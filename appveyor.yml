@@ -23,13 +23,7 @@ clone_folder: C:\Projects\Skylicht_Engine
 install:
   # clone submodules
   - git submodule update --init --recursive
-
-  # Install a recent CMake
-  # - set CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v3.15.4/cmake-3.15.4-win64-x64.zip"
-  # - appveyor DownloadFile %CMAKE_URL% -FileName cmake.zip
-  # - 7z x cmake.zip -oC:\projects\deps > nul
-  # - move C:\projects\deps\cmake-* C:\projects\deps\cmake # Move to a version-agnostic directory
-  # - set PATH=C:\projects\deps\cmake\bin;C:\Python37;%PATH%
+  
   - set PATH=C:\Python37;%PATH%
   - cmake --version
   - python --version
@@ -44,19 +38,20 @@ before_build:
   - cmake %cmake_args% -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A %generator_arch%
 
 build_script:
-  - cmake --build ./PrjVisualStudio --config "%configuration%" -- /verbosity:minimal /maxcpucount
-  
-#build:
-#  project: C:\Projects\Skylicht_Engine\PrjVisualStudio\SKYLICHT_ENGINE.sln
-#  verbosity: minimal
-#  parallel: true
+  - if "%PLATFORM%"=="Win32 x64" (
+      cmake --build ./PrjVisualStudio --config "%configuration%" -- /verbosity:minimal /maxcpucount
+    )
+    
+  - if "%PLATFORM%"=="Win32 x86" (
+      cmake --build ./PrjVisualStudio --config "%configuration%" -- /verbosity:minimal /maxcpucount
+    )
 
 after_build:
 
 test: off
 
 artifacts:
-  - path: C:\Projects\Skylicht_Engine\Bin\Windows\Libs\$(configuration)\Irrlicht.lib
+  - path: Bin\Windows\Libs\$(configuration)\Irrlicht.lib
     name: Irrlicht
     
 #deploy:
