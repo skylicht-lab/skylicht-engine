@@ -44,7 +44,7 @@ before_build:
   - cmake %cmake_args% -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A %generator_arch%
 
 build_script:
-  - cmake --build build --config "%configuration%" /verbosity:minimal /maxcpucount
+  - cmake --build ./PrjVisualStudio --config "%configuration%" -- /verbosity:minimal /maxcpucount
   
 #build:
 #  project: C:\Projects\Skylicht_Engine\PrjVisualStudio\SKYLICHT_ENGINE.sln
