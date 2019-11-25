@@ -8,6 +8,6 @@ Skylicht Engine is a fork from [Irrlicht 3D Engine](http://irrlicht.sourceforge.
 
 | Platform | Build Status |
 | ---------------------|-------------|
-| Win32/Win64 | [![Build Status](https://ci.appveyor.com/api/projects/status/github/ducphamhong/skylicht-engine?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine) |
-| MinGW64 | [![Build Status](https://ci.appveyor.com/api/projects/status/github/ducphamhong/skylicht-engine?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine) |
-| Android | [![Build Status](https://ci.appveyor.com/api/projects/status/github/ducphamhong/skylicht-engine?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine) |
+| Win32/Win64 | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine)|
+| MinGW64 | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine)|
+| Android | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine)|
