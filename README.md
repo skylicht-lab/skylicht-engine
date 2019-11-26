@@ -18,7 +18,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 
 ## License
 
-Skylicht Engine is under MIT License.
+Skylicht Engine is under [MIT License](LICENSE.md).
 
 Skylicht Engine is based in part on the work of:
 - Irrlicht Engine
