@@ -1658,7 +1658,7 @@ namespace irr
 						}
 					}
 
-					// pham hong duc
+					// Pham Hong Duc
 					// AnisotropicFilter is defalt TrilinearFilter
 					if (CurrentTexture[i] && CurrentTexture[i]->hasMipMaps() == true)
 					{

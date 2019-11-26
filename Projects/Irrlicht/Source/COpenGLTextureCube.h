@@ -1,8 +1,7 @@
 // Copyright (C) 2002-2012 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
-// Pham Hong Duc
-// Add to skylicht engine
+// Pham Hong Duc add to Skylicht Engine
 
 #ifndef __C_OPEN_GL_TEXTURECUBE_H_INCLUDED__
 #define __C_OPEN_GL_TEXTURECUBE_H_INCLUDED__
