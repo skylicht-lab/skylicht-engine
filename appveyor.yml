@@ -7,8 +7,16 @@ image:
 
 environment:
   matrix:
+    # Android
+    - platform: Android v7a
+      arch: armeabi-v7a
+      toolchain: Android
+      configuration: Release
+      cmake_args: -B ./PrjAndroid -G "MinGW Makefiles"
+      cmake_build: /verbosity:minimal /maxcpucount
+  
     # Cygwin/x64/Release
-    - platform: Cygwin x86
+    - platform: Cygwin x64
       arch: x64
       toolchain: Cygwin
       configuration: Release
@@ -34,7 +42,7 @@ environment:
 # clone directory
 clone_folder: C:\Projects\Skylicht_Engine
 
-# https://www.appveyor.com/docs/windows-images-software/
+# https://www.appveyor.com/docs/windows-images-software
 install:
   # clone submodules
   - git submodule update --init --recursive
@@ -45,6 +53,14 @@ install:
   # set env for cygwin
   - if "%toolchain%"=="Cygwin" set PATH=C:\cygwin64\bin;%PATH%
 
+  # set env for android
+  - if "%toolchain%"=="Android" set PATH=C:\MinGW\bin;%PATH%
+  - if "%toolchain%"=="Android" (
+      set AndroidNDK=C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17
+      set AndroidABI="armeabi-v7a with NEON"
+      set AndroidMinSDK=21
+  )
+
   # test version  
   - cmake --version
   - python --version
@@ -54,15 +70,21 @@ before_build:
   - cd C:\Projects\Skylicht_Engine
   - echo %arch%
   - echo %cmake_args%
-  - cmake -S . %cmake_args%
+  - if "%toolchain%"=="Android" (
+      cmake -S . %cmake_args% -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=%AndroidNDK%/build/cmake/android.toolchain.cmake -DANDROID_ABI=%AndroidABI% -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=%AndroidMinSDK%
+    ) else (
+      cmake -S . %cmake_args%
+    )
 
 build_script:
-  # build visual studio project
   - if "%toolchain%"=="MSVC" (
       cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
     )
   - if "%toolchain%"=="Cygwin" (
       make -C PrjCygwin
+    )
+  - if "%toolchain%"=="Android" (
+      mingw32-make -C PrjAndroid
     )
 
 after_build:
@@ -73,6 +95,9 @@ after_build:
     )
   - if "%toolchain%"=="Cygwin" (
       7z a %output_zip% Bin\Windows\Libs\*.a
+    )
+  - if "%toolchain%"=="Android" (
+      7z a %output_zip% Bin\Android\Libs\*.a
     )
   
 test: off

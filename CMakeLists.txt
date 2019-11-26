@@ -21,14 +21,14 @@ set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/L
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin CACHE PATH "Single output directory for building executables.")
 
 # debug/release
-if(NOT CMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
 	# set(CMAKE_BUILD_TYPE "Debug")
 	set(CMAKE_BUILD_TYPE "Release")
 endif()
 
 message(STATUS "- System: ${CMAKE_SYSTEM_NAME} - BuildType: ${CMAKE_BUILD_TYPE}")
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 endif()
 
@@ -40,12 +40,18 @@ if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
 	set(BUILD_EMSCRIPTEN ON)
 endif()
 
+if (CMAKE_SYSTEM_NAME STREQUAL Android)
+	set(BUILD_ENGINE_TOOL OFF)
+	set(BUILD_ANDROID ON)
+	add_definitions(-DANDROID)	
+endif()
+
 option(BUILD_SHARED_LIBS "Use shared libraries" OFF)
 
 option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
 
 # irrlicht static lib
-if(NOT BUILD_SHARED_LIBS)
+if (NOT BUILD_SHARED_LIBS)
 	add_definitions(-D_IRR_STATIC_LIB_ )
 endif()
 
@@ -64,16 +70,16 @@ if (BUILD_SKYLICHT_NETWORK)
 endif()
 
 # skylicht release data
-if(BUILD_WITH_ZIP_DATA)
+if (BUILD_WITH_ZIP_DATA)
 	add_definitions(-DUSE_DATA_IN_ZIP_FILE)
 endif()
 
 # skylicht debug leak memory
-if(BUILD_DEBUG_VLD)
+if (BUILD_DEBUG_VLD)
 	add_definitions(-DUSE_VISUAL_LEAK_DETECTOR)
 endif()
 
-if(BUILD_SDL)
+if (BUILD_SDL)
 	add_definitions(-DSDL)
 	set(BUILD_ENGINE_TOOL OFF)
 endif()
@@ -81,7 +87,7 @@ endif()
 # skylicht bullet engine
 option(BUILD_BULLET_PHYSIC2_LIB "Build bullet physic 2" ON)
 
-if(BUILD_BULLET_PHYSIC2_LIB)
+if (BUILD_BULLET_PHYSIC2_LIB)
 	add_definitions(-DUSE_PHYSIC_ENGINE -DUSE_PHYSIC_RAGDOLL -DUSE_PHYSIC_VEHICLE -DUSE_BULLET_PHYSIC_ENGINE)
 	
 	# sse on window
@@ -99,54 +105,60 @@ endif()
 # skylicht recast navigation
 option(BUILD_RECAST_NAVIGATION_LIB "Build Recast Navigation" ON)
 
-if(BUILD_RECAST_NAVIGATION_LIB)
+if (BUILD_RECAST_NAVIGATION_LIB)
 	add_definitions(-DUSE_RECAST_NAVIGATION_ENGINE)
 endif()
 
 # unicode library
 add_definitions(-DUNICODE -D_UNICODE)	
 
-if(CYGWIN)
+if (CYGWIN)
 	add_definitions(-DCYGWIN)
 endif()
 
-if(MINGW)
+if (MINGW)
 	add_definitions(-DMINGW)
 endif()
 
+# android
+if (BUILD_ANDROID)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-narrowing")
+	set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -Wno-narrowing")
+endif()
+
 # visual studio
-if(MSVC)		
+if (MSVC)		
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
-	if(NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+	if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
 		#We statically link to reduce dependancies
 		foreach(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
-			if(${flag_var} MATCHES "/MD")
+			if (${flag_var} MATCHES "/MD")
 				string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-			endif(${flag_var} MATCHES "/MD")
-			if(${flag_var} MATCHES "/MDd")
+			endif (${flag_var} MATCHES "/MD")
+			if (${flag_var} MATCHES "/MDd")
 				string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-			endif(${flag_var} MATCHES "/MDd")
+			endif (${flag_var} MATCHES "/MDd")
 		endforeach()
 	endif()
 		
-	if(CMAKE_CL_64)
+	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
 	endif()
 	
 	option(USE_MSVC_FAST_FLOATINGPOINT "Use MSVC /fp:fast option" ON)
-	if(USE_MSVC_FAST_FLOATINGPOINT)
+	if (USE_MSVC_FAST_FLOATINGPOINT)
 		  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:fast")
 	endif()
 
 	option(USE_MSVC_STRING_POOLING "Use MSVC /GF string pooling option"	ON)
-	if(USE_MSVC_STRING_POOLING)
+	if (USE_MSVC_STRING_POOLING)
 		set(CMAKE_C_FLAGS "/GF ${CMAKE_C_FLAGS}")
 		set(CMAKE_CXX_FLAGS "/GF ${CMAKE_CXX_FLAGS}")
 	endif()
 
 	option(USE_MSVC_FUNCTION_LEVEL_LINKING "Use MSVC /Gy function level linking option"	ON)
-	if(USE_MSVC_FUNCTION_LEVEL_LINKING)
+	if (USE_MSVC_FUNCTION_LEVEL_LINKING)
 		set(CMAKE_C_FLAGS "/Gy ${CMAKE_C_FLAGS}")
 		set(CMAKE_CXX_FLAGS "/Gy ${CMAKE_CXX_FLAGS}")
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:REF")
@@ -154,13 +166,13 @@ if(MSVC)
 	endif()
 	
 	option(USE_MSVC_COMDAT_FOLDING "Use MSVC /OPT:ICF COMDAT folding option" ON)
-	if(USE_MSVC_COMDAT_FOLDING)
+	if (USE_MSVC_COMDAT_FOLDING)
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:ICF")
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:ICF")
 	endif()
 
 	option(USE_MSVC_DISABLE_RTTI "Use MSVC /GR- disabled RTTI flags option"	OFF)
-	if(USE_MSVC_DISABLE_RTTI)
+	if (USE_MSVC_DISABLE_RTTI)
 		string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
 		set(CMAKE_C_FLAGS "/GR- ${CMAKE_C_FLAGS}")
 		set(CMAKE_CXX_FLAGS "/GR- ${CMAKE_CXX_FLAGS}")
@@ -178,11 +190,11 @@ subdirs (Projects/ThirdParty)
 subdirs (Projects/Irrlicht)
 #subdirs (Projects/Spark)
 
-#if(BUILD_BULLET_PHYSIC2_LIB)
+#if (BUILD_BULLET_PHYSIC2_LIB)
 #subdirs (Projects/BulletPhysics2)
 #endif()
 
-#if(BUILD_RECAST_NAVIGATION_LIB)
+#if (BUILD_RECAST_NAVIGATION_LIB)
 #subdirs (Projects/RecastNavigation)
 #endif()
 
@@ -199,9 +211,11 @@ subdirs (Projects/Irrlicht)
 
 #subdirs (Projects/SkylichtClient)
 
-#if(BUILD_ENGINE_TOOL)
+#if (BUILD_ENGINE_TOOL)
 #subdirs (Projects/UIClass)
 #subdirs (Projects/SkylichtEditor)
 #endif()
 
-#subdirs (Projects/Game)
+#if (NOT BUILD_ANDROID)
+#subdirs (Projects/MainApp)
+#endif()
