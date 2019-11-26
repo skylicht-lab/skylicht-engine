@@ -7,15 +7,30 @@ image:
 
 environment:
   matrix:
+    # Cygwin/x64/Release
+    - platform: Cygwin x86
+      arch: x64
+      toolchain: Cygwin
+      configuration: Release
+      cmake_args: -B ./PrjCygwin -G "Unix Makefiles"
+      cmake_build: /verbosity:minimal /maxcpucount
+      
     # Win32/x64/Release
     - platform: Win32 x64
-      configuration: Release
-
+      arch: x64
+      toolchain: MSVC
+      configuration: Release      
+      cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+      cmake_build: /verbosity:minimal /maxcpucount
+      
     # Win32/x86/Release
     - platform: Win32 x86
+      arch: x86
+      toolchain: MSVC
       configuration: Release
-    
-    
+      cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A Win32
+      cmake_build: /verbosity:minimal /maxcpucount
+      
 # clone directory
 clone_folder: C:\Projects\Skylicht_Engine
 
@@ -24,40 +39,64 @@ install:
   # clone submodules
   - git submodule update --init --recursive
   
+  # set env for python
   - set PATH=C:\Python37;%PATH%
+  
+  # set env for cygwin
+  - if "%toolchain%"=="Cygwin" (
+      set PATH=C:\cygwin64\bin;%PATH%
+    )
+
+  # test version
   - cmake --version
   - python --version
-  - echo %PLATFORM%
-  - if "%PLATFORM%"=="Win32 x64" ( set generator_arch=x64 )
-  - if "%PLATFORM%"=="Win32 x86" ( set generator_arch=Win32 )
+  - echo %platform%
   
 before_build:
   - cd C:\Projects\Skylicht_Engine
-  - echo %generator_arch%
+  - echo %arch%
   - echo %cmake_args%
-  - cmake %cmake_args% -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A %generator_arch%
+  - cmake -S . %cmake_args%
 
 build_script:
-  - if "%PLATFORM%"=="Win32 x64" (
-      cmake --build ./PrjVisualStudio --config "%configuration%" -- /verbosity:minimal /maxcpucount
+  # build visual studio project
+  - if "%toolchain%"=="MSVC" (
+      cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
     )
-    
-  - if "%PLATFORM%"=="Win32 x86" (
-      cmake --build ./PrjVisualStudio --config "%configuration%" -- /verbosity:minimal /maxcpucount
+  - if "%toolchain%"=="Cygwin" (
+      make -C PrjCygwin
     )
 
 after_build:
-
+  - mkdir Build
+  - set output_zip=Build\Skylicht_%toolchain%_%arch%.zip  
+  - if "%toolchain%"=="MSVC" (
+      7z a %output_zip% Bin\Windows\Libs\$(configuration)\*.Lib
+    )
+  - if "%toolchain%"=="Cygwin" (
+      7z a %output_zip% Bin\Windows\Libs\*.Lib
+    )
+  
 test: off
 
 artifacts:
-  - path: Bin\Windows\Libs\$(configuration)\Irrlicht.lib
-    name: Irrlicht
+  - path: Build\*.zip
+      
+#for:
+#  -
+    #branches:
+    #  only:
+    #    - master
+    #      configuration: Release
+          
+    #artifacts:
+      # all zip build
+      #- path: Build\*.zip
     
-#deploy:
-#- provider: GitHub
-#  auth_token:
-#    secure: the-token-is-hidden-on-purpose
-#  force_update: true
-#  on:
-#    APPVEYOR_REPO_TAG: true
+    #deploy:
+    #- provider: GitHub
+    #  auth_token:
+    #    secure: the-token-is-hidden-on-purpose
+    #  force_update: true
+    #  on:
+    #    APPVEYOR_REPO_TAG: true
