@@ -13,8 +13,8 @@ environment:
       toolchain: Android
       configuration: Release
       cmake_args: -B ./PrjAndroid -G "MinGW Makefiles"      
-      android_ndk: C:\ProgramData\Microsoft\android_ndk64\android-ndk-r17
-      android_abi: "armeabi-v7a with NEON"
+      android_ndk: C:/ProgramData/Microsoft/android_ndk64/android-ndk-r17
+      android_abi: armeabi-v7a with NEON
       android_min_sdk: 21
       
     # Cygwin/x64/Release
@@ -67,7 +67,7 @@ before_build:
   - echo %arch%
   - echo %cmake_args%
   - if "%toolchain%"=="Android" (
-      cmake -S . %cmake_args% -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=%android_ndk%/build/cmake/android.toolchain.cmake -DANDROID_ABI=%android_abi% -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=%android_min_sdk%
+      cmake -S . %cmake_args% -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=%android_ndk%/build/cmake/android.toolchain.cmake -DANDROID_ABI="%android_abi%" -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=%android_min_sdk%
     ) else (
       cmake -S . %cmake_args%
     )
