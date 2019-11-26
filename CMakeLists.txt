@@ -3,9 +3,6 @@ cmake_minimum_required(VERSION 3.1)
 # cmake config
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-# fix sh for mingw ci
-set(DCMAKE_SH="CMAKE_SH-NOTFOUND")
-
 # cmake library
 include(CMake/CMakeVisualStudioSourceGroup.cmake)
 include(CMake/CMakeVisualStudioPCH.cmake)
