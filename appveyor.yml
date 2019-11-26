@@ -8,7 +8,7 @@ image:
 environment:
   matrix:
     # Android
-    - platform: Android v7a
+    - platform: Android Armeabi v7a
       arch: armeabi-v7a
       toolchain: Android
       configuration: Release
@@ -59,6 +59,7 @@ install:
       set AndroidNDK=C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17
       set AndroidABI="armeabi-v7a with NEON"
       set AndroidMinSDK=21
+      dir %AndroidNDK%
     )
 
   # test version  
@@ -89,7 +90,7 @@ build_script:
 
 after_build:
   - mkdir Build
-  - set output_zip=Build\Skylicht_%toolchain%_%arch%.zip  
+  - set output_zip=Build\SkylichtDemo_%toolchain%_%arch%.zip  
   - if "%toolchain%"=="MSVC" (
       7z a %output_zip% Bin\Windows\Libs\%configuration%\*.lib
     )
