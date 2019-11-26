@@ -56,7 +56,7 @@ install:
   # - set PATH=C:\projects\deps\cmake\bin;%PATH%
   
   # remove conflict sh.exe
-  - set PATH=%PATH:C:\Program Files (x86)\Git\bin;=%
+  - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
   
   # set env for python
   - set PATH=C:\Python37;%PATH%
