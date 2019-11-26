@@ -308,8 +308,8 @@ void CImage::copyToWithAlpha(IImage* target, const core::position2d<s32>& pos, c
 			target, clipRect, &pos, this, &sourceRect, color.color);
 }
 
-//! Pham Hong Duc add
-// swap Blue and G channel
+// Pham Hong Duc add
+// Swap Blue and G channel
 void CImage::swapBG()
 {
     if (IsCompressed)
