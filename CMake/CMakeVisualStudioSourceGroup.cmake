@@ -1,6 +1,5 @@
 # group source on visual project
-function(setup_project_group project_source current_dir)	
-	
+function(setup_project_group project_source current_dir)		
 	foreach(source IN LISTS project_source)		
 		# get source path
 		get_filename_component(source_path ${source} PATH)		
@@ -20,7 +19,6 @@ function(setup_project_group project_source current_dir)
 		else()
 			# setup project group
 			source_group("${group_name}" FILES "${source}")
-		endif()
-		
+		endif()		
 	endforeach()
 endfunction()
