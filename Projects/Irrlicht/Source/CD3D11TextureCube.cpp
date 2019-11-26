@@ -1,7 +1,7 @@
 // Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
-// Todo: Pham Hong Add to Skylicht Engine
+// Pham Hong Duc add to Skylicht Engine
 
 #include "pch.h"
 #include "IrrCompileConfig.h"
