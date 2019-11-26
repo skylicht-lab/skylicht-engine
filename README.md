@@ -28,4 +28,4 @@ Skylicht Engine is based in part on the work of:
 - libPng
 - Bullet Physics
 
-This means that if you use the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used the IJG code. It would also be nice to mention that you use the Irrlicht Engine, the zlib and libPng. Please see the README files in the jpeglib, the zlib and libPng for further informations.
+This means that if you've used the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used. It would also be nice to mention that you use the Irrlicht Engine, Bullet Physics ,the zlib, curl and libPng... Please see the README files from 3rd parties for further informations.
