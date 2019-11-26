@@ -28,7 +28,7 @@ environment:
     - platform: Win32 x64
       arch: x64
       toolchain: MSVC
-      configuration: Release      
+      configuration: Release
       cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
       cmake_build: /verbosity:minimal /maxcpucount
       
@@ -48,6 +48,13 @@ install:
   # clone submodules
   - git submodule update --init --recursive
   
+  # Install a recent CMake for "MinGW Makefiles"
+  # - set CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v3.15.4/cmake-3.15.4-win64-x64.zip"
+  # - appveyor DownloadFile %CMAKE_URL% -FileName cmake.zip
+  # - 7z x cmake.zip -oC:\projects\deps > nul
+  # - move C:\projects\deps\cmake-* C:\projects\deps\cmake # Move to a version-agnostic directory
+  # - set PATH=C:\projects\deps\cmake\bin;%PATH%
+  
   # set env for python
   - set PATH=C:\Python37;%PATH%
   
@@ -55,7 +62,7 @@ install:
   - if "%toolchain%"=="Cygwin" set PATH=C:\cygwin64\bin;%PATH%
 
   # set env for android
-  - if "%toolchain%"=="Android" set PATH=C:\MinGW\bin;%PATH%
+  - if "%toolchain%"=="Android" set PATH=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;%PATH%
 
   # test version  
   - cmake --version
