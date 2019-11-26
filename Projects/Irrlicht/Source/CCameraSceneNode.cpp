@@ -295,7 +295,7 @@ void CCameraSceneNode::updateMatrices()
 		up.X += 0.5f;
 	}
 
-	// pham hong duc modify
+	// Pham hong Duc modify
     // rotate target by setRotate
     // apply when shake camera
     core::vector3df t = Target - pos;
