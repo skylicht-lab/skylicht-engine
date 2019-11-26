@@ -69,10 +69,10 @@ after_build:
   - mkdir Build
   - set output_zip=Build\Skylicht_%toolchain%_%arch%.zip  
   - if "%toolchain%"=="MSVC" (
-      7z a %output_zip% Bin\Windows\Libs\$(configuration)\*.Lib
+      7z a %output_zip% Bin\Windows\Libs\%configuration%\*.lib
     )
   - if "%toolchain%"=="Cygwin" (
-      7z a %output_zip% Bin\Windows\Libs\*.Lib
+      7z a %output_zip% Bin\Windows\Libs\*.a
     )
   
 test: off
