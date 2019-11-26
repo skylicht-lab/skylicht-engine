@@ -43,11 +43,9 @@ install:
   - set PATH=C:\Python37;%PATH%
   
   # set env for cygwin
-  - if "%toolchain%"=="Cygwin" (
-      set PATH=C:\cygwin64\bin;%PATH%
-    )
+  - if "%toolchain%"=="Cygwin" set PATH=C:\cygwin64\bin;%PATH%
 
-  # test version
+  # test version  
   - cmake --version
   - python --version
   - echo %platform%
