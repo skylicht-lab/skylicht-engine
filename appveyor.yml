@@ -71,6 +71,8 @@ install:
   - cmake --version  
   - python --version
   - echo %platform%
+  - echo %APPVEYOR_BUILD_VERSION%
+  - if "%toolchain%"=="Android" ( dir %android_ndk% )
   
 before_build:
   - cd C:\Projects\Skylicht_Engine
