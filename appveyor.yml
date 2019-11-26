@@ -59,7 +59,7 @@ install:
       set AndroidNDK=C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17
       set AndroidABI="armeabi-v7a with NEON"
       set AndroidMinSDK=21
-  )
+    )
 
   # test version  
   - cmake --version
