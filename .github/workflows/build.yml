@@ -16,6 +16,7 @@ jobs:
         ./emsdk install latest-fastcomp
         ./emsdk activate latest-fastcomp
         source ./emsdk_env.sh
+        ls -l fastcomp/emscripten/system/include
         cd ..
         
     - name: Build
