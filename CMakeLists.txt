@@ -46,6 +46,12 @@ if (CMAKE_SYSTEM_NAME STREQUAL Android)
 	add_definitions(-DANDROID)	
 endif()
 
+if (CMAKE_SYSTEM_NAME STREQUAL Linux)
+	set(BUILD_ENGINE_TOOL OFF)
+	set(BUILD_LINUX ON)
+	add_definitions(-DLINUX)
+endif()
+
 option(BUILD_SHARED_LIBS "Use shared libraries" OFF)
 
 option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)

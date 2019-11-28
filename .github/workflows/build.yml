@@ -23,5 +23,5 @@ jobs:
       
     - name: Zip
       run: |
-        ls -l ./Bin
-        7z a Output.zip ./Bin/*.a
+        mkdir Build
+        7z a Build/Output.zip ./Bin/Linux/Libs/*.a
