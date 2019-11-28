@@ -73,7 +73,11 @@
 
 #ifdef LINUX
 	#define _IRR_LINUX_PLATFORM
-	#define _IRR_COMPILE_WITH_LINUX_DEVICE_
+	#ifdef SDL
+		#define _IRR_COMPILE_WITH_SDL_DEVICE_
+	#else
+		#define _IRR_COMPILE_WITH_LINUX_DEVICE_
+	#endif
 #endif
 
 #ifdef EMSCRIPTEN

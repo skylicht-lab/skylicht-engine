@@ -46,7 +46,7 @@
 	#include <io.h>
 	#include <tchar.h>
 #else
-	#if (defined(_IRR_POSIX_API_) || defined(_IRR_OSX_PLATFORM_) || defined(ANDROID))
+	#if (defined(_IRR_POSIX_API_) || defined(_IRR_OSX_PLATFORM_) || defined(ANDROID) || defined(LINUX))
 		#include <stdio.h>
 		#include <stdlib.h>
 		#include <string.h>
