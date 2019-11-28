@@ -20,7 +20,7 @@ jobs:
         
     - name: Build
       run: |        
-        cmake -DCMAKE_TOOLCHAIN_FILE=emsdk-master/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake  -S.
+        cmake -DCMAKE_TOOLCHAIN_FILE=emsdk/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake  -S.
         make
         
     - name: Package
