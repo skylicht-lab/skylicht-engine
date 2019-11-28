@@ -18,7 +18,7 @@ jobs:
       
     - name: Build
       run: |
-        cmake -S . -D BUILD_SDL
+        cmake -S. -DBUILD_SDL=true
         make
       
     - name: Zip
