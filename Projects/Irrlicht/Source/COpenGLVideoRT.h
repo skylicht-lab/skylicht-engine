@@ -1,5 +1,5 @@
 #ifndef __C_VIDEO_OPENGL_VRT_H_INCLUDED__
-#define __C_VIDEO_OPENGL_11_VRT_H_INCLUDED__
+#define __C_VIDEO_OPENGL_VRT_H_INCLUDED__
 
 #include "IrrCompileConfig.h"
 
