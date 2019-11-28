@@ -10,6 +10,8 @@ jobs:
     
     - name: Install Dependencies
       run: |
+        sudo apt-get update
+        sudo apt-get install -y libsdl2-dev
         git clone https://github.com/emscripten-core/emsdk.git
         cd emsdk
         git pull
