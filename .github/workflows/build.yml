@@ -18,8 +18,8 @@ jobs:
       
     - name: Build
       run: |
-        cmake -S. -B./PrjLinuxBuild -DBUILD_SDL=true
-        make -C./PrjLinuxBuild
+        cmake -S. -DBUILD_SDL=true
+        make
       
     - name: Zip
       run: |
