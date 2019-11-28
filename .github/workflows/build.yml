@@ -21,4 +21,6 @@ jobs:
         make -C PrjGCC
       
     - name: Zip
+      run: |
         ls -l ./Bin
+        7z a Output.zip ./Bin/*.a
