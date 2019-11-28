@@ -25,7 +25,7 @@ environment:
       cmake_args: -B ./PrjCygwin -G "Unix Makefiles"
       
     # Win32/x64/Release
-    - platform: Win32 x64
+    - platform: Win64 x64
       arch: x64
       toolchain: MSVC
       configuration: Release
@@ -73,31 +73,19 @@ before_build:
   - echo %cmake_args%
   - cmake -S . %cmake_args%
 
+# will be override
 build_script:
-  - if "%toolchain%"=="MSVC" (
-      cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
-    )
-  - if "%toolchain%"=="Cygwin" (
-      make -C PrjCygwin
-    )  
 
+# will be override
 after_build:
-  - mkdir Build
-  - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
-  - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip  
-  - if "%toolchain%"=="MSVC" (
-      7z a %output_zip% Bin\Windows\Libs\%configuration%\*.lib
-    )
-  - if "%toolchain%"=="Cygwin" (
-      7z a %output_zip% Bin\Windows\Libs\*.a
-    )  
-  
+
 test: off
 
 artifacts:
   - path: Build\*.zip
       
 for:
+  # Android
   -
     matrix:
       only:
@@ -114,6 +102,32 @@ for:
       - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
       - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
       - 7z a %output_zip% Bin\Android\Libs\*.a
+  
+  # MSVC
+  -
+    matrix:
+      only:
+        - toolchain: MSVC
+    build_script:
+      - cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
+    after_build:
+      - mkdir Build
+      - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
+      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
+      - 7z a %output_zip% Bin\Windows\Libs\%configuration%\*.lib
+
+  # Cygwin
+  -
+    matrix:
+      only:
+        - toolchain: Cygwin
+    build_script:
+      - make -C PrjCygwin
+    after_build:
+      - mkdir Build
+      - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
+      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
+      - 7z a %output_zip% Bin\Windows\Libs\*.a
       
 #deploy:
 #- provider: GitHub
