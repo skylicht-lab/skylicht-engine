@@ -328,11 +328,11 @@ namespace video
 
 		virtual IVertexDescriptor* addVertexDescriptor(const core::stringc& pName) _IRR_OVERRIDE_;
 
-		virtual IVertexDescriptor* getVertexDescriptor(u32 id) const;
+		virtual IVertexDescriptor* getVertexDescriptor(u32 id) const _IRR_OVERRIDE_;
 
-		virtual IVertexDescriptor* getVertexDescriptor(const core::stringc& pName) const;
+		virtual IVertexDescriptor* getVertexDescriptor(const core::stringc& pName) const _IRR_OVERRIDE_;
 
-		virtual u32 getVertexDescriptorCount() const;
+		virtual u32 getVertexDescriptorCount() const _IRR_OVERRIDE_;
 
 		virtual IHardwareBuffer* createHardwareBuffer(scene::IIndexBuffer* indexBuffer) _IRR_OVERRIDE_;
 
@@ -562,7 +562,7 @@ namespace video
 		}
 
 		//! get default frame
-		virtual int getDefaultFrameBuffer()
+		virtual int getDefaultFrameBuffer() _IRR_OVERRIDE_
 		{
 			return DefaultFrameBuffer;
 		}
