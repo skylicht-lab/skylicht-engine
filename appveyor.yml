@@ -25,7 +25,7 @@ environment:
       cmake_args: -B ./PrjCygwin -G "Unix Makefiles"
       
     # Win32/x64/Release
-    - platform: Win32 x64
+    - platform: Win64 x64
       arch: x64
       toolchain: MSVC
       configuration: Release
@@ -47,13 +47,6 @@ clone_folder: C:\Projects\Skylicht_Engine
 install:
   # clone submodules
   - git submodule update --init --recursive
-  
-  # Install a recent CMake for "MinGW Makefiles"
-  # - set CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v3.15.4/cmake-3.15.4-win64-x64.zip"
-  # - appveyor DownloadFile %CMAKE_URL% -FileName cmake.zip
-  # - 7z x cmake.zip -oC:\projects\deps > nul
-  # - move C:\projects\deps\cmake-* C:\projects\deps\cmake # Move to a version-agnostic directory
-  # - set PATH=C:\projects\deps\cmake\bin;%PATH%
   
   # remove conflict sh.exe
   - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
@@ -78,57 +71,68 @@ before_build:
   - cd C:\Projects\Skylicht_Engine
   - echo %arch%
   - echo %cmake_args%
-  - if "%toolchain%"=="Android" (
-      cmake -S . %cmake_args% -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=%android_ndk%/build/cmake/android.toolchain.cmake -DANDROID_ABI="%android_abi%" -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=%android_min_sdk%
-    ) else (
-      cmake -S . %cmake_args%
-    )
+  - cmake -S . %cmake_args%
 
+# will be override
 build_script:
-  - if "%toolchain%"=="MSVC" (
-      cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
-    )
-  - if "%toolchain%"=="Cygwin" (
-      make -C PrjCygwin
-    )
-  - if "%toolchain%"=="Android" (
-      mingw32-make -C PrjAndroid
-    )
 
+# will be override
 after_build:
-  - mkdir Build
-  - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
-  - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip  
-  - if "%toolchain%"=="MSVC" (
-      7z a %output_zip% Bin\Windows\Libs\%configuration%\*.lib
-    )
-  - if "%toolchain%"=="Cygwin" (
-      7z a %output_zip% Bin\Windows\Libs\*.a
-    )
-  - if "%toolchain%"=="Android" (
-      7z a %output_zip% Bin\Android\Libs\*.a
-    )
-  
+
 test: off
 
 artifacts:
   - path: Build\*.zip
       
-#for:
-#  -
-    #branches:
-    #  only:
-    #    - master
-    #      configuration: Release
-          
-    #artifacts:
-      # all zip build
-      #- path: Build\*.zip
-    
-    #deploy:
-    #- provider: GitHub
-    #  auth_token:
-    #    secure: the-token-is-hidden-on-purpose
-    #  force_update: true
-    #  on:
-    #    APPVEYOR_REPO_TAG: true
+for:
+  # Android
+  -
+    matrix:
+      only:
+        - toolchain: Android
+    before_build:
+      - cd C:\Projects\Skylicht_Engine
+      - echo %arch%
+      - echo %cmake_args%      
+      - cmake -S . %cmake_args% -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=%android_ndk%/build/cmake/android.toolchain.cmake -DANDROID_ABI="%android_abi%" -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=%android_min_sdk%
+    build_script:
+      - mingw32-make -C PrjAndroid
+    after_build:
+      - mkdir Build
+      - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
+      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
+      - 7z a %output_zip% Bin\Android\Libs\*.a
+  
+  # MSVC
+  -
+    matrix:
+      only:
+        - toolchain: MSVC
+    build_script:
+      - cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
+    after_build:
+      - mkdir Build
+      - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
+      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
+      - 7z a %output_zip% Bin\Windows\Libs\%configuration%\*.lib
+
+  # Cygwin
+  -
+    matrix:
+      only:
+        - toolchain: Cygwin
+    build_script:
+      - make -C PrjCygwin
+    after_build:
+      - mkdir Build
+      - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
+      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
+      - 7z a %output_zip% Bin\Windows\Libs\*.a
+      
+#deploy:
+#- provider: GitHub
+#  auth_token:
+#    secure: the-token-is-hidden-on-purpose
+#  force_update: true
+#  on:
+#    APPVEYOR_REPO_TAG: true

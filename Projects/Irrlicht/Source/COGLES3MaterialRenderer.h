@@ -86,10 +86,10 @@ namespace irr
 			virtual IVideoDriver* getVideoDriver() _IRR_OVERRIDE_;
 
 			//! get shader id
-			virtual s32 getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType);
+			virtual s32 getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType) _IRR_OVERRIDE_;
 
 			//! set shader value
-			virtual void setShaderVariable(s32 id, const f32 *value, int count, E_SHADER_TYPE shaderType);
+			virtual void setShaderVariable(s32 id, const f32 *value, int count, E_SHADER_TYPE shaderType) _IRR_OVERRIDE_;
 
 		protected:
 
