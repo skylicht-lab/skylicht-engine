@@ -18,10 +18,10 @@ jobs:
       
     - name: Build
       run: |
-        cmake -S. -DBUILD_SDL=true
-        make
+        cmake -S. -B./PrjLinuxBuild -DBUILD_SDL=true
+        make -C./PrjLinuxBuild
       
     - name: Zip
       run: |
-        ls -l ./Bin
-        7z a Output.zip ./Bin/*.a
+        mkdir Build
+        7z a Build/Output.zip ./Bin/Linux/Libs/*.a
