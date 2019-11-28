@@ -124,11 +124,11 @@ namespace video
 		bool initDriver();
 		bool changeRenderContext(const SExposedVideoData& videoData);
 
-		virtual IVideoRenderTarget* addVideoRenderTarget(void *hwnd, u32 w, u32 h);
+		virtual IVideoRenderTarget* addVideoRenderTarget(void *hwnd, u32 w, u32 h) _IRR_OVERRIDE_;
 
-		virtual void removeVideoRenderTarget(IVideoRenderTarget* vrt);
+		virtual void removeVideoRenderTarget(IVideoRenderTarget* vrt) _IRR_OVERRIDE_;
 
-		virtual void setVideoRenderTarget(IVideoRenderTarget* vrt);
+		virtual void setVideoRenderTarget(IVideoRenderTarget* vrt) _IRR_OVERRIDE_;
 		#endif
 
 		#ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
@@ -218,7 +218,7 @@ namespace video
 		virtual void OnResize(const core::dimension2d<u32>& size) _IRR_OVERRIDE_;
 
 		//! Adds a new material renderer to the video device.
-		virtual s32 addMaterialRenderer(IMaterialRenderer* renderer, const char* name = 0);
+		virtual s32 addMaterialRenderer(IMaterialRenderer* renderer, const char* name = 0) _IRR_OVERRIDE_;
 
 		//! Returns type of video driver
 		virtual E_DRIVER_TYPE getDriverType() const _IRR_OVERRIDE_;
@@ -347,10 +347,11 @@ namespace video
 		virtual core::dimension2du getMaxTextureSize() const _IRR_OVERRIDE_;
 
 		ITexture* createDepthTexture(ITexture* texture, bool shared=true);
+
 		void removeDepthTexture(ITexture* texture);
 		
 		//! Removes a texture from the texture cache and deletes it, freeing lot of memory.
-		void removeTexture(ITexture* texture);
+		virtual void removeTexture(ITexture* texture) _IRR_OVERRIDE_;
 		
 		virtual IVertexDescriptor* addVertexDescriptor(const core::stringc& pName) _IRR_OVERRIDE_;
 
