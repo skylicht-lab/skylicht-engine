@@ -10,15 +10,16 @@ jobs:
     
     - name: Install Dependencies
       run: |
-        wget -q https://github.com/emscripten-core/emsdk/archive/master.tar.gz
-        tar -xvf master.tar.gz
-        emsdk-master/emsdk update
-        emsdk-master/emsdk install latest-fastcomp
-        emsdk-master/emsdk activate latest-fastcomp
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        git pull
+        ./emsdk install latest
+        ./emsdk activate latest
+        source ./emsdk_env.sh
+        cd ..
         
     - name: Build
-      run: |
-        source emsdk-master/emsdk_env.sh
+      run: |        
         cmake -DCMAKE_TOOLCHAIN_FILE=emsdk-master/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake  -S.
         make
         
