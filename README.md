@@ -15,7 +15,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 | Win32/Win64 | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master)|
 | Cygwin64 | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master)|
 | Android | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master)|
-| Linux | ![](https://github.com/skylicht-lab/skylicht-engine/workflows/C%2FC%2B%2B%20CI/badge.svg)|
+| Linux | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/C%2FC%2B%2B%20CI/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=C%2FC%2B%2B%20CI)|
 
 
 ## License
