@@ -57,8 +57,3 @@ if(BUILD_SDL)
 		target_link_libraries(Irrlicht sdl2)
 	endif()	
 endif()
-
-#Emscripten
-if (BUILD_EMSCRIPTEN)
-	set(CMAKE_REQUIRED_FLAGS "-std=c++11 -s USE_SDL=2 -s USE_WEBGL2=1")
-endif()
