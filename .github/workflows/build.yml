@@ -3,10 +3,32 @@ name: C/C++ CI
 on: [push]
 
 jobs:
-  build:
-
+  Emscripten:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
     
+    - name: Install Dependencies
+      run: |
+        wget -q https://github.com/emscripten-core/emsdk/archive/master.tar.gz
+        tar -xvf master.tar.gz
+        emsdk-master/emsdk update
+        emsdk-master/emsdk install latest-fastcomp
+        emsdk-master/emsdk activate latest-fastcomp
+        
+    - name: Build
+      run: |
+        source emsdk-master/emsdk_env.sh
+        cmake -DCMAKE_TOOLCHAIN_FILE=emsdk-master/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake  -S.
+        make
+        
+    - name: Package
+      run: |
+        mkdir Build
+        7z a Build/Output.zip ./Bin/Emscripten/Libs/*.a
+        
+  Linux:
+    runs-on: ubuntu-latest    
     steps:
     - uses: actions/checkout@v1
       
@@ -21,7 +43,7 @@ jobs:
         cmake -S. -DBUILD_SDL=true
         make
       
-    - name: Zip
+    - name: Package
       run: |
         mkdir Build
         7z a Build/Output.zip ./Bin/Linux/Libs/*.a
