@@ -864,7 +864,7 @@ public:
 		}
 	}
 
-	virtual void setColor(video::SColorf color)
+	virtual void setColor(video::SColorf color) _IRR_OVERRIDE_
 	{
 		reset();
 		if (IsFloat)
@@ -941,7 +941,7 @@ public:
 		}
 	}
 
-	virtual void setQuaternion(const core::quaternion& value)
+	virtual void setQuaternion(const core::quaternion& value) _IRR_OVERRIDE_
 	{
 		reset();
 		if (IsFloat)
@@ -1046,7 +1046,7 @@ public:
 		}
 	}
 
-	virtual void setVector2d(const core::vector2di& v)
+	virtual void setVector2d(const core::vector2di& v) _IRR_OVERRIDE_
 	{
 		reset();
 		if (IsFloat)

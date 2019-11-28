@@ -217,7 +217,7 @@ namespace irr
 			virtual void OnResize(const core::dimension2d<u32>& size) _IRR_OVERRIDE_;
 
 			//! Adds a new material renderer to the video device.
-			virtual s32 addMaterialRenderer(IMaterialRenderer* renderer, const char* name = 0);
+			virtual s32 addMaterialRenderer(IMaterialRenderer* renderer, const char* name = 0) _IRR_OVERRIDE_;
 
 			//! Returns type of video driver
 			virtual E_DRIVER_TYPE getDriverType() const _IRR_OVERRIDE_;
@@ -350,7 +350,7 @@ namespace irr
 			void removeDepthTexture(ITexture* texture);
 
 			//! Removes a texture from the texture cache and deletes it, freeing lot of memory.
-			void removeTexture(ITexture* texture);
+			virtual void removeTexture(ITexture* texture) _IRR_OVERRIDE_;
 
 			virtual IVertexDescriptor* addVertexDescriptor(const core::stringc& pName) _IRR_OVERRIDE_;
 
