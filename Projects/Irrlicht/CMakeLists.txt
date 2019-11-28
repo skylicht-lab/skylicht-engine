@@ -53,7 +53,7 @@ if(BUILD_SDL)
 	if(CYGWIN OR MINGW)
 		find_library(SDL2_LIBRARY NAME SDL2)
 		target_link_libraries(Irrlicht ${SDL2_LIBRARY})
-	else
+	else()
 		target_link_libraries(Irrlicht sdl2)
 	endif()	
 endif()
