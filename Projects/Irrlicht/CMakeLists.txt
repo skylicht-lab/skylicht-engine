@@ -16,7 +16,7 @@ if(BUILD_SDL OR BUILD_EMSCRIPTEN)
         #mkdir InstallLibs/SDL2-version_18
         #mkdir InstallLibs/SDL2
         #7z x SDL2-version_18.zip -o./InstallLibs/SDL2-version_18
-        #cp -p .InstallLibs/SDL2-version_18/include/*.* ./InstallLibs/SDL2/
+        #cp -p ./InstallLibs/SDL2-version_18/include/*.* ./InstallLibs/SDL2/
 		include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/InstallLibs)
 	endif()
 
