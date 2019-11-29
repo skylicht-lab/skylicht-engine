@@ -4,13 +4,23 @@ include_directories(
 )
 
 # SDL Include
-if(BUILD_SDL)
+if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 	if(MSVC)
 		include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/include)
 	endif()
 
+	if (BUILD_EMSCRIPTEN)
+		# CI will download SDL2 to InstallLibs
+		# wget -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
+        # tar -xvf SDL2-version_18.zip
+        # mkdir InstallLibs
+        # mkdir InstallLibs/SDL2
+        # cp -p ./SDL2-version_18/include/*.* ./InstallLibs/SDL2/
+		include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/InstallLibs)
+	endif()
+
 	if(CYGWIN OR MINGW)
-		find_file(SDL2_INCLUDE_DIR NAME SDL.h HINTS SDL2)		
+		find_file(SDL2_INCLUDE_DIR NAME SDL.h HINTS SDL2)
 		include_directories(${SDL2_INCLUDE_DIR})
 	endif()
 endif()
