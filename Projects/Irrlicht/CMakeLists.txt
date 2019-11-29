@@ -11,7 +11,7 @@ if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 
 	if (BUILD_EMSCRIPTEN)
 		# CI will download SDL2 to InstallLibs
-		# wget -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
+		# wget -O SDL2-version_18.zip -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
         # tar -xvf SDL2-version_18.zip
         # mkdir InstallLibs
         # mkdir InstallLibs/SDL2

@@ -10,8 +10,6 @@ jobs:
     
     - name: Install Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libsdl2-dev
         git clone https://github.com/emscripten-core/emsdk.git
         cd emsdk
         git pull
@@ -20,7 +18,7 @@ jobs:
         source ./emsdk_env.sh
         ls -l fastcomp/emscripten/system/include
         cd ..
-        wget -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
+        wget -O SDL2-version_18.zip -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
         tar -xvf SDL2-version_18.zip
         mkdir InstallLibs
         mkdir InstallLibs/SDL2
