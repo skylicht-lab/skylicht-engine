@@ -20,6 +20,11 @@ jobs:
         source ./emsdk_env.sh
         ls -l fastcomp/emscripten/system/include
         cd ..
+        wget -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
+        tar -xvf SDL2-version_18.zip
+        mkdir InstallLibs
+        mkdir InstallLibs/SDL2
+        cp -p ./SDL2-version_18/include/*.* ./InstallLibs/SDL2/
         
     - name: Build
       run: |        
