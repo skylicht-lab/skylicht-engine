@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #if defined(WIN32) || defined(CYGWIN) || defined(MINGW)
+#include <Windows.h>
 
 #include "Resource.h"
 #include "CApplication.h"
