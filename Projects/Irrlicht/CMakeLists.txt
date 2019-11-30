@@ -10,13 +10,7 @@ if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 	endif()
 
 	if (BUILD_EMSCRIPTEN)
-		# CI will download SDL2 to InstallLibs
-		#wget -O SDL2-version_18.zip -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
-        #mkdir InstallLibs
-        #mkdir InstallLibs/SDL2
-        #7z x SDL2-version_18.zip -o./InstallLibs
-        #ls -l InstallLibs
-        #cp -p ./InstallLibs/SDL2-version_18/include/*.* ./InstallLibs/SDL2/
+		# See Github Action CI for more details
 		include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/InstallLibs)
 	endif()
 
@@ -59,9 +53,7 @@ endif()
 if(BUILD_SDL)
 	if(MSVC)
 		target_link_libraries(Irrlicht SDL2)
-	endif()
-
-	if(CYGWIN OR MINGW)
+	elseif(CYGWIN OR MINGW OR BUILD_LINUX)
 		find_library(SDL2_LIBRARY NAME SDL2)
 		target_link_libraries(Irrlicht ${SDL2_LIBRARY})
 	else()

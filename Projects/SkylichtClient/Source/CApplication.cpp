@@ -89,6 +89,7 @@ bool CApplication::OnEvent(const SEvent& event)
 #if defined(IOS) || defined(ANDROID)
 	if (event.EventType == EET_GAME_EVENT)
 	{
+		/*
 		if (event.GameEvent.EventID == EvtShowUIEditField)
 		{
 			core::recti *r = (core::recti*)event.GameEvent.EventData;
@@ -100,6 +101,7 @@ bool CApplication::OnEvent(const SEvent& event)
 			applicationHideEditFieldControl();
 #endif
 		}
+		*/
 	}
 #endif
 
