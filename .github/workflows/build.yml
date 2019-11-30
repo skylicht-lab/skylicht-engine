@@ -69,5 +69,5 @@ jobs:
     - name: Result
       uses: actions/upload-artifact@v1
       with:
-        name: Skylicht_Demo_Emscripten
-        path: Build/Skylicht_Demo_Emscripten.zip
+        name: Skylicht_Demo_Linux
+        path: Build/Skylicht_Demo_Linux.zip

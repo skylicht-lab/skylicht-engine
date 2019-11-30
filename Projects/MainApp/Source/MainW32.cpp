@@ -1,8 +1,8 @@
 #include "pch.h"
+
+#if defined(WIN32) || defined(CYGWIN) || defined(MINGW)
+
 #include "Resource.h"
-
-#ifndef SDL
-
 #include "CApplication.h"
 #include "BuildConfig/CBuildConfig.h"
 #include "Utils/CStringImp.h"
