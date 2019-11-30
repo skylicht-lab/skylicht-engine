@@ -99,9 +99,10 @@ for:
       - mingw32-make -C PrjAndroid
     after_build:
       - mkdir Build
+      - dir Bin
       - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
-      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
-      - 7z a %output_zip% Bin\Android\Libs\*.a
+      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
+      - 7z a %output_zip% Bin\*.so
   
   # MSVC
   -
@@ -112,9 +113,10 @@ for:
       - cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
     after_build:
       - mkdir Build
+      - dir Bin
       - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
       - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
-      - 7z a %output_zip% Bin\Windows\Libs\%configuration%\*.lib
+      - 7z a %output_zip% Bin\%configuration%\*.exe
 
   # Cygwin
   -
@@ -125,9 +127,10 @@ for:
       - make -C PrjCygwin
     after_build:
       - mkdir Build
+      - dir Bin
       - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
       - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
-      - 7z a %output_zip% Bin\Windows\Libs\*.a
+      - 7z a %output_zip% Bin\*.exe
       
 #deploy:
 #- provider: GitHub
