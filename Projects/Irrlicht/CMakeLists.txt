@@ -47,7 +47,7 @@ target_link_libraries(Irrlicht ThirdParty)
 
 if (MSVC OR CYGWIN OR MINGW)
 	# OpenGL
-	target_link_libraries(Irrlicht opengl32)
+	target_link_libraries(Irrlicht opengl32 Winmm)
 
 	# DirectX11 (No DX11 on MINGW)
 	if (NOT MINGW)	
