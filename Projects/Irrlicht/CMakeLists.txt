@@ -50,6 +50,11 @@ if (MSVC OR CYGWIN OR MINGW)
 	endif()
 endif()
 
+# Linux
+if (BUILD_LINUX)
+	target_link_libraries(Irrlicht GL)
+endif()
+
 # Android
 if (BUILD_ANDROID)
 	# OpenGL ES 3.0
