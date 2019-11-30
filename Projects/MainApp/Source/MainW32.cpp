@@ -31,6 +31,7 @@ bool				g_show2D = true;
 bool				g_update = true;
 
 #if defined(CYGWIN) || defined(MINGW)
+#define DEF_CHAR CHAR
 int CALLBACK WinMain(
 	HINSTANCE   hInstance,
 	HINSTANCE   hPrevInstance,
@@ -38,6 +39,7 @@ int CALLBACK WinMain(
 	int         nCmdShow
 )
 #else
+#define DEF_CHAR WCHAR
 // Visual Studio Main Function
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -65,7 +67,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	std::vector<std::string> params;
 
-	if (CStringImp::length<TCHAR>(lpCmdLine) > 0)
+	if (CStringImp::length<DEF_CHAR>(lpCmdLine) > 0)
 	{
 		char s[512];
 		CStringImp::convertUnicodeToUTF8(lpCmdLine, s);
