@@ -13,10 +13,10 @@ jobs:
         git clone https://github.com/emscripten-core/emsdk.git
         cd emsdk
         git pull
-        ./emsdk install latest-fastcomp
-        ./emsdk activate latest-fastcomp
+        ./emsdk install latest-upstream
+        ./emsdk activate latest-upstream
         source ./emsdk_env.sh
-        ls -l fastcomp/emscripten/system/include
+        ls -l upstream/emscripten/system/include
         cd ..
         wget -O SDL2-version_18.zip -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
         mkdir InstallLibs
@@ -27,7 +27,7 @@ jobs:
         
     - name: Build
       run: |        
-        cmake -DCMAKE_TOOLCHAIN_FILE=emsdk/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake  -S.
+        cmake -DCMAKE_TOOLCHAIN_FILE=emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake  -S.
         make
         
     - name: Package

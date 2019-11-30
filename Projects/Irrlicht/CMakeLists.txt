@@ -39,6 +39,7 @@ set_property(TARGET Irrlicht PROPERTY CXX_STANDARD 11)
 # ThirdParty
 target_link_libraries(Irrlicht ThirdParty)
 
+# Window DirectX11 && OpenGL
 if (MSVC OR CYGWIN OR MINGW)
 	# OpenGL
 	target_link_libraries(Irrlicht opengl32 Winmm)
@@ -47,6 +48,12 @@ if (MSVC OR CYGWIN OR MINGW)
 	if (NOT MINGW)	
 	target_link_libraries(Irrlicht d3d11 d3dcompiler dxguid dxgi)
 	endif()
+endif()
+
+# Android
+if (BUILD_ANDROID)
+	# OpenGL ES 3.0
+	target_link_libraries(Irrlicht GLESv3)
 endif()
 
 # SDL

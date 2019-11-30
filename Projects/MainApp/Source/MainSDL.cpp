@@ -2,8 +2,10 @@
 
 #ifdef SDL
 
-#if defined(WIN32) || defined(CYGWIN)
+#if defined(WIN32) || defined(CYGWIN) || defined(MINGW)
+// for HINSTANCE
 #include <Windows.h>
+#endif
 
 using namespace irr;
 using namespace core;
@@ -24,18 +26,21 @@ void main_loop()
 	}
 }
 
-#if __GNUC__
+#if defined(CYGWIN) || defined(MINGW)
 int CALLBACK WinMain(
 	HINSTANCE   hInstance,
 	HINSTANCE   hPrevInstance,
 	LPSTR       lpCmdLine,
 	int         nCmdShow
 )
-#else
+#elif defined(WIN32)
+// Visual Studio Main Function
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
+#else
+int main(int argc, char *argv[])
 #endif
 {	
 	g_mainApp = new CApplication();
@@ -60,7 +65,5 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	return 0;
 }
-
-#endif
 
 #endif
