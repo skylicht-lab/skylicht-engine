@@ -115,8 +115,9 @@ for:
       - mkdir Build
       - dir Bin
       - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
-      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
-      - 7z a %output_zip% Bin\%configuration%\*.exe
+      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
+      - move Bin\%configuration%\MainApp.exe Bin\MainApp.exe
+      - 7z a %output_zip% Bin\*.exe
 
   # Cygwin
   -
