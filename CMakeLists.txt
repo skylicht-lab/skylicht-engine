@@ -205,23 +205,21 @@ subdirs (Projects/Irrlicht)
 #endif()
 
 # skylicht engine
-#subdirs (Projects/SkylichtSystem)
+subdirs (Projects/SkylichtSystem)
 #subdirs (Projects/SkylichtAudio)
 #subdirs (Projects/SkylichtPhysics)
-#subdirs (Projects/SkylichtEngine)
+subdirs (Projects/SkylichtEngine)
 #subdirs (Projects/SkylichtComponents)
 
 #if (BUILD_SKYLICHT_NETWORK)
 #subdirs (Projects/SkylichtNetwork)
 #endif()
 
-#subdirs (Projects/SkylichtClient)
+subdirs (Projects/SkylichtClient)
 
 #if (BUILD_ENGINE_TOOL)
 #subdirs (Projects/UIClass)
 #subdirs (Projects/SkylichtEditor)
 #endif()
 
-#if (NOT BUILD_ANDROID)
-#subdirs (Projects/MainApp)
-#endif()
+subdirs (Projects/MainApp)
