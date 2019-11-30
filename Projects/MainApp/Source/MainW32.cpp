@@ -31,7 +31,6 @@ bool				g_show2D = true;
 bool				g_update = true;
 
 #if defined(CYGWIN) || defined(MINGW)
-#define DEF_CHAR CHAR
 int CALLBACK WinMain(
 	HINSTANCE   hInstance,
 	HINSTANCE   hPrevInstance,
@@ -39,7 +38,6 @@ int CALLBACK WinMain(
 	int         nCmdShow
 )
 #else
-#define DEF_CHAR WCHAR
 // Visual Studio Main Function
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -47,8 +45,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ int       nCmdShow)
 #endif
 {
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
+	UNREFERENCED_PARAMETER(hPrevInstance);	
 
 	int useDX11 = MessageBox(hWnd, L"Use directX11 driver?", L"Question", MB_YESNO | MB_ICONQUESTION);
 	// TODO: Place code here.
@@ -67,12 +64,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	std::vector<std::string> params;
 
-	if (CStringImp::length<DEF_CHAR>(lpCmdLine) > 0)
+	#if defined(CYGWIN) || defined(MINGW)
+	CStringImp::splitString(lpCmdLine, " ", params);
+	#else
+	// need convert LPWSTR to LPSTR
+	if (CStringImp::length<WCHAR>(lpCmdLine) > 0)
 	{
 		char s[512];
 		CStringImp::convertUnicodeToUTF8(lpCmdLine, s);
 		CStringImp::splitString(s, " ", params);
 	}
+	#endif
 
 	//core::dimension2du winSize(960, 540);
 	//core::dimension2du winSize(960, 720);
@@ -109,7 +111,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	if (windowLeft < 0)
 		windowLeft = 0;
 	if (windowTop < 0)
-		windowTop = 0;	// make sure window menus are in screen on creation
+		windowTop = 0;
 
 	MoveWindow(hWnd, windowLeft, windowTop, realWidth, realHeight, TRUE);
 
