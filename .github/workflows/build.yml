@@ -34,9 +34,8 @@ jobs:
       run: |
         mkdir Build
         ls -l Bin
-        7z a Build/Skylicht_Demo_Emscripten.zip Bin/*.js
-        7z a Build/Skylicht_Demo_Emscripten.zip Bin/*.html
-        7z a Build/Skylicht_Demo_Emscripten.zip Bin/*.wasm
+        7z a Build/Skylicht_Demo_Emscripten.zip Bin/MainApp*
+        7z a Build/Skylicht_Demo_Emscripten.zip Bin/*.zip
         
     - name: Result
       uses: actions/upload-artifact@v1
@@ -64,7 +63,8 @@ jobs:
       run: |
         mkdir Build
         ls -l Bin
-        7z a Build/Skylicht_Demo_Linux.zip ./Bin/MainApp
+        7z a Build/Skylicht_Demo_Linux.zip Bin/MainApp*
+        7z a Build/Skylicht_Demo_Emscripten.zip Bin/*.zip
         
     - name: Result
       uses: actions/upload-artifact@v1
