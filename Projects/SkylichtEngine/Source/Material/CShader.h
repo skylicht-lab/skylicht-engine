@@ -1,3 +1,27 @@
+/*
+!@
+MIT License
+
+Copyright (c) 2019 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
+
 #ifndef _GAME_MATERIAL_SHADER_H_
 #define _GAME_MATERIAL_SHADER_H_
 
@@ -183,7 +207,7 @@ namespace Skylicht
 		core::array<SUniformUI*>	m_ui;
 		core::array<SResource*>		m_resources;
 
-		core::array<SAttributeMapping>	m_attributeMapping;		
+		core::array<SAttributeMapping>	m_attributeMapping;
 
 		SUniform* m_listVSUniforms;
 		SUniform* m_listFSUniforms;
@@ -203,101 +227,92 @@ namespace Skylicht
 		CShader();
 		virtual ~CShader();
 
-		// initShader
 		void initShader(io::IXMLReader *xmlReader, const char *shaderFolder);
+
 		void parseUniform(io::IXMLReader *xmlReader);
+
 		void parseUniformUI(io::IXMLReader *xmlReader);
+
 		void parseResources(io::IXMLReader *xmlReader);
+
 		void parseUI(io::IXMLReader *xmlReader, SUniformUI *parent);
 
-		// getName
 		const std::string& getName()
 		{
 			return m_name;
 		}
 
-		// getPath
 		const std::string& getShaderPath()
 		{
 			return m_shaderPath;
 		}
 
-		// getDepthWriteMaterial
 		const std::string& getWriteDepthMaterial()
 		{
 			return m_writeDepth;
 		}
 
-		// getAttributeMappingCount
 		int getAttributeMappingCount()
 		{
 			return (int)m_attributeMapping.size();
 		}
 
-		// getAttributeMapping
 		SAttributeMapping& getAttributeMapping(int id)
 		{
 			return m_attributeMapping[id];
 		}
 
-		// setPath
 		void setShaderPath(const char *path)
 		{
 			m_shaderPath = path;
 		}
 
-		// getNumResource
 		int getNumResource()
 		{
 			return (int)m_resources.size();
 		}
 
-		// getNumVS
 		int getNumVS()
 		{
 			return (int)m_vsUniforms.size();
 		}
 
-		// getNumFS
 		int getNumFS()
 		{
 			return (int)m_fsUniforms.size();
 		}
 
-		// getResouceInfo
 		SResource* getResouceInfo(int id)
 		{
 			return m_resources[id];
 		}
 
-		// getUniformID
 		SUniform* getVSUniformID(int id)
 		{
 			return &m_listVSUniforms[id];
 		}
 
-		// getFSUniformID
 		SUniform* getFSUniformID(int id)
 		{
 			return &m_listFSUniforms[id];
 		}
 
-		// getNumUI
 		int getNumUI()
 		{
 			return (int)m_ui.size();
 		}
 
-		// getUniformUI
 		SUniformUI* getUniformUI(int id)
 		{
 			return m_ui[id];
 		}
 
 		SUniformUI* getUniformUIByName(const char *name);
+
 		SUniformUI* getUniformUIByName(const char *name, SUniformUI *group);
 
 		SUniform* getVSUniform(const char *name);
+
 		SUniform* getFSUniform(const char *name);
 
 		void setCallback(IShaderCallback *callback, bool releaseCallback = true)
@@ -317,35 +332,29 @@ namespace Skylicht
 
 	protected:
 
-		// getBaseShaderByName
 		E_MATERIAL_TYPE getBaseShaderByName(const char *name);
 
-		// getUniformType
 		EUniformType getUniformType(const char *name);
 
-		// getShaderFileName
 		std::string getVSShaderFileName();
+
 		std::string getFSShaderFileName();
 
-		// buildShader
 		void buildShader();
+
 		void buildUIUniform();
+
 		void buildUIUniform(SUniformUI *ui);
 
-		// isUniformAvaiable
 		bool isUniformAvaiable(SUniform& uniform);
 
-		// setUniform
 		void setUniform(SUniform &uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform);
 
-		// deleteAllUI
 		void deleteAllUI();
 
-		// deleteAllResource
 		void deleteAllResource();
 	};
 
 }
 
 #endif
-
