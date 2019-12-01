@@ -22,39 +22,61 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _APPLICATION_EVENT_H_
-#define _APPLICATION_EVENT_H_
+#include "MainTest.h"
 
-namespace Skylicht
+MainTest::MainTest()
+{
+	m_frameCount = 0;
+
+	m_passInit = false;
+	m_passUpdate = false;
+	m_passRender = false;
+	m_passPostRender = false;
+	m_passQuitApp = false;
+}
+
+MainTest::~MainTest()
 {
 
-	class IApplicationEventReceiver
-	{
-	public:
-		IApplicationEventReceiver()
-		{
-
-		}
-
-		virtual ~IApplicationEventReceiver()
-		{
-
-		}
-
-		virtual void onUpdate() = 0;
-
-		virtual void onRender() = 0;
-
-		virtual void onPostRender() = 0;
-
-		virtual void onResume() = 0;
-
-		virtual void onPause() = 0;
-
-		virtual void onInitApp() = 0;
-
-		virtual void onQuitApp() = 0;
-	};
-
 }
-#endif
+
+void MainTest::onInitApp()
+{
+	os::Printer::log("MainTest::onInitApp");
+	m_passInit = true;
+}
+
+void MainTest::onUpdate()
+{
+	m_passUpdate = true;
+
+	// try test in 5 frame
+	if (++m_frameCount >= 5)
+		getIrrlichtDevice()->closeDevice();
+}
+
+void MainTest::onRender()
+{
+	m_passRender = true;
+}
+
+void MainTest::onPostRender()
+{
+	m_passPostRender = true;
+}
+
+void MainTest::onResume()
+{
+	os::Printer::log("MainTest::onResume");
+}
+
+void MainTest::onPause()
+{
+	os::Printer::log("MainTest::onPause");
+}
+
+void MainTest::onQuitApp()
+{
+	os::Printer::log("MainTest::onQuitApp");
+	m_passQuitApp = (m_frameCount == 5);
+}

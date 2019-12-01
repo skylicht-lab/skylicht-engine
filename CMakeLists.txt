@@ -223,3 +223,9 @@ subdirs (Projects/SkylichtClient)
 #endif()
 
 subdirs (Projects/MainApp)
+
+# unit test
+if (NOT BUILD_ANDROID AND NOT BUILD_EMSCRIPTEN)
+enable_testing()
+subdirs (UnitTest/TestApp)
+endif()

@@ -58,7 +58,10 @@ jobs:
       run: |
         cmake -S. -DBUILD_SDL=true
         make
-      
+    - name: Unit Test
+      run: |
+        ctest
+        
     - name: Package
       run: |
         mkdir Build

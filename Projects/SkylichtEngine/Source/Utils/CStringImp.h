@@ -1,3 +1,27 @@
+/*
+!@
+MIT License
+
+Copyright (c) 2019 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
+
 #ifndef _STRING_IMP_H_
 #define _STRING_IMP_H_
 
@@ -12,7 +36,6 @@ namespace Skylicht
 	class CStringImp
 	{
 	public:
-		// length
 		template <class T>
 		static int length(T* pString)
 		{
@@ -23,7 +46,6 @@ namespace Skylicht
 			return result;
 		}
 
-		// find
 		template <class T>
 		static int find(T* pString, T pCharSearch, int begin = 0)
 		{
@@ -40,7 +62,6 @@ namespace Skylicht
 			return -1;
 		}
 
-		// find
 		template <class T>
 		static int find(T* pString, T* pKeySearch, int begin = 0)
 		{
@@ -58,7 +79,6 @@ namespace Skylicht
 			return -1;
 		}
 
-		// trimleft
 		template <class T>
 		static void trimleft(T* pString)
 		{
@@ -77,7 +97,6 @@ namespace Skylicht
 			}
 		}
 
-		// trimright
 		template <class T>
 		static void trimright(T* pString)
 		{
@@ -93,8 +112,6 @@ namespace Skylicht
 			}
 		}
 
-
-		// trimleft
 		template <class T>
 		static void trimleft(T* pString, T delChar)
 		{
@@ -113,7 +130,6 @@ namespace Skylicht
 			}
 		}
 
-		// trimright
 		template <class T>
 		static void trimright(T* pString, T delChar)
 		{
@@ -129,8 +145,6 @@ namespace Skylicht
 			}
 		}
 
-
-		// trim
 		template <class T>
 		static void trim(T* pString)
 		{
@@ -138,7 +152,6 @@ namespace Skylicht
 			CStringImp::trimright<T>(pString);
 		}
 
-		// trim
 		template <class T>
 		static void trim(T* pString, T delChar)
 		{
@@ -146,8 +159,6 @@ namespace Skylicht
 			CStringImp::trimright<T>(pString, delChar);
 		}
 
-
-		// countEntry
 		template <class T>
 		static int countEntry(T* pString, T entry, int begin = 0)
 		{
@@ -165,7 +176,6 @@ namespace Skylicht
 			return result;
 		}
 
-		// copy
 		template <class T1, class T2>
 		static int copy(T1* pStringDst, T2* pStringSrc)
 		{
@@ -186,7 +196,6 @@ namespace Skylicht
 			return index;
 		}
 
-		// copyAt
 		template <class T1, class T2>
 		static int copyAt(T1* pStringDst, T2* pStringSrc, int at)
 		{
@@ -205,7 +214,6 @@ namespace Skylicht
 			return index;
 		}
 
-		// cat
 		template <class T1, class T2>
 		static int cat(T1* pStringDst, T2* pStringSrc)
 		{
@@ -224,7 +232,6 @@ namespace Skylicht
 			return i;
 		}
 
-		// comp
 		template <class T>
 		static int comp(T* pString1, T* pString2)
 		{
@@ -247,14 +254,12 @@ namespace Skylicht
 			return r;
 		}
 
-		// comp
 		template <class T>
 		static int comp(T* pString1, T* pString2, int len)
 		{
 			return memcmp(pString1, pString2, len * sizeof(T));
 		}
 
-		// mid
 		template <class T1, class T2>
 		static int mid(T1* pStringDst, T2* pStringSrc, int begin, int end)
 		{
@@ -289,7 +294,7 @@ namespace Skylicht
 		}
 
 		// findBlock
-		// Get string inside pBlock "{}" hay "[]" "<>" ...
+		// Get string inside pBlock "{}" or "[]" "<>" ...
 		template <class T1, class T2>
 		static int findBlock(T1* pStringDst, T2* pStringSrc, T2* pBlock, int begin = 0)
 		{
@@ -299,7 +304,7 @@ namespace Skylicht
 
 			while (pStringSrc[i] != 0)
 			{
-				if (pStringSrc[i] == pBlock[0])		// '{' hay '[' hay '('
+				if (pStringSrc[i] == pBlock[0])		// '{' or '[' or '('
 				{
 					block++;
 					if (block == 1)
@@ -307,7 +312,7 @@ namespace Skylicht
 					i++;
 					continue;
 				}
-				if (pStringSrc[i] == pBlock[1])		// '}' hay ']' hay ')'
+				if (pStringSrc[i] == pBlock[1])		// '}' or ']' or ')'
 				{
 					block--;
 					if (block == 0 && midBegin != -1)
@@ -390,7 +395,6 @@ namespace Skylicht
 			}
 		}
 
-		// split
 		template<class T>
 		static bool split(T* lpStrResult, const T* lpStringSearch, const T* lpStrSplit, int *pos)
 		{
@@ -434,14 +438,12 @@ namespace Skylicht
 					minPos = tempPos;
 			}
 
-			// Thiet lap chuoi moi
 			CStringImp::mid<T, const T>(lpStrResult, lpStringSearch, *pos, minPos);
 			*pos = minPos + 1;
 
 			return true;
 		}
 
-		// splitString
 		static int splitString(const char *stringSplit, const char *search, std::vector<std::string>& result)
 		{
 			result.clear();
@@ -461,7 +463,6 @@ namespace Skylicht
 			return (int)result.size();
 		}
 
-		// format
 		template<class T>
 		static bool format(T* lpString, const T* lpFormat, ...)
 		{
@@ -479,12 +480,11 @@ namespace Skylicht
 #endif
 			if (i == -1)
 				return false;
-			
+
 			CStringImp::copy<T, wchar_t>(lpString, lpWResult);
 			return true;
 		}
 
-		// parseToInt
 		template<class T>
 		static bool parseToInt(T* lpString, int *result)
 		{
@@ -497,7 +497,6 @@ namespace Skylicht
 			return true;
 		}
 
-		// parseToInt
 		template<class T>
 		static bool parseToFloat(T* lpString, float *result)
 		{
@@ -510,9 +509,8 @@ namespace Skylicht
 			return true;
 		}
 
-		// parseToint
 		template<class T>
-		static bool parseToint(T* lpString, int *result)
+		static bool parseToUInt(T* lpString, int *result)
 		{
 			wchar_t lpAString[400];
 			CStringImp::copy<wchar_t, T>(lpAString, lpString);
@@ -523,7 +521,6 @@ namespace Skylicht
 			return true;
 		}
 
-		// parseFromHex
 		template<class T>
 		static bool parseFromHex(T* lpString, int *result)
 		{
@@ -536,7 +533,6 @@ namespace Skylicht
 			return true;
 		}
 
-		// toLower
 		template<class T>
 		static void toLower(T *lpString)
 		{
@@ -548,7 +544,6 @@ namespace Skylicht
 			}
 		}
 
-		// toLower
 		template<class T>
 		static void toUpper(T *lpString)
 		{
@@ -560,7 +555,6 @@ namespace Skylicht
 			}
 		}
 
-		// getFolderPath
 		template<class T1, class T2>
 		static void getFolderPath(T1 *lpString, T2 *dstString)
 		{
@@ -577,7 +571,6 @@ namespace Skylicht
 			dstString[i] = 0;
 		}
 
-		// getFileName
 		template<class T1, class T2>
 		static void getFileName(T1 *lpString, T2 *dstString)
 		{
@@ -594,7 +587,6 @@ namespace Skylicht
 				CStringImp::copy<T2, T1>(dstString, lpString + i + 1);
 		}
 
-		// getFileNameExt
 		template<class T1, class T2>
 		static void getFileNameExt(T1 *lpString, T2 *dstString)
 		{
@@ -611,7 +603,6 @@ namespace Skylicht
 				CStringImp::copy<T2, T1>(dstString, lpString + i + 1);
 		}
 
-		// getFileNameNoExt
 		template<class T1, class T2>
 		static void getFileNameNoExt(T1 *lpString, T2 *dstString)
 		{
@@ -692,17 +683,17 @@ namespace Skylicht
 				}
 			}
 		}
-
-		// convertUTF8ToUnicode
-		// convert the utf8 to unicode string		
 		static wchar_t utf8Char2Unicode(const char *&str)
 		{
 			char c = *str++;
 			if ((c & 0x80) == 0)
 				return c;
 
-			if (((c & 0xc0) == 0x80) || ((c & 0xfe) == 0xfe)) // should never happen
+			if (((c & 0xc0) == 0x80) || ((c & 0xfe) == 0xfe))
+			{
+				// I hope it should never happen
 				return static_cast<unsigned char>(c);
+			}
 
 #pragma warning( disable : 4309 )
 			char mask = 0xe0, value = 0xc0;
@@ -721,8 +712,9 @@ namespace Skylicht
 			for (; i > 0; --i)
 			{
 				c = *str++;
-				if ((c & 0xc0) != 0x80) // should never happen
+				if ((c & 0xc0) != 0x80)
 				{
+					// I hope should never happen
 				}
 				result <<= 6;
 				result |= c & 0x3f;
@@ -775,8 +767,6 @@ namespace Skylicht
 			return ++t;
 		}
 
-		// convertUnicodeToUTF8
-		// convert unicode to utf8 string
 		static void convertUnicodeToUTF8(const wchar_t* src, char* dst)
 		{
 			int k = 0;
