@@ -22,39 +22,53 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _APPLICATION_EVENT_H_
-#define _APPLICATION_EVENT_H_
+#ifndef _MAIN_TEST_H_
+#define _MAIN_TEST_H_
 
-namespace Skylicht
+#include "AppInclude.h"
+#include "IApplicationEventReceiver.h"
+
+class MainTest : public Skylicht::IApplicationEventReceiver
 {
+private:
+	int m_frameCount;
 
-	class IApplicationEventReceiver
-	{
-	public:
-		IApplicationEventReceiver()
-		{
+	bool m_passInit;
+	bool m_passUpdate;
+	bool m_passRender;
+	bool m_passPostRender;
+	bool m_passQuitApp;
 
-		}
+public:
+	MainTest();
 
-		virtual ~IApplicationEventReceiver()
-		{
+	virtual ~MainTest();
 
-		}
+	virtual void onUpdate();
 
-		virtual void onUpdate() = 0;
+	virtual void onRender();
 
-		virtual void onRender() = 0;
+	virtual void onPostRender();
 
-		virtual void onPostRender() = 0;
+	virtual void onResume();
 
-		virtual void onResume() = 0;
+	virtual void onPause();
 
-		virtual void onPause() = 0;
+	virtual void onInitApp();
 
-		virtual void onInitApp() = 0;
+	virtual void onQuitApp();
 
-		virtual void onQuitApp() = 0;
-	};
+public:
 
-}
+	inline bool isPassInit() { return m_passInit; }
+
+	inline bool isPassUpdate() { return m_passUpdate; }
+
+	inline bool isPassRender() { return m_passRender; }
+
+	inline bool isPassPostRender() { return m_passPostRender; }
+
+	inline bool isPassQuitApp() { return m_passQuitApp; }
+};
+
 #endif
