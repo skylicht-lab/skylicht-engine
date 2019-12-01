@@ -80,7 +80,7 @@ build_script:
 after_build:
 
 # will be override
-test: off
+test_script:
 
 artifacts:
   - path: Build\*.zip
@@ -119,7 +119,7 @@ for:
       - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
       - move Bin\%configuration%\MainApp.exe Bin\MainApp.exe
       - 7z a %output_zip% Bin\*.exe
-    test:
+    test_script:
       - cd PrjVisualStudio
       - ctest -C %configuration%
       - cd ..
@@ -137,7 +137,7 @@ for:
       - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
       - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
       - 7z a %output_zip% Bin\*.exe
-    test:
+    test_script:
       - cd PrjCygwin
       - ctest
       - cd ..
