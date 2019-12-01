@@ -1,3 +1,27 @@
+/*
+!@
+MIT License
+
+Copyright (c) 2019 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
+
 #include "pch.h"
 
 #if defined(WIN32) || defined(CYGWIN) || defined(MINGW)
@@ -40,12 +64,12 @@ int CALLBACK WinMain(
 #else
 // Visual Studio Main Function
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPWSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 #endif
 {
-	UNREFERENCED_PARAMETER(hPrevInstance);	
+	UNREFERENCED_PARAMETER(hPrevInstance);
 
 	int useDX11 = MessageBox(hWnd, L"Use directX11 driver?", L"Question", MB_YESNO | MB_ICONQUESTION);
 	// TODO: Place code here.
@@ -64,9 +88,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	std::vector<std::string> params;
 
-	#if defined(CYGWIN) || defined(MINGW)
+#if defined(CYGWIN) || defined(MINGW)
 	CStringImp::splitString(lpCmdLine, " ", params);
-	#else
+#else
 	// need convert LPWSTR to LPSTR
 	if (CStringImp::length<WCHAR>(lpCmdLine) > 0)
 	{
@@ -74,7 +98,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		CStringImp::convertUnicodeToUTF8(lpCmdLine, s);
 		CStringImp::splitString(s, " ", params);
 	}
-	#endif
+#endif
 
 	//core::dimension2du winSize(960, 540);
 	//core::dimension2du winSize(960, 720);
@@ -204,13 +228,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	return (int)msg.wParam;
 }
 
-
-
-//
-//  FUNCTION: MyRegisterClass()
-//
-//  PURPOSE: Registers the window class.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
@@ -264,16 +281,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 bool g_mouseDown = false;
 
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE:  Processes messages for the main window.
-//
-//  WM_COMMAND	- process the application menu
-//  WM_PAINT	- Paint the main window
-//  WM_DESTROY	- post a quit message and return
-//
-//
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;

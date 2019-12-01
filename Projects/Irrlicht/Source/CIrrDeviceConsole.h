@@ -2,12 +2,12 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#ifndef __C_IRR_DEVICE_LINUX_H_INCLUDED__
-#define __C_IRR_DEVICE_LINUX_H_INCLUDED__
+#ifndef __C_IRR_DEVICE_CONSOLE_H_INCLUDED__
+#define __C_IRR_DEVICE_CONSOLE_H_INCLUDED__
 
 #include "IrrCompileConfig.h"
 
-#ifdef _IRR_COMPILE_WITH_LINUX_DEVICE_
+#ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_
 
 #include "CIrrDeviceStub.h"
 #include "IrrlichtDevice.h"
@@ -15,12 +15,12 @@
 
 namespace irr
 {
-	class CIrrDeviceLinux : public CIrrDeviceStub
+	class CIrrDeviceConsole : public CIrrDeviceStub
 	{
 	public:
-		CIrrDeviceLinux(const SIrrlichtCreationParameters& param);
+		CIrrDeviceConsole(const SIrrlichtCreationParameters& param);
 
-		virtual ~CIrrDeviceLinux();
+		virtual ~CIrrDeviceConsole();
 
 		virtual bool run();
 
