@@ -51,7 +51,7 @@ void MainTest::onUpdate()
 	m_passUpdate = true;
 
 	// try test in 5 frame
-	if (++m_frameCount > 5)
+	if (++m_frameCount >= 5)
 		getIrrlichtDevice()->closeDevice();
 }
 
@@ -78,5 +78,5 @@ void MainTest::onPause()
 void MainTest::onQuitApp()
 {
 	os::Printer::log("MainTest::onQuitApp");
-	m_passQuitApp = true;
+	m_passQuitApp = (m_frameCount == 5);
 }
