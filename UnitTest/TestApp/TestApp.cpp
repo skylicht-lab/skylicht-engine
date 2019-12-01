@@ -27,10 +27,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "MainTest.h"
 #include "CApplication.h"
 
-#if defined(CYGWIN) || defined(MINGW)
-#include <Windows.h>
-#endif
-
 using namespace irr;
 using namespace core;
 using namespace scene;
@@ -50,16 +46,7 @@ void main_loop()
 	}
 }
 
-#if defined(CYGWIN) || defined(MINGW)
-int CALLBACK WinMain(
-	HINSTANCE   hInstance,
-	HINSTANCE   hPrevInstance,
-	LPSTR       lpCmdLine,
-	int         nCmdShow
-)
-#else
 int main(int, char**)
-#endif
 {
 	g_mainApp = new CApplication();
 
