@@ -1,0 +1,26 @@
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+
+
+IDI_SKYLICHT_DEMO		ICON         "Skylicht.ico"
+IDI_SMALL               ICON         "small.ico"
+
+STRINGTABLE
+BEGIN
+IDS_SKYLICHTDEMO	"SKYLICHT DEMO"
+IDS_APP_TITLE		"Skylicht Demo Application"
+END
+#endif
