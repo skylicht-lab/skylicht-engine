@@ -1,3 +1,27 @@
+/*
+!@
+MIT License
+
+Copyright (c) 2019 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
+
 #include "pch.h"
 #include "CShader.h"
 
@@ -34,7 +58,6 @@ namespace Skylicht
 		deleteAllResource();
 	}
 
-	// deleteAllUI
 	void CShader::deleteAllUI()
 	{
 		for (int i = 0, n = (int)m_ui.size(); i < n; i++)
@@ -45,7 +68,6 @@ namespace Skylicht
 		m_ui.clear();
 	}
 
-	// deleteAllResource
 	void CShader::deleteAllResource()
 	{
 		for (int i = 0, n = (int)m_resources.size(); i < n; i++)
@@ -56,7 +78,6 @@ namespace Skylicht
 		m_resources.clear();
 	}
 
-	// getUniformType
 	CShader::EUniformType CShader::getUniformType(const char *name)
 	{
 		const char *uniformString[] = {
@@ -115,7 +136,6 @@ namespace Skylicht
 		return NUM_SHADER_TYPE;
 	}
 
-	// getBaseShaderByName
 	E_MATERIAL_TYPE CShader::getBaseShaderByName(const char *name)
 	{
 		std::string type = name;
@@ -181,7 +201,6 @@ namespace Skylicht
 
 		if (parent == NULL)
 		{
-			// this is root
 			m_ui.push_back(uniform);
 		}
 		else
@@ -529,7 +548,7 @@ namespace Skylicht
 		// todo build shader
 		buildShader();
 
-		// update ui uniform
+		// update editor ui uniform
 		buildUIUniform();
 	}
 
@@ -618,7 +637,6 @@ namespace Skylicht
 		return NULL;
 	}
 
-	// getVSShaderFileName
 	std::string CShader::getVSShaderFileName()
 	{
 		std::string ret;
@@ -632,7 +650,6 @@ namespace Skylicht
 		return ret;
 	}
 
-	// getFSShaderFileName
 	std::string CShader::getFSShaderFileName()
 	{
 		std::string ret;
@@ -646,7 +663,6 @@ namespace Skylicht
 		return ret;
 	}
 
-	// buildShader
 	void CShader::buildShader()
 	{
 		std::string vs = getVSShaderFileName();
@@ -670,10 +686,10 @@ namespace Skylicht
 		}
 	}
 
-	// isUniformAvaiable
 	bool CShader::isUniformAvaiable(SUniform& uniform)
 	{
 		IVideoDriver *driver = getVideoDriver();
+
 		if (driver->getDriverType() == video::EDT_DIRECT3D11)
 		{
 			return uniform.DirectX;
@@ -686,13 +702,12 @@ namespace Skylicht
 		return true;
 	}
 
-	// shader callback
 	void CShader::OnSetConstants(video::IMaterialRendererServices* services, s32 userData, bool updateTransform)
 	{
 		IVideoDriver *driver = services->getVideoDriver();
 		IMaterialRenderer *matRender = driver->getMaterialRenderer(m_materialRenderID);
 
-		// todo init
+		// init for first time
 		if (m_initCallback == true)
 		{
 			for (int i = 0; i < m_numVSUniform; i++)
@@ -771,7 +786,6 @@ namespace Skylicht
 
 	}
 
-	// setUniform
 	void CShader::setUniform(SUniform &uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform)
 	{
 		IVideoDriver *driver = getVideoDriver();
@@ -1026,9 +1040,6 @@ namespace Skylicht
 						count++;
 					}
 				}
-
-				// add for 1x1 pixel
-				// count++;
 
 				if (vertexShader == true)
 					matRender->setShaderVariable(uniform.UniformShaderID, &count, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);

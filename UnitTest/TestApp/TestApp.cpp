@@ -22,13 +22,10 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
+#include "Base.hh"
 #include "pch.h"
-
-#ifdef SDL
-
-#if defined(WIN32) || defined(CYGWIN) || defined(MINGW)
-#include <Windows.h> // for HINSTANCE
-#endif
+#include "MainTest.h"
+#include "CApplication.h"
 
 using namespace irr;
 using namespace core;
@@ -49,31 +46,33 @@ void main_loop()
 	}
 }
 
-#if defined(CYGWIN) || defined(MINGW)
-int CALLBACK WinMain(
-	HINSTANCE   hInstance,
-	HINSTANCE   hPrevInstance,
-	LPSTR       lpCmdLine,
-	int         nCmdShow
-)
-#elif defined(WIN32)
-// Visual Studio Main Function
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPWSTR    lpCmdLine,
-	_In_ int       nCmdShow)
-#else
-int main(int argc, char *argv[])
-#endif
+int main(int, char**)
 {
 	g_mainApp = new CApplication();
 
-	g_device = createDevice(video::EDT_OPENGL, dimension2d<u32>(640, 480), 32, false, false, false, g_mainApp);
+	// create irrlicht device console
+	SIrrlichtCreationParameters p;
+	p.DeviceType = EIDT_CONSOLE;
+	p.DriverType = video::EDT_NULL;
+	p.Bits = (u8)32;
+	p.Fullscreen = false;
+	p.Stencilbuffer = false;
+	p.Vsync = true;
+	p.ZBufferBits = 32;
+	p.AntiAlias = 1;
+	p.WindowId = NULL;
+	p.EventReceiver = g_mainApp;
+
+	g_device = createDeviceEx(p);
 
 	if (!g_device)
 		return 1;
 
-	g_device->setWindowCaption(L"Skylicht Engine Demo");
+	g_device->setWindowCaption(L"Skylicht Test Demo");
+
+	MainTest *mainTest = new MainTest();
+
+	g_mainApp->registerAppEvent("MainTest", mainTest);
 
 	g_mainApp->initApplication(g_device);
 
@@ -86,7 +85,13 @@ int main(int argc, char *argv[])
 	delete g_mainApp;
 	g_mainApp = NULL;
 
+	TEST_ASSERT_THROW(mainTest->isPassInit());
+	TEST_ASSERT_THROW(mainTest->isPassUpdate());
+	TEST_ASSERT_THROW(mainTest->isPassRender());
+	TEST_ASSERT_THROW(mainTest->isPassPostRender());
+	TEST_ASSERT_THROW(mainTest->isPassQuitApp());
+
+	delete mainTest;
+
 	return 0;
 }
-
-#endif

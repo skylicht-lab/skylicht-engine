@@ -1,3 +1,27 @@
+/*
+!@
+MIT License
+
+Copyright (c) 2019 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
+
 #include "pch.h"
 #include "CBaseApp.h"
 
@@ -31,7 +55,7 @@ namespace Skylicht
 
 #if defined(_DEBUG) && defined(_WIN32)
 #if WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP
-		AllocConsole();		
+		AllocConsole();
 		freopen("con", "w", stdout);
 		freopen("con", "w", stderr);
 #endif
@@ -47,8 +71,6 @@ namespace Skylicht
 #endif
 	}
 
-	// register event
-	// register input event
 	void CBaseApp::registerEvent(std::string name, IEventReceiver *pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
@@ -62,8 +84,6 @@ namespace Skylicht
 		m_eventReceivers.push_back(eventType(name, pEvent));
 	}
 
-	// unRegisterEvent
-	// unregister input event
 	void CBaseApp::unRegisterEvent(IEventReceiver *pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
@@ -78,8 +98,6 @@ namespace Skylicht
 		}
 	}
 
-	// register event
-	// register input event
 	void CBaseApp::registerAppEvent(std::string name, IApplicationEventReceiver *pEvent)
 	{
 		std::vector<appEventType>::iterator i = m_appEventReceivers.begin(), end = m_appEventReceivers.end();
@@ -93,8 +111,6 @@ namespace Skylicht
 		m_appEventReceivers.push_back(appEventType(name, pEvent));
 	}
 
-	// unRegisterEvent
-	// unregister input event
 	void CBaseApp::unRegisterAppEvent(IApplicationEventReceiver *pEvent)
 	{
 		std::vector<appEventType>::iterator i = m_appEventReceivers.begin(), end = m_appEventReceivers.end();
@@ -145,11 +161,9 @@ namespace Skylicht
 #endif
 	}
 
-	// autoScaleUI
 	void CBaseApp::autoScaleUI()
 	{
 #ifndef LINUX_SERVER
-		// todo scale ui
 		core::dimension2du screenSize = getApplication()->getDriver()->getScreenSize();
 		core::dimension2du baseSize(1920, 1080);
 
@@ -157,30 +171,26 @@ namespace Skylicht
 		if (screenRatio < 1.5f)
 			baseSize.set(1920, 1440);
 
-		// todo we need scale this UI
 		float scale = baseSize.Width / (float)screenSize.Width;
 
-		CGraphics::getInstance()->setScale(scale);		
+		CGraphics::getInstance()->setScale(scale);
 #endif
 	}
 
-	// alertError
-	// show error msgbox
 	void CBaseApp::alertError(wchar_t *lpString)
 	{
+		// implement on Editor
 	}
 
-	// yesNoQuestion
-	// show yes, no msgbox
 	bool CBaseApp::yesNoQuestion(wchar_t *lpString)
 	{
+		// implement on Editor
 		return false;
 	}
 
-	// setStatusText
-	// set text on status bar
 	void CBaseApp::setStatusText(int part, wchar_t *lpString)
 	{
+		// implement on Editor
 	}
 
 }

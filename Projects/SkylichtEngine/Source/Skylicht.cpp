@@ -1,5 +1,26 @@
-﻿// Copyright (C) 2012 Pham Hong Duc
-// This file is part of the "Skylicht Technologies".
+﻿/*
+!@
+MIT License
+
+Copyright (c) 2019 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
 
 #include "pch.h"
 #include "Skylicht.h"
@@ -25,87 +46,83 @@
 namespace Skylicht
 {
 
-IrrlichtDevice* g_device = NULL;
-IVideoDriver*	g_video = NULL;
-float g_timestep = 0.0f;
+	IrrlichtDevice* g_device = NULL;
+	IVideoDriver*	g_video = NULL;
+	float g_timestep = 0.0f;
 
-void initSkylicht(IrrlichtDevice *device, bool server)
-{
-	g_device = device;
-	g_video = device->getVideoDriver();	
+	void initSkylicht(IrrlichtDevice *device, bool server)
+	{
+		g_device = device;
+		g_video = device->getVideoDriver();
 
 #ifdef LINUX_SERVER
-	// init server
-	os::Printer::log("Init linux server");
+		// init server
+		os::Printer::log("Init linux server");
 #else
-	os::Printer::log("Init skylicht core");
+		os::Printer::log("Init skylicht core");
 
-	CTouchManager::createGetInstance();
-	CAccelerometer::createGetInstance();
-	CJoystick::createGetInstance();
+		CTouchManager::createGetInstance();
+		CAccelerometer::createGetInstance();
+		CJoystick::createGetInstance();
 
-	CShaderManager::createGetInstance();
-	CGraphics::createGetInstance();
+		CShaderManager::createGetInstance();
+		CGraphics::createGetInstance();
 
 
 
-	// alway use HW
-	g_video->setMinHardwareBufferVertexCount(0);
+		// alway use HW
+		g_video->setMinHardwareBufferVertexCount(0);
 #endif
-	
-	// reset random time
-	os::Randomizer::reset(os::Timer::getRealTime());
-}
 
-void releaseSkylicht()
-{
+		// reset random time
+		os::Randomizer::reset(os::Timer::getRealTime());
+	}
+
+	void releaseSkylicht()
+	{
 #ifdef LINUX_SERVER
-	os::Printer::log("Close linux server");
+		os::Printer::log("Close linux server");
 #else
-	os::Printer::log("Close skylicht core");
+		os::Printer::log("Close skylicht core");
 
 
 
-	CGraphics::releaseInstance();
-	CShaderManager::releaseInstance();
+		CGraphics::releaseInstance();
+		CShaderManager::releaseInstance();
 
-	CTouchManager::releaseInstance();
-	CAccelerometer::releaseInstance();
-	CJoystick::releaseInstance();
+		CTouchManager::releaseInstance();
+		CAccelerometer::releaseInstance();
+		CJoystick::releaseInstance();
 #endif
-}
+	}
 
-void updateSkylicht()
-{
+	void updateSkylicht()
+	{
 #ifdef LINUX_SERVER
 
 #else	
 
 #endif
-}
+	}
 
-// getIrrlichtDevice
-IrrlichtDevice* getIrrlichtDevice()
-{
-	return g_device;
-}
+	IrrlichtDevice* getIrrlichtDevice()
+	{
+		return g_device;
+	}
 
-// getVideoDriver
-IVideoDriver* getVideoDriver()
-{
-	return g_video;
-}
+	IVideoDriver* getVideoDriver()
+	{
+		return g_video;
+	}
 
-// getTimeStep
-float getTimeStep()
-{
-	return g_timestep;
-}
+	float getTimeStep()
+	{
+		return g_timestep;
+	}
 
-// setTimeStep
-void setTimeStep(float timestep)
-{
-	g_timestep = timestep;
-}
+	void setTimeStep(float timestep)
+	{
+		g_timestep = timestep;
+	}
 
 }
