@@ -12,9 +12,9 @@ file(GLOB_RECURSE test_app_source
 	./**.h)
 
 if (MINGW OR CYGWIN)
-	add_executable(TestApp ${test_app_source})
-else()
 	add_executable(TestApp WIN32 ${test_app_source})
+else()
+	add_executable(TestApp ${test_app_source})
 endif()
 
 # Linker
@@ -22,11 +22,6 @@ if (BUILD_ANDROID)
 	target_link_libraries(TestApp SkylichtClient log)
 else()
 	target_link_libraries(TestApp SkylichtClient)
-endif()
-
-if (CYGWIN)
-	# SwapBuffers, ChoosePixelFormat
-	target_link_libraries(TestApp gdi32)
 endif()
 
 add_test(NAME TestApp COMMAND $<TARGET_FILE:TestApp>)
