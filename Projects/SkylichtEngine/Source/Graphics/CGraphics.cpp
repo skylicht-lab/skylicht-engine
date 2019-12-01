@@ -1,5 +1,26 @@
-// Copyright (C) 2012 Pham Hong Duc
-// This file is part of the "Skylicht Technologies".
+/*
+!@
+MIT License
+
+Copyright (c) 2019 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
 
 #include "pch.h"
 
@@ -69,7 +90,6 @@ namespace Skylicht
 			m_bufferImage->drop();
 	}
 
-	// set set2DViewport
 	void CGraphics::set2DViewport(int w, int h)
 	{
 		m_orthoMatrix.makeIdentity();
@@ -80,7 +100,6 @@ namespace Skylicht
 		m_currentH = h;
 	}
 
-	// begin draw 2d
 	void CGraphics::begin2D()
 	{
 		if (m_vertexColorShader == -1)
@@ -111,7 +130,6 @@ namespace Skylicht
 		m_numFlushTime = 0;
 	}
 
-	// end draw
 	void CGraphics::end()
 	{
 		flush();
@@ -121,7 +139,6 @@ namespace Skylicht
 		//printf("Graphics::end numFlush: %d\n", m_numFlushTime);
 	}
 
-	// draw2DLine
 	void CGraphics::draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color)
 	{
 		// flush buffer
@@ -232,12 +249,11 @@ namespace Skylicht
 		m_vertices->set_used(0);
 	}
 
-	// draw2D
 	void CGraphics::draw2D()
 	{
+
 	}
 
-	// flush
 	void CGraphics::flush()
 	{
 		flushBuffer(m_buffer, m_2dMaterial);
@@ -285,7 +301,6 @@ namespace Skylicht
 		}
 	}
 
-	// setWriteDepth
 	void CGraphics::setWriteDepth(video::SMaterial& mat)
 	{
 		mat.ZBuffer = video::ECFN_ALWAYS;
@@ -293,7 +308,6 @@ namespace Skylicht
 		mat.ColorMask = ECP_NONE;
 	}
 
-	// setTestDepth
 	void CGraphics::setTestDepth(video::SMaterial& mat)
 	{
 		mat.ZBuffer = video::ECFN_EQUAL;
@@ -301,7 +315,6 @@ namespace Skylicht
 		mat.ColorMask = ECP_ALL;
 	}
 
-	// setNoTestDepth
 	void CGraphics::setNoTestDepth(video::SMaterial& mat)
 	{
 		mat.ZBuffer = video::ECFN_ALWAYS;
@@ -309,7 +322,6 @@ namespace Skylicht
 		mat.ColorMask = ECP_ALL;
 	}
 
-	// masking
 	void CGraphics::beginDrawMask()
 	{
 		// render all
@@ -421,7 +433,6 @@ namespace Skylicht
 		m_2dMaterialImage.MaterialType = materialID;
 	}
 
-	// addImageBatch
 	void CGraphics::addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, ITexture *alpha, int pivotX, int pivotY)
 	{
 		if (m_2dMaterialImage.getTexture(0) != img || m_drawState != DrawImage)
@@ -486,7 +497,6 @@ namespace Skylicht
 		//m_vertices->set_used(0);
 	}
 
-	// addRect
 	void CGraphics::addRectBatch(const core::rectf& r, const SColor& color, const core::matrix4& absoluteMatrix, bool outLine)
 	{
 		flush();
@@ -581,7 +591,6 @@ namespace Skylicht
 		}
 	}
 
-	// getScreenSize
 	core::dimension2du CGraphics::getScreenSize()
 	{
 		core::dimension2du screenSize = getVideoDriver()->getScreenSize();

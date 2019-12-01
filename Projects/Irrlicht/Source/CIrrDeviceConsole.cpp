@@ -3,9 +3,9 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 #include "pch.h"
-#include "CIrrDeviceLinux.h"
+#include "CIrrDeviceConsole.h"
 
-#ifdef _IRR_COMPILE_WITH_LINUX_DEVICE_
+#ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_
 
 #include "irrOS.h"
 #include "CFileSystem.h"
@@ -13,14 +13,18 @@
 
 #include <time.h>
 
+#ifdef _IRR_WINDOWS_API_
+#include <Windows.h>
+#endif
+
 namespace irr
 {
 
-CIrrDeviceLinux::CIrrDeviceLinux(const SIrrlichtCreationParameters& param)
+CIrrDeviceConsole::CIrrDeviceConsole(const SIrrlichtCreationParameters& param)
 	: CIrrDeviceStub(param), Focused(false), Initialized(false), Paused(true), Close(false)
 {
 #ifdef _DEBUG
-	setDebugName("CIrrDeviceLinux");
+	setDebugName("CIrrDeviceConsole");
 #endif
 
 	createDriver();
@@ -32,7 +36,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(const SIrrlichtCreationParameters& param)
 }
 
 
-CIrrDeviceLinux::~CIrrDeviceLinux()
+CIrrDeviceConsole::~CIrrDeviceConsole()
 {
 	if (SceneManager)
 	{
@@ -47,7 +51,7 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 	}
 }
 
-bool CIrrDeviceLinux::run()
+bool CIrrDeviceConsole::run()
 {
 	if (!Initialized)
 		return false;
@@ -57,16 +61,23 @@ bool CIrrDeviceLinux::run()
 	return !Close;
 }
 
-void CIrrDeviceLinux::yield()
+void CIrrDeviceConsole::yield()
 {
-	struct timespec ts = {0,1};
+#ifdef _IRR_WINDOWS_API_
+	Sleep(1);
+#else
+	struct timespec ts = {0,0};
 	nanosleep(&ts, NULL);
+#endif
 }
 
-void CIrrDeviceLinux::sleep(u32 timeMs, bool pauseTimer)
+void CIrrDeviceConsole::sleep(u32 timeMs, bool pauseTimer)
 {
 	const bool wasStopped = Timer ? Timer->isStopped() : true;
 
+#ifdef _IRR_WINDOWS_API_
+	Sleep(timeMs);
+#else
 	struct timespec ts;
 	ts.tv_sec = (time_t) (timeMs / 1000);
 	ts.tv_nsec = (long) (timeMs % 1000) * 1000000;
@@ -75,67 +86,68 @@ void CIrrDeviceLinux::sleep(u32 timeMs, bool pauseTimer)
 		Timer->stop();
 
 	nanosleep(&ts, NULL);
+#endif
 
 	if (pauseTimer && !wasStopped)
 		Timer->start();
 }
 
-void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)
+void CIrrDeviceConsole::setWindowCaption(const wchar_t* text)
 {
 }
 
-bool CIrrDeviceLinux::present(video::IImage* surface, void* windowId, core::rect<s32>* srcClip)
+bool CIrrDeviceConsole::present(video::IImage* surface, void* windowId, core::rect<s32>* srcClip)
 {
 	return true;
 }
 
-bool CIrrDeviceLinux::isWindowActive() const
+bool CIrrDeviceConsole::isWindowActive() const
 {
 	return (Focused && !Paused);
 }
 
-bool CIrrDeviceLinux::isWindowFocused() const
+bool CIrrDeviceConsole::isWindowFocused() const
 {
 	return Focused;
 }
 
-bool CIrrDeviceLinux::isWindowMinimized() const
+bool CIrrDeviceConsole::isWindowMinimized() const
 {
 	return !Focused;
 }
 
-void CIrrDeviceLinux::closeDevice()
+void CIrrDeviceConsole::closeDevice()
 {
 	Close = true;
 }
 
-void CIrrDeviceLinux::setResizable(bool resize)
+void CIrrDeviceConsole::setResizable(bool resize)
 {
 }
 
-void CIrrDeviceLinux::minimizeWindow()
+void CIrrDeviceConsole::minimizeWindow()
 {
 }
 
-void CIrrDeviceLinux::maximizeWindow()
+void CIrrDeviceConsole::maximizeWindow()
 {
 }
 
-void CIrrDeviceLinux::restoreWindow()
+void CIrrDeviceConsole::restoreWindow()
 {
 }
 
-core::position2di CIrrDeviceLinux::getWindowPosition()
+core::position2di CIrrDeviceConsole::getWindowPosition()
 {
 	return core::position2di(0, 0);
 }
 
-E_DEVICE_TYPE CIrrDeviceLinux::getType() const
+E_DEVICE_TYPE CIrrDeviceConsole::getType() const
 {
 	return EIDT_LINUX;
 }
 
-void CIrrDeviceLinux::createDriver()
+void CIrrDeviceConsole::createDriver()
 {
 	switch(CreationParams.DriverType)
 	{
@@ -148,7 +160,7 @@ void CIrrDeviceLinux::createDriver()
 	}
 }
 
-video::SExposedVideoData& CIrrDeviceLinux::getExposedVideoData()
+video::SExposedVideoData& CIrrDeviceConsole::getExposedVideoData()
 {
 	return ExposedVideoData;
 }
