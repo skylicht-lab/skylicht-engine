@@ -58,7 +58,7 @@ jobs:
       run: |
         cmake -S. -DBUILD_SDL=true
         make
-    - name: UnitTest
+    - name: Unit Test
       run: |
         ctest
         
