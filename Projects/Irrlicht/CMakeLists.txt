@@ -10,13 +10,7 @@ if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 	endif()
 
 	if (BUILD_EMSCRIPTEN)
-		# CI will download SDL2 to InstallLibs
-		#wget -O SDL2-version_18.zip -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
-        #mkdir InstallLibs
-        #mkdir InstallLibs/SDL2
-        #7z x SDL2-version_18.zip -o./InstallLibs
-        #ls -l InstallLibs
-        #cp -p ./InstallLibs/SDL2-version_18/include/*.* ./InstallLibs/SDL2/
+		# See Github Action CI for more details
 		include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/InstallLibs)
 	endif()
 
@@ -45,9 +39,10 @@ set_property(TARGET Irrlicht PROPERTY CXX_STANDARD 11)
 # ThirdParty
 target_link_libraries(Irrlicht ThirdParty)
 
+# Window DirectX11 && OpenGL
 if (MSVC OR CYGWIN OR MINGW)
 	# OpenGL
-	target_link_libraries(Irrlicht opengl32)
+	target_link_libraries(Irrlicht opengl32 Winmm)
 
 	# DirectX11 (No DX11 on MINGW)
 	if (NOT MINGW)	
@@ -55,16 +50,25 @@ if (MSVC OR CYGWIN OR MINGW)
 	endif()
 endif()
 
+# Linux
+if (BUILD_LINUX)
+	target_link_libraries(Irrlicht GL)
+endif()
+
+# Android
+if (BUILD_ANDROID)
+	# OpenGL ES 3.0
+	target_link_libraries(Irrlicht GLESv3)
+endif()
+
 # SDL
 if(BUILD_SDL)
 	if(MSVC)
 		target_link_libraries(Irrlicht SDL2)
-	endif()
-
-	if(CYGWIN OR MINGW)
+	elseif(CYGWIN OR MINGW)
 		find_library(SDL2_LIBRARY NAME SDL2)
 		target_link_libraries(Irrlicht ${SDL2_LIBRARY})
 	else()
-		target_link_libraries(Irrlicht sdl2)
+		target_link_libraries(Irrlicht SDL2)
 	endif()	
 endif()

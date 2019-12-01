@@ -13,28 +13,36 @@ jobs:
         git clone https://github.com/emscripten-core/emsdk.git
         cd emsdk
         git pull
-        ./emsdk install latest-fastcomp
-        ./emsdk activate latest-fastcomp
+        ./emsdk install latest-upstream
+        ./emsdk activate latest-upstream
         source ./emsdk_env.sh
-        ls -l fastcomp/emscripten/system/include
+        ls -l upstream/emscripten/system/include
         cd ..
         wget -O SDL2-version_18.zip -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
         mkdir InstallLibs
         mkdir InstallLibs/SDL2
-        7z x SDL2-version_18.zip -o./InstallLibs
+        7z x SDL2-version_18.zip -oInstallLibs
         ls -l InstallLibs
-        cp -p ./InstallLibs/SDL2-version_18/include/*.* ./InstallLibs/SDL2/
+        cp -p InstallLibs/SDL2-version_18/include/*.* InstallLibs/SDL2/
         
     - name: Build
       run: |        
-        cmake -DCMAKE_TOOLCHAIN_FILE=emsdk/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake  -S.
+        cmake -DCMAKE_TOOLCHAIN_FILE=emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake  -S.
         make
         
     - name: Package
       run: |
         mkdir Build
-        7z a Build/Output.zip ./Bin/Emscripten/Libs/*.a
+        ls -l Bin
+        7z a Build/Skylicht_Demo_Emscripten.zip Bin/MainApp*
+        7z a Build/Skylicht_Demo_Emscripten.zip Bin/*.zip
         
+    - name: Result
+      uses: actions/upload-artifact@v1
+      with:
+        name: Skylicht_Demo_Emscripten
+        path: Build/Skylicht_Demo_Emscripten.zip
+          
   Linux:
     runs-on: ubuntu-latest    
     steps:
@@ -54,4 +62,12 @@ jobs:
     - name: Package
       run: |
         mkdir Build
-        7z a Build/Output.zip ./Bin/Linux/Libs/*.a
+        ls -l Bin
+        7z a Build/Skylicht_Demo_Linux.zip Bin/MainApp*
+        7z a Build/Skylicht_Demo_Emscripten.zip Bin/*.zip
+        
+    - name: Result
+      uses: actions/upload-artifact@v1
+      with:
+        name: Skylicht_Demo_Linux
+        path: Build/Skylicht_Demo_Linux.zip
