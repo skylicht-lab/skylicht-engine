@@ -11,9 +11,11 @@ file(GLOB_RECURSE test_app_source
 	./**.c 
 	./**.h)
 
-add_executable(TestApp
-    ${test_app_source}
-)
+if (MINGW OR CYGWIN)
+	add_executable(TestApp ${test_app_source})
+else()
+	add_executable(TestApp WIN32 ${test_app_source})
+endif()
 
 # Linker
 if (BUILD_ANDROID)
