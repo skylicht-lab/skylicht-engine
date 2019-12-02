@@ -203,7 +203,10 @@ namespace Skylicht
 			int i = 0;
 
 			if (pStringSrc == 0)
-				return index;
+				return 0;
+
+			if (length(pStringDst) < at || at < 0)
+				return 0;
 
 			while (pStringSrc[i] != 0)
 			{
@@ -302,6 +305,9 @@ namespace Skylicht
 			int block = 0;
 			int midBegin = -1;
 
+			if (length(pBlock) != 2)
+				return -1;
+
 			while (pStringSrc[i] != 0)
 			{
 				if (pStringSrc[i] == pBlock[0])		// '{' or '[' or '('
@@ -383,7 +389,6 @@ namespace Skylicht
 			{
 				if (pString[i] == charLoop)
 				{
-					// Xoa cac ky tu giong no
 					while (pString[i + 1] == charLoop && pString[i + 1] != 0)
 					{
 						int len = CStringImp::length<T>(&pString[i]);
@@ -463,25 +468,15 @@ namespace Skylicht
 			return (int)result.size();
 		}
 
-		template<class T>
-		static bool format(T* lpString, const T* lpFormat, ...)
+		static bool format(char* lpString, const char* lpStringFormat, ...)
 		{
 			va_list listArgs;
-			va_start(listArgs, lpFormat);
+			va_start(listArgs, lpStringFormat);
 
-			wchar_t lpWFormat[1024];
-			wchar_t lpWResult[1024];
-
-			CStringImp::copy<wchar_t, const T>(lpWFormat, lpFormat);
-#ifdef __MINGW32__
-			int i = vswprintf(lpWResult, lpWFormat, listArgs);
-#else
-			int i = vswprintf(lpWResult, 1024, lpWFormat, listArgs);
-#endif
+			int i = vsprintf(lpString, lpStringFormat, listArgs);
 			if (i == -1)
 				return false;
 
-			CStringImp::copy<T, wchar_t>(lpString, lpWResult);
 			return true;
 		}
 
@@ -556,25 +551,25 @@ namespace Skylicht
 		}
 
 		template<class T1, class T2>
-		static void getFolderPath(T1 *lpString, T2 *dstString)
+		static void getFolderPath(T1 *dstString, T2 *lpString)
 		{
-			int i = CStringImp::length<T1>(lpString) - 1;
+			int i = CStringImp::length<T2>(lpString) - 1;
 			while (i >= 0)
 			{
 				if (lpString[i] == '\\' || lpString[i] == '/')
 					break;
 				i--;
 			}
-			CStringImp::copy<T2, T1>(dstString, lpString);
+			CStringImp::copy<T1, T2>(dstString, lpString);
 			if (i < 0)
 				i = 0;
 			dstString[i] = 0;
 		}
 
 		template<class T1, class T2>
-		static void getFileName(T1 *lpString, T2 *dstString)
+		static void getFileName(T1 *dstString, T2 *lpString)
 		{
-			int i = CStringImp::length<T1>(lpString) - 1;
+			int i = CStringImp::length<T2>(lpString) - 1;
 			while (i > 0)
 			{
 				if (lpString[i] == '\\' || lpString[i] == '/')
@@ -582,15 +577,15 @@ namespace Skylicht
 				i--;
 			}
 			if (i == 0)
-				CStringImp::copy<T2, T1>(dstString, lpString);
+				CStringImp::copy<T1, T2>(dstString, lpString);
 			else
-				CStringImp::copy<T2, T1>(dstString, lpString + i + 1);
+				CStringImp::copy<T1, T2>(dstString, lpString + i + 1);
 		}
 
 		template<class T1, class T2>
-		static void getFileNameExt(T1 *lpString, T2 *dstString)
+		static void getFileNameExt(T1 *dstString, T2 *lpString)
 		{
-			int i = CStringImp::length<T1>(lpString) - 1;
+			int i = CStringImp::length<T2>(lpString) - 1;
 			while (i > 0)
 			{
 				if (lpString[i] == '\\' || lpString[i] == '/' || lpString[i] == '.')
@@ -598,15 +593,15 @@ namespace Skylicht
 				i--;
 			}
 			if (i == 0)
-				CStringImp::copy<T2, T1>(dstString, lpString);
+				CStringImp::copy<T1, T2>(dstString, lpString);
 			else
-				CStringImp::copy<T2, T1>(dstString, lpString + i + 1);
+				CStringImp::copy<T1, T2>(dstString, lpString + i + 1);
 		}
 
 		template<class T1, class T2>
-		static void getFileNameNoExt(T1 *lpString, T2 *dstString)
+		static void getFileNameNoExt(T1 *dstString, T2 *lpString)
 		{
-			int i = CStringImp::length<T1>(lpString) - 1;
+			int i = CStringImp::length<T2>(lpString) - 1;
 
 			int dotPos = -1;
 			while (i > 0)
@@ -618,21 +613,21 @@ namespace Skylicht
 				i--;
 			}
 			if (i == 0)
-				CStringImp::copy<T2, T1>(dstString, lpString);
+				CStringImp::copy<T1, T2>(dstString, lpString);
 			else
-				CStringImp::copy<T2, T1>(dstString, lpString + i + 1);
+				CStringImp::copy<T1, T2>(dstString, lpString + i + 1);
 
 			if (dotPos != -1)
 				dstString[dotPos - i - 1] = 0;
 		}
 
 		template<class T>
-		static void shortName(T* name, T* dest, int maxchar)
+		static void shortName(T* dest, const T* name, int maxchar)
 		{
-			int l = length<T>(name);
+			int l = length<const T>(name);
 			if (l <= maxchar)
 			{
-				copy<T, T>(dest, name);
+				copy<T, const T>(dest, name);
 				return;
 			}
 
@@ -645,15 +640,15 @@ namespace Skylicht
 			if (maxchar - 1 > 0)
 				dest[maxchar - 1] = (T)'.';
 
-			//if (maxchar - 2 > 0)
-			//	dest[maxchar - 2] = (T)'.';
+			if (maxchar - 2 > 0)
+				dest[maxchar - 2] = (T)'.';
 
 			//if (maxchar - 3 > 0)
 			//	dest[maxchar - 3] = (T)'.';
 		}
 
 		template<class T>
-		static void replaceText(const T *string, const T *search, const T *replace, T *result)
+		static void replaceText(T *result, const T *string, const T *search, const T *replace)
 		{
 			int lenSearch = length<const T>(search);
 			int lenReplace = length<const T>(replace);
@@ -830,9 +825,9 @@ namespace Skylicht
 		{
 			char fileName[512] = { 0 };
 
-			CStringImp::getFileNameNoExt<const char, char>(lpPath, fileName);
-			CStringImp::copy<char, char>(lpPath, fileName);
-			CStringImp::cat<char, const char>(lpPath, lpExt);
+			CStringImp::getFileNameNoExt(fileName, lpPath);
+			CStringImp::copy(lpPath, fileName);
+			CStringImp::cat(lpPath, lpExt);
 		}
 
 		static void replacePathExt(char *lpPath, const char *lpExt)
@@ -840,15 +835,15 @@ namespace Skylicht
 			char fileName[512] = { 0 };
 			char folder[512] = { 0 };
 
-			CStringImp::getFolderPath<const char, char>(lpPath, folder);
-			CStringImp::getFileNameNoExt<const char, char>(lpPath, fileName);
-			CStringImp::copy<char, char>(lpPath, folder);
+			CStringImp::getFolderPath(folder, lpPath);
+			CStringImp::getFileNameNoExt(fileName, lpPath);
+			CStringImp::copy(lpPath, folder);
 
-			if (CStringImp::length<char>(folder) > 0)
-				CStringImp::cat<char, const char>(lpPath, "/");
+			if (CStringImp::length(folder) > 0)
+				CStringImp::cat(lpPath, "/");
 
-			CStringImp::cat<char, char>(lpPath, fileName);
-			CStringImp::cat<char, const char>(lpPath, lpExt);
+			CStringImp::cat(lpPath, fileName);
+			CStringImp::cat(lpPath, lpExt);
 		}
 
 		static int findStringInList(std::vector<std::string>& listString, const char *find)
