@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: build
 
 on: [push]
 
@@ -60,7 +60,7 @@ jobs:
         make
     - name: Unit Test
       run: |
-        ctest
+        ctest --verpose
         
     - name: Package
       run: |

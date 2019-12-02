@@ -34,21 +34,21 @@ namespace Skylicht
 	std::string CPath::getFileName(const std::string& path)
 	{
 		CStringImp::copy<char, const char>(tempPath, path.c_str());
-		CStringImp::getFileName<char, char>(tempPath, resultPath);
+		CStringImp::getFileName<char, char>(resultPath, tempPath);
 		return resultPath;
 	}
 
 	std::string CPath::getFileNameExt(const std::string& path)
 	{
 		CStringImp::copy<char, const char>(tempPath, path.c_str());
-		CStringImp::getFileNameExt<char, char>(tempPath, resultPath);
+		CStringImp::getFileNameExt<char, char>(resultPath, tempPath);
 		return resultPath;
 	}
 
 	std::string CPath::getFileNameNoExt(const std::string& path)
 	{
 		CStringImp::copy<char, const char>(tempPath, path.c_str());
-		CStringImp::getFileNameNoExt<char, char>(tempPath, resultPath);
+		CStringImp::getFileNameNoExt<char, char>(resultPath, tempPath);
 		return resultPath;
 	}
 
@@ -62,7 +62,7 @@ namespace Skylicht
 	std::string CPath::getFolderPath(const std::string& path)
 	{
 		CStringImp::copy<char, const char>(tempPath, path.c_str());
-		CStringImp::getFolderPath<char, char>(tempPath, resultPath);
+		CStringImp::getFolderPath<char, char>(resultPath, tempPath);
 		return resultPath;
 	}
 
@@ -72,7 +72,7 @@ namespace Skylicht
 		std::vector<std::string> finalFolder;
 
 		// copy and replace
-		CStringImp::replaceText<char>(path.c_str(), "\\", "/", tempPath);
+		CStringImp::replaceText<char>(tempPath, path.c_str(), "\\", "/");
 
 		int nPos = 0;
 

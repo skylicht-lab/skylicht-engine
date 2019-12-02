@@ -118,8 +118,6 @@ namespace Skylicht
 
 	void CBaseShaderCallback::setWorldPosition(IMaterialRenderer *matRender, int posID, const core::vector3df& pos, bool vertexConstant)
 	{
-		video::IVideoDriver* driver = getVideoDriver();
-
 		float uPos[4];
 		uPos[0] = pos.X;
 		uPos[1] = pos.Y;

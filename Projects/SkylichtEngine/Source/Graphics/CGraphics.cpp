@@ -27,8 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGraphics.h"
 #include "Material/CShaderManager.h"
 
-#define MAX_VERTICES	(128*4)
-#define MAX_INDICES		(128*6)
+#define MAX_VERTICES (128*4)
+#define MAX_INDICES	(128*6)
 
 namespace Skylicht
 {
@@ -44,8 +44,6 @@ namespace Skylicht
 		m_bufferImage = NULL;
 
 		m_driver = getVideoDriver();
-		if (m_driver->getDriverType() == EDT_NULL)
-			return;
 
 		// buffer sprite
 		m_buffer = new CMeshBuffer<S3DVertex>(m_driver->getVertexDescriptor(EVT_STANDARD), video::EIT_16BIT);
