@@ -20,7 +20,7 @@ public:
 
 	virtual ~TestThreadCallback()
 	{
-
+		delete m_mutex;
 	}
 
 	virtual void updateThread()
@@ -34,4 +34,13 @@ void testSystemThread()
 {
 	TEST_CASE("System Thread Start");
 	g_thread = SkylichtSystem::IThread::createThread(new TestThreadCallback());
+}
+
+bool isSystemThreadPass()
+{
+	TEST_CASE("System Thread End");
+	g_thread->stop();
+	delete g_thread->getCallback();
+	delete g_thread;
+	return g_threadPass;
 }

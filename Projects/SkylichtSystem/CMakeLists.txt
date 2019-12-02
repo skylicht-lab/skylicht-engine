@@ -18,6 +18,6 @@ set_target_properties(SkylichtSystem PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 if (BUILD_EMSCRIPTEN)
 target_link_libraries(SkylichtSystem ThirdParty pthread)
-elseif(CYGWIN OR MINGW)
+elseif(CYGWIN OR MINGW OR BUILD_LINUX)
 target_link_libraries(SkylichtSystem ThirdParty pthread)
 endif()

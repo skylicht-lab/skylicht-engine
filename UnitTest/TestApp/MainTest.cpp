@@ -87,7 +87,5 @@ void MainTest::onQuitApp()
 
 bool MainTest::isThreadPass()
 {
-	g_thread->stop();
-	delete g_thread;
-	return g_threadPass;
+	return isSystemThreadPass();	
 }
