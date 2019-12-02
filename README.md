@@ -19,6 +19,37 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d6fbf50a10a4cf38426b9fabfc1fabc)](https://www.codacy.com/manual/ducphamhong/skylicht-engine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=skylicht-lab/skylicht-engine&amp;utm_campaign=Badge_Grade)
 
+## Getting Started
+
+### Windows
+
+#### Prerequisites
+  - [CMake](https://cmake.org/download/) 3.12 or higher
+  - [Python](https://www.python.org/downloads/) 3.x
+  - [Visual Studio](https://visualstudio.microsoft.com/downloads/) 2017 (or higher)
+
+#### How To Build
+
+  - Clone this repo.
+  - Update the submodules.
+    ```
+    C:\skylicht-engine>git submodule update --init --recursive
+    ```
+  - Create a new directory for the build files, e.g. `Build` at the root of the repo.
+    ```
+    C:\skylicht-engine>mkdir PrjVisualStudio
+    ```
+  - Change your working directory to the new directory.
+    ```
+    C:\skylicht-engine>cd PrjVisualStudio
+    ```
+  - Run CMake from the new directory and point to the root of the repo.  
+    ```
+    C:\skylicht-engine\Build>cmake ..
+    ```
+  - Open the generated solution `SKYLICHT_ENGINE.sln`.
+  - Once the solution opens, right click the MainApp project, click "Set as StartUp Project" and click the play button at the top to run the Demo App.
+
 ## License
 
 Skylicht Engine is under [MIT License](LICENSE.md).
