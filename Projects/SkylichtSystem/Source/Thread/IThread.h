@@ -49,6 +49,11 @@ namespace SkylichtSystem
 		{
 		}
 
+		IThreadCallback* getCallback()
+		{
+			return m_callback;
+		}
+
 		virtual void update() = 0;
 
 		virtual void stop() = 0;
