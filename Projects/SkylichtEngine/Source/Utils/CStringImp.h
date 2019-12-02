@@ -203,7 +203,10 @@ namespace Skylicht
 			int i = 0;
 
 			if (pStringSrc == 0)
-				return index;
+				return 0;
+
+			if (length(pStringDst) < at || at < 0)
+				return 0;
 
 			while (pStringSrc[i] != 0)
 			{
@@ -301,6 +304,9 @@ namespace Skylicht
 			int i = begin;
 			int block = 0;
 			int midBegin = -1;
+
+			if (length(pBlock) != 2)
+				return -1;
 
 			while (pStringSrc[i] != 0)
 			{

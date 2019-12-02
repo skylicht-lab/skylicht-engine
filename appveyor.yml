@@ -121,7 +121,7 @@ for:
       - 7z a %output_zip% Bin\*.exe
     test_script:
       - cd PrjVisualStudio
-      - ctest -C %configuration%
+      - ctest -C %configuration% --verpose
       - cd ..
 
   # Cygwin
@@ -139,7 +139,7 @@ for:
       - 7z a %output_zip% Bin\*.exe
     test_script:
       - cd PrjCygwin
-      - ctest
+      - ctest --verpose
       - cd ..
       
 #deploy:
