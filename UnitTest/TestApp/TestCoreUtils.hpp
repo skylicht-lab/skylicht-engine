@@ -8,6 +8,73 @@ void testStringImp()
 {
 	char stringTest[512] = { 0 };
 	wchar_t wstringTest[512] = { 0 };
+	std::string s;
+
+	// UNIT TEST: CPath
+	TEST_CASE("CPath::getFileName");
+	s = CPath::getFileName("C:\\Data\\Readme.md");
+	TEST_ASSERT_THROW(s == "Readme.md");
+	s = CPath::getFileName("Data/Readme.md");
+	TEST_ASSERT_THROW(s == "Readme.md");
+	s = CPath::getFileName(".\\Readme.md");
+	TEST_ASSERT_THROW(s == "Readme.md");
+
+
+	TEST_CASE("CPath::getFileNameExt");
+	s = CPath::getFileNameExt("C:\\Data\\Readme.md");
+	TEST_ASSERT_THROW(s == "md");
+	s = CPath::getFileNameExt("Data/Readme.md");
+	TEST_ASSERT_THROW(s == "md");
+	s = CPath::getFileNameExt(".\\Readme.md");
+	TEST_ASSERT_THROW(s == "md");
+
+
+	TEST_CASE("CPath::getFileNameExt");
+	s = CPath::getFileNameNoExt("C:\\Data\\Readme.md");
+	TEST_ASSERT_THROW(s == "Readme");
+	s = CPath::getFileNameNoExt("Data/Readme.md");
+	TEST_ASSERT_THROW(s == "Readme");
+	s = CPath::getFileNameNoExt(".\\Readme.md");
+	TEST_ASSERT_THROW(s == "Readme");
+
+
+	TEST_CASE("CPath::getFileNameExt");
+	s = CPath::replaceFileExt("C:\\Data\\Readme.md", ".txt");
+	TEST_ASSERT_THROW(s == "C:\\Data/Readme.txt");
+	s = CPath::replaceFileExt("Data/Readme.md", ".txt");
+	TEST_ASSERT_THROW(s == "Data/Readme.txt");
+	s = CPath::replaceFileExt(".\\Readme.md", ".txt");
+	TEST_ASSERT_THROW(s == "./Readme.txt");
+
+
+	TEST_CASE("CPath::getFolderPath");
+	s = CPath::getFolderPath("C:\\Data\\Readme.md");
+	TEST_ASSERT_THROW(s == "C:\\Data");
+	s = CPath::getFolderPath("Data/Readme.md");
+	TEST_ASSERT_THROW(s == "Data");
+	s = CPath::getFolderPath(".\\Readme.md");
+	TEST_ASSERT_THROW(s == ".");
+
+	TEST_CASE("CPath::getFolderPath");
+	s = CPath::normalizePath("C:\\Data\\..\\Readme.md");
+	TEST_ASSERT_THROW(s == "C:/Readme.md");
+	s = CPath::normalizePath("C:\\Data\\..\\Bin\\Readme.md");
+	TEST_ASSERT_THROW(s == "C:/Bin/Readme.md");
+	s = CPath::normalizePath("C:\\Data\\..\\Bin\\..\\Readme.md");
+	TEST_ASSERT_THROW(s == "C:/Readme.md");
+	s = CPath::normalizePath("C:\\Data\\Bin\\..\\..\\Readme.md");
+	TEST_ASSERT_THROW(s == "C:/Readme.md");
+
+	// UNIT TEST: CStringImp
+	TEST_CASE("CStringImp::utf8Char2Unicode");
+	CStringImp::convertUTF8ToUnicode("Skylicht Technology", wstringTest);
+	TEST_ASSERT_THROW(std::wstring(wstringTest) == L"Skylicht Technology");
+
+
+	TEST_CASE("CStringImp::convertUnicodeToUTF8");
+	CStringImp::convertUnicodeToUTF8(L"Skylicht Technology", stringTest);
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Skylicht Technology");
+
 
 	TEST_CASE("CStringImp::length");
 	TEST_ASSERT_EQUAL(CStringImp::length("Hello world"), 11);
@@ -127,6 +194,106 @@ void testStringImp()
 	CStringImp::splitString(stringTest, ",#|", splitArray);
 	TEST_ASSERT_STRING_EQUAL(splitArray[1].c_str(), "Skylicht");
 	TEST_ASSERT_EQUAL(splitArray.size(), 3);
+
+
+	TEST_CASE("CStringImp::findStringInList");
+	TEST_ASSERT_EQUAL(CStringImp::findStringInList(splitArray, "Skylicht"), 1);
+
+
+	TEST_CASE("CStringImp::format");
+	CStringImp::format(stringTest, "%d", 1);
+	TEST_ASSERT_STRING_EQUAL(stringTest, "1");
+
+	CStringImp::format(stringTest, "Hello %s", "Skylicht");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Hello Skylicht");
+
+
+	TEST_CASE("CStringImp::parseToInt");
+	int number = 0;
+	CStringImp::parseToInt("100", &number);
+	TEST_ASSERT_EQUAL(number, 100);
+	CStringImp::parseToUInt("100", &number);
+	TEST_ASSERT_EQUAL(number, 100);
+
+
+	TEST_CASE("CStringImp::parseToFloat");
+	float floatNumber = 0;
+	CStringImp::parseToFloat("0.5", &floatNumber);
+	TEST_ASSERT_EQUAL(floatNumber, 0.5f);
+
+
+	TEST_CASE("CStringImp::parseFromHex");
+	CStringImp::parseFromHex("FF", &number);
+	TEST_ASSERT_EQUAL(number, 255);
+
+
+	TEST_CASE("CStringImp::toLower");
+	strcpy(stringTest, "HeLlo sKYliCHt");
+	CStringImp::toLower(stringTest);
+	TEST_ASSERT_STRING_EQUAL(stringTest, "hello skylicht");
+
+
+	TEST_CASE("CStringImp::toUpper");
+	strcpy(stringTest, "HeLlo sKYliCHt");
+	CStringImp::toUpper(stringTest);
+	TEST_ASSERT_STRING_EQUAL(stringTest, "HELLO SKYLICHT");
+
+
+	TEST_CASE("CStringImp::getFolderPath");	
+	CStringImp::getFolderPath(stringTest, "C:\\Data\\Skylicht");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "C:\\Data");
+	CStringImp::getFolderPath(stringTest, "Data/Skylicht");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Data");
+	CStringImp::getFolderPath(stringTest, "");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "");
+
+
+	TEST_CASE("CStringImp::getFileName");
+	CStringImp::getFileName(stringTest, "C:\\Data\\Readme.md");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme.md");
+	CStringImp::getFileName(stringTest, "Data/Readme.md");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme.md");
+	CStringImp::getFileName(stringTest, ".\\Readme.md");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme.md");
+
+	TEST_CASE("CStringImp::getFileNameExt");
+	CStringImp::getFileNameExt(stringTest, "C:\\Data\\Readme.md");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "md");
+	CStringImp::getFileNameExt(stringTest, "C/Data/Readme");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme");
+
+
+	TEST_CASE("CStringImp::getFileNameNoExt");
+	CStringImp::getFileNameNoExt(stringTest, "C:\\Data\\Readme.md");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme");
+	CStringImp::getFileNameNoExt(stringTest, "C:\\Data\\Readme");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme");
+	CStringImp::getFileNameNoExt(stringTest, "Data/Readme.md");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme");
+	CStringImp::getFileNameNoExt(stringTest, ".\\Readme.md");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme");
+
+
+	TEST_CASE("CStringImp::replaceExt");
+	strcpy(stringTest, "C:\\Data\\Readme.md");
+	CStringImp::replaceExt(stringTest, ".txt");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme.txt");
+	
+
+	TEST_CASE("CStringImp::replacePathExt");
+	strcpy(stringTest, "C:\\Data\\Readme.md");
+	CStringImp::replacePathExt(stringTest, ".txt");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "C:\\Data/Readme.txt");
+
+
+	TEST_CASE("CStringImp::shortName");
+	CStringImp::shortName(stringTest, "Skylicht Technology", 10);
+	TEST_ASSERT_EQUAL(strlen(stringTest), 10);
+
+
+	TEST_CASE("CStringImp::replaceText");
+	CStringImp::replaceText(stringTest, "Skylicht Technology", " ", "__");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "Skylicht__Technology");
 }
 
 void testCoreUtils()
