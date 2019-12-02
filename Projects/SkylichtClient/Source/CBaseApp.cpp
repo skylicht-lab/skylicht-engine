@@ -78,7 +78,7 @@ namespace Skylicht
 		{
 			if ((*i).second == pEvent)
 				return;
-			i++;
+			++i;
 		}
 
 		m_eventReceivers.push_back(eventType(name, pEvent));
@@ -94,7 +94,7 @@ namespace Skylicht
 				m_eventReceivers.erase(i);
 				return;
 			}
-			i++;
+			++i;
 		}
 	}
 
@@ -105,7 +105,7 @@ namespace Skylicht
 		{
 			if ((*i).second == pEvent)
 				return;
-			i++;
+			++i;
 		}
 
 		m_appEventReceivers.push_back(appEventType(name, pEvent));
@@ -121,7 +121,7 @@ namespace Skylicht
 				m_appEventReceivers.erase(i);
 				return;
 			}
-			i++;
+			++i;
 		}
 	}
 

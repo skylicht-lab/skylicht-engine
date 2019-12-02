@@ -7,7 +7,8 @@ include_directories(
 )
 
 file(GLOB_RECURSE test_app_source 
-	./**.cpp 
+	./**.cpp
+	./**.hpp
 	./**.c 
 	./**.h)
 

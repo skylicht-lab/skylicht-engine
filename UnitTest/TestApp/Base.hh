@@ -2,7 +2,10 @@
 #define _TEST_BASE_H_
 
 #include <stdexcept>
+#include <iostream>
 #include <string>
+
+#define TEST_CASE( name ) std::cout << (std::string(" - ") + std::string(name)) << std::endl;
 
 #define TEST_ASSERT_THROW( condition )                              \
 {                                                                   \
@@ -28,6 +31,22 @@
                               + std::to_string( ( x ) )             \
                               + std::string( " != " )               \
                               + std::to_string( ( y ) )             \
+    );                                                              \
+  }                                                                 \
+}
+
+#define TEST_ASSERT_STRING_EQUAL( x, y )                            \
+{                                                                   \
+  if( strcmp(x, y) != 0 )                                           \
+  {                                                                 \
+    throw std::runtime_error(   std::string( __FILE__ )             \
+                              + std::string( ":" )                  \
+                              + std::to_string( __LINE__ )          \
+                              + std::string( " in " )               \
+                              + std::string( ": " )                 \
+                              + std::string( ( x ) )                \
+                              + std::string( " != " )               \
+                              + std::string( ( y ) )                \
     );                                                              \
   }                                                                 \
 }

@@ -30,6 +30,16 @@ namespace SkylichtSystem
 	class IThreadCallback
 	{
 	public:
+		IThreadCallback()
+		{
+
+		}
+
+		virtual ~IThreadCallback()
+		{
+
+		}
+
 		virtual void updateThread() = 0;
 	};
 
@@ -47,6 +57,11 @@ namespace SkylichtSystem
 
 		virtual ~IThread()
 		{
+		}
+
+		IThreadCallback* getCallback()
+		{
+			return m_callback;
 		}
 
 		virtual void update() = 0;
