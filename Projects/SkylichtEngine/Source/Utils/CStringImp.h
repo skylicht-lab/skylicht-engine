@@ -389,7 +389,6 @@ namespace Skylicht
 			{
 				if (pString[i] == charLoop)
 				{
-					// Xoa cac ky tu giong no
 					while (pString[i + 1] == charLoop && pString[i + 1] != 0)
 					{
 						int len = CStringImp::length<T>(&pString[i]);

@@ -2,9 +2,10 @@
 #define _TEST_BASE_H_
 
 #include <stdexcept>
+#include <iostream>
 #include <string>
 
-#define TEST_CASE( name ) printf((std::string(" - ") + std::string(name) + std::string("\n")).c_str());
+#define TEST_CASE( name ) std::cout << (std::string(" - ") + std::string(name)) << std::endl;
 
 #define TEST_ASSERT_THROW( condition )                              \
 {                                                                   \

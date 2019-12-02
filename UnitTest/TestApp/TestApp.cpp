@@ -82,6 +82,9 @@ int main(int, char**)
 
 	g_device->drop();	
 
+	TEST_CASE("System Thread End");
+	TEST_ASSERT_THROW(mainTest->isThreadPass());
+
 	TEST_CASE("App Init");
 	TEST_ASSERT_THROW(mainTest->isPassInit());
 
