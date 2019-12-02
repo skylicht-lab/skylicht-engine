@@ -80,18 +80,27 @@ int main(int, char**)
 
 	g_mainApp->destroyApplication();
 
-	g_device->drop();
+	g_device->drop();	
 
-	delete g_mainApp;
-	g_mainApp = NULL;
-
+	TEST_CASE("App Init");
 	TEST_ASSERT_THROW(mainTest->isPassInit());
+
+	TEST_CASE("App Update");
 	TEST_ASSERT_THROW(mainTest->isPassUpdate());
+
+	TEST_CASE("App Render");
 	TEST_ASSERT_THROW(mainTest->isPassRender());
+
+	TEST_CASE("App Post Render");
 	TEST_ASSERT_THROW(mainTest->isPassPostRender());
+
+	TEST_CASE("App Quit");
 	TEST_ASSERT_THROW(mainTest->isPassQuitApp());
 
 	delete mainTest;
+
+	delete g_mainApp;
+	g_mainApp = NULL;
 
 	return 0;
 }
