@@ -16,8 +16,6 @@ add_library(SkylichtSystem STATIC
 
 set_target_properties(SkylichtSystem PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-if (BUILD_EMSCRIPTEN)
-target_link_libraries(SkylichtSystem ThirdParty pthread)
-elseif(CYGWIN OR MINGW OR BUILD_LINUX)
+if (NOT MSVC)
 target_link_libraries(SkylichtSystem ThirdParty pthread)
 endif()
