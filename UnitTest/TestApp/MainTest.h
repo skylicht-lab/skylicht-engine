@@ -38,7 +38,7 @@ private:
 	bool m_passRender;
 	bool m_passPostRender;
 	bool m_passQuitApp;
-
+	
 public:
 	MainTest();
 
@@ -69,6 +69,8 @@ public:
 	inline bool isPassPostRender() { return m_passPostRender; }
 
 	inline bool isPassQuitApp() { return m_passQuitApp; }
+
+	bool isThreadPass();
 };
 
 #endif

@@ -54,7 +54,9 @@ namespace Skylicht
 
 	CApplication::CApplication()
 	{
-		g_app = (CBaseApp*)this;
+		g_app = this;
+
+		m_pauseTime = 0.0f;
 		m_resizeWin = true;
 		m_width = 0;
 		m_height = 0;
@@ -86,7 +88,7 @@ namespace Skylicht
 					sendEvent = true;
 					break;
 				}
-				j++;
+				++j;
 			}
 
 			// ok send event
@@ -95,7 +97,7 @@ namespace Skylicht
 				(*i).second->OnEvent(event);
 			}
 
-			i++;
+			++i;
 		}
 
 #if defined(WIN32) && WINAPI_FAMILY==WINAPI_FAMILY_DESKTOP_APP
@@ -286,7 +288,6 @@ namespace Skylicht
 		}
 		else
 		{
-			sleepTime = 0;
 			m_device->yield();
 		}
 #endif
