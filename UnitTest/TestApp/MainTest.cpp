@@ -23,6 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "MainTest.h"
+#include "TestCoreUtils.hpp"
 
 MainTest::MainTest()
 {
@@ -42,8 +43,9 @@ MainTest::~MainTest()
 
 void MainTest::onInitApp()
 {
-	os::Printer::log("MainTest::onInitApp");
 	m_passInit = true;
+
+	testCoreUtils();
 }
 
 void MainTest::onUpdate()
@@ -67,16 +69,15 @@ void MainTest::onPostRender()
 
 void MainTest::onResume()
 {
-	os::Printer::log("MainTest::onResume");
+
 }
 
 void MainTest::onPause()
 {
-	os::Printer::log("MainTest::onPause");
+
 }
 
 void MainTest::onQuitApp()
 {
-	os::Printer::log("MainTest::onQuitApp");
 	m_passQuitApp = (m_frameCount == 5);
 }
