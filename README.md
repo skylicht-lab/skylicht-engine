@@ -4,7 +4,7 @@
 
 Skylicht Engine is a fork from [Irrlicht 3D Engine](http://irrlicht.sourceforge.net), that we have upgraded more feature: Sound Engine, Physics Engine, Particle Engine...
 
-- Core functionality: Direct3D11, OpenGL 3+, OpenGLES 3+ video driver backends.
+- Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+ video driver backends.
 - Cross-Platform Framework: Android, IOS, Win32/Win64, UWP, Linux, MacOS, HTML5.
 - Render pipeline: Forwarder & Deferred.
 
@@ -15,7 +15,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 | Win32/Win64 | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master)          |
 | Cygwin64    | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master)          |
 | Android     | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master)          |
-| Linux       | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/C%2FC%2B%2B%20CI/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)            |
+| Linux       | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)            |
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d6fbf50a10a4cf38426b9fabfc1fabc)](https://www.codacy.com/manual/ducphamhong/skylicht-engine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=skylicht-lab/skylicht-engine&amp;utm_campaign=Badge_Grade)
 
@@ -39,9 +39,9 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
   ```
   C:\skylicht-engine>mkdir PrjVisualStudio
   ```  
-- Run CMake from the new directory
+- Run CMake from the current directory
   ```
-  C:\skylicht-engine>cmake %cmake_args% -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+  C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
   ```  
 - Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`.
 
