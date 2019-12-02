@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "MainTest.h"
 #include "TestCoreUtils.hpp"
+#include "TestSystemThread.hpp"
 
 MainTest::MainTest()
 {
@@ -46,6 +47,8 @@ void MainTest::onInitApp()
 	m_passInit = true;
 
 	testCoreUtils();
+
+	testSystemThread();
 }
 
 void MainTest::onUpdate()
@@ -80,4 +83,11 @@ void MainTest::onPause()
 void MainTest::onQuitApp()
 {
 	m_passQuitApp = (m_frameCount == 5);
+}
+
+bool MainTest::isThreadPass()
+{
+	g_thread->stop();
+	delete g_thread;
+	return g_threadPass;
 }

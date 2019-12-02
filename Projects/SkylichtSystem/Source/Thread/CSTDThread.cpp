@@ -41,6 +41,9 @@ namespace SkylichtSystem
 	CSTDThread::~CSTDThread()
 	{
 		stop();
+
+		delete m_thread;
+		m_thread = NULL;
 	}
 
 	void CSTDThread::update()
@@ -72,7 +75,7 @@ namespace SkylichtSystem
 
 	void* CSTDThread::run(void *param)
 	{
-		CSTDThread* p = (CSTDThread*)param;
+		CSTDThread* p = reinterpret_cast<CSTDThread*>(param);
 		p->update();
 		return 0;
 	}
