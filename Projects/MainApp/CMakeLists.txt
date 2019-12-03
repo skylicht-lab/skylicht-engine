@@ -23,6 +23,17 @@ file(GLOB_RECURSE platform_android_source
 list (APPEND main_app_source ${platform_android_source})
 endif()
 
+if (BUILD_WINDOWS_STORE)
+file(GLOB_RECURSE platform_uwp_source 
+	./Platforms/UWP/**.cpp 
+	./Platforms/UWP/**.c 
+	./Platforms/UWP/**.h)
+file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/MainApp/Assets/**.*)
+
+list (APPEND main_app_source ${platform_uwp_source})
+list (APPEND main_app_source ${platform_uwp_asset})
+endif()
+
 if (MSVC OR CYGWIN OR MINGW)
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Platforms/Win32
@@ -55,11 +66,17 @@ if (BUILD_EMSCRIPTEN)
 	add_executable(MainApp ${main_app_source})
 elseif(BUILD_ANDROID)
 	add_library(MainApp SHARED ${main_app_source})
+elseif (BUILD_WINDOWS_STORE)
+	add_executable(MainApp
+		${main_app_source}
+		./Platforms/UWP/MainApp_TemporaryKey.pfx
+		./Platforms/UWP/Package.appxmanifest
+	)
 elseif (MSVC OR CYGWIN OR MINGW)
 	add_executable(MainApp WIN32
 		${main_app_source}
 		./Platforms/Win32/Skylicht.rc
-	)
+	)	
 else()
 	add_executable(MainApp ${main_app_source})
 endif()

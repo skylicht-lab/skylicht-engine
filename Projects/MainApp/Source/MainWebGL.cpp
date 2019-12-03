@@ -42,8 +42,7 @@ CApplication *g_mainApp = NULL;
 irr::IrrlichtDevice *g_device = NULL;
 
 void main_loop()
-{
-	IVideoDriver* driver = g_device->getVideoDriver();
+{	
 	g_device->run();
 
 	g_mainApp->mainLoop();

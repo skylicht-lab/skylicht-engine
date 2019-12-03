@@ -19,6 +19,10 @@
 
 #include <d3d11.h>
 
+#ifdef WINDOWS_STORE
+#include <dxgi1_4.h>
+#endif
+
 namespace irr
 {
 namespace video
@@ -302,11 +306,19 @@ namespace video
 		// Direct3D 11 objects
 				
 		// DXGI objects
+#ifdef WINDOWS_STORE
+		DXGI_SWAP_CHAIN_DESC1 present;
+		IDXGISwapChain1* SwapChain;
+		IDXGIFactory4* DXGIFactory;
+		IDXGIAdapter1* Adapter;
+#else
 		DXGI_SWAP_CHAIN_DESC present;
 		IDXGISwapChain* SwapChain;
-		IDXGIAdapter* Adapter;
-		IDXGIOutput* Output;
 		IDXGIFactory* DXGIFactory;
+		IDXGIAdapter* Adapter;
+#endif
+		
+		IDXGIOutput* Output;
 
 		// D3D 11 Device objects
 		D3D_DRIVER_TYPE DriverType;

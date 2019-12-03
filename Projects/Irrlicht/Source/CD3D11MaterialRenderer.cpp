@@ -660,6 +660,8 @@ bool CD3D11MaterialRenderer::init(const c8* vertexShaderProgram, const c8* verte
 	}
 
 	UINT flags = 0;
+
+#if !defined(WINDOWS_STORE)
 	if (vsCompileTarget >= EVST_VS_4_0 && psCompileTarget >= EPST_PS_4_0)
 		flags |= D3D10_SHADER_ENABLE_STRICTNESS;
 	else
@@ -669,7 +671,6 @@ bool CD3D11MaterialRenderer::init(const c8* vertexShaderProgram, const c8* verte
 		psCompileTarget = EPST_PS_4_0;
 	}
 
-/*
 #ifdef _DEBUG
 	// These values allow use of PIX and shader debuggers
 	flags |= D3D10_SHADER_DEBUG;
@@ -678,9 +679,9 @@ bool CD3D11MaterialRenderer::init(const c8* vertexShaderProgram, const c8* verte
 	// These flags allow maximum performance
 	flags |= D3D10_SHADER_OPTIMIZATION_LEVEL3;
 #endif
-*/
 
 	flags |= D3D10_SHADER_OPTIMIZATION_LEVEL3;
+#endif
 
 	if (!createShader(vertexShaderProgram, vertexShaderEntryPointName, VERTEX_SHADER_TYPE_NAMES[vsCompileTarget], flags, EST_VERTEX_SHADER))
 		return false;
