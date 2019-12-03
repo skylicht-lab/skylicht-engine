@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 
-#if defined(WIN32) || defined(CYGWIN) || defined(MINGW)
+#if !defined(WINDOWS_STORE) && (defined(WIN32) || defined(CYGWIN) || defined(MINGW))
 #include <Windows.h>
 
 #include "Resource.h"

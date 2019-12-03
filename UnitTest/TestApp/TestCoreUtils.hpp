@@ -29,7 +29,7 @@ void testStringImp()
 	TEST_ASSERT_THROW(s == "md");
 
 
-	TEST_CASE("CPath::getFileNameExt");
+	TEST_CASE("CPath::getFileNameNoExt");
 	s = CPath::getFileNameNoExt("C:\\Data\\Readme.md");
 	TEST_ASSERT_THROW(s == "Readme");
 	s = CPath::getFileNameNoExt("Data/Readme.md");
@@ -38,7 +38,7 @@ void testStringImp()
 	TEST_ASSERT_THROW(s == "Readme");
 
 
-	TEST_CASE("CPath::getFileNameExt");
+	TEST_CASE("CPath::replaceFileExt");
 	s = CPath::replaceFileExt("C:\\Data\\Readme.md", ".txt");
 	TEST_ASSERT_THROW(s == "C:\\Data/Readme.txt");
 	s = CPath::replaceFileExt("Data/Readme.md", ".txt");
@@ -55,7 +55,7 @@ void testStringImp()
 	s = CPath::getFolderPath(".\\Readme.md");
 	TEST_ASSERT_THROW(s == ".");
 
-	TEST_CASE("CPath::getFolderPath");
+	TEST_CASE("CPath::normalizePath");
 	s = CPath::normalizePath("C:\\Data\\..\\Readme.md");
 	TEST_ASSERT_THROW(s == "C:/Readme.md");
 	s = CPath::normalizePath("C:\\Data\\..\\Bin\\Readme.md");
@@ -66,7 +66,7 @@ void testStringImp()
 	TEST_ASSERT_THROW(s == "C:/Readme.md");
 
 	// UNIT TEST: CStringImp
-	TEST_CASE("CStringImp::utf8Char2Unicode");
+	TEST_CASE("CStringImp::convertUTF8ToUnicode");
 	CStringImp::convertUTF8ToUnicode("Skylicht Technology", wstringTest);
 	TEST_ASSERT_THROW(std::wstring(wstringTest) == L"Skylicht Technology");
 
