@@ -37,7 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifdef _WIN32
 #include <Windows.h>
 
-#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+#ifdef WINDOWS_STORE
 #include <thread>
 #endif
 

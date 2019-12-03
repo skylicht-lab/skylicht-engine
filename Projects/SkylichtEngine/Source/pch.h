@@ -34,7 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <memory.h>
 #include <stdlib.h>
 
-#include <windows.h>
+#include <Windows.h>
 
 #else
 

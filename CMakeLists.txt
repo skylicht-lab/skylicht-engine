@@ -35,6 +35,12 @@ endif()
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
 
+if (CMAKE_SYSTEM_NAME STREQUAL WindowsStore)
+	set(BUILD_ENGINE_TOOL OFF)
+	set(BUILD_WINDOWS_STORE ON)
+	add_definitions(-DWINDOWS_STORE)
+endif()
+
 if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
 	set(BUILD_ENGINE_TOOL OFF)
 	set(BUILD_EMSCRIPTEN ON)
@@ -133,7 +139,16 @@ if (BUILD_ANDROID)
 endif()
 
 # visual studio
-if (MSVC)		
+if (BUILD_WINDOWS_STORE)
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
+	set(CMAKE_C_FLAGS "/ZW ${CMAKE_C_FLAGS}")
+	set(CMAKE_CXX_FLAGS "/ZW ${CMAKE_CXX_FLAGS}")
+	
+	if (CMAKE_CL_64)
+		add_definitions(-D_WIN64)
+	endif()		
+elseif (MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 	if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
@@ -177,16 +192,7 @@ if (MSVC)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:ICF")
 	endif()
 
-	option(USE_MSVC_DISABLE_RTTI "Use MSVC /GR- disabled RTTI flags option"	OFF)
-	if (USE_MSVC_DISABLE_RTTI)
-		string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
-		set(CMAKE_C_FLAGS "/GR- ${CMAKE_C_FLAGS}")
-		set(CMAKE_CXX_FLAGS "/GR- ${CMAKE_CXX_FLAGS}")
-	endif()
-
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244 /wd4267")	
-	
-    set(CMAKE_EXE_LINKER_FLAGS	"${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
+	set(CMAKE_EXE_LINKER_FLAGS	"${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")	
 endif()
 
 # add project
