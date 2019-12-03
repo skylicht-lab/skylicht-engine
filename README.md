@@ -15,18 +15,16 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 | Win32/Win64 | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master)          |
 | Cygwin64    | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master)          |
 | Android     | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master)          |
-| Linux       | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)            |
+| Linux       | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)                       |
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d6fbf50a10a4cf38426b9fabfc1fabc)](https://www.codacy.com/manual/ducphamhong/skylicht-engine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=skylicht-lab/skylicht-engine&amp;utm_campaign=Badge_Grade)
 
 ## How To Build
 
-### 1. Windows
-
 #### Prerequisites
 - [CMake](https://cmake.org/download/) 3.12 or higher
 - [Python](https://www.python.org/downloads/) 3.x
-- [Visual Studio](https://visualstudio.microsoft.com/downloads/)  (2017 or higher)
+- [Visual Studio](https://visualstudio.microsoft.com/downloads/)  (2017 or higher if you want to build on Windows OS)
 
 #### Build Command
 
@@ -34,30 +32,37 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 - Update the submodules.
   ```
   C:\skylicht-engine>git submodule update --init --recursive
-  ```  
-- Create a new directory for the build files, e.g. `Build` at the root of the repo.
+  ```
+- Create a new directory for the build files, e.g. `PrjVisualStudio` at the root of the repo.
   ```
   C:\skylicht-engine>mkdir PrjVisualStudio
-  ```  
+  ```
 - Run CMake from the current directory
   ```
   C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
-  ```  
+  ```
 - Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`.
 
 - Once the solution opens, right click the MainApp project, click "Set as StartUp Project" and click the play button at the top to run the Demo App.
 
-### 2. Android
+#### Add Source To Project
 
-### 3. IOS
+- You create new source files or folder on `Projects/{ProjectName}/Source/` and regenerate project.
+  ```
+  C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+  ```
 
-### 4. MacOS
+## Features [WIP]
 
-## Usage
+## Usage [WIP]
+
+## Editor [WIP]
 
 ## Contributing
 
-We will welcome if you want to contribute to `Skylicht Engine`. Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests.
+You are welcome if you want to contribute to `Skylicht Engine`.
+You can add an issue on Github, create new branch, commit your work and merge to master.
+Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests.
 
 ## License
 
