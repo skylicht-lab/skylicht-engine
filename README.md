@@ -54,15 +54,11 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 
 ## Features [WIP]
 
-## Usage [WIP]
-
 ## Editor [WIP]
 
 ## Contributing
 
-You are welcome if you want to contribute to `Skylicht Engine`.
-You can add an issue on Github, create new branch, commit your work and merge to master.
-Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests.
+If you want to contribute to `Skylicht Engine`. Open an issues and submit a pull request to this repository. Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests.
 
 ## License
 
