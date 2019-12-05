@@ -12,7 +12,7 @@ set(MSVC_INCREMENTAL_DEFAULT ON)
 
 # begin project
 project(SKYLICHT_ENGINE)
-file(STRINGS "Version" SKYLICHT_VERSION)
+file(STRINGS "Version.txt" SKYLICHT_VERSION)
 message(STATUS "- Skylicht Engine version ${SKYLICHT_VERSION}")
 
 # output
@@ -70,8 +70,6 @@ endif()
 # skylicht engine option
 option(BUILD_SKYLICHT_NETWORK "Build Skylicht Network" ON)
 
-option(BUILD_WITH_ZIP_DATA "Build Data on ZIP file" OFF)
-
 option(BUILD_DEBUG_VLD "Build with debug visual leak detector" OFF)
 
 option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform development library" OFF)
@@ -79,11 +77,6 @@ option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform develo
 # skylicht network
 if (BUILD_SKYLICHT_NETWORK)
 	add_definitions(-DUSE_SKYLICHT_NETWORK)
-endif()
-
-# skylicht release data
-if (BUILD_WITH_ZIP_DATA)
-	add_definitions(-DUSE_DATA_IN_ZIP_FILE)
 endif()
 
 # skylicht debug leak memory
@@ -229,6 +222,7 @@ subdirs (Projects/SkylichtClient)
 #endif()
 
 subdirs (Projects/MainApp)
+subdirs (Projects/Demo)
 
 # unit test
 if (NOT BUILD_ANDROID AND NOT BUILD_EMSCRIPTEN)

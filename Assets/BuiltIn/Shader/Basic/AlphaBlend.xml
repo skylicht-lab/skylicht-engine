@@ -1,0 +1,18 @@
+<shaderConfig name="AlphaBlend" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexAlpha" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>			
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/AlphaBlendVS.glsl" fs="GLSL/AlphaBlendFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/AlphaBlendVS.hlsl" fs="HLSL/AlphaBlendFS.hlsl"/>	
+</shaderConfig>

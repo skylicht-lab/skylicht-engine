@@ -39,7 +39,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 // Shader Manager
 #include "Material/CShaderManager.h"
-#include "Graphics/CGraphics.h"
+#include "Graphics2D/CGraphics2D.h"
 
 #endif
 
@@ -66,7 +66,7 @@ namespace Skylicht
 		CJoystick::createGetInstance();
 
 		CShaderManager::createGetInstance();
-		CGraphics::createGetInstance();
+		CGraphics2D::createGetInstance();
 
 
 
@@ -87,7 +87,7 @@ namespace Skylicht
 
 
 
-		CGraphics::releaseInstance();
+		CGraphics2D::releaseInstance();
 		CShaderManager::releaseInstance();
 
 		CTouchManager::releaseInstance();

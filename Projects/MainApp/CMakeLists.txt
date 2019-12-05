@@ -1,7 +1,7 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Spark/include		
+	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Spark/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtSystem/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtEngine/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtClient/Source
@@ -51,7 +51,7 @@ endif()
 #include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtNetwork/Source)
 #endif()
 
-#if(BUILD_BULLET_PHYSIC2_LIB)
+#if(BUILD_RECAST_NAVIGATION_LIB)
 #include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/RecastNavigation/Source)
 #endif()
 	
@@ -85,9 +85,9 @@ target_precompiled_header(MainApp ./Source/pch.cpp ${main_app_source})
 
 # Linker
 if (BUILD_ANDROID)
-	target_link_libraries(MainApp SkylichtClient log)
+	target_link_libraries(MainApp SkylichtClient Demo log)
 else()
-	target_link_libraries(MainApp SkylichtClient)
+	target_link_libraries(MainApp SkylichtClient Demo)
 endif()
 
 # Emscripten
@@ -95,11 +95,11 @@ if (BUILD_EMSCRIPTEN)
 if(JS_ONLY)
 	message(STATUS "Setting compilation target to native JavaScript")
 	set(CMAKE_EXECUTABLE_SUFFIX ".html")
-	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s EXPORTED_FUNCTIONS=['_main']")
+	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s EXPORTED_FUNCTIONS=['_main'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared")
 else()
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s WASM=1 -s BINARYEN_METHOD='native-wasm' -s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s EXPORTED_FUNCTIONS=['_main']")
+	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s EXPORTED_FUNCTIONS=['_main'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 endif()
 endif()
 

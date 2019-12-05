@@ -65,6 +65,9 @@ namespace Skylicht
 		bool			m_show2DUI;
 
 		float			m_tickSecond;
+
+		std::vector<std::string>	m_argv;
+
 	public:
 		CApplication();
 
@@ -76,6 +79,10 @@ namespace Skylicht
 		{
 			return (CBaseApp*)this;
 		}
+
+		void setParams(const std::vector<std::string>& argv);
+
+		const std::vector<std::string>& getParams();
 
 		void initApplication(IrrlichtDevice* device);
 
