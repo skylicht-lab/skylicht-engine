@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <stdlib.h>
 #include <cwchar>
 #include <cstdarg>
+#include <vector>
 
 namespace Skylicht
 {

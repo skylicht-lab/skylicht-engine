@@ -67,6 +67,11 @@ int main(int argc, char *argv[])
 #endif
 {
 	g_mainApp = new CApplication();
+	
+	std::vector<std::string> params;
+	for (int i = 1; i < argc; i++)
+		params.push_back(std::string(argv[i]));
+	g_mainApp->setParams(params);
 
 	g_device = createDevice(video::EDT_OPENGL, dimension2d<u32>(640, 480), 32, false, false, false, g_mainApp);
 

@@ -34,15 +34,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 
 
-#ifdef _WIN32
-#include <Windows.h>
-
-#ifdef WINDOWS_STORE
-#include <thread>
-#endif
-
-#else
-#include <sys/time.h>
+#if defined(_WIN32)
+	#include <Windows.h>
+	#ifdef WINDOWS_STORE
+	#include <thread>
+	#endif
+#elif defined(EMSCRIPTEN)
+	#include <sys/time.h>
+#else		
+	#include <sys/time.h>
 #endif
 
 namespace SkylichtSystem
@@ -86,6 +86,8 @@ namespace SkylichtSystem
 			// Win32
 		Sleep(time);
 		//#endif
+#elif defined(EMSCRIPTEN)
+
 #else
 		struct timespec ts;
 		ts.tv_sec = (time_t)(time / 1000);

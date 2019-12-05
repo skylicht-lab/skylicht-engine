@@ -1,0 +1,17 @@
+<shaderConfig name="TextureColorAdditive" baseShader="TRANSPARENT_ADD_COLOR">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>
+		</ui>
+	</customUI>	
+	<shader type="GLSL" vs="GLSL/TextureColorAdditiveVS.glsl" fs="GLSL/TextureColorAdditiveFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/TextureColorAdditiveVS.hlsl" fs="HLSL/TextureColorAdditiveFS.hlsl"/>
+</shaderConfig>

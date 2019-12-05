@@ -16,6 +16,6 @@ add_library(SkylichtSystem STATIC
 
 set_target_properties(SkylichtSystem PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-if (NOT MSVC AND NOT BUILD_ANDROID)
+if (NOT MSVC AND NOT BUILD_ANDROID AND NOT BUILD_EMSCRIPTEN)
 target_link_libraries(SkylichtSystem ThirdParty pthread)
 endif()

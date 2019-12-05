@@ -1,8 +1,10 @@
-#pragma once
-
 #include "Base.hh"
+#include "TestCoreUtils.h"
+
 #include "Utils/CStringImp.h"
 #include "Utils/CPath.h"
+
+using namespace Skylicht;
 
 void testStringImp()
 {
@@ -239,7 +241,7 @@ void testStringImp()
 	TEST_ASSERT_STRING_EQUAL(stringTest, "HELLO SKYLICHT");
 
 
-	TEST_CASE("CStringImp::getFolderPath");	
+	TEST_CASE("CStringImp::getFolderPath");
 	CStringImp::getFolderPath(stringTest, "C:\\Data\\Skylicht");
 	TEST_ASSERT_STRING_EQUAL(stringTest, "C:\\Data");
 	CStringImp::getFolderPath(stringTest, "Data/Skylicht");
@@ -278,7 +280,7 @@ void testStringImp()
 	strcpy(stringTest, "C:\\Data\\Readme.md");
 	CStringImp::replaceExt(stringTest, ".txt");
 	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme.txt");
-	
+
 
 	TEST_CASE("CStringImp::replacePathExt");
 	strcpy(stringTest, "C:\\Data\\Readme.md");

@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTouchManager.h"
-#include "Graphics/CGraphics.h"
+#include "Graphics2D/CGraphics2D.h"
 
 namespace Skylicht
 {
@@ -93,7 +93,7 @@ namespace Skylicht
 
 	void CTouchManager::updateTouch(ETouchEvent touchEvent, int x, int y, long id)
 	{
-		float scale = CGraphics::getInstance()->getScale();
+		float scale = CGraphics2D::getInstance()->getScale();
 		x = (int)((float)x * scale);
 		y = (int)((float)y * scale);
 
