@@ -28,7 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AppInclude.h"
 #include "IApplicationEventReceiver.h"
 
-class MainTest : public Skylicht::IApplicationEventReceiver
+#include "Scene/CScene.h"
+
+class CApp : public Skylicht::IApplicationEventReceiver
 {
 private:
 	int m_frameCount;
@@ -40,9 +42,9 @@ private:
 	bool m_passQuitApp;
 	
 public:
-	MainTest();
+	CApp();
 
-	virtual ~MainTest();
+	virtual ~CApp();
 
 	virtual void onUpdate();
 
@@ -69,8 +71,6 @@ public:
 	inline bool isPassPostRender() { return m_passPostRender; }
 
 	inline bool isPassQuitApp() { return m_passQuitApp; }
-
-	bool isThreadPass();
 };
 
 #endif

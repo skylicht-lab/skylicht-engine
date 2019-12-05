@@ -22,11 +22,25 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "MainTest.h"
-#include "TestCoreUtils.hpp"
-#include "TestSystemThread.hpp"
+#include "CApp.h"
+#include "TestCoreUtils.h"
+#include "TestSystemThread.h"
+#include "TestScene.h"
 
-MainTest::MainTest()
+#include "CApplication.h"
+#include "Material/CShaderManager.h"
+
+#define TEST_UPDATE_LOOP_COUNT	100
+
+bool g_finalPass = false;
+
+void installApplication(const std::vector<std::string>& argv)
+{
+	CApp *mainTest = new CApp();
+	getApplication()->registerAppEvent("CApp", mainTest);
+}
+
+CApp::CApp()
 {
 	m_frameCount = 0;
 
@@ -37,55 +51,83 @@ MainTest::MainTest()
 	m_passQuitApp = false;
 }
 
-MainTest::~MainTest()
+CApp::~CApp()
 {
-
+	g_finalPass = true;
 }
 
-void MainTest::onInitApp()
+void CApp::onInitApp()
 {
 	m_passInit = true;
 
+	// File system
+	io::IFileSystem *fileSystem = getApplication()->getFileSystem();
+
+	// Add built in data
+	fileSystem->addFileArchive("BuiltIn.zip", false, false);
+
+	// Load basic shader
+	CShaderManager::getInstance()->initBasicShader();
+
+	// Run unit test
 	testCoreUtils();
 
 	testSystemThread();
+
+	testScene();
 }
 
-void MainTest::onUpdate()
+void CApp::onUpdate()
 {
 	m_passUpdate = true;
 
-	// try test in 5 frame
-	if (++m_frameCount >= 5)
+	testSceneUpdate();
+	
+	if (++m_frameCount >= TEST_UPDATE_LOOP_COUNT)
 		getIrrlichtDevice()->closeDevice();
 }
 
-void MainTest::onRender()
+void CApp::onRender()
 {
 	m_passRender = true;
 }
 
-void MainTest::onPostRender()
+void CApp::onPostRender()
 {
 	m_passPostRender = true;
 }
 
-void MainTest::onResume()
+void CApp::onResume()
 {
 
 }
 
-void MainTest::onPause()
+void CApp::onPause()
 {
 
 }
 
-void MainTest::onQuitApp()
+void CApp::onQuitApp()
 {
-	m_passQuitApp = (m_frameCount == 5);
-}
+	m_passQuitApp = (m_frameCount == TEST_UPDATE_LOOP_COUNT);
 
-bool MainTest::isThreadPass()
-{
-	return isSystemThreadPass();	
+	TEST_ASSERT_THROW(isSystemThreadPass());
+	TEST_ASSERT_THROW(isTestScenePass());
+
+	TEST_CASE("App init");
+	TEST_ASSERT_THROW(this->isPassInit());
+
+	TEST_CASE("App update");
+	TEST_ASSERT_THROW(this->isPassUpdate());
+
+	TEST_CASE("App render");
+	TEST_ASSERT_THROW(this->isPassRender());
+
+	TEST_CASE("App post render");
+	TEST_ASSERT_THROW(this->isPassPostRender());
+
+	TEST_CASE("App quit");
+	TEST_ASSERT_THROW(this->isPassQuitApp());
+
+	delete this;
 }

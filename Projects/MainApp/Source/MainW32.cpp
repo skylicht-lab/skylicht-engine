@@ -72,7 +72,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 
 	int useDX11 = MessageBox(hWnd, L"Use directX11 driver?", L"Question", MB_YESNO | MB_ICONQUESTION);
-	// TODO: Place code here.
 	MSG msg;
 
 	// Initialize global strings
@@ -141,6 +140,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// init application
 	g_application = new CApplication();
+	g_application->setParams(params);
 
 	// create irrlicht device
 	SIrrlichtCreationParameters p;
@@ -212,8 +212,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			// renew application
 			g_application = new CApplication();
-
-			device->setEventReceiver(g_application);
 
 			g_application->initApplication(device);
 			g_restartApplication = false;

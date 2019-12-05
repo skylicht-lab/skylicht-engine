@@ -33,21 +33,22 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
   ```
   C:\skylicht-engine>git submodule update --init --recursive
   ```
-- Create a new directory for the build files, e.g. `PrjVisualStudio` at the root of the repo.
+- Build Data Assets
   ```
-  C:\skylicht-engine>mkdir PrjVisualStudio
-  ```
+  C:\skylicht-engine>cd Assets
+  C:\skylicht-engine\Assets>python BuildAssetBundles.py
+  C:\skylicht-engine\Assets>cd ..
+  ```  
 - Run CMake from the current directory
   ```
   C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
   ```
 - Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`.
-
 - Once the solution opens, right click the MainApp project, click "Set as StartUp Project" and click the play button at the top to run the Demo App.
 
 #### Add Source To Project
 
-- You create new source files or folder on `Projects/{ProjectName}/Source/` and regenerate project.
+- Add new source files or folder on `Projects/{ProjectName}/Source/` and regenerate project.
   ```
   C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
   ```

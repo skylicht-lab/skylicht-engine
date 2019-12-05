@@ -66,39 +66,50 @@ namespace Skylicht
 
 	void CShaderManager::initBasicShader()
 	{
-#ifndef LINUX_SERVER
-#endif
-}
+		loadShader("BuiltIn/Shader/Basic/VertexColor.xml");
+		loadShader("BuiltIn/Shader/Basic/VertexColorAlpha.xml");
+		loadShader("BuiltIn/Shader/Basic/VertexColorAdditive.xml");
+
+		loadShader("BuiltIn/Shader/Basic/TextureColor.xml");
+		loadShader("BuiltIn/Shader/Basic/TextureColorAlpha.xml");
+		loadShader("BuiltIn/Shader/Basic/TextureColorAlphaBGR.xml");
+		loadShader("BuiltIn/Shader/Basic/TextureColorAlphaBW.xml");
+
+		loadShader("BuiltIn/Shader/Basic/TextureColorAdditive.xml");
+		loadShader("BuiltIn/Shader/Basic/TextureColor2LayerAdditive.xml");
+
+		loadShader("BuiltIn/Shader/Basic/AlphaTest.xml");
+		loadShader("BuiltIn/Shader/Basic/AlphaBlend.xml");
+	}
 
 	void CShaderManager::initSkylichtEngineShader()
 	{
-#ifndef LINUX_SERVER		
-#endif
 	}
 
 
 	void CShaderManager::initShader()
 	{
-#ifndef LINUX_SERVER
 		initBasicShader();
 
 		initSkylichtEngineShader();
-#endif
 	}
 
 	CShader* CShaderManager::loadShader(const char *shaderConfig, IShaderCallback *callback, bool releaseCallback)
 	{
-#ifdef LINUX_SERVER
-		return NULL;
-#else
 		std::string shaderFolder = CPath::getFolderPath(std::string(shaderConfig));
 		shaderFolder += "/";
 
+		char log[512];
+
 		io::IXMLReader *xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(shaderConfig);
 		if (xmlReader == NULL)
-			return NULL;
+		{
+			sprintf(log, "Load shader: %s - File not found", shaderConfig);
+			os::Printer::log(log);
 
-		char log[512];
+			return NULL;
+		}
+		
 		sprintf(log, "Load shader: %s", shaderConfig);
 		os::Printer::log(log);
 
@@ -131,7 +142,6 @@ namespace Skylicht
 		}
 
 		return shader;
-#endif
 	}
 
 	int CShaderManager::getShaderIDByName(const char *name)

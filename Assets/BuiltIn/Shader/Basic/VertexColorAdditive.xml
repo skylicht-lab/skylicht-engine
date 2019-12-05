@@ -1,0 +1,9 @@
+<shaderConfig name="VertexColorAdditive" baseShader="TRANSPARENT_ADD_COLOR">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/ColorVS.glsl" fs="GLSL/ColorFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ColorVS.hlsl" fs="HLSL/ColorFS.hlsl"/>
+</shaderConfig>
