@@ -64,6 +64,9 @@ void COSOperator::copyToClipboard(const c8* text) const
 
 // Windows version
 #if defined(_IRR_XBOX_PLATFORM_)
+	// do nothing
+#elif defined(WINDOWS_STORE)
+	// do nothing
 #elif defined(_IRR_WINDOWS_API_)
 	if (!OpenClipboard(NULL) || text == 0)
 		return;
@@ -102,6 +105,8 @@ const c8* COSOperator::getTextFromClipboard() const
 {
 #if defined(_IRR_XBOX_PLATFORM_)
 		return 0;
+#elif defined(WINDOWS_STORE)
+		return 0;
 #elif defined(_IRR_WINDOWS_API_)
 	if (!OpenClipboard(NULL))
 		return 0;
@@ -133,7 +138,10 @@ bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
 {
 	if (MHz)
 		*MHz=0;
-#if defined(_IRR_WINDOWS_API_) && !defined (_IRR_XBOX_PLATFORM_)
+
+#if defined(WINDOWS_STORE)
+	return false;
+#elif defined(_IRR_WINDOWS_API_) && !defined (_IRR_XBOX_PLATFORM_)
 	LONG Error;
 
 	HKEY Key;
@@ -155,7 +163,6 @@ bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
 	else if (MHz)
 		*MHz = Speed;
 	return true;
-
 #elif defined(_IRR_OSX_PLATFORM_)
 	struct clockinfo CpuClock;
 	size_t Size = sizeof(clockinfo);
@@ -191,7 +198,9 @@ bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
 
 bool COSOperator::getSystemMemory(u32* Total, u32* Avail) const
 {
-#if defined(_IRR_WINDOWS_API_) && !defined (_IRR_XBOX_PLATFORM_)
+#if defined(WINDOWS_STORE)
+	return false;
+#elif defined(_IRR_WINDOWS_API_) && !defined (_IRR_XBOX_PLATFORM_)
 	MEMORYSTATUS MemoryStatus;
 	MemoryStatus.dwLength = sizeof(MEMORYSTATUS);
 
@@ -204,7 +213,6 @@ bool COSOperator::getSystemMemory(u32* Total, u32* Avail) const
 		*Avail = (u32)(MemoryStatus.dwAvailPhys>>10);
 
 	return true;
-
 #elif defined(_IRR_POSIX_API_) && !defined(__FreeBSD__)
 #if defined(_SC_PHYS_PAGES) && defined(_SC_AVPHYS_PAGES)
         long ps = sysconf(_SC_PAGESIZE);

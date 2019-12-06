@@ -970,20 +970,7 @@ bool CFileSystem::existFile(const io::path& filename) const
 		if (FileArchives[i]->getFileList()->findFile(filename)!=-1)
 			return true;
 
-#if defined(_IRR_WINDOW_UNIVERSAL_PLATFORM_)
-#if defined(_IRR_WCHAR_FILESYSTEM)
-	HANDLE hFile = CreateFileW(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-#else
-	HANDLE hFile = CreateFileW(core::stringw(filename).c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-#endif
-	if (hFile == INVALID_HANDLE_VALUE)
-		return false;
-	else
-	{
-		CloseHandle(hFile);
-		return true;
-	}
-#elif defined(_IRR_WEBASM_PLATFORM_)
+#if defined(_IRR_WINDOW_UNIVERSAL_PLATFORM_) || defined(_IRR_WEBASM_PLATFORM_)
 	FILE *file = fopen(filename.c_str(), "rb");
 	if (file == NULL)
 		return false;
