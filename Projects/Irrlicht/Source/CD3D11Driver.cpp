@@ -234,11 +234,11 @@ namespace irr
 				// Try creating hardware device
 				//! If you got an error here that 'D3D_FEATURE_LEVEL_11_1' is undeclared you have to download an appropriate DXSDK
 				//! Download: http://msdn.microsoft.com/en-us/windows/desktop/hh852363.aspx
-				D3D_FEATURE_LEVEL RequestedLevels[] = {
-					D3D_FEATURE_LEVEL_12_1,
-					D3D_FEATURE_LEVEL_12_0,
+				D3D_FEATURE_LEVEL RequestedLevels[] = {					
 					D3D_FEATURE_LEVEL_11_1,
-					D3D_FEATURE_LEVEL_11_0
+					D3D_FEATURE_LEVEL_11_0,
+					D3D_FEATURE_LEVEL_10_1,
+					D3D_FEATURE_LEVEL_10_0
 				};
 
 				const u32 featureLevelSize = sizeof(RequestedLevels) / sizeof(RequestedLevels[0]);
