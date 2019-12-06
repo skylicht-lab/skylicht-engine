@@ -147,6 +147,10 @@
 #define HAVE_WS2TCPIP_H 1
 #endif
 
+#ifdef WINDOWS_STORE
+#define HAVE_STRUCT_POLLFD	
+#endif
+	
 /* ---------------------------------------------------------------- */
 /*                        OTHER HEADER INFO                         */
 /* ---------------------------------------------------------------- */
@@ -515,16 +519,21 @@
    for VS2008 we will target the minimum Officially supported build target,
    which happens to be Windows XP. */
 #if defined(_MSC_VER) && (_MSC_VER >= 1500)
-#  define VS2008_DEF_TARGET  0x0501
+#ifdef WINDOWS_STORE
+// Windows 10
+#  define VS2017_DEF_TARGET  0x0A00
+#else
+#  define VS2017_DEF_TARGET  0x0501
+#endif
 #endif
 
 /* VS2008 default target settings and minimum build target check. */
 #if defined(_MSC_VER) && (_MSC_VER >= 1500)
 #  ifndef _WIN32_WINNT
-#    define _WIN32_WINNT VS2008_DEF_TARGET
+#    define _WIN32_WINNT VS2017_DEF_TARGET
 #  endif
 #  ifndef WINVER
-#    define WINVER VS2008_DEF_TARGET
+#    define WINVER VS2017_DEF_TARGET
 #  endif
 #  if (_WIN32_WINNT < VS2008_MIN_TARGET) || (WINVER < VS2008_MIN_TARGET)
 #    error VS2008 does not support Windows build targets prior to Windows 2000
