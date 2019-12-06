@@ -238,12 +238,7 @@ namespace irr
 					D3D_FEATURE_LEVEL_12_1,
 					D3D_FEATURE_LEVEL_12_0,
 					D3D_FEATURE_LEVEL_11_1,
-					D3D_FEATURE_LEVEL_11_0,
-					D3D_FEATURE_LEVEL_10_1,
-					D3D_FEATURE_LEVEL_10_0,
-					D3D_FEATURE_LEVEL_9_3,
-					D3D_FEATURE_LEVEL_9_2,
-					D3D_FEATURE_LEVEL_9_1
+					D3D_FEATURE_LEVEL_11_0
 				};
 
 				const u32 featureLevelSize = sizeof(RequestedLevels) / sizeof(RequestedLevels[0]);
