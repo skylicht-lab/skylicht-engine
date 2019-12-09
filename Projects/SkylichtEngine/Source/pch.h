@@ -79,6 +79,7 @@ using namespace irr::video;
 #include <queue>
 #include <fstream>
 #include <string>
+#include <typeinfo>
 
 namespace Skylicht
 {

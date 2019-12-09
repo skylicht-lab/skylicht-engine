@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CBaseApp.h"
 
-#include "Graphics/CGraphics.h"
+#include "Graphics2D/CGraphics2D.h"
 
 #ifdef _DEBUG
 #ifdef USE_VISUAL_LEAK_DETECTOR
@@ -148,14 +148,14 @@ namespace Skylicht
 #ifdef LINUX_SERVER	
 		return false;
 #else
-		return CGraphics::getInstance()->isHD();
+		return CGraphics2D::getInstance()->isHD();
 #endif
 	}
 
 	bool CBaseApp::isWideScreen()
 	{
 #ifndef LINUX_SERVER
-		return CGraphics::getInstance()->isWideScreen();
+		return CGraphics2D::getInstance()->isWideScreen();
 #else
 		return false;
 #endif
@@ -173,7 +173,7 @@ namespace Skylicht
 
 		float scale = baseSize.Width / (float)screenSize.Width;
 
-		CGraphics::getInstance()->setScale(scale);
+		CGraphics2D::getInstance()->setScale(scale);
 #endif
 	}
 
