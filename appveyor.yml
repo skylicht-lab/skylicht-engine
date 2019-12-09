@@ -1,4 +1,4 @@
-version: '0.0.{build}'
+version: '{build}'
 
 # all brance build
 
@@ -7,16 +7,6 @@ image:
 
 environment:
   matrix:
-    # Android
-    - platform: Android
-      arch: armeabi-v7a
-      toolchain: Android
-      configuration: Release
-      cmake_args: -B ./PrjAndroid -G "MinGW Makefiles"      
-      android_ndk: C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17
-      android_abi: armeabi-v7a with NEON
-      android_min_sdk: 21
-      
     # Cygwin/x64/Release
     - platform: Cygwin x64
       arch: x64
@@ -86,39 +76,26 @@ artifacts:
   - path: Build\*.zip
       
 for:
-  # Android
-  -
-    matrix:
-      only:
-        - toolchain: Android
-    before_build:
-      - cd C:\Projects\Skylicht_Engine
-      - echo %arch%
-      - echo %cmake_args%      
-      - cmake -S . %cmake_args% -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=%android_ndk%/build/cmake/android.toolchain.cmake -DANDROID_ABI="%android_abi%" -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=%android_min_sdk%
-    build_script:
-      - mingw32-make -C PrjAndroid
-    after_build:
-      - mkdir Build
-      - dir Bin
-      - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
-      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
-      - 7z a %output_zip% Bin\Android\Libs\*.so
-  
   # MSVC
   -
     matrix:
       only:
         - toolchain: MSVC
     build_script:
-      - cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
+      - cd Assets
+      - python BuildAssetBundles.py
+      - cd ..
+      - cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%      
     after_build:
       - mkdir Build
       - dir Bin
-      - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
+      - type Version.txt
+      - set /p CONFIG_VERSION=<Version.txt
+      - set file_version=%CONFIG_VERSION:.=_%_%APPVEYOR_BUILD_VERSION%
       - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
       - move Bin\%configuration%\MainApp.exe Bin\MainApp.exe
       - 7z a %output_zip% Bin\*.exe
+      - 7z a %output_zip% Bin\*.zip
     test_script:
       - cd PrjVisualStudio
       - ctest -C %configuration% --verpose
@@ -130,13 +107,19 @@ for:
       only:
         - toolchain: Cygwin
     build_script:
+      - cd Assets
+      - python BuildAssetBundles.py
+      - cd ..
       - make -C PrjCygwin
     after_build:
       - mkdir Build
       - dir Bin
-      - call set file_version=%%APPVEYOR_BUILD_VERSION:.=_%%
-      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip      
+      - type Version.txt
+      - set /p CONFIG_VERSION=<Version.txt
+      - set file_version=%CONFIG_VERSION:.=_%_%APPVEYOR_BUILD_VERSION%
+      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
       - 7z a %output_zip% Bin\*.exe
+      - 7z a %output_zip% Bin\*.zip
     test_script:
       - cd PrjCygwin
       - ctest --verpose

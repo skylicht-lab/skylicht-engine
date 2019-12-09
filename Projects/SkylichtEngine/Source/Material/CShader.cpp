@@ -389,7 +389,7 @@ namespace Skylicht
 						memset(uniform->Value, 0, sizeof(float) * 16);
 
 						for (int i = 0; i < numValue; i++)
-							uniform->Value[i] = atof(listValue[i].c_str());
+							uniform->Value[i] = (float)atof(listValue[i].c_str());
 					}
 
 					wtext = xmlReader->getAttributeValue(L"openGL");
@@ -418,14 +418,14 @@ namespace Skylicht
 					if (wtext != NULL)
 					{
 						CStringImp::convertUnicodeToUTF8(wtext, text);
-						uniform->Min = atof(text);
+						uniform->Min = (float)atof(text);
 					}
 
 					wtext = xmlReader->getAttributeValue(L"max");
 					if (wtext != NULL)
 					{
 						CStringImp::convertUnicodeToUTF8(wtext, text);
-						uniform->Max = atof(text);
+						uniform->Max = (float)atof(text);
 					}
 				}
 			}

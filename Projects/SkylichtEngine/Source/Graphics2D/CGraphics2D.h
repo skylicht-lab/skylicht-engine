@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	class CGraphics : public CGameSingleton<CGraphics>
+	class CGraphics2D : public CGameSingleton<CGraphics2D>
 	{
 	public:
 		enum EDrawState
@@ -84,8 +84,8 @@ namespace Skylicht
 		int		m_textureColorAlphaMaskShader;
 
 	public:
-		CGraphics();
-		virtual ~CGraphics();
+		CGraphics2D();
+		virtual ~CGraphics2D();
 
 		void init();
 

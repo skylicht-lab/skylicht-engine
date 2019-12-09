@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 
-#include "CGraphics.h"
+#include "CGraphics2D.h"
 #include "Material/CShaderManager.h"
 
 #define MAX_VERTICES (128*4)
@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CGraphics::CGraphics()
+	CGraphics2D::CGraphics2D()
 	{
 		m_currentW = -1;
 		m_currentH = -1;
@@ -72,11 +72,11 @@ namespace Skylicht
 		m_drawState = NoThing;
 	}
 
-	void CGraphics::init()
+	void CGraphics2D::init()
 	{
 	}
 
-	CGraphics::~CGraphics()
+	CGraphics2D::~CGraphics2D()
 	{
 		if (m_buffer)
 			m_buffer->drop();
@@ -88,17 +88,17 @@ namespace Skylicht
 			m_bufferImage->drop();
 	}
 
-	void CGraphics::set2DViewport(int w, int h)
+	void CGraphics2D::set2DViewport(int w, int h)
 	{
 		m_orthoMatrix.makeIdentity();
-		m_orthoMatrix.buildProjectionMatrixOrthoLH(w, -h, -1.0f, 1.0f);
-		m_orthoMatrix.setTranslation(core::vector3df(-1, 1, 0));
+		m_orthoMatrix.buildProjectionMatrixOrthoLH((f32)w, (f32)-h, -1.0f, 1.0f);
+		m_orthoMatrix.setTranslation(core::vector3df(-1.0f, 1.0f, 0.0f));
 
 		m_currentW = w;
 		m_currentH = h;
 	}
 
-	void CGraphics::begin2D()
+	void CGraphics2D::begin2D()
 	{
 		if (m_vertexColorShader == -1)
 		{
@@ -128,7 +128,7 @@ namespace Skylicht
 		m_numFlushTime = 0;
 	}
 
-	void CGraphics::end()
+	void CGraphics2D::end()
 	{
 		flush();
 		m_driver->setTransform(video::ETS_PROJECTION, m_prjMatrix);
@@ -137,7 +137,7 @@ namespace Skylicht
 		//printf("Graphics::end numFlush: %d\n", m_numFlushTime);
 	}
 
-	void CGraphics::draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color)
+	void CGraphics2D::draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color)
 	{
 		// flush buffer
 		flush();
@@ -176,7 +176,7 @@ namespace Skylicht
 		m_vertices->set_used(0);
 	}
 
-	void CGraphics::draw2DRectangle(const core::rectf& pos, const SColor& color)
+	void CGraphics2D::draw2DRectangle(const core::rectf& pos, const SColor& color)
 	{
 		// flush buffer
 		flush();
@@ -212,7 +212,7 @@ namespace Skylicht
 		m_vertices->set_used(0);
 	}
 
-	void CGraphics::draw2DRectangleOutline(const core::rectf& pos, const SColor& color)
+	void CGraphics2D::draw2DRectangleOutline(const core::rectf& pos, const SColor& color)
 	{
 		// flush buffer
 		flush();
@@ -247,12 +247,12 @@ namespace Skylicht
 		m_vertices->set_used(0);
 	}
 
-	void CGraphics::draw2D()
+	void CGraphics2D::draw2D()
 	{
 
 	}
 
-	void CGraphics::flush()
+	void CGraphics2D::flush()
 	{
 		flushBuffer(m_buffer, m_2dMaterial);
 		flushBuffer(m_bufferFont, m_2dMaterialFont);
@@ -261,7 +261,7 @@ namespace Skylicht
 		m_drawState = NoThing;
 	}
 
-	void CGraphics::flushBuffer(IMeshBuffer *meshBuffer, video::SMaterial& material)
+	void CGraphics2D::flushBuffer(IMeshBuffer *meshBuffer, video::SMaterial& material)
 	{
 		scene::IVertexBuffer* vertices = meshBuffer->getVertexBuffer();
 		scene::IIndexBuffer* indices = meshBuffer->getIndexBuffer();
@@ -299,28 +299,28 @@ namespace Skylicht
 		}
 	}
 
-	void CGraphics::setWriteDepth(video::SMaterial& mat)
+	void CGraphics2D::setWriteDepth(video::SMaterial& mat)
 	{
 		mat.ZBuffer = video::ECFN_ALWAYS;
 		mat.ZWriteEnable = true;
 		mat.ColorMask = ECP_NONE;
 	}
 
-	void CGraphics::setTestDepth(video::SMaterial& mat)
+	void CGraphics2D::setTestDepth(video::SMaterial& mat)
 	{
 		mat.ZBuffer = video::ECFN_EQUAL;
 		mat.ZWriteEnable = false;
 		mat.ColorMask = ECP_ALL;
 	}
 
-	void CGraphics::setNoTestDepth(video::SMaterial& mat)
+	void CGraphics2D::setNoTestDepth(video::SMaterial& mat)
 	{
 		mat.ZBuffer = video::ECFN_ALWAYS;
 		mat.ZWriteEnable = false;
 		mat.ColorMask = ECP_ALL;
 	}
 
-	void CGraphics::beginDrawMask()
+	void CGraphics2D::beginDrawMask()
 	{
 		// render all
 		flush();
@@ -338,7 +338,7 @@ namespace Skylicht
 		m_driver->setAllowZWriteOnTransparent(true);
 	}
 
-	void CGraphics::endDrawMask()
+	void CGraphics2D::endDrawMask()
 	{
 		// render all
 		flush();
@@ -353,7 +353,7 @@ namespace Skylicht
 		m_driver->setAllowZWriteOnTransparent(false);
 	}
 
-	void CGraphics::beginMaskTest()
+	void CGraphics2D::beginMaskTest()
 	{
 		// depth test
 		setTestDepth(m_2dMaterial);
@@ -361,7 +361,7 @@ namespace Skylicht
 		setTestDepth(m_2dMaterialImage);
 	}
 
-	void CGraphics::endMaskTest()
+	void CGraphics2D::endMaskTest()
 	{
 		// render all
 		flush();
@@ -372,7 +372,7 @@ namespace Skylicht
 		setNoTestDepth(m_2dMaterialImage);
 	}
 
-	void CGraphics::addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, ITexture *alpha, int pivotX, int pivotY)
+	void CGraphics2D::addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, ITexture *alpha, int pivotX, int pivotY)
 	{
 		if (m_2dMaterialImage.getTexture(0) != img || m_drawState != DrawImage)
 			flush();
@@ -405,9 +405,9 @@ namespace Skylicht
 		m_verticesImage->set_used(numVerticesUse);
 		S3DVertex *vertices = (S3DVertex*)m_verticesImage->getVertices();
 
-		core::recti pos;
-		pos.UpperLeftCorner.X = -pivotX;
-		pos.UpperLeftCorner.Y = -pivotY;
+		core::rectf pos;
+		pos.UpperLeftCorner.X = (f32)-pivotX;
+		pos.UpperLeftCorner.Y = (f32)-pivotY;
 		pos.LowerRightCorner.X = pos.UpperLeftCorner.X + dest.getWidth();
 		pos.LowerRightCorner.Y = pos.UpperLeftCorner.Y + dest.getHeight();
 
@@ -431,7 +431,7 @@ namespace Skylicht
 		m_2dMaterialImage.MaterialType = materialID;
 	}
 
-	void CGraphics::addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, ITexture *alpha, int pivotX, int pivotY)
+	void CGraphics2D::addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, ITexture *alpha, int pivotX, int pivotY)
 	{
 		if (m_2dMaterialImage.getTexture(0) != img || m_drawState != DrawImage)
 			flush();
@@ -495,7 +495,7 @@ namespace Skylicht
 		//m_vertices->set_used(0);
 	}
 
-	void CGraphics::addRectBatch(const core::rectf& r, const SColor& color, const core::matrix4& absoluteMatrix, bool outLine)
+	void CGraphics2D::addRectBatch(const core::rectf& r, const SColor& color, const core::matrix4& absoluteMatrix, bool outLine)
 	{
 		flush();
 
@@ -589,7 +589,7 @@ namespace Skylicht
 		}
 	}
 
-	core::dimension2du CGraphics::getScreenSize()
+	core::dimension2du CGraphics2D::getScreenSize()
 	{
 		core::dimension2du screenSize = getVideoDriver()->getScreenSize();
 
@@ -601,7 +601,7 @@ namespace Skylicht
 		return screenSize;
 	}
 
-	bool CGraphics::isHD()
+	bool CGraphics2D::isHD()
 	{
 		core::dimension2du size = getVideoDriver()->getScreenSize();
 		if (size.Width > 1400 || size.Height > 1400)
@@ -609,7 +609,7 @@ namespace Skylicht
 		return false;
 	}
 
-	bool CGraphics::isWideScreen()
+	bool CGraphics2D::isWideScreen()
 	{
 		core::dimension2du size = getVideoDriver()->getScreenSize();
 		float r = size.Width / (float)size.Height;
