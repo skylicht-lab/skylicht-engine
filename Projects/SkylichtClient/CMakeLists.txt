@@ -16,7 +16,7 @@ include_directories(
 #include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtNetwork/Source)
 #endif()
 
-#if(BUILD_BULLET_PHYSIC2_LIB)
+#if(BUILD_RECAST_NAVIGATION_LIB)
 #include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/RecastNavigation/Source)
 #endif()
 

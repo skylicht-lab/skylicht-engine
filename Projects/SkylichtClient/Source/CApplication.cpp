@@ -40,10 +40,10 @@ https://github.com/skylicht-lab/skylicht-engine
 // String Imp
 #include "Utils/CStringImp.h"
 
-// Shader load
-#include "Material/CShaderManager.h"
-
 CBaseApp* g_app = NULL;
+
+// external function
+void installApplication(const std::vector<std::string>& argv);
 
 namespace Skylicht
 {
@@ -56,7 +56,7 @@ namespace Skylicht
 	{
 		g_app = this;
 
-		m_pauseTime = 0.0f;
+		m_pauseTime = 0;
 		m_resizeWin = true;
 		m_width = 0;
 		m_height = 0;
@@ -135,6 +135,16 @@ namespace Skylicht
 		return false;
 	}
 
+	void CApplication::setParams(const std::vector<std::string>& argv)
+	{
+		m_argv = argv;
+	}
+
+	const std::vector<std::string>& CApplication::getParams()
+	{
+		return m_argv;
+	}
+
 	void CApplication::initApplication(IrrlichtDevice* device)
 	{
 		if (device == NULL)
@@ -157,9 +167,10 @@ namespace Skylicht
 		// init skylicht component
 		initSkylicht(m_device);
 
-		// load basic shader
-		CShaderManager::getInstance()->initBasicShader();
+		// install application
+		installApplication(m_argv);
 
+		// send app init event
 		sendEventToAppReceiver(AppEventInit);
 
 		m_runGame = true;
@@ -240,9 +251,6 @@ namespace Skylicht
 
 			// game render
 			sendEventToAppReceiver(AppEventPostRender);
-
-			// clear depth
-			m_driver->clearZBuffer();
 
 			// draw debug fps string
 			int fps = m_driver->getFPS();

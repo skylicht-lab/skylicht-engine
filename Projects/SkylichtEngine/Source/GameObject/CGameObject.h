@@ -1,0 +1,292 @@
+/*
+!@
+MIT License
+
+Copyright (c) 2019 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
+
+#ifndef _CGAMEOBJECT_H_
+#define _CGAMEOBJECT_H_
+
+#include "pch.h"
+#include "Material/CShaderParams.h"
+#include "Components/CComponentSystem.h"
+
+namespace Skylicht
+{
+	class CGameObject
+	{
+	public:
+		static long					s_objectID;
+		static std::map<long, long>	s_mapObjIDOnFileSaved;
+		static bool					s_repairIDMode;
+
+	public:
+		static core::vector3df s_ox;
+		static core::vector3df s_oy;
+		static core::vector3df s_oz;
+
+	protected:
+		long				m_objectID;
+		std::wstring		m_name;
+		std::wstring		m_defaultName;
+		std::string			m_namec;
+
+		bool				m_static;
+		bool				m_enable;
+		bool				m_visible;
+		bool				m_lighting;
+
+		bool				m_lockObject;
+
+		CGameObject			*m_parent;
+
+		void				*m_tagData;
+		int					m_tagDataInt;
+		std::string			m_tagDataString;
+
+		CShaderParams		m_shaderParams;
+
+
+		std::vector<CComponentSystem*> m_components;
+	public:
+
+		CGameObject();
+
+		CGameObject(CGameObject *parent);
+
+		virtual ~CGameObject();
+
+	protected:
+
+		void initNull();
+
+	public:
+
+		virtual void setID(long id)
+		{
+			m_objectID = id;
+
+			if (s_objectID <= m_objectID)
+				s_objectID = m_objectID + 1;
+		}
+
+		inline long getID()
+		{
+			return m_objectID;
+		}
+
+		inline const wchar_t* getName()
+		{
+			return m_name.c_str();
+		}
+
+		inline const wchar_t* getDefaultName()
+		{
+			return m_defaultName.c_str();
+		}
+
+		inline void setName(const wchar_t *lpName)
+		{
+			m_name = lpName;
+
+			if (m_defaultName == L"")
+				m_defaultName = lpName;
+		}
+
+		void setName(const char* lpName);
+
+		const char *getNameA();
+
+		inline CGameObject* getParent()
+		{
+			return m_parent;
+		}
+
+		inline void setParent(CGameObject *p)
+		{
+			m_parent = p;
+		}		
+
+		inline bool isEnable()
+		{
+			return m_enable;
+		}
+
+		inline bool isVisible()
+		{
+			return m_visible;
+		}
+
+		virtual void setEnable(bool b)
+		{
+			m_enable = b;
+		}
+
+		virtual void setStatic(bool b)
+		{
+			m_static = b;
+		}
+
+		virtual bool isStatic()
+		{
+			return m_static;
+		}
+
+		virtual void setVisible(bool b)
+		{
+			m_visible = b;
+		}
+
+		inline void setLighting(bool b)
+		{
+			m_lighting = b;
+		}
+
+		inline bool isLighting()
+		{
+			return m_lighting;
+		}		
+
+		inline void setLockObject(bool b)
+		{
+			m_lockObject = b;
+		}
+
+		inline bool isLock()
+		{
+			return m_lockObject;
+		}
+
+		inline void tagData(void *data)
+		{
+			m_tagData = data;
+		}
+
+		inline void tagData(int data)
+		{
+			m_tagDataInt = data;
+		}
+
+		inline void tagData(std::string& s)
+		{
+			m_tagDataString = s;
+		}
+
+		inline void* getTagData()
+		{
+			return m_tagData;
+		}
+
+		inline int getTagDataInt()
+		{
+			return m_tagDataInt;
+		}
+
+		const char* getTagDataString()
+		{
+			return m_tagDataString.c_str();
+		}
+		
+		virtual void updateObject();
+
+		virtual void postUpdateObject();
+
+		virtual void endUpdate();
+
+		virtual void remove();		
+
+		virtual void initComponent();
+
+		template<class T>
+		T* addComponent();
+
+		template<class T>
+		T* getComponent();
+
+		template<class T>
+		bool removeComponent();
+
+		void releaseAllComponent();
+	};
+
+	// typedef for array object
+	typedef std::vector<CGameObject*>			ArrayGameObject;
+	typedef std::vector<CGameObject*>::iterator	ArrayGameObjectIter;
+
+	// typedef for array component system
+	typedef std::vector<CComponentSystem*>              ArrayComponent;
+	typedef std::vector<CComponentSystem*>::iterator	ArrayComponentIter;
+
+	template<class T>
+	T* CGameObject::addComponent()
+	{
+		T* newComp = new T();
+		CComponentSystem *compSystem = dynamic_cast<CComponentSystem*>(newComp);
+		if (compSystem == NULL)
+		{
+			char exceptionInfo[512];
+			sprintf(exceptionInfo, "CGameObject::addComponent %s must inherit CComponentSystem", typeid(T).name());
+			os::Printer::log(exceptionInfo);
+			delete newComp;
+			return NULL;
+		}
+
+		compSystem->setOwner(this);
+		m_components.push_back(compSystem);
+
+		return newComp;
+	}
+
+	template<class T>
+	T* CGameObject::getComponent()
+	{
+		ArrayComponentIter i = m_components.begin(), end = m_components.end();
+		while (i != end)
+		{
+			CComponentSystem *c = (*i);
+			if (typeid(*c) == typeid(T))
+				return dynamic_cast<T*>(c);
+			++i;
+		}
+		return NULL;
+	}
+
+	template<class T>
+	bool CGameObject::removeComponent()
+	{
+		ArrayComponentIter i = m_components.begin(), end = m_components.end();
+		while (i != end)
+		{
+			CComponentSystem *c = (*i);
+			if (typeid(*c) == typeid(T))
+			{
+				delete c;
+				m_components.erase(i);
+				return true;
+			}
+			++i;
+		}
+
+		return false;
+	}
+}
+
+#endif
