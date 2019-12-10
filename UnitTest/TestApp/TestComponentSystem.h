@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameObject/CGameObject.h"
 #include "Components/CComponentSystem.h"
 
 class TestComponent : public Skylicht::CComponentSystem
@@ -18,5 +19,7 @@ public:
 	virtual void endUpdate();
 
 };
+
+void testComponent(CGameObject *gameObject);
 
 bool isTestComponentPass();
