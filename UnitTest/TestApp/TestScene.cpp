@@ -39,24 +39,7 @@ TestScene::TestScene() : m_testStep(0)
 	obj->setName("ObjectC");
 	TEST_ASSERT_THROW(obj != NULL);
 
-
-	TEST_CASE("Add component system");
-	TestComponent *comp = obj->addComponent<TestComponent>();
-	TEST_ASSERT_THROW(comp != NULL);
-	TEST_ASSERT_THROW(comp->getGameObject() == obj);	
-	obj->initComponent();
-
-
-	TEST_CASE("Get component system");
-	TestComponent *getComp = obj->getComponent<TestComponent>();
-	TEST_ASSERT_THROW(getComp != NULL);
-	TEST_ASSERT_THROW(getComp == comp);	
-
-	TEST_CASE("Remove component system");
-	TEST_ASSERT_THROW(obj->removeComponent<TestComponent>() == true);
-	
-	// re-add component for update component test
-	obj->addComponent<TestComponent>();
+	testComponent(obj);
 
 	TEST_CASE("Force update add/remove");
 	m_scene->updateAddRemoveObject();
