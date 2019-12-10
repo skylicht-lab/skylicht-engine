@@ -225,7 +225,7 @@ subdirs (Projects/MainApp)
 subdirs (Projects/Demo)
 
 # unit test
-if (NOT BUILD_ANDROID AND NOT BUILD_EMSCRIPTEN)
+if (NOT BUILD_ANDROID AND NOT BUILD_EMSCRIPTEN AND NOT BUILD_WINDOWS_STORE)
 enable_testing()
 subdirs (UnitTest/TestApp)
 endif()
