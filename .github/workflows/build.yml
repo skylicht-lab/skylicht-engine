@@ -47,7 +47,7 @@ jobs:
         type Version.txt
         set /p CONFIG_VERSION=<Version.txt
         set file_version=%CONFIG_VERSION:.=_%
-        set output=Build\SkylichtDemo_%file_version%__Emscripten.zip
+        set output=Build\SkylichtDemo_%file_version%_Emscripten.zip
         7z a %output% Bin\MainApp*
         7z a %output% Bin\*.zip        
     - name: Result
@@ -55,7 +55,40 @@ jobs:
       with:
         name: SkylichtDemo_Emscripten
         path: Build
-          
+
+  Universal_Windows_Platform:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      shell: cmd
+      run: |
+       cd Assets
+       python BuildAssetBundles.py
+       cd ..
+       mkdir PrjUWP
+       mkdir PrjUWP\Projects
+       mkdir PrjUWP\Projects\MainApp
+       mkdir PrjUWP\Projects\MainApp\Assets
+       copy Projects\MainApp\Platforms\UWP\Assets\*.* PrjUWP\Projects\MainApp\Assets
+       copy Bin\BuiltIn* PrjUWP\Projects\MainApp\Assets       
+       cmake -S . -B ./PrjUWP -G "Visual Studio 16 2019" -A x64 -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0
+       cmake --build ./PrjUWP --config "Release"
+    - name: Package
+      shell: cmd
+      run: |
+        mkdir Build        
+        type Version.txt
+        set /p CONFIG_VERSION=<Version.txt
+        set file_version=%CONFIG_VERSION:.=_%
+        set output=Build\SkylichtDemo_%file_version%_UWP.zip
+        7z a %output% PrjUWP\Projects\MainApp\AppPackages\MainApp\MainApp_1.0.0.0_x64_Test\*.*
+    - name: Result
+      uses: actions/upload-artifact@v1
+      with:
+        name: SkylichtDemo_UWP
+        path: Build
+    
   Linux:
     runs-on: ubuntu-latest    
     steps:

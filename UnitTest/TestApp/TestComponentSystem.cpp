@@ -1,3 +1,4 @@
+#include "Base.hh"
 #include "TestComponentSystem.h"
 
 bool g_initComponentPass = false;
@@ -34,6 +35,27 @@ void TestComponent::postUpdateComponent()
 void TestComponent::endUpdate()
 {
 	g_endUpdateComponentPass = true;
+}
+
+void testComponent(CGameObject *obj)
+{
+	TEST_CASE("Add component system");
+	TestComponent *comp = obj->addComponent<TestComponent>();
+	TEST_ASSERT_THROW(comp != NULL);
+	TEST_ASSERT_THROW(comp->getGameObject() == obj);
+	obj->initComponent();
+
+	TEST_CASE("Get component system");
+	TestComponent *getComp = obj->getComponent<TestComponent>();
+	TEST_ASSERT_THROW(getComp != NULL);
+	TEST_ASSERT_THROW(getComp == comp);
+
+	TEST_CASE("Remove component system");
+	TEST_ASSERT_THROW(obj->removeComponent<TestComponent>() == true);
+	TEST_ASSERT_THROW(obj->getComponent<TestComponent>() == NULL);
+
+	// re-add component for update component test
+	obj->addComponent<TestComponent>();
 }
 
 bool isTestComponentPass()
