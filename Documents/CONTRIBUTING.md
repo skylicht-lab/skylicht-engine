@@ -41,6 +41,7 @@ void function(int foo)
 ```
 **`Not recommended for old C Style`**
 Not recommend to use ~~c_style_function_name~~ and character _ for function name and variable name
+
 **`BAD`**
 ```
 // ugly code
@@ -152,4 +153,5 @@ function exampleFunction()
 }
 ```
 Thanks for contribute
+
 Skylicht Engine Author
