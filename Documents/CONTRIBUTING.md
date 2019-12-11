@@ -56,6 +56,7 @@ void function(int foo)
 **`NOT RECOMMENDED FOR OLD C CODE STYLE`**
 
 I recommend we don't use ~~c_style_function_name~~ and ~~character _~~ for function name and variable name
+
 **`BAD`**
 ```
 // ugly code
