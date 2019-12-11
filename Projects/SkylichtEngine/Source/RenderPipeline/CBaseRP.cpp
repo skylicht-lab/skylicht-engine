@@ -23,34 +23,16 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CZone.h"
-
-#include "Utils/CStringImp.h"
+#include "CBaseRP.h"
 
 namespace Skylicht
 {
-
-	CZone::CZone()
-	{
-		m_entityManager = new CEntityManager();
-	}
-
-	CZone::~CZone()
-	{
-		delete m_entityManager;
-	}
-
-	void CZone::updateObject()
-	{
-		updateAddRemoveObject();
-	}
-
-	void CZone::postUpdateObject()
+	CBaseRP::CBaseRP()
 	{
 
 	}
 
-	void CZone::endUpdate()
+	CBaseRP::~CBaseRP()
 	{
 
 	}

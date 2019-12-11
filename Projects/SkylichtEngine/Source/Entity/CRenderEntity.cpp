@@ -23,35 +23,46 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CZone.h"
-
-#include "Utils/CStringImp.h"
+#include "CEntityManager.h"
+#include "CRenderEntity.h"
 
 namespace Skylicht
 {
-
-	CZone::CZone()
+	CRenderEntity::CRenderEntity(CEntityManager *mgr) :
+		m_numData(0),
+		m_alive(true)
 	{
-		m_entityManager = new CEntityManager();
+		m_index = mgr->getNumEntities();
 	}
 
-	CZone::~CZone()
+	CRenderEntity::~CRenderEntity()
 	{
-		delete m_entityManager;
+		removeAllData();
+	}	
+
+	IEntityData* CRenderEntity::getData(int dataIndex)
+	{
+		if (dataIndex < 0 || dataIndex >= m_numData)
+			return NULL;
+
+		return m_data[dataIndex];
 	}
 
-	void CZone::updateObject()
+	void CRenderEntity::removeData(int dataIndex)
 	{
-		updateAddRemoveObject();
+		if (dataIndex >= 0 && dataIndex < m_numData)
+		{
+			m_numData--;
+			delete m_data[dataIndex];
+			m_data.erase(dataIndex);
+		}
 	}
 
-	void CZone::postUpdateObject()
+	void CRenderEntity::removeAllData()
 	{
-
-	}
-
-	void CZone::endUpdate()
-	{
-
+		IEntityData **data = m_data.pointer();
+		for (int i = 0; i < m_numData; i++)
+			delete data[i];
+		m_data.clear();
 	}
 }

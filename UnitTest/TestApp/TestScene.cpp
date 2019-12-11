@@ -1,6 +1,7 @@
 #include "Base.hh"
 #include "TestScene.h"
 #include "TestComponentSystem.h"
+#include "TestTransform.h"
 
 #include "Scene/CScene.h"
 
@@ -37,9 +38,10 @@ TestScene::TestScene() : m_testStep(0)
 	TEST_CASE("Create child object in container");
 	obj = container->createContainerObject();
 	obj->setName("ObjectC");
-	TEST_ASSERT_THROW(obj != NULL);
+	TEST_ASSERT_THROW(obj != NULL);	
 
 	testComponent(obj);
+	testTransform(obj);
 
 	TEST_CASE("Force update add/remove");
 	m_scene->updateAddRemoveObject();

@@ -23,34 +23,18 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CZone.h"
-
-#include "Utils/CStringImp.h"
+#include "CWorldTransform.h"
 
 namespace Skylicht
 {
-
-	CZone::CZone()
+	CWorldTransform::CWorldTransform():		
+		Depth(0),
+		ParentIndex(-1),
+		Transform(NULL)
 	{
-		m_entityManager = new CEntityManager();
 	}
 
-	CZone::~CZone()
-	{
-		delete m_entityManager;
-	}
-
-	void CZone::updateObject()
-	{
-		updateAddRemoveObject();
-	}
-
-	void CZone::postUpdateObject()
-	{
-
-	}
-
-	void CZone::endUpdate()
+	CWorldTransform::~CWorldTransform()
 	{
 
 	}

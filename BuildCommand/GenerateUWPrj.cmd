@@ -1,3 +1,4 @@
+cd..
 cd Assets
 python BuildAssetBundles.py
 cd ..
