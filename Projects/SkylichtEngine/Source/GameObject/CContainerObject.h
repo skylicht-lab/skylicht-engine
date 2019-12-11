@@ -36,6 +36,8 @@ namespace Skylicht
 		ArrayGameObject						m_add;
 		ArrayGameObject						m_remove;
 
+		core::array<CGameObject*>			m_arrayChildObjects;
+
 		core::array<CGameObject*>			m_objectsAffectLight;
 		core::array<CContainerObject*>		m_childContainer;
 
@@ -49,10 +51,6 @@ namespace Skylicht
 		virtual ~CContainerObject();
 
 		virtual void updateObject();
-
-		virtual void postUpdateObject();
-
-		virtual void endUpdate();
 
 		CGameObject* createEmptyObject();
 
@@ -91,6 +89,8 @@ namespace Skylicht
 
 		template<typename T>
 		void getListObjectType(ArrayGameObject& listObjs, T type);
+
+		core::array<CGameObject*>& getArrayChilds(bool addThis);
 	};
 }
 

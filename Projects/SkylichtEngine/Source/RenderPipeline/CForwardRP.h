@@ -22,36 +22,24 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CZone.h"
+#ifndef _CFORWARD_RP_H_
+#define _CFORWARD_RP_H_
 
-#include "Utils/CStringImp.h"
+#include "CBaseRP.h"
 
 namespace Skylicht
 {
-
-	CZone::CZone()
+	class CForwardRP : public CBaseRP
 	{
-		m_entityManager = new CEntityManager();
-	}
+	public:
+		CForwardRP();
 
-	CZone::~CZone()
-	{
-		delete m_entityManager;
-	}
+		virtual ~CForwardRP();
 
-	void CZone::updateObject()
-	{
-		updateAddRemoveObject();
-	}
+		virtual void initRender(int w, int h);
 
-	void CZone::postUpdateObject()
-	{
-
-	}
-
-	void CZone::endUpdate()
-	{
-
-	}
+		virtual void render(CCamera *camera, CEntityManager *entityManager, bool cullAndRenderOnly);
+	};
 }
+
+#endif

@@ -22,36 +22,31 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CZone.h"
+#ifndef _IRENDER_PIPELINE_H_
+#define _IRENDER_PIPELINE_H_
 
-#include "Utils/CStringImp.h"
+#include "Components/Camera/CCamera.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
-
-	CZone::CZone()
+	class IRenderPipeline
 	{
-		m_entityManager = new CEntityManager();
-	}
+	public:
+		IRenderPipeline()
+		{
 
-	CZone::~CZone()
-	{
-		delete m_entityManager;
-	}
+		}
 
-	void CZone::updateObject()
-	{
-		updateAddRemoveObject();
-	}
+		virtual ~IRenderPipeline()
+		{
 
-	void CZone::postUpdateObject()
-	{
+		}
 
-	}
+		virtual void initRender(int w, int h) = 0;
 
-	void CZone::endUpdate()
-	{
-
-	}
+		virtual void render(CCamera *camera, CEntityManager* entity, bool cullAndRenderOnly) = 0;
+	};
 }
+
+#endif

@@ -1,4 +1,5 @@
-cmake -S . -B ./PrjMinGW -G "MinGW Makefiles"
+cd..
+cmake -S . -B ./PrjMinGW -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"
 cd Assets
 python BuildAssetBundles.py
 cd ..

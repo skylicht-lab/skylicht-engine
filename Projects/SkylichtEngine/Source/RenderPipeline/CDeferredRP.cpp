@@ -23,35 +23,28 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CZone.h"
-
-#include "Utils/CStringImp.h"
+#include "CDeferredRP.h"
 
 namespace Skylicht
 {
-
-	CZone::CZone()
-	{
-		m_entityManager = new CEntityManager();
-	}
-
-	CZone::~CZone()
-	{
-		delete m_entityManager;
-	}
-
-	void CZone::updateObject()
-	{
-		updateAddRemoveObject();
-	}
-
-	void CZone::postUpdateObject()
+	CDeferredRP::CDeferredRP()
 	{
 
 	}
 
-	void CZone::endUpdate()
+	CDeferredRP::~CDeferredRP()
 	{
+
+	}
+
+	void CDeferredRP::initRender(int w, int h)
+	{
+
+	}
+
+	void CDeferredRP::render(CCamera *camera, CEntityManager *entityManager, bool cullAndRenderOnly)
+	{
+		camera->applyTransform();
 
 	}
 }
