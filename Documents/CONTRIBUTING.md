@@ -16,7 +16,7 @@ Do some thing 2
 
 Remember tag your issues id ex: #282 on your commit message, and branch name
 ## Code style
--   We try to adhere to the existing [**Irrlicht code style**](http://irrlicht.sourceforge.net/?page_id=140)
+-   We try to adhere to the existing [**Irrlicht code style**](http://irrlicht.sourceforge.net/?page_id=140) and mix some code style from Microsoft Foundation Classes, Java style.
 -   You can use your code style in your local project `Projects/{YourProject}`. But if you fix bug or commit a feature on `Projects/Skylicht*`, try to follow our style.
 ### Code formation
 Use **TAB Indent** instead 2 space for C/C++ code.
