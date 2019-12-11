@@ -22,36 +22,37 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CZone.h"
+#ifndef _BASE_TRANSFORM_H_
+#define _BASE_TRANSFORM_H_
 
-#include "Utils/CStringImp.h"
+#include "Components/CComponentSystem.h"
 
 namespace Skylicht
 {
-
-	CZone::CZone()
+	class CTransform : public CComponentSystem
 	{
-		m_entityManager = new CEntityManager();
-	}
+	public:
+		static core::vector3df s_ox;
+		static core::vector3df s_oy;
+		static core::vector3df s_oz;
 
-	CZone::~CZone()
-	{
-		delete m_entityManager;
-	}
+	public:
+		CTransform();
 
-	void CZone::updateObject()
-	{
-		updateAddRemoveObject();
-	}
+		virtual ~CTransform();
 
-	void CZone::postUpdateObject()
-	{
+		virtual void initComponent();
 
-	}
+		virtual void updateComponent();
 
-	void CZone::endUpdate()
-	{
+	public:
 
-	}
+		virtual void setMatrixTransform(const core::matrix4& mat) = 0;
+
+		virtual const core::matrix4& getMatrixTransform() = 0;
+
+		virtual void getMatrixTransform(core::matrix4& matrix) = 0;
+	};
 }
+
+#endif

@@ -16,7 +16,7 @@ Do some thing 2
 
 Remember tag your issues id ex: #282 on your commit message, and branch name
 ## Code style
--   We try to adhere to the existing [**Irrlicht code style**](http://irrlicht.sourceforge.net/?page_id=140) and mix some code style from Microsoft Foundation Classes, Java style.
+-   We try to adhere to the existing [**Irrlicht code style**](http://irrlicht.sourceforge.net/?page_id=140) and mix some code style from Microsoft , Java style.
 -   You can use your code style in your local project `Projects/{YourProject}`. But if you fix bug or commit a feature on `Projects/Skylicht*`, try to follow our style.
 ### Code formation
 Use **TAB Indent** instead 2 space for C/C++ code.
@@ -32,7 +32,6 @@ Use **TAB Indent** instead 2 space for C/C++ code.
 ### Example code style
 **`NOT RECOMMENDED`**
 ```
-// Dont try optimize your code lines because your function is too long
 void function(int foo){
   ...
   if (condition){
@@ -42,8 +41,7 @@ void function(int foo){
 ```
 **`GOOD`**
 ```
-// Create more function.
-// Each function is short enough in screen view.
+// Use hot key `Ctrl` + `K` + `D` (Visual Studio) to format this style
 void function(int foo)
 {
   ...
@@ -77,7 +75,7 @@ void MODULE_func_style_c_name()
 ```
 **`GOOD`**
 ```
-void funcStyleJavaName()
+void functionJavaNameStyle()
 {  
   int variable = 0;
 }
@@ -90,7 +88,7 @@ void functionName(int foo)
   ..
 }
 ```
--   **C** for *`class`*, **E** for *`enum`*, **S** for *`struct`*, **I** for abstract class
+-   Prefix **C** for *`class`*, Prefix **E** for *`enum`*, Prefix **S** for *`struct`*, Prefix **I** for *`abstract class`*
 ```
 class IInterfaceExample
 {
