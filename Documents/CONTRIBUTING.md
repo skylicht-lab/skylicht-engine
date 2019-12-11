@@ -11,7 +11,7 @@ Do some thing 2
 ...
 ```
 ### Bug
--   Open an issue ex: #283, so your branch name: **`bug/#283-your-bug-name`**
+-   Open an issue ex: #283. Create your branch name: **`bug/#283-your-bug-name`**
 -   Commit message: **`fix: #283 To do fix some thing`**
 
 Remember tag your issues id ex: #282 on your commit message, and branch name
@@ -32,19 +32,30 @@ Use **TAB Indent** instead 2 space for C/C++ code.
 ### Example code style
 **`NOT RECOMMENDED`**
 ```
+// Dont try optimize your code lines because your function is too long
 void function(int foo){
   ...
+  if (condition){
+  }
+  ...  
 }
 ```
 **`GOOD`**
 ```
+// Create more function.
+// Each function is short enough in screen view.
 void function(int foo)
 {
   ...
+  if (condition)
+  {
+    ...
+  }
 }
 ```
-**`Not recommended for old C Style`**
-Not recommend to use ~~c_style_function_name~~ and character _ for function name and variable name
+**`NOT RECOMMENDED FOR OLD C CODE STYLE`**
+
+I recommend we don't use ~~c_style_function_name~~ and ~~character _~~ for function name and variable name
 **`BAD`**
 ```
 // ugly code
@@ -52,6 +63,9 @@ void func_style_c_name()
 {
   // ugly code
   int _variable = 0;
+  
+  //  ugly code
+  int variable_ugly = 0;
 }
 
 // ugly code
@@ -129,8 +143,8 @@ class CExampleClass
     int m_privateVariableB;
 	
   public:
-	std::string PublicPropertyA;
-	std::string PublicPropertyB;
+    std::string PublicPropertyA;
+    std::string PublicPropertyB;
 	
   public:
     CExampleClass();
