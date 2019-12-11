@@ -1,7 +1,7 @@
 # Skylicht Engine
 ## Git flow
 ### Feature
--   If you commit code for feature, open an issue ex: #282. Create your brance name: **`feature/#282-your-brance-name`** (All characters is lowercase and - instead space)
+-   If you commit code for feature, open an issue ex: #282. Create your branch name: **`feature/#282-your-branch-name`** (All characters is lowercase and - instead space)
 -   Commit message: **`feat: #282 To do some thing`**
 -   If your commit message too long
 ```
@@ -11,16 +11,20 @@ Do some thing 2
 ...
 ```
 ### Bug
--   Open an issue ex: #283, so your brance name: **`bug/#283-your-bug-name`**
--   Commit message: **`fix: #282 To do fix some thing`**
+-   Open an issue ex: #283, so your branch name: **`bug/#283-your-bug-name`**
+-   Commit message: **`fix: #283 To do fix some thing`**
 
-Remember tag your issues id ex: #282 on your commit message, and brance name
+Remember tag your issues id ex: #282 on your commit message, and branch name
 ## Code style
 -   We try to adhere to the existing [**Irrlicht code style**](http://irrlicht.sourceforge.net/?page_id=140)
 -   You can use your code style in your local project `Projects/{YourProject}`. But if you fix bug or commit a feature on `Projects/Skylicht*`, try to follow our style.
 ### Code formation
 Use **TAB Indent** instead 2 space for C/C++ code.
--   On Visual Studio, try format your code document by hot key: **`Ctrl` + `K` + `D`** or **`Ctrl` + `K` + `F`**
+
+-   On Visual Studio, try format your code by hot key:
+    -   **`Ctrl` + `K` + `D`** for document
+    -   **`Ctrl` + `K` + `F`** for selected code
+
 -   On Visual Code:
     -   On Windows: **`Shift` + `Alt` + `F`**
     -   On Mac: **`Shift` + `Option` + `F`**
@@ -41,7 +45,6 @@ void function(int foo)
 ```
 **`Not recommended for old C Style`**
 Not recommend to use ~~c_style_function_name~~ and character _ for function name and variable name
-
 **`BAD`**
 ```
 // ugly code
@@ -64,8 +67,6 @@ void funcStyleJavaName()
   int variable = 0;
 }
 ```
-
-
 -   **camelCase** for *`all variables and functions`*
 ```
 void functionName(int foo)
@@ -74,9 +75,14 @@ void functionName(int foo)
   ..
 }
 ```
--   **C** for *`class`*, **E** for *`enum`*, **S** for *`struct`*
+-   **C** for *`class`*, **E** for *`enum`*, **S** for *`struct`*, **I** for abstract class
 ```
-class CExampleClass(int foo)
+class IInterfaceExample
+{
+  ...
+};
+
+class CExampleClass
 {
   ...
 };
@@ -113,7 +119,7 @@ enum EExamleEnum
 ```
 int g_exampleGlobalVariable;
 
-class CExampleClass(int foo)
+class CExampleClass
 {
   public:
     static int s_staticVariable;
@@ -121,7 +127,11 @@ class CExampleClass(int foo)
   private:
     int m_privateVariableA;
     int m_privateVariableB;
-    
+	
+  public:
+	std::string PublicPropertyA;
+	std::string PublicPropertyB;
+	
   public:
     CExampleClass();
     
