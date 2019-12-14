@@ -47,9 +47,12 @@ jobs:
         type Version.txt
         set /p CONFIG_VERSION=<Version.txt
         set file_version=%CONFIG_VERSION:.=_%
-        set output=Build\SkylichtDemo_%file_version%_Emscripten.zip
-        7z a %output% Bin\MainApp*
-        7z a %output% Bin\*.zip        
+        set output=SkylichtDemo_%file_version%_Emscripten.zip
+        cd Bin
+        7z a %output% *.zip
+        7z a %output% MainApp*
+        cd..
+        copy Bin\%output% Build
     - name: Result
       uses: actions/upload-artifact@v1
       with:
@@ -81,8 +84,11 @@ jobs:
         type Version.txt
         set /p CONFIG_VERSION=<Version.txt
         set file_version=%CONFIG_VERSION:.=_%
-        set output=Build\SkylichtDemo_%file_version%_UWP.zip
-        7z a %output% PrjUWP\Projects\MainApp\AppPackages\MainApp\MainApp_1.0.0.0_x64_Test\*.*
+        set output=SkylichtDemo_%file_version%_UWP.zip
+        pushd PrjUWP\Projects\MainApp\AppPackages\MainApp\MainApp_1.0.0.0_x64_Test
+        7z a %output% .\*.*        
+        popd
+        copy PrjUWP\Projects\MainApp\AppPackages\MainApp\MainApp_1.0.0.0_x64_Test\%output% Build
     - name: Result
       uses: actions/upload-artifact@v1
       with:
@@ -95,8 +101,8 @@ jobs:
     - uses: actions/checkout@v1      
     - name: Install Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libglfw3-dev libsdl2-dev        
+        sudo apt-get update -y -qq
+        sudo apt-get install -y libglfw3-dev libsdl2-dev
         sudo apt remove --purge --auto-remove cmake
         wget -q https://github.com/Kitware/CMake/releases/download/v3.15.5/cmake-3.15.5-Linux-x86_64.tar.gz
         tar -zxvf cmake-3.15.5-Linux-x86_64.tar.gz        
@@ -117,9 +123,12 @@ jobs:
         ls -l Bin
         version=$(cat "Version.txt")
         file_version=${version//./_}
-        output=Build/SkylichtDemo_${file_version}_Linux.zip
-        7z a ${output} Bin/MainApp*
-        7z a ${output} Bin/*.zip        
+        output=SkylichtDemo_${file_version}_Linux.zip
+        cd Bin
+        7z a ${output} *.zip
+        7z a ${output} MainApp*
+        cd ..
+        cp Bin/${output} Build
     - name: Result
       uses: actions/upload-artifact@v1
       with:

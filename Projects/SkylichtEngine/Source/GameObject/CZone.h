@@ -26,12 +26,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #define _CZONE_H_
 
 #include "CContainerObject.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
 	class CZone : public CContainerObject
 	{
 	protected:
+		CEntityManager	*m_entityManager;
 
 	public:
 		CZone();
@@ -43,6 +45,10 @@ namespace Skylicht
 
 	public:
 
+		inline CEntityManager* getEntityManager()
+		{
+			return m_entityManager;
+		}
 	};
 
 	typedef std::vector<CZone*>				ArrayZone;

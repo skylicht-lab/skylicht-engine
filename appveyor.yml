@@ -92,10 +92,13 @@ for:
       - type Version.txt
       - set /p CONFIG_VERSION=<Version.txt
       - set file_version=%CONFIG_VERSION:.=_%_%APPVEYOR_BUILD_VERSION%
-      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
+      - set output_zip=SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
       - move Bin\%configuration%\MainApp.exe Bin\MainApp.exe
-      - 7z a %output_zip% Bin\*.exe
-      - 7z a %output_zip% Bin\*.zip
+      - cd Bin
+      - 7z a %output_zip% *.zip
+      - 7z a %output_zip% *.exe
+      - cd ..
+      - copy Bin\%output_zip% Build
     test_script:
       - cd PrjVisualStudio
       - ctest -C %configuration% --verpose
@@ -117,9 +120,12 @@ for:
       - type Version.txt
       - set /p CONFIG_VERSION=<Version.txt
       - set file_version=%CONFIG_VERSION:.=_%_%APPVEYOR_BUILD_VERSION%
-      - set output_zip=Build\SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
-      - 7z a %output_zip% Bin\*.exe
-      - 7z a %output_zip% Bin\*.zip
+      - set output_zip=SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
+      - cd Bin
+      - 7z a %output_zip% *.zip
+      - 7z a %output_zip% *.exe
+      - cd ..
+      - copy Bin\%output_zip% Build
     test_script:
       - cd PrjCygwin
       - ctest --verpose

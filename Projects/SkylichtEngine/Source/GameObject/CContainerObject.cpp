@@ -71,53 +71,40 @@ namespace Skylicht
 		m_objectByName.clear();
 	}
 
+	core::array<CGameObject*>& CContainerObject::getArrayChilds(bool addThis)
+	{		
+		m_arrayChildObjects.set_used(0);
+		std::queue<CGameObject*> queueObjs;
+
+		if (addThis == true)
+			queueObjs.push(this);
+		else
+		{
+			for (CGameObject* &obj : m_childs)
+				queueObjs.push(obj);
+		}
+
+		while (queueObjs.size() != 0)
+		{
+			CGameObject *obj = queueObjs.front();
+			queueObjs.pop();
+
+			m_arrayChildObjects.push_back(obj);
+			
+			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
+			if (container != NULL)
+			{
+				for (CGameObject* &child : container->m_childs)
+					queueObjs.push(child);
+			}
+		}
+
+		return m_arrayChildObjects;
+	}
+
 	void CContainerObject::updateObject()
 	{
 		CGameObject::updateObject();
-
-		updateAddRemoveObject();
-
-		int numChild = (int)m_childs.size();
-		CGameObject **childs = m_childs.data();
-
-		for (int i = 0; i < numChild; i++)
-		{
-			CGameObject *pObject = childs[i];
-			if (pObject->isEnable())
-				pObject->updateObject();
-		}
-	}
-
-	void CContainerObject::postUpdateObject()
-	{
-		CGameObject::postUpdateObject();
-
-		ArrayGameObjectIter it = m_childs.begin(), end = m_childs.end();
-		while (it != end)
-		{
-			CGameObject *pObject = (CGameObject*)(*it);
-			if (pObject->isEnable())
-			{
-				pObject->postUpdateObject();
-			}
-			++it;
-		}
-	}
-
-	void CContainerObject::endUpdate()
-	{
-		CGameObject::endUpdate();
-
-		ArrayGameObjectIter it = m_childs.begin(), end = m_childs.end();
-		while (it != end)
-		{
-			CGameObject *pObject = (CGameObject*)(*it);
-			if (pObject->isEnable())
-			{
-				pObject->endUpdate();
-			}
-			++it;
-		}
 	}
 
 	template<typename T>
@@ -125,16 +112,12 @@ namespace Skylicht
 	{
 		listObjs.clear();
 
-		ArrayGameObjectIter it = m_childs.begin(), end = m_childs.end();
-		while (it != end)
+		for (CGameObject* &obj : m_childs)
 		{
-			CGameObject *pObject = (CGameObject*)(*it);
-
-			if (typeid(*pObject) == typeid(type))
+			if (typeid(*obj) == typeid(type))
 			{
-				listObjs.push_back(pObject);
+				listObjs.push_back(obj);
 			}
-			++it;
 		}
 	}
 
@@ -152,6 +135,7 @@ namespace Skylicht
 
 		addChild(p);
 
+		p->addComponent<CTransformEuler>();
 		return p;
 	}
 
@@ -167,6 +151,7 @@ namespace Skylicht
 		container->setName(name.c_str());
 		addChild(container);
 
+		container->addComponent<CTransformEuler>();
 		return container;
 	}
 
@@ -174,70 +159,48 @@ namespace Skylicht
 	{
 		m_objectByName.clear();
 
-		for (int i = 0, n = (int)m_childs.size(); i < n; i++)
+		for (CGameObject*&obj : m_childs)
 		{
-			registerObjectName(m_childs[i]);
+			registerObjectName(obj);
 
-			CContainerObject *child = dynamic_cast<CContainerObject*>(m_childs[i]);
-			if (child != NULL)
+			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
+			if (container != NULL)
 			{
-				child->updateIndexSearchObject();
+				container->updateIndexSearchObject();
 			}
 		}
 	}
 
 	int CContainerObject::getNumberObjects()
 	{
-		int numObj = 0;
-		ArrayGameObject::iterator i = m_childs.begin(), end = m_childs.end();
-		while (i != end)
-		{
-			++numObj;
-			++i;
-		}
-		return numObj;
+		return (int)m_childs.size();
 	}
 
 	CGameObject* CContainerObject::searchObject(const wchar_t *objectName)
 	{
 		core::map<std::wstring, CGameObject*>::Node *node = m_objectByName.find(std::wstring(objectName));
 		if (node == NULL)
-		{
-			for (int i = 0, n = (int)m_childs.size(); i < n; i++)
-			{
-				CContainerObject *child = dynamic_cast<CContainerObject*>(m_childs[i]);
-				if (child != NULL)
-				{
-					CGameObject* obj = child->searchObject(objectName);
-					if (obj != NULL)
-						return obj;
-				}
-			}
 			return NULL;
-		}
-
 		return node->getValue();
 	}
 
 	CGameObject* CContainerObject::searchObjectInChild(const wchar_t *objectName)
 	{
-		CGameObject *obj = searchObject(objectName);
-		if (obj == NULL)
+		CGameObject *result = searchObject(objectName);
+		if (result == NULL)
 		{
-			ArrayGameObject::iterator i = m_childs.begin(), end = m_childs.end();
-			while (i != end)
+			for (CGameObject*&obj : m_childs)
 			{
-				CContainerObject *container = dynamic_cast<CContainerObject*>(*i);
+				CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
 				if (container != NULL)
 				{
-					obj = container->searchObjectInChild(objectName);
-					if (obj != NULL)
-						return obj;
+					result = container->searchObjectInChild(objectName);
+					if (result != NULL)
+						return result;
 				}
-				++i;
 			}
 		}
-		return obj;
+		return result;
 	}
 
 	std::string CContainerObject::generateObjectName(const char* objTemplate)
@@ -266,64 +229,48 @@ namespace Skylicht
 	{
 		if (m_updateRemoveAdd == true || force == true)
 		{
-			ArrayGameObjectIter it, end;
+			m_updateRemoveAdd = false;
 
 			if (m_add.size() > 0)
 			{
-				it = m_add.begin(), end = m_add.end();
-				while (it != end)
-				{
-					m_childs.push_back((*it));
-					++it;
-				}
+				for (CGameObject* &obj : m_add)
+					m_childs.push_back(obj);
 
 				m_add.clear();
 			}
 
 			if (m_remove.size() > 0)
-			{
-				m_updateRemoveAdd = false;
-
+			{				
 				ArrayGameObject arrayRemove = m_remove;
 				m_remove.clear();
 
-				it = arrayRemove.begin(), end = arrayRemove.end();
-				while (it != end)
+				for (CGameObject* &obj : arrayRemove)
 				{
-					CGameObject *pObj = (*it);
-
 					ArrayGameObjectIter iObj = m_childs.begin(), iObjEnd = m_childs.end();
 					while (iObj != iObjEnd)
 					{
-						if (pObj == (*iObj))
+						if (obj == (*iObj))
 						{
-							m_objectByName.remove(pObj->getDefaultName());
-
+							m_objectByName.remove(obj->getDefaultName());
 							m_childs.erase(iObj);
 
-							delete pObj;
+							delete obj;
 							break;
 						}
-
 						++iObj;
 					}
-
-					++it;
 				}
 			}
 		}
 
-		m_add.clear();
-
 		// update in children
-		ArrayGameObjectIter it, end;
-		it = m_childs.begin(), end = m_childs.end();
-		while (it != end)
+		for (CGameObject*&obj : m_childs)
 		{
-			CContainerObject *container = dynamic_cast<CContainerObject*>(*it);
+			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
 			if (container != NULL)
-				container->updateAddRemoveObject(force);
-			++it;
+			{
+				container->updateAddRemoveObject(force);				
+			}
 		}
 	}
 
