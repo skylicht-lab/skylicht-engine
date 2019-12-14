@@ -23,34 +23,30 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CZone.h"
-
-#include "Utils/CStringImp.h"
+#include "CTransform.h"
 
 namespace Skylicht
 {
+	core::vector3df CTransform::s_ox = core::vector3df(1.0f, 0.0f, 0.0f);
+	core::vector3df CTransform::s_oy = core::vector3df(0.0f, 1.0f, 0.0f);
+	core::vector3df CTransform::s_oz = core::vector3df(0.0f, 0.0f, 1.0f);
 
-	CZone::CZone()
-	{
-		m_entityManager = new CEntityManager();
-	}
-
-	CZone::~CZone()
-	{
-		delete m_entityManager;
-	}
-
-	void CZone::updateObject()
-	{
-		updateAddRemoveObject();
-	}
-
-	void CZone::postUpdateObject()
+	CTransform::CTransform()
 	{
 
 	}
 
-	void CZone::endUpdate()
+	CTransform::~CTransform()
+	{
+
+	}
+
+	void CTransform::initComponent()
+	{
+
+	}
+
+	void CTransform::updateComponent()
 	{
 
 	}

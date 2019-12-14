@@ -1,3 +1,4 @@
+cd..
 call C:\emsdk\emsdk_env.bat
 call emcmake cmake -S . -B ./PrjEmscripten
 cd Assets

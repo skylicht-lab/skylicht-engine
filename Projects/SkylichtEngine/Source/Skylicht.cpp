@@ -68,8 +68,6 @@ namespace Skylicht
 		CShaderManager::createGetInstance();
 		CGraphics2D::createGetInstance();
 
-
-
 		// alway use HW
 		g_video->setMinHardwareBufferVertexCount(0);
 #endif
@@ -84,8 +82,6 @@ namespace Skylicht
 		os::Printer::log("Close linux server");
 #else
 		os::Printer::log("Close skylicht core");
-
-
 
 		CGraphics2D::releaseInstance();
 		CShaderManager::releaseInstance();

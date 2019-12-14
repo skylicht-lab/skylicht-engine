@@ -1,7 +1,23 @@
 #include "IApplicationEventReceiver.h"
 
+#include "Scene/CScene.h"
+#include "GameObject/CZone.h"
+#include "Components/Camera/CCamera.h"
+
+#include "RenderPipeline/CForwardRP.h"
+#include "RenderPipeline/CDeferredRP.h"
+
+#include "Entity/CEntityManager.h"
+
 class Demo : public IApplicationEventReceiver
 {
+protected:
+	CScene	*m_scene;
+	CZone	*m_zone;
+	CCamera	*m_camera;
+
+	CBaseRP *m_rendering;
+
 protected:
 	io::path getBuiltInPath(const char *name);
 
@@ -22,4 +38,8 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
+
+protected:
+
+	void initScene();
 };

@@ -17,7 +17,6 @@ def compress(dirName):
             if needCompress(file):
                 print("%s <-- %s - %s" %(outputZip, root, file))
                 z.write(os.path.join(root, file))
-
     z.close
 
 def main():

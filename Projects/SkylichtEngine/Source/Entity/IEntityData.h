@@ -22,36 +22,24 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CZone.h"
-
-#include "Utils/CStringImp.h"
+#ifndef _IENTITY_DATA_H_
+#define _IENTITY_DATA_H_
 
 namespace Skylicht
 {
-
-	CZone::CZone()
+	class IEntityData
 	{
-		m_entityManager = new CEntityManager();
-	}
+	public:
+		IEntityData()
+		{
 
-	CZone::~CZone()
-	{
-		delete m_entityManager;
-	}
+		}
 
-	void CZone::updateObject()
-	{
-		updateAddRemoveObject();
-	}
+		virtual ~IEntityData()
+		{
 
-	void CZone::postUpdateObject()
-	{
-
-	}
-
-	void CZone::endUpdate()
-	{
-
-	}
+		}
+	};
 }
+
+#endif
