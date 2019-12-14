@@ -35,10 +35,6 @@ namespace Skylicht
 	std::map<long, long> CGameObject::s_mapObjIDOnFileSaved;
 	bool CGameObject::s_repairIDMode = false;
 
-	core::vector3df CGameObject::s_ox = core::vector3df(1.0f, 0.0f, 0.0f);
-	core::vector3df CGameObject::s_oy = core::vector3df(0.0f, 1.0f, 0.0f);
-	core::vector3df CGameObject::s_oz = core::vector3df(0.0f, 0.0f, 1.0f);
-
 	CGameObject::CGameObject()
 	{
 		initNull();
@@ -89,7 +85,7 @@ namespace Skylicht
 		m_name = name;
 	}
 
-	const char * CGameObject::getNameA()
+	const char* CGameObject::getNameA()
 	{
 		char name[1024];
 		CStringImp::convertUnicodeToUTF8(m_name.c_str(), name);
@@ -97,25 +93,27 @@ namespace Skylicht
 		return m_namec.c_str();
 	}
 
+	CTransform* CGameObject::getTransform()
+	{		
+		return getComponent<CTransform>();
+	}
+
+	CTransformEuler* CGameObject::getTransformEuler()
+	{
+		return getComponent<CTransformEuler>();
+	}
+
 	void CGameObject::releaseAllComponent()
 	{
-		ArrayComponentIter iComp = m_components.begin(), iEnd = m_components.end();
-		while (iComp != iEnd)
-		{
-			delete (*iComp);
-			++iComp;
-		}
+		for (CComponentSystem* &comp : m_components)
+			delete comp;
 		m_components.clear();
-	}	
+	}
 
 	void CGameObject::initComponent()
 	{
-		ArrayComponentIter i = m_components.begin(), end = m_components.end();
-		while (i != end)
-		{
-			(*i)->initComponent();
-			++i;
-		}
+		for (CComponentSystem* &comp : m_components)
+			comp->initComponent();
 	}
 
 	void CGameObject::updateObject()

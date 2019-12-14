@@ -1,3 +1,4 @@
+cd..
 cmake -S . -B ./PrjCygwin
 cd Assets
 python BuildAssetBundles.py

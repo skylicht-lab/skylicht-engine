@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "Material/CShaderParams.h"
 #include "Components/CComponentSystem.h"
+#include "Components/Transform/CTransformEuler.h"
+#include "Components/Transform/CTransformMatrix.h"
 
 namespace Skylicht
 {
@@ -36,12 +38,7 @@ namespace Skylicht
 	public:
 		static long					s_objectID;
 		static std::map<long, long>	s_mapObjIDOnFileSaved;
-		static bool					s_repairIDMode;
-
-	public:
-		static core::vector3df s_ox;
-		static core::vector3df s_oy;
-		static core::vector3df s_oz;
+		static bool					s_repairIDMode;	
 
 	protected:
 		long				m_objectID;
@@ -63,7 +60,6 @@ namespace Skylicht
 		std::string			m_tagDataString;
 
 		CShaderParams		m_shaderParams;
-
 
 		std::vector<CComponentSystem*> m_components;
 	public:
@@ -125,6 +121,10 @@ namespace Skylicht
 			m_parent = p;
 		}		
 
+		CTransform* getTransform();
+
+		CTransformEuler* getTransformEuler();
+		
 		inline bool isEnable()
 		{
 			return m_enable;
@@ -261,9 +261,9 @@ namespace Skylicht
 		ArrayComponentIter i = m_components.begin(), end = m_components.end();
 		while (i != end)
 		{
-			CComponentSystem *c = (*i);
-			if (typeid(*c) == typeid(T))
-				return dynamic_cast<T*>(c);
+			T *c = dynamic_cast<T*>(*i);
+			if (c != NULL)
+				return c;
 			++i;
 		}
 		return NULL;
@@ -275,8 +275,8 @@ namespace Skylicht
 		ArrayComponentIter i = m_components.begin(), end = m_components.end();
 		while (i != end)
 		{
-			CComponentSystem *c = (*i);
-			if (typeid(*c) == typeid(T))
+			T *c = dynamic_cast<T*>(*i);
+			if (c != NULL)
 			{
 				delete c;
 				m_components.erase(i);

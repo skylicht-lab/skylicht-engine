@@ -42,17 +42,11 @@ namespace Skylicht
 		wchar_t buffer[1024] = { 0 };
 		CStringImp::convertUTF8ToUnicode(name, buffer);
 
-		ArrayZoneIter iZone = m_zones.begin(), iEnd = m_zones.end();
-		while (iZone != iEnd)
+		for (CZone* &zone : m_zones)
 		{
-			CZone *pZone = (*iZone);
-
-			if (CStringImp::comp<const wchar_t>(pZone->getName(), buffer) == 0)
-				return pZone;
-
-			iZone++;
+			if (CStringImp::comp<const wchar_t>(zone->getName(), buffer) == 0)
+				return zone;
 		}
-
 		return NULL;
 	}
 
@@ -64,29 +58,23 @@ namespace Skylicht
 			wchar_t buffer[1024] = { 0 };
 			CStringImp::convertUTF8ToUnicode(name, buffer);
 
-			ArrayZoneIter iZone = m_zones.begin(), iEnd = m_zones.end();
-			while (iZone != iEnd)
+			for (CZone* &zone : m_zones)
 			{
-				CZone *pZone = (*iZone);
-				obj = pZone->searchObjectInChild(buffer);
+				obj = zone->searchObjectInChild(buffer);
 				if (obj != NULL)
 					return obj;
-
-				++iZone;
 			}
 		}
+
 		return obj;
 	}
 
 	void CScene::releaseScene()
 	{
-		ArrayZoneIter iZone = m_zones.begin(), iEnd = m_zones.end();
-		while (iZone != iEnd)
+		for (CZone* &zone : m_zones)
 		{
-			CZone *p = (CZone*)(*iZone);
-			p->updateAddRemoveObject(true);
-			delete p;
-			iZone++;
+			zone->updateAddRemoveObject();
+			delete zone;
 		}
 		m_zones.clear();
 	}
@@ -99,24 +87,14 @@ namespace Skylicht
 	*/
 	void CScene::updateAddRemoveObject()
 	{
-		ArrayZoneIter iZone = m_zones.begin(), iEnd = m_zones.end();
-		while (iZone != iEnd)
-		{
-			CZone *p = (CZone*)(*iZone);
-			p->updateAddRemoveObject(true);
-			++iZone;
-		}
+		for (CZone* &zone : m_zones)
+			zone->updateAddRemoveObject(true);
 	}
 
 	void CScene::updateIndexSearchObject()
 	{
-		ArrayZoneIter iZone = m_zones.begin(), iEnd = m_zones.end();
-		while (iZone != iEnd)
-		{
-			CZone *p = (CZone*)(*iZone);
-			p->updateIndexSearchObject();
-			++iZone;
-		}
+		for (CZone* &zone : m_zones)
+			zone->updateIndexSearchObject();
 	}
 
 	CZone* CScene::createZone()
@@ -128,9 +106,9 @@ namespace Skylicht
 
 		zone->setName(name);
 		zone->setID(CGameObject::s_objectID++);
+		zone->addComponent<CTransformEuler>();
 
 		m_zones.push_back(zone);
-
 		return zone;
 	}
 
@@ -154,28 +132,34 @@ namespace Skylicht
 
 	void CScene::update()
 	{
-		// pass Update
-		ArrayZoneIter iZone = m_zones.begin(), iEnd = m_zones.end();
-		while (iZone != iEnd)
+		for (CZone* &zone : m_zones)
 		{
-			(*iZone)->updateObject();
-			++iZone;
-		}
+			// we add all child to array to optimize performance
+			zone->updateAddRemoveObject();
 
-		// pass PostUpdate
-		iZone = m_zones.begin(), iEnd = m_zones.end();
-		while (iZone != iEnd)
-		{
-			(*iZone)->postUpdateObject();
-			++iZone;
-		}
+			core::array<CGameObject*>& listChilds = zone->getArrayChilds(this);
+			CGameObject** objs = listChilds.pointer();
+			
+			for (int i = 0, n = (int)listChilds.size(); i < n; i++)
+			{
+				CGameObject* obj = objs[i];
+				if (obj->isEnable() == true)
+					obj->updateObject();
+			}
+			
+			for (int i = 0, n = (int)listChilds.size(); i < n; i++)
+			{
+				CGameObject* obj = objs[i];
+				if (obj->isEnable() == true)
+					obj->postUpdateObject();
+			}
 
-		// pass EndUpdate
-		iZone = m_zones.begin(), iEnd = m_zones.end();
-		while (iZone != iEnd)
-		{
-			(*iZone)->endUpdate();
-			++iZone;
+			for (int i = 0, n = (int)listChilds.size(); i < n; i++)
+			{
+				CGameObject* obj = objs[i];
+				if (obj->isEnable() == true)
+					obj->endUpdate();
+			}
 		}
 	}
 }
