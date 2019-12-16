@@ -9,7 +9,7 @@ void installApplication(const std::vector<std::string>& argv)
 	getApplication()->registerAppEvent("Demo", demo);
 }
 
-Demo::Demo():
+Demo::Demo() :
 	m_scene(NULL),
 	m_zone(NULL),
 	m_camera(NULL),
@@ -42,6 +42,7 @@ void Demo::onInitApp()
 {
 	io::IFileSystem* fileSystem = getApplication()->getFileSystem();
 	fileSystem->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
+	fileSystem->addFileArchive(getBuiltInPath("Demo.zip"), false, false);
 
 	CShaderManager::getInstance()->initBasicShader();
 
@@ -55,9 +56,14 @@ void Demo::initScene()
 	m_scene = new CScene();
 	m_zone = m_scene->createZone();
 
-	CGameObject *cameraObj = m_zone->createEmptyObject();
-	m_camera = cameraObj->addComponent<CCamera>();
-	cameraObj->initComponent();
+	m_camera = m_zone->createEmptyObject()->addComponent<CCamera>();
+
+	m_camera->setPosition(core::vector3df(3.0f, 3.0f, 3.0f));
+	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0, 1, 0));
+
+	CSkyDome *skyDome = m_zone->createEmptyObject()->addComponent<CSkyDome>();
+
+	skyDome->setData(getVideoDriver()->getTexture("Demo/Textures/Sky/PaperMill.png"), SColor(255, 255, 255, 255));
 
 	m_rendering = new CForwardRP();
 	m_rendering->initRender(app->getWidth(), app->getHeight());
@@ -70,7 +76,7 @@ void Demo::onUpdate()
 
 void Demo::onRender()
 {
-	m_rendering->render(m_camera, m_zone->getEntityManager(), false);
+	m_rendering->render(m_camera, m_zone->getEntityManager());
 }
 
 void Demo::onPostRender()

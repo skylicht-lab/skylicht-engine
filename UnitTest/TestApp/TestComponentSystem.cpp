@@ -43,7 +43,6 @@ void testComponent(CGameObject *obj)
 	TestComponent *comp = obj->addComponent<TestComponent>();
 	TEST_ASSERT_THROW(comp != NULL);
 	TEST_ASSERT_THROW(comp->getGameObject() == obj);
-	obj->initComponent();
 
 	TEST_CASE("Get component system");
 	TestComponent *getComp = obj->getComponent<TestComponent>();

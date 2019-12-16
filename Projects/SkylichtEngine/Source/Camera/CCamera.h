@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #define _CCAMERA_H_
 
 #include "Components/CComponentSystem.h"
-#include "Components/Transform/CTransform.h"
+#include "Transform/CTransform.h"
 
 namespace Skylicht
 {
@@ -48,7 +48,6 @@ namespace Skylicht
 		float m_fov;
 
 		SViewFrustum m_viewArea;
-
 	public:
 		CCamera();
 
@@ -58,12 +57,15 @@ namespace Skylicht
 
 		virtual void updateComponent();	
 
+		virtual void endUpdate();
+
 	public:
-		void applyTransform();
 
 		const core::matrix4& getProjectionMatrix() const;
 
 		const core::matrix4& getViewMatrix() const;
+
+		void setPosition(const core::vector3df& position);
 
 		void lookAt(const core::vector3df& position, const core::vector3df& target, const core::vector3df& up);
 
@@ -104,6 +106,10 @@ namespace Skylicht
 
 		void recalculateProjectionMatrix();
 
+		const SViewFrustum& getViewFrustum()
+		{
+			return m_viewArea;
+		}
 	};
 }
 

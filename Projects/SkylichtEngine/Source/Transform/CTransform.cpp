@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTransform.h"
+#include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
@@ -31,7 +32,8 @@ namespace Skylicht
 	core::vector3df CTransform::s_oy = core::vector3df(0.0f, 1.0f, 0.0f);
 	core::vector3df CTransform::s_oz = core::vector3df(0.0f, 0.0f, 1.0f);
 
-	CTransform::CTransform()
+	CTransform::CTransform():
+		m_hasChanged(true)
 	{
 
 	}
@@ -43,11 +45,32 @@ namespace Skylicht
 
 	void CTransform::initComponent()
 	{
-
+		m_gameObject->createEntity(this);
 	}
 
 	void CTransform::updateComponent()
 	{
 
+	}
+
+	CTransform* CTransform::getParent()
+	{
+		CGameObject *parent = getParentObject();
+		if (parent != NULL)
+			return parent->getTransform();
+		return NULL;
+	}
+
+	CGameObject* CTransform::getParentObject()
+	{
+		return m_gameObject->getParent();
+	}
+
+	CEntity* CTransform::getParentEntity()
+	{
+		CGameObject *parent = getParentObject();
+		if (parent != NULL)
+			return parent->getEntity();
+		return NULL;
 	}
 }

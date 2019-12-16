@@ -134,19 +134,20 @@ namespace Skylicht
 	{
 		for (CZone* &zone : m_zones)
 		{
-			// we add all child to array to optimize performance
+			// Update add/remove childs object
 			zone->updateAddRemoveObject();
 
+			// we add all child to array to optimize performance
 			core::array<CGameObject*>& listChilds = zone->getArrayChilds(this);
 			CGameObject** objs = listChilds.pointer();
-			
+
 			for (int i = 0, n = (int)listChilds.size(); i < n; i++)
 			{
 				CGameObject* obj = objs[i];
 				if (obj->isEnable() == true)
 					obj->updateObject();
 			}
-			
+
 			for (int i = 0, n = (int)listChilds.size(); i < n; i++)
 			{
 				CGameObject* obj = objs[i];

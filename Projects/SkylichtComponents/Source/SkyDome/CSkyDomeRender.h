@@ -22,34 +22,38 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _IENTITY_SYSTEM_H_
-#define _IENTITY_SYSTEM_H_
+#ifndef _SKYDOME_RENDER_
+#define _SKYDOME_RENDER_
 
-#include "CEntity.h"
+#include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
+
+#include "CSkyDomeData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
-{	
-	class CEntityManager;
-
-	class IEntitySystem
+{
+	class CSkyDomeRender : public IRenderSystem
 	{
+	protected:
+		core::array<CSkyDomeData*> m_skydomes;
+		core::array<CWorldTransformData*> m_transforms;
+		core::array<core::matrix4> m_worlds;
+
 	public:
-		IEntitySystem()
-		{
-		}
+		CSkyDomeRender();
 
-		virtual ~IEntitySystem()
-		{
+		virtual ~CSkyDomeRender();
 
-		}
+		virtual void beginQuery();
 
-		virtual void beginQuery() = 0;
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity) = 0;
+		virtual void init(CEntityManager *entityManager);
 
-		virtual void init(CEntityManager *entityManager) = 0;
+		virtual void update(CEntityManager *entityManager);
 
-		virtual void update(CEntityManager *entityManager) = 0;
+		virtual void render(CEntityManager *entityManager);
 	};
 }
 

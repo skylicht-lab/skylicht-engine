@@ -40,7 +40,7 @@ namespace Skylicht
 
 	void CTransformEuler::initComponent()
 	{
-
+		CTransform::initComponent();
 	}
 
 	void CTransformEuler::updateComponent()
@@ -83,12 +83,14 @@ namespace Skylicht
 		matData[15] = 1.0f;
 
 		m_rotation = rotationMatrix.getRotationDegrees();
+		m_hasChanged = true;
 	}
 
 	void CTransformEuler::lookAt(const core::vector3df& position)
 	{
 		float angle = (float)(core::vector2df(position.X - m_position.X, position.Z - m_position.Z).getAngleTrig());
 		m_rotation.set(0.0f, 90 - angle, 0.0f);
+		m_hasChanged = true;
 	}
 
 	void CTransformEuler::setMatrixTransform(const core::matrix4& mat)
@@ -129,6 +131,7 @@ namespace Skylicht
 		m_rotation = rotationMatrix.getRotationDegrees();
 		m_position = mat.getTranslation();
 		m_scale = mat.getScale();
+		m_hasChanged = true;
 	}
 
 	const core::matrix4& CTransformEuler::getMatrixTransform()

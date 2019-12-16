@@ -22,35 +22,42 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _IENTITY_SYSTEM_H_
-#define _IENTITY_SYSTEM_H_
+#include "pch.h"
+#include "CSkyDome.h"
+#include "GameObject/CGameObject.h"
 
-#include "CEntity.h"
+#include "Entity/CEntity.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
-{	
-	class CEntityManager;
-
-	class IEntitySystem
+{
+	CSkyDome::CSkyDome()
 	{
-	public:
-		IEntitySystem()
-		{
-		}
 
-		virtual ~IEntitySystem()
-		{
+	}
 
-		}
+	CSkyDome::~CSkyDome()
+	{
+	}
 
-		virtual void beginQuery() = 0;
+	void CSkyDome::initComponent()
+	{
+		// add skydome data
+		m_skyDomeData = m_gameObject->getEntity()->addData<CSkyDomeData>();
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity) = 0;
+		// add skydome render system
+		m_gameObject->getEntityManager()->addRenderSystem<CSkyDomeRender>();
+	}
 
-		virtual void init(CEntityManager *entityManager) = 0;
+	void CSkyDome::updateComponent()
+	{
 
-		virtual void update(CEntityManager *entityManager) = 0;
-	};
+	}
+
+	void CSkyDome::setData(ITexture *texture, const SColor& c)
+	{
+		m_skyDomeData->SkyDomeTexture = texture;
+		m_skyDomeData->SkyDomeColor = c;
+		m_skyDomeData->Buffer->getMaterial().setTexture(0, texture);
+	}
 }
-
-#endif

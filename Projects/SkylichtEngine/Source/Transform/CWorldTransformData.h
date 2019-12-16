@@ -22,34 +22,30 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _IENTITY_SYSTEM_H_
-#define _IENTITY_SYSTEM_H_
+#ifndef _WORLD_TRANSFORM_H_
+#define _WORLD_TRANSFORM_H_
 
-#include "CEntity.h"
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
-{	
-	class CEntityManager;
-
-	class IEntitySystem
+{
+	class CTransform;
+	class CWorldTransformData : public IEntityData
 	{
+		friend class CWorldTransformSystem;
+	protected:
+		bool HasChanged;
+
 	public:
-		IEntitySystem()
-		{
-		}
+		core::matrix4 World;
+		int Depth;
+		int ParentIndex;
+		CTransform *TransformComponent;
 
-		virtual ~IEntitySystem()
-		{
+	public:
+		CWorldTransformData();
 
-		}
-
-		virtual void beginQuery() = 0;
-
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity) = 0;
-
-		virtual void init(CEntityManager *entityManager) = 0;
-
-		virtual void update(CEntityManager *entityManager) = 0;
+		virtual ~CWorldTransformData();
 	};
 }
 

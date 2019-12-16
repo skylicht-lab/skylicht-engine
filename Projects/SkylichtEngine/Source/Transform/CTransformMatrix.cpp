@@ -22,37 +22,44 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _BASE_TRANSFORM_H_
-#define _BASE_TRANSFORM_H_
-
-#include "Components/CComponentSystem.h"
+#include "pch.h"
+#include "CTransformMatrix.h"
 
 namespace Skylicht
-{
-	class CTransform : public CComponentSystem
+{	
+	CTransformMatrix::CTransformMatrix()
 	{
-	public:
-		static core::vector3df s_ox;
-		static core::vector3df s_oy;
-		static core::vector3df s_oz;
 
-	public:
-		CTransform();
+	}
 
-		virtual ~CTransform();
+	CTransformMatrix::~CTransformMatrix()
+	{
 
-		virtual void initComponent();
+	}
 
-		virtual void updateComponent();
+	void CTransformMatrix::initComponent()
+	{
+		CTransform::initComponent();
+	}
 
-	public:
+	void CTransformMatrix::updateComponent()
+	{
 
-		virtual void setMatrixTransform(const core::matrix4& mat) = 0;
+	}
 
-		virtual const core::matrix4& getMatrixTransform() = 0;
+	void CTransformMatrix::setMatrixTransform(const core::matrix4& mat)
+	{
+		m_transform = mat;
+		m_hasChanged = true;
+	}
 
-		virtual void getMatrixTransform(core::matrix4& matrix) = 0;
-	};
+	const core::matrix4& CTransformMatrix::getMatrixTransform()
+	{
+		return m_transform;
+	}
+
+	void CTransformMatrix::getMatrixTransform(core::matrix4& matrix)
+	{
+		matrix = m_transform;
+	}
 }
-
-#endif
