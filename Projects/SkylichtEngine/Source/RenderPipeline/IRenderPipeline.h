@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifndef _IRENDER_PIPELINE_H_
 #define _IRENDER_PIPELINE_H_
 
-#include "Components/Camera/CCamera.h"
+#include "Camera/CCamera.h"
 #include "Entity/CEntityManager.h"
 
 namespace Skylicht
@@ -45,7 +45,9 @@ namespace Skylicht
 
 		virtual void initRender(int w, int h) = 0;
 
-		virtual void render(CCamera *camera, CEntityManager* entity, bool cullAndRenderOnly) = 0;
+		virtual void render(CCamera *camera, CEntityManager* entity) = 0;
+
+		virtual void setCamera(CCamera *camera) = 0;
 	};
 }
 

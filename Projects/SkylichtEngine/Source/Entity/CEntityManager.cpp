@@ -24,23 +24,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CEntityManager.h"
-#include "CWorldTransform.h"
+#include "Transform/CWorldTransformSystem.h"
 
 namespace Skylicht
 {
-	CEntityManager::CEntityManager()
+	CEntityManager::CEntityManager():
+		m_camera(NULL)
 	{
-
+		addSystem<CWorldTransformSystem>();
 	}
 
 	CEntityManager::~CEntityManager()
 	{
 		releaseAllEntities();
+		releaseAllSystems();
 	}
 
 	void CEntityManager::releaseAllEntities()
 	{
-		CRenderEntity** entities = m_entities.pointer();
+		CEntity** entities = m_entities.pointer();
 		for (int i = 0, n = (int)m_entities.size(); i < n; i++)
 		{
 			delete entities[i];
@@ -51,40 +53,58 @@ namespace Skylicht
 		m_unused.set_used(0);
 	}
 
-	CRenderEntity* CEntityManager::createEntity(CTransform *transform)
+	void CEntityManager::releaseAllSystems()
+	{
+		for (IEntitySystem* &s : m_systems)
+		{
+			delete s;
+		}
+
+		m_systems.clear();
+		m_renders.clear();
+	}
+
+	CEntity* CEntityManager::createEntity()
 	{
 		if (m_unused.size() > 0)
 		{
 			int last = (int)m_unused.size() - 1;
 
-			CRenderEntity *entity = m_unused[last];
+			CEntity *entity = m_unused[last];
 			entity->setAlive(true);
-			
-			if (transform != NULL)
-				addEntityTransformData(entity, transform);			
 
 			m_unused.erase(last);
 			return entity;
 		}
 
-		CRenderEntity *entity = new CRenderEntity(this);
-		
-		if (transform != NULL)
-			addEntityTransformData(entity, transform);
-
+		CEntity *entity = new CEntity(this);
 		m_entities.push_back(entity);
 		return entity;
 	}
 
-	void CEntityManager::addEntityTransformData(CRenderEntity *entity, CTransform *transform)
+	void CEntityManager::addTransformDataToEntity(CEntity *entity, CTransform *transform)
 	{
-		CWorldTransform *transformData = entity->addData<CWorldTransform>();
-		transformData->Transform = transform;
+		CWorldTransformData *transformData = entity->addData<CWorldTransformData>();
+		transformData->TransformComponent = transform;
+
+		CEntity *parent = transformData->TransformComponent->getParentEntity();
+		if (parent != NULL)
+		{
+			transformData->ParentIndex = parent->getIndex();
+			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
+		}
 	}
 
 	void CEntityManager::removeEntity(int index)
 	{
-		CRenderEntity* entity = m_entities[index];
+		CEntity* entity = m_entities[index];
+		entity->setAlive(false);
+		entity->removeAllData();
+		m_unused.push_back(entity);
+	}
+
+	void CEntityManager::removeEntity(CEntity *entity)
+	{
 		entity->setAlive(false);
 		entity->removeAllData();
 		m_unused.push_back(entity);
@@ -94,23 +114,77 @@ namespace Skylicht
 	{
 		for (IEntitySystem* &s : m_systems)
 		{
-			s->update();
+			s->beginQuery();
 		}
-	}	
+
+		CEntity** entity = m_entities.pointer();
+		int numEntity = m_entities.size();
+
+		for (int i = 0; i < numEntity; i++)
+		{
+			if (entity[i]->isAlive())
+			{
+				for (IEntitySystem* &s : m_systems)
+				{
+					s->onQuery(this, entity[i]);
+				}
+			}
+		}
+
+		for (IEntitySystem* &s : m_systems)
+		{
+			s->update(this);
+		}
+	}
+
+	void CEntityManager::render()
+	{
+		for (IRenderSystem* &s : m_renders)
+		{
+			s->render(this);
+		}
+	}
 
 	bool CEntityManager::removeSystem(IEntitySystem *system)
 	{
-		std::vector<IEntitySystem*>::iterator i = m_systems.begin(), end = m_systems.end();
-		while (i != end)
+		bool release = false;
+
+		// remove on list system
 		{
-			if ((*i) == system)
+			std::vector<IEntitySystem*>::iterator i = m_systems.begin(), end = m_systems.end();
+			while (i != end)
 			{
-				delete system;
-				m_systems.erase(i);
-				return true;
+				if ((*i) == system)
+				{
+					release = true;
+					m_systems.erase(i);
+					break;
+				}
+				++i;
 			}
-			++i;
 		}
+
+		// remove on list render
+		{
+			std::vector<IRenderSystem*>::iterator i = m_renders.begin(), end = m_renders.end();
+			while (i != end)
+			{
+				if ((*i) == system)
+				{
+					release = true;
+					m_renders.erase(i);
+					break;
+				}
+				++i;
+			}
+		}
+
+		if (release == true)
+		{
+			delete system;
+			return true;
+		}
+
 		return false;
 	}
 

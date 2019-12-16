@@ -2,7 +2,9 @@
 
 #include "Scene/CScene.h"
 #include "GameObject/CZone.h"
-#include "Components/Camera/CCamera.h"
+
+#include "Camera/CCamera.h"
+#include "SkyDome/CSkyDome.h"
 
 #include "RenderPipeline/CForwardRP.h"
 #include "RenderPipeline/CDeferredRP.h"

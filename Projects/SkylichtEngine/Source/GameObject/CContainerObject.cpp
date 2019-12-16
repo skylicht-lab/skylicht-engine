@@ -29,13 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CContainerObject::CContainerObject()
-	{
-		m_updateRemoveAdd = true;
-	}
 
-	CContainerObject::CContainerObject(CGameObject *parent)
-		:CGameObject(parent)
+	CContainerObject::CContainerObject(CGameObject *parent, CZone *zone)
+		:CGameObject(parent, zone)
 	{
 		m_updateRemoveAdd = true;
 	}
@@ -123,7 +119,7 @@ namespace Skylicht
 
 	CGameObject* CContainerObject::createEmptyObject()
 	{
-		CGameObject *p = new CGameObject(this);
+		CGameObject *p = new CGameObject(this, m_zone);
 		if (p == NULL)
 			return NULL;
 
@@ -141,7 +137,7 @@ namespace Skylicht
 
 	CContainerObject* CContainerObject::createContainerObject()
 	{
-		CContainerObject *container = new CContainerObject(this);
+		CContainerObject *container = new CContainerObject(this, m_zone);
 
 		std::string name = generateObjectName("Container");
 

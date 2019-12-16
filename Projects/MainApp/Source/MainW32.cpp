@@ -123,7 +123,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	clientSize.right = winSize.Width;
 	clientSize.bottom = winSize.Height;
 
-	AdjustWindowRect(&clientSize, hWndStyle, TRUE);
+	AdjustWindowRect(&clientSize, hWndStyle, FALSE);
 
 	const s32 realWidth = clientSize.right - clientSize.left;
 	const s32 realHeight = clientSize.bottom - clientSize.top;

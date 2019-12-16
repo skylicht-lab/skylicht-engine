@@ -22,26 +22,57 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _WORLD_TRANSFORM_H_
-#define _WORLD_TRANSFORM_H_
+#ifndef _BASE_TRANSFORM_H_
+#define _BASE_TRANSFORM_H_
 
-#include "IEntityData.h"
-#include "Components/Transform/CTransform.h"
+#include "Components/CComponentSystem.h"
 
 namespace Skylicht
 {
-	class CWorldTransform : public IEntityData
+	class CEntity;
+
+	class CTransform : public CComponentSystem
 	{
 	public:
-		core::matrix4 World;
-		int Depth;
-		int ParentIndex;
-		CTransform *Transform;
+		static core::vector3df s_ox;
+		static core::vector3df s_oy;
+		static core::vector3df s_oz;
+
+	protected:
+		bool m_hasChanged;
 
 	public:
-		CWorldTransform();
+		CTransform();
 
-		virtual ~CWorldTransform();
+		virtual ~CTransform();
+
+		virtual void initComponent();
+
+		virtual void updateComponent();
+
+		void setChanged(bool b)
+		{
+			m_hasChanged = b;
+		}
+
+		bool hasChanged()
+		{
+			return m_hasChanged;
+		}
+
+		CTransform* getParent();
+
+		CGameObject* getParentObject();
+
+		CEntity* getParentEntity();
+
+	public:
+
+		virtual void setMatrixTransform(const core::matrix4& mat) = 0;
+
+		virtual const core::matrix4& getMatrixTransform() = 0;
+
+		virtual void getMatrixTransform(core::matrix4& matrix) = 0;
 	};
 }
 

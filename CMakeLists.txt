@@ -206,8 +206,8 @@ subdirs (Projects/Irrlicht)
 # skylicht engine
 subdirs (Projects/SkylichtSystem)
 subdirs (Projects/SkylichtEngine)
+subdirs (Projects/SkylichtComponents)
 #subdirs (Projects/SkylichtAudio)
-#subdirs (Projects/SkylichtComponents)
 #subdirs (Projects/SkylichtPhysics)
 
 #if (BUILD_SKYLICHT_NETWORK)

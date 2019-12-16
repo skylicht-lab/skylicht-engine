@@ -31,30 +31,36 @@ namespace Skylicht
 {
 	class CEntityManager;
 
-	class CRenderEntity
+	class CEntity
 	{
 		friend class CEntityManager;
+
 	protected:
 		bool m_alive;
-		int m_numData;
 		int m_index;
 
 		core::array<IEntityData*> m_data;
 
 	public:
-		CRenderEntity(CEntityManager *mgr);
+		CEntity(CEntityManager *mgr);
 
-		virtual ~CRenderEntity();
+		virtual ~CEntity();
 
 		template<class T>
 		T* addData();
 
-		template<class T>
-		int getDataIndex();
+		inline int getDataCount()
+		{
+			return (int)m_data.size();
+		}
 
 		IEntityData* getData(int dataIndex);
 
-		void removeData(int dataIndex);
+		template<class T>
+		T* getData();
+
+		template<class T>
+		bool removeData();
 
 		void removeAllData();
 
@@ -78,14 +84,14 @@ namespace Skylicht
 	};
 
 	template<class T>
-	T* CRenderEntity::addData()
+	T* CEntity::addData()
 	{
 		T *newData = new T();
 		IEntityData *data = dynamic_cast<IEntityData*>(newData);
 		if (data == NULL)
 		{
 			char exceptionInfo[512];
-			sprintf(exceptionInfo, "CRenderEntity::addData %s must inherit IEntityData", typeid(T).name());
+			sprintf(exceptionInfo, "CEntity::addData %s must inherit IEntityData", typeid(T).name());
 			os::Printer::log(exceptionInfo);
 
 			delete newData;
@@ -93,22 +99,43 @@ namespace Skylicht
 		}
 
 		m_data.push_back(newData);
-
-		m_numData = (int)m_data.size();
 		return newData;
 	}
 
 	template<class T>
-	int CRenderEntity::getDataIndex()
+	T* CEntity::getData()
 	{
-		for (int i = 0, n = (int)m_data.size(); i < n; i++)
+		IEntityData** data = m_data.pointer();
+		int numData = (int)m_data.size();
+
+		for (int i = 0; i < numData; i++)
 		{
-			if (dynamic_cast<T*>(m_data[i]) != NULL)
+			if (typeid(T) == typeid(*data[i]))
 			{
-				return i;
+				return (T*)data[i];
 			}
 		}
-		return -1;
+
+		return NULL;
+	}
+
+	template<class T>
+	bool CEntity::removeData()
+	{
+		IEntityData** data = m_data.pointer();
+		int numData = (int)m_data.size();
+
+		for (int i = 0; i < numData; i++)
+		{
+			if (typeid(T) == typeid(*data[i]))
+			{
+				delete data[i];
+				m_data.erase(i);
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
 

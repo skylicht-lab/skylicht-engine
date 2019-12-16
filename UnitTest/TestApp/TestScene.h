@@ -2,16 +2,20 @@
 
 #include "Base.hh"
 #include "Scene/CScene.h"
-
 #include "TestComponentSystem.h"
+#include "Camera/CCamera.h"
 
 class TestScene
 {
 protected:
-	CScene				*m_scene;
-	CZone				*m_zone;
+	CScene			*m_scene;
+	CZone			*m_zone;
+	CCamera			*m_camera;
 
-	int					m_testStep;
+	CForwardRP		*m_forwardRP;
+	CDeferredRP		*m_deferredRP;
+
+	int				m_testStep;
 
 public:
 	TestScene();
@@ -20,10 +24,14 @@ public:
 
 	virtual void update();
 
+	virtual void render();
+
 };
 
 void testScene();
 
 void testSceneUpdate();
+
+void testSceneRender();
 
 bool isTestScenePass();

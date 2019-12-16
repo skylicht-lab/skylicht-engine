@@ -24,7 +24,7 @@ CApp::CApp()
 	m_passUpdate = false;
 	m_passRender = false;
 	m_passPostRender = false;
-	m_passQuitApp = false;
+	m_passQuitApp = false;	
 }
 
 CApp::~CApp()
@@ -66,6 +66,8 @@ void CApp::onUpdate()
 void CApp::onRender()
 {
 	m_passRender = true;
+
+	testSceneRender();
 }
 
 void CApp::onPostRender()

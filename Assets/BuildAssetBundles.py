@@ -1,10 +1,10 @@
 import zipfile
 import os
 
-zipFileTypes = ["xml", "hlsl", "glsl"]
+compressExt = ["xml", "hlsl", "glsl", "png"]
 
 def needCompress(filename):
-	for fileType in zipFileTypes:
+	for fileType in compressExt:
 		if filename.endswith(fileType):
 			return True
 	return False

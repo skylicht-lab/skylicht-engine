@@ -23,19 +23,32 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CWorldTransform.h"
+#include "CEntityManager.h"
+#include "CEntity.h"
 
 namespace Skylicht
 {
-	CWorldTransform::CWorldTransform():		
-		Depth(0),
-		ParentIndex(-1),
-		Transform(NULL)
+	CEntity::CEntity(CEntityManager *mgr) :
+		m_alive(true)
 	{
+		m_index = mgr->getNumEntities();
 	}
 
-	CWorldTransform::~CWorldTransform()
+	CEntity::~CEntity()
 	{
+		removeAllData();
+	}	
 
+	IEntityData* CEntity::getData(int dataIndex)
+	{
+		return m_data[dataIndex];
+	}
+
+	void CEntity::removeAllData()
+	{
+		IEntityData **data = m_data.pointer();
+		for (int i = 0, n = (int)m_data.size(); i < n; i++)
+			delete data[i];
+		m_data.clear();
 	}
 }

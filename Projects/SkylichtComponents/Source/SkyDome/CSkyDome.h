@@ -22,34 +22,30 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _IENTITY_SYSTEM_H_
-#define _IENTITY_SYSTEM_H_
+#ifndef _SKYDOME_
+#define _SKYDOME_
 
-#include "CEntity.h"
+#include "Components/CComponentSystem.h"
+#include "CSkyDomeData.h"
+#include "CSkyDomeRender.h"
 
 namespace Skylicht
-{	
-	class CEntityManager;
-
-	class IEntitySystem
+{
+	class CSkyDome : public CComponentSystem
 	{
+	protected:
+		CSkyDomeData *m_skyDomeData;
+
 	public:
-		IEntitySystem()
-		{
-		}
+		CSkyDome();
+		
+		virtual ~CSkyDome();
 
-		virtual ~IEntitySystem()
-		{
+		virtual void initComponent();
 
-		}
+		virtual void updateComponent();
 
-		virtual void beginQuery() = 0;
-
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity) = 0;
-
-		virtual void init(CEntityManager *entityManager) = 0;
-
-		virtual void update(CEntityManager *entityManager) = 0;
+		void setData(ITexture *texture, const SColor& c);
 	};
 }
 
