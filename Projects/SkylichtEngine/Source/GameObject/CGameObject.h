@@ -28,11 +28,15 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "Material/CShaderParams.h"
 #include "Components/CComponentSystem.h"
-#include "Components/Transform/CTransformEuler.h"
-#include "Components/Transform/CTransformMatrix.h"
+#include "Transform/CTransformEuler.h"
+#include "Transform/CTransformMatrix.h"
 
 namespace Skylicht
 {
+	class CZone;
+	class CEntity;
+	class CEntityManager;
+
 	class CGameObject
 	{
 	public:
@@ -53,7 +57,9 @@ namespace Skylicht
 
 		bool				m_lockObject;
 
+		CEntity				*m_entity;
 		CGameObject			*m_parent;
+		CZone				*m_zone;
 
 		void				*m_tagData;
 		int					m_tagDataInt;
@@ -62,19 +68,18 @@ namespace Skylicht
 		CShaderParams		m_shaderParams;
 
 		std::vector<CComponentSystem*> m_components;
-	public:
-
-		CGameObject();
-
-		CGameObject(CGameObject *parent);
+	public:		
+		CGameObject(CGameObject *parent, CZone *zone);
 
 		virtual ~CGameObject();
 
 	protected:
-
 		void initNull();
 
 	public:
+		CEntity* createEntity(CTransform *transform);
+
+		void destroyEntity();
 
 		virtual void setID(long id)
 		{
@@ -116,10 +121,22 @@ namespace Skylicht
 			return m_parent;
 		}
 
+		inline CZone* getZone()
+		{
+			return m_zone;
+		}
+
 		inline void setParent(CGameObject *p)
 		{
 			m_parent = p;
 		}		
+		
+		inline CEntity* getEntity()
+		{
+			return m_entity;
+		}
+
+		CEntityManager* getEntityManager();
 
 		CTransform* getTransform();
 
@@ -213,8 +230,6 @@ namespace Skylicht
 
 		virtual void remove();		
 
-		virtual void initComponent();
-
 		template<class T>
 		T* addComponent();
 
@@ -249,8 +264,10 @@ namespace Skylicht
 			return NULL;
 		}
 
-		compSystem->setOwner(this);
 		m_components.push_back(compSystem);
+
+		compSystem->setOwner(this);
+		compSystem->initComponent();		
 
 		return newComp;
 	}

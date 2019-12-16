@@ -22,43 +22,34 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CTransformMatrix.h"
+#ifndef _SKYDOME_DATA_
+#define _SKYDOME_DATA_
+
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
-{	
-	CTransformMatrix::CTransformMatrix()
+{
+	class CSkyDomeData : public IEntityData
 	{
+	public:
+		ITexture *SkyDomeTexture;
+		SColor SkyDomeColor;
 
-	}
+		CMeshBuffer<video::S3DVertex>* Buffer;
 
-	CTransformMatrix::~CTransformMatrix()
-	{
+		u32 HorizontalResolution;
+		u32 VerticalResolution;
+		f32 TexturePercentage;
+		f32 SpherePercentage;
+		f32 Radius;
 
-	}
+	public:
+		CSkyDomeData();
 
-	void CTransformMatrix::initComponent()
-	{
+		virtual ~CSkyDomeData();
 
-	}
-
-	void CTransformMatrix::updateComponent()
-	{
-
-	}
-
-	void CTransformMatrix::setMatrixTransform(const core::matrix4& mat)
-	{
-		m_transform = mat;
-	}
-
-	const core::matrix4& CTransformMatrix::getMatrixTransform()
-	{
-		return m_transform;
-	}
-
-	void CTransformMatrix::getMatrixTransform(core::matrix4& matrix)
-	{
-		matrix = m_transform;
-	}
+		void generateMesh();
+	};
 }
+
+#endif

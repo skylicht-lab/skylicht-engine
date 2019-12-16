@@ -22,47 +22,29 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CEntityManager.h"
-#include "CRenderEntity.h"
+#ifndef _IRENDER_SYSTEM_H_
+#define _IRENDER_SYSTEM_H_
+
+#include "CEntity.h"
+#include "IEntitySystem.h"
 
 namespace Skylicht
 {
-	CRenderEntity::CRenderEntity(CEntityManager *mgr) :
-		m_numData(0),
-		m_alive(true)
-	{
-		m_index = mgr->getNumEntities();
-	}
+	class CEntityManager;
 
-	CRenderEntity::~CRenderEntity()
+	class IRenderSystem : public IEntitySystem
 	{
-		removeAllData();
-	}	
-
-	IEntityData* CRenderEntity::getData(int dataIndex)
-	{
-		if (dataIndex < 0 || dataIndex >= m_numData)
-			return NULL;
-
-		return m_data[dataIndex];
-	}
-
-	void CRenderEntity::removeData(int dataIndex)
-	{
-		if (dataIndex >= 0 && dataIndex < m_numData)
+	public:
+		IRenderSystem()
 		{
-			m_numData--;
-			delete m_data[dataIndex];
-			m_data.erase(dataIndex);
 		}
-	}
 
-	void CRenderEntity::removeAllData()
-	{
-		IEntityData **data = m_data.pointer();
-		for (int i = 0; i < m_numData; i++)
-			delete data[i];
-		m_data.clear();
-	}
+		virtual ~IRenderSystem()
+		{
+		}
+
+		virtual void render(CEntityManager *entityManager) = 0;
+	};
 }
+
+#endif

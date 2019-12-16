@@ -35,7 +35,6 @@ namespace Skylicht
 		m_currentRenderID = -1;
 		m_currentMeshBuffer = NULL;
 		m_currentMatRendering = NULL;
-		m_haveBakeLMShader = false;
 	}
 
 	CShaderManager::~CShaderManager()

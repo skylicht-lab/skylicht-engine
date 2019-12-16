@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		m_nearValue = 0.05f;
 		m_farValue = 1500;
-		m_fov = 54.0f;
+		m_fov = 60.0f;
 	}
 
 	CCamera::~CCamera()
@@ -51,16 +51,12 @@ namespace Skylicht
 
 	}
 
-	void CCamera::applyTransform()
+	void CCamera::endUpdate()
 	{
-		m_viewArea.getTransform(video::ETS_VIEW) = m_gameObject->getTransform()->getMatrixTransform();
-
-		video::IVideoDriver* driver = getVideoDriver();
-		if (driver)
-		{
-			driver->setTransform(video::ETS_PROJECTION, m_viewArea.getTransform(video::ETS_PROJECTION));
-			driver->setTransform(video::ETS_VIEW, m_viewArea.getTransform(video::ETS_VIEW));
-		}
+		// LookAt matrix is inverse of camera transform
+		m_gameObject->getTransform()->getMatrixTransform().getInverse(
+			m_viewArea.getTransform(video::ETS_VIEW)
+		);
 	}
 
 	const core::matrix4& CCamera::getProjectionMatrix() const
@@ -71,6 +67,13 @@ namespace Skylicht
 	const core::matrix4& CCamera::getViewMatrix() const
 	{
 		return m_viewArea.getTransform(video::ETS_VIEW);
+	}
+
+	void CCamera::setPosition(const core::vector3df& position)
+	{
+		CTransformEuler *t = m_gameObject->getTransformEuler();
+		if (t != NULL)
+			t->setPosition(position);
 	}
 
 	void CCamera::lookAt(const core::vector3df& position, const core::vector3df& target, const core::vector3df& up)
@@ -88,24 +91,72 @@ namespace Skylicht
 	{
 		CTransformEuler *t = m_gameObject->getTransformEuler();
 		if (t != NULL)
-		{			
-			core::vector3df rot = t->getPosition() - target;
-			t->setOrientation(rot, up);
+		{
+			core::vector3df front = target - t->getPosition();
+			t->setOrientation(front, up);
 		}
 	}
 
 	void CCamera::recalculateProjectionMatrix()
-	{	
+	{
+		core::dimension2du screenSize = getVideoDriver()->getCurrentRenderTargetSize();
+		float aspect = (float)screenSize.Width / (float)screenSize.Height;
+
 		if (m_projectionType == CCamera::Perspective)
 		{
-			core::dimension2du screenSize = getVideoDriver()->getCurrentRenderTargetSize();
-			float aspect = (float)screenSize.Width / (float)screenSize.Height;
-
 			m_viewArea.getTransform(video::ETS_PROJECTION).buildProjectionMatrixPerspectiveFovLH(
-				m_fov * core::DEGTORAD, 
-				aspect, 
-				m_nearValue, 
+				m_fov * core::DEGTORAD,
+				aspect,
+				m_nearValue,
 				m_farValue);
+		}
+		else if (m_projectionType == CCamera::Frustum)
+		{
+			float n = m_nearValue;
+			float f = m_farValue;
+
+			float scale = tanf(m_fov * 0.5f * core::DEGTORAD) * n;
+			float r = aspect * scale;
+			float l = -r;
+			float t = scale;
+			float b = -t;
+
+			f32 *m = m_viewArea.getTransform(video::ETS_PROJECTION).pointer();
+
+#define mat(x, y) m[(x << 2) + y]
+			mat(0, 0) = 2 * n / (r - l);
+			mat(0, 1) = 0;
+			mat(0, 2) = 0;
+			mat(0, 3) = 0;
+
+			mat(1, 0) = 0;
+			mat(1, 1) = 2 * n / (t - b);
+			mat(1, 2) = 0;
+			mat(1, 3) = 0;
+
+			mat(2, 0) = (r + l) / (r - l);
+			mat(2, 1) = (t + b) / (t - b);
+			mat(2, 2) = f / (f - n);			//!
+			mat(2, 3) = 1;						//!
+
+			mat(3, 0) = 0;
+			mat(3, 1) = 0;
+			mat(3, 2) = -(n * f)/ (f - n);		//!
+			mat(3, 3) = 0;
+#undef mat
+		}
+		else if (m_projectionType == CCamera::Ortho)
+		{
+			float n = m_nearValue;
+			float f = m_farValue;
+
+			float scale = tanf(m_fov * 0.5f * core::DEGTORAD) * (float)screenSize.Width;
+			float r = aspect * scale;
+			float l = -r;
+			float t = scale;
+			float b = -t;
+
+			m_viewArea.getTransform(video::ETS_PROJECTION).buildProjectionMatrixOrthoLH(r - l, t - b, n, f);
 		}
 	}
 }

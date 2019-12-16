@@ -36,4 +36,12 @@ namespace Skylicht
 	{
 
 	}
+
+	void CBaseRP::setCamera(CCamera *camera)
+	{
+		const SViewFrustum& viewArea = camera->getViewFrustum();		
+		video::IVideoDriver* driver = getVideoDriver();
+		driver->setTransform(video::ETS_PROJECTION, viewArea.getTransform(video::ETS_PROJECTION));
+		driver->setTransform(video::ETS_VIEW, viewArea.getTransform(video::ETS_VIEW));
+	}
 }

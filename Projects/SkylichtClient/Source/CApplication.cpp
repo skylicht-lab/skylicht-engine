@@ -62,7 +62,10 @@ namespace Skylicht
 		m_height = 0;
 		m_runGame = false;
 
+#if _DEBUG
 		m_showFPS = true;
+#endif
+
 		m_show2DUI = true;
 
 		m_tickSecond = 0.0f;

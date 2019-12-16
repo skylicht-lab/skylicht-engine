@@ -27,12 +27,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GameObject/CZone.h"
 
+#include "RenderPipeline/CForwardRP.h"
+#include "RenderPipeline/CDeferredRP.h"
+
 namespace Skylicht
 {
 	class CScene
 	{
 	protected:
 		ArrayZone m_zones;
+
+		CForwardRP *m_forwardRP;
+		CDeferredRP *m_deferredRP;
 
 	public:
 		CScene();

@@ -22,49 +22,34 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _TRANSFORM_MATRIX_H_
-#define _TRANSFORM_MATRIX_H_
+#ifndef _WORLD_TRANSFORM_SYSTEM_H_
+#define _WORLD_TRANSFORM_SYSTEM_H_
 
-#include "CTransform.h"
+#include "CWorldTransformData.h"
+#include "Entity/IEntitySystem.h"
+
+#define MAX_CHILD_DEPTH 512
 
 namespace Skylicht
 {
-	class CTransformMatrix : public CTransform
+	class CWorldTransformSystem : public IEntitySystem
 	{
 	protected:
-		core::matrix4	m_transform;
+		int m_maxDepth;
+		core::array<CWorldTransformData*> m_entities[MAX_CHILD_DEPTH];
 
 	public:
-		CTransformMatrix();
+		CWorldTransformSystem();
 
-		virtual ~CTransformMatrix();
+		virtual ~CWorldTransformSystem();
 
-		virtual void initComponent();
+		virtual void beginQuery();
 
-		virtual void updateComponent();
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 
-	public:
+		virtual void init(CEntityManager *entityManager);
 
-		inline core::vector3df getPosition()
-		{
-			return m_transform.getTranslation();
-		}
-
-		inline core::vector3df getRotation()
-		{
-			return m_transform.getRotationDegrees();
-		}
-
-		inline core::vector3df getScale()
-		{
-			return m_transform.getScale();
-		}
-
-		virtual void setMatrixTransform(const core::matrix4& mat);
-
-		virtual const core::matrix4& getMatrixTransform();
-
-		virtual void getMatrixTransform(core::matrix4& matrix);
+		virtual void update(CEntityManager *entityManager);
 	};
 }
 

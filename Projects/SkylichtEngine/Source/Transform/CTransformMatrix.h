@@ -22,25 +22,22 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _TRANSFORM_H_
-#define _TRANSFORM_H_
+#ifndef _TRANSFORM_MATRIX_H_
+#define _TRANSFORM_MATRIX_H_
 
 #include "CTransform.h"
 
 namespace Skylicht
 {
-	class CTransformEuler : public CTransform
+	class CTransformMatrix : public CTransform
 	{
 	protected:
-		core::vector3df m_position;
-		core::vector3df m_rotation;
-		core::vector3df m_scale;
+		core::matrix4 m_transform;
 
-		core::matrix4	m_transform;
 	public:
-		CTransformEuler();
+		CTransformMatrix();
 
-		virtual ~CTransformEuler();
+		virtual ~CTransformMatrix();
 
 		virtual void initComponent();
 
@@ -48,71 +45,20 @@ namespace Skylicht
 
 	public:
 
-		inline const core::vector3df& getPosition()
+		inline core::vector3df getPosition()
 		{
-			return m_position;
+			return m_transform.getTranslation();
 		}
 
-		inline void setPosition(const core::vector3df& pos)
+		inline core::vector3df getRotation()
 		{
-			m_position = pos;
+			return m_transform.getRotationDegrees();
 		}
 
-		inline const core::vector3df& getRotation()
+		inline core::vector3df getScale()
 		{
-			return m_rotation;
+			return m_transform.getScale();
 		}
-
-		inline const core::vector3df& getScale()
-		{
-			return m_scale;
-		}
-
-		inline void setRotation(const core::vector3df& eulerDeg)
-		{
-			m_rotation = eulerDeg;
-		}
-
-		inline void setRotation(const core::quaternion& q)
-		{
-			q.toEuler(m_rotation);
-			m_rotation *= core::RADTODEG;
-		}
-
-		inline void setYaw(float deg)
-		{
-			m_rotation.Y = deg;
-		}
-
-		inline void setPitch(float deg)
-		{
-			m_rotation.X = deg;
-		}
-
-		inline void setRoll(float deg)
-		{
-			m_rotation.Z = deg;
-		}
-
-		void setOrientation(const core::vector3df& front, const core::vector3df& up);
-
-		void lookAt(const core::vector3df& position);
-
-		void getRotation(core::quaternion& q);
-
-		core::quaternion getRotationQuaternion();
-
-		void getFront(core::vector3df& front);
-		
-		core::vector3df getFront();
-
-		void getUp(core::vector3df& up);
-
-		core::vector3df getUp();
-
-		void getRight(core::vector3df& right);
-
-		core::vector3df getRight();
 
 		virtual void setMatrixTransform(const core::matrix4& mat);
 
