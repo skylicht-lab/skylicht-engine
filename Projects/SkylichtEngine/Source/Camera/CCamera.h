@@ -48,6 +48,8 @@ namespace Skylicht
 		float m_fov;
 
 		SViewFrustum m_viewArea;
+
+		core::dimension2du m_screenSize;
 	public:
 		CCamera();
 

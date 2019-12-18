@@ -31,7 +31,8 @@ file(GLOB_RECURSE platform_uwp_source
 file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/MainApp/Assets/**.*)
 
 list (APPEND main_app_source ${platform_uwp_source})
-list (APPEND main_app_source ${platform_uwp_asset})
+
+set_property(SOURCE ${platform_uwp_asset} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 endif()
 
 if (MSVC OR CYGWIN OR MINGW)
@@ -69,6 +70,7 @@ elseif(BUILD_ANDROID)
 elseif (BUILD_WINDOWS_STORE)
 	add_executable(MainApp
 		${main_app_source}
+		${platform_uwp_asset}
 		./Platforms/UWP/MainApp_TemporaryKey.pfx
 		./Platforms/UWP/Package.appxmanifest
 	)
