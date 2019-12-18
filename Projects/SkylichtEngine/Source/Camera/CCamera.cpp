@@ -29,11 +29,12 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CCamera::CCamera() :
-		m_projectionType(CCamera::Perspective)
+		m_projectionType(CCamera::Perspective),
+		m_inputReceiver(true),
+		m_nearValue(0.05f),
+		m_farValue(1500.0f),
+		m_fov(60.0f)
 	{
-		m_nearValue = 0.05f;
-		m_farValue = 1500;
-		m_fov = 60.0f;
 	}
 
 	CCamera::~CCamera()
@@ -58,10 +59,12 @@ namespace Skylicht
 		if (m_screenSize != screenSize)
 			recalculateProjectionMatrix();
 
-		// LookAt matrix is inverse of camera transform
-		m_gameObject->getTransform()->getMatrixTransform().getInverse(
-			m_viewArea.getTransform(video::ETS_VIEW)
-		);
+		// Update lookat matrix
+		const core::matrix4& mat = m_gameObject->getTransform()->getMatrixTransform();
+		core::vector3df position = mat.getTranslation();
+		core::vector3df target = CTransform::s_oz;
+		mat.rotateVect(target);
+		m_viewArea.getTransform(video::ETS_VIEW).buildCameraLookAtMatrixLH(position, position + target, CTransform::s_oy);
 	}
 
 	const core::matrix4& CCamera::getProjectionMatrix() const
@@ -86,8 +89,8 @@ namespace Skylicht
 		CTransformEuler *t = m_gameObject->getTransformEuler();
 		if (t != NULL)
 		{
-			core::vector3df rot = position - target;
-			t->setOrientation(rot, up);
+			core::vector3df front = target - position;
+			t->setOrientation(front, up);
 			t->setPosition(position);
 		}
 	}
@@ -146,7 +149,7 @@ namespace Skylicht
 
 			mat(3, 0) = 0;
 			mat(3, 1) = 0;
-			mat(3, 2) = -(n * f)/ (f - n);		//!
+			mat(3, 2) = -(n * f) / (f - n);		//!
 			mat(3, 3) = 0;
 #undef mat
 		}

@@ -52,6 +52,16 @@ namespace Skylicht
 		return g_app;
 	}
 
+	void registerEvent(const char *name, IEventReceiver *receiver)
+	{
+		g_app->registerEvent(name, receiver);
+	}
+
+	void unRegisterEvent(IEventReceiver *receiver)
+	{
+		g_app->unRegisterEvent(receiver);
+	}
+
 	CApplication::CApplication()
 	{
 		g_app = this;
