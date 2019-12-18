@@ -35,8 +35,18 @@ namespace MainApp
 		void OnDisplayContentsInvalidated(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
 
 	private:
+		float ConvertDipsToPixels(float dips, float dpi)
+		{
+			static const float dipsPerInch = 96.0f;
+			return floorf(dips * dpi / dipsPerInch + 0.5f); // Round to nearest integer.
+		}
+
+		core::dimension2du GetWindowPixelSize();
+
+	private:
 		bool m_windowClosed;
 		bool m_windowVisible;
+		float m_dpi;
 
 		Platform::Agile<Windows::UI::Core::CoreWindow> m_coreWindow;
 	};

@@ -78,16 +78,25 @@ void App::SetWindow(CoreWindow^ window)
 
 	// handle core window
 	m_coreWindow = window;
+	m_dpi = currentDisplayInformation->LogicalDpi;
+}
+
+core::dimension2du App::GetWindowPixelSize()
+{
+	core::dimension2du result;
+	result.Width = lround(ConvertDipsToPixels(m_coreWindow->Bounds.Width, m_dpi));
+	result.Height = lround(ConvertDipsToPixels(m_coreWindow->Bounds.Height, m_dpi));
+	return result;
 }
 
 // Initializes scene resources, or loads a previously saved app state.
 void App::Load(Platform::String^ entryPoint)
-{
+{	
 	m_application = new CApplication();	
 	SIrrlichtCreationParameters p;
 	p.DeviceType = irr::EIDT_PHONE;
 	p.DriverType = video::EDT_DIRECT3D11;
-	p.WindowSize = core::dimension2du((u32)m_coreWindow->Bounds.Width, (u32)m_coreWindow->Bounds.Height);
+	p.WindowSize = GetWindowPixelSize();
 	p.Bits = (u8)32;
 	p.ZBufferBits = (u8)32;
 	p.Fullscreen = false;
@@ -170,7 +179,11 @@ void App::OnResuming(Platform::Object^ sender, Platform::Object^ args)
 
 void App::OnWindowSizeChanged(CoreWindow^ sender, WindowSizeChangedEventArgs^ args)
 {
-
+	if (m_application != NULL)
+	{		
+		core::dimension2du windowSize = core::dimension2du((u32)m_coreWindow->Bounds.Width, (u32)m_coreWindow->Bounds.Height);
+		m_application->notifyResizeWin(windowSize.Width, windowSize.Height);
+	}
 }
 
 void App::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
@@ -193,7 +206,13 @@ void App::OnWindowClosed(CoreWindow^ sender, CoreWindowEventArgs^ args)
 
 void App::OnDpiChanged(DisplayInformation^ sender, Object^ args)
 {
+	m_dpi = sender->LogicalDpi;
 
+	if (m_application != NULL)
+	{
+		core::dimension2du windowSize = GetWindowPixelSize();
+		m_application->notifyResizeWin(windowSize.Width, windowSize.Height);
+	}
 }
 
 void App::OnOrientationChanged(DisplayInformation^ sender, Object^ args)
