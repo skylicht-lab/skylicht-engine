@@ -91,5 +91,9 @@ namespace Skylicht
 
 	extern ISceneManager* getSceneManager();
 
+	extern void registerEvent(const char *name, IEventReceiver *receiver);
+
+	extern void unRegisterEvent(IEventReceiver *receiver);
+
 	extern float getTimeStep();
 }

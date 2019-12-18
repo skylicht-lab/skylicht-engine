@@ -25,13 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "Skylicht.h"
 
-#ifdef LINUX_SERVER
-
-// Shader Manager
-#include "Material/CShaderManager.h"
-
-#else
-
 // Skylicht Control
 #include "Control/CTouchManager.h"
 #include "Control/CAccelerometer.h"
@@ -40,8 +33,6 @@ https://github.com/skylicht-lab/skylicht-engine
 // Shader Manager
 #include "Material/CShaderManager.h"
 #include "Graphics2D/CGraphics2D.h"
-
-#endif
 
 namespace Skylicht
 {
@@ -55,10 +46,6 @@ namespace Skylicht
 		g_device = device;
 		g_video = device->getVideoDriver();
 
-#ifdef LINUX_SERVER
-		// init server
-		os::Printer::log("Init linux server");
-#else
 		os::Printer::log("Init skylicht core");
 
 		CTouchManager::createGetInstance();
@@ -70,7 +57,6 @@ namespace Skylicht
 
 		// alway use HW
 		g_video->setMinHardwareBufferVertexCount(0);
-#endif
 
 		// reset random time
 		os::Randomizer::reset(os::Timer::getRealTime());
@@ -78,9 +64,6 @@ namespace Skylicht
 
 	void releaseSkylicht()
 	{
-#ifdef LINUX_SERVER
-		os::Printer::log("Close linux server");
-#else
 		os::Printer::log("Close skylicht core");
 
 		CGraphics2D::releaseInstance();
@@ -89,16 +72,13 @@ namespace Skylicht
 		CTouchManager::releaseInstance();
 		CAccelerometer::releaseInstance();
 		CJoystick::releaseInstance();
-#endif
 	}
 
 	void updateSkylicht()
 	{
-#ifdef LINUX_SERVER
-
-#else	
-
-#endif
+		CTouchManager::getInstance()->update();
+		CAccelerometer::getInstance()->update();
+		CJoystick::getInstance()->update();
 	}
 
 	IrrlichtDevice* getIrrlichtDevice()

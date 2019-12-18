@@ -50,6 +50,8 @@ namespace Skylicht
 		SViewFrustum m_viewArea;
 
 		core::dimension2du m_screenSize;
+
+		bool m_inputReceiver;
 	public:
 		CCamera();
 
@@ -111,6 +113,16 @@ namespace Skylicht
 		const SViewFrustum& getViewFrustum()
 		{
 			return m_viewArea;
+		}
+
+		inline bool setInputReceiver(bool b)
+		{
+			m_inputReceiver = b;
+		}
+
+		inline bool isInputReceiverEnabled()
+		{
+			return m_inputReceiver;
 		}
 	};
 }
