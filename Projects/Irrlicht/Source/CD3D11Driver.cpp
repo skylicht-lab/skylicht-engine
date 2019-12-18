@@ -179,7 +179,7 @@ namespace irr
 				if (!Params.DriverMultithreaded)
 					deviceFlags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
 
-#if !defined(WINDOWS_STORE)				
+#if !defined(WINDOWS_STORE)
 				// a specific video card?
 				if (Params.DisplayAdapter)
 				{
@@ -330,7 +330,7 @@ namespace irr
 
 #if defined(WINDOWS_STORE)
 			::ZeroMemory(&present, sizeof(DXGI_SWAP_CHAIN_DESC1));
-			present.Width = lround(Params.WindowSize.Width);		// Match the size of the window.
+			present.Width = lround(Params.WindowSize.Width);			// Match the size of the window.
 			present.Height = lround(Params.WindowSize.Height);
 			present.Format = DXGI_FORMAT_B8G8R8A8_UNORM;				// This is the most common swap chain format.
 			present.Stereo = false;
@@ -338,7 +338,7 @@ namespace irr
 			present.SampleDesc.Quality = 0;
 			present.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 			present.BufferCount = 2;									// Use double-buffering to minimize latency.
-			present.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;	// All Windows Store apps must use this SwapEffect.
+			present.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;		// All Windows Store apps must use this SwapEffect.
 			present.Flags = 0;
 			present.Scaling = DXGI_SCALING_NONE;
 			present.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
@@ -1537,7 +1537,7 @@ namespace irr
 
 
 		void CD3D11Driver::OnResize(const core::dimension2d<u32>& size)
-		{
+		{			
 			if (!Device || !SwapChain)
 				return;
 
@@ -2686,26 +2686,29 @@ namespace irr
 			ID3D11RenderTargetView* views[] = { NULL };
 			Context->OMSetRenderTargets(1, views, NULL);
 
-			if (DefaultDepthBuffer)
-				DefaultDepthBuffer->Release();
-
-			if (DefaultBackBuffer)
-				DefaultBackBuffer->Release();
-
 			// If fullscreen, do it
 			if (Params.Fullscreen)
 			{
 				SwapChain->SetFullscreenState(TRUE, Output);
 			}
 
+			if (DefaultDepthBuffer)
+				DefaultDepthBuffer->Release();
+
+			if (DefaultBackBuffer)
+				DefaultBackBuffer->Release();
+
 			HRESULT hr = S_OK;
 
 			// resize targets. Shows error when working with Parallel NSight
+#if defined(WINDOWS_STORE)
+			hr = SwapChain->ResizeBuffers(2, lround(ScreenSize.Width), lround(ScreenSize.Height), D3DColorFormat, 0);
+#else
 			hr = SwapChain->ResizeBuffers(1, ScreenSize.Width, ScreenSize.Height, D3DColorFormat, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+#endif
 			if (FAILED(hr))
 			{
 				logFormatError(hr, "Could not resize back buffer");
-
 				return;
 			}
 

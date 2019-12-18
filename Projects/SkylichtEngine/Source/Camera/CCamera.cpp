@@ -53,6 +53,11 @@ namespace Skylicht
 
 	void CCamera::endUpdate()
 	{
+		// Update projection matrix
+		const core::dimension2du& screenSize = getVideoDriver()->getCurrentRenderTargetSize();
+		if (m_screenSize != screenSize)
+			recalculateProjectionMatrix();
+
 		// LookAt matrix is inverse of camera transform
 		m_gameObject->getTransform()->getMatrixTransform().getInverse(
 			m_viewArea.getTransform(video::ETS_VIEW)
@@ -158,5 +163,7 @@ namespace Skylicht
 
 			m_viewArea.getTransform(video::ETS_PROJECTION).buildProjectionMatrixOrthoLH(r - l, t - b, n, f);
 		}
+
+		m_screenSize = screenSize;
 	}
 }
