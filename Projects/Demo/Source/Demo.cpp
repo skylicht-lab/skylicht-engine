@@ -56,8 +56,11 @@ void Demo::initScene()
 	m_scene = new CScene();
 	m_zone = m_scene->createZone();
 
-	m_camera = m_zone->createEmptyObject()->addComponent<CCamera>();
+	CGameObject *camObj = m_zone->createEmptyObject();
+	camObj->addComponent<CCamera>();
+	camObj->addComponent<CEditorCamera>();
 
+	m_camera = camObj->getComponent<CCamera>();
 	m_camera->setPosition(core::vector3df(3.0f, 3.0f, 3.0f));
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0, 1, 0));
 

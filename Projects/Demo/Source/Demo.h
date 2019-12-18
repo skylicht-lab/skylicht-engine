@@ -4,6 +4,8 @@
 #include "GameObject/CZone.h"
 
 #include "Camera/CCamera.h"
+#include "Camera/CEditorCamera.h"
+
 #include "SkyDome/CSkyDome.h"
 
 #include "RenderPipeline/CForwardRP.h"
