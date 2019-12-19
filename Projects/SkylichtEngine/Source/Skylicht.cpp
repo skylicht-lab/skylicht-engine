@@ -25,7 +25,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "Skylicht.h"
 
-// Skylicht Control
+// Event
+#include "EventManager/CEventManager.h"
+
+// Control
 #include "Control/CTouchManager.h"
 #include "Control/CAccelerometer.h"
 #include "Control/CJoystick.h"
@@ -47,6 +50,7 @@ namespace Skylicht
 		g_video = device->getVideoDriver();
 
 		os::Printer::log("Init skylicht core");
+		CEventManager::createGetInstance();
 
 		CTouchManager::createGetInstance();
 		CAccelerometer::createGetInstance();
@@ -72,6 +76,8 @@ namespace Skylicht
 		CTouchManager::releaseInstance();
 		CAccelerometer::releaseInstance();
 		CJoystick::releaseInstance();
+
+		CEventManager::releaseInstance();
 	}
 
 	void updateSkylicht()

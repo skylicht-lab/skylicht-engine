@@ -45,14 +45,13 @@ HWND hWnd;
 DWORD hWndStyle;
 
 // Forward declarations of functions included in this code module:
-ATOM				MyRegisterClass(HINSTANCE hInstance);
-BOOL				InitInstance(HINSTANCE, int);
-LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+ATOM MyRegisterClass(HINSTANCE hInstance);
+BOOL InitInstance(HINSTANCE, int);
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-CApplication		*g_application;
-bool				g_restartApplication = false;
-bool				g_show2D = true;
-bool				g_update = true;
+CApplication *g_application;
+bool g_restartApplication = false;
+bool g_update = true;
 
 #if defined(CYGWIN) || defined(MINGW)
 int CALLBACK WinMain(
