@@ -30,18 +30,15 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CShader::CShader()
+	CShader::CShader() :
+		m_listVSUniforms(NULL),
+		m_listFSUniforms(NULL),
+		m_numVSUniform(0),
+		m_numFSUniform(0),
+		m_callback(NULL),
+		m_releaseCallback(false),
+		m_deferred(false)
 	{
-		m_listVSUniforms = NULL;
-		m_listFSUniforms = NULL;
-
-		m_numVSUniform = 0;
-		m_numFSUniform = 0;
-
-		m_callback = NULL;
-		m_releaseCallback = false;
-
-		m_deferred = false;
 	}
 
 	CShader::~CShader()

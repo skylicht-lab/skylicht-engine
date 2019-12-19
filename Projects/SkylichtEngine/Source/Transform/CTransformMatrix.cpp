@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTransformMatrix.h"
 
 namespace Skylicht
-{	
+{
 	CTransformMatrix::CTransformMatrix()
 	{
 

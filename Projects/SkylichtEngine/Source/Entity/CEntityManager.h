@@ -39,7 +39,7 @@ namespace Skylicht
 	protected:
 		core::array<CEntity*> m_entities;
 		core::array<CEntity*> m_unused;
-		
+
 		std::vector<IEntitySystem*> m_systems;
 		std::vector<IRenderSystem*> m_renders;
 
@@ -96,8 +96,6 @@ namespace Skylicht
 
 		bool removeSystem(IEntitySystem *system);
 
-		void removeAllSystem();	
-
 		void addTransformDataToEntity(CEntity *entity, CTransform *transform);
 	};
 
@@ -112,6 +110,7 @@ namespace Skylicht
 			char exceptionInfo[512];
 			sprintf(exceptionInfo, "CEntityManager::addSystem %s must inherit IEntitySystem", typeid(T).name());
 			os::Printer::log(exceptionInfo);
+			delete newSystem;
 			return NULL;
 		}
 
@@ -132,6 +131,7 @@ namespace Skylicht
 			char exceptionInfo[512];
 			sprintf(exceptionInfo, "CEntityManager::addRenderSystem %s must inherit IRenderSystem", typeid(T).name());
 			os::Printer::log(exceptionInfo);
+			delete newSystem;
 			return NULL;
 		}
 

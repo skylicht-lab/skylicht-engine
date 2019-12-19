@@ -29,12 +29,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-
-	CSTDThread::CSTDThread(IThreadCallback *callback)
-		:IThread(callback)
+	CSTDThread::CSTDThread(IThreadCallback *callback):
+		IThread(callback),
+		m_run(false)
 	{
-		m_run = false;
-
 		m_thread = new std::thread(CSTDThread::run, this);
 	}
 
@@ -51,7 +49,7 @@ namespace SkylichtSystem
 		if (m_callback == NULL)
 			return;
 
-		// todo run thread
+		// run thread
 		m_run = true;
 
 		// callback
@@ -79,7 +77,6 @@ namespace SkylichtSystem
 		p->update();
 		return 0;
 	}
-
 }
 
 #endif

@@ -44,7 +44,7 @@ namespace Skylicht
 	{
 		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
 			m_entities[depth].set_used(0);
-		
+
 		m_maxDepth = 1;
 	}
 

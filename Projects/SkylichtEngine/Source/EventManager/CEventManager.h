@@ -22,33 +22,32 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CEntityManager.h"
-#include "CEntity.h"
+#ifndef _EVENT_MANAGER_H_
+#define _EVENT_MANAGER_H_
+
+#include "Utils/CGameSingleton.h"
 
 namespace Skylicht
 {
-	CEntity::CEntity(CEntityManager *mgr) :
-		m_alive(true)
+	class CEventManager :
+		public CGameSingleton<CEventManager>,
+		public IEventReceiver
 	{
-		m_index = mgr->getNumEntities();
-	}
+	protected:
+		typedef std::pair<std::string, IEventReceiver*> eventType;
+		std::vector<eventType> m_eventReceivers;
 
-	CEntity::~CEntity()
-	{
-		removeAllData();
-	}
+	public:
+		CEventManager();
 
-	IEntityData* CEntity::getData(int dataIndex)
-	{
-		return m_data[dataIndex];
-	}
+		virtual ~CEventManager();
 
-	void CEntity::removeAllData()
-	{
-		IEntityData **data = m_data.pointer();
-		for (int i = 0, n = (int)m_data.size(); i < n; i++)
-			delete data[i];
-		m_data.clear();
-	}
+		void registerEvent(std::string name, IEventReceiver *pEvent);
+
+		void unRegisterEvent(IEventReceiver *pEvent);
+
+		virtual bool OnEvent(const SEvent& event);
+	};
 }
+
+#endif

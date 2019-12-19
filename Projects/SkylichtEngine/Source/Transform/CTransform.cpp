@@ -32,7 +32,7 @@ namespace Skylicht
 	core::vector3df CTransform::s_oy = core::vector3df(0.0f, 1.0f, 0.0f);
 	core::vector3df CTransform::s_oz = core::vector3df(0.0f, 0.0f, 1.0f);
 
-	CTransform::CTransform():
+	CTransform::CTransform() :
 		m_hasChanged(true)
 	{
 
