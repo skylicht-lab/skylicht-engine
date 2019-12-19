@@ -187,13 +187,4 @@ namespace Skylicht
 
 		return false;
 	}
-
-	void CEntityManager::removeAllSystem()
-	{
-		for (IEntitySystem* &s : m_systems)
-		{
-			delete s;
-		}
-		m_systems.clear();
-	}
 }

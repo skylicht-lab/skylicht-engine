@@ -28,9 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CJoystick::CJoystick()
+	CJoystick::CJoystick() :
+		m_support(false)
 	{
-		m_support = false;
 	}
 
 	CJoystick::~CJoystick()

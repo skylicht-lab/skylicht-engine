@@ -36,22 +36,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CBaseApp::CBaseApp()
+	CBaseApp::CBaseApp() :
+		m_device(NULL),
+		m_driver(NULL),
+		m_timeStep(1.0f),
+		m_limitFPS(-1),
+		m_clearColor(255, 0, 0, 0),
+		m_clearScreenTime(0.0f),
+		m_enableRender(true)
 	{
-		m_device = NULL;
-		m_driver = NULL;
-
-		m_timeStep = 1.0f;
-		m_limitFPS = -1;
-
-		m_clearColor.set(255, 0, 0, 0);
-
 #ifdef USE_VISUAL_LEAK_DETECTOR
 		VLDEnable();
 #endif
-
-		m_clearScreenTime = 0.0f;
-		m_enableRender = true;
 
 #if defined(_DEBUG) && defined(_WIN32)
 #if WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP
@@ -64,38 +60,9 @@ namespace Skylicht
 
 	CBaseApp::~CBaseApp()
 	{
-		m_eventReceivers.clear();
-
 #ifdef USE_VISUAL_LEAK_DETECTOR
 		VLDDisable();
 #endif
-	}
-
-	void CBaseApp::registerEvent(std::string name, IEventReceiver *pEvent)
-	{
-		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
-		while (i != end)
-		{
-			if ((*i).second == pEvent)
-				return;
-			++i;
-		}
-
-		m_eventReceivers.push_back(eventType(name, pEvent));
-	}
-
-	void CBaseApp::unRegisterEvent(IEventReceiver *pEvent)
-	{
-		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
-		while (i != end)
-		{
-			if ((*i).second == pEvent)
-			{
-				m_eventReceivers.erase(i);
-				return;
-			}
-			++i;
-		}
 	}
 
 	void CBaseApp::registerAppEvent(std::string name, IApplicationEventReceiver *pEvent)
@@ -120,6 +87,41 @@ namespace Skylicht
 			{
 				m_appEventReceivers.erase(i);
 				return;
+			}
+			++i;
+		}
+	}
+
+	void CBaseApp::sendEventToAppReceiver(int eventID)
+	{
+		std::vector<appEventType>::iterator i = m_appEventReceivers.begin(), end = m_appEventReceivers.end();
+		while (i != end)
+		{
+			switch (eventID)
+			{
+			case AppEventUpdate:
+				i->second->onUpdate();
+				break;
+			case AppEventRender:
+				i->second->onRender();
+				break;
+			case AppEventPostRender:
+				i->second->onPostRender();
+				break;
+			case AppEventPause:
+				i->second->onPause();
+				break;
+			case AppEventResume:
+				i->second->onResume();
+				break;
+			case AppEventInit:
+				i->second->onInitApp();
+				break;
+			case AppEventQuit:
+				i->second->onQuitApp();
+				break;
+			default:
+				break;
 			}
 			++i;
 		}
@@ -193,4 +195,4 @@ namespace Skylicht
 		// implement on Editor
 	}
 
-}
+	}

@@ -2,6 +2,7 @@
 #include "CCamera.h"
 #include "CEditorCamera.h"
 #include "GameObject/CGameObject.h"
+#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
@@ -19,12 +20,12 @@ namespace Skylicht
 
 	CEditorCamera::~CEditorCamera()
 	{
-		unRegisterEvent(this);
+		CEventManager::getInstance()->unRegisterEvent(this);
 	}
 
 	void CEditorCamera::initComponent()
 	{
-		registerEvent("CEditorCamera", this);
+		CEventManager::getInstance()->registerEvent("CEditorCamera", this);
 	}
 
 	void CEditorCamera::updateComponent()
@@ -35,7 +36,7 @@ namespace Skylicht
 	void CEditorCamera::endUpdate()
 	{
 		CTransformEuler *transform = m_gameObject->getTransformEuler();
-		CCamera *camera = m_gameObject->getComponent<CCamera>();		
+		CCamera *camera = m_gameObject->getComponent<CCamera>();
 
 		if (camera == NULL || transform == NULL)
 			return;
@@ -91,7 +92,7 @@ namespace Skylicht
 			up.normalize();
 			pos += up * offsetPosition.Y;
 		}
-		
+
 		// write right target
 		camera->lookAt(pos, pos + target, CTransform::s_oy);
 	}
@@ -99,7 +100,7 @@ namespace Skylicht
 	void CEditorCamera::updateInputRotate(core::vector3df &relativeRotation, f32 timeDiff)
 	{
 		const float MaxVerticalAngle = 88;
-		const int	MouseYDirection = 1;
+		const int MouseYDirection = 1;
 
 		// rotate X
 		relativeRotation.Y -= (m_centerCursor.X - m_cursorPos.X) * m_rotateSpeed * MouseYDirection * timeDiff;

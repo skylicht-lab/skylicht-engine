@@ -29,13 +29,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	CPThread::CPThread(IThreadCallback *callback)
-		:IThread(callback)
+	CPThread::CPThread(IThreadCallback *callback):
+		IThread(callback),
+		m_run(false)
 	{
-		m_run = false;
-
 		int result = pthread_create(&m_pthread, 0,CPThread::run, this);
-
 		if(result != 0)
 		{
 			printf("CPThread::CPThread error in creating thread\n");
