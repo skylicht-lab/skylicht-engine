@@ -123,6 +123,12 @@ namespace Skylicht
 	template<class T>
 	T* CEntityManager::addRenderSystem()
 	{
+		T* system = getSystem<T>();
+		if (system != NULL)
+		{
+			return system;
+		}
+
 		T* newSystem = new T();
 
 		IRenderSystem *render = dynamic_cast<IRenderSystem*>(newSystem);
@@ -148,9 +154,10 @@ namespace Skylicht
 	{
 		for (IEntitySystem* &s : m_systems)
 		{
-			if (dynamic_cast<T*>(s) != NULL)
+			T *system = dynamic_cast<T*>(s);
+			if (system != NULL)
 			{
-				return s;
+				return system;
 			}
 		}
 		return NULL;

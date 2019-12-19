@@ -7,7 +7,7 @@
 namespace Skylicht
 {
 	CEditorCamera::CEditorCamera() :
-		m_moveSpeed(0.5f),
+		m_moveSpeed(1.0f),
 		m_rotateSpeed(16.0f),
 		m_leftMousePress(false),
 		m_rightMousePress(false),

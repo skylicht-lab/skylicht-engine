@@ -48,13 +48,15 @@ namespace Skylicht
 	void CSkyDomeRender::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
 		CSkyDomeData *skyDomeData = entity->getData<CSkyDomeData>();
-		CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
-
-		if (skyDomeData != NULL && transformData != NULL)
+		if (skyDomeData != NULL)
 		{
-			m_skydomes.push_back(skyDomeData);
-			m_transforms.push_back(transformData);
-			m_worlds.push_back(transformData->World);
+			CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
+			if (transformData != NULL)
+			{
+				m_skydomes.push_back(skyDomeData);
+				m_transforms.push_back(transformData);
+				m_worlds.push_back(transformData->World);
+			}
 		}
 	}
 
@@ -67,12 +69,12 @@ namespace Skylicht
 	{
 		CCamera *camera = entityManager->getCamera();
 		CTransform *cameraTransform = camera->getGameObject()->getComponent<CTransform>();
-		
+
 		core::vector3df cameraPosition = cameraTransform->getMatrixTransform().getTranslation();
 		float cameraFar = camera->getFarValue();
 
 		core::matrix4* worlds = m_worlds.pointer();
-		CWorldTransformData** transformData = m_transforms.pointer();		
+		CWorldTransformData** transformData = m_transforms.pointer();
 
 		for (int i = 0, n = (int)m_worlds.size(); i < n; i++)
 		{
@@ -90,13 +92,9 @@ namespace Skylicht
 
 		for (int i = 0, n = (int)m_skydomes.size(); i < n; i++)
 		{
-			// transform
+			IMeshBuffer* buffer = skydomes[i]->Buffer;
+
 			driver->setTransform(video::ETS_WORLD, worlds[i]);
-
-			// draw
-			CMeshBuffer<video::S3DVertex>* buffer = skydomes[i]->Buffer;
-
-			// draw skydome
 			driver->setMaterial(buffer->getMaterial());
 			driver->drawMeshBuffer(buffer);
 		}
