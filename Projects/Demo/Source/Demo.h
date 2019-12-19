@@ -7,6 +7,7 @@
 #include "Camera/CEditorCamera.h"
 
 #include "SkyDome/CSkyDome.h"
+#include "GridPlane/CGridPlane.h"
 
 #include "RenderPipeline/CForwardRP.h"
 #include "RenderPipeline/CDeferredRP.h"

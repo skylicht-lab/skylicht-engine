@@ -28,7 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CTransformEuler::CTransformEuler() :
-		m_scale(1.0f, 1.0f, 1.0f)
+		m_scale(1.0f, 1.0f, 1.0f),
+		m_matrixChanged(true)
 	{
 
 	}
@@ -84,6 +85,7 @@ namespace Skylicht
 
 		m_rotation = rotationMatrix.getRotationDegrees();
 		m_hasChanged = true;
+		m_matrixChanged = true;
 	}
 
 	void CTransformEuler::lookAt(const core::vector3df& position)
@@ -91,6 +93,7 @@ namespace Skylicht
 		float angle = (float)(core::vector2df(position.X - m_position.X, position.Z - m_position.Z).getAngleTrig());
 		m_rotation.set(0.0f, 90 - angle, 0.0f);
 		m_hasChanged = true;
+		m_matrixChanged = true;
 	}
 
 	void CTransformEuler::setMatrixTransform(const core::matrix4& mat)
@@ -131,12 +134,21 @@ namespace Skylicht
 		m_rotation = rotationMatrix.getRotationDegrees();
 		m_position = mat.getTranslation();
 		m_scale = mat.getScale();
+
 		m_hasChanged = true;
+
+		m_transform = mat;
+		m_matrixChanged = false;
 	}
 
 	const core::matrix4& CTransformEuler::getMatrixTransform()
 	{
-		getMatrixTransform(m_transform);
+		if (m_matrixChanged == true)
+		{
+			m_matrixChanged = false;
+			getMatrixTransform(m_transform);
+		}
+
 		return m_transform;
 	}
 

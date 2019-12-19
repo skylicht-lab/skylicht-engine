@@ -22,34 +22,40 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYDOME_DATA_
-#define _SKYDOME_DATA_
-
-#include "Entity/IEntityData.h"
+#include "pch.h"
+#include "Entity/CEntity.h"
+#include "Entity/CEntityManager.h"
+#include "CGridPlane.h"
+#include "CGridPlaneRender.h"
+#include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
-	class CSkyDomeData : public IEntityData
+	CGridPlane::CGridPlane()
 	{
-	public:
-		ITexture *SkyDomeTexture;
-		SColor SkyDomeColor;
 
-		IMeshBuffer* Buffer;
+	}
 
-		u32 HorizontalResolution;
-		u32 VerticalResolution;
-		f32 TexturePercentage;
-		f32 SpherePercentage;
-		f32 Radius;
+	CGridPlane::~CGridPlane()
+	{
 
-	public:
-		CSkyDomeData();
+	}
 
-		virtual ~CSkyDomeData();
+	void CGridPlane::initComponent()
+	{
+		m_gridData = m_gameObject->getEntity()->addData<CGridPlaneData>();
+		m_gameObject->getEntityManager()->addRenderSystem<CGridPlaneRender>();
+	}
 
-		void generateMesh();
-	};
+	void CGridPlane::updateComponent()
+	{
+
+	}
+
+	void CGridPlane::setGridData(int numGrid, float gridSize)
+	{
+		m_gridData->NumGrid = numGrid;
+		m_gridData->GridSize = gridSize;
+		m_gridData->init();
+	}
 }
-
-#endif
