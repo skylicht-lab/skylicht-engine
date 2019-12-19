@@ -48,7 +48,12 @@ void Demo::onInitApp()
 
 	io::IFileSystem* fileSystem = getApplication()->getFileSystem();
 	fileSystem->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
+
+#if defined(WINDOWS_STORE)
 	fileSystem->addFileArchive(getBuiltInPath("Demo.zip"), false, false);
+#else
+	fileSystem->addFileArchive("Demo.zip", false, false);
+#endif
 
 	CShaderManager::getInstance()->initBasicShader();
 
@@ -74,6 +79,8 @@ void Demo::initScene()
 	CSkyDome *skyDome = m_zone->createEmptyObject()->addComponent<CSkyDome>();
 	skyDome->setData(getVideoDriver()->getTexture("Demo/Textures/Sky/PaperMill.png"), SColor(255, 255, 255, 255));
 #endif
+
+	m_zone->createEmptyObject()->addComponent<CGridPlane>();
 
 	m_rendering = new CForwardRP();
 	m_rendering->initRender(app->getWidth(), app->getHeight());

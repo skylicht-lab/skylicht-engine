@@ -37,6 +37,9 @@ namespace Skylicht
 		core::vector3df m_scale;
 
 		core::matrix4	m_transform;
+
+		bool m_matrixChanged;
+
 	public:
 		CTransformEuler();
 
@@ -57,6 +60,7 @@ namespace Skylicht
 		{
 			m_position = pos;
 			m_hasChanged = true;
+			m_matrixChanged = true;
 		}
 
 		inline const core::vector3df& getRotation()
@@ -73,6 +77,7 @@ namespace Skylicht
 		{
 			m_rotation = eulerDeg;
 			m_hasChanged = true;
+			m_matrixChanged = true;
 		}
 
 		inline void setRotation(const core::quaternion& q)
@@ -80,24 +85,28 @@ namespace Skylicht
 			q.toEuler(m_rotation);
 			m_rotation *= core::RADTODEG;
 			m_hasChanged = true;
+			m_matrixChanged = true;
 		}
 
 		inline void setYaw(float deg)
 		{
 			m_rotation.Y = deg;
 			m_hasChanged = true;
+			m_matrixChanged = true;
 		}
 
 		inline void setPitch(float deg)
 		{
 			m_rotation.X = deg;
 			m_hasChanged = true;
+			m_matrixChanged = true;
 		}
 
 		inline void setRoll(float deg)
 		{
 			m_rotation.Z = deg;
 			m_hasChanged = true;
+			m_matrixChanged = true;
 		}
 
 		void setOrientation(const core::vector3df& front, const core::vector3df& up);

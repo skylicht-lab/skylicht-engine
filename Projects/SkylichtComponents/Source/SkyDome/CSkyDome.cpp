@@ -42,10 +42,7 @@ namespace Skylicht
 
 	void CSkyDome::initComponent()
 	{
-		// add skydome data
 		m_skyDomeData = m_gameObject->getEntity()->addData<CSkyDomeData>();
-
-		// add skydome render system
 		m_gameObject->getEntityManager()->addRenderSystem<CSkyDomeRender>();
 	}
 

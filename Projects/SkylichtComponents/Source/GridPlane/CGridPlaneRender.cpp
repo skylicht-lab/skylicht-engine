@@ -22,34 +22,55 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYDOME_DATA_
-#define _SKYDOME_DATA_
-
-#include "Entity/IEntityData.h"
+#include "pch.h"
+#include "CGridPlaneRender.h"
 
 namespace Skylicht
 {
-	class CSkyDomeData : public IEntityData
+	void CGridPlaneRender::beginQuery()
 	{
-	public:
-		ITexture *SkyDomeTexture;
-		SColor SkyDomeColor;
+		m_gridPlanes.set_used(0);
+		m_transforms.set_used(0);
+	}
 
-		IMeshBuffer* Buffer;
+	void CGridPlaneRender::onQuery(CEntityManager *entityManager, CEntity *entity)
+	{
+		CGridPlaneData *gridPlane = entity->getData<CGridPlaneData>();
+		if (gridPlane != NULL)
+		{
+			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+			if (transform != NULL)
+			{
+				m_gridPlanes.push_back(gridPlane);
+				m_transforms.push_back(transform);
+			}
+		}
+	}
 
-		u32 HorizontalResolution;
-		u32 VerticalResolution;
-		f32 TexturePercentage;
-		f32 SpherePercentage;
-		f32 Radius;
+	void CGridPlaneRender::init(CEntityManager *entityManager)
+	{
 
-	public:
-		CSkyDomeData();
+	}
 
-		virtual ~CSkyDomeData();
+	void CGridPlaneRender::update(CEntityManager *entityManager)
+	{
 
-		void generateMesh();
-	};
+	}
+
+	void CGridPlaneRender::render(CEntityManager *entityManager)
+	{
+		IVideoDriver *driver = getVideoDriver();
+
+		CGridPlaneData** gridPlane = m_gridPlanes.pointer();
+		CWorldTransformData** transformData = m_transforms.pointer();
+
+		for (int i = 0, n = (int)m_gridPlanes.size(); i < n; i++)
+		{
+			IMeshBuffer* buffer = gridPlane[i]->LineBuffer;
+
+			driver->setTransform(video::ETS_WORLD, transformData[i]->World);
+			driver->setMaterial(buffer->getMaterial());
+			driver->drawMeshBuffer(buffer);
+		}
+	}
 }
-
-#endif

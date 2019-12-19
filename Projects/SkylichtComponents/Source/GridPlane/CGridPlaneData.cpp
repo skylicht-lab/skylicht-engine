@@ -22,34 +22,66 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYDOME_DATA_
-#define _SKYDOME_DATA_
-
-#include "Entity/IEntityData.h"
+#include "pch.h"
+#include "CGridPlaneData.h"
 
 namespace Skylicht
 {
-	class CSkyDomeData : public IEntityData
+	CGridPlaneData::CGridPlaneData() :
+		NumGrid(50),
+		GridSize(1.0f)
 	{
-	public:
-		ITexture *SkyDomeTexture;
-		SColor SkyDomeColor;
+		init();
+	}
 
-		IMeshBuffer* Buffer;
+	CGridPlaneData::~CGridPlaneData()
+	{
 
-		u32 HorizontalResolution;
-		u32 VerticalResolution;
-		f32 TexturePercentage;
-		f32 SpherePercentage;
-		f32 Radius;
+	}
 
-	public:
-		CSkyDomeData();
+	void CGridPlaneData::init()
+	{
+		clearBuffer();
 
-		virtual ~CSkyDomeData();
+		SColor color(255, 100, 100, 100);
 
-		void generateMesh();
-	};
+		core::vector3df start;
+		core::vector3df end;
+
+		float size = NumGrid * GridSize * 0.5f;
+
+		start = core::vector3df(-size, 0, -size);
+		end = core::vector3df(size, 0, -size);
+
+		for (int i = 0; i <= NumGrid; i++)
+		{
+			if (i == NumGrid / 2)
+				color = SColor(255, 255, 255, 255);
+			else
+				color = SColor(255, 100, 100, 100);
+
+			addLineVertexBatch(start, end, color);
+
+			start.Z += GridSize;
+			end.Z += GridSize;
+		}
+
+		start = core::vector3df(-size, 0, -size);
+		end = core::vector3df(-size, 0, size);
+
+		for (int i = 0; i <= NumGrid; i++)
+		{
+			if (i == NumGrid / 2)
+				color = SColor(255, 255, 255, 255);
+			else
+				color = SColor(255, 100, 100, 100);
+
+			addLineVertexBatch(start, end, color);
+
+			start.X += GridSize;
+			end.X += GridSize;
+		}
+
+		updateBuffer();
+	}
 }
-
-#endif
