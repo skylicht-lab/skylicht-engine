@@ -10,6 +10,7 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 Demo::Demo() :
+	m_wgetResource(NULL),
 	m_scene(NULL),
 	m_zone(NULL),
 	m_camera(NULL),
@@ -40,6 +41,11 @@ io::path Demo::getBuiltInPath(const char *name)
 
 void Demo::onInitApp()
 {
+#ifdef __EMSCRIPTEN__
+	m_wgetResource = new CGetFileURL("Demo.zip", "Demo.zip");
+	m_wgetResource->download(CGetFileURL::Get);
+#endif
+
 	io::IFileSystem* fileSystem = getApplication()->getFileSystem();
 	fileSystem->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 	fileSystem->addFileArchive(getBuiltInPath("Demo.zip"), false, false);
@@ -64,9 +70,10 @@ void Demo::initScene()
 	m_camera->setPosition(core::vector3df(3.0f, 3.0f, 3.0f));
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0, 1, 0));
 
+#ifndef __EMSCRIPTEN__
 	CSkyDome *skyDome = m_zone->createEmptyObject()->addComponent<CSkyDome>();
-
 	skyDome->setData(getVideoDriver()->getTexture("Demo/Textures/Sky/PaperMill.png"), SColor(255, 255, 255, 255));
+#endif
 
 	m_rendering = new CForwardRP();
 	m_rendering->initRender(app->getWidth(), app->getHeight());

@@ -32,6 +32,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 endif()
 
+set(CMAKE_CXX_STANDARD 11)
+
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
 

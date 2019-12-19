@@ -13,6 +13,8 @@
 
 #include "Entity/CEntityManager.h"
 
+#include "Emscripten/CGetFileURL.h"
+
 class Demo : public IApplicationEventReceiver
 {
 protected:
@@ -21,7 +23,8 @@ protected:
 	CCamera	*m_camera;
 
 	CBaseRP *m_rendering;
-
+	
+	CGetFileURL *m_wgetResource;
 protected:
 	io::path getBuiltInPath(const char *name);
 
