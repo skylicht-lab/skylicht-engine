@@ -61,7 +61,7 @@ namespace Skylicht
 		// for multi-inherit
 		CBaseApp* getBaseApp()
 		{
-			return (CBaseApp*)this;
+			return static_cast<CBaseApp*>(this);
 		}
 
 		void setParams(const std::vector<std::string>& argv);

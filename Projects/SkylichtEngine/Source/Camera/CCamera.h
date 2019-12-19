@@ -115,7 +115,7 @@ namespace Skylicht
 			return m_viewArea;
 		}
 
-		inline bool setInputReceiver(bool b)
+		inline void setInputReceiver(bool b)
 		{
 			m_inputReceiver = b;
 		}

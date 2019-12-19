@@ -34,7 +34,6 @@ source_group("Include" FILES "${irrlicht_include}")
 add_library(Irrlicht STATIC ${irrlicht_source} ${irrlicht_include})
 
 set_target_properties(Irrlicht PROPERTIES VERSION ${SKYLICHT_VERSION})
-set_property(TARGET Irrlicht PROPERTY CXX_STANDARD 11)
 
 # ThirdParty
 target_link_libraries(Irrlicht ThirdParty)
