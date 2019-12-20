@@ -2,10 +2,10 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtSystem/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtClient/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include	
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtEngine/Source	
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtEngine/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtComponents/Source
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtPhysics/Source
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtAudio/Source
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtComponents/Source
 )
 
 #if(BUILD_DEBUG_VLD)
@@ -25,10 +25,12 @@ file(GLOB_RECURSE skylicht_client_source
 	./Source/**.c 
 	./Source/**.h)
 	
+setup_project_group("${skylicht_client_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+	
 add_library(SkylichtClient STATIC ${skylicht_client_source})
 
 target_precompiled_header(SkylichtClient ./Source/pch.cpp ${skylicht_client_source})
 
 set_target_properties(SkylichtClient PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-target_link_libraries(SkylichtClient SkylichtEngine)
+target_link_libraries(SkylichtClient SkylichtEngine SkylichtComponents)

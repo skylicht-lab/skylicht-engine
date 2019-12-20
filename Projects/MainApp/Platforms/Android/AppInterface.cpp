@@ -37,11 +37,11 @@ extern "C" {
 	bool g_appRelease = false;
 	bool g_appRestart = false;
 
-	CApplication*	g_myApp = NULL;
+	CApplication* g_myApp = NULL;
 	IrrlichtDevice* g_irrDevice = NULL;
 
-	int				g_width = -1;
-	int				g_height = -1;
+	int g_width = -1;
+	int g_height = -1;
 
 	void applicationExitApp();
 

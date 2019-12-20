@@ -40,7 +40,6 @@ private:
 	bool m_passRender;
 	bool m_passPostRender;
 	bool m_passQuitApp;
-	
 public:
 	CApp();
 

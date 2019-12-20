@@ -42,9 +42,14 @@ namespace Skylicht
 
 	}
 
-	void CDeferredRP::render(CCamera *camera, CEntityManager *entityManager, bool cullAndRenderOnly)
+	void CDeferredRP::render(CCamera *camera, CEntityManager *entityManager)
 	{
-		camera->applyTransform();
+		if (camera == NULL)
+			return;
 
+		setCamera(camera);
+		entityManager->setCamera(camera);
+		entityManager->update();
+		entityManager->render();
 	}
 }

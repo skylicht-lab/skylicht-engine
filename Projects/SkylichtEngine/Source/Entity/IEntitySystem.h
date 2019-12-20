@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifndef _IENTITY_SYSTEM_H_
 #define _IENTITY_SYSTEM_H_
 
+#include "CEntity.h"
+
 namespace Skylicht
 {	
 	class CEntityManager;
@@ -41,9 +43,13 @@ namespace Skylicht
 
 		}
 
-		virtual void init() = 0;
+		virtual void beginQuery() = 0;
 
-		virtual void update() = 0;
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity) = 0;
+
+		virtual void init(CEntityManager *entityManager) = 0;
+
+		virtual void update(CEntityManager *entityManager) = 0;
 	};
 }
 

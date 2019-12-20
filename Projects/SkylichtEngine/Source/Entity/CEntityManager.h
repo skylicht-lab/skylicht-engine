@@ -26,19 +26,24 @@ https://github.com/skylicht-lab/skylicht-engine
 #define _ENTITY_MANAGER_H_
 
 #include "IEntitySystem.h"
-#include "CRenderEntity.h"
+#include "IRenderSystem.h"
+#include "CEntity.h"
 
 #include "GameObject/CGameObject.h"
+#include "Camera/CCamera.h"
 
 namespace Skylicht
 {
 	class CEntityManager
 	{
 	protected:
-		core::array<CRenderEntity*> m_entities;
-		core::array<CRenderEntity*> m_unused;
-		
+		core::array<CEntity*> m_entities;
+		core::array<CEntity*> m_unused;
+
 		std::vector<IEntitySystem*> m_systems;
+		std::vector<IRenderSystem*> m_renders;
+
+		CCamera *m_camera;
 	public:
 		CEntityManager();
 
@@ -46,37 +51,52 @@ namespace Skylicht
 
 		void update();
 
+		void render();
+
 	public:
-		CRenderEntity* createEntity(CTransform *transform = NULL);
+
+		inline void setCamera(CCamera *camera)
+		{
+			m_camera = camera;
+		}
+
+		inline CCamera* getCamera()
+		{
+			return m_camera;
+		}
+
+		CEntity* createEntity();
 
 		void releaseAllEntities();
+
+		void releaseAllSystems();
 
 		inline int getNumEntities()
 		{
 			return (int)m_entities.size();
 		}
 
-		inline CRenderEntity* getEntity(int index)
+		inline CEntity* getEntity(int index)
 		{
 			return m_entities[index];
 		}
 
 		void removeEntity(int index);
 
+		void removeEntity(CEntity *entity);
+
 		template<class T>
-		T* addSystem();		
+		T* addSystem();
+
+		template<class T>
+		T* addRenderSystem();
 
 		template<class T>
 		T* getSystem();
 
 		bool removeSystem(IEntitySystem *system);
 
-		void removeAllSystem();
-
-	protected:
-
-		void addEntityTransformData(CRenderEntity *entity, CTransform *transform);
-
+		void addTransformDataToEntity(CEntity *entity, CTransform *transform);
 	};
 
 	template<class T>
@@ -90,12 +110,42 @@ namespace Skylicht
 			char exceptionInfo[512];
 			sprintf(exceptionInfo, "CEntityManager::addSystem %s must inherit IEntitySystem", typeid(T).name());
 			os::Printer::log(exceptionInfo);
+			delete newSystem;
 			return NULL;
 		}
 
-		system->init();
+		system->init(this);
 
 		m_systems.push_back(system);
+		return newSystem;
+	}
+
+	template<class T>
+	T* CEntityManager::addRenderSystem()
+	{
+		T* system = getSystem<T>();
+		if (system != NULL)
+		{
+			return system;
+		}
+
+		T* newSystem = new T();
+
+		IRenderSystem *render = dynamic_cast<IRenderSystem*>(newSystem);
+		if (render == NULL)
+		{
+			char exceptionInfo[512];
+			sprintf(exceptionInfo, "CEntityManager::addRenderSystem %s must inherit IRenderSystem", typeid(T).name());
+			os::Printer::log(exceptionInfo);
+			delete newSystem;
+			return NULL;
+		}
+
+		render->init(this);
+
+		m_systems.push_back(render);
+		m_renders.push_back(render);
+
 		return newSystem;
 	}
 
@@ -104,9 +154,10 @@ namespace Skylicht
 	{
 		for (IEntitySystem* &s : m_systems)
 		{
-			if (dynamic_cast<T*>(s) != NULL)
+			T *system = dynamic_cast<T*>(s);
+			if (system != NULL)
 			{
-				return s;
+				return system;
 			}
 		}
 		return NULL;

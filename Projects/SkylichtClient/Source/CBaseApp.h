@@ -30,6 +30,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	enum EAppEvent
+	{
+		AppEventUpdate,
+		AppEventRender,
+		AppEventPostRender,
+		AppEventPause,
+		AppEventResume,
+		AppEventBack,
+		AppEventQuit,
+		AppEventInit
+	};
+
 	class CBaseApp
 	{
 	protected:
@@ -50,9 +62,6 @@ namespace Skylicht
 
 		CBaseApp();
 		virtual ~CBaseApp();
-
-		typedef std::pair<std::string, IEventReceiver*> eventType;
-		std::vector<eventType> m_eventReceivers;
 
 		typedef std::pair<std::string, IApplicationEventReceiver*> appEventType;
 		std::vector<appEventType> m_appEventReceivers;
@@ -114,13 +123,11 @@ namespace Skylicht
 			return m_enableRender;
 		}
 
-		void registerEvent(std::string name, IEventReceiver *pEvent);
-
-		void unRegisterEvent(IEventReceiver *pEvent);
-
 		void registerAppEvent(std::string name, IApplicationEventReceiver *pEvent);
 
 		void unRegisterAppEvent(IApplicationEventReceiver *pEvent);
+
+		void sendEventToAppReceiver(int eventID);
 
 		void setLimitFPS(int fps)
 		{
