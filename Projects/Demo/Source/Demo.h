@@ -1,34 +1,7 @@
 #include "IApplicationEventReceiver.h"
 
-#include "Scene/CScene.h"
-#include "GameObject/CZone.h"
-
-#include "Camera/CCamera.h"
-#include "Camera/CEditorCamera.h"
-
-#include "SkyDome/CSkyDome.h"
-#include "GridPlane/CGridPlane.h"
-
-#include "RenderPipeline/CForwardRP.h"
-#include "RenderPipeline/CDeferredRP.h"
-
-#include "Entity/CEntityManager.h"
-
-#include "Emscripten/CGetFileURL.h"
-
 class Demo : public IApplicationEventReceiver
 {
-protected:
-	CScene	*m_scene;
-	CZone	*m_zone;
-	CCamera	*m_camera;
-
-	CBaseRP *m_rendering;
-	
-	CGetFileURL *m_wgetResource;
-protected:
-	io::path getBuiltInPath(const char *name);
-
 public:
 	Demo();
 	virtual ~Demo();
@@ -46,8 +19,4 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
-
-protected:
-
-	void initScene();
 };

@@ -1,10 +1,10 @@
 include_directories(
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Demo/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtSystem/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtClient/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include	
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtEngine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtComponents/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Demo/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtComponents/Source	
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtPhysics/Source
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtAudio/Source	
 )
@@ -17,7 +17,9 @@ file(GLOB_RECURSE demo_source
 	./Source/**.cpp 
 	./Source/**.c 
 	./Source/**.h)
-	
+
+setup_project_group("${demo_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_library(Demo STATIC ${demo_source})
 
 target_precompiled_header(Demo ./Source/pch.cpp ${demo_source})
