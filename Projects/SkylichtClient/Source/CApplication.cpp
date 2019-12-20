@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <android/log.h>
 #endif
 
+#include "EventManager/CEventManager.h"
+
 // Build config
 #include "BuildConfig/CBuildConfig.h"
 
@@ -52,53 +54,26 @@ namespace Skylicht
 		return g_app;
 	}
 
-	CApplication::CApplication()
+	CApplication::CApplication() :
+		m_pauseTime(0),
+		m_resizeWin(true),
+		m_width(0),
+		m_height(0),
+		m_runGame(false),
+		m_showFPS(false)
 	{
 		g_app = this;
 
-		m_pauseTime = 0;
-		m_resizeWin = true;
-		m_width = 0;
-		m_height = 0;
-		m_runGame = false;
-
+#if _DEBUG
 		m_showFPS = true;
-		m_show2DUI = true;
-
-		m_tickSecond = 0.0f;
+#endif
 	}
 
 	bool CApplication::OnEvent(const SEvent& event)
 	{
-		// need copy to another array.
-		// because the application will crash if registerEvent or unregister on process list Event
-		std::vector<eventType> eventWillProcess = m_eventReceivers;
-
-		std::vector<eventType>::iterator i = eventWillProcess.begin(), end = eventWillProcess.end();
-		while (i != end)
-		{
-			bool sendEvent = false;
-
-			// we need check
-			std::vector<eventType>::iterator j = m_eventReceivers.begin(), jend = m_eventReceivers.end();
-			while (j != jend)
-			{
-				if ((*i).second == (*j).second)
-				{
-					sendEvent = true;
-					break;
-				}
-				++j;
-			}
-
-			// ok send event
-			if (sendEvent)
-			{
-				(*i).second->OnEvent(event);
-			}
-
-			++i;
-		}
+		CEventManager *eventMgr = CEventManager::getInstance();
+		if (eventMgr != NULL)
+			eventMgr->OnEvent(event);
 
 #if defined(WIN32) && WINAPI_FAMILY==WINAPI_FAMILY_DESKTOP_APP
 		if (event.EventType == EET_KEY_INPUT_EVENT)
@@ -209,22 +184,11 @@ namespace Skylicht
 
 		m_lastUpdateTime = now;
 
-		// tick second to calc total playing time
-		m_tickSecond = m_tickSecond - m_timeStep;
-		if (m_tickSecond < 0.0f)
-		{
-			// todo
-			m_tickSecond = 1000.0f;
-		}
-
 		// update skylicht timestep
 		setTimeStep(m_timeStep);
 
 		// skylicht update
 		updateSkylicht();
-
-		// update additional...
-		additionalUpdate(m_timeStep);
 
 		// application receiver
 		sendEventToAppReceiver(AppEventUpdate);
@@ -411,27 +375,19 @@ namespace Skylicht
 			CAccelerometer::getInstance()->setVector(x, y, z);
 	}
 
-	// setAccelerometerSupport
 	void CApplication::setAccelerometerSupport(bool b)
 	{
 		CAccelerometer::getInstance()->setSupport(b);
 	}
 
-	// setAccelerometerDisable
 	void CApplication::setAccelerometerEnable(bool b)
 	{
 		CAccelerometer::getInstance()->setEnable(b);
 	}
 
-	// isAccelerometerEnable
 	bool CApplication::isAccelerometerEnable()
 	{
 		return CAccelerometer::getInstance()->isEnable();
-	}
-
-	void CApplication::additionalUpdate(float dt)
-	{
-
 	}
 
 	void CApplication::setDeviceID(const wchar_t *string)
@@ -484,40 +440,5 @@ namespace Skylicht
 		os::Printer::log(logString);
 
 		CBuildConfig::DeviceID = mac;
-	}
-
-	void CApplication::sendEventToAppReceiver(int eventID)
-	{
-		std::vector<appEventType>::iterator i = m_appEventReceivers.begin(), end = m_appEventReceivers.end();
-		while (i != end)
-		{
-			switch (eventID)
-			{
-			case AppEventUpdate:
-				i->second->onUpdate();
-				break;
-			case AppEventRender:
-				i->second->onRender();
-				break;
-			case AppEventPostRender:
-				i->second->onPostRender();
-				break;
-			case AppEventPause:
-				i->second->onPause();
-				break;
-			case AppEventResume:
-				i->second->onResume();
-				break;
-			case AppEventInit:
-				i->second->onInitApp();
-				break;
-			case AppEventQuit:
-				i->second->onQuitApp();
-				break;
-			default:
-				break;
-			}
-			++i;
-		}
 	}
 }

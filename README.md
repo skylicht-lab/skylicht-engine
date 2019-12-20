@@ -48,9 +48,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 ### Add Source To Project
 Add new source files or folder on `Projects/{ProjectName}/Source` and regenerate project.
 
-    ```
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
-    ```
 ## Contributing
 If you want to contribute your code to `Skylicht Engine` (Ex: add feature or fixbug). Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 ## License

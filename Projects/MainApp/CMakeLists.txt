@@ -31,7 +31,8 @@ file(GLOB_RECURSE platform_uwp_source
 file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/MainApp/Assets/**.*)
 
 list (APPEND main_app_source ${platform_uwp_source})
-list (APPEND main_app_source ${platform_uwp_asset})
+
+set_property(SOURCE ${platform_uwp_asset} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 endif()
 
 if (MSVC OR CYGWIN OR MINGW)
@@ -69,6 +70,7 @@ elseif(BUILD_ANDROID)
 elseif (BUILD_WINDOWS_STORE)
 	add_executable(MainApp
 		${main_app_source}
+		${platform_uwp_asset}
 		./Platforms/UWP/MainApp_TemporaryKey.pfx
 		./Platforms/UWP/Package.appxmanifest
 	)
@@ -95,11 +97,11 @@ if (BUILD_EMSCRIPTEN)
 if(JS_ONLY)
 	message(STATUS "Setting compilation target to native JavaScript")
 	set(CMAKE_EXECUTABLE_SUFFIX ".html")
-	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s EXPORTED_FUNCTIONS=['_main'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared")
+	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared")
 else()
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s EXPORTED_FUNCTIONS=['_main'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 endif()
 endif()
 

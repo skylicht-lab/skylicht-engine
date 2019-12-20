@@ -28,13 +28,12 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CAccelerometer::CAccelerometer()
+	CAccelerometer::CAccelerometer() :
+		m_support(false),
+		m_enable(false),
+		m_rotX(0.0f),
+		m_rotY(0.0f)
 	{
-		m_support = false;
-		m_enable = false;
-
-		m_rotX = 0.0f;
-		m_rotY = 0.0f;
 	}
 
 	CAccelerometer::~CAccelerometer()

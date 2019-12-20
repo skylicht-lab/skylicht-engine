@@ -45,14 +45,13 @@ HWND hWnd;
 DWORD hWndStyle;
 
 // Forward declarations of functions included in this code module:
-ATOM				MyRegisterClass(HINSTANCE hInstance);
-BOOL				InitInstance(HINSTANCE, int);
-LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+ATOM MyRegisterClass(HINSTANCE hInstance);
+BOOL InitInstance(HINSTANCE, int);
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-CApplication		*g_application;
-bool				g_restartApplication = false;
-bool				g_show2D = true;
-bool				g_update = true;
+CApplication *g_application;
+bool g_restartApplication = false;
+bool g_update = true;
 
 #if defined(CYGWIN) || defined(MINGW)
 int CALLBACK WinMain(
@@ -123,7 +122,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	clientSize.right = winSize.Width;
 	clientSize.bottom = winSize.Height;
 
-	AdjustWindowRect(&clientSize, hWndStyle, TRUE);
+	AdjustWindowRect(&clientSize, hWndStyle, FALSE);
 
 	const s32 realWidth = clientSize.right - clientSize.left;
 	const s32 realHeight = clientSize.bottom - clientSize.top;
@@ -285,50 +284,93 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	HDC hdc;
 
+	static irr::s32 ClickCount = 0;
+	if (GetCapture() != hWnd && ClickCount > 0)
+		ClickCount = 0;
+
 	struct messageMap
 	{
-		s32		Group;
-		UINT	WinMessage;
-		CTouchManager::ETouchEvent	TouchEvent;
+		irr::s32 group;
+		UINT winMessage;
+		irr::s32 irrMessage;
 	};
 
 	static messageMap mouseMap[] =
 	{
-		{ 0, WM_LBUTTONDOWN, CTouchManager::TouchDown },
-		{ 1, WM_LBUTTONUP,   CTouchManager::TouchUp },
-		{ 2, WM_MOUSEMOVE,   CTouchManager::TouchMove },
-		{ -1, 0, CTouchManager::TouchNone }
+		{0, WM_LBUTTONDOWN, irr::EMIE_LMOUSE_PRESSED_DOWN},
+		{1, WM_LBUTTONUP,   irr::EMIE_LMOUSE_LEFT_UP},
+		{0, WM_RBUTTONDOWN, irr::EMIE_RMOUSE_PRESSED_DOWN},
+		{1, WM_RBUTTONUP,   irr::EMIE_RMOUSE_LEFT_UP},
+		{0, WM_MBUTTONDOWN, irr::EMIE_MMOUSE_PRESSED_DOWN},
+		{1, WM_MBUTTONUP,   irr::EMIE_MMOUSE_LEFT_UP},
+		{2, WM_MOUSEMOVE,   irr::EMIE_MOUSE_MOVED},
+		{3, WM_MOUSEWHEEL,  irr::EMIE_MOUSE_WHEEL},
+		{-1, 0, 0}
 	};
 
 	// handle grouped events
-	messageMap *m = mouseMap;
-	while (m->Group >= 0 && m->WinMessage != message)
+	messageMap * m = mouseMap;
+	while (m->group >= 0 && m->winMessage != message)
 		m += 1;
 
-	if (m->Group >= 0)
+	irr::SEvent event;
+
+	if (m->group >= 0)
 	{
-		if (m->Group == 0)	// down
+		if (m->group == 0)	// down
 		{
-			g_mouseDown = true;
+			ClickCount++;
 			SetCapture(hWnd);
 		}
-		else if (m->Group == 1)	// up
-		{
-			g_mouseDown = false;
-			ReleaseCapture();
-		}
-
-		int touchX = (int)((short)LOWORD(lParam));
-		int touchY = (int)((short)HIWORD(lParam));
-
-		if (m->TouchEvent == CTouchManager::TouchMove)
-		{
-			if (g_mouseDown == true)
-				CTouchManager::getInstance()->touchEvent(m->TouchEvent, touchX, touchY, 0);
-		}
 		else
-			CTouchManager::getInstance()->touchEvent(m->TouchEvent, touchX, touchY, 0);
+			if (m->group == 1)	// up
+			{
+				ClickCount--;
+				if (ClickCount < 1)
+				{
+					ClickCount = 0;
+					ReleaseCapture();
+				}
+			}
 
+		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
+		event.MouseInput.Event = (irr::EMOUSE_INPUT_EVENT) m->irrMessage;
+		event.MouseInput.X = (short)LOWORD(lParam);
+		event.MouseInput.Y = (short)HIWORD(lParam);
+		event.MouseInput.Shift = ((LOWORD(wParam) & MK_SHIFT) != 0);
+		event.MouseInput.Control = ((LOWORD(wParam) & MK_CONTROL) != 0);
+		// left and right mouse buttons
+		event.MouseInput.ButtonStates = wParam & (MK_LBUTTON | MK_RBUTTON);
+		// middle and extra buttons
+		if (wParam & MK_MBUTTON)
+			event.MouseInput.ButtonStates |= irr::EMBSM_MIDDLE;
+#if(_WIN32_WINNT >= 0x0500)
+		if (wParam & MK_XBUTTON1)
+			event.MouseInput.ButtonStates |= irr::EMBSM_EXTRA1;
+		if (wParam & MK_XBUTTON2)
+			event.MouseInput.ButtonStates |= irr::EMBSM_EXTRA2;
+#endif
+		event.MouseInput.Wheel = 0.f;
+
+		// wheel
+		if (m->group == 3)
+		{
+			POINT p; // fixed by jox
+			p.x = 0; p.y = 0;
+			ClientToScreen(hWnd, &p);
+			event.MouseInput.X -= p.x;
+			event.MouseInput.Y -= p.y;
+
+			int nDelta = (int)wParam;
+			if (nDelta > 0)
+				event.MouseInput.Wheel = -1.0f;
+			else
+				event.MouseInput.Wheel = 1.0f;
+		}
+
+		IrrlichtDevice *dev  = getIrrlichtDevice();
+		if (dev)
+			dev->postEventFromUser(event);
 		return 0;
 	}
 
@@ -348,6 +390,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+
 	case WM_SYSKEYDOWN:
 	case WM_SYSKEYUP:
 	case WM_KEYDOWN:

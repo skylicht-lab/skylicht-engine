@@ -28,10 +28,10 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CBaseShaderCallback::CBaseShaderCallback()
+	CBaseShaderCallback::CBaseShaderCallback() :
+		m_materialRenderID(-1),
+		m_initCallback(true)
 	{
-		m_materialRenderID = -1;
-		m_initCallback = true;
 	}
 
 	CBaseShaderCallback::~CBaseShaderCallback()

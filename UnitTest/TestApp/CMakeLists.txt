@@ -4,6 +4,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtSystem/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtEngine/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtClient/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtComponents/Source
 )
 
 file(GLOB_RECURSE test_app_source 

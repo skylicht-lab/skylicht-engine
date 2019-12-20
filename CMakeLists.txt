@@ -32,6 +32,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 endif()
 
+set(CMAKE_CXX_STANDARD 11)
+
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
 
@@ -206,8 +208,8 @@ subdirs (Projects/Irrlicht)
 # skylicht engine
 subdirs (Projects/SkylichtSystem)
 subdirs (Projects/SkylichtEngine)
+subdirs (Projects/SkylichtComponents)
 #subdirs (Projects/SkylichtAudio)
-#subdirs (Projects/SkylichtComponents)
 #subdirs (Projects/SkylichtPhysics)
 
 #if (BUILD_SKYLICHT_NETWORK)

@@ -36,7 +36,9 @@ namespace Skylicht
 
 		virtual ~CBaseRP();
 
-		virtual void render(CCamera *camera, CEntityManager *entityManager, bool cullAndRenderOnly) = 0;
+		virtual void render(CCamera *camera, CEntityManager *entityManager) = 0;
+
+		virtual void setCamera(CCamera *camera);
 	};
 }
 

@@ -29,7 +29,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-
 	CPThreadMutex::CPThreadMutex()
 	{
 		pthread_mutex_init(&m_mutex, 0);
@@ -49,7 +48,6 @@ namespace SkylichtSystem
 	{
 		pthread_mutex_unlock(&m_mutex);
 	}
-
 }
 
 #endif
