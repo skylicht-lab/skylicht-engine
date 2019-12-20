@@ -30,12 +30,11 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CShaderManager::CShaderManager()
+	CShaderManager::CShaderManager() :
+		m_currentRenderID(-1),
+		m_currentMeshBuffer(NULL),
+		m_currentMatRendering(NULL)
 	{
-		m_currentRenderID = -1;
-		m_currentMeshBuffer = NULL;
-		m_currentMatRendering = NULL;
-		m_haveBakeLMShader = false;
 	}
 
 	CShaderManager::~CShaderManager()
@@ -109,7 +108,7 @@ namespace Skylicht
 
 			return NULL;
 		}
-		
+
 		sprintf(log, "Load shader: %s", shaderConfig);
 		os::Printer::log(log);
 

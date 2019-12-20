@@ -29,15 +29,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CContainerObject::CContainerObject()
-	{
-		m_updateRemoveAdd = true;
-	}
 
-	CContainerObject::CContainerObject(CGameObject *parent)
-		:CGameObject(parent)
+	CContainerObject::CContainerObject(CGameObject *parent, CZone *zone) :
+		CGameObject(parent, zone),
+		m_updateRemoveAdd(true)
 	{
-		m_updateRemoveAdd = true;
 	}
 
 	CContainerObject::~CContainerObject()
@@ -72,7 +68,7 @@ namespace Skylicht
 	}
 
 	core::array<CGameObject*>& CContainerObject::getArrayChilds(bool addThis)
-	{		
+	{
 		m_arrayChildObjects.set_used(0);
 		std::queue<CGameObject*> queueObjs;
 
@@ -90,7 +86,7 @@ namespace Skylicht
 			queueObjs.pop();
 
 			m_arrayChildObjects.push_back(obj);
-			
+
 			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
 			if (container != NULL)
 			{
@@ -123,7 +119,7 @@ namespace Skylicht
 
 	CGameObject* CContainerObject::createEmptyObject()
 	{
-		CGameObject *p = new CGameObject(this);
+		CGameObject *p = new CGameObject(this, m_zone);
 		if (p == NULL)
 			return NULL;
 
@@ -141,7 +137,7 @@ namespace Skylicht
 
 	CContainerObject* CContainerObject::createContainerObject()
 	{
-		CContainerObject *container = new CContainerObject(this);
+		CContainerObject *container = new CContainerObject(this, m_zone);
 
 		std::string name = generateObjectName("Container");
 
@@ -240,7 +236,7 @@ namespace Skylicht
 			}
 
 			if (m_remove.size() > 0)
-			{				
+			{
 				ArrayGameObject arrayRemove = m_remove;
 				m_remove.clear();
 
@@ -269,7 +265,7 @@ namespace Skylicht
 			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
 			if (container != NULL)
 			{
-				container->updateAddRemoveObject(force);				
+				container->updateAddRemoveObject(force);
 			}
 		}
 	}

@@ -30,19 +30,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-
-	enum EAppEvent
-	{
-		AppEventUpdate,
-		AppEventRender,
-		AppEventPostRender,
-		AppEventPause,
-		AppEventResume,
-		AppEventBack,
-		AppEventQuit,
-		AppEventInit
-	};
-
 	class CApplication :
 		public IEventReceiver,
 		public CBaseApp
@@ -62,9 +49,6 @@ namespace Skylicht
 
 		bool			m_runGame;
 		bool			m_showFPS;
-		bool			m_show2DUI;
-
-		float			m_tickSecond;
 
 		std::vector<std::string>	m_argv;
 
@@ -77,7 +61,7 @@ namespace Skylicht
 		// for multi-inherit
 		CBaseApp* getBaseApp()
 		{
-			return (CBaseApp*)this;
+			return static_cast<CBaseApp*>(this);
 		}
 
 		void setParams(const std::vector<std::string>& argv);
@@ -99,8 +83,6 @@ namespace Skylicht
 		void resetTouch();
 
 		void notifyResizeWin(int w, int h);
-
-		void additionalUpdate(float dt);
 
 		// updateTouch
 		// action:
@@ -127,9 +109,7 @@ namespace Skylicht
 
 		void setDeviceID(const wchar_t* string);
 
-		void setDeviceID(const char* string);
-
-		void sendEventToAppReceiver(int eventID);
+		void setDeviceID(const char* string);		
 	};
 
 }

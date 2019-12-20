@@ -33,16 +33,11 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CGraphics2D::CGraphics2D()
-	{
-		m_currentW = -1;
-		m_currentH = -1;
-		m_scaleRatio = 1.0f;
-
-		m_buffer = NULL;
-		m_bufferFont = NULL;
-		m_bufferImage = NULL;
-
+	CGraphics2D::CGraphics2D():
+		m_currentW(-1),
+		m_currentH(-1),
+		m_scaleRatio(1.0f)
+	{		
 		m_driver = getVideoDriver();
 
 		// buffer sprite

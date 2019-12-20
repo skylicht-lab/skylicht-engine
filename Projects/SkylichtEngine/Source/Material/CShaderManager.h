@@ -37,15 +37,13 @@ namespace Skylicht
 	class CShaderManager : public CGameSingleton<CShaderManager>
 	{
 	protected:
-		IMeshBuffer				*m_currentMeshBuffer;
-		SMaterial				*m_currentMatRendering;
+		IMeshBuffer *m_currentMeshBuffer;
+		SMaterial *m_currentMatRendering;
 
-		int						m_currentRenderID;
+		int m_currentRenderID;
 
-		std::vector<CShader*>		m_listShader;
-		std::map<std::string, int>	m_listShaderID;
-
-		bool					m_haveBakeLMShader;
+		std::vector<CShader*> m_listShader;
+		std::map<std::string, int> m_listShaderID;
 
 	public:
 
@@ -61,11 +59,6 @@ namespace Skylicht
 		virtual ~CShaderManager();
 
 		void releaseAll();
-
-		inline bool haveBakeLightMapShader()
-		{
-			return m_haveBakeLMShader;
-		}
 
 		inline void setCurrentMeshBuffer(IMeshBuffer *buffer)
 		{

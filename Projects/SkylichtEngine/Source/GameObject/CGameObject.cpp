@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGameObject.h"
 #include "CContainerObject.h"
+#include "CZone.h"
 
 #include "Utils/CStringImp.h"
 
@@ -35,16 +36,12 @@ namespace Skylicht
 	std::map<long, long> CGameObject::s_mapObjIDOnFileSaved;
 	bool CGameObject::s_repairIDMode = false;
 
-	CGameObject::CGameObject()
-	{
-		initNull();
-	}
-
-	CGameObject::CGameObject(CGameObject *parent)
+	CGameObject::CGameObject(CGameObject *parent, CZone *zone)
 	{
 		initNull();
 
 		m_parent = parent;
+		m_zone = zone;
 	}
 
 	void CGameObject::initNull()
@@ -58,6 +55,8 @@ namespace Skylicht
 		m_static = false;
 
 		m_parent = NULL;
+		m_zone = NULL;
+		m_entity = NULL;
 
 		m_tagData = NULL;
 		m_tagDataInt = 0;
@@ -65,6 +64,7 @@ namespace Skylicht
 
 	CGameObject::~CGameObject()
 	{
+		destroyEntity();
 		releaseAllComponent();
 	}
 
@@ -93,8 +93,41 @@ namespace Skylicht
 		return m_namec.c_str();
 	}
 
+	CEntity* CGameObject::createEntity(CTransform *transform)
+	{
+		if (m_entity != NULL)
+			return m_entity;
+
+		CEntityManager *entityManager = getEntityManager();
+
+		if (entityManager == NULL)
+			return NULL;
+
+		// create entity
+		m_entity = entityManager->createEntity();
+
+		// add transform data
+		entityManager->addTransformDataToEntity(m_entity, transform);
+
+		return m_entity;
+	}
+
+	void CGameObject::destroyEntity()
+	{
+		if (m_entity != NULL && getEntityManager() != NULL)
+		{
+			getEntityManager()->removeEntity(m_entity);
+			m_entity = NULL;
+		}
+	}
+
+	CEntityManager* CGameObject::getEntityManager()
+	{
+		return m_zone->getEntityManager();
+	}
+
 	CTransform* CGameObject::getTransform()
-	{		
+	{
 		return getComponent<CTransform>();
 	}
 
@@ -108,12 +141,6 @@ namespace Skylicht
 		for (CComponentSystem* &comp : m_components)
 			delete comp;
 		m_components.clear();
-	}
-
-	void CGameObject::initComponent()
-	{
-		for (CComponentSystem* &comp : m_components)
-			comp->initComponent();
 	}
 
 	void CGameObject::updateObject()

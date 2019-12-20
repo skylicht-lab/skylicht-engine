@@ -45,8 +45,7 @@ namespace Skylicht
 
 		bool								m_updateRemoveAdd;
 	public:
-		CContainerObject();
-		CContainerObject(CGameObject *parent);
+		CContainerObject(CGameObject *parent, CZone *zone);
 
 		virtual ~CContainerObject();
 
@@ -56,12 +55,6 @@ namespace Skylicht
 
 		CContainerObject* createContainerObject();
 		
-		/**
-	    * It will force add/remove object to scene tree
-		* Note: This function is called on CScene::update beforce update all CGameObject
-		*       You don't call this function inside CGameObject::update or Component::update
-		*       You can call this function when construct scene
-	    */
 		void updateAddRemoveObject(bool force = false);
 
 		int getNumberObjects();
