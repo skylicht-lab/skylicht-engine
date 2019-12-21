@@ -109,3 +109,8 @@ void CApp::onQuitApp()
 
 	delete this;
 }
+
+bool CApp::onBack()
+{
+	return false;
+}

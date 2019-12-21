@@ -106,6 +106,7 @@ namespace Skylicht
 
 		zone->setName(name);
 		zone->setID(CGameObject::s_objectID++);
+		zone->createEntity();
 		zone->addComponent<CTransformEuler>();
 
 		m_zones.push_back(zone);

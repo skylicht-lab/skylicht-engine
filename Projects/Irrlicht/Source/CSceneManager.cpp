@@ -14,26 +14,13 @@
 
 #include "irrOS.h"
 
-#include "CCameraSceneNode.h"
-#include "CLightSceneNode.h"
 #include "CEmptySceneNode.h"
+#include "CCameraSceneNode.h"
 #include "CSceneCollisionManager.h"
 #include "CTriangleSelector.h"
 #include "COctreeTriangleSelector.h"
 #include "CTriangleBBSelector.h"
 #include "CMetaTriangleSelector.h"
-
-#include "CSceneNodeAnimatorRotation.h"
-#include "CSceneNodeAnimatorFlyCircle.h"
-#include "CSceneNodeAnimatorFlyStraight.h"
-#include "CSceneNodeAnimatorTexture.h"
-#include "CSceneNodeAnimatorCollisionResponse.h"
-#include "CSceneNodeAnimatorDelete.h"
-#include "CSceneNodeAnimatorFollowSpline.h"
-#include "CSceneNodeAnimatorCameraFPS.h"
-#include "CSceneNodeAnimatorCameraMaya.h"
-#include "CDefaultSceneNodeFactory.h"
-#include "CDefaultSceneNodeAnimatorFactory.h"
 
 #include "CGeometryCreator.h"
 #include "CMeshManipulator.h"
@@ -86,15 +73,6 @@ CSceneManager::CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
 
 	// create geometry creator
 	GeometryCreator = new CGeometryCreator(Driver);
-
-	// factories
-	ISceneNodeFactory* factory = new CDefaultSceneNodeFactory(this);
-	registerSceneNodeFactory(factory);
-	factory->drop();
-
-	ISceneNodeAnimatorFactory* animatorFactory = new CDefaultSceneNodeAnimatorFactory(this, CursorControl);
-	registerSceneNodeAnimatorFactory(animatorFactory);
-	animatorFactory->drop();
 }
 
 
@@ -124,13 +102,6 @@ CSceneManager::~CSceneManager()
 
 	if (Parameters)
 		Parameters->drop();
-
-	u32 i = 0;
-	for (i=0; i<SceneNodeFactoryList.size(); ++i)
-		SceneNodeFactoryList[i]->drop();
-
-	for (i=0; i<SceneNodeAnimatorFactoryList.size(); ++i)
-		SceneNodeAnimatorFactoryList[i]->drop();
 
 	// remove all nodes and animators before dropping the driver
 	// as render targets may be destroyed twice
@@ -174,79 +145,7 @@ ICameraSceneNode* CSceneManager::addCameraSceneNode(ISceneNode* parent,
 	const core::vector3df& position, const core::vector3df& lookat, s32 id,
 	bool makeActive)
 {
-	if (!parent)
-		parent = this;
-
-	ICameraSceneNode* node = new CCameraSceneNode(parent, this, id, position, lookat);
-
-	if (makeActive)
-		setActiveCamera(node);
-	node->drop();
-
-	return node;
-}
-
-
-//! Adds a camera scene node which is able to be controlled with the mouse similar
-//! to in the 3D Software Maya by Alias Wavefront.
-//! The returned pointer must not be dropped.
-ICameraSceneNode* CSceneManager::addCameraSceneNodeMaya(ISceneNode* parent,
-	f32 rotateSpeed, f32 zoomSpeed, f32 translationSpeed, s32 id, f32 distance,
-	bool makeActive)
-{
-	ICameraSceneNode* node = addCameraSceneNode(parent, core::vector3df(),
-			core::vector3df(0,0,100), id, makeActive);
-	if (node)
-	{
-		ISceneNodeAnimator* anm = new CSceneNodeAnimatorCameraMaya(CursorControl,
-			rotateSpeed, zoomSpeed, translationSpeed, distance);
-
-		node->addAnimator(anm);
-		anm->drop();
-	}
-
-	return node;
-}
-
-
-//! Adds a camera scene node which is able to be controlled with the mouse and keys
-//! like in most first person shooters (FPS):
-ICameraSceneNode* CSceneManager::addCameraSceneNodeFPS(ISceneNode* parent,
-	f32 rotateSpeed, f32 moveSpeed, s32 id, SKeyMap* keyMapArray,
-	s32 keyMapSize, bool noVerticalMovement, f32 jumpSpeed,
-	bool invertMouseY, bool makeActive)
-{
-	ICameraSceneNode* node = addCameraSceneNode(parent, core::vector3df(),
-			core::vector3df(0,0,100), id, makeActive);
-	if (node)
-	{
-		ISceneNodeAnimator* anm = new CSceneNodeAnimatorCameraFPS(CursorControl,
-				rotateSpeed, moveSpeed, jumpSpeed,
-				keyMapArray, keyMapSize, noVerticalMovement, invertMouseY);
-
-		// Bind the node's rotation to its target. This is consistent with 1.4.2 and below.
-		node->bindTargetAndRotation(true);
-		node->addAnimator(anm);
-		anm->drop();
-	}
-
-	return node;
-}
-
-
-//! Adds a dynamic light scene node. The light will cast dynamic light on all
-//! other scene nodes in the scene, which have the material flag video::MTF_LIGHTING
-//! turned on. (This is the default setting in most scene nodes).
-ILightSceneNode* CSceneManager::addLightSceneNode(ISceneNode* parent,
-	const core::vector3df& position, video::SColorf color, f32 range, s32 id)
-{
-	if (!parent)
-		parent = this;
-
-	ILightSceneNode* node = new CLightSceneNode(parent, this, id, position, color, range);
-	node->drop();
-
-	return node;
+	return NULL;
 }
 
 //! Adds an empty scene node.
@@ -293,12 +192,10 @@ void CSceneManager::setActiveCamera(ICameraSceneNode* camera)
 	ActiveCamera = camera;
 }
 
-
 //! renders the node.
 void CSceneManager::render()
 {
 }
-
 
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CSceneManager::getBoundingBox() const
@@ -431,14 +328,7 @@ u32 CSceneManager::registerNodeForRendering(ISceneNode* node, E_SCENE_NODE_RENDE
 			SolidNodeList.push_back(node);
 			taken = 1;
 		}
-		break;
-	case ESNRP_SOLID_DEFERRED:
-		if (!isCulled(node))
-		{
-			SolidDeferredNodeList.push_back(node);
-			taken = 1;
-		}
-		break;		
+		break;	
 	case ESNRP_TRANSPARENT:
 		if (!isCulled(node))
 		{
@@ -524,7 +414,6 @@ void CSceneManager::update()
 	CameraList.set_used(0);
 	SkyBoxList.set_used(0);			
 	SolidNodeList.set_used(0);
-	SolidDeferredNodeList.set_used(0);
 	TransparentNodeList.set_used(0);
 	TransparentEffectNodeList.set_used(0);
 	ShadowNodeList.set_used(0);
@@ -566,7 +455,6 @@ void CSceneManager::update()
 
 	CubeReflectList.sort(); // sort by textures
 	SolidNodeList.sort(); // sort by textures
-	SolidDeferredNodeList.sort(); // sort by textures
 	TransparentNodeList.sort(); // sort by distance from camera
 	TransparentEffectNodeList.sort(); // sort by distance from camera	
 
@@ -631,16 +519,6 @@ void CSceneManager::draw()
 			SolidNodeList[i].Node->render();
 
 		Parameters->setAttribute("drawn_solid", (s32) SolidNodeList.size());		
-	}
-
-	// render default objects
-	{
-		CurrentRendertime = ESNRP_SOLID_DEFERRED;
-
-		for (i = 0; i < SolidDeferredNodeList.size(); ++i)
-			SolidDeferredNodeList[i].Node->render();
-
-		Parameters->setAttribute("drawn_solid_forward", (s32)SolidDeferredNodeList.size());
 	}
 
 	// render transparent objects.
@@ -730,17 +608,6 @@ void CSceneManager::draw(E_SCENE_NODE_RENDER_PASS renderPass)
 			SolidNodeList[i].Node->render();
 
 		Parameters->setAttribute("drawn_solid", (s32) SolidNodeList.size());		
-	}
-
-	// render default objects
-	if (renderPass == ESNRP_SOLID_DEFERRED)
-	{
-		CurrentRendertime = ESNRP_SOLID_DEFERRED;
-
-		for (i = 0; i < SolidDeferredNodeList.size(); ++i)
-			SolidDeferredNodeList[i].Node->render();
-
-		Parameters->setAttribute("drawn_solid_deferred", (s32)SolidDeferredNodeList.size());
 	}
 
 	// render shadow cast
@@ -881,19 +748,6 @@ void CSceneManager::drawAll()
 		SolidNodeList.set_used(0);
 	}
 
-	// render default objects
-	{
-		CurrentRendertime = ESNRP_SOLID;
-
-		SolidDeferredNodeList.sort(); // sort by textures
-
-		for (i = 0; i < SolidDeferredNodeList.size(); ++i)
-			SolidDeferredNodeList[i].Node->render();
-
-		Parameters->setAttribute("drawn_solid", (s32)SolidDeferredNodeList.size());
-		SolidDeferredNodeList.set_used(0);
-	}
-
 	// render transparent objects.
 	{
 		CurrentRendertime = ESNRP_TRANSPARENT;
@@ -940,93 +794,6 @@ video::SColor CSceneManager::getShadowColor() const
 {
 	return ShadowColor;
 }
-
-
-//! creates a rotation animator, which rotates the attached scene node around itself.
-ISceneNodeAnimator* CSceneManager::createRotationAnimator(const core::vector3df& rotationPerSecond)
-{
-	ISceneNodeAnimator* anim = new CSceneNodeAnimatorRotation(os::Timer::getTime(),
-		rotationPerSecond);
-
-	return anim;
-}
-
-
-//! creates a fly circle animator, which lets the attached scene node fly around a center.
-ISceneNodeAnimator* CSceneManager::createFlyCircleAnimator(
-		const core::vector3df& center, f32 radius, f32 speed,
-		const core::vector3df& direction,
-		f32 startPosition,
-		f32 radiusEllipsoid)
-{
-	const f32 orbitDurationMs = (core::DEGTORAD * 360.f) / speed;
-	const u32 effectiveTime = os::Timer::getTime() + (u32)(orbitDurationMs * startPosition);
-
-	ISceneNodeAnimator* anim = new CSceneNodeAnimatorFlyCircle(
-			effectiveTime, center,
-			radius, speed, direction,radiusEllipsoid);
-	return anim;
-}
-
-
-//! Creates a fly straight animator, which lets the attached scene node
-//! fly or move along a line between two points.
-ISceneNodeAnimator* CSceneManager::createFlyStraightAnimator(const core::vector3df& startPoint,
-					const core::vector3df& endPoint, u32 timeForWay, bool loop,bool pingpong)
-{
-	ISceneNodeAnimator* anim = new CSceneNodeAnimatorFlyStraight(startPoint,
-		endPoint, timeForWay, loop, os::Timer::getTime(), pingpong);
-
-	return anim;
-}
-
-
-//! Creates a texture animator, which switches the textures of the target scene
-//! node based on a list of textures.
-ISceneNodeAnimator* CSceneManager::createTextureAnimator(const core::array<video::ITexture*>& textures,
-	s32 timePerFrame, bool loop)
-{
-	ISceneNodeAnimator* anim = new CSceneNodeAnimatorTexture(textures,
-		timePerFrame, loop, os::Timer::getTime());
-
-	return anim;
-}
-
-
-//! Creates a scene node animator, which deletes the scene node after
-//! some time automaticly.
-ISceneNodeAnimator* CSceneManager::createDeleteAnimator(u32 when)
-{
-	return new CSceneNodeAnimatorDelete(this, os::Timer::getTime() + when);
-}
-
-
-//! Creates a special scene node animator for doing automatic collision detection
-//! and response.
-ISceneNodeAnimatorCollisionResponse* CSceneManager::createCollisionResponseAnimator(
-	ITriangleSelector* world, ISceneNode* sceneNode, const core::vector3df& ellipsoidRadius,
-	const core::vector3df& gravityPerSecond,
-	const core::vector3df& ellipsoidTranslation, f32 slidingValue)
-{
-	ISceneNodeAnimatorCollisionResponse* anim = new
-		CSceneNodeAnimatorCollisionResponse(this, world, sceneNode,
-			ellipsoidRadius, gravityPerSecond,
-			ellipsoidTranslation, slidingValue);
-
-	return anim;
-}
-
-
-//! Creates a follow spline animator.
-ISceneNodeAnimator* CSceneManager::createFollowSplineAnimator(s32 startTime,
-	const core::array< core::vector3df >& points,
-	f32 speed, f32 tightness, bool loop, bool pingpong)
-{
-	ISceneNodeAnimator* a = new CSceneNodeAnimatorFollowSpline(startTime, points,
-		speed, tightness, loop, pingpong);
-	return a;
-}
-
 
 //! Returns a pointer to the scene collision manager.
 ISceneCollisionManager* CSceneManager::getSceneCollisionManager()
@@ -1249,120 +1016,6 @@ ISceneManager* CSceneManager::createNewSceneManager(bool cloneContent)
 
 	return manager;
 }
-
-
-//! Returns the default scene node factory which can create all built in scene nodes
-ISceneNodeFactory* CSceneManager::getDefaultSceneNodeFactory()
-{
-	return getSceneNodeFactory(0);
-}
-
-
-//! Adds a scene node factory to the scene manager.
-void CSceneManager::registerSceneNodeFactory(ISceneNodeFactory* factoryToAdd)
-{
-	if (factoryToAdd)
-	{
-		factoryToAdd->grab();
-		SceneNodeFactoryList.push_back(factoryToAdd);
-	}
-}
-
-
-//! Returns amount of registered scene node factories.
-u32 CSceneManager::getRegisteredSceneNodeFactoryCount() const
-{
-	return SceneNodeFactoryList.size();
-}
-
-
-//! Returns a scene node factory by index
-ISceneNodeFactory* CSceneManager::getSceneNodeFactory(u32 index)
-{
-	if (index < SceneNodeFactoryList.size())
-		return SceneNodeFactoryList[index];
-
-	return 0;
-}
-
-
-//! Returns the default scene node animator factory which can create all built-in scene node animators
-ISceneNodeAnimatorFactory* CSceneManager::getDefaultSceneNodeAnimatorFactory()
-{
-	return getSceneNodeAnimatorFactory(0);
-}
-
-//! Adds a scene node animator factory to the scene manager.
-void CSceneManager::registerSceneNodeAnimatorFactory(ISceneNodeAnimatorFactory* factoryToAdd)
-{
-	if (factoryToAdd)
-	{
-		factoryToAdd->grab();
-		SceneNodeAnimatorFactoryList.push_back(factoryToAdd);
-	}
-}
-
-
-//! Returns amount of registered scene node animator factories.
-u32 CSceneManager::getRegisteredSceneNodeAnimatorFactoryCount() const
-{
-	return SceneNodeAnimatorFactoryList.size();
-}
-
-
-//! Returns a scene node animator factory by index
-ISceneNodeAnimatorFactory* CSceneManager::getSceneNodeAnimatorFactory(u32 index)
-{
-	if (index < SceneNodeAnimatorFactoryList.size())
-		return SceneNodeAnimatorFactoryList[index];
-
-	return 0;
-}
-
-//! Returns a typename from a scene node type or null if not found
-const c8* CSceneManager::getSceneNodeTypeName(ESCENE_NODE_TYPE type)
-{
-	const char* name = 0;
-
-	for (s32 i=(s32)SceneNodeFactoryList.size()-1; !name && i>=0; --i)
-		name = SceneNodeFactoryList[i]->getCreateableSceneNodeTypeName(type);
-
-	return name;
-}
-
-//! Adds a scene node to the scene by name
-ISceneNode* CSceneManager::addSceneNode(const char* sceneNodeTypeName, ISceneNode* parent)
-{
-	ISceneNode* node = 0;
-
-	for (s32 i=(s32)SceneNodeFactoryList.size()-1; i>=0 && !node; --i)
-			node = SceneNodeFactoryList[i]->addSceneNode(sceneNodeTypeName, parent);
-
-	return node;
-}
-
-ISceneNodeAnimator* CSceneManager::createSceneNodeAnimator(const char* typeName, ISceneNode* target)
-{
-	ISceneNodeAnimator *animator = 0;
-
-	for (s32 i=(s32)SceneNodeAnimatorFactoryList.size()-1; i>=0 && !animator; --i)
-		animator = SceneNodeAnimatorFactoryList[i]->createSceneNodeAnimator(typeName, target);
-
-	return animator;
-}
-
-
-//! Returns a typename from a scene node animator type or null if not found
-const c8* CSceneManager::getAnimatorTypeName(ESCENE_NODE_ANIMATOR_TYPE type)
-{
-	const char* name = 0;
-
-	for (s32 i=SceneNodeAnimatorFactoryList.size()-1; !name && i >= 0; --i)
-		name = SceneNodeAnimatorFactoryList[i]->getCreateableSceneNodeAnimatorTypeName(type);
-
-	return name;
-}
-
 
 //! Writes attributes of the scene node.
 void CSceneManager::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options) const

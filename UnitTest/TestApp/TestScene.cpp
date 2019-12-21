@@ -1,6 +1,7 @@
 #include "Base.hh"
 #include "TestScene.h"
 #include "TestComponentSystem.h"
+#include "TestRenderSystem.h"
 #include "TestTransform.h"
 
 #include "Scene/CScene.h"
@@ -140,6 +141,9 @@ bool isTestScenePass()
 {
 	TEST_CASE("Test component pass");
 	TEST_ASSERT_THROW(isTestComponentPass());
+
+	TEST_CASE("Test render system pass");
+	TEST_ASSERT_THROW(isTestRenderSystemPass());
 
 	TEST_CASE("Test scene end");
 	delete g_testScene;

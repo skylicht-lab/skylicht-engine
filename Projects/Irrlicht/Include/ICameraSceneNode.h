@@ -29,7 +29,7 @@ namespace scene
 			const core::vector3df& position = core::vector3df(0,0,0),
 			const core::vector3df& rotation = core::vector3df(0,0,0),
 			const core::vector3df& scale = core::vector3df(1.0f,1.0f,1.0f))
-			: ISceneNode(parent, mgr, id, position, rotation, scale), IsOrthogonal(false), IsDynamicTarget(true) {}
+			: ISceneNode(parent, mgr, id, position, rotation, scale), IsOrthogonal(false) {}
 
 		//! Sets the projection matrix of the camera.
 		/** The core::matrix4 class has some methods to build a
@@ -42,8 +42,7 @@ namespace scene
 		\param isOrthogonal Set this to true if the matrix is an
 		orthogonal one (e.g. from matrix4::buildProjectionMatrixOrtho).
 		*/
-		virtual void setProjectionMatrix(const core::matrix4& projection, bool isOrthogonal=false, bool isDynamicTarget=true) =0;
-		virtual void setViewMatrix(const core::matrix4& view) = 0;
+		virtual void setProjectionMatrix(const core::matrix4& projection, bool isOrthogonal=false) =0;
 
 		//! Gets the current projection matrix of the camera.
 		/** \return The current projection matrix of the camera. */
@@ -94,8 +93,7 @@ namespace scene
 		//! Gets the current look at target of the camera
 		/** \return The current look at target of the camera, in world co-ordinates */
 		virtual const core::vector3df& getTarget() const =0;
-		virtual const core::vector3df& getShakeTarget() const =0;
-		
+
 		//! Sets the up vector of the camera.
 		/** \param pos: New upvector of the camera. */
 		virtual void setUpVector(const core::vector3df& pos) =0;
@@ -174,12 +172,6 @@ namespace scene
 		/** @see bindTargetAndRotation() */
 		virtual bool getTargetAndRotationBinding(void) const =0;
 
-		// setShakeVector
-		virtual void setShakeVector(const core::vector3df& shake, float shakeDis) =0;
-
-		// setShakeVectorRandom
-		virtual void setShakeVectorRandom(bool b) =0;
-
 		//! Writes attributes of the camera node
 		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) const
 		{
@@ -206,11 +198,9 @@ namespace scene
 		void cloneMembers(ICameraSceneNode* toCopyFrom)
 		{
 			IsOrthogonal = toCopyFrom->IsOrthogonal;
-			IsDynamicTarget = toCopyFrom->IsDynamicTarget;
 		}
 
 		bool IsOrthogonal;
-		bool IsDynamicTarget;
 	};
 
 } // end namespace scene

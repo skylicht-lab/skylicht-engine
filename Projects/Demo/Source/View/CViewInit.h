@@ -9,7 +9,6 @@ class CViewInit : public CView
 public:
 	enum EInitState
 	{
-		InitEngine,
 		DownloadBundles,
 		InitScene,
 		Error,
