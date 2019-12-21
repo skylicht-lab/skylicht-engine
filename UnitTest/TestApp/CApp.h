@@ -59,6 +59,8 @@ public:
 
 	virtual void onQuitApp();
 
+	virtual bool onBack();
+
 public:
 
 	inline bool isPassInit() { return m_passInit; }

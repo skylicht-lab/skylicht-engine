@@ -7,13 +7,13 @@ CContext::CContext() :
 	m_zone(NULL),
 	m_camera(NULL)
 {
-	releaseScene();
-	releaseRenderPipeline();
+
 }
 
 CContext::~CContext()
 {
-
+	releaseScene();
+	releaseRenderPipeline();
 }
 
 CScene* CContext::initScene()
