@@ -30,7 +30,9 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CZone::CZone() : CContainerObject(NULL, this)
+	CZone::CZone() :		
+		CContainerObject(NULL, this),
+		m_entityManager(NULL)
 	{
 		m_entityManager = new CEntityManager();
 	}

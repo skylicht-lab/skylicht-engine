@@ -1,11 +1,14 @@
 #include "Base.hh"
 #include "TestComponentSystem.h"
+#include "TestRenderSystem.h"
 
 bool g_initComponentPass = false;
 bool g_updateComponentPass = false;
 bool g_postUpdateComponentPass = false;
 bool g_endUpdateComponentPass = false;
 bool g_releaseComponentPass = false;
+
+bool g_deleteEntityDataPass = false;
 
 TestComponent::TestComponent()
 {
@@ -15,11 +18,27 @@ TestComponent::TestComponent()
 TestComponent::~TestComponent()
 {
 	g_releaseComponentPass = true;
+
+	if (m_gameObject->getEntity()->removeData<CTestEntityData>() == true)
+	{
+		g_deleteEntityDataPass = true;
+	}
 }
 
 void TestComponent::initComponent()
 {
 	g_initComponentPass = true;
+	
+	TEST_CASE("Add entity data");
+	TEST_ASSERT_THROW(m_gameObject->getEntity()->addData<CTestEntityData>() != NULL);
+
+	TEST_CASE("Get entity data");
+	CTestEntityData *entityData = m_gameObject->getEntity()->getData<CTestEntityData>();
+	TEST_ASSERT_THROW(entityData != NULL);
+	entityData->initCubeMesh(1.0f);
+
+	TEST_CASE("Add render system");
+	TEST_ASSERT_THROW(m_gameObject->getEntityManager()->addRenderSystem<CTestRenderSystem>() != NULL);
 }
 
 void TestComponent::updateComponent()
@@ -63,5 +82,6 @@ bool isTestComponentPass()
 		g_releaseComponentPass &&
 		g_updateComponentPass &&
 		g_postUpdateComponentPass &&
-		g_endUpdateComponentPass;
+		g_endUpdateComponentPass &&
+		g_deleteEntityDataPass;
 }

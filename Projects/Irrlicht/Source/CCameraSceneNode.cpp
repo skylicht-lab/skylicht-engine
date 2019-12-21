@@ -26,14 +26,6 @@ CCameraSceneNode::CCameraSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 i
 
 	// set default projection
 	Fovy = core::PI / 2.5f;	// Field of view, in radians.
-	
-	LastTime = 0;
-	ShakeDis = 0.0f;
-	ShakeRandom = false;
-	ShakeX = 0.0f;
-	ShakeY = 0.0f;
-	ShakeZ = 0.0f;
-	ShakeD = 0.0f;
 
 	const video::IVideoDriver* const d = mgr?mgr->getVideoDriver():0;
 	if (d)
@@ -67,17 +59,12 @@ bool CCameraSceneNode::isInputReceiverEnabled() const
 /** The core::matrix4 class has some methods
 to build a projection matrix. e.g: core::matrix4::buildProjectionMatrixPerspectiveFovLH
 \param projection: The new projection matrix of the camera. */
-void CCameraSceneNode::setProjectionMatrix(const core::matrix4& projection, bool isOrthogonal, bool isDynamicTarget)
+void CCameraSceneNode::setProjectionMatrix(const core::matrix4& projection, bool isOrthogonal)
 {
 	IsOrthogonal = isOrthogonal;
-	IsDynamicTarget = isDynamicTarget;
-	ViewArea.getTransform(video::ETS_PROJECTION) = projection;
+	ViewArea.getTransform ( video::ETS_PROJECTION ) = projection;
 }
 
-void CCameraSceneNode::setViewMatrix(const core::matrix4& view)
-{
-	ViewArea.getTransform(video::ETS_VIEW) = view;
-}
 
 //! Gets the current projection matrix of the camera
 //! \return Returns the current projection matrix of the camera.
@@ -140,7 +127,6 @@ bool CCameraSceneNode::OnEvent(const SEvent& event)
 void CCameraSceneNode::setTarget(const core::vector3df& pos)
 {
 	Target = pos;
-	ShakeTarget = pos;
 
 	if(TargetAndRotationAreBound)
 	{
@@ -171,10 +157,6 @@ const core::vector3df& CCameraSceneNode::getTarget() const
 	return Target;
 }
 
-const core::vector3df& CCameraSceneNode::getShakeTarget() const
-{
-	return ShakeTarget;
-}
 
 //! sets the up vector of the camera
 //! \param pos: New upvector of the camera.
@@ -264,9 +246,8 @@ void CCameraSceneNode::OnRegisterSceneNode()
 
 //! render
 void CCameraSceneNode::render()
-{	
-	if (IsOrthogonal == false || IsDynamicTarget == true)
-		updateMatrices();
+{
+	updateMatrices();
 
 	video::IVideoDriver* driver = SceneManager->getVideoDriver();
 	if ( driver)
@@ -294,63 +275,6 @@ void CCameraSceneNode::updateMatrices()
 	{
 		up.X += 0.5f;
 	}
-
-	// Pham hong Duc modify
-    // rotate target by setRotate
-    // apply when shake camera
-    core::vector3df t = Target - pos;
-    float length = t.getLength();
-    core::quaternion q(getRotation());
-    t = q * t;
-	t.normalize();
-
-	// make camera shake
-	core::vector3df right = up.crossProduct(t);
-
-	float time = (float)os::Timer::getTime();
-	LastTime = time;
-	
-
-	// todo: rotate random target (left - right)
-	if (ShakeRandom == true)	
-		ShakeX = os::Randomizer::frand();		 
-	
-	float sx = -Shake.X + ShakeX*(Shake.X*2.0);
-	q.fromAngleAxis(sx*core::DEGTORAD, core::vector3df(up));	
-	t = q * t;
-	t.normalize();
-
-	// todo: rotate random target (up - down)
-	if (ShakeRandom == true)	
-		ShakeZ = os::Randomizer::frand();		
-	
-	float sz = -Shake.Z + ShakeZ*(Shake.Z*2.0);
-	q.fromAngleAxis(sz*core::DEGTORAD, core::vector3df(right));
-	t = q * t;
-	t.normalize();
-
-	core::vector3df realTarget = pos + t*length;
-	
-	// todo: rotate random up vector
-	if (ShakeRandom == true)	
-		ShakeY = os::Randomizer::frand();
-	
-	float sy = -Shake.Y + ShakeY*(Shake.Y*2.0);	
-	core::vector3df front = realTarget - pos;
-	front.normalize();
-
-	// todo: shake near distance
-	if (ShakeRandom == true)
-		ShakeD = 0.5f + 0.5f*os::Randomizer::frand();
-
-	pos = pos + ShakeD*ShakeDis*front;
-
-	q.fromAngleAxis(sy*core::DEGTORAD, core::vector3df(front));
-	up = q * up;
-	up.normalize();	
-
-	// todo shake target
-	ShakeTarget = realTarget;
 
 	ViewArea.getTransform(video::ETS_VIEW).buildCameraLookAtMatrixLH(pos, Target, up);
 	ViewArea.getTransform(video::ETS_VIEW) *= Affector;

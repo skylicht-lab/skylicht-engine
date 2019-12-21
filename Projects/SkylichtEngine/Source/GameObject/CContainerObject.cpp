@@ -128,9 +128,10 @@ namespace Skylicht
 
 		p->setID(CGameObject::s_objectID++);
 		p->setName(lpName);
-
+		
 		addChild(p);
 
+		p->createEntity();
 		p->addComponent<CTransformEuler>();
 		return p;
 	}
@@ -147,6 +148,7 @@ namespace Skylicht
 		container->setName(name.c_str());
 		addChild(container);
 
+		container->createEntity();
 		container->addComponent<CTransformEuler>();
 		return container;
 	}

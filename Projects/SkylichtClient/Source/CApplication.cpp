@@ -75,7 +75,8 @@ namespace Skylicht
 		if (eventMgr != NULL)
 			eventMgr->OnEvent(event);
 
-#if defined(WIN32) && WINAPI_FAMILY==WINAPI_FAMILY_DESKTOP_APP
+#if defined(_DEBUG) && defined(WIN32) && !defined(WINDOWS_STORE)
+		// simulate
 		if (event.EventType == EET_KEY_INPUT_EVENT)
 		{
 			if (event.KeyInput.Key == KEY_F1 && event.KeyInput.PressedDown == false)
@@ -269,11 +270,19 @@ namespace Skylicht
 	{
 		if (m_runGame == true)
 		{
-			sendEventToAppReceiver(AppEventBack);
 			os::Printer::log("CApplication::back");
-			return 0;
+
+			int processOSBackKey = 0;
+			for (appEventType& app : m_appEventReceivers)
+			{
+				if (app.second->onBack() == true)
+					processOSBackKey = 1;
+			}
+
+			return processOSBackKey;
 		}
 
+		// run default os back
 		return 1;
 	}
 

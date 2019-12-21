@@ -63,9 +63,9 @@ namespace Skylicht
 	}
 
 	CGameObject::~CGameObject()
-	{
-		destroyEntity();
+	{		
 		releaseAllComponent();
+		destroyEntity();
 	}
 
 	void CGameObject::remove()
@@ -93,21 +93,17 @@ namespace Skylicht
 		return m_namec.c_str();
 	}
 
-	CEntity* CGameObject::createEntity(CTransform *transform)
+	CEntity* CGameObject::createEntity()
 	{
 		if (m_entity != NULL)
 			return m_entity;
 
 		CEntityManager *entityManager = getEntityManager();
-
 		if (entityManager == NULL)
 			return NULL;
 
 		// create entity
 		m_entity = entityManager->createEntity();
-
-		// add transform data
-		entityManager->addTransformDataToEntity(m_entity, transform);
 
 		return m_entity;
 	}
