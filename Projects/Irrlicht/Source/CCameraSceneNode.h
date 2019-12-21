@@ -30,8 +30,7 @@ namespace scene
 		\param projection The new projection matrix of the camera.
 		\param isOrthogonal Set this to true if the matrix is an orthogonal one (e.g.
 		from matrix4::buildProjectionMatrixOrthoLH(). */
-		virtual void setProjectionMatrix(const core::matrix4& projection, bool isOrthogonal = false, bool isDynamicTarget = true) _IRR_OVERRIDE_;
-		virtual void setViewMatrix(const core::matrix4& view) _IRR_OVERRIDE_;
+		virtual void setProjectionMatrix(const core::matrix4& projection, bool isOrthogonal = false) _IRR_OVERRIDE_;
 
 		//! Gets the current projection matrix of the camera
 		//! \return Returns the current projection matrix of the camera.
@@ -71,7 +70,6 @@ namespace scene
 		//! Gets the current look at target of the camera
 		/** \return The current look at target of the camera */
 		virtual const core::vector3df& getTarget() const _IRR_OVERRIDE_;
-		virtual const core::vector3df& getShakeTarget() const _IRR_OVERRIDE_;
 
 		//! Sets the up vector of the camera.
 		//! \param pos: New upvector of the camera.
@@ -150,35 +148,11 @@ namespace scene
 		//! Creates a clone of this scene node and its children.
 		virtual ISceneNode* clone(ISceneNode* newParent=0, ISceneManager* newManager=0) _IRR_OVERRIDE_;
 
-		// setShakeVector
-		virtual void setShakeVector(const core::vector3df& shake, float shakeDis) _IRR_OVERRIDE_
-		{
-			Shake = shake;
-			ShakeDis = shakeDis;
-		}
-
-		// setShakeVectorRandom
-		virtual void setShakeVectorRandom(bool b) _IRR_OVERRIDE_
-		{
-			ShakeRandom = b;
-		}
-
 	protected:
-
-		float LastTime;
-
-		bool			ShakeRandom;
-		core::vector3df Shake;
-		float			ShakeX;
-		float			ShakeY;
-		float			ShakeZ;
-		float			ShakeD;
-		float			ShakeDis;
 
 		void recalculateProjectionMatrix();
 		void recalculateViewArea();
 
-		core::vector3df ShakeTarget;
 		core::vector3df Target;
 		core::vector3df UpVector;
 

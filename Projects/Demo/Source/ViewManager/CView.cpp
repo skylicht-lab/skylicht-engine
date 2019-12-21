@@ -63,5 +63,5 @@ void CView::onPause()
 
 bool CView::onBack()
 {
-	return true;
+	return false;
 }

@@ -12,7 +12,7 @@
 #include "SkyDome/CSkyDome.h"
 
 CViewInit::CViewInit() :
-	m_initState(CViewInit::InitEngine),
+	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL)
 {
 
@@ -85,18 +85,13 @@ void CViewInit::onUpdate()
 
 	switch (m_initState)
 	{
-	case CViewInit::InitEngine:
-	{
-		m_initState = CViewInit::DownloadBundles;
-	}
-	break;
 	case CViewInit::DownloadBundles:
 	{
 		io::IFileSystem* fileSystem = getApplication()->getFileSystem();
 #ifdef __EMSCRIPTEN__
 		if (m_getFile == NULL)
 		{
-			m_getFile = new CGetFileURL("Demo.zip", "Demo.zip");
+			m_getFile = new CGetFileURL("CDemo.zip", "CDemo.zip");
 			m_getFile->download(CGetFileURL::Get);
 		}
 		else
@@ -104,7 +99,7 @@ void CViewInit::onUpdate()
 			if (m_getFile->getState() == CGetFileURL::Finish)
 			{
 				// add demo.zip after it downloaded
-				fileSystem->addFileArchive("Demo.zip", false, false);
+				fileSystem->addFileArchive("CDemo.zip", false, false);
 				m_initState = CViewInit::InitScene;
 			}
 			else if (m_getFile->getState() == CGetFileURL::Error)

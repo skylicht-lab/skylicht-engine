@@ -1,7 +1,7 @@
 # Skylicht Engine
 ## Git flow
 ### Feature
--   If you commit code for feature, open an issue ex: #282. Create your branch name: **`feature/#282-your-branch-name`** (All characters is lowercase and - instead space)
+-   If you commit code for feature, open an issue ex: #282. Create your branch name: **`feature/#282-your-branch-name`** (All characters is lowercase and character '-' instead space ' ')
 -   Commit message: **`feat: #282 To do some thing`**
 -   If your commit message too long
 ```
@@ -16,8 +16,8 @@ Do some thing 2
 
 Remember tag your issues id ex: #282 on your commit message, and branch name
 ## Code style
--   We try to adhere to the existing [**Irrlicht code style**](http://irrlicht.sourceforge.net/?page_id=140) and mix some code style from Microsoft , Java style.
--   You can use your code style in your local project `Projects/{YourProject}`. But if you fix bug or commit a feature on `Projects/Skylicht*`, try to follow our style.
+-   We try to adhere to the existing [**Irrlicht code style**](http://irrlicht.sourceforge.net/?page_id=140).
+-   You can use your code style in your local project `Projects/{YourProject}`. When you fix bug or commit a feature on `Projects/Skylicht*`, please follow our style.
 ### Code formation
 Use **TAB Indent** instead 2 space for C/C++ code.
 
@@ -57,17 +57,17 @@ I recommend we don't use ~~c_style_function_name~~ and ~~character _~~ for funct
 
 **`BAD`**
 ```
-// ugly code
+// not recommend
 void func_style_c_name()
 {
-  // ugly code
+  // not recommend
   int _variable = 0;
   
-  //  ugly code
+  // not recommend
   int variable_ugly = 0;
 }
 
-// ugly code
+// not recommend
 void MODULE_func_style_c_name()
 {
   
@@ -78,6 +78,7 @@ void MODULE_func_style_c_name()
 void functionJavaNameStyle()
 {  
   int variable = 0;
+  ...
 }
 ```
 -   **camelCase** for *`all variables and functions`*
