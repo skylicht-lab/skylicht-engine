@@ -2629,6 +2629,10 @@ IVideoDriver* createNullDriver(io::IFileSystem* io, const core::dimension2d<u32>
 {
 	CNullDriver* nullDriver = new CNullDriver(io, screenSize);
 
+	// Skylicht Engine add
+	// create vertex descriptor to simulate meshbuffer
+	nullDriver->createVertexDescriptors();
+
 	// create empty material renderers
 	for(u32 i=0; sBuiltInMaterialTypeNames[i]; ++i)
 	{

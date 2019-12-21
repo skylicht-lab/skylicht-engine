@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTransform.h"
 #include "GameObject/CGameObject.h"
 
+#include "Entity/CEntityManager.h"
+
 namespace Skylicht
 {
 	core::vector3df CTransform::s_ox = core::vector3df(1.0f, 0.0f, 0.0f);
@@ -45,7 +47,7 @@ namespace Skylicht
 
 	void CTransform::initComponent()
 	{
-		m_gameObject->createEntity(this);
+		m_gameObject->getEntityManager()->addTransformDataToEntity(m_gameObject->getEntity(), this);
 	}
 
 	void CTransform::updateComponent()

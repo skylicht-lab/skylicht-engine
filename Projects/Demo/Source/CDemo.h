@@ -1,10 +1,10 @@
 #include "IApplicationEventReceiver.h"
 
-class Demo : public IApplicationEventReceiver
+class CDemo : public IApplicationEventReceiver
 {
 public:
-	Demo();
-	virtual ~Demo();
+	CDemo();
+	virtual ~CDemo();
 
 	virtual void onUpdate();
 
@@ -19,4 +19,6 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
+
+	virtual bool onBack();
 };

@@ -77,7 +77,7 @@ namespace Skylicht
 		void initNull();
 
 	public:
-		CEntity* createEntity(CTransform *transform);
+		CEntity* createEntity();
 
 		void destroyEntity();
 
