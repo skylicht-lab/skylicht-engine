@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Demo.h"
+#include "CDemo.h"
 
 #include "View/CViewInit.h"
 #include "Context/CContext.h"
@@ -7,53 +7,58 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	Demo *demo = new Demo();
-	getApplication()->registerAppEvent("Demo", demo);
+	CDemo *demo = new CDemo();
+	getApplication()->registerAppEvent("CDemo", demo);
 }
 
-Demo::Demo()
+CDemo::CDemo()
 {
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 }
 
-Demo::~Demo()
+CDemo::~CDemo()
 {
-	CContext::releaseInstance();
 	CViewManager::releaseInstance();
+	CContext::releaseInstance();	
 }
 
-void Demo::onInitApp()
+void CDemo::onInitApp()
 {
 	CViewManager::getInstance()->getLayer(0)->pushView<CViewInit>();
 }
 
-void Demo::onUpdate()
+void CDemo::onUpdate()
 {
 	CViewManager::getInstance()->update();
 }
 
-void Demo::onRender()
+void CDemo::onRender()
 {
 	CViewManager::getInstance()->render();
 }
 
-void Demo::onPostRender()
+void CDemo::onPostRender()
 {
 	CViewManager::getInstance()->postRender();
 }
 
-void Demo::onResume()
+void CDemo::onResume()
 {
 	CViewManager::getInstance()->onResume();
 }
 
-void Demo::onPause()
+void CDemo::onPause()
 {
-
+	CViewManager::getInstance()->onPause();
 }
 
-void Demo::onQuitApp()
+void CDemo::onQuitApp()
 {
 	delete this;
+}
+
+bool CDemo::onBack()
+{
+	return false;
 }

@@ -75,30 +75,6 @@ namespace scene
 			const core::vector3df& lookat = core::vector3df(0,0,100),
 			s32 id=-1, bool makeActive=true);
 
-		//! Adds a camera scene node which is able to be controlle with the mouse similar
-		//! like in the 3D Software Maya by Alias Wavefront.
-		//! The returned pointer must not be dropped.
-		virtual ICameraSceneNode* addCameraSceneNodeMaya(ISceneNode* parent=0,
-			f32 rotateSpeed=-1500.f, f32 zoomSpeed=200.f,
-			f32 translationSpeed=1500.f, s32 id=-1, f32 distance=70.f,
-			bool makeActive=true);
-
-		//! Adds a camera scene node which is able to be controled with the mouse and keys
-		//! like in most first person shooters (FPS):
-		virtual ICameraSceneNode* addCameraSceneNodeFPS(ISceneNode* parent = 0,
-			f32 rotateSpeed = 100.0f, f32 moveSpeed = .5f, s32 id=-1,
-			SKeyMap* keyMapArray=0, s32 keyMapSize=0,
-			bool noVerticalMovement=false, f32 jumpSpeed = 0.f,
-			bool invertMouseY=false, bool makeActive=true);
-
-		//! Adds a dynamic light scene node. The light will cast dynamic light on all
-		//! other scene nodes in the scene, which have the material flag video::MTF_LIGHTING
-		//! turned on. (This is the default setting in most scene nodes).
-		virtual ILightSceneNode* addLightSceneNode(ISceneNode* parent = 0,
-			const core::vector3df& position = core::vector3df(0,0,0),
-			video::SColorf color = video::SColorf(1.0f, 1.0f, 1.0f),
-			f32 range=100.0f, s32 id=-1);
-
 		//! Adds an empty scene node.
 		virtual ISceneNode* addEmptySceneNode(ISceneNode* parent, s32 id=-1);
 
@@ -117,58 +93,6 @@ namespace scene
 		//! Sets the active camera. The previous active camera will be deactivated.
 		//! \param camera: The new camera which should be active.
 		virtual void setActiveCamera(ICameraSceneNode* camera);
-
-		//! creates a rotation animator, which rotates the attached scene node around itself.
-		//! \param rotationPerSecond: Specifies the speed of the animation
-		//! \return The animator. Attach it to a scene node with ISceneNode::addAnimator()
-		//! and the animator will animate it.
-		virtual ISceneNodeAnimator* createRotationAnimator(const core::vector3df& rotationPerSecond);
-
-		//! creates a fly circle animator
-		/** Lets the attached scene node fly around a center.
-		\param center Center relative to node origin
-		 \param speed: The orbital speed, in radians per millisecond.
-		 \param direction: Specifies the upvector used for alignment of the mesh.
-		 \param startPosition: The position on the circle where the animator will
-			begin. Value is in multiples  of a circle, i.e. 0.5 is half way around.
-		 \return The animator. Attach it to a scene node with ISceneNode::addAnimator()
-		 */
-		virtual ISceneNodeAnimator* createFlyCircleAnimator(
-				const core::vector3df& center=core::vector3df(0.f, 0.f, 0.f),
-				f32 radius=100.f, f32 speed=0.001f,
-				const core::vector3df& direction=core::vector3df(0.f, 1.f, 0.f),
-				f32 startPosition = 0.f,
-				f32 radiusEllipsoid = 0.f);
-
-		//! Creates a fly straight animator, which lets the attached scene node
-		//! fly or move along a line between two points.
-		virtual ISceneNodeAnimator* createFlyStraightAnimator(const core::vector3df& startPoint,
-			const core::vector3df& endPoint, u32 timeForWay, bool loop=false,bool pingpong = false);
-
-		//! Creates a texture animator, which switches the textures of the target scene
-		//! node based on a list of textures.
-		virtual ISceneNodeAnimator* createTextureAnimator(const core::array<video::ITexture*>& textures,
-			s32 timePerFrame, bool loop);
-
-		//! Creates a scene node animator, which deletes the scene node after
-		//! some time automaticly.
-		virtual ISceneNodeAnimator* createDeleteAnimator(u32 timeMS);
-
-
-		//! Creates a special scene node animator for doing automatic collision detection
-		//! and response.
-		virtual ISceneNodeAnimatorCollisionResponse* createCollisionResponseAnimator(
-			ITriangleSelector* world, ISceneNode* sceneNode,
-			const core::vector3df& ellipsoidRadius = core::vector3df(30,60,30),
-			const core::vector3df& gravityPerSecond = core::vector3df(0,-1.0f,0),
-			const core::vector3df& ellipsoidTranslation = core::vector3df(0,0,0),
-			f32 slidingValue = 0.0005f);
-
-		//! Creates a follow spline animator.
-		virtual ISceneNodeAnimator* createFollowSplineAnimator(s32 startTime,
-			const core::array< core::vector3df >& points,
-			f32 speed, f32 tightness, bool loop, bool pingpong);
-
 
 		//! Creates a simple ITriangleSelector, based on a mesh.
 		virtual ITriangleSelector* createTriangleSelector(IMesh* mesh, ISceneNode* node);	
@@ -232,44 +156,6 @@ namespace scene
 
 		//! Returns type of the scene node
 		virtual ESCENE_NODE_TYPE getType() const { return ESNT_SCENE_MANAGER; }
-
-		//! Returns the default scene node factory which can create all built in scene nodes
-		virtual ISceneNodeFactory* getDefaultSceneNodeFactory();
-
-		//! Adds a scene node factory to the scene manager.
-		/** Use this to extend the scene manager with new scene node types which it should be
-		able to create automaticly, for example when loading data from xml files. */
-		virtual void registerSceneNodeFactory(ISceneNodeFactory* factoryToAdd);
-
-		//! Returns amount of registered scene node factories.
-		virtual u32 getRegisteredSceneNodeFactoryCount() const;
-
-		//! Returns a scene node factory by index
-		virtual ISceneNodeFactory* getSceneNodeFactory(u32 index);
-
-		//! Returns a typename from a scene node type or null if not found
-		virtual const c8* getSceneNodeTypeName(ESCENE_NODE_TYPE type);
-
-		//! Returns a typename from a scene node animator type or null if not found
-		virtual const c8* getAnimatorTypeName(ESCENE_NODE_ANIMATOR_TYPE type);
-
-		//! Adds a scene node to the scene by name
-		virtual ISceneNode* addSceneNode(const char* sceneNodeTypeName, ISceneNode* parent=0);
-
-		//! creates a scene node animator based on its type name
-		virtual ISceneNodeAnimator* createSceneNodeAnimator(const char* typeName, ISceneNode* target=0);
-
-		//! Returns the default scene node animator factory which can create all built-in scene node animators
-		virtual ISceneNodeAnimatorFactory* getDefaultSceneNodeAnimatorFactory();
-
-		//! Adds a scene node animator factory to the scene manager.
-		virtual void registerSceneNodeAnimatorFactory(ISceneNodeAnimatorFactory* factoryToAdd);
-
-		//! Returns amount of registered scene node animator factories.
-		virtual u32 getRegisteredSceneNodeAnimatorFactoryCount() const;
-
-		//! Returns a scene node animator factory by index
-		virtual ISceneNodeAnimatorFactory* getSceneNodeAnimatorFactory(u32 index);		
 
 		//! Writes attributes of the scene node.
 		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) const;
@@ -394,7 +280,6 @@ namespace scene
 		core::array<DefaultNodeEntry> CubeReflectList;
 		core::array<ISceneNode*> SkyBoxList;
 		core::array<DefaultNodeEntry> SolidNodeList;
-		core::array<DefaultNodeEntry> SolidDeferredNodeList;
 		core::array<TransparentNodeEntry> TransparentNodeList;
 		core::array<TransparentNodeEntry> TransparentEffectNodeList;
 		
