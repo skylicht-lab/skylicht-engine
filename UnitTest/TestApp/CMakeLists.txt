@@ -1,10 +1,10 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtSystem/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtEngine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtClient/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtComponents/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
 )
 
 file(GLOB_RECURSE test_app_source 
@@ -20,9 +20,9 @@ endif()
 
 # Linker
 if (BUILD_ANDROID)
-	target_link_libraries(TestApp SkylichtClient log)
+	target_link_libraries(TestApp Client log)
 else()
-	target_link_libraries(TestApp SkylichtClient)
+	target_link_libraries(TestApp Client)
 endif()
 
 add_test(NAME TestApp COMMAND $<TARGET_FILE:TestApp>)

@@ -1,12 +1,12 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Demo/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtSystem/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtClient/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include	
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtEngine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtComponents/Source	
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtPhysics/Source
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtAudio/Source	
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source	
+	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
+	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source	
 )
 
 #if (BUILD_SKYLICHT_NETWORK)
@@ -26,4 +26,4 @@ target_precompiled_header(Demo ./Source/pch.cpp ${demo_source})
 
 set_target_properties(Demo PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-target_link_libraries(Demo SkylichtClient)
+target_link_libraries(Demo Client)

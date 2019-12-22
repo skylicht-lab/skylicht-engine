@@ -206,21 +206,21 @@ subdirs (Projects/Irrlicht)
 #endif()
 
 # skylicht engine
-subdirs (Projects/SkylichtSystem)
-subdirs (Projects/SkylichtEngine)
-subdirs (Projects/SkylichtComponents)
-#subdirs (Projects/SkylichtAudio)
-#subdirs (Projects/SkylichtPhysics)
+subdirs (Projects/Skylicht/System)
+subdirs (Projects/Skylicht/Engine)
+subdirs (Projects/Skylicht/Components)
+#subdirs (Projects/Skylicht/Audio)
+#subdirs (Projects/Skylicht/Physics)
 
 #if (BUILD_SKYLICHT_NETWORK)
-#subdirs (Projects/SkylichtNetwork)
+#subdirs (Projects/Skylicht/Network)
 #endif()
 
-subdirs (Projects/SkylichtClient)
+subdirs (Projects/Skylicht/Client)
 
 #if (BUILD_ENGINE_TOOL)
 #subdirs (Projects/UIClass)
-#subdirs (Projects/SkylichtEditor)
+#subdirs (Projects/Editor)
 #endif()
 
 subdirs (Projects/MainApp)
