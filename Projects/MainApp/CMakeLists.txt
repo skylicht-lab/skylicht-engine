@@ -2,11 +2,11 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Spark/include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtSystem/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtEngine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtClient/Source
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtAudio/Source
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtPhysics/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
+	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
+	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
 )
 
 file(GLOB_RECURSE main_app_source 
@@ -95,9 +95,9 @@ target_precompiled_header(MainApp ./Source/pch.cpp ${main_app_source})
 
 # Linker
 if (BUILD_ANDROID)
-	target_link_libraries(MainApp SkylichtClient Demo log)
+	target_link_libraries(MainApp Client Demo log)
 else()
-	target_link_libraries(MainApp SkylichtClient Demo)
+	target_link_libraries(MainApp Client Demo)
 endif()
 
 # Emscripten
