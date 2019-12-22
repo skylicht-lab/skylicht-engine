@@ -60,5 +60,5 @@ void CDemo::onQuitApp()
 
 bool CDemo::onBack()
 {
-	return false;
+	return CViewManager::getInstance()->onBack();
 }
