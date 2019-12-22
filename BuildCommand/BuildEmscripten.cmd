@@ -7,4 +7,5 @@ cd ..
 mkdir Bin\BuiltIn
 copy Bin\BuiltIn.zip Bin\BuiltIn
 call emmake make -C PrjEmscripten
-emrun --browser chrome Bin\MainApp.wasm.html
+copy Projects\MainApp\Platforms\Emscripten\Index.html Bin
+emrun --browser chrome Bin\Index.html
