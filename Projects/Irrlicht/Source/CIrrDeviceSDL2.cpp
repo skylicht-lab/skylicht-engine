@@ -392,7 +392,9 @@ namespace irr
 				{
 					// FIXME: Implement more precise window control
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
-					// FIXME: Check if the window is game window
+					/*
+					// SKYLICHT: Need post an event to application, I will fix it later...
+					// FIXME: Check if the window is game window					
 					if ((SDL_event.window.data1 != (int)Width) || (SDL_event.window.data2 != (int)Height))
 					{
 						Width = SDL_event.window.data1;
@@ -401,6 +403,7 @@ namespace irr
 						if (VideoDriver)
 							VideoDriver->OnResize(core::dimension2d<u32>(Width, Height));
 					}
+					*/
 					break;
 				case SDL_WINDOWEVENT_ENTER:
 				case SDL_WINDOWEVENT_FOCUS_GAINED:

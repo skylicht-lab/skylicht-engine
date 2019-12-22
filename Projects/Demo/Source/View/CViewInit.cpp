@@ -26,7 +26,7 @@ CViewInit::~CViewInit()
 io::path CViewInit::getBuiltInPath(const char *name)
 {
 #ifdef __EMSCRIPTEN__
-	// Path from ./PrjEmscripten/Projects/MainApp
+	// path from ./PrjEmscripten/Projects/MainApp
 	std::string assetPath = std::string("../../../Bin/BuiltIn/") + std::string(name);
 	return io::path(assetPath.c_str());
 #elif defined(WINDOWS_STORE)
@@ -91,7 +91,7 @@ void CViewInit::onUpdate()
 #ifdef __EMSCRIPTEN__
 		if (m_getFile == NULL)
 		{
-			m_getFile = new CGetFileURL("CDemo.zip", "CDemo.zip");
+			m_getFile = new CGetFileURL("Demo.zip", "Demo.zip");
 			m_getFile->download(CGetFileURL::Get);
 		}
 		else
@@ -99,7 +99,7 @@ void CViewInit::onUpdate()
 			if (m_getFile->getState() == CGetFileURL::Finish)
 			{
 				// add demo.zip after it downloaded
-				fileSystem->addFileArchive("CDemo.zip", false, false);
+				fileSystem->addFileArchive("Demo.zip", false, false);
 				m_initState = CViewInit::InitScene;
 			}
 			else if (m_getFile->getState() == CGetFileURL::Error)
