@@ -51,13 +51,13 @@ void function(int foo)
   }
 }
 ```
-**`NOT RECOMMENDED FOR OLD C CODE STYLE`**
+**`NOT RECOMMENDED FOR OLD C CODE STYLE IN CLASS NAME, MEMBER FUNCTION AND VARIABLE`**
 
-I recommend we don't use ~~c_style_function_name~~ and ~~character _~~ for function name and variable name
+I recommend we don't use ~~c_style_function_name~~ and ~~character _~~ for function name and variable name in .cpp source
 
 **`BAD`**
 ```
-// not recommend
+// not recommend in .cpp
 void func_style_c_name()
 {
   // not recommend
@@ -67,7 +67,7 @@ void func_style_c_name()
   int variable_ugly = 0;
 }
 
-// not recommend
+// not recommend in .cpp
 void MODULE_func_style_c_name()
 {
   
