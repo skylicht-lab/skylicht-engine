@@ -64,7 +64,15 @@ if(MINGW OR CYGWIN)
 endif()
 
 if (BUILD_EMSCRIPTEN)
-	add_executable(MainApp ${main_app_source})
+	add_executable(MainApp 
+		${main_app_source}
+		./Platforms/Emscripten/MainWebGL.cpp
+	)
+elseif(BUILD_SDL)
+	add_executable(MainApp 
+		${main_app_source}
+		./Platforms/SDL2/MainSDL.cpp
+	)
 elseif(BUILD_ANDROID)
 	add_library(MainApp SHARED ${main_app_source})
 elseif (BUILD_WINDOWS_STORE)
@@ -94,15 +102,9 @@ endif()
 
 # Emscripten
 if (BUILD_EMSCRIPTEN)
-if(JS_ONLY)
-	message(STATUS "Setting compilation target to native JavaScript")
-	set(CMAKE_EXECUTABLE_SUFFIX ".html")
-	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared")
-else()
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
-endif()
+	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 endif()
 
 set_target_properties(MainApp PROPERTIES VERSION ${SKYLICHT_VERSION})

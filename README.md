@@ -50,7 +50,7 @@ Add new source files or subfolders on `Projects/{ProjectName}/Source` and regene
 
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
 ## Contributing
-Wellcome if you wanna join with us. If you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+Welcome if you wanna join with us. If you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 ## License
 Skylicht Engine is licensed under [MIT License](LICENSE.md)
 Skylicht Engine is based in part on the work of:

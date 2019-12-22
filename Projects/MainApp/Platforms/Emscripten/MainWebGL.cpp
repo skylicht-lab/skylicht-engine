@@ -48,11 +48,30 @@ void main_loop()
 	g_mainApp->mainLoop();
 }
 
-int main()
+extern "C" void main_resize(int w, int h)
 {
+	if (g_mainApp != NULL)
+	{
+		g_mainApp->notifyResizeWin(w, h);
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	// default params
+	u32 width = 800;
+	u32 height = 600;
+	
+	// parse params from Javascript (arguments_.push)
+	if (argc == 3)
+	{
+		width = (u32)atoi(argv[1]);
+		height = (u32)atoi(argv[2]);
+	}
+	
 	g_mainApp = new CApplication();
 
-	g_device = createDevice(video::EDT_OPENGLES, dimension2d<u32>(640, 480), 32, false, false, false, g_mainApp);
+	g_device = createDevice(video::EDT_OPENGLES, dimension2d<u32>(width, height), 32, false, false, false, g_mainApp);
 
 	if (!g_device)
 		return 1;
@@ -72,5 +91,5 @@ int main()
 
 	return 0;
 }
-
+	
 #endif
