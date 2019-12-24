@@ -1,0 +1,2892 @@
+/*
+!@
+MIT License
+
+Copyright (c) 2019 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
+
+#include "pch.h"
+#include "CColladaLoader.h"
+#include "CColladaLoaderFunc.h"
+
+#include "Utils/CStringImp.h"
+#include "GameObject/CGameObject.h"
+#include "Material/CShaderManager.h"
+
+namespace Skylicht
+{
+
+	bool CColladaLoader::s_fixUV = false;
+
+	CColladaLoader::CColladaLoader() :
+		m_loadTexcoord2(false),
+		m_batching(false),
+		m_tangent(false),
+		m_loadNormalMap(false),
+		m_maxUVTile(16.0f)
+	{
+
+	}
+
+	CColladaLoader::~CColladaLoader()
+	{
+
+	}
+
+	void CColladaLoader::loadDae(const char *fileName)
+	{
+		m_meshFile = fileName;
+
+		IrrlichtDevice	*device = getIrrlichtDevice();
+		io::IFileSystem *fs = device->getFileSystem();
+
+		io::IXMLReader *xmlRead = fs->createXMLReader(fileName);
+		if (xmlRead == NULL)
+		{
+			char log[64];
+			sprintf(log, "Can not load: %s\n", fileName);
+			os::Printer::log(log);
+			return;
+		}
+
+		const std::wstring controllerSectionName(L"controller");
+		const std::wstring imageSectionName(L"image");
+		const std::wstring materialSectionName(L"material");
+		const std::wstring effectSectionName(L"effect");
+		const std::wstring geometrySectionName(L"geometry");
+		const std::wstring sceneSectionName(L"visual_scene");
+
+		bool readLUpAxis = false;
+		m_zUp = false;
+		m_flipOx = false;
+
+		while (xmlRead->read())
+		{
+			switch (xmlRead->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+			{
+				std::wstring nodeName = xmlRead->getNodeName();
+
+				if (nodeName == imageSectionName)
+				{
+					parseImageNode(xmlRead);
+				}
+				else if (nodeName == materialSectionName)
+				{
+					parseMaterialNode(xmlRead);
+				}
+				else if (nodeName == effectSectionName)
+				{
+					parseEffectNode(xmlRead);
+				}
+				else if (nodeName == geometrySectionName)
+				{
+					parseGeometryNode(xmlRead);
+				}
+				else if (nodeName == controllerSectionName)
+				{
+					parseControllerNode(xmlRead);
+				}
+				else if (nodeName == sceneSectionName)
+				{
+					parseSceneNode(xmlRead);
+				}
+				else if (nodeName == L"up_axis")
+				{
+					readLUpAxis = true;
+				}
+
+			}
+			case io::EXN_ELEMENT_END:
+			{
+			}
+			break;
+			case io::EXN_TEXT:
+			{
+				if (readLUpAxis == true)
+				{
+					std::wstring text = xmlRead->getNodeData();
+					if (text == L"Z_UP")
+					{
+						m_zUp = true;
+						m_flipOx = false;
+					}
+					else
+					{
+						m_zUp = false;
+						m_flipOx = true;
+					}
+				}
+				readLUpAxis = false;
+			}
+			break;
+			}
+		}
+
+		xmlRead->drop();
+
+		// update load texture
+		loadEffectTexture();
+
+		// build render entity
+		constructRenderEntity();
+
+		// clean data
+		cleanData();
+	}
+
+
+	// parseImageNode
+	// parse image
+	void CColladaLoader::parseImageNode(io::IXMLReader *xmlRead, SColladaImage* image)
+	{
+		if (image == NULL)
+		{
+			m_listImages.push_back(SColladaImage());
+			image = &m_listImages.back();
+		}
+
+		const std::wstring imageSectionName(L"image");
+
+		image->id = xmlRead->getAttributeValue(L"id");
+
+		if (xmlRead->getAttributeValue(L"name"))
+			image->name = xmlRead->getAttributeValue(L"name");
+		else
+			image->name = image->id;
+
+		bool readPath = false;
+
+		while (xmlRead->read())
+		{
+			if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+			{
+				std::wstring nodeName = xmlRead->getNodeName();
+				if (nodeName == L"init_from")
+					readPath = true;
+			}
+			else if (xmlRead->getNodeType() == io::EXN_TEXT)
+			{
+				if (readPath)
+					image->fileName = xmlRead->getNodeData();
+				readPath = false;
+			}
+			else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+			{
+				std::wstring nodeName = xmlRead->getNodeName();
+				if (nodeName == imageSectionName)
+					break;
+			}
+		}
+	}
+
+	// parseMaterialNode
+	// parse material
+	void CColladaLoader::parseMaterialNode(io::IXMLReader *xmlRead, SColladaMaterial* material)
+	{
+		if (material == NULL)
+		{
+			m_listMaterial.push_back(SColladaMaterial());
+			material = &m_listMaterial.back();
+
+			material->ID = readId(xmlRead);
+
+			material->Effect.Id = material->ID;
+			material->Effect.Mat.Lighting = true;
+			material->Effect.Mat.NormalizeNormals = true;
+
+			material->Effect.Transparency = 1.f;
+			material->Effect.HasAlpha = false;
+			material->Effect.TransparentAddColor = false;
+
+			material->Effect.HasBumpMapping = false;
+			material->Effect.HasSpecularMapping = false;
+			material->Effect.HasDiffuseMapping = false;
+		}
+
+		const std::wstring setParam(L"setparam");
+		const std::wstring materialSectionName(L"material");
+		const std::wstring initFrom(L"init_from");
+		const std::wstring instanceEffect(L"instance_effect");
+
+		const std::wstring diffuseSurface(L"Diffuse-surface");
+		const std::wstring diffuseMapSurface(L"DiffuseMap-surface");
+		const std::wstring normalMapSurface(L"NormalMap-surface");
+		const std::wstring specularMapSurface(L"SpecularMapSampler-surface");
+
+		bool readInitFrom = 0;
+
+		std::wstring paramName = L"";
+
+		while (xmlRead->read())
+		{
+			if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+			{
+				// read the first image init as texture
+				std::wstring nodeName = xmlRead->getNodeName();
+				if (nodeName == initFrom)
+				{
+					readInitFrom = 1;
+				}
+				else if (nodeName == setParam)
+				{
+					paramName = xmlRead->getAttributeValue(L"ref");
+				}
+				else if (nodeName == instanceEffect)
+				{
+					material->InstanceEffect = xmlRead->getAttributeValue(L"url");
+					uriToId(material->InstanceEffect);
+				}
+			}
+			else if (xmlRead->getNodeType() == io::EXN_TEXT)
+			{
+				// read texture
+				if (readInitFrom == 1)
+				{
+					std::wstring tname = xmlRead->getNodeData();
+
+					if (paramName == diffuseSurface || paramName == diffuseMapSurface)
+					{
+						material->Effect.DiffuseRef = tname;
+						material->Effect.HasDiffuseMapping = true;
+					}
+					else if (paramName == specularMapSurface)
+					{
+						material->Effect.SpecularRef = tname;
+						material->Effect.HasSpecularMapping = true;
+					}
+					else if (paramName == normalMapSurface)
+					{
+						material->Effect.BumpRef = tname;
+						material->Effect.HasBumpMapping = true;
+					}
+					else
+					{
+						char text[512];
+						core::stringc name = paramName.c_str();
+						sprintf(text, "Unknown map %s", name.c_str());
+						os::Printer::log(text);
+					}
+				}
+
+				readInitFrom = 0;
+			}
+			else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+			{
+				// end parse material
+				std::wstring nodeName = xmlRead->getNodeName();
+				if (nodeName == materialSectionName)
+					break;
+				else if (nodeName == setParam)
+					paramName = L"";
+			}
+		}
+
+		if (material)
+			updateEffectMaterial(&material->Effect);
+	}
+
+	// parseEffectNode
+	// parse effect material node
+	void CColladaLoader::parseEffectNode(io::IXMLReader *xmlRead, SEffect* effect)
+	{
+		if (effect == NULL)
+		{
+			m_listEffects.push_back(SEffect());
+			effect = &m_listEffects.back();
+
+			effect->Id = readId(xmlRead);
+
+			effect->Mat.Lighting = true;
+			effect->Mat.NormalizeNormals = true;
+
+			effect->Transparency = 1.f;
+			effect->HasAlpha = false;
+			effect->TransparentAddColor = false;
+
+			effect->HasBumpMapping = false;
+			effect->HasSpecularMapping = false;
+		}
+
+		const std::wstring constantNode(L"constant");
+		const std::wstring lambertNode(L"lambert");
+		const std::wstring phongNode(L"phong");
+		const std::wstring blinnNode(L"blinn");
+		const std::wstring bumpNode(L"bump");
+		const std::wstring emissionNode(L"emission");
+		const std::wstring ambientNode(L"ambient");
+		const std::wstring diffuseNode(L"diffuse");
+		const std::wstring specularNode(L"specular");
+		const std::wstring specularLevel(L"spec_level");
+		const std::wstring specularLevelH(L"specularLevel");
+		const std::wstring shininessNode(L"shininess");
+		const std::wstring reflectiveNode(L"reflective");
+		const std::wstring reflectivityNode(L"reflectivity");
+		const std::wstring transparentNode(L"transparent");
+		const std::wstring transparencyNode(L"transparency");
+		const std::wstring indexOfRefractionNode(L"index_of_refraction");
+		const std::wstring effectSectionName(L"effect");
+		const std::wstring profileCOMMONSectionName(L"profile_COMMON");
+		const std::wstring techniqueNodeName(L"technique");
+		const std::wstring colorNodeName(L"color");
+		const std::wstring floatNodeName(L"float");
+		const std::wstring textureNodeName(L"texture");
+		const std::wstring extraNodeName(L"extra");
+		const std::wstring newParamName(L"newparam");
+
+		const std::wstring initFromNode(L"init_from");
+		const std::wstring sourceNode(L"source");
+
+		const std::wstring libraryEffect(L"library_effects");
+
+		while (xmlRead->read())
+		{
+			if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+			{
+				std::wstring nodeName = xmlRead->getNodeName();
+
+				if (nodeName == profileCOMMONSectionName || nodeName == techniqueNodeName)
+				{
+					parseEffectNode(xmlRead, effect);
+				}
+				else if (nodeName == newParamName)
+				{
+					int m_readState = 0;
+
+					SEffectParam effectParam;
+
+					if (xmlRead->getAttributeValue(L"sid"))
+						effectParam.Name = xmlRead->getAttributeValue(L"sid");
+
+					while (xmlRead->read())
+					{
+						std::wstring node = xmlRead->getNodeName();
+
+						if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+						{
+							if (node == initFromNode)
+								m_readState = 1;
+							else if (node == sourceNode)
+								m_readState = 2;
+
+						}
+						else if (xmlRead->getNodeType() == io::EXN_TEXT)
+						{
+							if (m_readState == 1)
+								effectParam.InitFromTexture = xmlRead->getNodeData();
+							else if (m_readState == 2)
+								effectParam.Source = xmlRead->getNodeData();
+
+							m_readState = 0;
+						}
+						else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+						{
+							if (node == newParamName)
+								break;
+						}
+					}
+
+					// add to list effect params				
+					effect->EffectParams.push_back(effectParam);
+
+				}
+				else if (constantNode == nodeName || lambertNode == nodeName || phongNode == nodeName || blinnNode == nodeName)
+				{
+					if (xmlRead->isEmptyElement() == false)
+					{
+						// set phong shading
+						effect->Mat.setFlag(irr::video::EMF_GOURAUD_SHADING, phongNode == nodeName || blinnNode == nodeName);
+
+						// read color type
+						while (xmlRead->read())
+						{
+							std::wstring node = xmlRead->getNodeName();
+
+							if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+							{
+								if (emissionNode == node || ambientNode == node || diffuseNode == node ||
+									specularNode == node || reflectiveNode == node || transparentNode == node)
+								{
+
+									// read transparent type
+									if (node == transparentNode)
+									{
+										if (xmlRead->getAttributeValue(L"opaque"))
+										{
+											if (std::wstring(L"RGB_ZERO") == xmlRead->getAttributeValue(L"opaque") ||
+												std::wstring(L"A_ONE") == xmlRead->getAttributeValue(L"opaque"))
+											{
+												effect->TransparentAddColor = false;
+											}
+										}
+									}
+
+									// read color
+									while (xmlRead->read())
+									{
+										if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+										{
+											if (colorNodeName == xmlRead->getNodeName())
+											{
+												const video::SColorf colorf = readColorNode(xmlRead);
+												const video::SColor color = colorf.toSColor();
+
+												if (emissionNode == node)
+													effect->Mat.EmissiveColor = color;
+												else if (ambientNode == node)
+													effect->Mat.AmbientColor = color;
+												else if (diffuseNode == node)
+													effect->Mat.DiffuseColor = color;
+												else if (specularNode == node)
+													effect->Mat.SpecularColor = color;
+												else if (transparentNode == node)
+												{
+													effect->Transparency = colorf.getAlpha();
+													if (effect->Transparency != 1.0f)
+														effect->HasAlpha = true;
+												}
+											}
+											else if (textureNodeName == xmlRead->getNodeName())
+											{
+												if (node == diffuseNode)
+												{
+													std::wstring tname = xmlRead->getAttributeValue(L"texture");
+													if (tname.empty() == false)
+													{
+														effect->HasDiffuseMapping = true;
+														effect->DiffuseRef = tname;
+													}
+												}
+												else if (node == ambientNode)
+												{
+													// ambient lightmap texture:										
+													// see lightmap component
+												}
+												else if (node == specularNode)
+												{
+													// specular
+													std::wstring tname = xmlRead->getAttributeValue(L"texture");
+													if (tname.empty() == false)
+													{
+														effect->HasSpecularMapping = true;
+														effect->SpecularRef = tname;
+													}
+												}
+												else if (node == bumpNode)
+												{
+													// specular
+													std::wstring tname = xmlRead->getAttributeValue(L"texture");
+													if (tname.empty() == false)
+													{
+														effect->HasBumpMapping = true;
+														effect->BumpRef = tname;
+													}
+												}
+												else if (node == transparentNode)
+												{
+													// alpha node
+													effect->HasAlpha = true;
+												}
+											}
+										}
+										else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+										{
+											if (node == xmlRead->getNodeName())
+												break;
+										}
+									}
+								}
+								else if (shininessNode == node || reflectivityNode == node || transparencyNode == node || indexOfRefractionNode == node)
+								{
+									// float or param types
+									while (xmlRead->read())
+									{
+										if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+										{
+											if (floatNodeName == xmlRead->getNodeName())
+											{
+												f32 f = readFloatNode(xmlRead);
+												if (shininessNode == node)
+													effect->Mat.Shininess = f;
+												else if (transparencyNode == node)
+													effect->Transparency *= f;
+											}
+										}
+										else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+										{
+											if (node == xmlRead->getNodeName())
+												break;
+										}
+									}
+								}
+							}
+							else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+							{
+								if (constantNode == node ||
+									lambertNode == node ||
+									phongNode == node ||
+									blinnNode == node ||
+									bumpNode == node)
+									break;
+							}
+						}
+					}
+				}
+				else if (specularLevel == nodeName || specularLevelH == nodeName)
+				{
+					// <extra><spec_level> ... </spec_level></extra>
+					while (xmlRead->read())
+					{
+						if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+						{
+							std::wstring node = xmlRead->getNodeName();
+
+							if (textureNodeName == xmlRead->getNodeName())
+							{
+								std::wstring tname = xmlRead->getAttributeValue(L"texture");
+								if (tname.empty() == false)
+								{
+									effect->HasSpecularMapping = true;
+									effect->SpecularRef = tname;
+								}
+							}
+
+						}
+						else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+						{
+							if (specularLevel == xmlRead->getNodeName() || specularLevelH == nodeName)
+								break;
+						}
+					}
+
+				}
+				else if (bumpNode == nodeName)
+				{
+					// <extra><bump> ... </bump></extra>
+					if (m_loadNormalMap)
+					{
+						while (xmlRead->read())
+						{
+							if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+							{
+								std::wstring node = xmlRead->getNodeName();
+
+								if (textureNodeName == xmlRead->getNodeName())
+								{
+									std::wstring tname = xmlRead->getAttributeValue(L"texture");
+									if (tname.empty() == false)
+									{
+										effect->HasBumpMapping = true;
+										effect->BumpRef = tname;
+									}
+								}
+							}
+							else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+							{
+								if (bumpNode == xmlRead->getNodeName())
+									break;
+							}
+						}
+					}
+				}
+			}
+			else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+			{
+				std::wstring nodeName = xmlRead->getNodeName();
+
+				if (effectSectionName == nodeName)
+					break;
+				else if (profileCOMMONSectionName == nodeName)
+					break;
+				else if (techniqueNodeName == nodeName)
+					break;
+				else if (libraryEffect == nodeName)
+					break;
+			}
+		}
+
+		if (effect)
+			updateEffectMaterial(effect);
+	}
+
+	// parseGeometryNode
+	// parse mesh data
+	void CColladaLoader::parseGeometryNode(io::IXMLReader *xmlRead)
+	{
+		const std::wstring geometrySectionName(L"geometry");
+		const std::wstring sourceNode(L"source");
+		const std::wstring verticesNode(L"vertices");
+		const std::wstring vcountNode(L"vcount");
+		const std::wstring trianglesNode(L"triangles");
+		const std::wstring polylistNode(L"polylist");
+		const std::wstring floatArrayNode(L"float_array");
+		const std::wstring inputNode(L"input");
+		const std::wstring accessorNode(L"accessor");
+
+		SMeshParam mesh;
+
+		mesh.Type = k_mesh;
+		mesh.Name = readId(xmlRead);
+
+		while (xmlRead->read())
+		{
+			if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+			{
+				std::wstring nodeName = xmlRead->getNodeName();
+
+				//<source>
+				if (nodeName == sourceNode)
+				{
+					SBufferParam buffer;
+
+					buffer.Name = readId(xmlRead);
+					buffer.Type = k_positionBuffer;
+					buffer.ArrayCount = 0;
+					buffer.Strike = 0;
+					buffer.FloatArray = NULL;
+
+					while (xmlRead->read())
+					{
+						if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+						{
+							if (xmlRead->getNodeName() == floatArrayNode)
+							{
+								buffer.ArrayCount = xmlRead->getAttributeValueAsInt(L"count");
+								buffer.FloatArray = new float[buffer.ArrayCount];
+
+								readFloatsInsideElement(xmlRead, buffer.FloatArray, buffer.ArrayCount);
+							}
+							else if (xmlRead->getNodeName() == accessorNode)
+							{
+								buffer.Strike = xmlRead->getAttributeValueAsInt(L"stride");
+							}
+						}
+						else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+						{
+							if (xmlRead->getNodeName() == sourceNode)
+								break;
+						}
+					}
+
+					mesh.Buffers.push_back(buffer);
+
+				}
+				//<vertices>
+				else if (nodeName == verticesNode)
+				{
+					SVerticesParam	verticesParam;
+					verticesParam.Name = readId(xmlRead);
+
+					while (xmlRead->read())
+					{
+						if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+						{
+							if (xmlRead->getNodeName() == inputNode)
+							{
+								std::wstring semantic = xmlRead->getAttributeValue(L"semantic");
+								std::wstring source = xmlRead->getAttributeValue(L"source");
+								source.erase(source.begin());
+
+								int bufferID = getBufferWithUri(source, &mesh);
+
+								if (bufferID != -1)
+								{
+									SBufferParam *buffer = &mesh.Buffers[bufferID];
+
+									if (semantic == L"POSITION")
+									{
+										buffer->Type = k_positionBuffer;
+										verticesParam.PositionIndex = bufferID;
+									}
+									else if (semantic == L"NORMAL")
+									{
+										buffer->Type = k_normalBuffer;
+										verticesParam.NormalIndex = bufferID;
+									}
+									else if (semantic == L"TEXCOORD")
+									{
+										buffer->Type = k_texCoordBuffer;
+
+										if (verticesParam.TexCoord1Index == -1)
+										{
+											verticesParam.TexCoord1Index = bufferID;
+										}
+										else if (verticesParam.TexCoord2Index == -1)
+										{
+											verticesParam.TexCoord2Index = bufferID;
+										}
+									}
+								}
+
+							}
+						}
+						else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+						{
+							if (xmlRead->getNodeName() == verticesNode)
+								break;
+						}
+					}
+
+					// add vertex param
+					mesh.Vertices.push_back(verticesParam);
+				}
+				//<triangles>
+				//<polylistNode>
+				else if (nodeName == trianglesNode || nodeName == polylistNode)
+				{
+					STrianglesParam triangle;
+
+					triangle.NumElementPerVertex = 0;
+
+					triangle.NumPolygon = xmlRead->getAttributeValueAsInt(L"count");
+
+					if (xmlRead->getAttributeValue(L"material"))
+					{
+						std::wstring materialName = xmlRead->getAttributeValue(L"material");
+						triangle.Material = materialName;
+					}
+
+					while (xmlRead->read())
+					{
+						if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+						{
+							if (xmlRead->getNodeName() == inputNode)
+							{
+								std::wstring source = xmlRead->getAttributeValue(L"source");
+								std::wstring semantic = xmlRead->getAttributeValue(L"semantic");
+
+								int offset = 0;
+								offset = xmlRead->getAttributeValueAsInt(L"offset");
+
+								source.erase(source.begin());
+
+								if (semantic == L"NORMAL")
+								{
+									int bufferID = getBufferWithUri(source, &mesh);
+									mesh.Buffers[bufferID].Type = k_normalBuffer;
+
+									if (triangle.VerticesIndex != -1)
+									{
+										mesh.Vertices[triangle.VerticesIndex].NormalIndex = bufferID;
+										triangle.OffsetNormal = offset;
+									}
+
+									triangle.NumElementPerVertex++;
+								}
+								else if (semantic == L"TEXCOORD")
+								{
+									int bufferID = getBufferWithUri(source, &mesh);
+									mesh.Buffers[bufferID].Type = k_texCoordBuffer;
+									if (triangle.VerticesIndex != -1)
+									{
+										SVerticesParam &verticesParam = mesh.Vertices[triangle.VerticesIndex];
+
+										if (verticesParam.TexCoord1Index == -1)
+										{
+											verticesParam.TexCoord1Index = bufferID;
+											triangle.OffsetTexcoord1 = offset;
+										}
+										else if (verticesParam.TexCoord2Index == -1)
+										{
+											verticesParam.TexCoord2Index = bufferID;
+											triangle.OffsetTexcoord2 = offset;
+										}
+
+										// hard code to fix many triangle on a mesh
+										if (triangle.OffsetTexcoord1 == 0)
+											triangle.OffsetTexcoord1 = offset;
+										else if (triangle.OffsetTexcoord2 == 0)
+											triangle.OffsetTexcoord2 = offset;
+
+									}
+
+									triangle.NumElementPerVertex++;
+								}
+								else if (semantic == L"VERTEX")
+								{
+									triangle.VerticesIndex = getVerticesWithUri(source, &mesh);
+									triangle.OffsetVertex = offset;
+
+									triangle.NumElementPerVertex++;
+								}
+								else
+								{
+									triangle.NumElementPerVertex++;
+								}
+							}
+							else if (xmlRead->getNodeName() == vcountNode)
+							{
+								//<vcount>
+								triangle.VCount = new s32[triangle.NumPolygon];
+								readIntsInsideElement(xmlRead, triangle.VCount, triangle.NumPolygon);
+							}
+							else if (xmlRead->getNodeName() == std::wstring(L"p")
+								&& triangle.VerticesIndex != -1
+								&& triangle.NumElementPerVertex > 0)
+							{
+								if (nodeName == polylistNode)
+								{
+									std::vector<s32> indexBuffer;
+
+									std::vector<s32> arrayInt;
+									readIntsInsideElement(xmlRead, arrayInt);
+									int sourceID = 0;
+									int targetID = 0;
+
+									// num triangle
+									int numTris = calcNumTriangleFromPolygon(triangle.VCount, triangle.NumPolygon);
+
+									// polylist -> triangle
+									triangle.IndexBuffer = new s32[numTris * triangle.NumElementPerVertex * 3];
+
+									for (int i = 0; i < triangle.NumPolygon; i++)
+									{
+										sourceID = convertPolygonToTriangle(
+											arrayInt.data(), sourceID,			// source polygon
+											triangle.IndexBuffer, targetID,		// target triangle
+											triangle.VCount[i],					// vertex count
+											triangle.NumElementPerVertex		// element per vertex
+										);
+									}
+
+									triangle.NumPolygon = numTris;
+								}
+								else
+								{
+									// triangles
+									triangle.IndexBuffer = new s32[triangle.NumPolygon * triangle.NumElementPerVertex * 3];
+									readIntsInsideElement(xmlRead, triangle.IndexBuffer, triangle.NumPolygon * triangle.NumElementPerVertex * 3);
+								}
+							}
+						}
+						else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+						{
+							if (xmlRead->getNodeName() == trianglesNode || xmlRead->getNodeName() == polylistNode)
+								break;
+						}
+					}
+
+					// delete vcount (no need to use)
+					if (triangle.VCount != NULL)
+					{
+						delete triangle.VCount;
+						triangle.VCount = NULL;
+					}
+
+					// add triangles
+					if (triangle.IndexBuffer != NULL)
+						mesh.Triangles.push_back(triangle);
+				}
+			}
+			else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+			{
+				if (xmlRead->getNodeName() == geometrySectionName)
+					break;
+			}
+		}
+
+		m_listMesh.push_back(mesh);
+	}
+
+	// parseControllersNode
+	// parse controllser
+	void CColladaLoader::parseControllerNode(io::IXMLReader *xmlRead)
+	{
+		const std::wstring skinSectionName(L"skin");
+		const std::wstring controllerSectionName(L"controller");
+
+		std::wstring controllerName = xmlRead->getAttributeValue(L"id");
+
+		while (xmlRead->read())
+		{
+			if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+			{
+				std::wstring node = xmlRead->getNodeName();
+
+				if (node == skinSectionName)
+				{
+					SMeshParam *mesh = parseSkinNode(xmlRead);
+
+					if (mesh)
+						mesh->ControllerName = controllerName;
+				}
+			}
+			else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+			{
+				if (xmlRead->getNodeName() == controllerSectionName)
+					break;
+			}
+		}
+	}
+
+	// parseSkinNode
+	// parse skin data
+	SMeshParam* CColladaLoader::parseSkinNode(io::IXMLReader *xmlRead)
+	{
+		std::wstring source = xmlRead->getAttributeValue(L"source");
+		source.erase(source.begin());
+
+		int meshID = getMeshWithUri(source, m_listMesh);
+		if (meshID == -1)
+			return NULL;
+
+		SMeshParam *mesh = &m_listMesh[meshID];
+
+		const std::wstring paramSectionName(L"param");
+		const std::wstring skinSectionName(L"skin");
+		const std::wstring jointsSectionName(L"joints");
+		const std::wstring weightsSectionName(L"vertex_weights");
+		const std::wstring nameArraySectionName(L"Name_array");
+		const std::wstring floatArraySectionName(L"float_array");
+		const std::wstring intArraySectionName(L"int_array");
+		const std::wstring vcountNode(L"vcount");
+		const std::wstring vNode(L"v");
+		const std::wstring sourceNode(L"source");
+		const std::wstring bindShapeMatrix(L"bind_shape_matrix");
+
+		int	numJoints;
+		std::wstring jointsName;
+
+		int						numArray = 0;
+		float					*transformArray = NULL;
+		float					*weightArray = NULL;
+
+		std::vector<s32>				&vCountArray = mesh->JointVertexIndex;
+		std::vector<s32>				vArray;
+
+		while (xmlRead->read())
+		{
+			if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+			{
+				std::wstring node = xmlRead->getNodeName();
+
+				if (node == bindShapeMatrix)
+				{
+					float f[16];
+					readFloatsInsideElement(xmlRead, f, 16);
+
+					core::matrix4 mat;
+					mat.setM(f);
+					if (m_zUp)
+					{
+						core::matrix4 mat2(mat, core::matrix4::EM4CONST_TRANSPOSED);
+
+						mat2[1] = mat[8];
+						mat2[2] = mat[4];
+						mat2[4] = mat[2];
+						mat2[5] = mat[10];
+						mat2[6] = mat[6];
+						mat2[8] = mat[1];
+						mat2[9] = mat[9];
+						mat2[10] = mat[5];
+						mat2[12] = mat[3];
+						mat2[13] = mat[11];
+						mat2[14] = mat[7];
+
+						mesh->BindShapeMatrix = mat2;
+					}
+					else
+					{
+						mesh->BindShapeMatrix = mat.getTransposed();
+					}
+				}
+				// <source>
+				else if (node == sourceNode)
+				{
+					float *f = NULL;
+
+					std::wstring sourceId = xmlRead->getAttributeValue(L"id");
+
+					while (xmlRead->read())
+					{
+						if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+						{
+							// <Name_array>
+							if (xmlRead->getNodeName() == nameArraySectionName)
+							{
+								numJoints = xmlRead->getAttributeValueAsInt(L"count");
+								readStringInsideElement(xmlRead, jointsName);
+							}
+							// <float_array>
+							else if (xmlRead->getNodeName() == floatArraySectionName)
+							{
+								int count = xmlRead->getAttributeValueAsInt(L"count");
+								numArray = count;
+								f = new float[count];
+								readFloatsInsideElement(xmlRead, f, count);
+							}
+							// <param>	inside <accessor>
+							else if (xmlRead->getNodeName() == paramSectionName)
+							{
+								if (xmlRead->getAttributeValue(L"name") != NULL)
+								{
+									std::wstring name = xmlRead->getAttributeValue(L"name");
+									if (name == L"TRANSFORM")
+										transformArray = f;
+									else if (name == L"WEIGHT")
+										weightArray = f;
+									else
+									{
+										// delete float buffer on another accessor
+										if (f != NULL)
+										{
+											delete f;
+											f = NULL;
+										}
+									}
+								}
+								else
+								{
+									if (sourceId.find(L"-Matrices") != std::wstring::npos)
+										transformArray = f;
+									else if (sourceId.find(L"-Weights") != std::wstring::npos)
+										weightArray = f;
+									else
+									{
+										// delete float buffer on another accessor
+										if (f != NULL)
+										{
+											delete f;
+											f = NULL;
+										}
+									}
+								}
+							}
+						}
+						else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+						{
+							if (xmlRead->getNodeName() == sourceNode)
+								break;
+						}
+					}
+				}
+				// <vcount>
+				else if (node == vcountNode)
+				{
+					readIntsInsideElement(xmlRead, vCountArray);
+				}
+				// <vNode>
+				else if (node == vNode)
+				{
+					readIntsInsideElement(xmlRead, vArray);
+				}
+			}
+			else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+			{
+				if (xmlRead->getNodeName() == skinSectionName)
+					break;
+			}
+		}
+
+		mesh->Type = k_skinMesh;
+		mesh->ListJointName = jointsName;
+
+		updateJointToMesh(mesh, numJoints, weightArray, transformArray, vCountArray, vArray);
+
+		if (weightArray)
+			delete weightArray;
+
+		if (transformArray)
+			delete transformArray;
+
+		return mesh;
+	}
+
+	void CColladaLoader::updateJointToMesh(SMeshParam *mesh,
+		int numJoints,
+		float *arrayWeight,
+		float *arrayTransform,
+		std::vector<s32>& vCountArray,
+		std::vector<s32>& vArray)
+	{
+		// get array float
+		f32* f = (f32*)arrayTransform;
+
+		for (int i = 0; i < numJoints; i++)
+		{
+			SJointParam newJoint;
+
+			// We will add name later
+			// newJoint.Name = L"";
+
+			core::matrix4 mat;
+			mat.setM(f + i * 16);
+
+			if (m_zUp)
+			{
+				core::matrix4 mat2(mat, core::matrix4::EM4CONST_TRANSPOSED);
+
+				mat2[1] = mat[8];
+				mat2[2] = mat[4];
+				mat2[4] = mat[2];
+				mat2[5] = mat[10];
+				mat2[6] = mat[6];
+				mat2[8] = mat[1];
+				mat2[9] = mat[9];
+				mat2[10] = mat[5];
+				mat2[12] = mat[3];
+				mat2[13] = mat[11];
+				mat2[14] = mat[7];
+
+				newJoint.InvMatrix = mat2;
+			}
+			else
+			{
+				newJoint.InvMatrix = mat.getTransposed();
+			}
+
+			// add joint to controller
+			mesh->Joints.push_back(newJoint);
+		}
+
+		// set vertex weight
+		int nVertex = (int)vCountArray.size();
+		int id = 0;
+
+		for (int i = 0; i < nVertex; i++)
+		{
+			// num of bone in vertex
+			int nBone = vCountArray[i];
+
+			// loop on bone in vertex		
+			for (int iBone = 0; iBone < nBone; iBone++, id += 2)
+			{
+				u32 boneId = vArray[id];
+				u32 weightId = vArray[id + 1];
+				f32 f = arrayWeight[weightId];
+
+				SWeightParam weightParam;
+
+				weightParam.VertexID = i;
+				weightParam.Strength = f;
+
+				// add weight on bone
+				mesh->Joints[boneId].Weights.push_back(weightParam);
+
+				mesh->JointIndex.push_back(boneId);
+				mesh->JointIndex.push_back(mesh->Joints[boneId].Weights.size() - 1);
+			}
+
+		}
+	}
+
+	// parseSceneNode
+	// parse scene data
+	void CColladaLoader::parseSceneNode(io::IXMLReader *xmlRead)
+	{
+		const std::wstring sceneSectionName(L"visual_scene");
+		const std::wstring nodeSectionName(L"node");
+
+		m_colladaRoot = NULL;
+
+		while (xmlRead->read())
+		{
+			std::wstring nodeName = xmlRead->getNodeName();
+
+			if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+			{
+				if (nodeName == nodeSectionName)
+				{
+					parseNode(xmlRead, NULL);
+				}
+			}
+			else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+			{
+				if (nodeName == sceneSectionName)
+					break;
+			}
+		}
+	}
+
+	// parseNode
+	// parse <node> element
+	SNodeParam* CColladaLoader::parseNode(io::IXMLReader *xmlRead, SNodeParam* parent)
+	{
+		const std::wstring nodeSectionName(L"node");
+		const std::wstring translateSectionName(L"translate");
+		const std::wstring rotateSectionName(L"rotate");
+		const std::wstring scaleSectionName(L"scale");
+		const std::wstring matrixNodeName(L"matrix");
+
+		const std::wstring instanceGeometrySectionName(L"instance_geometry");
+		const std::wstring instanceControllerSectionName(L"instance_controller");
+		const std::wstring instanceMaterialSectionName(L"instance_material");
+
+		SNodeParam *pNode = new SNodeParam();
+
+		pNode->Name = L"";
+		if (xmlRead->getAttributeValue(L"id"))
+			pNode->Name = xmlRead->getAttributeValue(L"id");
+
+		if (xmlRead->getAttributeValue(L"sid"))
+			pNode->SID = xmlRead->getAttributeValue(L"sid");
+
+		pNode->Type = L"NODE";
+		if (xmlRead->getAttributeValue(L"type"))
+			pNode->Type = xmlRead->getAttributeValue(L"type");
+
+		if (m_colladaRoot == NULL)
+		{
+			m_colladaRoot = new SNodeParam();
+			m_colladaRoot->Name = L"BoneRoot";
+			m_colladaRoot->Type = L"JOINT";
+			m_colladaRoot->ChildLevel = 0;
+
+			m_colladaRoot->Parent = NULL;
+
+			if (m_flipOx == false)
+			{
+				m_colladaRoot->Scale = core::vector3df(1, 1, 1);
+			}
+			else
+			{
+				m_colladaRoot->Scale = core::vector3df(-1, 1, 1);
+				m_colladaRoot->Transform.setScale(core::vector3df(-1, 1, 1));
+			}
+
+			if (m_zUp)
+			{
+				// Z is front
+				core::matrix4 rot;
+				core::vector3df rotVec(0.0f, 180.0, 0.0f);
+				rot.setRotationDegrees(rotVec);
+
+				m_colladaRoot->Rot = core::quaternion(rot);
+				m_colladaRoot->Transform = rot;
+			}
+
+			m_listNode.push_back(m_colladaRoot);
+		}
+
+		if (parent == NULL)
+			parent = m_colladaRoot;
+
+		pNode->Parent = parent;
+		if (parent)
+		{
+			parent->Childs.push_back(pNode);
+			pNode->ChildLevel = parent->ChildLevel + 1;
+		}
+		else
+			pNode->ChildLevel = 0;
+
+
+		while (xmlRead->read())
+		{
+			if (xmlRead->getNodeType() == io::EXN_ELEMENT)
+			{
+				if (xmlRead->getNodeName() == nodeSectionName)
+				{
+					parseNode(xmlRead, pNode);
+				}
+				else if (xmlRead->getNodeName() == translateSectionName)
+				{
+					// mul translate
+					core::matrix4 m = readTranslateNode(xmlRead, m_zUp);
+					pNode->Transform *= m;
+					pNode->Pos = m.getTranslation();
+					pNode->UseTransform = false;
+				}
+				else if (xmlRead->getNodeName() == rotateSectionName)
+				{
+					// mul rotate
+					core::matrix4 m = readRotateNode(xmlRead, m_zUp);
+					pNode->Transform *= m;
+					pNode->Rot = core::quaternion(m);
+					pNode->UseTransform = false;
+				}
+				else if (xmlRead->getNodeName() == scaleSectionName)
+				{
+					// mul scale
+					core::matrix4 m = readScaleNode(xmlRead, m_zUp);
+					pNode->Transform *= m;
+					pNode->Scale = m.getScale();
+					pNode->UseTransform = false;
+				}
+				else if (xmlRead->getNodeName() == matrixNodeName)
+				{
+					// mull matix
+					pNode->Transform *= readMatrixNode(xmlRead, m_zUp);
+				}
+				else if (xmlRead->getNodeName() == instanceGeometrySectionName)
+				{
+					// <instance_geometry url="#MESHNAME">
+					pNode->Instance = xmlRead->getAttributeValue(L"url");
+					uriToId(pNode->Instance);
+				}
+				else if (xmlRead->getNodeName() == instanceMaterialSectionName)
+				{
+					//<instance_material symbol="#MESHMATERIAL" target="#MATERIAL">
+					std::wstring symbol = xmlRead->getAttributeValue(L"symbol");
+					std::wstring target = xmlRead->getAttributeValue(L"target");
+					uriToId(target);
+
+					pNode->BindMaterial[symbol] = target;
+				}
+				else if (xmlRead->getNodeName() == instanceControllerSectionName)
+				{
+					// <instance_controller url="#MESHNAME">
+
+					// move to root
+					if (pNode->Parent)
+					{
+						std::vector<SNodeParam*>::iterator i = std::find(pNode->Parent->Childs.begin(), pNode->Parent->Childs.end(), pNode);
+						if (i != pNode->Parent->Childs.end())
+							pNode->Parent->Childs.erase(i);
+
+						pNode->ChildLevel = 0;
+						pNode->Parent = NULL;
+					}
+
+					// get skin mesh url
+					pNode->Instance = xmlRead->getAttributeValue(L"url");
+					uriToId(pNode->Instance);
+				}
+
+			}
+			else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)
+			{
+				if (xmlRead->getNodeName() == nodeSectionName)
+					break;
+			}
+		}
+
+		if (pNode->Parent == NULL)
+			m_listNode.push_back(pNode);
+
+		return pNode;
+	}
+
+
+	// updateEffectMaterial
+	// apply material type to effect
+	void CColladaLoader::updateEffectMaterial(SEffect* effect)
+	{
+		if (effect->HasAlpha == true)
+		{
+			if (effect->Transparency != 1.0f && effect->TransparentAddColor == false)
+			{
+				// todo add material id
+			}
+			else
+			{
+				if (effect->TransparentAddColor)
+				{
+					// todo add material id
+				}
+				else
+				{
+					// todo add material id
+				}
+			}
+
+			effect->Mat.Lighting = false;
+			effect->Mat.BackfaceCulling = false;
+			effect->Mat.FrontfaceCulling = false;
+		}
+		else
+		{
+			if (effect->HasSpecularMapping)
+			{
+				// todo add material id
+			}
+			if (effect->HasBumpMapping)
+			{
+				// todo add material id
+			}
+			if (effect->HasBumpMapping && effect->HasSpecularMapping)
+			{
+				// todo add material id
+			}
+		}
+	}
+
+	ITexture *CColladaLoader::getTextureResource(std::wstring& refName, ArrayEffectParams& params)
+	{
+		ITexture *tex = getTextureFromImage(refName, params, m_listImages, m_textureFolder);
+		if (tex == NULL)
+			tex = getTextureFromImage(refName, m_listImages, m_textureFolder);
+
+		return tex;
+	}
+
+	// loadEffectTexture
+	// load effect texture
+	void CColladaLoader::loadEffectTexture()
+	{
+		for (int i = 0, n = m_listEffects.size(); i < n; i++)
+		{
+			SEffect& effect = m_listEffects[i];
+			ITexture *tex = NULL;
+
+			// load diffuse
+			if (effect.HasDiffuseMapping == true)
+			{
+				tex = getTextureResource(effect.DiffuseRef, effect.EffectParams);
+				if (tex != NULL)
+					effect.Mat.setTexture(0, tex);
+				else
+					effect.HasDiffuseMapping = false;
+			}
+
+			// load specular
+			if (effect.HasSpecularMapping == true)
+			{
+				tex = getTextureResource(effect.SpecularRef, effect.EffectParams);
+				if (tex != NULL)
+					effect.Mat.setTexture(1, tex);
+				else
+					effect.HasSpecularMapping = false;
+			}
+
+			// load normal map
+			if (effect.HasBumpMapping == true)
+			{
+				if (m_loadNormalMap == true)
+				{
+					tex = getTextureResource(effect.BumpRef, effect.EffectParams);
+					if (tex != NULL)
+						effect.Mat.setTexture(2, tex);
+					else
+						effect.HasBumpMapping = false;
+				}
+				else
+				{
+					effect.HasBumpMapping = false;
+				}
+			}
+		}
+	}
+
+	void CColladaLoader::constructRenderEntity()
+	{
+#if 0
+		bool isJointNode = false;
+
+		std::list<SNodeParam*>	stackScene;
+		std::list<SNodeParam*>	listScene;
+
+		int nNode = (int)m_listNode.size();
+		for (int i = 0; i < nNode; i++)
+		{
+			SNodeParam* root = m_listNode[i];
+			stackScene.push_back(root);
+		}
+
+		while (stackScene.size())
+		{
+			SNodeParam *node = stackScene.back();
+
+			// save to list bone prefab
+			listScene.push_back(node);
+
+			// to do create node
+			char name[1024];
+			CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
+
+			// create new scene node
+			ISceneNode *parent = colladaNode;
+			if (node->Parent && node->Parent->SceneNode)
+				parent = node->Parent->SceneNode;
+
+			// crate new scene node
+			CGameColladaSceneNode *colladaSceneNode = NULL;
+
+			if (node->Type == L"JOINT")
+			{
+				// setup for bone node
+				CGameColladaJointSceneNode *bone = new CGameColladaJointSceneNode(parent, smgr, -1);
+				if (node->ChildLevel == 0)
+					bone->BoneRoot = true;
+
+				bone->RootNode = colladaNode;
+				colladaSceneNode = bone;
+				isJointNode = true;
+			}
+			else
+			{
+				colladaSceneNode = new CGameColladaSceneNode(parent, smgr, -1);
+				isJointNode = false;
+			}
+
+			colladaSceneNode->setColladaComponent(m_component);
+			colladaSceneNode->setName(name);
+			colladaSceneNode->setOwner(m_gameObject);
+
+			// get position from transform		
+			node->SceneNode = colladaSceneNode;
+
+			// front vector
+			if (m_flipOx == false)
+				colladaSceneNode->FrontVector = core::vector3df(0.0f, 0.0f, 1.0f);
+			else
+				colladaSceneNode->FrontVector = core::vector3df(0.0f, 0.0f, -1.0f);
+
+			// store joint sid node
+			if (node->SID.size() > 0)
+			{
+				CStringImp::convertUnicodeToUTF8(node->SID.c_str(), name);
+
+				m_component->registerSID(name, colladaSceneNode);
+				colladaSceneNode->setSIDName(name);
+			}
+
+			if (node->Name.size() > 0)
+				CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
+
+			// store this node
+			m_component->registerName(name, colladaSceneNode);
+
+			// store joint node
+			if (isJointNode)
+				m_component->registerBip(name, (CGameColladaJointSceneNode*)colladaSceneNode);
+
+			// set relative position
+			if (node->UseTransform)
+			{
+				colladaSceneNode->setLocalMatrix(node->Transform);
+
+				// Bone Root
+				if (node->Type == L"JOINT" && node->ChildLevel == 0)
+				{
+					colladaSceneNode->LocalPosition = node->Pos;
+					colladaSceneNode->LocalRotation = node->Rot;
+					colladaSceneNode->LocalScale = node->Scale;
+				}
+			}
+			else
+				colladaSceneNode->setLocalTransform(node->Pos, node->Scale, node->Rot);
+
+
+			// construct geometry & controller in node
+			if (node->Instance.size() > 0)
+			{
+				int meshID = getMeshWithUri(node->Instance, m_listMesh);
+				if (meshID == -1)
+					meshID = getMeshWithControllerName(node->Instance, m_listMesh);
+
+				if (meshID != -1)
+				{
+					SMeshParam *pMesh = &m_listMesh[meshID];
+
+					CGameColladaMesh *mesh = constructColladaMesh(pMesh, node);
+					if (mesh)
+					{
+						colladaSceneNode->setColladaMesh(mesh);
+						mesh->drop();
+					}
+				}
+
+			}
+
+			// pop stack
+			stackScene.erase(--stackScene.end());
+
+			// add child to continue loop
+			int nChild = (int)node->Childs.size();
+			for (int i = 0; i < nChild; i++)
+			{
+				SNodeParam *childNode = node->Childs[i];
+
+				// set parent
+				childNode->Parent = node;
+				stackScene.push_back(childNode);
+			}
+		}
+
+		// construct
+		std::list<SNodeParam*>::iterator i = listScene.begin(), end = listScene.end();
+		while (i != end)
+		{
+			SNodeParam *pNode = (*i);
+
+			// apply skin
+			CGameColladaMesh* pMesh = pNode->SceneNode->getColladaMesh();
+			if (pMesh != NULL && pMesh->IsStaticMesh == false)
+			{
+				int meshID = getMeshWithControllerName(pNode->Instance, m_listMesh);
+				constructSkinMesh(&m_listMesh[meshID], pMesh);
+
+				// this is animation mesh
+				m_component->setAnimationMesh(true);
+			}
+
+			// clear node
+			pNode->SceneNode->drop();
+			pNode->SceneNode = NULL;
+			i++;
+		}
+
+		// compute global box
+		colladaNode->OnAnimate(1);
+		colladaNode->computeBoudingBox();
+
+
+		CGameColladaSceneNode *resultNode = colladaNode;
+#endif
+	}
+
+	CMesh* CColladaLoader::constructMesh(SMeshParam *mesh, SNodeParam* node)
+	{
+		CMesh *colladaMesh = new CMesh();
+
+		// calc bindshapematrix
+		if (mesh->Type == k_skinMesh)
+		{
+			//colladaMesh->BindShapeMatrix = mesh->BindShapeMatrix;
+			//colladaMesh->InvBindShapeMatrix = mesh->BindShapeMatrix;
+			//colladaMesh->InvBindShapeMatrix.makeInverse();
+		}
+
+		colladaMesh->IsStatic = (mesh->Type == k_mesh);
+
+		// add mesh buffer
+		int numBuffer = (int)mesh->Triangles.size();
+		for (int i = 0; i < numBuffer; i++)
+		{
+			STrianglesParam& tri = mesh->Triangles[i];
+			if (tri.NumPolygon == 0)
+				continue;
+
+			// bind material
+			if (tri.Material.empty() == false)
+			{
+				std::wstring bindMaterial = node->BindMaterial[tri.Material];
+				if (bindMaterial.empty() == false)
+					tri.EffectIndex = getEffectWithUri(bindMaterial, m_listEffects, m_listMaterial);
+			}
+
+			// get effect
+			SEffect *effect = NULL;
+			if (tri.EffectIndex != -1)
+				effect = &m_listEffects[tri.EffectIndex];
+
+			bool needFixUV = false;
+			IMeshBuffer *buffer = NULL;
+			buffer = constructMeshBuffer(mesh, &tri, i, needFixUV);
+
+			if (colladaMesh->IsStatic == true)
+			{
+				// STATIC MESH BUFFER
+				if (m_loadTexcoord2 == true)
+				{
+					if (mesh->Vertices[tri.VerticesIndex].TexCoord2Index > 0)
+					{
+						convertToLightMapVertices(buffer, mesh, &tri);
+					}
+				}
+				else if ((effect && effect->HasBumpMapping) || m_tangent)
+				{
+					convertToTangentVertices(buffer);
+				}
+			}
+			else
+			{
+				// SKIN MESH BUFFER
+				if (m_tangent)
+				{
+					// construct skin tangent buffer
+					convertToSkinTangentVertices(buffer);
+				}
+				else
+				{
+					// construct skin buffer
+					convertToSkinVertices(buffer);
+				}
+			}
+
+			if (needFixUV && s_fixUV)
+				fixUVTitle(buffer);
+
+			if (effect != NULL)
+			{
+				char materialName[512];
+				CStringImp::convertUnicodeToUTF8(effect->Id.c_str(), materialName);
+				colladaMesh->ColladaMaterialName.push_back(materialName);
+			}
+			else
+			{
+				colladaMesh->ColladaMaterialName.push_back("");
+			}
+
+			if (buffer)
+			{
+				colladaMesh->addMeshBuffer(buffer);
+				buffer->drop();
+			}
+		}
+
+		// calc bbox
+		colladaMesh->Tangent = m_tangent;
+		colladaMesh->recalculateBoundingBox();
+
+		return colladaMesh;
+	}
+
+	void CColladaLoader::fixUVTitle(IMeshBuffer *buffer)
+	{
+		video::E_VERTEX_TYPE vertexType = buffer->getVertexType();
+
+		if (vertexType == video::EVT_2TCOORDS)
+			return fixUVLMTile(buffer);
+		else if (vertexType == video::EVT_TANGENTS)
+			fixUVTangentTile(buffer);
+		else if (vertexType == video::EVT_STANDARD)
+			fixUVStandardTile(buffer);
+	}
+
+	void CColladaLoader::fixUVStandardTile(IMeshBuffer *buffer)
+	{
+		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		{
+			CVertexBuffer<video::S3DVertex>* vertexBuffer = new CVertexBuffer<video::S3DVertex>();
+			CIndexBuffer* indexBuffer = new CIndexBuffer();
+
+			video::S3DVertex *srcVertexBuffer = (video::S3DVertex*)buffer->getVertexBuffer(j)->getVertices();
+
+			u16 *srcIndexBuffer = (u16*)buffer->getIndexBuffer()->getIndices();
+			u32 numIndex = buffer->getIndexBuffer()->getIndexCount();
+
+			for (u32 i = 0; i < numIndex; i += 3)
+			{
+				u16 i1 = srcIndexBuffer[i];
+				u16 i2 = srcIndexBuffer[i + 1];
+				u16 i3 = srcIndexBuffer[i + 2];
+
+				video::S3DVertex p1 = srcVertexBuffer[i1];
+				video::S3DVertex p2 = srcVertexBuffer[i2];
+				video::S3DVertex p3 = srcVertexBuffer[i3];
+
+				if (fixUV(p1.TCoords, p2.TCoords, p3.TCoords) == false)
+				{
+					fixUV(p1.TCoords, p2.TCoords, p3.TCoords, 2);
+				}
+
+				{
+					int vIndex = vertexBuffer->getVertexCount();
+
+					vertexBuffer->addVertex(p1);
+					vertexBuffer->addVertex(p2);
+					vertexBuffer->addVertex(p3);
+
+					indexBuffer->addIndex(vIndex);
+					indexBuffer->addIndex(vIndex + 1);
+					indexBuffer->addIndex(vIndex + 2);
+				}
+			}
+
+			if (vertexBuffer->getVertexCount() > 30000)
+			{
+				printf("%s have max index mesh %d \n", m_meshFile.c_str(), vertexBuffer->getVertexCount());
+			}
+
+			buffer->setVertexBuffer(vertexBuffer, j);
+			buffer->setIndexBuffer(indexBuffer);
+
+			vertexBuffer->drop();
+			indexBuffer->drop();
+		}
+	}
+
+	void CColladaLoader::fixUVLMTile(IMeshBuffer *buffer)
+	{
+		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		{
+			CVertexBuffer<video::S3DVertex2TCoords>* vertexBuffer = new CVertexBuffer<video::S3DVertex2TCoords>();
+			CIndexBuffer* indexBuffer = new CIndexBuffer();
+
+			video::S3DVertex2TCoords *srcVertexBuffer = (video::S3DVertex2TCoords*)buffer->getVertexBuffer(j)->getVertices();
+
+			u16 *srcIndexBuffer = (u16*)buffer->getIndexBuffer()->getIndices();
+			u32 numIndex = buffer->getIndexBuffer()->getIndexCount();
+
+			for (u32 i = 0; i < numIndex; i += 3)
+			{
+				u16 i1 = srcIndexBuffer[i];
+				u16 i2 = srcIndexBuffer[i + 1];
+				u16 i3 = srcIndexBuffer[i + 2];
+
+				video::S3DVertex2TCoords p1 = srcVertexBuffer[i1];
+				video::S3DVertex2TCoords p2 = srcVertexBuffer[i2];
+				video::S3DVertex2TCoords p3 = srcVertexBuffer[i3];
+
+				if (fixUV(p1.TCoords, p2.TCoords, p3.TCoords) == false)
+				{
+					fixUV(p1.TCoords, p2.TCoords, p3.TCoords, 2);
+				}
+
+				{
+					int vIndex = vertexBuffer->getVertexCount();
+
+					vertexBuffer->addVertex(p1);
+					vertexBuffer->addVertex(p2);
+					vertexBuffer->addVertex(p3);
+
+					indexBuffer->addIndex(vIndex);
+					indexBuffer->addIndex(vIndex + 1);
+					indexBuffer->addIndex(vIndex + 2);
+				}
+			}
+
+			if (vertexBuffer->getVertexCount() > 30000)
+			{
+				printf("%s have max index mesh %d \n", m_meshFile.c_str(), vertexBuffer->getVertexCount());
+			}
+
+			buffer->setVertexBuffer(vertexBuffer, j);
+			buffer->setIndexBuffer(indexBuffer);
+
+			vertexBuffer->drop();
+			indexBuffer->drop();
+		}
+	}
+
+	void CColladaLoader::fixUVTangentTile(IMeshBuffer *buffer)
+	{
+		// todo later
+	}
+
+	bool CColladaLoader::fixUV(core::vector2df& t1, core::vector2df& t2, core::vector2df& t3, int mul)
+	{
+		int tile = (int)m_maxUVTile * mul;
+		float uvMax = 2.0f * m_maxUVTile * mul;
+
+		if (fabsf(t1.X - t2.X) > uvMax ||
+			fabsf(t3.X - t2.X) > uvMax ||
+			fabsf(t3.X - t1.X) > uvMax ||
+			fabsf(t1.Y - t2.Y) > uvMax ||
+			fabsf(t3.Y - t2.Y) > uvMax ||
+			fabsf(t3.Y - t1.Y) > uvMax)
+		{
+			return false;
+		}
+
+		// TODO
+		// MOVE UV: FROM > 8 = 0 TO 8
+		int offsetX = (int)t1.X / tile;
+		if (offsetX < (int)t2.X / tile)
+			offsetX = (int)t2.X / tile;
+		if (offsetX < (int)t3.X / tile)
+			offsetX = (int)t3.X / tile;
+
+		int offsetY = (int)t1.Y / tile;
+		if (offsetY < (int)t2.Y / tile)
+			offsetY = (int)t2.Y / tile;
+		if (offsetY < (int)t3.Y / tile)
+			offsetY = (int)t3.Y / tile;
+
+		t1.X = t1.X - offsetX * m_maxUVTile;
+		t2.X = t2.X - offsetX * m_maxUVTile;
+		t3.X = t3.X - offsetX * m_maxUVTile;
+
+		t1.Y = t1.Y - offsetY * m_maxUVTile;
+		t2.Y = t2.Y - offsetY * m_maxUVTile;
+		t3.Y = t3.Y - offsetY * m_maxUVTile;
+
+		// TODO
+		// MOVE UV: FROM > 16 = -8 TO 0
+		offsetX = (int)t1.X / tile;
+		if (offsetX < (int)t2.X / tile)
+			offsetX = (int)t2.X / tile;
+		if (offsetX < (int)t3.X / tile)
+			offsetX = (int)t3.X / tile;
+
+		offsetY = (int)t1.Y / tile;
+		if (offsetY < (int)t2.Y / tile)
+			offsetY = (int)t2.Y / tile;
+		if (offsetY < (int)t3.Y / tile)
+			offsetY = (int)t3.Y / tile;
+
+		t1.X = t1.X - offsetX * m_maxUVTile;
+		t2.X = t2.X - offsetX * m_maxUVTile;
+		t3.X = t3.X - offsetX * m_maxUVTile;
+
+		t1.Y = t1.Y - offsetY * m_maxUVTile;
+		t2.Y = t2.Y - offsetY * m_maxUVTile;
+		t3.Y = t3.Y - offsetY * m_maxUVTile;
+
+		// TODO:
+		// MOVE UV: FROM < -8 = -8 TO 0
+		offsetX = (int)t1.X / tile;
+		if (offsetX > (int)t2.X / tile)
+			offsetX = (int)t2.X / tile;
+		if (offsetX > (int)t3.X / tile)
+			offsetX = (int)t3.X / tile;
+
+		offsetY = (int)t1.Y / tile;
+		if (offsetY > (int)t2.Y / tile)
+			offsetY = (int)t2.Y / tile;
+		if (offsetY > (int)t3.Y / tile)
+			offsetY = (int)t3.Y / tile;
+
+		t1.X = t1.X - offsetX * m_maxUVTile;
+		t2.X = t2.X - offsetX * m_maxUVTile;
+		t3.X = t3.X - offsetX * m_maxUVTile;
+
+		t1.Y = t1.Y - offsetY * m_maxUVTile;
+		t2.Y = t2.Y - offsetY * m_maxUVTile;
+		t3.Y = t3.Y - offsetY * m_maxUVTile;
+
+		return true;
+	}
+
+	IMeshBuffer* CColladaLoader::constructMeshBuffer(SMeshParam *mesh, STrianglesParam* tri, int bufferID, bool &needFixUVTile)
+	{
+		E_INDEX_TYPE indexBufferType = video::EIT_16BIT;
+		int numVertex = tri->NumPolygon * 3;
+		if (numVertex >= USHRT_MAX - 1)
+			indexBufferType = video::EIT_32BIT;
+
+		CMeshBuffer<video::S3DVertex> *buffer = new CMeshBuffer<video::S3DVertex>(
+			getVideoDriver()->getVertexDescriptor(video::EVT_STANDARD),
+			indexBufferType);
+
+		IVertexBuffer *vertexBuffer = buffer->getVertexBuffer();
+		IIndexBuffer *indexBuffer = buffer->getIndexBuffer();
+
+		SVerticesParam *vertices = &mesh->Vertices[tri->VerticesIndex];
+
+		SEffect	*effect = NULL;
+		SBufferParam *position = NULL;
+		SBufferParam *normal = NULL;
+		SBufferParam *texCoord1 = NULL;
+		SBufferParam *texCoord2 = NULL;
+
+		needFixUVTile = false;
+
+		if (tri->EffectIndex != -1)
+			effect = &m_listEffects[tri->EffectIndex];
+
+		if (vertices->PositionIndex == -1)
+			return NULL;
+
+		// position buffer
+		position = &mesh->Buffers[vertices->PositionIndex];
+
+		if (vertices->NormalIndex != -1)
+			normal = &mesh->Buffers[vertices->NormalIndex];
+
+		if (vertices->TexCoord1Index != -1)
+			texCoord1 = &mesh->Buffers[vertices->TexCoord1Index];
+
+		if (vertices->TexCoord2Index != -1)
+			texCoord2 = &mesh->Buffers[vertices->TexCoord2Index];
+
+		// index buffer
+		core::array<u32> indices;
+
+		// if have the normal & texcoord
+		if (tri->NumElementPerVertex == 1)
+		{
+			// alloc number of vertex
+			int vertexCount = position->ArrayCount / 3;
+
+			// add to vertex buffer
+			for (int i = 0; i < vertexCount; i++)
+			{
+				video::S3DVertex vtx;
+				vtx.Color = SColor(0xFFFFFFFF);
+
+				int vIndex = i;
+				int idx = vIndex * position->Strike;
+
+				// set position
+				vtx.Pos.X = position->FloatArray[idx + 0];
+				if (m_zUp)
+				{
+					vtx.Pos.Z = position->FloatArray[idx + 1];
+					vtx.Pos.Y = position->FloatArray[idx + 2];
+				}
+				else
+				{
+					vtx.Pos.Y = position->FloatArray[idx + 1];
+					vtx.Pos.Z = position->FloatArray[idx + 2];
+				}
+
+				// set normal
+				if (normal != NULL)
+				{
+					int idx = vIndex * normal->Strike;
+
+					vtx.Normal.X = normal->FloatArray[idx + 0];
+					if (m_zUp)
+					{
+						vtx.Normal.Z = normal->FloatArray[idx + 1];
+						vtx.Normal.Y = normal->FloatArray[idx + 2];
+					}
+					else
+					{
+						vtx.Normal.Y = normal->FloatArray[idx + 1];
+						vtx.Normal.Z = normal->FloatArray[idx + 2];
+					}
+
+					vtx.Normal.normalize();
+				}
+
+				// set texcoord
+				if (texCoord1 != NULL)
+				{
+					idx = vIndex * texCoord1->Strike;
+					if (texCoord1 != NULL)
+					{
+						vtx.TCoords.X = texCoord1->FloatArray[idx + 0];
+						vtx.TCoords.Y = texCoord1->FloatArray[idx + 1];
+
+						if (vtx.TCoords.X > m_maxUVTile ||
+							vtx.TCoords.Y > m_maxUVTile ||
+							vtx.TCoords.X < -m_maxUVTile ||
+							vtx.TCoords.Y < -m_maxUVTile)
+							needFixUVTile = true;
+					}
+				}
+
+				// add to vertex buffer
+				vertexBuffer->addVertex(&vtx);
+
+				u32 newIndex = vertexBuffer->getVertexCount() - 1;
+
+				if (mesh->Type == k_skinMesh)
+				{
+					// apply mesh map (for affect bone)
+					SColladaMeshVertexMap map;
+					map.meshId = mesh;
+					map.bufferId = bufferID;
+					map.vertexId = vIndex;
+					m_meshVertexIndex[map].push_back(newIndex);
+				}
+			}
+
+			int totalElement = tri->NumPolygon * tri->NumElementPerVertex * 3;
+			int index = 0;
+			for (int i = 0; i < totalElement; i += tri->NumElementPerVertex)
+			{
+				// add to index buffer
+				indices.push_back(tri->IndexBuffer[i]);
+				index++;
+			}
+
+		}
+		else
+		{
+			// FBX to DAE converter
+			int totalElement = tri->NumPolygon * tri->NumElementPerVertex * 3;
+			int index = 0;
+
+			SColladaVertexIndex	vertexIndex;
+
+			for (int i = 0; i < totalElement; i += tri->NumElementPerVertex)
+			{
+				// reset collada index
+				vertexIndex.vertexId = tri->IndexBuffer[i] * position->Strike;
+				vertexIndex.normalId = -1;
+				vertexIndex.texcoordId1 = -1;
+				vertexIndex.texcoordId2 = -1;
+
+				// sync texcoord & position
+				if (texCoord1 != NULL)
+					vertexIndex.texcoordId1 = tri->IndexBuffer[i + tri->OffsetTexcoord1] * texCoord1->Strike;
+
+				if (normal != NULL)
+					vertexIndex.normalId = tri->IndexBuffer[i + tri->OffsetNormal] * normal->Strike;
+
+				// new vertex infomation
+				video::S3DVertex vtx;
+				vtx.Color = SColor(0xFFFFFFFF);
+
+				// set position
+				int idx = vertexIndex.vertexId;
+
+				vtx.Pos.X = position->FloatArray[idx];
+				if (m_zUp)
+				{
+					vtx.Pos.Z = position->FloatArray[idx + 1];
+					vtx.Pos.Y = position->FloatArray[idx + 2];
+				}
+				else
+				{
+					vtx.Pos.Y = position->FloatArray[idx + 1];
+					vtx.Pos.Z = position->FloatArray[idx + 2];
+				}
+
+				// set normal
+				if (vertexIndex.normalId != -1)
+				{
+					idx = vertexIndex.normalId;
+					vtx.Normal.X = normal->FloatArray[idx + 0];
+					if (m_zUp)
+					{
+						vtx.Normal.Z = normal->FloatArray[idx + 1];
+						vtx.Normal.Y = normal->FloatArray[idx + 2];
+					}
+					else
+					{
+						vtx.Normal.Y = normal->FloatArray[idx + 1];
+						vtx.Normal.Z = normal->FloatArray[idx + 2];
+					}
+
+					vtx.Normal.normalize();
+				}
+
+				// set texcoord
+				if (vertexIndex.texcoordId1 != -1)
+				{
+					idx = vertexIndex.texcoordId1;
+					vtx.TCoords.X = texCoord1->FloatArray[idx + 0];
+					vtx.TCoords.Y = 1.0f - texCoord1->FloatArray[idx + 1];
+
+					if (vtx.TCoords.X > m_maxUVTile ||
+						vtx.TCoords.Y > m_maxUVTile ||
+						vtx.TCoords.X < -m_maxUVTile ||
+						vtx.TCoords.Y < -m_maxUVTile)
+						needFixUVTile = true;
+				}
+
+				// add vertex buffer
+				vertexBuffer->addVertex(&vtx);
+				u32 newIndex = vertexBuffer->getVertexCount() - 1;
+
+				// add index buffer
+				indices.push_back(newIndex);
+				index++;
+
+				// FBX to collada
+				// apply mesh map (for affect bone)
+				if (mesh->Type == k_skinMesh)
+				{
+					SColladaMeshVertexMap map;
+					map.meshId = mesh;
+					map.bufferId = bufferID;
+					map.vertexId = tri->IndexBuffer[i];
+					m_meshVertexIndex[map].push_back(newIndex);
+				}
+			}
+		}
+
+		// it's just triangles
+		u32 nPoly = indices.size() / 3;
+
+		for (u32 i = 0; i < nPoly; i++)
+		{
+			u32 ind = i * 3;
+
+			if (m_flipOx == true)
+			{
+				if (m_zUp)
+				{
+					indexBuffer->addIndex(indices[ind + 0]);
+					indexBuffer->addIndex(indices[ind + 1]);
+					indexBuffer->addIndex(indices[ind + 2]);
+				}
+				else
+				{
+					indexBuffer->addIndex(indices[ind + 2]);
+					indexBuffer->addIndex(indices[ind + 1]);
+					indexBuffer->addIndex(indices[ind + 0]);
+				}
+			}
+			else
+			{
+				if (m_zUp)
+				{
+					indexBuffer->addIndex(indices[ind + 2]);
+					indexBuffer->addIndex(indices[ind + 1]);
+					indexBuffer->addIndex(indices[ind + 0]);
+				}
+				else
+				{
+					indexBuffer->addIndex(indices[ind + 0]);
+					indexBuffer->addIndex(indices[ind + 1]);
+					indexBuffer->addIndex(indices[ind + 2]);
+				}
+			}
+		}
+
+		if (!normal)
+		{
+			getSceneManager()->getMeshManipulator()->recalculateNormals(buffer, true);
+
+			if (m_flipOx)
+			{
+				IVertexBuffer *vertexBuffer = buffer->getVertexBuffer();
+				video::S3DVertex *vertices = (video::S3DVertex*)vertexBuffer->getVertices();
+
+				for (int i = 0, n = vertexBuffer->getVertexCount(); i < n; i++)
+				{
+					vertices[i].Normal *= -1.0f;
+				}
+			}
+		}
+
+		if (effect)
+		{
+			SMaterial& mat = buffer->getMaterial();
+
+			mat = effect->Mat;
+
+			if (effect->Mat.getTexture(0) != NULL)
+				mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("LightingTexture");
+			else
+				mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("LightingColor");
+		}
+
+		buffer->recalculateBoundingBox();
+		return buffer;
+	}
+
+	// convertToSkinVertices
+	void CColladaLoader::convertToSkinVertices(IMeshBuffer* buffer)
+	{
+		// change vertex descriptor
+		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN));
+
+		for (u32 i = 0; i < buffer->getVertexBufferCount(); ++i)
+		{
+			CVertexBuffer<video::S3DVertexSkin>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkin>();
+
+			// copy vertex data
+			copyVertices(buffer->getVertexBuffer(i), vertexBuffer);
+
+			// replace the buffer
+			buffer->setVertexBuffer(vertexBuffer, i);
+
+			// drop reference
+			vertexBuffer->drop();
+		}
+
+		// assign skin material
+		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
+	}
+
+	void CColladaLoader::convertToSkinTangentVertices(IMeshBuffer* buffer)
+	{
+		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN_TANGENTS));
+
+		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		{
+			CVertexBuffer<video::S3DVertexSkinTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkinTangents>();
+
+			// copy vertex data
+			copyVertices(buffer->getVertexBuffer(j), vertexBuffer);
+
+			// todo calc tangent & binormal
+			const u32 vtxCnt = vertexBuffer->getVertexCount();
+			const u32 idxCnt = buffer->getIndexBuffer()->getIndexCount();
+
+			u16* idx16 = NULL;
+			u32* idx32 = NULL;
+
+			if (buffer->getIndexBuffer()->getType() == video::EIT_16BIT)
+				idx16 = (u16*)buffer->getIndexBuffer()->getIndices();
+			else
+				idx32 = (u32*)buffer->getIndexBuffer()->getIndices();
+
+			video::S3DVertexSkinTangents* v = (video::S3DVertexSkinTangents*)vertexBuffer->getVertices();
+
+			u32 i;
+			for (i = 0; i != vtxCnt; ++i)
+			{
+				v[i].Tangent.set(0.f, 0.f, 0.f);
+				v[i].Binormal.set(0.f, 0.f, 0.f);
+				v[i].TangentW.set(1.f, 1.f);
+			}
+
+			// https://www.marti.works/calculating-tangents-for-your-mesh/
+			// https://answers.unity.com/questions/7789/calculating-tangents-vector4.html
+			// (1)
+			for (i = 0; i < idxCnt; i += 3)
+			{
+				int i1 = 0;
+				int i2 = 0;
+				int i3 = 0;
+
+				if (idx16 != NULL)
+				{
+					i1 = idx16[i + 0];
+					i2 = idx16[i + 1];
+					i3 = idx16[i + 2];
+				}
+				else
+				{
+					i1 = idx32[i + 0];
+					i2 = idx32[i + 1];
+					i3 = idx32[i + 2];
+				}
+
+				// if this triangle is degenerate, skip it!
+				if (v[i1].Pos == v[i2].Pos ||
+					v[i1].Pos == v[i3].Pos ||
+					v[i2].Pos == v[i3].Pos)
+				{
+					continue;
+				}
+
+				core::vector3df v1 = v[i1].Pos;
+				core::vector3df v2 = v[i2].Pos;
+				core::vector3df v3 = v[i3].Pos;
+
+				core::vector2df w1 = v[i1].TCoords;
+				core::vector2df w2 = v[i2].TCoords;
+				core::vector2df w3 = v[i3].TCoords;
+
+				float x1 = v2.X - v1.X;
+				float x2 = v3.X - v1.X;
+				float y1 = v2.Y - v1.Y;
+				float y2 = v3.Y - v1.Y;
+				float z1 = v2.Z - v1.Z;
+				float z2 = v3.Z - v1.Z;
+
+				float s1 = w2.X - w1.X;
+				float s2 = w3.X - w1.X;
+				float t1 = w2.Y - w1.Y;
+				float t2 = w3.Y - w1.Y;
+
+				float r = 1.0f / (s1 * t2 - s2 * t1);
+
+				core::vector3df sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+				core::vector3df tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+
+				v[i1].Tangent += sdir;
+				v[i2].Tangent += sdir;
+				v[i3].Tangent += sdir;
+
+				v[i1].Binormal += tdir;
+				v[i2].Binormal += tdir;
+				v[i3].Binormal += tdir;
+			}
+
+			// (2)
+			for (i = 0; i != vtxCnt; ++i)
+			{
+				core::vector3df n = v[i].Normal;
+				core::vector3df t = v[i].Tangent;
+				core::vector3df t2 = v[i].Binormal;
+
+				v[i].Tangent = (t - n * n.dotProduct(t));
+
+				float w = n.crossProduct(t).dotProduct(t2) > 0.0f ? 1.0f : -1.0f;
+				v[i].Binormal = n.crossProduct(t);
+
+				// OK on YUp
+				if (m_flipOx == true)
+				{
+					v[i].TangentW.X = w;
+				}
+
+				v[i].Tangent.normalize();
+				v[i].Binormal.normalize();
+				v[i].Normal.normalize();
+			}
+
+			// replace the buffer
+			buffer->setVertexBuffer(vertexBuffer, j);
+
+			// drop reference
+			vertexBuffer->drop();
+		}
+
+		// assign skin material
+		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
+	}
+
+	void CColladaLoader::convertToTangentVertices(IMeshBuffer* buffer)
+	{
+		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_TANGENTS));
+
+		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		{
+			CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexTangents>();
+
+			// copy vertex data
+			copyVertices(buffer->getVertexBuffer(j), vertexBuffer);
+
+			// todo calc tangent & binormal
+			const u32 vtxCnt = vertexBuffer->getVertexCount();
+			const u32 idxCnt = buffer->getIndexBuffer()->getIndexCount();
+
+			u16* idx16 = NULL;
+			u32* idx32 = NULL;
+
+			if (buffer->getIndexBuffer()->getType() == video::EIT_16BIT)
+				idx16 = (u16*)buffer->getIndexBuffer()->getIndices();
+			else
+				idx32 = (u32*)buffer->getIndexBuffer()->getIndices();
+
+			video::S3DVertexTangents* v = (video::S3DVertexTangents*)vertexBuffer->getVertices();
+
+			u32 i;
+			for (i = 0; i != vtxCnt; ++i)
+			{
+				v[i].Tangent.set(0.f, 0.f, 0.f);
+				v[i].Binormal.set(0.f, 0.f, 0.f);
+			}
+
+			// https://www.marti.works/calculating-tangents-for-your-mesh/
+			// https://answers.unity.com/questions/7789/calculating-tangents-vector4.html
+			// (1)
+			for (i = 0; i < idxCnt; i += 3)
+			{
+				int i1 = 0;
+				int i2 = 0;
+				int i3 = 0;
+
+				if (idx16 != NULL)
+				{
+					i1 = idx16[i + 0];
+					i2 = idx16[i + 1];
+					i3 = idx16[i + 2];
+				}
+				else
+				{
+					i1 = idx32[i + 0];
+					i2 = idx32[i + 1];
+					i3 = idx32[i + 2];
+				}
+
+				// if this triangle is degenerate, skip it!
+				if (v[i1].Pos == v[i2].Pos ||
+					v[i1].Pos == v[i3].Pos ||
+					v[i2].Pos == v[i3].Pos)
+				{
+					continue;
+				}
+
+				core::vector3df v1 = v[i1].Pos;
+				core::vector3df v2 = v[i2].Pos;
+				core::vector3df v3 = v[i3].Pos;
+
+				core::vector2df w1 = v[i1].TCoords;
+				core::vector2df w2 = v[i2].TCoords;
+				core::vector2df w3 = v[i3].TCoords;
+
+				float x1 = v2.X - v1.X;
+				float x2 = v3.X - v1.X;
+				float y1 = v2.Y - v1.Y;
+				float y2 = v3.Y - v1.Y;
+				float z1 = v2.Z - v1.Z;
+				float z2 = v3.Z - v1.Z;
+
+				float s1 = w2.X - w1.X;
+				float s2 = w3.X - w1.X;
+				float t1 = w2.Y - w1.Y;
+				float t2 = w3.Y - w1.Y;
+
+				float r = 1.0f / (s1 * t2 - s2 * t1);
+
+				core::vector3df sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+				core::vector3df tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+
+				v[i1].Tangent += sdir;
+				v[i2].Tangent += sdir;
+				v[i3].Tangent += sdir;
+
+				v[i1].Binormal += tdir;
+				v[i2].Binormal += tdir;
+				v[i3].Binormal += tdir;
+			}
+
+			// (2)
+			for (i = 0; i != vtxCnt; ++i)
+			{
+				core::vector3df n = v[i].Normal;
+				core::vector3df t = v[i].Tangent;
+				core::vector3df t2 = v[i].Binormal;
+
+				v[i].Tangent = (t - n * n.dotProduct(t));
+
+				float w = n.crossProduct(t).dotProduct(t2) > 0.0f ? 1.0f : -1.0f;
+				v[i].Binormal = n.crossProduct(t);
+
+				// OK on YUp
+				if (m_flipOx == true)
+				{
+					v[i].TangentW.X = w;
+				}
+
+				v[i].Tangent.normalize();
+				v[i].Binormal.normalize();
+				v[i].Normal.normalize();
+			}
+
+			// replace the buffer
+			buffer->setVertexBuffer(vertexBuffer, j);
+
+			// drop reference
+			vertexBuffer->drop();
+		}
+	}
+
+	void CColladaLoader::convertToLightMapVertices(IMeshBuffer* buffer, SMeshParam *mesh, STrianglesParam* tri)
+	{
+		SVerticesParam	*vertices = &mesh->Vertices[tri->VerticesIndex];
+
+		SBufferParam *texCoord2 = NULL;
+
+		if (vertices->TexCoord2Index != -1)
+			texCoord2 = &mesh->Buffers[vertices->TexCoord2Index];
+
+		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_2TCOORDS));
+
+		for (u32 i = 0; i < buffer->getVertexBufferCount(); ++i)
+		{
+			CVertexBuffer<video::S3DVertex2TCoords>* vertexBuffer = new CVertexBuffer<video::S3DVertex2TCoords>();
+
+			// copy vertex data
+			copyVertices(buffer->getVertexBuffer(i), vertexBuffer);
+
+			// fill texcoord 2
+			// if have the normal & texcoord
+			if (tri->NumElementPerVertex == 1)
+			{
+				// DAE EXPORT
+				for (int i = 0, n = vertexBuffer->getVertexCount(); i < n; i++)
+				{
+					video::S3DVertex2TCoords& v = vertexBuffer->getVertex(i);
+
+					int idx = i * texCoord2->Strike;
+					if (texCoord2 != NULL)
+					{
+						v.TCoords2.X = texCoord2->FloatArray[idx + 0];
+						v.TCoords2.Y = texCoord2->FloatArray[idx + 1];
+					}
+				}
+			}
+			else
+			{
+				// FBX to DAE
+				int totalElement = tri->NumPolygon * tri->NumElementPerVertex * 3;
+
+				int vID = 0;
+
+				for (int i = 0; i < totalElement; i += tri->NumElementPerVertex)
+				{
+					video::S3DVertex2TCoords& v = vertexBuffer->getVertex(vID++);
+					int texcoordId2 = tri->IndexBuffer[i + tri->OffsetTexcoord2] * texCoord2->Strike;
+
+					// set texcoord
+					v.TCoords2.X = texCoord2->FloatArray[texcoordId2 + 0];
+					v.TCoords2.Y = 1.0f - texCoord2->FloatArray[texcoordId2 + 1];
+				}
+			}
+
+			// replace the buffer
+			buffer->setVertexBuffer(vertexBuffer, i);
+
+			// drop reference
+			vertexBuffer->drop();
+		}
+	}
+
+	void CColladaLoader::copyVertices(IVertexBuffer *srcBuffer, IVertexBuffer *dstBuffer)
+	{
+		int numVertex = srcBuffer->getVertexCount();
+		unsigned char *src = (unsigned char*)srcBuffer->getVertices();
+		u32 srcSize = srcBuffer->getVertexSize();
+
+		dstBuffer->set_used(numVertex);
+		unsigned char *dst = (unsigned char*)dstBuffer->getVertices();
+		u32 dstSize = dstBuffer->getVertexSize();
+
+		// cannot copy
+		if (srcSize > dstSize)
+			return;
+
+		// copy vertex data
+		for (int i = 0; i < numVertex; i++)
+		{
+			memset(dst, 0, dstSize);
+			memcpy(dst, src, srcSize);
+			dst += dstSize;
+			src += srcSize;
+		}
+	}
+
+#if 0
+	void CColladaLoader::constructSkinMesh(SMeshParam *meshParam, CMesh *mesh)
+	{
+		char name[1024];
+		int nJoint = (int)meshParam->Joints.size();
+
+		// setup joint name
+		int len = meshParam->ListJointName.size() + 1;
+
+		wchar_t *listJointName = new wchar_t[len + 1];
+		CStringImp::copy<wchar_t, const wchar_t>(listJointName, meshParam->ListJointName.c_str());
+
+		wchar_t* p = listJointName;
+		wchar_t* begin = listJointName;
+
+		// set up joint
+		for (int i = 0; i < nJoint; i++)
+		{
+			mesh->Joints.push_back(CSkinMesh::SJoint());
+			CSkinMesh::SJoint& newJoint = mesh->Joints.getLast();
+
+			SJointParam& joint = meshParam->Joints[i];
+
+			std::wstring sidName;
+
+			bool hasJointNode = false;
+			bool end = false;
+
+			do
+			{
+				// todo
+				// we need split join name
+				while (*p && !(*p == L' ' || *p == L'\n' || *p == L'\r' || *p == L'\t'))
+					++p;
+
+				*p = 0;
+
+				if (*begin)
+					sidName += std::wstring(begin);
+				else
+				{
+					sidName += std::wstring(L"");
+					end = true;
+				}
+
+				p++;
+				begin = p;
+
+				CStringImp::convertUnicodeToUTF8(sidName.c_str(), name);
+				hasJointNode = hasJointNode(name);
+
+				// we continue search joint name
+				if (hasJointNode == false)
+					sidName += L" ";
+			} while (hasJointNode == NULL || end == true);
+
+			// set joint name
+			joint.Name = sidName;
+
+			newJoint.Name = joint.Name;
+			newJoint.GlobalInversedMatrix = joint.InvMatrix;
+
+			if (end == true)
+			{
+				mesh->Joints.clear();
+				break;
+			}
+		}
+
+		// free data
+		delete listJointName;
+
+		// setup vertex weight
+		int numVertex = 0;
+		for (int i = 0; i < (int)meshParam->Triangles.size(); i++)
+			numVertex += meshParam->Triangles[i].NumPolygon;
+
+		numVertex = numVertex * 3;
+		int *nBoneCount = new int[numVertex];
+		memset(nBoneCount, 0, sizeof(int)*numVertex);
+
+		// apply joint to vertex
+		for (int i = 0, n = (int)meshParam->JointIndex.size(); i < n; i += 2)
+		{
+			int boneID = meshParam->JointIndex[i];
+			int weightID = meshParam->JointIndex[i + 1];
+
+			SJointParam& joint = meshParam->Joints[boneID];
+			SWeightParam& weight = joint.Weights[weightID];
+
+			int nBone = nBoneCount[weight.VertexID]++;
+
+			for (int i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
+			{
+				IMeshBuffer *buffer = (IMeshBuffer*)mesh->getMeshBuffer(i);
+
+				video::S3DVertexSkin *vertex = NULL;
+				video::S3DVertexSkinTangents *vertexTangent = NULL;
+
+				if (m_tangent == true)
+					vertexTangent = (video::S3DVertexSkinTangents*)buffer->getVertexBuffer()->getVertices();
+				else
+					vertex = (video::S3DVertexSkin*)buffer->getVertexBuffer()->getVertices();
+
+
+				// Add support FBX to DAE converter
+				SColladaMeshVertexMap map;
+				map.meshId = meshParam;
+				map.bufferId = i;
+				map.vertexId = weight.VertexID;
+
+				std::vector<s32>& arrayVertexId = m_meshVertexIndex[map];
+				int numVertexAffect = arrayVertexId.size();
+
+				for (int j = 0; j < numVertexAffect; j++)
+				{
+					// todo find realVertexIndex
+					s32 realVertexID = arrayVertexId[j];
+
+					float* boneIndex = NULL;
+					float* boneWeight = NULL;
+
+					if (m_tangent == true)
+					{
+						boneIndex = (float*)&(vertexTangent[realVertexID].BoneIndex);
+						boneWeight = (float*)&(vertexTangent[realVertexID].BoneWeight);
+					}
+					else
+					{
+						boneIndex = (float*)&(vertex[realVertexID].BoneIndex);
+						boneWeight = (float*)&(vertex[realVertexID].BoneWeight);
+					}
+
+					// only support 4 bones affect on 1 vertex
+					// we need replace the smallest weight
+					if (nBone >= 4)
+					{
+						int		minIndex = 0;
+						float	minWeight = boneWeight[0];
+
+						for (int i = 1; i < 4; i++)
+						{
+							if (boneWeight[i] < minWeight)
+							{
+								minIndex = i;
+								minWeight = boneWeight[i];
+								break;
+							}
+						}
+
+						if (weight.Strength > minWeight)
+						{
+							boneIndex[minIndex] = (float)boneID;
+							boneWeight[minIndex] = weight.Strength;
+						}
+					}
+					else
+					{
+						boneIndex[nBone] = (float)boneID;
+						boneWeight[nBone] = weight.Strength;
+					}
+				}
+
+			}
+		}
+
+		delete nBoneCount;
+
+		// fix the weight if vertex affect > 4 bone
+		for (int i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
+		{
+			IMeshBuffer *buffer = (IMeshBuffer*)mesh->getMeshBuffer(i);
+
+			video::S3DVertexSkin *vertex = NULL;
+			video::S3DVertexSkinTangents *vertexTangent = NULL;
+
+			if (m_tangent == true)
+				vertexTangent = (video::S3DVertexSkinTangents*)buffer->getVertexBuffer()->getVertices();
+			else
+				vertex = (video::S3DVertexSkin*)buffer->getVertexBuffer()->getVertices();
+
+
+			int numVertex = buffer->getVertexBuffer()->getVertexCount();
+
+			for (int j = 0; j < numVertex; j++)
+			{
+				float* boneIndex = NULL;
+				float* boneWeight = NULL;
+
+				if (m_tangent == true)
+				{
+					boneIndex = (float*)&(vertexTangent[j].BoneIndex);
+					boneWeight = (float*)&(vertexTangent[j].BoneWeight);
+				}
+				else
+				{
+					boneIndex = (float*)&(vertex[j].BoneIndex);
+					boneWeight = (float*)&(vertex[j].BoneWeight);
+				}
+
+				if ((int)boneIndex[3] != 0)
+				{
+					float totalWeight =
+						boneWeight[0] +
+						boneWeight[1] +
+						boneWeight[2] +
+						boneWeight[3];
+
+					boneWeight[0] = boneWeight[0] / totalWeight;
+					boneWeight[1] = boneWeight[1] / totalWeight;
+					boneWeight[2] = boneWeight[2] / totalWeight;
+					boneWeight[3] = boneWeight[3] / totalWeight;
+				}
+			}
+		}
+	}
+#endif 0
+	void CColladaLoader::cleanData()
+	{
+		m_listEffects.clear();
+		m_listImages.clear();
+		m_listMaterial.clear();
+
+		ArrayMeshParams::iterator i = m_listMesh.begin(), end = m_listMesh.end();
+		while (i != end)
+		{
+			SMeshParam& mesh = (*i);
+
+			int n = (int)mesh.Buffers.size();
+			int j = 0;
+
+			for (j = 0; j < n; j++)
+			{
+				if (mesh.Buffers[j].FloatArray != NULL)
+					delete mesh.Buffers[j].FloatArray;
+			}
+
+			n = (int)mesh.Triangles.size();
+			for (j = 0; j < n; j++)
+			{
+				if (mesh.Triangles[j].VCount != NULL)
+					delete mesh.Triangles[j].VCount;
+
+				if (mesh.Triangles[j].IndexBuffer != NULL)
+					delete mesh.Triangles[j].IndexBuffer;
+			}
+
+			i++;
+		}
+		m_listMesh.clear();
+
+		for (int j = 0; j < (int)m_listNode.size(); j++)
+		{
+			SNodeParam* pNode = m_listNode[j];
+
+			std::stack<SNodeParam*>	stackNode;
+			stackNode.push(pNode);
+			while (stackNode.size())
+			{
+				pNode = stackNode.top();
+				stackNode.pop();
+
+				for (int i = 0; i < (int)pNode->Childs.size(); i++)
+					stackNode.push(pNode->Childs[i]);
+
+				delete pNode;
+			}
+		}
+		m_listNode.clear();
+	}
+
+}	// namespace

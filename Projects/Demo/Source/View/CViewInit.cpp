@@ -2,6 +2,7 @@
 #include "CViewInit.h"
 #include "CViewDemo.h"
 #include "ViewManager/CViewManager.h"
+#include "TextureManager/CTextureManager.h"
 
 #include "Context/CContext.h"
 
@@ -59,7 +60,7 @@ void CViewInit::initScene()
 	camera->setPosition(core::vector3df(3.0f, 3.0f, 3.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
-	ITexture *skyDomeTexture = getVideoDriver()->getTexture("Demo/Textures/Sky/PaperMill.png");
+	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Demo/Textures/Sky/PaperMill.png");
 	if (skyDomeTexture != NULL)
 	{
 		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
