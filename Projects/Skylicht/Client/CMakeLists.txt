@@ -8,9 +8,10 @@ include_directories(
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 )
 
-#if(BUILD_DEBUG_VLD)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/Vld)
-#endif()
+if (BUILD_DEBUG_VLD)
+	set(vld_inc_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/include")
+	include_directories(${vld_inc_path})
+endif()
 
 #if (BUILD_SKYLICHT_NETWORK)
 #include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtNetwork/Source)
@@ -34,3 +35,7 @@ target_precompiled_header(Client ./Source/pch.cpp ${skylicht_client_source})
 set_target_properties(Client PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 target_link_libraries(Client Engine Components)
+
+if (BUILD_DEBUG_VLD)
+	target_link_libraries(Client vld)
+endif()
