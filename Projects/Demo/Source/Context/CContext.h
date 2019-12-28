@@ -1,5 +1,4 @@
-#ifndef _CONTEXT_H_
-#define _CONTEXT_H_
+#pragma once
 
 #include "Utils/CGameSingleton.h"
 
@@ -60,5 +59,3 @@ public:
 
 	void releaseRenderPipeline();
 };
-
-#endif

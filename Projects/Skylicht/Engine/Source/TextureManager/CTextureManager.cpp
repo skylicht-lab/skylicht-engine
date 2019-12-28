@@ -204,7 +204,7 @@ namespace Skylicht
 
 		core::array<io::path> paths;
 
-		for (int i = 0, n = listTexture.size(); i < n; i++)
+		for (u32 i = 0, n = listTexture.size(); i < n; i++)
 		{
 			std::string fixPath = CPath::normalizePath(listTexture[i]);
 			paths.push_back(fixPath.c_str());
@@ -216,7 +216,7 @@ namespace Skylicht
 
 		IImage* baseImage = NULL;
 
-		for (int i = 0, n = (int)paths.size(); i < n; i++)
+		for (u32 i = 0, n = paths.size(); i < n; i++)
 		{
 			char ansiPath[512];
 			strcpy(ansiPath, paths[i].c_str());
@@ -338,7 +338,7 @@ namespace Skylicht
 		}
 
 		// release
-		for (int i = 0, n = (int)listImage.size(); i < n; i++)
+		for (u32 i = 0, n = listImage.size(); i < n; i++)
 		{
 			if (listImage[i] != NULL)
 				listImage[i]->drop();

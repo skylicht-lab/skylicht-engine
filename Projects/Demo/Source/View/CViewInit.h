@@ -1,5 +1,4 @@
-#ifndef _VIEW_INIT_H_
-#define _VIEW_INIT_H_
+#pragma once
 
 #include "ViewManager/CView.h"
 #include "Emscripten/CGetFileURL.h"
@@ -40,5 +39,3 @@ protected:
 
 	void initScene();
 };
-
-#endif

@@ -23,54 +23,69 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGridPlaneRender.h"
+#include "CRenderMeshSystem.h"
 
 namespace Skylicht
 {
-	void CGridPlaneRender::beginQuery()
+	CRenderMeshSystem::CRenderMeshSystem()
 	{
-		m_gridPlanes.set_used(0);
+
+	}
+
+	CRenderMeshSystem::~CRenderMeshSystem()
+	{
+
+	}
+
+	void CRenderMeshSystem::beginQuery()
+	{
+		m_meshs.set_used(0);
 		m_transforms.set_used(0);
 	}
 
-	void CGridPlaneRender::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CRenderMeshSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
-		CGridPlaneData *gridPlane = entity->getData<CGridPlaneData>();
-		if (gridPlane != NULL)
+		CRenderMeshData *meshData = entity->getData<CRenderMeshData>();
+		if (meshData != NULL)
 		{
 			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
 			if (transform != NULL)
 			{
-				m_gridPlanes.push_back(gridPlane);
+				m_meshs.push_back(meshData);
 				m_transforms.push_back(transform);
 			}
 		}
 	}
 
-	void CGridPlaneRender::init(CEntityManager *entityManager)
+	void CRenderMeshSystem::init(CEntityManager *entityManager)
 	{
 
 	}
 
-	void CGridPlaneRender::update(CEntityManager *entityManager)
+	void CRenderMeshSystem::update(CEntityManager *entityManager)
 	{
 
 	}
 
-	void CGridPlaneRender::render(CEntityManager *entityManager)
+	void CRenderMeshSystem::render(CEntityManager *entityManager)
 	{
 		IVideoDriver *driver = getVideoDriver();
 
-		CGridPlaneData** gridPlane = m_gridPlanes.pointer();
+		CRenderMeshData** meshs = m_meshs.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();
 
-		for (u32 i = 0, n = m_gridPlanes.size(); i < n; i++)
+		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
-			IMeshBuffer* buffer = gridPlane[i]->LineBuffer;
-
+			CMesh *mesh = m_meshs[i]->getMesh();
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
-			driver->setMaterial(buffer->getMaterial());
-			driver->drawMeshBuffer(buffer);
+			
+			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
+			{
+				IMeshBuffer* meshBuffer = mesh->getMeshBuffer(j);
+
+				driver->setMaterial(meshBuffer->getMaterial());
+				driver->drawMeshBuffer(meshBuffer);
+			}
 		}
 	}
 }

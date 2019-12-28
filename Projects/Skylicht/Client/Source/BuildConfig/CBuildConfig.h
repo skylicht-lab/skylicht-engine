@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CBUILD_CONFIG_H_
-#define _CBUILD_CONFIG_H_
+#pragma once
 
 #include "pch.h"
 
@@ -56,5 +55,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

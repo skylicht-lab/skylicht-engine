@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CGAMESHADERPARAMS_H_
-#define _CGAMESHADERPARAMS_H_
+#pragma once
 
 #define MAX_SHADERPARAMS	20
 
@@ -55,5 +54,3 @@ namespace Skylicht
 		}
 	};
 }
-
-#endif

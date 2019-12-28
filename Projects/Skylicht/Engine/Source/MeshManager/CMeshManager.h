@@ -1,5 +1,4 @@
-#ifndef _MESH_MANAGER_H_
-#define _MESH_MANAGER_H_
+#pragma once
 
 #include "RenderMesh/CMesh.h"
 #include "Entity/CEntityPrefab.h"
@@ -22,5 +21,3 @@ namespace Skylicht
 		void releaseAllPrefabs();
 	};
 }
-
-#endif

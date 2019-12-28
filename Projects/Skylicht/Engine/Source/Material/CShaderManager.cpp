@@ -44,7 +44,7 @@ namespace Skylicht
 
 	void CShaderManager::releaseAll()
 	{
-		for (int i = 0, n = (int)m_listShader.size(); i < n; i++)
+		for (u32 i = 0, n = m_listShader.size(); i < n; i++)
 			m_listShader[i]->drop();
 
 		m_listShader.clear();
@@ -157,7 +157,7 @@ namespace Skylicht
 
 	CShader* CShaderManager::getShaderByName(const char *name)
 	{
-		for (int i = 0, n = (int)m_listShader.size(); i < n; i++)
+		for (u32 i = 0, n = m_listShader.size(); i < n; i++)
 		{
 			if (m_listShader[i]->getName() == name)
 				return m_listShader[i];
@@ -168,7 +168,7 @@ namespace Skylicht
 
 	CShader* CShaderManager::getShaderByPath(const char *path)
 	{
-		for (int i = 0, n = (int)m_listShader.size(); i < n; i++)
+		for (u32 i = 0, n = m_listShader.size(); i < n; i++)
 		{
 			if (m_listShader[i]->getShaderPath() == path)
 				return m_listShader[i];
@@ -179,7 +179,7 @@ namespace Skylicht
 
 	CShader* CShaderManager::getShaderByID(int id)
 	{
-		for (int i = 0, n = (int)m_listShader.size(); i < n; i++)
+		for (u32 i = 0, n = m_listShader.size(); i < n; i++)
 		{
 			if (m_listShader[i]->getMaterialRenderID() == id)
 				return m_listShader[i];

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _EM_GETFILE_H_
-#define _EM_GETFILE_H_
+#pragma once
 
 namespace Skylicht
 {
@@ -81,5 +80,3 @@ namespace Skylicht
 		}
 	};
 }
-
-#endif

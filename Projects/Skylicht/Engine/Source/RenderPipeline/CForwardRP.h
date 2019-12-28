@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CFORWARD_RP_H_
-#define _CFORWARD_RP_H_
+#pragma once
 
 #include "CBaseRP.h"
 
@@ -41,5 +40,3 @@ namespace Skylicht
 		virtual void render(CCamera *camera, CEntityManager *entityManager);
 	};
 }
-
-#endif

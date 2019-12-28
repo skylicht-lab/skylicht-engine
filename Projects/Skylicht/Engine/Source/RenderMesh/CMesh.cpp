@@ -48,7 +48,7 @@ namespace Skylicht
 		newMesh->BoundingBox = BoundingBox;
 		newMesh->MaterialName = MaterialName;
 
-		for (int i = 0, n = (int)MeshBuffers.size(); i < n; i++)
+		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
 		{
 			newMesh->addMeshBuffer(MeshBuffers[i]);
 		}
@@ -130,7 +130,7 @@ namespace Skylicht
 	{
 		if (buf)
 		{
-			for (int i = 0; i < (int)MeshBuffers.size(); i++)
+			for (u32 i = 0; i < MeshBuffers.size(); i++)
 			{
 				if (MeshBuffers[i] == buf)
 				{
@@ -144,7 +144,7 @@ namespace Skylicht
 
 	IMeshBuffer* CMesh::getBufferByMaterialID(int materialID)
 	{
-		for (int i = 0, n = (int)MeshBuffers.size(); i < n; i++)
+		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
 		{
 			IMeshBuffer *mb = MeshBuffers[i];
 			if (mb->getMaterial().MaterialType == materialID)
@@ -159,9 +159,9 @@ namespace Skylicht
 		CMesh* alphaMesh = NULL;
 
 		IVideoDriver *driver = getVideoDriver();
-		int numMeshBuffer = (int)MeshBuffers.size();
+		u32 numMeshBuffer = MeshBuffers.size();
 
-		for (int i = 0; i < numMeshBuffer; i++)
+		for (u32 i = 0; i < numMeshBuffer; i++)
 		{
 			IMeshBuffer* buffer = MeshBuffers[i];
 			video::SMaterial& m = buffer->getMaterial();
@@ -286,8 +286,8 @@ namespace Skylicht
 
 	int CMesh::getMeshBufferID(IMeshBuffer *buffer)
 	{
-		int numMeshBuffer = (int)MeshBuffers.size();
-		for (int i = 0; i < numMeshBuffer; i++)
+		u32 numMeshBuffer = MeshBuffers.size();
+		for (u32 i = 0; i < numMeshBuffer; i++)
 		{
 			if (MeshBuffers[i] == buffer)
 				return i;

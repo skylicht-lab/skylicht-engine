@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _BASE_APP_
-#define _BASE_APP_
+#pragma once
 
 #include "pch.h"
 #include "IApplicationEventReceiver.h"
@@ -145,5 +144,3 @@ namespace Skylicht
 
 	extern CBaseApp* getApplication();
 }
-
-#endif

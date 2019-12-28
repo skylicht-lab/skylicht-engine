@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYLICHT_MESH_H_
-#define _SKYLICHT_MESH_H_
+#pragma once
 
 #include "Entity/IEntityData.h"
 
@@ -76,5 +75,3 @@ namespace Skylicht
 		std::vector<std::string>	MaterialName;
 	};
 }
-
-#endif

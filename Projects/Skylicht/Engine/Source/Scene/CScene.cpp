@@ -30,6 +30,7 @@ namespace Skylicht
 {
 	CScene::CScene()
 	{
+		m_entityManager = new CEntityManager();
 	}
 
 	CScene::~CScene()
@@ -77,6 +78,9 @@ namespace Skylicht
 			delete zone;
 		}
 		m_zones.clear();
+
+		delete m_entityManager;
+		m_entityManager = NULL;
 	}
 
 	/**
@@ -99,7 +103,7 @@ namespace Skylicht
 
 	CZone* CScene::createZone()
 	{
-		CZone *zone = new CZone();
+		CZone *zone = new CZone(m_entityManager);
 
 		char name[512];
 		sprintf(name, "Zone_%d", (int)CGameObject::s_objectID);
@@ -142,21 +146,21 @@ namespace Skylicht
 			core::array<CGameObject*>& listChilds = zone->getArrayChilds(this);
 			CGameObject** objs = listChilds.pointer();
 
-			for (int i = 0, n = (int)listChilds.size(); i < n; i++)
+			for (u32 i = 0, n = listChilds.size(); i < n; i++)
 			{
 				CGameObject* obj = objs[i];
 				if (obj->isEnable() == true)
 					obj->updateObject();
 			}
 
-			for (int i = 0, n = (int)listChilds.size(); i < n; i++)
+			for (u32 i = 0, n = listChilds.size(); i < n; i++)
 			{
 				CGameObject* obj = objs[i];
 				if (obj->isEnable() == true)
 					obj->postUpdateObject();
 			}
 
-			for (int i = 0, n = (int)listChilds.size(); i < n; i++)
+			for (u32 i = 0, n = listChilds.size(); i < n; i++)
 			{
 				CGameObject* obj = objs[i];
 				if (obj->isEnable() == true)

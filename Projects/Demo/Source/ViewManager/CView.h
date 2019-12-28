@@ -1,5 +1,4 @@
-#ifndef _VIEW_H_
-#define _VIEW_H_
+#pragma once
 
 class CView
 {
@@ -32,5 +31,3 @@ public:
 
 	virtual bool onBack();
 };
-
-#endif

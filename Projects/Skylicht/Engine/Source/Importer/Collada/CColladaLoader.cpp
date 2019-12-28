@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CColladaLoaderFunc.h"
 
 #include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
+
 #include "GameObject/CGameObject.h"
 #include "Material/CShaderManager.h"
 
@@ -65,6 +67,7 @@ namespace Skylicht
 	bool CColladaLoader::loadDae(const char *fileName, CEntityPrefab* output)
 	{
 		m_meshFile = fileName;
+		m_meshName = CPath::getFileName(fileName);
 
 		IrrlichtDevice	*device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
@@ -1240,7 +1243,12 @@ namespace Skylicht
 		if (m_colladaRoot == NULL)
 		{
 			m_colladaRoot = new SNodeParam();
-			m_colladaRoot->Name = L"BoneRoot";
+						
+			wchar_t namew[512];
+			CStringImp::convertUTF8ToUnicode(m_meshName.c_str(), namew);
+
+			m_colladaRoot->Name = namew;
+			m_colladaRoot->SID = L"Root";
 			m_colladaRoot->Type = L"JOINT";
 			m_colladaRoot->ChildLevel = 0;
 
@@ -1248,6 +1256,7 @@ namespace Skylicht
 
 			if (m_flipOx == true)
 			{
+				// Inverse X
 				m_colladaRoot->Transform.setScale(core::vector3df(-1, 1, 1));
 			}
 
@@ -1409,7 +1418,7 @@ namespace Skylicht
 
 	void CColladaLoader::loadEffectTexture()
 	{
-		for (int i = 0, n = m_listEffects.size(); i < n; i++)
+		for (u32 i = 0, n = m_listEffects.size(); i < n; i++)
 		{
 			SEffect& effect = m_listEffects[i];
 			ITexture *tex = NULL;
@@ -1464,26 +1473,24 @@ namespace Skylicht
 			SNodeParam* root = m_listNode[i];
 			stackColladaNodes.push_back(root);
 		}
-
-		CEntity* rootEntity = output->createEntity();
-		output->addTransformData(rootEntity, NULL, core::IdentityMatrix);
+		
+		char name[512] = { 0 };
 
 		while (stackColladaNodes.size())
 		{
 			SNodeParam *node = stackColladaNodes.back();
-			listColladaNodes.push_back(node);
-
-			// to do create node
-			char name[1024];
-			CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
+			listColladaNodes.push_back(node);			
 
 			// find parent entity
-			CEntity *parent = rootEntity;
+			CEntity *parent = NULL;
 			if (node->Parent && node->Parent->Entity)
 				parent = node->Parent->Entity;
 
 			// create entity
 			CEntity* entity = output->createEntity();
+
+			// tag this entity
+			node->Entity = entity;
 
 			/*
 			if (node->Type == L"JOINT")
@@ -1506,7 +1513,9 @@ namespace Skylicht
 			colladaSceneNode->setColladaComponent(m_component);
 			colladaSceneNode->setName(name);
 			colladaSceneNode->setOwner(m_gameObject);
+			*/
 
+			/*
 			// store joint sid node
 			if (node->SID.size() > 0)
 			{
@@ -1515,10 +1524,11 @@ namespace Skylicht
 				m_component->registerSID(name, colladaSceneNode);
 				colladaSceneNode->setSIDName(name);
 			}
+			*/
 
-			if (node->Name.size() > 0)
-				CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
+			CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
 
+			/*
 			// store this node
 			m_component->registerName(name, colladaSceneNode);
 
@@ -1528,7 +1538,7 @@ namespace Skylicht
 			*/
 
 			// add transform
-			output->addTransformData(entity, parent, node->Transform);
+			output->addTransformData(entity, parent, node->Transform, name);
 
 			// construct geometry & controller in node
 			if (node->Instance.size() > 0)
@@ -1544,7 +1554,6 @@ namespace Skylicht
 					CMesh *mesh = constructMesh(pMesh, node);
 					if (mesh)
 					{
-						// add mesh data
 						CRenderMeshData *meshData = entity->addData<CRenderMeshData>();
 						meshData->setMesh(mesh);
 
@@ -2203,6 +2212,11 @@ namespace Skylicht
 			else
 				mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("LightingColor");
 		}
+		else
+		{
+			SMaterial& mat = buffer->getMaterial();
+			mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("LightingColor");
+		}
 
 		buffer->recalculateBoundingBox();
 		return buffer;
@@ -2648,7 +2662,7 @@ namespace Skylicht
 
 		// setup vertex weight
 		int numVertex = 0;
-		for (int i = 0; i < (int)meshParam->Triangles.size(); i++)
+		for (u32 i = 0; i < meshParam->Triangles.size(); i++)
 			numVertex += meshParam->Triangles[i].NumPolygon;
 
 		numVertex = numVertex * 3;
@@ -2656,7 +2670,7 @@ namespace Skylicht
 		memset(nBoneCount, 0, sizeof(int)*numVertex);
 
 		// apply joint to vertex
-		for (int i = 0, n = (int)meshParam->JointIndex.size(); i < n; i += 2)
+		for (u32 i = 0, n = meshParam->JointIndex.size(); i < n; i += 2)
 		{
 			int boneID = meshParam->JointIndex[i];
 			int weightID = meshParam->JointIndex[i + 1];
@@ -2666,7 +2680,7 @@ namespace Skylicht
 
 			int nBone = nBoneCount[weight.VertexID]++;
 
-			for (int i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
+			for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
 			{
 				IMeshBuffer *buffer = (IMeshBuffer*)mesh->getMeshBuffer(i);
 
@@ -2686,9 +2700,9 @@ namespace Skylicht
 				map.vertexId = weight.VertexID;
 
 				std::vector<s32>& arrayVertexId = m_meshVertexIndex[map];
-				int numVertexAffect = arrayVertexId.size();
+				u32 numVertexAffect = arrayVertexId.size();
 
-				for (int j = 0; j < numVertexAffect; j++)
+				for (u32 j = 0; j < numVertexAffect; j++)
 				{
 					// todo find realVertexIndex
 					s32 realVertexID = arrayVertexId[j];
@@ -2743,7 +2757,7 @@ namespace Skylicht
 		delete nBoneCount;
 
 		// fix the weight if vertex affect > 4 bone
-		for (int i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
+		for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
 		{
 			IMeshBuffer *buffer = (IMeshBuffer*)mesh->getMeshBuffer(i);
 
@@ -2826,7 +2840,7 @@ namespace Skylicht
 		}
 		m_listMesh.clear();
 
-		for (int j = 0; j < (int)m_listNode.size(); j++)
+		for (u32 j = 0; j < m_listNode.size(); j++)
 		{
 			SNodeParam* pNode = m_listNode[j];
 
@@ -2837,7 +2851,7 @@ namespace Skylicht
 				pNode = stackNode.top();
 				stackNode.pop();
 
-				for (int i = 0; i < (int)pNode->Childs.size(); i++)
+				for (u32 i = 0; i < pNode->Childs.size(); i++)
 					stackNode.push(pNode->Childs[i]);
 
 				delete pNode;

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _RENDER_MESH_DATA_H_
-#define _RENDER_MESH_DATA_H_
+#pragma once
 
 #include "Entity/IEntityData.h"
 #include "CMesh.h"
@@ -51,5 +50,3 @@ namespace Skylicht
 		void setMesh(CMesh *mesh);
 	};
 }
-
-#endif

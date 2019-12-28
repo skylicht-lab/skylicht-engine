@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CONTAINEROBJ_
-#define _CONTAINEROBJ_
+#pragma once
 
 #include "CGameObject.h"
 
@@ -86,5 +85,3 @@ namespace Skylicht
 		core::array<CGameObject*>& getArrayChilds(bool addThis);
 	};
 }
-
-#endif
