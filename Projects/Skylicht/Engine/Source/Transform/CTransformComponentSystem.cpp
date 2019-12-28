@@ -48,14 +48,15 @@ namespace Skylicht
 
 	void CComponentTransformSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
-		CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-		if (transform != NULL)
+		CTransformComponentData *component = entity->getData<CTransformComponentData>();
+		if (component != NULL && component->TransformComponent && component->TransformComponent->hasChanged())
 		{
-			CTransformComponentData *component = entity->getData<CTransformComponentData>();
-			if (component != NULL &&
-				component->TransformComponent &&
-				component->TransformComponent->hasChanged())
+			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+			if (transform != NULL)
 			{
+				// notify changed for CWorldTransformSystem query
+				transform->HasChanged = true;
+
 				m_transforms.push_back(transform);
 				m_components.push_back(component);
 			}
@@ -78,9 +79,6 @@ namespace Skylicht
 			// copy transform to relative matrix
 			components[i]->TransformComponent->getMatrixTransform(transforms[i]->Relative);
 			components[i]->TransformComponent->setChanged(false);
-
-			// notify changed
-			transforms[i]->HasChanged = true;
 		}
 	}
 }
