@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _COMPONENT_TRANSFORM_DATA_H_
-#define _COMPONENT_TRANSFORM_DATA_H_
+#pragma once
 
 #include "Entity/IEntityData.h"
 
@@ -42,5 +41,3 @@ namespace Skylicht
 		virtual ~CTransformComponentData();
 	};
 }
-
-#endif

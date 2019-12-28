@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _EVENT_MANAGER_H_
-#define _EVENT_MANAGER_H_
+#pragma once
 
 #include "Utils/CGameSingleton.h"
 
@@ -49,5 +48,3 @@ namespace Skylicht
 		virtual bool OnEvent(const SEvent& event);
 	};
 }
-
-#endif

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _GAME_MATERIAL_SHADER_H_
-#define _GAME_MATERIAL_SHADER_H_
+#pragma once
 
 #include "CBaseShaderCallback.h"
 
@@ -171,7 +170,7 @@ namespace Skylicht
 
 			~SUniformUI()
 			{
-				for (int i = 0, n = (int)Childs.size(); i < n; i++)
+				for (u32 i = 0, n = Childs.size(); i < n; i++)
 				{
 					delete Childs[i];
 				}
@@ -356,5 +355,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _GRID_PLANE_H_
-#define _GRID_PLANE_H_
+#pragma once
 
 #include "Components/CComponentSystem.h"
 #include "CGridPlaneData.h"
@@ -23,5 +22,3 @@ namespace Skylicht
 		void setGridData(int numGrid, float gridSize);
 	};
 }
-
-#endif

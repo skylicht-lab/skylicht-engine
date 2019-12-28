@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CAPPLICATION_H_
-#define _CAPPLICATION_H_
+#pragma once
 
 #include "pch.h"
 #include "CBaseApp.h"
@@ -113,5 +112,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

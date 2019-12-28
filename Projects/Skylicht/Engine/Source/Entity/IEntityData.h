@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _IENTITY_DATA_H_
-#define _IENTITY_DATA_H_
+#pragma once
 
 namespace Skylicht
 {
@@ -41,5 +40,3 @@ namespace Skylicht
 		}
 	};
 }
-
-#endif

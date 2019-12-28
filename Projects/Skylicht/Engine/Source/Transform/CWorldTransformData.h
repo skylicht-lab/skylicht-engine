@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _WORLD_TRANSFORM_H_
-#define _WORLD_TRANSFORM_H_
+#pragma once
 
 #include "Entity/IEntityData.h"
 
@@ -37,6 +36,7 @@ namespace Skylicht
 		core::matrix4 Relative;
 		int Depth;
 		int ParentIndex;
+		std::string Name;
 
 	public:
 		CWorldTransformData();
@@ -44,5 +44,3 @@ namespace Skylicht
 		virtual ~CWorldTransformData();
 	};
 }
-
-#endif

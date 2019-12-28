@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Transform/CTransformComponentSystem.h"
 #include "Transform/CWorldTransformSystem.h"
+#include "RenderMesh/CRenderMeshSystem.h"
 
 
 namespace Skylicht
@@ -36,6 +37,7 @@ namespace Skylicht
 	{
 		addSystem<CComponentTransformSystem>();
 		addSystem<CWorldTransformSystem>();
+		addRenderSystem<CRenderMeshSystem>();
 	}
 
 	CEntityManager::~CEntityManager()
@@ -47,7 +49,7 @@ namespace Skylicht
 	void CEntityManager::releaseAllEntities()
 	{
 		CEntity** entities = m_entities.pointer();
-		for (int i = 0, n = (int)m_entities.size(); i < n; i++)
+		for (u32 i = 0, n = m_entities.size(); i < n; i++)
 		{
 			delete entities[i];
 			entities[i] = NULL;
@@ -86,6 +88,22 @@ namespace Skylicht
 		return entity;
 	}
 
+	CEntity** CEntityManager::createEntity(int num, core::array<CEntity*>& entities)
+	{		
+		entities.reallocate(num);
+		entities.set_used(0);
+
+		for (int i = 0; i < num; i++)
+		{
+			CEntity *entity = new CEntity(this);
+			m_entities.push_back(entity);
+			
+			entities.push_back(entity);
+		}
+
+		return entities.pointer();
+	}
+
 	void CEntityManager::addTransformDataToEntity(CEntity *entity, CTransform *transform)
 	{
 		CWorldTransformData *transformData = entity->addData<CWorldTransformData>();
@@ -99,8 +117,9 @@ namespace Skylicht
 		CEntity *parent = componentData->TransformComponent->getParentEntity();
 		if (parent != NULL)
 		{
+			transformData->Name = transform->getName();
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
+			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;			
 		}
 	}
 

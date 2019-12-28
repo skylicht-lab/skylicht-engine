@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _ENTITY_PREFAB_H_
-#define _ENTITY_PREFAB_H_
+#pragma once
 
 #include <Entity/CEntity.h>
 
@@ -53,8 +52,6 @@ namespace Skylicht
 			return m_entities[index];
 		}
 
-		void addTransformData(CEntity* entity, CEntity* parent, const core::matrix4& transform);
+		void addTransformData(CEntity* entity, CEntity* parent, const core::matrix4& transform, const char *name);
 	};
 }
-
-#endif

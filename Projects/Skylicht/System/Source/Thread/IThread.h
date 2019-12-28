@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYLICHT_SYSTEM_ITHREAD_H_
-#define _SKYLICHT_SYSTEM_ITHREAD_H_
+#pragma once
 
 namespace SkylichtSystem
 {
@@ -75,5 +74,3 @@ namespace SkylichtSystem
 		static IThread* createThread(IThreadCallback* callback);
 	};
 };
-
-#endif

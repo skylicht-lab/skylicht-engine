@@ -12,6 +12,7 @@
 #include "Camera/CEditorCamera.h"
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
+#include "RenderMesh/CRenderMesh.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -79,7 +80,13 @@ void CViewInit::initScene()
 	if (prefab != NULL)
 	{
 		// instance object
+		CGameObject *model = zone->createEmptyObject();
+		model->addComponent<CRenderMesh>()->initFromPrefab(prefab);
 
+		// transform
+		// CTransformEuler *transform = model->getTransformEuler();
+		// transform->setPosition(core::vector3df(0.0f, 0.0f, 2.0f));
+		// transform->setYaw(45.0f);
 	}
 
 	// save to context

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CCOMPONENT_SYSTEM_H_
-#define _CCOMPONENT_SYSTEM_H_
+#pragma once
 
 namespace Skylicht
 {
@@ -46,6 +45,8 @@ namespace Skylicht
 
 		virtual ~CComponentSystem();
 
+		const char *getName();
+
 		virtual void initComponent() = 0;
 
 		virtual void updateComponent() = 0;
@@ -60,5 +61,3 @@ namespace Skylicht
 		}
 	};
 }
-
-#endif

@@ -52,6 +52,8 @@ namespace Skylicht
 	{
 		// transform data
 		CWorldTransformData* t = entity->getData<CWorldTransformData>();
+		if (t == NULL)
+			return;
 
 		if (t->Depth > m_maxDepth)
 			m_maxDepth = t->Depth;

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _GAMESINGLETON_H_
-#define _GAMESINGLETON_H_
+#pragma once
 
 namespace Skylicht
 {
@@ -66,5 +65,3 @@ namespace Skylicht
 	T* CGameSingleton<T>::s_instance = 0;
 
 }
-
-#endif
