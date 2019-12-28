@@ -32,13 +32,23 @@ namespace Skylicht
 {
 	class CRenderMeshData : public IEntityData
 	{
-	public:
+	protected:
 		CMesh *RenderMesh;
+
 		int InstancingID;
+
 	public:
+
 		CRenderMeshData();
 
 		virtual ~CRenderMeshData();
+
+		inline CMesh *getMesh()
+		{
+			return RenderMesh;
+		}
+
+		void setMesh(CMesh *mesh);
 	};
 }
 

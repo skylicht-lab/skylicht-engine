@@ -27,9 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CMesh::CMesh() :
-		IsStatic(false),
-		Tangent(false)
+	CMesh::CMesh()
 	{
 #ifdef _DEBUG
 		setDebugName("CMesh");
@@ -47,11 +45,8 @@ namespace Skylicht
 	CMesh* CMesh::clone()
 	{
 		CMesh *newMesh = new CMesh();
-
-		newMesh->IsStatic = IsStatic;
 		newMesh->BoundingBox = BoundingBox;
-		newMesh->Tangent = Tangent;
-		newMesh->ColladaMaterialName = ColladaMaterialName;
+		newMesh->MaterialName = MaterialName;
 
 		for (int i = 0, n = (int)MeshBuffers.size(); i < n; i++)
 		{
@@ -179,12 +174,12 @@ namespace Skylicht
 
 				// add buffer and material to new alpha mesh
 				alphaMesh->addMeshBuffer(MeshBuffers[i]);
-				alphaMesh->ColladaMaterialName.push_back(ColladaMaterialName[i]);
+				alphaMesh->MaterialName.push_back(MaterialName[i]);
 
 				// remove buffer and material
 				MeshBuffers[i]->drop();
 				MeshBuffers.erase(i);
-				ColladaMaterialName.erase(ColladaMaterialName.begin() + i);
+				MaterialName.erase(MaterialName.begin() + i);
 
 				i--;
 				numMeshBuffer--;

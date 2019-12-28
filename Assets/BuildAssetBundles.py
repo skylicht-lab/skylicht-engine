@@ -1,7 +1,7 @@
 import zipfile
 import os
 
-compressExt = ["xml", "hlsl", "glsl", "png"]
+compressExt = ["xml", "hlsl", "glsl", "png", "dae"]
 
 def needCompress(filename):
 	for fileType in compressExt:

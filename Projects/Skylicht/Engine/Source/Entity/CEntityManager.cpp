@@ -24,13 +24,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CEntityManager.h"
+
+#include "Transform/CTransformComponentSystem.h"
 #include "Transform/CWorldTransformSystem.h"
+
 
 namespace Skylicht
 {
 	CEntityManager::CEntityManager():
 		m_camera(NULL)
 	{
+		addSystem<CComponentTransformSystem>();
 		addSystem<CWorldTransformSystem>();
 	}
 
@@ -85,9 +89,14 @@ namespace Skylicht
 	void CEntityManager::addTransformDataToEntity(CEntity *entity, CTransform *transform)
 	{
 		CWorldTransformData *transformData = entity->addData<CWorldTransformData>();
-		transformData->TransformComponent = transform;
+		CTransformComponentData *componentData = entity->addData<CTransformComponentData>();
 
-		CEntity *parent = transformData->TransformComponent->getParentEntity();
+		// add component to transform
+		componentData->TransformComponent = transform;
+		componentData->TransformComponent->setChanged(true);
+
+		// add parent relative
+		CEntity *parent = componentData->TransformComponent->getParentEntity();
 		if (parent != NULL)
 		{
 			transformData->ParentIndex = parent->getIndex();

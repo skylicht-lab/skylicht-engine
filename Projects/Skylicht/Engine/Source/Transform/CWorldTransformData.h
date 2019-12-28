@@ -29,18 +29,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CTransform;
 	class CWorldTransformData : public IEntityData
 	{
-		friend class CWorldTransformSystem;
-	protected:
-		bool HasChanged;
-
 	public:
+		bool HasChanged;
 		core::matrix4 World;
+		core::matrix4 Relative;
 		int Depth;
 		int ParentIndex;
-		CTransform *TransformComponent;
 
 	public:
 		CWorldTransformData();

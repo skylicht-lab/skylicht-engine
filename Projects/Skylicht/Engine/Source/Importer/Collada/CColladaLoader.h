@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "RenderMesh/CMesh.h"
 
+#include "Importer/IMeshImporter.h"
+
 namespace Skylicht
 {
 	// const for buffer
@@ -184,6 +186,7 @@ namespace Skylicht
 	};
 	typedef std::vector<SMeshParam>	ArrayMeshParams;
 
+	class CEntity;
 
 	struct SNodeParam
 	{
@@ -194,22 +197,17 @@ namespace Skylicht
 		std::map<std::wstring, std::wstring> BindMaterial;
 
 		core::matrix4 Transform;
-		bool UseTransform;
-
-		core::quaternion Rot;
-		core::vector3df Pos;
-		core::vector3df Scale;
 
 		std::vector<SNodeParam*> Childs;
 		SNodeParam* Parent;
 
+		CEntity *Entity;
 		int ChildLevel;
 
 		SNodeParam()
 		{
+			Entity = NULL;
 			ChildLevel = 0;
-			UseTransform = true;
-			Scale = core::vector3df(1, 1, 1);
 		}
 	};
 	typedef std::vector<SNodeParam*> ArrayNodeParams;
@@ -275,7 +273,7 @@ namespace Skylicht
 		}
 	};
 
-	class CColladaLoader
+	class CColladaLoader: public IMeshImporter
 	{
 	public:
 		static bool s_fixUV;
@@ -290,8 +288,8 @@ namespace Skylicht
 		bool m_flipOx;
 
 		bool m_loadTexcoord2;
-		bool m_tangent;
-		bool m_batching;
+		bool m_createTangent;
+		bool m_createBatchMesh;
 
 		bool m_loadNormalMap;
 
@@ -321,19 +319,15 @@ namespace Skylicht
 			m_loadTexcoord2 = b;
 		}
 
-		void setBatching(bool b)
+		void setCreateBatchMesh(bool b)
 		{
-			m_batching = b;
-		}
-
-		void setTangent(bool b)
-		{
-			m_tangent = b;
+			m_createBatchMesh = b;
 		}
 
 		void setLoadNormalMap(bool b)
 		{
 			m_loadNormalMap = b;
+			m_createTangent = b;
 		}
 
 		void setTextureFolder(std::vector<std::string>& folder)
@@ -341,9 +335,11 @@ namespace Skylicht
 			m_textureFolder = folder;
 		}
 
-		void loadDae(const char *fileName);
-
+		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false);
+		
 	protected:
+
+		bool loadDae(const char *fileName, CEntityPrefab* output);
 
 		void parseImageNode(io::IXMLReader *xmlRead, SColladaImage* image = NULL);
 
@@ -373,7 +369,7 @@ namespace Skylicht
 
 		ITexture *getTextureResource(std::wstring& refName, ArrayEffectParams& params);
 
-		void constructRenderEntity();
+		void constructEntityPrefab(CEntityPrefab *output);
 
 		CMesh* constructMesh(SMeshParam *mesh, SNodeParam* node);
 
