@@ -3,6 +3,7 @@
 #include "CViewDemo.h"
 #include "ViewManager/CViewManager.h"
 #include "TextureManager/CTextureManager.h"
+#include "MeshManager/CMeshManager.h"
 
 #include "Context/CContext.h"
 
@@ -52,6 +53,7 @@ void CViewInit::initScene()
 	CScene *scene = CContext::getInstance()->initScene();
 	CZone *zone = scene->createZone();
 
+	// camera
 	CGameObject *camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>();
@@ -60,6 +62,7 @@ void CViewInit::initScene()
 	camera->setPosition(core::vector3df(3.0f, 3.0f, 3.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
+	// sky
 	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Demo/Textures/Sky/PaperMill.png");
 	if (skyDomeTexture != NULL)
 	{
@@ -67,8 +70,19 @@ void CViewInit::initScene()
 		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
 	}
 
+	// grid
 	zone->createEmptyObject()->addComponent<CGridPlane>();
 
+	// test dae model
+	CMeshManager *meshManager = CMeshManager::getInstance();
+	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/monkey.dae");
+	if (prefab != NULL)
+	{
+		// instance object
+
+	}
+
+	// save to context
 	CContext *context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);
@@ -109,7 +123,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+}
 #else
 
 #if defined(WINDOWS_STORE)
