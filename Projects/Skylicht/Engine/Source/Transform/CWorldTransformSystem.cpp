@@ -45,7 +45,7 @@ namespace Skylicht
 		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
 			m_entities[depth].set_used(0);
 
-		m_maxDepth = 1;
+		m_maxDepth = 0;
 	}
 
 	void CWorldTransformSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
@@ -54,7 +54,7 @@ namespace Skylicht
 		CWorldTransformData* t = entity->getData<CWorldTransformData>();
 
 		if (t->Depth > m_maxDepth)
-			m_maxDepth = t->Depth + 1;
+			m_maxDepth = t->Depth;
 
 		if (t->HasChanged == true)
 		{
@@ -93,7 +93,7 @@ namespace Skylicht
 		}
 
 		// child transform
-		for (int depth = 1; depth < m_maxDepth; depth++)
+		for (int depth = 1; depth <= m_maxDepth; depth++)
 		{
 			entities = m_entities[depth].pointer();
 			numEntity = m_entities[depth].size();
