@@ -23,31 +23,17 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CRenderMeshData.h"
+#include "CTransformComponentData.h"
 
 namespace Skylicht
 {
-	CRenderMeshData::CRenderMeshData() :
-		RenderMesh(NULL),
-		InstancingID(-1)
+	CTransformComponentData::CTransformComponentData() :
+		TransformComponent(NULL)
 	{
-
 	}
 
-	CRenderMeshData::~CRenderMeshData()
+	CTransformComponentData::~CTransformComponentData()
 	{
-		RenderMesh->drop();
-	}
 
-	void CRenderMeshData::setMesh(CMesh *mesh)
-	{
-		if (RenderMesh)
-		{
-			RenderMesh->drop();
-			RenderMesh = NULL;
-		}
-
-		RenderMesh = mesh;
-		RenderMesh->grab();
 	}
 }

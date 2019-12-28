@@ -23,13 +23,19 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CEntityManager.h"
 #include "CEntity.h"
+#include "CEntityManager.h"
+#include "CEntityPrefab.h"
 
 namespace Skylicht
 {
 	CEntity::CEntity(CEntityManager *mgr) :
 		m_alive(true)
+	{
+		m_index = mgr->getNumEntities();
+	}
+
+	CEntity::CEntity(CEntityPrefab *mgr)
 	{
 		m_index = mgr->getNumEntities();
 	}

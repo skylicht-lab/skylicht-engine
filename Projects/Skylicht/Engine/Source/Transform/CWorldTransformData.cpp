@@ -28,9 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CWorldTransformData::CWorldTransformData() :
+		HasChanged(true),
 		Depth(0),
-		ParentIndex(-1),
-		TransformComponent(NULL)
+		ParentIndex(-1)
 	{
 	}
 
