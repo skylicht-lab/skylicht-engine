@@ -28,13 +28,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/IEntityData.h"
 
 namespace Skylicht
-{	
+{
 	class CMesh : public IMesh
 	{
 	public:
-		friend class CRenderMeshData;
-		friend class CColladaLoader;
-
 		CMesh();
 
 		virtual ~CMesh();
@@ -70,29 +67,13 @@ namespace Skylicht
 
 		int getMeshBufferID(IMeshBuffer *buffer);
 
-		inline bool IsStaticMesh()
-		{
-			return IsStatic;
-		}
-
-		inline bool HaveTangent()
-		{
-			return Tangent;
-		}
-
 		static void applyDoubleSided(IMeshBuffer *buffer);
-
-	protected:
 
 		core::array<IMeshBuffer*>	MeshBuffers;
 
 		core::aabbox3d<f32>			BoundingBox;
 
-		bool						IsStatic;
-
-		bool						Tangent;
-
-		std::vector<std::string>	ColladaMaterialName;
+		std::vector<std::string>	MaterialName;
 	};
 }
 

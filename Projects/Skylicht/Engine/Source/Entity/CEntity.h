@@ -30,19 +30,22 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	class CEntityManager;
+	class CEntityPrefab;
 
 	class CEntity
 	{
 		friend class CEntityManager;
+		friend class CEntityPrefab;
 
 	protected:
 		bool m_alive;
 		int m_index;
 
 		core::array<IEntityData*> m_data;
-
+	
 	public:
 		CEntity(CEntityManager *mgr);
+		CEntity(CEntityPrefab *mgr);
 
 		virtual ~CEntity();
 

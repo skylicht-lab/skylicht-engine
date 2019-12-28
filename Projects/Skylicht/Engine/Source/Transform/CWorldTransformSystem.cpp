@@ -52,7 +52,6 @@ namespace Skylicht
 	{
 		// transform data
 		CWorldTransformData* t = entity->getData<CWorldTransformData>();
-		t->HasChanged = t->TransformComponent->hasChanged();
 
 		if (t->Depth > m_maxDepth)
 			m_maxDepth = t->Depth + 1;
@@ -86,13 +85,14 @@ namespace Skylicht
 		CWorldTransformData** entities = m_entities[0].pointer();
 		u32 numEntity = m_entities[0].size();
 
+		// root transform
 		for (u32 i = 0; i < numEntity; i++)
 		{
 			CWorldTransformData *t = entities[i];
-			t->World = t->TransformComponent->getMatrixTransform();
-			t->TransformComponent->setChanged(false);
+			t->World = t->Relative;
 		}
 
+		// child transform
 		for (int depth = 1; depth < m_maxDepth; depth++)
 		{
 			entities = m_entities[depth].pointer();
@@ -100,14 +100,17 @@ namespace Skylicht
 
 			for (u32 i = 0; i < numEntity; i++)
 			{
+				// this entity
 				CWorldTransformData *t = entities[i];
-				const core::matrix4& relativeMatrix = t->TransformComponent->getMatrixTransform();
 
+				// parent entity
 				CEntity *parent = entityManager->getEntity(t->ParentIndex);
 				CWorldTransformData *p = parent->getData<CWorldTransformData>();
 
-				t->World.setbyproduct_nocheck(p->World, relativeMatrix);
-				t->TransformComponent->setChanged(false);
+				// calc world = parent * relative
+				// - relative is copied from CTransformComponentSystem
+				// - relative is also defined in CEntityPrefab
+				t->World.setbyproduct_nocheck(p->World, t->Relative);
 			}
 		}
 	}

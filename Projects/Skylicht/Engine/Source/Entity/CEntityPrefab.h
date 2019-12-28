@@ -22,32 +22,39 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CRenderMeshData.h"
+#ifndef _ENTITY_PREFAB_H_
+#define _ENTITY_PREFAB_H_
+
+#include <Entity/CEntity.h>
 
 namespace Skylicht
 {
-	CRenderMeshData::CRenderMeshData() :
-		RenderMesh(NULL),
-		InstancingID(-1)
+	class CEntityPrefab
 	{
+	protected:
+		core::array<CEntity*> m_entities;
 
-	}
+	public:
+		CEntityPrefab();
 
-	CRenderMeshData::~CRenderMeshData()
-	{
-		RenderMesh->drop();
-	}
+		virtual ~CEntityPrefab();
 
-	void CRenderMeshData::setMesh(CMesh *mesh)
-	{
-		if (RenderMesh)
+		CEntity* createEntity();
+
+		void releaseAllEntities();
+
+		inline int getNumEntities()
 		{
-			RenderMesh->drop();
-			RenderMesh = NULL;
+			return m_entities.size();
 		}
 
-		RenderMesh = mesh;
-		RenderMesh->grab();
-	}
+		inline CEntity* getEntity(int index)
+		{
+			return m_entities[index];
+		}
+
+		void addTransformData(CEntity* entity, CEntity* parent, const core::matrix4& transform);
+	};
 }
+
+#endif

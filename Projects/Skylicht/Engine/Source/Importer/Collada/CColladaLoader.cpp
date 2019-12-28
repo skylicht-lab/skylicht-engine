@@ -30,6 +30,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CGameObject.h"
 #include "Material/CShaderManager.h"
 
+#include "Entity/CEntityPrefab.h"
+#include "RenderMesh/CRenderMeshData.h"
+
 namespace Skylicht
 {
 
@@ -37,8 +40,8 @@ namespace Skylicht
 
 	CColladaLoader::CColladaLoader() :
 		m_loadTexcoord2(false),
-		m_batching(false),
-		m_tangent(false),
+		m_createBatchMesh(false),
+		m_createTangent(false),
 		m_loadNormalMap(false),
 		m_maxUVTile(16.0f)
 	{
@@ -50,7 +53,16 @@ namespace Skylicht
 
 	}
 
-	void CColladaLoader::loadDae(const char *fileName)
+	bool CColladaLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
+	{
+		setLoadNormalMap(normalMap);
+		setLoadTexCoord2(texcoord2);
+		setCreateBatchMesh(batching);
+
+		return loadDae(resource, output);
+	}
+
+	bool CColladaLoader::loadDae(const char *fileName, CEntityPrefab* output)
 	{
 		m_meshFile = fileName;
 
@@ -63,7 +75,7 @@ namespace Skylicht
 			char log[64];
 			sprintf(log, "Can not load: %s\n", fileName);
 			os::Printer::log(log);
-			return;
+			return false;
 		}
 
 		const std::wstring controllerSectionName(L"controller");
@@ -143,19 +155,15 @@ namespace Skylicht
 
 		xmlRead->drop();
 
-		// update load texture
 		loadEffectTexture();
 
-		// build render entity
-		constructRenderEntity();
+		constructEntityPrefab(output);
 
-		// clean data
 		cleanData();
+
+		return true;
 	}
 
-
-	// parseImageNode
-	// parse image
 	void CColladaLoader::parseImageNode(io::IXMLReader *xmlRead, SColladaImage* image)
 	{
 		if (image == NULL)
@@ -198,8 +206,6 @@ namespace Skylicht
 		}
 	}
 
-	// parseMaterialNode
-	// parse material
 	void CColladaLoader::parseMaterialNode(io::IXMLReader *xmlRead, SColladaMaterial* material)
 	{
 		if (material == NULL)
@@ -304,8 +310,6 @@ namespace Skylicht
 			updateEffectMaterial(&material->Effect);
 	}
 
-	// parseEffectNode
-	// parse effect material node
 	void CColladaLoader::parseEffectNode(io::IXMLReader *xmlRead, SEffect* effect)
 	{
 		if (effect == NULL)
@@ -627,8 +631,6 @@ namespace Skylicht
 			updateEffectMaterial(effect);
 	}
 
-	// parseGeometryNode
-	// parse mesh data
 	void CColladaLoader::parseGeometryNode(io::IXMLReader *xmlRead)
 	{
 		const std::wstring geometrySectionName(L"geometry");
@@ -906,8 +908,6 @@ namespace Skylicht
 		m_listMesh.push_back(mesh);
 	}
 
-	// parseControllersNode
-	// parse controllser
 	void CColladaLoader::parseControllerNode(io::IXMLReader *xmlRead)
 	{
 		const std::wstring skinSectionName(L"skin");
@@ -937,8 +937,6 @@ namespace Skylicht
 		}
 	}
 
-	// parseSkinNode
-	// parse skin data
 	SMeshParam* CColladaLoader::parseSkinNode(io::IXMLReader *xmlRead)
 	{
 		std::wstring source = xmlRead->getAttributeValue(L"source");
@@ -1188,8 +1186,6 @@ namespace Skylicht
 		}
 	}
 
-	// parseSceneNode
-	// parse scene data
 	void CColladaLoader::parseSceneNode(io::IXMLReader *xmlRead)
 	{
 		const std::wstring sceneSectionName(L"visual_scene");
@@ -1216,8 +1212,6 @@ namespace Skylicht
 		}
 	}
 
-	// parseNode
-	// parse <node> element
 	SNodeParam* CColladaLoader::parseNode(io::IXMLReader *xmlRead, SNodeParam* parent)
 	{
 		const std::wstring nodeSectionName(L"node");
@@ -1252,13 +1246,8 @@ namespace Skylicht
 
 			m_colladaRoot->Parent = NULL;
 
-			if (m_flipOx == false)
+			if (m_flipOx == true)
 			{
-				m_colladaRoot->Scale = core::vector3df(1, 1, 1);
-			}
-			else
-			{
-				m_colladaRoot->Scale = core::vector3df(-1, 1, 1);
 				m_colladaRoot->Transform.setScale(core::vector3df(-1, 1, 1));
 			}
 
@@ -1269,8 +1258,7 @@ namespace Skylicht
 				core::vector3df rotVec(0.0f, 180.0, 0.0f);
 				rot.setRotationDegrees(rotVec);
 
-				m_colladaRoot->Rot = core::quaternion(rot);
-				m_colladaRoot->Transform = rot;
+				m_colladaRoot->Transform *= rot;
 			}
 
 			m_listNode.push_back(m_colladaRoot);
@@ -1302,24 +1290,18 @@ namespace Skylicht
 					// mul translate
 					core::matrix4 m = readTranslateNode(xmlRead, m_zUp);
 					pNode->Transform *= m;
-					pNode->Pos = m.getTranslation();
-					pNode->UseTransform = false;
 				}
 				else if (xmlRead->getNodeName() == rotateSectionName)
 				{
 					// mul rotate
 					core::matrix4 m = readRotateNode(xmlRead, m_zUp);
 					pNode->Transform *= m;
-					pNode->Rot = core::quaternion(m);
-					pNode->UseTransform = false;
 				}
 				else if (xmlRead->getNodeName() == scaleSectionName)
 				{
 					// mul scale
 					core::matrix4 m = readScaleNode(xmlRead, m_zUp);
 					pNode->Transform *= m;
-					pNode->Scale = m.getScale();
-					pNode->UseTransform = false;
 				}
 				else if (xmlRead->getNodeName() == matrixNodeName)
 				{
@@ -1375,9 +1357,6 @@ namespace Skylicht
 		return pNode;
 	}
 
-
-	// updateEffectMaterial
-	// apply material type to effect
 	void CColladaLoader::updateEffectMaterial(SEffect* effect)
 	{
 		if (effect->HasAlpha == true)
@@ -1428,8 +1407,6 @@ namespace Skylicht
 		return tex;
 	}
 
-	// loadEffectTexture
-	// load effect texture
 	void CColladaLoader::loadEffectTexture()
 	{
 		for (int i = 0, n = m_listEffects.size(); i < n; i++)
@@ -1476,40 +1453,39 @@ namespace Skylicht
 		}
 	}
 
-	void CColladaLoader::constructRenderEntity()
+	void CColladaLoader::constructEntityPrefab(CEntityPrefab *output)
 	{
-#if 0
-		bool isJointNode = false;
-
-		std::list<SNodeParam*>	stackScene;
-		std::list<SNodeParam*>	listScene;
+		std::list<SNodeParam*>	stackColladaNodes;
+		std::list<SNodeParam*>	listColladaNodes;
 
 		int nNode = (int)m_listNode.size();
 		for (int i = 0; i < nNode; i++)
 		{
 			SNodeParam* root = m_listNode[i];
-			stackScene.push_back(root);
+			stackColladaNodes.push_back(root);
 		}
 
-		while (stackScene.size())
-		{
-			SNodeParam *node = stackScene.back();
+		CEntity* rootEntity = output->createEntity();
+		output->addTransformData(rootEntity, NULL, core::IdentityMatrix);
 
-			// save to list bone prefab
-			listScene.push_back(node);
+		while (stackColladaNodes.size())
+		{
+			SNodeParam *node = stackColladaNodes.back();
+			listColladaNodes.push_back(node);
 
 			// to do create node
 			char name[1024];
 			CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
 
-			// create new scene node
-			ISceneNode *parent = colladaNode;
-			if (node->Parent && node->Parent->SceneNode)
-				parent = node->Parent->SceneNode;
+			// find parent entity
+			CEntity *parent = rootEntity;
+			if (node->Parent && node->Parent->Entity)
+				parent = node->Parent->Entity;
 
-			// crate new scene node
-			CGameColladaSceneNode *colladaSceneNode = NULL;
+			// create entity
+			CEntity* entity = output->createEntity();
 
+			/*
 			if (node->Type == L"JOINT")
 			{
 				// setup for bone node
@@ -1531,15 +1507,6 @@ namespace Skylicht
 			colladaSceneNode->setName(name);
 			colladaSceneNode->setOwner(m_gameObject);
 
-			// get position from transform		
-			node->SceneNode = colladaSceneNode;
-
-			// front vector
-			if (m_flipOx == false)
-				colladaSceneNode->FrontVector = core::vector3df(0.0f, 0.0f, 1.0f);
-			else
-				colladaSceneNode->FrontVector = core::vector3df(0.0f, 0.0f, -1.0f);
-
 			// store joint sid node
 			if (node->SID.size() > 0)
 			{
@@ -1558,23 +1525,10 @@ namespace Skylicht
 			// store joint node
 			if (isJointNode)
 				m_component->registerBip(name, (CGameColladaJointSceneNode*)colladaSceneNode);
+			*/
 
-			// set relative position
-			if (node->UseTransform)
-			{
-				colladaSceneNode->setLocalMatrix(node->Transform);
-
-				// Bone Root
-				if (node->Type == L"JOINT" && node->ChildLevel == 0)
-				{
-					colladaSceneNode->LocalPosition = node->Pos;
-					colladaSceneNode->LocalRotation = node->Rot;
-					colladaSceneNode->LocalScale = node->Scale;
-				}
-			}
-			else
-				colladaSceneNode->setLocalTransform(node->Pos, node->Scale, node->Rot);
-
+			// add transform
+			output->addTransformData(entity, parent, node->Transform);
 
 			// construct geometry & controller in node
 			if (node->Instance.size() > 0)
@@ -1587,18 +1541,21 @@ namespace Skylicht
 				{
 					SMeshParam *pMesh = &m_listMesh[meshID];
 
-					CGameColladaMesh *mesh = constructColladaMesh(pMesh, node);
+					CMesh *mesh = constructMesh(pMesh, node);
 					if (mesh)
 					{
-						colladaSceneNode->setColladaMesh(mesh);
+						// add mesh data
+						CRenderMeshData *meshData = entity->addData<CRenderMeshData>();
+						meshData->setMesh(mesh);
+
+						// drop this mesh
 						mesh->drop();
 					}
 				}
-
 			}
 
 			// pop stack
-			stackScene.erase(--stackScene.end());
+			stackColladaNodes.erase(--stackColladaNodes.end());
 
 			// add child to continue loop
 			int nChild = (int)node->Childs.size();
@@ -1608,12 +1565,13 @@ namespace Skylicht
 
 				// set parent
 				childNode->Parent = node;
-				stackScene.push_back(childNode);
+				stackColladaNodes.push_back(childNode);
 			}
 		}
 
+		/*
 		// construct
-		std::list<SNodeParam*>::iterator i = listScene.begin(), end = listScene.end();
+		std::list<SNodeParam*>::iterator i = listColladaNodes.begin(), end = listColladaNodes.end();
 		while (i != end)
 		{
 			SNodeParam *pNode = (*i);
@@ -1638,10 +1596,7 @@ namespace Skylicht
 		// compute global box
 		colladaNode->OnAnimate(1);
 		colladaNode->computeBoudingBox();
-
-
-		CGameColladaSceneNode *resultNode = colladaNode;
-#endif
+		*/
 	}
 
 	CMesh* CColladaLoader::constructMesh(SMeshParam *mesh, SNodeParam* node)
@@ -1649,14 +1604,16 @@ namespace Skylicht
 		CMesh *colladaMesh = new CMesh();
 
 		// calc bindshapematrix
+		/*
 		if (mesh->Type == k_skinMesh)
 		{
-			//colladaMesh->BindShapeMatrix = mesh->BindShapeMatrix;
-			//colladaMesh->InvBindShapeMatrix = mesh->BindShapeMatrix;
-			//colladaMesh->InvBindShapeMatrix.makeInverse();
+			colladaMesh->BindShapeMatrix = mesh->BindShapeMatrix;
+			colladaMesh->InvBindShapeMatrix = mesh->BindShapeMatrix;
+			colladaMesh->InvBindShapeMatrix.makeInverse();
 		}
+		*/
 
-		colladaMesh->IsStatic = (mesh->Type == k_mesh);
+		bool staticMesh = mesh->Type == k_mesh;
 
 		// add mesh buffer
 		int numBuffer = (int)mesh->Triangles.size();
@@ -1683,7 +1640,7 @@ namespace Skylicht
 			IMeshBuffer *buffer = NULL;
 			buffer = constructMeshBuffer(mesh, &tri, i, needFixUV);
 
-			if (colladaMesh->IsStatic == true)
+			if (staticMesh == true)
 			{
 				// STATIC MESH BUFFER
 				if (m_loadTexcoord2 == true)
@@ -1693,7 +1650,7 @@ namespace Skylicht
 						convertToLightMapVertices(buffer, mesh, &tri);
 					}
 				}
-				else if ((effect && effect->HasBumpMapping) || m_tangent)
+				else if ((effect && effect->HasBumpMapping) || m_createTangent)
 				{
 					convertToTangentVertices(buffer);
 				}
@@ -1701,7 +1658,7 @@ namespace Skylicht
 			else
 			{
 				// SKIN MESH BUFFER
-				if (m_tangent)
+				if (m_createTangent)
 				{
 					// construct skin tangent buffer
 					convertToSkinTangentVertices(buffer);
@@ -1720,11 +1677,11 @@ namespace Skylicht
 			{
 				char materialName[512];
 				CStringImp::convertUnicodeToUTF8(effect->Id.c_str(), materialName);
-				colladaMesh->ColladaMaterialName.push_back(materialName);
+				colladaMesh->MaterialName.push_back(materialName);
 			}
 			else
 			{
-				colladaMesh->ColladaMaterialName.push_back("");
+				colladaMesh->MaterialName.push_back("");
 			}
 
 			if (buffer)
@@ -1735,7 +1692,6 @@ namespace Skylicht
 		}
 
 		// calc bbox
-		colladaMesh->Tangent = m_tangent;
 		colladaMesh->recalculateBoundingBox();
 
 		return colladaMesh;
@@ -1746,7 +1702,7 @@ namespace Skylicht
 		video::E_VERTEX_TYPE vertexType = buffer->getVertexType();
 
 		if (vertexType == video::EVT_2TCOORDS)
-			return fixUVLMTile(buffer);
+			fixUVLMTile(buffer);
 		else if (vertexType == video::EVT_TANGENTS)
 			fixUVTangentTile(buffer);
 		else if (vertexType == video::EVT_STANDARD)
@@ -2221,7 +2177,8 @@ namespace Skylicht
 
 		if (!normal)
 		{
-			getSceneManager()->getMeshManipulator()->recalculateNormals(buffer, true);
+			IMeshManipulator* meshManipulator = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
+			meshManipulator->recalculateNormals(buffer, true);
 
 			if (m_flipOx)
 			{
@@ -2251,7 +2208,6 @@ namespace Skylicht
 		return buffer;
 	}
 
-	// convertToSkinVertices
 	void CColladaLoader::convertToSkinVertices(IMeshBuffer* buffer)
 	{
 		// change vertex descriptor
@@ -2555,7 +2511,7 @@ namespace Skylicht
 			// if have the normal & texcoord
 			if (tri->NumElementPerVertex == 1)
 			{
-				// DAE EXPORT
+				// DAE Exporter
 				for (int i = 0, n = vertexBuffer->getVertexCount(); i < n; i++)
 				{
 					video::S3DVertex2TCoords& v = vertexBuffer->getVertex(i);
@@ -2717,7 +2673,7 @@ namespace Skylicht
 				video::S3DVertexSkin *vertex = NULL;
 				video::S3DVertexSkinTangents *vertexTangent = NULL;
 
-				if (m_tangent == true)
+				if (m_createTangent == true)
 					vertexTangent = (video::S3DVertexSkinTangents*)buffer->getVertexBuffer()->getVertices();
 				else
 					vertex = (video::S3DVertexSkin*)buffer->getVertexBuffer()->getVertices();
@@ -2740,7 +2696,7 @@ namespace Skylicht
 					float* boneIndex = NULL;
 					float* boneWeight = NULL;
 
-					if (m_tangent == true)
+					if (m_createTangent == true)
 					{
 						boneIndex = (float*)&(vertexTangent[realVertexID].BoneIndex);
 						boneWeight = (float*)&(vertexTangent[realVertexID].BoneWeight);
@@ -2794,7 +2750,7 @@ namespace Skylicht
 			video::S3DVertexSkin *vertex = NULL;
 			video::S3DVertexSkinTangents *vertexTangent = NULL;
 
-			if (m_tangent == true)
+			if (m_createTangent == true)
 				vertexTangent = (video::S3DVertexSkinTangents*)buffer->getVertexBuffer()->getVertices();
 			else
 				vertex = (video::S3DVertexSkin*)buffer->getVertexBuffer()->getVertices();
@@ -2807,7 +2763,7 @@ namespace Skylicht
 				float* boneIndex = NULL;
 				float* boneWeight = NULL;
 
-				if (m_tangent == true)
+				if (m_createTangent == true)
 				{
 					boneIndex = (float*)&(vertexTangent[j].BoneIndex);
 					boneWeight = (float*)&(vertexTangent[j].BoneWeight);
@@ -2835,6 +2791,7 @@ namespace Skylicht
 		}
 	}
 #endif 0
+
 	void CColladaLoader::cleanData()
 	{
 		m_listEffects.clear();
