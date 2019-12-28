@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _COLLADALOADER_FUNC_
-#define _COLLADALOADER_FUNC_
+#pragma once
 
 #include "pch.h"
 #include "CColladaLoader.h"
@@ -63,5 +62,3 @@ namespace Skylicht
 	int	getMeshWithUri(std::wstring& uri, ArrayMeshParams& listMeshParam);
 	int	getMeshWithControllerName(std::wstring& controllerName, ArrayMeshParams& listMeshParam);
 }
-
-#endif

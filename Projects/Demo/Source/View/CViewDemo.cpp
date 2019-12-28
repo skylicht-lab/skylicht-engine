@@ -36,10 +36,10 @@ void CViewDemo::onRender()
 	CContext *context = CContext::getInstance();
 
 	CCamera *camera = context->getActiveCamera();
-	CZone *zone = context->getActiveZone();
+	CScene *scene = context->getScene();
 
-	if (camera != NULL && zone != NULL)
+	if (camera != NULL && scene != NULL)
 	{
-		context->getRenderPipeline()->render(camera, zone->getEntityManager());
+		context->getRenderPipeline()->render(camera, scene->getEntityManager());
 	}
 }

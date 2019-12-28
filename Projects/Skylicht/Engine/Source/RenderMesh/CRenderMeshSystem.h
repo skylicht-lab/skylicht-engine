@@ -24,55 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
+#include "CRenderMeshData.h"
+#include "Entity/IRenderSystem.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	class CEditorCamera : 
-		public CComponentSystem,
-		public IEventReceiver
+	class CRenderMeshSystem : public IRenderSystem
 	{
 	protected:
-		f32	m_moveSpeed;
-		f32 m_rotateSpeed;
-		gui::ICursorControl *m_cursorControl;
-
-		core::position2df m_centerCursor;
-		core::position2df m_cursorPos;
-
-		bool	m_leftMousePress;
-		bool	m_rightMousePress;
-		bool	m_midMousePress;
-
-		bool	m_mouseWhell;
-		float	m_wheel;
+		core::array<CRenderMeshData*> m_meshs;
+		core::array<CWorldTransformData*> m_transforms;
 
 	public:
-		CEditorCamera();
+		CRenderMeshSystem();
 
-		virtual ~CEditorCamera();
+		virtual ~CRenderMeshSystem();
 
-		virtual void initComponent();
+		virtual void beginQuery();
 
-		virtual void updateComponent();
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 
-		virtual void endUpdate();
+		virtual void init(CEntityManager *entityManager);
 
-		virtual bool OnEvent(const SEvent& event);
+		virtual void update(CEntityManager *entityManager);
 
-	public:
-		inline void setRotateSpeed(float speed)
-		{
-			m_rotateSpeed = speed;
-		}
-
-		inline void setMoveSpeed(float speed)
-		{
-			m_moveSpeed = speed;
-		}
-
-		void updateInputRotate(core::vector3df &relativeRotation, f32 timeDiff);
-
-		void updateInputOffset(core::vector3df &offsetPosition, f32 timeDiff);
+		virtual void render(CEntityManager *entityManager);
 	};
 }

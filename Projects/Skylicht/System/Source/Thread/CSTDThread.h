@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYLICHT_SYSTEM_PTHREAD_H_
-#define _SKYLICHT_SYSTEM_PTHREAD_H_
+#pragma once
 
 #include "IMutex.h"
 #include "IThread.h"
@@ -51,7 +50,5 @@ namespace SkylichtSystem
 		static void* run(void *param);
 	};
 }
-
-#endif
 
 #endif

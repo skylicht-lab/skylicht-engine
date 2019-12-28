@@ -372,11 +372,11 @@ namespace Skylicht
 		char fileName[512];
 
 		CStringImp::convertUnicodeToUTF8(path.c_str(), realFilePath);
-		CStringImp::getFileName(realFilePath, fileName);
+		CStringImp::getFileName(fileName, realFilePath);
 
 		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
 
-		for (int i = 0, n = (int)textureFolder.size(); i < n; i++)
+		for (u32 i = 0, n = textureFolder.size(); i < n; i++)
 		{
 			std::string s = textureFolder[i];
 			s += "/";

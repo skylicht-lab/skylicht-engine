@@ -1,5 +1,4 @@
-#ifndef _VIEW_LAYER_H_
-#define _VIEW_LAYER_H_
+#pragma once
 
 #include "CView.h"
 
@@ -147,5 +146,3 @@ T* CViewLayer::replaceView(CView* oldView)
 
 	return NULL;
 }
-
-#endif

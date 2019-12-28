@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYDOME_RENDER_
-#define _SKYDOME_RENDER_
+#pragma once
 
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
@@ -56,5 +55,3 @@ namespace Skylicht
 		virtual void render(CEntityManager *entityManager);
 	};
 }
-
-#endif

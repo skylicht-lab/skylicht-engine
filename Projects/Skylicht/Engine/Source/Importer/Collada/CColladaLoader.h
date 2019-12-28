@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _COLLADALOADER_H_
-#define _COLLADALOADER_H_
+#pragma once
 
 #include "pch.h"
 #include "RenderMesh/CMesh.h"
@@ -280,7 +279,8 @@ namespace Skylicht
 
 	protected:
 
-		std::string				m_meshFile;
+		std::string m_meshFile;
+		std::string m_meshName;
 
 	protected:
 
@@ -401,5 +401,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

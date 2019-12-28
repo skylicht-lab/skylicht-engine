@@ -53,7 +53,7 @@ namespace Skylicht
 	void CEntity::removeAllData()
 	{
 		IEntityData **data = m_data.pointer();
-		for (int i = 0, n = (int)m_data.size(); i < n; i++)
+		for (u32 i = 0, n = m_data.size(); i < n; i++)
 			delete data[i];
 		m_data.clear();
 	}

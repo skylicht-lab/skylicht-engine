@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _JOYSTICK_H_
-#define _JOYSTICK_H_
+#pragma once
 
 #include "Utils/CGameSingleton.h"
 
@@ -71,5 +70,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

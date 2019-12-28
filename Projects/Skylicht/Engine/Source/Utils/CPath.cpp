@@ -81,7 +81,7 @@ namespace Skylicht
 			listFolder.push_back(resultPath);
 		}
 
-		for (int i = 0, n = (int)listFolder.size(); i < n; i++)
+		for (u32 i = 0, n = listFolder.size(); i < n; i++)
 		{
 			if (listFolder[i] != ".." || finalFolder.size() == 0)
 				finalFolder.push_back(listFolder[i]);
@@ -94,7 +94,7 @@ namespace Skylicht
 
 		std::string finalPath;
 
-		for (int i = 0, n = (int)finalFolder.size(); i < n; i++)
+		for (u32 i = 0, n = finalFolder.size(); i < n; i++)
 		{
 			finalPath += finalFolder[i];
 			if (i + 1 < n)

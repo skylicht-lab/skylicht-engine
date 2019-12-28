@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYDOME_DATA_
-#define _SKYDOME_DATA_
+#pragma once
 
 #include "Entity/IEntityData.h"
 
@@ -51,5 +50,3 @@ namespace Skylicht
 		void generateMesh();
 	};
 }
-
-#endif

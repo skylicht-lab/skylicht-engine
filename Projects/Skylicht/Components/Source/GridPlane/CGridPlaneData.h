@@ -1,5 +1,4 @@
-#ifndef _GRID_PLANE_DATA_H_
-#define _GRID_PLANE_DATA_H_
+#pragma once
 
 #include "Entity/IEntityData.h"
 #include "LineDraw/CLineDrawData.h"
@@ -19,5 +18,3 @@ namespace Skylicht
 		void init();
 	};
 }
-
-#endif

@@ -22,9 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _APPINCLUDE_H_
-#define _APPINCLUDE_H_
-
+#pragma once
 
 // IRRLICHT 3D ENGINE
 #include "irrlicht.h"
@@ -49,5 +47,3 @@ using namespace Skylicht;
 #include <queue>
 #include <fstream>
 #include <string>
-
-#endif
