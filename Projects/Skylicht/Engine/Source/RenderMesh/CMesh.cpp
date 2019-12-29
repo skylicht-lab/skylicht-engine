@@ -28,20 +28,15 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CMesh::CMesh()
-	{
-#ifdef _DEBUG
-		setDebugName("CMesh");
-#endif		
+	{	
 	}
 
-	//! ~CMesh
 	CMesh::~CMesh()
 	{
 		for (u32 i = 0; i < MeshBuffers.size(); ++i)
 			MeshBuffers[i]->drop();
 	}
 
-	//! clone this mesh
 	CMesh* CMesh::clone()
 	{
 		CMesh *newMesh = new CMesh();

@@ -24,22 +24,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Entity/IEntityData.h"
+
 namespace Skylicht
 {
-	class IEntityData
+	class CJointData : public IEntityData
 	{
 	public:
-		int EntityIndex;
+		bool BoneRoot;
 
+		std::string SID;
+		std::string BoneName;
+		
+		core::matrix4 AnimationMatrix;
+		core::matrix4 DefaultAnimationMatrix;
+		core::matrix4 DefaultRelativeMatrix;
 	public:
-		IEntityData()
-		{
 
-		}
+		CJointData();
 
-		virtual ~IEntityData()
-		{
-
-		}
+		virtual ~CJointData();
 	};
 }

@@ -41,6 +41,8 @@ namespace Skylicht
 
 		}
 
+		virtual void addTextureFolder(const char *folder) = 0;
+
 		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false) = 0;
 	};
 }

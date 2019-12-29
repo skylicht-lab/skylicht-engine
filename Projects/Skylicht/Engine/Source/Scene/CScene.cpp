@@ -143,7 +143,7 @@ namespace Skylicht
 			zone->updateAddRemoveObject();
 
 			// we add all child to array to optimize performance
-			core::array<CGameObject*>& listChilds = zone->getArrayChilds(this);
+			core::array<CGameObject*>& listChilds = zone->getArrayChilds(false);
 			CGameObject** objs = listChilds.pointer();
 
 			for (u32 i = 0, n = listChilds.size(); i < n; i++)
