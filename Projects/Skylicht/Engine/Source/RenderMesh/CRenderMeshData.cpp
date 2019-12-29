@@ -29,14 +29,19 @@ namespace Skylicht
 {
 	CRenderMeshData::CRenderMeshData() :
 		RenderMesh(NULL),
-		InstancingID(-1)
+		SkinMesh(NULL),
+		SoftwareSkinning(false)
 	{
 
 	}
 
 	CRenderMeshData::~CRenderMeshData()
 	{
-		RenderMesh->drop();
+		if (RenderMesh != NULL)
+			RenderMesh->drop();
+
+		if (SkinMesh != NULL)
+			SkinMesh->drop();
 	}
 
 	void CRenderMeshData::setMesh(CMesh *mesh)
@@ -47,7 +52,82 @@ namespace Skylicht
 			RenderMesh = NULL;
 		}
 
+		RenderMesh = mesh->clone();
+	}
+
+	void CRenderMeshData::initSoftwareSkinning()
+	{
+		CSkinnedMesh *mesh = new CSkinnedMesh();
+
+		for (int i = 0, n = RenderMesh->getMeshBufferCount(); i < n; i++)
+		{
+			// skinned mesh buffer
+			IMeshBuffer* skinnedMeshBuffer = RenderMesh->getMeshBuffer(i);
+
+			// alloc new mesh buffer
+			CMeshBuffer<video::S3DVertex>* meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(video::EVT_STANDARD), video::EIT_16BIT);
+
+			// get new index & new vertex buffer
+			CVertexBuffer<video::S3DVertex>* vertexBuffer = dynamic_cast<CVertexBuffer<video::S3DVertex>*>(meshBuffer->getVertexBuffer(0));
+			CIndexBuffer* indexBuffer = dynamic_cast<CIndexBuffer*>(meshBuffer->getIndexBuffer());
+			
+			if (skinnedMeshBuffer->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
+			{
+				// SKIN TANGENT
+				CVertexBuffer<video::S3DVertexSkinTangents>* skinTangentVertexBuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)skinnedMeshBuffer->getVertexBuffer(0);
+				int numVertex = skinTangentVertexBuffer->getVertexCount();
+
+				vertexBuffer->set_used(numVertex);
+				for (int i = 0; i < numVertex; i++)
+				{
+					video::S3DVertex& dest = vertexBuffer->getVertex(i);
+					video::S3DVertexSkinTangents& src = skinTangentVertexBuffer->getVertex(i);
+
+					dest.Pos = src.Pos;
+					dest.Normal = src.Normal;
+					dest.Color = src.Color;
+					dest.TCoords = src.TCoords;
+				}
+			}
+			else
+			{
+				// SKIN
+				CVertexBuffer<video::S3DVertexSkin>* skinVertexBuffer = (CVertexBuffer<video::S3DVertexSkin>*)skinnedMeshBuffer->getVertexBuffer(0);
+				int numVertex = skinVertexBuffer->getVertexCount();
+
+				vertexBuffer->set_used(numVertex);
+				for (int i = 0; i < numVertex; i++)
+				{
+					video::S3DVertex& dest = vertexBuffer->getVertex(i);
+					video::S3DVertexSkin& src = skinVertexBuffer->getVertex(i);
+
+					dest.Pos = src.Pos;
+					dest.Normal = src.Normal;
+					dest.Color = src.Color;
+					dest.TCoords = src.TCoords;
+				}
+			}
+
+			// copy indices
+			int numIndex = skinnedMeshBuffer->getIndexBuffer()->getIndexCount();
+			indexBuffer->set_used(numIndex);
+			for (int i = 0; i < numIndex; i++)
+			{
+				indexBuffer->setIndex(i, skinnedMeshBuffer->getIndexBuffer()->getIndex(i));
+			}
+
+			// copy material
+			meshBuffer->getMaterial() = skinnedMeshBuffer->getMaterial();
+			meshBuffer->setHardwareMappingHint(EHM_STREAM);
+
+			// add to mesh
+			mesh->addMeshBuffer(meshBuffer);
+			meshBuffer->drop();
+		}
+
+		// swap default render mesh to dynamic stream mesh
+		// see CSoftwareSkinningSystem todo next
+		SkinMesh = RenderMesh;
 		RenderMesh = mesh;
-		RenderMesh->grab();
 	}
 }

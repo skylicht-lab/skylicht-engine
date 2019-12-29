@@ -24,44 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CMesh.h"
-#include "Entity/IEntityData.h"
-#include "RenderMesh/CJointData.h"
+#include "Entity/IEntitySystem.h"
+#include "CRenderMeshData.h"
 
 namespace Skylicht
 {
-	class CSkinnedMesh : public CMesh
+	class CSoftwareSkinningSystem : public IEntitySystem
 	{
-	public:
-		struct SJoint
-		{
-			// skinningMatrix = joint.animMatrix (at pos 0,0,0) * joint.globalInversedMatrix * mesh.BindShapeMatrix
-			core::matrix4 GlobalInversedMatrix;
-
-			// this matrix will push to GPU
-			core::matrix4 SkinningMatrix;
-
-			// Entity index, that have JointData
-			int EntityIndex;
-
-			std::string Name;
-
-			SJoint()
-			{
-				EntityIndex = -1;
-			}
-		};
+	protected:
+		core::array<CRenderMeshData*> m_renderers;
 
 	public:
-		core::matrix4 BindShapeMatrix;
+		CSoftwareSkinningSystem();
 
-		core::array<SJoint> Joints;
+		virtual ~CSoftwareSkinningSystem();
 
-	public:
-		CSkinnedMesh();
+		virtual void beginQuery();
 
-		virtual ~CSkinnedMesh();
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 
-		virtual CMesh* clone();
+		virtual void init(CEntityManager *entityManager);
+
+		virtual void update(CEntityManager *entityManager);
+	
+	protected:
+		void softwareSkinning(CSkinnedMesh *renderMesh, CSkinnedMesh *originalMesh);
+
+		void softwareSkinningTangent(CSkinnedMesh *renderMesh, CSkinnedMesh *originalMesh);
+
+		void skinVertex(CSkinnedMesh::SJoint *arrayJoint, core::vector3df &vertex, core::vector3df &normal, video::S3DVertexSkinTangents* src, int boneIndex);
 	};
 }

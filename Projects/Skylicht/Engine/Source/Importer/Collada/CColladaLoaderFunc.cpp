@@ -467,7 +467,7 @@ namespace Skylicht
 		return -1;
 	}
 
-	int	getEffectWithUri(std::wstring& uri, ArrayEffects& listEffectParam)
+	int getEffectWithUri(std::wstring& uri, ArrayEffects& listEffectParam)
 	{
 		int n = (int)listEffectParam.size();
 		for (int i = 0; i < n; i++)
@@ -512,7 +512,7 @@ namespace Skylicht
 		return -1;
 	}
 
-	int	getMeshWithUri(std::wstring& uri, ArrayMeshParams& listMeshParam)
+	int getMeshWithUri(std::wstring& uri, ArrayMeshParams& listMeshParam)
 	{
 		int n = (int)listMeshParam.size();
 		for (int i = 0; i < n; i++)

@@ -24,44 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CMesh.h"
-#include "Entity/IEntityData.h"
-#include "RenderMesh/CJointData.h"
+#include "Entity/IEntitySystem.h"
+#include "CJointData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	class CSkinnedMesh : public CMesh
+	class CJointSystem : public IEntitySystem
 	{
-	public:
-		struct SJoint
-		{
-			// skinningMatrix = joint.animMatrix (at pos 0,0,0) * joint.globalInversedMatrix * mesh.BindShapeMatrix
-			core::matrix4 GlobalInversedMatrix;
+	protected:
+		core::array<CJointData*> m_joints;
 
-			// this matrix will push to GPU
-			core::matrix4 SkinningMatrix;
-
-			// Entity index, that have JointData
-			int EntityIndex;
-
-			std::string Name;
-
-			SJoint()
-			{
-				EntityIndex = -1;
-			}
-		};
+		core::array<CWorldTransformData*> m_transforms;
 
 	public:
-		core::matrix4 BindShapeMatrix;
 
-		core::array<SJoint> Joints;
+		CJointSystem();
 
-	public:
-		CSkinnedMesh();
+		virtual ~CJointSystem();
 
-		virtual ~CSkinnedMesh();
+		virtual void beginQuery();
 
-		virtual CMesh* clone();
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+
+		virtual void init(CEntityManager *entityManager);
+
+		virtual void update(CEntityManager *entityManager);
+
+		virtual void render(CEntityManager *entityManager);
 	};
 }

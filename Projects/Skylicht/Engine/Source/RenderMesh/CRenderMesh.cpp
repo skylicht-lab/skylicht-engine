@@ -73,6 +73,7 @@ namespace Skylicht
 
 		// map new entity index from src prefab
 		std::map<int, int> entityIndex;
+		std::vector<CRenderMeshData*> renderers;
 
 		// copy entity data
 		for (int i = 0; i < numEntities; i++)
@@ -109,6 +110,11 @@ namespace Skylicht
 			{
 				CRenderMeshData *spawnRender = spawnEntity->addData<CRenderMeshData>();
 				spawnRender->setMesh(srcRender->getMesh());
+				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());
+				if (spawnRender->isSoftwareSkinning() == true)
+					spawnRender->initSoftwareSkinning();
+
+				renderers.push_back(spawnRender);
 			}
 
 			// copy culling data
@@ -131,6 +137,20 @@ namespace Skylicht
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
 				spawnJoint->DefaultAnimationMatrix = srcJointData->DefaultAnimationMatrix;
 				spawnJoint->DefaultRelativeMatrix = srcJointData->DefaultRelativeMatrix;
+			}
+		}
+
+		// re-map joint with new entity in CEntityManager
+		for (CRenderMeshData *&r :renderers)
+		{
+			CSkinnedMesh *skinMesh = dynamic_cast<CSkinnedMesh*>(r->getMesh());
+			if (skinMesh != NULL)
+			{
+				for (u32 i = 0, n = skinMesh->Joints.size(); i < n; i++)
+				{
+					CSkinnedMesh::SJoint& joint = skinMesh->Joints[i];
+					joint.EntityIndex = entityIndex[joint.EntityIndex];
+				}
 			}
 		}
 	}
