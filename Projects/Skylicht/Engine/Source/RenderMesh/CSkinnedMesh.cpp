@@ -41,6 +41,7 @@ namespace Skylicht
 		newMesh->BoundingBox = BoundingBox;
 		newMesh->MaterialName = MaterialName;
 		newMesh->BindShapeMatrix = BindShapeMatrix;
+		newMesh->Joints = Joints;
 
 		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
 		{

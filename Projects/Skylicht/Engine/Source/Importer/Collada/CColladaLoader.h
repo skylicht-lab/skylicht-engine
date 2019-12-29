@@ -394,17 +394,7 @@ namespace Skylicht
 
 		void constructSkinMesh(SMeshParam *meshParam, CSkinnedMesh *mesh);
 
-		IMeshBuffer* constructMeshBuffer(SMeshParam *mesh, STrianglesParam* tri, int bufferID, bool &needFixUVTile);
-
-		void fixUVTitle(IMeshBuffer *buffer);
-
-		void fixUVStandardTile(IMeshBuffer *buffer);
-
-		void fixUVLMTile(IMeshBuffer *buffer);
-
-		void fixUVTangentTile(IMeshBuffer *buffer);
-
-		bool fixUV(core::vector2df& t1, core::vector2df& t2, core::vector2df& t3, int mul = 1);
+		IMeshBuffer* constructMeshBuffer(SMeshParam *mesh, STrianglesParam* tri, int bufferID, bool &needFixUVTile);		
 
 		void convertToSkinVertices(IMeshBuffer* buffer);
 

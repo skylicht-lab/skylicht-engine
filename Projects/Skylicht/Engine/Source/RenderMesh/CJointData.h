@@ -39,8 +39,8 @@ namespace Skylicht
 		core::matrix4 AnimationMatrix;
 		core::matrix4 DefaultAnimationMatrix;
 		core::matrix4 DefaultRelativeMatrix;
-	public:
 
+	public:
 		CJointData();
 
 		virtual ~CJointData();
