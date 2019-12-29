@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Transform/CWorldTransformData.h"
 #include "RenderMesh/CRenderMeshData.h"
+#include "Culling/CCullingData.h"
 
 namespace Skylicht
 {
@@ -80,7 +81,7 @@ namespace Skylicht
 			// map index
 			entityIndex[srcEntity->getIndex()] = spawnEntity->getIndex();
 
-			// copy transform
+			// copy transform data
 			CWorldTransformData* srcTransform = srcEntity->getData<CWorldTransformData>();
 			if (srcTransform != NULL)
 			{
@@ -106,6 +107,15 @@ namespace Skylicht
 			{
 				CRenderMeshData *spawnRender = spawnEntity->addData<CRenderMeshData>();
 				spawnRender->setMesh(srcRender->getMesh());
+			}
+
+			// copy culling data
+			CCullingData *srcCulling = srcEntity->getData<CCullingData>();
+			if (srcCulling != NULL)
+			{
+				CCullingData *spawnCulling = spawnEntity->addData<CCullingData>();
+				spawnCulling->Type = srcCulling->Type;
+				spawnCulling->Visible = srcCulling->Visible;
 			}
 		}
 	}

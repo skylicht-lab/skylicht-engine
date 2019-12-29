@@ -24,29 +24,35 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CEntity.h"
-#include "IEntitySystem.h"
+#include "CCullingData.h"
+#include "Entity/IRenderSystem.h"
+#include "Transform/CWorldTransformData.h"
+#include "RenderMesh/CRenderMeshData.h"
 
 namespace Skylicht
 {
-	class CEntityManager;
-
-	class IRenderSystem : public IEntitySystem
+	class CCullingSystem : public IRenderSystem
 	{
+	protected:
+		core::array<CCullingData*> m_cullings;
+		core::array<CWorldTransformData*> m_transforms;
+		core::array<CRenderMeshData*> m_meshs;
+
 	public:
-		IRenderSystem()
-		{
-		}
+		CCullingSystem();
 
-		virtual ~IRenderSystem()
-		{
-		}
+		virtual ~CCullingSystem();
 
-		virtual void render(CEntityManager *entityManager) = 0;
+		virtual void beginQuery();
 
-		virtual void postRender(CEntityManager *entityManager)
-		{
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 
-		}
+		virtual void init(CEntityManager *entityManager);
+
+		virtual void update(CEntityManager *entityManager);
+
+		virtual void render(CEntityManager *entityManager);
+
+		virtual void postRender(CEntityManager *entityManager);
 	};
 }
