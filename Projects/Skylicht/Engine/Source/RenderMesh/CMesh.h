@@ -35,7 +35,7 @@ namespace Skylicht
 
 		virtual ~CMesh();
 
-		CMesh* clone();
+		virtual CMesh* clone();
 
 		virtual u32 getMeshBufferCount() const;
 

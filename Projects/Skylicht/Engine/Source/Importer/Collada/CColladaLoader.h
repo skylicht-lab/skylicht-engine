@@ -26,8 +26,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "RenderMesh/CMesh.h"
+#include "RenderMesh/CSkinnedMesh.h"
 
 #include "Importer/IMeshImporter.h"
+
+#include "RenderMesh/CJointData.h"
 
 namespace Skylicht
 {
@@ -282,6 +285,9 @@ namespace Skylicht
 		std::string m_meshFile;
 		std::string m_meshName;
 
+		std::string m_unit;
+		float m_unitScale;
+
 	protected:
 
 		bool m_zUp;
@@ -295,23 +301,28 @@ namespace Skylicht
 
 		float m_maxUVTile;
 
-		std::vector<std::string>	m_textureFolder;
+		std::vector<std::string> m_textureFolder;
+
+		std::map<std::string, CJointData*> m_nameToJointData;
+		std::map<std::string, CJointData*> m_sidToJointData;
+
 	protected:
 
-		ArrayImages					m_listImages;
-		ArrayEffects				m_listEffects;
-		ArrayMaterials				m_listMaterial;
-		ArrayMeshParams				m_listMesh;
-		ArrayNodeParams				m_listNode;
+		ArrayImages m_listImages;
+		ArrayEffects m_listEffects;
+		ArrayMaterials m_listMaterial;
+		ArrayMeshParams m_listMesh;
+		ArrayNodeParams m_listNode;
 
-		SNodeParam					*m_colladaRoot;
+		SNodeParam *m_colladaRoot;
 
 		// Add to support read DAE from FBX Converter
-		typedef std::vector<s32>	ArrayShort;
-		std::map<SColladaMeshVertexMap, ArrayShort>	m_meshVertexIndex;
+		typedef std::vector<s32> ArrayShort;
+		std::map<SColladaMeshVertexMap, ArrayShort> m_meshVertexIndex;
 
 	public:
 		CColladaLoader();
+
 		virtual ~CColladaLoader();
 
 		void setLoadTexCoord2(bool b)
@@ -335,6 +346,8 @@ namespace Skylicht
 			m_textureFolder = folder;
 		}
 
+		virtual void addTextureFolder(const char *folder);
+
 		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false);
 		
 	protected:
@@ -353,6 +366,8 @@ namespace Skylicht
 
 		void parseSceneNode(io::IXMLReader *xmlRead);
 
+		void parseUnit(io::IXMLReader *xmlRead);
+
 	protected:
 
 		SMeshParam* parseSkinNode(io::IXMLReader *xmlRead);
@@ -365,15 +380,19 @@ namespace Skylicht
 
 	protected:
 
+		CJointData* findJointData(const char *name);
+
 		void loadEffectTexture();
 
 		ITexture *getTextureResource(std::wstring& refName, ArrayEffectParams& params);
 
 		void constructEntityPrefab(CEntityPrefab *output);
-
+		
 		CMesh* constructMesh(SMeshParam *mesh, SNodeParam* node);
 
-		void constructSkinMesh(SMeshParam *meshParam, CMesh *mesh);
+		void constructSkinMesh(std::list<SNodeParam*>& nodes);
+
+		void constructSkinMesh(SMeshParam *meshParam, CSkinnedMesh *mesh);
 
 		IMeshBuffer* constructMeshBuffer(SMeshParam *mesh, STrianglesParam* tri, int bufferID, bool &needFixUVTile);
 

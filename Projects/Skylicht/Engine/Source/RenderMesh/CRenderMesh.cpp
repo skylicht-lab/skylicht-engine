@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Transform/CWorldTransformData.h"
 #include "RenderMesh/CRenderMeshData.h"
+#include "RenderMesh/CJointData.h"
 #include "Culling/CCullingData.h"
 
 namespace Skylicht
@@ -60,16 +61,17 @@ namespace Skylicht
 
 	void CRenderMesh::initFromPrefab(CEntityPrefab *prefab)
 	{
+		CEntityManager *entityManager = m_gameObject->getEntityManager();
+
 		// root entity of object
 		CEntity *rootEntity = m_gameObject->getEntity();
 		CWorldTransformData *rootTransform = rootEntity->getData<CWorldTransformData>();
 
 		// spawn childs entity
 		int numEntities = prefab->getNumEntities();
-
-		CEntityManager *entityManager = m_gameObject->getEntityManager();
 		CEntity** entities = entityManager->createEntity(numEntities, m_childs);
 
+		// map new entity index from src prefab
 		std::map<int, int> entityIndex;
 
 		// copy entity data
@@ -116,6 +118,19 @@ namespace Skylicht
 				CCullingData *spawnCulling = spawnEntity->addData<CCullingData>();
 				spawnCulling->Type = srcCulling->Type;
 				spawnCulling->Visible = srcCulling->Visible;
+			}
+
+			// copy joint data
+			CJointData *srcJointData = srcEntity->getData<CJointData>();
+			if (srcJointData != NULL)
+			{
+				CJointData *spawnJoint = spawnEntity->addData<CJointData>();
+				spawnJoint->BoneRoot = srcJointData->BoneRoot;
+				spawnJoint->SID = srcJointData->SID;
+				spawnJoint->BoneName = srcJointData->BoneName;
+				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
+				spawnJoint->DefaultAnimationMatrix = srcJointData->DefaultAnimationMatrix;
+				spawnJoint->DefaultRelativeMatrix = srcJointData->DefaultRelativeMatrix;
 			}
 		}
 	}

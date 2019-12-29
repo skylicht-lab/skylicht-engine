@@ -16,7 +16,7 @@ namespace Skylicht
 
 		virtual ~CMeshManager();
 
-		CEntityPrefab* loadModel(const char *resource, bool loadNormalMap = true, bool loadTexcoord2 = true, bool createBatching = false);
+		CEntityPrefab* loadModel(const char *resource, const char *texturePath, bool loadNormalMap = true, bool loadTexcoord2 = true, bool createBatching = false);
 
 		void releaseAllPrefabs();
 	};

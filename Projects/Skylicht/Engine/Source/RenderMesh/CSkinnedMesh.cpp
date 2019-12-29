@@ -22,24 +22,31 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CSkinnedMesh.h"
 
 namespace Skylicht
 {
-	class IEntityData
+	CSkinnedMesh::CSkinnedMesh()
 	{
-	public:
-		int EntityIndex;
+	}
 
-	public:
-		IEntityData()
+	CSkinnedMesh::~CSkinnedMesh()
+	{
+	}
+
+	CMesh* CSkinnedMesh::clone()
+	{
+		CSkinnedMesh *newMesh = new CSkinnedMesh();
+		newMesh->BoundingBox = BoundingBox;
+		newMesh->MaterialName = MaterialName;
+		newMesh->BindShapeMatrix = BindShapeMatrix;
+
+		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
 		{
-
+			newMesh->addMeshBuffer(MeshBuffers[i]);
 		}
 
-		virtual ~IEntityData()
-		{
-
-		}
-	};
+		return newMesh;
+	}
 }

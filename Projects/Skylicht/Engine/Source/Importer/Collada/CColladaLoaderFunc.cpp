@@ -382,9 +382,10 @@ namespace Skylicht
 			s += "/";
 			s += fileName;
 
-			if (fs->existFile(s.c_str()) == true)
+			ITexture *texture = CTextureManager::getInstance()->getTexture(s.c_str());
+			if (texture != NULL)
 			{
-				return CTextureManager::getInstance()->getTexture(s.c_str());
+				return texture;
 			}
 		}
 

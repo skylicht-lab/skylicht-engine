@@ -76,7 +76,7 @@ void CViewInit::initScene()
 
 	// test dae model
 	CMeshManager *meshManager = CMeshManager::getInstance();
-	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/monkey.dae");
+	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures");
 	if (prefab != NULL)
 	{
 		// instance object
@@ -84,9 +84,9 @@ void CViewInit::initScene()
 		model->addComponent<CRenderMesh>()->initFromPrefab(prefab);
 
 		// transform
-		// CTransformEuler *transform = model->getTransformEuler();
-		// transform->setPosition(core::vector3df(0.0f, 0.0f, 2.0f));
-		// transform->setYaw(45.0f);
+		CTransformEuler *transform = model->getTransformEuler();
+		transform->setPosition(core::vector3df(0.0f, 0.0f, 2.0f));
+		transform->setYaw(45.0f);
 	}
 
 	// save to context
@@ -130,7 +130,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-}
+		}
 #else
 
 #if defined(WINDOWS_STORE)

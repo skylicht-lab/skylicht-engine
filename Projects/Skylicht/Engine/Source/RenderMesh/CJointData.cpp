@@ -22,24 +22,19 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CJointData.h"
 
 namespace Skylicht
 {
-	class IEntityData
+	CJointData::CJointData() :
+		BoneRoot(false)
 	{
-	public:
-		int EntityIndex;
 
-	public:
-		IEntityData()
-		{
+	}
 
-		}
+	CJointData::~CJointData()
+	{
 
-		virtual ~IEntityData()
-		{
-
-		}
-	};
+	}
 }
