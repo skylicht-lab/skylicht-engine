@@ -22,31 +22,20 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CEntity.h"
-#include "IEntitySystem.h"
+#include "pch.h"
+#include "CCullingData.h"
 
 namespace Skylicht
 {
-	class CEntityManager;
-
-	class IRenderSystem : public IEntitySystem
+	CCullingData::CCullingData() :
+		Type(CCullingData::FrustumBox),
+		Visible(true)
 	{
-	public:
-		IRenderSystem()
-		{
-		}
 
-		virtual ~IRenderSystem()
-		{
-		}
+	}
 
-		virtual void render(CEntityManager *entityManager) = 0;
+	CCullingData::~CCullingData()
+	{
 
-		virtual void postRender(CEntityManager *entityManager)
-		{
-
-		}
-	};
+	}
 }

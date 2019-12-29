@@ -854,7 +854,7 @@ namespace Skylicht
 
 		static int findStringInList(std::vector<std::string>& listString, const char *find)
 		{
-			for (u32 i = 0, n = listString.size(); i < n; i++)
+			for (int i = 0, n = (int)listString.size(); i < n; i++)
 			{
 				if (listString[i] == find)
 				{
