@@ -34,6 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/CEntityPrefab.h"
 #include "RenderMesh/CRenderMeshData.h"
+#include "Culling/CCullingData.h"
 
 namespace Skylicht
 {
@@ -1554,11 +1555,15 @@ namespace Skylicht
 					CMesh *mesh = constructMesh(pMesh, node);
 					if (mesh)
 					{
+						// add render mesh
 						CRenderMeshData *meshData = entity->addData<CRenderMeshData>();
-						meshData->setMesh(mesh);
+						meshData->setMesh(mesh);						
 
 						// drop this mesh
 						mesh->drop();
+
+						// add culling data
+						entity->addData<CCullingData>();
 					}
 				}
 			}

@@ -28,15 +28,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CTransformComponentSystem.h"
 #include "Transform/CWorldTransformSystem.h"
 #include "RenderMesh/CRenderMeshSystem.h"
-
+#include "Culling/CCullingSystem.h"
 
 namespace Skylicht
 {
-	CEntityManager::CEntityManager():
+	CEntityManager::CEntityManager() :
 		m_camera(NULL)
 	{
 		addSystem<CComponentTransformSystem>();
 		addSystem<CWorldTransformSystem>();
+		addRenderSystem<CCullingSystem>();
 		addRenderSystem<CRenderMeshSystem>();
 	}
 
@@ -89,7 +90,7 @@ namespace Skylicht
 	}
 
 	CEntity** CEntityManager::createEntity(int num, core::array<CEntity*>& entities)
-	{		
+	{
 		entities.reallocate(num);
 		entities.set_used(0);
 
@@ -97,7 +98,7 @@ namespace Skylicht
 		{
 			CEntity *entity = new CEntity(this);
 			m_entities.push_back(entity);
-			
+
 			entities.push_back(entity);
 		}
 
@@ -119,7 +120,7 @@ namespace Skylicht
 		{
 			transformData->Name = transform->getName();
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;			
+			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
 		}
 	}
 
@@ -148,19 +149,16 @@ namespace Skylicht
 		CEntity** entity = m_entities.pointer();
 		int numEntity = m_entities.size();
 
-		for (int i = 0; i < numEntity; i++)
-		{
-			if (entity[i]->isAlive())
+		for (IEntitySystem* &s : m_systems)
+		{			
+			for (int i = 0; i < numEntity; i++)
 			{
-				for (IEntitySystem* &s : m_systems)
+				if (entity[i]->isAlive())
 				{
 					s->onQuery(this, entity[i]);
 				}
 			}
-		}
 
-		for (IEntitySystem* &s : m_systems)
-		{
 			s->update(this);
 		}
 	}
@@ -170,6 +168,11 @@ namespace Skylicht
 		for (IRenderSystem* &s : m_renders)
 		{
 			s->render(this);
+		}
+
+		for (IRenderSystem* &s : m_renders)
+		{
+			s->postRender(this);
 		}
 	}
 

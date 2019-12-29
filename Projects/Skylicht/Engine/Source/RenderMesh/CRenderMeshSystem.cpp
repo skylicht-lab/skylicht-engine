@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CRenderMeshSystem.h"
 
+#include "Culling/CCullingData.h"
+
 namespace Skylicht
 {
 	CRenderMeshSystem::CRenderMeshSystem()
@@ -48,11 +50,22 @@ namespace Skylicht
 		CRenderMeshData *meshData = entity->getData<CRenderMeshData>();
 		if (meshData != NULL)
 		{
-			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-			if (transform != NULL)
+			bool cullingVisible = true;
+
+			// get culling result from CCullingSystem
+			CCullingData *cullingData = entity->getData<CCullingData>();
+			if (cullingData != NULL)
+				cullingVisible = cullingData->Visible;
+
+			// only render visible culling mesh
+			if (cullingVisible == true)
 			{
-				m_meshs.push_back(meshData);
-				m_transforms.push_back(transform);
+				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+				if (transform != NULL)
+				{
+					m_meshs.push_back(meshData);
+					m_transforms.push_back(transform);
+				}
 			}
 		}
 	}
@@ -78,7 +91,7 @@ namespace Skylicht
 		{
 			CMesh *mesh = m_meshs[i]->getMesh();
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
-			
+
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
 				IMeshBuffer* meshBuffer = mesh->getMeshBuffer(j);

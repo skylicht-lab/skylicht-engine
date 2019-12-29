@@ -24,29 +24,29 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CEntity.h"
-#include "IEntitySystem.h"
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	class CEntityManager;
-
-	class IRenderSystem : public IEntitySystem
+	class CCullingData : public IEntityData
 	{
 	public:
-		IRenderSystem()
+		enum ECulling
 		{
-		}
+			BoundingBox,
+			FrustumBox,
+			Occlusion,
+		};
 
-		virtual ~IRenderSystem()
-		{
-		}
+		core::aabbox3df BBox;
 
-		virtual void render(CEntityManager *entityManager) = 0;
+		ECulling Type;
 
-		virtual void postRender(CEntityManager *entityManager)
-		{
+		bool Visible;
 
-		}
+	public:
+		CCullingData();
+
+		virtual ~CCullingData();
 	};
 }
