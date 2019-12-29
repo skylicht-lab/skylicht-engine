@@ -34,9 +34,9 @@ namespace Skylicht
 	{
 	protected:
 		CMesh *RenderMesh;
+		CMesh *SkinMesh;
 
-		int InstancingID;
-
+		bool SoftwareSkinning;
 	public:
 
 		CRenderMeshData();
@@ -48,6 +48,23 @@ namespace Skylicht
 			return RenderMesh;
 		}
 
+		inline CMesh *getSkinMesh()
+		{
+			return SkinMesh;
+		}
+
 		void setMesh(CMesh *mesh);
+
+		void initSoftwareSkinning();
+
+		inline bool isSoftwareSkinning()
+		{
+			return SoftwareSkinning;
+		}
+
+		void setSoftwareSkinning(bool b)
+		{
+			SoftwareSkinning = b;
+		}
 	};
 }

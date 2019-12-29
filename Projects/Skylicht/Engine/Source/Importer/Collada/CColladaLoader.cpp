@@ -391,10 +391,8 @@ namespace Skylicht
 		const std::wstring textureNodeName(L"texture");
 		const std::wstring extraNodeName(L"extra");
 		const std::wstring newParamName(L"newparam");
-
 		const std::wstring initFromNode(L"init_from");
 		const std::wstring sourceNode(L"source");
-
 		const std::wstring libraryEffect(L"library_effects");
 
 		while (xmlRead->read())
@@ -996,7 +994,7 @@ namespace Skylicht
 		const std::wstring sourceNode(L"source");
 		const std::wstring bindShapeMatrix(L"bind_shape_matrix");
 
-		int	numJoints;
+		int numJoints;
 		std::wstring jointsName;
 
 		int numArray = 0;
@@ -1067,7 +1065,7 @@ namespace Skylicht
 								f = new float[count];
 								readFloatsInsideElement(xmlRead, f, count);
 							}
-							// <param>	inside <accessor>
+							// <param> inside <accessor>
 							else if (xmlRead->getNodeName() == paramSectionName)
 							{
 								if (xmlRead->getAttributeValue(L"name") != NULL)
@@ -1157,9 +1155,6 @@ namespace Skylicht
 		for (int i = 0; i < numJoints; i++)
 		{
 			SJointParam newJoint;
-
-			// We will add name later
-			// newJoint.Name = L"";
 
 			core::matrix4 mat;
 			mat.setM(f + i * 16);
@@ -1595,7 +1590,7 @@ namespace Skylicht
 					CMesh *mesh = constructMesh(pMesh, node);
 					if (mesh)
 					{
-						// add render mesh
+						// add & clone new render mesh
 						CRenderMeshData *meshData = entity->addData<CRenderMeshData>();
 						meshData->setMesh(mesh);
 
@@ -1639,6 +1634,12 @@ namespace Skylicht
 				{
 					int meshID = getMeshWithControllerName(node->Instance, m_listMesh);
 					constructSkinMesh(&m_listMesh[meshID], skinnedMesh);
+
+					// add software skinning
+					// if (skinnedMesh->Joints.size() >= 70)
+					{
+						renderMesh->setSoftwareSkinning(true);
+					}
 				}
 			}
 		}
@@ -1714,8 +1715,8 @@ namespace Skylicht
 				}
 			}
 
-			if (needFixUV && s_fixUV)
-				fixUVTitle(buffer);
+			//if (needFixUV && s_fixUV)
+			//	fixUVTitle(buffer);
 
 			if (effect != NULL)
 			{
@@ -1742,213 +1743,6 @@ namespace Skylicht
 		colladaMesh->setHardwareMappingHint(EHM_STATIC);
 
 		return colladaMesh;
-	}
-
-	void CColladaLoader::fixUVTitle(IMeshBuffer *buffer)
-	{
-		video::E_VERTEX_TYPE vertexType = buffer->getVertexType();
-
-		if (vertexType == video::EVT_2TCOORDS)
-			fixUVLMTile(buffer);
-		else if (vertexType == video::EVT_TANGENTS)
-			fixUVTangentTile(buffer);
-		else if (vertexType == video::EVT_STANDARD)
-			fixUVStandardTile(buffer);
-	}
-
-	void CColladaLoader::fixUVStandardTile(IMeshBuffer *buffer)
-	{
-		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
-		{
-			CVertexBuffer<video::S3DVertex>* vertexBuffer = new CVertexBuffer<video::S3DVertex>();
-			CIndexBuffer* indexBuffer = new CIndexBuffer();
-
-			video::S3DVertex *srcVertexBuffer = (video::S3DVertex*)buffer->getVertexBuffer(j)->getVertices();
-
-			u16 *srcIndexBuffer = (u16*)buffer->getIndexBuffer()->getIndices();
-			u32 numIndex = buffer->getIndexBuffer()->getIndexCount();
-
-			for (u32 i = 0; i < numIndex; i += 3)
-			{
-				u16 i1 = srcIndexBuffer[i];
-				u16 i2 = srcIndexBuffer[i + 1];
-				u16 i3 = srcIndexBuffer[i + 2];
-
-				video::S3DVertex p1 = srcVertexBuffer[i1];
-				video::S3DVertex p2 = srcVertexBuffer[i2];
-				video::S3DVertex p3 = srcVertexBuffer[i3];
-
-				if (fixUV(p1.TCoords, p2.TCoords, p3.TCoords) == false)
-				{
-					fixUV(p1.TCoords, p2.TCoords, p3.TCoords, 2);
-				}
-
-				{
-					int vIndex = vertexBuffer->getVertexCount();
-
-					vertexBuffer->addVertex(p1);
-					vertexBuffer->addVertex(p2);
-					vertexBuffer->addVertex(p3);
-
-					indexBuffer->addIndex(vIndex);
-					indexBuffer->addIndex(vIndex + 1);
-					indexBuffer->addIndex(vIndex + 2);
-				}
-			}
-
-			if (vertexBuffer->getVertexCount() > 30000)
-			{
-				printf("%s have max index mesh %d \n", m_meshFile.c_str(), vertexBuffer->getVertexCount());
-			}
-
-			buffer->setVertexBuffer(vertexBuffer, j);
-			buffer->setIndexBuffer(indexBuffer);
-
-			vertexBuffer->drop();
-			indexBuffer->drop();
-		}
-	}
-
-	void CColladaLoader::fixUVLMTile(IMeshBuffer *buffer)
-	{
-		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
-		{
-			CVertexBuffer<video::S3DVertex2TCoords>* vertexBuffer = new CVertexBuffer<video::S3DVertex2TCoords>();
-			CIndexBuffer* indexBuffer = new CIndexBuffer();
-
-			video::S3DVertex2TCoords *srcVertexBuffer = (video::S3DVertex2TCoords*)buffer->getVertexBuffer(j)->getVertices();
-
-			u16 *srcIndexBuffer = (u16*)buffer->getIndexBuffer()->getIndices();
-			u32 numIndex = buffer->getIndexBuffer()->getIndexCount();
-
-			for (u32 i = 0; i < numIndex; i += 3)
-			{
-				u16 i1 = srcIndexBuffer[i];
-				u16 i2 = srcIndexBuffer[i + 1];
-				u16 i3 = srcIndexBuffer[i + 2];
-
-				video::S3DVertex2TCoords p1 = srcVertexBuffer[i1];
-				video::S3DVertex2TCoords p2 = srcVertexBuffer[i2];
-				video::S3DVertex2TCoords p3 = srcVertexBuffer[i3];
-
-				if (fixUV(p1.TCoords, p2.TCoords, p3.TCoords) == false)
-				{
-					fixUV(p1.TCoords, p2.TCoords, p3.TCoords, 2);
-				}
-
-				{
-					int vIndex = vertexBuffer->getVertexCount();
-
-					vertexBuffer->addVertex(p1);
-					vertexBuffer->addVertex(p2);
-					vertexBuffer->addVertex(p3);
-
-					indexBuffer->addIndex(vIndex);
-					indexBuffer->addIndex(vIndex + 1);
-					indexBuffer->addIndex(vIndex + 2);
-				}
-			}
-
-			if (vertexBuffer->getVertexCount() > 30000)
-			{
-				printf("%s have max index mesh %d \n", m_meshFile.c_str(), vertexBuffer->getVertexCount());
-			}
-
-			buffer->setVertexBuffer(vertexBuffer, j);
-			buffer->setIndexBuffer(indexBuffer);
-
-			vertexBuffer->drop();
-			indexBuffer->drop();
-		}
-	}
-
-	void CColladaLoader::fixUVTangentTile(IMeshBuffer *buffer)
-	{
-		// todo later
-	}
-
-	bool CColladaLoader::fixUV(core::vector2df& t1, core::vector2df& t2, core::vector2df& t3, int mul)
-	{
-		int tile = (int)m_maxUVTile * mul;
-		float uvMax = 2.0f * m_maxUVTile * mul;
-
-		if (fabsf(t1.X - t2.X) > uvMax ||
-			fabsf(t3.X - t2.X) > uvMax ||
-			fabsf(t3.X - t1.X) > uvMax ||
-			fabsf(t1.Y - t2.Y) > uvMax ||
-			fabsf(t3.Y - t2.Y) > uvMax ||
-			fabsf(t3.Y - t1.Y) > uvMax)
-		{
-			return false;
-		}
-
-		// TODO
-		// MOVE UV: FROM > 8 = 0 TO 8
-		int offsetX = (int)t1.X / tile;
-		if (offsetX < (int)t2.X / tile)
-			offsetX = (int)t2.X / tile;
-		if (offsetX < (int)t3.X / tile)
-			offsetX = (int)t3.X / tile;
-
-		int offsetY = (int)t1.Y / tile;
-		if (offsetY < (int)t2.Y / tile)
-			offsetY = (int)t2.Y / tile;
-		if (offsetY < (int)t3.Y / tile)
-			offsetY = (int)t3.Y / tile;
-
-		t1.X = t1.X - offsetX * m_maxUVTile;
-		t2.X = t2.X - offsetX * m_maxUVTile;
-		t3.X = t3.X - offsetX * m_maxUVTile;
-
-		t1.Y = t1.Y - offsetY * m_maxUVTile;
-		t2.Y = t2.Y - offsetY * m_maxUVTile;
-		t3.Y = t3.Y - offsetY * m_maxUVTile;
-
-		// TODO
-		// MOVE UV: FROM > 16 = -8 TO 0
-		offsetX = (int)t1.X / tile;
-		if (offsetX < (int)t2.X / tile)
-			offsetX = (int)t2.X / tile;
-		if (offsetX < (int)t3.X / tile)
-			offsetX = (int)t3.X / tile;
-
-		offsetY = (int)t1.Y / tile;
-		if (offsetY < (int)t2.Y / tile)
-			offsetY = (int)t2.Y / tile;
-		if (offsetY < (int)t3.Y / tile)
-			offsetY = (int)t3.Y / tile;
-
-		t1.X = t1.X - offsetX * m_maxUVTile;
-		t2.X = t2.X - offsetX * m_maxUVTile;
-		t3.X = t3.X - offsetX * m_maxUVTile;
-
-		t1.Y = t1.Y - offsetY * m_maxUVTile;
-		t2.Y = t2.Y - offsetY * m_maxUVTile;
-		t3.Y = t3.Y - offsetY * m_maxUVTile;
-
-		// TODO:
-		// MOVE UV: FROM < -8 = -8 TO 0
-		offsetX = (int)t1.X / tile;
-		if (offsetX > (int)t2.X / tile)
-			offsetX = (int)t2.X / tile;
-		if (offsetX > (int)t3.X / tile)
-			offsetX = (int)t3.X / tile;
-
-		offsetY = (int)t1.Y / tile;
-		if (offsetY > (int)t2.Y / tile)
-			offsetY = (int)t2.Y / tile;
-		if (offsetY > (int)t3.Y / tile)
-			offsetY = (int)t3.Y / tile;
-
-		t1.X = t1.X - offsetX * m_maxUVTile;
-		t2.X = t2.X - offsetX * m_maxUVTile;
-		t3.X = t3.X - offsetX * m_maxUVTile;
-
-		t1.Y = t1.Y - offsetY * m_maxUVTile;
-		t2.Y = t2.Y - offsetY * m_maxUVTile;
-		t3.Y = t3.Y - offsetY * m_maxUVTile;
-
-		return true;
 	}
 
 	IMeshBuffer* CColladaLoader::constructMeshBuffer(SMeshParam *mesh, STrianglesParam* tri, int bufferID, bool &needFixUVTile)
@@ -2795,8 +2589,8 @@ namespace Skylicht
 					// we need replace the smallest weight
 					if (nBone >= 4)
 					{
-						int		minIndex = 0;
-						float	minWeight = boneWeight[0];
+						int minIndex = 0;
+						float minWeight = boneWeight[0];
 
 						for (int i = 1; i < 4; i++)
 						{

@@ -22,46 +22,61 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CMesh.h"
-#include "Entity/IEntityData.h"
-#include "RenderMesh/CJointData.h"
+#include "pch.h"
+#include "CJointSystem.h"
 
 namespace Skylicht
 {
-	class CSkinnedMesh : public CMesh
+	CJointSystem::CJointSystem()
 	{
-	public:
-		struct SJoint
+
+	}
+
+	CJointSystem::~CJointSystem()
+	{
+
+	}
+
+	void CJointSystem::beginQuery()
+	{
+		m_joints.set_used(0);
+		m_transforms.set_used(0);
+	}
+
+	void CJointSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	{
+		CJointData *joint = entity->getData<CJointData>();
+		if (joint != NULL)
 		{
-			// skinningMatrix = joint.animMatrix (at pos 0,0,0) * joint.globalInversedMatrix * mesh.BindShapeMatrix
-			core::matrix4 GlobalInversedMatrix;
-
-			// this matrix will push to GPU
-			core::matrix4 SkinningMatrix;
-
-			// Entity index, that have JointData
-			int EntityIndex;
-
-			std::string Name;
-
-			SJoint()
+			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+			if (transform != NULL)
 			{
-				EntityIndex = -1;
+				m_joints.push_back(joint);
+				m_transforms.push_back(transform);
 			}
-		};
+		}
+	}
 
-	public:
-		core::matrix4 BindShapeMatrix;
+	void CJointSystem::init(CEntityManager *entityManager)
+	{
 
-		core::array<SJoint> Joints;
+	}
 
-	public:
-		CSkinnedMesh();
+	void CJointSystem::update(CEntityManager *entityManager)
+	{
+		CJointData** joints = m_joints.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
 
-		virtual ~CSkinnedMesh();
+		for (u32 i = 0, n = m_joints.size(); i < n; i++)
+		{
+			// alway update bone transform for animation
+			transforms[i]->Relative = joints[i]->AnimationMatrix;
+			transforms[i]->HasChanged = true;
+		}
+	}
 
-		virtual CMesh* clone();
-	};
+	void CJointSystem::render(CEntityManager *entityManager)
+	{
+
+	}
 }
