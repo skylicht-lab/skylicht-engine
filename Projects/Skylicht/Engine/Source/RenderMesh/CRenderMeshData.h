@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 #include "CMesh.h"
+#include "CSkinnedMesh.h"
 
 namespace Skylicht
 {

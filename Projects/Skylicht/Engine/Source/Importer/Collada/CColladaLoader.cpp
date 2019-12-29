@@ -34,6 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/CEntityPrefab.h"
 #include "RenderMesh/CRenderMeshData.h"
+#include "RenderMesh/CJointData.h"
 #include "Culling/CCullingData.h"
 
 namespace Skylicht
@@ -46,7 +47,9 @@ namespace Skylicht
 		m_createBatchMesh(false),
 		m_createTangent(false),
 		m_loadNormalMap(false),
-		m_maxUVTile(16.0f)
+		m_maxUVTile(16.0f),
+		m_unit("meter"),
+		m_unitScale(1.0f)
 	{
 
 	}
@@ -54,6 +57,11 @@ namespace Skylicht
 	CColladaLoader::~CColladaLoader()
 	{
 
+	}
+
+	void CColladaLoader::addTextureFolder(const char *folder)
+	{
+		m_textureFolder.push_back(folder);
 	}
 
 	bool CColladaLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
@@ -129,6 +137,10 @@ namespace Skylicht
 				{
 					readLUpAxis = true;
 				}
+				else if (nodeName == L"unit")
+				{
+					parseUnit(xmlRead);
+				}
 
 			}
 			case io::EXN_ELEMENT_END:
@@ -166,6 +178,26 @@ namespace Skylicht
 		cleanData();
 
 		return true;
+	}
+
+	void CColladaLoader::parseUnit(io::IXMLReader *xmlRead)
+	{
+		char unitName[64] = { 0 };
+		char unitValue[64] = { 0 };
+
+		const wchar_t *unitNameW = xmlRead->getAttributeValue(L"name");
+		if (unitNameW != NULL)
+		{
+			CStringImp::convertUnicodeToUTF8(unitNameW, unitName);
+			m_unit = unitName;
+		}
+
+		const wchar_t *meterW = xmlRead->getAttributeValue(L"meter");
+		if (meterW != NULL)
+		{
+			CStringImp::convertUnicodeToUTF8(meterW, unitValue);
+			m_unitScale = (float)atof(unitValue);
+		}
 	}
 
 	void CColladaLoader::parseImageNode(io::IXMLReader *xmlRead, SColladaImage* image)
@@ -967,12 +999,12 @@ namespace Skylicht
 		int	numJoints;
 		std::wstring jointsName;
 
-		int						numArray = 0;
-		float					*transformArray = NULL;
-		float					*weightArray = NULL;
+		int numArray = 0;
+		float *transformArray = NULL;
+		float *weightArray = NULL;
 
-		std::vector<s32>				&vCountArray = mesh->JointVertexIndex;
-		std::vector<s32>				vArray;
+		std::vector<s32> &vCountArray = mesh->JointVertexIndex;
+		std::vector<s32> vArray;
 
 		while (xmlRead->read())
 		{
@@ -1244,7 +1276,7 @@ namespace Skylicht
 		if (m_colladaRoot == NULL)
 		{
 			m_colladaRoot = new SNodeParam();
-						
+
 			wchar_t namew[512];
 			CStringImp::convertUTF8ToUnicode(m_meshName.c_str(), namew);
 
@@ -1465,8 +1497,8 @@ namespace Skylicht
 
 	void CColladaLoader::constructEntityPrefab(CEntityPrefab *output)
 	{
-		std::list<SNodeParam*>	stackColladaNodes;
-		std::list<SNodeParam*>	listColladaNodes;
+		std::list<SNodeParam*> stackColladaNodes;
+		std::list<SNodeParam*> listColladaNodes;
 
 		int nNode = (int)m_listNode.size();
 		for (int i = 0; i < nNode; i++)
@@ -1474,13 +1506,18 @@ namespace Skylicht
 			SNodeParam* root = m_listNode[i];
 			stackColladaNodes.push_back(root);
 		}
-		
+
 		char name[512] = { 0 };
+
+		// unit scale
+		float unitScale = 1.0f;
+		if (m_unit != "meter")
+			unitScale = m_unitScale;
 
 		while (stackColladaNodes.size())
 		{
 			SNodeParam *node = stackColladaNodes.back();
-			listColladaNodes.push_back(node);			
+			listColladaNodes.push_back(node);
 
 			// find parent entity
 			CEntity *parent = NULL;
@@ -1493,53 +1530,56 @@ namespace Skylicht
 			// tag this entity
 			node->Entity = entity;
 
-			/*
+			// add joint data if this node is JOINT
 			if (node->Type == L"JOINT")
 			{
-				// setup for bone node
-				CGameColladaJointSceneNode *bone = new CGameColladaJointSceneNode(parent, smgr, -1);
-				if (node->ChildLevel == 0)
-					bone->BoneRoot = true;
+				CJointData *jointData = entity->addData<CJointData>();
 
-				bone->RootNode = colladaNode;
-				colladaSceneNode = bone;
-				isJointNode = true;
+				if (node->ChildLevel == 0)
+					jointData->BoneRoot = true;
+
+				if (node->SID.size() > 0)
+				{
+					CStringImp::convertUnicodeToUTF8(node->SID.c_str(), name);
+					jointData->SID = name;
+				}
+
+				CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
+				jointData->BoneName = name;
+
+				// default matrix
+				jointData->DefaultRelativeMatrix = node->Transform;
+
+				// get parent
+				CJointData *parentJoint = NULL;
+				if (parent != NULL)
+					parentJoint = parent->getData<CJointData>();
+
+				// calc animation matrix
+				if (jointData->BoneRoot == true || parentJoint == NULL)
+					jointData->DefaultAnimationMatrix = node->Transform;
+				else
+					jointData->DefaultAnimationMatrix.setbyproduct_nocheck(parentJoint->DefaultAnimationMatrix, jointData->DefaultRelativeMatrix);
+
+				// current animation is default matrix
+				jointData->AnimationMatrix = jointData->DefaultAnimationMatrix;
+
+				// store for next construct skinned mesh
+				m_nameToJointData[jointData->BoneName] = jointData;
+				m_sidToJointData[jointData->SID] = jointData;
 			}
 			else
 			{
-				colladaSceneNode = new CGameColladaSceneNode(parent, smgr, -1);
-				isJointNode = false;
+				CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
 			}
-
-			colladaSceneNode->setColladaComponent(m_component);
-			colladaSceneNode->setName(name);
-			colladaSceneNode->setOwner(m_gameObject);
-			*/
-
-			/*
-			// store joint sid node
-			if (node->SID.size() > 0)
-			{
-				CStringImp::convertUnicodeToUTF8(node->SID.c_str(), name);
-
-				m_component->registerSID(name, colladaSceneNode);
-				colladaSceneNode->setSIDName(name);
-			}
-			*/
-
-			CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
-
-			/*
-			// store this node
-			m_component->registerName(name, colladaSceneNode);
-
-			// store joint node
-			if (isJointNode)
-				m_component->registerBip(name, (CGameColladaJointSceneNode*)colladaSceneNode);
-			*/
 
 			// add transform
-			output->addTransformData(entity, parent, node->Transform, name);
+			core::matrix4 mat = node->Transform;
+			core::vector3df unitTranslate = mat.getTranslation() * unitScale;
+			mat.setTranslation(unitTranslate);
+
+			// add entity
+			output->addTransformData(entity, parent, mat, name);
 
 			// construct geometry & controller in node
 			if (node->Instance.size() > 0)
@@ -1557,7 +1597,7 @@ namespace Skylicht
 					{
 						// add render mesh
 						CRenderMeshData *meshData = entity->addData<CRenderMeshData>();
-						meshData->setMesh(mesh);						
+						meshData->setMesh(mesh);
 
 						// drop this mesh
 						mesh->drop();
@@ -1583,51 +1623,37 @@ namespace Skylicht
 			}
 		}
 
-		/*
-		// construct
-		std::list<SNodeParam*>::iterator i = listColladaNodes.begin(), end = listColladaNodes.end();
-		while (i != end)
+		// construct apply bone weight to skinned mesh
+		constructSkinMesh(listColladaNodes);
+	}
+
+	void CColladaLoader::constructSkinMesh(std::list<SNodeParam*>& nodes)
+	{
+		for (SNodeParam*& node : nodes)
 		{
-			SNodeParam *pNode = (*i);
-
-			// apply skin
-			CGameColladaMesh* pMesh = pNode->SceneNode->getColladaMesh();
-			if (pMesh != NULL && pMesh->IsStaticMesh == false)
+			CRenderMeshData *renderMesh = node->Entity->getData<CRenderMeshData>();
+			if (renderMesh != NULL)
 			{
-				int meshID = getMeshWithControllerName(pNode->Instance, m_listMesh);
-				constructSkinMesh(&m_listMesh[meshID], pMesh);
-
-				// this is animation mesh
-				m_component->setAnimationMesh(true);
+				CSkinnedMesh *skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderMesh->getMesh());
+				if (skinnedMesh != NULL)
+				{
+					int meshID = getMeshWithControllerName(node->Instance, m_listMesh);
+					constructSkinMesh(&m_listMesh[meshID], skinnedMesh);
+				}
 			}
-
-			// clear node
-			pNode->SceneNode->drop();
-			pNode->SceneNode = NULL;
-			i++;
 		}
-
-		// compute global box
-		colladaNode->OnAnimate(1);
-		colladaNode->computeBoudingBox();
-		*/
 	}
 
 	CMesh* CColladaLoader::constructMesh(SMeshParam *mesh, SNodeParam* node)
 	{
-		CMesh *colladaMesh = new CMesh();
-
-		// calc bindshapematrix
-		/*
-		if (mesh->Type == k_skinMesh)
-		{
-			colladaMesh->BindShapeMatrix = mesh->BindShapeMatrix;
-			colladaMesh->InvBindShapeMatrix = mesh->BindShapeMatrix;
-			colladaMesh->InvBindShapeMatrix.makeInverse();
-		}
-		*/
+		CMesh *colladaMesh = NULL;
 
 		bool staticMesh = mesh->Type == k_mesh;
+
+		if (staticMesh == true)
+			colladaMesh = new CMesh();
+		else
+			colladaMesh = new CSkinnedMesh();
 
 		// add mesh buffer
 		int numBuffer = (int)mesh->Triangles.size();
@@ -1671,6 +1697,10 @@ namespace Skylicht
 			}
 			else
 			{
+				// BIND SHAPE MATRIX
+				CSkinnedMesh *skinnedMesh = (CSkinnedMesh*)colladaMesh;
+				skinnedMesh->BindShapeMatrix = mesh->BindShapeMatrix;
+
 				// SKIN MESH BUFFER
 				if (m_createTangent)
 				{
@@ -1707,6 +1737,9 @@ namespace Skylicht
 
 		// calc bbox
 		colladaMesh->recalculateBoundingBox();
+
+		// notify create static hardware buffer
+		colladaMesh->setHardwareMappingHint(EHM_STATIC);
 
 		return colladaMesh;
 	}
@@ -1963,6 +1996,10 @@ namespace Skylicht
 		// index buffer
 		core::array<u32> indices;
 
+		float unitScale = 1.0f;
+		if (m_unit != "meter")
+			unitScale = m_unitScale;
+
 		// if have the normal & texcoord
 		if (tri->NumElementPerVertex == 1)
 		{
@@ -1990,6 +2027,9 @@ namespace Skylicht
 					vtx.Pos.Y = position->FloatArray[idx + 1];
 					vtx.Pos.Z = position->FloatArray[idx + 2];
 				}
+
+				// scale centimeter to meter
+				vtx.Pos *= unitScale;
 
 				// set normal
 				if (normal != NULL)
@@ -2095,6 +2135,9 @@ namespace Skylicht
 					vtx.Pos.Y = position->FloatArray[idx + 1];
 					vtx.Pos.Z = position->FloatArray[idx + 2];
 				}
+
+				// scale centimeter to meter
+				vtx.Pos *= unitScale;
 
 				// set normal
 				if (vertexIndex.normalId != -1)
@@ -2213,14 +2256,14 @@ namespace Skylicht
 			mat = effect->Mat;
 
 			if (effect->Mat.getTexture(0) != NULL)
-				mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("LightingTexture");
+				mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
 			else
-				mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("LightingColor");
+				mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColor");
 		}
 		else
 		{
 			SMaterial& mat = buffer->getMaterial();
-			mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("LightingColor");
+			mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColor");
 		}
 
 		buffer->recalculateBoundingBox();
@@ -2247,7 +2290,7 @@ namespace Skylicht
 		}
 
 		// assign skin material
-		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
+		// buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
 	}
 
 	void CColladaLoader::convertToSkinTangentVertices(IMeshBuffer* buffer)
@@ -2378,7 +2421,7 @@ namespace Skylicht
 		}
 
 		// assign skin material
-		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
+		// buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
 	}
 
 	void CColladaLoader::convertToTangentVertices(IMeshBuffer* buffer)
@@ -2593,8 +2636,24 @@ namespace Skylicht
 		}
 	}
 
-#if 0
-	void CColladaLoader::constructSkinMesh(SMeshParam *meshParam, CMesh *mesh)
+	CJointData* CColladaLoader::findJointData(const char *name)
+	{
+		if (m_sidToJointData.find(name) != m_sidToJointData.end())
+		{
+			// found in SID
+			return m_sidToJointData[name];
+		}
+
+		if (m_nameToJointData.find(name) != m_nameToJointData.end())
+		{
+			// found in Bone Name
+			return m_nameToJointData[name];
+		}
+
+		return NULL;
+	}
+
+	void CColladaLoader::constructSkinMesh(SMeshParam *meshParam, CSkinnedMesh *mesh)
 	{
 		char name[1024];
 		int nJoint = (int)meshParam->Joints.size();
@@ -2611,14 +2670,14 @@ namespace Skylicht
 		// set up joint
 		for (int i = 0; i < nJoint; i++)
 		{
-			mesh->Joints.push_back(CSkinMesh::SJoint());
-			CSkinMesh::SJoint& newJoint = mesh->Joints.getLast();
+			mesh->Joints.push_back(CSkinnedMesh::SJoint());
+			CSkinnedMesh::SJoint& newJoint = mesh->Joints.getLast();
 
 			SJointParam& joint = meshParam->Joints[i];
 
 			std::wstring sidName;
 
-			bool hasJointNode = false;
+			CJointData *jointData = NULL;
 			bool end = false;
 
 			do
@@ -2642,18 +2701,23 @@ namespace Skylicht
 				begin = p;
 
 				CStringImp::convertUnicodeToUTF8(sidName.c_str(), name);
-				hasJointNode = hasJointNode(name);
+				jointData = findJointData(name);
 
 				// we continue search joint name
-				if (hasJointNode == false)
+				if (jointData == NULL)
 					sidName += L" ";
-			} while (hasJointNode == NULL || end == true);
+
+			} while (jointData == NULL || end == true);
 
 			// set joint name
 			joint.Name = sidName;
 
-			newJoint.Name = joint.Name;
-			newJoint.GlobalInversedMatrix = joint.InvMatrix;
+			if (jointData != NULL)
+			{
+				newJoint.Name = jointData->BoneName;
+				newJoint.EntityIndex = jointData->EntityIndex;
+				newJoint.GlobalInversedMatrix = joint.InvMatrix;
+			}
 
 			if (end == true)
 			{
@@ -2670,6 +2734,7 @@ namespace Skylicht
 		for (u32 i = 0; i < meshParam->Triangles.size(); i++)
 			numVertex += meshParam->Triangles[i].NumPolygon;
 
+		// bone count per vertex
 		numVertex = numVertex * 3;
 		int *nBoneCount = new int[numVertex];
 		memset(nBoneCount, 0, sizeof(int)*numVertex);
@@ -2809,13 +2874,15 @@ namespace Skylicht
 			}
 		}
 	}
-#endif 0
 
 	void CColladaLoader::cleanData()
 	{
 		m_listEffects.clear();
 		m_listImages.clear();
 		m_listMaterial.clear();
+
+		m_nameToJointData.clear();
+		m_sidToJointData.clear();
 
 		ArrayMeshParams::iterator i = m_listMesh.begin(), end = m_listMesh.end();
 		while (i != end)

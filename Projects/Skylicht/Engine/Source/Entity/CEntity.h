@@ -100,6 +100,10 @@ namespace Skylicht
 			return NULL;
 		}
 
+		// also save this entity index
+		data->EntityIndex = m_index;
+
+		// add to list data
 		m_data.push_back(newData);
 		return newData;
 	}
