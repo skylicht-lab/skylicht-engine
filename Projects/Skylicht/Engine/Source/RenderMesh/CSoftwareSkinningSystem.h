@@ -53,5 +53,7 @@ namespace Skylicht
 		void softwareSkinningTangent(CSkinnedMesh *renderMesh, CSkinnedMesh *originalMesh);
 
 		void skinVertex(CSkinnedMesh::SJoint *arrayJoint, core::vector3df &vertex, core::vector3df &normal, video::S3DVertexSkinTangents* src, int boneIndex);
+		
+		void skinVertex(CSkinnedMesh::SJoint *arrayJoint, core::vector3df &vertex, core::vector3df &normal, video::S3DVertexSkin* src, int boneIndex);
 	};
 }
