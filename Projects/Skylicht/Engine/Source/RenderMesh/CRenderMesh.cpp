@@ -110,10 +110,13 @@ namespace Skylicht
 			{
 				CRenderMeshData *spawnRender = spawnEntity->addData<CRenderMeshData>();
 				spawnRender->setMesh(srcRender->getMesh());
+				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
 				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());
-				if (spawnRender->isSoftwareSkinning() == true)
+				
+				// init software skinning
+				if (spawnRender->isSkinnedMesh() && spawnRender->isSoftwareSkinning() == true)
 					spawnRender->initSoftwareSkinning();
-
+				
 				renderers.push_back(spawnRender);
 			}
 
@@ -132,6 +135,7 @@ namespace Skylicht
 			{
 				CJointData *spawnJoint = spawnEntity->addData<CJointData>();
 				spawnJoint->BoneRoot = srcJointData->BoneRoot;
+				spawnJoint->Depth = srcJointData->Depth;
 				spawnJoint->SID = srcJointData->SID;
 				spawnJoint->BoneName = srcJointData->BoneName;
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
@@ -142,14 +146,24 @@ namespace Skylicht
 
 		// re-map joint with new entity in CEntityManager
 		for (CRenderMeshData *&r :renderers)
-		{
-			CSkinnedMesh *skinMesh = dynamic_cast<CSkinnedMesh*>(r->getMesh());
-			if (skinMesh != NULL)
+		{						
+			if (r->isSkinnedMesh() == true)
 			{
-				for (u32 i = 0, n = skinMesh->Joints.size(); i < n; i++)
+				CSkinnedMesh *skinMesh = NULL;
+
+				if (r->isSoftwareSkinning() == true)
+					skinMesh = dynamic_cast<CSkinnedMesh*>(r->getOriginalMesh());
+				else
+					skinMesh = dynamic_cast<CSkinnedMesh*>(r->getMesh());
+
+				if (skinMesh != NULL)
 				{
-					CSkinnedMesh::SJoint& joint = skinMesh->Joints[i];
-					joint.EntityIndex = entityIndex[joint.EntityIndex];
+					for (u32 i = 0, n = skinMesh->Joints.size(); i < n; i++)
+					{
+						CSkinnedMesh::SJoint& joint = skinMesh->Joints[i];
+						joint.EntityIndex = entityIndex[joint.EntityIndex];
+						joint.JointData = entityManager->getEntity(joint.EntityIndex)->getData<CJointData>();
+					}
 				}
 			}
 		}

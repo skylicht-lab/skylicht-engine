@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CRenderMeshData.h"
 #include "RenderMesh/CJointData.h"
 #include "Culling/CCullingData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
@@ -1282,10 +1283,18 @@ namespace Skylicht
 
 			m_colladaRoot->Parent = NULL;
 
+			float unitScale = 1.0f;
+			if (m_unit != "meter")
+				unitScale = m_unitScale;
+			
 			if (m_flipOx == true)
 			{
 				// Inverse X
-				m_colladaRoot->Transform.setScale(core::vector3df(-1, 1, 1));
+				m_colladaRoot->Transform.setScale(core::vector3df(-unitScale, unitScale, unitScale));
+			}
+			else
+			{
+				m_colladaRoot->Transform.setScale(unitScale);
 			}
 
 			if (m_zUp)
@@ -1506,8 +1515,6 @@ namespace Skylicht
 
 		// unit scale
 		float unitScale = 1.0f;
-		if (m_unit != "meter")
-			unitScale = m_unitScale;
 
 		while (stackColladaNodes.size())
 		{
@@ -1519,16 +1526,32 @@ namespace Skylicht
 			if (node->Parent && node->Parent->Entity)
 				parent = node->Parent->Entity;
 
+			// get parent
+			CWorldTransformData *parentTransform = NULL;
+			if (parent != NULL)
+				parentTransform = parent->getData<CWorldTransformData>();
+
 			// create entity
 			CEntity* entity = output->createEntity();
 
 			// tag this entity
 			node->Entity = entity;
 
+			// add transform
+			core::matrix4 relativeTransform = node->Transform;
+			core::vector3df unitTranslate = relativeTransform.getTranslation() * unitScale;
+			relativeTransform.setTranslation(unitTranslate);
+
+			// add entity with transform
+			CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
+			output->addTransformData(entity, parent, relativeTransform, name);
+
 			// add joint data if this node is JOINT
 			if (node->Type == L"JOINT")
 			{
 				CJointData *jointData = entity->addData<CJointData>();
+				jointData->BoneName = name;
+				jointData->Depth = node->ChildLevel;
 
 				if (node->ChildLevel == 0)
 					jointData->BoneRoot = true;
@@ -1539,42 +1562,30 @@ namespace Skylicht
 					jointData->SID = name;
 				}
 
-				CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
-				jointData->BoneName = name;
-
-				// default matrix
-				jointData->DefaultRelativeMatrix = node->Transform;
-
-				// get parent
-				CJointData *parentJoint = NULL;
-				if (parent != NULL)
-					parentJoint = parent->getData<CJointData>();
+				// default relative matrix
+				jointData->DefaultRelativeMatrix = relativeTransform;
 
 				// calc animation matrix
-				if (jointData->BoneRoot == true || parentJoint == NULL)
-					jointData->DefaultAnimationMatrix = node->Transform;
+				if (jointData->BoneRoot == true)
+					jointData->DefaultAnimationMatrix = relativeTransform;
 				else
-					jointData->DefaultAnimationMatrix.setbyproduct_nocheck(parentJoint->DefaultAnimationMatrix, jointData->DefaultRelativeMatrix);
+					jointData->DefaultAnimationMatrix.setbyproduct_nocheck(parentTransform->World, jointData->DefaultRelativeMatrix);
 
-				// current animation is default matrix
+				// animation is default matrix
 				jointData->AnimationMatrix = jointData->DefaultAnimationMatrix;
+				jointData->RelativeAnimationMatrix = jointData->DefaultRelativeMatrix;
 
 				// store for next construct skinned mesh
 				m_nameToJointData[jointData->BoneName] = jointData;
 				m_sidToJointData[jointData->SID] = jointData;
 			}
+
+			// calc world transform
+			CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
+			if (parentTransform != NULL)
+				transformData->World.setbyproduct_nocheck(parentTransform->World, transformData->Relative);
 			else
-			{
-				CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
-			}
-
-			// add transform
-			core::matrix4 mat = node->Transform;
-			core::vector3df unitTranslate = mat.getTranslation() * unitScale;
-			mat.setTranslation(unitTranslate);
-
-			// add entity
-			output->addTransformData(entity, parent, mat, name);
+				transformData->World = transformData->Relative;
 
 			// construct geometry & controller in node
 			if (node->Instance.size() > 0)
@@ -1640,6 +1651,8 @@ namespace Skylicht
 					{
 						renderMesh->setSoftwareSkinning(true);
 					}
+
+					renderMesh->setSkinnedMesh(true);
 				}
 			}
 		}
@@ -1730,8 +1743,9 @@ namespace Skylicht
 			}
 
 			if (buffer)
-			{
+			{				
 				colladaMesh->addMeshBuffer(buffer);
+				buffer->recalculateBoundingBox();
 				buffer->drop();
 			}
 		}
@@ -1791,8 +1805,6 @@ namespace Skylicht
 		core::array<u32> indices;
 
 		float unitScale = 1.0f;
-		if (m_unit != "meter")
-			unitScale = m_unitScale;
 
 		// if have the normal & texcoord
 		if (tri->NumElementPerVertex == 1)
@@ -2043,21 +2055,21 @@ namespace Skylicht
 			}
 		}
 
-		if (effect)
-		{
-			SMaterial& mat = buffer->getMaterial();
+		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		SMaterial& mat = buffer->getMaterial();
 
+		if (effect)
+		{			
 			mat = effect->Mat;
 
 			if (effect->Mat.getTexture(0) != NULL)
-				mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+				mat.MaterialType = shaderMgr->getShaderIDByName("TextureColor");
 			else
-				mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColor");
+				mat.MaterialType = shaderMgr->getShaderIDByName("VertexColor");
 		}
 		else
 		{
-			SMaterial& mat = buffer->getMaterial();
-			mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColor");
+			mat.MaterialType = shaderMgr->getShaderIDByName("VertexColor");
 		}
 
 		buffer->recalculateBoundingBox();
@@ -2084,7 +2096,7 @@ namespace Skylicht
 		}
 
 		// assign skin material
-		// buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
+		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
 	}
 
 	void CColladaLoader::convertToSkinTangentVertices(IMeshBuffer* buffer)
@@ -2215,7 +2227,7 @@ namespace Skylicht
 		}
 
 		// assign skin material
-		// buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
+		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
 	}
 
 	void CColladaLoader::convertToTangentVertices(IMeshBuffer* buffer)

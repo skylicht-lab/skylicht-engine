@@ -23,27 +23,27 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CJointSystem.h"
+#include "CJointAnimationSystem.h"
 
 namespace Skylicht
 {
-	CJointSystem::CJointSystem()
+	CJointAnimationSystem::CJointAnimationSystem()
 	{
 
 	}
 
-	CJointSystem::~CJointSystem()
+	CJointAnimationSystem::~CJointAnimationSystem()
 	{
 
 	}
 
-	void CJointSystem::beginQuery()
+	void CJointAnimationSystem::beginQuery()
 	{
 		m_joints.set_used(0);
 		m_transforms.set_used(0);
 	}
 
-	void CJointSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CJointAnimationSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
 		CJointData *joint = entity->getData<CJointData>();
 		if (joint != NULL)
@@ -57,26 +57,21 @@ namespace Skylicht
 		}
 	}
 
-	void CJointSystem::init(CEntityManager *entityManager)
+	void CJointAnimationSystem::init(CEntityManager *entityManager)
 	{
 
 	}
 
-	void CJointSystem::update(CEntityManager *entityManager)
+	void CJointAnimationSystem::update(CEntityManager *entityManager)
 	{
 		CJointData** joints = m_joints.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();
 
+		// calc animation matrix for CSkinnedMeshSystem
 		for (u32 i = 0, n = m_joints.size(); i < n; i++)
 		{
-			// alway update bone transform for animation
-			transforms[i]->Relative = joints[i]->RelativeAnimationMatrix;
-			transforms[i]->HasChanged = true;
+			// CJointData *joint = joints[i];
+			// joint->AnimationMatrix = do later (see CColladaLoader::constructEntityPrefab)
 		}
-	}
-
-	void CJointSystem::render(CEntityManager *entityManager)
-	{
-
 	}
 }

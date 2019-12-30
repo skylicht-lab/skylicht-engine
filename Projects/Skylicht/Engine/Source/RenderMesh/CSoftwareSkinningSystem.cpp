@@ -64,18 +64,74 @@ namespace Skylicht
 			CRenderMeshData *renderer = renderers[i];
 
 			CSkinnedMesh *renderMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
-			CSkinnedMesh *skinMesh = dynamic_cast<CSkinnedMesh*>(renderer->getSkinMesh());
+			CSkinnedMesh *originalMesh = dynamic_cast<CSkinnedMesh*>(renderer->getOriginalMesh());
 
-			if (skinMesh->getMeshBuffer(0)->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
-				softwareSkinningTangent(renderMesh, skinMesh);
+			if (originalMesh->getMeshBuffer(0)->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
+				softwareSkinningTangent(renderMesh, originalMesh);
 			else
-				softwareSkinning(renderMesh, skinMesh);
+				softwareSkinning(renderMesh, originalMesh);
 		}
 	}
 
 	void CSoftwareSkinningSystem::softwareSkinning(CSkinnedMesh *renderMesh, CSkinnedMesh *originalMesh)
 	{
+		CSkinnedMesh::SJoint *arrayJoint = originalMesh->Joints.pointer();
 
+		for (u32 i = 0, n = originalMesh->getMeshBufferCount(); i < n; i++)
+		{
+			IMeshBuffer* originalMeshBuffer = originalMesh->getMeshBuffer(i);
+			CVertexBuffer<video::S3DVertexSkin>* originalVertexbuffer = (CVertexBuffer<video::S3DVertexSkin>*)originalMeshBuffer->getVertexBuffer(0);
+			video::S3DVertexSkin *vertex = (video::S3DVertexSkin*)originalVertexbuffer->getVertices();
+
+			int numVertex = originalVertexbuffer->getVertexCount();
+
+			IMeshBuffer* skinnedMeshBuffer = renderMesh->getMeshBuffer(i);
+			CVertexBuffer<video::S3DVertex>* vertexbuffer = (CVertexBuffer<video::S3DVertex>*)skinnedMeshBuffer->getVertexBuffer(0);
+			video::S3DVertex *resultVertex = (video::S3DVertex*)vertexbuffer->getVertices();
+
+			// skinning
+			for (int i = 0; i < numVertex; i++)
+			{
+				resultVertex->Pos.X = 0.0f;
+				resultVertex->Pos.Y = 0.0f;
+				resultVertex->Pos.Z = 0.0f;
+
+				resultVertex->Normal.X = 0.0f;
+				resultVertex->Normal.Y = 0.0f;
+				resultVertex->Normal.Z = 0.0f;
+
+				// bone 0
+				if (vertex->BoneWeight.X > 0.0f)
+					skinVertex(arrayJoint, resultVertex->Pos, resultVertex->Normal, vertex, 0);
+
+				// bone 1
+				if (vertex->BoneWeight.Y > 0.0f)
+					skinVertex(arrayJoint, resultVertex->Pos, resultVertex->Normal, vertex, 1);
+
+				// bone 2
+				if (vertex->BoneWeight.Z > 0.0f)
+					skinVertex(arrayJoint, resultVertex->Pos, resultVertex->Normal, vertex, 2);
+
+				// bone 3
+				if (vertex->BoneWeight.W > 0.0f)
+					skinVertex(arrayJoint, resultVertex->Pos, resultVertex->Normal, vertex, 3);
+
+				// apply skin normal
+				float length = resultVertex->Normal.X*resultVertex->Normal.X +
+					resultVertex->Normal.Y*resultVertex->Normal.Y +
+					resultVertex->Normal.Z*resultVertex->Normal.Z;
+
+				float invLength = 1.0f / sqrtf(length);
+				resultVertex->Normal.X = resultVertex->Normal.X*invLength;
+				resultVertex->Normal.Y = resultVertex->Normal.Y*invLength;
+				resultVertex->Normal.Z = resultVertex->Normal.Z*invLength;
+
+				++resultVertex;
+				++vertex;
+			}
+
+			renderMesh->setDirty(EBT_VERTEX);
+		}
 	}
 
 	void CSoftwareSkinningSystem::softwareSkinningTangent(CSkinnedMesh *renderMesh, CSkinnedMesh *originalMesh)
@@ -84,16 +140,13 @@ namespace Skylicht
 
 		for (u32 i = 0, n = originalMesh->getMeshBufferCount(); i < n; i++)
 		{
-			// skinned mesh buffer
-			IMeshBuffer* originalMeshBuffer = originalMesh->getMeshBuffer(i);			
+			IMeshBuffer* originalMeshBuffer = originalMesh->getMeshBuffer(i);
+			CVertexBuffer<video::S3DVertexSkinTangents>* originalVertexbuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)originalMeshBuffer->getVertexBuffer(0);
+			video::S3DVertexSkinTangents *vertex = (video::S3DVertexSkinTangents*)originalVertexbuffer->getVertices();
+
+			int numVertex = originalVertexbuffer->getVertexCount();
+
 			IMeshBuffer* skinnedMeshBuffer = renderMesh->getMeshBuffer(i);
-
-			CVertexBuffer<video::S3DVertexSkinTangents>* skinVertexbuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)originalMeshBuffer->getVertexBuffer(0);
-			int numVertex = skinVertexbuffer->getVertexCount();
-
-			// current skin vertex
-			video::S3DVertexSkinTangents *vertex = (video::S3DVertexSkinTangents*)skinVertexbuffer->getVertices();
-
 			CVertexBuffer<video::S3DVertex>* vertexbuffer = (CVertexBuffer<video::S3DVertex>*)skinnedMeshBuffer->getVertexBuffer(0);
 			video::S3DVertex *resultVertex = (video::S3DVertex*)vertexbuffer->getVertices();
 
@@ -143,6 +196,37 @@ namespace Skylicht
 	}
 
 	void CSoftwareSkinningSystem::skinVertex(CSkinnedMesh::SJoint *arrayJoint, core::vector3df &vertex, core::vector3df &normal, video::S3DVertexSkinTangents* src, int boneIndex)
+	{
+		float *boneID = (float*)(&src->BoneIndex);
+		float *boneWeight = (float*)(&src->BoneWeight);
+
+		CSkinnedMesh::SJoint *pJoint = &arrayJoint[(int)boneID[boneIndex]];
+
+		static core::vector3df thisVertexMove, thisNormalMove;
+
+		pJoint->SkinningMatrix.transformVect(thisVertexMove, src->Pos);
+		pJoint->SkinningMatrix.rotateVect(thisNormalMove, src->Normal);
+
+		float weight = boneWeight[boneIndex];
+
+		thisVertexMove.X *= weight;
+		thisVertexMove.Y *= weight;
+		thisVertexMove.Z *= weight;
+
+		thisNormalMove.X *= weight;
+		thisNormalMove.Y *= weight;
+		thisNormalMove.Z *= weight;
+
+		vertex.X += thisVertexMove.X;
+		vertex.Y += thisVertexMove.Y;
+		vertex.Z += thisVertexMove.Z;
+
+		normal.X += thisNormalMove.X;
+		normal.Y += thisNormalMove.Y;
+		normal.Z += thisNormalMove.Z;
+	}
+
+	void CSoftwareSkinningSystem::skinVertex(CSkinnedMesh::SJoint *arrayJoint, core::vector3df &vertex, core::vector3df &normal, video::S3DVertexSkin* src, int boneIndex)
 	{
 		float *boneID = (float*)(&src->BoneIndex);
 		float *boneWeight = (float*)(&src->BoneWeight);

@@ -75,8 +75,9 @@ void CViewInit::initScene()
 	zone->createEmptyObject()->addComponent<CGridPlane>();
 
 	// test dae model
+	/*
 	CMeshManager *meshManager = CMeshManager::getInstance();
-	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures");
+	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
 	if (prefab != NULL)
 	{
 		// instance object
@@ -88,6 +89,7 @@ void CViewInit::initScene()
 		transform->setPosition(core::vector3df(0.0f, 0.0f, 2.0f));
 		transform->setYaw(45.0f);
 	}
+	*/
 
 	// save to context
 	CContext *context = CContext::getInstance();
