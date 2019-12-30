@@ -32,11 +32,14 @@ namespace Skylicht
 	{
 	public:
 		bool BoneRoot;
+		int Depth;
 
 		std::string SID;
 		std::string BoneName;
 		
 		core::matrix4 AnimationMatrix;
+		core::matrix4 RelativeAnimationMatrix;
+
 		core::matrix4 DefaultAnimationMatrix;
 		core::matrix4 DefaultRelativeMatrix;
 

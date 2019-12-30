@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CWorldTransformSystem.h"
 #include "RenderMesh/CJointSystem.h"
 #include "RenderMesh/CRenderMeshSystem.h"
+#include "RenderMesh/CJointAnimationSystem.h"
+#include "RenderMesh/CSkinnedMeshSystem.h"
 #include "RenderMesh/CSoftwareSkinningSystem.h"
 #include "Culling/CCullingSystem.h"
 
@@ -38,8 +40,10 @@ namespace Skylicht
 		m_camera(NULL)
 	{
 		addSystem<CComponentTransformSystem>();
-		addSystem<CJointSystem>();
+		addSystem<CJointSystem>();		
 		addSystem<CWorldTransformSystem>();
+		addSystem<CJointAnimationSystem>();
+		addSystem<CSkinnedMeshSystem>();
 		addSystem<CSoftwareSkinningSystem>();
 		addRenderSystem<CCullingSystem>();
 		addRenderSystem<CRenderMeshSystem>();
@@ -154,7 +158,7 @@ namespace Skylicht
 		int numEntity = m_entities.size();
 
 		for (IEntitySystem* &s : m_systems)
-		{			
+		{
 			for (int i = 0; i < numEntity; i++)
 			{
 				if (entity[i]->isAlive())

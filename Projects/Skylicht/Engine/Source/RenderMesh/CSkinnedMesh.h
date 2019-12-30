@@ -44,11 +44,15 @@ namespace Skylicht
 			// Entity index, that have JointData
 			int EntityIndex;
 
+			// Link to joint transform
+			CJointData *JointData;
+
 			std::string Name;
 
 			SJoint()
 			{
 				EntityIndex = -1;
+				JointData = NULL;
 			}
 		};
 

@@ -24,13 +24,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CRenderMeshData.h"
+#include "Material/CShaderManager.h"
 
 namespace Skylicht
 {
 	CRenderMeshData::CRenderMeshData() :
 		RenderMesh(NULL),
-		SkinMesh(NULL),
-		SoftwareSkinning(false)
+		OriginalMesh(NULL),
+		SoftwareSkinning(false),
+		IsSkinnedMesh(false)
 	{
 
 	}
@@ -40,8 +42,8 @@ namespace Skylicht
 		if (RenderMesh != NULL)
 			RenderMesh->drop();
 
-		if (SkinMesh != NULL)
-			SkinMesh->drop();
+		if (OriginalMesh != NULL)
+			OriginalMesh->drop();
 	}
 
 	void CRenderMeshData::setMesh(CMesh *mesh)
@@ -61,27 +63,28 @@ namespace Skylicht
 
 		for (int i = 0, n = RenderMesh->getMeshBufferCount(); i < n; i++)
 		{
-			// skinned mesh buffer
-			IMeshBuffer* skinnedMeshBuffer = RenderMesh->getMeshBuffer(i);
-
 			// alloc new mesh buffer
 			CMeshBuffer<video::S3DVertex>* meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(video::EVT_STANDARD), video::EIT_16BIT);
+
+			// skinned mesh buffer
+			IMeshBuffer* originalMeshBuffer = RenderMesh->getMeshBuffer(i);
+			
 
 			// get new index & new vertex buffer
 			CVertexBuffer<video::S3DVertex>* vertexBuffer = dynamic_cast<CVertexBuffer<video::S3DVertex>*>(meshBuffer->getVertexBuffer(0));
 			CIndexBuffer* indexBuffer = dynamic_cast<CIndexBuffer*>(meshBuffer->getIndexBuffer());
 			
-			if (skinnedMeshBuffer->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
+			if (originalMeshBuffer->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
 			{
 				// SKIN TANGENT
-				CVertexBuffer<video::S3DVertexSkinTangents>* skinTangentVertexBuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)skinnedMeshBuffer->getVertexBuffer(0);
-				int numVertex = skinTangentVertexBuffer->getVertexCount();
+				CVertexBuffer<video::S3DVertexSkinTangents>* originalTangentVertexBuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)originalMeshBuffer->getVertexBuffer(0);
+				int numVertex = originalTangentVertexBuffer->getVertexCount();
 
 				vertexBuffer->set_used(numVertex);
 				for (int i = 0; i < numVertex; i++)
 				{
 					video::S3DVertex& dest = vertexBuffer->getVertex(i);
-					video::S3DVertexSkinTangents& src = skinTangentVertexBuffer->getVertex(i);
+					video::S3DVertexSkinTangents& src = originalTangentVertexBuffer->getVertex(i);
 
 					dest.Pos = src.Pos;
 					dest.Normal = src.Normal;
@@ -92,14 +95,14 @@ namespace Skylicht
 			else
 			{
 				// SKIN
-				CVertexBuffer<video::S3DVertexSkin>* skinVertexBuffer = (CVertexBuffer<video::S3DVertexSkin>*)skinnedMeshBuffer->getVertexBuffer(0);
-				int numVertex = skinVertexBuffer->getVertexCount();
+				CVertexBuffer<video::S3DVertexSkin>* originalVertexBuffer = (CVertexBuffer<video::S3DVertexSkin>*)originalMeshBuffer->getVertexBuffer(0);
+				int numVertex = originalVertexBuffer->getVertexCount();
 
 				vertexBuffer->set_used(numVertex);
 				for (int i = 0; i < numVertex; i++)
 				{
 					video::S3DVertex& dest = vertexBuffer->getVertex(i);
-					video::S3DVertexSkin& src = skinVertexBuffer->getVertex(i);
+					video::S3DVertexSkin& src = originalVertexBuffer->getVertex(i);
 
 					dest.Pos = src.Pos;
 					dest.Normal = src.Normal;
@@ -109,25 +112,37 @@ namespace Skylicht
 			}
 
 			// copy indices
-			int numIndex = skinnedMeshBuffer->getIndexBuffer()->getIndexCount();
+			int numIndex = originalMeshBuffer->getIndexBuffer()->getIndexCount();
 			indexBuffer->set_used(numIndex);
 			for (int i = 0; i < numIndex; i++)
 			{
-				indexBuffer->setIndex(i, skinnedMeshBuffer->getIndexBuffer()->getIndex(i));
+				indexBuffer->setIndex(i, originalMeshBuffer->getIndexBuffer()->getIndex(i));
 			}
 
 			// copy material
-			meshBuffer->getMaterial() = skinnedMeshBuffer->getMaterial();
+			meshBuffer->getMaterial() = originalMeshBuffer->getMaterial();
+			
+			// apply static material
+			CShaderManager *shaderMgr = CShaderManager::getInstance();
+
+			if (meshBuffer->getMaterial().getTexture(0) != NULL)
+				meshBuffer->getMaterial().MaterialType = shaderMgr->getShaderIDByName("TextureColor");
+			else
+				meshBuffer->getMaterial().MaterialType = shaderMgr->getShaderIDByName("VertexColor");
+
 			meshBuffer->setHardwareMappingHint(EHM_STREAM);
 
 			// add to mesh
 			mesh->addMeshBuffer(meshBuffer);
+			meshBuffer->recalculateBoundingBox();
 			meshBuffer->drop();
 		}
 
+		mesh->recalculateBoundingBox();
+
 		// swap default render mesh to dynamic stream mesh
 		// see CSoftwareSkinningSystem todo next
-		SkinMesh = RenderMesh;
+		OriginalMesh = RenderMesh;
 		RenderMesh = mesh;
 	}
 }
