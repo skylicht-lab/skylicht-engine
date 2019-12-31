@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _TOUCHMANAGER_H_
-#define _TOUCHMANAGER_H_
+#pragma once
 
 #include "Thread/IMutex.h"
 #include "Utils/CGameSingleton.h"
@@ -91,5 +90,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

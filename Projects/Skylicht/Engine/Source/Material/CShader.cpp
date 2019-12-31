@@ -57,7 +57,7 @@ namespace Skylicht
 
 	void CShader::deleteAllUI()
 	{
-		for (int i = 0, n = (int)m_ui.size(); i < n; i++)
+		for (u32 i = 0, n = m_ui.size(); i < n; i++)
 		{
 			delete m_ui[i];
 		}
@@ -67,7 +67,7 @@ namespace Skylicht
 
 	void CShader::deleteAllResource()
 	{
-		for (int i = 0, n = (int)m_resources.size(); i < n; i++)
+		for (u32 i = 0, n = m_resources.size(); i < n; i++)
 		{
 			delete m_resources[i];
 		}
@@ -124,7 +124,7 @@ namespace Skylicht
 			"NULL"
 		};
 
-		for (int i = 0, n = (int)NUM_SHADER_TYPE; i < n; i++)
+		for (u32 i = 0, n = NUM_SHADER_TYPE; i < n; i++)
 		{
 			if (strcmp(uniformString[i], name) == 0)
 				return (EUniformType)i;
@@ -169,7 +169,7 @@ namespace Skylicht
 		CStringImp::convertUnicodeToUTF8(wtext, text);
 
 		EUIControlType controlType = UIGroup;
-		for (int i = 0, n = (int)UICount; i < n; i++)
+		for (u32 i = 0, n = UICount; i < n; i++)
 		{
 			if (strcmp(text, uiName[i]) == 0)
 			{
@@ -275,7 +275,7 @@ namespace Skylicht
 						"ShadowMapTexture"
 					};
 
-					for (int i = 0, n = (int)RResourceCount; i < n; i++)
+					for (u32 i = 0, n = RResourceCount; i < n; i++)
 					{
 						if (CStringImp::comp<const char>(text, type[i]) == 0)
 						{
@@ -551,7 +551,7 @@ namespace Skylicht
 
 	void CShader::buildUIUniform()
 	{
-		for (int i = 0, n = (int)m_ui.size(); i < n; i++)
+		for (u32 i = 0, n = m_ui.size(); i < n; i++)
 		{
 			SUniformUI* ui = m_ui[i];
 			buildUIUniform(ui);
@@ -567,7 +567,7 @@ namespace Skylicht
 				ui->UniformInfo = getFSUniform(ui->Name.c_str());
 		}
 
-		for (int i = 0, n = ui->Childs.size(); i < n; i++)
+		for (u32 i = 0, n = ui->Childs.size(); i < n; i++)
 		{
 			SUniformUI* child = ui->Childs[i];
 			buildUIUniform(child);
@@ -576,7 +576,7 @@ namespace Skylicht
 
 	CShader::SUniformUI* CShader::getUniformUIByName(const char *name)
 	{
-		for (int i = 0, n = (int)m_ui.size(); i < n; i++)
+		for (u32 i = 0, n = m_ui.size(); i < n; i++)
 		{
 			if (m_ui[i]->Name == name)
 				return m_ui[i];
@@ -594,7 +594,7 @@ namespace Skylicht
 
 	CShader::SUniformUI* CShader::getUniformUIByName(const char *name, CShader::SUniformUI *group)
 	{
-		for (int i = 0, n = (int)group->Childs.size(); i < n; i++)
+		for (u32 i = 0, n = group->Childs.size(); i < n; i++)
 		{
 			SUniformUI *ui = group->Childs[i];
 

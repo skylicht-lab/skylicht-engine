@@ -22,10 +22,10 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SCENE_H_
-#define _SCENE_H_
+#pragma once
 
 #include "GameObject/CZone.h"
+#include "Entity/CEntityManager.h"
 
 #include "RenderPipeline/CForwardRP.h"
 #include "RenderPipeline/CDeferredRP.h"
@@ -39,6 +39,8 @@ namespace Skylicht
 
 		CForwardRP *m_forwardRP;
 		CDeferredRP *m_deferredRP;
+
+		CEntityManager *m_entityManager;
 
 	public:
 		CScene();
@@ -56,6 +58,11 @@ namespace Skylicht
 		virtual CZone* createZone();
 
 		virtual void removeZone(CGameObject* zone);
+
+		inline CEntityManager* getEntityManager()
+		{
+			return m_entityManager;
+		}
 
 		inline int getZoneCount()
 		{
@@ -75,5 +82,3 @@ namespace Skylicht
 		virtual void update();
 	};
 }
-
-#endif

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _TOUCH_IDENTIFY_H_
-#define _TOUCH_IDENTIFY_H_
+#pragma once
 
 #define MAX_MULTITOUCH	10
 
@@ -62,5 +61,3 @@ namespace Skylicht
 		CTouchIdentify::ETouchIdentify getTouchIdentify(int touchID);
 	};
 }
-
-#endif

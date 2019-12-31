@@ -1,5 +1,4 @@
-#ifndef _VIEW_DEMO_H_
-#define _VIEW_DEMO_H_
+#pragma once
 
 #include "ViewManager/CView.h"
 
@@ -18,5 +17,3 @@ public:
 
 	virtual void onRender();
 };
-
-#endif

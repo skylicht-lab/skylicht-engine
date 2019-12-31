@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYDOME_
-#define _SKYDOME_
+#pragma once
 
 #include "Components/CComponentSystem.h"
 #include "CSkyDomeData.h"
@@ -48,5 +47,3 @@ namespace Skylicht
 		void setData(ITexture *texture, const SColor& c);
 	};
 }
-
-#endif

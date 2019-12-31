@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _TRANSFORM_H_
-#define _TRANSFORM_H_
+#pragma once
 
 #include "CTransform.h"
 
@@ -136,5 +135,3 @@ namespace Skylicht
 		virtual void getMatrixTransform(core::matrix4& matrix);
 	};
 }
-
-#endif

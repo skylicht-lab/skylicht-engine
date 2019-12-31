@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _STRING_IMP_H_
-#define _STRING_IMP_H_
+#pragma once
 
 #include <stdio.h>
 #include <string.h>
@@ -613,13 +612,19 @@ namespace Skylicht
 					break;
 				i--;
 			}
-			if (i == 0)
-				CStringImp::copy<T1, T2>(dstString, lpString);
-			else
-				CStringImp::copy<T1, T2>(dstString, lpString + i + 1);
 
-			if (dotPos != -1)
-				dstString[dotPos - i - 1] = 0;
+			if (i == 0)
+			{
+				CStringImp::copy<T1, T2>(dstString, lpString);
+				if (dotPos != -1)
+					dstString[dotPos] = 0;
+			}
+			else
+			{
+				CStringImp::copy<T1, T2>(dstString, lpString + i + 1);
+				if (dotPos != -1)
+					dstString[dotPos - i - 1] = 0;
+			}
 		}
 
 		template<class T>
@@ -861,5 +866,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

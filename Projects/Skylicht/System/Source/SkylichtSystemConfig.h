@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYLICHT_SYSTEM_CONFIG_
-#define _SKYLICHT_SYSTEM_CONFIG_
+#pragma once
 
 #if defined(ANDROID)
 	#define USE_PTHREAD
@@ -38,6 +37,4 @@ https://github.com/skylicht-lab/skylicht-engine
 	#define USE_STDTHREAD
 #elif defined(LINUX)
 	#define USE_PTHREAD
-#endif
-
 #endif

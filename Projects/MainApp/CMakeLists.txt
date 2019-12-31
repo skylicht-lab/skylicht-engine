@@ -15,37 +15,35 @@ file(GLOB_RECURSE main_app_source
 	./Source/**.h)
 
 if (BUILD_ANDROID)
-file(GLOB_RECURSE platform_android_source 
-	./Platforms/Android/**.cpp 
-	./Platforms/Android/**.c 
-	./Platforms/Android/**.h)
+	file(GLOB_RECURSE platform_android_source 
+		./Platforms/Android/**.cpp 
+		./Platforms/Android/**.c 
+		./Platforms/Android/**.h)
 
-list (APPEND main_app_source ${platform_android_source})
+	list (APPEND main_app_source ${platform_android_source})
 endif()
 
 if (BUILD_WINDOWS_STORE)
-file(GLOB_RECURSE platform_uwp_source 
-	./Platforms/UWP/**.cpp 
-	./Platforms/UWP/**.c 
-	./Platforms/UWP/**.h)
-file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/MainApp/Assets/**.*)
+	file(GLOB_RECURSE platform_uwp_source 
+		./Platforms/UWP/**.cpp 
+		./Platforms/UWP/**.c 
+		./Platforms/UWP/**.h)
+	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/MainApp/Assets/**.*)
 
-list (APPEND main_app_source ${platform_uwp_source})
+	list (APPEND main_app_source ${platform_uwp_source})
 
-set_property(SOURCE ${platform_uwp_asset} PROPERTY VS_DEPLOYMENT_CONTENT 1)
+	set_property(SOURCE ${platform_uwp_asset} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 endif()
 
 if (MSVC OR CYGWIN OR MINGW)
-include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Platforms/Win32
-)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Platforms/Win32)
 
-file(GLOB_RECURSE platform_win32_source 
-	./Platforms/Win32/**.cpp 
-	./Platforms/Win32/**.c 
-	./Platforms/Win32/**.h)
+	file(GLOB_RECURSE platform_win32_source 
+		./Platforms/Win32/**.cpp 
+		./Platforms/Win32/**.c 
+		./Platforms/Win32/**.h)
 
-list (APPEND main_app_source ${platform_win32_source})
+	list (APPEND main_app_source ${platform_win32_source})
 endif()
 
 #if (BUILD_SKYLICHT_NETWORK)
@@ -56,7 +54,18 @@ endif()
 #include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/RecastNavigation/Source)
 #endif()
 	
-if(MINGW OR CYGWIN)
+if (BUILD_DEBUG_VLD)
+	if (CMAKE_CL_64)		
+		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/lib/Win64")
+		set(vld_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/bin/Win64/*.*")
+	else()
+		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/lib/Win32")
+		set(vld_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/bin/Win32/*.*")
+	endif()	
+	link_directories(${vld_lib_path})	
+endif()
+	
+if (MINGW OR CYGWIN)
 	# .rc build
 	set(CMAKE_RC_COMPILER_INIT windres)
 	enable_language(RC)
@@ -105,6 +114,14 @@ if (BUILD_EMSCRIPTEN)
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
 	set_target_properties(MainApp PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+endif()
+
+#VLD
+if (BUILD_DEBUG_VLD)
+	file(GLOB_RECURSE vld_bin_files ${vld_dll_path})
+		foreach(vld_bin ${vld_bin_files})
+			add_custom_command(TARGET MainApp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:MainApp>)
+		endforeach()
 endif()
 
 set_target_properties(MainApp PROPERTIES VERSION ${SKYLICHT_VERSION})

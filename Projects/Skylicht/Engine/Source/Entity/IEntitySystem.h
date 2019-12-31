@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _IENTITY_SYSTEM_H_
-#define _IENTITY_SYSTEM_H_
+#pragma once
 
 #include "CEntity.h"
 
@@ -52,5 +51,3 @@ namespace Skylicht
 		virtual void update(CEntityManager *entityManager) = 0;
 	};
 }
-
-#endif

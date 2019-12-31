@@ -1,5 +1,4 @@
-#ifndef _GRID_PLANE_RENDER_H_
-#define _GRID_PLANE_RENDER_H_
+#pragma once
 
 #include "CGridPlaneData.h"
 #include "Transform/CWorldTransformData.h"
@@ -25,5 +24,3 @@ namespace Skylicht
 		virtual void render(CEntityManager *entityManager);
 	};
 }
-
-#endif

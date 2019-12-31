@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _MAIN_TEST_H_
-#define _MAIN_TEST_H_
+#pragma once
 
 #include "AppInclude.h"
 #include "IApplicationEventReceiver.h"
@@ -73,5 +72,3 @@ public:
 
 	inline bool isPassQuitApp() { return m_passQuitApp; }
 };
-
-#endif
