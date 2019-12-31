@@ -166,7 +166,7 @@ namespace Skylicht
 			float n = m_nearValue;
 			float f = m_farValue;
 
-			float scale = tanf(m_fov * 0.5f * core::DEGTORAD) * (float)screenSize.Width;
+			float scale = tanf(m_fov * 0.5f * core::DEGTORAD) * 3.0f;
 			float r = aspect * scale;
 			float l = -r;
 			float t = scale;
