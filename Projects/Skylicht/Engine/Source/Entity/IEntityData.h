@@ -22,13 +22,15 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _IENTITY_DATA_H_
-#define _IENTITY_DATA_H_
+#pragma once
 
 namespace Skylicht
 {
 	class IEntityData
 	{
+	public:
+		int EntityIndex;
+
 	public:
 		IEntityData()
 		{
@@ -41,5 +43,3 @@ namespace Skylicht
 		}
 	};
 }
-
-#endif

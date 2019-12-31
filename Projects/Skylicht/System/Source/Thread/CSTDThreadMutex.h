@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYLICHT_SYSTEM_STDTHREADMUTEX_H_
-#define _SKYLICHT_SYSTEM_STDTHREADMUTEX_H_
+#pragma once
 
 #include "IMutex.h"
 #include <mutex>
@@ -46,7 +45,5 @@ namespace SkylichtSystem
 		virtual void unlock();
 	};
 }
-
-#endif
 
 #endif

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _PATH_H_
-#define _PATH_H_
+#pragma once
 
 namespace Skylicht
 {
@@ -43,5 +42,3 @@ namespace Skylicht
 		static std::string normalizePath(const std::string& path);
 	};
 }
-
-#endif

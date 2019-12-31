@@ -82,7 +82,7 @@ if (BUILD_SKYLICHT_NETWORK)
 endif()
 
 # skylicht debug leak memory
-if (BUILD_DEBUG_VLD)
+if (BUILD_DEBUG_VLD AND MSVC)
 	add_definitions(-DUSE_VISUAL_LEAK_DETECTOR)
 endif()
 

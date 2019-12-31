@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CGAMEOBJECT_H_
-#define _CGAMEOBJECT_H_
+#pragma once
 
 #include "pch.h"
 #include "Material/CShaderParams.h"
@@ -305,5 +304,3 @@ namespace Skylicht
 		return false;
 	}
 }
-
-#endif

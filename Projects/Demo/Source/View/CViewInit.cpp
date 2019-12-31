@@ -2,6 +2,8 @@
 #include "CViewInit.h"
 #include "CViewDemo.h"
 #include "ViewManager/CViewManager.h"
+#include "TextureManager/CTextureManager.h"
+#include "MeshManager/CMeshManager.h"
 
 #include "Context/CContext.h"
 
@@ -10,6 +12,7 @@
 #include "Camera/CEditorCamera.h"
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
+#include "RenderMesh/CRenderMesh.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -51,6 +54,7 @@ void CViewInit::initScene()
 	CScene *scene = CContext::getInstance()->initScene();
 	CZone *zone = scene->createZone();
 
+	// camera
 	CGameObject *camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>();
@@ -59,15 +63,35 @@ void CViewInit::initScene()
 	camera->setPosition(core::vector3df(3.0f, 3.0f, 3.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
-	ITexture *skyDomeTexture = getVideoDriver()->getTexture("Demo/Textures/Sky/PaperMill.png");
+	// sky
+	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Demo/Textures/Sky/PaperMill.png");
 	if (skyDomeTexture != NULL)
 	{
 		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
 		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
 	}
 
+	// grid
 	zone->createEmptyObject()->addComponent<CGridPlane>();
 
+	// test dae model
+	/*
+	CMeshManager *meshManager = CMeshManager::getInstance();
+	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
+	if (prefab != NULL)
+	{
+		// instance object
+		CGameObject *model = zone->createEmptyObject();
+		model->addComponent<CRenderMesh>()->initFromPrefab(prefab);
+
+		// transform
+		CTransformEuler *transform = model->getTransformEuler();
+		transform->setPosition(core::vector3df(0.0f, 0.0f, 2.0f));
+		transform->setYaw(45.0f);
+	}
+	*/
+
+	// save to context
 	CContext *context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);

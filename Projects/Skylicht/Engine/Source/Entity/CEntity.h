@@ -22,27 +22,29 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _RENDER_ENTITY_H_
-#define _RENDER_ENTITY_H_
+#pragma once
 
 #include "IEntityData.h"
 
 namespace Skylicht
 {
 	class CEntityManager;
+	class CEntityPrefab;
 
 	class CEntity
 	{
 		friend class CEntityManager;
+		friend class CEntityPrefab;
 
 	protected:
 		bool m_alive;
 		int m_index;
 
 		core::array<IEntityData*> m_data;
-
+	
 	public:
 		CEntity(CEntityManager *mgr);
+		CEntity(CEntityPrefab *mgr);
 
 		virtual ~CEntity();
 
@@ -98,6 +100,10 @@ namespace Skylicht
 			return NULL;
 		}
 
+		// also save this entity index
+		data->EntityIndex = m_index;
+
+		// add to list data
 		m_data.push_back(newData);
 		return newData;
 	}
@@ -106,9 +112,9 @@ namespace Skylicht
 	T* CEntity::getData()
 	{
 		IEntityData** data = m_data.pointer();
-		int numData = (int)m_data.size();
+		u32 numData = m_data.size();
 
-		for (int i = 0; i < numData; i++)
+		for (u32 i = 0; i < numData; i++)
 		{
 			if (typeid(T) == typeid(*data[i]))
 			{
@@ -123,9 +129,9 @@ namespace Skylicht
 	bool CEntity::removeData()
 	{
 		IEntityData** data = m_data.pointer();
-		int numData = (int)m_data.size();
+		u32 numData = m_data.size();
 
-		for (int i = 0; i < numData; i++)
+		for (u32 i = 0; i < numData; i++)
 		{
 			if (typeid(T) == typeid(*data[i]))
 			{
@@ -138,5 +144,3 @@ namespace Skylicht
 		return false;
 	}
 }
-
-#endif

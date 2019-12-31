@@ -89,7 +89,5 @@ namespace Skylicht
 
 	extern IVideoDriver* getVideoDriver();
 
-	extern ISceneManager* getSceneManager();
-
 	extern float getTimeStep();
 }

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _APPLICATION_EVENT_H_
-#define _APPLICATION_EVENT_H_
+#pragma once
 
 namespace Skylicht
 {
@@ -62,4 +61,3 @@ namespace Skylicht
 	};
 
 }
-#endif

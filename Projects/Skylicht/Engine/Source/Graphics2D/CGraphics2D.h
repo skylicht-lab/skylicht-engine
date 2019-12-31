@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _GRAPHICS_H_
-#define _GRAPHICS_H_
+#pragma once
 
 #include "pch.h"
 #include "Utils/CGameSingleton.h"
@@ -145,5 +144,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _BASE_RP_H_
-#define _BASE_RP_H_
+#pragma once
 
 #include "IRenderPipeline.h"
 
@@ -41,5 +40,3 @@ namespace Skylicht
 		virtual void setCamera(CCamera *camera);
 	};
 }
-
-#endif

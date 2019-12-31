@@ -1,5 +1,4 @@
-#ifndef _VIEW_MANAGER_H_
-#define _VIEW_MANAGER_H_
+#pragma once
 
 #include "Utils/CGameSingleton.h"
 #include "CViewLayer.h"
@@ -40,5 +39,3 @@ public:
 
 	bool onBack();
 };
-
-#endif

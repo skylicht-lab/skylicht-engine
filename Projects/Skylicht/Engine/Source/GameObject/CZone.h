@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CZONE_H_
-#define _CZONE_H_
+#pragma once
 
 #include "CContainerObject.h"
 #include "Entity/CEntityManager.h"
@@ -36,7 +35,7 @@ namespace Skylicht
 		CEntityManager	*m_entityManager;
 
 	public:
-		CZone();
+		CZone(CEntityManager *entityManager);
 		virtual ~CZone();
 
 		virtual void updateObject();
@@ -54,5 +53,3 @@ namespace Skylicht
 	typedef std::vector<CZone*>				ArrayZone;
 	typedef std::vector<CZone*>::iterator	ArrayZoneIter;
 }
-
-#endif

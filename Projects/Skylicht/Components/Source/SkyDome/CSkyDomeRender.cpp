@@ -55,7 +55,7 @@ namespace Skylicht
 			{
 				m_skydomes.push_back(skyDomeData);
 				m_transforms.push_back(transformData);
-				m_worlds.push_back(transformData->World);
+				m_worlds.push_back(core::IdentityMatrix);
 			}
 		}
 	}
@@ -74,9 +74,9 @@ namespace Skylicht
 		float cameraFar = camera->getFarValue();
 
 		core::matrix4* worlds = m_worlds.pointer();
-		CWorldTransformData** transformData = m_transforms.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
 
-		for (int i = 0, n = (int)m_worlds.size(); i < n; i++)
+		for (u32 i = 0, n = m_worlds.size(); i < n; i++)
 		{
 			worlds[i].setTranslation(cameraPosition);
 			worlds[i].setScale(cameraFar * 0.9f);
@@ -90,7 +90,7 @@ namespace Skylicht
 		CSkyDomeData** skydomes = m_skydomes.pointer();
 		core::matrix4* worlds = m_worlds.pointer();
 
-		for (int i = 0, n = (int)m_skydomes.size(); i < n; i++)
+		for (u32 i = 0, n = m_skydomes.size(); i < n; i++)
 		{
 			IMeshBuffer* buffer = skydomes[i]->Buffer;
 

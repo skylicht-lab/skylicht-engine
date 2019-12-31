@@ -1,3 +1,5 @@
+#pragma once
+
 #include "IApplicationEventReceiver.h"
 
 class CDemo : public IApplicationEventReceiver

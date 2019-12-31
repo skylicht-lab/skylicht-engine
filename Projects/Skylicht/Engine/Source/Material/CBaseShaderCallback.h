@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _BASESHADER_CALLBACK_H_
-#define _BASESHADER_CALLBACK_H_
+#pragma once
 
 #include "pch.h"
 #include "CShaderManager.h"
@@ -65,5 +64,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

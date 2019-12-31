@@ -1,5 +1,4 @@
-#ifndef _LINE_DRAW_DATA_
-#define _LINE_DRAW_DATA_
+#pragma once
 
 #include "Entity/IEntityData.h"
 
@@ -24,5 +23,3 @@ namespace Skylicht
 		void updateBuffer();
 	};
 }
-
-#endif
