@@ -30,7 +30,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifdef _DEBUG
 #ifdef USE_VISUAL_LEAK_DETECTOR
 #include "vld.h"
-#pragma comment(lib,"vld.lib")
 #endif
 #endif
 
@@ -195,4 +194,4 @@ namespace Skylicht
 		// implement on Editor
 	}
 
-	}
+}

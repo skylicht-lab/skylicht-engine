@@ -38,7 +38,8 @@ void testStringImp()
 	TEST_ASSERT_THROW(s == "Readme");
 	s = CPath::getFileNameNoExt(".\\Readme.md");
 	TEST_ASSERT_THROW(s == "Readme");
-
+	s = CPath::getFileNameNoExt("Readme.md");
+	TEST_ASSERT_THROW(s == "Readme");
 
 	TEST_CASE("CPath::replaceFileExt");
 	s = CPath::replaceFileExt("C:\\Data\\Readme.md", ".txt");

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _WORLD_TRANSFORM_SYSTEM_H_
-#define _WORLD_TRANSFORM_SYSTEM_H_
+#pragma once
 
 #include "CWorldTransformData.h"
 #include "Entity/IEntitySystem.h"
@@ -52,5 +51,3 @@ namespace Skylicht
 		virtual void update(CEntityManager *entityManager);
 	};
 }
-
-#endif

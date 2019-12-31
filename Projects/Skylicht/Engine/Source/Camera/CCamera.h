@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CCAMERA_H_
-#define _CCAMERA_H_
+#pragma once
 
 #include "Components/CComponentSystem.h"
 #include "Transform/CTransform.h"
@@ -126,5 +125,3 @@ namespace Skylicht
 		}
 	};
 }
-
-#endif

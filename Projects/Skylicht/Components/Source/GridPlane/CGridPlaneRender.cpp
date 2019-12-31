@@ -62,13 +62,13 @@ namespace Skylicht
 		IVideoDriver *driver = getVideoDriver();
 
 		CGridPlaneData** gridPlane = m_gridPlanes.pointer();
-		CWorldTransformData** transformData = m_transforms.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
 
-		for (int i = 0, n = (int)m_gridPlanes.size(); i < n; i++)
+		for (u32 i = 0, n = m_gridPlanes.size(); i < n; i++)
 		{
 			IMeshBuffer* buffer = gridPlane[i]->LineBuffer;
 
-			driver->setTransform(video::ETS_WORLD, transformData[i]->World);
+			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 			driver->setMaterial(buffer->getMaterial());
 			driver->drawMeshBuffer(buffer);
 		}

@@ -24,14 +24,29 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CEntityManager.h"
+
+#include "Transform/CTransformComponentSystem.h"
 #include "Transform/CWorldTransformSystem.h"
+#include "RenderMesh/CJointSystem.h"
+#include "RenderMesh/CRenderMeshSystem.h"
+#include "RenderMesh/CJointAnimationSystem.h"
+#include "RenderMesh/CSkinnedMeshSystem.h"
+#include "RenderMesh/CSoftwareSkinningSystem.h"
+#include "Culling/CCullingSystem.h"
 
 namespace Skylicht
 {
-	CEntityManager::CEntityManager():
+	CEntityManager::CEntityManager() :
 		m_camera(NULL)
 	{
+		addSystem<CComponentTransformSystem>();
+		addSystem<CJointSystem>();		
 		addSystem<CWorldTransformSystem>();
+		addSystem<CJointAnimationSystem>();
+		addSystem<CSkinnedMeshSystem>();
+		addSystem<CSoftwareSkinningSystem>();
+		addRenderSystem<CCullingSystem>();
+		addRenderSystem<CRenderMeshSystem>();
 	}
 
 	CEntityManager::~CEntityManager()
@@ -43,7 +58,7 @@ namespace Skylicht
 	void CEntityManager::releaseAllEntities()
 	{
 		CEntity** entities = m_entities.pointer();
-		for (int i = 0, n = (int)m_entities.size(); i < n; i++)
+		for (u32 i = 0, n = m_entities.size(); i < n; i++)
 		{
 			delete entities[i];
 			entities[i] = NULL;
@@ -82,14 +97,36 @@ namespace Skylicht
 		return entity;
 	}
 
+	CEntity** CEntityManager::createEntity(int num, core::array<CEntity*>& entities)
+	{
+		entities.reallocate(num);
+		entities.set_used(0);
+
+		for (int i = 0; i < num; i++)
+		{
+			CEntity *entity = new CEntity(this);
+			m_entities.push_back(entity);
+
+			entities.push_back(entity);
+		}
+
+		return entities.pointer();
+	}
+
 	void CEntityManager::addTransformDataToEntity(CEntity *entity, CTransform *transform)
 	{
 		CWorldTransformData *transformData = entity->addData<CWorldTransformData>();
-		transformData->TransformComponent = transform;
+		CTransformComponentData *componentData = entity->addData<CTransformComponentData>();
 
-		CEntity *parent = transformData->TransformComponent->getParentEntity();
+		// add component to transform
+		componentData->TransformComponent = transform;
+		componentData->TransformComponent->setChanged(true);
+
+		// add parent relative
+		CEntity *parent = componentData->TransformComponent->getParentEntity();
 		if (parent != NULL)
 		{
+			transformData->Name = transform->getName();
 			transformData->ParentIndex = parent->getIndex();
 			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
 		}
@@ -120,19 +157,16 @@ namespace Skylicht
 		CEntity** entity = m_entities.pointer();
 		int numEntity = m_entities.size();
 
-		for (int i = 0; i < numEntity; i++)
+		for (IEntitySystem* &s : m_systems)
 		{
-			if (entity[i]->isAlive())
+			for (int i = 0; i < numEntity; i++)
 			{
-				for (IEntitySystem* &s : m_systems)
+				if (entity[i]->isAlive())
 				{
 					s->onQuery(this, entity[i]);
 				}
 			}
-		}
 
-		for (IEntitySystem* &s : m_systems)
-		{
 			s->update(this);
 		}
 	}
@@ -142,6 +176,11 @@ namespace Skylicht
 		for (IRenderSystem* &s : m_renders)
 		{
 			s->render(this);
+		}
+
+		for (IRenderSystem* &s : m_renders)
+		{
+			s->postRender(this);
 		}
 	}
 

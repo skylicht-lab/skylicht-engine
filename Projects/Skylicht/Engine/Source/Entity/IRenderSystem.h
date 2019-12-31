@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _IRENDER_SYSTEM_H_
-#define _IRENDER_SYSTEM_H_
+#pragma once
 
 #include "CEntity.h"
 #include "IEntitySystem.h"
@@ -44,7 +43,10 @@ namespace Skylicht
 		}
 
 		virtual void render(CEntityManager *entityManager) = 0;
+
+		virtual void postRender(CEntityManager *entityManager)
+		{
+
+		}
 	};
 }
-
-#endif

@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _ACCELEROMETER_H_
-#define _ACCELEROMETER_H_
+#pragma once
 
 #include "Utils/CGameSingleton.h"
 
@@ -86,5 +85,3 @@ namespace Skylicht
 	};
 
 }
-
-#endif

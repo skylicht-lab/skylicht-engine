@@ -65,6 +65,14 @@ namespace Skylicht
 		core::vector3df target = CTransform::s_oz;
 		mat.rotateVect(target);
 		m_viewArea.getTransform(video::ETS_VIEW).buildCameraLookAtMatrixLH(position, position + target, CTransform::s_oy);
+
+		// Update view area
+		m_viewArea.cameraPosition = position;
+		core::matrix4 m(core::matrix4::EM4CONST_NOTHING);
+		m.setbyproduct_nocheck(
+			m_viewArea.getTransform(video::ETS_PROJECTION),
+			m_viewArea.getTransform(video::ETS_VIEW));
+		m_viewArea.setFrom(m);
 	}
 
 	const core::matrix4& CCamera::getProjectionMatrix() const

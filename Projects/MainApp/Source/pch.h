@@ -22,12 +22,9 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _PCH_
-#define _PCH_
+#pragma once
 
 #include <irrlicht.h>
 #include <irrOS.h>
 
 #include "CApplication.h"
-
-#endif

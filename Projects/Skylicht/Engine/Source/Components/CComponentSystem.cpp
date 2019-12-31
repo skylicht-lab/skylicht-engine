@@ -33,6 +33,11 @@ namespace Skylicht
 		m_gameObject = NULL;
 	}
 
+	const char* CComponentSystem::getName()
+	{
+		return m_gameObject->getNameA();
+	}
+
 	CComponentSystem::~CComponentSystem()
 	{
 

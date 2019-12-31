@@ -42,7 +42,7 @@ namespace Skylicht
 		SEvent event;
 
 		// push game event
-		for (int i = 0, n = (int)m_eventQueue.size(); i < n; i++)
+		for (u32 i = 0, n = m_eventQueue.size(); i < n; i++)
 		{
 			event.EventType = irr::EET_GAMEPAD_INPUT_EVENT;
 

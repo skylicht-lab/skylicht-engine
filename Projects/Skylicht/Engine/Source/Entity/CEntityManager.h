@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _ENTITY_MANAGER_H_
-#define _ENTITY_MANAGER_H_
+#pragma once
 
 #include "IEntitySystem.h"
 #include "IRenderSystem.h"
@@ -66,6 +65,8 @@ namespace Skylicht
 		}
 
 		CEntity* createEntity();
+
+		CEntity** createEntity(int num, core::array<CEntity*>& entities);
 
 		void releaseAllEntities();
 
@@ -163,5 +164,3 @@ namespace Skylicht
 		return NULL;
 	}
 }
-
-#endif

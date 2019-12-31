@@ -1,5 +1,4 @@
-#ifndef _TEST_RENDER_SYSTEM_H_
-#define _TEST_RENDER_SYSTEM_H_
+#pragma once
 
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
@@ -42,5 +41,3 @@ public:
 };
 
 bool isTestRenderSystemPass();
-
-#endif
