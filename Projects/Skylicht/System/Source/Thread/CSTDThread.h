@@ -37,8 +37,9 @@ namespace SkylichtSystem
 	class CSTDThread : public IThread
 	{
 	protected:
-		std::thread	*m_thread;
-		bool		m_run;
+		std::thread *m_thread;
+		bool m_run;
+		
 	public:
 		CSTDThread(IThreadCallback *callback);
 		virtual ~CSTDThread();

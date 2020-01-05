@@ -32,7 +32,7 @@ namespace Skylicht
 	class CZone : public CContainerObject
 	{
 	protected:
-		CEntityManager	*m_entityManager;
+		CEntityManager *m_entityManager;
 
 	public:
 		CZone(CEntityManager *entityManager);
@@ -50,6 +50,6 @@ namespace Skylicht
 		}
 	};
 
-	typedef std::vector<CZone*>				ArrayZone;
-	typedef std::vector<CZone*>::iterator	ArrayZoneIter;
+	typedef std::vector<CZone*> ArrayZone;
+	typedef std::vector<CZone*>::iterator ArrayZoneIter;
 }

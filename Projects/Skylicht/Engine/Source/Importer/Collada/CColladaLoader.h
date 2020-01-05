@@ -49,7 +49,7 @@ namespace Skylicht
 		std::wstring name;
 		std::wstring fileName;
 	};
-	typedef std::vector<SColladaImage>	ArrayImages;
+	typedef std::vector<SColladaImage> ArrayImages;
 
 	struct SEffectParam
 	{
@@ -244,7 +244,7 @@ namespace Skylicht
 
 	struct SColladaVertexIndex
 	{
-		s32	vertexId;
+		s32 vertexId;
 		s32 normalId;
 		s32 texcoordId1;
 		s32 texcoordId2;
