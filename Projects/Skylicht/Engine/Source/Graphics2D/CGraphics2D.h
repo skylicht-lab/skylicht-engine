@@ -43,44 +43,44 @@ namespace Skylicht
 		};
 
 	protected:
-		core::matrix4		m_orthoMatrix;
+		core::matrix4 m_orthoMatrix;
 
-		video::SMaterial	m_2dMaterial;
-		video::SMaterial	m_2dMaterialFont;
-		video::SMaterial	m_2dMaterialImage;
+		video::SMaterial m_2dMaterial;
+		video::SMaterial m_2dMaterialFont;
+		video::SMaterial m_2dMaterialImage;
 
 		int m_currentW;
 		int m_currentH;
 
-		core::matrix4	m_prjMatrix;
-		core::matrix4	m_viewMatrix;
+		core::matrix4 m_prjMatrix;
+		core::matrix4 m_viewMatrix;
 
-		IVideoDriver*	m_driver;
+		IVideoDriver *m_driver;
 
-		IMeshBuffer	*m_buffer;
-		scene::SVertexBuffer*	m_vertices;
-		scene::CIndexBuffer*	m_indices;
+		IMeshBuffer *m_buffer;
+		scene::SVertexBuffer *m_vertices;
+		scene::CIndexBuffer *m_indices;
 
-		IMeshBuffer	*m_bufferFont;
-		scene::SVertexBuffer*	m_verticesFont;
-		scene::CIndexBuffer*	m_indicesFont;
+		IMeshBuffer *m_bufferFont;
+		scene::SVertexBuffer *m_verticesFont;
+		scene::CIndexBuffer *m_indicesFont;
 
-		IMeshBuffer	*m_bufferImage;
-		scene::SVertexBuffer*	m_verticesImage;
-		scene::CIndexBuffer*	m_indicesImage;
+		IMeshBuffer *m_bufferImage;
+		scene::SVertexBuffer *m_verticesImage;
+		scene::CIndexBuffer *m_indicesImage;
 
-		bool	m_isDrawMask;
-		bool	m_isMaskTest;
+		bool m_isDrawMask;
+		bool m_isMaskTest;
 
-		int		m_numFlushTime;
+		int m_numFlushTime;
 
-		float	m_scaleRatio;
+		float m_scaleRatio;
 
 		EDrawState m_drawState;
 
-		int		m_vertexColorShader;
-		int		m_textureColorShader;
-		int		m_textureColorAlphaMaskShader;
+		int m_vertexColorShader;
+		int m_textureColorShader;
+		int m_textureColorAlphaMaskShader;
 
 	public:
 		CGraphics2D();

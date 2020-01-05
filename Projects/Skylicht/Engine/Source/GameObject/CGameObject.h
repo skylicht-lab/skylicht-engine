@@ -39,32 +39,32 @@ namespace Skylicht
 	class CGameObject
 	{
 	public:
-		static long					s_objectID;
-		static std::map<long, long>	s_mapObjIDOnFileSaved;
-		static bool					s_repairIDMode;	
+		static long s_objectID;
+		static std::map<long, long> s_mapObjIDOnFileSaved;
+		static bool s_repairIDMode;	
 
 	protected:
-		long				m_objectID;
-		std::wstring		m_name;
-		std::wstring		m_defaultName;
-		std::string			m_namec;
+		long m_objectID;
+		std::wstring m_name;
+		std::wstring m_defaultName;
+		std::string m_namec;
 
-		bool				m_static;
-		bool				m_enable;
-		bool				m_visible;
-		bool				m_lighting;
+		bool m_static;
+		bool m_enable;
+		bool m_visible;
+		bool m_lighting;
 
-		bool				m_lockObject;
+		bool m_lockObject;
 
-		CEntity				*m_entity;
-		CGameObject			*m_parent;
-		CZone				*m_zone;
+		CEntity *m_entity;
+		CGameObject *m_parent;
+		CZone *m_zone;
 
-		void				*m_tagData;
-		int					m_tagDataInt;
-		std::string			m_tagDataString;
+		void *m_tagData;
+		int m_tagDataInt;
+		std::string m_tagDataString;
 
-		CShaderParams		m_shaderParams;
+		CShaderParams m_shaderParams;
 
 		std::vector<CComponentSystem*> m_components;
 	public:		
@@ -242,12 +242,12 @@ namespace Skylicht
 	};
 
 	// typedef for array object
-	typedef std::vector<CGameObject*>			ArrayGameObject;
-	typedef std::vector<CGameObject*>::iterator	ArrayGameObjectIter;
+	typedef std::vector<CGameObject*> ArrayGameObject;
+	typedef std::vector<CGameObject*>::iterator ArrayGameObjectIter;
 
 	// typedef for array component system
-	typedef std::vector<CComponentSystem*>              ArrayComponent;
-	typedef std::vector<CComponentSystem*>::iterator	ArrayComponentIter;
+	typedef std::vector<CComponentSystem*> ArrayComponent;
+	typedef std::vector<CComponentSystem*>::iterator ArrayComponentIter;
 
 	template<class T>
 	T* CGameObject::addComponent()

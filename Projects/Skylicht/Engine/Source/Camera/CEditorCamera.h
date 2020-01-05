@@ -33,19 +33,19 @@ namespace Skylicht
 		public IEventReceiver
 	{
 	protected:
-		f32	m_moveSpeed;
+		f32 m_moveSpeed;
 		f32 m_rotateSpeed;
 		gui::ICursorControl *m_cursorControl;
 
 		core::position2df m_centerCursor;
 		core::position2df m_cursorPos;
 
-		bool	m_leftMousePress;
-		bool	m_rightMousePress;
-		bool	m_midMousePress;
+		bool m_leftMousePress;
+		bool m_rightMousePress;
+		bool m_midMousePress;
 
-		bool	m_mouseWhell;
-		float	m_wheel;
+		bool m_mouseWhell;
+		float m_wheel;
 
 	public:
 		CEditorCamera();
