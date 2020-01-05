@@ -36,7 +36,7 @@ namespace SkylichtSystem
 	class CPThreadMutex : public IMutex
 	{
 	protected:
-		pthread_mutex_t	m_mutex;
+		pthread_mutex_t m_mutex;
 
 	public:
 		CPThreadMutex();
