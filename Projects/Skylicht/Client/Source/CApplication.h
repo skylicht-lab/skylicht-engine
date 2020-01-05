@@ -34,22 +34,22 @@ namespace Skylicht
 		public CBaseApp
 	{
 	public:
-		unsigned long	m_lastUpdateTime;
-		int				m_fps;
+		unsigned long m_lastUpdateTime;
+		int m_fps;
 
-		unsigned long	m_pauseTime;
-
-	protected:
-		bool			m_resizeWin;
+		unsigned long m_pauseTime;
 
 	protected:
-		int             m_width;
-		int             m_height;
+		bool m_resizeWin;
 
-		bool			m_runGame;
-		bool			m_showFPS;
+	protected:
+		int m_width;
+		int m_height;
 
-		std::vector<std::string>	m_argv;
+		bool m_runGame;
+		bool m_showFPS;
+
+		std::vector<std::string> m_argv;
 
 	public:
 		CApplication();
@@ -85,9 +85,9 @@ namespace Skylicht
 
 		// updateTouch
 		// action:
-		//	+ 0:	TouchDown
-		//	+ 1:	TouchUp
-		//	+ 2:	TouchMove	
+		//	+ 0: TouchDown
+		//	+ 1: TouchUp
+		//	+ 2: TouchMove
 		void updateTouch(long touchID, int x, int y, int action);
 
 		// updateJoystick

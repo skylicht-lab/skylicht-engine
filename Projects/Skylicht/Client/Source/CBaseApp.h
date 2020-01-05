@@ -44,19 +44,19 @@ namespace Skylicht
 	class CBaseApp
 	{
 	protected:
-		IrrlichtDevice*			m_device;
-		IVideoDriver*			m_driver;
-		io::IFileSystem*		m_fileSystem;
+		IrrlichtDevice* m_device;
+		IVideoDriver* m_driver;
+		io::IFileSystem* m_fileSystem;
 
-		SExposedVideoData		m_videoData;
+		SExposedVideoData m_videoData;
 
-		float					m_timeStep;
-		int						m_limitFPS;
+		float m_timeStep;
+		int m_limitFPS;
 
-		float					m_clearScreenTime;
-		bool					m_enableRender;
+		float m_clearScreenTime;
+		bool m_enableRender;
 
-		video::SColor			m_clearColor;
+		video::SColor m_clearColor;
 	public:
 
 		CBaseApp();
