@@ -39,15 +39,15 @@ namespace Skylicht
 	protected:
 		struct STexturePackage
 		{
-			std::string	package;
-			ITexture	*texture;
+			std::string package;
+			ITexture *texture;
 		};
 
-		std::string						m_currentPackage;
-		std::vector<STexturePackage*>	m_textureList;
+		std::string m_currentPackage;
+		std::vector<STexturePackage*> m_textureList;
 
-		std::vector<std::string>		m_listCommonTexture;
-		int		m_loadCommonPos;
+		std::vector<std::string> m_listCommonTexture;
+		int m_loadCommonPos;
 
 	public:
 		CTextureManager();

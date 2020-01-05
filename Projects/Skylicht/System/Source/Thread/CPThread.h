@@ -37,9 +37,9 @@ namespace SkylichtSystem
 	class CPThread : public IThread
 	{
 	protected:
-		pthread_t	m_pthread;
+		pthread_t m_pthread;
 
-		bool		m_run;
+		bool m_run;
 	public:
 		CPThread(IThreadCallback *callback);
 		virtual ~CPThread();
