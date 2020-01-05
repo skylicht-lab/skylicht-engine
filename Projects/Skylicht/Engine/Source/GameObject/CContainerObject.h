@@ -31,18 +31,18 @@ namespace Skylicht
 	class CContainerObject : public CGameObject
 	{
 	protected:
-		ArrayGameObject						m_childs;
-		ArrayGameObject						m_add;
-		ArrayGameObject						m_remove;
+		ArrayGameObject m_childs;
+		ArrayGameObject m_add;
+		ArrayGameObject m_remove;
 
-		core::array<CGameObject*>			m_arrayChildObjects;
+		core::array<CGameObject*> m_arrayChildObjects;
 
-		core::array<CGameObject*>			m_objectsAffectLight;
-		core::array<CContainerObject*>		m_childContainer;
+		core::array<CGameObject*> m_objectsAffectLight;
+		core::array<CContainerObject*> m_childContainer;
 
-		core::map<std::wstring, CGameObject*>	m_objectByName;
+		core::map<std::wstring, CGameObject*> m_objectByName;
 
-		bool								m_updateRemoveAdd;
+		bool m_updateRemoveAdd;
 	public:
 		CContainerObject(CGameObject *parent, CZone *zone);
 

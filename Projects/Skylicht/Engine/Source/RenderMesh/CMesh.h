@@ -68,10 +68,10 @@ namespace Skylicht
 
 		static void applyDoubleSided(IMeshBuffer *buffer);
 
-		core::array<IMeshBuffer*>	MeshBuffers;
+		core::array<IMeshBuffer*> MeshBuffers;
 
-		core::aabbox3d<f32>			BoundingBox;
+		core::aabbox3d<f32> BoundingBox;
 
-		std::vector<std::string>	MaterialName;
+		std::vector<std::string> MaterialName;
 	};
 }
