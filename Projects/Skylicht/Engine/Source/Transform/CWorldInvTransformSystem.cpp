@@ -23,20 +23,54 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CJointData.h"
+#include "CWorldInvTransformSystem.h"
+#include "Entity/CEntityManager.h"
+#include "Transform/CTransform.h"
 
 namespace Skylicht
 {
-	CJointData::CJointData() :
-		BoneRoot(false),
-		RootIndex(-1),
-		BoneIndex(-1)
+	CWorldInvTransformSystem::CWorldInvTransformSystem()
+	{
+	}
+
+	CWorldInvTransformSystem::~CWorldInvTransformSystem()
+	{
+	}
+
+	void CWorldInvTransformSystem::beginQuery()
+	{
+		m_world.set_used(0);
+		m_worldInv.set_used(0);
+	}
+
+	void CWorldInvTransformSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	{
+		CWorldInvTransformData *worldInv = entity->getData<CWorldInvTransformData>();
+		if (worldInv != NULL)
+		{
+			CWorldTransformData *world = entity->getData<CWorldTransformData>();
+			if (world != NULL)
+			{
+				m_world.push_back(world);
+				m_worldInv.push_back(worldInv);
+			}
+		}
+	}
+
+	void CWorldInvTransformSystem::init(CEntityManager *entityManager)
 	{
 
 	}
 
-	CJointData::~CJointData()
+	void CWorldInvTransformSystem::update(CEntityManager *entityManager)
 	{
+		CWorldTransformData **worlds = m_world.pointer();
+		CWorldInvTransformData **worldInvs = m_worldInv.pointer();
 
+		for (u32 i = 0, n = m_world.size(); i < n; i++)
+		{
+			// Get inverse matrix of world
+			worlds[i]->World.getInverse(worldInvs[i]->WorldInverse);
+		}
 	}
 }

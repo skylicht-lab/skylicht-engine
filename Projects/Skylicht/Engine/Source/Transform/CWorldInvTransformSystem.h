@@ -22,21 +22,31 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CJointData.h"
+#pragma once
+
+#include "CWorldTransformData.h"
+#include "CWorldInvTransformData.h"
+#include "Entity/IEntitySystem.h"
 
 namespace Skylicht
 {
-	CJointData::CJointData() :
-		BoneRoot(false),
-		RootIndex(-1),
-		BoneIndex(-1)
+	class CWorldInvTransformSystem : public IEntitySystem
 	{
+	protected:
+		core::array<CWorldTransformData*> m_world;
+		core::array<CWorldInvTransformData*> m_worldInv;		
 
-	}
+	public:
+		CWorldInvTransformSystem();
 
-	CJointData::~CJointData()
-	{
+		virtual ~CWorldInvTransformSystem();
 
-	}
+		virtual void beginQuery();
+
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+
+		virtual void init(CEntityManager *entityManager);
+
+		virtual void update(CEntityManager *entityManager);
+	};
 }
