@@ -43,11 +43,11 @@ namespace Skylicht
 		addSystem<CComponentTransformSystem>();
 		addSystem<CJointSystem>();		
 		addSystem<CWorldTransformSystem>();
-		addSystem<CWorldInvTransformSystem>();
+		addSystem<CWorldInvTransformSystem>();		
 		addSystem<CJointAnimationSystem>();
 		addSystem<CSkinnedMeshSystem>();
-		addSystem<CSoftwareSkinningSystem>();
 		addRenderSystem<CCullingSystem>();
+		addSystem<CSoftwareSkinningSystem>();		
 		addRenderSystem<CRenderMeshSystem>();
 	}
 

@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSoftwareSkinningSystem.h"
+#include "Culling/CCullingData.h"
 
 namespace Skylicht
 {
@@ -45,9 +46,16 @@ namespace Skylicht
 	void CSoftwareSkinningSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
 		CRenderMeshData *renderer = entity->getData<CRenderMeshData>();
+		CCullingData *culling = entity->getData<CCullingData>();
+
 		if (renderer != NULL && renderer->isSoftwareSkinning())
 		{
-			m_renderers.push_back(renderer);
+			bool render = true;
+			if (culling != NULL && culling->Visible == false)
+				render = false;
+
+			if (render == true)
+				m_renderers.push_back(renderer);
 		}
 	}
 
@@ -204,8 +212,11 @@ namespace Skylicht
 
 		static core::vector3df thisVertexMove, thisNormalMove;
 
-		pJoint->SkinningMatrix.transformVect(thisVertexMove, src->Pos);
-		pJoint->SkinningMatrix.rotateVect(thisNormalMove, src->Normal);
+		core::matrix4 skinningMat;
+		skinningMat.setM(pJoint->SkinningMatrix);
+
+		skinningMat.transformVect(thisVertexMove, src->Pos);
+		skinningMat.rotateVect(thisNormalMove, src->Normal);
 
 		float weight = boneWeight[boneIndex];
 
@@ -235,8 +246,11 @@ namespace Skylicht
 
 		static core::vector3df thisVertexMove, thisNormalMove;
 
-		pJoint->SkinningMatrix.transformVect(thisVertexMove, src->Pos);
-		pJoint->SkinningMatrix.rotateVect(thisNormalMove, src->Normal);
+		core::matrix4 skinningMat;
+		skinningMat.setM(pJoint->SkinningMatrix);
+
+		skinningMat.transformVect(thisVertexMove, src->Pos);
+		skinningMat.rotateVect(thisNormalMove, src->Normal);
 
 		float weight = boneWeight[boneIndex];
 
