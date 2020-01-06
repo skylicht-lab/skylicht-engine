@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 
 #include "Transform/CWorldTransformData.h"
+#include "Transform/CWorldInvTransformSystem.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "RenderMesh/CJointData.h"
 #include "Culling/CCullingData.h"
@@ -95,13 +96,9 @@ namespace Skylicht
 				spawnTransform->Depth = rootTransform->Depth + srcTransform->Depth;
 
 				if (srcTransform->ParentIndex == -1)
-				{
 					spawnTransform->ParentIndex = rootEntity->getIndex();
-				}
 				else
-				{
 					spawnTransform->ParentIndex = entityIndex[srcTransform->ParentIndex];
-				}
 			}
 
 			// copy render data
@@ -141,8 +138,13 @@ namespace Skylicht
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
 				spawnJoint->DefaultAnimationMatrix = srcJointData->DefaultAnimationMatrix;
 				spawnJoint->DefaultRelativeMatrix = srcJointData->DefaultRelativeMatrix;
+				spawnJoint->RelativeAnimationMatrix = srcJointData->RelativeAnimationMatrix;
+				spawnJoint->BoneIndex = srcJointData->BoneIndex;
+				spawnJoint->RootIndex = rootEntity->getIndex();
 			}
 		}
+
+		bool addInvData = false;
 
 		// re-map joint with new entity in CEntityManager
 		for (CRenderMeshData *&r :renderers)
@@ -164,6 +166,12 @@ namespace Skylicht
 						joint.EntityIndex = entityIndex[joint.EntityIndex];
 						joint.JointData = entityManager->getEntity(joint.EntityIndex)->getData<CJointData>();
 					}
+				}
+
+				if (addInvData == false)
+				{
+					rootEntity->addData<CWorldInvTransformData>();
+					addInvData = true;
 				}
 			}
 		}
