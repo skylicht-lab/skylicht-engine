@@ -1283,18 +1283,10 @@ namespace Skylicht
 
 			m_colladaRoot->Parent = NULL;
 
-			float unitScale = 1.0f;
-			if (m_unit != "meter")
-				unitScale = m_unitScale;
-			
 			if (m_flipOx == true)
 			{
 				// Inverse X
-				m_colladaRoot->Transform.setScale(core::vector3df(-unitScale, unitScale, unitScale));
-			}
-			else
-			{
-				m_colladaRoot->Transform.setScale(unitScale);
+				m_colladaRoot->Transform.setScale(core::vector3df(-1.0f, 1.0f, 1.0f));
 			}
 
 			if (m_zUp)
@@ -1382,6 +1374,15 @@ namespace Skylicht
 
 						pNode->ChildLevel = 0;
 						pNode->Parent = NULL;
+
+						// unit scale on render mesh node
+						float unitScale = 1.0f;
+						if (m_unit != "meter")
+							unitScale = m_unitScale;
+
+						core::matrix4 scale;
+						scale.setScale(unitScale);
+						pNode->Transform *= scale;
 					}
 
 					// get skin mesh url
@@ -1442,6 +1443,12 @@ namespace Skylicht
 				// todo add material id
 			}
 		}
+
+		// add mipmap filter
+		effect->Mat.UseMipMaps = true;
+		effect->Mat.setFlag(video::EMF_BILINEAR_FILTER, false);
+		effect->Mat.setFlag(video::EMF_TRILINEAR_FILTER, false);
+		effect->Mat.setFlag(video::EMF_ANISOTROPIC_FILTER, true, 2);
 	}
 
 	ITexture *CColladaLoader::getTextureResource(std::wstring& refName, ArrayEffectParams& params)
@@ -1743,7 +1750,7 @@ namespace Skylicht
 			}
 
 			if (buffer)
-			{				
+			{
 				colladaMesh->addMeshBuffer(buffer);
 				buffer->recalculateBoundingBox();
 				buffer->drop();
@@ -2059,7 +2066,7 @@ namespace Skylicht
 		SMaterial& mat = buffer->getMaterial();
 
 		if (effect)
-		{			
+		{
 			mat = effect->Mat;
 
 			if (effect->Mat.getTexture(0) != NULL)
@@ -2523,6 +2530,7 @@ namespace Skylicht
 				newJoint.Name = jointData->BoneName;
 				newJoint.EntityIndex = jointData->EntityIndex;
 				newJoint.GlobalInversedMatrix = joint.InvMatrix;
+				newJoint.BindPoseMatrix.setbyproduct_nocheck(newJoint.GlobalInversedMatrix, mesh->BindShapeMatrix);
 			}
 
 			if (end == true)

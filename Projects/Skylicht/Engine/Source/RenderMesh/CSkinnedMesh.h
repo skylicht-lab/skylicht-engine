@@ -38,8 +38,11 @@ namespace Skylicht
 			// skinningMatrix = joint.animMatrix (at pos 0,0,0) * joint.globalInversedMatrix * mesh.BindShapeMatrix
 			core::matrix4 GlobalInversedMatrix;
 
-			// this matrix will push to GPU
-			core::matrix4 SkinningMatrix;
+			// bindPoseMatrix = joint.globalInversedMatrix * mesh.BindShapeMatrix (cache for optimize)
+			core::matrix4 BindPoseMatrix;
+
+			// pointer to gpu skinning matrix
+			f32 *SkinningMatrix;
 
 			// Entity index, that have JointData
 			int EntityIndex;
@@ -60,6 +63,9 @@ namespace Skylicht
 		core::matrix4 BindShapeMatrix;
 
 		core::array<SJoint> Joints;
+
+		// this matrix will push to GPU
+		f32 *SkinningMatrix;
 
 	public:
 		CSkinnedMesh();

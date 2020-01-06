@@ -99,8 +99,6 @@ namespace Skylicht
 
 				driver->setMaterial(meshBuffer->getMaterial());
 				driver->drawMeshBuffer(meshBuffer);
-
-				driver->draw3DBox(meshBuffer->getBoundingBox());
 			}
 		}
 	}

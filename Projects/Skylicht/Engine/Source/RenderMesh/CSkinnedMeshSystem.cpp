@@ -67,6 +67,7 @@ namespace Skylicht
 	void CSkinnedMeshSystem::update(CEntityManager *entityManager)
 	{
 		CSkinnedMesh** meshs = m_meshs.pointer();
+
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
 			CSkinnedMesh *skinnedMesh = meshs[i];
@@ -75,12 +76,35 @@ namespace Skylicht
 			{
 				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[j];
 
-				// skinMat = animMat * invMat * bindShapMat
+				// skinMat = animMat * invMat * bindShapMatrix
 				// note:
-				// AnimationMatrix is a transform of bone at pos (0,0,0)
-				core::matrix4 mat;
-				mat.setbyproduct(joint.GlobalInversedMatrix, skinnedMesh->BindShapeMatrix);
-				joint.SkinningMatrix.setbyproduct(joint.JointData->AnimationMatrix, mat);
+				// bindPoseMatrix = invMat * bindShapMat (cached)
+				// animationMatrix is a transform of bone at pos (0,0,0)
+				f32 *M = joint.SkinningMatrix;
+
+				const f32 *m1 = joint.JointData->AnimationMatrix.pointer();
+				const f32 *m2 = joint.BindPoseMatrix.pointer();
+
+				// inline mul matrix
+				M[0] = m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2] + m1[12] * m2[3];
+				M[1] = m1[1] * m2[0] + m1[5] * m2[1] + m1[9] * m2[2] + m1[13] * m2[3];
+				M[2] = m1[2] * m2[0] + m1[6] * m2[1] + m1[10] * m2[2] + m1[14] * m2[3];
+				M[3] = m1[3] * m2[0] + m1[7] * m2[1] + m1[11] * m2[2] + m1[15] * m2[3];
+
+				M[4] = m1[0] * m2[4] + m1[4] * m2[5] + m1[8] * m2[6] + m1[12] * m2[7];
+				M[5] = m1[1] * m2[4] + m1[5] * m2[5] + m1[9] * m2[6] + m1[13] * m2[7];
+				M[6] = m1[2] * m2[4] + m1[6] * m2[5] + m1[10] * m2[6] + m1[14] * m2[7];
+				M[7] = m1[3] * m2[4] + m1[7] * m2[5] + m1[11] * m2[6] + m1[15] * m2[7];
+
+				M[8] = m1[0] * m2[8] + m1[4] * m2[9] + m1[8] * m2[10] + m1[12] * m2[11];
+				M[9] = m1[1] * m2[8] + m1[5] * m2[9] + m1[9] * m2[10] + m1[13] * m2[11];
+				M[10] = m1[2] * m2[8] + m1[6] * m2[9] + m1[10] * m2[10] + m1[14] * m2[11];
+				M[11] = m1[3] * m2[8] + m1[7] * m2[9] + m1[11] * m2[10] + m1[15] * m2[11];
+
+				M[12] = m1[0] * m2[12] + m1[4] * m2[13] + m1[8] * m2[14] + m1[12] * m2[15];
+				M[13] = m1[1] * m2[12] + m1[5] * m2[13] + m1[9] * m2[14] + m1[13] * m2[15];
+				M[14] = m1[2] * m2[12] + m1[6] * m2[13] + m1[10] * m2[14] + m1[14] * m2[15];
+				M[15] = m1[3] * m2[12] + m1[7] * m2[13] + m1[11] * m2[14] + m1[15] * m2[15];
 			}
 		}
 	}

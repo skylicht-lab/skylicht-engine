@@ -100,7 +100,7 @@ namespace Skylicht
 				{
 					SViewFrustum frust = camera->getViewFrustum();
 
-					//transform the frustum to the node's current absolute transformation
+					// transform the frustum to the node's current absolute transformation
 					core::matrix4 invTrans(transform->World, core::matrix4::EM4CONST_INVERSE);
 					frust.transform(invTrans);
 
