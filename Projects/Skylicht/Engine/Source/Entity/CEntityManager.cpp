@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Transform/CTransformComponentSystem.h"
 #include "Transform/CWorldTransformSystem.h"
+#include "Transform/CWorldInvTransformSystem.h"
 #include "RenderMesh/CJointSystem.h"
 #include "RenderMesh/CRenderMeshSystem.h"
 #include "RenderMesh/CJointAnimationSystem.h"
@@ -42,6 +43,7 @@ namespace Skylicht
 		addSystem<CComponentTransformSystem>();
 		addSystem<CJointSystem>();		
 		addSystem<CWorldTransformSystem>();
+		addSystem<CWorldInvTransformSystem>();
 		addSystem<CJointAnimationSystem>();
 		addSystem<CSkinnedMeshSystem>();
 		addSystem<CSoftwareSkinningSystem>();
