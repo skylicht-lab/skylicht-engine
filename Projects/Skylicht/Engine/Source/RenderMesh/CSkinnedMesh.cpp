@@ -27,12 +27,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CSkinnedMesh::CSkinnedMesh()
+	CSkinnedMesh::CSkinnedMesh():
+		SkinningMatrix(NULL)
 	{
 	}
 
 	CSkinnedMesh::~CSkinnedMesh()
 	{
+		if (SkinningMatrix != NULL)
+			delete SkinningMatrix;
 	}
 
 	CMesh* CSkinnedMesh::clone()

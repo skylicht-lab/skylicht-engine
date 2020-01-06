@@ -29,8 +29,7 @@ namespace Skylicht
 {
 	CJointData::CJointData() :
 		BoneRoot(false),
-		RootIndex(-1),
-		BoneIndex(-1)
+		RootIndex(-1)
 	{
 
 	}

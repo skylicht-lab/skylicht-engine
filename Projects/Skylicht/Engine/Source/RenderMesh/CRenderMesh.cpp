@@ -139,7 +139,6 @@ namespace Skylicht
 				spawnJoint->DefaultAnimationMatrix = srcJointData->DefaultAnimationMatrix;
 				spawnJoint->DefaultRelativeMatrix = srcJointData->DefaultRelativeMatrix;
 				spawnJoint->RelativeAnimationMatrix = srcJointData->RelativeAnimationMatrix;
-				spawnJoint->BoneIndex = srcJointData->BoneIndex;
 				spawnJoint->RootIndex = rootEntity->getIndex();
 			}
 		}
@@ -160,11 +159,18 @@ namespace Skylicht
 
 				if (skinMesh != NULL)
 				{
+					// alloc animation matrix
+					skinMesh->SkinningMatrix = new f32[16 * skinMesh->Joints.size()];
+
 					for (u32 i = 0, n = skinMesh->Joints.size(); i < n; i++)
 					{
+						// map entity data to joint
 						CSkinnedMesh::SJoint& joint = skinMesh->Joints[i];
 						joint.EntityIndex = entityIndex[joint.EntityIndex];
 						joint.JointData = entityManager->getEntity(joint.EntityIndex)->getData<CJointData>();
+
+						// pointer to skin mesh animation matrix
+						joint.SkinningMatrix = skinMesh->SkinningMatrix + i * 16;
 					}
 				}
 
