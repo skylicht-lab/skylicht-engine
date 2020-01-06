@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CJointAnimationSystem.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
@@ -41,18 +42,22 @@ namespace Skylicht
 	{
 		m_joints.set_used(0);
 		m_transforms.set_used(0);
+		m_rootInvTransform.set_used(0);
 	}
 
 	void CJointAnimationSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
 		CJointData *joint = entity->getData<CJointData>();
-		if (joint != NULL)
+		if (joint != NULL && joint->RootIndex != 0)
 		{
 			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-			if (transform != NULL)
+			CWorldInvTransformData *rootInvTransform = entityManager->getEntity(joint->RootIndex)->getData<CWorldInvTransformData>();
+
+			if (transform != NULL && rootInvTransform != NULL)
 			{
 				m_joints.push_back(joint);
 				m_transforms.push_back(transform);
+				m_rootInvTransform.push_back(rootInvTransform);
 			}
 		}
 	}
@@ -64,14 +69,14 @@ namespace Skylicht
 
 	void CJointAnimationSystem::update(CEntityManager *entityManager)
 	{
-		CJointData** joints = m_joints.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
+		CJointData **joints = m_joints.pointer();
+		CWorldTransformData **transforms = m_transforms.pointer();
+		CWorldInvTransformData **rootInvTransform = m_rootInvTransform.pointer();
 
 		// calc animation matrix for CSkinnedMeshSystem
 		for (u32 i = 0, n = m_joints.size(); i < n; i++)
 		{
-			// CJointData *joint = joints[i];
-			// joint->AnimationMatrix = do later (see CColladaLoader::constructEntityPrefab)
+			joints[i]->AnimationMatrix.setbyproduct_nocheck(rootInvTransform[i]->WorldInverse, transforms[i]->World);
 		}
 	}
 }

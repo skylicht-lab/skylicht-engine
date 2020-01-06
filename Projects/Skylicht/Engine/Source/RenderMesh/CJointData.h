@@ -34,6 +34,9 @@ namespace Skylicht
 		bool BoneRoot;
 		int Depth;
 
+		int RootIndex;
+		int BoneIndex;
+
 		std::string SID;
 		std::string BoneName;
 		

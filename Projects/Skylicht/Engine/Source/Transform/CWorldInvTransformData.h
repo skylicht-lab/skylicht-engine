@@ -22,21 +22,20 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CJointData.h"
+#pragma once
+
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	CJointData::CJointData() :
-		BoneRoot(false),
-		RootIndex(-1),
-		BoneIndex(-1)
+	class CWorldInvTransformData : public IEntityData
 	{
+	public:
+		core::matrix4 WorldInverse;
 
-	}
+	public:
+		CWorldInvTransformData();
 
-	CJointData::~CJointData()
-	{
-
-	}
+		virtual ~CWorldInvTransformData();
+	};
 }
