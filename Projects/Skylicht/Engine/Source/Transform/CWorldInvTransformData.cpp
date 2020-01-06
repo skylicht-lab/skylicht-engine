@@ -23,19 +23,15 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CJointData.h"
+#include "CWorldInvTransformData.h"
 
 namespace Skylicht
 {
-	CJointData::CJointData() :
-		BoneRoot(false),
-		RootIndex(-1),
-		BoneIndex(-1)
+	CWorldInvTransformData::CWorldInvTransformData()
 	{
-
 	}
 
-	CJointData::~CJointData()
+	CWorldInvTransformData::~CWorldInvTransformData()
 	{
 
 	}

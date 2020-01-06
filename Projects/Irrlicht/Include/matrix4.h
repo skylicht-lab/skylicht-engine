@@ -1321,8 +1321,8 @@ namespace core
 		}
 #endif
 		//const CMatrix4<T> &m = *this;
-		#define m(x,y)		M[ (x << 2) + y]
-		#define out(x,y)	out.M[ (x << 2) + y]
+		#define m(x,y)		M[(x << 2) + y]
+		#define out(x,y)	out.M[(x << 2) + y]
 
 		f32 d = (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0)) * (m(2, 2) * m(3, 3) - m(2, 3) * m(3, 2)) -
 			(m(0, 0) * m(1, 2) - m(0, 2) * m(1, 0)) * (m(2, 1) * m(3, 3) - m(2, 3) * m(3, 1)) +
