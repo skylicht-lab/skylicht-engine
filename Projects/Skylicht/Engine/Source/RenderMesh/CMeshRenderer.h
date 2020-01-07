@@ -30,16 +30,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CRenderMeshSystem : public IRenderSystem
+	class CMeshRenderer : public IRenderSystem
 	{
 	protected:
 		core::array<CRenderMeshData*> m_meshs;
 		core::array<CWorldTransformData*> m_transforms;
 
 	public:
-		CRenderMeshSystem();
+		CMeshRenderer();
 
-		virtual ~CRenderMeshSystem();
+		virtual ~CMeshRenderer();
 
 		virtual void beginQuery();
 

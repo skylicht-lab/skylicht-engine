@@ -1,9 +1,9 @@
 struct VS_INPUT
 {
-	float4 pos		: POSITION;
-	float3 norm		: NORMAL;
-	float4 color	: COLOR;
-	float2 tex0		: TEXCOORD0;
+	float4 pos: POSITION;
+	float3 norm: NORMAL;
+	float4 color: COLOR;
+	float2 tex0: TEXCOORD0;
 };
 
 struct VS_OUTPUT
@@ -12,7 +12,6 @@ struct VS_OUTPUT
 	float2 tex0 : TEXCOORD0;
 };
 
-// adding constant buffer for transform matrices
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
