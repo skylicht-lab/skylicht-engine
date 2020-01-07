@@ -1,0 +1,18 @@
+<shaderConfig name="Skin" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>	
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/SkinVS.glsl" fs="GLSL/SkinFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SkinVS.hlsl" fs="HLSL/SkinFS.hlsl"/>
+</shaderConfig>

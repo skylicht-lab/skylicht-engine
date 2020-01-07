@@ -23,76 +23,87 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CRenderMeshSystem.h"
+#include "CSkinMeshRenderer.h"
 
 #include "Culling/CCullingData.h"
+#include "Material/CShaderManager.h"
 
 namespace Skylicht
 {
-	CRenderMeshSystem::CRenderMeshSystem()
+	CSkinMeshRenderer::CSkinMeshRenderer()
 	{
 
 	}
 
-	CRenderMeshSystem::~CRenderMeshSystem()
+	CSkinMeshRenderer::~CSkinMeshRenderer()
 	{
 
 	}
 
-	void CRenderMeshSystem::beginQuery()
+	void CSkinMeshRenderer::beginQuery()
 	{
 		m_meshs.set_used(0);
 		m_transforms.set_used(0);
 	}
 
-	void CRenderMeshSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CSkinMeshRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
 		CRenderMeshData *meshData = entity->getData<CRenderMeshData>();
 		if (meshData != NULL)
 		{
-			bool cullingVisible = true;
-
-			// get culling result from CCullingSystem
-			CCullingData *cullingData = entity->getData<CCullingData>();
-			if (cullingData != NULL)
-				cullingVisible = cullingData->Visible;
-
-			// only render visible culling mesh
-			if (cullingVisible == true)
+			if (meshData->isSkinnedMesh() == true && meshData->isSoftwareSkinning() == false)
 			{
-				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-				if (transform != NULL)
+				bool cullingVisible = true;
+
+				// get culling result from CCullingSystem
+				CCullingData *cullingData = entity->getData<CCullingData>();
+				if (cullingData != NULL)
+					cullingVisible = cullingData->Visible;
+
+				// only render visible culling mesh
+				if (cullingVisible == true)
 				{
-					m_meshs.push_back(meshData);
-					m_transforms.push_back(transform);
+					CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+					if (transform != NULL)
+					{
+						m_meshs.push_back(meshData);
+						m_transforms.push_back(transform);
+					}
 				}
 			}
 		}
 	}
 
-	void CRenderMeshSystem::init(CEntityManager *entityManager)
+	void CSkinMeshRenderer::init(CEntityManager *entityManager)
 	{
 
 	}
 
-	void CRenderMeshSystem::update(CEntityManager *entityManager)
+	void CSkinMeshRenderer::update(CEntityManager *entityManager)
 	{
 
 	}
 
-	void CRenderMeshSystem::render(CEntityManager *entityManager)
+	void CSkinMeshRenderer::render(CEntityManager *entityManager)
 	{
 		IVideoDriver *driver = getVideoDriver();
 
 		CRenderMeshData** meshs = m_meshs.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();
 
+		CShaderManager *shaderManager = CShaderManager::getInstance();
+
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
-			CMesh *mesh = m_meshs[i]->getMesh();
+			CSkinnedMesh *mesh = (CSkinnedMesh*)m_meshs[i]->getMesh();
 
+			// set bone matrix to shader callback
+			shaderManager->BoneMatrix = mesh->SkinningMatrix;
+
+			// set transform
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
+			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
 				IMeshBuffer* meshBuffer = mesh->getMeshBuffer(j);

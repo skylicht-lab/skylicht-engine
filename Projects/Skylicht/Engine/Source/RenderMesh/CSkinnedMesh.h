@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/IEntityData.h"
 #include "RenderMesh/CJointData.h"
 
+#define GPU_BONES_COUNT 64
+
 namespace Skylicht
 {
 	class CSkinnedMesh : public CMesh
@@ -35,10 +37,8 @@ namespace Skylicht
 	public:
 		struct SJoint
 		{
-			// skinningMatrix = joint.animMatrix (at pos 0,0,0) * joint.globalInversedMatrix * mesh.BindShapeMatrix
-			core::matrix4 GlobalInversedMatrix;
-
-			// bindPoseMatrix = joint.globalInversedMatrix * mesh.BindShapeMatrix (cache for optimize)
+			// bindPoseMatrix = joint.globalInversedMatrix * mesh.BindShapeMatrix
+			// skinningMatrix = joint.animMatrix (at pos 0,0,0) * bindPoseMatrix			
 			core::matrix4 BindPoseMatrix;
 
 			// pointer to gpu skinning matrix
@@ -60,8 +60,6 @@ namespace Skylicht
 		};
 
 	public:
-		core::matrix4 BindShapeMatrix;
-
 		core::array<SJoint> Joints;
 
 		// this matrix will push to GPU
