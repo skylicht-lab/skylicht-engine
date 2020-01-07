@@ -50,7 +50,9 @@ namespace Skylicht
 		// use to save uniform for current draw command
 		core::vector2df	ShaderVec2[10];
 		core::vector3df	ShaderVec3[10];
-		video::SVec4	ShaderVec4[10];
+		video::SVec4 ShaderVec4[10];
+
+		f32* BoneMatrix;
 
 	public:
 

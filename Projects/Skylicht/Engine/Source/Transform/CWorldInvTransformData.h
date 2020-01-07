@@ -32,6 +32,7 @@ namespace Skylicht
 	{
 	public:
 		core::matrix4 WorldInverse;
+		bool HasChanged;
 
 	public:
 		CWorldInvTransformData();

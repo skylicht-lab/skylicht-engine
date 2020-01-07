@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CWorldTransformSystem.h"
+#include "CWorldInvTransformData.h"
 #include "Entity/CEntityManager.h"
 #include "Transform/CTransform.h"
 
@@ -55,6 +56,8 @@ namespace Skylicht
 		if (t == NULL)
 			return;
 
+		CWorldInvTransformData* tInverse = entity->getData<CWorldInvTransformData>();
+
 		if (t->Depth > m_maxDepth)
 			m_maxDepth = t->Depth;
 
@@ -62,6 +65,10 @@ namespace Skylicht
 		{
 			// my transform changed
 			m_entities[t->Depth].push_back(t);
+
+			// notify recalc inverse matrix
+			if (tInverse != NULL)
+				tInverse->HasChanged = true;
 		}
 		else if (t->ParentIndex != -1)
 		{
@@ -71,6 +78,10 @@ namespace Skylicht
 			{
 				// this transform changed because parent is changed
 				t->HasChanged = true;
+
+				// notify recalc inverse matrix
+				if (tInverse != NULL)
+					tInverse->HasChanged = true;
 
 				// parent transform changed
 				m_entities[t->Depth].push_back(t);
@@ -92,6 +103,7 @@ namespace Skylicht
 		{
 			CWorldTransformData *t = entities[i];
 			t->World = t->Relative;
+			t->HasChanged = false;
 		}
 
 		// child transform
@@ -113,6 +125,7 @@ namespace Skylicht
 				// - relative is copied from CTransformComponentSystem
 				// - relative is also defined in CEntityPrefab
 				t->World.setbyproduct_nocheck(p->World, t->Relative);
+				t->HasChanged = false;
 			}
 		}
 	}

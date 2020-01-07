@@ -109,12 +109,15 @@ namespace Skylicht
 				spawnRender->setMesh(srcRender->getMesh());
 				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
 				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());
-				
+
 				// init software skinning
 				if (spawnRender->isSkinnedMesh() && spawnRender->isSoftwareSkinning() == true)
 					spawnRender->initSoftwareSkinning();
-				
+
 				renderers.push_back(spawnRender);
+
+				// add world inv transform for culling system
+				spawnEntity->addData<CWorldInvTransformData>();
 			}
 
 			// copy culling data
@@ -132,14 +135,12 @@ namespace Skylicht
 			{
 				CJointData *spawnJoint = spawnEntity->addData<CJointData>();
 				spawnJoint->BoneRoot = srcJointData->BoneRoot;
-				spawnJoint->Depth = srcJointData->Depth;
 				spawnJoint->SID = srcJointData->SID;
 				spawnJoint->BoneName = srcJointData->BoneName;
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
 				spawnJoint->DefaultAnimationMatrix = srcJointData->DefaultAnimationMatrix;
 				spawnJoint->DefaultRelativeMatrix = srcJointData->DefaultRelativeMatrix;
 				spawnJoint->RelativeAnimationMatrix = srcJointData->RelativeAnimationMatrix;
-				spawnJoint->BoneIndex = srcJointData->BoneIndex;
 				spawnJoint->RootIndex = rootEntity->getIndex();
 			}
 		}
@@ -147,8 +148,8 @@ namespace Skylicht
 		bool addInvData = false;
 
 		// re-map joint with new entity in CEntityManager
-		for (CRenderMeshData *&r :renderers)
-		{						
+		for (CRenderMeshData *&r : renderers)
+		{
 			if (r->isSkinnedMesh() == true)
 			{
 				CSkinnedMesh *skinMesh = NULL;
@@ -160,17 +161,25 @@ namespace Skylicht
 
 				if (skinMesh != NULL)
 				{
+					// alloc animation matrix (Max: 64 bone)
+					skinMesh->SkinningMatrix = new f32[16 * GPU_BONES_COUNT];
+
 					for (u32 i = 0, n = skinMesh->Joints.size(); i < n; i++)
 					{
+						// map entity data to joint
 						CSkinnedMesh::SJoint& joint = skinMesh->Joints[i];
 						joint.EntityIndex = entityIndex[joint.EntityIndex];
 						joint.JointData = entityManager->getEntity(joint.EntityIndex)->getData<CJointData>();
+
+						// pointer to skin mesh animation matrix
+						joint.SkinningMatrix = skinMesh->SkinningMatrix + i * 16;
 					}
 				}
 
 				if (addInvData == false)
 				{
-					rootEntity->addData<CWorldInvTransformData>();
+					if (rootEntity->getData<CWorldInvTransformData>() == NULL)
+						rootEntity->addData<CWorldInvTransformData>();
 					addInvData = true;
 				}
 			}

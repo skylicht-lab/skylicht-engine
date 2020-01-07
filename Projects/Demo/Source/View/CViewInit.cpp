@@ -80,14 +80,21 @@ void CViewInit::initScene()
 	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
 	if (prefab != NULL)
 	{
-		// instance object
+		// instance object 1
 		CGameObject *model = zone->createEmptyObject();
 		model->addComponent<CRenderMesh>()->initFromPrefab(prefab);
 
-		// transform
 		CTransformEuler *transform = model->getTransformEuler();
 		transform->setPosition(core::vector3df(0.0f, 0.0f, 2.0f));
 		transform->setYaw(45.0f);
+
+		// instance object 2
+		model = zone->createEmptyObject();
+		model->addComponent<CRenderMesh>()->initFromPrefab(prefab);
+
+		transform = model->getTransformEuler();
+		transform->setPosition(core::vector3df(0.0f, 0.0f, -3.0f));
+		transform->setYaw(-45.0f);
 	}
 	*/
 

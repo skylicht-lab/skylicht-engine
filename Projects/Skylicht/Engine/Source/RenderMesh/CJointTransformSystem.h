@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CJointSystem : public IEntitySystem
+	class CJointTransformSystem : public IEntitySystem
 	{
 	protected:
 		core::array<CJointData*> m_joints;
@@ -39,9 +39,9 @@ namespace Skylicht
 
 	public:
 
-		CJointSystem();
+		CJointTransformSystem();
 
-		virtual ~CJointSystem();
+		virtual ~CJointTransformSystem();
 
 		virtual void beginQuery();
 
