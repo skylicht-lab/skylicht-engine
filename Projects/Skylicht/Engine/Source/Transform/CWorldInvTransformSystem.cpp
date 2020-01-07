@@ -46,7 +46,7 @@ namespace Skylicht
 	void CWorldInvTransformSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
 		CWorldInvTransformData *worldInv = entity->getData<CWorldInvTransformData>();
-		if (worldInv != NULL)
+		if (worldInv != NULL && worldInv->HasChanged == true)
 		{
 			CWorldTransformData *world = entity->getData<CWorldTransformData>();
 			if (world != NULL)
@@ -71,6 +71,7 @@ namespace Skylicht
 		{
 			// Get inverse matrix of world
 			worlds[i]->World.getInverse(worldInvs[i]->WorldInverse);
+			worlds[i]->HasChanged = false;
 		}
 	}
 }

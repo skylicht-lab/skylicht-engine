@@ -892,6 +892,8 @@ namespace Skylicht
 		break;
 		case CShader::BONE_MATRIX:
 		{
+			if (vertexShader == true && shaderManager->BoneMatrix != NULL)
+				matRender->setShaderVariable(uniform.UniformShaderID, shaderManager->BoneMatrix, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
 		}
 		break;
 		case CShader::SHADOW_MAP_MATRIX:

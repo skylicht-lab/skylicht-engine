@@ -1283,18 +1283,10 @@ namespace Skylicht
 
 			m_colladaRoot->Parent = NULL;
 
-			float unitScale = 1.0f;
-			if (m_unit != "meter")
-				unitScale = m_unitScale;
-			
 			if (m_flipOx == true)
 			{
 				// Inverse X
-				m_colladaRoot->Transform.setScale(core::vector3df(-unitScale, unitScale, unitScale));
-			}
-			else
-			{
-				m_colladaRoot->Transform.setScale(unitScale);
+				m_colladaRoot->Transform.setScale(core::vector3df(-1.0f, 1.0f, 1.0f));
 			}
 
 			if (m_zUp)
@@ -1305,6 +1297,14 @@ namespace Skylicht
 				rot.setRotationDegrees(rotVec);
 
 				m_colladaRoot->Transform *= rot;
+			}
+
+			// unit scale on render mesh node
+			if (m_unit != "meter")
+			{
+				core::matrix4 scale;
+				scale.setScale(m_unitScale);
+				m_colladaRoot->Transform *= scale;
 			}
 
 			m_listNode.push_back(m_colladaRoot);
@@ -1382,6 +1382,19 @@ namespace Skylicht
 
 						pNode->ChildLevel = 0;
 						pNode->Parent = NULL;
+
+						if (m_unit != "meter")
+						{
+							// set unit scale this node
+							core::matrix4 scale;
+							scale.setScale(m_unitScale);
+							pNode->Transform *= scale;
+
+							// revert scale root transform
+							scale.makeIdentity();
+							scale.setScale(1.0f / m_unitScale);
+							m_colladaRoot->Transform *= scale;
+						}
 					}
 
 					// get skin mesh url
@@ -1442,6 +1455,12 @@ namespace Skylicht
 				// todo add material id
 			}
 		}
+
+		// add mipmap filter
+		effect->Mat.UseMipMaps = true;
+		effect->Mat.setFlag(video::EMF_BILINEAR_FILTER, false);
+		effect->Mat.setFlag(video::EMF_TRILINEAR_FILTER, false);
+		effect->Mat.setFlag(video::EMF_ANISOTROPIC_FILTER, true, 2);
 	}
 
 	ITexture *CColladaLoader::getTextureResource(std::wstring& refName, ArrayEffectParams& params)
@@ -1513,9 +1532,6 @@ namespace Skylicht
 
 		char name[512] = { 0 };
 
-		// unit scale
-		float unitScale = 1.0f;
-
 		while (stackColladaNodes.size())
 		{
 			SNodeParam *node = stackColladaNodes.back();
@@ -1539,8 +1555,6 @@ namespace Skylicht
 
 			// add transform
 			core::matrix4 relativeTransform = node->Transform;
-			core::vector3df unitTranslate = relativeTransform.getTranslation() * unitScale;
-			relativeTransform.setTranslation(unitTranslate);
 
 			// add entity with transform
 			CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
@@ -1551,7 +1565,6 @@ namespace Skylicht
 			{
 				CJointData *jointData = entity->addData<CJointData>();
 				jointData->BoneName = name;
-				jointData->Depth = node->ChildLevel;
 
 				if (node->ChildLevel == 0)
 					jointData->BoneRoot = true;
@@ -1647,10 +1660,8 @@ namespace Skylicht
 					constructSkinMesh(&m_listMesh[meshID], skinnedMesh);
 
 					// add software skinning
-					// if (skinnedMesh->Joints.size() >= 70)
-					{
+					if (skinnedMesh->Joints.size() >= GPU_BONES_COUNT)
 						renderMesh->setSoftwareSkinning(true);
-					}
 
 					renderMesh->setSkinnedMesh(true);
 				}
@@ -1713,7 +1724,6 @@ namespace Skylicht
 			{
 				// BIND SHAPE MATRIX
 				CSkinnedMesh *skinnedMesh = (CSkinnedMesh*)colladaMesh;
-				skinnedMesh->BindShapeMatrix = mesh->BindShapeMatrix;
 
 				// SKIN MESH BUFFER
 				if (m_createTangent)
@@ -1743,7 +1753,7 @@ namespace Skylicht
 			}
 
 			if (buffer)
-			{				
+			{
 				colladaMesh->addMeshBuffer(buffer);
 				buffer->recalculateBoundingBox();
 				buffer->drop();
@@ -1804,8 +1814,6 @@ namespace Skylicht
 		// index buffer
 		core::array<u32> indices;
 
-		float unitScale = 1.0f;
-
 		// if have the normal & texcoord
 		if (tri->NumElementPerVertex == 1)
 		{
@@ -1833,9 +1841,6 @@ namespace Skylicht
 					vtx.Pos.Y = position->FloatArray[idx + 1];
 					vtx.Pos.Z = position->FloatArray[idx + 2];
 				}
-
-				// scale centimeter to meter
-				vtx.Pos *= unitScale;
 
 				// set normal
 				if (normal != NULL)
@@ -1941,9 +1946,6 @@ namespace Skylicht
 					vtx.Pos.Y = position->FloatArray[idx + 1];
 					vtx.Pos.Z = position->FloatArray[idx + 2];
 				}
-
-				// scale centimeter to meter
-				vtx.Pos *= unitScale;
 
 				// set normal
 				if (vertexIndex.normalId != -1)
@@ -2059,7 +2061,7 @@ namespace Skylicht
 		SMaterial& mat = buffer->getMaterial();
 
 		if (effect)
-		{			
+		{
 			mat = effect->Mat;
 
 			if (effect->Mat.getTexture(0) != NULL)
@@ -2522,7 +2524,7 @@ namespace Skylicht
 			{
 				newJoint.Name = jointData->BoneName;
 				newJoint.EntityIndex = jointData->EntityIndex;
-				newJoint.GlobalInversedMatrix = joint.InvMatrix;
+				newJoint.BindPoseMatrix.setbyproduct_nocheck(joint.InvMatrix, meshParam->BindShapeMatrix);
 			}
 
 			if (end == true)
@@ -2679,6 +2681,8 @@ namespace Skylicht
 				}
 			}
 		}
+
+		mesh->setHardwareMappingHint(EHM_STATIC);
 	}
 
 	void CColladaLoader::cleanData()

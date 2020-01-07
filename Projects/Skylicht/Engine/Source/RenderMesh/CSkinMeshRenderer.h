@@ -22,34 +22,33 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CSkinnedMesh.h"
+#pragma once
+
+#include "CRenderMeshData.h"
+#include "Entity/IRenderSystem.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	CSkinnedMesh::CSkinnedMesh():
-		SkinningMatrix(NULL)
+	class CSkinMeshRenderer : public IRenderSystem
 	{
-	}
+	protected:
+		core::array<CRenderMeshData*> m_meshs;
+		core::array<CWorldTransformData*> m_transforms;
 
-	CSkinnedMesh::~CSkinnedMesh()
-	{
-		if (SkinningMatrix != NULL)
-			delete SkinningMatrix;
-	}
+	public:
+		CSkinMeshRenderer();
 
-	CMesh* CSkinnedMesh::clone()
-	{
-		CSkinnedMesh *newMesh = new CSkinnedMesh();
-		newMesh->BoundingBox = BoundingBox;
-		newMesh->MaterialName = MaterialName;
-		newMesh->Joints = Joints;
+		virtual ~CSkinMeshRenderer();
 
-		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
-		{
-			newMesh->addMeshBuffer(MeshBuffers[i]);
-		}
+		virtual void beginQuery();
 
-		return newMesh;
-	}
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+
+		virtual void init(CEntityManager *entityManager);
+
+		virtual void update(CEntityManager *entityManager);
+
+		virtual void render(CEntityManager *entityManager);
+	};
 }

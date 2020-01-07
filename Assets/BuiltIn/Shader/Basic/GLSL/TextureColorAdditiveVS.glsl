@@ -4,7 +4,7 @@ in vec3 inNormal;
 in vec2 inTexCoord0;
 
 uniform mat4 uMvpMatrix;
-	
+
 out vec2 varTexCoord0;
 out vec4 varColor;
 
