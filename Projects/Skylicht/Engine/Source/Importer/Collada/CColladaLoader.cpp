@@ -1299,6 +1299,14 @@ namespace Skylicht
 				m_colladaRoot->Transform *= rot;
 			}
 
+			// unit scale on render mesh node
+			if (m_unit != "meter")
+			{
+				core::matrix4 scale;
+				scale.setScale(m_unitScale);
+				m_colladaRoot->Transform *= scale;
+			}
+
 			m_listNode.push_back(m_colladaRoot);
 		}
 
@@ -1375,14 +1383,18 @@ namespace Skylicht
 						pNode->ChildLevel = 0;
 						pNode->Parent = NULL;
 
-						// unit scale on render mesh node
-						float unitScale = 1.0f;
 						if (m_unit != "meter")
-							unitScale = m_unitScale;
+						{
+							// set unit scale this node
+							core::matrix4 scale;
+							scale.setScale(m_unitScale);
+							pNode->Transform *= scale;
 
-						core::matrix4 scale;
-						scale.setScale(unitScale);
-						pNode->Transform *= scale;
+							// revert scale root transform
+							scale.makeIdentity();
+							scale.setScale(1.0f / m_unitScale);
+							m_colladaRoot->Transform *= scale;
+						}
 					}
 
 					// get skin mesh url
@@ -1648,10 +1660,8 @@ namespace Skylicht
 					constructSkinMesh(&m_listMesh[meshID], skinnedMesh);
 
 					// add software skinning
-					// if (skinnedMesh->Joints.size() >= 70)
-					{
+					if (skinnedMesh->Joints.size() >= GPU_BONES_COUNT)
 						renderMesh->setSoftwareSkinning(true);
-					}
 
 					renderMesh->setSkinnedMesh(true);
 				}
@@ -1714,7 +1724,6 @@ namespace Skylicht
 			{
 				// BIND SHAPE MATRIX
 				CSkinnedMesh *skinnedMesh = (CSkinnedMesh*)colladaMesh;
-				skinnedMesh->BindShapeMatrix = mesh->BindShapeMatrix;
 
 				// SKIN MESH BUFFER
 				if (m_createTangent)
@@ -2515,8 +2524,7 @@ namespace Skylicht
 			{
 				newJoint.Name = jointData->BoneName;
 				newJoint.EntityIndex = jointData->EntityIndex;
-				newJoint.GlobalInversedMatrix = joint.InvMatrix;
-				newJoint.BindPoseMatrix.setbyproduct_nocheck(newJoint.GlobalInversedMatrix, mesh->BindShapeMatrix);
+				newJoint.BindPoseMatrix.setbyproduct_nocheck(joint.InvMatrix, meshParam->BindShapeMatrix);
 			}
 
 			if (end == true)
@@ -2673,6 +2681,8 @@ namespace Skylicht
 				}
 			}
 		}
+
+		mesh->setHardwareMappingHint(EHM_STATIC);
 	}
 
 	void CColladaLoader::cleanData()

@@ -1,7 +1,7 @@
 precision mediump float;
 
-uniform sampler2D 	uTexDiffuse;
-uniform sampler2D 	uTexAlpha;
+uniform sampler2D uTexDiffuse;
+uniform sampler2D uTexAlpha;
 
 in vec2 varTexCoord0;
 in vec4 varColor;
