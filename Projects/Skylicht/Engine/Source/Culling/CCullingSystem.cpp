@@ -43,6 +43,7 @@ namespace Skylicht
 	{
 		m_cullings.set_used(0);
 		m_transforms.set_used(0);
+		m_invTransforms.set_used(0);
 		m_meshs.set_used(0);
 	}
 
@@ -56,11 +57,14 @@ namespace Skylicht
 			if (mesh != NULL)
 			{
 				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+				CWorldInvTransformData *invTransform = entity->getData<CWorldInvTransformData>();
+
 				if (transform != NULL)
 				{
 					m_cullings.push_back(culling);
 					m_meshs.push_back(mesh);
 					m_transforms.push_back(transform);
+					m_invTransforms.push_back(invTransform);
 				}
 			}
 		}
@@ -76,6 +80,9 @@ namespace Skylicht
 		CCullingData **cullings = m_cullings.pointer();
 		CRenderMeshData **meshs = m_meshs.pointer();
 		CWorldTransformData **transforms = m_transforms.pointer();
+		CWorldInvTransformData **invTransforms = m_invTransforms.pointer();
+
+		core::matrix4 invTrans;
 
 		u32 numEntity = m_cullings.size();
 		for (u32 i = 0; i < numEntity; i++)
@@ -83,6 +90,7 @@ namespace Skylicht
 			// get mesh bbox
 			CCullingData *culling = cullings[i];
 			CWorldTransformData *transform = transforms[i];
+			CWorldInvTransformData *invTransform = invTransforms[i];
 			CRenderMeshData *mesh = meshs[i];
 
 			// transform world bbox
@@ -96,12 +104,12 @@ namespace Skylicht
 			// 2. Detect algorithm 
 			if (culling->Visible == true)
 			{
-				if (culling->Type == CCullingData::FrustumBox)
+				if (culling->Type == CCullingData::FrustumBox && invTransform != NULL)
 				{
 					SViewFrustum frust = camera->getViewFrustum();
 
 					// transform the frustum to the node's current absolute transformation
-					core::matrix4 invTrans(transform->World, core::matrix4::EM4CONST_INVERSE);
+					invTrans = invTransform->WorldInverse;
 					frust.transform(invTrans);
 
 					core::vector3df edges[8];

@@ -32,7 +32,6 @@ namespace Skylicht
 	{
 	public:
 		bool BoneRoot;
-		int Depth;
 
 		int RootIndex;
 

@@ -109,12 +109,15 @@ namespace Skylicht
 				spawnRender->setMesh(srcRender->getMesh());
 				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
 				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());
-				
+
 				// init software skinning
 				if (spawnRender->isSkinnedMesh() && spawnRender->isSoftwareSkinning() == true)
 					spawnRender->initSoftwareSkinning();
-				
+
 				renderers.push_back(spawnRender);
+
+				// add world inv transform for culling system
+				spawnEntity->addData<CWorldInvTransformData>();
 			}
 
 			// copy culling data
@@ -132,7 +135,6 @@ namespace Skylicht
 			{
 				CJointData *spawnJoint = spawnEntity->addData<CJointData>();
 				spawnJoint->BoneRoot = srcJointData->BoneRoot;
-				spawnJoint->Depth = srcJointData->Depth;
 				spawnJoint->SID = srcJointData->SID;
 				spawnJoint->BoneName = srcJointData->BoneName;
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
@@ -146,8 +148,8 @@ namespace Skylicht
 		bool addInvData = false;
 
 		// re-map joint with new entity in CEntityManager
-		for (CRenderMeshData *&r :renderers)
-		{						
+		for (CRenderMeshData *&r : renderers)
+		{
 			if (r->isSkinnedMesh() == true)
 			{
 				CSkinnedMesh *skinMesh = NULL;
@@ -176,7 +178,8 @@ namespace Skylicht
 
 				if (addInvData == false)
 				{
-					rootEntity->addData<CWorldInvTransformData>();
+					if (rootEntity->getData<CWorldInvTransformData>() == NULL)
+						rootEntity->addData<CWorldInvTransformData>();
 					addInvData = true;
 				}
 			}

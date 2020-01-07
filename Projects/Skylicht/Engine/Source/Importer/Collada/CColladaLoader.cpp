@@ -1520,9 +1520,6 @@ namespace Skylicht
 
 		char name[512] = { 0 };
 
-		// unit scale
-		float unitScale = 1.0f;
-
 		while (stackColladaNodes.size())
 		{
 			SNodeParam *node = stackColladaNodes.back();
@@ -1546,8 +1543,6 @@ namespace Skylicht
 
 			// add transform
 			core::matrix4 relativeTransform = node->Transform;
-			core::vector3df unitTranslate = relativeTransform.getTranslation() * unitScale;
-			relativeTransform.setTranslation(unitTranslate);
 
 			// add entity with transform
 			CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
@@ -1558,7 +1553,6 @@ namespace Skylicht
 			{
 				CJointData *jointData = entity->addData<CJointData>();
 				jointData->BoneName = name;
-				jointData->Depth = node->ChildLevel;
 
 				if (node->ChildLevel == 0)
 					jointData->BoneRoot = true;
@@ -1811,8 +1805,6 @@ namespace Skylicht
 		// index buffer
 		core::array<u32> indices;
 
-		float unitScale = 1.0f;
-
 		// if have the normal & texcoord
 		if (tri->NumElementPerVertex == 1)
 		{
@@ -1840,9 +1832,6 @@ namespace Skylicht
 					vtx.Pos.Y = position->FloatArray[idx + 1];
 					vtx.Pos.Z = position->FloatArray[idx + 2];
 				}
-
-				// scale centimeter to meter
-				vtx.Pos *= unitScale;
 
 				// set normal
 				if (normal != NULL)
@@ -1948,9 +1937,6 @@ namespace Skylicht
 					vtx.Pos.Y = position->FloatArray[idx + 1];
 					vtx.Pos.Z = position->FloatArray[idx + 2];
 				}
-
-				// scale centimeter to meter
-				vtx.Pos *= unitScale;
 
 				// set normal
 				if (vertexIndex.normalId != -1)
