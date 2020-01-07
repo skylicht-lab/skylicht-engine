@@ -33,7 +33,8 @@ namespace Skylicht
 	CShaderManager::CShaderManager() :
 		m_currentRenderID(-1),
 		m_currentMeshBuffer(NULL),
-		m_currentMatRendering(NULL)
+		m_currentMatRendering(NULL),
+		BoneMatrix(NULL)
 	{
 	}
 
@@ -79,6 +80,8 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/Basic/AlphaTest.xml");
 		loadShader("BuiltIn/Shader/Basic/AlphaBlend.xml");
+
+		loadShader("BuiltIn/Shader/Basic/Skin.xml");
 	}
 
 	void CShaderManager::initSkylichtEngineShader()

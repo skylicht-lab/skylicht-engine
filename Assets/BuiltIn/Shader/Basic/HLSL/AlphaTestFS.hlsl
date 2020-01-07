@@ -16,7 +16,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float4 alphaColor = uTexAlpha.Sample( uTexAlphaSampler, input.tex0 );
 	if (alphaColor.r < 0.5)
 		discard;
-	
 	float4 result = uTexDiffuse.Sample( uTexDiffuseSampler, input.tex0 );
 	return result;
 }

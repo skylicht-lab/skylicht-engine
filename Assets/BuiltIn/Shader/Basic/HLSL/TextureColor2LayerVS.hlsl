@@ -1,10 +1,10 @@
 struct VS_INPUT
 {
-	float4 pos		: POSITION;
-	float3 norm		: NORMAL;
-	float4 color	: COLOR;
-	float2 tex0		: TEXCOORD0;
-	float2 tex1		: TEXCOORD1;
+	float4 pos: POSITION;
+	float3 norm: NORMAL;
+	float4 color: COLOR;
+	float2 tex0: TEXCOORD0;
+	float2 tex1: TEXCOORD1;
 };
 
 struct VS_OUTPUT

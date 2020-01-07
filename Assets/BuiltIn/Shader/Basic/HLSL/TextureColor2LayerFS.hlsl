@@ -16,6 +16,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, input.tex0);
 	float4 color2 = uTexDiffuse2.Sample(uTex2Sampler, input.tex1);
-	
 	return color1 * color2 * input.color;
 }
