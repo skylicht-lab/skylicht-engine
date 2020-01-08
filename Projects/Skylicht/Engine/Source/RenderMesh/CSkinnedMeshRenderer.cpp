@@ -23,30 +23,30 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CSkinMeshRenderer.h"
+#include "CSkinnedMeshRenderer.h"
 
 #include "Culling/CCullingData.h"
 #include "Material/CShaderManager.h"
 
 namespace Skylicht
 {
-	CSkinMeshRenderer::CSkinMeshRenderer()
+	CSkinnedMeshRenderer::CSkinnedMeshRenderer()
 	{
 
 	}
 
-	CSkinMeshRenderer::~CSkinMeshRenderer()
+	CSkinnedMeshRenderer::~CSkinnedMeshRenderer()
 	{
 
 	}
 
-	void CSkinMeshRenderer::beginQuery()
+	void CSkinnedMeshRenderer::beginQuery()
 	{
 		m_meshs.set_used(0);
 		m_transforms.set_used(0);
 	}
 
-	void CSkinMeshRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CSkinnedMeshRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
 		CRenderMeshData *meshData = entity->getData<CRenderMeshData>();
 		if (meshData != NULL)
@@ -74,17 +74,17 @@ namespace Skylicht
 		}
 	}
 
-	void CSkinMeshRenderer::init(CEntityManager *entityManager)
+	void CSkinnedMeshRenderer::init(CEntityManager *entityManager)
 	{
 
 	}
 
-	void CSkinMeshRenderer::update(CEntityManager *entityManager)
+	void CSkinnedMeshRenderer::update(CEntityManager *entityManager)
 	{
 
 	}
 
-	void CSkinMeshRenderer::render(CEntityManager *entityManager)
+	void CSkinnedMeshRenderer::render(CEntityManager *entityManager)
 	{
 		IVideoDriver *driver = getVideoDriver();
 

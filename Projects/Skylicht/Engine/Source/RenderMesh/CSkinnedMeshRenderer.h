@@ -30,16 +30,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSkinMeshRenderer : public IRenderSystem
+	class CSkinnedMeshRenderer : public IRenderSystem
 	{
 	protected:
 		core::array<CRenderMeshData*> m_meshs;
 		core::array<CWorldTransformData*> m_transforms;
 
 	public:
-		CSkinMeshRenderer();
+		CSkinnedMeshRenderer();
 
-		virtual ~CSkinMeshRenderer();
+		virtual ~CSkinnedMeshRenderer();
 
 		virtual void beginQuery();
 
