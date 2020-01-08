@@ -17,7 +17,7 @@ Do some thing 2
 Remember tag your issues id ex: #282 on your commit message, and branch name
 ## Code style
 -   We try to adhere to the existing [**Irrlicht code style**](http://irrlicht.sourceforge.net/?page_id=140).
--   You can use your code style in your local project `Projects/{YourProject}`. When you fix bug or commit a feature on `Projects/Skylicht*`, please follow our style.
+-   You can use your code style in your local project `Projects/{YourProject}`. If you fix bug or commit a feature on `Projects/Skylicht/*`, please follow our style.
 ### Code formation
 Use **TAB Indent** instead 2 space for C/C++ code.
 
@@ -30,7 +30,7 @@ Use **TAB Indent** instead 2 space for C/C++ code.
     -   On Mac: **`Shift` + `Option` + `F`**
     -   On Ubuntu: **`Ctrl` + `Shift` + `I`**
 ### Example code style
-**`NOT RECOMMENDED`**
+**`NOT RECOMMENDED JS STYLE`**
 ```
 void function(int foo){
   ...
@@ -57,7 +57,7 @@ I recommend we don't use ~~c_style_function_name~~ and ~~character _~~ for funct
 
 **`BAD`**
 ```
-// not recommend in .cpp
+// not recommend underscore C style in C++ (*.cpp)
 void func_style_c_name()
 {
   // not recommend
@@ -75,7 +75,7 @@ void MODULE_func_style_c_name()
 ```
 **`GOOD`**
 ```
-void functionJavaNameStyle()
+void camelCaseStyle()
 {  
   int variable = 0;
   ...
