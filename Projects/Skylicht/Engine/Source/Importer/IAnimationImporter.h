@@ -24,87 +24,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "pch.h"
-#include "CAnimationTrack.h"
-
 namespace Skylicht
 {
-	struct SEntityAnim
-	{
-		std::string Name;
-		CFrameData Data;
-	};
+	class CAnimationClip;
 
-	class CAnimationClip
+	class IAnimationImporter
 	{
 	public:
-		std::string AnimName;
-		float Time;
-		float Duration;
-		bool Loop;
-
-		std::vector<SEntityAnim*> AnimInfo;
-		std::map<std::string, SEntityAnim*> AnimNameToInfo;
-
-		CAnimationClip()
+		IAnimationImporter()
 		{
-			AnimName = "";
-			Time = 0.0f;
-			Duration = 0.0f;
-			Loop = true;
+
 		}
 
-		virtual ~CAnimationClip()
+		virtual ~IAnimationImporter()
 		{
-			releaseAllAnim();
+
 		}
 
-		void releaseAllAnim()
-		{
-			for (SEntityAnim* &i : AnimInfo)
-			{
-				delete i;
-			}
-			AnimInfo.clear();
-			AnimNameToInfo.clear();
-		}
-
-		void addAnim(SEntityAnim* anim)
-		{
-			for (SEntityAnim *&i : AnimInfo)
-			{
-				if (i->Name == anim->Name)
-				{
-					delete i;
-					i = anim;
-					AnimNameToInfo[i->Name] = anim;
-					return;
-				}
-			}
-
-			AnimInfo.push_back(anim);
-			AnimNameToInfo[anim->Name] = anim;
-		}
-
-		int getNodeAnimCount()
-		{
-			return (int)AnimInfo.size();
-		}
-
-		SEntityAnim* getAnimOfSceneNode(int i)
-		{
-			return AnimInfo[i];
-		}
-
-		SEntityAnim* getAnimOfSceneNode(const std::string &sceneNodeName)
-		{
-			return AnimNameToInfo[sceneNodeName];
-		}
-
-		float getRealTimeLength(float baseFps = 30.0f)
-		{
-			return Duration * 1000.0f / baseFps;
-		}
+		virtual bool loadAnimation(const char *resource, CAnimationClip* output) = 0;
 	};
-
 }

@@ -3,7 +3,9 @@
 #include "CViewDemo.h"
 #include "ViewManager/CViewManager.h"
 #include "TextureManager/CTextureManager.h"
+
 #include "MeshManager/CMeshManager.h"
+#include "Animation/CAnimationManager.h"
 
 #include "Context/CContext.h"
 
@@ -74,8 +76,13 @@ void CViewInit::initScene()
 	// grid
 	zone->createEmptyObject()->addComponent<CGridPlane>();
 
-	// test dae model
 	/*
+	// load animation
+	CAnimationManager *animManager = CAnimationManager::getInstance();
+	CAnimation* anim = animManager->createAnimation("HeroAnimation");
+	anim->addClip(animManager->loadAnimation("Demo/Model3D/Hero@Idle.dae"));
+
+	// test dae model
 	CMeshManager *meshManager = CMeshManager::getInstance();
 	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
 	if (prefab != NULL)

@@ -25,86 +25,64 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "pch.h"
-#include "CAnimationTrack.h"
+#include "CAnimationClip.h"
 
 namespace Skylicht
 {
-	struct SEntityAnim
-	{
-		std::string Name;
-		CFrameData Data;
-	};
 
-	class CAnimationClip
+	class CAnimation
 	{
+	protected:
+		std::vector<CAnimationClip*> m_clips;
+		std::map<std::string, CAnimationClip*> m_clipName;
+
 	public:
-		std::string AnimName;
-		float Time;
-		float Duration;
-		bool Loop;
+		CAnimation();
 
-		std::vector<SEntityAnim*> AnimInfo;
-		std::map<std::string, SEntityAnim*> AnimNameToInfo;
+		virtual ~CAnimation();
 
-		CAnimationClip()
+		CAnimationClip* getAnim(const char *lpAnimName)
 		{
-			AnimName = "";
-			Time = 0.0f;
-			Duration = 0.0f;
-			Loop = true;
+			return m_clipName[lpAnimName];
 		}
 
-		virtual ~CAnimationClip()
+		CAnimationClip* getAnim(int animID)
 		{
-			releaseAllAnim();
+			return m_clips[animID];
 		}
 
-		void releaseAllAnim()
+		int getAnimCount()
 		{
-			for (SEntityAnim* &i : AnimInfo)
-			{
-				delete i;
-			}
-			AnimInfo.clear();
-			AnimNameToInfo.clear();
+			return (int)m_clips.size();
 		}
 
-		void addAnim(SEntityAnim* anim)
+		void addClip(CAnimationClip* clip)
 		{
-			for (SEntityAnim *&i : AnimInfo)
-			{
-				if (i->Name == anim->Name)
-				{
-					delete i;
-					i = anim;
-					AnimNameToInfo[i->Name] = anim;
-					return;
-				}
-			}
+			if (clip == NULL)
+				return;
 
-			AnimInfo.push_back(anim);
-			AnimNameToInfo[anim->Name] = anim;
+			m_clips.push_back(clip);
+			m_clipName[clip->AnimName] = clip;
 		}
 
-		int getNodeAnimCount()
+		void sortAnimByName();
+
+		std::vector<CAnimationClip*>* getAllAnimClip()
 		{
-			return (int)AnimInfo.size();
+			return &m_clips;
 		}
 
-		SEntityAnim* getAnimOfSceneNode(int i)
+		std::map<std::string, CAnimationClip*>* getAllAnimNameClip()
 		{
-			return AnimInfo[i];
+			return &m_clipName;
 		}
 
-		SEntityAnim* getAnimOfSceneNode(const std::string &sceneNodeName)
-		{
-			return AnimNameToInfo[sceneNodeName];
-		}
+		void removeAll();
 
-		float getRealTimeLength(float baseFps = 30.0f)
-		{
-			return Duration * 1000.0f / baseFps;
-		}
+		void removeClip(const std::string& clipName);
+
+		void renameClip(const std::string& oldName, const std::string& newName);
+
 	};
 
 }
