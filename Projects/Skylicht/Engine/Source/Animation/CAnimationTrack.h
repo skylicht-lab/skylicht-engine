@@ -70,11 +70,11 @@ namespace Skylicht
 	class CAnimationTrack
 	{
 	protected:
-		s32	m_posHint;
-		s32	m_scaleHint;
-		s32	m_rotHint;
+		s32 m_posHint;
+		s32 m_scaleHint;
+		s32 m_rotHint;
 
-		CFrameData	*m_data;
+		CFrameData *m_data;
 	public:
 
 		std::string Name;
