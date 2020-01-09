@@ -24,21 +24,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Importer/IAnimationImporter.h"
+
 namespace Skylicht
 {
-
 	class CAnimationClip;
-	struct SNodeAnim;
+
+	struct SEntityAnim;
 	struct SNodeParam;
 
-	class CColladaAnimLoader
+	class CColladaAnimLoader : public IAnimationImporter
 	{
 	protected:
 		bool m_zUp;
 		bool m_flipOx;
 
 		std::vector<CAnimationClip*> m_clips;
-		std::map<std::string, SNodeAnim*> m_nodeAnim;
+		std::map<std::string, SEntityAnim*> m_nodeAnim;
 
 		SNodeParam* m_colladaRoot;
 		std::vector<SNodeParam*> m_listNode;
@@ -48,14 +50,12 @@ namespace Skylicht
 
 		virtual ~CColladaAnimLoader();
 
-		void loadDae(const char *fileName);
+		bool loadAnimation(const char *resource, CAnimationClip* output);
 
 	protected:
-		void constructAnimation(const char *fileName);
+		void constructAnimation(const char *fileName, CAnimationClip* output);
 
 		void clearData();
-
-		void parseClipNode(io::IXMLReader *xmlRead);
 
 		void parseAnimationNode(io::IXMLReader *xmlRead);
 

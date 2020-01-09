@@ -24,87 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "pch.h"
-#include "CAnimationTrack.h"
+#include "Utils/CGameSingleton.h"
+#include "CAnimation.h"
+#include "CAnimationClip.h"
 
 namespace Skylicht
 {
-	struct SEntityAnim
+	class CAnimationManager : public CGameSingleton<CAnimationManager>
 	{
-		std::string Name;
-		CFrameData Data;
-	};
+	protected:
+		std::map<std::string, CAnimationClip*> m_clips;
+		std::map<std::string, CAnimation*> m_animations;
 
-	class CAnimationClip
-	{
 	public:
-		std::string AnimName;
-		float Time;
-		float Duration;
-		bool Loop;
+		CAnimationManager();
 
-		std::vector<SEntityAnim*> AnimInfo;
-		std::map<std::string, SEntityAnim*> AnimNameToInfo;
+		virtual ~CAnimationManager();
 
-		CAnimationClip()
+		CAnimation* createAnimation(const char *name);
+
+		CAnimation* getAnimation(const char *animName)
 		{
-			AnimName = "";
-			Time = 0.0f;
-			Duration = 0.0f;
-			Loop = true;
+			return m_animations[animName];
 		}
 
-		virtual ~CAnimationClip()
-		{
-			releaseAllAnim();
-		}
+		CAnimationClip* loadAnimation(const char *resource);
 
-		void releaseAllAnim()
-		{
-			for (SEntityAnim* &i : AnimInfo)
-			{
-				delete i;
-			}
-			AnimInfo.clear();
-			AnimNameToInfo.clear();
-		}
+		void releaseAllClips();
 
-		void addAnim(SEntityAnim* anim)
-		{
-			for (SEntityAnim *&i : AnimInfo)
-			{
-				if (i->Name == anim->Name)
-				{
-					delete i;
-					i = anim;
-					AnimNameToInfo[i->Name] = anim;
-					return;
-				}
-			}
-
-			AnimInfo.push_back(anim);
-			AnimNameToInfo[anim->Name] = anim;
-		}
-
-		int getNodeAnimCount()
-		{
-			return (int)AnimInfo.size();
-		}
-
-		SEntityAnim* getAnimOfSceneNode(int i)
-		{
-			return AnimInfo[i];
-		}
-
-		SEntityAnim* getAnimOfSceneNode(const std::string &sceneNodeName)
-		{
-			return AnimNameToInfo[sceneNodeName];
-		}
-
-		float getRealTimeLength(float baseFps = 30.0f)
-		{
-			return Duration * 1000.0f / baseFps;
-		}
+		void releaseAllAnimations();
 	};
-
 }
