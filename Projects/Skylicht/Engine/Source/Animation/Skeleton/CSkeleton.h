@@ -24,33 +24,49 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include "CAnimationTimeline.h"
+#include "Entity/CEntityPrefab.h"
 
 namespace Skylicht
 {
-	class CJointData : public IEntityData
+	class CSkeleton
 	{
+	protected:
+		CEntityPrefab m_entites;
+
+		int m_id;
+		bool m_enable;
+
+		CAnimationTimeline m_timeline;
 	public:
-		bool BoneRoot;
+		CSkeleton(int id);
 
-		int RootIndex;
+		virtual ~CSkeleton();
 
-		std::string SID;
-		std::string BoneName;
+		void initSkeleton(core::array<CEntity*>& entities);
 
-		// absolute joint transform at (0,0,0)
-		core::matrix4 AnimationMatrix;
+		void releaseAllEntities();
 
-		// relative transform copy from skeleton
-		core::matrix4 RelativeAnimationMatrix;
+		void update();
 
-		// default transform
-		core::matrix4 DefaultAnimationMatrix;
-		core::matrix4 DefaultRelativeMatrix;
+		inline int getID()
+		{
+			return m_id;
+		}
 
-	public:
-		CJointData();
+		inline bool isEnable()
+		{
+			return m_enable;
+		}
 
-		virtual ~CJointData();
+		inline void setEnable(bool b)
+		{
+			m_enable = b;
+		}
+
+		inline CAnimationTimeline& getTimeline()
+		{
+			return m_timeline;
+		}
 	};
 }

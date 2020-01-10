@@ -26,31 +26,39 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 
+#include "Animation/CAnimationTrack.h"
+#include "Transform/CWorldTransformData.h"
+
 namespace Skylicht
 {
-	class CJointData : public IEntityData
+	class CAnimationTransformData : public IEntityData
 	{
 	public:
-		bool BoneRoot;
+		std::string Name;
 
-		int RootIndex;
+		int ParentID;
+		int Depth;
 
-		std::string SID;
-		std::string BoneName;
-
-		// absolute joint transform at (0,0,0)
-		core::matrix4 AnimationMatrix;
-
-		// relative transform copy from skeleton
-		core::matrix4 RelativeAnimationMatrix;
-
-		// default transform
-		core::matrix4 DefaultAnimationMatrix;
+		// transform if the entity dont have animation
 		core::matrix4 DefaultRelativeMatrix;
 
-	public:
-		CJointData();
+		core::vector3df DefaultPosition;
+		core::vector3df DefaultScale;
+		core::quaternion DefaultRotation;
 
-		virtual ~CJointData();
+		// transform get from animation track
+		core::vector3df AnimPosition;
+		core::vector3df AnimScale;
+		core::quaternion AnimRotation;
+
+		CWorldTransformData* WorldTransform;
+
+		// current animation track
+		CAnimationTrack AnimationTrack;
+
+	public:
+		CAnimationTransformData();
+
+		virtual ~CAnimationTransformData();
 	};
 }
