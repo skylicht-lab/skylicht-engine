@@ -22,35 +22,60 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "GameObject/CGameObject.h"
+#include "CAnimationController.h"
 
-#include "Entity/IEntityData.h"
+#include "RenderMesh/CRenderMesh.h"
 
 namespace Skylicht
 {
-	class CJointData : public IEntityData
+	CAnimationController::CAnimationController()
 	{
-	public:
-		bool BoneRoot;
 
-		int RootIndex;
+	}
 
-		std::string SID;
-		std::string BoneName;
+	CAnimationController::~CAnimationController()
+	{
+		releaseAllSkeleton();
+	}
 
-		// absolute joint transform at (0,0,0)
-		core::matrix4 AnimationMatrix;
+	void CAnimationController::initComponent()
+	{
 
-		// relative transform copy from skeleton
-		core::matrix4 RelativeAnimationMatrix;
+	}
 
-		// default transform
-		core::matrix4 DefaultAnimationMatrix;
-		core::matrix4 DefaultRelativeMatrix;
+	void CAnimationController::updateComponent()
+	{
+		for (CSkeleton *&skeleton : m_skeletons)
+		{
+			if (skeleton->isEnable() == true)
+			{
+				skeleton->update();
+			}
+		}
+	}
 
-	public:
-		CJointData();
+	CSkeleton* CAnimationController::createSkeleton()
+	{
+		int id = (int)m_skeletons.size();
 
-		virtual ~CJointData();
-	};
+		CSkeleton* skeleton = new CSkeleton(id);
+
+		CRenderMesh *renderMesh = m_gameObject->getComponent<CRenderMesh>();
+		if (renderMesh != NULL)
+			skeleton->initSkeleton(renderMesh->getEntities());
+
+		m_skeletons.push_back(skeleton);
+		return skeleton;
+	}
+
+	void CAnimationController::releaseAllSkeleton()
+	{
+		for (CSkeleton *&skeleton : m_skeletons)
+		{
+			delete skeleton;
+		}
+		m_skeletons.clear();
+	}
 }

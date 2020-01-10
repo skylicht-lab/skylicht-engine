@@ -24,33 +24,57 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include "pch.h"
+#include "CAnimationTimeline.h"
 
 namespace Skylicht
 {
-	class CJointData : public IEntityData
+
+	CAnimationTimeline::CAnimationTimeline() :
+		AnimationFrame(0.0f),
+		AnimationDuration(0.0f),
+		AnimationSpeed(1.0f),
+		AnimationSpeedMultiply(1.0f),
+		AnimationDurationSyncRatio(1.0f),
+		AnimationWeight(1.0f),
+		AnimationSleep(0.0f),
+		EndTrackSleep(0.0f),
+		SyncSeekRatio(0.0f),
+		Pause(false)
 	{
-	public:
-		bool BoneRoot;
 
-		int RootIndex;
+	}
 
-		std::string SID;
-		std::string BoneName;
+	void CAnimationTimeline::update()
+	{
+		float milisecondToSecond = 1.0f / 1000.0f;
+		if (Pause == false)
+		{
+			float secFrameStep = getTimeStep()*AnimationSpeed*AnimationSpeedMultiply*milisecondToSecond;
 
-		// absolute joint transform at (0,0,0)
-		core::matrix4 AnimationMatrix;
+			// seek animation frame
+			AnimationFrame = AnimationFrame + secFrameStep;
 
-		// relative transform copy from skeleton
-		core::matrix4 RelativeAnimationMatrix;
+			// if end of animation
+			if (AnimationFrame > AnimationDuration)
+			{
+				AnimationFrame = AnimationDuration;
 
-		// default transform
-		core::matrix4 DefaultAnimationMatrix;
-		core::matrix4 DefaultRelativeMatrix;
+				// if animation is loop
+				if (AnimationLoop == true)
+				{
+					if (AnimationSleep > 0)
+					{
+						AnimationSleep = AnimationSleep - secFrameStep;
+					}
+					else
+					{
+						AnimationFrame = 0.0f;
+						AnimationSleep = EndTrackSleep;
+					}
+				}
+			}
+		}
+	}
 
-	public:
-		CJointData();
-
-		virtual ~CJointData();
-	};
 }
