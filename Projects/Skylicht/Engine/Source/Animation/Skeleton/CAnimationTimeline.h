@@ -24,33 +24,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
-
 namespace Skylicht
 {
-	class CJointData : public IEntityData
+	class CAnimationTimeline
 	{
 	public:
-		bool BoneRoot;
-
-		int RootIndex;
-
-		std::string SID;
-		std::string BoneName;
-
-		// absolute joint transform at (0,0,0)
-		core::matrix4 AnimationMatrix;
-
-		// relative transform copy from skeleton
-		core::matrix4 RelativeAnimationMatrix;
-
-		// default transform
-		core::matrix4 DefaultAnimationMatrix;
-		core::matrix4 DefaultRelativeMatrix;
+		float AnimationDuration; // second
+		float AnimationDurationSyncRatio;
+		float AnimationFrame; // second
+		float AnimationSpeed; // todo use for sync on animation blending
+		float AnimationSpeedMultiply;
+		float AnimationWeight;
+		float AnimationSleep;
+		float SyncSeekRatio;
+		float EndTrackSleep;
+		bool AnimationLoop;
+		bool Pause;
 
 	public:
-		CJointData();
+		CAnimationTimeline();
 
-		virtual ~CJointData();
+		void update();
 	};
 }

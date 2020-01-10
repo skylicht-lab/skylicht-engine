@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 	protected:
 		CEntity* m_root;
-		core::array<CEntity*> m_childs;
+		core::array<CEntity*> m_entities;
 
 	public:
 		CRenderMesh();
@@ -43,9 +43,14 @@ namespace Skylicht
 		virtual void initComponent();
 
 		virtual void updateComponent();
-	
+
 	public:
 
 		void initFromPrefab(CEntityPrefab *prefab);
+
+		core::array<CEntity*>& getEntities()
+		{
+			return m_entities;
+		}
 	};
 }
