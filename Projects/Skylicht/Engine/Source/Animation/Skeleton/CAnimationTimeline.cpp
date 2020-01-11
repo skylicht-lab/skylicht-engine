@@ -31,14 +31,10 @@ namespace Skylicht
 {
 
 	CAnimationTimeline::CAnimationTimeline() :
-		AnimationFrame(0.0f),
-		AnimationDuration(0.0f),
-		AnimationSpeed(1.0f),
-		AnimationSpeedMultiply(1.0f),
-		AnimationDurationSyncRatio(1.0f),
-		AnimationWeight(1.0f),
-		AnimationSleep(0.0f),
-		EndTrackSleep(0.0f),
+		Frame(0.0f),
+		Duration(0.0f),
+		Speed(1.0f),
+		Weight(1.0f),
 		SyncSeekRatio(0.0f),
 		Pause(false)
 	{
@@ -50,29 +46,19 @@ namespace Skylicht
 		float milisecondToSecond = 1.0f / 1000.0f;
 		if (Pause == false)
 		{
-			float secFrameStep = getTimeStep()*AnimationSpeed*AnimationSpeedMultiply*milisecondToSecond;
+			float secFrameStep = getTimeStep()*Speed*milisecondToSecond;
 
 			// seek animation frame
-			AnimationFrame = AnimationFrame + secFrameStep;
+			Frame = Frame + secFrameStep;
 
 			// if end of animation
-			if (AnimationFrame > AnimationDuration)
+			if (Frame > Duration)
 			{
-				AnimationFrame = AnimationDuration;
+				Frame = Duration;
 
 				// if animation is loop
-				if (AnimationLoop == true)
-				{
-					if (AnimationSleep > 0)
-					{
-						AnimationSleep = AnimationSleep - secFrameStep;
-					}
-					else
-					{
-						AnimationFrame = 0.0f;
-						AnimationSleep = EndTrackSleep;
-					}
-				}
+				if (Loop == true)
+					Frame = 0.0f;
 			}
 		}
 	}

@@ -6,6 +6,7 @@
 
 #include "MeshManager/CMeshManager.h"
 #include "Animation/CAnimationManager.h"
+#include "Animation/CAnimationController.h"
 
 #include "Context/CContext.h"
 
@@ -76,13 +77,13 @@ void CViewInit::initScene()
 	// grid
 	zone->createEmptyObject()->addComponent<CGridPlane>();
 
+	// test dae model & animation
 	/*
-	// load animation
 	CAnimationManager *animManager = CAnimationManager::getInstance();
-	CAnimation* anim = animManager->createAnimation("HeroAnimation");
-	anim->addClip(animManager->loadAnimation("Demo/Model3D/Hero@Idle.dae"));
+	CAnimationClip *animIdle = animManager->loadAnimation("Demo/Model3D/Hero@Idle.dae");
+	CAnimationClip *animWalkForward = animManager->loadAnimation("Demo/Model3D/Hero@WalkForward.dae");
+	CAnimationClip *animRunForward = animManager->loadAnimation("Demo/Model3D/Hero@RunForward.dae");
 
-	// test dae model
 	CMeshManager *meshManager = CMeshManager::getInstance();
 	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
 	if (prefab != NULL)
@@ -91,17 +92,38 @@ void CViewInit::initScene()
 		CGameObject *model = zone->createEmptyObject();
 		model->addComponent<CRenderMesh>()->initFromPrefab(prefab);
 
+		// setup animation
+		CAnimationController *animController = model->addComponent<CAnimationController>();
+
+		CSkeleton *skeletonIdle = animController->createSkeleton();
+		CSkeleton *skeletonWalkForward = animController->createSkeleton();
+		CSkeleton *skeletonRunForward = animController->createSkeleton();
+
+		CSkeleton *output = animController->createSkeleton();
+		output->setAnimationType(CSkeleton::Blending);
+
+		// set animation clip
+		skeletonIdle->setAnimation(animIdle, true);
+		skeletonIdle->getTimeline().Weight = 0.0f;
+
+		skeletonWalkForward->setAnimation(animWalkForward, true);
+		skeletonWalkForward->getTimeline().Weight = 0.0f;
+
+		skeletonRunForward->setAnimation(animRunForward, true);
+		skeletonRunForward->getTimeline().Weight = 1.0f;
+
+		// blending
+		skeletonIdle->setTarget(output);
+		skeletonWalkForward->setTarget(output);
+		skeletonRunForward->setTarget(output);
+
+		// output animation
+		animController->setOutput(output);
+
+		// setup transform
 		CTransformEuler *transform = model->getTransformEuler();
 		transform->setPosition(core::vector3df(0.0f, 0.0f, 2.0f));
 		transform->setYaw(45.0f);
-
-		// instance object 2
-		model = zone->createEmptyObject();
-		model->addComponent<CRenderMesh>()->initFromPrefab(prefab);
-
-		transform = model->getTransformEuler();
-		transform->setPosition(core::vector3df(0.0f, 0.0f, -3.0f));
-		transform->setYaw(-45.0f);
 	}
 	*/
 

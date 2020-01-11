@@ -29,16 +29,12 @@ namespace Skylicht
 	class CAnimationTimeline
 	{
 	public:
-		float AnimationDuration; // second
-		float AnimationDurationSyncRatio;
-		float AnimationFrame; // second
-		float AnimationSpeed; // todo use for sync on animation blending
-		float AnimationSpeedMultiply;
-		float AnimationWeight;
-		float AnimationSleep;
+		float Duration; // second
+		float Frame; // second
+		float Speed;
+		float Weight;
 		float SyncSeekRatio;
-		float EndTrackSleep;
-		bool AnimationLoop;
+		bool Loop;
 		bool Pause;
 
 	public:
