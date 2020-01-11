@@ -29,22 +29,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	struct SNodeAnim
+	struct SEntityAnim
 	{
-		std::string SceneNodeName;
+		std::string Name;
 		CFrameData Data;
 	};
 
 	class CAnimationClip
 	{
 	public:
-		std::string	AnimName;
+		std::string AnimName;
 		float Time;
 		float Duration;
 		bool Loop;
 
-		std::vector<SNodeAnim*> AnimInfo;
-		std::map<std::string, SNodeAnim*> AnimNameToInfo;
+		std::vector<SEntityAnim*> AnimInfo;
+		std::map<std::string, SEntityAnim*> AnimNameToInfo;
 
 		CAnimationClip()
 		{
@@ -56,12 +56,12 @@ namespace Skylicht
 
 		virtual ~CAnimationClip()
 		{
-			freeAllNodeAnim();
+			releaseAllAnim();
 		}
 
-		void freeAllNodeAnim()
+		void releaseAllAnim()
 		{
-			for (SNodeAnim* &i : AnimInfo)
+			for (SEntityAnim* &i : AnimInfo)
 			{
 				delete i;
 			}
@@ -69,21 +69,21 @@ namespace Skylicht
 			AnimNameToInfo.clear();
 		}
 
-		void addNodeAnim(SNodeAnim* anim)
+		void addAnim(SEntityAnim* anim)
 		{
-			for (SNodeAnim *&i : AnimInfo)
+			for (SEntityAnim *&i : AnimInfo)
 			{
-				if (i->SceneNodeName == anim->SceneNodeName)
+				if (i->Name == anim->Name)
 				{
 					delete i;
 					i = anim;
-					AnimNameToInfo[i->SceneNodeName] = anim;
+					AnimNameToInfo[i->Name] = anim;
 					return;
 				}
 			}
 
 			AnimInfo.push_back(anim);
-			AnimNameToInfo[anim->SceneNodeName] = anim;
+			AnimNameToInfo[anim->Name] = anim;
 		}
 
 		int getNodeAnimCount()
@@ -91,12 +91,12 @@ namespace Skylicht
 			return (int)AnimInfo.size();
 		}
 
-		SNodeAnim* getAnimOfSceneNode(int i)
+		SEntityAnim* getAnimOfEntity(int i)
 		{
 			return AnimInfo[i];
 		}
 
-		SNodeAnim* getAnimOfSceneNode(const std::string &sceneNodeName)
+		SEntityAnim* getAnimOfEntity(const std::string &sceneNodeName)
 		{
 			return AnimNameToInfo[sceneNodeName];
 		}

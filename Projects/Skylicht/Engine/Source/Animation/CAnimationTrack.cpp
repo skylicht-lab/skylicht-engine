@@ -32,8 +32,7 @@ namespace Skylicht
 		m_posHint(0),
 		m_scaleHint(0),
 		m_rotHint(0),
-		Enable(false),
-		TrackID(0)
+		HaveAnimation(false)
 	{
 	}
 
@@ -75,15 +74,15 @@ namespace Skylicht
 		{
 			foundPositionIndex = -1;
 
-			//Test the Hints...
+			// Test the Hints...
 			if (positionHint >= 0 && positionHint < numPositionKey)
 			{
-				//check this hint
+				// check this hint
 				if (positionHint > 0 && pPositionKey[positionHint].frame >= frame && pPositionKey[positionHint - 1].frame < frame)
 					foundPositionIndex = positionHint;
 				else if (positionHint + 1 < numPositionKey)
 				{
-					//check the next index
+					// check the next index
 					if (pPositionKey[positionHint + 1].frame >= frame && pPositionKey[positionHint + 0].frame < frame)
 					{
 						positionHint++;
@@ -92,12 +91,12 @@ namespace Skylicht
 				}
 			}
 
-			//The hint test failed, do a full scan...
+			// The hint test failed, do a full scan...
 			if (foundPositionIndex == -1)
 			{
 				for (s32 i = 0; i < numPositionKey; ++i)
 				{
-					if (pPositionKey[i].frame >= frame) //Keys should to be sorted by frame
+					if (pPositionKey[i].frame >= frame) // Keys should to be sorted by frame
 					{
 						foundPositionIndex = i;
 						positionHint = i;
@@ -106,7 +105,7 @@ namespace Skylicht
 				}
 			}
 
-			//Do interpolation...
+			// Do interpolation...
 			if (foundPositionIndex == 0)
 			{
 				position.X = pPositionKey[0].position.X;
@@ -153,15 +152,15 @@ namespace Skylicht
 		{
 			foundScaleIndex = -1;
 
-			//Test the Hints...
+			// Test the Hints...
 			if (scaleHint >= 0 && scaleHint < numScaleKey)
 			{
-				//check this hint
+				// check this hint
 				if (scaleHint > 0 && pScaleKey[scaleHint].frame >= frame && pScaleKey[scaleHint - 1].frame < frame)
 					foundScaleIndex = scaleHint;
 				else if (scaleHint + 1 < numScaleKey)
 				{
-					//check the next index
+					// check the next index
 					if (pScaleKey[scaleHint + 1].frame >= frame && pScaleKey[scaleHint].frame < frame)
 					{
 						scaleHint++;
@@ -171,12 +170,12 @@ namespace Skylicht
 			}
 
 
-			//The hint test failed, do a full scan...
+			// The hint test failed, do a full scan...
 			if (foundScaleIndex == -1)
 			{
 				for (s32 i = 0; i < numScaleKey; ++i)
 				{
-					if (pScaleKey[i].frame >= frame) //Keys should to be sorted by frame
+					if (pScaleKey[i].frame >= frame) // Keys should to be sorted by frame
 					{
 						foundScaleIndex = i;
 						scaleHint = i;
@@ -185,7 +184,7 @@ namespace Skylicht
 				}
 			}
 
-			//Do interpolation...
+			// Do interpolation...
 			if (foundScaleIndex == 0)
 			{
 				scale.X = pScaleKey[0].scale.X;
@@ -231,15 +230,15 @@ namespace Skylicht
 		{
 			foundRotationIndex = -1;
 
-			//Test the Hints...
+			// Test the Hints...
 			if (rotationHint >= 0 && rotationHint < numRotKey)
 			{
-				//check this hint
+				// check this hint
 				if (rotationHint > 0 && pRotKey[rotationHint].frame >= frame && pRotKey[rotationHint - 1].frame < frame)
 					foundRotationIndex = rotationHint;
 				else if (rotationHint + 1 < numRotKey)
 				{
-					//check the next index
+					// check the next index
 					if (pRotKey[rotationHint + 1].frame >= frame && pRotKey[rotationHint].frame < frame)
 					{
 						rotationHint++;
@@ -249,12 +248,12 @@ namespace Skylicht
 			}
 
 
-			//The hint test failed, do a full scan...
+			// The hint test failed, do a full scan...
 			if (foundRotationIndex == -1)
 			{
 				for (s32 i = 0; i < numRotKey; ++i)
 				{
-					if (pRotKey[i].frame >= frame) //Keys should be sorted by frame
+					if (pRotKey[i].frame >= frame) // Keys should be sorted by frame
 					{
 						foundRotationIndex = i;
 						rotationHint = i;
@@ -263,7 +262,7 @@ namespace Skylicht
 				}
 			}
 
-			//Do interpolation...
+			// Do interpolation...
 			if (foundRotationIndex == 0)
 			{
 				rotation.X = pRotKey[0].rotation.X;
@@ -355,10 +354,5 @@ namespace Skylicht
 		result.Y = q1.Y*scale + q2.Y*invscale;
 		result.Z = q1.Z*scale + q2.Z*invscale;
 		result.W = q1.W*scale + q2.W*invscale;
-	}
-
-	void CAnimationTrack::update(float timeStep)
-	{
-		// todo nothing
 	}
 }

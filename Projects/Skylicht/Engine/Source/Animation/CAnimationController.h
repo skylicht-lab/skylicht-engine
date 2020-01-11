@@ -24,56 +24,36 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Importer/IAnimationImporter.h"
+#include "Skeleton/CSkeleton.h"
+#include "Components/CComponentSystem.h"
 
 namespace Skylicht
 {
-	class CAnimationClip;
-
-	struct SEntityAnim;
-	struct SNodeParam;
-
-	class CColladaAnimLoader : public IAnimationImporter
+	class CAnimationController : public CComponentSystem
 	{
 	protected:
-		bool m_zUp;
-		bool m_flipOx;
+		std::vector<CSkeleton*> m_skeletons;
 
-		std::string m_unit;
-		float m_unitScale;
-
-		std::vector<CAnimationClip*> m_clips;
-		std::map<std::string, SEntityAnim*> m_nodeAnim;
-
-		SNodeParam* m_colladaRoot;
-		std::vector<SNodeParam*> m_listNode;
+		CSkeleton *m_output;
 
 	public:
-		CColladaAnimLoader();
+		CAnimationController();
 
-		virtual ~CColladaAnimLoader();
+		virtual ~CAnimationController();
 
-		bool loadAnimation(const char *resource, CAnimationClip* output);
+		virtual void initComponent();
 
-	protected:
-		void constructAnimation(const char *fileName, CAnimationClip* output);
+		virtual void updateComponent();
 
-		void clearData();
+	public:
 
-		void parseUnit(io::IXMLReader *xmlRead);
+		CSkeleton* createSkeleton();
 
-		void parseAnimationNode(io::IXMLReader *xmlRead);
+		void releaseAllSkeleton();
 
-		void parseAnimationSourceNode(io::IXMLReader *xmlRead);
-
-		void parseDefaultValuePosition(io::IXMLReader *xmlRead, float *x, float *y, float *z);
-
-		void parseDefaultValueRotate(io::IXMLReader *xmlRead, float *x, float *y, float *z, float *angle);
-
-		void parseSceneNode(io::IXMLReader *xmlRead);
-
-		SNodeParam* parseNode(io::IXMLReader *xmlRead, SNodeParam* parent);
-
-		SNodeParam* getNode(const std::string& nodeName);
+		inline void setOutput(CSkeleton *skeleton)
+		{
+			m_output = skeleton;
+		}
 	};
 }

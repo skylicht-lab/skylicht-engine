@@ -39,6 +39,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 // Mesh & Texture
 #include "MeshManager/CMeshManager.h"
+#include "Animation/CAnimationManager.h"
 #include "TextureManager/CTextureManager.h"
 
 namespace Skylicht
@@ -64,6 +65,7 @@ namespace Skylicht
 		CGraphics2D::createGetInstance();
 		CTextureManager::createGetInstance();
 		CMeshManager::createGetInstance();
+		CAnimationManager::createGetInstance();
 
 		// alway use HW
 		g_video->setMinHardwareBufferVertexCount(0);
@@ -76,6 +78,7 @@ namespace Skylicht
 	{
 		os::Printer::log("Close skylicht core");
 
+		CAnimationManager::releaseInstance();
 		CMeshManager::releaseInstance();
 		CTextureManager::releaseInstance();
 		CGraphics2D::releaseInstance();

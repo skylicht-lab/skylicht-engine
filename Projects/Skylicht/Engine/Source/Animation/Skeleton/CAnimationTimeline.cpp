@@ -22,61 +22,45 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
+#pragma once
+
 #include "pch.h"
-#include "CJointTransformSystem.h"
+#include "CAnimationTimeline.h"
 
 namespace Skylicht
 {
-	CJointTransformSystem::CJointTransformSystem()
+
+	CAnimationTimeline::CAnimationTimeline() :
+		Frame(0.0f),
+		Duration(0.0f),
+		Speed(1.0f),
+		Weight(1.0f),
+		SyncSeekRatio(0.0f),
+		Pause(false)
 	{
 
 	}
 
-	CJointTransformSystem::~CJointTransformSystem()
+	void CAnimationTimeline::update()
 	{
-
-	}
-
-	void CJointTransformSystem::beginQuery()
-	{
-		m_joints.set_used(0);
-		m_transforms.set_used(0);
-	}
-
-	void CJointTransformSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
-	{
-		CJointData *joint = entity->getData<CJointData>();
-		if (joint != NULL)
+		float milisecondToSecond = 1.0f / 1000.0f;
+		if (Pause == false)
 		{
-			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-			if (transform != NULL)
+			float secFrameStep = getTimeStep()*Speed*milisecondToSecond;
+
+			// seek animation frame
+			Frame = Frame + secFrameStep;
+
+			// if end of animation
+			if (Frame > Duration)
 			{
-				m_joints.push_back(joint);
-				m_transforms.push_back(transform);
+				Frame = Duration;
+
+				// if animation is loop
+				if (Loop == true)
+					Frame = 0.0f;
 			}
 		}
 	}
 
-	void CJointTransformSystem::init(CEntityManager *entityManager)
-	{
-
-	}
-
-	void CJointTransformSystem::update(CEntityManager *entityManager)
-	{
-		CJointData** joints = m_joints.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
-
-		for (u32 i = 0, n = m_joints.size(); i < n; i++)
-		{
-			// alway update bone transform for animation
-			transforms[i]->Relative = joints[i]->RelativeAnimationMatrix;
-			transforms[i]->HasChanged = true;
-		}
-	}
-
-	void CJointTransformSystem::render(CEntityManager *entityManager)
-	{
-
-	}
 }
