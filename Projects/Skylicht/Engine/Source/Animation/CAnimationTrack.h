@@ -75,11 +75,10 @@ namespace Skylicht
 		s32 m_rotHint;
 
 		CFrameData *m_data;
-	public:
 
+	public:
 		std::string Name;
-		int TrackID;
-		bool Enable;
+		bool HaveAnimation;
 
 	public:
 		CAnimationTrack();
@@ -94,21 +93,16 @@ namespace Skylicht
 
 		CFrameData* getAnimData();
 
-		void update(float timeStep);
-
 		void clearAllKeyFrame()
 		{
 			m_data = NULL;
 
-			// clear hint
 			m_posHint = 0;
 			m_scaleHint = 0;
 			m_rotHint = 0;
 
 			Name = "";
-
-			// disable animation
-			Enable = false;
+			HaveAnimation = false;
 		}
 
 		void setFrameData(CFrameData *data)

@@ -25,19 +25,36 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CAnimationTimeline.h"
+#include "CAnimationTransformData.h"
 #include "Entity/CEntityPrefab.h"
+#include "Animation/CAnimationClip.h"
 
 namespace Skylicht
 {
 	class CSkeleton
 	{
+	public:
+		enum EAnimationType
+		{
+			TrackKeyFrame = 0,
+			Blending,
+		};
+
 	protected:
-		CEntityPrefab m_entites;
+		CEntityPrefab m_entities;
+
+		std::vector<CAnimationTransformData*> m_entitiesData;
 
 		int m_id;
+
 		bool m_enable;
 
 		CAnimationTimeline m_timeline;
+
+		EAnimationType m_animationType;
+
+		CAnimationClip *m_clip;
+
 	public:
 		CSkeleton(int id);
 
@@ -48,6 +65,15 @@ namespace Skylicht
 		void releaseAllEntities();
 
 		void update();
+
+		void applyTransform();
+
+		void setAnimation(CAnimationClip *clip, bool loop, bool pause = false);
+
+		inline CAnimationClip* getCurrentAnimation()
+		{
+			return m_clip;
+		}
 
 		inline int getID()
 		{
@@ -68,5 +94,23 @@ namespace Skylicht
 		{
 			return m_timeline;
 		}
+
+		inline void setAnimationType(EAnimationType type)
+		{
+			m_animationType = type;
+		}
+
+		inline EAnimationType getAnimationType()
+		{
+			return m_animationType;
+		}
+
+	protected:
+
+		void updateTrackKeyFrame();
+
+		void updateBlending();
+
+		float offsetFrame(float frame);
 	};
 }
