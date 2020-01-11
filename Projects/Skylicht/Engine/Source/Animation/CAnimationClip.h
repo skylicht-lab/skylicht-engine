@@ -91,12 +91,12 @@ namespace Skylicht
 			return (int)AnimInfo.size();
 		}
 
-		SEntityAnim* getAnimOfSceneNode(int i)
+		SEntityAnim* getAnimOfEntity(int i)
 		{
 			return AnimInfo[i];
 		}
 
-		SEntityAnim* getAnimOfSceneNode(const std::string &sceneNodeName)
+		SEntityAnim* getAnimOfEntity(const std::string &sceneNodeName)
 		{
 			return AnimNameToInfo[sceneNodeName];
 		}

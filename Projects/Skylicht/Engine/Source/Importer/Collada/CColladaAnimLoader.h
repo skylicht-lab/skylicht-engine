@@ -39,6 +39,9 @@ namespace Skylicht
 		bool m_zUp;
 		bool m_flipOx;
 
+		std::string m_unit;
+		float m_unitScale;
+
 		std::vector<CAnimationClip*> m_clips;
 		std::map<std::string, SEntityAnim*> m_nodeAnim;
 
@@ -56,6 +59,8 @@ namespace Skylicht
 		void constructAnimation(const char *fileName, CAnimationClip* output);
 
 		void clearData();
+
+		void parseUnit(io::IXMLReader *xmlRead);
 
 		void parseAnimationNode(io::IXMLReader *xmlRead);
 

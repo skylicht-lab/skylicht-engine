@@ -28,7 +28,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CTransformComponentSystem.h"
 #include "Transform/CWorldTransformSystem.h"
 #include "Transform/CWorldInvTransformSystem.h"
-#include "RenderMesh/CJointTransformSystem.h"
 #include "RenderMesh/CMeshRenderer.h"
 #include "RenderMesh/CSkinnedMeshRenderer.h"
 #include "RenderMesh/CJointAnimationSystem.h"
@@ -42,7 +41,6 @@ namespace Skylicht
 		m_camera(NULL)
 	{
 		addSystem<CComponentTransformSystem>();
-		addSystem<CJointTransformSystem>();
 		addSystem<CWorldTransformSystem>();
 		addSystem<CWorldInvTransformSystem>();
 		addSystem<CJointAnimationSystem>();

@@ -35,7 +35,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CColladaAnimLoader::CColladaAnimLoader()
+	CColladaAnimLoader::CColladaAnimLoader() :
+		m_unit("meter"),
+		m_unitScale(1.0f)
 	{
 	}
 
@@ -87,6 +89,10 @@ namespace Skylicht
 				else if (nodeName == L"up_axis")
 				{
 					readLUpAxis = true;
+				}
+				else if (nodeName == L"unit")
+				{
+					parseUnit(xmlRead);
 				}
 			}
 			break;
@@ -250,6 +256,26 @@ namespace Skylicht
 			iNodeAnim++;
 		}
 		m_nodeAnim.clear();
+	}
+
+	void CColladaAnimLoader::parseUnit(io::IXMLReader *xmlRead)
+	{
+		char unitName[64] = { 0 };
+		char unitValue[64] = { 0 };
+
+		const wchar_t *unitNameW = xmlRead->getAttributeValue(L"name");
+		if (unitNameW != NULL)
+		{
+			CStringImp::convertUnicodeToUTF8(unitNameW, unitName);
+			m_unit = unitName;
+		}
+
+		const wchar_t *meterW = xmlRead->getAttributeValue(L"meter");
+		if (meterW != NULL)
+		{
+			CStringImp::convertUnicodeToUTF8(meterW, unitValue);
+			m_unitScale = (float)atof(unitValue);
+		}
 	}
 
 	void CColladaAnimLoader::parseAnimationNode(io::IXMLReader *xmlRead)
@@ -1576,6 +1602,14 @@ namespace Skylicht
 				m_colladaRoot->Transform *= rot;
 			}
 
+			// unit scale on render mesh node
+			if (m_unit != "meter")
+			{
+				core::matrix4 scale;
+				scale.setScale(m_unitScale);
+				m_colladaRoot->Transform *= scale;
+			}
+
 			m_listNode.push_back(m_colladaRoot);
 		}
 
@@ -1643,6 +1677,19 @@ namespace Skylicht
 
 						pNode->ChildLevel = 0;
 						pNode->Parent = NULL;
+
+						if (m_unit != "meter")
+						{
+							// set unit scale this node
+							core::matrix4 scale;
+							scale.setScale(m_unitScale);
+							pNode->Transform *= scale;
+
+							// revert scale root transform
+							scale.makeIdentity();
+							scale.setScale(1.0f / m_unitScale);
+							m_colladaRoot->Transform *= scale;
+						}
 					}
 
 					// get skin mesh url
