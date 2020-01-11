@@ -55,6 +55,12 @@ namespace Skylicht
 
 		CAnimationClip *m_clip;
 
+	protected:
+
+		CSkeleton *m_target;
+
+		std::vector<CSkeleton*> m_blending;
+
 	public:
 		CSkeleton(int id);
 
@@ -105,6 +111,8 @@ namespace Skylicht
 			return m_animationType;
 		}
 
+		void setTarget(CSkeleton *skeleton);
+
 	protected:
 
 		void updateTrackKeyFrame();
@@ -112,5 +120,9 @@ namespace Skylicht
 		void updateBlending();
 
 		float offsetFrame(float frame);
+
+		void addBlending(CSkeleton *skeleton);
+
+		void removeBlending(CSkeleton *skeleton);
 	};
 }

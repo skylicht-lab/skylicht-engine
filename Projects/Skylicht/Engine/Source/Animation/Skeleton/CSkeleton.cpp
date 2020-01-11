@@ -61,7 +61,7 @@ namespace Skylicht
 
 			CEntity* newEntity = m_entities.createEntity();
 
-			// map index
+			// map world entity index to local entity
 			entityIDMap[worldEntity->getIndex()] = newEntity->getIndex();
 
 			// add animation transform data
@@ -84,9 +84,6 @@ namespace Skylicht
 				animationData->ParentID = -1;
 				animationData->Depth = 0;
 			}
-
-			// default relative matrix
-			animationData->DefaultRelativeMatrix = worldTransform->Relative;
 
 			// default pos, scale, rot
 			animationData->DefaultPosition = worldTransform->Relative.getTranslation();
@@ -224,6 +221,28 @@ namespace Skylicht
 			frame = frame - m_timeline.AnimationDuration;
 
 		return frame;
+	}
+
+	void CSkeleton::setTarget(CSkeleton *skeleton)
+	{
+		if (m_target != NULL)
+			m_target->removeBlending(this);
+
+		m_target = skeleton;
+		m_target->addBlending(this);
+	}
+
+	void CSkeleton::addBlending(CSkeleton *skeleton)
+	{
+		if (std::find(m_blending.begin(), m_blending.end(), skeleton) == m_blending.end())
+			m_blending.push_back(skeleton);
+	}
+
+	void CSkeleton::removeBlending(CSkeleton *skeleton)
+	{
+		std::vector<CSkeleton*>::iterator i = std::find(m_blending.begin(), m_blending.end(), skeleton);
+		if (i != m_blending.end())
+			m_blending.erase(i);
 	}
 
 	void CSkeleton::updateBlending()

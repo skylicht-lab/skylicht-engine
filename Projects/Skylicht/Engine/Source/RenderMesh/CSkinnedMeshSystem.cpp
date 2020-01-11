@@ -76,10 +76,9 @@ namespace Skylicht
 			{
 				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[j];
 
-				// skinMat = animMat * invMat * bindShapMatrix
-				// note:
-				// bindPoseMatrix = invMat * bindShapMat (cached)
-				// animationMatrix is a transform of bone at pos (0,0,0)
+				// gpuSkinMat = animMat * bindPoseMatrix
+				// bindPoseMatrix = invMat * bindShapMat (see collada loader)
+				// animMat = transform of joint at pos (0,0,0)
 				f32 *M = joint.SkinningMatrix;
 
 				const f32 *m1 = joint.JointData->AnimationMatrix.pointer();

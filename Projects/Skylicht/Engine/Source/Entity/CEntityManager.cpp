@@ -192,31 +192,21 @@ namespace Skylicht
 
 		// remove on list system
 		{
-			std::vector<IEntitySystem*>::iterator i = m_systems.begin(), end = m_systems.end();
-			while (i != end)
+			std::vector<IEntitySystem*>::iterator i = std::find(m_systems.begin(), m_systems.end(), system);
+			if (i != m_systems.end())
 			{
-				if ((*i) == system)
-				{
-					release = true;
-					m_systems.erase(i);
-					break;
-				}
-				++i;
+				release = true;
+				m_systems.erase(i);
 			}
 		}
 
 		// remove on list render
 		{
-			std::vector<IRenderSystem*>::iterator i = m_renders.begin(), end = m_renders.end();
-			while (i != end)
+			std::vector<IRenderSystem*>::iterator i = std::find(m_renders.begin(), m_renders.end(), system);
+			if (i != m_renders.end())
 			{
-				if ((*i) == system)
-				{
-					release = true;
-					m_renders.erase(i);
-					break;
-				}
-				++i;
+				release = true;
+				m_renders.erase(i);
 			}
 		}
 
