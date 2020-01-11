@@ -38,9 +38,10 @@ namespace Skylicht
 		std::string SID;
 		std::string BoneName;
 
+		// absolute joint transform at (0,0,0)
 		core::matrix4 AnimationMatrix;
-		core::matrix4 RelativeAnimationMatrix;
 
+		// default transform
 		core::matrix4 DefaultAnimationMatrix;
 		core::matrix4 DefaultRelativeMatrix;
 

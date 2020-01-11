@@ -37,8 +37,7 @@ namespace Skylicht
 	public:
 		struct SJoint
 		{
-			// bindPoseMatrix = joint.globalInversedMatrix * mesh.BindShapeMatrix
-			// skinningMatrix = joint.animMatrix (at pos 0,0,0) * bindPoseMatrix			
+			// bindPoseMatrix = joint.globalInversedMatrix * mesh.BindShapeMatrix (collada loader)
 			core::matrix4 BindPoseMatrix;
 
 			// pointer to gpu skinning matrix
