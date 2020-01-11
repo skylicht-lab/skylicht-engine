@@ -74,16 +74,12 @@ namespace Skylicht
 		if (clip == NULL)
 			return;
 
-		std::vector<CAnimationClip*>::iterator it = m_clips.begin(), end = m_clips.end();
-		while (it != end)
+		std::vector<CAnimationClip*>::iterator it = std::find(m_clips.begin(), m_clips.end(), clip);
+		if (it != m_clips.end())
 		{
-			if ((*it) == clip)
-			{
-				m_clips.erase(it);
-				m_clipName[clipName] = NULL;
-				return;
-			}
-			it++;
+			m_clips.erase(it);
+			m_clipName[clipName] = NULL;
+			return;
 		}
 	}
 

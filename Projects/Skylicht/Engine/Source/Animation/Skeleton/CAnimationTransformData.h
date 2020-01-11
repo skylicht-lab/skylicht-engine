@@ -40,8 +40,6 @@ namespace Skylicht
 		int Depth;
 
 		// transform if the entity dont have animation
-		core::matrix4 DefaultRelativeMatrix;
-
 		core::vector3df DefaultPosition;
 		core::vector3df DefaultScale;
 		core::quaternion DefaultRotation;
@@ -51,6 +49,7 @@ namespace Skylicht
 		core::vector3df AnimScale;
 		core::quaternion AnimRotation;
 
+		// handle of world transform
 		CWorldTransformData* WorldTransform;
 
 		// current animation track
