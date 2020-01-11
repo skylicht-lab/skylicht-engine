@@ -24,56 +24,65 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Importer/IAnimationImporter.h"
+#include "pch.h"
+#include "CAnimationClip.h"
 
 namespace Skylicht
 {
-	class CAnimationClip;
 
-	struct SEntityAnim;
-	struct SNodeParam;
-
-	class CColladaAnimLoader : public IAnimationImporter
+	class CAnimation
 	{
 	protected:
-		bool m_zUp;
-		bool m_flipOx;
-
-		std::string m_unit;
-		float m_unitScale;
-
 		std::vector<CAnimationClip*> m_clips;
-		std::map<std::string, SEntityAnim*> m_nodeAnim;
-
-		SNodeParam* m_colladaRoot;
-		std::vector<SNodeParam*> m_listNode;
+		std::map<std::string, CAnimationClip*> m_clipName;
 
 	public:
-		CColladaAnimLoader();
+		CAnimation();
 
-		virtual ~CColladaAnimLoader();
+		virtual ~CAnimation();
 
-		bool loadAnimation(const char *resource, CAnimationClip* output);
+		CAnimationClip* getAnim(const char *lpAnimName)
+		{
+			return m_clipName[lpAnimName];
+		}
 
-	protected:
-		void constructAnimation(const char *fileName, CAnimationClip* output);
+		CAnimationClip* getAnim(int animID)
+		{
+			return m_clips[animID];
+		}
 
-		void clearData();
+		int getAnimCount()
+		{
+			return (int)m_clips.size();
+		}
 
-		void parseUnit(io::IXMLReader *xmlRead);
+		void addClip(CAnimationClip* clip)
+		{
+			if (clip == NULL)
+				return;
 
-		void parseAnimationNode(io::IXMLReader *xmlRead);
+			m_clips.push_back(clip);
+			m_clipName[clip->AnimName] = clip;
+		}
 
-		void parseAnimationSourceNode(io::IXMLReader *xmlRead);
+		void sortAnimByName();
 
-		void parseDefaultValuePosition(io::IXMLReader *xmlRead, float *x, float *y, float *z);
+		std::vector<CAnimationClip*>* getAllAnimClip()
+		{
+			return &m_clips;
+		}
 
-		void parseDefaultValueRotate(io::IXMLReader *xmlRead, float *x, float *y, float *z, float *angle);
+		std::map<std::string, CAnimationClip*>* getAllAnimNameClip()
+		{
+			return &m_clipName;
+		}
 
-		void parseSceneNode(io::IXMLReader *xmlRead);
+		void removeAll();
 
-		SNodeParam* parseNode(io::IXMLReader *xmlRead, SNodeParam* parent);
+		void removeClip(const std::string& clipName);
 
-		SNodeParam* getNode(const std::string& nodeName);
+		void renameClip(const std::string& oldName, const std::string& newName);
+
 	};
+
 }

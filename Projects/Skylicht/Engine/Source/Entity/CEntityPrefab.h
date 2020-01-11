@@ -44,7 +44,12 @@ namespace Skylicht
 
 		inline int getNumEntities()
 		{
-			return m_entities.size();
+			return (int)m_entities.size();
+		}
+
+		inline CEntity** getEntities()
+		{
+			return m_entities.pointer();
 		}
 
 		inline CEntity* getEntity(int index)

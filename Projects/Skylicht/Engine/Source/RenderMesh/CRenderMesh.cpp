@@ -43,11 +43,11 @@ namespace Skylicht
 	CRenderMesh::~CRenderMesh()
 	{
 		CEntityManager *entityManager = m_gameObject->getEntityManager();
-		for (u32 i = 0, n = m_childs.size(); i < n; i++)
+		for (u32 i = 0, n = m_entities.size(); i < n; i++)
 		{
-			entityManager->removeEntity(m_childs[i]);
+			entityManager->removeEntity(m_entities[i]);
 		}
-		m_childs.clear();
+		m_entities.clear();
 	}
 
 	void CRenderMesh::initComponent()
@@ -65,12 +65,12 @@ namespace Skylicht
 		CEntityManager *entityManager = m_gameObject->getEntityManager();
 
 		// root entity of object
-		CEntity *rootEntity = m_gameObject->getEntity();
-		CWorldTransformData *rootTransform = rootEntity->getData<CWorldTransformData>();
+		m_root = m_gameObject->getEntity();
+		CWorldTransformData *rootTransform = m_root->getData<CWorldTransformData>();
 
 		// spawn childs entity
 		int numEntities = prefab->getNumEntities();
-		CEntity** entities = entityManager->createEntity(numEntities, m_childs);
+		CEntity** entities = entityManager->createEntity(numEntities, m_entities);
 
 		// map new entity index from src prefab
 		std::map<int, int> entityIndex;
@@ -96,7 +96,7 @@ namespace Skylicht
 				spawnTransform->Depth = rootTransform->Depth + srcTransform->Depth;
 
 				if (srcTransform->ParentIndex == -1)
-					spawnTransform->ParentIndex = rootEntity->getIndex();
+					spawnTransform->ParentIndex = m_root->getIndex();
 				else
 					spawnTransform->ParentIndex = entityIndex[srcTransform->ParentIndex];
 			}
@@ -140,8 +140,7 @@ namespace Skylicht
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
 				spawnJoint->DefaultAnimationMatrix = srcJointData->DefaultAnimationMatrix;
 				spawnJoint->DefaultRelativeMatrix = srcJointData->DefaultRelativeMatrix;
-				spawnJoint->RelativeAnimationMatrix = srcJointData->RelativeAnimationMatrix;
-				spawnJoint->RootIndex = rootEntity->getIndex();
+				spawnJoint->RootIndex = m_root->getIndex();
 			}
 		}
 
@@ -178,8 +177,8 @@ namespace Skylicht
 
 				if (addInvData == false)
 				{
-					if (rootEntity->getData<CWorldInvTransformData>() == NULL)
-						rootEntity->addData<CWorldInvTransformData>();
+					if (m_root->getData<CWorldInvTransformData>() == NULL)
+						m_root->addData<CWorldInvTransformData>();
 					addInvData = true;
 				}
 			}

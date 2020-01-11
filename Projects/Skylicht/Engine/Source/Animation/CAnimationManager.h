@@ -24,33 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntitySystem.h"
-#include "CJointData.h"
-#include "Transform/CWorldTransformData.h"
+#include "Utils/CGameSingleton.h"
+#include "CAnimation.h"
+#include "CAnimationClip.h"
 
 namespace Skylicht
 {
-	class CJointTransformSystem : public IEntitySystem
+	class CAnimationManager : public CGameSingleton<CAnimationManager>
 	{
 	protected:
-		core::array<CJointData*> m_joints;
-
-		core::array<CWorldTransformData*> m_transforms;
+		std::map<std::string, CAnimationClip*> m_clips;
+		std::map<std::string, CAnimation*> m_animations;
 
 	public:
+		CAnimationManager();
 
-		CJointTransformSystem();
+		virtual ~CAnimationManager();
 
-		virtual ~CJointTransformSystem();
+		CAnimation* createAnimation(const char *name);
 
-		virtual void beginQuery();
+		CAnimation* getAnimation(const char *animName)
+		{
+			return m_animations[animName];
+		}
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+		CAnimationClip* loadAnimation(const char *resource);
 
-		virtual void init(CEntityManager *entityManager);
+		void releaseAllClips();
 
-		virtual void update(CEntityManager *entityManager);
-
-		virtual void render(CEntityManager *entityManager);
+		void releaseAllAnimations();
 	};
 }

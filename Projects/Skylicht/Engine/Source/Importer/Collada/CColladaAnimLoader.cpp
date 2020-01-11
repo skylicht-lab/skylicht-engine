@@ -28,13 +28,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CColladaLoader.h"
 #include "CColladaLoaderFunc.h"
 
-//#include "CColladaAnimation.h"
 #include "CColladaAnimLoader.h"
+
+#include "Animation/CAnimation.h"
 #include "Animation/CAnimationClip.h"
 
 namespace Skylicht
 {
-	CColladaAnimLoader::CColladaAnimLoader()
+	CColladaAnimLoader::CColladaAnimLoader() :
+		m_unit("meter"),
+		m_unitScale(1.0f)
 	{
 	}
 
@@ -43,16 +46,16 @@ namespace Skylicht
 
 	}
 
-	void CColladaAnimLoader::loadDae(const char *fileName)
+	bool CColladaAnimLoader::loadAnimation(const char *resource, CAnimationClip* output)
 	{
 		IrrlichtDevice *device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
 
-		io::IXMLReader *xmlRead = fs->createXMLReader(fileName);
+		io::IXMLReader *xmlRead = fs->createXMLReader(resource);
 
 		if (xmlRead == NULL)
 		{
-			return;
+			return false;
 		}
 
 		m_zUp = false;
@@ -68,11 +71,6 @@ namespace Skylicht
 			{
 				core::stringw nodeName = xmlRead->getNodeName();
 
-				//if ( core::stringw(L"library_animation_clips") == nodeName )
-				//{
-				//	parseClipNode( xmlRead );
-				//}				
-				//else 
 				if (core::stringw(L"animation") == nodeName)
 				{
 					if (xmlRead->getAttributeValue(L"id") != NULL)
@@ -91,6 +89,10 @@ namespace Skylicht
 				else if (nodeName == L"up_axis")
 				{
 					readLUpAxis = true;
+				}
+				else if (nodeName == L"unit")
+				{
+					parseUnit(xmlRead);
 				}
 			}
 			break;
@@ -121,19 +123,19 @@ namespace Skylicht
 		}
 
 		// construct anim data
-		constructAnimation(fileName);
+		constructAnimation(resource, output);
 
 		// clear memory data
 		clearData();
 
 		// close file
 		xmlRead->drop();
+
+		return true;
 	}
 
-	void CColladaAnimLoader::constructAnimation(const char *fileName)
+	void CColladaAnimLoader::constructAnimation(const char *fileName, CAnimationClip* clip)
 	{
-		CAnimationClip *clip = new CAnimationClip();
-
 		char name[512];
 		CStringImp::getFileNameNoExt(name, fileName);
 		clip->AnimName = name;
@@ -155,11 +157,11 @@ namespace Skylicht
 				// found node
 				CStringImp::convertUnicodeToUTF8(pNode->Name.c_str(), name);
 
-				SNodeAnim *nodeAnim = m_nodeAnim[name];
+				SEntityAnim *nodeAnim = m_nodeAnim[name];
 				if (nodeAnim == NULL)
 				{
-					nodeAnim = new SNodeAnim();
-					nodeAnim->SceneNodeName = name;
+					nodeAnim = new SEntityAnim();
+					nodeAnim->Name = name;
 
 					// default value
 					core::matrix4 mat;
@@ -183,16 +185,16 @@ namespace Skylicht
 			}
 		}
 
-		std::map<std::string, SNodeAnim*>::iterator iNodeAnim = m_nodeAnim.begin(), iNodeEnd = m_nodeAnim.end();
+		std::map<std::string, SEntityAnim*>::iterator iNodeAnim = m_nodeAnim.begin(), iNodeEnd = m_nodeAnim.end();
 		while (iNodeAnim != iNodeEnd)
 		{
-			SNodeAnim* nodeAnim = iNodeAnim->second;
-			SNodeAnim* newNodeAnim = new SNodeAnim();
+			SEntityAnim* nodeAnim = iNodeAnim->second;
+			SEntityAnim* newNodeAnim = new SEntityAnim();
 
 			*newNodeAnim = *nodeAnim;
 
 			// get default matrix
-			SNodeParam *n = getNode(newNodeAnim->SceneNodeName);
+			SNodeParam *n = getNode(newNodeAnim->Name);
 			if (n)
 			{
 				newNodeAnim->Data.DefaultRot = core::quaternion(n->Transform);
@@ -216,15 +218,12 @@ namespace Skylicht
 					frames = nodeAnim->Data.ScaleKeys.getLast().frame;
 			}
 
-			clip->addNodeAnim(newNodeAnim);
+			clip->addAnim(newNodeAnim);
 			iNodeAnim++;
 		}
 
 		// n frames
 		clip->Duration = frames;
-
-		// add clip
-		// m_anim->addClip(clip);
 	}
 
 	void CColladaAnimLoader::clearData()
@@ -250,7 +249,7 @@ namespace Skylicht
 		m_listNode.clear();
 
 		// clear node anim data
-		std::map<std::string, SNodeAnim*>::iterator iNodeAnim = m_nodeAnim.begin(), iNodeEnd = m_nodeAnim.end();
+		std::map<std::string, SEntityAnim*>::iterator iNodeAnim = m_nodeAnim.begin(), iNodeEnd = m_nodeAnim.end();
 		while (iNodeAnim != iNodeEnd)
 		{
 			delete iNodeAnim->second;
@@ -259,51 +258,26 @@ namespace Skylicht
 		m_nodeAnim.clear();
 	}
 
-	// parseClipNode
-	void CColladaAnimLoader::parseClipNode(io::IXMLReader *xmlRead)
+	void CColladaAnimLoader::parseUnit(io::IXMLReader *xmlRead)
 	{
-		char charBuffer[1024];
+		char unitName[64] = { 0 };
+		char unitValue[64] = { 0 };
 
-		while (xmlRead->read())
+		const wchar_t *unitNameW = xmlRead->getAttributeValue(L"name");
+		if (unitNameW != NULL)
 		{
-			switch (xmlRead->getNodeType())
-			{
-			case io::EXN_ELEMENT:
-			{
-				core::stringw nodeName = xmlRead->getNodeName();
+			CStringImp::convertUnicodeToUTF8(unitNameW, unitName);
+			m_unit = unitName;
+		}
 
-				// read anamation clip
-				if (core::stringw(L"animation_clip") == nodeName)
-				{
-					const wchar_t *idClip = xmlRead->getAttributeValue(L"id");
-					CStringImp::convertUnicodeToUTF8(idClip, charBuffer);
-
-					float start = xmlRead->getAttributeValueAsFloat(L"start");
-					float end = xmlRead->getAttributeValueAsFloat(L"end");
-
-					// add clip
-					CAnimationClip *clip = new CAnimationClip();
-					clip->AnimName = charBuffer;
-					clip->Time = start;
-					clip->Duration = end - start;
-
-					m_clips.push_back(clip);
-				}
-				break;
-			}
-			case io::EXN_ELEMENT_END:
-			{
-				core::stringw nodeName = xmlRead->getNodeName();
-
-				if (core::stringw(L"library_animation_clips") == nodeName)
-					return;
-			}
-			}
+		const wchar_t *meterW = xmlRead->getAttributeValue(L"meter");
+		if (meterW != NULL)
+		{
+			CStringImp::convertUnicodeToUTF8(meterW, unitValue);
+			m_unitScale = (float)atof(unitValue);
 		}
 	}
 
-
-	// parseAnimationNode
 	void CColladaAnimLoader::parseAnimationNode(io::IXMLReader *xmlRead)
 	{
 		std::wstring idNodeName = xmlRead->getAttributeValue(L"id");
@@ -358,11 +332,11 @@ namespace Skylicht
 		CStringImp::convertUnicodeToUTF8(jointName.c_str(), stringBuffer);
 
 		// create anim node
-		SNodeAnim *nodeAnim = m_nodeAnim[stringBuffer];
+		SEntityAnim *nodeAnim = m_nodeAnim[stringBuffer];
 		if (nodeAnim == NULL)
 		{
-			nodeAnim = new SNodeAnim();
-			nodeAnim->SceneNodeName = stringBuffer;
+			nodeAnim = new SEntityAnim();
+			nodeAnim->Name = stringBuffer;
 
 			// default value
 			core::matrix4 mat;
@@ -781,7 +755,7 @@ namespace Skylicht
 
 		int nAnimationTags = 1;
 
-		SNodeAnim *nodeAnim = NULL;
+		SEntityAnim *nodeAnim = NULL;
 
 		while (xmlRead->read())
 		{
@@ -960,8 +934,8 @@ namespace Skylicht
 							nodeAnim = m_nodeAnim[stringBuffer];
 							if (nodeAnim == NULL)
 							{
-								nodeAnim = new SNodeAnim();
-								nodeAnim->SceneNodeName = stringBuffer;
+								nodeAnim = new SEntityAnim();
+								nodeAnim->Name = stringBuffer;
 
 								// default value
 								core::matrix4 mat;
@@ -1628,6 +1602,14 @@ namespace Skylicht
 				m_colladaRoot->Transform *= rot;
 			}
 
+			// unit scale on render mesh node
+			if (m_unit != "meter")
+			{
+				core::matrix4 scale;
+				scale.setScale(m_unitScale);
+				m_colladaRoot->Transform *= scale;
+			}
+
 			m_listNode.push_back(m_colladaRoot);
 		}
 
@@ -1695,6 +1677,19 @@ namespace Skylicht
 
 						pNode->ChildLevel = 0;
 						pNode->Parent = NULL;
+
+						if (m_unit != "meter")
+						{
+							// set unit scale this node
+							core::matrix4 scale;
+							scale.setScale(m_unitScale);
+							pNode->Transform *= scale;
+
+							// revert scale root transform
+							scale.makeIdentity();
+							scale.setScale(1.0f / m_unitScale);
+							m_colladaRoot->Transform *= scale;
+						}
 					}
 
 					// get skin mesh url
