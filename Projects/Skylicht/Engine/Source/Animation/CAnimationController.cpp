@@ -30,7 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CAnimationController::CAnimationController()
+	CAnimationController::CAnimationController() :
+		m_output(NULL)
 	{
 
 	}
@@ -54,6 +55,9 @@ namespace Skylicht
 				skeleton->update();
 			}
 		}
+
+		if (m_output != NULL)
+			m_output->applyTransform();
 	}
 
 	CSkeleton* CAnimationController::createSkeleton()
@@ -67,6 +71,10 @@ namespace Skylicht
 			skeleton->initSkeleton(renderMesh->getEntities());
 
 		m_skeletons.push_back(skeleton);
+
+		if (m_output == NULL)
+			m_output = skeleton;
+
 		return skeleton;
 	}
 
@@ -77,5 +85,6 @@ namespace Skylicht
 			delete skeleton;
 		}
 		m_skeletons.clear();
+		m_output = NULL;
 	}
 }

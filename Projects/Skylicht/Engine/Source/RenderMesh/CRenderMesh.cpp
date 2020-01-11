@@ -140,7 +140,6 @@ namespace Skylicht
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
 				spawnJoint->DefaultAnimationMatrix = srcJointData->DefaultAnimationMatrix;
 				spawnJoint->DefaultRelativeMatrix = srcJointData->DefaultRelativeMatrix;
-				spawnJoint->RelativeAnimationMatrix = srcJointData->RelativeAnimationMatrix;
 				spawnJoint->RootIndex = m_root->getIndex();
 			}
 		}

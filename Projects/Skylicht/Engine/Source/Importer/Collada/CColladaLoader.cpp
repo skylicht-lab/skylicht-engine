@@ -1586,7 +1586,6 @@ namespace Skylicht
 
 				// animation is default matrix
 				jointData->AnimationMatrix = jointData->DefaultAnimationMatrix;
-				jointData->RelativeAnimationMatrix = jointData->DefaultRelativeMatrix;
 
 				// store for next construct skinned mesh
 				m_nameToJointData[jointData->BoneName] = jointData;
