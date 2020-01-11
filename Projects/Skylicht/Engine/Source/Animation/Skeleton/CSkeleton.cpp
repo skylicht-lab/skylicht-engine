@@ -33,8 +33,9 @@ namespace Skylicht
 	CSkeleton::CSkeleton(int id) :
 		m_id(id),
 		m_enable(true),
-		m_animationType(TrackKeyFrame),
-		m_clip(NULL)
+		m_animationType(KeyFrame),
+		m_clip(NULL),
+		m_target(NULL)
 	{
 
 	}
@@ -91,9 +92,9 @@ namespace Skylicht
 			animationData->DefaultRotation = core::quaternion(worldTransform->Relative);
 
 			// default anim pos, scale, rot
-			animationData->AnimPosition = animationData->DefaultPosition;
-			animationData->AnimScale = animationData->DefaultScale;
-			animationData->AnimRotation = animationData->DefaultRotation;
+			COPY_VECTOR3DF(animationData->AnimPosition, animationData->DefaultPosition);
+			COPY_VECTOR3DF(animationData->AnimScale, animationData->DefaultScale);
+			COPY_QUATERNION(animationData->AnimRotation, animationData->DefaultRotation);
 		}
 	}
 
@@ -107,9 +108,9 @@ namespace Skylicht
 	{
 		m_clip = clip;
 
-		m_timeline.AnimationDuration = 0.0f;
-		m_timeline.AnimationFrame = 0.0f;
-		m_timeline.AnimationLoop = loop;
+		m_timeline.Duration = 0.0f;
+		m_timeline.Frame = 0.0f;
+		m_timeline.Loop = loop;
 		m_timeline.Pause = pause;
 
 		for (CAnimationTransformData *&entity : m_entitiesData)
@@ -133,8 +134,8 @@ namespace Skylicht
 				else if (anim->Data.ScaleKeys.size() > 0)
 					totalFrame = anim->Data.ScaleKeys.getLast().frame;
 
-				if (m_timeline.AnimationDuration < totalFrame)
-					m_timeline.AnimationDuration = totalFrame;
+				if (m_timeline.Duration < totalFrame)
+					m_timeline.Duration = totalFrame;
 
 				// notify this track have animation
 				track.HaveAnimation = true;
@@ -144,7 +145,7 @@ namespace Skylicht
 
 	void CSkeleton::update()
 	{
-		if (m_animationType == TrackKeyFrame)
+		if (m_animationType == KeyFrame)
 			updateTrackKeyFrame();
 		else
 			updateBlending();
@@ -156,6 +157,7 @@ namespace Skylicht
 		{
 			// todo calc relative matrix & position
 			core::matrix4 &relativeMatrix = entity->WorldTransform->Relative;
+			relativeMatrix.makeIdentity();
 
 			// rotation
 			entity->AnimRotation.getMatrix(relativeMatrix);
@@ -190,23 +192,21 @@ namespace Skylicht
 
 	void CSkeleton::updateTrackKeyFrame()
 	{
-		m_timeline.update();
-
 		for (CAnimationTransformData *&entity : m_entitiesData)
 		{
 			CAnimationTrack& track = entity->AnimationTrack;
 
 			if (track.HaveAnimation == true)
 			{
-				float frame = m_timeline.AnimationFrame;
+				float frame = m_timeline.Frame;
 				frame = offsetFrame(frame);
 				track.getFrameData(frame, entity->AnimPosition, entity->AnimScale, entity->AnimRotation);
 			}
 			else
 			{
 				COPY_VECTOR3DF(entity->AnimPosition, entity->DefaultPosition);
-				COPY_VECTOR3DF(entity->AnimRotation, entity->DefaultRotation);
 				COPY_VECTOR3DF(entity->AnimScale, entity->DefaultScale);
+				COPY_QUATERNION(entity->AnimRotation, entity->DefaultRotation);
 			}
 		}
 	}
@@ -214,11 +214,11 @@ namespace Skylicht
 	float CSkeleton::offsetFrame(float frame)
 	{
 		// need offset the timeline
-		float offset = m_timeline.AnimationDuration * m_timeline.SyncSeekRatio;
+		float offset = m_timeline.Duration * m_timeline.SyncSeekRatio;
 		frame = frame + offset;
 
-		if (frame > m_timeline.AnimationDuration)
-			frame = frame - m_timeline.AnimationDuration;
+		if (frame > m_timeline.Duration)
+			frame = frame - m_timeline.Duration;
 
 		return frame;
 	}
@@ -247,6 +247,111 @@ namespace Skylicht
 
 	void CSkeleton::updateBlending()
 	{
+		int id = 0;
 
+		for (CAnimationTransformData *&entity : m_entitiesData)
+		{
+			bool first = true;
+
+			for (CSkeleton *&skeleton : m_blending)
+			{
+				core::quaternion *rotation = &skeleton->m_entitiesData[id]->AnimRotation;
+				core::vector3df *position = &skeleton->m_entitiesData[id]->AnimPosition;
+				core::vector3df *scale = &skeleton->m_entitiesData[id]->AnimScale;
+
+				float weight = skeleton->getTimeline().Weight;
+				if (weight == 0.0f)
+					continue;
+
+				if (first == true)
+				{
+					first = false;
+
+					entity->AnimRotation.X = rotation->X * weight;
+					entity->AnimRotation.Y = rotation->Y * weight;
+					entity->AnimRotation.Z = rotation->Z * weight;
+					entity->AnimRotation.W = rotation->W * weight;
+
+					entity->AnimPosition.X = position->X * weight;
+					entity->AnimPosition.Y = position->Y * weight;
+					entity->AnimPosition.Z = position->Z * weight;
+
+					entity->AnimScale.X = scale->X * weight;
+					entity->AnimScale.Y = scale->Y * weight;
+					entity->AnimScale.Z = scale->Z * weight;
+				}
+				else
+				{
+					entity->AnimPosition.X += position->X*weight;
+					entity->AnimPosition.Y += position->Y*weight;
+					entity->AnimPosition.Z += position->Z*weight;
+
+					entity->AnimScale.X += scale->X*weight;
+					entity->AnimScale.Y += scale->Y*weight;
+					entity->AnimScale.Z += scale->Z*weight;
+
+					float Rx = rotation->X;
+					float Ry = rotation->Y;
+					float Rz = rotation->Z;
+					float Rw = rotation->W;
+
+					float dot = entity->AnimRotation.X * Rx + entity->AnimRotation.Y * Ry + entity->AnimRotation.Z * Rz + entity->AnimRotation.W * Rw;
+
+					if (dot < 0.0f)
+					{
+						Rx *= -1.0f;
+						Ry *= -1.0f;
+						Rz *= -1.0f;
+						Rw *= -1.0f;
+					}
+
+					entity->AnimRotation.X += Rx * weight;
+					entity->AnimRotation.Y += Ry * weight;
+					entity->AnimRotation.Z += Rz * weight;
+					entity->AnimRotation.W += Rw * weight;
+				}
+			}
+
+			id++;
+		}
+	}
+
+	void CSkeleton::syncAnimationByTimeScale()
+	{
+		float frameRatio = 0.0f;
+		float maxWeight = -1;
+
+		CSkeleton *baseSkeleton = NULL;
+
+		for (CSkeleton *&skeleton : m_blending)
+		{
+			CAnimationTimeline &trackInfo = skeleton->getTimeline();
+			if (trackInfo.Duration > 0 && trackInfo.Weight > 0.0f)
+			{
+				float targetBlend = 1.0f;
+
+				float animWeight = trackInfo.Weight * targetBlend;
+				float animDuration = trackInfo.Duration;
+
+				// find frame ratio
+				if (maxWeight < animWeight)
+				{
+					maxWeight = animWeight;
+					frameRatio = trackInfo.Frame / animDuration;
+					baseSkeleton = skeleton;
+				}
+			}
+		}
+
+		if (baseSkeleton == NULL)
+			return;
+
+		// sync speed
+		for (CSkeleton *&skeleton : m_blending)
+		{
+			CAnimationTimeline &trackInfo = skeleton->getTimeline();
+			frameRatio = core::clamp<float>(frameRatio, 0.0f, 1.0f);
+			trackInfo.Frame = frameRatio * trackInfo.Duration;
+		}
 	}
 }

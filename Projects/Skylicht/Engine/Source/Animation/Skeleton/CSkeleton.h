@@ -36,7 +36,7 @@ namespace Skylicht
 	public:
 		enum EAnimationType
 		{
-			TrackKeyFrame = 0,
+			KeyFrame = 0,
 			Blending,
 		};
 
@@ -73,6 +73,8 @@ namespace Skylicht
 		void update();
 
 		void applyTransform();
+
+		void syncAnimationByTimeScale();
 
 		void setAnimation(CAnimationClip *clip, bool loop, bool pause = false);
 

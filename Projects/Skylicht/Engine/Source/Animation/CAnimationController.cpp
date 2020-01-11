@@ -50,6 +50,18 @@ namespace Skylicht
 	{
 		for (CSkeleton *&skeleton : m_skeletons)
 		{
+			if (skeleton->isEnable() == true && skeleton->getAnimationType() == CSkeleton::KeyFrame)
+				skeleton->getTimeline().update();
+		}
+
+		for (CSkeleton *&skeleton : m_skeletons)
+		{
+			if (skeleton->isEnable() == true && skeleton->getAnimationType() == CSkeleton::Blending)
+				skeleton->syncAnimationByTimeScale();
+		}
+
+		for (CSkeleton *&skeleton : m_skeletons)
+		{
 			if (skeleton->isEnable() == true)
 			{
 				skeleton->update();
