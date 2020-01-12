@@ -148,16 +148,16 @@ namespace Skylicht
 
 		struct SUniformUI
 		{
-			EUIControlType	ControlType;
-			std::string		Name;
-			std::string		AutoReplace;
-			int				Step;
+			EUIControlType ControlType;
+			std::string Name;
+			std::string AutoReplace;
+			int Step;
 
-			SUniform				*UniformInfo;
-			CShader		*Shader;
+			SUniform *UniformInfo;
+			CShader *Shader;
 
-			SUniformUI					*Parent;
-			core::array<SUniformUI*>	Childs;
+			SUniformUI *Parent;
+			core::array<SUniformUI*> Childs;
 
 			SUniformUI(CShader *shader)
 			{
