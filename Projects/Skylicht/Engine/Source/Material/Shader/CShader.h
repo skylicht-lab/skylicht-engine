@@ -89,21 +89,21 @@ namespace Skylicht
 			std::string Name;
 			EUniformType Type;
 
-			int			ValueIndex;
-			float		Value[16];
-			int			FloatSize;
-			int			ArraySize;
-			bool		IsMatrix;
+			int	ValueIndex;
+			float Value[16];
+			int FloatSize;
+			int ArraySize;
+			bool IsMatrix;
 
-			int			SizeOfUniform;
+			int SizeOfUniform;
 
-			bool		OpenGL;
-			bool		DirectX;
+			bool OpenGL;
+			bool DirectX;
 
-			int			UniformShaderID;
+			int UniformShaderID;
 
-			float		Min;
-			float		Max;
+			float Min;
+			float Max;
 
 			SUniform()
 			{
@@ -179,9 +179,9 @@ namespace Skylicht
 
 		struct SResource
 		{
-			std::string		Name;
-			EResourceType	Type;
-			std::string		Path;
+			std::string	Name;
+			std::string	Path;
+			EResourceType Type;
 		};
 
 		struct SShader
@@ -197,16 +197,16 @@ namespace Skylicht
 		};
 
 	protected:
-		std::string		m_name;
-		std::string		m_shaderPath;
-		std::string		m_writeDepth;
+		std::string	m_name;
+		std::string	m_shaderPath;
+		std::string	m_writeDepth;
 
-		core::array<SUniform>		m_vsUniforms;
-		core::array<SUniform>		m_fsUniforms;
-		core::array<SUniformUI*>	m_ui;
-		core::array<SResource*>		m_resources;
+		core::array<SUniform> m_vsUniforms;
+		core::array<SUniform> m_fsUniforms;
+		core::array<SUniformUI*> m_ui;
+		core::array<SResource*> m_resources;
 
-		core::array<SAttributeMapping>	m_attributeMapping;
+		core::array<SAttributeMapping> m_attributeMapping;
 
 		SUniform* m_listVSUniforms;
 		SUniform* m_listFSUniforms;
@@ -326,6 +326,7 @@ namespace Skylicht
 		}
 
 	public:
+
 		// shader callback
 		virtual void OnSetConstants(video::IMaterialRendererServices* services, s32 userData, bool updateTransform);
 

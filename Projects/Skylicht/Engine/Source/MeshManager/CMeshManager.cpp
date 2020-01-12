@@ -4,8 +4,8 @@
 
 #include "Importer/Collada/CColladaLoader.h"
 #include "RenderMesh/CRenderMeshData.h"
-#include "Material/CShaderManager.h"
-#include "Material/CShader.h"
+#include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/CShader.h"
 
 namespace Skylicht
 {
