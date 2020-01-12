@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CMaterial.h"
 #include "Utils/CGameSingleton.h"
 #include "Entity/CEntityPrefab.h"
 
@@ -31,10 +32,17 @@ namespace Skylicht
 {
 	class CMaterialManager : public CGameSingleton<CMaterialManager>
 	{
+	protected:
+		std::map<std::string, ArrayMaterial> m_materials;
+
 	public:
 		CMaterialManager();
 
 		virtual ~CMaterialManager();
+
+		void releaseAllMaterials();
+
+		ArrayMaterial& loadMaterial(const char *filename, bool loadTexture, std::vector<std::string>& textureFolders);
 
 		void exportMaterial(CEntityPrefab *prefab, const char *folder, const char *filename);
 	};

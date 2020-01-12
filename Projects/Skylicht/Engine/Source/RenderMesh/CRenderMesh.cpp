@@ -184,4 +184,9 @@ namespace Skylicht
 			}
 		}
 	}
+
+	void CRenderMesh::initMaterial(ArrayMaterial& materials)
+	{
+
+	}
 }

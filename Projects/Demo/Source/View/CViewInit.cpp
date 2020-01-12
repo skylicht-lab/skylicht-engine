@@ -10,7 +10,8 @@
 
 #include "Context/CContext.h"
 
-#include "Material/CShaderManager.h"
+#include "Material/Shader/CShaderManager.h"
+#include "Material/CMaterialManager.h"
 
 #include "Camera/CEditorCamera.h"
 #include "GridPlane/CGridPlane.h"
@@ -60,7 +61,7 @@ void CViewInit::initScene()
 	// camera
 	CGameObject *camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
-	camObj->addComponent<CEditorCamera>();
+	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
 	CCamera *camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(3.0f, 3.0f, 3.0f));
@@ -75,7 +76,30 @@ void CViewInit::initScene()
 	}
 
 	// grid
-	zone->createEmptyObject()->addComponent<CGridPlane>();
+	// zone->createEmptyObject()->addComponent<CGridPlane>();
+
+	/*
+	// sponza
+	CMeshManager *meshManager = CMeshManager::getInstance();
+
+	std::vector<std::string> textureFolders;
+	textureFolders.push_back("Demo/Sponza/Textures");
+
+	// load model
+	CEntityPrefab *prefab = meshManager->loadModel("Demo/Sponza/Sponza.dae", textureFolders[0].c_str(), false);
+	if (prefab != NULL)
+	{
+		// export model material
+		// CMaterialManager::getInstance()->exportMaterial(prefab, "../Assets/Demo/Sponza", "Sponza.xml");
+		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Demo/Sponza/Sponza.xml", true, textureFolders);
+
+		// create render mesh object
+		CGameObject *sponza = zone->createEmptyObject();
+		CRenderMesh *renderer = sponza->addComponent<CRenderMesh>();
+		renderer->initFromPrefab(prefab);
+		renderer->initMaterial(materials);
+	}
+	*/
 
 	// test dae model & animation
 	/*
