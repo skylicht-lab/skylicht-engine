@@ -31,8 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CMaterial::CMaterial(CGameObject *gameObject, const char *name, const char *shaderPath) :
-		m_owner(gameObject),
+	CMaterial::CMaterial(const char *name, const char *shaderPath) :
+		m_owner(NULL),
 		m_zBuffer(video::ECFN_LESSEQUAL),
 		m_zWriteEnable(true),
 		m_backfaceCulling(true),
@@ -73,7 +73,7 @@ namespace Skylicht
 
 	CMaterial* CMaterial::clone(CGameObject *gameObject)
 	{
-		CMaterial *mat = new CMaterial(gameObject, m_materialName.c_str(), m_shaderPath.c_str());
+		CMaterial *mat = new CMaterial(m_materialName.c_str(), m_shaderPath.c_str());
 		mat->deleteAllParams();
 
 		for (SUniformValue *&u : m_uniformParams)
@@ -152,6 +152,13 @@ namespace Skylicht
 		{
 			memcpy(p->FloatValue, f, sizeof(float) * 4);
 		}
+	}
+
+	const char *CMaterial::getUniformTextureName(int slot)
+	{
+		if (slot >= 0 && slot < (int)m_uniformTextures.size())
+			return m_uniformTextures[slot]->Name.c_str();
+		return NULL;
 	}
 
 	void CMaterial::setUniformTexture(const char *name, ITexture *texture)
@@ -710,11 +717,14 @@ namespace Skylicht
 				{
 				case CShader::OBJECT_PARAM:
 				{
-					SVec4& v = m_owner->getShaderParams().getParam(uniform->ValueIndex);
-					v.X = uniformValue->FloatValue[0];
-					v.Y = uniformValue->FloatValue[1];
-					v.Z = uniformValue->FloatValue[2];
-					v.W = uniformValue->FloatValue[3];
+					if (m_owner != NULL)
+					{
+						SVec4& v = m_owner->getShaderParams().getParam(uniform->ValueIndex);
+						v.X = uniformValue->FloatValue[0];
+						v.Y = uniformValue->FloatValue[1];
+						v.Z = uniformValue->FloatValue[2];
+						v.W = uniformValue->FloatValue[3];
+					}
 					break;
 				}
 				case CShader::NODE_PARAM:
