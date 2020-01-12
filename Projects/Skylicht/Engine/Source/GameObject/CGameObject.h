@@ -41,7 +41,7 @@ namespace Skylicht
 	public:
 		static long s_objectID;
 		static std::map<long, long> s_mapObjIDOnFileSaved;
-		static bool s_repairIDMode;	
+		static bool s_repairIDMode;
 
 	protected:
 		long m_objectID;
@@ -67,7 +67,7 @@ namespace Skylicht
 		CShaderParams m_shaderParams;
 
 		std::vector<CComponentSystem*> m_components;
-	public:		
+	public:
 		CGameObject(CGameObject *parent, CZone *zone);
 
 		virtual ~CGameObject();
@@ -128,11 +128,16 @@ namespace Skylicht
 		inline void setParent(CGameObject *p)
 		{
 			m_parent = p;
-		}		
-		
+		}
+
 		inline CEntity* getEntity()
 		{
 			return m_entity;
+		}
+
+		inline CShaderParams& getShaderParams()
+		{
+			return m_shaderParams;
 		}
 
 		CEntityManager* getEntityManager();
@@ -140,7 +145,7 @@ namespace Skylicht
 		CTransform* getTransform();
 
 		CTransformEuler* getTransformEuler();
-		
+
 		inline bool isEnable()
 		{
 			return m_enable;
@@ -179,7 +184,7 @@ namespace Skylicht
 		inline bool isLighting()
 		{
 			return m_lighting;
-		}		
+		}
 
 		inline void setLockObject(bool b)
 		{
@@ -220,14 +225,14 @@ namespace Skylicht
 		{
 			return m_tagDataString.c_str();
 		}
-		
+
 		virtual void updateObject();
 
 		virtual void postUpdateObject();
 
 		virtual void endUpdate();
 
-		virtual void remove();		
+		virtual void remove();
 
 		template<class T>
 		T* addComponent();
@@ -266,7 +271,7 @@ namespace Skylicht
 		m_components.push_back(compSystem);
 
 		compSystem->setOwner(this);
-		compSystem->initComponent();		
+		compSystem->initComponent();
 
 		return newComp;
 	}
