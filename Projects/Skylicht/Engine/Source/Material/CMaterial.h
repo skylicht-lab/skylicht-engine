@@ -116,6 +116,11 @@ namespace Skylicht
 			m_owner = obj;
 		}
 
+		inline const char* getName()
+		{
+			return m_materialName.c_str();
+		}
+
 		CMaterial* clone(CGameObject *gameObject);
 
 		void deleteAllParams();

@@ -55,7 +55,8 @@ namespace Skylicht
 			output = new CEntityPrefab();
 
 			// add search texture path
-			importer->addTextureFolder(texturePath);
+			if (texturePath != NULL)
+				importer->addTextureFolder(texturePath);
 
 			// load model
 			if (importer->loadModel(resource, output, loadNormalMap, loadTexcoord2, createBatching) == true)
@@ -75,5 +76,5 @@ namespace Skylicht
 		}
 
 		return output;
-	}	
+	}
 }
