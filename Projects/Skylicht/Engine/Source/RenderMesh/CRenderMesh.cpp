@@ -42,12 +42,16 @@ namespace Skylicht
 
 	CRenderMesh::~CRenderMesh()
 	{
+		for (CMaterial *m : m_materials)
+			delete m;
+		m_materials.clear();
+
 		CEntityManager *entityManager = m_gameObject->getEntityManager();
 		for (u32 i = 0, n = m_entities.size(); i < n; i++)
-		{
 			entityManager->removeEntity(m_entities[i]);
-		}
+
 		m_entities.clear();
+		m_renderers.clear();
 	}
 
 	void CRenderMesh::initComponent()
@@ -74,7 +78,6 @@ namespace Skylicht
 
 		// map new entity index from src prefab
 		std::map<int, int> entityIndex;
-		std::vector<CRenderMeshData*> renderers;
 
 		// copy entity data
 		for (int i = 0; i < numEntities; i++)
@@ -114,7 +117,8 @@ namespace Skylicht
 				if (spawnRender->isSkinnedMesh() && spawnRender->isSoftwareSkinning() == true)
 					spawnRender->initSoftwareSkinning();
 
-				renderers.push_back(spawnRender);
+				// add to list renderer
+				m_renderers.push_back(spawnRender);
 
 				// add world inv transform for culling system
 				spawnEntity->addData<CWorldInvTransformData>();
@@ -147,7 +151,7 @@ namespace Skylicht
 		bool addInvData = false;
 
 		// re-map joint with new entity in CEntityManager
-		for (CRenderMeshData *&r : renderers)
+		for (CRenderMeshData *&r : m_renderers)
 		{
 			if (r->isSkinnedMesh() == true)
 			{
@@ -187,6 +191,28 @@ namespace Skylicht
 
 	void CRenderMesh::initMaterial(ArrayMaterial& materials)
 	{
+		int bufferID = 0;
 
+		for (CMaterial *m : materials)
+		{
+			CMaterial *material = m->clone(m_gameObject);
+			for (CRenderMeshData *renderer : m_renderers)
+			{
+				bufferID = 0;
+				CMesh *mesh = renderer->getMesh();
+				for (std::string& materialName : mesh->MaterialName)
+				{
+					if (materialName == m->getName())
+					{
+						material->addAffectMesh(mesh->getMeshBuffer(bufferID));
+					}
+					bufferID++;
+				}
+			}
+			m_materials.push_back(material);
+		}
+
+		for (CMaterial *m : m_materials)
+			m->applyMaterial();
 	}
 }
