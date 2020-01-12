@@ -64,7 +64,7 @@ void CViewInit::initScene()
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
 	CCamera *camera = camObj->getComponent<CCamera>();
-	camera->setPosition(core::vector3df(3.0f, 3.0f, 3.0f));
+	camera->setPosition(core::vector3df(2.0f, 1.0f, 2.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// sky
@@ -78,19 +78,19 @@ void CViewInit::initScene()
 	// grid
 	// zone->createEmptyObject()->addComponent<CGridPlane>();
 
-	/*
 	// sponza
+	/*
 	CMeshManager *meshManager = CMeshManager::getInstance();
+	CEntityPrefab *prefab = NULL;
 
 	std::vector<std::string> textureFolders;
 	textureFolders.push_back("Demo/Sponza/Textures");
 
 	// load model
-	CEntityPrefab *prefab = meshManager->loadModel("Demo/Sponza/Sponza.dae", textureFolders[0].c_str(), false);
+	prefab = meshManager->loadModel("Demo/Sponza/Sponza.dae", NULL, false);
 	if (prefab != NULL)
 	{
 		// export model material
-		// CMaterialManager::getInstance()->exportMaterial(prefab, "../Assets/Demo/Sponza", "Sponza.xml");
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Demo/Sponza/Sponza.xml", true, textureFolders);
 
 		// create render mesh object
@@ -108,8 +108,7 @@ void CViewInit::initScene()
 	CAnimationClip *animWalkForward = animManager->loadAnimation("Demo/Model3D/Hero@WalkForward.dae");
 	CAnimationClip *animRunForward = animManager->loadAnimation("Demo/Model3D/Hero@RunForward.dae");
 
-	CMeshManager *meshManager = CMeshManager::getInstance();
-	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
+	prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
 	if (prefab != NULL)
 	{
 		// instance object 1
@@ -191,8 +190,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+}
 #else
 
 #if defined(WINDOWS_STORE)
