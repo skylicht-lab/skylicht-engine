@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSkinnedMeshRenderer.h"
 
 #include "Culling/CCullingData.h"
-#include "Material/CShaderManager.h"
+#include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {

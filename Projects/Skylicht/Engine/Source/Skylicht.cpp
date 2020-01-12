@@ -34,7 +34,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Control/CJoystick.h"
 
 // Shader Manager
-#include "Material/CShaderManager.h"
+#include "Material/CMaterialManager.h"
+#include "Material/Shader/CShaderManager.h"
 #include "Graphics2D/CGraphics2D.h"
 
 // Mesh & Texture
@@ -66,6 +67,7 @@ namespace Skylicht
 		CTextureManager::createGetInstance();
 		CMeshManager::createGetInstance();
 		CAnimationManager::createGetInstance();
+		CMaterialManager::createGetInstance();
 
 		// alway use HW
 		g_video->setMinHardwareBufferVertexCount(0);
@@ -78,6 +80,7 @@ namespace Skylicht
 	{
 		os::Printer::log("Close skylicht core");
 
+		CMaterialManager::releaseInstance();
 		CAnimationManager::releaseInstance();
 		CMeshManager::releaseInstance();
 		CTextureManager::releaseInstance();
