@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CRenderMeshData.h"
-#include "Material/CShaderManager.h"
+#include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {
