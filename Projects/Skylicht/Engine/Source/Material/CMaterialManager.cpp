@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CMaterialManager.h"
 #include "Shader/CShader.h"
 #include "RenderMesh/CRenderMeshData.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -36,7 +37,162 @@ namespace Skylicht
 
 	CMaterialManager::~CMaterialManager()
 	{
+		releaseAllMaterials();
+	}
 
+	void CMaterialManager::releaseAllMaterials()
+	{
+		std::map<std::string, ArrayMaterial>::iterator i = m_materials.begin(), end = m_materials.end();
+		while (i != end)
+		{
+			ArrayMaterial &list = (*i).second;
+			for (int j = 0, n = list.size(); j < n; j++)
+			{
+				delete list[j];
+			}
+			list.clear();
+			++i;
+		}
+		m_materials.clear();
+	}
+
+	ArrayMaterial& CMaterialManager::loadMaterial(const char *filename, bool loadTexture, std::vector<std::string>& textureFolders)
+	{
+		// find in cached
+		std::map<std::string, ArrayMaterial>::iterator findCache = m_materials.find(filename);
+		if (findCache != m_materials.end())
+		{
+			return (*findCache).second;
+		}
+
+		ArrayMaterial& result = m_materials[filename];
+
+		IrrlichtDevice	*device = getIrrlichtDevice();
+		io::IFileSystem *fs = device->getFileSystem();
+
+		io::IXMLReader *xmlRead = fs->createXMLReader(filename);
+		if (xmlRead == NULL)
+			return result;
+
+		const wchar_t *textw;
+		char text[1024];
+
+		CMaterial *material = NULL;
+
+		while (xmlRead->read())
+		{
+			switch (xmlRead->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+			{
+				std::wstring nodeName = xmlRead->getNodeName();
+				if (nodeName == L"Material")
+				{
+					textw = xmlRead->getAttributeValue(L"name");
+					CStringImp::convertUnicodeToUTF8(textw, text);
+					std::string name = text;
+
+					textw = xmlRead->getAttributeValue(L"shader");
+					CStringImp::convertUnicodeToUTF8(textw, text);
+					std::string shader = text;
+
+					// create material
+					material = new CMaterial(name.c_str(), shader.c_str());
+
+					if (loadTexture == true)
+						material->loadDefaultTexture();
+
+					result.push_back(material);
+				}
+				else if (nodeName == L"Property")
+				{
+					if (material != NULL)
+					{
+						textw = xmlRead->getAttributeValue(L"name");
+						CStringImp::convertUnicodeToUTF8(textw, text);
+						std::string name = text;
+
+						textw = xmlRead->getAttributeValue(L"value");
+						CStringImp::convertUnicodeToUTF8(textw, text);
+						std::string value = text;
+
+						// set property (depth, culling)
+						material->setProperty(name, value);
+					}
+				}
+				else if (nodeName == L"Texture")
+				{
+					if (material != NULL)
+					{
+						textw = xmlRead->getAttributeValue(L"path");
+						CStringImp::convertUnicodeToUTF8(textw, text);
+						std::string path = text;
+
+						// load texture by name
+						textw = xmlRead->getAttributeValue(L"name");
+						if (textw != NULL)
+						{
+							CStringImp::convertUnicodeToUTF8(textw, text);
+							std::string name = text;
+							if (path.empty() == false)
+								material->setUniformTexture(name.c_str(), path.c_str(), textureFolders, loadTexture);
+						}
+
+						// load texture by uniform slot
+						textw = xmlRead->getAttributeValue(L"slot");
+						if (textw != NULL)
+						{
+							CStringImp::convertUnicodeToUTF8(textw, text);
+							int slot = atoi(text);
+							const char *name = material->getUniformTextureName(slot);
+							if (name != NULL)
+								material->setUniformTexture(name, path.c_str(), textureFolders, loadTexture);
+						}
+					}
+				}
+				else if (nodeName == L"Param")
+				{
+					if (material != NULL)
+					{
+						textw = xmlRead->getAttributeValue(L"name");
+						CStringImp::convertUnicodeToUTF8(textw, text);
+						std::string name = text;
+
+						textw = xmlRead->getAttributeValue(L"floatSize");
+						CStringImp::convertUnicodeToUTF8(textw, text);
+						int floatSize = atoi(text);
+
+						textw = xmlRead->getAttributeValue(L"floatValue");
+						CStringImp::convertUnicodeToUTF8(textw, text);
+						float v[4];
+						sscanf(text, "%f,%f,%f,%f", &v[0], &v[1], &v[2], &v[3]);
+
+						// set uniform param
+						if (floatSize == 1)
+							material->setUniform(name.c_str(), v[0]);
+						else if (floatSize == 2)
+							material->setUniform2(name.c_str(), v);
+						else if (floatSize == 3)
+							material->setUniform3(name.c_str(), v);
+						else if (floatSize == 4)
+							material->setUniform4(name.c_str(), v);
+					}
+				}
+			}
+			case io::EXN_ELEMENT_END:
+			{
+			}
+			break;
+			case io::EXN_TEXT:
+			{
+			}
+			break;
+			}
+		}
+
+		xmlRead->drop();
+
+		return result;
 	}
 
 	void CMaterialManager::exportMaterial(CEntityPrefab *prefab, const char *folder, const char *filename)

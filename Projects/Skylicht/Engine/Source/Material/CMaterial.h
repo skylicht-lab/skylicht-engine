@@ -38,7 +38,7 @@ namespace Skylicht
 		{
 			std::string Name;
 			std::string Path;
-			ITexture*	Texture;
+			ITexture* Texture;
 
 			SUniformTexture()
 			{
@@ -58,9 +58,9 @@ namespace Skylicht
 		struct SUniformValue
 		{
 			std::string Name;
-			float		FloatValue[4];
-			int			FloatSize;
-			bool		ShaderDefaultValue;
+			float FloatValue[4];
+			int FloatSize;
+			bool ShaderDefaultValue;
 
 			SUniformValue()
 			{
@@ -84,7 +84,6 @@ namespace Skylicht
 		CShaderParams m_shaderParams;
 
 		std::string	m_materialName;
-		std::string	m_fileName;
 		std::string	m_shaderPath;
 
 		std::vector<SUniformValue*> m_uniformParams;
@@ -108,11 +107,16 @@ namespace Skylicht
 		CGameObject* m_owner;
 
 	public:
-		CMaterial(CGameObject *gameObject, const char *name, const char *shaderPath);
-		
+		CMaterial(const char *name, const char *shaderPath);
+
 		virtual ~CMaterial();
 
-		CMaterial* clone(CGameObject *gameObject);		
+		inline void setOwner(CGameObject *obj)
+		{
+			m_owner = obj;
+		}
+
+		CMaterial* clone(CGameObject *gameObject);
 
 		void deleteAllParams();
 
@@ -121,11 +125,13 @@ namespace Skylicht
 		void setUniform3(const char *name, float *f);
 		void setUniform4(const char *name, float *f);
 
-		void setUniformTexture(const char *name, const char *path, bool loadTexture = true);		
+		const char *getUniformTextureName(int slot);
+		void setUniformTexture(const char *name, const char *path, bool loadTexture = true);
 		void setUniformTexture(const char *name, const char *path, std::vector<std::string>& folder, bool loadTexture = true);
 		void setUniformTexture(const char *name, ITexture *texture);
 
 		SUniformValue* getUniform(const char *name);
+
 		SUniformTexture* getUniformTexture(const char *name);
 
 		bool haveUniform(const char *name);
@@ -176,4 +182,6 @@ namespace Skylicht
 
 		void addShaderUI(CShader::SUniformUI* ui);
 	};
+
+	typedef std::vector<CMaterial*> ArrayMaterial;
 }

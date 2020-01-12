@@ -38,7 +38,6 @@ namespace Skylicht
 
 	class CShader : public CBaseShaderCallback
 	{
-
 	public:
 		enum EUniformType
 		{
@@ -151,7 +150,7 @@ namespace Skylicht
 			EUIControlType ControlType;
 			std::string Name;
 			std::string AutoReplace;
-			int Step;
+			int SliderStep;
 
 			SUniform *UniformInfo;
 			CShader *Shader;
@@ -164,7 +163,7 @@ namespace Skylicht
 				UniformInfo = NULL;
 				Shader = shader;
 				Parent = NULL;
-				Step = 10;
+				SliderStep = 10;
 				ControlType = UINone;
 			}
 
@@ -222,8 +221,11 @@ namespace Skylicht
 		bool m_releaseCallback;
 
 		bool m_deferred;
+
 	public:
+
 		CShader();
+
 		virtual ~CShader();
 
 		void initShader(io::IXMLReader *xmlReader, const char *shaderFolder);
