@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 
 #include "GameObject/CGameObject.h"
-#include "Material/CShaderManager.h"
+#include "Material/Shader/CShaderManager.h"
 
 #include "Entity/CEntityPrefab.h"
 #include "RenderMesh/CRenderMeshData.h"
