@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CCullingData.h"
 #include "Entity/IRenderSystem.h"
 #include "Transform/CWorldTransformData.h"
-#include "Transform/CWorldInvTransformData.h"
+#include "Transform/CWorldInverseTransformData.h"
 #include "RenderMesh/CRenderMeshData.h"
 
 namespace Skylicht
@@ -37,7 +37,7 @@ namespace Skylicht
 	protected:
 		core::array<CCullingData*> m_cullings;
 		core::array<CWorldTransformData*> m_transforms;
-		core::array<CWorldInvTransformData*> m_invTransforms;
+		core::array<CWorldInverseTransformData*> m_invTransforms;
 		core::array<CRenderMeshData*> m_meshs;
 
 	public:

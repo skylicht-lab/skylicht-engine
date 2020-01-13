@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 
 #include "Transform/CWorldTransformData.h"
-#include "Transform/CWorldInvTransformSystem.h"
+#include "Transform/CWorldInverseTransformSystem.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "RenderMesh/CJointData.h"
 #include "Culling/CCullingData.h"
@@ -121,7 +121,7 @@ namespace Skylicht
 				m_renderers.push_back(spawnRender);
 
 				// add world inv transform for culling system
-				spawnEntity->addData<CWorldInvTransformData>();
+				spawnEntity->addData<CWorldInverseTransformData>();
 			}
 
 			// copy culling data
@@ -181,8 +181,8 @@ namespace Skylicht
 
 				if (addInvData == false)
 				{
-					if (m_root->getData<CWorldInvTransformData>() == NULL)
-						m_root->addData<CWorldInvTransformData>();
+					if (m_root->getData<CWorldInverseTransformData>() == NULL)
+						m_root->addData<CWorldInverseTransformData>();
 					addInvData = true;
 				}
 			}

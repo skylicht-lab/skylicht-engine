@@ -1,5 +1,5 @@
 cd..
-call C:\emsdk\emsdk_env.bat
+call C:\Devtools\emsdk\emsdk_env.bat
 call emcmake cmake -S . -B ./PrjEmscripten
 cd Assets
 python BuildAssetBundles.py
