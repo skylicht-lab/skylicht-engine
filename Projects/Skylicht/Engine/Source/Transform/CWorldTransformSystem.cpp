@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CWorldTransformSystem.h"
-#include "CWorldInvTransformData.h"
+#include "CWorldInverseTransformData.h"
 #include "Entity/CEntityManager.h"
 #include "Transform/CTransform.h"
 
@@ -56,7 +56,7 @@ namespace Skylicht
 		if (t == NULL)
 			return;
 
-		CWorldInvTransformData* tInverse = entity->getData<CWorldInvTransformData>();
+		CWorldInverseTransformData* tInverse = entity->getData<CWorldInverseTransformData>();
 
 		if (t->Depth > m_maxDepth)
 			m_maxDepth = t->Depth;
