@@ -28,15 +28,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CWorldInvTransformData : public IEntityData
+	class CWorldInverseTransformData : public IEntityData
 	{
 	public:
 		core::matrix4 WorldInverse;
 		bool HasChanged;
 
 	public:
-		CWorldInvTransformData();
+		CWorldInverseTransformData();
 
-		virtual ~CWorldInvTransformData();
+		virtual ~CWorldInverseTransformData();
 	};
 }

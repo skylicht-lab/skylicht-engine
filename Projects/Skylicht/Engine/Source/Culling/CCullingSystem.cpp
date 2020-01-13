@@ -57,7 +57,7 @@ namespace Skylicht
 			if (mesh != NULL)
 			{
 				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-				CWorldInvTransformData *invTransform = entity->getData<CWorldInvTransformData>();
+				CWorldInverseTransformData *invTransform = entity->getData<CWorldInverseTransformData>();
 
 				if (transform != NULL)
 				{
@@ -80,7 +80,7 @@ namespace Skylicht
 		CCullingData **cullings = m_cullings.pointer();
 		CRenderMeshData **meshs = m_meshs.pointer();
 		CWorldTransformData **transforms = m_transforms.pointer();
-		CWorldInvTransformData **invTransforms = m_invTransforms.pointer();
+		CWorldInverseTransformData **invTransforms = m_invTransforms.pointer();
 
 		core::matrix4 invTrans;
 
@@ -90,7 +90,7 @@ namespace Skylicht
 			// get mesh bbox
 			CCullingData *culling = cullings[i];
 			CWorldTransformData *transform = transforms[i];
-			CWorldInvTransformData *invTransform = invTransforms[i];
+			CWorldInverseTransformData *invTransform = invTransforms[i];
 			CRenderMeshData *mesh = meshs[i];
 
 			// transform world bbox
