@@ -79,6 +79,8 @@ namespace Skylicht
 
 		CMaterial *material = NULL;
 
+		CMaterial::SExtraParams *extra = NULL;
+
 		while (xmlRead->read())
 		{
 			switch (xmlRead->getNodeType())
@@ -98,11 +100,18 @@ namespace Skylicht
 
 					// create material
 					material = new CMaterial(name.c_str(), shader.c_str());
+					extra = NULL;
 
 					if (loadTexture == true)
 						material->loadDefaultTexture();
 
 					result.push_back(material);
+				}
+				if (nodeName == L"Extra")
+				{
+					textw = xmlRead->getAttributeValue(L"name");
+					CStringImp::convertUnicodeToUTF8(textw, text);
+					extra = material->newExtra(text);
 				}
 				else if (nodeName == L"Property")
 				{
@@ -135,7 +144,12 @@ namespace Skylicht
 							CStringImp::convertUnicodeToUTF8(textw, text);
 							std::string name = text;
 							if (path.empty() == false)
-								material->setUniformTexture(name.c_str(), path.c_str(), textureFolders, loadTexture);
+							{
+								if (extra == NULL)
+									material->setUniformTexture(name.c_str(), path.c_str(), textureFolders, loadTexture);
+								else
+									material->setExtraUniformTexture(extra, name.c_str(), path.c_str());
+							}
 						}
 
 						// load texture by uniform slot
@@ -146,7 +160,10 @@ namespace Skylicht
 							int slot = atoi(text);
 							const char *name = material->getUniformTextureName(slot);
 							if (name != NULL)
-								material->setUniformTexture(name, path.c_str(), textureFolders, loadTexture);
+							{
+								if (extra == NULL)
+									material->setUniformTexture(name, path.c_str(), textureFolders, loadTexture);
+							}
 						}
 					}
 				}
@@ -168,14 +185,21 @@ namespace Skylicht
 						sscanf(text, "%f,%f,%f,%f", &v[0], &v[1], &v[2], &v[3]);
 
 						// set uniform param
-						if (floatSize == 1)
-							material->setUniform(name.c_str(), v[0]);
-						else if (floatSize == 2)
-							material->setUniform2(name.c_str(), v);
-						else if (floatSize == 3)
-							material->setUniform3(name.c_str(), v);
-						else if (floatSize == 4)
-							material->setUniform4(name.c_str(), v);
+						if (extra == NULL)
+						{
+							if (floatSize == 1)
+								material->setUniform(name.c_str(), v[0]);
+							else if (floatSize == 2)
+								material->setUniform2(name.c_str(), v);
+							else if (floatSize == 3)
+								material->setUniform3(name.c_str(), v);
+							else if (floatSize == 4)
+								material->setUniform4(name.c_str(), v);
+						}
+						else
+						{
+							material->setExtraUniform(extra, name.c_str(), v, floatSize);
+						}
 					}
 				}
 			}
@@ -264,19 +288,19 @@ namespace Skylicht
 					if (e->UniformTextures.size() > 0)
 					{
 						// write uniform texture
-						buffer += "\t\t\t\t<ExtraTextures>\n";
+						buffer += "\t\t\t\t<Textures>\n";
 						for (CMaterial::SUniformTexture* texture : e->UniformTextures)
 						{
-							sprintf(data, "\t\t\t\t\t<ExtraTexture name='%s' path='%s'/>\n", texture->Name.c_str(), texture->Path.c_str());
+							sprintf(data, "\t\t\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), texture->Path.c_str());
 							buffer += data;
 						}
-						buffer += "\t\t\t\t</ExtraTextures>\n";
+						buffer += "\t\t\t\t</Textures>\n";
 					}
 
 					if (e->UniformParams.size() > 0)
 					{
 						// write uniform value
-						buffer += "\t\t\t\t<ExtraParams>\n";
+						buffer += "\t\t\t\t<Params>\n";
 						for (CMaterial::SUniformValue* param : e->UniformParams)
 						{
 							sprintf(data, "\t\t\t\t\t<Param name='%s' floatSize='%d' floatValue='%f,%f,%f,%f'/>\n",

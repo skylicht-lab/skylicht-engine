@@ -136,7 +136,7 @@ namespace Skylicht
 		}
 
 		CMaterial* clone(CGameObject *gameObject);
-
+		
 		void deleteAllParams();
 		void deleteExtramParams();
 
@@ -149,6 +149,10 @@ namespace Skylicht
 		void setUniformTexture(const char *name, const char *path, bool loadTexture = true);
 		void setUniformTexture(const char *name, const char *path, std::vector<std::string>& folder, bool loadTexture = true);
 		void setUniformTexture(const char *name, ITexture *texture);
+
+		SExtraParams *newExtra(const char *shaderPath);
+		void setExtraUniformTexture(SExtraParams *e, const char *name, const char *path);
+		void setExtraUniform(SExtraParams *e, const char *name, float *f, int floatSize);
 
 		inline std::vector<SUniformValue*>& getUniformParams()
 		{
@@ -168,6 +172,10 @@ namespace Skylicht
 		SUniformValue* getUniform(const char *name);
 
 		SUniformTexture* getUniformTexture(const char *name);
+
+		SUniformValue* getExtraUniform(SExtraParams *e, const char *name);
+
+		SUniformTexture* getExtraUniformTexture(SExtraParams *e, const char *name);
 
 		bool haveUniform(const char *name);
 
@@ -221,6 +229,10 @@ namespace Skylicht
 		SUniformValue *newUniform(const char *name, int floatSize);
 
 		SUniformTexture *newUniformTexture(const char *name);
+
+		SUniformTexture *newExtraUniformTexture(SExtraParams *e, const char *name);
+
+		SUniformValue *newExtraUniform(SExtraParams *e, const char *name, int floatSize);
 
 		void addShaderUI(CShader::SUniformUI* ui);
 
