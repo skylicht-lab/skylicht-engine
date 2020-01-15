@@ -50,7 +50,7 @@ namespace Skylicht
 			m_textures[i] = NULL;
 		}
 
-		for (int i = 0; i < CShader::RResourceCount; i++)
+		for (int i = 0; i < CShader::ResourceCount; i++)
 			m_overrideTextures[i] = NULL;
 
 		initMaterial();
@@ -68,6 +68,7 @@ namespace Skylicht
 		}
 
 		deleteAllParams();
+		deleteExtramParams();
 		clearAllAffectMesh();
 	}
 
@@ -116,6 +117,24 @@ namespace Skylicht
 		for (SUniformTexture *&uniform : m_uniformTextures)
 			delete uniform;
 		m_uniformTextures.clear();
+	}
+
+	void CMaterial::deleteExtramParams()
+	{
+		for (SExtraParams *&e : m_extras)
+		{
+			for (SUniformValue *&uniform : e->UniformParams)
+				delete uniform;
+			e->UniformParams.clear();
+
+			for (SUniformTexture *&uniform : e->UniformTextures)
+				delete uniform;
+			e->UniformTextures.clear();
+
+			delete e;
+		}
+
+		m_extras.clear();
 	}
 
 	void CMaterial::setUniform(const char *name, float f)
@@ -392,19 +411,19 @@ namespace Skylicht
 					}
 					else
 					{
-						if (r->Type == CShader::RTexture)
+						if (r->Type == CShader::Texture)
 						{
 							texture = textureManager->getTexture(r->Path.c_str());
 						}
-						else if (r->Type == CShader::RCubeTexture)
+						else if (r->Type == CShader::CubeTexture)
 						{
 
 						}
-						else if (r->Type == CShader::RStaticCubeTexture)
+						else if (r->Type == CShader::StaticCubeTexture)
 						{
 
 						}
-						else if (r->Type == CShader::RShadowMapTexture)
+						else if (r->Type == CShader::ShadowMapTexture)
 						{
 
 						}
@@ -488,6 +507,8 @@ namespace Skylicht
 		}
 	}
 
+	// PUBLIC FOR USE
+
 	void CMaterial::applyMaterial(SMaterial& mat)
 	{
 		loadDefaultTexture();
@@ -514,6 +535,59 @@ namespace Skylicht
 
 			// apply texture
 			updateTexture(material);
+		}
+	}
+
+	void CMaterial::changeShader(CShader *shader)
+	{
+		// save current shader params
+		saveExtraParams();
+
+		// new shader path
+		m_shaderPath = shader->getShaderPath();
+
+		// init default params
+		initMaterial();
+
+		// try load from extra params
+		reloadExtraParams(m_shaderPath.c_str());
+	}
+
+	void CMaterial::changeShader(const char *path)
+	{
+		CShaderManager *shaderManager = CShaderManager::getInstance();
+		CShader* shader = shaderManager->getShaderByPath(path);
+		if (shader != NULL)
+		{
+			changeShader(shader);
+		}
+		else
+		{
+			// try load shader
+			CShader *shader = shaderManager->loadShader(path);
+			if (shader != NULL)
+			{
+				changeShader(shader);
+			}
+		}
+	}
+
+	void CMaterial::autoDetectLoadTexture()
+	{
+		CShaderManager *shaderManager = CShaderManager::getInstance();
+		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
+		if (shader != NULL)
+		{
+			for (SUniformTexture *texture : m_uniformTextures)
+			{
+				CShader::SUniformUI* ui = shader->getUniformUIByName(texture->Name.c_str());
+
+				// need try to fill and load texture
+				if (ui != NULL && texture->Texture == NULL)
+				{
+
+				}
+			}
 		}
 	}
 
@@ -787,5 +861,145 @@ namespace Skylicht
 		memcpy(v->FloatValue, u->Value, sizeof(float) * 4);
 
 		v->ShaderDefaultValue = true;
+	}
+
+	CMaterial::SExtraParams* CMaterial::getExtraParams(const char *shaderPath)
+	{
+		for (SExtraParams* e : m_extras)
+		{
+			if (e->ShaderPath == shaderPath)
+				return e;
+		}
+
+		return NULL;
+	}
+
+	void CMaterial::saveExtraParams()
+	{
+		// get or create extra
+		SExtraParams *e = getExtraParams(m_shaderPath.c_str());
+		if (e == NULL)
+		{
+			e = new SExtraParams();
+			e->ShaderPath = m_shaderPath;
+			m_extras.push_back(e);
+		}
+
+		// clear old params
+		for (SUniformValue *&uniform : e->UniformParams)
+			delete uniform;
+		e->UniformParams.clear();
+
+		for (SUniformTexture *&uniform : e->UniformTextures)
+			delete uniform;
+		e->UniformTextures.clear();
+
+		// add current params
+		for (SUniformTexture *&t : m_uniformTextures)
+		{
+			e->UniformTextures.push_back(t->clone());
+		}
+
+		for (SUniformValue *&v : m_uniformParams)
+		{
+			e->UniformParams.push_back(v->clone());
+		}
+	}
+
+	void CMaterial::reloadExtraParams(const char *shaderPath)
+	{
+		SExtraParams *e = getExtraParams(m_shaderPath.c_str());
+		if (e == NULL)
+		{
+			// no extra data
+			// try find in same shader params
+			for (SUniformTexture *&t : m_uniformTextures)
+			{
+				if (t->Texture != NULL)
+					continue;
+
+				SUniformTexture *uniform = findExtraTexture(t->Name.c_str());
+				if (uniform != NULL)
+				{
+					t->Path = uniform->Path;
+					t->Texture = uniform->Texture;
+					break;
+				}
+			}
+
+			for (SUniformValue *&v : m_uniformParams)
+			{
+				SUniformValue *uniform = findExtraParam(v->Name.c_str(), v->FloatSize);
+				if (uniform != NULL)
+				{
+					v->FloatValue[0] = uniform->FloatValue[0];
+					v->FloatValue[1] = uniform->FloatValue[1];
+					v->FloatValue[2] = uniform->FloatValue[2];
+					v->FloatValue[3] = uniform->FloatValue[3];
+					break;
+				}
+			}
+
+			return;
+		}
+
+		for (SUniformTexture *&t : m_uniformTextures)
+		{
+			if (t->Texture != NULL)
+				continue;
+
+			for (SUniformTexture *&uniform : e->UniformTextures)
+			{
+				if (t->Name == uniform->Name)
+				{
+					t->Path = uniform->Path;
+					t->Texture = uniform->Texture;
+					break;
+				}
+			}
+		}
+
+		for (SUniformValue *&v : m_uniformParams)
+		{
+			for (SUniformValue *&uniform : e->UniformParams)
+			{
+				if (v->Name == uniform->Name && v->FloatSize == uniform->FloatSize)
+				{
+					v->FloatValue[0] = uniform->FloatValue[0];
+					v->FloatValue[1] = uniform->FloatValue[1];
+					v->FloatValue[2] = uniform->FloatValue[2];
+					v->FloatValue[3] = uniform->FloatValue[3];
+					break;
+				}
+			}
+		}
+	}
+
+	CMaterial::SUniformTexture *CMaterial::findExtraTexture(const char *name)
+	{
+		for (SExtraParams* e : m_extras)
+		{
+			for (CMaterial::SUniformTexture *t : e->UniformTextures)
+			{
+				if (t->Name == name && t->Texture != NULL)
+					return t;
+			}
+		}
+
+		return NULL;
+	}
+
+	CMaterial::SUniformValue *CMaterial::findExtraParam(const char *name, int floatSize)
+	{
+		for (SExtraParams* e : m_extras)
+		{
+			for (CMaterial::SUniformValue *v : e->UniformParams)
+			{
+				if (v->Name == name && v->FloatSize == floatSize)
+					return v;
+			}
+		}
+
+		return NULL;
 	}
 }

@@ -44,6 +44,8 @@ namespace Skylicht
 
 		ArrayMaterial& loadMaterial(const char *filename, bool loadTexture, std::vector<std::string>& textureFolders);
 
-		void exportMaterial(CEntityPrefab *prefab, const char *folder, const char *filename);
+		void saveMaterial(ArrayMaterial &materials, const char *filename);
+
+		void exportMaterial(CEntityPrefab *prefab, const char *filename);
 	};
 }
