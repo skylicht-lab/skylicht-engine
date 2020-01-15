@@ -185,7 +185,7 @@ namespace Skylicht
 		if (wtext != NULL)
 		{
 			CStringImp::convertUnicodeToUTF8(wtext, text);
-			uniform->AutoReplace = text;
+			CStringImp::splitString(text, ";", uniform->AutoReplace);
 		}
 
 		wtext = xmlReader->getAttributeValue(L"step");
@@ -274,7 +274,7 @@ namespace Skylicht
 						"ShadowMapTexture"
 					};
 
-					for (u32 i = 0, n = RResourceCount; i < n; i++)
+					for (u32 i = 0, n = ResourceCount; i < n; i++)
 					{
 						if (CStringImp::comp<const char>(text, type[i]) == 0)
 						{

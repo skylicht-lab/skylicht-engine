@@ -195,11 +195,118 @@ namespace Skylicht
 		return result;
 	}
 
-	void CMaterialManager::exportMaterial(CEntityPrefab *prefab, const char *folder, const char *filename)
+	void CMaterialManager::saveMaterial(ArrayMaterial &materials, const char *filename)
 	{
-		std::string matFile = folder;
-		matFile += "/";
-		matFile += filename;
+		std::string matFile = filename;
+
+		IrrlichtDevice	*device = getIrrlichtDevice();
+		io::IFileSystem *fs = device->getFileSystem();
+
+		io::IWriteFile *writeFile = fs->createAndWriteFile(matFile.c_str());
+		if (writeFile == NULL)
+			return;
+
+		std::string buffer;
+		std::map<std::string, bool> saved;
+
+		char data[1024];
+
+		buffer += "<Materials>\n";
+
+		for (CMaterial *material : materials)
+		{
+			sprintf(data, "\t<Material name='%s' shader='%s'>\n", material->getName(), material->getShaderPath());
+			buffer += data;
+
+			std::vector<CMaterial::SUniformTexture*>& textures = material->getUniformTexture();
+			std::vector<CMaterial::SUniformValue*>& params = material->getUniformParams();
+			std::vector<CMaterial::SExtraParams*>& extras = material->getExtraParams();
+
+			if (textures.size() > 0)
+			{
+				// write uniform texture
+				buffer += "\t\t<Textures>\n";
+				for (CMaterial::SUniformTexture* texture : textures)
+				{
+					sprintf(data, "\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), texture->Path.c_str());
+					buffer += data;
+				}
+				buffer += "\t\t</Textures>\n";
+			}
+
+			if (params.size() > 0)
+			{
+				// write uniform value
+				buffer += "\t\t<Params>\n";
+				for (CMaterial::SUniformValue* param : params)
+				{
+					sprintf(data, "\t\t\t<Param name='%s' floatSize='%d' floatValue='%f,%f,%f,%f'/>\n",
+						param->Name.c_str(),
+						param->FloatSize,
+						param->FloatValue[0],
+						param->FloatValue[1],
+						param->FloatValue[2],
+						param->FloatValue[3]);
+					buffer += data;
+				}
+				buffer += "\t\t</Params>\n";
+			}
+
+			// write extra data
+			if (extras.size() > 0)
+			{
+				buffer += "\t\t<Extras>\n";
+				for (CMaterial::SExtraParams* e : extras)
+				{
+					sprintf(data, "\t\t\t<Extra name='%s'/>\n", e->ShaderPath.c_str());
+					buffer += data;
+
+					if (e->UniformTextures.size() > 0)
+					{
+						// write uniform texture
+						buffer += "\t\t\t\t<ExtraTextures>\n";
+						for (CMaterial::SUniformTexture* texture : e->UniformTextures)
+						{
+							sprintf(data, "\t\t\t\t\t<ExtraTexture name='%s' path='%s'/>\n", texture->Name.c_str(), texture->Path.c_str());
+							buffer += data;
+						}
+						buffer += "\t\t\t\t</ExtraTextures>\n";
+					}
+
+					if (e->UniformParams.size() > 0)
+					{
+						// write uniform value
+						buffer += "\t\t\t\t<ExtraParams>\n";
+						for (CMaterial::SUniformValue* param : e->UniformParams)
+						{
+							sprintf(data, "\t\t\t\t\t<Param name='%s' floatSize='%d' floatValue='%f,%f,%f,%f'/>\n",
+								param->Name.c_str(),
+								param->FloatSize,
+								param->FloatValue[0],
+								param->FloatValue[1],
+								param->FloatValue[2],
+								param->FloatValue[3]);
+							buffer += data;
+						}
+						buffer += "\t\t\t\t</Params>\n";
+					}
+
+					buffer += "\t\t\t</Extra>\n";
+				}
+				buffer += "\t\t</Extras>\n";
+			}
+
+			buffer += "\t</Material>\n";
+		}
+
+		buffer += "</Materials>";
+		writeFile->write(buffer.c_str(), buffer.size());
+		writeFile->drop();
+	}
+
+	void CMaterialManager::exportMaterial(CEntityPrefab *prefab, const char *filename)
+	{
+		std::string matFile = filename;
 
 		IrrlichtDevice	*device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
