@@ -138,18 +138,18 @@ namespace Skylicht
 
 		enum EResourceType
 		{
-			RTexture = 0,
-			RCubeTexture,
-			RStaticCubeTexture,
-			RShadowMapTexture,
-			RResourceCount
+			Texture = 0,
+			CubeTexture,
+			StaticCubeTexture,
+			ShadowMapTexture,
+			ResourceCount
 		};
 
 		struct SUniformUI
 		{
 			EUIControlType ControlType;
 			std::string Name;
-			std::string AutoReplace;
+			std::vector<std::string> AutoReplace;
 			int SliderStep;
 
 			SUniform *UniformInfo;
