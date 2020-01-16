@@ -48,7 +48,9 @@ void CViewInit::onInit()
 {
 	getApplication()->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
-	CShaderManager::getInstance()->initBasicShader();
+	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	shaderMgr->initBasicShader();
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 }
 
 void CViewInit::initScene()
@@ -87,11 +89,16 @@ void CViewInit::initScene()
 	textureFolders.push_back("Demo/Sponza/Textures");
 
 	// load model
-	prefab = meshManager->loadModel("Demo/Sponza/Sponza.dae", NULL, false);
+	prefab = meshManager->loadModel("Demo/Sponza/Sponza.dae", NULL, true);
 	if (prefab != NULL)
 	{
 		// export model material
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Demo/Sponza/Sponza.xml", true, textureFolders);
+		for (CMaterial *&material : materials)
+		{
+			material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
+			material->autoDetectLoadTexture();
+		}
 
 		// create render mesh object
 		CGameObject *sponza = zone->createEmptyObject();
@@ -190,8 +197,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-}
+			}
+		}
 #else
 
 #if defined(WINDOWS_STORE)

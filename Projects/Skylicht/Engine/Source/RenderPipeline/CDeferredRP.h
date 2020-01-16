@@ -30,6 +30,20 @@ namespace Skylicht
 {
 	class CDeferredRP : public CBaseRP
 	{
+	protected:
+		ITexture *m_albedo;
+		ITexture *m_position;
+		ITexture *m_normal;
+		ITexture *m_data;
+
+		core::dimension2du m_size;
+
+		core::array<irr::video::IRenderTarget> m_multiRenderTarget;
+
+		core::matrix4 m_viewMatrix;
+		core::matrix4 m_projectionMatrix;
+
+		SMaterial m_material;
 	public:
 		CDeferredRP();
 
@@ -37,6 +51,6 @@ namespace Skylicht
 
 		virtual void initRender(int w, int h);
 
-		virtual void render(CCamera *camera, CEntityManager *entityManager);
+		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager);
 	};
 }

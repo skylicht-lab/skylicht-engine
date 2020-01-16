@@ -35,7 +35,7 @@ void CContext::releaseScene()
 
 CBaseRP* CContext::initRenderPipeline(int w, int h)
 {
-	m_rendering = new CForwardRP();
+	m_rendering = new CDeferredRP();
 	m_rendering->initRender(w, h);
 	return m_rendering;
 }

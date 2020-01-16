@@ -42,10 +42,12 @@ namespace Skylicht
 
 	}
 
-	void CForwardRP::render(CCamera *camera, CEntityManager *entityManager)
+	void CForwardRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager)
 	{
 		if (camera == NULL)
 			return;
+
+		getVideoDriver()->setRenderTarget(target, true, false);
 
 		setCamera(camera);
 		entityManager->setCamera(camera);
