@@ -29,7 +29,7 @@ void main(void)
 	vWorldTangent = normalize(worldTangent.xyz);
 	vWorldBinormal = cross(vWorldNormal.xyz, vWorldTangent.xyz);
 	
-	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
+	vTexCoord0 = inTexCoord0;// * uUVScale.xy + uUVScale.zw;
 	vTangentW = inTangentW.x;
 	
 	gl_Position = uMvpMatrix * inPosition;
