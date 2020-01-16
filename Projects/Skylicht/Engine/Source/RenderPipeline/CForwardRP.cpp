@@ -47,7 +47,7 @@ namespace Skylicht
 		if (camera == NULL)
 			return;
 
-		getVideoDriver()->setRenderTarget(target, true, false);
+		getVideoDriver()->setRenderTarget(target, true, true);
 
 		setCamera(camera);
 		entityManager->setCamera(camera);
