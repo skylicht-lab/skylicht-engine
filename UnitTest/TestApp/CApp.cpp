@@ -4,7 +4,7 @@
 #include "TestScene.h"
 
 #include "CApplication.h"
-#include "Material/CShaderManager.h"
+#include "Material/Shader/CShaderManager.h"
 
 #define TEST_UPDATE_LOOP_COUNT	100
 

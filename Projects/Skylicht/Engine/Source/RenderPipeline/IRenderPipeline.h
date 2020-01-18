@@ -25,16 +25,30 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Camera/CCamera.h"
-#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
+	class CMaterial;
+	class CShader;
+	class CEntityManager;
+
 	class IRenderPipeline
 	{
 	public:
-		IRenderPipeline()
+		enum ERenderPipelineType
 		{
+			Forwarder,
+			Deferred,
+			Mix,
+		};
 
+	protected:
+		ERenderPipelineType m_type;
+
+	public:
+		IRenderPipeline() :
+			m_type(Forwarder)
+		{
 		}
 
 		virtual ~IRenderPipeline()
@@ -42,10 +56,21 @@ namespace Skylicht
 
 		}
 
+		virtual ERenderPipelineType getType()
+		{
+			return m_type;
+		}
+
+		virtual bool canRenderMaterial(CMaterial *m) = 0;
+
 		virtual void initRender(int w, int h) = 0;
 
-		virtual void render(CCamera *camera, CEntityManager* entity) = 0;
+		virtual void render(ITexture *target, CCamera *camera, CEntityManager* entity) = 0;
 
 		virtual void setCamera(CCamera *camera) = 0;
+
+		virtual void setNextPipeLine(IRenderPipeline *next) = 0;
+
+		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity) = 0;
 	};
 }

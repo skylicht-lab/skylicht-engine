@@ -6,7 +6,9 @@ namespace Skylicht
 {
 	const char *CTextureManager::GlobalPackage = "Global";
 
-	CTextureManager::CTextureManager()
+	CTextureManager::CTextureManager():
+		m_nullNormalMap(NULL),
+		m_nullTexture(NULL)
 	{
 		m_currentPackage = GlobalPackage;
 		m_loadCommonPos = 0;
@@ -15,6 +17,19 @@ namespace Skylicht
 	CTextureManager::~CTextureManager()
 	{
 		removeAllTexture();
+
+		IVideoDriver *driver = getVideoDriver();
+		if (m_nullNormalMap)
+		{
+			driver->removeTexture(m_nullNormalMap);
+			m_nullNormalMap = NULL;
+		}
+
+		if (m_nullTexture)
+		{
+			driver->removeTexture(m_nullTexture);
+			m_nullTexture = NULL;
+		}
 	}
 
 	void CTextureManager::registerTexture(ITexture* tex)
@@ -104,7 +119,7 @@ namespace Skylicht
 
 		} while (needContinue);
 
-	}
+	}	
 
 	ITexture* CTextureManager::getTextureFromRealPath(const char *path)
 	{
@@ -193,6 +208,13 @@ namespace Skylicht
 			sprintf(errorLog, "Can not load texture: %s\n", path);
 			os::Printer::log(errorLog);
 		}
+
+		// load null
+		if (m_nullNormalMap == NULL)
+			m_nullNormalMap = driver->getTexture("BuiltIn/Textures/NullNormalMap.png");
+
+		if (m_nullTexture == NULL)
+			m_nullTexture = driver->getTexture("BuiltIn/Textures/NullTexture.png");
 
 		return texture;
 	}

@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 
 #include "GameObject/CGameObject.h"
-#include "Material/CShaderManager.h"
+#include "Material/Shader/CShaderManager.h"
 
 #include "Entity/CEntityPrefab.h"
 #include "RenderMesh/CRenderMeshData.h"
@@ -674,6 +674,7 @@ namespace Skylicht
 		const std::wstring vcountNode(L"vcount");
 		const std::wstring trianglesNode(L"triangles");
 		const std::wstring polylistNode(L"polylist");
+		const std::wstring polygonsNode(L"polygons");
 		const std::wstring floatArrayNode(L"float_array");
 		const std::wstring inputNode(L"input");
 		const std::wstring accessorNode(L"accessor");
@@ -762,11 +763,13 @@ namespace Skylicht
 									{
 										buffer->Type = k_texCoordBuffer;
 
-										if (verticesParam.TexCoord1Index == -1)
+										int set = xmlRead->getAttributeValueAsInt(L"set");
+
+										if (set == 0)
 										{
 											verticesParam.TexCoord1Index = bufferID;
 										}
-										else if (verticesParam.TexCoord2Index == -1)
+										else if (set == 1)
 										{
 											verticesParam.TexCoord2Index = bufferID;
 										}
@@ -835,24 +838,18 @@ namespace Skylicht
 									if (triangle.VerticesIndex != -1)
 									{
 										SVerticesParam &verticesParam = mesh.Vertices[triangle.VerticesIndex];
+										int set = xmlRead->getAttributeValueAsInt(L"set");
 
-										if (verticesParam.TexCoord1Index == -1)
+										if (set == 0)
 										{
 											verticesParam.TexCoord1Index = bufferID;
 											triangle.OffsetTexcoord1 = offset;
 										}
-										else if (verticesParam.TexCoord2Index == -1)
+										else if (set == 1)
 										{
 											verticesParam.TexCoord2Index = bufferID;
 											triangle.OffsetTexcoord2 = offset;
 										}
-
-										// hard code to fix many triangle on a mesh
-										if (triangle.OffsetTexcoord1 == 0)
-											triangle.OffsetTexcoord1 = offset;
-										else if (triangle.OffsetTexcoord2 == 0)
-											triangle.OffsetTexcoord2 = offset;
-
 									}
 
 									triangle.NumElementPerVertex++;
@@ -931,6 +928,15 @@ namespace Skylicht
 					// add triangles
 					if (triangle.IndexBuffer != NULL)
 						mesh.Triangles.push_back(triangle);
+				}
+				//<polygons>
+				else if (nodeName == polygonsNode)
+				{
+					char log[512];
+					char nodeNameA[512];
+					CStringImp::convertUnicodeToUTF8(nodeName.c_str(), nodeNameA);
+					sprintf(log, "[Collada loader] unsupport %s - reimport <triangles> or <polylist>", nodeNameA);
+					os::Printer::log(log);
 				}
 			}
 			else if (xmlRead->getNodeType() == io::EXN_ELEMENT_END)

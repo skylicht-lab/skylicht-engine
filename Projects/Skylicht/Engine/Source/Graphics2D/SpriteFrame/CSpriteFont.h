@@ -24,19 +24,55 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include "CSpriteFrame.h"
 
 namespace Skylicht
 {
-	class CWorldInvTransformData : public IEntityData
+	class CSpriteFont
 	{
-	public:
-		core::matrix4 WorldInverse;
-		bool HasChanged;
+	protected:
+		std::vector<SImage> m_images;
+		std::vector<SModuleRect> m_moduleRect;
+		std::vector<SFrame> m_frames;
+
+		std::map<std::string, SFrame*>	m_frameName;
+
+		int *m_moduleMap;
+		int m_numModuleMap;
+
+		float m_charPadding;
+		float m_spacePadding;
 
 	public:
-		CWorldInvTransformData();
+		CSpriteFont();
 
-		virtual ~CWorldInvTransformData();
+		virtual ~CSpriteFont();
+
+		bool loadFont(const char *fileName);
+
+		float getCharPadding()
+		{
+			return m_charPadding;
+		}
+
+		void setCharPadding(float padding)
+		{
+			m_charPadding = padding;
+			m_spacePadding = padding;
+		}
+
+		float getSpacePadding()
+		{
+			return m_spacePadding;
+		}
+
+		void setSpacePadding(float padding)
+		{
+			m_spacePadding = padding;
+		}
+
+		SModuleOffset* getCharacterModule(int character);
+
+		void getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
 	};
 }

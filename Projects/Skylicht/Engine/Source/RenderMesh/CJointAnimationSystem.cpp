@@ -51,7 +51,7 @@ namespace Skylicht
 		if (joint != NULL && joint->RootIndex != 0)
 		{
 			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-			CWorldInvTransformData *rootInvTransform = entityManager->getEntity(joint->RootIndex)->getData<CWorldInvTransformData>();
+			CWorldInverseTransformData *rootInvTransform = entityManager->getEntity(joint->RootIndex)->getData<CWorldInverseTransformData>();
 
 			if (transform != NULL && rootInvTransform != NULL)
 			{
@@ -71,7 +71,7 @@ namespace Skylicht
 	{
 		CJointData **joints = m_joints.pointer();
 		CWorldTransformData **transforms = m_transforms.pointer();
-		CWorldInvTransformData **rootInvTransform = m_rootInvTransform.pointer();
+		CWorldInverseTransformData **rootInvTransform = m_rootInvTransform.pointer();
 
 		// calc animation matrix for CSkinnedMeshSystem
 		for (u32 i = 0, n = m_joints.size(); i < n; i++)

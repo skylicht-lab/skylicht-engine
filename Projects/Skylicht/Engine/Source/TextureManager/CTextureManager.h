@@ -49,6 +49,9 @@ namespace Skylicht
 		std::vector<std::string> m_listCommonTexture;
 		int m_loadCommonPos;
 
+		ITexture *m_nullNormalMap;
+		ITexture *m_nullTexture;
+
 	public:
 		CTextureManager();
 		virtual ~CTextureManager();
@@ -70,7 +73,7 @@ namespace Skylicht
 		void removeTexture(const char *namePackage);
 
 		void removeTexture(ITexture *tex);
-		
+
 		ITexture* getTexture(const char *path);
 
 		ITexture* getTextureFromRealPath(const char *path);
@@ -84,6 +87,16 @@ namespace Skylicht
 			const char *pathZ2);
 
 		ITexture* getTextureArray(std::vector<std::string>& listTexture);
+
+		ITexture *getNullNormalMap()
+		{
+			return m_nullNormalMap;
+		}
+
+		ITexture *getNullTexture()
+		{
+			return m_nullTexture;
+		}
 	};
 
 }

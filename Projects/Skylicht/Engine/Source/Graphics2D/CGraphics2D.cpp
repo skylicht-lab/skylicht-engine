@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 
 #include "CGraphics2D.h"
-#include "Material/CShaderManager.h"
+#include "Material/Shader/CShaderManager.h"
 
 #define MAX_VERTICES (128*4)
 #define MAX_INDICES	(128*6)
