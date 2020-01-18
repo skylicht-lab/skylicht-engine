@@ -25,13 +25,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CCullingSystem.h"
 #include "Entity/CEntityManager.h"
+#include "RenderPipeline/IRenderPipeline.h"
 #include "Camera/CCamera.h"
 
 namespace Skylicht
 {
 	CCullingSystem::CCullingSystem()
 	{
-
+		m_pipelineType = IRenderPipeline::Mix;
 	}
 
 	CCullingSystem::~CCullingSystem()
@@ -82,6 +83,8 @@ namespace Skylicht
 		CWorldTransformData **transforms = m_transforms.pointer();
 		CWorldInverseTransformData **invTransforms = m_invTransforms.pointer();
 
+		IRenderPipeline *rp = entityManager->getRenderPipeline();
+
 		core::matrix4 invTrans;
 
 		u32 numEntity = m_cullings.size();
@@ -92,6 +95,14 @@ namespace Skylicht
 			CWorldTransformData *transform = transforms[i];
 			CWorldInverseTransformData *invTransform = invTransforms[i];
 			CRenderMeshData *mesh = meshs[i];
+
+			// check material first
+			CMaterial *material = mesh->getMaterial();
+			if (material != NULL && rp->canRenderMaterial(material) == false)
+			{
+				culling->Visible = false;
+				continue;
+			}
 
 			// transform world bbox
 			culling->BBox = mesh->getMesh()->getBoundingBox();

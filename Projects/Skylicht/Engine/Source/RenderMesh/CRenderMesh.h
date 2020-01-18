@@ -70,5 +70,11 @@ namespace Skylicht
 		{
 			return m_entities;
 		}
+
+	protected:
+		
+		void releaseMaterial();
+
+		void releaseEntities();
 	};
 }

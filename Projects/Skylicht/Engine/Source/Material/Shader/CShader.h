@@ -93,11 +93,12 @@ namespace Skylicht
 			int FloatSize;
 			int ArraySize;
 			bool IsMatrix;
+			bool IsNormal;
 
 			int SizeOfUniform;
 
 			bool OpenGL;
-			bool DirectX;
+			bool DirectX;			
 
 			int UniformShaderID;
 
@@ -111,6 +112,7 @@ namespace Skylicht
 				FloatSize = 1;
 				ArraySize = 1;
 				IsMatrix = false;
+				IsNormal = false;
 
 				ValueIndex = 0;
 				memset(Value, 0, sizeof(float) * 16);

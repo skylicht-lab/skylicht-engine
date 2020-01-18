@@ -32,7 +32,7 @@ namespace Skylicht
 {
 	CSkinnedMeshRenderer::CSkinnedMeshRenderer()
 	{
-
+		m_pipelineType = IRenderPipeline::Mix;
 	}
 
 	CSkinnedMeshRenderer::~CSkinnedMeshRenderer()
