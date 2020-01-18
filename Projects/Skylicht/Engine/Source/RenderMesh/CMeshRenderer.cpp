@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	CMeshRenderer::CMeshRenderer()
 	{
-
+		m_pipelineType = IRenderPipeline::Mix;
 	}
 
 	CMeshRenderer::~CMeshRenderer()

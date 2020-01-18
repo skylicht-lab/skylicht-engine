@@ -10,7 +10,8 @@
 
 #include "Context/CContext.h"
 
-#include "Material/CShaderManager.h"
+#include "Material/Shader/CShaderManager.h"
+#include "Material/CMaterialManager.h"
 
 #include "Camera/CEditorCamera.h"
 #include "GridPlane/CGridPlane.h"
@@ -47,7 +48,9 @@ void CViewInit::onInit()
 {
 	getApplication()->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
-	CShaderManager::getInstance()->initBasicShader();
+	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	shaderMgr->initBasicShader();
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 }
 
 void CViewInit::initScene()
@@ -60,10 +63,10 @@ void CViewInit::initScene()
 	// camera
 	CGameObject *camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
-	camObj->addComponent<CEditorCamera>();
+	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
 	CCamera *camera = camObj->getComponent<CCamera>();
-	camera->setPosition(core::vector3df(3.0f, 3.0f, 3.0f));
+	camera->setPosition(core::vector3df(2.0f, 1.0f, 2.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// sky
@@ -75,7 +78,35 @@ void CViewInit::initScene()
 	}
 
 	// grid
-	zone->createEmptyObject()->addComponent<CGridPlane>();
+	// zone->createEmptyObject()->addComponent<CGridPlane>();
+
+	// sponza
+	/*
+	CMeshManager *meshManager = CMeshManager::getInstance();
+	CEntityPrefab *prefab = NULL;
+
+	std::vector<std::string> textureFolders;
+	textureFolders.push_back("Demo/Sponza/Textures");
+
+	// load model
+	prefab = meshManager->loadModel("Demo/Sponza/Sponza.dae", NULL, true);
+	if (prefab != NULL)
+	{
+		// export model material
+		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Demo/Sponza/Sponza.xml", true, textureFolders);
+		for (CMaterial *&material : materials)
+		{
+			material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
+			material->autoDetectLoadTexture();
+		}
+
+		// create render mesh object
+		CGameObject *sponza = zone->createEmptyObject();
+		CRenderMesh *renderer = sponza->addComponent<CRenderMesh>();
+		renderer->initFromPrefab(prefab);
+		renderer->initMaterial(materials);
+	}
+	*/
 
 	// test dae model & animation
 	/*
@@ -84,8 +115,7 @@ void CViewInit::initScene()
 	CAnimationClip *animWalkForward = animManager->loadAnimation("Demo/Model3D/Hero@WalkForward.dae");
 	CAnimationClip *animRunForward = animManager->loadAnimation("Demo/Model3D/Hero@RunForward.dae");
 
-	CMeshManager *meshManager = CMeshManager::getInstance();
-	CEntityPrefab *prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
+	prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
 	if (prefab != NULL)
 	{
 		// instance object 1

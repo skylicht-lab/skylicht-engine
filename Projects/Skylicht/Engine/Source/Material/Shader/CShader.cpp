@@ -29,7 +29,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-
 	CShader::CShader() :
 		m_listVSUniforms(NULL),
 		m_listFSUniforms(NULL),
@@ -186,14 +185,14 @@ namespace Skylicht
 		if (wtext != NULL)
 		{
 			CStringImp::convertUnicodeToUTF8(wtext, text);
-			uniform->AutoReplace = text;
+			CStringImp::splitString(text, ";", uniform->AutoReplace);
 		}
 
 		wtext = xmlReader->getAttributeValue(L"step");
 		if (wtext != NULL)
 		{
 			CStringImp::convertUnicodeToUTF8(wtext, text);
-			uniform->Step = atoi(text);
+			uniform->SliderStep = atoi(text);
 		}
 
 		if (parent == NULL)
@@ -275,7 +274,7 @@ namespace Skylicht
 						"ShadowMapTexture"
 					};
 
-					for (u32 i = 0, n = RResourceCount; i < n; i++)
+					for (u32 i = 0, n = ResourceCount; i < n; i++)
 					{
 						if (CStringImp::comp<const char>(text, type[i]) == 0)
 						{
@@ -363,6 +362,16 @@ namespace Skylicht
 							uniform->IsMatrix = true;
 						else
 							uniform->IsMatrix = false;
+					}
+
+					wtext = xmlReader->getAttributeValue(L"normal");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+						if (strcmp(text, "true") == 0)
+							uniform->IsNormal = true;
+						else
+							uniform->IsNormal = false;
 					}
 
 					wtext = xmlReader->getAttributeValue(L"valueIndex");
@@ -952,15 +961,16 @@ namespace Skylicht
 		{
 		}
 		break;
-		case OBJECT_PARAM:
+		case CShader::OBJECT_PARAM:
 		{
 		}
 		break;
-		case NODE_PARAM:
+		case CShader::NODE_PARAM:
 		{
+
 		}
 		break;
-		case SHADER_VEC2:
+		case CShader::SHADER_VEC2:
 		{
 			CShaderManager *material = shaderManager;
 			int paramID = (int)uniform.Value[0];
@@ -974,7 +984,7 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform.UniformShaderID, v, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
-		case SHADER_VEC3:
+		case CShader::SHADER_VEC3:
 		{
 			CShaderManager *material = shaderManager;
 			int paramID = (int)uniform.Value[0];
@@ -989,7 +999,7 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform.UniformShaderID, v, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
-		case SHADER_VEC4:
+		case CShader::SHADER_VEC4:
 		{
 			CShaderManager *material = shaderManager;
 			int paramID = (int)uniform.Value[0];
@@ -1006,20 +1016,20 @@ namespace Skylicht
 
 			break;
 		}
-		case SH_CONST:
+		case CShader::SH_CONST:
 		{
 		}
 		break;
-		case BPCEM_MIN:
-		case BPCEM_MAX:
+		case CShader::BPCEM_MIN:
+		case CShader::BPCEM_MAX:
 		{
 		}
 		break;
-		case BPCEM_POS:
+		case CShader::BPCEM_POS:
 		{
 		}
 		break;
-		case TEXTURE_MIPMAP_COUNT:
+		case CShader::TEXTURE_MIPMAP_COUNT:
 		{
 			SMaterial *material = shaderManager->getCurrentMaterial();
 			int textureID = (int)uniform.Value[0];
@@ -1056,23 +1066,23 @@ namespace Skylicht
 			}
 		}
 		break;
-		case FOG_PARAMS:
+		case CShader::FOG_PARAMS:
 		{
 		}
 		break;
-		case SSAO_KERNEL:
+		case CShader::SSAO_KERNEL:
 		{
 		}
 		break;
-		case DEFERRED_VIEW:
+		case CShader::DEFERRED_VIEW:
 		{
 		}
 		break;
-		case DEFERRED_PROJECTION:
+		case CShader::DEFERRED_PROJECTION:
 		{
 		}
 		break;
-		case CUSTOM_VALUE:
+		case CShader::CUSTOM_VALUE:
 		{
 			// todo
 			// set params in callback
@@ -1082,5 +1092,4 @@ namespace Skylicht
 			break;
 		}
 	}
-
 }

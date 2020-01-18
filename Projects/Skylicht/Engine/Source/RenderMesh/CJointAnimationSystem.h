@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntitySystem.h"
 #include "Transform/CWorldTransformData.h"
-#include "Transform/CWorldInvTransformData.h"
+#include "Transform/CWorldInverseTransformData.h"
 #include "CJointData.h"
 
 namespace Skylicht
@@ -36,7 +36,7 @@ namespace Skylicht
 	protected:
 		core::array<CJointData*> m_joints;
 		core::array<CWorldTransformData*> m_transforms;
-		core::array<CWorldInvTransformData*> m_rootInvTransform;
+		core::array<CWorldInverseTransformData*> m_rootInvTransform;
 
 	public:
 		CJointAnimationSystem();

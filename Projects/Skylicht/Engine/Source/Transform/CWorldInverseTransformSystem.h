@@ -25,21 +25,21 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CWorldTransformData.h"
-#include "CWorldInvTransformData.h"
+#include "CWorldInverseTransformData.h"
 #include "Entity/IEntitySystem.h"
 
 namespace Skylicht
 {
-	class CWorldInvTransformSystem : public IEntitySystem
+	class CWorldInverseTransformSystem : public IEntitySystem
 	{
 	protected:
 		core::array<CWorldTransformData*> m_world;
-		core::array<CWorldInvTransformData*> m_worldInv;		
+		core::array<CWorldInverseTransformData*> m_worldInv;		
 
 	public:
-		CWorldInvTransformSystem();
+		CWorldInverseTransformSystem();
 
-		virtual ~CWorldInvTransformSystem();
+		virtual ~CWorldInverseTransformSystem();
 
 		virtual void beginQuery();
 

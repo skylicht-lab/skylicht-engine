@@ -43,6 +43,10 @@ namespace Skylicht
 		std::vector<IRenderSystem*> m_renders;
 
 		CCamera *m_camera;
+
+		IEntitySystem *m_cullingSystem;
+		IRenderPipeline *m_renderPipeline;
+
 	public:
 		CEntityManager();
 
@@ -51,6 +55,8 @@ namespace Skylicht
 		void update();
 
 		void render();
+
+		void cullingAndRender();
 
 	public:
 
@@ -62,6 +68,16 @@ namespace Skylicht
 		inline CCamera* getCamera()
 		{
 			return m_camera;
+		}
+
+		inline void setRenderPipeline(IRenderPipeline *p)
+		{
+			m_renderPipeline = p;
+		}
+
+		inline IRenderPipeline* getRenderPipeline()
+		{
+			return m_renderPipeline;
 		}
 
 		CEntity* createEntity();

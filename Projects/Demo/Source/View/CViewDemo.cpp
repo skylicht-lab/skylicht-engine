@@ -26,7 +26,7 @@ void CViewDemo::onDestroy()
 void CViewDemo::onUpdate()
 {
 	CContext *context = CContext::getInstance();
-	CScene *scene =	context->getScene();
+	CScene *scene = context->getScene();
 	if (scene != NULL)
 		scene->update();
 }
@@ -40,6 +40,6 @@ void CViewDemo::onRender()
 
 	if (camera != NULL && scene != NULL)
 	{
-		context->getRenderPipeline()->render(camera, scene->getEntityManager());
+		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager());
 	}
 }

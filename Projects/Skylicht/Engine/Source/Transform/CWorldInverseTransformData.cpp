@@ -22,39 +22,17 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CCullingData.h"
-#include "Entity/IRenderSystem.h"
-#include "Transform/CWorldTransformData.h"
-#include "Transform/CWorldInverseTransformData.h"
-#include "RenderMesh/CRenderMeshData.h"
+#include "pch.h"
+#include "CWorldInverseTransformData.h"
 
 namespace Skylicht
 {
-	class CCullingSystem : public IRenderSystem
+	CWorldInverseTransformData::CWorldInverseTransformData()
 	{
-	protected:
-		core::array<CCullingData*> m_cullings;
-		core::array<CWorldTransformData*> m_transforms;
-		core::array<CWorldInverseTransformData*> m_invTransforms;
-		core::array<CRenderMeshData*> m_meshs;
+	}
 
-	public:
-		CCullingSystem();
+	CWorldInverseTransformData::~CWorldInverseTransformData()
+	{
 
-		virtual ~CCullingSystem();
-
-		virtual void beginQuery();
-
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
-
-		virtual void init(CEntityManager *entityManager);
-
-		virtual void update(CEntityManager *entityManager);
-
-		virtual void render(CEntityManager *entityManager);
-
-		virtual void postRender(CEntityManager *entityManager);
-	};
+	}
 }
