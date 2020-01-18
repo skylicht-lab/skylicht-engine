@@ -38,15 +38,21 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CEntityManager::CEntityManager() :
-		m_camera(NULL)
+		m_camera(NULL),
+		m_renderPipeline(NULL)
 	{
+		// core engine systems
 		addSystem<CComponentTransformSystem>();
 		addSystem<CWorldTransformSystem>();
 		addSystem<CWorldInverseTransformSystem>();
 		addSystem<CJointAnimationSystem>();
 		addSystem<CSkinnedMeshSystem>();
-		addRenderSystem<CCullingSystem>();
 		addSystem<CSoftwareSkinningSystem>();
+
+		// culling system
+		m_cullingSystem = addRenderSystem<CCullingSystem>();
+
+		// systems run after culling
 		addRenderSystem<CMeshRenderer>();
 		addRenderSystem<CSkinnedMeshRenderer>();
 	}
@@ -177,12 +183,62 @@ namespace Skylicht
 	{
 		for (IRenderSystem* &s : m_renders)
 		{
-			s->render(this);
+			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+			{
+				s->render(this);
+			}
 		}
 
 		for (IRenderSystem* &s : m_renders)
 		{
-			s->postRender(this);
+			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+			{
+				s->postRender(this);
+			}
+		}
+	}
+
+	void CEntityManager::cullingAndRender()
+	{
+		for (IRenderSystem* &s : m_renders)
+		{
+			s->beginQuery();
+		}
+
+		CEntity** entity = m_entities.pointer();
+		int numEntity = m_entities.size();
+
+		for (IRenderSystem* &s : m_renders)
+		{
+			for (int i = 0; i < numEntity; i++)
+			{
+				if (entity[i]->isAlive())
+				{
+					s->onQuery(this, entity[i]);
+				}
+			}
+
+			s->update(this);
+		}
+
+		for (IRenderSystem* &s : m_renders)
+		{
+			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+			{
+				s->render(this);
+			}
+		}
+
+		for (IRenderSystem* &s : m_renders)
+		{
+			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+			{
+				s->postRender(this);
+			}
 		}
 	}
 

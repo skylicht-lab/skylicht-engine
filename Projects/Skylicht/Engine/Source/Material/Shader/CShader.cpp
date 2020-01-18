@@ -364,6 +364,16 @@ namespace Skylicht
 							uniform->IsMatrix = false;
 					}
 
+					wtext = xmlReader->getAttributeValue(L"normal");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+						if (strcmp(text, "true") == 0)
+							uniform->IsNormal = true;
+						else
+							uniform->IsNormal = false;
+					}
+
 					wtext = xmlReader->getAttributeValue(L"valueIndex");
 					if (wtext != NULL)
 					{

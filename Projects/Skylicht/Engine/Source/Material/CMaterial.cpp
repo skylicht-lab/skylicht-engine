@@ -618,23 +618,102 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::autoDetectLoadTexture()
+	bool CMaterial::autoDetectLoadTexture()
 	{
+		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
+
+		bool ret = true;
+
+		CTextureManager *textureManager = CTextureManager::getInstance();
+
 		CShaderManager *shaderManager = CShaderManager::getInstance();
 		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
+
 		if (shader != NULL)
 		{
+			std::vector<std::string> paths;
+			std::vector<std::string> exts;
+
 			for (SUniformTexture *texture : m_uniformTextures)
 			{
 				CShader::SUniformUI* ui = shader->getUniformUIByName(texture->Name.c_str());
 
-				// need try to fill and load texture
-				if (ui != NULL && texture->Texture == NULL)
+				if (texture->Texture != NULL)
 				{
+					// add references
+					const char *path = texture->Texture->getName().getPath().c_str();
+					for (std::string &s : ui->AutoReplace)
+					{
+						if (strstr(path, s.c_str()) > 0)
+						{
+							paths.push_back(path);
+							exts.push_back(s);
+						}
+					}
+				}
+				else
+				{
+					// need try to fill and load texture
+					if (ui != NULL && ui->AutoReplace.size() > 0)
+					{
+						bool found = false;
+						std::string foundPath;
 
+						for (std::string &s : ui->AutoReplace)
+						{
+							found = false;
+							for (u32 i = 0, n = paths.size(); i < n; i++)
+							{
+								char t[512] = { 0 };
+								CStringImp::replaceText(
+									t,
+									paths[i].c_str(),
+									exts[i].c_str(),
+									s.c_str());
+
+								if (fs->existFile(io::path(t)) == true)
+								{
+									paths.push_back(t);
+									exts.push_back(s);
+
+									foundPath = t;
+									found = true;
+									break;
+								}
+							}
+
+							if (found == true)
+								break;
+						}
+
+						if (found == true)
+						{
+							ITexture *texture = textureManager->getTexture(foundPath.c_str());
+							if (texture != NULL)
+							{
+								setUniformTexture(ui->Name.c_str(), texture);
+							}
+						}
+						else
+						{
+							char log[512];
+							sprintf(log, "[CMaterial::autoDetectLoadTexture] %s: not found texture uniform %s", m_materialName.c_str(), texture->Name.c_str());
+							os::Printer::log(log);
+
+							// todo replace empty texture
+							if (ui->UniformInfo->IsNormal == true)
+								setUniformTexture(ui->Name.c_str(), textureManager->getNullNormalMap());
+							else
+								setUniformTexture(ui->Name.c_str(), textureManager->getNullTexture());
+
+							ret = false;
+						}
+					}
 				}
 			}
 		}
+
+		return ret;
 	}
 
 	// PRIVATE & PROTECTED

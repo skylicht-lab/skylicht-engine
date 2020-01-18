@@ -32,7 +32,8 @@ namespace Skylicht
 		RenderMesh(NULL),
 		OriginalMesh(NULL),
 		SoftwareSkinning(false),
-		IsSkinnedMesh(false)
+		IsSkinnedMesh(false),
+		Material(NULL)
 	{
 
 	}
@@ -57,6 +58,25 @@ namespace Skylicht
 		RenderMesh = mesh->clone();
 	}
 
+	void CRenderMeshData::setMaterial(CMaterial *material)
+	{
+		CMesh *mesh = RenderMesh;
+		const char *name = material->getName();
+
+		int bufferID = 0;
+		for (std::string& materialName : mesh->MaterialName)
+		{
+			if (materialName == name)
+			{
+				material->addAffectMesh(mesh->getMeshBuffer(bufferID));
+			}
+
+			bufferID++;
+		}
+
+		Material = material;
+	}
+
 	void CRenderMeshData::initSoftwareSkinning()
 	{
 		CSkinnedMesh *mesh = new CSkinnedMesh();
@@ -68,12 +88,12 @@ namespace Skylicht
 
 			// skinned mesh buffer
 			IMeshBuffer* originalMeshBuffer = RenderMesh->getMeshBuffer(i);
-			
+
 
 			// get new index & new vertex buffer
 			CVertexBuffer<video::S3DVertex>* vertexBuffer = dynamic_cast<CVertexBuffer<video::S3DVertex>*>(meshBuffer->getVertexBuffer(0));
 			CIndexBuffer* indexBuffer = dynamic_cast<CIndexBuffer*>(meshBuffer->getIndexBuffer());
-			
+
 			if (originalMeshBuffer->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
 			{
 				// SKIN TANGENT
@@ -121,7 +141,7 @@ namespace Skylicht
 
 			// copy material
 			meshBuffer->getMaterial() = originalMeshBuffer->getMaterial();
-			
+
 			// apply static material
 			CShaderManager *shaderMgr = CShaderManager::getInstance();
 

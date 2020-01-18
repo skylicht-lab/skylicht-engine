@@ -49,6 +49,8 @@ namespace Skylicht
 
 		virtual ~CDeferredRP();
 
+		virtual bool canRenderMaterial(CMaterial *material);
+
 		virtual void initRender(int w, int h);
 
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager);

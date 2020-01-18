@@ -135,6 +135,11 @@ namespace Skylicht
 			return m_shaderPath.c_str();
 		}
 
+		inline bool isDeferred()
+		{
+			return m_deferred;
+		}
+
 		CMaterial* clone(CGameObject *gameObject);
 		
 		void deleteAllParams();
@@ -208,7 +213,7 @@ namespace Skylicht
 
 		void changeShader(const char *path);
 
-		void autoDetectLoadTexture();
+		bool autoDetectLoadTexture();
 
 		void applyMaterial();
 

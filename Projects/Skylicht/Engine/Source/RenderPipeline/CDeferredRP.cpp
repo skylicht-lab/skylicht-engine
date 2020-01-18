@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CDeferredRP.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Material/CMaterial.h"
 
 namespace Skylicht
 {
@@ -34,7 +35,7 @@ namespace Skylicht
 		m_normal(NULL),
 		m_data(NULL)
 	{
-
+		m_type = IRenderPipeline::Deferred;
 	}
 
 	CDeferredRP::~CDeferredRP()
@@ -96,6 +97,14 @@ namespace Skylicht
 		m_material.ZWriteEnable = false;
 	}
 
+	bool CDeferredRP::canRenderMaterial(CMaterial *material)
+	{
+		if (material->isDeferred() == true)
+			return true;
+
+		return false;
+	}
+
 	void CDeferredRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager)
 	{
 		if (camera == NULL)
@@ -108,6 +117,7 @@ namespace Skylicht
 		// draw entity to buffer
 		setCamera(camera);
 		entityManager->setCamera(camera);
+		entityManager->setRenderPipeline(this);
 		entityManager->update();
 		entityManager->render();
 
@@ -123,5 +133,8 @@ namespace Skylicht
 
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_material);
+
+		// fix DX11: [AndUnorderedAccessViews]: Forcing PS shader resource
+		unbindRTT();
 	}
 }

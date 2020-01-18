@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CEntity.h"
 #include "IEntitySystem.h"
+#include "RenderPipeline/IRenderPipeline.h"
 
 namespace Skylicht
 {
@@ -33,13 +34,22 @@ namespace Skylicht
 
 	class IRenderSystem : public IEntitySystem
 	{
+	protected:
+		IRenderPipeline::ERenderPipelineType m_pipelineType;
+
 	public:
-		IRenderSystem()
+		IRenderSystem() :
+			m_pipelineType(IRenderPipeline::Forwarder)
 		{
 		}
 
 		virtual ~IRenderSystem()
 		{
+		}
+
+		IRenderPipeline::ERenderPipelineType getPipelineType()
+		{
+			return m_pipelineType;
 		}
 
 		virtual void render(CEntityManager *entityManager) = 0;
