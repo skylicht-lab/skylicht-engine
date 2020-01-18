@@ -90,8 +90,8 @@ namespace Skylicht
 	private:
 		CShaderParams m_shaderParams;
 
-		std::string	m_materialName;
-		std::string	m_shaderPath;
+		std::string m_materialName;
+		std::string m_shaderPath;
 
 		std::vector<SUniformValue*> m_uniformParams;
 		std::vector<SUniformTexture*> m_uniformTextures;
