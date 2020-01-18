@@ -43,7 +43,7 @@ namespace Skylicht
 		m_verticesImage = m_drawBuffer->getVertexBuffer();
 		m_indicesImage = m_drawBuffer->getIndexBuffer();
 
-		// init index
+		// init indices buffer
 		m_indicesImage->set_used(6);
 		u16 *index = (u16*)m_indicesImage->getIndices();
 		index[0] = 0;
@@ -122,7 +122,6 @@ namespace Skylicht
 		m_verticesImage->set_used(numVerticesUse);
 		S3DVertex2TCoords *vertices = (S3DVertex2TCoords*)m_verticesImage->getVertices();
 		SColor color(255, 255, 255, 255);
-
 
 		float x = -1.0f;
 		float y = -1.0f;
