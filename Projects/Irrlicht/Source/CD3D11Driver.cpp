@@ -234,7 +234,7 @@ namespace irr
 				// Try creating hardware device
 				//! If you got an error here that 'D3D_FEATURE_LEVEL_11_1' is undeclared you have to download an appropriate DXSDK
 				//! Download: http://msdn.microsoft.com/en-us/windows/desktop/hh852363.aspx
-				D3D_FEATURE_LEVEL RequestedLevels[] = {					
+				D3D_FEATURE_LEVEL RequestedLevels[] = {
 					D3D_FEATURE_LEVEL_11_1,
 					D3D_FEATURE_LEVEL_11_0,
 					D3D_FEATURE_LEVEL_10_1,
@@ -352,13 +352,12 @@ namespace irr
 #else
 			// Preparing for swap chain creation
 			::ZeroMemory(&present, sizeof(DXGI_SWAP_CHAIN_DESC));
-			present.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-			present.BufferCount = 1;
+			present.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+			present.BufferCount = 2;
 			present.BufferDesc.Format = D3DColorFormat;
 			present.BufferDesc.Width = Params.WindowSize.Width;
 			present.BufferDesc.Height = Params.WindowSize.Height;
 			present.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-			//present.BufferUsage |= DXGI_USAGE_SHADER_INPUT;
 			present.SampleDesc.Count = 1;
 			present.SampleDesc.Quality = 0;
 			present.OutputWindow = (HWND)Params.WindowId;
@@ -418,7 +417,7 @@ namespace irr
 					{
 						present.SampleDesc.Count = Params.AntiAlias;
 						present.SampleDesc.Quality = qualityLevels - 1;
-						present.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+						present.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 						break;
 					}
 					--Params.AntiAlias;
@@ -759,7 +758,7 @@ namespace irr
 			default:
 				return false;
 			}
-		}
+			}
 
 		bool CD3D11Driver::setActiveTexture(u32 stage, video::ITexture* texture)
 		{
@@ -1537,7 +1536,7 @@ namespace irr
 
 
 		void CD3D11Driver::OnResize(const core::dimension2d<u32>& size)
-		{			
+		{
 			if (!Device || !SwapChain)
 				return;
 
@@ -2704,7 +2703,7 @@ namespace irr
 #if defined(WINDOWS_STORE)
 			hr = SwapChain->ResizeBuffers(2, lround(ScreenSize.Width), lround(ScreenSize.Height), D3DColorFormat, 0);
 #else
-			hr = SwapChain->ResizeBuffers(1, ScreenSize.Width, ScreenSize.Height, D3DColorFormat, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+			hr = SwapChain->ResizeBuffers(2, ScreenSize.Width, ScreenSize.Height, D3DColorFormat, 0);
 #endif
 			if (FAILED(hr))
 			{
@@ -2907,8 +2906,8 @@ namespace irr
 			setViewPort(core::rect<s32>(0, 0, size.Width, size.Height));
 		}
 
-	} // end namespace video
-} // end namespace irr
+		} // end namespace video
+	} // end namespace irr
 
 #endif
 

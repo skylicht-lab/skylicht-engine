@@ -7,7 +7,7 @@
 		</vs>
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
-			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false" normal="true"/>
 			<uniform name="uTexSpecGloss" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 		</fs>
 	</uniforms>

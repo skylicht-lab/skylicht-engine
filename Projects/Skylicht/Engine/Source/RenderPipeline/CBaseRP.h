@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "IRenderPipeline.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
@@ -40,10 +41,14 @@ namespace Skylicht
 		float m_viewport2DW;
 		float m_viewport2DH;
 
+		SMaterial m_unbindMaterial;
+
 	public:
 		CBaseRP();
 
 		virtual ~CBaseRP();
+
+		virtual bool canRenderMaterial(CMaterial *m);
 
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager) = 0;
 
@@ -58,5 +63,7 @@ namespace Skylicht
 		void beginRender2D(float w, float h);
 
 		void renderBufferToTarget(float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);
+
+		void unbindRTT();
 	};
 }

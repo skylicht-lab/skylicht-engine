@@ -24,6 +24,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CBaseRP.h"
+#include "Material/CMaterial.h"
+#include "Material/Shader/CShaderManager.h"
+#include "TextureManager/CTextureManager.h"
 
 namespace Skylicht
 {
@@ -49,6 +52,14 @@ namespace Skylicht
 		index[3] = 0;
 		index[4] = 2;
 		index[5] = 3;
+
+		// unbind material
+		m_unbindMaterial.ZBuffer = video::ECFN_DISABLED;
+		m_unbindMaterial.ZWriteEnable = false;
+		m_unbindMaterial.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+		ITexture *nullTexture = CTextureManager::getInstance()->getNullTexture();
+		for (u32 i = 0; i < MATERIAL_MAX_TEXTURES; ++i)
+			m_unbindMaterial.setTexture(i, nullTexture);
 	}
 
 	CBaseRP::~CBaseRP()
@@ -56,6 +67,15 @@ namespace Skylicht
 		m_drawBuffer->drop();
 		m_verticesImage = NULL;
 		m_indicesImage = NULL;
+	}
+
+	bool CBaseRP::canRenderMaterial(CMaterial *m)
+	{
+		// default dont render deferred material
+		if (m->isDeferred() == true)
+			return false;
+
+		return true;
 	}
 
 	void CBaseRP::setCamera(CCamera *camera)
@@ -92,6 +112,35 @@ namespace Skylicht
 
 		m_viewport2DW = w;
 		m_viewport2DH = h;
+	}
+
+	void CBaseRP::unbindRTT()
+	{
+		IVideoDriver *driver = getVideoDriver();
+
+		int numVerticesUse = 4;
+		m_verticesImage->set_used(numVerticesUse);
+		S3DVertex2TCoords *vertices = (S3DVertex2TCoords*)m_verticesImage->getVertices();
+		SColor color(255, 255, 255, 255);
+
+
+		float x = -1.0f;
+		float y = -1.0f;
+		float w = 1.0f;
+		float h = 1.0f;
+
+		// add vertices
+		vertices[0] = S3DVertex2TCoords(x, y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0, 1, 1);
+		vertices[1] = S3DVertex2TCoords(x + w, y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0, 1, 1);
+		vertices[2] = S3DVertex2TCoords(x + w, y + h, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0, 1, 1);
+		vertices[3] = S3DVertex2TCoords(x, y + h, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0, 1, 1);
+
+		// notify change vertex buffer
+		m_drawBuffer->setDirty(scene::EBT_VERTEX);
+
+		// draw buffer
+		driver->setMaterial(m_unbindMaterial);
+		driver->drawMeshBuffer(m_drawBuffer);
 	}
 
 	void CBaseRP::renderBufferToTarget(float sx, float sy, float sw, float sh, SMaterial& material, bool flipY, bool flipX)
@@ -155,6 +204,9 @@ namespace Skylicht
 		vertices[1] = S3DVertex2TCoords(x + w, y, 0.0f, 0.0f, 0.0f, 1.0f, color, tw1, ty1, tw2, ty2);
 		vertices[2] = S3DVertex2TCoords(x + w, y + h, 0.0f, 0.0f, 0.0f, 1.0f, color, tw1, th1, tw2, th2);
 		vertices[3] = S3DVertex2TCoords(x, y + h, 0.0f, 0.0f, 0.0f, 1.0f, color, tx1, th1, tx2, th2);
+
+		// notify change vertex buffer
+		m_drawBuffer->setDirty(scene::EBT_VERTEX);
 
 		// no depth test
 		material.ZBuffer = video::ECFN_DISABLED;

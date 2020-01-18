@@ -42,10 +42,19 @@ namespace Skylicht
 
 	CRenderMesh::~CRenderMesh()
 	{
+		releaseMaterial();
+		releaseEntities();
+	}
+
+	void CRenderMesh::releaseMaterial()
+	{
 		for (CMaterial *m : m_materials)
 			delete m;
 		m_materials.clear();
+	}
 
+	void CRenderMesh::releaseEntities()
+	{
 		CEntityManager *entityManager = m_gameObject->getEntityManager();
 		for (u32 i = 0, n = m_entities.size(); i < n; i++)
 			entityManager->removeEntity(m_entities[i]);
@@ -66,6 +75,8 @@ namespace Skylicht
 
 	void CRenderMesh::initFromPrefab(CEntityPrefab *prefab)
 	{
+		releaseEntities();
+
 		CEntityManager *entityManager = m_gameObject->getEntityManager();
 
 		// root entity of object
@@ -191,23 +202,14 @@ namespace Skylicht
 
 	void CRenderMesh::initMaterial(ArrayMaterial& materials)
 	{
-		int bufferID = 0;
+		releaseMaterial();
 
 		for (CMaterial *m : materials)
 		{
 			CMaterial *material = m->clone(m_gameObject);
-			for (CRenderMeshData *renderer : m_renderers)
+			for (CRenderMeshData *&renderer : m_renderers)
 			{
-				bufferID = 0;
-				CMesh *mesh = renderer->getMesh();
-				for (std::string& materialName : mesh->MaterialName)
-				{
-					if (materialName == m->getName())
-					{
-						material->addAffectMesh(mesh->getMeshBuffer(bufferID));
-					}
-					bufferID++;
-				}
+				renderer->setMaterial(material);
 			}
 			m_materials.push_back(material);
 		}
