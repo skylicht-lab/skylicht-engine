@@ -644,7 +644,7 @@ namespace Skylicht
 					const char *path = texture->Texture->getName().getPath().c_str();
 					for (std::string &s : ui->AutoReplace)
 					{
-						if (strstr(path, s.c_str()) > 0)
+						if (strstr(path, s.c_str()) != NULL)
 						{
 							paths.push_back(path);
 							exts.push_back(s);
