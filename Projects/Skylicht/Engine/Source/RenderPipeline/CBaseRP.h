@@ -25,18 +25,45 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "IRenderPipeline.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
 	class CBaseRP : public IRenderPipeline
 	{
+	protected:
+		IRenderPipeline *m_next;
+
+		CMeshBuffer<video::S3DVertex2TCoords> *m_drawBuffer;
+		IVertexBuffer* m_verticesImage;
+		IIndexBuffer* m_indicesImage;
+
+		float m_viewport2DW;
+		float m_viewport2DH;
+
+		SMaterial m_unbindMaterial;
+
 	public:
 		CBaseRP();
 
 		virtual ~CBaseRP();
 
-		virtual void render(CCamera *camera, CEntityManager *entityManager) = 0;
+		virtual bool canRenderMaterial(CMaterial *m);
+
+		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager) = 0;
 
 		virtual void setCamera(CCamera *camera);
+
+		virtual void setNextPipeLine(IRenderPipeline *next);
+
+		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity);
+
+	public:
+
+		void beginRender2D(float w, float h);
+
+		void renderBufferToTarget(float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);
+
+		void unbindRTT();
 	};
 }

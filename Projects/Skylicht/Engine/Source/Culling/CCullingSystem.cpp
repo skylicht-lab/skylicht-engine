@@ -25,13 +25,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CCullingSystem.h"
 #include "Entity/CEntityManager.h"
+#include "RenderPipeline/IRenderPipeline.h"
 #include "Camera/CCamera.h"
 
 namespace Skylicht
 {
 	CCullingSystem::CCullingSystem()
 	{
-
+		m_pipelineType = IRenderPipeline::Mix;
 	}
 
 	CCullingSystem::~CCullingSystem()
@@ -57,7 +58,7 @@ namespace Skylicht
 			if (mesh != NULL)
 			{
 				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-				CWorldInvTransformData *invTransform = entity->getData<CWorldInvTransformData>();
+				CWorldInverseTransformData *invTransform = entity->getData<CWorldInverseTransformData>();
 
 				if (transform != NULL)
 				{
@@ -80,7 +81,9 @@ namespace Skylicht
 		CCullingData **cullings = m_cullings.pointer();
 		CRenderMeshData **meshs = m_meshs.pointer();
 		CWorldTransformData **transforms = m_transforms.pointer();
-		CWorldInvTransformData **invTransforms = m_invTransforms.pointer();
+		CWorldInverseTransformData **invTransforms = m_invTransforms.pointer();
+
+		IRenderPipeline *rp = entityManager->getRenderPipeline();
 
 		core::matrix4 invTrans;
 
@@ -90,8 +93,16 @@ namespace Skylicht
 			// get mesh bbox
 			CCullingData *culling = cullings[i];
 			CWorldTransformData *transform = transforms[i];
-			CWorldInvTransformData *invTransform = invTransforms[i];
+			CWorldInverseTransformData *invTransform = invTransforms[i];
 			CRenderMeshData *mesh = meshs[i];
+
+			// check material first
+			CMaterial *material = mesh->getMaterial();
+			if (material != NULL && rp->canRenderMaterial(material) == false)
+			{
+				culling->Visible = false;
+				continue;
+			}
 
 			// transform world bbox
 			culling->BBox = mesh->getMesh()->getBoundingBox();

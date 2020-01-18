@@ -154,8 +154,7 @@ void CD3D11CallBridge::setPixelShader(SShader* shader)
 	{
 		shaders[EST_PIXEL_SHADER] = shader;
 
-		// Duc Pham Hong add
-		// need reset sampler state
+		// duc.phamhong: need reset sampler state when shader is changed
 		samplersChanged = 0;
 		texturesChanged = 0;
 

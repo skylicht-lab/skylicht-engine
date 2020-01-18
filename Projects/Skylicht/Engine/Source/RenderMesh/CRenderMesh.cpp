@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 
 #include "Transform/CWorldTransformData.h"
-#include "Transform/CWorldInvTransformSystem.h"
+#include "Transform/CWorldInverseTransformSystem.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "RenderMesh/CJointData.h"
 #include "Culling/CCullingData.h"
@@ -42,12 +42,25 @@ namespace Skylicht
 
 	CRenderMesh::~CRenderMesh()
 	{
+		releaseMaterial();
+		releaseEntities();
+	}
+
+	void CRenderMesh::releaseMaterial()
+	{
+		for (CMaterial *m : m_materials)
+			delete m;
+		m_materials.clear();
+	}
+
+	void CRenderMesh::releaseEntities()
+	{
 		CEntityManager *entityManager = m_gameObject->getEntityManager();
 		for (u32 i = 0, n = m_entities.size(); i < n; i++)
-		{
 			entityManager->removeEntity(m_entities[i]);
-		}
+
 		m_entities.clear();
+		m_renderers.clear();
 	}
 
 	void CRenderMesh::initComponent()
@@ -62,6 +75,8 @@ namespace Skylicht
 
 	void CRenderMesh::initFromPrefab(CEntityPrefab *prefab)
 	{
+		releaseEntities();
+
 		CEntityManager *entityManager = m_gameObject->getEntityManager();
 
 		// root entity of object
@@ -74,7 +89,6 @@ namespace Skylicht
 
 		// map new entity index from src prefab
 		std::map<int, int> entityIndex;
-		std::vector<CRenderMeshData*> renderers;
 
 		// copy entity data
 		for (int i = 0; i < numEntities; i++)
@@ -114,10 +128,11 @@ namespace Skylicht
 				if (spawnRender->isSkinnedMesh() && spawnRender->isSoftwareSkinning() == true)
 					spawnRender->initSoftwareSkinning();
 
-				renderers.push_back(spawnRender);
+				// add to list renderer
+				m_renderers.push_back(spawnRender);
 
 				// add world inv transform for culling system
-				spawnEntity->addData<CWorldInvTransformData>();
+				spawnEntity->addData<CWorldInverseTransformData>();
 			}
 
 			// copy culling data
@@ -147,7 +162,7 @@ namespace Skylicht
 		bool addInvData = false;
 
 		// re-map joint with new entity in CEntityManager
-		for (CRenderMeshData *&r : renderers)
+		for (CRenderMeshData *&r : m_renderers)
 		{
 			if (r->isSkinnedMesh() == true)
 			{
@@ -177,11 +192,29 @@ namespace Skylicht
 
 				if (addInvData == false)
 				{
-					if (m_root->getData<CWorldInvTransformData>() == NULL)
-						m_root->addData<CWorldInvTransformData>();
+					if (m_root->getData<CWorldInverseTransformData>() == NULL)
+						m_root->addData<CWorldInverseTransformData>();
 					addInvData = true;
 				}
 			}
 		}
+	}
+
+	void CRenderMesh::initMaterial(ArrayMaterial& materials)
+	{
+		releaseMaterial();
+
+		for (CMaterial *m : materials)
+		{
+			CMaterial *material = m->clone(m_gameObject);
+			for (CRenderMeshData *&renderer : m_renderers)
+			{
+				renderer->setMaterial(material);
+			}
+			m_materials.push_back(material);
+		}
+
+		for (CMaterial *m : m_materials)
+			m->applyMaterial();
 	}
 }

@@ -22,17 +22,21 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CWorldInvTransformData.h"
+#pragma once
+
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	CWorldInvTransformData::CWorldInvTransformData()
+	class CWorldInverseTransformData : public IEntityData
 	{
-	}
+	public:
+		core::matrix4 WorldInverse;
+		bool HasChanged;
 
-	CWorldInvTransformData::~CWorldInvTransformData()
-	{
+	public:
+		CWorldInverseTransformData();
 
-	}
+		virtual ~CWorldInverseTransformData();
+	};
 }

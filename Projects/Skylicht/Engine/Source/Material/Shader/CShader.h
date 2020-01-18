@@ -38,7 +38,6 @@ namespace Skylicht
 
 	class CShader : public CBaseShaderCallback
 	{
-
 	public:
 		enum EUniformType
 		{
@@ -89,21 +88,22 @@ namespace Skylicht
 			std::string Name;
 			EUniformType Type;
 
-			int			ValueIndex;
-			float		Value[16];
-			int			FloatSize;
-			int			ArraySize;
-			bool		IsMatrix;
+			int	ValueIndex;
+			float Value[16];
+			int FloatSize;
+			int ArraySize;
+			bool IsMatrix;
+			bool IsNormal;
 
-			int			SizeOfUniform;
+			int SizeOfUniform;
 
-			bool		OpenGL;
-			bool		DirectX;
+			bool OpenGL;
+			bool DirectX;			
 
-			int			UniformShaderID;
+			int UniformShaderID;
 
-			float		Min;
-			float		Max;
+			float Min;
+			float Max;
 
 			SUniform()
 			{
@@ -112,6 +112,7 @@ namespace Skylicht
 				FloatSize = 1;
 				ArraySize = 1;
 				IsMatrix = false;
+				IsNormal = false;
 
 				ValueIndex = 0;
 				memset(Value, 0, sizeof(float) * 16);
@@ -139,32 +140,32 @@ namespace Skylicht
 
 		enum EResourceType
 		{
-			RTexture = 0,
-			RCubeTexture,
-			RStaticCubeTexture,
-			RShadowMapTexture,
-			RResourceCount
+			Texture = 0,
+			CubeTexture,
+			StaticCubeTexture,
+			ShadowMapTexture,
+			ResourceCount
 		};
 
 		struct SUniformUI
 		{
-			EUIControlType	ControlType;
-			std::string		Name;
-			std::string		AutoReplace;
-			int				Step;
+			EUIControlType ControlType;
+			std::string Name;
+			std::vector<std::string> AutoReplace;
+			int SliderStep;
 
-			SUniform				*UniformInfo;
-			CShader		*Shader;
+			SUniform *UniformInfo;
+			CShader *Shader;
 
-			SUniformUI					*Parent;
-			core::array<SUniformUI*>	Childs;
+			SUniformUI *Parent;
+			core::array<SUniformUI*> Childs;
 
 			SUniformUI(CShader *shader)
 			{
 				UniformInfo = NULL;
 				Shader = shader;
 				Parent = NULL;
-				Step = 10;
+				SliderStep = 10;
 				ControlType = UINone;
 			}
 
@@ -179,9 +180,9 @@ namespace Skylicht
 
 		struct SResource
 		{
-			std::string		Name;
-			EResourceType	Type;
-			std::string		Path;
+			std::string	Name;
+			std::string	Path;
+			EResourceType Type;
 		};
 
 		struct SShader
@@ -197,16 +198,16 @@ namespace Skylicht
 		};
 
 	protected:
-		std::string		m_name;
-		std::string		m_shaderPath;
-		std::string		m_writeDepth;
+		std::string	m_name;
+		std::string	m_shaderPath;
+		std::string	m_writeDepth;
 
-		core::array<SUniform>		m_vsUniforms;
-		core::array<SUniform>		m_fsUniforms;
-		core::array<SUniformUI*>	m_ui;
-		core::array<SResource*>		m_resources;
+		core::array<SUniform> m_vsUniforms;
+		core::array<SUniform> m_fsUniforms;
+		core::array<SUniformUI*> m_ui;
+		core::array<SResource*> m_resources;
 
-		core::array<SAttributeMapping>	m_attributeMapping;
+		core::array<SAttributeMapping> m_attributeMapping;
 
 		SUniform* m_listVSUniforms;
 		SUniform* m_listFSUniforms;
@@ -222,8 +223,11 @@ namespace Skylicht
 		bool m_releaseCallback;
 
 		bool m_deferred;
+
 	public:
+
 		CShader();
+
 		virtual ~CShader();
 
 		void initShader(io::IXMLReader *xmlReader, const char *shaderFolder);
@@ -326,6 +330,7 @@ namespace Skylicht
 		}
 
 	public:
+
 		// shader callback
 		virtual void OnSetConstants(video::IMaterialRendererServices* services, s32 userData, bool updateTransform);
 

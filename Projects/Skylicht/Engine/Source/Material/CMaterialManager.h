@@ -24,37 +24,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CCullingData.h"
-#include "Entity/IRenderSystem.h"
-#include "Transform/CWorldTransformData.h"
-#include "Transform/CWorldInverseTransformData.h"
-#include "RenderMesh/CRenderMeshData.h"
+#include "CMaterial.h"
+#include "Utils/CGameSingleton.h"
+#include "Entity/CEntityPrefab.h"
 
 namespace Skylicht
 {
-	class CCullingSystem : public IRenderSystem
+	class CMaterialManager : public CGameSingleton<CMaterialManager>
 	{
 	protected:
-		core::array<CCullingData*> m_cullings;
-		core::array<CWorldTransformData*> m_transforms;
-		core::array<CWorldInverseTransformData*> m_invTransforms;
-		core::array<CRenderMeshData*> m_meshs;
+		std::map<std::string, ArrayMaterial> m_materials;
 
 	public:
-		CCullingSystem();
+		CMaterialManager();
 
-		virtual ~CCullingSystem();
+		virtual ~CMaterialManager();
 
-		virtual void beginQuery();
+		void releaseAllMaterials();
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+		ArrayMaterial& loadMaterial(const char *filename, bool loadTexture, std::vector<std::string>& textureFolders);
 
-		virtual void init(CEntityManager *entityManager);
+		void saveMaterial(ArrayMaterial &materials, const char *filename);
 
-		virtual void update(CEntityManager *entityManager);
-
-		virtual void render(CEntityManager *entityManager);
-
-		virtual void postRender(CEntityManager *entityManager);
+		void exportMaterial(CEntityPrefab *prefab, const char *filename);
 	};
 }

@@ -3,6 +3,9 @@
 #include "CMeshManager.h"
 
 #include "Importer/Collada/CColladaLoader.h"
+#include "RenderMesh/CRenderMeshData.h"
+#include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/CShader.h"
 
 namespace Skylicht
 {
@@ -52,7 +55,8 @@ namespace Skylicht
 			output = new CEntityPrefab();
 
 			// add search texture path
-			importer->addTextureFolder(texturePath);
+			if (texturePath != NULL)
+				importer->addTextureFolder(texturePath);
 
 			// load model
 			if (importer->loadModel(resource, output, loadNormalMap, loadTexcoord2, createBatching) == true)

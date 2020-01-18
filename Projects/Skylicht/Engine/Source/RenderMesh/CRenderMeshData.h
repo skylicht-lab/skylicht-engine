@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
+#include "Material/CMaterial.h"
 #include "CMesh.h"
 #include "CSkinnedMesh.h"
 
@@ -38,6 +39,9 @@ namespace Skylicht
 
 		bool IsSkinnedMesh;
 		bool SoftwareSkinning;
+
+		CMaterial *Material;
+
 	public:
 
 		CRenderMeshData();
@@ -76,6 +80,13 @@ namespace Skylicht
 		inline void setSkinnedMesh(bool b)
 		{
 			IsSkinnedMesh = b;
+		}
+
+		void setMaterial(CMaterial *material);
+
+		inline CMaterial* getMaterial()
+		{
+			return Material;
 		}
 	};
 }

@@ -26,6 +26,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/CEntityPrefab.h"
 #include "Components/CComponentSystem.h"
+#include "Material/CMaterial.h"
+#include "Material/CMaterialManager.h"
+#include "RenderMesh/CRenderMeshData.h"
 
 namespace Skylicht
 {
@@ -35,6 +38,9 @@ namespace Skylicht
 		CEntity* m_root;
 		core::array<CEntity*> m_entities;
 
+		std::vector<CRenderMeshData*> m_renderers;
+
+		ArrayMaterial m_materials;
 	public:
 		CRenderMesh();
 
@@ -48,9 +54,27 @@ namespace Skylicht
 
 		void initFromPrefab(CEntityPrefab *prefab);
 
+		void initMaterial(ArrayMaterial& materials);
+
+		inline int getMaterialCount()
+		{
+			return (int)m_materials.size();
+		}
+
+		CMaterial* getMaterial(int i)
+		{
+			return m_materials[i];
+		}
+
 		core::array<CEntity*>& getEntities()
 		{
 			return m_entities;
 		}
+
+	protected:
+		
+		void releaseMaterial();
+
+		void releaseEntities();
 	};
 }

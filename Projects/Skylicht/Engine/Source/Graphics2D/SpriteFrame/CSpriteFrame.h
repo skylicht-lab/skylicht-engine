@@ -24,39 +24,88 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CEntity.h"
-#include "IEntitySystem.h"
-#include "RenderPipeline/IRenderPipeline.h"
-
 namespace Skylicht
 {
-	class CEntityManager;
-
-	class IRenderSystem : public IEntitySystem
+	struct SImage
 	{
-	protected:
-		IRenderPipeline::ERenderPipelineType m_pipelineType;
+		int ID;
+		std::string Path;
+		ITexture *Texture;
 
+		SImage()
+		{
+			ID = -1;
+			Texture = NULL;
+		}
+	};
+
+	struct SModuleRect
+	{
+		int ID;
+		std::string Name;
+
+		float X;
+		float Y;
+		float W;
+		float H;
+
+		SModuleRect()
+		{
+			ID = -1;
+			X = -1;
+			Y = -1;
+			W = -1;
+			H = -1;
+		}
+	};
+
+	struct SFrame;
+
+	struct SModuleOffset
+	{
+		SModuleRect *Module;
+
+		float OffsetX;
+		float OffsetY;
+		float XAdvance;
+		bool FlipX;
+		bool FlipY;
+
+		char Character;
+
+		SModuleOffset();
+
+		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
+
+		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, int offsetX, int offsetY, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
+
+		void getTexCoordBuffer(video::S3DVertex *vertices, float texWidth, float texHeight, float scaleW = 1.0f, float scaleH = 1.0f);
+
+		void getColorBuffer(video::S3DVertex *vertices, const SColor& c);
+	};
+
+	struct SFrame
+	{
+		int ID;
+		std::string Name;
+
+		std::vector<SModuleOffset> ModuleOffset;
+
+		SImage *Image;
+
+		core::rectf	BoudingRect;
+
+		SFrame()
+		{
+			ID = -1;
+		}
+	};
+
+	class CSpriteFrame
+	{
 	public:
-		IRenderSystem() :
-			m_pipelineType(IRenderPipeline::Forwarder)
-		{
-		}
+		CSpriteFrame();
 
-		virtual ~IRenderSystem()
-		{
-		}
-
-		IRenderPipeline::ERenderPipelineType getPipelineType()
-		{
-			return m_pipelineType;
-		}
-
-		virtual void render(CEntityManager *entityManager) = 0;
-
-		virtual void postRender(CEntityManager *entityManager)
-		{
-
-		}
+		virtual ~CSpriteFrame();
 	};
 }
