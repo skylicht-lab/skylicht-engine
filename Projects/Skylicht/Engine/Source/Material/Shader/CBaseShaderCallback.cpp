@@ -60,10 +60,14 @@ namespace Skylicht
 		return false;
 	}
 
-	// setAmbientLight
-	void CBaseShaderCallback::setAmbientLight(IMaterialRenderer *matRender, int ambientID, bool vertexConstant)
+	void CBaseShaderCallback::setColor(IMaterialRenderer *matRender, int colorID, bool vertexConstant, const SColorf& color)
 	{
+		float constBuffer[] = { color.r, color.g, color.b, 1.0f };
 
+		if (vertexConstant == true)
+			matRender->setShaderVariable(colorID, constBuffer, 4, video::EST_VERTEX_SHADER);
+		else
+			matRender->setShaderVariable(colorID, constBuffer, 4, video::EST_PIXEL_SHADER);
 	}
 
 	void CBaseShaderCallback::setDirection(IMaterialRenderer *matRender, int directionID, bool vertexConstant, const core::vector3df& dir, int count, bool worldDirection)

@@ -229,7 +229,7 @@ namespace Skylicht
 
 		void updateShaderParams();
 
-		void setDefaultValue(SUniformValue *v, CShader::SUniform* u);
+		void setDefaultValue(SUniformValue *v, SUniform* u);
 
 		SUniformValue *newUniform(const char *name, int floatSize);
 
