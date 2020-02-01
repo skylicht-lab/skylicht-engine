@@ -30,100 +30,99 @@ namespace Skylicht
 {
 	class CShader;
 
+	enum EUniformType
+	{
+		VIEW_PROJECTION,
+		WORLD_VIEW_PROJECTION,
+		VIEW,
+		WORLD,
+		WORLD_INVERSE,
+		WORLD_INVERSE_TRANSPOSE,
+		WORLD_TRANSPOSE,
+		BONE_MATRIX,
+		SHADOW_MAP_MATRIX,
+		SHADOW_MAP_DIRECTION,
+		SHADOW_MAP_DISTANCE,
+		CAMERA_POSITION,
+		WORLD_CAMERA_POSITION,
+		LIGHT_COLOR,
+		LIGHT_AMBIENT,
+		LIGHT_DIRECTION,
+		WORLD_LIGHT_DIRECTION,
+		POINT_LIGHT_POSITION,
+		POINT_LIGHT_ATTENUATION,
+		SPOT_LIGHT_CUTOFF,
+		MATERIAL_COLOR,
+		OBJECT_PARAM,
+		NODE_PARAM,
+		DEFAULT_VALUE,
+		SHADER_VEC2,
+		SHADER_VEC3,
+		SHADER_VEC4,
+		SH_CONST,
+		CUSTOM_VALUE,
+		CONFIG_VALUE,
+		BPCEM_MIN,
+		BPCEM_MAX,
+		BPCEM_POS,
+		TEXTURE_MIPMAP_COUNT,
+		FOG_PARAMS,
+		SSAO_KERNEL,
+		DEFERRED_VIEW,
+		DEFERRED_PROJECTION,
+		NUM_SHADER_TYPE,
+	};
+
+	struct SUniform
+	{
+		std::string Name;
+		EUniformType Type;
+
+		int	ValueIndex;
+		float Value[16];
+		int FloatSize;
+		int ArraySize;
+		bool IsMatrix;
+		bool IsNormal;
+
+		int SizeOfUniform;
+
+		bool OpenGL;
+		bool DirectX;
+
+		int UniformShaderID;
+
+		float Min;
+		float Max;
+
+		SUniform()
+		{
+			OpenGL = true;
+			DirectX = true;
+			FloatSize = 1;
+			ArraySize = 1;
+			IsMatrix = false;
+			IsNormal = false;
+
+			ValueIndex = 0;
+			memset(Value, 0, sizeof(float) * 16);
+			UniformShaderID = -1;
+			SizeOfUniform = 0;
+
+			Min = FLT_MIN;
+			Max = FLT_MAX;
+		}
+	};
+
 	class IShaderCallback
 	{
 	public:
-		virtual void OnSetConstants(video::IMaterialRendererServices* services, s32 userData, CShader *materialShader) = 0;
+		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader) = 0;
 	};
 
 	class CShader : public CBaseShaderCallback
 	{
-	public:
-		enum EUniformType
-		{
-			VIEW_PROJECTION,
-			WORLD_VIEW_PROJECTION,
-			VIEW,
-			WORLD,
-			WORLD_INVERSE,
-			WORLD_INVERSE_TRANSPOSE,
-			WORLD_TRANSPOSE,
-			BONE_MATRIX,
-			SHADOW_MAP_MATRIX,
-			SHADOW_MAP_DIRECTION,
-			SHADOW_MAP_DISTANCE,
-			WORLD_CAMERA_POSITION,
-			CAMERA_POSITION,
-			SUN_POSITION,
-			LIGHT_DIRECTION,
-			LIGHT_COLOR,
-			LIGHT_AMBIENT,
-			WORLD_LIGHT_DIRECTION,
-			POINT_LIGHT_POSITION,
-			POINT_LIGHT_COLOR,
-			POINT_LIGHT_ATTENUATION,
-			DIFFUSE_COLOR,
-			OBJECT_PARAM,
-			NODE_PARAM,
-			DEFAULT_VALUE,
-			SHADER_VEC2,
-			SHADER_VEC3,
-			SHADER_VEC4,
-			SH_CONST,
-			CUSTOM_VALUE,
-			CONFIG_VALUE,
-			BPCEM_MIN,
-			BPCEM_MAX,
-			BPCEM_POS,
-			TEXTURE_MIPMAP_COUNT,
-			FOG_PARAMS,
-			SSAO_KERNEL,
-			DEFERRED_VIEW,
-			DEFERRED_PROJECTION,
-			NUM_SHADER_TYPE,
-		};
-
-		struct SUniform
-		{
-			std::string Name;
-			EUniformType Type;
-
-			int	ValueIndex;
-			float Value[16];
-			int FloatSize;
-			int ArraySize;
-			bool IsMatrix;
-			bool IsNormal;
-
-			int SizeOfUniform;
-
-			bool OpenGL;
-			bool DirectX;			
-
-			int UniformShaderID;
-
-			float Min;
-			float Max;
-
-			SUniform()
-			{
-				OpenGL = true;
-				DirectX = true;
-				FloatSize = 1;
-				ArraySize = 1;
-				IsMatrix = false;
-				IsNormal = false;
-
-				ValueIndex = 0;
-				memset(Value, 0, sizeof(float) * 16);
-				UniformShaderID = -1;
-				SizeOfUniform = 0;
-
-				Min = FLT_MIN;
-				Max = FLT_MAX;
-			}
-		};
-
+	public:		
 		enum EUIControlType
 		{
 			UITexture = 0,
@@ -209,6 +208,8 @@ namespace Skylicht
 
 		core::array<SAttributeMapping> m_attributeMapping;
 
+		std::vector<IShaderCallback*> m_callbacks;
+
 		SUniform* m_listVSUniforms;
 		SUniform* m_listFSUniforms;
 		int m_numVSUniform;
@@ -218,9 +219,6 @@ namespace Skylicht
 		SShader m_hlsl;
 
 		E_MATERIAL_TYPE	m_baseShader;
-
-		IShaderCallback	*m_callback;
-		bool m_releaseCallback;
 
 		bool m_deferred;
 
@@ -318,12 +316,6 @@ namespace Skylicht
 
 		SUniform* getFSUniform(const char *name);
 
-		void setCallback(IShaderCallback *callback, bool releaseCallback = true)
-		{
-			m_callback = callback;
-			m_releaseCallback = releaseCallback;
-		}
-
 		bool isDeferred()
 		{
 			return m_deferred;
@@ -333,6 +325,39 @@ namespace Skylicht
 
 		// shader callback
 		virtual void OnSetConstants(video::IMaterialRendererServices* services, s32 userData, bool updateTransform);
+
+		template<class T>
+		IShaderCallback* addCallback()
+		{
+			T *newCB = new T();
+			IShaderCallback *shaderCallback = dynamic_cast<IShaderCallback*>(newCB);
+			if (shaderCallback == NULL)
+			{
+				char exceptionInfo[512];
+				sprintf(exceptionInfo, "CShader::addCallback %s must inherit IShaderCallback", typeid(T).name());
+				os::Printer::log(exceptionInfo);
+
+				delete newCB;
+				return NULL;
+			}
+
+			m_callbacks.push_back(newCB);
+			return newCB;
+		}
+
+		template<class T>
+		T* getCallback()
+		{
+			for (IShaderCallback *cb : m_callbacks)
+			{
+				if (typeid(T) == typeid(*cb))
+				{
+					return (T*)cb;
+				}
+			}
+
+			return NULL;
+		}
 
 	protected:
 
@@ -352,7 +377,7 @@ namespace Skylicht
 
 		bool isUniformAvaiable(SUniform& uniform);
 
-		void setUniform(SUniform &uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform);
+		bool setUniform(SUniform &uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform);
 
 		void deleteAllUI();
 

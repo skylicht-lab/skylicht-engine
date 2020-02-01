@@ -99,7 +99,7 @@ namespace Skylicht
 
 		// loadShader
 		// load game shader from file config
-		CShader* loadShader(const char *shaderConfig, IShaderCallback *callback = NULL, bool releaseCallback = true);
+		CShader* loadShader(const char *shaderConfig);
 
 		int getShaderIDByName(const char *name);
 

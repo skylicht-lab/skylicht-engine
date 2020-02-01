@@ -30,9 +30,6 @@ namespace Skylicht
 {
 	class CDirectionalLight : public CLight
 	{
-	protected:
-		static std::vector<CDirectionalLight*> s_lights;
-
 	public:
 		CDirectionalLight();
 
@@ -41,11 +38,5 @@ namespace Skylicht
 		virtual void initComponent();
 
 		virtual void updateComponent();
-
-	public:
-		static std::vector<CDirectionalLight*>& getAllDirectionalLight()
-		{
-			return s_lights;
-		}
 	};
 }
