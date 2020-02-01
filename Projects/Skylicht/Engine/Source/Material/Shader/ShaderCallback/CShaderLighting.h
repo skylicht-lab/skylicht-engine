@@ -22,35 +22,29 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CDirectionalLight.h"
+#pragma once
 
-#include "GameObject/CGameObject.h"
-#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "Material/Shader/CShader.h"
 
 namespace Skylicht
 {
-	CDirectionalLight::CDirectionalLight()
-	{
+	class CDirectionalLight;
 
-	}
-
-	CDirectionalLight::~CDirectionalLight()
+	class CShaderLighting : public IShaderCallback
 	{
-		if (CShaderLighting::getDirectionalLight() == this)
-			CShaderLighting::setDirectionalLight(NULL);
-	}
+	protected:
+		static CDirectionalLight *s_directionalLight;
 
-	void CDirectionalLight::initComponent()
-	{
-		CShaderLighting::setDirectionalLight(this);
-	}
+	public:
+		CShaderLighting();
 
-	void CDirectionalLight::updateComponent()
-	{
-		m_direction.set(0.0f, 0.0f, 1.0f);
-		const core::matrix4& transform = m_gameObject->getTransform()->getMatrixTransform();
-		transform.rotateVect(m_direction);
-		m_direction.normalize();
-	}
+		virtual ~CShaderLighting();
+
+		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+
+	public:
+		static void setDirectionalLight(CDirectionalLight *light);
+
+		static CDirectionalLight* getDirectionalLight();
+	};
 }
