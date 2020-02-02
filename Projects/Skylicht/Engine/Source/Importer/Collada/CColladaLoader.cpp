@@ -1751,10 +1751,12 @@ namespace Skylicht
 				char materialName[512];
 				CStringImp::convertUnicodeToUTF8(effect->Id.c_str(), materialName);
 				colladaMesh->MaterialName.push_back(materialName);
+				colladaMesh->Material.push_back(NULL);
 			}
 			else
 			{
 				colladaMesh->MaterialName.push_back("");
+				colladaMesh->Material.push_back(NULL);
 			}
 
 			if (buffer)

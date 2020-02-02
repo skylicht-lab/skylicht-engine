@@ -182,6 +182,11 @@ namespace Skylicht
 
 		SUniformTexture* getExtraUniformTexture(SExtraParams *e, const char *name);
 
+		CShaderParams& getShaderParams()
+		{
+			return m_shaderParams;
+		}
+
 		bool haveUniform(const char *name);
 
 		void initMaterial();

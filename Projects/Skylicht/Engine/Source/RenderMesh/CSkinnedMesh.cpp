@@ -43,6 +43,7 @@ namespace Skylicht
 		CSkinnedMesh *newMesh = new CSkinnedMesh();
 		newMesh->BoundingBox = BoundingBox;
 		newMesh->MaterialName = MaterialName;
+		newMesh->Material = Material;
 		newMesh->Joints = Joints;
 
 		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
