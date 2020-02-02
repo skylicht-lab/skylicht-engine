@@ -22,32 +22,52 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Material/Shader/CShader.h"
+#include "pch.h"
+#include "CShaderCamera.h"
+#include "Camera/CCamera.h"
+#include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
-	class CDirectionalLight;
+	CCamera *CShaderCamera::s_camera = NULL;
 
-	class CShaderLighting : public IShaderCallback
+	void CShaderCamera::setCamera(CCamera *camera)
 	{
-	protected:
-		static CDirectionalLight *s_directionalLight;
-		static SColorf s_lightAmbient;
+		s_camera = camera;
+	}
 
-	public:
-		CShaderLighting();
+	CShaderCamera::CShaderCamera()
+	{
 
-		virtual ~CShaderLighting();
+	}
 
-		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+	CShaderCamera::~CShaderCamera()
+	{
 
-	public:
-		static void setDirectionalLight(CDirectionalLight *light);
+	}
 
-		static CDirectionalLight* getDirectionalLight();
-		
-		static void setLightAmbient(const SColorf& c);
-	};
+	void CShaderCamera::OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader)
+	{
+		switch (uniform->Type)
+		{
+		case WORLD_CAMERA_POSITION:
+		{
+			core::vector3df position;
+			if (s_camera != NULL)
+				position = s_camera->getGameObject()->getTransform()->getMatrixTransform().getTranslation();
+			shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
+		}
+		break;
+		case CAMERA_POSITION:
+		{
+			core::vector3df position;
+			if (s_camera != NULL)
+				position = s_camera->getGameObject()->getTransform()->getMatrixTransform().getTranslation();
+			shader->setPosition(matRender, uniform->UniformShaderID, position, vertexShader);
+		}
+		break;
+		default:
+			break;
+		}
+	}
 }

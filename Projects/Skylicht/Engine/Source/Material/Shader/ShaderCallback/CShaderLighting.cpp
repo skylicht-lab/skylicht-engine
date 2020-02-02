@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CDirectionalLight *CShaderLighting::s_directionalLight = NULL;
+	SColorf CShaderLighting::s_lightAmbient = SColorf(0.4f, 0.4f, 0.4f, 1.0f);
 
 	void CShaderLighting::setDirectionalLight(CDirectionalLight *light)
 	{
@@ -38,6 +39,11 @@ namespace Skylicht
 	CDirectionalLight* CShaderLighting::getDirectionalLight()
 	{
 		return s_directionalLight;
+	}
+
+	void CShaderLighting::setLightAmbient(const SColorf& c)
+	{
+		s_lightAmbient = c;
 	}
 
 	CShaderLighting::CShaderLighting()
@@ -65,6 +71,7 @@ namespace Skylicht
 		break;
 		case LIGHT_AMBIENT:
 		{
+			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, s_lightAmbient);
 		}
 		break;
 		case LIGHT_DIRECTION:

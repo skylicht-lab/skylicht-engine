@@ -28,26 +28,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CDirectionalLight;
+	class CCamera;
 
-	class CShaderLighting : public IShaderCallback
+	class CShaderCamera : public IShaderCallback
 	{
 	protected:
-		static CDirectionalLight *s_directionalLight;
-		static SColorf s_lightAmbient;
+		static CCamera *s_camera;
 
 	public:
-		CShaderLighting();
+		CShaderCamera();
 
-		virtual ~CShaderLighting();
+		virtual ~CShaderCamera();
 
 		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
-		static void setDirectionalLight(CDirectionalLight *light);
+		static void setCamera(CCamera *camera);
 
-		static CDirectionalLight* getDirectionalLight();
-		
-		static void setLightAmbient(const SColorf& c);
 	};
 }
