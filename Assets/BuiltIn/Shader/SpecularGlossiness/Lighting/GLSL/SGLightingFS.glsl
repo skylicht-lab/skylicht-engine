@@ -16,17 +16,17 @@ const float PI = 3.1415926;
 const float MinReflectance = 0.04;
 float getPerceivedBrightness(vec3 color)
 {
-    return sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b);
+	return sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b);
 }
 float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
 {
-    float specularBrightness = getPerceivedBrightness(specular);
-    float diffuseBrightness = getPerceivedBrightness(diffuse);
-    float a = MinReflectance;
-    float b = diffuseBrightness * oneMinusSpecularStrength / (1.0 - MinReflectance) + specularBrightness - 2.0 * MinReflectance;
-    float c = MinReflectance - specularBrightness;
-    float D = b * b - 4.0 * a * c;
-    return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
+	float specularBrightness = getPerceivedBrightness(specular);
+	float diffuseBrightness = getPerceivedBrightness(diffuse);
+	float a = MinReflectance;
+	float b = diffuseBrightness * oneMinusSpecularStrength / (1.0 - MinReflectance) + specularBrightness - 2.0 * MinReflectance;
+	float c = MinReflectance - specularBrightness;
+	float D = b * b - 4.0 * a * c;
+	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
 }
 vec3 SG(
 	const vec3 baseColor,
@@ -41,16 +41,16 @@ vec3 SG(
 	float roughness = 1.0 - gloss;
 	vec3 f0 = vec3(spec, spec, spec);
 	vec3 specularColor = f0;
-    float oneMinusSpecularStrength = 1.0 - spec;
+	float oneMinusSpecularStrength = 1.0 - spec;
 	float metallic = solveMetallic(baseColor.rgb, specularColor, oneMinusSpecularStrength);
 	f0 = vec3(0.04, 0.04, 0.04);
 	vec3 diffuseColor = baseColor.rgb * (vec3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
-    specularColor = mix(f0, baseColor.rgb, metallic);
+	specularColor = mix(f0, baseColor.rgb, metallic);
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	vec3 color = (ambient + NdotL * lightColor) * (diffuseColor + specular * specularColor * 4.0);
+	vec3 color = (ambient + NdotL * lightColor) * (diffuseColor + specular * specularColor);
 	return color;
 }
 void main(void)

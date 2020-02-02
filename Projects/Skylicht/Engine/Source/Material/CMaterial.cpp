@@ -760,7 +760,7 @@ namespace Skylicht
 			for (int i = 0; i < numVS; i++)
 			{
 				SUniform* u = shader->getVSUniformID(i);
-				if (u->Type == OBJECT_PARAM || u->Type == NODE_PARAM)
+				if (u->Type == OBJECT_PARAM || u->Type == MATERIAL_PARAM)
 				{
 					if (haveUniform(u->Name.c_str()) == false)
 					{
@@ -782,7 +782,7 @@ namespace Skylicht
 			for (int i = 0; i < numFS; i++)
 			{
 				SUniform* u = shader->getFSUniformID(i);
-				if (u->Type == OBJECT_PARAM || u->Type == NODE_PARAM)
+				if (u->Type == OBJECT_PARAM || u->Type == MATERIAL_PARAM)
 				{
 					if (haveUniform(u->Name.c_str()) == false)
 					{
@@ -977,7 +977,7 @@ namespace Skylicht
 					}
 					break;
 				}
-				case NODE_PARAM:
+				case MATERIAL_PARAM:
 				{
 					SVec4& v = m_shaderParams.getParam(uniform->ValueIndex);
 					v.X = uniformValue->FloatValue[0];
@@ -986,15 +986,6 @@ namespace Skylicht
 					v.W = uniformValue->FloatValue[3];
 					break;
 				}
-				/*
-				case DEFAULT_VALUE:
-				case CONFIG_VALUE:
-					uniform->Value[0] = uniformValue->FloatValue[0];
-					uniform->Value[1] = uniformValue->FloatValue[1];
-					uniform->Value[2] = uniformValue->FloatValue[2];
-					uniform->Value[3] = uniformValue->FloatValue[3];
-					break;
-				*/
 				default:
 				{
 					char log[512];

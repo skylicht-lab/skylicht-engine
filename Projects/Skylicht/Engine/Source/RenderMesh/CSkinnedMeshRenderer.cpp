@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Culling/CCullingData.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
@@ -107,6 +108,8 @@ namespace Skylicht
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
 				IMeshBuffer* meshBuffer = mesh->getMeshBuffer(j);
+
+				CShaderMaterial::setMaterial(mesh->Material[i]);
 
 				driver->setMaterial(meshBuffer->getMaterial());
 				driver->drawMeshBuffer(meshBuffer);

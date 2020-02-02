@@ -30,8 +30,20 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     C:\skylicht-engine>cd Assets
     C:\skylicht-engine\Assets>python BuildAssetBundles.py
     C:\skylicht-engine\Assets>cd ..
-    ```  
-  
+    ```
+
+-   Build Shader (**Optional**, just rebuild when you modify built-in shader)
+    ```
+    # Install pcpp (C Preprocessor tool)
+    # https://pypi.org/project/pcpp/
+    C:\skylicht-engine>pip install pcpp
+    
+    # Build shader script
+    C:\skylicht-engine>cd Assets
+    C:\skylicht-engine\Assets>python BuildShader.py
+    C:\skylicht-engine\Assets>cd ..
+    ```
+
 -   Run CMake from the current directory
     ```
     # Visual Studio 2017
@@ -40,7 +52,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     # Visual Studio 2019
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 16 2019" -A x64
     ```
-  
+
 -   Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`
 
 -   Once the solution opens, right click the MainApp project, click "Set as StartUp Project" and click the play button at the top to run the Demo App.

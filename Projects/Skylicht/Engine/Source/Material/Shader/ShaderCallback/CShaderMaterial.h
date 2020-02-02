@@ -24,62 +24,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
-#include "Material/CMaterial.h"
-#include "CMesh.h"
-#include "CSkinnedMesh.h"
+#include "Material/Shader/CShader.h"
 
 namespace Skylicht
 {
-	class CRenderMeshData : public IEntityData
+	class CMaterial;
+
+	class CShaderMaterial : public IShaderCallback
 	{
 	protected:
-		CMesh *RenderMesh;
-		CMesh *OriginalMesh;
-
-		bool IsSkinnedMesh;
-		bool SoftwareSkinning;
+		static CMaterial *s_material;
 
 	public:
+		CShaderMaterial();
 
-		CRenderMeshData();
+		virtual ~CShaderMaterial();
 
-		virtual ~CRenderMeshData();
+		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
 
-		inline CMesh *getMesh()
-		{
-			return RenderMesh;
-		}
+	public:
+		static void setMaterial(CMaterial *material);
 
-		inline CMesh *getOriginalMesh()
-		{
-			return OriginalMesh;
-		}
-
-		void setMesh(CMesh *mesh);
-
-		void initSoftwareSkinning();
-
-		inline bool isSoftwareSkinning()
-		{
-			return SoftwareSkinning;
-		}
-
-		void setSoftwareSkinning(bool b)
-		{
-			SoftwareSkinning = b;
-		}
-
-		inline bool isSkinnedMesh()
-		{
-			return IsSkinnedMesh;
-		}
-
-		inline void setSkinnedMesh(bool b)
-		{
-			IsSkinnedMesh = b;
-		}
-
-		void setMaterial(CMaterial *material);
 	};
 }
