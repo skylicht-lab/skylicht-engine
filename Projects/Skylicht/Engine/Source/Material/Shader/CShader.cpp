@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "ShaderCallback/CShaderLighting.h"
 #include "ShaderCallback/CShaderCamera.h"
+#include "ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
@@ -42,6 +43,7 @@ namespace Skylicht
 		// builtin callback
 		addCallback<CShaderLighting>();
 		addCallback<CShaderCamera>();
+		addCallback<CShaderMaterial>();
 	}
 
 	CShader::~CShader()
@@ -100,9 +102,9 @@ namespace Skylicht
 			"POINT_LIGHT_POSITION",
 			"POINT_LIGHT_ATTENUATION",
 			"SPOT_LIGHT_CUTOFF",
-			"MATERIAL_COLOR",
 			"OBJECT_PARAM",
-			"NODE_PARAM",
+			"MATERIAL_COLOR",
+			"MATERIAL_PARAM",
 			"DEFAULT_VALUE",
 			"SHADER_VEC2",
 			"SHADER_VEC3",
@@ -337,6 +339,12 @@ namespace Skylicht
 					wtext = xmlReader->getAttributeValue(L"type");
 					CStringImp::convertUnicodeToUTF8(wtext, text);
 					uniform->Type = getUniformType(text);
+
+					if (uniform->Type == NUM_SHADER_TYPE)
+					{
+						sprintf(text, "[CShader] %s: '%s' have unknown type", m_name.c_str(), uniform->Name.c_str());
+						os::Printer::log(text);
+					}
 
 					wtext = xmlReader->getAttributeValue(L"float");
 					CStringImp::convertUnicodeToUTF8(wtext, text);
@@ -1023,7 +1031,7 @@ namespace Skylicht
 		{
 		}
 		break;
-		case NODE_PARAM:
+		case MATERIAL_PARAM:
 		{
 
 		}

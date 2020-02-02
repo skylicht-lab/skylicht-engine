@@ -31,7 +31,7 @@ VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
 	output.pos = mul(input.pos, uMvpMatrix);
-	output.tex0 = input.tex0;// * uUVScale.xy + uUVScale.zw;
+	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
 	output.tangentw = input.tangentw.x;
 	
 	float4 worldPos = mul(input.pos, uWorldMatrix);

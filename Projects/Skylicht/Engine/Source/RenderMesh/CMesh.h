@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CMaterial;
+
 	class CMesh : public IMesh
 	{
 	public:
@@ -73,5 +75,7 @@ namespace Skylicht
 		core::aabbox3d<f32> BoundingBox;
 
 		std::vector<std::string> MaterialName;
+
+		std::vector<CMaterial*> Material;
 	};
 }

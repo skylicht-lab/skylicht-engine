@@ -22,64 +22,48 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Entity/IEntityData.h"
+#include "pch.h"
+#include "CShaderMaterial.h"
 #include "Material/CMaterial.h"
-#include "CMesh.h"
-#include "CSkinnedMesh.h"
 
 namespace Skylicht
 {
-	class CRenderMeshData : public IEntityData
+	CMaterial *CShaderMaterial::s_material = NULL;
+
+	void CShaderMaterial::setMaterial(CMaterial *material)
 	{
-	protected:
-		CMesh *RenderMesh;
-		CMesh *OriginalMesh;
+		s_material = material;
+	}
 
-		bool IsSkinnedMesh;
-		bool SoftwareSkinning;
+	CShaderMaterial::CShaderMaterial()
+	{
 
-	public:
+	}
 
-		CRenderMeshData();
+	CShaderMaterial::~CShaderMaterial()
+	{
 
-		virtual ~CRenderMeshData();
+	}
 
-		inline CMesh *getMesh()
+	void CShaderMaterial::OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader)
+	{
+		switch (uniform->Type)
 		{
-			return RenderMesh;
-		}
-
-		inline CMesh *getOriginalMesh()
+		case MATERIAL_COLOR:
+		case MATERIAL_PARAM:
 		{
-			return OriginalMesh;
+			if (s_material != NULL)
+			{
+				float *f = s_material->getShaderParams().getParamData(uniform->ValueIndex);
+				if (vertexShader == true)
+					matRender->setShaderVariable(uniform->UniformShaderID, f, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+				else
+					matRender->setShaderVariable(uniform->UniformShaderID, f, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+			}
 		}
-
-		void setMesh(CMesh *mesh);
-
-		void initSoftwareSkinning();
-
-		inline bool isSoftwareSkinning()
-		{
-			return SoftwareSkinning;
+		break;
+		default:
+			break;
 		}
-
-		void setSoftwareSkinning(bool b)
-		{
-			SoftwareSkinning = b;
-		}
-
-		inline bool isSkinnedMesh()
-		{
-			return IsSkinnedMesh;
-		}
-
-		inline void setSkinnedMesh(bool b)
-		{
-			IsSkinnedMesh = b;
-		}
-
-		void setMaterial(CMaterial *material);
-	};
+	}
 }
