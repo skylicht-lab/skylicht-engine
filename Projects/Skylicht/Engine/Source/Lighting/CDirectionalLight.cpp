@@ -48,7 +48,7 @@ namespace Skylicht
 
 	void CDirectionalLight::updateComponent()
 	{
-		m_direction.set(0.0f, 0.0f, 1.0f);
+		m_direction.set(0.0f, 0.0f, -1.0f);
 		const core::matrix4& transform = m_gameObject->getTransform()->getMatrixTransform();
 		transform.rotateVect(m_direction);
 		m_direction.normalize();
