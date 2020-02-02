@@ -6,7 +6,7 @@ namespace Skylicht
 {
 	const char *CTextureManager::GlobalPackage = "Global";
 
-	CTextureManager::CTextureManager():
+	CTextureManager::CTextureManager() :
 		m_nullNormalMap(NULL),
 		m_nullTexture(NULL)
 	{
@@ -119,7 +119,7 @@ namespace Skylicht
 
 		} while (needContinue);
 
-	}	
+	}
 
 	ITexture* CTextureManager::getTextureFromRealPath(const char *path)
 	{
@@ -140,15 +140,15 @@ namespace Skylicht
 		return texture;
 	}
 
-	ITexture* CTextureManager::getTexture(const char *path)
+	bool CTextureManager::existTexture(const char *path)
 	{
 		char ansiPath[512];
 
+		IVideoDriver *driver = getVideoDriver();
+		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
+
 		std::string fixPath = CPath::normalizePath(path);
 		strcpy(ansiPath, fixPath.c_str());
-
-		IVideoDriver *driver = getVideoDriver();
-		IrrlichtDevice *device = getIrrlichtDevice();
 
 		// try to load compress texture
 		if (driver->getDriverType() == video::EDT_OPENGLES)
@@ -164,26 +164,82 @@ namespace Skylicht
 			CStringImp::replacePathExt(ansiPath, ".dds");
 		}
 
-		if (device->getFileSystem()->existFile(ansiPath) == false)
+		if (fs->existFile(ansiPath) == false)
 		{
 			CStringImp::replacePathExt(ansiPath, ".tga");
 
-			if (device->getFileSystem()->existFile(ansiPath) == false)
+			if (fs->existFile(ansiPath) == false)
 			{
 				CStringImp::replacePathExt(ansiPath, ".bmp");
 
-				if (device->getFileSystem()->existFile(ansiPath) == false)
+				if (fs->existFile(ansiPath) == false)
 				{
 					CStringImp::replacePathExt(ansiPath, ".png");
 
-					if (device->getFileSystem()->existFile(ansiPath) == false)
+					if (fs->existFile(ansiPath) == false)
 					{
 						CStringImp::replacePathExt(ansiPath, ".jpeg");
 
-						if (device->getFileSystem()->existFile(ansiPath) == false)
+						if (fs->existFile(ansiPath) == false)
 						{
 							CStringImp::replacePathExt(ansiPath, ".jpg");
-							if (device->getFileSystem()->existFile(ansiPath) == false)
+							if (fs->existFile(ansiPath) == false)
+							{
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	ITexture* CTextureManager::getTexture(const char *path)
+	{
+		char ansiPath[512];
+
+		std::string fixPath = CPath::normalizePath(path);
+		strcpy(ansiPath, fixPath.c_str());
+
+		IVideoDriver *driver = getVideoDriver();
+		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
+
+		// try to load compress texture
+		if (driver->getDriverType() == video::EDT_OPENGLES)
+		{
+#ifdef IOS
+			CStringImp::replacePathExt(ansiPath, ".pvr");
+#else
+			CStringImp::replacePathExt(ansiPath, ".etc");
+#endif
+		}
+		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
+		{
+			CStringImp::replacePathExt(ansiPath, ".dds");
+		}
+
+		if (fs->existFile(ansiPath) == false)
+		{
+			CStringImp::replacePathExt(ansiPath, ".tga");
+
+			if (fs->existFile(ansiPath) == false)
+			{
+				CStringImp::replacePathExt(ansiPath, ".bmp");
+
+				if (fs->existFile(ansiPath) == false)
+				{
+					CStringImp::replacePathExt(ansiPath, ".png");
+
+					if (fs->existFile(ansiPath) == false)
+					{
+						CStringImp::replacePathExt(ansiPath, ".jpeg");
+
+						if (fs->existFile(ansiPath) == false)
+						{
+							CStringImp::replacePathExt(ansiPath, ".jpg");
+							if (fs->existFile(ansiPath) == false)
 							{
 								char errorLog[512];
 								sprintf(errorLog, "Can not load texture (file not found): %s\n", path);
@@ -222,7 +278,7 @@ namespace Skylicht
 	ITexture* CTextureManager::getTextureArray(std::vector<std::string>& listTexture)
 	{
 		IVideoDriver *driver = getVideoDriver();
-		IrrlichtDevice *device = getIrrlichtDevice();
+		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
 
 		core::array<io::path> paths;
 
@@ -255,27 +311,27 @@ namespace Skylicht
 
 			bool loadImage = true;
 
-			if (device->getFileSystem()->existFile(ansiPath) == false)
+			if (fs->existFile(ansiPath) == false)
 			{
 				CStringImp::replacePathExt(ansiPath, ".tga");
 
-				if (device->getFileSystem()->existFile(ansiPath) == false)
+				if (fs->existFile(ansiPath) == false)
 				{
 					CStringImp::replacePathExt(ansiPath, ".bmp");
 
-					if (device->getFileSystem()->existFile(ansiPath) == false)
+					if (fs->existFile(ansiPath) == false)
 					{
 						CStringImp::replacePathExt(ansiPath, ".png");
 
-						if (device->getFileSystem()->existFile(ansiPath) == false)
+						if (fs->existFile(ansiPath) == false)
 						{
 							CStringImp::replacePathExt(ansiPath, ".jpeg");
 
-							if (device->getFileSystem()->existFile(ansiPath) == false)
+							if (fs->existFile(ansiPath) == false)
 							{
 								CStringImp::replacePathExt(ansiPath, ".jpg");
 
-								if (device->getFileSystem()->existFile(ansiPath) == false)
+								if (fs->existFile(ansiPath) == false)
 								{
 									char errorLog[512];
 									sprintf(errorLog, "Can not load array texture (file not found): %s\n", paths[i].c_str());
@@ -296,7 +352,7 @@ namespace Skylicht
 				sprintf(log, "Load array texture: %s", ansiPath);
 				os::Printer::log(log);
 
-				io::IReadFile* file = device->getFileSystem()->createAndOpenFile(ansiPath);
+				io::IReadFile* file = fs->createAndOpenFile(ansiPath);
 				if (file != NULL)
 				{
 					image = driver->createImageFromFile(file);
