@@ -631,6 +631,9 @@ namespace Skylicht
 
 		if (shader != NULL)
 		{
+			std::vector<std::string> texNamePaths;
+			std::vector<std::string> texExtPaths;
+
 			std::vector<std::string> paths;
 			std::vector<std::string> exts;
 
@@ -650,6 +653,13 @@ namespace Skylicht
 							exts.push_back(s);
 						}
 					}
+
+					std::string folder = CPath::getFolderPath(path);
+					std::string name = CPath::getFileNameNoExt(path);
+					std::string ext = CPath::getFileNameExt(path);
+
+					texNamePaths.push_back(folder + "/" + name);
+					texExtPaths.push_back(ext);
 				}
 				else
 				{
@@ -679,6 +689,26 @@ namespace Skylicht
 									foundPath = t;
 									found = true;
 									break;
+								}
+							}
+
+							// try test again
+							if (found == false)
+							{
+								for (std::string &s : ui->AutoReplace)
+								{
+									for (u32 i = 0, n = texNamePaths.size(); i < n; i++)
+									{
+										std::string fileName = texNamePaths[i];
+										fileName += s;
+										fileName += texExtPaths[i];
+
+										if (fs->existFile(io::path(fileName.c_str())) == true)
+										{
+											foundPath = fileName;
+											found = true;
+										}
+									}
 								}
 							}
 

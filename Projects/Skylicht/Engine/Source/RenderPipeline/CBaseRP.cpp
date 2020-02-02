@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/CMaterial.h"
 #include "Material/Shader/CShaderManager.h"
 #include "TextureManager/CTextureManager.h"
+#include "Material/Shader/ShaderCallback/CShaderCamera.h"
 
 namespace Skylicht
 {
@@ -84,6 +85,8 @@ namespace Skylicht
 		video::IVideoDriver* driver = getVideoDriver();
 		driver->setTransform(video::ETS_PROJECTION, viewArea.getTransform(video::ETS_PROJECTION));
 		driver->setTransform(video::ETS_VIEW, viewArea.getTransform(video::ETS_VIEW));
+
+		CShaderCamera::setCamera(camera);
 	}
 
 	void CBaseRP::setNextPipeLine(IRenderPipeline *next)

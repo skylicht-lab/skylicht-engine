@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 
 #include "ShaderCallback/CShaderLighting.h"
+#include "ShaderCallback/CShaderCamera.h"
 
 namespace Skylicht
 {
@@ -38,7 +39,9 @@ namespace Skylicht
 		m_numFSUniform(0),
 		m_deferred(false)
 	{
+		// builtin callback
 		addCallback<CShaderLighting>();
+		addCallback<CShaderCamera>();
 	}
 
 	CShader::~CShader()
@@ -88,11 +91,12 @@ namespace Skylicht
 			"SHADOW_MAP_DIRECTION",
 			"SHADOW_MAP_DISTANCE",
 			"CAMERA_POSITION",
-			"WORLD_CAMERA_POSITION",			
+			"WORLD_CAMERA_POSITION",
 			"LIGHT_COLOR",
 			"LIGHT_AMBIENT",
 			"LIGHT_DIRECTION",
 			"WORLD_LIGHT_DIRECTION",
+			"POINT_LIGHT_COLOR",
 			"POINT_LIGHT_POSITION",
 			"POINT_LIGHT_ATTENUATION",
 			"SPOT_LIGHT_CUTOFF",
@@ -1008,18 +1012,6 @@ namespace Skylicht
 		}
 		break;
 		case SHADOW_MAP_DIRECTION:
-		{
-		}
-		break;
-		case WORLD_CAMERA_POSITION:
-		{
-		}
-		break;
-		case CAMERA_POSITION:
-		{
-		}
-		break;
-		case SUN_POSITION:
 		{
 		}
 		break;

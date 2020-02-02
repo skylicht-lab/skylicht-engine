@@ -76,7 +76,7 @@ namespace Skylicht
 		m_multiRenderTarget.push_back(m_data);
 
 		// setup material
-		m_material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+		m_material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGLighting");
 
 		m_material.setTexture(0, m_albedo);
 		m_material.setTexture(1, m_position);
