@@ -620,8 +620,6 @@ namespace Skylicht
 
 	bool CMaterial::autoDetectLoadTexture()
 	{
-		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
-
 		bool ret = true;
 
 		CTextureManager *textureManager = CTextureManager::getInstance();
@@ -681,7 +679,7 @@ namespace Skylicht
 									exts[i].c_str(),
 									s.c_str());
 
-								if (fs->existFile(io::path(t)) == true)
+								if (textureManager->existTexture(t) == true)
 								{
 									paths.push_back(t);
 									exts.push_back(s);
@@ -692,28 +690,32 @@ namespace Skylicht
 								}
 							}
 
-							// try test again
-							if (found == false)
-							{
-								for (std::string &s : ui->AutoReplace)
-								{
-									for (u32 i = 0, n = texNamePaths.size(); i < n; i++)
-									{
-										std::string fileName = texNamePaths[i];
-										fileName += s;
-										fileName += texExtPaths[i];
-
-										if (fs->existFile(io::path(fileName.c_str())) == true)
-										{
-											foundPath = fileName;
-											found = true;
-										}
-									}
-								}
-							}
-
 							if (found == true)
 								break;
+						}
+
+						// try test again
+						if (found == false)
+						{
+							for (std::string &s : ui->AutoReplace)
+							{
+								for (u32 i = 0, n = texNamePaths.size(); i < n; i++)
+								{
+									std::string fileName = texNamePaths[i];
+									fileName += s;
+									fileName += texExtPaths[i];
+
+									if (textureManager->existTexture(fileName.c_str()) == true)
+									{
+										foundPath = fileName;
+										found = true;
+										break;
+									}
+								}
+
+								if (found == true)
+									break;
+							}
 						}
 
 						if (found == true)

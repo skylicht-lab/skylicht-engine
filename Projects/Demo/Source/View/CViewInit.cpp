@@ -14,6 +14,7 @@
 #include "Material/CMaterialManager.h"
 
 #include "Camera/CEditorCamera.h"
+#include "Lighting/CDirectionalLight.h"
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 #include "RenderMesh/CRenderMesh.h"
@@ -51,6 +52,7 @@ void CViewInit::onInit()
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGLighting.xml");
 }
 
 void CViewInit::initScene()
@@ -76,6 +78,15 @@ void CViewInit::initScene()
 		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
 		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
 	}
+
+	// lighting
+	CGameObject *lightObj = zone->createEmptyObject();
+	lightObj->addComponent<CDirectionalLight>();
+	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
+
+	core::vector3df direction = core::vector3df(-2.0f, -2.0f, -2.0f);
+	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// grid
 	// zone->createEmptyObject()->addComponent<CGridPlane>();
