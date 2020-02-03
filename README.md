@@ -35,7 +35,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 -   Build Shader (**Optional**, just rebuild when you modify built-in shader)
     ```
     # Install pcpp (C Preprocessor tool)
-    # https://pypi.org/project/pcpp/
+    # https://pypi.org/project/pcpp
     C:\skylicht-engine>pip install pcpp
     
     # Build shader script

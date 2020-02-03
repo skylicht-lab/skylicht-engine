@@ -31,10 +31,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 albedo = uTexAlbedo.Sample(uTexAlbedoSampler, input.tex0).rgb;
 	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
 	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
-	float3 data	= uTexData.Sample(uTexDataSampler, input.tex0).xyz;
+	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
 
 	float3 v = uCameraPosition.xyz - position;
-	float3 viewDir 	= normalize(v);
+	float3 viewDir = normalize(v);
 	
 	float3 color = SG(
 		albedo,

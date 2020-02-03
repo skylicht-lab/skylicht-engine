@@ -1,7 +1,7 @@
 import os
 
 # pip install pcpp
-# https://pypi.org/project/pcpp/
+# https://pypi.org/project/pcpp
 from pcpp import Preprocessor
 
 shaderExt = [".d.hlsl", ".d.glsl"]
