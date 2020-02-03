@@ -118,7 +118,10 @@ namespace Skylicht
 		setCamera(camera);
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
-		entityManager->update();
+
+		if (m_updateEntity == true)
+			entityManager->update();
+
 		entityManager->render();
 
 		// save camera transform
@@ -135,6 +138,8 @@ namespace Skylicht
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_material);
 
 		// fix DX11: [AndUnorderedAccessViews]: Forcing PS shader resource
-		unbindRTT();
+		// unbindRTT();
+
+		onNext(target, camera, entityManager);
 	}
 }

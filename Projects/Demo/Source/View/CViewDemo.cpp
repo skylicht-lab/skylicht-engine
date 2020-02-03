@@ -2,6 +2,9 @@
 #include "CViewDemo.h"
 
 #include "Context/CContext.h"
+#include "Graphics2D/CGraphics2D.h"
+
+#include "Material/Shader/CShaderManager.h"
 
 CViewDemo::CViewDemo()
 {
@@ -15,7 +18,8 @@ CViewDemo::~CViewDemo()
 
 void CViewDemo::onInit()
 {
-
+	CContext *context = CContext::getInstance();
+	CCamera *camera = context->getActiveCamera();
 }
 
 void CViewDemo::onDestroy()
@@ -40,6 +44,18 @@ void CViewDemo::onRender()
 
 	if (camera != NULL && scene != NULL)
 	{
+		context->updateDirectionLight();
+
 		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager());
+
+		/*
+		SColor color(255, 255, 255, 255);
+		ITexture *texture = context->getShadowMapRenderPipeline()->getDepthTexture();
+		CGraphics2D *g = CGraphics2D::getInstance();
+		g->begin2D();
+		int shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+		g->addImageBatch(texture, color, core::IdentityMatrix, shaderID);
+		g->flush();
+		*/
 	}
 }

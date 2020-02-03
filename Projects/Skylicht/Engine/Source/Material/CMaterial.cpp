@@ -42,7 +42,8 @@ namespace Skylicht
 		m_deferred(false),
 		m_shadowMapTextureSlot(-1),
 		m_shaderPath(shaderPath),
-		m_materialName(name)
+		m_materialName(name),
+		m_castShadow(true)
 	{
 		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 		{
@@ -370,6 +371,10 @@ namespace Skylicht
 		else if (name == "DoubleSided")
 		{
 			m_doubleSided = booleanValue;
+		}
+		else if (name == "CastShadow")
+		{
+			m_castShadow = booleanValue;
 		}
 	}
 

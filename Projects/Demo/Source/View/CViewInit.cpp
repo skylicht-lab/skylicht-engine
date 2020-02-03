@@ -84,7 +84,7 @@ void CViewInit::initScene()
 
 	// lighting
 	CGameObject *lightObj = zone->createEmptyObject();
-	lightObj->addComponent<CDirectionalLight>();
+	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
@@ -174,6 +174,7 @@ void CViewInit::initScene()
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
+	context->setDirectionalLight(directionalLight);
 }
 
 void CViewInit::onDestroy()

@@ -78,7 +78,7 @@ namespace Skylicht
 		{
 			if (s_directionalLight != NULL)
 			{
-				const core::vector3df &dir = s_directionalLight->getDirection();
+				core::vector3df dir = -s_directionalLight->getDirection();
 				shader->setDirection(matRender, uniform->UniformShaderID, vertexShader, dir);
 			}
 		}
@@ -87,7 +87,7 @@ namespace Skylicht
 		{
 			if (s_directionalLight != NULL)
 			{
-				const core::vector3df &dir = s_directionalLight->getDirection();
+				core::vector3df dir = -s_directionalLight->getDirection();
 				shader->setDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4, true);
 			}
 		}
