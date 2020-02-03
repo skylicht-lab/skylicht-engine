@@ -82,6 +82,8 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Basic/AlphaBlend.xml");
 
 		loadShader("BuiltIn/Shader/Basic/Skin.xml");
+
+		loadShader("BuiltIn/Shader/ShadowMap/ShadowDepthWrite.xml");
 	}
 
 	void CShaderManager::initSkylichtEngineShader()

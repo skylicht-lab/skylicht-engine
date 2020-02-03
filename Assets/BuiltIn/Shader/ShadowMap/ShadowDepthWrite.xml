@@ -1,0 +1,9 @@
+<shaderConfig name="ShadowDepthWrite" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/ShadowDepthWriteVS.glsl" fs="GLSL/ShadowDepthWriteFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ShadowDepthWriteVS.hlsl" fs="HLSL/ShadowDepthWriteFS.hlsl"/>
+</shaderConfig>

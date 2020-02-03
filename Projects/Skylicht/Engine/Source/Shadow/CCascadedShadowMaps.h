@@ -26,55 +26,71 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Camera/CCamera.h"
 
+#define MAX_FRUSTUM_SPLITS 8
+
 namespace Skylicht
 {
-	class CMesh;
-	class CMaterial;
-	class CShader;
-	class CEntityManager;
-
-	class IRenderPipeline
+	struct SFrustumSplit
 	{
+		float NearPlane;
+		float FarPlane;
+		float Ratio;
+		float Fov;
+		core::vector3df Center;
+		core::vector3df Corners[8];
+	};
+
+	class CCascadedShadowMaps
+	{
+	protected:
+		float m_lambda;
+		float m_nearOffset;
+		int m_splitCount;
+		int m_shadowMapSize;
+
+		SFrustumSplit m_splits[MAX_FRUSTUM_SPLITS];
+		float m_farBounds[MAX_FRUSTUM_SPLITS];
+
+		core::vector3df m_lightDirection;
+
+		core::matrix4 m_bias;
+		core::matrix4 m_lightView;
+		core::matrix4 m_viewMatrices[MAX_FRUSTUM_SPLITS];
+		core::matrix4 m_projMatrices[MAX_FRUSTUM_SPLITS];
+		core::matrix4 m_textureMatrices[MAX_FRUSTUM_SPLITS];
+
+		float m_farValue;
+
 	public:
-		enum ERenderPipelineType
+		CCascadedShadowMaps();
+
+		virtual ~CCascadedShadowMaps();
+
+		void init(int splitCount, int shadowMapSize, float farValue, int screenWidth, int screenHeight);
+
+		void update(CCamera *camera, const core::vector3df& lightDir);
+
+		int getSplitCount()
 		{
-			Forwarder,
-			Deferred,
-			ShadowMap,
-			Mix,
-		};
+			return m_splitCount;
+		}
+
+		const core::matrix4& getViewMatrices(int i)
+		{
+			return m_viewMatrices[i];
+		}
+
+		const core::matrix4& getProjectionMatrices(int i)
+		{
+			return m_projMatrices[i];
+		}
 
 	protected:
-		ERenderPipelineType m_type;
 
-	public:
-		IRenderPipeline() :
-			m_type(Forwarder)
-		{
-		}
+		void updateSplits(CCamera *camera);
 
-		virtual ~IRenderPipeline()
-		{
+		void updateFrustumCorners(const core::vector3df& camPos, const core::vector3df& camForward);
 
-		}
-
-		virtual ERenderPipelineType getType()
-		{
-			return m_type;
-		}
-
-		virtual bool canRenderMaterial(CMaterial *m) = 0;
-
-		virtual void initRender(int w, int h) = 0;
-
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager* entity) = 0;
-
-		virtual void setCamera(CCamera *camera) = 0;
-
-		virtual void setNextPipeLine(IRenderPipeline *next) = 0;
-
-		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity) = 0;
-
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID) = 0;
+		void updateMatrix();
 	};
 }
