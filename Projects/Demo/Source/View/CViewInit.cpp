@@ -52,8 +52,9 @@ void CViewInit::onInit()
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");	
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGLighting.xml");
 }
 
@@ -107,10 +108,6 @@ void CViewInit::initScene()
 	{
 		// export model material
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Demo/Sponza/Sponza.xml", true, textureFolders);
-		for (CMaterial *&material : materials)
-		{
-
-		}
 
 		// save material
 		// CMaterialManager::getInstance()->saveMaterial(materials, "../Assets/Demo/Sponza/Sponza.xml");
@@ -224,7 +221,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-		}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -247,7 +244,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {
