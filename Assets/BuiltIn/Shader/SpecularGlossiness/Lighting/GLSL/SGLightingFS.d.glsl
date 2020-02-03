@@ -12,7 +12,7 @@ uniform vec4 uLightDirection;
 uniform vec4 uAmbientLightColor;
 uniform vec4 uLightColor;
 
-in vec2	varTexCoord0;
+in vec2 varTexCoord0;
 
 out vec4 FragColor;
 
@@ -24,10 +24,10 @@ void main(void)
 	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
-		
+	
 	vec3 v = uCameraPosition.xyz - position;
-	vec3 viewDir 	= normalize(v);
-		
+	vec3 viewDir = normalize(v);
+	
 	vec3 color = SG(
 		albedo, 
 		data.r, 

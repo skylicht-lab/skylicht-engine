@@ -102,7 +102,7 @@ namespace Skylicht
 			{
 				IMeshBuffer* meshBuffer = mesh->getMeshBuffer(j);
 
-				CShaderMaterial::setMaterial(mesh->Material[i]);
+				CShaderMaterial::setMaterial(mesh->Material[j]);
 
 				driver->setMaterial(meshBuffer->getMaterial());
 				driver->drawMeshBuffer(meshBuffer);

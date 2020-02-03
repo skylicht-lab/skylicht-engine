@@ -17,7 +17,7 @@
 	</uniforms>
 	<resources>
 	</resources>
-	<customUI>		
+	<customUI>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/SGLightingVS.glsl" fs="GLSL/SGLightingFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/SGLightingVS.hlsl" fs="HLSL/SGLightingFS.hlsl"/>
