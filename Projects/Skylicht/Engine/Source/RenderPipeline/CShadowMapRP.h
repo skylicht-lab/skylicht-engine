@@ -22,35 +22,46 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CDirectionalLight.h"
+#pragma once
 
-#include "GameObject/CGameObject.h"
-#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "CBaseRP.h"
+#include "Shadow/CCascadedShadowMaps.h"
 
 namespace Skylicht
 {
-	CDirectionalLight::CDirectionalLight()
+	class CShadowMapRP : public CBaseRP
 	{
+	protected:
+		ITexture *m_depthTexture;
+		int m_shadowMapSize;
 
-	}
+		SMaterial m_writeDepthMaterial;
+		core::vector3df m_lightDirection;
 
-	CDirectionalLight::~CDirectionalLight()
-	{
-		if (CShaderLighting::getDirectionalLight() == this)
-			CShaderLighting::setDirectionalLight(NULL);
-	}
+		CCascadedShadowMaps *m_csm;
 
-	void CDirectionalLight::initComponent()
-	{
-		CShaderLighting::setDirectionalLight(this);
-	}
+	public:
+		CShadowMapRP();
 
-	void CDirectionalLight::updateComponent()
-	{
-		m_direction.set(0.0f, 0.0f, 1.0f);
-		const core::matrix4& transform = m_gameObject->getTransform()->getMatrixTransform();
-		transform.rotateVect(m_direction);
-		m_direction.normalize();
-	}
+		virtual ~CShadowMapRP();
+
+		virtual void initRender(int w, int h);
+
+		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager);
+
+		virtual void drawMeshBuffer(CMesh *mesh, int bufferID);
+
+	public:
+
+		inline ITexture* getDepthTexture()
+		{
+			return m_depthTexture;
+		}
+
+		inline void setLightDirection(const core::vector3df& v)
+		{
+			m_lightDirection = v;
+		}
+
+	};
 }

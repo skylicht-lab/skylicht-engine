@@ -24,15 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CBaseRP.h"
+#include "RenderMesh/CMesh.h"
 #include "Material/CMaterial.h"
 #include "Material/Shader/CShaderManager.h"
 #include "TextureManager/CTextureManager.h"
 #include "Material/Shader/ShaderCallback/CShaderCamera.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
 	CBaseRP::CBaseRP() :
-		m_next(NULL)
+		m_next(NULL),
+		m_updateEntity(true)
 	{
 		const core::dimension2du &size = getVideoDriver()->getCurrentRenderTargetSize();
 		m_viewport2DW = (float)size.Width;
@@ -72,7 +75,7 @@ namespace Skylicht
 
 	bool CBaseRP::canRenderMaterial(CMaterial *m)
 	{
-		// default dont render deferred material
+		// default: we don't render deferred material
 		if (m->isDeferred() == true)
 			return false;
 
@@ -98,6 +101,21 @@ namespace Skylicht
 	{
 		if (m_next != NULL)
 			m_next->render(target, camera, entity);
+	}
+
+	void CBaseRP::drawMeshBuffer(CMesh *mesh, int bufferID)
+	{
+		// set shader material
+		CShaderMaterial::setMaterial(mesh->Material[bufferID]);
+
+		IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
+		IVideoDriver *driver = getVideoDriver();
+
+		// set irrlicht material
+		driver->setMaterial(mb->getMaterial());
+
+		// draw mesh buffer
+		driver->drawMeshBuffer(mb);
 	}
 
 	void CBaseRP::beginRender2D(float w, float h)

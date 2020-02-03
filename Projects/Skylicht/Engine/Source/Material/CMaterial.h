@@ -110,6 +110,7 @@ namespace Skylicht
 		bool m_frontfaceCulling;
 		bool m_doubleSided;
 		bool m_deferred;
+		bool m_castShadow;
 		bool m_manualInitMaterial;
 		int m_shadowMapTextureSlot;
 
@@ -141,7 +142,7 @@ namespace Skylicht
 		}
 
 		CMaterial* clone(CGameObject *gameObject);
-		
+
 		void deleteAllParams();
 		void deleteExtramParams();
 
