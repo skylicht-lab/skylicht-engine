@@ -51,6 +51,8 @@ void CViewInit::onInit()
 
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");	
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGLighting.xml");
 }
@@ -85,7 +87,7 @@ void CViewInit::initScene()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-2.0f, -2.0f, -2.0f);
+	core::vector3df direction = core::vector3df(-2.0f, -5.0f, -2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// grid
@@ -107,9 +109,11 @@ void CViewInit::initScene()
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Demo/Sponza/Sponza.xml", true, textureFolders);
 		for (CMaterial *&material : materials)
 		{
-			material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
-			material->autoDetectLoadTexture();
+
 		}
+
+		// save material
+		// CMaterialManager::getInstance()->saveMaterial(materials, "../Assets/Demo/Sponza/Sponza.xml");
 
 		// create render mesh object
 		CGameObject *sponza = zone->createEmptyObject();
@@ -220,7 +224,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+		}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -243,7 +247,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-}
+	}
 
 void CViewInit::onRender()
 {
