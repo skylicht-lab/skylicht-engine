@@ -82,6 +82,8 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Basic/AlphaBlend.xml");
 
 		loadShader("BuiltIn/Shader/Basic/Skin.xml");
+
+		loadShader("BuiltIn/Shader/ShadowMap/ShadowDepthWrite.xml");
 	}
 
 	void CShaderManager::initSkylichtEngineShader()
@@ -96,7 +98,7 @@ namespace Skylicht
 		initSkylichtEngineShader();
 	}
 
-	CShader* CShaderManager::loadShader(const char *shaderConfig, IShaderCallback *callback, bool releaseCallback)
+	CShader* CShaderManager::loadShader(const char *shaderConfig)
 	{
 		std::string shaderFolder = CPath::getFolderPath(std::string(shaderConfig));
 		shaderFolder += "/";
@@ -120,9 +122,6 @@ namespace Skylicht
 		shader->initShader(xmlReader, shaderFolder.c_str());
 		shader->setShaderPath(shaderConfig);
 		xmlReader->drop();
-
-		// apply callback
-		shader->setCallback(callback, releaseCallback);
 
 		// if shader load success
 		const std::string& shaderName = shader->getName();

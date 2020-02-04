@@ -27,6 +27,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CStringImp.h"
 
+#include "ShaderCallback/CShaderLighting.h"
+#include "ShaderCallback/CShaderCamera.h"
+#include "ShaderCallback/CShaderMaterial.h"
+#include "ShaderCallback/CShaderShadow.h"
+
 namespace Skylicht
 {
 	CShader::CShader() :
@@ -34,21 +39,22 @@ namespace Skylicht
 		m_listFSUniforms(NULL),
 		m_numVSUniform(0),
 		m_numFSUniform(0),
-		m_callback(NULL),
-		m_releaseCallback(false),
 		m_deferred(false)
 	{
+		// builtin callback
+		addCallback<CShaderLighting>();
+		addCallback<CShaderCamera>();
+		addCallback<CShaderMaterial>();
+		addCallback<CShaderShadow>();
 	}
 
 	CShader::~CShader()
 	{
-		if (m_releaseCallback == true)
+		for (IShaderCallback *cb : m_callbacks)
 		{
-			if (m_callback != NULL)
-				delete m_callback;
-
-			m_callback = NULL;
+			delete cb;
 		}
+		m_callbacks.clear();
 
 		deleteAllUI();
 		deleteAllResource();
@@ -74,7 +80,7 @@ namespace Skylicht
 		m_resources.clear();
 	}
 
-	CShader::EUniformType CShader::getUniformType(const char *name)
+	EUniformType CShader::getUniformType(const char *name)
 	{
 		const char *uniformString[] = {
 			"VIEW_PROJECTION",
@@ -85,26 +91,21 @@ namespace Skylicht
 			"WORLD_INVERSE_TRANSPOSE",
 			"WORLD_TRANSPOSE",
 			"BONE_MATRIX",
-			"SHADOW_RGB_MATRIX",
 			"SHADOW_MAP_MATRIX",
-			"SHADOW_MAP_DIRECTION",
 			"SHADOW_MAP_DISTANCE",
-			"WORLD_CAMERA_POSITION",
 			"CAMERA_POSITION",
-			"SUN_POSITION",
-			"LIGHT_DIRECTION",
+			"WORLD_CAMERA_POSITION",
 			"LIGHT_COLOR",
 			"LIGHT_AMBIENT",
+			"LIGHT_DIRECTION",
 			"WORLD_LIGHT_DIRECTION",
-			"POINT_LIGHT_POSITION",
 			"POINT_LIGHT_COLOR",
+			"POINT_LIGHT_POSITION",
 			"POINT_LIGHT_ATTENUATION",
-			"BAKE_LIGHT_POSITION",
-			"BAKE_LIGHT_COLOR",
-			"BAKE_LIGHT_ATTENUATION",
-			"DIFFUSE_COLOR",
+			"SPOT_LIGHT_CUTOFF",
 			"OBJECT_PARAM",
-			"NODE_PARAM",
+			"MATERIAL_COLOR",
+			"MATERIAL_PARAM",
 			"DEFAULT_VALUE",
 			"SHADER_VEC2",
 			"SHADER_VEC3",
@@ -339,6 +340,12 @@ namespace Skylicht
 					wtext = xmlReader->getAttributeValue(L"type");
 					CStringImp::convertUnicodeToUTF8(wtext, text);
 					uniform->Type = getUniformType(text);
+
+					if (uniform->Type == NUM_SHADER_TYPE)
+					{
+						sprintf(text, "[CShader] %s: '%s' have unknown type", m_name.c_str(), uniform->Name.c_str());
+						os::Printer::log(text);
+					}
 
 					wtext = xmlReader->getAttributeValue(L"float");
 					CStringImp::convertUnicodeToUTF8(wtext, text);
@@ -621,7 +628,7 @@ namespace Skylicht
 		return NULL;
 	}
 
-	CShader::SUniform* CShader::getVSUniform(const char *name)
+	SUniform* CShader::getVSUniform(const char *name)
 	{
 		for (int i = 0; i < m_numVSUniform; i++)
 		{
@@ -632,7 +639,7 @@ namespace Skylicht
 		return NULL;
 	}
 
-	CShader::SUniform* CShader::getFSUniform(const char *name)
+	SUniform* CShader::getFSUniform(const char *name)
 	{
 		for (int i = 0; i < m_numFSUniform; i++)
 		{
@@ -775,7 +782,18 @@ namespace Skylicht
 		{
 			SUniform& uniform = m_listVSUniforms[i];
 			if (uniform.UniformShaderID >= 0)
-				setUniform(uniform, matRender, true, updateTransform);
+			{
+				// builtin callback
+				if (setUniform(uniform, matRender, true, updateTransform) == false)
+				{
+					// plugin callback
+					for (IShaderCallback *cb : m_callbacks)
+					{
+						cb->OnSetConstants(this, &uniform, matRender, true);
+					}
+				}
+
+			}
 		}
 
 		// todo set pixel shader
@@ -783,23 +801,28 @@ namespace Skylicht
 		{
 			SUniform& uniform = m_listFSUniforms[i];
 			if (uniform.UniformShaderID >= 0)
-				setUniform(uniform, matRender, false, updateTransform);
+			{
+				// builtin callback
+				if (setUniform(uniform, matRender, false, updateTransform) == false)
+				{
+					// plugin callback
+					for (IShaderCallback *cb : m_callbacks)
+					{
+						cb->OnSetConstants(this, &uniform, matRender, false);
+					}
+				}
+			}
 		}
-
-		// todo callback
-		if (m_callback != NULL)
-			m_callback->OnSetConstants(services, userData, this);
-
 	}
 
-	void CShader::setUniform(SUniform &uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform)
+	bool CShader::setUniform(SUniform &uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform)
 	{
 		IVideoDriver *driver = getVideoDriver();
 		CShaderManager *shaderManager = CShaderManager::getInstance();
 
 		switch (uniform.Type)
 		{
-		case CShader::VIEW_PROJECTION:
+		case VIEW_PROJECTION:
 		{
 			if (updateTransform == true)
 			{
@@ -812,7 +835,7 @@ namespace Skylicht
 			}
 		}
 		break;
-		case CShader::WORLD_VIEW_PROJECTION:
+		case WORLD_VIEW_PROJECTION:
 		{
 			if (updateTransform == true)
 			{
@@ -825,7 +848,7 @@ namespace Skylicht
 			}
 		}
 		break;
-		case CShader::VIEW:
+		case VIEW:
 		{
 			if (updateTransform == true)
 			{
@@ -838,7 +861,7 @@ namespace Skylicht
 			}
 		}
 		break;
-		case CShader::WORLD:
+		case WORLD:
 		{
 			if (updateTransform == true)
 			{
@@ -851,7 +874,7 @@ namespace Skylicht
 			}
 		}
 		break;
-		case CShader::WORLD_INVERSE:
+		case WORLD_INVERSE:
 		{
 			if (updateTransform == true)
 			{
@@ -864,7 +887,7 @@ namespace Skylicht
 			}
 		}
 		break;
-		case CShader::WORLD_INVERSE_TRANSPOSE:
+		case WORLD_INVERSE_TRANSPOSE:
 		{
 			if (updateTransform == true)
 			{
@@ -876,7 +899,7 @@ namespace Skylicht
 			}
 		}
 		break;
-		case CShader::WORLD_TRANSPOSE:
+		case WORLD_TRANSPOSE:
 		{
 			if (updateTransform == true)
 			{
@@ -890,8 +913,8 @@ namespace Skylicht
 			}
 		}
 		break;
-		case CShader::DEFAULT_VALUE:
-		case CShader::CONFIG_VALUE:
+		case DEFAULT_VALUE:
+		case CONFIG_VALUE:
 		{
 			if (vertexShader == true)
 				matRender->setShaderVariable(uniform.UniformShaderID, uniform.Value, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
@@ -899,78 +922,13 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform.UniformShaderID, uniform.Value, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
-		case CShader::BONE_MATRIX:
+		case BONE_MATRIX:
 		{
 			if (vertexShader == true && shaderManager->BoneMatrix != NULL)
 				matRender->setShaderVariable(uniform.UniformShaderID, shaderManager->BoneMatrix, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
 		}
 		break;
-		case CShader::SHADOW_MAP_MATRIX:
-		{
-		}
-		break;
-		case CShader::SHADOW_MAP_DISTANCE:
-		{
-		}
-		break;
-		case CShader::SHADOW_MAP_DIRECTION:
-		{
-		}
-		break;
-		case CShader::WORLD_CAMERA_POSITION:
-		{
-		}
-		break;
-		case CShader::CAMERA_POSITION:
-		{
-		}
-		break;
-		case CShader::SUN_POSITION:
-		{
-		}
-		break;
-		case CShader::LIGHT_AMBIENT:
-		{
-		}
-		break;
-		case CShader::LIGHT_DIRECTION:
-		{
-		}
-		break;
-		case CShader::WORLD_LIGHT_DIRECTION:
-		{
-		}
-		break;
-		case CShader::LIGHT_COLOR:
-		{
-		}
-		break;
-		case CShader::POINT_LIGHT_POSITION:
-		{
-		}
-		break;
-		case CShader::POINT_LIGHT_COLOR:
-		{
-		}
-		break;
-		case CShader::POINT_LIGHT_ATTENUATION:
-		{
-		}
-		break;
-		case CShader::DIFFUSE_COLOR:
-		{
-		}
-		break;
-		case CShader::OBJECT_PARAM:
-		{
-		}
-		break;
-		case CShader::NODE_PARAM:
-		{
-
-		}
-		break;
-		case CShader::SHADER_VEC2:
+		case SHADER_VEC2:
 		{
 			CShaderManager *material = shaderManager;
 			int paramID = (int)uniform.Value[0];
@@ -984,7 +942,7 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform.UniformShaderID, v, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
-		case CShader::SHADER_VEC3:
+		case SHADER_VEC3:
 		{
 			CShaderManager *material = shaderManager;
 			int paramID = (int)uniform.Value[0];
@@ -999,7 +957,7 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform.UniformShaderID, v, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
-		case CShader::SHADER_VEC4:
+		case SHADER_VEC4:
 		{
 			CShaderManager *material = shaderManager;
 			int paramID = (int)uniform.Value[0];
@@ -1016,20 +974,7 @@ namespace Skylicht
 
 			break;
 		}
-		case CShader::SH_CONST:
-		{
-		}
-		break;
-		case CShader::BPCEM_MIN:
-		case CShader::BPCEM_MAX:
-		{
-		}
-		break;
-		case CShader::BPCEM_POS:
-		{
-		}
-		break;
-		case CShader::TEXTURE_MIPMAP_COUNT:
+		case TEXTURE_MIPMAP_COUNT:
 		{
 			SMaterial *material = shaderManager->getCurrentMaterial();
 			int textureID = (int)uniform.Value[0];
@@ -1066,30 +1011,50 @@ namespace Skylicht
 			}
 		}
 		break;
-		case CShader::FOG_PARAMS:
+		/*		
+		case OBJECT_PARAM:
 		{
 		}
 		break;
-		case CShader::SSAO_KERNEL:
+		case SH_CONST:
 		{
 		}
 		break;
-		case CShader::DEFERRED_VIEW:
+		case BPCEM_MIN:
+		case BPCEM_MAX:
 		{
 		}
 		break;
-		case CShader::DEFERRED_PROJECTION:
+		case BPCEM_POS:
 		{
 		}
 		break;
-		case CShader::CUSTOM_VALUE:
+		case FOG_PARAMS:
+		{
+		}
+		break;
+		case SSAO_KERNEL:
+		{
+		}
+		break;
+		case DEFERRED_VIEW:
+		{
+		}
+		break;
+		case DEFERRED_PROJECTION:
+		{
+		}
+		break;
+		case CUSTOM_VALUE:
 		{
 			// todo
 			// set params in callback
 		}
 		break;
+		*/
 		default:
-			break;
+			return false;
 		}
+		return true;
 	}
 }

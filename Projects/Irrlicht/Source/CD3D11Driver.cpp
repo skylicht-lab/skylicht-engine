@@ -1374,9 +1374,9 @@ namespace irr
 			Context->OMSetRenderTargets(maxMultipleRTTs, RTViews, CurrentDepthBuffer);
 
 			// don't forget to set viewport
+			CurrentRendertargetSize = tex->getSize();
 			core::dimension2du size = getCurrentRenderTargetSize();
 
-			CurrentRendertargetSize = tex->getSize();
 			setViewPort(core::rect<s32>(0, 0, size.Width, size.Height));
 
 			return true;

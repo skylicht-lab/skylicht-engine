@@ -42,6 +42,7 @@ namespace Skylicht
 		CMesh *newMesh = new CMesh();
 		newMesh->BoundingBox = BoundingBox;
 		newMesh->MaterialName = MaterialName;
+		newMesh->Material = Material;
 
 		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
 		{
@@ -170,11 +171,13 @@ namespace Skylicht
 				// add buffer and material to new alpha mesh
 				alphaMesh->addMeshBuffer(MeshBuffers[i]);
 				alphaMesh->MaterialName.push_back(MaterialName[i]);
+				alphaMesh->Material.push_back(Material[i]);
 
 				// remove buffer and material
 				MeshBuffers[i]->drop();
 				MeshBuffers.erase(i);
 				MaterialName.erase(MaterialName.begin() + i);
+				Material.erase(Material.begin() + i);
 
 				i--;
 				numMeshBuffer--;

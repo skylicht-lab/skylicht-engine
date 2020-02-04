@@ -165,6 +165,7 @@ namespace Skylicht
 	void CBaseApp::autoScaleUI()
 	{
 #ifndef LINUX_SERVER
+		/*
 		core::dimension2du screenSize = getApplication()->getDriver()->getScreenSize();
 		core::dimension2du baseSize(1920, 1080);
 
@@ -175,6 +176,7 @@ namespace Skylicht
 		float scale = baseSize.Width / (float)screenSize.Width;
 
 		CGraphics2D::getInstance()->setScale(scale);
+		*/
 #endif
 	}
 

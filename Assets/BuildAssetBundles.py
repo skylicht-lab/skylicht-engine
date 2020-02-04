@@ -3,11 +3,13 @@ import os
 
 compressExt = ["xml", "hlsl", "glsl", "png", "dae", "tga"]
 
+
 def needCompress(filename):
-	for fileType in compressExt:
-		if filename.endswith(fileType):
-			return True
-	return False
+    for fileType in compressExt:
+        if filename.endswith(fileType):
+            return True
+    return False
+
 
 def compress(dirName):
     outputZip = "../Bin/" + dirName + ".zip"
@@ -15,9 +17,10 @@ def compress(dirName):
     for root, dirs, files in os.walk(dirName):
         for file in files:
             if needCompress(file):
-                print("%s <-- %s - %s" %(outputZip, root, file))
+                print("%s <-- %s - %s" % (outputZip, root, file))
                 z.write(os.path.join(root, file))
     z.close
+
 
 def main():
     # Create Bin folder
@@ -33,6 +36,7 @@ def main():
             continue
         else:
             continue
+
 
 if __name__ == '__main__':
     main()
