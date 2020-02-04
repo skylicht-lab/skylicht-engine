@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CCullingData.h"
 #include "Material/Shader/CShaderManager.h"
 
+#include "Entity/CEntityManager.h"
+
 namespace Skylicht
 {
 	CSkinnedMeshRenderer::CSkinnedMeshRenderer()
@@ -92,6 +94,7 @@ namespace Skylicht
 		CWorldTransformData** transforms = m_transforms.pointer();
 
 		CShaderManager *shaderManager = CShaderManager::getInstance();
+		IRenderPipeline *rp = entityManager->getRenderPipeline();
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
@@ -105,12 +108,7 @@ namespace Skylicht
 
 			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
-			{
-				IMeshBuffer* meshBuffer = mesh->getMeshBuffer(j);
-
-				driver->setMaterial(meshBuffer->getMaterial());
-				driver->drawMeshBuffer(meshBuffer);
-			}
+				rp->drawMeshBuffer(mesh, j);
 		}
 	}
 }

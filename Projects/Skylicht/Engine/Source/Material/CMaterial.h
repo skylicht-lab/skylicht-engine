@@ -110,10 +110,12 @@ namespace Skylicht
 		bool m_frontfaceCulling;
 		bool m_doubleSided;
 		bool m_deferred;
+		bool m_castShadow;
 		bool m_manualInitMaterial;
 		int m_shadowMapTextureSlot;
 
 		CGameObject* m_owner;
+		CShader* m_shader;
 
 	public:
 		CMaterial(const char *name, const char *shaderPath);
@@ -141,7 +143,7 @@ namespace Skylicht
 		}
 
 		CMaterial* clone(CGameObject *gameObject);
-		
+
 		void deleteAllParams();
 		void deleteExtramParams();
 
@@ -182,6 +184,11 @@ namespace Skylicht
 
 		SUniformTexture* getExtraUniformTexture(SExtraParams *e, const char *name);
 
+		CShaderParams& getShaderParams()
+		{
+			return m_shaderParams;
+		}
+
 		bool haveUniform(const char *name);
 
 		void initMaterial();
@@ -191,6 +198,8 @@ namespace Skylicht
 		void setProperty(const std::string& name, const std::string& value);
 
 		void loadDefaultTexture();
+
+		void loadRuntimeTexture();
 
 		void loadUniformTexture();
 
@@ -229,7 +238,7 @@ namespace Skylicht
 
 		void updateShaderParams();
 
-		void setDefaultValue(SUniformValue *v, CShader::SUniform* u);
+		void setDefaultValue(SUniformValue *v, SUniform* u);
 
 		SUniformValue *newUniform(const char *name, int floatSize);
 

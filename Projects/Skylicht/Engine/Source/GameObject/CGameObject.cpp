@@ -33,8 +33,6 @@ namespace Skylicht
 {
 
 	long CGameObject::s_objectID = 1;
-	std::map<long, long> CGameObject::s_mapObjIDOnFileSaved;
-	bool CGameObject::s_repairIDMode = false;
 
 	CGameObject::CGameObject(CGameObject *parent, CZone *zone)
 	{

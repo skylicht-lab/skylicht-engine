@@ -40,8 +40,6 @@ namespace Skylicht
 	{
 	public:
 		static long s_objectID;
-		static std::map<long, long> s_mapObjIDOnFileSaved;
-		static bool s_repairIDMode;
 
 	protected:
 		long m_objectID;

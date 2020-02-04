@@ -94,18 +94,21 @@ namespace Skylicht
 			CCullingData *culling = cullings[i];
 			CWorldTransformData *transform = transforms[i];
 			CWorldInverseTransformData *invTransform = invTransforms[i];
-			CRenderMeshData *mesh = meshs[i];
+			CRenderMeshData *meshData = meshs[i];
+			CMesh *mesh = meshData->getMesh();
 
-			// check material first
-			CMaterial *material = mesh->getMaterial();
-			if (material != NULL && rp->canRenderMaterial(material) == false)
+			// check material first			
+			for (CMaterial *material : mesh->Material)
 			{
-				culling->Visible = false;
-				continue;
+				if (material != NULL && rp->canRenderMaterial(material) == false)
+				{
+					culling->Visible = false;
+					continue;
+				}
 			}
 
 			// transform world bbox
-			culling->BBox = mesh->getMesh()->getBoundingBox();
+			culling->BBox = mesh->getBoundingBox();
 			transform->World.transformBoxEx(culling->BBox);
 
 			// 1. Detect by bounding box
@@ -124,7 +127,7 @@ namespace Skylicht
 					frust.transform(invTrans);
 
 					core::vector3df edges[8];
-					mesh->getMesh()->getBoundingBox().getEdges(edges);
+					mesh->getBoundingBox().getEdges(edges);
 
 					for (s32 i = 0; i < scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 					{

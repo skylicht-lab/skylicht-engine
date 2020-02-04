@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CMesh;
 	class CMaterial;
 	class CShader;
 	class CEntityManager;
@@ -39,6 +40,7 @@ namespace Skylicht
 		{
 			Forwarder,
 			Deferred,
+			ShadowMap,
 			Mix,
 		};
 
@@ -72,5 +74,7 @@ namespace Skylicht
 		virtual void setNextPipeLine(IRenderPipeline *next) = 0;
 
 		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity) = 0;
+
+		virtual void drawMeshBuffer(CMesh *mesh, int bufferID) = 0;
 	};
 }

@@ -1751,10 +1751,12 @@ namespace Skylicht
 				char materialName[512];
 				CStringImp::convertUnicodeToUTF8(effect->Id.c_str(), materialName);
 				colladaMesh->MaterialName.push_back(materialName);
+				colladaMesh->Material.push_back(NULL);
 			}
 			else
 			{
 				colladaMesh->MaterialName.push_back("");
+				colladaMesh->Material.push_back(NULL);
 			}
 
 			if (buffer)
@@ -2540,7 +2542,7 @@ namespace Skylicht
 		}
 
 		// free data
-		delete listJointName;
+		delete []listJointName;
 
 		// setup vertex weight
 		int numVertex = 0;
@@ -2637,7 +2639,7 @@ namespace Skylicht
 			}
 		}
 
-		delete nBoneCount;
+		delete []nBoneCount;
 
 		// fix the weight if vertex affect > 4 bone
 		for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
