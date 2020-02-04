@@ -88,7 +88,7 @@ void CViewInit::initScene()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-2.0f, -5.0f, -2.0f);
+	core::vector3df direction = core::vector3df(-1.0f, -7.0f, -1.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// grid

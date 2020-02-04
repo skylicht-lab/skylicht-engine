@@ -5,12 +5,32 @@ uniform sampler2D uTexAlbedo;
 uniform sampler2D uTexPosition;
 uniform sampler2D uTexNormal;
 uniform sampler2D uTexData;
+uniform sampler2DArray uShadowMap;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
 uniform vec4 uAmbientLightColor;
 uniform vec4 uLightColor;
+uniform vec2 uShadowDistance;
+uniform mat4 uShadowMatrix[2];
 in vec2 varTexCoord0;
 out vec4 FragColor;
+float shadow(const vec4 shadowCoord[2], const float shadowDistance[2], const float farDistance)
+{
+	int id = 0;
+	float visible = 1.0;
+	float bias = 0.0002;
+	float depth = 0.0;
+	float sampledDistance = 0.0;
+	if (farDistance > shadowDistance[0])
+		id = 1;
+	if (farDistance > shadowDistance[1])
+		return 1.0;
+	depth = shadowCoord[id].z;
+	sampledDistance = texture(uShadowMap, vec3(shadowCoord[id].xy, id)).r;
+	if (depth - bias > sampledDistance)
+        visible = 0.1f;
+	return visible;
+}
 const float EnvironmentScale = 3.0;
 const float PI = 3.1415926;
 const float MinReflectance = 0.04;
@@ -36,7 +56,8 @@ vec3 SG(
 	const vec3 worldLightDir,
 	const vec3 worldNormal,
 	const vec3 ambient,
-	const vec3 lightColor)
+	const vec3 lightColor,
+	const float visibility)
 {
 	float roughness = 1.0 - gloss;
 	vec3 f0 = vec3(spec, spec, spec);
@@ -50,7 +71,7 @@ vec3 SG(
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	vec3 color = (ambient + NdotL * lightColor) * (diffuseColor + specular * specularColor);
+	vec3 color = (ambient + NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
 	return color;
 }
 void main(void)
@@ -61,6 +82,14 @@ void main(void)
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
+	float depth = length(v);
+	vec4 shadowCoord[2];
+	shadowCoord[0] = uShadowMatrix[0] * vec4(position, 1.0);
+	shadowCoord[1] = uShadowMatrix[1] * vec4(position, 1.0);
+	float shadowDistance[2];
+	shadowDistance[0] = uShadowDistance.x;
+	shadowDistance[1] = uShadowDistance.y;
+	float visibility = shadow(shadowCoord, shadowDistance, depth);
 	vec3 color = SG(
 		albedo,
 		data.r,
@@ -69,6 +98,7 @@ void main(void)
 		uLightDirection.xyz,
 		normal,
 		uAmbientLightColor.rgb,
-		uLightColor.rgb);
+		uLightColor.rgb,
+		visibility);
 	FragColor = vec4(color, 1.0);
 }

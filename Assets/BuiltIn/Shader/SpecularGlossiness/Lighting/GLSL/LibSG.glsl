@@ -29,7 +29,8 @@ vec3 SG(
 	const vec3 worldLightDir,
 	const vec3 worldNormal,
 	const vec3 ambient,
-	const vec3 lightColor)
+	const vec3 lightColor,
+	const float visibility)
 {
 	// Roughness
 	float roughness = 1.0 - gloss;
@@ -53,7 +54,7 @@ vec3 SG(
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
-	vec3 color = (ambient + NdotL * lightColor) * (diffuseColor + specular * specularColor);
+	vec3 color = (ambient + NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
 	
 	// IBL Ambient
 	// color += IBLAmbient(worldNormal) * diffuseColor / PI * EnvironmentScale;

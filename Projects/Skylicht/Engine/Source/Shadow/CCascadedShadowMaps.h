@@ -59,6 +59,8 @@ namespace Skylicht
 		core::matrix4 m_projMatrices[MAX_FRUSTUM_SPLITS];
 		core::matrix4 m_textureMatrices[MAX_FRUSTUM_SPLITS];
 
+		float m_shadowMatrices[16 * MAX_FRUSTUM_SPLITS];
+
 		float m_farValue;
 
 	public:
@@ -83,6 +85,16 @@ namespace Skylicht
 		const core::matrix4& getProjectionMatrices(int i)
 		{
 			return m_projMatrices[i];
+		}
+
+		float* getShadowDistance()
+		{
+			return m_farBounds;
+		}
+
+		float* getShadowMatrices()
+		{
+			return m_shadowMatrices;
 		}
 
 	protected:

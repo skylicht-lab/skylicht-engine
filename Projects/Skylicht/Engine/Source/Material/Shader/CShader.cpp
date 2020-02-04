@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ShaderCallback/CShaderLighting.h"
 #include "ShaderCallback/CShaderCamera.h"
 #include "ShaderCallback/CShaderMaterial.h"
+#include "ShaderCallback/CShaderShadow.h"
 
 namespace Skylicht
 {
@@ -44,6 +45,7 @@ namespace Skylicht
 		addCallback<CShaderLighting>();
 		addCallback<CShaderCamera>();
 		addCallback<CShaderMaterial>();
+		addCallback<CShaderShadow>();
 	}
 
 	CShader::~CShader()
@@ -90,7 +92,6 @@ namespace Skylicht
 			"WORLD_TRANSPOSE",
 			"BONE_MATRIX",
 			"SHADOW_MAP_MATRIX",
-			"SHADOW_MAP_DIRECTION",
 			"SHADOW_MAP_DISTANCE",
 			"CAMERA_POSITION",
 			"WORLD_CAMERA_POSITION",
@@ -1010,30 +1011,9 @@ namespace Skylicht
 			}
 		}
 		break;
-		/*
-		case SHADOW_MAP_MATRIX:
-		{
-		}
-		break;
-		case SHADOW_MAP_DISTANCE:
-		{
-		}
-		break;
-		case SHADOW_MAP_DIRECTION:
-		{
-		}
-		break;
-		case MATERIAL_COLOR:
-		{
-		}
-		break;
+		/*		
 		case OBJECT_PARAM:
 		{
-		}
-		break;
-		case MATERIAL_PARAM:
-		{
-
 		}
 		break;
 		case SH_CONST:
