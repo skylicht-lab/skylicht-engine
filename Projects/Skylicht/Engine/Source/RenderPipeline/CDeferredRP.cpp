@@ -24,8 +24,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDeferredRP.h"
-#include "Material/Shader/CShaderManager.h"
 #include "Material/CMaterial.h"
+#include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/ShaderCallback/CShaderShadow.h"
 
 namespace Skylicht
 {
@@ -92,6 +93,10 @@ namespace Skylicht
 		m_material.TextureLayer[2].TrilinearFilter = false;
 		m_material.TextureLayer[2].AnisotropicFilter = 0;
 
+		m_material.TextureLayer[4].BilinearFilter = false;
+		m_material.TextureLayer[4].TrilinearFilter = false;
+		m_material.TextureLayer[4].AnisotropicFilter = 0;
+
 		// disable Z
 		m_material.ZBuffer = video::ECFN_DISABLED;
 		m_material.ZWriteEnable = false;
@@ -133,6 +138,11 @@ namespace Skylicht
 		float renderH = (float)m_size.Height;
 
 		driver->setRenderTarget(target, true, false);
+
+		// set shadow depth
+		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
+		if (shadowRP != NULL)
+			m_material.setTexture(4, shadowRP->getDepthTexture());
 
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_material);

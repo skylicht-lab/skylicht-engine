@@ -24,51 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CBaseRP.h"
-#include "Shadow/CCascadedShadowMaps.h"
+#include "Material/Shader/CShader.h"
+#include "RenderPipeline/CShadowMapRP.h"
 
 namespace Skylicht
 {
-	class CShadowMapRP : public CBaseRP
+	class CShaderShadow : public IShaderCallback
 	{
 	protected:
-		ITexture *m_depthTexture;
-
-		int m_shadowMapSize;
-		int m_numCascade;
-
-		SMaterial m_writeDepthMaterial;
-		core::vector3df m_lightDirection;
-
-		CCascadedShadowMaps *m_csm;
+		static CShadowMapRP *s_shadowMapRP;
 
 	public:
-		CShadowMapRP();
+		CShaderShadow();
 
-		virtual ~CShadowMapRP();
+		virtual ~CShaderShadow();
 
-		virtual void initRender(int w, int h);
-
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager);
-
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID);
+		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
 
-		inline ITexture* getDepthTexture()
+		static void setShadowMapRP(CShadowMapRP *rp)
 		{
-			return m_depthTexture;
+			s_shadowMapRP = rp;
 		}
 
-		inline CCascadedShadowMaps* getCSM()
+		static CShadowMapRP* getShadowMapRP()
 		{
-			return m_csm;
+			return s_shadowMapRP;
 		}
-
-		inline void setLightDirection(const core::vector3df& v)
-		{
-			m_lightDirection = v;
-		}
-
 	};
 }
