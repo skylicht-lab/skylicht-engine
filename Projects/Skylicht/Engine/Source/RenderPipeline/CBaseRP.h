@@ -42,6 +42,7 @@ namespace Skylicht
 		float m_viewport2DH;
 
 		SMaterial m_unbindMaterial;
+		bool m_updateEntity;
 
 	public:
 		CBaseRP();
@@ -58,6 +59,8 @@ namespace Skylicht
 
 		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity);
 
+		virtual void drawMeshBuffer(CMesh *mesh, int bufferID);
+
 	public:
 
 		void beginRender2D(float w, float h);
@@ -65,5 +68,10 @@ namespace Skylicht
 		void renderBufferToTarget(float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);
 
 		void unbindRTT();
+
+		void enableUpdateEntity(bool b)
+		{
+			m_updateEntity = b;
+		}
 	};
 }

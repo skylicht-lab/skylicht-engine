@@ -52,7 +52,12 @@ namespace Skylicht
 		setCamera(camera);
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
-		entityManager->update();
+		
+		if (m_updateEntity == true)
+			entityManager->update();
+		
 		entityManager->render();
+
+		onNext(target, camera, entityManager);
 	}
 }

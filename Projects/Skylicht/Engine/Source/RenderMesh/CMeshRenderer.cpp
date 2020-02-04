@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CMeshRenderer.h"
 
 #include "Culling/CCullingData.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
@@ -91,6 +92,8 @@ namespace Skylicht
 		CRenderMeshData** meshs = m_meshs.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();
 
+		IRenderPipeline *rp = entityManager->getRenderPipeline();
+
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
 			CMesh *mesh = m_meshs[i]->getMesh();
@@ -98,12 +101,7 @@ namespace Skylicht
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
-			{
-				IMeshBuffer* meshBuffer = mesh->getMeshBuffer(j);
-
-				driver->setMaterial(meshBuffer->getMaterial());
-				driver->drawMeshBuffer(meshBuffer);
-			}
+				rp->drawMeshBuffer(mesh, j);
 		}
 	}
 }

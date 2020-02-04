@@ -3,7 +3,7 @@
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
-			<uniform name="uUVScale" type="NODE_PARAM" valueIndex="0" value="1.0,1.0,0.0,0.0" float="4"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0,1.0,0.0,0.0" float="4"/>
 		</vs>
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
@@ -15,7 +15,7 @@
 	</resources>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
-			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff."/>
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_dif."/>
 			<ui control="UITexture" name="uTexNormal" autoReplace="_norm.;_ddn.;_n."/>
 			<ui control="UITexture" name="uTexSpecGloss" autoReplace="_spec.;_s."/>
 		</ui>

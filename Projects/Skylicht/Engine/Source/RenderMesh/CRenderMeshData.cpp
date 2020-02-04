@@ -32,8 +32,7 @@ namespace Skylicht
 		RenderMesh(NULL),
 		OriginalMesh(NULL),
 		SoftwareSkinning(false),
-		IsSkinnedMesh(false),
-		Material(NULL)
+		IsSkinnedMesh(false)
 	{
 
 	}
@@ -69,12 +68,11 @@ namespace Skylicht
 			if (materialName == name)
 			{
 				material->addAffectMesh(mesh->getMeshBuffer(bufferID));
+				mesh->Material[bufferID] = material;
 			}
 
 			bufferID++;
 		}
-
-		Material = material;
 	}
 
 	void CRenderMeshData::initSoftwareSkinning()

@@ -24,8 +24,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDeferredRP.h"
-#include "Material/Shader/CShaderManager.h"
 #include "Material/CMaterial.h"
+#include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/ShaderCallback/CShaderShadow.h"
 
 namespace Skylicht
 {
@@ -76,7 +77,7 @@ namespace Skylicht
 		m_multiRenderTarget.push_back(m_data);
 
 		// setup material
-		m_material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+		m_material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGLighting");
 
 		m_material.setTexture(0, m_albedo);
 		m_material.setTexture(1, m_position);
@@ -91,6 +92,10 @@ namespace Skylicht
 		m_material.TextureLayer[2].BilinearFilter = false;
 		m_material.TextureLayer[2].TrilinearFilter = false;
 		m_material.TextureLayer[2].AnisotropicFilter = 0;
+
+		m_material.TextureLayer[4].BilinearFilter = false;
+		m_material.TextureLayer[4].TrilinearFilter = false;
+		m_material.TextureLayer[4].AnisotropicFilter = 0;
 
 		// disable Z
 		m_material.ZBuffer = video::ECFN_DISABLED;
@@ -118,7 +123,10 @@ namespace Skylicht
 		setCamera(camera);
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
-		entityManager->update();
+
+		if (m_updateEntity == true)
+			entityManager->update();
+
 		entityManager->render();
 
 		// save camera transform
@@ -131,10 +139,17 @@ namespace Skylicht
 
 		driver->setRenderTarget(target, true, false);
 
+		// set shadow depth
+		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
+		if (shadowRP != NULL)
+			m_material.setTexture(4, shadowRP->getDepthTexture());
+
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_material);
 
 		// fix DX11: [AndUnorderedAccessViews]: Forcing PS shader resource
-		unbindRTT();
+		// unbindRTT();
+
+		onNext(target, camera, entityManager);
 	}
 }

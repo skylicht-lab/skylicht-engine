@@ -40,8 +40,6 @@ namespace Skylicht
 		bool IsSkinnedMesh;
 		bool SoftwareSkinning;
 
-		CMaterial *Material;
-
 	public:
 
 		CRenderMeshData();
@@ -83,10 +81,5 @@ namespace Skylicht
 		}
 
 		void setMaterial(CMaterial *material);
-
-		inline CMaterial* getMaterial()
-		{
-			return Material;
-		}
 	};
 }

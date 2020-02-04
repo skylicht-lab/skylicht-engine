@@ -74,6 +74,8 @@ namespace Skylicht
 
 		void removeTexture(ITexture *tex);
 
+		bool existTexture(const char *path);
+
 		ITexture* getTexture(const char *path);
 
 		ITexture* getTextureFromRealPath(const char *path);

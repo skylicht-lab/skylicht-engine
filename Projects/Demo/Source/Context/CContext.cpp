@@ -5,6 +5,7 @@ CContext::CContext() :
 	m_scene(NULL),
 	m_rendering(NULL),
 	m_zone(NULL),
+	m_directionalLight(NULL),
 	m_camera(NULL)
 {
 
@@ -35,9 +36,18 @@ void CContext::releaseScene()
 
 CBaseRP* CContext::initRenderPipeline(int w, int h)
 {
+	// 2nd
 	m_rendering = new CDeferredRP();
 	m_rendering->initRender(w, h);
-	return m_rendering;
+	m_rendering->enableUpdateEntity(false);
+
+	// 1st
+	m_shadowMapRendering = new CShadowMapRP();
+	m_shadowMapRendering->initRender(w, h);
+	m_shadowMapRendering->setNextPipeLine(m_rendering);
+
+	m_beginRP = m_shadowMapRendering;
+	return m_beginRP;
 }
 
 void CContext::releaseRenderPipeline()
@@ -46,5 +56,24 @@ void CContext::releaseRenderPipeline()
 	{
 		delete m_rendering;
 		m_rendering = NULL;
+	}
+
+	if (m_shadowMapRendering != NULL)
+	{
+		delete m_shadowMapRendering;
+		m_shadowMapRendering = NULL;
+	}
+}
+
+void CContext::setDirectionalLight(CDirectionalLight *light)
+{
+	m_directionalLight = light;
+}
+
+void CContext::updateDirectionLight()
+{
+	if (m_shadowMapRendering != NULL && m_directionalLight != NULL)
+	{
+		m_shadowMapRendering->setLightDirection(m_directionalLight->getDirection());
 	}
 }

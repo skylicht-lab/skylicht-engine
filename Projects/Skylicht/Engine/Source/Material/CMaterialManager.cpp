@@ -391,7 +391,7 @@ namespace Skylicht
 									for (int i = 0, n = shader->getNumUI(); i < n; i++)
 									{
 										CShader::SUniformUI *uniformUI = shader->getUniformUI(i);
-										CShader::SUniform* info = uniformUI->UniformInfo;
+										SUniform* info = uniformUI->UniformInfo;
 										if (info != NULL)
 										{
 											sprintf(data, "\t\t\t<Param name='%s' floatSize='%d' floatValue='%f,%f,%f,%f'/>\n",
