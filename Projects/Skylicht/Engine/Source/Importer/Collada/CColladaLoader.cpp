@@ -2542,7 +2542,7 @@ namespace Skylicht
 		}
 
 		// free data
-		delete listJointName;
+		delete []listJointName;
 
 		// setup vertex weight
 		int numVertex = 0;
@@ -2639,7 +2639,7 @@ namespace Skylicht
 			}
 		}
 
-		delete nBoneCount;
+		delete []nBoneCount;
 
 		// fix the weight if vertex affect > 4 bone
 		for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
