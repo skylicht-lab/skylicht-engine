@@ -35,7 +35,8 @@ namespace Skylicht
 	CCascadedShadowMaps::CCascadedShadowMaps() :
 		m_shadowMapSize(2048),
 		m_lambda(0.9f),
-		m_nearOffset(100.0f)
+		m_nearOffset(100.0f),
+		m_farValue(300.0f)
 	{
 
 	}
