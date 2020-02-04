@@ -118,6 +118,16 @@ namespace Skylicht
 	class IShaderCallback
 	{
 	public:
+		IShaderCallback()
+		{
+
+		}
+
+		virtual ~IShaderCallback()
+		{
+
+		}
+
 		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader) = 0;
 	};
 
