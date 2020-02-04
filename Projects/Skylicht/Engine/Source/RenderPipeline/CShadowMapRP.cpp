@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CShadowMapRP.h"
 #include "RenderMesh/CMesh.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
+#include "Material/Shader/ShaderCallback/CShaderShadow.h"
 #include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
@@ -33,11 +34,13 @@ namespace Skylicht
 	CShadowMapRP::CShadowMapRP() :
 		m_depthTexture(NULL),
 		m_csm(NULL),
-		m_shadowMapSize(512)
+		m_shadowMapSize(2048),
+		m_numCascade(2)
 	{
 		m_type = ShadowMap;
 		m_lightDirection.set(-1.0f, -1.0f, -1.0f);
 
+		// write depth material
 		m_writeDepthMaterial.MaterialType = CShaderManager::getInstance()->getShaderIDByName("ShadowDepthWrite");
 	}
 
@@ -53,12 +56,12 @@ namespace Skylicht
 	void CShadowMapRP::initRender(int w, int h)
 	{
 		m_csm = new CCascadedShadowMaps();
-		m_csm->init(2, m_shadowMapSize, 100.0f, w, h);
+		m_csm->init(m_numCascade, m_shadowMapSize, 200.0f, w, h);
 
 		core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
-		m_depthTexture = getVideoDriver()->addRenderTargetTexture(size, "shadow_depth", ECF_A8R8G8B8);
+		m_depthTexture = getVideoDriver()->addRenderTargetTextureArray(size, m_numCascade, "shadow_depth", ECF_R32F);
 	}
-	
+
 	void CShadowMapRP::drawMeshBuffer(CMesh *mesh, int bufferID)
 	{
 		// set shader material
@@ -81,13 +84,7 @@ namespace Skylicht
 
 		m_csm->update(camera, m_lightDirection);
 
-		IVideoDriver *driver = getVideoDriver();
-		driver->setRenderTarget(m_depthTexture, true, true);
-
 		setCamera(camera);
-
-		driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(0));
-		driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(0));
 
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
@@ -95,7 +92,17 @@ namespace Skylicht
 		if (m_updateEntity == true)
 			entityManager->update();
 
-		entityManager->render();
+		CShaderShadow::setShadowMapRP(this);
+
+		IVideoDriver *driver = getVideoDriver();
+		for (int i = 0; i < m_numCascade; i++)
+		{
+			driver->setRenderTargetArray(m_depthTexture, i, true, true);
+			driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(i));
+			driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
+
+			entityManager->render();
+		}
 
 		onNext(target, camera, entityManager);
 	}

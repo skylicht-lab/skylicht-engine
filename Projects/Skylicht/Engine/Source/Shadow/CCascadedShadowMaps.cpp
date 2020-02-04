@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CCascadedShadowMaps::CCascadedShadowMaps() :
-		m_shadowMapSize(1024),
+		m_shadowMapSize(2048),
 		m_lambda(0.9f),
 		m_nearOffset(100.0f)
 	{
@@ -101,11 +101,13 @@ namespace Skylicht
 		mat.rotateVect(cameraForward);
 		cameraForward.normalize();
 
+		/*
 		core::vector3df center = cameraPosition + cameraForward * 0.5f;
 		core::vector3df lightPos = center - lightDir * ((m_farValue - camera->getNearValue()) / 2.0f);
 
 		// light view matrix
 		m_lightView.buildCameraLookAtMatrixLH(lightPos, center, CTransform::s_oy);
+		*/
 
 		updateSplits(camera);
 		updateFrustumCorners(cameraPosition, cameraForward);
@@ -131,9 +133,13 @@ namespace Skylicht
 			float t_far = t_near * 1.005f;
 			m_splits[i].NearPlane = t_near;
 			m_splits[i - 1].FarPlane = t_far;
+
+			m_farBounds[i - 1] = t_far;
 		}
 
 		m_splits[m_splitCount - 1].FarPlane = fd;
+
+		m_farBounds[m_splitCount - 1] = fd;
 	}
 
 	void CCascadedShadowMaps::updateFrustumCorners(const core::vector3df& camPos, const core::vector3df& camForward)
@@ -243,6 +249,10 @@ namespace Skylicht
 			shadowProj(3, 0) += roundOffset.X;
 			shadowProj(3, 1) += roundOffset.Y;
 			shadowProj(3, 2) += roundOffset.Z;
+
+			core::matrix4 mvp = m_projMatrices[i] * m_viewMatrices[i];
+			core::matrix4 shadowMatrix = m_bias * mvp;
+			memcpy(m_shadowMatrices + i * 16, shadowMatrix.pointer(), 16 * sizeof(float));
 		}
 	}
 }

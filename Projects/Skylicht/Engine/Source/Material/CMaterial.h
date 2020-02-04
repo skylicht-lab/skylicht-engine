@@ -115,6 +115,7 @@ namespace Skylicht
 		int m_shadowMapTextureSlot;
 
 		CGameObject* m_owner;
+		CShader* m_shader;
 
 	public:
 		CMaterial(const char *name, const char *shaderPath);
@@ -197,6 +198,8 @@ namespace Skylicht
 		void setProperty(const std::string& name, const std::string& value);
 
 		void loadDefaultTexture();
+
+		void loadRuntimeTexture();
 
 		void loadUniformTexture();
 

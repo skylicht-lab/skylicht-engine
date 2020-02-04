@@ -43,7 +43,8 @@ namespace Skylicht
 		m_shadowMapTextureSlot(-1),
 		m_shaderPath(shaderPath),
 		m_materialName(name),
-		m_castShadow(true)
+		m_castShadow(true),
+		m_shader(NULL)
 	{
 		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 		{
@@ -105,6 +106,7 @@ namespace Skylicht
 		mat->m_backfaceCulling = m_backfaceCulling;
 		mat->m_frontfaceCulling = m_frontfaceCulling;
 		mat->m_doubleSided = m_doubleSided;
+		mat->m_castShadow = m_castShadow;
 
 		return mat;
 	}
@@ -400,17 +402,15 @@ namespace Skylicht
 
 	void CMaterial::loadUniformTexture()
 	{
-		CShaderManager *shaderManager = CShaderManager::getInstance();
-		CTextureManager *textureManager = CTextureManager::getInstance();
-
-		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
-		if (shader == NULL)
+		if (m_shader == NULL)
 			return;
+
+		CTextureManager *textureManager = CTextureManager::getInstance();
 
 		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 		{
 			SUniformTexture *textureUI = m_uniformTextures[i];
-			SUniform* uniform = shader->getFSUniform(textureUI->Name.c_str());
+			SUniform* uniform = m_shader->getFSUniform(textureUI->Name.c_str());
 
 			if (uniform != NULL)
 			{
@@ -430,17 +430,15 @@ namespace Skylicht
 
 	void CMaterial::loadDefaultTexture()
 	{
-		CShaderManager *shaderManager = CShaderManager::getInstance();
 		CTextureManager *textureManager = CTextureManager::getInstance();
 
-		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
-		if (shader != NULL)
+		if (m_shader != NULL)
 		{
-			for (int i = 0, n = shader->getNumResource(); i < n; i++)
+			for (int i = 0, n = m_shader->getNumResource(); i < n; i++)
 			{
-				CShader::SResource *r = shader->getResouceInfo(i);
+				CShader::SResource *r = m_shader->getResouceInfo(i);
 
-				SUniform *uniform = shader->getFSUniform(r->Name.c_str());
+				SUniform *uniform = m_shader->getFSUniform(r->Name.c_str());
 				if (uniform != NULL)
 				{
 					int textureSlot = (int)uniform->Value[0];
@@ -488,6 +486,16 @@ namespace Skylicht
 		}
 	}
 
+	void CMaterial::loadRuntimeTexture()
+	{
+		CTextureManager *textureManager = CTextureManager::getInstance();
+
+		if (m_shader != NULL)
+		{
+
+		}
+	}
+
 	void CMaterial::addAffectMesh(IMeshBuffer *mesh)
 	{
 		if (mesh == NULL)
@@ -532,17 +540,17 @@ namespace Skylicht
 		deleteAllParams();
 
 		CShaderManager *shaderManager = CShaderManager::getInstance();
-		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
-		if (shader != NULL)
+		m_shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
+		if (m_shader != NULL)
 		{
 			// check pipeline
-			m_deferred = shader->isDeferred();
+			m_deferred = m_shader->isDeferred();
 
 			// add gui
-			int numUI = shader->getNumUI();
+			int numUI = m_shader->getNumUI();
 			for (int i = 0; i < numUI; i++)
 			{
-				CShader::SUniformUI *ui = shader->getUniformUI(i);
+				CShader::SUniformUI *ui = m_shader->getUniformUI(i);
 				if (ui->ControlType == CShader::UIGroup)
 				{
 					for (int j = 0, n = ui->Childs.size(); j < n; j++)
@@ -629,10 +637,7 @@ namespace Skylicht
 
 		CTextureManager *textureManager = CTextureManager::getInstance();
 
-		CShaderManager *shaderManager = CShaderManager::getInstance();
-		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
-
-		if (shader != NULL)
+		if (m_shader != NULL)
 		{
 			std::vector<std::string> texNamePaths;
 			std::vector<std::string> texExtPaths;
@@ -642,7 +647,7 @@ namespace Skylicht
 
 			for (SUniformTexture *texture : m_uniformTextures)
 			{
-				CShader::SUniformUI* ui = shader->getUniformUIByName(texture->Name.c_str());
+				CShader::SUniformUI* ui = m_shader->getUniformUIByName(texture->Name.c_str());
 
 				if (texture->Texture != NULL)
 				{
@@ -757,14 +762,12 @@ namespace Skylicht
 
 	void CMaterial::initDefaultValue()
 	{
-		CShaderManager *shaderManager = CShaderManager::getInstance();
-		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
-		if (shader != NULL)
+		if (m_shader != NULL)
 		{
-			int numVS = shader->getNumVS();
+			int numVS = m_shader->getNumVS();
 			for (int i = 0; i < numVS; i++)
 			{
-				SUniform* u = shader->getVSUniformID(i);
+				SUniform* u = m_shader->getVSUniformID(i);
 				if (u->Type == OBJECT_PARAM || u->Type == MATERIAL_PARAM)
 				{
 					if (haveUniform(u->Name.c_str()) == false)
@@ -783,10 +786,10 @@ namespace Skylicht
 				}
 			}
 
-			int numFS = shader->getNumFS();
+			int numFS = m_shader->getNumFS();
 			for (int i = 0; i < numFS; i++)
 			{
-				SUniform* u = shader->getFSUniformID(i);
+				SUniform* u = m_shader->getFSUniformID(i);
 				if (u->Type == OBJECT_PARAM || u->Type == MATERIAL_PARAM)
 				{
 					if (haveUniform(u->Name.c_str()) == false)
@@ -846,8 +849,6 @@ namespace Skylicht
 
 	void CMaterial::updateTexture(SMaterial& mat)
 	{
-		CShaderManager *shaderManager = CShaderManager::getInstance();
-
 		// property
 		mat.ZBuffer = m_zBuffer;
 		mat.ZWriteEnable = m_zWriteEnable;
@@ -890,11 +891,10 @@ namespace Skylicht
 			}
 		}
 
-		// apply config material
-		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
-		if (shader != NULL)
+		// apply config material		
+		if (m_shader != NULL)
 		{
-			mat.MaterialType = shader->getMaterialRenderID();
+			mat.MaterialType = m_shader->getMaterialRenderID();
 
 			// manual init
 			if (m_manualInitMaterial == true)
@@ -909,7 +909,7 @@ namespace Skylicht
 			// auto uniform config
 			for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 			{
-				SUniform *uniform = shader->getFSUniform(m_uniformTextures[i]->Name.c_str());
+				SUniform *uniform = m_shader->getFSUniform(m_uniformTextures[i]->Name.c_str());
 				if (uniform != NULL)
 				{
 					int textureSlot = (int)uniform->Value[0];
@@ -925,16 +925,14 @@ namespace Skylicht
 
 	void CMaterial::updateShaderTexture()
 	{
-		CShaderManager *shaderManager = CShaderManager::getInstance();
-		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
-		if (shader == NULL)
+		if (m_shader == NULL)
 			return;
 
 		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 		{
 			SUniformTexture *textureUI = m_uniformTextures[i];
 
-			SUniform* uniform = shader->getFSUniform(textureUI->Name.c_str());
+			SUniform* uniform = m_shader->getFSUniform(textureUI->Name.c_str());
 			if (uniform != NULL)
 			{
 				int textureSlot = (int)uniform->Value[0];
@@ -953,18 +951,16 @@ namespace Skylicht
 
 	void CMaterial::updateShaderParams()
 	{
-		CShaderManager *shaderManager = CShaderManager::getInstance();
-		CShader* shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
-		if (shader == NULL)
+		if (m_shader == NULL)
 			return;
 
 		for (int i = 0, n = (int)m_uniformParams.size(); i < n; i++)
 		{
 			SUniformValue *uniformValue = m_uniformParams[i];
 
-			SUniform* uniform = shader->getFSUniform(uniformValue->Name.c_str());
+			SUniform* uniform = m_shader->getFSUniform(uniformValue->Name.c_str());
 			if (uniform == NULL)
-				uniform = shader->getVSUniform(uniformValue->Name.c_str());
+				uniform = m_shader->getVSUniform(uniformValue->Name.c_str());
 
 			if (uniform != NULL)
 			{
@@ -1051,9 +1047,7 @@ namespace Skylicht
 		// get or create extra
 		SExtraParams *e = getExtraParams(m_shaderPath.c_str());
 		if (e == NULL)
-		{
 			e = newExtra(m_shaderPath.c_str());
-		}
 
 		// clear old params
 		for (SUniformValue *&uniform : e->UniformParams)
