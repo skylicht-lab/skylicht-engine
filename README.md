@@ -10,6 +10,9 @@ Skylicht Engine is a fork from [Irrlicht 3D Engine](http://irrlicht.sourceforge.
 Skylicht Engine is a super lightweight Game Engine, that target to mobile platform (Android, IOS). And, it's completely free.
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d6fbf50a10a4cf38426b9fabfc1fabc)](https://www.codacy.com/manual/ducphamhong/skylicht-engine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=skylicht-lab/skylicht-engine&amp;utm_campaign=Badge_Grade)
+### Project Architecture
+<img src="Documents/Media/project_architecture.jpg">
+
 ## How To Build
 | Platform                                                                                 | Build Status                                                                                                                                                                      |
 | -----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -18,8 +21,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 | <img src="Documents/Media/Platforms/uwp.png" width="25" valign="middle"> Windows Store   | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
 | <img src="Documents/Media/Platforms/ubuntu.png" width="25" valign="middle"> Linux        | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
 | <img src="Documents/Media/Platforms/html5.png" width="25" valign="middle"> Emscripten    | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
-### Project Architecture
-<img src="Documents/Media/project_architecture.jpg">
+
 ### Prerequisites
 -   [CMake](https://cmake.org/download/) 3.12 or higher
 -   [Python](https://www.python.org/downloads/) 3.x
