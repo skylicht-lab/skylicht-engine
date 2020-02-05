@@ -45,11 +45,13 @@ namespace Skylicht
 	public:
 		CShadowMapRP();
 
-		virtual ~CShadowMapRP();
+		virtual ~CShadowMapRP();		
 
 		virtual void initRender(int w, int h);
 
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager);
+
+		virtual bool canRenderMaterial(CMaterial *m);
 
 		virtual void drawMeshBuffer(CMesh *mesh, int bufferID);
 
