@@ -43,7 +43,7 @@ float3 SG(
 	
 	// Color
 	f0 = float3(0.04, 0.04, 0.04);
-	float3 diffuseColor = baseColor.rgb * (float3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+	float3 diffuseColor = baseColor.rgb;
 	specularColor = lerp(f0, baseColor.rgb, metallic);
 	
 	// Lighting
@@ -54,7 +54,7 @@ float3 SG(
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
-	float3 color = (ambient + NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
+	float3 color = (NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
 	
 	// IBL Ambient
 	// color += IBLAmbient(worldNormal) * diffuseColor / PI * EnvironmentScale;

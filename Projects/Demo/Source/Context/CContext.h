@@ -21,6 +21,7 @@ protected:
 	CBaseRP *m_beginRP;
 	CBaseRP	*m_rendering;
 	CShadowMapRP *m_shadowMapRendering;
+	CForwardRP *m_forwardRP;
 
 public:
 	CContext();

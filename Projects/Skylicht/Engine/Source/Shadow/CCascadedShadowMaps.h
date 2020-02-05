@@ -54,7 +54,6 @@ namespace Skylicht
 		core::vector3df m_lightDirection;
 
 		core::matrix4 m_bias;
-		core::matrix4 m_lightView;
 		core::matrix4 m_viewMatrices[MAX_FRUSTUM_SPLITS];
 		core::matrix4 m_projMatrices[MAX_FRUSTUM_SPLITS];
 		core::matrix4 m_textureMatrices[MAX_FRUSTUM_SPLITS];

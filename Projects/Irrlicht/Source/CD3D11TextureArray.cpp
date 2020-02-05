@@ -33,12 +33,12 @@ namespace irr
 #endif
 			TextureType = ETT_TEXTURE_ARRAY;
 			DriverType = EDT_DIRECT3D11;
-			HasMipMaps = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);			
-			ColorFormat = Driver->getColorFormat();			
+			HasMipMaps = Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
+			ColorFormat = Driver->getColorFormat();
 
 			for (int i = 0; i < MAX_TEXTURE_ARRAY_RT_SIZE; i++)
 				RTView[i] = NULL;
-			
+
 			Device = driver->getExposedVideoData().D3D11.D3DDev11;
 			if (Device)
 			{
@@ -95,7 +95,7 @@ namespace irr
 			}
 
 			for (int i = 0; i < MAX_TEXTURE_ARRAY_RT_SIZE; i++)
-			{			
+			{
 				if (RTView[i])
 				{
 					RTView[i]->Release();
@@ -140,12 +140,12 @@ namespace irr
 				// get irrlicht format from backbuffer
 				// (This will get overwritten by the custom format if it is provided, else kept.)
 				ColorFormat = Driver->getColorFormat();
-				
+
 				// Use color format if provided.
 				if (format != ECF_UNKNOWN)
 				{
 					ColorFormat = format;
-					d3dformat = Driver->getD3DFormatFromColorFormat(format);				
+					d3dformat = Driver->getD3DFormatFromColorFormat(format);
 				}
 			}
 			else
@@ -181,15 +181,16 @@ namespace irr
 			if (Driver->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS) &&
 				Driver->querySupportForColorFormat(d3dformat, D3D11_FORMAT_SUPPORT_MIP_AUTOGEN))
 			{
+				HardwareMipMaps = true;
 				desc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
 				desc.MipLevels = 0;
 			}
 			else
 			{
-				//desc.MiscFlags = 0;
 				desc.MipLevels = 1;
 			}
 			*/
+
 			desc.MipLevels = 1;
 
 			// If multisampled, mip levels shall be 1
@@ -248,9 +249,9 @@ namespace irr
 
 				// check if texture is array and/or multisampled				
 				rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-				rtvDesc.Texture2DArray.ArraySize = 1;				
+				rtvDesc.Texture2DArray.ArraySize = 1;
 				rtvDesc.Texture2DArray.MipSlice = 0;
-				
+
 				for (u32 i = 0; i < NumberOfArraySlices; i++)
 				{
 					rtvDesc.Texture2DArray.FirstArraySlice = i;
@@ -276,7 +277,7 @@ namespace irr
 			srvDesc.Texture2DArray.FirstArraySlice = 0;
 			srvDesc.Texture2DArray.MipLevels = NumberOfMipLevels;
 			srvDesc.Texture2DArray.MostDetailedMip = 0;
-			
+
 
 			hr = Device->CreateShaderResourceView(Texture, &srvDesc, &SRView);
 			if (FAILED(hr))
@@ -317,7 +318,7 @@ namespace irr
 			Context->CopyResource(TextureBuffer, Texture);
 			return true;
 		}
-		
+
 		//! lock function
 		void* CD3D11TextureArray::lock(E_TEXTURE_LOCK_MODE mode, u32 mipmapLevel)
 		{
@@ -358,10 +359,10 @@ namespace irr
 
 			D3D11_MAPPED_SUBRESOURCE mappedData;
 			hr = Context->Map(TextureBuffer,
-					i, 					// number of mip levels
-					LastMapDirection, 						// direction to map
-					0,
-					&mappedData);							// mapped result
+				i, 					// number of mip levels
+				LastMapDirection, 						// direction to map
+				0,
+				&mappedData);							// mapped result
 
 			if (FAILED(hr))
 			{
@@ -611,14 +612,14 @@ namespace irr
 					else
 					{
 						for (int i = 0; i < mipCount; i++)
-						{							
+						{
 							initData[id].pSysMem = NULL;
 							initData[id].SysMemPitch = 0;
 							initData[id].SysMemSlicePitch = 0;
 
 							id++;
 						}
-					}					
+					}
 				}
 
 				hr = Device->CreateTexture2D(&texDesc, initData, &Texture);
@@ -643,7 +644,7 @@ namespace irr
 			NumberOfMipLevels = texDesc.MipLevels;
 
 			// create view
-			hr = Device->CreateShaderResourceView(Texture, &SMViewDesc, &SRView);			
+			hr = Device->CreateShaderResourceView(Texture, &SMViewDesc, &SRView);
 
 			if (isCompressed == false)
 			{
@@ -973,7 +974,7 @@ namespace irr
 				return 0;
 			}
 		}
-	}		
+	}
 }
 
 #endif
