@@ -19,25 +19,40 @@ cbuffer cbPerFrame
 	float4 uLightDirection;
 	float4 uAmbientLightColor;
 	float4 uLightColor;
-	float2 uShadowDistance;
-	float4x4 uShadowMatrix[2];
+	float3 uShadowDistance;
+	float4x4 uShadowMatrix[3];
 };
-float shadow(const float4 shadowCoord[2], const float shadowDistance[2], const float farDistance)
+float texture2DCompare(float3 uv, float compare){
+    float depth = uShadowMap.Sample(uShadowMapSampler, uv).r;
+    return step(compare, depth);
+}
+float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
 {
 	int id = 0;
 	float visible = 1.0;
-	float bias = 0.0002;
+	float bias = 0.005;
 	float depth = 0.0;
-	float sampledDistance = 0.0;
+	float result = 0.0;
+	float size = 2048;
 	if (farDistance > shadowDistance[0])
 		id = 1;
 	if (farDistance > shadowDistance[1])
+		id = 2;
+	if (farDistance > shadowDistance[2])
 		return 1.0;
 	depth = shadowCoord[id].z;
-	sampledDistance = uShadowMap.Sample(uShadowMapSampler, float3(shadowCoord[id].xy, id)).r;
-	if (depth - bias > sampledDistance)
-        visible = 0.1f;
-	return visible;
+	float2 uv = shadowCoord[id].xy;
+	[unroll]
+    for(int x=-1; x<=1; x++)
+	{
+		[unroll]
+        for(int y=-1; y<=1; y++)
+		{
+            float2 off = float2(x,y)/size;
+            result += texture2DCompare(float3(uv+off, id), depth - bias);
+        }
+    }
+    return result/9.0;
 }
 static const float MinReflectance = 0.04;
 float getPerceivedBrightness(float3 color)
@@ -71,13 +86,13 @@ float3 SG(
 	float oneMinusSpecularStrength = 1.0 - spec;
 	float metallic = solveMetallic(baseColor.rgb, specularColor, oneMinusSpecularStrength);
 	f0 = float3(0.04, 0.04, 0.04);
-	float3 diffuseColor = baseColor.rgb * (float3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+	float3 diffuseColor = baseColor.rgb;
 	specularColor = lerp(f0, baseColor.rgb, metallic);
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	float3 color = (ambient + NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
+	float3 color = (NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
 	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET
@@ -89,12 +104,14 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
 	float depth = length(v);
-	float4 shadowCoord[2];
+	float4 shadowCoord[3];
 	shadowCoord[0] = mul(float4(position, 1.0), uShadowMatrix[0]);
 	shadowCoord[1] = mul(float4(position, 1.0), uShadowMatrix[1]);
-	float shadowDistance[2];
+	shadowCoord[2] = mul(float4(position, 1.0), uShadowMatrix[2]);
+	float shadowDistance[3];
 	shadowDistance[0] = uShadowDistance.x;
 	shadowDistance[1] = uShadowDistance.y;
+	shadowDistance[2] = uShadowDistance.z;
 	float visibility = shadow(shadowCoord, shadowDistance, depth);
 	float3 color = SG(
 		albedo,

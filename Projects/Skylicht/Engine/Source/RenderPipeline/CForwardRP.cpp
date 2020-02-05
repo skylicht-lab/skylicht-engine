@@ -47,16 +47,21 @@ namespace Skylicht
 		if (camera == NULL)
 			return;
 
-		getVideoDriver()->setRenderTarget(target, true, true);
+		getVideoDriver()->setRenderTarget(target, false, false);
 
 		setCamera(camera);
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
-		
+
 		if (m_updateEntity == true)
+		{
 			entityManager->update();
-		
-		entityManager->render();
+			entityManager->render();
+		}
+		else
+		{
+			entityManager->cullingAndRender();
+		}
 
 		onNext(target, camera, entityManager);
 	}

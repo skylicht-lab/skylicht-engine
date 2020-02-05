@@ -43,7 +43,7 @@ vec3 SG(
 	
 	// Color
 	f0 = vec3(0.04, 0.04, 0.04);
-	vec3 diffuseColor = baseColor.rgb * (vec3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+	vec3 diffuseColor = baseColor.rgb;
 	specularColor = mix(f0, baseColor.rgb, metallic);
 	
 	// Lighting
@@ -54,7 +54,7 @@ vec3 SG(
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
-	vec3 color = (ambient + NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
+	vec3 color = (NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
 	
 	// IBL Ambient
 	// color += IBLAmbient(worldNormal) * diffuseColor / PI * EnvironmentScale;

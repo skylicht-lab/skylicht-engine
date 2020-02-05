@@ -125,9 +125,14 @@ namespace Skylicht
 		entityManager->setRenderPipeline(this);
 
 		if (m_updateEntity == true)
+		{
 			entityManager->update();
-
-		entityManager->render();
+			entityManager->render();
+		}
+		else
+		{
+			entityManager->cullingAndRender();
+		}
 
 		// save camera transform
 		m_projectionMatrix = driver->getTransform(video::ETS_PROJECTION);
