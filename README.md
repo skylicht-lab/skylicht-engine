@@ -10,8 +10,6 @@ Skylicht Engine is a fork from [Irrlicht 3D Engine](http://irrlicht.sourceforge.
 Skylicht Engine is a super lightweight Game Engine, that target to mobile platform (Android, IOS). And, it's completely free.
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d6fbf50a10a4cf38426b9fabfc1fabc)](https://www.codacy.com/manual/ducphamhong/skylicht-engine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=skylicht-lab/skylicht-engine&amp;utm_campaign=Badge_Grade)
-### Project Architecture
-<img src="Documents/Media/project_architecture.jpg">
 
 ## How To Build
 | Platform                                                                                 | Build Status                                                                                                                                                                      |
@@ -65,6 +63,9 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project.
 
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+## Project Architecture
+<img src="Documents/Media/project_architecture.jpg" width="500">
+
 ## Contributing
 Welcome if you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 ## License
