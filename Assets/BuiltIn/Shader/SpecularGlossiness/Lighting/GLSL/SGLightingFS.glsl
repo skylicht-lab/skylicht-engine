@@ -15,8 +15,8 @@ uniform mat4 uShadowMatrix[3];
 in vec2 varTexCoord0;
 out vec4 FragColor;
 float texture2DCompare(vec3 uv, float compare){
-    float depth = texture(uShadowMap, uv).r;
-    return step(compare, depth);
+	float depth = texture(uShadowMap, uv).r;
+	return step(compare, depth);
 }
 float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
 {
@@ -34,15 +34,15 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 		return 1.0;
 	depth = shadowCoord[id].z;
 	vec2 uv = shadowCoord[id].xy;
-    for(int x=-1; x<=1; x++)
+	for(int x=-1; x<=1; x++)
 	{
-        for(int y=-1; y<=1; y++)
+		for(int y=-1; y<=1; y++)
 		{
-            vec2 off = vec2(x,y)/size;
-            result += texture2DCompare(vec3(uv+off, id), depth - bias);
-        }
-    }
-    return result/9.0;
+			vec2 off = vec2(x,y)/size;
+			result += texture2DCompare(vec3(uv+off, id), depth - bias);
+		}
+	}
+	return result/9.0;
 }
 const float EnvironmentScale = 3.0;
 const float PI = 3.1415926;
