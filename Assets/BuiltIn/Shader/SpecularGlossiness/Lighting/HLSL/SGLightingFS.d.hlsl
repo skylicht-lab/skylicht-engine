@@ -25,8 +25,8 @@ cbuffer cbPerFrame
 	float4 uLightDirection;
 	float4 uAmbientLightColor;
 	float4 uLightColor;
-	float2 uShadowDistance;
-	float4x4 uShadowMatrix[2];
+	float3 uShadowDistance;
+	float4x4 uShadowMatrix[3];
 };
 
 #include "LibShadow.hlsl"
@@ -45,13 +45,15 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// shadow
 	float depth = length(v);
 		
-	float4 shadowCoord[2];
+	float4 shadowCoord[3];
 	shadowCoord[0] = mul(float4(position, 1.0), uShadowMatrix[0]);
 	shadowCoord[1] = mul(float4(position, 1.0), uShadowMatrix[1]);
+	shadowCoord[2] = mul(float4(position, 1.0), uShadowMatrix[2]);
 	
-	float shadowDistance[2];
+	float shadowDistance[3];
 	shadowDistance[0] = uShadowDistance.x;
 	shadowDistance[1] = uShadowDistance.y;
+	shadowDistance[2] = uShadowDistance.z;
 	float visibility = shadow(shadowCoord, shadowDistance, depth);
 	
 	// lighting

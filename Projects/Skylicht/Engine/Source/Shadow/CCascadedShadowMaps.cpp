@@ -35,8 +35,8 @@ namespace Skylicht
 	CCascadedShadowMaps::CCascadedShadowMaps() :
 		m_shadowMapSize(2048),
 		m_lambda(0.9f),
-		m_nearOffset(100.0f),
-		m_farValue(300.0f)
+		m_nearOffset(50.0f),
+		m_farValue(200.0f)
 	{
 
 	}
@@ -52,7 +52,7 @@ namespace Skylicht
 		m_shadowMapSize = shadowMapSize;
 		m_farValue = farValue;
 
-		float ratio = screenWidth / (float)screenHeight;
+		float ratio = 1.0f;
 		for (int i = 0; i < m_splitCount; i++)
 			m_splits[i].Ratio = ratio;
 
@@ -102,14 +102,7 @@ namespace Skylicht
 		mat.rotateVect(cameraForward);
 		cameraForward.normalize();
 
-		/*
-		core::vector3df center = cameraPosition + cameraForward * 0.5f;
-		core::vector3df lightPos = center - lightDir * ((m_farValue - camera->getNearValue()) / 2.0f);
-
-		// light view matrix
-		m_lightView.buildCameraLookAtMatrixLH(lightPos, center, CTransform::s_oy);
-		*/
-
+		// calc shadow volume
 		updateSplits(camera);
 		updateFrustumCorners(cameraPosition, cameraForward);
 		updateMatrix();
