@@ -46,6 +46,23 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     C:\skylicht-engine\Assets>cd ..
     ```
 
+-   Build Texture Compress (DDS, ETC2, PVRTC) (**Optional**, just rebuild when you modify texture asset)
+    ```
+    # Install Tinydb
+    # https://pypi.org/project/tinydb
+    C:\skylicht-engine>pip install tinydb
+
+    # Install Pillow (Image processing)
+    # https://pillow.readthedocs.io/en/4.1.x/index.html
+    C:\skylicht-engine>pip install Pillow
+
+    # Compress DDS & ETC2 texture
+    C:\skylicht-engine>cd Assets    
+    C:\skylicht-engine\Assets>python BuildTextureCompressDDS.py
+    C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
+    C:\skylicht-engine\Assets>cd ..
+    ```
+
 -   Run CMake from the current directory
     ```
     # Visual Studio 2017

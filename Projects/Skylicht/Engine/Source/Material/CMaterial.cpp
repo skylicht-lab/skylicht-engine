@@ -210,46 +210,25 @@ namespace Skylicht
 		SUniformTexture* p = getUniformTexture(name);
 		if (p != NULL)
 		{
-			io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
+			CTextureManager *textureManager = CTextureManager::getInstance();
+			p->Path = path;
+			p->Texture = NULL;
 
-			if (fs->existFile(path) == true)
+			if (textureManager->existTexture(path) == true)
 			{
-				p->Path = path;
-
 				if (loadTexture == true)
 					p->Texture = CTextureManager::getInstance()->getTexture(path);
 			}
 			else
 			{
-				p->Path = path;
-				p->Texture = NULL;
-
-				const char *exts[] = { ".pvr", ".etc", ".dds" };
-
+				// try search in folder
 				for (int i = 0, n = (int)folder.size(); i < n; i++)
 				{
 					std::string s = folder[i];
 					s += "/";
 					s += path;
 
-					bool fileExist = false;
-
-					if (fs->existFile(s.c_str()) == true)
-						fileExist = true;
-					else
-					{
-						for (int j = 0; j < 3; j++)
-						{
-							s = CPath::replaceFileExt(s, std::string(exts[j]));
-							if (fs->existFile(s.c_str()) == true)
-							{
-								fileExist = true;
-								break;
-							}
-						}
-					}
-
-					if (fileExist == true)
+					if (textureManager->existTexture(s.c_str()) == true)
 					{
 						p->Path = s;
 						if (loadTexture == true)
