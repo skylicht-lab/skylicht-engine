@@ -1,7 +1,36 @@
 import os
+from tinydb import TinyDB, Query
+from PIL import Image
+import os.path
+import time
+import json
 
 textureExt = [".tga"]
 compressTools = "..\\Tools\\PVRTexTool\\PVRTexToolCLI.exe"
+db = TinyDB('CacheETC.json')
+fileQuery = Query()
+
+print("---------------------------------------------")
+print("COMPRESS TEXTURE TO ETC")
+print("Delete CacheETC.json if you want rebuild all")
+print("---------------------------------------------")
+print("")
+
+
+def compress(inputFile, outputFile):
+    # call build tools
+    im = Image.open(inputFile)
+    # ETC2_RGB
+    format = "ETC2_RGB"
+    # ETC2_RGBA
+    if im.mode == "RGBA":
+        format = "ETC2_RGBA"
+    params = "-f %s -m -q etcfastperceptual" % (format)
+    command = "%s %s -i %s -o %s" % (
+        compressTools, params, inputFile, outputFile
+    )
+    print(command)
+    os.system(command)
 
 
 def needBuildTexture(filename):
@@ -14,6 +43,7 @@ def needBuildTexture(filename):
 def buildCompressTexture(dirName):
     outputFile = None
     inputFile = None
+
     for root, dirs, files in os.walk(dirName):
         for file in files:
             if needBuildTexture(file):
@@ -25,14 +55,24 @@ def buildCompressTexture(dirName):
                 outputFile = root + "/" + outputFile
                 inputFile = root + "/" + file
 
-                # call build tools
-                # ETC2_RGB ETC2_RGBA
-                params = "-f ETC2_RGB -m -q etcfastperceptual"
-                command = "%s %s -i %s -o %s" % (
-                    compressTools, params, inputFile, outputFile
-                )
-                print(command)
-                os.system(command)
+                needBuild = True
+                modifyTime = time.ctime(os.path.getmtime(inputFile))
+
+                queryInfo = db.get(fileQuery.file == inputFile)
+                if queryInfo != None:
+                    if queryInfo["mtime"] == modifyTime:
+                        needBuild = False
+
+                if needBuild:
+                    compress(inputFile, outputFile)
+                    if queryInfo != None:
+                        db.update({'mtime': modifyTime},
+                                  fileQuery.file == inputFile)
+                    else:
+                        db.insert({'file': inputFile, 'mtime': modifyTime})
+                else:
+                    print("- Cached")
+                print("")
 
 
 def main():

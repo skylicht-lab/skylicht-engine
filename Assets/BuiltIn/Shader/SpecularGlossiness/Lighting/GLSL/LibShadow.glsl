@@ -7,7 +7,7 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 {	
 	int id = 0;
 	float visible = 1.0;
-	float bias = 0.005;
+	float bias = 0.001;
 	float depth = 0.0;
 	
 	float result = 0.0;
