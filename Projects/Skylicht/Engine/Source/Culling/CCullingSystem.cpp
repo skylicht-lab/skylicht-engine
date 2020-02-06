@@ -97,15 +97,20 @@ namespace Skylicht
 			CRenderMeshData *meshData = meshs[i];
 			CMesh *mesh = meshData->getMesh();
 
+			culling->Visible = true;
+
 			// check material first			
 			for (CMaterial *material : mesh->Material)
 			{
 				if (material != NULL && rp->canRenderMaterial(material) == false)
 				{
 					culling->Visible = false;
-					continue;
+					break;
 				}
 			}
+
+			if (culling->Visible == false)
+				continue;
 
 			// transform world bbox
 			culling->BBox = mesh->getBoundingBox();

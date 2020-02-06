@@ -12,8 +12,8 @@ uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
 uniform vec4 uAmbientLightColor;
 uniform vec4 uLightColor;
-uniform vec2 uShadowDistance;
-uniform mat4 uShadowMatrix[2];
+uniform vec3 uShadowDistance;
+uniform mat4 uShadowMatrix[3];
 
 in vec2 varTexCoord0;
 
@@ -35,13 +35,15 @@ void main(void)
 	// shadow
 	float depth = length(v);
 
-	vec4 shadowCoord[2];
+	vec4 shadowCoord[3];
 	shadowCoord[0] = uShadowMatrix[0] * vec4(position, 1.0);
 	shadowCoord[1] = uShadowMatrix[1] * vec4(position, 1.0);
+	shadowCoord[2] = uShadowMatrix[2] * vec4(position, 1.0);
 
-	float shadowDistance[2];
+	float shadowDistance[3];
 	shadowDistance[0] = uShadowDistance.x;
 	shadowDistance[1] = uShadowDistance.y;
+	shadowDistance[2] = uShadowDistance.z;
 
 	float visibility = shadow(shadowCoord, shadowDistance, depth);
 	
