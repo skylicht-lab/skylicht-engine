@@ -35,7 +35,7 @@ namespace Skylicht
 		m_depthTexture(NULL),
 		m_csm(NULL),
 		m_shadowMapSize(2048),
-		m_numCascade(2)
+		m_numCascade(3)
 	{
 		m_type = ShadowMap;
 		m_lightDirection.set(-1.0f, -1.0f, -1.0f);
@@ -60,6 +60,12 @@ namespace Skylicht
 
 		core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
 		m_depthTexture = getVideoDriver()->addRenderTargetTextureArray(size, m_numCascade, "shadow_depth", ECF_R32F);
+	}
+
+	bool CShadowMapRP::canRenderMaterial(CMaterial *m)
+	{
+		// render all object
+		return true;
 	}
 
 	void CShadowMapRP::drawMeshBuffer(CMesh *mesh, int bufferID)
@@ -90,7 +96,14 @@ namespace Skylicht
 		entityManager->setRenderPipeline(this);
 
 		if (m_updateEntity == true)
+		{
 			entityManager->update();
+			entityManager->render();
+		}
+		else
+		{
+			entityManager->cullingAndRender();
+		}
 
 		CShaderShadow::setShadowMapRP(this);
 

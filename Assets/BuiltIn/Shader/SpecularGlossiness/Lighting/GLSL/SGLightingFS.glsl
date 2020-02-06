@@ -10,26 +10,39 @@ uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
 uniform vec4 uAmbientLightColor;
 uniform vec4 uLightColor;
-uniform vec2 uShadowDistance;
-uniform mat4 uShadowMatrix[2];
+uniform vec3 uShadowDistance;
+uniform mat4 uShadowMatrix[3];
 in vec2 varTexCoord0;
 out vec4 FragColor;
-float shadow(const vec4 shadowCoord[2], const float shadowDistance[2], const float farDistance)
+float texture2DCompare(vec3 uv, float compare){
+    float depth = texture(uShadowMap, uv).r;
+    return step(compare, depth);
+}
+float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
 {
 	int id = 0;
 	float visible = 1.0;
-	float bias = 0.0002;
+	float bias = 0.005;
 	float depth = 0.0;
-	float sampledDistance = 0.0;
+	float result = 0.0;
+	float size = 2048.0;
 	if (farDistance > shadowDistance[0])
 		id = 1;
 	if (farDistance > shadowDistance[1])
+		id = 2;
+	if (farDistance > shadowDistance[2])
 		return 1.0;
 	depth = shadowCoord[id].z;
-	sampledDistance = texture(uShadowMap, vec3(shadowCoord[id].xy, id)).r;
-	if (depth - bias > sampledDistance)
-        visible = 0.1f;
-	return visible;
+	vec2 uv = shadowCoord[id].xy;
+    for(int x=-1; x<=1; x++)
+	{
+        for(int y=-1; y<=1; y++)
+		{
+            vec2 off = vec2(x,y)/size;
+            result += texture2DCompare(vec3(uv+off, id), depth - bias);
+        }
+    }
+    return result/9.0;
 }
 const float EnvironmentScale = 3.0;
 const float PI = 3.1415926;
@@ -65,13 +78,13 @@ vec3 SG(
 	float oneMinusSpecularStrength = 1.0 - spec;
 	float metallic = solveMetallic(baseColor.rgb, specularColor, oneMinusSpecularStrength);
 	f0 = vec3(0.04, 0.04, 0.04);
-	vec3 diffuseColor = baseColor.rgb * (vec3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+	vec3 diffuseColor = baseColor.rgb;
 	specularColor = mix(f0, baseColor.rgb, metallic);
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	vec3 color = (ambient + NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
+	vec3 color = (NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
 	return color;
 }
 void main(void)
@@ -83,12 +96,14 @@ void main(void)
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
 	float depth = length(v);
-	vec4 shadowCoord[2];
+	vec4 shadowCoord[3];
 	shadowCoord[0] = uShadowMatrix[0] * vec4(position, 1.0);
 	shadowCoord[1] = uShadowMatrix[1] * vec4(position, 1.0);
-	float shadowDistance[2];
+	shadowCoord[2] = uShadowMatrix[2] * vec4(position, 1.0);
+	float shadowDistance[3];
 	shadowDistance[0] = uShadowDistance.x;
 	shadowDistance[1] = uShadowDistance.y;
+	shadowDistance[2] = uShadowDistance.z;
 	float visibility = shadow(shadowCoord, shadowDistance, depth);
 	vec3 color = SG(
 		albedo,

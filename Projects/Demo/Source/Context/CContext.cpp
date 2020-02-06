@@ -36,15 +36,23 @@ void CContext::releaseScene()
 
 CBaseRP* CContext::initRenderPipeline(int w, int h)
 {
+	// 1st
+	m_shadowMapRendering = new CShadowMapRP();
+	m_shadowMapRendering->initRender(w, h);
+
 	// 2nd
 	m_rendering = new CDeferredRP();
 	m_rendering->initRender(w, h);
 	m_rendering->enableUpdateEntity(false);
 
-	// 1st
-	m_shadowMapRendering = new CShadowMapRP();
-	m_shadowMapRendering->initRender(w, h);
+	// 3rd
+	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
+	m_forwardRP->enableUpdateEntity(false);
+
+	// link rp
 	m_shadowMapRendering->setNextPipeLine(m_rendering);
+	// m_rendering->setNextPipeLine(m_forwardRP);
 
 	m_beginRP = m_shadowMapRendering;
 	return m_beginRP;
@@ -62,6 +70,12 @@ void CContext::releaseRenderPipeline()
 	{
 		delete m_shadowMapRendering;
 		m_shadowMapRendering = NULL;
+	}
+
+	if (m_forwardRP != NULL)
+	{
+		delete m_forwardRP;
+		m_forwardRP = NULL;
 	}
 }
 
