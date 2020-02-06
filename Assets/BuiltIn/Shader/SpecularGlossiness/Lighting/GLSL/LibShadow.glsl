@@ -1,6 +1,6 @@
 float texture2DCompare(vec3 uv, float compare){
-    float depth = texture(uShadowMap, uv).r;
-    return step(compare, depth);
+	float depth = texture(uShadowMap, uv).r;
+	return step(compare, depth);
 }
 
 float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
@@ -23,14 +23,14 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 	depth = shadowCoord[id].z;
 	vec2 uv = shadowCoord[id].xy;
 	
-    for(int x=-1; x<=1; x++)
+	for(int x=-1; x<=1; x++)
 	{
-        for(int y=-1; y<=1; y++)
+		for(int y=-1; y<=1; y++)
 		{
-            vec2 off = vec2(x,y)/size;			
-            result += texture2DCompare(vec3(uv+off, id), depth - bias);
-        }
-    }
+			vec2 off = vec2(x,y)/size;
+			result += texture2DCompare(vec3(uv+off, id), depth - bias);
+		}
+	}
 	
-    return result/9.0;
+	return result/9.0;
 }

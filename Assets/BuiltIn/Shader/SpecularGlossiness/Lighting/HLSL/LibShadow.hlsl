@@ -1,6 +1,6 @@
 float texture2DCompare(float3 uv, float compare){
-    float depth = uShadowMap.Sample(uShadowMapSampler, uv).r;
-    return step(compare, depth);
+	float depth = uShadowMap.Sample(uShadowMapSampler, uv).r;
+	return step(compare, depth);
 }
 
 float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
@@ -24,15 +24,15 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	float2 uv = shadowCoord[id].xy;
 	
 	[unroll]
-    for(int x=-1; x<=1; x++)
+	for(int x=-1; x<=1; x++)
 	{
 		[unroll]
-        for(int y=-1; y<=1; y++)
+		for(int y=-1; y<=1; y++)
 		{
-            float2 off = float2(x,y)/size;
-            result += texture2DCompare(float3(uv+off, id), depth - bias);
-        }
-    }
+			float2 off = float2(x,y)/size;
+			result += texture2DCompare(float3(uv+off, id), depth - bias);
+		}
+	}
 	
-    return result/9.0;
+	return result/9.0;
 }
