@@ -31,6 +31,9 @@ def compress(inputFile, outputFile):
     print(command)
     os.system(command)
 
+    etcOutputFile = outputFile.replace("_e.pvr", ".epvr")
+    os.rename(outputFile, etcOutputFile)
+
 
 def needBuildTexture(filename):
     for fileType in textureExt:
@@ -47,7 +50,7 @@ def buildCompressTexture(dirName):
         for file in files:
             if needBuildTexture(file):
                 outputFile = file
-                outputFile = outputFile.replace(".tga", ".pvr")
+                outputFile = outputFile.replace(".tga", "_e.pvr")
 
                 print("%s <- %s" % (outputFile, file))
 
