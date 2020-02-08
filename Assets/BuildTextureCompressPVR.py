@@ -8,12 +8,12 @@ import json
 textureExt = [".tga"]
 compressTools = "..\\Tools\\PVRTexTool\\PVRTexToolCLI.exe"
 
-db = TinyDB('CacheETC.json')
+db = TinyDB('CachePVR.json')
 fileQuery = Query()
 
 print("---------------------------------------------")
-print("COMPRESS TEXTURE TO ETC")
-print("Delete CacheETC.json if you want rebuild all")
+print("COMPRESS TEXTURE TO PVRTC")
+print("Delete CachePVR.json if you want rebuild all")
 print("---------------------------------------------")
 print("")
 
@@ -21,10 +21,7 @@ print("")
 def compress(inputFile, outputFile):
     # call build tools
     im = Image.open(inputFile)
-    format = "ETC2_RGB"
-    if im.mode == "RGBA":
-        format = "ETC2_RGBA"
-    params = "-f %s -m -q etcfastperceptual" % (format)
+    params = "-q pvrtcfast -f PVRTC2_4 -m"
     command = "%s %s -i %s -o %s" % (
         compressTools, params, inputFile, outputFile
     )
