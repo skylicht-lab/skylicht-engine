@@ -44,7 +44,6 @@ namespace Skylicht
 
 		CCamera *m_camera;
 
-		IEntitySystem *m_cullingSystem;
 		IRenderPipeline *m_renderPipeline;
 
 	public:
