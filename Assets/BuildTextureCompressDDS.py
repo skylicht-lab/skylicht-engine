@@ -7,6 +7,7 @@ import json
 normalMap = ["_norm.", "_ddn.", "_n."]
 textureExt = [".tga"]
 compressTools = "..\\Tools\\NvTools\\nvcompress.exe"
+
 db = TinyDB('CacheDDS.json')
 fileQuery = Query()
 
