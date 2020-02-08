@@ -15,6 +15,7 @@
 
 #include "Camera/CEditorCamera.h"
 #include "Lighting/CDirectionalLight.h"
+#include "Lighting/CPointLight.h"
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 #include "RenderMesh/CRenderMesh.h"
@@ -91,11 +92,25 @@ void CViewInit::initScene()
 	core::vector3df direction = core::vector3df(-1.0f, -7.0f, -1.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
+	core::vector3df pointLightPosition[] = {
+		{5.595442f, 0.8f, -2.00912f},
+		{5.6f, 0.8f, 2.25},
+		{-6.018463f, 0.8f, -2.0211f},
+		{-6.007851f, 0.8f, 2.237712f},
+	};
+
+	for (int i = 0; i < 4; i++)
+	{
+		CGameObject *pointLightObj = zone->createEmptyObject();
+		CPointLight *pointLight = pointLightObj->addComponent<CPointLight>();
+		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
+		pointLightTransform->setPosition(pointLightPosition[i]);
+	}
+
 	// grid
 	// zone->createEmptyObject()->addComponent<CGridPlane>();
 
 	// sponza
-	/*
 	CMeshManager *meshManager = CMeshManager::getInstance();
 	CEntityPrefab *prefab = NULL;
 
@@ -118,7 +133,6 @@ void CViewInit::initScene()
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
 	}
-	*/
 
 	// test dae model & animation
 	/*

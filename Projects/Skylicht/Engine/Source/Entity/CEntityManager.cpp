@@ -34,6 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CSkinnedMeshSystem.h"
 #include "RenderMesh/CSoftwareSkinningSystem.h"
 #include "Culling/CCullingSystem.h"
+#include "Lighting/CLightCullingSystem.h"
 
 namespace Skylicht
 {
@@ -50,7 +51,8 @@ namespace Skylicht
 		addSystem<CSoftwareSkinningSystem>();
 
 		// culling system
-		m_cullingSystem = addRenderSystem<CCullingSystem>();
+		addRenderSystem<CCullingSystem>();
+		addRenderSystem<CLightCullingSystem>();
 
 		// systems run after culling
 		addRenderSystem<CMeshRenderer>();
