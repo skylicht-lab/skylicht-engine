@@ -79,7 +79,7 @@ namespace irr
 			else if (OriginalSize == Size)
 			{
 				Image = Driver->createImage(ColorFormat, OriginalSize);
-				origImage->copyTo(Image);				
+				origImage->copyTo(Image);
 				Image->swapBG();
 			}
 			else
@@ -325,6 +325,23 @@ namespace irr
 				type = GL_COMPRESSED_RGBA8_ETC2_EAC;
 				break;
 #endif
+			case ECF_DXT1:
+				colorformat = GL_BGRA_EXT;
+				type = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+				internalformat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+				break;
+			case ECF_DXT2:
+			case ECF_DXT3:
+				colorformat = GL_BGRA_EXT;
+				type = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+				internalformat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+				break;
+			case ECF_DXT4:
+			case ECF_DXT5:
+				colorformat = GL_BGRA_EXT;
+				type = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+				internalformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+				break;
 			case ECF_D16:
 				colorformat = GL_DEPTH_COMPONENT;
 				type = GL_UNSIGNED_BYTE;
@@ -459,7 +476,7 @@ namespace irr
 			{
 				// auto generate if possible and no mipmap data is given
 				if (!IsCompressed && HasMipMaps && !mipmapData && Driver->queryFeature(EVDF_MIP_MAP_AUTO_UPDATE))
-				{					
+				{
 					if (Driver->getTextureCreationFlag(ETCF_OPTIMIZED_FOR_SPEED))
 						glHint(GL_GENERATE_MIPMAP_HINT, GL_FASTEST);
 					else if (Driver->getTextureCreationFlag(ETCF_OPTIMIZED_FOR_QUALITY))
@@ -487,7 +504,7 @@ namespace irr
 			if (newTexture)
 			{
 				if (IsCompressed)
-				{					
+				{
 					compressedDataSize = IImage::getCompressedImageSize(ColorFormat, image->getDimension().Width, image->getDimension().Height);
 					glCompressedTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, image->getDimension().Width, image->getDimension().Height, 0, compressedDataSize, source);
 				}
@@ -540,7 +557,7 @@ namespace irr
 		{
 			if (IsCompressed)
 				return 0;
-			
+
 			return NULL;
 		}
 
@@ -615,7 +632,7 @@ namespace irr
 
 				if (IsCompressed)
 				{
-					compressedDataSize = IImage::getCompressedImageSize(ColorFormat, width, height);					
+					compressedDataSize = IImage::getCompressedImageSize(ColorFormat, width, height);
 					glCompressedTexImage2D(GL_TEXTURE_2D, i, InternalFormat, width, height, 0, compressedDataSize, target);
 				}
 				else
@@ -632,8 +649,7 @@ namespace irr
 
 					target = static_cast<u8*>(mipmapData);
 				}
-			} 
-			while (width != 1 || height != 1);
+			} while (width != 1 || height != 1);
 
 			// cleanup
 			if (!mipmapData)
@@ -726,7 +742,7 @@ namespace irr
 			default:
 				break;
 			}
-			
+
 			InternalFormat = getOpenGLFormatAndParametersFromColorFormat(format, FilteringType, PixelFormat, PixelType);
 
 			HasMipMaps = false;
@@ -949,15 +965,15 @@ namespace irr
 			{
 				//Our FBO is perfect, return true
 			case GL_FRAMEBUFFER_COMPLETE:
-				return true;			
+				return true;
 
 			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
 				os::Printer::log("FBO has one or several incomplete image attachments", ELL_ERROR);
-				break;			
+				break;
 
 			case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
 				os::Printer::log("FBO has one or several image attachments with different dimensions", ELL_ERROR);
-				break;			
+				break;
 
 			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
 				os::Printer::log("FBO missing an image attachment", ELL_ERROR);

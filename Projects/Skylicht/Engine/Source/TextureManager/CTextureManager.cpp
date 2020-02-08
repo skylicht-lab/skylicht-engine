@@ -153,10 +153,15 @@ namespace Skylicht
 		// try to load compress texture
 		if (driver->getDriverType() == video::EDT_OPENGLES)
 		{
-#ifdef IOS
+#if defined(IOS)
 			CStringImp::replacePathExt(ansiPath, ".pvr");
+#elif defined(__EMSCRIPTEN__)
+			if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
+				CStringImp::replacePathExt(ansiPath, ".dds");
+			else
+				CStringImp::replacePathExt(ansiPath, ".pvr");
 #else
-			CStringImp::replacePathExt(ansiPath, ".etc");
+			CStringImp::replacePathExt(ansiPath, ".pvr");
 #endif
 		}
 		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
@@ -209,12 +214,17 @@ namespace Skylicht
 		// try to load compress texture
 		if (driver->getDriverType() == video::EDT_OPENGLES)
 		{
-#ifdef IOS
+#if defined(IOS)
 			CStringImp::replacePathExt(ansiPath, ".pvr");
+#elif defined(__EMSCRIPTEN__)
+			if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
+				CStringImp::replacePathExt(ansiPath, ".dds");
+			else
+				CStringImp::replacePathExt(ansiPath, ".pvr");
 #else
-			CStringImp::replacePathExt(ansiPath, ".etc");
+			CStringImp::replacePathExt(ansiPath, ".pvr");
 #endif
-		}
+	}
 		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
 		{
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -273,7 +283,7 @@ namespace Skylicht
 			m_nullTexture = driver->getTexture("BuiltIn/Textures/NullTexture.png");
 
 		return texture;
-	}
+}
 
 	ITexture* CTextureManager::getTextureArray(std::vector<std::string>& listTexture)
 	{
@@ -301,10 +311,15 @@ namespace Skylicht
 
 			// try to load compress texture
 			if (driver->getDriverType() == video::EDT_OPENGLES)
-#ifdef IOS
+#if defined(IOS)
 				CStringImp::replacePathExt(ansiPath, ".pvr");
+#elif defined(__EMSCRIPTEN__)
+				if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
+					CStringImp::replacePathExt(ansiPath, ".dds");
+				else
+					CStringImp::replacePathExt(ansiPath, ".pvr");
 #else
-				CStringImp::replacePathExt(ansiPath, ".etc");
+				CStringImp::replacePathExt(ansiPath, ".pvr");
 #endif
 			else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
 				CStringImp::replacePathExt(ansiPath, ".dds");
