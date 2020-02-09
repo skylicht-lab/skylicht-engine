@@ -98,7 +98,7 @@ namespace Skylicht
 			CCamera *camera = entityManager->getCamera();
 			culling->Visible = lightBox.intersectsWithBox(camera->getViewFrustum().getBoundingBox());
 
-			// 2. Detect algorithm 
+			// 2. Detect algorithm
 			if (culling->Visible == true)
 			{
 				SViewFrustum frust = camera->getViewFrustum();

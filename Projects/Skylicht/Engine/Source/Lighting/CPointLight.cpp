@@ -55,4 +55,9 @@ namespace Skylicht
 		m_cullingData->BBox.MaxEdge.set(r, r, r);
 		m_cullingData->BBox.MinEdge.set(-r, -r, -r);
 	}
+
+	core::vector3df CPointLight::getPosition()
+	{
+		return m_gameObject->getTransform()->getMatrixTransform().getTranslation();
+	}
 }

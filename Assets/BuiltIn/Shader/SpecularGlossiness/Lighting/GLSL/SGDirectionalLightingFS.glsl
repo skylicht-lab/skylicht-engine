@@ -5,10 +5,10 @@ uniform sampler2D uTexAlbedo;
 uniform sampler2D uTexPosition;
 uniform sampler2D uTexNormal;
 uniform sampler2D uTexData;
+uniform sampler2D uTexLight;
 uniform sampler2DArray uShadowMap;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
-uniform vec4 uAmbientLightColor;
 uniform vec4 uLightColor;
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
@@ -44,8 +44,6 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 	}
 	return result/9.0;
 }
-const float EnvironmentScale = 3.0;
-const float PI = 3.1415926;
 const float MinReflectance = 0.04;
 float getPerceivedBrightness(vec3 color)
 {
@@ -68,9 +66,9 @@ vec3 SG(
 	const vec3 worldViewDir,
 	const vec3 worldLightDir,
 	const vec3 worldNormal,
-	const vec3 ambient,
 	const vec3 lightColor,
-	const float visibility)
+	const float visibility,
+	const vec3 light)
 {
 	float roughness = 1.0 - gloss;
 	vec3 f0 = vec3(spec, spec, spec);
@@ -84,7 +82,8 @@ vec3 SG(
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	vec3 color = (NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
+	vec3 directionalLight = NdotL * lightColor * visibility + specular * specularColor * visibility;
+	vec3 color = (directionalLight + light) * diffuseColor;
 	return color;
 }
 void main(void)
@@ -93,6 +92,7 @@ void main(void)
 	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
+	vec3 light = texture(uTexLight, varTexCoord0.xy).rgb;
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
 	float depth = length(v);
@@ -112,8 +112,8 @@ void main(void)
 		viewDir,
 		uLightDirection.xyz,
 		normal,
-		uAmbientLightColor.rgb,
 		uLightColor.rgb,
-		visibility);
+		visibility,
+		light);
 	FragColor = vec4(color, 1.0);
 }

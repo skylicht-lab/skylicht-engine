@@ -56,7 +56,8 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGLighting.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLighting.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLighting.xml");
 }
 
 void CViewInit::initScene()
@@ -93,10 +94,10 @@ void CViewInit::initScene()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	core::vector3df pointLightPosition[] = {
-		{5.595442f, 0.8f, -2.00912f},
-		{5.6f, 0.8f, 2.25},
-		{-6.018463f, 0.8f, -2.0211f},
-		{-6.007851f, 0.8f, 2.237712f},
+		{-5.595442f, 0.8f, 2.00912f},
+		{-5.6f, 0.8f, -2.25},
+		{6.018463f, 0.8f, 2.0211f},
+		{6.007851f, 0.8f, -2.237712f},
 	};
 
 	for (int i = 0; i < 4; i++)
