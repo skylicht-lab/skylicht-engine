@@ -36,6 +36,9 @@ namespace Skylicht
 		ITexture *m_normal;
 		ITexture *m_data;
 
+		ITexture *m_lightBuffer1;
+		ITexture *m_lightBuffer2;
+
 		core::dimension2du m_size;
 
 		core::array<irr::video::IRenderTarget> m_multiRenderTarget;
@@ -43,7 +46,14 @@ namespace Skylicht
 		core::matrix4 m_viewMatrix;
 		core::matrix4 m_projectionMatrix;
 
-		SMaterial m_material;
+		SMaterial m_pointLightPass;
+		SMaterial m_directionalLightPass;
+
+	protected:
+
+		void initDefferredMaterial();
+		void initPointLightMaterial();
+
 	public:
 		CDeferredRP();
 
