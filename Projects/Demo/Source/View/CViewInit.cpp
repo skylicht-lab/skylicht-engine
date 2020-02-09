@@ -108,9 +108,6 @@ void CViewInit::initScene()
 		pointLightTransform->setPosition(pointLightPosition[i]);
 	}
 
-	// grid
-	// zone->createEmptyObject()->addComponent<CGridPlane>();
-
 	// sponza
 	CMeshManager *meshManager = CMeshManager::getInstance();
 	CEntityPrefab *prefab = NULL;
@@ -134,55 +131,6 @@ void CViewInit::initScene()
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
 	}
-
-	// test dae model & animation
-	/*
-	CAnimationManager *animManager = CAnimationManager::getInstance();
-	CAnimationClip *animIdle = animManager->loadAnimation("Demo/Model3D/Hero@Idle.dae");
-	CAnimationClip *animWalkForward = animManager->loadAnimation("Demo/Model3D/Hero@WalkForward.dae");
-	CAnimationClip *animRunForward = animManager->loadAnimation("Demo/Model3D/Hero@RunForward.dae");
-
-	prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
-	if (prefab != NULL)
-	{
-		// instance object 1
-		CGameObject *model = zone->createEmptyObject();
-		model->addComponent<CRenderMesh>()->initFromPrefab(prefab);
-
-		// setup animation
-		CAnimationController *animController = model->addComponent<CAnimationController>();
-
-		CSkeleton *skeletonIdle = animController->createSkeleton();
-		CSkeleton *skeletonWalkForward = animController->createSkeleton();
-		CSkeleton *skeletonRunForward = animController->createSkeleton();
-
-		CSkeleton *output = animController->createSkeleton();
-		output->setAnimationType(CSkeleton::Blending);
-
-		// set animation clip
-		skeletonIdle->setAnimation(animIdle, true);
-		skeletonIdle->getTimeline().Weight = 0.0f;
-
-		skeletonWalkForward->setAnimation(animWalkForward, true);
-		skeletonWalkForward->getTimeline().Weight = 0.0f;
-
-		skeletonRunForward->setAnimation(animRunForward, true);
-		skeletonRunForward->getTimeline().Weight = 1.0f;
-
-		// blending
-		skeletonIdle->setTarget(output);
-		skeletonWalkForward->setTarget(output);
-		skeletonRunForward->setTarget(output);
-
-		// output animation
-		animController->setOutput(output);
-
-		// setup transform
-		CTransformEuler *transform = model->getTransformEuler();
-		transform->setPosition(core::vector3df(0.0f, 0.0f, 2.0f));
-		transform->setYaw(45.0f);
-	}
-	*/
 
 	// save to context
 	CContext *context = CContext::getInstance();

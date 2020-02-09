@@ -58,11 +58,8 @@ namespace Skylicht
 		if (m_data != NULL)
 			driver->removeTexture(m_data);
 
-		if (m_lightBuffer1 != NULL)
-			driver->removeTexture(m_lightBuffer1);
-
-		if (m_lightBuffer2 != NULL)
-			driver->removeTexture(m_lightBuffer2);
+		if (m_lightBuffer != NULL)
+			driver->removeTexture(m_lightBuffer);
 
 		m_multiRenderTarget.clear();
 
@@ -79,8 +76,7 @@ namespace Skylicht
 		m_normal = driver->addRenderTargetTexture(m_size, "normal", ECF_A32B32G32R32F);
 		m_data = driver->addRenderTargetTexture(m_size, "data", ECF_A8R8G8B8);
 
-		m_lightBuffer1 = driver->addRenderTargetTexture(m_size, "light_01", ECF_A8R8G8B8);
-		m_lightBuffer2 = driver->addRenderTargetTexture(m_size, "light_02", ECF_A8R8G8B8);
+		m_lightBuffer = driver->addRenderTargetTexture(m_size, "light", ECF_A8R8G8B8);
 
 		// setup multi render target
 		m_multiRenderTarget.push_back(m_albedo);
@@ -101,6 +97,9 @@ namespace Skylicht
 		m_directionalLightPass.setTexture(1, m_position);
 		m_directionalLightPass.setTexture(2, m_normal);
 		m_directionalLightPass.setTexture(3, m_data);
+		
+		// point light color
+		m_directionalLightPass.setTexture(4, m_lightBuffer);
 
 		// turn off mipmap on float texture	
 		m_directionalLightPass.TextureLayer[1].BilinearFilter = false;
@@ -192,10 +191,7 @@ namespace Skylicht
 
 
 		// render light pass, clear black color
-		driver->setRenderTarget(m_lightBuffer1, true, false);
-		driver->setRenderTarget(m_lightBuffer2, true, false);
-
-		ITexture *lightBuffer = NULL;
+		driver->setRenderTarget(m_lightBuffer, true, false);
 
 		CLightCullingSystem *lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
@@ -207,33 +203,16 @@ namespace Skylicht
 				CPointLight *pointLight = dynamic_cast<CPointLight*>(light);
 				if (pointLight != NULL)
 				{
-					if (lightBuffer == NULL || lightBuffer == m_lightBuffer2)
-					{
-						lightBuffer = m_lightBuffer1;
-						m_pointLightPass.setTexture(4, m_lightBuffer2);
-					}
-					else
-					{
-						lightBuffer = m_lightBuffer2;
-						m_pointLightPass.setTexture(4, m_lightBuffer1);
-					}
-
 					CShaderLighting::setPointLight(pointLight);
 
-					// render current point light to light buffer
-					driver->setRenderTarget(lightBuffer, true, false);
 					beginRender2D(renderW, renderH);
 					renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
 				}
 			}
 		}
 
-
 		// render final light to screen
 		driver->setRenderTarget(target, true, false);
-
-		// point light color
-		m_directionalLightPass.setTexture(4, lightBuffer);
 
 		// shadow
 		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
