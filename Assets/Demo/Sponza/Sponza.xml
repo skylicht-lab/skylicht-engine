@@ -1,0 +1,172 @@
+<Materials>
+	<Material name='bricks-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/spnza_bricks_a_diff.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/spnza_bricks_a_ddn.tga'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/spnza_bricks_a_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='flagpole-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_flagpole_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_flagpole_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='column_b-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_column_b_diff.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/sponza_column_b_ddn.tga'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_column_b_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='vase_hanging-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/vase_hanging.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+		</Textures>
+	</Material>
+	<Material name='column_c-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_column_c_diff.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/sponza_column_c_ddn.tga'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_column_c_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='Material__57-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/vase_plant.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpecGloss' path='Demo/Sponza/Textures/vase_plant_spec.tga'/>
+			<Texture name='uTexMask' path='Demo/Sponza/Textures/vase_plant_mask.tga'/>
+		</Textures>
+	</Material>
+	<Material name='vase_round-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/vase_round.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/vase_round_ddn.tga'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/vase_round_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='column_a-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_column_a_diff.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/sponza_column_a_ddn.tga'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_column_a_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='vase-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/vase_dif.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/vase_ddn.tga'/>
+		</Textures>
+	</Material>
+	<Material name='ceiling-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_ceiling_a_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_ceiling_a_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='arch-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_arch_diff.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/sponza_arch_ddn.tga'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_arch_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='chain-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/chain_texture.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/chain_texture_ddn.tga'/>
+		</Textures>
+	</Material>
+	<Material name='leaf-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_thorn_diff.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/sponza_thorn_ddn.tga'/>
+			<Texture name='uTexSpecGloss' path='Demo/Sponza/Textures/sponza_thorn_spec.tga'/>
+			<Texture name='uTexMask' path='Demo/Sponza/Textures/sponza_thorn_mask.tga'/>
+		</Textures>
+	</Material>
+	<Material name='fabric_c-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_curtain_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_fabric_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='fabric_d-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_fabric_blue_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_fabric_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='roof-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_roof_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+		</Textures>
+	</Material>
+	<Material name='fabric_f-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_curtain_green_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_fabric_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='details-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_details_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_details_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='floor-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_floor_a_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_floor_a_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='Material__25-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/lion.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/lion_ddn.tga'/>
+		</Textures>
+	</Material>
+	<Material name='Material__298-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/background.tga'/>
+			<Texture name='uTexNormal' path='Demo/Sponza/Textures/background_ddn.tga'/>
+		</Textures>
+	</Material>
+	<Material name='fabric_g-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_curtain_blue_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_fabric_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='fabric_e-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_fabric_green_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_fabric_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='fabric_a-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='Demo/Sponza/Textures/sponza_fabric_diff.tga'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+			<Texture name='uTexSpec' path='Demo/Sponza/Textures/sponza_fabric_spec.tga'/>
+		</Textures>
+	</Material>
+	<Material name='Material__47-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='BuiltIn/Textures/NullTexture.png'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
+		</Textures>
+	</Material>
+</Materials>
