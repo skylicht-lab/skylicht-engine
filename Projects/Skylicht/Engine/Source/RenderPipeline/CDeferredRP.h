@@ -36,8 +36,7 @@ namespace Skylicht
 		ITexture *m_normal;
 		ITexture *m_data;
 
-		ITexture *m_lightBuffer1;
-		ITexture *m_lightBuffer2;
+		ITexture *m_lightBuffer;
 
 		core::dimension2du m_size;
 

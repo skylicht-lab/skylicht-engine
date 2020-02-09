@@ -6,8 +6,6 @@ Texture2D uTexNormal : register(t2);
 SamplerState uTexNormalSampler : register(s2);
 Texture2D uTexData : register(t3);
 SamplerState uTexDataSampler : register(s3);
-Texture2D uTexLight : register(t4);
-SamplerState uTexLightSampler : register(s4);
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
@@ -41,7 +39,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
 	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
 	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
-	float3 light = uTexLight.Sample(uTexLightSampler, input.tex0).xyz;
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
 	float spec = data.r;
@@ -63,5 +60,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float NdotE = max(0.0,dot(normal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	float3 lightColor = uLightColor.rgb * (NdotL * attenuation) + specular * specularColor.rgb * attenuation;
-	return float4(light + lightColor, 1.0);
+	return float4(lightColor, 1.0);
 }

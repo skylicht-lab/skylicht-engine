@@ -6,7 +6,6 @@ uniform sampler2D uTexAlbedo;
 uniform sampler2D uTexPosition;
 uniform sampler2D uTexNormal;
 uniform sampler2D uTexData;
-uniform sampler2D uTexLight;
 
 uniform vec4 uCameraPosition;
 uniform vec4 uLightPosition;
@@ -25,7 +24,6 @@ void main(void)
 	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
-	vec3 light = texture(uTexLight, varTexCoord0.xy).rgb;
 	
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
@@ -62,5 +60,5 @@ void main(void)
 	
 	vec3 lightColor = uLightColor.rgb * (NdotL * attenuation) + specular * specularColor.rgb * attenuation;
 	
-	FragColor = vec4(lightColor + light, 1.0);
+	FragColor = vec4(lightColor, 1.0);
 }
