@@ -6,11 +6,11 @@ uniform sampler2D uTexAlbedo;
 uniform sampler2D uTexPosition;
 uniform sampler2D uTexNormal;
 uniform sampler2D uTexData;
+uniform sampler2D uTexLight;
 uniform sampler2DArray uShadowMap;
 
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
-uniform vec4 uAmbientLightColor;
 uniform vec4 uLightColor;
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
@@ -28,6 +28,7 @@ void main(void)
 	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
+	vec3 light = texture(uTexLight, varTexCoord0.xy).rgb;
 	
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
@@ -47,7 +48,7 @@ void main(void)
 
 	float visibility = shadow(shadowCoord, shadowDistance, depth);
 	
-	// lighting
+	// lighting	
 	vec3 color = SG(
 		albedo, 
 		data.r, 
@@ -55,9 +56,9 @@ void main(void)
 		viewDir,
 		uLightDirection.xyz,
 		normal,
-		uAmbientLightColor.rgb,
 		uLightColor.rgb,
-		visibility);
-	
+		visibility,
+		light);
+		
 	FragColor = vec4(color, 1.0);
 }

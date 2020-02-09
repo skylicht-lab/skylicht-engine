@@ -27,6 +27,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/CMaterial.h"
 #include "Material/Shader/CShaderManager.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "Lighting/CLightCullingSystem.h"
+#include "Lighting/CPointLight.h"
 
 namespace Skylicht
 {
@@ -55,6 +58,12 @@ namespace Skylicht
 		if (m_data != NULL)
 			driver->removeTexture(m_data);
 
+		if (m_lightBuffer1 != NULL)
+			driver->removeTexture(m_lightBuffer1);
+
+		if (m_lightBuffer2 != NULL)
+			driver->removeTexture(m_lightBuffer2);
+
 		m_multiRenderTarget.clear();
 
 	}
@@ -70,6 +79,9 @@ namespace Skylicht
 		m_normal = driver->addRenderTargetTexture(m_size, "normal", ECF_A32B32G32R32F);
 		m_data = driver->addRenderTargetTexture(m_size, "data", ECF_A8R8G8B8);
 
+		m_lightBuffer1 = driver->addRenderTargetTexture(m_size, "light_01", ECF_A8R8G8B8);
+		m_lightBuffer2 = driver->addRenderTargetTexture(m_size, "light_02", ECF_A8R8G8B8);
+
 		// setup multi render target
 		m_multiRenderTarget.push_back(m_albedo);
 		m_multiRenderTarget.push_back(m_position);
@@ -77,29 +89,66 @@ namespace Skylicht
 		m_multiRenderTarget.push_back(m_data);
 
 		// setup material
-		m_material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGLighting");
+		initDefferredMaterial();
+		initPointLightMaterial();
+	}
 
-		m_material.setTexture(0, m_albedo);
-		m_material.setTexture(1, m_position);
-		m_material.setTexture(2, m_normal);
-		m_material.setTexture(3, m_data);
+	void CDeferredRP::initDefferredMaterial()
+	{
+		m_directionalLightPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGDirectionalLighting");
+
+		m_directionalLightPass.setTexture(0, m_albedo);
+		m_directionalLightPass.setTexture(1, m_position);
+		m_directionalLightPass.setTexture(2, m_normal);
+		m_directionalLightPass.setTexture(3, m_data);
 
 		// turn off mipmap on float texture	
-		m_material.TextureLayer[1].BilinearFilter = false;
-		m_material.TextureLayer[1].TrilinearFilter = false;
-		m_material.TextureLayer[1].AnisotropicFilter = 0;
+		m_directionalLightPass.TextureLayer[1].BilinearFilter = false;
+		m_directionalLightPass.TextureLayer[1].TrilinearFilter = false;
+		m_directionalLightPass.TextureLayer[1].AnisotropicFilter = 0;
 
-		m_material.TextureLayer[2].BilinearFilter = false;
-		m_material.TextureLayer[2].TrilinearFilter = false;
-		m_material.TextureLayer[2].AnisotropicFilter = 0;
+		m_directionalLightPass.TextureLayer[2].BilinearFilter = false;
+		m_directionalLightPass.TextureLayer[2].TrilinearFilter = false;
+		m_directionalLightPass.TextureLayer[2].AnisotropicFilter = 0;
 
-		m_material.TextureLayer[4].BilinearFilter = false;
-		m_material.TextureLayer[4].TrilinearFilter = false;
-		m_material.TextureLayer[4].AnisotropicFilter = 0;
+		m_directionalLightPass.TextureLayer[4].BilinearFilter = false;
+		m_directionalLightPass.TextureLayer[4].TrilinearFilter = false;
+		m_directionalLightPass.TextureLayer[4].AnisotropicFilter = 0;
 
 		// disable Z
-		m_material.ZBuffer = video::ECFN_DISABLED;
-		m_material.ZWriteEnable = false;
+		m_directionalLightPass.ZBuffer = video::ECFN_DISABLED;
+		m_directionalLightPass.ZWriteEnable = false;
+	}
+
+	void CDeferredRP::initPointLightMaterial()
+	{
+		m_pointLightPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGPointLighting");
+
+		m_pointLightPass.setTexture(0, m_albedo);
+		m_pointLightPass.setTexture(1, m_position);
+		m_pointLightPass.setTexture(2, m_normal);
+		m_pointLightPass.setTexture(3, m_data);
+
+		// turn off mipmap on float texture	
+		m_pointLightPass.TextureLayer[0].BilinearFilter = false;
+		m_pointLightPass.TextureLayer[0].TrilinearFilter = false;
+		m_pointLightPass.TextureLayer[0].AnisotropicFilter = 0;
+
+		m_pointLightPass.TextureLayer[1].BilinearFilter = false;
+		m_pointLightPass.TextureLayer[1].TrilinearFilter = false;
+		m_pointLightPass.TextureLayer[1].AnisotropicFilter = 0;
+
+		m_pointLightPass.TextureLayer[2].BilinearFilter = false;
+		m_pointLightPass.TextureLayer[2].TrilinearFilter = false;
+		m_pointLightPass.TextureLayer[2].AnisotropicFilter = 0;
+
+		m_pointLightPass.TextureLayer[3].BilinearFilter = false;
+		m_pointLightPass.TextureLayer[3].TrilinearFilter = false;
+		m_pointLightPass.TextureLayer[3].AnisotropicFilter = 0;
+
+		// disable Z
+		m_pointLightPass.ZBuffer = video::ECFN_DISABLED;
+		m_pointLightPass.ZWriteEnable = false;
 	}
 
 	bool CDeferredRP::canRenderMaterial(CMaterial *material)
@@ -138,22 +187,61 @@ namespace Skylicht
 		m_projectionMatrix = driver->getTransform(video::ETS_PROJECTION);
 		m_viewMatrix = driver->getTransform(video::ETS_VIEW);
 
-		// render to screen
 		float renderW = (float)m_size.Width;
 		float renderH = (float)m_size.Height;
 
+
+		// render light pass, clear black color
+		driver->setRenderTarget(m_lightBuffer1, true, false);
+		driver->setRenderTarget(m_lightBuffer2, true, false);
+
+		ITexture *lightBuffer = NULL;
+
+		CLightCullingSystem *lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
+		if (lightCullingSystem != NULL)
+		{
+			core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
+			for (u32 i = 0, n = listLight.size(); i < n; i++)
+			{
+				CLight *light = listLight[i]->Light;
+				CPointLight *pointLight = dynamic_cast<CPointLight*>(light);
+				if (pointLight != NULL)
+				{
+					if (lightBuffer == NULL || lightBuffer == m_lightBuffer2)
+					{
+						lightBuffer = m_lightBuffer1;
+						m_pointLightPass.setTexture(4, m_lightBuffer2);
+					}
+					else
+					{
+						lightBuffer = m_lightBuffer2;
+						m_pointLightPass.setTexture(4, m_lightBuffer1);
+					}
+
+					CShaderLighting::setPointLight(pointLight);
+
+					// render current point light to light buffer
+					driver->setRenderTarget(lightBuffer, true, false);
+					beginRender2D(renderW, renderH);
+					renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
+				}
+			}
+		}
+
+
+		// render final light to screen
 		driver->setRenderTarget(target, true, false);
 
-		// set shadow depth
+		// point light color
+		m_directionalLightPass.setTexture(4, lightBuffer);
+
+		// shadow
 		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
 		if (shadowRP != NULL)
-			m_material.setTexture(4, shadowRP->getDepthTexture());
+			m_directionalLightPass.setTexture(5, shadowRP->getDepthTexture());
 
 		beginRender2D(renderW, renderH);
-		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_material);
-
-		// fix DX11: [AndUnorderedAccessViews]: Forcing PS shader resource
-		// unbindRTT();
+		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 
 		onNext(target, camera, entityManager);
 	}

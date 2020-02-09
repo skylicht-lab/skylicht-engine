@@ -42,5 +42,9 @@ namespace Skylicht
 		virtual void initComponent();
 
 		virtual void updateComponent();
+
+	public:
+
+		core::vector3df getPosition();
 	};
 }

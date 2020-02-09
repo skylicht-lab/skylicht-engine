@@ -6,8 +6,10 @@ Texture2D uTexNormal : register(t2);
 SamplerState uTexNormalSampler : register(s2);
 Texture2D uTexData : register(t3);
 SamplerState uTexDataSampler : register(s3);
-Texture2DArray uShadowMap : register(t4);
-SamplerState uShadowMapSampler : register(s4);
+Texture2D uLight : register(t4);
+SamplerState uLightSampler : register(s4);
+Texture2DArray uShadowMap : register(t5);
+SamplerState uShadowMapSampler : register(s5);
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
@@ -17,7 +19,6 @@ cbuffer cbPerFrame
 {
 	float4 uCameraPosition;
 	float4 uLightDirection;
-	float4 uAmbientLightColor;
 	float4 uLightColor;
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
@@ -76,9 +77,9 @@ float3 SG(
 	const float3 worldViewDir,
 	const float3 worldLightDir,
 	const float3 worldNormal,
-	const float3 ambient,
 	const float3 lightColor,
-	const float visibility)
+	const float visibility,
+	const float3 light)
 {
 	float roughness = 1.0 - gloss;
 	float3 f0 = spec;
@@ -92,7 +93,8 @@ float3 SG(
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	float3 color = (NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
+	float3 directionalLight = NdotL * lightColor * visibility + specular * specularColor * visibility;
+	float3 color = (directionalLight + light) * diffuseColor;
 	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET
@@ -101,6 +103,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
 	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
 	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
+	float3 light = uLight.Sample(uLightSampler, input.tex0).xyz;
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
 	float depth = length(v);
@@ -120,8 +123,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 		viewDir,
 		uLightDirection.xyz,
 		normal,
-		uAmbientLightColor.rgb,
 		uLightColor.rgb,
-		visibility);
+		visibility,
+		light);
 	return float4(color, 1.0);
 }
