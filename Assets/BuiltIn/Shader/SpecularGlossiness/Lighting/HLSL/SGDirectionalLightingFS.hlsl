@@ -79,7 +79,7 @@ float3 SG(
 	const float3 worldNormal,
 	const float3 lightColor,
 	const float visibility,
-	const float3 light)
+	const float4 light)
 {
 	float roughness = 1.0 - gloss;
 	float3 f0 = spec;
@@ -93,8 +93,8 @@ float3 SG(
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	float3 directionalLight = NdotL * lightColor * visibility + specular * specularColor * visibility;
-	float3 color = (directionalLight + light) * diffuseColor;
+	float3 directionalLight = NdotL * lightColor * visibility;
+	float3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
 	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET
@@ -103,7 +103,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
 	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
 	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
-	float3 light = uLight.Sample(uLightSampler, input.tex0).xyz;
+	float4 light = uLight.Sample(uLightSampler, input.tex0);
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
 	float depth = length(v);

@@ -68,7 +68,7 @@ vec3 SG(
 	const vec3 worldNormal,
 	const vec3 lightColor,
 	const float visibility,
-	const vec3 light)
+	const vec4 light)
 {
 	float roughness = 1.0 - gloss;
 	vec3 f0 = vec3(spec, spec, spec);
@@ -82,8 +82,8 @@ vec3 SG(
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	vec3 directionalLight = NdotL * lightColor * visibility + specular * specularColor * visibility;
-	vec3 color = (directionalLight + light) * diffuseColor;
+	vec3 directionalLight = NdotL * lightColor * visibility;
+	vec3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
 	return color;
 }
 void main(void)
@@ -92,7 +92,7 @@ void main(void)
 	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
-	vec3 light = texture(uTexLight, varTexCoord0.xy).rgb;
+	vec4 light = texture(uTexLight, varTexCoord0.xy);
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
 	float depth = length(v);
