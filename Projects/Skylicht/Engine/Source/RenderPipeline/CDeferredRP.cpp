@@ -97,7 +97,7 @@ namespace Skylicht
 		m_directionalLightPass.setTexture(1, m_position);
 		m_directionalLightPass.setTexture(2, m_normal);
 		m_directionalLightPass.setTexture(3, m_data);
-		
+
 		// point light color
 		m_directionalLightPass.setTexture(4, m_lightBuffer);
 
@@ -123,10 +123,9 @@ namespace Skylicht
 	{
 		m_pointLightPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGPointLighting");
 
-		m_pointLightPass.setTexture(0, m_albedo);
-		m_pointLightPass.setTexture(1, m_position);
-		m_pointLightPass.setTexture(2, m_normal);
-		m_pointLightPass.setTexture(3, m_data);
+		m_pointLightPass.setTexture(0, m_position);
+		m_pointLightPass.setTexture(1, m_normal);
+		m_pointLightPass.setTexture(2, m_data);
 
 		// turn off mipmap on float texture	
 		m_pointLightPass.TextureLayer[0].BilinearFilter = false;
@@ -140,10 +139,6 @@ namespace Skylicht
 		m_pointLightPass.TextureLayer[2].BilinearFilter = false;
 		m_pointLightPass.TextureLayer[2].TrilinearFilter = false;
 		m_pointLightPass.TextureLayer[2].AnisotropicFilter = 0;
-
-		m_pointLightPass.TextureLayer[3].BilinearFilter = false;
-		m_pointLightPass.TextureLayer[3].TrilinearFilter = false;
-		m_pointLightPass.TextureLayer[3].AnisotropicFilter = 0;
 
 		// disable Z
 		m_pointLightPass.ZBuffer = video::ECFN_DISABLED;
