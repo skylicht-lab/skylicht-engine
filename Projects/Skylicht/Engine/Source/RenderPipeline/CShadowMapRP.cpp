@@ -96,14 +96,7 @@ namespace Skylicht
 		entityManager->setRenderPipeline(this);
 
 		if (m_updateEntity == true)
-		{
 			entityManager->update();
-			entityManager->render();
-		}
-		else
-		{
-			entityManager->cullingAndRender();
-		}
 
 		CShaderShadow::setShadowMapRP(this);
 

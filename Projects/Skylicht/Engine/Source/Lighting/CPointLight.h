@@ -34,6 +34,8 @@ namespace Skylicht
 	protected:
 		CLightCullingData *m_cullingData;
 
+		ITexture* m_depth;
+
 	public:
 		CPointLight();
 
@@ -46,5 +48,7 @@ namespace Skylicht
 	public:
 
 		core::vector3df getPosition();
+
+		ITexture* createGetDepthTexture();
 	};
 }

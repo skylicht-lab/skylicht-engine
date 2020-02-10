@@ -61,6 +61,9 @@ namespace Skylicht
 		if (m_lightBuffer != NULL)
 			driver->removeTexture(m_lightBuffer);
 
+		if (m_target != NULL)
+			driver->removeTexture(m_target);
+
 		m_multiRenderTarget.clear();
 
 	}
@@ -78,6 +81,8 @@ namespace Skylicht
 
 		m_lightBuffer = driver->addRenderTargetTexture(m_size, "light", ECF_A8R8G8B8);
 
+		m_target = driver->addRenderTargetTexture(m_size, "target", ECF_A32B32G32R32F);
+
 		// setup multi render target
 		m_multiRenderTarget.push_back(m_albedo);
 		m_multiRenderTarget.push_back(m_position);
@@ -87,6 +92,10 @@ namespace Skylicht
 		// setup material
 		initDefferredMaterial();
 		initPointLightMaterial();
+
+		// final pass
+		m_finalPass.setTexture(0, m_target);
+		m_finalPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
 	}
 
 	void CDeferredRP::initDefferredMaterial()
@@ -207,7 +216,7 @@ namespace Skylicht
 		}
 
 		// render final light to screen
-		driver->setRenderTarget(target, true, false);
+		driver->setRenderTarget(m_target, false, false);
 
 		// shadow
 		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
@@ -217,6 +226,12 @@ namespace Skylicht
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 
-		onNext(target, camera, entityManager);
+		// call forwarder rp?
+		onNext(m_target, camera, entityManager);
+
+		// final pass to screen
+		driver->setRenderTarget(NULL, false, false);
+		beginRender2D(renderW, renderH);
+		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 	}
 }
