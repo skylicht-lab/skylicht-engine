@@ -30,14 +30,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CPointLight::CPointLight()
+	CPointLight::CPointLight() :
+		m_depth(NULL)
 	{
 
 	}
 
 	CPointLight::~CPointLight()
 	{
-
+		if (m_depth != NULL)
+			getVideoDriver()->removeTexture(m_depth);
 	}
 
 	void CPointLight::initComponent()
@@ -59,5 +61,16 @@ namespace Skylicht
 	core::vector3df CPointLight::getPosition()
 	{
 		return m_gameObject->getTransform()->getMatrixTransform().getTranslation();
+	}
+
+	ITexture* CPointLight::createGetDepthTexture()
+	{
+		if (m_depth == NULL)
+		{
+			int size = 1024;
+			m_depth = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
+		}
+
+		return m_depth;
 	}
 }
