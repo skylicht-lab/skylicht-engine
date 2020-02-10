@@ -28,7 +28,7 @@ void main(void)
 	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
-	vec3 light = texture(uTexLight, varTexCoord0.xy).rgb;
+	vec4 light = texture(uTexLight, varTexCoord0.xy);
 	
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
