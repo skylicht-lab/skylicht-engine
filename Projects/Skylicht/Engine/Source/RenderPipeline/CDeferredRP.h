@@ -31,6 +31,8 @@ namespace Skylicht
 	class CDeferredRP : public CBaseRP
 	{
 	protected:
+		ITexture *m_target;
+
 		ITexture *m_albedo;
 		ITexture *m_position;
 		ITexture *m_normal;
@@ -47,6 +49,7 @@ namespace Skylicht
 
 		SMaterial m_pointLightPass;
 		SMaterial m_directionalLightPass;
+		SMaterial m_finalPass;
 
 	protected:
 
