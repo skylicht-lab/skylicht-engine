@@ -31,7 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CPointLight::CPointLight() :
-		m_depth(NULL)
+		m_depth(NULL),
+		m_needRenderShadowDepth(true)
 	{
 
 	}
@@ -56,11 +57,14 @@ namespace Skylicht
 		float r = m_radius * m_radius * 0.5f;
 		m_cullingData->BBox.MaxEdge.set(r, r, r);
 		m_cullingData->BBox.MinEdge.set(-r, -r, -r);
+
+		if (m_gameObject->getTransform()->hasChanged() == true)
+			m_needRenderShadowDepth = true;
 	}
 
 	core::vector3df CPointLight::getPosition()
 	{
-		return m_gameObject->getTransform()->getMatrixTransform().getTranslation();
+		return m_gameObject->getPosition();
 	}
 
 	ITexture* CPointLight::createGetDepthTexture()
@@ -72,5 +76,20 @@ namespace Skylicht
 		}
 
 		return m_depth;
+	}
+
+	bool CPointLight::needRenderShadowDepth()
+	{
+		return m_needRenderShadowDepth;
+	}
+
+	void CPointLight::beginRenderShadowDepth()
+	{
+
+	}
+
+	void CPointLight::endRenderShadowDepth()
+	{
+		m_needRenderShadowDepth = false;
 	}
 }

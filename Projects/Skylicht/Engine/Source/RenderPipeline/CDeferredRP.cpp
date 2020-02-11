@@ -37,7 +37,9 @@ namespace Skylicht
 		m_albedo(NULL),
 		m_position(NULL),
 		m_normal(NULL),
-		m_data(NULL)
+		m_data(NULL),
+		m_pointLightShader(0),
+		m_pointLightShadowShader(0)
 	{
 		m_type = IRenderPipeline::Deferred;
 	}
@@ -79,9 +81,9 @@ namespace Skylicht
 		m_normal = driver->addRenderTargetTexture(m_size, "normal", ECF_A32B32G32R32F);
 		m_data = driver->addRenderTargetTexture(m_size, "data", ECF_A8R8G8B8);
 
-		m_lightBuffer = driver->addRenderTargetTexture(m_size, "light", ECF_A8R8G8B8);
+		m_lightBuffer = driver->addRenderTargetTexture(m_size, "light", ECF_A16B16G16R16F);
 
-		m_target = driver->addRenderTargetTexture(m_size, "target", ECF_A32B32G32R32F);
+		m_target = driver->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
 
 		// setup multi render target
 		m_multiRenderTarget.push_back(m_albedo);
@@ -100,7 +102,7 @@ namespace Skylicht
 
 	void CDeferredRP::initDefferredMaterial()
 	{
-		m_directionalLightPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGDirectionalLighting");
+		m_directionalLightPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGDirectionalLight");
 
 		m_directionalLightPass.setTexture(0, m_albedo);
 		m_directionalLightPass.setTexture(1, m_position);
@@ -130,7 +132,12 @@ namespace Skylicht
 
 	void CDeferredRP::initPointLightMaterial()
 	{
-		m_pointLightPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGPointLighting");
+		CShaderManager *shaderMgr = CShaderManager::getInstance();
+
+		m_pointLightShader = shaderMgr->getShaderIDByName("SGPointLight");
+		m_pointLightShadowShader = shaderMgr->getShaderIDByName("SGPointLightShadow");
+
+		m_pointLightPass.MaterialType = m_pointLightShader;
 
 		m_pointLightPass.setTexture(0, m_position);
 		m_pointLightPass.setTexture(1, m_normal);
@@ -148,6 +155,10 @@ namespace Skylicht
 		m_pointLightPass.TextureLayer[2].BilinearFilter = false;
 		m_pointLightPass.TextureLayer[2].TrilinearFilter = false;
 		m_pointLightPass.TextureLayer[2].AnisotropicFilter = 0;
+
+		m_pointLightPass.TextureLayer[3].BilinearFilter = false;
+		m_pointLightPass.TextureLayer[3].TrilinearFilter = false;
+		m_pointLightPass.TextureLayer[3].AnisotropicFilter = 0;
 
 		// disable Z
 		m_pointLightPass.ZBuffer = video::ECFN_DISABLED;
@@ -209,6 +220,20 @@ namespace Skylicht
 				{
 					CShaderLighting::setPointLight(pointLight);
 
+					if (pointLight->isCastShadow() == true)
+					{
+						// directx11 regenerate mipmaps
+						pointLight->createGetDepthTexture()->regenerateMipMapLevels();
+
+						m_pointLightPass.MaterialType = m_pointLightShadowShader;
+						m_pointLightPass.setTexture(3, pointLight->createGetDepthTexture());
+					}
+					else
+					{
+						m_pointLightPass.MaterialType = m_pointLightShader;
+						m_pointLightPass.setTexture(3, NULL);
+					}
+
 					beginRender2D(renderW, renderH);
 					renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
 				}
@@ -221,7 +246,9 @@ namespace Skylicht
 		// shadow
 		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
 		if (shadowRP != NULL)
+		{
 			m_directionalLightPass.setTexture(5, shadowRP->getDepthTexture());
+		}
 
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);

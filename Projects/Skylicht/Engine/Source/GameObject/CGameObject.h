@@ -144,6 +144,10 @@ namespace Skylicht
 
 		CTransformEuler* getTransformEuler();
 
+		core::vector3df getPosition();
+
+		core::quaternion getRotation();
+
 		inline bool isEnable()
 		{
 			return m_enable;

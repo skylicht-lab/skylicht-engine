@@ -36,6 +36,8 @@ namespace Skylicht
 
 		ITexture* m_depth;
 
+		bool m_needRenderShadowDepth;
+
 	public:
 		CPointLight();
 
@@ -46,6 +48,12 @@ namespace Skylicht
 		virtual void updateComponent();
 
 	public:
+
+		bool needRenderShadowDepth();
+
+		void beginRenderShadowDepth();
+
+		void endRenderShadowDepth();
 
 		core::vector3df getPosition();
 
