@@ -70,6 +70,8 @@ namespace Skylicht
 
 		void renderCubeEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture, int* face, int numFace);
 
+		void saveFBOToFile(ITexture *texture, const char *output);
+
 		void unbindRTT();
 
 		void enableUpdateEntity(bool b)

@@ -56,8 +56,9 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLighting.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLighting.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
 }
 
 void CViewInit::initScene()
@@ -103,7 +104,11 @@ void CViewInit::initScene()
 	for (int i = 0; i < 4; i++)
 	{
 		CGameObject *pointLightObj = zone->createEmptyObject();
+
 		CPointLight *pointLight = pointLightObj->addComponent<CPointLight>();
+		pointLight->setShadow(true);
+		pointLight->setRadius(3.0f);
+
 		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
 	}

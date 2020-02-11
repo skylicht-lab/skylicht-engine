@@ -45,8 +45,6 @@ namespace irr
 		class COGLES3TextureCube : public ITexture
 		{
 		private:
-			ECOLOR_FORMAT ColorFormat;
-			s32 Pitch;
 
 			core::array<IImage*> Image;
 		public:

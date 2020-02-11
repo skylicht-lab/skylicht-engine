@@ -248,7 +248,6 @@ namespace Skylicht
 
 		core::matrix4 projection;
 		projection.buildProjectionMatrixPerspectiveFovLH(90.0f * core::DEGTORAD, 1.0f, camera->getNearValue(), camera->getFarValue());
-		driver->setTransform(video::ETS_PROJECTION, projection);
 
 		core::vector3df targetDirectX[] = {
 			core::vector3df(1.0f, 0.0f, 0.0f),	// right
@@ -318,7 +317,9 @@ namespace Skylicht
 				int faceID = face[i];
 				video::E_CUBEMAP_FACE cubemapFace = (video::E_CUBEMAP_FACE)faceID;
 
+				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[faceID] * 100.0f, up[faceID]);
+				driver->setTransform(video::ETS_PROJECTION, projection);
 				driver->setTransform(video::ETS_VIEW, view);
 
 				if (tempFBO)
@@ -342,7 +343,9 @@ namespace Skylicht
 			{
 				video::E_CUBEMAP_FACE cubemapFace = (video::E_CUBEMAP_FACE)i;
 
+				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[i] * 100.0f, up[i]);
+				driver->setTransform(video::ETS_PROJECTION, projection);
 				driver->setTransform(video::ETS_VIEW, view);
 
 				if (tempFBO)
@@ -366,6 +369,29 @@ namespace Skylicht
 		{
 			driver->removeTexture(tempFBO);
 		}
+	}
+
+	void CBaseRP::saveFBOToFile(ITexture *texture, const char *output)
+	{
+		video::ECOLOR_FORMAT format = texture->getColorFormat();
+		if (format != ECF_R8G8B8 && format != ECF_A8R8G8B8)
+			return;
+
+		IVideoDriver *driver = getVideoDriver();
+		void *imageData = texture->lock(video::ETLM_READ_ONLY);
+
+		IImage* im = driver->createImageFromData(
+			format,
+			texture->getSize(),
+			imageData);
+
+		if (driver->getDriverType() == video::EDT_DIRECT3D11)
+			im->swapBG();
+
+		driver->writeImageToFile(im, output);
+		im->drop();
+
+		texture->unlock();
 	}
 
 	void CBaseRP::drawSceneToTexture(ITexture *target, CEntityManager *entityMgr)

@@ -1,4 +1,4 @@
-<shaderConfig name="SGDirectionalLighting" baseShader="SOLID">
+<shaderConfig name="SGDirectionalLight" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>					
@@ -22,6 +22,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGDirectionalLightingVS.glsl" fs="GLSL/SGDirectionalLightingFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/SGDirectionalLightingVS.hlsl" fs="HLSL/SGDirectionalLightingFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SGDirectionalLightVS.glsl" fs="GLSL/SGDirectionalLightFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SGDirectionalLightVS.hlsl" fs="HLSL/SGDirectionalLightFS.hlsl"/>
 </shaderConfig>

@@ -1,4 +1,4 @@
-<shaderConfig name="SGPointLighting" baseShader="TRANSPARENT_ADD_COLOR">
+<shaderConfig name="SGPointLight" baseShader="TRANSPARENT_ADD_COLOR">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>					
@@ -18,6 +18,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGPointLightingVS.glsl" fs="GLSL/SGPointLightingFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/SGPointLightingVS.hlsl" fs="HLSL/SGPointLightingFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SGPointLightVS.glsl" fs="GLSL/SGPointLightFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SGPointLightVS.hlsl" fs="HLSL/SGPointLightFS.hlsl"/>
 </shaderConfig>
