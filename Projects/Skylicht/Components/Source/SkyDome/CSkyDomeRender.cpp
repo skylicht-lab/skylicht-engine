@@ -68,9 +68,8 @@ namespace Skylicht
 	void CSkyDomeRender::update(CEntityManager *entityManager)
 	{
 		CCamera *camera = entityManager->getCamera();
-		CTransform *cameraTransform = camera->getGameObject()->getComponent<CTransform>();
 
-		core::vector3df cameraPosition = cameraTransform->getMatrixTransform().getTranslation();
+		core::vector3df cameraPosition = camera->getGameObject()->getPosition();
 		float cameraFar = camera->getFarValue();
 
 		core::matrix4* worlds = m_worlds.pointer();

@@ -48,8 +48,12 @@ namespace Skylicht
 		core::matrix4 m_projectionMatrix;
 
 		SMaterial m_pointLightPass;
+
 		SMaterial m_directionalLightPass;
 		SMaterial m_finalPass;
+
+		int m_pointLightShader;
+		int m_pointLightShadowShader;
 
 	protected:
 
