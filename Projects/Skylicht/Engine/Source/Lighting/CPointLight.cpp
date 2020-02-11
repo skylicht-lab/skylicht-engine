@@ -71,7 +71,7 @@ namespace Skylicht
 	{
 		if (m_depth == NULL)
 		{
-			int size = 1024;
+			int size = 512;
 			m_depth = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
 		}
 

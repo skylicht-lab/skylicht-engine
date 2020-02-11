@@ -222,9 +222,6 @@ namespace Skylicht
 
 					if (pointLight->isCastShadow() == true)
 					{
-						// directx11 regenerate mipmaps
-						pointLight->createGetDepthTexture()->regenerateMipMapLevels();
-
 						m_pointLightPass.MaterialType = m_pointLightShadowShader;
 						m_pointLightPass.setTexture(3, pointLight->createGetDepthTexture());
 					}

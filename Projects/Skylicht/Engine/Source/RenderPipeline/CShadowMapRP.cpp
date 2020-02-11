@@ -121,6 +121,8 @@ namespace Skylicht
 		// render point light shadow
 		m_writeDepthMaterial.MaterialType = m_cubeDepthWriteShader;
 
+		std::vector<ITexture*> listDepthTexture;
+
 		CLightCullingSystem *lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
 		{
@@ -140,11 +142,23 @@ namespace Skylicht
 					core::vector3df lightPosition = pointLight->getGameObject()->getPosition();
 					ITexture *depth = pointLight->createGetDepthTexture();
 					if (depth != NULL)
+					{
 						renderCubeEnvironment(camera, entityManager, lightPosition, depth, NULL, 0);
+						listDepthTexture.push_back(depth);
+					}
 
 					pointLight->endRenderShadowDepth();
 				}
 			}
+		}
+
+		if (listDepthTexture.size() > 0)
+		{
+			driver->setRenderTarget(target, false, false);
+
+			// Generate all depth texture
+			for (ITexture *d : listDepthTexture)
+				d->regenerateMipMapLevels();
 		}
 
 		onNext(target, camera, entityManager);
