@@ -91,14 +91,14 @@ void CViewInit::initScene()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-1.0f, -7.0f, -1.0f);
+	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	core::vector3df pointLightPosition[] = {
-		{-5.595442f, 0.8f, 2.00912f},
-		{-5.6f, 0.8f, -2.25},
-		{6.018463f, 0.8f, 2.0211f},
-		{6.007851f, 0.8f, -2.237712f},
+		{-5.595442f, 1.2f, 2.00912f},
+		{-5.6f, 1.2f, -2.25},
+		{6.018463f, 1.2f, 2.0211f},
+		{6.007851f, 1.2f, -2.237712f},
 	};
 
 	for (int i = 0; i < 4; i++)
