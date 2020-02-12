@@ -44,6 +44,7 @@ namespace Skylicht
 		SMaterial m_unbindMaterial;
 		bool m_updateEntity;
 
+		int m_textureColorShaderID;
 	public:
 		CBaseRP();
 
@@ -67,11 +68,21 @@ namespace Skylicht
 
 		void renderBufferToTarget(float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);
 
+		void renderCubeEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture, int* face, int numFace);
+
+		void saveFBOToFile(ITexture *texture, const char *output);
+
 		void unbindRTT();
 
 		void enableUpdateEntity(bool b)
 		{
 			m_updateEntity = b;
 		}
+
+	protected:
+
+		void drawSceneToTexture(ITexture *target, CEntityManager *entityMgr);
+
+		void drawSceneToCubeTexture(ITexture *target, video::E_CUBEMAP_FACE faceID, CEntityManager *entityMgr);
 	};
 }
