@@ -50,11 +50,33 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
 	// Shadow
-	float bias = 0.1;
+	float bias = 0.2;
+	/*
 	float sampledDistance = uShadowMap.Sample(uShadowMapSampler, -lightDir).r;	
 	float shadow = 1.0;
 	if (distance - bias > sampledDistance)
-        shadow = 0.0f; // Inside the shadow
+		shadow = 0.0f; // Inside the shadow
+	*/
+	float shadow = 0.0;
+	float samples = 3.0;
+	float offset = 0.01;
+	
+	for(float x = -offset; x < offset; x += offset / (samples * 0.5))
+	{
+		for(float y = -offset; y < offset; y += offset / (samples * 0.5))
+		{
+			for(float z = -offset; z < offset; z += offset / (samples * 0.5))
+			{
+				float3 fragToLight = -lightDir + float3(x, y, z);
+				float closestDepth = uShadowMap.Sample(uShadowMapSampler, fragToLight).r;
+				
+				if (distance - bias > closestDepth)
+					shadow += 1.0;
+			}
+		}
+	}
+	shadow /= (samples * samples * samples);
+	shadow = max(1.0 - shadow, 0.0);
 	
 	float3 lightColor = uLightColor.rgb * (NdotL * attenuation) * shadow;
 	return float4(lightColor, specular * attenuation * shadow);
