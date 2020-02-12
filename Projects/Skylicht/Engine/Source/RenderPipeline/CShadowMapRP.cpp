@@ -27,7 +27,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CMesh.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Lighting/CLightCullingSystem.h"
+#include "Lighting/CPointLight.h"
 
 namespace Skylicht
 {
@@ -41,7 +44,9 @@ namespace Skylicht
 		m_lightDirection.set(-1.0f, -1.0f, -1.0f);
 
 		// write depth material
-		m_writeDepthMaterial.MaterialType = CShaderManager::getInstance()->getShaderIDByName("ShadowDepthWrite");
+		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		m_depthWriteShader = shaderMgr->getShaderIDByName("ShadowDepthWrite");
+		m_cubeDepthWriteShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWrite");
 	}
 
 	CShadowMapRP::~CShadowMapRP()
@@ -96,16 +101,12 @@ namespace Skylicht
 		entityManager->setRenderPipeline(this);
 
 		if (m_updateEntity == true)
-		{
 			entityManager->update();
-			entityManager->render();
-		}
-		else
-		{
-			entityManager->cullingAndRender();
-		}
 
 		CShaderShadow::setShadowMapRP(this);
+
+		// render directional light shadow
+		m_writeDepthMaterial.MaterialType = m_depthWriteShader;
 
 		IVideoDriver *driver = getVideoDriver();
 		for (int i = 0; i < m_numCascade; i++)
@@ -115,6 +116,49 @@ namespace Skylicht
 			driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
 
 			entityManager->render();
+		}
+
+		// render point light shadow
+		m_writeDepthMaterial.MaterialType = m_cubeDepthWriteShader;
+
+		std::vector<ITexture*> listDepthTexture;
+
+		CLightCullingSystem *lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
+		if (lightCullingSystem != NULL)
+		{
+			core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
+			for (u32 i = 0, n = listLight.size(); i < n; i++)
+			{
+				CLight *light = listLight[i]->Light;
+				CPointLight *pointLight = dynamic_cast<CPointLight*>(light);
+
+				if (pointLight != NULL &&
+					pointLight->isCastShadow() == true &&
+					pointLight->needRenderShadowDepth() == true)
+				{
+					CShaderLighting::setPointLight(pointLight);
+					pointLight->beginRenderShadowDepth();
+
+					core::vector3df lightPosition = pointLight->getGameObject()->getPosition();
+					ITexture *depth = pointLight->createGetDepthTexture();
+					if (depth != NULL)
+					{
+						renderCubeEnvironment(camera, entityManager, lightPosition, depth, NULL, 0);
+						listDepthTexture.push_back(depth);
+					}
+
+					pointLight->endRenderShadowDepth();
+				}
+			}
+		}
+
+		if (listDepthTexture.size() > 0)
+		{
+			driver->setRenderTarget(target, false, false);
+
+			// Generate all depth texture
+			for (ITexture *d : listDepthTexture)
+				d->regenerateMipMapLevels();
 		}
 
 		onNext(target, camera, entityManager);

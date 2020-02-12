@@ -54,7 +54,7 @@ namespace Skylicht
 		{
 			core::vector3df position;
 			if (s_camera != NULL)
-				position = s_camera->getGameObject()->getTransform()->getMatrixTransform().getTranslation();
+				position = s_camera->getGameObject()->getPosition();
 			shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
 		}
 		break;
@@ -62,7 +62,7 @@ namespace Skylicht
 		{
 			core::vector3df position;
 			if (s_camera != NULL)
-				position = s_camera->getGameObject()->getTransform()->getMatrixTransform().getTranslation();
+				position = s_camera->getGameObject()->getPosition();
 			shader->setPosition(matRender, uniform->UniformShaderID, position, vertexShader);
 		}
 		break;

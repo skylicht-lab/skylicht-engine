@@ -118,7 +118,7 @@ namespace Skylicht
 
 			// 1. Detect by bounding box
 			CCamera *camera = entityManager->getCamera();
-			culling->Visible = cullings[i]->BBox.intersectsWithBox(camera->getViewFrustum().getBoundingBox());
+			culling->Visible = culling->BBox.intersectsWithBox(camera->getViewFrustum().getBoundingBox());
 
 			// 2. Detect algorithm 
 			if (culling->Visible == true)

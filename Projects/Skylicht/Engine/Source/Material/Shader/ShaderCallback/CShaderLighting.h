@@ -29,11 +29,14 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	class CDirectionalLight;
+	class CPointLight;
 
 	class CShaderLighting : public IShaderCallback
 	{
 	protected:
 		static CDirectionalLight *s_directionalLight;
+		static CPointLight *s_pointLight;
+
 		static SColorf s_lightAmbient;
 
 	public:
@@ -44,10 +47,17 @@ namespace Skylicht
 		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
+
 		static void setDirectionalLight(CDirectionalLight *light);
 
 		static CDirectionalLight* getDirectionalLight();
-		
+
+
+		static void setPointLight(CPointLight *light);
+
+		static CPointLight* getPointLight();
+
+
 		static void setLightAmbient(const SColorf& c);
 	};
 }

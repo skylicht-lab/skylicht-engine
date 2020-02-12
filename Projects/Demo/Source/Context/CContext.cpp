@@ -52,7 +52,7 @@ CBaseRP* CContext::initRenderPipeline(int w, int h)
 
 	// link rp
 	m_shadowMapRendering->setNextPipeLine(m_rendering);
-	// m_rendering->setNextPipeLine(m_forwardRP);
+	m_rendering->setNextPipeLine(m_forwardRP);
 
 	m_beginRP = m_shadowMapRendering;
 	return m_beginRP;

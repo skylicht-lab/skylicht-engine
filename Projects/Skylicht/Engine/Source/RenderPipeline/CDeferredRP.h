@@ -31,10 +31,14 @@ namespace Skylicht
 	class CDeferredRP : public CBaseRP
 	{
 	protected:
+		ITexture *m_target;
+
 		ITexture *m_albedo;
 		ITexture *m_position;
 		ITexture *m_normal;
 		ITexture *m_data;
+
+		ITexture *m_lightBuffer;
 
 		core::dimension2du m_size;
 
@@ -43,7 +47,19 @@ namespace Skylicht
 		core::matrix4 m_viewMatrix;
 		core::matrix4 m_projectionMatrix;
 
-		SMaterial m_material;
+		SMaterial m_pointLightPass;
+
+		SMaterial m_directionalLightPass;
+		SMaterial m_finalPass;
+
+		int m_pointLightShader;
+		int m_pointLightShadowShader;
+
+	protected:
+
+		void initDefferredMaterial();
+		void initPointLightMaterial();
+
 	public:
 		CDeferredRP();
 
