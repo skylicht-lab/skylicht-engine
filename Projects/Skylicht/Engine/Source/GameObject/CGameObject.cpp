@@ -61,7 +61,7 @@ namespace Skylicht
 	}
 
 	CGameObject::~CGameObject()
-	{		
+	{
 		releaseAllComponent();
 		destroyEntity();
 	}
@@ -128,6 +128,17 @@ namespace Skylicht
 	CTransformEuler* CGameObject::getTransformEuler()
 	{
 		return getComponent<CTransformEuler>();
+	}
+
+	core::vector3df CGameObject::getPosition()
+	{
+		return getTransform()->getMatrixTransform().getTranslation();
+	}
+
+	core::quaternion CGameObject::getRotation()
+	{
+		const core::matrix4& matrix = getTransform()->getMatrixTransform();
+		return core::quaternion(matrix);
 	}
 
 	void CGameObject::releaseAllComponent()

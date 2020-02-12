@@ -1,6 +1,5 @@
 import os
 from tinydb import TinyDB, Query
-from PIL import Image
 import os.path
 import time
 import json
@@ -19,8 +18,6 @@ print("")
 
 
 def compress(inputFile, outputFile):
-    # call build tools
-    im = Image.open(inputFile)
     params = "-q pvrtcfast -f PVRTC2_4 -m"
     command = "%s %s -i %s -o %s" % (
         compressTools, params, inputFile, outputFile

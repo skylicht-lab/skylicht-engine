@@ -42,6 +42,9 @@ namespace Skylicht
 
 		CCascadedShadowMaps *m_csm;
 
+		int m_depthWriteShader;
+		int m_cubeDepthWriteShader;
+
 	public:
 		CShadowMapRP();
 

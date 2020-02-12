@@ -15,6 +15,7 @@
 
 #include "Camera/CEditorCamera.h"
 #include "Lighting/CDirectionalLight.h"
+#include "Lighting/CPointLight.h"
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 #include "RenderMesh/CRenderMesh.h"
@@ -55,7 +56,9 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGLighting.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
 }
 
 void CViewInit::initScene()
@@ -88,14 +91,29 @@ void CViewInit::initScene()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-1.0f, -7.0f, -1.0f);
+	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-	// grid
-	// zone->createEmptyObject()->addComponent<CGridPlane>();
+	core::vector3df pointLightPosition[] = {
+		{-5.595442f, 1.2f, 2.00912f},
+		{-5.6f, 1.2f, -2.25},
+		{6.018463f, 1.2f, 2.0211f},
+		{6.007851f, 1.2f, -2.237712f},
+	};
+
+	for (int i = 0; i < 4; i++)
+	{
+		CGameObject *pointLightObj = zone->createEmptyObject();
+
+		CPointLight *pointLight = pointLightObj->addComponent<CPointLight>();
+		pointLight->setShadow(true);
+		pointLight->setRadius(3.0f);
+
+		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
+		pointLightTransform->setPosition(pointLightPosition[i]);
+	}
 
 	// sponza
-	/*
 	CMeshManager *meshManager = CMeshManager::getInstance();
 	CEntityPrefab *prefab = NULL;
 
@@ -118,56 +136,6 @@ void CViewInit::initScene()
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
 	}
-	*/
-
-	// test dae model & animation
-	/*
-	CAnimationManager *animManager = CAnimationManager::getInstance();
-	CAnimationClip *animIdle = animManager->loadAnimation("Demo/Model3D/Hero@Idle.dae");
-	CAnimationClip *animWalkForward = animManager->loadAnimation("Demo/Model3D/Hero@WalkForward.dae");
-	CAnimationClip *animRunForward = animManager->loadAnimation("Demo/Model3D/Hero@RunForward.dae");
-
-	prefab = meshManager->loadModel("Demo/Model3D/Hero.dae", "Demo/Model3D/Textures", false);
-	if (prefab != NULL)
-	{
-		// instance object 1
-		CGameObject *model = zone->createEmptyObject();
-		model->addComponent<CRenderMesh>()->initFromPrefab(prefab);
-
-		// setup animation
-		CAnimationController *animController = model->addComponent<CAnimationController>();
-
-		CSkeleton *skeletonIdle = animController->createSkeleton();
-		CSkeleton *skeletonWalkForward = animController->createSkeleton();
-		CSkeleton *skeletonRunForward = animController->createSkeleton();
-
-		CSkeleton *output = animController->createSkeleton();
-		output->setAnimationType(CSkeleton::Blending);
-
-		// set animation clip
-		skeletonIdle->setAnimation(animIdle, true);
-		skeletonIdle->getTimeline().Weight = 0.0f;
-
-		skeletonWalkForward->setAnimation(animWalkForward, true);
-		skeletonWalkForward->getTimeline().Weight = 0.0f;
-
-		skeletonRunForward->setAnimation(animRunForward, true);
-		skeletonRunForward->getTimeline().Weight = 1.0f;
-
-		// blending
-		skeletonIdle->setTarget(output);
-		skeletonWalkForward->setTarget(output);
-		skeletonRunForward->setTarget(output);
-
-		// output animation
-		animController->setOutput(output);
-
-		// setup transform
-		CTransformEuler *transform = model->getTransformEuler();
-		transform->setPosition(core::vector3df(0.0f, 0.0f, 2.0f));
-		transform->setYaw(45.0f);
-	}
-	*/
 
 	// save to context
 	CContext *context = CContext::getInstance();

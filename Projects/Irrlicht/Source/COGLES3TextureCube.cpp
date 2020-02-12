@@ -25,7 +25,7 @@ namespace irr
 		//! rendertarget constructor
 		COGLES3TextureCube::COGLES3TextureCube(COGLES3Driver* driver, const core::dimension2d<u32>& size, const io::path& name,
 			const ECOLOR_FORMAT format)
-			: ITexture(name), ColorFormat(ECF_UNKNOWN), Driver(driver), Pitch(0)
+			: ITexture(name), Driver(driver)
 		{
 			os::Printer::log("Init COGLES3TextureCube - Render Target");
 
@@ -36,7 +36,7 @@ namespace irr
 			ColorFormat = format;
 
 			if (ECF_UNKNOWN == format)
-				ColorFormat = ECF_A8R8G8B8;			
+				ColorFormat = ECF_A8R8G8B8;
 
 			GLint filtering;
 			InternalFormat = getOpenGLFormatAndParametersFromColorFormat(ColorFormat, filtering, PixelFormat, PixelType);
@@ -87,13 +87,13 @@ namespace irr
 
 			// attach color texture to frame buffer
 			for (int i = 0; i < 6; i++)
-			{				
+			{
 				glFramebufferTexture2D(GL_FRAMEBUFFER,
 					GL_COLOR_ATTACHMENT0,
 					GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
 					TextureName,
 					0);
-			}			
+			}
 
 			// attach depth texture to frame buffer
 			glFramebufferTexture2D(GL_FRAMEBUFFER,
@@ -106,7 +106,7 @@ namespace irr
 			checkFBOStatus(Driver);
 			Driver->testGLError();
 #endif
-			unbindRTT();			
+			unbindRTT();
 		}
 
 		//! destructor
@@ -135,7 +135,7 @@ namespace irr
 			GLenum internalformat = GL_RGBA;
 
 			switch (format)
-			{			
+			{
 			case ECF_R5G6B5:
 				colorformat = GL_RGB;
 				type = GL_UNSIGNED_SHORT_5_6_5;
@@ -150,7 +150,7 @@ namespace irr
 				colorformat = GL_RGBA;
 				type = GL_UNSIGNED_BYTE;
 				internalformat = GL_RGBA;
-				break;			
+				break;
 			case ECF_D16:
 				colorformat = GL_DEPTH_COMPONENT;
 				type = GL_UNSIGNED_BYTE;
@@ -161,16 +161,16 @@ namespace irr
 				type = GL_UNSIGNED_BYTE;
 				internalformat = GL_DEPTH_COMPONENT;
 				break;
-			case ECF_R8:				
+			case ECF_R8:
 				colorformat = GL_RED;
 				type = GL_UNSIGNED_BYTE;
-				internalformat = GL_R8;				
+				internalformat = GL_R8;
 				break;
 			case ECF_R8G8:
 				colorformat = GL_RG;
 				type = GL_UNSIGNED_BYTE;
-				internalformat = GL_RG8;				
-				break;			
+				internalformat = GL_RG8;
+				break;
 			case ECF_R16F:
 				filtering = GL_NEAREST;
 				colorformat = GL_RED;
@@ -199,13 +199,13 @@ namespace irr
 				filtering = GL_NEAREST;
 				colorformat = GL_RG;
 				internalformat = GL_RG32F;
-				type = GL_FLOAT;			
+				type = GL_FLOAT;
 				break;
 			case ECF_A32B32G32R32F:
 				filtering = GL_NEAREST;
 				colorformat = GL_RGBA;
 				internalformat = GL_RGBA32F;
-				type = GL_FLOAT;				
+				type = GL_FLOAT;
 				break;
 			default:
 				os::Printer::log("Unsupported texture format", ELL_ERROR);
@@ -227,7 +227,7 @@ namespace irr
 			IImage* posXImage, IImage* negXImage,
 			IImage* posYImage, IImage* negYImage,
 			IImage* posZImage, IImage* negZImage)
-			: ITexture(name), ColorFormat(ECF_A8R8G8B8), Driver(driver),
+			: ITexture(name), Driver(driver),
 			TextureName(0), InternalFormat(GL_RGB8), PixelFormat(GL_RGB),
 			PixelType(GL_UNSIGNED_BYTE)
 		{

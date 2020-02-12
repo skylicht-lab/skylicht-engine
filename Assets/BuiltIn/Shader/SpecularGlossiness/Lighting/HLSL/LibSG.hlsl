@@ -1,25 +1,7 @@
 //static const float EnvironmentScale = 3.0;
 //static const float PI = 3.1415926;
-static const float MinReflectance = 0.04;
 
-float getPerceivedBrightness(float3 color)
-{
-	return sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b);
-}
-
-// https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/examples/convert-between-workflows/js/three.pbrUtilities.js#L34
-float solveMetallic(float3 diffuse, float3 specular, float oneMinusSpecularStrength) 
-{
-	float specularBrightness = getPerceivedBrightness(specular);
-	float diffuseBrightness = getPerceivedBrightness(diffuse);
-	
-	float a = MinReflectance;
-	float b = diffuseBrightness * oneMinusSpecularStrength / (1.0 - MinReflectance) + specularBrightness - 2.0 * MinReflectance;
-	float c = MinReflectance - specularBrightness;
-	float D = b * b - 4.0 * a * c;
-
-	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
-}
+#include "LibSolverMetallic.hlsl"
 
 float3 SG(
 	const float3 baseColor, 
@@ -28,9 +10,9 @@ float3 SG(
 	const float3 worldViewDir,
 	const float3 worldLightDir,
 	const float3 worldNormal,
-	const float3 ambient,
 	const float3 lightColor,
-	const float visibility)
+	const float visibility,
+	const float4 light)
 {
 	// Roughness
 	float roughness = 1.0 - gloss;
@@ -54,7 +36,8 @@ float3 SG(
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
-	float3 color = (NdotL * lightColor * visibility) * (diffuseColor + specular * specularColor * visibility);
+	float3 directionalLight = NdotL * lightColor * visibility;
+	float3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
 	
 	// IBL Ambient
 	// color += IBLAmbient(worldNormal) * diffuseColor / PI * EnvironmentScale;

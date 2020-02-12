@@ -30,9 +30,9 @@ namespace Skylicht
 	CLight::CLight() :
 		m_castShadow(false),
 		m_color(1.0f, 1.0f, 1.0f, 1.0f),
-		m_spotCutoff(core::PI / 4.0f)		
+		m_spotCutoff(core::PI / 4.0f)
 	{
-		setRadius(1.0f);
+		setRadius(3.0f);
 	}
 
 	CLight::~CLight()
