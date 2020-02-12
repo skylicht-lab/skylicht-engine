@@ -76,8 +76,6 @@ namespace Skylicht
 		CWorldTransformData **transforms = m_transforms.pointer();
 		CWorldInverseTransformData **invTransforms = m_invTransforms.pointer();
 
-		IRenderPipeline *rp = entityManager->getRenderPipeline();
-
 		core::matrix4 invTrans;
 
 		u32 numEntity = m_cullings.size();

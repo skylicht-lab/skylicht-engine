@@ -28,7 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CLightCullingData::CLightCullingData() :
-		Visible(true)
+		Visible(true),
+		Light(NULL)
 	{
 
 	}
