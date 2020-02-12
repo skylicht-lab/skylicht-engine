@@ -28,11 +28,25 @@ void main(void)
 	vec3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0,dot(normal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	float bias = 0.1;
-	float sampledDistance = texture(uShadowMap, -lightDir).r;
-	float shadow = 1.0;
-	if (distance - bias > sampledDistance)
-        shadow = 0.0f;
+	float bias = 0.2;
+	float shadow = 0.0;
+	float samples = 3.0;
+	float offset = 0.01;
+	for(float x = -offset; x < offset; x += offset / (samples * 0.5))
+	{
+		for(float y = -offset; y < offset; y += offset / (samples * 0.5))
+		{
+			for(float z = -offset; z < offset; z += offset / (samples * 0.5))
+			{
+				vec3 fragToLight = -lightDir + vec3(x, y, z);
+				float closestDepth = texture(uShadowMap, fragToLight).r;
+				if (distance - bias > closestDepth)
+					shadow += 1.0;
+			}
+		}
+	}
+	shadow /= (samples * samples * samples);
+	shadow = max(0.0, 1.0 - shadow);
 	vec3 lightColor = uLightColor.rgb * (NdotL * attenuation) * shadow;
 	FragColor = vec4(lightColor, specular * attenuation * shadow);
 }

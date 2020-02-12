@@ -10,7 +10,7 @@ void main(void)
 {
 	vec3 lightToVertex = varWorldPos.xyz - uLightPosition.xyz;
 	
-    float lightToPixelDistance = length(lightToVertex);
+	float lightToPixelDistance = length(lightToVertex);
 	
 	FragColor = lightToPixelDistance;
 }
