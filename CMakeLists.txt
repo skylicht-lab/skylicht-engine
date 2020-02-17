@@ -76,6 +76,8 @@ option(BUILD_DEBUG_VLD "Build with debug visual leak detector" OFF)
 
 option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform development library" OFF)
 
+option(BUILD_IMGUI "Build Ocornut Imgui" ON)
+
 # skylicht network
 if (BUILD_SKYLICHT_NETWORK)
 	add_definitions(-DUSE_SKYLICHT_NETWORK)
@@ -196,6 +198,10 @@ endif()
 subdirs (Projects/ThirdParty)
 subdirs (Projects/Irrlicht)
 #subdirs (Projects/Spark)
+
+if (BUILD_IMGUI)
+subdirs (Projects/Imgui)
+endif()
 
 #if (BUILD_BULLET_PHYSIC2_LIB)
 #subdirs (Projects/BulletPhysics2)
