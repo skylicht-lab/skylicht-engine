@@ -276,23 +276,15 @@ bool CNullDriver::createVertexDescriptors()
 	VertexDescriptor[4]->addAttribute("inBlendIndex", 4, EVAS_BLEND_INDICES, EVAT_FLOAT, 0);
 	VertexDescriptor[4]->addAttribute("inBlendWeight", 4, EVAS_BLEND_WEIGHTS, EVAT_FLOAT, 0);	
 
-	addVertexDescriptor("2tcoordslightprobe");
+	addVertexDescriptor("2tcoordstangents");
 	VertexDescriptor[5]->addAttribute("inPosition", 3, EVAS_POSITION, EVAT_FLOAT, 0);
 	VertexDescriptor[5]->addAttribute("inNormal", 3, EVAS_NORMAL, EVAT_FLOAT, 0);
 	VertexDescriptor[5]->addAttribute("inColor", 4, EVAS_COLOR, EVAT_UBYTE, 0);
 	VertexDescriptor[5]->addAttribute("inTexCoord0", 2, EVAS_TEXCOORD0, EVAT_FLOAT, 0);
-	VertexDescriptor[5]->addAttribute("inTexCoord1", 2, EVAS_TEXCOORD1, EVAT_FLOAT, 0);
-	VertexDescriptor[5]->addAttribute("inLightProbe", 4, EVAS_LIGHTPROBE, EVAT_FLOAT, 0);
-
-	addVertexDescriptor("2tcoordstangents");
-	VertexDescriptor[6]->addAttribute("inPosition", 3, EVAS_POSITION, EVAT_FLOAT, 0);
-	VertexDescriptor[6]->addAttribute("inNormal", 3, EVAS_NORMAL, EVAT_FLOAT, 0);
-	VertexDescriptor[6]->addAttribute("inColor", 4, EVAS_COLOR, EVAT_UBYTE, 0);
-	VertexDescriptor[6]->addAttribute("inTexCoord0", 2, EVAS_TEXCOORD0, EVAT_FLOAT, 0);
-	VertexDescriptor[6]->addAttribute("inTexCoord1", 2, EVAS_TEXCOORD1, EVAT_FLOAT, 0);	
-	VertexDescriptor[6]->addAttribute("inTangent", 3, EVAS_TANGENT, EVAT_FLOAT, 0);
-	VertexDescriptor[6]->addAttribute("inBinormal", 3, EVAS_BINORMAL, EVAT_FLOAT, 0);
-	VertexDescriptor[6]->addAttribute("inTangentW", 2, EVAS_TANGENTW, EVAT_FLOAT, 0);
+	VertexDescriptor[5]->addAttribute("inTexCoord1", 2, EVAS_TEXCOORD1, EVAT_FLOAT, 0);	
+	VertexDescriptor[5]->addAttribute("inTangent", 3, EVAS_TANGENT, EVAT_FLOAT, 0);
+	VertexDescriptor[5]->addAttribute("inBinormal", 3, EVAS_BINORMAL, EVAT_FLOAT, 0);
+	VertexDescriptor[5]->addAttribute("inTangentW", 2, EVAS_TANGENTW, EVAT_FLOAT, 0);
 	return true;
 }
 

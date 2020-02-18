@@ -31,7 +31,6 @@ enum E_VERTEX_TYPE
 	//! Skylicht support hardware skinning
 	EVT_SKIN,
 	EVT_SKIN_TANGENTS,
-	EVT_2TCOORDS_LIGHTPROBE,
 	EVT_2TCOORDS_TANGENTS,
 };
 
@@ -43,7 +42,7 @@ const char* const sBuiltInVertexTypeNames[] =
 	"tangents",
 	"skin",
 	"skintangents",
-	"2tcoordslightprobe",
+	"2tcoordstangents",
 	0
 };
 
@@ -352,25 +351,6 @@ struct S3DVertexSkinTangents: public S3DVertexTangents
 	}
 };
 
-struct S3DVertex2TCoordsLightProbe : public  S3DVertex2TCoords
-{
-	S3DVertex2TCoordsLightProbe() : S3DVertex2TCoords()
-	{
-	}
-
-	S3DVertex2TCoordsLightProbe(S3DVertex2TCoords& v): S3DVertex2TCoords(v)
-	{
-
-	}
-
-	SVec4	LightProbe;
-
-	E_VERTEX_TYPE getType() const
-	{
-		return EVT_2TCOORDS_LIGHTPROBE;
-	}
-};
-
 struct S3DVertex2TCoordsTangents : public  S3DVertex2TCoords
 {
 	S3DVertex2TCoordsTangents() : S3DVertex2TCoords()
@@ -409,8 +389,6 @@ inline u32 getVertexPitchFromType(E_VERTEX_TYPE vertexType)
 		return sizeof(video::S3DVertexSkin);
 	case video::EVT_SKIN_TANGENTS:
 		return sizeof(video::S3DVertexSkinTangents);
-	case video::EVT_2TCOORDS_LIGHTPROBE:
-		return sizeof(video::S3DVertex2TCoordsLightProbe);
 	case video::EVT_2TCOORDS_TANGENTS:
 		return sizeof(video::S3DVertex2TCoordsTangents);
 	default:

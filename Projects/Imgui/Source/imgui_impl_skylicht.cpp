@@ -24,10 +24,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "imgui_impl_skylicht.h"
+#include "Material/Shader/CShaderManager.h"
 
 #ifdef _MSC_VER
 #pragma warning (disable: 4505) // unreferenced local function has been removed (stb stuff)
 #endif
+
+using namespace Skylicht;
+using namespace irr;
+
+ITexture *g_fontTexture = NULL;
+int g_vertexColorShader = 0;
+int g_textureColorShader = 0;
+
+IMeshBuffer *g_meshBuffer = NULL;
 
 bool ImGui_Impl_Skylicht_Init()
 {
@@ -63,12 +73,33 @@ bool ImGui_Impl_Skylicht_Init()
 	io.Fonts->AddFontDefault();
 	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 
+	IVideoDriver *driver = getVideoDriver();
+	core::dimension2du size((u32)width, (u32)height);
+	IImage *img = driver->createImageFromData(video::ECF_A8R8G8B8, size, pixels, true, false);
+	g_fontTexture = driver->addTexture("imgui_font", img);
+	io.Fonts->SetTexID((ImTextureID*)g_fontTexture);
+	img->drop();
+
+	g_meshBuffer = new CMeshBuffer<S3DVertex>(driver->getVertexDescriptor(EVT_STANDARD), video::EIT_32BIT);
+	g_meshBuffer->setHardwareMappingHint(EHM_STREAM);
 	return true;
 }
 
 void ImGui_Impl_Skylicht_Shutdown()
 {
+	if (g_fontTexture != NULL)
+	{
+		getVideoDriver()->removeTexture(g_fontTexture);
+		g_fontTexture = NULL;
+		ImGuiIO& io = ImGui::GetIO();
+		io.Fonts->SetTexID(NULL);
+	}
 
+	if (g_meshBuffer != NULL)
+	{
+		g_meshBuffer->drop();
+		g_meshBuffer = NULL;
+	}
 }
 
 void ImGui_Impl_Skylicht_NewFrame()
@@ -79,6 +110,134 @@ void ImGui_Impl_Skylicht_NewFrame()
 
 	// Start the frame
 	ImGui::NewFrame();
+}
+
+void ImGui_Impl_Skylicht_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height)
+{
+	if (g_textureColorShader == 0)
+	{
+		CShaderManager *shaderManager = CShaderManager::getInstance();
+		g_vertexColorShader = shaderManager->getShaderIDByName("VertexColor");
+		g_textureColorShader = shaderManager->getShaderIDByName("TextureColor");
+	}
+
+	// set viewport
+	IVideoDriver *driver = getVideoDriver();
+	driver->setViewPort(core::recti(0, 0, fb_width, fb_height));
+
+	core::matrix4 orthoMatrix;
+	orthoMatrix.buildProjectionMatrixOrthoLH(
+		draw_data->DisplaySize.x,
+		-draw_data->DisplaySize.y,
+		-1.0f,
+		1.0f);
+	orthoMatrix.setTranslation(core::vector3df(-1, 1, 0));
+
+	driver->setTransform(video::ETS_PROJECTION, orthoMatrix);
+	driver->setTransform(video::ETS_VIEW, core::IdentityMatrix);
+	driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
+}
+
+void ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data)
+{
+	// Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
+	int fb_width = (int)(draw_data->DisplaySize.x * draw_data->FramebufferScale.x);
+	int fb_height = (int)(draw_data->DisplaySize.y * draw_data->FramebufferScale.y);
+	if (fb_width == 0 || fb_height == 0)
+		return;
+
+	IVideoDriver *driver = getVideoDriver();
+
+	ImGui_Impl_Skylicht_SetupRenderState(draw_data, fb_width, fb_height);
+
+	// Will project scissor/clipping rectangles into framebuffer space
+	ImVec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
+	ImVec2 clip_scale = draw_data->FramebufferScale; // (1,1) unless using retina display which are often (2,2)
+
+	// Render command lists
+	for (int n = 0; n < draw_data->CmdListsCount; n++)
+	{
+		const ImDrawList* cmd_list = draw_data->CmdLists[n];
+		const ImDrawVert* vtx_buffer = cmd_list->VtxBuffer.Data;
+		const ImDrawIdx* idx_buffer = cmd_list->IdxBuffer.Data;
+
+		SVertexBuffer *vtx = (SVertexBuffer*)g_meshBuffer->getVertexBuffer(0);
+		int vtxSize = cmd_list->VtxBuffer.Size;
+		vtx->set_used(vtxSize);
+
+		for (int i = 0, n = vtxSize; i < n; i++)
+		{
+			S3DVertex &v = vtx->getVertex(i);
+			const ImDrawVert* imguiVertex = vtx_buffer + i;
+
+			v.Pos.X = imguiVertex->pos.x;
+			v.Pos.Y = imguiVertex->pos.y;
+			v.Pos.Z = 0;
+			v.TCoords.X = imguiVertex->uv.x;
+			v.TCoords.Y = imguiVertex->uv.y;
+			v.Color.set(imguiVertex->col);
+		}
+
+		g_meshBuffer->setDirty(EBT_VERTEX);
+
+		for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+		{
+			const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
+			if (pcmd->UserCallback)
+			{
+				// User callback, registered via ImDrawList::AddCallback()
+				// (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
+				if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
+					ImGui_Impl_Skylicht_SetupRenderState(draw_data, fb_width, fb_height);
+				else
+					pcmd->UserCallback(cmd_list, pcmd);
+			}
+			else
+			{
+				// Project scissor/clipping rectangles into framebuffer space
+				ImVec4 clip_rect;
+				clip_rect.x = (pcmd->ClipRect.x - clip_off.x) * clip_scale.x;
+				clip_rect.y = (pcmd->ClipRect.y - clip_off.y) * clip_scale.y;
+				clip_rect.z = (pcmd->ClipRect.z - clip_off.x) * clip_scale.x;
+				clip_rect.w = (pcmd->ClipRect.w - clip_off.y) * clip_scale.y;
+
+				if (clip_rect.x < fb_width && clip_rect.y < fb_height && clip_rect.z >= 0.0f && clip_rect.w >= 0.0f)
+				{
+					// Apply scissor/clipping rectangle
+					// glScissor((int)clip_rect.x, (int)(fb_height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
+
+					int n = pcmd->ElemCount;
+					IIndexBuffer *idxBuffer = g_meshBuffer->getIndexBuffer();
+					idxBuffer->set_used(n);
+
+					u32* idx = (u32*)idxBuffer->getIndices();
+					for (int i = 0; i < n; i++)
+						idx[i] = (u32)idx_buffer[i];
+
+					g_meshBuffer->setPrimitiveType(scene::EPT_TRIANGLES);
+					g_meshBuffer->setDirty(EBT_INDEX);
+
+					SMaterial material;
+					material.ZBuffer = video::ECFN_ALWAYS;
+					material.ZWriteEnable = false;
+					material.BackfaceCulling = false;
+					material.FrontfaceCulling = false;
+
+					if (pcmd->TextureId == NULL)
+						material.MaterialType = g_vertexColorShader;
+					else
+					{
+						material.MaterialType = g_textureColorShader;
+						material.setTexture(0, (ITexture*)pcmd->TextureId);
+					}
+
+					driver->setMaterial(material);
+					driver->drawMeshBuffer(g_meshBuffer);
+				}
+			}
+			idx_buffer += pcmd->ElemCount;
+		}
+	}
 }
 
 void ImGui_Impl_Skylicht_ResizeFunc(int w, int h)
