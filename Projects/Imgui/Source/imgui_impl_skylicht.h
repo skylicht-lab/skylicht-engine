@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 IMGUI_IMPL_API bool     ImGui_Impl_Skylicht_Init();
 IMGUI_IMPL_API void     ImGui_Impl_Skylicht_Shutdown();
 IMGUI_IMPL_API void     ImGui_Impl_Skylicht_NewFrame();
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data);
 
 IMGUI_IMPL_API void     ImGui_Impl_Skylicht_ResizeFunc(int w, int h);
 IMGUI_IMPL_API void     ImGui_Impl_Skylicht_MouseMoveFunc(int x, int y);

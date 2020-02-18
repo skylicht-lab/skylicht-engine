@@ -55,6 +55,19 @@ namespace Skylicht
 		}
 
 		ImGui_Impl_Skylicht_NewFrame();
+
+		// Dear ImGui Apps (accessible from the "Tools" menu)
+		static bool open = true;
+		if (!ImGui::Begin("About Dear ImGui", &open, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::End();
+			return;
+		}
+		ImGui::Text("Dear ImGui %s", ImGui::GetVersion());
+		ImGui::Separator();
+		ImGui::Text("By Omar Cornut and all Dear ImGui contributors.");
+		ImGui::Text("Dear ImGui is licensed under the MIT License, see LICENSE for more information.");
+		ImGui::End();
 	}
 
 	void CImguiManager::onRender()
@@ -62,6 +75,6 @@ namespace Skylicht
 		ImGui::Render();
 		ImGuiIO& io = ImGui::GetIO();
 
-		ImGui::GetDrawData();
+		ImGui_Impl_Skylicht_RenderDrawData(ImGui::GetDrawData());
 	}
 }

@@ -99,15 +99,24 @@ void CViewInit::initScene()
 		{-5.6f, 1.2f, -2.25},
 		{6.018463f, 1.2f, 2.0211f},
 		{6.007851f, 1.2f, -2.237712f},
+
+		{3.09f, 0.8f, -1.10477f},
+		{3.09f, 0.8f, 0.71455f},
+		{-2.4447f, 0.8f, -1.0884f},
+		{-2.4447f, 0.8f,  0.7141f},
 	};
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		CGameObject *pointLightObj = zone->createEmptyObject();
 
 		CPointLight *pointLight = pointLightObj->addComponent<CPointLight>();
 		pointLight->setShadow(true);
-		pointLight->setRadius(3.0f);
+
+		if (i >= 4)
+			pointLight->setRadius(1.5f);
+		else
+			pointLight->setRadius(3.0f);
 
 		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
