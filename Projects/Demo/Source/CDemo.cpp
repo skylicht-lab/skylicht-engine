@@ -5,6 +5,8 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 
+#include "CImguiManager.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	CDemo *demo = new CDemo();
@@ -13,14 +15,16 @@ void installApplication(const std::vector<std::string>& argv)
 
 CDemo::CDemo()
 {
+	CImguiManager::createGetInstance();
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 }
 
 CDemo::~CDemo()
 {
+	CImguiManager::releaseInstance();
 	CViewManager::releaseInstance();
-	CContext::releaseInstance();	
+	CContext::releaseInstance();
 }
 
 void CDemo::onInitApp()
@@ -31,6 +35,7 @@ void CDemo::onInitApp()
 void CDemo::onUpdate()
 {
 	CViewManager::getInstance()->update();
+	CImguiManager::getInstance()->onNewFrame();
 }
 
 void CDemo::onRender()
@@ -41,6 +46,7 @@ void CDemo::onRender()
 void CDemo::onPostRender()
 {
 	CViewManager::getInstance()->postRender();
+	CImguiManager::getInstance()->onRender();
 }
 
 void CDemo::onResume()
