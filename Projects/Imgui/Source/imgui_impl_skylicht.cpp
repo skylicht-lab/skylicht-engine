@@ -117,8 +117,8 @@ void ImGui_Impl_Skylicht_SetupRenderState(ImDrawData* draw_data, int fb_width, i
 	if (g_textureColorShader == 0)
 	{
 		CShaderManager *shaderManager = CShaderManager::getInstance();
-		g_vertexColorShader = shaderManager->getShaderIDByName("VertexColor");
-		g_textureColorShader = shaderManager->getShaderIDByName("TextureColor");
+		g_vertexColorShader = shaderManager->getShaderIDByName("VertexColorAlpha");
+		g_textureColorShader = shaderManager->getShaderIDByName("TextureColorAlpha");
 	}
 
 	// set viewport
@@ -222,6 +222,7 @@ void ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data)
 					material.ZWriteEnable = false;
 					material.BackfaceCulling = false;
 					material.FrontfaceCulling = false;
+					material.UseMipMaps = false;
 
 					if (pcmd->TextureId == NULL)
 						material.MaterialType = g_vertexColorShader;
@@ -254,30 +255,42 @@ void ImGui_Impl_Skylicht_MouseMoveFunc(int x, int y)
 
 void ImGui_Impl_Skylicht_MouseButtonFunc(int button, int state, int x, int y)
 {
-
+	ImGuiIO& io = ImGui::GetIO();
+	io.MousePos = ImVec2((float)x, (float)y);
+	if (state == 1)
+		io.MouseDown[button] = true;
+	else
+		io.MouseDown[button] = false;
 }
 
-void ImGui_Impl_Skylicht_MouseWheelFunc(int button, int dir, int x, int y)
+void ImGui_Impl_Skylicht_MouseWheelFunc(int dir, int x, int y)
 {
-
+	ImGuiIO& io = ImGui::GetIO();
+	io.MousePos = ImVec2((float)x, (float)y);
+	io.MouseWheel += dir;
 }
 
-void ImGui_Impl_Skylicht_CharPressedFunc(unsigned char c, int x, int y)
+void ImGui_Impl_Skylicht_CharFunc(unsigned int c)
 {
-
+	ImGuiIO& io = ImGui::GetIO();
+	if (c >= 32)
+		io.AddInputCharacter(c);
 }
 
-void ImGui_Impl_Skylicht_CharReleasedFunc(unsigned char c, int x, int y)
+void ImGui_Impl_Skylicht_KeyPressedFunc(int key, bool ctrl, bool shift, bool alt)
 {
-
+	ImGuiIO& io = ImGui::GetIO();
+	io.KeysDown[key] = true;
+	io.KeyCtrl = ctrl;
+	io.KeyShift = shift;
+	io.KeyAlt = alt;
 }
 
-void ImGui_Impl_Skylicht_KeyPressedFunc(int key, int x, int y)
+void ImGui_Impl_Skylicht_KeyReleasedFunc(int key, bool ctrl, bool shift, bool alt)
 {
-
-}
-
-void ImGui_Impl_Skylicht_KeyReleasedFunc(int key, int x, int y)
-{
-
+	ImGuiIO& io = ImGui::GetIO();
+	io.KeysDown[key] = false;
+	io.KeyCtrl = ctrl;
+	io.KeyShift = shift;
+	io.KeyAlt = alt;
 }

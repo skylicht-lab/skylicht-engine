@@ -35,6 +35,8 @@ namespace Skylicht
 	CEventManager::~CEventManager()
 	{
 		m_eventReceivers.clear();
+
+		m_eventProcessors.clear();
 	}
 
 	void CEventManager::registerEvent(std::string name, IEventReceiver *pEvent)
@@ -64,8 +66,50 @@ namespace Skylicht
 		}
 	}
 
+	void CEventManager::registerProcessorEvent(std::string name, IEventProcessor *pEvent)
+	{
+		std::vector<eventProcessorType>::iterator i = m_eventProcessors.begin(), end = m_eventProcessors.end();
+		while (i != end)
+		{
+			if ((*i).second == pEvent)
+				return;
+			++i;
+		}
+
+		m_eventProcessors.push_back(eventProcessorType(name, pEvent));
+	}
+
+	void CEventManager::unRegisterProcessorEvent(IEventProcessor *pEvent)
+	{
+		std::vector<eventProcessorType>::iterator i = m_eventProcessors.begin(), end = m_eventProcessors.end();
+		while (i != end)
+		{
+			if ((*i).second == pEvent)
+			{
+				m_eventProcessors.erase(i);
+				return;
+			}
+			++i;
+		}
+	}
+
 	bool CEventManager::OnEvent(const SEvent& event)
 	{
+		bool enableEvent = true;
+
+		// call processor first
+		for (eventProcessorType p : m_eventProcessors)
+		{
+			if (p.second->OnProcessEvent(event) == false)
+				enableEvent = false;
+		}
+
+		if (enableEvent == false)
+		{
+			// if disable event
+			return false;
+		}
+
 		// need copy to another array.
 		// because the application will crash if registerEvent or unregister on process list Event
 		std::vector<eventType> eventWillProcess = m_eventReceivers;

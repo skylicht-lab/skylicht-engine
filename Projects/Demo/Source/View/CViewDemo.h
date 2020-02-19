@@ -16,4 +16,6 @@ public:
 	virtual void onUpdate();
 
 	virtual void onRender();
+
+	virtual void onPostRender();
 };
