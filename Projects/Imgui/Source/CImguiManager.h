@@ -25,10 +25,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CGameSingleton.h"
+#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
-	class CImguiManager : public CGameSingleton<CImguiManager>
+	class CImguiManager : 
+		public CGameSingleton<CImguiManager>,
+		public IEventProcessor
 	{
 	protected:
 		core::dimension2du m_viewport;
@@ -41,5 +44,7 @@ namespace Skylicht
 		void onNewFrame();
 
 		void onRender();
+
+		virtual bool OnProcessEvent(const SEvent& event);
 	};
 }

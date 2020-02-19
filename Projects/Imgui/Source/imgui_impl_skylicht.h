@@ -35,8 +35,7 @@ IMGUI_IMPL_API void     ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data
 IMGUI_IMPL_API void     ImGui_Impl_Skylicht_ResizeFunc(int w, int h);
 IMGUI_IMPL_API void     ImGui_Impl_Skylicht_MouseMoveFunc(int x, int y);
 IMGUI_IMPL_API void     ImGui_Impl_Skylicht_MouseButtonFunc(int button, int state, int x, int y);
-IMGUI_IMPL_API void     ImGui_Impl_Skylicht_MouseWheelFunc(int button, int dir, int x, int y);
-IMGUI_IMPL_API void     ImGui_Impl_Skylicht_CharPressedFunc(unsigned char c, int x, int y);
-IMGUI_IMPL_API void     ImGui_Impl_Skylicht_CharReleasedFunc(unsigned char c, int x, int y);
-IMGUI_IMPL_API void     ImGui_Impl_Skylicht_KeyPressedFunc(int key, int x, int y);
-IMGUI_IMPL_API void     ImGui_Impl_Skylicht_KeyReleasedFunc(int key, int x, int y);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_MouseWheelFunc(int dir, int x, int y);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_CharFunc(unsigned int c);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_KeyPressedFunc(int key, bool ctrl, bool shift, bool alt);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_KeyReleasedFunc(int key, bool ctrl, bool shift, bool alt);

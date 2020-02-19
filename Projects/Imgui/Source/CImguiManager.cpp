@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CImguiManager.h"
 #include "Graphics2D/CGraphics2D.h"
+#include "EventManager/CEventManager.h"
 #include "imgui_impl_skylicht.h"
 
 namespace Skylicht
@@ -35,7 +36,13 @@ namespace Skylicht
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.AntiAliasedLines = false;
+		style.AntiAliasedFill = false;
+
 		ImGui_Impl_Skylicht_Init();
+
+		CEventManager::getInstance()->registerProcessorEvent("ImguiManager", this);
 	}
 
 	CImguiManager::~CImguiManager()
@@ -43,6 +50,8 @@ namespace Skylicht
 		ImGui_Impl_Skylicht_Shutdown();
 
 		ImGui::DestroyContext();
+
+		CEventManager::getInstance()->unRegisterProcessorEvent(this);
 	}
 
 	void CImguiManager::onNewFrame()
@@ -55,19 +64,6 @@ namespace Skylicht
 		}
 
 		ImGui_Impl_Skylicht_NewFrame();
-
-		// Dear ImGui Apps (accessible from the "Tools" menu)
-		static bool open = true;
-		if (!ImGui::Begin("About Dear ImGui", &open, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			ImGui::End();
-			return;
-		}
-		ImGui::Text("Dear ImGui %s", ImGui::GetVersion());
-		ImGui::Separator();
-		ImGui::Text("By Omar Cornut and all Dear ImGui contributors.");
-		ImGui::Text("Dear ImGui is licensed under the MIT License, see LICENSE for more information.");
-		ImGui::End();
 	}
 
 	void CImguiManager::onRender()
@@ -76,5 +72,73 @@ namespace Skylicht
 		ImGuiIO& io = ImGui::GetIO();
 
 		ImGui_Impl_Skylicht_RenderDrawData(ImGui::GetDrawData());
+	}
+
+	bool CImguiManager::OnProcessEvent(const SEvent& event)
+	{
+		bool skipAllEvent = false;
+
+		if (event.EventType == EET_MOUSE_INPUT_EVENT)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			if (io.WantCaptureMouse == true)
+				skipAllEvent = true;
+
+			int x = event.MouseInput.X;
+			int y = event.MouseInput.Y;
+
+			if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
+				ImGui_Impl_Skylicht_MouseMoveFunc(x, y);
+			else if (event.MouseInput.Event == EMIE_MOUSE_WHEEL)
+			{
+				ImGui_Impl_Skylicht_MouseWheelFunc((int)-event.MouseInput.Wheel, x, y);
+			}
+			else
+			{
+				int button[EMIE_COUNT] = { 0 };
+				int state[EMIE_COUNT] = { 0 };
+
+				button[EMIE_LMOUSE_PRESSED_DOWN] = 0;
+				state[EMIE_LMOUSE_PRESSED_DOWN] = 1;
+
+				button[EMIE_LMOUSE_LEFT_UP] = 0;
+				state[EMIE_LMOUSE_LEFT_UP] = 0;
+
+				button[EMIE_MMOUSE_PRESSED_DOWN] = 2;
+				state[EMIE_MMOUSE_PRESSED_DOWN] = 1;
+
+				button[EMIE_MMOUSE_LEFT_UP] = 2;
+				state[EMIE_MMOUSE_LEFT_UP] = 0;
+
+				button[EMIE_RMOUSE_PRESSED_DOWN] = 1;
+				state[EMIE_RMOUSE_PRESSED_DOWN] = 1;
+
+				button[EMIE_RMOUSE_LEFT_UP] = 1;
+				state[EMIE_RMOUSE_LEFT_UP] = 0;
+
+				int eventID = (int)event.MouseInput.Event;
+				ImGui_Impl_Skylicht_MouseButtonFunc(button[eventID], state[eventID], x, y);
+			}
+		}
+		else if (event.EventType == irr::EET_KEY_INPUT_EVENT)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			if (io.WantCaptureKeyboard == true)
+				skipAllEvent = true;
+
+			unsigned int keyChar = (unsigned int)event.KeyInput.Char;
+			bool control = event.KeyInput.Control;
+			bool shift = event.KeyInput.Shift;
+
+			if (keyChar != 0)
+				ImGui_Impl_Skylicht_CharFunc(keyChar);
+
+			if (event.KeyInput.PressedDown == true)
+				ImGui_Impl_Skylicht_KeyPressedFunc((int)event.KeyInput.Key, control, shift, false);
+			else
+				ImGui_Impl_Skylicht_KeyReleasedFunc((int)event.KeyInput.Key, control, shift, false);
+		}
+
+		return !skipAllEvent;
 	}
 }
