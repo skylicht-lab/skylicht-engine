@@ -318,16 +318,12 @@ namespace video
 			PolygonOffsetFactor = other.PolygonOffsetFactor;
 			PolygonOffsetDirection = other.PolygonOffsetDirection;
 			UseMipMaps = other.UseMipMaps;
-
-			//! Skylicht engine add
-			Shadow = other.Shadow;
-			CubeReflection = other.CubeReflection;
-			PlaneReflection = other.PlaneReflection;
 			MaterialInfo = other.MaterialInfo;
 
 			return *this;
 		}
 
+		//! Extern tag infomation
 		void* MaterialInfo;
 
 		//! Texture layer array.
@@ -482,11 +478,6 @@ namespace video
 		//! Shall mipmaps be used if available
 		/** Sometimes, disabling mipmap usage can be useful. Default: true */
 		bool UseMipMaps:1;
-
-		//! Skylicht engine add
-		bool Shadow: 1;
-		bool CubeReflection: 1;
-		bool PlaneReflection: 1;
 
 		//! Gets the texture transformation matrix for level i
 		/** \param i The desired level. Must not be larger than MATERIAL_MAX_TEXTURES.
@@ -709,10 +700,8 @@ namespace video
 				BlendFactor != b.BlendFactor ||
 				PolygonOffsetFactor != b.PolygonOffsetFactor ||
 				PolygonOffsetDirection != b.PolygonOffsetDirection ||
-				UseMipMaps != b.UseMipMaps ||
-				Shadow != b.Shadow ||
-				CubeReflection != b.CubeReflection ||
-				PlaneReflection != b.PlaneReflection;
+				UseMipMaps != b.UseMipMaps;
+
 			for (u32 i=0; (i<MATERIAL_MAX_TEXTURES) && !different; ++i)
 			{
 				different |= (TextureLayer[i] != b.TextureLayer[i]);

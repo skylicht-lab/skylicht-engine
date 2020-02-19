@@ -28,13 +28,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class IEventProcessor
+	{
+	public:
+		virtual ~IEventProcessor() {}
+
+		virtual bool OnProcessEvent(const SEvent& event) = 0;
+	};
+
 	class CEventManager :
 		public CGameSingleton<CEventManager>,
 		public IEventReceiver
 	{
 	protected:
+
 		typedef std::pair<std::string, IEventReceiver*> eventType;
 		std::vector<eventType> m_eventReceivers;
+
+		typedef std::pair<std::string, IEventProcessor*> eventProcessorType;
+		std::vector<eventProcessorType> m_eventProcessors;
 
 	public:
 		CEventManager();
@@ -44,6 +56,10 @@ namespace Skylicht
 		void registerEvent(std::string name, IEventReceiver *pEvent);
 
 		void unRegisterEvent(IEventReceiver *pEvent);
+
+		void registerProcessorEvent(std::string name, IEventProcessor *pEvent);
+
+		void unRegisterProcessorEvent(IEventProcessor *pEvent);
 
 		virtual bool OnEvent(const SEvent& event);
 	};
