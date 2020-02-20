@@ -76,12 +76,14 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 
 -   Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`
 
--   Once the solution opens, right click the MainApp project, click "Set as StartUp Project" and click the play button at the top to run the Demo App.
+-   Once the solution opens, right click the **MainApp** project, click **"Set as StartUp Project"** and click the play button at the top to run the Demo App.
 
 ### Add Source To Project
-Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project.
-
+-   Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project.
+    ```console
+    # Example cmd to regenerate vs2017 x64 project
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+    ```
     
 ## Project Architecture
 <img src="Documents/Media/project_architecture.jpg" width="500">
@@ -92,10 +94,10 @@ Welcome if you want to contribute your code to `Skylicht Engine` (Ex: add featur
 Skylicht Engine is licensed under [MIT License](LICENSE.md)
 
 Skylicht Engine is based in part on the work of:
--   Irrlicht Engine
--   Bullet Physics
--   Ocornut Imgui
--   Spark Particle
+-   [Irrlicht Engine](http://irrlicht.sourceforge.net)
+-   [Bullet Physics](https://github.com/bulletphysics/bullet3)
+-   [Ocornut Imgui](https://github.com/ocornut/imgui)
+-   [Spark Particle](https://github.com/Synxis/SPARK)
 -   Independent JPEG Group
 -   zlib
 -   curl 
