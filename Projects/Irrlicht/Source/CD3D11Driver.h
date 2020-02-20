@@ -134,11 +134,12 @@ namespace video
 			SColor color = video::SColor(0, 0, 0, 0)) _IRR_OVERRIDE_;
 
 		//! sets a viewport
-		virtual void setViewPort(const core::rect<s32>& area);
-
-		//! gets the area of the current viewport
-		virtual const core::rect<s32>& getViewPort() const;
+		virtual void setViewPort(const core::rect<s32>& area);		
 		
+		virtual void setScissor(const core::rect<s32>& area);
+
+		virtual void enableScissor(bool b);
+
 		//! is vbo recommended on this mesh? for DirectX 11 ALWAYS YES!!!!!!!!!!!
 		// DirectX 11 doesn't use methods like drawPrimitiveUp (DX9) or glVertex (OpenGL)
 		// virtual bool isHardwareBufferRecommend(const scene::IMeshBuffer* mb) { return true; }
@@ -397,7 +398,7 @@ namespace video
 		DXGI_FORMAT DepthStencilFormat;		// Best format for depth stencil
 		SIrrlichtCreationParameters Params;
 	
-		bool AlphaToCoverageSupport;
+		bool AlphaToCoverageSupport;		
 
 		//! Adds a new material renderer to the VideoDriver, based on a high level shading
 		//! language.

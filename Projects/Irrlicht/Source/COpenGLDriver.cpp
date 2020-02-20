@@ -1892,6 +1892,11 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		break;
 	}
 
+	// Scissor
+	BridgeCalls->enableScissor(EnableScissor);
+	if (EnableScissor == true)
+		BridgeCalls->setScissor(ScissorRect.UpperLeftCorner.X, ScissorRect.UpperLeftCorner.Y, ScissorRect.getWidth(), ScissorRect.getHeight());
+
 	// ZWrite
 	if (material.ZWriteEnable && (AllowZWriteOnTransparent || (material.BlendOperation == EBO_NONE &&
 		!MaterialRenderers[material.MaterialType].Renderer->isTransparent())))
@@ -2365,6 +2370,23 @@ void COpenGLDriver::setViewPort(const core::rect<s32>& area)
 		BridgeCalls->setViewport(vp.UpperLeftCorner.X, getCurrentRenderTargetSize().Height - vp.UpperLeftCorner.Y - vp.getHeight(), vp.getWidth(), vp.getHeight());
 
 	ViewPort = vp;
+}
+
+void COpenGLDriver::setScissor(const core::rect<s32>& area)
+{
+	core::rect<s32> vp = area;
+	core::rect<s32> rendert(0, 0, getCurrentRenderTargetSize().Width, getCurrentRenderTargetSize().Height);
+	vp.clipAgainst(rendert);
+
+	if (vp.getHeight() > 0 && vp.getWidth() > 0)
+		BridgeCalls->setScissor(vp.UpperLeftCorner.X, getCurrentRenderTargetSize().Height - vp.UpperLeftCorner.Y - vp.getHeight(), vp.getWidth(), vp.getHeight());
+
+	ScissorRect = vp;
+}
+
+void COpenGLDriver::enableScissor(bool b)
+{
+	EnableScissor = b;
 }
 
 //! Sets the fog mode.
@@ -3422,9 +3444,9 @@ const CGcontext& COpenGLDriver::getCgContext()
 COpenGLCallBridge::COpenGLCallBridge(COpenGLDriver* driver) : Driver(driver),
 	AlphaMode(GL_ALWAYS), AlphaRef(0.0f), AlphaTest(false),
 	ClientStateVertex(false), ClientStateNormal(false), ClientStateColor(false),
-	CullFaceMode(GL_BACK), CullFace(false),
+	CullFaceMode(GL_BACK), CullFace(false), EnableScissor(false),
 	DepthFunc(GL_LESS), DepthMask(true), DepthTest(false), MatrixMode(GL_MODELVIEW),
-	ActiveTexture(GL_TEXTURE0_ARB), ClientActiveTexture(GL_TEXTURE0_ARB), ViewportX(0), ViewportY(0)
+	ActiveTexture(GL_TEXTURE0_ARB), ClientActiveTexture(GL_TEXTURE0_ARB), ViewportX(0), ViewportY(0), ScissorX(0), ScissorY(0)
 {
 	FrameBufferCount = core::max_(static_cast<GLuint>(1), static_cast<GLuint>(Driver->MaxMultipleRenderTargets));
 
@@ -3503,6 +3525,9 @@ COpenGLCallBridge::COpenGLCallBridge(COpenGLDriver* driver) : Driver(driver),
 	ViewportWidth = ScreenSize.Width;
 	ViewportHeight = ScreenSize.Height;
 	glViewport(ViewportX, ViewportY, ViewportWidth, ViewportHeight);
+
+	ScissorWidth = ViewportWidth;
+	ScissorHeight = ViewportHeight;
 }
 
 COpenGLCallBridge::~COpenGLCallBridge()
@@ -3777,6 +3802,30 @@ void COpenGLCallBridge::setDepthTest(bool enable)
 		else
 			glDisable(GL_DEPTH_TEST);
 		DepthTest = enable;
+	}
+}
+
+void COpenGLCallBridge::enableScissor(bool enable)
+{
+	if (EnableScissor != enable)
+	{
+		if (enable)
+			glEnable(GL_SCISSOR_TEST);
+		else
+			glDisable(GL_SCISSOR_TEST);
+		EnableScissor = enable;
+	}
+}
+
+void COpenGLCallBridge::setScissor(GLint scissorX, GLint scissorY, GLsizei scissorWidth, GLsizei scissorHeight)
+{
+	if (ScissorX != scissorX || ScissorY != scissorY || ScissorWidth != scissorWidth || ScissorHeight != scissorHeight)
+	{
+		glScissor(scissorX, scissorY, scissorWidth, scissorHeight);
+		ScissorX = scissorX;
+		ScissorY = scissorY;
+		ScissorWidth = scissorWidth;
+		ScissorHeight = scissorHeight;
 	}
 }
 

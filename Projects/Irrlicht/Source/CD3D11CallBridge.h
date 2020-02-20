@@ -208,6 +208,8 @@ public:
 
 	void setViewPort( const core::rect<s32>& vp );
 
+	void setScissor( const core::rect<s32>& vp );
+
 private:
 	ID3D11DeviceContext* Context;
 	ID3D11Device* Device;
@@ -242,6 +244,7 @@ private:
 	u32 ShaderByteCodeSize;
 
 	core::rect<s32> ViewPort;
+	core::rect<s32> ScissorRect;
 };
 
 }

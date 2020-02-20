@@ -209,6 +209,10 @@ namespace video
 		//! sets a viewport
 		virtual void setViewPort(const core::rect<s32>& area) _IRR_OVERRIDE_;
 
+		virtual void setScissor(const core::rect<s32>& area) _IRR_OVERRIDE_;
+
+		virtual void enableScissor(bool b) _IRR_OVERRIDE_;
+
 		//! Sets the fog mode.
 		virtual void setFog(SColor color, E_FOG_TYPE fogType, f32 start,
 			f32 end, f32 density, bool pixelFog, bool rangeFog) _IRR_OVERRIDE_;
@@ -602,6 +606,12 @@ namespace video
 
 		void setDepthTest(bool enable);
 
+		// Scissor
+
+		void enableScissor(bool enable);
+
+		void setScissor(GLint scissorX, GLint scissorY, GLsizei scissorWidth, GLsizei scissorHeight);
+
 		// Matrix calls.
 
 		void setMatrixMode(GLenum mode);
@@ -648,6 +658,7 @@ namespace video
 		GLenum DepthFunc;
 		bool DepthMask;
 		bool DepthTest;
+		bool EnableScissor;		
 
 		GLenum MatrixMode;
 
@@ -660,6 +671,11 @@ namespace video
 		GLint ViewportY;
 		GLsizei ViewportWidth;
 		GLsizei ViewportHeight;
+
+		GLint ScissorX;
+		GLint ScissorY;
+		GLsizei ScissorWidth;
+		GLsizei ScissorHeight;
 	};
 
 } // end namespace video

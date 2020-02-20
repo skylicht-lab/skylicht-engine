@@ -1423,9 +1423,22 @@ namespace irr
 			this->ViewPort = vp;
 		}
 
-		const core::rect<s32>& CD3D11Driver::getViewPort() const
+		void CD3D11Driver::setScissor(const core::rect<s32>& area)
 		{
-			return ViewPort;
+			core::dimension2du size = getCurrentRenderTargetSize();
+
+			core::rect<s32> vp = area;
+			core::rect<s32> rendert(0, 0, size.Width, size.Height);
+			vp.clipAgainst(rendert);
+
+			BridgeCalls->setScissor(vp);
+
+			this->ScissorRect = vp;
+		}
+
+		void CD3D11Driver::enableScissor(bool b)
+		{
+			EnableScissor = b;
 		}
 
 		void CD3D11Driver::drawHardwareBuffer(IHardwareBuffer* vertices,
@@ -1691,6 +1704,9 @@ namespace irr
 					RasterizerDesc.DepthBias = 0;
 				}
 			}
+
+			// Scissor
+			RasterizerDesc.ScissorEnable = EnableScissor ? true : false;
 
 			// Anti Aliasing
 			if (AlphaToCoverageSupport && (material.AntiAliasing & EAAM_ALPHA_TO_COVERAGE))

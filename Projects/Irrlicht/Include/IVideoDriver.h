@@ -792,11 +792,17 @@ namespace video
 		/** Every rendering operation is done into this new area.
 		\param area: Rectangle defining the new area of rendering
 		operations. */
-		virtual void setViewPort(const core::rect<s32>& area) =0;
+		virtual void setViewPort(const core::rect<s32>& area) = 0;
 
 		//! Gets the area of the current viewport.
 		/** \return Rectangle of the current viewport. */
-		virtual const core::rect<s32>& getViewPort() const =0;		
+		virtual const core::rect<s32>& getViewPort() const = 0;		
+
+		virtual void setScissor(const core::rect<s32>& area) = 0;
+
+		virtual const core::rect<s32>& getScissor() const = 0;
+
+		virtual void enableScissor(bool b) = 0;
 
 		//! Draws a 3d line.
 		/** For some implementations, this method simply calls
