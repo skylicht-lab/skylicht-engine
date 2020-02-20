@@ -1333,6 +1333,7 @@ namespace irr
 		//! sets the needed renderstates
 		void COGLES3Driver::setRenderStates3DMode()
 		{
+			/*
 			// Reset Texture Stages
 			BridgeCalls->setBlend(false);
 			BridgeCalls->setAlphaTest(false);
@@ -1344,7 +1345,7 @@ namespace irr
 			if (FeatureAvailable[IRR_EXT_clip_volume_hint])
 				glHint(GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL_NICEST);
 #endif
-
+			*/
 			bool shaderChanged = LastMaterial.MaterialType != Material.MaterialType;
 			s32 numMaterialRenderers = (s32)MaterialRenderers.size();
 
@@ -1491,6 +1492,7 @@ namespace irr
 				(material.ColorMask & ECP_BLUE) ? GL_TRUE : GL_FALSE,
 				(material.ColorMask & ECP_ALPHA) ? GL_TRUE : GL_FALSE);
 
+			/*
 			// Blend Equation
 			if (material.BlendOperation == EBO_NONE)
 				BridgeCalls->setBlend(false);
@@ -1518,6 +1520,7 @@ namespace irr
 					BridgeCalls->setBlendFunc(getGLBlend(srcRGBFact), getGLBlend(dstRGBFact));
 				}
 			}
+			*/
 
 			// thickness
 			/*

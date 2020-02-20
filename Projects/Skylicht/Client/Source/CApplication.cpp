@@ -94,10 +94,6 @@ namespace Skylicht
 					s_isPause = false;
 				}
 			}
-			else if (event.KeyInput.Key == KEY_BACK && event.KeyInput.PressedDown == false)
-			{
-				back();
-			}
 		}
 #endif
 

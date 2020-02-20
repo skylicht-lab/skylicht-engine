@@ -25,42 +25,26 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CGameSingleton.h"
+#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
-	class IEventProcessor
-	{
-	public:
-		virtual ~IEventProcessor() {}
-
-		virtual bool OnProcessEvent(const SEvent& event) = 0;
-	};
-
-	class CEventManager :
-		public CGameSingleton<CEventManager>,
-		public IEventReceiver
+	class CImguiManager : 
+		public CGameSingleton<CImguiManager>,
+		public IEventProcessor
 	{
 	protected:
-
-		typedef std::pair<std::string, IEventReceiver*> eventType;
-		std::vector<eventType> m_eventReceivers;
-
-		typedef std::pair<std::string, IEventProcessor*> eventProcessorType;
-		std::vector<eventProcessorType> m_eventProcessors;
+		core::dimension2du m_viewport;
 
 	public:
-		CEventManager();
+		CImguiManager();
 
-		virtual ~CEventManager();
+		virtual ~CImguiManager();
 
-		void registerEvent(std::string name, IEventReceiver *pEvent);
+		void onNewFrame();
 
-		void unRegisterEvent(IEventReceiver *pEvent);
+		void onRender();
 
-		void registerProcessorEvent(std::string name, IEventProcessor *pEvent);
-
-		void unRegisterProcessorEvent(IEventProcessor *pEvent);
-
-		virtual bool OnEvent(const SEvent& event);
+		virtual bool OnProcessEvent(const SEvent& event);
 	};
 }

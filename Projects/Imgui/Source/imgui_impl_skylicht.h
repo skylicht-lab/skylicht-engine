@@ -24,43 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "imgui.h"
 
-namespace Skylicht
-{
-	class IEventProcessor
-	{
-	public:
-		virtual ~IEventProcessor() {}
+IMGUI_IMPL_API bool     ImGui_Impl_Skylicht_Init();
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_Shutdown();
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_NewFrame();
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data);
 
-		virtual bool OnProcessEvent(const SEvent& event) = 0;
-	};
-
-	class CEventManager :
-		public CGameSingleton<CEventManager>,
-		public IEventReceiver
-	{
-	protected:
-
-		typedef std::pair<std::string, IEventReceiver*> eventType;
-		std::vector<eventType> m_eventReceivers;
-
-		typedef std::pair<std::string, IEventProcessor*> eventProcessorType;
-		std::vector<eventProcessorType> m_eventProcessors;
-
-	public:
-		CEventManager();
-
-		virtual ~CEventManager();
-
-		void registerEvent(std::string name, IEventReceiver *pEvent);
-
-		void unRegisterEvent(IEventReceiver *pEvent);
-
-		void registerProcessorEvent(std::string name, IEventProcessor *pEvent);
-
-		void unRegisterProcessorEvent(IEventProcessor *pEvent);
-
-		virtual bool OnEvent(const SEvent& event);
-	};
-}
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_ResizeFunc(int w, int h);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_MouseMoveFunc(int x, int y);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_MouseButtonFunc(int button, int state, int x, int y);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_MouseWheelFunc(int dir, int x, int y);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_CharFunc(unsigned int c);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_KeyPressedFunc(int key, bool ctrl, bool shift, bool alt);
+IMGUI_IMPL_API void     ImGui_Impl_Skylicht_KeyReleasedFunc(int key, bool ctrl, bool shift, bool alt);

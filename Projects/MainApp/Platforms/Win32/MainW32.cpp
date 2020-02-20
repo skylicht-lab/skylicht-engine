@@ -404,11 +404,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		event.EventType = irr::EET_KEY_INPUT_EVENT;
 		event.KeyInput.Key = (irr::EKEY_CODE)wParam;
-		event.KeyInput.PressedDown = (message == WM_KEYDOWN || message == WM_SYSKEYDOWN);
-
-		// todo pause game
-		if (event.KeyInput.PressedDown == false && event.KeyInput.Key == irr::KEY_F9)
-			g_update = !g_update;
+		event.KeyInput.PressedDown = (message == WM_KEYDOWN || message == WM_SYSKEYDOWN);		
 
 		const UINT MY_MAPVK_VSC_TO_VK_EX = 3; // MAPVK_VSC_TO_VK_EX should be in SDK according to MSDN, but isn't in mine.
 
