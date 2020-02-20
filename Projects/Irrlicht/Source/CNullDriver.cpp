@@ -85,9 +85,9 @@ IImageWriter* createImageWriterPPM();
 
 //! constructor
 CNullDriver::CNullDriver(io::IFileSystem* io, const core::dimension2d<u32>& screenSize)
-: FileSystem(io), MeshManipulator(0), ViewPort(0,0,0,0), ScreenSize(screenSize),
+: FileSystem(io), MeshManipulator(0), ViewPort(0,0,0,0), ScissorRect(0,0,0,0), ScreenSize(screenSize),
 	PrimitivesDrawn(0), TextureChangedCount(0), DrawCall(0), MinVertexCountForVBO(128), TextureCreationFlags(0),
-	AllowZWriteOnTransparent(false), DefaultFrameBuffer(0), RendererTransformChanged(true)
+	AllowZWriteOnTransparent(false), DefaultFrameBuffer(0), RendererTransformChanged(true), EnableScissor(false)
 {
 	#ifdef _DEBUG
 	setDebugName("CNullDriver");
@@ -886,6 +886,21 @@ void CNullDriver::setViewPort(const core::rect<s32>& area)
 const core::rect<s32>& CNullDriver::getViewPort() const
 {
 	return ViewPort;
+}
+
+void CNullDriver::setScissor(const core::rect<s32>& area)
+{
+
+}
+
+const core::rect<s32>& CNullDriver::getScissor() const
+{
+	return ScissorRect;
+}
+
+void CNullDriver::enableScissor(bool b)
+{
+
 }
 
 //! Draws a 3d line.
@@ -1998,7 +2013,7 @@ void CNullDriver::OnResize(const core::dimension2d<u32>& size)
 		ViewPort.getHeight() == (s32)ScreenSize.Height)
 		ViewPort = core::rect<s32>(core::position2d<s32>(0,0),
 									core::dimension2di(size));
-
+	
 	ScreenSize = size;
 }
 
