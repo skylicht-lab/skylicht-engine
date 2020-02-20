@@ -34,8 +34,8 @@ using namespace Skylicht;
 using namespace irr;
 
 ITexture *g_fontTexture = NULL;
-int g_vertexColorShader = 0;
-int g_textureColorShader = 0;
+int g_vertexColorShader = -1;
+int g_textureColorShader = -1;
 
 IMeshBuffer *g_meshBuffer = NULL;
 
@@ -114,7 +114,7 @@ void ImGui_Impl_Skylicht_NewFrame()
 
 void ImGui_Impl_Skylicht_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height)
 {
-	if (g_textureColorShader == 0)
+	if (g_textureColorShader == -1)
 	{
 		CShaderManager *shaderManager = CShaderManager::getInstance();
 		g_vertexColorShader = shaderManager->getShaderIDByName("VertexColorAlpha");
@@ -178,8 +178,6 @@ void ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data)
 			v.Color.set(imguiVertex->col);
 		}
 
-		g_meshBuffer->setDirty(EBT_VERTEX);
-
 		for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
 		{
 			const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
@@ -215,7 +213,7 @@ void ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data)
 						idx[i] = (u32)idx_buffer[i];
 
 					g_meshBuffer->setPrimitiveType(scene::EPT_TRIANGLES);
-					g_meshBuffer->setDirty(EBT_INDEX);
+					g_meshBuffer->setDirty();
 
 					SMaterial material;
 					material.ZBuffer = video::ECFN_ALWAYS;

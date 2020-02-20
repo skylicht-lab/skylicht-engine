@@ -37,8 +37,6 @@ namespace Skylicht
 		ImGui::StyleColorsDark();
 
 		ImGuiStyle& style = ImGui::GetStyle();
-		style.AntiAliasedLines = false;
-		style.AntiAliasedFill = false;
 
 		ImGui_Impl_Skylicht_Init();
 
