@@ -14,7 +14,7 @@ if (BUILD_DEBUG_VLD)
 endif()
 
 #if (BUILD_SKYLICHT_NETWORK)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtNetwork/Source)
+#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source)
 #endif()
 
 #if(BUILD_RECAST_NAVIGATION_LIB)

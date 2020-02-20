@@ -1703,16 +1703,18 @@ bool COpenGLDriver::testGLError()
 void COpenGLDriver::setRenderStates3DMode()
 {
 	// Reset Texture Stages
+	/*
 	BridgeCalls->setBlend(false);
 	BridgeCalls->setAlphaTest(false);
 	BridgeCalls->setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	ResetRenderStates = true;
+	ResetRenderStates = true;	
 
 #ifdef GL_EXT_clip_volume_hint
 	if (FeatureAvailable[IRR_EXT_clip_volume_hint])
 		glHint(GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL_NICEST);
 #endif
+	*/
 
 	bool shaderChanged = LastMaterial.MaterialType != Material.MaterialType;
 	s32 numMaterialRenderers = (s32)MaterialRenderers.size();
@@ -1930,6 +1932,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		(material.ColorMask & ECP_ALPHA)?GL_TRUE:GL_FALSE);
 
 	// Blend Equation
+	/*
     if (material.BlendOperation == EBO_NONE)
         BridgeCalls->setBlend(false);
     else
@@ -2048,6 +2051,7 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
             BridgeCalls->setBlendFunc(getGLBlend(srcRGBFact), getGLBlend(dstRGBFact));
         }
 	}
+	*/
 
 	// thickness
 	if (resetAllRenderStates || lastmaterial.Thickness != material.Thickness)
@@ -2285,7 +2289,6 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 					tmpTexture->getStatesCache().MipMapStatus = true;
 				}
 			}
-			/*
 			else
 			{
 				// default no mipmap
@@ -2295,7 +2298,6 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 				tmpTexture->getStatesCache().TrilinearFilter = false;
 				tmpTexture->getStatesCache().MipMapStatus = false;
 			}
-			*/
 
 			if (FeatureAvailable[IRR_EXT_texture_filter_anisotropic] &&
 				(!tmpTexture->getStatesCache().IsCached || material.TextureLayer[i].AnisotropicFilter != tmpTexture->getStatesCache().AnisotropicFilter))

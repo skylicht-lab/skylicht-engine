@@ -5,6 +5,7 @@
 #include "Graphics2D/CGraphics2D.h"
 
 #include "Material/Shader/CShaderManager.h"
+#include "imgui.h"
 
 CViewDemo::CViewDemo()
 {
@@ -47,15 +48,15 @@ void CViewDemo::onRender()
 		context->updateDirectionLight();
 
 		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager());
+	}
+}
 
-		/*
-		SColor color(255, 255, 255, 255);
-		ITexture *texture = context->getShadowMapRenderPipeline()->getDepthTexture();
-		CGraphics2D *g = CGraphics2D::getInstance();
-		g->begin2D();
-		int shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
-		g->addImageBatch(texture, color, core::IdentityMatrix, shaderID);
-		g->flush();
-		*/
+void CViewDemo::onPostRender()
+{
+	// Show demo imgui
+	static bool open = true;
+	if (open == true)
+	{
+		ImGui::ShowDemoWindow(&open);
 	}
 }
