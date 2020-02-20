@@ -150,6 +150,13 @@ namespace video
 
 		//! gets the area of the current viewport
 		virtual const core::rect<s32>& getViewPort() const _IRR_OVERRIDE_;
+
+		virtual void setScissor(const core::rect<s32>& area) _IRR_OVERRIDE_;
+
+		virtual const core::rect<s32>& getScissor() const _IRR_OVERRIDE_;
+
+		virtual void enableScissor(bool b) _IRR_OVERRIDE_;
+
 		//! Draws a 3d line.
 		virtual void draw3DLine(const core::vector3df& start,
 			const core::vector3df& end, SColor color = SColor(255,255,255,255)) _IRR_OVERRIDE_;
@@ -725,6 +732,9 @@ namespace video
 		scene::IMeshManipulator* MeshManipulator;
 
 		core::rect<s32> ViewPort;
+		core::rect<s32> ScissorRect;
+		bool EnableScissor;
+
 		core::dimension2d<u32> ScreenSize;
 		core::matrix4 TransformationMatrix;
 

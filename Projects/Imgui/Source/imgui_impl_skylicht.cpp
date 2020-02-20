@@ -147,6 +147,7 @@ void ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data)
 		return;
 
 	IVideoDriver *driver = getVideoDriver();
+	driver->enableScissor(true);
 
 	ImGui_Impl_Skylicht_SetupRenderState(draw_data, fb_width, fb_height);
 
@@ -202,7 +203,8 @@ void ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data)
 				if (clip_rect.x < fb_width && clip_rect.y < fb_height && clip_rect.z >= 0.0f && clip_rect.w >= 0.0f)
 				{
 					// Apply scissor/clipping rectangle
-					// glScissor((int)clip_rect.x, (int)(fb_height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
+					core::recti r((int)clip_rect.x, (int)clip_rect.y, (int)clip_rect.z, (int)clip_rect.w);
+					driver->setScissor(r);
 
 					int n = pcmd->ElemCount;
 					IIndexBuffer *idxBuffer = g_meshBuffer->getIndexBuffer();
@@ -218,9 +220,6 @@ void ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data)
 					SMaterial material;
 					material.ZBuffer = video::ECFN_ALWAYS;
 					material.ZWriteEnable = false;
-					material.BackfaceCulling = false;
-					material.FrontfaceCulling = false;
-					material.UseMipMaps = false;
 
 					if (pcmd->TextureId == NULL)
 						material.MaterialType = g_vertexColorShader;
@@ -237,6 +236,8 @@ void ImGui_Impl_Skylicht_RenderDrawData(ImDrawData* draw_data)
 			idx_buffer += pcmd->ElemCount;
 		}
 	}
+
+	driver->enableScissor(false);
 }
 
 void ImGui_Impl_Skylicht_ResizeFunc(int w, int h)

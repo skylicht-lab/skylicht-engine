@@ -53,10 +53,28 @@ void CViewDemo::onRender()
 
 void CViewDemo::onPostRender()
 {
-	// Show demo imgui
-	static bool open = true;
-	if (open == true)
+	static bool showImguiDemo = false;
+
+	ImGui::BeginMainMenuBar();
+	if (ImGui::BeginMenu("Skylicht"))
+	{		
+		if (ImGui::BeginMenu("Renderer"))
+		{
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("Windows"))
 	{
-		ImGui::ShowDemoWindow(&open);
+		ImGui::MenuItem("ImGui Demo", NULL, &showImguiDemo);
+		ImGui::EndMenu();
+	}
+
+	ImGui::EndMainMenuBar();
+
+	if (showImguiDemo == true)
+	{
+		ImGui::ShowDemoWindow(&showImguiDemo);
 	}
 }

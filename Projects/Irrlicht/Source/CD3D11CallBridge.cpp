@@ -680,6 +680,20 @@ void CD3D11CallBridge::setViewPort( const core::rect<s32>& vp )
 	}
 }
 
+void CD3D11CallBridge::setScissor(const core::rect<s32>& vp)
+{
+	if (ScissorRect != vp)
+	{
+		D3D11_RECT rect;
+		rect.left = (LONG)vp.UpperLeftCorner.X;
+		rect.top = (LONG)vp.UpperLeftCorner.Y;
+		rect.bottom = (LONG)vp.LowerRightCorner.Y;
+		rect.right = (LONG)vp.LowerRightCorner.X;
+
+		Context->RSSetScissorRects(1, &rect);
+	}
+}
+
 }
 }
 
