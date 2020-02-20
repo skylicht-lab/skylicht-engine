@@ -1,4 +1,4 @@
-# Skylicht Engine [WIP]
+# Skylicht Engine WIP
 ## About
 Skylicht Engine is a fork from [Irrlicht 3D Engine](http://irrlicht.sourceforge.net), that we have upgraded more feature: Sound Engine, Physics Engine, Particle Engine...
 -   Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+ video driver backends.
@@ -6,6 +6,7 @@ Skylicht Engine is a fork from [Irrlicht 3D Engine](http://irrlicht.sourceforge.
 -   Cross-Platform Framework: Android, IOS, Win32/Win64, UWP, Linux, MacOS, HTML5.
 
 -   Render pipeline: Forwarder & Deferred.
+
 
 Skylicht Engine is a super lightweight Game Engine, that target to mobile platform (Android, IOS). And, it's completely free.
 
@@ -28,17 +29,17 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 -   Clone this repo
 
 -   Build Data Assets
-    ```
+    ```console
     C:\skylicht-engine>cd Assets
     C:\skylicht-engine\Assets>python BuildAssetBundles.py
     C:\skylicht-engine\Assets>cd ..
     ```
 
 -   Build Shader (**Optional**, just rebuild when you modify built-in shader)
-    ```
+    ```console
     # Install pcpp (C Preprocessor tool)
     # https://pypi.org/project/pcpp
-    C:\skylicht-engine>pip install pcpp
+    C:\skylicht-engine>C:\Python37\Scripts\pip install pcpp
     
     # Build shader script
     C:\skylicht-engine>cd Assets
@@ -47,24 +48,25 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     ```
 
 -   Build Texture Compress (DDS, ETC2, PVRTC) (**Optional**, just rebuild when you modify texture asset)
-    ```
+    ```console
     # Install Tinydb
     # https://pypi.org/project/tinydb
-    C:\skylicht-engine>pip install tinydb
+    C:\skylicht-engine>C:\Python37\Scripts\pip install tinydb
 
     # Install Pillow (Image processing)
     # https://pillow.readthedocs.io/en/4.1.x/index.html
-    C:\skylicht-engine>pip install Pillow
+    C:\skylicht-engine>C:\Python37\Scripts\pip install Pillow
 
-    # Compress DDS & ETC2 texture
+    # Compress TGA to DDS, ETC2, PVR texture
     C:\skylicht-engine>cd Assets    
     C:\skylicht-engine\Assets>python BuildTextureCompressDDS.py
     C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
+    C:\skylicht-engine\Assets>python BuildTextureCompressPVR.py
     C:\skylicht-engine\Assets>cd ..
     ```
 
 -   Run CMake from the current directory
-    ```
+    ```console
     # Visual Studio 2017
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
   
@@ -80,6 +82,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project.
 
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+    
 ## Project Architecture
 <img src="Documents/Media/project_architecture.jpg" width="500">
 
@@ -91,6 +94,8 @@ Skylicht Engine is licensed under [MIT License](LICENSE.md)
 Skylicht Engine is based in part on the work of:
 -   Irrlicht Engine
 -   Bullet Physics
+-   Ocornut Imgui
+-   Spark Particle
 -   Independent JPEG Group
 -   zlib
 -   curl 
