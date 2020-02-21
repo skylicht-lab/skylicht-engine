@@ -19,6 +19,7 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 #include "RenderMesh/CRenderMesh.h"
+#include "Graphics2D/CCanvas.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -76,6 +77,11 @@ void CViewInit::initScene()
 	CCamera *camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(2.0f, 1.0f, 2.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+
+	// gui camera
+	CGameObject *guiCameraObj = zone->createEmptyObject();
+	guiCameraObj->addComponent<CCamera>();
+	CCamera *guiCamera = guiCameraObj->getComponent<CCamera>();
 
 	// sky
 	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Demo/Textures/Sky/PaperMill.png");
@@ -146,11 +152,17 @@ void CViewInit::initScene()
 		renderer->initMaterial(materials);
 	}
 
+	// gui
+	CGameObject *guiObject = zone->createEmptyObject();
+	CCanvas *canvas = guiObject->addComponent<CCanvas>();
+	CGUIImage *guiImage = canvas->createImage();
+
 	// save to context
 	CContext *context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
+	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 }
 
@@ -188,7 +200,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+}
 #else
 
 #if defined(WINDOWS_STORE)

@@ -24,53 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "pch.h"
-#include "Utils/CGameSingleton.h"
+#include "CGUIElement.h"
 
 namespace Skylicht
 {
-	class CCamera;
-	class CCanvas;
-
-	class CGraphics2D : public CGameSingleton<CGraphics2D>
+	class CGUIImage : public CGUIElement
 	{
+		friend class CCanvas;
 	protected:
-		int m_currentW;
-		int m_currentH;
+		ITexture *m_image;
 
-		float m_scaleRatio;
-
-		IVideoDriver *m_driver;
-
-		std::vector<CCanvas*> m_canvas;
+	protected:
+		CGUIImage(CCanvas *canvas, const core::rectf& rect);
+		CGUIImage(CCanvas *canvas, CGUIElement *parent);
+		CGUIImage(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect);
 
 	public:
-		CGraphics2D();
-		virtual ~CGraphics2D();
+		virtual ~CGUIImage();
 
-		void init();
+		virtual void render(CCamera *camera);
 
-		core::dimension2du getScreenSize();
-
-		bool isHD();
-
-		bool isWideScreen();
-
-		float getScale()
+		inline void setTexture(ITexture *texture)
 		{
-			return m_scaleRatio;
+			m_image = texture;
 		}
 
-		void setScale(float f)
+		inline ITexture* getTexture()
 		{
-			m_scaleRatio = f;
+			return m_image;
 		}
-
-		void addCanvas(CCanvas *canvas);
-
-		void removeCanvas(CCanvas *canvas);
-
-		void render(CCamera *camera);
 	};
-
 }

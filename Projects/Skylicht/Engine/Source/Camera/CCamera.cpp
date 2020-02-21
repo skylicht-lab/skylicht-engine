@@ -44,6 +44,9 @@ namespace Skylicht
 
 	void CCamera::initComponent()
 	{
+		core::vector3df target(0.0f, 0.0f, 1.0f);
+		lookAt(target, CTransform::s_oy);
+
 		recalculateProjectionMatrix();
 	}
 
