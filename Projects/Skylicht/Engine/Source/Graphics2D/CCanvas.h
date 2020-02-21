@@ -24,53 +24,85 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "pch.h"
-#include "Utils/CGameSingleton.h"
+#include "Components/CComponentSystem.h"
+
+#include "Camera/CCamera.h"
+
+#include "GUI/CGUIElement.h"
+#include "GUI/CGUIImage.h"
+
+#define MAX_CHILD_DEPTH 512
 
 namespace Skylicht
 {
-	class CCamera;
-	class CCanvas;
-
-	class CGraphics2D : public CGameSingleton<CGraphics2D>
+	class CCanvas : public CComponentSystem
 	{
 	protected:
-		int m_currentW;
-		int m_currentH;
+		std::list<CGUIElement*> m_entities;
+		core::array<CGUIElement*> m_entitiesTree[MAX_CHILD_DEPTH];
 
-		float m_scaleRatio;
+		core::rectf m_rect;
 
-		IVideoDriver *m_driver;
+		CGUIElement *m_root;
+		int m_maxChildLevel;
 
-		std::vector<CCanvas*> m_canvas;
-
+		int m_sortDepth;
 	public:
-		CGraphics2D();
-		virtual ~CGraphics2D();
+		CCanvas();
 
-		void init();
+		virtual ~CCanvas();
 
-		core::dimension2du getScreenSize();
+		virtual void initComponent();
 
-		bool isHD();
+		virtual void updateComponent();
 
-		bool isWideScreen();
-
-		float getScale()
-		{
-			return m_scaleRatio;
-		}
-
-		void setScale(float f)
-		{
-			m_scaleRatio = f;
-		}
-
-		void addCanvas(CCanvas *canvas);
-
-		void removeCanvas(CCanvas *canvas);
+		virtual void endUpdate();
 
 		void render(CCamera *camera);
-	};
 
+	public:
+
+		inline void setSortDepth(int d)
+		{
+			m_sortDepth = d;
+		}
+
+		inline int getSortDepth()
+		{
+			return m_sortDepth;
+		}
+
+		inline void setRect(const core::rectf& r)
+		{
+			m_rect = r;
+		}
+
+		inline int generateID()
+		{
+			return (int)m_entities.size();
+		}
+
+		inline CGUIElement* getRootElement()
+		{
+			return m_root;
+		}
+
+		CGUIElement* createElement();
+
+		CGUIElement* createElement(const core::rectf& r);
+
+		CGUIElement* createElement(CGUIElement *e, const core::rectf& r);
+
+		CGUIImage* createImage();
+
+		CGUIImage* createImage(const core::rectf& r);
+
+		CGUIImage* createImage(CGUIElement *e, const core::rectf& r);
+
+		void remove(CGUIElement *element);
+
+	protected:
+
+		void removeChildOfParent(CGUIElement *parent);
+	};
 }

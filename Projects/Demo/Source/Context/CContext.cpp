@@ -6,7 +6,8 @@ CContext::CContext() :
 	m_rendering(NULL),
 	m_zone(NULL),
 	m_directionalLight(NULL),
-	m_camera(NULL)
+	m_camera(NULL),
+	m_guiCamera(NULL)
 {
 
 }
