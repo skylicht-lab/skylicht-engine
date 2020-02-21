@@ -22,55 +22,41 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
 #include "pch.h"
-#include "Utils/CGameSingleton.h"
+#include "CGUIImage.h"
 
 namespace Skylicht
 {
-	class CCamera;
-	class CCanvas;
-
-	class CGraphics2D : public CGameSingleton<CGraphics2D>
+	CGUIImage::CGUIImage(CCanvas *canvas, const core::rectf& rect) :
+		CGUIElement(canvas, rect),
+		m_image(NULL)
 	{
-	protected:
-		int m_currentW;
-		int m_currentH;
 
-		float m_scaleRatio;
+	}
 
-		IVideoDriver *m_driver;
+	CGUIImage::CGUIImage(CCanvas *canvas, CGUIElement *parent) :
+		CGUIElement(canvas, parent),
+		m_image(NULL)
+	{
 
-		std::vector<CCanvas*> m_canvas;
+	}
 
-	public:
-		CGraphics2D();
-		virtual ~CGraphics2D();
+	CGUIImage::CGUIImage(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect) :
+		CGUIElement(canvas, parent, rect),
+		m_image(NULL)
+	{
 
-		void init();
+	}
 
-		core::dimension2du getScreenSize();
+	CGUIImage::~CGUIImage()
+	{
 
-		bool isHD();
+	}
 
-		bool isWideScreen();
+	void CGUIImage::render(CCamera *camera)
+	{
+		IVideoDriver *driver = getVideoDriver();
+		driver->setTransform(ETS_WORLD, m_absoluteTransform);
 
-		float getScale()
-		{
-			return m_scaleRatio;
-		}
-
-		void setScale(float f)
-		{
-			m_scaleRatio = f;
-		}
-
-		void addCanvas(CCanvas *canvas);
-
-		void removeCanvas(CCanvas *canvas);
-
-		void render(CCamera *camera);
-	};
-
+	}
 }
