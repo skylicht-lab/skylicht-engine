@@ -79,9 +79,9 @@ void CViewInit::initScene()
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
-	CGameObject *guiCameraObj = zone->createEmptyObject();
-	guiCameraObj->addComponent<CCamera>();
-	CCamera *guiCamera = guiCameraObj->getComponent<CCamera>();
+	//CGameObject *guiCameraObj = zone->createEmptyObject();
+	//guiCameraObj->addComponent<CCamera>();
+	CCamera *guiCamera = camera;// guiCameraObj->getComponent<CCamera>();
 
 	// sky
 	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Demo/Textures/Sky/PaperMill.png");
@@ -155,7 +155,12 @@ void CViewInit::initScene()
 	// gui
 	CGameObject *guiObject = zone->createEmptyObject();
 	CCanvas *canvas = guiObject->addComponent<CCanvas>();
+
 	CGUIImage *guiImage = canvas->createImage();
+	guiImage->setImage(skyDomeTexture);
+	core::rectf r = guiImage->getRect();
+	r.LowerRightCorner *= 0.1f;
+	guiImage->setRect(r);
 
 	// save to context
 	CContext *context = CContext::getInstance();
@@ -200,7 +205,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-}
+		}
 #else
 
 #if defined(WINDOWS_STORE)
@@ -234,7 +239,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-}
+	}
 
 void CViewInit::onRender()
 {
