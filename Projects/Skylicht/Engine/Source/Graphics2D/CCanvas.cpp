@@ -29,7 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CCanvas::CCanvas() :
-		m_sortDepth(0)
+		m_sortDepth(0),
+		m_enable3DBillboard(false)
 	{
 		CGraphics2D *g = CGraphics2D::getInstance();
 		float w = (float)g->getScreenSize().Width;

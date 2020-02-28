@@ -29,6 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGraphics2D.h"
 #include "Material/Shader/CShaderManager.h"
 
+// camera transform
+#include "GameObject/CGameObject.h"
+
 #define MAX_VERTICES (1024*4)
 #define MAX_INDICES	(1024*6)
 
@@ -45,6 +48,10 @@ namespace Skylicht
 		m_buffer = new CMeshBuffer<S3DVertex>(m_driver->getVertexDescriptor(EVT_STANDARD), video::EIT_16BIT);
 		m_vertices = (SVertexBuffer*)m_buffer->getVertexBuffer();
 		m_indices = (CIndexBuffer*)m_buffer->getIndexBuffer();
+
+		m_2dMaterial.ZBuffer = ECFN_ALWAYS;
+		m_2dMaterial.ZWriteEnable = false;
+		// m_2dMaterial.BackfaceCulling = false;
 	}
 
 	void CGraphics2D::init()
@@ -115,17 +122,81 @@ namespace Skylicht
 		IVideoDriver *driver = getVideoDriver();
 		const SViewFrustum& viewArea = camera->getViewFrustum();
 		driver->setTransform(video::ETS_PROJECTION, viewArea.getTransform(video::ETS_PROJECTION));
+		driver->setTransform(video::ETS_VIEW, viewArea.getTransform(video::ETS_VIEW));
 
-		const core::matrix4& view = viewArea.getTransform(video::ETS_VIEW);
-		driver->setTransform(video::ETS_VIEW, view);
+		// Calculate billboard matrix
+		// this is invert view camera
+		const core::matrix4& cameraTransform = camera->getGameObject()->getTransform()->getMatrixTransform();
 
-		core::matrix4 world;
-		world.setScale(core::vector3df(1.0f, -1.0f, 1.0f));
-		driver->setTransform(video::ETS_WORLD, world);
+		// look vector
+		core::vector3df cameraPosition = cameraTransform.getTranslation();
+		core::vector3df look(0.0f, 0.0f, -1.0f);
+		cameraTransform.rotateVect(look);
+		look.normalize();
+
+		// up vector
+		core::vector3df up(0.0f, 1.0f, 0.0f);
+		cameraTransform.rotateVect(up);
+		up.normalize();
+
+		// right vector
+		core::vector3df right = up.crossProduct(look);
+		up = look.crossProduct(right);
+		up.normalize();
+
+		// billboard matrix
+		core::matrix4 billboardMatrix;
+		f32 *matData = billboardMatrix.pointer();
+
+		matData[0] = right.X;
+		matData[1] = right.Y;
+		matData[2] = right.Z;
+		matData[3] = 0.0f;
+
+		matData[4] = up.X;
+		matData[5] = up.Y;
+		matData[6] = up.Z;
+		matData[7] = 0.0f;
+
+		matData[8] = look.X;
+		matData[9] = look.Y;
+		matData[10] = look.Z;
+		matData[11] = 0.0f;
+
+		matData[12] = 0.0f;
+		matData[13] = 0.0f;
+		matData[14] = 0.0f;
+		matData[15] = 1.0f;
 
 		// render graphics
 		for (CCanvas *canvas : m_canvas)
 		{
+			CGUIElement* root = canvas->getRootElement();
+
+			if (canvas->isEnable3DBillboard() == true)
+			{
+				// rotation canvas to billboard
+				core::matrix4 world = billboardMatrix;
+
+				// scale canvas
+				core::matrix4 scale;
+				scale.setScale(root->getScale());
+				world *= scale;
+
+				// move to canvas position
+				world.setTranslation(root->getPosition());
+
+				// apply billboard transform
+				driver->setTransform(video::ETS_WORLD, world);
+			}
+			else
+			{
+				// world is real transform
+				const core::matrix4& world = root->getRelativeTransform(true);
+				driver->setTransform(video::ETS_WORLD, world);
+			}
+
+			// render this canvas
 			canvas->render(camera);
 		}
 
