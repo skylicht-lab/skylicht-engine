@@ -72,6 +72,9 @@ namespace Skylicht
 
 		bool m_cullingVisible;
 
+		SColor m_color;
+		int m_shaderID;
+
 	protected:
 		CGUIElement(CCanvas *canvas, const core::rectf& rect);
 		CGUIElement(CCanvas *canvas, CGUIElement *parent);
@@ -97,6 +100,11 @@ namespace Skylicht
 		inline core::rectf& getRect()
 		{
 			return m_rect;
+		}
+
+		inline void setRect(const core::rectf& r)
+		{
+			m_rect = r;
 		}
 
 		inline bool isTransformChanged()
@@ -170,6 +178,16 @@ namespace Skylicht
 		inline bool isCullingVisisble()
 		{
 			return m_cullingVisible;
+		}
+
+		inline void setShaderID(int id)
+		{
+			m_shaderID = id;
+		}
+
+		inline int getShaderID()
+		{
+			return m_shaderID;
 		}
 
 		virtual void render(CCamera *camera);

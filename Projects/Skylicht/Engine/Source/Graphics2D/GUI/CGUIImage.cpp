@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGUIImage.h"
+#include "Graphics2D/CGraphics2D.h"
 
 namespace Skylicht
 {
@@ -55,8 +56,17 @@ namespace Skylicht
 
 	void CGUIImage::render(CCamera *camera)
 	{
-		IVideoDriver *driver = getVideoDriver();
-		driver->setTransform(ETS_WORLD, m_absoluteTransform);
+		if (m_image != NULL)
+		{
+			CGraphics2D::getInstance()->addImageBatch(m_image, m_rect, m_sourceRect, m_color, m_absoluteTransform, m_shaderID, m_pivot.X, m_pivot.Y);
+		}
+	}
 
+	void CGUIImage::setImage(ITexture *texture)
+	{
+		m_image = texture;
+
+		if (m_image)
+			setSourceRect(0, 0, (float)m_image->getSize().Width, (float)m_image->getSize().Height);
 	}
 }
