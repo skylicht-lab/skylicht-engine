@@ -93,9 +93,9 @@ namespace Skylicht
 
 	}
 
-	const core::matrix4& CGUIElement::getRelativeTransform()
+	const core::matrix4& CGUIElement::getRelativeTransform(bool forceRecalc)
 	{
-		if (m_transformChanged == true)
+		if (m_transformChanged == true || forceRecalc == true)
 		{
 			m_relativeTransform.makeIdentity();
 			m_relativeTransform.setRotationDegrees(m_rotation);
@@ -130,8 +130,14 @@ namespace Skylicht
 	void CGUIElement::calcAbsoluteTransform()
 	{
 		if (m_parent == NULL)
-			m_absoluteTransform = getRelativeTransform();
+		{
+			// alway identity at root transform
+			// that fix for canvas billboard
+			m_absoluteTransform = core::IdentityMatrix;
+		}
 		else
+		{
 			m_absoluteTransform.setbyproduct_nocheck(m_parent->getAbsoluteTransform(), getRelativeTransform());
+		}
 	}
 }

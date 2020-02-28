@@ -47,6 +47,9 @@ namespace Skylicht
 		int m_maxChildLevel;
 
 		int m_sortDepth;
+
+		bool m_enable3DBillboard;
+
 	public:
 		CCanvas();
 
@@ -85,6 +88,16 @@ namespace Skylicht
 		inline CGUIElement* getRootElement()
 		{
 			return m_root;
+		}
+
+		inline void enable3DBillboard(bool b)
+		{
+			m_enable3DBillboard = b;
+		}
+
+		inline bool isEnable3DBillboard()
+		{
+			return m_enable3DBillboard;
 		}
 
 		CGUIElement* createElement();

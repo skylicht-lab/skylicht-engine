@@ -152,14 +152,19 @@ void CViewInit::initScene()
 		renderer->initMaterial(materials);
 	}
 
-	// gui
+	// 3d gui
 	CGameObject *guiObject = zone->createEmptyObject();
 	CCanvas *canvas = guiObject->addComponent<CCanvas>();
+	canvas->enable3DBillboard(true);
+
+	// Scale screen resolution to meter and flip 2D coord (Y down, X invert)
+	CGUIElement *rootGUI = canvas->getRootElement();
+	rootGUI->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
+	rootGUI->setScale(core::vector3df(-0.001f, -0.001f, 0.001f));
 
 	CGUIImage *guiImage = canvas->createImage();
 	guiImage->setImage(skyDomeTexture);
 	core::rectf r = guiImage->getRect();
-	r.LowerRightCorner *= 0.1f;
 	guiImage->setRect(r);
 
 	// save to context
@@ -239,7 +244,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {

@@ -192,7 +192,7 @@ namespace Skylicht
 
 		virtual void render(CCamera *camera);
 
-		const core::matrix4& getRelativeTransform();
+		const core::matrix4& getRelativeTransform(bool forceRecalc = false);
 
 		const core::matrix4& getAbsoluteTransform()
 		{
