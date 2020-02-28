@@ -44,6 +44,14 @@ namespace Skylicht
 
 		std::vector<CCanvas*> m_canvas;
 
+	protected:
+
+		video::SMaterial m_2dMaterial;
+
+		IMeshBuffer *m_buffer;
+		scene::SVertexBuffer *m_vertices;
+		scene::CIndexBuffer *m_indices;
+
 	public:
 		CGraphics2D();
 		virtual ~CGraphics2D();
@@ -71,6 +79,16 @@ namespace Skylicht
 		void removeCanvas(CCanvas *canvas);
 
 		void render(CCamera *camera);
+
+	public:
+
+		void flushBuffer(IMeshBuffer *meshBuffer, video::SMaterial& material);
+
+		void flush();
+
+		void addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX = 0, float pivotY = 0);
+
+		void addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX = 0, float pivotY = 0);
 	};
 
 }

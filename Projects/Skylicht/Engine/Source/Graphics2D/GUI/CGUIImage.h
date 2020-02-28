@@ -31,8 +31,12 @@ namespace Skylicht
 	class CGUIImage : public CGUIElement
 	{
 		friend class CCanvas;
+
 	protected:
 		ITexture *m_image;
+
+		core::rectf m_sourceRect;
+		core::position2df m_pivot;
 
 	protected:
 		CGUIImage(CCanvas *canvas, const core::rectf& rect);
@@ -44,14 +48,29 @@ namespace Skylicht
 
 		virtual void render(CCamera *camera);
 
-		inline void setTexture(ITexture *texture)
-		{
-			m_image = texture;
-		}
+		void setImage(ITexture *texture);
 
-		inline ITexture* getTexture()
+		inline ITexture* getImage()
 		{
 			return m_image;
+		}
+
+		inline void setSourceRect(float x, float y, float w, float h)
+		{
+			m_sourceRect.UpperLeftCorner.X = x;
+			m_sourceRect.UpperLeftCorner.Y = y;
+			m_sourceRect.LowerRightCorner.X = x + w;
+			m_sourceRect.LowerRightCorner.Y = y + h;
+		}
+
+		void setPivot(float x, float y)
+		{
+			m_pivot.set(x, y);
+		}
+
+		const core::position2df& getPivot()
+		{
+			return m_pivot;
 		}
 	};
 }

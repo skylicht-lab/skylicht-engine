@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGUIElement.h"
 
 #include "Graphics2D/CCanvas.h"
+#include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {
@@ -39,8 +40,10 @@ namespace Skylicht
 		m_visible(true),
 		m_parent(NULL),
 		m_scale(1.0f, 1.0f, 1.0f),
-		m_cullingVisible(true)
+		m_cullingVisible(true),
+		m_color(255, 255, 255, 255)
 	{
+		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
 
 	CGUIElement::CGUIElement(CCanvas *canvas, CGUIElement *parent) :
@@ -51,10 +54,12 @@ namespace Skylicht
 		m_visible(true),
 		m_parent(parent),
 		m_scale(1.0f, 1.0f, 1.0f),
-		m_cullingVisible(true)
+		m_cullingVisible(true),
+		m_color(255, 255, 255, 255)
 	{
 		m_level = parent->getLevel() + 1;
 		m_rect = parent->getRect();
+		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
 
 	CGUIElement::CGUIElement(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect) :
@@ -66,9 +71,11 @@ namespace Skylicht
 		m_visible(true),
 		m_parent(parent),
 		m_scale(1.0f, 1.0f, 1.0f),
-		m_cullingVisible(true)
+		m_cullingVisible(true),
+		m_color(255, 255, 255, 255)
 	{
 		m_level = parent->getLevel() + 1;
+		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
 
 	CGUIElement::~CGUIElement()
