@@ -21,6 +21,10 @@
 #include "RenderMesh/CRenderMesh.h"
 #include "Graphics2D/CCanvas.h"
 
+#if defined(USE_FREETYPE)
+#include "Graphics2D/Glyph/CGlyphFreetype.h"
+#endif
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL)
@@ -60,6 +64,11 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
+
+#if defined(USE_FREETYPE)
+	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+#endif
 }
 
 void CViewInit::initScene()
@@ -153,19 +162,19 @@ void CViewInit::initScene()
 	}
 
 	// 3d gui
+	/*
 	CGameObject *guiObject = zone->createEmptyObject();
 	CCanvas *canvas = guiObject->addComponent<CCanvas>();
 	canvas->enable3DBillboard(true);
 
 	// Scale screen resolution to meter and flip 2D coord (Y down, X invert)
 	CGUIElement *rootGUI = canvas->getRootElement();
-	rootGUI->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
+	rootGUI->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
 	rootGUI->setScale(core::vector3df(-0.001f, -0.001f, 0.001f));
 
 	CGUIImage *guiImage = canvas->createImage();
 	guiImage->setImage(skyDomeTexture);
-	core::rectf r = guiImage->getRect();
-	guiImage->setRect(r);
+	*/
 
 	// save to context
 	CContext *context = CContext::getInstance();
@@ -210,7 +219,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 #if defined(WINDOWS_STORE)
@@ -243,7 +252,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
