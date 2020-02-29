@@ -59,8 +59,6 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
-		virtual void endUpdate();
-
 		void render(CCamera *camera);
 
 	public:
