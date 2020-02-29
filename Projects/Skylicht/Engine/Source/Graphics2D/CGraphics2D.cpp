@@ -51,7 +51,7 @@ namespace Skylicht
 
 		m_2dMaterial.ZBuffer = ECFN_ALWAYS;
 		m_2dMaterial.ZWriteEnable = false;
-		// m_2dMaterial.BackfaceCulling = false;
+		m_2dMaterial.BackfaceCulling = false;
 	}
 
 	void CGraphics2D::init()
@@ -186,7 +186,7 @@ namespace Skylicht
 				// move to canvas position
 				world.setTranslation(root->getPosition());
 
-				// apply billboard transform
+				// apply billboard transform to world and skip recalc ui transform
 				driver->setTransform(video::ETS_WORLD, world);
 			}
 			else

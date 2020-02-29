@@ -66,7 +66,7 @@ namespace Skylicht
 	{
 	}
 
-	void CCanvas::endUpdate()
+	void CCanvas::render(CCamera *camera)
 	{
 		// we update GUI element one last frame update
 		for (int i = 0; i < MAX_CHILD_DEPTH; i++)
@@ -110,12 +110,6 @@ namespace Skylicht
 
 		m_maxChildLevel = maxLevel;
 
-		// base update
-		CComponentSystem::endUpdate();
-	}
-
-	void CCanvas::render(CCamera *camera)
-	{
 		// culling
 		for (CGUIElement *entity : m_entities)
 		{
