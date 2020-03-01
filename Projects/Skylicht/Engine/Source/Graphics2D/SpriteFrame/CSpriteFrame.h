@@ -98,19 +98,11 @@ namespace Skylicht
 
 		SImage *Image;
 
-		core::rectf	BoudingRect;
+		core::rectf BoudingRect;
 
 		SFrame()
 		{
 			ID = -1;
 		}
-	};
-
-	class CSpriteFrame
-	{
-	public:
-		CSpriteFrame();
-
-		virtual ~CSpriteFrame();
 	};
 }

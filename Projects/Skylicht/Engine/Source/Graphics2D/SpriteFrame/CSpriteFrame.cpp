@@ -144,14 +144,4 @@ namespace Skylicht
 		vertices[2].Color = c;
 		vertices[3].Color = c;
 	}
-
-	CSpriteFrame::CSpriteFrame()
-	{
-
-	}
-
-	CSpriteFrame::~CSpriteFrame()
-	{
-
-	}
 }
