@@ -31,16 +31,18 @@ https://github.com/skylicht-lab/skylicht-engine
 #include FT_GLYPH_H
 
 #include "Utils/CGameSingleton.h"
+#include "Graphics2D/Atlas/CAtlas.h"
 
 namespace Skylicht
 {
 	struct SGlyphEntity
 	{
-		IImage *m_bitmap;
+		CAtlas *m_atlas;
 		float m_advance;
-		core::rectf m_bounds;
 		float m_uvX;
 		float m_uvY;
+		float m_uvW;
+		float m_uvH;
 	};
 
 	struct SFaceEntity
@@ -48,10 +50,11 @@ namespace Skylicht
 		FT_Face m_face;
 		FT_Byte *m_data;
 
-		std::map<int, SGlyphEntity*> m_ge;
+		std::map<u32, SGlyphEntity*> m_ge;
 
-		SFaceEntity(FT_Face face) :
-			m_face(face)
+		SFaceEntity(FT_Face face, FT_Byte *data) :
+			m_face(face),
+			m_data(data)
 		{
 		}
 
@@ -59,10 +62,9 @@ namespace Skylicht
 		{
 			FT_Done_Face(m_face);
 
-			for (std::map<int, SGlyphEntity*>::iterator it = m_ge.begin(), end = m_ge.end(); it != end; ++it)
-			{
+			for (std::map<u32, SGlyphEntity*>::iterator it = m_ge.begin(), end = m_ge.end(); it != end; ++it)
 				delete it->second;
-			}
+			m_ge.clear();
 		}
 	};
 
@@ -71,6 +73,13 @@ namespace Skylicht
 	protected:
 		FT_Library m_lib;
 
+		std::map<std::string, SFaceEntity*> m_faceEntity;
+
+		u32 m_width;
+		u32 m_height;
+
+		std::vector<CAtlas*> m_atlas;
+
 	public:
 		CGlyphFreetype();
 
@@ -78,13 +87,23 @@ namespace Skylicht
 
 		bool initFont(const char *name, const char *path);
 
-		IImage *getCharImage(unsigned short code,
+		static int getFontPtToPx(int pt);
+
+		CAtlas *getCharImage(unsigned short code,
 			const char *name,
 			int fontSize,
-			core::rectf *bounds,
 			float *advance,
 			float *uvX,
-			float *uvY);
+			float *uvY,
+			float *uvW,
+			float *uvH);
+
+	protected:
+
+		CAtlas* addEmptyAtlas(ECOLOR_FORMAT color, int w, int h);
+
+		int putGlyphToTexture(const FT_GlyphSlot &glyph, float *uvx, float *uvy, float *uvW, float *uvH);
+
 	};
 }
 

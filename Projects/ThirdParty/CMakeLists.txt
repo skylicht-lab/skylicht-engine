@@ -101,7 +101,6 @@ set(freetype_source
 	./source/freetype2/src/smooth/smooth.c
 	./source/freetype2/src/truetype/truetype.c)
 add_source_group("${freetype_source}" "source\\freetype2")
-add_definitions(-DFT2_BUILD_LIBRARY)
 
 add_library(ThirdParty STATIC
 	${aes_gladman_source} 
