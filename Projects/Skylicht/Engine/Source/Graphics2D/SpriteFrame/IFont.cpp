@@ -22,70 +22,28 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
+#include "pch.h"
 #include "IFont.h"
-#include "Graphics2D/Atlas/CAtlas.h"
 
 namespace Skylicht
 {
-	class CGlyphFont : public IFont
+	void IFont::getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat)
 	{
-	protected:
-		float m_charPadding;
-		float m_spacePadding;
+		output.clear();
+		outputFormat.clear();
 
-		std::map<int, SModuleOffset*> m_moduleOffset;
-
-		std::vector<SImage> m_images;
-		std::vector<SModuleRect> m_moduleRect;
-		std::vector<SFrame> m_frames;
-
-		std::string m_fontName;
-		int m_fontSizePt;
-
-	protected:
-
-		SImage* getImage(CAtlas *atlas);
-
-	public:
-		CGlyphFont();
-
-		virtual ~CGlyphFont();
-
-		inline void setFont(const char *fontName)
+		int i = 0;
+		while (string[i] != NULL)
 		{
-			m_fontName = fontName;
+			SModuleOffset* module = getCharacterModule(string[i]);
+			if (module)
+			{
+				module->Character = (wchar_t)string[i];
+
+				outputFormat.push_back(format[i]);
+				output.push_back(module);
+			}
+			i++;
 		}
-
-		inline const char *getFontName()
-		{
-			return m_fontName.c_str();
-		}
-
-		virtual float getCharPadding()
-		{
-			return m_charPadding;
-		}
-
-		virtual void setCharPadding(float padding)
-		{
-			m_charPadding = padding;
-			m_spacePadding = padding;
-		}
-
-		virtual float getSpacePadding()
-		{
-			return m_spacePadding;
-		}
-
-		virtual void setSpacePadding(float padding)
-		{
-			m_spacePadding = padding;
-		}
-
-		virtual SModuleOffset* getCharacterModule(int character);
-
-		virtual void getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
-	};
+	}
 }

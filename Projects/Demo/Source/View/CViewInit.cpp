@@ -171,7 +171,8 @@ void CViewInit::initScene()
 	freetypeFont->getCharImage('C', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
 	freetypeFont->getCharImage('D', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
 
-	// 3d gui
+	// 2d gui
+	/*
 	CGameObject *guiObject = zone->createEmptyObject();
 	CCanvas *canvas = guiObject->addComponent<CCanvas>();
 	// canvas->enable3DBillboard(true);
@@ -183,6 +184,9 @@ void CViewInit::initScene()
 
 	CGUIImage *guiImage = canvas->createImage();
 	guiImage->setImage(atlas->getTexture());
+
+	atlas->updateTexture();
+	*/
 #endif
 
 	// save to context
@@ -239,7 +243,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{

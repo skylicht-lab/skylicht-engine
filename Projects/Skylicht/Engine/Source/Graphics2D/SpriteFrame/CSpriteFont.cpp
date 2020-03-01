@@ -172,6 +172,10 @@ namespace Skylicht
 					CStringImp::convertUnicodeToUTF8(xadvance, text);
 					moduleOffset.XAdvance = core::fast_atof(text);
 
+					// map frame to module
+					moduleOffset.Frame = &frame;
+					moduleOffset.Module = &module;
+
 					// make module map
 					m_moduleMap[moduleID] = charID;
 					moduleID++;
@@ -232,25 +236,5 @@ namespace Skylicht
 
 		SFrame& frame = m_frames[index];
 		return &frame.ModuleOffset[0];
-	}
-
-	void CSpriteFont::getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat)
-	{
-		output.clear();
-		outputFormat.clear();
-
-		int i = 0;
-		while (string[i] != NULL)
-		{
-			SModuleOffset* module = getCharacterModule(string[i]);
-			if (module)
-			{
-				module->Character = (char)string[i];
-
-				outputFormat.push_back(format[i]);
-				output.push_back(module);
-			}
-			i++;
-		}
 	}
 }
