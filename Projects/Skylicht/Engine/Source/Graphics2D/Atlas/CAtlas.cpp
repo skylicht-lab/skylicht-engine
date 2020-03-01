@@ -157,17 +157,15 @@ namespace Skylicht
 
 	ITexture* CAtlas::getTexture()
 	{
-		updateTexture();
+		if (m_texture == NULL)
+			m_texture = getVideoDriver()->addTexture("font_atas", m_image);
+
 		return m_texture;
 	}
 
 	void CAtlas::updateTexture()
 	{
-		if (m_texture == NULL)
-		{
-			m_texture = getVideoDriver()->addTexture("font_atas", m_image);
-		}
-		else if (m_needUpdateTexture)
+		if (m_needUpdateTexture)
 		{
 			void *data = m_texture->lock();
 			memcpy(data, m_image->lock(), m_width * m_height * 4);
