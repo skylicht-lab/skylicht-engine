@@ -80,6 +80,13 @@ namespace Skylicht
 			delete a;
 		m_atlas.clear();
 
+		for (std::map<std::string, SFaceEntity*>::iterator i = m_faceEntity.begin(), end = m_faceEntity.end(); i != end; i++)
+		{
+			delete[]i->second->m_data;
+			delete i->second;
+		}
+		m_faceEntity.clear();
+
 		int error = FT_Done_FreeType(m_lib);
 		if (error)
 			os::Printer::log("FreeType provider: can't close FreeType!  error = %d\n", ELL_ERROR);
@@ -110,6 +117,18 @@ namespace Skylicht
 			return true;
 		}
 		return false;
+	}
+
+	void CGlyphFreetype::clearAtlas()
+	{
+		for (CAtlas *a : m_atlas)
+			delete a;
+		m_atlas.clear();
+
+		for (std::map<std::string, SFaceEntity*>::iterator i = m_faceEntity.begin(), end = m_faceEntity.end(); i != end; i++)
+			i->second->cleanGlyphEntity();
+
+		addEmptyAtlas(ECF_A8R8G8B8, m_width, m_height);
 	}
 
 	int CGlyphFreetype::getFontPtToPx(int pt)
