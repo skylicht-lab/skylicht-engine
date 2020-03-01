@@ -161,11 +161,19 @@ void CViewInit::initScene()
 		renderer->initMaterial(materials);
 	}
 
+#if defined(USE_FREETYPE)
+	int fontPx = CGlyphFreetype::getFontPtToPx(60);
+	float advance, x, y, w, h;
+	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CAtlas *atlas = freetypeFont->getCharImage('A', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
+	freetypeFont->getCharImage('B', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
+	freetypeFont->getCharImage('C', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
+	freetypeFont->getCharImage('D', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
+
 	// 3d gui
-	/*
 	CGameObject *guiObject = zone->createEmptyObject();
 	CCanvas *canvas = guiObject->addComponent<CCanvas>();
-	canvas->enable3DBillboard(true);
+	// canvas->enable3DBillboard(true);
 
 	// Scale screen resolution to meter and flip 2D coord (Y down, X invert)
 	CGUIElement *rootGUI = canvas->getRootElement();
@@ -173,8 +181,8 @@ void CViewInit::initScene()
 	rootGUI->setScale(core::vector3df(-0.001f, -0.001f, 0.001f));
 
 	CGUIImage *guiImage = canvas->createImage();
-	guiImage->setImage(skyDomeTexture);
-	*/
+	guiImage->setImage(atlas->getTexture());	
+#endif
 
 	// save to context
 	CContext *context = CContext::getInstance();
@@ -219,7 +227,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 #if defined(WINDOWS_STORE)
@@ -252,7 +260,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()
