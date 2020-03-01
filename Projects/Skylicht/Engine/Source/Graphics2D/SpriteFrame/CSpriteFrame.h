@@ -26,16 +26,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CAtlas;
+
 	struct SImage
 	{
 		int ID;
 		std::string Path;
 		ITexture *Texture;
+		CAtlas *Atlas;
 
 		SImage()
 		{
 			ID = -1;
 			Texture = NULL;
+			Atlas = NULL;
 		}
 	};
 
@@ -64,6 +68,7 @@ namespace Skylicht
 	struct SModuleOffset
 	{
 		SModuleRect *Module;
+		SFrame *Frame;
 
 		float OffsetX;
 		float OffsetY;
@@ -71,7 +76,7 @@ namespace Skylicht
 		bool FlipX;
 		bool FlipY;
 
-		char Character;
+		wchar_t Character;
 
 		SModuleOffset();
 
