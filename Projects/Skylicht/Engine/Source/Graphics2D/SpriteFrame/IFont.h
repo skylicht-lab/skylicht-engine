@@ -24,55 +24,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "IFont.h"
+#include "CSpriteFrame.h"
 
 namespace Skylicht
 {
-	class CSpriteFont: public IFont
+	class IFont
 	{
-	protected:
-		std::vector<SImage> m_images;
-		std::vector<SModuleRect> m_moduleRect;
-		std::vector<SFrame> m_frames;
-
-		std::map<std::string, SFrame*>	m_frameName;
-
-		int *m_moduleMap;
-		int m_numModuleMap;
-
-		float m_charPadding;
-		float m_spacePadding;
-
 	public:
-		CSpriteFont();
+		IFont() {}
 
-		virtual ~CSpriteFont();
+		virtual ~IFont() {}
 
-		bool loadFont(const char *fileName);
+		/*virtual float getCharPadding() = 0;
 
-		virtual float getCharPadding()
-		{
-			return m_charPadding;
-		}
+		virtual void setCharPadding(float padding) = 0;
 
-		virtual void setCharPadding(float padding)
-		{
-			m_charPadding = padding;
-			m_spacePadding = padding;
-		}
+		virtual float getSpacePadding() = 0;
 
-		virtual float getSpacePadding()
-		{
-			return m_spacePadding;
-		}
+		virtual void setSpacePadding(float padding) = 0;
 
-		virtual void setSpacePadding(float padding)
-		{
-			m_spacePadding = padding;
-		}
+		virtual SModuleOffset* getCharacterModule(int character) = 0;
 
-		virtual SModuleOffset* getCharacterModule(int character);
-
-		virtual void getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
+		virtual void getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat) = 0;*/
 	};
 }

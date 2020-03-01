@@ -26,8 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #if defined(USE_FREETYPE)
 #include <ft2build.h>
-#include FT_OUTLINE_H
-#include FT_FREETYPE_H
 #include FT_GLYPH_H
 
 #include "Utils/CGameSingleton.h"
@@ -62,6 +60,11 @@ namespace Skylicht
 		{
 			FT_Done_Face(m_face);
 
+			cleanGlyphEntity();
+		}
+
+		void cleanGlyphEntity()
+		{
 			for (std::map<u32, SGlyphEntity*>::iterator it = m_ge.begin(), end = m_ge.end(); it != end; ++it)
 				delete it->second;
 			m_ge.clear();
@@ -86,6 +89,8 @@ namespace Skylicht
 		virtual ~CGlyphFreetype();
 
 		bool initFont(const char *name, const char *path);
+
+		void clearAtlas();
 
 		static int getFontPtToPx(int pt);
 

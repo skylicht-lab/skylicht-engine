@@ -22,57 +22,36 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "IFont.h"
+#include "pch.h"
+#include "CGUIText.h"
 
 namespace Skylicht
 {
-	class CSpriteFont: public IFont
+	CGUIText::CGUIText(CCanvas *canvas, const core::rectf& rect) :
+		CGUIElement(canvas, rect)
 	{
-	protected:
-		std::vector<SImage> m_images;
-		std::vector<SModuleRect> m_moduleRect;
-		std::vector<SFrame> m_frames;
 
-		std::map<std::string, SFrame*>	m_frameName;
+	}
 
-		int *m_moduleMap;
-		int m_numModuleMap;
+	CGUIText::CGUIText(CCanvas *canvas, CGUIElement *parent) :
+		CGUIElement(canvas, parent)
+	{
 
-		float m_charPadding;
-		float m_spacePadding;
+	}
 
-	public:
-		CSpriteFont();
+	CGUIText::CGUIText(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect) :
+		CGUIElement(canvas, parent, rect)
+	{
 
-		virtual ~CSpriteFont();
+	}
 
-		bool loadFont(const char *fileName);
+	CGUIText::~CGUIText()
+	{
 
-		virtual float getCharPadding()
-		{
-			return m_charPadding;
-		}
+	}
 
-		virtual void setCharPadding(float padding)
-		{
-			m_charPadding = padding;
-			m_spacePadding = padding;
-		}
+	void CGUIText::render(CCamera *camera)
+	{
 
-		virtual float getSpacePadding()
-		{
-			return m_spacePadding;
-		}
-
-		virtual void setSpacePadding(float padding)
-		{
-			m_spacePadding = padding;
-		}
-
-		virtual SModuleOffset* getCharacterModule(int character);
-
-		virtual void getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
-	};
+	}
 }

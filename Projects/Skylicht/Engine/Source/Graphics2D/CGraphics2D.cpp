@@ -52,6 +52,9 @@ namespace Skylicht
 		m_2dMaterial.ZBuffer = ECFN_ALWAYS;
 		m_2dMaterial.ZWriteEnable = false;
 		m_2dMaterial.BackfaceCulling = false;
+
+		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+			m_2dMaterial.setFlag(EMF_ANISOTROPIC_FILTER, true, 8);
 	}
 
 	void CGraphics2D::init()
@@ -118,62 +121,67 @@ namespace Skylicht
 		} customLess;
 		std::sort(m_canvas.begin(), m_canvas.end(), customLess);
 
-		// set projection & view
+		core::matrix4 billboardMatrix;
+
 		IVideoDriver *driver = getVideoDriver();
+		
+		// set projection & view			
 		const SViewFrustum& viewArea = camera->getViewFrustum();
 		driver->setTransform(video::ETS_PROJECTION, viewArea.getTransform(video::ETS_PROJECTION));
 		driver->setTransform(video::ETS_VIEW, viewArea.getTransform(video::ETS_VIEW));
 
-		// Calculate billboard matrix
-		// this is invert view camera
-		const core::matrix4& cameraTransform = camera->getGameObject()->getTransform()->getMatrixTransform();
+		if (camera->getProjectionType() != CCamera::OrthoUI)
+		{
+			// Calculate billboard matrix
+			// this is invert view camera
+			const core::matrix4& cameraTransform = camera->getGameObject()->getTransform()->getMatrixTransform();
 
-		// look vector
-		core::vector3df cameraPosition = cameraTransform.getTranslation();
-		core::vector3df look(0.0f, 0.0f, -1.0f);
-		cameraTransform.rotateVect(look);
-		look.normalize();
+			// look vector
+			core::vector3df cameraPosition = cameraTransform.getTranslation();
+			core::vector3df look(0.0f, 0.0f, -1.0f);
+			cameraTransform.rotateVect(look);
+			look.normalize();
 
-		// up vector
-		core::vector3df up(0.0f, 1.0f, 0.0f);
-		cameraTransform.rotateVect(up);
-		up.normalize();
+			// up vector
+			core::vector3df up(0.0f, 1.0f, 0.0f);
+			cameraTransform.rotateVect(up);
+			up.normalize();
 
-		// right vector
-		core::vector3df right = up.crossProduct(look);
-		up = look.crossProduct(right);
-		up.normalize();
+			// right vector
+			core::vector3df right = up.crossProduct(look);
+			up = look.crossProduct(right);
+			up.normalize();
 
-		// billboard matrix
-		core::matrix4 billboardMatrix;
-		f32 *matData = billboardMatrix.pointer();
+			// billboard matrix		
+			f32 *matData = billboardMatrix.pointer();
 
-		matData[0] = right.X;
-		matData[1] = right.Y;
-		matData[2] = right.Z;
-		matData[3] = 0.0f;
+			matData[0] = right.X;
+			matData[1] = right.Y;
+			matData[2] = right.Z;
+			matData[3] = 0.0f;
 
-		matData[4] = up.X;
-		matData[5] = up.Y;
-		matData[6] = up.Z;
-		matData[7] = 0.0f;
+			matData[4] = up.X;
+			matData[5] = up.Y;
+			matData[6] = up.Z;
+			matData[7] = 0.0f;
 
-		matData[8] = look.X;
-		matData[9] = look.Y;
-		matData[10] = look.Z;
-		matData[11] = 0.0f;
+			matData[8] = look.X;
+			matData[9] = look.Y;
+			matData[10] = look.Z;
+			matData[11] = 0.0f;
 
-		matData[12] = 0.0f;
-		matData[13] = 0.0f;
-		matData[14] = 0.0f;
-		matData[15] = 1.0f;
+			matData[12] = 0.0f;
+			matData[13] = 0.0f;
+			matData[14] = 0.0f;
+			matData[15] = 1.0f;
+		}
 
 		// render graphics
 		for (CCanvas *canvas : m_canvas)
 		{
 			CGUIElement* root = canvas->getRootElement();
 
-			if (canvas->isEnable3DBillboard() == true)
+			if (canvas->isEnable3DBillboard() == true && camera->getProjectionType() != CCamera::OrthoUI)
 			{
 				// rotation canvas to billboard
 				core::matrix4 world = billboardMatrix;
@@ -289,10 +297,6 @@ namespace Skylicht
 		m_2dMaterial.MaterialType = shaderID;
 
 		m_buffer->setDirty();
-
-		// todo wait flush
-		//m_driver->setMaterial(m_2dMaterial);
-		//m_driver->drawMeshBuffer(m_buffer);
 	}
 
 	void CGraphics2D::addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX, float pivotY)
