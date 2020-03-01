@@ -25,6 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "IFont.h"
+
+#if defined(USE_FREETYPE)
+
 #include "Graphics2D/Atlas/CAtlas.h"
 
 namespace Skylicht
@@ -89,3 +92,5 @@ namespace Skylicht
 		virtual void getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
 	};
 }
+
+#endif
