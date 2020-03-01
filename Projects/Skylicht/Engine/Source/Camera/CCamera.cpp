@@ -62,20 +62,36 @@ namespace Skylicht
 		if (m_screenSize != screenSize)
 			recalculateProjectionMatrix();
 
-		// Update lookat matrix
-		const core::matrix4& mat = m_gameObject->getTransform()->getMatrixTransform();
-		core::vector3df position = mat.getTranslation();
-		core::vector3df target = CTransform::s_oz;
-		mat.rotateVect(target);
-		m_viewArea.getTransform(video::ETS_VIEW).buildCameraLookAtMatrixLH(position, position + target, CTransform::s_oy);
+		core::vector3df position;
 
-		// Update view area
+		if (m_projectionType == CCamera::OrthoUI)
+		{
+			// identity view matrix
+			m_viewArea.getTransform(video::ETS_VIEW).makeIdentity();
+		}
+		else
+		{
+			// update lookat matrix
+			const core::matrix4& mat = m_gameObject->getTransform()->getMatrixTransform();
+			position = mat.getTranslation();
+			core::vector3df target = CTransform::s_oz;
+			mat.rotateVect(target);
+			m_viewArea.getTransform(video::ETS_VIEW).buildCameraLookAtMatrixLH(position, position + target, CTransform::s_oy);
+		}
+
+		// update view area
 		m_viewArea.cameraPosition = position;
 		core::matrix4 m(core::matrix4::EM4CONST_NOTHING);
 		m.setbyproduct_nocheck(
 			m_viewArea.getTransform(video::ETS_PROJECTION),
 			m_viewArea.getTransform(video::ETS_VIEW));
 		m_viewArea.setFrom(m);
+	}
+
+	void CCamera::setProjectionType(ECameraProjection projection)
+	{
+		m_projectionType = projection;
+		recalculateProjectionMatrix();
 	}
 
 	const core::matrix4& CCamera::getProjectionMatrix() const
@@ -176,6 +192,13 @@ namespace Skylicht
 			float b = -t;
 
 			m_viewArea.getTransform(video::ETS_PROJECTION).buildProjectionMatrixOrthoLH(r - l, t - b, n, f);
+		}
+		else if (m_projectionType == CCamera::OrthoUI)
+		{
+			core::matrix4 orthoMatrix;
+			orthoMatrix.buildProjectionMatrixOrthoLH((f32)screenSize.Width, -(f32)(screenSize.Height), -1.0f, 1.0f);
+			orthoMatrix.setTranslation(core::vector3df(-1, 1, 0));
+			m_viewArea.setTransform(video::ETS_PROJECTION, orthoMatrix);
 		}
 
 		m_screenSize = screenSize;

@@ -28,27 +28,30 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSpriteFont: public IFont
+	class CGlyphFont : public IFont
 	{
 	protected:
-		std::vector<SImage> m_images;
-		std::vector<SModuleRect> m_moduleRect;
-		std::vector<SFrame> m_frames;
-
-		std::map<std::string, SFrame*>	m_frameName;
-
-		int *m_moduleMap;
-		int m_numModuleMap;
-
 		float m_charPadding;
 		float m_spacePadding;
 
+		std::vector<SModuleRect> m_moduleRect;
+		std::vector<SFrame> m_frames;
+
+		std::string m_fontName;
 	public:
-		CSpriteFont();
+		CGlyphFont();
 
-		virtual ~CSpriteFont();
+		virtual ~CGlyphFont();
 
-		bool loadFont(const char *fileName);
+		inline void setFont(const char *fontName)
+		{
+			m_fontName = fontName;
+		}
+
+		inline const char *getFontName()
+		{
+			return m_fontName.c_str();
+		}
 
 		virtual float getCharPadding()
 		{

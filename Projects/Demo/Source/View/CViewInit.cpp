@@ -88,9 +88,10 @@ void CViewInit::initScene()
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
-	//CGameObject *guiCameraObj = zone->createEmptyObject();
-	//guiCameraObj->addComponent<CCamera>();
-	CCamera *guiCamera = camera;// guiCameraObj->getComponent<CCamera>();
+	CGameObject *guiCameraObj = zone->createEmptyObject();
+	guiCameraObj->addComponent<CCamera>();
+	CCamera *guiCamera = guiCameraObj->getComponent<CCamera>();
+	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
 	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Demo/Textures/Sky/PaperMill.png");
@@ -177,11 +178,11 @@ void CViewInit::initScene()
 
 	// Scale screen resolution to meter and flip 2D coord (Y down, X invert)
 	CGUIElement *rootGUI = canvas->getRootElement();
-	rootGUI->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
-	rootGUI->setScale(core::vector3df(-0.001f, -0.001f, 0.001f));
+	//rootGUI->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
+	//rootGUI->setScale(core::vector3df(-0.001f, -0.001f, 0.001f));
 
 	CGUIImage *guiImage = canvas->createImage();
-	guiImage->setImage(atlas->getTexture());	
+	guiImage->setImage(atlas->getTexture());
 #endif
 
 	// save to context
