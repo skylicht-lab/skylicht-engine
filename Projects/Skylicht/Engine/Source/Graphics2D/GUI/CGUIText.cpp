@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUIText::CGUIText(CCanvas *canvas, const core::rectf& rect) :
+	CGUIText::CGUIText(CCanvas *canvas, const core::rectf& rect, IFont *font) :
 		CGUIElement(canvas, rect),
 		TextVertical(Top),
 		TextHorizontal(Left),
@@ -38,12 +38,13 @@ namespace Skylicht
 		m_charPadding(0),
 		m_charSpacePadding(0),
 		m_linePadding(0),
-		m_updateTextRender(true)
+		m_updateTextRender(true),
+		m_font(font)
 	{
 
 	}
 
-	CGUIText::CGUIText(CCanvas *canvas, CGUIElement *parent) :
+	CGUIText::CGUIText(CCanvas *canvas, CGUIElement *parent, IFont *font) :
 		CGUIElement(canvas, parent),
 		TextVertical(Top),
 		TextHorizontal(Left),
@@ -52,12 +53,13 @@ namespace Skylicht
 		m_charPadding(0),
 		m_charSpacePadding(0),
 		m_linePadding(0),
-		m_updateTextRender(true)
+		m_updateTextRender(true),
+		m_font(font)
 	{
 
 	}
 
-	CGUIText::CGUIText(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect) :
+	CGUIText::CGUIText(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect, IFont *font) :
 		CGUIElement(canvas, parent, rect),
 		TextVertical(Top),
 		TextHorizontal(Left),
@@ -66,9 +68,10 @@ namespace Skylicht
 		m_charPadding(0),
 		m_charSpacePadding(0),
 		m_linePadding(0),
-		m_updateTextRender(true)
+		m_updateTextRender(true),
+		m_font(font)
 	{
-
+		init();
 	}
 
 	void CGUIText::init()
@@ -76,15 +79,15 @@ namespace Skylicht
 		m_textHeight = 50;
 		m_textSpaceWidth = 20;
 
-		if (m_sprite)
+		if (m_font)
 		{
 			// get text height
-			SModuleOffset *moduleCharA = m_sprite->getCharacterModule((int)'A');
+			SModuleOffset *moduleCharA = m_font->getCharacterModule((int)'A');
 			if (moduleCharA)
 				m_textHeight = (int)moduleCharA->OffsetY + (int)moduleCharA->Module->H;
 
 			// get space width
-			SModuleOffset *moduleCharSpace = m_sprite->getCharacterModule((int)' ');
+			SModuleOffset *moduleCharSpace = m_font->getCharacterModule((int)' ');
 			if (moduleCharSpace)
 				m_textSpaceWidth = (int)moduleCharSpace->XAdvance;
 		}
@@ -335,7 +338,7 @@ namespace Skylicht
 		std::vector<SModuleOffset*>	listModule;
 		std::vector<int> listFormat;
 
-		m_sprite->getListModule(string.c_str(), format, listModule, listFormat);
+		m_font->getListModule(string.c_str(), format, listModule, listFormat);
 
 		int stringWidth = 0;
 		for (int i = 0, n = (int)listModule.size(); i < n; i++)
@@ -369,7 +372,7 @@ namespace Skylicht
 		std::vector<SModuleOffset*>	listModule;
 		std::vector<int> listFormat;
 
-		m_sprite->getListModule(wtext, format, listModule, listFormat);
+		m_font->getListModule(wtext, format, listModule, listFormat);
 
 		for (int i = 0, n = (int)listModule.size(); i < n; i++)
 		{
@@ -408,7 +411,7 @@ namespace Skylicht
 
 				while (lpString[i] != 0)
 				{
-					SModuleOffset *c = m_sprite->getCharacterModule((int)lpString[i]);
+					SModuleOffset *c = m_font->getCharacterModule((int)lpString[i]);
 					if (c != NULL)
 					{
 						modules.push_back(c);
@@ -423,6 +426,8 @@ namespace Skylicht
 
 			m_updateTextRender = false;
 		}
+
+		m_font->updateFontTexture();
 
 		// calc multiline height
 		int textHeight = m_arrayCharRender.size() * (m_textHeight + m_linePadding);
@@ -511,7 +516,7 @@ namespace Skylicht
 		const wchar_t* lpString = m_textw.c_str();
 		ArrayInt& lpFormat = m_textFormat;
 
-		if (m_sprite == NULL || lpString == NULL)
+		if (m_font == NULL || lpString == NULL)
 			return;
 
 		int i = 0;
@@ -531,7 +536,7 @@ namespace Skylicht
 				// loop all string on sentence
 				for (int j = begin; j < i; j++)
 				{
-					SModuleOffset *c = m_sprite->getCharacterModule((int)lpString[j]);
+					SModuleOffset *c = m_font->getCharacterModule((int)lpString[j]);
 					if (c != NULL)
 					{
 						modules.push_back(c);
@@ -561,7 +566,7 @@ namespace Skylicht
 					// loop all string on sentence
 					for (int j = begin; j < i; j++)
 					{
-						SModuleOffset *c = m_sprite->getCharacterModule((int)lpString[j]);
+						SModuleOffset *c = m_font->getCharacterModule((int)lpString[j]);
 						if (c != NULL)
 						{
 							modules.push_back(c);
@@ -583,7 +588,7 @@ namespace Skylicht
 				}
 			}
 
-			SModuleOffset *c = m_sprite->getCharacterModule((int)lpString[i]);
+			SModuleOffset *c = m_font->getCharacterModule((int)lpString[i]);
 			if (c == NULL)
 			{
 				i++;
@@ -617,7 +622,7 @@ namespace Skylicht
 
 				for (int j = begin; j < lastSpace; j++)
 				{
-					SModuleOffset *c = m_sprite->getCharacterModule((int)lpString[j]);
+					SModuleOffset *c = m_font->getCharacterModule((int)lpString[j]);
 					if (c != NULL)
 					{
 						modules.push_back(c);
@@ -648,7 +653,7 @@ namespace Skylicht
 
 		for (int j = begin; j < i; j++)
 		{
-			SModuleOffset *c = m_sprite->getCharacterModule((int)lpString[j]);
+			SModuleOffset *c = m_font->getCharacterModule((int)lpString[j]);
 			if (c != NULL)
 			{
 				modules.push_back(c);

@@ -131,7 +131,7 @@ namespace Skylicht
 		addEmptyAtlas(ECF_A8R8G8B8, m_width, m_height);
 	}
 
-	int CGlyphFreetype::getFontPtToPx(int pt)
+	int CGlyphFreetype::sizePtToPx(int pt)
 	{
 		return (int)(pt * (8.0f / 6.0f));
 	}

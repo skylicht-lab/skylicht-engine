@@ -62,6 +62,7 @@ void CViewDemo::onRender()
 
 void CViewDemo::onPostRender()
 {
+	/*
 	static bool showImguiDemo = false;
 
 	// render ImGui
@@ -87,4 +88,5 @@ void CViewDemo::onPostRender()
 	{
 		ImGui::ShowDemoWindow(&showImguiDemo);
 	}
+	*/
 }

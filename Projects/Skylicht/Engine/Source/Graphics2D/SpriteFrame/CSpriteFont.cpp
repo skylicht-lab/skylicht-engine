@@ -151,7 +151,7 @@ namespace Skylicht
 					const wchar_t* page = xmlReader->getAttributeValue(L"page");
 					CStringImp::convertUnicodeToUTF8(page, text);
 					int imageID = atoi(text);
-					frame.Image = &m_images[imageID];
+					frame.Image = &(*std::next(m_images.begin(), imageID));
 
 					// module offset
 					frame.ModuleOffset.push_back(SModuleOffset());
@@ -234,7 +234,7 @@ namespace Skylicht
 		if (m_frames.size() < index)
 			return NULL;
 
-		SFrame& frame = m_frames[index];
+		SFrame& frame = *std::next(m_frames.begin(), index);
 		return &frame.ModuleOffset[0];
 	}
 }

@@ -31,9 +31,9 @@ namespace Skylicht
 	class CSpriteFont: public IFont
 	{
 	protected:
-		std::vector<SImage> m_images;
-		std::vector<SModuleRect> m_moduleRect;
-		std::vector<SFrame> m_frames;
+		std::list<SImage> m_images;
+		std::list<SModuleRect> m_moduleRect;
+		std::list<SFrame> m_frames;
 
 		std::map<std::string, SFrame*>	m_frameName;
 
