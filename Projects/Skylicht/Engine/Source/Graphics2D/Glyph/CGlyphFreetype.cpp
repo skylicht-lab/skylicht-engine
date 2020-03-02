@@ -67,7 +67,7 @@ namespace Skylicht
 		m_width(1024),
 		m_height(1024)
 	{
-		int	error = FT_Init_FreeType(&m_lib);
+		int error = FT_Init_FreeType(&m_lib);
 		if (error)
 			os::Printer::log("FreeType provider: can't init FreeType!  error = %d\n", ELL_ERROR);
 
