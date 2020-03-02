@@ -40,9 +40,9 @@ namespace Skylicht
 
 		std::map<int, SModuleOffset*> m_moduleOffset;
 
-		std::vector<SImage> m_images;
-		std::vector<SModuleRect> m_moduleRect;
-		std::vector<SFrame> m_frames;
+		std::list<SImage> m_images;
+		std::list<SModuleRect> m_moduleRect;
+		std::list<SFrame> m_frames;
 
 		std::string m_fontName;
 		int m_fontSizePt;
@@ -56,9 +56,10 @@ namespace Skylicht
 
 		virtual ~CGlyphFont();
 
-		inline void setFont(const char *fontName)
+		inline void setFont(const char *fontName, int sizePt)
 		{
 			m_fontName = fontName;
+			m_fontSizePt = sizePt;
 		}
 
 		inline const char *getFontName()
@@ -90,6 +91,13 @@ namespace Skylicht
 		virtual SModuleOffset* getCharacterModule(int character);
 
 		virtual void getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
+
+		virtual void updateFontTexture();
+
+		std::list<SImage>& getImages()
+		{
+			return m_images;
+		}
 	};
 }
 

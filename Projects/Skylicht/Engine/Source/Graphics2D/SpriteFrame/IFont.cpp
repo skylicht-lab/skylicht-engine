@@ -46,4 +46,9 @@ namespace Skylicht
 			i++;
 		}
 	}
+
+	void IFont::updateFontTexture()
+	{
+
+	}
 }

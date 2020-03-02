@@ -172,6 +172,13 @@ namespace Skylicht
 			m_texture->unlock();
 			m_texture->regenerateMipMapLevels();
 			m_needUpdateTexture = false;
+
+			/*
+			static int test = 0;
+			char name[64];
+			sprintf(name, "C:\\SVN\\test_%d.png", test++);
+			getVideoDriver()->writeImageToFile(m_image, name);
+			*/
 		}
 	}
 

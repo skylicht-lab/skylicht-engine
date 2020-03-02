@@ -82,7 +82,7 @@ namespace Skylicht
 
 		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
 
-		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, int offsetX, int offsetY, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
+		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, float offsetX, float offsetY, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
 
 		void getTexCoordBuffer(video::S3DVertex *vertices, float texWidth, float texHeight, float scaleW = 1.0f, float scaleH = 1.0f);
 
