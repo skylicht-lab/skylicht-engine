@@ -111,11 +111,11 @@ namespace Skylicht
 
 		CGUIImage* createImage(CGUIElement *e, const core::rectf& r);
 
-		CGUIText* createText();
+		CGUIText* createText(IFont *font);
 
-		CGUIText* createText(const core::rectf& r);
+		CGUIText* createText(const core::rectf& r, IFont *font);
 
-		CGUIText* createText(CGUIElement *e, const core::rectf& r);
+		CGUIText* createText(CGUIElement *e, const core::rectf& r, IFont *font);
 
 		void remove(CGUIElement *element);
 

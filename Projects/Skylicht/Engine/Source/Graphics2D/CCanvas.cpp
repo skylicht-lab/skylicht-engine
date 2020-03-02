@@ -187,23 +187,23 @@ namespace Skylicht
 	* Text constructor
 	*/
 
-	CGUIText* CCanvas::createText()
+	CGUIText* CCanvas::createText(IFont *font)
 	{
-		CGUIText *element = new CGUIText(this, m_root, m_rect);
+		CGUIText *element = new CGUIText(this, m_root, m_rect, font);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIText* CCanvas::createText(const core::rectf& r)
+	CGUIText* CCanvas::createText(const core::rectf& r, IFont *font)
 	{
-		CGUIText *element = new CGUIText(this, m_root, m_rect);
+		CGUIText *element = new CGUIText(this, m_root, m_rect, font);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIText* CCanvas::createText(CGUIElement *e, const core::rectf& r)
+	CGUIText* CCanvas::createText(CGUIElement *e, const core::rectf& r, IFont *font)
 	{
-		CGUIText *element = new CGUIText(this, e, r);
+		CGUIText *element = new CGUIText(this, e, r, font);
 		m_entities.push_back(element);
 		return element;
 	}

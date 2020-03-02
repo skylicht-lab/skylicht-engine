@@ -39,7 +39,7 @@ namespace Skylicht
 		typedef std::vector<SModuleOffset*> ArrayModuleOffset;
 
 	protected:
-		IFont *m_sprite;
+		IFont *m_font;
 
 		int m_charPadding;
 		int m_charSpacePadding;
@@ -66,9 +66,9 @@ namespace Skylicht
 		std::vector<ArrayInt> m_arrayCharFormat;
 
 	protected:
-		CGUIText(CCanvas *canvas, const core::rectf& rect);
-		CGUIText(CCanvas *canvas, CGUIElement *parent);
-		CGUIText(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect);
+		CGUIText(CCanvas *canvas, const core::rectf& rect, IFont *font);
+		CGUIText(CCanvas *canvas, CGUIElement *parent, IFont *font);
+		CGUIText(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect, IFont *font);
 
 		virtual void renderText(ArrayModuleOffset &string, ArrayInt& format, int posY);
 

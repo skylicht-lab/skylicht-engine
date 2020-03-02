@@ -23,6 +23,7 @@
 
 #if defined(USE_FREETYPE)
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
+#include "Graphics2D/SpriteFrame/CGlyphFont.h"
 #endif
 
 CViewInit::CViewInit() :
@@ -163,16 +164,12 @@ void CViewInit::initScene()
 	}
 
 #if defined(USE_FREETYPE)
-	int fontPx = CGlyphFreetype::getFontPtToPx(60);
-	float advance, x, y, w, h;
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
-	CAtlas *atlas = freetypeFont->getCharImage('A', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
-	freetypeFont->getCharImage('B', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
-	freetypeFont->getCharImage('C', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
-	freetypeFont->getCharImage('D', "Segoe UI Light", fontPx, &advance, &x, &y, &w, &h);
+	int fontSize = CGlyphFreetype::sizePtToPx(60);
+
+	CGlyphFont *font = new CGlyphFont();
+	font->setFont("Segoe UI Light", 24);
 
 	// 2d gui
-	/*
 	CGameObject *guiObject = zone->createEmptyObject();
 	CCanvas *canvas = guiObject->addComponent<CCanvas>();
 	// canvas->enable3DBillboard(true);
@@ -182,11 +179,9 @@ void CViewInit::initScene()
 	//rootGUI->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
 	//rootGUI->setScale(core::vector3df(-0.001f, -0.001f, 0.001f));
 
-	CGUIImage *guiImage = canvas->createImage();
-	guiImage->setImage(atlas->getTexture());
-
-	atlas->updateTexture();
-	*/
+	CGUIText *text = canvas->createText(font);
+	text->setText("Skylicht Engine");
+	// text->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
 #endif
 
 	// save to context
@@ -243,7 +238,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-}
+	}
 	break;
 	case CViewInit::InitScene:
 	{

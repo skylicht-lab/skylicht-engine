@@ -68,7 +68,7 @@ namespace Skylicht
 
 	SModuleOffset* CGlyphFont::getCharacterModule(int character)
 	{
-		int fontSize = CGlyphFreetype::getFontPtToPx(m_fontSizePt);
+		int fontSize = CGlyphFreetype::sizePtToPx(m_fontSizePt);
 		u32 key = (fontSize << 16) | (u16)character;
 
 		SModuleOffset* c = m_moduleOffset[key];
@@ -129,6 +129,15 @@ namespace Skylicht
 	{
 		IFont::getListModule(string, format, output, outputFormat);
 
+		for (SImage& img : m_images)
+		{
+			if (img.Atlas != NULL)
+				img.Atlas->updateTexture();
+		}
+	}
+
+	void CGlyphFont::updateFontTexture()
+	{
 		for (SImage& img : m_images)
 		{
 			if (img.Atlas != NULL)

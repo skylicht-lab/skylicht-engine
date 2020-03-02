@@ -46,5 +46,7 @@ namespace Skylicht
 		virtual SModuleOffset* getCharacterModule(int character) = 0;
 
 		virtual void getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
+
+		virtual void updateFontTexture();
 	};
 }
