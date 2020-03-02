@@ -124,7 +124,7 @@ namespace Skylicht
 		core::matrix4 billboardMatrix;
 
 		IVideoDriver *driver = getVideoDriver();
-		
+
 		// set projection & view			
 		const SViewFrustum& viewArea = camera->getViewFrustum();
 		driver->setTransform(video::ETS_PROJECTION, viewArea.getTransform(video::ETS_PROJECTION));
@@ -353,5 +353,65 @@ namespace Skylicht
 
 		m_2dMaterial.setTexture(0, img);
 		m_2dMaterial.MaterialType = shaderID;
+	}
+
+	void CGraphics2D::addModuleBatch(SModuleOffset *module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID)
+	{
+		ITexture *tex = module->Frame->Image->Texture;
+
+		if (m_2dMaterial.getTexture(0) != tex)
+			flush();
+
+		int numSpriteVertex = 4;
+
+		int numVertices = m_vertices->getVertexCount();
+		int vertexUse = numVertices + numSpriteVertex;
+
+		int numSpriteIndex = 6;
+		int numIndices = m_indices->getIndexCount();
+		int indexUse = numIndices + numSpriteIndex;
+
+		if (vertexUse > MAX_VERTICES || indexUse > MAX_INDICES)
+		{
+			flush();
+			numVertices = 0;
+			numIndices = 0;
+			vertexUse = numSpriteVertex;
+			indexUse = numSpriteIndex;
+		}
+
+		m_2dMaterial.setTexture(0, tex);
+		m_2dMaterial.MaterialType = shaderID;
+
+		// alloc vertex
+		m_vertices->set_used(vertexUse);
+
+		// get vertex pointer
+		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		vertices += numVertices;
+
+		// alloc index
+		m_indices->set_used(indexUse);
+
+		// get indices pointer
+		s16 *indices = (s16*)m_indices->getIndices();
+		indices += numIndices;
+
+		float texWidth = 512.0f;
+		float texHeight = 512.0f;
+
+		if (tex)
+		{
+			texWidth = (float)tex->getSize().Width;
+			texHeight = (float)tex->getSize().Height;
+		}
+
+		module->getPositionBuffer(vertices, indices, numVertices, offsetX, offsetY, absoluteMatrix);
+		module->getTexCoordBuffer(vertices, texWidth, texHeight);
+		module->getColorBuffer(vertices, color);
+
+		numVertices += 4;
+		vertices += 4;
+		indices += 6;
 	}
 }

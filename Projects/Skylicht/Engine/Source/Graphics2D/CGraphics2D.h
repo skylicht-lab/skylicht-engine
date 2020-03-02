@@ -25,7 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "pch.h"
+
 #include "Utils/CGameSingleton.h"
+#include "Graphics2D/SpriteFrame/CSpriteFrame.h"
 
 namespace Skylicht
 {
@@ -89,6 +91,8 @@ namespace Skylicht
 		void addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX = 0, float pivotY = 0);
 
 		void addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX = 0, float pivotY = 0);
+
+		void addModuleBatch(SModuleOffset *module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID);
 	};
 
 }
