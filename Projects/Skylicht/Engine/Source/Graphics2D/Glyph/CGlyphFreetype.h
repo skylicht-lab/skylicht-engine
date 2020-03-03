@@ -41,6 +41,8 @@ namespace Skylicht
 		float m_uvY;
 		float m_uvW;
 		float m_uvH;
+		float m_offsetX;
+		float m_offsetY;
 	};
 
 	struct SFaceEntity
@@ -101,7 +103,8 @@ namespace Skylicht
 			float *uvX,
 			float *uvY,
 			float *uvW,
-			float *uvH);
+			float *uvH,
+			float *offsetX, float *offsetY);
 
 	protected:
 

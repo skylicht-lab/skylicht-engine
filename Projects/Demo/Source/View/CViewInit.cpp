@@ -164,10 +164,14 @@ void CViewInit::initScene()
 	}
 
 #if defined(USE_FREETYPE)
-	int fontSize = CGlyphFreetype::sizePtToPx(60);
+	CGlyphFont *fontLarge = new CGlyphFont();
+	fontLarge->setFont("Segoe UI Light", 50);
 
-	CGlyphFont *font = new CGlyphFont();
-	font->setFont("Segoe UI Light", 24);
+	CGlyphFont *fontSmall = new CGlyphFont();
+	fontSmall->setFont("Segoe UI Light", 34);
+
+	CGlyphFont *fontTiny = new CGlyphFont();
+	fontTiny->setFont("Segoe UI Light", 16);
 
 	// 2d gui
 	CGameObject *guiObject = zone->createEmptyObject();
@@ -179,9 +183,29 @@ void CViewInit::initScene()
 	//rootGUI->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
 	//rootGUI->setScale(core::vector3df(-0.001f, -0.001f, 0.001f));
 
-	CGUIText *text = canvas->createText(font);
-	text->setText("Skylicht Engine");
-	// text->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+	CGUIText *textLarge = canvas->createText(fontLarge);
+	textLarge->setText("Skylicht Engine");
+
+	CGUIText *textSmall = canvas->createText(fontSmall);
+	textSmall->setText("This is demo for render of Truetype font");
+	textSmall->setPosition(core::vector3df(0.0f, 60.0f, 0.0f));
+
+	io::IReadFile *file = getIrrlichtDevice()->getFileSystem()->createAndOpenFile("BuiltIn/Fonts/character-list.txt");
+	long fileSize = file->getSize();
+	char *data = new char[fileSize + 4];
+	memset(data, 0, fileSize + 4);
+	file->read(data, fileSize);
+
+	// +2 to skip BOM character
+	wchar_t* unicodeText = (wchar_t*)(data + 2);
+
+	CGUIText *textTiny = canvas->createText(fontTiny);
+	textTiny->setText(unicodeText);
+	textTiny->setMultiLine(true);
+	textTiny->setPosition(core::vector3df(0.0f, 100.0f, 0.0f));
+
+	delete data;
+	file->drop();
 #endif
 
 	// save to context
