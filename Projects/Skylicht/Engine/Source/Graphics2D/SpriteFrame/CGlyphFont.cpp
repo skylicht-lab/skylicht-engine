@@ -75,7 +75,7 @@ namespace Skylicht
 		if (c != NULL)
 			return c;
 
-		float advance = 0.0f, x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f;
+		float advance = 0.0f, x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f, offsetX = 0, offsetY = 0;
 
 		CGlyphFreetype *glyphFreetype = CGlyphFreetype::getInstance();
 		CAtlas *atlas = glyphFreetype->getCharImage(
@@ -83,7 +83,8 @@ namespace Skylicht
 			m_fontName.c_str(),
 			fontSize,
 			&advance,
-			&x, &y, &w, &h);
+			&x, &y, &w, &h,
+			&offsetX, &offsetY);
 
 		if (atlas != NULL)
 		{
@@ -99,8 +100,8 @@ namespace Skylicht
 			c = &frame.ModuleOffset.back();
 			c->Character = character;
 			c->XAdvance = advance;
-			c->OffsetX = 0;
-			c->OffsetY = 0;
+			c->OffsetX = offsetX;
+			c->OffsetY = offsetY;
 
 			core::dimension2du size = atlas->getImage()->getDimension();
 
