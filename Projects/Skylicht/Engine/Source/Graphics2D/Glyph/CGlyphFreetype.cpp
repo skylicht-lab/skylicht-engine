@@ -140,7 +140,7 @@ namespace Skylicht
 		const char *name,
 		int fontSize,
 		float *advance,
-		float *uvX, float *uvY, float *uvW, float *uvH)
+		float *uvX, float *uvY, float *uvW, float *uvH, float *offsetX, float *offsetY)
 	{
 		SFaceEntity *fe = m_faceEntity[name];
 		if (fe == NULL)
@@ -175,6 +175,12 @@ namespace Skylicht
 			ge->m_uvW = *uvW;
 			ge->m_uvH = *uvH;
 
+			// Glyph metrics
+			// https://docs.microsoft.com/en-us/typography/opentype/spec/gpos
+			float height = (float)FT_CEIL(g->metrics.vertAdvance);
+			ge->m_offsetX = (float)FT_CEIL(g->metrics.horiBearingX);
+			ge->m_offsetY = -(float)FT_CEIL(g->metrics.horiBearingY) + height;
+
 			fe->m_ge[key] = ge;
 		}
 
@@ -185,7 +191,8 @@ namespace Skylicht
 			*uvW = ge->m_uvW;
 			*uvH = ge->m_uvH;
 			*advance = ge->m_advance;
-
+			*offsetX = ge->m_offsetX;
+			*offsetY = ge->m_offsetY;
 			return ge->m_atlas;
 		}
 		else
@@ -195,6 +202,8 @@ namespace Skylicht
 			*uvW = 0;
 			*uvH = 0;
 			*advance = 0;
+			*offsetX = 0;
+			*offsetY = 0;
 			return NULL;
 		}
 	}
