@@ -614,6 +614,8 @@ namespace irr
 			u32 height = Image->getDimension().Height;
 			u32 i = 0;
 			u8* target = static_cast<u8*>(mipmapData);
+			u32 m = width < height ? width : height;
+
 			do
 			{
 				if (width > 1)
@@ -649,7 +651,9 @@ namespace irr
 
 					target = static_cast<u8*>(mipmapData);
 				}
-			} while (width != 1 || height != 1);
+
+				m = width < height ? width : height;
+			} while (m > 1);
 
 			// cleanup
 			if (!mipmapData)
