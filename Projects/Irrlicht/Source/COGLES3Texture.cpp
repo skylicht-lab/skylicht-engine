@@ -558,7 +558,90 @@ namespace irr
 			if (IsCompressed)
 				return 0;
 
-			return NULL;
+			// store info about which image is locked
+			IImage* image = (mipmapLevel == 0) ? Image : MipImage;
+			ReadOnlyLock |= (mode == ETLM_READ_ONLY);
+			MipLevelStored = mipmapLevel;
+			if (!ReadOnlyLock && mipmapLevel)
+			{
+				AutomaticMipmapUpdate = false;
+			}
+
+			// if data not available or might have changed on GPU download it
+			if (!image || IsRenderTarget)
+			{
+				// prepare the data storage if necessary
+				if (!image)
+				{
+					if (mipmapLevel)
+					{
+						u32 i = 0;
+						u32 width = Size.Width;
+						u32 height = Size.Height;
+						do
+						{
+							if (width > 1)
+								width >>= 1;
+							if (height > 1)
+								height >>= 1;
+							++i;
+						} while (i != mipmapLevel);
+						MipImage = image = Driver->createImage(ECF_A8R8G8B8, core::dimension2du(width, height));
+					}
+					else
+						Image = image = Driver->createImage(ECF_A8R8G8B8, OriginalSize);
+					ColorFormat = ECF_A8R8G8B8;
+				}
+				if (!image)
+					return 0;
+
+				/*
+				// duc.phamhong
+				// OpenGLES donot support glGetTexImage, use glReadPixels
+				// So i do it later
+				// Just lock memory for unlock texture update
+				if (mode != ETLM_WRITE_ONLY)
+				{
+					u8* pixels = static_cast<u8*>(image->lock());
+					if (!pixels)
+						return 0;
+					
+					// we need to keep the correct texture bound later on
+					GLint tmpTexture;
+					glGetIntegerv(GL_TEXTURE_BINDING_2D, &tmpTexture);
+					glBindTexture(GL_TEXTURE_2D, TextureName);
+
+					// we need to flip textures vertical
+					// however, it seems that this does not hold for mipmap
+					// textures, for unknown reasons.
+
+					// download GPU data as ARGB8 to pixels;
+					glGetTexImage(GL_TEXTURE_2D, mipmapLevel, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pixels);
+
+					if (!mipmapLevel)
+					{
+						// opengl images are horizontally flipped, so we have to fix that here.
+						const s32 pitch = image->getPitch();
+						u8* p2 = pixels + (image->getDimension().Height - 1) * pitch;
+						u8* tmpBuffer = new u8[pitch];
+						for (u32 i = 0; i < image->getDimension().Height; i += 2)
+						{
+							memcpy(tmpBuffer, pixels, pitch);
+							memcpy(pixels, p2, pitch);
+							memcpy(p2, tmpBuffer, pitch);
+							pixels += pitch;
+							p2 -= pitch;
+						}
+						delete[] tmpBuffer;
+					}
+					image->unlock();
+
+					//reset old bound texture
+					glBindTexture(GL_TEXTURE_2D, tmpTexture);
+				}
+				*/
+			}
+			return image->lock();
 		}
 
 
@@ -567,6 +650,37 @@ namespace irr
 		{
 			if (IsCompressed) // TO-DO
 				return;
+			
+			// test if miplevel or main texture was locked
+			IImage* image = MipImage ? MipImage : Image;
+			if (!image)
+				return;
+			
+			// unlock image to see changes
+			image->unlock();
+			// copy texture data to GPU
+			if (!ReadOnlyLock)
+			{
+				os::Printer::log("[COGLES3Texture::unlock] Update texture");
+				uploadTexture(false, 0, MipLevelStored);
+			}
+			ReadOnlyLock = false;
+			// cleanup local image
+			if (MipImage)
+			{
+				MipImage->drop();
+				MipImage = 0;
+			}
+			else if (!KeepImage)
+			{
+				Image->drop();
+				Image = 0;
+			}
+			// update information
+			if (Image)
+				ColorFormat = Image->getColorFormat();
+			else
+				ColorFormat = ECF_A8R8G8B8;
 		}
 
 
