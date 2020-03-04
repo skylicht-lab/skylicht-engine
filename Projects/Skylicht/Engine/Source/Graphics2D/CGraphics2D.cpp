@@ -46,6 +46,8 @@ namespace Skylicht
 		m_driver = getVideoDriver();
 
 		m_buffer = new CMeshBuffer<S3DVertex>(m_driver->getVertexDescriptor(EVT_STANDARD), video::EIT_16BIT);
+		m_buffer->setHardwareMappingHint(EHM_STREAM);
+		
 		m_vertices = (SVertexBuffer*)m_buffer->getVertexBuffer();
 		m_indices = (CIndexBuffer*)m_buffer->getIndexBuffer();
 
