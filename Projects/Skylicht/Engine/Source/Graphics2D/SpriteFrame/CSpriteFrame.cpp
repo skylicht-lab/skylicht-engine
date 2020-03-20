@@ -29,8 +29,8 @@ namespace Skylicht
 {
 	SModuleOffset::SModuleOffset()
 	{
-		OffsetX = -1;
-		OffsetY = -1;
+		OffsetX = 0;
+		OffsetY = 0;
 		FlipX = false;
 		FlipY = false;
 

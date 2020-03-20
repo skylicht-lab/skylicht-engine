@@ -28,7 +28,8 @@
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
-	m_getFile(NULL)
+	m_getFile(NULL),
+	m_spriteArchive(NULL)
 {
 
 }
@@ -185,27 +186,11 @@ void CViewInit::initScene()
 
 	CGUIText *textLarge = canvas->createText(fontLarge);
 	textLarge->setText("Skylicht Engine");
+	textLarge->setPosition(core::vector3df(0.0f, 40.0f, 0.0f));
 
 	CGUIText *textSmall = canvas->createText(fontSmall);
 	textSmall->setText("This is demo for render of Truetype font");
-	textSmall->setPosition(core::vector3df(0.0f, 60.0f, 0.0f));
-
-	io::IReadFile *file = getIrrlichtDevice()->getFileSystem()->createAndOpenFile("BuiltIn/Fonts/character-list.txt");
-	long fileSize = file->getSize();
-	char *data = new char[fileSize + 4];
-	memset(data, 0, fileSize + 4);
-	file->read(data, fileSize);
-
-	// +2 to skip BOM character
-	wchar_t* unicodeText = (wchar_t*)(data + 2);
-
-	CGUIText *textTiny = canvas->createText(fontTiny);
-	textTiny->setText(unicodeText);
-	textTiny->setMultiLine(true);
-	textTiny->setPosition(core::vector3df(0.0f, 100.0f, 0.0f));
-
-	delete data;
-	file->drop();
+	textSmall->setPosition(core::vector3df(0.0f, 100.0f, 0.0f));
 #endif
 
 	// save to context
@@ -256,8 +241,10 @@ void CViewInit::onUpdate()
 
 #if defined(WINDOWS_STORE)
 		fileSystem->addFileArchive(getBuiltInPath("Demo.zip"), false, false);
+		fileSystem->addFileArchive("Sprite.zip", false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
 #else
 		fileSystem->addFileArchive("Demo.zip", false, false);
+		fileSystem->addFileArchive("Sprite.zip", false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
 #endif	
 
 		m_initState = CViewInit::InitScene;
@@ -266,6 +253,25 @@ void CViewInit::onUpdate()
 	break;
 	case CViewInit::InitScene:
 	{
+		if (m_spriteArchive != NULL)
+		{
+			m_sprite = new CAtlasFrame(video::ECF_A8R8G8B8, 2048, 2048);
+
+			// get list sprite image
+			std::vector<std::string> sprites;
+
+			const io::IFileList *fileList = m_spriteArchive->getFileList();
+			for (int i = 0, n = fileList->getFileCount(); i < n; i++)
+			{
+				const char *fullFileame = fileList->getFullFileName(i).c_str();
+				const char *name = fileList->getFileName(i).c_str();
+
+				m_sprite->addFrame(name, fullFileame);
+			}
+
+			m_sprite->updateTexture();
+		}
+
 		initScene();
 		m_initState = CViewInit::Finished;
 	}
