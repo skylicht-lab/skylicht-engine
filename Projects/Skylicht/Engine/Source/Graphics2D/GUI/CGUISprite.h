@@ -24,31 +24,41 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CSpriteFrame.h"
+#include "CGUIElement.h"
+#include "Graphics2D/SpriteFrame/CSpriteFrame.h"
 
 namespace Skylicht
 {
-	class CAtlasFrame
+	class CGUISprite : public CGUIElement
 	{
+		friend class CCanvas;
 	protected:
-		std::vector<SImage*> m_images;
-		std::vector<SFrame*> m_frames;
-		std::vector<SModuleRect*> m_modules;
+		SFrame *m_frame;
 
-		int m_width;
-		int m_height;
-		ECOLOR_FORMAT m_fmt;
-	
+		bool m_autoRotate;
+
+		float m_frameRotate;
+		float m_frameSpeed;
+		float m_animationTime;
+
 	protected:
-		SImage* addEmptyAtlas();
+		CGUISprite(CCanvas *canvas, const core::rectf& rect, SFrame *frame);
+		CGUISprite(CCanvas *canvas, CGUIElement *parent, SFrame *frame);
+		CGUISprite(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect, SFrame *frame);
 
 	public:
-		CAtlasFrame(ECOLOR_FORMAT format, int width, int height);
+		virtual ~CGUISprite();
 
-		virtual ~CAtlasFrame();
+		virtual void update(CCamera *camera);
 
-		bool addFrame(const char *name, const char *path);
+		virtual void render(CCamera *camera);
 
-		void updateTexture();
+		void setFrame(SFrame *frame);
+
+		void setAutoRotate(bool rotate, float rotateAngle, float framePerSec);
+
+		void setAlignCenterModule();
+
+		void setOffsetModule(float x, float y);
 	};
 }

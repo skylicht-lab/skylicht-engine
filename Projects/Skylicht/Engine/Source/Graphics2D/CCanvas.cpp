@@ -79,6 +79,9 @@ namespace Skylicht
 		{
 			int level = entity->getLevel();
 
+			// update entity
+			entity->update(camera);
+
 			if (entity->isTransformChanged() == true)
 			{
 				// me changed
@@ -204,6 +207,31 @@ namespace Skylicht
 	CGUIText* CCanvas::createText(CGUIElement *e, const core::rectf& r, IFont *font)
 	{
 		CGUIText *element = new CGUIText(this, e, r, font);
+		m_entities.push_back(element);
+		return element;
+	}
+
+	/*
+	* Sprite constructor
+	*/
+
+	CGUISprite* CCanvas::createSprite(SFrame *frame)
+	{
+		CGUISprite *element = new CGUISprite(this, m_root, m_rect, frame);
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUISprite* CCanvas::createSprite(const core::rectf& r, SFrame *frame)
+	{
+		CGUISprite *element = new CGUISprite(this, m_root, r, frame);
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUISprite* CCanvas::createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame)
+	{
+		CGUISprite *element = new CGUISprite(this, e, r, frame);
 		m_entities.push_back(element);
 		return element;
 	}
