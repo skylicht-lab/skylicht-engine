@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/CGUIElement.h"
 #include "GUI/CGUIImage.h"
 #include "GUI/CGUIText.h"
+#include "GUI/CGUISprite.h"
 
 #define MAX_CHILD_DEPTH 512
 
@@ -116,6 +117,12 @@ namespace Skylicht
 		CGUIText* createText(const core::rectf& r, IFont *font);
 
 		CGUIText* createText(CGUIElement *e, const core::rectf& r, IFont *font);
+
+		CGUISprite* createSprite(SFrame *frame);
+
+		CGUISprite* createSprite(const core::rectf& r, SFrame *frame);
+
+		CGUISprite* createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame);
 
 		void remove(CGUIElement *element);
 

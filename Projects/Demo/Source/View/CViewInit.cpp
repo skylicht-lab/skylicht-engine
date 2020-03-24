@@ -193,6 +193,16 @@ void CViewInit::initScene()
 	textSmall->setPosition(core::vector3df(0.0f, 100.0f, 0.0f));
 #endif
 
+	if (m_sprite != NULL)
+	{
+		SFrame* f = m_sprite->getFrame("icon_gunfire_sr_semi_auto.png");
+		if (f != NULL)
+		{
+			CGUISprite *spriteGUI = canvas->createSprite(f);
+			spriteGUI->setPosition(core::vector3df(0.0f, 150.0f, 0.0f));
+		}
+	}
+
 	// save to context
 	CContext *context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
@@ -236,7 +246,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 #if defined(WINDOWS_STORE)
@@ -255,7 +265,7 @@ void CViewInit::onUpdate()
 	{
 		if (m_spriteArchive != NULL)
 		{
-			m_sprite = new CAtlasFrame(video::ECF_A8R8G8B8, 2048, 2048);
+			m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 2048, 2048);
 
 			// get list sprite image
 			std::vector<std::string> sprites;
@@ -290,7 +300,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
