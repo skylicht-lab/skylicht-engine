@@ -47,7 +47,7 @@ namespace Skylicht
 
 		m_buffer = new CMeshBuffer<S3DVertex>(m_driver->getVertexDescriptor(EVT_STANDARD), video::EIT_16BIT);
 		m_buffer->setHardwareMappingHint(EHM_STREAM);
-		
+
 		m_vertices = (SVertexBuffer*)m_buffer->getVertexBuffer();
 		m_indices = (CIndexBuffer*)m_buffer->getIndexBuffer();
 
@@ -415,5 +415,68 @@ namespace Skylicht
 		numVertices += 4;
 		vertices += 4;
 		indices += 6;
+	}
+
+	void CGraphics2D::addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID)
+	{
+		if (m_2dMaterial.getTexture(0) != frame->Image->Texture || m_2dMaterial.MaterialType != materialID)
+			flush();
+
+		int numSpriteVertex = frame->ModuleOffset.size() * 4;
+
+		int numVertices = m_vertices->getVertexCount();
+		int vertexUse = numVertices + numSpriteVertex;
+
+		int numSpriteIndex = frame->ModuleOffset.size() * 6;
+		int numIndices = m_indices->getIndexCount();
+		int indexUse = numIndices + numSpriteIndex;
+
+		if (vertexUse > MAX_VERTICES || indexUse > MAX_INDICES)
+		{
+			flush();
+			numVertices = 0;
+			numIndices = 0;
+			vertexUse = numSpriteVertex;
+			indexUse = numSpriteIndex;
+		}
+
+		m_2dMaterial.setTexture(0, frame->Image->Texture);
+		m_2dMaterial.MaterialType = materialID;
+
+		m_vertices->set_used(vertexUse);
+
+		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		vertices += numVertices;
+
+		m_indices->set_used(indexUse);
+
+		s16 *indices = (s16*)m_indices->getIndices();
+		indices += numIndices;
+
+		float texWidth = 512.0f;
+		float texHeight = 512.0f;
+
+		if (frame->Image->Texture)
+		{
+			core::dimension2du size = frame->Image->Texture->getSize();
+			texWidth = (float)size.Width;
+			texHeight = (float)size.Height;
+		}
+
+		std::vector<SModuleOffset>::iterator it = frame->ModuleOffset.begin(), end = frame->ModuleOffset.end();
+		while (it != end)
+		{
+			SModuleOffset& module = (*it);
+
+			module.getPositionBuffer(vertices, indices, numVertices, absoluteMatrix);
+			module.getTexCoordBuffer(vertices, texWidth, texHeight);
+			module.getColorBuffer(vertices, color);
+
+			numVertices += 4;
+			vertices += 4;
+			indices += 6;
+
+			++it;
+		}
 	}
 }

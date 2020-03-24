@@ -23,12 +23,12 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CAtlasFrame.h"
+#include "CSpriteAtlas.h"
 #include "Graphics2D/Atlas/CAtlas.h"
 
 namespace Skylicht
 {
-	CAtlasFrame::CAtlasFrame(ECOLOR_FORMAT format, int width, int height) :
+	CSpriteAtlas::CSpriteAtlas(ECOLOR_FORMAT format, int width, int height) :
 		m_width(width),
 		m_height(height),
 		m_fmt(format)
@@ -36,7 +36,7 @@ namespace Skylicht
 		addEmptyAtlas();
 	}
 
-	CAtlasFrame::~CAtlasFrame()
+	CSpriteAtlas::~CSpriteAtlas()
 	{
 		for (SFrame *&f : m_frames)
 			delete f;
@@ -52,13 +52,20 @@ namespace Skylicht
 			delete a;
 		}
 		m_images.clear();
+		m_names.clear();
 	}
 
-	bool CAtlasFrame::addFrame(const char *name, const char *path)
+	SFrame* CSpriteAtlas::addFrame(const char *name, const char *path)
 	{
 		IImage *img = getVideoDriver()->createImageFromFile(path);
+		SFrame *frame = NULL;
+
 		if (img != NULL)
 		{
+			// Need swap Png RBG -> RBG on DX11
+			if (getVideoDriver()->getDriverType() == video::EDT_DIRECT3D11)
+				img->swapBG();
+
 			int w = img->getDimension().Width;
 			int h = img->getDimension().Height;
 
@@ -85,15 +92,15 @@ namespace Skylicht
 				if (r.getWidth() == 0 || r.getHeight() == 0)
 				{
 					img->drop();
-					return false;
+					return NULL;
 				}
 			}
 
 			// atlas image
 			image->Atlas->bitBltImage(img, r.UpperLeftCorner.X, r.UpperLeftCorner.Y);
 
-			// create frame
-			SFrame *frame = new SFrame();
+			// create frame			
+			frame = new SFrame();
 			frame->Image = image;
 			frame->BoudingRect.UpperLeftCorner.set((f32)r.UpperLeftCorner.X, (f32)r.UpperLeftCorner.Y);
 			frame->BoudingRect.LowerRightCorner.set((f32)r.LowerRightCorner.X, (f32)r.LowerRightCorner.Y);
@@ -123,12 +130,24 @@ namespace Skylicht
 
 			m_frames.push_back(frame);
 			img->drop();
+
+			m_names[name] = frame;
 		}
 
-		return true;
+		return frame;
 	}
 
-	void CAtlasFrame::updateTexture()
+	SFrame* CSpriteAtlas::getFrame(const char *name)
+	{
+		std::map<std::string, SFrame*>::iterator it = m_names.find(name);
+
+		if (it == m_names.end())
+			return NULL;
+
+		return it->second;
+	}
+
+	void CSpriteAtlas::updateTexture()
 	{
 		for (SImage *&a : m_images)
 		{
@@ -142,7 +161,7 @@ namespace Skylicht
 		}
 	}
 
-	SImage* CAtlasFrame::addEmptyAtlas()
+	SImage* CSpriteAtlas::addEmptyAtlas()
 	{
 		SImage *image = new SImage();
 		image->Atlas = new CAtlas(m_fmt, m_width, m_height);

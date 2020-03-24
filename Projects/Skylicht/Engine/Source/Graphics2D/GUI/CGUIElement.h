@@ -190,6 +190,11 @@ namespace Skylicht
 			return m_shaderID;
 		}
 
+		virtual void update(CCamera *camera)
+		{
+
+		}
+
 		virtual void render(CCamera *camera);
 
 		const core::matrix4& getRelativeTransform(bool forceRecalc = false);
