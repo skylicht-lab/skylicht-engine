@@ -7,8 +7,12 @@ commands:
     steps:
       - run:
           command: >
+            [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
+
             $SUDO apt-get update
-            $sudo apt-get install cmake
+
+            $SUDO apt-get install cmake
+          name: Install CMake
   install-ndk:
     description: Extend CircleCI's Android convenience images by installing a version of the Android NDK of your choice.
     parameters:
@@ -54,4 +58,5 @@ jobs:
       - checkout
       - install-ndk
       - install-cmake
-      - run: ls -l
+      - run: >
+          ls -l
