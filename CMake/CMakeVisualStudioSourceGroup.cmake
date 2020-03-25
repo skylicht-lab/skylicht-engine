@@ -22,3 +22,10 @@ function(setup_project_group project_source current_dir)
 		endif()		
 	endforeach()
 endfunction()
+
+function(add_source_group project_source group_name)		
+	foreach(source IN LISTS project_source)
+		# setup project group
+		source_group("${group_name}" FILES "${source}")
+	endforeach()
+endfunction()

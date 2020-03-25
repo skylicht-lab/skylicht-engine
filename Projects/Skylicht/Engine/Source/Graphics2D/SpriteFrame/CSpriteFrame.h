@@ -26,16 +26,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CAtlas;
+
 	struct SImage
 	{
 		int ID;
 		std::string Path;
 		ITexture *Texture;
+		CAtlas *Atlas;
 
 		SImage()
 		{
 			ID = -1;
 			Texture = NULL;
+			Atlas = NULL;
 		}
 	};
 
@@ -64,6 +68,7 @@ namespace Skylicht
 	struct SModuleOffset
 	{
 		SModuleRect *Module;
+		SFrame *Frame;
 
 		float OffsetX;
 		float OffsetY;
@@ -71,13 +76,13 @@ namespace Skylicht
 		bool FlipX;
 		bool FlipY;
 
-		char Character;
+		wchar_t Character;
 
 		SModuleOffset();
 
 		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
 
-		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, int offsetX, int offsetY, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
+		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, float offsetX, float offsetY, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
 
 		void getTexCoordBuffer(video::S3DVertex *vertices, float texWidth, float texHeight, float scaleW = 1.0f, float scaleH = 1.0f);
 
@@ -93,19 +98,11 @@ namespace Skylicht
 
 		SImage *Image;
 
-		core::rectf	BoudingRect;
+		core::rectf BoudingRect;
 
 		SFrame()
 		{
 			ID = -1;
 		}
-	};
-
-	class CSpriteFrame
-	{
-	public:
-		CSpriteFrame();
-
-		virtual ~CSpriteFrame();
 	};
 }

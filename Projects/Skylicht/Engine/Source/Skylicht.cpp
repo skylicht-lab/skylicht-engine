@@ -43,6 +43,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Animation/CAnimationManager.h"
 #include "TextureManager/CTextureManager.h"
 
+#if defined(USE_FREETYPE)
+#include "Graphics2D/Glyph/CGlyphFreetype.h"
+#endif
+
+
 namespace Skylicht
 {
 
@@ -69,6 +74,10 @@ namespace Skylicht
 		CAnimationManager::createGetInstance();
 		CMaterialManager::createGetInstance();
 
+#if defined(USE_FREETYPE)
+		CGlyphFreetype::createGetInstance();
+#endif
+
 		// alway use HW
 		g_video->setMinHardwareBufferVertexCount(0);
 
@@ -79,6 +88,10 @@ namespace Skylicht
 	void releaseSkylicht()
 	{
 		os::Printer::log("Close skylicht core");
+
+#if defined(USE_FREETYPE)
+		CGlyphFreetype::releaseInstance();
+#endif
 
 		CMaterialManager::releaseInstance();
 		CAnimationManager::releaseInstance();

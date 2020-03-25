@@ -78,6 +78,13 @@ option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform develo
 
 option(BUILD_IMGUI "Build Ocornut Imgui" ON)
 
+option(BUILD_FREETYPE "Build Font Freetype" ON)
+
+if (BUILD_FREETYPE)
+	add_definitions(-DUSE_FREETYPE)
+	add_definitions(-DFT2_BUILD_LIBRARY)
+endif()
+
 # skylicht network
 if (BUILD_SKYLICHT_NETWORK)
 	add_definitions(-DUSE_SKYLICHT_NETWORK)
