@@ -13,6 +13,7 @@ commands:
 
             $SUDO apt-get install cmake
           name: Install CMake
+
   install-ndk:
     description: Extend CircleCI's Android convenience images by installing a version of the Android NDK of your choice.
     parameters:
@@ -24,6 +25,16 @@ commands:
         default: android-ndk-r19c
         description: Version of the NDK to install. Provide a string formatted along the lines of the default value.
         type: string
+
+    build-engine-native:
+      steps:
+        - run:
+            command: >
+              cmake -S. -BPrjAndroid -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=24
+
+              make -C PrjAndroid
+            name: Build Skylicht Engine Native SDK
+
     steps:
       - run:
           command: >
@@ -58,6 +69,7 @@ jobs:
       - checkout
       - install-ndk
       - install-cmake
-      - run: >
-          cmake -S. -BPrjAndroid -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=24
-          make -C PrjAndroid
+      - build-engine-native
+      #- run: >
+      #    cmake -S. -BPrjAndroid -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=24
+      #    make -C PrjAndroid
