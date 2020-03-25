@@ -4,7 +4,7 @@ orbs:
   android: circleci/android@0.2.0
 commands:
   install-cmake:
-  steps:
+    steps:
       - run:
           command: >
             $SUDO apt-get update
