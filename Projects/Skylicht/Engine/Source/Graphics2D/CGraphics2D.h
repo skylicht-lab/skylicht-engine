@@ -50,6 +50,8 @@ namespace Skylicht
 
 		video::SMaterial m_2dMaterial;
 
+		int m_vertexColorShader;
+
 		IMeshBuffer *m_buffer;
 		scene::SVertexBuffer *m_vertices;
 		scene::CIndexBuffer *m_indices;
@@ -95,6 +97,26 @@ namespace Skylicht
 		void addModuleBatch(SModuleOffset *module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID);
 
 		void addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID);
+
+		void beginDrawDepth();
+
+		void endDrawDepth();
+
+		void beginDepthTest();
+
+		void endDepthTest();
+
+		void setWriteDepth(video::SMaterial& mat);
+
+		void setDepthTest(video::SMaterial& mat);
+
+		void setNoDepthTest(video::SMaterial& mat);
+
+		void draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color);
+
+		void draw2DRectangle(const core::rectf& pos, const SColor& color);
+
+		void draw2DRectangleOutline(const core::rectf& pos, const SColor& color);
 	};
 
 }
