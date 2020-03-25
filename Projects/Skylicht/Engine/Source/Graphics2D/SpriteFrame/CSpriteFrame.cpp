@@ -29,14 +29,17 @@ namespace Skylicht
 {
 	SModuleOffset::SModuleOffset()
 	{
-		OffsetX = -1;
-		OffsetY = -1;
+		OffsetX = 0;
+		OffsetY = 0;
 		FlipX = false;
 		FlipY = false;
 
 		XAdvance = 0.0f;
 
 		Character = 0;
+
+		Frame = NULL;
+		Module = NULL;
 	}
 
 	void SModuleOffset::getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, const core::matrix4& mat, float scaleW, float scaleH)
@@ -74,7 +77,7 @@ namespace Skylicht
 		indices[5] = vertexOffset + 3;
 	}
 
-	void SModuleOffset::getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, int offsetX, int offsetY, const core::matrix4& mat, float scaleW, float scaleH)
+	void SModuleOffset::getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, float offsetX, float offsetY, const core::matrix4& mat, float scaleW, float scaleH)
 	{
 		float x1 = (float)OffsetX + offsetX;
 		float y1 = (float)OffsetY + offsetY;
@@ -140,15 +143,5 @@ namespace Skylicht
 		vertices[1].Color = c;
 		vertices[2].Color = c;
 		vertices[3].Color = c;
-	}
-
-	CSpriteFrame::CSpriteFrame()
-	{
-
-	}
-
-	CSpriteFrame::~CSpriteFrame()
-	{
-
 	}
 }

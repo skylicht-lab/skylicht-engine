@@ -2,6 +2,7 @@
 
 #include "ViewManager/CView.h"
 #include "Emscripten/CGetFileURL.h"
+#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
 
 class CViewInit : public CView
 {
@@ -16,6 +17,9 @@ public:
 
 protected:
 	CGetFileURL *m_getFile;
+
+	CSpriteAtlas *m_sprite;
+	io::IFileArchive *m_spriteArchive;
 
 	EInitState m_initState;
 

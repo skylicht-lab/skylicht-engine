@@ -19,10 +19,17 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 #include "RenderMesh/CRenderMesh.h"
+#include "Graphics2D/CCanvas.h"
+
+#if defined(USE_FREETYPE)
+#include "Graphics2D/Glyph/CGlyphFreetype.h"
+#include "Graphics2D/SpriteFrame/CGlyphFont.h"
+#endif
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
-	m_getFile(NULL)
+	m_getFile(NULL),
+	m_spriteArchive(NULL)
 {
 
 }
@@ -59,6 +66,11 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
+
+#if defined(USE_FREETYPE)
+	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+#endif
 }
 
 void CViewInit::initScene()
@@ -76,6 +88,12 @@ void CViewInit::initScene()
 	CCamera *camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(2.0f, 1.0f, 2.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+
+	// gui camera
+	CGameObject *guiCameraObj = zone->createEmptyObject();
+	guiCameraObj->addComponent<CCamera>();
+	CCamera *guiCamera = guiCameraObj->getComponent<CCamera>();
+	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
 	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Demo/Textures/Sky/PaperMill.png");
@@ -146,11 +164,51 @@ void CViewInit::initScene()
 		renderer->initMaterial(materials);
 	}
 
+#if defined(USE_FREETYPE)
+	CGlyphFont *fontLarge = new CGlyphFont();
+	fontLarge->setFont("Segoe UI Light", 50);
+
+	CGlyphFont *fontSmall = new CGlyphFont();
+	fontSmall->setFont("Segoe UI Light", 34);
+
+	CGlyphFont *fontTiny = new CGlyphFont();
+	fontTiny->setFont("Segoe UI Light", 16);
+
+	// 2d gui
+	CGameObject *guiObject = zone->createEmptyObject();
+	CCanvas *canvas = guiObject->addComponent<CCanvas>();
+	// canvas->enable3DBillboard(true);
+
+	// Scale screen resolution to meter and flip 2D coord (Y down, X invert)
+	CGUIElement *rootGUI = canvas->getRootElement();
+	//rootGUI->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
+	//rootGUI->setScale(core::vector3df(-0.001f, -0.001f, 0.001f));
+
+	CGUIText *textLarge = canvas->createText(fontLarge);
+	textLarge->setText("Skylicht Engine");
+	textLarge->setPosition(core::vector3df(0.0f, 40.0f, 0.0f));
+
+	CGUIText *textSmall = canvas->createText(fontSmall);
+	textSmall->setText("This is demo for render of Truetype font");
+	textSmall->setPosition(core::vector3df(0.0f, 100.0f, 0.0f));
+#endif
+
+	if (m_sprite != NULL)
+	{
+		SFrame* f = m_sprite->getFrame("icon_gunfire_sr_semi_auto.png");
+		if (f != NULL)
+		{
+			CGUISprite *spriteGUI = canvas->createSprite(f);
+			spriteGUI->setPosition(core::vector3df(0.0f, 150.0f, 0.0f));
+		}
+	}
+
 	// save to context
 	CContext *context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
+	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 }
 
@@ -188,13 +246,15 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 #if defined(WINDOWS_STORE)
 		fileSystem->addFileArchive(getBuiltInPath("Demo.zip"), false, false);
+		fileSystem->addFileArchive("Sprite.zip", false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
 #else
 		fileSystem->addFileArchive("Demo.zip", false, false);
+		fileSystem->addFileArchive("Sprite.zip", false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
 #endif	
 
 		m_initState = CViewInit::InitScene;
@@ -203,6 +263,25 @@ void CViewInit::onUpdate()
 	break;
 	case CViewInit::InitScene:
 	{
+		if (m_spriteArchive != NULL)
+		{
+			m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 2048, 2048);
+
+			// get list sprite image
+			std::vector<std::string> sprites;
+
+			const io::IFileList *fileList = m_spriteArchive->getFileList();
+			for (int i = 0, n = fileList->getFileCount(); i < n; i++)
+			{
+				const char *fullFileame = fileList->getFullFileName(i).c_str();
+				const char *name = fileList->getFileName(i).c_str();
+
+				m_sprite->addFrame(name, fullFileame);
+			}
+
+			m_sprite->updateTexture();
+		}
+
 		initScene();
 		m_initState = CViewInit::Finished;
 	}
@@ -221,7 +300,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
