@@ -13,7 +13,6 @@ commands:
 
             $SUDO apt-get install cmake
           name: Install CMake
-
   install-ndk:
     description: Extend CircleCI's Android convenience images by installing a version of the Android NDK of your choice.
     parameters:
@@ -25,7 +24,6 @@ commands:
         default: android-ndk-r19c
         description: Version of the NDK to install. Provide a string formatted along the lines of the default value.
         type: string
-
     build-engine-native:
       steps:
         - run:
@@ -34,7 +32,6 @@ commands:
 
               make -C PrjAndroid
             name: Build Skylicht Engine Native SDK
-
     steps:
       - run:
           command: >
