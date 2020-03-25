@@ -21,7 +21,7 @@ commands:
 
             $SUDO curl --silent --show-error --location --fail --retry 3 --output /tmp/<<parameters.ndk-version>>.zip https://dl.google.com/android/repository/<<parameters.ndk-version>>-linux-x86_64.zip
 
-            $SUDO echo "<<parameters.ndk-sha>> /tmp/<<parameters.ndk-version>>.zip" /tmp/<<parameters.ndk-version>>.zip.sha1
+            $SUDO echo "<<parameters.ndk-sha>> /tmp/<<parameters.ndk-version>>.zip" > /tmp/<<parameters.ndk-version>>.zip.sha1
 
             sha1sum -c /tmp/<<parameters.ndk-version>>.zip.sha1
 
