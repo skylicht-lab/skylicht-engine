@@ -8,7 +8,9 @@ commands:
       - run:
           command: >
             [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
+
             $SUDO apt-get update
+
             $SUDO apt-get install cmake
           name: Install CMake
   install-ndk:
@@ -26,12 +28,19 @@ commands:
       - run:
           command: >
             [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
+
             $SUDO curl --silent --show-error --location --fail --retry 3 --output /tmp/<<parameters.ndk-version>>.zip https://dl.google.com/android/repository/<<parameters.ndk-version>>-linux-x86_64.zip
+
             $SUDO echo "<<parameters.ndk-sha>> /tmp/<<parameters.ndk-version>>.zip" > /tmp/<<parameters.ndk-version>>.zip.sha1
+
             sha1sum -c /tmp/<<parameters.ndk-version>>.zip.sha1
+
             $SUDO unzip -q /tmp/<<parameters.ndk-version>>.zip -d /opt/android
+
             $SUDO rm -f /tmp/<<parameters.ndk-version>>*
+
             $SUDO chown -R circleci:circleci /opt/android/<<parameters.ndk-version>>
+
             echo "export ANDROID_NDK_HOME=/opt/android/<<parameters.ndk-version>>" > $BASH_ENV
 
             if [[ -d /opt/android/<<parameters.ndk-version>> && -n "$(ls -A /opt/android/<<parameters.ndk-version>>)" ]]; then
@@ -46,6 +55,7 @@ commands:
       - run:
           command: >
             cmake -S. -BPrjAndroid -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=24
+
             make -C PrjAndroid
           name: Build Skylicht Engine Native SDK
 jobs:
