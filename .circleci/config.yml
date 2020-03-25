@@ -59,4 +59,5 @@ jobs:
       - install-ndk
       - install-cmake
       - run: >
-          ls -l
+          cmake -S. -BPrjAndroid -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=24
+          make -C PrjAndroid
