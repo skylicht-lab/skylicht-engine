@@ -758,6 +758,7 @@ namespace irr
 			u32 height = Image->getDimension().Height;
 			u32 i = 0;
 			u8* target = static_cast<u8*>(mipmapData);
+			u32 m = width < height ? width : height;
 			do
 			{
 				if (width > 1)
@@ -776,10 +777,7 @@ namespace irr
 
 				if (IsCompressed)
 				{
-					if (ColorFormat == ECF_DXT1)
-						compressedDataSize = ((width + 3) / 4) * ((height + 3) / 4) * 8;
-					else if (ColorFormat == ECF_DXT2 || ColorFormat == ECF_DXT3 || ColorFormat == ECF_DXT4 || ColorFormat == ECF_DXT5)
-						compressedDataSize = ((width + 3) / 4) * ((height + 3) / 4) * 16;
+					compressedDataSize = IImage::getCompressedImageSize(ColorFormat, width, height);
 
 					Driver->extGlCompressedTexImage2D(GL_TEXTURE_2D, i, InternalFormat, width,
 						height, 0, compressedDataSize, target);
@@ -798,7 +796,10 @@ namespace irr
 
 					target = static_cast<u8*>(mipmapData);
 				}
-			} while (width != 1 || height != 1);
+
+				m = width < height ? width : height;
+			} while (m > 1);
+
 			// cleanup
 			if (!mipmapData)
 				delete[] target;

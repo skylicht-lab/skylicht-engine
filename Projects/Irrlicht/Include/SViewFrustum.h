@@ -105,6 +105,8 @@ namespace scene
 		//! get the given state's matrix based on frustum E_TRANSFORMATION_STATE
 		const core::matrix4& getTransform( video::E_TRANSFORMATION_STATE state) const;
 
+		void setTransform(video::E_TRANSFORMATION_STATE state, const core::matrix4& mat);
+
 		//! clips a line to the view frustum.
 		/** \return True if the line was clipped, false if not */
 		bool clipLine(core::line3d<f32>& line) const;
@@ -376,6 +378,22 @@ namespace scene
 				break;
 		}
 		return Matrices [ index ];
+	}
+
+	inline void SViewFrustum::setTransform(video::E_TRANSFORMATION_STATE state, const core::matrix4& mat)
+	{
+		u32 index = 0;
+		switch (state)
+		{
+		case video::ETS_PROJECTION:
+			index = SViewFrustum::ETS_PROJECTION; break;
+		case video::ETS_VIEW:
+			index = SViewFrustum::ETS_VIEW; break;
+		default:
+			break;
+		}
+		
+		Matrices[index] = mat;
 	}
 
 	//! Clips a line to the frustum

@@ -2,6 +2,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/zlib
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
 )
 
 #aesGladman
@@ -76,6 +77,31 @@ file(GLOB_RECURSE zlib_source
 	./source/zlib/**.h)
 setup_project_group("${zlib_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
+#freetype2
+set(freetype_source
+	./source/freetype2/src/autofit/autofit.c
+	./source/freetype2/src/base/basepic.c
+	./source/freetype2/src/base/ftapi.c
+	./source/freetype2/src/base/ftbase.c
+	./source/freetype2/src/base/ftbbox.c
+	./source/freetype2/src/base/ftbitmap.c
+	./source/freetype2/src/base/ftdbgmem.c
+	./source/freetype2/src/base/ftdebug.c
+	./source/freetype2/src/base/ftglyph.c
+	./source/freetype2/src/base/ftinit.c
+	./source/freetype2/src/base/ftpic.c
+	./source/freetype2/src/base/ftstroke.c
+	./source/freetype2/src/base/ftsynth.c
+	./source/freetype2/src/base/ftsystem.c
+	./source/freetype2/src/cff/cff.c
+	./source/freetype2/src/pshinter/pshinter.c
+	./source/freetype2/src/psnames/psnames.c
+	./source/freetype2/src/raster/raster.c
+	./source/freetype2/src/sfnt/sfnt.c
+	./source/freetype2/src/smooth/smooth.c
+	./source/freetype2/src/truetype/truetype.c)
+add_source_group("${freetype_source}" "source\\freetype2")
+
 add_library(ThirdParty STATIC
 	${aes_gladman_source} 
 	${bzip2_source}
@@ -86,6 +112,7 @@ add_library(ThirdParty STATIC
 	${lzma_source}
 	${mpc_source}
 	${zlib_source}
+	${freetype_source}
 )
 
 set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})

@@ -13,9 +13,11 @@ class CContext : public CGameSingleton<CContext>
 {
 protected:
 	CScene *m_scene;
-	
+
 	CZone *m_zone;
 	CCamera *m_camera;
+	CCamera *m_guiCamera;
+
 	CDirectionalLight *m_directionalLight;
 
 	CBaseRP *m_beginRP;
@@ -31,7 +33,7 @@ public:
 	CScene* initScene();
 
 	CBaseRP* initRenderPipeline(int w, int h);
-	
+
 	inline CScene* getScene()
 	{
 		return m_scene;
@@ -74,6 +76,16 @@ public:
 	inline CCamera* getActiveCamera()
 	{
 		return m_camera;
+	}
+
+	inline void setGUICamera(CCamera *camera)
+	{
+		m_guiCamera = camera;
+	}
+
+	inline CCamera* getGUICamera()
+	{
+		return m_guiCamera;
 	}
 
 	void releaseScene();

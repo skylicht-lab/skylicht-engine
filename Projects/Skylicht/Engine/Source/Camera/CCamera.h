@@ -29,16 +29,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CCamera: public CComponentSystem
+	class CCamera : public CComponentSystem
 	{
 	public:
 		enum ECameraProjection
-		{			
+		{
 			Ortho,
 			Frustum,
-			Perspective
+			Perspective,
+			OrthoUI,
 		};
-	
+
 	protected:
 		ECameraProjection m_projectionType;
 
@@ -58,11 +59,18 @@ namespace Skylicht
 
 		virtual void initComponent();
 
-		virtual void updateComponent();	
+		virtual void updateComponent();
 
 		virtual void endUpdate();
 
 	public:
+
+		void setProjectionType(ECameraProjection projection);
+
+		inline ECameraProjection getProjectionType()
+		{
+			return m_projectionType;
+		}
 
 		const core::matrix4& getProjectionMatrix() const;
 
