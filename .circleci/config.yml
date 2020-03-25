@@ -1,0 +1,63 @@
+version: 2.1
+
+orbs:
+ android: circleci/android@0.2.0
+commands:
+  install-ndk:
+    description: Extend CircleCI's Android convenience images by installing a version of the Android NDK of your choice.
+    parameters:
+      ndk-sha:
+        default: fd94d0be6017c6acbd193eb95e09cf4b6f61b834
+        description: > 
+          SHA-1 of the zip file specified by ndk-version. Provide a string formatted along the lines of the default value. See https://developer.android.com/ndk/downloads
+          type: string
+        ndk-version:
+        default: android-ndk-r19c
+        description: > 
+          Version of the NDK to install. Provide a string formatted along the lines of the default value.
+        type: string
+    steps:
+      - run:
+        command: >
+          [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
+
+          $SUDO curl --silent --show-error --location --fail --retry 3 \
+          --output /tmp/<<parameters.ndk-version>>.zip \
+          https://dl.google.com/android/repository/<<parameters.ndk-version>>-linux-x86_64.zip
+
+          $SUDO echo "<<parameters.ndk-sha>> /tmp/<<parameters.ndk-version>>.zip"
+          > /tmp/<<parameters.ndk-version>>.zip.sha1
+
+
+          sha1sum -c /tmp/<<parameters.ndk-version>>.zip.sha1
+
+
+          $SUDO unzip -q /tmp/<<parameters.ndk-version>>.zip -d /opt/android
+
+          $SUDO rm -f /tmp/<<parameters.ndk-version>>*
+
+
+          $SUDO chown -R circleci:circleci /opt/android/<<parameters.ndk-version>>
+
+
+          echo "export ANDROID_NDK_HOME=/opt/android/<<parameters.ndk-version>>"
+          >> $BASH_ENV
+
+
+          if [[ -d /opt/android/<<parameters.ndk-version>> && \
+          -n "$(ls -A /opt/android/<<parameters.ndk-version>>)" ]]; then
+            echo "Android NDK installed"
+          else
+            echo "Android NDK did not install successfully"
+            exit 1
+          fi
+        name: Install Android NDK
+jobs:
+  build:
+    executor: android/android
+        
+    steps:
+      - checkout
+      - install-ndk
+      - run:
+          
