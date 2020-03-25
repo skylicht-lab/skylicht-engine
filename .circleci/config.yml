@@ -3,6 +3,12 @@ version: 2.1
 orbs:
   android: circleci/android@0.2.0
 commands:
+  install-cmake:
+  steps:
+      - run:
+          command: >
+            $SUDO apt-get update
+            $sudo apt-get install cmake
   install-ndk:
     description: Extend CircleCI's Android convenience images by installing a version of the Android NDK of your choice.
     parameters:
@@ -47,3 +53,5 @@ jobs:
     steps:
       - checkout
       - install-ndk
+      - install-cmake:
+      - run: ls -l
