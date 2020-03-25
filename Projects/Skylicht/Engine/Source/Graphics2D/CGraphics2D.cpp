@@ -41,7 +41,8 @@ namespace Skylicht
 	CGraphics2D::CGraphics2D() :
 		m_currentW(-1),
 		m_currentH(-1),
-		m_scaleRatio(1.0f)
+		m_scaleRatio(1.0f),
+		m_vertexColorShader(0)
 	{
 		m_driver = getVideoDriver();
 
@@ -478,5 +479,161 @@ namespace Skylicht
 
 			++it;
 		}
+	}
+
+	void CGraphics2D::beginDrawDepth()
+	{
+		flush();
+
+		m_driver->clearZBuffer();
+
+		setWriteDepth(m_2dMaterial);
+
+		m_driver->setAllowZWriteOnTransparent(true);
+	}
+
+	void CGraphics2D::endDrawDepth()
+	{
+		flush();
+
+		setNoDepthTest(m_2dMaterial);
+
+		m_driver->setAllowZWriteOnTransparent(false);
+	}
+
+	void CGraphics2D::beginDepthTest()
+	{
+		setDepthTest(m_2dMaterial);
+	}
+
+	void CGraphics2D::endDepthTest()
+	{
+		flush();
+		setNoDepthTest(m_2dMaterial);
+	}
+
+	void CGraphics2D::setWriteDepth(video::SMaterial& mat)
+	{
+		mat.ZBuffer = video::ECFN_ALWAYS;
+		mat.ZWriteEnable = true;
+		mat.ColorMask = ECP_NONE;
+	}
+
+	void CGraphics2D::setDepthTest(video::SMaterial& mat)
+	{
+		mat.ZBuffer = video::ECFN_EQUAL;
+		mat.ZWriteEnable = false;
+		mat.ColorMask = ECP_ALL;
+	}
+
+	void CGraphics2D::setNoDepthTest(video::SMaterial& mat)
+	{
+		mat.ZBuffer = video::ECFN_ALWAYS;
+		mat.ZWriteEnable = false;
+		mat.ColorMask = ECP_ALL;
+	}
+
+	void CGraphics2D::draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color)
+	{
+		flush();
+
+		m_indices->set_used(0);
+		m_indices->addIndex(0);
+		m_indices->addIndex(1);
+
+		video::S3DVertex vert;
+		vert.Color = color;
+
+		vert.Pos.X = start.X;
+		vert.Pos.Y = start.Y;
+		vert.Pos.Z = 0;
+
+		m_vertices->set_used(0);
+		m_vertices->addVertex(vert);
+
+		vert.Pos.X = end.X;
+		vert.Pos.Y = end.Y;
+		vert.Pos.Z = 0;
+		m_vertices->addVertex(vert);
+
+		m_2dMaterial.setTexture(0, NULL);
+		m_2dMaterial.setTexture(1, NULL);
+		m_2dMaterial.MaterialType = m_vertexColorShader;
+		m_driver->setMaterial(m_2dMaterial);
+
+		m_buffer->setPrimitiveType(scene::EPT_LINES);
+		m_buffer->setDirty();
+
+		m_driver->drawMeshBuffer(m_buffer);
+
+		m_indices->set_used(0);
+		m_vertices->set_used(0);
+	}
+
+	void CGraphics2D::draw2DRectangle(const core::rectf& pos, const SColor& color)
+	{
+		flush();
+
+		m_indices->set_used(6);
+		u16 *index = (u16*)m_indices->getIndices();
+		index[0] = 0;
+		index[1] = 1;
+		index[2] = 2;
+		index[3] = 0;
+		index[4] = 2;
+		index[5] = 3;
+
+		m_vertices->set_used(4);
+		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		vertices[0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+
+		m_2dMaterial.setTexture(0, NULL);
+		m_2dMaterial.setTexture(1, NULL);
+		m_2dMaterial.MaterialType = m_vertexColorShader;
+		m_driver->setMaterial(m_2dMaterial);
+
+		m_buffer->setPrimitiveType(scene::EPT_TRIANGLES);
+		m_buffer->setDirty();
+
+		m_driver->drawMeshBuffer(m_buffer);
+
+		m_indices->set_used(0);
+		m_vertices->set_used(0);
+	}
+
+	void CGraphics2D::draw2DRectangleOutline(const core::rectf& pos, const SColor& color)
+	{
+		flush();
+
+		m_indices->set_used(5);
+		u16 *index = (u16*)m_indices->getIndices();
+		index[0] = 0;
+		index[1] = 1;
+		index[2] = 2;
+		index[3] = 3;
+		index[4] = 0;
+
+		m_vertices->set_used(4);
+		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		vertices[0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+
+		m_2dMaterial.setTexture(0, NULL);
+		m_2dMaterial.setTexture(1, NULL);
+		m_2dMaterial.MaterialType = m_vertexColorShader;
+		m_driver->setMaterial(m_2dMaterial);
+
+		m_buffer->setPrimitiveType(scene::EPT_LINE_STRIP);
+		m_buffer->setDirty();
+
+		m_driver->drawMeshBuffer(m_buffer);
+
+		m_indices->set_used(0);
+		m_vertices->set_used(0);
 	}
 }
