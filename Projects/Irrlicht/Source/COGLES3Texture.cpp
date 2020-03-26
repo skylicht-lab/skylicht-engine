@@ -325,6 +325,8 @@ namespace irr
 				type = GL_COMPRESSED_RGBA8_ETC2_EAC;
 				break;
 #endif
+
+#if !defined(ANDROID)
 			case ECF_DXT1:
 				colorformat = GL_BGRA_EXT;
 				type = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
@@ -342,6 +344,7 @@ namespace irr
 				type = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 				internalformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 				break;
+#endif
 			case ECF_D16:
 				colorformat = GL_DEPTH_COMPONENT;
 				type = GL_UNSIGNED_BYTE;
