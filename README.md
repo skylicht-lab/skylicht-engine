@@ -20,6 +20,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 | <img src="Documents/Media/Platforms/uwp.png" width="25" valign="middle"> Windows Store   | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
 | <img src="Documents/Media/Platforms/ubuntu.png" width="25" valign="middle"> Linux        | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
 | <img src="Documents/Media/Platforms/html5.png" width="25" valign="middle"> Emscripten    | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
+| <img src="Documents/Media/Platforms/android.png" width="25" valign="middle"> Android     | [![Build status](https://circleci.com/gh/skylicht-lab/skylicht-engine.svg?style=shield)](https://app.circleci.com/pipelines/github/skylicht-lab/skylicht-engine)                  |
 
 ### Prerequisites
 -   [CMake](https://cmake.org/download/) 3.12 or higher
