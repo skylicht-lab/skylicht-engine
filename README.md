@@ -87,7 +87,11 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     ```
     
 ## Project Architecture
-<img src="Documents/Media/project_architecture.jpg" width="500">
+<img src="Documents/Media/mainapp.png">
+
+<img src="Documents/Media/skylicht.png">
+
+<img src="Documents/Media/thirdparty.png">
 
 ## Contributing
 Welcome if you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
