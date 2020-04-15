@@ -25,8 +25,73 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGUIMask.h"
+#include "Graphics2D/CGraphics2D.h"
 
 namespace Skylicht
 {
+	CGUIMask::CGUIMask(CCanvas *canvas, const core::rectf& rect) :
+		CGUIElement(canvas, rect),
+		m_drawMask(false)
+	{
 
+	}
+
+	CGUIMask::CGUIMask(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect) :
+		CGUIElement(canvas, parent, rect),
+		m_drawMask(false)
+	{
+
+	}
+
+	CGUIMask::~CGUIMask()
+	{
+
+	}
+
+	void CGUIMask::update(CCamera *camera)
+	{
+		m_drawMask = false;
+	}
+
+	void CGUIMask::render(CCamera *camera)
+	{
+		if (m_drawMask == false)
+		{
+			core::rectf r = m_rect;
+
+			float z = 0.0f;
+			if (camera->getProjectionType() != CCamera::OrthoUI)
+				z = 0.1f;
+
+			core::vector3df topLeft(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);
+			core::vector3df bottomRight(r.LowerRightCorner.X, r.LowerRightCorner.Y, z);
+
+			m_absoluteTransform.transformVect(topLeft);
+			m_absoluteTransform.transformVect(bottomRight);
+
+			CGraphics2D *g = CGraphics2D::getInstance();
+
+			// draw depth for mask
+			g->beginDrawDepth();
+			g->draw2DRectangle(topLeft, bottomRight, SColor(255, 0, 0, 0));
+			g->endDrawDepth();
+		}
+
+		m_drawMask = true;
+	}
+
+	void CGUIMask::beginMaskTest(CCamera *camera)
+	{
+		if (m_drawMask == false)
+			render(camera);
+
+		// depth test for clip mask
+		CGraphics2D::getInstance()->beginDepthTest();
+	}
+
+	void CGUIMask::endMaskTest()
+	{
+		// end depth test
+		CGraphics2D::getInstance()->endDepthTest();
+	}
 }
