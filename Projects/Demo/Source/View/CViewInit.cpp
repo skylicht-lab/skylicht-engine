@@ -174,15 +174,24 @@ void CViewInit::initScene()
 	CGlyphFont *fontTiny = new CGlyphFont();
 	fontTiny->setFont("Segoe UI Light", 16);
 
-	// 2d gui
+	// gui
+	bool is3DGUI = true;
+
 	CGameObject *guiObject = zone->createEmptyObject();
 	CCanvas *canvas = guiObject->addComponent<CCanvas>();
-	// canvas->enable3DBillboard(true);
 
 	// Scale screen resolution to meter and flip 2D coord (Y down, X invert)
 	CGUIElement *rootGUI = canvas->getRootElement();
-	//rootGUI->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
-	//rootGUI->setScale(core::vector3df(-0.001f, -0.001f, 0.001f));
+
+	if (is3DGUI == true)
+	{
+		// 3D GUI transform
+		rootGUI->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
+		rootGUI->setScale(core::vector3df(-0.002f, -0.002f, 0.002f));
+
+		// Billboard or not?
+		canvas->enable3DBillboard(true);
+	}
 
 	CGUIText *textLarge = canvas->createText(fontLarge);
 	textLarge->setText("Skylicht Engine");
@@ -200,15 +209,28 @@ void CViewInit::initScene()
 		{
 			CGUISprite *spriteGUI = canvas->createSprite(f);
 			spriteGUI->setPosition(core::vector3df(0.0f, 150.0f, 0.0f));
+
+			// test mask on sprite
+			//CGUIMask *mask = canvas->createMask(core::rectf(20.0f, 20.0f, 400.0f, 200.0f));
+			//spriteGUI->setMask(mask);
 		}
 	}
+
+	// test mask on all gui
+	// CGUIMask *mask = canvas->createMask(core::rectf(20.0f, 20.0f, 400.0f, 200.0f));
+	// canvas->getRootElement()->setMask(mask);
 
 	// save to context
 	CContext *context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
-	context->setGUICamera(guiCamera);
+
+	if (is3DGUI == true)
+		context->setGUICamera(camera);
+	else
+		context->setGUICamera(guiCamera);
+
 	context->setDirectionalLight(directionalLight);
 }
 
@@ -245,8 +267,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
 	}
+		}
 #else
 
 #if defined(WINDOWS_STORE)
@@ -259,7 +281,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -300,7 +322,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()

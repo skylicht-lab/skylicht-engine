@@ -72,16 +72,23 @@ namespace Skylicht
 		for (int i = 0; i < MAX_CHILD_DEPTH; i++)
 			m_entitiesTree[i].set_used(0);
 
-		int maxLevel = 0;
+		int maxLevel = 0;		
 
-		// pick transform changed to update
+		// update all entities
 		for (CGUIElement *entity : m_entities)
 		{
 			int level = entity->getLevel();
+			CGUIElement *parent = entity->getParent();
 
 			// update entity
 			entity->update(camera);
 
+			// clear all child and build entity render by tree
+			entity->m_childs.set_used(0);
+			if (parent != NULL)
+				parent->m_childs.push_back(entity);
+
+			// pick transform changed to update
 			if (entity->isTransformChanged() == true)
 			{
 				// me changed
@@ -89,13 +96,25 @@ namespace Skylicht
 				if (level > maxLevel)
 					maxLevel = level;
 			}
-			else if (entity->getParent() != NULL && entity->getParent()->isTransformChanged() == true)
+			else if (parent != NULL && parent->isTransformChanged() == true)
 			{
 				// parent changed
 				m_entitiesTree[level].push_back(entity);
 				if (level > maxLevel)
 					maxLevel = level;
 				entity->setTransformChanged(true);
+			}
+
+			// apply mask
+			entity->applyParentMask(entity->getMask());
+			if (parent != NULL)
+			{
+				CGUIMask *mask = parent->getMask();
+				if (mask == NULL)
+					mask = parent->getCurrentMask();
+
+				if (mask != NULL)
+					entity->applyParentMask(mask);
 			}
 		}
 
@@ -129,10 +148,25 @@ namespace Skylicht
 		}
 
 		// render
-		for (CGUIElement *entity : m_entities)
+		std::stack<CGUIElement*> renderEntity;
+		renderEntity.push(m_root);
+
+		while (renderEntity.size() > 0)
 		{
-			if (entity->isCullingVisisble() == true)
-				entity->render(camera);
+			CGUIElement *entity = renderEntity.top();
+			renderEntity.pop();
+
+			CGUIMask *mask = entity->getCurrentMask();
+			if (mask != NULL)
+				mask->beginMaskTest(camera);
+
+			entity->render(camera);
+
+			if (mask != NULL)
+				mask->endMaskTest();
+
+			for (u32 i = 0, n = entity->m_childs.size(); i < n; i++)
+				renderEntity.push(entity->m_childs[i]);
 		}
 	}
 
@@ -232,6 +266,24 @@ namespace Skylicht
 	CGUISprite* CCanvas::createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame)
 	{
 		CGUISprite *element = new CGUISprite(this, e, r, frame);
+		m_entities.push_back(element);
+		return element;
+	}
+
+	/*
+	* Mask constructor
+	*/
+
+	CGUIMask* CCanvas::createMask(const core::rectf& r)
+	{
+		CGUIMask *element = new CGUIMask(this, r);
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUIMask* CCanvas::createMask(CGUIElement *e, const core::rectf& r)
+	{
+		CGUIMask *element = new CGUIMask(this, e, r);
 		m_entities.push_back(element);
 		return element;
 	}

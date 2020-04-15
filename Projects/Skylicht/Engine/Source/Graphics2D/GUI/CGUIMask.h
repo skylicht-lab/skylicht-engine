@@ -24,7 +24,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CGUIElement.h"
+
 namespace Skylicht
 {
+	class CGUIMask : public CGUIElement
+	{
+		friend class CCanvas;
 
+		CGUIMask(CCanvas *canvas, const core::rectf& rect);
+		CGUIMask(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect);
+
+		bool m_drawMask;
+
+	public:
+		virtual ~CGUIMask();
+
+		virtual void update(CCamera *camera);
+
+		virtual void render(CCamera *camera);
+
+		void beginMaskTest(CCamera *camera);
+
+		void endMaskTest();
+	};
 }
