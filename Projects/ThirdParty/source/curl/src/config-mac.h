@@ -80,7 +80,8 @@
 #define HAVE_RAND_EGD           1
 
 #define HAVE_IOCTL              1
-#define HAVE_IOCTL_FIONBIO      1
+
+#define HAVE_FCNTL_O_NONBLOCK    1
 
 #define RETSIGTYPE void
 
@@ -116,11 +117,8 @@
 #define SEND_TYPE_ARG1 int
 #define SEND_QUAL_ARG2 const
 #define SEND_TYPE_ARG2 void *
-#define SEND_TYPE_ARG3 size_T
+#define SEND_TYPE_ARG3 size_t
 #define SEND_TYPE_ARG4 int
 #define SEND_TYPE_RETV ssize_t
-
-#define HAVE_EXTRA_STRICMP_H 1
-#define HAVE_EXTRA_STRDUP_H  1
 
 #endif /* HEADER_CURL_CONFIG_MAC_H */

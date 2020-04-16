@@ -326,7 +326,7 @@ namespace irr
 				break;
 #endif
 
-#if !defined(ANDROID)
+#if !defined(ANDROID) && !defined(MACOS)
 			case ECF_DXT1:
 				colorformat = GL_BGRA_EXT;
 				type = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;

@@ -25,7 +25,7 @@
 #include "CIrrDeviceLinux.h"
 #endif
 #ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
-#include "MacOSX/OSXClipboard.h"
+//#include "MacOSX/OSXClipboard.h"
 #endif
 #include "fast_atof.h"
 
@@ -88,7 +88,7 @@ void COSOperator::copyToClipboard(const c8* text) const
 // MacOSX version
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
 
-	OSXCopyToClipboard(text);
+	//OSXCopyToClipboard(text);
 
 #elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
     if ( IrrDeviceLinux )
@@ -120,8 +120,8 @@ const c8* COSOperator::getTextFromClipboard() const
 	return buffer;
 
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-	return (OSXCopyFromClipboard());
-
+	//return (OSXCopyFromClipboard());
+    return 0;
 #elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
     if ( IrrDeviceLinux )
         return IrrDeviceLinux->getTextFromClipboard();
