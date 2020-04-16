@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 	// no thread support on webgl
 #elif defined(IOS)
 	#define USE_PTHREAD
+#elif defined(MACOS)
+    #define USE_PTHREAD
 #elif defined(CYGWIN) || defined(MINGW)
 	#define USE_PTHREAD
 #elif defined(_WIN32)
