@@ -46,6 +46,19 @@ if (MSVC OR CYGWIN OR MINGW)
 	list (APPEND main_app_source ${platform_win32_source})
 endif()
 
+if (BUILD_MACOS)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Platforms/MacOS)
+
+	file(GLOB_RECURSE platform_mac_source 
+		./Platforms/MacOS/**.cpp 
+		./Platforms/MacOS/**.c 
+		./Platforms/MacOS/**.h
+		./Platforms/MacOS/**.m
+		./Platforms/MacOS/**.mm)
+
+	list (APPEND main_app_source ${platform_mac_source})
+endif()
+
 #if (BUILD_SKYLICHT_NETWORK)
 #include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtNetwork/Source)
 #endif()
@@ -95,7 +108,22 @@ elseif (MSVC OR CYGWIN OR MINGW)
 	add_executable(MainApp WIN32
 		${main_app_source}
 		./Platforms/Win32/Skylicht.rc
-	)	
+	)
+elseif (BUILD_MACOS)
+	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
+
+	add_executable(MainApp ${main_app_source} ${resources_files})
+
+	set_target_properties(MainApp PROPERTIES
+		MACOSX_BUNDLE TRUE
+	)
+	
+	foreach(res_file ${resources_files})
+		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
+		message(STATUS "- Add resources: ${res_path}")
+		set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
+		source_group("Bin" FILES "${res_file}")
+	endforeach()
 else()
 	add_executable(MainApp ${main_app_source})
 endif()
