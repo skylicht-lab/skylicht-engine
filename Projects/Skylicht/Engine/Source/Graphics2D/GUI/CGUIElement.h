@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	class CCanvas;
+	class CGUIMask;
 
 	class CGUIElement
 	{
@@ -53,7 +54,12 @@ namespace Skylicht
 		int m_level;
 
 		CGUIElement* m_parent;
+		core::array<CGUIElement*> m_childs;
+
 		CCanvas *m_canvas;
+
+		CGUIMask *m_mask;
+		CGUIMask *m_applyParentMask;
 
 		core::rectf m_rect;
 
@@ -79,6 +85,16 @@ namespace Skylicht
 		CGUIElement(CCanvas *canvas, const core::rectf& rect);
 		CGUIElement(CCanvas *canvas, CGUIElement *parent);
 		CGUIElement(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect);
+
+		inline void applyParentMask(CGUIMask *mask)
+		{
+			m_applyParentMask = mask;
+		}
+
+		inline CGUIMask* getCurrentMask()
+		{
+			return m_applyParentMask;
+		}
 
 	public:
 		virtual ~CGUIElement();
@@ -188,6 +204,16 @@ namespace Skylicht
 		inline int getShaderID()
 		{
 			return m_shaderID;
+		}
+
+		inline CGUIMask* getMask()
+		{
+			return m_mask;
+		}
+
+		inline void setMask(CGUIMask *mask)
+		{
+			m_mask = mask;
 		}
 
 		virtual void update(CCamera *camera)
