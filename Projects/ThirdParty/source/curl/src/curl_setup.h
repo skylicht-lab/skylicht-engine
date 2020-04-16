@@ -64,7 +64,7 @@
 #  include "config-ios.h"
 #endif
 
-#if defined(macintosh) && defined(__MRC__)
+#if defined(MACOS)
 #  include "config-mac.h"
 #endif
 

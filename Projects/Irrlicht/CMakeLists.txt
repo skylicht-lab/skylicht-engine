@@ -20,6 +20,11 @@ if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 	endif()
 endif()
 
+# Angle include
+if(BUILD_MACOS)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
+endif()
+
 if(CYGWIN)
 	# DirectX11
 	add_definitions(-DIRR_COMPILE_WITH_DX11_DEV_PACK)
@@ -70,4 +75,9 @@ if(BUILD_SDL)
 	else()
 		target_link_libraries(Irrlicht SDL2)
 	endif()	
+endif()
+
+# MAC - angle
+if(BUILD_MACOS)
+	target_link_libraries(Irrlicht "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/Release/libGLESv2.dylib")
 endif()

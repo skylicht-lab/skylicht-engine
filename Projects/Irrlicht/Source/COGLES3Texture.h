@@ -15,6 +15,8 @@
 #if defined(_IRR_IOS_PLATFORM_)
 #include <OpenGLES/ES3/gl.h>
 #include <OpenGLES/ES3/glext.h>
+#elif defined(_IRR_OSX_PLATFORM_)
+#include <GLES3/gl3.h>
 #elif defined(_IRR_ANDROID_PLATFORM_)
 #include <GLES3/gl32.h>
 #include <GLES3/gl3ext.h>
