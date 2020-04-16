@@ -29,8 +29,11 @@ void testSystemThread()
 bool isSystemThreadPass()
 {
 	TEST_CASE("System thread end");
-	g_thread->stop();
-	delete g_thread->getCallback();
-	delete g_thread;
+    if (g_thread != NULL)
+    {
+        g_thread->stop();
+        delete g_thread->getCallback();
+        delete g_thread;
+    }
 	return g_threadPass;
 }
