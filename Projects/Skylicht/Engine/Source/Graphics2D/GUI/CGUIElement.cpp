@@ -41,7 +41,8 @@ namespace Skylicht
 		m_parent(NULL),
 		m_scale(1.0f, 1.0f, 1.0f),
 		m_cullingVisible(true),
-		m_color(255, 255, 255, 255)
+		m_color(255, 255, 255, 255),
+		m_mask(NULL)
 	{
 		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
@@ -55,7 +56,8 @@ namespace Skylicht
 		m_parent(parent),
 		m_scale(1.0f, 1.0f, 1.0f),
 		m_cullingVisible(true),
-		m_color(255, 255, 255, 255)
+		m_color(255, 255, 255, 255),
+		m_mask(NULL)
 	{
 		m_level = parent->getLevel() + 1;
 		m_rect = parent->getRect();
@@ -72,7 +74,8 @@ namespace Skylicht
 		m_parent(parent),
 		m_scale(1.0f, 1.0f, 1.0f),
 		m_cullingVisible(true),
-		m_color(255, 255, 255, 255)
+		m_color(255, 255, 255, 255),
+		m_mask(NULL)
 	{
 		m_level = parent->getLevel() + 1;
 		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");

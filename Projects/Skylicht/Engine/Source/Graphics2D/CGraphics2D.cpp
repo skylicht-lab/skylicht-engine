@@ -57,7 +57,7 @@ namespace Skylicht
 		m_2dMaterial.BackfaceCulling = false;
 
 		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
-			m_2dMaterial.setFlag(EMF_ANISOTROPIC_FILTER, true, 8);
+			m_2dMaterial.setFlag(EMF_TRILINEAR_FILTER, true, 8);
 	}
 
 	void CGraphics2D::init()
@@ -521,7 +521,7 @@ namespace Skylicht
 
 	void CGraphics2D::setDepthTest(video::SMaterial& mat)
 	{
-		mat.ZBuffer = video::ECFN_EQUAL;
+		mat.ZBuffer = video::ECFN_GREATEREQUAL;
 		mat.ZWriteEnable = false;
 		mat.ColorMask = ECP_ALL;
 	}
@@ -589,6 +589,40 @@ namespace Skylicht
 		vertices[1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
 		vertices[2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
 		vertices[3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+
+		m_2dMaterial.setTexture(0, NULL);
+		m_2dMaterial.setTexture(1, NULL);
+		m_2dMaterial.MaterialType = m_vertexColorShader;
+		m_driver->setMaterial(m_2dMaterial);
+
+		m_buffer->setPrimitiveType(scene::EPT_TRIANGLES);
+		m_buffer->setDirty();
+
+		m_driver->drawMeshBuffer(m_buffer);
+
+		m_indices->set_used(0);
+		m_vertices->set_used(0);
+	}
+
+	void CGraphics2D::draw2DRectangle(const core::vector3df& upleft, const core::vector3df& lowerright, const SColor& color)
+	{
+		flush();
+
+		m_indices->set_used(6);
+		u16 *index = (u16*)m_indices->getIndices();
+		index[0] = 0;
+		index[1] = 1;
+		index[2] = 2;
+		index[3] = 0;
+		index[4] = 2;
+		index[5] = 3;
+
+		m_vertices->set_used(4);
+		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		vertices[0] = S3DVertex(upleft.X, upleft.Y, upleft.Z, 0, 0, 1, color, 0, 0);
+		vertices[1] = S3DVertex(lowerright.X, upleft.Y, upleft.Z, 0, 0, 1, color, 0, 0);
+		vertices[2] = S3DVertex(lowerright.X, lowerright.Y, lowerright.Z, 0, 0, 1, color, 0, 0);
+		vertices[3] = S3DVertex(upleft.X, lowerright.Y, upleft.Z, 0, 0, 1, color, 0, 0);
 
 		m_2dMaterial.setTexture(0, NULL);
 		m_2dMaterial.setTexture(1, NULL);

@@ -116,6 +116,8 @@ namespace Skylicht
 
 		void draw2DRectangle(const core::rectf& pos, const SColor& color);
 
+		void draw2DRectangle(const core::vector3df& upleft, const core::vector3df& lowerright, const SColor& color);
+
 		void draw2DRectangleOutline(const core::rectf& pos, const SColor& color);
 	};
 
