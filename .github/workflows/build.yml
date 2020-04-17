@@ -100,7 +100,7 @@ jobs:
   Linux:
     runs-on: ubuntu-latest    
     steps:
-    - uses: actions/checkout@v1      
+    - uses: actions/checkout@v1
     - name: Install Dependencies
       run: |
         sudo apt-get update -y -qq
@@ -136,3 +136,16 @@ jobs:
       with:
         name: SkylichtDemo_Linux
         path: Build
+
+  MacOS:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      run: |
+        cd Assets
+        python BuildAssetBundles.py
+        cd ..
+        cmake -S . -B ./PrjMac -G Xcode
+        cd PrjMac
+        xcodebuild
