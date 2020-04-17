@@ -3,6 +3,12 @@ version: 2.1
 orbs:
   android: circleci/android@0.2.0
 commands:
+  install-cmake-mac:
+    step:
+      - run:
+          command: >
+            brew install cmake
+          name: Install CMake
   install-cmake:
     steps:
       - run:
@@ -58,6 +64,22 @@ commands:
 
             make -C PrjAndroid
           name: Build Skylicht Engine Native SDK
+  build-xcode:
+    step:
+      - run:
+          command: >
+            cd Assets
+            
+            python BuildAssetBundles.py
+            
+            cd ..
+            
+            cmake -S . -B ./PrjMac -G Xcode
+
+            cd PrjMac
+
+            xcodebuild
+          name: Build Xcode
 jobs:
   build:
     executor: android/android
@@ -67,6 +89,13 @@ jobs:
       - install-ndk
       - install-cmake
       - build-engine-native
-      #- run: >
-      #    cmake -S. -BPrjAndroid -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=24
-      #    make -C PrjAndroid
+
+  build:
+    macos:
+      xcode: 11.3.0
+    
+    steps:
+      - checkout
+      - install-cmake-mac
+      - build-xcode
+
