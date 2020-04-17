@@ -76,8 +76,3 @@ if(BUILD_SDL)
 		target_link_libraries(Irrlicht SDL2)
 	endif()	
 endif()
-
-# MAC - angle
-if(BUILD_MACOS)
-	target_link_libraries(Irrlicht "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/Release/libGLESv2.dylib")
-endif()

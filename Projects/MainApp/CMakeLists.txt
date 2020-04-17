@@ -47,8 +47,12 @@ if (MSVC OR CYGWIN OR MINGW)
 endif()
 
 if (BUILD_MACOS)
+	add_definitions(-DANGLE_USE_UTIL_LOADER)
+	add_definitions(-DEGL_EGL_PROTOTYPES=0)
+	add_definitions(-DGL_GLES_PROTOTYPES=0)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Platforms/MacOS)
-
 	file(GLOB_RECURSE platform_mac_source 
 		./Platforms/MacOS/**.cpp 
 		./Platforms/MacOS/**.c 
@@ -124,6 +128,21 @@ elseif (BUILD_MACOS)
 		set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
 		source_group("Bin" FILES "${res_file}")
 	endforeach()
+
+	# Angle library
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
+	set(angle_dylib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/*.dylib")
+
+	target_link_libraries(MainApp "${angle_lib_path}/libEGL.dylib")
+	target_link_libraries(MainApp "${angle_lib_path}/libGLESv2.dylib")
+	target_link_libraries(MainApp "${angle_lib_path}/libangle_util.dylib")
+	target_link_libraries(MainApp "${angle_lib_path}/libfeature_support.dylib")	
+
+	#file(GLOB_RECURSE angle_dylib_files ${angle_dylib_path})
+	#foreach(angle_dylib ${angle_dylib_files})
+	#	add_custom_command(TARGET MainApp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${angle_dylib} $<TARGET_FILE_DIR:MainApp>)
+	#endforeach()
+
 else()
 	add_executable(MainApp ${main_app_source})
 endif()
@@ -147,9 +166,9 @@ endif()
 #VLD
 if (BUILD_DEBUG_VLD)
 	file(GLOB_RECURSE vld_bin_files ${vld_dll_path})
-		foreach(vld_bin ${vld_bin_files})
-			add_custom_command(TARGET MainApp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:MainApp>)
-		endforeach()
+	foreach(vld_bin ${vld_bin_files})
+		add_custom_command(TARGET MainApp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:MainApp>)
+	endforeach()
 endif()
 
 set_target_properties(MainApp PROPERTIES VERSION ${SKYLICHT_VERSION})

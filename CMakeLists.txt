@@ -63,7 +63,10 @@ endif()
 if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
 	set(BUILD_ENGINE_TOOL OFF)
 	set(BUILD_MACOS ON)
+	set(XCODE ON)
 	add_definitions(-DMACOS)
+
+	set(CMAKE_CXX_STANDARD 14)
 endif()
 
 option(BUILD_SHARED_LIBS "Use shared libraries" OFF)
@@ -202,7 +205,7 @@ elseif (MSVC)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:ICF")
 	endif()
 
-	set(CMAKE_EXE_LINKER_FLAGS	"${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")	
+	set(CMAKE_EXE_LINKER_FLAGS	"${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
 endif()
 
 # add project
