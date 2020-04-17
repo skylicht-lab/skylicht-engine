@@ -80,22 +80,29 @@ commands:
 
             xcodebuild
           name: Build Xcode
-jobs:
-  build-android:
-    executor: android/android
 
-    steps:
-      - checkout
-      - install-ndk
-      - install-cmake
-      - build-engine-native
+workflows:
+  version: 2
+
+  build-android:
+    jobs:
+      - build:
+          executor: android/android
+
+          steps:
+            - checkout
+            - install-ndk
+            - install-cmake
+            - build-engine-native
 
   build-macos:
-    macos:
-      xcode: 11.3.0
+    jobs:
+      - build:
+          macos:
+            xcode: 11.3.0
     
-    steps:
-      - checkout
-      - install-cmake-mac
-      - build-xcode
+          steps:
+            - checkout
+            - install-cmake-mac
+            - build-xcode
 
