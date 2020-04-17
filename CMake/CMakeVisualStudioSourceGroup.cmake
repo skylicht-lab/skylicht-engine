@@ -7,7 +7,7 @@ function(setup_project_group project_source current_dir)
 		# get source relative path
 		string(REPLACE "${current_dir}/./" "" source_relative ${source_path})		
 		
-		if(MSVC OR BUILD_MACOS)
+		if(MSVC OR XCODE)
 			# get group name
 			string(REPLACE "/" "\\" group_name ${source_relative})
 		else()
