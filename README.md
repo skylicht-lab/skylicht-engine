@@ -1,7 +1,7 @@
 # Skylicht Engine WIP
 ## About
 Skylicht Engine is a fork from [Irrlicht 3D Engine](http://irrlicht.sourceforge.net), that we have upgraded more feature: Sound Engine, Physics Engine, Particle Engine...
--   Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+ video driver backends.
+-   Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+, Google Angle GLES video driver backends.
 
 -   Cross-Platform Framework: Android, IOS, Win32/Win64, UWP, Linux, MacOS, HTML5.
 
@@ -18,9 +18,10 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 | <img src="Documents/Media/Platforms/windows.png" width="25" valign="middle"> Windows     | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master) |
 | <img src="Documents/Media/Platforms/cygwin.png" width="25" valign="middle"> Cygwin64     | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master) |
 | <img src="Documents/Media/Platforms/uwp.png" width="25" valign="middle"> Windows Store   | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
+| <img src="Documents/Media/Platforms/apple.png" width="25" valign="middle"> MacOS         | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
 | <img src="Documents/Media/Platforms/ubuntu.png" width="25" valign="middle"> Linux        | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
 | <img src="Documents/Media/Platforms/html5.png" width="25" valign="middle"> Emscripten    | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
-| <img src="Documents/Media/Platforms/android.png" width="25" valign="middle"> Android     | [![Build status](https://circleci.com/gh/skylicht-lab/skylicht-engine.svg?style=shield)](https://circleci.com/gh/skylicht-lab/skylicht-engine/tree/master)                  |
+| <img src="Documents/Media/Platforms/android.png" width="25" valign="middle"> Android     | [![Build status](https://circleci.com/gh/skylicht-lab/skylicht-engine.svg?style=shield)](https://circleci.com/gh/skylicht-lab/skylicht-engine/tree/master)                        |
 
 ### Prerequisites
 -   [CMake](https://cmake.org/download/) 3.12 or higher
@@ -101,6 +102,7 @@ Skylicht Engine is licensed under [MIT License](LICENSE.md)
 Skylicht Engine is based in part on the work of:
 -   [Irrlicht Engine](http://irrlicht.sourceforge.net)
 -   [Bullet Physics](https://github.com/bulletphysics/bullet3)
+-   [Google Angle](https://github.com/google/angle)
 -   [Ocornut Imgui](https://github.com/ocornut/imgui)
 -   [Spark Particle](https://github.com/Synxis/SPARK)
 -   Independent JPEG Group
@@ -108,4 +110,4 @@ Skylicht Engine is based in part on the work of:
 -   curl 
 -   libPng
 
-This means that if you've used the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used. It would also be nice to mention that you use the Irrlicht Engine, Bullet Physics ,the zlib, curl and libPng... Please see the README files from 3rd parties for further informations.
+This means that if you've used the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used. It would also be nice to mention that you use the 3rd parties library... Please see the README files from 3rd parties for further informations.
