@@ -104,4 +104,3 @@ workflows:
   build_all:
     jobs:
       - build-android
-      - build-macos
