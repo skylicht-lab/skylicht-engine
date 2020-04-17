@@ -4,7 +4,7 @@ orbs:
   android: circleci/android@0.2.0
 commands:
   install-cmake-mac:
-    step:
+    steps:
       - run:
           command: >
             brew install cmake
@@ -65,7 +65,7 @@ commands:
             make -C PrjAndroid
           name: Build Skylicht Engine Native SDK
   build-xcode:
-    step:
+    steps:
       - run:
           command: >
             cd Assets
