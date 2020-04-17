@@ -81,7 +81,7 @@ commands:
             xcodebuild
           name: Build Xcode
 jobs:
-  build:
+  build-android:
     executor: android/android
 
     steps:
@@ -90,7 +90,7 @@ jobs:
       - install-cmake
       - build-engine-native
 
-  build:
+  build-macos:
     macos:
       xcode: 11.3.0
     
