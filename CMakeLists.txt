@@ -67,6 +67,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
 	add_definitions(-DMACOS)
 
 	set(CMAKE_CXX_STANDARD 14)
+	set(CMAKE_OSX_ARCHITECTURES "x86_64")
 endif()
 
 option(BUILD_SHARED_LIBS "Use shared libraries" OFF)

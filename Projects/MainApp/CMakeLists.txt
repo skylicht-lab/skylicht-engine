@@ -47,12 +47,16 @@ if (MSVC OR CYGWIN OR MINGW)
 endif()
 
 if (BUILD_MACOS)
+	# Angle API	
 	add_definitions(-DANGLE_USE_UTIL_LOADER)
-	add_definitions(-DEGL_EGL_PROTOTYPES=0)
 	add_definitions(-DGL_GLES_PROTOTYPES=0)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle)
+	add_definitions(-DEGL_EGL_PROTOTYPES=0)
+	add_definitions(-DANGLE_EGL_LIBRARY_NAME=\"libEGL\")
+	add_definitions(-DANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2\")
+
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Platforms/MacOS)
+	
 	file(GLOB_RECURSE platform_mac_source 
 		./Platforms/MacOS/**.cpp 
 		./Platforms/MacOS/**.c 
@@ -61,6 +65,8 @@ if (BUILD_MACOS)
 		./Platforms/MacOS/**.mm)
 
 	list (APPEND main_app_source ${platform_mac_source})
+
+	setup_project_group("${platform_mac_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 #if (BUILD_SKYLICHT_NETWORK)
@@ -130,19 +136,13 @@ elseif (BUILD_MACOS)
 	endforeach()
 
 	# Angle library
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
-	set(angle_dylib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/*.dylib")
-
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/${CMAKE_BUILD_TYPE}")
+	set(angle_dylib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/${CMAKE_BUILD_TYPE}/*.dylib")
+	
 	target_link_libraries(MainApp "${angle_lib_path}/libEGL.dylib")
 	target_link_libraries(MainApp "${angle_lib_path}/libGLESv2.dylib")
-	target_link_libraries(MainApp "${angle_lib_path}/libangle_util.dylib")
-	target_link_libraries(MainApp "${angle_lib_path}/libfeature_support.dylib")	
 
-	#file(GLOB_RECURSE angle_dylib_files ${angle_dylib_path})
-	#foreach(angle_dylib ${angle_dylib_files})
-	#	add_custom_command(TARGET MainApp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${angle_dylib} $<TARGET_FILE_DIR:MainApp>)
-	#endforeach()
-
+	target_link_libraries(MainApp "-framework Cocoa")
 else()
 	add_executable(MainApp ${main_app_source})
 endif()
