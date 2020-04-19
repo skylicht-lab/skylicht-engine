@@ -6,7 +6,7 @@
 
 // system_utils_osx.cpp: Implementation of OS-specific functions for OSX
 
-#include "common/system_utils.h"
+#include "system_utils.h"
 
 #include <unistd.h>
 
