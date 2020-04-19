@@ -25,17 +25,17 @@ namespace angle
 class Library;
 }  // namespace angle
 
-class SampleApplication
+class AngleApplication
 {
   public:
-    SampleApplication(std::string name,
+    AngleApplication(std::string name,
                       int argc,
                       char **argv,
                       EGLint glesMajorVersion = 2,
                       EGLint glesMinorVersion = 0,
                       uint32_t width          = 1280,
                       uint32_t height         = 720);
-    virtual ~SampleApplication();
+    virtual ~AngleApplication();
 
     virtual bool initialize();
     virtual void destroy();

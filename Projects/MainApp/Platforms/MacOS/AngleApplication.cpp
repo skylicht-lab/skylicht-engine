@@ -4,18 +4,13 @@
 // found in the LICENSE file.
 //
 
-#include "SampleApplication.h"
+#include "AngleApplication.h"
 
 #include "util/EGLWindow.h"
-#include "util/gles_loader_autogen.h"
-#include "util/random_utils.h"
-#include "util/test_utils.h"
 
 #include <string.h>
 #include <iostream>
 #include <utility>
-
-#define ANGLE_EGL_LIBRARY_NAME "libEGL"
 
 namespace
 {
@@ -60,9 +55,10 @@ EGLint GetDeviceTypeFromArg(const char *displayTypeArg)
         return EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
     }
 }
+
 }  // anonymous namespace
 
-SampleApplication::SampleApplication(std::string name,
+AngleApplication::AngleApplication(std::string name,
                                      int argc,
                                      char **argv,
                                      EGLint glesMajorVersion,
@@ -77,7 +73,8 @@ SampleApplication::SampleApplication(std::string name,
       mOSWindow(nullptr)
 {
     mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
-
+    mPlatformParams.deviceType = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
+    
     if (argc > 1 && strncmp(argv[1], kUseAngleArg, strlen(kUseAngleArg)) == 0)
     {
         const char *arg            = argv[1] + strlen(kUseAngleArg);
@@ -86,61 +83,70 @@ SampleApplication::SampleApplication(std::string name,
     }
 
     // Load EGL library so we can initialize the display.
-    mEntryPointsLib.reset(
-        angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ApplicationDir));
-
+    mEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ApplicationDir));
+    
     mEGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
     mOSWindow  = OSWindow::New();
 }
 
-SampleApplication::~SampleApplication()
+AngleApplication::~AngleApplication()
 {
     EGLWindow::Delete(&mEGLWindow);
     OSWindow::Delete(&mOSWindow);
 }
 
-bool SampleApplication::initialize()
+bool AngleApplication::initialize()
 {
     return true;
 }
 
-void SampleApplication::destroy() {}
+void AngleApplication::destroy() {}
 
-void SampleApplication::step(float dt, double totalTime) {}
+void AngleApplication::step(float dt, double totalTime) {}
 
-void SampleApplication::draw() {}
+void AngleApplication::draw()
+{
+    // Set the viewport
+    int w = getWindow()->getWidth();
+    int h = getWindow()->getHeight();
+    glViewport(0, 0, w, h);
 
-void SampleApplication::swap()
+    // Clear the color buffer
+    glClearColor(0.1f,0.0f,0.0f,0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void AngleApplication::swap()
 {
     mEGLWindow->swap();
 }
 
-OSWindow *SampleApplication::getWindow() const
+OSWindow *AngleApplication::getWindow() const
 {
     return mOSWindow;
 }
 
-EGLConfig SampleApplication::getConfig() const
+EGLConfig AngleApplication::getConfig() const
 {
     return mEGLWindow->getConfig();
 }
 
-EGLDisplay SampleApplication::getDisplay() const
+EGLDisplay AngleApplication::getDisplay() const
 {
     return mEGLWindow->getDisplay();
 }
 
-EGLSurface SampleApplication::getSurface() const
+EGLSurface AngleApplication::getSurface() const
 {
     return mEGLWindow->getSurface();
 }
 
-EGLContext SampleApplication::getContext() const
+EGLContext AngleApplication::getContext() const
 {
     return mEGLWindow->getContext();
 }
 
-int SampleApplication::run()
+int AngleApplication::run()
 {
     if (!mOSWindow->initialize(mName, mWidth, mHeight))
     {
@@ -167,9 +173,7 @@ int SampleApplication::run()
     {
         return -1;
     }
-
-    angle::LoadGLES(eglGetProcAddress);
-
+    
     mRunning   = true;
     int result = 0;
 
@@ -230,22 +234,22 @@ int SampleApplication::run()
     return result;
 }
 
-void SampleApplication::exit()
+void AngleApplication::exit()
 {
     mRunning = false;
 }
 
-bool SampleApplication::popEvent(Event *event)
+bool AngleApplication::popEvent(Event *event)
 {
     return mOSWindow->popEvent(event);
 }
 
-void SampleApplication::onKeyUp(const Event::KeyEvent &keyEvent)
+void AngleApplication::onKeyUp(const Event::KeyEvent &keyEvent)
 {
     // Default no-op.
 }
 
-void SampleApplication::onKeyDown(const Event::KeyEvent &keyEvent)
+void AngleApplication::onKeyDown(const Event::KeyEvent &keyEvent)
 {
     // Default no-op.
 }
