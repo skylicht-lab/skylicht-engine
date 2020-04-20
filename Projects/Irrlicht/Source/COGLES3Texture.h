@@ -16,7 +16,7 @@
 #include <OpenGLES/ES3/gl.h>
 #include <OpenGLES/ES3/glext.h>
 #elif defined(_IRR_OSX_PLATFORM_)
-#include <GLES3/gl3.h>
+#include "util/gles_loader_autogen.h"
 #elif defined(_IRR_ANDROID_PLATFORM_)
 #include <GLES3/gl32.h>
 #include <GLES3/gl3ext.h>
@@ -25,8 +25,6 @@
 #include <EGL/egl.h>
 #endif
 
-#include <GLES3/gl3.h>
-#include <GLES3/gl2ext.h>
 #endif
 
 

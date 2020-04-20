@@ -116,6 +116,7 @@
     #endif
     #define _IRR_OSX_PLATFORM_
     #define _IRR_COMPILE_WITH_OSX_DEVICE_
+    #define _IRR_COMPILE_WITH_PHONE_DEVICE_
     #define NO_IRR_COMPILE_WITH_OPENGL_
     #define _IRR_COMPILE_WITH_OGLES3_ // angle wraper
 #endif
