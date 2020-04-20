@@ -156,6 +156,9 @@ namespace Skylicht
 #if defined(ANDROID)
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".epvr");
+#elif defined(MACOS)
+            // dxt compress
+            CStringImp::replacePathExt(ansiPath, ".dds");
 #elif defined(__EMSCRIPTEN__)
 			if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
 				CStringImp::replacePathExt(ansiPath, ".dds");
@@ -220,6 +223,9 @@ namespace Skylicht
 #if defined(ANDROID)
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".epvr");
+#elif defined(MACOS)
+            // dxt compress
+            CStringImp::replacePathExt(ansiPath, ".dds");
 #elif defined(__EMSCRIPTEN__)
 			if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
 				CStringImp::replacePathExt(ansiPath, ".dds");

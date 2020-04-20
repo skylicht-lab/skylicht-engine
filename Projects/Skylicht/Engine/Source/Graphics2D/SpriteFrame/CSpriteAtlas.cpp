@@ -63,9 +63,13 @@ namespace Skylicht
 		if (img != NULL)
 		{
 			// Need swap Png RBG -> RBG on DX11
-			if (getVideoDriver()->getDriverType() == video::EDT_DIRECT3D11)
+#if defined(MACOS) || defined(IOS)
+            img->swapBG();
+#else
+            if (getVideoDriver()->getDriverType() == video::EDT_DIRECT3D11)
 				img->swapBG();
-
+#endif
+            
 			int w = img->getDimension().Width;
 			int h = img->getDimension().Height;
 
