@@ -68,6 +68,13 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
 
 	set(CMAKE_CXX_STANDARD 14)
 	set(CMAKE_OSX_ARCHITECTURES "x86_64")
+
+	# Angle API defined
+	add_definitions(-DANGLE_USE_UTIL_LOADER)
+	add_definitions(-DGL_GLES_PROTOTYPES=0)
+	add_definitions(-DEGL_EGL_PROTOTYPES=0)
+	add_definitions(-DANGLE_EGL_LIBRARY_NAME=\"libEGL\")
+	add_definitions(-DANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2\")
 endif()
 
 option(BUILD_SHARED_LIBS "Use shared libraries" OFF)

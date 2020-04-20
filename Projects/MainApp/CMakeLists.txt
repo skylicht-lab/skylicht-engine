@@ -48,12 +48,6 @@ endif()
 
 if (BUILD_MACOS)
 	# Angle API	
-	add_definitions(-DANGLE_USE_UTIL_LOADER)
-	add_definitions(-DGL_GLES_PROTOTYPES=0)
-	add_definitions(-DEGL_EGL_PROTOTYPES=0)
-	add_definitions(-DANGLE_EGL_LIBRARY_NAME=\"libEGL\")
-	add_definitions(-DANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2\")
-
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Platforms/MacOS)
 	
@@ -120,7 +114,7 @@ elseif (MSVC OR CYGWIN OR MINGW)
 		./Platforms/Win32/Skylicht.rc
 	)
 elseif (BUILD_MACOS)
-	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
+	# file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
 
 	add_executable(MainApp ${main_app_source} ${resources_files})
 
@@ -128,12 +122,12 @@ elseif (BUILD_MACOS)
 		MACOSX_BUNDLE TRUE
 	)
 	
-	foreach(res_file ${resources_files})
-		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
-		message(STATUS "- Add resources: ${res_path}")
-		set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
-		source_group("Bin" FILES "${res_file}")
-	endforeach()
+	# foreach(res_file ${resources_files})
+	#	file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
+	#	message(STATUS "- Add resources: ${res_path}")
+	#	set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
+	#	source_group("Bin" FILES "${res_file}")
+	#endforeach()
 
 	# Angle library
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/${CMAKE_BUILD_TYPE}")
