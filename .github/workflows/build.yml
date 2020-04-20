@@ -151,4 +151,5 @@ jobs:
         xcodebuild -configuration Release
         cd ..
         cp Projects/Angle/out/MacOS/Release/*.dylib Bin/Release
+        cp Bin/*.zip Bin/Release
         
