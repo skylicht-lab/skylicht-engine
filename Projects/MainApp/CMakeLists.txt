@@ -118,9 +118,9 @@ elseif (BUILD_MACOS)
 
 	add_executable(MainApp ${main_app_source} ${resources_files})
 
-	set_target_properties(MainApp PROPERTIES
-		MACOSX_BUNDLE TRUE
-	)
+	#set_target_properties(MainApp PROPERTIES
+	#	MACOSX_BUNDLE TRUE
+	#)
 	
 	# foreach(res_file ${resources_files})
 	#	file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
