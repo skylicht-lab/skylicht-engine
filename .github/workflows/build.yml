@@ -148,4 +148,7 @@ jobs:
         cd ..
         cmake -S . -B ./PrjMac -G Xcode
         cd PrjMac
-        xcodebuild
+        xcodebuild -configuration Release
+        cd ..
+        cp Projects/Angle/out/MacOS/Release/*.dylib Bin/Release
+        
