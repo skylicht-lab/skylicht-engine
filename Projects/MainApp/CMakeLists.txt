@@ -130,9 +130,7 @@ elseif (BUILD_MACOS)
 	#endforeach()
 
 	# Angle library
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
-	set(angle_dylib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/*.dylib")
-	
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")	
 	target_link_libraries(MainApp "${angle_lib_path}/libEGL.dylib")
 	target_link_libraries(MainApp "${angle_lib_path}/libGLESv2.dylib")
 
