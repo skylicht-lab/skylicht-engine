@@ -152,4 +152,23 @@ jobs:
         cd ..
         cp Projects/Angle/out/MacOS/Release/*.dylib Bin/Release
         cp Bin/*.zip Bin/Release
+    - name: Package
+      run: |
+        brew install p7zip
+        mkdir Build
+        ls -l Bin
+        version=$(cat "Version.txt")
+        file_version=${version//./_}
+        output=SkylichtDemo_${file_version}_MacOS.zip
+        cd Bin/Release
+        7z a ${output} *.zip
+        7z a ${output} *.dylib
+        7z a ${output} MainApp*
+        cd ../..
+        cp Bin/Release/${output} Build
+    - name: Result
+      uses: actions/upload-artifact@v1
+      with:
+        name: SkylichtDemo_MacOS
+        path: Build
         
