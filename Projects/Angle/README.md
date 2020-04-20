@@ -34,8 +34,10 @@ Example: **'depot_tools'** at /Users/Skylicht/Documents/projects/depot_tools
 ```console
   gn args out/Debug
 ```
-After vi editor display, press Enter and type:
+After vi editor display, press Enter and edit **args.gn**:
+```console
 is_debug = true
+```
 
 Press ESC and type :wq to quit vi
 
@@ -50,7 +52,7 @@ Press ESC and type :wq to quit vi
 ```
 ### RESULT
 
-Copy libEGL.dylib and libGLESv2.dylib to use in Skylicht Project
+Copy **libEGL.dylib** and **libGLESv2.dylib** to **Projects/Angle/out/MacOS/Release** use in Skylicht Engine Project
 
 ## More infomation
 
