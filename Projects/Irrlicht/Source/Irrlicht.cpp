@@ -21,7 +21,7 @@ static const char* const copyright = "Irrlicht Engine (c) 2002-2012 Nikolaus Geb
 #endif
 
 #ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
-
+    #include "CIrrDevicePhone.h"
 #endif
 
 #ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_
@@ -77,7 +77,7 @@ namespace irr
 
 #ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
 		if (params.DeviceType == EIDT_OSX || (!dev && params.DeviceType == EIDT_BEST))
-			dev = NULL;
+			dev = new CIrrDevicePhone(params);
 #endif
 
 #ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_

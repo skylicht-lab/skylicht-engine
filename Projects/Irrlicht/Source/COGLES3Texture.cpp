@@ -326,25 +326,30 @@ namespace irr
 				break;
 #endif
 
-#if !defined(ANDROID) && !defined(MACOS)
 			case ECF_DXT1:
+#if !defined(ANDROID)
 				colorformat = GL_BGRA_EXT;
 				type = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 				internalformat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+#endif
 				break;
 			case ECF_DXT2:
 			case ECF_DXT3:
+#if !defined(ANDROID)
 				colorformat = GL_BGRA_EXT;
 				type = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
 				internalformat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+#endif
 				break;
 			case ECF_DXT4:
 			case ECF_DXT5:
+#if !defined(ANDROID)
 				colorformat = GL_BGRA_EXT;
 				type = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 				internalformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-				break;
 #endif
+				break;
+                    
 			case ECF_D16:
 				colorformat = GL_DEPTH_COMPONENT;
 				type = GL_UNSIGNED_BYTE;

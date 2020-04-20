@@ -112,7 +112,7 @@ void AngleApplication::draw()
     glViewport(0, 0, w, h);
 
     // Clear the color buffer
-    glClearColor(0.1f,0.0f,0.0f,0.0f);
+    glClearColor(0.0f,0.0f,0.0f,1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
