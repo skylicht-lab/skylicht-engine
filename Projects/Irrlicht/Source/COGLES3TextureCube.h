@@ -21,19 +21,18 @@
 #ifdef _IRR_COMPILE_WITH_OGLES3_
 
 #if defined(_IRR_IOS_PLATFORM_)
-#include <OpenGLES/ES3/gl.h>
-#include <OpenGLES/ES3/glext.h>
+	#include <OpenGLES/ES3/gl.h>
+	#include <OpenGLES/ES3/glext.h>
 #elif defined(_IRR_OSX_PLATFORM_)
-#include "util/gles_loader_autogen.h"
+	#include "util/gles_loader_autogen.h"
 #elif defined(_IRR_ANDROID_PLATFORM_)
-#include <GLES3/gl32.h>
-#include <GLES3/gl3ext.h>
+	#include <GLES3/gl32.h>
+	#include <GLES3/gl3ext.h>
 #else
-#ifdef _IRR_COMPILE_WITH_WINDOWS_DEVICE_
-#include <EGL/egl.h>
-#endif
-
-
+	#ifdef _IRR_COMPILE_WITH_WINDOWS_DEVICE_
+	#include <EGL/egl.h>
+	#endif
+	#include <GLES3/gl3.h>
 #endif
 
 

@@ -115,7 +115,10 @@ namespace Skylicht
 			driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(i));
 			driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
 
-			entityManager->render();
+			// todo
+			// We inorge last cascade shadow
+			if (i < m_numCascade - 1)
+				entityManager->render();
 		}
 
 		// render point light shadow

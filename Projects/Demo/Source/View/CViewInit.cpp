@@ -29,7 +29,8 @@
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
-	m_spriteArchive(NULL)
+	m_spriteArchive(NULL),
+	m_downloaded(0)
 {
 
 }
@@ -248,26 +249,47 @@ void CViewInit::onUpdate()
 	case CViewInit::DownloadBundles:
 	{
 		io::IFileSystem* fileSystem = getApplication()->getFileSystem();
+
 #ifdef __EMSCRIPTEN__
+		std::vector<std::string> listFile;
+		listFile.push_back("Sprite.Zip");
+		listFile.push_back("Demo.Zip");
+
+		const char *filename = listFile[m_downloaded].c_str();
+
 		if (m_getFile == NULL)
 		{
-			m_getFile = new CGetFileURL("Demo.zip", "Demo.zip");
+			m_getFile = new CGetFileURL(filename, filename);
 			m_getFile->download(CGetFileURL::Get);
+
+			char log[512];
+			sprintf(log, "Download asset: %s", filename);
+			os::Printer::log(log);
 		}
 		else
 		{
 			if (m_getFile->getState() == CGetFileURL::Finish)
 			{
-				// add demo.zip after it downloaded
-				fileSystem->addFileArchive("Demo.zip", false, false);
-				m_initState = CViewInit::InitScene;
+				// add asset.zip after it downloaded
+				if (m_downloaded == 0)
+					fileSystem->addFileArchive(filename, false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
+				else
+					fileSystem->addFileArchive(filename, false, false);
+
+				if (++m_downloaded >= listFile.size())
+					m_initState = CViewInit::InitScene;
+				else
+				{
+					delete m_getFile;
+					m_getFile = NULL;
+				}
 			}
 			else if (m_getFile->getState() == CGetFileURL::Error)
 			{
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
+			}
 		}
 #else
 
@@ -281,7 +303,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-}
+	}
 	break;
 	case CViewInit::InitScene:
 	{

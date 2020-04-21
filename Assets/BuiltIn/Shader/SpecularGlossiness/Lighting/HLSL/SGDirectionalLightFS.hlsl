@@ -38,7 +38,9 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	if (farDistance > shadowDistance[0])
 		id = 1;
 	if (farDistance > shadowDistance[1])
-		id = 2;
+	{
+		return 1.0;
+	}
 	if (farDistance > shadowDistance[2])
 		return 1.0;
 	depth = shadowCoord[id].z;
