@@ -1,4 +1,4 @@
-# Skylicht Engine WIP
+# Skylicht Engine
 ## About
 Skylicht Engine is a fork from [Irrlicht 3D Engine](http://irrlicht.sourceforge.net), that we have upgraded more feature: Sound Engine, Physics Engine, Particle Engine...
 -   Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+, Google Angle GLES video driver backends.
@@ -74,11 +74,15 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
   
     # Visual Studio 2019
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 16 2019" -A x64
+    
+    # Xcode
+    /User/Skylicht/Documents/skylicht-engine>cmake -S . -B ./PrjMac -G Xcode 
     ```
-
 -   Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`
 
 -   Once the solution opens, right click the **MainApp** project, click **"Set as StartUp Project"** and click the play button at the top to run the Demo App.
+
+-   More details: please preview command in **BuildCommand** folder.
 
 ### Add Source To Project
 -   Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project.
@@ -87,13 +91,6 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
     ```
     
-## Project Architecture
-<img src="Documents/Media/mainapp.png">
-
-<img src="Documents/Media/skylicht.png">
-
-<img src="Documents/Media/thirdparty.png">
-
 ## Contributing
 Welcome if you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 ## License
