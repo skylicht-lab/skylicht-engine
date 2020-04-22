@@ -188,11 +188,6 @@ int AngleApplication::run()
 
     while (mRunning)
     {
-        double elapsedTime = mTimer.getElapsedTime();
-        double deltaTime   = elapsedTime - prevTime;
-
-        step(static_cast<float>(deltaTime), elapsedTime);
-
         // Clear events that the application did not process from this frame
         Event event;
         while (popEvent(&event))
@@ -209,6 +204,15 @@ int AngleApplication::run()
                 case Event::EVENT_KEY_PRESSED:
                     onKeyDown(event.Key);
                     break;
+                case Event::EVENT_MOUSE_MOVED:
+                    onMouseMoved(event.MouseMove);
+                    break;
+                case Event::EVENT_MOUSE_BUTTON_PRESSED:
+                    onMouseButtonPressed(event.MouseButton);
+                    break;
+                case Event::EVENT_MOUSE_BUTTON_RELEASED:
+                    onMouseButtonRelease(event.MouseButton);
+                    break;
                 default:
                     break;
             }
@@ -219,6 +223,11 @@ int AngleApplication::run()
             break;
         }
 
+        double elapsedTime = mTimer.getElapsedTime();
+        double deltaTime   = elapsedTime - prevTime;
+
+        step(static_cast<float>(deltaTime), elapsedTime);
+        
         draw();
         swap();
 
@@ -250,6 +259,21 @@ void AngleApplication::onKeyUp(const Event::KeyEvent &keyEvent)
 }
 
 void AngleApplication::onKeyDown(const Event::KeyEvent &keyEvent)
+{
+    // Default no-op.
+}
+
+void AngleApplication::onMouseMoved(const Event::MouseMoveEvent &mouseEvent)
+{
+    // Default no-op.
+}
+
+void AngleApplication::onMouseButtonPressed(const Event::MouseButtonEvent &mouseEvent)
+{
+    // Default no-op.
+}
+
+void AngleApplication::onMouseButtonRelease(const Event::MouseButtonEvent &mouseEvent)
 {
     // Default no-op.
 }
