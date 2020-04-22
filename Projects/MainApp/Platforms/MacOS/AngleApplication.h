@@ -52,6 +52,8 @@ class AngleApplication
     virtual void onMouseButtonPressed(const Event::MouseButtonEvent &mouseEvent);
     virtual void onMouseButtonRelease(const Event::MouseButtonEvent &mouseEvent);
     
+    virtual void onWheel(const Event::MouseWheelEvent &wheelEvent);
+    
     OSWindow *getWindow() const;
     EGLConfig getConfig() const;
     EGLDisplay getDisplay() const;
