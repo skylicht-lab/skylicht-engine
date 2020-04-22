@@ -17,7 +17,9 @@ SkylichtApplication::SkylichtApplication(int argc, char **argv)
     m_controlHold(false),
     m_leftMouseDown(false),
     m_midMouseDown(false),
-    m_rightMouseDown(false)
+    m_rightMouseDown(false),
+    m_mouseX(0),
+    m_mouseY(0)
 {
     g_mainApp = new CApplication();
     
@@ -88,6 +90,9 @@ void SkylichtApplication::onMouseMoved(const Event::MouseMoveEvent &mouseEvent)
     event.MouseInput.Y = mouseEvent.Y;
     event.MouseInput.Shift = m_shiftHold;
     event.MouseInput.Control = m_controlHold;
+    
+    m_mouseX = mouseEvent.X;
+    m_mouseY = mouseEvent.Y;
     
     if (m_leftMouseDown)
         event.MouseInput.ButtonStates |= irr::EMBSM_LEFT;
@@ -179,4 +184,25 @@ void SkylichtApplication::onMouseButtonRelease(const Event::MouseButtonEvent &mo
         if (dev)
             dev->postEventFromUser(event);
     }
+}
+
+void SkylichtApplication::onWheel(const Event::MouseWheelEvent &wheelEvent)
+{
+    irr::SEvent event;
+    event.EventType = irr::EET_MOUSE_INPUT_EVENT;
+    event.MouseInput.Event = irr::EMIE_MOUSE_WHEEL;
+    
+    event.MouseInput.X = m_mouseX;
+    event.MouseInput.Y = m_mouseY;
+    event.MouseInput.Shift = m_shiftHold;
+    event.MouseInput.Control = m_controlHold;
+    
+    if (wheelEvent.Delta < 0)
+        event.MouseInput.Wheel = 1.0f;
+    else
+        event.MouseInput.Wheel = -1.0f;
+    
+    IrrlichtDevice *dev  = getIrrlichtDevice();
+    if (dev)
+        dev->postEventFromUser(event);
 }
