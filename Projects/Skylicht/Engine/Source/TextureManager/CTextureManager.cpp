@@ -61,7 +61,7 @@ namespace Skylicht
 		while (i != end)
 		{
 			char log[512];
-			sprintf(log, "Remove Texture: %s\n", (*i)->texture->getName().getPath().c_str());
+			sprintf(log, "Remove Texture: %s", (*i)->texture->getName().getPath().c_str());
 			os::Printer::log(log);
 
 			driver->removeTexture((*i)->texture);
