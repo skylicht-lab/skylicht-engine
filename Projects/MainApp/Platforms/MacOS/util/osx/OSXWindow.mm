@@ -481,6 +481,11 @@ static MouseButton TranslateMouseButton(NSInteger button)
     mWindow->pushEvent(event);
 }
 
+- (BOOL)acceptsFirstMouse:(NSEvent *)event;
+{
+    return YES;
+}
+
 - (void)mouseDown:(NSEvent *)event
 {
     [self addButtonEvent:event type:Event::EVENT_MOUSE_BUTTON_PRESSED button:MOUSEBUTTON_LEFT];

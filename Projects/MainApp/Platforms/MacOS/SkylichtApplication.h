@@ -11,6 +11,8 @@ protected:
     bool m_midMouseDown;
     bool m_rightMouseDown;
     
+    int m_mouseX;
+    int m_mouseY;
 public:
     SkylichtApplication(int argc, char **argv);
 
@@ -28,4 +30,6 @@ public:
     virtual void onMouseMoved(const Event::MouseMoveEvent &mouseEvent);
     virtual void onMouseButtonPressed(const Event::MouseButtonEvent &mouseEvent);
     virtual void onMouseButtonRelease(const Event::MouseButtonEvent &mouseEvent);
+    
+    virtual void onWheel(const Event::MouseWheelEvent &wheelEvent);
 };

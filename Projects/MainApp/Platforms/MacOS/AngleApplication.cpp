@@ -213,6 +213,9 @@ int AngleApplication::run()
                 case Event::EVENT_MOUSE_BUTTON_RELEASED:
                     onMouseButtonRelease(event.MouseButton);
                     break;
+                case Event::EVENT_MOUSE_WHEEL_MOVED:
+                    onWheel(event.MouseWheel);
+                    break;
                 default:
                     break;
             }
@@ -274,6 +277,11 @@ void AngleApplication::onMouseButtonPressed(const Event::MouseButtonEvent &mouse
 }
 
 void AngleApplication::onMouseButtonRelease(const Event::MouseButtonEvent &mouseEvent)
+{
+    // Default no-op.
+}
+
+void AngleApplication::onWheel(const Event::MouseWheelEvent &wheelEvent)
 {
     // Default no-op.
 }
