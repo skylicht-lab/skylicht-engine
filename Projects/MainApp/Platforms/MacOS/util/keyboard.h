@@ -7,9 +7,12 @@
 #ifndef SAMPLE_UTIL_KEYBOARD_H
 #define SAMPLE_UTIL_KEYBOARD_H
 
+namespace Angle
+{
+
 enum Key
 {
-    KEY_UNKNOWN,
+    KEY_UNKNOWN = 0,
     KEY_A,          // The A key
     KEY_B,          // The B key
     KEY_C,          // The C key
@@ -113,5 +116,7 @@ enum Key
     KEY_PAUSE,      // The pause key
     KEY_COUNT,
 };
+
+}
 
 #endif  // SAMPLE_UTIL_KEYBOARD_H
