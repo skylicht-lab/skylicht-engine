@@ -1,4 +1,6 @@
 #pragma once
+
+#include "pch.h"
 #include "AngleApplication.h"
 
 class SkylichtApplication: public AngleApplication
@@ -13,6 +15,26 @@ protected:
     
     int m_mouseX;
     int m_mouseY;
+    
+    struct SKeyMap
+    {
+        SKeyMap() {}
+        SKeyMap(Angle::Key macos, irr::EKEY_CODE win32)
+            : MacOSKey(macos), Win32Key(win32)
+        {
+        }
+
+        Angle::Key MacOSKey;
+        irr::EKEY_CODE  Win32Key;
+
+        bool operator<(const SKeyMap& o) const
+        {
+            return (irr::s32)MacOSKey<(irr::s32)o.MacOSKey;
+        }
+    };
+
+    core::array<SKeyMap> m_keyMap;
+    
 public:
     SkylichtApplication(int argc, char **argv);
 
@@ -32,4 +54,6 @@ public:
     virtual void onMouseButtonRelease(const Event::MouseButtonEvent &mouseEvent);
     
     virtual void onWheel(const Event::MouseWheelEvent &wheelEvent);
+    
+    void createKeyMap();
 };
