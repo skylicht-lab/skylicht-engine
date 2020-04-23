@@ -76,7 +76,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 16 2019" -A x64
     
     # Xcode
-    /User/Skylicht/Documents/skylicht-engine>cmake -S . -B ./PrjMac -G Xcode 
+    /User/Skylicht/Documents/skylicht-engine$cmake -S . -B ./PrjMac -G Xcode 
     ```
 -   Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`
 
