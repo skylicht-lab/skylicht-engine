@@ -113,23 +113,27 @@ elseif (MSVC OR CYGWIN OR MINGW)
 		${main_app_source}
 		./Platforms/Win32/Skylicht.rc
 	)
-elseif (BUILD_MACOS)
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
-
-	add_library(EGL SHARED IMPORTED)
-	set_target_properties(EGL PROPERTIES IMPORTED_LOCATION "${angle_lib_path}/libEGL.dylib")
-
-	add_library(GLESv2 SHARED IMPORTED)
-	set_target_properties(GLESv2 PROPERTIES IMPORTED_LOCATION "${angle_lib_path}/libGLESv2.dylib")
-
+elseif (BUILD_MACOS)	
 	add_executable(MainApp 
 		${main_app_source} 
 		${resources_files}		
 	)
 	
-	set_target_properties(MainApp PROPERTIES MACOSX_BUNDLE TRUE)	
+	set_target_properties(MainApp PROPERTIES MACOSX_BUNDLE TRUE)
+	
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
+	
+	find_library(
+		LIBEGL 
+		libEGL.dylib
+		PATHS ${angle_lib_path})
 
-	target_link_libraries(MainApp EGL GLESv2)
+	find_library(
+		LIBGLESV2
+		libGLESv2.dylib
+		PATHS ${angle_lib_path})
+
+	target_link_libraries(MainApp ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(MainApp "-framework Cocoa")
 
 	# file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
@@ -139,6 +143,22 @@ elseif (BUILD_MACOS)
 	#	set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
 	#	source_group("Bin" FILES "${res_file}")
 	# endforeach()
+
+	add_custom_command(TARGET MainApp 
+		POST_BUILD COMMAND 
+		${CMAKE_INSTALL_NAME_TOOL} -change ./libEGL.dylib @rpath/libEGL.dylib
+		$<TARGET_FILE:MainApp>)
+
+	add_custom_command(TARGET MainApp 
+		POST_BUILD COMMAND 
+		${CMAKE_INSTALL_NAME_TOOL} -change ./libGLESv2.dylib @rpath/libGLESv2.dylib
+		$<TARGET_FILE:MainApp>)
+
+	set_target_properties(MainApp PROPERTIES
+		MACOSX_RPATH ON
+  		BUILD_WITH_INSTALL_RPATH 1
+		INSTALL_RPATH "@executable_path/../../.."
+	)
 else()
 	add_executable(MainApp ${main_app_source})
 endif()

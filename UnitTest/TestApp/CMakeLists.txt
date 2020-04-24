@@ -25,4 +25,11 @@ else()
 	target_link_libraries(TestApp Client)
 endif()
 
+if (BUILD_MACOS)
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
+	add_library(GLESv2 SHARED IMPORTED)
+	set_target_properties(GLESv2 PROPERTIES IMPORTED_LOCATION "${angle_lib_path}/libGLESv2.dylib")
+	target_link_libraries(TestApp GLESv2)
+endif()
+
 add_test(NAME TestApp COMMAND $<TARGET_FILE:TestApp>)
