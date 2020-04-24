@@ -113,7 +113,9 @@ elseif (MSVC OR CYGWIN OR MINGW)
 		${main_app_source}
 		./Platforms/Win32/Skylicht.rc
 	)
-elseif (BUILD_MACOS)	
+elseif (BUILD_MACOS)
+	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
+
 	add_executable(MainApp 
 		${main_app_source} 
 		${resources_files}		
@@ -136,13 +138,12 @@ elseif (BUILD_MACOS)
 	target_link_libraries(MainApp ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(MainApp "-framework Cocoa")
 
-	# file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
-	# foreach(res_file ${resources_files})
-	#	file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
-	#	message(STATUS "- Add resources: ${res_path}")
-	#	set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
-	#	source_group("Bin" FILES "${res_file}")
-	# endforeach()
+	foreach(res_file ${resources_files})
+		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
+		message(STATUS "- Add resources: ${res_path}")
+		set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
+		source_group("Bin" FILES "${res_file}")
+	endforeach()
 
 	add_custom_command(TARGET MainApp 
 		POST_BUILD COMMAND 
