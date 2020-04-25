@@ -239,6 +239,7 @@ endif()
 subdirs (Projects/Skylicht/System)
 subdirs (Projects/Skylicht/Engine)
 subdirs (Projects/Skylicht/Components)
+subdirs (Projects/Skylicht/Lightmapper)
 #subdirs (Projects/Skylicht/Audio)
 #subdirs (Projects/Skylicht/Physics)
 
