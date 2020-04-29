@@ -50,7 +50,9 @@ namespace Skylicht
 
 		void CRenderToTexture::render(CCamera *camera, IRenderPipeline* rp,
 			const core::vector3df& position,
-			const core::vector3df& normal)
+			const core::vector3df& normal,
+			const core::vector3df& tagent,
+			const core::vector3df& binormal)
 		{
 
 		}
