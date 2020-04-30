@@ -107,8 +107,9 @@ namespace Skylicht
 
 	void CBaseRP::drawMeshBuffer(CMesh *mesh, int bufferID)
 	{
-		// set shader material
-		CShaderMaterial::setMaterial(mesh->Material[bufferID]);
+		// set shader (uniform) material
+		if (mesh->Material.size() > (u32)bufferID)
+			CShaderMaterial::setMaterial(mesh->Material[bufferID]);
 
 		IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver *driver = getVideoDriver();

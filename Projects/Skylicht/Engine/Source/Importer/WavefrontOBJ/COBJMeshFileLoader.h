@@ -37,10 +37,44 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	struct SObjMtl
+	{
+		SObjMtl() : Meshbuffer(0), Bumpiness(1.0f), Illumination(0),
+			RecalculateNormals(false)
+		{
+			Meshbuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(0));
+			Meshbuffer->getMaterial().Shininess = 0.0f;
+			Meshbuffer->getMaterial().AmbientColor = video::SColorf(0.2f, 0.2f, 0.2f, 1.0f).toSColor();
+			Meshbuffer->getMaterial().DiffuseColor = video::SColorf(0.8f, 0.8f, 0.8f, 1.0f).toSColor();
+			Meshbuffer->getMaterial().SpecularColor = video::SColorf(1.0f, 1.0f, 1.0f, 1.0f).toSColor();
+		}
+
+		SObjMtl(const SObjMtl& o)
+			: Name(o.Name), Group(o.Group),
+			Bumpiness(o.Bumpiness), Illumination(o.Illumination),
+			RecalculateNormals(false)
+		{
+			Meshbuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(0));
+			Meshbuffer->getMaterial() = o.Meshbuffer->getMaterial();
+		}
+
+		core::map<video::S3DVertex, int> VertMap;
+		scene::CMeshBuffer<video::S3DVertex> *Meshbuffer;
+		core::stringc Name;
+		core::stringc Group;
+		f32 Bumpiness;
+		c8 Illumination;
+		bool RecalculateNormals;
+	};
+
 	class COBJMeshFileLoader : public IMeshImporter
 	{
 	protected:
 		std::vector<std::string> m_textureFolder;
+
+		core::array<SObjMtl*> m_materials;
+
+		std::string m_modelName;
 
 	public:
 		COBJMeshFileLoader();
@@ -51,9 +85,16 @@ namespace Skylicht
 
 		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false);
 
+		void readMTL(const c8* fileName, const io::path& relPath);
+
+		SObjMtl* findMtl(const core::stringc& mtlName, const core::stringc& grpName);
+
+		bool retrieveVertexIndices(c8* vertexData, s32* idx, const c8* bufEnd, u32 vbsize, u32 vtsize, u32 vnsize);
+
+		void constructScene(CEntityPrefab* output);
 	private:
 
-		const c8* readTextures(const c8* bufPtr, const c8* const bufEnd);
+		const c8* readTextures(const c8* bufPtr, const c8* const bufEnd, SObjMtl* currMaterial, const io::path& relPath);
 
 		const c8* goFirstWord(const c8* buf, const c8* const bufEnd, bool acrossNewlines = true);
 
@@ -75,5 +116,6 @@ namespace Skylicht
 
 		const c8* readBool(const c8* bufPtr, bool& tf, const c8* const bufEnd);
 
+		void cleanUp();
 	};
 }
