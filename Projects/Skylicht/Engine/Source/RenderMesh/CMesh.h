@@ -58,7 +58,7 @@ namespace Skylicht
 	public:
 		void recalculateBoundingBox();
 
-		void addMeshBuffer(IMeshBuffer* buf);
+		void addMeshBuffer(IMeshBuffer* buf, const char* materialName = "", CMaterial *m = NULL);
 
 		void removeMeshBuffer(IMeshBuffer* buf);
 

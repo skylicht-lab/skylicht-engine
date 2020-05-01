@@ -1748,22 +1748,15 @@ namespace Skylicht
 			//if (needFixUV && s_fixUV)
 			//	fixUVTitle(buffer);
 
+			char materialName[512];
+			strcpy(materialName, "");
+
 			if (effect != NULL)
-			{
-				char materialName[512];
 				CStringImp::convertUnicodeToUTF8(effect->Id.c_str(), materialName);
-				colladaMesh->MaterialName.push_back(materialName);
-				colladaMesh->Material.push_back(NULL);
-			}
-			else
-			{
-				colladaMesh->MaterialName.push_back("");
-				colladaMesh->Material.push_back(NULL);
-			}
 
 			if (buffer)
 			{
-				colladaMesh->addMeshBuffer(buffer);
+				colladaMesh->addMeshBuffer(buffer, materialName);
 				buffer->recalculateBoundingBox();
 				buffer->drop();
 			}

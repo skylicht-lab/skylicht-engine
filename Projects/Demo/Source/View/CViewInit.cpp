@@ -21,10 +21,15 @@
 #include "RenderMesh/CRenderMesh.h"
 #include "Graphics2D/CCanvas.h"
 
+#include "BuildConfig/CBuildConfig.h"
+
 #if defined(USE_FREETYPE)
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
 #include "Graphics2D/SpriteFrame/CGlyphFont.h"
 #endif
+
+#define DEMO_SPONZA
+//#define DEMO_TANKSCENE
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -40,14 +45,32 @@ CViewInit::~CViewInit()
 
 }
 
+io::path CViewInit::getBuiltInPath(const char *name)
+{
+#ifdef __EMSCRIPTEN__
+	// path from ./PrjEmscripten/Projects/MainApp
+	std::string assetPath = std::string("../../../Bin/BuiltIn/") + std::string(name);
+	return io::path(assetPath.c_str());
+#elif defined(WINDOWS_STORE)
+	std::string assetPath = std::string("Assets\\") + std::string(name);
+	return io::path(assetPath.c_str());
+#elif defined(MACOS)
+	std::string assetPath = CBuildConfig::DataFolder + std::string("//") + std::string(name);
+	return io::path(assetPath.c_str());
+#else
+	return io::path(name);
+#endif
+}
+
 void CViewInit::onInit()
 {
-	getApplication()->getFileSystem()->addFileArchive(getApplication()->getBuiltInPath("BuiltIn.zip"), false, false);
+	getApplication()->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
@@ -83,7 +106,7 @@ void CViewInit::initScene()
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Demo/Textures/Sky/PaperMill.png");
+	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
 	if (skyDomeTexture != NULL)
 	{
 		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
@@ -99,6 +122,7 @@ void CViewInit::initScene()
 	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
+#if defined(DEMO_SPONZA)
 	core::vector3df pointLightPosition[] = {
 		{-5.595442f, 1.2f, 2.00912f},
 		{-5.6f, 1.2f, -2.25},
@@ -132,24 +156,57 @@ void CViewInit::initScene()
 	CEntityPrefab *prefab = NULL;
 
 	std::vector<std::string> textureFolders;
-	textureFolders.push_back("Demo/Sponza/Textures");
+	textureFolders.push_back("Sponza/Textures");
 
 	// load model
-	prefab = meshManager->loadModel("Demo/Sponza/Sponza.dae", NULL, true);
+	prefab = meshManager->loadModel("Sponza/Sponza.dae", NULL, true);
 	if (prefab != NULL)
 	{
-		// export model material
-		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Demo/Sponza/Sponza.xml", true, textureFolders);
-
-		// save material
-		// CMaterialManager::getInstance()->saveMaterial(materials, "../Assets/Demo/Sponza/Sponza.xml");
-
+		// load material
+		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Sponza/Sponza.xml", true, textureFolders);
 		// create render mesh object
 		CGameObject *sponza = zone->createEmptyObject();
 		CRenderMesh *renderer = sponza->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
 	}
+#endif
+
+#if defined(DEMO_TANKSCENE)
+	CMeshManager *meshManager = CMeshManager::getInstance();
+	CEntityPrefab *prefab = NULL;
+
+	std::vector<std::string> textureFolders;
+	textureFolders.push_back("Sponza/Textures");
+
+	// load model
+	prefab = meshManager->loadModel("TankScene/TankScene.obj", NULL, true);
+	if (prefab != NULL)
+	{
+		// export model material if TankScene.xml is not exist
+		// CMaterialManager::getInstance()->exportMaterial(prefab, "../Assets/TankScene/TankScene.xml");
+
+		// load material
+		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("TankScene/TankScene.xml", true, textureFolders);
+
+		// todo modify material
+		//for (CMaterial* m : materials)
+		//{
+		//	m->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
+		//	m->autoDetectLoadTexture();
+		//	m->deleteExtramParams();
+		//}
+
+		// and save material
+		// CMaterialManager::getInstance()->saveMaterial(materials, "../Assets/TankScene/TankScene1.xml");
+
+		// create render mesh object
+		CGameObject *tankScene = zone->createEmptyObject();
+		CRenderMesh *renderer = tankScene->addComponent<CRenderMesh>();
+		renderer->initFromPrefab(prefab);
+		renderer->initMaterial(materials);
+	}
+#endif
 
 #if defined(USE_FREETYPE)
 	CGlyphFont *fontLarge = new CGlyphFont();
@@ -236,10 +293,21 @@ void CViewInit::onUpdate()
 	{
 		io::IFileSystem* fileSystem = getApplication()->getFileSystem();
 
+		std::vector<std::string> listBundles;
+		listBundles.push_back("Common.Zip");
+
+#ifdef DEMO_SPONZA
+		listBundles.push_back("Sponza.Zip");
+#endif
+
+#ifdef DEMO_TANKSCENE
+		listBundles.push_back("TankScene.Zip");
+#endif		
+
 #ifdef __EMSCRIPTEN__
 		std::vector<std::string> listFile;
-		listFile.push_back("Sprite.Zip");
-		listFile.push_back("Demo.Zip");
+		listFile.push_back("Sprite.zip");
+		listFile.insert(listFile.end(), listBundles.begin(), listBundles.end());
 
 		const char *filename = listFile[m_downloaded].c_str();
 
@@ -256,11 +324,16 @@ void CViewInit::onUpdate()
 		{
 			if (m_getFile->getState() == CGetFileURL::Finish)
 			{
-				// add asset.zip after it downloaded
 				if (m_downloaded == 0)
+				{
+					// sprite.zip
 					fileSystem->addFileArchive(filename, false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
+				}
 				else
+				{
+					// [bundles].zip
 					fileSystem->addFileArchive(filename, false, false);
+				}
 
 				if (++m_downloaded >= listFile.size())
 					m_initState = CViewInit::InitScene;
@@ -279,20 +352,27 @@ void CViewInit::onUpdate()
 		}
 #else
 
-#if defined(WINDOWS_STORE)
-		fileSystem->addFileArchive(getApplication()->getBuiltInPath("Demo.zip"), false, false);
-		fileSystem->addFileArchive("Sprite.zip", false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
-#elif defined(MACOS)
-		fileSystem->addFileArchive(getApplication()->getBuiltInPath("Demo.zip"), false, false);
-		fileSystem->addFileArchive(getApplication()->getBuiltInPath("Sprite.zip"), false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
+#if defined(WINDOWS_STORE) || defined(MACOS)
+		fileSystem->addFileArchive(getBuiltInPath("Sprite.zip"), false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
 #else
-		fileSystem->addFileArchive("Demo.zip", false, false);
 		fileSystem->addFileArchive("Sprite.zip", false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
-#endif	
+#endif
+
+		for (std::string& bundle : listBundles)
+		{
+			const char *r = bundle.c_str();
+#if defined(WINDOWS_STORE)
+			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
+#elif defined(MACOS)
+			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
+#else
+			fileSystem->addFileArchive(r, false, false);
+#endif
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+		}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -334,7 +414,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-}
+	}
 
 void CViewInit::onRender()
 {
