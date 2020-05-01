@@ -312,14 +312,19 @@ namespace Skylicht
 				{
 					CMeshUtils::convertToTangentVertices(m_materials[m]->Meshbuffer);
 
-					mesh->addMeshBuffer(m_materials[m]->Meshbuffer);
+					// add tangent mesh buffer
+					mesh->addMeshBuffer(m_materials[m]->Meshbuffer, m_materials[m]->Name.c_str());
 				}
 				else
 				{
-					mesh->addMeshBuffer(m_materials[m]->Meshbuffer);
+					// add mesh buffer
+					mesh->addMeshBuffer(m_materials[m]->Meshbuffer, m_materials[m]->Name.c_str());
 				}
 
 				mesh->recalculateBoundingBox();
+
+				// notify create static hardware buffer
+				mesh->setHardwareMappingHint(EHM_STATIC);
 
 				// add & clone new render mesh
 				CRenderMeshData *meshData = entity->addData<CRenderMeshData>();

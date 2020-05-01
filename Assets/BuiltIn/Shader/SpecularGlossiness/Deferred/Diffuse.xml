@@ -1,0 +1,23 @@
+<shaderConfig name="DiffuseNormal" baseShader="SOLID" deferred="true">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0,1.0,0.0,0.0" float="4"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uSpec" type="MATERIAL_PARAM" valueIndex="1"value="0.4" float="1"/>
+			<uniform name="uGloss" type="MATERIAL_PARAM" valueIndex="2" value="0.3" float="1"/>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_dif."/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/DiffuseSpecularGlossinessVS.glsl" fs="GLSL/DiffuseFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/DiffuseSpecularGlossinessVS.hlsl" fs="HLSL/DiffuseFS.hlsl"/>
+</shaderConfig>
