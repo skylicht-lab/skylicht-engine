@@ -7,6 +7,7 @@
 #include "RenderMesh/CRenderMeshData.h"
 #include "Culling/CCullingData.h"
 
+#include "Importer/Utils/CMeshUtils.h"
 #include "Material/Shader/CShaderManager.h"
 
 #define WORD_BUFFER_LENGTH 512
@@ -309,19 +310,7 @@ namespace Skylicht
 				// if this material have normal map
 				if (m_materials[m]->Meshbuffer->getMaterial().TextureLayer[1].Texture != NULL)
 				{
-					video::IVertexDescriptor* vd = getVideoDriver()->getVertexDescriptor(EVT_TANGENTS);
-
-					CVertexBuffer<video::S3DVertexTangents>* vb = new CVertexBuffer<video::S3DVertexTangents>();
-					meshManipulator->copyVertices(
-						m_materials[m]->Meshbuffer->getVertexBuffer(0), 0,
-						m_materials[m]->Meshbuffer->getVertexDescriptor(), vb, 0, vd, false);
-
-					m_materials[m]->Meshbuffer->setVertexDescriptor(vd);
-					m_materials[m]->Meshbuffer->setVertexBuffer(vb, 0);
-
-					vb->drop();
-
-					meshManipulator->recalculateTangents(m_materials[m]->Meshbuffer, false, false, false);
+					CMeshUtils::convertToTangentVertices(m_materials[m]->Meshbuffer);
 
 					mesh->addMeshBuffer(m_materials[m]->Meshbuffer);
 				}
@@ -745,7 +734,7 @@ namespace Skylicht
 				if (type == 0)
 				{
 					// diffuse map
-					material.setTexture(0, texture);					
+					material.setTexture(0, texture);
 				}
 				else if (type == 1)
 				{
