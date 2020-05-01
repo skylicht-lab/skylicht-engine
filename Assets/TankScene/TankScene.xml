@@ -1,0 +1,27 @@
+<Materials>
+	<Material name='ground' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='TankScene/ground_diff.dds'/>
+		</Textures>
+	</Material>
+	<Material name='left_engine_phong' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='TankScene/left_engine_diff.dds'/>
+		</Textures>
+	</Material>
+	<Material name='right_engine_phong' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='TankScene/left_engine_diff.dds'/>
+		</Textures>
+	</Material>
+	<Material name='turret_phong' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='TankScene/turret_diff.dds'/>
+		</Textures>
+	</Material>
+	<Material name='barricade_phong' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml'>
+		<Textures>
+			<Texture name='uTexDiffuse' path='TankScene/turret_diff.dds'/>
+		</Textures>
+	</Material>
+</Materials>
