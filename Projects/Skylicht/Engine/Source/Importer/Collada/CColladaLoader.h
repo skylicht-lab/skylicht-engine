@@ -394,17 +394,9 @@ namespace Skylicht
 
 		void constructSkinMesh(SMeshParam *meshParam, CSkinnedMesh *mesh);
 
-		IMeshBuffer* constructMeshBuffer(SMeshParam *mesh, STrianglesParam* tri, int bufferID, bool &needFixUVTile);		
+		IMeshBuffer* constructMeshBuffer(SMeshParam *mesh, STrianglesParam* tri, int bufferID, bool &needFixUVTile);	
 
-		void convertToSkinVertices(IMeshBuffer* buffer);
-
-		void convertToSkinTangentVertices(IMeshBuffer* buffer);
-
-		void convertToTangentVertices(IMeshBuffer* buffer);
-
-		void convertToLightMapVertices(IMeshBuffer* buffer, SMeshParam *mesh, STrianglesParam* tri);
-
-		void copyVertices(IVertexBuffer *srcBuffer, IVertexBuffer *dstBuffer);
+		void convertToLightMapVertices(IMeshBuffer* buffer, SMeshParam *mesh, STrianglesParam* tri);		
 
 		void cleanData();
 	};
