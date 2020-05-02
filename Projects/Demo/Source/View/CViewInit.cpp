@@ -28,6 +28,8 @@
 #include "Graphics2D/SpriteFrame/CGlyphFont.h"
 #endif
 
+#include "Lightmapper/Components/Probe/CProbe.h"
+
 #define DEMO_SPONZA
 //#define DEMO_TANKSCENE
 
@@ -121,6 +123,13 @@ void CViewInit::initScene()
 
 	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
+
+	// probe
+	CGameObject *probeObj = zone->createEmptyObject();
+	CProbe *probe = probeObj->addComponent<CProbe>();
+	
+	CTransformEuler *probeTransform = probeObj->getTransformEuler();
+	probeTransform->setPosition(core::vector3df(0.0f, 3.0f, 0.0f));
 
 #if defined(DEMO_SPONZA)
 	core::vector3df pointLightPosition[] = {
