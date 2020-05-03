@@ -29,26 +29,46 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntity.h"
 #include "Entity/CEntityManager.h"
 
+#include "Lightmapper/CLightmapper.h"
+
 namespace Skylicht
 {
-	CProbe::CProbe()
+	namespace Lightmapper
 	{
+		CProbe::CProbe()
+		{
 
-	}
+		}
 
-	CProbe::~CProbe()
-	{
+		CProbe::~CProbe()
+		{
 
-	}
+		}
 
-	void CProbe::initComponent()
-	{
-		m_probeData = m_gameObject->getEntity()->addData<CProbeData>();
-		m_gameObject->getEntityManager()->addRenderSystem<CProbeDataRender>();
-	}
+		void CProbe::initComponent()
+		{
+			m_probeData = m_gameObject->getEntity()->addData<CProbeData>();
+			m_gameObject->getEntityManager()->addRenderSystem<CProbeDataRender>();
+		}
 
-	void CProbe::updateComponent()
-	{
+		void CProbe::updateComponent()
+		{
 
+		}
+
+		void CProbe::bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr)
+		{
+			core::vector3df position = m_gameObject->getPosition();
+
+			CLightmapper::getInstance()->bakeAtPosition(
+				0,
+				camera,
+				rp,
+				entityMgr,
+				position,
+				CTransform::s_oy,
+				CTransform::s_oz,
+				CTransform::s_ox);
+		}
 	}
 }

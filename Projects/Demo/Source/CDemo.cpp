@@ -4,6 +4,7 @@
 #include "View/CViewInit.h"
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
+#include "Lightmapper/CLightmapper.h"
 
 #include "CImguiManager.h"
 
@@ -18,10 +19,14 @@ CDemo::CDemo()
 	CImguiManager::createGetInstance();
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
+
+	Lightmapper::CLightmapper::createGetInstance();
 }
 
 CDemo::~CDemo()
 {
+	Lightmapper::CLightmapper::releaseInstance();
+
 	CImguiManager::releaseInstance();
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();

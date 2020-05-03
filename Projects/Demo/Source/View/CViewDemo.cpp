@@ -36,6 +36,8 @@ void CViewDemo::onUpdate()
 		scene->update();
 }
 
+bool bake = false;
+
 void CViewDemo::onRender()
 {
 	CContext *context = CContext::getInstance();
@@ -50,13 +52,25 @@ void CViewDemo::onRender()
 	{
 		context->updateDirectionLight();
 
-		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager());
+		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager(), core::recti());
 	}
 
 	// render GUI
 	if (guiCamera != NULL)
 	{
 		CGraphics2D::getInstance()->render(guiCamera);
+	}
+
+	// test bake bake irradiance
+	if (bake == false)
+	{
+		CGameObject *bakeCameraObj = scene->getZone(0)->createEmptyObject();		
+		CCamera *bakeCamera = bakeCameraObj->addComponent<CCamera>();
+
+		scene->updateAddRemoveObject();
+
+		context->getProbe()->bakeIrradiance(bakeCamera, context->getForwarderRP(), scene->getEntityManager());
+		bake = true;
 	}
 }
 

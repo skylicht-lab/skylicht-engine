@@ -27,21 +27,27 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Components/CComponentSystem.h"
 #include "CProbeData.h"
 #include "CProbeDataRender.h"
+#include "Camera/CCamera.h"
 
 namespace Skylicht
 {
-	class CProbe : public CComponentSystem
+	namespace Lightmapper
 	{
-	protected:
-		CProbeData *m_probeData;
+		class CProbe : public CComponentSystem
+		{
+		protected:
+			CProbeData *m_probeData;
 
-	public:
-		CProbe();
+		public:
+			CProbe();
 
-		virtual ~CProbe();
+			virtual ~CProbe();
 
-		virtual void initComponent();
+			virtual void initComponent();
 
-		virtual void updateComponent();
-	};
+			virtual void updateComponent();
+
+			void bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
+		};
+	}
 }

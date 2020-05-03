@@ -42,12 +42,17 @@ namespace Skylicht
 
 	}
 
-	void CForwardRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager)
+	void CForwardRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
 			return;
 
-		getVideoDriver()->setRenderTarget(target, false, false);
+		IVideoDriver *driver = getVideoDriver();
+		driver->setRenderTarget(target, false, false);
+		
+		// custom viewport
+		if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+			driver->setViewPort(viewport);
 
 		setCamera(camera);
 		entityManager->setCamera(camera);
@@ -63,6 +68,6 @@ namespace Skylicht
 			entityManager->cullingAndRender();
 		}
 
-		onNext(target, camera, entityManager);
+		onNext(target, camera, entityManager, viewport);
 	}
 }

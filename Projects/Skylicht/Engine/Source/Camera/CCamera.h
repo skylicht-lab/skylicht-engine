@@ -37,7 +37,7 @@ namespace Skylicht
 			Ortho,
 			Frustum,
 			Perspective,
-			OrthoUI,
+			OrthoUI
 		};
 
 	protected:
@@ -46,6 +46,7 @@ namespace Skylicht
 		float m_nearValue;
 		float m_farValue;
 		float m_fov;
+		float m_aspect;
 
 		SViewFrustum m_viewArea;
 
@@ -115,7 +116,15 @@ namespace Skylicht
 			return m_fov;
 		}
 
+		inline void setAspect(float f)
+		{
+			m_aspect = f;
+			recalculateProjectionMatrix();
+		}
+
 		void recalculateProjectionMatrix();
+
+		void recalculateViewMatrix();
 
 		const SViewFrustum& getViewFrustum()
 		{

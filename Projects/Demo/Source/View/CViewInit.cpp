@@ -126,8 +126,8 @@ void CViewInit::initScene()
 
 	// probe
 	CGameObject *probeObj = zone->createEmptyObject();
-	CProbe *probe = probeObj->addComponent<CProbe>();
-	
+	CProbe *probe = probeObj->addComponent<Lightmapper::CProbe>();
+
 	CTransformEuler *probeTransform = probeObj->getTransformEuler();
 	probeTransform->setPosition(core::vector3df(0.0f, 3.0f, 0.0f));
 
@@ -285,6 +285,7 @@ void CViewInit::initScene()
 		context->setGUICamera(guiCamera);
 
 	context->setDirectionalLight(directionalLight);
+	context->setProbe(probe);
 }
 
 void CViewInit::onDestroy()
@@ -381,7 +382,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-		}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -423,7 +424,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {

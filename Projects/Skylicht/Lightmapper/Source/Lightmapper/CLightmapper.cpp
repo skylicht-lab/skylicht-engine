@@ -22,39 +22,34 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Camera/CCamera.h"
-#include "RenderPipeline/IRenderPipeline.h"
-#include "Entity/CEntityManager.h"
-
-#define NUM_FACES 5
-#define RT_SIZE 64
+#include "pch.h"
+#include "CLightmapper.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CRenderToTexture
+		CLightmapper::CLightmapper()
 		{
-		protected:
-			video::ITexture *m_radiance;
+			for (int i = 0; i < NUM_BAKE_THREAD; i++)
+				m_rtt[i] = new CRenderToTexture();
+		}
 
-		public:
-			CRenderToTexture();
+		CLightmapper::~CLightmapper()
+		{
+			for (int i = 0; i < NUM_BAKE_THREAD; i++)
+				delete m_rtt[i];
+		}
 
-			virtual ~CRenderToTexture();
-
-			void bake(CCamera *camera, 
-				IRenderPipeline* rp,
-				CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal);
-		
-		protected:
-			void setRow(core::matrix4& mat, int row, const core::vector3df& v, float w = 0.0f);
-		};
+		void CLightmapper::bakeAtPosition(
+			int threadID,
+			CCamera *camera, IRenderPipeline* rp, CEntityManager *entityMgr,
+			const core::vector3df& position,
+			const core::vector3df& normal,
+			const core::vector3df& tangent,
+			const core::vector3df& binormal)
+		{
+			m_rtt[threadID]->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
+		}
 	}
 }

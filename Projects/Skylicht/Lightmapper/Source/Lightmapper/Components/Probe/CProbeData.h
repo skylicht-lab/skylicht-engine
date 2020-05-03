@@ -28,14 +28,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CProbeData : public IEntityData
+	namespace Lightmapper
 	{
-	public:
-		IMesh *ProbeMesh;
+		class CProbeData : public IEntityData
+		{
+		public:
+			IMesh *ProbeMesh;
 
-	public:
-		CProbeData();
+			core::vector3df SH[9];
 
-		virtual ~CProbeData();
-	};
+		public:
+			CProbeData();
+
+			virtual ~CProbeData();
+		};
+	}
 }

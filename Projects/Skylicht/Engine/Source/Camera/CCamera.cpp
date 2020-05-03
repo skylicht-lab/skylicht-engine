@@ -33,7 +33,8 @@ namespace Skylicht
 		m_inputReceiver(true),
 		m_nearValue(0.05f),
 		m_farValue(1500.0f),
-		m_fov(60.0f)
+		m_fov(60.0f),
+		m_aspect(-1.0f)
 	{
 	}
 
@@ -132,10 +133,18 @@ namespace Skylicht
 		}
 	}
 
+	void CCamera::recalculateViewMatrix()
+	{
+		endUpdate();
+	}
+
 	void CCamera::recalculateProjectionMatrix()
 	{
 		core::dimension2du screenSize = getVideoDriver()->getCurrentRenderTargetSize();
 		float aspect = (float)screenSize.Width / (float)screenSize.Height;
+
+		if (m_aspect > 0)
+			aspect = m_aspect;
 
 		if (m_projectionType == CCamera::Perspective)
 		{
