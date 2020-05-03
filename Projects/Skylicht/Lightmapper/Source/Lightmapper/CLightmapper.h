@@ -22,39 +22,32 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Camera/CCamera.h"
-#include "RenderPipeline/IRenderPipeline.h"
-#include "Entity/CEntityManager.h"
-
-#define NUM_FACES 5
-#define RT_SIZE 64
+#include "Utils/CGameSingleton.h"
+#include "Lightmapper/Baker/CRenderToTexture.h"
 
 namespace Skylicht
 {
+	#define NUM_BAKE_THREAD	5
+
 	namespace Lightmapper
 	{
-		class CRenderToTexture
+		class CLightmapper : public CGameSingleton<CLightmapper>
 		{
 		protected:
-			video::ITexture *m_radiance;
+			CRenderToTexture *m_rtt[NUM_BAKE_THREAD];
 
 		public:
-			CRenderToTexture();
+			CLightmapper();
 
-			virtual ~CRenderToTexture();
+			virtual ~CLightmapper();
 
-			void bake(CCamera *camera, 
-				IRenderPipeline* rp,
-				CEntityManager* entityMgr,
+			void bakeAtPosition(
+				int threadID,
+				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
 				const core::vector3df& position,
 				const core::vector3df& normal,
 				const core::vector3df& tangent,
 				const core::vector3df& binormal);
-		
-		protected:
-			void setRow(core::matrix4& mat, int row, const core::vector3df& v, float w = 0.0f);
 		};
 	}
 }

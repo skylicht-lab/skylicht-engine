@@ -27,63 +27,66 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CProbeDataRender::CProbeDataRender()
+	namespace Lightmapper
 	{
-
-	}
-
-	CProbeDataRender::~CProbeDataRender()
-	{
-
-	}
-
-	void CProbeDataRender::beginQuery()
-	{
-		m_probes.set_used(0);
-		m_transforms.set_used(0);
-	}
-
-	void CProbeDataRender::onQuery(CEntityManager *entityManager, CEntity *entity)
-	{
-		CProbeData *probeData = entity->getData<CProbeData>();
-		if (probeData != NULL)
+		CProbeDataRender::CProbeDataRender()
 		{
-			CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
-			if (transformData != NULL)
+
+		}
+
+		CProbeDataRender::~CProbeDataRender()
+		{
+
+		}
+
+		void CProbeDataRender::beginQuery()
+		{
+			m_probes.set_used(0);
+			m_transforms.set_used(0);
+		}
+
+		void CProbeDataRender::onQuery(CEntityManager *entityManager, CEntity *entity)
+		{
+			CProbeData *probeData = entity->getData<CProbeData>();
+			if (probeData != NULL)
 			{
-				m_probes.push_back(probeData);
-				m_transforms.push_back(transformData);
+				CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
+				if (transformData != NULL)
+				{
+					m_probes.push_back(probeData);
+					m_transforms.push_back(transformData);
+				}
 			}
 		}
-	}
 
-	void CProbeDataRender::init(CEntityManager *entityManager)
-	{
-
-	}
-
-	void CProbeDataRender::update(CEntityManager *entityManager)
-	{
-
-	}
-
-	void CProbeDataRender::render(CEntityManager *entityManager)
-	{
-		IVideoDriver *driver = getVideoDriver();
-
-		CProbeData** probes = m_probes.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
-
-		for (u32 i = 0, n = m_probes.size(); i < n; i++)
+		void CProbeDataRender::init(CEntityManager *entityManager)
 		{
-			IMesh* mesh = probes[i]->ProbeMesh;
-			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
-			for (u32 j = 0; j < mesh->getMeshBufferCount(); j++)
+		}
+
+		void CProbeDataRender::update(CEntityManager *entityManager)
+		{
+
+		}
+
+		void CProbeDataRender::render(CEntityManager *entityManager)
+		{
+			IVideoDriver *driver = getVideoDriver();
+
+			CProbeData** probes = m_probes.pointer();
+			CWorldTransformData** transforms = m_transforms.pointer();
+
+			for (u32 i = 0, n = m_probes.size(); i < n; i++)
 			{
-				IMeshBuffer *buffer = mesh->getMeshBuffer(j);
-				driver->setMaterial(buffer->getMaterial());
-				driver->drawMeshBuffer(buffer);
+				IMesh* mesh = probes[i]->ProbeMesh;
+				driver->setTransform(video::ETS_WORLD, transforms[i]->World);
+
+				for (u32 j = 0; j < mesh->getMeshBufferCount(); j++)
+				{
+					IMeshBuffer *buffer = mesh->getMeshBuffer(j);
+					driver->setMaterial(buffer->getMaterial());
+					driver->drawMeshBuffer(buffer);
+				}
 			}
 		}
 	}

@@ -9,6 +9,10 @@
 #include "RenderPipeline/CDeferredRP.h"
 #include "RenderPipeline/CShadowMapRP.h"
 
+#include "Lightmapper/Components/Probe/CProbe.h"
+
+using namespace Lightmapper;
+
 class CContext : public CGameSingleton<CContext>
 {
 protected:
@@ -19,6 +23,7 @@ protected:
 	CCamera *m_guiCamera;
 
 	CDirectionalLight *m_directionalLight;
+	CProbe *m_probe;
 
 	CBaseRP *m_beginRP;
 	CBaseRP	*m_rendering;
@@ -49,6 +54,11 @@ public:
 		return m_beginRP;
 	}
 
+	inline CForwardRP* getForwarderRP()
+	{
+		return m_forwardRP;
+	}
+
 	inline void setActiveZone(CZone *zone)
 	{
 		m_zone = zone;
@@ -71,6 +81,16 @@ public:
 	inline void setActiveCamera(CCamera *camera)
 	{
 		m_camera = camera;
+	}
+
+	inline CProbe* getProbe()
+	{
+		return m_probe;
+	}
+
+	inline void setProbe(CProbe *probe)
+	{
+		m_probe = probe;
 	}
 
 	inline CCamera* getActiveCamera()

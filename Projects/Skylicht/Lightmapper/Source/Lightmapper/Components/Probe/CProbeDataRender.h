@@ -32,25 +32,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CProbeDataRender : public IRenderSystem
+	namespace Lightmapper
 	{
-	protected:
-		core::array<CProbeData*> m_probes;
-		core::array<CWorldTransformData*> m_transforms;
+		class CProbeDataRender : public IRenderSystem
+		{
+		protected:
+			core::array<CProbeData*> m_probes;
+			core::array<CWorldTransformData*> m_transforms;
 
-	public:
-		CProbeDataRender();
+		public:
+			CProbeDataRender();
 
-		virtual ~CProbeDataRender();
+			virtual ~CProbeDataRender();
 
-		virtual void beginQuery();
+			virtual void beginQuery();
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+			virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 
-		virtual void init(CEntityManager *entityManager);
+			virtual void init(CEntityManager *entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+			virtual void update(CEntityManager *entityManager);
 
-		virtual void render(CEntityManager *entityManager);
-	};
+			virtual void render(CEntityManager *entityManager);
+		};
+	}
 }

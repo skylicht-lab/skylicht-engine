@@ -27,16 +27,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CProbeData::CProbeData()
+	namespace Lightmapper
 	{
-		const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
-		ProbeMesh = geometryCreator->createSphereMesh(0.25f);
-		ProbeMesh->setHardwareMappingHint(EHM_STATIC);
-	}
+		CProbeData::CProbeData()
+		{
+			const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
+			ProbeMesh = geometryCreator->createSphereMesh(0.25f);
+			ProbeMesh->setHardwareMappingHint(EHM_STATIC);
+		}
 
-	CProbeData::~CProbeData()
-	{
-		ProbeMesh->drop();
-		ProbeMesh = NULL;
+		CProbeData::~CProbeData()
+		{
+			ProbeMesh->drop();
+			ProbeMesh = NULL;
+		}
 	}
 }

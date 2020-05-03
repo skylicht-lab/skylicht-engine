@@ -67,13 +67,13 @@ namespace Skylicht
 
 		virtual void initRender(int w, int h) = 0;
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager* entity) = 0;
+		virtual void render(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& viewport) = 0;
 
 		virtual void setCamera(CCamera *camera) = 0;
 
 		virtual void setNextPipeLine(IRenderPipeline *next) = 0;
 
-		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity) = 0;
+		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& viewport) = 0;
 
 		virtual void drawMeshBuffer(CMesh *mesh, int bufferID) = 0;
 	};
