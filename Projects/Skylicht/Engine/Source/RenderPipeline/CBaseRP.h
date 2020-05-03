@@ -52,13 +52,13 @@ namespace Skylicht
 
 		virtual bool canRenderMaterial(CMaterial *m);
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager) = 0;
+		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& vp) = 0;
 
 		virtual void setCamera(CCamera *camera);
 
 		virtual void setNextPipeLine(IRenderPipeline *next);
 
-		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity);
+		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& vp);
 
 		virtual void drawMeshBuffer(CMesh *mesh, int bufferID);
 
@@ -70,7 +70,7 @@ namespace Skylicht
 
 		void renderCubeEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture, int* face, int numFace);
 
-		void saveFBOToFile(ITexture *texture, const char *output);
+		static void saveFBOToFile(ITexture *texture, const char *output);
 
 		void unbindRTT();
 

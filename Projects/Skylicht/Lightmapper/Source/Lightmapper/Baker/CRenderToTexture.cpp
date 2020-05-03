@@ -24,6 +24,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CRenderToTexture.h"
+#include "GameObject/CGameObject.h"
+
+#include "RenderPipeline/CBaseRP.h"
 
 namespace Skylicht
 {
@@ -32,29 +35,110 @@ namespace Skylicht
 		CRenderToTexture::CRenderToTexture()
 		{
 			IVideoDriver *driver = getVideoDriver();
-			core::dimension2du s(RT_SIZE, RT_SIZE);
-
-			for (int i = 0; i < NUM_FACES; i++)
-				m_radiance[i] = driver->addRenderTargetTexture(s, "lmrt", video::ECF_A8R8G8B8);
+			core::dimension2du s(RT_SIZE * NUM_FACES, RT_SIZE);
+			m_radiance = driver->addRenderTargetTexture(s, "lmrt", video::ECF_A8R8G8B8);
 		}
 
 		CRenderToTexture::~CRenderToTexture()
 		{
 			IVideoDriver *driver = getVideoDriver();
-			for (int i = 0; i < NUM_FACES; i++)
-			{
-				driver->removeTexture(m_radiance[i]);
-				m_radiance[i] = NULL;
-			}
+			driver->removeTexture(m_radiance);
+			m_radiance = NULL;
 		}
 
-		void CRenderToTexture::render(CCamera *camera, IRenderPipeline* rp,
+		void CRenderToTexture::bake(CCamera *camera,
+			IRenderPipeline* rp,
+			CEntityManager* entityMgr,
 			const core::vector3df& position,
 			const core::vector3df& normal,
-			const core::vector3df& tagent,
+			const core::vector3df& tangent,
 			const core::vector3df& binormal)
 		{
+			IVideoDriver *driver = getVideoDriver();
 
+			core::vector3df x = tangent;
+			core::vector3df y = binormal;
+			core::vector3df z = normal;
+
+			// apply projection
+			camera->setAspect(1.0f);
+			camera->setFOV(90.0f);
+
+			for (int face = 0; face < NUM_FACES; face++)
+			{
+				core::matrix4 cameraWorld;
+				core::recti viewport;
+
+				if (face == 0)
+				{
+					// +Z
+					setRow(cameraWorld, 0, x);
+					setRow(cameraWorld, 1, y);
+					setRow(cameraWorld, 2, z);
+				}
+				else if (face == 1)
+				{
+					// +X
+					setRow(cameraWorld, 0, -z);
+					setRow(cameraWorld, 1, y);
+					setRow(cameraWorld, 2, x);
+				}
+				else if (face == 2)
+				{
+					// -X
+					setRow(cameraWorld, 0, z);
+					setRow(cameraWorld, 1, y);
+					setRow(cameraWorld, 2, -x);
+				}
+				else if (face == 3)
+				{
+					// +Y
+					setRow(cameraWorld, 0, x);
+					setRow(cameraWorld, 1, -z);
+					setRow(cameraWorld, 2, y);
+				}
+				else if (face == 4)
+				{
+					// -Y
+					setRow(cameraWorld, 0, x);
+					setRow(cameraWorld, 1, z);
+					setRow(cameraWorld, 2, -y);
+				}
+				else
+				{
+					continue;
+				}
+
+				setRow(cameraWorld, 3, position, 1.0f);
+
+				// camera world
+				camera->getGameObject()->getTransform()->setMatrixTransform(cameraWorld);
+				camera->recalculateViewMatrix();
+
+				// apply viewport
+				u32 offsetX = face * RT_SIZE;
+				u32 offsetY = 0;
+				viewport.UpperLeftCorner.set(offsetX, offsetY);
+				viewport.LowerRightCorner.set(offsetX + RT_SIZE, offsetY + RT_SIZE);
+
+				// render to target
+				getVideoDriver()->clearZBuffer();
+
+				// render
+				rp->render(m_radiance, camera, entityMgr, viewport);
+			}
+
+			driver->setRenderTarget(NULL, false, false);
+
+			// CBaseRP::saveFBOToFile(m_radiance, "C:\\SVN\\test.png");
+		}
+
+		void CRenderToTexture::setRow(core::matrix4& mat, int row, const core::vector3df& v, float w)
+		{
+			mat(row, 0) = v.X;
+			mat(row, 1) = v.Y;
+			mat(row, 2) = v.Z;
+			mat(row, 3) = w;
 		}
 	}
 }

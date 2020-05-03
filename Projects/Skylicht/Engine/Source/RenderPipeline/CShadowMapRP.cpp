@@ -91,7 +91,7 @@ namespace Skylicht
 		driver->drawMeshBuffer(mb);
 	}
 
-	void CShadowMapRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager)
+	void CShadowMapRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
 			return;
@@ -167,6 +167,6 @@ namespace Skylicht
 				d->regenerateMipMapLevels();
 		}
 
-		onNext(target, camera, entityManager);
+		onNext(target, camera, entityManager, viewport);
 	}
 }

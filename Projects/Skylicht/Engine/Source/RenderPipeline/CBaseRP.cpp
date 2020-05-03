@@ -99,10 +99,10 @@ namespace Skylicht
 		m_next = next;
 	}
 
-	void CBaseRP::onNext(ITexture *target, CCamera *camera, CEntityManager* entity)
+	void CBaseRP::onNext(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& viewport)
 	{
 		if (m_next != NULL)
-			m_next->render(target, camera, entity);
+			m_next->render(target, camera, entity, viewport);
 	}
 
 	void CBaseRP::drawMeshBuffer(CMesh *mesh, int bufferID)

@@ -52,7 +52,7 @@ namespace Skylicht
 
 		virtual void initRender(int w, int h);
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager);
+		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
 
 		virtual bool canRenderMaterial(CMaterial *m);
 
