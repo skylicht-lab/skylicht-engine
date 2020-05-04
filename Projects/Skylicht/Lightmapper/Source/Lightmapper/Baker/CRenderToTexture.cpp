@@ -56,64 +56,26 @@ namespace Skylicht
 		{
 			IVideoDriver *driver = getVideoDriver();
 
-			core::vector3df x = tangent;
-			core::vector3df y = binormal;
-			core::vector3df z = normal;
-
 			// apply projection
 			camera->setAspect(1.0f);
 			camera->setFOV(90.0f);
+
+			// clear rtt
+			getVideoDriver()->setRenderTarget(m_radiance, true, true);
 
 			for (int face = 0; face < NUM_FACES; face++)
 			{
 				core::matrix4 cameraWorld;
 				core::recti viewport;
 
-				if (face == 0)
-				{
-					// +Z
-					setRow(cameraWorld, 0, x);
-					setRow(cameraWorld, 1, y);
-					setRow(cameraWorld, 2, z);
-				}
-				else if (face == 1)
-				{
-					// +X
-					setRow(cameraWorld, 0, -z);
-					setRow(cameraWorld, 1, y);
-					setRow(cameraWorld, 2, x);
-				}
-				else if (face == 2)
-				{
-					// -X
-					setRow(cameraWorld, 0, z);
-					setRow(cameraWorld, 1, y);
-					setRow(cameraWorld, 2, -x);
-				}
-				else if (face == 3)
-				{
-					// +Y
-					setRow(cameraWorld, 0, x);
-					setRow(cameraWorld, 1, -z);
-					setRow(cameraWorld, 2, y);
-				}
-				else if (face == 4)
-				{
-					// -Y
-					setRow(cameraWorld, 0, x);
-					setRow(cameraWorld, 1, z);
-					setRow(cameraWorld, 2, -y);
-				}
-				else
-				{
-					continue;
-				}
-
-				setRow(cameraWorld, 3, position, 1.0f);
+				getWorldView(normal, tangent, binormal, position, face, cameraWorld);				
 
 				// camera world
 				camera->getGameObject()->getTransform()->setMatrixTransform(cameraWorld);
-				camera->recalculateViewMatrix();
+
+				// view matrix is world inverse
+				cameraWorld.makeInverse();
+				camera->setViewMatrix(cameraWorld);
 
 				// apply viewport
 				u32 offsetX = face * RT_SIZE;
@@ -131,6 +93,61 @@ namespace Skylicht
 			driver->setRenderTarget(NULL, false, false);
 
 			// CBaseRP::saveFBOToFile(m_radiance, "C:\\SVN\\test.png");
+		}
+
+		void CRenderToTexture::getWorldView(
+			const core::vector3df& normal,
+			const core::vector3df& tangent,
+			const core::vector3df& binormal,
+			const core::vector3df& position,
+			int face,
+			core::matrix4& out)
+		{
+			core::vector3df x = tangent;
+			core::vector3df y = binormal;
+			core::vector3df z = normal;
+
+			if (face == 0)
+			{
+				// top
+				setRow(out, 0, x);
+				setRow(out, 1, y);
+				setRow(out, 2, z);
+			}
+			else if (face == 1)
+			{
+				setRow(out, 0, -z);
+				setRow(out, 1, y);
+				setRow(out, 2, x);
+			}
+			else if (face == 2)
+			{
+				setRow(out, 0, z);
+				setRow(out, 1, y);
+				setRow(out, 2, -x);
+			}
+			else if (face == 3)
+			{
+				setRow(out, 0, x);
+				setRow(out, 1, -z);
+				setRow(out, 2, y);
+			}
+			else if (face == 4)
+			{
+				setRow(out, 0, x);
+				setRow(out, 1, z);
+				setRow(out, 2, -y);
+			}
+			else
+			{
+				// bottom
+				setRow(out, 0, x);
+				setRow(out, 1, -y);
+				setRow(out, 2, -z);
+			}
+
+			// translate
+			setRow(out, 3, position, 1.0f);
 		}
 
 		void CRenderToTexture::setRow(core::matrix4& mat, int row, const core::vector3df& v, float w)
