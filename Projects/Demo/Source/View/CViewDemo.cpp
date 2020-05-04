@@ -69,7 +69,7 @@ void CViewDemo::onRender()
 
 		scene->updateAddRemoveObject();
 
-		context->getProbe()->bakeIrradiance(bakeCamera, context->getForwarderRP(), scene->getEntityManager());
+		context->getProbe()->bakeIrradiance(bakeCamera, context->getRenderPipeline(), scene->getEntityManager());
 		bake = true;
 	}
 }
