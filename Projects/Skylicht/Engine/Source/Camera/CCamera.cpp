@@ -34,7 +34,8 @@ namespace Skylicht
 		m_nearValue(0.05f),
 		m_farValue(1500.0f),
 		m_fov(60.0f),
-		m_aspect(-1.0f)
+		m_aspect(-1.0f),
+		m_up(CTransform::s_oy)
 	{
 	}
 
@@ -69,7 +70,7 @@ namespace Skylicht
 		{
 			// identity view matrix
 			m_viewArea.getTransform(video::ETS_VIEW).makeIdentity();
-		}
+		}		
 		else
 		{
 			// update lookat matrix
@@ -77,7 +78,7 @@ namespace Skylicht
 			position = mat.getTranslation();
 			core::vector3df target = CTransform::s_oz;
 			mat.rotateVect(target);
-			m_viewArea.getTransform(video::ETS_VIEW).buildCameraLookAtMatrixLH(position, position + target, CTransform::s_oy);
+			m_viewArea.getTransform(video::ETS_VIEW).buildCameraLookAtMatrixLH(position, position + target, m_up);
 		}
 
 		// update view area
@@ -103,6 +104,20 @@ namespace Skylicht
 	const core::matrix4& CCamera::getViewMatrix() const
 	{
 		return m_viewArea.getTransform(video::ETS_VIEW);
+	}
+
+	void CCamera::setViewMatrix(const core::matrix4& view)
+	{
+		m_viewArea.getTransform(video::ETS_VIEW) = view;
+
+		// update view area
+		m_viewArea.cameraPosition = view.getTranslation();
+
+		core::matrix4 m(core::matrix4::EM4CONST_NOTHING);
+		m.setbyproduct_nocheck(
+			m_viewArea.getTransform(video::ETS_PROJECTION),
+			m_viewArea.getTransform(video::ETS_VIEW));
+		m_viewArea.setFrom(m);
 	}
 
 	void CCamera::setPosition(const core::vector3df& position)
@@ -131,6 +146,11 @@ namespace Skylicht
 			core::vector3df front = target - t->getPosition();
 			t->setOrientation(front, up);
 		}
+	}
+
+	void CCamera::setUpVector(const core::vector3df& up)
+	{
+		m_up = up;
 	}
 
 	void CCamera::recalculateViewMatrix()

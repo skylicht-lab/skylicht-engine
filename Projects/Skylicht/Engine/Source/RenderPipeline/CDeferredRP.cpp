@@ -181,10 +181,21 @@ namespace Skylicht
 		// set multi rtt
 		IVideoDriver *driver = getVideoDriver();
 		driver->setRenderTarget(m_multiRenderTarget);
-		
+
+		bool useCustomViewport = false;
+		core::recti customViewport;
+
 		// custom viewport
 		if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
-			driver->setViewPort(viewport);
+		{
+			customViewport.LowerRightCorner.set(
+				viewport.getWidth(),
+				viewport.getHeight()
+			);
+
+			useCustomViewport = true;
+			driver->setViewPort(customViewport);
+		}
 
 		// draw entity to buffer
 		setCamera(camera);
@@ -208,7 +219,7 @@ namespace Skylicht
 		float renderW = (float)m_size.Width;
 		float renderH = (float)m_size.Height;
 
-		if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+		if (useCustomViewport)
 		{
 			renderW = (float)viewport.getWidth();
 			renderH = (float)viewport.getHeight();
@@ -216,6 +227,10 @@ namespace Skylicht
 
 		// render light pass, clear black color
 		driver->setRenderTarget(m_lightBuffer, true, false);
+
+		// custom viewport
+		if (useCustomViewport)
+			driver->setViewPort(customViewport);
 
 		CLightCullingSystem *lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
@@ -249,6 +264,10 @@ namespace Skylicht
 		// render final light to screen
 		driver->setRenderTarget(m_target, false, false);
 
+		// custom viewport
+		if (useCustomViewport)
+			driver->setViewPort(customViewport);
+
 		// shadow
 		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
 		if (shadowRP != NULL)
@@ -264,6 +283,10 @@ namespace Skylicht
 
 		// final pass to screen
 		driver->setRenderTarget(target, false, false);
+
+		if (useCustomViewport)
+			driver->setViewPort(viewport);
+
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 	}
