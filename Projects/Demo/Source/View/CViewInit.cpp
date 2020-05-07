@@ -21,8 +21,6 @@
 #include "RenderMesh/CRenderMesh.h"
 #include "Graphics2D/CCanvas.h"
 
-#include "BuildConfig/CBuildConfig.h"
-
 #if defined(USE_FREETYPE)
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
 #include "Graphics2D/SpriteFrame/CGlyphFont.h"
