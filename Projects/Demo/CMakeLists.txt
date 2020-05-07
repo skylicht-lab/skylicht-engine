@@ -45,7 +45,7 @@ if (BUILD_WINDOWS_STORE)
 		${template_path}/Platforms/UWP/**.cpp 
 		${template_path}/Platforms/UWP/**.c 
 		${template_path}/Platforms/UWP/**.h)
-	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Template/Assets/**.*)
+	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Assets/**.*)
 
 	list (APPEND application_source ${platform_uwp_source})
 
