@@ -48,6 +48,9 @@ io::path CViewInit::getBuiltInPath(const char *name)
 	// path from ./PrjEmscripten/Projects/MainApp
 	std::string assetPath = std::string("../../../Bin/BuiltIn/") + std::string(name);
 	return io::path(assetPath.c_str());
+#elif defined(WINDOWS_STORE)
+	std::string assetPath = std::string("") + std::string(name);
+	return io::path(assetPath.c_str());
 #elif defined(MACOS)
 	std::string assetPath = CBuildConfig::DataFolder + std::string("//") + std::string(name);
 	return io::path(assetPath.c_str());

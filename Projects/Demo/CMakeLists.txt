@@ -48,7 +48,8 @@ if (BUILD_WINDOWS_STORE)
 	
 	# copy resource to generate prj folder
 	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Template/Assets/**.*)
-
+	add_source_group("${platform_uwp_asset}" "Assets")
+	
 	list (APPEND application_source ${platform_uwp_source})
 
 	set_property(SOURCE ${platform_uwp_asset} PROPERTY VS_DEPLOYMENT_CONTENT 1)
