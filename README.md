@@ -85,6 +85,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 -   More details: please preview command in **BuildCommand** folder.
 
 ### Add Source To Project
+
 #### Static library
 -   Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project.
     ```console
@@ -101,6 +102,12 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
 ```
 - Open Solution and click **NewApplication** - **"Set as StartUp Project"**.
+
+### Samples Application
+
+#### Samples\HelloWorld
+Use **Glyph Font**, **Canvas Component**, **Graphics2D**, **GUI Text**
+<img src="Documents/Media/Samples/sample_hello_world.png">
 
 ## Contributing
 Welcome if you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
