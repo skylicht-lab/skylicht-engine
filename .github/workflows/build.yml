@@ -40,7 +40,6 @@ jobs:
        call emsdk\emsdk_env.bat
        cmake -DCMAKE_TOOLCHAIN_FILE=emsdk\upstream\emscripten\cmake\Modules\Platform\Emscripten.cmake  -S . -B ./PrjEmscripten -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"
        mingw32-make -C PrjEmscripten
-       copy Projects\MainApp\Platforms\Emscripten\Index.html Bin
     - name: Package
       shell: cmd
       run: |
@@ -51,8 +50,8 @@ jobs:
         set output=SkylichtDemo_%file_version%_Emscripten.zip
         cd Bin
         7z a %output% *.zip
-        7z a %output% MainApp*
-        7z a %output% Index.html
+        7z a %output% *.wasm.*
+        7z a %output% *.html
         cd..
         copy Bin\%output% Build
     - name: Result

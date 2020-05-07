@@ -1,14 +1,23 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/%project_path%/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/@project_path@/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Spark/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
 )
+
+if (BUILD_FREETYPE)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include)
+endif()
+
+if (BUILD_IMGUI)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Imgui/Source)
+endif()
 
 set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template)
 
@@ -17,12 +26,7 @@ file(GLOB_RECURSE application_source
 	./Source/**.c 
 	./Source/**.h)
 	
-file(GLOB_RECURSE template_source 
-	${template_path}/**.cpp
-	${template_path}/**.c 
-	${template_path}/**.h)
-
-list (APPEND application_source ${template_source})
+setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (BUILD_ANDROID)
 	file(GLOB_RECURSE platform_android_source 
@@ -82,14 +86,14 @@ endif()
 #endif()
 	
 if (BUILD_DEBUG_VLD)
-	if (CMAKE_CL_64)		
+	if (CMAKE_CL_64)
 		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/lib/Win64")
 		set(vld_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/bin/Win64/*.*")
 	else()
 		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/lib/Win32")
 		set(vld_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/bin/Win32/*.*")
 	endif()	
-	link_directories(${vld_lib_path})	
+	link_directories(${vld_lib_path})
 endif()
 	
 if (MINGW OR CYGWIN)
@@ -100,38 +104,38 @@ if (MINGW OR CYGWIN)
 endif()
 
 if (BUILD_EMSCRIPTEN)
-	add_executable(%project_name% 
+	add_executable(@project_name@ 
 		${application_source}
 		${template_path}/Platforms/Emscripten/MainWebGL.cpp
 	)
 elseif(BUILD_SDL)
-	add_executable(%project_name% 
+	add_executable(@project_name@ 
 		${application_source}
 		${template_path}/Platforms/SDL2/MainSDL.cpp
 	)
 elseif(BUILD_ANDROID)
-	add_library(%project_name% SHARED ${application_source})
+	add_library(@project_name@ SHARED ${application_source})
 elseif (BUILD_WINDOWS_STORE)
-	add_executable(%project_name%
+	add_executable(@project_name@
 		${application_source}
 		${platform_uwp_asset}
-		${template_path}/Platforms/UWP/%project_name%_TemporaryKey.pfx
+		${template_path}/Platforms/UWP/@project_name@_TemporaryKey.pfx
 		${template_path}/Platforms/UWP/Package.appxmanifest
 	)
 elseif (MSVC OR CYGWIN OR MINGW)
-	add_executable(%project_name% WIN32
+	add_executable(@project_name@ WIN32
 		${application_source}
 		${template_path}/Platforms/Win32/Skylicht.rc
 	)
 elseif (BUILD_MACOS)
 	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
 
-	add_executable(%project_name% 
+	add_executable(@project_name@ 
 		${application_source} 
 		${resources_files}
 	)
 	
-	set_target_properties(%project_name% PROPERTIES MACOSX_BUNDLE TRUE)
+	set_target_properties(@project_name@ PROPERTIES MACOSX_BUNDLE TRUE)
 	
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
 	
@@ -145,8 +149,8 @@ elseif (BUILD_MACOS)
 		libGLESv2.dylib
 		PATHS ${angle_lib_path})
 
-	target_link_libraries(%project_name% ${LIBEGL} ${LIBGLESV2})
-	target_link_libraries(%project_name% "-framework Cocoa")
+	target_link_libraries(@project_name@ ${LIBEGL} ${LIBGLESV2})
+	target_link_libraries(@project_name@ "-framework Cocoa")
 
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
@@ -155,48 +159,57 @@ elseif (BUILD_MACOS)
 		source_group("Bin" FILES "${res_file}")
 	endforeach()
 
-	add_custom_command(TARGET %project_name% 
+	add_custom_command(TARGET @project_name@ 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libEGL.dylib @rpath/libEGL.dylib
-		$<TARGET_FILE:%project_name%>)
+		$<TARGET_FILE:@project_name@>)
 
-	add_custom_command(TARGET %project_name% 
+	add_custom_command(TARGET @project_name@ 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libGLESv2.dylib @rpath/libGLESv2.dylib
-		$<TARGET_FILE:%project_name%>)
+		$<TARGET_FILE:@project_name@>)
 
-	set_target_properties(%project_name% PROPERTIES
+	set_target_properties(@project_name@ PROPERTIES
 		MACOSX_RPATH ON
   		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../../.."
 	)
 else()
-	add_executable(%project_name% ${application_source})
+	add_executable(@project_name@ ${application_source})
 endif()
 
-target_precompiled_header(%project_name% ./Source/pch.cpp ${application_source})
+target_precompiled_header(@project_name@ ./Source/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)
-	target_link_libraries(%project_name% Client Demo log)
+	target_link_libraries(@project_name@ Client log)
 else()
-	target_link_libraries(%project_name% Client Demo)
+	target_link_libraries(@project_name@ Client)
+endif()
+
+# Imgui
+if (BUILD_IMGUI)
+	target_link_libraries(@project_name@ Imgui)
 endif()
 
 # Emscripten
 if (BUILD_EMSCRIPTEN)
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(%project_name% PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	set_target_properties(@project_name@ PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	
+	set(project_name @project_name@)
+	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
+	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/@project_name@.html)
 endif()
 
 #VLD
 if (BUILD_DEBUG_VLD)
 	file(GLOB_RECURSE vld_bin_files ${vld_dll_path})
 	foreach(vld_bin ${vld_bin_files})
-		add_custom_command(TARGET %project_name% POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:%project_name%>)
+		add_custom_command(TARGET @project_name@ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:@project_name@>)
 	endforeach()
 endif()
 
-set_target_properties(%project_name% PROPERTIES VERSION ${SKYLICHT_VERSION})
-set_target_properties(%project_name% PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+set_target_properties(@project_name@ PROPERTIES VERSION ${SKYLICHT_VERSION})
+set_target_properties(@project_name@ PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
