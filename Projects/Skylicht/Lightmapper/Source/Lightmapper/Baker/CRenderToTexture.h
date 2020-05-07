@@ -40,21 +40,23 @@ namespace Skylicht
 		protected:
 			video::ITexture *m_radiance;
 
+			core::vector3df m_sh9[9];
+
 		public:
 			CRenderToTexture();
 
 			virtual ~CRenderToTexture();
 
-			void bake(CCamera *camera, 
+			void bake(CCamera *camera,
 				IRenderPipeline* rp,
 				CEntityManager* entityMgr,
 				const core::vector3df& position,
 				const core::vector3df& normal,
 				const core::vector3df& tangent,
 				const core::vector3df& binormal);
-		
+
 		protected:
-			
+
 			void setRow(core::matrix4& mat, int row, const core::vector3df& v, float w = 0.0f);
 
 			void getWorldView(const core::vector3df& normal,
@@ -63,6 +65,10 @@ namespace Skylicht
 				const core::vector3df& position,
 				int face,
 				core::matrix4& out);
+
+			void projectOntoSH(const core::vector3df& n, const core::vector3df& color, core::vector3df *sh);
+
+			void getSHColor(const core::vector3df& n, const core::vector3df *sh, core::vector3df& color);
 		};
 	}
 }

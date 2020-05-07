@@ -27,14 +27,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	#define NUM_BAKE_THREAD	5
-
 	namespace Lightmapper
 	{
 		class CLightmapper : public CGameSingleton<CLightmapper>
 		{
 		protected:
-			CRenderToTexture *m_rtt[NUM_BAKE_THREAD];
+			CRenderToTexture *m_rtt;
 
 		public:
 			CLightmapper();
@@ -42,7 +40,6 @@ namespace Skylicht
 			virtual ~CLightmapper();
 
 			void bakeAtPosition(
-				int threadID,
 				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
 				const core::vector3df& position,
 				const core::vector3df& normal,
