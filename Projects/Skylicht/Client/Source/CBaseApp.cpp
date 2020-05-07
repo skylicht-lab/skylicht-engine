@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBaseApp.h"
 
 #include "Graphics2D/CGraphics2D.h"
+#include "BuildConfig/CBuildConfig.h"
 
 #ifdef _DEBUG
 #ifdef USE_VISUAL_LEAK_DETECTOR
