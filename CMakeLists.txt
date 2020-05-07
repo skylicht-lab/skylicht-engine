@@ -249,9 +249,10 @@ subdirs (Projects/Skylicht/Components)
 subdirs (Projects/Skylicht/Client)
 
 #if (BUILD_ENGINE_TOOL)
-#subdirs (Projects/UIClass)
 #subdirs (Projects/Editor)
 #endif()
+
+include(CMakeProjects.cmake)
 
 # unit test
 if (NOT BUILD_ANDROID AND NOT BUILD_EMSCRIPTEN AND NOT BUILD_WINDOWS_STORE)

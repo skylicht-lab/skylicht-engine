@@ -29,6 +29,10 @@ def main():
     # Parse params
     project_name = sys.argv[1]
     project_path = sys.argv[2]
+
+    project_name = project_name.replace(' ', '_')
+    project_path = project_path.replace('\\', '/')
+
     print("Create project: %s at %s" % (project_name, project_path))
 
     # Create Project folder
@@ -40,8 +44,8 @@ def main():
 
     target_cmake = project_path + "/CMakeLists.txt"
     shutil.copy("Scripts/CMakeLists.txt", target_cmake)
-    replace_text(target_cmake, "%project_path%", project_path)
-    replace_text(target_cmake, "%project_name%", project_name)
+    replace_text(target_cmake, "@project_path@", project_path)
+    replace_text(target_cmake, "@project_name@", project_name)
 
 
 if __name__ == '__main__':
