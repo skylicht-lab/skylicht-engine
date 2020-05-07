@@ -94,7 +94,6 @@ for:
       - set file_version=%CONFIG_VERSION:.=_%_%APPVEYOR_BUILD_VERSION%
       - set output_zip=SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
       - copy Bin\%configuration%\*.exe Bin
-      - del Bin\%configuration%\*.exe
       - cd Bin
       - 7z a %output_zip% *.zip
       - 7z a %output_zip% *.exe
