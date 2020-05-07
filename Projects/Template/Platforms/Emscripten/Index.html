@@ -95,9 +95,9 @@
 			Module.setStatus = function (text) {
 				if (text) Module.printErr('[post-exception status] ' + text);
 			};
-		};		  		 
+		};
 	</script>
-	<script src=MainApp.wasm.js></script>
+	<script src=@project_name@.wasm.js></script>
 	<script type='text/javascript'>
 		// add params to C wasm and run function main(argc, argv)
 		arguments_.push(canvas.width.toString());
