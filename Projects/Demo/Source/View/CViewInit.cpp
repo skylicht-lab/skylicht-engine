@@ -48,12 +48,9 @@ io::path CViewInit::getBuiltInPath(const char *name)
 	// path from ./PrjEmscripten/Projects/MainApp
 	std::string assetPath = std::string("../../../Bin/BuiltIn/") + std::string(name);
 	return io::path(assetPath.c_str());
-#elif defined(WINDOWS_STORE)
-	std::string assetPath = std::string("Assets\\") + std::string(name);
-	return io::path(assetPath.c_str());
 #elif defined(MACOS)
-    std::string assetPath = CBuildConfig::DataFolder + std::string("//") + std::string(name);
-    return io::path(assetPath.c_str());
+	std::string assetPath = CBuildConfig::DataFolder + std::string("//") + std::string(name);
+	return io::path(assetPath.c_str());
 #else
 	return io::path(name);
 #endif
@@ -302,8 +299,8 @@ void CViewInit::onUpdate()
 		fileSystem->addFileArchive(getBuiltInPath("Demo.zip"), false, false);
 		fileSystem->addFileArchive("Sprite.zip", false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
 #elif defined(MACOS)
-        fileSystem->addFileArchive(getBuiltInPath("Demo.zip"), false, false);
-        fileSystem->addFileArchive(getBuiltInPath("Sprite.zip"), false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
+		fileSystem->addFileArchive(getBuiltInPath("Demo.zip"), false, false);
+		fileSystem->addFileArchive(getBuiltInPath("Sprite.zip"), false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
 #else
 		fileSystem->addFileArchive("Demo.zip", false, false);
 		fileSystem->addFileArchive("Sprite.zip", false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
