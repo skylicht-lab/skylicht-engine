@@ -80,17 +80,28 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     ```
 -   Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`
 
--   Once the solution opens, right click the **MainApp** project, click **"Set as StartUp Project"** and click the play button at the top to run the Demo App.
+-   Once the solution opens, right click the **Demo** project, click **"Set as StartUp Project"** and click the play button at the top to run the Demo App.
 
 -   More details: please preview command in **BuildCommand** folder.
 
 ### Add Source To Project
+#### Static library
 -   Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project.
     ```console
     # Example cmd to regenerate vs2017 x64 project
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
     ```
+#### Application
+- Run python script at Skylicht Project directory
+```console
+    # Create application Demo
+    C:\skylicht-engine>python Scripts\create_project.py NewApplication Samples\NewApplication
     
+    # Regenerate vs2017 x64 project
+    C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+```
+- Open Solution and click **NewApplication** - **"Set as StartUp Project"**.
+
 ## Contributing
 Welcome if you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 ## License
