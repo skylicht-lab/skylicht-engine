@@ -31,25 +31,22 @@ namespace Skylicht
 	{
 		CLightmapper::CLightmapper()
 		{
-			for (int i = 0; i < NUM_BAKE_THREAD; i++)
-				m_rtt[i] = new CRenderToTexture();
+			m_rtt = new CRenderToTexture();
 		}
 
 		CLightmapper::~CLightmapper()
 		{
-			for (int i = 0; i < NUM_BAKE_THREAD; i++)
-				delete m_rtt[i];
+			delete m_rtt;
 		}
 
 		void CLightmapper::bakeAtPosition(
-			int threadID,
 			CCamera *camera, IRenderPipeline* rp, CEntityManager *entityMgr,
 			const core::vector3df& position,
 			const core::vector3df& normal,
 			const core::vector3df& tangent,
 			const core::vector3df& binormal)
 		{
-			m_rtt[threadID]->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
+			m_rtt->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
 		}
 	}
 }

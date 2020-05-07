@@ -63,12 +63,22 @@ namespace Skylicht
 			// clear rtt
 			getVideoDriver()->setRenderTarget(m_radiance, true, true);
 
+			core::matrix4 toTangentSpace[NUM_FACES];
+			core::matrix4 worldToTangent;
+			setRow(worldToTangent, 0, tangent);
+			setRow(worldToTangent, 1, binormal);
+			setRow(worldToTangent, 2, normal);
+			worldToTangent = worldToTangent.getTransposed();
+
 			for (int face = 0; face < NUM_FACES; face++)
 			{
 				core::matrix4 cameraWorld;
 				core::recti viewport;
 
-				getWorldView(normal, tangent, binormal, position, face, cameraWorld);				
+				getWorldView(normal, tangent, binormal, position, face, cameraWorld);
+
+				// to tangent space
+				toTangentSpace[face] = cameraWorld * worldToTangent;
 
 				// camera world
 				camera->getGameObject()->getTransform()->setMatrixTransform(cameraWorld);
@@ -92,7 +102,178 @@ namespace Skylicht
 
 			driver->setRenderTarget(NULL, false, false);
 
-			// CBaseRP::saveFBOToFile(m_radiance, "C:\\SVN\\test.png");
+			// Cubemap to SH
+			// https://github.com/nicknikolov/cubemap-sh/blob/master/index.js
+			// https://github.com/nicknikolov/glsl-sh
+
+			u8 *imageData = (u8*)m_radiance->lock(video::ETLM_READ_ONLY);
+			u32 bpp = 4;
+			u32 rowSize = RT_SIZE * NUM_FACES * bpp;
+			float c = 1.0f / 255.0f;
+
+			for (int i = 0; i < 9; i++)
+				m_sh9[i].set(0.0f, 0.0f, 0.0f);
+
+			core::vector3df color;
+			core::vector3df dirTS;
+
+			// Compute SH by radiance
+			for (u32 face = 0; face < NUM_FACES; face++)
+			{
+				// offset to face data
+				u8 *faceData = imageData + RT_SIZE * face * bpp;
+
+				// scan pixels
+				for (u32 y = 0; y < RT_SIZE; y++)
+				{
+					u8* data = faceData;
+
+					for (u32 x = 0; x < RT_SIZE; x++)
+					{
+						// Calculate the location in [-1, 1] texture space
+						float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
+						float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
+
+						float temp = 1.0f + u * u + v * v;
+						float weight = 4.0f / (sqrt(temp) * temp);
+
+						color.X = data[0] * c * weight; // r
+						color.Y = data[1] * c * weight; // g
+						color.Z = data[2] * c * weight; // b
+
+						dirTS.X = u;
+						dirTS.Y = v;
+						dirTS.Z = 1.0f;
+						toTangentSpace[face].rotateVect(dirTS);
+						dirTS.normalize();
+
+						projectOntoSH(dirTS, color, m_sh9);
+
+						data += bpp;
+					}
+
+					faceData += rowSize;
+				}
+			}
+
+			// Compute the final weight for integration
+			float weightSum = 0.0f;
+			for (u32 y = 0; y < RT_SIZE; y++)
+			{
+				for (u32 x = 0; x < RT_SIZE; x++)
+				{
+					// Calculate the location in [-1, 1] texture space
+					float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
+					float v = ((y / float(RT_SIZE)) * 2.0f - 1.0f);
+
+					float temp = 1.0f + u * u + v * v;
+					float weight = 4.0f / (sqrt(temp) * temp);
+
+					weightSum = weightSum + weight;
+				}
+			}
+
+			weightSum = weightSum * 15.0f;
+
+			// finalWeight is weight for 1 pixel on Sphere
+			// S = 4 * PI * R^2
+			float finalWeight = (4.0f * 3.14159f) / weightSum;
+
+			for (int i = 0; i < 9; i++)
+				m_sh9[i] = m_sh9[i] * finalWeight;
+
+			m_radiance->unlock();
+
+			/*
+			// Test SH
+			u8 *testData = new u8[RT_SIZE * RT_SIZE * bpp];
+			for (u32 y = 0; y < RT_SIZE; y++)
+			{
+				u8* data = testData + y * RT_SIZE * bpp;
+
+				for (u32 x = 0; x < RT_SIZE; x++)
+				{
+					float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
+					float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
+
+					dirTS.X = u;
+					dirTS.Y = v;
+					dirTS.Z = 1.0f;
+					toTangentSpace[4].rotateVect(dirTS);
+					dirTS.normalize();
+
+					getSHColor(dirTS, m_sh9, color);
+
+					color.X = core::clamp(color.X * 255.0f, 0.0f, 255.0f);
+					color.Y = core::clamp(color.Y * 255.0f, 0.0f, 255.0f);
+					color.Z = core::clamp(color.Z * 255.0f, 0.0f, 255.0f);
+
+					data[0] = (u8)(color.X);
+					data[1] = (u8)(color.Y);
+					data[2] = (u8)(color.Z);
+					data[3] = 255;
+
+					data += bpp;
+				}
+			}
+			*/
+
+			/*
+			IImage* im = driver->createImageFromData(
+				video::ECF_A8R8G8B8,
+				core::dimension2du(RT_SIZE, RT_SIZE),
+				testData);
+
+			if (driver->getDriverType() == video::EDT_DIRECT3D11)
+				im->swapBG();
+
+			driver->writeImageToFile(im, "C:\\SVN\\testsh.png");
+			im->drop();
+
+			CBaseRP::saveFBOToFile(m_radiance, "C:\\SVN\\test.png");
+
+			delete testData;
+			*/
+		}
+
+		void CRenderToTexture::projectOntoSH(const core::vector3df& n, const core::vector3df& color, core::vector3df *sh)
+		{
+			// Cosine kernel
+			const float A0 = 3.141593f;
+			const float A1 = 2.095395f;
+			const float A2 = 0.785398f;
+
+			// Band 0
+			sh[0] = sh[0] + 0.282095f * A0 * color;
+
+			// Band 1
+			sh[1] = sh[1] + 0.488603f * n.X * A1 * color;
+			sh[2] = sh[2] + 0.488603f * n.Y * A1 * color;
+			sh[3] = sh[3] + 0.488603f * n.Z * A1 * color;
+
+			// Band 2
+			sh[4] = sh[4] + 1.092548f * n.X * n.Z * A2 * color;
+			sh[5] = sh[5] + 1.092548f * n.Z * n.Y * A2 * color;
+			sh[6] = sh[7] + 1.092548f * n.Y * n.X * A2 * color;
+
+			sh[7] = sh[6] + 0.315392f * (3.0f * n.Z * n.Z - 1.0f) * A2 * color;
+			sh[8] = sh[8] + 0.546274f * (n.X * n.X - n.Y * n.Y) * A2 * color;
+		}
+
+		void CRenderToTexture::getSHColor(const core::vector3df& n, const core::vector3df *sh, core::vector3df& color)
+		{
+			color = (
+				sh[0] +
+
+				sh[1] * n.X +
+				sh[2] * n.Y +
+				sh[3] * n.Z +
+
+				sh[4] * n.Z * n.X +
+				sh[5] * n.Y * n.Z +
+				sh[6] * n.Y * n.X +
+				sh[7] * (3.0f * n.Z * n.Z - 1.0f) +
+				sh[8] * (n.X*n.X - n.Y * n.Y));
 		}
 
 		void CRenderToTexture::getWorldView(
