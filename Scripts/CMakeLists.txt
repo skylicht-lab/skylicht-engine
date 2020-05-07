@@ -25,8 +25,11 @@ file(GLOB_RECURSE application_source
 	./Source/**.cpp 
 	./Source/**.c 
 	./Source/**.h)
-	
+
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+
+list (APPEND application_source ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.cpp)
+list (APPEND application_source ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.h)
 
 if (BUILD_ANDROID)
 	file(GLOB_RECURSE platform_android_source 
@@ -61,7 +64,7 @@ if (MSVC OR CYGWIN OR MINGW)
 endif()
 
 if (BUILD_MACOS)
-	# Angle API	
+	# Angle API
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
 	include_directories(${template_path}/Platforms/MacOS)
 	
@@ -119,7 +122,7 @@ elseif (BUILD_WINDOWS_STORE)
 	add_executable(@project_name@
 		${application_source}
 		${platform_uwp_asset}
-		${template_path}/Platforms/UWP/@project_name@_TemporaryKey.pfx
+		${template_path}/Platforms/UWP/TemporaryKey.pfx
 		${template_path}/Platforms/UWP/Package.appxmanifest
 	)
 elseif (MSVC OR CYGWIN OR MINGW)
@@ -178,7 +181,7 @@ else()
 	add_executable(@project_name@ ${application_source})
 endif()
 
-target_precompiled_header(@project_name@ ./Source/pch.cpp ${application_source})
+target_precompiled_header(@project_name@ ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)

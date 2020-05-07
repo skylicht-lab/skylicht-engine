@@ -23,7 +23,7 @@ endif()
 # Angle include
 if(BUILD_MACOS)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/MainApp/Platforms/MacOS)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/MacOS)
 endif()
 
 if(CYGWIN)
