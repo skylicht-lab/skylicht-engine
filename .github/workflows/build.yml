@@ -150,13 +150,12 @@ jobs:
       run: |
         brew install p7zip
         mkdir Build
-        ls -l Bin
+        ls -l Bin/Release
         version=$(cat "Version.txt")
         file_version=${version//./_}
         output=SkylichtDemo_${file_version}_MacOS.zip
         cd Bin/Release
-        7z a ${output} *.dylib
-        7z a ${output} MainApp*
+        7z a ${output} *.*
         cd ../..
         cp Bin/Release/${output} Build
     - name: Result
