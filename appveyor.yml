@@ -93,7 +93,8 @@ for:
       - set /p CONFIG_VERSION=<Version.txt
       - set file_version=%CONFIG_VERSION:.=_%_%APPVEYOR_BUILD_VERSION%
       - set output_zip=SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
-      - move Bin\%configuration%\MainApp.exe Bin\MainApp.exe
+      - copy Bin\%configuration%\*.exe Bin
+      - del Bin\%configuration%\*.exe
       - cd Bin
       - 7z a %output_zip% *.zip
       - 7z a %output_zip% *.exe
