@@ -158,9 +158,9 @@ jobs:
         7z a ${output} *.*
         cd ../..
         cp Bin/Release/${output} Build
-    - name: Result
-      uses: actions/upload-artifact@v1
-      with:
-        name: SkylichtDemo_MacOS
-        path: Build
+    #- name: Result
+    #  uses: actions/upload-artifact@v1
+    #  with:
+    #    name: SkylichtDemo_MacOS
+    #    path: Build
         
