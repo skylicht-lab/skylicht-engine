@@ -97,6 +97,8 @@ namespace Skylicht
 			return m_timeStep;
 		}
 
+		io::path getBuiltInPath(const char *name);
+
 		int getWidth();
 
 		int getHeight();

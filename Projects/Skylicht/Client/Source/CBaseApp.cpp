@@ -126,6 +126,23 @@ namespace Skylicht
 		}
 	}
 
+	io::path CBaseApp::getBuiltInPath(const char *name)
+	{
+#ifdef __EMSCRIPTEN__
+		// path from ./PrjEmscripten/Projects/MainApp
+		std::string assetPath = std::string("../../../Bin/BuiltIn/") + std::string(name);
+		return io::path(assetPath.c_str());
+#elif defined(WINDOWS_STORE)
+		std::string assetPath = std::string("Assets\\") + std::string(name);
+		return io::path(assetPath.c_str());
+#elif defined(MACOS)
+		std::string assetPath = CBuildConfig::DataFolder + std::string("//") + std::string(name);
+		return io::path(assetPath.c_str());
+#else
+		return io::path(name);
+#endif
+	}
+
 	int CBaseApp::getWidth()
 	{
 		return (int)m_driver->getScreenSize().Width;
