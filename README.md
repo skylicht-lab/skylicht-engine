@@ -84,29 +84,32 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 
 -   More details: please preview command in **BuildCommand** folder.
 
-### Add Source To Project
+### Add Your Project
 
-#### Static library
--   Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project.
+#### Add source
+-   Add new source files or subfolders on `Projects/{ProjectName}/Source`
     ```console
     # Example cmd to regenerate vs2017 x64 project
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
     ```
-#### Application
-- Run python script at Skylicht Project directory
+
+#### Create application project
+- Run python script **Scripts/create_project.py**
 ```console
-    # Create application Demo
+    # Create application NewApplication at folder Samples\NewApplication
     C:\skylicht-engine>python Scripts\create_project.py NewApplication Samples\NewApplication
-    
+```
+- Edit **CMakeProjects.cmake**, add new project **subdirs (Samples/NewApplication)** and regenerate projects
+```console
     # Regenerate vs2017 x64 project
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
 ```
-- Open Solution and click **NewApplication** - **"Set as StartUp Project"**.
+- Open Visual Studio Solution and click **NewApplication** - **"Set as StartUp Project"**.
 
 ### Samples Application
 
 #### Samples\HelloWorld
-Use **Glyph Font**, **Canvas Component**, **Graphics2D**, **GUI Text**
+Use **FreeType Font**, **Glyph Font**, **Canvas Component**, **Graphics2D**, **GUI Text**
 <img src="Documents/Media/Samples/sample_hello_world.png">
 
 ## Contributing
