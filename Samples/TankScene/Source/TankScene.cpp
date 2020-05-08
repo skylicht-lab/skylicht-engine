@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "SampleSponza.h"
+#include "TankScene.h"
 
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
@@ -8,44 +8,44 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleSponza *app = new SampleSponza();
-	getApplication()->registerAppEvent("SampleSponza", app);
+	TankScene *app = new TankScene();
+	getApplication()->registerAppEvent("TankScene", app);
 }
 
-SampleSponza::SampleSponza()
+TankScene::TankScene()
 {
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 }
 
-SampleSponza::~SampleSponza()
+TankScene::~TankScene()
 {
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
 }
 
-void SampleSponza::onInitApp()
+void TankScene::onInitApp()
 {
 	CViewManager::getInstance()->getLayer(0)->pushView<CViewInit>();
 }
 
-void SampleSponza::onUpdate()
+void TankScene::onUpdate()
 {
 	CViewManager::getInstance()->update();
 }
 
-void SampleSponza::onRender()
+void TankScene::onRender()
 {
 	CViewManager::getInstance()->render();
 }
 
-void SampleSponza::onPostRender()
+void TankScene::onPostRender()
 {
 	// post render application
 	CViewManager::getInstance()->postRender();
 }
 
-bool SampleSponza::onBack()
+bool TankScene::onBack()
 {
 	// on back key press
 	// return TRUE will run default by OS (Mobile)
@@ -53,19 +53,19 @@ bool SampleSponza::onBack()
 	return CViewManager::getInstance()->onBack();
 }
 
-void SampleSponza::onResume()
+void TankScene::onResume()
 {
 	// resume application
 	CViewManager::getInstance()->onResume();
 }
 
-void SampleSponza::onPause()
+void TankScene::onPause()
 {
 	// pause application
 	CViewManager::getInstance()->onPause();
 }
 
-void SampleSponza::onQuitApp()
+void TankScene::onQuitApp()
 {
 	// end application
 	delete this;
