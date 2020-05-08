@@ -38,6 +38,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CCullingData.h"
 #include "Transform/CWorldTransformData.h"
 
+#include "Importer/Utils/CMeshUtils.h"
+
 namespace Skylicht
 {
 
@@ -1722,7 +1724,7 @@ namespace Skylicht
 				}
 				else if ((effect && effect->HasBumpMapping) || m_createTangent)
 				{
-					convertToTangentVertices(buffer);
+					CMeshUtils::convertToTangentVertices(buffer, m_flipOx);
 				}
 			}
 			else
@@ -1734,34 +1736,27 @@ namespace Skylicht
 				if (m_createTangent)
 				{
 					// construct skin tangent buffer
-					convertToSkinTangentVertices(buffer);
+					CMeshUtils::convertToSkinTangentVertices(buffer, m_flipOx);
 				}
 				else
 				{
 					// construct skin buffer
-					convertToSkinVertices(buffer);
+					CMeshUtils::convertToSkinVertices(buffer);
 				}
 			}
 
 			//if (needFixUV && s_fixUV)
 			//	fixUVTitle(buffer);
 
+			char materialName[512];
+			strcpy(materialName, "");
+
 			if (effect != NULL)
-			{
-				char materialName[512];
 				CStringImp::convertUnicodeToUTF8(effect->Id.c_str(), materialName);
-				colladaMesh->MaterialName.push_back(materialName);
-				colladaMesh->Material.push_back(NULL);
-			}
-			else
-			{
-				colladaMesh->MaterialName.push_back("");
-				colladaMesh->Material.push_back(NULL);
-			}
 
 			if (buffer)
 			{
-				colladaMesh->addMeshBuffer(buffer);
+				colladaMesh->addMeshBuffer(buffer, materialName);
 				buffer->recalculateBoundingBox();
 				buffer->drop();
 			}
@@ -2085,287 +2080,6 @@ namespace Skylicht
 		return buffer;
 	}
 
-	void CColladaLoader::convertToSkinVertices(IMeshBuffer* buffer)
-	{
-		// change vertex descriptor
-		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN));
-
-		for (u32 i = 0; i < buffer->getVertexBufferCount(); ++i)
-		{
-			CVertexBuffer<video::S3DVertexSkin>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkin>();
-
-			// copy vertex data
-			copyVertices(buffer->getVertexBuffer(i), vertexBuffer);
-
-			// replace the buffer
-			buffer->setVertexBuffer(vertexBuffer, i);
-
-			// drop reference
-			vertexBuffer->drop();
-		}
-
-		// assign skin material
-		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
-	}
-
-	void CColladaLoader::convertToSkinTangentVertices(IMeshBuffer* buffer)
-	{
-		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN_TANGENTS));
-
-		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
-		{
-			CVertexBuffer<video::S3DVertexSkinTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkinTangents>();
-
-			// copy vertex data
-			copyVertices(buffer->getVertexBuffer(j), vertexBuffer);
-
-			// todo calc tangent & binormal
-			const u32 vtxCnt = vertexBuffer->getVertexCount();
-			const u32 idxCnt = buffer->getIndexBuffer()->getIndexCount();
-
-			u16* idx16 = NULL;
-			u32* idx32 = NULL;
-
-			if (buffer->getIndexBuffer()->getType() == video::EIT_16BIT)
-				idx16 = (u16*)buffer->getIndexBuffer()->getIndices();
-			else
-				idx32 = (u32*)buffer->getIndexBuffer()->getIndices();
-
-			video::S3DVertexSkinTangents* v = (video::S3DVertexSkinTangents*)vertexBuffer->getVertices();
-
-			u32 i;
-			for (i = 0; i != vtxCnt; ++i)
-			{
-				v[i].Tangent.set(0.f, 0.f, 0.f);
-				v[i].Binormal.set(0.f, 0.f, 0.f);
-				v[i].TangentW.set(1.f, 1.f);
-			}
-
-			// https://www.marti.works/calculating-tangents-for-your-mesh/
-			// https://answers.unity.com/questions/7789/calculating-tangents-vector4.html
-			// (1)
-			for (i = 0; i < idxCnt; i += 3)
-			{
-				int i1 = 0;
-				int i2 = 0;
-				int i3 = 0;
-
-				if (idx16 != NULL)
-				{
-					i1 = idx16[i + 0];
-					i2 = idx16[i + 1];
-					i3 = idx16[i + 2];
-				}
-				else
-				{
-					i1 = idx32[i + 0];
-					i2 = idx32[i + 1];
-					i3 = idx32[i + 2];
-				}
-
-				// if this triangle is degenerate, skip it!
-				if (v[i1].Pos == v[i2].Pos ||
-					v[i1].Pos == v[i3].Pos ||
-					v[i2].Pos == v[i3].Pos)
-				{
-					continue;
-				}
-
-				core::vector3df v1 = v[i1].Pos;
-				core::vector3df v2 = v[i2].Pos;
-				core::vector3df v3 = v[i3].Pos;
-
-				core::vector2df w1 = v[i1].TCoords;
-				core::vector2df w2 = v[i2].TCoords;
-				core::vector2df w3 = v[i3].TCoords;
-
-				float x1 = v2.X - v1.X;
-				float x2 = v3.X - v1.X;
-				float y1 = v2.Y - v1.Y;
-				float y2 = v3.Y - v1.Y;
-				float z1 = v2.Z - v1.Z;
-				float z2 = v3.Z - v1.Z;
-
-				float s1 = w2.X - w1.X;
-				float s2 = w3.X - w1.X;
-				float t1 = w2.Y - w1.Y;
-				float t2 = w3.Y - w1.Y;
-
-				float r = 1.0f / (s1 * t2 - s2 * t1);
-
-				core::vector3df sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
-				core::vector3df tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
-
-				v[i1].Tangent += sdir;
-				v[i2].Tangent += sdir;
-				v[i3].Tangent += sdir;
-
-				v[i1].Binormal += tdir;
-				v[i2].Binormal += tdir;
-				v[i3].Binormal += tdir;
-			}
-
-			// (2)
-			for (i = 0; i != vtxCnt; ++i)
-			{
-				core::vector3df n = v[i].Normal;
-				core::vector3df t = v[i].Tangent;
-				core::vector3df t2 = v[i].Binormal;
-
-				v[i].Tangent = (t - n * n.dotProduct(t));
-
-				float w = n.crossProduct(t).dotProduct(t2) > 0.0f ? 1.0f : -1.0f;
-				v[i].Binormal = n.crossProduct(t);
-
-				// OK on YUp
-				if (m_flipOx == true)
-				{
-					v[i].TangentW.X = w;
-				}
-
-				v[i].Tangent.normalize();
-				v[i].Binormal.normalize();
-				v[i].Normal.normalize();
-			}
-
-			// replace the buffer
-			buffer->setVertexBuffer(vertexBuffer, j);
-
-			// drop reference
-			vertexBuffer->drop();
-		}
-
-		// assign skin material
-		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
-	}
-
-	void CColladaLoader::convertToTangentVertices(IMeshBuffer* buffer)
-	{
-		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_TANGENTS));
-
-		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
-		{
-			CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexTangents>();
-
-			// copy vertex data
-			copyVertices(buffer->getVertexBuffer(j), vertexBuffer);
-
-			// todo calc tangent & binormal
-			const u32 vtxCnt = vertexBuffer->getVertexCount();
-			const u32 idxCnt = buffer->getIndexBuffer()->getIndexCount();
-
-			u16* idx16 = NULL;
-			u32* idx32 = NULL;
-
-			if (buffer->getIndexBuffer()->getType() == video::EIT_16BIT)
-				idx16 = (u16*)buffer->getIndexBuffer()->getIndices();
-			else
-				idx32 = (u32*)buffer->getIndexBuffer()->getIndices();
-
-			video::S3DVertexTangents* v = (video::S3DVertexTangents*)vertexBuffer->getVertices();
-
-			u32 i;
-			for (i = 0; i != vtxCnt; ++i)
-			{
-				v[i].Tangent.set(0.f, 0.f, 0.f);
-				v[i].Binormal.set(0.f, 0.f, 0.f);
-			}
-
-			// https://www.marti.works/calculating-tangents-for-your-mesh/
-			// https://answers.unity.com/questions/7789/calculating-tangents-vector4.html
-			// (1)
-			for (i = 0; i < idxCnt; i += 3)
-			{
-				int i1 = 0;
-				int i2 = 0;
-				int i3 = 0;
-
-				if (idx16 != NULL)
-				{
-					i1 = idx16[i + 0];
-					i2 = idx16[i + 1];
-					i3 = idx16[i + 2];
-				}
-				else
-				{
-					i1 = idx32[i + 0];
-					i2 = idx32[i + 1];
-					i3 = idx32[i + 2];
-				}
-
-				// if this triangle is degenerate, skip it!
-				if (v[i1].Pos == v[i2].Pos ||
-					v[i1].Pos == v[i3].Pos ||
-					v[i2].Pos == v[i3].Pos)
-				{
-					continue;
-				}
-
-				core::vector3df v1 = v[i1].Pos;
-				core::vector3df v2 = v[i2].Pos;
-				core::vector3df v3 = v[i3].Pos;
-
-				core::vector2df w1 = v[i1].TCoords;
-				core::vector2df w2 = v[i2].TCoords;
-				core::vector2df w3 = v[i3].TCoords;
-
-				float x1 = v2.X - v1.X;
-				float x2 = v3.X - v1.X;
-				float y1 = v2.Y - v1.Y;
-				float y2 = v3.Y - v1.Y;
-				float z1 = v2.Z - v1.Z;
-				float z2 = v3.Z - v1.Z;
-
-				float s1 = w2.X - w1.X;
-				float s2 = w3.X - w1.X;
-				float t1 = w2.Y - w1.Y;
-				float t2 = w3.Y - w1.Y;
-
-				float r = 1.0f / (s1 * t2 - s2 * t1);
-
-				core::vector3df sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
-				core::vector3df tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
-
-				v[i1].Tangent += sdir;
-				v[i2].Tangent += sdir;
-				v[i3].Tangent += sdir;
-
-				v[i1].Binormal += tdir;
-				v[i2].Binormal += tdir;
-				v[i3].Binormal += tdir;
-			}
-
-			// (2)
-			for (i = 0; i != vtxCnt; ++i)
-			{
-				core::vector3df n = v[i].Normal;
-				core::vector3df t = v[i].Tangent;
-				core::vector3df t2 = v[i].Binormal;
-
-				v[i].Tangent = (t - n * n.dotProduct(t));
-
-				float w = n.crossProduct(t).dotProduct(t2) > 0.0f ? 1.0f : -1.0f;
-				v[i].Binormal = n.crossProduct(t);
-
-				// OK on YUp
-				if (m_flipOx == true)
-				{
-					v[i].TangentW.X = w;
-				}
-
-				v[i].Tangent.normalize();
-				v[i].Binormal.normalize();
-				v[i].Normal.normalize();
-			}
-
-			// replace the buffer
-			buffer->setVertexBuffer(vertexBuffer, j);
-
-			// drop reference
-			vertexBuffer->drop();
-		}
-	}
-
 	void CColladaLoader::convertToLightMapVertices(IMeshBuffer* buffer, SMeshParam *mesh, STrianglesParam* tri)
 	{
 		SVerticesParam	*vertices = &mesh->Vertices[tri->VerticesIndex];
@@ -2382,7 +2096,7 @@ namespace Skylicht
 			CVertexBuffer<video::S3DVertex2TCoords>* vertexBuffer = new CVertexBuffer<video::S3DVertex2TCoords>();
 
 			// copy vertex data
-			copyVertices(buffer->getVertexBuffer(i), vertexBuffer);
+			CMeshUtils::copyVertices(buffer->getVertexBuffer(i), vertexBuffer);
 
 			// fill texcoord 2
 			// if have the normal & texcoord
@@ -2424,30 +2138,6 @@ namespace Skylicht
 
 			// drop reference
 			vertexBuffer->drop();
-		}
-	}
-
-	void CColladaLoader::copyVertices(IVertexBuffer *srcBuffer, IVertexBuffer *dstBuffer)
-	{
-		int numVertex = srcBuffer->getVertexCount();
-		unsigned char *src = (unsigned char*)srcBuffer->getVertices();
-		u32 srcSize = srcBuffer->getVertexSize();
-
-		dstBuffer->set_used(numVertex);
-		unsigned char *dst = (unsigned char*)dstBuffer->getVertices();
-		u32 dstSize = dstBuffer->getVertexSize();
-
-		// cannot copy
-		if (srcSize > dstSize)
-			return;
-
-		// copy vertex data
-		for (int i = 0; i < numVertex; i++)
-		{
-			memset(dst, 0, dstSize);
-			memcpy(dst, src, srcSize);
-			dst += dstSize;
-			src += srcSize;
 		}
 	}
 

@@ -99,16 +99,17 @@ namespace Skylicht
 		m_next = next;
 	}
 
-	void CBaseRP::onNext(ITexture *target, CCamera *camera, CEntityManager* entity)
+	void CBaseRP::onNext(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& viewport)
 	{
 		if (m_next != NULL)
-			m_next->render(target, camera, entity);
+			m_next->render(target, camera, entity, viewport);
 	}
 
 	void CBaseRP::drawMeshBuffer(CMesh *mesh, int bufferID)
 	{
-		// set shader material
-		CShaderMaterial::setMaterial(mesh->Material[bufferID]);
+		// set shader (uniform) material
+		if (mesh->Material.size() > (u32)bufferID)
+			CShaderMaterial::setMaterial(mesh->Material[bufferID]);
 
 		IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver *driver = getVideoDriver();

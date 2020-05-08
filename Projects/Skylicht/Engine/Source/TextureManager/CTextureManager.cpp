@@ -104,7 +104,7 @@ namespace Skylicht
 				if ((*i)->package == namePackage)
 				{
 					char log[512];
-					sprintf(log, "Remove Texture: %s\n", (*i)->texture->getName().getPath().c_str());
+					sprintf(log, "Remove Texture: %s", (*i)->texture->getName().getPath().c_str());
 					os::Printer::log(log);
 
 					driver->removeTexture((*i)->texture);
@@ -133,7 +133,7 @@ namespace Skylicht
 		else
 		{
 			char errorLog[512];
-			sprintf(errorLog, "Can not load texture: %s\n", path);
+			sprintf(errorLog, "Can not load texture: %s", path);
 			os::Printer::log(errorLog);
 		}
 
@@ -264,7 +264,7 @@ namespace Skylicht
 							if (fs->existFile(ansiPath) == false)
 							{
 								char errorLog[512];
-								sprintf(errorLog, "Can not load texture (file not found): %s\n", path);
+								sprintf(errorLog, "Can not load texture (file not found): %s", path);
 								os::Printer::log(errorLog);
 								return NULL;
 							}
@@ -283,7 +283,7 @@ namespace Skylicht
 		else
 		{
 			char errorLog[512];
-			sprintf(errorLog, "Can not load texture: %s\n", path);
+			sprintf(errorLog, "Can not load texture: %s", path);
 			os::Printer::log(errorLog);
 		}
 
@@ -366,7 +366,7 @@ namespace Skylicht
 								if (fs->existFile(ansiPath) == false)
 								{
 									char errorLog[512];
-									sprintf(errorLog, "Can not load array texture (file not found): %s\n", paths[i].c_str());
+									sprintf(errorLog, "Can not load array texture (file not found): %s", paths[i].c_str());
 									os::Printer::log(errorLog);
 									loadImage = false;
 								}
@@ -410,7 +410,7 @@ namespace Skylicht
 					if (w != imageW || h != imageH)
 					{
 						char errorLog[512];
-						sprintf(errorLog, "Error: Texture size is not equal %d-%d: %s\n", w, h, ansiPath);
+						sprintf(errorLog, "Error: Texture size is not equal %d-%d: %s", w, h, ansiPath);
 						os::Printer::log(errorLog);
 
 						image->drop();
@@ -429,7 +429,7 @@ namespace Skylicht
 		if (listImage.size() > 0 && listImage[0] == NULL)
 		{
 			char errorLog[512];
-			sprintf(errorLog, "Can not load texture array: %s\n", paths[0].c_str());
+			sprintf(errorLog, "Can not load texture array: %s", paths[0].c_str());
 			os::Printer::log(errorLog);
 		}
 		else
@@ -442,7 +442,7 @@ namespace Skylicht
 			else
 			{
 				char errorLog[512];
-				sprintf(errorLog, "Can not load texture array: %s\n", paths[0].c_str());
+				sprintf(errorLog, "Can not load texture array: %s", paths[0].c_str());
 				os::Printer::log(errorLog);
 			}
 		}
@@ -502,7 +502,7 @@ namespace Skylicht
 		else
 		{
 			char errorLog[512];
-			sprintf(errorLog, "Can not load texture: %s\n", paths[0].c_str());
+			sprintf(errorLog, "Can not load texture: %s", paths[0].c_str());
 			os::Printer::log(errorLog);
 		}
 

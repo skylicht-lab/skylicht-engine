@@ -3,6 +3,8 @@
 #include "CMeshManager.h"
 
 #include "Importer/Collada/CColladaLoader.h"
+#include "Importer/WavefrontOBJ/COBJMeshFileLoader.h"
+
 #include "RenderMesh/CRenderMeshData.h"
 #include "Material/Shader/CShaderManager.h"
 #include "Material/Shader/CShader.h"
@@ -46,9 +48,9 @@ namespace Skylicht
 		// load from file
 		std::string ext = CPath::getFileNameExt(resource);
 		if (ext == "dae")
-		{
 			importer = new CColladaLoader();
-		}
+		else if (ext == "obj")
+			importer = new COBJMeshFileLoader();
 
 		if (importer != NULL)
 		{
