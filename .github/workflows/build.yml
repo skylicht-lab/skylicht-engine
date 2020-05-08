@@ -74,23 +74,6 @@ jobs:
        mkdir PrjUWP\Projects
        cmake -S . -B ./PrjUWP -G "Visual Studio 16 2019" -A x64 -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0
        cmake --build ./PrjUWP --config "Release"
-    - name: Package
-      shell: cmd
-      run: |
-        mkdir Build        
-        type Version.txt
-        set /p CONFIG_VERSION=<Version.txt
-        set file_version=%CONFIG_VERSION:.=_%
-        set output=SkylichtDemo_%file_version%_UWP.zip
-        pushd PrjUWP\Projects\MainApp\AppPackages\MainApp\MainApp_1.0.0.0_x64_Test
-        7z a %output% .\*.*        
-        popd
-        copy PrjUWP\Projects\MainApp\AppPackages\MainApp\MainApp_1.0.0.0_x64_Test\%output% Build
-    - name: Result
-      uses: actions/upload-artifact@v1
-      with:
-        name: SkylichtDemo_UWP
-        path: Build
     
   Linux:
     runs-on: ubuntu-latest    
@@ -123,7 +106,7 @@ jobs:
         output=SkylichtDemo_${file_version}_Linux.zip
         cd Bin
         7z a ${output} *.zip
-        7z a ${output} MainApp*
+        7z a ${output} *
         cd ..
         cp Bin/${output} Build
     - name: Result
