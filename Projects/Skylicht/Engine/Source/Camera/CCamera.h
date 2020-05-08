@@ -46,6 +46,9 @@ namespace Skylicht
 		float m_nearValue;
 		float m_farValue;
 		float m_fov;
+		float m_aspect;
+
+		core::vector3df m_up;
 
 		SViewFrustum m_viewArea;
 
@@ -76,11 +79,15 @@ namespace Skylicht
 
 		const core::matrix4& getViewMatrix() const;
 
+		void setViewMatrix(const core::matrix4& view);
+
 		void setPosition(const core::vector3df& position);
 
 		void lookAt(const core::vector3df& position, const core::vector3df& target, const core::vector3df& up);
 
 		void lookAt(const core::vector3df& target, const core::vector3df& up);
+
+		void setUpVector(const core::vector3df& up);
 
 		inline void setNearValue(float f)
 		{
@@ -115,7 +122,15 @@ namespace Skylicht
 			return m_fov;
 		}
 
+		inline void setAspect(float f)
+		{
+			m_aspect = f;
+			recalculateProjectionMatrix();
+		}
+
 		void recalculateProjectionMatrix();
+
+		void recalculateViewMatrix();
 
 		const SViewFrustum& getViewFrustum()
 		{

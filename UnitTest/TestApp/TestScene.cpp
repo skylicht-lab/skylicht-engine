@@ -115,8 +115,8 @@ void TestScene::update()
 
 void TestScene::render()
 {
-	m_forwardRP->render(NULL, m_camera, m_zone->getEntityManager());
-	m_deferredRP->render(NULL, m_camera, m_zone->getEntityManager());
+	m_forwardRP->render(NULL, m_camera, m_zone->getEntityManager(), core::recti());
+	m_deferredRP->render(NULL, m_camera, m_zone->getEntityManager(), core::recti());
 }
 
 TestScene* g_testScene = NULL;

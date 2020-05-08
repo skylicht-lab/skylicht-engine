@@ -2,11 +2,17 @@
 
 #include "IApplicationEventReceiver.h"
 
-class CDemo : public IApplicationEventReceiver
+#include "Scene/CScene.h"
+#include "Camera/CCamera.h"
+#include "Graphics2D/SpriteFrame/CGlyphFont.h"
+
+class TankScene : public IApplicationEventReceiver
 {
+private:
+
 public:
-	CDemo();
-	virtual ~CDemo();
+	TankScene();
+	virtual ~TankScene();
 
 	virtual void onUpdate();
 
@@ -18,9 +24,9 @@ public:
 
 	virtual void onPause();
 
+	virtual bool onBack();
+
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
-
-	virtual bool onBack();
 };

@@ -75,8 +75,11 @@ namespace Skylicht
 
 	void CShadowMapRP::drawMeshBuffer(CMesh *mesh, int bufferID)
 	{
-		// set shader material
-		CShaderMaterial::setMaterial(mesh->Material[bufferID]);
+		if (mesh->Material.size() > (u32)bufferID)
+		{
+			// set shader material
+			CShaderMaterial::setMaterial(mesh->Material[bufferID]);
+		}
 
 		IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver *driver = getVideoDriver();
@@ -88,7 +91,7 @@ namespace Skylicht
 		driver->drawMeshBuffer(mb);
 	}
 
-	void CShadowMapRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager)
+	void CShadowMapRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
 			return;
@@ -164,6 +167,6 @@ namespace Skylicht
 				d->regenerateMipMapLevels();
 		}
 
-		onNext(target, camera, entityManager);
+		onNext(target, camera, entityManager, viewport);
 	}
 }

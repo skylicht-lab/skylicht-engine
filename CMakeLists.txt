@@ -36,6 +36,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
+set(BUILD_CURL OFF)
 
 if (CMAKE_SYSTEM_NAME STREQUAL WindowsStore)
 	set(BUILD_ENGINE_TOOL OFF)
@@ -239,6 +240,7 @@ endif()
 subdirs (Projects/Skylicht/System)
 subdirs (Projects/Skylicht/Engine)
 subdirs (Projects/Skylicht/Components)
+subdirs (Projects/Skylicht/Lightmapper)
 #subdirs (Projects/Skylicht/Audio)
 #subdirs (Projects/Skylicht/Physics)
 
