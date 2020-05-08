@@ -52,6 +52,14 @@ if (BUILD_WINDOWS_STORE)
 		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo/Assets)
 	endforeach()
 
+	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Package.appxmanifest
+		DESTINATION 
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo)
+		
+	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/TemporaryKey.pfx
+		DESTINATION 
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo)
+
 	file(GLOB_RECURSE platform_uwp_source 
 		${template_path}/Platforms/UWP/**.cpp 
 		${template_path}/Platforms/UWP/**.c 
@@ -136,8 +144,8 @@ elseif (BUILD_WINDOWS_STORE)
 	add_executable(Demo
 		${application_source}
 		${platform_uwp_asset}
-		${template_path}/Platforms/UWP/TemporaryKey.pfx
-		${template_path}/Platforms/UWP/Package.appxmanifest
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo/TemporaryKey.pfx
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo/Package.appxmanifest
 	)
 elseif (MSVC OR CYGWIN OR MINGW)
 	add_executable(Demo WIN32
@@ -169,9 +177,10 @@ elseif (BUILD_MACOS)
 	target_link_libraries(Demo ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(Demo "-framework Cocoa")
 
+	message(STATUS "- Setup project: Demo")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
-		message(STATUS "- Add resources: ${res_path}")
+		message(STATUS "  - Add resources: ${res_path}")
 		set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
 		source_group("Bin" FILES "${res_file}")
 	endforeach()
