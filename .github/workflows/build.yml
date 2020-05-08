@@ -92,23 +92,21 @@ jobs:
         cmake -S. -BPrjLinux -DBUILD_SDL=true
         cd Assets
         python BuildAssetBundles.py
-        cd ..        
-        make -C PrjLinux        
+        cd ..
+        make -C PrjLinux
     - name: Unit Test
       run: |
-        ctest --verpose        
+        ctest --verpose
     - name: Package
       run: |
         mkdir Build
         ls -l Bin
         version=$(cat "Version.txt")
         file_version=${version//./_}
-        output=SkylichtDemo_${file_version}_Linux.zip
+        output=../Build/SkylichtDemo_${file_version}_Linux.zip
         cd Bin
-        7z a ${output} *.zip
-        7z a ${output} *
+        7z a ${output} ./*
         cd ..
-        cp Bin/${output} Build
     - name: Result
       uses: actions/upload-artifact@v1
       with:
