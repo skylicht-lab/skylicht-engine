@@ -35,7 +35,8 @@ namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CProbe::CProbe()
+		CProbe::CProbe() :
+			m_probeData(NULL)
 		{
 
 		}

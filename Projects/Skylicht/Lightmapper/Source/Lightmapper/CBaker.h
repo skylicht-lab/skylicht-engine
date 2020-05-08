@@ -35,7 +35,7 @@ namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CRenderToTexture
+		class CBaker
 		{
 		protected:
 			video::ITexture *m_radiance;
@@ -43,9 +43,9 @@ namespace Skylicht
 			core::vector3df m_sh9[9];
 
 		public:
-			CRenderToTexture();
+			CBaker();
 
-			virtual ~CRenderToTexture();
+			virtual ~CBaker();
 
 			void bake(CCamera *camera,
 				IRenderPipeline* rp,
