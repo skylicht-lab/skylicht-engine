@@ -41,16 +41,24 @@ if (BUILD_ANDROID)
 endif()
 
 if (BUILD_WINDOWS_STORE)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/@project_name@)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/@project_name@/Assets)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/Assets)
 	
 	file(GLOB uwp_assets 
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Assets/**.*
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/**.zip)
 	
 	foreach(asset_file ${uwp_assets})
-		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/@project_name@/Assets)
+		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/Assets)
 	endforeach()
+
+	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Package.appxmanifest
+		DESTINATION 
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@)
+		
+	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/TemporaryKey.pfx
+		DESTINATION 
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@)
 
 	file(GLOB_RECURSE platform_uwp_source 
 		${template_path}/Platforms/UWP/**.cpp 
@@ -58,7 +66,7 @@ if (BUILD_WINDOWS_STORE)
 		${template_path}/Platforms/UWP/**.h)
 	
 	# copy resource to generate prj folder
-	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/@project_name@/Assets/**.*)
+	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/Assets/**.*)
 	add_source_group("${platform_uwp_asset}" "Assets")
 	
 	list (APPEND application_source ${platform_uwp_source})
@@ -136,8 +144,8 @@ elseif (BUILD_WINDOWS_STORE)
 	add_executable(@project_name@
 		${application_source}
 		${platform_uwp_asset}
-		${template_path}/Platforms/UWP/TemporaryKey.pfx
-		${template_path}/Platforms/UWP/Package.appxmanifest
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/TemporaryKey.pfx
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/Package.appxmanifest
 	)
 elseif (MSVC OR CYGWIN OR MINGW)
 	add_executable(@project_name@ WIN32

@@ -35,10 +35,18 @@ def main():
 
     print("Create project: %s at %s" % (project_name, project_path))
 
+    copy_source = True
+
     # Create Project folder
     if (os.path.exists(project_path) is True):
-        print("- Error: %s is exits" % (project_path))
-        return
+        print("Warning: Project %s is exits" % (project_path))
+        answer = raw_input(
+            "Do use want override CMakeLists.txt - Yes[y] or No[n]: ")
+        if answer != "y":
+            return
+        else:
+            print("Override!")
+            copy_source = False
     else:
         os.makedirs(project_path + "/Source")
 
@@ -46,6 +54,15 @@ def main():
     shutil.copy("Scripts/CMakeLists.txt", target_cmake)
     replace_text(target_cmake, "@project_path@", project_path)
     replace_text(target_cmake, "@project_name@", project_name)
+
+    if copy_source == True:
+        source_h = project_path + "/Source/" + project_name + ".h"
+        source_cpp = project_path + "/Source/" + project_name + ".cpp"
+        shutil.copy("Scripts/Template.h", source_h)
+        replace_text(source_h, "@project_name@", project_name)
+
+        shutil.copy("Scripts/Template.cpp", source_cpp)
+        replace_text(source_cpp, "@project_name@", project_name)
 
 
 if __name__ == '__main__':
