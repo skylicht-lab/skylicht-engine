@@ -31,7 +31,7 @@ namespace Skylicht
 	{
 		CLightmapper::CLightmapper()
 		{
-			m_rtt = new CRenderToTexture();
+			m_rtt = new CBaker();
 		}
 
 		CLightmapper::~CLightmapper()

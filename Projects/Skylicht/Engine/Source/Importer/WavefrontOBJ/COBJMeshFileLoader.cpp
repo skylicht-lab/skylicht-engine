@@ -652,7 +652,7 @@ namespace Skylicht
 			if (!strncmp(bufPtr, "-bm", 3))
 			{
 				bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-				materialParam = core::fast_atof(textureNameBuf);
+				// materialParam = core::fast_atof(textureNameBuf);
 				bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
 				continue;
 			}
@@ -714,7 +714,7 @@ namespace Skylicht
 
 		if ((type == 1) && (core::isdigit(textureNameBuf[0])))
 		{
-			materialParam = core::fast_atof(textureNameBuf);
+			// materialParam = core::fast_atof(textureNameBuf);
 			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
 		}
 
