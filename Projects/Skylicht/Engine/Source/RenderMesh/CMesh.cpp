@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CMesh::CMesh()
-	{	
+	{
 	}
 
 	CMesh::~CMesh()
@@ -113,12 +113,14 @@ namespace Skylicht
 			BoundingBox.reset(0.0f, 0.0f, 0.0f);
 	}
 
-	void CMesh::addMeshBuffer(IMeshBuffer* buf)
+	void CMesh::addMeshBuffer(IMeshBuffer* buf, const char* materialName, CMaterial *m)
 	{
 		if (buf)
 		{
 			buf->grab();
 			MeshBuffers.push_back(buf);
+			MaterialName.push_back(materialName);
+			Material.push_back(m);
 		}
 	}
 

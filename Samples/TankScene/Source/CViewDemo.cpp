@@ -5,7 +5,6 @@
 #include "Graphics2D/CGraphics2D.h"
 
 #include "Material/Shader/CShaderManager.h"
-#include "imgui.h"
 
 CViewDemo::CViewDemo()
 {
@@ -36,6 +35,8 @@ void CViewDemo::onUpdate()
 		scene->update();
 }
 
+bool bake = false;
+
 void CViewDemo::onRender()
 {
 	CContext *context = CContext::getInstance();
@@ -50,7 +51,7 @@ void CViewDemo::onRender()
 	{
 		context->updateDirectionLight();
 
-		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager());
+		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager(), core::recti());
 	}
 
 	// render GUI
@@ -62,29 +63,5 @@ void CViewDemo::onRender()
 
 void CViewDemo::onPostRender()
 {
-	static bool showImguiDemo = false;
 
-	// render ImGui
-	ImGui::BeginMainMenuBar();
-	if (ImGui::BeginMenu("Skylicht"))
-	{
-		if (ImGui::BeginMenu("Renderer"))
-		{
-			ImGui::EndMenu();
-		}
-
-		ImGui::EndMenu();
-	}
-	if (ImGui::BeginMenu("Windows"))
-	{
-		ImGui::MenuItem("ImGui Demo", NULL, &showImguiDemo);
-		ImGui::EndMenu();
-	}
-
-	ImGui::EndMainMenuBar();
-
-	if (showImguiDemo == true)
-	{
-		ImGui::ShowDemoWindow(&showImguiDemo);
-	}
 }

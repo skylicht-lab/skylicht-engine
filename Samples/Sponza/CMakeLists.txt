@@ -1,5 +1,6 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Demo/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/Sponza/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Spark/include
@@ -7,6 +8,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
 )
@@ -24,7 +26,9 @@ set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template)
 file(GLOB_RECURSE application_source 
 	./Source/**.cpp 
 	./Source/**.c 
-	./Source/**.h)
+	./Source/**.h
+	../SampleFW/**.cpp
+	../SampleFW/**.h)
 
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -41,24 +45,24 @@ if (BUILD_ANDROID)
 endif()
 
 if (BUILD_WINDOWS_STORE)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo/Assets)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Sponza)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Sponza/Assets)
 	
 	file(GLOB uwp_assets 
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Assets/**.*
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/**.zip)
 	
 	foreach(asset_file ${uwp_assets})
-		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo/Assets)
+		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Sponza/Assets)
 	endforeach()
 
 	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Package.appxmanifest
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Sponza)
 		
 	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/TemporaryKey.pfx
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Sponza)
 
 	file(GLOB_RECURSE platform_uwp_source 
 		${template_path}/Platforms/UWP/**.cpp 
@@ -66,7 +70,7 @@ if (BUILD_WINDOWS_STORE)
 		${template_path}/Platforms/UWP/**.h)
 	
 	# copy resource to generate prj folder
-	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo/Assets/**.*)
+	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Sponza/Assets/**.*)
 	add_source_group("${platform_uwp_asset}" "Assets")
 	
 	list (APPEND application_source ${platform_uwp_source})
@@ -129,38 +133,38 @@ if (MINGW OR CYGWIN)
 endif()
 
 if (BUILD_EMSCRIPTEN)
-	add_executable(Demo 
+	add_executable(SampleSponza 
 		${application_source}
 		${template_path}/Platforms/Emscripten/MainWebGL.cpp
 	)
 elseif(BUILD_SDL)
-	add_executable(Demo 
+	add_executable(SampleSponza 
 		${application_source}
 		${template_path}/Platforms/SDL2/MainSDL.cpp
 	)
 elseif(BUILD_ANDROID)
-	add_library(Demo SHARED ${application_source})
+	add_library(SampleSponza SHARED ${application_source})
 elseif (BUILD_WINDOWS_STORE)
-	add_executable(Demo
+	add_executable(SampleSponza
 		${application_source}
 		${platform_uwp_asset}
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo/TemporaryKey.pfx
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Demo/Package.appxmanifest
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Sponza/TemporaryKey.pfx
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Sponza/Package.appxmanifest
 	)
 elseif (MSVC OR CYGWIN OR MINGW)
-	add_executable(Demo WIN32
+	add_executable(SampleSponza WIN32
 		${application_source}
 		${template_path}/Platforms/Win32/Skylicht.rc
 	)
 elseif (BUILD_MACOS)
 	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
 
-	add_executable(Demo 
+	add_executable(SampleSponza 
 		${application_source} 
 		${resources_files}
 	)
 	
-	set_target_properties(Demo PROPERTIES MACOSX_BUNDLE TRUE)
+	set_target_properties(SampleSponza PROPERTIES MACOSX_BUNDLE TRUE)
 	
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
 	
@@ -174,10 +178,10 @@ elseif (BUILD_MACOS)
 		libGLESv2.dylib
 		PATHS ${angle_lib_path})
 
-	target_link_libraries(Demo ${LIBEGL} ${LIBGLESV2})
-	target_link_libraries(Demo "-framework Cocoa")
+	target_link_libraries(SampleSponza ${LIBEGL} ${LIBGLESV2})
+	target_link_libraries(SampleSponza "-framework Cocoa")
 
-	message(STATUS "- Setup project: Demo")
+	message(STATUS "- Setup project: SampleSponza")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
 		message(STATUS "  - Add resources: ${res_path}")
@@ -185,57 +189,57 @@ elseif (BUILD_MACOS)
 		source_group("Bin" FILES "${res_file}")
 	endforeach()
 
-	add_custom_command(TARGET Demo 
+	add_custom_command(TARGET SampleSponza 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libEGL.dylib @rpath/libEGL.dylib
-		$<TARGET_FILE:Demo>)
+		$<TARGET_FILE:SampleSponza>)
 
-	add_custom_command(TARGET Demo 
+	add_custom_command(TARGET SampleSponza 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libGLESv2.dylib @rpath/libGLESv2.dylib
-		$<TARGET_FILE:Demo>)
+		$<TARGET_FILE:SampleSponza>)
 
-	set_target_properties(Demo PROPERTIES
+	set_target_properties(SampleSponza PROPERTIES
 		MACOSX_RPATH ON
   		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../../.."
 	)
 else()
-	add_executable(Demo ${application_source})
+	add_executable(SampleSponza ${application_source})
 endif()
 
-target_precompiled_header(Demo ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleSponza ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)
-	target_link_libraries(Demo Client log)
+	target_link_libraries(SampleSponza Client log)
 else()
-	target_link_libraries(Demo Client)
+	target_link_libraries(SampleSponza Client)
 endif()
 
 # Imgui
 if (BUILD_IMGUI)
-	target_link_libraries(Demo Imgui)
+	target_link_libraries(SampleSponza Imgui)
 endif()
 
 # Emscripten
 if (BUILD_EMSCRIPTEN)
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(Demo PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	set_target_properties(SampleSponza PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
-	set(project_name Demo)
+	set(project_name SampleSponza)
 	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
-	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Demo.html)
+	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SampleSponza.html)
 endif()
 
 #VLD
 if (BUILD_DEBUG_VLD)
 	file(GLOB_RECURSE vld_bin_files ${vld_dll_path})
 	foreach(vld_bin ${vld_bin_files})
-		add_custom_command(TARGET Demo POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:Demo>)
+		add_custom_command(TARGET SampleSponza POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:SampleSponza>)
 	endforeach()
 endif()
 
-set_target_properties(Demo PROPERTIES VERSION ${SKYLICHT_VERSION})
-set_target_properties(Demo PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+set_target_properties(SampleSponza PROPERTIES VERSION ${SKYLICHT_VERSION})
+set_target_properties(SampleSponza PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

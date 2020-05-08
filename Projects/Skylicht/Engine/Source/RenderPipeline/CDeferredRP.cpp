@@ -173,7 +173,7 @@ namespace Skylicht
 		return false;
 	}
 
-	void CDeferredRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager)
+	void CDeferredRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
 			return;
@@ -181,6 +181,21 @@ namespace Skylicht
 		// set multi rtt
 		IVideoDriver *driver = getVideoDriver();
 		driver->setRenderTarget(m_multiRenderTarget);
+
+		bool useCustomViewport = false;
+		core::recti customViewport;
+
+		// custom viewport
+		if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+		{
+			customViewport.LowerRightCorner.set(
+				viewport.getWidth(),
+				viewport.getHeight()
+			);
+
+			useCustomViewport = true;
+			driver->setViewPort(customViewport);
+		}
 
 		// draw entity to buffer
 		setCamera(camera);
@@ -204,9 +219,18 @@ namespace Skylicht
 		float renderW = (float)m_size.Width;
 		float renderH = (float)m_size.Height;
 
+		if (useCustomViewport)
+		{
+			renderW = (float)viewport.getWidth();
+			renderH = (float)viewport.getHeight();
+		}
 
 		// render light pass, clear black color
 		driver->setRenderTarget(m_lightBuffer, true, false);
+
+		// custom viewport
+		if (useCustomViewport)
+			driver->setViewPort(customViewport);
 
 		CLightCullingSystem *lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
@@ -240,6 +264,10 @@ namespace Skylicht
 		// render final light to screen
 		driver->setRenderTarget(m_target, false, false);
 
+		// custom viewport
+		if (useCustomViewport)
+			driver->setViewPort(customViewport);
+
 		// shadow
 		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
 		if (shadowRP != NULL)
@@ -251,10 +279,14 @@ namespace Skylicht
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 
 		// call forwarder rp?
-		onNext(m_target, camera, entityManager);
+		onNext(m_target, camera, entityManager, viewport);
 
 		// final pass to screen
-		driver->setRenderTarget(NULL, false, false);
+		driver->setRenderTarget(target, false, false);
+
+		if (useCustomViewport)
+			driver->setViewPort(viewport);
+
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 	}

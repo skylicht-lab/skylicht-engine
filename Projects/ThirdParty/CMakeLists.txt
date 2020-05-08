@@ -22,12 +22,14 @@ file(GLOB_RECURSE bzip2_source
 setup_project_group("${bzip2_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 #curl
+if (BUILD_CURL)
 file(GLOB_RECURSE curl_source 
 	./source/curl/**.cpp 
 	./source/curl/**.hpp 
 	./source/curl/**.c 
 	./source/curl/**.h)
 setup_project_group("${curl_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
 
 #jpeglib
 file(GLOB_RECURSE jpeglib_source 
