@@ -6,13 +6,13 @@
 #include "Camera/CCamera.h"
 #include "Graphics2D/SpriteFrame/CGlyphFont.h"
 
-class SampleSponza : public IApplicationEventReceiver
+class TankScene : public IApplicationEventReceiver
 {
 private:
 
 public:
-	SampleSponza();
-	virtual ~SampleSponza();
+	TankScene();
+	virtual ~TankScene();
 
 	virtual void onUpdate();
 
