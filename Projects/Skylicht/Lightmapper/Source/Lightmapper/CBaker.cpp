@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CRenderToTexture.h"
+#include "CBaker.h"
 #include "GameObject/CGameObject.h"
 
 #include "RenderPipeline/CBaseRP.h"
@@ -32,21 +32,21 @@ namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CRenderToTexture::CRenderToTexture()
+		CBaker::CBaker()
 		{
 			IVideoDriver *driver = getVideoDriver();
 			core::dimension2du s(RT_SIZE * NUM_FACES, RT_SIZE);
 			m_radiance = driver->addRenderTargetTexture(s, "lmrt", video::ECF_A8R8G8B8);
 		}
 
-		CRenderToTexture::~CRenderToTexture()
+		CBaker::~CBaker()
 		{
 			IVideoDriver *driver = getVideoDriver();
 			driver->removeTexture(m_radiance);
 			m_radiance = NULL;
 		}
 
-		void CRenderToTexture::bake(CCamera *camera,
+		void CBaker::bake(CCamera *camera,
 			IRenderPipeline* rp,
 			CEntityManager* entityMgr,
 			const core::vector3df& position,
@@ -216,7 +216,7 @@ namespace Skylicht
 			*/
 		}
 
-		void CRenderToTexture::projectOntoSH(const core::vector3df& n, const core::vector3df& color, core::vector3df *sh)
+		void CBaker::projectOntoSH(const core::vector3df& n, const core::vector3df& color, core::vector3df *sh)
 		{
 			// Cosine kernel for SH
 			const float A0 = 1.0f;// core::PI;
@@ -241,7 +241,7 @@ namespace Skylicht
 			sh[8] = 0.546274f * (n.X * n.X - n.Y * n.Y) * color * A2;
 		}
 
-		void CRenderToTexture::getSHColor(const core::vector3df& n, const core::vector3df *sh, core::vector3df& color)
+		void CBaker::getSHColor(const core::vector3df& n, const core::vector3df *sh, core::vector3df& color)
 		{
 			// EvalSH9
 			// https://github.com/TheRealMJP/BakingLab/blob/master/SampleFramework11/v1.02/Shaders/SH.hlsl
@@ -255,7 +255,7 @@ namespace Skylicht
 			}
 		}
 
-		void CRenderToTexture::getWorldView(
+		void CBaker::getWorldView(
 			const core::vector3df& normal,
 			const core::vector3df& tangent,
 			const core::vector3df& binormal,
@@ -310,7 +310,7 @@ namespace Skylicht
 			setRow(out, 3, position, 1.0f);
 		}
 
-		void CRenderToTexture::setRow(core::matrix4& mat, int row, const core::vector3df& v, float w)
+		void CBaker::setRow(core::matrix4& mat, int row, const core::vector3df& v, float w)
 		{
 			mat(row, 0) = v.X;
 			mat(row, 1) = v.Y;

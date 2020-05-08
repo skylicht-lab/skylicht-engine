@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "Utils/CGameSingleton.h"
-#include "Lightmapper/Baker/CRenderToTexture.h"
+#include "CBaker.h"
 
 namespace Skylicht
 {
@@ -32,7 +32,7 @@ namespace Skylicht
 		class CLightmapper : public CGameSingleton<CLightmapper>
 		{
 		protected:
-			CRenderToTexture *m_rtt;
+			CBaker *m_rtt;
 
 		public:
 			CLightmapper();
