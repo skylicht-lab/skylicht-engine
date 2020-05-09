@@ -60,7 +60,7 @@ namespace Skylicht
 		g_device = device;
 		g_video = device->getVideoDriver();
 
-		os::Printer::log("Init skylicht core");
+		os::Printer::log("Init Skylicht Engine");
 		CEventManager::createGetInstance();
 
 		CTouchManager::createGetInstance();

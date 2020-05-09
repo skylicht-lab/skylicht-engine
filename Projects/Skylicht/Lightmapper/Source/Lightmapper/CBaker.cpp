@@ -108,9 +108,10 @@ namespace Skylicht
 			u32 rowSize = RT_SIZE * NUM_FACES * bpp;
 			float c = 1.0f / 255.0f;
 
-			core::vector3df sh[9];
 			core::vector3df color;
 			core::vector3df dirTS;
+
+			m_sh.zero();
 
 			// Compute the final weight for integration
 			float weightSum = 0.0f;
@@ -130,7 +131,7 @@ namespace Skylicht
 					{
 						// Calculate the location in [-1, 1] texture space
 						float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
-						float v = ((y / float(RT_SIZE)) * 2.0f - 1.0f);
+						float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
 
 						float temp = 1.0f + u * u + v * v;
 						float weight = 4.0f / (sqrt(temp) * temp);
@@ -146,10 +147,10 @@ namespace Skylicht
 						toTangentSpace[face].rotateVect(dirTS);
 						dirTS.normalize();
 
-						projectOntoSH(dirTS, color, sh);
+						CSH9 sh;
+						sh.projectOntoSH(dirTS, color);
 
-						for (int i = 0; i < 9; i++)
-							m_sh9[i] = m_sh9[i] + sh[i];
+						m_sh += sh;
 
 						data += bpp;
 					}
@@ -161,14 +162,12 @@ namespace Skylicht
 			// finalWeight is weight for 1 pixel on Sphere
 			// S = 4 * PI * R^2
 			float finalWeight = (4.0f * 3.14159f) / weightSum;
-
-			for (int i = 0; i < 9; i++)
-				m_sh9[i] = m_sh9[i] * finalWeight;
+			m_sh *= finalWeight;
 
 			m_radiance->unlock();
 
-			// Test SH
 			/*
+			// Test SH
 			u8 *testData = new u8[RT_SIZE * RT_SIZE * bpp];
 			for (u32 y = 0; y < RT_SIZE; y++)
 			{
@@ -177,15 +176,15 @@ namespace Skylicht
 				for (u32 x = 0; x < RT_SIZE; x++)
 				{
 					float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
-					float v = ((y / float(RT_SIZE)) * 2.0f - 1.0f);
+					float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
 
 					dirTS.X = u;
 					dirTS.Y = v;
 					dirTS.Z = 1.0f;
-					toTangentSpace[0].rotateVect(dirTS);
+					toTangentSpace[5].rotateVect(dirTS);
 					dirTS.normalize();
 
-					getSHColor(dirTS, m_sh9, color);
+					m_sh.getSHIrradiance(dirTS, color);
 					color.X = core::clamp(color.X, 0.0f, 1.0f);
 					color.Y = core::clamp(color.Y, 0.0f, 1.0f);
 					color.Z = core::clamp(color.Z, 0.0f, 1.0f);
@@ -207,52 +206,13 @@ namespace Skylicht
 			if (driver->getDriverType() == video::EDT_DIRECT3D11)
 				im->swapBG();
 
-			driver->writeImageToFile(im, "D:\\testsh.png");
+			driver->writeImageToFile(im, "C:\\SVN\\testsh.png");
 			im->drop();
 
-			CBaseRP::saveFBOToFile(m_radiance, "D:\\test.png");
+			CBaseRP::saveFBOToFile(m_radiance, "C:\\SVN\\test.png");
 
 			delete testData;
 			*/
-		}
-
-		void CBaker::projectOntoSH(const core::vector3df& n, const core::vector3df& color, core::vector3df *sh)
-		{
-			// Cosine kernel for SH
-			const float A0 = 1.0f;// core::PI;
-			const float A1 = 1.0f;// (2.0f * core::PI) / 3.0f;
-			const float A2 = 1.0f;// core::PI / 4.0f;
-
-			// https://github.com/TheRealMJP/LowResRendering/blob/master/SampleFramework11/v1.01/Graphics/SH.cpp			
-			// Band 0
-			sh[0] = 0.282095f * color * A0;
-
-			// Band 1
-			sh[1] = 0.488603f * n.Y * color * A1;
-			sh[2] = 0.488603f * n.Z * color * A1;
-			sh[3] = 0.488603f * n.X * color * A1;
-
-			// Band 2
-			sh[4] = 1.092548f * n.X * n.Y * color * A2;
-			sh[5] = 1.092548f * n.Y * n.Z * color * A2;
-			sh[6] = 0.315392f * (3.0f * n.Z * n.Z - 1.0f) * color * A2;
-
-			sh[7] = 1.092548f * n.X * n.Z * color * A2;
-			sh[8] = 0.546274f * (n.X * n.X - n.Y * n.Y) * color * A2;
-		}
-
-		void CBaker::getSHColor(const core::vector3df& n, const core::vector3df *sh, core::vector3df& color)
-		{
-			// EvalSH9
-			// https://github.com/TheRealMJP/BakingLab/blob/master/SampleFramework11/v1.02/Shaders/SH.hlsl
-			core::vector3df dirSH[9];
-			projectOntoSH(n, core::vector3df(1.0f, 1.0f, 1.0f), dirSH);
-
-			color.set(0.0f, 0.0f, 0.0f);
-			for (int i = 0; i < 9; i++)
-			{
-				color = color + dirSH[i] * sh[i];
-			}
 		}
 
 		void CBaker::getWorldView(

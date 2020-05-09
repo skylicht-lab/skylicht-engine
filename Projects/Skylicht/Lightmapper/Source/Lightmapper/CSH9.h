@@ -22,50 +22,52 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CSH9.h"
-#include "Camera/CCamera.h"
-#include "RenderPipeline/IRenderPipeline.h"
-#include "Entity/CEntityManager.h"
-
-#define NUM_FACES 6
-#define RT_SIZE 64
-
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CBaker
+		class CSH9
 		{
 		protected:
-			video::ITexture *m_radiance;
-
-			CSH9 m_sh;
+			core::vector3df m_sh[9];
 
 		public:
-			CBaker();
+			CSH9();
+			CSH9(const core::vector3df *sh);
+			CSH9(const CSH9& sh);
+			virtual ~CSH9();
 
-			virtual ~CBaker();
+			void zero();
 
-			void bake(CCamera *camera,
-				IRenderPipeline* rp,
-				CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal);
+			CSH9 operator-() const;
 
-		protected:
+			CSH9& operator=(const CSH9& other);
 
-			void setRow(core::matrix4& mat, int row, const core::vector3df& v, float w = 0.0f);
+			CSH9 operator+(const CSH9& other) const;
+			CSH9& operator+=(const CSH9& other);
 
-			void getWorldView(const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal,
-				const core::vector3df& position,
-				int face,
-				core::matrix4& out);
+			CSH9 operator-(const CSH9& other) const;
+			CSH9& operator-=(const CSH9& other);
+
+			CSH9 operator*(const CSH9& other) const;
+			CSH9& operator*=(const CSH9& other);
+			CSH9 operator*(const float v) const;
+			CSH9& operator*=(const float v);
+
+			CSH9 operator/(const CSH9& other) const;
+			CSH9& operator/=(const CSH9& other);
+			CSH9 operator/(const float v) const;
+			CSH9& operator/=(const float v);
+
+			core::vector3df dotProduct(const CSH9& other);
+
+			void projectOntoSH(const core::vector3df& n, const core::vector3df& color, float A0 = 1.0f, float A1 = 1.0f, float A2 = 1.0f);
+
+			void getSH(const core::vector3df& n, core::vector3df& color);
+
+			void getSHIrradiance(const core::vector3df& n, core::vector3df& color);
+
+			void convolveWithCosineKernel();
 		};
 	}
 }
