@@ -24,48 +24,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CSH9.h"
-#include "Camera/CCamera.h"
-#include "RenderPipeline/IRenderPipeline.h"
-#include "Entity/CEntityManager.h"
-
-#define NUM_FACES 6
-#define RT_SIZE 64
+#include "Material/Shader/CShader.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CShaderSH : public IShaderCallback
 	{
-		class CBaker
-		{
-		protected:
-			video::ITexture *m_radiance;
+	protected:
+		static float s_sh9[36];
 
-			CSH9 m_sh;
+	public:
+		CShaderSH();
 
-		public:
-			CBaker();
+		virtual ~CShaderSH();
 
-			virtual ~CBaker();
+		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
 
-			const CSH9& bake(CCamera *camera,
-				IRenderPipeline* rp,
-				CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal);
-
-		protected:
-
-			void setRow(core::matrix4& mat, int row, const core::vector3df& v, float w = 0.0f);
-
-			void getWorldView(const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal,
-				const core::vector3df& position,
-				int face,
-				core::matrix4& out);
-		};
-	}
+	public:
+		static void setSH9(core::vector3df *sh);
+	};
 }

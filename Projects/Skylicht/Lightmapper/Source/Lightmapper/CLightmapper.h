@@ -39,7 +39,7 @@ namespace Skylicht
 
 			virtual ~CLightmapper();
 
-			void bakeAtPosition(
+			const CSH9& bakeAtPosition(
 				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
 				const core::vector3df& position,
 				const core::vector3df& normal,

@@ -39,14 +39,14 @@ namespace Skylicht
 			delete m_rtt;
 		}
 
-		void CLightmapper::bakeAtPosition(
+		const CSH9& CLightmapper::bakeAtPosition(
 			CCamera *camera, IRenderPipeline* rp, CEntityManager *entityMgr,
 			const core::vector3df& position,
 			const core::vector3df& normal,
 			const core::vector3df& tangent,
 			const core::vector3df& binormal)
 		{
-			m_rtt->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
+			return m_rtt->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
 		}
 	}
 }

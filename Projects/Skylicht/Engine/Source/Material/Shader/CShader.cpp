@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ShaderCallback/CShaderCamera.h"
 #include "ShaderCallback/CShaderMaterial.h"
 #include "ShaderCallback/CShaderShadow.h"
+#include "ShaderCallback/CShaderSH.h"
 
 namespace Skylicht
 {
@@ -46,6 +47,7 @@ namespace Skylicht
 		addCallback<CShaderCamera>();
 		addCallback<CShaderMaterial>();
 		addCallback<CShaderShadow>();
+		addCallback<CShaderSH>();
 	}
 
 	CShader::~CShader()
@@ -1011,12 +1013,8 @@ namespace Skylicht
 			}
 		}
 		break;
-		/*		
+		/*
 		case OBJECT_PARAM:
-		{
-		}
-		break;
-		case SH_CONST:
 		{
 		}
 		break;

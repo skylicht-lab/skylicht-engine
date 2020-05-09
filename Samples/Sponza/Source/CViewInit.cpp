@@ -44,6 +44,8 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
 
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
+
 #if defined(USE_FREETYPE)
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -94,6 +96,8 @@ void CViewInit::initScene()
 	CProbe *probe = probeObj->addComponent<Lightmapper::CProbe>();
 
 	CTransformEuler *probeTransform = probeObj->getTransformEuler();
+	// probeTransform->setPosition(core::vector3df(2.2f, 1.0f, -1.0f));
+	// probeTransform->setPosition(core::vector3df(0.8f, 3.0f, -1.0f));
 	probeTransform->setPosition(core::vector3df(0.0f, 3.0f, 0.0f));
 
 	core::vector3df pointLightPosition[] = {
@@ -278,8 +282,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 #if defined(WINDOWS_STORE) || defined(MACOS)
@@ -298,7 +302,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::InitScene;
 #endif

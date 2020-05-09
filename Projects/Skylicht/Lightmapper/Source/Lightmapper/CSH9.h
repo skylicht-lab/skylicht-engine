@@ -22,6 +22,8 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
+#pragma once
+
 namespace Skylicht
 {
 	namespace Lightmapper
@@ -38,6 +40,11 @@ namespace Skylicht
 			virtual ~CSH9();
 
 			void zero();
+
+			inline core::vector3df* getValue()
+			{
+				return m_sh;
+			}
 
 			CSH9 operator-() const;
 

@@ -46,7 +46,7 @@ namespace Skylicht
 			m_radiance = NULL;
 		}
 
-		void CBaker::bake(CCamera *camera,
+		const CSH9& CBaker::bake(CCamera *camera,
 			IRenderPipeline* rp,
 			CEntityManager* entityMgr,
 			const core::vector3df& position,
@@ -141,9 +141,9 @@ namespace Skylicht
 						color.Y = data[1] * c * weight; // g
 						color.Z = data[2] * c * weight; // b
 
-						dirTS.X = u;
-						dirTS.Y = v;
-						dirTS.Z = 1.0f;
+						dirTS.X = v;
+						dirTS.Y = 1.0f;
+						dirTS.Z = u;
 						toTangentSpace[face].rotateVect(dirTS);
 						dirTS.normalize();
 
@@ -166,53 +166,7 @@ namespace Skylicht
 
 			m_radiance->unlock();
 
-			/*
-			// Test SH
-			u8 *testData = new u8[RT_SIZE * RT_SIZE * bpp];
-			for (u32 y = 0; y < RT_SIZE; y++)
-			{
-				u8* data = testData + y * RT_SIZE * bpp;
-
-				for (u32 x = 0; x < RT_SIZE; x++)
-				{
-					float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
-					float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
-
-					dirTS.X = u;
-					dirTS.Y = v;
-					dirTS.Z = 1.0f;
-					toTangentSpace[5].rotateVect(dirTS);
-					dirTS.normalize();
-
-					m_sh.getSHIrradiance(dirTS, color);
-					color.X = core::clamp(color.X, 0.0f, 1.0f);
-					color.Y = core::clamp(color.Y, 0.0f, 1.0f);
-					color.Z = core::clamp(color.Z, 0.0f, 1.0f);
-
-					data[0] = (u8)(color.X * 255.0f);
-					data[1] = (u8)(color.Y * 255.0f);
-					data[2] = (u8)(color.Z * 255.0f);
-					data[3] = 255;
-
-					data += bpp;
-				}
-			}
-
-			IImage* im = driver->createImageFromData(
-				video::ECF_A8R8G8B8,
-				core::dimension2du(RT_SIZE, RT_SIZE),
-				testData);
-
-			if (driver->getDriverType() == video::EDT_DIRECT3D11)
-				im->swapBG();
-
-			driver->writeImageToFile(im, "C:\\SVN\\testsh.png");
-			im->drop();
-
-			CBaseRP::saveFBOToFile(m_radiance, "C:\\SVN\\test.png");
-
-			delete testData;
-			*/
+			return m_sh;
 		}
 
 		void CBaker::getWorldView(
