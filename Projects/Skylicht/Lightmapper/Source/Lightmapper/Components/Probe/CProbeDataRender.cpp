@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CProbe.h"
 
+#include "Material/Shader/ShaderCallback/CShaderSH.h"
+
 namespace Skylicht
 {
 	namespace Lightmapper
@@ -81,8 +83,13 @@ namespace Skylicht
 				IMesh* mesh = probes[i]->ProbeMesh;
 				driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
+				core::vector3df *shValue = probes[i]->SH.getValue();
+
 				for (u32 j = 0; j < mesh->getMeshBufferCount(); j++)
 				{
+					// Pass current sh const to shader callback
+					CShaderSH::setSH9(shValue);
+
 					IMeshBuffer *buffer = mesh->getMeshBuffer(j);
 					driver->setMaterial(buffer->getMaterial());
 					driver->drawMeshBuffer(buffer);

@@ -61,7 +61,7 @@ namespace Skylicht
 		{
 			core::vector3df position = m_gameObject->getPosition();
 
-			CLightmapper::getInstance()->bakeAtPosition(
+			m_probeData->SH = CLightmapper::getInstance()->bakeAtPosition(
 				camera,
 				rp,
 				entityMgr,
