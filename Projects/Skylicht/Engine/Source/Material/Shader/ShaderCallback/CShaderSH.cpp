@@ -22,50 +22,48 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CSH9.h"
-#include "Camera/CCamera.h"
-#include "RenderPipeline/IRenderPipeline.h"
-#include "Entity/CEntityManager.h"
-
-#define NUM_FACES 6
-#define RT_SIZE 64
+#include "pch.h"
+#include "CShaderSH.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	float CShaderSH::s_sh9[36];
+
+	CShaderSH::CShaderSH()
 	{
-		class CBaker
+	}
+
+	CShaderSH::~CShaderSH()
+	{
+	}
+
+	void CShaderSH::OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader)
+	{
+		switch (uniform->Type)
 		{
-		protected:
-			video::ITexture *m_radiance;
+		case SH_CONST:
+		{
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, s_sh9, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, s_sh9, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+		}
+		break;
+		default:
+			break;
+		}
+	}
 
-			CSH9 m_sh;
+	void CShaderSH::setSH9(core::vector3df *sh)
+	{
+		memset(s_sh9, 0, sizeof(float) * 36);
 
-		public:
-			CBaker();
-
-			virtual ~CBaker();
-
-			const CSH9& bake(CCamera *camera,
-				IRenderPipeline* rp,
-				CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal);
-
-		protected:
-
-			void setRow(core::matrix4& mat, int row, const core::vector3df& v, float w = 0.0f);
-
-			void getWorldView(const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal,
-				const core::vector3df& position,
-				int face,
-				core::matrix4& out);
-		};
+		for (int i = 0; i < 9; i++)
+		{
+			s_sh9[i * 4] = sh[i].X;
+			s_sh9[i * 4 + 1] = sh[i].Y;
+			s_sh9[i * 4 + 2] = sh[i].Z;
+			s_sh9[i * 4 + 3] = 1.0f;
+		}
 	}
 }
