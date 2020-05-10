@@ -80,7 +80,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
     ```
 -   Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`
 
--   Once the solution opens, right click the **Demo** project, click **"Set as StartUp Project"** and click the play button at the top to run the Demo App.
+-   Once the solution opens, right click the **SampleXXX** project, click **"Set as StartUp Project"** and click the play button at the top to run the Demo App.
 
 -   More details: please preview command in **BuildCommand** folder.
 
