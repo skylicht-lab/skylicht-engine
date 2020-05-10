@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CViewDemo.h"
 
+#include "Context/CContext.h"
+
 CViewDemo::CViewDemo()
 {
 
