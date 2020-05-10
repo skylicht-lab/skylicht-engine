@@ -1,11 +1,6 @@
 #include "pch.h"
 #include "CViewDemo.h"
 
-#include "Context/CContext.h"
-#include "Graphics2D/CGraphics2D.h"
-
-#include "Material/Shader/CShaderManager.h"
-
 CViewDemo::CViewDemo()
 {
 

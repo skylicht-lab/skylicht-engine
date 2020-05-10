@@ -2,17 +2,16 @@
 
 #include "IApplicationEventReceiver.h"
 
-#include "Scene/CScene.h"
-#include "Camera/CCamera.h"
-#include "Graphics2D/SpriteFrame/CGlyphFont.h"
-
 class CHelloWorld : public IApplicationEventReceiver
 {
 private:
 	CScene *m_scene;
 	CCamera *m_guiCamera;
+    
+#if defined(USE_FREETYPE)
 	CGlyphFont *m_largeFont;
-
+#endif
+    
 public:
 	CHelloWorld();
 	virtual ~CHelloWorld();

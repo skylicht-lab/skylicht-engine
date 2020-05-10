@@ -1,33 +1,13 @@
 #include "pch.h"
+
 #include "CViewInit.h"
 #include "CViewDemo.h"
+
 #include "ViewManager/CViewManager.h"
-#include "TextureManager/CTextureManager.h"
-
-#include "MeshManager/CMeshManager.h"
-#include "Animation/CAnimationManager.h"
-#include "Animation/CAnimationController.h"
-
 #include "Context/CContext.h"
 
-#include "Material/Shader/CShaderManager.h"
-#include "Material/CMaterialManager.h"
-
-#include "Camera/CEditorCamera.h"
-#include "Lighting/CDirectionalLight.h"
-#include "Lighting/CPointLight.h"
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
-#include "RenderMesh/CRenderMesh.h"
-#include "Graphics2D/CCanvas.h"
-
-#include "BuildConfig/CBuildConfig.h"
-
-#if defined(USE_FREETYPE)
-#include "Graphics2D/Glyph/CGlyphFreetype.h"
-#include "Graphics2D/SpriteFrame/CGlyphFont.h"
-#endif
-
 #include "Lightmapper/Components/Probe/CProbe.h"
 
 CViewInit::CViewInit() :

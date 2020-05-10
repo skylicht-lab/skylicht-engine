@@ -3,8 +3,8 @@
 
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
-
 #include "Lightmapper/CLightmapper.h"
+
 using namespace Lightmapper;
 
 #include "CViewInit.h"
