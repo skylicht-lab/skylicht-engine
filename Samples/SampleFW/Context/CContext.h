@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SkylichtEngine.h"
+
 #include "Lightmapper/Components/Probe/CProbe.h"
 
 using namespace Lightmapper;

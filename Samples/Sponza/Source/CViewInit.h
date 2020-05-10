@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SkylichtEngine.h"
 #include "ViewManager/CView.h"
 #include "Emscripten/CGetFileURL.h"
 

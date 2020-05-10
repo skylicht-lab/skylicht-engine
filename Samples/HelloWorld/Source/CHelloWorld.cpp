@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "SkylichtEngine.h"
 #include "CHelloWorld.h"
 
 void installApplication(const std::vector<std::string>& argv)
