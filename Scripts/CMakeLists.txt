@@ -156,9 +156,13 @@ elseif (MSVC OR CYGWIN OR MINGW)
 elseif (BUILD_MACOS)
 	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
 
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
+	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
+
 	add_executable(@project_name@ 
 		${application_source} 
 		${resources_files}
+		${dylib_files}
 	)
 	
 	set_target_properties(@project_name@ PROPERTIES MACOSX_BUNDLE TRUE)
@@ -186,6 +190,12 @@ elseif (BUILD_MACOS)
 		source_group("Bin" FILES "${res_file}")
 	endforeach()
 
+	foreach(lib_file ${dylib_files})
+		set_property(SOURCE ${lib_file} PROPERTY MACOSX_PACKAGE_LOCATION "Frameworks")
+		set_source_files_properties(${lib_file} PROPERTIES XCODE_FILE_ATTRIBUTES "CodeSignOnCopy")
+		source_group("Libs" FILES "${lib_file}")
+	endforeach()
+
 	add_custom_command(TARGET @project_name@ 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libEGL.dylib @rpath/libEGL.dylib
@@ -199,7 +209,7 @@ elseif (BUILD_MACOS)
 	set_target_properties(@project_name@ PROPERTIES
 		MACOSX_RPATH ON
   		BUILD_WITH_INSTALL_RPATH 1
-		INSTALL_RPATH "@executable_path/../../.."
+		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
 else()
 	add_executable(@project_name@ ${application_source})
