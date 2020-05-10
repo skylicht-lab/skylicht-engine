@@ -126,7 +126,6 @@ jobs:
         cd PrjMac
         xcodebuild -configuration Release
         cd ..
-        cp Projects/Angle/out/MacOS/Release/*.dylib Bin/Release
     - name: Package
       run: |
         brew install p7zip
