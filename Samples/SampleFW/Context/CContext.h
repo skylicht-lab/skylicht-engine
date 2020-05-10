@@ -1,14 +1,5 @@
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-
-#include "Scene/CScene.h"
-#include "Lighting/CDirectionalLight.h"
-
-#include "RenderPipeline/CForwardRP.h"
-#include "RenderPipeline/CDeferredRP.h"
-#include "RenderPipeline/CShadowMapRP.h"
-
 #include "Lightmapper/Components/Probe/CProbe.h"
 
 using namespace Lightmapper;
