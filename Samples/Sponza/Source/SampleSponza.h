@@ -2,10 +2,6 @@
 
 #include "IApplicationEventReceiver.h"
 
-#include "Scene/CScene.h"
-#include "Camera/CCamera.h"
-#include "Graphics2D/SpriteFrame/CGlyphFont.h"
-
 class SampleSponza : public IApplicationEventReceiver
 {
 private:

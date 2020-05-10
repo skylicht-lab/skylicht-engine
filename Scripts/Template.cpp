@@ -1,18 +1,6 @@
 #include "pch.h"
 #include "@project_name@.h"
 
-#include "Material/Shader/CShaderManager.h"
-
-// font - freetype
-#if defined(USE_FREETYPE)
-#include "Graphics2D/Glyph/CGlyphFreetype.h"
-#include "Graphics2D/SpriteFrame/CGlyphFont.h"
-#endif
-
-// canvas 2D
-#include "Graphics2D/CCanvas.h"
-#include "Graphics2D/CGraphics2D.h"
-
 void installApplication(const std::vector<std::string>& argv)
 {
 	@project_name@ *app = new @project_name@();
@@ -20,8 +8,10 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 @project_name@::@project_name@() :
-	m_scene(NULL),
-	m_largeFont(NULL)
+	m_scene(NULL)
+#if defined(USE_FREETYPE)	
+	,m_largeFont(NULL)
+#endif
 {
 
 }
@@ -29,7 +19,9 @@ void installApplication(const std::vector<std::string>& argv)
 @project_name@::~@project_name@()
 {
 	delete m_scene;
+#if defined(USE_FREETYPE)	
 	delete m_largeFont;
+#endif
 }
 
 void @project_name@::onInitApp()
