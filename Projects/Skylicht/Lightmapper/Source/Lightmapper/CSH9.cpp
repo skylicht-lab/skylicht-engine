@@ -173,7 +173,7 @@ namespace Skylicht
 
 		void CSH9::projectOntoSH(const core::vector3df& n, const core::vector3df& color, float A0, float A1, float A2)
 		{
-			// https://github.com/TheRealMJP/LowResRendering/blob/master/SampleFramework11/v1.01/Graphics/m_shpp			
+			// https://github.com/TheRealMJP/LowResRendering/blob/master/SampleFramework11/v1.01/Graphics/SH.cpp
 			// Band 0
 			m_sh[0] = 0.282095f * color * A0;
 
