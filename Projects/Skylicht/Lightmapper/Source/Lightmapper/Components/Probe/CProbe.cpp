@@ -61,14 +61,21 @@ namespace Skylicht
 		{
 			core::vector3df position = m_gameObject->getPosition();
 
+			core::vector3df n = CTransform::s_oy;
+			core::vector3df t = core::vector3df(0.0f, 0.0f, 1.0f);
+			t.normalize();
+
+			core::vector3df b = n.crossProduct(t);
+			b.normalize();
+
 			m_probeData->SH = CLightmapper::getInstance()->bakeAtPosition(
 				camera,
 				rp,
 				entityMgr,
 				position,
-				CTransform::s_oy,
-				CTransform::s_oz,
-				CTransform::s_ox);
+				n,
+				t,
+				b);
 		}
 	}
 }
