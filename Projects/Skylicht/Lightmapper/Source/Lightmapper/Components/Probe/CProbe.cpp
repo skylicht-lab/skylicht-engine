@@ -62,9 +62,7 @@ namespace Skylicht
 			core::vector3df position = m_gameObject->getPosition();
 
 			core::vector3df n = CTransform::s_oy;
-			core::vector3df t = core::vector3df(0.0f, 0.0f, 1.0f);
-			t.normalize();
-
+			core::vector3df t = CTransform::s_ox;
 			core::vector3df b = n.crossProduct(t);
 			b.normalize();
 
