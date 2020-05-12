@@ -73,12 +73,16 @@ namespace Skylicht
 			for (int face = 0; face < NUM_FACES; face++)
 			{
 				core::matrix4 cameraWorld;
+				core::matrix4 viewToWorld;
+
 				core::recti viewport;
 
 				getWorldView(normal, tangent, binormal, position, face, cameraWorld);
 
 				// to tangent space
-				toTangentSpace[face] = cameraWorld * worldToTangent;
+				viewToWorld = cameraWorld;
+				setRow(viewToWorld, 3, core::vector3df(0.0f, 0.0f, 0.0f), 1.0f);
+				toTangentSpace[face] = viewToWorld * worldToTangent;
 
 				// camera world
 				camera->getGameObject()->getTransform()->setMatrixTransform(cameraWorld);
@@ -131,7 +135,7 @@ namespace Skylicht
 					{
 						// Calculate the location in [-1, 1] texture space
 						float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
-						float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
+						float v = ((y / float(RT_SIZE)) * 2.0f - 1.0f);
 
 						float temp = 1.0f + u * u + v * v;
 						float weight = 4.0f / (sqrt(temp) * temp);
@@ -149,7 +153,6 @@ namespace Skylicht
 
 						CSH9 sh;
 						sh.projectOntoSH(dirTS, color);
-
 						m_sh += sh;
 
 						data += bpp;
@@ -165,6 +168,8 @@ namespace Skylicht
 			m_sh *= finalWeight;
 
 			m_radiance->unlock();
+
+			CBaseRP::saveFBOToFile(m_radiance, "D:\\test.png");
 
 			return m_sh;
 		}
