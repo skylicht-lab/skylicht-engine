@@ -145,9 +145,9 @@ namespace Skylicht
 						color.Y = data[1] * c * weight; // g
 						color.Z = data[2] * c * weight; // b
 
-						dirTS.X = v;
+						dirTS.X = u;
 						dirTS.Y = 1.0f;
-						dirTS.Z = u;
+						dirTS.Z = v;
 						toTangentSpace[face].rotateVect(dirTS);
 						dirTS.normalize();
 
@@ -169,8 +169,7 @@ namespace Skylicht
 
 			m_radiance->unlock();
 
-			CBaseRP::saveFBOToFile(m_radiance, "D:\\test.png");
-
+			// CBaseRP::saveFBOToFile(m_radiance, "D:\\test.png");
 			return m_sh;
 		}
 
