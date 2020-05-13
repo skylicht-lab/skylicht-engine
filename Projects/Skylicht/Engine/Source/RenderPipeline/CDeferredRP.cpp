@@ -279,7 +279,8 @@ namespace Skylicht
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 
 		// call forwarder rp?
-		onNext(m_target, camera, entityManager, viewport);
+		core::recti fwvp(0, 0, (int)renderW, (int)renderH);
+		onNext(m_target, camera, entityManager, fwvp);
 
 		// final pass to screen
 		driver->setRenderTarget(target, false, false);

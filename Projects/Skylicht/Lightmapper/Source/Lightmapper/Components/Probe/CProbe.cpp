@@ -60,9 +60,16 @@ namespace Skylicht
 		void CProbe::bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr)
 		{
 			core::vector3df position = m_gameObject->getPosition();
-
+			
+			/*
 			core::vector3df n = CTransform::s_oy;
 			core::vector3df t = CTransform::s_ox;
+			core::vector3df b = n.crossProduct(t);
+			b.normalize();			
+			*/
+
+			core::vector3df n = -CTransform::s_oy;
+			core::vector3df t = CTransform::s_oz;
 			core::vector3df b = n.crossProduct(t);
 			b.normalize();
 
