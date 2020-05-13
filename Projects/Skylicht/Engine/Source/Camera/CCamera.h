@@ -79,7 +79,7 @@ namespace Skylicht
 
 		const core::matrix4& getViewMatrix() const;
 
-		void setViewMatrix(const core::matrix4& view);
+		void setViewMatrix(const core::matrix4& view, const core::vector3df& position);
 
 		void setPosition(const core::vector3df& position);
 

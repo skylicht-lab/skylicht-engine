@@ -64,11 +64,6 @@ namespace Skylicht
 			getVideoDriver()->setRenderTarget(m_radiance, true, true);
 
 			core::matrix4 toTangentSpace[NUM_FACES];
-			core::matrix4 worldToTangent;
-			setRow(worldToTangent, 0, tangent);
-			setRow(worldToTangent, 1, binormal);
-			setRow(worldToTangent, 2, normal);
-			worldToTangent = worldToTangent.getTransposed();
 
 			for (int face = 0; face < NUM_FACES; face++)
 			{
@@ -80,25 +75,21 @@ namespace Skylicht
 				getWorldView(normal, tangent, binormal, position, face, cameraWorld);
 
 				// to tangent space
-				viewToWorld = cameraWorld;
-				setRow(viewToWorld, 3, core::vector3df(0.0f, 0.0f, 0.0f), 1.0f);
-				toTangentSpace[face] = viewToWorld * worldToTangent;
+				toTangentSpace[face] = cameraWorld;
+				setRow(toTangentSpace[face], 3, core::vector3df(0.0f, 0.0f, 0.0f), 1.0f);
 
 				// camera world
 				camera->getGameObject()->getTransform()->setMatrixTransform(cameraWorld);
 
 				// view matrix is world inverse
 				cameraWorld.makeInverse();
-				camera->setViewMatrix(cameraWorld);
+				camera->setViewMatrix(cameraWorld, position);
 
 				// apply viewport
 				u32 offsetX = face * RT_SIZE;
 				u32 offsetY = 0;
 				viewport.UpperLeftCorner.set(offsetX, offsetY);
 				viewport.LowerRightCorner.set(offsetX + RT_SIZE, offsetY + RT_SIZE);
-
-				// render to target
-				getVideoDriver()->clearZBuffer();
 
 				// render
 				rp->render(m_radiance, camera, entityMgr, viewport);
@@ -135,7 +126,7 @@ namespace Skylicht
 					{
 						// Calculate the location in [-1, 1] texture space
 						float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
-						float v = ((y / float(RT_SIZE)) * 2.0f - 1.0f);
+						float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
 
 						float temp = 1.0f + u * u + v * v;
 						float weight = 4.0f / (sqrt(temp) * temp);
@@ -146,8 +137,8 @@ namespace Skylicht
 						color.Z = data[2] * c * weight; // b
 
 						dirTS.X = u;
-						dirTS.Y = 1.0f;
-						dirTS.Z = v;
+						dirTS.Y = v;
+						dirTS.Z = 1.0f;
 						toTangentSpace[face].rotateVect(dirTS);
 						dirTS.normalize();
 
@@ -169,7 +160,7 @@ namespace Skylicht
 
 			m_radiance->unlock();
 
-			// CBaseRP::saveFBOToFile(m_radiance, "D:\\test.png");
+			CBaseRP::saveFBOToFile(m_radiance, "D:\\test.png");
 			return m_sh;
 		}
 
