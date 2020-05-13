@@ -55,17 +55,6 @@ namespace Skylicht
 				const core::vector3df& normal,
 				const core::vector3df& tangent,
 				const core::vector3df& binormal);
-
-		protected:
-
-			void setRow(core::matrix4& mat, int row, const core::vector3df& v, float w = 0.0f);
-
-			void getWorldView(const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal,
-				const core::vector3df& position,
-				int face,
-				core::matrix4& out);
 		};
 	}
 }

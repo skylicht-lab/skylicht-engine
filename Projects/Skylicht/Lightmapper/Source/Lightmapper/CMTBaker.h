@@ -22,33 +22,41 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CLightmapper.h"
+#pragma once
+
+#include "CSH9.h"
+#include "Camera/CCamera.h"
+#include "RenderPipeline/IRenderPipeline.h"
+#include "Entity/CEntityManager.h"
+
+#include "CBaker.h"
+
+#define NUM_MTBAKER	10
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CLightmapper::CLightmapper()
+		class CMTBaker
 		{
-			m_singleBaker = new CBaker();
-			m_multiBaker = new CMTBaker();
-		}
+		protected:
+			video::ITexture *m_radiance;
 
-		CLightmapper::~CLightmapper()
-		{
-			delete m_singleBaker;
-			delete m_multiBaker;
-		}
+			CSH9 m_sh[NUM_MTBAKER];
 
-		const CSH9& CLightmapper::bakeAtPosition(
-			CCamera *camera, IRenderPipeline* rp, CEntityManager *entityMgr,
-			const core::vector3df& position,
-			const core::vector3df& normal,
-			const core::vector3df& tangent,
-			const core::vector3df& binormal)
-		{
-			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
-		}
+		public:
+			CMTBaker();
+
+			virtual ~CMTBaker();
+
+			void bake(CCamera *camera,
+				IRenderPipeline* rp,
+				CEntityManager* entityMgr,
+				const core::vector3df* position,
+				const core::vector3df* normal,
+				const core::vector3df* tangent,
+				const core::vector3df* binormal,
+				int count);
+		};
 	}
 }

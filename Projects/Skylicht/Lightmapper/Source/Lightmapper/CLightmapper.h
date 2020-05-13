@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "CBaker.h"
+#include "CMTBaker.h"
 
 namespace Skylicht
 {
@@ -32,7 +33,8 @@ namespace Skylicht
 		class CLightmapper : public CGameSingleton<CLightmapper>
 		{
 		protected:
-			CBaker *m_rtt;
+			CBaker *m_singleBaker;
+			CMTBaker *m_multiBaker;
 
 		public:
 			CLightmapper();
