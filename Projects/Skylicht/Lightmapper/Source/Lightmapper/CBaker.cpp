@@ -108,7 +108,8 @@ namespace Skylicht
 
 			bool isBGR = false;
 
-			if (getVideoDriver()->getDriverType() != video::EDT_DIRECT3D11)
+			// Note: DX11 & OpenGLES is RGB after read texture data
+			if (getVideoDriver()->getDriverType() == video::EDT_OPENGL)
 				isBGR = true;
 
 			m_sh.zero();
