@@ -106,6 +106,11 @@ namespace Skylicht
 			core::vector3df color;
 			core::vector3df dirTS;
 
+			bool isBGR = false;
+
+			if (getVideoDriver()->getDriverType() != video::EDT_DIRECT3D11)
+				isBGR = true;
+
 			m_sh.zero();
 
 			// Compute the final weight for integration
@@ -132,9 +137,18 @@ namespace Skylicht
 						float weight = 4.0f / (sqrt(temp) * temp);
 						weightSum = weightSum + weight;
 
-						color.X = data[0] * c * weight; // r
-						color.Y = data[1] * c * weight; // g
-						color.Z = data[2] * c * weight; // b
+						if (isBGR == true)
+						{
+							color.X = data[2] * c * weight; // b
+							color.Y = data[1] * c * weight; // g
+							color.Z = data[0] * c * weight; // r
+						}
+						else
+						{
+							color.X = data[0] * c * weight; // r
+							color.Y = data[1] * c * weight; // g
+							color.Z = data[2] * c * weight; // b
+						}
 
 						dirTS.X = u;
 						dirTS.Y = v;
