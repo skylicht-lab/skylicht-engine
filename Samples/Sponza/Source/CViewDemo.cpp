@@ -65,7 +65,10 @@ void CViewDemo::onRender()
 
 		scene->updateAddRemoveObject();
 
-		context->getProbe()->bakeIrradiance(bakeCamera, context->getRenderPipeline(), scene->getEntityManager());
+		std::vector<CProbe*>& probes = context->getProbes();
+		for (u32 i = 0, n = probes.size(); i < n; i++)
+			probes[i]->bakeIrradiance(bakeCamera, context->getRenderPipeline(), scene->getEntityManager());
+
 		bake = true;
 	}
 }
