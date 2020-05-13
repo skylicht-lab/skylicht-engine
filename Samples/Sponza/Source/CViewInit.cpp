@@ -220,7 +220,7 @@ void CViewInit::initProbes()
 
 	for (int i = 0; i < 7; i++)
 	{
-		float x = i * 2.5f - 3.0f * 2.5f;
+		float x = i * 2.8f - 3.0f * 2.8f;
 
 		// row 0
 		probesPosition.push_back(core::vector3df(x, 1.0f, -0.2f));
@@ -322,8 +322,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 #if defined(WINDOWS_STORE) || defined(MACOS)
@@ -342,11 +342,11 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif
-}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -387,8 +387,8 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
 	}
+}
 
 void CViewInit::onRender()
 {
