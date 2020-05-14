@@ -16,7 +16,7 @@ protected:
 	CCamera *m_guiCamera;
 
 	CDirectionalLight *m_directionalLight;
-	CProbe *m_probe;
+	std::vector<CProbe*> m_probes;
 
 	CBaseRP *m_beginRP;
 	CBaseRP	*m_rendering;
@@ -76,14 +76,14 @@ public:
 		m_camera = camera;
 	}
 
-	inline CProbe* getProbe()
+	inline std::vector<CProbe*>& getProbes()
 	{
-		return m_probe;
+		return m_probes;
 	}
 
-	inline void setProbe(CProbe *probe)
+	inline void setProbes(std::vector<CProbe*>& probes)
 	{
-		m_probe = probe;
+		m_probes = probes;
 	}
 
 	inline CCamera* getActiveCamera()
