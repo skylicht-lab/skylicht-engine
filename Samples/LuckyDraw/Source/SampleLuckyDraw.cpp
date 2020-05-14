@@ -9,10 +9,8 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 SampleLuckyDraw::SampleLuckyDraw() :
-	m_scene(NULL)
-#if defined(USE_FREETYPE)	
-	,m_largeFont(NULL)
-#endif
+	m_scene(NULL),
+	m_largeFont(NULL)
 {
 
 }
@@ -20,9 +18,7 @@ SampleLuckyDraw::SampleLuckyDraw() :
 SampleLuckyDraw::~SampleLuckyDraw()
 {
 	delete m_scene;
-#if defined(USE_FREETYPE)	
 	delete m_largeFont;
-#endif
 }
 
 void SampleLuckyDraw::onInitApp()
@@ -32,12 +28,12 @@ void SampleLuckyDraw::onInitApp()
 
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("LuckyDraw.zip"), false, false);
 
-#if defined(USE_FREETYPE)
 	// init segoeuil.ttf inside BuiltIn.zip
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
-#endif
+	freetypeFont->initFont("LasVegas", "LuckyDraw/LasVegasJackpotRegular.otf");
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -54,9 +50,8 @@ void SampleLuckyDraw::onInitApp()
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
-#if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();
-	m_largeFont->setFont("Segoe UI Light", 50);
+	m_largeFont->setFont("LasVegas", 50);
 
 	// Create 2D Canvas
 	CGameObject *canvasObject = zone->createEmptyObject();
@@ -66,7 +61,6 @@ void SampleLuckyDraw::onInitApp()
 	CGUIText *textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleLuckyDraw");
 	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
-#endif
 }
 
 void SampleLuckyDraw::onUpdate()

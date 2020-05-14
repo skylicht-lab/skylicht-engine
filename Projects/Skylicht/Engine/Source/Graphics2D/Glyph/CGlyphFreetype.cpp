@@ -82,8 +82,11 @@ namespace Skylicht
 
 		for (std::map<std::string, SFaceEntity*>::iterator i = m_faceEntity.begin(), end = m_faceEntity.end(); i != end; i++)
 		{
-			delete[]i->second->m_data;
-			delete i->second;
+			if (i->second != NULL)
+			{
+				delete[]i->second->m_data;
+				delete i->second;
+			}
 		}
 		m_faceEntity.clear();
 
@@ -107,6 +110,10 @@ namespace Skylicht
 			FT_Error error = FT_New_Memory_Face(m_lib, data, dataSize, 0, &face);
 			if (error != 0)
 			{
+				char log[512];
+				sprintf(log, "[CGlyphFreetype] initFont '%s' failed: no support encode!", name);
+				os::Printer::log(log);
+
 				delete[]data;
 				return false;
 			}
@@ -116,6 +123,13 @@ namespace Skylicht
 			readFile->drop();
 			return true;
 		}
+		else
+		{
+			char log[512];
+			sprintf(log, "[CGlyphFreetype] initFont '%s' failed: file not found!", name);
+			os::Printer::log(log);
+		}
+
 		return false;
 	}
 
