@@ -30,44 +30,14 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 ### Build Command
 -   Clone this repo
 
--   Build Data Assets
+-   Build assets bundle
     ```console
     C:\skylicht-engine>cd Assets
     C:\skylicht-engine\Assets>python BuildAssetBundles.py
     C:\skylicht-engine\Assets>cd ..
     ```
-
--   Build Shader (**Optional**, just rebuild when you modify built-in shader)
-    ```console
-    # Install pcpp (C Preprocessor tool)
-    # https://pypi.org/project/pcpp
-    C:\skylicht-engine>C:\Python37\Scripts\pip install pcpp
     
-    # Build shader script
-    C:\skylicht-engine>cd Assets
-    C:\skylicht-engine\Assets>python BuildShader.py
-    C:\skylicht-engine\Assets>cd ..
-    ```
-
--   Build Texture Compress (DDS, ETC2, PVRTC) (**Optional**, just rebuild when you modify texture asset)
-    ```console
-    # Install Tinydb
-    # https://pypi.org/project/tinydb
-    C:\skylicht-engine>C:\Python37\Scripts\pip install tinydb
-
-    # Install Pillow (Image processing)
-    # https://pillow.readthedocs.io/en/4.1.x/index.html
-    C:\skylicht-engine>C:\Python37\Scripts\pip install Pillow
-
-    # Compress TGA to DDS, ETC2, PVR texture
-    C:\skylicht-engine>cd Assets    
-    C:\skylicht-engine\Assets>python BuildTextureCompressDDS.py
-    C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
-    C:\skylicht-engine\Assets>python BuildTextureCompressPVR.py
-    C:\skylicht-engine\Assets>cd ..
-    ```
-
--   Run CMake from the current directory
+-   Run CMake from the current directory to generate visual studio project or xcode project
     ```console
     # Visual Studio 2017
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
@@ -84,9 +54,41 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 
 -   More details: please preview command in **BuildCommand** folder.
 
-### Add Your Project
+### Build Compress Texture, Shader
 
-#### Add source
+-   This python tool will convert texture .TGA to compressed texture (.DDS, .ETC2, .PVRTC) to optimize gpu memory on runtime. (**Optional**, just rebuild when you modify/add texture to asset)
+    ```console
+    # Install Tinydb
+    # https://pypi.org/project/tinydb
+    C:\skylicht-engine>C:\Python37\Scripts\pip install tinydb
+
+    # Install Pillow (Image processing)
+    # https://pillow.readthedocs.io/en/4.1.x/index.html
+    C:\skylicht-engine>C:\Python37\Scripts\pip install Pillow
+
+    # Compress TGA to DDS, ETC2, PVR texture
+    C:\skylicht-engine>cd Assets    
+    C:\skylicht-engine\Assets>python BuildTextureCompressDDS.py
+    C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
+    C:\skylicht-engine\Assets>python BuildTextureCompressPVR.py
+    C:\skylicht-engine\Assets>cd ..
+    ```
+    
+-   This python tool use C Preprocessor to inline shader script (HLSL, HLSL) (**Optional**, just rebuild when you modify built-in shader)
+    ```console
+    # Install pcpp (C Preprocessor tool)
+    # https://pypi.org/project/pcpp
+    C:\skylicht-engine>C:\Python37\Scripts\pip install pcpp
+    
+    # Build shader script
+    C:\skylicht-engine>cd Assets
+    C:\skylicht-engine\Assets>python BuildShader.py
+    C:\skylicht-engine\Assets>cd ..
+    ```
+    
+### Add your code to  Project
+
+#### Add source code
 -   Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project
     ```console
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
