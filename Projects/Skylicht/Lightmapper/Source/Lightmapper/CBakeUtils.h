@@ -22,33 +22,19 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CLightmapper.h"
+#pragma once
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CLightmapper::CLightmapper()
-		{
-			m_singleBaker = new CBaker();
-			m_multiBaker = new CMTBaker();
-		}
+		void setRow(core::matrix4& mat, int row, const core::vector3df& v, float w = 0.0f);
 
-		CLightmapper::~CLightmapper()
-		{
-			delete m_singleBaker;
-			delete m_multiBaker;
-		}
-
-		const CSH9& CLightmapper::bakeAtPosition(
-			CCamera *camera, IRenderPipeline* rp, CEntityManager *entityMgr,
-			const core::vector3df& position,
-			const core::vector3df& normal,
+		void getWorldView(const core::vector3df& normal,
 			const core::vector3df& tangent,
-			const core::vector3df& binormal)
-		{
-			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
-		}
+			const core::vector3df& binormal,
+			const core::vector3df& position,
+			int face,
+			core::matrix4& out);
 	}
 }

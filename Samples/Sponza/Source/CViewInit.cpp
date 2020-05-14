@@ -44,6 +44,8 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
 
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
+
 #if defined(USE_FREETYPE)
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -88,13 +90,6 @@ void CViewInit::initScene()
 
 	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
-
-	// probe
-	CGameObject *probeObj = zone->createEmptyObject();
-	CProbe *probe = probeObj->addComponent<Lightmapper::CProbe>();
-
-	CTransformEuler *probeTransform = probeObj->getTransformEuler();
-	probeTransform->setPosition(core::vector3df(0.0f, 3.0f, 0.0f));
 
 	core::vector3df pointLightPosition[] = {
 		{-5.595442f, 1.2f, 2.00912f},
@@ -212,7 +207,56 @@ void CViewInit::initScene()
 		context->setGUICamera(guiCamera);
 
 	context->setDirectionalLight(directionalLight);
-	context->setProbe(probe);
+
+	initProbes();
+}
+
+void CViewInit::initProbes()
+{
+	CContext *context = CContext::getInstance();
+	CZone *zone = context->getActiveZone();
+
+	std::vector<core::vector3df> probesPosition;
+
+	for (int i = 0; i < 7; i++)
+	{
+		float x = i * 2.8f - 3.0f * 2.8f;
+
+		// row 0
+		probesPosition.push_back(core::vector3df(x, 1.0f, -0.2f));
+
+		probesPosition.push_back(core::vector3df(x, 1.0f, 2.0f));
+
+		probesPosition.push_back(core::vector3df(x, 1.0f, -2.3f));
+
+		// row 1
+
+		probesPosition.push_back(core::vector3df(x, 3.5f, -0.2f));
+
+		probesPosition.push_back(core::vector3df(x, 3.5f, 2.0f));
+
+		probesPosition.push_back(core::vector3df(x, 3.5f, -2.3f));
+
+		// row 2
+
+		probesPosition.push_back(core::vector3df(x, 8.0f, -0.2f));
+	}
+
+	std::vector<CProbe*> probes;
+
+	for (u32 i = 0, n = (int)probesPosition.size(); i < n; i++)
+	{
+		// probe
+		CGameObject *probeObj = zone->createEmptyObject();
+		CProbe *probe = probeObj->addComponent<Lightmapper::CProbe>();
+
+		CTransformEuler *probeTransform = probeObj->getTransformEuler();
+		probeTransform->setPosition(probesPosition[i]);
+
+		probes.push_back(probe);
+	}
+
+	context->setProbes(probes);
 }
 
 void CViewInit::onDestroy()

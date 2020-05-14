@@ -22,33 +22,59 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CLightmapper.h"
+#pragma once
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CLightmapper::CLightmapper()
+		class CSH9
 		{
-			m_singleBaker = new CBaker();
-			m_multiBaker = new CMTBaker();
-		}
+		protected:
+			core::vector3df m_sh[9];
 
-		CLightmapper::~CLightmapper()
-		{
-			delete m_singleBaker;
-			delete m_multiBaker;
-		}
+		public:
+			CSH9();
+			CSH9(const core::vector3df *sh);
+			CSH9(const CSH9& sh);
+			virtual ~CSH9();
 
-		const CSH9& CLightmapper::bakeAtPosition(
-			CCamera *camera, IRenderPipeline* rp, CEntityManager *entityMgr,
-			const core::vector3df& position,
-			const core::vector3df& normal,
-			const core::vector3df& tangent,
-			const core::vector3df& binormal)
-		{
-			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
-		}
+			void zero();
+
+			inline core::vector3df* getValue()
+			{
+				return m_sh;
+			}
+
+			CSH9 operator-() const;
+
+			CSH9& operator=(const CSH9& other);
+
+			CSH9 operator+(const CSH9& other) const;
+			CSH9& operator+=(const CSH9& other);
+
+			CSH9 operator-(const CSH9& other) const;
+			CSH9& operator-=(const CSH9& other);
+
+			CSH9 operator*(const CSH9& other) const;
+			CSH9& operator*=(const CSH9& other);
+			CSH9 operator*(const float v) const;
+			CSH9& operator*=(const float v);
+
+			CSH9 operator/(const CSH9& other) const;
+			CSH9& operator/=(const CSH9& other);
+			CSH9 operator/(const float v) const;
+			CSH9& operator/=(const float v);
+
+			core::vector3df dotProduct(const CSH9& other);
+
+			void projectOntoSH(const core::vector3df& n, const core::vector3df& color, float A0 = 1.0f, float A1 = 1.0f, float A2 = 1.0f);
+
+			void getSH(const core::vector3df& n, core::vector3df& color);
+
+			void getSHIrradiance(const core::vector3df& n, core::vector3df& color);
+
+			void convolveWithCosineKernel();
+		};
 	}
 }

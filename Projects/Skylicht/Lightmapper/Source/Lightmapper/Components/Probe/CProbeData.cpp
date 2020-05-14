@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CProbeData.h"
 
+#include "Material/Shader/CShaderManager.h"
+
 namespace Skylicht
 {
 	namespace Lightmapper
@@ -32,8 +34,18 @@ namespace Skylicht
 		CProbeData::CProbeData()
 		{
 			const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
-			ProbeMesh = geometryCreator->createSphereMesh(0.25f);
+			ProbeMesh = geometryCreator->createSphereMesh(0.2f);
 			ProbeMesh->setHardwareMappingHint(EHM_STATIC);
+
+			int shShader = CShaderManager::getInstance()->getShaderIDByName("SH");
+			if (shShader >= 0)
+			{
+				for (u32 i = 0, n = ProbeMesh->getMeshBufferCount(); i < n; i++)
+				{
+					IMeshBuffer* mb = ProbeMesh->getMeshBuffer(i);
+					mb->getMaterial().MaterialType = shShader;
+				}
+			}
 		}
 
 		CProbeData::~CProbeData()
