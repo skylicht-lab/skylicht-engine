@@ -22,33 +22,25 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CLightmapper.h"
+#pragma once
+
+#include "Material/Shader/CShader.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CShaderSH : public IShaderCallback
 	{
-		CLightmapper::CLightmapper()
-		{
-			m_singleBaker = new CBaker();
-			m_multiBaker = new CMTBaker();
-		}
+	protected:
+		static float s_sh9[36];
 
-		CLightmapper::~CLightmapper()
-		{
-			delete m_singleBaker;
-			delete m_multiBaker;
-		}
+	public:
+		CShaderSH();
 
-		const CSH9& CLightmapper::bakeAtPosition(
-			CCamera *camera, IRenderPipeline* rp, CEntityManager *entityMgr,
-			const core::vector3df& position,
-			const core::vector3df& normal,
-			const core::vector3df& tangent,
-			const core::vector3df& binormal)
-		{
-			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
-		}
-	}
+		virtual ~CShaderSH();
+
+		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+
+	public:
+		static void setSH9(core::vector3df *sh);
+	};
 }

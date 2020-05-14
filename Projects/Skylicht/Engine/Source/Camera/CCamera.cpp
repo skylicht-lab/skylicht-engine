@@ -106,12 +106,12 @@ namespace Skylicht
 		return m_viewArea.getTransform(video::ETS_VIEW);
 	}
 
-	void CCamera::setViewMatrix(const core::matrix4& view)
+	void CCamera::setViewMatrix(const core::matrix4& view, const core::vector3df& position)
 	{
 		m_viewArea.getTransform(video::ETS_VIEW) = view;
 
 		// update view area
-		m_viewArea.cameraPosition = view.getTranslation();
+		m_viewArea.cameraPosition = position;
 
 		core::matrix4 m(core::matrix4::EM4CONST_NOTHING);
 		m.setbyproduct_nocheck(

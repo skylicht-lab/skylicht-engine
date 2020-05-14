@@ -23,32 +23,47 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CLightmapper.h"
+#include "CShaderSH.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	float CShaderSH::s_sh9[36];
+
+	CShaderSH::CShaderSH()
 	{
-		CLightmapper::CLightmapper()
-		{
-			m_singleBaker = new CBaker();
-			m_multiBaker = new CMTBaker();
-		}
+	}
 
-		CLightmapper::~CLightmapper()
-		{
-			delete m_singleBaker;
-			delete m_multiBaker;
-		}
+	CShaderSH::~CShaderSH()
+	{
+	}
 
-		const CSH9& CLightmapper::bakeAtPosition(
-			CCamera *camera, IRenderPipeline* rp, CEntityManager *entityMgr,
-			const core::vector3df& position,
-			const core::vector3df& normal,
-			const core::vector3df& tangent,
-			const core::vector3df& binormal)
+	void CShaderSH::OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader)
+	{
+		switch (uniform->Type)
 		{
-			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
+		case SH_CONST:
+		{
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, s_sh9, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, s_sh9, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+		}
+		break;
+		default:
+			break;
+		}
+	}
+
+	void CShaderSH::setSH9(core::vector3df *sh)
+	{
+		memset(s_sh9, 0, sizeof(float) * 36);
+
+		for (int i = 0; i < 9; i++)
+		{
+			s_sh9[i * 4] = sh[i].X;
+			s_sh9[i * 4 + 1] = sh[i].Y;
+			s_sh9[i * 4 + 2] = sh[i].Z;
+			s_sh9[i * 4 + 3] = 1.0f;
 		}
 	}
 }

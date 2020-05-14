@@ -349,7 +349,7 @@ namespace irr
 				internalformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 #endif
 				break;
-                    
+
 			case ECF_D16:
 				colorformat = GL_DEPTH_COMPONENT;
 				type = GL_UNSIGNED_BYTE;
@@ -603,7 +603,6 @@ namespace irr
 				if (!image)
 					return 0;
 
-				/*
 				// duc.phamhong
 				// OpenGLES donot support glGetTexImage, use glReadPixels
 				// So i do it later
@@ -613,18 +612,15 @@ namespace irr
 					u8* pixels = static_cast<u8*>(image->lock());
 					if (!pixels)
 						return 0;
-					
-					// we need to keep the correct texture bound later on
-					GLint tmpTexture;
-					glGetIntegerv(GL_TEXTURE_BINDING_2D, &tmpTexture);
-					glBindTexture(GL_TEXTURE_2D, TextureName);
 
-					// we need to flip textures vertical
-					// however, it seems that this does not hold for mipmap
-					// textures, for unknown reasons.
+					os::Printer::log("[COGLES3Texture::unlock] Begin bind texture to FBO for read");
+
+					// Bind this texture to GL_COLOR_ATTACHMENT0
+					Driver->setRenderTarget(this, false, false, SColor(0, 0, 0, 0), NULL);
 
 					// download GPU data as ARGB8 to pixels;
-					glGetTexImage(GL_TEXTURE_2D, mipmapLevel, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pixels);
+					glReadBuffer(GL_COLOR_ATTACHMENT0);
+					glReadPixels(0, 0, Size.Width, Size.Height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
 					if (!mipmapLevel)
 					{
@@ -642,12 +638,14 @@ namespace irr
 						}
 						delete[] tmpBuffer;
 					}
+
 					image->unlock();
 
-					//reset old bound texture
-					glBindTexture(GL_TEXTURE_2D, tmpTexture);
+					// reset RTT
+					Driver->setRenderTarget(NULL, false, false, SColor(0, 0, 0, 0), NULL);
+
+					os::Printer::log("[COGLES3Texture::unlock] End bind texture to FBO");
 				}
-				*/
 			}
 			return image->lock();
 		}
@@ -658,12 +656,12 @@ namespace irr
 		{
 			if (IsCompressed) // TO-DO
 				return;
-			
+
 			// test if miplevel or main texture was locked
 			IImage* image = MipImage ? MipImage : Image;
 			if (!image)
 				return;
-			
+
 			// unlock image to see changes
 			image->unlock();
 			// copy texture data to GPU

@@ -43,4 +43,6 @@ public:
 protected:
 
 	void initScene();
+
+	void initProbes();
 };
