@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SkylichtEngine.h"
 #include "SampleLuckyDraw.h"
+#include "CLuckyDrawConfig.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -10,7 +11,8 @@ void installApplication(const std::vector<std::string>& argv)
 
 SampleLuckyDraw::SampleLuckyDraw() :
 	m_scene(NULL),
-	m_largeFont(NULL)
+	m_largeFont(NULL),
+	m_state(0)
 {
 
 }
@@ -19,6 +21,8 @@ SampleLuckyDraw::~SampleLuckyDraw()
 {
 	delete m_scene;
 	delete m_largeFont;
+
+	CLuckyDrawConfig::releaseInstance();
 }
 
 void SampleLuckyDraw::onInitApp()
@@ -39,6 +43,9 @@ void SampleLuckyDraw::onInitApp()
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
+	// Load Luckydraw config
+	CLuckyDrawConfig::createGetInstance()->initConfigs();
+
 	// Create a Scene
 	m_scene = new CScene();
 
@@ -57,10 +64,15 @@ void SampleLuckyDraw::onInitApp()
 	CGameObject *canvasObject = zone->createEmptyObject();
 	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
 
+	// Create Background
+	m_backgroundImage = canvas->createImage();
+
 	// Create UI Text in Canvas
 	CGUIText *textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleLuckyDraw");
 	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+
+	initState(0);
 }
 
 void SampleLuckyDraw::onUpdate()
@@ -102,4 +114,20 @@ void SampleLuckyDraw::onQuitApp()
 {
 	// end application
 	delete this;
+}
+
+void SampleLuckyDraw::initState(int cfg)
+{
+	CLuckyDrawConfig *configs = CLuckyDrawConfig::getInstance();
+	CTextureManager *textureMgr = CTextureManager::getInstance();
+
+	if (configs->getNumberOfConfig() <= m_state)
+		return;
+
+	// get config state
+	m_state = cfg;
+	CLuckyDrawConfig::SStateConfig *stateConfig = configs->getConfig(cfg);
+
+	// set background image
+	m_backgroundImage->setImage(textureMgr->getTexture(stateConfig->BackgroundImage.c_str()));
 }
