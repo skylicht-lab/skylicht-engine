@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/CGUIText.h"
 #include "GUI/CGUISprite.h"
 #include "GUI/CGUIRect.h"
+#include "GUI/CGUIRoundedRect.h"
 #include "GUI/CGUIMask.h"
 
 #define MAX_CHILD_DEPTH 512
@@ -135,6 +136,12 @@ namespace Skylicht
 		CGUIRect* createRect(const core::rectf& r, const video::SColor &c);
 
 		CGUIRect* createRect(CGUIElement *e, const core::rectf& r, const video::SColor &c);
+
+		CGUIRoundedRect* createRoundedRect(float radius, const video::SColor &c);
+
+		CGUIRoundedRect* createRoundedRect(const core::rectf& r, float radius, const video::SColor &c);
+
+		CGUIRoundedRect* createRoundedRect(CGUIElement *e, const core::rectf& r, float radius, const video::SColor &c);
 
 		void remove(CGUIElement *element);
 
