@@ -98,6 +98,8 @@ namespace Skylicht
 
 		void addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID);
 
+		void addRectangleBatch(const core::rectf& pos, const SColor& color, const core::matrix4& absoluteTransform, int shaderID);
+
 		void beginDrawDepth();
 
 		void endDrawDepth();
@@ -112,7 +114,7 @@ namespace Skylicht
 
 		void setNoDepthTest(video::SMaterial& mat);
 
-		void draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color);
+		void draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color);		
 
 		void draw2DRectangle(const core::rectf& pos, const SColor& color);
 
