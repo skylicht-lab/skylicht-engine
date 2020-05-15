@@ -114,13 +114,18 @@ namespace Skylicht
 
 		void setNoDepthTest(video::SMaterial& mat);
 
-		void draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color);		
+		void draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color);
 
 		void draw2DRectangle(const core::rectf& pos, const SColor& color);
 
 		void draw2DRectangle(const core::vector3df& upleft, const core::vector3df& lowerright, const SColor& color);
 
 		void draw2DRectangleOutline(const core::rectf& pos, const SColor& color);
+
+		video::SMaterial& getMaterial()
+		{
+			return m_2dMaterial;
+		}
 	};
 
 }
