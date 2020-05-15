@@ -103,6 +103,11 @@ namespace Skylicht
 
 	public:
 
+		inline CCanvas* getCanvas()
+		{
+			return m_canvas;
+		}
+
 		inline CGUIElement* getParent()
 		{
 			return m_parent;
@@ -111,6 +116,16 @@ namespace Skylicht
 		inline int getLevel()
 		{
 			return m_level;
+		}
+
+		inline void setColor(const SColor& c)
+		{
+			m_color = c;
+		}
+
+		const SColor& getColor()
+		{
+			return m_color;
 		}
 
 		inline core::rectf& getRect()

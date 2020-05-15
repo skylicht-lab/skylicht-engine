@@ -11,6 +11,7 @@ private:
 	CGlyphFont *m_largeFont;
 
 	CGUIImage *m_backgroundImage;
+	CScroller *m_numberScroll;
 
 	int m_state;
 public:

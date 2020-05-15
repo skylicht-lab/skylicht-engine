@@ -236,7 +236,7 @@ namespace Skylicht
 
 	CGUIText* CCanvas::createText(const core::rectf& r, IFont *font)
 	{
-		CGUIText *element = new CGUIText(this, m_root, m_rect, font);
+		CGUIText *element = new CGUIText(this, m_root, r, font);
 		m_entities.push_back(element);
 		return element;
 	}
@@ -290,6 +290,38 @@ namespace Skylicht
 		m_entities.push_back(element);
 		return element;
 	}
+
+	/*
+	* Rect constructor
+	*/
+
+	CGUIRect* CCanvas::createRect(const video::SColor &c)
+	{
+		CGUIRect *element = new CGUIRect(this, m_root, m_rect);
+		element->setColor(c);
+
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUIRect* CCanvas::createRect(const core::rectf& r, const video::SColor &c)
+	{
+		CGUIRect *element = new CGUIRect(this, m_root, r);
+		element->setColor(c);
+
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUIRect* CCanvas::createRect(CGUIElement *e, const core::rectf& r, const video::SColor &c)
+	{
+		CGUIRect *element = new CGUIRect(this, e, r);
+		element->setColor(c);
+
+		m_entities.push_back(element);
+		return element;
+	}
+
 
 	/*
 	* Element destructor

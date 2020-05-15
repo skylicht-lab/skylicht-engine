@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "SkylichtEngine.h"
-#include "SampleLuckyDraw.h"
 #include "CLuckyDrawConfig.h"
+#include "CScroller.h"
+#include "SampleLuckyDraw.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -58,20 +59,31 @@ void SampleLuckyDraw::onInitApp()
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	m_largeFont = new CGlyphFont();
-	m_largeFont->setFont("LasVegas", 50);
+	m_largeFont->setFont("LasVegas", 200);
 
 	// Create 2D Canvas
 	CGameObject *canvasObject = zone->createEmptyObject();
 	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
 
-	// Create Background
+	// 2D Canvas size
+	const core::rectf& screenSize = canvas->getRootElement()->getRect();
+
+	// Create background
 	m_backgroundImage = canvas->createImage();
 
-	// Create UI Text in Canvas
-	CGUIText *textLarge = canvas->createText(m_largeFont);
-	textLarge->setText("SampleLuckyDraw");
-	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+	// Create Rect scroller
+	float numberW = 230.0f;
+	float numberH = 382.0f;
+	core::rectf scrollerSize(0.0f, 0.0f, numberW, numberH);
+	CGUIRect *rect = canvas->createRect(scrollerSize, SColor(240, 255, 255, 255));
 
+	// Create Text inside Rect
+	CGUIText *textLarge = canvas->createText(rect, scrollerSize, m_largeFont);
+	textLarge->setText("1");
+	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+	textLarge->setColor(SColor(255, 0, 0, 0));
+
+	// Setup everything for a state
 	initState(0);
 }
 
