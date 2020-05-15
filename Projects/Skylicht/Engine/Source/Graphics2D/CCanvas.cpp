@@ -72,7 +72,7 @@ namespace Skylicht
 		for (int i = 0; i < MAX_CHILD_DEPTH; i++)
 			m_entitiesTree[i].set_used(0);
 
-		int maxLevel = 0;		
+		int maxLevel = 0;
 
 		// update all entities
 		for (CGUIElement *entity : m_entities)
@@ -165,7 +165,10 @@ namespace Skylicht
 			if (mask != NULL)
 				mask->endMaskTest();
 
-			for (u32 i = 0, n = entity->m_childs.size(); i < n; i++)
+			// note
+			// we use stack to render parent -> child
+			// so we must inverse render position because stack = Last-In First-Out (LIFO)
+			for (int i = (int)entity->m_childs.size() - 1; i >= 0; i--)
 				renderEntity.push(entity->m_childs[i]);
 		}
 	}
