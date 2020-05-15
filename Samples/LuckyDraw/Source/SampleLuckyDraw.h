@@ -7,8 +7,12 @@ class SampleLuckyDraw : public IApplicationEventReceiver
 private:
 	CScene *m_scene;
 	CCamera *m_guiCamera;
+	
 	CGlyphFont *m_largeFont;
 
+	CGUIImage *m_backgroundImage;
+
+	int m_state;
 public:
 	SampleLuckyDraw();
 	virtual ~SampleLuckyDraw();
@@ -28,4 +32,8 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
+
+public:
+
+	void initState(int cfg);
 };
