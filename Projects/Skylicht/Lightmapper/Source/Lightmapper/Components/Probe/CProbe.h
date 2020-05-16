@@ -48,6 +48,16 @@ namespace Skylicht
 			virtual void updateComponent();
 
 			void bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
+
+			inline CSH9& getSH()
+			{
+				return m_probeData->SH;
+			}
+
+			inline void setSH(const CSH9& sh)
+			{
+				m_probeData->SH = sh;
+			}
 		};
 	}
 }
