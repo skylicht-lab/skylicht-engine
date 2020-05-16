@@ -35,13 +35,13 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	float depth = 0.0;
 	float result = 0.0;
 	float size = 2048;
-	if (farDistance > shadowDistance[0])
+	if (farDistance < shadowDistance[0])
+		id = 0;
+	else if (farDistance < shadowDistance[1])
 		id = 1;
-	if (farDistance > shadowDistance[1])
-	{
-		return 1.0;
-	}
-	if (farDistance > shadowDistance[2])
+	else if (farDistance < shadowDistance[2])
+		id = 2;
+	else
 		return 1.0;
 	depth = shadowCoord[id].z;
 	float2 uv = shadowCoord[id].xy;

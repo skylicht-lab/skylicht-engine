@@ -120,8 +120,7 @@ namespace Skylicht
 
 			// todo
 			// We inorge last cascade shadow
-			if (i < m_numCascade - 1)
-				entityManager->render();
+			entityManager->render();
 		}
 
 		// render point light shadow

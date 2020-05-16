@@ -16,12 +16,14 @@ TankScene::TankScene()
 {
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
+	CLightmapper::createGetInstance();
 }
 
 TankScene::~TankScene()
 {
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
+	CLightmapper::releaseInstance();
 }
 
 void TankScene::onInitApp()
