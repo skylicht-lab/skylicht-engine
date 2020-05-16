@@ -77,7 +77,94 @@ namespace Skylicht
 
 			driver->setRenderTarget(NULL, false, false);
 
-			// CBaseRP::saveFBOToFile(m_radiance, "D:\\test.png");
+			// Cubemap to SH		
+			u8 *imageData = (u8*)m_radiance->lock(video::ETLM_READ_ONLY);
+			u32 bpp = 4;
+			u32 rowSize = RT_SIZE * NUM_FACES * bpp;
+			float c = 1.0f / 255.0f;
+
+			core::vector3df color;
+			core::vector3df dirTS;
+
+			bool isBGR = false;
+
+			// Note: DX11 & OpenGLES is RGB after read texture data
+			if (getVideoDriver()->getDriverType() == video::EDT_OPENGL)
+				isBGR = true;
+
+			for (int tid = 0; tid < count; tid++)
+			{
+				m_sh[tid].zero();
+
+				// Compute the final weight for integration
+				float weightSum = 0.0f;
+
+				// Compute SH by radiance
+				for (u32 face = 0; face < NUM_FACES; face++)
+				{
+					// offset to face data
+					u8 *faceData = imageData + RT_SIZE * face * bpp;
+
+					// offset to tid
+					faceData += rowSize * RT_SIZE * tid;
+
+					// scan pixels
+					for (u32 y = 0; y < RT_SIZE; y++)
+					{
+						u8* data = faceData;
+
+						for (u32 x = 0; x < RT_SIZE; x++)
+						{
+							// Calculate the location in [-1, 1] texture space
+							float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
+							float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
+
+							float temp = 1.0f + u * u + v * v;
+							float weight = 4.0f / (sqrt(temp) * temp);
+							weightSum = weightSum + weight;
+
+							if (isBGR == true)
+							{
+								color.X = data[2] * c * weight; // b
+								color.Y = data[1] * c * weight; // g
+								color.Z = data[0] * c * weight; // r
+							}
+							else
+							{
+								color.X = data[0] * c * weight; // r
+								color.Y = data[1] * c * weight; // g
+								color.Z = data[2] * c * weight; // b
+							}
+
+							dirTS.X = u;
+							dirTS.Y = v;
+							dirTS.Z = 1.0f;
+							toTangentSpace[tid][face].rotateVect(dirTS);
+							dirTS.normalize();
+
+							CSH9 sh;
+							sh.projectOntoSH(dirTS, color);
+							m_sh[tid] += sh;
+
+							data += bpp;
+						}
+
+						faceData += rowSize;
+					}
+				}
+
+				// finalWeight is weight for 1 pixel on Sphere
+				// S = 4 * PI * R^2
+				float finalWeight = (4.0f * 3.14159f) / weightSum;
+				m_sh[tid] *= finalWeight;
+			}
+
+			m_radiance->unlock();
+
+			//static int t = 0;
+			//char filename[512];
+			//sprintf(filename, "C:\\SVN\\test_%d.png", t++);
+			//CBaseRP::saveFBOToFile(m_radiance, filename);
 		}
 	}
 }

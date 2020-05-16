@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBaker.h"
 
-#define NUM_MTBAKER	10
+#define NUM_MTBAKER	50
 
 namespace Skylicht
 {
@@ -57,6 +57,16 @@ namespace Skylicht
 				const core::vector3df* tangent,
 				const core::vector3df* binormal,
 				int count);
+
+			inline int getMaxMT()
+			{
+				return NUM_MTBAKER;
+			}
+
+			const CSH9& getSH(int i)
+			{
+				return m_sh[i];
+			}
 		};
 	}
 }
