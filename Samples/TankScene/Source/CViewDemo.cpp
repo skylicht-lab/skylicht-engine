@@ -32,8 +32,6 @@ void CViewDemo::onUpdate()
 		scene->update();
 }
 
-bool bake = false;
-
 void CViewDemo::onRender()
 {
 	CContext *context = CContext::getInstance();

@@ -77,7 +77,7 @@ namespace Skylicht
 
 			driver->setRenderTarget(NULL, false, false);
 
-			// Cubemap to SH		
+			// Cubemap to SH
 			u8 *imageData = (u8*)m_radiance->lock(video::ETLM_READ_ONLY);
 			u32 bpp = 4;
 			u32 rowSize = RT_SIZE * NUM_FACES * bpp;
