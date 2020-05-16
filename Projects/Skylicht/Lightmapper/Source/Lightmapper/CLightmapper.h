@@ -22,6 +22,8 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
+#pragma once
+
 #include "Utils/CGameSingleton.h"
 #include "CBaker.h"
 #include "CMTBaker.h"
@@ -47,6 +49,15 @@ namespace Skylicht
 				const core::vector3df& normal,
 				const core::vector3df& tangent,
 				const core::vector3df& binormal);
+
+			void bakeAtPosition(
+				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
+				const core::vector3df *position,
+				const core::vector3df *normal,
+				const core::vector3df *tangent,
+				const core::vector3df *binormal,
+				std::vector<CSH9>& out,
+				int count);
 		};
 	}
 }
