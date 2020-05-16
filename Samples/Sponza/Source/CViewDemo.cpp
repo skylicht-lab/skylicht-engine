@@ -66,8 +66,46 @@ void CViewDemo::onRender()
 		scene->updateAddRemoveObject();
 
 		std::vector<CProbe*>& probes = context->getProbes();
+		//for (u32 i = 0, n = probes.size(); i < n; i++)
+		//	probes[i]->bakeIrradiance(bakeCamera, context->getRenderPipeline(), scene->getEntityManager());
+
+		// prepare comput sh
+		core::array<core::vector3df> positions;
+		core::array<core::vector3df> normals;
+		core::array<core::vector3df> tangents;
+		core::array<core::vector3df> binormals;
 		for (u32 i = 0, n = probes.size(); i < n; i++)
-			probes[i]->bakeIrradiance(bakeCamera, context->getRenderPipeline(), scene->getEntityManager());
+		{
+			CProbe* probe = probes[i];
+
+			core::vector3df pos = probe->getGameObject()->getPosition();
+			core::vector3df normal = CTransform::s_oy;
+			core::vector3df tangent = CTransform::s_ox;
+			core::vector3df binormal = normal.crossProduct(tangent);
+			binormal.normalize();
+
+			positions.push_back(pos);
+			normals.push_back(normal);
+			tangents.push_back(tangent);
+			binormals.push_back(binormal);
+		}
+
+		// bake sh
+		std::vector<CSH9> out;
+		CLightmapper::getInstance()->bakeAtPosition(
+			bakeCamera,
+			context->getRenderPipeline(),
+			scene->getEntityManager(),
+			positions.pointer(),
+			normals.pointer(),
+			tangents.pointer(),
+			binormals.pointer(),
+			out,
+			(int)probes.size());
+
+		// apply sh
+		for (u32 i = 0, n = probes.size(); i < n; i++)
+			probes[i]->setSH(out[i]);
 
 		bake = true;
 	}

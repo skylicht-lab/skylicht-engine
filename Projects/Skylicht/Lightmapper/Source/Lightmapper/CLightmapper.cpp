@@ -50,5 +50,41 @@ namespace Skylicht
 		{
 			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
 		}
+
+		void CLightmapper::bakeAtPosition(
+			CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
+			const core::vector3df *position,
+			const core::vector3df *normal,
+			const core::vector3df *tangent,
+			const core::vector3df *binormal,
+			std::vector<CSH9>& out,
+			int count)
+		{
+			out.clear();
+
+			int maxMT = m_multiBaker->getMaxMT();
+			int current = 0;
+
+			while (current < count)
+			{
+				int numMT = count - current;
+				numMT = core::min_(numMT, maxMT);
+
+				// bake and get SH result
+				m_multiBaker->bake(camera,
+					rp,
+					entityMgr,
+					position + current,
+					normal + current,
+					tangent + current,
+					binormal + current,
+					numMT);
+
+				for (int i = 0; i < numMT; i++)
+					out.push_back(m_multiBaker->getSH(i));
+
+				current += numMT;
+			}
+		}
 	}
 }

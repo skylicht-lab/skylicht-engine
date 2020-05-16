@@ -3,6 +3,7 @@
 #include "SkylichtEngine.h"
 
 #include "Lightmapper/Components/Probe/CProbe.h"
+#include "Lightmapper/CLightmapper.h"
 
 using namespace Lightmapper;
 
