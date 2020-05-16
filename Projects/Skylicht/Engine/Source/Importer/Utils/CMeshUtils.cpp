@@ -54,8 +54,8 @@ namespace Skylicht
 
 	void CMeshUtils::convertToTangentVertices(IMeshBuffer* buffer, bool flipZUp)
 	{
-		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_TANGENTS));
 
+		// replace the buffer
 		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
 		{
 			CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexTangents>();
@@ -63,8 +63,32 @@ namespace Skylicht
 			// copy vertex data
 			CMeshUtils::copyVertices(buffer->getVertexBuffer(j), vertexBuffer);
 
+			// replace
+			buffer->setVertexBuffer(vertexBuffer, j);
+		}
+
+		// change Vertex Descriptor
+		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_TANGENTS));
+
+		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		{
 			// todo calc tangent & binormal
+			CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = (CVertexBuffer<video::S3DVertexTangents>*)buffer->getVertexBuffer(j);
+
 			const u32 vtxCnt = vertexBuffer->getVertexCount();
+
+			u32 i;
+			video::S3DVertexTangents* v = (video::S3DVertexTangents*)vertexBuffer->getVertices();
+
+			// (1)
+			// Use irrlicht compute
+			IMeshManipulator *mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
+			mh->recalculateTangents(buffer);
+
+			// Use skylicht compute
+			// https://www.marti.works/calculating-tangents-for-your-mesh/
+			// https://answers.unity.com/questions/7789/calculating-tangents-vector4.html
+			/*
 			const u32 idxCnt = buffer->getIndexBuffer()->getIndexCount();
 
 			u16* idx16 = NULL;
@@ -75,17 +99,12 @@ namespace Skylicht
 			else
 				idx32 = (u32*)buffer->getIndexBuffer()->getIndices();
 
-			video::S3DVertexTangents* v = (video::S3DVertexTangents*)vertexBuffer->getVertices();
-
-			u32 i;
 			for (i = 0; i != vtxCnt; ++i)
 			{
 				v[i].Tangent.set(0.f, 0.f, 0.f);
 				v[i].Binormal.set(0.f, 0.f, 0.f);
 			}
 
-			// https://www.marti.works/calculating-tangents-for-your-mesh/
-			// https://answers.unity.com/questions/7789/calculating-tangents-vector4.html
 			// (1)
 			for (i = 0; i < idxCnt; i += 3)
 			{
@@ -134,7 +153,10 @@ namespace Skylicht
 				float t1 = w2.Y - w1.Y;
 				float t2 = w3.Y - w1.Y;
 
-				float r = 1.0f / (s1 * t2 - s2 * t1);
+				float div = s1 * t2 - s2 * t1;
+				float r = div == 0.0f ? 0.0f : 1.0f / div;
+
+				// float r = 1.0f / (s1 * t2 - s2 * t1);	// bug if: s1 * t2 - s2 * t1 == 0
 
 				core::vector3df sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
 				core::vector3df tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
@@ -147,6 +169,7 @@ namespace Skylicht
 				v[i2].Binormal += tdir;
 				v[i3].Binormal += tdir;
 			}
+			*/
 
 			// (2)
 			for (i = 0; i != vtxCnt; ++i)
@@ -154,6 +177,19 @@ namespace Skylicht
 				core::vector3df n = v[i].Normal;
 				core::vector3df t = v[i].Tangent;
 				core::vector3df t2 = v[i].Binormal;
+
+				// hard code to fix some error on model
+				if (t.getLengthSQ() == 0)
+				{
+					// char log[512];
+					// sprintf(log, "[CMeshUtils] Error compute TBN space at: %d", i);
+					// os::Printer::log(log);
+
+					if (t2.getLengthSQ() != 0)
+						t = n.crossProduct(t2);
+					else
+						t.set(0.0f, 0.0f, 1.0f);
+				}
 
 				v[i].Tangent = (t - n * n.dotProduct(t));
 
@@ -170,9 +206,6 @@ namespace Skylicht
 				v[i].Binormal.normalize();
 				v[i].Normal.normalize();
 			}
-
-			// replace the buffer
-			buffer->setVertexBuffer(vertexBuffer, j);
 
 			// drop reference
 			vertexBuffer->drop();

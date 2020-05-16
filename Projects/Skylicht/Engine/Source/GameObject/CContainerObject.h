@@ -53,7 +53,7 @@ namespace Skylicht
 		CGameObject* createEmptyObject();
 
 		CContainerObject* createContainerObject();
-		
+
 		void updateAddRemoveObject(bool force = false);
 
 		int getNumberObjects();
@@ -82,6 +82,43 @@ namespace Skylicht
 		template<typename T>
 		void getListObjectType(ArrayGameObject& listObjs, T type);
 
+		template<typename T>
+		std::vector<T*> getComponentsInChild(bool addThis);
+
 		core::array<CGameObject*>& getArrayChilds(bool addThis);
 	};
+
+	template<typename T>
+	std::vector<T*> CContainerObject::getComponentsInChild(bool addThis)
+	{
+		std::vector<T*> result;
+		std::queue<CGameObject*> queueObjs;
+
+		if (addThis == true)
+			queueObjs.push(this);
+		else
+		{
+			for (CGameObject* &obj : m_childs)
+				queueObjs.push(obj);
+		}
+
+		while (queueObjs.size() != 0)
+		{
+			CGameObject *obj = queueObjs.front();
+			queueObjs.pop();
+
+			T* comp = obj->getComponent<T>();
+			if (comp != NULL)
+				result.push_back(comp);
+
+			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
+			if (container != NULL)
+			{
+				for (CGameObject* &child : container->m_childs)
+					queueObjs.push(child);
+			}
+		}
+
+		return result;
+	}
 }

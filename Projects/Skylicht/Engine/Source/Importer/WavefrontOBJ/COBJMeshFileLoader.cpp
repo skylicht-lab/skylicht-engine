@@ -274,14 +274,14 @@ namespace Skylicht
 			bufPtr = goNextLine(bufPtr, bufEnd);
 		}	// end while(bufPtr && (bufPtr-buf<filesize))
 
-		constructScene(output);
+		constructScene(output, normalMap);
 
 		file->drop();
 		delete buf;
 		return true;
 	}
 
-	void COBJMeshFileLoader::constructScene(CEntityPrefab* output)
+	void COBJMeshFileLoader::constructScene(CEntityPrefab* output, bool normalMap)
 	{
 		// create entity
 		CEntity* root = output->createEntity();
@@ -308,7 +308,7 @@ namespace Skylicht
 					meshManipulator->recalculateNormals(m_materials[m]->Meshbuffer);
 
 				// if this material have normal map
-				if (m_materials[m]->Meshbuffer->getMaterial().TextureLayer[1].Texture != NULL)
+				if (m_materials[m]->Meshbuffer->getMaterial().TextureLayer[1].Texture != NULL || normalMap == true)
 				{
 					CMeshUtils::convertToTangentVertices(m_materials[m]->Meshbuffer);
 

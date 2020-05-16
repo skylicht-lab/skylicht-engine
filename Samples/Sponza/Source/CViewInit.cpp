@@ -134,9 +134,11 @@ void CViewInit::initScene()
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Sponza/Sponza.xml", true, textureFolders);
 		// create render mesh object
 		CGameObject *sponza = zone->createEmptyObject();
+		sponza->setStatic(true);
+
 		CRenderMesh *renderer = sponza->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefab);
-		renderer->initMaterial(materials);
+		renderer->initMaterial(materials);		
 	}
 
 #if defined(USE_FREETYPE)

@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CGameSingleton.h"
 #include "CBaker.h"
 #include "CMTBaker.h"
+#include "Components/Probe/CProbe.h"
 
 namespace Skylicht
 {
@@ -58,6 +59,10 @@ namespace Skylicht
 				const core::vector3df *binormal,
 				std::vector<CSH9>& out,
 				int count);
+
+			void bakeProbes(std::vector<CProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr);
+
+			int bakeMeshBuffer(IMeshBuffer *mb, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& out);
 		};
 	}
 }
