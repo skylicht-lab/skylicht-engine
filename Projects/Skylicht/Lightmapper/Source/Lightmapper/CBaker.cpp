@@ -52,7 +52,8 @@ namespace Skylicht
 			const core::vector3df& position,
 			const core::vector3df& normal,
 			const core::vector3df& tangent,
-			const core::vector3df& binormal)
+			const core::vector3df& binormal,
+			int numFace)
 		{
 			IVideoDriver *driver = getVideoDriver();
 
@@ -65,7 +66,7 @@ namespace Skylicht
 
 			core::matrix4 toTangentSpace[NUM_FACES];
 
-			for (int face = 0; face < NUM_FACES; face++)
+			for (int face = 0; face < numFace; face++)
 			{
 				core::matrix4 cameraWorld;
 				core::matrix4 viewToWorld;
@@ -118,7 +119,7 @@ namespace Skylicht
 			float weightSum = 0.0f;
 
 			// Compute SH by radiance
-			for (u32 face = 0; face < NUM_FACES; face++)
+			for (int face = 0; face < numFace; face++)
 			{
 				// offset to face data
 				u8 *faceData = imageData + RT_SIZE * face * bpp;

@@ -168,8 +168,15 @@ void* CD3D11Texture::lock(E_TEXTURE_LOCK_MODE mode, u32 mipmapLevel)
 
 void* CD3D11Texture::lock(bool readOnly, u32 mipmapLevel, u32 arraySlice)
 {
-	if(!Texture || !createTextureBuffer())
+	if(!Texture)
 		return 0;
+
+	if (TextureBuffer == NULL)
+	{
+		if (!createTextureBuffer())
+			return 0;
+	}
+
 
 	HRESULT hr = S_OK;
 
@@ -222,7 +229,7 @@ void CD3D11Texture::unlock()
 	Context->Unmap( TextureBuffer, D3D11CalcSubresource(MipLevelLocked, ArraySliceLocked, NumberOfMipLevels) );
 
 	// copy texture buffer to main texture ONLY if buffer was write
-	if (LastMapDirection && D3D11_MAP_WRITE)
+	if (LastMapDirection & D3D11_MAP_WRITE)
 	{
 		Context->CopyResource( Texture, TextureBuffer );
 	}

@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 
 #define NUM_FACES 6
-#define RT_SIZE 64
+#define RT_SIZE 32
 
 namespace Skylicht
 {
@@ -54,7 +54,8 @@ namespace Skylicht
 				const core::vector3df& position,
 				const core::vector3df& normal,
 				const core::vector3df& tangent,
-				const core::vector3df& binormal);
+				const core::vector3df& binormal,
+				int numFace);
 		};
 	}
 }

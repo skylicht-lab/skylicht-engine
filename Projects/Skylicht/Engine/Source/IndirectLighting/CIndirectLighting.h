@@ -24,47 +24,57 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "CBaker.h"
-#include "CMTBaker.h"
-#include "Components/Probe/CProbe.h"
+#include "Components/CComponentSystem.h"
+#include "CIndirectLightingData.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CIndirectLighting : public CComponentSystem
 	{
-		class CLightmapper : public CGameSingleton<CLightmapper>
+	public:
+		enum EIndirectType
 		{
-		protected:
-			CBaker *m_singleBaker;
-			CMTBaker *m_multiBaker;
-
-		public:
-			CLightmapper();
-
-			virtual ~CLightmapper();
-
-			const CSH9& bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal, 
-				int numFace = NUM_FACES);
-
-			void bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df *position,
-				const core::vector3df *normal,
-				const core::vector3df *tangent,
-				const core::vector3df *binormal,
-				std::vector<CSH9>& out,
-				int count,
-				int numFace = NUM_FACES);
-
-			void bakeProbes(std::vector<CProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr);
-
-			int bakeMeshBuffer(IMeshBuffer *mb, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& out);
+			Lightmap,
+			VertexColor,
 		};
-	}
+
+	protected:
+		EIndirectType m_type;
+		int m_lightmapIndex;
+
+		std::vector<CIndirectLightingData*> m_data;
+
+	public:
+		CIndirectLighting();
+
+		virtual ~CIndirectLighting();
+
+		virtual void initComponent();
+
+		virtual void updateComponent();
+
+	public:
+
+		void setIndirectLightingType(EIndirectType type);
+
+		inline void setLightmapIndex(int idx)
+		{
+			m_lightmapIndex = idx;
+		}
+
+		inline int getLightmapIndex()
+		{
+			return m_lightmapIndex;
+		}
+
+		EIndirectType getIndirectLightingType()
+		{
+			return m_type;
+		}
+
+		std::vector<CIndirectLightingData*>& getData()
+		{
+			return m_data;
+		}
+	};
 }

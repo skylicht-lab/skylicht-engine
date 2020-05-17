@@ -73,7 +73,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CShadowMapRP::drawMeshBuffer(CMesh *mesh, int bufferID)
+	void CShadowMapRP::drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
 	{
 		if (mesh->Material.size() > (u32)bufferID)
 		{

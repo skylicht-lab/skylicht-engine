@@ -24,20 +24,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDeferredRP.h"
+#include "RenderMesh/CMesh.h"
 #include "Material/CMaterial.h"
 #include "Material/Shader/CShaderManager.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
+#include "IndirectLighting/CIndirectLightingData.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
+	bool CDeferredRP::s_enableRenderIndirect = true;
+
 	CDeferredRP::CDeferredRP() :
 		m_albedo(NULL),
 		m_position(NULL),
 		m_normal(NULL),
 		m_data(NULL),
+		m_isIndirectPass(false),
+		m_vertexColorShader(0),
+		m_textureColorShader(0),
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0)
 	{
@@ -60,6 +68,9 @@ namespace Skylicht
 		if (m_data != NULL)
 			driver->removeTexture(m_data);
 
+		if (m_indirect != NULL)
+			driver->removeTexture(m_indirect);
+
 		if (m_lightBuffer != NULL)
 			driver->removeTexture(m_lightBuffer);
 
@@ -81,11 +92,13 @@ namespace Skylicht
 		m_normal = driver->addRenderTargetTexture(m_size, "normal", ECF_A32B32G32R32F);
 		m_data = driver->addRenderTargetTexture(m_size, "data", ECF_A8R8G8B8);
 
+		m_indirect = driver->addRenderTargetTexture(m_size, "indirect", ECF_A8R8G8B8);
 		m_lightBuffer = driver->addRenderTargetTexture(m_size, "light", ECF_A16B16G16R16F);
 
 		m_target = driver->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
 
 		// setup multi render target
+		// opengles just support 4 buffer
 		m_multiRenderTarget.push_back(m_albedo);
 		m_multiRenderTarget.push_back(m_position);
 		m_multiRenderTarget.push_back(m_normal);
@@ -95,9 +108,14 @@ namespace Skylicht
 		initDefferredMaterial();
 		initPointLightMaterial();
 
+		// get basic shader
+		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		m_textureColorShader = shaderMgr->getShaderIDByName("TextureColor");
+		m_vertexColorShader = shaderMgr->getShaderIDByName("VertexColor");
+
 		// final pass
 		m_finalPass.setTexture(0, m_target);
-		m_finalPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+		m_finalPass.MaterialType = m_textureColorShader;
 	}
 
 	void CDeferredRP::initDefferredMaterial()
@@ -111,6 +129,9 @@ namespace Skylicht
 
 		// point light color
 		m_directionalLightPass.setTexture(4, m_lightBuffer);
+
+		// indirect light color
+		m_directionalLightPass.setTexture(5, m_indirect);
 
 		// turn off mipmap on float texture	
 		m_directionalLightPass.TextureLayer[1].BilinearFilter = false;
@@ -165,6 +186,16 @@ namespace Skylicht
 		m_pointLightPass.ZWriteEnable = false;
 	}
 
+	void CDeferredRP::enableRenderIndirect(bool b)
+	{
+		s_enableRenderIndirect = b;
+	}
+
+	bool CDeferredRP::isEnableRenderIndirect()
+	{
+		return s_enableRenderIndirect;
+	}
+
 	bool CDeferredRP::canRenderMaterial(CMaterial *material)
 	{
 		if (material->isDeferred() == true)
@@ -173,19 +204,61 @@ namespace Skylicht
 		return false;
 	}
 
+	void CDeferredRP::drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
+	{
+		if (m_isIndirectPass == true)
+		{
+			// read indirect lighting data
+			CIndirectLightingData *indirectData = (CIndirectLightingData*)entity->getEntity(entityID)->getData<CIndirectLightingData>();
+			if (indirectData == NULL)
+				return;
+
+			// set shader (uniform) material
+			if (mesh->Material.size() > (u32)bufferID)
+				CShaderMaterial::setMaterial(mesh->Material[bufferID]);
+
+			IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
+			IVideoDriver *driver = getVideoDriver();
+
+			video::SMaterial& material = mb->getMaterial();
+
+			if (indirectData->Type == CIndirectLightingData::VertexColor)
+			{
+				// change shader to vertex color
+				s32 current = material.MaterialType;
+				material.MaterialType = m_vertexColorShader;
+
+				// set irrlicht material
+				driver->setMaterial(material);
+
+				// draw mesh buffer
+				driver->drawMeshBuffer(mb);
+
+				// revert default material
+				material.MaterialType = current;
+			}
+			else if (indirectData->Type == CIndirectLightingData::Lightmap)
+			{
+
+			}
+		}
+		else
+		{
+			// default render
+			CBaseRP::drawMeshBuffer(mesh, bufferID, entity, entityID);
+		}
+	}
+
 	void CDeferredRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
 			return;
 
-		// set multi rtt
 		IVideoDriver *driver = getVideoDriver();
-		driver->setRenderTarget(m_multiRenderTarget);
-
-		bool useCustomViewport = false;
-		core::recti customViewport;
 
 		// custom viewport
+		bool useCustomViewport = false;
+		core::recti customViewport;
 		if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
 		{
 			customViewport.LowerRightCorner.set(
@@ -194,24 +267,48 @@ namespace Skylicht
 			);
 
 			useCustomViewport = true;
-			driver->setViewPort(customViewport);
 		}
 
-		// draw entity to buffer
+		// setup camera
 		setCamera(camera);
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
 
+		// STEP 01:
+		// draw baked indirect lighting
+		m_isIndirectPass = true;
+		driver->setRenderTarget(m_indirect, true, true, SColor(255, 0, 0, 0));
+		if (useCustomViewport)
+			driver->setViewPort(customViewport);
+
 		if (m_updateEntity == true)
 		{
 			entityManager->update();
-			entityManager->render();
+
+			if (s_enableRenderIndirect == true)
+				entityManager->render();
 		}
 		else
 		{
-			entityManager->cullingAndRender();
+			if (s_enableRenderIndirect == true)
+				entityManager->cullingAndRender();
 		}
+		m_isIndirectPass = false;
 
+		// STEP 02:
+		// Render multi target to: albedo, position, normal, data		
+		driver->setRenderTarget(m_multiRenderTarget);
+		if (useCustomViewport)
+			driver->setViewPort(customViewport);
+
+		// draw entity to buffer
+		if (s_enableRenderIndirect == true)
+			entityManager->render();
+		else
+			entityManager->cullingAndRender();
+
+		// STEP 03:
+		// draw point lighting & spot lighting
 		// save camera transform
 		m_projectionMatrix = driver->getTransform(video::ETS_PROJECTION);
 		m_viewMatrix = driver->getTransform(video::ETS_VIEW);
@@ -261,7 +358,8 @@ namespace Skylicht
 			}
 		}
 
-		// render final light to screen
+		// STEP 04
+		// Render final direction lighting to screen
 		driver->setRenderTarget(m_target, false, false);
 
 		// custom viewport
@@ -272,16 +370,18 @@ namespace Skylicht
 		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
 		if (shadowRP != NULL)
 		{
-			m_directionalLightPass.setTexture(5, shadowRP->getDepthTexture());
+			m_directionalLightPass.setTexture(6, shadowRP->getDepthTexture());
 		}
 
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 
+		// STEP 05
 		// call forwarder rp?
 		core::recti fwvp(0, 0, (int)renderW, (int)renderH);
 		onNext(m_target, camera, entityManager, fwvp);
 
+		// STEP 06
 		// final pass to screen
 		driver->setRenderTarget(target, false, false);
 
@@ -290,5 +390,16 @@ namespace Skylicht
 
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
+
+		// test
+		/*
+		if (s_enableRenderIndirect == true)
+		{
+			m_indirect->regenerateMipMapLevels();
+			SMaterial t = m_finalPass;
+			t.TextureLayer[0].Texture = m_indirect;
+			renderBufferToTarget(0.0f, 0.0f, renderW / 3, renderH / 3, 0.0f, 0.0f, renderW, renderH, t);
+		}
+		*/
 	}
 }

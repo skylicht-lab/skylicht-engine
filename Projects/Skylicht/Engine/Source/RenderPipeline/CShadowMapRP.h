@@ -56,7 +56,7 @@ namespace Skylicht
 
 		virtual bool canRenderMaterial(CMaterial *m);
 
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID);
+		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
 
 	public:
 
