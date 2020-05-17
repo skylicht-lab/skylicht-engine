@@ -24,47 +24,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "CBaker.h"
-#include "CMTBaker.h"
-#include "Components/Probe/CProbe.h"
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CIndirectLightingData : public IEntityData
 	{
-		class CLightmapper : public CGameSingleton<CLightmapper>
+	public:
+		enum EType
 		{
-		protected:
-			CBaker *m_singleBaker;
-			CMTBaker *m_multiBaker;
-
-		public:
-			CLightmapper();
-
-			virtual ~CLightmapper();
-
-			const CSH9& bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal, 
-				int numFace = NUM_FACES);
-
-			void bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df *position,
-				const core::vector3df *normal,
-				const core::vector3df *tangent,
-				const core::vector3df *binormal,
-				std::vector<CSH9>& out,
-				int count,
-				int numFace = NUM_FACES);
-
-			void bakeProbes(std::vector<CProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr);
-
-			int bakeMeshBuffer(IMeshBuffer *mb, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& out);
+			Lightmap,
+			VertexColor
 		};
-	}
+
+		EType Type;
+		int LightmapIndex;
+
+	public:
+		CIndirectLightingData();
+
+		virtual ~CIndirectLightingData();
+	};
 }

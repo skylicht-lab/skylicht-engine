@@ -119,6 +119,9 @@ void CViewInit::initScene()
 		CRenderMesh *renderer = tankScene->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
+
+		CIndirectLighting *indirectLighting = tankScene->addComponent<CIndirectLighting>();
+		indirectLighting->setIndirectLightingType(CIndirectLighting::VertexColor);
 	}
 
 	// save to context
@@ -194,7 +197,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 #if defined(WINDOWS_STORE) || defined(MACOS)
@@ -258,7 +261,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewBakeLightmap>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

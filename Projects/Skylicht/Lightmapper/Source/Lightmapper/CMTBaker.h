@@ -56,7 +56,8 @@ namespace Skylicht
 				const core::vector3df* normal,
 				const core::vector3df* tangent,
 				const core::vector3df* binormal,
-				int count);
+				int count,
+				int numFace);
 
 			inline int getMaxMT()
 			{

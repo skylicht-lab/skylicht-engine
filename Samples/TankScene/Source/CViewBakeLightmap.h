@@ -25,6 +25,7 @@ protected:
 	u32 m_currentMeshBuffer;
 	u32 m_currentVertex;
 	u32 m_totalVertexBaked;
+	int m_lightBound;
 public:
 	CViewBakeLightmap();
 
