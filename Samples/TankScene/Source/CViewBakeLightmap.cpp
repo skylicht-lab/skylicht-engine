@@ -3,6 +3,7 @@
 #include "ViewManager/CViewManager.h"
 #include "CViewBakeLightmap.h"
 #include "CViewDemo.h"
+#include "Importer/Utils/CMeshUtils.h"
 
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_guiObject(NULL),
@@ -10,7 +11,8 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_textInfo(NULL),
 	m_font(NULL),
 	m_currentMeshBuffer(0),
-	m_currentVertex(0)
+	m_currentVertex(0),
+	m_totalVertexBaked(0)
 {
 
 }
@@ -22,13 +24,17 @@ CViewBakeLightmap::~CViewBakeLightmap()
 
 	// delete font
 	delete m_font;
+
+	// delete baked color buffer
+	for (u32 i = 0, n = m_colorBuffer.size(); i < n; i++)
+		delete m_colorBuffer[i];
+	m_colorBuffer.clear();
 }
 
 void CViewBakeLightmap::onInit()
 {
 	CContext *context = CContext::getInstance();
 	CCamera *camera = context->getActiveCamera();
-
 	CZone *zone = context->getActiveZone();
 
 	// get all render mesh in zone
@@ -47,7 +53,19 @@ void CViewBakeLightmap::onInit()
 					CMesh *mesh = r->getMesh();
 					u32 bufferCount = mesh->getMeshBufferCount();
 					for (u32 i = 0; i < bufferCount; i++)
-						m_allMeshBuffer.push_back(mesh->getMeshBuffer(i));
+					{
+						IMeshBuffer *mb = mesh->getMeshBuffer(i);
+						if (mb->getVertexBufferCount() > 0)
+						{
+							// add mesh buffer, that will bake lighting
+							m_allMeshBuffer.push_back(mb);
+
+							// alloc color buffer, that is result of indirect lighting baked
+							SColorBuffer *cb = new SColorBuffer();
+							cb->Color.set_used(mb->getVertexBuffer(0)->getVertexCount());
+							m_colorBuffer.push_back(cb);
+						}
+					}
 				}
 			}
 		}
@@ -91,12 +109,20 @@ void CViewBakeLightmap::onUpdate()
 	if (m_currentMeshBuffer < numMB)
 	{
 		IMeshBuffer *mb = m_allMeshBuffer[m_currentMeshBuffer];
+		SColorBuffer *cb = m_colorBuffer[m_currentMeshBuffer];
+
 		u32 numVtx = mb->getVertexBuffer(0)->getVertexCount();
 
+		// compute wait percent
+		float percentPerBuffer = 1.0f / (float)numMB;
+		float percent = (percentPerBuffer * m_currentMeshBuffer + percentPerBuffer * (m_currentVertex / (float)numVtx)) * 100.0f;
+
 		char status[512];
-		sprintf(status, "MeshBuffer: %d/%d\nVertex: %d/%d",
+		sprintf(status, "LIGHTMAPPING: %d%%\n\n- MeshBuffer: %d/%d\n- Vertex: %d/%d\n\n - Total: %d",
+			(int)percent,
 			m_currentMeshBuffer + 1, numMB,
-			m_currentVertex, numVtx);
+			m_currentVertex, numVtx,
+			m_totalVertexBaked);
 		m_textInfo->setText(status);
 
 		// lightmaper bake meshbuffer
@@ -107,9 +133,10 @@ void CViewBakeLightmap::onUpdate()
 			mb,
 			camera, context->getRenderPipeline(), scene->getEntityManager(),
 			m_currentVertex, NUM_MTBAKER,
-			m_color);
+			cb->Color);
 
 		m_currentVertex += bakeCount;
+		m_totalVertexBaked += bakeCount;
 
 		// next mesh
 		if (m_currentVertex >= numVtx || bakeCount == 0)
@@ -120,8 +147,47 @@ void CViewBakeLightmap::onUpdate()
 	}
 	else
 	{
+		copyColorBufferToMeshBuffer();
+
 		// next to demo scene
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+	}
+}
+
+void CViewBakeLightmap::copyColorBufferToMeshBuffer()
+{
+	// copy baked color buffer to mesh buffer
+	for (u32 i = 0, n = m_allMeshBuffer.size(); i < n; i++)
+	{
+		IMeshBuffer *mb = m_allMeshBuffer[i];
+		SColorBuffer *cb = m_colorBuffer[i];
+
+		if (mb->getVertexType() != EVT_TANGENTS || mb->getVertexBufferCount() == 0)
+			continue;
+
+		IVertexBuffer *vb = mb->getVertexBuffer(0);
+		u32 vtxCount = vb->getVertexCount();
+
+		// alloc new vtx buffer (because current vtx buffer is on GPU Memory, that can't change)
+		CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexTangents>();
+
+		// copy vertex data
+		CMeshUtils::copyVertices(vb, vertexBuffer);
+
+		// copy baked color
+		video::S3DVertexTangents *vtx = (video::S3DVertexTangents*)vertexBuffer->getVertices();
+		for (u32 i = 0; i < vtxCount; i++)
+			vtx->Color = cb->Color[i];
+
+		// notify update vertex to GPU Memory
+		vertexBuffer->setHardwareMappingHint(EHM_STATIC);
+
+		// replace current vertex buffer
+		mb->setVertexBuffer(vertexBuffer, 0);
+		mb->setDirty(EBT_VERTEX);
+
+		// drop
+		vertexBuffer->drop();
 	}
 }
 

@@ -182,6 +182,20 @@ namespace Skylicht
 				outSH,
 				count);
 
+
+			core::vector3df result;
+			for (int i = begin, id = 0; i < begin + count; i++, id++)
+			{
+				// get result color
+				outSH[id].getSH(normals[id], result);
+				out[i].set(
+					255, // a
+					(int)(result.X * 255.0f), // r
+					(int)(result.Y * 255.0f), // g
+					(int)(result.Z * 255.0f) // b
+				);
+			}
+
 			return count;
 		}
 	}

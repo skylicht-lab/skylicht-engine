@@ -4,6 +4,12 @@
 
 class CViewBakeLightmap : public CView
 {
+public:
+	struct SColorBuffer
+	{
+		core::array<SColor> Color;
+	};
+
 protected:
 	CGameObject *m_guiObject;
 	CGameObject *m_bakeCameraObject;
@@ -14,11 +20,11 @@ protected:
 	std::vector<CRenderMesh*> m_renderMesh;
 	std::vector<IMeshBuffer*> m_allMeshBuffer;
 
-	core::array<SColor> m_color;
+	core::array<SColorBuffer*> m_colorBuffer;
 
 	u32 m_currentMeshBuffer;
 	u32 m_currentVertex;
-
+	u32 m_totalVertexBaked;
 public:
 	CViewBakeLightmap();
 
@@ -33,4 +39,8 @@ public:
 	virtual void onRender();
 
 	virtual void onPostRender();
+
+protected:
+
+	void copyColorBufferToMeshBuffer();
 };
