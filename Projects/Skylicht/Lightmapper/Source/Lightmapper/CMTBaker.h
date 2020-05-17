@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBaker.h"
 
-#define NUM_MTBAKER	50
+#define NUM_MTBAKER	60
 
 namespace Skylicht
 {
