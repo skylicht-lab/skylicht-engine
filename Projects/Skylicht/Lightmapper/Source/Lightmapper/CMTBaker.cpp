@@ -3,6 +3,7 @@
 #include "CBakeUtils.h"
 #include "GameObject/CGameObject.h"
 #include "RenderPipeline/CBaseRP.h"
+#include "RenderPipeline/CDeferredRP.h"
 
 namespace Skylicht
 {
@@ -29,7 +30,8 @@ namespace Skylicht
 			const core::vector3df* normal,
 			const core::vector3df* tangent,
 			const core::vector3df* binormal,
-			int count)
+			int count,
+			int numFace)
 		{
 			IVideoDriver *driver = getVideoDriver();
 
@@ -44,7 +46,7 @@ namespace Skylicht
 
 			for (int tid = 0; tid < count; tid++)
 			{
-				for (int face = 0; face < NUM_FACES; face++)
+				for (int face = 0; face < numFace; face++)
 				{
 					core::matrix4 cameraWorld;
 					core::matrix4 viewToWorld;
@@ -100,7 +102,7 @@ namespace Skylicht
 				float weightSum = 0.0f;
 
 				// Compute SH by radiance
-				for (u32 face = 0; face < NUM_FACES; face++)
+				for (int face = 0; face < numFace; face++)
 				{
 					// offset to face data
 					u8 *faceData = imageData + RT_SIZE * face * bpp;
@@ -161,10 +163,19 @@ namespace Skylicht
 
 			m_radiance->unlock();
 
-			//static int t = 0;
-			//char filename[512];
-			//sprintf(filename, "C:\\SVN\\test_%d.png", t++);
-			//CBaseRP::saveFBOToFile(m_radiance, filename);
+			// test radiance
+			/*
+			static int t = 0;
+			static bool test = false;
+			if (CDeferredRP::isEnableRenderIndirect() == true && test == false)
+			{
+				char filename[512];
+				sprintf(filename, "C:\\SVN\\test_%d.png", t);
+				CBaseRP::saveFBOToFile(m_radiance, filename);
+				test = true;
+			}
+			t++;
+			*/
 		}
 	}
 }

@@ -9,7 +9,8 @@
 			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uTexData" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
 			<uniform name="uTexLight" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
-			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="5" float="1" directX="false"/>
+			<uniform name="uTexIndirect" type="DEFAULT_VALUE" value="5" float="1" directX="false"/>
+			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="6" float="1" directX="false"/>
 			
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>			

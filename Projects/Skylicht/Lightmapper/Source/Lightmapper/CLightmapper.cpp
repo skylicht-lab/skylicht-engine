@@ -46,9 +46,10 @@ namespace Skylicht
 			const core::vector3df& position,
 			const core::vector3df& normal,
 			const core::vector3df& tangent,
-			const core::vector3df& binormal)
+			const core::vector3df& binormal,
+			int numFace)
 		{
-			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
+			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal, numFace);
 		}
 
 		void CLightmapper::bakeAtPosition(
@@ -58,7 +59,8 @@ namespace Skylicht
 			const core::vector3df *tangent,
 			const core::vector3df *binormal,
 			std::vector<CSH9>& out,
-			int count)
+			int count,
+			int numFace)
 		{
 			out.clear();
 
@@ -78,7 +80,8 @@ namespace Skylicht
 					normal + current,
 					tangent + current,
 					binormal + current,
-					numMT);
+					numMT,
+					numFace);
 
 				for (int i = 0; i < numMT; i++)
 					out.push_back(m_multiBaker->getSH(i));
@@ -180,19 +183,27 @@ namespace Skylicht
 				tangents.pointer(),
 				binormals.pointer(),
 				outSH,
-				count);
+				count,
+				5);
 
 
 			core::vector3df result;
+			float invPi = 1.0f / core::PI;
+
 			for (int i = begin, id = 0; i < begin + count; i++, id++)
 			{
 				// get result color
-				outSH[id].getSH(normals[id], result);
+				outSH[id].getSHIrradiance(normals[id], result);
+
+				float r = core::clamp(result.X, 0.0f, 1.0f);
+				float g = core::clamp(result.Y, 0.0f, 1.0f);
+				float b = core::clamp(result.Z, 0.0f, 1.0f);
+
 				out[i].set(
 					255, // a
-					(int)(result.X * 255.0f), // r
-					(int)(result.Y * 255.0f), // g
-					(int)(result.Z * 255.0f) // b
+					(int)(r * 255.0f), // r
+					(int)(g * 255.0f), // g
+					(int)(b * 255.0f)  // b
 				);
 			}
 

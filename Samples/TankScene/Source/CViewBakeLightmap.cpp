@@ -12,7 +12,8 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_font(NULL),
 	m_currentMeshBuffer(0),
 	m_currentVertex(0),
-	m_totalVertexBaked(0)
+	m_totalVertexBaked(0),
+	m_lightBound(0)
 {
 
 }
@@ -105,9 +106,15 @@ void CViewBakeLightmap::onUpdate()
 		scene->update();
 
 	// bake lightmap
+	int numLightBound = 1;
 	u32 numMB = m_allMeshBuffer.size();
 	if (m_currentMeshBuffer < numMB)
 	{
+		if (m_lightBound == 0)
+			CDeferredRP::enableRenderIndirect(false);
+		else
+			CDeferredRP::enableRenderIndirect(true);
+
 		IMeshBuffer *mb = m_allMeshBuffer[m_currentMeshBuffer];
 		SColorBuffer *cb = m_colorBuffer[m_currentMeshBuffer];
 
@@ -118,7 +125,9 @@ void CViewBakeLightmap::onUpdate()
 		float percent = (percentPerBuffer * m_currentMeshBuffer + percentPerBuffer * (m_currentVertex / (float)numVtx)) * 100.0f;
 
 		char status[512];
-		sprintf(status, "LIGHTMAPPING: %d%%\n\n- MeshBuffer: %d/%d\n- Vertex: %d/%d\n\n - Total: %d",
+		sprintf(status, "LIGHTMAPPING (%d/%d): %d%%\n\n- MeshBuffer: %d/%d\n- Vertex: %d/%d\n\n - Total: %d",
+			m_lightBound + 1,
+			numLightBound,
 			(int)percent,
 			m_currentMeshBuffer + 1, numMB,
 			m_currentVertex, numVtx,
@@ -149,8 +158,14 @@ void CViewBakeLightmap::onUpdate()
 	{
 		copyColorBufferToMeshBuffer();
 
-		// next to demo scene
-		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+		CDeferredRP::enableRenderIndirect(true);
+
+		m_lightBound++;
+		m_currentMeshBuffer = 0;
+		m_currentVertex = 0;
+
+		if (m_lightBound >= numLightBound)
+			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 }
 
@@ -177,7 +192,7 @@ void CViewBakeLightmap::copyColorBufferToMeshBuffer()
 		// copy baked color
 		video::S3DVertexTangents *vtx = (video::S3DVertexTangents*)vertexBuffer->getVertices();
 		for (u32 i = 0; i < vtxCount; i++)
-			vtx->Color = cb->Color[i];
+			vtx[i].Color = cb->Color[i];
 
 		// notify update vertex to GPU Memory
 		vertexBuffer->setHardwareMappingHint(EHM_STATIC);
