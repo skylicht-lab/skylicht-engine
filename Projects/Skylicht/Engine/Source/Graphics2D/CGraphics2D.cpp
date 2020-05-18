@@ -54,7 +54,7 @@ namespace Skylicht
 
 		m_2dMaterial.ZBuffer = ECFN_ALWAYS;
 		m_2dMaterial.ZWriteEnable = false;
-		m_2dMaterial.BackfaceCulling = false;
+		// m_2dMaterial.BackfaceCulling = false;
 
 		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 			m_2dMaterial.setFlag(EMF_TRILINEAR_FILTER, true, 8);
@@ -247,6 +247,55 @@ namespace Skylicht
 	void CGraphics2D::flush()
 	{
 		flushBuffer(m_buffer, m_2dMaterial);
+	}
+
+	void CGraphics2D::addExternalBuffer(IMeshBuffer *meshBuffer, const core::matrix4& absoluteMatrix, int shaderID)
+	{
+		if (m_2dMaterial.MaterialType != shaderID)
+			flush();
+
+		scene::IVertexBuffer* vtxBuffer = meshBuffer->getVertexBuffer();
+		scene::IIndexBuffer* idxBuffer = meshBuffer->getIndexBuffer();
+
+		u16 *idxData = (u16*)idxBuffer->getIndices();
+		S3DVertex *vtxData = (S3DVertex*)vtxBuffer->getVertices();
+
+		int numVtx = vtxBuffer->getVertexCount();
+		int numIdx = idxBuffer->getIndexCount();
+
+		int numVertices = m_vertices->getVertexCount();
+		int numVerticesUse = numVertices + numVtx;
+		int numIndex = m_indices->getIndexCount();
+		int numIndexUse = numIndex + numIdx;
+
+		if (numVerticesUse > MAX_VERTICES || numIndexUse > MAX_INDICES)
+		{
+			flush();
+			numVertices = 0;
+			numIndex = 0;
+			numVerticesUse = 6;
+			numIndexUse = 4;
+		}
+
+		m_indices->set_used(numIndexUse);
+		u16 *index = (u16*)m_indices->getIndices();
+		for (int i = 0; i < numIdx; i++)
+			index[numIndex + i] = numVertices + idxData[i];
+
+		m_vertices->set_used(numVerticesUse);
+		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+
+		// add vertices
+		for (int i = 0; i < numVtx; i++)
+			vertices[numVertices + i] = vtxData[i];
+
+
+		// transform
+		for (int i = 0; i < numVtx; i++)
+			absoluteMatrix.transformVect(vertices[numVertices + i].Pos);
+
+		m_2dMaterial.MaterialType = shaderID;
+		m_buffer->setDirty();
 	}
 
 	void CGraphics2D::addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX, float pivotY)
@@ -485,7 +534,7 @@ namespace Skylicht
 	{
 		if (m_2dMaterial.MaterialType != shaderID)
 			flush();
-		
+
 		int numVertices = m_vertices->getVertexCount();
 		int vertexUse = numVertices + 4;
 
