@@ -90,6 +90,8 @@ namespace Skylicht
 
 		void flush();
 
+		void addExternalBuffer(IMeshBuffer *meshBuffer, const core::matrix4& absoluteMatrix, int shaderID);
+
 		void addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX = 0, float pivotY = 0);
 
 		void addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX = 0, float pivotY = 0);
