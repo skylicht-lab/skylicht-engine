@@ -59,7 +59,7 @@ void SampleLuckyDraw::onInitApp()
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	m_largeFont = new CGlyphFont();
-	m_largeFont->setFont("LasVegas", 200);
+	m_largeFont->setFont("LasVegas", 100);
 
 	// Create 2D Canvas
 	CGameObject *canvasObject = zone->createEmptyObject();
@@ -71,17 +71,16 @@ void SampleLuckyDraw::onInitApp()
 	// Create background
 	m_backgroundImage = canvas->createImage();
 
-	// Create Rect scroller
-	float numberW = 230.0f;
-	float numberH = 382.0f;
-	core::rectf scrollerSize(0.0f, 0.0f, numberW, numberH);
-	CGUIRect *rect = canvas->createRect(scrollerSize, SColor(240, 255, 255, 255));
+	// Create Rect scroller	
+	float numberW = 184.0f;
+	float numberH = 305.0f;
+	float itemH = 150.0f;
 
-	// Create Text inside Rect
-	CGUIText *textLarge = canvas->createText(rect, scrollerSize, m_largeFont);
-	textLarge->setText("1");
-	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
-	textLarge->setColor(SColor(255, 0, 0, 0));
+	core::rectf scrollerSize(0.0f, 0.0f, numberW, numberH);
+
+	// Create scroll control
+	CGUIRect *rect = canvas->createRect(scrollerSize, SColor(200, 255, 255, 255));
+	m_numberScroll = new CScroller(rect, itemH, this);
 
 	// Setup everything for a state
 	initState(0);
@@ -89,6 +88,14 @@ void SampleLuckyDraw::onInitApp()
 
 void SampleLuckyDraw::onUpdate()
 {
+	// gui scroller update
+	float speed = 0.5f;
+	float f = m_numberScroll->getOffset();
+	f = f + getTimeStep() * speed;
+
+	m_numberScroll->setOffset(f);
+	m_numberScroll->update();
+
 	// update application
 	m_scene->update();
 }
@@ -142,4 +149,26 @@ void SampleLuckyDraw::initState(int cfg)
 
 	// set background image
 	m_backgroundImage->setImage(textureMgr->getTexture(stateConfig->BackgroundImage.c_str()));
+}
+
+CGUIElement* SampleLuckyDraw::createScrollElement(CGUIElement *parent, const core::rectf& itemRect)
+{
+	CCanvas *canvas = parent->getCanvas();
+
+	CGUIText *textLarge = canvas->createText(parent, itemRect, m_largeFont);
+	textLarge->setText("");
+	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Top);
+	textLarge->setColor(SColor(255, 0, 0, 0));
+
+	return textLarge;
+}
+
+void SampleLuckyDraw::updateScrollElement(CGUIElement *item, int itemID)
+{
+	int number = core::abs_(itemID % 10);
+
+	CGUIText *textLarge = dynamic_cast<CGUIText*>(item);
+	char t[32];
+	sprintf(t, "%d", number);
+	textLarge->setText(t);
 }

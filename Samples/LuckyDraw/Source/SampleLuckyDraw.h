@@ -2,12 +2,14 @@
 
 #include "IApplicationEventReceiver.h"
 
-class SampleLuckyDraw : public IApplicationEventReceiver
+class SampleLuckyDraw :
+	public IApplicationEventReceiver,
+	public IScrollerCallback
 {
 private:
 	CScene *m_scene;
 	CCamera *m_guiCamera;
-	
+
 	CGlyphFont *m_largeFont;
 
 	CGUIImage *m_backgroundImage;
@@ -37,4 +39,9 @@ public:
 public:
 
 	void initState(int cfg);
+
+	virtual CGUIElement* createScrollElement(CGUIElement *parent, const core::rectf& itemRect);
+
+	virtual void updateScrollElement(CGUIElement *item, int itemID);
+
 };
