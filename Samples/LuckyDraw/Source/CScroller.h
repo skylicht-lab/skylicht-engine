@@ -1,11 +1,13 @@
 #pragma once
 
+class CScroller;
+
 class IScrollerCallback
 {
 public:
-	virtual CGUIElement* createScrollElement(CGUIElement *parent, const core::rectf& itemRect) = 0;
+	virtual CGUIElement* createScrollElement(CScroller *scroller, CGUIElement *parent, const core::rectf& itemRect) = 0;
 
-	virtual void updateScrollElement(CGUIElement *item, int itemID) = 0;
+	virtual void updateScrollElement(CScroller *scroller, CGUIElement *item, int itemID) = 0;
 };
 
 class CScroller
@@ -16,6 +18,7 @@ protected:
 
 	IScrollerCallback *m_callback;
 
+	float m_startOffset;
 	float m_absoluteOffset;
 	float m_offset;
 	float m_itemSize;
@@ -30,6 +33,16 @@ public:
 	const core::rectf& getRect()
 	{
 		return m_element->getRect();
+	}
+
+	inline void setStartOffset(float offset)
+	{
+		m_startOffset = offset;
+	}
+
+	inline float getStartOffset()
+	{
+		return m_startOffset;
 	}
 
 	inline void setOffset(float offset)
