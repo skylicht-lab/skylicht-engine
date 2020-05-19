@@ -13,7 +13,9 @@ private:
 	CGlyphFont *m_largeFont;
 
 	CGUIImage *m_backgroundImage;
-	CScroller *m_numberScroll;
+	std::vector<CScroller*> m_scrollers;
+
+	CSpriteAtlas *m_sprite;
 
 	int m_state;
 public:
@@ -38,10 +40,8 @@ public:
 
 public:
 
-	void initState(int cfg);
+	virtual CGUIElement* createScrollElement(CScroller *scroller, CGUIElement *parent, const core::rectf& itemRect);
 
-	virtual CGUIElement* createScrollElement(CGUIElement *parent, const core::rectf& itemRect);
-
-	virtual void updateScrollElement(CGUIElement *item, int itemID);
+	virtual void updateScrollElement(CScroller *scroller, CGUIElement *item, int itemID);
 
 };
