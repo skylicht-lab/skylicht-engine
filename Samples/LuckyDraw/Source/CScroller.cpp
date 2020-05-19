@@ -5,6 +5,7 @@
 CScroller::CScroller(CGUIElement *element, float itemHeight, IScrollerCallback *callback) :
 	m_element(element),
 	m_callback(callback),
+	m_startOffset(0.0f),
 	m_absoluteOffset(0.0f),
 	m_offset(0.0f),
 	m_itemSize(itemHeight)
@@ -29,7 +30,7 @@ CScroller::CScroller(CGUIElement *element, float itemHeight, IScrollerCallback *
 	core::rectf itemRect(0.0f, 0.0f, scrollWidth, itemHeight);
 	for (int i = 0; i < numItem; i++)
 	{
-		CGUIElement *item = m_callback->createScrollElement(m_element, itemRect);
+		CGUIElement *item = m_callback->createScrollElement(this, m_element, itemRect);
 		item->setMask(mask);
 		m_items.push_back(item);
 	}
@@ -55,7 +56,7 @@ void CScroller::updateItemPosition()
 	if (numItem == 0)
 		return;
 
-	float offset = m_absoluteOffset;
+	float offset = m_startOffset + m_absoluteOffset;
 
 	float scrollSize = m_items.size() * m_itemSize;
 	int loop = (int)(-offset / scrollSize);
@@ -102,7 +103,7 @@ void CScroller::updateItemPosition()
 
 		// callback
 		if (m_callback)
-			m_callback->updateScrollElement(item, loopItem * numItem + id);
+			m_callback->updateScrollElement(this, item, loopItem * numItem + id);
 
 		// next item
 		y = y + m_itemSize;

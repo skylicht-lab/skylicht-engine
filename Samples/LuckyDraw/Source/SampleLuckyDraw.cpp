@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "SkylichtEngine.h"
-#include "CLuckyDrawConfig.h"
 #include "CScroller.h"
 #include "SampleLuckyDraw.h"
 
@@ -13,6 +12,7 @@ void installApplication(const std::vector<std::string>& argv)
 SampleLuckyDraw::SampleLuckyDraw() :
 	m_scene(NULL),
 	m_largeFont(NULL),
+	m_sprite(NULL),
 	m_state(0)
 {
 
@@ -22,8 +22,7 @@ SampleLuckyDraw::~SampleLuckyDraw()
 {
 	delete m_scene;
 	delete m_largeFont;
-
-	CLuckyDrawConfig::releaseInstance();
+	delete m_sprite;
 }
 
 void SampleLuckyDraw::onInitApp()
@@ -40,61 +39,81 @@ void SampleLuckyDraw::onInitApp()
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 	freetypeFont->initFont("LasVegas", "LuckyDraw/LasVegasJackpotRegular.otf");
 
-	// Load basic shader
+	// load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
-	// Load Luckydraw config
-	CLuckyDrawConfig::createGetInstance()->initConfigs();
-
-	// Create a Scene
+	// create a Scene
 	m_scene = new CScene();
 
-	// Create a Zone in Scene
+	// create a Zone in Scene
 	CZone *zone = m_scene->createZone();
 
-	// Create 2D camera
+	// create 2D camera
 	CGameObject *guiCameraObject = (CGameObject*)zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	m_largeFont = new CGlyphFont();
-	m_largeFont->setFont("LasVegas", 100);
+	m_largeFont->setFont("LasVegas", 200);
 
-	// Create 2D Canvas
+	// create 2D Canvas
 	CGameObject *canvasObject = zone->createEmptyObject();
 	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
 
-	// 2D Canvas size
+	// get canvas size
 	const core::rectf& screenSize = canvas->getRootElement()->getRect();
 
-	// Create background
+	// create background
 	m_backgroundImage = canvas->createImage();
+	m_backgroundImage->setImage(CTextureManager::getInstance()->getTexture("LuckyDraw/state_01.png"));
 
-	// Create Rect scroller	
+	// create number scroller	
 	float numberW = 184.0f;
 	float numberH = 305.0f;
-	float itemH = 150.0f;
-
+	float itemH = 280.0f;
+	float paddingY = 50.0f;
+	float paddingX = 20.0f;
+	int numScroller = 4;
 	core::rectf scrollerSize(0.0f, 0.0f, numberW, numberH);
 
-	// Create scroll control
-	CGUIRect *rect = canvas->createRect(scrollerSize, SColor(200, 255, 255, 255));
-	m_numberScroll = new CScroller(rect, itemH, this);
+	float scrollerPosX = screenSize.getWidth() / 2 - (numScroller * numberW + (numScroller - 1) * paddingX) / 2.0f;
+	float scrollerPosY = screenSize.getHeight() / 2 - numberH / 2.0f + paddingY;
 
-	// Setup everything for a state
-	initState(0);
+	float startOffset = (numberH - itemH) / 2;
+
+	for (int i = 0; i < numScroller; i++)
+	{
+		// create scoller background
+		CGUIRect *scrollerGUI = canvas->createRect(scrollerSize, SColor(150, 0, 0, 0));
+		scrollerGUI->setPosition(core::vector3df(scrollerPosX, scrollerPosY, 0.0f));
+
+		// create scroller control
+		CScroller *scroller = new CScroller(scrollerGUI, itemH, this);
+		scroller->setStartOffset(startOffset);
+		m_scrollers.push_back(scroller);
+
+		scrollerPosX = scrollerPosX + numberW + paddingX;		
+	}
+
+	// create Button
+	m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 1024, 1024);
+	m_sprite->addFrame("btn_violet.png", "LuckyDraw/btn_violet.png");
+	m_sprite->addFrame("btn_yellow.png", "LuckyDraw/btn_yellow.png");
 }
 
 void SampleLuckyDraw::onUpdate()
 {
 	// gui scroller update
-	float speed = 0.5f;
-	float f = m_numberScroll->getOffset();
-	f = f + getTimeStep() * speed;
+	for (u32 i = 0, n = m_scrollers.size(); i < n; i++)
+	{
+		//float speed = 0.5f;
+		//float f = m_scrollers[i]->getOffset();
+		//f = f + getTimeStep() * speed;
 
-	m_numberScroll->setOffset(f);
-	m_numberScroll->update();
+		//m_scrollers[i]->setOffset(f);
+		m_scrollers[i]->update();
+	}
 
 	// update application
 	m_scene->update();
@@ -135,35 +154,19 @@ void SampleLuckyDraw::onQuitApp()
 	delete this;
 }
 
-void SampleLuckyDraw::initState(int cfg)
-{
-	CLuckyDrawConfig *configs = CLuckyDrawConfig::getInstance();
-	CTextureManager *textureMgr = CTextureManager::getInstance();
-
-	if (configs->getNumberOfConfig() <= m_state)
-		return;
-
-	// get config state
-	m_state = cfg;
-	CLuckyDrawConfig::SStateConfig *stateConfig = configs->getConfig(cfg);
-
-	// set background image
-	m_backgroundImage->setImage(textureMgr->getTexture(stateConfig->BackgroundImage.c_str()));
-}
-
-CGUIElement* SampleLuckyDraw::createScrollElement(CGUIElement *parent, const core::rectf& itemRect)
+CGUIElement* SampleLuckyDraw::createScrollElement(CScroller *scroller, CGUIElement *parent, const core::rectf& itemRect)
 {
 	CCanvas *canvas = parent->getCanvas();
 
 	CGUIText *textLarge = canvas->createText(parent, itemRect, m_largeFont);
 	textLarge->setText("");
 	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Top);
-	textLarge->setColor(SColor(255, 0, 0, 0));
+	textLarge->setColor(SColor(255, 255, 255, 255));
 
 	return textLarge;
 }
 
-void SampleLuckyDraw::updateScrollElement(CGUIElement *item, int itemID)
+void SampleLuckyDraw::updateScrollElement(CScroller *scroller, CGUIElement *item, int itemID)
 {
 	int number = core::abs_(itemID % 10);
 
