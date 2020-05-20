@@ -14,9 +14,16 @@ CButton::CButton(CGUIElement *element, SFrame* frame, const char *label, CGlyphF
 	m_text->setText(m_label.c_str());
 	m_text->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
 	m_text->setColor(m_textColor);
+
+	CEventManager::getInstance()->registerEvent("CButton", this);
 }
 
 CButton::~CButton()
 {
+	CEventManager::getInstance()->unRegisterEvent(this);
+}
 
+bool CButton::OnEvent(const SEvent& event)
+{
+	return false;
 }
