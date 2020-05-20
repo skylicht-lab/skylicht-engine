@@ -69,6 +69,8 @@ void SampleLuckyDraw::onInitApp()
 
 	// get canvas size
 	const core::rectf& screenSize = canvas->getRootElement()->getRect();
+	float screenW = screenSize.getWidth();
+	float screenH = screenSize.getHeight();
 
 	// create background
 	m_backgroundImage = canvas->createImage();
@@ -83,8 +85,8 @@ void SampleLuckyDraw::onInitApp()
 	int numScroller = 4;
 	core::rectf scrollerSize(0.0f, 0.0f, numberW, numberH);
 
-	float scrollerPosX = screenSize.getWidth() / 2 - (numScroller * numberW + (numScroller - 1) * paddingX) / 2.0f;
-	float scrollerPosY = screenSize.getHeight() / 2 - numberH / 2.0f + paddingY;
+	float scrollerPosX = screenW / 2 - (numScroller * numberW + (numScroller - 1) * paddingX) / 2.0f;
+	float scrollerPosY = screenH / 2 - numberH / 2.0f + paddingY;
 
 	float startOffset = (numberH - itemH) / 2;
 
@@ -108,17 +110,20 @@ void SampleLuckyDraw::onInitApp()
 	SFrame* btnVioletBackground = m_sprite->addFrame("btn_violet.png", "LuckyDraw/btn_violet.png");
 	m_sprite->updateTexture();
 
-	core::rectf buttonSize(0.0f, 0.0f,
-		btnYellowBackground->BoudingRect.getWidth(),
-		btnYellowBackground->BoudingRect.getHeight());
+	float buttonW = btnYellowBackground->BoudingRect.getWidth();
+	float buttonH = btnYellowBackground->BoudingRect.getHeight();
+	float buttonPaddingY = 60.0f;
+	core::rectf buttonSize(0.0f, 0.0f, buttonW, buttonH);
+	float buttonX = (screenW - buttonW) / 2.0f;
+	float buttonY = scrollerPosY + numberH + buttonPaddingY;
 
 	CGUIElement *buttonSpinGUI = canvas->createElement(buttonSize);
-	buttonSpinGUI->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
+	buttonSpinGUI->setPosition(core::vector3df(buttonX, buttonY, 0.0f));
 	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, "SPIN", m_smallFont, SColor(255, 107, 76, 8));
 
-	CGUIElement *buttonBackGUI = canvas->createElement(buttonSize);
+	/*CGUIElement *buttonBackGUI = canvas->createElement(buttonSize);
 	buttonBackGUI->setPosition(core::vector3df(0.0f, 70.0f, 0.0f));
-	m_spin = new CButton(buttonBackGUI, btnVioletBackground, "BACK", m_smallFont, SColor(255, 187, 179, 234));
+	m_spin = new CButton(buttonBackGUI, btnVioletBackground, "BACK", m_smallFont, SColor(255, 187, 179, 234));*/
 
 }
 
