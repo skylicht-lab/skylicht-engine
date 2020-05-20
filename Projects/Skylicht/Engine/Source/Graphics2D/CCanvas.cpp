@@ -241,6 +241,13 @@ namespace Skylicht
 		return element;
 	}
 
+	CGUIText* CCanvas::createText(CGUIElement *e, IFont *font)
+	{
+		CGUIText *element = new CGUIText(this, e, e->getRect(), font);
+		m_entities.push_back(element);
+		return element;
+	}
+
 	CGUIText* CCanvas::createText(CGUIElement *e, const core::rectf& r, IFont *font)
 	{
 		CGUIText *element = new CGUIText(this, e, r, font);
@@ -262,6 +269,13 @@ namespace Skylicht
 	CGUISprite* CCanvas::createSprite(const core::rectf& r, SFrame *frame)
 	{
 		CGUISprite *element = new CGUISprite(this, m_root, r, frame);
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUISprite* CCanvas::createSprite(CGUIElement *e, SFrame *frame)
+	{
+		CGUISprite *element = new CGUISprite(this, e, e->getRect(), frame);
 		m_entities.push_back(element);
 		return element;
 	}

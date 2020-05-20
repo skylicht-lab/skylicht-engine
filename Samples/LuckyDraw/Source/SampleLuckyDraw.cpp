@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SkylichtEngine.h"
 #include "CScroller.h"
+#include "CButton.h"
 #include "SampleLuckyDraw.h"
 
 void installApplication(const std::vector<std::string>& argv)
@@ -12,6 +13,7 @@ void installApplication(const std::vector<std::string>& argv)
 SampleLuckyDraw::SampleLuckyDraw() :
 	m_scene(NULL),
 	m_largeFont(NULL),
+	m_smallFont(NULL),
 	m_sprite(NULL),
 	m_state(0)
 {
@@ -22,6 +24,7 @@ SampleLuckyDraw::~SampleLuckyDraw()
 {
 	delete m_scene;
 	delete m_largeFont;
+	delete m_smallFont;
 	delete m_sprite;
 }
 
@@ -56,6 +59,9 @@ void SampleLuckyDraw::onInitApp()
 
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("LasVegas", 200);
+
+	m_smallFont = new CGlyphFont();
+	m_smallFont->setFont("LasVegas", 30);
 
 	// create 2D Canvas
 	CGameObject *canvasObject = zone->createEmptyObject();
@@ -93,13 +99,27 @@ void SampleLuckyDraw::onInitApp()
 		scroller->setStartOffset(startOffset);
 		m_scrollers.push_back(scroller);
 
-		scrollerPosX = scrollerPosX + numberW + paddingX;		
+		scrollerPosX = scrollerPosX + numberW + paddingX;
 	}
 
 	// create Button
 	m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 1024, 1024);
-	m_sprite->addFrame("btn_violet.png", "LuckyDraw/btn_violet.png");
-	m_sprite->addFrame("btn_yellow.png", "LuckyDraw/btn_yellow.png");
+	SFrame* btnYellowBackground = m_sprite->addFrame("btn_yellow.png", "LuckyDraw/btn_yellow.png");
+	SFrame* btnVioletBackground = m_sprite->addFrame("btn_violet.png", "LuckyDraw/btn_violet.png");
+	m_sprite->updateTexture();
+
+	core::rectf buttonSize(0.0f, 0.0f,
+		btnYellowBackground->BoudingRect.getWidth(),
+		btnYellowBackground->BoudingRect.getHeight());
+
+	CGUIElement *buttonSpinGUI = canvas->createElement(buttonSize);
+	buttonSpinGUI->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
+	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, "SPIN", m_smallFont, SColor(255, 107, 76, 8));
+
+	CGUIElement *buttonBackGUI = canvas->createElement(buttonSize);
+	buttonBackGUI->setPosition(core::vector3df(0.0f, 70.0f, 0.0f));
+	m_spin = new CButton(buttonBackGUI, btnVioletBackground, "BACK", m_smallFont, SColor(255, 187, 179, 234));
+
 }
 
 void SampleLuckyDraw::onUpdate()

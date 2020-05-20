@@ -119,13 +119,17 @@ namespace Skylicht
 
 		CGUIText* createText(const core::rectf& r, IFont *font);
 
+		CGUIText* createText(CGUIElement *e, IFont *font);
+
 		CGUIText* createText(CGUIElement *e, const core::rectf& r, IFont *font);
 
 		CGUISprite* createSprite(SFrame *frame);
 
 		CGUISprite* createSprite(const core::rectf& r, SFrame *frame);
 
-		CGUISprite* createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame);
+		CGUISprite* createSprite(CGUIElement *e, SFrame *frame);
+
+		CGUISprite* createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame);		
 
 		CGUIMask* createMask(const core::rectf& r);
 
