@@ -54,7 +54,7 @@ namespace Skylicht
 
 		m_2dMaterial.ZBuffer = ECFN_ALWAYS;
 		m_2dMaterial.ZWriteEnable = false;
-		// m_2dMaterial.BackfaceCulling = false;
+		m_2dMaterial.BackfaceCulling = false;
 
 		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 			m_2dMaterial.setFlag(EMF_TRILINEAR_FILTER, true, 8);
