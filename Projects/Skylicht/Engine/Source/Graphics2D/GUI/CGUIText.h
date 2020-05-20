@@ -53,6 +53,7 @@ namespace Skylicht
 		EGUIHorizontalAlign TextHorizontal;
 
 		int m_textHeight;
+		int m_textOffsetY;
 		int m_textSpaceWidth;
 
 		bool m_multiLine;

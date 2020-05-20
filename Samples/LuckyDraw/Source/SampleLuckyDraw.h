@@ -11,11 +11,15 @@ private:
 	CCamera *m_guiCamera;
 
 	CGlyphFont *m_largeFont;
+	CGlyphFont *m_smallFont;
 
 	CGUIImage *m_backgroundImage;
-	std::vector<CScroller*> m_scrollers;
 
 	CSpriteAtlas *m_sprite;
+
+	std::vector<CScroller*> m_scrollers;
+	CButton* m_spin;
+	CButton* m_stop;
 
 	int m_state;
 public:
