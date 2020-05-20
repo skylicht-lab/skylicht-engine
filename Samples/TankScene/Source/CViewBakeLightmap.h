@@ -1,6 +1,9 @@
 #pragma once
 
 #include "ViewManager/CView.h"
+#include "Lightmapper/CSH9.h"
+
+using namespace Lightmapper;
 
 class CViewBakeLightmap : public CView
 {
@@ -8,7 +11,10 @@ public:
 	struct SColorBuffer
 	{
 		core::array<SColor> Color;
+		core::array<CSH9> SH;
 	};
+
+	static int s_numLightBound;
 
 protected:
 	CGameObject *m_guiObject;
@@ -21,6 +27,7 @@ protected:
 	std::vector<IMeshBuffer*> m_allMeshBuffer;
 
 	core::array<SColorBuffer*> m_colorBuffer;
+	core::array<core::matrix4> m_meshTransforms;
 
 	u32 m_currentMeshBuffer;
 	u32 m_currentVertex;

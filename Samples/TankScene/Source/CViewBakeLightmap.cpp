@@ -5,6 +5,8 @@
 #include "CViewDemo.h"
 #include "Importer/Utils/CMeshUtils.h"
 
+int CViewBakeLightmap::s_numLightBound = 1;
+
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_guiObject(NULL),
 	m_bakeCameraObject(NULL),
@@ -37,6 +39,7 @@ void CViewBakeLightmap::onInit()
 	CContext *context = CContext::getInstance();
 	CCamera *camera = context->getActiveCamera();
 	CZone *zone = context->getActiveZone();
+	CEntityManager *entityMgr = zone->getEntityManager();
 
 	// get all render mesh in zone
 	m_renderMesh = zone->getComponentsInChild<CRenderMesh>(false);
@@ -50,6 +53,12 @@ void CViewBakeLightmap::onInit()
 			{
 				if (r->isSkinnedMesh() == false)
 				{
+					core::matrix4 transform;
+					CEntity *entity = entityMgr->getEntity(r->EntityIndex);
+					CWorldTransformData *worldTransform = entity->getData<CWorldTransformData>();
+					if (worldTransform != NULL)
+						transform = worldTransform->World;
+
 					// just list static mesh
 					CMesh *mesh = r->getMesh();
 					u32 bufferCount = mesh->getMeshBufferCount();
@@ -60,10 +69,21 @@ void CViewBakeLightmap::onInit()
 						{
 							// add mesh buffer, that will bake lighting
 							m_allMeshBuffer.push_back(mb);
+							m_meshTransforms.push_back(transform);
+
+							int vtxCount = mb->getVertexBuffer(0)->getVertexCount();
 
 							// alloc color buffer, that is result of indirect lighting baked
 							SColorBuffer *cb = new SColorBuffer();
-							cb->Color.set_used(mb->getVertexBuffer(0)->getVertexCount());
+							cb->Color.set_used(vtxCount);
+							cb->SH.set_used(vtxCount);
+
+							for (int i = 0; i < vtxCount; i++)
+							{
+								cb->Color[i].set(255, 0, 0, 0);
+								cb->SH[i].zero();
+							}
+
 							m_colorBuffer.push_back(cb);
 						}
 					}
@@ -106,7 +126,6 @@ void CViewBakeLightmap::onUpdate()
 		scene->update();
 
 	// bake lightmap
-	int numLightBound = 1;
 	u32 numMB = m_allMeshBuffer.size();
 	if (m_currentMeshBuffer < numMB)
 	{
@@ -117,6 +136,7 @@ void CViewBakeLightmap::onUpdate()
 
 		IMeshBuffer *mb = m_allMeshBuffer[m_currentMeshBuffer];
 		SColorBuffer *cb = m_colorBuffer[m_currentMeshBuffer];
+		const core::matrix4& transform = m_meshTransforms[m_currentMeshBuffer];
 
 		u32 numVtx = mb->getVertexBuffer(0)->getVertexCount();
 
@@ -127,7 +147,7 @@ void CViewBakeLightmap::onUpdate()
 		char status[512];
 		sprintf(status, "LIGHTMAPPING (%d/%d): %d%%\n\n- MeshBuffer: %d/%d\n- Vertex: %d/%d\n\n - Total: %d",
 			m_lightBound + 1,
-			numLightBound,
+			s_numLightBound,
 			(int)percent,
 			m_currentMeshBuffer + 1, numMB,
 			m_currentVertex, numVtx,
@@ -137,12 +157,14 @@ void CViewBakeLightmap::onUpdate()
 		// lightmaper bake meshbuffer
 		CCamera *camera = m_bakeCameraObject->getComponent<CCamera>();
 
-		// bake
+		// bake light to color & sh
 		int bakeCount = CLightmapper::getInstance()->bakeMeshBuffer(
 			mb,
+			transform,
 			camera, context->getRenderPipeline(), scene->getEntityManager(),
 			m_currentVertex, NUM_MTBAKER,
-			cb->Color);
+			cb->Color,
+			cb->SH);
 
 		m_currentVertex += bakeCount;
 		m_totalVertexBaked += bakeCount;
@@ -164,7 +186,7 @@ void CViewBakeLightmap::onUpdate()
 		m_currentMeshBuffer = 0;
 		m_currentVertex = 0;
 
-		if (m_lightBound >= numLightBound)
+		if (m_lightBound >= s_numLightBound)
 			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 }
