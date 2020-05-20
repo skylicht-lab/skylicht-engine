@@ -110,7 +110,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//core::dimension2du winSize(480, 320);
 	//core::dimension2du winSize(320, 240);
 
-	if (params.size() >= 2 && params.size() <= 3)
+	if (params.size() >= 2)
 	{
 		winSize.Width = atoi(params[0].c_str());
 		winSize.Height = atoi(params[1].c_str());
@@ -166,7 +166,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	p.AntiAlias = 0;
 	p.WindowId = reinterpret_cast<void*>(hWnd);
 
-	if (params.size() == 3)
+	if (params.size() >= 3 && strcmp(params[2].c_str(), "true") == 0)
 		p.Fullscreen = true;
 
 	if (useDX11 == IDYES)
@@ -368,7 +368,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				event.MouseInput.Wheel = 1.0f;
 		}
 
-		IrrlichtDevice *dev  = getIrrlichtDevice();
+		IrrlichtDevice *dev = getIrrlichtDevice();
 		if (dev)
 			dev->postEventFromUser(event);
 		return 0;
@@ -404,7 +404,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		event.EventType = irr::EET_KEY_INPUT_EVENT;
 		event.KeyInput.Key = (irr::EKEY_CODE)wParam;
-		event.KeyInput.PressedDown = (message == WM_KEYDOWN || message == WM_SYSKEYDOWN);		
+		event.KeyInput.PressedDown = (message == WM_KEYDOWN || message == WM_SYSKEYDOWN);
 
 		const UINT MY_MAPVK_VSC_TO_VK_EX = 3; // MAPVK_VSC_TO_VK_EX should be in SDK according to MSDN, but isn't in mine.
 

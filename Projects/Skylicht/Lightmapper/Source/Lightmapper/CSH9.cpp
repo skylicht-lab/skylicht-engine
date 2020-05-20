@@ -54,7 +54,7 @@ namespace Skylicht
 		void CSH9::zero()
 		{
 			for (int i = 0; i < 9; i++)
-				m_sh->set(0.0f, 0.0f, 0.0f);
+				m_sh[i].set(0.0f, 0.0f, 0.0f);
 		}
 
 		CSH9 CSH9::operator-() const

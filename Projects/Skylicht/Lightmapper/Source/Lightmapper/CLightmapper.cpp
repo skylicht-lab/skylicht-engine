@@ -131,7 +131,7 @@ namespace Skylicht
 				probes[i]->setSH(out[i]);
 		}
 
-		int CLightmapper::bakeMeshBuffer(IMeshBuffer *mb, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& out)
+		int CLightmapper::bakeMeshBuffer(IMeshBuffer *mb, const core::matrix4& transform, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH)
 		{
 			if (mb->getVertexBufferCount() == 0)
 			{
@@ -165,15 +165,24 @@ namespace Skylicht
 			core::array<core::vector3df> tangents;
 			core::array<core::vector3df> binormals;
 
-			for (int i = begin; i < begin + count; i++)
+			for (int i = begin, id = 0; i < begin + count; i++, id++)
 			{
 				positions.push_back(vtx[i].Pos);
 				normals.push_back(vtx[i].Normal);
 				tangents.push_back(vtx[i].Tangent);
 				binormals.push_back(vtx[i].Binormal);
+
+				transform.transformVect(positions[id]);
+				transform.rotateVect(normals[id]);
+				transform.rotateVect(tangents[id]);
+				transform.rotateVect(binormals[id]);
+
+				normals[id].normalize();
+				tangents[id].normalize();
+				binormals[id].normalize();
 			}
 
-			std::vector<CSH9> outSH;
+			std::vector<CSH9> resultSH;
 			bakeAtPosition(
 				camera,
 				rp,
@@ -182,7 +191,7 @@ namespace Skylicht
 				normals.pointer(),
 				tangents.pointer(),
 				binormals.pointer(),
-				outSH,
+				resultSH,
 				count,
 				5);
 
@@ -192,14 +201,17 @@ namespace Skylicht
 
 			for (int i = begin, id = 0; i < begin + count; i++, id++)
 			{
+				// additive bound light color
+				outSH[i] += resultSH[id];
+
 				// get result color
-				outSH[id].getSHIrradiance(normals[id], result);
+				outSH[i].getSHIrradiance(normals[id], result);
 
 				float r = core::clamp(result.X, 0.0f, 1.0f);
 				float g = core::clamp(result.Y, 0.0f, 1.0f);
 				float b = core::clamp(result.Z, 0.0f, 1.0f);
 
-				out[i].set(
+				outColor[i].set(
 					255, // a
 					(int)(r * 255.0f), // r
 					(int)(g * 255.0f), // g
