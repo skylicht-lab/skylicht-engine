@@ -37,7 +37,6 @@ CViewBakeLightmap::~CViewBakeLightmap()
 void CViewBakeLightmap::onInit()
 {
 	CContext *context = CContext::getInstance();
-	CCamera *camera = context->getActiveCamera();
 	CZone *zone = context->getActiveZone();
 	CEntityManager *entityMgr = zone->getEntityManager();
 
