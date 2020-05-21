@@ -197,7 +197,6 @@ namespace Skylicht
 
 
 			core::vector3df result;
-			float invPi = 1.0f / core::PI;
 
 			for (int i = begin, id = 0; i < begin + count; i++, id++)
 			{
