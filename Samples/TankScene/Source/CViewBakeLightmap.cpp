@@ -156,7 +156,7 @@ void CViewBakeLightmap::onUpdate()
 			m_currentMeshBuffer + 1, numMB,
 			m_currentVertex, numVtx,
 			m_totalVertexBaked,
-			deltaTime/1000);
+			deltaTime / 1000);
 		m_textInfo->setText(status);
 
 		// lightmaper bake meshbuffer

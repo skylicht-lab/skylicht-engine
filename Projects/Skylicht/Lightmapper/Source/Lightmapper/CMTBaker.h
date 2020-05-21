@@ -43,6 +43,8 @@ namespace Skylicht
 			video::ITexture *m_radiance;
 
 			CSH9 m_sh[NUM_MTBAKER];
+			
+			float m_weightSum;
 
 		public:
 			CMTBaker();
