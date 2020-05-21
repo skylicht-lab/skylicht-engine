@@ -115,17 +115,11 @@ Use **OBJ Wavefront** loader, **Deferred** and **Forwarder** rendering, **Dynami
 References from the project [BakingLab](https://github.com/TheRealMJP/BakingLab)
 
 #### 1st bounce Direction Light & Shadow Mapping
-
-##### Albedo
-<img src="Documents/Media/Samples/tank-scene/albedo.png"/>
-
 ##### Direction Light
 <img src="Documents/Media/Samples/tank-scene/direction-1-bounce.png"/>
 
 #### 2nd bounce Baked Global Illumination
-
-**Indirect lighting**
-Indirect lighting bake on Vertex Color
+**Indirect lighting** baked on Vertex Color
 <img src="Documents/Media/Samples/tank-scene/indirect-bake-2-bounce.png"/>
 
 **Combine final lighting**
