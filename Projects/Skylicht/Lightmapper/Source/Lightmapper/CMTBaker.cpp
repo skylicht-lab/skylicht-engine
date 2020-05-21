@@ -5,6 +5,10 @@
 #include "RenderPipeline/CBaseRP.h"
 #include "RenderPipeline/CDeferredRP.h"
 
+#if defined(USE_OPENMP)
+#include <omp.h>
+#endif
+
 namespace Skylicht
 {
 	namespace Lightmapper
@@ -101,22 +105,25 @@ namespace Skylicht
 				// Compute the final weight for integration
 				float weightSum = 0.0f;
 
-				// Compute SH by radiance
+				// Compute SH by radiance (use OpenMP)
 				for (int face = 0; face < numFace; face++)
 				{
+					// scan pixels
 					// offset to face data
 					u8 *faceData = imageData + RT_SIZE * face * bpp;
+					u8 *data = NULL;
 
-					// offset to tid
-					faceData += rowSize * RT_SIZE * tid;
-
-					// scan pixels
-					for (u32 y = 0; y < RT_SIZE; y++)
+#pragma omp parallel for private(dirTS) private(color) private(data)
+					for (int y = 0; y < RT_SIZE; y++)
 					{
-						u8* data = faceData;
-
-						for (u32 x = 0; x < RT_SIZE; x++)
+						for (int x = 0; x < RT_SIZE; x++)
 						{
+							// offset to tid and row y
+							data = faceData + (RT_SIZE * tid + y) * rowSize;
+
+							// offset to pixel x 
+							data += x * bpp;
+
 							// Calculate the location in [-1, 1] texture space
 							float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
 							float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
@@ -144,14 +151,8 @@ namespace Skylicht
 							toTangentSpace[tid][face].rotateVect(dirTS);
 							dirTS.normalize();
 
-							CSH9 sh;
-							sh.projectOntoSH(dirTS, color);
-							m_sh[tid] += sh;
-
-							data += bpp;
+							m_sh[tid].projectAddOntoSH(dirTS, color);
 						}
-
-						faceData += rowSize;
 					}
 				}
 

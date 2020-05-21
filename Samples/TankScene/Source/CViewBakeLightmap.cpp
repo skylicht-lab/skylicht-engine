@@ -15,7 +15,8 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_currentMeshBuffer(0),
 	m_currentVertex(0),
 	m_totalVertexBaked(0),
-	m_lightBound(0)
+	m_lightBound(0),
+	m_timeBeginBake(0)
 {
 
 }
@@ -105,6 +106,8 @@ void CViewBakeLightmap::onInit()
 	// create text
 	m_textInfo = canvas->createText(m_font);
 	m_textInfo->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+
+	m_timeBeginBake = os::Timer::getRealTime();
 }
 
 void CViewBakeLightmap::onDestroy()
@@ -143,14 +146,17 @@ void CViewBakeLightmap::onUpdate()
 		float percentPerBuffer = 1.0f / (float)numMB;
 		float percent = (percentPerBuffer * m_currentMeshBuffer + percentPerBuffer * (m_currentVertex / (float)numVtx)) * 100.0f;
 
+		u32 deltaTime = os::Timer::getRealTime() - m_timeBeginBake;
+
 		char status[512];
-		sprintf(status, "LIGHTMAPPING (%d/%d): %d%%\n\n- MeshBuffer: %d/%d\n- Vertex: %d/%d\n\n - Total: %d",
+		sprintf(status, "LIGHTMAPPING (%d/%d): %d%%\n\n- MeshBuffer: %d/%d\n- Vertex: %d/%d\n\n - Total: %d\n-Time: %d seconds",
 			m_lightBound + 1,
 			s_numLightBound,
 			(int)percent,
 			m_currentMeshBuffer + 1, numMB,
 			m_currentVertex, numVtx,
-			m_totalVertexBaked);
+			m_totalVertexBaked,
+			deltaTime/1000);
 		m_textInfo->setText(status);
 
 		// lightmaper bake meshbuffer
