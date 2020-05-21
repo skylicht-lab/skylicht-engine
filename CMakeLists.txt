@@ -160,20 +160,18 @@ endif()
 if (USE_OPENMP)
 	add_definitions(-DUSE_OPENMP)
 	
-	if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-	  # using GCC
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")	
+	if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+		# AppleClang
+		set(CMAKE_C_FLAGS "-Xpreprocessor -fopenmp ${CMAKE_C_FLAGS}")
+		set(CMAKE_CXX_FLAGS "-Xpreprocessor -fopenmp ${CMAKE_CXX_FLAGS}")	
 	elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 		# using Visual Studio C++
 		set(CMAKE_C_FLAGS "/openmp ${CMAKE_C_FLAGS}")
 		set(CMAKE_CXX_FLAGS "/openmp ${CMAKE_CXX_FLAGS}")
 	else()
-		if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-			# using regular Clang or AppleClang
-			set(CMAKE_C_FLAGS "-fopenmp=libiomp5 ${CMAKE_C_FLAGS}")
-			set(CMAKE_CXX_FLAGS "-fopenmp=libiomp5 ${CMAKE_CXX_FLAGS}")
-		endif()
+		# using GCC & Clang++ (android)
+		set(CMAKE_CXX_FLAGS "-fopenmp ${CMAKE_CXX_FLAGS}")
+		set(CMAKE_C_FLAGS "-fopenmp ${CMAKE_C_FLAGS}")
 	endif()
 endif()
 
