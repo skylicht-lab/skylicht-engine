@@ -162,8 +162,8 @@ if (USE_OPENMP)
 	
 	if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 		# AppleClang
-		set(CMAKE_C_FLAGS "-Xpreprocessor -fopenmp ${CMAKE_C_FLAGS}")
-		set(CMAKE_CXX_FLAGS "-Xpreprocessor -fopenmp ${CMAKE_CXX_FLAGS}")	
+		set(CMAKE_C_FLAGS "-Xpreprocessor -fopenmp -lomp -L/usr/local/opt/libomp/lib -I/usr/local/opt/libomp/include ${CMAKE_C_FLAGS}")
+		set(CMAKE_CXX_FLAGS "-Xpreprocessor -fopenmp -lomp -L/usr/local/opt/libomp/lib -I/usr/local/opt/libomp/include ${CMAKE_CXX_FLAGS}")
 	elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 		# using Visual Studio C++
 		set(CMAKE_C_FLAGS "/openmp ${CMAKE_C_FLAGS}")
