@@ -128,7 +128,7 @@ namespace Skylicht
 
 		p->setID(CGameObject::s_objectID++);
 		p->setName(lpName);
-		
+
 		addChild(p);
 
 		p->createEntity();

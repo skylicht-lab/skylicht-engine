@@ -132,11 +132,19 @@ void CViewInit::initScene()
 	{
 		// load material
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Sponza/Sponza.xml", true, textureFolders);
+
 		// create render mesh object
 		CGameObject *sponza = zone->createEmptyObject();
+		sponza->setStatic(true);
+
+		// renderer
 		CRenderMesh *renderer = sponza->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
+
+		// indirect indirect lighting
+		// CIndirectLighting *indirectLighting = sponza->addComponent<CIndirectLighting>();
+		// indirectLighting->setIndirectLightingType(CIndirectLighting::VertexColor);
 	}
 
 #if defined(USE_FREETYPE)
@@ -323,7 +331,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 #if defined(WINDOWS_STORE) || defined(MACOS)
@@ -387,7 +395,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

@@ -73,7 +73,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CShadowMapRP::drawMeshBuffer(CMesh *mesh, int bufferID)
+	void CShadowMapRP::drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
 	{
 		if (mesh->Material.size() > (u32)bufferID)
 		{
@@ -120,8 +120,7 @@ namespace Skylicht
 
 			// todo
 			// We inorge last cascade shadow
-			if (i < m_numCascade - 1)
-				entityManager->render();
+			entityManager->render();
 		}
 
 		// render point light shadow

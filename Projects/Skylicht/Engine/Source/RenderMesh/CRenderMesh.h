@@ -71,6 +71,11 @@ namespace Skylicht
 			return m_entities;
 		}
 
+		std::vector<CRenderMeshData*>& getRenderers()
+		{
+			return m_renderers;
+		}
+
 	protected:
 		
 		void releaseMaterial();

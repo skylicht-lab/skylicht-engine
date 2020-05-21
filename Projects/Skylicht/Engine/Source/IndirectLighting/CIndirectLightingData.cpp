@@ -22,40 +22,20 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CSH9.h"
-#include "Camera/CCamera.h"
-#include "RenderPipeline/IRenderPipeline.h"
-#include "Entity/CEntityManager.h"
-
-#define NUM_FACES 6
-#define RT_SIZE 64
+#include "pch.h"
+#include "CIndirectLightingData.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	CIndirectLightingData::CIndirectLightingData() :
+		Type(Lightmap),
+		LightmapIndex(0)
 	{
-		class CBaker
-		{
-		protected:
-			video::ITexture *m_radiance;
 
-			CSH9 m_sh;
+	}
 
-		public:
-			CBaker();
+	CIndirectLightingData::~CIndirectLightingData()
+	{
 
-			virtual ~CBaker();
-
-			const CSH9& bake(CCamera *camera,
-				IRenderPipeline* rp,
-				CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal,
-				int numFace);
-		};
 	}
 }

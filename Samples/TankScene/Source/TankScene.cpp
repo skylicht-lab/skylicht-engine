@@ -5,23 +5,31 @@
 #include "ViewManager/CViewManager.h"
 
 #include "CViewInit.h"
+#include "CViewBakeLightmap.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
 	TankScene *app = new TankScene();
 	getApplication()->registerAppEvent("TankScene", app);
+
+	if (argv.size() >= 4)
+	{
+		CViewBakeLightmap::s_numLightBound = atoi(argv[3].c_str());
+	}
 }
 
 TankScene::TankScene()
 {
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
+	CLightmapper::createGetInstance();
 }
 
 TankScene::~TankScene()
 {
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
+	CLightmapper::releaseInstance();
 }
 
 void TankScene::onInitApp()

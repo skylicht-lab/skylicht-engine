@@ -105,7 +105,7 @@ namespace Skylicht
 			m_next->render(target, camera, entity, viewport);
 	}
 
-	void CBaseRP::drawMeshBuffer(CMesh *mesh, int bufferID)
+	void CBaseRP::drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
 	{
 		// set shader (uniform) material
 		if (mesh->Material.size() > (u32)bufferID)
@@ -163,6 +163,80 @@ namespace Skylicht
 
 		// draw buffer
 		driver->setMaterial(m_unbindMaterial);
+		driver->drawMeshBuffer(m_drawBuffer);
+	}
+
+	void CBaseRP::renderBufferToTarget(float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, SMaterial& material, bool flipY, bool flipX)
+	{
+		ITexture *tex = material.getTexture(0);
+		if (tex == NULL)
+			return;
+
+		IVideoDriver *driver = getVideoDriver();
+
+		int numVerticesUse = 4;
+
+		m_verticesImage->set_used(numVerticesUse);
+		S3DVertex2TCoords *vertices = (S3DVertex2TCoords*)m_verticesImage->getVertices();
+		SColor color(255, 255, 255, 255);
+
+		float x = dx;
+		float y = dy;
+		float w = dw;
+		float h = dh;
+
+		float texW = (float)tex->getSize().Width;
+		float texH = (float)tex->getSize().Height;
+
+		const f32 invW = 1.f / static_cast<f32>(texW);
+		const f32 invH = 1.f / static_cast<f32>(texH);
+
+		float tx1 = sx * invW;
+		float ty1 = sy * invH;
+		float tw1 = tx1 + sw * invW;
+		float th1 = ty1 + sh * invH;
+
+		float tx2 = 0.0f;
+		float ty2 = 0.0f;
+		float tw2 = 1.0f;
+		float th2 = 1.0f;
+
+		if (driver->getDriverType() != EDT_DIRECT3D11)
+		{
+			if (flipY)
+			{
+				ty1 = 1.0f - ty1;
+				th1 = 1.0f - th1;
+
+				ty2 = 1.0f - ty2;
+				th2 = 1.0f - th2;
+			}
+
+			if (flipX)
+			{
+				tx1 = 1.0f - tx1;
+				tw1 = 1.0f - tw1;
+
+				tx2 = 1.0f - tx2;
+				tw2 = 1.0f - tw2;
+			}
+		}
+
+		// add vertices
+		vertices[0] = S3DVertex2TCoords(x, y, 0.0f, 0.0f, 0.0f, 1.0f, color, tx1, ty1, tx2, ty2);
+		vertices[1] = S3DVertex2TCoords(x + w, y, 0.0f, 0.0f, 0.0f, 1.0f, color, tw1, ty1, tw2, ty2);
+		vertices[2] = S3DVertex2TCoords(x + w, y + h, 0.0f, 0.0f, 0.0f, 1.0f, color, tw1, th1, tw2, th2);
+		vertices[3] = S3DVertex2TCoords(x, y + h, 0.0f, 0.0f, 0.0f, 1.0f, color, tx1, th1, tx2, th2);
+
+		// notify change vertex buffer
+		m_drawBuffer->setDirty(scene::EBT_VERTEX);
+
+		// no depth test
+		material.ZBuffer = video::ECFN_DISABLED;
+		material.ZWriteEnable = false;
+
+		// draw buffer
+		driver->setMaterial(material);
 		driver->drawMeshBuffer(m_drawBuffer);
 	}
 
