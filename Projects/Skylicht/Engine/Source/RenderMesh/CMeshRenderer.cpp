@@ -96,12 +96,13 @@ namespace Skylicht
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
-			CMesh *mesh = m_meshs[i]->getMesh();
+			CRenderMeshData *meshData = m_meshs[i];
+			CMesh *mesh = meshData->getMesh();
 
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
-				rp->drawMeshBuffer(mesh, j);
+				rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex);
 		}
 	}
 }

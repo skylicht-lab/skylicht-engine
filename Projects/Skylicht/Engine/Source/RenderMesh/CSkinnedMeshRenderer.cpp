@@ -98,7 +98,8 @@ namespace Skylicht
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
-			CSkinnedMesh *mesh = (CSkinnedMesh*)m_meshs[i]->getMesh();
+			CRenderMeshData *renderMeshData = m_meshs[i];
+			CSkinnedMesh *mesh = (CSkinnedMesh*)renderMeshData->getMesh();
 
 			// set bone matrix to shader callback
 			shaderManager->BoneMatrix = mesh->SkinningMatrix;
@@ -108,7 +109,7 @@ namespace Skylicht
 
 			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
-				rp->drawMeshBuffer(mesh, j);
+				rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex);
 		}
 	}
 }

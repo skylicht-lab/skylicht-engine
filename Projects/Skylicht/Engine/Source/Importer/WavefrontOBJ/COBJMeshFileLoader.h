@@ -91,7 +91,7 @@ namespace Skylicht
 
 		bool retrieveVertexIndices(c8* vertexData, s32* idx, const c8* bufEnd, u32 vbsize, u32 vtsize, u32 vnsize);
 
-		void constructScene(CEntityPrefab* output);
+		void constructScene(CEntityPrefab* output, bool normalMap);
 	private:
 
 		const c8* readTextures(const c8* bufPtr, const c8* const bufEnd, SObjMtl* currMaterial, const io::path& relPath);

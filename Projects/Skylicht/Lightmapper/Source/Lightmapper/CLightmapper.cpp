@@ -46,9 +46,10 @@ namespace Skylicht
 			const core::vector3df& position,
 			const core::vector3df& normal,
 			const core::vector3df& tangent,
-			const core::vector3df& binormal)
+			const core::vector3df& binormal,
+			int numFace)
 		{
-			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal);
+			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal, numFace);
 		}
 
 		void CLightmapper::bakeAtPosition(
@@ -58,7 +59,8 @@ namespace Skylicht
 			const core::vector3df *tangent,
 			const core::vector3df *binormal,
 			std::vector<CSH9>& out,
-			int count)
+			int count,
+			int numFace)
 		{
 			out.clear();
 
@@ -78,13 +80,145 @@ namespace Skylicht
 					normal + current,
 					tangent + current,
 					binormal + current,
-					numMT);
+					numMT,
+					numFace);
 
 				for (int i = 0; i < numMT; i++)
 					out.push_back(m_multiBaker->getSH(i));
 
 				current += numMT;
 			}
+		}
+
+		void CLightmapper::bakeProbes(std::vector<CProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr)
+		{
+			// prepare comput sh
+			core::array<core::vector3df> positions;
+			core::array<core::vector3df> normals;
+			core::array<core::vector3df> tangents;
+			core::array<core::vector3df> binormals;
+			for (u32 i = 0, n = probes.size(); i < n; i++)
+			{
+				CProbe* probe = probes[i];
+
+				core::vector3df pos = probe->getGameObject()->getPosition();
+				core::vector3df normal = CTransform::s_oy;
+				core::vector3df tangent = CTransform::s_ox;
+				core::vector3df binormal = normal.crossProduct(tangent);
+				binormal.normalize();
+
+				positions.push_back(pos);
+				normals.push_back(normal);
+				tangents.push_back(tangent);
+				binormals.push_back(binormal);
+			}
+
+			// bake sh
+			std::vector<CSH9> out;
+			CLightmapper::getInstance()->bakeAtPosition(
+				camera,
+				rp,
+				entityMgr,
+				positions.pointer(),
+				normals.pointer(),
+				tangents.pointer(),
+				binormals.pointer(),
+				out,
+				(int)probes.size());
+
+			// apply sh
+			for (u32 i = 0, n = probes.size(); i < n; i++)
+				probes[i]->setSH(out[i]);
+		}
+
+		int CLightmapper::bakeMeshBuffer(IMeshBuffer *mb, const core::matrix4& transform, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH)
+		{
+			if (mb->getVertexBufferCount() == 0)
+			{
+				char log[512];
+				sprintf(log, "[CLightmapper] bakeMeshBuffer skip bake MeshBuffer");
+				os::Printer::log(log);
+				return 0;
+			}
+
+			if (mb->getVertexType() != EVT_TANGENTS)
+			{
+				char log[512];
+				sprintf(log, "[CLightmapper] bakeMeshBuffer skip non tangent MeshBuffer");
+				os::Printer::log(log);
+				return 0;
+			}
+
+			IVertexBuffer *vb = mb->getVertexBuffer(0);
+			u32 vtxCount = vb->getVertexCount();
+
+			int remain = vtxCount - begin;
+			if (remain <= 0)
+				return 0;
+
+			count = core::min_(count, remain);
+
+			video::S3DVertexTangents *vtx = (video::S3DVertexTangents*)vb->getVertices();
+
+			core::array<core::vector3df> positions;
+			core::array<core::vector3df> normals;
+			core::array<core::vector3df> tangents;
+			core::array<core::vector3df> binormals;
+
+			for (int i = begin, id = 0; i < begin + count; i++, id++)
+			{
+				positions.push_back(vtx[i].Pos);
+				normals.push_back(vtx[i].Normal);
+				tangents.push_back(vtx[i].Tangent);
+				binormals.push_back(vtx[i].Binormal);
+
+				transform.transformVect(positions[id]);
+				transform.rotateVect(normals[id]);
+				transform.rotateVect(tangents[id]);
+				transform.rotateVect(binormals[id]);
+
+				normals[id].normalize();
+				tangents[id].normalize();
+				binormals[id].normalize();
+			}
+
+			std::vector<CSH9> resultSH;
+			bakeAtPosition(
+				camera,
+				rp,
+				entityMgr,
+				positions.pointer(),
+				normals.pointer(),
+				tangents.pointer(),
+				binormals.pointer(),
+				resultSH,
+				count,
+				5);
+
+
+			core::vector3df result;
+
+			for (int i = begin, id = 0; i < begin + count; i++, id++)
+			{
+				// additive bound light color
+				outSH[i] += resultSH[id];
+
+				// get result color
+				outSH[i].getSHIrradiance(normals[id], result);
+
+				float r = core::clamp(result.X, 0.0f, 1.0f);
+				float g = core::clamp(result.Y, 0.0f, 1.0f);
+				float b = core::clamp(result.Z, 0.0f, 1.0f);
+
+				outColor[i].set(
+					255, // a
+					(int)(r * 255.0f), // r
+					(int)(g * 255.0f), // g
+					(int)(b * 255.0f)  // b
+				);
+			}
+
+			return count;
 		}
 	}
 }

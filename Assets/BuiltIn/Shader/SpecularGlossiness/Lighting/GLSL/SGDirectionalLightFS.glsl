@@ -6,6 +6,7 @@ uniform sampler2D uTexPosition;
 uniform sampler2D uTexNormal;
 uniform sampler2D uTexData;
 uniform sampler2D uTexLight;
+uniform sampler2D uTexIndirect;
 uniform sampler2DArray uShadowMap;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
@@ -26,13 +27,13 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 	float depth = 0.0;
 	float result = 0.0;
 	float size = 2048.0;
-	if (farDistance > shadowDistance[0])
+	if (farDistance < shadowDistance[0])
+		id = 0;
+	else if (farDistance < shadowDistance[1])
 		id = 1;
-	if (farDistance > shadowDistance[1])
-	{
-		return 1.0;
-	}
-	if (farDistance > shadowDistance[2])
+	else if (farDistance < shadowDistance[2])
+		id = 2;
+	else
 		return 1.0;
 	depth = shadowCoord[id].z;
 	vec2 uv = shadowCoord[id].xy;
@@ -46,6 +47,7 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 	}
 	return result/9.0;
 }
+const float PI = 3.1415926;
 const float MinReflectance = 0.04;
 float getPerceivedBrightness(vec3 color)
 {
@@ -70,7 +72,8 @@ vec3 SG(
 	const vec3 worldNormal,
 	const vec3 lightColor,
 	const float visibility,
-	const vec4 light)
+	const vec4 light,
+	const vec3 indirect)
 {
 	float roughness = 1.0 - gloss;
 	vec3 f0 = vec3(spec, spec, spec);
@@ -86,6 +89,7 @@ vec3 SG(
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	vec3 directionalLight = NdotL * lightColor * visibility;
 	vec3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
+	color += indirect * diffuseColor / PI;
 	return color;
 }
 void main(void)
@@ -95,6 +99,7 @@ void main(void)
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
 	vec4 light = texture(uTexLight, varTexCoord0.xy);
+	vec3 indirect = texture(uTexIndirect, varTexCoord0.xy).rgb;
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
 	float depth = length(v);
@@ -116,6 +121,7 @@ void main(void)
 		normal,
 		uLightColor.rgb,
 		visibility,
-		light);
+		light,
+		indirect);
 	FragColor = vec4(color, 1.0);
 }

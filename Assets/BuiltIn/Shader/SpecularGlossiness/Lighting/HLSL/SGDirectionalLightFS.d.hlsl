@@ -10,11 +10,14 @@ SamplerState uTexNormalSampler : register(s2);
 Texture2D uTexData : register(t3);
 SamplerState uTexDataSampler : register(s3);
 
-Texture2D uLight : register(t4);
-SamplerState uLightSampler : register(s4);
+Texture2D uTexLight : register(t4);
+SamplerState uTexLightSampler : register(s4);
 
-Texture2DArray uShadowMap : register(t5);
-SamplerState uShadowMapSampler : register(s5);
+Texture2D uTexIndirect : register(t5);
+SamplerState uTexIndirectSampler : register(s5);
+
+Texture2DArray uShadowMap : register(t6);
+SamplerState uShadowMapSampler : register(s6);
 
 struct PS_INPUT
 {
@@ -40,7 +43,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
 	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
 	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
-	float4 light = uLight.Sample(uLightSampler, input.tex0);
+	float4 light = uTexLight.Sample(uTexLightSampler, input.tex0);
+	float3 indirect = uTexIndirect.Sample(uTexIndirectSampler, input.tex0).rgb;
 
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
@@ -69,7 +73,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 		normal,
 		uLightColor.rgb,
 		visibility,
-		light);
+		light,
+		indirect);
 	
 	return float4(color, 1.0);
 }

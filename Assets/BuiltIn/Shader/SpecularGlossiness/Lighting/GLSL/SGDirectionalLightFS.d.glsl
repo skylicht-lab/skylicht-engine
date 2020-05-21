@@ -7,6 +7,7 @@ uniform sampler2D uTexPosition;
 uniform sampler2D uTexNormal;
 uniform sampler2D uTexData;
 uniform sampler2D uTexLight;
+uniform sampler2D uTexIndirect;
 uniform sampler2DArray uShadowMap;
 
 uniform vec4 uCameraPosition;
@@ -29,6 +30,7 @@ void main(void)
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
 	vec4 light = texture(uTexLight, varTexCoord0.xy);
+	vec3 indirect = texture(uTexIndirect, varTexCoord0.xy).rgb;
 	
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
@@ -58,7 +60,8 @@ void main(void)
 		normal,
 		uLightColor.rgb,
 		visibility,
-		light);
+		light,
+		indirect);
 		
 	FragColor = vec4(color, 1.0);
 }

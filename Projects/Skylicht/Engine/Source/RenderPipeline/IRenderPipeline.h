@@ -75,6 +75,6 @@ namespace Skylicht
 
 		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& viewport) = 0;
 
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID) = 0;
+		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID) = 0;
 	};
 }
