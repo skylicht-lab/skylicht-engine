@@ -34,6 +34,12 @@ endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
+option(BUILD_SHARED_LIBS "Use shared libraries" OFF)
+
+option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
+
+option(USE_OPENMP "Use openmp for multithread optimize" ON)
+
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
 set(BUILD_CURL OFF)
@@ -47,6 +53,7 @@ endif()
 if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
 	set(BUILD_ENGINE_TOOL OFF)
 	set(BUILD_EMSCRIPTEN ON)
+	set(USE_OPENMP OFF)
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL Android)
@@ -77,12 +84,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
 	add_definitions(-DANGLE_EGL_LIBRARY_NAME=\"libEGL\")
 	add_definitions(-DANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2\")
 endif()
-
-option(BUILD_SHARED_LIBS "Use shared libraries" OFF)
-
-option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
-
-option(USE_OPENMP "Use openmp for multithread optimize" ON)
 
 # irrlicht static lib
 if (NOT BUILD_SHARED_LIBS)
@@ -159,9 +160,20 @@ endif()
 if (USE_OPENMP)
 	add_definitions(-DUSE_OPENMP)
 	
-	if(NOT MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
+	if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	  # using GCC
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")	
+	elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+		# using Visual Studio C++
+		set(CMAKE_C_FLAGS "/openmp ${CMAKE_C_FLAGS}")
+		set(CMAKE_CXX_FLAGS "/openmp ${CMAKE_CXX_FLAGS}")
+	else()
+		if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+			# using regular Clang or AppleClang
+			set(CMAKE_C_FLAGS "-fopenmp=libiomp5 ${CMAKE_C_FLAGS}")
+			set(CMAKE_CXX_FLAGS "-fopenmp=libiomp5 ${CMAKE_CXX_FLAGS}")
+		endif()
 	endif()
 endif()
 
@@ -181,11 +193,6 @@ if (BUILD_WINDOWS_STORE)
 	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
 	endif()
-	
-	if (USE_OPENMP)
-		set(CMAKE_C_FLAGS "/openmp ${CMAKE_C_FLAGS}")
-		set(CMAKE_CXX_FLAGS "/openmp ${CMAKE_CXX_FLAGS}")
-	endif()
 elseif (MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
@@ -199,12 +206,7 @@ elseif (MSVC)
 				string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
 			endif (${flag_var} MATCHES "/MDd")
 		endforeach()
-	endif()
-	
-	if (USE_OPENMP)
-		set(CMAKE_C_FLAGS "/openmp ${CMAKE_C_FLAGS}")
-		set(CMAKE_CXX_FLAGS "/openmp ${CMAKE_CXX_FLAGS}")
-	endif()
+	endif()	
 	
 	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
