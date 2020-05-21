@@ -118,17 +118,17 @@ References from the project [BakingLab](https://github.com/TheRealMJP/BakingLab)
 ##### Direction Light
 <img src="Documents/Media/Samples/tank-scene/direction-1-bounce.png"/>
 
-#### 2nd bounce Baked Global Illumination
+#### Test 2nd bounce Baked Global Illumination
 **Indirect lighting** baked on Vertex Color
 <img src="Documents/Media/Samples/tank-scene/indirect-bake-2-bounce.png"/>
 
 **Combine final lighting**
 <img src="Documents/Media/Samples/tank-scene/combine-2-bounces.png"/>
 
-Lightmapper work fine on WebAsm (OpenGLES3)
+Lightmapper works well on WebAsm (WebGL, OpenGLES3.0)
 <img src="Documents/Media/Samples/tank-scene/emsdk-2-bounces.png"/>
 
-#### 3rd bounce Baked Global Illumination
+#### Test 3rd bounce Baked Global Illumination
 
 <img src="Documents/Media/Samples/tank-scene/combine-3-bounces-a.png"/>
 
