@@ -82,6 +82,8 @@ option(BUILD_SHARED_LIBS "Use shared libraries" OFF)
 
 option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
 
+option(USE_OPENMP "Use openmp for multithread optimize" ON)
+
 # irrlicht static lib
 if (NOT BUILD_SHARED_LIBS)
 	add_definitions(-D_IRR_STATIC_LIB_ )
@@ -154,6 +156,15 @@ if (MINGW)
 	add_definitions(-DMINGW)
 endif()
 
+if (USE_OPENMP)
+	add_definitions(-DUSE_OPENMP)
+	
+	if(NOT MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
+	endif()
+endif()
+
 # android
 if (BUILD_ANDROID)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-narrowing")
@@ -169,7 +180,12 @@ if (BUILD_WINDOWS_STORE)
 	
 	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
-	endif()		
+	endif()
+	
+	if (USE_OPENMP)
+		set(CMAKE_C_FLAGS "/openmp ${CMAKE_C_FLAGS}")
+		set(CMAKE_CXX_FLAGS "/openmp ${CMAKE_CXX_FLAGS}")
+	endif()
 elseif (MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
@@ -184,7 +200,12 @@ elseif (MSVC)
 			endif (${flag_var} MATCHES "/MDd")
 		endforeach()
 	endif()
-		
+	
+	if (USE_OPENMP)
+		set(CMAKE_C_FLAGS "/openmp ${CMAKE_C_FLAGS}")
+		set(CMAKE_CXX_FLAGS "/openmp ${CMAKE_CXX_FLAGS}")
+	endif()
+	
 	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
 	endif()

@@ -70,6 +70,8 @@ namespace Skylicht
 
 			void projectOntoSH(const core::vector3df& n, const core::vector3df& color, float A0 = 1.0f, float A1 = 1.0f, float A2 = 1.0f);
 
+			void projectAddOntoSH(const core::vector3df& n, const core::vector3df& color, float A0 = 1.0f, float A1 = 1.0f, float A2 = 1.0f);
+
 			void getSH(const core::vector3df& n, core::vector3df& color);
 
 			void getSHIrradiance(const core::vector3df& n, core::vector3df& color);
