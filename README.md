@@ -105,40 +105,38 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 ```
 - Open Visual Studio Solution and click **NewApplication** - **"Set as StartUp Project"**.
 
-### Samples Application
-
-#### Samples\HelloWorld
+### Samples\HelloWorld
 Use **FreeType Font**, **Glyph Font**, **Canvas Component**, **Graphics2D**, **GUI Text**
 <img src="Documents/Media/Samples/sample_hello_world.png"/>
 
-#### Samples\TankScene
+### Samples\TankScene
 Use **OBJ Wavefront** loader, **Deferred** and **Forwarder** rendering, **Dynamic Direction Lighting**, **Shadow Mapping**, **Lightmapper**, **Skydome**
 
 References from the project [BakingLab](https://github.com/TheRealMJP/BakingLab)
 
-##### 1 bounce Direction Light & Shadow Mapping
+#### 1st bounce Direction Light & Shadow Mapping
 
-###### Albedo
+##### Albedo
 <img src="Documents/Media/Samples/tank-scene/albedo.png"/>
 
-###### Direction Light
+##### Direction Light
 <img src="Documents/Media/Samples/tank-scene/direction-1-bounce.png"/>
 
-##### 2 bounce Baked Global Illumination
+#### 2nd bounce Baked Global Illumination
 
-###### Indirect Lighting
+**Indirect lighting**
 Indirect lighting bake on Vertex Color
 <img src="Documents/Media/Samples/tank-scene/indirect-bake-2-bounce.png"/>
 
-###### Combine Indirect & Direction Lighting
+**Combine final lighting**
 <img src="Documents/Media/Samples/tank-scene/combine-2-bounds.png"/>
 
-##### 3 bounce Baked Global Illumination
+#### 3rd bounce Baked Global Illumination
 
-###### Indirect Lighting
+**Indirect lighting**
 <img src="Documents/Media/Samples/tank-scene/indirect-bake-3-bounce.png"/>
 
-###### Combine Indirect & Direction Lighting
+**Combine final lighting**
 <img src="Documents/Media/Samples/tank-scene/combine-3-bounds-a.png"/>
 
 <img src="Documents/Media/Samples/tank-scene/combine-3-bounds-b.png"/>
