@@ -32,6 +32,7 @@ namespace Skylicht
 	{
 	protected:
 		static bool s_enableRenderIndirect;
+		static bool s_enableRenderTestIndirect;
 
 	protected:
 		ITexture *m_target;
@@ -83,5 +84,7 @@ namespace Skylicht
 		static void enableRenderIndirect(bool b);
 
 		static bool isEnableRenderIndirect();
+
+		static void enableTestIndirect(bool b);
 	};
 }

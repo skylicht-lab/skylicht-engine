@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	bool CDeferredRP::s_enableRenderIndirect = true;
+	bool CDeferredRP::s_enableRenderTestIndirect = false;
 
 	CDeferredRP::CDeferredRP() :
 		m_albedo(NULL),
@@ -184,6 +185,11 @@ namespace Skylicht
 		// disable Z
 		m_pointLightPass.ZBuffer = video::ECFN_DISABLED;
 		m_pointLightPass.ZWriteEnable = false;
+	}
+
+	void CDeferredRP::enableTestIndirect(bool b)
+	{
+		s_enableRenderTestIndirect = b;
 	}
 
 	void CDeferredRP::enableRenderIndirect(bool b)
@@ -369,11 +375,10 @@ namespace Skylicht
 		// shadow
 		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
 		if (shadowRP != NULL)
-		{
 			m_directionalLightPass.setTexture(6, shadowRP->getDepthTexture());
-		}
 
 		beginRender2D(renderW, renderH);
+
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 
 		// STEP 05
@@ -392,14 +397,12 @@ namespace Skylicht
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 
 		// test
-		/*
-		if (s_enableRenderIndirect == true)
+		if (s_enableRenderTestIndirect == true)
 		{
 			m_indirect->regenerateMipMapLevels();
 			SMaterial t = m_finalPass;
 			t.TextureLayer[0].Texture = m_indirect;
-			renderBufferToTarget(0.0f, 0.0f, renderW / 3, renderH / 3, 0.0f, 0.0f, renderW, renderH, t);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, renderW, renderH, t);
 		}
-		*/
 	}
 }
