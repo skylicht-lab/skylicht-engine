@@ -60,6 +60,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CZone.h"
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
+#include "IndirectLighting/CIndirectLighting.h"
 
 // Graphics2D, Canvas 2D
 #include "Graphics2D/CCanvas.h"

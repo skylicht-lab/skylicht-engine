@@ -37,7 +37,7 @@ namespace Skylicht
 			CSH9();
 			CSH9(const core::vector3df *sh);
 			CSH9(const CSH9& sh);
-			virtual ~CSH9();
+			~CSH9();
 
 			void zero();
 

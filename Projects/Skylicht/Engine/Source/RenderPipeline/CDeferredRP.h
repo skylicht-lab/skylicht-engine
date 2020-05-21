@@ -31,12 +31,17 @@ namespace Skylicht
 	class CDeferredRP : public CBaseRP
 	{
 	protected:
+		static bool s_enableRenderIndirect;
+		static bool s_enableRenderTestIndirect;
+
+	protected:
 		ITexture *m_target;
 
 		ITexture *m_albedo;
 		ITexture *m_position;
 		ITexture *m_normal;
 		ITexture *m_data;
+		ITexture *m_indirect;
 
 		ITexture *m_lightBuffer;
 
@@ -47,8 +52,11 @@ namespace Skylicht
 		core::matrix4 m_viewMatrix;
 		core::matrix4 m_projectionMatrix;
 
-		SMaterial m_pointLightPass;
+		bool m_isIndirectPass;
+		int m_vertexColorShader;
+		int m_textureColorShader;
 
+		SMaterial m_pointLightPass;
 		SMaterial m_directionalLightPass;
 		SMaterial m_finalPass;
 
@@ -70,5 +78,13 @@ namespace Skylicht
 		virtual void initRender(int w, int h);
 
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
+
+		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
+
+		static void enableRenderIndirect(bool b);
+
+		static bool isEnableRenderIndirect();
+
+		static void enableTestIndirect(bool b);
 	};
 }

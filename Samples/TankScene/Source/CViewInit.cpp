@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "CViewInit.h"
-#include "CViewDemo.h"
+#include "CViewBakeLightmap.h"
 
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
@@ -42,10 +42,8 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
 
-#if defined(USE_FREETYPE)
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
-#endif
 }
 
 void CViewInit::initScene()
@@ -116,9 +114,14 @@ void CViewInit::initScene()
 
 		// create render mesh object
 		CGameObject *tankScene = zone->createEmptyObject();
+		tankScene->setStatic(true);
+
 		CRenderMesh *renderer = tankScene->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
+
+		CIndirectLighting *indirectLighting = tankScene->addComponent<CIndirectLighting>();
+		indirectLighting->setIndirectLightingType(CIndirectLighting::VertexColor);
 	}
 
 	// save to context
@@ -194,7 +197,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 #if defined(WINDOWS_STORE) || defined(MACOS)
@@ -255,10 +258,10 @@ void CViewInit::onUpdate()
 		if (scene != NULL)
 			scene->update();
 
-		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+		CViewManager::getInstance()->getLayer(0)->changeView<CViewBakeLightmap>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

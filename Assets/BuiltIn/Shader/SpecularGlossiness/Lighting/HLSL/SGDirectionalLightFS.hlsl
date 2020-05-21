@@ -6,10 +6,12 @@ Texture2D uTexNormal : register(t2);
 SamplerState uTexNormalSampler : register(s2);
 Texture2D uTexData : register(t3);
 SamplerState uTexDataSampler : register(s3);
-Texture2D uLight : register(t4);
-SamplerState uLightSampler : register(s4);
-Texture2DArray uShadowMap : register(t5);
-SamplerState uShadowMapSampler : register(s5);
+Texture2D uTexLight : register(t4);
+SamplerState uTexLightSampler : register(s4);
+Texture2D uTexIndirect : register(t5);
+SamplerState uTexIndirectSampler : register(s5);
+Texture2DArray uShadowMap : register(t6);
+SamplerState uShadowMapSampler : register(s6);
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
@@ -35,13 +37,13 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	float depth = 0.0;
 	float result = 0.0;
 	float size = 2048;
-	if (farDistance > shadowDistance[0])
+	if (farDistance < shadowDistance[0])
+		id = 0;
+	else if (farDistance < shadowDistance[1])
 		id = 1;
-	if (farDistance > shadowDistance[1])
-	{
-		return 1.0;
-	}
-	if (farDistance > shadowDistance[2])
+	else if (farDistance < shadowDistance[2])
+		id = 2;
+	else
 		return 1.0;
 	depth = shadowCoord[id].z;
 	float2 uv = shadowCoord[id].xy;
@@ -57,6 +59,7 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	}
 	return result/9.0;
 }
+static const float PI = 3.1415926;
 static const float MinReflectance = 0.04;
 float getPerceivedBrightness(float3 color)
 {
@@ -81,7 +84,8 @@ float3 SG(
 	const float3 worldNormal,
 	const float3 lightColor,
 	const float visibility,
-	const float4 light)
+	const float4 light,
+	const float3 indirect)
 {
 	float roughness = 1.0 - gloss;
 	float3 f0 = spec;
@@ -97,6 +101,7 @@ float3 SG(
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	float3 directionalLight = NdotL * lightColor * visibility;
 	float3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
+	color += indirect * diffuseColor / PI;
 	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET
@@ -105,7 +110,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
 	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
 	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
-	float4 light = uLight.Sample(uLightSampler, input.tex0);
+	float4 light = uTexLight.Sample(uTexLightSampler, input.tex0);
+	float3 indirect = uTexIndirect.Sample(uTexIndirectSampler, input.tex0).rgb;
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
 	float depth = length(v);
@@ -127,6 +133,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		normal,
 		uLightColor.rgb,
 		visibility,
-		light);
+		light,
+		indirect);
 	return float4(color, 1.0);
 }

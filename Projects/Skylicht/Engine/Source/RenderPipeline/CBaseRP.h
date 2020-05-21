@@ -60,13 +60,15 @@ namespace Skylicht
 
 		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& vp);
 
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID);
+		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
 
 	public:
 
 		void beginRender2D(float w, float h);
 
 		void renderBufferToTarget(float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);
+
+		void renderBufferToTarget(float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);
 
 		void renderCubeEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture, int* face, int numFace);
 

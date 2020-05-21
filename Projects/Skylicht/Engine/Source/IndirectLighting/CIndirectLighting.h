@@ -24,38 +24,57 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CSH9.h"
-#include "Camera/CCamera.h"
-#include "RenderPipeline/IRenderPipeline.h"
-#include "Entity/CEntityManager.h"
-
-#define NUM_FACES 6
-#define RT_SIZE 64
+#include "Components/CComponentSystem.h"
+#include "CIndirectLightingData.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CIndirectLighting : public CComponentSystem
 	{
-		class CBaker
+	public:
+		enum EIndirectType
 		{
-		protected:
-			video::ITexture *m_radiance;
-
-			CSH9 m_sh;
-
-		public:
-			CBaker();
-
-			virtual ~CBaker();
-
-			const CSH9& bake(CCamera *camera,
-				IRenderPipeline* rp,
-				CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal,
-				int numFace);
+			Lightmap,
+			VertexColor,
 		};
-	}
+
+	protected:
+		EIndirectType m_type;
+		int m_lightmapIndex;
+
+		std::vector<CIndirectLightingData*> m_data;
+
+	public:
+		CIndirectLighting();
+
+		virtual ~CIndirectLighting();
+
+		virtual void initComponent();
+
+		virtual void updateComponent();
+
+	public:
+
+		void setIndirectLightingType(EIndirectType type);
+
+		inline void setLightmapIndex(int idx)
+		{
+			m_lightmapIndex = idx;
+		}
+
+		inline int getLightmapIndex()
+		{
+			return m_lightmapIndex;
+		}
+
+		EIndirectType getIndirectLightingType()
+		{
+			return m_type;
+		}
+
+		std::vector<CIndirectLightingData*>& getData()
+		{
+			return m_data;
+		}
+	};
 }
