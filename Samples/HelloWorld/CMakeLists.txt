@@ -181,7 +181,10 @@ elseif (BUILD_MACOS)
 
 	target_link_libraries(SampleHelloWorld ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(SampleHelloWorld "-framework Cocoa")
-
+	if (OPENMP_FOUND)
+	target_link_libraries(SampleHelloWorld PRIVATE OpenMP::OpenMP_CXX)
+	endif()
+	
 	message(STATUS "- Setup project: SampleHelloWorld")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
