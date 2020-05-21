@@ -25,6 +25,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CLightmapper.h"
 
+#if defined(USE_OPENMP)
+#include <omp.h>
+#endif
+
 namespace Skylicht
 {
 	namespace Lightmapper
@@ -165,12 +169,22 @@ namespace Skylicht
 			core::array<core::vector3df> tangents;
 			core::array<core::vector3df> binormals;
 
-			for (int i = begin, id = 0; i < begin + count; i++, id++)
+			positions.set_used(count);
+			normals.set_used(count);
+			tangents.set_used(count);
+			binormals.set_used(count);
+
+			int i = 0;
+
+#pragma omp parallel for private(i)
+			for (int id = 0; id < count; id++)
 			{
-				positions.push_back(vtx[i].Pos);
-				normals.push_back(vtx[i].Normal);
-				tangents.push_back(vtx[i].Tangent);
-				binormals.push_back(vtx[i].Binormal);
+				i = begin + id;
+
+				positions[id] = vtx[i].Pos;
+				normals[id] = vtx[i].Normal;
+				tangents[id] = vtx[i].Tangent;
+				binormals[id] = vtx[i].Binormal;
 
 				transform.transformVect(positions[id]);
 				transform.rotateVect(normals[id]);
@@ -198,8 +212,11 @@ namespace Skylicht
 
 			core::vector3df result;
 
-			for (int i = begin, id = 0; i < begin + count; i++, id++)
+#pragma omp parallel for private(result) private(i)
+			for (int id = 0; id < count; id++)
 			{
+				i = begin + id;
+
 				// additive bound light color
 				outSH[i] += resultSH[id];
 
