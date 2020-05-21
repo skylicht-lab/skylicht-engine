@@ -109,10 +109,43 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 
 #### Samples\HelloWorld
 Use **FreeType Font**, **Glyph Font**, **Canvas Component**, **Graphics2D**, **GUI Text**
-<img src="Documents/Media/Samples/sample_hello_world.png">
+<img src="Documents/Media/Samples/sample_hello_world.png"/>
+
+#### Samples\TankScene
+Use **OBJ Wavefront** loader, **Deferred** and **Forwarder** rendering, **Dynamic Direction Lighting**, **Shadow Mapping**, **Lightmapper**, **Skydome**
+
+References from the project [BakingLab](https://github.com/TheRealMJP/BakingLab)
+
+##### 1 bounce Direction Light & Shadow Mapping
+
+###### Albedo
+<img src="Documents/Media/Samples/tank-scene/albedo.png"/>
+
+###### Direction Light
+<img src="Documents/Media/Samples/tank-scene/direction-1-bounce.png"/>
+
+##### 2 bounce Baked Global Illumination
+
+###### Indirect Lighting
+Indirect lighting bake on Vertex Color
+<img src="Documents/Media/Samples/tank-scene/indirect-bake-2-bounce.png"/>
+
+###### Combine Indirect & Direction Lighting
+<img src="Documents/Media/Samples/tank-scene/combine-2-bounds.png"/>
+
+##### 3 bounce Baked Global Illumination
+
+###### Indirect Lighting
+<img src="Documents/Media/Samples/tank-scene/indirect-bake-3-bounce.png"/>
+
+###### Combine Indirect & Direction Lighting
+<img src="Documents/Media/Samples/tank-scene/combine-3-bounds-a.png"/>
+
+<img src="Documents/Media/Samples/tank-scene/combine-3-bounds-b.png"/>
 
 ## Contributing
-Welcome if you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+Welcome if you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Wellcome to join group. Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+
 ## License
 Skylicht Engine is licensed under [MIT License](LICENSE.md)
 

@@ -127,7 +127,7 @@ void CViewBakeLightmap::onUpdate()
 
 	// bake lightmap
 	u32 numMB = m_allMeshBuffer.size();
-	if (m_currentMeshBuffer < numMB)
+	if (m_currentMeshBuffer < numMB && s_numLightBound > 0)
 	{
 		if (m_lightBound == 0)
 			CDeferredRP::enableRenderIndirect(false);
@@ -187,7 +187,9 @@ void CViewBakeLightmap::onUpdate()
 		m_currentVertex = 0;
 
 		if (m_lightBound >= s_numLightBound)
+		{
 			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+		}
 	}
 }
 
