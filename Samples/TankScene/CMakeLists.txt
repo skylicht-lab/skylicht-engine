@@ -184,7 +184,10 @@ elseif (BUILD_MACOS)
 
 	target_link_libraries(SampleTankScene ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(SampleTankScene "-framework Cocoa")
-
+	if (OPENMP_FOUND)
+	target_link_libraries(SampleTankScene PRIVATE OpenMP::OpenMP_CXX)
+	endif()
+	
 	message(STATUS "- Setup project: SampleTankScene")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
