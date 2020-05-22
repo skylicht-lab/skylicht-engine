@@ -33,6 +33,8 @@ protected:
 	u32 m_currentVertex;
 	u32 m_totalVertexBaked;
 	int m_lightBound;
+
+	u32 m_timeBeginBake;
 public:
 	CViewBakeLightmap();
 

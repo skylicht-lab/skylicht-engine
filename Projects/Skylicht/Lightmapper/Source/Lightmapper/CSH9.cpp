@@ -171,6 +171,25 @@ namespace Skylicht
 			return r;
 		}
 
+		void CSH9::projectAddOntoSH(const core::vector3df& n, const core::vector3df& color, float A0, float A1, float A2)
+		{
+			// Band 0
+			m_sh[0] = m_sh[0] + 0.282095f * color * A0;
+
+			// Band 1
+			m_sh[1] = m_sh[1] + 0.488603f * n.Y * color * A1;
+			m_sh[2] = m_sh[2] + 0.488603f * n.Z * color * A1;
+			m_sh[3] = m_sh[3] + 0.488603f * n.X * color * A1;
+
+			// Band 2
+			m_sh[4] = m_sh[4] + 1.092548f * n.X * n.Y * color * A2;
+			m_sh[5] = m_sh[5] + 1.092548f * n.Y * n.Z * color * A2;
+			m_sh[6] = m_sh[6] + 0.315392f * (3.0f * n.Z * n.Z - 1.0f) * color * A2;
+
+			m_sh[7] = m_sh[7] + 1.092548f * n.X * n.Z * color * A2;
+			m_sh[8] = m_sh[8] + 0.546274f * (n.X * n.X - n.Y * n.Y) * color * A2;
+		}
+
 		void CSH9::projectOntoSH(const core::vector3df& n, const core::vector3df& color, float A0, float A1, float A2)
 		{
 			// https://github.com/TheRealMJP/LowResRendering/blob/master/SampleFramework11/v1.01/Graphics/SH.cpp
