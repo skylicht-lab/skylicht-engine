@@ -1,6 +1,7 @@
 # Skylicht Engine
 ## About
-Skylicht Engine is a fork from [Irrlicht 3D Engine](http://irrlicht.sourceforge.net), that we have upgraded more feature: Sound Engine, Physics Engine, Particle Engine...
+Skylicht Engine, which is an evolution of [Irrlicht Project](http://irrlicht.sourceforge.net). We have upgraded more feature: Sound Engine, Physics Engine, Particle Engine...
+
 -   Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+, Google Angle GLES video driver backends.
 
 -   Cross-Platform Framework: Android, IOS, Win32/Win64, UWP, Linux, MacOS, HTML5.
@@ -114,28 +115,27 @@ Use **OBJ Wavefront** loader, **Deferred** and **Forwarder** rendering, **Dynami
 
 References from the project [BakingLab](https://github.com/TheRealMJP/BakingLab)
 
-#### 1st bounce Direction Light & Shadow Mapping
-##### Direction Light
+#### Direction Light & Shadow Mapping (1 bounce)
 <img src="Documents/Media/Samples/tank-scene/direction-1-bounce.png"/>
 
-#### Test 2nd bounce Baked Global Illumination
-**Indirect lighting** baked on Vertex Color
+#### Baked Global Illumination (2 bounces)
+Irradiance baked on Vertex Color
 <img src="Documents/Media/Samples/tank-scene/indirect-bake-2-bounce.png"/>
 
-**Combine final lighting**
+**Final Composition**
 <img src="Documents/Media/Samples/tank-scene/combine-2-bounces.png"/>
 
-Lightmapper works well on WebAsm (WebGL, OpenGLES3.0)
+Lightmapper works well on Wasm (OpenGLES3.0)
 <img src="Documents/Media/Samples/tank-scene/emsdk-2-bounces.png"/>
 
-#### Test 3rd bounce Baked Global Illumination
+#### **Final Composition** (3 bounces)
 
 <img src="Documents/Media/Samples/tank-scene/combine-3-bounces-a.png"/>
 
 <img src="Documents/Media/Samples/tank-scene/combine-3-bounces-b.png"/>
 
 ## Contributing
-Welcome if you want to contribute your code to `Skylicht Engine` (Ex: add feature or fix bug). Wellcome to join group. Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join group. Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 
 ## License
 Skylicht Engine is licensed under [MIT License](LICENSE.md)
