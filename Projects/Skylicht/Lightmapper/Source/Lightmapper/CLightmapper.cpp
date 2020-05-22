@@ -170,7 +170,7 @@ namespace Skylicht
 			tangents.set_used(count);
 			binormals.set_used(count);
 
-			int i = 0;
+			int i;
 
 #pragma omp parallel for private(i)
 			for (int id = 0; id < count; id++)
@@ -207,7 +207,7 @@ namespace Skylicht
 
 
 			core::vector3df result;
-			float r = 0, g = 0, b = 0;
+			float r, g, b;
 
 #pragma omp parallel for private(result, i, r, g, b)
 			for (int id = 0; id < count; id++)
