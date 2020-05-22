@@ -172,7 +172,7 @@ if (USE_OPENMP)
 			get_filename_component(OMP_INCLUDE_DIR ${OMP_H_PATH} DIRECTORY)
 			include_directories(${OMP_INCLUDE_DIR})
 			
-			find_library(OMP_LIBRARY NAME OpenMP)
+			find_library(OMP_LIBRARY NAME omp)
 			link_directories(${OMP_LIBRARY})
 			
 			message(STATUS "- OpenMP library found: ${OMP_H_PATH}")
