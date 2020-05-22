@@ -157,16 +157,22 @@ if (MINGW)
 	add_definitions(-DMINGW)
 endif()
 
-if (USE_OPENMP)		
+if (USE_OPENMP)
 	if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 		# AppleClang
 		find_package(OpenMP REQUIRED)
 		if (OPENMP_FOUND)
-			set(OpenMP_C_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
-			set(OpenMP_CXX_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
+			set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp")
+			set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
 			
 			set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 			set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+			
+			find_file(OMP_INCLUDE_DIR NAME omp.h HINTS OpenMP)
+			include_directories(${OMP_INCLUDE_DIR})
+			
+			find_library(OMP_LIBRARY NAME OpenMP)
+			link_directories(${OMP_LIBRARY})
 			
 			add_definitions(-DUSE_OPENMP)
 		else()
