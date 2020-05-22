@@ -184,7 +184,7 @@ elseif (BUILD_MACOS)
 
 	target_link_libraries(SampleSponza ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(SampleSponza "-framework Cocoa")
-
+	
 	message(STATUS "- Setup project: SampleSponza")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})

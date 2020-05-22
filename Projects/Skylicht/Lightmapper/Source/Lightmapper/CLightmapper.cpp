@@ -165,12 +165,22 @@ namespace Skylicht
 			core::array<core::vector3df> tangents;
 			core::array<core::vector3df> binormals;
 
-			for (int i = begin, id = 0; i < begin + count; i++, id++)
+			positions.set_used(count);
+			normals.set_used(count);
+			tangents.set_used(count);
+			binormals.set_used(count);
+
+			int i;
+
+#pragma omp parallel for private(i)
+			for (int id = 0; id < count; id++)
 			{
-				positions.push_back(vtx[i].Pos);
-				normals.push_back(vtx[i].Normal);
-				tangents.push_back(vtx[i].Tangent);
-				binormals.push_back(vtx[i].Binormal);
+				i = begin + id;
+
+				positions[id] = vtx[i].Pos;
+				normals[id] = vtx[i].Normal;
+				tangents[id] = vtx[i].Tangent;
+				binormals[id] = vtx[i].Binormal;
 
 				transform.transformVect(positions[id]);
 				transform.rotateVect(normals[id]);
@@ -197,18 +207,22 @@ namespace Skylicht
 
 
 			core::vector3df result;
+			float r, g, b;
 
-			for (int i = begin, id = 0; i < begin + count; i++, id++)
+#pragma omp parallel for private(result, i, r, g, b)
+			for (int id = 0; id < count; id++)
 			{
+				i = begin + id;
+
 				// additive bound light color
 				outSH[i] += resultSH[id];
 
 				// get result color
 				outSH[i].getSHIrradiance(normals[id], result);
 
-				float r = core::clamp(result.X, 0.0f, 1.0f);
-				float g = core::clamp(result.Y, 0.0f, 1.0f);
-				float b = core::clamp(result.Z, 0.0f, 1.0f);
+				r = core::clamp(result.X, 0.0f, 1.0f);
+				g = core::clamp(result.Y, 0.0f, 1.0f);
+				b = core::clamp(result.Z, 0.0f, 1.0f);
 
 				outColor[i].set(
 					255, // a

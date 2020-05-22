@@ -34,6 +34,12 @@ endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
+option(BUILD_SHARED_LIBS "Use shared libraries" OFF)
+
+option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
+
+option(USE_OPENMP "Use openmp for multithread optimize" ON)
+
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
 set(BUILD_CURL OFF)
@@ -47,6 +53,7 @@ endif()
 if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
 	set(BUILD_ENGINE_TOOL OFF)
 	set(BUILD_EMSCRIPTEN ON)
+	set(USE_OPENMP OFF)
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL Android)
@@ -77,10 +84,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
 	add_definitions(-DANGLE_EGL_LIBRARY_NAME=\"libEGL\")
 	add_definitions(-DANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2\")
 endif()
-
-option(BUILD_SHARED_LIBS "Use shared libraries" OFF)
-
-option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
 
 # irrlicht static lib
 if (NOT BUILD_SHARED_LIBS)
@@ -144,7 +147,7 @@ if (BUILD_RECAST_NAVIGATION_LIB)
 endif()
 
 # unicode library
-add_definitions(-DUNICODE -D_UNICODE)	
+add_definitions(-DUNICODE -D_UNICODE)
 
 if (CYGWIN)
 	add_definitions(-DCYGWIN)
@@ -152,6 +155,45 @@ endif()
 
 if (MINGW)
 	add_definitions(-DMINGW)
+endif()
+
+if (USE_OPENMP)
+	if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+		# AppleClang
+		find_package(OpenMP REQUIRED)
+		if (OPENMP_FOUND)
+			set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp")
+			set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
+			
+			set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+			set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+			
+			find_file(OMP_H_PATH NAME omp.h HINTS OpenMP)
+			get_filename_component(OMP_INCLUDE_DIR ${OMP_H_PATH} DIRECTORY)
+			include_directories(${OMP_INCLUDE_DIR})
+			
+			find_library(OMP_LIBRARY NAMES omp)
+			link_libraries(${OMP_LIBRARY})
+			
+			message(STATUS "- OpenMP library found: ${OMP_H_PATH}")
+			message(STATUS "- OpenMP include directory: ${OMP_INCLUDE_DIR}")
+			message(STATUS "- OpenMP link directory: ${OMP_LIBRARY}")
+			
+			add_definitions(-DUSE_OPENMP)
+		else()
+			message(STATUS "! OpenMP library not found! $>brew install libomp")
+		endif()
+	elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+		# using Visual Studio C++
+		set(CMAKE_C_FLAGS "/openmp ${CMAKE_C_FLAGS}")
+		set(CMAKE_CXX_FLAGS "/openmp ${CMAKE_CXX_FLAGS}")
+		add_definitions(-DUSE_OPENMP)
+	else()
+		# using GCC & Clang++ (android)
+		set(CMAKE_CXX_FLAGS "-fopenmp ${CMAKE_CXX_FLAGS}")
+		set(CMAKE_C_FLAGS "-fopenmp ${CMAKE_C_FLAGS}")
+		add_definitions(-DUSE_OPENMP)
+	endif()
 endif()
 
 # android
@@ -169,7 +211,7 @@ if (BUILD_WINDOWS_STORE)
 	
 	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
-	endif()		
+	endif()
 elseif (MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
@@ -183,8 +225,8 @@ elseif (MSVC)
 				string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
 			endif (${flag_var} MATCHES "/MDd")
 		endforeach()
-	endif()
-		
+	endif()	
+	
 	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
 	endif()
