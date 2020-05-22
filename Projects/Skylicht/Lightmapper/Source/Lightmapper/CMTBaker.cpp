@@ -121,13 +121,11 @@ namespace Skylicht
 
 			u8 *faceData = NULL;
 			u8 *data = NULL;
-			int x = 0;
-			int y = 0;
-			int face = 0;
-			int tid = 0;
+			int x = 0, y = 0, face = 0, tid = 0;
+			float u = 0.0f, v = 0.0f, temp = 0.0f, weight = 0.0f;
 
 			// Compute SH by radiance (use OpenMP)
-#pragma omp parallel for private(dirTS, color, data, x, y, face, tid)
+#pragma omp parallel for private(dirTS, color, data, x, y, face, tid, u, v, temp, weight)
 			for (int imgy = 0; imgy < height; imgy++)
 			{
 				for (int imgx = 0; imgx < width; imgx++)
@@ -149,11 +147,11 @@ namespace Skylicht
 					data += x * bpp;
 
 					// Calculate the location in [-1, 1] texture space
-					float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
-					float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
+					u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
+					v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
 
-					float temp = 1.0f + u * u + v * v;
-					float weight = 4.0f / (sqrt(temp) * temp);
+					temp = 1.0f + u * u + v * v;
+					weight = 4.0f / (sqrt(temp) * temp);
 
 					if (isBGR == true)
 					{
