@@ -25,10 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CLightmapper.h"
 
-#if defined(USE_OPENMP)
-#include <omp.h>
-#endif
-
 namespace Skylicht
 {
 	namespace Lightmapper

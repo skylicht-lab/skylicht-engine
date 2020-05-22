@@ -147,7 +147,7 @@ if (BUILD_RECAST_NAVIGATION_LIB)
 endif()
 
 # unicode library
-add_definitions(-DUNICODE -D_UNICODE)	
+add_definitions(-DUNICODE -D_UNICODE)
 
 if (CYGWIN)
 	add_definitions(-DCYGWIN)
@@ -168,11 +168,16 @@ if (USE_OPENMP)
 			set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 			set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 			
-			find_file(OMP_INCLUDE_DIR NAME omp.h HINTS OpenMP)
+			find_file(OMP_H_PATH NAME omp.h HINTS OpenMP)
+			get_filename_component(OMP_INCLUDE_DIR ${OMP_H_PATH} DIRECTORY)
 			include_directories(${OMP_INCLUDE_DIR})
 			
 			find_library(OMP_LIBRARY NAME OpenMP)
 			link_directories(${OMP_LIBRARY})
+			
+			message(STATUS "- OpenMP library found: ${OMP_H_PATH})
+			message(STATUS "- OpenMP include directory: ${OMP_INCLUDE_DIR}"))
+			message(STATUS "- OpenMP link directory: ${OMP_LIBRARY}"))
 			
 			add_definitions(-DUSE_OPENMP)
 		else()
