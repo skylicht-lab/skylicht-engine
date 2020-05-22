@@ -5,10 +5,6 @@
 #include "RenderPipeline/CBaseRP.h"
 #include "RenderPipeline/CDeferredRP.h"
 
-#if defined(USE_OPENMP)
-#include <omp.h>
-#endif
-
 namespace Skylicht
 {
 	namespace Lightmapper
