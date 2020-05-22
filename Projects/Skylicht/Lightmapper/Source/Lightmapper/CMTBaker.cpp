@@ -117,8 +117,8 @@ namespace Skylicht
 
 			u8 *faceData = NULL;
 			u8 *data = NULL;
-			int x = 0, y = 0, face = 0, tid = 0;
-			float u = 0.0f, v = 0.0f, temp = 0.0f, weight = 0.0f;
+			int x, y, face, tid;
+			float u, v, temp, weight;
 
 			// Compute SH by radiance (use OpenMP)
 #pragma omp parallel for private(dirTS, color, data, x, y, face, tid, u, v, temp, weight)
