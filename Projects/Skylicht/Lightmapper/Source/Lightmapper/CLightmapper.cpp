@@ -211,8 +211,9 @@ namespace Skylicht
 
 
 			core::vector3df result;
+			float r = 0, g = 0, b = 0;
 
-#pragma omp parallel for private(result) private(i)
+#pragma omp parallel for private(result, i, r, g, b)
 			for (int id = 0; id < count; id++)
 			{
 				i = begin + id;
@@ -223,9 +224,9 @@ namespace Skylicht
 				// get result color
 				outSH[i].getSHIrradiance(normals[id], result);
 
-				float r = core::clamp(result.X, 0.0f, 1.0f);
-				float g = core::clamp(result.Y, 0.0f, 1.0f);
-				float b = core::clamp(result.Z, 0.0f, 1.0f);
+				r = core::clamp(result.X, 0.0f, 1.0f);
+				g = core::clamp(result.Y, 0.0f, 1.0f);
+				b = core::clamp(result.Z, 0.0f, 1.0f);
 
 				outColor[i].set(
 					255, // a
