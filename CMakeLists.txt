@@ -175,9 +175,9 @@ if (USE_OPENMP)
 			find_library(OMP_LIBRARY NAME OpenMP)
 			link_directories(${OMP_LIBRARY})
 			
-			message(STATUS "- OpenMP library found: ${OMP_H_PATH})
-			message(STATUS "- OpenMP include directory: ${OMP_INCLUDE_DIR}"))
-			message(STATUS "- OpenMP link directory: ${OMP_LIBRARY}"))
+			message(STATUS "- OpenMP library found: ${OMP_H_PATH}")
+			message(STATUS "- OpenMP include directory: ${OMP_INCLUDE_DIR}")
+			message(STATUS "- OpenMP link directory: ${OMP_LIBRARY}")
 			
 			add_definitions(-DUSE_OPENMP)
 		else()
