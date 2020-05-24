@@ -34,7 +34,7 @@ std::string ArrayIndexString(const std::vector<unsigned int> &indices)
 
     for (auto indicesIt = indices.rbegin(); indicesIt != indices.rend(); ++indicesIt)
     {
-        // We assume that UINT_MAX and GL_INVALID_INDEX are equal.        
+        // We assume that UINT_MAX and GL_INVALID_INDEX are equal.
         strstr << "[";
         strstr << (*indicesIt);
         strstr << "]";
