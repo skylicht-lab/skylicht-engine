@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 227
+#define ANGLE_SH_VERSION 229
 
 enum ShShaderSpec
 {
@@ -336,6 +336,9 @@ const ShCompileOptions SH_REWRITE_ROW_MAJOR_MATRICES = UINT64_C(1) << 53;
 // Drop any explicit precision qualifiers from shader.
 const ShCompileOptions SH_IGNORE_PRECISION_QUALIFIERS = UINT64_C(1) << 54;
 
+// Allow compiler to do early fragment tests as an optimization.
+const ShCompileOptions SH_EARLY_FRAGMENT_TESTS_OPTIMIZATION = UINT64_C(1) << 55;
+
 // Defines alternate strategies for implementing array index clamping.
 enum ShArrayIndexClampingStrategy
 {
@@ -395,6 +398,7 @@ struct ShBuiltInResources
     int ANGLE_multi_draw;
     int ANGLE_base_vertex_base_instance;
     int WEBGL_video_texture;
+    int APPLE_clip_distance;
 
     // Set to 1 to enable replacing GL_EXT_draw_buffers #extension directives
     // with GL_NV_draw_buffers in ESSL output. This flag can be used to emulate
@@ -536,6 +540,9 @@ struct ShBuiltInResources
 
     // Subpixel bits used in rasterization.
     int SubPixelBits;
+
+    // APPLE_clip_distance/EXT_clip_cull_distance constant
+    int MaxClipDistances;
 };
 
 //
@@ -665,6 +672,8 @@ sh::WorkGroupSize GetComputeShaderLocalGroupSize(const ShHandle handle);
 // Returns the number of views specified through the num_views layout qualifier. If num_views is
 // not set, the function returns -1.
 int GetVertexShaderNumViews(const ShHandle handle);
+// Returns true if compiler has injected instructions for early fragment tests as an optimization
+bool HasEarlyFragmentTestsOptimization(const ShHandle handle);
 
 // Returns true if the passed in variables pack in maxVectors followingthe packing rules from the
 // GLSL 1.017 spec, Appendix A, section 7.
