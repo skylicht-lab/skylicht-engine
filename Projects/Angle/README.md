@@ -30,7 +30,21 @@ Example: **'depot_tools'** at /Users/Skylicht/Documents/projects/depot_tools
 
 ### Build project
 
-#### DEBUG
+#### RELEASE
+
+```console
+  gn gen out/Release
+```
+Edit **args.gn** generated:
+```console
+is_debug = false
+```
+Use autoninja (depot_tools) tool to build Angle project
+```
+  autoninja -C out/Release libEGL libGLESv2
+```
+
+#### DEBUG (Optional)
 ```console
   gn args out/Debug
 ```
@@ -43,12 +57,6 @@ Press ESC and type :wq to quit vi
 
 ```console
   autoninja -C out/Debug libEGL libGLESv2
-```
-#### RELEASE
-
-```console
-  gn gen out/Release
-  autoninja -C out/Release libEGL libGLESv2
 ```
 ### RESULT
 
