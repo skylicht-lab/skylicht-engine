@@ -54,6 +54,9 @@ namespace Skylicht
 		int m_sortDepth;
 
 		bool m_enable3DBillboard;
+		
+		core::matrix4 m_renderWorldTransform;
+		CCamera *m_renderCamera;
 
 	public:
 		CCanvas();
@@ -148,6 +151,21 @@ namespace Skylicht
 		CGUIRoundedRect* createRoundedRect(CGUIElement *e, const core::rectf& r, float radius, const video::SColor &c);
 
 		void remove(CGUIElement *element);
+
+		const core::matrix4& getRenderWorldTransform()
+		{
+			return m_renderWorldTransform;
+		}
+
+		inline void setRenderWorldTransform(core::matrix4& w)
+		{
+			m_renderWorldTransform = w;
+		}
+
+		inline CCamera* getRenderCamera()
+		{
+			return m_renderCamera;
+		}
 
 	protected:
 

@@ -63,6 +63,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "IndirectLighting/CIndirectLighting.h"
 
 // Graphics2D, Canvas 2D
+#include "Projective/CProjective.h"
+
 #include "Graphics2D/CCanvas.h"
 #include "Graphics2D/CGraphics2D.h"
 #include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
