@@ -184,10 +184,12 @@ namespace Skylicht
 		{
 			CGUIElement* root = canvas->getRootElement();
 
+			core::matrix4 world;
+
 			if (canvas->isEnable3DBillboard() == true && camera->getProjectionType() != CCamera::OrthoUI)
 			{
 				// rotation canvas to billboard
-				core::matrix4 world = billboardMatrix;
+				world = billboardMatrix;
 
 				// scale canvas
 				core::matrix4 scale;
@@ -203,9 +205,13 @@ namespace Skylicht
 			else
 			{
 				// world is real transform
-				const core::matrix4& world = root->getRelativeTransform(true);
+				world = root->getRelativeTransform(true);
 				driver->setTransform(video::ETS_WORLD, world);
 			}
+
+			// save real world transform
+			// root transform alway identity transform see (CGUIElement::calcAbsoluteTransform)
+			canvas->setRenderWorldTransform(world);
 
 			// render this canvas
 			canvas->render(camera);

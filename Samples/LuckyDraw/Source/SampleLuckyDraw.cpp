@@ -80,7 +80,7 @@ void SampleLuckyDraw::onInitApp()
 	float numberW = 184.0f;
 	float numberH = 305.0f;
 	float itemH = 280.0f;
-	float paddingY = 50.0f;
+	float paddingY = 0.0f;
 	float paddingX = 20.0f;
 	int numScroller = 4;
 	core::rectf scrollerSize(0.0f, 0.0f, numberW, numberH);
@@ -112,7 +112,7 @@ void SampleLuckyDraw::onInitApp()
 
 	float buttonW = btnYellowBackground->BoudingRect.getWidth();
 	float buttonH = btnYellowBackground->BoudingRect.getHeight();
-	float buttonPaddingY = 60.0f;
+	float buttonPaddingY = 70.0f;
 	core::rectf buttonSize(0.0f, 0.0f, buttonW, buttonH);
 	float buttonX = (screenW - buttonW) / 2.0f;
 	float buttonY = scrollerPosY + numberH + buttonPaddingY;
@@ -120,10 +120,13 @@ void SampleLuckyDraw::onInitApp()
 	CGUIElement *buttonSpinGUI = canvas->createElement(buttonSize);
 	buttonSpinGUI->setPosition(core::vector3df(buttonX, buttonY, 0.0f));
 	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, "SPIN", m_smallFont, SColor(255, 107, 76, 8));
+	m_spin->OnClick = std::bind(&SampleLuckyDraw::onBtnSpin, this);
 
-	/*CGUIElement *buttonBackGUI = canvas->createElement(buttonSize);
-	buttonBackGUI->setPosition(core::vector3df(0.0f, 70.0f, 0.0f));
-	m_spin = new CButton(buttonBackGUI, btnVioletBackground, "BACK", m_smallFont, SColor(255, 187, 179, 234));*/
+	/*
+	CGUIElement *buttonBackGUI = canvas->createElement(buttonSize);
+	buttonBackGUI->setPosition(core::vector3df(buttonX, buttonY + 70.0f, 0.0f));
+	m_spin = new CButton(buttonBackGUI, btnVioletBackground, "BACK", m_smallFont, SColor(255, 187, 179, 234));
+	*/
 
 }
 
@@ -199,4 +202,9 @@ void SampleLuckyDraw::updateScrollElement(CScroller *scroller, CGUIElement *item
 	char t[32];
 	sprintf(t, "%d", number);
 	textLarge->setText(t);
+}
+
+void SampleLuckyDraw::onBtnSpin()
+{
+
 }
