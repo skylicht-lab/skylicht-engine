@@ -113,8 +113,6 @@ Use **FreeType Font**, **Glyph Font**, **Canvas Component**, **Graphics2D**, **G
 ### Samples\TankScene
 Use **OBJ Wavefront** loader, **Deferred** and **Forwarder** rendering, **Dynamic Direction Lighting**, **Shadow Mapping**, **Lightmapper**, **Skydome**
 
-References from the project [BakingLab](https://github.com/TheRealMJP/BakingLab)
-
 #### Direction Light & Shadow Mapping (1 bounce)
 <img src="Documents/Media/Samples/tank-scene/direction-1-bounce.png"/>
 
@@ -146,9 +144,10 @@ Skylicht Engine is based in part on the work of:
 -   [Google Angle](https://github.com/google/angle)
 -   [Ocornut Imgui](https://github.com/ocornut/imgui)
 -   [Spark Particle](https://github.com/Synxis/SPARK)
--   Independent JPEG Group
--   zlib
--   curl 
--   libPng
+-   [Freetype2](http://git.savannah.gnu.org/cgit/freetype/freetype2.git)
+-   Independent JPEG Group, libPng, zlib, curl...
+
+References from the projects:
+- [BakingLab](https://github.com/TheRealMJP/BakingLab)
 
 This means that if you've used the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used. It would also be nice to mention that you use the 3rd parties library... Please see the README files from 3rd parties for further informations.
