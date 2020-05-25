@@ -156,7 +156,11 @@ void SampleLuckyDraw::onSpinClick()
 
 void SampleLuckyDraw::onStopClick()
 {
+	int random = os::Randomizer::rand() % 9999;
+	m_controller->stopOnNumber(random);
 
+	m_stop->setVisible(false);
+	printf("SampleLuckyDraw::onStopClick at: %d\n", random);
 }
 
 void SampleLuckyDraw::onUpdate()
@@ -168,6 +172,13 @@ void SampleLuckyDraw::onUpdate()
 	if (m_controller->stopReady() == true && m_stop->isVisible() == false)
 	{
 		m_stop->setVisible(true);
+	}
+
+	// show spin button when finish
+	if (m_controller->isFinished() == true)
+	{
+		m_spin->setVisible(true);
+		m_quit->setVisible(true);
 	}
 
 	// update application
