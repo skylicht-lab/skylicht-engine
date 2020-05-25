@@ -26,4 +26,14 @@ public:
 	virtual ~CButton();
 
 	virtual bool OnEvent(const SEvent& event);
+
+	inline void setVisible(bool b)
+	{
+		m_element->setVisible(b);
+	}
+
+	inline bool isVisible()
+	{
+		return m_element->isVisible();
+	}
 };

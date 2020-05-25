@@ -24,7 +24,7 @@ protected:
 	float m_itemSize;
 
 public:
-	CScroller(CGUIElement *element, float itemHeight, IScrollerCallback *callback);
+	CScroller(CGUIElement *element, float itemSize, IScrollerCallback *callback);
 
 	virtual ~CScroller();
 
@@ -53,6 +53,11 @@ public:
 	inline float getOffset()
 	{
 		return m_absoluteOffset;
+	}
+
+	inline float getItemSize()
+	{
+		return m_itemSize;
 	}
 
 protected:
