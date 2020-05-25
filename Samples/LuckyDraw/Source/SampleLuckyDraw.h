@@ -18,8 +18,10 @@ private:
 	CSpriteAtlas *m_sprite;
 
 	std::vector<CScroller*> m_scrollers;
+	CScrollerController *m_controller;
+
 	CButton* m_spin;
-	CButton* m_stop;
+	CButton* m_quit;
 
 	int m_state;
 public:
@@ -47,6 +49,4 @@ public:
 	virtual CGUIElement* createScrollElement(CScroller *scroller, CGUIElement *parent, const core::rectf& itemRect);
 
 	virtual void updateScrollElement(CScroller *scroller, CGUIElement *item, int itemID);
-
-	void onBtnSpin();
 };
