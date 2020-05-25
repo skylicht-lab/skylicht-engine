@@ -2,13 +2,13 @@
 #include "SkylichtEngine.h"
 #include "CScroller.h"
 
-CScroller::CScroller(CGUIElement *element, float itemHeight, IScrollerCallback *callback) :
+CScroller::CScroller(CGUIElement *element, float itemSize, IScrollerCallback *callback) :
 	m_element(element),
 	m_callback(callback),
 	m_startOffset(0.0f),
 	m_absoluteOffset(0.0f),
 	m_offset(0.0f),
-	m_itemSize(itemHeight)
+	m_itemSize(itemSize)
 {
 	CCanvas *canvas = element->getCanvas();
 
@@ -21,13 +21,13 @@ CScroller::CScroller(CGUIElement *element, float itemHeight, IScrollerCallback *
 	CGUIMask *mask = canvas->createMask(element, scrollerRect);
 
 	// compute number of items in scroll
-	float f = 1.0f + scrollHeight / (float)itemHeight;
+	float f = 1.0f + scrollHeight / (float)itemSize;
 	int numItem = (int)f;
 	if ((int)f < f)
 		numItem++;
 
 	// create scroll items
-	core::rectf itemRect(0.0f, 0.0f, scrollWidth, itemHeight);
+	core::rectf itemRect(0.0f, 0.0f, scrollWidth, itemSize);
 	for (int i = 0; i < numItem; i++)
 	{
 		CGUIElement *item = m_callback->createScrollElement(this, m_element, itemRect);

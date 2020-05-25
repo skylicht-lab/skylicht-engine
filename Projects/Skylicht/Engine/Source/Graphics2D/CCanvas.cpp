@@ -159,6 +159,9 @@ namespace Skylicht
 			CGUIElement *entity = renderEntity.top();
 			renderEntity.pop();
 
+			if (entity->isVisible() == false)
+				continue;
+
 			CGUIMask *mask = entity->getCurrentMask();
 			if (mask != NULL)
 				mask->beginMaskTest(camera);

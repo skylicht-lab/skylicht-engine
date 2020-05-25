@@ -130,9 +130,13 @@ void SampleLuckyDraw::onInitApp()
 	CGUIElement *buttonSpinGUI = canvas->createElement(buttonSize);
 	buttonSpinGUI->setPosition(core::vector3df(buttonX, buttonY, 0.0f));
 	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, "SPIN", m_smallFont, SColor(255, 107, 76, 8));
-	m_spin->OnClick = []() {
-		int randomNumber = os::Randomizer::rand() % 9999;
-	};
+	m_spin->OnClick = std::bind(&SampleLuckyDraw::onSpinClick, this);
+
+	CGUIElement *buttonStopGUI = canvas->createElement(buttonSize);
+	buttonStopGUI->setPosition(core::vector3df(buttonX, buttonY, 0.0f));
+	m_stop = new CButton(buttonStopGUI, btnYellowBackground, "STOP", m_smallFont, SColor(255, 107, 76, 8));
+	m_stop->OnClick = std::bind(&SampleLuckyDraw::onStopClick, this);
+	m_stop->setVisible(false);
 
 	CGUIElement *buttonBackGUI = canvas->createElement(buttonSize);
 	buttonBackGUI->setPosition(core::vector3df(buttonX, buttonY + 70.0f, 0.0f));
@@ -142,10 +146,29 @@ void SampleLuckyDraw::onInitApp()
 	};
 }
 
+void SampleLuckyDraw::onSpinClick()
+{
+	m_controller->beginScroll();
+
+	m_spin->setVisible(false);
+	m_quit->setVisible(false);
+}
+
+void SampleLuckyDraw::onStopClick()
+{
+
+}
+
 void SampleLuckyDraw::onUpdate()
 {
 	// update scroller
 	m_controller->update();
+
+	// show stop button
+	if (m_controller->stopReady() == true && m_stop->isVisible() == false)
+	{
+		m_stop->setVisible(true);
+	}
 
 	// update application
 	m_scene->update();

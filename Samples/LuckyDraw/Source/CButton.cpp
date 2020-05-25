@@ -27,6 +27,9 @@ CButton::~CButton()
 
 bool CButton::OnEvent(const SEvent& event)
 {
+	if (m_element->isVisible() == false)
+		return false;
+
 	if (event.EventType == EET_MOUSE_INPUT_EVENT)
 	{
 		// get current canvas
@@ -91,7 +94,7 @@ bool CButton::OnEvent(const SEvent& event)
 		{
 			if (event.MouseInput.isLeftPressed() == true)
 			{
-				SColor bgColor(200, 255, 255, 255);
+				SColor bgColor(230, 255, 255, 255);
 				m_backround->setColor(bgColor);
 
 				m_mouseHold = true;
