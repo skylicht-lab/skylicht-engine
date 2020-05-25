@@ -48,4 +48,5 @@ public:
 
 	virtual void updateScrollElement(CScroller *scroller, CGUIElement *item, int itemID);
 
+	void onBtnSpin();
 };

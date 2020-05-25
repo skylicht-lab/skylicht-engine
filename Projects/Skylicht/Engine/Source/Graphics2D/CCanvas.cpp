@@ -30,7 +30,8 @@ namespace Skylicht
 {
 	CCanvas::CCanvas() :
 		m_sortDepth(0),
-		m_enable3DBillboard(false)
+		m_enable3DBillboard(false),
+		m_renderCamera(NULL)
 	{
 		CGraphics2D *g = CGraphics2D::getInstance();
 		float w = (float)g->getScreenSize().Width;
@@ -68,6 +69,8 @@ namespace Skylicht
 
 	void CCanvas::render(CCamera *camera)
 	{
+		m_renderCamera = camera;
+
 		// we update GUI element one last frame update
 		for (int i = 0; i < MAX_CHILD_DEPTH; i++)
 			m_entitiesTree[i].set_used(0);
