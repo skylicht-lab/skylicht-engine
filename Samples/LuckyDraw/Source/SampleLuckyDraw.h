@@ -21,6 +21,7 @@ private:
 	CScrollerController *m_controller;
 
 	CButton* m_spin;
+	CButton* m_stop;
 	CButton* m_quit;
 
 	int m_state;
@@ -43,6 +44,12 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
+
+protected:
+
+	void onSpinClick();
+
+	void onStopClick();
 
 public:
 
