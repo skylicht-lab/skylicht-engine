@@ -35,12 +35,13 @@ Example: **'depot_tools'** at /Users/Skylicht/Documents/projects/depot_tools
 ```console
   gn gen out/Release
 ```
-Edit **args.gn** generated:
+Edit generated file **args.gn**
 ```console
 is_debug = false
 ```
 Use autoninja (depot_tools) tool to build Angle project
-```
+
+```console
   autoninja -C out/Release libEGL libGLESv2
 ```
 
@@ -60,7 +61,7 @@ Press ESC and type :wq to quit vi
 ```
 ### RESULT
 
-Copy **libEGL.dylib** and **libGLESv2.dylib** to **Projects/Angle/out/MacOS/Release** use in Skylicht Engine Project
+Copy **libEGL.dylib** and **libGLESv2.dylib** to **Projects/Angle/out/MacOS/Release** and update include folder (.h).
 
 ## More infomation
 
