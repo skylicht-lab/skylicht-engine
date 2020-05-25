@@ -19,11 +19,16 @@ public:
 		float Speed;
 		float TargetSpeed;
 		float WaitScrollTime;
+		float TargetStop;
+		float StopLengthDistance;
 		EScrollerState State;
 	};
 
 protected:
 	std::vector<SScrollerInfo> m_scrollers;
+
+	int m_targetNumber;
+	int m_stopPosition;
 
 public:
 	CScrollerController(std::vector<CScroller*>& scroller);
@@ -35,4 +40,8 @@ public:
 	void beginScroll();
 
 	bool stopReady();
+
+	bool isFinished();
+
+	void stopOnNumber(int number);	
 };
