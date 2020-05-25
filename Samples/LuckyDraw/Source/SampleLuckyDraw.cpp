@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SkylichtEngine.h"
 #include "CScroller.h"
+#include "CScrollerController.h"
 #include "CButton.h"
 #include "SampleLuckyDraw.h"
 
@@ -15,7 +16,10 @@ SampleLuckyDraw::SampleLuckyDraw() :
 	m_largeFont(NULL),
 	m_smallFont(NULL),
 	m_sprite(NULL),
-	m_state(0)
+	m_state(0),
+	m_spin(NULL),
+	m_quit(NULL),
+	m_controller(NULL)
 {
 
 }
@@ -26,6 +30,9 @@ SampleLuckyDraw::~SampleLuckyDraw()
 	delete m_largeFont;
 	delete m_smallFont;
 	delete m_sprite;
+	delete m_spin;
+	delete m_quit;
+	delete m_controller;
 }
 
 void SampleLuckyDraw::onInitApp()
@@ -101,8 +108,11 @@ void SampleLuckyDraw::onInitApp()
 		scroller->setStartOffset(startOffset);
 		m_scrollers.push_back(scroller);
 
+		// next scroll position
 		scrollerPosX = scrollerPosX + numberW + paddingX;
 	}
+
+	m_controller = new CScrollerController(m_scrollers);
 
 	// create Button
 	m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 1024, 1024);
@@ -120,28 +130,22 @@ void SampleLuckyDraw::onInitApp()
 	CGUIElement *buttonSpinGUI = canvas->createElement(buttonSize);
 	buttonSpinGUI->setPosition(core::vector3df(buttonX, buttonY, 0.0f));
 	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, "SPIN", m_smallFont, SColor(255, 107, 76, 8));
-	m_spin->OnClick = std::bind(&SampleLuckyDraw::onBtnSpin, this);
+	m_spin->OnClick = []() {
+		int randomNumber = os::Randomizer::rand() % 9999;
+	};
 
-	/*
 	CGUIElement *buttonBackGUI = canvas->createElement(buttonSize);
 	buttonBackGUI->setPosition(core::vector3df(buttonX, buttonY + 70.0f, 0.0f));
-	m_spin = new CButton(buttonBackGUI, btnVioletBackground, "BACK", m_smallFont, SColor(255, 187, 179, 234));
-	*/
-
+	m_quit = new CButton(buttonBackGUI, btnVioletBackground, "QUIT", m_smallFont, SColor(255, 187, 179, 234));
+	m_quit->OnClick = []() {
+		getIrrlichtDevice()->closeDevice();
+	};
 }
 
 void SampleLuckyDraw::onUpdate()
 {
-	// gui scroller update
-	for (u32 i = 0, n = m_scrollers.size(); i < n; i++)
-	{
-		//float speed = 0.5f;
-		//float f = m_scrollers[i]->getOffset();
-		//f = f + getTimeStep() * speed;
-
-		//m_scrollers[i]->setOffset(f);
-		m_scrollers[i]->update();
-	}
+	// update scroller
+	m_controller->update();
 
 	// update application
 	m_scene->update();
@@ -202,9 +206,4 @@ void SampleLuckyDraw::updateScrollElement(CScroller *scroller, CGUIElement *item
 	char t[32];
 	sprintf(t, "%d", number);
 	textLarge->setText(t);
-}
-
-void SampleLuckyDraw::onBtnSpin()
-{
-
 }
