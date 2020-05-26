@@ -19,7 +19,8 @@ SampleLuckyDraw::SampleLuckyDraw() :
 	m_state(0),
 	m_spin(NULL),
 	m_quit(NULL),
-	m_controller(NULL)
+	m_controller(NULL),
+	m_guiCamera(NULL)
 {
 
 }

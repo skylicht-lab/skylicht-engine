@@ -31,13 +31,10 @@ namespace Skylicht
 	{
 		const core::rect<s32>& viewPort = getVideoDriver()->getViewPort();
 
-		core::dimension2d<s32> dim(viewPort.getWidth(), viewPort.getHeight());
-
-		float scaleW = 1.0f;
-		float scaleH = 1.0f;
-
-		dim.Width = (int)((dim.Width  * (1.0f / scaleW)) / 2);
-		dim.Height = (int)((dim.Height * (1.0f / scaleH)) / 2);
+		core::dimension2d<f32> dim(
+			(f32)viewPort.getWidth() * 0.5f,
+			(f32)viewPort.getHeight() * 0.5f
+		);
 
 		core::matrix4 trans = camera->getProjectionMatrix();
 		trans *= camera->getViewMatrix();
