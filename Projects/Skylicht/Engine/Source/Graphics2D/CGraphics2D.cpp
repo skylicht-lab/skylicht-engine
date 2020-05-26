@@ -184,10 +184,12 @@ namespace Skylicht
 		{
 			CGUIElement* root = canvas->getRootElement();
 
+			core::matrix4 world;
+
 			if (canvas->isEnable3DBillboard() == true && camera->getProjectionType() != CCamera::OrthoUI)
 			{
 				// rotation canvas to billboard
-				core::matrix4 world = billboardMatrix;
+				world = billboardMatrix;
 
 				// scale canvas
 				core::matrix4 scale;
@@ -203,9 +205,13 @@ namespace Skylicht
 			else
 			{
 				// world is real transform
-				const core::matrix4& world = root->getRelativeTransform(true);
+				world = root->getRelativeTransform(true);
 				driver->setTransform(video::ETS_WORLD, world);
 			}
+
+			// save real world transform
+			// root transform alway identity transform see (CGUIElement::calcAbsoluteTransform)
+			canvas->setRenderWorldTransform(world);
 
 			// render this canvas
 			canvas->render(camera);
@@ -249,9 +255,58 @@ namespace Skylicht
 		flushBuffer(m_buffer, m_2dMaterial);
 	}
 
+	void CGraphics2D::addExternalBuffer(IMeshBuffer *meshBuffer, const core::matrix4& absoluteMatrix, int shaderID)
+	{
+		if (m_2dMaterial.MaterialType != shaderID)
+			flush();
+
+		scene::IVertexBuffer* vtxBuffer = meshBuffer->getVertexBuffer();
+		scene::IIndexBuffer* idxBuffer = meshBuffer->getIndexBuffer();
+
+		u16 *idxData = (u16*)idxBuffer->getIndices();
+		S3DVertex *vtxData = (S3DVertex*)vtxBuffer->getVertices();
+
+		int numVtx = vtxBuffer->getVertexCount();
+		int numIdx = idxBuffer->getIndexCount();
+
+		int numVertices = m_vertices->getVertexCount();
+		int numVerticesUse = numVertices + numVtx;
+		int numIndex = m_indices->getIndexCount();
+		int numIndexUse = numIndex + numIdx;
+
+		if (numVerticesUse > MAX_VERTICES || numIndexUse > MAX_INDICES)
+		{
+			flush();
+			numVertices = 0;
+			numIndex = 0;
+			numVerticesUse = 6;
+			numIndexUse = 4;
+		}
+
+		m_indices->set_used(numIndexUse);
+		u16 *index = (u16*)m_indices->getIndices();
+		for (int i = 0; i < numIdx; i++)
+			index[numIndex + i] = numVertices + idxData[i];
+
+		m_vertices->set_used(numVerticesUse);
+		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+
+		// add vertices
+		for (int i = 0; i < numVtx; i++)
+			vertices[numVertices + i] = vtxData[i];
+
+
+		// transform
+		for (int i = 0; i < numVtx; i++)
+			absoluteMatrix.transformVect(vertices[numVertices + i].Pos);
+
+		m_2dMaterial.MaterialType = shaderID;
+		m_buffer->setDirty();
+	}
+
 	void CGraphics2D::addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX, float pivotY)
 	{
-		if (m_2dMaterial.getTexture(0) != img)
+		if (m_2dMaterial.getTexture(0) != img || m_2dMaterial.MaterialType != shaderID)
 			flush();
 
 		int numVertices = m_vertices->getVertexCount();
@@ -304,7 +359,7 @@ namespace Skylicht
 
 	void CGraphics2D::addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX, float pivotY)
 	{
-		if (m_2dMaterial.getTexture(0) != img)
+		if (m_2dMaterial.getTexture(0) != img || m_2dMaterial.MaterialType != shaderID)
 			flush();
 
 		int numVertices = m_vertices->getVertexCount();
@@ -362,7 +417,7 @@ namespace Skylicht
 	{
 		ITexture *tex = module->Frame->Image->Texture;
 
-		if (m_2dMaterial.getTexture(0) != tex)
+		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID)
 			flush();
 
 		int numSpriteVertex = 4;
@@ -479,6 +534,49 @@ namespace Skylicht
 
 			++it;
 		}
+	}
+
+	void CGraphics2D::addRectangleBatch(const core::rectf& pos, const SColor& color, const core::matrix4& absoluteTransform, int shaderID)
+	{
+		if (m_2dMaterial.MaterialType != shaderID)
+			flush();
+
+		int numVertices = m_vertices->getVertexCount();
+		int vertexUse = numVertices + 4;
+
+		int numIndices = m_indices->getIndexCount();
+		int indexUse = numIndices + 6;
+
+		m_indices->set_used(indexUse);
+		u16 *index = (u16*)m_indices->getIndices();
+		index[numIndices + 0] = 0;
+		index[numIndices + 1] = 1;
+		index[numIndices + 2] = 2;
+		index[numIndices + 3] = 0;
+		index[numIndices + 4] = 2;
+		index[numIndices + 5] = 3;
+
+		m_vertices->set_used(vertexUse);
+		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+
+		// transform
+		for (int i = 0; i < 4; i++)
+			absoluteTransform.transformVect(vertices[numVertices + i].Pos);
+
+		m_2dMaterial.MaterialType = shaderID;
+		m_driver->setMaterial(m_2dMaterial);
+
+		m_buffer->setPrimitiveType(scene::EPT_TRIANGLES);
+		m_buffer->setDirty();
+
+		m_driver->drawMeshBuffer(m_buffer);
+
+		m_indices->set_used(0);
+		m_vertices->set_used(0);
 	}
 
 	void CGraphics2D::beginDrawDepth()

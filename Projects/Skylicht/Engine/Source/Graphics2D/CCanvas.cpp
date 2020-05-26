@@ -30,7 +30,8 @@ namespace Skylicht
 {
 	CCanvas::CCanvas() :
 		m_sortDepth(0),
-		m_enable3DBillboard(false)
+		m_enable3DBillboard(false),
+		m_renderCamera(NULL)
 	{
 		CGraphics2D *g = CGraphics2D::getInstance();
 		float w = (float)g->getScreenSize().Width;
@@ -68,11 +69,13 @@ namespace Skylicht
 
 	void CCanvas::render(CCamera *camera)
 	{
+		m_renderCamera = camera;
+
 		// we update GUI element one last frame update
 		for (int i = 0; i < MAX_CHILD_DEPTH; i++)
 			m_entitiesTree[i].set_used(0);
 
-		int maxLevel = 0;		
+		int maxLevel = 0;
 
 		// update all entities
 		for (CGUIElement *entity : m_entities)
@@ -156,6 +159,9 @@ namespace Skylicht
 			CGUIElement *entity = renderEntity.top();
 			renderEntity.pop();
 
+			if (entity->isVisible() == false)
+				continue;
+
 			CGUIMask *mask = entity->getCurrentMask();
 			if (mask != NULL)
 				mask->beginMaskTest(camera);
@@ -165,7 +171,10 @@ namespace Skylicht
 			if (mask != NULL)
 				mask->endMaskTest();
 
-			for (u32 i = 0, n = entity->m_childs.size(); i < n; i++)
+			// note
+			// we use stack to render parent -> child
+			// so we must inverse render position because stack = Last-In First-Out (LIFO)
+			for (int i = (int)entity->m_childs.size() - 1; i >= 0; i--)
 				renderEntity.push(entity->m_childs[i]);
 		}
 	}
@@ -233,7 +242,14 @@ namespace Skylicht
 
 	CGUIText* CCanvas::createText(const core::rectf& r, IFont *font)
 	{
-		CGUIText *element = new CGUIText(this, m_root, m_rect, font);
+		CGUIText *element = new CGUIText(this, m_root, r, font);
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUIText* CCanvas::createText(CGUIElement *e, IFont *font)
+	{
+		CGUIText *element = new CGUIText(this, e, e->getRect(), font);
 		m_entities.push_back(element);
 		return element;
 	}
@@ -263,6 +279,13 @@ namespace Skylicht
 		return element;
 	}
 
+	CGUISprite* CCanvas::createSprite(CGUIElement *e, SFrame *frame)
+	{
+		CGUISprite *element = new CGUISprite(this, e, e->getRect(), frame);
+		m_entities.push_back(element);
+		return element;
+	}
+
 	CGUISprite* CCanvas::createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame)
 	{
 		CGUISprite *element = new CGUISprite(this, e, r, frame);
@@ -284,6 +307,69 @@ namespace Skylicht
 	CGUIMask* CCanvas::createMask(CGUIElement *e, const core::rectf& r)
 	{
 		CGUIMask *element = new CGUIMask(this, e, r);
+		m_entities.push_back(element);
+		return element;
+	}
+
+	/*
+	* Rect constructor
+	*/
+
+	CGUIRect* CCanvas::createRect(const video::SColor &c)
+	{
+		CGUIRect *element = new CGUIRect(this, m_root, m_rect);
+		element->setColor(c);
+
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUIRect* CCanvas::createRect(const core::rectf& r, const video::SColor &c)
+	{
+		CGUIRect *element = new CGUIRect(this, m_root, r);
+		element->setColor(c);
+
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUIRect* CCanvas::createRect(CGUIElement *e, const core::rectf& r, const video::SColor &c)
+	{
+		CGUIRect *element = new CGUIRect(this, e, r);
+		element->setColor(c);
+
+		m_entities.push_back(element);
+		return element;
+	}
+
+
+	/*
+	* RoundedRect constructor
+	*/
+
+	CGUIRoundedRect* CCanvas::createRoundedRect(float radius, const video::SColor &c)
+	{
+		CGUIRoundedRect *element = new CGUIRoundedRect(this, m_root, m_rect, radius);
+		element->setColor(c);
+
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUIRoundedRect* CCanvas::createRoundedRect(const core::rectf& r, float radius, const video::SColor &c)
+	{
+		CGUIRoundedRect *element = new CGUIRoundedRect(this, m_root, r, radius);
+		element->setColor(c);
+
+		m_entities.push_back(element);
+		return element;
+	}
+
+	CGUIRoundedRect* CCanvas::createRoundedRect(CGUIElement *e, const core::rectf& r, float radius, const video::SColor &c)
+	{
+		CGUIRoundedRect *element = new CGUIRoundedRect(this, e, r, radius);
+		element->setColor(c);
+
 		m_entities.push_back(element);
 		return element;
 	}

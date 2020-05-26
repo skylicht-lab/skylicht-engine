@@ -32,6 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/CGUIImage.h"
 #include "GUI/CGUIText.h"
 #include "GUI/CGUISprite.h"
+#include "GUI/CGUIRect.h"
+#include "GUI/CGUIRoundedRect.h"
 #include "GUI/CGUIMask.h"
 
 #define MAX_CHILD_DEPTH 512
@@ -52,6 +54,9 @@ namespace Skylicht
 		int m_sortDepth;
 
 		bool m_enable3DBillboard;
+		
+		core::matrix4 m_renderWorldTransform;
+		CCamera *m_renderCamera;
 
 	public:
 		CCanvas();
@@ -117,19 +122,50 @@ namespace Skylicht
 
 		CGUIText* createText(const core::rectf& r, IFont *font);
 
+		CGUIText* createText(CGUIElement *e, IFont *font);
+
 		CGUIText* createText(CGUIElement *e, const core::rectf& r, IFont *font);
 
 		CGUISprite* createSprite(SFrame *frame);
 
 		CGUISprite* createSprite(const core::rectf& r, SFrame *frame);
 
-		CGUISprite* createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame);
+		CGUISprite* createSprite(CGUIElement *e, SFrame *frame);
+
+		CGUISprite* createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame);		
 
 		CGUIMask* createMask(const core::rectf& r);
 
 		CGUIMask* createMask(CGUIElement *e, const core::rectf& r);
 
+		CGUIRect* createRect(const video::SColor &c);
+
+		CGUIRect* createRect(const core::rectf& r, const video::SColor &c);
+
+		CGUIRect* createRect(CGUIElement *e, const core::rectf& r, const video::SColor &c);
+
+		CGUIRoundedRect* createRoundedRect(float radius, const video::SColor &c);
+
+		CGUIRoundedRect* createRoundedRect(const core::rectf& r, float radius, const video::SColor &c);
+
+		CGUIRoundedRect* createRoundedRect(CGUIElement *e, const core::rectf& r, float radius, const video::SColor &c);
+
 		void remove(CGUIElement *element);
+
+		const core::matrix4& getRenderWorldTransform()
+		{
+			return m_renderWorldTransform;
+		}
+
+		inline void setRenderWorldTransform(core::matrix4& w)
+		{
+			m_renderWorldTransform = w;
+		}
+
+		inline CCamera* getRenderCamera()
+		{
+			return m_renderCamera;
+		}
 
 	protected:
 
