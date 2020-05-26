@@ -3,7 +3,8 @@
 #include "CScrollerController.h"
 
 CScrollerController::CScrollerController(std::vector<CScroller*>& scrollers) :
-	m_targetNumber(0)
+	m_targetNumber(0),
+	m_stopPosition(0)
 {
 	for (CScroller *s : scrollers)
 	{
