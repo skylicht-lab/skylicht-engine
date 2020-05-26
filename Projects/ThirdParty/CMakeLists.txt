@@ -97,6 +97,7 @@ set(freetype_source
 	./source/freetype2/src/base/ftsystem.c
 	./source/freetype2/src/cff/cff.c
 	./source/freetype2/src/pshinter/pshinter.c
+	./source/freetype2/src/psaux/psaux.c
 	./source/freetype2/src/psnames/psnames.c
 	./source/freetype2/src/raster/raster.c
 	./source/freetype2/src/sfnt/sfnt.c

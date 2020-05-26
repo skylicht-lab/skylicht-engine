@@ -76,6 +76,7 @@ namespace Skylicht
 
 	void CGUIText::init()
 	{
+		m_textOffsetY = 0;
 		m_textHeight = 50;
 		m_textSpaceWidth = 20;
 
@@ -84,7 +85,10 @@ namespace Skylicht
 			// get text height
 			SModuleOffset *moduleCharA = m_font->getCharacterModule((int)'A');
 			if (moduleCharA)
+			{
 				m_textHeight = (int)moduleCharA->OffsetY + (int)moduleCharA->Module->H;
+				m_textOffsetY = (int)moduleCharA->OffsetY;
+			}
 
 			// get space width
 			SModuleOffset *moduleCharSpace = m_font->getCharacterModule((int)' ');
@@ -437,7 +441,7 @@ namespace Skylicht
 
 		// calc text algin vertial
 		if (TextVertical == CGUIElement::Middle)
-			y = ((int)m_rect.getHeight() - textHeight) / 2;
+			y = ((int)m_rect.getHeight() - textHeight - m_textOffsetY) / 2;
 		else if (TextVertical == CGUIElement::Bottom)
 			y = (int)m_rect.getHeight() - textHeight;
 
