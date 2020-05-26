@@ -168,7 +168,7 @@ void CScrollerController::stopOnNumber(int number)
 		SScrollerInfo& s = m_scrollers[i];
 		int num = 0;
 
-		if (number > t)
+		if (number >= t)
 			num = number / t;
 
 		float stop = s.Scroller->getItemSize() * num + s.Scroller->getItemSize() * 10.0f;
