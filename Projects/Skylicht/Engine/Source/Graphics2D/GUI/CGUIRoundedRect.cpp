@@ -86,8 +86,7 @@ namespace Skylicht
 		float x = 0.0f;
 		float y = height;
 
-		float x_offset = 0.0f;
-		float y_offset = 0.0f;
+		float x_offset, y_offset;
 		float step = (2.0f * core::PI) / (roundPointCount * 4);
 		float angle = 0.0f;
 
