@@ -125,6 +125,8 @@ bool CIrrDeviceWin32::isWindowMinimized() const
 
 void CIrrDeviceWin32::closeDevice()
 {
+	HWND hwnd = (HWND)CreationParams.WindowId;
+	PostMessage(hwnd, WM_CLOSE, 0, 0);
 }
 
 void CIrrDeviceWin32::setResizable(bool resize)
