@@ -90,7 +90,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 ### Add your code to  Project
 
 #### Add source code
--   Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project
+- Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project
     ```console
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
     ```
@@ -107,11 +107,33 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 - Open Visual Studio Solution and click **NewApplication** - **"Set as StartUp Project"**.
 
 ### Samples\HelloWorld
-Use **FreeType Font**, **Glyph Font**, **Canvas Component**, **Graphics2D**, **GUI Text**
+Engine Components are used:
+- **FreeType Font**
+- **Glyph Font**
+- **Canvas Component**
+- **Graphics2D**
+- **GUI Text**
 <img src="Documents/Media/Samples/sample_hello_world.png"/>
 
+### Samples\LuckyDraw
+Engine Components are used:
+- **FreeType Font**
+- **Glyph Font**
+- **Graphics2D**
+- **GUI Text**
+- **GUI Image**
+- **GUI Mask**
+- **EventManager**
+<img src="Documents/Media/Samples/sample_lucky_draw.gift"/>
+
 ### Samples\TankScene
-Use **OBJ Wavefront** loader, **Deferred** and **Forwarder** rendering, **Dynamic Direction Lighting**, **Shadow Mapping**, **Lightmapper**, **Skydome**
+Engine Components are used:
+- **OBJ Wavefront** loader
+- **Deferred** and **Forwarder** rendering
+- **Dynamic Direction Lighting**
+- **Shadow Mapping**
+- **Lightmapper**
+- **Skydome**
 
 #### Direction Light & Shadow Mapping (1 bounce)
 <img src="Documents/Media/Samples/tank-scene/direction-1-bounce.png"/>
