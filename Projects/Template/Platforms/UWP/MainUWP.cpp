@@ -56,14 +56,18 @@ void App::Initialize(CoreApplicationView^ applicationView)
 // Called when the CoreWindow object is created (or re-created).
 void App::SetWindow(CoreWindow^ window)
 {
-	window->SizeChanged += 
+	window->SizeChanged +=
 		ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &App::OnWindowSizeChanged);
 
 	window->VisibilityChanged +=
 		ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &App::OnVisibilityChanged);
 
-	window->Closed += 
+	window->Closed +=
 		ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &App::OnWindowClosed);
+
+	window->PointerPressed += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerPressed);
+	window->PointerMoved += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerMoved);
+	window->PointerReleased += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerRelease);
 
 	DisplayInformation^ currentDisplayInformation = DisplayInformation::GetForCurrentView();
 
@@ -81,6 +85,75 @@ void App::SetWindow(CoreWindow^ window)
 	m_dpi = currentDisplayInformation->LogicalDpi;
 }
 
+void App::OnPointerPressed(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::PointerEventArgs^ e)
+{
+	int id = (int)e->CurrentPoint->PointerId;
+	int x = (int)ConvertDipsToPixels(e->CurrentPoint->Position.X, m_dpi);
+	int y = (int)ConvertDipsToPixels(e->CurrentPoint->Position.Y, m_dpi);
+
+	if (m_application != nullptr)
+	{
+		irr::SEvent	event;
+		IrrlichtDevice *device = getIrrlichtDevice();
+
+		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
+		event.MouseInput.ID = id;
+		event.MouseInput.X = x;
+		event.MouseInput.Y = y;
+		event.MouseInput.Shift = false;
+		event.MouseInput.Control = false;
+		event.MouseInput.Event = irr::EMIE_LMOUSE_PRESSED_DOWN;
+
+		getIrrlichtDevice()->postEventFromUser(event);
+	}
+}
+
+void App::OnPointerRelease(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::PointerEventArgs^ e)
+{
+	int id = (int)e->CurrentPoint->PointerId;
+	int x = (int)ConvertDipsToPixels(e->CurrentPoint->Position.X, m_dpi);
+	int y = (int)ConvertDipsToPixels(e->CurrentPoint->Position.Y, m_dpi);
+
+	if (m_application != nullptr)
+	{
+		irr::SEvent	event;
+		IrrlichtDevice *device = getIrrlichtDevice();
+
+		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
+		event.MouseInput.ID = id;
+		event.MouseInput.X = x;
+		event.MouseInput.Y = y;
+		event.MouseInput.Shift = false;
+		event.MouseInput.Control = false;
+		event.MouseInput.Event = irr::EMIE_LMOUSE_LEFT_UP;
+
+		getIrrlichtDevice()->postEventFromUser(event);
+	}
+}
+
+void App::OnPointerMoved(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::PointerEventArgs^ e)
+{
+	int id = (int)e->CurrentPoint->PointerId;
+	int x = (int)ConvertDipsToPixels(e->CurrentPoint->Position.X, m_dpi);
+	int y = (int)ConvertDipsToPixels(e->CurrentPoint->Position.Y, m_dpi);
+
+	if (m_application != nullptr)
+	{
+		irr::SEvent	event;
+		IrrlichtDevice *device = getIrrlichtDevice();
+
+		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
+		event.MouseInput.ID = id;
+		event.MouseInput.X = x;
+		event.MouseInput.Y = y;
+		event.MouseInput.Shift = false;
+		event.MouseInput.Control = false;
+		event.MouseInput.Event = irr::EMIE_MOUSE_MOVED;
+
+		getIrrlichtDevice()->postEventFromUser(event);
+	}
+}
+
 core::dimension2du App::GetWindowPixelSize()
 {
 	core::dimension2du result;
@@ -91,8 +164,8 @@ core::dimension2du App::GetWindowPixelSize()
 
 // Initializes scene resources, or loads a previously saved app state.
 void App::Load(Platform::String^ entryPoint)
-{	
-	m_application = new CApplication();	
+{
+	m_application = new CApplication();
 	SIrrlichtCreationParameters p;
 	p.DeviceType = irr::EIDT_PHONE;
 	p.DriverType = video::EDT_DIRECT3D11;
@@ -122,7 +195,7 @@ void App::Run()
 		if (m_windowVisible)
 		{
 			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
-						
+
 			m_application->mainLoop();
 		}
 		else
@@ -137,7 +210,7 @@ void App::Run()
 // class is torn down while the app is in the foreground.
 void App::Uninitialize()
 {
-	
+
 }
 
 // Application lifecycle event handlers.
@@ -180,7 +253,7 @@ void App::OnResuming(Platform::Object^ sender, Platform::Object^ args)
 void App::OnWindowSizeChanged(CoreWindow^ sender, WindowSizeChangedEventArgs^ args)
 {
 	if (m_application != NULL)
-	{		
+	{
 		core::dimension2du windowSize = core::dimension2du((u32)m_coreWindow->Bounds.Width, (u32)m_coreWindow->Bounds.Height);
 		m_application->notifyResizeWin(windowSize.Width, windowSize.Height);
 	}
