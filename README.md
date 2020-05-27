@@ -143,11 +143,9 @@ Skylicht Engine is based in part on the work of:
 -   [Bullet Physics](https://github.com/bulletphysics/bullet3)
 -   [Google Angle](https://github.com/google/angle)
 -   [Ocornut Imgui](https://github.com/ocornut/imgui)
+-   [Xatlas](https://github.com/jpcy/xatlas)
 -   [Spark Particle](https://github.com/Synxis/SPARK)
 -   [Freetype2](http://git.savannah.gnu.org/cgit/freetype/freetype2.git)
 -   Independent JPEG Group, libPng, zlib, curl...
-
-References from the projects:
-- [BakingLab](https://github.com/TheRealMJP/BakingLab)
 
 This means that if you've used the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used. It would also be nice to mention that you use the 3rd parties library... Please see the README files from 3rd parties for further informations.
