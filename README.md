@@ -143,8 +143,9 @@ Irradiance baked on Vertex Color:
 
 <img src="Documents/Media/Samples/tank-scene/indirect-bake-2-bounce.png" width="50%"/>
 
-**Final Composition**
-<img src="Documents/Media/Samples/tank-scene/combine-2-bounces.png"/>
+**Final Composition (2 bounces)**
+
+<img src="Documents/Media/Samples/tank-scene/combine-2-bounces.png" width="50%"/>
 
 Lightmapper works well on Wasm (OpenGLES3.0)
 
@@ -152,7 +153,9 @@ Lightmapper works well on Wasm (OpenGLES3.0)
 
 #### **Final Composition** (3 bounces)
 
-|<img src="Documents/Media/Samples/tank-scene/combine-3-bounces-a.png" width="45%"/>|<img src="Documents/Media/Samples/tank-scene/combine-3-bounces-b.png" width="45%"/>|
+<img src="Documents/Media/Samples/tank-scene/combine-3-bounces-a.png"/>
+
+<img src="Documents/Media/Samples/tank-scene/combine-3-bounces-b.png"/>
 
 ## Contributing
 Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join group. Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
