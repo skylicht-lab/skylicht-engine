@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "RenderMesh/CMesh.h"
+#include "xatlas.h"
 
 namespace Skylicht
 {
@@ -33,11 +34,19 @@ namespace Skylicht
 		class CUnwrapUV
 		{
 		protected:
-			CMesh *m_mesh;
+			std::vector<CMesh*> m_meshs;
+
+			xatlas::Atlas *m_atlas;
 		public:
-			CUnwrapUV(CMesh *mesh);
+			CUnwrapUV();
 
 			virtual ~CUnwrapUV();
+
+			bool addMesh(CMesh *mesh);
+
+			void generate();
+
+			void writeUVToImage();
 		};
 	}
 }

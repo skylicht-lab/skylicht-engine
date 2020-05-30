@@ -3,6 +3,7 @@
 #include "SampleLightmapUV.h"
 
 #include "GridPlane/CGridPlane.h"
+#include "UnwrapUV/CUnwrapUV.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -74,6 +75,19 @@ void SampleLightmapUV::onInitApp()
 		renderMesh->initFromPrefab(model);
 
 		// CMaterialManager::getInstance()->exportMaterial(model, "../Assets/LightmapUV/gazebo.xml");
+
+		// Unwrap lightmap uv
+		Lightmapper::CUnwrapUV unwrap;
+
+		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
+		for (CRenderMeshData* renderData : renderers)
+		{
+			CMesh *mesh = renderData->getMesh();
+			unwrap.addMesh(mesh);
+		}
+
+		unwrap.generate();
+		unwrap.writeUVToImage();
 	}
 
 	// Render pipeline
