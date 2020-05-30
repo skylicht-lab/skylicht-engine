@@ -181,10 +181,6 @@ elseif (BUILD_MACOS)
 
 	target_link_libraries(@project_name@ ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(@project_name@ "-framework Cocoa")
-	
-	if (OPENMP_FOUND)
-	target_link_libraries(@project_name@ PRIVATE OpenMP::OpenMP_CXX)
-	endif()
 		
 	message(STATUS "- Setup project: @project_name@")
 	foreach(res_file ${resources_files})

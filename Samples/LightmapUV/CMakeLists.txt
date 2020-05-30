@@ -181,10 +181,6 @@ elseif (BUILD_MACOS)
 
 	target_link_libraries(SampleLightmapUV ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(SampleLightmapUV "-framework Cocoa")
-	
-	if (OPENMP_FOUND)
-	target_link_libraries(SampleLightmapUV PRIVATE OpenMP::OpenMP_CXX)
-	endif()
 		
 	message(STATUS "- Setup project: SampleLightmapUV")
 	foreach(res_file ${resources_files})
