@@ -32,6 +32,8 @@ void SampleLightmapUV::onInitApp()
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("LightmapUV.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("TankScene.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -67,7 +69,9 @@ void SampleLightmapUV::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// 3D model
-	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("LightmapUV/gazebo.obj", "LightmapUV");
+	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("LightmapUV/gazebo.obj", "LightmapUV");
+	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("TankScene/TankScene.obj", "TankScene");
+	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
 	if (model != NULL)
 	{
 		CGameObject *gazeboObj = zone->createEmptyObject();
@@ -76,18 +80,22 @@ void SampleLightmapUV::onInitApp()
 
 		// CMaterialManager::getInstance()->exportMaterial(model, "../Assets/LightmapUV/gazebo.xml");
 
-		// Unwrap lightmap uv
-		Lightmapper::CUnwrapUV unwrap;
-
+		// Unwrap lightmap uv		
+		int i = 0;
 		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
 		for (CRenderMeshData* renderData : renderers)
 		{
 			CMesh *mesh = renderData->getMesh();
-			unwrap.addMesh(mesh);
-		}
 
-		unwrap.generate();
-		unwrap.writeUVToImage();
+			Lightmapper::CUnwrapUV unwrap;
+
+			unwrap.addMesh(mesh);
+			unwrap.generate();
+
+			char name[512];
+			sprintf(name, "mesh_%d", i++);
+			unwrap.writeUVToImage(name);
+		}
 	}
 
 	// Render pipeline
