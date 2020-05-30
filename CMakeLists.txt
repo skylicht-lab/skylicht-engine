@@ -270,8 +270,6 @@ if (BUILD_IMGUI)
 subdirs (Projects/Imgui)
 endif()
 
-subdirs (Projects/XAtlas)
-
 #if (BUILD_BULLET_PHYSIC2_LIB)
 #subdirs (Projects/BulletPhysics2)
 #endif()

@@ -2,6 +2,8 @@
 #include "SkylichtEngine.h"
 #include "SampleLightmapUV.h"
 
+#include "GridPlane/CGridPlane.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SampleLightmapUV *app = new SampleLightmapUV();
@@ -9,13 +11,15 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 SampleLightmapUV::SampleLightmapUV() :
-	m_scene(NULL)
+	m_scene(NULL),
+	m_camera(NULL)
 {
 
 }
 
 SampleLightmapUV::~SampleLightmapUV()
 {
+	delete m_forwardRP;
 	delete m_scene;
 }
 
@@ -38,6 +42,43 @@ void SampleLightmapUV::onInitApp()
 	// Create a Zone in Scene
 	CZone *zone = m_scene->createZone();
 
+	// 3D grid
+	CGameObject *grid = zone->createEmptyObject();
+	grid->addComponent<CGridPlane>();
+
+	// Camera
+	CGameObject *cameraObj = zone->createEmptyObject();
+	cameraObj->addComponent<CCamera>();
+	cameraObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
+
+	m_camera = cameraObj->getComponent<CCamera>();
+	m_camera->setProjectionType(CCamera::Perspective);
+	m_camera->setPosition(core::vector3df(-10.0f, 5.0f, 10.0f));
+	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+
+	// lighting
+	CGameObject *lightObj = zone->createEmptyObject();
+	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
+
+	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
+	lightTransform->setOrientation(direction, CTransform::s_oy);
+
+	// 3D model
+	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("LightmapUV/gazebo.obj", "LightmapUV");
+	if (model != NULL)
+	{
+		CGameObject *gazeboObj = zone->createEmptyObject();
+		CRenderMesh *renderMesh = gazeboObj->addComponent<CRenderMesh>();
+		renderMesh->initFromPrefab(model);
+
+		// CMaterialManager::getInstance()->exportMaterial(model, "../Assets/LightmapUV/gazebo.xml");
+	}
+
+	// Render pipeline
+	m_forwardRP = new CForwardRP();
+
 	// Create 2D camera
 	CGameObject *guiCameraObject = (CGameObject*)zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
@@ -52,7 +93,13 @@ void SampleLightmapUV::onUpdate()
 
 void SampleLightmapUV::onRender()
 {
-	// Render hello,world text in gui camera
+	// render 3D
+	m_forwardRP->render(NULL,
+		m_camera,
+		m_scene->getZone(0)->getEntityManager(),
+		core::recti());
+
+	// render 2D
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }
 

@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Shader/CShader.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
 
 namespace Skylicht
 {
@@ -64,6 +65,12 @@ namespace Skylicht
 		{
 			return (*findCache).second;
 		}
+
+		// auto add base folder
+		std::string baseFolder = CPath::getFolderPath(filename);
+
+		std::vector<std::string>& folders = textureFolders;
+		folders.push_back(baseFolder);
 
 		ArrayMaterial& result = m_materials[filename];
 
@@ -146,7 +153,7 @@ namespace Skylicht
 							if (path.empty() == false)
 							{
 								if (extra == NULL)
-									material->setUniformTexture(name.c_str(), path.c_str(), textureFolders, loadTexture);
+									material->setUniformTexture(name.c_str(), path.c_str(), folders, loadTexture);
 								else
 									material->setExtraUniformTexture(extra, name.c_str(), path.c_str());
 							}
@@ -162,7 +169,7 @@ namespace Skylicht
 							if (name != NULL)
 							{
 								if (extra == NULL)
-									material->setUniformTexture(name, path.c_str(), textureFolders, loadTexture);
+									material->setUniformTexture(name, path.c_str(), folders, loadTexture);
 							}
 						}
 					}
@@ -223,6 +230,12 @@ namespace Skylicht
 	{
 		std::string matFile = filename;
 
+		char tempPath[MAX_PATH];
+		char relativeTextureFolder[MAX_PATH];
+		CStringImp::replaceText<char>(tempPath, filename, "\\", "/");
+		std::string materialFolder = CPath::getFolderPath(tempPath);
+		CStringImp::replaceText(relativeTextureFolder, materialFolder.c_str(), "../Assets/", "");
+
 		IrrlichtDevice	*device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
 
@@ -252,7 +265,7 @@ namespace Skylicht
 				buffer += "\t\t<Textures>\n";
 				for (CMaterial::SUniformTexture* texture : textures)
 				{
-					sprintf(data, "\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), texture->Path.c_str());
+					sprintf(data, "\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), CPath::getRelativePath(texture->Path, relativeTextureFolder).c_str());
 					buffer += data;
 				}
 				buffer += "\t\t</Textures>\n";
@@ -291,7 +304,7 @@ namespace Skylicht
 						buffer += "\t\t\t\t<Textures>\n";
 						for (CMaterial::SUniformTexture* texture : e->UniformTextures)
 						{
-							sprintf(data, "\t\t\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), texture->Path.c_str());
+							sprintf(data, "\t\t\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), CPath::getRelativePath(texture->Path, relativeTextureFolder).c_str());
 							buffer += data;
 						}
 						buffer += "\t\t\t\t</Textures>\n";
@@ -334,6 +347,12 @@ namespace Skylicht
 
 		IrrlichtDevice	*device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
+
+		char tempPath[MAX_PATH];
+		char relativeTextureFolder[MAX_PATH];
+		CStringImp::replaceText<char>(tempPath, filename, "\\", "/");
+		std::string materialFolder = CPath::getFolderPath(tempPath);
+		CStringImp::replaceText(relativeTextureFolder, materialFolder.c_str(), "../Assets/", "");
 
 		io::IWriteFile *writeFile = fs->createAndWriteFile(matFile.c_str());
 		if (writeFile == NULL)
@@ -380,7 +399,8 @@ namespace Skylicht
 										ITexture *texture = material.TextureLayer[i].Texture;
 										if (texture != NULL)
 										{
-											sprintf(data, "\t\t\t<Texture slot='%d' path='%s'/>\n", i, texture->getName().getPath().c_str());
+											sprintf(data, "\t\t\t<Texture slot='%d' path='%s'/>\n", i,
+												CPath::getRelativePath(texture->getName().getPath().c_str(), relativeTextureFolder).c_str());
 											buffer += data;
 										}
 									}
