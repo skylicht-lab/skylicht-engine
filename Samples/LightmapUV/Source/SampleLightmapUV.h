@@ -6,6 +6,9 @@ class SampleLightmapUV : public IApplicationEventReceiver
 {
 private:
 	CScene *m_scene;
+	
+	CForwardRP *m_forwardRP;
+	CCamera *m_camera;
 	CCamera *m_guiCamera;
 
 public:
