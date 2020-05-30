@@ -230,8 +230,8 @@ namespace Skylicht
 	{
 		std::string matFile = filename;
 
-		char tempPath[MAX_PATH];
-		char relativeTextureFolder[MAX_PATH];
+		char tempPath[512];
+		char relativeTextureFolder[512];
 		CStringImp::replaceText<char>(tempPath, filename, "\\", "/");
 		std::string materialFolder = CPath::getFolderPath(tempPath);
 		CStringImp::replaceText(relativeTextureFolder, materialFolder.c_str(), "../Assets/", "");
@@ -348,8 +348,8 @@ namespace Skylicht
 		IrrlichtDevice	*device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
 
-		char tempPath[MAX_PATH];
-		char relativeTextureFolder[MAX_PATH];
+		char tempPath[512];
+		char relativeTextureFolder[512];
 		CStringImp::replaceText<char>(tempPath, filename, "\\", "/");
 		std::string materialFolder = CPath::getFolderPath(tempPath);
 		CStringImp::replaceText(relativeTextureFolder, materialFolder.c_str(), "../Assets/", "");
