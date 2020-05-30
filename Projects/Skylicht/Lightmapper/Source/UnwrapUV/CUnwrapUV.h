@@ -44,9 +44,11 @@ namespace Skylicht
 
 			bool addMesh(CMesh *mesh);
 
+			bool addMeshBuffer(IMeshBuffer *meshBuffer);
+
 			void generate();
 
-			void writeUVToImage();
+			void writeUVToImage(const char *outputName);
 		};
 	}
 }
