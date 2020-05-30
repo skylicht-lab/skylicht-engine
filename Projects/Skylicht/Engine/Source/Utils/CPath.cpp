@@ -103,4 +103,55 @@ namespace Skylicht
 
 		return finalPath;
 	}
+
+	std::string CPath::getRelativePath(const std::string& path, const std::string& folder)
+	{
+		std::string result;
+
+		std::vector<std::string> listFolder;
+		std::vector<std::string> listFolderOfPath;
+
+		std::string baseFolder = getFolderPath(path);
+		std::string filename = getFileName(path);
+
+		int nPos = 0;
+		CStringImp::replaceText<char>(tempPath, folder.c_str(), "\\", "/");
+		while (CStringImp::split<char>(resultPath, tempPath, "/", &nPos) == true)
+		{
+			listFolder.push_back(resultPath);
+		}
+
+		nPos = 0;
+		CStringImp::replaceText<char>(tempPath, baseFolder.c_str(), "\\", "/");
+		while (CStringImp::split<char>(resultPath, tempPath, "/", &nPos) == true)
+		{
+			listFolderOfPath.push_back(resultPath);
+		}
+
+		// they are not relative
+		if (listFolderOfPath[0] != listFolder[0])
+			return path;
+
+		// find the same root path
+		u32 i = 0;
+		for (; i < listFolder.size() && i < listFolderOfPath.size() && (listFolder[i] == listFolderOfPath[i]); ++i)
+		{
+
+		}
+
+		// add relative path
+		u32 j = i;
+		for (; i < listFolder.size(); ++i)
+			result += "../";
+
+		// add path to this file
+		for (; j < listFolderOfPath.size(); ++j)
+		{
+			result += listFolderOfPath[j];
+			result += "/";
+		}
+
+		result += filename;
+		return result;
+	}
 }

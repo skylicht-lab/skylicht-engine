@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CUnwrapUV.h"
-#include <xatlas.h>
+#include "xatlas.h"
 
 namespace Skylicht
 {

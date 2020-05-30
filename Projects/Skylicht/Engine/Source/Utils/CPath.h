@@ -40,5 +40,7 @@ namespace Skylicht
 		static std::string getFolderPath(const std::string& path);
 
 		static std::string normalizePath(const std::string& path);
+
+		static std::string getRelativePath(const std::string& path, const std::string& folder);
 	};
 }
