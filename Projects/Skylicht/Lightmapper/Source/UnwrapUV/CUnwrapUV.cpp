@@ -96,9 +96,25 @@ namespace Skylicht
 			}
 		}
 
+		bool ProgressCallback(xatlas::ProgressCategory::Enum category, int progress, void *userData)
+		{
+			const char *task[] = {
+				"AddMesh",
+				"ComputeCharts",
+				"ParameterizeCharts",
+				"PackCharts",
+				"BuildOutputMeshes"
+			};
+
+			printf("Atlas: %s - progress: %d\n", task[category], progress);
+			return true;
+		}
+
 		CUnwrapUV::CUnwrapUV()
 		{
 			m_atlas = xatlas::Create();
+
+			xatlas::SetProgressCallback(m_atlas, ProgressCallback, this);
 		}
 
 		CUnwrapUV::~CUnwrapUV()
@@ -106,60 +122,68 @@ namespace Skylicht
 			xatlas::Destroy(m_atlas);
 		}
 
+		bool CUnwrapUV::addMeshBuffer(IMeshBuffer *mb)
+		{
+			xatlas::MeshDecl meshDecl;
+
+			IVertexBuffer *vb = mb->getVertexBuffer(0);
+			IIndexBuffer *id = mb->getIndexBuffer();
+
+			unsigned char *vtx = (unsigned char*)vb->getVertices();
+
+			video::IVertexDescriptor* vertexDescriptor = mb->getVertexDescriptor();
+
+			u32 vertexSize = vertexDescriptor->getVertexSize(0);
+			IVertexAttribute *attibute = NULL;
+
+			// Position
+			attibute = vertexDescriptor->getAttributeBySemantic(video::EVAS_POSITION);
+			if (attibute == NULL)
+				return false;
+
+			meshDecl.vertexCount = (uint32_t)vb->getVertexCount();
+			meshDecl.vertexPositionData = vtx + attibute->getOffset();
+			meshDecl.vertexPositionStride = vertexSize;
+
+			attibute = vertexDescriptor->getAttributeBySemantic(video::EVAS_NORMAL);
+			if (attibute != NULL)
+			{
+				meshDecl.vertexNormalData = vtx + attibute->getOffset();
+				meshDecl.vertexNormalStride = vertexSize;
+			}
+
+			attibute = vertexDescriptor->getAttributeBySemantic(video::EVAS_TEXCOORD0);
+			if (attibute != NULL)
+			{
+				meshDecl.vertexUvData = vtx + attibute->getOffset();
+				meshDecl.vertexUvStride = vertexSize;
+			}
+
+			meshDecl.indexCount = (uint32_t)id->getIndexCount();
+			meshDecl.indexData = id->getIndices();
+
+			if (id->getType() == video::EIT_16BIT)
+				meshDecl.indexFormat = xatlas::IndexFormat::UInt16;
+			else
+				meshDecl.indexFormat = xatlas::IndexFormat::UInt32;
+
+			xatlas::AddMeshError::Enum error = xatlas::AddMesh(m_atlas, meshDecl);
+			if (error != xatlas::AddMeshError::Success) {
+				xatlas::Destroy(m_atlas);
+				printf("\rError adding mesh: %s\n", xatlas::StringForEnum(error));
+				return false;
+			}
+
+			return true;
+		}
+
 		bool CUnwrapUV::addMesh(CMesh *mesh)
 		{
 			for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
 			{
-				xatlas::MeshDecl meshDecl;
-
 				IMeshBuffer *mb = mesh->getMeshBuffer(i);
-
-				IVertexBuffer *vb = mb->getVertexBuffer(0);
-				IIndexBuffer *id = mb->getIndexBuffer();
-
-				unsigned char *vtx = (unsigned char*)vb->getVertices();
-
-				video::IVertexDescriptor* vertexDescriptor = mb->getVertexDescriptor();
-
-				u32 vertexSize = vertexDescriptor->getVertexSize(0);
-
-				IVertexAttribute *attibute = NULL;
-
-				// Position
-				attibute = vertexDescriptor->getAttributeBySemantic(video::EVAS_POSITION);
-				if (attibute == NULL)
-					continue;
-
-				meshDecl.vertexCount = (uint32_t)vb->getVertexCount();
-				meshDecl.vertexPositionData = vtx + attibute->getOffset();
-				meshDecl.vertexPositionStride = vertexSize;
-
-				attibute = vertexDescriptor->getAttributeBySemantic(video::EVAS_NORMAL);
-				if (attibute != NULL)
+				if (addMeshBuffer(mb) == false)
 				{
-					meshDecl.vertexNormalData = vtx + attibute->getOffset();
-					meshDecl.vertexNormalStride = vertexSize;
-				}
-
-				attibute = vertexDescriptor->getAttributeBySemantic(video::EVAS_TEXCOORD0);
-				if (attibute != NULL)
-				{
-					meshDecl.vertexUvData = vtx + attibute->getOffset();
-					meshDecl.vertexUvStride = vertexSize;
-				}
-
-				meshDecl.indexCount = (uint32_t)id->getIndexCount();
-				meshDecl.indexData = id->getIndices();
-
-				if (id->getType() == video::EIT_16BIT)
-					meshDecl.indexFormat = xatlas::IndexFormat::UInt16;
-				else
-					meshDecl.indexFormat = xatlas::IndexFormat::UInt32;
-
-				xatlas::AddMeshError::Enum error = xatlas::AddMesh(m_atlas, meshDecl);
-				if (error != xatlas::AddMeshError::Success) {
-					xatlas::Destroy(m_atlas);
-					printf("\rError adding mesh %d: %s\n", i, xatlas::StringForEnum(error));
 					return false;
 				}
 			}
@@ -171,7 +195,8 @@ namespace Skylicht
 		{
 			xatlas::PackOptions packOptions = xatlas::PackOptions();
 			packOptions.padding = 1;
-			packOptions.texelsPerUnit = 32.0f;
+			// packOptions.texelsPerUnit = 32.0f;
+			packOptions.resolution = 4096;
 
 			xatlas::Generate(m_atlas,
 				xatlas::ChartOptions(),
@@ -180,7 +205,7 @@ namespace Skylicht
 			);
 		}
 
-		void CUnwrapUV::writeUVToImage()
+		void CUnwrapUV::writeUVToImage(const char *outputName)
 		{
 			if (m_atlas->width > 0 && m_atlas->height > 0)
 			{
@@ -253,7 +278,7 @@ namespace Skylicht
 					IImage *img;
 					void *data;
 
-					snprintf(filename, sizeof(filename), "example_tris%02u.tga", i);
+					snprintf(filename, sizeof(filename), "%s_tris%02u.png", outputName, i);
 					printf("Writing '%s'...\n", filename);
 
 					img = getVideoDriver()->createImage(video::ECF_R8G8B8, core::dimension2du(m_atlas->width, m_atlas->height));
@@ -262,7 +287,7 @@ namespace Skylicht
 					img->unlock();
 					getVideoDriver()->writeImageToFile(img, filename);
 
-					snprintf(filename, sizeof(filename), "example_charts%02u.tga", i);
+					snprintf(filename, sizeof(filename), "%s_charts%02u.png", outputName, i);
 					printf("Writing '%s'...\n", filename);
 
 					data = img->lock();
