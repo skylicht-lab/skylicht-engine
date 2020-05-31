@@ -35,6 +35,7 @@ namespace Skylicht
 	protected:
 		std::map<std::string, ArrayMaterial> m_materials;
 
+		ArrayMaterial m_listGenerateMaterials;
 	public:
 		CMaterialManager();
 
@@ -47,5 +48,7 @@ namespace Skylicht
 		void saveMaterial(ArrayMaterial &materials, const char *filename);
 
 		void exportMaterial(CEntityPrefab *prefab, const char *filename);
+
+		ArrayMaterial initDefaultMaterial(CEntityPrefab *prefab);
 	};
 }
