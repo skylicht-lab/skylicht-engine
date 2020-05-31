@@ -13,13 +13,16 @@ void installApplication(const std::vector<std::string>& argv)
 
 SampleLightmapUV::SampleLightmapUV() :
 	m_scene(NULL),
-	m_camera(NULL)
+	m_camera(NULL),
+	m_UVChartsTexture(NULL)
 {
 
 }
 
 SampleLightmapUV::~SampleLightmapUV()
 {
+	getVideoDriver()->removeTexture(m_UVChartsTexture);
+
 	delete m_forwardRP;
 	delete m_scene;
 }
@@ -32,7 +35,6 @@ void SampleLightmapUV::onInitApp()
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("LightmapUV.zip"), false, false);
-	// app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -69,7 +71,6 @@ void SampleLightmapUV::onInitApp()
 
 	// 3D model
 	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("LightmapUV/gazebo.obj", "LightmapUV");
-	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
 
 	if (model != NULL)
 	{
@@ -77,7 +78,8 @@ void SampleLightmapUV::onInitApp()
 		CRenderMesh *renderMesh = gazeboObj->addComponent<CRenderMesh>();
 		renderMesh->initFromPrefab(model);
 
-		// CMaterialManager::getInstance()->exportMaterial(model, "../Assets/LightmapUV/gazebo.xml");
+		// Get list default material
+		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(model);
 
 		// Unwrap lightmap uv		
 		Lightmapper::CUnwrapUV unwrap;
@@ -86,12 +88,13 @@ void SampleLightmapUV::onInitApp()
 		for (CRenderMeshData* renderData : renderers)
 			unwrap.addMesh(renderData->getMesh());
 
-		unwrap.generate(2048, 20);
+		unwrap.generate(2048, 0);
 		unwrap.generateUVImage();
 
-		char name[512];
-		sprintf(name, "mesh");
-		unwrap.writeUVToImage(name);
+		// Write to bin folder output layout uv
+		// char name[512];
+		// sprintf(name, "mesh");
+		// unwrap.writeUVToImage(name);
 
 		// Update lightmap uv to renderer
 		for (CRenderMeshData* renderData : renderers)
@@ -128,6 +131,18 @@ void SampleLightmapUV::onInitApp()
 				vertexBuffer->drop();
 			}
 		}
+
+		// Update material
+		IImage *img = unwrap.getChartsImage(0);
+		m_UVChartsTexture = getVideoDriver()->addTexture("ChartsTexture", img);
+
+		for (CMaterial *m : materials)
+		{
+			m->changeShader("BuiltIn/Shader/Basic/TextureColor.xml");
+			m->setTexture(&m_UVChartsTexture, 1);
+		}
+
+		renderMesh->initMaterial(materials);
 	}
 
 	// Render pipeline

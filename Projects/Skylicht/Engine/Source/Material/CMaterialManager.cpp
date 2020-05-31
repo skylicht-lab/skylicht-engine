@@ -55,6 +55,10 @@ namespace Skylicht
 			++i;
 		}
 		m_materials.clear();
+
+		for (CMaterial *m : m_listGenerateMaterials)
+			delete m;
+		m_listGenerateMaterials.clear();
 	}
 
 	ArrayMaterial& CMaterialManager::loadMaterial(const char *filename, bool loadTexture, std::vector<std::string>& textureFolders)
@@ -439,5 +443,78 @@ namespace Skylicht
 		buffer += "</Materials>";
 		writeFile->write(buffer.c_str(), buffer.size());
 		writeFile->drop();
+	}
+
+	ArrayMaterial CMaterialManager::initDefaultMaterial(CEntityPrefab *prefab)
+	{
+		CMaterial *materialObj;
+		ArrayMaterial result;
+
+		std::map<std::string, bool> saved;
+
+		CEntity** entities = prefab->getEntities();
+		for (int i = 0, n = prefab->getNumEntities(); i < n; i++)
+		{
+			CRenderMeshData *renderer = entities[i]->getData<CRenderMeshData>();
+			if (renderer != NULL)
+			{
+				CMesh *mesh = renderer->getMesh();
+				if (mesh != NULL)
+				{
+					for (int j = 0, m = (int)mesh->getMeshBufferCount(); j < m; j++)
+					{
+						ITexture* texture = NULL;
+						IMeshBuffer* meshBuffer = mesh->getMeshBuffer(j);
+
+						if (meshBuffer != NULL && j < (int)mesh->MaterialName.size())
+						{
+							const char *materialName = mesh->MaterialName[j].c_str();
+							if (saved[materialName] == false)
+							{
+								SMaterial& material = meshBuffer->getMaterial();
+
+								CShader *shader = CShaderManager::getInstance()->getShaderByID(material.MaterialType);
+								if (shader != NULL)
+								{
+									materialObj = new CMaterial(materialName, shader->getShaderPath().c_str());
+									materialObj->loadDefaultTexture();
+
+									ITexture *t[MATERIAL_MAX_TEXTURES];
+									for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+										t[i] = material.TextureLayer[i].Texture;
+
+									materialObj->setTexture(t, MATERIAL_MAX_TEXTURES);
+
+									for (int i = 0, n = shader->getNumUI(); i < n; i++)
+									{
+										CShader::SUniformUI *uniformUI = shader->getUniformUI(i);
+										SUniform* info = uniformUI->UniformInfo;
+										if (info != NULL)
+										{
+											if (info->FloatSize == 1)
+												materialObj->setUniform(info->Name.c_str(), info->Value[0]);
+											else if (info->FloatSize == 2)
+												materialObj->setUniform2(info->Name.c_str(), info->Value);
+											else if (info->FloatSize == 3)
+												materialObj->setUniform3(info->Name.c_str(), info->Value);
+											else if (info->FloatSize == 4)
+												materialObj->setUniform4(info->Name.c_str(), info->Value);
+										}
+									}
+
+
+									saved[materialName] = true;
+									result.push_back(materialObj);
+
+									m_listGenerateMaterials.push_back(materialObj);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return result;
 	}
 }
