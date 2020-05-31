@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,23 +24,57 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "RenderMesh/CMesh.h"
+#include "xatlas.h"
+
 namespace Skylicht
 {
-	class CPath
+	namespace Lightmapper
 	{
-	public:
-		static std::string getFileName(const std::string& path);
+		class CUnwrapUV
+		{
+		protected:
+			std::vector<CMesh*> m_meshs;
 
-		static std::string getFileNameExt(const std::string& path);
+			xatlas::Atlas *m_atlas;
 
-		static std::string getFileNameNoExt(const std::string& path);
+			IImage **m_imgUVCharts;
 
-		static std::string replaceFileExt(const std::string& path, const std::string& ext);
+			int m_atlasCount;
 
-		static std::string getFolderPath(const std::string& path);
+			std::vector<IMeshBuffer*> m_meshData;
+		public:
+			enum EOutputTexcoord
+			{
+				TEXCOORD0 = 0,
+				TEXCOORD1,
+				TEXCOORD2
+			};
+		public:
+			CUnwrapUV();
 
-		static std::string normalizePath(const std::string& path);
+			virtual ~CUnwrapUV();
 
-		static std::string getRelativePath(const std::string& path, const std::string& folder);
-	};
+			bool addMesh(CMesh *mesh);
+
+			bool addMeshBuffer(IMeshBuffer *meshBuffer);
+
+			void generate(int resolution = 2048, float texelsPerUnit = 0.0f, int padding = 1);
+
+			void generateUVImage();
+
+			void writeUVToImage(const char *outputName);
+
+			bool writeUVToMeshBuffer(IMeshBuffer *baseMesh, IMeshBuffer *result, EOutputTexcoord texcoordID);
+
+			void cleanImage();
+
+			int getMeshID(IMeshBuffer* mb);
+
+			IImage* getChartsImage(int id)
+			{
+				return m_imgUVCharts[id];
+			}
+		};
+	}
 }

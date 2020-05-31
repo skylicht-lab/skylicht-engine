@@ -40,6 +40,8 @@ option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)"
 
 option(USE_OPENMP "Use openmp for multithread optimize" ON)
 
+option(BUILD_EXAMPLE "Build example application" ON)
+
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
 set(BUILD_CURL OFF)

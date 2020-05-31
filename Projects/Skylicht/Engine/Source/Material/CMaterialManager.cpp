@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Shader/CShader.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
 
 namespace Skylicht
 {
@@ -54,6 +55,10 @@ namespace Skylicht
 			++i;
 		}
 		m_materials.clear();
+
+		for (CMaterial *m : m_listGenerateMaterials)
+			delete m;
+		m_listGenerateMaterials.clear();
 	}
 
 	ArrayMaterial& CMaterialManager::loadMaterial(const char *filename, bool loadTexture, std::vector<std::string>& textureFolders)
@@ -64,6 +69,12 @@ namespace Skylicht
 		{
 			return (*findCache).second;
 		}
+
+		// auto add base folder
+		std::string baseFolder = CPath::getFolderPath(filename);
+
+		std::vector<std::string>& folders = textureFolders;
+		folders.push_back(baseFolder);
 
 		ArrayMaterial& result = m_materials[filename];
 
@@ -146,7 +157,7 @@ namespace Skylicht
 							if (path.empty() == false)
 							{
 								if (extra == NULL)
-									material->setUniformTexture(name.c_str(), path.c_str(), textureFolders, loadTexture);
+									material->setUniformTexture(name.c_str(), path.c_str(), folders, loadTexture);
 								else
 									material->setExtraUniformTexture(extra, name.c_str(), path.c_str());
 							}
@@ -162,7 +173,7 @@ namespace Skylicht
 							if (name != NULL)
 							{
 								if (extra == NULL)
-									material->setUniformTexture(name, path.c_str(), textureFolders, loadTexture);
+									material->setUniformTexture(name, path.c_str(), folders, loadTexture);
 							}
 						}
 					}
@@ -223,6 +234,12 @@ namespace Skylicht
 	{
 		std::string matFile = filename;
 
+		char tempPath[512];
+		char relativeTextureFolder[512];
+		CStringImp::replaceText<char>(tempPath, filename, "\\", "/");
+		std::string materialFolder = CPath::getFolderPath(tempPath);
+		CStringImp::replaceText(relativeTextureFolder, materialFolder.c_str(), "../Assets/", "");
+
 		IrrlichtDevice	*device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
 
@@ -252,7 +269,7 @@ namespace Skylicht
 				buffer += "\t\t<Textures>\n";
 				for (CMaterial::SUniformTexture* texture : textures)
 				{
-					sprintf(data, "\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), texture->Path.c_str());
+					sprintf(data, "\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), CPath::getRelativePath(texture->Path, relativeTextureFolder).c_str());
 					buffer += data;
 				}
 				buffer += "\t\t</Textures>\n";
@@ -291,7 +308,7 @@ namespace Skylicht
 						buffer += "\t\t\t\t<Textures>\n";
 						for (CMaterial::SUniformTexture* texture : e->UniformTextures)
 						{
-							sprintf(data, "\t\t\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), texture->Path.c_str());
+							sprintf(data, "\t\t\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), CPath::getRelativePath(texture->Path, relativeTextureFolder).c_str());
 							buffer += data;
 						}
 						buffer += "\t\t\t\t</Textures>\n";
@@ -334,6 +351,12 @@ namespace Skylicht
 
 		IrrlichtDevice	*device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
+
+		char tempPath[512];
+		char relativeTextureFolder[512];
+		CStringImp::replaceText<char>(tempPath, filename, "\\", "/");
+		std::string materialFolder = CPath::getFolderPath(tempPath);
+		CStringImp::replaceText(relativeTextureFolder, materialFolder.c_str(), "../Assets/", "");
 
 		io::IWriteFile *writeFile = fs->createAndWriteFile(matFile.c_str());
 		if (writeFile == NULL)
@@ -380,7 +403,8 @@ namespace Skylicht
 										ITexture *texture = material.TextureLayer[i].Texture;
 										if (texture != NULL)
 										{
-											sprintf(data, "\t\t\t<Texture slot='%d' path='%s'/>\n", i, texture->getName().getPath().c_str());
+											sprintf(data, "\t\t\t<Texture slot='%d' path='%s'/>\n", i,
+												CPath::getRelativePath(texture->getName().getPath().c_str(), relativeTextureFolder).c_str());
 											buffer += data;
 										}
 									}
@@ -419,5 +443,78 @@ namespace Skylicht
 		buffer += "</Materials>";
 		writeFile->write(buffer.c_str(), buffer.size());
 		writeFile->drop();
+	}
+
+	ArrayMaterial CMaterialManager::initDefaultMaterial(CEntityPrefab *prefab)
+	{
+		CMaterial *materialObj;
+		ArrayMaterial result;
+
+		std::map<std::string, bool> saved;
+
+		CEntity** entities = prefab->getEntities();
+		for (int i = 0, n = prefab->getNumEntities(); i < n; i++)
+		{
+			CRenderMeshData *renderer = entities[i]->getData<CRenderMeshData>();
+			if (renderer != NULL)
+			{
+				CMesh *mesh = renderer->getMesh();
+				if (mesh != NULL)
+				{
+					for (int j = 0, m = (int)mesh->getMeshBufferCount(); j < m; j++)
+					{
+						ITexture* texture = NULL;
+						IMeshBuffer* meshBuffer = mesh->getMeshBuffer(j);
+
+						if (meshBuffer != NULL && j < (int)mesh->MaterialName.size())
+						{
+							const char *materialName = mesh->MaterialName[j].c_str();
+							if (saved[materialName] == false)
+							{
+								SMaterial& material = meshBuffer->getMaterial();
+
+								CShader *shader = CShaderManager::getInstance()->getShaderByID(material.MaterialType);
+								if (shader != NULL)
+								{
+									materialObj = new CMaterial(materialName, shader->getShaderPath().c_str());
+									materialObj->loadDefaultTexture();
+
+									ITexture *t[MATERIAL_MAX_TEXTURES];
+									for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+										t[i] = material.TextureLayer[i].Texture;
+
+									materialObj->setTexture(t, MATERIAL_MAX_TEXTURES);
+
+									for (int i = 0, n = shader->getNumUI(); i < n; i++)
+									{
+										CShader::SUniformUI *uniformUI = shader->getUniformUI(i);
+										SUniform* info = uniformUI->UniformInfo;
+										if (info != NULL)
+										{
+											if (info->FloatSize == 1)
+												materialObj->setUniform(info->Name.c_str(), info->Value[0]);
+											else if (info->FloatSize == 2)
+												materialObj->setUniform2(info->Name.c_str(), info->Value);
+											else if (info->FloatSize == 3)
+												materialObj->setUniform3(info->Name.c_str(), info->Value);
+											else if (info->FloatSize == 4)
+												materialObj->setUniform4(info->Name.c_str(), info->Value);
+										}
+									}
+
+
+									saved[materialName] = true;
+									result.push_back(materialObj);
+
+									m_listGenerateMaterials.push_back(materialObj);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return result;
 	}
 }

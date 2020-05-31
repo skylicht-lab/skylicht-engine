@@ -95,3 +95,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CTransform.h"
 #include "Transform/CTransformEuler.h"
 #include "Transform/CTransformMatrix.h"
+
+// Importer
+#include "Importer/Utils/CMeshUtils.h"

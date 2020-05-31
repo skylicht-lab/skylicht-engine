@@ -10,6 +10,8 @@
 #include "Importer/Utils/CMeshUtils.h"
 #include "Material/Shader/CShaderManager.h"
 
+#include "Utils/CPath.h"
+
 #define WORD_BUFFER_LENGTH 512
 
 namespace Skylicht
@@ -75,13 +77,16 @@ namespace Skylicht
 		core::array<core::vector3df> normalsBuffer;
 		core::array<core::vector2df> textureCoordBuffer;
 
-		SObjMtl * currMtl = new SObjMtl();
-		m_materials.push_back(currMtl);
-
 		const io::path relPath = fs->getFileDir(resource) + "/";
 		const io::path fullName = file->getFileName();
 
 		m_modelName = fullName.c_str();
+
+		SObjMtl * currMtl = new SObjMtl();
+		m_materials.push_back(currMtl);
+
+		// set default name is model name
+		currMtl->Name = CPath::getFileName(m_modelName).c_str();
 
 		while (bufPtr != bufEnd)
 		{
