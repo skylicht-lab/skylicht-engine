@@ -67,6 +67,18 @@ void testStringImp()
 	TEST_ASSERT_THROW(s == "C:/Readme.md");
 	s = CPath::normalizePath("C:\\Data\\Bin\\..\\..\\Readme.md");
 	TEST_ASSERT_THROW(s == "C:/Readme.md");
+	s = CPath::normalizePath("..\\Test\\Readme.md");
+	TEST_ASSERT_THROW(s == "../Test/Readme.md");
+
+	TEST_CASE("CPath::getRelativePath");
+	s = CPath::getRelativePath("C:\\Data\\Readme.md", "D:\\Data\\Test");
+	TEST_ASSERT_THROW(s == "C:\\Data\\Readme.md");
+	s = CPath::getRelativePath("C:\\Data\\Readme.md", "C:\\Data\\Test");
+	TEST_ASSERT_THROW(s == "../Readme.md");
+	s = CPath::getRelativePath("C:\\Data\\Readme.md", "C:\\Data\\");
+	TEST_ASSERT_THROW(s == "Readme.md");
+	s = CPath::getRelativePath("C:\\Data\\Readme.md", "C:\\");
+	TEST_ASSERT_THROW(s == "Data/Readme.md");
 
 	// UNIT TEST: CStringImp
 	TEST_CASE("CStringImp::convertUTF8ToUnicode");
