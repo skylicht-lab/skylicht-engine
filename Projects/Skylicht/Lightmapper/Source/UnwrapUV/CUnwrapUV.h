@@ -37,6 +37,19 @@ namespace Skylicht
 			std::vector<CMesh*> m_meshs;
 
 			xatlas::Atlas *m_atlas;
+
+			IImage **m_imgUVTris;
+			IImage **m_imgUVCharts;
+			int m_atlasCount;
+
+			std::vector<IMeshBuffer*> m_meshData;
+		public:
+			enum EOutputTexcoord
+			{
+				TEXCOORD0 = 0,
+				TEXCOORD1,
+				TEXCOORD2
+			};
 		public:
 			CUnwrapUV();
 
@@ -46,9 +59,17 @@ namespace Skylicht
 
 			bool addMeshBuffer(IMeshBuffer *meshBuffer);
 
-			void generate();
+			void generate(int resolution = 2048, float texelsPerUnit = 0.0f, int padding = 1);
+
+			void generateUVImage();
 
 			void writeUVToImage(const char *outputName);
+
+			bool writeUVToMeshBuffer(IMeshBuffer *baseMesh, IMeshBuffer *result, EOutputTexcoord texcoordID);
+
+			void cleanImage();
+
+			int getMeshID(IMeshBuffer* mb);
 		};
 	}
 }

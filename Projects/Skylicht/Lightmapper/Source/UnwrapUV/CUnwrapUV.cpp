@@ -106,11 +106,14 @@ namespace Skylicht
 				"BuildOutputMeshes"
 			};
 
-			printf("Atlas: %s - progress: %d\n", task[category], progress);
+			printf("[CUnwrapUV] Progress %s - progress: %d\n", task[category], progress);
 			return true;
 		}
 
-		CUnwrapUV::CUnwrapUV()
+		CUnwrapUV::CUnwrapUV() :
+			m_imgUVTris(NULL),
+			m_imgUVCharts(NULL),
+			m_atlasCount(NULL)
 		{
 			m_atlas = xatlas::Create();
 
@@ -119,7 +122,38 @@ namespace Skylicht
 
 		CUnwrapUV::~CUnwrapUV()
 		{
+			cleanImage();
 			xatlas::Destroy(m_atlas);
+		}
+
+		void CUnwrapUV::cleanImage()
+		{
+			for (int i = 0; i < m_atlasCount; i++)
+			{
+				m_imgUVTris[i]->drop();
+				m_imgUVCharts[i]->drop();
+			}
+
+			if (m_imgUVTris != NULL)
+				delete m_imgUVTris;
+
+			if (m_imgUVCharts != NULL)
+				delete m_imgUVCharts;
+
+			m_imgUVTris = NULL;
+			m_imgUVCharts = NULL;
+		}
+
+		int CUnwrapUV::getMeshID(IMeshBuffer* mb)
+		{
+			int id = 0;
+			for (IMeshBuffer *meshbuffer : m_meshData)
+			{
+				if (mb == meshbuffer)
+					return id;
+				id++;
+			}
+			return -1;
 		}
 
 		bool CUnwrapUV::addMeshBuffer(IMeshBuffer *mb)
@@ -132,6 +166,8 @@ namespace Skylicht
 			unsigned char *vtx = (unsigned char*)vb->getVertices();
 
 			video::IVertexDescriptor* vertexDescriptor = mb->getVertexDescriptor();
+			if (vertexDescriptor == NULL)
+				return false;
 
 			u32 vertexSize = vertexDescriptor->getVertexSize(0);
 			IVertexAttribute *attibute = NULL;
@@ -170,10 +206,12 @@ namespace Skylicht
 			xatlas::AddMeshError::Enum error = xatlas::AddMesh(m_atlas, meshDecl);
 			if (error != xatlas::AddMeshError::Success) {
 				xatlas::Destroy(m_atlas);
-				printf("\rError adding mesh: %s\n", xatlas::StringForEnum(error));
+				printf("[CUnwrapUV] \rError adding mesh: %s\n", xatlas::StringForEnum(error));
 				return false;
 			}
 
+			// save for query id
+			m_meshData.push_back(mb);
 			return true;
 		}
 
@@ -191,12 +229,13 @@ namespace Skylicht
 			return true;
 		}
 
-		void CUnwrapUV::generate()
+		void CUnwrapUV::generate(int resolution, float texelsPerUnit, int padding)
 		{
 			xatlas::PackOptions packOptions = xatlas::PackOptions();
-			packOptions.padding = 1;
-			// packOptions.texelsPerUnit = 32.0f;
-			packOptions.resolution = 4096;
+
+			packOptions.padding = padding;
+			packOptions.texelsPerUnit = texelsPerUnit;
+			packOptions.resolution = resolution;
 
 			xatlas::Generate(m_atlas,
 				xatlas::ChartOptions(),
@@ -205,15 +244,19 @@ namespace Skylicht
 			);
 		}
 
-		void CUnwrapUV::writeUVToImage(const char *outputName)
+		void CUnwrapUV::generateUVImage()
 		{
+			cleanImage();
+
 			if (m_atlas->width > 0 && m_atlas->height > 0)
 			{
-				printf("Rasterizing result...\n");
+				printf("[CUnwrapUV] Rasterizing result...\n");
 
 				// Dump images.
 				std::vector<uint8_t> outputTrisImage, outputChartsImage;
+
 				const uint32_t imageDataSize = m_atlas->width * m_atlas->height * 3;
+
 				outputTrisImage.resize(m_atlas->atlasCount * imageDataSize);
 				outputChartsImage.resize(m_atlas->atlasCount * imageDataSize);
 
@@ -273,29 +316,92 @@ namespace Skylicht
 					}
 				}
 
+				m_imgUVTris = new IImage*[m_atlas->atlasCount];
+				m_imgUVCharts = new IImage*[m_atlas->atlasCount];
+
 				for (uint32_t i = 0; i < m_atlas->atlasCount; i++) {
-					char filename[256];
-					IImage *img;
 					void *data;
 
-					snprintf(filename, sizeof(filename), "%s_tris%02u.png", outputName, i);
-					printf("Writing '%s'...\n", filename);
-
-					img = getVideoDriver()->createImage(video::ECF_R8G8B8, core::dimension2du(m_atlas->width, m_atlas->height));
-					data = img->lock();
+					m_imgUVTris[i] = getVideoDriver()->createImage(video::ECF_R8G8B8, core::dimension2du(m_atlas->width, m_atlas->height));
+					data = m_imgUVTris[i]->lock();
 					memcpy(data, &outputTrisImage[i * imageDataSize], m_atlas->width * m_atlas->height * 3);
-					img->unlock();
-					getVideoDriver()->writeImageToFile(img, filename);
+					m_imgUVTris[i]->unlock();
 
-					snprintf(filename, sizeof(filename), "%s_charts%02u.png", outputName, i);
-					printf("Writing '%s'...\n", filename);
-
-					data = img->lock();
+					m_imgUVCharts[i] = getVideoDriver()->createImage(video::ECF_R8G8B8, core::dimension2du(m_atlas->width, m_atlas->height));
+					data = m_imgUVCharts[i]->lock();
 					memcpy(data, &outputChartsImage[i * imageDataSize], m_atlas->width * m_atlas->height * 3);
-					img->unlock();
-					getVideoDriver()->writeImageToFile(img, filename);
+					m_imgUVCharts[i]->unlock();
+				}
+			}
+		}
 
-					img->drop();
+		bool CUnwrapUV::writeUVToMeshBuffer(IMeshBuffer *baseMesh, IMeshBuffer *result, EOutputTexcoord texcoordID)
+		{
+			IVertexDescriptor* vertexDescriptor = result->getVertexDescriptor();
+			if (vertexDescriptor == NULL)
+				return false;
+
+			video::E_VERTEX_ATTRIBUTE_SEMANTIC semantic[] = {
+				EVAS_TEXCOORD0,
+				EVAS_TEXCOORD1,
+				EVAS_TEXCOORD2,
+			};
+
+			IVertexAttribute *attribute = vertexDescriptor->getAttributeBySemantic(semantic[(int)texcoordID]);
+			if (attribute == NULL)
+				return false;
+
+			int meshID = getMeshID(baseMesh);
+			if (meshID == -1)
+				return false;
+
+			IVertexBuffer *vb = result->getVertexBuffer(0);
+
+			unsigned char *vertexBuffer = (unsigned char*)vb->getVertices();
+			int vtxCount = vb->getVertexCount();
+
+			const xatlas::Mesh &mesh = m_atlas->meshes[meshID];
+
+			if (mesh.vertexCount != vtxCount)
+			{
+				printf("[CUnwrapUV] writeUVToMeshBuffer failed! Need Init vertex: %d - [unwrap vertex count: %d]\n", vtxCount, mesh.vertexCount);
+				return false;
+			}
+
+			unsigned char *texcoord = vertexBuffer + attribute->getOffset();
+			u32 vertexSize = vertexDescriptor->getVertexSize(0);
+
+			for (int i = 0; i < vtxCount; i++)
+			{
+				float *f = (float*)texcoord;
+
+				f[0] = mesh.vertexArray[i].uv[0];
+				f[1] = mesh.vertexArray[i].uv[1];
+
+				texcoord += vertexSize;
+			}
+
+			return true;
+		}
+
+		void CUnwrapUV::writeUVToImage(const char *outputName)
+		{
+			char filename[256];
+
+			for (uint32_t i = 0; i < m_atlas->atlasCount; i++)
+			{
+				if (m_imgUVTris[i] != NULL)
+				{
+					snprintf(filename, sizeof(filename), "%s_tris%02u.png", outputName, i);
+					printf("[CUnwrapUV] Writing '%s'...\n", filename);
+					getVideoDriver()->writeImageToFile(m_imgUVTris[i], filename);
+				}
+
+				if (m_imgUVCharts[i] != NULL)
+				{
+					snprintf(filename, sizeof(filename), "%s_charts%02u.png", outputName, i);
+					printf("[CUnwrapUV] Writing '%s'...\n", filename);
+					getVideoDriver()->writeImageToFile(m_imgUVCharts[i], filename);
 				}
 			}
 		}
