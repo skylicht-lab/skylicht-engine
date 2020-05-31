@@ -38,8 +38,8 @@ namespace Skylicht
 
 			xatlas::Atlas *m_atlas;
 
-			IImage **m_imgUVTris;
 			IImage **m_imgUVCharts;
+
 			int m_atlasCount;
 
 			std::vector<IMeshBuffer*> m_meshData;
@@ -70,6 +70,11 @@ namespace Skylicht
 			void cleanImage();
 
 			int getMeshID(IMeshBuffer* mb);
+
+			IImage* getChartsImage(int id)
+			{
+				return m_imgUVCharts[id];
+			}
 		};
 	}
 }

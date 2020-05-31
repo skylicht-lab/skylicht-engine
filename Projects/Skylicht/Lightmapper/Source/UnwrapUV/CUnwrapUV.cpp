@@ -111,7 +111,6 @@ namespace Skylicht
 		}
 
 		CUnwrapUV::CUnwrapUV() :
-			m_imgUVTris(NULL),
 			m_imgUVCharts(NULL),
 			m_atlasCount(NULL)
 		{
@@ -129,18 +128,11 @@ namespace Skylicht
 		void CUnwrapUV::cleanImage()
 		{
 			for (int i = 0; i < m_atlasCount; i++)
-			{
-				m_imgUVTris[i]->drop();
 				m_imgUVCharts[i]->drop();
-			}
-
-			if (m_imgUVTris != NULL)
-				delete m_imgUVTris;
 
 			if (m_imgUVCharts != NULL)
 				delete m_imgUVCharts;
 
-			m_imgUVTris = NULL;
 			m_imgUVCharts = NULL;
 		}
 
@@ -257,7 +249,7 @@ namespace Skylicht
 
 				const uint32_t imageDataSize = m_atlas->width * m_atlas->height * 3;
 
-				outputTrisImage.resize(m_atlas->atlasCount * imageDataSize);
+				// outputTrisImage.resize(m_atlas->atlasCount * imageDataSize);
 				outputChartsImage.resize(m_atlas->atlasCount * imageDataSize);
 
 				for (uint32_t i = 0; i < m_atlas->meshCount; i++)
@@ -267,6 +259,7 @@ namespace Skylicht
 					// Rasterize mesh triangles.
 					const uint8_t white[] = { 255, 255, 255 };
 
+					/*
 					for (uint32_t j = 0; j < mesh.indexCount; j += 3)
 					{
 						int32_t atlasIndex = -1;
@@ -292,6 +285,7 @@ namespace Skylicht
 						RasterizeLine(imageData, m_atlas->width, verts[1], verts[2], white);
 						RasterizeLine(imageData, m_atlas->width, verts[2], verts[0], white);
 					}
+					*/
 
 					// Rasterize mesh charts.
 					for (uint32_t j = 0; j < mesh.chartCount; j++)
@@ -316,19 +310,11 @@ namespace Skylicht
 					}
 				}
 
-				m_imgUVTris = new IImage*[m_atlas->atlasCount];
 				m_imgUVCharts = new IImage*[m_atlas->atlasCount];
 
 				for (uint32_t i = 0; i < m_atlas->atlasCount; i++) {
-					void *data;
-
-					m_imgUVTris[i] = getVideoDriver()->createImage(video::ECF_R8G8B8, core::dimension2du(m_atlas->width, m_atlas->height));
-					data = m_imgUVTris[i]->lock();
-					memcpy(data, &outputTrisImage[i * imageDataSize], m_atlas->width * m_atlas->height * 3);
-					m_imgUVTris[i]->unlock();
-
 					m_imgUVCharts[i] = getVideoDriver()->createImage(video::ECF_R8G8B8, core::dimension2du(m_atlas->width, m_atlas->height));
-					data = m_imgUVCharts[i]->lock();
+					void *data = m_imgUVCharts[i]->lock();
 					memcpy(data, &outputChartsImage[i * imageDataSize], m_atlas->width * m_atlas->height * 3);
 					m_imgUVCharts[i]->unlock();
 				}
@@ -371,14 +357,18 @@ namespace Skylicht
 			unsigned char *texcoord = vertexBuffer + attribute->getOffset();
 			u32 vertexSize = vertexDescriptor->getVertexSize(0);
 
+			float w = (float)m_atlas->width;
+			float h = (float)m_atlas->height;
+
 			for (int i = 0; i < vtxCount; i++)
 			{
-				float *f = (float*)texcoord;
+				xatlas::Vertex &v = mesh.vertexArray[i];
 
-				f[0] = mesh.vertexArray[i].uv[0];
-				f[1] = mesh.vertexArray[i].uv[1];
+				unsigned char *buffer = texcoord + vertexSize * v.xref;
 
-				texcoord += vertexSize;
+				float *f = (float*)buffer;
+				f[0] = v.uv[0] / w;
+				f[1] = v.uv[1] / h;
 			}
 
 			return true;
@@ -390,13 +380,6 @@ namespace Skylicht
 
 			for (uint32_t i = 0; i < m_atlas->atlasCount; i++)
 			{
-				if (m_imgUVTris[i] != NULL)
-				{
-					snprintf(filename, sizeof(filename), "%s_tris%02u.png", outputName, i);
-					printf("[CUnwrapUV] Writing '%s'...\n", filename);
-					getVideoDriver()->writeImageToFile(m_imgUVTris[i], filename);
-				}
-
 				if (m_imgUVCharts[i] != NULL)
 				{
 					snprintf(filename, sizeof(filename), "%s_charts%02u.png", outputName, i);

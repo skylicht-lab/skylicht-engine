@@ -11,6 +11,7 @@ private:
 	CCamera *m_camera;
 	CCamera *m_guiCamera;
 
+	ITexture *m_UVChartsTexture;
 public:
 	SampleLightmapUV();
 	virtual ~SampleLightmapUV();

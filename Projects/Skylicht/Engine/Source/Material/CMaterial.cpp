@@ -361,7 +361,7 @@ namespace Skylicht
 
 	void CMaterial::setTexture(ITexture** textures, int num)
 	{
-		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+		for (int i = 0; i < num; i++)
 			m_textures[i] = textures[i];
 
 		updateShaderTexture();
