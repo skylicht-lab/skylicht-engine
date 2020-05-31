@@ -32,8 +32,7 @@ void SampleLightmapUV::onInitApp()
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("LightmapUV.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("TankScene.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
+	// app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -69,9 +68,9 @@ void SampleLightmapUV::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// 3D model
-	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("LightmapUV/gazebo.obj", "LightmapUV");
-	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("TankScene/TankScene.obj", "TankScene");
+	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("LightmapUV/gazebo.obj", "LightmapUV");
 	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
+
 	if (model != NULL)
 	{
 		CGameObject *gazeboObj = zone->createEmptyObject();
@@ -81,20 +80,53 @@ void SampleLightmapUV::onInitApp()
 		// CMaterialManager::getInstance()->exportMaterial(model, "../Assets/LightmapUV/gazebo.xml");
 
 		// Unwrap lightmap uv		
-		int i = 0;
+		Lightmapper::CUnwrapUV unwrap;
+
 		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
+		for (CRenderMeshData* renderData : renderers)
+			unwrap.addMesh(renderData->getMesh());
+
+		unwrap.generate(2048, 20);
+		unwrap.generateUVImage();
+
+		char name[512];
+		sprintf(name, "mesh");
+		unwrap.writeUVToImage(name);
+
+		// Update lightmap uv to renderer
 		for (CRenderMeshData* renderData : renderers)
 		{
 			CMesh *mesh = renderData->getMesh();
+			for (u32 i = 0; i < mesh->getMeshBufferCount(); i++)
+			{
+				IMeshBuffer *mb = mesh->getMeshBuffer(i);
+				IVertexBuffer *vb = mb->getVertexBuffer(0);
 
-			Lightmapper::CUnwrapUV unwrap;
+				// alloc new vtx buffer (because current vtx buffer is on GPU Memory, that can't change)
+				CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexTangents>();
 
-			unwrap.addMesh(mesh);
-			unwrap.generate();
+				// copy vertex data
+				CMeshUtils::copyVertices(vb, vertexBuffer);
 
-			char name[512];
-			sprintf(name, "mesh_%d", i++);
-			unwrap.writeUVToImage(name);
+				// notify update vertex to GPU Memory
+				vertexBuffer->setHardwareMappingHint(EHM_STATIC);
+
+				// hold before replace vb
+				vb->grab();
+
+				// replace current vertex buffer
+				mb->setVertexBuffer(vertexBuffer, 0);
+
+				// write uv lightmap
+				unwrap.writeUVToMeshBuffer(mb, mb, Lightmapper::CUnwrapUV::TEXCOORD0);
+
+				// notify change
+				mb->setDirty(scene::EBT_VERTEX);
+
+				// drop
+				vb->drop();
+				vertexBuffer->drop();
+			}
 		}
 	}
 
