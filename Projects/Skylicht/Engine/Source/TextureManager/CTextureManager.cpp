@@ -155,7 +155,7 @@ namespace Skylicht
 		{
 #if defined(ANDROID)
 			// etc compress
-			CStringImp::replacePathExt(ansiPath, ".epvr");
+			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(MACOS)
             // dxt compress
             CStringImp::replacePathExt(ansiPath, ".dds");
@@ -165,7 +165,7 @@ namespace Skylicht
 			else if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC) || driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC2))
 				CStringImp::replacePathExt(ansiPath, ".pvr");
 			else
-				CStringImp::replacePathExt(ansiPath, ".epvr");
+				CStringImp::replacePathExt(ansiPath, ".etc2");
 #else
 			CStringImp::replacePathExt(ansiPath, ".pvr");
 #endif
@@ -222,7 +222,7 @@ namespace Skylicht
 		{
 #if defined(ANDROID)
 			// etc compress
-			CStringImp::replacePathExt(ansiPath, ".epvr");
+			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(MACOS)
             // dxt compress
             CStringImp::replacePathExt(ansiPath, ".dds");
@@ -232,7 +232,7 @@ namespace Skylicht
 			else if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC) || driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC2))
 				CStringImp::replacePathExt(ansiPath, ".pvr");
 			else
-				CStringImp::replacePathExt(ansiPath, ".epvr");
+				CStringImp::replacePathExt(ansiPath, ".etc2");
 #else
 			CStringImp::replacePathExt(ansiPath, ".pvr");
 #endif
@@ -326,14 +326,14 @@ namespace Skylicht
 			{
 #if defined(ANDROID)
 				// etc compress
-				CStringImp::replacePathExt(ansiPath, ".epvr");
+				CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(__EMSCRIPTEN__)
 				if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
 					CStringImp::replacePathExt(ansiPath, ".dds");
 				else if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC) || driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC2))
 					CStringImp::replacePathExt(ansiPath, ".pvr");
 				else
-					CStringImp::replacePathExt(ansiPath, ".epvr");
+					CStringImp::replacePathExt(ansiPath, ".etc2");
 #else
 				CStringImp::replacePathExt(ansiPath, ".pvr");
 #endif

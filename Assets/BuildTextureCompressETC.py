@@ -31,7 +31,7 @@ def compress(inputFile, outputFile):
     print(command)
     os.system(command)
 
-    etcOutputFile = outputFile.replace("_e.pvr", ".epvr")
+    etcOutputFile = outputFile.replace("_e.pvr", ".etc2")
     os.rename(outputFile, etcOutputFile)
 
 
