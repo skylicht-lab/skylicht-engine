@@ -60,7 +60,7 @@ void SampleLightmapUV::onInitApp()
 	m_camera->setPosition(core::vector3df(-10.0f, 5.0f, 10.0f));
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
-	// lighting
+	// Direction lighting
 	CGameObject *lightObj = zone->createEmptyObject();
 	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
