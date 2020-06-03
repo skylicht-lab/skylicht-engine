@@ -6,11 +6,9 @@ class SampleSkinnedMesh : public IApplicationEventReceiver
 {
 private:
 	CScene *m_scene;
-	CCamera *m_guiCamera;
-
-#if defined(USE_FREETYPE)	
-	CGlyphFont *m_largeFont;
-#endif
+	CCamera *m_guiCamera;	
+	CCamera *m_camera;
+	CForwardRP *m_forwardRP;
 
 public:
 	SampleSkinnedMesh();

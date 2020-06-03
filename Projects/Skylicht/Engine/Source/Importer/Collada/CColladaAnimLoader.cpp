@@ -36,8 +36,9 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CColladaAnimLoader::CColladaAnimLoader() :
-		m_unit("meter"),
-		m_unitScale(1.0f)
+		m_unit(""),
+		m_unitScale(1.0f),
+		m_rootScaleByUnit(false)
 	{
 	}
 
@@ -1608,6 +1609,7 @@ namespace Skylicht
 				core::matrix4 scale;
 				scale.setScale(m_unitScale);
 				m_colladaRoot->Transform *= scale;
+				m_rootScaleByUnit = true;
 			}
 
 			m_listNode.push_back(m_colladaRoot);
@@ -1686,9 +1688,13 @@ namespace Skylicht
 							pNode->Transform *= scale;
 
 							// revert scale root transform
-							scale.makeIdentity();
-							scale.setScale(1.0f / m_unitScale);
-							m_colladaRoot->Transform *= scale;
+							if (m_rootScaleByUnit == true)
+							{
+								scale.makeIdentity();
+								scale.setScale(1.0f / m_unitScale);
+								m_colladaRoot->Transform *= scale;
+								m_rootScaleByUnit = false;
+							}
 						}
 					}
 
