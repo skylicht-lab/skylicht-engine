@@ -57,7 +57,7 @@ void SampleSkinnedMesh::onInitApp()
 	m_camera->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
-	CGameObject *guiCameraObject = (CGameObject*)zone->createEmptyObject();
+	CGameObject *guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
@@ -68,6 +68,10 @@ void SampleSkinnedMesh::onInitApp()
 		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
 		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
 	}
+
+	// reflection probe
+	CGameObject *reflectionProbeObj = zone->createEmptyObject();
+	reflectionProbeObj->addComponent<CReflectionProbe>();
 
 	// 3D grid
 	CGameObject *grid = zone->createEmptyObject();
