@@ -71,7 +71,8 @@ void SampleSkinnedMesh::onInitApp()
 
 	// reflection probe
 	CGameObject *reflectionProbeObj = zone->createEmptyObject();
-	reflectionProbeObj->addComponent<CReflectionProbe>();
+	CReflectionProbe *reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
+	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
 	// 3D grid
 	CGameObject *grid = zone->createEmptyObject();
