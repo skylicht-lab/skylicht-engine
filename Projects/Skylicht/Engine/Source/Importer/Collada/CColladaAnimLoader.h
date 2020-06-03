@@ -41,6 +41,7 @@ namespace Skylicht
 
 		std::string m_unit;
 		float m_unitScale;
+		bool m_rootScaleByUnit;
 
 		std::vector<CAnimationClip*> m_clips;
 		std::map<std::string, SEntityAnim*> m_nodeAnim;
