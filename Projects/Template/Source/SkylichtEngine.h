@@ -61,6 +61,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
 #include "IndirectLighting/CIndirectLighting.h"
+#include "ReflectionProbe/CReflectionProbe.h"
 
 // Graphics2D, Canvas 2D
 #include "Projective/CProjective.h"

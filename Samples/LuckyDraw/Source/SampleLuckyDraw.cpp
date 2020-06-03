@@ -61,7 +61,7 @@ void SampleLuckyDraw::onInitApp()
 	CZone *zone = m_scene->createZone();
 
 	// create 2D camera
-	CGameObject *guiCameraObject = (CGameObject*)zone->createEmptyObject();
+	CGameObject *guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
