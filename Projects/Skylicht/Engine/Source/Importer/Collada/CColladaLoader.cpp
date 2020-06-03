@@ -51,8 +51,9 @@ namespace Skylicht
 		m_createTangent(false),
 		m_loadNormalMap(false),
 		m_maxUVTile(16.0f),
-		m_unit("meter"),
-		m_unitScale(1.0f)
+		m_unit(""),
+		m_unitScale(1.0f),
+		m_rootScaleByUnit(false)
 	{
 
 	}
@@ -1313,6 +1314,7 @@ namespace Skylicht
 				core::matrix4 scale;
 				scale.setScale(m_unitScale);
 				m_colladaRoot->Transform *= scale;
+				m_rootScaleByUnit = true;
 			}
 
 			m_listNode.push_back(m_colladaRoot);
@@ -1329,7 +1331,6 @@ namespace Skylicht
 		}
 		else
 			pNode->ChildLevel = 0;
-
 
 		while (xmlRead->read())
 		{
@@ -1399,9 +1400,13 @@ namespace Skylicht
 							pNode->Transform *= scale;
 
 							// revert scale root transform
-							scale.makeIdentity();
-							scale.setScale(1.0f / m_unitScale);
-							m_colladaRoot->Transform *= scale;
+							if (m_rootScaleByUnit == true)
+							{
+								scale.makeIdentity();
+								scale.setScale(1.0f / m_unitScale);
+								m_colladaRoot->Transform *= scale;
+								m_rootScaleByUnit = false;
+							}
 						}
 					}
 
@@ -2203,6 +2208,10 @@ namespace Skylicht
 				}
 
 				p++;
+
+				// fix next new line 
+				while (*p && *p == L'\n')
+					p++;
 				begin = p;
 
 				CStringImp::convertUnicodeToUTF8(sidName.c_str(), name);
@@ -2232,7 +2241,7 @@ namespace Skylicht
 		}
 
 		// free data
-		delete []listJointName;
+		delete[]listJointName;
 
 		// setup vertex weight
 		int numVertex = 0;
@@ -2329,7 +2338,7 @@ namespace Skylicht
 			}
 		}
 
-		delete []nBoneCount;
+		delete[]nBoneCount;
 
 		// fix the weight if vertex affect > 4 bone
 		for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
