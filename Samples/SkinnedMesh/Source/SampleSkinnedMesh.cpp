@@ -12,7 +12,10 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 SampleSkinnedMesh::SampleSkinnedMesh() :
-	m_scene(NULL)
+	m_scene(NULL),
+	m_camera(NULL),
+	m_guiCamera(NULL),
+	m_forwardRP(NULL)
 {
 
 }
@@ -72,13 +75,15 @@ void SampleSkinnedMesh::onInitApp()
 
 	// lighting
 	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	lightObj->addComponent<CDirectionalLight>();
+
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
+	// load dae animation
 	CAnimationManager *animManager = CAnimationManager::getInstance();
 	CAnimationClip *clip1 = animManager->loadAnimation("SkinnedMesh/Hip_Hop_Dancing.dae");
 	CAnimationClip *clip2 = animManager->loadAnimation("SkinnedMesh/Samba_Dancing.dae");
