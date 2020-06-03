@@ -314,6 +314,142 @@ namespace Skylicht
 		driver->drawMeshBuffer(m_drawBuffer);
 	}
 
+	void CBaseRP::renderEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture[], int* face, int numFace)
+	{
+		if (texture == NULL)
+			return;
+
+		IVideoDriver *driver = getVideoDriver();
+
+		core::matrix4 projection;
+		projection.buildProjectionMatrixPerspectiveFovLH(90.0f * core::DEGTORAD, 1.0f, camera->getNearValue(), camera->getFarValue());
+
+		core::vector3df targetDirectX[] = {
+			core::vector3df(1.0f, 0.0f, 0.0f),	// right
+			core::vector3df(-1.0f, 0.0f, 0.0f),	// left
+
+			core::vector3df(0.0f, 1.0f, 0.0f),	// up
+			core::vector3df(0.0f,-1.0f, 0.0f),	// down
+
+			core::vector3df(0.0f, 0.0f, 1.0f),	// front
+			core::vector3df(0.0f, 0.0f,-1.0f),	// back
+		};
+
+		// todo: FBO OpenGL is invertY
+		core::vector3df targetOpenGL[] = {
+			core::vector3df(1.0f, 0.0f, 0.0f),	// right
+			core::vector3df(-1.0f, 0.0f, 0.0f),	// left
+
+			core::vector3df(0.0f, 1.0f, 0.0f),	// up
+			core::vector3df(0.0f,-1.0f, 0.0f),	// down
+
+			core::vector3df(0.0f, 0.0f,-1.0f),	// front
+			core::vector3df(0.0f, 0.0f, 1.0f),	// back
+		};
+
+		core::vector3df up[] = {
+			core::vector3df(0.0f, 1.0f, 0.0f),
+			core::vector3df(0.0f, 1.0f, 0.0f),
+
+			core::vector3df(0.0f, 0.0f,-1.0f),
+			core::vector3df(0.0f, 0.0f, 1.0f),
+
+			core::vector3df(0.0f, 1.0f, 0.0f),
+			core::vector3df(0.0f, 1.0f, 0.0f),
+		};
+
+		core::vector3df *target = targetDirectX;
+
+		if (driver->getDriverType() != video::EDT_DIRECT3D11)
+			target = targetOpenGL;
+
+		core::matrix4 view;
+
+		// OpenGL have flipY buffer
+		// So we fix inverse Y by render to a buffer
+		ITexture *tempFBO = NULL;
+		E_DRIVER_TYPE driverType = driver->getDriverType();
+
+		SMaterial material;
+
+		if (driverType == EDT_OPENGL || driverType == EDT_OPENGLES)
+		{
+			video::ECOLOR_FORMAT colorFormat = texture[0]->getColorFormat();
+			tempFBO = driver->addRenderTargetTexture(texture[0]->getSize(), "tempFBO", colorFormat);
+
+			material.setTexture(0, tempFBO);
+			material.MaterialType = m_textureColorShaderID;
+		}
+
+		if (face != NULL)
+		{
+			for (int i = 0; i < numFace; i++)
+			{
+				core::dimension2du size = texture[i]->getSize();
+				float sizeW = (float)size.Width;
+				float sizeH = (float)size.Height;
+
+				int faceID = face[i];
+				video::E_CUBEMAP_FACE cubemapFace = (video::E_CUBEMAP_FACE)faceID;
+
+				view.makeIdentity();
+				view.buildCameraLookAtMatrixLH(position, position + target[faceID] * 100.0f, up[faceID]);
+				driver->setTransform(video::ETS_PROJECTION, projection);
+				driver->setTransform(video::ETS_VIEW, view);
+
+				if (tempFBO)
+				{
+					// todo: Dont flip TOP & BOTTOM
+					drawSceneToTexture(tempFBO, entityMgr);
+
+					driver->setRenderTargetCube(texture[i], cubemapFace, true, true);
+					beginRender2D(sizeW, sizeH);
+					renderBufferToTarget(0, 0, sizeW, sizeH, material, false);
+				}
+				else
+				{
+					drawSceneToCubeTexture(texture[i], cubemapFace, entityMgr);
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				core::dimension2du size = texture[i]->getSize();
+				float sizeW = (float)size.Width;
+				float sizeH = (float)size.Height;
+
+				video::E_CUBEMAP_FACE cubemapFace = (video::E_CUBEMAP_FACE)i;
+
+				view.makeIdentity();
+				view.buildCameraLookAtMatrixLH(position, position + target[i] * 100.0f, up[i]);
+				driver->setTransform(video::ETS_PROJECTION, projection);
+				driver->setTransform(video::ETS_VIEW, view);
+
+				if (tempFBO)
+				{
+					// todo: Dont flip TOP & BOTTOM
+					drawSceneToTexture(tempFBO, entityMgr);
+
+					driver->setRenderTarget(texture[i], cubemapFace, true, true);
+					beginRender2D(sizeW, sizeH);
+					renderBufferToTarget(0, 0, sizeW, sizeH, material, false);
+				}
+				else
+				{
+					drawSceneToCubeTexture(texture[i], cubemapFace, entityMgr);
+				}
+			}
+		}
+
+		driver->setRenderTarget(NULL);
+		if (tempFBO != NULL)
+		{
+			driver->removeTexture(tempFBO);
+		}
+	}
+
 	void CBaseRP::renderCubeEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture, int* face, int numFace)
 	{
 		if (texture == NULL)

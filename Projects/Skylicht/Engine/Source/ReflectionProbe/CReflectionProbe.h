@@ -33,7 +33,17 @@ namespace Skylicht
 	{
 	protected:
 		video::ITexture *m_staticTexture;
-		video::ITexture *m_bakeTexture;
+
+		video::ITexture *m_dynamicTexture;
+
+		core::dimension2du m_bakeSize;
+		video::ITexture *m_bakeTexture[6];
+
+	protected:
+
+		void removeBakeTexture();
+
+		void removeDynamicTexture();
 
 	public:
 		CReflectionProbe();
@@ -47,5 +57,7 @@ namespace Skylicht
 		bool loadStaticTexture(const char *path);
 
 		void bakeProbe(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
+
+		void bakeProbeToFile(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr, const char *outfolder, const char *outname);
 	};
 }
