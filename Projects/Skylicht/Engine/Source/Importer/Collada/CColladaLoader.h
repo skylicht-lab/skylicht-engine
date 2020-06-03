@@ -287,6 +287,7 @@ namespace Skylicht
 
 		std::string m_unit;
 		float m_unitScale;
+		bool m_rootScaleByUnit;
 
 	protected:
 
