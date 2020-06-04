@@ -49,6 +49,8 @@ namespace irr
 			glGenTextures(1, &TextureName);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, TextureName);
 
+			glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 			glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -64,8 +66,8 @@ namespace irr
 			}
 
 			// Depth Buffer
-            DepthTexture = 0;
-            /*
+			DepthTexture = 0;
+			/*
 			glGenTextures(1, &DepthTexture);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, DepthTexture);
 
@@ -86,7 +88,7 @@ namespace irr
 #ifdef _DEBUG
 			driver->testGLError();
 #endif
-            */
+			*/
 
 			// attach color texture to frame buffer
 			for (int i = 0; i < 6; i++)
@@ -99,12 +101,12 @@ namespace irr
 			}
 
 			// attach depth texture to frame buffer
-            /*
+			/*
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER,
 				GL_DEPTH_ATTACHMENT,
 				GL_RENDERBUFFER,
 				DepthTexture);
-            */
+			*/
 
 #ifdef _DEBUG
 			checkFBOStatus(Driver);
@@ -263,6 +265,8 @@ namespace irr
 
 			Driver->setActiveTexture(0, this);
 			Driver->getBridgeCalls()->setTexture(0);
+
+			glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 			if (Driver->testGLError())
 				os::Printer::log("Could not bind Texture", ELL_ERROR);
