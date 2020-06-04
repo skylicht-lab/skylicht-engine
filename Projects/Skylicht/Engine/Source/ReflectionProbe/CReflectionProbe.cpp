@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderPipeline/IRenderPipeline.h"
 #include "RenderPipeline/CBaseRP.h"
 
+#include "CReflectionProbeData.h"
+#include "CReflectionProbeRender.h"
 #include "CReflectionProbe.h"
 
 #include "TextureManager/CTextureManager.h"
@@ -40,7 +42,8 @@ namespace Skylicht
 	CReflectionProbe::CReflectionProbe() :
 		m_staticTexture(NULL),
 		m_dynamicTexture(NULL),
-		m_bakeSize(512, 512)
+		m_bakeSize(512, 512),
+		m_probeData(NULL)
 	{
 		for (int i = 0; i < 6; i++)
 			m_bakeTexture[i] = NULL;
@@ -75,7 +78,8 @@ namespace Skylicht
 
 	void CReflectionProbe::initComponent()
 	{
-
+		m_probeData = m_gameObject->getEntity()->addData<CReflectionProbeData>();
+		m_gameObject->getEntityManager()->addRenderSystem<CReflectionProbeRender>();
 	}
 
 	void CReflectionProbe::updateComponent()
