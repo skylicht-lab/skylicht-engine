@@ -25,13 +25,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CReflectionProbeRender.h"
 
-#include "Material/Shader/ShaderCallback/CShaderSH.h"
+#include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {
 	CReflectionProbeRender::CReflectionProbeRender()
 	{
-
+		m_material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("ReflectionProbe");
 	}
 
 	CReflectionProbeRender::~CReflectionProbeRender()
@@ -48,7 +48,7 @@ namespace Skylicht
 	void CReflectionProbeRender::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
 		CReflectionProbeData *probeData = entity->getData<CReflectionProbeData>();
-		if (probeData != NULL)
+		if (probeData != NULL && probeData->ReflectionTexture != NULL)
 		{
 			CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
 			if (transformData != NULL)
@@ -81,10 +81,12 @@ namespace Skylicht
 			IMesh* mesh = probes[i]->ProbeMesh;
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
+			m_material.setTexture(0, probes[i]->ReflectionTexture);
+
 			for (u32 j = 0; j < mesh->getMeshBufferCount(); j++)
 			{
 				IMeshBuffer *buffer = mesh->getMeshBuffer(j);
-				driver->setMaterial(buffer->getMaterial());
+				driver->setMaterial(m_material);
 				driver->drawMeshBuffer(buffer);
 			}
 		}

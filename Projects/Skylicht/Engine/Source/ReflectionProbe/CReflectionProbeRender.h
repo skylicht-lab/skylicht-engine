@@ -38,6 +38,8 @@ namespace Skylicht
 		core::array<CReflectionProbeData*> m_probes;
 		core::array<CWorldTransformData*> m_transforms;
 
+		SMaterial m_material;
+
 	public:
 		CReflectionProbeRender();
 
