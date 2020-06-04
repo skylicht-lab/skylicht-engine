@@ -62,5 +62,7 @@ namespace Skylicht
 		void bakeProbe(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
 
 		void bakeProbeToFile(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr, const char *outfolder, const char *outname);
+
+		video::ITexture* getReflectionTexture();
 	};
 }

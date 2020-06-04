@@ -99,6 +99,8 @@ namespace Skylicht
 			baseRP->renderCubeEnvironment(camera, entityMgr, position, m_dynamicTexture, NULL, 0);
 
 			m_dynamicTexture->regenerateMipMapLevels();
+
+			m_probeData->ReflectionTexture = m_dynamicTexture;
 		}
 	}
 
@@ -148,6 +150,21 @@ namespace Skylicht
 		}
 	}
 
+	video::ITexture* CReflectionProbe::getReflectionTexture()
+	{
+		/*
+		if (m_dynamicTexture != NULL)
+			return m_dynamicTexture;
+
+		if (m_staticTexture != NULL)
+			return m_staticTexture;
+
+		return NULL;
+		*/
+
+		return m_probeData->ReflectionTexture;
+	}
+
 	bool CReflectionProbe::loadStaticTexture(const char *path)
 	{
 		std::string x1 = std::string(path) + "_X1.png";
@@ -164,7 +181,11 @@ namespace Skylicht
 		);
 
 		if (m_staticTexture != NULL)
+		{
 			m_staticTexture->regenerateMipMapLevels();
+
+			m_probeData->ReflectionTexture = m_staticTexture;
+		}
 
 		return (m_staticTexture != NULL);
 	}

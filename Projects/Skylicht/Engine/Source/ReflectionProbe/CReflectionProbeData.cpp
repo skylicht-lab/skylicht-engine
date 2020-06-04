@@ -29,12 +29,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CReflectionProbeData::CReflectionProbeData()
+	CReflectionProbeData::CReflectionProbeData() :
+		ReflectionTexture(NULL)
 	{
 		const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
-		ProbeMesh = geometryCreator->createSphereMesh(0.2f);
+		ProbeMesh = geometryCreator->createSphereMesh(0.5f);
 		ProbeMesh->setHardwareMappingHint(EHM_STATIC);
-
 	}
 
 	CReflectionProbeData::~CReflectionProbeData()

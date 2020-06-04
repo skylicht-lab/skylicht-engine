@@ -40,6 +40,8 @@ void SampleSkinnedMesh::onInitApp()
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
+	
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
 
 	// Create a Scene
 	m_scene = new CScene();
