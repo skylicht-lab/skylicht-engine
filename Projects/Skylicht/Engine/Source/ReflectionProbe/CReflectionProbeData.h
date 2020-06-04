@@ -24,43 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "Camera/CCamera.h"
-#include "CReflectionProbeData.h"
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	class CReflectionProbe : public CComponentSystem
+	class CReflectionProbeData : public IEntityData
 	{
-	protected:
-		video::ITexture *m_staticTexture;
-
-		video::ITexture *m_dynamicTexture;
-
-		core::dimension2du m_bakeSize;
-		video::ITexture *m_bakeTexture[6];
-
-		CReflectionProbeData *m_probeData;
-
-	protected:
-
-		void removeBakeTexture();
-
-		void removeDynamicTexture();
+	public:
+		IMesh *ProbeMesh;
 
 	public:
-		CReflectionProbe();
+		CReflectionProbeData();
 
-		virtual ~CReflectionProbe();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		bool loadStaticTexture(const char *path);
-
-		void bakeProbe(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
-
-		void bakeProbeToFile(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr, const char *outfolder, const char *outname);
+		virtual ~CReflectionProbeData();
 	};
 }

@@ -24,43 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "Camera/CCamera.h"
+#include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
+
 #include "CReflectionProbeData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	class CReflectionProbe : public CComponentSystem
+	class CReflectionProbeRender : public IRenderSystem
 	{
 	protected:
-		video::ITexture *m_staticTexture;
-
-		video::ITexture *m_dynamicTexture;
-
-		core::dimension2du m_bakeSize;
-		video::ITexture *m_bakeTexture[6];
-
-		CReflectionProbeData *m_probeData;
-
-	protected:
-
-		void removeBakeTexture();
-
-		void removeDynamicTexture();
+		core::array<CReflectionProbeData*> m_probes;
+		core::array<CWorldTransformData*> m_transforms;
 
 	public:
-		CReflectionProbe();
+		CReflectionProbeRender();
 
-		virtual ~CReflectionProbe();
+		virtual ~CReflectionProbeRender();
 
-		virtual void initComponent();
+		virtual void beginQuery();
 
-		virtual void updateComponent();
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 
-		bool loadStaticTexture(const char *path);
+		virtual void init(CEntityManager *entityManager);
 
-		void bakeProbe(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
+		virtual void update(CEntityManager *entityManager);
 
-		void bakeProbeToFile(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr, const char *outfolder, const char *outname);
+		virtual void render(CEntityManager *entityManager);
 	};
 }
