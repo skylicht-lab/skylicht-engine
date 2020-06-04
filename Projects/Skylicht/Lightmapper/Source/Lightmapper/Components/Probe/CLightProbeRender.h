@@ -22,58 +22,38 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CProbe.h"
-#include "GameObject/CGameObject.h"
+#pragma once
 
-#include "Entity/CEntity.h"
-#include "Entity/CEntityManager.h"
+#include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
 
-#include "Lightmapper/CLightmapper.h"
+#include "CLightProbeData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CProbe::CProbe() :
-			m_probeData(NULL)
+		class CLightProbeRender : public IRenderSystem
 		{
+		protected:
+			core::array<CLightProbeData*> m_probes;
+			core::array<CWorldTransformData*> m_transforms;
 
-		}
+		public:
+			CLightProbeRender();
 
-		CProbe::~CProbe()
-		{
+			virtual ~CLightProbeRender();
 
-		}
+			virtual void beginQuery();
 
-		void CProbe::initComponent()
-		{
-			m_probeData = m_gameObject->getEntity()->addData<CProbeData>();
-			m_gameObject->getEntityManager()->addRenderSystem<CProbeDataRender>();
-		}
+			virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 
-		void CProbe::updateComponent()
-		{
+			virtual void init(CEntityManager *entityManager);
 
-		}
+			virtual void update(CEntityManager *entityManager);
 
-		void CProbe::bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr)
-		{
-			core::vector3df position = m_gameObject->getPosition();
-
-			core::vector3df n = CTransform::s_oy;
-			core::vector3df t = CTransform::s_ox;
-			core::vector3df b = n.crossProduct(t);
-			b.normalize();
-
-			m_probeData->SH = CLightmapper::getInstance()->bakeAtPosition(
-				camera,
-				rp,
-				entityMgr,
-				position,
-				n,
-				t,
-				b);
-		}
+			virtual void render(CEntityManager *entityManager);
+		};
 	}
 }
