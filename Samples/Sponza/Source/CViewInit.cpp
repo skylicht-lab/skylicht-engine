@@ -8,7 +8,7 @@
 
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
-#include "Lightmapper/Components/Probe/CProbe.h"
+#include "Lightmapper/Components/Probe/CLightProbe.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -250,13 +250,13 @@ void CViewInit::initProbes()
 		probesPosition.push_back(core::vector3df(x, 8.0f, -0.2f));
 	}
 
-	std::vector<CProbe*> probes;
+	std::vector<CLightProbe*> probes;
 
 	for (u32 i = 0, n = (int)probesPosition.size(); i < n; i++)
 	{
 		// probe
 		CGameObject *probeObj = zone->createEmptyObject();
-		CProbe *probe = probeObj->addComponent<Lightmapper::CProbe>();
+		CLightProbe *probe = probeObj->addComponent<Lightmapper::CLightProbe>();
 
 		CTransformEuler *probeTransform = probeObj->getTransformEuler();
 		probeTransform->setPosition(probesPosition[i]);

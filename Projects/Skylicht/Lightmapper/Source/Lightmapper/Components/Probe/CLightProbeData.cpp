@@ -22,42 +22,36 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CLightProbeData.h"
 
-#include "Components/CComponentSystem.h"
-#include "CProbeData.h"
-#include "CProbeDataRender.h"
-#include "Camera/CCamera.h"
+#include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CProbe : public CComponentSystem
+		CLightProbeData::CLightProbeData()
 		{
-		protected:
-			CProbeData *m_probeData;
+			const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
+			ProbeMesh = geometryCreator->createSphereMesh(0.2f);
+			ProbeMesh->setHardwareMappingHint(EHM_STATIC);
 
-		public:
-			CProbe();
-
-			virtual ~CProbe();
-
-			virtual void initComponent();
-
-			virtual void updateComponent();
-
-			void bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
-
-			inline CSH9& getSH()
+			int shShader = CShaderManager::getInstance()->getShaderIDByName("SH");
+			if (shShader >= 0)
 			{
-				return m_probeData->SH;
+				for (u32 i = 0, n = ProbeMesh->getMeshBufferCount(); i < n; i++)
+				{
+					IMeshBuffer* mb = ProbeMesh->getMeshBuffer(i);
+					mb->getMaterial().MaterialType = shShader;
+				}
 			}
+		}
 
-			inline void setSH(const CSH9& sh)
-			{
-				m_probeData->SH = sh;
-			}
-		};
+		CLightProbeData::~CLightProbeData()
+		{
+			ProbeMesh->drop();
+			ProbeMesh = NULL;
+		}
 	}
 }

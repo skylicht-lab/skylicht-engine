@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CProbe.h"
+#include "CLightProbeRender.h"
 
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
 
@@ -31,25 +31,25 @@ namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CProbeDataRender::CProbeDataRender()
+		CLightProbeRender::CLightProbeRender()
 		{
 
 		}
 
-		CProbeDataRender::~CProbeDataRender()
+		CLightProbeRender::~CLightProbeRender()
 		{
 
 		}
 
-		void CProbeDataRender::beginQuery()
+		void CLightProbeRender::beginQuery()
 		{
 			m_probes.set_used(0);
 			m_transforms.set_used(0);
 		}
 
-		void CProbeDataRender::onQuery(CEntityManager *entityManager, CEntity *entity)
+		void CLightProbeRender::onQuery(CEntityManager *entityManager, CEntity *entity)
 		{
-			CProbeData *probeData = entity->getData<CProbeData>();
+			CLightProbeData *probeData = entity->getData<CLightProbeData>();
 			if (probeData != NULL)
 			{
 				CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
@@ -61,21 +61,21 @@ namespace Skylicht
 			}
 		}
 
-		void CProbeDataRender::init(CEntityManager *entityManager)
+		void CLightProbeRender::init(CEntityManager *entityManager)
 		{
 
 		}
 
-		void CProbeDataRender::update(CEntityManager *entityManager)
+		void CLightProbeRender::update(CEntityManager *entityManager)
 		{
 
 		}
 
-		void CProbeDataRender::render(CEntityManager *entityManager)
+		void CLightProbeRender::render(CEntityManager *entityManager)
 		{
 			IVideoDriver *driver = getVideoDriver();
 
-			CProbeData** probes = m_probes.pointer();
+			CLightProbeData** probes = m_probes.pointer();
 			CWorldTransformData** transforms = m_transforms.pointer();
 
 			for (u32 i = 0, n = m_probes.size(); i < n; i++)

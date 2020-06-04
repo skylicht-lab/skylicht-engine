@@ -22,36 +22,26 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CProbeData.h"
+#pragma once
 
-#include "Material/Shader/CShaderManager.h"
+#include "Lightmapper/CSH9.h"
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CProbeData::CProbeData()
+		class CLightProbeData : public IEntityData
 		{
-			const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
-			ProbeMesh = geometryCreator->createSphereMesh(0.2f);
-			ProbeMesh->setHardwareMappingHint(EHM_STATIC);
+		public:
+			IMesh *ProbeMesh;
 
-			int shShader = CShaderManager::getInstance()->getShaderIDByName("SH");
-			if (shShader >= 0)
-			{
-				for (u32 i = 0, n = ProbeMesh->getMeshBufferCount(); i < n; i++)
-				{
-					IMeshBuffer* mb = ProbeMesh->getMeshBuffer(i);
-					mb->getMaterial().MaterialType = shShader;
-				}
-			}
-		}
+			CSH9 SH;
 
-		CProbeData::~CProbeData()
-		{
-			ProbeMesh->drop();
-			ProbeMesh = NULL;
-		}
+		public:
+			CLightProbeData();
+
+			virtual ~CLightProbeData();
+		};
 	}
 }
