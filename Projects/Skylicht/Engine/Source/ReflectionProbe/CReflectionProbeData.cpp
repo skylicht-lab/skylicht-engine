@@ -22,38 +22,24 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CReflectionProbeData.h"
 
-#include "Entity/IEntityData.h"
-#include "Entity/IRenderSystem.h"
-
-#include "CProbeData.h"
-#include "Transform/CWorldTransformData.h"
+#include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	CReflectionProbeData::CReflectionProbeData() :
+		ReflectionTexture(NULL)
 	{
-		class CProbeDataRender : public IRenderSystem
-		{
-		protected:
-			core::array<CProbeData*> m_probes;
-			core::array<CWorldTransformData*> m_transforms;
+		const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
+		ProbeMesh = geometryCreator->createSphereMesh(0.5f);
+		ProbeMesh->setHardwareMappingHint(EHM_STATIC);
+	}
 
-		public:
-			CProbeDataRender();
-
-			virtual ~CProbeDataRender();
-
-			virtual void beginQuery();
-
-			virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
-
-			virtual void init(CEntityManager *entityManager);
-
-			virtual void update(CEntityManager *entityManager);
-
-			virtual void render(CEntityManager *entityManager);
-		};
+	CReflectionProbeData::~CReflectionProbeData()
+	{
+		ProbeMesh->drop();
+		ProbeMesh = NULL;
 	}
 }

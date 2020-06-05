@@ -90,7 +90,7 @@ namespace Skylicht
 			}
 		}
 
-		void CLightmapper::bakeProbes(std::vector<CProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr)
+		void CLightmapper::bakeProbes(std::vector<CLightProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr)
 		{
 			// prepare comput sh
 			core::array<core::vector3df> positions;
@@ -99,7 +99,7 @@ namespace Skylicht
 			core::array<core::vector3df> binormals;
 			for (u32 i = 0, n = probes.size(); i < n; i++)
 			{
-				CProbe* probe = probes[i];
+				CLightProbe* probe = probes[i];
 
 				core::vector3df pos = probe->getGameObject()->getPosition();
 				core::vector3df normal = CTransform::s_oy;
