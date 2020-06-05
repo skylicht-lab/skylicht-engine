@@ -47,7 +47,7 @@ namespace irr
 
 			// Color Buffer
 			glGenTextures(1, &TextureName);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, TextureName);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, TextureName);			
 
 			glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -64,8 +64,8 @@ namespace irr
 			}
 
 			// Depth Buffer
-            DepthTexture = 0;
-            /*
+			DepthTexture = 0;
+			/*
 			glGenTextures(1, &DepthTexture);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, DepthTexture);
 
@@ -86,7 +86,7 @@ namespace irr
 #ifdef _DEBUG
 			driver->testGLError();
 #endif
-            */
+			*/
 
 			// attach color texture to frame buffer
 			for (int i = 0; i < 6; i++)
@@ -99,12 +99,12 @@ namespace irr
 			}
 
 			// attach depth texture to frame buffer
-            /*
+			/*
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER,
 				GL_DEPTH_ATTACHMENT,
 				GL_RENDERBUFFER,
 				DepthTexture);
-            */
+			*/
 
 #ifdef _DEBUG
 			checkFBOStatus(Driver);

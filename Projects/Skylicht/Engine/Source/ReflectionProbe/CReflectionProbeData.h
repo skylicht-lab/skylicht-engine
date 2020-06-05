@@ -24,24 +24,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Lightmapper/CSH9.h"
 #include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CReflectionProbeData : public IEntityData
 	{
-		class CProbeData : public IEntityData
-		{
-		public:
-			IMesh *ProbeMesh;
+	public:
+		IMesh *ProbeMesh;
+		ITexture *ReflectionTexture;
 
-			CSH9 SH;
+	public:
+		CReflectionProbeData();
 
-		public:
-			CProbeData();
-
-			virtual ~CProbeData();
-		};
-	}
+		virtual ~CReflectionProbeData();
+	};
 }

@@ -22,49 +22,58 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CLightProbe.h"
+#include "GameObject/CGameObject.h"
 
-#include "Utils/CGameSingleton.h"
-#include "CBaker.h"
-#include "CMTBaker.h"
-#include "Components/Probe/CLightProbe.h"
+#include "Entity/CEntity.h"
+#include "Entity/CEntityManager.h"
+
+#include "Lightmapper/CLightmapper.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CLightmapper : public CGameSingleton<CLightmapper>
+		CLightProbe::CLightProbe() :
+			m_probeData(NULL)
 		{
-		protected:
-			CBaker *m_singleBaker;
-			CMTBaker *m_multiBaker;
 
-		public:
-			CLightmapper();
+		}
 
-			virtual ~CLightmapper();
+		CLightProbe::~CLightProbe()
+		{
 
-			const CSH9& bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal, 
-				int numFace = NUM_FACES);
+		}
 
-			void bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df *position,
-				const core::vector3df *normal,
-				const core::vector3df *tangent,
-				const core::vector3df *binormal,
-				std::vector<CSH9>& out,
-				int count,
-				int numFace = NUM_FACES);
+		void CLightProbe::initComponent()
+		{
+			m_probeData = m_gameObject->getEntity()->addData<CLightProbeData>();
+			m_gameObject->getEntityManager()->addRenderSystem<CLightProbeRender>();
+		}
 
-			void bakeProbes(std::vector<CLightProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr);
+		void CLightProbe::updateComponent()
+		{
 
-			int bakeMeshBuffer(IMeshBuffer *mb, const core::matrix4& transform, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH);
-		};
+		}
+
+		void CLightProbe::bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr)
+		{
+			core::vector3df position = m_gameObject->getPosition();
+
+			core::vector3df n = CTransform::s_oy;
+			core::vector3df t = CTransform::s_ox;
+			core::vector3df b = n.crossProduct(t);
+			b.normalize();
+
+			m_probeData->SH = CLightmapper::getInstance()->bakeAtPosition(
+				camera,
+				rp,
+				entityMgr,
+				position,
+				n,
+				t,
+				b);
+		}
 	}
 }

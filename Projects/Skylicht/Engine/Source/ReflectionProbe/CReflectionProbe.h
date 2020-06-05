@@ -22,36 +22,47 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CProbeData.h"
+#pragma once
 
-#include "Material/Shader/CShaderManager.h"
+#include "Components/CComponentSystem.h"
+#include "Camera/CCamera.h"
+#include "CReflectionProbeData.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CReflectionProbe : public CComponentSystem
 	{
-		CProbeData::CProbeData()
-		{
-			const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
-			ProbeMesh = geometryCreator->createSphereMesh(0.2f);
-			ProbeMesh->setHardwareMappingHint(EHM_STATIC);
+	protected:
+		video::ITexture *m_staticTexture;
 
-			int shShader = CShaderManager::getInstance()->getShaderIDByName("SH");
-			if (shShader >= 0)
-			{
-				for (u32 i = 0, n = ProbeMesh->getMeshBufferCount(); i < n; i++)
-				{
-					IMeshBuffer* mb = ProbeMesh->getMeshBuffer(i);
-					mb->getMaterial().MaterialType = shShader;
-				}
-			}
-		}
+		video::ITexture *m_dynamicTexture;
 
-		CProbeData::~CProbeData()
-		{
-			ProbeMesh->drop();
-			ProbeMesh = NULL;
-		}
-	}
+		core::dimension2du m_bakeSize;
+		video::ITexture *m_bakeTexture[6];
+
+		CReflectionProbeData *m_probeData;
+
+	protected:
+
+		void removeBakeTexture();
+
+		void removeDynamicTexture();
+
+	public:
+		CReflectionProbe();
+
+		virtual ~CReflectionProbe();
+
+		virtual void initComponent();
+
+		virtual void updateComponent();
+
+		bool loadStaticTexture(const char *path);
+
+		void bakeProbe(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
+
+		void bakeProbeToFile(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr, const char *outfolder, const char *outname);
+
+		video::ITexture* getReflectionTexture();
+	};
 }

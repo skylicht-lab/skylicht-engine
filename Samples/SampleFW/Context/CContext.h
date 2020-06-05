@@ -2,7 +2,7 @@
 
 #include "SkylichtEngine.h"
 
-#include "Lightmapper/Components/Probe/CProbe.h"
+#include "Lightmapper/Components/Probe/CLightProbe.h"
 #include "Lightmapper/CLightmapper.h"
 
 using namespace Lightmapper;
@@ -17,7 +17,7 @@ protected:
 	CCamera *m_guiCamera;
 
 	CDirectionalLight *m_directionalLight;
-	std::vector<CProbe*> m_probes;
+	std::vector<CLightProbe*> m_probes;
 
 	CBaseRP *m_beginRP;
 	CBaseRP	*m_rendering;
@@ -77,12 +77,12 @@ public:
 		m_camera = camera;
 	}
 
-	inline std::vector<CProbe*>& getProbes()
+	inline std::vector<CLightProbe*>& getProbes()
 	{
 		return m_probes;
 	}
 
-	inline void setProbes(std::vector<CProbe*>& probes)
+	inline void setProbes(std::vector<CLightProbe*>& probes)
 	{
 		m_probes = probes;
 	}

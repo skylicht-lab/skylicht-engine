@@ -149,7 +149,7 @@ void SampleLightmapUV::onInitApp()
 	m_forwardRP = new CForwardRP();
 
 	// Create 2D camera
-	CGameObject *guiCameraObject = (CGameObject*)zone->createEmptyObject();
+	CGameObject *guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 }
