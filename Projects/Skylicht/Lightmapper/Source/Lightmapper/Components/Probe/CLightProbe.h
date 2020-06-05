@@ -24,47 +24,40 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "CBaker.h"
-#include "CMTBaker.h"
-#include "Components/Probe/CLightProbe.h"
+#include "Components/CComponentSystem.h"
+#include "CLightProbeData.h"
+#include "CLightProbeRender.h"
+#include "Camera/CCamera.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CLightmapper : public CGameSingleton<CLightmapper>
+		class CLightProbe : public CComponentSystem
 		{
 		protected:
-			CBaker *m_singleBaker;
-			CMTBaker *m_multiBaker;
+			CLightProbeData *m_probeData;
 
 		public:
-			CLightmapper();
+			CLightProbe();
 
-			virtual ~CLightmapper();
+			virtual ~CLightProbe();
 
-			const CSH9& bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal, 
-				int numFace = NUM_FACES);
+			virtual void initComponent();
 
-			void bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df *position,
-				const core::vector3df *normal,
-				const core::vector3df *tangent,
-				const core::vector3df *binormal,
-				std::vector<CSH9>& out,
-				int count,
-				int numFace = NUM_FACES);
+			virtual void updateComponent();
 
-			void bakeProbes(std::vector<CLightProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr);
+			void bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
 
-			int bakeMeshBuffer(IMeshBuffer *mb, const core::matrix4& transform, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH);
+			inline CSH9& getSH()
+			{
+				return m_probeData->SH;
+			}
+
+			inline void setSH(const CSH9& sh)
+			{
+				m_probeData->SH = sh;
+			}
 		};
 	}
 }

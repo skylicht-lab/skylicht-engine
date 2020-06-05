@@ -22,58 +22,26 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CProbe.h"
-#include "GameObject/CGameObject.h"
+#pragma once
 
-#include "Entity/CEntity.h"
-#include "Entity/CEntityManager.h"
-
-#include "Lightmapper/CLightmapper.h"
+#include "Lightmapper/CSH9.h"
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CProbe::CProbe() :
-			m_probeData(NULL)
+		class CLightProbeData : public IEntityData
 		{
+		public:
+			IMesh *ProbeMesh;
 
-		}
+			CSH9 SH;
 
-		CProbe::~CProbe()
-		{
+		public:
+			CLightProbeData();
 
-		}
-
-		void CProbe::initComponent()
-		{
-			m_probeData = m_gameObject->getEntity()->addData<CProbeData>();
-			m_gameObject->getEntityManager()->addRenderSystem<CProbeDataRender>();
-		}
-
-		void CProbe::updateComponent()
-		{
-
-		}
-
-		void CProbe::bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr)
-		{
-			core::vector3df position = m_gameObject->getPosition();
-
-			core::vector3df n = CTransform::s_oy;
-			core::vector3df t = CTransform::s_ox;
-			core::vector3df b = n.crossProduct(t);
-			b.normalize();
-
-			m_probeData->SH = CLightmapper::getInstance()->bakeAtPosition(
-				camera,
-				rp,
-				entityMgr,
-				position,
-				n,
-				t,
-				b);
-		}
+			virtual ~CLightProbeData();
+		};
 	}
 }

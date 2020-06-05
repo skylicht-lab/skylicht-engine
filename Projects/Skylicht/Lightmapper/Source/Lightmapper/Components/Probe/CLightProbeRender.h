@@ -24,40 +24,36 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "CProbeData.h"
-#include "CProbeDataRender.h"
-#include "Camera/CCamera.h"
+#include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
+
+#include "CLightProbeData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CProbe : public CComponentSystem
+		class CLightProbeRender : public IRenderSystem
 		{
 		protected:
-			CProbeData *m_probeData;
+			core::array<CLightProbeData*> m_probes;
+			core::array<CWorldTransformData*> m_transforms;
 
 		public:
-			CProbe();
+			CLightProbeRender();
 
-			virtual ~CProbe();
+			virtual ~CLightProbeRender();
 
-			virtual void initComponent();
+			virtual void beginQuery();
 
-			virtual void updateComponent();
+			virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 
-			void bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
+			virtual void init(CEntityManager *entityManager);
 
-			inline CSH9& getSH()
-			{
-				return m_probeData->SH;
-			}
+			virtual void update(CEntityManager *entityManager);
 
-			inline void setSH(const CSH9& sh)
-			{
-				m_probeData->SH = sh;
-			}
+			virtual void render(CEntityManager *entityManager);
 		};
 	}
 }

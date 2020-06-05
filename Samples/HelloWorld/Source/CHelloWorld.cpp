@@ -50,7 +50,7 @@ void CHelloWorld::onInitApp()
 	CZone *zone = m_scene->createZone();
 
 	// Create 2D camera
-	CGameObject *guiCameraObject = (CGameObject*)zone->createEmptyObject();
+	CGameObject *guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 

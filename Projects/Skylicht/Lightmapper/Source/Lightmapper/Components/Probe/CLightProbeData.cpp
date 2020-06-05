@@ -22,49 +22,36 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CLightProbeData.h"
 
-#include "Utils/CGameSingleton.h"
-#include "CBaker.h"
-#include "CMTBaker.h"
-#include "Components/Probe/CLightProbe.h"
+#include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CLightmapper : public CGameSingleton<CLightmapper>
+		CLightProbeData::CLightProbeData()
 		{
-		protected:
-			CBaker *m_singleBaker;
-			CMTBaker *m_multiBaker;
+			const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
+			ProbeMesh = geometryCreator->createSphereMesh(0.2f);
+			ProbeMesh->setHardwareMappingHint(EHM_STATIC);
 
-		public:
-			CLightmapper();
+			int shShader = CShaderManager::getInstance()->getShaderIDByName("SH");
+			if (shShader >= 0)
+			{
+				for (u32 i = 0, n = ProbeMesh->getMeshBufferCount(); i < n; i++)
+				{
+					IMeshBuffer* mb = ProbeMesh->getMeshBuffer(i);
+					mb->getMaterial().MaterialType = shShader;
+				}
+			}
+		}
 
-			virtual ~CLightmapper();
-
-			const CSH9& bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df& position,
-				const core::vector3df& normal,
-				const core::vector3df& tangent,
-				const core::vector3df& binormal, 
-				int numFace = NUM_FACES);
-
-			void bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df *position,
-				const core::vector3df *normal,
-				const core::vector3df *tangent,
-				const core::vector3df *binormal,
-				std::vector<CSH9>& out,
-				int count,
-				int numFace = NUM_FACES);
-
-			void bakeProbes(std::vector<CLightProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr);
-
-			int bakeMeshBuffer(IMeshBuffer *mb, const core::matrix4& transform, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH);
-		};
+		CLightProbeData::~CLightProbeData()
+		{
+			ProbeMesh->drop();
+			ProbeMesh = NULL;
+		}
 	}
 }
