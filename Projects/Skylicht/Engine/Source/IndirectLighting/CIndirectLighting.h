@@ -36,6 +36,7 @@ namespace Skylicht
 		{
 			Lightmap,
 			VertexColor,
+			SphericalHarmonics,
 		};
 
 	protected:
@@ -43,6 +44,8 @@ namespace Skylicht
 		int m_lightmapIndex;
 
 		std::vector<CIndirectLightingData*> m_data;
+
+		core::vector3df m_sh[9];
 
 	public:
 		CIndirectLighting();
@@ -66,6 +69,8 @@ namespace Skylicht
 		{
 			return m_lightmapIndex;
 		}
+
+		void setSH(core::vector3df* sh);
 
 		EIndirectType getIndirectLightingType()
 		{
