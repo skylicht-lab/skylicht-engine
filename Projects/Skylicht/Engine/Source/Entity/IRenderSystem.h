@@ -34,12 +34,26 @@ namespace Skylicht
 
 	class IRenderSystem : public IEntitySystem
 	{
+	public:
+		enum ERenderPass
+		{
+			Opaque = 0,
+			Sky,
+			Transparent,
+			Effect,
+		};
+
 	protected:
 		IRenderPipeline::ERenderPipelineType m_pipelineType;
 
+		ERenderPass m_renderPass;
+		int m_sortingPriority;
+
 	public:
 		IRenderSystem() :
-			m_pipelineType(IRenderPipeline::Forwarder)
+			m_pipelineType(IRenderPipeline::Forwarder),
+			m_renderPass(Opaque),
+			m_sortingPriority(0)
 		{
 		}
 
@@ -57,6 +71,21 @@ namespace Skylicht
 		virtual void postRender(CEntityManager *entityManager)
 		{
 
+		}
+
+		inline ERenderPass getRenderPass()
+		{
+			return m_renderPass;
+		}
+
+		inline int getSortingPriority()
+		{
+			return m_sortingPriority;
+		}
+
+		inline void setSortingPriority(int s)
+		{
+			m_sortingPriority = s;
 		}
 	};
 }

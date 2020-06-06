@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	CSkyDomeRender::CSkyDomeRender()
 	{
-
+		m_renderPass = IRenderSystem::Sky;
 	}
 
 	CSkyDomeRender::~CSkyDomeRender()
