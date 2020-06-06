@@ -34,12 +34,14 @@ namespace Skylicht
 		enum EType
 		{
 			Lightmap,
-			VertexColor
+			VertexColor,
+			SphericalHarmonics
 		};
 
 		EType Type;
 		int LightmapIndex;
 
+		core::vector3df *SH;
 	public:
 		CIndirectLightingData();
 
