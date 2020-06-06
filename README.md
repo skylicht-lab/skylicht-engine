@@ -106,6 +106,10 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 ```
 - Open Visual Studio Solution and click **NewApplication** - **"Set as StartUp Project"**.
 
+### Roadmap
+- [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
+- [Skylight Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6) (Planned)
+
 ### Samples\HelloWorld
 Engine Components are used:
 - **FreeType Font**
