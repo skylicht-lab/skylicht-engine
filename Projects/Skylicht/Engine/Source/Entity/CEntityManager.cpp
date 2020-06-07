@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CJointAnimationSystem.h"
 #include "RenderMesh/CSkinnedMeshSystem.h"
 #include "RenderMesh/CSoftwareSkinningSystem.h"
+#include "Culling/CVisibleSystem.h"
 #include "Culling/CCullingSystem.h"
 #include "Lighting/CLightCullingSystem.h"
 
@@ -52,6 +53,7 @@ namespace Skylicht
 		addSystem<CSoftwareSkinningSystem>();
 
 		// culling system
+		addRenderSystem<CVisibleSystem>();
 		addRenderSystem<CCullingSystem>();
 		addRenderSystem<CLightCullingSystem>();
 
@@ -104,6 +106,7 @@ namespace Skylicht
 		}
 
 		CEntity *entity = new CEntity(this);
+		entity->addData<CVisibleData>();
 		m_entities.push_back(entity);
 		return entity;
 	}
@@ -116,6 +119,7 @@ namespace Skylicht
 		for (int i = 0; i < num; i++)
 		{
 			CEntity *entity = new CEntity(this);
+			entity->addData<CVisibleData>();
 			m_entities.push_back(entity);
 
 			entities.push_back(entity);

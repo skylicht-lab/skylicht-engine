@@ -52,7 +52,12 @@ namespace Skylicht
 	{
 		CCullingData *culling = entity->getData<CCullingData>();
 
-		if (culling != NULL)
+		CVisibleData *visible = entity->getData<CVisibleData>();
+		if (culling != NULL && visible != NULL && visible->Visible == false)
+		{
+			culling->Visible = false;
+		}
+		else if (culling != NULL)
 		{
 			CRenderMeshData *mesh = entity->getData<CRenderMeshData>();
 			if (mesh != NULL)
