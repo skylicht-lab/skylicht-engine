@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CCullingData.h"
 #include "Entity/CEntityManager.h"
 
+#include "Material/Shader/ShaderCallback/CShaderSH.h"
+
 namespace Skylicht
 {
 	CMeshRenderer::CMeshRenderer()
@@ -44,6 +46,7 @@ namespace Skylicht
 	{
 		m_meshs.set_used(0);
 		m_transforms.set_used(0);
+		m_indirectLightings.set_used(0);
 	}
 
 	void CMeshRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
@@ -66,10 +69,13 @@ namespace Skylicht
 			if (cullingVisible == true)
 			{
 				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+				CIndirectLightingData *indirect = entity->getData<CIndirectLightingData>();
+
 				if (transform != NULL)
 				{
 					m_meshs.push_back(meshData);
 					m_transforms.push_back(transform);
+					m_indirectLightings.push_back(indirect);
 				}
 			}
 		}
@@ -91,6 +97,7 @@ namespace Skylicht
 
 		CRenderMeshData** meshs = m_meshs.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();
+		CIndirectLightingData** indirectLighting = m_indirectLightings.pointer();
 
 		IRenderPipeline *rp = entityManager->getRenderPipeline();
 
@@ -98,6 +105,15 @@ namespace Skylicht
 		{
 			CRenderMeshData *meshData = m_meshs[i];
 			CMesh *mesh = meshData->getMesh();
+
+			CIndirectLightingData *lightingData = indirectLighting[i];
+			if (lightingData != NULL)
+			{
+				if (lightingData->Type == CIndirectLightingData::SH9)
+					CShaderSH::setSH9(lightingData->SH);
+				else if (lightingData->Type == CIndirectLightingData::SH4)
+					CShaderSH::setSH4(lightingData->SH);
+			}
 
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 

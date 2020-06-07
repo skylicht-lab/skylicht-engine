@@ -101,9 +101,14 @@ namespace Skylicht
 				data->Type = CIndirectLightingData::Lightmap;
 				data->LightmapIndex = m_lightmapIndex;
 			}
-			else if (m_type == SphericalHarmonics)
+			else if (m_type == SH4)
 			{
-				data->Type = CIndirectLightingData::SphericalHarmonics;
+				data->Type = CIndirectLightingData::SH4;
+				data->SH = m_sh;
+			}
+			else if (m_type == SH9)
+			{
+				data->Type = CIndirectLightingData::SH9;
 				data->SH = m_sh;
 			}
 			else

@@ -35,7 +35,8 @@ namespace Skylicht
 		{
 			Lightmap,
 			VertexColor,
-			SphericalHarmonics
+			SH4,
+			SH9
 		};
 
 		EType Type;
