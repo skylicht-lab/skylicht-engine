@@ -36,7 +36,8 @@ namespace Skylicht
 		{
 			Lightmap,
 			VertexColor,
-			SphericalHarmonics,
+			SH4,
+			SH9,
 		};
 
 	protected:

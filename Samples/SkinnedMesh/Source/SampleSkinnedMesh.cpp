@@ -49,6 +49,7 @@ void SampleSkinnedMesh::onInitApp()
 	shaderMgr->initBasicShader();
 
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
 
 	// Create a Scene
 	m_scene = new CScene();
@@ -106,6 +107,13 @@ void SampleSkinnedMesh::onInitApp()
 	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SkinnedMesh/Ch17_nonPBR.dae", "SkinnedMesh/textures");
 	if (prefab != NULL)
 	{
+		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
+		for (CMaterial *m : material)
+		{
+			m->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
+			m->autoDetectLoadTexture();
+		}
+
 		// CHARACTER 01
 		// ------------------------------------------
 
@@ -115,6 +123,7 @@ void SampleSkinnedMesh::onInitApp()
 		// load skinned mesh character 01
 		CRenderMesh *renderMesh1 = m_character01->addComponent<CRenderMesh>();
 		renderMesh1->initFromPrefab(prefab);
+		renderMesh1->initMaterial(material);
 
 		// apply animation to character 01
 		CAnimationController *animController1 = m_character01->addComponent<CAnimationController>();
@@ -126,7 +135,7 @@ void SampleSkinnedMesh::onInitApp()
 
 		// set sh lighting
 		CIndirectLighting *indirectLighting = m_character01->addComponent<CIndirectLighting>();
-		indirectLighting->setIndirectLightingType(CIndirectLighting::SphericalHarmonics);
+		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
 
 
 		// CHARACTER 02
@@ -138,6 +147,7 @@ void SampleSkinnedMesh::onInitApp()
 		// load skinned mesh character 02
 		CRenderMesh *renderMesh2 = m_character02->addComponent<CRenderMesh>();
 		renderMesh2->initFromPrefab(prefab);
+		renderMesh2->initMaterial(material);
 
 		// apply animation to character 02
 		CAnimationController *animController2 = m_character02->addComponent<CAnimationController>();
@@ -149,7 +159,7 @@ void SampleSkinnedMesh::onInitApp()
 
 		// set sh lighting
 		indirectLighting = m_character02->addComponent<CIndirectLighting>();
-		indirectLighting->setIndirectLightingType(CIndirectLighting::SphericalHarmonics);
+		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
 	}
 
 
