@@ -9,5 +9,5 @@ out vec4 FragColor;
 
 void main(void)
 {	
-	FragColor = vColor * textureLod(uTexReflect, vWorldNormal, 0);
+	FragColor = vColor * textureLod(uTexReflect, vWorldNormal, 0.0);
 }
