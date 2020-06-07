@@ -95,7 +95,7 @@ void SampleSkinnedMesh::onInitApp()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
+	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// load dae animation
@@ -179,6 +179,9 @@ void SampleSkinnedMesh::onRender()
 	{
 		m_bakeSHLighting = false;
 
+		m_character01->setVisible(false);
+		m_character02->setVisible(false);
+
 		CGameObject *bakeCameraObj = m_scene->getZone(0)->createEmptyObject();
 		CCamera *bakeCamera = bakeCameraObj->addComponent<CCamera>();
 		m_scene->updateAddRemoveObject();
@@ -201,6 +204,9 @@ void SampleSkinnedMesh::onRender()
 		// apply indirect lighting
 		m_character01->getComponent<CIndirectLighting>()->setSH(sh.getValue());
 		m_character02->getComponent<CIndirectLighting>()->setSH(sh.getValue());
+
+		m_character01->setVisible(true);
+		m_character02->setVisible(true);
 	}
 
 	m_forwardRP->render(

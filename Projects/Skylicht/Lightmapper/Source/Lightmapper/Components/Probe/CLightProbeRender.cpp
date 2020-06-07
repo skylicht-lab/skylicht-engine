@@ -31,6 +31,8 @@ namespace Skylicht
 {
 	namespace Lightmapper
 	{
+		bool CLightProbeRender::s_showProbe = false;
+
 		CLightProbeRender::CLightProbeRender()
 		{
 
@@ -49,6 +51,9 @@ namespace Skylicht
 
 		void CLightProbeRender::onQuery(CEntityManager *entityManager, CEntity *entity)
 		{
+			if (s_showProbe == false)
+				return;
+
 			CLightProbeData *probeData = entity->getData<CLightProbeData>();
 			if (probeData != NULL)
 			{

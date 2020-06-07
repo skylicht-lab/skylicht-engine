@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,41 +23,19 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CEntity.h"
-#include "CEntityManager.h"
-#include "CEntityPrefab.h"
+#include "CVisibleData.h"
 
 namespace Skylicht
 {
-	CEntity::CEntity(CEntityManager *mgr) :
-		m_alive(true),
-		m_visible(true)
+	CVisibleData::CVisibleData() :
+		SelfVisible(true),
+		Visible(true)
 	{
-		m_index = mgr->getNumEntities();
+
 	}
 
-	CEntity::CEntity(CEntityPrefab *mgr) :
-		m_alive(true),
-		m_visible(true)
+	CVisibleData::~CVisibleData()
 	{
-		m_index = mgr->getNumEntities();
-	}
 
-	CEntity::~CEntity()
-	{
-		removeAllData();
-	}
-
-	IEntityData* CEntity::getData(int dataIndex)
-	{
-		return m_data[dataIndex];
-	}
-
-	void CEntity::removeAllData()
-	{
-		IEntityData **data = m_data.pointer();
-		for (u32 i = 0, n = m_data.size(); i < n; i++)
-			delete data[i];
-		m_data.clear();
 	}
 }
