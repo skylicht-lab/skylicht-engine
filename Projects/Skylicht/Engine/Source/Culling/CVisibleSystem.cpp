@@ -22,45 +22,72 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Entity/IEntityData.h"
-#include "Entity/IRenderSystem.h"
-
-#include "CLightProbeData.h"
+#include "pch.h"
+#include "CVisibleSystem.h"
+#include "RenderPipeline/IRenderPipeline.h"
+#include "Entity/CEntityManager.h"
 #include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	CVisibleSystem::CVisibleSystem()
 	{
-		class CLightProbeRender : public IRenderSystem
+		m_pipelineType = IRenderPipeline::Mix;
+	}
+
+	CVisibleSystem::~CVisibleSystem()
+	{
+
+	}
+
+	void CVisibleSystem::beginQuery()
+	{
+	}
+
+	void CVisibleSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	{
+		CVisibleData *visible = entity->getData<CVisibleData>();
+		CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+
+		if (visible != NULL)
 		{
-		protected:
-			core::array<CLightProbeData*> m_probes;
-			core::array<CWorldTransformData*> m_transforms;
+			visible->SelfVisible = entity->isVisible();
+			visible->Visible = visible->SelfVisible;
 
-			static bool s_showProbe;
-
-		public:
-			CLightProbeRender();
-
-			virtual ~CLightProbeRender();
-
-			virtual void beginQuery();
-
-			virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
-
-			virtual void init(CEntityManager *entityManager);
-
-			virtual void update(CEntityManager *entityManager);
-
-			virtual void render(CEntityManager *entityManager);
-
-			static void showProbe(bool b)
+			if (visible->Visible == true && transform->ParentIndex >= 0)
 			{
-				s_showProbe = b;
+				if (transform->ParentIndex == 7)
+				{
+					int t = 0;
+					t++;
+				}
+
+				// link parent visible
+				CEntity *parentEntity = entityManager->getEntity(transform->ParentIndex);
+				CVisibleData *parentVisible = parentEntity->getData<CVisibleData>();
+
+				visible->Visible = parentVisible->Visible;
 			}
-		};
+		}
+	}
+
+	void CVisibleSystem::init(CEntityManager *entityManager)
+	{
+
+	}
+
+	void CVisibleSystem::update(CEntityManager *entityManager)
+	{
+
+	}
+
+	void CVisibleSystem::render(CEntityManager *entityManager)
+	{
+
+	}
+
+	void CVisibleSystem::postRender(CEntityManager *entityManager)
+	{
+
 	}
 }

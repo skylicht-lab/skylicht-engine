@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CRenderMeshData.h"
 #include "Entity/IRenderSystem.h"
 #include "Transform/CWorldTransformData.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 namespace Skylicht
 {
@@ -35,6 +36,7 @@ namespace Skylicht
 	protected:
 		core::array<CRenderMeshData*> m_meshs;
 		core::array<CWorldTransformData*> m_transforms;
+		core::array<CIndirectLightingData*> m_indirectLightings;
 
 	public:
 		CSkinnedMeshRenderer();

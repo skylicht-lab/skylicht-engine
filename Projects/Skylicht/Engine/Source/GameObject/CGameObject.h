@@ -173,10 +173,7 @@ namespace Skylicht
 			return m_static;
 		}
 
-		virtual void setVisible(bool b)
-		{
-			m_visible = b;
-		}
+		virtual void setVisible(bool b);
 
 		inline void setLighting(bool b)
 		{

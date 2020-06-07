@@ -17,6 +17,15 @@ struct PS_INPUT
 	float4 viewPosition: VIEWPOSITION;
 };
 
+cbuffer cbPerFrame
+{
+	float4 uLightColor;
+	float4 uSHConst[4];
+};
+
+static const float PI = 3.1415926;
+static const float EnvironmentScale = 1.0;
+
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0).xyz;
@@ -28,5 +37,20 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 n = normalize(mul(localCoords, rotation));
 	n = normalize(n);
 	
-	return float4(n, 1.0);
+	// SH Ambient
+	float3 ambientLighting = uSHConst[0].xyz +
+		uSHConst[1].xyz * n.y +
+		uSHConst[2].xyz * n.z +
+		uSHConst[3].xyz * n.x;
+	
+	// Lighting
+	float NdotL = max(dot(input.worldNormal, input.worldLightDir), 0.0);
+	float3 directionalLight = NdotL * uLightColor.rgb;
+	
+	float3 color = directionalLight * diffuseMap;
+
+	// IBL lighting
+	color += ambientLighting * diffuseMap * EnvironmentScale / PI;
+	
+	return float4(color, 1.0);
 }

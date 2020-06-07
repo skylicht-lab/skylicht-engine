@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	bool CReflectionProbeRender::s_showProbe = false;
+
 	CReflectionProbeRender::CReflectionProbeRender()
 	{
 		m_material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("ReflectionProbe");
@@ -47,6 +49,9 @@ namespace Skylicht
 
 	void CReflectionProbeRender::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
+		if (s_showProbe == false)
+			return;
+
 		CReflectionProbeData *probeData = entity->getData<CReflectionProbeData>();
 		if (probeData != NULL && probeData->ReflectionTexture != NULL)
 		{

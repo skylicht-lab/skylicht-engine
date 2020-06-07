@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CStringImp.h"
 
+#include "Culling/CVisibleData.h"
+
 namespace Skylicht
 {
 
@@ -113,6 +115,13 @@ namespace Skylicht
 			getEntityManager()->removeEntity(m_entity);
 			m_entity = NULL;
 		}
+	}
+
+	void CGameObject::setVisible(bool b)
+	{
+		m_visible = b;
+		if (m_entity != NULL)
+			m_entity->setVisible(b);
 	}
 
 	CEntityManager* CGameObject::getEntityManager()

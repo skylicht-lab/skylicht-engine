@@ -37,11 +37,12 @@ namespace Skylicht
 		friend class CEntityPrefab;
 
 	protected:
+		bool m_visible;
 		bool m_alive;
 		int m_index;
 
 		core::array<IEntityData*> m_data;
-	
+
 	public:
 		CEntity(CEntityManager *mgr);
 		CEntity(CEntityPrefab *mgr);
@@ -74,6 +75,16 @@ namespace Skylicht
 		inline bool isAlive()
 		{
 			return m_alive;
+		}
+
+		inline bool isVisible()
+		{
+			return m_visible;
+		}
+
+		inline void setVisible(bool b)
+		{
+			m_visible = b;
 		}
 
 	protected:
