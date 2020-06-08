@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CVisibleSystem.h"
 #include "Culling/CCullingSystem.h"
 #include "Lighting/CLightCullingSystem.h"
+#include "ReflectionProbe/CReflectionProbeSystem.h"
 
 namespace Skylicht
 {
@@ -51,6 +52,7 @@ namespace Skylicht
 		addSystem<CJointAnimationSystem>();
 		addSystem<CSkinnedMeshSystem>();
 		addSystem<CSoftwareSkinningSystem>();
+		addSystem<CReflectionProbeSystem>();
 
 		// culling system
 		addRenderSystem<CVisibleSystem>();
