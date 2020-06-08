@@ -11,11 +11,15 @@
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
 			<uniform name="uTexSpecular" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
+			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
 			
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
+	<resources>		
+		<resource name="uTexReflect" type="ReflectionProbe"/>
+	</resources>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_Diffuse.;_D."/>

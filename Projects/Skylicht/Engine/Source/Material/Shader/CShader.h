@@ -51,7 +51,7 @@ namespace Skylicht
 		POINT_LIGHT_COLOR,
 		POINT_LIGHT_POSITION,
 		POINT_LIGHT_ATTENUATION,
-		SPOT_LIGHT_CUTOFF,		
+		SPOT_LIGHT_CUTOFF,
 		OBJECT_PARAM,
 		MATERIAL_COLOR,
 		MATERIAL_PARAM,
@@ -132,7 +132,7 @@ namespace Skylicht
 
 	class CShader : public CBaseShaderCallback
 	{
-	public:		
+	public:
 		enum EUIControlType
 		{
 			UITexture = 0,
@@ -151,6 +151,7 @@ namespace Skylicht
 		{
 			Texture = 0,
 			CubeTexture,
+			ReflectionProbe,
 			ResourceCount
 		};
 

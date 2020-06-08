@@ -70,6 +70,8 @@ namespace Skylicht
 			m_entitiesData.push_back(animationData);
 
 			animationData->Name = worldTransform->Name;
+
+			// handle real world transform
 			animationData->WorldTransform = worldTransform;
 
 			// find parent

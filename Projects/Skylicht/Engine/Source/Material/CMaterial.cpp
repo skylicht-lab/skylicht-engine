@@ -447,6 +447,10 @@ namespace Skylicht
 						{
 							// texture = textureManager->getCubeTexture( ... );
 						}
+						else if (r->Type == CShader::ReflectionProbe)
+						{
+							// realtime reflection probe
+						}
 					}
 
 					// hold this texture
