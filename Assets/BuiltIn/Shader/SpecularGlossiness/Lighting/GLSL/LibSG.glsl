@@ -37,7 +37,7 @@ vec3 SG(
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
 	vec3 directionalLight = NdotL * lightColor * visibility;
-	vec3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
+	vec3 color = (directionalLight + light.rgb) + (specular * specularColor * visibility + light.a * specularColor);
 	
 	// IBL Ambient
 	color += indirect * diffuseColor / PI;
@@ -46,5 +46,5 @@ vec3 SG(
 	// vec3 reflection = -normalize(reflect(worldViewDir, worldNormal));
 	// color += texture(uTexReflect, reflection, roughness*uMipmapCount).rgb * specularColor * (1.5 + metallic);
 	
-	return color;
+	return color * diffuseColor;
 }
