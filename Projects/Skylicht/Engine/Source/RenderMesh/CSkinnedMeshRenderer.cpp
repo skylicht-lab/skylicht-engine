@@ -125,7 +125,10 @@ namespace Skylicht
 
 			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
+			{
+				// draw mesh
 				rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex);
+			}
 		}
 	}
 }
