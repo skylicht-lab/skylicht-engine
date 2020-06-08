@@ -22,21 +22,38 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CIndirectLightingData.h"
+#pragma once
+
+#include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
+
+#include "CReflectionProbeData.h"
+#include "Transform/CWorldTransformData.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 namespace Skylicht
 {
-	CIndirectLightingData::CIndirectLightingData() :
-		Type(Lightmap),
-		LightmapIndex(0),
-		ReflectionTexture(NULL)
+	class CReflectionProbeSystem : public IEntitySystem
 	{
+	protected:
+		core::array<CReflectionProbeData*> m_probes;
+		core::array<CWorldTransformData*> m_probePositions;
 
-	}
+		core::array<CIndirectLightingData*> m_entities;
+		core::array<CWorldTransformData*> m_entitiesPositions;
+		core::array<float> m_minDistance;
 
-	CIndirectLightingData::~CIndirectLightingData()
-	{
+	public:
+		CReflectionProbeSystem();
 
-	}
+		virtual ~CReflectionProbeSystem();
+
+		virtual void beginQuery();
+
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+
+		virtual void init(CEntityManager *entityManager);
+
+		virtual void update(CEntityManager *entityManager);
+	};
 }

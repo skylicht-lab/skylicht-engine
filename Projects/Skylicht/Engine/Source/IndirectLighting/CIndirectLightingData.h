@@ -43,6 +43,8 @@ namespace Skylicht
 		int LightmapIndex;
 
 		core::vector3df *SH;
+		
+		ITexture *ReflectionTexture;
 	public:
 		CIndirectLightingData();
 
