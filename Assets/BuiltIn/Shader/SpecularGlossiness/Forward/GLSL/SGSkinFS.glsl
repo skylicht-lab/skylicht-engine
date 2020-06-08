@@ -20,7 +20,6 @@ in vec3 vWorldPosition;
 out vec4 FragColor;
 
 const float PI = 3.1415926;
-const float EnvironmentScale = 1.0;
 
 void main(void)
 {
@@ -43,7 +42,7 @@ void main(void)
 	// Lighting
 	float NdotL = max(dot(vWorldNormal, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * uLightColor.rgb;
-	vec3 color = directionalLight * diffuseMap;
+	vec3 color = directionalLight;
 
 	// Specular
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);	
@@ -52,7 +51,7 @@ void main(void)
 	color += specular * uLightColor.rgb;
 	
 	// IBL lighting
-	color += ambientLighting * diffuseMap * EnvironmentScale / PI;
+	color += ambientLighting * diffuseMap / PI;
 	
-	FragColor = vec4(color, 1.0);
+	FragColor = vec4(color * diffuseMap, 1.0);
 }

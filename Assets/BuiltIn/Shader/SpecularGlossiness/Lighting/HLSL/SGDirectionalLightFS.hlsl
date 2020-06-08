@@ -100,9 +100,9 @@ float3 SG(
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	float3 directionalLight = NdotL * lightColor * visibility;
-	float3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
+	float3 color = (directionalLight + light.rgb) + (specular * specularColor * visibility + light.a * specularColor);
 	color += indirect * diffuseColor / PI;
-	return color;
+	return color * diffuseColor;
 }
 float4 main(PS_INPUT input) : SV_TARGET
 {

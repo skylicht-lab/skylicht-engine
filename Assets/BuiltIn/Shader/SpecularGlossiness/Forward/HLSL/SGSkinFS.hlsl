@@ -27,7 +27,6 @@ cbuffer cbPerFrame
 };
 
 static const float PI = 3.1415926;
-static const float EnvironmentScale = 1.0;
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
@@ -50,7 +49,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// Lighting
 	float NdotL = max(dot(input.worldNormal, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * uLightColor.rgb;
-	float3 color = directionalLight * diffuseMap;
+	float3 color = directionalLight;
 
 	// Specular
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);	
@@ -59,7 +58,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	color += specular * uLightColor.rgb;
 	
 	// IBL lighting
-	color += ambientLighting * diffuseMap * EnvironmentScale / PI;
+	color += ambientLighting * diffuseMap / PI;
 	
-	return float4(color, 1.0);
+	return float4(color * diffuseMap, 1.0);
 }
