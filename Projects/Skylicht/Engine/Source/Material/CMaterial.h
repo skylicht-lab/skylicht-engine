@@ -122,6 +122,11 @@ namespace Skylicht
 
 		virtual ~CMaterial();
 
+		inline CShader* getShader()
+		{
+			return m_shader;
+		}
+
 		inline void setOwner(CGameObject *obj)
 		{
 			m_owner = obj;
@@ -198,8 +203,6 @@ namespace Skylicht
 		void setProperty(const std::string& name, const std::string& value);
 
 		void loadDefaultTexture();
-
-		void loadRuntimeTexture();
 
 		void loadUniformTexture();
 
