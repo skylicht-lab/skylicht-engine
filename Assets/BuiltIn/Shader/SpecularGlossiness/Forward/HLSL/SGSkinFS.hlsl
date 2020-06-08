@@ -4,6 +4,9 @@ SamplerState uTexDiffuseSampler : register(s0);
 Texture2D uTexNormalMap : register(t1);
 SamplerState uTexNormalMapSampler : register(s1);
 
+Texture2D uTexSpecularMap : register(t2);
+SamplerState uTexSpecularMapSampler : register(s2);
+
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
@@ -30,6 +33,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0).xyz;
 	float3 normalMap = uTexNormalMap.Sample(uTexNormalMapSampler, input.tex0).xyz;
+	float3 specMap = uTexSpecularMap.Sample(uTexSpecularMapSampler, input.tex0).xyz;
 	
 	float3x3 rotation = float3x3(input.worldTangent, input.worldBinormal, input.worldNormal);
 	float3 localCoords = normalMap * 2.0 - float3(1.0, 1.0, 1.0);
@@ -46,9 +50,14 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// Lighting
 	float NdotL = max(dot(input.worldNormal, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * uLightColor.rgb;
-	
 	float3 color = directionalLight * diffuseMap;
 
+	// Specular
+	float3 H = normalize(input.worldLightDir + input.worldViewDir);	
+	float NdotE = max(0.0,dot(input.worldNormal, H));
+	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
+	color += specular * uLightColor.rgb;
+	
 	// IBL lighting
 	color += ambientLighting * diffuseMap * EnvironmentScale / PI;
 	
