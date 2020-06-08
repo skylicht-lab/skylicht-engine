@@ -82,7 +82,7 @@ namespace Skylicht
 
 			for (u32 j = 0, m = m_entities.size(); j < m; j++)
 			{
-				core::vector3df entityPosition = m_entitiesPositions[i]->World.getTranslation();
+				core::vector3df entityPosition = m_entitiesPositions[j]->World.getTranslation();
 
 				// find nearest probe
 				float d = probePosition.getDistanceFromSQ(entityPosition);

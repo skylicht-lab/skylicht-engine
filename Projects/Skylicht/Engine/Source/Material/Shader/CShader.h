@@ -151,8 +151,6 @@ namespace Skylicht
 		{
 			Texture = 0,
 			CubeTexture,
-			StaticCubeTexture,
-			ShadowMapTexture,
 			ResourceCount
 		};
 
