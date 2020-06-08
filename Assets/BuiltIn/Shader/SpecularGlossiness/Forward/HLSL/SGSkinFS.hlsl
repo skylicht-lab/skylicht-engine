@@ -7,6 +7,9 @@ SamplerState uTexNormalMapSampler : register(s1);
 Texture2D uTexSpecularMap : register(t2);
 SamplerState uTexSpecularMapSampler : register(s2);
 
+TextureCube uTexReflect : register(t3);
+SamplerState uTexReflectSampler : register(s3);
+
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
@@ -27,6 +30,26 @@ cbuffer cbPerFrame
 };
 
 static const float PI = 3.1415926;
+static const float MinReflectance = 0.04;
+
+float getPerceivedBrightness(float3 color)
+{
+    return sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b);
+}
+
+
+float solveMetallic(float3 diffuse, float3 specular, float oneMinusSpecularStrength)
+{
+    float specularBrightness = getPerceivedBrightness(specular);
+    float diffuseBrightness = getPerceivedBrightness(diffuse);
+
+    float a = MinReflectance;
+    float b = diffuseBrightness * oneMinusSpecularStrength / (1.0 - MinReflectance) + specularBrightness - 2.0 * MinReflectance;
+    float c = MinReflectance - specularBrightness;
+    float D = b * b - 4.0 * a * c;
+
+    return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
+}
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
@@ -40,6 +63,18 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 n = normalize(mul(localCoords, rotation));
 	n = normalize(n);
 	
+	// Solver metallic
+	float roughness = 1.0 - specMap.g;
+
+	float3 f0 = specMap.r;
+	float3 specularColor = f0;
+    float oneMinusSpecularStrength = 1.0 - specMap.r;
+	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
+	
+	f0 = float3(0.04, 0.04, 0.04);
+	float3 diffuseColor = diffuseMap.rgb * (float3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+    specularColor = lerp(f0, diffuseMap.rgb, metallic);
+	
 	// SH Ambient
 	float3 ambientLighting = uSHConst[0].xyz +
 		uSHConst[1].xyz * n.y +
@@ -49,16 +84,20 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// Lighting
 	float NdotL = max(dot(input.worldNormal, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * uLightColor.rgb;
-	float3 color = directionalLight;
+	float3 color = directionalLight * diffuseColor;
 
 	// Specular
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);	
 	float NdotE = max(0.0,dot(input.worldNormal, H));
-	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
-	color += specular * uLightColor.rgb;
+	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r * 3.0;
+	color += specular * specularColor;
 	
-	// IBL lighting
-	color += ambientLighting * diffuseMap / PI;
+	// IBL lighting (2 bounce)
+	color += ambientLighting * diffuseColor * 2.0 / PI;
 	
-	return float4(color * diffuseMap, 1.0);
+	float3 reflection = -normalize(reflect(input.worldViewDir, input.worldNormal));
+	float3 reflect = uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz * specularColor * metallic;
+	color += reflect;
+	
+	return float4(color, 1.0);
 }
