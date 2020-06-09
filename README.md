@@ -131,8 +131,8 @@ Engine Components are used:
 <img src="Documents/Media/Samples/sample_lucky_draw.gif" width="50%"/>
 
 ### Samples\SkinnedMesh
-This is demo load [mixamo](https://www.mixamo.com) model and animation.
-- **DAE Collada** (model/animation) loader
+This is demo of how to render character model with animation, models are downloaded from [mixamo](https://www.mixamo.com)
+- **DAE Collada** loader model/animation
 - **Forwarder**
 - **Skydome**
 - **AnimationController**
