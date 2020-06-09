@@ -82,13 +82,12 @@ namespace Skylicht
 		return output;
 	}
 
-	bool CMeshManager::exportModel(CEntity** entity, int count, const char *output)
+	bool CMeshManager::exportModel(CEntity** entity, u32 count, const char *output)
 	{
 		IMeshExporter *exporter = NULL;
 
-		// load from file
 		std::string ext = CPath::getFileNameExt(output);
-		if (ext == "lichtmodel")
+		if (ext == "smesh")
 			exporter = new CSkylichtMeshExporter();
 
 		if (exporter != NULL)
