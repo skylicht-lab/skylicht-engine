@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "Entity/CEntity.h"
+#include "Exporter/ExportResources.h"
 #include "CSkylichtMeshExporter.h"
 
 namespace Skylicht
@@ -38,8 +39,26 @@ namespace Skylicht
 
 	}
 
-	bool CSkylichtMeshExporter::exportModel(CEntity** entity, int count, const char *output)
+	bool CSkylichtMeshExporter::exportModel(CEntity** entity, u32 count, const char *output)
 	{
+		IrrlichtDevice *device = getIrrlichtDevice();
+		io::IFileSystem *fs = device->getFileSystem();
+
+		io::IWriteFile *writeFile = fs->createAndWriteFile(output);
+		if (writeFile == NULL)
+			return false;
+
+		// write header
+		SAssetHeader assetHeader;
+		strcpy(assetHeader.Sign, "SLT");
+		assetHeader.AssetType = (u32)AssetModel;
+		assetHeader.AssetVersion = 1;
+		writeFile->write(&assetHeader, sizeof(SAssetHeader));
+
+		// write num of entities
+		writeFile->write(&count, sizeof(u32));
+
+		writeFile->drop();
 		return false;
 	}
 }

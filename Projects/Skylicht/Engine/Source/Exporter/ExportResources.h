@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -26,21 +26,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CEntity;
-
-	class IMeshExporter
+	enum EExportAsset
 	{
-	public:
-		IMeshExporter()
-		{
+		Unknown = 0,
+		AssetModel,
+		AssetAnimation
+	};
 
-		}
-
-		virtual ~IMeshExporter()
-		{
-
-		}		
-
-		virtual bool exportModel(CEntity** entity, u32 count, const char *output) = 0;
+	struct SAssetHeader
+	{
+		char Sign[4];
+		u32 AssetType;
+		u32 AssetVersion;
 	};
 }
