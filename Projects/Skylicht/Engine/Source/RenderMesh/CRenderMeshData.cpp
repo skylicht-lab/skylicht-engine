@@ -163,4 +163,6 @@ namespace Skylicht
 		OriginalMesh = RenderMesh;
 		RenderMesh = mesh;
 	}
+
+	ACTIVATOR_REGISTER(CRenderMeshData);
 }

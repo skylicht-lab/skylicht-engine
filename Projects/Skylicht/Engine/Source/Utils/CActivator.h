@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,22 +22,25 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CJointData.h"
+#pragma once
+
+#define ACTIVATOR_REGISTER(type)  \
+	IActivatorObject* type##CreateFunc() { return new type(); } \
+	bool type##Activator = CActivator::registerType(std::string(#type), &type##CreateFunc);
 
 namespace Skylicht
 {
-	CJointData::CJointData() :
-		BoneRoot(false),
-		RootIndex(-1)
+	class IActivatorObject
 	{
+	};
 
-	}
+	typedef IActivatorObject* (*ActivatorCreateInstance)();
 
-	CJointData::~CJointData()
+	class CActivator
 	{
+	public:
+		static bool registerType(const std::string& type, ActivatorCreateInstance func);
 
-	}
-
-	ACTIVATOR_REGISTER(CJointData)
+		static IActivatorObject* createInstance(const char *type);
+	};
 }
