@@ -1,5 +1,6 @@
 import os
 from tinydb import TinyDB, Query
+from PIL import Image
 import os.path
 import time
 import json
@@ -20,9 +21,15 @@ print("")
 
 def compress(inputFile, outputFile):
     format = "-bc1"
+
+    im = Image.open(inputFile)
+    if im.mode == "RGBA":
+        format = "-bc3"
+	
     for nmExt in normalMap:
         if inputFile.find(nmExt) >= 0:
             format = "-bc3"
+            
     # call build tools
     params = "%s -nocuda" % (format)
     command = "%s %s %s %s" % (

@@ -50,6 +50,7 @@ void SampleSkinnedMesh::onInitApp()
 
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
 
 	// Create a Scene
 	m_scene = new CScene();
@@ -108,10 +109,15 @@ void SampleSkinnedMesh::onInitApp()
 	if (prefab != NULL)
 	{
 		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
-		for (CMaterial *m : material)
+		if (material.size() == 2)
 		{
-			m->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
-			m->autoDetectLoadTexture();
+			// body
+			material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
+			material[1]->autoDetectLoadTexture();
+
+			// hair
+			material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
+			material[0]->autoDetectLoadTexture();
 		}
 
 		// CHARACTER 01
