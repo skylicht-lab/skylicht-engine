@@ -56,12 +56,6 @@ namespace Skylicht
 
 			if (visible->Visible == true && transform->ParentIndex >= 0)
 			{
-				if (transform->ParentIndex == 7)
-				{
-					int t = 0;
-					t++;
-				}
-
 				// link parent visible
 				CEntity *parentEntity = entityManager->getEntity(transform->ParentIndex);
 				CVisibleData *parentVisible = parentEntity->getData<CVisibleData>();
