@@ -38,4 +38,6 @@ namespace Skylicht
 	{
 
 	}
+
+	ACTIVATOR_REGISTER(CCullingData);
 }

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,24 +24,71 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CActivator.h"
-
 namespace Skylicht
 {
-	class IEntityData : public IActivatorObject
+
+	class CMemoryStream
 	{
+	protected:
+		unsigned char *m_memory;
+		unsigned int m_size;
+		unsigned int m_totalSize;
+		unsigned int m_pos;
+		bool m_fromMemory;
 	public:
-		int EntityIndex;
+		CMemoryStream(unsigned int initMem);
 
-	public:
-		IEntityData()
+		CMemoryStream(unsigned char *fromMem, unsigned int size);
+
+		virtual ~CMemoryStream();
+
+		void writeData(const void* data, unsigned int size);
+
+		void writeChar(const char data);
+		void writeShort(const short data);
+		void writeInt(const int data);
+		void writeLong(const long data);
+		void writeFloat(const float data);
+		void writeDouble(const float data);
+		void writeString(const std::string& s);
+
+		unsigned int readData(void* data, unsigned int size);
+
+		char readChar();
+		short readShort();
+		int readInt();
+		long readLong();
+		float readFloat();
+		double readDouble();
+		std::string readString();
+
+		unsigned char *getData()
 		{
-
+			return m_memory;
 		}
 
-		virtual ~IEntityData()
+		unsigned int getSize()
 		{
-
+			return m_size;
 		}
+
+		unsigned int getPos()
+		{
+			return m_pos;
+		}
+
+		unsigned int getTotalSize()
+		{
+			return m_totalSize;
+		}
+
+		void setPos(unsigned int pos)
+		{
+			m_pos = pos;
+		}
+
+		void encrypt();
+		void decrypt();
 	};
+
 }
