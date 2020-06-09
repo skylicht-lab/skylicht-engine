@@ -330,6 +330,16 @@ namespace Skylicht
 			return m_deferred;
 		}
 
+		bool isOpaque()
+		{
+			return m_baseShader == EMT_SOLID;
+		}
+
+		E_MATERIAL_TYPE getBaseMaterial()
+		{
+			return m_baseShader;
+		}
+
 	public:
 
 		// shader callback

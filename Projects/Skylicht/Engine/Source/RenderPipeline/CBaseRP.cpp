@@ -136,6 +136,13 @@ namespace Skylicht
 						}
 					}
 				}
+
+				// transparent (disable zwrite)
+				if (shader->isOpaque() == false)
+				{
+					irrMaterial.ZWriteEnable = false;
+					irrMaterial.BackfaceCulling = false;
+				}
 			}
 
 			CShaderMaterial::setMaterial(material);
