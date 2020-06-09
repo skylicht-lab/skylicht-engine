@@ -48,6 +48,8 @@ namespace Skylicht
 		m_meshs.set_used(0);
 		m_transforms.set_used(0);
 		m_indirectLightings.set_used(0);
+
+		m_transparents.set_used(0);
 	}
 
 	void CSkinnedMeshRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
@@ -123,11 +125,75 @@ namespace Skylicht
 			// set transform
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
+			bool haveTransparent = false;
+
 			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
-				// draw mesh
-				rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex);
+				CMaterial *material = mesh->Material[j];
+				if (material == NULL)
+				{
+					// draw opaque mesh because unknown material
+					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex);
+				}
+				else if (material->getShader() != NULL && material->getShader()->isOpaque() == false)
+				{
+					// draw transparent material later
+					haveTransparent = true;
+				}
+				else
+				{
+					// draw opaque mesh
+					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex);
+				}
+			}
+
+			if (haveTransparent == true)
+			{
+				// this will render in transparent pass
+				m_transparents.push_back(i);
+			}
+		}
+	}
+
+	void CSkinnedMeshRenderer::renderTransparent(CEntityManager *entityManager)
+	{
+		u32 numTransparent = m_transparents.size();
+		if (numTransparent == 0)
+			return;
+
+		IVideoDriver *driver = getVideoDriver();
+
+		CRenderMeshData** meshs = m_meshs.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
+
+		CShaderManager *shaderManager = CShaderManager::getInstance();
+		IRenderPipeline *rp = entityManager->getRenderPipeline();
+
+		for (u32 i = 0; i < numTransparent; i++)
+		{
+			u32 meshID = m_transparents[i];
+
+			CRenderMeshData *renderMeshData = m_meshs[meshID];
+			CSkinnedMesh *mesh = (CSkinnedMesh*)renderMeshData->getMesh();
+
+			// set bone matrix to shader callback
+			shaderManager->BoneMatrix = mesh->SkinningMatrix;
+
+			// set transform
+			driver->setTransform(video::ETS_WORLD, transforms[meshID]->World);
+
+			// render mesh
+			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
+			{
+				CMaterial *material = mesh->Material[j];
+
+				if (material != NULL &&
+					material->getShader() != NULL &&
+					material->getShader()->isOpaque() == false)
+				{
+					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex);
+				}
 			}
 		}
 	}

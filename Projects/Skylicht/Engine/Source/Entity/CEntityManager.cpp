@@ -221,6 +221,17 @@ namespace Skylicht
 			}
 		}
 
+		// transparent pass
+		for (IRenderSystem* &s : m_sortRender)
+		{
+			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+			{
+				s->renderTransparent(this);
+			}
+		}
+
+		// post render
 		for (IRenderSystem* &s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();

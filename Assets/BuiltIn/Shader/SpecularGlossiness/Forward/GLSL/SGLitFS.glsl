@@ -44,7 +44,7 @@ float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
 
 void main(void)
 {
-	vec3 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy).xyz;
+	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy);
 	vec3 normalMap = texture(uTexNormal, vTexCoord0.xy).xyz;
 	vec3 specMap = texture(uTexSpecular, vTexCoord0.xy).xyz;
 	
@@ -90,5 +90,5 @@ void main(void)
 	vec3 reflection = -normalize(reflect(vWorldViewDir, vWorldNormal));
 	color += textureLod(uTexReflect, reflection, roughness * 8).xyz * specularColor * metallic;	
 	
-	FragColor = vec4(color, 1.0);
+	FragColor = vec4(color, diffuseMap.a);
 }

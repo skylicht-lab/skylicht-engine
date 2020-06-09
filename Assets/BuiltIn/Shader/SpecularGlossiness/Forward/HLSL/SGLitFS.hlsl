@@ -53,7 +53,7 @@ float solveMetallic(float3 diffuse, float3 specular, float oneMinusSpecularStren
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float3 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0).xyz;
+	float4 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
 	float3 normalMap = uTexNormalMap.Sample(uTexNormalMapSampler, input.tex0).xyz;
 	float3 specMap = uTexSpecularMap.Sample(uTexSpecularMapSampler, input.tex0).xyz;
 	
@@ -99,5 +99,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 reflection = -normalize(reflect(input.worldViewDir, input.worldNormal));
 	color += uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz * specularColor * metallic;	
 	
-	return float4(color, 1.0);
+	return float4(color, diffuseMap.a);
 }

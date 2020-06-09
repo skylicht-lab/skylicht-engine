@@ -37,8 +37,8 @@ namespace Skylicht
 	public:
 		enum ERenderPass
 		{
-			Opaque = 0,
-			Sky,
+			Sky = 0,
+			Opaque,
 			Transparent,
 			Effect,
 		};
@@ -67,6 +67,11 @@ namespace Skylicht
 		}
 
 		virtual void render(CEntityManager *entityManager) = 0;
+
+		virtual void renderTransparent(CEntityManager *entityManager)
+		{
+
+		}
 
 		virtual void postRender(CEntityManager *entityManager)
 		{
