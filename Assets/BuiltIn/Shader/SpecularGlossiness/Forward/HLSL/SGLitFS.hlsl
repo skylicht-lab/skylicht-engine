@@ -89,15 +89,15 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// Specular
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);	
 	float NdotE = max(0.0,dot(input.worldNormal, H));
-	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r * 3.0;
+	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
 	color += specular * specularColor;
 	
 	// IBL lighting (2 bounce)
 	color += ambientLighting * diffuseColor * 2.0 / PI;
 	
+	// IBL reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, input.worldNormal));
-	float3 reflect = uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz * specularColor * metallic;
-	color += reflect;
+	color += uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz * specularColor * metallic;	
 	
 	return float4(color, 1.0);
 }
