@@ -64,6 +64,8 @@ namespace Skylicht
 
 	public:
 
+		void updateTextureResource(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
+
 		void beginRender2D(float w, float h);
 
 		void renderBufferToTarget(float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);

@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CCullingData.h"
+#include "CVisibleData.h"
 #include "Entity/IRenderSystem.h"
 #include "Transform/CWorldTransformData.h"
 #include "Transform/CWorldInverseTransformData.h"

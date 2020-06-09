@@ -42,5 +42,7 @@ namespace Skylicht
 
 	public:
 		static void setSH9(core::vector3df *sh);
+
+		static void setSH4(core::vector3df *sh);
 	};
 }

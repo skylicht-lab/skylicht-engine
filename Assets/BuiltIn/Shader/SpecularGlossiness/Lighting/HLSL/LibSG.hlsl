@@ -38,7 +38,7 @@ float3 SG(
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
 	float3 directionalLight = NdotL * lightColor * visibility;
-	float3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
+	float3 color = (directionalLight + light.rgb) + (specular * specularColor * visibility + light.a * specularColor);
 	
 	// IBL Ambient
 	color += indirect * diffuseColor / PI;
@@ -47,5 +47,5 @@ float3 SG(
 	// float3 reflection = -normalize(reflect(worldViewDir, worldNormal));
 	// color += uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness*uMipmapCount).rgb * specularColor * (1.5 + metallic);
 	
-	return color;
+	return color * diffuseColor;
 }

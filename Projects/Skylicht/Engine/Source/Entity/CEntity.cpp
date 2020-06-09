@@ -30,12 +30,15 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CEntity::CEntity(CEntityManager *mgr) :
-		m_alive(true)
+		m_alive(true),
+		m_visible(true)
 	{
 		m_index = mgr->getNumEntities();
 	}
 
-	CEntity::CEntity(CEntityPrefab *mgr)
+	CEntity::CEntity(CEntityPrefab *mgr) :
+		m_alive(true),
+		m_visible(true)
 	{
 		m_index = mgr->getNumEntities();
 	}
