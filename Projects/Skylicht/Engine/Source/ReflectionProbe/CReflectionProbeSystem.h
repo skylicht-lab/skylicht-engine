@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,42 +22,38 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CEntity.h"
-#include "CEntityManager.h"
-#include "CEntityPrefab.h"
+#pragma once
+
+#include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
+
+#include "CReflectionProbeData.h"
+#include "Transform/CWorldTransformData.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 namespace Skylicht
 {
-	CEntity::CEntity(CEntityManager *mgr) :
-		m_alive(true),
-		m_visible(true)
+	class CReflectionProbeSystem : public IEntitySystem
 	{
-		m_index = mgr->getNumEntities();
-	}
+	protected:
+		core::array<CReflectionProbeData*> m_probes;
+		core::array<CWorldTransformData*> m_probePositions;
 
-	CEntity::CEntity(CEntityPrefab *mgr) :
-		m_alive(true),
-		m_visible(true)
-	{
-		m_index = mgr->getNumEntities();
-	}
+		core::array<CIndirectLightingData*> m_entities;
+		core::array<CWorldTransformData*> m_entitiesPositions;
+		core::array<float> m_minDistance;
 
-	CEntity::~CEntity()
-	{
-		removeAllData();
-	}
+	public:
+		CReflectionProbeSystem();
 
-	IEntityData* CEntity::getData(int dataIndex)
-	{
-		return m_data[dataIndex];
-	}
+		virtual ~CReflectionProbeSystem();
 
-	void CEntity::removeAllData()
-	{
-		IEntityData **data = m_data.pointer();
-		for (u32 i = 0, n = m_data.size(); i < n; i++)
-			delete data[i];
-		m_data.clear();
-	}
+		virtual void beginQuery();
+
+		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+
+		virtual void init(CEntityManager *entityManager);
+
+		virtual void update(CEntityManager *entityManager);
+	};
 }

@@ -42,6 +42,9 @@ namespace Skylicht
 		std::vector<IEntitySystem*> m_systems;
 		std::vector<IRenderSystem*> m_renders;
 
+		std::vector<IRenderSystem*> m_sortRender;
+		bool m_systemChanged;
+
 		CCamera *m_camera;
 
 		IRenderPipeline *m_renderPipeline;
@@ -54,6 +57,8 @@ namespace Skylicht
 		void update();
 
 		void render();
+
+		void render(IRenderSystem::ERenderPass pass);
 
 		void cullingAndRender();
 
@@ -131,6 +136,8 @@ namespace Skylicht
 		}
 
 		system->init(this);
+
+		m_systemChanged = true;
 
 		m_systems.push_back(system);
 		return newSystem;

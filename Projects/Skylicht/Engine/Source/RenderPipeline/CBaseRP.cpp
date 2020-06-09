@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderCamera.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
+#include "IndirectLighting/CIndirectLightingData.h"
+
 namespace Skylicht
 {
 	CBaseRP::CBaseRP() :
@@ -105,17 +107,60 @@ namespace Skylicht
 			m_next->render(target, camera, entity, viewport);
 	}
 
-	void CBaseRP::drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
+	void CBaseRP::updateTextureResource(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
 	{
+		IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
+		video::SMaterial& irrMaterial = mb->getMaterial();
+
 		// set shader (uniform) material
 		if (mesh->Material.size() > (u32)bufferID)
-			CShaderMaterial::setMaterial(mesh->Material[bufferID]);
+		{
+			CMaterial *material = mesh->Material[bufferID];
+			CShader *shader = material->getShader();
+			if (shader != NULL)
+			{
+				for (int i = 0, n = shader->getNumResource(); i < n; i++)
+				{
+					CShader::SResource *res = shader->getResouceInfo(i);
+
+					if (res->Type == CShader::ReflectionProbe)
+					{
+						SUniform *uniform = shader->getFSUniform(res->Name.c_str());
+						if (uniform != NULL)
+						{
+							CIndirectLightingData *lightData = entity->getEntity(entityID)->getData<CIndirectLightingData>();
+							u32 textureID = (u32)uniform->Value[0];
+
+							if (lightData != NULL && lightData->ReflectionTexture != NULL && textureID < MATERIAL_MAX_TEXTURES)
+								irrMaterial.setTexture(textureID, lightData->ReflectionTexture);
+						}
+					}
+				}
+
+				// transparent (disable zwrite)
+				if (shader->isOpaque() == false)
+				{
+					irrMaterial.ZWriteEnable = false;
+					irrMaterial.BackfaceCulling = false;
+				}
+			}
+
+			CShaderMaterial::setMaterial(material);
+		}
+	}
+
+	void CBaseRP::drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
+	{
+		// update texture resource
+		updateTextureResource(mesh, bufferID, entity, entityID);
 
 		IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver *driver = getVideoDriver();
 
+		video::SMaterial& irrMaterial = mb->getMaterial();
+
 		// set irrlicht material
-		driver->setMaterial(mb->getMaterial());
+		driver->setMaterial(irrMaterial);
 
 		// draw mesh buffer
 		driver->drawMeshBuffer(mb);

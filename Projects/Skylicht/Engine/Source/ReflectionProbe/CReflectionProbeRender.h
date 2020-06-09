@@ -40,6 +40,8 @@ namespace Skylicht
 
 		SMaterial m_material;
 
+		static bool s_showProbe;
+
 	public:
 		CReflectionProbeRender();
 
@@ -54,5 +56,10 @@ namespace Skylicht
 		virtual void update(CEntityManager *entityManager);
 
 		virtual void render(CEntityManager *entityManager);
+
+		static void showProbe(bool b)
+		{
+			s_showProbe = b;
+		}
 	};
 }
