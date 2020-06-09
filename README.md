@@ -130,6 +130,14 @@ Engine Components are used:
 - **EventManager**
 <img src="Documents/Media/Samples/sample_lucky_draw.gif" width="50%"/>
 
+### Samples\SkinnedMesh
+This is demo load [mixamo](https://www.mixamo.com) model and animation.
+- **DAE Collada** (model/animation) loader
+- **Forwarder**
+- **Skydome**
+- **AnimationController**
+<img src="Documents/Media/Samples/sample_skinned_mesh.gif" width="50%"/>
+
 ### Samples\TankScene
 This is a demo of use lightmapper to set indirect lighting color into vertex color.
 
