@@ -5,6 +5,8 @@
 #include "SkyDome/CSkyDome.h"
 #include "GridPlane/CGridPlane.h"
 
+#include "Lightmapper/CLightmapper.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SampleSkinnedMesh *app = new SampleSkinnedMesh();
@@ -15,15 +17,20 @@ SampleSkinnedMesh::SampleSkinnedMesh() :
 	m_scene(NULL),
 	m_camera(NULL),
 	m_guiCamera(NULL),
-	m_forwardRP(NULL)
+	m_forwardRP(NULL),
+	m_bakeSHLighting(true),
+	m_character01(NULL),
+	m_character02(NULL)
 {
-
+	Lightmapper::CLightmapper::createGetInstance();
 }
 
 SampleSkinnedMesh::~SampleSkinnedMesh()
 {
 	delete m_scene;
 	delete m_forwardRP;
+
+	Lightmapper::CLightmapper::releaseInstance();
 }
 
 void SampleSkinnedMesh::onInitApp()
@@ -40,8 +47,10 @@ void SampleSkinnedMesh::onInitApp()
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
-	
+
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
 
 	// Create a Scene
 	m_scene = new CScene();
@@ -87,7 +96,7 @@ void SampleSkinnedMesh::onInitApp()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
+	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// load dae animation
@@ -99,37 +108,64 @@ void SampleSkinnedMesh::onInitApp()
 	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SkinnedMesh/Ch17_nonPBR.dae", "SkinnedMesh/textures");
 	if (prefab != NULL)
 	{
+		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
+		if (material.size() == 2)
+		{
+			// body
+			material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
+			material[1]->autoDetectLoadTexture();
+
+			// hair
+			material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
+			material[0]->autoDetectLoadTexture();
+		}
+
+		// CHARACTER 01
+		// ------------------------------------------
+
 		// create character 01 object
-		CGameObject *characterObj1 = zone->createEmptyObject();
+		m_character01 = zone->createEmptyObject();
 
 		// load skinned mesh character 01
-		CRenderMesh *renderMesh1 = characterObj1->addComponent<CRenderMesh>();
+		CRenderMesh *renderMesh1 = m_character01->addComponent<CRenderMesh>();
 		renderMesh1->initFromPrefab(prefab);
+		renderMesh1->initMaterial(material);
 
 		// apply animation to character 01
-		CAnimationController *animController1 = characterObj1->addComponent<CAnimationController>();
+		CAnimationController *animController1 = m_character01->addComponent<CAnimationController>();
 		CSkeleton *skeleton1 = animController1->createSkeleton();
 		skeleton1->setAnimation(clip1, true);
 
 		// set position for character 01
-		characterObj1->getTransformEuler()->setPosition(core::vector3df(-1.0f, 0.0f, 0.0f));
+		m_character01->getTransformEuler()->setPosition(core::vector3df(-1.0f, 0.0f, 0.0f));
+
+		// set sh lighting
+		CIndirectLighting *indirectLighting = m_character01->addComponent<CIndirectLighting>();
+		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
 
 
+		// CHARACTER 02
+		// ------------------------------------------
 
 		// create character 02 object
-		CGameObject *characterObj2 = zone->createEmptyObject();
+		m_character02 = zone->createEmptyObject();
 
 		// load skinned mesh character 02
-		CRenderMesh *renderMesh2 = characterObj2->addComponent<CRenderMesh>();
+		CRenderMesh *renderMesh2 = m_character02->addComponent<CRenderMesh>();
 		renderMesh2->initFromPrefab(prefab);
+		renderMesh2->initMaterial(material);
 
 		// apply animation to character 02
-		CAnimationController *animController2 = characterObj2->addComponent<CAnimationController>();
+		CAnimationController *animController2 = m_character02->addComponent<CAnimationController>();
 		CSkeleton *skeleton2 = animController2->createSkeleton();
 		skeleton2->setAnimation(clip2, true);
 
 		// set position for character 02
-		characterObj2->getTransformEuler()->setPosition(core::vector3df(1.0f, 0.0f, 0.0f));
+		m_character02->getTransformEuler()->setPosition(core::vector3df(1.0f, 0.0f, 0.0f));
+
+		// set sh lighting
+		indirectLighting = m_character02->addComponent<CIndirectLighting>();
+		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
 	}
 
 
@@ -145,6 +181,40 @@ void SampleSkinnedMesh::onUpdate()
 
 void SampleSkinnedMesh::onRender()
 {
+	if (m_bakeSHLighting == true)
+	{
+		m_bakeSHLighting = false;
+
+		m_character01->setVisible(false);
+		m_character02->setVisible(false);
+
+		CGameObject *bakeCameraObj = m_scene->getZone(0)->createEmptyObject();
+		CCamera *bakeCamera = bakeCameraObj->addComponent<CCamera>();
+		m_scene->updateAddRemoveObject();
+
+		core::vector3df pos(0.0f, 0.0f, 0.0f);
+
+		core::vector3df normal = CTransform::s_oy;
+		core::vector3df tangent = CTransform::s_ox;
+		core::vector3df binormal = normal.crossProduct(tangent);
+		binormal.normalize();
+
+		Lightmapper::CLightmapper *lm = Lightmapper::CLightmapper::getInstance();
+		Lightmapper::CSH9 sh = lm->bakeAtPosition(
+			bakeCamera,
+			m_forwardRP,
+			m_scene->getEntityManager(),
+			pos,
+			normal, tangent, binormal);
+
+		// apply indirect lighting
+		m_character01->getComponent<CIndirectLighting>()->setSH(sh.getValue());
+		m_character02->getComponent<CIndirectLighting>()->setSH(sh.getValue());
+
+		m_character01->setVisible(true);
+		m_character02->setVisible(true);
+	}
+
 	m_forwardRP->render(
 		NULL,
 		m_camera,

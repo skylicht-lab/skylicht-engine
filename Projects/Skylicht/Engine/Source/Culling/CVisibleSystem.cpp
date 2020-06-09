@@ -23,19 +23,64 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CIndirectLightingData.h"
+#include "CVisibleSystem.h"
+#include "RenderPipeline/IRenderPipeline.h"
+#include "Entity/CEntityManager.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	CIndirectLightingData::CIndirectLightingData() :
-		Type(Lightmap),
-		LightmapIndex(0),
-		ReflectionTexture(NULL)
+	CVisibleSystem::CVisibleSystem()
+	{
+		m_pipelineType = IRenderPipeline::Mix;
+	}
+
+	CVisibleSystem::~CVisibleSystem()
 	{
 
 	}
 
-	CIndirectLightingData::~CIndirectLightingData()
+	void CVisibleSystem::beginQuery()
+	{
+	}
+
+	void CVisibleSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	{
+		CVisibleData *visible = entity->getData<CVisibleData>();
+		CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+
+		if (visible != NULL)
+		{
+			visible->SelfVisible = entity->isVisible();
+			visible->Visible = visible->SelfVisible;
+
+			if (visible->Visible == true && transform->ParentIndex >= 0)
+			{
+				// link parent visible
+				CEntity *parentEntity = entityManager->getEntity(transform->ParentIndex);
+				CVisibleData *parentVisible = parentEntity->getData<CVisibleData>();
+
+				visible->Visible = parentVisible->Visible;
+			}
+		}
+	}
+
+	void CVisibleSystem::init(CEntityManager *entityManager)
+	{
+
+	}
+
+	void CVisibleSystem::update(CEntityManager *entityManager)
+	{
+
+	}
+
+	void CVisibleSystem::render(CEntityManager *entityManager)
+	{
+
+	}
+
+	void CVisibleSystem::postRender(CEntityManager *entityManager)
 	{
 
 	}

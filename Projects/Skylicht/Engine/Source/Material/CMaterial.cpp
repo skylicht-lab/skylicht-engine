@@ -445,15 +445,11 @@ namespace Skylicht
 						}
 						else if (r->Type == CShader::CubeTexture)
 						{
-
+							// texture = textureManager->getCubeTexture( ... );
 						}
-						else if (r->Type == CShader::StaticCubeTexture)
+						else if (r->Type == CShader::ReflectionProbe)
 						{
-
-						}
-						else if (r->Type == CShader::ShadowMapTexture)
-						{
-
+							// realtime reflection probe
 						}
 					}
 
@@ -462,16 +458,6 @@ namespace Skylicht
 						texture->grab();
 				}
 			}
-		}
-	}
-
-	void CMaterial::loadRuntimeTexture()
-	{
-		CTextureManager *textureManager = CTextureManager::getInstance();
-
-		if (m_shader != NULL)
-		{
-
 		}
 	}
 

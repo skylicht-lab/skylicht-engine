@@ -23,76 +23,76 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CReflectionProbeRender.h"
-
-#include "Material/Shader/CShaderManager.h"
+#include "CReflectionProbeSystem.h"
 
 namespace Skylicht
 {
-	bool CReflectionProbeRender::s_showProbe = false;
-
-	CReflectionProbeRender::CReflectionProbeRender()
-	{
-		m_material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("ReflectionProbe");
-	}
-
-	CReflectionProbeRender::~CReflectionProbeRender()
+	CReflectionProbeSystem::CReflectionProbeSystem()
 	{
 
 	}
 
-	void CReflectionProbeRender::beginQuery()
+	CReflectionProbeSystem::~CReflectionProbeSystem()
+	{
+
+	}
+
+	void CReflectionProbeSystem::beginQuery()
 	{
 		m_probes.set_used(0);
-		m_transforms.set_used(0);
+		m_probePositions.set_used(0);
+
+		m_entities.set_used(0);
+		m_entitiesPositions.set_used(0);
+		m_minDistance.set_used(0);
 	}
 
-	void CReflectionProbeRender::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CReflectionProbeSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
-		if (s_showProbe == false)
-			return;
+		CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
+		CIndirectLightingData *lightData = entity->getData<CIndirectLightingData>();
 
 		CReflectionProbeData *probeData = entity->getData<CReflectionProbeData>();
 		if (probeData != NULL && probeData->ReflectionTexture != NULL)
 		{
-			CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
 			if (transformData != NULL)
 			{
 				m_probes.push_back(probeData);
-				m_transforms.push_back(transformData);
+				m_probePositions.push_back(transformData);
 			}
+		}
+		else if (lightData != NULL)
+		{
+			m_entities.push_back(lightData);
+			m_entitiesPositions.push_back(transformData);
+			m_minDistance.push_back(999999999.9f);
 		}
 	}
 
-	void CReflectionProbeRender::init(CEntityManager *entityManager)
+	void CReflectionProbeSystem::init(CEntityManager *entityManager)
 	{
 
 	}
 
-	void CReflectionProbeRender::update(CEntityManager *entityManager)
+	void CReflectionProbeSystem::update(CEntityManager *entityManager)
 	{
-
-	}
-
-	void CReflectionProbeRender::render(CEntityManager *entityManager)
-	{
-		IVideoDriver *driver = getVideoDriver();
-
-		CReflectionProbeData** probes = m_probes.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
-
 		for (u32 i = 0, n = m_probes.size(); i < n; i++)
 		{
-			IMesh* mesh = probes[i]->ProbeMesh;
-			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
+			core::vector3df probePosition = m_probePositions[i]->World.getTranslation();
 
-			m_material.setTexture(0, probes[i]->ReflectionTexture);
-
-			for (u32 j = 0; j < mesh->getMeshBufferCount(); j++)
+			for (u32 j = 0, m = m_entities.size(); j < m; j++)
 			{
-				IMeshBuffer *buffer = mesh->getMeshBuffer(j);
-				driver->setMaterial(m_material);
-				driver->drawMeshBuffer(buffer);
+				core::vector3df entityPosition = m_entitiesPositions[j]->World.getTranslation();
+
+				// find nearest probe
+				float d = probePosition.getDistanceFromSQ(entityPosition);
+				if (d < m_minDistance[j])
+				{
+					m_minDistance[j] = d;
+
+					// set reflection texture
+					m_entities[j]->ReflectionTexture = m_probes[i]->ReflectionTexture;
+				}
 			}
 		}
 	}

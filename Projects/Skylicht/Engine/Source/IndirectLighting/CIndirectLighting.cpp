@@ -73,6 +73,8 @@ namespace Skylicht
 				data->Type = CIndirectLightingData::VertexColor;
 			}
 
+			data->SH = m_sh;
+
 			m_data.push_back(data);
 		}
 	}
@@ -80,6 +82,12 @@ namespace Skylicht
 	void CIndirectLighting::updateComponent()
 	{
 
+	}
+
+	void CIndirectLighting::setSH(core::vector3df* sh)
+	{
+		for (int i = 0; i < 9; i++)
+			m_sh[i] = sh[i];
 	}
 
 	void CIndirectLighting::setIndirectLightingType(EIndirectType type)
@@ -92,6 +100,16 @@ namespace Skylicht
 			{
 				data->Type = CIndirectLightingData::Lightmap;
 				data->LightmapIndex = m_lightmapIndex;
+			}
+			else if (m_type == SH4)
+			{
+				data->Type = CIndirectLightingData::SH4;
+				data->SH = m_sh;
+			}
+			else if (m_type == SH9)
+			{
+				data->Type = CIndirectLightingData::SH9;
+				data->SH = m_sh;
 			}
 			else
 			{

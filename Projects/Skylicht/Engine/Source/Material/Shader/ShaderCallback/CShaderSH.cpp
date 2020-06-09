@@ -56,9 +56,22 @@ namespace Skylicht
 
 	void CShaderSH::setSH9(core::vector3df *sh)
 	{
-		memset(s_sh9, 0, sizeof(float) * 36);
+		memset(s_sh9, 0, sizeof(float) * 9 * 4);
 
 		for (int i = 0; i < 9; i++)
+		{
+			s_sh9[i * 4] = sh[i].X;
+			s_sh9[i * 4 + 1] = sh[i].Y;
+			s_sh9[i * 4 + 2] = sh[i].Z;
+			s_sh9[i * 4 + 3] = 1.0f;
+		}
+	}
+
+	void CShaderSH::setSH4(core::vector3df *sh)
+	{
+		memset(s_sh9, 0, sizeof(float) * 4 * 4);
+
+		for (int i = 0; i < 4; i++)
 		{
 			s_sh9[i * 4] = sh[i].X;
 			s_sh9[i * 4 + 1] = sh[i].Y;

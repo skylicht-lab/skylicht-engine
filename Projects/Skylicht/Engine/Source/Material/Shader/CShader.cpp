@@ -273,8 +273,7 @@ namespace Skylicht
 					{
 						"Texture",
 						"CubeTexture",
-						"StaticCubeTexture",
-						"ShadowMapTexture"
+						"ReflectionProbe",
 					};
 
 					for (u32 i = 0, n = ResourceCount; i < n; i++)

@@ -8,7 +8,9 @@
 
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
+
 #include "Lightmapper/Components/Probe/CLightProbe.h"
+#include "Lightmapper/Components/Probe/CLightProbeRender.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -263,6 +265,8 @@ void CViewInit::initProbes()
 
 		probes.push_back(probe);
 	}
+
+	CLightProbeRender::showProbe(true);
 
 	context->setProbes(probes);
 }

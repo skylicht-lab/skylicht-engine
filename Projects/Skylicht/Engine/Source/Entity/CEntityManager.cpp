@@ -33,14 +33,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CJointAnimationSystem.h"
 #include "RenderMesh/CSkinnedMeshSystem.h"
 #include "RenderMesh/CSoftwareSkinningSystem.h"
+#include "Culling/CVisibleSystem.h"
 #include "Culling/CCullingSystem.h"
 #include "Lighting/CLightCullingSystem.h"
+#include "ReflectionProbe/CReflectionProbeSystem.h"
 
 namespace Skylicht
 {
 	CEntityManager::CEntityManager() :
 		m_camera(NULL),
-		m_renderPipeline(NULL)
+		m_renderPipeline(NULL),
+		m_systemChanged(true)
 	{
 		// core engine systems
 		addSystem<CComponentTransformSystem>();
@@ -49,8 +52,10 @@ namespace Skylicht
 		addSystem<CJointAnimationSystem>();
 		addSystem<CSkinnedMeshSystem>();
 		addSystem<CSoftwareSkinningSystem>();
+		addSystem<CReflectionProbeSystem>();
 
 		// culling system
+		addRenderSystem<CVisibleSystem>();
 		addRenderSystem<CCullingSystem>();
 		addRenderSystem<CLightCullingSystem>();
 
@@ -103,6 +108,7 @@ namespace Skylicht
 		}
 
 		CEntity *entity = new CEntity(this);
+		entity->addData<CVisibleData>();
 		m_entities.push_back(entity);
 		return entity;
 	}
@@ -115,6 +121,7 @@ namespace Skylicht
 		for (int i = 0; i < num; i++)
 		{
 			CEntity *entity = new CEntity(this);
+			entity->addData<CVisibleData>();
 			m_entities.push_back(entity);
 
 			entities.push_back(entity);
@@ -183,7 +190,29 @@ namespace Skylicht
 
 	void CEntityManager::render()
 	{
-		for (IRenderSystem* &s : m_renders)
+		if (m_systemChanged == true)
+		{
+			m_sortRender = m_renders;
+
+			struct {
+				bool operator()(IRenderSystem *a, IRenderSystem *b) const
+				{
+					int priorityA = (int)a->getRenderPass();
+					int priorityB = (int)b->getRenderPass();
+
+					if (priorityA == priorityB)
+						return a->getSortingPriority() < b->getSortingPriority();
+
+					return priorityA < priorityB;
+				}
+			} customLess;
+
+			std::sort(m_sortRender.begin(), m_sortRender.end(), customLess);
+
+			m_systemChanged = false;
+		}
+
+		for (IRenderSystem* &s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
@@ -192,12 +221,50 @@ namespace Skylicht
 			}
 		}
 
-		for (IRenderSystem* &s : m_renders)
+		// transparent pass
+		for (IRenderSystem* &s : m_sortRender)
+		{
+			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+			{
+				s->renderTransparent(this);
+			}
+		}
+
+		// post render
+		for (IRenderSystem* &s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
 			{
 				s->postRender(this);
+			}
+		}
+	}
+
+	void CEntityManager::render(IRenderSystem::ERenderPass pass)
+	{
+		for (IRenderSystem* &s : m_sortRender)
+		{
+			if (s->getRenderPass() == pass)
+			{
+				IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+				if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+				{
+					s->render(this);
+				}
+			}
+		}
+
+		for (IRenderSystem* &s : m_sortRender)
+		{
+			if (s->getRenderPass() == pass)
+			{
+				IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+				if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+				{
+					s->postRender(this);
+				}
 			}
 		}
 	}
