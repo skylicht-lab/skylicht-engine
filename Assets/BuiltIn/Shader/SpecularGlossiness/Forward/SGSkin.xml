@@ -27,6 +27,6 @@
 			<ui control="UITexture" name="uTexSpecular" autoReplace="_spec.;_Specular.;_S."/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGSkinVS.glsl" fs="GLSL/SGSkinFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/SGSkinVS.hlsl" fs="HLSL/SGSkinFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SGSkinVS.glsl" fs="GLSL/SGLitFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SGSkinVS.hlsl" fs="HLSL/SGLitFS.hlsl"/>
 </shaderConfig>
