@@ -48,7 +48,7 @@ namespace Skylicht
 		void writeChar(char data);
 		void writeShort(short data);
 		void writeInt(int data);
-		void writeLong(u64 data);
+		// void writeLong(u64 data);
 		void writeFloat(float data);
 		void writeDouble(double data);
 		void writeString(const std::string& s);
@@ -58,7 +58,7 @@ namespace Skylicht
 		char readChar();
 		short readShort();
 		int readInt();
-		u64 readLong();
+		// u64 readLong();
 		float readFloat();
 		double readDouble();
 		std::string readString();
