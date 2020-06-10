@@ -3,6 +3,7 @@
 
 #include "Utils/CStringImp.h"
 #include "Utils/CPath.h"
+#include "Utils/CActivator.h"
 
 using namespace Skylicht;
 
@@ -314,4 +315,19 @@ void testStringImp()
 void testCoreUtils()
 {
 	testStringImp();
+
+	testActivator();
+}
+
+#include "TestComponentSystem.h"
+#include "TestRenderSystem.h"
+
+void testActivator()
+{
+	TEST_CASE("CActivator::createInstance");
+	IActivatorObject *testData = CActivator::getInstance()->createInstance("CTestEntityData");
+	TEST_ASSERT_THROW(testData != NULL);
+
+	CTestEntityData *data = dynamic_cast<CTestEntityData*>(testData);
+	TEST_ASSERT_THROW(data != NULL);
 }

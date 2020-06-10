@@ -35,6 +35,6 @@ namespace Skylicht
 
 		virtual ~CSkylichtMeshExporter();
 
-		virtual bool exportModel(CEntity** entity, u32 count, const char *output);
+		virtual bool exportModel(CEntity** entities, u32 count, const char *output);
 	};
 }

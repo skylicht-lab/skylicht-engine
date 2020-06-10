@@ -26,7 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-
 	class CMemoryStream
 	{
 	protected:
@@ -47,9 +46,9 @@ namespace Skylicht
 		void writeChar(const char data);
 		void writeShort(const short data);
 		void writeInt(const int data);
-		void writeLong(const long data);
+		void writeLong(const u64 data);
 		void writeFloat(const float data);
-		void writeDouble(const float data);
+		void writeDouble(const double data);
 		void writeString(const std::string& s);
 
 		unsigned int readData(void* data, unsigned int size);
@@ -57,7 +56,7 @@ namespace Skylicht
 		char readChar();
 		short readShort();
 		int readInt();
-		long readLong();
+		u64 readLong();
 		float readFloat();
 		double readDouble();
 		std::string readString();

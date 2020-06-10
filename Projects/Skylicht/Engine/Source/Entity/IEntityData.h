@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CActivator.h"
+#include "Utils/CMemoryStream.h"
 
 namespace Skylicht
 {
@@ -34,7 +35,8 @@ namespace Skylicht
 		int EntityIndex;
 
 	public:
-		IEntityData()
+		IEntityData() :
+			EntityIndex(-1)
 		{
 
 		}
@@ -42,6 +44,16 @@ namespace Skylicht
 		virtual ~IEntityData()
 		{
 
+		}
+
+		virtual int serializable(CMemoryStream *stream)
+		{
+			return 0;
+		}
+
+		virtual int deserializable(CMemoryStream *stream)
+		{
+			return 0;
 		}
 	};
 }

@@ -3,3 +3,5 @@
 void testStringImp();
 
 void testCoreUtils();
+
+void testActivator();
