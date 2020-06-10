@@ -41,6 +41,8 @@ namespace Skylicht
 
 		virtual ~CMemoryStream();
 
+		bool grow(unsigned int growSize);
+
 		void writeData(const void* data, unsigned int size);
 
 		void writeChar(const char data);
@@ -84,6 +86,12 @@ namespace Skylicht
 		void setPos(unsigned int pos)
 		{
 			m_pos = pos;
+		}
+
+		void resetWrite()
+		{
+			m_size = 0;
+			m_pos = 0;
 		}
 
 		void encrypt();

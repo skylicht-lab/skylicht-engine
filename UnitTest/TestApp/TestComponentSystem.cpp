@@ -33,7 +33,7 @@ void TestComponent::initComponent()
 	TEST_ASSERT_THROW(m_gameObject->getEntity()->addData<CTestEntityData>() != NULL);
 
 	TEST_CASE("Add entity data by activator");
-	TEST_ASSERT_THROW(m_gameObject->getEntity()->addDataByActivator("CCullingData") != NULL);
+	TEST_ASSERT_THROW(m_gameObject->getEntity()->addDataByActivator("class Skylicht::CRenderMeshData") != NULL);
 
 	TEST_CASE("Get entity data");
 	CTestEntityData *entityData = m_gameObject->getEntity()->getData<CTestEntityData>();

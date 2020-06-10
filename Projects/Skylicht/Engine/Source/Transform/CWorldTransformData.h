@@ -42,5 +42,9 @@ namespace Skylicht
 		CWorldTransformData();
 
 		virtual ~CWorldTransformData();
+
+		virtual bool serializable(CMemoryStream *stream);
+
+		virtual bool deserializable(CMemoryStream *stream);
 	};
 }
