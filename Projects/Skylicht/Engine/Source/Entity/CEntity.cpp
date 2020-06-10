@@ -61,7 +61,9 @@ namespace Skylicht
 			sprintf(exceptionInfo, "CEntity::addData %s must inherit IEntityData", dataType);
 			os::Printer::log(exceptionInfo);
 
-			delete obj;
+			if (obj != NULL)
+				delete obj;
+
 			return NULL;
 		}
 

@@ -60,38 +60,62 @@ namespace Skylicht
 		// write num of entities
 		writeFile->write(&count, sizeof(u32));
 
-		std::map<int, int> mapIndex;
-
 		// 1mb cache
-		CMemoryStream memory(1024 * 1024);
+		CMemoryStream memory(512 * 1024);
+		CMemoryStream memoryEntity(512 * 1024);
+		CMemoryStream memoryData(512 * 1024);
 
 		for (u32 i = 0; i < count; i++)
 		{
-			memory.setPos(0);
+			memory.resetWrite();
+			memoryEntity.resetWrite();
 
 			CEntity* entity = entities[i];
 			if (entity->isAlive() == false)
 				continue;
 
-			mapIndex[entity->getIndex()] = i;
-
-			// entity info
-			memory.writeInt(i);
-			memory.writeChar(entity->isVisible() ? 1 : 0);
+			memoryEntity.writeInt(entity->getIndex());
+			memoryEntity.writeChar(entity->isVisible() ? 1 : 0);
 
 			// entity data info
 			for (int j = 0, n = entity->getDataCount(); j < n; j++)
 			{
+				memoryData.resetWrite();
+
 				IEntityData* data = entity->getData(j);
-				int size = data->serializable(&memory);
-				if (size == 0)
+				std::string typeName = typeid(*data).name();
+
+				if (data->serializable(&memoryData))
+				{
+					// size
+					memoryEntity.writeInt(memoryData.getSize());
+
+					// name					
+					memoryEntity.writeString(typeName);
+
+					// data
+					memoryEntity.writeData(memoryData.getData(), memoryData.getSize());
+				}
+#if _DEBUG
+				else
 				{
 					char log[512];
-					sprintf(log, "CSkylichtMeshExporter::exportModel entity: %d - need implement 'serializable' in %s", i, typeid(*data).name());
+					sprintf(log, "[CSkylichtMeshExporter::exportModel] entity: %d - skip serializable in: %s", i, typeName.c_str());
 					os::Printer::log(log);
 				}
+#endif
 			}
 
+			// end of entity data
+			memoryEntity.writeInt(-1);
+
+			// entity info
+			memory.writeInt(memoryEntity.getSize());
+
+			memory.writeData(memoryEntity.getData(), memoryEntity.getSize());
+
+			// flush data to file
+			writeFile->write(memory.getData(), memory.getSize());
 		}
 
 		writeFile->drop();

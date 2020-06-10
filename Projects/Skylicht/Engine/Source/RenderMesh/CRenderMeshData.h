@@ -81,5 +81,9 @@ namespace Skylicht
 		}
 
 		void setMaterial(CMaterial *material);
+
+		virtual bool serializable(CMemoryStream *stream);
+
+		virtual bool deserializable(CMemoryStream *stream);
 	};
 }
