@@ -45,12 +45,12 @@ namespace Skylicht
 
 		void writeData(const void* data, unsigned int size);
 
-		void writeChar(const char data);
-		void writeShort(const short data);
-		void writeInt(const int data);
-		void writeLong(const u64 data);
-		void writeFloat(const float data);
-		void writeDouble(const double data);
+		void writeChar(char data);
+		void writeShort(short data);
+		void writeInt(int data);
+		void writeLong(u64 data);
+		void writeFloat(float data);
+		void writeDouble(double data);
 		void writeString(const std::string& s);
 
 		unsigned int readData(void* data, unsigned int size);

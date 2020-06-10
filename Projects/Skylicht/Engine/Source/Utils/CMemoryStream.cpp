@@ -74,42 +74,42 @@ namespace Skylicht
 		m_size += size;
 	}
 
-	void CMemoryStream::writeChar(const char data)
+	void CMemoryStream::writeChar(char data)
 	{
 		int size = sizeof(data);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
 
-	void CMemoryStream::writeShort(const short data)
+	void CMemoryStream::writeShort(short data)
 	{
 		int size = sizeof(data);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
 
-	void CMemoryStream::writeInt(const int data)
+	void CMemoryStream::writeInt(int data)
 	{
 		int size = sizeof(data);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
 
-	void CMemoryStream::writeLong(const u64 data)
+	void CMemoryStream::writeLong(u64 data)
 	{
 		int size = sizeof(data);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
 
-	void CMemoryStream::writeFloat(const float data)
+	void CMemoryStream::writeFloat(float data)
 	{
 		int size = sizeof(data);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
 
-	void CMemoryStream::writeDouble(const double data)
+	void CMemoryStream::writeDouble(double data)
 	{
 		int size = sizeof(data);
 		memcpy(&m_memory[m_size], &data, size);
