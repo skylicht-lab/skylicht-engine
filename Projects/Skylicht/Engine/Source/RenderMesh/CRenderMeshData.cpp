@@ -164,5 +164,19 @@ namespace Skylicht
 		RenderMesh = mesh;
 	}
 
+	bool CRenderMeshData::serializable(CMemoryStream *stream)
+	{
+		stream->writeChar(IsSkinnedMesh ? 1 : 0);
+		stream->writeChar(SoftwareSkinning ? 1 : 0);
+		return true;
+	}
+
+	bool CRenderMeshData::deserializable(CMemoryStream *stream)
+	{
+		IsSkinnedMesh = stream->readChar() == 1 ? true : false;
+		SoftwareSkinning = stream->readChar() == 1 ? true : false;
+		return true;
+	}
+
 	ACTIVATOR_REGISTER(CRenderMeshData);
 }

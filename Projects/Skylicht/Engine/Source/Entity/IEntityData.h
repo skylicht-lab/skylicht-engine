@@ -46,14 +46,14 @@ namespace Skylicht
 
 		}
 
-		virtual int serializable(CMemoryStream *stream)
+		virtual bool serializable(CMemoryStream *stream)
 		{
-			return 0;
+			return false;
 		}
 
-		virtual int deserializable(CMemoryStream *stream)
+		virtual bool deserializable(CMemoryStream *stream)
 		{
-			return 0;
+			return false;
 		}
 	};
 }

@@ -51,6 +51,23 @@ namespace Skylicht
 			delete m_memory;
 	}
 
+	bool CMemoryStream::grow(unsigned int growSize)
+	{
+		if (m_fromMemory == false)
+			return false;
+
+		unsigned int newSize = m_totalSize + growSize;
+
+		unsigned char *newMemory = new unsigned char[newSize];
+		memcpy(newMemory, m_memory, m_size);
+		delete m_memory;
+
+		m_memory = newMemory;
+		m_totalSize = newSize;
+
+		return true;
+	}
+
 	void CMemoryStream::writeData(const void* data, unsigned int size)
 	{
 		memcpy(&m_memory[m_size], data, size);
