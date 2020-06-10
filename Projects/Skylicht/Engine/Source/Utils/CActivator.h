@@ -24,23 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Utils/CGameSingleton.h"
+
 #define ACTIVATOR_REGISTER(type)  \
 	IActivatorObject* type##CreateFunc() { return new type(); } \
-	bool type##Activator = CActivator::registerType(std::string(#type), &type##CreateFunc);
+	bool type##Activator = CActivator::createGetInstance()->registerType(std::string(#type), &type##CreateFunc);
 
 namespace Skylicht
 {
 	class IActivatorObject
 	{
+	public:
+		virtual ~IActivatorObject()
+		{
+
+		}
 	};
 
 	typedef IActivatorObject* (*ActivatorCreateInstance)();
 
-	class CActivator
+	class CActivator : public CGameSingleton<CActivator>
 	{
-	public:
-		static bool registerType(const std::string& type, ActivatorCreateInstance func);
+	protected:
+		std::vector<std::string> m_factoryName;
+		std::vector<ActivatorCreateInstance> m_factoryFunc;
 
-		static IActivatorObject* createInstance(const char *type);
+	public:
+		bool registerType(const std::string& type, ActivatorCreateInstance func);
+
+		IActivatorObject* createInstance(const char *type);
 	};
 }

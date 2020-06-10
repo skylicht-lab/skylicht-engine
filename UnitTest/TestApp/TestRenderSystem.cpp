@@ -26,6 +26,7 @@ void CTestEntityData::initCubeMesh(float size)
 	TestMesh = sceneManager->getGeometryCreator()->createCubeMesh(core::vector3df(size));
 }
 
+ACTIVATOR_REGISTER(CTestEntityData);
 
 bool g_passSystemInit = false;
 bool g_passSystemUpdate = false;

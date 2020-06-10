@@ -27,23 +27,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	std::vector<std::string> g_factoryName;
-	std::vector<ActivatorCreateInstance> g_factoryFunc;
-
 	bool CActivator::registerType(const std::string& type, ActivatorCreateInstance func)
 	{
-		g_factoryName.push_back(type);
-		g_factoryFunc.push_back(func);
+		m_factoryName.push_back(type);
+		m_factoryFunc.push_back(func);
 		return true;
 	}
 
 	IActivatorObject* CActivator::createInstance(const char *type)
 	{
-		for (u32 i = 0, n = g_factoryName.size(); i < n; i++)
+		for (u32 i = 0, n = m_factoryName.size(); i < n; i++)
 		{
-			if (g_factoryName[i] == type)
+			if (m_factoryName[i] == type)
 			{
-				return g_factoryFunc[i]();
+				return m_factoryFunc[i]();
 			}
 		}
 		return NULL;

@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CEntityManager.h"
 #include "CEntityPrefab.h"
 
+#include "Utils/CActivator.h"
+
 namespace Skylicht
 {
 	CEntity::CEntity(CEntityManager *mgr) :
@@ -46,6 +48,29 @@ namespace Skylicht
 	CEntity::~CEntity()
 	{
 		removeAllData();
+	}
+
+	IEntityData* CEntity::addDataByActivator(const char *dataType)
+	{
+		IActivatorObject *obj = CActivator::getInstance()->createInstance(dataType);
+
+		IEntityData *data = dynamic_cast<IEntityData*>(obj);
+		if (data == NULL)
+		{
+			char exceptionInfo[512];
+			sprintf(exceptionInfo, "CEntity::addData %s must inherit IEntityData", dataType);
+			os::Printer::log(exceptionInfo);
+
+			delete obj;
+			return NULL;
+		}
+
+		// also save this entity index
+		data->EntityIndex = m_index;
+
+		// add to list data
+		m_data.push_back(data);
+		return data;
 	}
 
 	IEntityData* CEntity::getData(int dataIndex)

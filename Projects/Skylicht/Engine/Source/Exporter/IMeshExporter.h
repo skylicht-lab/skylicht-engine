@@ -41,6 +41,6 @@ namespace Skylicht
 
 		}		
 
-		virtual bool exportModel(CEntity** entity, u32 count, const char *output) = 0;
+		virtual bool exportModel(CEntity** entities, u32 count, const char *output) = 0;
 	};
 }
