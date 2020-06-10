@@ -54,6 +54,9 @@ namespace Skylicht
 		CRenderMeshData *meshData = entity->getData<CRenderMeshData>();
 		if (meshData != NULL)
 		{
+			if (meshData->getMesh() == NULL)
+				return;
+
 			// do not render gpu skinning, pass for CSkinMeshRenderer
 			if (meshData->isSkinnedMesh() == true && meshData->isSoftwareSkinning() == false)
 				return;
