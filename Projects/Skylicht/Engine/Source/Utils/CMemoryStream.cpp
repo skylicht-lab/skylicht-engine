@@ -78,15 +78,11 @@ namespace Skylicht
 		m_size += size;
 	}
 
-	void CMemoryStream::writeLong(const long data)
+	void CMemoryStream::writeLong(const u64 data)
 	{
-		/*
 		int size = sizeof(data);
-		memcpy( &m_memory[m_size], &data, size );
+		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
-		*/
-		// fix 32bit & 64bit
-		writeInt((const int)data);
 	}
 
 	void CMemoryStream::writeFloat(const float data)
@@ -96,7 +92,7 @@ namespace Skylicht
 		m_size += size;
 	}
 
-	void CMemoryStream::writeDouble(const float data)
+	void CMemoryStream::writeDouble(const double data)
 	{
 		int size = sizeof(data);
 		memcpy(&m_memory[m_size], &data, size);
@@ -159,16 +155,13 @@ namespace Skylicht
 		return ret;
 	}
 
-	long CMemoryStream::readLong()
+	u64 CMemoryStream::readLong()
 	{
-		/*
-		long ret = 0;
+		u64 ret = 0;
 		int size = sizeof(ret);
 		memcpy(&ret, &m_memory[m_pos], size);
 		m_pos += size;
 		return ret;
-		*/
-		return (long)readInt();
 	}
 
 	float CMemoryStream::readFloat()

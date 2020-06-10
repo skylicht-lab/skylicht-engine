@@ -25,7 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "Entity/CEntity.h"
 #include "Exporter/ExportResources.h"
+
 #include "CSkylichtMeshExporter.h"
+#include "Utils/CMemoryStream.h"
 
 namespace Skylicht
 {
@@ -39,7 +41,7 @@ namespace Skylicht
 
 	}
 
-	bool CSkylichtMeshExporter::exportModel(CEntity** entity, u32 count, const char *output)
+	bool CSkylichtMeshExporter::exportModel(CEntity** entities, u32 count, const char *output)
 	{
 		IrrlichtDevice *device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
@@ -57,6 +59,40 @@ namespace Skylicht
 
 		// write num of entities
 		writeFile->write(&count, sizeof(u32));
+
+		std::map<int, int> mapIndex;
+
+		// 1mb cache
+		CMemoryStream memory(1024 * 1024);
+
+		for (u32 i = 0; i < count; i++)
+		{
+			memory.setPos(0);
+
+			CEntity* entity = entities[i];
+			if (entity->isAlive() == false)
+				continue;
+
+			mapIndex[entity->getIndex()] = i;
+
+			// entity info
+			memory.writeInt(i);
+			memory.writeChar(entity->isVisible() ? 1 : 0);
+
+			// entity data info
+			for (int j = 0, n = entity->getDataCount(); j < n; j++)
+			{
+				IEntityData* data = entity->getData(j);
+				int size = data->serializable(&memory);
+				if (size == 0)
+				{
+					char log[512];
+					sprintf(log, "CSkylichtMeshExporter::exportModel entity: %d - need implement 'serializable' in %s", i, typeid(*data).name());
+					os::Printer::log(log);
+				}
+			}
+
+		}
 
 		writeFile->drop();
 		return false;

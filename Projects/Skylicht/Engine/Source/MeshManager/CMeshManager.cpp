@@ -82,7 +82,7 @@ namespace Skylicht
 		return output;
 	}
 
-	bool CMeshManager::exportModel(CEntity** entity, u32 count, const char *output)
+	bool CMeshManager::exportModel(CEntity** entities, u32 count, const char *output)
 	{
 		IMeshExporter *exporter = NULL;
 
@@ -92,7 +92,7 @@ namespace Skylicht
 
 		if (exporter != NULL)
 		{
-			bool result = exporter->exportModel(entity, count, output);
+			bool result = exporter->exportModel(entities, count, output);
 			delete exporter;
 			return true;
 		}
