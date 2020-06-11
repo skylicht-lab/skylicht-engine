@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #define ACTIVATOR_REGISTER(type)  \
 	IActivatorObject* type##CreateFunc() { return new type(); } \
-	bool type##Activator = CActivator::createGetInstance()->registerType(&type##CreateFunc);
+	bool type##Activator = CActivator::createGetInstance()->registerType(#type, &type##CreateFunc);
 
 namespace Skylicht
 {
@@ -50,7 +50,7 @@ namespace Skylicht
 		std::vector<ActivatorCreateInstance> m_factoryFunc;
 
 	public:
-		bool registerType(ActivatorCreateInstance func);
+		bool registerType(const char *type, ActivatorCreateInstance func);
 
 		IActivatorObject* createInstance(const char *type);
 	};

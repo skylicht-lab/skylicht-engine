@@ -27,18 +27,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	bool CActivator::registerType(ActivatorCreateInstance func)
+	bool CActivator::registerType(const char *type, ActivatorCreateInstance func)
 	{
-		IActivatorObject* spawn = func();
-		if (spawn != NULL)
-		{
-			m_factoryFunc.push_back(func);
-			m_factoryName.push_back(typeid(*spawn).name());
-			delete spawn;
-			return true;
-		}
-
-		return false;
+		m_factoryFunc.push_back(func);
+		m_factoryName.push_back(type);
+		return true;
 	}
 
 	IActivatorObject* CActivator::createInstance(const char *type)
