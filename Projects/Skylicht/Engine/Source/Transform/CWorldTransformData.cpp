@@ -57,4 +57,6 @@ namespace Skylicht
 		HasChanged = true;
 		return true;
 	}
+
+	ACTIVATOR_REGISTER(CWorldTransformData);
 }

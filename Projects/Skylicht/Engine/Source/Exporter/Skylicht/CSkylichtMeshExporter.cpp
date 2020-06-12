@@ -60,10 +60,10 @@ namespace Skylicht
 		// write num of entities
 		writeFile->write(&count, sizeof(u32));
 
-		// 1mb cache
-		CMemoryStream memory(512 * 1024);
-		CMemoryStream memoryEntity(512 * 1024);
-		CMemoryStream memoryData(512 * 1024);
+		// init memory (it will grow later)
+		CMemoryStream memory(512);
+		CMemoryStream memoryEntity(512);
+		CMemoryStream memoryData(512);
 
 		for (u32 i = 0; i < count; i++)
 		{
@@ -83,7 +83,17 @@ namespace Skylicht
 				memoryData.resetWrite();
 
 				IEntityData* data = entity->getData(j);
-				std::string typeName = typeid(*data).name();
+				std::string typeName = data->getTypeName();
+
+				if (typeName == "IEntityData")
+				{
+#if _DEBUG
+					char log[512];
+					sprintf(log, "[CSkylichtMeshExporter::exportModel] entity: %d - dont declare getTypeName in: %s", i, typeid(*data).raw_name());
+					os::Printer::log(log);
+#endif
+					continue;
+				}
 
 				if (data->serializable(&memoryData))
 				{
@@ -94,7 +104,7 @@ namespace Skylicht
 					memoryEntity.writeString(typeName);
 
 					// data
-					memoryEntity.writeData(memoryData.getData(), memoryData.getSize());
+					memoryEntity.writeStream(&memoryData);
 				}
 #if _DEBUG
 				else
@@ -112,7 +122,7 @@ namespace Skylicht
 			// entity info
 			memory.writeInt(memoryEntity.getSize());
 
-			memory.writeData(memoryEntity.getData(), memoryEntity.getSize());
+			memory.writeStream(&memoryEntity);
 
 			// flush data to file
 			writeFile->write(memory.getData(), memory.getSize());
