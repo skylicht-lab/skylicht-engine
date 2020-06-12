@@ -49,5 +49,7 @@ namespace Skylicht
 		CJointData();
 
 		virtual ~CJointData();
+
+		DECLARE_GETTYPENAME(CJointData)
 	};
 }
