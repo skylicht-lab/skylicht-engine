@@ -51,12 +51,16 @@ namespace Skylicht
 			delete m_memory;
 	}
 
-	bool CMemoryStream::grow(unsigned int growSize)
+	bool CMemoryStream::autoGrow(unsigned int writeSize)
 	{
-		if (m_fromMemory == false)
+		if (m_fromMemory == true)
 			return false;
 
-		unsigned int newSize = m_totalSize + growSize;
+		unsigned int expectedSize = m_size + writeSize;
+		if (expectedSize < m_totalSize)
+			return true;
+
+		unsigned int newSize = expectedSize * 2;
 
 		unsigned char *newMemory = new unsigned char[newSize];
 		memcpy(newMemory, m_memory, m_size);
@@ -70,13 +74,20 @@ namespace Skylicht
 
 	void CMemoryStream::writeData(const void* data, unsigned int size)
 	{
+		autoGrow(size);
 		memcpy(&m_memory[m_size], data, size);
 		m_size += size;
+	}
+
+	void CMemoryStream::writeStream(CMemoryStream *stream)
+	{
+		writeData(stream->getData(), stream->getSize());
 	}
 
 	void CMemoryStream::writeChar(char data)
 	{
 		int size = sizeof(data);
+		autoGrow(size);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
@@ -84,6 +95,15 @@ namespace Skylicht
 	void CMemoryStream::writeShort(short data)
 	{
 		int size = sizeof(data);
+		autoGrow(size);
+		memcpy(&m_memory[m_size], &data, size);
+		m_size += size;
+	}
+
+	void CMemoryStream::writeUShort(unsigned short data)
+	{
+		int size = sizeof(data);
+		autoGrow(size);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
@@ -91,29 +111,39 @@ namespace Skylicht
 	void CMemoryStream::writeInt(int data)
 	{
 		int size = sizeof(data);
+		autoGrow(size);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
 
-	/*
-	void CMemoryStream::writeLong(u64 data)
+	void CMemoryStream::writeUInt(unsigned int data)
 	{
 		int size = sizeof(data);
+		autoGrow(size);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
-	*/
 
 	void CMemoryStream::writeFloat(float data)
 	{
 		int size = sizeof(data);
+		autoGrow(size);
 		memcpy(&m_memory[m_size], &data, size);
+		m_size += size;
+	}
+
+	void CMemoryStream::writeFloatArray(float *f, int count)
+	{
+		int size = sizeof(float) * count;
+		autoGrow(size);
+		memcpy(&m_memory[m_size], f, size);
 		m_size += size;
 	}
 
 	void CMemoryStream::writeDouble(double data)
 	{
 		int size = sizeof(data);
+		autoGrow(size);
 		memcpy(&m_memory[m_size], &data, size);
 		m_size += size;
 	}
@@ -121,6 +151,7 @@ namespace Skylicht
 	void CMemoryStream::writeString(const std::string& s)
 	{
 		int size = s.size() + 1;
+		autoGrow(size);
 
 		// write num char
 		memcpy(&m_memory[m_size], &size, sizeof(int));
@@ -165,9 +196,27 @@ namespace Skylicht
 		return ret;
 	}
 
+	unsigned short CMemoryStream::readUShort()
+	{
+		unsigned short ret = 0;
+		int size = sizeof(ret);
+		memcpy(&ret, &m_memory[m_pos], size);
+		m_pos += size;
+		return ret;
+	}
+
 	int CMemoryStream::readInt()
 	{
 		int ret = 0;
+		int size = sizeof(ret);
+		memcpy(&ret, &m_memory[m_pos], size);
+		m_pos += size;
+		return ret;
+	}
+
+	unsigned int CMemoryStream::readUInt()
+	{
+		unsigned int ret = 0;
 		int size = sizeof(ret);
 		memcpy(&ret, &m_memory[m_pos], size);
 		m_pos += size;
@@ -201,6 +250,13 @@ namespace Skylicht
 		memcpy(&ret, &m_memory[m_pos], size);
 		m_pos += size;
 		return ret;
+	}
+
+	void CMemoryStream::readFloatArray(float *f, int count)
+	{
+		int size = sizeof(float) * count;
+		memcpy(f, &m_memory[m_pos], size);
+		m_pos += size;
 	}
 
 	std::string CMemoryStream::readString()

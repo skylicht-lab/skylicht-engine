@@ -35,33 +35,38 @@ namespace Skylicht
 		unsigned int m_pos;
 		bool m_fromMemory;
 	public:
-		CMemoryStream(unsigned int initMem);
+		CMemoryStream(unsigned int initMem = 512);
 
 		CMemoryStream(unsigned char *fromMem, unsigned int size);
 
 		virtual ~CMemoryStream();
 
-		bool grow(unsigned int growSize);
+		bool autoGrow(unsigned int writeSize);
 
 		void writeData(const void* data, unsigned int size);
+		void writeStream(CMemoryStream *stream);
 
 		void writeChar(char data);
 		void writeShort(short data);
+		void writeUShort(unsigned short data);
 		void writeInt(int data);
-		// void writeLong(u64 data);
+		void writeUInt(unsigned int data);
 		void writeFloat(float data);
 		void writeDouble(double data);
 		void writeString(const std::string& s);
+		void writeFloatArray(float *f, int count);
 
 		unsigned int readData(void* data, unsigned int size);
 
 		char readChar();
 		short readShort();
+		unsigned short readUShort();
 		int readInt();
-		// u64 readLong();
+		unsigned int readUInt();		
 		float readFloat();
 		double readDouble();
 		std::string readString();
+		void readFloatArray(float *f, int count);
 
 		unsigned char *getData()
 		{

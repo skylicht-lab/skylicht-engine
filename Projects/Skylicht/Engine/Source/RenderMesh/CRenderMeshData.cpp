@@ -168,6 +168,50 @@ namespace Skylicht
 	{
 		stream->writeChar(IsSkinnedMesh ? 1 : 0);
 		stream->writeChar(SoftwareSkinning ? 1 : 0);
+
+		CMesh *mesh = RenderMesh;
+		if (SoftwareSkinning == true)
+			mesh = OriginalMesh;
+
+		// write bounding box
+		stream->writeFloatArray(&mesh->BoundingBox.MinEdge.X, 3);
+		stream->writeFloatArray(&mesh->BoundingBox.MaxEdge.X, 3);
+
+		// write number buffer
+		u32 numMB = mesh->getMeshBufferCount();
+		stream->writeUInt(numMB);
+
+		for (u32 i = 0; i < numMB; i++)
+		{
+			// write bind material name
+			stream->writeString(mesh->MaterialName[i]);
+
+			IMeshBuffer *mb = mesh->getMeshBuffer(i);
+			IVertexBuffer *vb = mb->getVertexBuffer(0);
+			IIndexBuffer *ib = mb->getIndexBuffer();
+
+			// write vertices data
+			u32 vtxCount = vb->getVertexCount();
+			u32 vtxSize = vb->getVertexSize();
+			u32 vtxBufferSize = vtxCount * vtxSize;
+
+			u32 idxCount = ib->getIndexCount();
+			u32 idxSize = ib->getIndexSize();
+			u32 idxBufferSize = idxCount * idxSize;
+
+			stream->writeUInt(vtxCount);
+			stream->writeUInt(vtxSize);
+
+			int vertexType = (int)mb->getVertexType();
+			stream->writeString(video::sBuiltInVertexTypeNames[vertexType]);
+			stream->writeData(vb->getVertices(), vtxBufferSize);
+
+			// write indices data
+			stream->writeUInt(idxCount);
+			stream->writeUInt(idxSize);
+			stream->writeData(ib->getIndices(), idxBufferSize);
+		}
+
 		return true;
 	}
 
@@ -175,6 +219,9 @@ namespace Skylicht
 	{
 		IsSkinnedMesh = stream->readChar() == 1 ? true : false;
 		SoftwareSkinning = stream->readChar() == 1 ? true : false;
+
+
+
 		return true;
 	}
 
