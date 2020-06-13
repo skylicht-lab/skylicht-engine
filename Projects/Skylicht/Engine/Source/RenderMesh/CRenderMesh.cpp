@@ -107,7 +107,7 @@ namespace Skylicht
 				spawnTransform->Name = srcTransform->Name;
 				spawnTransform->Relative = srcTransform->Relative;
 				spawnTransform->HasChanged = true;
-				spawnTransform->Depth = rootTransform->Depth + srcTransform->Depth;
+				spawnTransform->Depth = rootTransform->Depth + 1 + srcTransform->Depth;
 
 				if (srcTransform->ParentIndex == -1)
 					spawnTransform->ParentIndex = m_root->getIndex();
