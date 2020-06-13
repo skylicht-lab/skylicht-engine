@@ -47,8 +47,6 @@ namespace Skylicht
 
 		virtual bool deserializable(CMemoryStream *stream);
 
-		virtual void replaceEntityIndex(std::map<int, int>& mapIndex, int depthChange);
-
 		DECLARE_GETTYPENAME(CWorldTransformData);
 	};
 }

@@ -129,7 +129,7 @@ namespace Skylicht
 						{
 							if (i == 0)
 								depthChange = -worldTransform->Depth;
-							worldTransform->replaceEntityIndex(entityID, depthChange);
+							worldTransform->Depth += depthChange;
 						}
 					}
 				}
