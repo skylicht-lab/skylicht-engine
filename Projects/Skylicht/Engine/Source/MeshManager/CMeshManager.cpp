@@ -4,6 +4,7 @@
 
 #include "Importer/Collada/CColladaLoader.h"
 #include "Importer/WavefrontOBJ/COBJMeshFileLoader.h"
+#include "Importer/Skylicht/CSkylichtMeshLoader.h"
 
 #include "Exporter/Skylicht/CSkylichtMeshExporter.h"
 
@@ -53,6 +54,8 @@ namespace Skylicht
 			importer = new CColladaLoader();
 		else if (ext == "obj")
 			importer = new COBJMeshFileLoader();
+		else if (ext == "smesh")
+			importer = new CSkylichtMeshLoader();
 
 		if (importer != NULL)
 		{

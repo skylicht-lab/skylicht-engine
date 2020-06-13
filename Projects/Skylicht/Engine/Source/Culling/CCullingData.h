@@ -48,5 +48,11 @@ namespace Skylicht
 		CCullingData();
 
 		virtual ~CCullingData();
+
+		virtual bool serializable(CMemoryStream *stream);
+
+		virtual bool deserializable(CMemoryStream *stream);
+
+		DECLARE_GETTYPENAME(CCullingData);
 	};
 }
