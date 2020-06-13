@@ -108,6 +108,14 @@ void SampleSkinnedMesh::onInitApp()
 	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SkinnedMesh/Ch17_nonPBR.dae", "SkinnedMesh/textures");
 	if (prefab != NULL)
 	{
+		// test exporter
+		/*
+		CMeshManager::getInstance()->exportModel(
+			prefab->getEntities(),
+			prefab->getNumEntities(),
+			"../Assets/SkinnedMesh/Ch17_nonPBR.smesh");
+		*/
+
 		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
 		if (material.size() == 2)
 		{

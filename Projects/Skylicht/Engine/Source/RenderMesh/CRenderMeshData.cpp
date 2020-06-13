@@ -172,6 +172,24 @@ namespace Skylicht
 		if (SoftwareSkinning == true)
 			mesh = OriginalMesh;
 
+		if (IsSkinnedMesh == true)
+		{
+			CSkinnedMesh *smesh = dynamic_cast<CSkinnedMesh*>(mesh);
+
+			// write joint data
+			u32 numJoint = smesh->Joints.size();
+			stream->writeUInt(numJoint);
+
+			for (u32 i = 0; i < numJoint; i++)
+			{
+				CSkinnedMesh::SJoint &j = smesh->Joints[i];
+
+				stream->writeString(j.Name);
+				stream->writeInt(j.EntityIndex);
+				stream->writeFloatArray(j.BindPoseMatrix.pointer(), 16);
+			}
+		}
+
 		// write number buffer
 		u32 numMB = mesh->getMeshBufferCount();
 		stream->writeUInt(numMB);
@@ -234,7 +252,29 @@ namespace Skylicht
 	{
 		IsSkinnedMesh = stream->readChar() == 1 ? true : false;
 
-		RenderMesh = new CMesh();
+		if (IsSkinnedMesh == true)
+		{
+			CSkinnedMesh *smesh = new CSkinnedMesh();
+
+			u32 numJoint = stream->readUInt();
+
+			for (u32 i = 0; i < numJoint; i++)
+			{
+				smesh->Joints.push_back(CSkinnedMesh::SJoint());
+				CSkinnedMesh::SJoint &j = smesh->Joints[i];
+
+				j.Name = stream->readString();
+				j.EntityIndex = stream->readInt();
+				stream->readFloatArray(j.BindPoseMatrix.pointer(), 16);
+			}
+
+			RenderMesh = smesh;
+		}
+		else
+		{
+			RenderMesh = new CMesh();
+		}
+
 		u32 numMB = stream->readUInt();
 
 		for (u32 i = 0; i < numMB; i++)

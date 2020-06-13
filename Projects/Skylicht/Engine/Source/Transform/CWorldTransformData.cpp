@@ -44,7 +44,7 @@ namespace Skylicht
 		stream->writeString(Name);
 		stream->writeInt(ParentIndex);
 		stream->writeInt(Depth);
-		stream->writeData(Relative.pointer(), sizeof(float) * 16);
+		stream->writeFloatArray(Relative.pointer(), 16);
 
 		return true;
 	}
@@ -54,21 +54,10 @@ namespace Skylicht
 		Name = stream->readString();
 		ParentIndex = stream->readInt();
 		Depth = stream->readInt();
-		stream->readData(Relative.pointer(), sizeof(float) * 16);
+		stream->readFloatArray(Relative.pointer(), 16);
 
 		HasChanged = true;
 		return true;
-	}
-
-	void CWorldTransformData::replaceEntityIndex(std::map<int, int>& mapIndex, int depthChange)
-	{
-		std::map<int, int>::iterator i = mapIndex.find(ParentIndex);
-		if (i != mapIndex.end())
-			ParentIndex = i->second;
-		else
-			ParentIndex = -1;
-
-		Depth += depthChange;
 	}
 
 	ACTIVATOR_REGISTER(CWorldTransformData);
