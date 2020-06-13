@@ -60,10 +60,5 @@ namespace Skylicht
 		{
 			return std::string("IEntityData");
 		}
-
-		virtual void replaceEntityIndex(std::map<int, int>& mapIndex)
-		{
-
-		}
 	};
 }
