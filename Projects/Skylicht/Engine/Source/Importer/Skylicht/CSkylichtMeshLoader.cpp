@@ -32,6 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CMemoryStream.h"
 #include "Utils/CActivator.h"
 
+#include "Transform/CWorldTransformData.h"
+
 namespace Skylicht
 {
 	CSkylichtMeshLoader::CSkylichtMeshLoader()
@@ -95,6 +97,7 @@ namespace Skylicht
 	void CSkylichtMeshLoader::loadVersion1(CMemoryStream* stream, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
 	{
 		std::map<int, int> entityID;
+		int depthChange = 0;
 
 		u32 numEntity = stream->readUInt();
 		for (u32 i = 0; i < numEntity; i++)
@@ -117,7 +120,18 @@ namespace Skylicht
 				if (data != NULL)
 				{
 					data->deserializable(stream);
-					data->replaceEntityIndex(entityID);
+
+					// hardcode to fix transform
+					if (entityDataName == "CWorldTransformData")
+					{
+						CWorldTransformData *worldTransform = dynamic_cast<CWorldTransformData*>(data);
+						if (worldTransform != NULL)
+						{
+							if (i == 0)
+								depthChange = -worldTransform->Depth;
+							worldTransform->replaceEntityIndex(entityID, depthChange);
+						}
+					}
 				}
 
 				// go next data
