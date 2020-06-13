@@ -61,13 +61,11 @@ namespace Skylicht
 		writeFile->write(&count, sizeof(u32));
 
 		// init memory (it will grow later)
-		CMemoryStream memory(512);
 		CMemoryStream memoryEntity(512);
 		CMemoryStream memoryData(512);
 
 		for (u32 i = 0; i < count; i++)
 		{
-			memory.resetWrite();
 			memoryEntity.resetWrite();
 
 			CEntity* entity = entities[i];
@@ -119,13 +117,8 @@ namespace Skylicht
 			// end of entity data
 			memoryEntity.writeInt(-1);
 
-			// entity info
-			memory.writeInt(memoryEntity.getSize());
-
-			memory.writeStream(&memoryEntity);
-
 			// flush data to file
-			writeFile->write(memory.getData(), memory.getSize());
+			writeFile->write(memoryEntity.getData(), memoryEntity.getSize());
 		}
 
 		writeFile->drop();
