@@ -38,4 +38,18 @@ namespace Skylicht
 	{
 
 	}
+
+	bool CCullingData::serializable(CMemoryStream *stream)
+	{
+		stream->writeChar((char)Type);
+		return true;
+	}
+
+	bool CCullingData::deserializable(CMemoryStream *stream)
+	{
+		Type = (ECulling)stream->readChar();
+		return true;
+	}
+
+	ACTIVATOR_REGISTER(CCullingData);
 }

@@ -167,15 +167,10 @@ namespace Skylicht
 	bool CRenderMeshData::serializable(CMemoryStream *stream)
 	{
 		stream->writeChar(IsSkinnedMesh ? 1 : 0);
-		stream->writeChar(SoftwareSkinning ? 1 : 0);
 
 		CMesh *mesh = RenderMesh;
 		if (SoftwareSkinning == true)
 			mesh = OriginalMesh;
-
-		// write bounding box
-		stream->writeFloatArray(&mesh->BoundingBox.MinEdge.X, 3);
-		stream->writeFloatArray(&mesh->BoundingBox.MaxEdge.X, 3);
 
 		// write number buffer
 		u32 numMB = mesh->getMeshBufferCount();
@@ -190,6 +185,10 @@ namespace Skylicht
 			IVertexBuffer *vb = mb->getVertexBuffer(0);
 			IIndexBuffer *ib = mb->getIndexBuffer();
 
+			// write bounding box
+			stream->writeFloatArray(&mb->getBoundingBox().MinEdge.X, 3);
+			stream->writeFloatArray(&mb->getBoundingBox().MaxEdge.X, 3);
+
 			// write vertices data
 			u32 vtxCount = vb->getVertexCount();
 			u32 vtxSize = vb->getVertexSize();
@@ -202,13 +201,29 @@ namespace Skylicht
 			stream->writeUInt(vtxCount);
 			stream->writeUInt(vtxSize);
 
+			stream->writeUInt(idxCount);
+			stream->writeUInt(idxSize);
+
+			// write attribute
 			int vertexType = (int)mb->getVertexType();
 			stream->writeString(video::sBuiltInVertexTypeNames[vertexType]);
+
+			video::IVertexDescriptor* vtxInfo = mb->getVertexDescriptor();
+			u32 numAttribute = vtxInfo->getAttributeCount();
+			stream->writeUInt(numAttribute);
+			for (u32 j = 0; j < numAttribute; j++)
+			{
+				IVertexAttribute *attribute = vtxInfo->getAttribute(j);
+				stream->writeString(attribute->getName().c_str());
+				stream->writeShort(attribute->getOffset());
+				stream->writeShort(attribute->getElementCount());
+				stream->writeShort(attribute->getTypeSize());
+			}
+
+			// write vertex data
 			stream->writeData(vb->getVertices(), vtxBufferSize);
 
 			// write indices data
-			stream->writeUInt(idxCount);
-			stream->writeUInt(idxSize);
 			stream->writeData(ib->getIndices(), idxBufferSize);
 		}
 
@@ -218,9 +233,98 @@ namespace Skylicht
 	bool CRenderMeshData::deserializable(CMemoryStream *stream)
 	{
 		IsSkinnedMesh = stream->readChar() == 1 ? true : false;
-		SoftwareSkinning = stream->readChar() == 1 ? true : false;
 
+		RenderMesh = new CMesh();
+		u32 numMB = stream->readUInt();
 
+		for (u32 i = 0; i < numMB; i++)
+		{
+			std::string material = stream->readString();
+
+			core::aabbox3df bbox;
+			stream->readFloatArray(&bbox.MinEdge.X, 3);
+			stream->readFloatArray(&bbox.MaxEdge.X, 3);
+
+			u32 vtxCount = stream->readUInt();
+			u32 vtxSize = stream->readUInt();
+			u32 vtxBufferSize = vtxCount * vtxSize;
+
+			u32 idxCount = stream->readUInt();
+			u32 idxSize = stream->readUInt();
+			u32 idxBufferSize = idxCount * idxSize;
+
+			E_INDEX_TYPE indexType = video::EIT_16BIT;
+			if (idxSize == 32)
+				indexType = video::EIT_32BIT;
+
+			std::string vertexTypeName = stream->readString();
+
+			IMeshBuffer *mb = NULL;
+
+			bool vertexCompatible = true;
+
+			IVertexDescriptor *vertexDes = getVideoDriver()->getVertexDescriptor(vertexTypeName.c_str());
+			if (vertexDes != NULL)
+			{
+				if (vertexDes->getVertexSize(0) == vtxSize)
+				{
+					E_VERTEX_TYPE vtxType = (E_VERTEX_TYPE)vertexDes->getID();
+					switch (vtxType)
+					{
+					case EVT_STANDARD:
+						mb = new CMeshBuffer<S3DVertex>(vertexDes, indexType);
+						break;
+					case EVT_2TCOORDS:
+						mb = new CMeshBuffer<S3DVertex2TCoords>(vertexDes, indexType);
+						break;
+					case EVT_TANGENTS:
+						mb = new CMeshBuffer<S3DVertexTangents>(vertexDes, indexType);
+						break;
+					case EVT_SKIN:
+						mb = new CMeshBuffer<S3DVertexSkin>(vertexDes, indexType);
+						break;
+					case EVT_SKIN_TANGENTS:
+						mb = new CMeshBuffer<S3DVertexSkinTangents>(vertexDes, indexType);
+						break;
+					case EVT_2TCOORDS_TANGENTS:
+						mb = new CMeshBuffer<S3DVertex2TCoordsTangents>(vertexDes, indexType);
+						break;
+					}
+				}
+				else
+				{
+					os::Printer::log("[CRenderMeshData::deserializable] Vertex is not compatible");
+					vertexCompatible = false;
+				}
+			}
+
+			u32 numAttribute = stream->readUInt();
+			for (u32 j = 0; j < numAttribute; j++)
+			{
+				std::string attributeName = stream->readString();
+				short offset = stream->readShort();
+				short elementCount = stream->readShort();
+				short typeSize = stream->readShort();
+			}
+
+			if (mb != NULL)
+			{
+				IVertexBuffer *vtxBuffer = mb->getVertexBuffer();
+				IIndexBuffer *idxBuffer = mb->getIndexBuffer();
+
+				vtxBuffer->set_used(vtxCount);
+				stream->readData(vtxBuffer->getVertices(), vtxBufferSize);
+
+				idxBuffer->set_used(idxCount);
+				stream->readData(idxBuffer->getIndices(), idxBufferSize);
+
+				mb->getBoundingBox() = bbox;
+				mb->setHardwareMappingHint(EHM_STATIC);
+
+				RenderMesh->addMeshBuffer(mb, material.c_str());
+				mb->drop();
+			}
+		}
 
 		return true;
 	}

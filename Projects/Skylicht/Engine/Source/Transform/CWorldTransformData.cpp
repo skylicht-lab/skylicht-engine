@@ -58,5 +58,14 @@ namespace Skylicht
 		return true;
 	}
 
+	void CWorldTransformData::replaceEntityIndex(std::map<int, int>& mapIndex)
+	{
+		std::map<int, int>::iterator i = mapIndex.find(ParentIndex);
+		if (i != mapIndex.end())
+			ParentIndex = i->second;
+		else
+			ParentIndex = -1;
+	}
+
 	ACTIVATOR_REGISTER(CWorldTransformData);
 }
