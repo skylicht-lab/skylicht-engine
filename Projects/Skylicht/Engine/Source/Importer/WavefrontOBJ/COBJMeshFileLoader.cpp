@@ -37,11 +37,6 @@ namespace Skylicht
 		m_materials.clear();
 	}
 
-	void COBJMeshFileLoader::addTextureFolder(const char *folder)
-	{
-		m_textureFolder.push_back(folder);
-	}
-
 	bool COBJMeshFileLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
 	{
 		IrrlichtDevice	*device = getIrrlichtDevice();
@@ -738,7 +733,7 @@ namespace Skylicht
 
 		if (texname.size() > 0)
 		{
-			video::ITexture *texture = CTextureManager::getInstance()->getTexture(texname.c_str());
+			video::ITexture *texture = CTextureManager::getInstance()->getTexture(texname.c_str(), m_textureFolder);
 			if (texture)
 			{
 				if (type == 0)

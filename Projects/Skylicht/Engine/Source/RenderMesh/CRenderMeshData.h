@@ -81,5 +81,11 @@ namespace Skylicht
 		}
 
 		void setMaterial(CMaterial *material);
+
+		virtual bool serializable(CMemoryStream *stream, IMeshExporter *exporter);
+
+		virtual bool deserializable(CMemoryStream *stream, IMeshImporter *importer);
+
+		DECLARE_GETTYPENAME(CRenderMeshData)
 	};
 }

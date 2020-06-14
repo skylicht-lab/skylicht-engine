@@ -157,8 +157,8 @@ namespace Skylicht
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(MACOS)
-            // dxt compress
-            CStringImp::replacePathExt(ansiPath, ".dds");
+			// dxt compress
+			CStringImp::replacePathExt(ansiPath, ".dds");
 #elif defined(__EMSCRIPTEN__)
 			if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
 				CStringImp::replacePathExt(ansiPath, ".dds");
@@ -207,6 +207,37 @@ namespace Skylicht
 		return true;
 	}
 
+	ITexture* CTextureManager::getTexture(const char *filename, const std::vector<std::string>& textureFolder)
+	{
+		ITexture *t = getTexture(filename);
+		if (t != NULL)
+			return t;
+
+		char realFileName[512];
+
+		CStringImp::getFileName(realFileName, filename);
+
+		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
+
+		for (u32 i = 0, n = textureFolder.size(); i < n; i++)
+		{
+			std::string s = textureFolder[i];
+			s += "/";
+			s += realFileName;
+
+			ITexture *texture = CTextureManager::getInstance()->getTexture(s.c_str());
+			if (texture != NULL)
+			{
+				return texture;
+			}
+		}
+
+		char errLog[512];
+		sprintf(errLog, "[CTextureManager::getTexture] Load texture %s in list folders failed!", filename);
+		os::Printer::log(errLog);
+		return NULL;
+	}
+
 	ITexture* CTextureManager::getTexture(const char *path)
 	{
 		char ansiPath[512];
@@ -224,8 +255,8 @@ namespace Skylicht
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(MACOS)
-            // dxt compress
-            CStringImp::replacePathExt(ansiPath, ".dds");
+			// dxt compress
+			CStringImp::replacePathExt(ansiPath, ".dds");
 #elif defined(__EMSCRIPTEN__)
 			if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
 				CStringImp::replacePathExt(ansiPath, ".dds");

@@ -24,15 +24,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Utils/CActivator.h"
+#include "Utils/CMemoryStream.h"
+
 namespace Skylicht
 {
-	class IEntityData
+	class IMeshExporter;
+	class IMeshImporter;
+
+	class IEntityData : public IActivatorObject
 	{
 	public:
 		int EntityIndex;
 
 	public:
-		IEntityData()
+		IEntityData() :
+			EntityIndex(-1)
 		{
 
 		}
@@ -40,6 +47,21 @@ namespace Skylicht
 		virtual ~IEntityData()
 		{
 
+		}
+
+		virtual bool serializable(CMemoryStream *stream, IMeshExporter *exporter)
+		{
+			return false;
+		}
+
+		virtual bool deserializable(CMemoryStream *stream, IMeshImporter *importer)
+		{
+			return false;
+		}
+
+		virtual std::string getTypeName()
+		{
+			return std::string("IEntityData");
 		}
 	};
 }

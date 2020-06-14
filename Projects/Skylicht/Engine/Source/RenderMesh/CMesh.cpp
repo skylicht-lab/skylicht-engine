@@ -41,12 +41,14 @@ namespace Skylicht
 	{
 		CMesh *newMesh = new CMesh();
 		newMesh->BoundingBox = BoundingBox;
-		newMesh->MaterialName = MaterialName;
-		newMesh->Material = Material;
 
 		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
 		{
-			newMesh->addMeshBuffer(MeshBuffers[i]);
+			newMesh->addMeshBuffer(
+				MeshBuffers[i],
+				MaterialName[i].c_str(),
+				Material[i]
+			);
 		}
 
 		return newMesh;
