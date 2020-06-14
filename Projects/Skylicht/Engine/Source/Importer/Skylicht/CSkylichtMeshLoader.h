@@ -27,11 +27,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CMesh.h"
 #include "RenderMesh/CSkinnedMesh.h"
 
-#include "Importer/IMeshImporter.h"
+#include "Importer/CBaseMeshImporter.h"
 
 namespace Skylicht
 {
-	class CSkylichtMeshLoader : public IMeshImporter
+	class CSkylichtMeshLoader : public CBaseMeshImporter
 	{
 	protected:
 
@@ -39,8 +39,6 @@ namespace Skylicht
 		CSkylichtMeshLoader();
 
 		virtual ~CSkylichtMeshLoader();
-
-		virtual void addTextureFolder(const char *folder);
 
 		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching);
 

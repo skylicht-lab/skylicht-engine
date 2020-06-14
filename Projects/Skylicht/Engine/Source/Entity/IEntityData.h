@@ -29,6 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class IMeshExporter;
+	class IMeshImporter;
+
 	class IEntityData : public IActivatorObject
 	{
 	public:
@@ -46,12 +49,12 @@ namespace Skylicht
 
 		}
 
-		virtual bool serializable(CMemoryStream *stream)
+		virtual bool serializable(CMemoryStream *stream, IMeshExporter *exporter)
 		{
 			return false;
 		}
 
-		virtual bool deserializable(CMemoryStream *stream)
+		virtual bool deserializable(CMemoryStream *stream, IMeshImporter *importer)
 		{
 			return false;
 		}

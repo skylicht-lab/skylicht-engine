@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CMesh.h"
 #include "RenderMesh/CSkinnedMesh.h"
 
-#include "Importer/IMeshImporter.h"
+#include "Importer/CBaseMeshImporter.h"
 
 #include "RenderMesh/CJointData.h"
 
@@ -275,7 +275,7 @@ namespace Skylicht
 		}
 	};
 
-	class CColladaLoader: public IMeshImporter
+	class CColladaLoader: public CBaseMeshImporter
 	{
 	public:
 		static bool s_fixUV;
@@ -300,9 +300,7 @@ namespace Skylicht
 
 		bool m_loadNormalMap;
 
-		float m_maxUVTile;
-
-		std::vector<std::string> m_textureFolder;
+		float m_maxUVTile;		
 
 		std::map<std::string, CJointData*> m_nameToJointData;
 		std::map<std::string, CJointData*> m_sidToJointData;
@@ -346,8 +344,6 @@ namespace Skylicht
 		{
 			m_textureFolder = folder;
 		}
-
-		virtual void addTextureFolder(const char *folder);
 
 		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false);
 		

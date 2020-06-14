@@ -25,6 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CRenderMeshData.h"
 #include "Material/Shader/CShaderManager.h"
+#include "TextureManager/CTextureManager.h"
+#include "Utils/CPath.h"
+#include "Importer/IMeshImporter.h"
 
 namespace Skylicht
 {
@@ -164,7 +167,7 @@ namespace Skylicht
 		RenderMesh = mesh;
 	}
 
-	bool CRenderMeshData::serializable(CMemoryStream *stream)
+	bool CRenderMeshData::serializable(CMemoryStream *stream, IMeshExporter *exporter)
 	{
 		stream->writeChar(IsSkinnedMesh ? 1 : 0);
 
@@ -202,6 +205,20 @@ namespace Skylicht
 			IMeshBuffer *mb = mesh->getMeshBuffer(i);
 			IVertexBuffer *vb = mb->getVertexBuffer(0);
 			IIndexBuffer *ib = mb->getIndexBuffer();
+
+			// write texture name
+			SMaterial &material = mb->getMaterial();
+			for (int t = 0; t < 3; t++)
+			{
+				ITexture *texture = material.TextureLayer[i].Texture;
+				if (texture != NULL)
+				{
+					std::string path = texture->getName().getInternalName().c_str();
+					stream->writeString(CPath::getFileName(path).c_str());
+				}
+				else
+					stream->writeString("");
+			}
 
 			// write bounding box
 			stream->writeFloatArray(&mb->getBoundingBox().MinEdge.X, 3);
@@ -248,8 +265,10 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CRenderMeshData::deserializable(CMemoryStream *stream)
+	bool CRenderMeshData::deserializable(CMemoryStream *stream, IMeshImporter *importer)
 	{
+		CShaderManager *shaderMgr = CShaderManager::getInstance();
+
 		IsSkinnedMesh = stream->readChar() == 1 ? true : false;
 
 		if (IsSkinnedMesh == true)
@@ -280,6 +299,11 @@ namespace Skylicht
 		for (u32 i = 0; i < numMB; i++)
 		{
 			std::string material = stream->readString();
+
+			std::vector<std::string> textures;
+
+			for (int t = 0; t < 3; t++)
+				textures.push_back(stream->readString());
 
 			core::aabbox3df bbox;
 			stream->readFloatArray(&bbox.MinEdge.X, 3);
@@ -360,6 +384,26 @@ namespace Skylicht
 
 				mb->getBoundingBox() = bbox;
 				mb->setHardwareMappingHint(EHM_STATIC);
+
+				video::SMaterial& irrMaterial = mb->getMaterial();
+
+				for (int t = 0; t < 3; t++)
+				{
+					if (textures[t].empty() == false)
+					{
+						ITexture *texture = CTextureManager::getInstance()->getTexture(textures[t].c_str(), importer->getTextureFolder());
+						if (texture != NULL)
+							irrMaterial.setTexture(t, texture);
+
+						if (t == 0 && texture != NULL)
+						{
+							if (IsSkinnedMesh == false)
+								irrMaterial.MaterialType = shaderMgr->getShaderIDByName("TextureColor");
+							else
+								irrMaterial.MaterialType = shaderMgr->getShaderIDByName("Skin");
+						}
+					}
+				}
 
 				RenderMesh->addMeshBuffer(mb, material.c_str());
 				mb->drop();

@@ -369,30 +369,8 @@ namespace Skylicht
 	ITexture* loadDaeTexture(const std::wstring& path, std::vector<std::string>& textureFolder)
 	{
 		char realFilePath[1024];
-		char fileName[512];
-
 		CStringImp::convertUnicodeToUTF8(path.c_str(), realFilePath);
-		CStringImp::getFileName(fileName, realFilePath);
-
-		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
-
-		for (u32 i = 0, n = textureFolder.size(); i < n; i++)
-		{
-			std::string s = textureFolder[i];
-			s += "/";
-			s += fileName;
-
-			ITexture *texture = CTextureManager::getInstance()->getTexture(s.c_str());
-			if (texture != NULL)
-			{
-				return texture;
-			}
-		}
-
-		char errLog[512];
-		sprintf(errLog, "[Collada] Load texture %s failed!", fileName);
-		os::Printer::log(errLog);
-		return NULL;
+		return CTextureManager::getInstance()->getTexture(realFilePath, textureFolder);
 	}
 
 	std::wstring getImageWithId(const std::wstring& id, const ArrayImages& listImages)
