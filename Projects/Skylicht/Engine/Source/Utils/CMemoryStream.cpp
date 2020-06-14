@@ -45,10 +45,22 @@ namespace Skylicht
 		m_fromMemory = true;
 	}
 
+	CMemoryStream::CMemoryStream(const CMemoryStream& stream)
+	{
+		m_size = stream.m_size;
+		m_totalSize = stream.m_totalSize;
+		m_pos = 0;
+
+		m_memory = new unsigned char[m_totalSize];
+		memcpy(m_memory, stream.m_memory, m_size);
+
+		m_fromMemory = true;
+	}
+
 	CMemoryStream::~CMemoryStream()
 	{
 		if (m_fromMemory == false)
-			delete m_memory;
+			delete[]m_memory;
 	}
 
 	bool CMemoryStream::autoGrow(unsigned int writeSize)
@@ -170,9 +182,6 @@ namespace Skylicht
 		unsigned int maxSize = m_size - m_pos;
 		if (size > maxSize)
 			size = maxSize;
-
-		if (size <= 0)
-			return 0;
 
 		memcpy(data, &m_memory[m_pos], size);
 		m_pos += size;
