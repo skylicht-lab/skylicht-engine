@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,29 +22,28 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CBaseMeshImporter.h"
 
 namespace Skylicht
 {
-	class CEntityPrefab;
-
-	class IMeshImporter
+	CBaseMeshImporter::CBaseMeshImporter()
 	{
-	public:
-		IMeshImporter()
-		{
 
-		}
+	}
 
-		virtual ~IMeshImporter()
-		{
+	CBaseMeshImporter::~CBaseMeshImporter()
+	{
 
-		}
+	}
 
-		virtual void addTextureFolder(const char *folder) = 0;
+	void CBaseMeshImporter::addTextureFolder(const char *folder)
+	{
+		m_textureFolder.push_back(folder);
+	}
 
-		virtual std::vector<std::string>& getTextureFolder() = 0;
-
-		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false) = 0;
-	};
+	std::vector<std::string>& CBaseMeshImporter::getTextureFolder()
+	{
+		return m_textureFolder;
+	}
 }
