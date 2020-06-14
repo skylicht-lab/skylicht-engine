@@ -2,6 +2,7 @@
 #include "TestCoreUtils.h"
 #include "TestSystemThread.h"
 #include "TestScene.h"
+#include "TestMemoryStream.h"
 
 #include "CApplication.h"
 #include "Material/Shader/CShaderManager.h"
@@ -47,6 +48,8 @@ void CApp::onInitApp()
 
 	// Run unit test
 	testCoreUtils();
+
+	testMemoryStream();
 
 	testSystemThread();
 

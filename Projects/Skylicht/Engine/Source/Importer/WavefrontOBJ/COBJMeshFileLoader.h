@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CMesh.h"
 #include "RenderMesh/CSkinnedMesh.h"
 
-#include "Importer/IMeshImporter.h"
+#include "Importer/CBaseMeshImporter.h"
 
 namespace Skylicht
 {
@@ -67,11 +67,9 @@ namespace Skylicht
 		bool RecalculateNormals;
 	};
 
-	class COBJMeshFileLoader : public IMeshImporter
+	class COBJMeshFileLoader : public CBaseMeshImporter
 	{
 	protected:
-		std::vector<std::string> m_textureFolder;
-
 		core::array<SObjMtl*> m_materials;
 
 		std::string m_modelName;
@@ -80,8 +78,6 @@ namespace Skylicht
 		COBJMeshFileLoader();
 
 		virtual ~COBJMeshFileLoader();
-
-		virtual void addTextureFolder(const char *folder);
 
 		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false);
 

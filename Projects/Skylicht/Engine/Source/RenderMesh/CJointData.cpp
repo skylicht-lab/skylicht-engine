@@ -38,4 +38,34 @@ namespace Skylicht
 	{
 
 	}
+
+	bool CJointData::serializable(CMemoryStream *stream, IMeshExporter *exporter)
+	{
+		stream->writeChar(BoneRoot == true ? 1 : 0);
+
+		stream->writeString(SID);
+		stream->writeString(BoneName);
+
+		stream->writeFloatArray(AnimationMatrix.pointer(), 16);
+		stream->writeFloatArray(DefaultAnimationMatrix.pointer(), 16);
+		stream->writeFloatArray(DefaultRelativeMatrix.pointer(), 16);
+
+		return true;
+	}
+
+	bool CJointData::deserializable(CMemoryStream *stream, IMeshImporter *importer)
+	{
+		BoneRoot = stream->readChar() == 1 ? true : false;
+
+		SID = stream->readString();
+		BoneName = stream->readString();
+
+		stream->readFloatArray(AnimationMatrix.pointer(), 16);
+		stream->readFloatArray(DefaultAnimationMatrix.pointer(), 16);
+		stream->readFloatArray(DefaultRelativeMatrix.pointer(), 16);
+
+		return true;
+	}
+
+	ACTIVATOR_REGISTER(CJointData)
 }

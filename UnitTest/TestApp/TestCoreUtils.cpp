@@ -3,6 +3,7 @@
 
 #include "Utils/CStringImp.h"
 #include "Utils/CPath.h"
+#include "Utils/CActivator.h"
 
 using namespace Skylicht;
 

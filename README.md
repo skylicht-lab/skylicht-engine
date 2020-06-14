@@ -136,7 +136,7 @@ This is demo of how to render character model with animation, models are downloa
 - **Forwarder**
 - **Skydome**
 - **AnimationController**
-<img src="Documents/Media/Samples/sample_skinned_mesh.gif" width="50%"/>
+<img src="Documents/Media/Samples/sample_skinned_mesh.png"/>
 
 ### Samples\TankScene
 This is a demo of use lightmapper to set indirect lighting color into vertex color.

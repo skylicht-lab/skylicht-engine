@@ -18,6 +18,8 @@ namespace Skylicht
 
 		CEntityPrefab* loadModel(const char *resource, const char *texturePath, bool loadNormalMap = true, bool loadTexcoord2 = false, bool createBatching = false);
 
+		bool exportModel(CEntity** entities, u32 count, const char *output);
+
 		void releaseAllPrefabs();
 	};
 }

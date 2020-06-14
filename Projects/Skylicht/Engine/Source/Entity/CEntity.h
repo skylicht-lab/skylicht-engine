@@ -52,6 +52,8 @@ namespace Skylicht
 		template<class T>
 		T* addData();
 
+		IEntityData* addDataByActivator(const char *dataType);
+
 		inline int getDataCount()
 		{
 			return (int)m_data.size();

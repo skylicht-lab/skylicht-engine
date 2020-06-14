@@ -38,4 +38,27 @@ namespace Skylicht
 	{
 
 	}
+
+	bool CWorldTransformData::serializable(CMemoryStream *stream, IMeshExporter *exporter)
+	{
+		stream->writeString(Name);
+		stream->writeInt(ParentIndex);
+		stream->writeInt(Depth);
+		stream->writeFloatArray(Relative.pointer(), 16);
+
+		return true;
+	}
+
+	bool CWorldTransformData::deserializable(CMemoryStream *stream, IMeshImporter *importer)
+	{
+		Name = stream->readString();
+		ParentIndex = stream->readInt();
+		Depth = stream->readInt();
+		stream->readFloatArray(Relative.pointer(), 16);
+
+		HasChanged = true;
+		return true;
+	}
+
+	ACTIVATOR_REGISTER(CWorldTransformData);
 }
