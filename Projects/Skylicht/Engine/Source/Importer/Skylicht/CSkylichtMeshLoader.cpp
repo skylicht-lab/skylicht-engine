@@ -56,6 +56,7 @@ namespace Skylicht
 			return false;
 
 		u32 size = readFile->getSize();
+
 		unsigned char *data = new unsigned char[size];
 		readFile->read(data, size);
 
@@ -67,13 +68,13 @@ namespace Skylicht
 
 		if (strcmp(assetHeader.Sign, "SLT") != 0)
 		{
-			delete data;
+			delete[] data;
 			return false;
 		}
 
 		if (assetHeader.AssetType != (u32)AssetModel)
 		{
-			delete data;
+			delete[] data;
 			return false;
 		}
 
@@ -81,11 +82,11 @@ namespace Skylicht
 			loadVersion1(&stream, output, normalMap, texcoord2, batching);
 		else
 		{
-			delete data;
+			delete[] data;
 			return false;
 		}
 
-		delete data;
+		delete[] data;
 		return true;
 	}
 

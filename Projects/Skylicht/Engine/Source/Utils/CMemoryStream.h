@@ -39,6 +39,8 @@ namespace Skylicht
 
 		CMemoryStream(unsigned char *fromMem, unsigned int size);
 
+		CMemoryStream(const CMemoryStream& stream);
+
 		virtual ~CMemoryStream();
 
 		bool autoGrow(unsigned int writeSize);
