@@ -46,11 +46,6 @@ namespace Skylicht
 
 	}
 
-	void CSkylichtMeshLoader::addTextureFolder(const char *folder)
-	{
-
-	}
-
 	bool CSkylichtMeshLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
 	{
 		IrrlichtDevice *device = getIrrlichtDevice();
@@ -119,7 +114,7 @@ namespace Skylicht
 				IEntityData *data = entity->addDataByActivator(entityDataName.c_str());
 				if (data != NULL)
 				{
-					data->deserializable(stream);
+					data->deserializable(stream, this);
 
 					// hardcode to fix transform
 					if (entityDataName == "CWorldTransformData")

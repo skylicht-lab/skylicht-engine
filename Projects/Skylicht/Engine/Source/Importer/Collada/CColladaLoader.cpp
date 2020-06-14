@@ -63,11 +63,6 @@ namespace Skylicht
 
 	}
 
-	void CColladaLoader::addTextureFolder(const char *folder)
-	{
-		m_textureFolder.push_back(folder);
-	}
-
 	bool CColladaLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
 	{
 		setLoadNormalMap(normalMap);

@@ -39,7 +39,7 @@ namespace Skylicht
 
 	}
 
-	bool CWorldTransformData::serializable(CMemoryStream *stream)
+	bool CWorldTransformData::serializable(CMemoryStream *stream, IMeshExporter *exporter)
 	{
 		stream->writeString(Name);
 		stream->writeInt(ParentIndex);
@@ -49,7 +49,7 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CWorldTransformData::deserializable(CMemoryStream *stream)
+	bool CWorldTransformData::deserializable(CMemoryStream *stream, IMeshImporter *importer)
 	{
 		Name = stream->readString();
 		ParentIndex = stream->readInt();

@@ -93,7 +93,7 @@ namespace Skylicht
 					continue;
 				}
 
-				if (data->serializable(&memoryData))
+				if (data->serializable(&memoryData, this))
 				{
 					// size
 					memoryEntity.writeInt(memoryData.getSize());
