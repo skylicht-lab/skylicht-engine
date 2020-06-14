@@ -78,6 +78,8 @@ namespace Skylicht
 
 		ITexture* getTexture(const char *path);
 
+		ITexture* getTexture(const char *filename, const std::vector<std::string>& folders);
+
 		ITexture* getTextureFromRealPath(const char *path);
 
 		ITexture* getCubeTexture(

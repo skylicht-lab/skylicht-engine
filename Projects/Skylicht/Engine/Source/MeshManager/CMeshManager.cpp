@@ -4,6 +4,9 @@
 
 #include "Importer/Collada/CColladaLoader.h"
 #include "Importer/WavefrontOBJ/COBJMeshFileLoader.h"
+#include "Importer/Skylicht/CSkylichtMeshLoader.h"
+
+#include "Exporter/Skylicht/CSkylichtMeshExporter.h"
 
 #include "RenderMesh/CRenderMeshData.h"
 #include "Material/Shader/CShaderManager.h"
@@ -51,6 +54,8 @@ namespace Skylicht
 			importer = new CColladaLoader();
 		else if (ext == "obj")
 			importer = new COBJMeshFileLoader();
+		else if (ext == "smesh")
+			importer = new CSkylichtMeshLoader();
 
 		if (importer != NULL)
 		{
@@ -78,5 +83,23 @@ namespace Skylicht
 		}
 
 		return output;
+	}
+
+	bool CMeshManager::exportModel(CEntity** entities, u32 count, const char *output)
+	{
+		IMeshExporter *exporter = NULL;
+
+		std::string ext = CPath::getFileNameExt(output);
+		if (ext == "smesh")
+			exporter = new CSkylichtMeshExporter();
+
+		if (exporter != NULL)
+		{
+			bool result = exporter->exportModel(entities, count, output);
+			delete exporter;
+			return true;
+		}
+
+		return false;
 	}
 }

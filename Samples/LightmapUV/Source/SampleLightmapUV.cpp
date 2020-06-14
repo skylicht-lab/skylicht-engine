@@ -143,6 +143,14 @@ void SampleLightmapUV::onInitApp()
 		}
 
 		renderMesh->initMaterial(materials);
+
+		// test exporter
+		/*
+		CMeshManager::getInstance()->exportModel(
+			renderMesh->getEntities().pointer(),
+			renderMesh->getEntities().size(),
+			"../Assets/LightmapUV/gazebo.smesh");
+		*/
 	}
 
 	// Render pipeline

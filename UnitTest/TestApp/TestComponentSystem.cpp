@@ -32,6 +32,9 @@ void TestComponent::initComponent()
 	TEST_CASE("Add entity data");
 	TEST_ASSERT_THROW(m_gameObject->getEntity()->addData<CTestEntityData>() != NULL);
 
+	TEST_CASE("Add entity data by activator");
+	TEST_ASSERT_THROW(m_gameObject->getEntity()->addDataByActivator("CRenderMeshData") != NULL);
+
 	TEST_CASE("Get entity data");
 	CTestEntityData *entityData = m_gameObject->getEntity()->getData<CTestEntityData>();
 	TEST_ASSERT_THROW(entityData != NULL);
