@@ -34,6 +34,7 @@ void SampleLightmapping::onInitApp()
 	// load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
@@ -78,7 +79,7 @@ void SampleLightmapping::onInitApp()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
+	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// gazebo object
@@ -89,6 +90,12 @@ void SampleLightmapping::onInitApp()
 		CGameObject *gazeboObj = zone->createEmptyObject();
 		CRenderMesh *renderMesh = gazeboObj->addComponent<CRenderMesh>();
 		renderMesh->initFromPrefab(model);
+
+		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(model);
+		for (CMaterial *material : materials)
+			material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+
+		renderMesh->initMaterial(materials);
 	}
 
 	// save to context	
