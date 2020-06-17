@@ -406,6 +406,8 @@ namespace Skylicht
 				}
 
 				RenderMesh->addMeshBuffer(mb, material.c_str());
+				RenderMesh->recalculateBoundingBox();
+
 				mb->drop();
 			}
 		}
