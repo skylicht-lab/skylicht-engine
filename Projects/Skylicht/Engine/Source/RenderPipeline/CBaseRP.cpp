@@ -116,6 +116,9 @@ namespace Skylicht
 		if (mesh->Material.size() > (u32)bufferID)
 		{
 			CMaterial *material = mesh->Material[bufferID];
+			if (material == NULL)
+				return;
+
 			CShader *shader = material->getShader();
 			if (shader != NULL)
 			{
