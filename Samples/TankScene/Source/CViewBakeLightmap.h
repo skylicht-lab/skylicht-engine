@@ -24,9 +24,9 @@ protected:
 	CGlyphFont *m_font;
 
 	std::vector<CRenderMesh*> m_renderMesh;
-	std::vector<IMeshBuffer*> m_allMeshBuffer;
+	std::vector<IMeshBuffer*> m_neshBuffers;
 
-	core::array<SColorBuffer*> m_colorBuffer;
+	core::array<SColorBuffer*> m_colorBuffers;
 	core::array<core::matrix4> m_meshTransforms;
 
 	u32 m_currentMeshBuffer;

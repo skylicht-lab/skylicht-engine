@@ -185,8 +185,8 @@ namespace Skylicht
 			// test radiance
 			/*
 			static int t = 0;
-			static bool test = false;
-			if (CDeferredRP::isEnableRenderIndirect() == true && test == false)
+			static bool test = true;
+			if (CDeferredRP::isEnableRenderIndirect() == true && test == true)
 			{
 				char filename[512];
 				sprintf(filename, "C:\\SVN\\test_%d.png", t);

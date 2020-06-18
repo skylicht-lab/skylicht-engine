@@ -90,6 +90,7 @@ vec3 SG(
 	vec3 directionalLight = NdotL * lightColor * visibility;
 	vec3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
 	color += indirect * diffuseColor / PI;
+	color += indirect / PI * specularColor * metallic;
 	return color;
 }
 void main(void)
