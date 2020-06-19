@@ -301,8 +301,13 @@ namespace irr
 
 			if (status != GL_TRUE)
 			{
-				os::Printer::log("GLSL shader failed to compile", ELL_ERROR);
-
+                if (GL_VERTEX_SHADER == shaderType)
+                    os::Printer::log("GLSL GL_VERTEX_SHADER shader failed to compile", ELL_ERROR);
+                else if (GL_FRAGMENT_SHADER == shaderType)
+                    os::Printer::log("GLSL GL_FRAGMENT_SHADER shader failed to compile", ELL_ERROR);
+                else
+                    os::Printer::log("GLSL shader failed to compile", ELL_ERROR);
+                
 				// check error message and log it
 				GLint maxLength = 0;
 				GLint length;

@@ -84,11 +84,11 @@ void main(void)
 	color += specular * uLightColor.rgb;
 	
 	// IBL lighting (2 bounce)
-	color += ambientLighting * diffuseColor * 2 / PI;
+	color += ambientLighting * diffuseColor * 2.0 / PI;
 	
 	// IBL reflection
 	vec3 reflection = -normalize(reflect(vWorldViewDir, vWorldNormal));
-	color += textureLod(uTexReflect, reflection, roughness * 8).xyz * specularColor * metallic;	
+	color += textureLod(uTexReflect, reflection, roughness * 8.0).xyz * specularColor * metallic;	
 	
 	FragColor = vec4(color, diffuseMap.a);
 }
