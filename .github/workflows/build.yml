@@ -129,6 +129,11 @@ jobs:
         cd PrjMac
         xcodebuild -configuration Release
         cd ..
+    - name: Unit Test
+      run: |
+        cd PrjMac
+        ctest --verpose -C Release
+        cd ..
     - name: Package
       run: |
         brew install p7zip
