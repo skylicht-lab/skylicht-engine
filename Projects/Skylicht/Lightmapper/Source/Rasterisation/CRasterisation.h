@@ -34,7 +34,7 @@ namespace Skylicht
 		{
 		protected:
 			CSH9 *m_bakeResult;
-			
+
 			bool *m_bakedData;
 			unsigned char *m_imageData;
 			int m_width;
@@ -45,11 +45,11 @@ namespace Skylicht
 
 			core::vector2df m_uvf[3];
 
-			const core::vector3df *m_position;
-			const core::vector2df *m_uv;
-			const core::vector3df *m_normal;
-			const core::vector3df *m_tangent;
-			const core::vector3df *m_binormal;
+			core::vector3df m_position[3];
+			core::vector2df m_uv[3];
+			core::vector3df m_normal[3];
+			core::vector3df m_tangent[3];
+			core::vector3df m_binormal[3];
 
 			SColor m_randomColor;
 		public:
@@ -72,6 +72,23 @@ namespace Skylicht
 				core::vector2di& lmPixel);
 
 			bool moveNextPixel(core::vector2di& lmPixel, int offset);
+
+			bool isFinished(const core::vector2di& lmPixel);
+
+			inline unsigned char *getImageData()
+			{
+				return m_imageData;
+			}
+
+			inline int getWidth()
+			{
+				return m_width;
+			}
+
+			inline int getHeight()
+			{
+				return m_height;
+			}
 		};
 	}
 }
