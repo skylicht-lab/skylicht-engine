@@ -43,6 +43,10 @@ if (BUILD_MACOS)
 	add_library(GLESv2 SHARED IMPORTED)
 	set_target_properties(GLESv2 PROPERTIES IMPORTED_LOCATION "${angle_lib_path}/libGLESv2.dylib")
 	target_link_libraries(TestApp GLESv2)
+
+	add_custom_command(TARGET TestApp POST_BUILD COMMAND 
+		${CMAKE_COMMAND} -E copy_if_different "${angle_lib_path}/libGLESv2.dylib" 
+		$<TARGET_FILE_DIR:TestApp>)	
 endif()
 
-add_test(NAME TestApp COMMAND $<TARGET_FILE:TestApp>)
+add_test(NAME TestApp COMMAND $<TARGET_FILE:TestApp> WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}")

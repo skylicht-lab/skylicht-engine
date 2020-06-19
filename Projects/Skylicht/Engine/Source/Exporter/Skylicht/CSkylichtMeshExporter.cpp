@@ -87,7 +87,7 @@ namespace Skylicht
 				{
 #if _DEBUG
 					char log[512];
-					sprintf(log, "[CSkylichtMeshExporter::exportModel] entity: %d - dont declare getTypeName in: %s", i, typeid(*data).raw_name());
+                    sprintf(log, "[CSkylichtMeshExporter::exportModel] entity: %d - dont declare getTypeName in: %s", i, typeid(*data).name());
 					os::Printer::log(log);
 #endif
 					continue;
