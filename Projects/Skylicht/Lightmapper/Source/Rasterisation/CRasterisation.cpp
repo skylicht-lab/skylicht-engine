@@ -31,12 +31,7 @@ namespace Skylicht
 	{
 		CRasterisation::CRasterisation(int width, int height) :
 			m_width(width),
-			m_height(height),
-			m_position(NULL),
-			m_uv(NULL),
-			m_normal(NULL),
-			m_tangent(NULL),
-			m_binormal(NULL)
+			m_height(height)
 		{
 			int size = width * height;
 
@@ -69,24 +64,25 @@ namespace Skylicht
 		{
 			core::vector2df minUV, maxUV;
 
-			m_position = position;
-			m_uv = uv;
-			m_normal = normal;
-			m_tangent = tangent;
-			m_binormal = binormal;
-
-			minUV = m_uv[0];
-			maxUV = m_uv[0];
+			minUV = uv[0];
+			maxUV = uv[0];
 
 			for (int i = 0; i < 3; i++)
 			{
+				// copy data
+				m_position[i] = position[i];
+				m_uv[i] = uv[i];
+				m_normal[i] = normal[i];
+				m_tangent[i] = tangent[i];
+				m_binormal[i] = binormal[i];
+
 				float x = m_uv[i].X;
 				float y = m_uv[i].Y;
 
 				minUV.X = core::min_(minUV.X, x);
 				minUV.Y = core::min_(minUV.Y, y);
-				maxUV.X = core::max_(minUV.X, x);
-				maxUV.Y = core::max_(minUV.Y, y);
+				maxUV.X = core::max_(maxUV.X, x);
+				maxUV.Y = core::max_(maxUV.Y, y);
 
 				m_uvf[i].X = fmodf(x, 1.0f) * (float)m_width;
 				m_uvf[i].Y = fmodf(y, 1.0f) * (float)m_height;
@@ -237,15 +233,17 @@ namespace Skylicht
 			float fy = (float)y;
 
 			// finish
-			if (y >= m_uvMax.Y)
+			if (isFinished(lmPixel) == true)
 				return false;
 
 			// this pixel is baked
-			if (m_bakedData[y * m_width + x] == true)
+			int dataOffset = y * m_width + x;
+
+			if (m_bakedData[dataOffset] == true)
 				return false;
 
 			// check pixel inside triangle
-			core::vector2df poly[4];
+			core::vector2df poly[16];
 			poly[0] = core::vector2df(fx, fy);
 			poly[1] = core::vector2df(fx + 1.0f, fy);
 			poly[2] = core::vector2df(fx + 1.0f, fy + 1.0f);
@@ -254,8 +252,11 @@ namespace Skylicht
 			core::vector2df *res = new core::vector2df[16];
 			int nRes = isClipPolyInside(poly, 4, m_uvf, 3, res);
 			if (nRes == 0)
+			{
 				return false;
+			}
 
+			/*
 			// calculate centroid position and area
 			core::vector2df centroid = res[0];
 			float area = res[nRes - 1].X * res[0].Y - res[nRes - 1].Y * res[0].X;
@@ -278,6 +279,15 @@ namespace Skylicht
 
 			if (!isfinite(uv.X) || !isfinite(uv.Y))
 				return false; // degenerate
+			*/
+
+			// set baked
+			m_bakedData[dataOffset] = true;
+
+			// fill color
+			m_imageData[dataOffset * 3] = m_randomColor.getRed();
+			m_imageData[dataOffset * 3 + 1] = m_randomColor.getGreen();
+			m_imageData[dataOffset * 3 + 2] = m_randomColor.getBlue();
 
 			// bake pixel
 			return true;
@@ -292,11 +302,19 @@ namespace Skylicht
 				lmPixel.X = m_uvMin.X;
 				lmPixel.Y += offset;
 
-				if (lmPixel.Y >= m_uvMax.Y)
+				if (isFinished(lmPixel) == true)
 					return false;
 			}
 
 			return true;
+		}
+
+		bool CRasterisation::isFinished(const core::vector2di& lmPixel)
+		{
+			if (lmPixel.Y >= m_uvMax.Y)
+				return true;
+
+			return false;
 		}
 	}
 }
