@@ -92,6 +92,8 @@ void CViewInit::onInit()
 	if (model != NULL)
 	{
 		CGameObject *gazeboObj = zone->createEmptyObject();
+		gazeboObj->setStatic(true);
+
 		CRenderMesh *renderMesh = gazeboObj->addComponent<CRenderMesh>();
 		renderMesh->initFromPrefab(model);
 
