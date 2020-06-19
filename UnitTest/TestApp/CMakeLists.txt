@@ -46,7 +46,12 @@ if (BUILD_MACOS)
 
 	add_custom_command(TARGET TestApp POST_BUILD COMMAND 
 		${CMAKE_COMMAND} -E copy_if_different "${angle_lib_path}/libGLESv2.dylib" 
-		$<TARGET_FILE_DIR:TestApp>)	
+		$<TARGET_FILE_DIR:TestApp>)			
 endif()
 
-add_test(NAME TestApp COMMAND $<TARGET_FILE:TestApp> WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}")
+if (BUILD_MACOS)
+	# WORKING_DIRECTORY for load dylib
+	add_test(NAME TestApp COMMAND $<TARGET_FILE:TestApp> WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}")
+else()
+	add_test(NAME TestApp COMMAND $<TARGET_FILE:TestApp>)
+endif()
