@@ -37,6 +37,8 @@ namespace Skylicht
 			core::vector3df Normal;
 			core::vector3df Tangent;
 			core::vector3df Binormal;
+
+			CSH9 SH;
 		};
 
 		class CRasterisation
@@ -115,6 +117,7 @@ namespace Skylicht
 
 			ERasterPass m_currentPass;
 
+			unsigned char *m_lightmapData;
 			unsigned char *m_testBakedData;
 
 		private:
@@ -164,15 +167,18 @@ namespace Skylicht
 				return m_testBakedData;
 			}
 
+			unsigned char* getLightmapData()
+			{
+				return m_lightmapData;
+			}
+
 			core::array<SBakePixel>& getBakePixelQueue()
 			{
 				return m_bakePixels;
 			}
 
-			void flushPixelQueue()
-			{
-				m_bakePixels.set_used(0);
-			}
+			void flushPixel(std::vector<CSH9>& bakeResults);
+
 		};
 	}
 }
