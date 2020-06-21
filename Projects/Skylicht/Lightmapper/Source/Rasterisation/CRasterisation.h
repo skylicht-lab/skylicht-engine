@@ -30,13 +30,72 @@ namespace Skylicht
 {
 	namespace Lightmapper
 	{
+		struct SBakePixel
+		{
+			core::vector2di Pixel;
+			core::vector3df Position;
+			core::vector3df Normal;
+			core::vector3df Tangent;
+			core::vector3df Binormal;
+		};
+
 		class CRasterisation
 		{
+		public:
+
+			/*
+			* ERasterPass
+			* http://web.archive.org/web/20160311085440/http://freespace.virgin.net/hugo.elias/radiosity/radiosity.htm
+			* Section: Increasing the accuracy of the solution
+			*
+			* Step 1: Space4A (All bake)
+			*         A           A
+			*
+			*
+			*
+			*         A           A
+			* Step 2,3: Space2BX, Space2BY (Interpolate + Bake if needed)
+			*         A     B     A
+			*
+			*         B           B
+			*
+			*         A     B     A
+			* Step 4: Space4C (Interpolate + Bake if needed)
+			*         A     B     A
+			*
+			*         B     C     B
+			*
+			*         A     B     A
+			* Step 5: Space1D (Interpolate + Bake if needed)
+			*         A  D  B  D  A
+			*         D     D     D
+			*         B  D  C  D  B
+			*         D     D     D
+			*         A  D  B  D  A
+			* Step 6: Space1E (Interpolate + Bake if needed)
+			*         A  D  B  D  A
+			*         D  E  D  E  D
+			*         B  D  C  D  B
+			*         D  E  D  E  D
+			*         A  D  B  D  A
+			*/
+			enum ERasterPass
+			{
+				Space4A = 0,
+				Space2BX,
+				Space2BY,
+				Space4C,
+				Space1DX,
+				Space1DY,
+				Space1E,
+				PassCount,
+			};
+
 		protected:
 			CSH9 *m_bakeResult;
 
 			bool *m_bakedData;
-			unsigned char *m_imageData;
+
 			int m_width;
 			int m_height;
 
@@ -49,20 +108,35 @@ namespace Skylicht
 			core::vector2df m_uv[3];
 			core::vector3df m_normal[3];
 			core::vector3df m_tangent[3];
-			core::vector3df m_binormal[3];
 
 			SColor m_randomColor;
+
+			core::array<SBakePixel> m_bakePixels;
+
+			ERasterPass m_currentPass;
+
+			unsigned char *m_testBakedData;
+
+		private:
+			core::vector3df sampleVector3(const core::vector3df* p, const core::vector2df& uv);
+
 		public:
 			CRasterisation(int width, int height);
 
 			virtual ~CRasterisation();
+
+			int getPixelStep(ERasterPass pass);
+
+			int getPassOffsetX(ERasterPass pass);
+
+			int getPassOffsetY(ERasterPass pass);
 
 			core::vector2di setTriangle(
 				const core::vector3df *position,
 				const core::vector2df *uv,
 				const core::vector3df *normal,
 				const core::vector3df *tangent,
-				const core::vector3df *binormal);
+				ERasterPass pass);
 
 			bool samplingTrianglePosition(
 				core::vector3df& outPosition,
@@ -71,14 +145,9 @@ namespace Skylicht
 				core::vector3df& outBinormal,
 				core::vector2di& lmPixel);
 
-			bool moveNextPixel(core::vector2di& lmPixel, int offset);
+			bool moveNextPixel(core::vector2di& lmPixel);
 
 			bool isFinished(const core::vector2di& lmPixel);
-
-			inline unsigned char *getImageData()
-			{
-				return m_imageData;
-			}
 
 			inline int getWidth()
 			{
@@ -88,6 +157,21 @@ namespace Skylicht
 			inline int getHeight()
 			{
 				return m_height;
+			}
+
+			unsigned char* getTestBakeImage()
+			{
+				return m_testBakedData;
+			}
+
+			core::array<SBakePixel>& getBakePixelQueue()
+			{
+				return m_bakePixels;
+			}
+
+			void flushPixelQueue()
+			{
+				m_bakePixels.set_used(0);
 			}
 		};
 	}
