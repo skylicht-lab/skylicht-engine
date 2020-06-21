@@ -145,16 +145,10 @@ void CViewBakeLightmap::onUpdate()
 			core::vector3df outTangent;
 			core::vector3df outBinormal;
 
+			bool forceBake = false;
+
 			// sampling pixel
 			m_lmRasterize->samplingTrianglePosition(outPos, outNormal, outTangent, outBinormal, m_pixel);
-
-			// check array bake
-			const core::array<SBakePixel>& listPixels = m_lmRasterize->getBakePixelQueue();
-			if (listPixels.size() == NUM_MTBAKER - 1)
-			{
-				// bake
-				m_lmRasterize->flushPixelQueue();
-			}
 
 			// next pixel
 			m_lmRasterize->moveNextPixel(m_pixel);
@@ -167,28 +161,66 @@ void CViewBakeLightmap::onUpdate()
 			if (m_currentTris >= numTris)
 			{
 				m_currentMB++;
+
 				m_currentTris = 0;
 				m_lastTris = 9999;
+
+				forceBake = true;
+			}
+
+			// bake indirect pixels
+			core::array<SBakePixel>& listPixels = m_lmRasterize->getBakePixelQueue();
+			if (listPixels.size() == NUM_MTBAKER || forceBake == true)
+			{
+				int n = (int)listPixels.size();
+				m_out.clear();
+
+				for (int i = 0; i < n; i++)
+				{
+					m_bakePositions[i] = listPixels[i].Position;
+					m_bakeNormals[i] = listPixels[i].Normal;
+					m_bakeTangents[i] = listPixels[i].Tangent;
+					m_bakeBinormals[i] = listPixels[i].Binormal;
+				}
+
+				CContext *context = CContext::getInstance();
+				CScene *scene = context->getScene();
+
+				CLightmapper::getInstance()->bakeAtPosition(
+					m_bakeCameraObject->getComponent<CCamera>(),
+					context->getRenderPipeline(),
+					scene->getEntityManager(),
+					m_bakePositions,
+					m_bakeNormals,
+					m_bakeTangents,
+					m_bakeBinormals,
+					m_out,
+					n,
+					5
+				);
+
+				// bake
+				m_lmRasterize->flushPixel(m_out);
 			}
 		}
 		else
 		{
 			// next pass
 			m_currentPass++;
+
 			m_currentMB = 0;
 			m_currentTris = 0;
 			m_lastTris = 9999;
 
-			if (m_currentPass >= (int)CRasterisation::PassCount)
+			if (m_currentPass >= (int)CRasterisation::Space4A)
 			{
 				/*
-				unsigned char *data = m_lmRasterize->getTestBakeImage();
+				unsigned char *data = m_lmRasterize->getLightmapData();
 				core::dimension2du size(m_lmRasterize->getWidth(), m_lmRasterize->getHeight());
 				IImage *img = getVideoDriver()->createImageFromData(video::ECF_R8G8B8, size, data);
 				getVideoDriver()->writeImageToFile(img, "C:\\SVN\\m_lmRasterize.png");
 				img->drop();
 				*/
-
 				CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 			}
 
