@@ -14,6 +14,7 @@ protected:
 
 	CGameObject *m_bakeCameraObject;
 
+	u32 m_currentPass;
 	u32 m_currentMB;
 	
 	u32 m_currentTris;

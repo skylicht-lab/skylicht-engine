@@ -205,7 +205,6 @@ namespace Skylicht
 				count,
 				5);
 
-
 			core::vector3df result;
 			float r, g, b;
 

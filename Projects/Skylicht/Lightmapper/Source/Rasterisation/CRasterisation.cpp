@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CRasterisation.h"
+#include "SutherlandHodgman.h"
 
 namespace Skylicht
 {
@@ -31,20 +32,23 @@ namespace Skylicht
 	{
 		CRasterisation::CRasterisation(int width, int height) :
 			m_width(width),
-			m_height(height)
+			m_height(height),
+			m_currentPass(Space4A)
 		{
 			int size = width * height;
 
 			m_bakeResult = new CSH9[size];
 			m_bakedData = new bool[size];
-			m_imageData = new unsigned char[size * 3];
+
+			m_testBakedData = new unsigned char[size * 3];
 
 			for (int i = 0; i < size; i++)
 			{
 				m_bakedData[i] = false;
-				m_imageData[i * 3] = 0;
-				m_imageData[i * 3 + 1] = 0;
-				m_imageData[i * 3 + 2] = 0;
+				
+				m_testBakedData[i * 3] = 0;
+				m_testBakedData[i * 3 + 1] = 0;
+				m_testBakedData[i * 3 + 2] = 0;
 			}
 		}
 
@@ -52,7 +56,124 @@ namespace Skylicht
 		{
 			delete[] m_bakeResult;
 			delete[] m_bakedData;
-			delete[] m_imageData;
+			delete[] m_testBakedData;
+		}
+
+		/*
+			* ERasterPass
+			* http://web.archive.org/web/20160311085440/http://freespace.virgin.net/hugo.elias/radiosity/radiosity.htm
+			* Section: Increasing the accuracy of the solution
+			*
+			* Step 1: Space4A (All bake)
+			*         A           A
+			*
+			*
+			*
+			*         A           A
+			* Step 2,3: Space2BX, Space2BY (Interpolate + Bake if needed)
+			*         A     B     A
+			*
+			*         B           B
+			*
+			*         A     B     A
+			* Step 4: Space4C (Interpolate + Bake if needed)
+			*         A     B     A
+			*
+			*         B     C     B
+			*
+			*         A     B     A
+			* Step 5, 6: Space1DX, Space1DY (Interpolate + Bake if needed)
+			*         A  D  B  D  A
+			*         D     D     D
+			*         B  D  C  D  B
+			*         D     D     D
+			*         A  D  B  D  A
+			* Step 7: Space1E (Interpolate + Bake if needed)
+			*         A  D  B  D  A
+			*         D  E  D  E  D
+			*         B  D  C  D  B
+			*         D  E  D  E  D
+			*         A  D  B  D  A
+			*/
+
+		int CRasterisation::getPixelStep(ERasterPass pass)
+		{
+			int offset = 4;
+			switch (pass)
+			{
+			case Space4A:
+			case Space2BX:
+			case Space2BY:
+			case Space4C:
+				offset = 4;
+				break;
+			case Space1DX:
+			case Space1DY:
+			case Space1E:
+				offset = 2;
+				break;
+			default:
+				break;
+			}
+			return offset;
+		}
+
+		int CRasterisation::getPassOffsetX(ERasterPass pass)
+		{
+			int offsetX = 0;
+			switch (pass)
+			{
+			case Space4A:
+				break;
+			case Space2BX:
+				offsetX = 2;
+				break;
+			case Space2BY:
+				break;
+			case Space4C:
+				offsetX = 2;
+				break;
+			case Space1DX:
+				offsetX = 1;
+				break;
+			case Space1DY:
+				break;
+			case Space1E:
+				offsetX = 1;
+				break;
+			default:
+				break;
+			}
+			return offsetX;
+		}
+
+		int CRasterisation::getPassOffsetY(ERasterPass pass)
+		{
+			int offsetY = 0;
+			switch (pass)
+			{
+			case Space4A:
+				break;
+			case Space2BX:
+				break;
+			case Space2BY:
+				offsetY = 2;
+				break;
+			case Space4C:
+				offsetY = 2;
+				break;
+			case Space1DX:
+				break;
+			case Space1DY:
+				offsetY = 1;
+				break;
+			case Space1E:
+				offsetY = 1;
+				break;
+			default:
+				break;
+			}
+			return offsetY;
 		}
 
 		core::vector2di CRasterisation::setTriangle(
@@ -60,12 +181,14 @@ namespace Skylicht
 			const core::vector2df *uv,
 			const core::vector3df *normal,
 			const core::vector3df *tangent,
-			const core::vector3df *binormal)
+			ERasterPass pass)
 		{
 			core::vector2df minUV, maxUV;
 
 			minUV = uv[0];
 			maxUV = uv[0];
+
+			m_currentPass = pass;
 
 			for (int i = 0; i < 3; i++)
 			{
@@ -74,7 +197,6 @@ namespace Skylicht
 				m_uv[i] = uv[i];
 				m_normal[i] = normal[i];
 				m_tangent[i] = tangent[i];
-				m_binormal[i] = binormal[i];
 
 				float x = m_uv[i].X;
 				float y = m_uv[i].Y;
@@ -107,90 +229,12 @@ namespace Skylicht
 			m_randomColor.setAlpha(255);
 
 			// return first lm pixel of triangle
-			return m_uvMin;
-		}
+			core::vector2di pixel = m_uvMin;
 
-		// pseudo cross product
-		static inline float cross2(const core::vector2df& a, const core::vector2df& b)
-		{
-			return a.X * b.Y - a.Y * b.X;
-		}
+			pixel.X += getPassOffsetX(m_currentPass);
+			pixel.Y += getPassOffsetY(m_currentPass);
 
-		static inline int leftOf(const core::vector2df& a, const core::vector2df& b, const core::vector2df& c)
-		{
-			core::vector2df v1 = b - a;
-			core::vector2df v2 = c - b;
-			float x = cross2(v1, v2);
-			return x < 0 ? -1 : x > 0;
-		}
-
-		static bool lineIntersection(
-			const core::vector2df& x0,
-			const core::vector2df& x1,
-			const core::vector2df& y0,
-			const core::vector2df& y1,
-			core::vector2df& res)
-		{
-			core::vector2df dx = x1 - x0;
-			core::vector2df dy = y1 - y0;
-			core::vector2df d = x0 - y0;
-
-			float dyx = cross2(dy, dx);
-			if (dyx == 0.0f)
-				return false;
-
-			dyx = cross2(d, dx) / dyx;
-			if (dyx <= 0 || dyx >= 1)
-				return false;
-
-			res.X = y0.X + dyx * dy.X;
-			res.X = y0.Y + dyx * dy.Y;
-			return true;
-		}
-
-		int isClipPolyInside(core::vector2df *poly, int polyCount, core::vector2df *clip, int clipCount, core::vector2df *res)
-		{
-			int nRes = polyCount;
-
-			int dir = leftOf(clip[0], clip[1], clip[2]);
-
-			for (int i = 0, j = clipCount - 1; i < clipCount && nRes; j = i++)
-			{
-				if (i != 0)
-				{
-					for (int i = 0; i < nRes; i++)
-						poly[i] = res[i];
-				}
-
-				nRes = 0;
-
-				core::vector2df v0 = poly[polyCount - 1];
-
-				int side0 = leftOf(clip[j], clip[i], v0);
-				if (side0 != -dir)
-					res[nRes++] = v0;
-
-				for (int k = 0; k < clipCount; k++)
-				{
-					core::vector2df v1 = poly[k], x;
-
-					int side1 = leftOf(clip[j], clip[i], v1);
-
-					if (side0 + side1 == 0 && side0 && lineIntersection(clip[j], clip[i], v0, v1, x))
-						res[nRes++] = x;
-
-					if (k == polyCount - 1)
-						break;
-
-					if (side1 != -dir)
-						res[nRes++] = v1;
-
-					v0 = v1;
-					side0 = side1;
-				}
-			}
-
-			return nRes;
+			return pixel;
 		}
 
 		static core::vector2df toBarycentric(const core::vector2df& p1, const core::vector2df& p2, const core::vector2df& p3, const core::vector2df& p)
@@ -213,6 +257,18 @@ namespace Skylicht
 			float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
 			float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 			return core::vector2df(u, v);
+		}
+
+		core::vector3df CRasterisation::sampleVector3(const core::vector3df* p, const core::vector2df& uv)
+		{
+			const core::vector3df& p0 = p[0];
+			const core::vector3df& p1 = p[1];
+			const core::vector3df& p2 = p[2];
+
+			core::vector3df v1 = p1 - p0;
+			core::vector3df v2 = p2 - p0;
+
+			return p0 + ((v2 * uv.X) + (v1 * uv.Y));
 		}
 
 		bool CRasterisation::samplingTrianglePosition(
@@ -243,20 +299,22 @@ namespace Skylicht
 				return false;
 
 			// check pixel inside triangle
-			core::vector2df poly[16];
+			core::vector2df poly[4];
 			poly[0] = core::vector2df(fx, fy);
 			poly[1] = core::vector2df(fx + 1.0f, fy);
 			poly[2] = core::vector2df(fx + 1.0f, fy + 1.0f);
 			poly[3] = core::vector2df(fx, fy + 1.0f);
 
-			core::vector2df *res = new core::vector2df[16];
-			int nRes = isClipPolyInside(poly, 4, m_uvf, 3, res);
+			core::vector2df res[16];
+			int nRes = 0;
+
+			// clip rect poly with triangle
+			SutherlandHodgman(m_uvf, 3, poly, 4, res, nRes);
 			if (nRes == 0)
 			{
 				return false;
 			}
 
-			/*
 			// calculate centroid position and area
 			core::vector2df centroid = res[0];
 			float area = res[nRes - 1].X * res[0].Y - res[nRes - 1].Y * res[0].X;
@@ -279,28 +337,47 @@ namespace Skylicht
 
 			if (!isfinite(uv.X) || !isfinite(uv.Y))
 				return false; // degenerate
-			*/
 
 			// set baked
 			m_bakedData[dataOffset] = true;
 
-			// fill color
-			m_imageData[dataOffset * 3] = m_randomColor.getRed();
-			m_imageData[dataOffset * 3 + 1] = m_randomColor.getGreen();
-			m_imageData[dataOffset * 3 + 2] = m_randomColor.getBlue();
+			m_bakePixels.push_back(SBakePixel());
+			SBakePixel &p = m_bakePixels.getLast();
+			p.Pixel = lmPixel;
+
+			// calc position 			
+			p.Position = sampleVector3(m_position, uv);
+
+			// calc normal
+			p.Normal = sampleVector3(m_normal, uv);
+			p.Normal.normalize();
+
+			// calc tangent
+			p.Tangent = sampleVector3(m_tangent, uv);
+			p.Tangent.normalize();
+
+			// calc binormal
+			p.Binormal = p.Normal.crossProduct(p.Tangent);
+			p.Binormal.normalize();
+
+			// fill test color
+			m_testBakedData[dataOffset * 3] = m_randomColor.getRed();
+			m_testBakedData[dataOffset * 3 + 1] = m_randomColor.getGreen();
+			m_testBakedData[dataOffset * 3 + 2] = m_randomColor.getBlue();
 
 			// bake pixel
 			return true;
 		}
 
-		bool CRasterisation::moveNextPixel(core::vector2di& lmPixel, int offset)
+		bool CRasterisation::moveNextPixel(core::vector2di& lmPixel)
 		{
-			lmPixel.X += offset;
+			int step = getPixelStep(m_currentPass);
+			lmPixel.X += step;
 
 			if (lmPixel.X >= m_uvMax.X)
 			{
-				lmPixel.X = m_uvMin.X;
-				lmPixel.Y += offset;
+				lmPixel.X = m_uvMin.X + getPassOffsetX(m_currentPass);
+				lmPixel.Y += step;
 
 				if (isFinished(lmPixel) == true)
 					return false;
