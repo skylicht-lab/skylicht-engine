@@ -41,14 +41,19 @@ namespace Skylicht
 			m_bakedData = new bool[size];
 
 			m_testBakedData = new unsigned char[size * 3];
+			m_lightmapData = new unsigned char[size * 3];
 
 			for (int i = 0; i < size; i++)
 			{
 				m_bakedData[i] = false;
-				
+
 				m_testBakedData[i * 3] = 0;
 				m_testBakedData[i * 3 + 1] = 0;
 				m_testBakedData[i * 3 + 2] = 0;
+
+				m_lightmapData[i * 3] = 0;
+				m_lightmapData[i * 3 + 1] = 0;
+				m_lightmapData[i * 3 + 2] = 0;
 			}
 		}
 
@@ -57,6 +62,7 @@ namespace Skylicht
 			delete[] m_bakeResult;
 			delete[] m_bakedData;
 			delete[] m_testBakedData;
+			delete[] m_lightmapData;
 		}
 
 		/*
@@ -360,6 +366,12 @@ namespace Skylicht
 			p.Binormal = p.Normal.crossProduct(p.Tangent);
 			p.Binormal.normalize();
 
+			if (p.Binormal.getLength() == 0)
+			{
+				int t = 0;
+				t++;
+			}
+
 			// fill test color
 			m_testBakedData[dataOffset * 3] = m_randomColor.getRed();
 			m_testBakedData[dataOffset * 3 + 1] = m_randomColor.getGreen();
@@ -392,6 +404,40 @@ namespace Skylicht
 				return true;
 
 			return false;
+		}
+
+		void CRasterisation::flushPixel(std::vector<CSH9>& bakeResults)
+		{
+			int n = (int)m_bakePixels.size();
+
+			core::vector3df result;
+			float r, g, b;
+			u32 colorR, colorG, colorB;
+			int dataOffset;
+
+#pragma omp parallel for private(result, r, g, b, colorR, colorG, colorB, dataOffset)
+			for (int i = 0; i < n; i++)
+			{
+				SBakePixel& p = m_bakePixels[i];
+
+				bakeResults[i].getSHIrradiance(p.Normal, result);
+
+				r = core::clamp(result.X, 0.0f, 1.0f);
+				g = core::clamp(result.Y, 0.0f, 1.0f);
+				b = core::clamp(result.Z, 0.0f, 1.0f);
+
+				colorR = (u32)(r * 255.0f);
+				colorG = (u32)(g * 255.0f);
+				colorB = (u32)(b * 255.0f);
+
+				dataOffset = p.Pixel.Y * m_width + p.Pixel.X;
+
+				m_lightmapData[dataOffset * 3] = colorR;
+				m_lightmapData[dataOffset * 3 + 1] = colorG;
+				m_lightmapData[dataOffset * 3 + 2] = colorB;
+			}
+
+			m_bakePixels.set_used(0);
 		}
 	}
 }
