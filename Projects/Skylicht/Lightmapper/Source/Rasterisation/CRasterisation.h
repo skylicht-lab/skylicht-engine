@@ -120,6 +120,8 @@ namespace Skylicht
 			unsigned char *m_lightmapData;
 			unsigned char *m_testBakedData;
 
+			float m_interpolationThreshold;
+
 		private:
 			core::vector3df sampleVector3(const core::vector3df* p, const core::vector2df& uv);
 
@@ -133,6 +135,10 @@ namespace Skylicht
 			int getPassOffsetX(ERasterPass pass);
 
 			int getPassOffsetY(ERasterPass pass);
+
+			bool isInterpolateX(ERasterPass pass);
+
+			bool isInterpolateY(ERasterPass pass);
 
 			core::vector2di setTriangle(
 				const core::vector3df *position,
@@ -151,6 +157,11 @@ namespace Skylicht
 			bool moveNextPixel(core::vector2di& lmPixel);
 
 			bool isFinished(const core::vector2di& lmPixel);
+
+			inline void setInterpolationThreshold(float f)
+			{
+				m_interpolationThreshold = f;
+			}
 
 			inline int getWidth()
 			{
@@ -171,6 +182,10 @@ namespace Skylicht
 			{
 				return m_lightmapData;
 			}
+
+			bool tryInterpolate(int x, int y);
+
+			void getLightmapPixel(int x, int y, float *color);
 
 			core::array<SBakePixel>& getBakePixelQueue()
 			{

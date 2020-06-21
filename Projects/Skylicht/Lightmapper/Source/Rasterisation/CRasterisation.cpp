@@ -33,7 +33,8 @@ namespace Skylicht
 		CRasterisation::CRasterisation(int width, int height) :
 			m_width(width),
 			m_height(height),
-			m_currentPass(Space4A)
+			m_currentPass(Space4A),
+			m_interpolationThreshold(2.0f)
 		{
 			int size = width * height;
 
@@ -182,6 +183,66 @@ namespace Skylicht
 			return offsetY;
 		}
 
+		bool CRasterisation::isInterpolateX(ERasterPass pass)
+		{
+			bool ret = false;
+			switch (pass)
+			{
+			case Space4A:
+				break;
+			case Space2BX:
+				ret = true;
+				break;
+			case Space2BY:
+				break;
+			case Space4C:
+				ret = true;
+				break;
+			case Space1DX:
+				ret = true;
+				break;
+			case Space1DY:
+				break;
+			case Space1E:
+				ret = true;
+				break;
+			default:
+				break;
+			}
+
+			return ret;
+		}
+
+		bool CRasterisation::isInterpolateY(ERasterPass pass)
+		{
+			bool ret = false;
+			switch (pass)
+			{
+			case Space4A:
+				break;
+			case Space2BX:
+				break;
+			case Space2BY:
+				ret = true;
+				break;
+			case Space4C:
+				ret = true;
+				break;
+			case Space1DX:
+				break;
+			case Space1DY:
+				ret = true;
+				break;
+			case Space1E:
+				ret = true;
+				break;
+			default:
+				break;
+			}
+
+			return ret;
+		}
+
 		core::vector2di CRasterisation::setTriangle(
 			const core::vector3df *position,
 			const core::vector2df *uv,
@@ -294,12 +355,12 @@ namespace Skylicht
 			float fx = (float)x;
 			float fy = (float)y;
 
+			// this pixel is baked
+			int dataOffset = y * m_width + x;
+
 			// finish
 			if (isFinished(lmPixel) == true)
 				return false;
-
-			// this pixel is baked
-			int dataOffset = y * m_width + x;
 
 			if (m_bakedData[dataOffset] == true)
 				return false;
@@ -347,35 +408,46 @@ namespace Skylicht
 			// set baked
 			m_bakedData[dataOffset] = true;
 
-			m_bakePixels.push_back(SBakePixel());
-			SBakePixel &p = m_bakePixels.getLast();
-			p.Pixel = lmPixel;
+			bool useInterpolate = false;
 
-			// calc position 			
-			p.Position = sampleVector3(m_position, uv);
-
-			// calc normal
-			p.Normal = sampleVector3(m_normal, uv);
-			p.Normal.normalize();
-
-			// calc tangent
-			p.Tangent = sampleVector3(m_tangent, uv);
-			p.Tangent.normalize();
-
-			// calc binormal
-			p.Binormal = p.Normal.crossProduct(p.Tangent);
-			p.Binormal.normalize();
-
-			if (p.Binormal.getLength() == 0)
+			if (m_currentPass >= Space2BX)
 			{
-				int t = 0;
-				t++;
+				useInterpolate = tryInterpolate(x, y);
+				if (useInterpolate == true)
+				{
+					// fill test color
+					m_testBakedData[dataOffset * 3] = 255;
+					m_testBakedData[dataOffset * 3 + 1] = 255;
+					m_testBakedData[dataOffset * 3 + 2] = 255;
+				}
 			}
 
-			// fill test color
-			m_testBakedData[dataOffset * 3] = m_randomColor.getRed();
-			m_testBakedData[dataOffset * 3 + 1] = m_randomColor.getGreen();
-			m_testBakedData[dataOffset * 3 + 2] = m_randomColor.getBlue();
+			if (useInterpolate == false)
+			{
+				m_bakePixels.push_back(SBakePixel());
+				SBakePixel &p = m_bakePixels.getLast();
+				p.Pixel = lmPixel;
+
+				// calc position 			
+				p.Position = sampleVector3(m_position, uv);
+
+				// calc normal
+				p.Normal = sampleVector3(m_normal, uv);
+				p.Normal.normalize();
+
+				// calc tangent
+				p.Tangent = sampleVector3(m_tangent, uv);
+				p.Tangent.normalize();
+
+				// calc binormal
+				p.Binormal = p.Normal.crossProduct(p.Tangent);
+				p.Binormal.normalize();
+
+				// fill test color
+				m_testBakedData[dataOffset * 3] = m_randomColor.getRed();
+				m_testBakedData[dataOffset * 3 + 1] = m_randomColor.getGreen();
+				m_testBakedData[dataOffset * 3 + 2] = m_randomColor.getBlue();
+			}
 
 			// bake pixel
 			return true;
@@ -402,6 +474,129 @@ namespace Skylicht
 		{
 			if (lmPixel.Y >= m_uvMax.Y)
 				return true;
+
+			return false;
+		}
+
+		void CRasterisation::getLightmapPixel(int x, int y, float *color)
+		{
+			int dataOffset = y * m_width + x;
+
+			u8 r = m_lightmapData[dataOffset * 3];
+			u8 g = m_lightmapData[dataOffset * 3 + 1];
+			u8 b = m_lightmapData[dataOffset * 3 + 2];
+
+			color[0] = (float)r;
+			color[1] = (float)g;
+			color[2] = (float)b;
+		}
+
+		bool CRasterisation::tryInterpolate(int x, int y)
+		{
+			bool interpolateX = isInterpolateX(m_currentPass);
+			bool interpolateY = isInterpolateY(m_currentPass);
+
+			int d = getPixelStep(m_currentPass) / 2;
+
+			float neighbors[4][3];
+
+			int neighborCount = 0;
+			int neighborsExpected = 0;
+
+			if (interpolateX == true)
+			{
+				neighborsExpected += 2;
+				if (x - d >= m_uvMin.X && x + d <= m_uvMax.X)
+				{
+					float c[3];
+					getLightmapPixel(x - d, y, c);
+					neighbors[neighborCount][0] = c[0];
+					neighbors[neighborCount][1] = c[1];
+					neighbors[neighborCount][2] = c[2];
+					neighborCount++;
+
+					getLightmapPixel(x + d, y, c);
+					neighbors[neighborCount][0] = c[0];
+					neighbors[neighborCount][1] = c[1];
+					neighbors[neighborCount][2] = c[2];
+					neighborCount++;
+				}
+			}
+
+			if (interpolateY == true)
+			{
+				neighborsExpected += 2;
+				if (y - d >= m_uvMin.Y && y + d <= m_uvMax.Y)
+				{
+					float c[3];
+					getLightmapPixel(x, y - d, c);
+					neighbors[neighborCount][0] = c[0];
+					neighbors[neighborCount][1] = c[1];
+					neighbors[neighborCount][2] = c[2];
+					neighborCount++;
+
+					getLightmapPixel(x, y + d, c);
+					neighbors[neighborCount][0] = c[0];
+					neighbors[neighborCount][1] = c[1];
+					neighbors[neighborCount][2] = c[2];
+					neighborCount++;
+				}
+			}
+
+			if (neighborCount == neighborsExpected)
+			{
+				// calculate average neighbor pixel value
+				float avg[3] = { 0 };
+				for (int i = 0; i < neighborCount; i++)
+				{
+					avg[0] = avg[0] + (float)(neighbors[i][0]);
+					avg[1] = avg[1] + (float)(neighbors[i][1]);
+					avg[2] = avg[2] + (float)(neighbors[i][2]);
+				}
+
+				float ni = 1.0f / (float)neighborCount;
+				for (int j = 0; j < 3; j++)
+					avg[j] *= ni;
+
+				// check if error from average pixel to neighbors is above the interpolation threshold
+				bool interpolate = true;
+
+				for (int i = 0; i < neighborCount; i++)
+				{
+					bool zero = true;
+
+					float c[3] = { 0 };
+					c[0] = neighbors[i][0];
+					c[1] = neighbors[i][1];
+					c[2] = neighbors[i][2];
+
+					for (int j = 0; j < 3; j++)
+					{
+						if (c[j] != 0.0f)
+							zero = false;
+
+						if (fabs(c[j] - avg[j]) > m_interpolationThreshold)
+							interpolate = false;
+					}
+
+					if (zero)
+						interpolate = false;
+
+					if (!interpolate)
+						break;
+				}
+
+				if (interpolate == true)
+				{
+					int dataOffset = y * m_width + x;
+
+					m_lightmapData[dataOffset * 3] = (u8)(avg[0]);
+					m_lightmapData[dataOffset * 3 + 1] = (u8)(avg[1]);
+					m_lightmapData[dataOffset * 3 + 2] = (u8)(avg[2]);
+				}
+
+				return interpolate;
+			}
 
 			return false;
 		}

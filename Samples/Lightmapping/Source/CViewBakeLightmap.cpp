@@ -212,13 +212,18 @@ void CViewBakeLightmap::onUpdate()
 			m_currentTris = 0;
 			m_lastTris = 9999;
 
-			if (m_currentPass >= (int)CRasterisation::Space4A)
+			if (m_currentPass >= (int)CRasterisation::PassCount)
 			{
 				/*
 				unsigned char *data = m_lmRasterize->getLightmapData();
 				core::dimension2du size(m_lmRasterize->getWidth(), m_lmRasterize->getHeight());
 				IImage *img = getVideoDriver()->createImageFromData(video::ECF_R8G8B8, size, data);
 				getVideoDriver()->writeImageToFile(img, "C:\\SVN\\m_lmRasterize.png");
+				img->drop();
+
+				data = m_lmRasterize->getTestBakeImage();
+				img = getVideoDriver()->createImageFromData(video::ECF_R8G8B8, size, data);
+				getVideoDriver()->writeImageToFile(img, "C:\\SVN\\m_lmRasterize_debug.png");
 				img->drop();
 				*/
 				CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
