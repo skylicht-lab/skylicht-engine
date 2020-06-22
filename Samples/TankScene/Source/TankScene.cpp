@@ -14,7 +14,7 @@ void installApplication(const std::vector<std::string>& argv)
 
 	if (argv.size() >= 4)
 	{
-		CViewBakeLightmap::s_numLightBound = atoi(argv[3].c_str());
+		CViewBakeLightmap::s_numLightBounce = atoi(argv[3].c_str());
 	}
 }
 

@@ -35,6 +35,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	bool CBaseRP::s_bakeMode = false;
+
 	CBaseRP::CBaseRP() :
 		m_next(NULL),
 		m_updateEntity(true)
@@ -651,6 +653,11 @@ namespace Skylicht
 		im->drop();
 
 		texture->unlock();
+	}
+
+	void CBaseRP::setBakeMode(bool b)
+	{
+		s_bakeMode = b;
 	}
 
 	void CBaseRP::drawSceneToTexture(ITexture *target, CEntityManager *entityMgr)

@@ -5,7 +5,7 @@
 #include "CViewDemo.h"
 #include "Importer/Utils/CMeshUtils.h"
 
-int CViewBakeLightmap::s_numLightBound = 1;
+int CViewBakeLightmap::s_numLightBounce = 2;
 
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_guiObject(NULL),
@@ -15,7 +15,7 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_currentMeshBuffer(0),
 	m_currentVertex(0),
 	m_totalVertexBaked(0),
-	m_lightBound(0),
+	m_lightBounce(0),
 	m_timeBeginBake(0)
 {
 
@@ -129,9 +129,9 @@ void CViewBakeLightmap::onUpdate()
 
 	// bake lightmap
 	u32 numMB = m_neshBuffers.size();
-	if (m_currentMeshBuffer < numMB && s_numLightBound > 0)
+	if (m_currentMeshBuffer < numMB && s_numLightBounce > 0)
 	{
-		if (m_lightBound == 0)
+		if (m_lightBounce == 0)
 			CDeferredRP::enableRenderIndirect(false);
 		else
 			CDeferredRP::enableRenderIndirect(true);
@@ -150,8 +150,8 @@ void CViewBakeLightmap::onUpdate()
 
 		char status[512];
 		sprintf(status, "LIGHTMAPPING (%d/%d): %d%%\n\n- MeshBuffer: %d/%d\n- Vertex: %d/%d\n\n - Total: %d\n-Time: %d seconds",
-			m_lightBound + 1,
-			s_numLightBound,
+			m_lightBounce + 1,
+			s_numLightBounce,
 			(int)percent,
 			m_currentMeshBuffer + 1, numMB,
 			m_currentVertex, numVtx,
@@ -188,11 +188,11 @@ void CViewBakeLightmap::onUpdate()
 		CDeferredRP::enableRenderIndirect(true);
 		// CDeferredRP::enableTestIndirect(true);
 
-		m_lightBound++;
+		m_lightBounce++;
 		m_currentMeshBuffer = 0;
 		m_currentVertex = 0;
 
-		if (m_lightBound >= s_numLightBound)
+		if (m_lightBounce >= s_numLightBounce)
 		{
 			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 		}

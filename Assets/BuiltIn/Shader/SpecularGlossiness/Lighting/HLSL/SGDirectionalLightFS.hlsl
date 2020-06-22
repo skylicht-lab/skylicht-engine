@@ -96,13 +96,13 @@ float3 SG(
 	float3 diffuseColor = baseColor.rgb;
 	specularColor = lerp(f0, baseColor.rgb, metallic);
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
+	NdotL = min(NdotL, 0.9);
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	float3 directionalLight = NdotL * lightColor * visibility;
 	float3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
-	color += indirect * diffuseColor / PI;
-	color += indirect / PI * specularColor * metallic;
+	color += indirect * diffuseColor;
 	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET

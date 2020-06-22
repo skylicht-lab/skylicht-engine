@@ -30,6 +30,7 @@ vec3 SG(
 	
 	// Lighting
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
+	NdotL = min(NdotL, 0.9);
 	
 	// Specular
 	vec3 H = normalize(worldLightDir + worldViewDir);
@@ -40,10 +41,10 @@ vec3 SG(
 	vec3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
 	
 	// IBL Ambient
-	color += indirect * diffuseColor / PI;
+	color += indirect * diffuseColor;
 	
 	// IBL reflection (fake by ambient)
-	color += indirect / PI * specularColor * metallic;
+	// color += indirect * specularColor * metallic;
 	
 	return color;
 }

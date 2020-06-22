@@ -87,7 +87,9 @@ namespace Skylicht
 					viewport.LowerRightCorner.set(offsetX + RT_SIZE, offsetY + RT_SIZE);
 
 					// render
+					CBaseRP::setBakeMode(true);
 					rp->render(m_radiance, camera, entityMgr, viewport);
+					CBaseRP::setBakeMode(false);
 				}
 			}
 

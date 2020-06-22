@@ -14,7 +14,7 @@ public:
 		core::array<CSH9> SH;
 	};
 
-	static int s_numLightBound;
+	static int s_numLightBounce;
 
 protected:
 	CGameObject *m_guiObject;
@@ -32,7 +32,7 @@ protected:
 	u32 m_currentMeshBuffer;
 	u32 m_currentVertex;
 	u32 m_totalVertexBaked;
-	int m_lightBound;
+	int m_lightBounce;
 
 	u32 m_timeBeginBake;
 public:

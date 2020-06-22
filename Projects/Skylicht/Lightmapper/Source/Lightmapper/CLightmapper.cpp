@@ -213,8 +213,7 @@ namespace Skylicht
 			{
 				i = begin + id;
 
-				// additive bound light color
-				outSH[i] += resultSH[id];
+				outSH[i] = resultSH[id];
 
 				// get result color
 				outSH[i].getSHIrradiance(normals[id], result);
