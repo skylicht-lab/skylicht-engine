@@ -48,6 +48,10 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
 
+	// load font
+	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+
 	// create a Scene
 	CContext *context = CContext::getInstance();
 	CScene *scene = context->initScene();
@@ -228,7 +232,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {

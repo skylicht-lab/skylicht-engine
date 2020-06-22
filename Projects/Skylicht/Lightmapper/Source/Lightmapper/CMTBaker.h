@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBaker.h"
 
-#define NUM_MTBAKER	60
+#define NUM_MTBAKER	120
 
 namespace Skylicht
 {
@@ -43,7 +43,7 @@ namespace Skylicht
 			video::ITexture *m_radiance;
 
 			CSH9 m_sh[NUM_MTBAKER];
-			
+
 			float m_weightSum;
 
 		public:

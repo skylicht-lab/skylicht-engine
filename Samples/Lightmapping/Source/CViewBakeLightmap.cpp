@@ -4,18 +4,24 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 
+u32 CViewBakeLightmap::s_numLightBounce = 2;
+
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_currentPass(0),
 	m_currentMB(0),
 	m_currentTris(0),
 	m_lastTris(99999),
-	m_bakeCameraObject(NULL)
+	m_bakeCameraObject(NULL),
+	m_lightBounce(0)
 {
-	m_lmRasterize = new Lightmapper::CRasterisation(512, 512);
+	m_lmRasterize = new Lightmapper::CRasterisation(1024, 1024);
 }
 
 CViewBakeLightmap::~CViewBakeLightmap()
 {
+	m_guiObject->remove();
+
+	delete m_font;
 	delete m_lmRasterize;
 }
 
@@ -64,6 +70,19 @@ void CViewBakeLightmap::onInit()
 	// create bake camera
 	m_bakeCameraObject = zone->createEmptyObject();
 	m_bakeCameraObject->addComponent<CCamera>();
+
+	// create gui object
+	m_guiObject = zone->createEmptyObject();
+	CCanvas *canvas = m_guiObject->addComponent<CCanvas>();
+
+	m_font = new CGlyphFont();
+	m_font->setFont("Segoe UI Light", 25);
+
+	// create text
+	m_textInfo = canvas->createText(m_font);
+	m_textInfo->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+
+	m_timeBeginBake = os::Timer::getRealTime();
 }
 
 void CViewBakeLightmap::onDestroy()
@@ -73,6 +92,13 @@ void CViewBakeLightmap::onDestroy()
 
 void CViewBakeLightmap::onUpdate()
 {
+	u32 deltaTime = os::Timer::getRealTime() - m_timeBeginBake;
+
+	if (m_lightBounce == 0)
+		CDeferredRP::enableRenderIndirect(false);
+	else
+		CDeferredRP::enableRenderIndirect(true);
+
 	for (int loopCount = 0; loopCount < 64; loopCount++)
 	{
 		if (m_currentMB < m_meshBuffers.size())
@@ -83,12 +109,18 @@ void CViewBakeLightmap::onUpdate()
 			IIndexBuffer *idx = mb->getIndexBuffer();
 			u32 numTris = idx->getIndexCount() / 3;
 
+			char status[512];
+			sprintf(status, "LIGHTMAPPING (%d/%d):\n\n- Bake step: %d/%d\n- Triangle: %d/%d\n- Time: %d seconds",
+				m_lightBounce + 1, s_numLightBounce,
+				m_currentPass + 1, 7,
+				m_currentTris, numTris,
+				deltaTime / 1000);
+			m_textInfo->setText(status);
+
 			CRasterisation::ERasterPass pass = (CRasterisation::ERasterPass)m_currentPass;
 
 			if (m_lastTris != m_currentTris)
 			{
-				printf("pass: %d - %d/%d\n", m_currentPass, m_currentTris, numTris);
-
 				u32 v1 = 0;
 				u32 v2 = 0;
 				u32 v3 = 0;
@@ -214,19 +246,62 @@ void CViewBakeLightmap::onUpdate()
 
 			if (m_currentPass >= (int)CRasterisation::PassCount)
 			{
-				/*
+				m_lightBounce++;
+
+				IVideoDriver *driver = getVideoDriver();
+
 				unsigned char *data = m_lmRasterize->getLightmapData();
+
 				core::dimension2du size(m_lmRasterize->getWidth(), m_lmRasterize->getHeight());
-				IImage *img = getVideoDriver()->createImageFromData(video::ECF_R8G8B8, size, data);
-				getVideoDriver()->writeImageToFile(img, "C:\\SVN\\m_lmRasterize.png");
+				IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+
+				ITexture *lightmapTexture = driver->addTexture("lightmap_bake", img);
+				if (lightmapTexture != NULL)
+				{
+					for (CRenderMesh *renderMesh : m_renderMesh)
+					{
+						if (renderMesh->getGameObject()->isStatic() == true)
+						{
+							CIndirectLighting *indirect = renderMesh->getGameObject()->getComponent<CIndirectLighting>();
+							if (indirect == NULL)
+								indirect = renderMesh->getGameObject()->addComponent<CIndirectLighting>();
+
+							indirect->setLightmap(lightmapTexture);
+							indirect->setIndirectLightingType(CIndirectLighting::Lightmap);
+						}
+					}
+				}
+
+				/*
+				char outFileName[512];
+				sprintf(outFileName, "C:\\SVN\\m_lmRasterize_%d.png", m_lightBounce);
+				driver->writeImageToFile(img, outFileName);
 				img->drop();
 
 				data = m_lmRasterize->getTestBakeImage();
-				img = getVideoDriver()->createImageFromData(video::ECF_R8G8B8, size, data);
-				getVideoDriver()->writeImageToFile(img, "C:\\SVN\\m_lmRasterize_debug.png");
+				img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+
+				sprintf(outFileName, "C:\\SVN\\m_lmRasterize_debug_%d.png", m_lightBounce);
+				driver->writeImageToFile(img, outFileName);
 				img->drop();
 				*/
-				CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+
+				m_lmRasterize->resetBake();
+
+				if (m_lightBounce >= s_numLightBounce)
+				{
+					CDeferredRP::enableRenderIndirect(true);
+
+					CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+				}
+				else
+				{
+					// reset next light bounce
+					m_currentPass = 0;
+					m_currentMB = 0;
+					m_currentTris = 0;
+					m_lastTris = 9999;
+				}
 			}
 
 			return;
@@ -236,7 +311,14 @@ void CViewBakeLightmap::onUpdate()
 
 void CViewBakeLightmap::onRender()
 {
+	CContext *context = CContext::getInstance();
+	CCamera *guiCamera = context->getGUICamera();
 
+	// render GUI
+	if (guiCamera != NULL)
+	{
+		CGraphics2D::getInstance()->render(guiCamera);
+	}
 }
 
 void CViewBakeLightmap::onPostRender()

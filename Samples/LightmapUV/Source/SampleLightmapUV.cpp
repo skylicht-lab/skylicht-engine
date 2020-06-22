@@ -88,7 +88,7 @@ void SampleLightmapUV::onInitApp()
 		for (CRenderMeshData* renderData : renderers)
 			unwrap.addMesh(renderData->getMesh());
 
-		unwrap.generate(2048, 0);
+		unwrap.generate(1024, 0);
 		unwrap.generateUVImage();
 
 		// Write to bin folder output layout uv
