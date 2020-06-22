@@ -16,6 +16,15 @@ protected:
 	core::array<core::matrix4> m_meshTransforms;
 
 	CGameObject *m_bakeCameraObject;
+	CGameObject *m_guiObject;
+	CGlyphFont *m_font;
+	CGUIText *m_textInfo;
+
+	u32 m_timeBeginBake;
+
+	static u32 s_numLightBounce;
+
+	u32 m_lightBounce;
 
 	u32 m_currentPass;
 	u32 m_currentMB;

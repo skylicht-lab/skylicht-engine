@@ -90,6 +90,11 @@ namespace Skylicht
 			m_sh[i] = sh[i];
 	}
 
+	void CIndirectLighting::setLightmap(ITexture *texture)
+	{
+		m_lightmap = texture;
+	}
+
 	void CIndirectLighting::setIndirectLightingType(EIndirectType type)
 	{
 		m_type = type;
@@ -99,7 +104,14 @@ namespace Skylicht
 			if (m_type == Lightmap)
 			{
 				data->Type = CIndirectLightingData::Lightmap;
+				data->LightmapIndex = 0;
+				data->LightmapTexture = m_lightmap;
+			}
+			else if (m_type == LightmapArray)
+			{
+				data->Type = CIndirectLightingData::LightmapArray;
 				data->LightmapIndex = m_lightmapIndex;
+				data->LightmapTexture = m_lightmap;
 			}
 			else if (m_type == SH4)
 			{

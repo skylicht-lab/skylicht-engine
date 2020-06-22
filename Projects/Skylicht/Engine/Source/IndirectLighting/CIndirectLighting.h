@@ -35,6 +35,7 @@ namespace Skylicht
 		enum EIndirectType
 		{
 			Lightmap,
+			LightmapArray,
 			VertexColor,
 			SH4,
 			SH9,
@@ -47,6 +48,7 @@ namespace Skylicht
 		std::vector<CIndirectLightingData*> m_data;
 
 		core::vector3df m_sh[9];
+		ITexture *m_lightmap;
 
 	public:
 		CIndirectLighting();
@@ -69,6 +71,13 @@ namespace Skylicht
 		inline int getLightmapIndex()
 		{
 			return m_lightmapIndex;
+		}
+
+		void setLightmap(ITexture *texture);
+
+		ITexture* getLightmap()
+		{
+			return m_lightmap;
 		}
 
 		void setSH(core::vector3df* sh);

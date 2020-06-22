@@ -66,6 +66,26 @@ namespace Skylicht
 			delete[] m_lightmapData;
 		}
 
+		void CRasterisation::resetBake()
+		{
+			int size = m_width * m_height;
+
+			m_currentPass = Space4A;
+
+			for (int i = 0; i < size; i++)
+			{
+				m_bakedData[i] = false;
+
+				m_testBakedData[i * 3] = 0;
+				m_testBakedData[i * 3 + 1] = 0;
+				m_testBakedData[i * 3 + 2] = 0;
+
+				m_lightmapData[i * 3] = 0;
+				m_lightmapData[i * 3 + 1] = 0;
+				m_lightmapData[i * 3 + 2] = 0;
+			}
+		}
+
 		/*
 			* ERasterPass
 			* http://web.archive.org/web/20160311085440/http://freespace.virgin.net/hugo.elias/radiosity/radiosity.htm
@@ -289,12 +309,6 @@ namespace Skylicht
 			m_uvMax.X = core::min_(m_uvMax.X + 1, m_width - 1);
 			m_uvMax.Y = core::min_(m_uvMax.Y + 1, m_height - 1);
 
-			// random color
-			m_randomColor.setRed(u32((rand() % 255 + 192) * 0.5f));
-			m_randomColor.setGreen(u32((rand() % 255 + 192) * 0.5f));
-			m_randomColor.setBlue(u32((rand() % 255 + 192) * 0.5f));
-			m_randomColor.setAlpha(255);
-
 			// return first lm pixel of triangle
 			core::vector2di pixel = m_uvMin;
 
@@ -416,9 +430,9 @@ namespace Skylicht
 				if (useInterpolate == true)
 				{
 					// fill test color
-					m_testBakedData[dataOffset * 3] = 255;
-					m_testBakedData[dataOffset * 3 + 1] = 255;
-					m_testBakedData[dataOffset * 3 + 2] = 255;
+					m_testBakedData[dataOffset * 3] = 10;
+					m_testBakedData[dataOffset * 3 + 1] = 0;
+					m_testBakedData[dataOffset * 3 + 2] = 0;
 				}
 			}
 
@@ -444,9 +458,9 @@ namespace Skylicht
 				p.Binormal.normalize();
 
 				// fill test color
-				m_testBakedData[dataOffset * 3] = m_randomColor.getRed();
-				m_testBakedData[dataOffset * 3 + 1] = m_randomColor.getGreen();
-				m_testBakedData[dataOffset * 3 + 2] = m_randomColor.getBlue();
+				m_testBakedData[dataOffset * 3] = 255;
+				m_testBakedData[dataOffset * 3 + 1] = 0;
+				m_testBakedData[dataOffset * 3 + 2] = 0;
 			}
 
 			// bake pixel
@@ -549,9 +563,9 @@ namespace Skylicht
 				float avg[3] = { 0 };
 				for (int i = 0; i < neighborCount; i++)
 				{
-					avg[0] = avg[0] + (float)(neighbors[i][0]);
-					avg[1] = avg[1] + (float)(neighbors[i][1]);
-					avg[2] = avg[2] + (float)(neighbors[i][2]);
+					avg[0] += neighbors[i][0];
+					avg[1] += neighbors[i][1];
+					avg[2] += neighbors[i][2];
 				}
 
 				float ni = 1.0f / (float)neighborCount;
@@ -573,10 +587,16 @@ namespace Skylicht
 					for (int j = 0; j < 3; j++)
 					{
 						if (c[j] != 0.0f)
+						{
 							zero = false;
+							break;
+						}
 
 						if (fabs(c[j] - avg[j]) > m_interpolationThreshold)
+						{
 							interpolate = false;
+							break;
+						}
 					}
 
 					if (zero)

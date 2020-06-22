@@ -111,8 +111,6 @@ namespace Skylicht
 			core::vector3df m_normal[3];
 			core::vector3df m_tangent[3];
 
-			SColor m_randomColor;
-
 			core::array<SBakePixel> m_bakePixels;
 
 			ERasterPass m_currentPass;
@@ -129,6 +127,8 @@ namespace Skylicht
 			CRasterisation(int width, int height);
 
 			virtual ~CRasterisation();
+
+			void resetBake();
 
 			int getPixelStep(ERasterPass pass);
 

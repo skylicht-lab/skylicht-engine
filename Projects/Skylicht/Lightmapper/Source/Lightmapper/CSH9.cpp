@@ -230,7 +230,7 @@ namespace Skylicht
 			CSH9 dirSH;
 			dirSH.projectOntoSH(n, core::vector3df(1.0f, 1.0f, 1.0f), CosineA0, CosineA1, CosineA2);
 
-			color = dirSH.dotProduct(*this);
+			color = dirSH.dotProduct(*this) / core::PI;
 		}
 
 		void CSH9::convolveWithCosineKernel()

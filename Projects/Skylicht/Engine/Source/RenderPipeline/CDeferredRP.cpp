@@ -231,21 +231,28 @@ namespace Skylicht
 			if (indirectData->Type == CIndirectLightingData::VertexColor)
 			{
 				// change shader to vertex color
-				s32 current = material.MaterialType;
-				material.MaterialType = m_vertexColorShader;
+				SMaterial vertexColor;
+				vertexColor.MaterialType = m_vertexColorShader;
 
 				// set irrlicht material
-				driver->setMaterial(material);
+				driver->setMaterial(vertexColor);
 
 				// draw mesh buffer
 				driver->drawMeshBuffer(mb);
-
-				// revert default material
-				material.MaterialType = current;
 			}
 			else if (indirectData->Type == CIndirectLightingData::Lightmap)
 			{
+				// change shader to vertex color
+				SMaterial textureColor;
 
+				textureColor.MaterialType = m_textureColorShader;
+				textureColor.setTexture(0, indirectData->LightmapTexture);
+
+				// set irrlicht material
+				driver->setMaterial(textureColor);
+
+				// draw mesh buffer
+				driver->drawMeshBuffer(mb);
 			}
 		}
 		else
