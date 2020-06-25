@@ -88,13 +88,13 @@ void SampleLightmapUV::onInitApp()
 		for (CRenderMeshData* renderData : renderers)
 			unwrap.addMesh(renderData->getMesh());
 
-		unwrap.generate(1024, 0);
+		unwrap.generate(512, 25);
 		unwrap.generateUVImage();
 
 		// Write to bin folder output layout uv
-		// char name[512];
-		// sprintf(name, "mesh");
-		// unwrap.writeUVToImage(name);
+		char name[512];
+		sprintf(name, "mesh");
+		unwrap.writeUVToImage(name);
 
 		// Update lightmap uv to renderer
 		for (CRenderMeshData* renderData : renderers)
@@ -145,12 +145,10 @@ void SampleLightmapUV::onInitApp()
 		renderMesh->initMaterial(materials);
 
 		// test exporter
-		/*
 		CMeshManager::getInstance()->exportModel(
 			renderMesh->getEntities().pointer(),
 			renderMesh->getEntities().size(),
 			"../Assets/LightmapUV/gazebo.smesh");
-		*/
 	}
 
 	// Render pipeline
