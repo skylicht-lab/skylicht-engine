@@ -4,6 +4,8 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 
+#include "CViewInit.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	TankScene *app = new TankScene();
@@ -26,7 +28,7 @@ TankScene::~TankScene()
 
 void TankScene::onInitApp()
 {
-	// CViewManager::getInstance()->getLayer(0)->pushView<CViewInit>();
+	CViewManager::getInstance()->getLayer(0)->pushView<CViewInit>();
 }
 
 void TankScene::onUpdate()
