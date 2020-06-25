@@ -38,10 +38,10 @@ protected:
 
 	std::vector<Lightmapper::CSH9> m_out;
 
-	core::vector3df m_bakePositions[NUM_MTBAKER];
-	core::vector3df m_bakeNormals[NUM_MTBAKER];
-	core::vector3df m_bakeTangents[NUM_MTBAKER];
-	core::vector3df m_bakeBinormals[NUM_MTBAKER];
+	core::vector3df m_bakePositions[MAX_NUM_THREAD];
+	core::vector3df m_bakeNormals[MAX_NUM_THREAD];
+	core::vector3df m_bakeTangents[MAX_NUM_THREAD];
+	core::vector3df m_bakeBinormals[MAX_NUM_THREAD];
 
 public:
 

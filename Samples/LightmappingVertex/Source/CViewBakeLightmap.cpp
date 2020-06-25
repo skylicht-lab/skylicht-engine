@@ -41,6 +41,9 @@ void CViewBakeLightmap::onInit()
 	CZone *zone = context->getActiveZone();
 	CEntityManager *entityMgr = zone->getEntityManager();
 
+	// set 32px for optimize speed
+	CLightmapper::getInstance()->initBaker(32);
+
 	// get all render mesh in zone
 	m_renderMesh = zone->getComponentsInChild<CRenderMesh>(false);
 	for (CRenderMesh *renderMesh : m_renderMesh)
@@ -167,7 +170,7 @@ void CViewBakeLightmap::onUpdate()
 			mb,
 			transform,
 			camera, context->getRenderPipeline(), scene->getEntityManager(),
-			m_currentVertex, NUM_MTBAKER,
+			m_currentVertex, MAX_NUM_THREAD,
 			cb->Color,
 			cb->SH);
 
@@ -194,6 +197,15 @@ void CViewBakeLightmap::onUpdate()
 
 		if (m_lightBounce >= s_numLightBounce)
 		{
+			// test exporter
+			if (m_renderMesh.size() > 0)
+			{
+				CMeshManager::getInstance()->exportModel(
+					m_renderMesh[0]->getEntities().pointer(),
+					m_renderMesh[0]->getEntities().size(),
+					"../Assets/TankScene/TankScene.smesh");
+			}
+
 			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 		}
 	}

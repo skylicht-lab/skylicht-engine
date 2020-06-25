@@ -4,6 +4,7 @@
 #include "GameObject/CGameObject.h"
 #include "RenderPipeline/CBaseRP.h"
 #include "RenderPipeline/CDeferredRP.h"
+#include "Lightmapper/CLightmapper.h"
 
 namespace Skylicht
 {
@@ -13,15 +14,18 @@ namespace Skylicht
 			m_weightSum(0.0f)
 		{
 			IVideoDriver *driver = getVideoDriver();
-			core::dimension2du s(RT_SIZE * NUM_FACES, RT_SIZE * NUM_MTBAKER);
+
+			u32 rtSize = CLightmapper::getHemisphereBakeSize();
+			core::dimension2du s(rtSize * NUM_FACES, rtSize * MAX_NUM_THREAD);
+
 			m_radiance = driver->addRenderTargetTexture(s, "lmrt", video::ECF_A8R8G8B8);
 
-			for (int y = 0; y < RT_SIZE; y++)
+			for (u32 y = 0; y < rtSize; y++)
 			{
-				for (int x = 0; x < RT_SIZE; x++)
+				for (u32 x = 0; x < rtSize; x++)
 				{
-					float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
-					float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
+					float u = ((x / float(rtSize)) * 2.0f - 1.0f);
+					float v = -((y / float(rtSize)) * 2.0f - 1.0f);
 
 					float temp = 1.0f + u * u + v * v;
 					float weight = 4.0f / (sqrt(temp) * temp);
@@ -56,7 +60,9 @@ namespace Skylicht
 			// clear rtt
 			getVideoDriver()->setRenderTarget(m_radiance, true, true);
 
-			core::matrix4 toTangentSpace[NUM_MTBAKER][NUM_FACES];
+			core::matrix4 toTangentSpace[MAX_NUM_THREAD][NUM_FACES];
+
+			u32 rtSize = CLightmapper::getHemisphereBakeSize();
 
 			for (int tid = 0; tid < count; tid++)
 			{
@@ -81,10 +87,10 @@ namespace Skylicht
 					camera->setViewMatrix(cameraWorld, position[tid]);
 
 					// apply viewport
-					u32 offsetX = face * RT_SIZE;
-					u32 offsetY = tid * RT_SIZE;
+					u32 offsetX = face * rtSize;
+					u32 offsetY = tid * rtSize;
 					viewport.UpperLeftCorner.set(offsetX, offsetY);
-					viewport.LowerRightCorner.set(offsetX + RT_SIZE, offsetY + RT_SIZE);
+					viewport.LowerRightCorner.set(offsetX + rtSize, offsetY + rtSize);
 
 					// render
 					CBaseRP::setBakeMode(true);
@@ -98,7 +104,7 @@ namespace Skylicht
 			// Cubemap to SH
 			u8 *imageData = (u8*)m_radiance->lock(video::ETLM_READ_ONLY);
 			u32 bpp = 4;
-			u32 rowSize = RT_SIZE * NUM_FACES * bpp;
+			u32 rowSize = rtSize * NUM_FACES * bpp;
 			float c = 1.0f / 255.0f;
 
 			core::vector3df color;
@@ -114,8 +120,8 @@ namespace Skylicht
 			for (int tid = 0; tid < count; tid++)
 				m_sh[tid].zero();
 
-			int height = RT_SIZE * count;
-			int width = RT_SIZE * numFace;
+			int height = rtSize * count;
+			int width = rtSize * numFace;
 
 			u8 *faceData = NULL;
 			u8 *data = NULL;
@@ -129,24 +135,24 @@ namespace Skylicht
 				for (int imgx = 0; imgx < width; imgx++)
 				{
 					// calc face & tid
-					face = imgx / RT_SIZE;
-					tid = imgy / RT_SIZE;
+					face = imgx / rtSize;
+					tid = imgy / rtSize;
 
-					y = imgy - tid * RT_SIZE;
-					x = imgx - face * RT_SIZE;
+					y = imgy - tid * rtSize;
+					x = imgx - face * rtSize;
 
 					// face data
-					faceData = imageData + RT_SIZE * face * bpp;
+					faceData = imageData + rtSize * face * bpp;
 
 					// offset to tid and row y
-					data = faceData + (RT_SIZE * tid + y) * rowSize;
+					data = faceData + (rtSize * tid + y) * rowSize;
 
 					// offset to pixel x 
 					data += x * bpp;
 
 					// Calculate the location in [-1, 1] texture space
-					u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
-					v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
+					u = ((x / float(rtSize)) * 2.0f - 1.0f);
+					v = -((y / float(rtSize)) * 2.0f - 1.0f);
 
 					temp = 1.0f + u * u + v * v;
 					weight = 4.0f / (sqrt(temp) * temp);
