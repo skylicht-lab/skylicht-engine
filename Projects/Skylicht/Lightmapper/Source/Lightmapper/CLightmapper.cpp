@@ -29,16 +29,37 @@ namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		CLightmapper::CLightmapper()
+		int CLightmapper::s_numThread = 120;
+		int CLightmapper::s_hemisphereBakeSize = 128;
+
+		CLightmapper::CLightmapper() :
+			m_singleBaker(NULL),
+			m_multiBaker(NULL)
 		{
-			m_singleBaker = new CBaker();
-			m_multiBaker = new CMTBaker();
+
 		}
 
 		CLightmapper::~CLightmapper()
 		{
-			delete m_singleBaker;
-			delete m_multiBaker;
+			if (m_singleBaker != NULL)
+				delete m_singleBaker;
+
+			if (m_multiBaker != NULL)
+				delete m_multiBaker;
+		}
+
+		void CLightmapper::initBaker(u32 hemisphereBakeSize)
+		{
+			if (m_singleBaker != NULL)
+				delete m_singleBaker;
+
+			if (m_multiBaker != NULL)
+				delete m_multiBaker;
+
+			s_hemisphereBakeSize = hemisphereBakeSize;
+
+			m_singleBaker = new CBaker();
+			m_multiBaker = new CMTBaker();
 		}
 
 		const CSH9& CLightmapper::bakeAtPosition(
