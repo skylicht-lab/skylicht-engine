@@ -14,7 +14,7 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_bakeCameraObject(NULL),
 	m_lightBounce(0)
 {
-	m_lmRasterize = new Lightmapper::CRasterisation(1024, 1024);
+	m_lmRasterize = new Lightmapper::CRasterisation(512, 512);
 }
 
 CViewBakeLightmap::~CViewBakeLightmap()
@@ -248,6 +248,9 @@ void CViewBakeLightmap::onUpdate()
 			{
 				m_lightBounce++;
 
+				// todo fix seam
+				m_lmRasterize->fixSeamPixel();
+
 				IVideoDriver *driver = getVideoDriver();
 
 				unsigned char *data = m_lmRasterize->getLightmapData();
@@ -272,19 +275,27 @@ void CViewBakeLightmap::onUpdate()
 					}
 				}
 
-				/*
-				char outFileName[512];
-				sprintf(outFileName, "C:\\SVN\\m_lmRasterize_%d.png", m_lightBounce);
-				driver->writeImageToFile(img, outFileName);
+				bool testWriteFile = true;
+
+				if (testWriteFile)
+				{
+					char outFileName[512];
+					sprintf(outFileName, "C:\\SVN\\m_lmRasterize_%d.png", m_lightBounce);
+					driver->writeImageToFile(img, outFileName);
+				}
+
 				img->drop();
 
-				data = m_lmRasterize->getTestBakeImage();
-				img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+				if (testWriteFile)
+				{
+					data = m_lmRasterize->getTestBakeImage();
+					img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
 
-				sprintf(outFileName, "C:\\SVN\\m_lmRasterize_debug_%d.png", m_lightBounce);
-				driver->writeImageToFile(img, outFileName);
-				img->drop();
-				*/
+					char outFileName[512];
+					sprintf(outFileName, "C:\\SVN\\m_lmRasterize_debug_%d.png", m_lightBounce);
+					driver->writeImageToFile(img, outFileName);
+					img->drop();
+				}
 
 				m_lmRasterize->resetBake();
 
