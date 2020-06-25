@@ -31,6 +31,9 @@ void CViewBakeLightmap::onInit()
 	CZone *zone = context->getActiveZone();
 	CEntityManager *entityMgr = zone->getEntityManager();
 
+	// set default 128px for quality
+	CLightmapper::getInstance()->initBaker();
+
 	// get all render mesh in zone
 	m_renderMesh = zone->getComponentsInChild<CRenderMesh>(false);
 	for (CRenderMesh *renderMesh : m_renderMesh)
@@ -202,7 +205,7 @@ void CViewBakeLightmap::onUpdate()
 
 			// bake indirect pixels
 			core::array<SBakePixel>& listPixels = m_lmRasterize->getBakePixelQueue();
-			if (listPixels.size() == NUM_MTBAKER || forceBake == true)
+			if (listPixels.size() == MAX_NUM_THREAD || forceBake == true)
 			{
 				int n = (int)listPixels.size();
 				m_out.clear();

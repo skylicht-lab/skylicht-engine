@@ -1,51 +1,59 @@
 #include "pch.h"
-#include "TankScene.h"
+#include "SampleLightmappingVertex.h"
 
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 
+#include "CViewInit.h"
+#include "CViewBakeLightmap.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
-	TankScene *app = new TankScene();
-	getApplication()->registerAppEvent("TankScene", app);
+	SampleLightmappingVertex *app = new SampleLightmappingVertex();
+	getApplication()->registerAppEvent("SampleLightmappingVertex", app);
+
+	if (argv.size() >= 4)
+	{
+		CViewBakeLightmap::s_numLightBounce = atoi(argv[3].c_str());
+	}
 }
 
-TankScene::TankScene()
+SampleLightmappingVertex::SampleLightmappingVertex()
 {
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
 }
 
-TankScene::~TankScene()
+SampleLightmappingVertex::~SampleLightmappingVertex()
 {
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();
 }
 
-void TankScene::onInitApp()
+void SampleLightmappingVertex::onInitApp()
 {
-	// CViewManager::getInstance()->getLayer(0)->pushView<CViewInit>();
+	CViewManager::getInstance()->getLayer(0)->pushView<CViewInit>();
 }
 
-void TankScene::onUpdate()
+void SampleLightmappingVertex::onUpdate()
 {
 	CViewManager::getInstance()->update();
 }
 
-void TankScene::onRender()
+void SampleLightmappingVertex::onRender()
 {
 	CViewManager::getInstance()->render();
 }
 
-void TankScene::onPostRender()
+void SampleLightmappingVertex::onPostRender()
 {
 	// post render application
 	CViewManager::getInstance()->postRender();
 }
 
-bool TankScene::onBack()
+bool SampleLightmappingVertex::onBack()
 {
 	// on back key press
 	// return TRUE will run default by OS (Mobile)
@@ -53,19 +61,19 @@ bool TankScene::onBack()
 	return CViewManager::getInstance()->onBack();
 }
 
-void TankScene::onResume()
+void SampleLightmappingVertex::onResume()
 {
 	// resume application
 	CViewManager::getInstance()->onResume();
 }
 
-void TankScene::onPause()
+void SampleLightmappingVertex::onPause()
 {
 	// pause application
 	CViewManager::getInstance()->onPause();
 }
 
-void TankScene::onQuitApp()
+void SampleLightmappingVertex::onQuitApp()
 {
 	// end application
 	delete this;

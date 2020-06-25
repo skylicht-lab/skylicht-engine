@@ -30,7 +30,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 
 #define NUM_FACES 6
-#define RT_SIZE 128
 
 namespace Skylicht
 {
