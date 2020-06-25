@@ -654,5 +654,81 @@ namespace Skylicht
 
 			m_bakePixels.set_used(0);
 		}
+
+		void CRasterisation::fixSeamPixel()
+		{
+			int dataOffset;
+			int nextDataOffset;
+			bool copy;
+
+			for (int x = 0; x < m_width; x++)
+			{
+				for (int y = 0; y < m_height; y++)
+				{
+					dataOffset = y * m_width + x;
+
+					if (m_bakedData[dataOffset] == true)
+						continue;
+
+					copy = false;
+
+					if (x >= 1)
+					{
+						nextDataOffset = y * m_width + (x - 1);
+						if (m_bakedData[nextDataOffset] == true)
+						{
+							m_lightmapData[dataOffset * 3] = m_lightmapData[nextDataOffset * 3];
+							m_lightmapData[dataOffset * 3 + 1] = m_lightmapData[nextDataOffset * 3 + 1];
+							m_lightmapData[dataOffset * 3 + 2] = m_lightmapData[nextDataOffset * 3 + 2];
+							copy = true;
+						}
+					}
+
+					if (x < m_width - 2 && copy == false)
+					{
+						nextDataOffset = y * m_width + (x + 1);
+						if (m_bakedData[nextDataOffset] == true)
+						{
+							m_lightmapData[dataOffset * 3] = m_lightmapData[nextDataOffset * 3];
+							m_lightmapData[dataOffset * 3 + 1] = m_lightmapData[nextDataOffset * 3 + 1];
+							m_lightmapData[dataOffset * 3 + 2] = m_lightmapData[nextDataOffset * 3 + 2];
+							copy = true;
+						}
+					}
+
+					if (y >= 1 && copy == false)
+					{
+						nextDataOffset = (y - 1) * m_width + x;
+						if (m_bakedData[nextDataOffset] == true)
+						{
+							m_lightmapData[dataOffset * 3] = m_lightmapData[nextDataOffset * 3];
+							m_lightmapData[dataOffset * 3 + 1] = m_lightmapData[nextDataOffset * 3 + 1];
+							m_lightmapData[dataOffset * 3 + 2] = m_lightmapData[nextDataOffset * 3 + 2];
+							copy = true;
+						}
+					}
+
+					if (y <= m_height - 2 && copy == false)
+					{
+						nextDataOffset = (y + 1) * m_width + x;
+						if (m_bakedData[nextDataOffset] == true)
+						{
+							m_lightmapData[dataOffset * 3] = m_lightmapData[nextDataOffset * 3];
+							m_lightmapData[dataOffset * 3 + 1] = m_lightmapData[nextDataOffset * 3 + 1];
+							m_lightmapData[dataOffset * 3 + 2] = m_lightmapData[nextDataOffset * 3 + 2];
+							copy = true;
+						}
+					}
+
+					// fill test color
+					if (copy == true)
+					{
+						m_testBakedData[dataOffset * 3] = 0;
+						m_testBakedData[dataOffset * 3 + 1] = 0;
+						m_testBakedData[dataOffset * 3 + 2] = 255;
+					}
+				}
+			}
+		}
 	}
 }

@@ -154,6 +154,8 @@ namespace Skylicht
 				core::vector3df& outBinormal,
 				core::vector2di& lmPixel);
 
+			void fixSeamPixel();
+
 			bool moveNextPixel(core::vector2di& lmPixel);
 
 			bool isFinished(const core::vector2di& lmPixel);
