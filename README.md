@@ -138,7 +138,32 @@ This is demo of how to render character model with animation, models are downloa
 - **AnimationController**
 <img src="Documents/Media/Samples/sample_skinned_mesh.png"/>
 
-### Samples\TankScene
+### Samples\LightmapUV
+This is a demo of use UnwrapUV tool to create Lightmap UV. 
+[Library xatlas](https://github.com/jpcy/xatlas) is integrated to Skylicht Engine.
+
+<img src="Documents/Media/Samples/lightmap-uv/lightmap-uv.png"/>
+
+<img src="Documents/Media/Samples/lightmap-uv/mesh-charts00.png" width="50%"/>
+
+### Samples\Lightmapping
+This is a demo of use lightmapper to bake indirect lighting color into lightmap texture.
+[Project references: Lightmapper](https://github.com/ands/lightmapper)
+
+<img src="Documents/Media/Samples/lightmap/lightmapping_a.png" width="50%"/>
+
+<img src="Documents/Media/Samples/lightmap/lightmapping_b.png" width="50%"/>
+
+#### Pixel baked
+<img src="Documents/Media/Samples/lightmap/rasterize_debug.png"/>
+
+#### 2 bounces light
+<img src="Documents/Media/Samples/lightmap/rasterize_1.png"/>
+
+#### 3 bounces light
+<img src="Documents/Media/Samples/lightmap/rasterize_2.png"/>
+
+### Samples\LightmappingVertex
 This is a demo of use lightmapper to set indirect lighting color into vertex color.
 
 Engine Components are used:
@@ -149,34 +174,16 @@ Engine Components are used:
 - **Lightmapper**
 - **Skydome**
 
-#### Direction Light & Shadow Mapping (1 bounce)
-<img src="Documents/Media/Samples/tank-scene/direction-1-bounce.png" width="50%"/>
-
-#### Baked Global Illumination (2 bounces)
+#### Baked Global Illumination (3 bounces)
 Irradiance baked on Vertex Color:
 
-<img src="Documents/Media/Samples/tank-scene/indirect-bake-2-bounce.png" width="50%"/>
+<img src="Documents/Media/Samples/tank-scene/indirect-bake-3-bounce.png" width="50%"/>
 
-**Final Composition (2 bounces)**
+#### Final Composition (3 bounces)
 
-<img src="Documents/Media/Samples/tank-scene/combine-2-bounces.png" width="50%"/>
+<img src="Documents/Media/Samples/tank-scene/tank-scene-3-bounce-a.png"/>
 
-Lightmapper works well on Wasm (OpenGLES3.0)
-
-<img src="Documents/Media/Samples/tank-scene/emsdk-2-bounces.png" width="50%"/>
-
-#### **Final Composition** (3 bounces)
-
-<img src="Documents/Media/Samples/tank-scene/combine-3-bounces-a.png"/>
-
-<img src="Documents/Media/Samples/tank-scene/combine-3-bounces-b.png"/>
-
-### Samples\LightmapUV
-This is a demo of use UnwrapUV tool to create Lightmap UV. Library [xatlas](https://github.com/jpcy/xatlas) is integrated.
-
-<img src="Documents/Media/Samples/lightmap-uv/lightmap-uv.png"/>
-
-<img src="Documents/Media/Samples/lightmap-uv/mesh-charts00.png" width="50%"/>
+<img src="Documents/Media/Samples/tank-scene/tank-scene-3-bounce-b.png"/>
 
 ## Contributing
 Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join group. Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.

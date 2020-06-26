@@ -36,6 +36,10 @@ namespace Skylicht
 		class CLightmapper : public CGameSingleton<CLightmapper>
 		{
 		protected:
+			static int s_numThread;
+			static int s_hemisphereBakeSize;
+
+		protected:
 			CBaker *m_singleBaker;
 			CMTBaker *m_multiBaker;
 
@@ -44,12 +48,14 @@ namespace Skylicht
 
 			virtual ~CLightmapper();
 
+			void initBaker(u32 hemisphereBakeSize = 128);
+
 			const CSH9& bakeAtPosition(
 				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
 				const core::vector3df& position,
 				const core::vector3df& normal,
 				const core::vector3df& tangent,
-				const core::vector3df& binormal, 
+				const core::vector3df& binormal,
 				int numFace = NUM_FACES);
 
 			void bakeAtPosition(
@@ -65,6 +71,26 @@ namespace Skylicht
 			void bakeProbes(std::vector<CLightProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr);
 
 			int bakeMeshBuffer(IMeshBuffer *mb, const core::matrix4& transform, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH);
+
+			static void setNumThread(u32 num)
+			{
+				s_numThread = num;
+			}
+
+			static void setHemisphereBakeSize(u32 size)
+			{
+				s_hemisphereBakeSize = size;
+			}
+
+			static u32 getNumThread()
+			{
+				return s_numThread;
+			}
+
+			static u32 getHemisphereBakeSize()
+			{
+				return s_hemisphereBakeSize;
+			}
 		};
 	}
 }

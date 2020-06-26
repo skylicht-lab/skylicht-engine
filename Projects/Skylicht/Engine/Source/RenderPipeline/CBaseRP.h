@@ -45,6 +45,9 @@ namespace Skylicht
 		bool m_updateEntity;
 
 		int m_textureColorShaderID;
+
+		static bool s_bakeMode;
+
 	public:
 		CBaseRP();
 
@@ -77,6 +80,8 @@ namespace Skylicht
 		void renderCubeEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture, int* face, int numFace);
 
 		static void saveFBOToFile(ITexture *texture, const char *output);
+
+		static void setBakeMode(bool b);
 
 		void unbindRTT();
 

@@ -3,7 +3,10 @@
 
 CContext::CContext() :
 	m_scene(NULL),
+	m_beginRP(NULL),
 	m_rendering(NULL),
+	m_shadowMapRendering(NULL),
+	m_forwardRP(NULL),
 	m_zone(NULL),
 	m_directionalLight(NULL),
 	m_camera(NULL),

@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CGameObject.h"
 #include "RenderPipeline/CBaseRP.h"
 
+#include "Lightmapper/CLightmapper.h"
+
 namespace Skylicht
 {
 	namespace Lightmapper
@@ -35,7 +37,10 @@ namespace Skylicht
 		CBaker::CBaker()
 		{
 			IVideoDriver *driver = getVideoDriver();
-			core::dimension2du s(RT_SIZE * NUM_FACES, RT_SIZE);
+
+			u32 bakeSize = CLightmapper::getHemisphereBakeSize();
+			core::dimension2du s(bakeSize * NUM_FACES, bakeSize);
+
 			m_radiance = driver->addRenderTargetTexture(s, "lmrt", video::ECF_A8R8G8B8);
 		}
 
@@ -66,6 +71,8 @@ namespace Skylicht
 
 			core::matrix4 toTangentSpace[NUM_FACES];
 
+			u32 rtSize = CLightmapper::getHemisphereBakeSize();
+
 			for (int face = 0; face < numFace; face++)
 			{
 				core::matrix4 cameraWorld;
@@ -87,13 +94,15 @@ namespace Skylicht
 				camera->setViewMatrix(cameraWorld, position);
 
 				// apply viewport
-				u32 offsetX = face * RT_SIZE;
+				u32 offsetX = face * rtSize;
 				u32 offsetY = 0;
 				viewport.UpperLeftCorner.set(offsetX, offsetY);
-				viewport.LowerRightCorner.set(offsetX + RT_SIZE, offsetY + RT_SIZE);
+				viewport.LowerRightCorner.set(offsetX + rtSize, offsetY + rtSize);
 
 				// render
+				CBaseRP::setBakeMode(true);
 				rp->render(m_radiance, camera, entityMgr, viewport);
+				CBaseRP::setBakeMode(false);
 			}
 
 			driver->setRenderTarget(NULL, false, false);
@@ -101,7 +110,7 @@ namespace Skylicht
 			// Cubemap to SH		
 			u8 *imageData = (u8*)m_radiance->lock(video::ETLM_READ_ONLY);
 			u32 bpp = 4;
-			u32 rowSize = RT_SIZE * NUM_FACES * bpp;
+			u32 rowSize = rtSize * NUM_FACES * bpp;
 			float c = 1.0f / 255.0f;
 
 			core::vector3df color;
@@ -122,18 +131,18 @@ namespace Skylicht
 			for (int face = 0; face < numFace; face++)
 			{
 				// offset to face data
-				u8 *faceData = imageData + RT_SIZE * face * bpp;
+				u8 *faceData = imageData + rtSize * face * bpp;
 
 				// scan pixels
-				for (u32 y = 0; y < RT_SIZE; y++)
+				for (u32 y = 0; y < rtSize; y++)
 				{
 					u8* data = faceData;
 
-					for (u32 x = 0; x < RT_SIZE; x++)
+					for (u32 x = 0; x < rtSize; x++)
 					{
 						// Calculate the location in [-1, 1] texture space
-						float u = ((x / float(RT_SIZE)) * 2.0f - 1.0f);
-						float v = -((y / float(RT_SIZE)) * 2.0f - 1.0f);
+						float u = ((x / float(rtSize)) * 2.0f - 1.0f);
+						float v = -((y / float(rtSize)) * 2.0f - 1.0f);
 
 						float temp = 1.0f + u * u + v * v;
 						float weight = 4.0f / (sqrt(temp) * temp);
