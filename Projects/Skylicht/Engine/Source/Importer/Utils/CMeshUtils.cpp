@@ -188,10 +188,22 @@ namespace Skylicht
 					if (t2.getLengthSQ() != 0)
 						t = n.crossProduct(t2);
 					else
-						t.set(0.0f, 0.0f, 1.0f);
+					{
+						core::vector3df t1 = n.crossProduct(core::vector3df(0.0f, 0.0f, 1.0f));
+						core::vector3df t2 = n.crossProduct(core::vector3df(0.0f, 1.0f, 0.0f));
+
+						if (t1.getLength() > t2.getLength())
+						{
+							t = t1;
+						}
+						else
+						{
+							t = t2;
+						}
+					}
 				}
 
-				v[i].Tangent = (t - n * n.dotProduct(t));
+				v[i].Tangent = t - (n * n.dotProduct(t));
 
 				float w = n.crossProduct(t).dotProduct(t2) > 0.0f ? 1.0f : -1.0f;
 				v[i].Binormal = n.crossProduct(t);

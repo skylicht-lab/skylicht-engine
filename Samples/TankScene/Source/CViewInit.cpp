@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "CViewInit.h"
-#include "CViewBakeLightmap.h"
+#include "CViewDemo.h"
 
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
@@ -69,7 +69,7 @@ void CViewInit::initScene()
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
+	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/MonValley.png");
 	if (skyDomeTexture != NULL)
 	{
 		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
@@ -82,7 +82,7 @@ void CViewInit::initScene()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
+	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	CMeshManager *meshManager = CMeshManager::getInstance();
@@ -92,34 +92,22 @@ void CViewInit::initScene()
 	textureFolders.push_back("Sponza/Textures");
 
 	// load model
-	prefab = meshManager->loadModel("TankScene/TankScene.obj", NULL, true);
+	prefab = meshManager->loadModel("TankScene/TankScene.smesh", NULL, true);
 	if (prefab != NULL)
 	{
-		// export model material if TankScene.xml is not exist
-		// CMaterialManager::getInstance()->exportMaterial(prefab, "../Assets/TankScene/TankScene.xml");
-
 		// load material
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("TankScene/TankScene.xml", true, textureFolders);
-
-		// todo modify material
-		//for (CMaterial* m : materials)
-		//{
-		//	m->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
-		//	m->autoDetectLoadTexture();
-		//	m->deleteExtramParams();
-		//}
-
-		// and save material
-		// CMaterialManager::getInstance()->saveMaterial(materials, "../Assets/TankScene/TankScene1.xml");
 
 		// create render mesh object
 		CGameObject *tankScene = zone->createEmptyObject();
 		tankScene->setStatic(true);
 
+		// render mesh & init material
 		CRenderMesh *renderer = tankScene->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
 
+		// set indirect lighting by VertexColor
 		CIndirectLighting *indirectLighting = tankScene->addComponent<CIndirectLighting>();
 		indirectLighting->setIndirectLightingType(CIndirectLighting::VertexColor);
 	}
@@ -153,11 +141,7 @@ void CViewInit::onUpdate()
 		listBundles.push_back("TankScene.Zip");
 
 #ifdef __EMSCRIPTEN__
-		std::vector<std::string> listFile;
-		listFile.push_back("Sprite.zip");
-		listFile.insert(listFile.end(), listBundles.begin(), listBundles.end());
-
-		const char *filename = listFile[m_downloaded].c_str();
+		const char *filename = listBundles[m_downloaded].c_str();
 
 		if (m_getFile == NULL)
 		{
@@ -172,18 +156,10 @@ void CViewInit::onUpdate()
 		{
 			if (m_getFile->getState() == CGetFileURL::Finish)
 			{
-				if (m_downloaded == 0)
-				{
-					// sprite.zip
-					fileSystem->addFileArchive(filename, false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
-				}
-				else
-				{
-					// [bundles].zip
-					fileSystem->addFileArchive(filename, false, false);
-				}
+				// [bundles].zip
+				fileSystem->addFileArchive(filename, false, false);
 
-				if (++m_downloaded >= listFile.size())
+				if (++m_downloaded >= listBundles.size())
 					m_initState = CViewInit::InitScene;
 				else
 				{
@@ -197,14 +173,8 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
-
-#if defined(WINDOWS_STORE) || defined(MACOS)
-		fileSystem->addFileArchive(getBuiltInPath("Sprite.zip"), false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
-#else
-		fileSystem->addFileArchive("Sprite.zip", false, false, irr::io::EFAT_UNKNOWN, "", &m_spriteArchive);
-#endif
 
 		for (std::string& bundle : listBundles)
 		{
@@ -258,10 +228,12 @@ void CViewInit::onUpdate()
 		if (scene != NULL)
 			scene->update();
 
-		CViewManager::getInstance()->getLayer(0)->changeView<CViewBakeLightmap>();
+		// CDeferredRP::enableTestIndirect(true);
+
+		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()
