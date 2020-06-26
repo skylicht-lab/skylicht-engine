@@ -320,6 +320,12 @@ namespace Skylicht
 		else
 			entityManager->cullingAndRender();
 
+		// Apply uniform: uLightMultiplier
+		if (CBaseRP::s_bakeMode == true)
+			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.0f);
+		else
+			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(0.7f, 1.5f);
+
 		// STEP 03:
 		// draw point lighting & spot lighting
 		// save camera transform

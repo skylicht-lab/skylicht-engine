@@ -12,7 +12,9 @@ vec3 SG(
 	const vec3 lightColor,
 	const float visibility,
 	const vec4 light,
-	const vec3 indirect)
+	const vec3 indirect,
+	const float directMultiplier,
+	const float indirectMultiplier)
 {
 	// Roughness
 	float roughness = 1.0 - gloss;
@@ -30,18 +32,18 @@ vec3 SG(
 	
 	// Lighting
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
-	NdotL = min(NdotL, 0.9);
+	NdotL = min(NdotL, 1.0);
 	
 	// Specular
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
-	vec3 directionalLight = NdotL * lightColor * visibility;
-	vec3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
+	vec3 directionalLight = NdotL * lightColor * visibility * directMultiplier;
+	vec3 color = (directionalLight + light.rgb) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
 	
 	// IBL Ambient
-	color += indirect * diffuseColor;
+	color += indirect * diffuseColor * indirectMultiplier;
 	
 	// IBL reflection (fake by ambient)
 	// color += indirect * specularColor * metallic;
