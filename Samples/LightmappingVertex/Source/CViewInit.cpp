@@ -69,7 +69,7 @@ void CViewInit::initScene()
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
+	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/MonValley.png");
 	if (skyDomeTexture != NULL)
 	{
 		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
@@ -82,7 +82,7 @@ void CViewInit::initScene()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
+	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	CMeshManager *meshManager = CMeshManager::getInstance();

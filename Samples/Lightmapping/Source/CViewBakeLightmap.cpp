@@ -32,7 +32,7 @@ void CViewBakeLightmap::onInit()
 	CEntityManager *entityMgr = zone->getEntityManager();
 
 	// set default 128px for quality
-	CLightmapper::getInstance()->initBaker();
+	CLightmapper::getInstance()->initBaker(128);
 
 	// get all render mesh in zone
 	m_renderMesh = zone->getComponentsInChild<CRenderMesh>(false);

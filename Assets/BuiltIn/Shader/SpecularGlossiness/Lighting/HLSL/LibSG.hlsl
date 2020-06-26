@@ -1,4 +1,3 @@
-//static const float EnvironmentScale = 3.0;
 static const float PI = 3.1415926;
 
 #include "LibSolverMetallic.hlsl"
@@ -13,7 +12,9 @@ float3 SG(
 	const float3 lightColor,
 	const float visibility,
 	const float4 light,
-	const float3 indirect)
+	const float3 indirect,
+	const float directMultiplier,
+	const float indirectMultiplier)
 {
 	// Roughness
 	float roughness = 1.0 - gloss;
@@ -31,18 +32,18 @@ float3 SG(
 	
 	// Lighting
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
-	NdotL = min(NdotL, 0.9);
+	NdotL = min(NdotL, 1.0);
 	
 	// Specular
 	float3 H = normalize(worldLightDir + worldViewDir);	
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
-	float3 directionalLight = NdotL * lightColor * visibility;
-	float3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
+	float3 directionalLight = NdotL * lightColor * visibility * directMultiplier;
+	float3 color = (directionalLight + light.rgb) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
 	
 	// IBL Ambient
-	color += indirect * diffuseColor;
+	color += indirect * diffuseColor * indirectMultiplier;
 	
 	// IBL reflection (fake by ambient)
 	// color += indirect * specularColor * metallic;
