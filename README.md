@@ -150,9 +150,9 @@ This is a demo of use UnwrapUV tool to create Lightmap UV.
 This is a demo of use lightmapper to bake indirect lighting color into lightmap texture.
 [Project references: Lightmapper](https://github.com/ands/lightmapper)
 
-<img src="Documents/Media/Samples/lightmap/lightmapping_a.png" width="50%"/>
+<img src="Documents/Media/Samples/lightmap/lightmapping_a.png"/>
 
-<img src="Documents/Media/Samples/lightmap/lightmapping_b.png" width="50%"/>
+<img src="Documents/Media/Samples/lightmap/lightmapping_b.png"/>
 
 #### Pixel baked
 <img src="Documents/Media/Samples/lightmap/rasterize_debug.png"/>
@@ -177,7 +177,7 @@ Engine Components are used:
 #### Baked Global Illumination (3 bounces)
 Irradiance baked on Vertex Color:
 
-<img src="Documents/Media/Samples/tank-scene/indirect-bake-3-bounce.png" width="50%"/>
+<img src="Documents/Media/Samples/tank-scene/indirect-bake-3-bounce.png"/>
 
 #### Final Composition (3 bounces)
 
