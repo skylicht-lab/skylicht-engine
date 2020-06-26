@@ -14,7 +14,7 @@ public:
 		core::array<CSH9> SH;
 	};
 
-	static int s_numLightBound;
+	static int s_numLightBounce;
 
 protected:
 	CGameObject *m_guiObject;
@@ -24,15 +24,15 @@ protected:
 	CGlyphFont *m_font;
 
 	std::vector<CRenderMesh*> m_renderMesh;
-	std::vector<IMeshBuffer*> m_allMeshBuffer;
+	std::vector<IMeshBuffer*> m_neshBuffers;
 
-	core::array<SColorBuffer*> m_colorBuffer;
+	core::array<SColorBuffer*> m_colorBuffers;
 	core::array<core::matrix4> m_meshTransforms;
 
 	u32 m_currentMeshBuffer;
 	u32 m_currentVertex;
 	u32 m_totalVertexBaked;
-	int m_lightBound;
+	int m_lightBounce;
 
 	u32 m_timeBeginBake;
 public:

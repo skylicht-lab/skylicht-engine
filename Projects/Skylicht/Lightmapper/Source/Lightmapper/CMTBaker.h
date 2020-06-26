@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBaker.h"
 
-#define NUM_MTBAKER	60
+#define MAX_NUM_THREAD	120
 
 namespace Skylicht
 {
@@ -42,8 +42,8 @@ namespace Skylicht
 		protected:
 			video::ITexture *m_radiance;
 
-			CSH9 m_sh[NUM_MTBAKER];
-			
+			CSH9 m_sh[MAX_NUM_THREAD];
+
 			float m_weightSum;
 
 		public:
@@ -63,7 +63,7 @@ namespace Skylicht
 
 			inline int getMaxMT()
 			{
-				return NUM_MTBAKER;
+				return MAX_NUM_THREAD;
 			}
 
 			const CSH9& getSH(int i)

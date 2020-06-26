@@ -5,7 +5,7 @@
 #include "CViewDemo.h"
 #include "Importer/Utils/CMeshUtils.h"
 
-int CViewBakeLightmap::s_numLightBound = 1;
+int CViewBakeLightmap::s_numLightBounce = 2;
 
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_guiObject(NULL),
@@ -15,7 +15,7 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_currentMeshBuffer(0),
 	m_currentVertex(0),
 	m_totalVertexBaked(0),
-	m_lightBound(0),
+	m_lightBounce(0),
 	m_timeBeginBake(0)
 {
 
@@ -30,9 +30,9 @@ CViewBakeLightmap::~CViewBakeLightmap()
 	delete m_font;
 
 	// delete baked color buffer
-	for (u32 i = 0, n = m_colorBuffer.size(); i < n; i++)
-		delete m_colorBuffer[i];
-	m_colorBuffer.clear();
+	for (u32 i = 0, n = m_colorBuffers.size(); i < n; i++)
+		delete m_colorBuffers[i];
+	m_colorBuffers.clear();
 }
 
 void CViewBakeLightmap::onInit()
@@ -40,6 +40,9 @@ void CViewBakeLightmap::onInit()
 	CContext *context = CContext::getInstance();
 	CZone *zone = context->getActiveZone();
 	CEntityManager *entityMgr = zone->getEntityManager();
+
+	// set 32px for optimize speed
+	CLightmapper::getInstance()->initBaker(32);
 
 	// get all render mesh in zone
 	m_renderMesh = zone->getComponentsInChild<CRenderMesh>(false);
@@ -68,7 +71,7 @@ void CViewBakeLightmap::onInit()
 						if (mb->getVertexBufferCount() > 0)
 						{
 							// add mesh buffer, that will bake lighting
-							m_allMeshBuffer.push_back(mb);
+							m_neshBuffers.push_back(mb);
 							m_meshTransforms.push_back(transform);
 
 							int vtxCount = mb->getVertexBuffer(0)->getVertexCount();
@@ -84,7 +87,7 @@ void CViewBakeLightmap::onInit()
 								cb->SH[i].zero();
 							}
 
-							m_colorBuffer.push_back(cb);
+							m_colorBuffers.push_back(cb);
 						}
 					}
 				}
@@ -128,16 +131,16 @@ void CViewBakeLightmap::onUpdate()
 		scene->update();
 
 	// bake lightmap
-	u32 numMB = m_allMeshBuffer.size();
-	if (m_currentMeshBuffer < numMB && s_numLightBound > 0)
+	u32 numMB = m_neshBuffers.size();
+	if (m_currentMeshBuffer < numMB && s_numLightBounce > 0)
 	{
-		if (m_lightBound == 0)
+		if (m_lightBounce == 0)
 			CDeferredRP::enableRenderIndirect(false);
 		else
 			CDeferredRP::enableRenderIndirect(true);
 
-		IMeshBuffer *mb = m_allMeshBuffer[m_currentMeshBuffer];
-		SColorBuffer *cb = m_colorBuffer[m_currentMeshBuffer];
+		IMeshBuffer *mb = m_neshBuffers[m_currentMeshBuffer];
+		SColorBuffer *cb = m_colorBuffers[m_currentMeshBuffer];
 		const core::matrix4& transform = m_meshTransforms[m_currentMeshBuffer];
 
 		u32 numVtx = mb->getVertexBuffer(0)->getVertexCount();
@@ -150,8 +153,8 @@ void CViewBakeLightmap::onUpdate()
 
 		char status[512];
 		sprintf(status, "LIGHTMAPPING (%d/%d): %d%%\n\n- MeshBuffer: %d/%d\n- Vertex: %d/%d\n\n - Total: %d\n-Time: %d seconds",
-			m_lightBound + 1,
-			s_numLightBound,
+			m_lightBounce + 1,
+			s_numLightBounce,
 			(int)percent,
 			m_currentMeshBuffer + 1, numMB,
 			m_currentVertex, numVtx,
@@ -167,7 +170,7 @@ void CViewBakeLightmap::onUpdate()
 			mb,
 			transform,
 			camera, context->getRenderPipeline(), scene->getEntityManager(),
-			m_currentVertex, NUM_MTBAKER,
+			m_currentVertex, MAX_NUM_THREAD,
 			cb->Color,
 			cb->SH);
 
@@ -186,13 +189,23 @@ void CViewBakeLightmap::onUpdate()
 		copyColorBufferToMeshBuffer();
 
 		CDeferredRP::enableRenderIndirect(true);
+		// CDeferredRP::enableTestIndirect(true);
 
-		m_lightBound++;
+		m_lightBounce++;
 		m_currentMeshBuffer = 0;
 		m_currentVertex = 0;
 
-		if (m_lightBound >= s_numLightBound)
+		if (m_lightBounce >= s_numLightBounce)
 		{
+			// test exporter
+			if (m_renderMesh.size() > 0)
+			{
+				CMeshManager::getInstance()->exportModel(
+					m_renderMesh[0]->getEntities().pointer(),
+					m_renderMesh[0]->getEntities().size(),
+					"../Assets/TankScene/TankScene.smesh");
+			}
+
 			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 		}
 	}
@@ -201,10 +214,10 @@ void CViewBakeLightmap::onUpdate()
 void CViewBakeLightmap::copyColorBufferToMeshBuffer()
 {
 	// copy baked color buffer to mesh buffer
-	for (u32 i = 0, n = m_allMeshBuffer.size(); i < n; i++)
+	for (u32 i = 0, n = m_neshBuffers.size(); i < n; i++)
 	{
-		IMeshBuffer *mb = m_allMeshBuffer[i];
-		SColorBuffer *cb = m_colorBuffer[i];
+		IMeshBuffer *mb = m_neshBuffers[i];
+		SColorBuffer *cb = m_colorBuffers[i];
 
 		if (mb->getVertexType() != EVT_TANGENTS || mb->getVertexBufferCount() == 0)
 			continue;

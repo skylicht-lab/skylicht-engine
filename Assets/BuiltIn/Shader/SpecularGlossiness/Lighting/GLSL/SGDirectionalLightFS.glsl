@@ -11,6 +11,7 @@ uniform sampler2DArray uShadowMap;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
 uniform vec4 uLightColor;
+uniform vec2 uLightMultiplier;
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
 in vec2 varTexCoord0;
@@ -73,7 +74,9 @@ vec3 SG(
 	const vec3 lightColor,
 	const float visibility,
 	const vec4 light,
-	const vec3 indirect)
+	const vec3 indirect,
+	const float directMultiplier,
+	const float indirectMultiplier)
 {
 	float roughness = 1.0 - gloss;
 	vec3 f0 = vec3(spec, spec, spec);
@@ -84,12 +87,13 @@ vec3 SG(
 	vec3 diffuseColor = baseColor.rgb;
 	specularColor = mix(f0, baseColor.rgb, metallic);
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
+	NdotL = min(NdotL, 1.0);
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	vec3 directionalLight = NdotL * lightColor * visibility;
-	vec3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
-	color += indirect * diffuseColor / PI;
+	vec3 directionalLight = NdotL * lightColor * visibility * directMultiplier;
+	vec3 color = (directionalLight + light.rgb) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
+	color += indirect * diffuseColor * indirectMultiplier;
 	return color;
 }
 void main(void)
@@ -122,6 +126,8 @@ void main(void)
 		uLightColor.rgb,
 		visibility,
 		light,
-		indirect);
+		indirect,
+		uLightMultiplier.x,
+		uLightMultiplier.y);
 	FragColor = vec4(color, 1.0);
 }

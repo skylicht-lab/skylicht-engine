@@ -64,6 +64,8 @@ void CViewDemo::onRender()
 		CCamera *bakeCamera = bakeCameraObj->addComponent<CCamera>();
 		scene->updateAddRemoveObject();
 
+		CLightmapper::getInstance()->initBaker(32);
+
 		CLightmapper::getInstance()->bakeProbes(
 			context->getProbes(),
 			bakeCamera,
