@@ -22,6 +22,7 @@ cbuffer cbPerFrame
 	float4 uCameraPosition;
 	float4 uLightDirection;
 	float4 uLightColor;
+	float2 uLightMultiplier;
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
 };
@@ -85,7 +86,9 @@ float3 SG(
 	const float3 lightColor,
 	const float visibility,
 	const float4 light,
-	const float3 indirect)
+	const float3 indirect,
+	const float directMultiplier,
+	const float indirectMultiplier)
 {
 	float roughness = 1.0 - gloss;
 	float3 f0 = spec;
@@ -96,13 +99,13 @@ float3 SG(
 	float3 diffuseColor = baseColor.rgb;
 	specularColor = lerp(f0, baseColor.rgb, metallic);
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
-	NdotL = min(NdotL, 0.9);
+	NdotL = min(NdotL, 1.0);
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	float3 directionalLight = NdotL * lightColor * visibility;
-	float3 color = (directionalLight + light.rgb) * diffuseColor + (specular * specularColor * visibility + light.a * specularColor);
-	color += indirect * diffuseColor;
+	float3 directionalLight = NdotL * lightColor * visibility * directMultiplier;
+	float3 color = (directionalLight + light.rgb) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
+	color += indirect * diffuseColor * indirectMultiplier;
 	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET
@@ -135,6 +138,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 		uLightColor.rgb,
 		visibility,
 		light,
-		indirect);
+		indirect,
+		uLightMultiplier.x,
+		uLightMultiplier.y);
 	return float4(color, 1.0);
 }
