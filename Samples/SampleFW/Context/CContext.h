@@ -20,7 +20,7 @@ protected:
 	std::vector<CLightProbe*> m_probes;
 
 	CBaseRP *m_beginRP;
-	CBaseRP	*m_rendering;
+	CDeferredRP	*m_rendering;
 	CShadowMapRP *m_shadowMapRendering;
 	CForwardRP *m_forwardRP;
 
@@ -46,6 +46,11 @@ public:
 	inline CBaseRP* getRenderPipeline()
 	{
 		return m_beginRP;
+	}
+
+	inline CDeferredRP* getDefferredRP()
+	{
+		return m_rendering;
 	}
 
 	inline CForwardRP* getForwarderRP()

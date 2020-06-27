@@ -48,7 +48,9 @@ namespace Skylicht
 		m_vertexColorShader(0),
 		m_textureColorShader(0),
 		m_pointLightShader(0),
-		m_pointLightShadowShader(0)
+		m_pointLightShadowShader(0),
+		m_indirectMultipler(1.2f),
+		m_directMultipler(0.7f)
 	{
 		m_type = IRenderPipeline::Deferred;
 	}
@@ -324,7 +326,7 @@ namespace Skylicht
 		if (CBaseRP::s_bakeMode == true)
 			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.0f);
 		else
-			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(0.7f, 1.5f);
+			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(m_directMultipler, m_indirectMultipler);
 
 		// STEP 03:
 		// draw point lighting & spot lighting
