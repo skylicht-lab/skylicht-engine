@@ -208,6 +208,7 @@ void SampleSkinnedMesh::onRender()
 		binormal.normalize();
 
 		Lightmapper::CLightmapper *lm = Lightmapper::CLightmapper::getInstance();
+		lm->initBaker(64);
 		Lightmapper::CSH9 sh = lm->bakeAtPosition(
 			bakeCamera,
 			m_forwardRP,

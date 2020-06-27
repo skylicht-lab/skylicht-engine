@@ -133,7 +133,7 @@ Engine Components are used:
 ### Samples\SkinnedMesh
 This is demo of how to render character model with animation, models are downloaded from [mixamo](https://www.mixamo.com)
 - **DAE Collada** loader model/animation
-- **Forwarder**
+- **Forwarder** rendering
 - **Skydome**
 - **AnimationController**
 <img src="Documents/Media/Samples/sample_skinned_mesh.png"/>
@@ -147,7 +147,7 @@ This is a demo of use UnwrapUV tool to create Lightmap UV.
 <img src="Documents/Media/Samples/lightmap-uv/mesh-charts00.png" width="50%"/>
 
 ### Samples\Lightmapping
-This is a demo of use lightmapper to bake indirect lighting color into lightmap texture.
+This is a demo of use lightmapper to bake indirect lighting color on lightmap texture.
 [Project references: Lightmapper](https://github.com/ands/lightmapper)
 
 <img src="Documents/Media/Samples/lightmap/lightmapping_a.png"/>
@@ -164,7 +164,7 @@ This is a demo of use lightmapper to bake indirect lighting color into lightmap 
 <img src="Documents/Media/Samples/lightmap/rasterize_2.png"/>
 
 ### Samples\LightmappingVertex
-This is a demo of use lightmapper to set indirect lighting color into vertex color.
+This is a demo of use lightmapper to set indirect lighting color on vertex color.
 
 Engine Components are used:
 - **OBJ Wavefront** loader
