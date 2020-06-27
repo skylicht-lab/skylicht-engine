@@ -63,6 +63,8 @@ namespace Skylicht
 		int m_pointLightShader;
 		int m_pointLightShadowShader;
 
+		float m_indirectMultipler;
+		float m_directMultipler;
 	protected:
 
 		void initDefferredMaterial();
@@ -80,6 +82,16 @@ namespace Skylicht
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
 
 		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
+
+		inline void setIndirectMultipler(float f)
+		{
+			m_indirectMultipler = f;
+		}
+
+		inline void setDirectMultipler(float f)
+		{
+			m_directMultipler = f;
+		}
 
 		static void enableRenderIndirect(bool b);
 
