@@ -119,6 +119,56 @@ Engine Components are used:
 - **GUI Text**
 <img src="Documents/Media/Samples/sample_hello_world.png"/>
 
+### Samples\DrawPrimitives
+This demo of draw simple Cube 3D, Transform and use Component
+<img src="Documents/Media/Samples/sample_draw_cube.png"/>
+```C++
+// Create cube 1
+CGameObject *cubeObj1 = zone->createEmptyObject();
+cubeObj1->addComponent<CCubeComponent>();
+cubeObj1->addComponent<CCubeRotate>()->setRotate(0.1f, 0.1f, 0.1f);
+cubeObj1->getTransformEuler()->setPosition(core::vector3df(-1.0f, 0.0f, 0.0f));
+
+// Create cube 2
+CGameObject *cubeObj2 = zone->createEmptyObject();
+cubeObj2->addComponent<CCubeComponent>();
+cubeObj2->addComponent<CCubeRotate>()->setRotate(0.0f, 0.1f, 0.0f);
+cubeObj2->getTransformEuler()->setPosition(core::vector3df(1.0f, 0.0f, 0.0f));
+```
+
+```C++
+void CCubeRotate::updateComponent()
+{
+	CTransformEuler *transform = m_gameObject->getTransformEuler();
+
+	float timestep = getTimeStep();
+	core::vector3df rot = transform->getRotation();
+
+	rot.X = rot.X + m_rotateSpeed.X * timestep;
+	rot.Y = rot.Y + m_rotateSpeed.Y * timestep;
+	rot.Z = rot.Z + m_rotateSpeed.Z * timestep;
+
+	rot.X = fmodf(rot.X, 360.0f);
+	rot.Y = fmodf(rot.Y, 360.0f);
+	rot.Z = fmodf(rot.Z, 360.0f);
+
+    // rotate cube 3d
+	transform->setRotation(rot);
+}
+
+void CCubeComponent::initComponent()
+{
+	// add cube mesh data to entity
+	// more details: instance cube mesh from CCubeData
+	CCubeData *cube = m_gameObject->getEntity()->addData<CCubeData>();
+	cube->initCube(1.0f);
+
+	// add culling data to entity
+	CCullingData *culling = m_gameObject->getEntity()->addData<CCullingData>();
+	culling->Type = CCullingData::BoundingBox;
+}
+```
+
 ### Samples\LuckyDraw
 Engine Components are used:
 - **FreeType Font**
