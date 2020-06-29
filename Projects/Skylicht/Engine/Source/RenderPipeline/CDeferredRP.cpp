@@ -50,7 +50,7 @@ namespace Skylicht
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
 		m_indirectMultipler(1.2f),
-		m_directMultipler(0.7f)
+		m_directMultipler(1.0f)
 	{
 		m_type = IRenderPipeline::Deferred;
 	}
