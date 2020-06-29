@@ -137,6 +137,7 @@ cubeObj2->getTransformEuler()->setPosition(core::vector3df(1.0f, 0.0f, 0.0f));
 ```
 
 ```C++
+// CCubeRotate Component
 void CCubeRotate::updateComponent()
 {
 	CTransformEuler *transform = m_gameObject->getTransformEuler();
@@ -144,9 +145,9 @@ void CCubeRotate::updateComponent()
 	float timestep = getTimeStep();
 	core::vector3df rot = transform->getRotation();
 
-	rot.X = rot.X + m_rotateSpeed.X * timestep;
-	rot.Y = rot.Y + m_rotateSpeed.Y * timestep;
-	rot.Z = rot.Z + m_rotateSpeed.Z * timestep;
+	rot.X = rot.X + rotateSpeed.X * timestep;
+	rot.Y = rot.Y + rotateSpeed.Y * timestep;
+	rot.Z = rot.Z + rotateSpeed.Z * timestep;
 
 	rot.X = fmodf(rot.X, 360.0f);
 	rot.Y = fmodf(rot.Y, 360.0f);
@@ -156,6 +157,7 @@ void CCubeRotate::updateComponent()
 	transform->setRotation(rot);
 }
 
+// CCubeComponent
 void CCubeComponent::initComponent()
 {
 	// add cube mesh data to entity
@@ -168,6 +170,7 @@ void CCubeComponent::initComponent()
 	culling->Type = CCullingData::BoundingBox;
 }
 
+// CubeData
 void CCubeData::initCube(float size)
 {
 	// that will render from RenderMesh/CMeshRenderer.cpp
@@ -175,7 +178,8 @@ void CCubeData::initCube(float size)
 
 	IVideoDriver *driver = getVideoDriver();
 
-	// irrlicht mesh buffer implement
+	// Irrlicht Engine Mesh Buffer instance
+	// http://irrlicht.sourceforge.net/docu/classirr_1_1scene_1_1_c_mesh_buffer.html
 	CubeMeshBuffer = new CMeshBuffer<S3DVertex>(driver->getVertexDescriptor(EVT_STANDARD), EIT_16BIT);
 	IIndexBuffer *ib = CubeMeshBuffer->getIndexBuffer();
 	IVertexBuffer *vb = CubeMeshBuffer->getVertexBuffer();
@@ -272,7 +276,7 @@ void CCubeData::initCube(float size)
 	// add cube mesh buffer to mesh
 	RenderMesh->addMeshBuffer(CubeMeshBuffer, "default_material", NULL);
 
-	// recalc bbox for culling
+	// bbox for culling
 	RenderMesh->recalculateBoundingBox();
 }
 ```
