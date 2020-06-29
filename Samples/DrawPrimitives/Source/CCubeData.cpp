@@ -27,7 +27,8 @@ void CCubeData::initCube(float size)
 
 	IVideoDriver *driver = getVideoDriver();
 
-	// irrlicht mesh buffer implement
+	// Irrlicht Engine Mesh Buffer instance
+	// http://irrlicht.sourceforge.net/docu/classirr_1_1scene_1_1_c_mesh_buffer.html
 	CubeMeshBuffer = new CMeshBuffer<S3DVertex>(driver->getVertexDescriptor(EVT_STANDARD), EIT_16BIT);
 	IIndexBuffer *ib = CubeMeshBuffer->getIndexBuffer();
 	IVertexBuffer *vb = CubeMeshBuffer->getVertexBuffer();
