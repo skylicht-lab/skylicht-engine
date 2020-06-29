@@ -129,9 +129,10 @@ namespace Skylicht
 
 		for (u32 i = 0; i < numData; i++)
 		{
-			if (typeid(T) == typeid(*data[i]))
+			T* t = dynamic_cast<T*>(data[i]);
+			if (t)
 			{
-				return (T*)data[i];
+				return t;
 			}
 		}
 
