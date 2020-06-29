@@ -179,7 +179,7 @@ Irradiance baked on Vertex Color:
 
 <img src="Documents/Media/Samples/tank-scene/indirect-bake-3-bounce.png"/>
 
-#### Final Composition (3 bounces)
+#### Indirect + Direction light - No post processing (3 bounces light)
 
 <img src="Documents/Media/Samples/tank-scene/tank-scene-3-bounce-a.png"/>
 
