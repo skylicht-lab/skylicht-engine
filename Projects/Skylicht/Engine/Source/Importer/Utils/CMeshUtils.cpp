@@ -52,7 +52,7 @@ namespace Skylicht
 		}
 	}
 
-	void CMeshUtils::convertToTangentVertices(IMeshBuffer* buffer, bool flipZUp)
+	void CMeshUtils::convertToTangentVertices(IMeshBuffer* buffer, bool fixFlipY)
 	{
 
 		// replace the buffer
@@ -214,7 +214,7 @@ namespace Skylicht
 
 				// OK on YUp
 				// need test this condition
-				// if (flipZUp == true)
+				if (fixFlipY == true)
 				{
 					v[i].TangentW.X = w;
 				}
@@ -252,7 +252,7 @@ namespace Skylicht
 		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
 	}
 
-	void CMeshUtils::convertToSkinTangentVertices(IMeshBuffer* buffer, bool flipZUp)
+	void CMeshUtils::convertToSkinTangentVertices(IMeshBuffer* buffer, bool fixFlipY)
 	{
 		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN_TANGENTS));
 
@@ -363,7 +363,7 @@ namespace Skylicht
 
 				// OK on YUp
 				// need test this condition
-				// if (flipZUp == true)
+				if (fixFlipY == true)
 				{
 					v[i].TangentW.X = w;
 				}
