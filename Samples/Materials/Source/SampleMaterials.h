@@ -7,7 +7,8 @@ class SampleMaterials : public IApplicationEventReceiver
 private:
 	CScene *m_scene;
 	CCamera *m_guiCamera;
-
+	CCamera *m_camera;
+	CForwardRP *m_forwardRP;
 public:
 	SampleMaterials();
 	virtual ~SampleMaterials();

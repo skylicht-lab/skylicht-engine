@@ -2,6 +2,10 @@
 #include "SkylichtEngine.h"
 #include "SampleMaterials.h"
 
+#include "GridPlane/CGridPlane.h"
+
+#include "CSphereComponent.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SampleMaterials *app = new SampleMaterials();
@@ -41,6 +45,26 @@ void SampleMaterials::onInitApp()
 	CGameObject *guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
+
+	// Create 3d camera
+	CGameObject *camObj = zone->createEmptyObject();
+	camObj->addComponent<CCamera>();
+	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
+
+	m_camera = camObj->getComponent<CCamera>();
+	m_camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
+	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+
+	// 3D grid
+	CGameObject *grid = zone->createEmptyObject();
+	grid->addComponent<CGridPlane>();
+
+	// Create sphere 1
+	CGameObject *sphereObj1 = zone->createEmptyObject();
+	sphereObj1->addComponent<CSphereComponent>();
+
+	// Rendering
+	m_forwardRP = new CForwardRP();
 }
 
 void SampleMaterials::onUpdate()
@@ -51,6 +75,8 @@ void SampleMaterials::onUpdate()
 
 void SampleMaterials::onRender()
 {
+	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
+
 	// Render hello,world text in gui camera
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }
