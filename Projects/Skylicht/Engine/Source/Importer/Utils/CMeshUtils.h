@@ -31,10 +31,10 @@ namespace Skylicht
 	public:
 		static void copyVertices(IVertexBuffer *srcBuffer, IVertexBuffer *dstBuffer);
 
-		static void convertToTangentVertices(IMeshBuffer* buffer, bool flipZUp = false);
+		static void convertToTangentVertices(IMeshBuffer* buffer, bool fixFlipY = true);
 
 		static void convertToSkinVertices(IMeshBuffer* buffer);
 
-		static void convertToSkinTangentVertices(IMeshBuffer* buffer, bool flipZUp = false);
+		static void convertToSkinTangentVertices(IMeshBuffer* buffer, bool fixFlipY = true);
 	};
 }
