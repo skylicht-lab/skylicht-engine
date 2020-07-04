@@ -132,4 +132,7 @@ void CCubeData::initCube(float size)
 
 	// recalc bbox for culling
 	RenderMesh->recalculateBoundingBox();
+
+	// remeber set static mesh buffer to optimize (it will stored on GPU)
+	RenderMesh->setHardwareMappingHint(EHM_STATIC);
 }
