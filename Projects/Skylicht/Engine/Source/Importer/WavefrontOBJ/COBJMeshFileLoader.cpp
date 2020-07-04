@@ -310,7 +310,7 @@ namespace Skylicht
 				// if this material have normal map
 				if (m_materials[m]->Meshbuffer->getMaterial().TextureLayer[1].Texture != NULL || normalMap == true)
 				{
-					CMeshUtils::convertToTangentVertices(m_materials[m]->Meshbuffer);
+					CMeshUtils::convertToTangentVertices(m_materials[m]->Meshbuffer, true);
 
 					// add tangent mesh buffer
 					mesh->addMeshBuffer(m_materials[m]->Meshbuffer, m_materials[m]->Name.c_str());
