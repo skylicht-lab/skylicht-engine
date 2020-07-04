@@ -57,7 +57,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 normalMap = uTexNormalMap.Sample(uTexNormalMapSampler, input.tex0).xyz;
 	float3 specMap = uTexSpecularMap.Sample(uTexSpecularMapSampler, input.tex0).xyz;
 	
-	float3x3 rotation = float3x3(input.worldTangent, input.worldBinormal, input.worldNormal);
+	float3x3 rotation = float3x3(input.worldTangent, input.worldBinormal, input.worldNormal);	
 	float3 localCoords = normalMap * 2.0 - float3(1.0, 1.0, 1.0);
 	localCoords.y *= input.tangentw;
 	float3 n = normalize(mul(localCoords, rotation));
@@ -92,8 +92,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
 	color += specular * specularColor;
 	
-	// IBL lighting (2 bounce)
-	color += ambientLighting * diffuseColor * 2.0 / PI;
+	// IBL lighting
+	color += ambientLighting * diffuseColor * 1.5 / PI;
 	
 	// IBL reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, input.worldNormal));

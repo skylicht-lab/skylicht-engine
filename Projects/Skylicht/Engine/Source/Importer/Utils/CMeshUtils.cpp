@@ -85,6 +85,9 @@ namespace Skylicht
 			IMeshManipulator *mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
 			mh->recalculateTangents(buffer);
 
+			for (i = 0; i != vtxCnt; ++i)
+				v[i].TangentW.set(1.f, 1.f);
+
 			// Use skylicht compute
 			// https://www.marti.works/calculating-tangents-for-your-mesh/
 			// https://answers.unity.com/questions/7789/calculating-tangents-vector4.html
@@ -103,6 +106,7 @@ namespace Skylicht
 			{
 				v[i].Tangent.set(0.f, 0.f, 0.f);
 				v[i].Binormal.set(0.f, 0.f, 0.f);
+				v[i].TangentW.set(1.f, 1.f);
 			}
 
 			// (1)
@@ -209,7 +213,8 @@ namespace Skylicht
 				v[i].Binormal = n.crossProduct(t);
 
 				// OK on YUp
-				if (flipZUp == true)
+				// need test this condition
+				// if (flipZUp == true)
 				{
 					v[i].TangentW.X = w;
 				}
@@ -357,7 +362,8 @@ namespace Skylicht
 				v[i].Binormal = n.crossProduct(t);
 
 				// OK on YUp
-				if (flipZUp == true)
+				// need test this condition
+				// if (flipZUp == true)
 				{
 					v[i].TangentW.X = w;
 				}
