@@ -3,6 +3,7 @@
 #include "SampleMaterials.h"
 
 #include "GridPlane/CGridPlane.h"
+#include "SkyDome/CSkyDome.h"
 
 #include "CSphereComponent.h"
 
@@ -29,7 +30,10 @@ void SampleMaterials::onInitApp()
 	CBaseApp* app = getApplication();
 
 	// Load "BuiltIn.zip" to read files inside it
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
+	io::IFileSystem* fs = app->getFileSystem();
+	fs->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
+	fs->addFileArchive(app->getBuiltInPath("Common.zip"), false, false);
+	fs->addFileArchive(app->getBuiltInPath("SampleMaterials.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -55,13 +59,44 @@ void SampleMaterials::onInitApp()
 	m_camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
+	// sky
+	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/MonValley.png");
+	if (skyDomeTexture != NULL)
+	{
+		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
+		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
+	}
+
+	// lighting
+	CGameObject *lightObj = zone->createEmptyObject();
+	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	SColor c(255, 255, 244, 214);
+	directionalLight->setColor(SColorf(c));
+
+	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
+
+	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
+	lightTransform->setOrientation(direction, CTransform::s_oy);
+
 	// 3D grid
 	CGameObject *grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
 
 	// Create sphere 1
 	CGameObject *sphereObj1 = zone->createEmptyObject();
-	sphereObj1->addComponent<CSphereComponent>();
+	CSphereComponent *sphere = sphereObj1->addComponent<CSphereComponent>();
+
+	// load texture
+	CTextureManager *textureManager = CTextureManager::getInstance();
+	ITexture *brickDiffuse = textureManager->getTexture("SampleMaterials/Textures/brick_diff.png");
+	ITexture *brickNormal = textureManager->getTexture("SampleMaterials/Textures/brick_norm.png");
+	ITexture *brickSpec = textureManager->getTexture("SampleMaterials/Textures/brick_spec.png");
+
+	CMaterial *material = sphere->getMaterial();
+	material->changeShader("BuiltIn/Shader/Basic/TextureColor.xml");
+	material->setUniformTexture("uTexDiffuse", brickDiffuse);
+	material->applyMaterial();
 
 	// Rendering
 	m_forwardRP = new CForwardRP();

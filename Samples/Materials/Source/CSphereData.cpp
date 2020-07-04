@@ -24,9 +24,11 @@ void CSphereData::initSphere(float radius, CMaterial *material)
 
 	RenderMesh = new CMesh();
 
-	IMesh *mesh = getIrrlichtDevice()->getSceneManager()->getGeometryCreator()->createSphereMesh(radius);
+	IMesh *mesh = getIrrlichtDevice()->getSceneManager()->getGeometryCreator()->createSphereMesh(radius, 32, 32);
 
 	SphereMeshBuffer = mesh->getMeshBuffer(0);
+
+	// convert tangent for normal map
 	CMeshUtils::convertToTangentVertices(SphereMeshBuffer);
 
 	// assign mesh buffer material
