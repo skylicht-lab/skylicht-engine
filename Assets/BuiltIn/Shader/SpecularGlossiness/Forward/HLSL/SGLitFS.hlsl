@@ -82,7 +82,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		uSHConst[3].xyz * n.x;
 	
 	// Lighting
-	float NdotL = max(dot(input.worldNormal, input.worldLightDir), 0.0);
+	float NdotL = max(dot(n, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * uLightColor.rgb;
 	float3 color = directionalLight * diffuseColor;
 

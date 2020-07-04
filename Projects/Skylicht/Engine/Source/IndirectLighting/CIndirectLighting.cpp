@@ -46,37 +46,43 @@ namespace Skylicht
 	void CIndirectLighting::initComponent()
 	{
 		CRenderMesh *renderMesh = m_gameObject->getComponent<CRenderMesh>();
-		if (renderMesh == NULL)
+		if (renderMesh != NULL)
 		{
-			char log[512];
-			sprintf(log, "[CIndirectLighting] Require CRenderMesh component");
-			return;
+			CEntityManager *entityMgr = m_gameObject->getEntityManager();
+			std::vector<CRenderMeshData*>& renderData = renderMesh->getRenderers();
+			for (CRenderMeshData *render : renderData)
+			{
+				// get entity that have render mesh data
+				CEntity* entity = entityMgr->getEntity(render->EntityIndex);
+				addLightingData(entity);
+			}
 		}
-
-		CEntityManager *entityMgr = m_gameObject->getEntityManager();
-		std::vector<CRenderMeshData*>& renderData = renderMesh->getRenderers();
-		for (CRenderMeshData *render : renderData)
+		else
 		{
 			// get entity that have render mesh data
-			CEntity* entity = entityMgr->getEntity(render->EntityIndex);
-
-			// add indirect data info
-			CIndirectLightingData *data = entity->addData<CIndirectLightingData>();
-
-			if (m_type == Lightmap)
-			{
-				data->Type = CIndirectLightingData::Lightmap;
-				data->LightmapIndex = m_lightmapIndex;
-			}
-			else
-			{
-				data->Type = CIndirectLightingData::VertexColor;
-			}
-
-			data->SH = m_sh;
-
-			m_data.push_back(data);
+			CEntity* entity = m_gameObject->getEntity();
+			addLightingData(entity);
 		}
+	}
+
+	void CIndirectLighting::addLightingData(CEntity *entity)
+	{
+		// add indirect data info
+		CIndirectLightingData *data = entity->addData<CIndirectLightingData>();
+
+		if (m_type == Lightmap)
+		{
+			data->Type = CIndirectLightingData::Lightmap;
+			data->LightmapIndex = m_lightmapIndex;
+		}
+		else
+		{
+			data->Type = CIndirectLightingData::VertexColor;
+		}
+
+		data->SH = m_sh;
+
+		m_data.push_back(data);
 	}
 
 	void CIndirectLighting::updateComponent()

@@ -6,6 +6,7 @@
 #include "SkyDome/CSkyDome.h"
 
 #include "CSphereComponent.h"
+#include "Lightmapper/CLightmapper.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -14,14 +15,17 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 SampleMaterials::SampleMaterials() :
-	m_scene(NULL)
+	m_scene(NULL),
+	m_bakeSHLighting(true)
 {
-
+	Lightmapper::CLightmapper::createGetInstance();
 }
 
 SampleMaterials::~SampleMaterials()
 {
 	delete m_scene;
+
+	Lightmapper::CLightmapper::releaseInstance();
 }
 
 void SampleMaterials::onInitApp()
@@ -84,19 +88,29 @@ void SampleMaterials::onInitApp()
 	grid->addComponent<CGridPlane>();
 
 	// Create sphere 1
-	CGameObject *sphereObj1 = zone->createEmptyObject();
-	CSphereComponent *sphere = sphereObj1->addComponent<CSphereComponent>();
+	CGameObject *sphereObj = zone->createEmptyObject();
+	CSphereComponent *sphere = sphereObj->addComponent<CSphereComponent>();
 
-	// load texture
+	// SH ambient lighting
+	CIndirectLighting *indirect = sphereObj->addComponent<CIndirectLighting>();
+	indirect->setIndirectLightingType(CIndirectLighting::SH4);
+
+	// Load texture
 	CTextureManager *textureManager = CTextureManager::getInstance();
 	ITexture *brickDiffuse = textureManager->getTexture("SampleMaterials/Textures/brick_diff.png");
 	ITexture *brickNormal = textureManager->getTexture("SampleMaterials/Textures/brick_norm.png");
 	ITexture *brickSpec = textureManager->getTexture("SampleMaterials/Textures/brick_spec.png");
 
+	// Apply shader & uniform texture
+	// Uniform name: uTexDiffuse, uTexNormal, uTexSpecular declare in SG.xml
 	CMaterial *material = sphere->getMaterial();
-	material->changeShader("BuiltIn/Shader/Basic/TextureColor.xml");
+	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SG.xml");
 	material->setUniformTexture("uTexDiffuse", brickDiffuse);
+	material->setUniformTexture("uTexNormal", brickNormal);
+	material->setUniformTexture("uTexSpecular", brickSpec);
 	material->applyMaterial();
+
+	m_spheres.push_back(sphereObj);
 
 	// Rendering
 	m_forwardRP = new CForwardRP();
@@ -110,6 +124,42 @@ void SampleMaterials::onUpdate()
 
 void SampleMaterials::onRender()
 {
+	if (m_bakeSHLighting == true)
+	{
+		m_bakeSHLighting = false;
+
+		for (CGameObject *sphere : m_spheres)
+			sphere->setVisible(false);
+
+		CGameObject *bakeCameraObj = m_scene->getZone(0)->createEmptyObject();
+		CCamera *bakeCamera = bakeCameraObj->addComponent<CCamera>();
+		m_scene->updateAddRemoveObject();
+
+		core::vector3df pos(0.0f, 0.0f, 0.0f);
+
+		core::vector3df normal = CTransform::s_oy;
+		core::vector3df tangent = CTransform::s_ox;
+		core::vector3df binormal = normal.crossProduct(tangent);
+		binormal.normalize();
+
+		Lightmapper::CLightmapper *lm = Lightmapper::CLightmapper::getInstance();
+		lm->initBaker(64);
+		Lightmapper::CSH9 sh = lm->bakeAtPosition(
+			bakeCamera,
+			m_forwardRP,
+			m_scene->getEntityManager(),
+			pos,
+			normal, tangent, binormal);
+
+		// apply indirect lighting
+		std::vector<CIndirectLighting*> lightings = m_scene->getZone(0)->getComponentsInChild<CIndirectLighting>(false);
+		for (CIndirectLighting *indirect : lightings)
+			indirect->setSH(sh.getValue());
+
+		for (CGameObject *sphere : m_spheres)
+			sphere->setVisible(true);
+	}
+
 	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
 
 	// Render hello,world text in gui camera
