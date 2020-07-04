@@ -1724,7 +1724,7 @@ namespace Skylicht
 				}
 				else if ((effect && effect->HasBumpMapping) || m_createTangent)
 				{
-					CMeshUtils::convertToTangentVertices(buffer, m_flipOx);
+					CMeshUtils::convertToTangentVertices(buffer, m_zUp);
 				}
 			}
 			else
@@ -1736,7 +1736,7 @@ namespace Skylicht
 				if (m_createTangent)
 				{
 					// construct skin tangent buffer
-					CMeshUtils::convertToSkinTangentVertices(buffer, m_flipOx);
+					CMeshUtils::convertToSkinTangentVertices(buffer, m_zUp);
 				}
 				else
 				{
