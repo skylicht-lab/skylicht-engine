@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CEntity;
+
 	class CIndirectLighting : public CComponentSystem
 	{
 	public:
@@ -58,6 +60,10 @@ namespace Skylicht
 		virtual void initComponent();
 
 		virtual void updateComponent();
+
+	protected:
+
+		void addLightingData(CEntity *entity);
 
 	public:
 
