@@ -73,7 +73,7 @@ void main(void)
 		uSHConst[3].xyz * n.x;
 	
 	// Lighting
-	float NdotL = max(dot(vWorldNormal, vWorldLightDir), 0.0);
+	float NdotL = max(dot(n, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * uLightColor.rgb;
 	vec3 color = directionalLight * diffuseColor;
 
