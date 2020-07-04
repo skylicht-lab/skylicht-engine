@@ -231,7 +231,6 @@ void SampleSkinnedMesh::onRender()
 		core::recti()
 	);
 
-	// Render hello,world text in gui camera
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }
 
