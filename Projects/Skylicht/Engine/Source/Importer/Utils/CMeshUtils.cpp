@@ -52,9 +52,8 @@ namespace Skylicht
 		}
 	}
 
-	void CMeshUtils::convertToTangentVertices(IMeshBuffer* buffer, bool fixFlipY)
+	void CMeshUtils::convertToTangentVertices(IMeshBuffer* buffer, bool flipNormal)
 	{
-
 		// replace the buffer
 		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
 		{
@@ -81,17 +80,17 @@ namespace Skylicht
 			video::S3DVertexTangents* v = (video::S3DVertexTangents*)vertexBuffer->getVertices();
 
 			// (1)
-			// Use irrlicht compute
+			// Use irrlicht compute			
 			IMeshManipulator *mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
 			mh->recalculateTangents(buffer);
 
 			for (i = 0; i != vtxCnt; ++i)
 				v[i].TangentW.set(1.f, 1.f);
 
+			/*
 			// Use skylicht compute
 			// https://www.marti.works/calculating-tangents-for-your-mesh/
 			// https://answers.unity.com/questions/7789/calculating-tangents-vector4.html
-			/*
 			const u32 idxCnt = buffer->getIndexBuffer()->getIndexCount();
 
 			u16* idx16 = NULL;
@@ -209,15 +208,14 @@ namespace Skylicht
 
 				v[i].Tangent = t - (n * n.dotProduct(t));
 
-				float w = n.crossProduct(t).dotProduct(t2) > 0.0f ? 1.0f : -1.0f;
+				float w = n.crossProduct(t).dotProduct(t2) < 0.0f ? -1.0f : 1.0f;
 				v[i].Binormal = n.crossProduct(t);
 
-				// OK on YUp
-				// need test this condition
-				if (fixFlipY == true)
-				{
+				// need test this condition				
+				if (flipNormal == true)
+					v[i].TangentW.X = -w;
+				else
 					v[i].TangentW.X = w;
-				}
 
 				v[i].Tangent.normalize();
 				v[i].Binormal.normalize();
@@ -229,33 +227,9 @@ namespace Skylicht
 		}
 	}
 
-	void CMeshUtils::convertToSkinVertices(IMeshBuffer* buffer)
+	void CMeshUtils::convertToSkinTangentVertices(IMeshBuffer* buffer, bool flipNormal)
 	{
-		// change vertex descriptor
-		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN));
-
-		for (u32 i = 0; i < buffer->getVertexBufferCount(); ++i)
-		{
-			CVertexBuffer<video::S3DVertexSkin>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkin>();
-
-			// copy vertex data
-			CMeshUtils::copyVertices(buffer->getVertexBuffer(i), vertexBuffer);
-
-			// replace the buffer
-			buffer->setVertexBuffer(vertexBuffer, i);
-
-			// drop reference
-			vertexBuffer->drop();
-		}
-
-		// assign skin material
-		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
-	}
-
-	void CMeshUtils::convertToSkinTangentVertices(IMeshBuffer* buffer, bool fixFlipY)
-	{
-		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN_TANGENTS));
-
+		// replace the buffer
 		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
 		{
 			CVertexBuffer<video::S3DVertexSkinTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkinTangents>();
@@ -263,9 +237,21 @@ namespace Skylicht
 			// copy vertex data
 			CMeshUtils::copyVertices(buffer->getVertexBuffer(j), vertexBuffer);
 
+			// replace
+			buffer->setVertexBuffer(vertexBuffer, j);
+		}
+
+		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN_TANGENTS));
+
+		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		{
 			// todo calc tangent & binormal
+			CVertexBuffer<video::S3DVertexSkinTangents>* vertexBuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)buffer->getVertexBuffer(j);
+
 			const u32 vtxCnt = vertexBuffer->getVertexCount();
-			const u32 idxCnt = buffer->getIndexBuffer()->getIndexCount();
+
+			u32 i;
+			video::S3DVertexSkinTangents* v = (video::S3DVertexSkinTangents*)vertexBuffer->getVertices();
 
 			u16* idx16 = NULL;
 			u32* idx32 = NULL;
@@ -275,9 +261,19 @@ namespace Skylicht
 			else
 				idx32 = (u32*)buffer->getIndexBuffer()->getIndices();
 
-			video::S3DVertexSkinTangents* v = (video::S3DVertexSkinTangents*)vertexBuffer->getVertices();
+			// (1)
+			// Use irrlicht compute			
+			IMeshManipulator *mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
+			mh->recalculateTangents(buffer);
 
-			u32 i;
+			for (i = 0; i != vtxCnt; ++i)
+				v[i].TangentW.set(1.f, 1.f);
+
+			/*
+			// Use skylicht compute
+			// https://www.marti.works/calculating-tangents-for-your-mesh/
+			// https://answers.unity.com/questions/7789/calculating-tangents-vector4.html
+			const u32 idxCnt = buffer->getIndexBuffer()->getIndexCount();
 			for (i = 0; i != vtxCnt; ++i)
 			{
 				v[i].Tangent.set(0.f, 0.f, 0.f);
@@ -348,6 +344,7 @@ namespace Skylicht
 				v[i2].Binormal += tdir;
 				v[i3].Binormal += tdir;
 			}
+			*/
 
 			// (2)
 			for (i = 0; i != vtxCnt; ++i)
@@ -358,15 +355,14 @@ namespace Skylicht
 
 				v[i].Tangent = (t - n * n.dotProduct(t));
 
-				float w = n.crossProduct(t).dotProduct(t2) > 0.0f ? 1.0f : -1.0f;
+				float w = n.crossProduct(t).dotProduct(t2) < 0.0f ? -1.0f : 1.0f;
 				v[i].Binormal = n.crossProduct(t);
 
-				// OK on YUp
 				// need test this condition
-				if (fixFlipY == true)
-				{
+				if (flipNormal == true)
+					v[i].TangentW.X = -w;
+				else
 					v[i].TangentW.X = w;
-				}
 
 				v[i].Tangent.normalize();
 				v[i].Binormal.normalize();
@@ -375,6 +371,29 @@ namespace Skylicht
 
 			// replace the buffer
 			buffer->setVertexBuffer(vertexBuffer, j);
+
+			// drop reference
+			vertexBuffer->drop();
+		}
+
+		// assign skin material
+		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
+	}
+
+	void CMeshUtils::convertToSkinVertices(IMeshBuffer* buffer)
+	{
+		// change vertex descriptor
+		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN));
+
+		for (u32 i = 0; i < buffer->getVertexBufferCount(); ++i)
+		{
+			CVertexBuffer<video::S3DVertexSkin>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkin>();
+
+			// copy vertex data
+			CMeshUtils::copyVertices(buffer->getVertexBuffer(i), vertexBuffer);
+
+			// replace the buffer
+			buffer->setVertexBuffer(vertexBuffer, i);
 
 			// drop reference
 			vertexBuffer->drop();
