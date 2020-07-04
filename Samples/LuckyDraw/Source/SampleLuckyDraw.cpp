@@ -188,7 +188,6 @@ void SampleLuckyDraw::onUpdate()
 
 void SampleLuckyDraw::onRender()
 {
-	// Render hello,world text in gui camera
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }
 

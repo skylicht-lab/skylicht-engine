@@ -84,8 +84,8 @@ void SampleMaterials::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// 3D grid
-	CGameObject *grid = zone->createEmptyObject();
-	grid->addComponent<CGridPlane>();
+	// CGameObject *grid = zone->createEmptyObject();
+	// grid->addComponent<CGridPlane>();
 
 	// Create sphere 1
 	CGameObject *sphereObj = zone->createEmptyObject();
@@ -162,7 +162,6 @@ void SampleMaterials::onRender()
 
 	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
 
-	// Render hello,world text in gui camera
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }
 

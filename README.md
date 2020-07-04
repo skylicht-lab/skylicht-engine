@@ -120,8 +120,12 @@ Engine Components are used:
 <img src="Documents/Media/Samples/sample_hello_world.png"/>
 
 ### Samples\DrawPrimitives
-This demo of draw simple Cube 3D, Transform and use Component
+This demo of draw Cube 3D, setup transform and use component.
 <img src="Documents/Media/Samples/sample_draw_cube.png"/>
+
+### Samples\Materials
+This demo of draw Sphere 3D, load textures, init material SpecGloss with Diffuse, Normal, Specular.
+<img src="Documents/Media/Samples/sample_material.jpg"/>
 
 ### Samples\LuckyDraw
 Engine Components are used:
@@ -140,7 +144,7 @@ This is demo of how to render character model with animation, models are downloa
 - **Forwarder** rendering
 - **Skydome**
 - **AnimationController**
-<img src="Documents/Media/Samples/sample_skinned_mesh.png"/>
+<img src="Documents/Media/Samples/sample_skinned_mesh.jpg"/>
 
 ### Samples\LightmapUV
 This is a demo of use UnwrapUV tool to create Lightmap UV. 
