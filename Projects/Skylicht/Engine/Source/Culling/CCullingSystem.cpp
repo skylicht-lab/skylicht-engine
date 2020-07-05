@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderPipeline/IRenderPipeline.h"
 #include "Camera/CCamera.h"
 
+#include "RenderPipeline/CShadowMapRP.h"
+
 namespace Skylicht
 {
 	CCullingSystem::CCullingSystem()
@@ -123,15 +125,27 @@ namespace Skylicht
 
 			// 1. Detect by bounding box
 			CCamera *camera = entityManager->getCamera();
-			culling->Visible = culling->BBox.intersectsWithBox(camera->getViewFrustum().getBoundingBox());
+			SViewFrustum frust;
 
-			// 2. Detect algorithm 
+			if (rp->getType() == IRenderPipeline::ShadowMap)
+			{
+				CShadowMapRP *shadowMapRP = (CShadowMapRP*)rp;
+
+				const core::aabbox3df& box = shadowMapRP->getFrustumBox();
+				culling->Visible = culling->BBox.intersectsWithBox(box);
+				continue;
+			}
+			else
+			{
+				frust = camera->getViewFrustum();
+				culling->Visible = culling->BBox.intersectsWithBox(frust.getBoundingBox());
+			}
+
+			// 2. Detect algorithm
 			if (culling->Visible == true)
 			{
 				if (culling->Type == CCullingData::FrustumBox && invTransform != NULL)
 				{
-					SViewFrustum frust = camera->getViewFrustum();
-
 					// transform the frustum to the node's current absolute transformation
 					invTrans = invTransform->WorldInverse;
 					frust.transform(invTrans);

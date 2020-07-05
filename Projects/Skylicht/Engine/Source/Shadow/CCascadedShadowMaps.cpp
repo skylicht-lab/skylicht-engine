@@ -211,6 +211,11 @@ namespace Skylicht
 			// Push the light position back along the light direction by the near offset.
 			core::vector3df shadowCameraPos = frustum.Center - m_lightDirection * m_nearOffset;
 
+			// Compute bounding box for culling
+			m_frustumBox[i].MinEdge = frustum.Center - radius3;
+			m_frustumBox[i].MaxEdge = frustum.Center + radius3;
+			m_frustumBox[i].addInternalPoint(shadowCameraPos);
+
 			// Add the near offset to the Z value of the cascade extents to make sure the orthographic frustum captures the entire frustum split (else it will exhibit cut-off issues).
 			core::matrix4 ortho;
 			ortho.buildProjectionMatrixOrthoLH(max.X - min.X, max.Y - min.Y, -m_nearOffset, m_nearOffset + cascadeExtents.Z);

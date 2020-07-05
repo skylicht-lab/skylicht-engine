@@ -50,6 +50,7 @@ namespace Skylicht
 		m_createBatchMesh(false),
 		m_createTangent(false),
 		m_loadNormalMap(false),
+		m_flipNormalMap(true),
 		m_maxUVTile(16.0f),
 		m_unit(""),
 		m_unitScale(1.0f),
@@ -63,9 +64,9 @@ namespace Skylicht
 
 	}
 
-	bool CColladaLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
+	bool CColladaLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching)
 	{
-		setLoadNormalMap(normalMap);
+		setLoadNormalMap(normalMap, flipNormalMap);
 		setLoadTexCoord2(texcoord2);
 		setCreateBatchMesh(batching);
 
@@ -1724,7 +1725,7 @@ namespace Skylicht
 				}
 				else if ((effect && effect->HasBumpMapping) || m_createTangent)
 				{
-					CMeshUtils::convertToTangentVertices(buffer, true);
+					CMeshUtils::convertToTangentVertices(buffer, m_flipNormalMap);
 				}
 			}
 			else
@@ -1736,7 +1737,7 @@ namespace Skylicht
 				if (m_createTangent)
 				{
 					// construct skin tangent buffer
-					CMeshUtils::convertToSkinTangentVertices(buffer, true);
+					CMeshUtils::convertToSkinTangentVertices(buffer, m_flipNormalMap);
 				}
 				else
 				{

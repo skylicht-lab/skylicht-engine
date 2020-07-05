@@ -38,7 +38,8 @@ namespace Skylicht
 		m_depthTexture(NULL),
 		m_csm(NULL),
 		m_shadowMapSize(2048),
-		m_numCascade(3)
+		m_numCascade(3),
+		m_currentCSM(0)
 	{
 		m_type = ShadowMap;
 		m_lightDirection.set(-1.0f, -1.0f, -1.0f);
@@ -91,6 +92,11 @@ namespace Skylicht
 		driver->drawMeshBuffer(mb);
 	}
 
+	const core::aabbox3df& CShadowMapRP::getFrustumBox()
+	{
+		return m_csm->getFrustumBox(m_currentCSM);
+	}
+
 	void CShadowMapRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
@@ -118,9 +124,11 @@ namespace Skylicht
 			driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(i));
 			driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
 
+			m_currentCSM = i;
+
 			// todo
 			// We inorge last cascade shadow
-			entityManager->render();
+			entityManager->cullingAndRender();
 		}
 
 		// render point light shadow

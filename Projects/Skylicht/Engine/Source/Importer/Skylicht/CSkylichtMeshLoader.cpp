@@ -46,7 +46,7 @@ namespace Skylicht
 
 	}
 
-	bool CSkylichtMeshLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
+	bool CSkylichtMeshLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching)
 	{
 		IrrlichtDevice *device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();

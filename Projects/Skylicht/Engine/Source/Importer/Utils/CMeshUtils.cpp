@@ -211,7 +211,7 @@ namespace Skylicht
 				float w = n.crossProduct(t).dotProduct(t2) < 0.0f ? -1.0f : 1.0f;
 				v[i].Binormal = n.crossProduct(t);
 
-				// need test this condition				
+				// need test this condition
 				if (flipNormal == true)
 					v[i].TangentW.X = -w;
 				else

@@ -45,6 +45,6 @@ namespace Skylicht
 
 		virtual std::vector<std::string>& getTextureFolder() = 0;
 
-		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false) = 0;
+		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool flipNormalMap = true, bool texcoord2 = true, bool batching = false) = 0;
 	};
 }
