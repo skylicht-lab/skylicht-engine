@@ -16,7 +16,8 @@
 
 namespace Skylicht
 {
-	COBJMeshFileLoader::COBJMeshFileLoader()
+	COBJMeshFileLoader::COBJMeshFileLoader() :
+		m_flipNormalMap(true)
 	{
 
 	}
@@ -37,7 +38,7 @@ namespace Skylicht
 		m_materials.clear();
 	}
 
-	bool COBJMeshFileLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
+	bool COBJMeshFileLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching)
 	{
 		IrrlichtDevice	*device = getIrrlichtDevice();
 		io::IFileSystem *fs = device->getFileSystem();
@@ -310,7 +311,7 @@ namespace Skylicht
 				// if this material have normal map
 				if (m_materials[m]->Meshbuffer->getMaterial().TextureLayer[1].Texture != NULL || normalMap == true)
 				{
-					CMeshUtils::convertToTangentVertices(m_materials[m]->Meshbuffer, true);
+					CMeshUtils::convertToTangentVertices(m_materials[m]->Meshbuffer, m_flipNormalMap);
 
 					// add tangent mesh buffer
 					mesh->addMeshBuffer(m_materials[m]->Meshbuffer, m_materials[m]->Name.c_str());

@@ -36,7 +36,7 @@ namespace Skylicht
 		m_meshPrefabs.clear();
 	}
 
-	CEntityPrefab* CMeshManager::loadModel(const char *resource, const char *texturePath, bool loadNormalMap, bool loadTexcoord2, bool createBatching)
+	CEntityPrefab* CMeshManager::loadModel(const char *resource, const char *texturePath, bool loadNormalMap, bool flipNormalMap, bool loadTexcoord2, bool createBatching)
 	{
 		// find in cached
 		std::map<std::string, CEntityPrefab*>::iterator findCache = m_meshPrefabs.find(resource);
@@ -66,7 +66,7 @@ namespace Skylicht
 				importer->addTextureFolder(texturePath);
 
 			// load model
-			if (importer->loadModel(resource, output, loadNormalMap, loadTexcoord2, createBatching) == true)
+			if (importer->loadModel(resource, output, loadNormalMap, flipNormalMap, loadTexcoord2, createBatching) == true)
 			{
 				// cached resource
 				m_meshPrefabs[resource] = output;

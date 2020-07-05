@@ -74,12 +74,14 @@ namespace Skylicht
 
 		std::string m_modelName;
 
+		bool m_flipNormalMap;
+
 	public:
 		COBJMeshFileLoader();
 
 		virtual ~COBJMeshFileLoader();
 
-		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false);
+		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool flipNormalMap = true, bool texcoord2 = true, bool batching = false);
 
 		void readMTL(const c8* fileName, const io::path& relPath);
 

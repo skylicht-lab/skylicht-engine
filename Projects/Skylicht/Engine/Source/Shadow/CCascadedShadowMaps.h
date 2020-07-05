@@ -58,6 +58,8 @@ namespace Skylicht
 		core::matrix4 m_projMatrices[MAX_FRUSTUM_SPLITS];
 		core::matrix4 m_textureMatrices[MAX_FRUSTUM_SPLITS];
 
+		core::aabbox3df m_frustumBox[MAX_FRUSTUM_SPLITS];
+
 		float m_shadowMatrices[16 * MAX_FRUSTUM_SPLITS];
 
 		float m_farValue;
@@ -70,6 +72,11 @@ namespace Skylicht
 		void init(int splitCount, int shadowMapSize, float farValue, int screenWidth, int screenHeight);
 
 		void update(CCamera *camera, const core::vector3df& lightDir);
+
+		const core::aabbox3df& getFrustumBox(int cascaded)
+		{
+			return m_frustumBox[cascaded];
+		}
 
 		int getSplitCount()
 		{
