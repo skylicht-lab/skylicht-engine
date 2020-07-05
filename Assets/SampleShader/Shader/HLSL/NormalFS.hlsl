@@ -24,10 +24,10 @@ static const float PI = 3.1415926;
 
 float4 main(PS_INPUT input) : SV_TARGET
 {	
-	float3 diffuseMap = float3(0.7, 0.7, 0.7);
-	float3 normalMap = uTexNormalMap.Sample(uTexNormalMapSampler, input.tex0).xyz;
+	float3 diffuseMap = float3(0.5, 0.5, 0.5);
+	float3 normalMap = uTexNormalMap.Sample(uTexNormalMapSampler, input.tex0).xyz;	
 	
-	float3x3 rotation = float3x3(input.worldTangent, input.worldBinormal, input.worldNormal);	
+	float3x3 rotation = float3x3(input.worldTangent, input.worldBinormal, input.worldNormal);
 	float3 localCoords = normalMap * 2.0 - float3(1.0, 1.0, 1.0);
 	localCoords.y *= input.tangentw;
 	float3 n = normalize(mul(localCoords, rotation));

@@ -72,6 +72,13 @@ namespace Skylicht
 			return m_scale;
 		}
 
+		inline void setScale(const core::vector3df& scale)
+		{
+			m_scale = scale;
+			m_hasChanged = true;
+			m_matrixChanged = true;
+		}
+
 		inline void setRotation(const core::vector3df& eulerDeg)
 		{
 			m_rotation = eulerDeg;
@@ -117,7 +124,7 @@ namespace Skylicht
 		core::quaternion getRotationQuaternion();
 
 		void getFront(core::vector3df& front);
-		
+
 		core::vector3df getFront();
 
 		void getUp(core::vector3df& up);

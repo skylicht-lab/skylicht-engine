@@ -296,6 +296,7 @@ namespace Skylicht
 
 		bool m_loadTexcoord2;
 		bool m_createTangent;
+		bool m_flipNormalMap;
 		bool m_createBatchMesh;
 
 		bool m_loadNormalMap;
@@ -334,10 +335,11 @@ namespace Skylicht
 			m_createBatchMesh = b;
 		}
 
-		void setLoadNormalMap(bool b)
+		void setLoadNormalMap(bool b, bool flipNormalMap)
 		{
 			m_loadNormalMap = b;
 			m_createTangent = b;
+			m_flipNormalMap = flipNormalMap;
 		}
 
 		void setTextureFolder(std::vector<std::string>& folder)
@@ -345,7 +347,7 @@ namespace Skylicht
 			m_textureFolder = folder;
 		}
 
-		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool texcoord2 = true, bool batching = false);
+		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool flipNormalMap = true, bool texcoord2 = true, bool batching = false);
 		
 	protected:
 

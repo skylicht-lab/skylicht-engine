@@ -40,7 +40,7 @@ namespace Skylicht
 
 		virtual ~CSkylichtMeshLoader();
 
-		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching);
+		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching);
 
 	protected:
 

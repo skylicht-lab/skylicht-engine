@@ -6,6 +6,7 @@
 #include "SkyDome/CSkyDome.h"
 
 #include "Lightmapper/CLightmapper.h"
+#include "CRotateComponent.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -36,7 +37,8 @@ void SampleShader::onInitApp()
 	io::IFileSystem* fs = app->getFileSystem();
 	fs->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	fs->addFileArchive(app->getBuiltInPath("Common.zip"), false, false);
-	fs->addFileArchive(app->getBuiltInPath("PBR.zip"), false, false);
+	fs->addFileArchive(app->getBuiltInPath("SampleShader.zip"), false, false);
+	fs->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -83,8 +85,8 @@ void SampleShader::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// 3D grid
-	CGameObject *grid = zone->createEmptyObject();
-	grid->addComponent<CGridPlane>();
+	// CGameObject *grid = zone->createEmptyObject();
+	// grid->addComponent<CGridPlane>();
 
 	CMeshManager *meshManager = CMeshManager::getInstance();
 	CEntityPrefab *prefab = NULL;
@@ -92,35 +94,39 @@ void SampleShader::onInitApp()
 	std::vector<std::string> textureFolders;
 	textureFolders.push_back("Sponza/Textures");
 
-	// Load wheel model
-	prefab = meshManager->loadModel("PBR/Models/wheel_backleft.dae", NULL, true);
+	// Load object model
+	prefab = meshManager->loadModel("SampleModels/DamagedHelmet/DamagedHelmet.dae", NULL, true, false);
 	if (prefab != NULL)
 	{
 		// load normal map
-		ITexture *normalMap = CTextureManager::getInstance()->getTexture("PBR/Models/wheels_norm.tga");
+		ITexture *normalMap = CTextureManager::getInstance()->getTexture("SampleModels/DamagedHelmet/Default_normal.jpg");
 
 		// init material
 		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
 		for (CMaterial *material : materials)
 		{
-			material->changeShader("PBR/Shader/Normal.xml");
+			material->changeShader("SampleShader/Shader/Normal.xml");
 			material->setUniformTexture("uTexNormal", normalMap);
 		}
 
 		// create render mesh object
-		CGameObject *wheel = zone->createEmptyObject();
-		wheel->setStatic(true);
+		CGameObject *object = zone->createEmptyObject();
+		object->setStatic(true);
 
 		// render mesh & init material
-		CRenderMesh *renderer = wheel->addComponent<CRenderMesh>();
+		CRenderMesh *renderer = object->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
 
 		// set indirect lighting by VertexColor
-		CIndirectLighting *indirectLighting = wheel->addComponent<CIndirectLighting>();
+		CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
 		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
 
-		m_objects.push_back(wheel);
+		// rotate
+		CRotateComponent *rotate = object->addComponent<CRotateComponent>();
+		rotate->setRotate(0.0f, 0.05f, 0.0f);
+
+		m_objects.push_back(object);
 	}
 
 	// Rendering

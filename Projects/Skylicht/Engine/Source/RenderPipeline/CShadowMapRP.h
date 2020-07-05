@@ -41,6 +41,7 @@ namespace Skylicht
 		core::vector3df m_lightDirection;
 
 		CCascadedShadowMaps *m_csm;
+		int m_currentCSM;
 
 		int m_depthWriteShader;
 		int m_cubeDepthWriteShader;
@@ -48,7 +49,7 @@ namespace Skylicht
 	public:
 		CShadowMapRP();
 
-		virtual ~CShadowMapRP();		
+		virtual ~CShadowMapRP();
 
 		virtual void initRender(int w, int h);
 
@@ -59,6 +60,8 @@ namespace Skylicht
 		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
 
 	public:
+
+		const core::aabbox3df& getFrustumBox();
 
 		inline ITexture* getDepthTexture()
 		{

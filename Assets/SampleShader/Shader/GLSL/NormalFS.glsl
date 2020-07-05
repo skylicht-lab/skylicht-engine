@@ -21,7 +21,7 @@ const float PI = 3.1415926;
 
 void main(void)
 {
-	vec3 diffuseColor = vec3(0.7, 0.7, 0.7);
+	vec3 diffuseColor = vec3(0.5, 0.5, 0.5);
 	vec3 normalMap = texture(uTexNormal, vTexCoord0.xy).xyz;
 	
 	mat3 rotation = mat3(vWorldTangent, vWorldBinormal, vWorldNormal);

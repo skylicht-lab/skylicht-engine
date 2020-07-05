@@ -67,8 +67,8 @@ void CViewInit::initScene()
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
 	CCamera *camera = camObj->getComponent<CCamera>();
-	camera->setPosition(core::vector3df(2.0f, 1.0f, 2.0f));
-	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+	camera->setPosition(core::vector3df(1.0f, 2.0f, 1.0f));
+	camera->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
 	CGameObject *guiCameraObj = zone->createEmptyObject();
@@ -94,15 +94,14 @@ void CViewInit::initScene()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	core::vector3df pointLightPosition[] = {
-		{-5.595442f, 1.2f, 2.00912f},
-		{-5.6f, 1.2f, -2.25},
-		{6.018463f, 1.2f, 2.0211f},
-		{6.007851f, 1.2f, -2.237712f},
-
-		{3.09f, 0.8f, -1.10477f},
-		{3.09f, 0.8f, 0.71455f},
-		{-2.4447f, 0.8f, -1.0884f},
-		{-2.4447f, 0.8f,  0.7141f},
+		{-11.19f, 2.4f, 4.01f},
+		{-11.2f, 2.4f, -4.5f},
+		{12.03f, 2.4f, 4.04f},
+		{12.01f, 2.4f, -4.47f},
+		{6.18f, 1.6f, -2.2f},
+		{6.18f, 1.6f, 1.43f},
+		{-4.89f, 1.6f, -2.17f},
+		{-4.89f, 1.6f, 1.42f},
 	};
 
 	for (int i = 0; i < 8; i++)
@@ -113,9 +112,9 @@ void CViewInit::initScene()
 		pointLight->setShadow(true);
 
 		if (i >= 4)
-			pointLight->setRadius(1.5f);
-		else
 			pointLight->setRadius(3.0f);
+		else
+			pointLight->setRadius(6.0f);
 
 		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
@@ -171,7 +170,7 @@ void CViewInit::initScene()
 	if (is3DGUI == true)
 	{
 		// 3D GUI transform
-		rootGUI->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
+		rootGUI->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
 		rootGUI->setScale(core::vector3df(-0.002f, -0.002f, 0.002f));
 
 		// Billboard or not?
@@ -194,16 +193,8 @@ void CViewInit::initScene()
 		{
 			CGUISprite *spriteGUI = canvas->createSprite(f);
 			spriteGUI->setPosition(core::vector3df(0.0f, 150.0f, 0.0f));
-
-			// test mask on sprite
-			//CGUIMask *mask = canvas->createMask(core::rectf(20.0f, 20.0f, 400.0f, 200.0f));
-			//spriteGUI->setMask(mask);
 		}
 	}
-
-	// test mask on all gui
-	// CGUIMask *mask = canvas->createMask(core::rectf(20.0f, 20.0f, 400.0f, 200.0f));
-	// canvas->getRootElement()->setMask(mask);
 
 	// save to context
 	CContext *context = CContext::getInstance();
@@ -230,26 +221,26 @@ void CViewInit::initProbes()
 
 	for (int i = 0; i < 7; i++)
 	{
-		float x = i * 2.8f - 3.0f * 2.8f;
+		float x = i * 5.6f - 6.0f * 5.6f;
 
 		// row 0
-		probesPosition.push_back(core::vector3df(x, 1.0f, -0.2f));
+		probesPosition.push_back(core::vector3df(x, 2.0f, -0.4f));
 
-		probesPosition.push_back(core::vector3df(x, 1.0f, 2.0f));
+		probesPosition.push_back(core::vector3df(x, 2.0f, 4.0f));
 
-		probesPosition.push_back(core::vector3df(x, 1.0f, -2.3f));
+		probesPosition.push_back(core::vector3df(x, 2.0f, -4.6f));
 
 		// row 1
 
-		probesPosition.push_back(core::vector3df(x, 3.5f, -0.2f));
+		probesPosition.push_back(core::vector3df(x, 7.0f, -0.4f));
 
-		probesPosition.push_back(core::vector3df(x, 3.5f, 2.0f));
+		probesPosition.push_back(core::vector3df(x, 7.0f, 4.0f));
 
-		probesPosition.push_back(core::vector3df(x, 3.5f, -2.3f));
+		probesPosition.push_back(core::vector3df(x, 7.0f, -4.36));
 
 		// row 2
 
-		probesPosition.push_back(core::vector3df(x, 8.0f, -0.2f));
+		probesPosition.push_back(core::vector3df(x, 16.0f, -0.4f));
 	}
 
 	std::vector<CLightProbe*> probes;
@@ -335,7 +326,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 #if defined(WINDOWS_STORE) || defined(MACOS)
@@ -400,7 +391,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 }
-}
+	}
 
 void CViewInit::onRender()
 {
