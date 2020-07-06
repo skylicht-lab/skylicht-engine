@@ -205,7 +205,7 @@ void CViewBakeLightmap::onUpdate()
 
 			// bake indirect pixels
 			core::array<SBakePixel>& listPixels = m_lmRasterize->getBakePixelQueue();
-			if (listPixels.size() == MAX_NUM_THREAD || forceBake == true)
+			if (listPixels.size() == CLightmapper::getNumThread() || forceBake == true)
 			{
 				int n = (int)listPixels.size();
 				m_out.clear();
@@ -283,7 +283,7 @@ void CViewBakeLightmap::onUpdate()
 				if (testWriteFile)
 				{
 					char outFileName[512];
-					sprintf(outFileName, "C:\\SVN\\m_lmRasterize_%d.png", m_lightBounce);
+					sprintf(outFileName, "LightMapRasterize_%d.png", m_lightBounce);
 					driver->writeImageToFile(img, outFileName);
 				}
 
@@ -295,7 +295,7 @@ void CViewBakeLightmap::onUpdate()
 					img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
 
 					char outFileName[512];
-					sprintf(outFileName, "C:\\SVN\\m_lmRasterize_debug_%d.png", m_lightBounce);
+					sprintf(outFileName, "LightMapRasterize_debug_%d.png", m_lightBounce);
 					driver->writeImageToFile(img, outFileName);
 					img->drop();
 				}

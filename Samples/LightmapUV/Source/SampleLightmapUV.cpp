@@ -34,7 +34,7 @@ void SampleLightmapUV::onInitApp()
 
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("LightmapUV.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -70,7 +70,7 @@ void SampleLightmapUV::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// 3D model
-	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("LightmapUV/gazebo.obj", "LightmapUV");
+	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "LightmapUV");
 
 	if (model != NULL)
 	{
@@ -148,7 +148,7 @@ void SampleLightmapUV::onInitApp()
 		CMeshManager::getInstance()->exportModel(
 			renderMesh->getEntities().pointer(),
 			renderMesh->getEntities().size(),
-			"../Assets/LightmapUV/gazebo.smesh");
+			"../SampleModels/Gazebo/gazebo.smesh");
 	}
 
 	// Render pipeline

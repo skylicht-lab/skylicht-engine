@@ -33,7 +33,7 @@ void CViewInit::onInit()
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Common.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("LightmapUV.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
 
 	// load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -91,7 +91,7 @@ void CViewInit::onInit()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// gazebo object
-	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("LightmapUV/gazebo.smesh", "LightmapUV");
+	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.smesh", "LightmapUV");
 
 	if (model != NULL)
 	{
