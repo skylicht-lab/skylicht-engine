@@ -42,7 +42,7 @@ void SampleSkinnedMesh::onInitApp()
 	io::IFileSystem* fs = app->getFileSystem();
 	fs->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	fs->addFileArchive(app->getBuiltInPath("Common.zip"), false, false);
-	fs->addFileArchive(app->getBuiltInPath("SkinnedMesh.zip"), false, false);
+	fs->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -101,11 +101,11 @@ void SampleSkinnedMesh::onInitApp()
 
 	// load dae animation
 	CAnimationManager *animManager = CAnimationManager::getInstance();
-	CAnimationClip *clip1 = animManager->loadAnimation("SkinnedMesh/Hip_Hop_Dancing.dae");
-	CAnimationClip *clip2 = animManager->loadAnimation("SkinnedMesh/Samba_Dancing.dae");
+	CAnimationClip *clip1 = animManager->loadAnimation("SampleModels/MixamoCharacter/Hip_Hop_Dancing.dae");
+	CAnimationClip *clip2 = animManager->loadAnimation("SampleModels/MixamoCharacter/Samba_Dancing.dae");
 
 	// skinned mesh
-	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SkinnedMesh/Ch17_nonPBR.dae", "SkinnedMesh/textures");
+	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SampleModels/MixamoCharacter/Ch17_nonPBR.dae", "SampleModels/MixamoCharacter/textures");
 	if (prefab != NULL)
 	{
 		// test exporter
