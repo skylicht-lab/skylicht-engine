@@ -16,10 +16,7 @@ public:
 	};
 
 protected:
-	CGetFileURL *m_getFile;
-
-	CSpriteAtlas *m_sprite;
-	io::IFileArchive *m_spriteArchive;
+	CGetFileURL *m_getFile;	
 
 	EInitState m_initState;
 	unsigned int m_downloaded;
