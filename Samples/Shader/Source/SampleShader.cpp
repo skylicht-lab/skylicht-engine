@@ -16,6 +16,8 @@ void installApplication(const std::vector<std::string>& argv)
 
 SampleShader::SampleShader() :
 	m_scene(NULL),
+	m_guiCamera(NULL),
+	m_camera(NULL),
 	m_bakeSHLighting(true)
 {
 	Lightmapper::CLightmapper::createGetInstance();
