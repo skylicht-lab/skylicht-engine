@@ -120,7 +120,7 @@ Engine Components are used:
 <img src="Documents/Media/Samples/sample_hello_world.png"/>
 
 ### Samples\DrawPrimitives
-This demo of draw Cube 3D, setup transform and use component.
+This demo to draw Cube 3D, setup transform and use component.
 <img src="Documents/Media/Samples/sample_draw_cube.png"/>
 
 ### Samples\Materials
@@ -139,7 +139,7 @@ Engine Components are used:
 <img src="Documents/Media/Samples/sample_lucky_draw.gif" width="50%"/>
 
 ### Samples\SkinnedMesh
-This is demo of how to render character model with animation, models are downloaded from [mixamo](https://www.mixamo.com)
+This is example code. How to render character model with animation, models are downloaded from [mixamo](https://www.mixamo.com)
 - **DAE Collada** loader model/animation
 - **Forwarder** rendering
 - **Skydome**
@@ -155,7 +155,7 @@ This is a demo of use UnwrapUV tool to create Lightmap UV.
 <img src="Documents/Media/Samples/lightmap-uv/mesh-charts00.png" width="50%"/>
 
 ### Samples\Lightmapping
-This is a demo of use lightmapper to bake indirect lighting color on lightmap texture.
+This is a demo code to use lightmapper to bake indirect lighting color on lightmap texture.
 [Project references: Lightmapper](https://github.com/ands/lightmapper)
 
 <img src="Documents/Media/Samples/lightmap/lightmapping_a.png"/>
@@ -172,7 +172,7 @@ This is a demo of use lightmapper to bake indirect lighting color on lightmap te
 <img src="Documents/Media/Samples/lightmap/rasterize_2.png"/>
 
 ### Samples\LightmappingVertex
-This is a demo of use lightmapper to set indirect lighting color on vertex color.
+This is a demo to use lightmapper to set indirect lighting color on vertex color.
 
 Engine Components are used:
 - **OBJ Wavefront** loader
