@@ -124,7 +124,7 @@ This demo to draw Cube 3D, setup transform and use component.
 <img src="Documents/Media/Samples/sample_draw_cube.png"/>
 
 ### Samples\Materials
-This demo of draw Sphere 3D, load textures, init material SpecGloss with Diffuse, Normal, Specular.
+This demo code, that render Sphere 3D, load textures (Diffuse, Normal, Specular), and bind SpecGloss shader as Material.
 <img src="Documents/Media/Samples/sample_material.jpg"/>
 
 ### Samples\LuckyDraw
