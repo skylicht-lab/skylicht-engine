@@ -72,8 +72,8 @@ after_build:
 # will be override
 test_script:
 
-artifacts:
-  - path: Build\*.zip
+#artifacts:
+#  - path: Build\*.zip
       
 for:
   # MSVC
