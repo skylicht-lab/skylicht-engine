@@ -54,11 +54,12 @@ jobs:
         7z a %output% *.html
         cd..
         copy Bin\%output% Build
-    - name: Result
-      uses: actions/upload-artifact@v1
-      with:
-        name: SkylichtDemo_Emscripten
-        path: Build
+        dir -l Bin\%output% Build
+    #- name: Result
+    #  uses: actions/upload-artifact@v1
+    #  with:
+    #    name: SkylichtDemo_Emscripten
+    #    path: Build
 
   Universal_Windows_Platform:
     runs-on: windows-latest
@@ -109,11 +110,12 @@ jobs:
         cd Bin
         7z a ${output} ./*
         cd ..
-    - name: Result
-      uses: actions/upload-artifact@v1
-      with:
-        name: SkylichtDemo_Linux
-        path: Build
+        ls -l Build
+    #- name: Result
+    #  uses: actions/upload-artifact@v1
+    #  with:
+    #    name: SkylichtDemo_Linux
+    #    path: Build
 
   MacOS:
     runs-on: macos-latest
@@ -146,6 +148,7 @@ jobs:
         7z a ${output} *.*
         cd ../..
         cp Bin/Release/${output} Build
+        ls -l Build
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
