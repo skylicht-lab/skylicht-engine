@@ -215,9 +215,9 @@ namespace Skylicht
 
 			// render this canvas
 			canvas->render(camera);
-		}
 
-		flush();
+			flush();
+		}
 	}
 
 	void CGraphics2D::flushBuffer(IMeshBuffer *meshBuffer, video::SMaterial& material)

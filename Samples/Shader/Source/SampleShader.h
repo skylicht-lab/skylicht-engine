@@ -10,10 +10,13 @@ private:
 	CCamera *m_camera;
 	CForwardRP *m_forwardRP;
 
+	CReflectionProbe *m_reflectionProbe;
+
 	bool m_bakeSHLighting;
 
 	std::vector<CGameObject*> m_objects;
 
+	CGlyphFont *m_font;
 public:
 	SampleShader();
 	virtual ~SampleShader();
@@ -33,4 +36,12 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
+
+protected:
+
+	void initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial& materials);
+
+	void initTestReflectionShader(CEntityPrefab *prefab, ArrayMaterial& materials);
+
+	void createCanvasText(const char *text, const core::vector3df& position);
 };

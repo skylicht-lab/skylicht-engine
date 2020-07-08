@@ -70,6 +70,12 @@ namespace Skylicht
 			const core::vector3df& binormal,
 			int numFace)
 		{
+			if (m_singleBaker == NULL)
+			{
+				os::Printer::log("[CLightmapper::bakeAtPosition] Need call initBaker first");
+				return m_temp;
+			}
+
 			return m_singleBaker->bake(camera, rp, entityMgr, position, normal, tangent, binormal, numFace);
 		}
 
@@ -84,6 +90,12 @@ namespace Skylicht
 			int numFace)
 		{
 			out.clear();
+
+			if (m_multiBaker == NULL)
+			{
+				os::Printer::log("[CLightmapper::bakeAtPosition] Need call initBaker first");
+				return;
+			}
 
 			int maxMT = m_multiBaker->getMaxMT();
 			int current = 0;
