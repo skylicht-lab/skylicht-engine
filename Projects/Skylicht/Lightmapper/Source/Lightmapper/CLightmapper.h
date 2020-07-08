@@ -43,6 +43,8 @@ namespace Skylicht
 			CBaker *m_singleBaker;
 			CMTBaker *m_multiBaker;
 
+			CSH9 m_temp;
+
 		public:
 			CLightmapper();
 

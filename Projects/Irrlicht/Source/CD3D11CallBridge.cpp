@@ -694,6 +694,15 @@ void CD3D11CallBridge::setScissor(const core::rect<s32>& vp)
 	}
 }
 
+void CD3D11CallBridge::resetState()
+{
+	for (u32 i = 0; i < MATERIAL_MAX_TEXTURES; ++i)
+	{
+		SamplerStates[i] = NULL;
+		CurrentTextures[i] = NULL;
+	}
+}
+
 }
 }
 

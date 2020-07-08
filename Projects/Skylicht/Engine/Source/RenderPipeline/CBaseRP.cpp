@@ -121,6 +121,9 @@ namespace Skylicht
 			if (material == NULL)
 				return;
 
+			// apply shader & material to irrlicht material
+			material->updateTexture(irrMaterial);
+
 			CShader *shader = material->getShader();
 			if (shader != NULL)
 			{
@@ -670,9 +673,17 @@ namespace Skylicht
 
 	void CBaseRP::drawSceneToCubeTexture(ITexture *target, video::E_CUBEMAP_FACE faceID, CEntityManager *entityMgr)
 	{
-		SColor whiteColor(255, 255, 255, 255);
+		SColor testColor[] = {
+			{255, 255, 255, 255},
+			{255, 0, 255, 0},
+			{255, 0, 0, 255},
+			{255, 0, 255, 255},
+			{255, 255, 255, 0},
+			{255, 0, 0, 0},
+		};
+
 		IVideoDriver *driver = getVideoDriver();
-		driver->setRenderTargetCube(target, faceID, true, true, whiteColor);
+		driver->setRenderTargetCube(target, faceID, true, true, testColor[faceID]);
 		entityMgr->render();
 	}
 }

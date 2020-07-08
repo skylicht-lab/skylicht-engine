@@ -231,11 +231,11 @@ namespace Skylicht
 
 		void applyMaterial(SMaterial& mat);
 
+		void updateTexture(SMaterial& mat);
+
 	protected:
 
 		void initDefaultValue();
-
-		void updateTexture(SMaterial& mat);
 
 		void updateShaderTexture();
 

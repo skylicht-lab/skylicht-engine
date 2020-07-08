@@ -1155,6 +1155,8 @@ namespace irr
 			// set blend
 			BlendDesc.IndependentBlendEnable = FALSE;
 
+			BridgeCalls->resetState();
+
 			core::dimension2du size = getCurrentRenderTargetSize();
 
 			// don't forget to set viewport
