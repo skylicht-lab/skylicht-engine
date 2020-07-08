@@ -46,11 +46,6 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
 
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
-
-#if defined(USE_FREETYPE)
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
-	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
-#endif
 }
 
 void CViewInit::initScene()
@@ -147,55 +142,13 @@ void CViewInit::initScene()
 		// indirectLighting->setIndirectLightingType(CIndirectLighting::VertexColor);
 	}
 
-#if defined(USE_FREETYPE)
-	CGlyphFont *fontLarge = new CGlyphFont();
-	fontLarge->setFont("Segoe UI Light", 50);
-
-	CGlyphFont *fontSmall = new CGlyphFont();
-	fontSmall->setFont("Segoe UI Light", 34);
-
-	CGlyphFont *fontTiny = new CGlyphFont();
-	fontTiny->setFont("Segoe UI Light", 16);
-
-	// gui
-	bool is3DGUI = true;
-
-	CGameObject *guiObject = zone->createEmptyObject();
-	CCanvas *canvas = guiObject->addComponent<CCanvas>();
-
-	// Scale screen resolution to meter and flip 2D coord (Y down, X invert)
-	CGUIElement *rootGUI = canvas->getRootElement();
-
-	if (is3DGUI == true)
-	{
-		// 3D GUI transform
-		rootGUI->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
-		rootGUI->setScale(core::vector3df(-0.002f, -0.002f, 0.002f));
-
-		// Billboard or not?
-		canvas->enable3DBillboard(true);
-	}
-
-	CGUIText *textLarge = canvas->createText(fontLarge);
-	textLarge->setText("Skylicht Engine");
-	textLarge->setPosition(core::vector3df(0.0f, 40.0f, 0.0f));
-
-	CGUIText *textSmall = canvas->createText(fontSmall);
-	textSmall->setText("This is demo for render of Truetype font");
-	textSmall->setPosition(core::vector3df(0.0f, 100.0f, 0.0f));
-#endif
-
 	// save to context
 	CContext *context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 
-	if (is3DGUI == true)
-		context->setGUICamera(camera);
-	else
-		context->setGUICamera(guiCamera);
-
+	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 
 	initProbes();

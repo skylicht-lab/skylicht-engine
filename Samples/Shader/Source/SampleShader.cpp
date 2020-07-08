@@ -18,7 +18,9 @@ SampleShader::SampleShader() :
 	m_scene(NULL),
 	m_guiCamera(NULL),
 	m_camera(NULL),
-	m_bakeSHLighting(true)
+	m_bakeSHLighting(true),
+	m_reflectionProbe(NULL),
+	m_font(NULL)
 {
 	Lightmapper::CLightmapper::createGetInstance();
 }
@@ -26,6 +28,7 @@ SampleShader::SampleShader() :
 SampleShader::~SampleShader()
 {
 	delete m_scene;
+	delete m_font;
 
 	Lightmapper::CLightmapper::releaseInstance();
 }
@@ -41,6 +44,12 @@ void SampleShader::onInitApp()
 	fs->addFileArchive(app->getBuiltInPath("Common.zip"), false, false);
 	fs->addFileArchive(app->getBuiltInPath("SampleShader.zip"), false, false);
 	fs->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
+
+	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+
+	m_font = new CGlyphFont();
+	m_font->setFont("Segoe UI Light", 100);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -96,43 +105,100 @@ void SampleShader::onInitApp()
 	std::vector<std::string> textureFolders;
 	textureFolders.push_back("Sponza/Textures");
 
-	// Load object model
+	// reflection probe
+	CGameObject *reflectionProbeObj = zone->createEmptyObject();
+	m_reflectionProbe = reflectionProbeObj->addComponent<CReflectionProbe>();
+
+	// load object model
 	prefab = meshManager->loadModel("SampleModels/DamagedHelmet/DamagedHelmet.dae", NULL, true, false);
 	if (prefab != NULL)
 	{
-		// load normal map
-		ITexture *normalMap = CTextureManager::getInstance()->getTexture("SampleModels/DamagedHelmet/Default_normal.jpg");
-
 		// init material
 		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
-		for (CMaterial *material : materials)
-		{
-			material->changeShader("SampleShader/Shader/Normal.xml");
-			material->setUniformTexture("uTexNormal", normalMap);
-		}
 
-		// create render mesh object
-		CGameObject *object = zone->createEmptyObject();
-		object->setStatic(true);
-
-		// render mesh & init material
-		CRenderMesh *renderer = object->addComponent<CRenderMesh>();
-		renderer->initFromPrefab(prefab);
-		renderer->initMaterial(materials);
-
-		// set indirect lighting by VertexColor
-		CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
-		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
-
-		// rotate
-		CRotateComponent *rotate = object->addComponent<CRotateComponent>();
-		rotate->setRotate(0.0f, 0.05f, 0.0f);
-
-		m_objects.push_back(object);
+		initTestNormalMapShader(prefab, materials);
+		initTestReflectionShader(prefab, materials);
 	}
 
 	// Rendering
 	m_forwardRP = new CForwardRP();
+}
+
+void SampleShader::initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial& materials)
+{
+	// load normal map
+	ITexture *normalMap = CTextureManager::getInstance()->getTexture("SampleModels/DamagedHelmet/Default_normal.jpg");
+
+	for (CMaterial *material : materials)
+	{
+		material->changeShader("SampleShader/Shader/Normal.xml");
+		material->setUniformTexture("uTexNormal", normalMap);
+	}
+
+	// create render mesh object
+	CGameObject *object = m_scene->getZone(0)->createEmptyObject();
+
+	// render mesh & init material
+	CRenderMesh *renderer = object->addComponent<CRenderMesh>();
+	renderer->initFromPrefab(prefab);
+	renderer->initMaterial(materials);
+
+	// set indirect lighting by VertexColor
+	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
+	indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
+
+	// rotate
+	CRotateComponent *rotate = object->addComponent<CRotateComponent>();
+	rotate->setRotate(0.0f, 0.05f, 0.0f);
+
+	m_objects.push_back(object);
+
+	createCanvasText("Normal Map", core::vector3df(0.0f, 1.5f, 0.0f));
+}
+
+void SampleShader::initTestReflectionShader(CEntityPrefab *prefab, ArrayMaterial& materials)
+{
+	for (CMaterial *material : materials)
+		material->changeShader("SampleShader/Shader/Reflection.xml");
+
+	// create render mesh object
+	CGameObject *object = m_scene->getZone(0)->createEmptyObject();
+
+	// render mesh & init material
+	CRenderMesh *renderer = object->addComponent<CRenderMesh>();
+	renderer->initFromPrefab(prefab);
+	renderer->initMaterial(materials);
+
+	// set indirect lighting by VertexColor
+	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
+	indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
+
+	// rotate
+	CRotateComponent *rotate = object->addComponent<CRotateComponent>();
+	rotate->setRotate(0.0f, 0.05f, 0.0f);
+
+	// set position
+	object->getTransformEuler()->setPosition(core::vector3df(3.0f, 0.0f, 0.0f));
+
+	m_objects.push_back(object);
+
+	createCanvasText("Reflection", core::vector3df(3.0f, 1.5f, 0.0f));
+}
+
+void SampleShader::createCanvasText(const char *text, const core::vector3df& position)
+{
+	CGameObject *canvasObject = m_scene->getZone(0)->createEmptyObject();
+	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
+	CGUIText *guiText = canvas->createText(core::rectf(0.0f, 0.0f, 700.0f, 100.0f), m_font);
+	guiText->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+	guiText->setText(text);
+	guiText->setPosition(core::vector3df(-350.0f, 0.0f, 0.0f));
+
+	CGUIElement *rootGUI = canvas->getRootElement();
+	rootGUI->setScale(core::vector3df(-0.004f, -0.004f, 0.004f));
+	rootGUI->setPosition(position);
+
+	canvas->enable3DBillboard(true);
 }
 
 void SampleShader::onUpdate()
@@ -163,12 +229,17 @@ void SampleShader::onRender()
 
 		Lightmapper::CLightmapper *lm = Lightmapper::CLightmapper::getInstance();
 		lm->initBaker(64);
+
+		// compute sh
 		Lightmapper::CSH9 sh = lm->bakeAtPosition(
 			bakeCamera,
 			m_forwardRP,
 			m_scene->getEntityManager(),
 			pos,
 			normal, tangent, binormal);
+
+		// bake environment
+		m_reflectionProbe->bakeProbe(bakeCamera, m_forwardRP, m_scene->getEntityManager());
 
 		// apply indirect lighting
 		std::vector<CIndirectLighting*> lightings = m_scene->getZone(0)->getComponentsInChild<CIndirectLighting>(false);
@@ -181,7 +252,7 @@ void SampleShader::onRender()
 
 	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
 
-	CGraphics2D::getInstance()->render(m_guiCamera);
+	CGraphics2D::getInstance()->render(m_camera);
 }
 
 void SampleShader::onPostRender()
