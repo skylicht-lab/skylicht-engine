@@ -122,10 +122,17 @@ struct S3DVertex2TCoords : public S3DVertex
 	S3DVertex2TCoords(f32 x, f32 y, f32 z, SColor c, f32 tu, f32 tv, f32 tu2, f32 tv2, f32 lx, f32 ly, f32 lz)
 		: S3DVertex(x,y,z, 0.0f, 0.0f, 0.0f, c, tu,tv), TCoords2(tu2,tv2), Lightmap(lx, ly, lz) {}
 
+	S3DVertex2TCoords(f32 x, f32 y, f32 z, SColor c, f32 tu, f32 tv, f32 tu2, f32 tv2)
+		: S3DVertex(x, y, z, 0.0f, 0.0f, 0.0f, c, tu, tv), TCoords2(tu2, tv2), Lightmap(tu2, tu2, 0.0f) {}
+
 	//! constructor with two different texture coords, but no normal
 	S3DVertex2TCoords(const core::vector3df& pos, SColor color,
 		const core::vector2d<f32>& tcoords, const core::vector2d<f32>& tcoords2, const core::vector3df& lm)
 		: S3DVertex(pos, core::vector3df(), color, tcoords), TCoords2(tcoords2), Lightmap(lm) {}
+
+	S3DVertex2TCoords(const core::vector3df& pos, SColor color,
+		const core::vector2d<f32>& tcoords, const core::vector2d<f32>& tcoords2)
+		: S3DVertex(pos, core::vector3df(), color, tcoords), TCoords2(tcoords2), Lightmap(tcoords2.X, tcoords2.Y, 0.0f) {}
 
 	//! constructor with all values
 	S3DVertex2TCoords(const core::vector3df& pos, const core::vector3df& normal, const SColor& color,
@@ -135,6 +142,9 @@ struct S3DVertex2TCoords : public S3DVertex
 	//! constructor with all values
 	S3DVertex2TCoords(f32 x, f32 y, f32 z, f32 nx, f32 ny, f32 nz, SColor c, f32 tu, f32 tv, f32 tu2, f32 tv2, f32 lx, f32 ly, f32 lz)
 		: S3DVertex(x,y,z, nx,ny,nz, c, tu,tv), TCoords2(tu2,tv2), Lightmap(lx, ly, lz) {}
+
+	S3DVertex2TCoords(f32 x, f32 y, f32 z, f32 nx, f32 ny, f32 nz, SColor c, f32 tu, f32 tv, f32 tu2, f32 tv2)
+		: S3DVertex(x, y, z, nx, ny, nz, c, tu, tv), TCoords2(tu2, tv2), Lightmap(tu2, tv2, 0.0f) {}
 
 	//! constructor with the same texture coords and normal
 	S3DVertex2TCoords(f32 x, f32 y, f32 z, f32 nx, f32 ny, f32 nz, SColor c, f32 tu, f32 tv)
