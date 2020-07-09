@@ -48,7 +48,8 @@ namespace Skylicht
 			{
 				TEXCOORD0 = 0,
 				TEXCOORD1,
-				TEXCOORD2
+				TEXCOORD2,
+				LIGHTMAP,
 			};
 		public:
 			CUnwrapUV();
