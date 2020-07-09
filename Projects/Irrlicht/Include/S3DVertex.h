@@ -71,7 +71,7 @@ struct S3DVertex
 	SColor Color;
 
 	//! Texture coordinates
-	core::vector2d<f32> TCoords;
+	core::vector2d<f32> TCoords;	
 
 	bool operator==(const S3DVertex& other) const
 	{
@@ -119,31 +119,31 @@ struct S3DVertex2TCoords : public S3DVertex
 	S3DVertex2TCoords() : S3DVertex() {}
 
 	//! constructor with two different texture coords, but no normal
-	S3DVertex2TCoords(f32 x, f32 y, f32 z, SColor c, f32 tu, f32 tv, f32 tu2, f32 tv2)
-		: S3DVertex(x,y,z, 0.0f, 0.0f, 0.0f, c, tu,tv), TCoords2(tu2,tv2) {}
+	S3DVertex2TCoords(f32 x, f32 y, f32 z, SColor c, f32 tu, f32 tv, f32 tu2, f32 tv2, f32 lx, f32 ly, f32 lz)
+		: S3DVertex(x,y,z, 0.0f, 0.0f, 0.0f, c, tu,tv), TCoords2(tu2,tv2), Lightmap(lx, ly, lz) {}
 
 	//! constructor with two different texture coords, but no normal
 	S3DVertex2TCoords(const core::vector3df& pos, SColor color,
-		const core::vector2d<f32>& tcoords, const core::vector2d<f32>& tcoords2)
-		: S3DVertex(pos, core::vector3df(), color, tcoords), TCoords2(tcoords2) {}
+		const core::vector2d<f32>& tcoords, const core::vector2d<f32>& tcoords2, const core::vector3df& lm)
+		: S3DVertex(pos, core::vector3df(), color, tcoords), TCoords2(tcoords2), Lightmap(lm) {}
 
 	//! constructor with all values
 	S3DVertex2TCoords(const core::vector3df& pos, const core::vector3df& normal, const SColor& color,
-		const core::vector2d<f32>& tcoords, const core::vector2d<f32>& tcoords2)
-		: S3DVertex(pos, normal, color, tcoords), TCoords2(tcoords2) {}
+		const core::vector2d<f32>& tcoords, const core::vector2d<f32>& tcoords2, const core::vector3df& lm)
+		: S3DVertex(pos, normal, color, tcoords), TCoords2(tcoords2), Lightmap(lm) {}
 
 	//! constructor with all values
-	S3DVertex2TCoords(f32 x, f32 y, f32 z, f32 nx, f32 ny, f32 nz, SColor c, f32 tu, f32 tv, f32 tu2, f32 tv2)
-		: S3DVertex(x,y,z, nx,ny,nz, c, tu,tv), TCoords2(tu2,tv2) {}
+	S3DVertex2TCoords(f32 x, f32 y, f32 z, f32 nx, f32 ny, f32 nz, SColor c, f32 tu, f32 tv, f32 tu2, f32 tv2, f32 lx, f32 ly, f32 lz)
+		: S3DVertex(x,y,z, nx,ny,nz, c, tu,tv), TCoords2(tu2,tv2), Lightmap(lx, ly, lz) {}
 
 	//! constructor with the same texture coords and normal
 	S3DVertex2TCoords(f32 x, f32 y, f32 z, f32 nx, f32 ny, f32 nz, SColor c, f32 tu, f32 tv)
-		: S3DVertex(x,y,z, nx,ny,nz, c, tu,tv), TCoords2(tu,tv) {}
+		: S3DVertex(x,y,z, nx,ny,nz, c, tu,tv), TCoords2(tu,tv), Lightmap(tu, tv, 0.0f) {}
 
 	//! constructor with the same texture coords and normal
 	S3DVertex2TCoords(const core::vector3df& pos, const core::vector3df& normal,
 		SColor color, const core::vector2d<f32>& tcoords)
-		: S3DVertex(pos, normal, color, tcoords), TCoords2(tcoords) {}
+		: S3DVertex(pos, normal, color, tcoords), TCoords2(tcoords), Lightmap(tcoords.X, tcoords.Y, 0.0f) {}
 
 	//! constructor from S3DVertex
 	S3DVertex2TCoords(S3DVertex& o) : S3DVertex(o) {}
@@ -151,24 +151,29 @@ struct S3DVertex2TCoords : public S3DVertex
 	//! Second set of texture coordinates
 	core::vector2d<f32> TCoords2;
 
+	//! Lightmap uv
+	core::vector3df Lightmap;
+
 	//! Equality operator
 	bool operator==(const S3DVertex2TCoords& other) const
 	{
-		return ((static_cast<S3DVertex>(*this)==other) &&
-			(TCoords2 == other.TCoords2));
+		return ((static_cast<S3DVertex>(*this)==other) && 
+			(TCoords2 == other.TCoords2) && 
+			(Lightmap == other.Lightmap));
 	}
 
 	//! Inequality operator
 	bool operator!=(const S3DVertex2TCoords& other) const
 	{
 		return ((static_cast<S3DVertex>(*this)!=other) ||
-			(TCoords2 != other.TCoords2));
+			(TCoords2 != other.TCoords2) ||
+			(Lightmap != other.Lightmap));
 	}
 
 	bool operator<(const S3DVertex2TCoords& other) const
 	{
 		return ((static_cast<S3DVertex>(*this) < other) ||
-				((static_cast<S3DVertex>(*this) == other) && (TCoords2 < other.TCoords2)));
+				((static_cast<S3DVertex>(*this) == other) && (TCoords2 < other.TCoords2) && (Lightmap < other.Lightmap)));
 	}
 
 	E_VERTEX_TYPE getType() const
@@ -183,7 +188,8 @@ struct S3DVertex2TCoords : public S3DVertex
 				Normal.getInterpolated(other.Normal, d),
 				Color.getInterpolated(other.Color, d),
 				TCoords.getInterpolated(other.TCoords, d),
-				TCoords2.getInterpolated(other.TCoords2, d));
+				TCoords2.getInterpolated(other.TCoords2, d),
+				Lightmap.getInterpolated(other.Lightmap, d));
 	}
 };
 
