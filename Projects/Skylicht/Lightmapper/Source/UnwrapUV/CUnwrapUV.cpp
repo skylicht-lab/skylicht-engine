@@ -331,6 +331,7 @@ namespace Skylicht
 				EVAS_TEXCOORD0,
 				EVAS_TEXCOORD1,
 				EVAS_TEXCOORD2,
+				EVAS_LIGHTMAP,
 			};
 
 			IVertexAttribute *attribute = vertexDescriptor->getAttributeBySemantic(semantic[(int)texcoordID]);
@@ -360,6 +361,7 @@ namespace Skylicht
 			float w = (float)m_atlas->width;
 			float h = (float)m_atlas->height;
 
+			// write lightmap uv
 			for (int i = 0; i < vtxCount; i++)
 			{
 				xatlas::Vertex &v = mesh.vertexArray[i];
@@ -368,7 +370,20 @@ namespace Skylicht
 
 				float *f = (float*)buffer;
 				f[0] = v.uv[0] / w;
-				f[1] = v.uv[1] / h;
+				f[1] = v.uv[1] / h;				
+			}
+
+			// write lightmap index
+			if (texcoordID == CUnwrapUV::LIGHTMAP)
+			{
+				for (int i = 0; i < vtxCount; i++)
+				{
+					xatlas::Vertex &v = mesh.vertexArray[i];
+					unsigned char *buffer = texcoord + vertexSize * v.xref;
+
+					float *f = (float*)buffer;
+					f[2] = (float)v.atlasIndex;
+				}
 			}
 
 			return true;

@@ -247,6 +247,7 @@ bool CNullDriver::createVertexDescriptors()
 	VertexDescriptor[1]->addAttribute("inColor", 4, EVAS_COLOR, EVAT_UBYTE, 0);
 	VertexDescriptor[1]->addAttribute("inTexCoord0", 2, EVAS_TEXCOORD0, EVAT_FLOAT, 0);
 	VertexDescriptor[1]->addAttribute("inTexCoord1", 2, EVAS_TEXCOORD1, EVAT_FLOAT, 0);
+	VertexDescriptor[1]->addAttribute("inLightmap", 3, EVAS_LIGHTMAP, EVAT_FLOAT, 0);
 
 	addVertexDescriptor("tangents");
 	VertexDescriptor[2]->addAttribute("inPosition", 3, EVAS_POSITION, EVAT_FLOAT, 0);
@@ -282,6 +283,7 @@ bool CNullDriver::createVertexDescriptors()
 	VertexDescriptor[5]->addAttribute("inColor", 4, EVAS_COLOR, EVAT_UBYTE, 0);
 	VertexDescriptor[5]->addAttribute("inTexCoord0", 2, EVAS_TEXCOORD0, EVAT_FLOAT, 0);
 	VertexDescriptor[5]->addAttribute("inTexCoord1", 2, EVAS_TEXCOORD1, EVAT_FLOAT, 0);	
+	VertexDescriptor[5]->addAttribute("inLightmap", 3, EVAS_LIGHTMAP, EVAT_FLOAT, 0);
 	VertexDescriptor[5]->addAttribute("inTangent", 3, EVAS_TANGENT, EVAT_FLOAT, 0);
 	VertexDescriptor[5]->addAttribute("inBinormal", 3, EVAS_BINORMAL, EVAT_FLOAT, 0);
 	VertexDescriptor[5]->addAttribute("inTangentW", 2, EVAS_TANGENTW, EVAT_FLOAT, 0);
