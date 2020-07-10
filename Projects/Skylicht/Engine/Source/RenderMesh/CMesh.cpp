@@ -136,10 +136,19 @@ namespace Skylicht
 				{
 					buf->drop();
 					MeshBuffers.erase(i);
+					MaterialName.erase(MaterialName.begin() + i);
+					Material.erase(Material.begin() + i);
 					return;
 				}
 			}
 		}
+	}
+
+	void CMesh::replaceMeshBuffer(int i, IMeshBuffer *buf)
+	{
+		MeshBuffers[i]->drop();		
+		MeshBuffers[i] = buf;
+		buf->grab();
 	}
 
 	IMeshBuffer* CMesh::getBufferByMaterialID(int materialID)
