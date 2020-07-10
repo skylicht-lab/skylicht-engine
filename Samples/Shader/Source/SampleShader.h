@@ -14,11 +14,18 @@ private:
 
 	bool m_bakeSHLighting;
 
+	ITexture *m_normalMap;
+
 	std::vector<CGameObject*> m_objects;
 
+	CRenderMesh *m_dissolveRenderer;
+	float m_dissolveParam;
+
 	CGlyphFont *m_font;
+
 public:
 	SampleShader();
+
 	virtual ~SampleShader();
 
 	virtual void onUpdate();
@@ -42,6 +49,10 @@ protected:
 	void initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial& materials);
 
 	void initTestReflectionShader(CEntityPrefab *prefab, ArrayMaterial& materials);
+
+	void initTestDissoveShader(CEntityPrefab *prefab, ArrayMaterial& materials);
+
+	void updateDissoveShader();
 
 	void createCanvasText(const char *text, const core::vector3df& position);
 };

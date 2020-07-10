@@ -4,6 +4,7 @@ SamplerState uTexNormalMapSampler : register(s0);
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
+	float4 color: COLOR;
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;

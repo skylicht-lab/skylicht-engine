@@ -1,9 +1,11 @@
 precision mediump float;
 
 uniform sampler2D uTexNormal;
+uniform sampler2D uTexNoise;
 
 uniform vec4 uLightColor;
 uniform vec4 uSHConst[4];
+uniform vec4 uCutoff;
 
 in vec4 vColor;
 in vec2 vTexCoord0;
@@ -22,6 +24,10 @@ const float PI = 3.1415926;
 
 void main(void)
 {
+	float dissolve = vColor.r - uCutoff.w;
+	if (dissolve <= 0.0)
+		discard;
+		
 	vec3 diffuseColor = vec3(0.5, 0.5, 0.5);
 	vec3 normalMap = texture(uTexNormal, vTexCoord0.xy).xyz;
 	
@@ -48,8 +54,15 @@ void main(void)
 	float specular = pow(NdotE, 100.0f * 0.5) * 0.5;
 	color += vec3(specular, specular, specular);
 	
-	// IBL lighting (2 bounce)
+	// IBL lighting
 	color += ambientLighting * diffuseColor * 1.5 / PI;
+	
+	// Emission Noise
+	float noiseSize = 2.0;
+	float noise = step(0.5, texture(uTexNoise, vTexCoord0.xy * noiseSize).x);
+	
+	// Emission
+	color += uCutoff.xyz * step(dissolve, 0.04) * noise;
 	
 	FragColor = vec4(color, 1.0);
 }

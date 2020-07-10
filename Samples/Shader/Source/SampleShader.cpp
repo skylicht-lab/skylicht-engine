@@ -20,7 +20,10 @@ SampleShader::SampleShader() :
 	m_camera(NULL),
 	m_bakeSHLighting(true),
 	m_reflectionProbe(NULL),
-	m_font(NULL)
+	m_font(NULL),
+	m_normalMap(NULL),
+	m_dissolveRenderer(NULL),
+	m_dissolveParam(0.0f)
 {
 	Lightmapper::CLightmapper::createGetInstance();
 }
@@ -113,11 +116,15 @@ void SampleShader::onInitApp()
 	prefab = meshManager->loadModel("SampleModels/DamagedHelmet/DamagedHelmet.dae", NULL, true, false);
 	if (prefab != NULL)
 	{
+		// load normal map
+		m_normalMap = CTextureManager::getInstance()->getTexture("SampleModels/DamagedHelmet/Default_normal.jpg");
+
 		// init material
 		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
 
 		initTestNormalMapShader(prefab, materials);
 		initTestReflectionShader(prefab, materials);
+		initTestDissoveShader(prefab, materials);
 	}
 
 	// Rendering
@@ -126,13 +133,10 @@ void SampleShader::onInitApp()
 
 void SampleShader::initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial& materials)
 {
-	// load normal map
-	ITexture *normalMap = CTextureManager::getInstance()->getTexture("SampleModels/DamagedHelmet/Default_normal.jpg");
-
 	for (CMaterial *material : materials)
 	{
 		material->changeShader("SampleShader/Shader/Normal.xml");
-		material->setUniformTexture("uTexNormal", normalMap);
+		material->setUniformTexture("uTexNormal", m_normalMap);
 	}
 
 	// create render mesh object
@@ -143,7 +147,7 @@ void SampleShader::initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial&
 	renderer->initFromPrefab(prefab);
 	renderer->initMaterial(materials);
 
-	// set indirect lighting by VertexColor
+	// set indirect lighting by baked SH
 	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
 	indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
 
@@ -159,7 +163,10 @@ void SampleShader::initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial&
 void SampleShader::initTestReflectionShader(CEntityPrefab *prefab, ArrayMaterial& materials)
 {
 	for (CMaterial *material : materials)
+	{
 		material->changeShader("SampleShader/Shader/Reflection.xml");
+		material->setUniformTexture("uTexNormal", m_normalMap);
+	}
 
 	// create render mesh object
 	CGameObject *object = m_scene->getZone(0)->createEmptyObject();
@@ -169,7 +176,7 @@ void SampleShader::initTestReflectionShader(CEntityPrefab *prefab, ArrayMaterial
 	renderer->initFromPrefab(prefab);
 	renderer->initMaterial(materials);
 
-	// set indirect lighting by VertexColor
+	// set indirect lighting by baked SH
 	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
 	indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
 
@@ -184,6 +191,120 @@ void SampleShader::initTestReflectionShader(CEntityPrefab *prefab, ArrayMaterial
 
 	createCanvasText("Reflection", core::vector3df(3.0f, 1.5f, 0.0f));
 }
+
+void SampleShader::initTestDissoveShader(CEntityPrefab *prefab, ArrayMaterial& materials)
+{
+	// create render mesh object
+	CGameObject *object = m_scene->getZone(0)->createEmptyObject();
+
+	// render mesh & init material
+	CRenderMesh *renderer = object->addComponent<CRenderMesh>();
+	renderer->initFromPrefab(prefab);
+
+	// we need copy current mesh buffer and recompute color for dissolve shader
+	std::vector<CRenderMeshData*>& renderers = renderer->getRenderers();
+	for (CRenderMeshData *r : renderers)
+	{
+		CMesh *mesh = r->getMesh();
+
+		const core::aabbox3df &bbox = mesh->getBoundingBox();
+
+		// z up mesh
+		float minY = bbox.MinEdge.Z;
+		float maxY = bbox.MaxEdge.Z;
+
+		float d = maxY - minY;
+		if (d > 0.0f)
+		{
+			for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
+			{
+				IMeshBuffer *mb = mesh->getMeshBuffer(i);
+
+				IVertexBuffer *buffer = mb->getVertexBuffer();
+				S3DVertexTangents *vtxBuffer = (S3DVertexTangents*)buffer->getVertices();
+
+				CMeshBuffer<S3DVertexTangents> *newBuffer = new CMeshBuffer<S3DVertexTangents>(getVideoDriver()->getVertexDescriptor(EVT_TANGENTS));
+				IVertexBuffer *newVtxBuffer = newBuffer->getVertexBuffer();
+
+				for (int j = 0, m = buffer->getVertexCount(); j < m; j++)
+				{
+					S3DVertexTangents s = vtxBuffer[j];
+
+					float f = (s.Pos.Z - minY) / d;
+					s.Color.setRed((u32)(f * 255.0f));
+					s.Color.setGreen(0);
+					s.Color.setBlue(0);
+
+					newVtxBuffer->addVertex(&s);
+				}
+
+				// set index buffer
+				newBuffer->setIndexBuffer(mb->getIndexBuffer());
+
+				// static buffer			
+				newBuffer->setHardwareMappingHint(EHM_STATIC);
+
+				// replace
+				mesh->replaceMeshBuffer(i, newBuffer);
+			}
+		}
+	}
+
+	for (CMaterial *material : materials)
+	{
+		material->changeShader("SampleShader/Shader/Dissolved.xml");
+		material->setUniformTexture("uTexNormal", m_normalMap);
+
+		// test dissolved direction
+		// material->changeShader("BuiltIn/Shader/Basic/VertexColor.xml");
+	}
+
+	renderer->initMaterial(materials);
+
+	// set indirect lighting by baked SH
+	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
+	indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
+
+	// rotate
+	CRotateComponent *rotate = object->addComponent<CRotateComponent>();
+	rotate->setRotate(0.0f, 0.05f, 0.0f);
+
+	// set position
+	object->getTransformEuler()->setPosition(core::vector3df(6.0f, 0.0f, 0.0f));
+
+	m_objects.push_back(object);
+
+	m_dissolveRenderer = renderer;
+
+	createCanvasText("Dissolved", core::vector3df(6.0f, 1.5f, 0.0f));
+}
+
+void SampleShader::updateDissoveShader()
+{
+	m_dissolveParam = m_dissolveParam + getTimeStep() * 0.001f;
+	m_dissolveParam = fmodf(m_dissolveParam, 180.0f);
+
+	// f [0 - 1]
+	float f = fabsf(sinf(m_dissolveParam));
+
+	// Update uniform uCutoff
+	for (int i = 0, n = m_dissolveRenderer->getMaterialCount(); i < n; i++)
+	{
+		CMaterial *material = m_dissolveRenderer->getMaterial(i);
+		CMaterial::SUniformValue* v = material->getUniform("uCutoff");
+
+		// border color
+		v->FloatValue[0] = 1.0f;
+		v->FloatValue[1] = 0.0f;
+		v->FloatValue[2] = 0.0f;
+
+		// cutoff
+		v->FloatValue[3] = f;
+
+		material->updateShaderParams();
+	}
+}
+
 
 void SampleShader::createCanvasText(const char *text, const core::vector3df& position)
 {
@@ -203,6 +324,9 @@ void SampleShader::createCanvasText(const char *text, const core::vector3df& pos
 
 void SampleShader::onUpdate()
 {
+	// update shader
+	updateDissoveShader();
+
 	// update application
 	m_scene->update();
 }

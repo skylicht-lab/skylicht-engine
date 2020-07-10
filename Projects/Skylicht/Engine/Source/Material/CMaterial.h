@@ -39,10 +39,12 @@ namespace Skylicht
 			std::string Name;
 			std::string Path;
 			ITexture* Texture;
+			int TextureSlot;
 
 			SUniformTexture()
 			{
 				Texture = NULL;
+				TextureSlot = -1;
 			}
 
 			SUniformTexture* clone()
@@ -51,6 +53,7 @@ namespace Skylicht
 				c->Name = Name;
 				c->Path = Path;
 				c->Texture = Texture;
+				c->TextureSlot = TextureSlot;
 				return c;
 			}
 		};
@@ -62,10 +65,15 @@ namespace Skylicht
 			int FloatSize;
 			bool ShaderDefaultValue;
 
+			EUniformType Type;
+			int ValueIndex;
+
 			SUniformValue()
 			{
 				ShaderDefaultValue = false;
 				FloatSize = 0;
+				Type = NUM_SHADER_TYPE;
+				ValueIndex = -1;
 				memset(FloatValue, 0, 4 * sizeof(float));
 			}
 
@@ -76,6 +84,8 @@ namespace Skylicht
 				c->Name = Name;
 				c->FloatSize = FloatSize;
 				c->ShaderDefaultValue = ShaderDefaultValue;
+				c->Type = Type;
+				c->ValueIndex = ValueIndex;
 				return c;
 			}
 		};
@@ -231,15 +241,17 @@ namespace Skylicht
 
 		void applyMaterial(SMaterial& mat);
 
-		void updateTexture(SMaterial& mat);
+		void updateTexture(SMaterial& mat);		
+
+		void updateShaderParams();
 
 	protected:
 
+		void bindUniformParam();
+
+		void readTexturePath();
+
 		void initDefaultValue();
-
-		void updateShaderTexture();
-
-		void updateShaderParams();
 
 		void setDefaultValue(SUniformValue *v, SUniform* u);
 
