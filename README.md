@@ -127,6 +127,10 @@ This demo to draw Cube 3D, setup transform and use component.
 This demo code, that render Sphere 3D, load textures (Diffuse, Normal, Specular), and bind SpecGloss shader to Material.
 <img src="Documents/Media/Samples/sample_material.jpg"/>
 
+### Samples\SampleShader
+This demo code, How to bind shader on Material.
+<img src="Documents/Media/Samples/sample_shader.jpg"/>
+
 ### Samples\LuckyDraw
 Engine Components are used:
 - **FreeType Font**

@@ -364,7 +364,7 @@ namespace Skylicht
 		for (int i = 0; i < num; i++)
 			m_textures[i] = textures[i];
 
-		updateShaderTexture();
+		readTexturePath();
 	}
 
 	void CMaterial::buildDoubleSidedMesh()
@@ -529,6 +529,8 @@ namespace Skylicht
 				}
 			}
 		}
+
+		bindUniformParam();
 	}
 
 	// PUBLIC FOR USE
@@ -874,41 +876,84 @@ namespace Skylicht
 			// auto uniform config
 			for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 			{
-				SUniform *uniform = m_shader->getFSUniform(m_uniformTextures[i]->Name.c_str());
-				if (uniform != NULL)
+				SUniformTexture *uniformTexture = m_uniformTextures[i];
+				if (uniformTexture->TextureSlot == -1)
 				{
-					int textureSlot = (int)uniform->Value[0];
-					if (textureSlot >= 0 && textureSlot < MATERIAL_MAX_TEXTURES)
-					{
-						mat.setTexture(textureSlot, m_uniformTextures[i]->Texture);
-						m_textures[textureSlot] = m_uniformTextures[i]->Texture;
-					}
+					SUniform* uniform = m_shader->getFSUniform(uniformTexture->Name.c_str());
+					if (uniform != NULL)
+						uniformTexture->TextureSlot = (int)uniform->Value[0];
+					else
+						uniformTexture->TextureSlot = -2;
+				}
+
+				int textureSlot = uniformTexture->TextureSlot;
+				if (textureSlot >= 0 && textureSlot < MATERIAL_MAX_TEXTURES)
+				{
+					mat.setTexture(textureSlot, m_uniformTextures[i]->Texture);
+					m_textures[textureSlot] = m_uniformTextures[i]->Texture;
 				}
 			}
 		}
 	}
 
-	void CMaterial::updateShaderTexture()
+	void CMaterial::bindUniformParam()
+	{
+		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
+		{
+			SUniformTexture *uniformTexture = m_uniformTextures[i];
+			if (uniformTexture->TextureSlot == -1)
+			{
+				SUniform* uniform = m_shader->getFSUniform(uniformTexture->Name.c_str());
+				if (uniform != NULL)
+					uniformTexture->TextureSlot = (int)uniform->Value[0];
+				else
+					uniformTexture->TextureSlot = -2;
+			}
+		}
+
+		for (int i = 0, n = (int)m_uniformParams.size(); i < n; i++)
+		{
+			SUniformValue *uniformValue = m_uniformParams[i];
+
+			if (uniformValue->Type == NUM_SHADER_TYPE)
+			{
+				SUniform* uniform = m_shader->getFSUniform(uniformValue->Name.c_str());
+				if (uniform == NULL)
+					uniform = m_shader->getVSUniform(uniformValue->Name.c_str());
+
+				if (uniform != NULL)
+				{
+					uniformValue->Type = uniform->Type;
+					uniformValue->ValueIndex = uniform->ValueIndex;
+				}
+			}
+		}
+	}
+
+	void CMaterial::readTexturePath()
 	{
 		if (m_shader == NULL)
 			return;
 
 		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 		{
-			SUniformTexture *textureUI = m_uniformTextures[i];
-
-			SUniform* uniform = m_shader->getFSUniform(textureUI->Name.c_str());
-			if (uniform != NULL)
+			SUniformTexture *uniformTexture = m_uniformTextures[i];
+			if (uniformTexture->TextureSlot == -1)
 			{
-				int textureSlot = (int)uniform->Value[0];
-				if (textureSlot < MATERIAL_MAX_TEXTURES)
+				SUniform* uniform = m_shader->getFSUniform(uniformTexture->Name.c_str());
+				if (uniform != NULL)
+					uniformTexture->TextureSlot = (int)uniform->Value[0];
+				else
+					uniformTexture->TextureSlot = -2;
+			}
+
+			if (uniformTexture->TextureSlot >= 0 && uniformTexture->TextureSlot < MATERIAL_MAX_TEXTURES)
+			{
+				ITexture *texture = m_textures[uniformTexture->TextureSlot];
+				if (texture)
 				{
-					ITexture *texture = m_textures[textureSlot];
-					if (texture)
-					{
-						textureUI->Path = texture->getName().getPath().c_str();
-						textureUI->Texture = texture;
-					}
+					uniformTexture->Path = texture->getName().getPath().c_str();
+					uniformTexture->Texture = texture;
 				}
 			}
 		}
@@ -923,19 +968,28 @@ namespace Skylicht
 		{
 			SUniformValue *uniformValue = m_uniformParams[i];
 
-			SUniform* uniform = m_shader->getFSUniform(uniformValue->Name.c_str());
-			if (uniform == NULL)
-				uniform = m_shader->getVSUniform(uniformValue->Name.c_str());
-
-			if (uniform != NULL)
+			if (uniformValue->Type == NUM_SHADER_TYPE)
 			{
-				switch (uniform->Type)
+				SUniform* uniform = m_shader->getFSUniform(uniformValue->Name.c_str());
+				if (uniform == NULL)
+					uniform = m_shader->getVSUniform(uniformValue->Name.c_str());
+
+				if (uniform != NULL)
+				{
+					uniformValue->Type = uniform->Type;
+					uniformValue->ValueIndex = uniform->ValueIndex;
+				}
+			}
+
+			if (uniformValue->ValueIndex >= 0)
+			{
+				switch (uniformValue->Type)
 				{
 				case OBJECT_PARAM:
 				{
 					if (m_owner != NULL)
 					{
-						SVec4& v = m_owner->getShaderParams().getParam(uniform->ValueIndex);
+						SVec4& v = m_owner->getShaderParams().getParam(uniformValue->ValueIndex);
 						v.X = uniformValue->FloatValue[0];
 						v.Y = uniformValue->FloatValue[1];
 						v.Z = uniformValue->FloatValue[2];
@@ -945,7 +999,7 @@ namespace Skylicht
 				}
 				case MATERIAL_PARAM:
 				{
-					SVec4& v = m_shaderParams.getParam(uniform->ValueIndex);
+					SVec4& v = m_shaderParams.getParam(uniformValue->ValueIndex);
 					v.X = uniformValue->FloatValue[0];
 					v.Y = uniformValue->FloatValue[1];
 					v.Z = uniformValue->FloatValue[2];

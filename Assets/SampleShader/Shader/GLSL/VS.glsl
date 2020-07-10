@@ -12,6 +12,7 @@ uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
 
 out vec2 vTexCoord0;
+out vec4 vColor;
 out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
 out vec3 vWorldLightDir;
@@ -23,6 +24,7 @@ out vec3 vWorldPosition;
 
 void main(void)
 {	
+	vColor = inColor/255.0;
 	vTexCoord0 = inTexCoord0;
 	vTangentW = inTangentW.x;
 	

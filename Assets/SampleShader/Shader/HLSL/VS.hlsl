@@ -12,6 +12,7 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
 	float4 pos : SV_POSITION;
+	float4 color: COLOR;
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
@@ -38,6 +39,7 @@ VS_OUTPUT main(VS_INPUT input)
 	
 	output.pos = mul(input.pos, uMvpMatrix);
 	
+	output.color = input.color;
 	output.tex0 = input.tex0;
 	output.tangentw = input.tangentw.x;
 	
