@@ -30,9 +30,9 @@ enum E_VERTEX_TYPE
 
 	//! Skylicht support hardware skinning
 	EVT_SKIN,
-	EVT_SKIN_TANGENTS,
-	EVT_SKIN_2TCOORDS_TANGENTS,
+	EVT_SKIN_TANGENTS,	
 	EVT_2TCOORDS_TANGENTS,
+	EVT_SKIN_2TCOORDS_TANGENTS,
 };
 
 //! Array holding the built in vertex type names
@@ -42,9 +42,9 @@ const char* const sBuiltInVertexTypeNames[] =
 	"2tcoords",
 	"tangents",
 	"skin",
-	"skintangents",
-	"skin2tcoordtangents",
+	"skintangents",	
 	"2tcoordstangents",
+	"skin2tcoordtangents",
 	0
 };
 
