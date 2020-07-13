@@ -125,7 +125,11 @@ namespace Skylicht
 						{
 							if (i == 0)
 								depthChange = -worldTransform->Depth;
+
 							worldTransform->Depth += depthChange;
+
+							if (entityID.find(worldTransform->ParentIndex) != entityID.end())
+								worldTransform->ParentIndex = entityID[worldTransform->ParentIndex];
 						}
 					}
 				}
