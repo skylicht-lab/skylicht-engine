@@ -122,7 +122,7 @@ void CViewInit::initScene()
 	textureFolders.push_back("Sponza/Textures");
 
 	// load model
-	prefab = meshManager->loadModel("Sponza/Sponza.dae", NULL, true);
+	prefab = meshManager->loadModel("Sponza/Sponza.smesh", NULL, true);
 	if (prefab != NULL)
 	{
 		// load material

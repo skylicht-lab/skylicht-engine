@@ -35,6 +35,7 @@ void SampleLightmapUV::onInitApp()
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
+	// app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -71,11 +72,14 @@ void SampleLightmapUV::onInitApp()
 
 	// 3D model
 	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
+	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
+
+	scene::IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
 
 	if (model != NULL)
 	{
-		CGameObject *gazeboObj = zone->createEmptyObject();
-		CRenderMesh *renderMesh = gazeboObj->addComponent<CRenderMesh>();
+		CGameObject *renderObj = zone->createEmptyObject();
+		CRenderMesh *renderMesh = renderObj->addComponent<CRenderMesh>();
 		renderMesh->initFromPrefab(model);
 
 		// Get list default material
@@ -85,10 +89,27 @@ void SampleLightmapUV::onInitApp()
 		Lightmapper::CUnwrapUV unwrap;
 
 		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
+		
+		/*
+		// hack for sponza mesh
+		int meshID = 0;
 		for (CRenderMeshData* renderData : renderers)
-			unwrap.addMesh(renderData->getMesh());
+		{
+			if (meshID >= 2)
+				unwrap.addMesh(renderData->getMesh(), 0.005f);
+			else if (meshID == 1)
+				unwrap.addMesh(renderData->getMesh(), 0.02f);
+			else
+				unwrap.addMesh(renderData->getMesh(), 1.0f);
 
-		unwrap.generate(512, 25);
+			meshID++;
+		}
+		*/
+
+		for (CRenderMeshData* renderData : renderers)		
+			unwrap.addMesh(renderData->getMesh(), 1.0f);
+
+		unwrap.generate(4096, 2.0f);
 		unwrap.generateUVImage();
 
 		// Write to bin folder output layout uv
@@ -103,13 +124,23 @@ void SampleLightmapUV::onInitApp()
 			for (u32 i = 0; i < mesh->getMeshBufferCount(); i++)
 			{
 				IMeshBuffer *mb = mesh->getMeshBuffer(i);
+				
 				IVertexBuffer *vb = mb->getVertexBuffer(0);
+				IVertexDescriptor *vd = mb->getVertexDescriptor();
 
 				// alloc new vtx buffer (because current vtx buffer is on GPU Memory, that can't change)
-				CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexTangents>();
+				CVertexBuffer<video::S3DVertex2TCoordsTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertex2TCoordsTangents>();
 
 				// copy vertex data
-				CMeshUtils::copyVertices(vb, vertexBuffer);
+				mh->copyVertices(
+					vb, 
+					0, 
+					getVideoDriver()->getVertexDescriptor(EVT_TANGENTS),
+					vertexBuffer, 
+					0, 
+					getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS),
+					false
+				);
 
 				// notify update vertex to GPU Memory
 				vertexBuffer->setHardwareMappingHint(EHM_STATIC);
@@ -119,6 +150,7 @@ void SampleLightmapUV::onInitApp()
 
 				// replace current vertex buffer
 				mb->setVertexBuffer(vertexBuffer, 0);
+				mb->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS));
 
 				// write uv lightmap
 				unwrap.writeUVToMeshBuffer(mb, mb, Lightmapper::CUnwrapUV::TEXCOORD0);
@@ -133,8 +165,11 @@ void SampleLightmapUV::onInitApp()
 		}
 
 		// Update material
-		IImage *img = unwrap.getChartsImage(0);
-		m_UVChartsTexture = getVideoDriver()->addTexture("ChartsTexture", img);
+		for (int i = 0, n = unwrap.getAtlasCount(); i < n; i++)
+		{
+			IImage *img = unwrap.getChartsImage(i);
+			m_UVChartsTexture = getVideoDriver()->addTexture("ChartsTexture", img);
+		}
 
 		for (CMaterial *m : materials)
 		{
@@ -145,10 +180,12 @@ void SampleLightmapUV::onInitApp()
 		renderMesh->initMaterial(materials);
 
 		// test exporter
+		/*
 		CMeshManager::getInstance()->exportModel(
 			renderMesh->getEntities().pointer(),
 			renderMesh->getEntities().size(),
-			"../SampleModels/Gazebo/gazebo.smesh");
+			"../Assets/Sponza/Sponza.smesh");
+		*/
 	}
 
 	// Render pipeline
