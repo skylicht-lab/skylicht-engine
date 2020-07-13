@@ -156,6 +156,8 @@ const c8* CD3D11VertexDescriptor::getSemanticName(E_VERTEX_ATTRIBUTE_SEMANTIC se
 		return "LIGHTPROBE";
 	case EVAS_TANGENTW:
 		return "TANGENTW";
+	case EVAS_LIGHTMAP:
+		return "LIGHTMAP";
 	case EVAS_CUSTOM:
 		return "CUSTOM";
 	default:
