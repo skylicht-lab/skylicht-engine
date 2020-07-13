@@ -132,6 +132,9 @@ struct MeshDecl
 
 	// Vertex positions within epsilon distance of each other are considered colocal.
 	float epsilon = 1.192092896e-07F;
+
+	// Mesh buffer scale
+	float scale = 1.0F;
 };
 
 struct AddMeshError

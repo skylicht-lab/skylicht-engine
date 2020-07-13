@@ -56,9 +56,9 @@ namespace Skylicht
 
 			virtual ~CUnwrapUV();
 
-			bool addMesh(CMesh *mesh);
+			bool addMesh(CMesh *mesh, float scale);
 
-			bool addMeshBuffer(IMeshBuffer *meshBuffer);
+			bool addMeshBuffer(IMeshBuffer *meshBuffer, float scale);
 
 			void generate(int resolution = 2048, float texelsPerUnit = 0.0f, int padding = 1);
 
@@ -75,6 +75,11 @@ namespace Skylicht
 			IImage* getChartsImage(int id)
 			{
 				return m_imgUVCharts[id];
+			}
+
+			int getAtlasCount()
+			{
+				return m_atlasCount;
 			}
 		};
 	}
