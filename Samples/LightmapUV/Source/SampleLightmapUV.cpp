@@ -35,7 +35,7 @@ void SampleLightmapUV::onInitApp()
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
-	// app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -71,8 +71,8 @@ void SampleLightmapUV::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// 3D model
-	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
-	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
+	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
+	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
 
 	scene::IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
 
@@ -89,25 +89,44 @@ void SampleLightmapUV::onInitApp()
 		Lightmapper::CUnwrapUV unwrap;
 
 		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
+		std::vector<CWorldTransformData*>& transforms = renderMesh->getRenderTransforms();
 		
-		/*
 		// hack for sponza mesh
 		int meshID = 0;
 		for (CRenderMeshData* renderData : renderers)
 		{
-			if (meshID >= 2)
-				unwrap.addMesh(renderData->getMesh(), 0.005f);
-			else if (meshID == 1)
+			std::string name = transforms[meshID]->Name;
+			if (name == "celling_sponza")
+			{
 				unwrap.addMesh(renderData->getMesh(), 0.02f);
+			}
+			else if (name == "floor_sponza")
+			{
+				unwrap.addMesh(renderData->getMesh(), 0.02f);
+			}				
+			else if (name == "wall_sponza")
+			{
+				unwrap.addMesh(renderData->getMesh(), 0.02f);
+			}			
+			else if (name == "smallwall_sponza")
+			{
+				unwrap.addMesh(renderData->getMesh(), 0.01f);
+			}
+			else if (name == "top_sponza")
+			{
+				unwrap.addMesh(renderData->getMesh(), 0.01f);
+			}
+			// if (name == "object_sponza")
 			else
+			{
 				unwrap.addMesh(renderData->getMesh(), 1.0f);
+			}						
 
 			meshID++;
 		}
-		*/
 
-		for (CRenderMeshData* renderData : renderers)		
-			unwrap.addMesh(renderData->getMesh(), 1.0f);
+		// for (CRenderMeshData* renderData : renderers)		
+		//	unwrap.addMesh(renderData->getMesh(), 1.0f);
 
 		unwrap.generate(4096, 2.0f);
 		unwrap.generateUVImage();
@@ -153,7 +172,7 @@ void SampleLightmapUV::onInitApp()
 				mb->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS));
 
 				// write uv lightmap
-				unwrap.writeUVToMeshBuffer(mb, mb, Lightmapper::CUnwrapUV::TEXCOORD0);
+				unwrap.writeUVToMeshBuffer(mb, mb, Lightmapper::CUnwrapUV::LIGHTMAP);
 
 				// notify change
 				mb->setDirty(scene::EBT_VERTEX);
@@ -164,7 +183,14 @@ void SampleLightmapUV::onInitApp()
 			}
 		}
 
+		// test exporter
+		CMeshManager::getInstance()->exportModel(
+			renderMesh->getEntities().pointer(),
+			renderMesh->getEntities().size(),
+			"../Assets/Sponza/Sponza.smesh");
+		
 		// Update material
+		/*
 		for (int i = 0, n = unwrap.getAtlasCount(); i < n; i++)
 		{
 			IImage *img = unwrap.getChartsImage(i);
@@ -178,13 +204,6 @@ void SampleLightmapUV::onInitApp()
 		}
 
 		renderMesh->initMaterial(materials);
-
-		// test exporter
-		/*
-		CMeshManager::getInstance()->exportModel(
-			renderMesh->getEntities().pointer(),
-			renderMesh->getEntities().size(),
-			"../Assets/Sponza/Sponza.smesh");
 		*/
 	}
 
