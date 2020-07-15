@@ -91,7 +91,7 @@ void SampleLightmapUV::onInitApp()
 
 		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
 		std::vector<CWorldTransformData*>& transforms = renderMesh->getRenderTransforms();
-		
+
 		// hack for sponza mesh
 		int meshID = 0;
 		for (CRenderMeshData* renderData : renderers)
@@ -104,11 +104,11 @@ void SampleLightmapUV::onInitApp()
 			else if (name == "floor_sponza")
 			{
 				unwrap.addMesh(renderData->getMesh(), 0.02f);
-			}				
+			}
 			else if (name == "wall_sponza")
 			{
 				unwrap.addMesh(renderData->getMesh(), 0.02f);
-			}			
+			}
 			else if (name == "smallwall_sponza")
 			{
 				unwrap.addMesh(renderData->getMesh(), 0.01f);
@@ -117,11 +117,11 @@ void SampleLightmapUV::onInitApp()
 			{
 				unwrap.addMesh(renderData->getMesh(), 0.01f);
 			}
-			// if (name == "object_sponza")
 			else
 			{
+				// default mesh
 				unwrap.addMesh(renderData->getMesh(), 1.0f);
-			}						
+			}
 
 			meshID++;
 		}
@@ -129,7 +129,7 @@ void SampleLightmapUV::onInitApp()
 		// for (CRenderMeshData* renderData : renderers)		
 		//	unwrap.addMesh(renderData->getMesh(), 1.0f);
 
-		unwrap.generate(4096, 25.0f);
+		unwrap.generate(4096, 2.0f);
 		unwrap.generateUVImage();
 
 		// Write to bin folder output layout uv
@@ -144,7 +144,7 @@ void SampleLightmapUV::onInitApp()
 			for (u32 i = 0; i < mesh->getMeshBufferCount(); i++)
 			{
 				IMeshBuffer *mb = mesh->getMeshBuffer(i);
-				
+
 				IVertexBuffer *vb = mb->getVertexBuffer(0);
 				IVertexDescriptor *vd = mb->getVertexDescriptor();
 
@@ -153,11 +153,11 @@ void SampleLightmapUV::onInitApp()
 
 				// copy vertex data
 				mh->copyVertices(
-					vb, 
-					0, 
+					vb,
+					0,
 					getVideoDriver()->getVertexDescriptor(EVT_TANGENTS),
-					vertexBuffer, 
-					0, 
+					vertexBuffer,
+					0,
 					getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS),
 					false
 				);
@@ -197,7 +197,7 @@ void SampleLightmapUV::onInitApp()
 		for (int i = 0, n = unwrap.getAtlasCount(); i < n; i++)
 		{
 			IImage *img = unwrap.getChartsImage(i);
-			arrayTexture.push_back(img);			
+			arrayTexture.push_back(img);
 		}
 
 		// Texture array
@@ -206,7 +206,7 @@ void SampleLightmapUV::onInitApp()
 		for (CMaterial *m : materials)
 		{
 			m->changeShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
-			m->setTexture(&m_UVChartsTexture, 1);
+			m->setUniformTexture("uTexLightmap", m_UVChartsTexture);
 		}
 
 		renderMesh->initMaterial(materials);
