@@ -425,7 +425,7 @@ namespace irr
 			case ECF_A1R5G5B5:
 				colorformat = GL_BGRA_EXT;
 				type = GL_UNSIGNED_SHORT_1_5_5_5_REV;
-				internalformat = GL_RGBA;
+				internalformat = GL_RGB5_A1;
 				break;
 			case ECF_R5G6B5:
 				colorformat = GL_RGB;
@@ -435,13 +435,13 @@ namespace irr
 			case ECF_R8G8B8:
 				colorformat = GL_BGR;
 				type = GL_UNSIGNED_BYTE;
-				internalformat = GL_RGB;
+				internalformat = GL_RGB8;
 				break;
 			case ECF_A8R8G8B8:
 				colorformat = GL_BGRA_EXT;
 				if (Driver->Version > 101)
 					type = GL_UNSIGNED_INT_8_8_8_8_REV;
-				internalformat = GL_RGBA;
+				internalformat = GL_RGBA8;
 				break;
 			case ECF_DXT1:
 				colorformat = GL_BGRA_EXT;
