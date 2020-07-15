@@ -40,6 +40,7 @@ void SampleLightmapUV::onInitApp()
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
+	shaderMgr->loadShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
 
 	// Create a Scene
 	m_scene = new CScene();
@@ -71,8 +72,8 @@ void SampleLightmapUV::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// 3D model
-	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
-	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
+	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
+	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
 
 	scene::IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
 
@@ -128,7 +129,7 @@ void SampleLightmapUV::onInitApp()
 		// for (CRenderMeshData* renderData : renderers)		
 		//	unwrap.addMesh(renderData->getMesh(), 1.0f);
 
-		unwrap.generate(4096, 2.0f);
+		unwrap.generate(4096, 25.0f);
 		unwrap.generateUVImage();
 
 		// Write to bin folder output layout uv
@@ -184,27 +185,31 @@ void SampleLightmapUV::onInitApp()
 		}
 
 		// test exporter
+		/*
 		CMeshManager::getInstance()->exportModel(
 			renderMesh->getEntities().pointer(),
 			renderMesh->getEntities().size(),
 			"../Assets/Sponza/Sponza.smesh");
-		
+		*/
+
 		// Update material
-		/*
+		core::array<IImage*> arrayTexture;
 		for (int i = 0, n = unwrap.getAtlasCount(); i < n; i++)
 		{
 			IImage *img = unwrap.getChartsImage(i);
-			m_UVChartsTexture = getVideoDriver()->addTexture("ChartsTexture", img);
+			arrayTexture.push_back(img);			
 		}
+
+		// Texture array
+		m_UVChartsTexture = getVideoDriver()->getTextureArray(arrayTexture.pointer(), arrayTexture.size());
 
 		for (CMaterial *m : materials)
 		{
-			m->changeShader("BuiltIn/Shader/Basic/TextureColor.xml");
+			m->changeShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
 			m->setTexture(&m_UVChartsTexture, 1);
 		}
 
 		renderMesh->initMaterial(materials);
-		*/
 	}
 
 	// Render pipeline
