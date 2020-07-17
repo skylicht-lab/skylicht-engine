@@ -28,8 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CIndirectLightingData::CIndirectLightingData() :
-		Type(Lightmap),
-		LightmapIndex(0),
+		Type(LightmapArray),
 		LightmapTexture(NULL),
 		ReflectionTexture(NULL)
 	{
