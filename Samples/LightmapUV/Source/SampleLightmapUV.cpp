@@ -54,8 +54,7 @@ void SampleLightmapUV::onInitApp()
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
-	shaderMgr->initBasicShader();
-	shaderMgr->loadShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
+	shaderMgr->initBasicShader();	
 
 	// Create a Scene
 	m_scene = new CScene();
@@ -87,8 +86,8 @@ void SampleLightmapUV::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// 3D model
-	// m_model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
-	m_model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
+	m_model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
+	// m_model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
 
 	if (m_model != NULL)
 	{
@@ -164,7 +163,7 @@ void SampleLightmapUV::onInitApp()
 void SampleLightmapUV::runThread()
 {
 	// generate uv in thread
-	m_unwrap.generate(2048, 1.0f);
+	m_unwrap.generate(2048, 5.0f);
 	m_unwrap.generateUVImage();
 
 	// write to bin folder output layout uv
@@ -229,10 +228,17 @@ void SampleLightmapUV::updateMeshUV()
 	}
 
 	// test exporter
+	/*
 	CMeshManager::getInstance()->exportModel(
 		m_renderMesh->getEntities().pointer(),
 		m_renderMesh->getEntities().size(),
 		"../Assets/Sponza/Sponza.smesh");
+	*/
+
+	CMeshManager::getInstance()->exportModel(
+		m_renderMesh->getEntities().pointer(),
+		m_renderMesh->getEntities().size(),
+		"../Assets/SampleModels/Gazebo/gazebo.smesh");
 
 	// Update material
 	core::array<IImage*> arrayTexture;

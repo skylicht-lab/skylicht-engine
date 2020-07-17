@@ -40,6 +40,7 @@ namespace Skylicht
 
 			m_bakeResult = new CSH9[size];
 			m_bakedData = new bool[size];
+			m_seamData = new bool[size];
 
 			m_testBakedData = new unsigned char[size * 3];
 			m_lightmapData = new unsigned char[size * 3];
@@ -47,6 +48,7 @@ namespace Skylicht
 			for (int i = 0; i < size; i++)
 			{
 				m_bakedData[i] = false;
+				m_seamData[i] = false;
 
 				m_testBakedData[i * 3] = 0;
 				m_testBakedData[i * 3 + 1] = 0;
@@ -655,77 +657,65 @@ namespace Skylicht
 			m_bakePixels.set_used(0);
 		}
 
-		void CRasterisation::fixSeamPixel()
+		void CRasterisation::imageDilate()
 		{
-			int dataOffset;
-			int nextDataOffset;
-			bool copy;
+			int c = 3;
 
-			for (int x = 0; x < m_width; x++)
+			for (int y = 0; y < m_height; y++)
 			{
-				for (int y = 0; y < m_height; y++)
+				for (int x = 0; x < m_width; x++)
 				{
-					dataOffset = y * m_width + x;
+					f32 color[4];
 
-					if (m_bakedData[dataOffset] == true)
-						continue;
+					bool valid = false;
 
-					copy = false;
-
-					if (x >= 1)
+					for (int i = 0; i < c; i++)
 					{
-						nextDataOffset = y * m_width + (x - 1);
-						if (m_bakedData[nextDataOffset] == true)
+						color[i] = m_lightmapData[(y * m_width + x) * c + i];
+						valid |= color[i] > 0.0f;
+					}
+
+					if (!valid)
+					{
+						int n = 0;
+						const int dx[] = { -1, 0, 1,  0 };
+						const int dy[] = { 0, 1, 0, -1 };
+
+						for (int d = 0; d < 4; d++)
 						{
-							m_lightmapData[dataOffset * 3] = m_lightmapData[nextDataOffset * 3];
-							m_lightmapData[dataOffset * 3 + 1] = m_lightmapData[nextDataOffset * 3 + 1];
-							m_lightmapData[dataOffset * 3 + 2] = m_lightmapData[nextDataOffset * 3 + 2];
-							copy = true;
+							int cx = x + dx[d];
+							int cy = y + dy[d];
+
+							if (cx >= 0 && cx < m_width && cy >= 0 && cy < m_height)
+							{
+								f32 dcolor[4];
+
+								bool dvalid = false;
+
+								for (int i = 0; i < c; i++)
+								{
+									dcolor[i] = (f32)m_lightmapData[(cy * m_width + cx) * c + i];
+									dvalid |= dcolor[i] > 0.0f;
+								}
+								if (dvalid)
+								{
+									for (int i = 0; i < c; i++)
+										color[i] += dcolor[i];
+									n++;
+								}
+							}
+						}
+						if (n)
+						{
+							float in = 1.0f / n;
+							for (int i = 0; i < c; i++)
+								color[i] *= in;
 						}
 					}
 
-					if (x < m_width - 2 && copy == false)
+					for (int i = 0; i < c; i++)
 					{
-						nextDataOffset = y * m_width + (x + 1);
-						if (m_bakedData[nextDataOffset] == true)
-						{
-							m_lightmapData[dataOffset * 3] = m_lightmapData[nextDataOffset * 3];
-							m_lightmapData[dataOffset * 3 + 1] = m_lightmapData[nextDataOffset * 3 + 1];
-							m_lightmapData[dataOffset * 3 + 2] = m_lightmapData[nextDataOffset * 3 + 2];
-							copy = true;
-						}
-					}
-
-					if (y >= 1 && copy == false)
-					{
-						nextDataOffset = (y - 1) * m_width + x;
-						if (m_bakedData[nextDataOffset] == true)
-						{
-							m_lightmapData[dataOffset * 3] = m_lightmapData[nextDataOffset * 3];
-							m_lightmapData[dataOffset * 3 + 1] = m_lightmapData[nextDataOffset * 3 + 1];
-							m_lightmapData[dataOffset * 3 + 2] = m_lightmapData[nextDataOffset * 3 + 2];
-							copy = true;
-						}
-					}
-
-					if (y <= m_height - 2 && copy == false)
-					{
-						nextDataOffset = (y + 1) * m_width + x;
-						if (m_bakedData[nextDataOffset] == true)
-						{
-							m_lightmapData[dataOffset * 3] = m_lightmapData[nextDataOffset * 3];
-							m_lightmapData[dataOffset * 3 + 1] = m_lightmapData[nextDataOffset * 3 + 1];
-							m_lightmapData[dataOffset * 3 + 2] = m_lightmapData[nextDataOffset * 3 + 2];
-							copy = true;
-						}
-					}
-
-					// fill test color
-					if (copy == true)
-					{
-						m_testBakedData[dataOffset * 3] = 0;
-						m_testBakedData[dataOffset * 3 + 1] = 0;
-						m_testBakedData[dataOffset * 3 + 2] = 255;
+						m_lightmapData[(y * m_width + x) * c + i] = (u8)color[i];
 					}
 				}
 			}

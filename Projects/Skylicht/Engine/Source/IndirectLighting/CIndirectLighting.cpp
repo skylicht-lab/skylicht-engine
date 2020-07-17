@@ -32,8 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CIndirectLighting::CIndirectLighting() :
-		m_type(Lightmap),
-		m_lightmapIndex(0)
+		m_type(LightmapArray)
 	{
 
 	}
@@ -70,10 +69,9 @@ namespace Skylicht
 		// add indirect data info
 		CIndirectLightingData *data = entity->addData<CIndirectLightingData>();
 
-		if (m_type == Lightmap)
+		if (m_type == LightmapArray)
 		{
-			data->Type = CIndirectLightingData::Lightmap;
-			data->LightmapIndex = m_lightmapIndex;
+			data->Type = CIndirectLightingData::LightmapArray;
 		}
 		else
 		{
@@ -107,16 +105,9 @@ namespace Skylicht
 
 		for (CIndirectLightingData* data : m_data)
 		{
-			if (m_type == Lightmap)
-			{
-				data->Type = CIndirectLightingData::Lightmap;
-				data->LightmapIndex = 0;
-				data->LightmapTexture = m_lightmap;
-			}
-			else if (m_type == LightmapArray)
+			if (m_type == LightmapArray)
 			{
 				data->Type = CIndirectLightingData::LightmapArray;
-				data->LightmapIndex = m_lightmapIndex;
 				data->LightmapTexture = m_lightmap;
 			}
 			else if (m_type == SH4)
