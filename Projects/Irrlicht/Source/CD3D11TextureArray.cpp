@@ -656,10 +656,12 @@ namespace irr
 					for (u32 i = 0; i < NumberOfArraySlices; i++)
 					{
 						void *data = lock(false, 0, i);
-
-						int size = texDesc.Width * texDesc.Height * 4;
-						image[i]->copyToScaling(data, texDesc.Width, texDesc.Height, ColorFormat, Pitch, true);
-						unlock();
+						if (data != NULL)
+						{
+							int size = texDesc.Width * texDesc.Height * 4;
+							image[i]->copyToScaling(data, texDesc.Width, texDesc.Height, ColorFormat, Pitch, true);
+							unlock();
+						}
 					}
 
 					// gen mipmap

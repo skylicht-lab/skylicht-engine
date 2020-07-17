@@ -43,6 +43,9 @@ namespace Skylicht
 			int m_atlasCount;
 
 			std::vector<IMeshBuffer*> m_meshData;
+
+			std::string m_log;
+
 		public:
 			enum EOutputTexcoord
 			{
@@ -80,6 +83,16 @@ namespace Skylicht
 			int getAtlasCount()
 			{
 				return m_atlasCount;
+			}
+
+			const char *getLog()
+			{
+				return m_log.c_str();
+			}
+
+			void writeLog(const char *log)
+			{
+				m_log = log;
 			}
 		};
 	}
