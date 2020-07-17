@@ -115,6 +115,7 @@ namespace Skylicht
 		CShaderManager *shaderMgr = CShaderManager::getInstance();
 		m_textureColorShader = shaderMgr->getShaderIDByName("TextureColor");
 		m_vertexColorShader = shaderMgr->getShaderIDByName("VertexColor");
+		m_lightmapArrayShader = shaderMgr->getShaderIDByName("Lightmap");
 
 		// final pass
 		m_finalPass.setTexture(0, m_target);
@@ -242,12 +243,12 @@ namespace Skylicht
 				// draw mesh buffer
 				driver->drawMeshBuffer(mb);
 			}
-			else if (indirectData->Type == CIndirectLightingData::Lightmap)
+			else if (indirectData->Type == CIndirectLightingData::LightmapArray)
 			{
 				// change shader to vertex color
 				SMaterial textureColor;
 
-				textureColor.MaterialType = m_textureColorShader;
+				textureColor.MaterialType = m_lightmapArrayShader;
 				textureColor.setTexture(0, indirectData->LightmapTexture);
 
 				// set irrlicht material
