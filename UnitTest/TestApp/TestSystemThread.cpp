@@ -1,6 +1,7 @@
 #include "Base.hh"
 #include "TestSystemThread.h"
 
+bool g_threadRunPass = false;
 bool g_threadPass = false;
 SkylichtSystem::IThread *g_thread = NULL;
 
@@ -12,6 +13,11 @@ TestThreadCallback::TestThreadCallback()
 TestThreadCallback::~TestThreadCallback()
 {
 	delete m_mutex;
+}
+
+void TestThreadCallback::runThread()
+{
+	g_threadRunPass = true;
 }
 
 void TestThreadCallback::updateThread()
@@ -35,5 +41,5 @@ bool isSystemThreadPass()
         delete g_thread->getCallback();
         delete g_thread;
     }
-	return g_threadPass;
+	return g_threadPass && g_threadRunPass;
 }

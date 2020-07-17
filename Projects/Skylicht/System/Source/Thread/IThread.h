@@ -39,6 +39,13 @@ namespace SkylichtSystem
 
 		}
 
+		virtual bool enableThreadLoop()
+		{
+			return true;
+		}
+
+		virtual void runThread() {}
+
 		virtual void updateThread() = 0;
 	};
 

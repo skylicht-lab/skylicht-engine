@@ -10,9 +10,11 @@ protected:
 	SkylichtSystem::IMutex *m_mutex;
 
 public:
-	TestThreadCallback();
+	TestThreadCallback();	
 
 	virtual ~TestThreadCallback();
+
+	virtual void runThread();
 
 	virtual void updateThread();
 

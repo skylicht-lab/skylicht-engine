@@ -113,6 +113,8 @@ namespace Skylicht
 					spawnTransform->ParentIndex = m_root->getIndex();
 				else
 					spawnTransform->ParentIndex = entityIndex[srcTransform->ParentIndex];
+
+				m_transforms.push_back(spawnTransform);
 			}
 
 			// copy render data
@@ -130,6 +132,9 @@ namespace Skylicht
 
 				// add to list renderer
 				m_renderers.push_back(spawnRender);
+
+				// also add transform
+				m_renderTransforms.push_back(spawnEntity->getData<CWorldTransformData>());
 
 				// add world inv transform for culling system
 				spawnEntity->addData<CWorldInverseTransformData>();

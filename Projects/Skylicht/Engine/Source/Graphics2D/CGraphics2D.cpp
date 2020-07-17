@@ -182,6 +182,9 @@ namespace Skylicht
 		// render graphics
 		for (CCanvas *canvas : m_canvas)
 		{
+			if (canvas->getGameObject()->isVisible() == false)
+				continue;
+
 			CGUIElement* root = canvas->getRootElement();
 
 			core::matrix4 world;

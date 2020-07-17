@@ -210,7 +210,7 @@ namespace Skylicht
 			SMaterial &material = mb->getMaterial();
 			for (int t = 0; t < 3; t++)
 			{
-				ITexture *texture = material.TextureLayer[i].Texture;
+				ITexture *texture = material.TextureLayer[t].Texture;
 				if (texture != NULL)
 				{
 					std::string path = texture->getName().getInternalName().c_str();
@@ -318,7 +318,7 @@ namespace Skylicht
 			u32 idxBufferSize = idxCount * idxSize;
 
 			E_INDEX_TYPE indexType = video::EIT_16BIT;
-			if (idxSize == 32)
+			if (idxSize == 4)
 				indexType = video::EIT_32BIT;
 
 			std::string vertexTypeName = stream->readString();
