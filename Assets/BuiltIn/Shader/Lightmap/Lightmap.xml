@@ -1,0 +1,14 @@
+<shaderConfig name="Lightmap" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexLightmap" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+		</fs>
+	</uniforms>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/VS.glsl" fs="GLSL/LightmapFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/VS.hlsl" fs="HLSL/LightmapFS.hlsl"/>
+</shaderConfig>

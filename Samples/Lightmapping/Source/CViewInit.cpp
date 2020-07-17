@@ -9,7 +9,6 @@
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
-	m_spriteArchive(NULL),
 	m_downloaded(0)
 {
 
@@ -138,7 +137,7 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
-		listBundles.push_back("LightmapUV.zip");
+		listBundles.push_back("SampleModels.zip");
 
 #ifdef __EMSCRIPTEN__
 		const char *filename = listBundles[m_downloaded].c_str();
@@ -194,25 +193,6 @@ void CViewInit::onUpdate()
 	break;
 	case CViewInit::InitScene:
 	{
-		if (m_spriteArchive != NULL)
-		{
-			m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 2048, 2048);
-
-			// get list sprite image
-			std::vector<std::string> sprites;
-
-			const io::IFileList *fileList = m_spriteArchive->getFileList();
-			for (int i = 0, n = fileList->getFileCount(); i < n; i++)
-			{
-				const char *fullFileame = fileList->getFullFileName(i).c_str();
-				const char *name = fileList->getFileName(i).c_str();
-
-				m_sprite->addFrame(name, fullFileame);
-			}
-
-			m_sprite->updateTexture();
-		}
-
 		initScene();
 		m_initState = CViewInit::Finished;
 	}

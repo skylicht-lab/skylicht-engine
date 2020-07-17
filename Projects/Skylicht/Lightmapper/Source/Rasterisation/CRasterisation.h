@@ -97,6 +97,7 @@ namespace Skylicht
 			CSH9 *m_bakeResult;
 
 			bool *m_bakedData;
+			bool *m_seamData;
 
 			int m_width;
 			int m_height;
@@ -154,7 +155,7 @@ namespace Skylicht
 				core::vector3df& outBinormal,
 				core::vector2di& lmPixel);
 
-			void fixSeamPixel();
+			void imageDilate();
 
 			bool moveNextPixel(core::vector2di& lmPixel);
 

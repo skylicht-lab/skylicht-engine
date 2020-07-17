@@ -9299,7 +9299,9 @@ static internal::Vector3 DecodePosition(const MeshDecl &meshDecl, uint32_t index
 {
 	XA_DEBUG_ASSERT(meshDecl.vertexPositionData);
 	XA_DEBUG_ASSERT(meshDecl.vertexPositionStride > 0);
-	return *((const internal::Vector3 *)&((const uint8_t *)meshDecl.vertexPositionData)[meshDecl.vertexPositionStride * index]);
+	internal::Vector3 position = *((const internal::Vector3 *)&((const uint8_t *)meshDecl.vertexPositionData)[meshDecl.vertexPositionStride * index]);
+	position *= meshDecl.scale;
+	return position;
 }
 
 static internal::Vector3 DecodeNormal(const MeshDecl &meshDecl, uint32_t index)

@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	CSTDThread::CSTDThread(IThreadCallback *callback):
+	CSTDThread::CSTDThread(IThreadCallback *callback) :
 		IThread(callback),
 		m_run(false)
 	{
@@ -39,9 +39,6 @@ namespace SkylichtSystem
 	CSTDThread::~CSTDThread()
 	{
 		stop();
-
-		delete m_thread;
-		m_thread = NULL;
 	}
 
 	void CSTDThread::update()
@@ -50,7 +47,9 @@ namespace SkylichtSystem
 			return;
 
 		// run thread
-		m_run = true;
+		m_run = m_callback->enableThreadLoop();
+
+		m_callback->runThread();
 
 		// callback
 		while (m_run)

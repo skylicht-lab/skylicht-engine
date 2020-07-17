@@ -33,7 +33,6 @@ namespace Skylicht
 	public:
 		enum EType
 		{
-			Lightmap,
 			LightmapArray,
 			VertexColor,
 			SH4,
@@ -41,7 +40,6 @@ namespace Skylicht
 		};
 
 		EType Type;
-		int LightmapIndex;
 
 		core::vector3df *SH;
 		ITexture *LightmapTexture;

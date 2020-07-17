@@ -179,7 +179,7 @@ namespace Skylicht
 		m_text = text;
 		int numUnicode = CStringImp::getUnicodeStringSize(text);
 
-		wchar_t *textw = new wchar_t[numUnicode];
+		wchar_t *textw = new wchar_t[numUnicode + 2];
 
 		CStringImp::convertUTF8ToUnicode(text, textw);
 		m_textw = textw;

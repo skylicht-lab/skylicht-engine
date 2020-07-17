@@ -1,8 +1,13 @@
 #pragma once
 
 #include "IApplicationEventReceiver.h"
+#include "Thread/IThread.h"
 
-class SampleLightmapUV : public IApplicationEventReceiver
+#include "UnwrapUV/CUnwrapUV.h"
+
+class SampleLightmapUV : 
+	public IApplicationEventReceiver,
+	public SkylichtSystem::IThreadCallback
 {
 private:
 	CScene *m_scene;
@@ -11,7 +16,22 @@ private:
 	CCamera *m_camera;
 	CCamera *m_guiCamera;
 
+	Lightmapper::CUnwrapUV m_unwrap;
+
+	CEntityPrefab *m_model;
+	CRenderMesh *m_renderMesh;
+	std::vector<CRenderMeshData*> m_allRenderers;
+
 	ITexture *m_UVChartsTexture;
+
+	SkylichtSystem::IThread *m_thread;
+
+	bool m_threadFinish;
+	bool m_initMeshUV;
+
+	CGlyphFont *m_font;
+	CGameObject *m_guiObject;
+	CGUIText *m_textInfo;
 public:
 	SampleLightmapUV();
 	virtual ~SampleLightmapUV();
@@ -31,4 +51,16 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
+
+	// SkylichtSystem::IThreadCallback implement
+	virtual bool enableThreadLoop()
+	{
+		return false;
+	}
+
+	virtual void runThread();
+
+	virtual void updateThread();
+
+	void updateMeshUV();
 };

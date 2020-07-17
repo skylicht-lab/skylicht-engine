@@ -106,13 +106,19 @@ namespace Skylicht
 				"BuildOutputMeshes"
 			};
 
-			printf("[CUnwrapUV] Progress %s - progress: %d\n", task[category], progress);
+			char log[512];
+			sprintf(log, "[CUnwrapUV] Progress %s - progress: %d", task[category], progress);
+			os::Printer::log(log);
+
+			CUnwrapUV *unwrap = (CUnwrapUV*)userData;
+			unwrap->writeLog(log);
+
 			return true;
 		}
 
 		CUnwrapUV::CUnwrapUV() :
 			m_imgUVCharts(NULL),
-			m_atlasCount(NULL)
+			m_atlasCount(0)
 		{
 			m_atlas = xatlas::Create();
 
@@ -148,7 +154,7 @@ namespace Skylicht
 			return -1;
 		}
 
-		bool CUnwrapUV::addMeshBuffer(IMeshBuffer *mb)
+		bool CUnwrapUV::addMeshBuffer(IMeshBuffer *mb, float scale)
 		{
 			xatlas::MeshDecl meshDecl;
 
@@ -172,6 +178,7 @@ namespace Skylicht
 			meshDecl.vertexCount = (uint32_t)vb->getVertexCount();
 			meshDecl.vertexPositionData = vtx + attibute->getOffset();
 			meshDecl.vertexPositionStride = vertexSize;
+			meshDecl.scale = scale;
 
 			attibute = vertexDescriptor->getAttributeBySemantic(video::EVAS_NORMAL);
 			if (attibute != NULL)
@@ -207,12 +214,12 @@ namespace Skylicht
 			return true;
 		}
 
-		bool CUnwrapUV::addMesh(CMesh *mesh)
+		bool CUnwrapUV::addMesh(CMesh *mesh, float scale)
 		{
 			for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
 			{
 				IMeshBuffer *mb = mesh->getMeshBuffer(i);
-				if (addMeshBuffer(mb) == false)
+				if (addMeshBuffer(mb, scale) == false)
 				{
 					return false;
 				}
@@ -310,6 +317,7 @@ namespace Skylicht
 					}
 				}
 
+				m_atlasCount = m_atlas->atlasCount;
 				m_imgUVCharts = new IImage*[m_atlas->atlasCount];
 
 				for (uint32_t i = 0; i < m_atlas->atlasCount; i++) {
@@ -370,7 +378,7 @@ namespace Skylicht
 
 				float *f = (float*)buffer;
 				f[0] = v.uv[0] / w;
-				f[1] = v.uv[1] / h;				
+				f[1] = v.uv[1] / h;
 			}
 
 			// write lightmap index
