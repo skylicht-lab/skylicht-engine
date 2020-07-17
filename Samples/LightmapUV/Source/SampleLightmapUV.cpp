@@ -3,7 +3,6 @@
 #include "SampleLightmapUV.h"
 
 #include "GridPlane/CGridPlane.h"
-#include "UnwrapUV/CUnwrapUV.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -14,15 +13,27 @@ void installApplication(const std::vector<std::string>& argv)
 SampleLightmapUV::SampleLightmapUV() :
 	m_scene(NULL),
 	m_camera(NULL),
-	m_UVChartsTexture(NULL)
+	m_model(NULL),
+	m_renderMesh(NULL),
+	m_threadFinish(false),
+	m_initMeshUV(false),
+	m_thread(NULL),
+	m_UVChartsTexture(NULL),
+	m_font(NULL),
+	m_guiObject(NULL),
+	m_textInfo(NULL)
 {
 
 }
 
 SampleLightmapUV::~SampleLightmapUV()
 {
+	if (m_thread != NULL)
+		delete m_thread;
+
 	getVideoDriver()->removeTexture(m_UVChartsTexture);
 
+	delete m_font;
 	delete m_forwardRP;
 	delete m_scene;
 }
@@ -36,6 +47,10 @@ void SampleLightmapUV::onInitApp()
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
+
+	// Load Font
+	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -60,7 +75,7 @@ void SampleLightmapUV::onInitApp()
 	m_camera = cameraObj->getComponent<CCamera>();
 	m_camera->setProjectionType(CCamera::Perspective);
 	m_camera->setPosition(core::vector3df(-10.0f, 5.0f, 10.0f));
-	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));	
 
 	// Direction lighting
 	CGameObject *lightObj = zone->createEmptyObject();
@@ -72,25 +87,18 @@ void SampleLightmapUV::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// 3D model
-	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
-	// CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
+	// m_model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
+	m_model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
 
-	scene::IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
-
-	if (model != NULL)
+	if (m_model != NULL)
 	{
 		CGameObject *renderObj = zone->createEmptyObject();
-		CRenderMesh *renderMesh = renderObj->addComponent<CRenderMesh>();
-		renderMesh->initFromPrefab(model);
 
-		// Get list default material
-		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(model);
+		m_renderMesh = renderObj->addComponent<CRenderMesh>();
+		m_renderMesh->initFromPrefab(m_model);
 
-		// Unwrap lightmap uv		
-		Lightmapper::CUnwrapUV unwrap;
-
-		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
-		std::vector<CWorldTransformData*>& transforms = renderMesh->getRenderTransforms();
+		std::vector<CRenderMeshData*>& renderers = m_renderMesh->getRenderers();
+		std::vector<CWorldTransformData*>& transforms = m_renderMesh->getRenderTransforms();
 
 		// hack for sponza mesh
 		int meshID = 0;
@@ -99,117 +107,38 @@ void SampleLightmapUV::onInitApp()
 			std::string name = transforms[meshID]->Name;
 			if (name == "celling_sponza")
 			{
-				unwrap.addMesh(renderData->getMesh(), 0.02f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.04f);
 			}
 			else if (name == "floor_sponza")
 			{
-				unwrap.addMesh(renderData->getMesh(), 0.02f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.04f);
 			}
 			else if (name == "wall_sponza")
 			{
-				unwrap.addMesh(renderData->getMesh(), 0.02f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.04f);
 			}
 			else if (name == "smallwall_sponza")
 			{
-				unwrap.addMesh(renderData->getMesh(), 0.01f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.04f);
 			}
 			else if (name == "top_sponza")
 			{
-				unwrap.addMesh(renderData->getMesh(), 0.01f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.01f);
 			}
 			else
 			{
 				// default mesh
-				unwrap.addMesh(renderData->getMesh(), 1.0f);
+				m_unwrap.addMesh(renderData->getMesh(), 1.0f);
 			}
 
 			meshID++;
 		}
 
-		// for (CRenderMeshData* renderData : renderers)		
-		//	unwrap.addMesh(renderData->getMesh(), 1.0f);
+		// save list renderer
+		m_allRenderers = renderers;
 
-		unwrap.generate(4096, 2.0f);
-		unwrap.generateUVImage();
-
-		// Write to bin folder output layout uv
-		char name[512];
-		sprintf(name, "mesh");
-		unwrap.writeUVToImage(name);
-
-		// Update lightmap uv to renderer
-		for (CRenderMeshData* renderData : renderers)
-		{
-			CMesh *mesh = renderData->getMesh();
-			for (u32 i = 0; i < mesh->getMeshBufferCount(); i++)
-			{
-				IMeshBuffer *mb = mesh->getMeshBuffer(i);
-
-				IVertexBuffer *vb = mb->getVertexBuffer(0);
-				IVertexDescriptor *vd = mb->getVertexDescriptor();
-
-				// alloc new vtx buffer (because current vtx buffer is on GPU Memory, that can't change)
-				CVertexBuffer<video::S3DVertex2TCoordsTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertex2TCoordsTangents>();
-
-				// copy vertex data
-				mh->copyVertices(
-					vb,
-					0,
-					getVideoDriver()->getVertexDescriptor(EVT_TANGENTS),
-					vertexBuffer,
-					0,
-					getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS),
-					false
-				);
-
-				// notify update vertex to GPU Memory
-				vertexBuffer->setHardwareMappingHint(EHM_STATIC);
-
-				// hold before replace vb
-				vb->grab();
-
-				// replace current vertex buffer
-				mb->setVertexBuffer(vertexBuffer, 0);
-				mb->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS));
-
-				// write uv lightmap
-				unwrap.writeUVToMeshBuffer(mb, mb, Lightmapper::CUnwrapUV::LIGHTMAP);
-
-				// notify change
-				mb->setDirty(scene::EBT_VERTEX);
-
-				// drop
-				vb->drop();
-				vertexBuffer->drop();
-			}
-		}
-
-		// test exporter
-		/*
-		CMeshManager::getInstance()->exportModel(
-			renderMesh->getEntities().pointer(),
-			renderMesh->getEntities().size(),
-			"../Assets/Sponza/Sponza.smesh");
-		*/
-
-		// Update material
-		core::array<IImage*> arrayTexture;
-		for (int i = 0, n = unwrap.getAtlasCount(); i < n; i++)
-		{
-			IImage *img = unwrap.getChartsImage(i);
-			arrayTexture.push_back(img);
-		}
-
-		// Texture array
-		m_UVChartsTexture = getVideoDriver()->getTextureArray(arrayTexture.pointer(), arrayTexture.size());
-
-		for (CMaterial *m : materials)
-		{
-			m->changeShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
-			m->setUniformTexture("uTexLightmap", m_UVChartsTexture);
-		}
-
-		renderMesh->initMaterial(materials);
+		// run thread
+		m_thread = SkylichtSystem::IThread::createThread(this);
 	}
 
 	// Render pipeline
@@ -219,10 +148,129 @@ void SampleLightmapUV::onInitApp()
 	CGameObject *guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
+
+	// create gui object
+	m_guiObject = zone->createEmptyObject();
+	CCanvas *canvas = m_guiObject->addComponent<CCanvas>();
+
+	m_font = new CGlyphFont();
+	m_font->setFont("Segoe UI Light", 25);
+
+	// create text
+	m_textInfo = canvas->createText(m_font);
+	m_textInfo->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+}
+
+void SampleLightmapUV::runThread()
+{
+	// generate uv in thread
+	m_unwrap.generate(2048, 1.0f);
+	m_unwrap.generateUVImage();
+
+	// write to bin folder output layout uv
+	char name[512];
+	sprintf(name, "mesh");
+	m_unwrap.writeUVToImage(name);
+
+	// call init mesh uv
+	m_initMeshUV = true;
+	m_threadFinish = true;
+}
+
+void SampleLightmapUV::updateMeshUV()
+{
+	scene::IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
+
+	// Update lightmap uv to renderer
+	for (CRenderMeshData* renderData : m_allRenderers)
+	{
+		CMesh *mesh = renderData->getMesh();
+		for (u32 i = 0; i < mesh->getMeshBufferCount(); i++)
+		{
+			IMeshBuffer *mb = mesh->getMeshBuffer(i);
+
+			IVertexBuffer *vb = mb->getVertexBuffer(0);
+			IVertexDescriptor *vd = mb->getVertexDescriptor();
+
+			// alloc new vtx buffer (because current vtx buffer is on GPU Memory, that can't change)
+			CVertexBuffer<video::S3DVertex2TCoordsTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertex2TCoordsTangents>();
+
+			// copy vertex data
+			mh->copyVertices(
+				vb,
+				0,
+				getVideoDriver()->getVertexDescriptor(EVT_TANGENTS),
+				vertexBuffer,
+				0,
+				getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS),
+				false
+			);
+
+			// notify update vertex to GPU Memory
+			vertexBuffer->setHardwareMappingHint(EHM_STATIC);
+
+			// hold before replace vb
+			vb->grab();
+
+			// replace current vertex buffer
+			mb->setVertexBuffer(vertexBuffer, 0);
+			mb->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS));
+
+			// write uv lightmap
+			m_unwrap.writeUVToMeshBuffer(mb, mb, Lightmapper::CUnwrapUV::LIGHTMAP);
+
+			// notify change
+			mb->setDirty(scene::EBT_VERTEX);
+
+			// drop
+			vb->drop();
+			vertexBuffer->drop();
+		}
+	}
+
+	// test exporter
+	CMeshManager::getInstance()->exportModel(
+		m_renderMesh->getEntities().pointer(),
+		m_renderMesh->getEntities().size(),
+		"../Assets/Sponza/Sponza.smesh");
+
+	// Update material
+	core::array<IImage*> arrayTexture;
+	for (int i = 0, n = m_unwrap.getAtlasCount(); i < n; i++)
+	{
+		IImage *img = m_unwrap.getChartsImage(i);
+		arrayTexture.push_back(img);
+	}
+
+	// Texture array
+	m_UVChartsTexture = getVideoDriver()->getTextureArray(arrayTexture.pointer(), arrayTexture.size());
+
+	// Get list default material
+	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(m_model);
+
+	for (CMaterial *m : materials)
+	{
+		m->changeShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
+		m->setUniformTexture("uTexLightmap", m_UVChartsTexture);
+	}
+
+	m_renderMesh->initMaterial(materials);
+}
+
+void SampleLightmapUV::updateThread()
+{
+
 }
 
 void SampleLightmapUV::onUpdate()
 {
+	// this gpu task should in main thread
+	if (m_initMeshUV == true)
+	{
+		updateMeshUV();
+		m_initMeshUV = false;
+	}
+
 	// update application
 	m_scene->update();
 }
@@ -230,10 +278,19 @@ void SampleLightmapUV::onUpdate()
 void SampleLightmapUV::onRender()
 {
 	// render 3D
-	m_forwardRP->render(NULL,
-		m_camera,
-		m_scene->getZone(0)->getEntityManager(),
-		core::recti());
+	if (m_threadFinish == true)
+	{
+		m_forwardRP->render(NULL,
+			m_camera,
+			m_scene->getZone(0)->getEntityManager(),
+			core::recti());
+
+		m_guiObject->setVisible(false);
+	}
+	else
+	{
+		m_textInfo->setText(m_unwrap.getLog());
+	}
 
 	// render 2D
 	CGraphics2D::getInstance()->render(m_guiCamera);
