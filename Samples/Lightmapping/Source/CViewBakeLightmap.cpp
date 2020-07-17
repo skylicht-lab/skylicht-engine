@@ -145,7 +145,7 @@ void CViewBakeLightmap::onUpdate()
 
 				IVertexBuffer *vtx = mb->getVertexBuffer();
 
-				S3DVertexTangents *vertices = (S3DVertexTangents*)vtx->getVertices();
+				S3DVertex2TCoordsTangents *vertices = (S3DVertex2TCoordsTangents*)vtx->getVertices();
 
 				core::vector3df positions[] = {
 					vertices[v1].Pos,
@@ -154,9 +154,9 @@ void CViewBakeLightmap::onUpdate()
 				};
 
 				core::vector2df uvs[] = {
-					vertices[v1].TCoords,
-					vertices[v2].TCoords,
-					vertices[v3].TCoords
+					core::vector2df(vertices[v1].Lightmap.X, vertices[v1].Lightmap.Y),
+					core::vector2df(vertices[v2].Lightmap.X, vertices[v2].Lightmap.Y),
+					core::vector2df(vertices[v3].Lightmap.X, vertices[v3].Lightmap.Y),
 				};
 
 				core::vector3df normals[] = {
@@ -170,6 +170,13 @@ void CViewBakeLightmap::onUpdate()
 					vertices[v2].Tangent,
 					vertices[v3].Tangent
 				};
+
+				for (int i = 0; i < 4; i++)
+				{
+					transform.transformVect(positions[i]);
+					transform.rotateVect(normals[i]);
+					transform.rotateVect(tangents[i]);
+				}
 
 				m_pixel = m_lmRasterize->setTriangle(positions, uvs, normals, tangents, pass);
 				m_lastTris = m_currentTris;
@@ -252,7 +259,7 @@ void CViewBakeLightmap::onUpdate()
 				m_lightBounce++;
 
 				// todo fix seam
-				m_lmRasterize->fixSeamPixel();
+				m_lmRasterize->imageDilate();
 
 				IVideoDriver *driver = getVideoDriver();
 
@@ -261,7 +268,7 @@ void CViewBakeLightmap::onUpdate()
 				core::dimension2du size(m_lmRasterize->getWidth(), m_lmRasterize->getHeight());
 				IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
 
-				ITexture *lightmapTexture = driver->addTexture("lightmap_bake", img);
+				ITexture *lightmapTexture = driver->getTextureArray(&img, 1);
 				if (lightmapTexture != NULL)
 				{
 					for (CRenderMesh *renderMesh : m_renderMesh)
@@ -273,7 +280,7 @@ void CViewBakeLightmap::onUpdate()
 								indirect = renderMesh->getGameObject()->addComponent<CIndirectLighting>();
 
 							indirect->setLightmap(lightmapTexture);
-							indirect->setIndirectLightingType(CIndirectLighting::Lightmap);
+							indirect->setIndirectLightingType(CIndirectLighting::LightmapArray);
 						}
 					}
 				}
