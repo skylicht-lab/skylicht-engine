@@ -58,7 +58,9 @@ namespace SkylichtSystem
 			return;
 
 		// todo run thread
-		m_run = true;
+		m_run = m_callback->enableThreadLoop();
+
+		m_callback->runThread();
 
 		// callback
 		while(m_run)

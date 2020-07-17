@@ -430,7 +430,7 @@ namespace irr
 			case ECF_R5G6B5:
 				colorformat = GL_RGB;
 				type = GL_UNSIGNED_SHORT_5_6_5;
-				internalformat = GL_RGB;
+				internalformat = GL_RGB565;
 				break;
 			case ECF_R8G8B8:
 				colorformat = GL_BGR;

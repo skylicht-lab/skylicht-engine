@@ -106,7 +106,13 @@ namespace Skylicht
 				"BuildOutputMeshes"
 			};
 
-			printf("[CUnwrapUV] Progress %s - progress: %d\n", task[category], progress);
+			char log[512];
+			sprintf(log, "[CUnwrapUV] Progress %s - progress: %d", task[category], progress);
+			os::Printer::log(log);
+
+			CUnwrapUV *unwrap = (CUnwrapUV*)userData;
+			unwrap->writeLog(log);
+
 			return true;
 		}
 
@@ -372,7 +378,7 @@ namespace Skylicht
 
 				float *f = (float*)buffer;
 				f[0] = v.uv[0] / w;
-				f[1] = v.uv[1] / h;				
+				f[1] = v.uv[1] / h;
 			}
 
 			// write lightmap index
