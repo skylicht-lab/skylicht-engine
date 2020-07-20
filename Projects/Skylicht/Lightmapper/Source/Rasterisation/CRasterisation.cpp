@@ -38,7 +38,7 @@ namespace Skylicht
 		{
 			int size = width * height;
 
-			m_bakedData = new bool[size];			
+			m_bakedData = new bool[size];
 
 			m_testBakedData = new unsigned char[size * 3];
 			m_lightmapData = new unsigned char[size * 3];
@@ -657,6 +657,9 @@ namespace Skylicht
 		{
 			int c = 3;
 
+			u32 sizeLightmapImage = m_width * m_height * 3;
+			unsigned char *tempData = new unsigned char[sizeLightmapImage];
+
 			for (int y = 0; y < m_height; y++)
 			{
 				for (int x = 0; x < m_width; x++)
@@ -711,10 +714,13 @@ namespace Skylicht
 
 					for (int i = 0; i < c; i++)
 					{
-						m_lightmapData[(y * m_width + x) * c + i] = (u8)color[i];
+						tempData[(y * m_width + x) * c + i] = (u8)color[i];
 					}
 				}
 			}
+
+			memcpy(m_lightmapData, tempData, sizeLightmapImage);
+			delete tempData;
 		}
 	}
 }

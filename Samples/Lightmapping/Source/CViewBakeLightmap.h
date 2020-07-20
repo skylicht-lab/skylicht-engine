@@ -7,6 +7,8 @@
 #include "Lightmapper/CSH9.h"
 #include "Rasterisation/CRasterisation.h"
 
+#define MAX_LIGHTMAP_ATLAS 40
+
 class CViewBakeLightmap : public CView
 {
 protected:
@@ -32,9 +34,14 @@ protected:
 	u32 m_currentTris;
 	u32 m_lastTris;
 
+	u32 m_lightmapSize;
+
 	core::vector2di m_pixel;
 
-	Lightmapper::CRasterisation *m_lmRasterize;
+	Lightmapper::CRasterisation *m_lmRasterize[MAX_LIGHTMAP_ATLAS];
+	int m_numberRasterize;
+
+	Lightmapper::CRasterisation *m_currentRasterisation;
 
 	std::vector<Lightmapper::CSH9> m_out;
 
@@ -58,4 +65,8 @@ public:
 	virtual void onRender();
 
 	virtual void onPostRender();
+
+protected:
+
+	Lightmapper::CRasterisation* createGetLightmapRasterisation(int index);
 };
