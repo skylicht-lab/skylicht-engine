@@ -94,9 +94,7 @@ namespace Skylicht
 			};
 
 		protected:
-			CSH9 *m_bakeResult;
-
-			bool *m_bakedData;			
+			bool *m_bakedData;
 
 			int m_width;
 			int m_height;
