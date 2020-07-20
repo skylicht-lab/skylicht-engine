@@ -39,8 +39,7 @@ namespace Skylicht
 			int size = width * height;
 
 			m_bakeResult = new CSH9[size];
-			m_bakedData = new bool[size];
-			m_seamData = new bool[size];
+			m_bakedData = new bool[size];			
 
 			m_testBakedData = new unsigned char[size * 3];
 			m_lightmapData = new unsigned char[size * 3];
@@ -48,7 +47,6 @@ namespace Skylicht
 			for (int i = 0; i < size; i++)
 			{
 				m_bakedData[i] = false;
-				m_seamData[i] = false;
 
 				m_testBakedData[i * 3] = 0;
 				m_testBakedData[i * 3 + 1] = 0;
