@@ -38,7 +38,6 @@ namespace Skylicht
 		{
 			int size = width * height;
 
-			m_bakeResult = new CSH9[size];
 			m_bakedData = new bool[size];			
 
 			m_testBakedData = new unsigned char[size * 3];
@@ -60,7 +59,6 @@ namespace Skylicht
 
 		CRasterisation::~CRasterisation()
 		{
-			delete[] m_bakeResult;
 			delete[] m_bakedData;
 			delete[] m_testBakedData;
 			delete[] m_lightmapData;
