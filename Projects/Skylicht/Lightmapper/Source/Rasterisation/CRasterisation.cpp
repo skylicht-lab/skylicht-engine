@@ -722,5 +722,125 @@ namespace Skylicht
 			memcpy(m_lightmapData, tempData, sizeLightmapImage);
 			delete tempData;
 		}
+
+		void CRasterisation::save(CMemoryStream* stream)
+		{
+			int size = m_width * m_height;
+
+			// write size
+			stream->writeInt(m_width);
+			stream->writeInt(m_height);
+
+			// write current task
+			stream->writeInt((int)m_currentPass);
+
+			stream->writeInt(m_uvMin.X);
+			stream->writeInt(m_uvMin.Y);
+
+			stream->writeInt(m_uvMax.X);
+			stream->writeInt(m_uvMax.Y);
+
+			for (int i = 0; i < 3; i++)
+			{
+				stream->writeFloatArray(&m_uvf[i].X, 3);
+				stream->writeFloatArray(&m_position[i].X, 3);
+				stream->writeFloatArray(&m_uv[i].X, 3);
+				stream->writeFloatArray(&m_normal[i].X, 3);
+				stream->writeFloatArray(&m_tangent[i].X, 3);
+			}
+
+			// write queue pixels
+			u32 queuePixelsCount = m_bakePixels.size();
+			stream->writeUInt(queuePixelsCount);
+
+			for (u32 i = 0; i < queuePixelsCount; i++)
+			{
+				SBakePixel& p = m_bakePixels[i];
+
+				stream->writeInt(p.Pixel.X);
+				stream->writeInt(p.Pixel.Y);
+
+				stream->writeFloatArray(&p.Position.X, 3);
+				stream->writeFloatArray(&p.Normal.X, 3);
+				stream->writeFloatArray(&p.Tangent.X, 3);
+				stream->writeFloatArray(&p.Binormal.X, 3);
+
+				core::vector3df* sh = p.SH.getValue();
+				for (int j = 0; j < 9; j++)
+					stream->writeFloatArray(&sh[j].X, 3);
+			}
+
+			// write data
+			stream->writeData(m_bakedData, sizeof(bool) * size);
+			stream->writeData(m_testBakedData, size * 3);
+			stream->writeData(m_lightmapData, size * 3);
+		}
+
+		void CRasterisation::load(CMemoryStream* stream)
+		{
+			// read size
+			m_width = stream->readInt();
+			m_height = stream->readInt();
+
+			int size = m_width * m_height;
+
+			// read current task
+			m_currentPass = (ERasterPass)stream->readInt();
+
+			m_uvMin.X = stream->readInt();
+			m_uvMin.Y = stream->readInt();
+
+			m_uvMax.X = stream->readInt();
+			m_uvMax.Y = stream->readInt();
+
+			for (int i = 0; i < 3; i++)
+			{
+				stream->readFloatArray(&m_uvf[i].X, 3);
+				stream->readFloatArray(&m_position[i].X, 3);
+				stream->readFloatArray(&m_uv[i].X, 3);
+				stream->readFloatArray(&m_normal[i].X, 3);
+				stream->readFloatArray(&m_tangent[i].X, 3);
+			}
+
+			// read bake queue
+			m_bakePixels.clear();
+			u32 queuePixelsCount = stream->readUInt();
+			for (u32 i = 0; i < queuePixelsCount; i++)
+			{
+				m_bakePixels.push_back(SBakePixel());
+				SBakePixel& p = m_bakePixels[i];
+
+				p.Pixel.X = stream->readInt();
+				p.Pixel.Y = stream->readInt();
+
+				stream->readFloatArray(&p.Position.X, 3);
+				stream->readFloatArray(&p.Normal.X, 3);
+				stream->readFloatArray(&p.Tangent.X, 3);
+				stream->readFloatArray(&p.Binormal.X, 3);
+
+				core::vector3df* sh = p.SH.getValue();
+				for (int j = 0; j < 9; j++)
+					stream->readFloatArray(&sh[j].X, 3);
+			}
+
+			// read data
+			if (m_bakedData != NULL)
+				delete[] m_bakedData;
+
+			m_bakedData = new bool[size];
+			stream->readData(m_bakedData, sizeof(bool) * size);
+
+			if (m_testBakedData != NULL)
+				delete[] m_testBakedData;
+
+			m_testBakedData = new unsigned char[size * 3];
+			stream->readData(m_testBakedData, size * 3);
+
+			if (m_lightmapData != NULL)
+				delete[] m_lightmapData;
+
+			m_lightmapData = new unsigned char[size * 3];
+			stream->readData(m_lightmapData, size * 3);
+		}
 	}
 }
