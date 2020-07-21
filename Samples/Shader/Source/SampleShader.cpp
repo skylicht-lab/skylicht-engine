@@ -246,6 +246,9 @@ void SampleShader::initTestDissoveShader(CEntityPrefab *prefab, ArrayMaterial& m
 
 				// replace
 				mesh->replaceMeshBuffer(i, newBuffer);
+
+				// remove handle this buffer
+				newBuffer->drop();
 			}
 		}
 	}
