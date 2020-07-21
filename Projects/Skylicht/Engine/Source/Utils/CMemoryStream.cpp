@@ -144,7 +144,7 @@ namespace Skylicht
 		m_size += size;
 	}
 
-	void CMemoryStream::writeFloatArray(float *f, int count)
+	void CMemoryStream::writeFloatArray(const float *f, int count)
 	{
 		int size = sizeof(float) * count;
 		autoGrow(size);

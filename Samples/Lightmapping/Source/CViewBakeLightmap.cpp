@@ -12,9 +12,18 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_currentTris(0),
 	m_lastTris(99999),
 	m_bakeCameraObject(NULL),
-	m_lightBounce(0)
+	m_lightBounce(0),
+	m_numberRasterize(0),
+	m_currentRasterisation(NULL),
+	m_lightmapSize(2048),
+	m_timeBeginBake(0),
+	m_timeSpentFromLastSave(0),
+	m_numRenderers(0),
+	m_numIndices(0),
+	m_numVertices(0)
 {
-	m_lmRasterize = new Lightmapper::CRasterisation(512, 512);
+	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
+		m_lmRasterize[i] = NULL;
 }
 
 CViewBakeLightmap::~CViewBakeLightmap()
@@ -22,7 +31,39 @@ CViewBakeLightmap::~CViewBakeLightmap()
 	m_guiObject->remove();
 
 	delete m_font;
-	delete m_lmRasterize;
+
+	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
+	{
+		if (m_lmRasterize[i] != NULL)
+		{
+			delete m_lmRasterize[i];
+			m_lmRasterize[i] = NULL;
+		}
+	}
+}
+
+Lightmapper::CRasterisation *CViewBakeLightmap::createGetLightmapRasterisation(int index)
+{
+	if (m_lmRasterize[index] != NULL)
+		return m_lmRasterize[index];
+
+	m_lmRasterize[index] = new Lightmapper::CRasterisation(m_lightmapSize, m_lightmapSize);
+
+	if (index + 1 > m_numberRasterize)
+		m_numberRasterize = index + 1;
+
+	return m_lmRasterize[index];
+}
+
+int CViewBakeLightmap::getRasterisationIndex(Lightmapper::CRasterisation *raster)
+{
+	for (int i = 0; i < m_numberRasterize; i++)
+	{
+		if (m_lmRasterize[i] == raster)
+			return i;
+	}
+
+	return -1;
 }
 
 void CViewBakeLightmap::onInit()
@@ -44,6 +85,8 @@ void CViewBakeLightmap::onInit()
 			std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
 			for (CRenderMeshData *r : renderers)
 			{
+				m_numRenderers++;
+
 				if (r->isSkinnedMesh() == false)
 				{
 					core::matrix4 transform;
@@ -63,6 +106,10 @@ void CViewBakeLightmap::onInit()
 							// add mesh buffer, that will bake lighting
 							m_meshBuffers.push_back(mb);
 							m_meshTransforms.push_back(transform);
+
+							// compute for verify load/save progress							
+							m_numIndices += mb->getIndexBuffer()->getIndexCount();
+							m_numVertices += mb->getVertexBuffer()->getVertexCount();
 						}
 					}
 				}
@@ -86,16 +133,20 @@ void CViewBakeLightmap::onInit()
 	m_textInfo->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
 
 	m_timeBeginBake = os::Timer::getRealTime();
+
+	// load last progress to continue
+	loadProgress();
 }
 
 void CViewBakeLightmap::onDestroy()
 {
-
+	// save progress to continue next time
+	saveProgress();
 }
 
 void CViewBakeLightmap::onUpdate()
 {
-	u32 deltaTime = os::Timer::getRealTime() - m_timeBeginBake;
+	u32 deltaTime = (os::Timer::getRealTime() - m_timeBeginBake) + m_timeSpentFromLastSave;
 
 	if (m_lightBounce == 0)
 		CDeferredRP::enableRenderIndirect(false);
@@ -113,8 +164,9 @@ void CViewBakeLightmap::onUpdate()
 			u32 numTris = idx->getIndexCount() / 3;
 
 			char status[512];
-			sprintf(status, "LIGHTMAPPING (%d/%d):\n\n- Bake step: %d/%d\n- Triangle: %d/%d\n- Time: %d seconds",
+			sprintf(status, "LIGHTMAPPING (%d/%d):\n\n- MeshBuffer: %d/%d\n- Bake step: %d/%d\n- Triangle: %d/%d\n- Time: %d seconds",
 				m_lightBounce + 1, s_numLightBounce,
+				m_currentMB + 1, (int)m_meshBuffers.size(),
 				m_currentPass + 1, 7,
 				m_currentTris, numTris,
 				deltaTime / 1000);
@@ -178,7 +230,11 @@ void CViewBakeLightmap::onUpdate()
 					transform.rotateVect(tangents[i]);
 				}
 
-				m_pixel = m_lmRasterize->setTriangle(positions, uvs, normals, tangents, pass);
+				int lmIndex = (int)vertices[v1].Lightmap.Z;
+				m_currentRasterisation = createGetLightmapRasterisation(lmIndex);
+
+				m_pixel = m_currentRasterisation->setTriangle(positions, uvs, normals, tangents, pass);
+
 				m_lastTris = m_currentTris;
 			}
 
@@ -190,13 +246,13 @@ void CViewBakeLightmap::onUpdate()
 			bool forceBake = false;
 
 			// sampling pixel
-			m_lmRasterize->samplingTrianglePosition(outPos, outNormal, outTangent, outBinormal, m_pixel);
+			m_currentRasterisation->samplingTrianglePosition(outPos, outNormal, outTangent, outBinormal, m_pixel);
 
 			// next pixel
-			m_lmRasterize->moveNextPixel(m_pixel);
+			m_currentRasterisation->moveNextPixel(m_pixel);
 
 			// finish
-			if (m_lmRasterize->isFinished(m_pixel))
+			if (m_currentRasterisation->isFinished(m_pixel))
 				m_currentTris++;
 
 			// go next buffer
@@ -211,7 +267,7 @@ void CViewBakeLightmap::onUpdate()
 			}
 
 			// bake indirect pixels
-			core::array<SBakePixel>& listPixels = m_lmRasterize->getBakePixelQueue();
+			core::array<SBakePixel>& listPixels = m_currentRasterisation->getBakePixelQueue();
 			if (listPixels.size() == CLightmapper::getNumThread() || forceBake == true)
 			{
 				int n = (int)listPixels.size();
@@ -228,6 +284,7 @@ void CViewBakeLightmap::onUpdate()
 				CContext *context = CContext::getInstance();
 				CScene *scene = context->getScene();
 
+				// bake lighting color
 				CLightmapper::getInstance()->bakeAtPosition(
 					m_bakeCameraObject->getComponent<CCamera>(),
 					context->getRenderPipeline(),
@@ -241,8 +298,8 @@ void CViewBakeLightmap::onUpdate()
 					5
 				);
 
-				// bake
-				m_lmRasterize->flushPixel(m_out);
+				// write result to image
+				m_currentRasterisation->flushPixel(m_out);
 			}
 		}
 		else
@@ -258,19 +315,29 @@ void CViewBakeLightmap::onUpdate()
 			{
 				m_lightBounce++;
 
-				// todo fix seam
-				m_lmRasterize->imageDilate();
-
 				IVideoDriver *driver = getVideoDriver();
+				core::array<IImage*> lightmapImages;
 
-				unsigned char *data = m_lmRasterize->getLightmapData();
+				core::dimension2du size(m_lightmapSize, m_lightmapSize);
 
-				core::dimension2du size(m_lmRasterize->getWidth(), m_lmRasterize->getHeight());
-				IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+				for (int i = 0; i < m_numberRasterize; i++)
+				{
+					// todo fix seam
+					m_lmRasterize[i]->imageDilate();
 
-				ITexture *lightmapTexture = driver->getTextureArray(&img, 1);
+					// lighting data
+					unsigned char *data = m_lmRasterize[i]->getLightmapData();
+
+					// create lightmap image					
+					IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+					lightmapImages.push_back(img);
+				}
+
+				// init lightmap texture array
+				ITexture* lightmapTexture = driver->getTextureArray(lightmapImages.pointer(), lightmapImages.size());
 				if (lightmapTexture != NULL)
 				{
+					// bind lightmap texture as indirect lighting
 					for (CRenderMesh *renderMesh : m_renderMesh)
 					{
 						if (renderMesh->getGameObject()->isStatic() == true)
@@ -285,34 +352,50 @@ void CViewBakeLightmap::onUpdate()
 					}
 				}
 
+				// write output to png
 				bool testWriteFile = true;
-
 				if (testWriteFile)
 				{
-					char outFileName[512];
-					sprintf(outFileName, "LightMapRasterize_%d.png", m_lightBounce);
-					driver->writeImageToFile(img, outFileName);
+					for (int i = 0; i < m_numberRasterize; i++)
+					{
+						char outFileName[512];
+						sprintf(outFileName, "LightMapRasterize_bounce_%d_%d.png", m_lightBounce, i);
+						driver->writeImageToFile(lightmapImages[i], outFileName);
+					}
 				}
 
-				img->drop();
+				for (int i = 0; i < m_numberRasterize; i++)
+				{
+					lightmapImages[i]->drop();
+					lightmapImages[i] = NULL;
+				}
 
+				// write debug bake to png
 				if (testWriteFile)
 				{
-					data = m_lmRasterize->getTestBakeImage();
-					img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+					for (int i = 0; i < m_numberRasterize; i++)
+					{
+						// debug data
+						unsigned char *data = m_lmRasterize[i]->getTestBakeImage();
+						IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
 
-					char outFileName[512];
-					sprintf(outFileName, "LightMapRasterize_debug_%d.png", m_lightBounce);
-					driver->writeImageToFile(img, outFileName);
-					img->drop();
+						char outFileName[512];
+						sprintf(outFileName, "LightMapRasterize_debug_bounce_%d_%d.png", m_lightBounce, i);
+						driver->writeImageToFile(img, outFileName);
+						img->drop();
+					}
 				}
 
-				m_lmRasterize->resetBake();
+				// clear reset data for next bounce bake
+				for (int i = 0; i < m_numberRasterize; i++)
+					m_lmRasterize[i]->resetBake();
 
 				if (m_lightBounce >= s_numLightBounce)
 				{
+					// enable render indirect
 					CDeferredRP::enableRenderIndirect(true);
 
+					// switch to demo view
 					CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 				}
 				else
@@ -322,6 +405,7 @@ void CViewBakeLightmap::onUpdate()
 					m_currentMB = 0;
 					m_currentTris = 0;
 					m_lastTris = 9999;
+					m_currentRasterisation = NULL;
 				}
 			}
 
@@ -345,4 +429,133 @@ void CViewBakeLightmap::onRender()
 void CViewBakeLightmap::onPostRender()
 {
 
+}
+
+void CViewBakeLightmap::saveProgress()
+{
+	// init 10mb (auto grow later)
+	CMemoryStream *stream = new CMemoryStream(10 * 1024 * 1024);
+
+	stream->writeUInt((u32)getVideoDriver()->getDriverType());
+
+	stream->writeUInt(m_numRenderers);
+	stream->writeUInt(m_numIndices);
+	stream->writeUInt(m_numVertices);
+	stream->writeUInt(m_lightmapSize);
+	stream->writeUInt(m_meshBuffers.size());
+
+	stream->writeInt(m_lightBounce);
+	stream->writeInt(m_currentPass);
+	stream->writeInt(m_currentMB);
+	stream->writeInt(m_currentTris);
+	stream->writeInt(m_lastTris);
+
+	stream->writeInt(m_numberRasterize);
+	for (int i = 0; i < m_numberRasterize; i++)
+		m_lmRasterize[i]->save(stream);
+
+	stream->writeInt(getRasterisationIndex(m_currentRasterisation));
+
+	io::IWriteFile *file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile("LightmapProgress.dat");
+	file->write(stream->getData(), stream->getSize());
+	file->drop();
+}
+
+void CViewBakeLightmap::loadProgress()
+{
+	io::IReadFile *file = getIrrlichtDevice()->getFileSystem()->createAndOpenFile("LightmapProgress.dat");
+	if (file != NULL)
+	{
+		u32 fileSize = file->getSize();
+		unsigned char *data = new unsigned char[fileSize];
+		file->read(data, fileSize);
+
+		CMemoryStream *stream = new CMemoryStream(data, fileSize);
+
+		u32 driverType = (u32)getVideoDriver()->getDriverType();
+
+		u32 readDriverType = stream->readUInt();
+		u32 numRenderers = stream->readUInt();
+		u32 numIndices = stream->readUInt();
+		u32 numVertices = stream->readUInt();
+		u32 lmSize = stream->readUInt();
+		u32 numMeshBuffer = stream->readUInt();
+
+		if (driverType != driverType ||
+			numRenderers != m_numRenderers ||
+			numIndices != m_numIndices ||
+			numVertices != m_numVertices ||
+			numMeshBuffer != m_meshBuffers.size() ||
+			lmSize != m_lightmapSize)
+		{
+			// broken progress
+			file->drop();
+			return;
+		}
+
+		m_lightBounce = stream->readInt();
+		m_currentPass = stream->readInt();
+		m_currentMB = stream->readInt();
+		m_currentTris = stream->readInt();
+		m_lastTris = stream->readInt();
+
+		int m_numberRasterize = stream->readInt();
+		for (int i = 0; i < m_numberRasterize; i++)
+		{
+			Lightmapper::CRasterisation *raster = createGetLightmapRasterisation(i);
+			raster->load(stream);
+		}
+
+		int rasterIndex = stream->readInt();
+		if (rasterIndex == -1)
+			m_currentRasterisation = NULL;
+		m_currentRasterisation = m_lmRasterize[rasterIndex];
+
+		delete stream;
+		delete data;
+
+		file->drop();
+
+		// need load current lightmap
+		if (m_lightBounce >= 1)
+		{
+			std::vector<std::string> listTextures;
+
+			for (int i = 0; i < m_numberRasterize; i++)
+			{
+				char lightmapName[512];
+				sprintf(lightmapName, "LightMapRasterize_bounce_%d_%d.png", m_lightBounce, i);
+				listTextures.push_back(lightmapName);
+			}
+
+			ITexture *lightmapTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
+			if (lightmapTexture != NULL)
+			{
+				// bind lightmap texture as indirect lighting
+				for (CRenderMesh *renderMesh : m_renderMesh)
+				{
+					if (renderMesh->getGameObject()->isStatic() == true)
+					{
+						CIndirectLighting *indirect = renderMesh->getGameObject()->getComponent<CIndirectLighting>();
+						if (indirect == NULL)
+							indirect = renderMesh->getGameObject()->addComponent<CIndirectLighting>();
+
+						indirect->setLightmap(lightmapTexture);
+						indirect->setIndirectLightingType(CIndirectLighting::LightmapArray);
+					}
+				}
+			}
+
+			// finish
+			if (m_lightBounce >= s_numLightBounce &&
+				m_currentPass >= (int)CRasterisation::PassCount)
+			{
+				// enable render indirect
+				CDeferredRP::enableRenderIndirect(true);
+
+				// switch to demo view
+				CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+			}
+		}
+	}
 }
