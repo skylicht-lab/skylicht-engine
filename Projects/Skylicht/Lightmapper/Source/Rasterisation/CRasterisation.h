@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Lightmapper/CSH9.h"
 
+#include "Utils/CMemoryStream.h"
+
 namespace Skylicht
 {
 	namespace Lightmapper
@@ -194,6 +196,9 @@ namespace Skylicht
 
 			void flushPixel(std::vector<CSH9>& bakeResults);
 
+			void save(CMemoryStream* stream);
+
+			void load(CMemoryStream* stream);
 		};
 	}
 }
