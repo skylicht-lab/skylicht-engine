@@ -22,7 +22,12 @@ protected:
 	CGlyphFont *m_font;
 	CGUIText *m_textInfo;
 
+	u32 m_numRenderers;
+	u32 m_numIndices;
+	u32 m_numVertices;
+
 	u32 m_timeBeginBake;
+	u32 m_timeSpentFromLastSave;
 
 	static u32 s_numLightBounce;
 
@@ -69,4 +74,9 @@ public:
 protected:
 
 	Lightmapper::CRasterisation* createGetLightmapRasterisation(int index);
+	int getRasterisationIndex(Lightmapper::CRasterisation *raster);
+
+public:
+	void saveProgress();
+	void loadProgress();
 };

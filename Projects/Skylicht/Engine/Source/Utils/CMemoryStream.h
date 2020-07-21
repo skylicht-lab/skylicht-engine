@@ -56,7 +56,7 @@ namespace Skylicht
 		void writeFloat(float data);
 		void writeDouble(double data);
 		void writeString(const std::string& s);
-		void writeFloatArray(float *f, int count);
+		void writeFloatArray(const float *f, int count);
 
 		unsigned int readData(void* data, unsigned int size);
 

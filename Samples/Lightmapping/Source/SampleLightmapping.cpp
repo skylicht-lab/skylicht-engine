@@ -4,6 +4,7 @@
 #include "ViewManager/CViewManager.h"
 #include "SampleLightmapping.h"
 #include "CViewInit.h"
+#include "CViewBakeLightmap.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
