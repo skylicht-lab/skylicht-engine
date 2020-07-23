@@ -786,7 +786,6 @@ void CNullDriver::addTexture(video::ITexture* texture)
 	}
 }
 
-
 //! looks if the image is already loaded
 video::ITexture* CNullDriver::findTexture(const io::path& filename)
 {
@@ -842,7 +841,10 @@ ITexture* CNullDriver::addTexture(const core::dimension2d<u32>& size,
 	return t;
 }
 
-
+IRWBuffer* CNullDriver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements)
+{
+	return NULL;
+}
 
 //! returns a device dependent texture from a software surface (IImage)
 //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
@@ -2676,7 +2678,6 @@ bool CNullDriver::setClipPlane(u32 index, const core::plane3df& plane, bool enab
 {
 	return false;
 }
-
 
 //! Enable/disable a clipping plane.
 void CNullDriver::enableClipPlane(u32 index, bool enable)
