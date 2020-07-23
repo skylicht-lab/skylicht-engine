@@ -1,0 +1,42 @@
+// Copyright (C) 2020 Pham Hong Duc
+// This file is part of the "Skylicht Engine"
+// Upgrade GPU Compute Shader feature
+
+#ifndef __IRR_IRW_BUFFER_H_INCLUDED__
+#define __IRR_IRW_BUFFER_H_INCLUDED__
+
+#include "IrrCompileConfig.h"
+
+#include "IReferenceCounted.h"
+#include "IImage.h"
+#include "dimension2d.h"
+#include "EDriverTypes.h"
+#include "path.h"
+#include "matrix4.h"
+
+namespace irr
+{
+	namespace video
+	{
+		class IRWBuffer : public virtual IReferenceCounted
+		{
+		public:
+			IRWBuffer(ECOLOR_FORMAT format, u32 numElements) :
+				DriverType(EDT_NULL),
+				Format(format),
+				NumElements(numElements)
+			{
+			}
+
+			E_DRIVER_TYPE getDriverType() const { return DriverType; };
+
+		protected:
+
+			E_DRIVER_TYPE DriverType;
+			ECOLOR_FORMAT Format;
+			u32 NumElements;
+		};
+	}
+}
+
+#endif

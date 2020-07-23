@@ -22,58 +22,30 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CSH9.h"
-#include "Camera/CCamera.h"
-#include "RenderPipeline/IRenderPipeline.h"
-#include "Entity/CEntityManager.h"
-
-#include "CBaker.h"
-
-#define MAX_NUM_THREAD	120
+#include "pch.h"
+#include "CGPUBaker.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CMTBaker
+		CGPUBaker::CGPUBaker()
 		{
-		protected:
-			video::ITexture *m_radiance;
+			m_shBuffer = getVideoDriver()->createRWBuffer(video::ECF_A32B32G32R32F, MAX_NUM_THREAD * 9);
+		}
 
-			CSH9 m_sh[MAX_NUM_THREAD];
+		CGPUBaker::~CGPUBaker()
+		{
+			if (m_shBuffer != NULL)
+				m_shBuffer->drop();
+		}
 
-			core::matrix4 m_toTangentSpace[MAX_NUM_THREAD * NUM_FACES];
+		bool CGPUBaker::canUseGPUBaker()
+		{
+			if (getVideoDriver()->getDriverType() == video::EDT_DIRECT3D11 && m_shBuffer != NULL)
+				return true;
 
-			float m_weightSum;
-
-		public:
-			CMTBaker();
-
-			virtual ~CMTBaker();
-
-			virtual void bake(CCamera *camera,
-				IRenderPipeline* rp,
-				CEntityManager* entityMgr,
-				const core::vector3df* position,
-				const core::vector3df* normal,
-				const core::vector3df* tangent,
-				const core::vector3df* binormal,
-				int count,
-				int numFace);
-
-			virtual void computeSH(int count, int numFace);
-
-			inline int getMaxMT()
-			{
-				return MAX_NUM_THREAD;
-			}
-
-			const CSH9& getSH(int i)
-			{
-				return m_sh[i];
-			}
-		};
+			return false;
+		}
 	}
 }

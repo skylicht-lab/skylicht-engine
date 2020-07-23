@@ -34,7 +34,8 @@ namespace Skylicht
 
 		CLightmapper::CLightmapper() :
 			m_singleBaker(NULL),
-			m_multiBaker(NULL)
+			m_multiBaker(NULL),
+			m_gpuBaker(NULL)
 		{
 
 		}
@@ -46,6 +47,9 @@ namespace Skylicht
 
 			if (m_multiBaker != NULL)
 				delete m_multiBaker;
+
+			if (m_gpuBaker != NULL)
+				delete m_gpuBaker;
 		}
 
 		void CLightmapper::initBaker(u32 hemisphereBakeSize)
@@ -56,10 +60,14 @@ namespace Skylicht
 			if (m_multiBaker != NULL)
 				delete m_multiBaker;
 
+			if (m_gpuBaker != NULL)
+				delete m_gpuBaker;
+
 			s_hemisphereBakeSize = hemisphereBakeSize;
 
 			m_singleBaker = new CBaker();
 			m_multiBaker = new CMTBaker();
+			m_gpuBaker = new CGPUBaker();
 		}
 
 		const CSH9& CLightmapper::bakeAtPosition(
@@ -90,14 +98,21 @@ namespace Skylicht
 			int numFace)
 		{
 			out.clear();
-
+			
 			if (m_multiBaker == NULL)
 			{
 				os::Printer::log("[CLightmapper::bakeAtPosition] Need call initBaker first");
 				return;
 			}
 
-			int maxMT = m_multiBaker->getMaxMT();
+			// default use multi thread bakder
+			CMTBaker *baker = m_multiBaker;
+
+			// switch gpu if supported
+			if (m_gpuBaker->canUseGPUBaker() == true)
+				baker = m_gpuBaker;
+
+			int maxMT = baker->getMaxMT();
 			int current = 0;
 
 			while (current < count)
@@ -106,7 +121,7 @@ namespace Skylicht
 				numMT = core::min_(numMT, maxMT);
 
 				// bake and get SH result
-				m_multiBaker->bake(camera,
+				baker->bake(camera,
 					rp,
 					entityMgr,
 					position + current,
@@ -117,7 +132,7 @@ namespace Skylicht
 					numFace);
 
 				for (int i = 0; i < numMT; i++)
-					out.push_back(m_multiBaker->getSH(i));
+					out.push_back(baker->getSH(i));
 
 				current += numMT;
 			}

@@ -21,7 +21,7 @@
 #include "CD3D11Texture.h"
 #include "CD3D11HardwareBuffer.h"
 #include "CD3D11VideoRT.h"
-
+#include "CD3D11RWBuffer.h"
 
 inline void unpack_texureBlendFunc(irr::video::E_BLEND_FACTOR &srcFact, irr::video::E_BLEND_FACTOR &dstFact,
 	irr::video::E_MODULATE_FUNC &modulo, irr::u32& alphaSource, const irr::f32 param)
@@ -1410,6 +1410,12 @@ namespace irr
 			IImage *imageZ2)
 		{
 			return new CD3D11TextureCube(this, "TextureCube", imageX1, imageX2, imageY1, imageY2, imageZ1, imageZ2);
+		}
+
+		//! creates a buffer stored on gpu
+		IRWBuffer* CD3D11Driver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements)
+		{
+			return new CD3D11RWBuffer(this, format, numElements);
 		}
 
 		void CD3D11Driver::setViewPort(const core::rect<s32>& area)
