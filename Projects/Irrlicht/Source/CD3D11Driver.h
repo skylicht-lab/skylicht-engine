@@ -61,6 +61,7 @@ namespace video
 		friend class CD3D11TextureCube;
 		friend class CD3D11TextureArray;
 		friend class CD3D11VideoRT;
+		friend class CD3D11RWBuffer;
 
 		//! constructor
 		CD3D11Driver(const irr::SIrrlichtCreationParameters& params,
@@ -219,6 +220,9 @@ namespace video
 			IImage *imageZ2);
 
 		virtual ITexture* getTextureArray(IImage** images, u32 num);
+
+		//! creates a buffer stored on gpu
+		virtual IRWBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements);
 
 		//! Clears the ZBuffer.
 		virtual void clearZBuffer();

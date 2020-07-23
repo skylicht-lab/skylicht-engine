@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CGameSingleton.h"
 #include "CBaker.h"
 #include "CMTBaker.h"
+#include "CGPUBaker.h"
 #include "Components/Probe/CLightProbe.h"
 
 namespace Skylicht
@@ -42,6 +43,7 @@ namespace Skylicht
 		protected:
 			CBaker *m_singleBaker;
 			CMTBaker *m_multiBaker;
+			CGPUBaker *m_gpuBaker;
 
 			CSH9 m_temp;
 
