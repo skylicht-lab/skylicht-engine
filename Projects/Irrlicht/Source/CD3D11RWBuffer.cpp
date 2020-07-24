@@ -9,15 +9,13 @@
 
 #ifdef _IRR_COMPILE_WITH_DIRECT3D_11_
 
-#define _IRR_DONT_DO_MEMORY_DEBUGGING_HERE
-
 #include "irrOS.h"
 
 namespace irr
 {
 	namespace video
 	{
-		CD3D11RWBuffer::CD3D11RWBuffer(CD3D11Driver *driver, ECOLOR_FORMAT format, u32 numElements) :
+		CD3D11RWBuffer::CD3D11RWBuffer(CD3D11Driver *driver, ECOLOR_FORMAT format, u32 numElements, void *initialData) :
 			IRWBuffer(format, numElements),
 			Driver(driver)
 		{
@@ -40,7 +38,19 @@ namespace irr
 			bufferDesc.CPUAccessFlags = 0;
 			bufferDesc.MiscFlags = 0;
 			bufferDesc.StructureByteStride = 0;
-			Device->CreateBuffer(&bufferDesc, NULL, &Buffer);
+
+			if (initialData == NULL)
+				Device->CreateBuffer(&bufferDesc, NULL, &Buffer);
+			else
+			{
+				// Load initial data
+				D3D11_SUBRESOURCE_DATA data;
+				data.pSysMem = initialData;
+				data.SysMemPitch = 0;
+				data.SysMemSlicePitch = 0;
+
+				Device->CreateBuffer(&bufferDesc, &data, &Buffer);
+			}
 
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 			srvDesc.Format = D3DFormat;
