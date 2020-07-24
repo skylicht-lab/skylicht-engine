@@ -21,9 +21,19 @@ namespace irr
 		class CD3D11RWBuffer : public IRWBuffer
 		{
 		public:
-			CD3D11RWBuffer(CD3D11Driver *driver, ECOLOR_FORMAT format, u32 numElements);
+			CD3D11RWBuffer(CD3D11Driver *driver, ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL);
 
 			~CD3D11RWBuffer();
+
+			ID3D11ShaderResourceView *getShaderResourceView()
+			{
+				return SRView;
+			}
+
+			ID3D11UnorderedAccessView *getUnorderedAccessView()
+			{
+				return UAView;
+			}
 
 		protected:
 
