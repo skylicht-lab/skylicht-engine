@@ -62,6 +62,7 @@ namespace video
 		friend class CD3D11TextureArray;
 		friend class CD3D11VideoRT;
 		friend class CD3D11RWBuffer;
+		friend class CD3D11GPUCompute;
 
 		//! constructor
 		CD3D11Driver(const irr::SIrrlichtCreationParameters& params,
@@ -222,7 +223,7 @@ namespace video
 		virtual ITexture* getTextureArray(IImage** images, u32 num);
 
 		//! creates a buffer stored on gpu
-		virtual IRWBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements);
+		virtual IRWBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL);
 
 		//! Clears the ZBuffer.
 		virtual void clearZBuffer();
@@ -415,6 +416,10 @@ namespace video
 			E_MATERIAL_TYPE baseMaterial, s32 userData, E_GPU_SHADING_LANGUAGE shadingLang);
 
 		virtual s32 addShaderMaterial(const c8* vertexShaderProgram, const c8* pixelShaderProgram, IShaderConstantSetCallBack* callback, E_MATERIAL_TYPE baseMaterial, s32 userData);
+
+		virtual IGPUCompute* createComputeProgram(const c8* computeShaderProgram,
+			const c8* computeShaderEntryPointName = "main",
+			E_COMPUTE_SHADER_TYPE csCompileTarget = ECST_CS_5_0);
 
 		void draw2D3DVertexPrimitiveList(const void* vertices, u32 vertexCount, u32 pVertexSize, 
 			const void* indices, u32 primitiveCount, E_VERTEX_TYPE vType, 

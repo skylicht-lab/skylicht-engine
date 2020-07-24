@@ -10,6 +10,8 @@
 #include "EPrimitiveTypes.h"
 #include "path.h"
 
+#include "IGPUCompute.h"
+
 namespace irr
 {
 
@@ -23,6 +25,7 @@ namespace video
 
 class IVideoDriver;
 class IShaderConstantSetCallBack;
+class IGPUCompute;
 
 //! Enumeration for different types of shading languages
 enum E_GPU_SHADING_LANGUAGE
@@ -123,6 +126,14 @@ public:
 			scene::EPT_TRIANGLES, scene::EPT_TRIANGLE_STRIP, 0,
 			callback, baseMaterial, userData, shadingLang);
 	}
+
+	virtual IGPUCompute* createComputeProgram(const c8* computeShaderProgram,
+		const c8* computeShaderEntryPointName = "main",
+		E_COMPUTE_SHADER_TYPE csCompileTarget = ECST_CS_5_0) = 0;
+
+	virtual IGPUCompute* createComputeProgramFromFile(const io::path& computeShaderFileName,
+		const c8* computeShaderEntryPointName = "main",
+		E_COMPUTE_SHADER_TYPE csCompileTarget = ECST_CS_5_0) = 0;
 
 	//! convenience function for use with many defaults, without geometry shader
 	/** All shader names are set to "main" and compile targets are shader
