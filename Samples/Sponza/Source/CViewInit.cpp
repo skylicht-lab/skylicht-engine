@@ -163,7 +163,7 @@ void CViewInit::initProbes()
 
 	for (int i = 0; i < 7; i++)
 	{
-		float x = i * 5.6f - 6.0f * 5.6f;
+		float x = i * 5.6f - 3.0f * 5.6f;
 
 		// row 0
 		probesPosition.push_back(core::vector3df(x, 2.0f, -0.4f));
