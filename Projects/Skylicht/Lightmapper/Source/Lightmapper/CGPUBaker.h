@@ -38,14 +38,19 @@ namespace Skylicht
 		class CGPUBaker : public CMTBaker
 		{
 		protected:
+			IGPUCompute *m_shCompute;
+			
 			IRWBuffer *m_shBuffer;
 
+			float *m_tangentToSpaceData;
 		public:
 			CGPUBaker();
 			
 			virtual ~CGPUBaker();
 
 			bool canUseGPUBaker();
+
+			virtual void computeSH(int count, int numFace);
 		};
 	}
 }

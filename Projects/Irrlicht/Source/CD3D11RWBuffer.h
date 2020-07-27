@@ -35,6 +35,10 @@ namespace irr
 				return UAView;
 			}
 
+			void* lock(bool readOnly);
+
+			void unlock();
+
 		protected:
 
 			CD3D11Driver *Driver;
@@ -47,6 +51,8 @@ namespace irr
 			ID3D11UnorderedAccessView* UAView;
 
 			DXGI_FORMAT D3DFormat;
+
+			D3D11_MAP LastMapDirection;
 		};
 }
 }

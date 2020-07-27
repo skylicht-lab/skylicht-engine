@@ -34,8 +34,8 @@ namespace irr
 			D3D11_BUFFER_DESC bufferDesc;
 			bufferDesc.ByteWidth = bytePerPixel * numElements;
 			bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
 			bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
-			bufferDesc.CPUAccessFlags = 0;
 			bufferDesc.MiscFlags = 0;
 			bufferDesc.StructureByteStride = 0;
 
@@ -76,6 +76,36 @@ namespace irr
 
 			Context->Release();
 			Device->Release();
+		}
+
+		//! Lock function.
+		void* CD3D11RWBuffer::lock(bool readOnly)
+		{
+			if (!Buffer)
+				return 0;
+
+			if (readOnly)
+				LastMapDirection = D3D11_MAP_READ;
+			else
+				LastMapDirection = (D3D11_MAP)(D3D11_MAP_WRITE | D3D11_MAP_READ);
+
+			// Otherwise, map this buffer
+			D3D11_MAPPED_SUBRESOURCE mappedData;
+			HRESULT hr = Context->Map(Buffer, 0, LastMapDirection, 0, &mappedData);
+			if (FAILED(hr))
+				return 0;
+
+			return mappedData.pData;
+		}
+
+		//! Unlock function. Must be called after a lock() to the buffer.
+		void CD3D11RWBuffer::unlock()
+		{
+			if (!Buffer)
+				return;
+
+			// Otherwise, unmap this
+			Context->Unmap(Buffer, 0);
 		}
 	}
 }

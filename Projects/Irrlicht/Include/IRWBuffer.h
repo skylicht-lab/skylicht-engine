@@ -26,6 +26,10 @@ namespace irr
 
 			E_DRIVER_TYPE getDriverType() const { return DriverType; };
 
+			virtual void* lock(bool readOnly) = 0;
+
+			virtual void unlock() = 0;
+
 		protected:
 
 			E_DRIVER_TYPE DriverType;
