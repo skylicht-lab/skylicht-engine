@@ -32,6 +32,10 @@ namespace irr
 			ITexture *TextureSlot[NUM_PARAMS_SUPPORT];
 			IRWBuffer *BufferSlot[NUM_PARAMS_SUPPORT];
 
+			core::array<SShaderBuffer*> BufferArray;
+			core::array<SShaderVariable*> VariableArray;
+			SShaderVariable** VariableArrayPtr;
+
 		public:
 			CD3D11GPUCompute(CD3D11Driver *driver);
 
@@ -40,12 +44,24 @@ namespace irr
 			bool compile(const c8* computeShaderProgram,
 				const c8* computeShaderEntryPointName = "main",
 				E_COMPUTE_SHADER_TYPE csCompileTarget = ECST_CS_5_0);
+			
+			bool setVariable(s32 id, const f32* floats, int count);
+
+			s32 getVariableID(const c8* name);
 
 			virtual void setTexture(int slot, ITexture *texture);
 
 			virtual void setBuffer(int slot, IRWBuffer *buffer);
 
 			virtual void dispatch(int threadGroupX, int threadGroupY, int threadGroupZ);
+
+		protected:
+			
+			bool initConstant();
+
+			SShaderBuffer* createConstantBuffer(D3D11_SHADER_BUFFER_DESC& bufferDesc);
+
+			bool uploadVariableToGPU();
 		};
 	}
 }

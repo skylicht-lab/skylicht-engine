@@ -29,6 +29,10 @@ namespace irr
 
 			E_DRIVER_TYPE getDriverType() const { return DriverType; };
 
+			virtual bool setVariable(s32 id, const f32* floats, int count) = 0;
+
+			virtual s32 getVariableID(const c8* name) = 0;
+
 			virtual void setTexture(int slot, ITexture *texture) = 0;
 
 			virtual void setBuffer(int slot, IRWBuffer *buffer) = 0;

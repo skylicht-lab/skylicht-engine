@@ -208,7 +208,7 @@ namespace Skylicht
 			if (CDeferredRP::isEnableRenderIndirect() == true && test == true)
 			{
 				char filename[512];
-				sprintf(filename, "C:\\SVN\\test_%d.png", t);
+				sprintf(filename, "test_%d.png", t);
 				CBaseRP::saveFBOToFile(m_radiance, filename);
 				test = true;
 			}
