@@ -91,6 +91,8 @@ namespace Skylicht
 		CWorldInverseTransformData **invTransforms = m_invTransforms.pointer();
 
 		IRenderPipeline *rp = entityManager->getRenderPipeline();
+		if (rp == NULL)
+			return;
 
 		core::matrix4 invTrans;
 
