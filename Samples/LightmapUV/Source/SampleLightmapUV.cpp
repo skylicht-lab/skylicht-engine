@@ -85,9 +85,12 @@ void SampleLightmapUV::onInitApp()
 	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-	// 3D model
+	// 3D model	
+#ifdef LIGHTMAP_SPONZA
+	m_model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
+#else
 	m_model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.obj", "");
-	// m_model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.dae", "Sponza/Textures");
+#endif
 
 	if (m_model != NULL)
 	{
@@ -163,7 +166,7 @@ void SampleLightmapUV::onInitApp()
 void SampleLightmapUV::runThread()
 {
 	// generate uv in thread
-	m_unwrap.generate(2048, 5.0f);
+	m_unwrap.generate(2048, 0.5f);
 	m_unwrap.generateUVImage();
 
 	// write to bin folder output layout uv
@@ -227,18 +230,18 @@ void SampleLightmapUV::updateMeshUV()
 		}
 	}
 
-	// test exporter
-	/*
+	// Exporter result
+#ifdef LIGHTMAP_SPONZA
 	CMeshManager::getInstance()->exportModel(
 		m_renderMesh->getEntities().pointer(),
 		m_renderMesh->getEntities().size(),
 		"../Assets/Sponza/Sponza.smesh");
-	*/
-
+#else	
 	CMeshManager::getInstance()->exportModel(
 		m_renderMesh->getEntities().pointer(),
 		m_renderMesh->getEntities().size(),
 		"../Assets/SampleModels/Gazebo/gazebo.smesh");
+#endif
 
 	// Update material
 	core::array<IImage*> arrayTexture;

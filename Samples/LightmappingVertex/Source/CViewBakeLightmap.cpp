@@ -207,6 +207,7 @@ void CViewBakeLightmap::onUpdate()
 			}
 
 			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+			return;
 		}
 	}
 }

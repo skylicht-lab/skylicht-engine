@@ -21,7 +21,8 @@
 #include "CD3D11Texture.h"
 #include "CD3D11HardwareBuffer.h"
 #include "CD3D11VideoRT.h"
-
+#include "CD3D11RWBuffer.h"
+#include "CD3D11GPUCompute.h"
 
 inline void unpack_texureBlendFunc(irr::video::E_BLEND_FACTOR &srcFact, irr::video::E_BLEND_FACTOR &dstFact,
 	irr::video::E_MODULATE_FUNC &modulo, irr::u32& alphaSource, const irr::f32 param)
@@ -1412,6 +1413,12 @@ namespace irr
 			return new CD3D11TextureCube(this, "TextureCube", imageX1, imageX2, imageY1, imageY2, imageZ1, imageZ2);
 		}
 
+		//! creates a buffer stored on gpu
+		IRWBuffer* CD3D11Driver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData)
+		{
+			return new CD3D11RWBuffer(this, format, numElements);
+		}
+
 		void CD3D11Driver::setViewPort(const core::rect<s32>& area)
 		{
 			core::dimension2du size = getCurrentRenderTargetSize();
@@ -2799,6 +2806,21 @@ namespace irr
 			rend->drop();
 
 			return id;
+		}
+
+		IGPUCompute* CD3D11Driver::createComputeProgram(const c8* computeShaderProgram,
+			const c8* computeShaderEntryPointName,
+			E_COMPUTE_SHADER_TYPE csCompileTarget)
+		{
+			CD3D11GPUCompute *compute = new CD3D11GPUCompute(this);
+
+			if (compute->compile(computeShaderProgram, computeShaderEntryPointName, csCompileTarget) == true)
+			{
+				return compute;
+			}
+
+			compute->drop();
+			return NULL;
 		}
 
 		//! Adds a new material renderer to the VideoDriver, using pixel and/or
