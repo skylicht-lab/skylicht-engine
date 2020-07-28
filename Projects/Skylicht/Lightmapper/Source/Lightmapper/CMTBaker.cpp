@@ -53,14 +53,13 @@ namespace Skylicht
 		{
 			IVideoDriver *driver = getVideoDriver();
 
+			// render radiance
 			// apply projection
 			camera->setAspect(1.0f);
 			camera->setFOV(90.0f);
 
 			// clear rtt
 			getVideoDriver()->setRenderTarget(m_radiance, true, true);
-
-			core::matrix4 toTangentSpace[MAX_NUM_THREAD][NUM_FACES];
 
 			u32 rtSize = CLightmapper::getHemisphereBakeSize();
 
@@ -76,8 +75,10 @@ namespace Skylicht
 					getWorldView(normal[tid], tangent[tid], binormal[tid], position[tid], face, cameraWorld);
 
 					// to tangent space
-					toTangentSpace[tid][face] = cameraWorld;
-					setRow(toTangentSpace[tid][face], 3, core::vector3df(0.0f, 0.0f, 0.0f), 1.0f);
+					m_toTangentSpace[tid * NUM_FACES + face] = cameraWorld;
+
+					// remove position
+					setRow(m_toTangentSpace[tid * NUM_FACES + face], 3, core::vector3df(0.0f, 0.0f, 0.0f), 1.0f);
 
 					// camera world
 					camera->getGameObject()->getTransform()->setMatrixTransform(cameraWorld);
@@ -100,6 +101,15 @@ namespace Skylicht
 			}
 
 			driver->setRenderTarget(NULL, false, false);
+
+			// compute sh from radiance
+			computeSH(count, numFace);
+		}
+
+		void CMTBaker::computeSH(int count, int numFace)
+		{
+			// render target size
+			u32 rtSize = CLightmapper::getHemisphereBakeSize();
 
 			// Cubemap to SH
 			u8 *imageData = (u8*)m_radiance->lock(video::ETLM_READ_ONLY);
@@ -173,7 +183,8 @@ namespace Skylicht
 					dirTS.X = u;
 					dirTS.Y = v;
 					dirTS.Z = 1.0f;
-					toTangentSpace[tid][face].rotateVect(dirTS);
+
+					m_toTangentSpace[tid * NUM_FACES + face].rotateVect(dirTS);
 					dirTS.normalize();
 
 					m_sh[tid].projectAddOntoSH(dirTS, color);
@@ -194,10 +205,10 @@ namespace Skylicht
 			/*
 			static int t = 0;
 			static bool test = true;
-			if (CDeferredRP::isEnableRenderIndirect() == true && test == true)
+			if (test == true)
 			{
 				char filename[512];
-				sprintf(filename, "C:\\SVN\\test_%d.png", t);
+				sprintf(filename, "test_%d.png", t);
 				CBaseRP::saveFBOToFile(m_radiance, filename);
 				test = true;
 			}

@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBaker.h"
 
-#define MAX_NUM_THREAD	120
+#define MAX_NUM_THREAD	128
 
 namespace Skylicht
 {
@@ -44,6 +44,8 @@ namespace Skylicht
 
 			CSH9 m_sh[MAX_NUM_THREAD];
 
+			core::matrix4 m_toTangentSpace[MAX_NUM_THREAD * NUM_FACES];
+
 			float m_weightSum;
 
 		public:
@@ -51,7 +53,7 @@ namespace Skylicht
 
 			virtual ~CMTBaker();
 
-			void bake(CCamera *camera,
+			virtual void bake(CCamera *camera,
 				IRenderPipeline* rp,
 				CEntityManager* entityMgr,
 				const core::vector3df* position,
@@ -60,6 +62,8 @@ namespace Skylicht
 				const core::vector3df* binormal,
 				int count,
 				int numFace);
+
+			virtual void computeSH(int count, int numFace);
 
 			inline int getMaxMT()
 			{

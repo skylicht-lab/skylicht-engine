@@ -786,7 +786,6 @@ void CNullDriver::addTexture(video::ITexture* texture)
 	}
 }
 
-
 //! looks if the image is already loaded
 video::ITexture* CNullDriver::findTexture(const io::path& filename)
 {
@@ -842,7 +841,10 @@ ITexture* CNullDriver::addTexture(const core::dimension2d<u32>& size,
 	return t;
 }
 
-
+IRWBuffer* CNullDriver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData)
+{
+	return NULL;
+}
 
 //! returns a device dependent texture from a software surface (IImage)
 //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
@@ -2479,6 +2481,54 @@ s32 CNullDriver::addHighLevelShaderMaterialFromFiles(
 	return result;
 }
 
+IGPUCompute* CNullDriver::createComputeProgramFromFile(const io::path& computeShaderFileName,
+	const c8* computeShaderEntryPointName,
+	E_COMPUTE_SHADER_TYPE csCompileTarget)
+{
+	io::IReadFile* csfile = 0;
+
+	if (computeShaderFileName.size())
+	{
+		csfile = FileSystem->createAndOpenFile(computeShaderFileName);
+		if (!csfile)
+		{
+			os::Printer::log("Could not open vertex shader program file",
+				computeShaderFileName, ELL_WARNING);
+			return NULL;
+		}
+	}
+
+	c8 *cs = NULL;
+
+	const long size = csfile->getSize();
+	if (size)
+	{
+		cs = new c8[size + 1];
+		csfile->read(cs, size);
+		cs[size] = 0;
+	}
+
+	IGPUCompute *result = NULL;
+
+	if (cs != NULL)
+	{
+		result = createComputeProgram(cs, computeShaderEntryPointName, csCompileTarget);
+		delete []cs;
+	}
+
+	if (csfile)
+		csfile->drop();
+
+	return result;
+}
+
+IGPUCompute* CNullDriver::createComputeProgram(const c8* computeShaderProgram,
+	const c8* computeShaderEntryPointName,
+	E_COMPUTE_SHADER_TYPE csCompileTarget)
+{
+	os::Printer::log("Compute shader not implemented yet in this driver, sorry.");
+	return NULL;
+}
 
 //! Adds a new material renderer to the VideoDriver, using pixel and/or
 //! vertex shaders to render geometry.
@@ -2676,7 +2726,6 @@ bool CNullDriver::setClipPlane(u32 index, const core::plane3df& plane, bool enab
 {
 	return false;
 }
-
 
 //! Enable/disable a clipping plane.
 void CNullDriver::enableClipPlane(u32 index, bool enable)
