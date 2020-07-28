@@ -5,6 +5,8 @@
 
 #include "UnwrapUV/CUnwrapUV.h"
 
+#define LIGHTMAP_SPONZA
+
 class SampleLightmapUV : 
 	public IApplicationEventReceiver,
 	public SkylichtSystem::IThreadCallback

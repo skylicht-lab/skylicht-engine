@@ -16,12 +16,6 @@ public:
 	};
 
 protected:
-	CGetFileURL *m_getFile;
-
-	EInitState m_initState;
-	unsigned int m_downloaded;
-
-protected:
 	io::path getBuiltInPath(const char *name);
 
 public:

@@ -9,6 +9,8 @@
 
 #define MAX_LIGHTMAP_ATLAS 40
 
+#define LIGHTMAP_SPONZA
+
 class CViewBakeLightmap : public CView
 {
 protected:
