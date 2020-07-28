@@ -29,51 +29,28 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderPipeline/IRenderPipeline.h"
 #include "Entity/CEntityManager.h"
 
-#include "CBaker.h"
-
-#define MAX_NUM_THREAD	128
+#include "CMTBaker.h"
 
 namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CMTBaker
+		class CGPUBaker : public CMTBaker
 		{
 		protected:
-			video::ITexture *m_radiance;
+			IGPUCompute *m_shCompute;
+			
+			IRWBuffer *m_shBuffer;
 
-			CSH9 m_sh[MAX_NUM_THREAD];
-
-			core::matrix4 m_toTangentSpace[MAX_NUM_THREAD * NUM_FACES];
-
-			float m_weightSum;
-
+			float *m_tangentToSpaceData;
 		public:
-			CMTBaker();
+			CGPUBaker();
+			
+			virtual ~CGPUBaker();
 
-			virtual ~CMTBaker();
-
-			virtual void bake(CCamera *camera,
-				IRenderPipeline* rp,
-				CEntityManager* entityMgr,
-				const core::vector3df* position,
-				const core::vector3df* normal,
-				const core::vector3df* tangent,
-				const core::vector3df* binormal,
-				int count,
-				int numFace);
+			bool canUseGPUBaker();
 
 			virtual void computeSH(int count, int numFace);
-
-			inline int getMaxMT()
-			{
-				return MAX_NUM_THREAD;
-			}
-
-			const CSH9& getSH(int i)
-			{
-				return m_sh[i];
-			}
 		};
 	}
 }

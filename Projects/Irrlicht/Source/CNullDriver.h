@@ -145,6 +145,9 @@ namespace video
 			bool clearZBuffer,
 			SColor color) _IRR_OVERRIDE_;
 
+		//! creates a buffer stored on gpu
+		virtual IRWBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL) _IRR_OVERRIDE_;
+
 		//! sets a viewport
 		virtual void setViewPort(const core::rect<s32>& area) _IRR_OVERRIDE_;
 
@@ -491,6 +494,14 @@ namespace video
 			E_MATERIAL_TYPE baseMaterial = video::EMT_SOLID,
 			s32 userData = 0, E_GPU_SHADING_LANGUAGE shadingLang = EGSL_DEFAULT) _IRR_OVERRIDE_;
 
+		virtual IGPUCompute* createComputeProgram(const c8* computeShaderProgram,
+			const c8* computeShaderEntryPointName = "main",
+			E_COMPUTE_SHADER_TYPE csCompileTarget = ECST_CS_5_0) _IRR_OVERRIDE_;
+
+		virtual IGPUCompute* createComputeProgramFromFile(const io::path& computeShaderFileName,
+			const c8* computeShaderEntryPointName = "main",
+			E_COMPUTE_SHADER_TYPE csCompileTarget = ECST_CS_5_0) _IRR_OVERRIDE_;
+
 		//! Returns a pointer to the mesh manipulator.
 		virtual scene::IMeshManipulator* getMeshManipulator() _IRR_OVERRIDE_;
 
@@ -660,6 +671,7 @@ namespace video
 		
 		core::array<SSurface> Textures;
 		core::array<IVideoRenderTarget*> VRTs;
+		core::array<IRWBuffer*> RWBuffers;
 
 		struct SOccQuery
 		{
