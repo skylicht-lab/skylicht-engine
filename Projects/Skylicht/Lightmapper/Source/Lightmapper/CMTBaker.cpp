@@ -205,7 +205,7 @@ namespace Skylicht
 			/*
 			static int t = 0;
 			static bool test = true;
-			if (CDeferredRP::isEnableRenderIndirect() == true && test == true)
+			if (test == true)
 			{
 				char filename[512];
 				sprintf(filename, "test_%d.png", t);

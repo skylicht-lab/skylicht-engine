@@ -87,6 +87,16 @@ void CViewBakeLightmap::onInit()
 	// set default 128px for quality
 	CLightmapper::getInstance()->initBaker(128);
 
+	// force update and render to compute transform (1 frame)
+	{
+		context->getScene()->update();
+		context->getRenderPipeline()->render(
+			NULL,
+			context->getActiveCamera(),
+			context->getScene()->getEntityManager(),
+			core::recti(0, 0, 0, 0));
+	}
+
 	// get all render mesh in zone
 	m_renderMesh = zone->getComponentsInChild<CRenderMesh>(false);
 	for (CRenderMesh *renderMesh : m_renderMesh)
@@ -235,7 +245,7 @@ void CViewBakeLightmap::onUpdate()
 					vertices[v3].Tangent
 				};
 
-				for (int i = 0; i < 4; i++)
+				for (int i = 0; i < 3; i++)
 				{
 					transform.transformVect(positions[i]);
 					transform.rotateVect(normals[i]);
