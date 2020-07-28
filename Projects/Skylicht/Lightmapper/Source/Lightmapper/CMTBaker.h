@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBaker.h"
 
-#define MAX_NUM_THREAD	120
+#define MAX_NUM_THREAD	128
 
 namespace Skylicht
 {

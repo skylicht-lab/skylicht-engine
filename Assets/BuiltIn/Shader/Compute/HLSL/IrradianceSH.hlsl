@@ -1,8 +1,8 @@
 // Number of thread
-#define MAX_NUM_THREAD 120
+#define MAX_NUM_THREAD 128
 
 // MAX_NUM_THREAD * 6 faces
-#define TANGENT_COUNT 720
+#define TANGENT_COUNT 768
 
 // NUM FACE
 #define NUM_FACE 6
@@ -164,14 +164,14 @@ void main(
 		uint id = (threadID * NUM_FACE + faceID) * 9;
 		
 		// Write result
-		OutputBuffer[id + 0] = float4(ResultSH[0][0], 0.0);
-		OutputBuffer[id + 1] = float4(ResultSH[0][1], 0.0);
-		OutputBuffer[id + 2] = float4(ResultSH[0][2], 0.0);
-		OutputBuffer[id + 3] = float4(ResultSH[0][3], 0.0);
-		OutputBuffer[id + 4] = float4(ResultSH[0][4], 0.0);
-		OutputBuffer[id + 5] = float4(ResultSH[0][5], 0.0);
-		OutputBuffer[id + 6] = float4(ResultSH[0][6], 0.0);
-		OutputBuffer[id + 7] = float4(ResultSH[0][7], 0.0);
-		OutputBuffer[id + 8] = float4(ResultSH[0][8], 0.0);
+		OutputBuffer[id + 0] += float4(ResultSH[0][0], 0.0);
+		OutputBuffer[id + 1] += float4(ResultSH[0][1], 0.0);
+		OutputBuffer[id + 2] += float4(ResultSH[0][2], 0.0);
+		OutputBuffer[id + 3] += float4(ResultSH[0][3], 0.0);
+		OutputBuffer[id + 4] += float4(ResultSH[0][4], 0.0);
+		OutputBuffer[id + 5] += float4(ResultSH[0][5], 0.0);
+		OutputBuffer[id + 6] += float4(ResultSH[0][6], 0.0);
+		OutputBuffer[id + 7] += float4(ResultSH[0][7], 0.0);
+		OutputBuffer[id + 8] += float4(ResultSH[0][8], 0.0);
 	}
 }

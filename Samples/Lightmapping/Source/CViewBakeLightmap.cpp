@@ -20,7 +20,9 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_timeSpentFromLastSave(0),
 	m_numRenderers(0),
 	m_numIndices(0),
-	m_numVertices(0)
+	m_numVertices(0),
+	m_guiObject(NULL),
+	m_font(NULL)
 {
 	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
 		m_lmRasterize[i] = NULL;
@@ -28,9 +30,11 @@ CViewBakeLightmap::CViewBakeLightmap() :
 
 CViewBakeLightmap::~CViewBakeLightmap()
 {
-	m_guiObject->remove();
+	if (m_guiObject != NULL)
+		m_guiObject->remove();
 
-	delete m_font;
+	if (m_font != NULL)
+		delete m_font;
 
 	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
 	{
@@ -68,6 +72,14 @@ int CViewBakeLightmap::getRasterisationIndex(Lightmapper::CRasterisation *raster
 
 void CViewBakeLightmap::onInit()
 {
+	/*
+	// enable render indirect
+	CDeferredRP::enableRenderIndirect(false);
+	// switch to demo view
+	CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+	return;
+	*/
+
 	CContext *context = CContext::getInstance();
 	CZone *zone = context->getActiveZone();
 	CEntityManager *entityMgr = zone->getEntityManager();
@@ -231,11 +243,18 @@ void CViewBakeLightmap::onUpdate()
 				}
 
 				int lmIndex = (int)vertices[v1].Lightmap.Z;
-				m_currentRasterisation = createGetLightmapRasterisation(lmIndex);
-
-				m_pixel = m_currentRasterisation->setTriangle(positions, uvs, normals, tangents, pass);
-
-				m_lastTris = m_currentTris;
+				if (lmIndex >= 0)
+				{
+					m_currentRasterisation = createGetLightmapRasterisation(lmIndex);
+					m_pixel = m_currentRasterisation->setTriangle(positions, uvs, normals, tangents, pass);
+					m_lastTris = m_currentTris;
+				}
+				else
+				{
+					// skip this triangle
+					m_currentTris++;
+					continue;
+				}
 			}
 
 			core::vector3df outPos;
@@ -459,6 +478,21 @@ void CViewBakeLightmap::saveProgress()
 	io::IWriteFile *file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile("LightmapProgress.dat");
 	file->write(stream->getData(), stream->getSize());
 	file->drop();
+
+	// write current output to review
+	core::dimension2du size(m_lightmapSize, m_lightmapSize);
+	char outFileName[512];
+	IVideoDriver *driver = getVideoDriver();
+
+	for (int i = 0; i < m_numberRasterize; i++)
+	{
+		unsigned char *data = m_lmRasterize[i]->getLightmapData();
+
+		IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+		sprintf(outFileName, "LightMapRasterize_review_bounce_%d_%d.png", m_lightBounce, i);
+		driver->writeImageToFile(img, outFileName);
+		img->drop();
+	}
 }
 
 void CViewBakeLightmap::loadProgress()
