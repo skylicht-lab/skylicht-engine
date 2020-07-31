@@ -72,13 +72,8 @@ int CViewBakeLightmap::getRasterisationIndex(Lightmapper::CRasterisation *raster
 
 void CViewBakeLightmap::onInit()
 {
-	/*
-	// enable render indirect
-	CDeferredRP::enableRenderIndirect(false);
-	// switch to demo view
-	CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
-	return;
-	*/
+	// gotoDemoView();
+	// return;
 
 	CContext *context = CContext::getInstance();
 	CZone *zone = context->getActiveZone();
@@ -123,7 +118,24 @@ void CViewBakeLightmap::onInit()
 					for (u32 i = 0; i < bufferCount; i++)
 					{
 						IMeshBuffer *mb = mesh->getMeshBuffer(i);
-						if (mb->getVertexBufferCount() > 0)
+
+#ifdef LIGHTMAP_SPONZA
+						/*
+						bool bake = false;
+						if (worldTransform->Name == "celling_sponza")
+							bake = true;
+						else if (worldTransform->Name == "floor_sponza")
+							bake = true;
+						else if (worldTransform->Name == "wall_sponza")
+							bake = true;
+						else if (worldTransform->Name == "smallwall_sponza")
+							bake = true;
+						*/
+						bool bake = true;
+#else
+						bool bake = true;
+#endif
+						if (mb->getVertexBufferCount() > 0 && bake)
 						{
 							// add mesh buffer, that will bake lighting
 							m_meshBuffers.push_back(mb);
@@ -250,6 +262,12 @@ void CViewBakeLightmap::onUpdate()
 					transform.transformVect(positions[i]);
 					transform.rotateVect(normals[i]);
 					transform.rotateVect(tangents[i]);
+
+					normals[i].normalize();
+					tangents[i].normalize();
+
+					// move 3cm
+					// positions[i] += normals[i] * 0.03f;
 				}
 
 				int lmIndex = (int)vertices[v1].Lightmap.Z;
@@ -421,11 +439,7 @@ void CViewBakeLightmap::onUpdate()
 
 				if (m_lightBounce >= s_numLightBounce)
 				{
-					// enable render indirect
-					CDeferredRP::enableRenderIndirect(true);
-
-					// switch to demo view
-					CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+					gotoDemoView();
 				}
 				else
 				{
@@ -594,12 +608,17 @@ void CViewBakeLightmap::loadProgress()
 			if (m_lightBounce >= s_numLightBounce &&
 				m_currentPass >= (int)CRasterisation::PassCount)
 			{
-				// enable render indirect
-				CDeferredRP::enableRenderIndirect(true);
-
-				// switch to demo view
-				CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+				gotoDemoView();
 			}
 		}
 	}
+}
+
+void CViewBakeLightmap::gotoDemoView()
+{
+	// enable render indirect
+	CDeferredRP::enableRenderIndirect(true);
+
+	// switch to demo view
+	CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 }

@@ -230,7 +230,28 @@ namespace Skylicht
 			CSH9 dirSH;
 			dirSH.projectOntoSH(n, core::vector3df(1.0f, 1.0f, 1.0f), CosineA0, CosineA1, CosineA2);
 
-			color = dirSH.dotProduct(*this) / core::PI;
+			color = dirSH.dotProduct(*this);
+		}
+
+		void CSH9::getSHLMIrradiance(const core::vector3df& n, core::vector3df& color)
+		{
+			const float CosineA0 = core::PI;
+			const float CosineA1 = (2.0f * core::PI) / 3.0f;
+
+			core::vector3df sh[4];
+			core::vector3df c(1.0f, 1.0f, 1.0f);
+
+			// Band 0
+			sh[0] = 0.282095f * c * CosineA0;
+
+			// Band 1
+			sh[1] = 0.488603f * n.Y * c * CosineA1;
+			sh[2] = 0.488603f * n.Z * c * CosineA1;
+			sh[3] = 0.488603f * n.X * c * CosineA1;
+
+			color.set(0.0f, 0.0f, 0.0f);
+			for (int i = 0; i < 4; i++)
+				color = color + m_sh[i] * sh[i];
 		}
 
 		void CSH9::convolveWithCosineKernel()

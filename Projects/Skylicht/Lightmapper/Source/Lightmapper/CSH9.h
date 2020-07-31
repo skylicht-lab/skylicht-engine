@@ -46,6 +46,11 @@ namespace Skylicht
 				return m_sh;
 			}
 
+			const core::vector3df* getValueConst() const
+			{
+				return m_sh;
+			}
+
 			CSH9 operator-() const;
 
 			CSH9& operator=(const CSH9& other);
@@ -75,6 +80,8 @@ namespace Skylicht
 			void getSH(const core::vector3df& n, core::vector3df& color);
 
 			void getSHIrradiance(const core::vector3df& n, core::vector3df& color);
+
+			void getSHLMIrradiance(const core::vector3df& n, core::vector3df& color);
 
 			void convolveWithCosineKernel();
 		};

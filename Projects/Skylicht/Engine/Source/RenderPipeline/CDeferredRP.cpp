@@ -49,7 +49,7 @@ namespace Skylicht
 		m_textureColorShader(0),
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
-		m_indirectMultipler(1.2f),
+		m_indirectMultipler(1.5f),
 		m_directMultipler(1.0f)
 	{
 		m_type = IRenderPipeline::Deferred;
@@ -95,7 +95,7 @@ namespace Skylicht
 		m_normal = driver->addRenderTargetTexture(m_size, "normal", ECF_A32B32G32R32F);
 		m_data = driver->addRenderTargetTexture(m_size, "data", ECF_A8R8G8B8);
 
-		m_indirect = driver->addRenderTargetTexture(m_size, "indirect", ECF_A8R8G8B8);
+		m_indirect = driver->addRenderTargetTexture(m_size, "indirect", ECF_A16B16G16R16F);
 		m_lightBuffer = driver->addRenderTargetTexture(m_size, "light", ECF_A16B16G16R16F);
 
 		m_target = driver->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
@@ -391,7 +391,7 @@ namespace Skylicht
 		// shadow
 		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
 		if (shadowRP != NULL)
-			m_directionalLightPass.setTexture(6, shadowRP->getDepthTexture());
+			m_directionalLightPass.TextureLayer[6].Texture = shadowRP->getDepthTexture();
 
 		beginRender2D(renderW, renderH);
 

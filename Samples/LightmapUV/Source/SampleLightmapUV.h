@@ -5,7 +5,7 @@
 
 #include "UnwrapUV/CUnwrapUV.h"
 
-#define LIGHTMAP_SPONZA
+// #define LIGHTMAP_SPONZA
 
 class SampleLightmapUV : 
 	public IApplicationEventReceiver,
