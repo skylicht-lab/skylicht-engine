@@ -93,7 +93,7 @@ vec3 SG(
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	vec3 directionalLight = NdotL * lightColor * visibility * directMultiplier;
 	vec3 color = (directionalLight + light.rgb) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
-	color += indirect * diffuseColor * indirectMultiplier;
+	color += indirect * diffuseColor * indirectMultiplier / PI;
 	return color;
 }
 void main(void)

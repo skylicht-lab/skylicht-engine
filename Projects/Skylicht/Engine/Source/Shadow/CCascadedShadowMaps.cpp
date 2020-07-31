@@ -35,8 +35,8 @@ namespace Skylicht
 	CCascadedShadowMaps::CCascadedShadowMaps() :
 		m_shadowMapSize(2048),
 		m_lambda(0.9f),
-		m_nearOffset(50.0f),
-		m_farValue(200.0f)
+		m_nearOffset(300.0f),
+		m_farValue(500.0f)
 	{
 
 	}
@@ -50,7 +50,7 @@ namespace Skylicht
 	{
 		m_splitCount = splitCount;
 		m_shadowMapSize = shadowMapSize;
-		m_farValue = farValue;
+		// m_farValue = farValue;
 
 		float ratio = 1.0f;
 		for (int i = 0; i < m_splitCount; i++)
@@ -111,7 +111,7 @@ namespace Skylicht
 	void CCascadedShadowMaps::updateSplits(CCamera *camera)
 	{
 		float nd = camera->getNearValue();
-		float fd = m_farValue;
+		float fd = m_farValue * 2.0f;
 
 		float lambda = m_lambda;
 		float ratio = fd / nd;
@@ -131,7 +131,7 @@ namespace Skylicht
 			m_farBounds[i - 1] = t_far;
 		}
 
-		m_splits[m_splitCount - 1].FarPlane = fd;
+		m_splits[m_splitCount - 1].FarPlane = fd * 0.5f;
 
 		m_farBounds[m_splitCount - 1] = fd;
 	}

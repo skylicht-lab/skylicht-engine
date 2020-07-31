@@ -633,7 +633,10 @@ namespace Skylicht
 			{
 				SBakePixel& p = m_bakePixels[i];
 
-				bakeResults[i].getSHIrradiance(p.Normal, result);
+				bakeResults[i].getSHLMIrradiance(p.Normal, result);
+
+				// compress lighting by 1.6
+				result *= 1.0f / 1.6f;
 
 				r = core::clamp(result.X, 0.0f, 1.0f);
 				g = core::clamp(result.Y, 0.0f, 1.0f);
