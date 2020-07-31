@@ -8,5 +8,5 @@ out vec4 FragColor;
 
 void main(void)
 {
-	FragColor = texture(uTexLightmap, varTexCoord0);
+	FragColor = texture(uTexLightmap, varTexCoord0) * 1.6;
 }

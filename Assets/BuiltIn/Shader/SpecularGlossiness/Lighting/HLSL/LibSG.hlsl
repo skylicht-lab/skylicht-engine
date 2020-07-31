@@ -43,7 +43,7 @@ float3 SG(
 	float3 color = (directionalLight + light.rgb) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
 	
 	// IBL Ambient
-	color += indirect * diffuseColor * indirectMultiplier;
+	color += indirect * diffuseColor * indirectMultiplier / PI;
 	
 	// IBL reflection (fake by ambient)
 	// color += indirect * specularColor * metallic;

@@ -54,7 +54,7 @@ void SampleLightmapUV::onInitApp()
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
-	shaderMgr->initBasicShader();	
+	shaderMgr->initBasicShader();
 
 	// Create a Scene
 	m_scene = new CScene();
@@ -74,7 +74,7 @@ void SampleLightmapUV::onInitApp()
 	m_camera = cameraObj->getComponent<CCamera>();
 	m_camera->setProjectionType(CCamera::Perspective);
 	m_camera->setPosition(core::vector3df(-10.0f, 5.0f, 10.0f));
-	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));	
+	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// Direction lighting
 	CGameObject *lightObj = zone->createEmptyObject();
@@ -106,33 +106,36 @@ void SampleLightmapUV::onInitApp()
 		int meshID = 0;
 		for (CRenderMeshData* renderData : renderers)
 		{
+#ifdef LIGHTMAP_SPONZA
 			std::string name = transforms[meshID]->Name;
 			if (name == "celling_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.04f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
 			}
 			else if (name == "floor_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.04f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
 			}
 			else if (name == "wall_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.04f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
 			}
 			else if (name == "smallwall_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.04f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
 			}
 			else if (name == "top_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.01f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
 			}
 			else
 			{
 				// default mesh
 				m_unwrap.addMesh(renderData->getMesh(), 1.0f);
 			}
-
+#else
+			m_unwrap.addMesh(renderData->getMesh(), 1.0f);
+#endif
 			meshID++;
 		}
 

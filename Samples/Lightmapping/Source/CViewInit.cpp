@@ -44,6 +44,7 @@ void CViewInit::onInit()
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
 
 	// load font
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
@@ -146,7 +147,12 @@ void CViewInit::onInit()
 		// init default material
 		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(model);
 		for (CMaterial *material : materials)
+		{
 			material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+
+			//float c[] = { 165.0f / 255.0f, 161.0f / 255.0f, 147 / 255.0f, 1.0f };
+			//material->setUniform4("uColor", c);
+		}
 #endif
 
 		renderMesh->initMaterial(materials);

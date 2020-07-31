@@ -9,7 +9,7 @@
 
 #define MAX_LIGHTMAP_ATLAS 40
 
-#define LIGHTMAP_SPONZA
+// #define LIGHTMAP_SPONZA
 
 class CViewBakeLightmap : public CView
 {
@@ -81,4 +81,6 @@ protected:
 public:
 	void saveProgress();
 	void loadProgress();
+
+	void gotoDemoView();
 };

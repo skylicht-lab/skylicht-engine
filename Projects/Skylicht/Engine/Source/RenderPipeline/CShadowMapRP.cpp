@@ -48,6 +48,9 @@ namespace Skylicht
 		CShaderManager *shaderMgr = CShaderManager::getInstance();
 		m_depthWriteShader = shaderMgr->getShaderIDByName("ShadowDepthWrite");
 		m_cubeDepthWriteShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWrite");
+
+		m_writeDepthMaterial.BackfaceCulling = false;
+		m_writeDepthMaterial.FrontfaceCulling = false;
 	}
 
 	CShadowMapRP::~CShadowMapRP()
