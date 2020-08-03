@@ -61,6 +61,6 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 		texture2DCompare(uv + float2( dx1 * 0.5, dy1 * 0.5 ), id, dcompare)
 	) * ( 1.0 / 17.0 );
 		
-	result *= 1.5f;
+	result *= 1.5;
 	return result;
 }

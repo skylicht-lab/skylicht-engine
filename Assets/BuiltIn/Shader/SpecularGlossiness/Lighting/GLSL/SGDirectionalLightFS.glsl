@@ -46,6 +46,7 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 			result += texture2DCompare(vec3(uv+off, id), depth - bias);
 		}
 	}
+	result *= 1.5;
 	return result/9.0;
 }
 const float PI = 3.1415926;
@@ -91,8 +92,8 @@ vec3 SG(
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	vec3 directionalLight = NdotL * lightColor * visibility * directMultiplier;
-	vec3 color = (directionalLight + light.rgb) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
+	vec3 directionalLight = NdotL * lightColor * visibility;
+	vec3 color = (directionalLight + light.rgb) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
 	color += indirect * diffuseColor * indirectMultiplier / PI;
 	return color;
 }

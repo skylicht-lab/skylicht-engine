@@ -39,8 +39,8 @@ float3 SG(
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
-	float3 directionalLight = NdotL * lightColor * visibility * directMultiplier;
-	float3 color = (directionalLight + light.rgb) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
+	float3 directionalLight = NdotL * lightColor * visibility;
+	float3 color = (directionalLight + light.rgb) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
 	
 	// IBL Ambient
 	color += indirect * diffuseColor * indirectMultiplier / PI;

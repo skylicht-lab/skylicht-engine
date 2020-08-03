@@ -49,7 +49,7 @@ namespace Skylicht
 		m_textureColorShader(0),
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
-		m_indirectMultipler(1.5f),
+		m_indirectMultipler(1.0f),
 		m_directMultipler(1.0f)
 	{
 		m_type = IRenderPipeline::Deferred;
@@ -116,6 +116,7 @@ namespace Skylicht
 		m_textureColorShader = shaderMgr->getShaderIDByName("TextureColor");
 		m_vertexColorShader = shaderMgr->getShaderIDByName("VertexColor");
 		m_lightmapArrayShader = shaderMgr->getShaderIDByName("Lightmap");
+		m_lightmapVertexShader = shaderMgr->getShaderIDByName("LightmapVertex");
 
 		// final pass
 		m_finalPass.setTexture(0, m_target);
@@ -234,11 +235,11 @@ namespace Skylicht
 			if (indirectData->Type == CIndirectLightingData::VertexColor)
 			{
 				// change shader to vertex color
-				SMaterial vertexColor;
-				vertexColor.MaterialType = m_vertexColorShader;
+				SMaterial vertexLightmap;
+				vertexLightmap.MaterialType = m_lightmapVertexShader;
 
 				// set irrlicht material
-				driver->setMaterial(vertexColor);
+				driver->setMaterial(vertexLightmap);
 
 				// draw mesh buffer
 				driver->drawMeshBuffer(mb);
@@ -325,7 +326,10 @@ namespace Skylicht
 
 		// Apply uniform: uLightMultiplier
 		if (CBaseRP::s_bakeMode == true)
-			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.0f);
+		{
+			// boost indirect lighting to 3.14
+			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(0.05f, 3.14f);
+		}
 		else
 			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(m_directMultipler, m_indirectMultipler);
 

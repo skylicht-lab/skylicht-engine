@@ -1,0 +1,13 @@
+<shaderConfig name="LightmapVertex" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+		</fs>
+	</uniforms>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/ColorVS.glsl" fs="GLSL/LightmapVertexFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ColorVS.hlsl" fs="HLSL/LightmapVertexFS.hlsl"/>
+</shaderConfig>

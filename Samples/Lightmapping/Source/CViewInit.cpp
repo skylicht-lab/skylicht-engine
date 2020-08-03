@@ -86,7 +86,7 @@ void CViewInit::onInit()
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
+	core::vector3df direction = core::vector3df(-4.0f, -5.0f, -3.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	core::vector3df pointLightPosition[] = {
@@ -150,8 +150,8 @@ void CViewInit::onInit()
 		{
 			material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 
-			//float c[] = { 165.0f / 255.0f, 161.0f / 255.0f, 147 / 255.0f, 1.0f };
-			//material->setUniform4("uColor", c);
+			float c[] = { 165.0f / 255.0f, 161.0f / 255.0f, 147 / 255.0f, 1.0f };
+			material->setUniform4("uColor", c);
 		}
 #endif
 

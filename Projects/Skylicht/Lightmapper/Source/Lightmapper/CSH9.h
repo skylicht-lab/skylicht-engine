@@ -81,7 +81,7 @@ namespace Skylicht
 
 			void getSHIrradiance(const core::vector3df& n, core::vector3df& color);
 
-			void getSHLMIrradiance(const core::vector3df& n, core::vector3df& color);
+			void getSH4Irradiance(const core::vector3df& n, core::vector3df& color);
 
 			void convolveWithCosineKernel();
 		};
