@@ -87,6 +87,8 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/ShadowMap/ShadowCubeDepthWrite.xml");
 
 		loadShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
+		loadShader("BuiltIn/Shader/Lightmap/LightmapUV.xml");
+		loadShader("BuiltIn/Shader/Lightmap/LightmapVertex.xml");
 	}
 
 	void CShaderManager::initSkylichtEngineShader()

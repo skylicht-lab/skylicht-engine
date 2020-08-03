@@ -56,6 +56,7 @@ namespace Skylicht
 		int m_vertexColorShader;
 		int m_textureColorShader;
 		int m_lightmapArrayShader;
+		int m_lightmapVertexShader;
 
 		SMaterial m_pointLightPass;
 		SMaterial m_directionalLightPass;

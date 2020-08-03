@@ -7,7 +7,7 @@
 #include "Lightmapper/CSH9.h"
 #include "Rasterisation/CRasterisation.h"
 
-#define MAX_LIGHTMAP_ATLAS 40
+#define MAX_LIGHTMAP_ATLAS 10
 
 // #define LIGHTMAP_SPONZA
 
