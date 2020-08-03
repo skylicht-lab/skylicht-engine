@@ -233,7 +233,7 @@ namespace Skylicht
 			color = dirSH.dotProduct(*this);
 		}
 
-		void CSH9::getSHLMIrradiance(const core::vector3df& n, core::vector3df& color)
+		void CSH9::getSH4Irradiance(const core::vector3df& n, core::vector3df& color)
 		{
 			const float CosineA0 = core::PI;
 			const float CosineA1 = (2.0f * core::PI) / 3.0f;

@@ -105,7 +105,7 @@ namespace Skylicht
 			int numFace)
 		{
 			out.clear();
-			
+
 			if (m_multiBaker == NULL)
 			{
 				os::Printer::log("[CLightmapper::bakeAtPosition] Need call initBaker first");
@@ -245,6 +245,9 @@ namespace Skylicht
 				normals[id].normalize();
 				tangents[id].normalize();
 				binormals[id].normalize();
+
+				// move 2cm
+				positions[id] += normals[id] * 0.02f;
 			}
 
 			std::vector<CSH9> resultSH;
@@ -272,6 +275,9 @@ namespace Skylicht
 
 				// get result color
 				outSH[i].getSHIrradiance(normals[id], result);
+
+				// compress lighting by 3.0
+				result *= 1.0f / 3.0f;
 
 				r = core::clamp(result.X, 0.0f, 1.0f);
 				g = core::clamp(result.Y, 0.0f, 1.0f);

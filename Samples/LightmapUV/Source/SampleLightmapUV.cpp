@@ -110,19 +110,19 @@ void SampleLightmapUV::onInitApp()
 			std::string name = transforms[meshID]->Name;
 			if (name == "celling_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.4f);
 			}
 			else if (name == "floor_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.2f);
 			}
 			else if (name == "wall_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.2f);
 			}
 			else if (name == "smallwall_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.2f);
 			}
 			else if (name == "top_sponza")
 			{
@@ -169,7 +169,13 @@ void SampleLightmapUV::onInitApp()
 void SampleLightmapUV::runThread()
 {
 	// generate uv in thread
-	m_unwrap.generate(2048, 0.5f);
+#ifdef LIGHTMAP_SPONZA
+	m_unwrap.generate(2048, 0.53f);
+#else
+	// auto texel in 256
+	m_unwrap.generate(256, 0.0f);
+#endif
+
 	m_unwrap.generateUVImage();
 
 	// write to bin folder output layout uv
@@ -262,7 +268,7 @@ void SampleLightmapUV::updateMeshUV()
 
 	for (CMaterial *m : materials)
 	{
-		m->changeShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
+		m->changeShader("BuiltIn/Shader/Lightmap/LightmapUV.xml");
 		m->setUniformTexture("uTexLightmap", m_UVChartsTexture);
 	}
 

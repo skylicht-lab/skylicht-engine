@@ -4,7 +4,7 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 
-u32 CViewBakeLightmap::s_numLightBounce = 2;
+u32 CViewBakeLightmap::s_numLightBounce = 3;
 
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_currentPass(0),
@@ -15,7 +15,11 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_lightBounce(0),
 	m_numberRasterize(0),
 	m_currentRasterisation(NULL),
+#ifdef LIGHTMAP_SPONZA
 	m_lightmapSize(2048),
+#else
+	m_lightmapSize(256),
+#endif
 	m_timeBeginBake(0),
 	m_timeSpentFromLastSave(0),
 	m_numRenderers(0),
@@ -118,24 +122,7 @@ void CViewBakeLightmap::onInit()
 					for (u32 i = 0; i < bufferCount; i++)
 					{
 						IMeshBuffer *mb = mesh->getMeshBuffer(i);
-
-#ifdef LIGHTMAP_SPONZA
-						/*
-						bool bake = false;
-						if (worldTransform->Name == "celling_sponza")
-							bake = true;
-						else if (worldTransform->Name == "floor_sponza")
-							bake = true;
-						else if (worldTransform->Name == "wall_sponza")
-							bake = true;
-						else if (worldTransform->Name == "smallwall_sponza")
-							bake = true;
-						*/
-						bool bake = true;
-#else
-						bool bake = true;
-#endif
-						if (mb->getVertexBufferCount() > 0 && bake)
+						if (mb->getVertexBufferCount() > 0)
 						{
 							// add mesh buffer, that will bake lighting
 							m_meshBuffers.push_back(mb);
@@ -197,13 +184,18 @@ void CViewBakeLightmap::onUpdate()
 			IIndexBuffer *idx = mb->getIndexBuffer();
 			u32 numTris = idx->getIndexCount() / 3;
 
+			int secs = deltaTime / 1000;
+			int mins = secs / 60;
+			int hours = mins / 60;
+
 			char status[512];
-			sprintf(status, "LIGHTMAPPING (%d/%d):\n\n- MeshBuffer: %d/%d\n- Bake step: %d/%d\n- Triangle: %d/%d\n- Time: %d seconds",
+			sprintf(status, "LIGHTMAPPING (%d/%d):\n\n- MeshBuffer: %d/%d\n- Bake step: %d/%d\n- Triangle: %d/%d\n- Time: %d seconds - (%02d:%02d) hm",
 				m_lightBounce + 1, s_numLightBounce,
 				m_currentMB + 1, (int)m_meshBuffers.size(),
 				m_currentPass + 1, 7,
 				m_currentTris, numTris,
-				deltaTime / 1000);
+				secs,
+				hours, mins);
 			m_textInfo->setText(status);
 
 			CRasterisation::ERasterPass pass = (CRasterisation::ERasterPass)m_currentPass;
@@ -266,8 +258,8 @@ void CViewBakeLightmap::onUpdate()
 					normals[i].normalize();
 					tangents[i].normalize();
 
-					// move 3cm
-					// positions[i] += normals[i] * 0.03f;
+					// move 2cm
+					positions[i] += normals[i] * 0.02f;
 				}
 
 				int lmIndex = (int)vertices[v1].Lightmap.Z;
@@ -476,6 +468,9 @@ void CViewBakeLightmap::onPostRender()
 
 void CViewBakeLightmap::saveProgress()
 {
+	// time baked
+	u32 deltaTime = (os::Timer::getRealTime() - m_timeBeginBake) + m_timeSpentFromLastSave;
+
 	// init 10mb (auto grow later)
 	CMemoryStream *stream = new CMemoryStream(10 * 1024 * 1024);
 
@@ -492,6 +487,7 @@ void CViewBakeLightmap::saveProgress()
 	stream->writeInt(m_currentMB);
 	stream->writeInt(m_currentTris);
 	stream->writeInt(m_lastTris);
+	stream->writeUInt(deltaTime);
 
 	stream->writeInt(m_numberRasterize);
 	for (int i = 0; i < m_numberRasterize; i++)
@@ -503,19 +499,22 @@ void CViewBakeLightmap::saveProgress()
 	file->write(stream->getData(), stream->getSize());
 	file->drop();
 
-	// write current output to review
-	core::dimension2du size(m_lightmapSize, m_lightmapSize);
-	char outFileName[512];
-	IVideoDriver *driver = getVideoDriver();
-
-	for (int i = 0; i < m_numberRasterize; i++)
+	if (m_currentPass != (int)CRasterisation::PassCount)
 	{
-		unsigned char *data = m_lmRasterize[i]->getLightmapData();
+		// write current output to review
+		core::dimension2du size(m_lightmapSize, m_lightmapSize);
+		char outFileName[512];
+		IVideoDriver *driver = getVideoDriver();
 
-		IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
-		sprintf(outFileName, "LightMapRasterize_review_bounce_%d_%d.png", m_lightBounce, i);
-		driver->writeImageToFile(img, outFileName);
-		img->drop();
+		for (int i = 0; i < m_numberRasterize; i++)
+		{
+			unsigned char *data = m_lmRasterize[i]->getLightmapData();
+
+			IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+			sprintf(outFileName, "LightMapRasterize_review_bounce_%d_%d.png", m_lightBounce + 1, i);
+			driver->writeImageToFile(img, outFileName);
+			img->drop();
+		}
 	}
 }
 
@@ -556,6 +555,7 @@ void CViewBakeLightmap::loadProgress()
 		m_currentMB = stream->readInt();
 		m_currentTris = stream->readInt();
 		m_lastTris = stream->readInt();
+		m_timeSpentFromLastSave = stream->readUInt();
 
 		int m_numberRasterize = stream->readInt();
 		for (int i = 0; i < m_numberRasterize; i++)
@@ -604,11 +604,17 @@ void CViewBakeLightmap::loadProgress()
 				}
 			}
 
-			// finish
-			if (m_lightBounce >= s_numLightBounce &&
-				m_currentPass >= (int)CRasterisation::PassCount)
+			if (m_currentPass >= (int)CRasterisation::PassCount)
 			{
-				gotoDemoView();
+				// finish
+				if (m_lightBounce >= s_numLightBounce)
+				{
+					gotoDemoView();
+				}
+				else
+				{
+					m_currentPass = 0;
+				}
 			}
 		}
 	}

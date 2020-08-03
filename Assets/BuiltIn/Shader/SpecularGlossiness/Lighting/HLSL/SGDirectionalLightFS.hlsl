@@ -81,7 +81,7 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 		texture2DCompare(uv + float2( 0.0, dy1 * 0.5 ), id, dcompare) +
 		texture2DCompare(uv + float2( dx1 * 0.5, dy1 * 0.5 ), id, dcompare)
 	) * ( 1.0 / 17.0 );
-	result *= 1.5f;
+	result *= 1.5;
 	return result;
 }
 static const float PI = 3.1415926;
@@ -127,8 +127,8 @@ float3 SG(
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	float3 directionalLight = NdotL * lightColor * visibility * directMultiplier;
-	float3 color = (directionalLight + light.rgb) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
+	float3 directionalLight = NdotL * lightColor * visibility;
+	float3 color = (directionalLight + light.rgb) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
 	color += indirect * diffuseColor * indirectMultiplier / PI;
 	return color;
 }

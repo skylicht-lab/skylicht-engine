@@ -34,5 +34,7 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 		}
 	}
 	
+	result *= 1.5;
+	
 	return result/9.0;
 }
