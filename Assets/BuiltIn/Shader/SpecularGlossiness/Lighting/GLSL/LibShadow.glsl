@@ -7,7 +7,7 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 {	
 	int id = 0;
 	float visible = 1.0;
-	float bias = 0.001;
+	float bias = 0.00005;
 	float depth = 0.0;
 	
 	float result = 0.0;
@@ -33,8 +33,6 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 			result += texture2DCompare(vec3(uv+off, id), depth - bias);
 		}
 	}
-	
-	result *= 1.5;
 	
 	return result/9.0;
 }

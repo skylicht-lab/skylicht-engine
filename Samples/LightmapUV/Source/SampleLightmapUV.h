@@ -5,15 +5,15 @@
 
 #include "UnwrapUV/CUnwrapUV.h"
 
-// #define LIGHTMAP_SPONZA
+#define LIGHTMAP_SPONZA
 
-class SampleLightmapUV : 
+class SampleLightmapUV :
 	public IApplicationEventReceiver,
 	public SkylichtSystem::IThreadCallback
 {
 private:
 	CScene *m_scene;
-	
+
 	CForwardRP *m_forwardRP;
 	CCamera *m_camera;
 	CCamera *m_guiCamera;

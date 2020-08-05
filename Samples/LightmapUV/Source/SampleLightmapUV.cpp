@@ -170,7 +170,7 @@ void SampleLightmapUV::runThread()
 {
 	// generate uv in thread
 #ifdef LIGHTMAP_SPONZA
-	m_unwrap.generate(2048, 0.53f);
+	m_unwrap.generate(1024, 0.3f);
 #else
 	// auto texel in 256
 	m_unwrap.generate(256, 0.0f);

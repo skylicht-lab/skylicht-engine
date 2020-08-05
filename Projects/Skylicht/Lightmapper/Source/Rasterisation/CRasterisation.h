@@ -189,6 +189,8 @@ namespace Skylicht
 
 			void getLightmapPixel(int x, int y, float *color);
 
+			bool isBaked(int x, int y);
+
 			core::array<SBakePixel>& getBakePixelQueue()
 			{
 				return m_bakePixels;
