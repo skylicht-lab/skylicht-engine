@@ -138,8 +138,22 @@ void CViewInit::initScene()
 		renderer->initMaterial(materials);
 
 		// indirect indirect lighting
-		// CIndirectLighting *indirectLighting = sponza->addComponent<CIndirectLighting>();
-		// indirectLighting->setIndirectLightingType(CIndirectLighting::VertexColor);
+/*
+		CIndirectLighting *indirectLighting = sponza->addComponent<CIndirectLighting>();
+
+		// init lightmap texture array
+		std::vector<std::string> textures;
+		textures.push_back("Sponza/LightMapRasterize_bounce_1_0.png");
+		textures.push_back("Sponza/LightMapRasterize_bounce_1_1.png");
+		textures.push_back("Sponza/LightMapRasterize_bounce_1_2.png");
+
+		ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(textures);
+		if (lightmapTexture != NULL)
+		{
+			indirectLighting->setLightmap(lightmapTexture);
+			indirectLighting->setIndirectLightingType(CIndirectLighting::LightmapArray);
+		}
+*/
 	}
 
 	// save to context
@@ -259,7 +273,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -298,7 +312,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

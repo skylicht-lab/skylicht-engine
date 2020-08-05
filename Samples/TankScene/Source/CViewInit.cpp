@@ -124,7 +124,7 @@ void CViewInit::initScene()
 	context->setDirectionalLight(directionalLight);
 
 	// adjust direct multipler
-	context->getDefferredRP()->setDirectMultipler(0.6f);
+	// context->getDefferredRP()->setDirectMultipler(0.6f);
 }
 
 void CViewInit::onDestroy()

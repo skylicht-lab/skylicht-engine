@@ -675,9 +675,6 @@ bool CD3D11MaterialRenderer::init(const c8* vertexShaderProgram, const c8* verte
 	// These values allow use of PIX and shader debuggers
 	flags |= D3D10_SHADER_DEBUG;
 	flags |= D3D10_SHADER_SKIP_OPTIMIZATION;
-#else
-	// These flags allow maximum performance
-	flags |= D3D10_SHADER_OPTIMIZATION_LEVEL3;
 #endif
 
 	flags |= D3D10_SHADER_OPTIMIZATION_LEVEL3;
