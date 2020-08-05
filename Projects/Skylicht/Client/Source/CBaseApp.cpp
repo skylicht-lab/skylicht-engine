@@ -49,7 +49,7 @@ namespace Skylicht
 		VLDEnable();
 #endif
 
-#if defined(_DEBUG) && defined(_WIN32)
+#if defined(_WIN32)
 #if WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP
 		AllocConsole();
 		freopen("con", "w", stdout);

@@ -111,7 +111,7 @@ namespace Skylicht
 	void CCascadedShadowMaps::updateSplits(CCamera *camera)
 	{
 		float nd = camera->getNearValue();
-		float fd = m_farValue * 2.0f;
+		float fd = m_farValue * 2.0f; // (1) hard cord x2
 
 		float lambda = m_lambda;
 		float ratio = fd / nd;
@@ -131,7 +131,7 @@ namespace Skylicht
 			m_farBounds[i - 1] = t_far;
 		}
 
-		m_splits[m_splitCount - 1].FarPlane = fd * 0.5f;
+		m_splits[m_splitCount - 1].FarPlane = fd * 0.5f; // (2) hard code /2
 
 		m_farBounds[m_splitCount - 1] = fd;
 	}

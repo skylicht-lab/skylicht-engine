@@ -16,7 +16,7 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_numberRasterize(0),
 	m_currentRasterisation(NULL),
 #ifdef LIGHTMAP_SPONZA
-	m_lightmapSize(2048),
+	m_lightmapSize(1024),
 #else
 	m_lightmapSize(256),
 #endif
@@ -188,6 +188,8 @@ void CViewBakeLightmap::onUpdate()
 			int mins = secs / 60;
 			int hours = mins / 60;
 
+			mins = mins - hours * 60;
+
 			char status[512];
 			sprintf(status, "LIGHTMAPPING (%d/%d):\n\n- MeshBuffer: %d/%d\n- Bake step: %d/%d\n- Triangle: %d/%d\n- Time: %d seconds - (%02d:%02d) hm",
 				m_lightBounce + 1, s_numLightBounce,
@@ -258,8 +260,8 @@ void CViewBakeLightmap::onUpdate()
 					normals[i].normalize();
 					tangents[i].normalize();
 
-					// move 2cm
-					positions[i] += normals[i] * 0.02f;
+					// move near value camera
+					positions[i] += normals[i] * 0.06f;
 				}
 
 				int lmIndex = (int)vertices[v1].Lightmap.Z;
@@ -511,7 +513,7 @@ void CViewBakeLightmap::saveProgress()
 			unsigned char *data = m_lmRasterize[i]->getLightmapData();
 
 			IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
-			sprintf(outFileName, "LightMapRasterize_review_bounce_%d_%d.png", m_lightBounce + 1, i);
+			sprintf(outFileName, "LightMapRasterize_review_%d.png", i);
 			driver->writeImageToFile(img, outFileName);
 			img->drop();
 		}

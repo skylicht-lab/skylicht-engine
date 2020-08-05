@@ -490,6 +490,12 @@ namespace Skylicht
 			return false;
 		}
 
+		bool CRasterisation::isBaked(int x, int y)
+		{
+			int dataOffset = y * m_width + x;
+			return m_bakedData[dataOffset];
+		}
+
 		void CRasterisation::getLightmapPixel(int x, int y, float *color)
 		{
 			int dataOffset = y * m_width + x;
@@ -521,17 +527,24 @@ namespace Skylicht
 				if (x - d >= m_uvMin.X && x + d <= m_uvMax.X)
 				{
 					float c[3];
-					getLightmapPixel(x - d, y, c);
-					neighbors[neighborCount][0] = c[0];
-					neighbors[neighborCount][1] = c[1];
-					neighbors[neighborCount][2] = c[2];
-					neighborCount++;
 
-					getLightmapPixel(x + d, y, c);
-					neighbors[neighborCount][0] = c[0];
-					neighbors[neighborCount][1] = c[1];
-					neighbors[neighborCount][2] = c[2];
-					neighborCount++;
+					if (isBaked(x - d, y) == true)
+					{
+						getLightmapPixel(x - d, y, c);
+						neighbors[neighborCount][0] = c[0];
+						neighbors[neighborCount][1] = c[1];
+						neighbors[neighborCount][2] = c[2];
+						neighborCount++;
+					}
+
+					if (isBaked(x + d, y) == true)
+					{
+						getLightmapPixel(x + d, y, c);
+						neighbors[neighborCount][0] = c[0];
+						neighbors[neighborCount][1] = c[1];
+						neighbors[neighborCount][2] = c[2];
+						neighborCount++;
+					}
 				}
 			}
 
@@ -541,17 +554,24 @@ namespace Skylicht
 				if (y - d >= m_uvMin.Y && y + d <= m_uvMax.Y)
 				{
 					float c[3];
-					getLightmapPixel(x, y - d, c);
-					neighbors[neighborCount][0] = c[0];
-					neighbors[neighborCount][1] = c[1];
-					neighbors[neighborCount][2] = c[2];
-					neighborCount++;
 
-					getLightmapPixel(x, y + d, c);
-					neighbors[neighborCount][0] = c[0];
-					neighbors[neighborCount][1] = c[1];
-					neighbors[neighborCount][2] = c[2];
-					neighborCount++;
+					if (isBaked(x, y - d) == true)
+					{
+						getLightmapPixel(x, y - d, c);
+						neighbors[neighborCount][0] = c[0];
+						neighbors[neighborCount][1] = c[1];
+						neighbors[neighborCount][2] = c[2];
+						neighborCount++;
+					}
+
+					if (isBaked(x, y + d) == true)
+					{
+						getLightmapPixel(x, y + d, c);
+						neighbors[neighborCount][0] = c[0];
+						neighbors[neighborCount][1] = c[1];
+						neighbors[neighborCount][2] = c[2];
+						neighborCount++;
+					}
 				}
 			}
 
@@ -575,8 +595,6 @@ namespace Skylicht
 
 				for (int i = 0; i < neighborCount; i++)
 				{
-					bool zero = true;
-
 					float c[3] = { 0 };
 					c[0] = neighbors[i][0];
 					c[1] = neighbors[i][1];
@@ -584,21 +602,12 @@ namespace Skylicht
 
 					for (int j = 0; j < 3; j++)
 					{
-						if (c[j] != 0.0f)
-						{
-							zero = false;
-							break;
-						}
-
 						if (fabs(c[j] - avg[j]) > m_interpolationThreshold)
 						{
 							interpolate = false;
 							break;
 						}
 					}
-
-					if (zero)
-						interpolate = false;
 
 					if (!interpolate)
 						break;

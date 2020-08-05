@@ -207,7 +207,7 @@ void CViewBakeLightmap::onUpdate()
 			}
 
 			// adjust direct multipler
-			context->getDefferredRP()->setDirectMultipler(0.6f);
+			// context->getDefferredRP()->setDirectMultipler(0.6f);
 
 			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 			return;
