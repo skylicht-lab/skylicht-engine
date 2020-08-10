@@ -109,6 +109,6 @@ namespace Skylicht
 
 		void updateFrustumCorners(const core::vector3df& camPos, const core::vector3df& camForward);
 
-		void updateMatrix();
+		void updateMatrix(core::vector3df& camPos);
 	};
 }

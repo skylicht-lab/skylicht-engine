@@ -139,6 +139,8 @@ void CViewBakeLightmap::onUpdate()
 		else
 			CDeferredRP::enableRenderIndirect(true);
 
+		CBaseRP::SetBakeLightingMapBounce(m_lightBounce);
+
 		IMeshBuffer *mb = m_neshBuffers[m_currentMeshBuffer];
 		SColorBuffer *cb = m_colorBuffers[m_currentMeshBuffer];
 		const core::matrix4& transform = m_meshTransforms[m_currentMeshBuffer];
@@ -205,9 +207,6 @@ void CViewBakeLightmap::onUpdate()
 					m_renderMesh[0]->getEntities().size(),
 					"../Assets/TankScene/TankScene.smesh");
 			}
-
-			// adjust direct multipler
-			// context->getDefferredRP()->setDirectMultipler(0.6f);
 
 			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 			return;

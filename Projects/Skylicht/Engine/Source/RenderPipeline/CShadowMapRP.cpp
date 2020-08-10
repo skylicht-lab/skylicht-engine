@@ -32,6 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
 
+#include "EventManager/CEventManager.h"
+
 namespace Skylicht
 {
 	CShadowMapRP::CShadowMapRP() :
@@ -39,7 +41,8 @@ namespace Skylicht
 		m_csm(NULL),
 		m_shadowMapSize(2048),
 		m_numCascade(3),
-		m_currentCSM(0)
+		m_currentCSM(0),
+		m_saveDebug(false)
 	{
 		m_type = ShadowMap;
 		m_lightDirection.set(-1.0f, -1.0f, -1.0f);
@@ -51,10 +54,14 @@ namespace Skylicht
 
 		m_writeDepthMaterial.BackfaceCulling = false;
 		m_writeDepthMaterial.FrontfaceCulling = false;
+
+		// CEventManager::getInstance()->registerEvent("ShadowRP", this);
 	}
 
 	CShadowMapRP::~CShadowMapRP()
 	{
+		// CEventManager::getInstance()->unRegisterEvent(this);
+
 		if (m_depthTexture != NULL)
 			getVideoDriver()->removeTexture(m_depthTexture);
 
@@ -65,7 +72,7 @@ namespace Skylicht
 	void CShadowMapRP::initRender(int w, int h)
 	{
 		m_csm = new CCascadedShadowMaps();
-		m_csm->init(m_numCascade, m_shadowMapSize, 200.0f, w, h);
+		m_csm->init(m_numCascade, m_shadowMapSize, 300.0f, w, h);
 
 		core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
 		m_depthTexture = getVideoDriver()->addRenderTargetTextureArray(size, m_numCascade, "shadow_depth", ECF_R32F);
@@ -89,10 +96,31 @@ namespace Skylicht
 		IVideoDriver *driver = getVideoDriver();
 
 		// override write depth material
-		driver->setMaterial(m_writeDepthMaterial);
+		if (m_saveDebug == true)
+		{
+			SMaterial m = mb->getMaterial();
+			m.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+			driver->setMaterial(m);
+		}
+		else
+		{
+			driver->setMaterial(m_writeDepthMaterial);
+		}
 
 		// draw mesh buffer
 		driver->drawMeshBuffer(mb);
+	}
+
+	bool CShadowMapRP::OnEvent(const SEvent& event)
+	{
+		if (event.EventType == EET_KEY_INPUT_EVENT)
+		{
+			if (event.KeyInput.Key == KEY_KEY_1 && event.KeyInput.PressedDown == false)
+			{
+				m_saveDebug = true;
+			}
+		}
+		return false;
 	}
 
 	const core::aabbox3df& CShadowMapRP::getFrustumBox()
@@ -129,9 +157,37 @@ namespace Skylicht
 
 			m_currentCSM = i;
 
-			// todo
-			// We inorge last cascade shadow
 			entityManager->cullingAndRender();
+		}
+
+		// todo
+		// Save output to file to test
+		if (m_saveDebug == true)
+		{
+			core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
+			ITexture *rtt = getVideoDriver()->addRenderTargetTexture(size, "rt", video::ECF_A8R8G8B8);
+
+			for (int i = 0; i < m_numCascade; i++)
+			{
+				driver->setRenderTarget(rtt, true, true);
+				driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(i));
+				driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
+
+				m_currentCSM = i;
+
+				entityManager->cullingAndRender();
+
+				driver->setRenderTarget(NULL, false, false);
+
+				char filename[32];
+				sprintf(filename, "shadow_%d.png", i);
+				CBaseRP::saveFBOToFile(rtt, filename);
+				os::Printer::log(filename);
+			}
+
+			getVideoDriver()->removeTexture(rtt);
+
+			m_saveDebug = false;
 		}
 
 		// render point light shadow

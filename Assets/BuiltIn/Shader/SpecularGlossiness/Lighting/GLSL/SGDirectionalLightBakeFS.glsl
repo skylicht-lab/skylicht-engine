@@ -107,6 +107,11 @@ void main(void)
 	vec3 indirect = texture(uTexIndirect, varTexCoord0.xy).rgb;
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
+	if (dot(viewDir, normal) < 0)
+	{
+		normal = normal * -1.0;
+		indirect = indirect * 0.1;
+	}
 	float depth = length(v);
 	vec4 shadowCoord[3];
 	shadowCoord[0] = uShadowMatrix[0] * vec4(position, 1.0);

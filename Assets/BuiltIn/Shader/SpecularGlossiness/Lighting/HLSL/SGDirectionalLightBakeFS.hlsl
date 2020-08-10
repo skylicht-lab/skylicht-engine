@@ -119,6 +119,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 indirect = uTexIndirect.Sample(uTexIndirectSampler, input.tex0).rgb;
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
+	if (dot(viewDir, normal) < 0)
+	{
+		normal = normal * -1.0;
+		indirect = indirect * 0.1;
+	}
 	float depth = length(v);
 	float4 shadowCoord[3];
 	shadowCoord[0] = mul(float4(position, 1.0), uShadowMatrix[0]);

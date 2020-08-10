@@ -35,16 +35,7 @@ void CViewInit::onInit()
 	// load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
+	shaderMgr->initSGDeferredShader();
 
 	// load font
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
@@ -94,6 +85,7 @@ void CViewInit::onInit()
 		{-11.2f, 2.4f, -4.5f},
 		{12.03f, 2.4f, 4.04f},
 		{12.01f, 2.4f, -4.47f},
+
 		{6.18f, 1.6f, -2.2f},
 		{6.18f, 1.6f, 1.43f},
 		{-4.89f, 1.6f, -2.17f},
@@ -108,7 +100,7 @@ void CViewInit::onInit()
 		pointLight->setShadow(true);
 
 		if (i >= 4)
-			pointLight->setRadius(3.0f);
+			pointLight->setRadius(1.5f);
 		else
 			pointLight->setRadius(6.0f);
 
