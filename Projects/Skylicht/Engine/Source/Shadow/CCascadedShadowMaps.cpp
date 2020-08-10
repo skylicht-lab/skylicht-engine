@@ -50,7 +50,7 @@ namespace Skylicht
 	{
 		m_splitCount = splitCount;
 		m_shadowMapSize = shadowMapSize;
-		// m_farValue = farValue;
+		m_farValue = farValue;
 
 		float ratio = 1.0f;
 		for (int i = 0; i < m_splitCount; i++)
@@ -105,13 +105,13 @@ namespace Skylicht
 		// calc shadow volume
 		updateSplits(camera);
 		updateFrustumCorners(cameraPosition, cameraForward);
-		updateMatrix();
+		updateMatrix(cameraPosition);
 	}
 
 	void CCascadedShadowMaps::updateSplits(CCamera *camera)
 	{
 		float nd = camera->getNearValue();
-		float fd = m_farValue * 2.0f; // (1) hard cord x2
+		float fd = m_farValue;
 
 		float lambda = m_lambda;
 		float ratio = fd / nd;
@@ -131,7 +131,7 @@ namespace Skylicht
 			m_farBounds[i - 1] = t_far;
 		}
 
-		m_splits[m_splitCount - 1].FarPlane = fd * 0.5f; // (2) hard code /2
+		m_splits[m_splitCount - 1].FarPlane = fd;
 
 		m_farBounds[m_splitCount - 1] = fd;
 	}
@@ -173,7 +173,7 @@ namespace Skylicht
 		}
 	}
 
-	void CCascadedShadowMaps::updateMatrix()
+	void CCascadedShadowMaps::updateMatrix(core::vector3df& camPos)
 	{
 		core::matrix4 projection;
 
@@ -214,7 +214,8 @@ namespace Skylicht
 			// Compute bounding box for culling
 			m_frustumBox[i].MinEdge = frustum.Center - radius3;
 			m_frustumBox[i].MaxEdge = frustum.Center + radius3;
-			m_frustumBox[i].addInternalPoint(shadowCameraPos);
+
+			m_frustumBox[i].addInternalPoint(camPos);
 
 			// Add the near offset to the Z value of the cascade extents to make sure the orthographic frustum captures the entire frustum split (else it will exhibit cut-off issues).
 			core::matrix4 ortho;

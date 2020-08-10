@@ -93,6 +93,8 @@ namespace Skylicht
 
 		void initBasicShader();
 
+		void initSGDeferredShader();
+
 		void initSkylichtEngineShader();
 
 		void initShader();

@@ -34,7 +34,7 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 {
 	int id = 0;
 	float visible = 1.0;
-	float bias = 0.00005;
+	float bias = 0.0001;
 	float depth = 0.0;
 	float result = 0.0;
 	float size = 2048;
@@ -46,8 +46,9 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 		id = 2;
 	else
 		return 1.0;
-	depth = shadowCoord[id].z;
-	float2 uv = shadowCoord[id].xy;
+	float3 shadowUV = shadowCoord[id].xyz / shadowCoord[id].w;
+	depth = shadowUV.z;
+	float2 uv = shadowUV.xy;
 	[unroll]
 	for(int x=-1; x<=1; x++)
 	{

@@ -88,7 +88,23 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapUV.xml");
+		loadShader("BuiltIn/Shader/Lightmap/IndirectTest.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapVertex.xml");
+	}
+
+	void CShaderManager::initSGDeferredShader()
+	{
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightBake.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
 	}
 
 	void CShaderManager::initSkylichtEngineShader()

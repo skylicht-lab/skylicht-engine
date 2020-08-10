@@ -107,16 +107,20 @@ namespace Skylicht
 		m_multiRenderTarget.push_back(m_normal);
 		m_multiRenderTarget.push_back(m_data);
 
-		// setup material
-		initDefferredMaterial();
-		initPointLightMaterial();
-
 		// get basic shader
 		CShaderManager *shaderMgr = CShaderManager::getInstance();
 		m_textureColorShader = shaderMgr->getShaderIDByName("TextureColor");
 		m_vertexColorShader = shaderMgr->getShaderIDByName("VertexColor");
 		m_lightmapArrayShader = shaderMgr->getShaderIDByName("Lightmap");
 		m_lightmapVertexShader = shaderMgr->getShaderIDByName("LightmapVertex");
+		m_lightmapIndirectTestShader = shaderMgr->getShaderIDByName("IndirectTest");
+
+		m_lightDirection = shaderMgr->getShaderIDByName("SGDirectionalLight");
+		m_lightDirectionBake = shaderMgr->getShaderIDByName("SGDirectionalLightBake");
+
+		// setup material
+		initDefferredMaterial();
+		initPointLightMaterial();
 
 		// final pass
 		m_finalPass.setTexture(0, m_target);
@@ -125,7 +129,7 @@ namespace Skylicht
 
 	void CDeferredRP::initDefferredMaterial()
 	{
-		m_directionalLightPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("SGDirectionalLight");
+		m_directionalLightPass.MaterialType = m_lightDirection;
 
 		m_directionalLightPass.setTexture(0, m_albedo);
 		m_directionalLightPass.setTexture(1, m_position);
@@ -261,8 +265,28 @@ namespace Skylicht
 		}
 		else
 		{
-			// default render
-			CBaseRP::drawMeshBuffer(mesh, bufferID, entity, entityID);
+			if (s_bakeMode == true)
+			{
+				// update texture resource
+				updateTextureResource(mesh, bufferID, entity, entityID);
+
+				IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
+				IVideoDriver *driver = getVideoDriver();
+
+				video::SMaterial irrMaterial = mb->getMaterial();
+				irrMaterial.BackfaceCulling = false;
+
+				// set irrlicht material
+				driver->setMaterial(irrMaterial);
+
+				// draw mesh buffer
+				driver->drawMeshBuffer(mb);
+			}
+			else
+			{
+				// default render
+				CBaseRP::drawMeshBuffer(mesh, bufferID, entity, entityID);
+			}
 		}
 	}
 
@@ -325,13 +349,15 @@ namespace Skylicht
 			entityManager->cullingAndRender();
 
 		// Apply uniform: uLightMultiplier
-		if (CBaseRP::s_bakeMode == true)
+		if (CBaseRP::s_bakeMode == true && CBaseRP::s_bakeLMMode)
 		{
-			// boost indirect lighting to
+			// boost indirect lighting
 			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.5f);
 		}
 		else
+		{
 			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(m_directMultipler, m_indirectMultipler);
+		}
 
 		// STEP 03:
 		// draw point lighting & spot lighting
@@ -399,6 +425,12 @@ namespace Skylicht
 
 		beginRender2D(renderW, renderH);
 
+		// enable backface shader if bake lightmap mode
+		if (s_bakeMode == true)
+			m_directionalLightPass.MaterialType = m_lightDirectionBake;
+		else
+			m_directionalLightPass.MaterialType = m_lightDirection;
+
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 
 		// STEP 05
@@ -422,6 +454,7 @@ namespace Skylicht
 			m_indirect->regenerateMipMapLevels();
 			SMaterial t = m_finalPass;
 			t.TextureLayer[0].Texture = m_indirect;
+			t.MaterialType = m_lightmapIndirectTestShader;
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, renderW, renderH, t);
 		}
 	}

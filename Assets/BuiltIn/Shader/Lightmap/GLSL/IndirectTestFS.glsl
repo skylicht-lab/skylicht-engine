@@ -1,0 +1,13 @@
+precision mediump float;
+
+uniform sampler2DArray uTexLightmap;
+
+in vec3 varTexCoord0;
+
+out vec4 FragColor;
+
+void main(void)
+{
+	FragColor = texture(uTexLightmap, varTexCoord0);
+	FragColor.xyz = FragColor.xyz / 3.0;
+}

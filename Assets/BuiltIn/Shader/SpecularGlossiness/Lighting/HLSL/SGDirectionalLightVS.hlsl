@@ -8,7 +8,7 @@ struct VS_INPUT
 
 struct VS_OUTPUT
 {
-	float4 pos : SV_POSITION;	
+	float4 pos : SV_POSITION;
 	float2 tex0 : TEXCOORD0;
 };
 
