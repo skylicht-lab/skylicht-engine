@@ -29,7 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CShadowMapRP : public CBaseRP
+	class CShadowMapRP : 
+		public CBaseRP,
+		public IEventReceiver
 	{
 	protected:
 		ITexture *m_depthTexture;
@@ -46,6 +48,7 @@ namespace Skylicht
 		int m_depthWriteShader;
 		int m_cubeDepthWriteShader;
 
+		bool m_saveDebug;
 	public:
 		CShadowMapRP();
 
@@ -58,6 +61,8 @@ namespace Skylicht
 		virtual bool canRenderMaterial(CMaterial *m);
 
 		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
+
+		virtual bool OnEvent(const SEvent& event);
 
 	public:
 

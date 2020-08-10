@@ -644,8 +644,14 @@ namespace Skylicht
 
 				bakeResults[i].getSHIrradiance(p.Normal, result);
 
+				const core::vector3df& ambient = bakeResults[i].getValue()[0];
+
+				// dark multipler x2
+				float l = core::clamp(0.21f * result.X + 0.72f * result.Y + 0.07f * result.Z, 0.0f, 1.0f);
+				float interplateMultipler = 1.0f + 1.5f * (1.0f - l);
+
 				// compress lighting by 3.0
-				result *= 1.0f / 3.0f;
+				result *= interplateMultipler / 3.0f;
 
 				r = core::clamp(result.X, 0.0f, 1.0f);
 				g = core::clamp(result.Y, 0.0f, 1.0f);

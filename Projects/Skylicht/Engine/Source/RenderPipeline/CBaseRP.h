@@ -47,6 +47,8 @@ namespace Skylicht
 		int m_textureColorShaderID;
 
 		static bool s_bakeMode;
+		static bool s_bakeLMMode;
+		static int s_bakeBounce;
 
 	public:
 		CBaseRP();
@@ -82,6 +84,10 @@ namespace Skylicht
 		static void saveFBOToFile(ITexture *texture, const char *output);
 
 		static void setBakeMode(bool b);
+
+		static void setBakeLightmapMode(bool b);
+
+		static void SetBakeLightingMapBounce(int i);
 
 		void unbindRTT();
 

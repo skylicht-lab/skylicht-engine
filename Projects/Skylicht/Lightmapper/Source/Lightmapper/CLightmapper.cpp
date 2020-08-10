@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CLightmapper.h"
+#include "RenderPipeline/CBaseRP.h"
 
 namespace Skylicht
 {
@@ -127,6 +128,8 @@ namespace Skylicht
 				int numMT = count - current;
 				numMT = core::min_(numMT, maxMT);
 
+				CBaseRP::setBakeLightmapMode(true);
+
 				// bake and get SH result
 				baker->bake(camera,
 					rp,
@@ -137,6 +140,8 @@ namespace Skylicht
 					binormal + current,
 					numMT,
 					numFace);
+
+				CBaseRP::setBakeLightmapMode(false);
 
 				for (int i = 0; i < numMT; i++)
 					out.push_back(baker->getSH(i));
@@ -250,6 +255,8 @@ namespace Skylicht
 				positions[id] += normals[id] * 0.02f;
 			}
 
+			CBaseRP::setBakeLightmapMode(true);
+
 			std::vector<CSH9> resultSH;
 			bakeAtPosition(
 				camera,
@@ -262,6 +269,8 @@ namespace Skylicht
 				resultSH,
 				count,
 				5);
+
+			CBaseRP::setBakeLightmapMode(false);
 
 			core::vector3df result;
 			float r, g, b;

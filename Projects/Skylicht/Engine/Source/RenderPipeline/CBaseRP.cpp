@@ -36,6 +36,8 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	bool CBaseRP::s_bakeMode = false;
+	bool CBaseRP::s_bakeLMMode = false;
+	int CBaseRP::s_bakeBounce = 0;
 
 	CBaseRP::CBaseRP() :
 		m_next(NULL),
@@ -661,6 +663,16 @@ namespace Skylicht
 	void CBaseRP::setBakeMode(bool b)
 	{
 		s_bakeMode = b;
+	}
+
+	void CBaseRP::setBakeLightmapMode(bool b)
+	{
+		s_bakeLMMode = b;
+	}
+
+	void CBaseRP::SetBakeLightingMapBounce(int i)
+	{
+		s_bakeBounce = i;
 	}
 
 	void CBaseRP::drawSceneToTexture(ITexture *target, CEntityManager *entityMgr)

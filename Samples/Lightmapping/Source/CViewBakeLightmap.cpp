@@ -174,6 +174,8 @@ void CViewBakeLightmap::onUpdate()
 	else
 		CDeferredRP::enableRenderIndirect(true);
 
+	CBaseRP::SetBakeLightingMapBounce(m_lightBounce);
+
 	for (int loopCount = 0; loopCount < 64; loopCount++)
 	{
 		if (m_currentMB < m_meshBuffers.size())
