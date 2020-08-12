@@ -54,7 +54,7 @@ namespace Skylicht
 
 		bool isOpenGLFamily();
 
-		void setColor(IMaterialRenderer *matRender, int colorID, bool vertexConstant, const SColorf& c);
+		void setColor(IMaterialRenderer *matRender, int colorID, bool vertexConstant, const SColorf& c, float intensity);
 
 		void setDirection(IMaterialRenderer *matRender, int directionID, bool vertexConstant, const core::vector3df& dir, int count = 4, bool worldDirection = false);
 

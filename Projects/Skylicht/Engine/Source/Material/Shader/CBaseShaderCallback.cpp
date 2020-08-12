@@ -60,9 +60,9 @@ namespace Skylicht
 		return false;
 	}
 
-	void CBaseShaderCallback::setColor(IMaterialRenderer *matRender, int colorID, bool vertexConstant, const SColorf& color)
+	void CBaseShaderCallback::setColor(IMaterialRenderer *matRender, int colorID, bool vertexConstant, const SColorf& color, float intensity)
 	{
-		float constBuffer[] = { color.r, color.g, color.b, 1.0f };
+		float constBuffer[] = { color.r, color.g, color.b, intensity };
 
 		if (vertexConstant == true)
 			matRender->setShaderVariable(colorID, constBuffer, 4, video::EST_VERTEX_SHADER);

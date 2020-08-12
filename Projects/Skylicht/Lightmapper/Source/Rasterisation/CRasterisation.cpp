@@ -646,12 +646,16 @@ namespace Skylicht
 
 				const core::vector3df& ambient = bakeResults[i].getValue()[0];
 
-				// dark multipler x2
-				float l = core::clamp(0.21f * result.X + 0.72f * result.Y + 0.07f * result.Z, 0.0f, 1.0f);
-				float interplateMultipler = 1.0f + 1.5f * (1.0f - l);
+				// dark multipler
+				float l = 1.0f - core::clamp(0.21f * result.X + 0.72f * result.Y + 0.07f * result.Z, 0.0f, 1.0f);
+
+				// use QuadraticEaseIn function (y = x^2) or CubicEaseIn (y = x^3)
+				// [x -> 0.0 - 1.0] 
+				// [y -> 1.0 - 1.3]
+				float darkMultipler = 1.0f + 1.3f * l * l * l;
 
 				// compress lighting by 3.0
-				result *= interplateMultipler / 3.0f;
+				result *= darkMultipler / 3.0f;
 
 				r = core::clamp(result.X, 0.0f, 1.0f);
 				g = core::clamp(result.Y, 0.0f, 1.0f);

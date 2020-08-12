@@ -84,7 +84,7 @@ namespace Skylicht
 			if (s_directionalLight != NULL)
 			{
 				const video::SColorf& color = s_directionalLight->getColor();
-				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color);
+				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, s_directionalLight->getIntensity());
 			}
 		}
 		break;
@@ -93,13 +93,13 @@ namespace Skylicht
 			if (s_pointLight != NULL)
 			{
 				const video::SColorf& color = s_pointLight->getColor();
-				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color);
+				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, s_pointLight->getIntensity());
 			}
 		}
 		break;
 		case LIGHT_AMBIENT:
 		{
-			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, s_lightAmbient);
+			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, s_lightAmbient, 1.0f);
 		}
 		break;
 		case LIGHT_DIRECTION:

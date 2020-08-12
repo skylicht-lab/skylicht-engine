@@ -29,7 +29,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float gloss = data.g;
 	float3 direction = uLightPosition.xyz - position;
 	float distance = length(direction);
-	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.y));
+	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.y)) * uLightColor.a;
 	float3 lightDir = normalize(direction);
 	float NdotL = max(0.0, dot(lightDir, normal));
 	float3 H = normalize(direction + viewDir);
