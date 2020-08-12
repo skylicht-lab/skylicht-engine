@@ -4,7 +4,7 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 
-u32 CViewBakeLightmap::s_numLightBounce = 3;
+u32 CViewBakeLightmap::s_numLightBounce = 4;
 
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_currentPass(0),
@@ -261,9 +261,6 @@ void CViewBakeLightmap::onUpdate()
 
 					normals[i].normalize();
 					tangents[i].normalize();
-
-					// move near value camera
-					positions[i] += normals[i] * 0.06f;
 				}
 
 				int lmIndex = (int)vertices[v1].Lightmap.Z;

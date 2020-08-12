@@ -36,11 +36,15 @@ void main(void)
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
 	
+	float directMul = uLightMultiplier.x;
+	float indirectMul = uLightMultiplier.y;
+	
 	// backface when render lightmap
 	if (dot(viewDir, normal) < 0)
 	{
 		normal = normal * -1.0;
-		indirect = indirect * 0.1;
+		directMul = 0.3;
+		indirectMul = 0.3;
 	}
 	
 	// shadow
@@ -66,12 +70,12 @@ void main(void)
 		viewDir,
 		uLightDirection.xyz,
 		normal,
-		uLightColor.rgb,
+		uLightColor.rgb * uLightColor.a,
 		visibility,
 		light,
 		indirect,
-		uLightMultiplier.x,
-		uLightMultiplier.y);
+		directMul,
+		indirectMul);
 		
 	FragColor = vec4(color, 1.0);
 }

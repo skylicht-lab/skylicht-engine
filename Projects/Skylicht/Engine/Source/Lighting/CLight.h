@@ -52,6 +52,9 @@ namespace Skylicht
 		//! Does the light cast shadows?
 		bool m_castShadow;
 
+		//! Intensity of light
+		float m_intensity;
+
 	public:
 		CLight();
 
@@ -107,6 +110,16 @@ namespace Skylicht
 		inline void setShadow(bool shadow)
 		{
 			m_castShadow = shadow;
+		}
+
+		inline void setIntensity(float f)
+		{
+			m_intensity = f;
+		}
+
+		inline float getIntensity()
+		{
+			return m_intensity;
 		}
 	};
 }

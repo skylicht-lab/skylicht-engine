@@ -87,7 +87,8 @@ void CViewInit::initScene()
 	std::vector<std::string> textureFolders;
 	textureFolders.push_back("Sponza/Textures");
 
-	// load model
+	// Load model from TankScene.smesh
+	// How to export "TankScene.smesh" see SampleLightmappingVertex
 	prefab = meshManager->loadModel("TankScene/TankScene.smesh", NULL, true);
 	if (prefab != NULL)
 	{
@@ -104,6 +105,7 @@ void CViewInit::initScene()
 		renderer->initMaterial(materials);
 
 		// set indirect lighting by VertexColor
+		// See SampleLightmappingVertex, that compute vertex color as indirect lighting
 		CIndirectLighting *indirectLighting = tankScene->addComponent<CIndirectLighting>();
 		indirectLighting->setIndirectLightingType(CIndirectLighting::VertexColor);
 	}

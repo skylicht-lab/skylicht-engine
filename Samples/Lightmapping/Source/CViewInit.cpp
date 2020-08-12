@@ -73,11 +73,14 @@ void CViewInit::onInit()
 #ifdef LIGHTMAP_SPONZA
 	// lighting
 	CGameObject *lightObj = zone->createEmptyObject();
+
 	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	directionalLight->setIntensity(2.0f);
+
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(-4.0f, -5.0f, -3.0f);
+	core::vector3df direction = core::vector3df(2.0f, -5.0f, 1.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	core::vector3df pointLightPosition[] = {
@@ -92,22 +95,25 @@ void CViewInit::onInit()
 		{-4.89f, 1.6f, 1.42f},
 	};
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		CGameObject *pointLightObj = zone->createEmptyObject();
 
 		CPointLight *pointLight = pointLightObj->addComponent<CPointLight>();
 		pointLight->setShadow(true);
+		pointLight->setColor(SColor(255, 221, 123, 34));
 
 		if (i >= 4)
-			pointLight->setRadius(1.5f);
+			pointLight->setRadius(1.0f);
 		else
-			pointLight->setRadius(6.0f);
+			pointLight->setRadius(4.0f);
 
 		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
 	}
 
+	// Load model from Sponza.smesh
+	// How to export "Sponza.smesh" see SampleLightmapUV
 	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.smesh", NULL, true);
 #else
 	CGameObject *lightObj = zone->createEmptyObject();
@@ -144,11 +150,11 @@ void CViewInit::onInit()
 
 			float c[] = { 165.0f / 255.0f, 161.0f / 255.0f, 147 / 255.0f, 1.0f };
 			material->setUniform4("uColor", c);
-		}
+	}
 #endif
 
 		renderMesh->initMaterial(materials);
-	}
+}
 
 	// save to context	
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
