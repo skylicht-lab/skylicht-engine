@@ -31,7 +31,7 @@ void main(void)
 	// Lighting	
 	vec3 direction = uLightPosition.xyz - position;
 	float distance = length(direction);	
-	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.y));
+	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.y)) * uLightColor.a;
 	
 	vec3 lightDir = normalize(direction);
 	float NdotL = max(0.0, dot(lightDir, normal));

@@ -71,11 +71,14 @@ void CViewInit::initScene()
 
 	// lighting
 	CGameObject *lightObj = zone->createEmptyObject();
+	
 	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	directionalLight->setIntensity(1.0f);
+
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(4.0f, -5.0f, 3.0f);
+	core::vector3df direction = core::vector3df(2.0f, -5.0f, 1.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	core::vector3df pointLightPosition[] = {
@@ -90,18 +93,18 @@ void CViewInit::initScene()
 		{-4.89f, 1.6f, 1.42f},
 	};
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		CGameObject *pointLightObj = zone->createEmptyObject();
 
 		CPointLight *pointLight = pointLightObj->addComponent<CPointLight>();
 		pointLight->setShadow(true);
-		pointLight->setColor(SColor(255, 255, 90, 0));
+		pointLight->setColor(SColor(255, 221, 123, 34));
 
 		if (i >= 4)
 			pointLight->setRadius(1.0f);
 		else
-			pointLight->setRadius(4.0f);
+			pointLight->setRadius(4.0f);		
 
 		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
@@ -114,7 +117,8 @@ void CViewInit::initScene()
 	std::vector<std::string> textureFolders;
 	textureFolders.push_back("Sponza/Textures");
 
-	// load model
+	// Load model from Sponza.smesh
+	// How to export "Sponza.smesh" see SampleLightmapUV
 	prefab = meshManager->loadModel("Sponza/Sponza.smesh", NULL, true);
 	if (prefab != NULL)
 	{
@@ -131,13 +135,15 @@ void CViewInit::initScene()
 		renderer->initMaterial(materials);
 
 		// indirect indirect lighting
+		/*
 		CIndirectLighting *indirectLighting = sponza->addComponent<CIndirectLighting>();
 
 		// init lightmap texture array
+		// See SampleLightmapping, that how to render this
 		std::vector<std::string> textures;
-		textures.push_back("Sponza/LightMapRasterize_bounce_3_0.png");
-		textures.push_back("Sponza/LightMapRasterize_bounce_3_1.png");
-		textures.push_back("Sponza/LightMapRasterize_bounce_3_2.png");
+		textures.push_back("Sponza/LightMapRasterize_bounce_4_0.png");
+		textures.push_back("Sponza/LightMapRasterize_bounce_4_1.png");
+		textures.push_back("Sponza/LightMapRasterize_bounce_4_2.png");
 
 		ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(textures);
 		if (lightmapTexture != NULL)
@@ -145,6 +151,7 @@ void CViewInit::initScene()
 			indirectLighting->setLightmap(lightmapTexture);
 			indirectLighting->setIndirectLightingType(CIndirectLighting::LightmapArray);
 		}
+		*/
 	}
 
 	// save to context
@@ -266,7 +273,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -305,7 +312,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()

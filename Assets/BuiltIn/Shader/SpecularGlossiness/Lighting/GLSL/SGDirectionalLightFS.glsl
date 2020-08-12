@@ -124,7 +124,7 @@ void main(void)
 		viewDir,
 		uLightDirection.xyz,
 		normal,
-		uLightColor.rgb,
+		uLightColor.rgb * uLightColor.a,
 		visibility,
 		light,
 		indirect,
