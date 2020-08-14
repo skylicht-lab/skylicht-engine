@@ -151,7 +151,7 @@ This is example code. How to render character model with animation, models are d
 <img src="Documents/Media/Samples/sample_skinned_mesh.jpg"/>
 
 ### Samples\LightmapUV
-This is a demo of use UnwrapUV tool to create Lightmap UV. 
+This is a demo how to use UnwrapUV tool to create Lightmap UV. 
 [Library xatlas](https://github.com/jpcy/xatlas) is integrated to Skylicht Engine.
 
 <img src="Documents/Media/Samples/lightmap-uv/lightmap-uv.png"/>
@@ -166,14 +166,23 @@ This is a demo code to use lightmapper to bake indirect lighting color on lightm
 
 <img src="Documents/Media/Samples/lightmap/lightmapping_b.png"/>
 
-#### Pixel baked
-<img src="Documents/Media/Samples/lightmap/rasterize_debug.png"/>
-
-#### 2 bounces light
-<img src="Documents/Media/Samples/lightmap/rasterize_1.png"/>
-
-#### 3 bounces light
+Lightmap
 <img src="Documents/Media/Samples/lightmap/rasterize_2.png"/>
+
+Sponza indirect lighting bake by Skylicht Lightmapper
+
+<img src="Documents/Media/Samples/sponza/Sponza_indirect_01.jpg"/>
+
+<img src="Documents/Media/Samples/sponza/Sponza_indirect_02.jpg"/>
+
+### Samples\Sponza
+This example how to setup simple lighting & lightmap
+
+<img src="Documents/Media/Samples/sponza/Sponza_01.jpg"/>
+
+<img src="Documents/Media/Samples/sponza/Sponza_02.jpg"/>
+
+<img src="Documents/Media/Samples/sponza/Sponza_03.jpg"/>
 
 ### Samples\LightmappingVertex
 This is a demo to use lightmapper to set indirect lighting color on vertex color.
