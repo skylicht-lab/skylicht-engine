@@ -71,9 +71,9 @@ void CViewInit::initScene()
 
 	// lighting
 	CGameObject *lightObj = zone->createEmptyObject();
-	
+
 	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
-	directionalLight->setIntensity(1.0f);
+	directionalLight->setIntensity(1.3f);
 
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
@@ -104,7 +104,7 @@ void CViewInit::initScene()
 		if (i >= 4)
 			pointLight->setRadius(1.0f);
 		else
-			pointLight->setRadius(4.0f);		
+			pointLight->setRadius(4.0f);
 
 		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
@@ -135,7 +135,6 @@ void CViewInit::initScene()
 		renderer->initMaterial(materials);
 
 		// indirect indirect lighting
-		/*
 		CIndirectLighting *indirectLighting = sponza->addComponent<CIndirectLighting>();
 
 		// init lightmap texture array
@@ -151,7 +150,6 @@ void CViewInit::initScene()
 			indirectLighting->setLightmap(lightmapTexture);
 			indirectLighting->setIndirectLightingType(CIndirectLighting::LightmapArray);
 		}
-		*/
 	}
 
 	// save to context
@@ -162,8 +160,6 @@ void CViewInit::initScene()
 
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
-
-	// context->getDefferredRP()->enableTestIndirect(true);
 
 	initProbes();
 }
