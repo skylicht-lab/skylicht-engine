@@ -173,14 +173,15 @@ Result lightmap
 <img src="Documents/Media/Samples/lightmap/rasterize_2.png"/>
 
 ### Sponza lightmap
-Sponza indirect lighting bake by Skylicht Lightmapper
+Sponza indirect lighting baked by Skylicht Lightmapper
 
 <img src="Documents/Media/Samples/sponza/Sponza_indirect_01.jpg"/>
 
 <img src="Documents/Media/Samples/sponza/Sponza_indirect_02.jpg"/>
 
 ### Samples\Sponza
-This example how to setup simple lighting & lightmap
+This example how to setup simple lighting & lightmap. 
+This scene use basic diffuse bump specular shader and don't use post processing.
 
 <img src="Documents/Media/Samples/sponza/Sponza_01.jpg"/>
 
