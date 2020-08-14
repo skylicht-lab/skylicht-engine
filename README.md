@@ -162,13 +162,17 @@ This is a demo how to use UnwrapUV tool to create Lightmap UV.
 This is a demo code to use lightmapper to bake indirect lighting color on lightmap texture.
 [Project references: Lightmapper](https://github.com/ands/lightmapper)
 
+#### Gazebo
+
 <img src="Documents/Media/Samples/lightmap/lightmapping_a.png"/>
 
 <img src="Documents/Media/Samples/lightmap/lightmapping_b.png"/>
 
-Lightmap
+Result lightmap
+
 <img src="Documents/Media/Samples/lightmap/rasterize_2.png"/>
 
+### Sponza lightmap
 Sponza indirect lighting bake by Skylicht Lightmapper
 
 <img src="Documents/Media/Samples/sponza/Sponza_indirect_01.jpg"/>
