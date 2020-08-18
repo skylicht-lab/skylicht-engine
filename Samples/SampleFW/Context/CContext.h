@@ -23,6 +23,7 @@ protected:
 	CDeferredRP	*m_rendering;
 	CShadowMapRP *m_shadowMapRendering;
 	CForwardRP *m_forwardRP;
+	CPostProcessorRP *m_postProcessor;
 
 public:
 	CContext();
@@ -46,6 +47,11 @@ public:
 	inline CBaseRP* getRenderPipeline()
 	{
 		return m_beginRP;
+	}
+
+	inline CPostProcessorRP* getPostProcessorPipeline()
+	{
+		return m_postProcessor;
 	}
 
 	inline CDeferredRP* getDefferredRP()

@@ -7,6 +7,7 @@ CContext::CContext() :
 	m_rendering(NULL),
 	m_shadowMapRendering(NULL),
 	m_forwardRP(NULL),
+	m_postProcessor(NULL),
 	m_zone(NULL),
 	m_directionalLight(NULL),
 	m_camera(NULL),
@@ -57,6 +58,13 @@ CBaseRP* CContext::initRenderPipeline(int w, int h)
 	// link rp
 	m_shadowMapRendering->setNextPipeLine(m_rendering);
 	m_rendering->setNextPipeLine(m_forwardRP);
+
+	// post processor
+	m_postProcessor = new CPostProcessorRP();
+	m_postProcessor->initRender(w, h);
+
+	// apply post processor
+	m_rendering->setPostProcessor(m_postProcessor);
 
 	m_beginRP = m_shadowMapRendering;
 	return m_beginRP;
