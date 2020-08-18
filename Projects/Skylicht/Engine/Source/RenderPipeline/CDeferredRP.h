@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBaseRP.h"
+#include "CPostProcessorRP.h"
 
 namespace Skylicht
 {
@@ -71,6 +72,9 @@ namespace Skylicht
 
 		float m_indirectMultipler;
 		float m_directMultipler;
+
+		CPostProcessorRP *m_postProcessor;
+
 	protected:
 
 		void initDefferredMaterial();
@@ -88,6 +92,11 @@ namespace Skylicht
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
 
 		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
+
+		inline void setPostProcessor(CPostProcessorRP *pp)
+		{
+			m_postProcessor = pp;
+		}
 
 		inline void setIndirectMultipler(float f)
 		{
