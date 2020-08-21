@@ -352,8 +352,8 @@ namespace Skylicht
 		// Apply uniform: uLightMultiplier
 		if (CBaseRP::s_bakeMode == true && CBaseRP::s_bakeLMMode)
 		{
-			// boost indirect lighting
-			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.5f);
+			// default light setting
+			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.0f);
 		}
 		else
 		{
