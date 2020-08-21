@@ -1,6 +1,7 @@
 static const float PI = 3.1415926;
 
 #include "LibSolverMetallic.hlsl"
+#include "../../../PostProcessing/HLSL/LibToneMapping.hlsl"
 
 float3 SG(
 	const float3 baseColor, 
@@ -30,6 +31,13 @@ float3 SG(
 	float3 diffuseColor = baseColor.rgb;
 	specularColor = lerp(f0, baseColor.rgb, metallic);
 	
+	// Tone mapping
+	specularColor = sRGB(specularColor);
+	diffuseColor = sRGB(diffuseColor);
+	float3 directionLightColor = sRGB(lightColor);
+	float3 pointLightColor = sRGB(light.rgb);
+	float3 indirectColor = sRGB(indirect.rgb);
+	
 	// Lighting
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	NdotL = min(NdotL, 1.0);
@@ -39,14 +47,14 @@ float3 SG(
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
-	float3 directionalLight = NdotL * lightColor * visibility;
-	float3 color = (directionalLight + light.rgb) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
+	float3 directionalLight = NdotL * directionLightColor * visibility;
+	float3 color = (directionalLight + pointLightColor) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
 	
 	// IBL Ambient
-	color += indirect * diffuseColor * indirectMultiplier / PI;
+	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 	
-	// IBL reflection (fake by ambient)
-	// color += indirect * specularColor * metallic;
+	// IBL reflection
+	// ...
 	
-	return color;
+	return linearRGB(color);
 }
