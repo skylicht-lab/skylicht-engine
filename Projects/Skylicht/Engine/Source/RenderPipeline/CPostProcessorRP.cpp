@@ -35,6 +35,9 @@ namespace Skylicht
 
 	CPostProcessorRP::~CPostProcessorRP()
 	{
+		IVideoDriver *driver = getVideoDriver();
+		driver->removeTexture(m_luminance[0]);
+		driver->removeTexture(m_luminance[1]);
 	}
 
 	void CPostProcessorRP::initRender(int w, int h)
@@ -44,6 +47,10 @@ namespace Skylicht
 
 		// init size of framebuffer
 		m_size = core::dimension2du((u32)w, (u32)h);
+
+		core::dimension2du lumSize(1024, 1024);
+		m_luminance[0] = driver->addRenderTargetTexture(lumSize, "lum_0", ECF_R16F);
+		m_luminance[1] = driver->addRenderTargetTexture(lumSize, "lum_1", ECF_R16F);
 
 		// init final pass shader
 		m_finalPass.MaterialType = shaderMgr->getShaderIDByName("TextureColor");
@@ -57,9 +64,16 @@ namespace Skylicht
 		onNext(target, camera, entityManager, viewport);
 	}
 
+	void CPostProcessorRP::luminanceMapGeneration(ITexture *color)
+	{
+
+	}
+
 	void CPostProcessorRP::postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport)
 	{
 		IVideoDriver *driver = getVideoDriver();
+
+		luminanceMapGeneration(color);
 
 		driver->setRenderTarget(finalTarget, false, false);
 
