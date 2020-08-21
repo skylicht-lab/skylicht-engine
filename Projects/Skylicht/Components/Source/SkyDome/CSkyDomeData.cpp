@@ -42,7 +42,7 @@ namespace Skylicht
 		SMaterial& mat = Buffer->getMaterial();
 		mat.setTexture(0, SkyDomeTexture);
 		mat.ZWriteEnable = false;
-		mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+		mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureTone");
 
 		generateMesh();
 	}

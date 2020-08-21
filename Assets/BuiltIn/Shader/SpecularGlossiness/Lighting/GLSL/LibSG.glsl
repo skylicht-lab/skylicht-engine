@@ -1,6 +1,7 @@
 const float PI = 3.1415926;
 
 #include "LibSolverMetallic.glsl"
+#include "../../../PostProcessing/GLSL/LibToneMapping.glsl"
 
 vec3 SG(
 	const vec3 baseColor, 
@@ -30,6 +31,13 @@ vec3 SG(
 	vec3 diffuseColor = baseColor.rgb;
 	specularColor = mix(f0, baseColor.rgb, metallic);
 	
+	// Tone mapping
+	specularColor = sRGB(specularColor);
+	diffuseColor = sRGB(diffuseColor);
+	vec3 directionLightColor = sRGB(lightColor);
+	vec3 pointLightColor = sRGB(light.rgb);
+	vec3 indirectColor = sRGB(indirect.rgb);
+		
 	// Lighting
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	NdotL = min(NdotL, 1.0);
@@ -39,14 +47,14 @@ vec3 SG(
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
-	vec3 directionalLight = NdotL * lightColor * visibility;
-	vec3 color = (directionalLight + light.rgb) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
+	vec3 directionalLight = NdotL * directionLightColor * visibility;
+	vec3 color = (directionalLight + pointLightColor) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
 	
 	// IBL Ambient
-	color += indirect * diffuseColor * indirectMultiplier / PI;
+	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 	
-	// IBL reflection (fake by ambient)
-	// color += indirect * specularColor * metallic;
+	// IBL reflection
+	// ...
 	
-	return color;
+	return linearRGB(color);
 }

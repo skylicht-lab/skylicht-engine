@@ -65,6 +65,16 @@ float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
 	float D = b * b - 4.0 * a * c;
 	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
 }
+const float gamma = 2.2;
+const float invGamma = 1.0/2.2;
+vec3 sRGB(vec3 color)
+{
+	return pow(color, vec3(gamma));
+}
+vec3 linearRGB(vec3 color)
+{
+	return pow(color, vec3(invGamma));
+}
 vec3 SG(
 	const vec3 baseColor,
 	const float spec,
@@ -87,15 +97,20 @@ vec3 SG(
 	f0 = vec3(0.04, 0.04, 0.04);
 	vec3 diffuseColor = baseColor.rgb;
 	specularColor = mix(f0, baseColor.rgb, metallic);
+	specularColor = sRGB(specularColor);
+	diffuseColor = sRGB(diffuseColor);
+	vec3 directionLightColor = sRGB(lightColor);
+	vec3 pointLightColor = sRGB(light.rgb);
+	vec3 indirectColor = sRGB(indirect.rgb);
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	NdotL = min(NdotL, 1.0);
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	vec3 directionalLight = NdotL * lightColor * visibility;
-	vec3 color = (directionalLight + light.rgb) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
-	color += indirect * diffuseColor * indirectMultiplier / PI;
-	return color;
+	vec3 directionalLight = NdotL * directionLightColor * visibility;
+	vec3 color = (directionalLight + pointLightColor) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
+	color += indirectColor * diffuseColor * indirectMultiplier / PI;
+	return linearRGB(color);
 }
 void main(void)
 {
