@@ -50,7 +50,8 @@ namespace Skylicht
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
 		m_indirectMultipler(1.0f),
-		m_directMultipler(1.0f)
+		m_directMultipler(1.0f),
+		m_postProcessor(NULL)
 	{
 		m_type = IRenderPipeline::Deferred;
 	}
@@ -351,8 +352,8 @@ namespace Skylicht
 		// Apply uniform: uLightMultiplier
 		if (CBaseRP::s_bakeMode == true && CBaseRP::s_bakeLMMode)
 		{
-			// boost indirect lighting
-			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.5f);
+			// default light setting
+			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.0f);
 		}
 		else
 		{
@@ -440,13 +441,20 @@ namespace Skylicht
 
 		// STEP 06
 		// final pass to screen
-		driver->setRenderTarget(target, false, false);
+		if (m_postProcessor != NULL && s_bakeMode == false)
+		{
+			m_postProcessor->postProcessing(target, m_target, m_normal, m_position, viewport);
+		}
+		else
+		{
+			driver->setRenderTarget(target, false, false);
 
-		if (useCustomViewport)
-			driver->setViewPort(viewport);
+			if (useCustomViewport)
+				driver->setViewPort(viewport);
 
-		beginRender2D(renderW, renderH);
-		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
+		}
 
 		// test
 		if (s_enableRenderTestIndirect == true)
