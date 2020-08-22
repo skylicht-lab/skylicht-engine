@@ -77,5 +77,5 @@ void main(void)
 	color += ambientLighting * diffuseColor / PI;
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));
 	color += textureLod(uTexReflect, reflection, roughness * 8.0).xyz * specularColor * metallic;
-	FragColor = vec4(linearRGB(color), diffuseMap.a);
+	FragColor = vec4(color, diffuseMap.a);
 }

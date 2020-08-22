@@ -11,5 +11,5 @@ out vec4 FragColor;
 void main(void)
 {
 	vec4 result = texture(uTexDiffuse, varTexCoord0.xy) * varColor;
-	FragColor = vec4(linearRGB(sRGB(result.rgb)), result.a);
+	FragColor = vec4(sRGB(result.rgb), result.a);
 }

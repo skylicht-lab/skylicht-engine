@@ -56,5 +56,5 @@ float3 SG(
 	// IBL reflection
 	// ...
 	
-	return linearRGB(color);
+	return color;
 }

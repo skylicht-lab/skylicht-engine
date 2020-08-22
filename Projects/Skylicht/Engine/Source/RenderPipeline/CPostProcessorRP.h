@@ -32,10 +32,14 @@ namespace Skylicht
 	{
 	protected:
 		core::dimension2du m_size;
+		core::dimension2du m_lumSize;
 
 		ITexture *m_luminance[2];
+		ITexture *m_lastLum;
+		ITexture *m_currentLum;
 
 		SMaterial m_finalPass;
+		SMaterial m_lumPass;
 
 	public:
 		CPostProcessorRP();

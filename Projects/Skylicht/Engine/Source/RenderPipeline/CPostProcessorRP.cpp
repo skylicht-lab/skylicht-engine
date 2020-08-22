@@ -28,7 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CPostProcessorRP::CPostProcessorRP()
+	CPostProcessorRP::CPostProcessorRP() :
+		m_currentLum(NULL),
+		m_lastLum(NULL)
 	{
 
 	}
@@ -47,13 +49,16 @@ namespace Skylicht
 
 		// init size of framebuffer
 		m_size = core::dimension2du((u32)w, (u32)h);
+		m_lumSize = core::dimension2du(1024, 1024);
 
-		core::dimension2du lumSize(1024, 1024);
-		m_luminance[0] = driver->addRenderTargetTexture(lumSize, "lum_0", ECF_R16F);
-		m_luminance[1] = driver->addRenderTargetTexture(lumSize, "lum_1", ECF_R16F);
+		m_luminance[0] = driver->addRenderTargetTexture(m_lumSize, "lum_0", ECF_R16F);
+		m_luminance[1] = driver->addRenderTargetTexture(m_lumSize, "lum_1", ECF_R16F);
 
 		// init final pass shader
-		m_finalPass.MaterialType = shaderMgr->getShaderIDByName("TextureColor");
+		m_finalPass.MaterialType = shaderMgr->getShaderIDByName("PostEffect");
+
+		// init lum pass shader
+		m_lumPass.MaterialType = shaderMgr->getShaderIDByName("Luminance");
 	}
 
 	void CPostProcessorRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
@@ -66,7 +71,27 @@ namespace Skylicht
 
 	void CPostProcessorRP::luminanceMapGeneration(ITexture *color)
 	{
+		if (m_lastLum == m_luminance[0])
+		{
+			m_currentLum = m_luminance[1];
+			m_lastLum = m_luminance[0];
+		}
+		else
+		{
+			m_currentLum = m_luminance[0];
+			m_lastLum = m_luminance[1];
+		}
 
+		IVideoDriver * driver = getVideoDriver();
+		driver->setRenderTarget(m_currentLum, true, true);
+
+		m_lumPass.setTexture(0, color);
+
+		float w = (float)m_lumSize.Width;
+		float h = (float)m_lumSize.Height;
+
+		beginRender2D(w, h);
+		renderBufferToTarget(0.0f, 0.0f, w, h, m_finalPass);
 	}
 
 	void CPostProcessorRP::postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport)
@@ -74,6 +99,8 @@ namespace Skylicht
 		IVideoDriver *driver = getVideoDriver();
 
 		luminanceMapGeneration(color);
+
+		m_currentLum->regenerateMipMapLevels();
 
 		driver->setRenderTarget(finalTarget, false, false);
 
@@ -90,8 +117,12 @@ namespace Skylicht
 		m_finalPass.setTexture(0, color);
 		m_finalPass.setTexture(1, normal);
 		m_finalPass.setTexture(2, position);
+		m_finalPass.setTexture(3, m_currentLum);
+		m_finalPass.setTexture(4, m_lastLum);
 
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
+
+		m_lastLum = m_currentLum;
 	}
 }
