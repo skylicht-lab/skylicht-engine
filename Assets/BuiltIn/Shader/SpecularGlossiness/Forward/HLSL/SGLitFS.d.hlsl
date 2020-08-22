@@ -106,5 +106,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
 	color += sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz) * specularColor * metallic;
 	
-	return float4(linearRGB(color), diffuseMap.a);
+	return float4(color, diffuseMap.a);
 }

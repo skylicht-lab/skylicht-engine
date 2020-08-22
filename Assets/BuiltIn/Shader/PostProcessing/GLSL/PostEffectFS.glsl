@@ -15,6 +15,6 @@ vec3 linearRGB(vec3 color)
 }
 void main(void)
 {
-	vec4 result = texture(uTexDiffuse, varTexCoord0.xy) * varColor;
-	FragColor = vec4(sRGB(result.rgb), result.a);
+	float4 color = texture(uTexDiffuse, varTexCoord0.xy);
+	FragColor = float4(linearRGB(color.rgb), color.a);
 }
