@@ -40,7 +40,7 @@ void main(void)
 	float indirectMul = uLightMultiplier.y;
 	
 	// backface when render lightmap
-	if (dot(viewDir, normal) < 0)
+	if (dot(viewDir, normal) < 0.0)
 	{
 		normal = normal * -1.0;
 		directMul = 0.3;
