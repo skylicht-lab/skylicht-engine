@@ -122,7 +122,7 @@ float3 SG(
 	float3 directionalLight = NdotL * directionLightColor * visibility;
 	float3 color = (directionalLight + pointLightColor) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
-	return linearRGB(color);
+	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET
 {

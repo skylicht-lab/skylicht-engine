@@ -110,7 +110,7 @@ vec3 SG(
 	vec3 directionalLight = NdotL * directionLightColor * visibility;
 	vec3 color = (directionalLight + pointLightColor) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
-	return linearRGB(color);
+	return color;
 }
 void main(void)
 {
