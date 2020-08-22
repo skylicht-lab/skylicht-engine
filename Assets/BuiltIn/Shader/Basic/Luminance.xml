@@ -8,9 +8,6 @@
 		</fs>
 	</uniforms>
 	<customUI>
-		<ui control="UIGroup" name="Texture">
-			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>
-		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/TextureColorVS.glsl" fs="GLSL/LuminanceFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/TextureColorVS.hlsl" fs="HLSL/LuminanceFS.hlsl"/>

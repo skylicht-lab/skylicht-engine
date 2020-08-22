@@ -124,7 +124,7 @@ void main(void)
 	vec3 viewDir = normalize(v);
 	float directMul = uLightMultiplier.x;
 	float indirectMul = uLightMultiplier.y;
-	if (dot(viewDir, normal) < 0)
+	if (dot(viewDir, normal) < 0.0)
 	{
 		normal = normal * -1.0;
 		directMul = 0.3;
