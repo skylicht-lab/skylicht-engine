@@ -724,11 +724,11 @@ namespace irr
 		void COpenGLTexture::regenerateMipMapLevels(void* mipmapData)
 		{
 			// texture require mipmaps?
-			if (!HasMipMaps)
+			if (!HasMipMaps && !IsRenderTarget)
 				return;
 
 			// we don't use custom data for mipmaps.
-			if (!mipmapData)
+			if (!mipmapData && !IsRenderTarget)
 			{
 				// compressed textures require custom data for prepare mipmaps.
 				if (IsCompressed)
@@ -744,11 +744,18 @@ namespace irr
 			}
 
 			// hardware moethods for generate mipmaps.
-			if (!mipmapData && AutomaticMipmapUpdate && !MipmapLegacyMode)
+			if (IsRenderTarget || (!mipmapData && AutomaticMipmapUpdate && !MipmapLegacyMode))
 			{
+				if (IsRenderTarget)
+				{
+					Driver->setActiveTexture(0, this);
+					Driver->getBridgeCalls()->setTexture(0);
+				}
+
 				glEnable(GL_TEXTURE_2D);
 				Driver->extGlGenerateMipmap(GL_TEXTURE_2D);
 
+				HasMipMaps = true;
 				return;
 			}
 

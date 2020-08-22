@@ -91,7 +91,7 @@ namespace Skylicht
 		float h = (float)m_lumSize.Height;
 
 		beginRender2D(w, h);
-		renderBufferToTarget(0.0f, 0.0f, w, h, m_finalPass);
+		renderBufferToTarget(0.0f, 0.0f, w, h, m_lumPass);
 	}
 
 	void CPostProcessorRP::postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport)
@@ -114,11 +114,9 @@ namespace Skylicht
 			renderH = (float)viewport.getHeight();
 		}
 
-		m_finalPass.setTexture(0, color);
-		m_finalPass.setTexture(1, normal);
-		m_finalPass.setTexture(2, position);
-		m_finalPass.setTexture(3, m_currentLum);
-		m_finalPass.setTexture(4, m_lastLum);
+		m_finalPass.setTexture(0, color);		
+		m_finalPass.setTexture(1, m_currentLum);
+		m_finalPass.setTexture(2, m_lastLum);
 
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
