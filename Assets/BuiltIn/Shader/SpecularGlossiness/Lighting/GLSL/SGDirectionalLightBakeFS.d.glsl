@@ -13,7 +13,7 @@ uniform sampler2DArray uShadowMap;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
 uniform vec4 uLightColor;
-uniform vec2 uLightMultiplier;
+uniform vec3 uLightMultiplier;
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
 
@@ -38,6 +38,7 @@ void main(void)
 	
 	float directMul = uLightMultiplier.x;
 	float indirectMul = uLightMultiplier.y;
+	float lightMul = uLightMultiplier.z;
 	
 	// backface when render lightmap
 	if (dot(viewDir, normal) < 0.0)
@@ -45,6 +46,7 @@ void main(void)
 		normal = normal * -1.0;
 		directMul = 0.3;
 		indirectMul = 0.3;
+		lightMul = 0.3;
 	}
 	
 	// shadow
@@ -75,7 +77,8 @@ void main(void)
 		light,
 		indirect,
 		directMul,
-		indirectMul);
+		indirectMul,
+		lightMul);
 		
 	FragColor = vec4(color, 1.0);
 }

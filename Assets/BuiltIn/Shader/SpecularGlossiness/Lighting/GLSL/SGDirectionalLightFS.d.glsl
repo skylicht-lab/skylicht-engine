@@ -13,7 +13,7 @@ uniform sampler2DArray uShadowMap;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
 uniform vec4 uLightColor;
-uniform vec2 uLightMultiplier;
+uniform vec3 uLightMultiplier;
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
 
@@ -64,7 +64,8 @@ void main(void)
 		light,
 		indirect,
 		uLightMultiplier.x,
-		uLightMultiplier.y);
+		uLightMultiplier.y,
+		uLightMultiplier.z);
 		
 	FragColor = vec4(color, 1.0);
 }
