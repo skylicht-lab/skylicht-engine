@@ -86,7 +86,8 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/ShadowMap/ShadowDepthWrite.xml");
 		loadShader("BuiltIn/Shader/ShadowMap/ShadowCubeDepthWrite.xml");
 
-		loadShader("BuiltIn/Shader/Basic/TextureTone.xml");
+		loadShader("BuiltIn/Shader/Basic/TextureSRGB.xml");
+		loadShader("BuiltIn/Shader/Basic/TextureLinearRGB.xml");
 		loadShader("BuiltIn/Shader/Basic/Luminance.xml");
 
 		loadShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
