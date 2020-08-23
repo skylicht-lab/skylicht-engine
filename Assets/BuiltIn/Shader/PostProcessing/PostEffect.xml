@@ -5,8 +5,7 @@
 		</vs>
 		<fs>
 			<uniform name="uTexColor" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
-			<uniform name="uTexCurrentLum" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
-			<uniform name="uTexLastLum" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
+			<uniform name="uTexLuminance" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
 		</fs>
 	</uniforms>
 	<customUI>
