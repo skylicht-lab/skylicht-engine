@@ -56,6 +56,7 @@ namespace Skylicht
 		bool m_isIndirectPass;
 		int m_vertexColorShader;
 		int m_textureColorShader;
+		int m_textureLinearRGBShader;
 		int m_lightmapArrayShader;
 		int m_lightmapVertexShader;
 		int m_lightmapIndirectTestShader;

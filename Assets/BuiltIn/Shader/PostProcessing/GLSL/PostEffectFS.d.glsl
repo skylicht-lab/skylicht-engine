@@ -17,7 +17,7 @@ void main(void)
 	
 	float avgLuminance = textureLod(uTexLuminance, varTexCoord0.xy, 10.0).x;			
 		
-	float target = 0.25;
+	float target = 0.2;
 	float threshold = 2.5;
 	float linearExposure = max((target / avgLuminance), 0.0001);
 	
