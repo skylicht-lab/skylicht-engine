@@ -70,6 +70,8 @@ namespace irr
 						images[i]->copyToScaling(Image[i]);
 					else
 						images[i]->copyTo(Image[i]);
+
+					Image[i]->swapBG();
 				}
 			}
 
