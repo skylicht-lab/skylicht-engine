@@ -72,6 +72,7 @@ namespace Skylicht
 
 		float m_indirectMultipler;
 		float m_directMultipler;
+		float m_lightMultipler;
 
 		CPostProcessorRP *m_postProcessor;
 
@@ -106,6 +107,11 @@ namespace Skylicht
 		inline void setDirectMultipler(float f)
 		{
 			m_directMultipler = f;
+		}
+
+		inline void setLightMultipler(float f)
+		{
+			m_lightMultipler = f;
 		}
 
 		static void enableRenderIndirect(bool b);

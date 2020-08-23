@@ -51,6 +51,7 @@ namespace Skylicht
 		m_pointLightShadowShader(0),
 		m_indirectMultipler(1.0f),
 		m_directMultipler(1.0f),
+		m_lightMultipler(1.0f),
 		m_postProcessor(NULL)
 	{
 		m_type = IRenderPipeline::Deferred;
@@ -353,11 +354,14 @@ namespace Skylicht
 		if (CBaseRP::s_bakeMode == true && CBaseRP::s_bakeLMMode)
 		{
 			// default light setting
-			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.0f);
+			if (CBaseRP::s_bakeBounce <= 1)
+				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 1.0f);
+			else
+				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 0.0f);
 		}
 		else
 		{
-			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(m_directMultipler, m_indirectMultipler);
+			CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(m_directMultipler, m_indirectMultipler, m_lightMultipler);
 		}
 
 		// STEP 03:
