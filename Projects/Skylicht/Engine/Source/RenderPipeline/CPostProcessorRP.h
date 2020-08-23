@@ -35,11 +35,12 @@ namespace Skylicht
 		core::dimension2du m_lumSize;
 
 		ITexture *m_luminance[2];
-		ITexture *m_lastLum;
-		ITexture *m_currentLum;
+		ITexture *m_adaptLum;
+		int m_lumTarget;
 
 		SMaterial m_finalPass;
 		SMaterial m_lumPass;
+		SMaterial m_adaptLumPass;
 
 	public:
 		CPostProcessorRP();
