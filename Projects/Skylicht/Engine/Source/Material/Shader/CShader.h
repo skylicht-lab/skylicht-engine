@@ -70,6 +70,7 @@ namespace Skylicht
 		SSAO_KERNEL,
 		DEFERRED_VIEW,
 		DEFERRED_PROJECTION,
+		TIME_STEP,
 		NUM_SHADER_TYPE,
 	};
 
