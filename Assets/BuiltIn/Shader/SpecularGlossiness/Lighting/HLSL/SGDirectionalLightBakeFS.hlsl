@@ -22,7 +22,7 @@ cbuffer cbPerFrame
 	float4 uCameraPosition;
 	float4 uLightDirection;
 	float4 uLightColor;
-	float2 uLightMultiplier;
+	float3 uLightMultiplier;
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
 };
@@ -99,7 +99,8 @@ float3 SG(
 	const float4 light,
 	const float3 indirect,
 	const float directMultiplier,
-	const float indirectMultiplier)
+	const float indirectMultiplier,
+	const float lightMultiplier)
 {
 	float roughness = 1.0 - gloss;
 	float3 f0 = spec;
@@ -120,7 +121,7 @@ float3 SG(
 	float NdotE = max(0.0,dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	float3 directionalLight = NdotL * directionLightColor * visibility;
-	float3 color = (directionalLight + pointLightColor) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
+	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 	return color;
 }
@@ -136,11 +137,13 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 viewDir = normalize(v);
 	float directMul = uLightMultiplier.x;
 	float indirectMul = uLightMultiplier.y;
+	float lightMul = uLightMultiplier.z;
 	if (dot(viewDir, normal) < 0)
 	{
 		normal = normal * -1.0;
 		directMul = 0.3;
 		indirectMul = 0.3;
+		lightMul = 0.3;
 	}
 	float depth = length(v);
 	float4 shadowCoord[3];
@@ -164,6 +167,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		light,
 		indirect,
 		directMul,
-		indirectMul);
+		indirectMul,
+		lightMul);
 	return float4(color, 1.0);
 }
