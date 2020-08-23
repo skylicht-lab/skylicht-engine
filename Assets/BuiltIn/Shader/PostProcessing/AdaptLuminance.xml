@@ -1,0 +1,16 @@
+<shaderConfig name="AdaptLuminance" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexLuminance" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexLastLuminance" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uTimeStep" type="TIME_STEP" value="0,0" float="2"/>
+		</fs>
+	</uniforms>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/PostEffectVS.glsl" fs="GLSL/AdaptLuminanceFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/PostEffectVS.hlsl" fs="HLSL/AdaptLuminanceFS.hlsl"/>
+</shaderConfig>

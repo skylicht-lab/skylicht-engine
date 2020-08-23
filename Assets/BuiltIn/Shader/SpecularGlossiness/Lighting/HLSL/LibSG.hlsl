@@ -15,7 +15,8 @@ float3 SG(
 	const float4 light,
 	const float3 indirect,
 	const float directMultiplier,
-	const float indirectMultiplier)
+	const float indirectMultiplier,
+	const float lightMultiplier)
 {
 	// Roughness
 	float roughness = 1.0 - gloss;
@@ -48,7 +49,7 @@ float3 SG(
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	
 	float3 directionalLight = NdotL * directionLightColor * visibility;
-	float3 color = (directionalLight + pointLightColor) * diffuseColor * directMultiplier + specular * specularColor * visibility + light.a * specularColor;
+	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
 	
 	// IBL Ambient
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
@@ -56,5 +57,5 @@ float3 SG(
 	// IBL reflection
 	// ...
 	
-	return linearRGB(color);
+	return color;
 }

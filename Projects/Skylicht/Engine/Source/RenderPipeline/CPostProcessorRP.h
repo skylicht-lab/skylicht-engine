@@ -28,12 +28,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPostProcessorRP: public CBaseRP
+	class CPostProcessorRP : public CBaseRP
 	{
 	protected:
 		core::dimension2du m_size;
+		core::dimension2du m_lumSize;
+
+		ITexture *m_luminance[2];
+		ITexture *m_adaptLum;
+		int m_lumTarget;
 
 		SMaterial m_finalPass;
+		SMaterial m_lumPass;
+		SMaterial m_adaptLumPass;
 
 	public:
 		CPostProcessorRP();
@@ -45,5 +52,7 @@ namespace Skylicht
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& vp);
 
 		virtual void postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport);
+
+		void luminanceMapGeneration(ITexture *color);
 	};
 }

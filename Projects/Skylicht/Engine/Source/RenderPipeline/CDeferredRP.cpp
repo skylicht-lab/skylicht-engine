@@ -49,8 +49,10 @@ namespace Skylicht
 		m_textureColorShader(0),
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
+		m_textureLinearRGBShader(0),
 		m_indirectMultipler(1.0f),
 		m_directMultipler(1.0f),
+		m_lightMultipler(1.0f),
 		m_postProcessor(NULL)
 	{
 		m_type = IRenderPipeline::Deferred;
@@ -111,6 +113,7 @@ namespace Skylicht
 		// get basic shader
 		CShaderManager *shaderMgr = CShaderManager::getInstance();
 		m_textureColorShader = shaderMgr->getShaderIDByName("TextureColor");
+		m_textureLinearRGBShader = shaderMgr->getShaderIDByName("TextureLinearRGB");
 		m_vertexColorShader = shaderMgr->getShaderIDByName("VertexColor");
 		m_lightmapArrayShader = shaderMgr->getShaderIDByName("Lightmap");
 		m_lightmapVertexShader = shaderMgr->getShaderIDByName("LightmapVertex");
@@ -125,7 +128,7 @@ namespace Skylicht
 
 		// final pass
 		m_finalPass.setTexture(0, m_target);
-		m_finalPass.MaterialType = m_textureColorShader;
+		m_finalPass.MaterialType = m_textureLinearRGBShader;
 	}
 
 	void CDeferredRP::initDefferredMaterial()
@@ -353,11 +356,14 @@ namespace Skylicht
 		if (CBaseRP::s_bakeMode == true && CBaseRP::s_bakeLMMode)
 		{
 			// default light setting
-			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(1.0f, 1.0f);
+			if (CBaseRP::s_bakeBounce <= 1)
+				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 1.0f);
+			else
+				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 0.0f);
 		}
 		else
 		{
-			CShaderManager::getInstance()->ShaderVec2[0] = core::vector2df(m_directMultipler, m_indirectMultipler);
+			CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(m_directMultipler, m_indirectMultipler, m_lightMultipler);
 		}
 
 		// STEP 03:
