@@ -95,6 +95,7 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Lightmap/IndirectTest.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapVertex.xml");
 
+		loadShader("BuiltIn/Shader/PostProcessing/AdaptLuminance.xml");
 		loadShader("BuiltIn/Shader/PostProcessing/PostEffect.xml");
 	}
 
@@ -110,7 +111,7 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightBake.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");		
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
 	}
 
 	void CShaderManager::initSkylichtEngineShader()
