@@ -30,7 +30,7 @@ cbuffer cbPerFrame
 	float4 uCameraPosition;
 	float4 uLightDirection;	
 	float4 uLightColor;
-	float2 uLightMultiplier;
+	float3 uLightMultiplier;
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
 };
@@ -52,6 +52,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	
 	float directMul = uLightMultiplier.x;
 	float indirectMul = uLightMultiplier.y;
+	float lightMul = uLightMultiplier.z;
 	
 	// backface when render lightmap
 	if (dot(viewDir, normal) < 0)
@@ -59,6 +60,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		normal = normal * -1.0;
 		directMul = 0.3;
 		indirectMul = 0.3;
+		lightMul = 0.3;
 	}
 	
 	// shadow
@@ -88,7 +90,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 		light,
 		indirect,
 		directMul,
-		indirectMul);
+		indirectMul,
+		lightMul);
 	
 	return float4(color, 1.0);
 }

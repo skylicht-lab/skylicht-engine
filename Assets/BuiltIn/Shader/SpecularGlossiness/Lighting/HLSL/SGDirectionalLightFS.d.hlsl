@@ -30,7 +30,7 @@ cbuffer cbPerFrame
 	float4 uCameraPosition;
 	float4 uLightDirection;	
 	float4 uLightColor;
-	float2 uLightMultiplier;
+	float3 uLightMultiplier;
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
 };
@@ -77,7 +77,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 		light,
 		indirect,
 		uLightMultiplier.x,
-		uLightMultiplier.y);
+		uLightMultiplier.y,
+		uLightMultiplier.z);
 	
 	return float4(color, 1.0);
 }

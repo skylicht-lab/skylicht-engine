@@ -8,10 +8,9 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 };
 
-#include "../../PostProcessing/HLSL/LibToneMapping.hlsl"
-
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float4 result = input.color * uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
-	return float4(linearRGB(sRGB(result.rgb)), result.a);
+	float4 color = input.color * uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);	
+	float lum = max(dot(color.rgb, float3(0.299, 0.587, 0.114)), 0.0001);
+	return float4(lum, 0.0, 0.0, 0.0);
 }

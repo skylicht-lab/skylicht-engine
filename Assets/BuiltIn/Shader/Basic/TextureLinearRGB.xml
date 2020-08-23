@@ -1,0 +1,12 @@
+<shaderConfig name="TextureLinearRGB" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+		</fs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/TextureColorVS.glsl" fs="GLSL/TextureLinearRGBFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/TextureColorVS.hlsl" fs="HLSL/TextureLinearRGBFS.hlsl"/>
+</shaderConfig>

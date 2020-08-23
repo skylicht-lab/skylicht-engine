@@ -1,4 +1,6 @@
 precision mediump float;
+precision highp sampler2D;
+precision highp sampler2DArray;
 
 uniform sampler2DArray uTexLightmap;
 
