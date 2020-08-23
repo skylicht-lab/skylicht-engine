@@ -56,6 +56,7 @@ namespace Skylicht
 		bool m_isIndirectPass;
 		int m_vertexColorShader;
 		int m_textureColorShader;
+		int m_textureLinearRGBShader;
 		int m_lightmapArrayShader;
 		int m_lightmapVertexShader;
 		int m_lightmapIndirectTestShader;
@@ -72,6 +73,7 @@ namespace Skylicht
 
 		float m_indirectMultipler;
 		float m_directMultipler;
+		float m_lightMultipler;
 
 		CPostProcessorRP *m_postProcessor;
 
@@ -106,6 +108,11 @@ namespace Skylicht
 		inline void setDirectMultipler(float f)
 		{
 			m_directMultipler = f;
+		}
+
+		inline void setLightMultipler(float f)
+		{
+			m_lightMultipler = f;
 		}
 
 		static void enableRenderIndirect(bool b);

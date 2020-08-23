@@ -123,6 +123,7 @@ namespace Skylicht
 			"SSAO_KERNEL",
 			"DEFERRED_VIEW",
 			"DEFERRED_PROJECTION",
+			"TIME_STEP",
 			"NULL"
 		};
 
@@ -912,6 +913,17 @@ namespace Skylicht
 				else
 					matRender->setShaderVariable(uniform.UniformShaderID, worldTranspose.pointer(), uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 			}
+		}
+		break;
+		case TIME_STEP:
+		{
+			float timestep[2] = { 0 };
+			timestep[0] = getTimeStep();
+
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform.UniformShaderID, timestep, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform.UniformShaderID, timestep, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		case DEFAULT_VALUE:

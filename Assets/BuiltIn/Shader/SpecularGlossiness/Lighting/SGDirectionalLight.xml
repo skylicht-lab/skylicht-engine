@@ -15,7 +15,7 @@
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>			
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
-			<uniform name="uLightMultiplier" type="SHADER_VEC2" value="0.0" float="2"/>
+			<uniform name="uLightMultiplier" type="SHADER_VEC3" value="0.0" float="3"/>
 			<uniform name="uShadowDistance" type="SHADOW_MAP_DISTANCE" value="0" float="3"/>
 			<uniform name="uShadowMatrix" type="SHADOW_MAP_MATRIX" value="0" float="16" array="3" matrix="true"/>
 		</fs>
