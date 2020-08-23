@@ -217,6 +217,10 @@ namespace Skylicht
 
 			m_frustumBox[i].addInternalPoint(camPos);
 
+			// Fix: object shadow culling above camera
+			core::vector3df highCameraPos = frustum.Center - m_lightDirection * radius * 2.0f;
+			m_frustumBox[i].addInternalPoint(highCameraPos);
+
 			// Add the near offset to the Z value of the cascade extents to make sure the orthographic frustum captures the entire frustum split (else it will exhibit cut-off issues).
 			core::matrix4 ortho;
 			ortho.buildProjectionMatrixOrthoLH(max.X - min.X, max.Y - min.Y, -m_nearOffset, m_nearOffset + cascadeExtents.Z);
