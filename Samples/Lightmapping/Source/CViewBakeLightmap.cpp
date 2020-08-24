@@ -18,7 +18,7 @@ CViewBakeLightmap::CViewBakeLightmap() :
 #ifdef LIGHTMAP_SPONZA
 	m_lightmapSize(1024),
 #else
-	m_lightmapSize(256),
+	m_lightmapSize(512),
 #endif
 	m_timeBeginBake(0),
 	m_timeSpentFromLastSave(0),

@@ -39,7 +39,7 @@ void CContext::releaseScene()
 	}
 }
 
-CBaseRP* CContext::initRenderPipeline(int w, int h)
+CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect)
 {
 	// 1st
 	m_shadowMapRendering = new CShadowMapRP();
@@ -59,12 +59,15 @@ CBaseRP* CContext::initRenderPipeline(int w, int h)
 	m_shadowMapRendering->setNextPipeLine(m_rendering);
 	m_rendering->setNextPipeLine(m_forwardRP);
 
-	// post processor
-	m_postProcessor = new CPostProcessorRP();
-	m_postProcessor->initRender(w, h);
+	if (postEffect == true)
+	{
+		// post processor
+		m_postProcessor = new CPostProcessorRP();
+		m_postProcessor->initRender(w, h);
 
-	// apply post processor
-	m_rendering->setPostProcessor(m_postProcessor);
+		// apply post processor
+		m_rendering->setPostProcessor(m_postProcessor);
+	}
 
 	m_beginRP = m_shadowMapRendering;
 	return m_beginRP;
@@ -88,6 +91,12 @@ void CContext::releaseRenderPipeline()
 	{
 		delete m_forwardRP;
 		m_forwardRP = NULL;
+	}
+
+	if (m_postProcessor != NULL)
+	{
+		delete m_postProcessor;
+		m_postProcessor = NULL;
 	}
 }
 

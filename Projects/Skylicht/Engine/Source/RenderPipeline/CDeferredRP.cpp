@@ -359,7 +359,7 @@ namespace Skylicht
 			if (CBaseRP::s_bakeBounce <= 1)
 				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 1.0f);
 			else
-				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 0.0f);
+				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 0.6f, 0.0f);
 		}
 		else
 		{

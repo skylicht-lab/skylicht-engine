@@ -32,7 +32,7 @@ public:
 
 	CScene* initScene();
 
-	CBaseRP* initRenderPipeline(int w, int h);
+	CBaseRP* initRenderPipeline(int w, int h, bool postEffect = true);
 
 	inline CScene* getScene()
 	{

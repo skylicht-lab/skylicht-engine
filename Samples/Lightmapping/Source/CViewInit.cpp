@@ -157,7 +157,7 @@ void CViewInit::onInit()
 }
 
 	// save to context	
-	context->initRenderPipeline(app->getWidth(), app->getHeight());
+	context->initRenderPipeline(app->getWidth(), app->getHeight(), false);
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
