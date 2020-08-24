@@ -166,11 +166,9 @@ This is a demo code to use lightmapper to bake indirect lighting color on lightm
 
 <img src="Documents/Media/Samples/lightmap/lightmapping_a.png"/>
 
-<img src="Documents/Media/Samples/lightmap/lightmapping_b.png"/>
-
 Result lightmap
 
-<img src="Documents/Media/Samples/lightmap/rasterize_2.png"/>
+<img src="Documents/Media/Samples/lightmap/rasterize_1.png"/>
 
 ### Sponza lightmap
 Sponza indirect lighting baked by Skylicht Lightmapper

@@ -129,9 +129,9 @@ void main(void)
 	if (dot(viewDir, normal) < 0.0)
 	{
 		normal = normal * -1.0;
-		directMul = 0.3;
-		indirectMul = 0.3;
-		lightMul = 0.3;
+		directMul = 0.3 * directMul;
+		indirectMul = 0.3 * indirectMul;
+		lightMul = 0.3 * lightMul;
 	}
 	float depth = length(v);
 	vec4 shadowCoord[3];

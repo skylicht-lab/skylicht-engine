@@ -10,7 +10,6 @@ CViewDemo::CViewDemo()
 
 CViewDemo::~CViewDemo()
 {
-	CContext::getInstance()->getDefferredRP()->setIndirectMultipler(1.5f);
 }
 
 void CViewDemo::onInit()
