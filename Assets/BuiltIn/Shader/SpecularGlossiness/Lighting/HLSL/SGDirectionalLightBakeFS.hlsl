@@ -141,9 +141,9 @@ float4 main(PS_INPUT input) : SV_TARGET
 	if (dot(viewDir, normal) < 0)
 	{
 		normal = normal * -1.0;
-		directMul = 0.3 * directMul;
-		indirectMul = 0.3 * indirectMul;
-		lightMul = 0.3 * lightMul;
+		directMul = 0.1 * directMul;
+		indirectMul = 0.1 * indirectMul;
+		lightMul = 0.1 * lightMul;
 	}
 	float depth = length(v);
 	float4 shadowCoord[3];

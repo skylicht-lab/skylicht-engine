@@ -110,7 +110,7 @@ void SampleLightmapUV::onInitApp()
 			std::string name = transforms[meshID]->Name;
 			if (name == "celling_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.4f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.5f);
 			}
 			else if (name == "floor_sponza")
 			{
@@ -122,7 +122,7 @@ void SampleLightmapUV::onInitApp()
 			}
 			else if (name == "smallwall_sponza")
 			{
-				m_unwrap.addMesh(renderData->getMesh(), 0.2f);
+				m_unwrap.addMesh(renderData->getMesh(), 0.5f);
 			}
 			else if (name == "top_sponza")
 			{
