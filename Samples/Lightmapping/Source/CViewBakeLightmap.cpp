@@ -4,7 +4,7 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 
-u32 CViewBakeLightmap::s_numLightBounce = 4;
+u32 CViewBakeLightmap::s_numLightBounce = 3;
 
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_currentPass(0),
