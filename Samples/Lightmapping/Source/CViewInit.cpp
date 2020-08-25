@@ -63,7 +63,11 @@ void CViewInit::onInit()
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// sky
+#ifdef LIGHTMAP_SPONZA
+	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/Helipad.png");
+#else
 	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
+#endif
 	if (skyDomeTexture != NULL)
 	{
 		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
@@ -75,7 +79,7 @@ void CViewInit::onInit()
 	CGameObject *lightObj = zone->createEmptyObject();
 
 	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
-	directionalLight->setIntensity(2.0f);
+	directionalLight->setIntensity(1.0f);
 
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
@@ -150,11 +154,11 @@ void CViewInit::onInit()
 
 			float c[] = { 165.0f / 255.0f, 161.0f / 255.0f, 147 / 255.0f, 1.0f };
 			material->setUniform4("uColor", c);
-	}
+		}
 #endif
 
 		renderMesh->initMaterial(materials);
-}
+	}
 
 	// save to context	
 	context->initRenderPipeline(app->getWidth(), app->getHeight(), false);

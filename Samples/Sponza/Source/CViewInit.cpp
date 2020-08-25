@@ -62,7 +62,7 @@ void CViewInit::initScene()
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
+	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/Helipad.png");
 	if (skyDomeTexture != NULL)
 	{
 		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
@@ -140,9 +140,9 @@ void CViewInit::initScene()
 		// init lightmap texture array
 		// See SampleLightmapping, that how to render this
 		std::vector<std::string> textures;
-		textures.push_back("Sponza/LightMapRasterize_bounce_4_0.png");
-		textures.push_back("Sponza/LightMapRasterize_bounce_4_1.png");
-		textures.push_back("Sponza/LightMapRasterize_bounce_4_2.png");
+		textures.push_back("Sponza/LightMapRasterize_bounce_3_0.png");
+		textures.push_back("Sponza/LightMapRasterize_bounce_3_1.png");
+		textures.push_back("Sponza/LightMapRasterize_bounce_3_2.png");
 
 		ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(textures);
 		if (lightmapTexture != NULL)
@@ -160,6 +160,8 @@ void CViewInit::initScene()
 
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
+	
+	// context->getDefferredRP()->enableTestIndirect(true);
 
 	initProbes();
 }
@@ -173,7 +175,8 @@ void CViewInit::initProbes()
 
 	for (int i = 0; i < 7; i++)
 	{
-		float x = i * 5.2f - 3.0f * 5.2f;
+		float dis = 4.0f;
+		float x = i * dis - 3.0f *dis;
 
 		// row 0
 		probesPosition.push_back(core::vector3df(x, 2.0f, -0.4f));

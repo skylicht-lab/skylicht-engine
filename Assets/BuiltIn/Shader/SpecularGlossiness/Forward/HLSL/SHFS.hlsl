@@ -122,6 +122,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// float interplateMultipler = 1.0 + 1.5 * (1.0 - l);
 	// ambient *= interplateMultipler;
 	
-	float4 result = input.color * float4(ambient, 1.0);
+	float4 result = input.color * float4(ambient, 1.0) / 3.14;
 	return result;
 }
