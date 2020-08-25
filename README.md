@@ -179,13 +179,15 @@ Sponza indirect lighting baked by Skylicht Lightmapper
 
 ### Samples\Sponza
 This example how to setup simple lighting & lightmap. 
-This scene use basic diffuse bump specular shader and don't use post processing.
+This scene use basic diffuse bump specular shader.
 
 <img src="Documents/Media/Samples/sponza/Sponza_01.jpg"/>
 
 <img src="Documents/Media/Samples/sponza/Sponza_02.jpg"/>
 
 <img src="Documents/Media/Samples/sponza/Sponza_03.jpg"/>
+
+<img src="Documents/Media/Samples/sponza/Sponza_04.jpg"/>
 
 ### Samples\LightmappingVertex
 This is a demo to use lightmapper to set indirect lighting color on vertex color.
