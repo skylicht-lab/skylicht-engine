@@ -4,8 +4,6 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 
-u32 CViewBakeLightmap::s_numLightBounce = 3;
-
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_currentPass(0),
 	m_currentMB(0),
@@ -163,6 +161,8 @@ void CViewBakeLightmap::onDestroy()
 {
 	// save progress to continue next time
 	saveProgress();
+
+	CBaseRP::setBakeLightmapMode(false);
 }
 
 void CViewBakeLightmap::onUpdate()
@@ -175,6 +175,12 @@ void CViewBakeLightmap::onUpdate()
 		CDeferredRP::enableRenderIndirect(true);
 
 	CBaseRP::SetBakeLightingMapBounce(m_lightBounce);
+	CBaseRP::setBakeLightmapMode(true);
+
+	u32 numLightBounce = 1;
+
+	if (CDirectionalLight::getCurrentDirectionLight() != NULL)
+		numLightBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
 
 	for (int loopCount = 0; loopCount < 64; loopCount++)
 	{
@@ -194,7 +200,7 @@ void CViewBakeLightmap::onUpdate()
 
 			char status[512];
 			sprintf(status, "LIGHTMAPPING (%d/%d):\n\n- MeshBuffer: %d/%d\n- Bake step: %d/%d\n- Triangle: %d/%d\n- Time: %d seconds - (%02d:%02d) hm",
-				m_lightBounce + 1, s_numLightBounce,
+				m_lightBounce + 1, numLightBounce,
 				m_currentMB + 1, (int)m_meshBuffers.size(),
 				m_currentPass + 1, 7,
 				m_currentTris, numTris,
@@ -430,7 +436,7 @@ void CViewBakeLightmap::onUpdate()
 				for (int i = 0; i < m_numberRasterize; i++)
 					m_lmRasterize[i]->resetBake();
 
-				if (m_lightBounce >= s_numLightBounce)
+				if (m_lightBounce >= numLightBounce)
 				{
 					gotoDemoView();
 				}
@@ -607,8 +613,13 @@ void CViewBakeLightmap::loadProgress()
 
 			if (m_currentPass >= (int)CRasterisation::PassCount)
 			{
+				u32 numLightBounce = 1;
+
+				if (CDirectionalLight::getCurrentDirectionLight() != NULL)
+					numLightBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
+
 				// finish
-				if (m_lightBounce >= s_numLightBounce)
+				if (m_lightBounce >= numLightBounce)
 				{
 					gotoDemoView();
 				}

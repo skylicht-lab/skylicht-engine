@@ -30,6 +30,9 @@ namespace Skylicht
 {
 	class CDirectionalLight : public CLight
 	{
+	protected:
+		static CDirectionalLight *s_currentLight;
+
 	public:
 		CDirectionalLight();
 
@@ -38,5 +41,10 @@ namespace Skylicht
 		virtual void initComponent();
 
 		virtual void updateComponent();
+
+		static CDirectionalLight* getCurrentDirectionLight()
+		{
+			return s_currentLight;
+		}
 	};
 }

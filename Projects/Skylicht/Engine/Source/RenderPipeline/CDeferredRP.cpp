@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CPointLight.h"
 #include "IndirectLighting/CIndirectLightingData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
+#include "Lighting/CDirectionalLight.h"
 
 namespace Skylicht
 {
@@ -356,10 +357,7 @@ namespace Skylicht
 		if (CBaseRP::s_bakeMode == true && CBaseRP::s_bakeLMMode)
 		{
 			// default light setting
-			if (CBaseRP::s_bakeBounce <= 1)
-				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 1.0f);
-			else
-				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 0.6f, 0.0f);
+			CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 1.0f);
 		}
 		else
 		{
@@ -388,6 +386,10 @@ namespace Skylicht
 		if (useCustomViewport)
 			driver->setViewPort(customViewport);
 
+		u32 totalBounce = 1;
+		if (CDirectionalLight::getCurrentDirectionLight() != NULL)
+			totalBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
+
 		CLightCullingSystem *lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
 		{
@@ -395,24 +397,37 @@ namespace Skylicht
 			for (u32 i = 0, n = listLight.size(); i < n; i++)
 			{
 				CLight *light = listLight[i]->Light;
-				CPointLight *pointLight = dynamic_cast<CPointLight*>(light);
-				if (pointLight != NULL)
+
+				bool renderLight = true;
+
+				if (s_bakeMode == true && s_bakeLMMode == true)
 				{
-					CShaderLighting::setPointLight(pointLight);
+					u32 lightBounce = light->getBounce();
+					if ((u32)s_bakeBounce < totalBounce - lightBounce)
+						renderLight = false;
+				}
 
-					if (pointLight->isCastShadow() == true)
+				if (renderLight == true)
+				{
+					CPointLight *pointLight = dynamic_cast<CPointLight*>(light);
+					if (pointLight != NULL)
 					{
-						m_pointLightPass.MaterialType = m_pointLightShadowShader;
-						m_pointLightPass.setTexture(3, pointLight->createGetDepthTexture());
-					}
-					else
-					{
-						m_pointLightPass.MaterialType = m_pointLightShader;
-						m_pointLightPass.setTexture(3, NULL);
-					}
+						CShaderLighting::setPointLight(pointLight);
 
-					beginRender2D(renderW, renderH);
-					renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
+						if (pointLight->isCastShadow() == true)
+						{
+							m_pointLightPass.MaterialType = m_pointLightShadowShader;
+							m_pointLightPass.setTexture(3, pointLight->createGetDepthTexture());
+						}
+						else
+						{
+							m_pointLightPass.MaterialType = m_pointLightShader;
+							m_pointLightPass.setTexture(3, NULL);
+						}
+
+						beginRender2D(renderW, renderH);
+						renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
+					}
 				}
 			}
 		}

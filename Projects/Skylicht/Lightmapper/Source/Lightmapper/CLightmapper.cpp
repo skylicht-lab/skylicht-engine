@@ -127,9 +127,7 @@ namespace Skylicht
 			{
 				int numMT = count - current;
 				numMT = core::min_(numMT, maxMT);
-
-				CBaseRP::setBakeLightmapMode(true);
-
+				
 				// bake and get SH result
 				baker->bake(camera,
 					rp,
@@ -140,8 +138,6 @@ namespace Skylicht
 					binormal + current,
 					numMT,
 					numFace);
-
-				CBaseRP::setBakeLightmapMode(false);
 
 				for (int i = 0; i < numMT; i++)
 					out.push_back(baker->getSH(i));
