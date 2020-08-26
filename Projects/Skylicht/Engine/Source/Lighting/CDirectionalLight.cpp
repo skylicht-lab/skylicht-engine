@@ -30,9 +30,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	CDirectionalLight *CDirectionalLight::s_currentLight = NULL;
+
 	CDirectionalLight::CDirectionalLight()
 	{
-
+		// default 3 bounce
+		m_bakeBounce = 3;
 	}
 
 	CDirectionalLight::~CDirectionalLight()
@@ -44,6 +47,8 @@ namespace Skylicht
 	void CDirectionalLight::initComponent()
 	{
 		CShaderLighting::setDirectionalLight(this);
+
+		s_currentLight = this;
 	}
 
 	void CDirectionalLight::updateComponent()

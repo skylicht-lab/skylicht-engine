@@ -14,8 +14,6 @@ public:
 		core::array<CSH9> SH;
 	};
 
-	static int s_numLightBounce;
-
 protected:
 	CGameObject *m_guiObject;
 	CGameObject *m_bakeCameraObject;

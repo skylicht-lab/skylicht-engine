@@ -5,8 +5,6 @@
 #include "CViewDemo.h"
 #include "Importer/Utils/CMeshUtils.h"
 
-int CViewBakeLightmap::s_numLightBounce = 2;
-
 CViewBakeLightmap::CViewBakeLightmap() :
 	m_guiObject(NULL),
 	m_bakeCameraObject(NULL),
@@ -115,7 +113,7 @@ void CViewBakeLightmap::onInit()
 
 void CViewBakeLightmap::onDestroy()
 {
-
+	CBaseRP::setBakeLightmapMode(false);
 }
 
 void CViewBakeLightmap::onUpdate()
@@ -130,9 +128,14 @@ void CViewBakeLightmap::onUpdate()
 	if (scene != NULL)
 		scene->update();
 
+	// get total light bounce
+	u32 numLightBounce = 1;
+	if (CDirectionalLight::getCurrentDirectionLight() != NULL)
+		numLightBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
+
 	// bake lightmap
 	u32 numMB = m_neshBuffers.size();
-	if (m_currentMeshBuffer < numMB && s_numLightBounce > 0)
+	if (m_currentMeshBuffer < numMB && numLightBounce > 0)
 	{
 		if (m_lightBounce == 0)
 			CDeferredRP::enableRenderIndirect(false);
@@ -140,6 +143,7 @@ void CViewBakeLightmap::onUpdate()
 			CDeferredRP::enableRenderIndirect(true);
 
 		CBaseRP::SetBakeLightingMapBounce(m_lightBounce);
+		CBaseRP::setBakeLightmapMode(true);
 
 		IMeshBuffer *mb = m_neshBuffers[m_currentMeshBuffer];
 		SColorBuffer *cb = m_colorBuffers[m_currentMeshBuffer];
@@ -156,7 +160,7 @@ void CViewBakeLightmap::onUpdate()
 		char status[512];
 		sprintf(status, "LIGHTMAPPING (%d/%d): %d%%\n\n- MeshBuffer: %d/%d\n- Vertex: %d/%d\n\n - Total: %d\n-Time: %d seconds",
 			m_lightBounce + 1,
-			s_numLightBounce,
+			numLightBounce,
 			(int)percent,
 			m_currentMeshBuffer + 1, numMB,
 			m_currentVertex, numVtx,
@@ -197,7 +201,7 @@ void CViewBakeLightmap::onUpdate()
 		m_currentMeshBuffer = 0;
 		m_currentVertex = 0;
 
-		if (m_lightBounce >= s_numLightBounce)
+		if (m_lightBounce >= numLightBounce)
 		{
 			// test exporter
 			if (m_renderMesh.size() > 0)
