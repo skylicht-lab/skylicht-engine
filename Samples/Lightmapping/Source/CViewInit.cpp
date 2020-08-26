@@ -80,6 +80,7 @@ void CViewInit::onInit()
 
 	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
 	directionalLight->setIntensity(1.0f);
+	directionalLight->setBounce(3);
 
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
@@ -106,6 +107,7 @@ void CViewInit::onInit()
 		CPointLight *pointLight = pointLightObj->addComponent<CPointLight>();
 		pointLight->setShadow(true);
 		pointLight->setColor(SColor(255, 221, 123, 34));
+		pointLight->setBounce(1);
 
 		if (i >= 4)
 			pointLight->setRadius(1.0f);
@@ -122,6 +124,8 @@ void CViewInit::onInit()
 #else
 	CGameObject *lightObj = zone->createEmptyObject();
 	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	directionalLight->setBounce(2);
+
 	CTransformEuler *lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 

@@ -31,7 +31,7 @@ protected:
 	u32 m_timeBeginBake;
 	u32 m_timeSpentFromLastSave;
 
-	static u32 s_numLightBounce;
+	u32 m_numLightBounce;
 
 	u32 m_lightBounce;
 

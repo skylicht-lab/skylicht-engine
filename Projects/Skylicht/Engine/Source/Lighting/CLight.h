@@ -55,6 +55,9 @@ namespace Skylicht
 		//! Intensity of light
 		float m_intensity;
 
+		//! Number bounce of light on bake lighting
+		u32 m_bakeBounce;
+
 	public:
 		CLight();
 
@@ -78,6 +81,16 @@ namespace Skylicht
 		inline float getRadius()
 		{
 			return m_radius;
+		}
+
+		void setBounce(u32 b)
+		{
+			m_bakeBounce = b;
+		}
+
+		u32 getBounce()
+		{
+			return m_bakeBounce;
 		}
 
 		void setRadius(float r)
