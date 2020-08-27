@@ -11,11 +11,6 @@ void installApplication(const std::vector<std::string>& argv)
 {
 	SampleLightmappingVertex *app = new SampleLightmappingVertex();
 	getApplication()->registerAppEvent("SampleLightmappingVertex", app);
-
-	if (argv.size() >= 4)
-	{
-		CViewBakeLightmap::s_numLightBounce = atoi(argv[3].c_str());
-	}
 }
 
 SampleLightmappingVertex::SampleLightmappingVertex()
