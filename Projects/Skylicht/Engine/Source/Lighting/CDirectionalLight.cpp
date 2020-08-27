@@ -34,8 +34,8 @@ namespace Skylicht
 
 	CDirectionalLight::CDirectionalLight()
 	{
-		// default 3 bounce
-		m_bakeBounce = 3;
+		// default 2 bounce
+		m_bakeBounce = 2;
 	}
 
 	CDirectionalLight::~CDirectionalLight()
