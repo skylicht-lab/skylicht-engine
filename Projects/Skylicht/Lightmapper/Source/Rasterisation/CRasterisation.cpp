@@ -651,8 +651,8 @@ namespace Skylicht
 
 				// use QuadraticEaseIn function (y = x^2) or CubicEaseIn (y = x^3)
 				// [x -> 0.0 - 1.0] 
-				// [y -> 1.0 - 1.4]
-				float darkMultipler = 1.0f + 1.4f * l * l * l;
+				// [y -> 1.0 - 1.5]
+				float darkMultipler = 1.0f + 1.5f * l * l * l;
 
 				// compress lighting by 3.0
 				result *= darkMultipler / 3.0f;
