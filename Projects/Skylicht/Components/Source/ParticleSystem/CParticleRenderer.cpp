@@ -24,34 +24,46 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CParticle.h"
-#include "Entity/CEntityPrefab.h"
-
-#include "Emitters/CEmitter.h"
-#include "Zones/CZone.h"
+#include "pch.h"
+#include "CParticleRenderer.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CGroup
+		CParticleRenderer::CParticleRenderer()
 		{
-		protected:
-			core::array<CParticle> m_particles;
 
-			std::vector<CEmitter*> m_emitters;
-			CZone* m_zone;
+		}
 
-		public:
-			CGroup();
+		CParticleRenderer::~CParticleRenderer()
+		{
 
-			virtual ~CGroup();
+		}
 
-			void update();
+		void CParticleRenderer::beginQuery()
+		{
 
-			CParticle* create(u32 num);
+		}
 
-			void remove(u32 i);
-		};
+		void CParticleRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
+		{
+
+		}
+
+		void CParticleRenderer::init(CEntityManager *entityManager)
+		{
+
+		}
+
+		void CParticleRenderer::update(CEntityManager *entityManager)
+		{
+
+		}
+
+		void CParticleRenderer::render(CEntityManager *entityManager)
+		{
+
+		}
 	}
 }

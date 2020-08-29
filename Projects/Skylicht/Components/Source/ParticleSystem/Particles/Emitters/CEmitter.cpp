@@ -22,36 +22,68 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CEmitter.h"
 
-#include "CParticle.h"
-#include "Entity/CEntityPrefab.h"
-
-#include "Emitters/CEmitter.h"
-#include "Zones/CZone.h"
+#include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/Zones/CZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CGroup
+		CEmitter::CEmitter() :
+			m_tank(0),
+			m_flow(0.0f),
+			m_forceMin(0.0f),
+			m_forceMax(0.0f),
+			m_active(true),
+			m_emitFullZone(true)
 		{
-		protected:
-			core::array<CParticle> m_particles;
+			m_fraction = os::Randomizer::frand();
+		}
 
-			std::vector<CEmitter*> m_emitters;
-			CZone* m_zone;
+		CEmitter::~CEmitter()
+		{
 
-		public:
-			CGroup();
+		}
 
-			virtual ~CGroup();
+		u32 CEmitter::updateNumber(float deltaTime)
+		{
+			u32 nbBorn;
+			if (m_flow <= 0.0f)
+			{
+				nbBorn = core::max_((u32)0, m_tank);
+				m_tank = 0;
+			}
+			else if (m_tank != 0)
+			{
+				m_fraction += m_flow * deltaTime;
+				nbBorn = static_cast<u32>(m_fraction);
+				if (m_tank >= 0)
+				{
+					nbBorn = core::min_(m_tank, nbBorn);
+					m_tank -= nbBorn;
+				}
+				m_fraction -= nbBorn;
+			}
+			else
+				nbBorn = 0;
 
-			void update();
+			return nbBorn;
+		}
 
-			CParticle* create(u32 num);
+		void CEmitter::generateVelocity(CParticle& particle)
+		{
+			float force = m_forceMin + (m_forceMax - m_forceMin) * os::Randomizer::frand();
 
-			void remove(u32 i);
-		};
+			generateVelocity(particle, force / particle.Mass);
+		}
+
+		void CEmitter::emitParticle(CParticle &particle, CZone* zone)
+		{
+			zone->generatePosition(particle, m_emitFullZone);
+			generateVelocity(particle);
+		}
 	}
 }

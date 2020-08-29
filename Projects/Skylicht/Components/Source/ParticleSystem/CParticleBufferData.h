@@ -22,24 +22,24 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CParticleData.h"
+#pragma once
+
+#include "Entity/IEntityData.h"
+#include "Particles/CGroup.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticleData::CParticleData() :
-			Age(0.0f),
-			Life(0.0f),
-			Immortal(false)
+		class CParticleBufferData : public IEntityData
 		{
+		public:
+			core::array<CGroup*> Groups;
 
-		}
+		public:
+			CParticleBufferData();
 
-		CParticleData::~CParticleData()
-		{
-
-		}
+			virtual ~CParticleBufferData();
+		};
 	}
 }
