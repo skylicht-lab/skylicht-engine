@@ -22,36 +22,52 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
+#include "pch.h"
 #include "CParticle.h"
-#include "Entity/CEntityPrefab.h"
-
-#include "Emitters/CEmitter.h"
-#include "Zones/CZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CGroup
+		CParticle::CParticle() :
+			Age(0.0f),
+			Life(0.0f),
+			Immortal(false),
+			Mass(1.0f)
 		{
-		protected:
-			core::array<CParticle> m_particles;
 
-			std::vector<CEmitter*> m_emitters;
-			CZone* m_zone;
+		}
 
-		public:
-			CGroup();
+		CParticle::~CParticle()
+		{
 
-			virtual ~CGroup();
+		}
 
-			void update();
+		void CParticle::swap(CParticle& p)
+		{
+			float age = Age;
+			float life = Life;
+			float mass = Mass;
+			bool immortal = Immortal;
+			core::vector3df position = Position;
+			core::vector3df velocity = Velocity;
+			video::SColor color = Color;
 
-			CParticle* create(u32 num);
+			Age = p.Age;
+			Life = p.Life;
+			Mass = p.Mass;
+			Immortal = p.Immortal;
+			Position = p.Position;
+			Velocity = p.Velocity;
+			Color = p.Color;
 
-			void remove(u32 i);
-		};
+			p.Age = age;
+			p.Life = life;
+			p.Immortal = immortal;
+			p.Position = position;
+			p.Velocity = velocity;
+			p.Color = color;
+			p.Mass = mass;
+		}
 	}
 }

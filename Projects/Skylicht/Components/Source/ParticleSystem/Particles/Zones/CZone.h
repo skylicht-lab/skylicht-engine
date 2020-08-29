@@ -24,34 +24,35 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CParticle.h"
-#include "Entity/CEntityPrefab.h"
-
-#include "Emitters/CEmitter.h"
-#include "Zones/CZone.h"
-
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CGroup
+		class CParticle;
+
+		class CZone
 		{
 		protected:
-			core::array<CParticle> m_particles;
-
-			std::vector<CEmitter*> m_emitters;
-			CZone* m_zone;
+			core::vector3df m_position;
 
 		public:
-			CGroup();
+			CZone();
 
-			virtual ~CGroup();
+			virtual ~CZone();
 
-			void update();
+			inline void setPosition(core::vector3df& pos)
+			{
+				m_position = pos;
+			}
 
-			CParticle* create(u32 num);
+			const core::vector3df& getPosition()
+			{
+				return m_position;
+			}
 
-			void remove(u32 i);
+			virtual void generatePosition(CParticle& particle, bool full) const = 0;
+
+			virtual core::vector3df computeNormal(const core::vector3df& point) const = 0;
 		};
 	}
 }

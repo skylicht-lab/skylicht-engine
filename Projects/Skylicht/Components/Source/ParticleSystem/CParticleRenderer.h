@@ -25,24 +25,28 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleData : public IEntityData
+		class CParticleRenderer : public IRenderSystem
 		{
 		public:
-			float Age;
-			float Life;
-			bool Immortal;
-			core::vector3df Position;
-			core::vector3df Velocity;
+			CParticleRenderer();
 
-		public:
-			CParticleData();
+			virtual ~CParticleRenderer();
 
-			virtual ~CParticleData();
+			virtual void beginQuery();
+
+			virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+
+			virtual void init(CEntityManager *entityManager);
+
+			virtual void update(CEntityManager *entityManager);
+
+			virtual void render(CEntityManager *entityManager);
 		};
 	}
 }
