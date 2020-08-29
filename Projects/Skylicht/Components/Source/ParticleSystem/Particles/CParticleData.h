@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -28,22 +28,21 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLineDrawData : public IEntityData
+	namespace Particle
 	{
-	public:
-		IMeshBuffer* LineBuffer;
+		class CParticleData : public IEntityData
+		{
+		public:
+			float Age;
+			float Life;
+			bool Immortal;
+			core::vector3df Position;
+			core::vector3df Velocity;
 
-	public:
-		CLineDrawData();
+		public:
+			CParticleData();
 
-		virtual ~CLineDrawData();
-
-		void add3DBoxToBuffer(const core::aabbox3d<f32>& box, SColor color);
-
-		void addLineVertexBatch(const core::vector3df& v1, const core::vector3df& v2, const SColor& color);
-
-		void clearBuffer();
-
-		void updateBuffer();
-	};
+			virtual ~CParticleData();
+		};
+	}
 }
