@@ -29,7 +29,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CGroup::CGroup()
+		CGroup::CGroup() :
+			m_zone(NULL)
 		{
 
 		}
@@ -37,6 +38,28 @@ namespace Skylicht
 		CGroup::~CGroup()
 		{
 
+		}
+
+		void CGroup::update()
+		{
+
+		}
+
+		CParticle* CGroup::create(u32 num)
+		{
+			u32 total = m_particles.size();
+			m_particles.set_used(total + num);
+			return m_particles.pointer() + total;
+		}
+
+		void CGroup::remove(u32 index)
+		{
+			u32 total = m_particles.size();
+			if (index >= total)
+				return;
+
+			m_particles[index].swap(m_particles.getLast());
+			m_particles.set_used(total - 1);
 		}
 	}
 }
