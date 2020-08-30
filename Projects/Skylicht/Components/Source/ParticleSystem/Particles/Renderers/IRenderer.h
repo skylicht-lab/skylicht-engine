@@ -24,26 +24,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
-#include "Particles/CGroup.h"
+#include "pch.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleBufferData : public IEntityData
+		class IRenderer
 		{
 		public:
-			core::array<CGroup*> Groups;
+			IRenderer()
+			{
 
-		public:
-			CParticleBufferData();
+			}
 
-			virtual ~CParticleBufferData();
+			virtual ~IRenderer()
+			{
 
-			CGroup* createGroup();
+			}
 
-			void removeGroup(CGroup *group);
+			virtual void getParticleBuffer(IMeshBuffer *buffer) = 0;
 		};
 	}
 }

@@ -34,7 +34,7 @@ namespace Skylicht
 		class CEmitter
 		{
 		protected:
-			u32 m_tank;
+			int m_tank;
 			float m_flow;
 			float m_forceMin;
 			float m_forceMax;
@@ -47,7 +47,7 @@ namespace Skylicht
 
 			virtual ~CEmitter();
 
-			inline void setTank(u32 tank)
+			inline void setTank(int tank)
 			{
 				m_tank = tank;
 			}

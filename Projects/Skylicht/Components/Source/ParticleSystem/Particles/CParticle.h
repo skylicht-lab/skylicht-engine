@@ -37,6 +37,7 @@ namespace Skylicht
 			float Life;
 			float Mass;
 			bool Immortal;
+			int TextureIndex;
 
 			video::SColor Color;
 			core::vector3df Position;
