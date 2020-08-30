@@ -24,26 +24,48 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
-#include "Particles/CGroup.h"
-
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleBufferData : public IEntityData
+		class CZone;
+		class IRenderer;
+
+		enum EZone
 		{
-		public:
-			core::array<CGroup*> Groups;
+			Sphere,
+			Point,
+			AABox,
+			Plane,
+			Line,
+			Ring,
+			Cylinder
+		};
+
+		enum ERenderer
+		{
+			Quad,
+			Mesh,
+		};
+
+		class CFactory
+		{
+		protected:
+			std::vector<IRenderer*> m_renderers;
+			std::vector<CZone*> m_zones;
 
 		public:
-			CParticleBufferData();
+			CFactory();
 
-			virtual ~CParticleBufferData();
+			virtual ~CFactory();
 
-			CGroup* createGroup();
+			IRenderer* createRenderer(ERenderer type = Quad);
 
-			void removeGroup(CGroup *group);
+			void deleteRenderer(IRenderer* r);
+
+			CZone* createZone(EZone type = Sphere);
+
+			void deleteZone(CZone *z);
 		};
 	}
 }

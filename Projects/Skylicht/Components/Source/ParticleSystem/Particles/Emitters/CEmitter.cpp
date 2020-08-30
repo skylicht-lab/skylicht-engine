@@ -50,16 +50,16 @@ namespace Skylicht
 
 		u32 CEmitter::updateNumber(float deltaTime)
 		{
-			u32 nbBorn;
+			int nbBorn;
 			if (m_flow <= 0.0f)
 			{
-				nbBorn = core::max_((u32)0, m_tank);
+				nbBorn = core::max_(0, m_tank);
 				m_tank = 0;
 			}
 			else if (m_tank != 0)
 			{
 				m_fraction += m_flow * deltaTime;
-				nbBorn = static_cast<u32>(m_fraction);
+				nbBorn = static_cast<int>(m_fraction);
 				if (m_tank >= 0)
 				{
 					nbBorn = core::min_(m_tank, nbBorn);
@@ -68,9 +68,11 @@ namespace Skylicht
 				m_fraction -= nbBorn;
 			}
 			else
+			{
 				nbBorn = 0;
+			}
 
-			return nbBorn;
+			return (u32)nbBorn;
 		}
 
 		void CEmitter::generateVelocity(CParticle& particle)

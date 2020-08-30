@@ -22,28 +22,61 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CFactory.h"
 
-#include "Entity/IEntityData.h"
-#include "Particles/CGroup.h"
+#include "Renderers/IRenderer.h"
+#include "Zones/CZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleBufferData : public IEntityData
+		CFactory::CFactory()
 		{
-		public:
-			core::array<CGroup*> Groups;
 
-		public:
-			CParticleBufferData();
+		}
 
-			virtual ~CParticleBufferData();
+		CFactory::~CFactory()
+		{
+			for (IRenderer *r : m_renderers)
+				delete r;
 
-			CGroup* createGroup();
+			for (CZone *z : m_zones)
+				delete z;
 
-			void removeGroup(CGroup *group);
-		};
+			m_renderers.clear();
+			m_zones.clear();
+		}
+
+		IRenderer* CFactory::createRenderer(ERenderer type)
+		{
+			return NULL;
+		}
+
+		void CFactory::deleteRenderer(IRenderer* r)
+		{
+			std::vector<IRenderer*>::iterator i = std::find(m_renderers.begin(), m_renderers.end(), r);
+			if (i != m_renderers.end())
+			{
+				m_renderers.erase(i);
+				delete r;
+			}
+		}
+
+		CZone* CFactory::createZone(EZone type)
+		{
+			return NULL;
+		}
+
+		void CFactory::deleteZone(CZone *z)
+		{
+			std::vector<CZone*>::iterator i = std::find(m_zones.begin(), m_zones.end(), z);
+			if (i != m_zones.end())
+			{
+				m_zones.erase(i);
+				delete z;
+			}
+		}
 	}
 }

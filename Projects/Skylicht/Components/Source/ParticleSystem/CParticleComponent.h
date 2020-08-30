@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Components/CComponentSystem.h"
 
+#include "Particles/CFactory.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -35,6 +37,8 @@ namespace Skylicht
 		protected:
 			CParticleBufferData *m_data;
 
+			CFactory m_factory;
+
 		public:
 			CParticleComponent();
 
@@ -43,6 +47,17 @@ namespace Skylicht
 			virtual void initComponent();
 
 			virtual void updateComponent();
+
+		public:
+
+			CFactory* getParticleFactory()
+			{
+				return &m_factory;
+			}
+
+			CGroup* createParticleGroup();
+
+			void removeParticleGroup(CGroup* group);
 		};
 	}
 }
