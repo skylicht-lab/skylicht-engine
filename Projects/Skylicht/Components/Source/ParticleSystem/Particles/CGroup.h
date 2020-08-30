@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Emitters/CEmitter.h"
 #include "Zones/CZone.h"
+#include "Renderers/IRenderer.h"
 
 namespace Skylicht
 {
@@ -40,7 +41,10 @@ namespace Skylicht
 			core::array<CParticle> m_particles;
 
 			std::vector<CEmitter*> m_emitters;
+
 			CZone* m_zone;
+
+			IRenderer* m_renderer;
 
 		public:
 			CGroup();

@@ -30,7 +30,8 @@ namespace Skylicht
 	namespace Particle
 	{
 		CGroup::CGroup() :
-			m_zone(NULL)
+			m_zone(NULL),
+			m_renderer(NULL)
 		{
 
 		}
