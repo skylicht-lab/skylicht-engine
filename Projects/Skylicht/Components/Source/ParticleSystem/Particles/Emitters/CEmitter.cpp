@@ -50,7 +50,8 @@ namespace Skylicht
 
 		u32 CEmitter::updateNumber(float deltaTime)
 		{
-			int nbBorn;
+			int nbBorn = 0;
+
 			if (m_flow <= 0.0f)
 			{
 				nbBorn = core::max_(0, m_tank);

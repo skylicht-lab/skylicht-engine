@@ -40,6 +40,7 @@ namespace Skylicht
 			int TextureIndex;
 
 			video::SColor Color;
+			core::vector3df OldPosition;
 			core::vector3df Position;
 			core::vector3df Velocity;
 

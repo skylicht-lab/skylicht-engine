@@ -22,64 +22,56 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CParticleSystem.h"
 
-#include "CParticle.h"
-#include "Entity/CEntityPrefab.h"
-
-#include "Emitters/CEmitter.h"
-#include "Zones/CZone.h"
-#include "Renderers/IRenderer.h"
-#include "Systems/ISystem.h"
+#include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		struct SLaunchParticle
+		CParticleSystem::CParticleSystem()
 		{
-			CEmitter *Emitter;
-			u32 Number;
-		};
 
-		class CGroup
+		}
+
+		CParticleSystem::~CParticleSystem()
 		{
-		protected:
-			core::array<CParticle> m_particles;
 
-			core::array<SLaunchParticle> m_launch;
+		}
 
-			std::vector<CEmitter*> m_emitters;
+		void CParticleSystem::update(CParticle *particles, int num, CGroup *group, float dt)
+		{
+			for (int i = 0; i < num; i++)
+			{
+				CParticle &p = particles[i];
 
-			std::vector<ISystem*> m_systems;
+				// update life time
+				p.Age = p.Age + dt;
+				if (!p.Immortal)
+				{
+					p.Life -= dt;
 
-			ISystem *m_defaultSystem;
+					// computes the ratio between the life of the particle and its lifetime
+					// float ratio = core::min_(1.0f, dt / p.Life);
+				}
 
-			CZone* m_zone;
+				// update position
+				p.OldPosition = p.Position;
+				p.Position = p.Position + p.Velocity * dt;
 
-			IRenderer* m_renderer;
+				// update gravity
+				p.Velocity = p.Velocity + group->Gravity * dt;
 
-		public:
-			core::vector3df Gravity;
-
-			float Friction;
-
-			float LifeMin;
-
-			float LifeMax;
-
-		public:
-			CGroup();
-
-			virtual ~CGroup();
-
-			void update();
-
-			bool launchParticle(CParticle& p, SLaunchParticle& launch);
-
-			CParticle* create(u32 num);
-
-			void remove(u32 i);
-		};
+				// update friction
+				if (group->Friction > 0.0f)
+				{
+					float f = 1.0f - core::min_(1.0f, group->Friction * dt / p.Mass);
+					p.Velocity = p.Velocity * f;
+				}
+			}
+		}
 	}
 }
