@@ -24,62 +24,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CParticle.h"
-#include "Entity/CEntityPrefab.h"
-
-#include "Emitters/CEmitter.h"
-#include "Zones/CZone.h"
-#include "Renderers/IRenderer.h"
-#include "Systems/ISystem.h"
-
 namespace Skylicht
 {
 	namespace Particle
 	{
-		struct SLaunchParticle
+		class CParticle;
+		class CGroup;
+
+		class ISystem
 		{
-			CEmitter *Emitter;
-			u32 Number;
-		};
-
-		class CGroup
-		{
-		protected:
-			core::array<CParticle> m_particles;
-
-			core::array<SLaunchParticle> m_launch;
-
-			std::vector<CEmitter*> m_emitters;
-
-			std::vector<ISystem*> m_systems;
-
-			ISystem *m_defaultSystem;
-
-			CZone* m_zone;
-
-			IRenderer* m_renderer;
-
 		public:
-			core::vector3df Gravity;
+			ISystem()
+			{
 
-			float Friction;
+			}
 
-			float LifeMin;
+			virtual ~ISystem()
+			{
 
-			float LifeMax;
+			}
 
-		public:
-			CGroup();
-
-			virtual ~CGroup();
-
-			void update();
-
-			bool launchParticle(CParticle& p, SLaunchParticle& launch);
-
-			CParticle* create(u32 num);
-
-			void remove(u32 i);
+			virtual void update(CParticle *particles, int num, CGroup *group, float dt) = 0;
 		};
 	}
 }

@@ -51,6 +51,7 @@ namespace Skylicht
 			float mass = Mass;
 			bool immortal = Immortal;
 			int textureIndex = TextureIndex;
+			core::vector3df oldPosition = OldPosition;
 			core::vector3df position = Position;
 			core::vector3df velocity = Velocity;
 			video::SColor color = Color;
@@ -59,6 +60,7 @@ namespace Skylicht
 			Life = p.Life;
 			Mass = p.Mass;
 			Immortal = p.Immortal;
+			OldPosition = p.OldPosition;
 			Position = p.Position;
 			Velocity = p.Velocity;
 			Color = p.Color;
@@ -67,6 +69,7 @@ namespace Skylicht
 			p.Age = age;
 			p.Life = life;
 			p.Immortal = immortal;
+			p.OldPosition = oldPosition;
 			p.Position = position;
 			p.Velocity = velocity;
 			p.Color = color;
