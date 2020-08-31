@@ -79,7 +79,6 @@ namespace Skylicht
 		void CEmitter::generateVelocity(CParticle& particle)
 		{
 			float force = m_forceMin + (m_forceMax - m_forceMin) * os::Randomizer::frand();
-
 			generateVelocity(particle, force / particle.Mass);
 		}
 

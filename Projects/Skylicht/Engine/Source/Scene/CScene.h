@@ -37,9 +37,6 @@ namespace Skylicht
 	protected:
 		ArrayZone m_zones;
 
-		CForwardRP *m_forwardRP;
-		CDeferredRP *m_deferredRP;
-
 		CEntityManager *m_entityManager;
 
 	public:
