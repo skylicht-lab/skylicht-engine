@@ -46,26 +46,18 @@ namespace Skylicht
 		{
 		protected:
 			core::array<CParticle> m_particles;
-
 			core::array<SLaunchParticle> m_launch;
-
 			std::vector<CEmitter*> m_emitters;
-
 			std::vector<ISystem*> m_systems;
 
-			ISystem *m_defaultSystem;
-
 			CZone* m_zone;
-
+			ISystem *m_defaultSystem;			
 			IRenderer* m_renderer;
 
 		public:
 			core::vector3df Gravity;
-
 			float Friction;
-
 			float LifeMin;
-
 			float LifeMax;
 
 		public:

@@ -71,29 +71,27 @@ namespace Skylicht
 			}
 
 			CParticle *particles = m_particles.pointer();
-			u32 num = m_particles.size();
+			u32 numParticles = m_particles.size();
 
 			// update particle system
-			m_defaultSystem->update(particles, num, this, dt);
+			m_defaultSystem->update(particles, numParticles, this, dt);
+
 			for (ISystem *s : m_systems)
-				s->update(particles, num, this, dt);
+				s->update(particles, numParticles, this, dt);
 
 
 			u32 emiterId = 0;
 			u32 emiterLaunch = m_launch.size();
 
 			// launch new and remove die particle
-			for (u32 i = 0; i < num; i++)
+			for (u32 i = 0; i < numParticles; i++)
 			{
 				CParticle& p = particles[i];
 				if (p.Life < 0)
 				{
-					// try replace to optimize
 					if (autoBorn > 0)
 					{
-						p.Age = 0.0f;
-						p.Life = LifeMin + (LifeMax - LifeMin) * os::Randomizer::frand();
-
+						// try born id dead particle						
 						if (launchParticle(p, m_launch[emiterId]) == true)
 							emiterId++;
 
@@ -101,8 +99,10 @@ namespace Skylicht
 					}
 					else
 					{
+						// remove dead particle
 						remove(i);
 						--i;
+						--numParticles;
 					}
 				}
 			}
@@ -115,18 +115,12 @@ namespace Skylicht
 					SLaunchParticle &launch = m_launch[i];
 					if (launch.Number > 0)
 					{
-						CParticle* particles = create(launch.Number);
-
-						for (u32 j = 0; j < launch.Number; j++)
+						CParticle* newParticles = create(launch.Number);
+						for (u32 j = 0, n = launch.Number; j < n; j++)
 						{
-							CParticle &p = particles[j];
-							p.Age = 0.0f;
-							p.Life = LifeMin + (LifeMax - LifeMin) * os::Randomizer::frand();
-
-							launch.Emitter->emitParticle(p, m_zone);
+							CParticle &p = newParticles[j];
+							launchParticle(p, launch);
 						}
-
-						launch.Number = 0;
 					}
 				}
 			}
@@ -134,6 +128,9 @@ namespace Skylicht
 
 		bool CGroup::launchParticle(CParticle& p, SLaunchParticle& launch)
 		{
+			p.Age = 0.0f;
+			p.Life = LifeMin + (LifeMax - LifeMin) * os::Randomizer::frand();
+
 			launch.Emitter->emitParticle(p, m_zone);
 			launch.Number--;
 
