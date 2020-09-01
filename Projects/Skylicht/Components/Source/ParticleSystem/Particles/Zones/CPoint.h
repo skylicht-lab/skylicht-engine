@@ -24,41 +24,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CZone.h"
+
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticle;
-
-		float random(float from, float to);
-
-		class CZone
+		class CPoint : public CZone
 		{
-		protected:
-			core::vector3df m_position;
-
 		public:
-			CZone();
+			CPoint();
 
-			virtual ~CZone();
+			virtual ~CPoint();
 
-			inline void setPosition(core::vector3df& pos)
-			{
-				m_position = pos;
-			}
+			virtual void generatePosition(CParticle& particle, bool full);
 
-			const core::vector3df& getPosition()
-			{
-				return m_position;
-			}
-
-			void normalizeOrRandomize(core::vector3df& v);
-
-			core::vector3df getTransformPosition(const core::vector3df& pos);
-
-			virtual void generatePosition(CParticle& particle, bool full) = 0;
-
-			virtual core::vector3df computeNormal(const core::vector3df& point) = 0;
+			virtual core::vector3df computeNormal(const core::vector3df& point);
 		};
 	}
 }

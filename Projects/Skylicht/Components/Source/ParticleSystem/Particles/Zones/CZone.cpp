@@ -29,6 +29,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		float random(float from, float to)
+		{
+			return from * (to - from) * os::Randomizer::frand();
+		}
+
 		CZone::CZone()
 		{
 
@@ -37,6 +42,23 @@ namespace Skylicht
 		CZone::~CZone()
 		{
 
+		}
+
+		void CZone::normalizeOrRandomize(core::vector3df& v)
+		{
+			while (v.getLengthSQ() == 0.0f)
+			{
+				v.X = random(-1.0f, 1.0f);
+				v.Y = random(-1.0f, 1.0f);
+				v.Z = random(-1.0f, 1.0f);
+			}
+
+			v.normalize();
+		}
+
+		core::vector3df CZone::getTransformPosition(const core::vector3df& pos)
+		{
+			return pos;
 		}
 	}
 }

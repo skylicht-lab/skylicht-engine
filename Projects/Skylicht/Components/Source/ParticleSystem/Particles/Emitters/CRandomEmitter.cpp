@@ -24,41 +24,41 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "pch.h"
+#include "CRandomEmitter.h"
+#include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/Zones/CZone.h"
+
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticle;
 
-		float random(float from, float to);
-
-		class CZone
+		CRandomEmitter::CRandomEmitter()
 		{
-		protected:
-			core::vector3df m_position;
 
-		public:
-			CZone();
+		}
 
-			virtual ~CZone();
+		CRandomEmitter::~CRandomEmitter()
+		{
 
-			inline void setPosition(core::vector3df& pos)
+		}
+
+		void CRandomEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone)
+		{
+			float norm;
+
+			do
 			{
-				m_position = pos;
-			}
+				particle.Velocity.set(random(-1.0f, 1.0f),
+					random(-1.0f, 1.0f),
+					random(-1.0f, 1.0f));
 
-			const core::vector3df& getPosition()
-			{
-				return m_position;
-			}
+				norm = particle.Velocity.getLength();
+			} while (norm > 1.0f || norm == 0.0f);
 
-			void normalizeOrRandomize(core::vector3df& v);
+			particle.Velocity *= speed / norm;
+		}
 
-			core::vector3df getTransformPosition(const core::vector3df& pos);
-
-			virtual void generatePosition(CParticle& particle, bool full) = 0;
-
-			virtual core::vector3df computeNormal(const core::vector3df& point) = 0;
-		};
 	}
 }
