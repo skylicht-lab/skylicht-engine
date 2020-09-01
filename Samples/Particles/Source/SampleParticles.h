@@ -2,6 +2,8 @@
 
 #include "IApplicationEventReceiver.h"
 
+#include "ParticleSystem/CParticleComponent.h"
+
 class SampleParticles : public IApplicationEventReceiver
 {
 private:
@@ -29,4 +31,9 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
+
+protected:
+
+	void initFireParticle(Particle::CParticleComponent *particleComponent);
+
 };

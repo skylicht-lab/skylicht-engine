@@ -3,6 +3,7 @@
 #include "SampleParticles.h"
 
 #include "GridPlane/CGridPlane.h"
+#include "ParticleSystem/CParticleComponent.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -57,8 +58,26 @@ void SampleParticles::onInitApp()
 	CGameObject *grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
 
+	// Particles
+	initFireParticle(zone->createEmptyObject()->addComponent<Particle::CParticleComponent>());
+
 	// Rendering
 	m_forwardRP = new CForwardRP();
+}
+
+void SampleParticles::initFireParticle(Particle::CParticleComponent *particleComponent)
+{
+	Particle::CFactory *factory = particleComponent->getParticleFactory();
+	Particle::CGroup *group = particleComponent->createParticleGroup();
+
+	// create start point
+	Particle::CZone *zone = group->setZone(factory->createZone(Particle::Point));
+	zone->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
+
+	// create emitter
+	Particle::CEmitter *emitter = group->addEmitter(factory->createEmitter(Particle::Random));
+	emitter->setTank(100);
+	emitter->setFlow(3.0f);
 }
 
 void SampleParticles::onUpdate()

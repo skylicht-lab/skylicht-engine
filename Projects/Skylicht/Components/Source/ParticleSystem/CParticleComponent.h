@@ -25,8 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Components/CComponentSystem.h"
-
 #include "Particles/CFactory.h"
+#include "CParticleBufferData.h"
 
 namespace Skylicht
 {

@@ -59,7 +59,7 @@ namespace Skylicht
 			}
 			else if (m_tank != 0)
 			{
-				m_fraction += m_flow * deltaTime;
+				m_fraction += m_flow * deltaTime * 0.001f;
 				nbBorn = static_cast<int>(m_fraction);
 				if (m_tank >= 0)
 				{
