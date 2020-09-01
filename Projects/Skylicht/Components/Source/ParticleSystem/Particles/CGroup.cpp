@@ -37,8 +37,8 @@ namespace Skylicht
 			m_renderer(NULL),
 			Gravity(0.0f, -1.0f, 0.0f),
 			Friction(0.1f),
-			LifeMin(0.5f),
-			LifeMax(1.0f)
+			LifeMin(500.0f),
+			LifeMax(1000.0f)
 		{
 			m_defaultSystem = new CParticleSystem();
 		}
@@ -124,6 +124,8 @@ namespace Skylicht
 					}
 				}
 			}
+
+			// printf("Particle update: %d\n", m_particles.size());
 		}
 
 		bool CGroup::launchParticle(CParticle& p, SLaunchParticle& launch)
@@ -140,7 +142,8 @@ namespace Skylicht
 		CParticle* CGroup::create(u32 num)
 		{
 			u32 total = m_particles.size();
-			m_particles.set_used(total + num);
+			for (u32 i = 0; i < num; i++)
+				m_particles.push_back(CParticle());
 			return m_particles.pointer() + total;
 		}
 

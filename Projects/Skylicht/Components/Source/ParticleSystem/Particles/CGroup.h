@@ -51,7 +51,7 @@ namespace Skylicht
 			std::vector<ISystem*> m_systems;
 
 			CZone* m_zone;
-			ISystem *m_defaultSystem;			
+			ISystem *m_defaultSystem;
 			IRenderer* m_renderer;
 
 		public:
@@ -67,6 +67,53 @@ namespace Skylicht
 
 			void update();
 
+			CZone* setZone(CZone *z)
+			{
+				m_zone = z;
+				return m_zone;
+			}
+
+			inline CZone* getZone()
+			{
+				return m_zone;
+			}
+
+			CEmitter* addEmitter(CEmitter *e)
+			{
+				m_emitters.push_back(e);
+				return e;
+			}
+
+			std::vector<CEmitter*>& getEmitters()
+			{
+				return m_emitters;
+			}
+
+			void removeEmitter(CEmitter *e)
+			{
+				std::vector<CEmitter*>::iterator i = std::find(m_emitters.begin(), m_emitters.end(), e);
+				if (i != m_emitters.end())
+					m_emitters.erase(i);
+			}
+
+			void addSystem(ISystem *s)
+			{
+				m_systems.push_back(s);
+			}
+
+			std::vector<ISystem*>& getSystems()
+			{
+				return m_systems;
+			}
+
+			void removeSystem(ISystem *s)
+			{
+				std::vector<ISystem*>::iterator i = std::find(m_systems.begin(), m_systems.end(), s);
+				if (i != m_systems.end())
+					m_systems.erase(i);
+			}
+
+		protected:
 			bool launchParticle(CParticle& p, SLaunchParticle& launch);
 
 			CParticle* create(u32 num);
