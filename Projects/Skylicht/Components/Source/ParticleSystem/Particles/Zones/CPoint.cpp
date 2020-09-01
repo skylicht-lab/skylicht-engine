@@ -22,43 +22,35 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CPoint.h"
+#include "ParticleSystem/Particles/CParticle.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticle;
-
-		float random(float from, float to);
-
-		class CZone
+		CPoint::CPoint()
 		{
-		protected:
-			core::vector3df m_position;
 
-		public:
-			CZone();
+		}
 
-			virtual ~CZone();
+		CPoint::~CPoint()
+		{
 
-			inline void setPosition(core::vector3df& pos)
-			{
-				m_position = pos;
-			}
+		}
 
-			const core::vector3df& getPosition()
-			{
-				return m_position;
-			}
+		void CPoint::generatePosition(CParticle& particle, bool full)
+		{
+			particle.Position = getTransformPosition(m_position);
+		}
 
-			void normalizeOrRandomize(core::vector3df& v);
-
-			core::vector3df getTransformPosition(const core::vector3df& pos);
-
-			virtual void generatePosition(CParticle& particle, bool full) = 0;
-
-			virtual core::vector3df computeNormal(const core::vector3df& point) = 0;
-		};
+		core::vector3df CPoint::computeNormal(const core::vector3df& point)
+		{
+			core::vector3df tpos = getTransformPosition(m_position);
+			core::vector3df v = point - tpos;
+			getTransformPosition(v);
+			return v;
+		}
 	}
 }
