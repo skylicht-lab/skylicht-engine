@@ -28,6 +28,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		class CEmitter;
 		class CZone;
 		class IRenderer;
 
@@ -42,6 +43,11 @@ namespace Skylicht
 			Cylinder
 		};
 
+		enum EEmitter
+		{
+			Random,
+		};
+
 		enum ERenderer
 		{
 			Quad,
@@ -53,11 +59,16 @@ namespace Skylicht
 		protected:
 			std::vector<IRenderer*> m_renderers;
 			std::vector<CZone*> m_zones;
+			std::vector<CEmitter*> m_emitters;
 
 		public:
 			CFactory();
 
 			virtual ~CFactory();
+
+			CEmitter* createEmitter(EEmitter type = Random);
+
+			void deleteEmitter(CEmitter *e);
 
 			IRenderer* createRenderer(ERenderer type = Quad);
 

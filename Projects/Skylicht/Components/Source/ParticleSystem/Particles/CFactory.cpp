@@ -27,6 +27,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Renderers/IRenderer.h"
 #include "Zones/CZone.h"
+#include "Emitters/CEmitter.h"
+
+#include "Emitters/CRandomEmitter.h"
+#include "Zones/CPoint.h"
 
 namespace Skylicht
 {
@@ -45,8 +49,42 @@ namespace Skylicht
 			for (CZone *z : m_zones)
 				delete z;
 
+			for (CEmitter *e : m_emitters)
+				delete e;
+
 			m_renderers.clear();
 			m_zones.clear();
+			m_emitters.clear();
+		}
+
+		CEmitter* CFactory::createEmitter(EEmitter type)
+		{
+			CEmitter *e = NULL;
+
+			switch (type)
+			{
+			case EEmitter::Random:
+				e = new CRandomEmitter();
+				break;
+			default:
+				e = NULL;
+				break;
+			}
+
+			if (e != NULL)
+				m_emitters.push_back(e);
+
+			return e;
+		}
+
+		void CFactory::deleteEmitter(CEmitter *e)
+		{
+			std::vector<CEmitter*>::iterator i = std::find(m_emitters.begin(), m_emitters.end(), e);
+			if (i != m_emitters.end())
+			{
+				m_emitters.erase(i);
+				delete e;
+			}
 		}
 
 		IRenderer* CFactory::createRenderer(ERenderer type)
@@ -66,7 +104,22 @@ namespace Skylicht
 
 		CZone* CFactory::createZone(EZone type)
 		{
-			return NULL;
+			CZone *z = NULL;
+
+			switch (type)
+			{
+			case EZone::Point:
+				z = new CPoint();
+				break;
+			default:
+				z = NULL;
+				break;
+			}
+
+			if (z != NULL)
+				m_zones.push_back(z);
+
+			return z;
 		}
 
 		void CFactory::deleteZone(CZone *z)

@@ -115,11 +115,11 @@ namespace Skylicht
 
 			virtual u32 updateNumber(float deltaTime);
 
-			void generateVelocity(CParticle& particle);
+			void generateVelocity(CParticle& particle, CZone* zone);
 
 			void emitParticle(CParticle& particle, CZone* zone);
 
-			virtual void generateVelocity(CParticle& particle, float speed) const = 0;
+			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone) = 0;
 		};
 	}
 }
