@@ -67,7 +67,7 @@ namespace Skylicht
 
 			void update();
 
-			CZone* setZone(CZone *z)
+			inline CZone* setZone(CZone *z)
 			{
 				m_zone = z;
 				return m_zone;
@@ -78,13 +78,13 @@ namespace Skylicht
 				return m_zone;
 			}
 
-			CEmitter* addEmitter(CEmitter *e)
+			inline CEmitter* addEmitter(CEmitter *e)
 			{
 				m_emitters.push_back(e);
 				return e;
 			}
 
-			std::vector<CEmitter*>& getEmitters()
+			inline std::vector<CEmitter*>& getEmitters()
 			{
 				return m_emitters;
 			}
@@ -96,12 +96,12 @@ namespace Skylicht
 					m_emitters.erase(i);
 			}
 
-			void addSystem(ISystem *s)
+			inline void addSystem(ISystem *s)
 			{
 				m_systems.push_back(s);
 			}
 
-			std::vector<ISystem*>& getSystems()
+			inline std::vector<ISystem*>& getSystems()
 			{
 				return m_systems;
 			}
@@ -111,6 +111,17 @@ namespace Skylicht
 				std::vector<ISystem*>::iterator i = std::find(m_systems.begin(), m_systems.end(), s);
 				if (i != m_systems.end())
 					m_systems.erase(i);
+			}
+
+			inline IRenderer* setRenderer(IRenderer *r)
+			{
+				m_renderer = r;
+				return r;
+			}
+
+			inline IRenderer* getRenderer()
+			{
+				return m_renderer;
 			}
 
 		protected:

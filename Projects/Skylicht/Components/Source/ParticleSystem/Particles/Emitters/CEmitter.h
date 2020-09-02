@@ -31,6 +31,11 @@ namespace Skylicht
 		class CZone;
 		class CParticle;
 
+		enum EEmitter
+		{
+			Random
+		};
+
 		class CEmitter
 		{
 		protected:
@@ -42,8 +47,9 @@ namespace Skylicht
 			bool m_active;
 			bool m_emitFullZone;
 
+			EEmitter m_type;
 		public:
-			CEmitter();
+			CEmitter(EEmitter type);
 
 			virtual ~CEmitter();
 
@@ -111,6 +117,11 @@ namespace Skylicht
 			inline bool isEmitFullZone()
 			{
 				return m_emitFullZone;
+			}
+
+			inline EEmitter getType()
+			{
+				return m_type;
 			}
 
 			virtual u32 updateNumber(float deltaTime);

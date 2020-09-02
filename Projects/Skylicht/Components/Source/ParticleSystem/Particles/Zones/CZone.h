@@ -32,13 +32,26 @@ namespace Skylicht
 
 		float random(float from, float to);
 
+		enum EZone
+		{
+			Sphere,
+			Point,
+			AABox,
+			Plane,
+			Line,
+			Ring,
+			Cylinder
+		};
+
 		class CZone
 		{
 		protected:
 			core::vector3df m_position;
 
+			EZone m_type;
+
 		public:
-			CZone();
+			CZone(EZone type);
 
 			virtual ~CZone();
 
@@ -50,6 +63,11 @@ namespace Skylicht
 			const core::vector3df& getPosition()
 			{
 				return m_position;
+			}
+
+			inline EZone getType()
+			{
+				return m_type;
 			}
 
 			void normalizeOrRandomize(core::vector3df& v);

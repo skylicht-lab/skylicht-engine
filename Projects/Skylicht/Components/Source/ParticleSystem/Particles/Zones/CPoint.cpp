@@ -30,7 +30,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CPoint::CPoint()
+		CPoint::CPoint() :
+			CZone(Point)
 		{
 
 		}

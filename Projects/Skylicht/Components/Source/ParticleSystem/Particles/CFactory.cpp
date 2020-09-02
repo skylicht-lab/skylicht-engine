@@ -25,13 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CFactory.h"
 
-#include "Renderers/IRenderer.h"
-#include "Zones/CZone.h"
-#include "Emitters/CEmitter.h"
-
-#include "Emitters/CRandomEmitter.h"
-#include "Zones/CPoint.h"
-
 namespace Skylicht
 {
 	namespace Particle
@@ -57,23 +50,10 @@ namespace Skylicht
 			m_emitters.clear();
 		}
 
-		CEmitter* CFactory::createEmitter(EEmitter type)
+		CRandomEmitter* CFactory::createRandomEmitter()
 		{
-			CEmitter *e = NULL;
-
-			switch (type)
-			{
-			case EEmitter::Random:
-				e = new CRandomEmitter();
-				break;
-			default:
-				e = NULL;
-				break;
-			}
-
-			if (e != NULL)
-				m_emitters.push_back(e);
-
+			CRandomEmitter *e = new CRandomEmitter();
+			m_emitters.push_back(e);
 			return e;
 		}
 
@@ -87,9 +67,11 @@ namespace Skylicht
 			}
 		}
 
-		IRenderer* CFactory::createRenderer(ERenderer type)
+		CQuadRenderer* CFactory::createQuadRenderer()
 		{
-			return NULL;
+			CQuadRenderer *r = new CQuadRenderer();
+			m_renderers.push_back(r);
+			return r;
 		}
 
 		void CFactory::deleteRenderer(IRenderer* r)
@@ -102,23 +84,10 @@ namespace Skylicht
 			}
 		}
 
-		CZone* CFactory::createZone(EZone type)
+		CPoint* CFactory::createPointZone()
 		{
-			CZone *z = NULL;
-
-			switch (type)
-			{
-			case EZone::Point:
-				z = new CPoint();
-				break;
-			default:
-				z = NULL;
-				break;
-			}
-
-			if (z != NULL)
-				m_zones.push_back(z);
-
+			CPoint *z = new CPoint();
+			m_zones.push_back(z);
 			return z;
 		}
 

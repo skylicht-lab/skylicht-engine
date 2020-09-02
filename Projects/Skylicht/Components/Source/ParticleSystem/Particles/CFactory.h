@@ -24,36 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Renderers/IRenderer.h"
+#include "Zones/CZone.h"
+#include "Emitters/CEmitter.h"
+
+#include "Renderers/CQuadRenderer.h"
+#include "Zones/CPoint.h"
+#include "Emitters/CRandomEmitter.h"
+
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CEmitter;
-		class CZone;
-		class IRenderer;
-
-		enum EZone
-		{
-			Sphere,
-			Point,
-			AABox,
-			Plane,
-			Line,
-			Ring,
-			Cylinder
-		};
-
-		enum EEmitter
-		{
-			Random,
-		};
-
-		enum ERenderer
-		{
-			Quad,
-			Mesh,
-		};
-
 		class CFactory
 		{
 		protected:
@@ -66,15 +48,15 @@ namespace Skylicht
 
 			virtual ~CFactory();
 
-			CEmitter* createEmitter(EEmitter type = Random);
+			CRandomEmitter* createRandomEmitter();
 
 			void deleteEmitter(CEmitter *e);
 
-			IRenderer* createRenderer(ERenderer type = Quad);
+			CQuadRenderer* createQuadRenderer();
 
 			void deleteRenderer(IRenderer* r);
 
-			CZone* createZone(EZone type = Sphere);
+			CPoint* createPointZone();
 
 			void deleteZone(CZone *z);
 		};
