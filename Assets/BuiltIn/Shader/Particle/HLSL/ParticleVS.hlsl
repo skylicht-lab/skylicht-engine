@@ -29,7 +29,7 @@ VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
 	
-	float3 position = input.pos.xyz + input.particlePos;
+	float3 position = input.pos.xyz * input.particleSizeRotation.x + input.particlePos;
 	
 	output.pos = mul(float4(position, 1.0), uMvpMatrix);
 	output.color = input.particleColor;
