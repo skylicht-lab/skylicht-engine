@@ -23,58 +23,44 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CParticle.h"
+#include "CParticleBufferSystem.h"
+
+#include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticle::CParticle() :
-			Age(0.0f),
-			Life(0.0f),
-			Immortal(false),
-			Mass(1.0f),
-			TextureIndex(0)
-		{
-			Color.set(255, 255, 255, 255);
-		}
-
-		CParticle::~CParticle()
+		CParticleBufferSystem::CParticleBufferSystem()
 		{
 
 		}
 
-		void CParticle::swap(CParticle& p)
+		CParticleBufferSystem::~CParticleBufferSystem()
 		{
-			float age = Age;
-			float life = Life;
-			float mass = Mass;
-			bool immortal = Immortal;
-			int textureIndex = TextureIndex;
-			core::vector3df oldPosition = OldPosition;
-			core::vector3df position = Position;
-			core::vector3df velocity = Velocity;
-			video::SColor color = Color;
 
-			Age = p.Age;
-			Life = p.Life;
-			Mass = p.Mass;
-			Immortal = p.Immortal;
-			OldPosition = p.OldPosition;
-			Position = p.Position;
-			Velocity = p.Velocity;
-			Color = p.Color;
-			TextureIndex = p.TextureIndex;
+		}
 
-			p.Age = age;
-			p.Life = life;
-			p.Immortal = immortal;
-			p.OldPosition = oldPosition;
-			p.Position = position;
-			p.Velocity = velocity;
-			p.Color = color;
-			p.Mass = mass;
-			p.TextureIndex = textureIndex;
+		void CParticleBufferSystem::update(CParticle *particles, int num, CGroup *group, float dt)
+		{
+			CVertexBuffer<SParticleInstance>* buffer = group->getIntancing()->getInstanceBuffer();
+
+			buffer->set_used(num);
+
+			SParticleInstance *vtx = (SParticleInstance*)buffer->getVertices();
+			for (int i = 0; i < num; i++)
+			{
+				CParticle &p = particles[i];	
+				vtx->Pos = p.Position;
+				vtx->Color = p.Color;
+				vtx->SizeRotation.X = 1.0f;
+				vtx->SizeRotation.Y = 0.0f;
+				vtx->UVScale.set(1.0f, 1.0f);
+				vtx->UVOffset.set(0.0f, 0.0f);
+			}
+
+			buffer->setDirty();
 		}
 	}
 }

@@ -97,6 +97,8 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/PostProcessing/AdaptLuminance.xml");
 		loadShader("BuiltIn/Shader/PostProcessing/PostEffect.xml");
+
+		loadShader("BuiltIn/Shader/Particle/ParticleAdditive.xml");
 	}
 
 	void CShaderManager::initSGDeferredShader()

@@ -35,8 +35,8 @@ namespace Skylicht
 		CEmitter::CEmitter(EEmitter type) :
 			m_tank(0),
 			m_flow(0.0f),
-			m_forceMin(0.0f),
-			m_forceMax(0.0f),
+			m_forceMin(5.0f),
+			m_forceMax(10.0f),
 			m_active(true),
 			m_emitFullZone(true),
 			m_type(type)

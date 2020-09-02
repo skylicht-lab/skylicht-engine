@@ -81,7 +81,6 @@
 
 #include "IMetaTriangleSelector.h"
 #include "IOSOperator.h"
-#include "IParticleSystemSceneNode.h" // also includes all emitters and attractors
 
 #include "IReadFile.h"
 #include "IReferenceCounted.h"
