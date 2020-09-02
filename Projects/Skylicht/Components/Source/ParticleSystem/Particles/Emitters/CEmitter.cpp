@@ -35,7 +35,7 @@ namespace Skylicht
 		CEmitter::CEmitter(EEmitter type) :
 			m_tank(0),
 			m_flow(0.0f),
-			m_forceMin(5.0f),
+			m_forceMin(8.0f),
 			m_forceMax(10.0f),
 			m_active(true),
 			m_emitFullZone(true),
@@ -58,11 +58,11 @@ namespace Skylicht
 				nbBorn = core::max_(0, m_tank);
 				m_tank = 0;
 			}
-			else if (m_tank != 0)
+			else if (m_tank >= 0)
 			{
 				m_fraction += m_flow * deltaTime * 0.001f;
 				nbBorn = static_cast<int>(m_fraction);
-				if (m_tank >= 0)
+				if (m_tank > 0)
 				{
 					nbBorn = core::min_(m_tank, nbBorn);
 					m_tank -= nbBorn;

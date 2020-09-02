@@ -35,10 +35,10 @@ namespace Skylicht
 		CGroup::CGroup() :
 			m_zone(NULL),
 			m_renderer(NULL),
-			Gravity(0.0f, 0.0f, 0.0f),
+			Gravity(0.0f, -9.8f, 0.0f),
 			Friction(0.1f),
-			LifeMin(3.0f),
-			LifeMax(5.0f)
+			LifeMin(1.0f),
+			LifeMax(2.0f)
 		{
 			m_particleSystem = new CParticleSystem();
 			m_bufferSystem = new CParticleBufferSystem();
