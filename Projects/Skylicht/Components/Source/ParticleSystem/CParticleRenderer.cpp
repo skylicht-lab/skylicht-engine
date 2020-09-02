@@ -43,12 +43,22 @@ namespace Skylicht
 
 		void CParticleRenderer::beginQuery()
 		{
-
+			m_particles.set_used(0);
+			m_transforms.set_used(0);
 		}
 
 		void CParticleRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
 		{
-
+			CParticleBufferData *particleData = entity->getData<CParticleBufferData>();
+			if (particleData != NULL)
+			{
+				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+				if (transform != NULL)
+				{
+					m_particles.push_back(particleData);
+					m_transforms.push_back(transform);
+				}
+			}
 		}
 
 		void CParticleRenderer::init(CEntityManager *entityManager)
@@ -64,6 +74,36 @@ namespace Skylicht
 		void CParticleRenderer::render(CEntityManager *entityManager)
 		{
 
+		}
+
+		void CParticleRenderer::renderTransparent(CEntityManager *entityManager)
+		{
+			CParticleBufferData** particles = m_particles.pointer();
+			CWorldTransformData** transforms = m_transforms.pointer();
+
+			for (u32 i = 0, n = m_particles.size(); i < n; i++)
+			{
+				renderParticleGroup(transforms[i]->World, particles[i]);
+			}
+		}
+
+		void CParticleRenderer::renderParticleGroup(const core::matrix4& transform, CParticleBufferData *data)
+		{
+			IVideoDriver *driver = getVideoDriver();
+			driver->setTransform(video::ETS_WORLD, transform);
+
+			CGroup** groups = data->Groups.pointer();
+			for (u32 i = 0, n = data->Groups.size(); i < n; i++)
+			{
+				CGroup *g = groups[i];
+				if (g->getCurrentParticleCount() > 0)
+				{
+					IMeshBuffer *buffer = g->getIntancing()->getMeshBuffer();
+
+					driver->setMaterial(buffer->getMaterial());
+					driver->drawMeshBuffer(buffer);
+				}
+			}
 		}
 	}
 }

@@ -27,12 +27,19 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
 
+#include "Transform/CWorldTransformData.h"
+#include "ParticleSystem/CParticleBufferData.h"
+
 namespace Skylicht
 {
 	namespace Particle
 	{
 		class CParticleRenderer : public IRenderSystem
 		{
+		protected:
+			core::array<CParticleBufferData*> m_particles;
+			core::array<CWorldTransformData*> m_transforms;
+
 		public:
 			CParticleRenderer();
 
@@ -47,6 +54,13 @@ namespace Skylicht
 			virtual void update(CEntityManager *entityManager);
 
 			virtual void render(CEntityManager *entityManager);
+
+			virtual void renderTransparent(CEntityManager *entityManager);
+		
+		protected:
+
+			void renderParticleGroup(const core::matrix4& transform, CParticleBufferData *data);
+
 		};
 	}
 }
