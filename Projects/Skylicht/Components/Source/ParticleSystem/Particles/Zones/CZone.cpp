@@ -34,7 +34,8 @@ namespace Skylicht
 			return from * (to - from) * os::Randomizer::frand();
 		}
 
-		CZone::CZone()
+		CZone::CZone(EZone type) :
+			m_type(type)
 		{
 
 		}

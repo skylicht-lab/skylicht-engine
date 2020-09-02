@@ -24,40 +24,43 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "pch.h"
+#include "IRenderer.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		enum ERenderer
-		{
-			Quad
-		};
-
-		class IRenderer
+		class CQuadRenderer : public IRenderer
 		{
 		protected:
-			ERenderer m_type;
+			u32 m_atlasNx;
+			u32 m_atlasNy;
+
+			static const u32 NB_INDICES_PER_QUAD = 6;
+			static const u32 NB_VERTICES_PER_QUAD = 4;
 
 		public:
-			IRenderer(ERenderer type) :
-				m_type(type)
-			{
+			CQuadRenderer();
 
+			virtual ~CQuadRenderer();
+
+			virtual void getParticleBuffer(IMeshBuffer *buffer);
+
+			void setAtlas(u32 x, u32 y)
+			{
+				m_atlasNx = x;
+				m_atlasNy = y;
 			}
 
-			virtual ~IRenderer()
+			inline u32 getAtlasX()
 			{
-
+				return m_atlasNx;
 			}
 
-			inline ERenderer getType()
+			inline u32 getAtlasY()
 			{
-				return m_type;
+				return m_atlasNy;
 			}
-
-			virtual void getParticleBuffer(IMeshBuffer *buffer) = 0;
 		};
 	}
 }

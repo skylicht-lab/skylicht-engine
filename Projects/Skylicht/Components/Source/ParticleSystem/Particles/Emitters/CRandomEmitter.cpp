@@ -34,7 +34,8 @@ namespace Skylicht
 	namespace Particle
 	{
 
-		CRandomEmitter::CRandomEmitter()
+		CRandomEmitter::CRandomEmitter() :
+			CEmitter(Random)
 		{
 
 		}

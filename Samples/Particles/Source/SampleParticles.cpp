@@ -71,13 +71,16 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 	Particle::CGroup *group = particleComponent->createParticleGroup();
 
 	// create start point
-	Particle::CZone *zone = group->setZone(factory->createZone(Particle::Point));
+	Particle::CZone *zone = group->setZone(factory->createPointZone());
 	zone->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
 
 	// create emitter
-	Particle::CEmitter *emitter = group->addEmitter(factory->createEmitter(Particle::Random));
+	Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
 	emitter->setTank(100);
 	emitter->setFlow(3.0f);
+
+	// create renderer
+	Particle::IRenderer *renderer = group->setRenderer(factory->createQuadRenderer());
 }
 
 void SampleParticles::onUpdate()
