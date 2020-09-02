@@ -54,10 +54,11 @@ namespace Skylicht
 				CParticle &p = particles[i];	
 				vtx->Pos = p.Position;
 				vtx->Color = p.Color;
-				vtx->SizeRotation.X = 1.0f;
+				vtx->SizeRotation.X = 0.1f;
 				vtx->SizeRotation.Y = 0.0f;
 				vtx->UVScale.set(1.0f, 1.0f);
 				vtx->UVOffset.set(0.0f, 0.0f);
+				vtx++;
 			}
 
 			buffer->setDirty();
