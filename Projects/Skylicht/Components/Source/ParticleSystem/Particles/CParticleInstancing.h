@@ -22,59 +22,50 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CParticle.h"
+#pragma once
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticle::CParticle() :
-			Age(0.0f),
-			Life(0.0f),
-			Immortal(false),
-			Mass(1.0f),
-			TextureIndex(0)
+		struct SParticleInstance
 		{
-			Color.set(255, 255, 255, 255);
-		}
+			core::vector3df Pos;
+			SColor Color;
+			core::vector2df UVScale;
+			core::vector2df UVOffset;
+			core::vector2df SizeRotation;
 
-		CParticle::~CParticle()
+			bool operator==(const SParticleInstance& other) const
+			{
+				return Pos == other.Pos
+					&& SizeRotation == other.SizeRotation
+					&& Color == other.Color
+					&& UVScale == other.UVScale
+					&& UVOffset == other.UVOffset;
+			}
+		};
+
+		class CParticleInstancing
 		{
+		protected:
+			IMeshBuffer* m_meshBuffer;
+			CVertexBuffer<SParticleInstance> *m_instanceBuffer;
 
-		}
+		public:
+			CParticleInstancing();
 
-		void CParticle::swap(CParticle& p)
-		{
-			float age = Age;
-			float life = Life;
-			float mass = Mass;
-			bool immortal = Immortal;
-			int textureIndex = TextureIndex;
-			core::vector3df oldPosition = OldPosition;
-			core::vector3df position = Position;
-			core::vector3df velocity = Velocity;
-			video::SColor color = Color;
+			virtual ~CParticleInstancing();
 
-			Age = p.Age;
-			Life = p.Life;
-			Mass = p.Mass;
-			Immortal = p.Immortal;
-			OldPosition = p.OldPosition;
-			Position = p.Position;
-			Velocity = p.Velocity;
-			Color = p.Color;
-			TextureIndex = p.TextureIndex;
+			inline IMeshBuffer* getMeshBuffer()
+			{
+				return m_meshBuffer;
+			}
 
-			p.Age = age;
-			p.Life = life;
-			p.Immortal = immortal;
-			p.OldPosition = oldPosition;
-			p.Position = position;
-			p.Velocity = velocity;
-			p.Color = color;
-			p.Mass = mass;
-			p.TextureIndex = textureIndex;
-		}
+			inline CVertexBuffer<SParticleInstance>* getInstanceBuffer()
+			{
+				return m_instanceBuffer;
+			}
+		};
 	}
 }

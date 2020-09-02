@@ -56,7 +56,7 @@ namespace Skylicht
 					random(-1.0f, 1.0f));
 
 				norm = particle.Velocity.getLength();
-			} while (norm > 1.0f || norm == 0.0f);
+			} while (norm == 0.0f);
 
 			particle.Velocity *= speed / norm;
 		}

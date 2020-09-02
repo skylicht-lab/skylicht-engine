@@ -22,59 +22,22 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CParticle.h"
+#pragma once
+
+#include "ISystem.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticle::CParticle() :
-			Age(0.0f),
-			Life(0.0f),
-			Immortal(false),
-			Mass(1.0f),
-			TextureIndex(0)
+		class CParticleBufferSystem : public ISystem
 		{
-			Color.set(255, 255, 255, 255);
-		}
+		public:
+			CParticleBufferSystem();
 
-		CParticle::~CParticle()
-		{
+			virtual ~CParticleBufferSystem();
 
-		}
-
-		void CParticle::swap(CParticle& p)
-		{
-			float age = Age;
-			float life = Life;
-			float mass = Mass;
-			bool immortal = Immortal;
-			int textureIndex = TextureIndex;
-			core::vector3df oldPosition = OldPosition;
-			core::vector3df position = Position;
-			core::vector3df velocity = Velocity;
-			video::SColor color = Color;
-
-			Age = p.Age;
-			Life = p.Life;
-			Mass = p.Mass;
-			Immortal = p.Immortal;
-			OldPosition = p.OldPosition;
-			Position = p.Position;
-			Velocity = p.Velocity;
-			Color = p.Color;
-			TextureIndex = p.TextureIndex;
-
-			p.Age = age;
-			p.Life = life;
-			p.Immortal = immortal;
-			p.OldPosition = oldPosition;
-			p.Position = position;
-			p.Velocity = velocity;
-			p.Color = color;
-			p.Mass = mass;
-			p.TextureIndex = textureIndex;
-		}
+			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
+		};
 	}
 }

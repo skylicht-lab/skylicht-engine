@@ -31,7 +31,7 @@ namespace Skylicht
 	{
 		float random(float from, float to)
 		{
-			return from * (to - from) * os::Randomizer::frand();
+			return from + (to - from) * os::Randomizer::frand();
 		}
 
 		CZone::CZone(EZone type) :

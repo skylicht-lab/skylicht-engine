@@ -35,17 +35,30 @@ namespace Skylicht
 		CGroup::CGroup() :
 			m_zone(NULL),
 			m_renderer(NULL),
-			Gravity(0.0f, -1.0f, 0.0f),
+			Gravity(0.0f, 0.0f, 0.0f),
 			Friction(0.1f),
-			LifeMin(500.0f),
-			LifeMax(1000.0f)
+			LifeMin(3.0f),
+			LifeMax(5.0f)
 		{
-			m_defaultSystem = new CParticleSystem();
+			m_particleSystem = new CParticleSystem();
+			m_bufferSystem = new CParticleBufferSystem();
+
+			m_instancing = new CParticleInstancing();
 		}
 
 		CGroup::~CGroup()
 		{
-			delete m_defaultSystem;
+			delete m_particleSystem;
+			delete m_bufferSystem;
+
+			delete m_instancing;
+		}
+
+		IRenderer* CGroup::setRenderer(IRenderer *r)
+		{
+			m_renderer = r;
+			m_renderer->getParticleBuffer(m_instancing->getMeshBuffer());
+			return r;
 		}
 
 		void CGroup::update()
@@ -74,11 +87,12 @@ namespace Skylicht
 			u32 numParticles = m_particles.size();
 
 			// update particle system
-			m_defaultSystem->update(particles, numParticles, this, dt);
+			m_particleSystem->update(particles, numParticles, this, dt);
 
 			for (ISystem *s : m_systems)
 				s->update(particles, numParticles, this, dt);
 
+			m_bufferSystem->update(particles, numParticles, this, dt);
 
 			u32 emiterId = 0;
 			u32 emiterLaunch = m_launch.size();

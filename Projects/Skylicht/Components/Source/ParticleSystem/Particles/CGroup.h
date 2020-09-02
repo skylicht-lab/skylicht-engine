@@ -32,6 +32,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Renderers/IRenderer.h"
 #include "Systems/ISystem.h"
 
+#include "Systems/CParticleSystem.h"
+#include "Systems/CParticleBufferSystem.h"
+
+#include "CParticleInstancing.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -50,9 +55,12 @@ namespace Skylicht
 			std::vector<CEmitter*> m_emitters;
 			std::vector<ISystem*> m_systems;
 
-			CZone* m_zone;
-			ISystem *m_defaultSystem;
+			CParticleSystem *m_particleSystem;
+			CParticleBufferSystem *m_bufferSystem;
+
+			CZone* m_zone;			
 			IRenderer* m_renderer;
+			CParticleInstancing *m_instancing;
 
 		public:
 			core::vector3df Gravity;
@@ -113,15 +121,21 @@ namespace Skylicht
 					m_systems.erase(i);
 			}
 
-			inline IRenderer* setRenderer(IRenderer *r)
-			{
-				m_renderer = r;
-				return r;
-			}
+			IRenderer* setRenderer(IRenderer *r);
 
 			inline IRenderer* getRenderer()
 			{
 				return m_renderer;
+			}
+
+			CParticleInstancing* getIntancing()
+			{
+				return m_instancing;
+			}
+
+			inline u32 getCurrentParticleCount()
+			{
+				return m_particles.size();
 			}
 
 		protected:

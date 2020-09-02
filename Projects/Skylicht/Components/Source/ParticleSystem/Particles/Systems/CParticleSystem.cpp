@@ -44,6 +44,8 @@ namespace Skylicht
 
 		void CParticleSystem::update(CParticle *particles, int num, CGroup *group, float dt)
 		{
+			dt = dt * 0.001f;
+
 			for (int i = 0; i < num; i++)
 			{
 				CParticle &p = particles[i];
