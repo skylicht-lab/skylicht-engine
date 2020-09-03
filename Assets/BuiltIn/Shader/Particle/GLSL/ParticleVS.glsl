@@ -10,6 +10,8 @@ layout (location = 7) in vec2 inParticleUVOffset;
 layout (location = 8) in vec2 inParticleSizeRotation;
 
 uniform mat4 uMvpMatrix;
+uniform vec3 uViewUp;
+uniform vec3 uViewLook;
 
 out vec2 varTexCoord0;
 out vec4 varColor;
@@ -19,7 +21,34 @@ void main(void)
 	varTexCoord0 = inTexCoord0 * inParticleUVScale + inParticleUVOffset;
 	varColor = inParticleColor/255.0;
 	
-	vec3 position = inPosition.xyz * inParticleSizeRotation.x + inParticlePosition;
+	// rotate
+	float cosA = cos(inParticleSizeRotation.y);
+	float sinA = sin(inParticleSizeRotation.y);
+	float oneMinusCosA = 1.0 - cosA;
+	
+	float upX = (uViewLook.x * uViewLook.x + (1.0f - uViewLook.x * uViewLook.x) * cosA) * uViewUp.x
+		+ (uViewLook.x * uViewLook.y * oneMinusCosA - uViewLook.z * sinA) * uViewUp.y
+		+ (uViewLook.x * uViewLook.z * oneMinusCosA + uViewLook.y * sinA) * uViewUp.z;
+	
+	float upY = (uViewLook.x * uViewLook.y * oneMinusCosA + uViewLook.z * sinA) * uViewUp.x
+		+ (uViewLook.y * uViewLook.y + (1.0f - uViewLook.y * uViewLook.y) * cosA) * uViewUp.y
+		+ (uViewLook.y * uViewLook.z * oneMinusCosA - uViewLook.x * sinA) * uViewUp.z;
+
+	float upZ = (uViewLook.x * uViewLook.z * oneMinusCosA - uViewLook.y * sinA) * uViewUp.x
+		+ (uViewLook.y * uViewLook.z * oneMinusCosA + uViewLook.x * sinA) * uViewUp.y
+		+ (uViewLook.z * uViewLook.z + (1.0f - uViewLook.z * uViewLook.z) * cosA) * uViewUp.z;
+	
+	// billboard position
+	vec3 up = vec3(upX, upY, upZ);
+	up = normalize(up);
+	
+	vec3 side = cross(up, uViewLook);
+	side = normalize(side);	
+	
+	side = side * 0.5 * inParticleSizeRotation.x;	
+	up = up * 0.5 * inParticleSizeRotation.x;
+	
+	vec3 position = inParticlePosition + inPosition.x * side + inPosition.y * up;
 	
 	gl_Position = uMvpMatrix * vec4(position, 1.0);
 }

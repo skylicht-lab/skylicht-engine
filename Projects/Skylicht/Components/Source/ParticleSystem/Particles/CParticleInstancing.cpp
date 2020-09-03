@@ -69,7 +69,6 @@ namespace Skylicht
 
 			video::SMaterial& material = m_meshBuffer->getMaterial();
 			material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("ParticleAdditive");
-			material.BackfaceCulling = false;
 
 			m_meshBuffer->setHardwareMappingHint(EHM_STREAM);
 			m_instanceBuffer->setHardwareMappingHint(EHM_STREAM);
