@@ -43,7 +43,10 @@ namespace Skylicht
 
 		void CPoint::generatePosition(CParticle& particle, bool full)
 		{
-			particle.Position = getTransformPosition(m_position);
+			core::vector3df pos = getTransformPosition(m_position);
+			particle.Params[PositionX] = pos.X;
+			particle.Params[PositionY] = pos.Y;
+			particle.Params[PositionZ] = pos.Z;
 		}
 
 		core::vector3df CPoint::computeNormal(const core::vector3df& point)

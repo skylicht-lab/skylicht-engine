@@ -30,19 +30,40 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		enum EParticleParams
+		{
+			PositionX = 0,
+			PositionY,
+			PositionZ,
+			RotationX,
+			RotationY,
+			RotationZ,
+			SizeX,
+			SizeY,
+			SizeZ,
+			LastPositionX,
+			LastPositionY,
+			LastPositionZ,
+			VelocityX,
+			VelocityY,
+			VelocityZ,
+			ColorR,
+			ColorG,
+			ColorB,
+			ColorA,
+			Age,
+			Life,
+			Mass,
+			FrameIndex,
+			NumParams
+		};
+
 		class CParticle
 		{
 		public:
-			float Age;
-			float Life;
-			float Mass;
 			bool Immortal;
-			int TextureIndex;
 
-			video::SColor Color;
-			core::vector3df OldPosition;
-			core::vector3df Position;
-			core::vector3df Velocity;
+			float Params[NumParams];
 
 		public:
 			CParticle();
