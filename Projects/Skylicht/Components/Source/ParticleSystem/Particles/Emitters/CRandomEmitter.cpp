@@ -49,16 +49,22 @@ namespace Skylicht
 		{
 			float norm;
 
+			core::vector3df velocity;
+
 			do
 			{
-				particle.Velocity.set(random(-1.0f, 1.0f),
+				velocity.set(random(-1.0f, 1.0f),
 					random(-1.0f, 1.0f),
 					random(-1.0f, 1.0f));
 
-				norm = particle.Velocity.getLength();
+				norm = velocity.getLength();
 			} while (norm == 0.0f);
 
-			particle.Velocity *= speed / norm;
+			velocity *= speed / norm;
+
+			particle.Params[VelocityX] = velocity.X;
+			particle.Params[VelocityY] = velocity.Y;
+			particle.Params[VelocityZ] = velocity.Z;
 		}
 
 	}
