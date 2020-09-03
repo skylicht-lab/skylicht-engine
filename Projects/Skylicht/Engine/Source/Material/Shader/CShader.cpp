@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ShaderCallback/CShaderMaterial.h"
 #include "ShaderCallback/CShaderShadow.h"
 #include "ShaderCallback/CShaderSH.h"
+#include "ShaderCallback/CShaderParticle.h"
 
 namespace Skylicht
 {
@@ -48,6 +49,7 @@ namespace Skylicht
 		addCallback<CShaderMaterial>();
 		addCallback<CShaderShadow>();
 		addCallback<CShaderSH>();
+		addCallback<CShaderParticle>();
 	}
 
 	CShader::~CShader()
@@ -124,6 +126,8 @@ namespace Skylicht
 			"DEFERRED_VIEW",
 			"DEFERRED_PROJECTION",
 			"TIME_STEP",
+			"PARTICLE_VIEW_UP",
+			"PARTICLE_VIEW_LOOK",
 			"NULL"
 		};
 

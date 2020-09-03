@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CParticleRenderer.h"
+#include "Material/Shader/ShaderCallback/CShaderParticle.h"
 
 namespace Skylicht
 {
@@ -68,7 +69,23 @@ namespace Skylicht
 
 		void CParticleRenderer::update(CEntityManager *entityManager)
 		{
+			IVideoDriver *driver = getVideoDriver();
 
+			irr::core::matrix4 invModelView;
+			{
+				irr::core::matrix4 modelView(driver->getTransform(video::ETS_VIEW));
+				modelView *= driver->getTransform(video::ETS_WORLD);
+				modelView.getInversePrimitive(invModelView); // wont work for odd modelview matrices (but should happen in very special cases)
+			}
+
+			core::vector3df look(invModelView[8], invModelView[9], invModelView[10]);
+			core::vector3df up(invModelView[4], invModelView[5], invModelView[6]);
+
+			look.normalize();
+			up.normalize();
+
+			CShaderParticle::setViewUp(up);
+			CShaderParticle::setViewLook(look);
 		}
 
 		void CParticleRenderer::render(CEntityManager *entityManager)

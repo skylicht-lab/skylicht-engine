@@ -77,7 +77,7 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 	// create emitter
 	Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
 	emitter->setTank(0);
-	emitter->setFlow(20000.0f);
+	emitter->setFlow(10.0f);
 
 	// create renderer
 	Particle::IRenderer *renderer = group->setRenderer(factory->createQuadRenderer());

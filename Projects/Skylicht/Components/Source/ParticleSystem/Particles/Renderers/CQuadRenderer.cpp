@@ -81,39 +81,34 @@ namespace Skylicht
 			vertices[2].TCoords = core::vector2df(1.0f, 1.0f);
 			vertices[3].TCoords = core::vector2df(0.0f, 1.0f);
 
-			core::vector3df quadUp(0.0f, 0.5f, 0.0f);
-			core::vector3df quadSide(-0.5f, 0.0f, 0.0f);
-			float x = 0.0f, y = 0.0f, z = 0.0f;
-
 			video::SColor white(255, 255, 255, 255);
 
 			// top left vertex
 			vertices[0].Pos.set(
-				x + quadSide.X + quadUp.X,
-				y + quadSide.Y + quadUp.Y,
-				z + quadSide.Z + quadUp.Z);
+				-1.0f,
+				1.0f,
+				0.0f);
 			vertices[0].Color = white;
-
 
 			// top right vertex
 			vertices[1].Pos.set(
-				x - quadSide.X + quadUp.X,
-				y - quadSide.Y + quadUp.Y,
-				z - quadSide.Z + quadUp.Z);
+				1.0f,
+				1.0,
+				0.0f);
 			vertices[1].Color = white;
 
 			// bottom right vertex
 			vertices[2].Pos.set(
-				x - quadSide.X - quadUp.X,
-				y - quadSide.Y - quadUp.Y,
-				z - quadSide.Z - quadUp.Z);
+				1.0f,
+				-1.0f,
+				0.0f);
 			vertices[2].Color = white;
 
 			// bottom left vertex
 			vertices[3].Pos.set(
-				x + quadSide.X - quadUp.X,
-				y + quadSide.Y - quadUp.Y,
-				z + quadSide.Z - quadUp.Z);
+				-1.0f,
+				-1.0f,
+				0.0f);
 			vertices[3].Color = white;
 		}
 	}

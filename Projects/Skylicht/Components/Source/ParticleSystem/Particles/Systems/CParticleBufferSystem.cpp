@@ -76,6 +76,7 @@ namespace Skylicht
 
 				data->SizeRotation.X = 0.1f;
 				data->SizeRotation.Y = 0.0f;
+
 				data->UVScale.set(1.0f, 1.0f);
 				data->UVOffset.set(0.0f, 0.0f);
 			}
