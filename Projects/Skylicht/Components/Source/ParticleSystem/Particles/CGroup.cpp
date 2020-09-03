@@ -36,7 +36,7 @@ namespace Skylicht
 			m_zone(NULL),
 			m_renderer(NULL),
 			Gravity(0.0f, -9.8f, 0.0f),
-			Friction(0.1f),
+			Friction(1.0f),
 			LifeMin(1.0f),
 			LifeMax(2.0f)
 		{
