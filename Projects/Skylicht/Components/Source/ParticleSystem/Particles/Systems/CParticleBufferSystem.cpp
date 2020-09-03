@@ -49,16 +49,35 @@ namespace Skylicht
 			buffer->set_used(num);
 
 			SParticleInstance *vtx = (SParticleInstance*)buffer->getVertices();
+
+			CParticle *p;
+			float *params;
+			SParticleInstance *data;
+
+#pragma omp parallel for private(p, params, data)
 			for (int i = 0; i < num; i++)
 			{
-				CParticle &p = particles[i];	
-				vtx->Pos = p.Position;
-				vtx->Color = p.Color;
-				vtx->SizeRotation.X = 0.1f;
-				vtx->SizeRotation.Y = 0.0f;
-				vtx->UVScale.set(1.0f, 1.0f);
-				vtx->UVOffset.set(0.0f, 0.0f);
-				vtx++;
+				p = particles + i;
+				params = p->Params;
+				data = vtx + i;
+
+				data->Pos.set(
+					params[PositionX],
+					params[PositionY],
+					params[PositionZ]
+				);
+
+				data->Color.set(
+					(u32)params[ColorA],
+					(u32)params[ColorR],
+					(u32)params[ColorG],
+					(u32)params[ColorB]
+				);
+
+				data->SizeRotation.X = 0.1f;
+				data->SizeRotation.Y = 0.0f;
+				data->UVScale.set(1.0f, 1.0f);
+				data->UVOffset.set(0.0f, 0.0f);
 			}
 
 			buffer->setDirty();

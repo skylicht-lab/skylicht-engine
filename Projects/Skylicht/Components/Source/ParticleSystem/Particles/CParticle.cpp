@@ -30,13 +30,19 @@ namespace Skylicht
 	namespace Particle
 	{
 		CParticle::CParticle() :
-			Age(0.0f),
-			Life(0.0f),
-			Immortal(false),
-			Mass(1.0f),
-			TextureIndex(0)
+			Immortal(false)
 		{
-			Color.set(255, 255, 255, 255);
+			memset(Params, 0, sizeof(float) * NumParams);
+
+			Params[ColorR] = 255;
+			Params[ColorG] = 255;
+			Params[ColorB] = 255;
+			Params[ColorA] = 255;
+
+			Params[Age] = 0.0f;
+			Params[Life] = 0.0f;
+			Params[Mass] = 1.0f;
+			Params[FrameIndex] = 0.0f;
 		}
 
 		CParticle::~CParticle()
@@ -46,35 +52,13 @@ namespace Skylicht
 
 		void CParticle::swap(CParticle& p)
 		{
-			float age = Age;
-			float life = Life;
-			float mass = Mass;
-			bool immortal = Immortal;
-			int textureIndex = TextureIndex;
-			core::vector3df oldPosition = OldPosition;
-			core::vector3df position = Position;
-			core::vector3df velocity = Velocity;
-			video::SColor color = Color;
+			float temp[NumParams];
 
-			Age = p.Age;
-			Life = p.Life;
-			Mass = p.Mass;
-			Immortal = p.Immortal;
-			OldPosition = p.OldPosition;
-			Position = p.Position;
-			Velocity = p.Velocity;
-			Color = p.Color;
-			TextureIndex = p.TextureIndex;
+			u32 size = sizeof(float) * NumParams;
 
-			p.Age = age;
-			p.Life = life;
-			p.Immortal = immortal;
-			p.OldPosition = oldPosition;
-			p.Position = position;
-			p.Velocity = velocity;
-			p.Color = color;
-			p.Mass = mass;
-			p.TextureIndex = textureIndex;
+			memcpy(temp, Params, size);
+			memcpy(Params, p.Params, size);
+			memcpy(p.Params, temp, size);
 		}
 	}
 }

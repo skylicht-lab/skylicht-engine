@@ -101,7 +101,7 @@ namespace Skylicht
 			for (u32 i = 0; i < numParticles; i++)
 			{
 				CParticle& p = particles[i];
-				if (p.Life < 0)
+				if (p.Params[Life] < 0)
 				{
 					if (autoBorn > 0)
 					{
@@ -144,8 +144,8 @@ namespace Skylicht
 
 		bool CGroup::launchParticle(CParticle& p, SLaunchParticle& launch)
 		{
-			p.Age = 0.0f;
-			p.Life = LifeMin + (LifeMax - LifeMin) * os::Randomizer::frand();
+			p.Params[Age] = 0.0f;
+			p.Params[Life] = LifeMin + (LifeMax - LifeMin) * os::Randomizer::frand();
 
 			launch.Emitter->emitParticle(p, m_zone);
 			launch.Number--;

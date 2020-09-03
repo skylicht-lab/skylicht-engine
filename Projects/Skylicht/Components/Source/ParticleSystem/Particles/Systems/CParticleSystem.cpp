@@ -46,32 +46,48 @@ namespace Skylicht
 		{
 			dt = dt * 0.001f;
 
+			float gravityX = group->Gravity.X * dt;
+			float gravityY = group->Gravity.Y * dt;
+			float gravityZ = group->Gravity.Z * dt;
+
+			float friction = group->Friction * dt;
+
+			CParticle *p;
+			float *params;
+
+#pragma omp parallel for private(p, params)
 			for (int i = 0; i < num; i++)
 			{
-				CParticle &p = particles[i];
+				p = particles + i;
+				params = p->Params;
 
 				// update life time
-				p.Age = p.Age + dt;
-				if (!p.Immortal)
-				{
-					p.Life -= dt;
+				params[Age] = params[Age] + dt;
 
-					// computes the ratio between the life of the particle and its lifetime
-					// float ratio = core::min_(1.0f, dt / p.Life);
-				}
+				if (!p->Immortal)
+					params[Life] -= dt;
 
 				// update position
-				p.OldPosition = p.Position;
-				p.Position = p.Position + p.Velocity * dt;
+				params[LastPositionX] = params[PositionX];
+				params[LastPositionY] = params[PositionY];
+				params[LastPositionZ] = params[PositionZ];
+
+				params[PositionX] = params[PositionX] + params[VelocityX] * dt;
+				params[PositionY] = params[PositionY] + params[VelocityY] * dt;
+				params[PositionZ] = params[PositionZ] + params[VelocityZ] * dt;
 
 				// update gravity
-				p.Velocity = p.Velocity + group->Gravity * dt;
+				params[VelocityX] = params[VelocityX] + gravityX;
+				params[VelocityY] = params[VelocityY] + gravityY;
+				params[VelocityZ] = params[VelocityZ] + gravityZ;
 
 				// update friction
 				if (group->Friction > 0.0f)
 				{
-					float f = 1.0f - core::min_(1.0f, group->Friction * dt / p.Mass);
-					p.Velocity = p.Velocity * f;
+					float f = 1.0f - core::min_(1.0f, friction / params[Mass]);
+					params[VelocityX] = params[VelocityX] * f;
+					params[VelocityY] = params[VelocityY] * f;
+					params[VelocityZ] = params[VelocityZ] * f;
 				}
 			}
 		}
