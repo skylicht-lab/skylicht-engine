@@ -7,8 +7,8 @@ layout (location = 4) in vec3 inParticlePosition;
 layout (location = 5) in vec4 inParticleColor;
 layout (location = 6) in vec2 inParticleUVScale;
 layout (location = 7) in vec2 inParticleUVOffset;
-layout (location = 8) in vec2 inParticleSize;
-layout (location = 9) in vec2 inParticleRotation;
+layout (location = 8) in vec3 inParticleSize;
+layout (location = 9) in vec3 inParticleRotation;
 
 uniform mat4 uMvpMatrix;
 uniform vec3 uViewUp;
