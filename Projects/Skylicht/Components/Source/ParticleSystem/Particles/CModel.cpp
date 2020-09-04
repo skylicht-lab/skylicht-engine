@@ -22,53 +22,47 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Entity/IEntityData.h"
+#include "pch.h"
+#include "CModel.h"
+#include "ParticleSystem/Particles/Zones/CZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		enum EParticleParams
+		CModel::CModel(EParticleParams type) :
+			m_type(type),
+			m_start1(0),
+			m_start2(0),
+			m_end1(0),
+			m_end2(0),
+			m_interpolator(NULL)
 		{
-			ScaleX = 0,
-			ScaleY,
-			ScaleZ,
-			ColorR,
-			ColorG,
-			ColorB,
-			ColorA,
-			Mass,
-			FrameIndex,
-			RotateSpeed,
-			NumParams
-		};
 
-		class CParticle
+		}
+
+		CModel::~CModel()
 		{
-		public:
-			bool Immortal;
+			if (m_interpolator != NULL)
+				delete m_interpolator;
+		}
 
-			float Params[NumParams];
-			float StartValue[NumParams];
-			float EndValue[NumParams];
+		float CModel::getRandomStart()
+		{
+			return random(m_start1, m_start2);
+		}
 
-			float Age;
-			float Life;
-			float LifeTime;
+		float CModel::getRandomEnd()
+		{
+			return random(m_end1, m_end2);
+		}
 
-			core::vector3df Position;
-			core::vector3df Rotation;
-			core::vector3df LastPosition;
-			core::vector3df Velocity;
+		CInterpolator* CModel::createGetInterpolator()
+		{
+			if (m_interpolator == NULL)
+				m_interpolator = new CInterpolator();
 
-		public:
-			CParticle();
-
-			virtual ~CParticle();
-
-			void swap(CParticle& p);
-		};
+			return m_interpolator;
+		}
 	}
 }

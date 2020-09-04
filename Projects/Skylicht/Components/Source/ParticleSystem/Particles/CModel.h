@@ -24,51 +24,74 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include "CInterpolator.h"
+#include "ParticleSystem/Particles/CParticle.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		enum EParticleParams
+		class CModel
 		{
-			ScaleX = 0,
-			ScaleY,
-			ScaleZ,
-			ColorR,
-			ColorG,
-			ColorB,
-			ColorA,
-			Mass,
-			FrameIndex,
-			RotateSpeed,
-			NumParams
-		};
+		protected:
+			EParticleParams m_type;
 
-		class CParticle
-		{
-		public:
-			bool Immortal;
+			float m_start1;
+			float m_start2;
 
-			float Params[NumParams];
-			float StartValue[NumParams];
-			float EndValue[NumParams];
+			float m_end1;
+			float m_end2;
 
-			float Age;
-			float Life;
-			float LifeTime;
-
-			core::vector3df Position;
-			core::vector3df Rotation;
-			core::vector3df LastPosition;
-			core::vector3df Velocity;
+			CInterpolator *m_interpolator;
 
 		public:
-			CParticle();
+			CModel(EParticleParams type);
 
-			virtual ~CParticle();
+			virtual ~CModel();
 
-			void swap(CParticle& p);
+			inline EParticleParams getType()
+			{
+				return m_type;
+			}
+
+			inline CModel* setStart(float f)
+			{
+				m_start1 = f;
+				m_start2 = f;
+				return this;
+			}
+
+			inline CModel* setStart(float f1, float f2)
+			{
+				m_start1 = f1;
+				m_start2 = f2;
+				return this;
+			}
+
+			inline CModel* setEnd(float f)
+			{
+				m_end1 = f;
+				m_end2 = f;
+				return this;
+			}
+
+			inline CModel* setEnd(float f1, float f2)
+			{
+				m_end1 = f1;
+				m_end2 = f2;
+				return this;
+			}
+
+			float getRandomStart();
+
+			float getRandomEnd();
+
+			CInterpolator* createGetInterpolator();
+
+			inline CInterpolator* getInterpolator()
+			{
+				return m_interpolator;
+			}
 		};
 	}
 }

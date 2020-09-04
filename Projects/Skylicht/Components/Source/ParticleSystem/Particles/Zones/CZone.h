@@ -32,6 +32,8 @@ namespace Skylicht
 
 		float random(float from, float to);
 
+		void random_reset(s32 seed);
+
 		enum EZone
 		{
 			Sphere,

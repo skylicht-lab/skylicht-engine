@@ -30,23 +30,26 @@ namespace Skylicht
 	namespace Particle
 	{
 		CParticle::CParticle() :
-			Immortal(false)
+			Immortal(false),
+			Age(0.0f),
+			Life(0.0f),
+			LifeTime(0.0f)
 		{
-			memset(Params, 0, sizeof(float) * NumParams);
+			memset(StartValue, 0, sizeof(float) * NumParams);
+			memset(EndValue, 0, sizeof(float) * NumParams);
 
-			Params[ColorR] = 255;
-			Params[ColorG] = 255;
-			Params[ColorB] = 255;
-			Params[ColorA] = 255;
+			Params[ColorR] = 1.0f;
+			Params[ColorG] = 1.0f;
+			Params[ColorB] = 1.0f;
+			Params[ColorA] = 1.0f;
 
 			Params[ScaleX] = 1.0f;
 			Params[ScaleY] = 1.0f;
 			Params[ScaleZ] = 1.0f;
 
-			Params[Age] = 0.0f;
-			Params[Life] = 0.0f;
 			Params[Mass] = 1.0f;
 			Params[FrameIndex] = 0.0f;
+			Params[RotateSpeed] = 0.0f;
 		}
 
 		CParticle::~CParticle()
@@ -57,23 +60,39 @@ namespace Skylicht
 		void CParticle::swap(CParticle& p)
 		{
 			float temp[NumParams];
-
 			u32 size = sizeof(float) * NumParams;
 
 			memcpy(temp, Params, size);
 			memcpy(Params, p.Params, size);
 			memcpy(p.Params, temp, size);
 
+			memcpy(temp, StartValue, size);
+			memcpy(StartValue, p.StartValue, size);
+			memcpy(p.StartValue, temp, size);
+
+			memcpy(temp, EndValue, size);
+			memcpy(EndValue, p.EndValue, size);
+			memcpy(p.EndValue, temp, size);
+
+			float age = Age;
+			float life = Life;
+			float lifeTime = LifeTime;
 			core::vector3df position = Position;
 			core::vector3df rotation = Rotation;
 			core::vector3df lastPosition = LastPosition;
 			core::vector3df velocity = Velocity;
 
+			Age = p.Age;
+			Life = p.Life;
+			LifeTime = p.LifeTime;
 			Position = p.Position;
 			Rotation = p.Rotation;
 			LastPosition = p.LastPosition;
 			Velocity = p.Velocity;
 
+			p.Age = age;
+			p.Life = life;
+			p.LifeTime = lifeTime;
 			p.Position = position;
 			p.Rotation = rotation;
 			p.LastPosition = lastPosition;

@@ -22,53 +22,56 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Entity/IEntityData.h"
+#include "pch.h"
+#include "CInterpolator.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		enum EParticleParams
+		CInterpolator::CInterpolator()
 		{
-			ScaleX = 0,
-			ScaleY,
-			ScaleZ,
-			ColorR,
-			ColorG,
-			ColorB,
-			ColorA,
-			Mass,
-			FrameIndex,
-			RotateSpeed,
-			NumParams
-		};
 
-		class CParticle
+		}
+
+		CInterpolator::~CInterpolator()
 		{
-		public:
-			bool Immortal;
 
-			float Params[NumParams];
-			float StartValue[NumParams];
-			float EndValue[NumParams];
+		}
 
-			float Age;
-			float Life;
-			float LifeTime;
+		float CInterpolator::interpolate(float x)
+		{
+			SInterpolatorEntry currentKey(x, 0.0f);
 
-			core::vector3df Position;
-			core::vector3df Rotation;
-			core::vector3df LastPosition;
-			core::vector3df Velocity;
+			std::set<SInterpolatorEntry>::const_iterator nextIt = m_graph.upper_bound(currentKey);
 
-		public:
-			CParticle();
+			if (nextIt == m_graph.end())
+			{
+				if (m_graph.empty())
+				{
+					// If the graph has no entry, sets the default value
+					return 0.0f;
+				}
+				else
+				{
+					// Else sets the value of the last entry
+					return (*(--nextIt)).y;
+				}
+			}
+			else if (nextIt == m_graph.begin())
+			{
+				// If the current X is lower than the first entry, sets the value to the first entry
+				return (*nextIt).y;
+			}
 
-			virtual ~CParticle();
+			const SInterpolatorEntry& nextEntry = *nextIt;
+			const SInterpolatorEntry& previousEntry = *(--nextIt);
 
-			void swap(CParticle& p);
-		};
+			float y0 = previousEntry.y;
+			float y1 = nextEntry.y;
+
+			float ratioX = (currentKey.x - previousEntry.x) / (nextEntry.x - previousEntry.x);
+			return y0 + ratioX * (y1 - y0);
+		}
 	}
 }
