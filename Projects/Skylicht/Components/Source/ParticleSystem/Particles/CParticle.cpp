@@ -39,6 +39,10 @@ namespace Skylicht
 			Params[ColorB] = 255;
 			Params[ColorA] = 255;
 
+			Params[ScaleX] = 1.0f;
+			Params[ScaleY] = 1.0f;
+			Params[ScaleZ] = 1.0f;
+
 			Params[Age] = 0.0f;
 			Params[Life] = 0.0f;
 			Params[Mass] = 1.0f;
@@ -59,6 +63,21 @@ namespace Skylicht
 			memcpy(temp, Params, size);
 			memcpy(Params, p.Params, size);
 			memcpy(p.Params, temp, size);
+
+			core::vector3df position = Position;
+			core::vector3df rotation = Rotation;
+			core::vector3df lastPosition = LastPosition;
+			core::vector3df velocity = Velocity;
+
+			Position = p.Position;
+			Rotation = p.Rotation;
+			LastPosition = p.LastPosition;
+			Velocity = p.Velocity;
+
+			p.Position = position;
+			p.Rotation = rotation;
+			p.LastPosition = lastPosition;
+			p.Velocity = velocity;
 		}
 	}
 }

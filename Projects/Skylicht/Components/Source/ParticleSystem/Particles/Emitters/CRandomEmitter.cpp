@@ -60,11 +60,7 @@ namespace Skylicht
 				norm = velocity.getLength();
 			} while (norm == 0.0f);
 
-			velocity *= speed / norm;
-
-			particle.Params[VelocityX] = velocity.X;
-			particle.Params[VelocityY] = velocity.Y;
-			particle.Params[VelocityZ] = velocity.Z;
+			particle.Velocity = velocity * speed / norm;
 		}
 
 	}

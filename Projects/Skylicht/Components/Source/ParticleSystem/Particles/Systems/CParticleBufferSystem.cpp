@@ -61,11 +61,7 @@ namespace Skylicht
 				params = p->Params;
 				data = vtx + i;
 
-				data->Pos.set(
-					params[PositionX],
-					params[PositionY],
-					params[PositionZ]
-				);
+				data->Pos = p->Position;
 
 				data->Color.set(
 					(u32)params[ColorA],
@@ -74,8 +70,12 @@ namespace Skylicht
 					(u32)params[ColorB]
 				);
 
-				data->SizeRotation.X = 0.1f;
-				data->SizeRotation.Y = 0.0f;
+				data->Size.set(
+					params[ScaleX],
+					params[ScaleY],
+					params[ScaleZ]
+				);
+				data->Rotation = p->Rotation;
 
 				data->UVScale.set(1.0f, 1.0f);
 				data->UVOffset.set(0.0f, 0.0f);

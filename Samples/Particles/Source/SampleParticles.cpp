@@ -29,6 +29,7 @@ void SampleParticles::onInitApp()
 
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Particles.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -77,10 +78,14 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 	// create emitter
 	Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
 	emitter->setTank(0);
-	emitter->setFlow(10.0f);
+	emitter->setFlow(200.0f);
 
 	// create renderer
 	Particle::IRenderer *renderer = group->setRenderer(factory->createQuadRenderer());
+
+	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
+	renderer->getMaterial()->setUniformTexture("uTexture", texture);
+	renderer->getMaterial()->applyMaterial();
 }
 
 void SampleParticles::onUpdate()

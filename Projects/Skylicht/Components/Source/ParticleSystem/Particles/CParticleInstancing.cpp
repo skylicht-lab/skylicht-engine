@@ -57,18 +57,16 @@ namespace Skylicht
 				vertexDescriptor->addAttribute("inParticleColor", 4, video::EVAS_TEXCOORD2, EVAT_UBYTE, 1);
 				vertexDescriptor->addAttribute("inParticleUVScale", 2, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
 				vertexDescriptor->addAttribute("inParticleUVOffset", 2, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
-				vertexDescriptor->addAttribute("inParticleSizeRotation", 2, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
+				vertexDescriptor->addAttribute("inParticleSize", 3, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
+				vertexDescriptor->addAttribute("inParticleRotation", 3, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 1);
 
 				vertexDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
 			}
 
 			m_meshBuffer->setVertexDescriptor(vertexDescriptor);
-			
+
 			m_instanceBuffer = new CVertexBuffer<SParticleInstance>();
 			m_meshBuffer->addVertexBuffer(m_instanceBuffer);
-
-			video::SMaterial& material = m_meshBuffer->getMaterial();
-			material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("ParticleAdditive");
 
 			m_meshBuffer->setHardwareMappingHint(EHM_STREAM);
 			m_instanceBuffer->setHardwareMappingHint(EHM_STREAM);
