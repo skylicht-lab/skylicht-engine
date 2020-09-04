@@ -64,10 +64,10 @@ namespace Skylicht
 				data->Pos = p->Position;
 
 				data->Color.set(
-					(u32)params[ColorA],
-					(u32)params[ColorR],
-					(u32)params[ColorG],
-					(u32)params[ColorB]
+					(u32)(params[ColorA] * 255.0f),
+					(u32)(params[ColorR] * 255.0f),
+					(u32)(params[ColorG] * 255.0f),
+					(u32)(params[ColorB] * 255.0f)
 				);
 
 				data->Size.set(

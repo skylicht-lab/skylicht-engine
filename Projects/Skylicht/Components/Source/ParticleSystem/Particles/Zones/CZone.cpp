@@ -29,9 +29,42 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		// use local random
+		s32 seed = 0x0f0f0f0f;
+		const s32 m = 2147483399;	// a non-Mersenne prime
+		const s32 a = 40692;		// another spectral success story
+		const s32 q = m / a;
+		const s32 r = m % a;		// again less than q
+		const s32 rMax = m - 1;
+
+		s32 particle_rand()
+		{
+			// (a*seed)%m with Schrage's method
+			seed = a * (seed%q) - r * (seed / q);
+			if (seed < 0)
+				seed += m;
+
+			return seed;
+		}
+
+		f32 particle_frand()
+		{
+			return particle_rand()*(1.f / rMax);
+		}
+
+		s32 particle_rand_max()
+		{
+			return rMax;
+		}
+
+		void random_reset(s32 value)
+		{
+			seed = value;
+		}
+
 		float random(float from, float to)
 		{
-			return from + (to - from) * os::Randomizer::frand();
+			return from + (to - from) * particle_frand();
 		}
 
 		CZone::CZone(EZone type) :
