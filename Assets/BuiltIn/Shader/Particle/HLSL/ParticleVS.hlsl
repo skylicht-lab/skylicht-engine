@@ -9,7 +9,8 @@ struct VS_INPUT
 	float4 particleColor: TEXCOORD2;
 	float2 particleUVScale: TEXCOORD3;
 	float2 particleUVOffset: TEXCOORD4;
-	float2 particleSizeRotation: TEXCOORD5;
+	float3 particleSize: TEXCOORD5;
+	float3 particleRotation: TEXCOORD6;
 };
 
 struct VS_OUTPUT
@@ -32,8 +33,8 @@ VS_OUTPUT main(VS_INPUT input)
 	VS_OUTPUT output;
 	
 	// rotate
-	float cosA = cos(input.particleSizeRotation.y);
-	float sinA = sin(input.particleSizeRotation.y);
+	float cosA = cos(input.particleRotation.z);
+	float sinA = sin(input.particleRotation.z);
 	float oneMinusCosA = 1.0 - cosA;
 	
 	float upX = (uViewLook.x * uViewLook.x + (1.0f - uViewLook.x * uViewLook.x) * cosA) * uViewUp.x
@@ -55,8 +56,8 @@ VS_OUTPUT main(VS_INPUT input)
 	float3 side = cross(up, uViewLook);
 	side = normalize(side);
 	
-	side = side * 0.5 * input.particleSizeRotation.x;
-	up = up * 0.5 * input.particleSizeRotation.x;
+	side = side * 0.5 * input.particleSize.x;
+	up = up * 0.5 * input.particleSize.y;
 	
 	float3 position = input.particlePos + input.pos.x * side + input.pos.y * up;
 	

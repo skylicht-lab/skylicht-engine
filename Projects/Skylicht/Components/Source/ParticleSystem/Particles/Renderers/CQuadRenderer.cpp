@@ -34,12 +34,12 @@ namespace Skylicht
 			m_atlasNx(1),
 			m_atlasNy(1)
 		{
-
+			m_material = new CMaterial("ParticleAddtive", "BuiltIn/Shader/Particle/ParticleAdditive.xml");
 		}
 
 		CQuadRenderer::~CQuadRenderer()
 		{
-
+			delete m_material;
 		}
 
 		void CQuadRenderer::getParticleBuffer(IMeshBuffer *buffer)
@@ -110,6 +110,9 @@ namespace Skylicht
 				-1.0f,
 				0.0f);
 			vertices[3].Color = white;
+
+			m_material->addAffectMesh(buffer);
+			m_material->applyMaterial();
 		}
 	}
 }

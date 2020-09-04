@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "pch.h"
+#include "Material/CMaterial.h"
 
 namespace Skylicht
 {
@@ -39,10 +40,12 @@ namespace Skylicht
 		{
 		protected:
 			ERenderer m_type;
+			CMaterial *m_material;
 
 		public:
 			IRenderer(ERenderer type) :
-				m_type(type)
+				m_type(type),
+				m_material(NULL)
 			{
 
 			}
@@ -55,6 +58,11 @@ namespace Skylicht
 			inline ERenderer getType()
 			{
 				return m_type;
+			}
+
+			CMaterial* getMaterial()
+			{
+				return m_material;
 			}
 
 			virtual void getParticleBuffer(IMeshBuffer *buffer) = 0;

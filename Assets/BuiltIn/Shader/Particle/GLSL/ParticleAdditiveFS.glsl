@@ -1,6 +1,6 @@
 precision mediump float;
 
-//uniform sampler2D uTexDiffuse;
+uniform sampler2D uTexture;
 
 in vec2 varTexCoord0;
 in vec4 varColor;
@@ -9,6 +9,6 @@ out vec4 FragColor;
 
 void main(void)
 {
-	vec4 color = /*texture(uTexDiffuse, varTexCoord0.xy) **/ varColor;
+	vec4 color = texture(uTexture, varTexCoord0.xy) * varColor;
 	FragColor = color * varColor.a;
 }

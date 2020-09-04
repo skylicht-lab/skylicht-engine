@@ -46,9 +46,7 @@ namespace Skylicht
 		{
 			dt = dt * 0.001f;
 
-			float gravityX = group->Gravity.X * dt;
-			float gravityY = group->Gravity.Y * dt;
-			float gravityZ = group->Gravity.Z * dt;
+			core::vector3df gravity = group->Gravity * dt;
 
 			float friction = group->Friction * dt;
 
@@ -68,26 +66,18 @@ namespace Skylicht
 					params[Life] -= dt;
 
 				// update position
-				params[LastPositionX] = params[PositionX];
-				params[LastPositionY] = params[PositionY];
-				params[LastPositionZ] = params[PositionZ];
+				p->LastPosition = p->Position;
 
-				params[PositionX] = params[PositionX] + params[VelocityX] * dt;
-				params[PositionY] = params[PositionY] + params[VelocityY] * dt;
-				params[PositionZ] = params[PositionZ] + params[VelocityZ] * dt;
+				p->Position = p->Position + p->Velocity * dt;
 
 				// update gravity
-				params[VelocityX] = params[VelocityX] + gravityX;
-				params[VelocityY] = params[VelocityY] + gravityY;
-				params[VelocityZ] = params[VelocityZ] + gravityZ;
+				p->Velocity = p->Velocity + gravity;
 
 				// update friction
 				if (group->Friction > 0.0f)
 				{
 					float f = 1.0f - core::min_(1.0f, friction / params[Mass]);
-					params[VelocityX] = params[VelocityX] * f;
-					params[VelocityY] = params[VelocityY] * f;
-					params[VelocityZ] = params[VelocityZ] * f;
+					p->Velocity *= f;
 				}
 			}
 		}

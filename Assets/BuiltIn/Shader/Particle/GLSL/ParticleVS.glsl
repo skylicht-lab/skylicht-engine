@@ -7,7 +7,8 @@ layout (location = 4) in vec3 inParticlePosition;
 layout (location = 5) in vec4 inParticleColor;
 layout (location = 6) in vec2 inParticleUVScale;
 layout (location = 7) in vec2 inParticleUVOffset;
-layout (location = 8) in vec2 inParticleSizeRotation;
+layout (location = 8) in vec2 inParticleSize;
+layout (location = 9) in vec2 inParticleRotation;
 
 uniform mat4 uMvpMatrix;
 uniform vec3 uViewUp;
@@ -22,8 +23,8 @@ void main(void)
 	varColor = inParticleColor/255.0;
 	
 	// rotate
-	float cosA = cos(inParticleSizeRotation.y);
-	float sinA = sin(inParticleSizeRotation.y);
+	float cosA = cos(inParticleRotation.z);
+	float sinA = sin(inParticleRotation.z);
 	float oneMinusCosA = 1.0 - cosA;
 	
 	float upX = (uViewLook.x * uViewLook.x + (1.0f - uViewLook.x * uViewLook.x) * cosA) * uViewUp.x
@@ -45,8 +46,8 @@ void main(void)
 	vec3 side = cross(up, uViewLook);
 	side = normalize(side);	
 	
-	side = side * 0.5 * inParticleSizeRotation.x;	
-	up = up * 0.5 * inParticleSizeRotation.x;
+	side = side * 0.5 * inParticleSize.x;	
+	up = up * 0.5 * inParticleSize.y;
 	
 	vec3 position = inParticlePosition + inPosition.x * side + inPosition.y * up;
 	

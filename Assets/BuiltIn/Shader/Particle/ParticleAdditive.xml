@@ -6,12 +6,12 @@
 			<uniform name="uViewLook" type="PARTICLE_VIEW_LOOK" value="0" float="3"/>
 		</vs>
 		<fs>
-			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 		</fs>
 	</uniforms>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
-			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>
+			<ui control="UITexture" name="uTexture"/>
 		</ui>
 	</customUI>	
 	<shader type="GLSL" vs="GLSL/ParticleVS.glsl" fs="GLSL/ParticleAdditiveFS.glsl"/>
