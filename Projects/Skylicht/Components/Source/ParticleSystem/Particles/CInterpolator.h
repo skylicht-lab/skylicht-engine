@@ -24,51 +24,68 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include <set>
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		enum EParticleParams
+		struct SInterpolatorEntry
 		{
-			ScaleX = 0,
-			ScaleY,
-			ScaleZ,
-			ColorR,
-			ColorG,
-			ColorB,
-			ColorA,
-			Mass,
-			FrameIndex,
-			RotateSpeed,
-			NumParams
+			float x;
+			float y;
+
+			SInterpolatorEntry() : x(0.0f), y(0.0f) {}
+
+			SInterpolatorEntry(float x, float y) : x(x), y(y) {}
 		};
 
-		class CParticle
+		inline bool operator<(const SInterpolatorEntry& entry0, const SInterpolatorEntry& entry1)
 		{
-		public:
-			bool Immortal;
+			return entry0.x < entry1.x;
+		}
 
-			float Params[NumParams];
-			float StartValue[NumParams];
-			float EndValue[NumParams];
+		inline bool operator==(const SInterpolatorEntry& entry0, const SInterpolatorEntry& entry1)
+		{
+			return entry0.x == entry1.x;
+		}
 
-			float Age;
-			float Life;
-			float LifeTime;
-
-			core::vector3df Position;
-			core::vector3df Rotation;
-			core::vector3df LastPosition;
-			core::vector3df Velocity;
+		class CInterpolator
+		{
+		protected:
+			std::set<SInterpolatorEntry> m_graph;
 
 		public:
-			CParticle();
+			CInterpolator();
 
-			virtual ~CParticle();
+			virtual ~CInterpolator();
 
-			void swap(CParticle& p);
+			float interpolate(float x);
+
+			inline std::set<SInterpolatorEntry>& getGraph()
+			{
+				return m_graph;
+			}
+
+			inline const std::set<SInterpolatorEntry>& getGraph() const
+			{
+				return m_graph;
+			}
+
+			inline bool addEntry(const SInterpolatorEntry& entry)
+			{
+				return m_graph.insert(entry).second;
+			}
+
+			inline bool addEntry(float x, float y)
+			{
+				return addEntry(SInterpolatorEntry(x, y));
+			}
+
+			inline void clearGraph()
+			{
+				m_graph.clear();
+			}
 		};
 	}
 }

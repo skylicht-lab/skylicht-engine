@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Systems/CParticleBufferSystem.h"
 
 #include "CParticleInstancing.h"
+#include "CModel.h"
 
 namespace Skylicht
 {
@@ -52,13 +53,15 @@ namespace Skylicht
 		protected:
 			core::array<CParticle> m_particles;
 			core::array<SLaunchParticle> m_launch;
+
 			std::vector<CEmitter*> m_emitters;
 			std::vector<ISystem*> m_systems;
+			std::vector<CModel*> m_models;
 
 			CParticleSystem *m_particleSystem;
 			CParticleBufferSystem *m_bufferSystem;
 
-			CZone* m_zone;			
+			CZone* m_zone;
 			IRenderer* m_renderer;
 			CParticleInstancing *m_instancing;
 
@@ -136,6 +139,17 @@ namespace Skylicht
 			inline u32 getCurrentParticleCount()
 			{
 				return m_particles.size();
+			}
+
+			CModel* createModel(EParticleParams param);
+
+			CModel* getModel(EParticleParams param);
+
+			void deleteModel(EParticleParams param);
+
+			std::vector<CModel*>& getModels()
+			{
+				return m_models;
 			}
 
 		protected:

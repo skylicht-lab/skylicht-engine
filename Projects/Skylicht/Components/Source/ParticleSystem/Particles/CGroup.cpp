@@ -48,6 +48,10 @@ namespace Skylicht
 
 		CGroup::~CGroup()
 		{
+			for (CModel *m : m_models)
+				delete m;
+			m_models.clear();
+
 			delete m_particleSystem;
 			delete m_bufferSystem;
 
@@ -101,7 +105,7 @@ namespace Skylicht
 			for (u32 i = 0; i < numParticles; i++)
 			{
 				CParticle& p = particles[i];
-				if (p.Params[Life] < 0)
+				if (p.Life < 0)
 				{
 					if (autoBorn > 0)
 					{
@@ -144,11 +148,22 @@ namespace Skylicht
 
 		bool CGroup::launchParticle(CParticle& p, SLaunchParticle& launch)
 		{
-			p.Params[Age] = 0.0f;
-			p.Params[Life] = LifeMin + (LifeMax - LifeMin) * os::Randomizer::frand();
+			p.Age = 0.0f;
+			p.Life = random(LifeMin, LifeMax);
+			p.LifeTime = p.Life;
 
-			launch.Emitter->emitParticle(p, m_zone);
-			launch.Number--;
+			if (p.LifeTime > 0)
+			{
+				launch.Emitter->emitParticle(p, m_zone);
+				launch.Number--;
+
+				for (CModel *m : m_models)
+				{
+					EParticleParams t = m->getType();
+					p.StartValue[t] = m->getRandomStart();
+					p.EndValue[t] = m->getRandomEnd();
+				}
+			}
 
 			return launch.Number == 0;
 		}
@@ -169,6 +184,47 @@ namespace Skylicht
 
 			m_particles[index].swap(m_particles.getLast());
 			m_particles.set_used(total - 1);
+		}
+
+		CModel* CGroup::createModel(EParticleParams param)
+		{
+			CModel *m = getModel(param);
+
+			if (m == NULL)
+			{
+				m = new CModel(param);
+				m_models.push_back(m);
+			}
+
+			return m;
+		}
+
+		CModel* CGroup::getModel(EParticleParams param)
+		{
+			for (CModel *m : m_models)
+			{
+				if (m->getType() == param)
+					return m;
+			}
+
+			return NULL;
+		}
+
+		void CGroup::deleteModel(EParticleParams param)
+		{
+			int id = -1;
+
+			for (u32 i = 0, n = m_models.size(); i < n; i++)
+			{
+				if (m_models[i]->getType() == param)
+				{
+					id = i;
+					break;
+				}
+			}
+
+			if (id >= 0)
+				m_models.erase(m_models.begin() + id);
 		}
 	}
 }

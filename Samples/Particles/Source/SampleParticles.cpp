@@ -86,6 +86,12 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
 	renderer->getMaterial()->setUniformTexture("uTexture", texture);
 	renderer->getMaterial()->applyMaterial();
+
+	// create model	
+	group->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(1.0f);
+	group->createModel(Particle::ColorR)->setStart(0.8f)->setEnd(1.0f);
+	group->createModel(Particle::ColorG)->setStart(0.4f)->setEnd(1.0f);
+	group->createModel(Particle::ColorB)->setStart(0.8f)->setEnd(1.0f);
 }
 
 void SampleParticles::onUpdate()

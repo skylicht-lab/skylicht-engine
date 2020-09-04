@@ -41,7 +41,7 @@ namespace Skylicht
 			m_emitFullZone(true),
 			m_type(type)
 		{
-			m_fraction = os::Randomizer::frand();
+			m_fraction = random(0.0f, 1.0f);
 		}
 
 		CEmitter::~CEmitter()
@@ -79,7 +79,7 @@ namespace Skylicht
 
 		void CEmitter::generateVelocity(CParticle& particle, CZone* zone)
 		{
-			float force = m_forceMin + (m_forceMax - m_forceMin) * os::Randomizer::frand();
+			float force = random(m_forceMin, m_forceMax);
 			generateVelocity(particle, force / particle.Params[Mass], zone);
 		}
 

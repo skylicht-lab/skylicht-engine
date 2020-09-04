@@ -53,6 +53,22 @@ namespace Skylicht
 			CParticle *p;
 			float *params;
 
+			std::vector<CModel*>& listModel = group->getModels();
+			std::vector<EParticleParams> listParams;
+			std::vector<CInterpolator*> listInterpolator;
+
+			for (CModel *m : listModel)
+			{
+				listInterpolator.push_back(m->getInterpolator());
+				listParams.push_back(m->getType());
+			}
+
+			CModel** models = listModel.data();
+			CInterpolator** interpolators = listInterpolator.data();
+			EParticleParams* paramTypes = listParams.data();
+
+			u32 numModels = listModel.size();
+
 #pragma omp parallel for private(p, params)
 			for (int i = 0; i < num; i++)
 			{
@@ -60,10 +76,10 @@ namespace Skylicht
 				params = p->Params;
 
 				// update life time
-				params[Age] = params[Age] + dt;
+				p->Age = p->Age + dt;
 
 				if (!p->Immortal)
-					params[Life] -= dt;
+					p->Life -= dt;
 
 				// update position
 				p->LastPosition = p->Position;
@@ -78,6 +94,26 @@ namespace Skylicht
 				{
 					float f = 1.0f - core::min_(1.0f, friction / params[Mass]);
 					p->Velocity *= f;
+				}
+
+				// update interpolate parameters
+				float x = p->Age / p->LifeTime;
+
+				for (u32 j = 0; j < numModels; j++)
+				{
+					// linear
+					float y = x;
+
+					if (interpolators[j] != NULL)
+					{
+						// interpolate
+						y = interpolators[j]->interpolate(x);
+					}
+
+					EParticleParams t = paramTypes[j];
+
+					// update param value
+					params[t] = p->StartValue[t] + (p->EndValue[t] - p->StartValue[t]) * y;
 				}
 			}
 		}
