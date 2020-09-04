@@ -34,12 +34,14 @@ namespace Skylicht
 			SColor Color;
 			core::vector2df UVScale;
 			core::vector2df UVOffset;
-			core::vector2df SizeRotation;
+			core::vector3df Size;
+			core::vector3df Rotation;
 
 			bool operator==(const SParticleInstance& other) const
 			{
 				return Pos == other.Pos
-					&& SizeRotation == other.SizeRotation
+					&& Size == other.Size
+					&& Rotation == other.Rotation
 					&& Color == other.Color
 					&& UVScale == other.UVScale
 					&& UVOffset == other.UVOffset;

@@ -32,21 +32,9 @@ namespace Skylicht
 	{
 		enum EParticleParams
 		{
-			PositionX = 0,
-			PositionY,
-			PositionZ,
-			RotationX,
-			RotationY,
-			RotationZ,
-			SizeX,
-			SizeY,
-			SizeZ,
-			LastPositionX,
-			LastPositionY,
-			LastPositionZ,
-			VelocityX,
-			VelocityY,
-			VelocityZ,
+			ScaleX = 0,
+			ScaleY,
+			ScaleZ,
 			ColorR,
 			ColorG,
 			ColorB,
@@ -64,6 +52,11 @@ namespace Skylicht
 			bool Immortal;
 
 			float Params[NumParams];
+
+			core::vector3df Position;
+			core::vector3df Rotation;
+			core::vector3df LastPosition;
+			core::vector3df Velocity;
 
 		public:
 			CParticle();
