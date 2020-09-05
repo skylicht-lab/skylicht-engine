@@ -57,6 +57,7 @@ namespace Skylicht
 			std::vector<CEmitter*> m_emitters;
 			std::vector<ISystem*> m_systems;
 			std::vector<CModel*> m_models;
+			std::vector<CInterpolator*> m_interpolators;
 
 			CParticleSystem *m_particleSystem;
 			CParticleBufferSystem *m_bufferSystem;
@@ -150,6 +151,15 @@ namespace Skylicht
 			std::vector<CModel*>& getModels()
 			{
 				return m_models;
+			}
+
+			CInterpolator* createInterpolator();
+
+			void deleteInterpolator(CInterpolator* interpolator);
+
+			std::vector<CInterpolator*>& getInterpolators()
+			{
+				return m_interpolators;
 			}
 
 		protected:

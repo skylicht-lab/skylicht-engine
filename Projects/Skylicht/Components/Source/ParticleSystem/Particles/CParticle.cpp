@@ -33,7 +33,8 @@ namespace Skylicht
 			Immortal(false),
 			Age(0.0f),
 			Life(0.0f),
-			LifeTime(0.0f)
+			LifeTime(0.0f),
+			HaveRotate(false)
 		{
 			memset(StartValue, 0, sizeof(float) * NumParams);
 			memset(EndValue, 0, sizeof(float) * NumParams);
@@ -49,7 +50,10 @@ namespace Skylicht
 
 			Params[Mass] = 1.0f;
 			Params[FrameIndex] = 0.0f;
-			Params[RotateSpeed] = 0.0f;
+
+			Params[RotateSpeedX] = 0.0f;
+			Params[RotateSpeedY] = 0.0f;
+			Params[RotateSpeedZ] = 0.0f;
 		}
 
 		CParticle::~CParticle()
@@ -77,6 +81,8 @@ namespace Skylicht
 			float age = Age;
 			float life = Life;
 			float lifeTime = LifeTime;
+			bool haveRotate = HaveRotate;
+
 			core::vector3df position = Position;
 			core::vector3df rotation = Rotation;
 			core::vector3df lastPosition = LastPosition;
@@ -89,6 +95,7 @@ namespace Skylicht
 			Rotation = p.Rotation;
 			LastPosition = p.LastPosition;
 			Velocity = p.Velocity;
+			HaveRotate = p.HaveRotate;
 
 			p.Age = age;
 			p.Life = life;
@@ -97,6 +104,7 @@ namespace Skylicht
 			p.Rotation = rotation;
 			p.LastPosition = lastPosition;
 			p.Velocity = velocity;
+			p.HaveRotate = haveRotate;
 		}
 	}
 }

@@ -50,6 +50,12 @@ namespace Skylicht
 			{
 				m_atlasNx = x;
 				m_atlasNy = y;
+
+				if (m_atlasNx < 1)
+					m_atlasNx = 1;
+
+				if (m_atlasNy < 1)
+					m_atlasNy = 1;
 			}
 
 			inline u32 getAtlasX()
@@ -60,6 +66,21 @@ namespace Skylicht
 			inline u32 getAtlasY()
 			{
 				return m_atlasNy;
+			}
+
+			virtual u32 getTotalFrames()
+			{
+				return m_atlasNx * m_atlasNy;
+			}
+
+			inline float getFrameWidth()
+			{
+				return 1.0f / m_atlasNx;
+			}
+
+			inline float getFrameHeight()
+			{
+				return 1.0f / m_atlasNy;
 			}
 		};
 	}
