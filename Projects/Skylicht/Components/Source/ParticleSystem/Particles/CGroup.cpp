@@ -52,6 +52,10 @@ namespace Skylicht
 				delete m;
 			m_models.clear();
 
+			for (CInterpolator *i : m_interpolators)
+				delete i;
+			m_interpolators.clear();
+
 			delete m_particleSystem;
 			delete m_bufferSystem;
 
@@ -96,34 +100,23 @@ namespace Skylicht
 			for (ISystem *s : m_systems)
 				s->update(particles, numParticles, this, dt);
 
-			m_bufferSystem->update(particles, numParticles, this, dt);
-
-			u32 emiterId = 0;
-			u32 emiterLaunch = m_launch.size();
-
-			// launch new and remove die particle
+			// remove die particle
 			for (u32 i = 0; i < numParticles; i++)
 			{
 				CParticle& p = particles[i];
 				if (p.Life < 0)
 				{
-					if (autoBorn > 0)
-					{
-						// try born id dead particle						
-						if (launchParticle(p, m_launch[emiterId]) == true)
-							emiterId++;
-
-						--autoBorn;
-					}
-					else
-					{
-						// remove dead particle
-						remove(i);
-						--i;
-						--numParticles;
-					}
+					// remove dead particle
+					remove(i);
+					--i;
+					--numParticles;
 				}
 			}
+
+			m_bufferSystem->update(particles, numParticles, this, dt);
+
+			u32 emiterId = 0;
+			u32 emiterLaunch = m_launch.size();
 
 			// born new particle
 			if (autoBorn > 0)
@@ -151,6 +144,7 @@ namespace Skylicht
 			p.Age = 0.0f;
 			p.Life = random(LifeMin, LifeMax);
 			p.LifeTime = p.Life;
+			p.HaveRotate = false;
 
 			if (p.LifeTime > 0)
 			{
@@ -160,8 +154,23 @@ namespace Skylicht
 				for (CModel *m : m_models)
 				{
 					EParticleParams t = m->getType();
-					p.StartValue[t] = m->getRandomStart();
-					p.EndValue[t] = m->getRandomEnd();
+
+					if (m->haveStart() == true)
+						p.StartValue[t] = m->getRandomStart();
+					else
+						p.StartValue[t] = 0.0f;
+
+					if (m->haveEnd() == true)
+						p.EndValue[t] = m->getRandomEnd();
+					else
+						p.EndValue[t] = p.StartValue[t];
+
+					if (t == Particle::RotateSpeedX ||
+						t == Particle::RotateSpeedY ||
+						t == Particle::RotateSpeedZ)
+					{
+						p.HaveRotate = true;
+					}
 				}
 			}
 
@@ -225,6 +234,30 @@ namespace Skylicht
 
 			if (id >= 0)
 				m_models.erase(m_models.begin() + id);
+		}
+
+		CInterpolator* CGroup::createInterpolator()
+		{
+			CInterpolator *interpolator = new CInterpolator();
+			m_interpolators.push_back(interpolator);
+			return interpolator;
+		}
+
+		void CGroup::deleteInterpolator(CInterpolator* interpolator)
+		{
+			int id = -1;
+
+			for (u32 i = 0, n = m_interpolators.size(); i < n; i++)
+			{
+				if (m_interpolators[i] == interpolator)
+				{
+					id = i;
+					break;
+				}
+			}
+
+			if (id >= 0)
+				m_interpolators.erase(m_interpolators.begin() + id);
 		}
 	}
 }

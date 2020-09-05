@@ -78,16 +78,28 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 	// create emitter
 	Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
 	emitter->setTank(0);
-	emitter->setFlow(200.0f);
+	emitter->setFlow(300.0f);
 
 	// create renderer
-	Particle::IRenderer *renderer = group->setRenderer(factory->createQuadRenderer());
+	Particle::CQuadRenderer *quadRenderer = factory->createQuadRenderer();
+	group->setRenderer(quadRenderer);
 
-	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
-	renderer->getMaterial()->setUniformTexture("uTexture", texture);
-	renderer->getMaterial()->applyMaterial();
+	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
+	quadRenderer->setAtlas(2, 2);
+	quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
+	quadRenderer->getMaterial()->applyMaterial();
 
 	// create model
+	group->Gravity.set(0.0f, 0.4f, 0.0f);
+
+	group->createModel(Particle::RotateSpeedZ)->setStart(2.0f);
+
+	group->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
+
+	group->createModel(Particle::ScaleX)->setStart(0.5f)->setEnd(4.0f, 6.0f);
+	group->createModel(Particle::ScaleY)->setStart(0.5f)->setEnd(4.0f, 6.0f);
+	group->createModel(Particle::ScaleZ)->setStart(0.5f)->setEnd(4.0f, 6.0f);
+
 	group->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	group->createModel(Particle::ColorR)->setStart(0.8f)->setEnd(1.0f);
 	group->createModel(Particle::ColorG)->setStart(0.4f)->setEnd(1.0f);

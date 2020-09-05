@@ -36,6 +36,8 @@ namespace Skylicht
 			m_start2(0),
 			m_end1(0),
 			m_end2(0),
+			m_haveStart(false),
+			m_haveEnd(false),
 			m_interpolator(NULL)
 		{
 
@@ -55,14 +57,6 @@ namespace Skylicht
 		float CModel::getRandomEnd()
 		{
 			return random(m_end1, m_end2);
-		}
-
-		CInterpolator* CModel::createGetInterpolator()
-		{
-			if (m_interpolator == NULL)
-				m_interpolator = new CInterpolator();
-
-			return m_interpolator;
 		}
 	}
 }
