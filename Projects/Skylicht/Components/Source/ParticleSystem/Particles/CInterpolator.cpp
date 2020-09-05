@@ -29,7 +29,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CInterpolator::CInterpolator()
+		CInterpolator::CInterpolator() :
+			m_lastValue(0.0f)
 		{
 
 		}
@@ -50,18 +51,21 @@ namespace Skylicht
 				if (m_graph.empty())
 				{
 					// If the graph has no entry, sets the default value
-					return 0.0f;
+					m_lastValue = 0.0f;
+					return m_lastValue;
 				}
 				else
 				{
 					// Else sets the value of the last entry
-					return (*(--nextIt)).y;
+					m_lastValue = (*(--nextIt)).y;
+					return m_lastValue;
 				}
 			}
 			else if (nextIt == m_graph.begin())
 			{
 				// If the current X is lower than the first entry, sets the value to the first entry
-				return (*nextIt).y;
+				m_lastValue = (*nextIt).y;
+				return m_lastValue;
 			}
 
 			const SInterpolatorEntry& nextEntry = *nextIt;
@@ -71,7 +75,8 @@ namespace Skylicht
 			float y1 = nextEntry.y;
 
 			float ratioX = (currentKey.x - previousEntry.x) / (nextEntry.x - previousEntry.x);
-			return y0 + ratioX * (y1 - y0);
+			m_lastValue = y0 + ratioX * (y1 - y0);
+			return m_lastValue;
 		}
 	}
 }

@@ -55,12 +55,19 @@ namespace Skylicht
 		protected:
 			std::set<SInterpolatorEntry> m_graph;
 
+			float m_lastValue;
+
 		public:
 			CInterpolator();
 
 			virtual ~CInterpolator();
 
 			float interpolate(float x);
+
+			inline float getLastComputeValue()
+			{
+				return m_lastValue;
+			}
 
 			inline std::set<SInterpolatorEntry>& getGraph()
 			{

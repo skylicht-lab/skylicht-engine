@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ParticleSystem/Particles/CParticle.h"
 #include "ParticleSystem/Particles/CGroup.h"
 
+#include "ParticleSystem/Particles/Renderers/CQuadRenderer.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -54,7 +56,21 @@ namespace Skylicht
 			float *params;
 			SParticleInstance *data;
 
-#pragma omp parallel for private(p, params, data)
+			u32 frameX = 1;
+			u32 frameY = 1;
+
+			if (group->getRenderer()->getType() == Particle::Quad)
+			{
+				CQuadRenderer *quadRenderer = (CQuadRenderer*)group->getRenderer();
+				frameX = quadRenderer->getAtlasX();
+				frameY = quadRenderer->getAtlasY();
+			}
+
+			u32 totalFrames = frameX * frameY;
+			float frameW = 1.0f / frameX;
+			float frameH = 1.0f / frameY;
+
+			// #pragma omp parallel for private(p, params, data)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
@@ -77,8 +93,15 @@ namespace Skylicht
 				);
 				data->Rotation = p->Rotation;
 
-				data->UVScale.set(1.0f, 1.0f);
-				data->UVOffset.set(0.0f, 0.0f);
+				u32 frame = (u32)params[FrameIndex];
+				frame = frame < 0 ? 0 : frame;
+				frame = frame >= totalFrames ? totalFrames - 1 : frame;
+
+				u32 row = frame / frameX;
+				u32 col = frame - (row * frameX);
+
+				data->UVScale.set(frameW, frameH);
+				data->UVOffset.set(col * frameW, row * frameH);
 			}
 
 			buffer->setDirty();

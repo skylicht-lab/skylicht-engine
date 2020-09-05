@@ -36,9 +36,11 @@ namespace Skylicht
 		protected:
 			EParticleParams m_type;
 
+			bool m_haveStart;
 			float m_start1;
 			float m_start2;
 
+			bool m_haveEnd;
 			float m_end1;
 			float m_end2;
 
@@ -58,6 +60,7 @@ namespace Skylicht
 			{
 				m_start1 = f;
 				m_start2 = f;
+				m_haveStart = true;
 				return this;
 			}
 
@@ -65,6 +68,7 @@ namespace Skylicht
 			{
 				m_start1 = f1;
 				m_start2 = f2;
+				m_haveStart = true;
 				return this;
 			}
 
@@ -72,6 +76,7 @@ namespace Skylicht
 			{
 				m_end1 = f;
 				m_end2 = f;
+				m_haveEnd = true;
 				return this;
 			}
 
@@ -79,14 +84,28 @@ namespace Skylicht
 			{
 				m_end1 = f1;
 				m_end2 = f2;
+				m_haveEnd = true;
 				return this;
+			}
+
+			inline bool haveStart()
+			{
+				return m_haveStart;
+			}
+
+			inline bool haveEnd()
+			{
+				return m_haveEnd;
 			}
 
 			float getRandomStart();
 
 			float getRandomEnd();
 
-			CInterpolator* createGetInterpolator();
+			inline void setInterpolator(CInterpolator *interpolate)
+			{
+				m_interpolator = interpolate;
+			}
 
 			inline CInterpolator* getInterpolator()
 			{

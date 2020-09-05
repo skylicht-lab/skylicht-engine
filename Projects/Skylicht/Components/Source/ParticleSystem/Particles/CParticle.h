@@ -41,7 +41,9 @@ namespace Skylicht
 			ColorA,
 			Mass,
 			FrameIndex,
-			RotateSpeed,
+			RotateSpeedX,
+			RotateSpeedY,
+			RotateSpeedZ,
 			NumParams
 		};
 
@@ -57,6 +59,8 @@ namespace Skylicht
 			float Age;
 			float Life;
 			float LifeTime;
+
+			bool HaveRotate;
 
 			core::vector3df Position;
 			core::vector3df Rotation;

@@ -66,6 +66,11 @@ namespace Skylicht
 			}
 
 			virtual void getParticleBuffer(IMeshBuffer *buffer) = 0;
+
+			virtual u32 getTotalFrames()
+			{
+				return 1;
+			}
 		};
 	}
 }

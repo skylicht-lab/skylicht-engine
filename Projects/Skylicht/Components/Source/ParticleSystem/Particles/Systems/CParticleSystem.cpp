@@ -46,6 +46,7 @@ namespace Skylicht
 		{
 			dt = dt * 0.001f;
 
+			float pi2 = 2 * core::PI;
 			core::vector3df gravity = group->Gravity * dt;
 
 			float friction = group->Friction * dt;
@@ -53,21 +54,28 @@ namespace Skylicht
 			CParticle *p;
 			float *params;
 
+			// model
 			std::vector<CModel*>& listModel = group->getModels();
+
 			std::vector<EParticleParams> listParams;
-			std::vector<CInterpolator*> listInterpolator;
+			std::vector<CInterpolator*> listModelInterpolators;
 
 			for (CModel *m : listModel)
 			{
-				listInterpolator.push_back(m->getInterpolator());
 				listParams.push_back(m->getType());
+				listModelInterpolators.push_back(m->getInterpolator());
 			}
 
-			CModel** models = listModel.data();
-			CInterpolator** interpolators = listInterpolator.data();
-			EParticleParams* paramTypes = listParams.data();
-
+			// list model and param
 			u32 numModels = listModel.size();
+			CModel** models = listModel.data();
+			EParticleParams* paramTypes = listParams.data();
+			CInterpolator** modelInterpolators = listModelInterpolators.data();
+
+			// list group interpolator
+			std::vector<CInterpolator*>& listInterpolator = group->getInterpolators();
+			CInterpolator** interpolators = listInterpolator.data();
+			u32 numInterpolator = listInterpolator.size();
 
 #pragma omp parallel for private(p, params)
 			for (int i = 0; i < num; i++)
@@ -89,6 +97,18 @@ namespace Skylicht
 				// update gravity
 				p->Velocity = p->Velocity + gravity;
 
+				// update rotation
+				if (p->HaveRotate == true)
+				{
+					p->Rotation.X = p->Rotation.X + params[RotateSpeedX] * dt;
+					p->Rotation.Y = p->Rotation.Y + params[RotateSpeedY] * dt;
+					p->Rotation.Z = p->Rotation.Z + params[RotateSpeedZ] * dt;
+
+					p->Rotation.X = fmod(p->Rotation.X, pi2);
+					p->Rotation.Y = fmod(p->Rotation.Y, pi2);
+					p->Rotation.Z = fmod(p->Rotation.Z, pi2);
+				}
+
 				// update friction
 				if (group->Friction > 0.0f)
 				{
@@ -99,15 +119,18 @@ namespace Skylicht
 				// update interpolate parameters
 				float x = p->Age / p->LifeTime;
 
+				for (u32 j = 0; j < numInterpolator; j++)
+					interpolators[j]->interpolate(x);
+
 				for (u32 j = 0; j < numModels; j++)
 				{
 					// linear
 					float y = x;
 
-					if (interpolators[j] != NULL)
+					if (modelInterpolators[j] != NULL)
 					{
 						// interpolate
-						y = interpolators[j]->interpolate(x);
+						y = modelInterpolators[j]->getLastComputeValue();
 					}
 
 					EParticleParams t = paramTypes[j];
