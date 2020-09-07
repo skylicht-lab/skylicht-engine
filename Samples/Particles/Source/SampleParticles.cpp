@@ -73,35 +73,41 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 
 	// create start point
 	// Particle::CZone *zone = group->setZone(factory->createPointZone());
-	Particle::CZone *zone = group->setZone(factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), 1.0f));
+	Particle::CZone *zone = group->setZone(factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), 2.0f));
+	// Particle::CZone *zone = group->setZone(factory->createCylinderZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 2.0f, 3.0f));
+	// Particle::CZone *zone = group->setZone(factory->createLineZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(2.0f, 2.0f, 2.0f)));
+	// Particle::CZone *zone = group->setZone(factory->createAABoxZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(2.0f, 2.0f, 2.0f)));
+	// Particle::CZone *zone = group->setZone(factory->createRingZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 1.0, 2.0f));
 
 	// create emitter
-	// Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
-	Particle::CEmitter *emitter = group->addEmitter(factory->createStraightEmitter(core::vector3df(0.0f, 0.0f, 1.0f)));
+	Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
+	// Particle::CEmitter *emitter = group->addEmitter(factory->createStraightEmitter(core::vector3df(0.0f, 0.0f, 1.0f)));	
+	// Particle::CEmitter *emitter = group->addEmitter(factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), core::PI * 0.0f, core::PI * 0.2f));
 	emitter->setTank(0);
-	emitter->setFlow(500.0f);
-	emitter->setForce(0.0f, 0.0f);
+	emitter->setFlow(2000.0f);
+	emitter->setForce(0.0f, 0.5f);
 	emitter->setEmitFullZone(false);
 
 	// create renderer
 	Particle::CQuadRenderer *quadRenderer = factory->createQuadRenderer();
 	group->setRenderer(quadRenderer);
 
-	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
-	quadRenderer->setAtlas(2, 2);
+	//ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
+	//quadRenderer->setAtlas(2, 2);
+	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
+	quadRenderer->setAtlas(1, 1);
 	quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
 	quadRenderer->getMaterial()->applyMaterial();
 
 	// create model
 	group->Gravity.set(0.0f, 0.1f, 0.0f);
 
-	group->createModel(Particle::RotateSpeedZ)->setStart(2.0f);
+	// group->createModel(Particle::RotateSpeedZ)->setStart(-2.0f, 2.0f);
+	// group->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
 
-	group->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
-
-	group->createModel(Particle::ScaleX)->setStart(0.1f)->setEnd(0.7f, 1.0f);
-	group->createModel(Particle::ScaleY)->setStart(0.1f)->setEnd(0.7f, 1.0f);
-	group->createModel(Particle::ScaleZ)->setStart(0.1f)->setEnd(0.7f, 1.0f);
+	group->createModel(Particle::ScaleX)->setStart(0.1f)->setEnd(0.1f, 0.1f);
+	group->createModel(Particle::ScaleY)->setStart(0.1f)->setEnd(0.1f, 0.1f);
+	group->createModel(Particle::ScaleZ)->setStart(0.1f)->setEnd(0.1f, 0.1f);
 
 	group->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	group->createModel(Particle::ColorR)->setStart(0.8f)->setEnd(1.0f);
