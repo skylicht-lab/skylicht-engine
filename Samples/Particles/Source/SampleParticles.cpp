@@ -72,13 +72,16 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 	Particle::CGroup *group = particleComponent->createParticleGroup();
 
 	// create start point
-	Particle::CZone *zone = group->setZone(factory->createPointZone());
-	zone->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
+	// Particle::CZone *zone = group->setZone(factory->createPointZone());
+	Particle::CZone *zone = group->setZone(factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), 1.0f));
 
 	// create emitter
-	Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
+	// Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
+	Particle::CEmitter *emitter = group->addEmitter(factory->createStraightEmitter(core::vector3df(0.0f, 0.0f, 1.0f)));
 	emitter->setTank(0);
-	emitter->setFlow(300.0f);
+	emitter->setFlow(500.0f);
+	emitter->setForce(0.0f, 0.0f);
+	emitter->setEmitFullZone(false);
 
 	// create renderer
 	Particle::CQuadRenderer *quadRenderer = factory->createQuadRenderer();
@@ -90,15 +93,15 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 	quadRenderer->getMaterial()->applyMaterial();
 
 	// create model
-	group->Gravity.set(0.0f, 0.4f, 0.0f);
+	group->Gravity.set(0.0f, 0.1f, 0.0f);
 
 	group->createModel(Particle::RotateSpeedZ)->setStart(2.0f);
 
 	group->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
 
-	group->createModel(Particle::ScaleX)->setStart(0.5f)->setEnd(4.0f, 6.0f);
-	group->createModel(Particle::ScaleY)->setStart(0.5f)->setEnd(4.0f, 6.0f);
-	group->createModel(Particle::ScaleZ)->setStart(0.5f)->setEnd(4.0f, 6.0f);
+	group->createModel(Particle::ScaleX)->setStart(0.1f)->setEnd(0.7f, 1.0f);
+	group->createModel(Particle::ScaleY)->setStart(0.1f)->setEnd(0.7f, 1.0f);
+	group->createModel(Particle::ScaleZ)->setStart(0.1f)->setEnd(0.7f, 1.0f);
 
 	group->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	group->createModel(Particle::ColorR)->setStart(0.8f)->setEnd(1.0f);
