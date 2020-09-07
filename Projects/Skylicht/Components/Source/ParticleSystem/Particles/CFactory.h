@@ -33,6 +33,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Zones/CPoint.h"
 #include "Zones/CSphere.h"
 #include "Zones/CAABox.h"
+#include "Zones/CCylinder.h"
+#include "Zones/CLine.h"
+#include "Zones/CRing.h"
 
 #include "Emitters/CRandomEmitter.h"
 #include "Emitters/CStraightEmitter.h"
@@ -71,6 +74,12 @@ namespace Skylicht
 			CSphere* createSphereZone(const core::vector3df& pos, float radius);
 
 			CAABox* createAABoxZone(const core::vector3df& pos, const core::vector3df& dimension);
+
+			CCylinder* createCylinderZone(const core::vector3df& pos, const core::vector3df& direction, float radius, float length);
+
+			CLine* createLineZone(const core::vector3df& p1, const core::vector3df& p2);
+
+			CRing* createRingZone(const core::vector3df& pos, const core::vector3df& normal, float minRadius, float maxRadius);
 
 			void deleteZone(CZone *z);
 		};
