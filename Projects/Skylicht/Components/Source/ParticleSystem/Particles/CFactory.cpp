@@ -57,6 +57,14 @@ namespace Skylicht
 			return e;
 		}
 
+		CStraightEmitter* CFactory::createStraightEmitter(const core::vector3df& direction)
+		{
+			CStraightEmitter *e = new CStraightEmitter();
+			e->setDirection(direction);
+			m_emitters.push_back(e);
+			return e;
+		}
+
 		void CFactory::deleteEmitter(CEmitter *e)
 		{
 			std::vector<CEmitter*>::iterator i = std::find(m_emitters.begin(), m_emitters.end(), e);
@@ -87,6 +95,13 @@ namespace Skylicht
 		CPoint* CFactory::createPointZone()
 		{
 			CPoint *z = new CPoint();
+			m_zones.push_back(z);
+			return z;
+		}
+
+		CSphere* CFactory::createSphereZone(const core::vector3df& pos, float radius)
+		{
+			CSphere *z = new CSphere(pos, radius);
 			m_zones.push_back(z);
 			return z;
 		}

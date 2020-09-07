@@ -33,7 +33,8 @@ namespace Skylicht
 
 		enum EEmitter
 		{
-			Random
+			Random,
+			Straight,
 		};
 
 		class CEmitter

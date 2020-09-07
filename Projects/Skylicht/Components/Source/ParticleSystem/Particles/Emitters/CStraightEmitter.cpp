@@ -22,51 +22,29 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Renderers/IRenderer.h"
-#include "Zones/CZone.h"
-#include "Emitters/CEmitter.h"
-
-#include "Renderers/CQuadRenderer.h"
-
-#include "Zones/CPoint.h"
-#include "Zones/CSphere.h"
-
-#include "Emitters/CRandomEmitter.h"
-#include "Emitters/CStraightEmitter.h"
+#include "pch.h"
+#include "CStraightEmitter.h"
+#include "ParticleSystem/Particles/CParticle.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CFactory
+		CStraightEmitter::CStraightEmitter() :
+			CEmitter(Straight),
+			m_direction(0.0f, 1.0f, 0.0f)
 		{
-		protected:
-			std::vector<IRenderer*> m_renderers;
-			std::vector<CZone*> m_zones;
-			std::vector<CEmitter*> m_emitters;
 
-		public:
-			CFactory();
+		}
 
-			virtual ~CFactory();
+		CStraightEmitter::~CStraightEmitter()
+		{
 
-			CRandomEmitter* createRandomEmitter();
+		}
 
-			CStraightEmitter* createStraightEmitter(const core::vector3df& direction);
-
-			void deleteEmitter(CEmitter *e);
-
-			CQuadRenderer* createQuadRenderer();
-
-			void deleteRenderer(IRenderer* r);
-
-			CPoint* createPointZone();
-
-			CSphere* createSphereZone(const core::vector3df& pos, float radius);
-
-			void deleteZone(CZone *z);
-		};
+		void CStraightEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone)
+		{
+			particle.Velocity = m_direction * speed;
+		}
 	}
 }
