@@ -22,88 +22,63 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
+#pragma once
+
 #include "CZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		// use local random
-		s32 seed = 0x0f0f0f0f;
-		const s32 m = 2147483399;	// a non-Mersenne prime
-		const s32 a = 40692;		// another spectral success story
-		const s32 q = m / a;
-		const s32 r = m % a;		// again less than q
-		const s32 rMax = m - 1;
-
-		s32 particle_rand()
+		class CRing : public CZone
 		{
-			// (a*seed)%m with Schrage's method
-			seed = a * (seed%q) - r * (seed / q);
-			if (seed < 0)
-				seed += m;
+		protected:
+			core::vector3df m_position;
+			core::vector3df m_normal;
+			float m_minRadius;
+			float m_maxRadius;
 
-			return seed;
-		}
+		public:
+			CRing(const core::vector3df& position, const core::vector3df& normal, float minRadius, float maxRadius);
 
-		f32 particle_frand()
-		{
-			return particle_rand()*(1.f / rMax);
-		}
+			virtual ~CRing();
 
-		s32 particle_rand_max()
-		{
-			return rMax;
-		}
-
-		void random_reset(s32 value)
-		{
-			seed = value;
-		}
-
-		int random(int from, int to)
-		{
-			s32 r = particle_rand() % (to - from);
-			return from + r;
-		}
-
-		float random(float from, float to)
-		{
-			return from + (to - from) * particle_frand();
-		}
-
-		CZone::CZone(EZone type) :
-			m_type(type)
-		{
-
-		}
-
-		CZone::~CZone()
-		{
-
-		}
-
-		void CZone::normalizeOrRandomize(core::vector3df& v)
-		{
-			while (v.getLengthSQ() == 0.0f)
+			inline void setPosition(const core::vector3df& pos)
 			{
-				v.X = random(-1.0f, 1.0f);
-				v.Y = random(-1.0f, 1.0f);
-				v.Z = random(-1.0f, 1.0f);
+				m_position = pos;
 			}
 
-			v.normalize();
-		}
+			inline core::vector3df& getPosition()
+			{
+				return m_position;
+			}
 
-		core::vector3df CZone::getTransformPosition(const core::vector3df& pos)
-		{
-			return pos;
-		}
+			inline void setNormal(const core::vector3df& d)
+			{
+				m_normal = d;
+				m_normal.normalize();
+			}
 
-		core::vector3df CZone::getTransformVector(const core::vector3df& vec)
-		{
-			return vec;
-		}
+			inline core::vector3df& getNormal()
+			{
+				return m_normal;
+			}
+
+			void setRadius(float min, float max);
+
+			inline float getMinRadius()
+			{
+				return m_minRadius;
+			}
+
+			inline float getMaxRadius()
+			{
+				return m_maxRadius;
+			}
+
+			virtual void generatePosition(CParticle& particle, bool full);
+
+			virtual core::vector3df computeNormal(const core::vector3df& point);
+		};
 	}
 }

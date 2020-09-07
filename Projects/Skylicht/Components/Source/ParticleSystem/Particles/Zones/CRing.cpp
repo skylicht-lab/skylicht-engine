@@ -23,87 +23,62 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CZone.h"
+#include "CRing.h"
+#include "ParticleSystem/Particles/CParticle.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		// use local random
-		s32 seed = 0x0f0f0f0f;
-		const s32 m = 2147483399;	// a non-Mersenne prime
-		const s32 a = 40692;		// another spectral success story
-		const s32 q = m / a;
-		const s32 r = m % a;		// again less than q
-		const s32 rMax = m - 1;
-
-		s32 particle_rand()
+		CRing::CRing(const core::vector3df& position, const core::vector3df& normal, float minRadius, float maxRadius) :
+			CZone(Ring),
+			m_position(position)
 		{
-			// (a*seed)%m with Schrage's method
-			seed = a * (seed%q) - r * (seed / q);
-			if (seed < 0)
-				seed += m;
-
-			return seed;
+			setNormal(normal);
+			setRadius(minRadius, maxRadius);
 		}
 
-		f32 particle_frand()
-		{
-			return particle_rand()*(1.f / rMax);
-		}
-
-		s32 particle_rand_max()
-		{
-			return rMax;
-		}
-
-		void random_reset(s32 value)
-		{
-			seed = value;
-		}
-
-		int random(int from, int to)
-		{
-			s32 r = particle_rand() % (to - from);
-			return from + r;
-		}
-
-		float random(float from, float to)
-		{
-			return from + (to - from) * particle_frand();
-		}
-
-		CZone::CZone(EZone type) :
-			m_type(type)
+		CRing::~CRing()
 		{
 
 		}
 
-		CZone::~CZone()
+		void CRing::setRadius(float minRadius, float maxRadius)
 		{
+			if (minRadius < 0.0f) minRadius = -minRadius;
+			if (maxRadius < 0.0f) maxRadius = -maxRadius;
 
+			if (minRadius > maxRadius)
+				std::swap(minRadius, maxRadius);
+
+			m_minRadius = minRadius;
+			m_maxRadius = maxRadius;
 		}
 
-		void CZone::normalizeOrRandomize(core::vector3df& v)
+		void CRing::generatePosition(CParticle& particle, bool full)
 		{
-			while (v.getLengthSQ() == 0.0f)
+			float sqrMinRadius = m_minRadius * m_minRadius;
+			float sqrMaxRadius = m_maxRadius * m_maxRadius;
+
+			core::vector3df pos = getTransformPosition(m_position);
+			core::vector3df normal = getTransformVector(m_normal);
+
+			core::vector3df tmp;
+			do
 			{
-				v.X = random(-1.0f, 1.0f);
-				v.Y = random(-1.0f, 1.0f);
-				v.Z = random(-1.0f, 1.0f);
-			}
+				tmp.set(random(-1.0f, 1.0f), random(-1.0f, 1.0f), random(-1.0f, 1.0f));
+			} while (tmp.getLengthSQ() > 1.0f);
 
+			core::vector3df v = normal.crossProduct(tmp);
 			v.normalize();
+			v *= sqrtf(random(sqrMinRadius, sqrMaxRadius)); // to have a uniform distribution
+
+			particle.Position = pos + v;
 		}
 
-		core::vector3df CZone::getTransformPosition(const core::vector3df& pos)
+		core::vector3df CRing::computeNormal(const core::vector3df& point)
 		{
-			return pos;
-		}
-
-		core::vector3df CZone::getTransformVector(const core::vector3df& vec)
-		{
-			return vec;
+			return getTransformVector(m_normal);
 		}
 	}
 }
