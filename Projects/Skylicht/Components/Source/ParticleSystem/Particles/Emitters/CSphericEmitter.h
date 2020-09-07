@@ -24,55 +24,48 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Renderers/IRenderer.h"
-#include "Zones/CZone.h"
-#include "Emitters/CEmitter.h"
-
-#include "Renderers/CQuadRenderer.h"
-
-#include "Zones/CPoint.h"
-#include "Zones/CSphere.h"
-#include "Zones/CAABox.h"
-
-#include "Emitters/CRandomEmitter.h"
-#include "Emitters/CStraightEmitter.h"
-#include "Emitters/CSphericEmitter.h"
+#include "CEmitter.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CFactory
+		class CSphericEmitter : public CEmitter
 		{
 		protected:
-			std::vector<IRenderer*> m_renderers;
-			std::vector<CZone*> m_zones;
-			std::vector<CEmitter*> m_emitters;
+			core::vector3df m_direction;
+			float m_angleA;
+			float m_angleB;
+			float m_cosAngleMin;
+			float m_cosAngleMax;
 
+			// matrix 3x3
+			float m_matrix[9];
 		public:
-			CFactory();
+			CSphericEmitter();
 
-			virtual ~CFactory();
+			virtual ~CSphericEmitter();
 
-			CRandomEmitter* createRandomEmitter();
+			void setDirection(const core::vector3df& d);
 
-			CStraightEmitter* createStraightEmitter(const core::vector3df& direction);
+			void setAngles(float a, float b);
 
-			CSphericEmitter* createSphericEmitter(const core::vector3df& direction, float angleA, float angleB);
+			inline float getAngleA()
+			{
+				return m_angleA;
+			}
 
-			void deleteEmitter(CEmitter *e);
+			inline float getAngleB()
+			{
+				return m_angleB;
+			}
 
-			CQuadRenderer* createQuadRenderer();
+			inline const core::vector3df& getDirection()
+			{
+				return m_direction;
+			}
 
-			void deleteRenderer(IRenderer* r);
-
-			CPoint* createPointZone();
-
-			CSphere* createSphereZone(const core::vector3df& pos, float radius);
-
-			CAABox* createAABoxZone(const core::vector3df& pos, const core::vector3df& dimension);
-
-			void deleteZone(CZone *z);
+			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone);
 		};
 	}
 }

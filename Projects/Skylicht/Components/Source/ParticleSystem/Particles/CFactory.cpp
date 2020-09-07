@@ -65,6 +65,15 @@ namespace Skylicht
 			return e;
 		}
 
+		CSphericEmitter* CFactory::createSphericEmitter(const core::vector3df& direction, float angleA, float angleB)
+		{
+			CSphericEmitter *e = new CSphericEmitter();
+			e->setDirection(direction);
+			e->setAngles(angleA, angleB);
+			m_emitters.push_back(e);
+			return e;
+		}
+
 		void CFactory::deleteEmitter(CEmitter *e)
 		{
 			std::vector<CEmitter*>::iterator i = std::find(m_emitters.begin(), m_emitters.end(), e);
@@ -102,6 +111,13 @@ namespace Skylicht
 		CSphere* CFactory::createSphereZone(const core::vector3df& pos, float radius)
 		{
 			CSphere *z = new CSphere(pos, radius);
+			m_zones.push_back(z);
+			return z;
+		}
+
+		CAABox* CFactory::createAABoxZone(const core::vector3df& pos, const core::vector3df& dimension)
+		{
+			CAABox *z = new CAABox(pos, dimension);
 			m_zones.push_back(z);
 			return z;
 		}
