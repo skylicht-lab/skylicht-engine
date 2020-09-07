@@ -24,65 +24,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CZone.h"
+
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticle;
-
-		int random(int from, int to);
-
-		float random(float from, float to);
-
-		void random_reset(s32 seed);
-
-		enum EZone
-		{
-			Sphere,
-			Point,
-			AABox,
-			Plane,
-			Line,
-			Ring,
-			Cylinder
-		};
-
-		class CZone
+		class CLine : public CZone
 		{
 		protected:
-			core::vector3df m_position;
-
-			EZone m_type;
+			core::vector3df m_p1;
+			core::vector3df m_p2;
 
 		public:
-			CZone(EZone type);
+			CLine(const core::vector3df& p1, const core::vector3df& p2);
 
-			virtual ~CZone();
+			virtual ~CLine();
 
-			inline void setPosition(const core::vector3df& pos)
-			{
-				m_position = pos;
-			}
+			void setLine(const core::vector3df& p1, const core::vector3df& p2);
 
-			const core::vector3df& getPosition()
-			{
-				return m_position;
-			}
+			virtual void generatePosition(CParticle& particle, bool full);
 
-			inline EZone getType()
-			{
-				return m_type;
-			}
-
-			void normalizeOrRandomize(core::vector3df& v);
-
-			core::vector3df getTransformPosition(const core::vector3df& pos);
-
-			core::vector3df getTransformVector(const core::vector3df& vec);
-
-			virtual void generatePosition(CParticle& particle, bool full) = 0;
-
-			virtual core::vector3df computeNormal(const core::vector3df& point) = 0;
+			virtual core::vector3df computeNormal(const core::vector3df& point);
 		};
 	}
 }

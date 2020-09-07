@@ -23,87 +23,63 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CZone.h"
+#include "CLine.h"
+#include "ParticleSystem/Particles/CParticle.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		// use local random
-		s32 seed = 0x0f0f0f0f;
-		const s32 m = 2147483399;	// a non-Mersenne prime
-		const s32 a = 40692;		// another spectral success story
-		const s32 q = m / a;
-		const s32 r = m % a;		// again less than q
-		const s32 rMax = m - 1;
-
-		s32 particle_rand()
+		CLine::CLine(const core::vector3df& p1, const core::vector3df& p2) :
+			CZone(Line)
 		{
-			// (a*seed)%m with Schrage's method
-			seed = a * (seed%q) - r * (seed / q);
-			if (seed < 0)
-				seed += m;
-
-			return seed;
+			setLine(p1, p2);
 		}
 
-		f32 particle_frand()
-		{
-			return particle_rand()*(1.f / rMax);
-		}
-
-		s32 particle_rand_max()
-		{
-			return rMax;
-		}
-
-		void random_reset(s32 value)
-		{
-			seed = value;
-		}
-
-		int random(int from, int to)
-		{
-			s32 r = particle_rand() % (to - from);
-			return from + r;
-		}
-
-		float random(float from, float to)
-		{
-			return from + (to - from) * particle_frand();
-		}
-
-		CZone::CZone(EZone type) :
-			m_type(type)
+		CLine::~CLine()
 		{
 
 		}
 
-		CZone::~CZone()
+		void CLine::setLine(const core::vector3df& p1, const core::vector3df& p2)
 		{
-
+			m_p1 = p1;
+			m_p2 = p2;
 		}
 
-		void CZone::normalizeOrRandomize(core::vector3df& v)
+		void CLine::generatePosition(CParticle& particle, bool full)
 		{
-			while (v.getLengthSQ() == 0.0f)
+			core::vector3df pos = getTransformPosition(m_p1);
+			core::vector3df direction = getTransformPosition(m_p2) - pos;
+
+			float ratio = random(0.0f, 1.0f);
+			particle.Position = pos + direction * ratio;
+		}
+
+		core::vector3df CLine::computeNormal(const core::vector3df& point)
+		{
+			core::vector3df pos = getTransformPosition(m_p1);
+			core::vector3df direction = getTransformPosition(m_p2) - pos;
+
+			float d = -direction.dotProduct(point);
+			float sqrNorm = direction.getLengthSQ();
+			float t = 0.0f;
+			if (sqrNorm > 0.0f)
 			{
-				v.X = random(-1.0f, 1.0f);
-				v.Y = random(-1.0f, 1.0f);
-				v.Z = random(-1.0f, 1.0f);
+				t = -(direction.dotProduct(pos) + d) / sqrNorm;
+
+				// t is clamped to the segment
+				if (t < 0.0f)
+					t = 0.0f;
+				else if (t > 1.0f)
+					t = 1.0f;
 			}
 
-			v.normalize();
-		}
+			core::vector3df normal = point;
+			normal -= pos + t * direction;
+			normal.normalize();
 
-		core::vector3df CZone::getTransformPosition(const core::vector3df& pos)
-		{
-			return pos;
-		}
-
-		core::vector3df CZone::getTransformVector(const core::vector3df& vec)
-		{
-			return vec;
+			return normal;
 		}
 	}
 }

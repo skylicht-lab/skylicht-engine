@@ -122,6 +122,27 @@ namespace Skylicht
 			return z;
 		}
 
+		CCylinder* CFactory::createCylinderZone(const core::vector3df& pos, const core::vector3df& direction, float radius, float length)
+		{
+			CCylinder *z = new CCylinder(pos, direction, radius, length);
+			m_zones.push_back(z);
+			return z;
+		}
+
+		CLine* CFactory::createLineZone(const core::vector3df& p1, const core::vector3df& p2)
+		{
+			CLine *z = new CLine(p1, p2);
+			m_zones.push_back(z);
+			return z;
+		}
+
+		CRing* CFactory::createRingZone(const core::vector3df& pos, const core::vector3df& normal, float minRadius, float maxRadius)
+		{
+			CRing *z = new CRing(pos, normal, minRadius, maxRadius);
+			m_zones.push_back(z);
+			return z;
+		}
+
 		void CFactory::deleteZone(CZone *z)
 		{
 			std::vector<CZone*>::iterator i = std::find(m_zones.begin(), m_zones.end(), z);

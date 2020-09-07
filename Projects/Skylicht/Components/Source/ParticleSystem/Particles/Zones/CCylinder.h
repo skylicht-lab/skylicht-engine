@@ -24,65 +24,72 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CZone.h"
+
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticle;
-
-		int random(int from, int to);
-
-		float random(float from, float to);
-
-		void random_reset(s32 seed);
-
-		enum EZone
-		{
-			Sphere,
-			Point,
-			AABox,
-			Plane,
-			Line,
-			Ring,
-			Cylinder
-		};
-
-		class CZone
+		class CCylinder : public CZone
 		{
 		protected:
 			core::vector3df m_position;
-
-			EZone m_type;
+			core::vector3df m_direction;
+			float m_radius;
+			float m_length;
 
 		public:
-			CZone(EZone type);
+			CCylinder(const core::vector3df& position,
+				const core::vector3df& direction,
+				float radius,
+				float length);
 
-			virtual ~CZone();
+			virtual ~CCylinder();
 
 			inline void setPosition(const core::vector3df& pos)
 			{
 				m_position = pos;
 			}
 
-			const core::vector3df& getPosition()
+			inline void setDirection(const core::vector3df& direction)
+			{
+				m_direction = direction;
+				m_direction.normalize();
+			}
+
+			inline void setRadius(float r)
+			{
+				m_radius = r;
+			}
+
+			inline void setLength(float l)
+			{
+				m_length = l;
+			}
+
+			inline const core::vector3df& getPosition()
 			{
 				return m_position;
 			}
 
-			inline EZone getType()
+			inline const core::vector3df& getDirection()
 			{
-				return m_type;
+				return m_direction;
 			}
 
-			void normalizeOrRandomize(core::vector3df& v);
+			inline float getRadius()
+			{
+				return m_radius;
+			}
 
-			core::vector3df getTransformPosition(const core::vector3df& pos);
+			inline float getLength()
+			{
+				return m_length;
+			}
 
-			core::vector3df getTransformVector(const core::vector3df& vec);
+			virtual void generatePosition(CParticle& particle, bool full);
 
-			virtual void generatePosition(CParticle& particle, bool full) = 0;
-
-			virtual core::vector3df computeNormal(const core::vector3df& point) = 0;
+			virtual core::vector3df computeNormal(const core::vector3df& point);
 		};
 	}
 }
