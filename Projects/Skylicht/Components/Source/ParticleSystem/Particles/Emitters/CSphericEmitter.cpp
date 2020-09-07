@@ -58,8 +58,8 @@ namespace Skylicht
 			m_angleA = angleA;
 			m_angleB = angleB;
 
-			m_cosAngleMin = std::cos(m_angleA * 0.5f);
-			m_cosAngleMax = std::cos(m_angleB * 0.5f);
+			m_cosAngleMin = cosf(m_angleA * 0.5f);
+			m_cosAngleMax = cosf(m_angleB * 0.5f);
 		}
 
 		void CSphericEmitter::setDirection(const core::vector3df& d)
