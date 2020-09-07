@@ -23,82 +23,60 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CZone.h"
+#include "CAABox.h"
+#include "ParticleSystem/Particles/CParticle.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		// use local random
-		s32 seed = 0x0f0f0f0f;
-		const s32 m = 2147483399;	// a non-Mersenne prime
-		const s32 a = 40692;		// another spectral success story
-		const s32 q = m / a;
-		const s32 r = m % a;		// again less than q
-		const s32 rMax = m - 1;
-
-		s32 particle_rand()
-		{
-			// (a*seed)%m with Schrage's method
-			seed = a * (seed%q) - r * (seed / q);
-			if (seed < 0)
-				seed += m;
-
-			return seed;
-		}
-
-		f32 particle_frand()
-		{
-			return particle_rand()*(1.f / rMax);
-		}
-
-		s32 particle_rand_max()
-		{
-			return rMax;
-		}
-
-		void random_reset(s32 value)
-		{
-			seed = value;
-		}
-
-		int random(int from, int to)
-		{
-			s32 r = particle_rand() % (to - from);
-			return from + r;
-		}
-
-		float random(float from, float to)
-		{
-			return from + (to - from) * particle_frand();
-		}
-
-		CZone::CZone(EZone type) :
-			m_type(type)
+		CAABox::CAABox(const core::vector3df& position, const core::vector3df& dimension) :
+			CZone(AABox),
+			m_position(position),
+			m_dimension(dimension)
 		{
 
 		}
 
-		CZone::~CZone()
+		CAABox::~CAABox()
 		{
 
 		}
 
-		void CZone::normalizeOrRandomize(core::vector3df& v)
+		void CAABox::generatePosition(CParticle& particle, bool full)
 		{
-			while (v.getLengthSQ() == 0.0f)
+			core::vector3df pos = getTransformPosition(m_position);
+
+			particle.Position.X = pos.X + random(-m_dimension.X * 0.5f, m_dimension.X * 0.5f);
+			particle.Position.Y = pos.Y + random(-m_dimension.Y * 0.5f, m_dimension.Y * 0.5f);
+			particle.Position.Z = pos.Z + random(-m_dimension.Z * 0.5f, m_dimension.Z * 0.5f);
+
+			if (!full)
 			{
-				v.X = random(-1.0f, 1.0f);
-				v.Y = random(-1.0f, 1.0f);
-				v.Z = random(-1.0f, 1.0f);
-			}
+				int axis = random(0, 3);
+				int sens = (random(0, 2) << 1) - 1;
 
-			v.normalize();
+				switch (axis)
+				{
+				case 0:
+					particle.Position.X = pos.X + sens * m_dimension.X * 0.5f;
+					break;
+				case 1:
+					particle.Position.Y = pos.Y + sens * m_dimension.Y * 0.5f;
+					break;
+				default:
+					particle.Position.Z = pos.Z + sens * m_dimension.Z * 0.5f;
+					break;
+				}
+			}
 		}
 
-		core::vector3df CZone::getTransformPosition(const core::vector3df& pos)
+		core::vector3df CAABox::computeNormal(const core::vector3df& point)
 		{
-			return pos;
+			core::vector3df pos = getTransformPosition(m_position);
+			core::vector3df normal(point - pos);
+			normal.normalize();
+			return normal;
 		}
 	}
 }

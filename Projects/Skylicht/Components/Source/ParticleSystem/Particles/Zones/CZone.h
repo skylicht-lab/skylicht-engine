@@ -30,6 +30,8 @@ namespace Skylicht
 	{
 		class CParticle;
 
+		int random(int from, int to);
+
 		float random(float from, float to);
 
 		void random_reset(s32 seed);

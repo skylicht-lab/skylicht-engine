@@ -35,6 +35,7 @@ namespace Skylicht
 		{
 			Random,
 			Straight,
+			Spheric
 		};
 
 		class CEmitter
