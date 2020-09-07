@@ -24,55 +24,46 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Renderers/IRenderer.h"
-#include "Zones/CZone.h"
-#include "Emitters/CEmitter.h"
-
-#include "Renderers/CQuadRenderer.h"
-
-#include "Zones/CPoint.h"
-#include "Zones/CSphere.h"
-#include "Zones/CAABox.h"
-
-#include "Emitters/CRandomEmitter.h"
-#include "Emitters/CStraightEmitter.h"
-#include "Emitters/CSphericEmitter.h"
+#include "CZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CFactory
+		class CAABox : public CZone
 		{
 		protected:
-			std::vector<IRenderer*> m_renderers;
-			std::vector<CZone*> m_zones;
-			std::vector<CEmitter*> m_emitters;
+			core::vector3df m_position;
+			core::vector3df m_dimension;
 
 		public:
-			CFactory();
+			CAABox(const core::vector3df& position, const core::vector3df& dimension);
 
-			virtual ~CFactory();
+			virtual ~CAABox();
 
-			CRandomEmitter* createRandomEmitter();
+			inline void setPosition(const core::vector3df& pos)
+			{
+				m_position = pos;
+			}
 
-			CStraightEmitter* createStraightEmitter(const core::vector3df& direction);
+			inline void setDimension(const core::vector3df& dimension)
+			{
+				m_dimension = dimension;
+			}
 
-			CSphericEmitter* createSphericEmitter(const core::vector3df& direction, float angleA, float angleB);
+			inline const core::vector3df& getPosition()
+			{
+				return m_position;
+			}
 
-			void deleteEmitter(CEmitter *e);
+			inline const core::vector3df& getDimension()
+			{
+				return m_dimension;
+			}
 
-			CQuadRenderer* createQuadRenderer();
+			virtual void generatePosition(CParticle& particle, bool full);
 
-			void deleteRenderer(IRenderer* r);
-
-			CPoint* createPointZone();
-
-			CSphere* createSphereZone(const core::vector3df& pos, float radius);
-
-			CAABox* createAABoxZone(const core::vector3df& pos, const core::vector3df& dimension);
-
-			void deleteZone(CZone *z);
+			virtual core::vector3df computeNormal(const core::vector3df& point);
 		};
 	}
 }
