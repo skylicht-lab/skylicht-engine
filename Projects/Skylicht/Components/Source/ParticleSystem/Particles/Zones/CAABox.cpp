@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CAABox.h"
 #include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
@@ -43,9 +44,9 @@ namespace Skylicht
 
 		}
 
-		void CAABox::generatePosition(CParticle& particle, bool full)
+		void CAABox::generatePosition(CParticle& particle, bool full, CGroup* group)
 		{
-			core::vector3df pos = getTransformPosition(m_position);
+			core::vector3df pos = group->getTransformPosition(m_position);
 
 			particle.Position.X = pos.X + random(-m_dimension.X * 0.5f, m_dimension.X * 0.5f);
 			particle.Position.Y = pos.Y + random(-m_dimension.Y * 0.5f, m_dimension.Y * 0.5f);
@@ -71,9 +72,9 @@ namespace Skylicht
 			}
 		}
 
-		core::vector3df CAABox::computeNormal(const core::vector3df& point)
+		core::vector3df CAABox::computeNormal(const core::vector3df& point, CGroup* group)
 		{
-			core::vector3df pos = getTransformPosition(m_position);
+			core::vector3df pos = group->getTransformPosition(m_position);
 			core::vector3df normal(point - pos);
 			normal.normalize();
 			return normal;

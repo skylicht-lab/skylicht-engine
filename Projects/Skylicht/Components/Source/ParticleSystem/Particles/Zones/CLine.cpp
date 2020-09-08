@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CLine.h"
 #include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
@@ -47,19 +48,19 @@ namespace Skylicht
 			m_p2 = p2;
 		}
 
-		void CLine::generatePosition(CParticle& particle, bool full)
+		void CLine::generatePosition(CParticle& particle, bool full, CGroup* group)
 		{
-			core::vector3df pos = getTransformPosition(m_p1);
-			core::vector3df direction = getTransformPosition(m_p2) - pos;
+			core::vector3df pos = group->getTransformPosition(m_p1);
+			core::vector3df direction = group->getTransformPosition(m_p2) - pos;
 
 			float ratio = random(0.0f, 1.0f);
 			particle.Position = pos + direction * ratio;
 		}
 
-		core::vector3df CLine::computeNormal(const core::vector3df& point)
+		core::vector3df CLine::computeNormal(const core::vector3df& point, CGroup* group)
 		{
-			core::vector3df pos = getTransformPosition(m_p1);
-			core::vector3df direction = getTransformPosition(m_p2) - pos;
+			core::vector3df pos = group->getTransformPosition(m_p1);
+			core::vector3df direction = group->getTransformPosition(m_p2) - pos;
 
 			float d = -direction.dotProduct(point);
 			float sqrNorm = direction.getLengthSQ();

@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSphere.h"
 #include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
@@ -43,7 +44,7 @@ namespace Skylicht
 
 		}
 
-		void CSphere::generatePosition(CParticle& particle, bool full)
+		void CSphere::generatePosition(CParticle& particle, bool full, CGroup* group)
 		{
 			core::vector3df r;
 			float r2 = m_radius * m_radius;
@@ -63,12 +64,12 @@ namespace Skylicht
 				r *= m_radius;
 			}
 
-			particle.Position = getTransformPosition(m_position) + r;
+			particle.Position = group->getTransformPosition(m_position) + r;
 		}
 
-		core::vector3df CSphere::computeNormal(const core::vector3df& point)
+		core::vector3df CSphere::computeNormal(const core::vector3df& point, CGroup* group)
 		{
-			core::vector3df normal(point - getTransformPosition(m_position));
+			core::vector3df normal(point - group->getTransformPosition(m_position));
 			normal.normalize();
 			return normal;
 		}

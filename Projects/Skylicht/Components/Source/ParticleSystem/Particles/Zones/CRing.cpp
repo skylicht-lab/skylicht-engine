@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CRing.h"
 #include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
@@ -55,13 +56,13 @@ namespace Skylicht
 			m_maxRadius = maxRadius;
 		}
 
-		void CRing::generatePosition(CParticle& particle, bool full)
+		void CRing::generatePosition(CParticle& particle, bool full, CGroup* group)
 		{
 			float sqrMinRadius = m_minRadius * m_minRadius;
 			float sqrMaxRadius = m_maxRadius * m_maxRadius;
 
-			core::vector3df pos = getTransformPosition(m_position);
-			core::vector3df normal = getTransformVector(m_normal);
+			core::vector3df pos = group->getTransformPosition(m_position);
+			core::vector3df normal = group->getTransformVector(m_normal);
 
 			core::vector3df tmp;
 			do
@@ -76,9 +77,9 @@ namespace Skylicht
 			particle.Position = pos + v;
 		}
 
-		core::vector3df CRing::computeNormal(const core::vector3df& point)
+		core::vector3df CRing::computeNormal(const core::vector3df& point, CGroup* group)
 		{
-			return getTransformVector(m_normal);
+			return group->getTransformVector(m_normal);
 		}
 	}
 }
