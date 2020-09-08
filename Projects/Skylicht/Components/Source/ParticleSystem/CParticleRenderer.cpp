@@ -86,6 +86,20 @@ namespace Skylicht
 
 			CShaderParticle::setViewUp(up);
 			CShaderParticle::setViewLook(look);
+
+			CParticleBufferData** particles = m_particles.pointer();
+			CWorldTransformData** transforms = m_transforms.pointer();
+
+			for (u32 i = 0, n = m_particles.size(); i < n; i++)
+			{
+				CParticleBufferData* data = particles[i];
+
+				for (u32 j = 0, m = data->Groups.size(); j < m; j++)
+				{
+					data->Groups[j]->setWorldMatrix(transforms[i]->World);
+					data->Groups[j]->update();
+				}
+			}
 		}
 
 		void CParticleRenderer::render(CEntityManager *entityManager)
@@ -95,19 +109,18 @@ namespace Skylicht
 
 		void CParticleRenderer::renderTransparent(CEntityManager *entityManager)
 		{
-			CParticleBufferData** particles = m_particles.pointer();
-			CWorldTransformData** transforms = m_transforms.pointer();
+			getVideoDriver()->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
+			CParticleBufferData** particles = m_particles.pointer();
 			for (u32 i = 0, n = m_particles.size(); i < n; i++)
 			{
-				renderParticleGroup(transforms[i]->World, particles[i]);
+				renderParticleGroup(particles[i]);
 			}
 		}
 
-		void CParticleRenderer::renderParticleGroup(const core::matrix4& transform, CParticleBufferData *data)
+		void CParticleRenderer::renderParticleGroup(CParticleBufferData *data)
 		{
 			IVideoDriver *driver = getVideoDriver();
-			driver->setTransform(video::ETS_WORLD, transform);
 
 			CGroup** groups = data->Groups.pointer();
 			for (u32 i = 0, n = data->Groups.size(); i < n; i++)

@@ -69,6 +69,20 @@ namespace Skylicht
 			return r;
 		}
 
+		core::vector3df CGroup::getTransformPosition(const core::vector3df& pos)
+		{
+			core::vector3df p = pos;
+			m_world.transformVect(p);
+			return p;
+		}
+
+		core::vector3df CGroup::getTransformVector(const core::vector3df& vec)
+		{
+			core::vector3df p = vec;
+			m_world.rotateVect(p);
+			return p;
+		}
+
 		void CGroup::update()
 		{
 			if (m_zone == NULL)
@@ -148,7 +162,7 @@ namespace Skylicht
 
 			if (p.LifeTime > 0)
 			{
-				launch.Emitter->emitParticle(p, m_zone);
+				launch.Emitter->emitParticle(p, m_zone, this);
 				launch.Number--;
 
 				for (CModel *m : m_models)

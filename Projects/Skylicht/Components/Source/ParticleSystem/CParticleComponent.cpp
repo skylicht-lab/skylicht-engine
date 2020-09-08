@@ -58,10 +58,7 @@ namespace Skylicht
 
 		void CParticleComponent::updateComponent()
 		{
-			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
-			{
-				m_data->Groups[i]->update();
-			}
+
 		}
 
 		CGroup* CParticleComponent::createParticleGroup()

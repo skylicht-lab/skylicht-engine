@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CCylinder.h"
 #include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
@@ -48,14 +49,14 @@ namespace Skylicht
 
 		}
 
-		void CCylinder::generatePosition(CParticle& particle, bool full)
+		void CCylinder::generatePosition(CParticle& particle, bool full, CGroup* group)
 		{
 			float cLength = random(0.0f, m_length) - m_length * 0.5f;
 			float cAngle = random(0.0f, 2 * core::PI);
 			float cRadius = full ? random(0.0f, m_radius) : m_radius;
 
-			core::vector3df pos = getTransformPosition(m_position);
-			core::vector3df dir = getTransformVector(m_direction);
+			core::vector3df pos = group->getTransformPosition(m_position);
+			core::vector3df dir = group->getTransformVector(m_direction);
 
 			// We need at least two points to compute a base
 			core::vector3df rPoint = pos + core::vector3df(10.0f, 10.0f, 10.0f);
@@ -69,19 +70,19 @@ namespace Skylicht
 			}
 
 			core::vector3df p1 = dir * dist + pos;
-			dist = p1.getDistanceFrom(rPoint);
+			core::vector3df a = (rPoint - p1);
+			a.Y = 0.0f;
+			a.normalize();
 
-			core::vector3df a = (rPoint - p1) / dist;
-			core::vector3df tmp1 = dir, tmp2 = a; tmp2 = tmp2.crossProduct(tmp1*(-1));
-			core::vector3df b = tmp2;
+			core::vector3df b = a.crossProduct(-dir);
 
 			particle.Position = pos + cLength * dir + a * cRadius * cosf(cAngle) + b * cRadius * sinf(cAngle);
 		}
 
-		core::vector3df CCylinder::computeNormal(const core::vector3df& point)
+		core::vector3df CCylinder::computeNormal(const core::vector3df& point, CGroup* group)
 		{
-			core::vector3df pos = getTransformPosition(m_position);
-			core::vector3df dir = getTransformVector(m_direction);
+			core::vector3df pos = group->getTransformPosition(m_position);
+			core::vector3df dir = group->getTransformVector(m_direction);
 
 			float dist = dir.dotProduct(point - pos);
 

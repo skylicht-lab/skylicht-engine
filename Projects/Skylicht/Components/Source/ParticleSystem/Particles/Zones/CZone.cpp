@@ -95,15 +95,5 @@ namespace Skylicht
 
 			v.normalize();
 		}
-
-		core::vector3df CZone::getTransformPosition(const core::vector3df& pos)
-		{
-			return pos;
-		}
-
-		core::vector3df CZone::getTransformVector(const core::vector3df& vec)
-		{
-			return vec;
-		}
 	}
 }

@@ -72,12 +72,29 @@ namespace Skylicht
 			float LifeMin;
 			float LifeMax;
 
+		protected:
+			core::matrix4 m_world;
+
 		public:
 			CGroup();
 
 			virtual ~CGroup();
 
 			void update();
+
+			inline void setWorldMatrix(const core::matrix4& m)
+			{
+				m_world = m;
+			}
+
+			inline const core::matrix4& getWorld()
+			{
+				return m_world;
+			}
+
+			core::vector3df getTransformPosition(const core::vector3df& pos);
+
+			core::vector3df getTransformVector(const core::vector3df& vec);
 
 			inline CZone* setZone(CZone *z)
 			{

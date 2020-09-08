@@ -61,9 +61,9 @@ namespace Skylicht
 				return m_dimension;
 			}
 
-			virtual void generatePosition(CParticle& particle, bool full);
+			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
-			virtual core::vector3df computeNormal(const core::vector3df& point);
+			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
 		};
 	}
 }
