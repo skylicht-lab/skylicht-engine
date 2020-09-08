@@ -30,12 +30,25 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CRandomEmitter : public CEmitter
+		class CNormalEmitter : public CEmitter
 		{
+		protected:
+			bool m_inverted;
+
 		public:
-			CRandomEmitter();
-			
-			virtual ~CRandomEmitter();
+			CNormalEmitter();
+
+			virtual ~CNormalEmitter();
+
+			inline void setInverted(bool b)
+			{
+				m_inverted = b;
+			}
+
+			inline bool isInverted()
+			{
+				return m_inverted;
+			}
 
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group);
 		};

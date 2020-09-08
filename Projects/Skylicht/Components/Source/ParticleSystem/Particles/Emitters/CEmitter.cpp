@@ -78,16 +78,16 @@ namespace Skylicht
 			return (u32)nbBorn;
 		}
 
-		void CEmitter::generateVelocity(CParticle& particle, CZone* zone)
+		void CEmitter::generateVelocity(CParticle& particle, CZone* zone, CGroup *group)
 		{
 			float force = random(m_forceMin, m_forceMax);
-			generateVelocity(particle, force / particle.Params[Mass], zone);
+			generateVelocity(particle, force / particle.Params[Mass], zone, group);
 		}
 
 		void CEmitter::emitParticle(CParticle &particle, CZone* zone, CGroup *group)
 		{
 			zone->generatePosition(particle, m_emitFullZone, group);
-			generateVelocity(particle, zone);
+			generateVelocity(particle, zone, group);
 		}
 	}
 }

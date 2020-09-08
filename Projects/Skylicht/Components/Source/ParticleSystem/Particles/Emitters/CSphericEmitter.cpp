@@ -105,7 +105,7 @@ namespace Skylicht
 			}
 		}
 
-		void CSphericEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone)
+		void CSphericEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group)
 		{
 			float a = random(m_cosAngleMax, m_cosAngleMin);
 			float theta = acosf(a);
