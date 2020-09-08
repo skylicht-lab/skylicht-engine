@@ -83,7 +83,7 @@ namespace Skylicht
 			return p;
 		}
 
-		void CGroup::update()
+		void CGroup::update(bool updateBuffer)
 		{
 			if (m_zone == NULL)
 				return;
@@ -114,10 +114,14 @@ namespace Skylicht
 			for (ISystem *s : m_systems)
 				s->update(particles, numParticles, this, dt);
 
-			// remove die particle
+			if (numParticles > 0)
+				m_bbox.reset(particles[0].Position);
+
+			// remove die particle & update box
 			for (u32 i = 0; i < numParticles; i++)
 			{
 				CParticle& p = particles[i];
+
 				if (p.Life < 0)
 				{
 					// remove dead particle
@@ -125,9 +129,16 @@ namespace Skylicht
 					--i;
 					--numParticles;
 				}
+				else
+				{
+					// add bbox
+					m_bbox.addInternalPoint(p.Position);
+				}
 			}
 
-			m_bufferSystem->update(particles, numParticles, this, dt);
+			// update instancing buffer
+			if (updateBuffer == true)
+				m_bufferSystem->update(particles, numParticles, this, dt);
 
 			u32 emiterId = 0;
 			u32 emiterLaunch = m_launch.size();
@@ -149,8 +160,6 @@ namespace Skylicht
 					}
 				}
 			}
-
-			// printf("Particle update: %d\n", m_particles.size());
 		}
 
 		bool CGroup::launchParticle(CParticle& p, SLaunchParticle& launch)

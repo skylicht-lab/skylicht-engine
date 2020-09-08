@@ -92,10 +92,10 @@ namespace Skylicht
 				// update position
 				p->LastPosition = p->Position;
 
-				p->Position = p->Position + p->Velocity * dt;
+				p->Position += p->Velocity * dt;
 
 				// update gravity
-				p->Velocity = p->Velocity + gravity;
+				p->Velocity += gravity;
 
 				// update rotation
 				if (p->HaveRotate == true)

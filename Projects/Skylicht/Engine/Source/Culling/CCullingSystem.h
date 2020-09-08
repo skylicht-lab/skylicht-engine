@@ -33,13 +33,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	struct SBBoxAndMaterial
+	{
+		core::aabbox3df BBox;
+		ArrayMaterial* Materials;
+
+		SBBoxAndMaterial(const core::aabbox3df& box, ArrayMaterial* m)
+		{
+			BBox = box;
+			Materials = m;
+		}
+	};
+
 	class CCullingSystem : public IRenderSystem
 	{
 	protected:
 		core::array<CCullingData*> m_cullings;
 		core::array<CWorldTransformData*> m_transforms;
 		core::array<CWorldInverseTransformData*> m_invTransforms;
-		core::array<CRenderMeshData*> m_meshs;
+		core::array<SBBoxAndMaterial> m_bboxAndMaterials;
 
 	public:
 		CCullingSystem();
