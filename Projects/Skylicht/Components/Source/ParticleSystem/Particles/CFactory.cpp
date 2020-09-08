@@ -74,6 +74,14 @@ namespace Skylicht
 			return e;
 		}
 
+		CNormalEmitter* CFactory::createNormalEmitter(bool inverted)
+		{
+			CNormalEmitter *e = new CNormalEmitter();
+			e->setInverted(inverted);
+			m_emitters.push_back(e);
+			return e;
+		}
+
 		void CFactory::deleteEmitter(CEmitter *e)
 		{
 			std::vector<CEmitter*>::iterator i = std::find(m_emitters.begin(), m_emitters.end(), e);

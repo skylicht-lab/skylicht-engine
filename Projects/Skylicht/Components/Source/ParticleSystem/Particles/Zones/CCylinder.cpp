@@ -65,7 +65,7 @@ namespace Skylicht
 			while (dist == 0.0f || dir * dist + pos == rPoint)
 			{
 				// avoid dist == 0, which leads to a div by zero.
-				rPoint += core::vector3df(10.0f, 10.0f, random(-10.0f, 10.0f));
+				rPoint = pos + core::vector3df(random(-10.0f, 10.0f), 10.0f, random(-10.0f, 10.0f));
 				dist = dir.dotProduct(rPoint);
 			}
 

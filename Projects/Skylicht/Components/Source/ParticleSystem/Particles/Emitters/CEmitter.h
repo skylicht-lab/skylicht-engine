@@ -36,7 +36,8 @@ namespace Skylicht
 		{
 			Random,
 			Straight,
-			Spheric
+			Spheric,
+			Normal
 		};
 
 		class CEmitter
@@ -129,11 +130,11 @@ namespace Skylicht
 
 			virtual u32 updateNumber(float deltaTime);
 
-			void generateVelocity(CParticle& particle, CZone* zone);
+			void generateVelocity(CParticle& particle, CZone* zone, CGroup *group);
 
 			void emitParticle(CParticle& particle, CZone* zone, CGroup *group);
 
-			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone) = 0;
+			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group) = 0;
 		};
 	}
 }

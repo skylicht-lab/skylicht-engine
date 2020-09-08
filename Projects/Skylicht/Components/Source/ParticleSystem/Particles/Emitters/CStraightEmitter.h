@@ -51,7 +51,7 @@ namespace Skylicht
 				return m_direction;
 			}
 
-			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone);
+			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group);
 		};
 	}
 }
