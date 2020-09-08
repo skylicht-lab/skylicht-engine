@@ -29,6 +29,7 @@ namespace Skylicht
 	namespace Particle
 	{
 		class CParticle;
+		class CGroup;
 
 		int random(int from, int to);
 
@@ -76,13 +77,9 @@ namespace Skylicht
 
 			void normalizeOrRandomize(core::vector3df& v);
 
-			core::vector3df getTransformPosition(const core::vector3df& pos);
+			virtual void generatePosition(CParticle& particle, bool full, CGroup* group) = 0;
 
-			core::vector3df getTransformVector(const core::vector3df& vec);
-
-			virtual void generatePosition(CParticle& particle, bool full) = 0;
-
-			virtual core::vector3df computeNormal(const core::vector3df& point) = 0;
+			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group) = 0;
 		};
 	}
 }

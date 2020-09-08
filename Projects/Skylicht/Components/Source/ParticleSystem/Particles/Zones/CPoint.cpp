@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CPoint.h"
 #include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
@@ -41,17 +42,17 @@ namespace Skylicht
 
 		}
 
-		void CPoint::generatePosition(CParticle& particle, bool full)
+		void CPoint::generatePosition(CParticle& particle, bool full, CGroup* group)
 		{
-			core::vector3df pos = getTransformPosition(m_position);
+			core::vector3df pos = group->getTransformPosition(m_position);
 			particle.Position = pos;
 		}
 
-		core::vector3df CPoint::computeNormal(const core::vector3df& point)
+		core::vector3df CPoint::computeNormal(const core::vector3df& point, CGroup* group)
 		{
-			core::vector3df tpos = getTransformPosition(m_position);
+			core::vector3df tpos = group->getTransformPosition(m_position);
 			core::vector3df v = point - tpos;
-			getTransformPosition(v);
+			v.normalize();
 			return v;
 		}
 	}

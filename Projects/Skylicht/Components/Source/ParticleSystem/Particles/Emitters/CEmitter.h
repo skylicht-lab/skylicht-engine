@@ -30,6 +30,7 @@ namespace Skylicht
 	{
 		class CZone;
 		class CParticle;
+		class CGroup;
 
 		enum EEmitter
 		{
@@ -130,7 +131,7 @@ namespace Skylicht
 
 			void generateVelocity(CParticle& particle, CZone* zone);
 
-			void emitParticle(CParticle& particle, CZone* zone);
+			void emitParticle(CParticle& particle, CZone* zone, CGroup *group);
 
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone) = 0;
 		};

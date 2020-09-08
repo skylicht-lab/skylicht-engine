@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CEmitter.h"
 
 #include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 #include "ParticleSystem/Particles/Zones/CZone.h"
 
 namespace Skylicht
@@ -83,9 +84,9 @@ namespace Skylicht
 			generateVelocity(particle, force / particle.Params[Mass], zone);
 		}
 
-		void CEmitter::emitParticle(CParticle &particle, CZone* zone)
+		void CEmitter::emitParticle(CParticle &particle, CZone* zone, CGroup *group)
 		{
-			zone->generatePosition(particle, m_emitFullZone);
+			zone->generatePosition(particle, m_emitFullZone, group);
 			generateVelocity(particle, zone);
 		}
 	}

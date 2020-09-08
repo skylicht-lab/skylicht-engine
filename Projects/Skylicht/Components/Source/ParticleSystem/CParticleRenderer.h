@@ -56,10 +56,10 @@ namespace Skylicht
 			virtual void render(CEntityManager *entityManager);
 
 			virtual void renderTransparent(CEntityManager *entityManager);
-		
+
 		protected:
 
-			void renderParticleGroup(const core::matrix4& transform, CParticleBufferData *data);
+			void renderParticleGroup(CParticleBufferData *data);
 
 		};
 	}
