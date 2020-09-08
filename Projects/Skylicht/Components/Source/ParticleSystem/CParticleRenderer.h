@@ -27,7 +27,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
 
+#include "Culling/CCullingBBoxData.h"
+#include "Culling/CCullingData.h"
 #include "Transform/CWorldTransformData.h"
+#include "Transform/CWorldInverseTransformData.h"
 #include "ParticleSystem/CParticleBufferData.h"
 
 namespace Skylicht
@@ -39,6 +42,7 @@ namespace Skylicht
 		protected:
 			core::array<CParticleBufferData*> m_particles;
 			core::array<CWorldTransformData*> m_transforms;
+			core::array<CCullingData*> m_cullings;
 
 		public:
 			CParticleRenderer();

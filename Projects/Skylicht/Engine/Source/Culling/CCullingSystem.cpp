@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CCullingSystem.h"
+#include "CCullingBBoxData.h"
 #include "Entity/CEntityManager.h"
 #include "RenderPipeline/IRenderPipeline.h"
 #include "Camera/CCamera.h"
@@ -47,7 +48,7 @@ namespace Skylicht
 		m_cullings.set_used(0);
 		m_transforms.set_used(0);
 		m_invTransforms.set_used(0);
-		m_meshs.set_used(0);
+		m_bboxAndMaterials.set_used(0);
 	}
 
 	void CCullingSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
@@ -70,7 +71,37 @@ namespace Skylicht
 				if (transform != NULL)
 				{
 					m_cullings.push_back(culling);
-					m_meshs.push_back(mesh);
+
+					CMesh *meshObj = mesh->getMesh();
+
+					m_bboxAndMaterials.push_back(
+						SBBoxAndMaterial(
+							meshObj->getBoundingBox(),
+							&meshObj->Material
+						)
+					);
+
+					m_transforms.push_back(transform);
+					m_invTransforms.push_back(invTransform);
+				}
+			}
+			else
+			{
+				CCullingBBoxData *bbox = entity->getData<CCullingBBoxData>();
+				if (bbox != NULL)
+				{
+					CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+					CWorldInverseTransformData *invTransform = entity->getData<CWorldInverseTransformData>();
+
+					m_cullings.push_back(culling);
+
+					m_bboxAndMaterials.push_back(
+						SBBoxAndMaterial(
+							bbox->BBox,
+							&bbox->Materials
+						)
+					);
+
 					m_transforms.push_back(transform);
 					m_invTransforms.push_back(invTransform);
 				}
@@ -86,7 +117,7 @@ namespace Skylicht
 	void CCullingSystem::update(CEntityManager *entityManager)
 	{
 		CCullingData **cullings = m_cullings.pointer();
-		CRenderMeshData **meshs = m_meshs.pointer();
+		SBBoxAndMaterial *bboxAndMaterials = m_bboxAndMaterials.pointer();
 		CWorldTransformData **transforms = m_transforms.pointer();
 		CWorldInverseTransformData **invTransforms = m_invTransforms.pointer();
 
@@ -103,18 +134,20 @@ namespace Skylicht
 			CCullingData *culling = cullings[i];
 			CWorldTransformData *transform = transforms[i];
 			CWorldInverseTransformData *invTransform = invTransforms[i];
-			CRenderMeshData *meshData = meshs[i];
-			CMesh *mesh = meshData->getMesh();
+			SBBoxAndMaterial &bbBoxMat = bboxAndMaterials[i];
 
 			culling->Visible = true;
 
-			// check material first			
-			for (CMaterial *material : mesh->Material)
+			// check material first
+			if (bbBoxMat.Materials != NULL)
 			{
-				if (material != NULL && rp->canRenderMaterial(material) == false)
+				for (CMaterial *material : *bbBoxMat.Materials)
 				{
-					culling->Visible = false;
-					break;
+					if (material != NULL && rp->canRenderMaterial(material) == false)
+					{
+						culling->Visible = false;
+						break;
+					}
 				}
 			}
 
@@ -122,7 +155,8 @@ namespace Skylicht
 				continue;
 
 			// transform world bbox
-			culling->BBox = mesh->getBoundingBox();
+			culling->BBox = bbBoxMat.BBox;
+
 			transform->World.transformBoxEx(culling->BBox);
 
 			// 1. Detect by bounding box
@@ -153,7 +187,7 @@ namespace Skylicht
 					frust.transform(invTrans);
 
 					core::vector3df edges[8];
-					mesh->getBoundingBox().getEdges(edges);
+					bbBoxMat.BBox.getEdges(edges);
 
 					for (s32 i = 0; i < scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 					{

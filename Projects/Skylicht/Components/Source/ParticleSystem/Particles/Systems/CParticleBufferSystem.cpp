@@ -69,8 +69,9 @@ namespace Skylicht
 			u32 totalFrames = frameX * frameY;
 			float frameW = 1.0f / frameX;
 			float frameH = 1.0f / frameY;
+			u32 frame, row, col;
 
-#pragma omp parallel for private(p, params, data)
+#pragma omp parallel for private(p, params, data, frame, row, col)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
@@ -93,12 +94,12 @@ namespace Skylicht
 				);
 				data->Rotation = p->Rotation;
 
-				u32 frame = (u32)params[FrameIndex];
+				frame = (u32)params[FrameIndex];
 				frame = frame < 0 ? 0 : frame;
 				frame = frame >= totalFrames ? totalFrames - 1 : frame;
 
-				u32 row = frame / frameX;
-				u32 col = frame - (row * frameX);
+				row = frame / frameX;
+				col = frame - (row * frameX);
 
 				data->UVScale.set(frameW, frameH);
 				data->UVOffset.set(col * frameW, row * frameH);

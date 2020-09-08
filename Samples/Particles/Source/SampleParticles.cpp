@@ -73,8 +73,8 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 
 	// create start point
 	// Particle::CZone *zone = group->setZone(factory->createPointZone());
-	// Particle::CZone *zone = group->setZone(factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), 2.0f));
-	Particle::CZone *zone = group->setZone(factory->createCylinderZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 2.0f, 4.0f));
+	Particle::CZone *zone = group->setZone(factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), 2.0f));
+	// Particle::CZone *zone = group->setZone(factory->createCylinderZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 2.0f, 4.0f));
 	// Particle::CZone *zone = group->setZone(factory->createLineZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(2.0f, 2.0f, 2.0f)));
 	// Particle::CZone *zone = group->setZone(factory->createAABoxZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(2.0f, 2.0f, 2.0f)));
 	// Particle::CZone *zone = group->setZone(factory->createRingZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 1.0, 2.0f));

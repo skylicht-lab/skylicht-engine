@@ -74,13 +74,14 @@ namespace Skylicht
 
 		protected:
 			core::matrix4 m_world;
+			core::aabbox3df m_bbox;
 
 		public:
 			CGroup();
 
 			virtual ~CGroup();
 
-			void update();
+			void update(bool updateBuffer);
 
 			inline void setWorldMatrix(const core::matrix4& m)
 			{
@@ -105,6 +106,16 @@ namespace Skylicht
 			inline CZone* getZone()
 			{
 				return m_zone;
+			}
+
+			inline const core::aabbox3df& getBBox()
+			{
+				return m_bbox;
+			}
+
+			inline u32 getNumParticles()
+			{
+				return m_particles.size();
 			}
 
 			inline CEmitter* addEmitter(CEmitter *e)
