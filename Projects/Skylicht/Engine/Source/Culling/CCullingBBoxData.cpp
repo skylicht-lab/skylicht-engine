@@ -22,64 +22,18 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
 #include "pch.h"
-#include "CParticleBufferData.h"
-#include "CParticleRenderer.h"
-#include "CParticleComponent.h"
-
-#include "GameObject/CGameObject.h"
-#include "Entity/CEntityManager.h"
-
-#include "Culling/CCullingData.h"
-#include "Culling/CCullingBBoxData.h"
-#include "Transform/CWorldInverseTransformData.h"
+#include "CCullingBBoxData.h"
 
 namespace Skylicht
 {
-	namespace Particle
+	CCullingBBoxData::CCullingBBoxData()
 	{
-		CParticleComponent::CParticleComponent() :
-			m_data(NULL)
-		{
 
-		}
+	}
 
-		CParticleComponent::~CParticleComponent()
-		{
+	CCullingBBoxData::~CCullingBBoxData()
+	{
 
-		}
-
-		void CParticleComponent::initComponent()
-		{
-			CEntity *entity = m_gameObject->getEntity();
-
-			// add particle buffer data
-			m_data = entity->addData<CParticleBufferData>();
-
-			// add culling
-			entity->addData<CCullingData>();
-			entity->addData<CCullingBBoxData>();
-			entity->addData<CWorldInverseTransformData>();
-
-			// add renderer system
-			m_gameObject->getEntityManager()->addRenderSystem<CParticleRenderer>();
-		}
-
-		void CParticleComponent::updateComponent()
-		{
-
-		}
-
-		CGroup* CParticleComponent::createParticleGroup()
-		{
-			return m_data->createGroup();
-		}
-
-		void CParticleComponent::removeParticleGroup(CGroup* group)
-		{
-			m_data->removeGroup(group);
-		}
 	}
 }

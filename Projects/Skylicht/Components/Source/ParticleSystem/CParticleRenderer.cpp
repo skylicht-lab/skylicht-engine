@@ -46,6 +46,7 @@ namespace Skylicht
 		{
 			m_particles.set_used(0);
 			m_transforms.set_used(0);
+			m_cullings.set_used(0);
 		}
 
 		void CParticleRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
@@ -58,6 +59,26 @@ namespace Skylicht
 				{
 					m_particles.push_back(particleData);
 					m_transforms.push_back(transform);
+
+					// update bbox for culling
+					// use last frame data
+					CCullingBBoxData *box = entity->getData<CCullingBBoxData>();
+					CWorldInverseTransformData *worldInverse = entity->getData<CWorldInverseTransformData>();
+
+					CGroup** groups = particleData->Groups.pointer();
+					for (u32 i = 0, n = particleData->Groups.size(); i < n; i++)
+					{
+						CGroup *g = groups[i];
+						if (i == 0)
+							box->BBox = g->getBBox();
+						else
+							box->BBox.addInternalBox(g->getBBox());
+					}
+
+					// convert world bbox to local
+					worldInverse->WorldInverse.transformBoxEx(box->BBox);
+
+					m_cullings.push_back(entity->getData<CCullingData>());
 				}
 			}
 		}
@@ -89,6 +110,7 @@ namespace Skylicht
 
 			CParticleBufferData** particles = m_particles.pointer();
 			CWorldTransformData** transforms = m_transforms.pointer();
+			CCullingData** cullings = m_cullings.pointer();
 
 			for (u32 i = 0, n = m_particles.size(); i < n; i++)
 			{
@@ -97,7 +119,7 @@ namespace Skylicht
 				for (u32 j = 0, m = data->Groups.size(); j < m; j++)
 				{
 					data->Groups[j]->setWorldMatrix(transforms[i]->World);
-					data->Groups[j]->update();
+					data->Groups[j]->update(cullings[i]->Visible);
 				}
 			}
 		}
@@ -112,9 +134,12 @@ namespace Skylicht
 			getVideoDriver()->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
 			CParticleBufferData** particles = m_particles.pointer();
+			CCullingData** cullings = m_cullings.pointer();
+
 			for (u32 i = 0, n = m_particles.size(); i < n; i++)
 			{
-				renderParticleGroup(particles[i]);
+				if (cullings[i]->Visible == true)
+					renderParticleGroup(particles[i]);
 			}
 		}
 
