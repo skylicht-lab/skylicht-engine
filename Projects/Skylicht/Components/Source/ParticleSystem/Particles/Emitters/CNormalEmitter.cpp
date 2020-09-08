@@ -22,22 +22,33 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CEmitter.h"
+#include "pch.h"
+#include "CNormalEmitter.h"
+#include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/Zones/CZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CRandomEmitter : public CEmitter
+		CNormalEmitter::CNormalEmitter() :
+			CEmitter(Normal),
+			m_inverted(false)
 		{
-		public:
-			CRandomEmitter();
-			
-			virtual ~CRandomEmitter();
 
-			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group);
-		};
+		}
+
+		CNormalEmitter::~CNormalEmitter()
+		{
+
+		}
+
+		void CNormalEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group)
+		{
+			if (m_inverted)
+				speed = -speed;
+
+			particle.Velocity = zone->computeNormal(particle.Position, group) * speed;
+		}
 	}
 }

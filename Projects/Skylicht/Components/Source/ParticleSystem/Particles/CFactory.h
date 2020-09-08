@@ -40,6 +40,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Emitters/CRandomEmitter.h"
 #include "Emitters/CStraightEmitter.h"
 #include "Emitters/CSphericEmitter.h"
+#include "Emitters/CNormalEmitter.h"
 
 namespace Skylicht
 {
@@ -62,6 +63,8 @@ namespace Skylicht
 			CStraightEmitter* createStraightEmitter(const core::vector3df& direction);
 
 			CSphericEmitter* createSphericEmitter(const core::vector3df& direction, float angleA, float angleB);
+
+			CNormalEmitter* createNormalEmitter(bool inverted);
 
 			void deleteEmitter(CEmitter *e);
 

@@ -45,7 +45,7 @@ namespace Skylicht
 
 		}
 
-		void CRandomEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone)
+		void CRandomEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group)
 		{
 			float norm;
 

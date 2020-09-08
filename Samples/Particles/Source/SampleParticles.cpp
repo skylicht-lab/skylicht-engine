@@ -74,19 +74,20 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 	// create start point
 	// Particle::CZone *zone = group->setZone(factory->createPointZone());
 	// Particle::CZone *zone = group->setZone(factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), 2.0f));
-	// Particle::CZone *zone = group->setZone(factory->createCylinderZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 2.0f, 4.0f));
+	Particle::CZone *zone = group->setZone(factory->createCylinderZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 2.0f, 4.0f));
 	// Particle::CZone *zone = group->setZone(factory->createLineZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(2.0f, 2.0f, 2.0f)));
-	Particle::CZone *zone = group->setZone(factory->createAABoxZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(2.0f, 2.0f, 2.0f)));
+	// Particle::CZone *zone = group->setZone(factory->createAABoxZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(2.0f, 2.0f, 2.0f)));
 	// Particle::CZone *zone = group->setZone(factory->createRingZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 1.0, 2.0f));
 
 	// create emitter
 	Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
+	// Particle::CEmitter *emitter = group->addEmitter(factory->createNormalEmitter(true));
 	// Particle::CEmitter *emitter = group->addEmitter(factory->createStraightEmitter(core::vector3df(0.0f, 0.0f, 1.0f)));	
 	// Particle::CEmitter *emitter = group->addEmitter(factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), core::PI * 0.0f, core::PI * 0.2f));
 	emitter->setTank(0);
 	emitter->setFlow(2000.0f);
 	emitter->setForce(0.0f, 0.5f);
-	emitter->setEmitFullZone(false);
+	emitter->setEmitFullZone(true);
 
 	// create renderer
 	Particle::CQuadRenderer *quadRenderer = factory->createQuadRenderer();
@@ -116,7 +117,7 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 
 	CTransformEuler *t = particleComponent->getGameObject()->getTransformEuler();
 	t->setPosition(core::vector3df(1.0f, 1.0f, 1.0f));
-	// t->setRotation(core::vector3df(0.0f, 0.0f, 45.0f));
+	t->setRotation(core::vector3df(0.0f, 0.0f, 0.0f));
 }
 
 void SampleParticles::onUpdate()

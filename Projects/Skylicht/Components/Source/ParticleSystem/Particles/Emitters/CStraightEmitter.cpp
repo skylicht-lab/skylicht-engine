@@ -42,7 +42,7 @@ namespace Skylicht
 
 		}
 
-		void CStraightEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone)
+		void CStraightEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group)
 		{
 			particle.Velocity = m_direction * speed;
 		}
