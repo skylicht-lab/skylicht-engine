@@ -30,6 +30,20 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		enum EBillboardType
+		{
+			Camera,
+			Velocity,
+			Axis
+		};
+
+		enum EBaseShaderType
+		{
+			Addtive,
+			Transparent,
+			Solid,
+		};
+
 		class CQuadRenderer : public IRenderer
 		{
 		protected:
@@ -38,6 +52,9 @@ namespace Skylicht
 
 			static const u32 NB_INDICES_PER_QUAD = 6;
 			static const u32 NB_VERTICES_PER_QUAD = 4;
+
+			EBillboardType m_billboardType;
+			EBaseShaderType m_baseShaderType;
 
 		public:
 			CQuadRenderer();
@@ -66,6 +83,18 @@ namespace Skylicht
 			inline u32 getAtlasY()
 			{
 				return m_atlasNy;
+			}
+
+			void setMaterialType(EBaseShaderType shader, EBillboardType billboard);
+
+			inline EBillboardType getBillboardType()
+			{
+				return m_billboardType;
+			}
+
+			inline EBaseShaderType getBaseShaderType()
+			{
+				return m_baseShaderType;
 			}
 
 			virtual u32 getTotalFrames()

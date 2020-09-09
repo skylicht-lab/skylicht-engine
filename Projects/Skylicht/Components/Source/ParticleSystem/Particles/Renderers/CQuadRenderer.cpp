@@ -32,14 +32,39 @@ namespace Skylicht
 		CQuadRenderer::CQuadRenderer() :
 			IRenderer(Quad),
 			m_atlasNx(1),
-			m_atlasNy(1)
+			m_atlasNy(1),
+			m_billboardType(Camera),
+			m_baseShaderType(Addtive)
 		{
-			m_material = new CMaterial("ParticleAddtive", "BuiltIn/Shader/Particle/ParticleAdditive.xml");
+			m_material = new CMaterial("Particle", "BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
+
+			setMaterialType(m_baseShaderType, m_billboardType);
 		}
 
 		CQuadRenderer::~CQuadRenderer()
 		{
 			delete m_material;
+		}
+
+		void CQuadRenderer::setMaterialType(EBaseShaderType shader, EBillboardType billboard)
+		{
+			if (shader == Addtive)
+			{
+				if (billboard == Camera)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
+			}
+			else if (shader == Transparent)
+			{
+				if (billboard == Camera)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardTransparent.xml");
+			}
+			else
+			{
+
+			}
+
+			m_billboardType = billboard;
+			m_baseShaderType = shader;
 		}
 
 		void CQuadRenderer::getParticleBuffer(IMeshBuffer *buffer)
