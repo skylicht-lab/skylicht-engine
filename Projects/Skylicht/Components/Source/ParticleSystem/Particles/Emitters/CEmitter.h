@@ -37,7 +37,8 @@ namespace Skylicht
 			Random,
 			Straight,
 			Spheric,
-			Normal
+			Normal,
+			NumOfEmitter,
 		};
 
 		class CEmitter

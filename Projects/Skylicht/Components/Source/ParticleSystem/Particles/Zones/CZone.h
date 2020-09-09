@@ -39,13 +39,14 @@ namespace Skylicht
 
 		enum EZone
 		{
-			Sphere,
 			Point,
+			Sphere,
 			AABox,
-			Plane,
+			Cylinder,
 			Line,
+			PolyLine,
 			Ring,
-			Cylinder
+			NumOfZone
 		};
 
 		class CZone

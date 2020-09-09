@@ -22,38 +22,38 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CPoint.h"
-#include "ParticleSystem/Particles/CParticle.h"
-#include "ParticleSystem/Particles/CGroup.h"
+#pragma once
+
+#include "CZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CPoint::CPoint() :
-			CZone(Point)
+		class CPolyLine : public CZone
 		{
+		protected:
+			core::array<core::vector3df> m_point;
+			core::array<float> m_segments;
+			core::array<float> m_ratios;
+			float m_length;
+			core::vector3df m_normal;
 
-		}
+		public:
+			CPolyLine(const core::array<core::vector3df>& point);
 
-		CPoint::~CPoint()
-		{
+			virtual ~CPolyLine();
 
-		}
+			void setLine(const core::array<core::vector3df>& point);
 
-		void CPoint::generatePosition(CParticle& particle, bool full, CGroup* group)
-		{
-			core::vector3df pos = group->getTransformPosition(m_position);
-			particle.Position = pos;
-		}
+			inline void setNormal(const core::vector3df& normal)
+			{
+				m_normal = normal;
+			}
 
-		core::vector3df CPoint::computeNormal(const core::vector3df& point, CGroup* group)
-		{
-			core::vector3df tpos = group->getTransformPosition(m_position);
-			core::vector3df v = point - tpos;
-			normalizeOrRandomize(v);
-			return v;
-		}
+			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
+
+			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
+		};
 	}
 }

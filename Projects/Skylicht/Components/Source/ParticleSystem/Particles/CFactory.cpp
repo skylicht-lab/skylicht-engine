@@ -144,6 +144,16 @@ namespace Skylicht
 			return z;
 		}
 
+		CPolyLine* CFactory::createPolyLineZone(const core::array<core::vector3df>& points)
+		{
+			if (points.size() < 2)
+				return NULL;
+
+			CPolyLine *z = new CPolyLine(points);
+			m_zones.push_back(z);
+			return z;
+		}
+
 		CRing* CFactory::createRingZone(const core::vector3df& pos, const core::vector3df& normal, float minRadius, float maxRadius)
 		{
 			CRing *z = new CRing(pos, normal, minRadius, maxRadius);
