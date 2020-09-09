@@ -95,7 +95,6 @@ namespace Skylicht
 			irr::core::matrix4 invModelView;
 			{
 				irr::core::matrix4 modelView(driver->getTransform(video::ETS_VIEW));
-				modelView *= driver->getTransform(video::ETS_WORLD);
 				modelView.getInversePrimitive(invModelView); // wont work for odd modelview matrices (but should happen in very special cases)
 			}
 

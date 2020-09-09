@@ -1138,7 +1138,7 @@ namespace Skylicht
 					t->Path = uniform->Path;
 					t->Texture = uniform->Texture;
 
-					if (t->Texture == NULL)
+					if (t->Texture == NULL && !t->Path.empty())
 						t->Texture = CTextureManager::getInstance()->getTexture(t->Path.c_str());
 
 					break;
