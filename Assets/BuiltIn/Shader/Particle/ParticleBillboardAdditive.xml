@@ -14,6 +14,6 @@
 			<ui control="UITexture" name="uTexture"/>
 		</ui>
 	</customUI>	
-	<shader type="GLSL" vs="GLSL/ParticleVS.glsl" fs="GLSL/ParticleAdditiveFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/ParticleVS.hlsl" fs="HLSL/ParticleAdditiveFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/ParticleBillboardVS.glsl" fs="GLSL/ParticleAdditiveFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ParticleBillboardVS.hlsl" fs="HLSL/ParticleAdditiveFS.hlsl"/>
 </shaderConfig>

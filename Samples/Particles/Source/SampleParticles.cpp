@@ -91,6 +91,7 @@ void SampleParticles::initFireParticle(Particle::CParticleComponent *particleCom
 
 	// create renderer
 	Particle::CQuadRenderer *quadRenderer = factory->createQuadRenderer();
+	quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
 	group->setRenderer(quadRenderer);
 
 	//ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
