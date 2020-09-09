@@ -12,6 +12,8 @@ private:
 	CCamera *m_camera;
 
 	CForwardRP *m_forwardRP;
+
+	CGlyphFont *m_font;
 public:
 	SampleParticles();
 	virtual ~SampleParticles();
@@ -34,6 +36,8 @@ public:
 
 protected:
 
-	void initFireParticle(Particle::CParticleComponent *particleComponent);
+	void createCanvasText(const char *text, const core::vector3df& position);
+
+	void initParticle(Particle::CParticleComponent *particleComponent, Particle::EZone zoneType, Particle::EEmitter emitterType, const core::vector3df& position);
 
 };
