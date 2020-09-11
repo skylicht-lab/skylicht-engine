@@ -2387,6 +2387,7 @@ void COpenGLDriver::setScissor(const core::rect<s32>& area)
 void COpenGLDriver::enableScissor(bool b)
 {
 	EnableScissor = b;
+	BridgeCalls->enableScissor(EnableScissor);
 }
 
 //! Sets the fog mode.
