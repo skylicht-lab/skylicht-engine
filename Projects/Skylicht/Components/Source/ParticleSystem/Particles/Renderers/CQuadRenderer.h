@@ -34,7 +34,7 @@ namespace Skylicht
 		{
 			Camera,
 			Velocity,
-			Axis
+			Point3D
 		};
 
 		enum EBaseShaderType

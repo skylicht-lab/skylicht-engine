@@ -1,4 +1,4 @@
-<shaderConfig name="ParticleAdditive" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+<shaderConfig name="ParticleBillboardTransparent" baseShader="TRANSPARENT_ALPHA_CHANNEL">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>

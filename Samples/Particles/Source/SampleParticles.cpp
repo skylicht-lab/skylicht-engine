@@ -244,14 +244,18 @@ Particle::IRenderer* SampleParticles::updateParticleRenderer(Particle::CParticle
 
 	// create renderer
 	Particle::CQuadRenderer *quadRenderer = factory->createQuadRenderer();
-	quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
 	group->setRenderer(quadRenderer);
 
 	// ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
 	// quadRenderer->setAtlas(2, 2);
 
 	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
+	quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
 	quadRenderer->setAtlas(1, 1);
+
+	//ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png");
+	//quadRenderer->setMaterialType(Particle::Addtive, Particle::Velocity);
+	//quadRenderer->setAtlas(1, 1);
 
 	quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
 	quadRenderer->getMaterial()->applyMaterial();
@@ -261,6 +265,7 @@ Particle::IRenderer* SampleParticles::updateParticleRenderer(Particle::CParticle
 
 	group->createModel(Particle::RotateSpeedZ)->setStart(-2.0f, 2.0f);
 	group->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
+
 	group->createModel(Particle::Scale)->setStart(0.05f)->setEnd(0.1f, 0.13f);
 	group->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 
@@ -371,8 +376,8 @@ void SampleParticles::onGUIBasic()
 		int lastEmitter = currentEmitter;
 
 		ImGui::Indent();
-
 		ImGui::Combo("Zone", &currentZone, zoneName, IM_ARRAYSIZE(zoneName));
+
 		ImGui::SameLine();
 		imguiHelpMarker("The shape that spawn particles");
 
@@ -748,17 +753,19 @@ void SampleParticles::onGUIRendererNode()
 		if (ImGui::TreeNode("Scale"))
 		{
 			Particle::CModel *scale = group->getModel(Particle::Scale);
+			if (scale != NULL)
+			{
+				float startS1 = scale->getStartValue1();
+				float startS2 = scale->getStartValue2();
 
-			float startS1 = scale->getStartValue1();
-			float startS2 = scale->getStartValue2();
+				float endS1 = scale->getEndValue1();
+				float endS2 = scale->getEndValue2();
 
-			float endS1 = scale->getEndValue1();
-			float endS2 = scale->getEndValue2();
+				ImGui::DragFloatRange2("Start Size", &startS1, &startS2, 0.01f, 0.0f, 1.0f, "Start 1: %.3f", "Start 2: %.3f");
+				ImGui::DragFloatRange2("End Size", &endS1, &endS2, 0.01f, 0.0f, 1.0f, "End 1: %.3f", "End 2: %.3f");
 
-			ImGui::DragFloatRange2("Start Size", &startS1, &startS2, 0.01f, 0.0f, 1.0f, "Start 1: %.3f", "Start 2: %.3f");
-			ImGui::DragFloatRange2("End Size", &endS1, &endS2, 0.01f, 0.0f, 1.0f, "End 1: %.3f", "End 2: %.3f");
-
-			scale->setStart(startS1, startS2)->setEnd(endS1, endS2);
+				scale->setStart(startS1, startS2)->setEnd(endS1, endS2);
+			}
 
 			ImGui::TreePop();
 		}

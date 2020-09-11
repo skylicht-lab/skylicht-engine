@@ -93,6 +93,7 @@ namespace Skylicht
 					params[ScaleZ]
 				);
 				data->Rotation = p->Rotation;
+				data->Velocity = p->Velocity;
 
 				frame = (u32)params[FrameIndex];
 				frame = frame < 0 ? 0 : frame;
