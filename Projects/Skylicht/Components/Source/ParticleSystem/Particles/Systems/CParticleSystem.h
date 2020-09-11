@@ -37,6 +37,8 @@ namespace Skylicht
 
 			virtual ~CParticleSystem();
 
+			void updateLifeTime(CParticle *particles, int num, CGroup *group, float dt);
+
 			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
 		};
 	}

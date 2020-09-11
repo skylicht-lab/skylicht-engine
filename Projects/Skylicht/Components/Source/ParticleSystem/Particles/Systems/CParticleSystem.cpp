@@ -42,6 +42,25 @@ namespace Skylicht
 
 		}
 
+		void CParticleSystem::updateLifeTime(CParticle *particles, int num, CGroup *group, float dt)
+		{
+			dt = dt * 0.001f;
+
+			CParticle *p;
+
+#pragma omp parallel for private(p)
+			for (int i = 0; i < num; i++)
+			{
+				p = particles + i;
+
+				// update life time
+				p->Age = p->Age + dt;
+
+				if (!p->Immortal)
+					p->Life -= dt;
+			}
+		}
+
 		void CParticleSystem::update(CParticle *particles, int num, CGroup *group, float dt)
 		{
 			dt = dt * 0.001f;
@@ -137,6 +156,13 @@ namespace Skylicht
 
 					// update param value
 					params[t] = p->StartValue[t] + (p->EndValue[t] - p->StartValue[t]) * y;
+
+					if (t == Scale)
+					{
+						params[ScaleX] = params[Scale];
+						params[ScaleY] = params[Scale];
+						params[ScaleZ] = params[Scale];
+					}
 				}
 			}
 		}

@@ -81,7 +81,7 @@ namespace Skylicht
 
 			virtual ~CGroup();
 
-			void update(bool updateBuffer);
+			void update(bool visible);
 
 			inline void setWorldMatrix(const core::matrix4& m)
 			{
