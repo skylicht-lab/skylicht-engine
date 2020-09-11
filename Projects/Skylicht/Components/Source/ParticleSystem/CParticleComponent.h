@@ -55,7 +55,22 @@ namespace Skylicht
 				return &m_factory;
 			}
 
+			inline CParticleBufferData* getData()
+			{
+				return m_data;
+			}
+
 			CGroup* createParticleGroup();
+
+			inline u32 getNumOfGroup()
+			{
+				return m_data->Groups.size();
+			}
+
+			inline CGroup* getGroup(int i)
+			{
+				return m_data->Groups[i];
+			}
 
 			void removeParticleGroup(CGroup* group);
 		};
