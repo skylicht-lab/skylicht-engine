@@ -52,11 +52,15 @@ namespace Skylicht
 			{
 				if (billboard == Camera)
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
+				else if (billboard == Velocity)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleVelocityAdditive.xml");
 			}
 			else if (shader == Transparent)
 			{
 				if (billboard == Camera)
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardTransparent.xml");
+				else if (billboard == Velocity)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleVelocityTransparent.xml");
 			}
 			else
 			{

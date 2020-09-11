@@ -59,6 +59,7 @@ namespace Skylicht
 				vertexDescriptor->addAttribute("inParticleUVOffset", 2, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
 				vertexDescriptor->addAttribute("inParticleSize", 3, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
 				vertexDescriptor->addAttribute("inParticleRotation", 3, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 1);
+				vertexDescriptor->addAttribute("inParticleVelocity", 3, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 1);
 
 				vertexDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
 			}
