@@ -2,8 +2,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/Sponza/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Spark/include
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include	
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source

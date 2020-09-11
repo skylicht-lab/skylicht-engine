@@ -164,7 +164,7 @@ This is a demo code to use lightmapper to bake indirect lighting color on lightm
 
 #### Gazebo
 
-<img src="Documents/Media/Samples/lightmap/lightmapping_a.png"/>
+<img src="Documents/Media/Samples/lightmap/lightmapping_a.jpg"/>
 
 Result lightmap
 
@@ -203,13 +203,18 @@ Engine Components are used:
 #### Baked Global Illumination (3 bounces)
 Irradiance baked on Vertex Color:
 
-<img src="Documents/Media/Samples/tank-scene/indirect-bake-3-bounce.png"/>
+<img src="Documents/Media/Samples/tank-scene/indirect-bake-3-bounce.jpg"/>
 
 #### Indirect + Direction light - No post processing (3 bounces light)
 
-<img src="Documents/Media/Samples/tank-scene/tank-scene-3-bounce-a.png"/>
+<img src="Documents/Media/Samples/tank-scene/tank-scene-3-bounce-a.jpg"/>
 
-<img src="Documents/Media/Samples/tank-scene/tank-scene-3-bounce-b.png"/>
+### Samples\Particles
+Skylicht Particle Component is a cleanup version of [SPARK](https://github.com/Synxis/SPARK). We have optimized by GPU Billboard Instancing.
+
+This is demo code how to create particle system and use [ImGUI](https://github.com/ocornut/imgui)
+
+<img src="Documents/Media/Samples/sample_particles.jpg"/>
 
 ## Contributing
 Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join group. Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
