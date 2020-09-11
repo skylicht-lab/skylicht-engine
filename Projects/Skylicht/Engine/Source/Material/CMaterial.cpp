@@ -1170,7 +1170,7 @@ namespace Skylicht
 			{
 				if (t->Name == name)
 				{
-					if (t->Texture == NULL)
+					if (t->Texture == NULL && !t->Path.empty())
 						t->Texture = CTextureManager::getInstance()->getTexture(t->Path.c_str());
 
 					if (t->Texture != NULL)
