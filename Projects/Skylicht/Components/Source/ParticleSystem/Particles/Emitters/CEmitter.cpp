@@ -59,7 +59,13 @@ namespace Skylicht
 				nbBorn = core::max_(0, m_tank);
 				m_tank = 0;
 			}
-			else if (m_tank >= 0)
+			else if (m_tank < 0)
+			{
+				m_fraction += m_flow * deltaTime * 0.001f;
+				nbBorn = static_cast<int>(m_fraction);
+				m_fraction -= nbBorn;
+			}
+			else if (m_tank > 0)
 			{
 				m_fraction += m_flow * deltaTime * 0.001f;
 				nbBorn = static_cast<int>(m_fraction);

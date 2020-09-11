@@ -83,7 +83,7 @@ namespace Skylicht
 			return p;
 		}
 
-		void CGroup::update(bool updateBuffer)
+		void CGroup::update(bool visible)
 		{
 			if (m_zone == NULL)
 				return;
@@ -108,11 +108,19 @@ namespace Skylicht
 			CParticle *particles = m_particles.pointer();
 			u32 numParticles = m_particles.size();
 
-			// update particle system
-			m_particleSystem->update(particles, numParticles, this, dt);
+			if (visible == true)
+			{
+				// update particle system
+				m_particleSystem->update(particles, numParticles, this, dt);
 
-			for (ISystem *s : m_systems)
-				s->update(particles, numParticles, this, dt);
+				for (ISystem *s : m_systems)
+					s->update(particles, numParticles, this, dt);
+			}
+			else
+			{
+				// we just update life time of hide particle
+				m_particleSystem->updateLifeTime(particles, numParticles, this, dt);
+			}
 
 			if (numParticles > 0)
 				m_bbox.reset(particles[0].Position);
@@ -136,8 +144,8 @@ namespace Skylicht
 				}
 			}
 
-			// update instancing buffer
-			if (updateBuffer == true)
+			// update instancing buffer		
+			if (visible == true)
 				m_bufferSystem->update(particles, numParticles, this, dt);
 
 			u32 emiterId = 0;

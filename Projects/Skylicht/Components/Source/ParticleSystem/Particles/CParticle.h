@@ -32,7 +32,8 @@ namespace Skylicht
 	{
 		enum EParticleParams
 		{
-			ScaleX = 0,
+			Scale = 0,
+			ScaleX,
 			ScaleY,
 			ScaleZ,
 			ColorR,

@@ -68,6 +68,7 @@ namespace Skylicht
 			{
 				m_start1 = f1;
 				m_start2 = f2;
+
 				m_haveStart = true;
 				return this;
 			}
@@ -84,6 +85,7 @@ namespace Skylicht
 			{
 				m_end1 = f1;
 				m_end2 = f2;
+
 				m_haveEnd = true;
 				return this;
 			}
@@ -96,6 +98,26 @@ namespace Skylicht
 			inline bool haveEnd()
 			{
 				return m_haveEnd;
+			}
+
+			float getStartValue1()
+			{
+				return m_start1;
+			}
+
+			float getStartValue2()
+			{
+				return m_start2;
+			}
+
+			float getEndValue1()
+			{
+				return m_end1;
+			}
+
+			float getEndValue2()
+			{
+				return m_end2;
 			}
 
 			float getRandomStart();
