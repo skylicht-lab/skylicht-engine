@@ -186,7 +186,7 @@ namespace Skylicht
 	void CMaterial::setUniformTexture(const char *name, ITexture *texture)
 	{
 		SUniformTexture* p = getUniformTexture(name);
-		if (p != NULL)
+		if (p != NULL && texture != NULL)
 		{
 			p->Path = texture->getName().getPath().c_str();
 			p->Texture = texture;
@@ -1138,7 +1138,7 @@ namespace Skylicht
 					t->Path = uniform->Path;
 					t->Texture = uniform->Texture;
 
-					if (t->Texture == NULL)
+					if (t->Texture == NULL && !t->Path.empty())
 						t->Texture = CTextureManager::getInstance()->getTexture(t->Path.c_str());
 
 					break;
@@ -1170,7 +1170,7 @@ namespace Skylicht
 			{
 				if (t->Name == name)
 				{
-					if (t->Texture == NULL)
+					if (t->Texture == NULL && !t->Path.empty())
 						t->Texture = CTextureManager::getInstance()->getTexture(t->Path.c_str());
 
 					if (t->Texture != NULL)

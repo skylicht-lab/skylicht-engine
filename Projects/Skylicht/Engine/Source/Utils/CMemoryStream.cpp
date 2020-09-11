@@ -283,7 +283,7 @@ namespace Skylicht
 			m_pos += numchar;
 
 			ret = data;
-			delete data;
+			delete[]data;
 		}
 		return ret;
 	}

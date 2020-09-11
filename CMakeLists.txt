@@ -266,7 +266,6 @@ endif()
 # core library
 subdirs (Projects/ThirdParty)
 subdirs (Projects/Irrlicht)
-#subdirs (Projects/Spark)
 
 if (BUILD_IMGUI)
 subdirs (Projects/Imgui)
@@ -295,7 +294,6 @@ subdirs (Projects/Skylicht/Lightmapper)
 subdirs (Projects/Skylicht/Client)
 
 #if (BUILD_ENGINE_TOOL)
-#subdirs (Projects/Editor)
 #endif()
 
 include(CMakeProjects.cmake)
