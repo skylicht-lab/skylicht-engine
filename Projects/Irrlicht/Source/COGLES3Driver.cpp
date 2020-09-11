@@ -1777,6 +1777,7 @@ namespace irr
 		void COGLES3Driver::enableScissor(bool b)
 		{
 			EnableScissor = b;
+			BridgeCalls->enableScissor(EnableScissor);
 		}
 
 		//! Sets the fog mode.
