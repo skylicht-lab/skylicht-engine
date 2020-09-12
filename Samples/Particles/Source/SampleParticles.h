@@ -47,7 +47,7 @@ protected:
 
 	void onGUI();
 
-	void onGUIBasic();
+	void onGUIParticle();
 
 	void onGUIZoneNode(int currentZone);
 
@@ -64,6 +64,8 @@ protected:
 	Particle::CEmitter* updateParticleEmitter(Particle::CParticleComponent *particleComponent, Particle::EEmitter emitterType);
 
 	Particle::IRenderer* updateParticleRenderer(Particle::CParticleComponent *particleComponent);
+
+	Particle::IRenderer* updateParticleRendererType(Particle::CParticleComponent *particleComponent, int typeId);
 
 	Particle::CParticleBufferData* getParticleData(CGameObject *obj);
 };

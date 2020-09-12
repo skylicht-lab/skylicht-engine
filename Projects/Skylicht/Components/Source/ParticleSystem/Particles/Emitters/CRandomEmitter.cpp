@@ -22,8 +22,6 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
 #include "pch.h"
 #include "CRandomEmitter.h"
 #include "ParticleSystem/Particles/CParticle.h"
