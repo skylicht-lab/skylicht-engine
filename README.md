@@ -218,7 +218,7 @@ This is demo code how to create particle system and use [imgui](https://github.c
 <img src="Documents/Media/Samples/sample_particles.jpg"/>
 
 #### Vortex systems
-Thanks [SPARK](https://github.com/Synxis/SPARK) for this source code
+Thanks [SPARK](https://github.com/Synxis/SPARK) team for this source code
 <img src="Documents/Media/Samples/sample_particles_vortex.jpg"/>
 
 ## Contributing

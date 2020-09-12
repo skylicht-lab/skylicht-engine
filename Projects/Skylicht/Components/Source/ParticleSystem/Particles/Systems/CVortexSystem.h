@@ -37,6 +37,7 @@ namespace Skylicht
 			core::vector3df m_direction;
 			float m_rotationSpeed;
 			float m_attractionSpeed;
+			float m_eyeAttractionSpeed;
 			float m_eyeRadius;
 			bool m_killingParticleEnabled;
 
@@ -95,6 +96,16 @@ namespace Skylicht
 			inline void setEyeRadius(float f)
 			{
 				m_eyeRadius = f;
+			}
+
+			inline void setEyeAttractionSpeed(float f)
+			{
+				m_eyeAttractionSpeed = f;
+			}
+
+			inline float getEyeAttractionSpeed()
+			{
+				return m_eyeAttractionSpeed;
 			}
 
 			inline bool isKillingParticle()

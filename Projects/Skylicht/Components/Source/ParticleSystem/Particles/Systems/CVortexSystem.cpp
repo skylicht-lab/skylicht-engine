@@ -37,6 +37,7 @@ namespace Skylicht
 			m_direction(direction),
 			m_rotationSpeed(rotationSpeed),
 			m_attractionSpeed(attractionSpeed),
+			m_eyeAttractionSpeed(1.0f),
 			m_eyeRadius(0.0f),
 			m_killingParticleEnabled(false)
 		{
@@ -59,9 +60,9 @@ namespace Skylicht
 
 			CParticle *p;
 			float dist, angle, endRadius;
-			core::vector3df rotationCenter, normal, tangent;
+			core::vector3df rotationCenter, normal, tangent, attraction;
 
-#pragma omp parallel for private(p, dist, angle, endRadius, rotationCenter, normal, tangent)
+			// #pragma omp parallel for private(p, dist, angle, endRadius, rotationCenter, normal, tangent)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
@@ -72,6 +73,9 @@ namespace Skylicht
 				// Position of the rotation center (orthogonal projection of the particle)
 				rotationCenter = direction;
 				rotationCenter *= dist;
+
+				attraction = -rotationCenter;
+
 				rotationCenter += position;
 
 				// Distance of the particle from the eye of the vortex
@@ -86,6 +90,10 @@ namespace Skylicht
 
 				angle = m_rotationSpeed * deltaTime / dist;
 
+				// Distance attraction
+				attraction.normalize();
+				attraction *= m_eyeAttractionSpeed * deltaTime / dist;
+
 				// Computes ortho base
 				normal = (p->Position - rotationCenter) / dist;
 				tangent = direction.crossProduct(normal);
@@ -99,6 +107,8 @@ namespace Skylicht
 				}
 
 				p->Position = rotationCenter + normal * endRadius * cosf(angle) + tangent * endRadius * sinf(angle);
+
+				p->Position += attraction;
 			}
 		}
 	}
