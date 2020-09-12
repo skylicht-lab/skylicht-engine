@@ -106,21 +106,22 @@ void SampleParticlesVortex::initParticleSystem(Particle::CParticleComponent *ps)
 	Particle::CRandomEmitter *emitter = NULL;
 
 	emitter = factory->createRandomEmitter();
-	emitter->setFlow(200);
+	emitter->setFlow(100);
 	emitter->setForce(0.0f, 3.0f);
 	emitter->setZone(factory->createLineZone(core::vector3df(-13.0f, 0.0f, -13.0f), core::vector3df(13.0f, 0.0f, 13.0f)));
 	group->addEmitter(emitter);
 
 	emitter = factory->createRandomEmitter();
-	emitter->setFlow(200);
+	emitter->setFlow(100);
 	emitter->setForce(0.0f, 3.0f);
 	emitter->setZone(factory->createLineZone(core::vector3df(-13.0f, 0.0f, 13.0f), core::vector3df(13.0f, 0.0f, -13.0f)));
 	group->addEmitter(emitter);
 
 	// extensions vortexSystem
-	m_vortexSystem = new Particle::CVortexSystem(core::vector3df(0.0f, 5.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+	m_vortexSystem = new Particle::CVortexSystem(core::vector3df(0.0f, -15.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 	m_vortexSystem->setRotateSpeed(2.0f);
-	m_vortexSystem->setAttractionSpeed(0.0f);
+	m_vortexSystem->setAttractionSpeed(0.1f);
+	m_vortexSystem->setEyeAttractionSpeed(0.5f);
 	m_vortexSystem->setEyeRadius(0.05f);
 	m_vortexSystem->enableKillingParticle(true);
 	group->addSystem(m_vortexSystem);
