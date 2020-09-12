@@ -33,7 +33,6 @@ namespace Skylicht
 	namespace Particle
 	{
 		CGroup::CGroup() :
-			m_zone(NULL),
 			m_renderer(NULL),
 			Gravity(0.0f, -9.8f, 0.0f),
 			Friction(1.0f),
@@ -85,9 +84,6 @@ namespace Skylicht
 
 		void CGroup::update(bool visible)
 		{
-			if (m_zone == NULL)
-				return;
-
 			float dt = getTimeStep();
 
 			u32 autoBorn = 0;
@@ -179,7 +175,7 @@ namespace Skylicht
 
 			if (p.LifeTime > 0)
 			{
-				launch.Emitter->emitParticle(p, m_zone, this);
+				launch.Emitter->emitParticle(p, launch.Emitter->getZone(), this);
 				launch.Number--;
 
 				for (CModel *m : m_models)

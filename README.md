@@ -212,9 +212,14 @@ Irradiance baked on Vertex Color:
 ### Samples\Particles
 Skylicht Particle Component is a cleanup version of [SPARK](https://github.com/Synxis/SPARK). We have optimized by GPU Billboard Instancing.
 
-This is demo code how to create particle system and use [ImGUI](https://github.com/ocornut/imgui)
+This is demo code how to create particle system and use [imgui](https://github.com/ocornut/imgui)
 
+#### Basic particle
 <img src="Documents/Media/Samples/sample_particles.jpg"/>
+
+#### Vortex systems
+Thanks [SPARK](https://github.com/Synxis/SPARK) for this source code
+<img src="Documents/Media/Samples/sample_particles_vortex.jpg"/>
 
 ## Contributing
 Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join group. Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
