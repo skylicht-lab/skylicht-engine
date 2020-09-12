@@ -225,6 +225,61 @@ Particle::CEmitter* SampleParticles::updateParticleEmitter(Particle::CParticleCo
 	return emitter;
 }
 
+Particle::IRenderer* SampleParticles::updateParticleRendererType(Particle::CParticleComponent *particleComponent, int typeId)
+{
+	Particle::CFactory *factory = particleComponent->getParticleFactory();
+
+	Particle::CGroup *group = NULL;
+	if (particleComponent->getNumOfGroup() == 0)
+		return NULL;
+	else
+		group = particleComponent->getGroup(0);
+
+	Particle::IRenderer *r = group->getRenderer();
+	if (r->getType() != Particle::Quad)
+		return r;
+
+	Particle::CQuadRenderer *quadRenderer = (Particle::CQuadRenderer*)r;
+
+	if (typeId == 0)
+	{
+		// point
+		ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
+		quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
+		quadRenderer->setAtlas(1, 1);
+		quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
+		quadRenderer->getMaterial()->applyMaterial();
+		quadRenderer->SizeX = 1.0f;
+		quadRenderer->SizeY = 1.0f;
+		quadRenderer->SizeZ = 1.0f;
+	}
+	else if (typeId == 1)
+	{
+		// sprite
+		ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
+		quadRenderer->setAtlas(2, 2);
+		quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
+		quadRenderer->getMaterial()->applyMaterial();
+		quadRenderer->SizeX = 2.0f;
+		quadRenderer->SizeY = 2.0f;
+		quadRenderer->SizeZ = 2.0f;
+	}
+	else if (typeId == 2)
+	{
+		// line
+		ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png");
+		quadRenderer->setMaterialType(Particle::Addtive, Particle::Velocity);
+		quadRenderer->setAtlas(1, 1);
+		quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
+		quadRenderer->getMaterial()->applyMaterial();
+		quadRenderer->SizeX = 0.5f;
+		quadRenderer->SizeY = 2.0f;
+		quadRenderer->SizeZ = 1.0f;
+	}
+
+	return r;
+}
+
 Particle::IRenderer* SampleParticles::updateParticleRenderer(Particle::CParticleComponent *particleComponent)
 {
 	Particle::CFactory *factory = particleComponent->getParticleFactory();
@@ -246,17 +301,9 @@ Particle::IRenderer* SampleParticles::updateParticleRenderer(Particle::CParticle
 	Particle::CQuadRenderer *quadRenderer = factory->createQuadRenderer();
 	group->setRenderer(quadRenderer);
 
-	// ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
-	// quadRenderer->setAtlas(2, 2);
-
 	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
 	quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
 	quadRenderer->setAtlas(1, 1);
-
-	//ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png");
-	//quadRenderer->setMaterialType(Particle::Addtive, Particle::Velocity);
-	//quadRenderer->setAtlas(1, 1);
-
 	quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
 	quadRenderer->getMaterial()->applyMaterial();
 
@@ -336,7 +383,7 @@ void SampleParticles::onGUI()
 
 	// BEGIN WINDOW
 	{
-		onGUIBasic();
+		onGUIParticle();
 	}
 
 	ImGui::End();
@@ -345,7 +392,7 @@ void SampleParticles::onGUI()
 	// ImGui::ShowDemoWindow(&open);
 }
 
-void SampleParticles::onGUIBasic()
+void SampleParticles::onGUIParticle()
 {
 	const char *zoneName[] = {
 		"Point",
@@ -406,11 +453,7 @@ void SampleParticles::onGUIBasic()
 
 		onGUIZoneNode(currentZone);
 
-		ImGui::Separator();
-
 		onGUIEmitterNode(currentEmitter);
-
-		ImGui::Separator();
 
 		onGUIRendererNode();
 
@@ -423,7 +466,7 @@ void SampleParticles::onGUIBasic()
 
 		ImGui::PushItemWidth(-1);
 
-		float width = ImGui::GetWindowWidth();
+		float width = ImGui::CalcItemWidth() - 21.0f;
 		ImVec2 btnSize(width, 0.0f);
 
 		if (ImGui::TreeNode("Stop Emitter"))
@@ -689,14 +732,12 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 		ImGui::TreePop();
 	}
 
-	ImGui::Separator();
-
 	if (ImGui::TreeNode("Force & Born (Emitter)"))
 	{
 		ImGui::DragFloatRange2("Force", &minForce, &maxForce, 0.01f, 0.0f, 10.0f, "Min: %.3f", "Max: %.3f");
 		emitter->setForce(minForce, maxForce);
 
-		ImGui::SliderFloat("Flow", &flow, 0.0f, 10000.0f, "flow = %.3f");
+		ImGui::SliderFloat("Flow", &flow, 1.0f, 10000.0f, "flow = %.3f");
 		emitter->setFlow(flow);
 
 		ImGui::Checkbox("Spawn particle at full zone", &fullZone);
@@ -748,6 +789,14 @@ void SampleParticles::onGUIRendererNode()
 	Particle::CParticleBufferData* particleData = getParticleData(m_currentParticleObj);
 	Particle::CGroup *group = particleData->Groups[0];
 
+	const char *renderType[] = {
+		"Point",
+		"Sprite",
+		"Line"
+	};
+
+	static int currentRenderType = 0;
+
 	if (ImGui::TreeNode("Renderer"))
 	{
 		if (ImGui::TreeNode("Scale"))
@@ -761,8 +810,8 @@ void SampleParticles::onGUIRendererNode()
 				float endS1 = scale->getEndValue1();
 				float endS2 = scale->getEndValue2();
 
-				ImGui::DragFloatRange2("Start Size", &startS1, &startS2, 0.01f, 0.0f, 1.0f, "Start 1: %.3f", "Start 2: %.3f");
-				ImGui::DragFloatRange2("End Size", &endS1, &endS2, 0.01f, 0.0f, 1.0f, "End 1: %.3f", "End 2: %.3f");
+				ImGui::DragFloatRange2("Start", &startS1, &startS2, 0.01f, 0.0f, 1.0f, "Start 1: %.3f", "Start 2: %.3f");
+				ImGui::DragFloatRange2("End", &endS1, &endS2, 0.01f, 0.0f, 1.0f, "End 1: %.3f", "End 2: %.3f");
 
 				scale->setStart(startS1, startS2)->setEnd(endS1, endS2);
 			}
@@ -812,6 +861,43 @@ void SampleParticles::onGUIRendererNode()
 			modelG->setStart(startColor1[1], startColor2[1])->setEnd(endColor1[1], endColor2[1]);
 			modelB->setStart(startColor1[2], startColor2[2])->setEnd(endColor1[2], endColor2[2]);
 			modelA->setStart(startColor1[3], startColor2[3])->setEnd(endColor1[3], endColor2[3]);
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Rotate speed"))
+		{
+			Particle::CModel *rotate = group->getModel(Particle::RotateSpeedZ);
+			float startR1 = rotate->getStartValue1();
+			float startR2 = rotate->getStartValue2();
+
+			ImGui::DragFloatRange2("Rotate", &startR1, &startR2, -4.0, 0.0f, 4.0f, "speed 1: %.3f", "speed: %.3f");
+
+			rotate->setStart(startR1, startR2);
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Render type"))
+		{
+			int lastRenderType = currentRenderType;
+
+			ImGui::Combo("Render type", &currentRenderType, renderType, IM_ARRAYSIZE(renderType));
+
+			if (lastRenderType != currentRenderType)
+				updateParticleRendererType(m_currentParticleObj->getComponent<Particle::CParticleComponent>(), currentRenderType);
+
+			float sizeX = group->getRenderer()->SizeX;
+			float sizeY = group->getRenderer()->SizeY;
+			float sizeZ = group->getRenderer()->SizeZ;
+
+			ImGui::SliderFloat("Size X", &sizeX, 0.0f, 4.0f, "sizeX = %.3f");
+			ImGui::SliderFloat("Size Y", &sizeY, 0.0f, 4.0f, "sizeY = %.3f");
+			ImGui::SliderFloat("Size Z", &sizeZ, 0.0f, 4.0f, "sizeZ = %.3f");
+
+			group->getRenderer()->SizeX = sizeX;
+			group->getRenderer()->SizeY = sizeY;
+			group->getRenderer()->SizeZ = sizeZ;
 
 			ImGui::TreePop();
 		}

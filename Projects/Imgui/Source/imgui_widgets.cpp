@@ -1947,7 +1947,7 @@ bool ImGui::DragBehaviorT(ImGuiDataType data_type, TYPE* v, float v_speed, const
     const bool is_decimal = (data_type == ImGuiDataType_Float) || (data_type == ImGuiDataType_Double);
     const bool is_clamped = (v_min < v_max);
     const bool is_power = (power != 1.0f && is_decimal && is_clamped && (v_max - v_min < FLT_MAX));
-    const bool is_locked = (v_min > v_max);
+    const bool is_locked = (v_min >= v_max);
     if (is_locked)
         return false;
 
