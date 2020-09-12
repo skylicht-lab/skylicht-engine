@@ -17,7 +17,9 @@ void installApplication(const std::vector<std::string>& argv)
 SampleParticles::SampleParticles() :
 	m_scene(NULL),
 	m_label(NULL),
-	m_currentParticleObj(NULL)
+	m_currentParticleObj(NULL),
+	m_particleZone(NULL),
+	m_particleEmitter(NULL)
 {
 	CImguiManager::createGetInstance();
 }
@@ -122,34 +124,32 @@ Particle::CZone* SampleParticles::updateParticleZone(Particle::CParticleComponen
 	else
 		group = particleComponent->getGroup(0);
 
-	Particle::CZone *zone = group->getZone();
-
 	// delete old zone
-	if (zone != NULL)
+	if (m_particleZone != NULL)
 	{
-		group->setZone(NULL);
-		factory->deleteZone(zone);
-		zone = NULL;
+		factory->deleteZone(m_particleZone);
+		m_particleZone = NULL;
 	}
 
+	Particle::CZone *zone = NULL;
 	float size = 1.5f;
 
 	switch (zoneType)
 	{
 	case Particle::Point:
-		zone = group->setZone(factory->createPointZone());
+		zone = factory->createPointZone();
 		break;
 	case Particle::Sphere:
-		zone = group->setZone(factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), size));
+		zone = factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), size);
 		break;
 	case Particle::AABox:
-		zone = group->setZone(factory->createAABoxZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(size, size, size)));
+		zone = factory->createAABoxZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(size, size, size));
 		break;
 	case Particle::Cylinder:
-		zone = group->setZone(factory->createCylinderZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, size, 0.0f), size * 0.5f, 1.0f));
+		zone = factory->createCylinderZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, size, 0.0f), size * 0.5f, 1.0f);
 		break;
 	case Particle::Line:
-		zone = group->setZone(factory->createLineZone(core::vector3df(-size, 0.0f, 0.0f), core::vector3df(size, 0.0f, 0.0f)));
+		zone = factory->createLineZone(core::vector3df(-size, 0.0f, 0.0f), core::vector3df(size, 0.0f, 0.0f));
 		break;
 	case Particle::PolyLine:
 	{
@@ -159,15 +159,20 @@ Particle::CZone* SampleParticles::updateParticleZone(Particle::CParticleComponen
 		points.push_back(core::vector3df(size, 0.0f, size));
 		points.push_back(core::vector3df(-size, 0.0f, size));
 		points.push_back(core::vector3df(-size, 0.0f, -size));
-		zone = group->setZone(factory->createPolyLineZone(points));
+		zone = factory->createPolyLineZone(points);
 	}
 	break;
 	case Particle::Ring:
-		zone = group->setZone(factory->createRingZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), size, size));
+		zone = factory->createRingZone(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), size, size);
 		break;
 	default:
 		break;
 	}
+
+	m_particleZone = zone;
+
+	if (m_particleEmitter != NULL)
+		m_particleEmitter->setZone(m_particleZone);
 
 	return zone;
 }
@@ -220,7 +225,10 @@ Particle::CEmitter* SampleParticles::updateParticleEmitter(Particle::CParticleCo
 	emitter->setTank(-1);
 	emitter->setFlow(flow);
 	emitter->setForce(minForce, maxForce);
+	emitter->setZone(m_particleZone);
 	emitter->setEmitFullZone(true);
+
+	m_particleEmitter = emitter;
 
 	return emitter;
 }
@@ -473,8 +481,7 @@ void SampleParticles::onGUIParticle()
 		{
 			if (ImGui::Button("Stop Particle", btnSize))
 			{
-				Particle::CEmitter *emitter = getParticleData(m_currentParticleObj)->Groups[0]->getEmitters()[0];
-				emitter->setFlow(0);
+				m_particleEmitter->setFlow(0);
 			}
 
 			ImGui::TreePop();
@@ -490,9 +497,8 @@ void SampleParticles::onGUIParticle()
 
 			if (ImGui::Button("Tank Particle", btnSize))
 			{
-				Particle::CEmitter *emitter = getParticleData(m_currentParticleObj)->Groups[0]->getEmitters()[0];
-				emitter->setFlow(flow);
-				emitter->setTank(tank);
+				m_particleEmitter->setFlow(flow);
+				m_particleEmitter->setTank(tank);
 			}
 
 			ImGui::TreePop();
@@ -502,9 +508,8 @@ void SampleParticles::onGUIParticle()
 		{
 			if (ImGui::Button("Play Particle", btnSize))
 			{
-				Particle::CEmitter *emitter = getParticleData(m_currentParticleObj)->Groups[0]->getEmitters()[0];
-				emitter->setTank(-1);
-				emitter->setFlow(2000);
+				m_particleEmitter->setTank(-1);
+				m_particleEmitter->setFlow(2000);
 			}
 
 			ImGui::TreePop();
@@ -530,7 +535,7 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 			if (r == 0.0f)
 			{
 				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
-				Particle::CSphere *sphere = dynamic_cast<Particle::CSphere*>(particleData->Groups[0]->getZone());
+				Particle::CSphere *sphere = dynamic_cast<Particle::CSphere*>(m_particleZone);
 				r = sphere->getRadius();
 			}
 
@@ -540,7 +545,7 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 			if (!core::equals(lastR, r))
 			{
 				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
-				Particle::CSphere *sphere = dynamic_cast<Particle::CSphere*>(particleData->Groups[0]->getZone());
+				Particle::CSphere *sphere = dynamic_cast<Particle::CSphere*>(m_particleZone);
 				sphere->setRadius(r);
 			}
 
@@ -558,7 +563,7 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 			if (sizeX == 0.0f)
 			{
 				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
-				Particle::CAABox *aabox = dynamic_cast<Particle::CAABox*>(particleData->Groups[0]->getZone());
+				Particle::CAABox *aabox = dynamic_cast<Particle::CAABox*>(m_particleZone);
 				const core::vector3df& s = aabox->getDimension();
 				sizeX = s.X;
 				sizeY = s.Y;
@@ -576,7 +581,7 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 			if (!core::equals(lastX, sizeX) || !core::equals(lastY, sizeY) || !core::equals(lastZ, sizeZ))
 			{
 				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
-				Particle::CAABox *aabox = dynamic_cast<Particle::CAABox*>(particleData->Groups[0]->getZone());
+				Particle::CAABox *aabox = dynamic_cast<Particle::CAABox*>(m_particleZone);
 				aabox->setDimension(core::vector3df(sizeX, sizeY, sizeZ));
 			}
 
@@ -596,7 +601,7 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 			if (r == 0.0f)
 			{
 				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
-				Particle::CCylinder *cylinder = dynamic_cast<Particle::CCylinder*>(particleData->Groups[0]->getZone());
+				Particle::CCylinder *cylinder = dynamic_cast<Particle::CCylinder*>(m_particleZone);
 				l = cylinder->getLength();
 				r = cylinder->getRadius();
 			}
@@ -619,7 +624,7 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 				!core::equals(lastZ, rz))
 			{
 				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
-				Particle::CCylinder *cylinder = dynamic_cast<Particle::CCylinder*>(particleData->Groups[0]->getZone());
+				Particle::CCylinder *cylinder = dynamic_cast<Particle::CCylinder*>(m_particleZone);
 				cylinder->setRadius(r);
 				cylinder->setLength(l);
 				cylinder->setDirection(direction);
@@ -638,7 +643,7 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 			if (r1 == 0.0f)
 			{
 				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
-				Particle::CRing *ring = dynamic_cast<Particle::CRing*>(particleData->Groups[0]->getZone());
+				Particle::CRing *ring = dynamic_cast<Particle::CRing*>(m_particleZone);
 				r1 = ring->getMinRadius();
 				r2 = ring->getMaxRadius();
 			}
@@ -651,7 +656,7 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 			if (!core::equals(lastRadius1, r1) || !core::equals(lastRadius2, r2))
 			{
 				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
-				Particle::CRing *ring = dynamic_cast<Particle::CRing*>(particleData->Groups[0]->getZone());
+				Particle::CRing *ring = dynamic_cast<Particle::CRing*>(m_particleZone);
 
 				float min = r1;
 				float max = r2;
@@ -682,12 +687,11 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 
 	Particle::CParticleBufferData* particleData = getParticleData(m_currentParticleObj);
 	Particle::CGroup *group = particleData->Groups[0];
-	Particle::CEmitter *emitter = group->getEmitters()[0];
 
-	minForce = emitter->getForceMin();
-	maxForce = emitter->getForceMax();
-	flow = emitter->getFlow();
-	fullZone = emitter->isEmitFullZone();
+	minForce = m_particleEmitter->getForceMin();
+	maxForce = m_particleEmitter->getForceMax();
+	flow = m_particleEmitter->getFlow();
+	fullZone = m_particleEmitter->isEmitFullZone();
 
 	lifeMin = group->LifeMin;
 	lifeMax = group->LifeMax;
@@ -735,13 +739,13 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 	if (ImGui::TreeNode("Force & Born (Emitter)"))
 	{
 		ImGui::DragFloatRange2("Force", &minForce, &maxForce, 0.01f, 0.0f, 10.0f, "Min: %.3f", "Max: %.3f");
-		emitter->setForce(minForce, maxForce);
+		m_particleEmitter->setForce(minForce, maxForce);
 
 		ImGui::SliderFloat("Flow", &flow, 1.0f, 10000.0f, "flow = %.3f");
-		emitter->setFlow(flow);
+		m_particleEmitter->setFlow(flow);
 
 		ImGui::Checkbox("Spawn particle at full zone", &fullZone);
-		emitter->setEmitFullZone(fullZone);
+		m_particleEmitter->setEmitFullZone(fullZone);
 
 		ImGui::TreePop();
 	}
@@ -750,7 +754,7 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 	{
 		if (ImGui::TreeNode("Straight (Emitter)"))
 		{
-			Particle::CStraightEmitter *e = (Particle::CStraightEmitter*)emitter;
+			Particle::CStraightEmitter *e = (Particle::CStraightEmitter*)m_particleEmitter;
 
 			static float rx = 0.0f;
 			static float ry = 0.0f;
@@ -766,7 +770,7 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 	{
 		if (ImGui::TreeNode("Spheric (Emitter)"))
 		{
-			Particle::CSphericEmitter *e = (Particle::CSphericEmitter*)emitter;
+			Particle::CSphericEmitter *e = (Particle::CSphericEmitter*)m_particleEmitter;
 
 			static float rx = 0.0f;
 			static float ry = 0.0f;
