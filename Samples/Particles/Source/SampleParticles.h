@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IApplicationEventReceiver.h"
-
 #include "ParticleSystem/CParticleComponent.h"
 
 class SampleParticles : public IApplicationEventReceiver
@@ -13,11 +12,12 @@ private:
 
 	CForwardRP *m_forwardRP;
 
+	CGUIText *m_label;
 	CGlyphFont *m_font;
 
 	CGameObject* m_currentParticleObj;
-
-	CGUIText *m_label;
+	Particle::CZone* m_particleZone;
+	Particle::CEmitter* m_particleEmitter;
 
 public:
 
