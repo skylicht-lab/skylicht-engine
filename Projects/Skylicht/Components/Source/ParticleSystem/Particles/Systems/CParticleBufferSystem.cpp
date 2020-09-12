@@ -59,9 +59,14 @@ namespace Skylicht
 			u32 frameX = 1;
 			u32 frameY = 1;
 
+			IRenderer *renderer = group->getRenderer();
+			float sx = renderer->SizeX;
+			float sy = renderer->SizeY;
+			float sz = renderer->SizeZ;
+
 			if (group->getRenderer()->getType() == Particle::Quad)
 			{
-				CQuadRenderer *quadRenderer = (CQuadRenderer*)group->getRenderer();
+				CQuadRenderer *quadRenderer = (CQuadRenderer*)renderer;
 				frameX = quadRenderer->getAtlasX();
 				frameY = quadRenderer->getAtlasY();
 			}
@@ -88,9 +93,9 @@ namespace Skylicht
 				);
 
 				data->Size.set(
-					params[ScaleX],
-					params[ScaleY],
-					params[ScaleZ]
+					sx * params[ScaleX],
+					sy * params[ScaleY],
+					sz * params[ScaleZ]
 				);
 				data->Rotation = p->Rotation;
 				data->Velocity = p->Velocity;

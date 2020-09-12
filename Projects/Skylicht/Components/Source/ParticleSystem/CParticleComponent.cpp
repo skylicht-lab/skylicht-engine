@@ -22,8 +22,6 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
 #include "pch.h"
 #include "CParticleBufferData.h"
 #include "CParticleRenderer.h"

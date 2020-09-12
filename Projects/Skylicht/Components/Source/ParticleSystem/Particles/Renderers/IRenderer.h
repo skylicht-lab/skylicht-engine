@@ -43,9 +43,17 @@ namespace Skylicht
 			CMaterial *m_material;
 
 		public:
+			float SizeX;
+			float SizeY;
+			float SizeZ;
+
+		public:
 			IRenderer(ERenderer type) :
 				m_type(type),
-				m_material(NULL)
+				m_material(NULL),
+				SizeX(1.0f),
+				SizeY(1.0f),
+				SizeZ(1.0f)
 			{
 
 			}
