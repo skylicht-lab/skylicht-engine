@@ -52,11 +52,24 @@ namespace Skylicht
 			bool m_active;
 			bool m_emitFullZone;
 
+			CZone* m_zone;
+
 			EEmitter m_type;
 		public:
 			CEmitter(EEmitter type);
 
 			virtual ~CEmitter();
+
+			inline CZone* setZone(CZone *z)
+			{
+				m_zone = z;
+				return m_zone;
+			}
+
+			inline CZone* getZone()
+			{
+				return m_zone;
+			}
 
 			inline void setTank(int tank)
 			{
