@@ -45,8 +45,6 @@ namespace Skylicht
 
 		CModel::~CModel()
 		{
-			if (m_interpolator != NULL)
-				delete m_interpolator;
 		}
 
 		float CModel::getRandomStart()
