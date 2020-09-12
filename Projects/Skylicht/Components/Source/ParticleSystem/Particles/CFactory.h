@@ -43,6 +43,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Emitters/CSphericEmitter.h"
 #include "Emitters/CNormalEmitter.h"
 
+#include "Systems/CVortexSystem.h"
+
 namespace Skylicht
 {
 	namespace Particle

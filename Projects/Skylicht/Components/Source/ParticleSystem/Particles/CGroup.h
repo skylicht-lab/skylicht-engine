@@ -61,8 +61,7 @@ namespace Skylicht
 
 			CParticleSystem *m_particleSystem;
 			CParticleBufferSystem *m_bufferSystem;
-
-			CZone* m_zone;
+			
 			IRenderer* m_renderer;
 			CParticleInstancing *m_instancing;
 
@@ -96,17 +95,6 @@ namespace Skylicht
 			core::vector3df getTransformPosition(const core::vector3df& pos);
 
 			core::vector3df getTransformVector(const core::vector3df& vec);
-
-			inline CZone* setZone(CZone *z)
-			{
-				m_zone = z;
-				return m_zone;
-			}
-
-			inline CZone* getZone()
-			{
-				return m_zone;
-			}
 
 			inline const core::aabbox3df& getBBox()
 			{
