@@ -44,6 +44,7 @@ namespace Skylicht
 		class CEmitter
 		{
 		protected:
+			int m_lastTank;
 			int m_tank;
 			float m_flow;
 			float m_forceMin;
@@ -71,9 +72,21 @@ namespace Skylicht
 				return m_zone;
 			}
 
+			inline void stop()
+			{
+				m_tank = 0;
+				m_flow = 0;
+			}
+
 			inline void setTank(int tank)
 			{
 				m_tank = tank;
+				m_lastTank = tank;
+			}
+
+			inline void resetTank()
+			{
+				setTank(m_lastTank);
 			}
 
 			inline int getTank()

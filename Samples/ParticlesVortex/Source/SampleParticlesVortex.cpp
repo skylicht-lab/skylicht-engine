@@ -33,26 +33,26 @@ void SampleParticlesVortex::onInitApp()
 	// init application
 	CBaseApp* app = getApplication();
 
-	// Load "BuiltIn.zip" to read files inside it
+	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Particles.zip"), false, false);
 
-	// Load basic shader
+	// ;oad basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
-	// Create a Scene
+	// create a Scene
 	m_scene = new CScene();
 
-	// Create a Zone in Scene
+	// create a Zone in Scene
 	CZone *zone = m_scene->createZone();
 
-	// Create 2D camera
+	// create 2D camera
 	CGameObject *guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
-	// Create 3d camera
+	// create 3d camera
 	CGameObject *camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
@@ -61,15 +61,15 @@ void SampleParticlesVortex::onInitApp()
 	m_camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
-	// 3D grid
+	// 3d grid
 	// CGameObject *grid = zone->createEmptyObject();
 	// grid->addComponent<CGridPlane>();
 
-	// Particles
+	// particles
 	m_currentParticleObj = zone->createEmptyObject();
 	initParticleSystem(m_currentParticleObj->addComponent<Particle::CParticleComponent>());
 
-	// Rendering pipe line
+	// rendering pipe line
 	m_forwardRP = new CForwardRP();
 }
 
@@ -85,7 +85,7 @@ void SampleParticlesVortex::initParticleSystem(Particle::CParticleComponent *ps)
 	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
 	quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
 	quadRenderer->setAtlas(1, 1);
-	quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
+	quadRenderer->getMaterial()->setTexture(0, texture);
 	quadRenderer->getMaterial()->applyMaterial();
 	quadRenderer->SizeX = 0.05f;
 	quadRenderer->SizeY = 0.05f;

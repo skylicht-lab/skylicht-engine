@@ -79,8 +79,9 @@ void SampleParticles::onInitApp()
 	m_currentParticleObj = zone->createEmptyObject();
 	Particle::CParticleComponent *particleComponent = m_currentParticleObj->addComponent<Particle::CParticleComponent>();
 
-	updateParticleZone(particleComponent, Particle::Sphere);
+	updateParticleGroup(particleComponent);
 	updateParticleEmitter(particleComponent, Particle::Random);
+	updateParticleZone(particleComponent, Particle::Sphere);
 	updateParticleRenderer(particleComponent);
 
 	// 3D text
@@ -109,20 +110,24 @@ void SampleParticles::createCanvasText(const char *text, const core::vector3df& 
 	m_label = guiText;
 }
 
-Particle::CParticleBufferData* SampleParticles::getParticleData(CGameObject *obj)
+Particle::CGroup* SampleParticles::updateParticleGroup(Particle::CParticleComponent *particleComponent)
 {
-	return obj->getComponent<Particle::CParticleComponent>()->getData();
+	Particle::CGroup *group = NULL;
+
+	if (particleComponent->getNumOfGroup() == 0)
+		group = particleComponent->createParticleGroup();
+	else
+		group = particleComponent->getGroup(0);
+
+	m_particleGroup = group;
+	return group;
 }
 
 Particle::CZone* SampleParticles::updateParticleZone(Particle::CParticleComponent *particleComponent, Particle::EZone zoneType)
 {
 	Particle::CFactory *factory = particleComponent->getParticleFactory();
 
-	Particle::CGroup *group = NULL;
-	if (particleComponent->getNumOfGroup() == 0)
-		group = particleComponent->createParticleGroup();
-	else
-		group = particleComponent->getGroup(0);
+	Particle::CGroup *group = m_particleGroup;
 
 	// delete old zone
 	if (m_particleZone != NULL)
@@ -181,11 +186,7 @@ Particle::CEmitter* SampleParticles::updateParticleEmitter(Particle::CParticleCo
 {
 	Particle::CFactory *factory = particleComponent->getParticleFactory();
 
-	Particle::CGroup *group = NULL;
-	if (particleComponent->getNumOfGroup() == 0)
-		group = particleComponent->createParticleGroup();
-	else
-		group = particleComponent->getGroup(0);
+	Particle::CGroup *group = m_particleGroup;
 
 	Particle::CEmitter *emitter = NULL;
 
@@ -237,11 +238,7 @@ Particle::IRenderer* SampleParticles::updateParticleRendererType(Particle::CPart
 {
 	Particle::CFactory *factory = particleComponent->getParticleFactory();
 
-	Particle::CGroup *group = NULL;
-	if (particleComponent->getNumOfGroup() == 0)
-		return NULL;
-	else
-		group = particleComponent->getGroup(0);
+	Particle::CGroup *group = m_particleGroup;
 
 	Particle::IRenderer *r = group->getRenderer();
 	if (r->getType() != Particle::Quad)
@@ -255,7 +252,7 @@ Particle::IRenderer* SampleParticles::updateParticleRendererType(Particle::CPart
 		ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
 		quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
 		quadRenderer->setAtlas(1, 1);
-		quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
+		quadRenderer->getMaterial()->setTexture(0, texture);
 		quadRenderer->getMaterial()->applyMaterial();
 		quadRenderer->SizeX = 1.0f;
 		quadRenderer->SizeY = 1.0f;
@@ -266,7 +263,7 @@ Particle::IRenderer* SampleParticles::updateParticleRendererType(Particle::CPart
 		// sprite
 		ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
 		quadRenderer->setAtlas(2, 2);
-		quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
+		quadRenderer->getMaterial()->setTexture(0, texture);
 		quadRenderer->getMaterial()->applyMaterial();
 		quadRenderer->SizeX = 2.0f;
 		quadRenderer->SizeY = 2.0f;
@@ -278,7 +275,7 @@ Particle::IRenderer* SampleParticles::updateParticleRendererType(Particle::CPart
 		ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png");
 		quadRenderer->setMaterialType(Particle::Addtive, Particle::Velocity);
 		quadRenderer->setAtlas(1, 1);
-		quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
+		quadRenderer->getMaterial()->setTexture(0, texture);
 		quadRenderer->getMaterial()->applyMaterial();
 		quadRenderer->SizeX = 0.5f;
 		quadRenderer->SizeY = 2.0f;
@@ -292,11 +289,7 @@ Particle::IRenderer* SampleParticles::updateParticleRenderer(Particle::CParticle
 {
 	Particle::CFactory *factory = particleComponent->getParticleFactory();
 
-	Particle::CGroup *group = NULL;
-	if (particleComponent->getNumOfGroup() == 0)
-		group = particleComponent->createParticleGroup();
-	else
-		group = particleComponent->getGroup(0);
+	Particle::CGroup *group = m_particleGroup;
 
 	// delete old emitter
 	if (group->getRenderer() != NULL)
@@ -481,7 +474,7 @@ void SampleParticles::onGUIParticle()
 		{
 			if (ImGui::Button("Stop Particle", btnSize))
 			{
-				m_particleEmitter->setFlow(0);
+				m_particleEmitter->stop();
 			}
 
 			ImGui::TreePop();
@@ -534,7 +527,6 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 
 			if (r == 0.0f)
 			{
-				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
 				Particle::CSphere *sphere = dynamic_cast<Particle::CSphere*>(m_particleZone);
 				r = sphere->getRadius();
 			}
@@ -544,7 +536,6 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 
 			if (!core::equals(lastR, r))
 			{
-				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
 				Particle::CSphere *sphere = dynamic_cast<Particle::CSphere*>(m_particleZone);
 				sphere->setRadius(r);
 			}
@@ -562,7 +553,6 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 
 			if (sizeX == 0.0f)
 			{
-				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
 				Particle::CAABox *aabox = dynamic_cast<Particle::CAABox*>(m_particleZone);
 				const core::vector3df& s = aabox->getDimension();
 				sizeX = s.X;
@@ -580,7 +570,6 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 
 			if (!core::equals(lastX, sizeX) || !core::equals(lastY, sizeY) || !core::equals(lastZ, sizeZ))
 			{
-				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
 				Particle::CAABox *aabox = dynamic_cast<Particle::CAABox*>(m_particleZone);
 				aabox->setDimension(core::vector3df(sizeX, sizeY, sizeZ));
 			}
@@ -600,7 +589,6 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 
 			if (r == 0.0f)
 			{
-				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
 				Particle::CCylinder *cylinder = dynamic_cast<Particle::CCylinder*>(m_particleZone);
 				l = cylinder->getLength();
 				r = cylinder->getRadius();
@@ -623,7 +611,6 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 				!core::equals(lastY, ry) ||
 				!core::equals(lastZ, rz))
 			{
-				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
 				Particle::CCylinder *cylinder = dynamic_cast<Particle::CCylinder*>(m_particleZone);
 				cylinder->setRadius(r);
 				cylinder->setLength(l);
@@ -642,7 +629,6 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 
 			if (r1 == 0.0f)
 			{
-				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
 				Particle::CRing *ring = dynamic_cast<Particle::CRing*>(m_particleZone);
 				r1 = ring->getMinRadius();
 				r2 = ring->getMaxRadius();
@@ -655,7 +641,6 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 
 			if (!core::equals(lastRadius1, r1) || !core::equals(lastRadius2, r2))
 			{
-				Particle::CParticleBufferData *particleData = getParticleData(m_currentParticleObj);
 				Particle::CRing *ring = dynamic_cast<Particle::CRing*>(m_particleZone);
 
 				float min = r1;
@@ -685,8 +670,7 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 	float lifeMax = 0.0f;
 	float friction = 0.0f;
 
-	Particle::CParticleBufferData* particleData = getParticleData(m_currentParticleObj);
-	Particle::CGroup *group = particleData->Groups[0];
+	Particle::CGroup *group = m_particleGroup;
 
 	minForce = m_particleEmitter->getForceMin();
 	maxForce = m_particleEmitter->getForceMax();
@@ -790,8 +774,7 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 
 void SampleParticles::onGUIRendererNode()
 {
-	Particle::CParticleBufferData* particleData = getParticleData(m_currentParticleObj);
-	Particle::CGroup *group = particleData->Groups[0];
+	Particle::CGroup *group = m_particleGroup;
 
 	const char *renderType[] = {
 		"Point",
