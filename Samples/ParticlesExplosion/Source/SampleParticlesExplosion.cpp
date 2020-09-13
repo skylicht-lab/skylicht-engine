@@ -101,7 +101,7 @@ bool SampleParticlesExplosion::OnEvent(const SEvent& event)
 {
 	if (event.EventType == EET_KEY_INPUT_EVENT)
 	{
-		if (event.KeyInput.Key == VK_SPACE && event.KeyInput.PressedDown == false)
+		if (event.KeyInput.Key == irr::KEY_SPACE && event.KeyInput.PressedDown == false)
 		{
 			for (int i = 0; i < MAX_POOL; i++)
 			{
