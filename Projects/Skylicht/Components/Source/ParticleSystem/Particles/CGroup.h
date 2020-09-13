@@ -61,7 +61,7 @@ namespace Skylicht
 
 			CParticleSystem *m_particleSystem;
 			CParticleBufferSystem *m_bufferSystem;
-			
+
 			IRenderer* m_renderer;
 			CParticleInstancing *m_instancing;
 
@@ -70,6 +70,9 @@ namespace Skylicht
 			float Friction;
 			float LifeMin;
 			float LifeMax;
+
+			core::vector3df OrientationNormal;
+			core::vector3df OrientationUp;
 
 		protected:
 			core::matrix4 m_world;

@@ -37,6 +37,7 @@ namespace Skylicht
 			m_baseShaderType(Addtive)
 		{
 			m_material = new CMaterial("Particle", "BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
+			m_material->setBackfaceCulling(false);
 
 			setMaterialType(m_baseShaderType, m_billboardType);
 		}
@@ -44,6 +45,12 @@ namespace Skylicht
 		CQuadRenderer::~CQuadRenderer()
 		{
 			delete m_material;
+		}
+
+		void CQuadRenderer::setTexture(int slot, ITexture *texture)
+		{
+			m_material->setTexture(slot, texture);
+			m_material->setManualInitTexture(true);
 		}
 
 		void CQuadRenderer::setMaterialType(EBaseShaderType shader, EBillboardType billboard)
@@ -54,6 +61,8 @@ namespace Skylicht
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
 				else if (billboard == Velocity)
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleVelocityAdditive.xml");
+				else if (billboard == FixOrientation)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleOrientationAdditive.xml");
 			}
 			else if (shader == Transparent)
 			{
@@ -61,6 +70,8 @@ namespace Skylicht
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardTransparent.xml");
 				else if (billboard == Velocity)
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleVelocityTransparent.xml");
+				else if (billboard == FixOrientation)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleOrientationTransparent.xml");
 			}
 			else
 			{
