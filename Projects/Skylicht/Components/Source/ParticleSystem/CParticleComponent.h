@@ -73,6 +73,14 @@ namespace Skylicht
 			}
 
 			void removeParticleGroup(CGroup* group);
+
+			void Play();
+
+			void Stop();
+
+			bool IsPlaying();
+
+			u32 getTotalParticle();
 		};
 	}
 }

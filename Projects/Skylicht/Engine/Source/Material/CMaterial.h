@@ -157,8 +157,13 @@ namespace Skylicht
 			return m_deferred;
 		}
 
-		CMaterial* clone(CGameObject *gameObject);
+		inline void setManualInitTexture(bool b)
+		{
+			m_manualInitMaterial = b;
+		}
 
+		CMaterial* clone(CGameObject *gameObject);
+		
 		void deleteAllParams();
 		void deleteExtramParams();
 
@@ -191,6 +196,16 @@ namespace Skylicht
 			return m_extras;
 		}
 
+		inline void setBackfaceCulling(bool b)
+		{
+			m_backfaceCulling = b;
+		}
+
+		inline void setFrontfaceCulling(bool b)
+		{
+			m_frontfaceCulling = b;
+		}
+
 		SUniformValue* getUniform(const char *name);
 
 		SUniformTexture* getUniformTexture(const char *name);
@@ -209,6 +224,8 @@ namespace Skylicht
 		void initMaterial();
 
 		void setTexture(ITexture** textures, int num);
+
+		void setTexture(int slot, ITexture* texture);
 
 		void setProperty(const std::string& name, const std::string& value);
 

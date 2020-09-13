@@ -16,6 +16,8 @@ private:
 	CGlyphFont *m_font;
 
 	CGameObject* m_currentParticleObj;
+
+	Particle::CGroup* m_particleGroup;
 	Particle::CZone* m_particleZone;
 	Particle::CEmitter* m_particleEmitter;
 
@@ -59,6 +61,8 @@ protected:
 
 	core::vector3df imguiDirection(core::vector3df baseDirection, float &x, float &y, float &z, const char *name, const char *fmt);
 
+	Particle::CGroup* updateParticleGroup(Particle::CParticleComponent *particleComponent);
+
 	Particle::CZone* updateParticleZone(Particle::CParticleComponent *particleComponent, Particle::EZone zoneType);
 
 	Particle::CEmitter* updateParticleEmitter(Particle::CParticleComponent *particleComponent, Particle::EEmitter emitterType);
@@ -66,6 +70,4 @@ protected:
 	Particle::IRenderer* updateParticleRenderer(Particle::CParticleComponent *particleComponent);
 
 	Particle::IRenderer* updateParticleRendererType(Particle::CParticleComponent *particleComponent, int typeId);
-
-	Particle::CParticleBufferData* getParticleData(CGameObject *obj);
 };

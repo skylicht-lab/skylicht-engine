@@ -367,6 +367,13 @@ namespace Skylicht
 		readTexturePath();
 	}
 
+	void CMaterial::setTexture(int slot, ITexture* texture)
+	{
+		m_textures[slot] = texture;
+
+		readTexturePath();
+	}
+
 	void CMaterial::buildDoubleSidedMesh()
 	{
 		if (m_doubleSided == true)

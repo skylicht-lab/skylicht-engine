@@ -216,12 +216,20 @@ void COpenGLSLMaterialRenderer::OnSetMaterial(const video::SMaterial& material,
 	if (Alpha)
 	{
 		bridgeCalls->setBlend(true);
-		bridgeCalls->setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		// C = (src a) x S + (1 - src a) x D
+		bridgeCalls->setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);		
+
+		// multiply
+		// C = (0) x S + S x D
+		// bridgeCalls->setBlendFunc(GL_ZERO, GL_SRC_COLOR);
 	}
 	else if (FixedBlending)
 	{
-		bridgeCalls->setBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
 		bridgeCalls->setBlend(true);
+
+		// C = (1) x S + (1 - S) x D
+		bridgeCalls->setBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);		
 	}
 	else if (Blending)
 	{
@@ -232,8 +240,12 @@ void COpenGLSLMaterialRenderer::OnSetMaterial(const video::SMaterial& material,
 
 		if (Driver->queryFeature(EVDF_BLEND_SEPARATE))
         {
-            bridgeCalls->setBlendFuncSeparate(Driver->getGLBlend(srcRGBFact), Driver->getGLBlend(dstRGBFact),
-                Driver->getGLBlend(srcAlphaFact), Driver->getGLBlend(dstAlphaFact));
+            bridgeCalls->setBlendFuncSeparate(
+				Driver->getGLBlend(srcRGBFact), 
+				Driver->getGLBlend(dstRGBFact),
+                Driver->getGLBlend(srcAlphaFact), 
+				Driver->getGLBlend(dstAlphaFact)
+			);
         }
         else
         {
