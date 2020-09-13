@@ -1,0 +1,19 @@
+<shaderConfig name="ParticleOrientationTransparent" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uOrientationUp" type="PARTICLE_ORIENTATION_UP" value="0" float="3"/>
+			<uniform name="uOrientationNormal" type="PARTICLE_ORIENTATION_NORMAL" value="0" float="3"/>
+		</vs>
+		<fs>
+			<uniform name="uTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexture"/>
+		</ui>
+	</customUI>	
+	<shader type="GLSL" vs="GLSL/ParticleOrientationVS.glsl" fs="GLSL/ParticleFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ParticleOrientationVS.hlsl" fs="HLSL/ParticleFS.hlsl"/>
+</shaderConfig>

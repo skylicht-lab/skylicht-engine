@@ -91,12 +91,9 @@ namespace Skylicht
 			EParticleParams* paramTypes = listParams.data();
 			CInterpolator** modelInterpolators = listModelInterpolators.data();
 
-			// list group interpolator
-			std::vector<CInterpolator*>& listInterpolator = group->getInterpolators();
-			CInterpolator** interpolators = listInterpolator.data();
-			u32 numInterpolator = listInterpolator.size();
+			float f, y;
 
-#pragma omp parallel for private(p, params)
+#pragma omp parallel for private(p, params, f, y)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
@@ -131,28 +128,24 @@ namespace Skylicht
 				// update friction
 				if (group->Friction > 0.0f)
 				{
-					float f = 1.0f - core::min_(1.0f, friction / params[Mass]);
+					f = 1.0f - core::min_(1.0f, friction / params[Mass]);
 					p->Velocity *= f;
 				}
 
 				// update interpolate parameters
 				float x = p->Age / p->LifeTime;
 
-				for (u32 j = 0; j < numInterpolator; j++)
-					interpolators[j]->interpolate(x);
-
 				for (u32 j = 0; j < numModels; j++)
 				{
 					// linear
-					float y = x;
+					y = x;
+					EParticleParams t = paramTypes[j];
 
 					if (modelInterpolators[j] != NULL)
 					{
 						// interpolate
-						y = modelInterpolators[j]->getLastComputeValue();
+						y = modelInterpolators[j]->interpolate(x);
 					}
-
-					EParticleParams t = paramTypes[j];
 
 					// update param value
 					params[t] = p->StartValue[t] + (p->EndValue[t] - p->StartValue[t]) * y;

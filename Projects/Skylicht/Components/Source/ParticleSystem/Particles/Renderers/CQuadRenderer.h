@@ -34,7 +34,7 @@ namespace Skylicht
 		{
 			Camera,
 			Velocity,
-			Point3D
+			FixOrientation
 		};
 
 		enum EBaseShaderType
@@ -84,6 +84,8 @@ namespace Skylicht
 			{
 				return m_atlasNy;
 			}
+
+			void setTexture(int slot, ITexture *texture);
 
 			void setMaterialType(EBaseShaderType shader, EBillboardType billboard);
 
