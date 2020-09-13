@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Culling/CCullingBBoxData.h"
 #include "Culling/CCullingData.h"
+#include "Culling/CVisibleData.h"
 #include "Transform/CWorldTransformData.h"
 #include "Transform/CWorldInverseTransformData.h"
 #include "ParticleSystem/CParticleBufferData.h"

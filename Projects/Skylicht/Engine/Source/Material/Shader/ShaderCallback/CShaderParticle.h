@@ -34,7 +34,8 @@ namespace Skylicht
 	protected:
 		static core::vector3df s_viewUp;
 		static core::vector3df s_viewLook;
-
+		static core::vector3df s_orientationNormal;
+		static core::vector3df s_orientationUp;
 	public:
 		CShaderParticle();
 
@@ -47,5 +48,9 @@ namespace Skylicht
 		static void setViewUp(const core::vector3df& up);
 
 		static void setViewLook(const core::vector3df& look);
+
+		static void setOrientationUp(const core::vector3df& up);
+
+		static void setOrientationNormal(const core::vector3df& normal);
 	};
 }

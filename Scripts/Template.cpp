@@ -30,7 +30,7 @@ void @project_name@::onInitApp()
 	// init application
 	CBaseApp* app = getApplication();
 
-	// Load "BuiltIn.zip" to read files inside it
+	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 
 #if defined(USE_FREETYPE)
@@ -39,17 +39,17 @@ void @project_name@::onInitApp()
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 #endif
 
-	// Load basic shader
+	// load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
-	// Create a Scene
+	// create a Scene
 	m_scene = new CScene();
 
-	// Create a Zone in Scene
+	// create a Zone in Scene
 	CZone *zone = m_scene->createZone();
 
-	// Create 2D camera
+	// create 2D camera
 	CGameObject *guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
@@ -58,11 +58,11 @@ void @project_name@::onInitApp()
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("Segoe UI Light", 50);
 
-	// Create 2D Canvas
+	// create 2D Canvas
 	CGameObject *canvasObject = zone->createEmptyObject();
 	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
 
-	// Create UI Text in Canvas
+	// create UI Text in Canvas
 	CGUIText *textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("@project_name@");
 	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
@@ -77,7 +77,7 @@ void @project_name@::onUpdate()
 
 void @project_name@::onRender()
 {
-	// Render hello,world text in gui camera
+	// render text in gui camera
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }
 

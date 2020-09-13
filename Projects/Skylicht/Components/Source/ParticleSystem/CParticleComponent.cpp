@@ -79,5 +79,54 @@ namespace Skylicht
 		{
 			m_data->removeGroup(group);
 		}
+
+		void CParticleComponent::Play()
+		{
+			CGroup** groups = m_data->Groups.pointer();
+			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
+			{
+				std::vector<CEmitter*>& emitter = groups[i]->getEmitters();
+				for (CEmitter *e : emitter)
+				{
+					e->resetTank();
+				}
+			}
+		}
+
+		void CParticleComponent::Stop()
+		{
+			CGroup** groups = m_data->Groups.pointer();
+			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
+			{
+				std::vector<CEmitter*>& emitter = groups[i]->getEmitters();
+				for (CEmitter *e : emitter)
+				{
+					e->stop();
+				}
+			}
+		}
+
+		bool CParticleComponent::IsPlaying()
+		{
+			CGroup** groups = m_data->Groups.pointer();
+			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
+			{
+				if (groups[i]->getNumParticles() > 0)
+					return true;
+			}
+
+			return false;
+		}
+
+		u32 CParticleComponent::getTotalParticle()
+		{
+			u32 n = 0;
+
+			CGroup** groups = m_data->Groups.pointer();
+			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
+				n += groups[i]->getNumParticles();
+
+			return n;
+		}
 	}
 }
