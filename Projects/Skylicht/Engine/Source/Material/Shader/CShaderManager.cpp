@@ -102,6 +102,8 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Particle/ParticleBillboardTransparent.xml");
 		loadShader("BuiltIn/Shader/Particle/ParticleVelocityAdditive.xml");
 		loadShader("BuiltIn/Shader/Particle/ParticleVelocityTransparent.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleOrientationAdditive.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleOrientationTransparent.xml");
 	}
 
 	void CShaderManager::initSGDeferredShader()

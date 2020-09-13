@@ -34,8 +34,8 @@ namespace Skylicht
 	{
 		CGroup::CGroup() :
 			m_renderer(NULL),
-			Gravity(0.0f, -9.8f, 0.0f),
-			Friction(1.0f),
+			Gravity(0.0f, 0.0f, 0.0f),
+			Friction(0.0f),
 			LifeMin(1.0f),
 			LifeMax(2.0f)
 		{
@@ -198,6 +198,12 @@ namespace Skylicht
 					{
 						p.HaveRotate = true;
 					}
+					else if (t == Particle::RotateX)
+						p.Rotation.X = p.StartValue[t];
+					else if (t == Particle::RotateY)
+						p.Rotation.Y = p.StartValue[t];
+					else if (t == Particle::RotateZ)
+						p.Rotation.Z = p.StartValue[t];
 				}
 			}
 

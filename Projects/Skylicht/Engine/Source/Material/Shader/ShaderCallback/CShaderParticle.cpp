@@ -30,6 +30,9 @@ namespace Skylicht
 	core::vector3df CShaderParticle::s_viewUp;
 	core::vector3df CShaderParticle::s_viewLook;
 
+	core::vector3df CShaderParticle::s_orientationNormal = core::vector3df(0.0f, 1.0f, 0.0f);
+	core::vector3df CShaderParticle::s_orientationUp = core::vector3df(1.0f, 0.0f, 0.0f);
+
 	CShaderParticle::CShaderParticle()
 	{
 
@@ -50,6 +53,16 @@ namespace Skylicht
 		s_viewLook = look;
 	}
 
+	void CShaderParticle::setOrientationUp(const core::vector3df& up)
+	{
+		s_orientationUp = up;
+	}
+
+	void CShaderParticle::setOrientationNormal(const core::vector3df& normal)
+	{
+		s_orientationNormal = normal;
+	}
+
 	void CShaderParticle::OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader)
 	{
 		switch (uniform->Type)
@@ -68,6 +81,22 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform->UniformShaderID, &s_viewLook.X, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 			else
 				matRender->setShaderVariable(uniform->UniformShaderID, &s_viewLook.X, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+		}
+		break;
+		case PARTICLE_ORIENTATION_UP:
+		{
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, &s_orientationUp.X, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, &s_orientationUp.X, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+		}
+		break;
+		case PARTICLE_ORIENTATION_NORMAL:
+		{
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, &s_orientationNormal.X, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, &s_orientationNormal.X, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		default:

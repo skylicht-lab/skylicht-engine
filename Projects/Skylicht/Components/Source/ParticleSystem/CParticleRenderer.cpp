@@ -53,7 +53,9 @@ namespace Skylicht
 			if (particleData != NULL)
 			{
 				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-				if (transform != NULL)
+				CVisibleData *visible = entity->getData<CVisibleData>();
+
+				if (transform != NULL && visible->Visible)
 				{
 					m_particles.push_back(particleData);
 					m_transforms.push_back(transform);
@@ -88,6 +90,9 @@ namespace Skylicht
 
 		void CParticleRenderer::update(CEntityManager *entityManager)
 		{
+			if (m_particles.size() == 0)
+				return;
+
 			IVideoDriver *driver = getVideoDriver();
 
 			irr::core::matrix4 invModelView;
@@ -123,11 +128,16 @@ namespace Skylicht
 
 		void CParticleRenderer::render(CEntityManager *entityManager)
 		{
+			if (m_particles.size() == 0)
+				return;
 
 		}
 
 		void CParticleRenderer::renderTransparent(CEntityManager *entityManager)
 		{
+			if (m_particles.size() == 0)
+				return;
+
 			getVideoDriver()->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
 			CParticleBufferData** particles = m_particles.pointer();
@@ -151,6 +161,9 @@ namespace Skylicht
 				if (g->getCurrentParticleCount() > 0)
 				{
 					IMeshBuffer *buffer = g->getIntancing()->getMeshBuffer();
+
+					CShaderParticle::setOrientationUp(g->OrientationUp);
+					CShaderParticle::setOrientationNormal(g->OrientationNormal);
 
 					driver->setMaterial(buffer->getMaterial());
 					driver->drawMeshBuffer(buffer);
