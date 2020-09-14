@@ -37,7 +37,8 @@ namespace Skylicht
 			Gravity(0.0f, 0.0f, 0.0f),
 			Friction(0.0f),
 			LifeMin(1.0f),
-			LifeMax(2.0f)
+			LifeMax(2.0f),
+			m_callback(NULL)
 		{
 			m_particleSystem = new CParticleSystem();
 			m_bufferSystem = new CParticleBufferSystem();
@@ -118,6 +119,9 @@ namespace Skylicht
 				m_particleSystem->updateLifeTime(particles, numParticles, this, dt);
 			}
 
+			if (m_callback != NULL)
+				m_callback->OnParticleUpdate(particles, numParticles, this, dt);
+
 			if (numParticles > 0)
 				m_bbox.reset(particles[0].Position);
 
@@ -128,6 +132,9 @@ namespace Skylicht
 
 				if (p.Life < 0)
 				{
+					if (m_callback != NULL)
+						m_callback->OnParticleDead(p, i);
+
 					// remove dead particle
 					remove(i);
 					--i;
@@ -168,46 +175,65 @@ namespace Skylicht
 
 		bool CGroup::launchParticle(CParticle& p, SLaunchParticle& launch)
 		{
-			p.Age = 0.0f;
-			p.Life = random(LifeMin, LifeMax);
-			p.LifeTime = p.Life;
-			p.HaveRotate = false;
+			initParticleLifeTime(p);
 
 			if (p.LifeTime > 0)
 			{
 				launch.Emitter->emitParticle(p, launch.Emitter->getZone(), this);
 				launch.Number--;
 
-				for (CModel *m : m_models)
-				{
-					EParticleParams t = m->getType();
-
-					if (m->haveStart() == true)
-						p.StartValue[t] = m->getRandomStart();
-					else
-						p.StartValue[t] = 0.0f;
-
-					if (m->haveEnd() == true)
-						p.EndValue[t] = m->getRandomEnd();
-					else
-						p.EndValue[t] = p.StartValue[t];
-
-					if (t == Particle::RotateSpeedX ||
-						t == Particle::RotateSpeedY ||
-						t == Particle::RotateSpeedZ)
-					{
-						p.HaveRotate = true;
-					}
-					else if (t == Particle::RotateX)
-						p.Rotation.X = p.StartValue[t];
-					else if (t == Particle::RotateY)
-						p.Rotation.Y = p.StartValue[t];
-					else if (t == Particle::RotateZ)
-						p.Rotation.Z = p.StartValue[t];
-				}
+				initParticleModel(p);
 			}
 
 			return launch.Number == 0;
+		}
+
+		void CGroup::initParticleModel(CParticle& p)
+		{
+			for (CModel *m : m_models)
+			{
+				EParticleParams t = m->getType();
+
+				if (m->haveStart() == true)
+					p.StartValue[t] = m->getRandomStart();
+				else
+					p.StartValue[t] = 0.0f;
+
+				if (m->haveEnd() == true)
+					p.EndValue[t] = m->getRandomEnd();
+				else
+					p.EndValue[t] = p.StartValue[t];
+
+				if (t == Particle::RotateSpeedX ||
+					t == Particle::RotateSpeedY ||
+					t == Particle::RotateSpeedZ)
+				{
+					p.HaveRotate = true;
+				}
+				else if (t == Particle::RotateX)
+					p.Rotation.X = p.StartValue[t];
+				else if (t == Particle::RotateY)
+					p.Rotation.Y = p.StartValue[t];
+				else if (t == Particle::RotateZ)
+					p.Rotation.Z = p.StartValue[t];
+			}
+
+			if (m_callback != NULL)
+				m_callback->OnParticleBorn(p);
+		}
+
+		void CGroup::addParticle(const core::vector3df& position, CEmitter *emitter)
+		{
+			CParticle* p = create(1);
+
+			initParticleLifeTime(*p);
+
+			if (p->LifeTime > 0)
+			{
+				emitter->generateVelocity(*p, emitter->getZone(), this);
+
+				initParticleModel(*p);
+			}
 		}
 
 		CParticle* CGroup::create(u32 num)
@@ -223,6 +249,9 @@ namespace Skylicht
 			u32 total = m_particles.size();
 			if (index >= total)
 				return;
+
+			if (m_callback != NULL)
+				m_callback->OnSwapParticleData(m_particles[index], m_particles.getLast());
 
 			m_particles[index].swap(m_particles.getLast());
 			m_particles.set_used(total - 1);
