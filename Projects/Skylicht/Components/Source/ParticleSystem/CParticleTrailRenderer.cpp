@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CParticleTrailRenderer.h"
 
+
 namespace Skylicht
 {
 	namespace Particle
@@ -41,12 +42,23 @@ namespace Skylicht
 
 		void CParticleTrailRenderer::beginQuery()
 		{
-
+			m_trails.set_used(0);
+			m_cullings.set_used(0);
 		}
 
 		void CParticleTrailRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
 		{
+			CParticleTrailData *trail = entity->getData<CParticleTrailData>();
+			if (trail != NULL)
+			{
+				CVisibleData *visible = entity->getData<CVisibleData>();
 
+				if (visible->Visible == true)
+					m_trails.push_back(trail);
+
+				CCullingData *culling = entity->getData<CCullingData>();
+				m_cullings.push_back(culling);
+			}
 		}
 
 		void CParticleTrailRenderer::init(CEntityManager *entityManager)
@@ -56,7 +68,19 @@ namespace Skylicht
 
 		void CParticleTrailRenderer::update(CEntityManager *entityManager)
 		{
+			CParticleTrailData** trails = m_trails.pointer();
 
+			for (u32 i = 0, n = m_trails.size(); i < n; i++)
+			{
+				CParticleTrailData *trailData = trails[i];
+
+				// update particle trail
+				u32 m = trailData->Trails.size();
+				for (u32 j = 0; j < m; j++)
+				{
+					trailData->Trails[j]->update();
+				}
+			}
 		}
 
 		void CParticleTrailRenderer::render(CEntityManager *entityManager)

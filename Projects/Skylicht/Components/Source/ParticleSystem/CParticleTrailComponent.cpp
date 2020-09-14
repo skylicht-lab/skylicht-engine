@@ -59,5 +59,10 @@ namespace Skylicht
 		{
 
 		}
+
+		CParticleTrail* CParticleTrailComponent::addTrail(CGroup *group)
+		{
+			return m_data->addTrail(group);
+		}
 	}
 }

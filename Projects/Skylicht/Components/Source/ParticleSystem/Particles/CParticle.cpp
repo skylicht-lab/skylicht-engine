@@ -29,7 +29,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticle::CParticle() :
+		CParticle::CParticle(u32 index) :
+			Index(index),
 			Immortal(false),
 			Age(0.0f),
 			Life(0.0f),
@@ -78,6 +79,7 @@ namespace Skylicht
 			memcpy(EndValue, p.EndValue, size);
 			memcpy(p.EndValue, temp, size);
 
+			u32 index = Index;
 			float age = Age;
 			float life = Life;
 			float lifeTime = LifeTime;
@@ -87,6 +89,7 @@ namespace Skylicht
 			core::vector3df rotation = Rotation;
 			core::vector3df velocity = Velocity;
 
+			Index = p.Index;
 			Age = p.Age;
 			Life = p.Life;
 			LifeTime = p.LifeTime;
@@ -95,6 +98,7 @@ namespace Skylicht
 			Velocity = p.Velocity;
 			HaveRotate = p.HaveRotate;
 
+			p.Index = index;
 			p.Age = age;
 			p.Life = life;
 			p.LifeTime = lifeTime;

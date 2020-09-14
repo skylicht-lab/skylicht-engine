@@ -27,9 +27,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
 
-#include "Culling/CCullingData.h"
+#include "CParticleTrailData.h"
+
 #include "Culling/CVisibleData.h"
-#include "Transform/CWorldTransformData.h"
+#include "Culling/CCullingData.h"
 
 namespace Skylicht
 {
@@ -38,7 +39,7 @@ namespace Skylicht
 		class CParticleTrailRenderer : public IRenderSystem
 		{
 		protected:
-			core::array<CWorldTransformData*> m_transforms;
+			core::array<CParticleTrailData*> m_trails;
 			core::array<CCullingData*> m_cullings;
 
 		public:
