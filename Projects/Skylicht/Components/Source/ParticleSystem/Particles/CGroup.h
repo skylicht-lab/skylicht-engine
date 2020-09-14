@@ -48,6 +48,40 @@ namespace Skylicht
 			u32 Number;
 		};
 
+		class IParticleCallback
+		{
+		public:
+			IParticleCallback()
+			{
+
+			}
+
+			virtual ~IParticleCallback()
+			{
+
+			}
+
+			virtual void OnParticleUpdate(CParticle *particles, int num, CGroup *group, float dt)
+			{
+
+			}
+
+			virtual void OnParticleBorn(CParticle &p)
+			{
+
+			}
+
+			virtual void OnParticleDead(CParticle &p, int index)
+			{
+
+			}
+
+			virtual void OnSwapParticleData(CParticle &p1, CParticle &p2)
+			{
+
+			}
+		};
+
 		class CGroup
 		{
 		protected:
@@ -64,6 +98,8 @@ namespace Skylicht
 
 			IRenderer* m_renderer;
 			CParticleInstancing *m_instancing;
+
+			IParticleCallback *m_callback;
 
 		public:
 			core::vector3df Gravity;
@@ -127,6 +163,16 @@ namespace Skylicht
 					m_emitters.erase(i);
 			}
 
+			inline void setCallback(IParticleCallback *cb)
+			{
+				m_callback = cb;
+			}
+
+			inline IParticleCallback* getCallback()
+			{
+				return m_callback;
+			}
+
 			inline void addSystem(ISystem *s)
 			{
 				m_systems.push_back(s);
@@ -143,6 +189,8 @@ namespace Skylicht
 				if (i != m_systems.end())
 					m_systems.erase(i);
 			}
+
+			void addParticle(const core::vector3df& position, CEmitter *emitter);
 
 			IRenderer* setRenderer(IRenderer *r);
 
@@ -183,6 +231,16 @@ namespace Skylicht
 
 		protected:
 			bool launchParticle(CParticle& p, SLaunchParticle& launch);
+
+			void initParticleModel(CParticle& p);
+
+			inline void initParticleLifeTime(CParticle& p)
+			{
+				p.Age = 0.0f;
+				p.Life = random(LifeMin, LifeMax);
+				p.LifeTime = p.Life;
+				p.HaveRotate = false;
+			}
 
 			CParticle* create(u32 num);
 
