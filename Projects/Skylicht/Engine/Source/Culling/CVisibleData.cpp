@@ -29,7 +29,8 @@ namespace Skylicht
 {
 	CVisibleData::CVisibleData() :
 		SelfVisible(true),
-		Visible(true)
+		Visible(true),
+		CullingLayer(1)
 	{
 
 	}

@@ -33,6 +33,7 @@ namespace Skylicht
 	public:
 		bool SelfVisible;
 		bool Visible;
+		u32 CullingLayer;
 
 	public:
 		CVisibleData();
