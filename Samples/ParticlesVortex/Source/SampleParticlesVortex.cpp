@@ -101,6 +101,7 @@ void SampleParticlesVortex::initParticleSystem(Particle::CParticleComponent *ps)
 	group->LifeMin = 35.0f;
 	group->LifeMax = 40.0f;
 	group->Gravity.set(0.0f, 0.0f, 0.0f);
+	group->Friction = 1.0f;
 
 	// create emitter	
 	Particle::CRandomEmitter *emitter = NULL;

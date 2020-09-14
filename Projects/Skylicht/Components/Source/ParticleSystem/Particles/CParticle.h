@@ -68,7 +68,6 @@ namespace Skylicht
 
 			core::vector3df Position;
 			core::vector3df Rotation;
-			core::vector3df LastPosition;
 			core::vector3df Velocity;
 
 		public:

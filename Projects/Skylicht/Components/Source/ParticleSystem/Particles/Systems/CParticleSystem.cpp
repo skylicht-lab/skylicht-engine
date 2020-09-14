@@ -105,9 +105,6 @@ namespace Skylicht
 				if (!p->Immortal)
 					p->Life -= dt;
 
-				// update position
-				p->LastPosition = p->Position;
-
 				p->Position += p->Velocity * dt;
 
 				// update gravity
