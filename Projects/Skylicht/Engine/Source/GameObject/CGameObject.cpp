@@ -60,6 +60,7 @@ namespace Skylicht
 
 		m_tagData = NULL;
 		m_tagDataInt = 0;
+		m_cullingLayer = 1;
 	}
 
 	CGameObject::~CGameObject()
@@ -122,6 +123,16 @@ namespace Skylicht
 		m_visible = b;
 		if (m_entity != NULL)
 			m_entity->setVisible(b);
+	}
+
+	void CGameObject::setCullingLayer(u32 layer)
+	{
+		m_cullingLayer = layer;
+		if (m_entity != NULL)
+		{
+			CVisibleData *visible = m_entity->getData<CVisibleData>();
+			visible->CullingLayer = layer;
+		}
 	}
 
 	CEntityManager* CGameObject::getEntityManager()

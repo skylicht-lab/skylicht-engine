@@ -54,8 +54,15 @@ namespace Skylicht
 	void CCullingSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
 	{
 		CCullingData *culling = entity->getData<CCullingData>();
+		if (culling == NULL)
+			return;
 
 		CVisibleData *visible = entity->getData<CVisibleData>();
+		if (visible != NULL)
+			culling->CullingLayer = visible->CullingLayer;
+		else
+			culling->CullingLayer = 1;
+
 		if (culling != NULL && visible != NULL && visible->Visible == false)
 		{
 			culling->Visible = false;
@@ -130,6 +137,9 @@ namespace Skylicht
 		u32 numEntity = m_cullings.size();
 		for (u32 i = 0; i < numEntity; i++)
 		{
+			// camera
+			CCamera *camera = entityManager->getCamera();
+
 			// get mesh bbox
 			CCullingData *culling = cullings[i];
 			CWorldTransformData *transform = transforms[i];
@@ -137,6 +147,14 @@ namespace Skylicht
 			SBBoxAndMaterial &bbBoxMat = bboxAndMaterials[i];
 
 			culling->Visible = true;
+
+			// check camera mask culling
+			u32 test = camera->getCullingMask() & culling->CullingLayer;
+			if (test == 0)
+			{
+				culling->Visible = false;
+				continue;
+			}
 
 			// check material first
 			if (bbBoxMat.Materials != NULL)
@@ -159,8 +177,7 @@ namespace Skylicht
 
 			transform->World.transformBoxEx(culling->BBox);
 
-			// 1. Detect by bounding box
-			CCamera *camera = entityManager->getCamera();
+			// 1. Detect by bounding box			
 			SViewFrustum frust;
 
 			if (rp->getType() == IRenderPipeline::ShadowMap)

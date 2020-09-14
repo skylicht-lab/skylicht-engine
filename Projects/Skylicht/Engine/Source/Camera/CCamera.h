@@ -55,6 +55,9 @@ namespace Skylicht
 		core::dimension2du m_screenSize;
 
 		bool m_inputReceiver;
+
+		u32 m_cullingMask;
+
 	public:
 		CCamera();
 
@@ -126,6 +129,16 @@ namespace Skylicht
 		{
 			m_aspect = f;
 			recalculateProjectionMatrix();
+		}
+
+		inline u32 getCullingMask()
+		{
+			return m_cullingMask;
+		}
+
+		inline void setCullingMask(u32 mask)
+		{
+			m_cullingMask = mask;
 		}
 
 		void recalculateProjectionMatrix();
