@@ -24,28 +24,39 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
-
-#include "Particles/CGroup.h"
-#include "Particles/CParticleTrail.h"
+#include "CGroup.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleTrailData : public IEntityData
+		class CParticleTrail : public IParticleCallback
 		{
-		public:
-			core::array<CParticleTrail*> Trails;
+		protected:
+			CGroup *m_group;
+			IMeshBuffer *m_meshBuffer;
+			float m_segmentLength;
+			u32 m_segmentCount;
 
 		public:
-			CParticleTrailData();
+			CParticleTrail(CGroup *group);
 
-			virtual ~CParticleTrailData();
+			virtual ~CParticleTrail();
 
-			CParticleTrail* addTrail(CGroup *group);
+			virtual void update();
 
-			void removeTrail(CParticleTrail* group);
+			virtual void OnParticleBorn(CParticle &p);
+
+			virtual void OnParticleDead(CParticle &p);
+
+			virtual void OnSwapParticleData(CParticle &p1, CParticle &p2);
+
+			virtual void OnGroupDestroy();
+
+			inline IMeshBuffer* getMeshBuffer()
+			{
+				return m_meshBuffer;
+			}
 		};
 	}
 }

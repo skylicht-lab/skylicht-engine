@@ -48,6 +48,9 @@ namespace Skylicht
 
 		CGroup::~CGroup()
 		{
+			if (m_callback != NULL)
+				m_callback->OnGroupDestroy();
+
 			for (CModel *m : m_models)
 				delete m;
 			m_models.clear();
@@ -133,7 +136,7 @@ namespace Skylicht
 				if (p.Life < 0)
 				{
 					if (m_callback != NULL)
-						m_callback->OnParticleDead(p, i);
+						m_callback->OnParticleDead(p);
 
 					// remove dead particle
 					remove(i);
@@ -240,7 +243,9 @@ namespace Skylicht
 		{
 			u32 total = m_particles.size();
 			for (u32 i = 0; i < num; i++)
-				m_particles.push_back(CParticle());
+			{
+				m_particles.push_back(CParticle(total + i));
+			}
 			return m_particles.pointer() + total;
 		}
 
