@@ -115,6 +115,9 @@ namespace Skylicht
 
 	void CGraphics2D::render(CCamera *camera)
 	{
+		if (camera == NULL)
+			return;
+
 		// sort canvas by depth
 		struct {
 			bool operator()(CCanvas* a, CCanvas* b) const
@@ -132,6 +135,8 @@ namespace Skylicht
 		const SViewFrustum& viewArea = camera->getViewFrustum();
 		driver->setTransform(video::ETS_PROJECTION, viewArea.getTransform(video::ETS_PROJECTION));
 		driver->setTransform(video::ETS_VIEW, viewArea.getTransform(video::ETS_VIEW));
+
+		u32 cameraCullingMask = camera->getCullingMask();
 
 		if (camera->getProjectionType() != CCamera::OrthoUI)
 		{
@@ -183,6 +188,12 @@ namespace Skylicht
 		for (CCanvas *canvas : m_canvas)
 		{
 			if (canvas->getGameObject()->isVisible() == false)
+				continue;
+
+			// culling
+			u32 cullingLayer = canvas->getGameObject()->getCullingLayer();
+			u32 test = cameraCullingMask & cullingLayer;
+			if (test == 0)
 				continue;
 
 			CGUIElement* root = canvas->getRootElement();

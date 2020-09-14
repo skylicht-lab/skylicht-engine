@@ -35,7 +35,8 @@ namespace Skylicht
 		m_farValue(1500.0f),
 		m_fov(60.0f),
 		m_aspect(-1.0f),
-		m_up(CTransform::s_oy)
+		m_up(CTransform::s_oy),
+		m_cullingMask(1)
 	{
 	}
 
@@ -70,7 +71,7 @@ namespace Skylicht
 		{
 			// identity view matrix
 			m_viewArea.getTransform(video::ETS_VIEW).makeIdentity();
-		}		
+		}
 		else
 		{
 			// update lookat matrix

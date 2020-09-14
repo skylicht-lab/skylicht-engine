@@ -44,6 +44,8 @@ namespace Skylicht
 
 		bool Visible;
 
+		u32 CullingLayer;
+
 	public:
 		CCullingData();
 

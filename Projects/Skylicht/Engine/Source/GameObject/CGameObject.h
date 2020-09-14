@@ -54,6 +54,8 @@ namespace Skylicht
 
 		bool m_lockObject;
 
+		u32 m_cullingLayer;
+
 		CEntity *m_entity;
 		CGameObject *m_parent;
 		CZone *m_zone;
@@ -174,6 +176,13 @@ namespace Skylicht
 		}
 
 		virtual void setVisible(bool b);
+
+		void setCullingLayer(u32 layer);
+
+		inline u32 getCullingLayer()
+		{
+			return m_cullingLayer;
+		}
 
 		inline void setLighting(bool b)
 		{
