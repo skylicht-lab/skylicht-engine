@@ -85,7 +85,6 @@ namespace Skylicht
 
 			core::vector3df position = Position;
 			core::vector3df rotation = Rotation;
-			core::vector3df lastPosition = LastPosition;
 			core::vector3df velocity = Velocity;
 
 			Age = p.Age;
@@ -93,7 +92,6 @@ namespace Skylicht
 			LifeTime = p.LifeTime;
 			Position = p.Position;
 			Rotation = p.Rotation;
-			LastPosition = p.LastPosition;
 			Velocity = p.Velocity;
 			HaveRotate = p.HaveRotate;
 
@@ -102,7 +100,6 @@ namespace Skylicht
 			p.LifeTime = lifeTime;
 			p.Position = position;
 			p.Rotation = rotation;
-			p.LastPosition = lastPosition;
 			p.Velocity = velocity;
 			p.HaveRotate = haveRotate;
 		}
