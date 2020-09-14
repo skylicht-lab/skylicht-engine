@@ -71,12 +71,17 @@ namespace Skylicht
 
 			}
 
-			virtual void OnParticleDead(CParticle &p, int index)
+			virtual void OnParticleDead(CParticle &p)
 			{
 
 			}
 
 			virtual void OnSwapParticleData(CParticle &p1, CParticle &p2)
+			{
+
+			}
+
+			virtual void OnGroupDestroy()
 			{
 
 			}
@@ -143,6 +148,11 @@ namespace Skylicht
 			inline u32 getNumParticles()
 			{
 				return m_particles.size();
+			}
+
+			inline CParticle* getParticlePointer()
+			{
+				return m_particles.pointer();
 			}
 
 			inline CEmitter* addEmitter(CEmitter *e)

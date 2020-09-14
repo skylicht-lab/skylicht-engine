@@ -44,6 +44,8 @@ namespace Skylicht
 			virtual void initComponent();
 
 			virtual void updateComponent();
+
+			CParticleTrail* addTrail(CGroup *group);
 		};
 	}
 }
