@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CCamera;
+
 	namespace Particle
 	{
 		struct SParticlePosition
@@ -65,7 +67,7 @@ namespace Skylicht
 
 			float m_segmentLength;
 
-			u32 m_segmentCount;
+			u32 m_maxSegmentCount;
 
 			float m_width;
 
@@ -78,7 +80,7 @@ namespace Skylicht
 
 			virtual ~CParticleTrail();
 
-			virtual void update();
+			virtual void update(CCamera *camera);
 
 			virtual void OnParticleUpdate(CParticle *particles, int num, CGroup *group, float dt);
 
