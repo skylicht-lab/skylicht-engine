@@ -59,6 +59,9 @@ namespace Skylicht
 
 			virtual void renderTransparent(CEntityManager *entityManager);
 
+		protected:
+
+			void renderMB(IMeshBuffer *mb);
 		};
 	}
 }

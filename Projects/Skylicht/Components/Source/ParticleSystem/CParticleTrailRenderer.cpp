@@ -24,7 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CParticleTrailRenderer.h"
-
+#include "Entity/CEntityManager.h"
+#include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {
@@ -68,6 +69,8 @@ namespace Skylicht
 
 		void CParticleTrailRenderer::update(CEntityManager *entityManager)
 		{
+			CCamera *camera = entityManager->getCamera();
+
 			CParticleTrailData** trails = m_trails.pointer();
 
 			for (u32 i = 0, n = m_trails.size(); i < n; i++)
@@ -78,17 +81,43 @@ namespace Skylicht
 				u32 m = trailData->Trails.size();
 				for (u32 j = 0; j < m; j++)
 				{
-					trailData->Trails[j]->update();
+					trailData->Trails[j]->update(camera);
 				}
 			}
 		}
 
 		void CParticleTrailRenderer::render(CEntityManager *entityManager)
 		{
+			CParticleTrailData** trails = m_trails.pointer();
 
+			IVideoDriver *driver = getVideoDriver();
+			driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
+
+			SMaterial m;
+			m.MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColor");
+			m.BackfaceCulling = false;
+			driver->setMaterial(m);
+
+			for (u32 i = 0, n = m_trails.size(); i < n; i++)
+			{
+				CParticleTrailData *trailData = trails[i];
+
+				// update particle trail
+				u32 m = trailData->Trails.size();
+				for (u32 j = 0; j < m; j++)
+				{
+					IMeshBuffer *mb = trailData->Trails[j]->getMeshBuffer();
+					driver->drawMeshBuffer(mb);
+				}
+			}
 		}
 
 		void CParticleTrailRenderer::renderTransparent(CEntityManager *entityManager)
+		{
+
+		}
+
+		void CParticleTrailRenderer::renderMB(IMeshBuffer *mb)
 		{
 
 		}

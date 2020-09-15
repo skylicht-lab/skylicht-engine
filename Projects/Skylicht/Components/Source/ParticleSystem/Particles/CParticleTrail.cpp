@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CParticleTrail.h"
+#include "Camera/CCamera.h"
 
 namespace Skylicht
 {
@@ -31,13 +32,16 @@ namespace Skylicht
 	{
 		CParticleTrail::CParticleTrail(CGroup *group) :
 			m_group(group),
-			m_segmentLength(0.3f),
-			m_segmentCount(150),
-			m_width(0.3f),
+			m_segmentLength(0.2f),
+			m_width(0.1f),
 			m_alpha(1.0f),
-			m_trailCount(0)
+			m_trailCount(0),
+			m_maxSegmentCount(10)
 		{
 			group->setCallback(this);
+
+			m_meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD), EIT_32BIT);
+			m_meshBuffer->setHardwareMappingHint(EHM_STREAM);
 		}
 
 		CParticleTrail::~CParticleTrail()
@@ -52,12 +56,148 @@ namespace Skylicht
 			}
 
 			m_trails.clear();
+
+			if (m_meshBuffer != NULL)
+				m_meshBuffer->drop();
 		}
 
-		void CParticleTrail::update()
+		void CParticleTrail::update(CCamera *camera)
 		{
 			if (m_group == NULL)
 				return;
+
+			IVertexBuffer *buffer = m_meshBuffer->getVertexBuffer(0);
+			IIndexBuffer *index = m_meshBuffer->getIndexBuffer();
+
+			int indexID = 0;
+			int vertexID = 0;
+
+			// camera
+			core::vector3df campos = camera->getGameObject()->getPosition();
+			core::vector3df up = camera->getUpVector();
+
+			int numVertex = m_trails.size() * 4 * m_maxSegmentCount;
+			int numIndex = m_trails.size() * 6 * m_maxSegmentCount;
+
+			buffer->set_used(numVertex);
+			index->set_used(numIndex);
+
+			S3DVertex* vertices = (S3DVertex*)buffer->getVertices();
+			u32 *indices = (u32*)index->getIndices();
+
+			u32 totalSegDraw = 0;
+
+			for (u32 trailID = 0, numTrail = m_trails.size(); trailID < numTrail; trailID++)
+			{
+				STrailInfo& trail = m_trails[trailID];
+
+				// todo setup buffer
+				u32 numSeg = trail.Position->size() - 1;
+
+				int endSeg = 0;
+				if (trail.Position->size() > m_maxSegmentCount)
+					endSeg = (int)(numSeg - m_maxSegmentCount + 1);
+
+				u32 numSegDraw = 0;
+				for (int i = numSeg; i >= endSeg; i--)
+				{
+					core::vector3df pos1;
+					core::vector3df pos2;
+
+					float thickness = 0.0f;
+					float alpha = 1.0f;
+
+					if (i == numSeg)
+					{
+						// first segment
+						SParticlePosition &p = (*trail.Position)[i];
+						pos2 = p.Position;
+						thickness = p.Width;
+
+						pos1 = trail.CurrentPosition;
+					}
+					else
+					{
+						// get nearest point
+						SParticlePosition& p1 = (*trail.Position)[i + 1];
+						SParticlePosition& p2 = (*trail.Position)[i];
+
+						pos2 = p2.Position;
+						pos1 = p1.Position;
+						thickness = p1.Width;
+					}
+
+					// line direction
+					core::vector3df direction = pos1 - pos2;
+					direction.normalize();
+
+					// look
+					core::vector3df lookdir = pos1 - campos;
+					if (lookdir.getLength() < 0.2f)
+						continue;
+					lookdir.normalize();
+
+					// view angle
+					f32 angle = lookdir.dotProduct(direction);
+
+					if (angle < 0.9999f && angle > -0.9999f)
+					{
+						core::vector3df updown = direction.crossProduct(lookdir);
+						updown.normalize();
+
+						core::vector3df normal = direction.crossProduct(updown);
+
+						int vertex = totalSegDraw * 4;
+						int index = totalSegDraw * 6;
+
+						SColor c((int)(255.0f * alpha), 255, 255, 255);
+
+						// vertex buffer
+						vertices[vertex + 0].Pos = pos1 - updown * thickness*0.5f;
+						vertices[vertex + 0].Normal = normal;
+						vertices[vertex + 0].Color = c;
+
+						vertices[vertex + 1].Pos = pos1 + updown * thickness*0.5f;
+						vertices[vertex + 1].Normal = normal;
+						vertices[vertex + 1].Color = c;
+
+						vertices[vertex + 2].Pos = pos2 - updown * thickness*0.5f;
+						vertices[vertex + 2].Normal = normal;
+						vertices[vertex + 2].Color = c;
+
+						vertices[vertex + 3].Pos = pos2 + updown * thickness*0.5f;
+						vertices[vertex + 3].Normal = normal;
+						vertices[vertex + 3].Color = c;
+
+						// index buffer
+						indices[index + 0] = vertex + 0;
+						indices[index + 1] = vertex + 1;
+						indices[index + 2] = vertex + 2;
+
+						indices[index + 3] = vertex + 1;
+						indices[index + 4] = vertex + 3;
+						indices[index + 5] = vertex + 2;
+
+						// todo modify to link 2 segment (fix seam)
+						if (numSegDraw >= 1)
+						{
+							vertex = (totalSegDraw - 1) * 4;
+							vertices[vertex + 2].Pos = pos1 - updown * thickness*0.5f;
+							vertices[vertex + 2].Color = c;
+
+							vertices[vertex + 3].Pos = pos1 + updown * thickness*0.5f;
+							vertices[vertex + 3].Color = c;
+						}
+
+						totalSegDraw++;
+						numSegDraw++;
+					}
+				}
+			}
+
+			m_meshBuffer->setDirty(EBT_VERTEX_AND_INDEX);
+
+			index->set_used(totalSegDraw * 6);
 		}
 
 		void CParticleTrail::OnParticleUpdate(CParticle *particles, int num, CGroup *group, float dt)
@@ -97,12 +237,12 @@ namespace Skylicht
 
 				if (particlePos.Position->size() == 0)
 				{
-					particlePos.Position->push_back(SParticlePosition());
-
-					SParticlePosition& pos = particlePos.Position->getLast();
+					SParticlePosition pos;
 					pos.Alpha = m_alpha;
 					pos.Width = m_width;
 					pos.Position = p.Position;
+
+					particlePos.Position->push_back(pos);
 
 					particlePos.LastPosition = p.Position;
 				}
