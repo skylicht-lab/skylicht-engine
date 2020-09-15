@@ -32,7 +32,10 @@ namespace Skylicht
 		CParticleTrail::CParticleTrail(CGroup *group) :
 			m_group(group),
 			m_segmentLength(0.3f),
-			m_segmentCount(150)
+			m_segmentCount(150),
+			m_width(0.3f),
+			m_alpha(1.0f),
+			m_trailCount(0)
 		{
 			group->setCallback(this);
 		}
@@ -41,13 +44,83 @@ namespace Skylicht
 		{
 			if (m_group != NULL)
 				m_group->setCallback(NULL);
+
+			for (u32 i = 0, n = m_trails.size(); i < n; i++)
+			{
+				m_trails[i].DeleteData();
+				// printf("Delete %d\n", i);
+			}
+
+			m_trails.clear();
 		}
 
 		void CParticleTrail::update()
 		{
 			if (m_group == NULL)
 				return;
+		}
 
+		void CParticleTrail::OnParticleUpdate(CParticle *particles, int num, CGroup *group, float dt)
+		{
+			float seg2 = m_segmentLength * m_segmentLength;
+
+			// delete dead particle data
+			if (m_trails.size() >= (u32)num)
+			{
+				for (u32 i = (u32)num, n = m_trails.size(); i < n; i++)
+				{
+					// printf("Delete %d\n", i);
+					m_trails[i].DeleteData();
+				}
+
+				m_trailCount = num;
+			}
+
+			m_trails.set_used(num);
+
+			for (int i = 0; i < num; i++)
+			{
+				CParticle& p = particles[i];
+
+				STrailInfo &particlePos = m_trails[p.Index];
+
+				if (m_trailCount <= i)
+				{
+					// init new particle data
+					particlePos.InitData();
+					m_trailCount = i + 1;
+
+					// printf("New %d\n", i);
+				}
+
+				particlePos.CurrentPosition = p.Position;
+
+				if (particlePos.Position->size() == 0)
+				{
+					particlePos.Position->push_back(SParticlePosition());
+
+					SParticlePosition& pos = particlePos.Position->getLast();
+					pos.Alpha = m_alpha;
+					pos.Width = m_width;
+					pos.Position = p.Position;
+
+					particlePos.LastPosition = p.Position;
+				}
+				else
+				{
+					if (p.Position.getDistanceFromSQ(particlePos.LastPosition) >= seg2)
+					{
+						particlePos.Position->push_back(SParticlePosition());
+
+						SParticlePosition& pos = particlePos.Position->getLast();
+						pos.Alpha = m_alpha;
+						pos.Width = m_width;
+						pos.Position = p.Position;
+
+						particlePos.LastPosition = p.Position;
+					}
+				}
+			}
 		}
 
 		void CParticleTrail::OnParticleBorn(CParticle &p)
@@ -62,7 +135,13 @@ namespace Skylicht
 
 		void CParticleTrail::OnSwapParticleData(CParticle &p1, CParticle &p2)
 		{
+			int index1 = p1.Index;
+			int index2 = p2.Index;
 
+			STrailInfo t = m_trails[index1];
+
+			m_trails[index1] = m_trails[index2];
+			m_trails[index2] = t;
 		}
 
 		void CParticleTrail::OnGroupDestroy()

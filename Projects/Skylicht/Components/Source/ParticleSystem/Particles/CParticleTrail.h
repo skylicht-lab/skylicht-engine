@@ -30,13 +30,48 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		struct SParticlePosition
+		{
+			core::vector3df Position;
+			float Width;
+			float Alpha;
+		};
+
+		struct STrailInfo
+		{
+			core::array<SParticlePosition> *Position;
+			core::vector3df CurrentPosition;
+			core::vector3df LastPosition;
+
+			void InitData()
+			{
+				Position = new core::array<SParticlePosition>();
+			}
+
+			void DeleteData()
+			{
+				delete Position;
+			}
+		};
+
 		class CParticleTrail : public IParticleCallback
 		{
 		protected:
 			CGroup *m_group;
+
+			core::array<STrailInfo> m_trails;
+
 			IMeshBuffer *m_meshBuffer;
+
 			float m_segmentLength;
+
 			u32 m_segmentCount;
+
+			float m_width;
+
+			float m_alpha;
+
+			int m_trailCount;
 
 		public:
 			CParticleTrail(CGroup *group);
@@ -44,6 +79,8 @@ namespace Skylicht
 			virtual ~CParticleTrail();
 
 			virtual void update();
+
+			virtual void OnParticleUpdate(CParticle *particles, int num, CGroup *group, float dt);
 
 			virtual void OnParticleBorn(CParticle &p);
 
