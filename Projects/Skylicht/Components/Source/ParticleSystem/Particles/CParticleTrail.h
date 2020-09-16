@@ -71,6 +71,8 @@ namespace Skylicht
 
 			float m_width;
 
+			float m_length;
+
 			float m_alpha;
 
 			int m_trailCount;
@@ -96,6 +98,28 @@ namespace Skylicht
 			{
 				return m_meshBuffer;
 			}
+
+			inline void setWidth(float f)
+			{
+				m_width = f;
+			}
+
+			inline float getWidth()
+			{
+				return m_width;
+			}
+
+			inline void setSegmentLength(float f)
+			{
+				m_segmentLength = f;
+			}
+
+			inline float getSegmentLength()
+			{
+				return m_segmentLength;
+			}
+
+			void setLength(float l);
 		};
 	}
 }
