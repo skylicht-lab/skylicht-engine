@@ -34,7 +34,6 @@ namespace Skylicht
 			m_group(group),
 			m_segmentLength(0.2f),
 			m_width(0.1f),
-			m_alpha(1.0f),
 			m_trailCount(0),
 			m_maxSegmentCount(0)
 		{
@@ -115,7 +114,8 @@ namespace Skylicht
 					core::vector3df pos2;
 
 					float thickness = 0.0f;
-					float alpha = 1.0f;
+
+					const SColor &c = trail.CurrentColor;
 
 					if (i == numSeg)
 					{
@@ -140,15 +140,20 @@ namespace Skylicht
 					// direction
 					core::vector3df direction = pos1 - pos2;
 
+					float uv1 = currentLength / m_length;
+
 					// length
 					currentLength = currentLength + direction.getLength();
 
 					direction.normalize();
 
+					float uv2 = currentLength / m_length;
+
 					if (currentLength > m_length)
 					{
 						float cutLength = currentLength - m_length;
 						pos2 = pos2 + cutLength * direction;
+						uv2 = 1.0f;
 					}
 
 					// look
@@ -170,24 +175,26 @@ namespace Skylicht
 						int vertex = totalSegDraw * 4;
 						int index = totalSegDraw * 6;
 
-						SColor c((int)(255.0f * alpha), 255, 255, 255);
-
 						// vertex buffer
 						vertices[vertex + 0].Pos = pos1 - updown * thickness*0.5f;
 						vertices[vertex + 0].Normal = normal;
 						vertices[vertex + 0].Color = c;
+						vertices[vertex + 0].TCoords.set(0.0f, uv1);
 
 						vertices[vertex + 1].Pos = pos1 + updown * thickness*0.5f;
 						vertices[vertex + 1].Normal = normal;
 						vertices[vertex + 1].Color = c;
+						vertices[vertex + 1].TCoords.set(1.0f, uv1);
 
 						vertices[vertex + 2].Pos = pos2 - updown * thickness*0.5f;
 						vertices[vertex + 2].Normal = normal;
 						vertices[vertex + 2].Color = c;
+						vertices[vertex + 2].TCoords.set(0.0f, uv2);
 
 						vertices[vertex + 3].Pos = pos2 + updown * thickness*0.5f;
 						vertices[vertex + 3].Normal = normal;
 						vertices[vertex + 3].Color = c;
+						vertices[vertex + 3].TCoords.set(1.0f, uv2);
 
 						// index buffer
 						indices[index + 0] = vertex + 0;
@@ -201,12 +208,16 @@ namespace Skylicht
 						// todo modify to link 2 segment (fix seam)
 						if (numSegDraw >= 1)
 						{
-							vertex = (totalSegDraw - 1) * 4;
-							vertices[vertex + 2].Pos = pos1 - updown * thickness*0.5f;
-							vertices[vertex + 2].Color = c;
+							int copyVertex = vertex;
 
-							vertices[vertex + 3].Pos = pos1 + updown * thickness*0.5f;
+							vertex = (totalSegDraw - 1) * 4;
+							vertices[vertex + 2].Pos = vertices[copyVertex + 0].Pos;
+							vertices[vertex + 2].Color = c;
+							vertices[vertex + 2].TCoords = vertices[copyVertex + 0].TCoords;
+
+							vertices[vertex + 3].Pos = vertices[copyVertex + 1].Pos;
 							vertices[vertex + 3].Color = c;
+							vertices[vertex + 3].TCoords = vertices[copyVertex + 1].TCoords;
 						}
 
 						totalSegDraw++;
@@ -258,11 +269,16 @@ namespace Skylicht
 				}
 
 				particlePos.CurrentPosition = p.Position;
+				particlePos.CurrentColor.set(
+					(u32)(p.Params[ColorA] * 255.0f),
+					(u32)(p.Params[ColorR] * 255.0f),
+					(u32)(p.Params[ColorG] * 255.0f),
+					(u32)(p.Params[ColorB] * 255.0f)
+				);
 
 				if (particlePos.Position->size() == 0)
 				{
 					SParticlePosition pos;
-					pos.Alpha = m_alpha;
 					pos.Width = m_width;
 					pos.Position = p.Position;
 
@@ -277,7 +293,6 @@ namespace Skylicht
 						particlePos.Position->push_back(SParticlePosition());
 
 						SParticlePosition& pos = particlePos.Position->getLast();
-						pos.Alpha = m_alpha;
 						pos.Width = m_width;
 						pos.Position = p.Position;
 
