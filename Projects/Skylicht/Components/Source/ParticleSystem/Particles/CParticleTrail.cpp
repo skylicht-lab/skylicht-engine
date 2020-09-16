@@ -36,8 +36,10 @@ namespace Skylicht
 			m_width(0.1f),
 			m_alpha(1.0f),
 			m_trailCount(0),
-			m_maxSegmentCount(10)
+			m_maxSegmentCount(0)
 		{
+			setLength(2.0f);
+
 			group->setCallback(this);
 
 			m_meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD), EIT_32BIT);
@@ -59,6 +61,12 @@ namespace Skylicht
 
 			if (m_meshBuffer != NULL)
 				m_meshBuffer->drop();
+		}
+
+		void CParticleTrail::setLength(float l)
+		{
+			m_maxSegmentCount = (int)(l / m_segmentLength + 1.0f);
+			m_length = l;
 		}
 
 		void CParticleTrail::update(CCamera *camera)
@@ -99,6 +107,8 @@ namespace Skylicht
 					endSeg = (int)(numSeg - m_maxSegmentCount + 1);
 
 				u32 numSegDraw = 0;
+				float currentLength = 0.0f;
+
 				for (int i = numSeg; i >= endSeg; i--)
 				{
 					core::vector3df pos1;
@@ -127,9 +137,19 @@ namespace Skylicht
 						thickness = p1.Width;
 					}
 
-					// line direction
+					// direction
 					core::vector3df direction = pos1 - pos2;
+
+					// length
+					currentLength = currentLength + direction.getLength();
+
 					direction.normalize();
+
+					if (currentLength > m_length)
+					{
+						float cutLength = currentLength - m_length;
+						pos2 = pos2 + cutLength * direction;
+					}
 
 					// look
 					core::vector3df lookdir = pos1 - campos;
@@ -191,6 +211,10 @@ namespace Skylicht
 
 						totalSegDraw++;
 						numSegDraw++;
+
+						// skip
+						if (currentLength >= m_length)
+							break;
 					}
 				}
 			}
