@@ -36,7 +36,6 @@ namespace Skylicht
 		{
 			core::vector3df Position;
 			float Width;
-			float Alpha;
 		};
 
 		struct STrailInfo
@@ -44,6 +43,7 @@ namespace Skylicht
 			core::array<SParticlePosition> *Position;
 			core::vector3df CurrentPosition;
 			core::vector3df LastPosition;
+			video::SColor CurrentColor;
 
 			void InitData()
 			{
@@ -72,8 +72,6 @@ namespace Skylicht
 			float m_width;
 
 			float m_length;
-
-			float m_alpha;
 
 			int m_trailCount;
 

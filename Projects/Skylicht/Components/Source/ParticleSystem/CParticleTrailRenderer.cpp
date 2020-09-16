@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 #include "Material/Shader/CShaderManager.h"
 
+#include "TextureManager/CTextureManager.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -64,7 +66,7 @@ namespace Skylicht
 
 		void CParticleTrailRenderer::init(CEntityManager *entityManager)
 		{
-
+			m_texture = CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png");
 		}
 
 		void CParticleTrailRenderer::update(CEntityManager *entityManager)
@@ -94,7 +96,8 @@ namespace Skylicht
 			driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
 			SMaterial m;
-			m.MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColor");
+			m.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColorAdditive");
+			m.setTexture(0, m_texture);
 			m.BackfaceCulling = false;
 			driver->setMaterial(m);
 
