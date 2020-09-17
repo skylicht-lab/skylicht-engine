@@ -35,7 +35,9 @@ namespace Skylicht
 			m_segmentLength(0.2f),
 			m_width(0.1f),
 			m_trailCount(0),
-			m_maxSegmentCount(0)
+			m_maxSegmentCount(0),
+			m_destroyWhenParticleDead(false),
+			m_deadAlphaReduction(0.01f)
 		{
 			setLength(2.0f);
 
@@ -53,10 +55,17 @@ namespace Skylicht
 			for (u32 i = 0, n = m_trails.size(); i < n; i++)
 			{
 				m_trails[i].DeleteData();
-				// printf("Delete %d\n", i);
+				// printf("Delete trail %d\n", i);
+			}
+
+			for (u32 i = 0, n = m_deadTrails.size(); i < n; i++)
+			{
+				m_deadTrails[i].DeleteData();
+				// printf("Delete dead trail %d\n", i);
 			}
 
 			m_trails.clear();
+			m_deadTrails.clear();
 
 			if (m_meshBuffer != NULL)
 				m_meshBuffer->drop();
@@ -68,10 +77,72 @@ namespace Skylicht
 			m_length = l;
 		}
 
+		void CParticleTrail::updateDeadTrail()
+		{
+			float dt = getTimeStep();
+
+			u32 numTrail = m_deadTrails.size();
+
+			for (u32 i = 0; i < numTrail; i++)
+			{
+				STrailInfo& trail = m_deadTrails[i];
+
+				u32 numSeg = trail.Position->size() - 1;
+
+				int endSeg = 0;
+				if (trail.Position->size() > m_maxSegmentCount)
+					endSeg = (int)(numSeg - m_maxSegmentCount + 1);
+
+				trail.Flag = 1;
+
+				for (u32 j = endSeg; j <= numSeg; j++)
+				{
+					SParticlePosition& p = (*trail.Position)[j];
+					if (p.Alpha == 0.0f)
+						continue;
+					else if (p.Alpha > 0.0f)
+					{
+						p.Alpha = p.Alpha - m_deadAlphaReduction * dt;
+						if (p.Alpha < 0.0f)
+							p.Alpha = 0.0f;
+
+						trail.Flag = 0;
+
+						// > 0.5f to keep smooth fade out
+						if (p.Alpha > 0.5f)
+							break;
+					}
+				}
+			}
+
+			for (u32 i = 0; i < numTrail; i++)
+			{
+				if (m_deadTrails[i].Flag == 1)
+				{
+					m_deadTrails[i].DeleteData();
+
+					if (numTrail > 1)
+					{
+						STrailInfo t = m_deadTrails[i];
+						m_deadTrails[i] = m_deadTrails[numTrail - 1];
+						m_deadTrails[numTrail - 1] = m_deadTrails[i];
+					}
+
+					i--;
+					numTrail--;
+				}
+			}
+			m_deadTrails.set_used(numTrail);
+		}
+
 		void CParticleTrail::update(CCamera *camera)
 		{
 			if (m_group == NULL)
 				return;
+
+			// on dead trail
+			// we reduction alpha to zero and kill
+			updateDeadTrail();
 
 			IVertexBuffer *buffer = m_meshBuffer->getVertexBuffer(0);
 			IIndexBuffer *index = m_meshBuffer->getIndexBuffer();
@@ -83,8 +154,11 @@ namespace Skylicht
 			core::vector3df campos = camera->getGameObject()->getPosition();
 			core::vector3df up = camera->getUpVector();
 
-			int numVertex = m_trails.size() * 4 * m_maxSegmentCount;
-			int numIndex = m_trails.size() * 6 * m_maxSegmentCount;
+			u32 numTrail = m_trails.size() + m_deadTrails.size();
+			u32 liveTrail = m_trails.size();
+
+			int numVertex = numTrail * 4 * m_maxSegmentCount;
+			int numIndex = numTrail * 6 * m_maxSegmentCount;
 
 			buffer->set_used(numVertex);
 			index->set_used(numIndex);
@@ -94,11 +168,17 @@ namespace Skylicht
 
 			u32 totalSegDraw = 0;
 
-			for (u32 trailID = 0, numTrail = m_trails.size(); trailID < numTrail; trailID++)
+			for (u32 trailID = 0; trailID < numTrail; trailID++)
 			{
-				STrailInfo& trail = m_trails[trailID];
+				STrailInfo* pTrail = NULL;
 
-				// todo setup buffer
+				if (trailID < liveTrail)
+					pTrail = &m_trails[trailID];
+				else
+					pTrail = &m_deadTrails[trailID - liveTrail];
+
+				STrailInfo& trail = *pTrail;
+
 				u32 numSeg = trail.Position->size() - 1;
 
 				int endSeg = 0;
@@ -114,8 +194,11 @@ namespace Skylicht
 					core::vector3df pos2;
 
 					float thickness = 0.0f;
+					float alpha1 = 1.0f;
+					float alpha2 = 1.0f;
 
 					const SColor &c = trail.CurrentColor;
+					float currentAlpha = c.getAlpha() / 255.0f;
 
 					if (i == numSeg)
 					{
@@ -123,6 +206,8 @@ namespace Skylicht
 						SParticlePosition &p = (*trail.Position)[i];
 						pos2 = p.Position;
 						thickness = p.Width;
+						alpha1 = p.Alpha;
+						alpha2 = p.Alpha;
 
 						pos1 = trail.CurrentPosition;
 					}
@@ -135,7 +220,15 @@ namespace Skylicht
 						pos2 = p2.Position;
 						pos1 = p1.Position;
 						thickness = p1.Width;
+						alpha1 = p1.Alpha;
+						alpha2 = p2.Alpha;
 					}
+
+					SColor c1(c);
+					SColor c2(c);
+
+					c1.setAlpha((u32)(alpha1 * currentAlpha * 255.0f));
+					c2.setAlpha((u32)(alpha2 * currentAlpha * 255.0f));
 
 					// direction
 					core::vector3df direction = pos1 - pos2;
@@ -178,22 +271,22 @@ namespace Skylicht
 						// vertex buffer
 						vertices[vertex + 0].Pos = pos1 - updown * thickness*0.5f;
 						vertices[vertex + 0].Normal = normal;
-						vertices[vertex + 0].Color = c;
+						vertices[vertex + 0].Color = c1;
 						vertices[vertex + 0].TCoords.set(0.0f, uv1);
 
 						vertices[vertex + 1].Pos = pos1 + updown * thickness*0.5f;
 						vertices[vertex + 1].Normal = normal;
-						vertices[vertex + 1].Color = c;
+						vertices[vertex + 1].Color = c1;
 						vertices[vertex + 1].TCoords.set(1.0f, uv1);
 
 						vertices[vertex + 2].Pos = pos2 - updown * thickness*0.5f;
 						vertices[vertex + 2].Normal = normal;
-						vertices[vertex + 2].Color = c;
+						vertices[vertex + 2].Color = c2;
 						vertices[vertex + 2].TCoords.set(0.0f, uv2);
 
 						vertices[vertex + 3].Pos = pos2 + updown * thickness*0.5f;
 						vertices[vertex + 3].Normal = normal;
-						vertices[vertex + 3].Color = c;
+						vertices[vertex + 3].Color = c2;
 						vertices[vertex + 3].TCoords.set(1.0f, uv2);
 
 						// index buffer
@@ -212,11 +305,9 @@ namespace Skylicht
 
 							vertex = (totalSegDraw - 1) * 4;
 							vertices[vertex + 2].Pos = vertices[copyVertex + 0].Pos;
-							vertices[vertex + 2].Color = c;
 							vertices[vertex + 2].TCoords = vertices[copyVertex + 0].TCoords;
 
 							vertices[vertex + 3].Pos = vertices[copyVertex + 1].Pos;
-							vertices[vertex + 3].Color = c;
 							vertices[vertex + 3].TCoords = vertices[copyVertex + 1].TCoords;
 						}
 
@@ -280,6 +371,7 @@ namespace Skylicht
 				{
 					SParticlePosition pos;
 					pos.Width = m_width;
+					pos.Alpha = 1.0f;
 					pos.Position = p.Position;
 
 					particlePos.Position->push_back(pos);
@@ -294,6 +386,7 @@ namespace Skylicht
 
 						SParticlePosition& pos = particlePos.Position->getLast();
 						pos.Width = m_width;
+						pos.Alpha = 1.0f;
 						pos.Position = p.Position;
 
 						particlePos.LastPosition = p.Position;
@@ -309,7 +402,15 @@ namespace Skylicht
 
 		void CParticleTrail::OnParticleDead(CParticle &p)
 		{
+			if (m_destroyWhenParticleDead == false)
+			{
+				// add to list dead trail to update alpha reduction
+				m_deadTrails.push_back(STrailInfo());
+				STrailInfo &t = m_deadTrails.getLast();
 
+				t.InitData();
+				t.Copy(m_trails[p.Index]);
+			}
 		}
 
 		void CParticleTrail::OnSwapParticleData(CParticle &p1, CParticle &p2)
