@@ -36,6 +36,7 @@ namespace Skylicht
 		{
 			core::vector3df Position;
 			float Width;
+			float Alpha;
 		};
 
 		struct STrailInfo
@@ -44,6 +45,12 @@ namespace Skylicht
 			core::vector3df CurrentPosition;
 			core::vector3df LastPosition;
 			video::SColor CurrentColor;
+			int Flag;
+
+			STrailInfo()
+			{
+				Flag = 0;
+			}
 
 			void InitData()
 			{
@@ -53,6 +60,16 @@ namespace Skylicht
 			void DeleteData()
 			{
 				delete Position;
+				Position = NULL;
+			}
+
+			void Copy(const STrailInfo& t)
+			{
+				CurrentPosition = t.CurrentPosition;
+				LastPosition = t.LastPosition;
+				CurrentColor = t.CurrentColor;
+				Flag = t.Flag;
+				*Position = *t.Position;
 			}
 		};
 
@@ -62,6 +79,7 @@ namespace Skylicht
 			CGroup *m_group;
 
 			core::array<STrailInfo> m_trails;
+			core::array<STrailInfo> m_deadTrails;
 
 			IMeshBuffer *m_meshBuffer;
 
@@ -74,6 +92,10 @@ namespace Skylicht
 			float m_length;
 
 			int m_trailCount;
+
+			bool m_destroyWhenParticleDead;
+
+			float m_deadAlphaReduction;
 
 		public:
 			CParticleTrail(CGroup *group);
@@ -117,7 +139,32 @@ namespace Skylicht
 				return m_segmentLength;
 			}
 
+			inline bool isDeadtroyWhenParticleDead()
+			{
+				return m_destroyWhenParticleDead;
+			}
+
+			inline void enableDestroyWhenParticleDead(bool b)
+			{
+				m_destroyWhenParticleDead = b;
+			}
+
+			inline float getDeadAlphaReduction()
+			{
+				return m_deadAlphaReduction;
+			}
+
+			inline void setDeadAlphaReduction(float a)
+			{
+				m_deadAlphaReduction = a;
+			}
+
 			void setLength(float l);
+
+		protected:
+
+			void updateDeadTrail();
+
 		};
 	}
 }

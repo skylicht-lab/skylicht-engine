@@ -135,9 +135,6 @@ namespace Skylicht
 
 				if (p.Life < 0)
 				{
-					if (m_callback != NULL)
-						m_callback->OnParticleDead(p);
-
 					// remove dead particle
 					remove(i);
 					--i;
@@ -259,6 +256,10 @@ namespace Skylicht
 				m_callback->OnSwapParticleData(m_particles[index], m_particles.getLast());
 
 			m_particles[index].swap(m_particles.getLast());
+
+			if (m_callback != NULL)
+				m_callback->OnParticleDead(m_particles.getLast());
+
 			m_particles.set_used(total - 1);
 		}
 
