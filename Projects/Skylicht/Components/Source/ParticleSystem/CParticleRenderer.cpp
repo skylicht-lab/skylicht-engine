@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CParticleRenderer.h"
 #include "Material/Shader/ShaderCallback/CShaderParticle.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
@@ -164,6 +165,7 @@ namespace Skylicht
 
 					CShaderParticle::setOrientationUp(g->OrientationUp);
 					CShaderParticle::setOrientationNormal(g->OrientationNormal);
+					CShaderMaterial::setMaterial(g->getRenderer()->getMaterial());
 
 					driver->setMaterial(buffer->getMaterial());
 					driver->drawMeshBuffer(buffer);
