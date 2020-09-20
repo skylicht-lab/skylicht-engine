@@ -8,6 +8,7 @@ struct PS_INPUT
 cbuffer cbPerFrame
 {
 	float4 uNoiseOffset;
+	float4 uElectricColor;
 };
 float hash(float3 p)
 {
@@ -69,6 +70,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float rz = fbm(uNoiseOffset.xyz + input.worldPos.xyz * uNoiseOffset.w);
 	rz *= 2.0f;
-	float3 col = float3(.2, 0.1, 0.4) / rz;
+	float3 col = uElectricColor.rgb / rz;
 	return input.color * float4(col, 1.0);
 }

@@ -513,6 +513,9 @@ namespace Skylicht
 
 		CShaderManager *shaderManager = CShaderManager::getInstance();
 		m_shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
+		if (m_shader == NULL)
+			m_shader = shaderManager->loadShader(m_shaderPath.c_str());
+
 		if (m_shader != NULL)
 		{
 			// check pipeline

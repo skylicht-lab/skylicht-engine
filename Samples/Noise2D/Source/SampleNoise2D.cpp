@@ -1,20 +1,19 @@
 #include "pch.h"
 #include "SkylichtEngine.h"
-#include "SampleNoise3D.h"
+#include "SampleNoise2D.h"
 
 #include "GridPlane/CGridPlane.h"
 
-#include "CSphereComponent.h"
-
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleNoise3D *app = new SampleNoise3D();
-	getApplication()->registerAppEvent("SampleNoise3D", app);
+	SampleNoise2D *app = new SampleNoise2D();
+	getApplication()->registerAppEvent("SampleNoise2D", app);
 }
 
-SampleNoise3D::SampleNoise3D() :
+SampleNoise2D::SampleNoise2D() :
 	m_scene(NULL),
-	m_forwardRP(NULL)
+	m_forwardRP(NULL),
+	m_noiseMaterial(NULL)
 #if defined(USE_FREETYPE)	
 	, m_largeFont(NULL)
 #endif
@@ -22,16 +21,17 @@ SampleNoise3D::SampleNoise3D() :
 
 }
 
-SampleNoise3D::~SampleNoise3D()
+SampleNoise2D::~SampleNoise2D()
 {
 	delete m_scene;
 #if defined(USE_FREETYPE)	
 	delete m_largeFont;
 #endif
+	delete m_noiseMaterial;
 	delete m_forwardRP;
 }
 
-void SampleNoise3D::onInitApp()
+void SampleNoise2D::onInitApp()
 {
 	// init application
 	CBaseApp* app = getApplication();
@@ -85,28 +85,6 @@ void SampleNoise3D::onInitApp()
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-	// add sphere
-	CGameObject *sphereObj;
-	CSphereComponent *sphere;
-
-	sphereObj = zone->createEmptyObject();
-	sphere = sphereObj->addComponent<CSphereComponent>();
-	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Noise3D.xml");
-	sphereObj->getTransformEuler()->setPosition(core::vector3df(4.0f, 0.0f, 0.0f));
-	m_materials.push_back(sphere->getMaterial());
-
-	sphereObj = zone->createEmptyObject();
-	sphere = sphereObj->addComponent<CSphereComponent>();
-	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Fbm3D.xml");
-	sphereObj->getTransformEuler()->setPosition(core::vector3df(-4.0f, 0.0f, 0.0f));
-	m_materials.push_back(sphere->getMaterial());
-
-	sphereObj = zone->createEmptyObject();
-	sphere = sphereObj->addComponent<CSphereComponent>();
-	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Electric3D.xml");
-	sphereObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
-	m_materials.push_back(sphere->getMaterial());
-
 #if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("Segoe UI Light", 50);
@@ -116,36 +94,30 @@ void SampleNoise3D::onInitApp()
 	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
 
 	// create UI Text in Canvas
-	// CGUIText *textLarge = canvas->createText(m_largeFont);
-	// textLarge->setText("SampleNoise3D");
-	// textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Bottom);
+	CGUIText *textLarge = canvas->createText(m_largeFont);
+	textLarge->setText("SampleNoise2D");
+	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Bottom);
 #endif
+
+	m_noiseMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Noise2D.xml");
+
+	CGUIRect *noiseRect1 = canvas->createRect(core::rectf(0.0f, 0.0f, 256.0f, 256.0f), SColor(255, 255, 255, 255));
+	noiseRect1->setMaterial(m_noiseMaterial);
+
+	CGUIRect *noiseRect2 = canvas->createRect(core::rectf(0.0f, 280.0f, 256.0f, 536.0f), SColor(255, 255, 255, 255));
+	noiseRect2->setMaterial(m_noiseMaterial);
 
 	// rendering pipe line
 	m_forwardRP = new CForwardRP();
 }
 
-void SampleNoise3D::onUpdate()
+void SampleNoise2D::onUpdate()
 {
-	m_noiseOffset = m_noiseOffset + core::vector3df(-0.0003f, 0.0004f, 0.0003f) * getTimeStep();
-
-	float params[4];
-	params[0] = fmodf(m_noiseOffset.X, 256.0f);
-	params[1] = fmodf(m_noiseOffset.Y, 256.0f);
-	params[2] = fmodf(m_noiseOffset.Z, 256.0f);
-	params[3] = 4.0f;
-
-	for (CMaterial *m : m_materials)
-	{
-		m->setUniform4("uNoiseOffset", params);
-		m->updateShaderParams();
-	}
-
 	// update application
 	m_scene->update();
 }
 
-void SampleNoise3D::onRender()
+void SampleNoise2D::onRender()
 {
 	// render 3d scene
 	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
@@ -154,12 +126,12 @@ void SampleNoise3D::onRender()
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }
 
-void SampleNoise3D::onPostRender()
+void SampleNoise2D::onPostRender()
 {
 	// post render application
 }
 
-bool SampleNoise3D::onBack()
+bool SampleNoise2D::onBack()
 {
 	// on back key press
 	// return TRUE will run default by OS (Mobile)
@@ -167,17 +139,17 @@ bool SampleNoise3D::onBack()
 	return true;
 }
 
-void SampleNoise3D::onResume()
+void SampleNoise2D::onResume()
 {
 	// resume application
 }
 
-void SampleNoise3D::onPause()
+void SampleNoise2D::onPause()
 {
 	// pause application
 }
 
-void SampleNoise3D::onQuitApp()
+void SampleNoise2D::onQuitApp()
 {
 	// end application
 	delete this;
