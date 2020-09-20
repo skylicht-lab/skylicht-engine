@@ -97,6 +97,8 @@ namespace Skylicht
 
 			float m_deadAlphaReduction;
 
+			CMaterial *m_material;
+
 		public:
 			CParticleTrail(CGroup *group);
 
@@ -117,6 +119,11 @@ namespace Skylicht
 			inline IMeshBuffer* getMeshBuffer()
 			{
 				return m_meshBuffer;
+			}
+
+			inline CMaterial* getMaterial()
+			{
+				return m_material;
 			}
 
 			inline void setWidth(float f)
@@ -160,6 +167,8 @@ namespace Skylicht
 			}
 
 			void setLength(float l);
+
+			void applyMaterial();
 
 		protected:
 

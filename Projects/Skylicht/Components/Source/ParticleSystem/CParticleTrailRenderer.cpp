@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CParticleTrailRenderer.h"
 #include "Entity/CEntityManager.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 #include "TextureManager/CTextureManager.h"
 
@@ -66,7 +67,7 @@ namespace Skylicht
 
 		void CParticleTrailRenderer::init(CEntityManager *entityManager)
 		{
-			m_texture = CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png");
+
 		}
 
 		void CParticleTrailRenderer::update(CEntityManager *entityManager)
@@ -95,21 +96,22 @@ namespace Skylicht
 			IVideoDriver *driver = getVideoDriver();
 			driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
-			SMaterial m;
-			m.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColorAdditive");
-			m.setTexture(0, m_texture);
-			m.BackfaceCulling = false;
-			driver->setMaterial(m);
-
 			for (u32 i = 0, n = m_trails.size(); i < n; i++)
 			{
 				CParticleTrailData *trailData = trails[i];
 
 				// update particle trail
 				u32 m = trailData->Trails.size();
+
 				for (u32 j = 0; j < m; j++)
 				{
-					IMeshBuffer *mb = trailData->Trails[j]->getMeshBuffer();
+					CParticleTrail* p = trailData->Trails[j];
+
+					IMeshBuffer *mb = p->getMeshBuffer();
+
+					CShaderMaterial::setMaterial(p->getMaterial());
+
+					driver->setMaterial(mb->getMaterial());
 					driver->drawMeshBuffer(mb);
 				}
 			}

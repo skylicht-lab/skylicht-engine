@@ -32,19 +32,22 @@ namespace Skylicht
 	{
 		CParticleTrail::CParticleTrail(CGroup *group) :
 			m_group(group),
-			m_segmentLength(0.2f),
+			m_segmentLength(0.05f),
 			m_width(0.1f),
 			m_trailCount(0),
 			m_maxSegmentCount(0),
 			m_destroyWhenParticleDead(false),
 			m_deadAlphaReduction(0.01f)
 		{
-			setLength(2.0f);
+			setLength(1.0f);
 
 			group->setCallback(this);
 
 			m_meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD), EIT_32BIT);
 			m_meshBuffer->setHardwareMappingHint(EHM_STREAM);
+
+			m_material = new CMaterial("TrailMaterial", "BuiltIn/Shader/Particle/ParticleTrailTurbulenceAdditive.xml");
+			m_material->setBackfaceCulling(false);
 		}
 
 		CParticleTrail::~CParticleTrail()
@@ -69,12 +72,19 @@ namespace Skylicht
 
 			if (m_meshBuffer != NULL)
 				m_meshBuffer->drop();
+
+			delete m_material;
 		}
 
 		void CParticleTrail::setLength(float l)
 		{
 			m_maxSegmentCount = (int)(l / m_segmentLength + 1.0f);
 			m_length = l;
+		}
+
+		void CParticleTrail::applyMaterial()
+		{
+			m_material->applyMaterial(m_meshBuffer->getMaterial());
 		}
 
 		void CParticleTrail::updateDeadTrail()
@@ -180,14 +190,41 @@ namespace Skylicht
 				STrailInfo& trail = *pTrail;
 
 				u32 numSeg = trail.Position->size() - 1;
-
 				int endSeg = 0;
 				if (trail.Position->size() > m_maxSegmentCount)
 					endSeg = (int)(numSeg - m_maxSegmentCount + 1);
 
 				u32 numSegDraw = 0;
 				float currentLength = 0.0f;
+				float trailLength = 0.0f;
 
+				// compute trail length
+				for (int i = numSeg; i >= endSeg; i--)
+				{
+					core::vector3df *pos1;
+					core::vector3df *pos2;
+
+					if (i == numSeg)
+					{
+						// first segment
+						SParticlePosition &p = (*trail.Position)[i];
+						pos2 = &p.Position;
+						pos1 = &trail.CurrentPosition;
+					}
+					else
+					{
+						// get nearest point
+						SParticlePosition& p1 = (*trail.Position)[i + 1];
+						SParticlePosition& p2 = (*trail.Position)[i];
+
+						pos2 = &p2.Position;
+						pos1 = &p1.Position;
+					}
+
+					trailLength = trailLength + pos2->getDistanceFrom(*pos1);
+				}
+
+				// build trail mesh buffer
 				for (int i = numSeg; i >= endSeg; i--)
 				{
 					core::vector3df pos1;
@@ -240,7 +277,7 @@ namespace Skylicht
 
 					direction.normalize();
 
-					float uv2 = currentLength / m_length;
+					float uv2 = currentLength / trailLength;
 
 					if (currentLength > m_length)
 					{
@@ -263,29 +300,30 @@ namespace Skylicht
 						core::vector3df updown = direction.crossProduct(lookdir);
 						updown.normalize();
 
-						core::vector3df normal = direction.crossProduct(updown);
+						// note: we use updown as normal on billboard
+						// core::vector3df normal = direction.crossProduct(updown);
 
 						int vertex = totalSegDraw * 4;
 						int index = totalSegDraw * 6;
 
 						// vertex buffer
 						vertices[vertex + 0].Pos = pos1 - updown * thickness*0.5f;
-						vertices[vertex + 0].Normal = normal;
+						vertices[vertex + 0].Normal = updown;
 						vertices[vertex + 0].Color = c1;
 						vertices[vertex + 0].TCoords.set(0.0f, uv1);
 
 						vertices[vertex + 1].Pos = pos1 + updown * thickness*0.5f;
-						vertices[vertex + 1].Normal = normal;
+						vertices[vertex + 1].Normal = updown;
 						vertices[vertex + 1].Color = c1;
 						vertices[vertex + 1].TCoords.set(1.0f, uv1);
 
 						vertices[vertex + 2].Pos = pos2 - updown * thickness*0.5f;
-						vertices[vertex + 2].Normal = normal;
+						vertices[vertex + 2].Normal = updown;
 						vertices[vertex + 2].Color = c2;
 						vertices[vertex + 2].TCoords.set(0.0f, uv2);
 
 						vertices[vertex + 3].Pos = pos2 + updown * thickness*0.5f;
-						vertices[vertex + 3].Normal = normal;
+						vertices[vertex + 3].Normal = updown;
 						vertices[vertex + 3].Color = c2;
 						vertices[vertex + 3].TCoords.set(1.0f, uv2);
 
@@ -306,9 +344,11 @@ namespace Skylicht
 							vertex = (totalSegDraw - 1) * 4;
 							vertices[vertex + 2].Pos = vertices[copyVertex + 0].Pos;
 							vertices[vertex + 2].TCoords = vertices[copyVertex + 0].TCoords;
+							vertices[vertex + 2].Normal = vertices[copyVertex + 0].Normal;
 
 							vertices[vertex + 3].Pos = vertices[copyVertex + 1].Pos;
 							vertices[vertex + 3].TCoords = vertices[copyVertex + 1].TCoords;
+							vertices[vertex + 3].Normal = vertices[copyVertex + 1].Normal;
 						}
 
 						totalSegDraw++;
@@ -410,6 +450,9 @@ namespace Skylicht
 
 				t.InitData();
 				t.Copy(m_trails[p.Index]);
+
+				// clear position data
+				m_trails[p.Index].Position->set_used(0);
 			}
 		}
 

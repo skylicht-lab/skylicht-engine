@@ -142,9 +142,9 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	Particle::CGroup *pointSparkGroup = ps->createParticleGroup();
 
 	Particle::CQuadRenderer *pointSpark = factory->createQuadRenderer();
-	pointSpark->SizeX = 0.5f;
-	pointSpark->SizeY = 0.5f;
-	pointSpark->SizeZ = 0.5f;
+	pointSpark->SizeX = 0.1f;
+	pointSpark->SizeY = 0.1f;
+	pointSpark->SizeZ = 0.1f;
 	pointSparkGroup->setRenderer(pointSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
@@ -159,17 +159,22 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	pointSparkGroup->LifeMin = 4.0f;
 	pointSparkGroup->LifeMax = 8.0f;
 	pointSparkGroup->Friction = 0.4f;
+	pointSparkGroup->Gravity.set(0.0f, -0.1f, 0.0f);
 
 	Particle::CNormalEmitter *pointSparkEmitter = factory->createNormalEmitter(false);
-	pointSparkEmitter->setFlow(-1.0f);
-	pointSparkEmitter->setTank(10);
-	pointSparkEmitter->setForce(0.4f, 0.8f);
+	pointSparkEmitter->setFlow(100.0f);
+	pointSparkEmitter->setTank(100.0f);
+	pointSparkEmitter->setForce(1.4f, 4.8f);
 	pointSparkEmitter->setZone(cylinder);
 	pointSparkGroup->addEmitter(pointSparkEmitter);
 
 	// ADD TRAIL
 	Particle::CParticleTrailComponent *psTrail = ps->getGameObject()->addComponent<Particle::CParticleTrailComponent>();
-	psTrail->addTrail(pointSparkGroup);
+	Particle::CParticleTrail *trail = psTrail->addTrail(pointSparkGroup);
+
+	CMaterial *material = trail->getMaterial();
+	material->setTexture(0, CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png"));
+	trail->applyMaterial();
 }
 
 void SampleParticlesMagicSkill::onUpdate()
