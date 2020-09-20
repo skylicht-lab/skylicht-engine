@@ -32,30 +32,12 @@ float noise( in float3 x )
 #else
 float noise( in float3 x )
 {
-    #if 1
-    
     float3 i = floor(x);
     float3 f = frac(x);
 	f = f*f*(3.0-2.0*f);
 	float2 uv = (i.xy+float2(37.0,17.0)*i.z) + f.xy;
 	float2 rg = uNoiseTexture.SampleLevel( uNoiseTextureSampler, (uv+0.5)/256.0, 0.0).yx;
-	return lerp( rg.x, rg.y, f.z );
-    
-    #else
-    
-    ifloat3 i = ifloat3(floor(x));
-    float3 f = frac(x);
-	f = f*f*(3.0-2.0*f);
-	float2 uv = i.xy + float2(37,17)*i.z;
-	float2 rgA = uNoiseTexture.SampleLevel( uNoiseTextureSampler, (uv+float2(0,0))/255, 0 ).yx;
-    float2 rgB = uNoiseTexture.SampleLevel( uNoiseTextureSampler, (uv+float2(1,0))/255, 0 ).yx;
-    float2 rgC = uNoiseTexture.SampleLevel( uNoiseTextureSampler, (uv+float2(0,1))/255, 0 ).yx;
-    float2 rgD = uNoiseTexture.SampleLevel( uNoiseTextureSampler, (uv+float2(1,1))/255, 0 ).yx;
-    float2 rg = lerp( lerp( rgA, rgB, f.x ),
-                   lerp( rgC, rgD, f.x ), f.y );
-    return lerp( rg.x, rg.y, f.z );
-    
-    #endif
+	return lerp( rg.x, rg.y, f.z );    
 }
 #endif
 
