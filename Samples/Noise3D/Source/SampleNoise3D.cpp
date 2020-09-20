@@ -1,16 +1,16 @@
 #include "pch.h"
 #include "SkylichtEngine.h"
-#include "@project_name@.h"
+#include "SampleNoise3D.h"
 
 #include "GridPlane/CGridPlane.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	@project_name@ *app = new @project_name@();
-	getApplication()->registerAppEvent("@project_name@", app);
+	SampleNoise3D *app = new SampleNoise3D();
+	getApplication()->registerAppEvent("SampleNoise3D", app);
 }
 
-@project_name@::@project_name@() :
+SampleNoise3D::SampleNoise3D() :
 	m_scene(NULL),
 	m_forwardRP(NULL)
 #if defined(USE_FREETYPE)	
@@ -20,7 +20,7 @@ void installApplication(const std::vector<std::string>& argv)
 
 }
 
-@project_name@::~@project_name@()
+SampleNoise3D::~SampleNoise3D()
 {
 	delete m_scene;
 #if defined(USE_FREETYPE)	
@@ -29,7 +29,7 @@ void installApplication(const std::vector<std::string>& argv)
 	delete m_forwardRP;
 }
 
-void @project_name@::onInitApp()
+void SampleNoise3D::onInitApp()
 {
 	// init application
 	CBaseApp* app = getApplication();
@@ -92,22 +92,22 @@ void @project_name@::onInitApp()
 	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
 
 	// create UI Text in Canvas
-	CGUIText *textLarge = canvas->createText(m_largeFont);
-	textLarge->setText("@project_name@");
-	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Bottom);
+	// CGUIText *textLarge = canvas->createText(m_largeFont);
+	// textLarge->setText("SampleNoise3D");
+	// textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Bottom);
 #endif
 
 	// rendering pipe line
 	m_forwardRP = new CForwardRP();
 }
 
-void @project_name@::onUpdate()
+void SampleNoise3D::onUpdate()
 {
 	// update application
 	m_scene->update();
 }
 
-void @project_name@::onRender()
+void SampleNoise3D::onRender()
 {
 	// render 3d scene
 	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
@@ -116,12 +116,12 @@ void @project_name@::onRender()
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }
 
-void @project_name@::onPostRender()
+void SampleNoise3D::onPostRender()
 {
 	// post render application
 }
 
-bool @project_name@::onBack()
+bool SampleNoise3D::onBack()
 {
 	// on back key press
 	// return TRUE will run default by OS (Mobile)
@@ -129,17 +129,17 @@ bool @project_name@::onBack()
 	return true;
 }
 
-void @project_name@::onResume()
+void SampleNoise3D::onResume()
 {
 	// resume application
 }
 
-void @project_name@::onPause()
+void SampleNoise3D::onPause()
 {
 	// pause application
 }
 
-void @project_name@::onQuitApp()
+void SampleNoise3D::onQuitApp()
 {
 	// end application
 	delete this;
