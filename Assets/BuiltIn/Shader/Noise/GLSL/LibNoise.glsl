@@ -55,7 +55,7 @@ float pnoise( vec3 q )
 	return f;
 }
 
-float fbm(in vec3 p)
+float fbm(vec3 p)
 {	
 	float z=2.;
 	float rz = 0.;	

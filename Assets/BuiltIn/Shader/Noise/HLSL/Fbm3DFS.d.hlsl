@@ -6,11 +6,16 @@ struct PS_INPUT
 	float4 worldPos: WORLD_POSITION;
 };
 
+cbuffer cbPerFrame
+{
+	float4 uNoiseOffset;
+};
+
 #include "LibNoise.hlsl"
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float n = fbm(input.worldPos.xyz * 8.0);
+	float n = fbm(uNoiseOffset.xyz + input.worldPos.xyz * uNoiseOffset.w);
 	
 	return input.color * float4(n, n, n, 1.0);
 }
