@@ -56,6 +56,6 @@ float fbm(in vec3 p)
 }
 void main(void)
 {
-	float n = pnoise(varWorldPos.xyz * 8.0);
+	float n = fbm(varWorldPos.xyz * 8.0);
 	FragColor = varColor * vec4(n, n, n, 1.0);
 }

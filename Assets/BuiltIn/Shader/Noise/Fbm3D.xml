@@ -1,0 +1,10 @@
+<shaderConfig name="Noise3D" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorld" type="WORLD" value="0" float="16" matrix="true"/>
+		</vs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/Noise3DVS.glsl" fs="GLSL/Fbm3DFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/Noise3DVS.hlsl" fs="HLSL/Fbm3DFS.hlsl"/>
+</shaderConfig>
