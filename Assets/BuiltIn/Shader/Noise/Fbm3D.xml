@@ -1,4 +1,4 @@
-<shaderConfig name="Noise3D" baseShader="SOLID">
+<shaderConfig name="Fbm3D" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
