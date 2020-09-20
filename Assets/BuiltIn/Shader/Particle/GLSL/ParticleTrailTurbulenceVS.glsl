@@ -38,6 +38,27 @@ float pnoise( vec3 q )
 	f += 0.0625*noise( q ); q = m*q*2.01;
 	return f;
 }
+float fbm(in vec3 p)
+{
+	float z=2.;
+	float rz = 0.;
+	rz+= abs((noise(p)-0.5)*2.)/z;
+	z = z*2.;
+	p = p*2.;
+	rz+= abs((noise(p)-0.5)*2.)/z;
+	z = z*2.;
+	p = p*2.;
+	rz+= abs((noise(p)-0.5)*2.)/z;
+	z = z*2.;
+	p = p*2.;
+	rz+= abs((noise(p)-0.5)*2.)/z;
+	z = z*2.;
+	p = p*2.;
+	rz+= abs((noise(p)-0.5)*2.)/z;
+	z = z*2.;
+	p = p*2.;
+	return rz;
+}
 void main(void)
 {
 	varTexCoord0 = inTexCoord0;
