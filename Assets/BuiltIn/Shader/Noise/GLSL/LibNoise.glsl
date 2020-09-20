@@ -32,32 +32,15 @@ float noise( in vec3 x )
 #else
 float noise( in vec3 x )
 {
-    #if 1
-    
     vec3 i = floor(x);
     vec3 f = fract(x);
 	f = f*f*(3.0-2.0*f);
 	vec2 uv = (i.xy+vec2(37.0,17.0)*i.z) + f.xy;
 	vec2 rg = textureLod( uNoiseTexture, (uv+0.5)/256.0, 0.0).yx;
 	return mix( rg.x, rg.y, f.z );
-    
-    #else
-    
-    ivec3 i = ivec3(floor(x));
-    vec3 f = fract(x);
-	f = f*f*(3.0-2.0*f);
-	ivec2 uv = i.xy + ivec2(37,17)*i.z;
-	vec2 rgA = texelFetch( uNoiseTexture, (uv+ivec2(0,0))&255, 0 ).yx;
-    vec2 rgB = texelFetch( uNoiseTexture, (uv+ivec2(1,0))&255, 0 ).yx;
-    vec2 rgC = texelFetch( uNoiseTexture, (uv+ivec2(0,1))&255, 0 ).yx;
-    vec2 rgD = texelFetch( uNoiseTexture, (uv+ivec2(1,1))&255, 0 ).yx;
-    vec2 rg = mix( mix( rgA, rgB, f.x ),
-                   mix( rgC, rgD, f.x ), f.y );
-    return mix( rg.x, rg.y, f.z );
-    
-    #endif
 }
 #endif
+
 const mat3 m = mat3( 0.00,  0.80,  0.60,
                     -0.80,  0.36, -0.48,
                     -0.60, -0.48,  0.64 );
