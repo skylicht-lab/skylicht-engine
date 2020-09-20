@@ -86,9 +86,18 @@ void SampleNoise3D::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// add sphere
-	CGameObject *sphereObj = zone->createEmptyObject();
-	CSphereComponent *sphere = sphereObj->addComponent<CSphereComponent>();
+	CGameObject *sphereObj;
+	CSphereComponent *sphere;
+
+	sphereObj = zone->createEmptyObject();
+	sphere = sphereObj->addComponent<CSphereComponent>();
 	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Noise3D.xml");
+	sphereObj->getTransformEuler()->setPosition(core::vector3df(2.0f, 0.0f, 0.0f));
+
+	sphereObj = zone->createEmptyObject();
+	sphere = sphereObj->addComponent<CSphereComponent>();
+	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Fbm3D.xml");
+	sphereObj->getTransformEuler()->setPosition(core::vector3df(-2.0f, 0.0f, 0.0f));
 
 #if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();

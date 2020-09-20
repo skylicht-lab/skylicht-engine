@@ -63,6 +63,6 @@ float fbm(in float3 p)
 }
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float n = pnoise(input.worldPos.xyz * 8.0);
+	float n = fbm(input.worldPos.xyz * 8.0);
 	return input.color * float4(n, n, n, 1.0);
 }
