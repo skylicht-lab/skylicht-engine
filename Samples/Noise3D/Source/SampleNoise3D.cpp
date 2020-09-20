@@ -4,6 +4,8 @@
 
 #include "GridPlane/CGridPlane.h"
 
+#include "CSphereComponent.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SampleNoise3D *app = new SampleNoise3D();
@@ -82,6 +84,11 @@ void SampleNoise3D::onInitApp()
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
+
+	// add sphere
+	CGameObject *sphereObj = zone->createEmptyObject();
+	CSphereComponent *sphere = sphereObj->addComponent<CSphereComponent>();
+	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Noise3D.xml");
 
 #if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();
