@@ -42,8 +42,6 @@ namespace Skylicht
 			core::array<CParticleTrailData*> m_trails;
 			core::array<CCullingData*> m_cullings;
 
-			ITexture *m_texture;
-
 		public:
 			CParticleTrailRenderer();
 
