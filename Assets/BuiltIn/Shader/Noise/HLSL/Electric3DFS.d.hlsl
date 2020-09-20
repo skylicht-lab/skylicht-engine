@@ -9,6 +9,7 @@ struct PS_INPUT
 cbuffer cbPerFrame
 {
 	float4 uNoiseOffset;
+	float4 uElectricColor;
 };
 
 #include "LibNoise.hlsl"
@@ -19,7 +20,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	
 	rz *= 2.0f;
 	
-	float3 col = float3(.2, 0.1, 0.4) / rz;	
+	float3 col = uElectricColor.rgb / rz;
 
 	return input.color * float4(col, 1.0);
 }

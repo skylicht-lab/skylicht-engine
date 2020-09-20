@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CGraphics2D.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 // camera transform
 #include "GameObject/CGameObject.h"
@@ -269,9 +270,19 @@ namespace Skylicht
 		flushBuffer(m_buffer, m_2dMaterial);
 	}
 
-	void CGraphics2D::addExternalBuffer(IMeshBuffer *meshBuffer, const core::matrix4& absoluteMatrix, int shaderID)
+	void CGraphics2D::flushWithMaterial(CMaterial *material)
 	{
-		if (m_2dMaterial.MaterialType != shaderID)
+		CShaderMaterial::setMaterial(material);
+
+		material->setTexture(0, m_2dMaterial.getTexture(0));
+		material->applyMaterial(m_customMaterial);
+
+		flushBuffer(m_buffer, m_customMaterial);
+	}
+
+	void CGraphics2D::addExternalBuffer(IMeshBuffer *meshBuffer, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material)
+	{
+		if (m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
 
 		scene::IVertexBuffer* vtxBuffer = meshBuffer->getVertexBuffer();
@@ -316,11 +327,14 @@ namespace Skylicht
 
 		m_2dMaterial.MaterialType = shaderID;
 		m_buffer->setDirty();
+
+		if (material != NULL)
+			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX, float pivotY)
+	void CGraphics2D::addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material, float pivotX, float pivotY)
 	{
-		if (m_2dMaterial.getTexture(0) != img || m_2dMaterial.MaterialType != shaderID)
+		if (m_2dMaterial.getTexture(0) != img || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
 
 		int numVertices = m_vertices->getVertexCount();
@@ -356,10 +370,10 @@ namespace Skylicht
 		pos.LowerRightCorner.Y = pos.UpperLeftCorner.Y + (f32)img->getSize().Height;
 
 		// add vertices
-		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0.0f, 0.0f);
-		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 1.0f, 0.0f);
-		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 1.0f, 1.0f);
-		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0.0f, 1.0f);
+		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0.0f, 0.0f);
+		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 1.0f, 0.0f);
+		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 1.0f, 1.0f);
+		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0.0f, 1.0f);
 
 		// transform
 		for (int i = 0; i < 4; i++)
@@ -369,11 +383,14 @@ namespace Skylicht
 		m_2dMaterial.MaterialType = shaderID;
 
 		m_buffer->setDirty();
+
+		if (material != NULL)
+			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX, float pivotY)
+	void CGraphics2D::addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material, float pivotX, float pivotY)
 	{
-		if (m_2dMaterial.getTexture(0) != img || m_2dMaterial.MaterialType != shaderID)
+		if (m_2dMaterial.getTexture(0) != img || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
 
 		int numVertices = m_vertices->getVertexCount();
@@ -414,10 +431,10 @@ namespace Skylicht
 		float ty2 = source.LowerRightCorner.Y / (float)img->getSize().Height;
 
 		// add vertices
-		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, tx1, ty1);
-		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, tx2, ty1);
-		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, tx2, ty2);
-		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, tx1, ty2);
+		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, tx1, ty1);
+		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, tx2, ty1);
+		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, tx2, ty2);
+		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, tx1, ty2);
 
 		// transform
 		for (int i = 0; i < 4; i++)
@@ -425,13 +442,16 @@ namespace Skylicht
 
 		m_2dMaterial.setTexture(0, img);
 		m_2dMaterial.MaterialType = shaderID;
+
+		if (material != NULL)
+			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addModuleBatch(SModuleOffset *module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID)
+	void CGraphics2D::addModuleBatch(SModuleOffset *module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID, CMaterial *material)
 	{
 		ITexture *tex = module->Frame->Image->Texture;
 
-		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID)
+		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
 
 		int numSpriteVertex = 4;
@@ -485,11 +505,14 @@ namespace Skylicht
 		numVertices += 4;
 		vertices += 4;
 		indices += 6;
+
+		if (material != NULL)
+			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID)
+	void CGraphics2D::addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, CMaterial *material)
 	{
-		if (m_2dMaterial.getTexture(0) != frame->Image->Texture || m_2dMaterial.MaterialType != materialID)
+		if (m_2dMaterial.getTexture(0) != frame->Image->Texture || m_2dMaterial.MaterialType != materialID || material != NULL)
 			flush();
 
 		int numSpriteVertex = frame->ModuleOffset.size() * 4;
@@ -548,11 +571,14 @@ namespace Skylicht
 
 			++it;
 		}
+
+		if (material != NULL)
+			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addRectangleBatch(const core::rectf& pos, const SColor& color, const core::matrix4& absoluteTransform, int shaderID)
+	void CGraphics2D::addRectangleBatch(const core::rectf& pos, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, CMaterial *material)
 	{
-		if (m_2dMaterial.MaterialType != shaderID)
+		if (m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
 
 		int numVertices = m_vertices->getVertexCount();
@@ -563,19 +589,19 @@ namespace Skylicht
 
 		m_indices->set_used(indexUse);
 		u16 *index = (u16*)m_indices->getIndices();
-		index[numIndices + 0] = 0;
-		index[numIndices + 1] = 1;
-		index[numIndices + 2] = 2;
-		index[numIndices + 3] = 0;
-		index[numIndices + 4] = 2;
-		index[numIndices + 5] = 3;
+		index[numIndices + 0] = numVertices + 0;
+		index[numIndices + 1] = numVertices + 1;
+		index[numIndices + 2] = numVertices + 2;
+		index[numIndices + 3] = numVertices + 0;
+		index[numIndices + 4] = numVertices + 2;
+		index[numIndices + 5] = numVertices + 3;
 
 		m_vertices->set_used(vertexUse);
 		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
-		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
-		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
-		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
-		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0.0f, 0.0f);
+		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 1.0f, 0.0f);
+		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 1.0f, 1.0f);
+		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0.0f, 1.0f);
 
 		// transform
 		for (int i = 0; i < 4; i++)
@@ -587,10 +613,8 @@ namespace Skylicht
 		m_buffer->setPrimitiveType(scene::EPT_TRIANGLES);
 		m_buffer->setDirty();
 
-		m_driver->drawMeshBuffer(m_buffer);
-
-		m_indices->set_used(0);
-		m_vertices->set_used(0);
+		if (material != NULL)
+			flushWithMaterial(material);
 	}
 
 	void CGraphics2D::beginDrawDepth()
@@ -697,10 +721,10 @@ namespace Skylicht
 
 		m_vertices->set_used(4);
 		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
-		vertices[0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
-		vertices[1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
-		vertices[2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
-		vertices[3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
+		vertices[1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
+		vertices[2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
+		vertices[3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
 
 		m_2dMaterial.setTexture(0, NULL);
 		m_2dMaterial.setTexture(1, NULL);
@@ -764,10 +788,10 @@ namespace Skylicht
 
 		m_vertices->set_used(4);
 		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
-		vertices[0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
-		vertices[1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0, 0, 0, 1, color, 0, 0);
-		vertices[2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
-		vertices[3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0, 0, 0, 1, color, 0, 0);
+		vertices[0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
+		vertices[1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
+		vertices[2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
+		vertices[3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
 
 		m_2dMaterial.setTexture(0, NULL);
 		m_2dMaterial.setTexture(1, NULL);

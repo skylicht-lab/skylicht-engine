@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "Graphics2D/SpriteFrame/CSpriteFrame.h"
+#include "Material/CMaterial.h"
 
 namespace Skylicht
 {
@@ -49,6 +50,7 @@ namespace Skylicht
 	protected:
 
 		video::SMaterial m_2dMaterial;
+		video::SMaterial m_customMaterial;
 
 		int m_vertexColorShader;
 
@@ -89,18 +91,20 @@ namespace Skylicht
 		void flushBuffer(IMeshBuffer *meshBuffer, video::SMaterial& material);
 
 		void flush();
+		
+		void flushWithMaterial(CMaterial *material);
 
-		void addExternalBuffer(IMeshBuffer *meshBuffer, const core::matrix4& absoluteMatrix, int shaderID);
+		void addExternalBuffer(IMeshBuffer *meshBuffer, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material = NULL);
 
-		void addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX = 0, float pivotY = 0);
+		void addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material = NULL, float pivotX = 0, float pivotY = 0);
 
-		void addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, float pivotX = 0, float pivotY = 0);
+		void addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material = NULL, float pivotX = 0, float pivotY = 0);
 
-		void addModuleBatch(SModuleOffset *module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID);
+		void addModuleBatch(SModuleOffset *module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID, CMaterial *material = NULL);
 
-		void addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID);
+		void addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, CMaterial *material = NULL);
 
-		void addRectangleBatch(const core::rectf& pos, const SColor& color, const core::matrix4& absoluteTransform, int shaderID);
+		void addRectangleBatch(const core::rectf& pos, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, CMaterial *material = NULL);
 
 		void beginDrawDepth();
 
