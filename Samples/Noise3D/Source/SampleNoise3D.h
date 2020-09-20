@@ -2,7 +2,7 @@
 
 #include "IApplicationEventReceiver.h"
 
-class @project_name@ : public IApplicationEventReceiver
+class SampleNoise3D : public IApplicationEventReceiver
 {
 private:
 	CScene *m_scene;
@@ -16,8 +16,8 @@ private:
 	CForwardRP *m_forwardRP;
 
 public:
-	@project_name@();
-	virtual ~@project_name@();
+	SampleNoise3D();
+	virtual ~SampleNoise3D();
 
 	virtual void onUpdate();
 
