@@ -5,6 +5,10 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 	float4 worldPos: WORLD_POSITION;
 };
+cbuffer cbPerFrame
+{
+	float4 uNoiseOffset;
+};
 float hash(float3 p)
 {
     p = frac( p*0.3183099+.1 );
@@ -40,7 +44,7 @@ float pnoise( float3 q )
 	q = mul(q, m)*2.01;
 	return f;
 }
-float fbm(in float3 p)
+float fbm(float3 p)
 {
 	float z=2.;
 	float rz = 0.;
@@ -63,6 +67,6 @@ float fbm(in float3 p)
 }
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float n = pnoise(input.worldPos.xyz * 8.0);
+	float n = pnoise(uNoiseOffset.xyz + input.worldPos.xyz * uNoiseOffset.w);
 	return input.color * float4(n, n, n, 1.0);
 }

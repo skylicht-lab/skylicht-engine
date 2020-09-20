@@ -1,12 +1,8 @@
-in vec4 inPosition;
-in vec4 inColor;
-in vec3 inNormal;
-in vec2 inTexCoord0;
-uniform mat4 uMvpMatrix;
-uniform mat4 uWorld;
-uniform vec3 uNoiseParam;
-out vec2 varTexCoord0;
-out vec4 varColor;
+precision mediump float;
+uniform vec4 uNoiseOffset;
+in vec4 varColor;
+in vec4 varWorldPos;
+out vec4 FragColor;
 float hash(vec3 p)
 {
     p = fract( p*0.3183099+.1 );
@@ -61,11 +57,8 @@ float fbm(vec3 p)
 }
 void main(void)
 {
-	varTexCoord0 = inTexCoord0;
-	varColor = inColor/255.0;
-	vec3 worldPos = (uWorld * inPosition).xyz;
-	float n = pnoise(worldPos * uNoiseParam.x) * 2.0 - 1.0;
-	float weight = clamp(inTexCoord0.y * uNoiseParam.z, 0.0, 1.0);
-	vec4 noisePosition = inPosition + vec4(n * inNormal * weight * uNoiseParam.y, 0.0);
-	gl_Position = uMvpMatrix * noisePosition;
+	float rz = fbm(uNoiseOffset.xyz + varWorldPos.xyz * uNoiseOffset.w);
+	rz *= 2.0f;
+	vec3 col = vec3(.2, 0.1, 0.4) / rz;
+	FragColor = varColor * vec4(col, 1.0);
 }

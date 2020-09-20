@@ -15,7 +15,11 @@ cbuffer cbPerFrame
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float n = pnoise(uNoiseOffset.xyz + input.worldPos.xyz * uNoiseOffset.w);
+	float rz = fbm(uNoiseOffset.xyz + input.worldPos.xyz * uNoiseOffset.w);
 	
-	return input.color * float4(n, n, n, 1.0);
+	rz *= 2.0f;
+	
+	float3 col = float3(.2, 0.1, 0.4) / rz;	
+
+	return input.color * float4(col, 1.0);
 }

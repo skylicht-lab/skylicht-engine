@@ -15,6 +15,9 @@ private:
 
 	CForwardRP *m_forwardRP;
 
+	core::vector3df m_noiseOffset;
+	std::vector<CMaterial*> m_materials;
+
 public:
 	SampleNoise3D();
 	virtual ~SampleNoise3D();
