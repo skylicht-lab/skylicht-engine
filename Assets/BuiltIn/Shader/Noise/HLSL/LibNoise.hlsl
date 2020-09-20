@@ -62,7 +62,7 @@ float pnoise( float3 q )
 	return f;
 }
 
-float fbm(in float3 p)
+float fbm(float3 p)
 {	
 	float z=2.;
 	float rz = 0.;	

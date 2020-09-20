@@ -92,12 +92,20 @@ void SampleNoise3D::onInitApp()
 	sphereObj = zone->createEmptyObject();
 	sphere = sphereObj->addComponent<CSphereComponent>();
 	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Noise3D.xml");
-	sphereObj->getTransformEuler()->setPosition(core::vector3df(2.0f, 0.0f, 0.0f));
+	sphereObj->getTransformEuler()->setPosition(core::vector3df(4.0f, 0.0f, 0.0f));
+	m_materials.push_back(sphere->getMaterial());
 
 	sphereObj = zone->createEmptyObject();
 	sphere = sphereObj->addComponent<CSphereComponent>();
 	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Fbm3D.xml");
-	sphereObj->getTransformEuler()->setPosition(core::vector3df(-2.0f, 0.0f, 0.0f));
+	sphereObj->getTransformEuler()->setPosition(core::vector3df(-4.0f, 0.0f, 0.0f));
+	m_materials.push_back(sphere->getMaterial());
+
+	sphereObj = zone->createEmptyObject();
+	sphere = sphereObj->addComponent<CSphereComponent>();
+	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Electric3D.xml");
+	sphereObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
+	m_materials.push_back(sphere->getMaterial());
 
 #if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();
@@ -119,6 +127,19 @@ void SampleNoise3D::onInitApp()
 
 void SampleNoise3D::onUpdate()
 {
+	m_noiseOffset = m_noiseOffset + core::vector3df(-0.0003f, 0.0004f, 0.0003f) * getTimeStep();
+	float params[4];
+	params[0] = m_noiseOffset.X;
+	params[1] = m_noiseOffset.Y;
+	params[2] = m_noiseOffset.Z;
+	params[3] = 4.0f;
+
+	for (CMaterial *m : m_materials)
+	{
+		m->setUniform4("uNoiseOffset", params);
+		m->updateShaderParams();
+	}
+
 	// update application
 	m_scene->update();
 }

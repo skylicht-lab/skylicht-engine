@@ -537,6 +537,8 @@ namespace Skylicht
 			}
 		}
 
+		initDefaultValue();
+
 		bindUniformParam();
 	}
 
@@ -584,6 +586,9 @@ namespace Skylicht
 
 		// try load from extra params
 		reloadExtraParams(m_shaderPath.c_str());
+
+		// update params
+		updateShaderParams();
 	}
 
 	void CMaterial::changeShader(const char *path)

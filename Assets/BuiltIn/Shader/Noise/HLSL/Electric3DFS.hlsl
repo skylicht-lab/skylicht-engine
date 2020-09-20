@@ -1,21 +1,13 @@
-struct VS_INPUT
-{
-	float4 pos: POSITION;
-	float3 norm: NORMAL;
-	float4 color: COLOR;
-	float2 tex0: TEXCOORD0;
-};
-struct VS_OUTPUT
+struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
 	float4 color : COLOR0;
 	float2 tex0 : TEXCOORD0;
+	float4 worldPos: WORLD_POSITION;
 };
-cbuffer cbPerObject
+cbuffer cbPerFrame
 {
-	float4x4 uMvpMatrix;
-	float4x4 uWorld;
-	float3 uNoiseParam;
+	float4 uNoiseOffset;
 };
 float hash(float3 p)
 {
@@ -73,15 +65,10 @@ float fbm(float3 p)
 	p = p*2.;
 	return rz;
 }
-VS_OUTPUT main(VS_INPUT input)
+float4 main(PS_INPUT input) : SV_TARGET
 {
-	VS_OUTPUT output;
-	float3 worldPos = mul(input.pos, uWorld).xyz;
-	float n = pnoise(worldPos * uNoiseParam.x) * 2.0 - 1.0;
-	float weight = clamp(input.tex0.y * uNoiseParam.z, 0.0, 1.0);
-	float4 noisePosition = input.pos + float4(n * input.norm * weight * uNoiseParam.y, 0.0);
-	output.pos = mul(noisePosition, uMvpMatrix);
-	output.color = input.color;
-	output.tex0 = input.tex0;
-	return output;
+	float rz = fbm(uNoiseOffset.xyz + input.worldPos.xyz * uNoiseOffset.w);
+	rz *= 2.0f;
+	float3 col = float3(.2, 0.1, 0.4) / rz;
+	return input.color * float4(col, 1.0);
 }
