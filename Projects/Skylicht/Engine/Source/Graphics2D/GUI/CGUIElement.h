@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Camera/CCamera.h"
+#include "Material/CMaterial.h"
 
 namespace Skylicht
 {
@@ -80,6 +81,7 @@ namespace Skylicht
 
 		SColor m_color;
 		int m_shaderID;
+		CMaterial *m_material;
 
 	protected:
 		CGUIElement(CCanvas *canvas, const core::rectf& rect);
@@ -219,6 +221,16 @@ namespace Skylicht
 		inline int getShaderID()
 		{
 			return m_shaderID;
+		}
+
+		inline void setMaterial(CMaterial* material)
+		{
+			m_material = material;
+		}
+
+		inline CMaterial* getMaterial()
+		{
+			return m_material;
 		}
 
 		inline CGUIMask* getMask()

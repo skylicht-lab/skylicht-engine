@@ -54,6 +54,8 @@ namespace Skylicht
 		class CParticle
 		{
 		public:
+			u32 Index;
+
 			bool Immortal;
 
 			float Params[NumParams];
@@ -71,7 +73,7 @@ namespace Skylicht
 			core::vector3df Velocity;
 
 		public:
-			CParticle();
+			CParticle(u32 index);
 
 			virtual ~CParticle();
 

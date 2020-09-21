@@ -29,7 +29,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticle::CParticle() :
+		CParticle::CParticle(u32 index) :
+			Index(index),
 			Immortal(false),
 			Age(0.0f),
 			Life(0.0f),
@@ -87,6 +88,8 @@ namespace Skylicht
 			core::vector3df rotation = Rotation;
 			core::vector3df velocity = Velocity;
 
+			// note: 
+			// Dont swap [p.Index], just swap data
 			Age = p.Age;
 			Life = p.Life;
 			LifeTime = p.LifeTime;

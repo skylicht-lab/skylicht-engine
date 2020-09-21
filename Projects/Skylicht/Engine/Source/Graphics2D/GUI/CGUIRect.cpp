@@ -48,6 +48,6 @@ namespace Skylicht
 
 	void CGUIRect::render(CCamera *camera)
 	{
-		CGraphics2D::getInstance()->addRectangleBatch(m_rect, m_color, m_absoluteTransform, m_shaderID);
+		CGraphics2D::getInstance()->addRectangleBatch(m_rect, m_color, m_absoluteTransform, m_shaderID, m_material);
 	}
 }

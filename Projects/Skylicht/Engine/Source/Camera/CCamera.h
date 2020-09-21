@@ -92,6 +92,13 @@ namespace Skylicht
 
 		void setUpVector(const core::vector3df& up);
 
+		inline const core::vector3df& getUpVector()
+		{
+			return m_up;
+		}
+
+		core::vector3df getLookVector();
+
 		inline void setNearValue(float f)
 		{
 			m_nearValue = f;
