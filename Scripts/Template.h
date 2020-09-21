@@ -14,7 +14,8 @@ private:
 #endif
 
 	CForwardRP *m_forwardRP;
-
+	CLinearColorRP *m_postProcessRP;
+	
 public:
 	@project_name@();
 	virtual ~@project_name@();

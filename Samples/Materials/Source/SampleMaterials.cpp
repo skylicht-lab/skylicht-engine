@@ -16,7 +16,10 @@ void installApplication(const std::vector<std::string>& argv)
 
 SampleMaterials::SampleMaterials() :
 	m_scene(NULL),
-	m_bakeSHLighting(true)
+	m_bakeSHLighting(true),
+	m_reflectionProbe(NULL),
+	m_forwardRP(NULL),
+	m_postProcessRP(NULL)
 {
 	Lightmapper::CLightmapper::createGetInstance();
 }
@@ -95,6 +98,10 @@ void SampleMaterials::onInitApp()
 	CIndirectLighting *indirect = sphereObj->addComponent<CIndirectLighting>();
 	indirect->setIndirectLightingType(CIndirectLighting::SH4);
 
+	// Reflection probe
+	CGameObject *reflectionProbeObj = zone->createEmptyObject();
+	m_reflectionProbe = reflectionProbeObj->addComponent<CReflectionProbe>();
+
 	// Load texture
 	CTextureManager *textureManager = CTextureManager::getInstance();
 	ITexture *brickDiffuse = textureManager->getTexture("SampleMaterials/Textures/brick_diff.png");
@@ -113,7 +120,16 @@ void SampleMaterials::onInitApp()
 	m_spheres.push_back(sphereObj);
 
 	// Rendering
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
+
 	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
+
+	m_postProcessRP = new CLinearColorRP();
+	m_postProcessRP->initRender(w, h);
+
+	m_forwardRP->setPostProcessor(m_postProcessRP);
 }
 
 void SampleMaterials::onUpdate()
@@ -158,6 +174,9 @@ void SampleMaterials::onRender()
 
 		for (CGameObject *sphere : m_spheres)
 			sphere->setVisible(true);
+
+		// bake environment
+		m_reflectionProbe->bakeProbe(bakeCamera, m_forwardRP, m_scene->getEntityManager());
 	}
 
 	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());

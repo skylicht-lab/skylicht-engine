@@ -9,6 +9,7 @@ private:
 	CCamera *m_guiCamera;
 	CCamera *m_camera;
 	CForwardRP *m_forwardRP;
+	CLinearColorRP *m_postProcessRP;
 
 	CReflectionProbe *m_reflectionProbe;
 

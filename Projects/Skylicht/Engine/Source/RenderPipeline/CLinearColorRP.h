@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -25,33 +25,28 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBaseRP.h"
-#include "CPostProcessorRP.h"
+#include "IPostProcessor.h"
 
 namespace Skylicht
 {
-	class CForwardRP : public CBaseRP
+	class CLinearColorRP :
+		public CBaseRP,
+		public IPostProcessor
 	{
 	protected:
-
-		bool m_usePostProcessor;
-
-		ITexture *m_target;
 		core::dimension2du m_size;
 
-		IPostProcessor *m_postProcessor;
+		SMaterial m_finalPass;
 
 	public:
-		CForwardRP(bool postProcessor = true);
+		CLinearColorRP();
 
-		virtual ~CForwardRP();
+		virtual ~CLinearColorRP();
 
 		virtual void initRender(int w, int h);
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
+		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& vp);
 
-		inline void setPostProcessor(IPostProcessor *pp)
-		{
-			m_postProcessor = pp;
-		}
+		virtual void postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport);
 	};
 }
