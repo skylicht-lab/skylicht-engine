@@ -18,7 +18,6 @@ struct VS_OUTPUT
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
-	float4x4 uWorld; 
 };
 
 VS_OUTPUT main(VS_INPUT input)
@@ -26,7 +25,7 @@ VS_OUTPUT main(VS_INPUT input)
 	VS_OUTPUT output;
 	float4 pos;
 	pos = mul(input.pos, uMvpMatrix);
-	output.worldPos = mul(input.pos, uWorld);
+	output.worldPos = input.pos;
 	output.pos = pos;
 	output.color = input.color;
 	output.tex0 = input.tex0;
