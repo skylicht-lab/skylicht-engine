@@ -128,7 +128,16 @@ void SampleShader::onInitApp()
 	}
 
 	// Rendering
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
+
 	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
+
+	m_postProcessRP = new CLinearColorRP();
+	m_postProcessRP->initRender(w, h);
+
+	m_forwardRP->setPostProcessor(m_postProcessRP);
 }
 
 void SampleShader::initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial& materials)

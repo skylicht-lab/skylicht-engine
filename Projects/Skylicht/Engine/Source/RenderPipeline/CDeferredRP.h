@@ -75,7 +75,7 @@ namespace Skylicht
 		float m_directMultipler;
 		float m_lightMultipler;
 
-		CPostProcessorRP *m_postProcessor;
+		IPostProcessor *m_postProcessor;
 
 	protected:
 
@@ -95,7 +95,7 @@ namespace Skylicht
 
 		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
 
-		inline void setPostProcessor(CPostProcessorRP *pp)
+		inline void setPostProcessor(IPostProcessor *pp)
 		{
 			m_postProcessor = pp;
 		}

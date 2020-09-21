@@ -9,10 +9,12 @@ private:
 	CCamera *m_guiCamera;
 	CCamera *m_camera;
 	CForwardRP *m_forwardRP;
+	CLinearColorRP *m_postProcessRP;
 
 	bool m_bakeSHLighting;
 
 	std::vector<CGameObject*> m_spheres;
+	CReflectionProbe *m_reflectionProbe;
 
 public:
 	SampleMaterials();

@@ -27,19 +27,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CForwardRP::CForwardRP()
+	CForwardRP::CForwardRP(bool postProcessor) :
+		m_usePostProcessor(postProcessor),
+		m_postProcessor(NULL),
+		m_target(NULL)
 	{
 
 	}
 
 	CForwardRP::~CForwardRP()
 	{
-
+		if (m_target != NULL)
+			getVideoDriver()->removeTexture(m_target);
 	}
 
 	void CForwardRP::initRender(int w, int h)
 	{
+		m_size.set(w, h);
 
+		if (m_usePostProcessor == true)
+			m_target = getVideoDriver()->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
 	}
 
 	void CForwardRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
@@ -48,11 +55,29 @@ namespace Skylicht
 			return;
 
 		IVideoDriver *driver = getVideoDriver();
-		driver->setRenderTarget(target, false, false);
-		
-		// custom viewport
-		if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
-			driver->setViewPort(viewport);
+
+		ITexture *currentTarget = NULL;
+
+		if (m_usePostProcessor == true && m_postProcessor != NULL)
+		{
+			driver->setRenderTarget(m_target, true, true);
+			currentTarget = m_target;
+
+			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+			{
+				core::recti vp(0, 0, (int)viewport.getWidth(), (int)viewport.getHeight());
+				driver->setViewPort(vp);
+			}
+		}
+		else
+		{
+			driver->setRenderTarget(target, false, false);
+			currentTarget = target;
+
+			// custom viewport
+			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+				driver->setViewPort(viewport);
+		}
 
 		setCamera(camera);
 		entityManager->setCamera(camera);
@@ -68,6 +93,11 @@ namespace Skylicht
 			entityManager->cullingAndRender();
 		}
 
-		onNext(target, camera, entityManager, viewport);
+		onNext(currentTarget, camera, entityManager, viewport);
+
+		if (m_usePostProcessor == true && m_postProcessor != NULL)
+		{
+			m_postProcessor->postProcessing(target, m_target, NULL, NULL, viewport);
+		}
 	}
 }

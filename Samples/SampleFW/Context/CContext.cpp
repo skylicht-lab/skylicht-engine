@@ -51,7 +51,7 @@ CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect)
 	m_rendering->enableUpdateEntity(false);
 
 	// 3rd
-	m_forwardRP = new CForwardRP();
+	m_forwardRP = new CForwardRP(false);
 	m_forwardRP->initRender(w, h);
 	m_forwardRP->enableUpdateEntity(false);
 
