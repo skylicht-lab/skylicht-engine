@@ -92,13 +92,13 @@ void SampleNoise3D::onInitApp()
 	sphereObj = zone->createEmptyObject();
 	sphere = sphereObj->addComponent<CSphereComponent>();
 	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Noise3D.xml");
-	sphereObj->getTransformEuler()->setPosition(core::vector3df(4.0f, 0.0f, 0.0f));
+	sphereObj->getTransformEuler()->setPosition(core::vector3df(3.0f, 0.0f, 0.0f));
 	m_materials.push_back(sphere->getMaterial());
 
 	sphereObj = zone->createEmptyObject();
 	sphere = sphereObj->addComponent<CSphereComponent>();
 	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Fbm3D.xml");
-	sphereObj->getTransformEuler()->setPosition(core::vector3df(-4.0f, 0.0f, 0.0f));
+	sphereObj->getTransformEuler()->setPosition(core::vector3df(-3.0f, 0.0f, 0.0f));
 	m_materials.push_back(sphere->getMaterial());
 
 	sphereObj = zone->createEmptyObject();
