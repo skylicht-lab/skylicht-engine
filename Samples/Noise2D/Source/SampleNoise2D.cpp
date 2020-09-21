@@ -27,9 +27,12 @@ SampleNoise2D::~SampleNoise2D()
 #if defined(USE_FREETYPE)	
 	delete m_largeFont;
 #endif
+
 	delete m_noiseMaterial;
 	delete m_electricMaterial;
 	delete m_electricLightningMaterial;
+	delete m_burnMaterial;
+
 	delete m_forwardRP;
 }
 
@@ -106,6 +109,7 @@ void SampleNoise2D::onInitApp()
 	m_noiseMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Noise2D.xml");
 	m_electricMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Electric2D.xml");
 	m_electricLightningMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/ElectricLightning2D.xml");
+	m_burnMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Burn2D.xml");
 
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
@@ -114,19 +118,24 @@ void SampleNoise2D::onInitApp()
 	f32 cy = h * 0.5f;
 	f32 rectSize = 256.0f;
 	f32 offset = rectSize * 0.5f;
-	f32 padding = 1.5f;
+	f32 paddingX = 1.5f;
+	f32 paddingY = 0.7f;
 
 	CGUIRect *noiseRect1 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect1->setMaterial(m_noiseMaterial);
-	noiseRect1->setPosition(core::vector3df(cx - offset - rectSize * padding, cy - offset, 0.0f));
+	noiseRect1->setPosition(core::vector3df(cx - offset - rectSize * paddingX, cy - offset - rectSize * paddingY, 0.0f));
 
 	CGUIRect *noiseRect2 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect2->setMaterial(m_electricMaterial);
-	noiseRect2->setPosition(core::vector3df(cx - offset, cy - offset, 0.0f));
+	noiseRect2->setPosition(core::vector3df(cx - offset, cy - offset - rectSize * paddingY, 0.0f));
 
 	CGUIRect *noiseRect3 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect3->setMaterial(m_electricLightningMaterial);
-	noiseRect3->setPosition(core::vector3df(cx - offset + rectSize * padding, cy - offset, 0.0f));
+	noiseRect3->setPosition(core::vector3df(cx - offset + rectSize * paddingX, cy - offset - rectSize * paddingY, 0.0f));
+
+	CGUIRect *noiseRect4 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	noiseRect4->setMaterial(m_burnMaterial);
+	noiseRect4->setPosition(core::vector3df(cx - offset - rectSize * paddingX, cy - offset + rectSize * paddingY, 0.0f));
 
 	// rendering pipe line
 	m_forwardRP = new CForwardRP();
@@ -150,6 +159,9 @@ void SampleNoise2D::onUpdate()
 
 	m_electricLightningMaterial->setUniform4("uNoiseOffset", params);
 	m_electricLightningMaterial->updateShaderParams();
+
+	m_burnMaterial->setUniform4("uNoiseOffset", params);
+	m_burnMaterial->updateShaderParams();
 
 	// update application
 	m_scene->update();

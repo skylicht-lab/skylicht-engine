@@ -116,9 +116,9 @@ void SampleNoise3D::onInitApp()
 	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
 
 	// create UI Text in Canvas
-	// CGUIText *textLarge = canvas->createText(m_largeFont);
-	// textLarge->setText("SampleNoise3D");
-	// textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Bottom);
+	CGUIText *textLarge = canvas->createText(m_largeFont);
+	textLarge->setText("SampleNoise3D");
+	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
 #endif
 
 	// rendering pipe line
@@ -127,13 +127,13 @@ void SampleNoise3D::onInitApp()
 
 void SampleNoise3D::onUpdate()
 {
-	m_noiseOffset = m_noiseOffset + core::vector3df(-0.0003f, 0.0004f, 0.0003f) * getTimeStep();
+	m_noiseOffset = m_noiseOffset + core::vector3df(-0.0003f, 0.0003f, 0.0003f) * getTimeStep();
 
 	float params[4];
 	params[0] = m_noiseOffset.X;
 	params[1] = m_noiseOffset.Y;
 	params[2] = m_noiseOffset.Z;
-	params[3] = 4.0f;
+	params[3] = 16.0f;
 
 	for (CMaterial *m : m_materials)
 	{
