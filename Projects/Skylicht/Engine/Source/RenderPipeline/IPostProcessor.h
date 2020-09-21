@@ -24,34 +24,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CBaseRP.h"
-#include "CPostProcessorRP.h"
+#include "pch.h"
 
 namespace Skylicht
 {
-	class CForwardRP : public CBaseRP
+	class IPostProcessor
 	{
-	protected:
-
-		bool m_usePostProcessor;
-
-		ITexture *m_target;
-		core::dimension2du m_size;
-
-		IPostProcessor *m_postProcessor;
-
 	public:
-		CForwardRP(bool postProcessor = true);
-
-		virtual ~CForwardRP();
-
-		virtual void initRender(int w, int h);
-
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
-
-		inline void setPostProcessor(IPostProcessor *pp)
+		IPostProcessor()
 		{
-			m_postProcessor = pp;
 		}
+
+		virtual ~IPostProcessor()
+		{
+
+		}
+
+		virtual void postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport) = 0;
 	};
 }

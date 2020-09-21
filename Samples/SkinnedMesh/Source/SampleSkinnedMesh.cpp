@@ -176,9 +176,17 @@ void SampleSkinnedMesh::onInitApp()
 		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
 	}
 
+	// Rendering
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
 
-	// render pipeline
 	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
+
+	m_postProcessRP = new CLinearColorRP();
+	m_postProcessRP->initRender(w, h);
+
+	m_forwardRP->setPostProcessor(m_postProcessRP);
 }
 
 void SampleSkinnedMesh::onUpdate()

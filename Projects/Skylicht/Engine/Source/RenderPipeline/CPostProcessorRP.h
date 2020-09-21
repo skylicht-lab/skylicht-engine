@@ -25,10 +25,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBaseRP.h"
+#include "IPostProcessor.h"
 
 namespace Skylicht
 {
-	class CPostProcessorRP : public CBaseRP
+	class CPostProcessorRP :
+		public CBaseRP,
+		public IPostProcessor
 	{
 	protected:
 		core::dimension2du m_size;
