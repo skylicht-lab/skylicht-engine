@@ -154,6 +154,17 @@ namespace Skylicht
 		m_up = up;
 	}
 
+	core::vector3df CCamera::getLookVector()
+	{
+		const core::matrix4 &m = m_gameObject->getTransform()->getMatrixTransform();
+
+		core::vector3df look = CTransform::s_oz;
+		m.rotateVect(look);
+
+		look.normalize();
+		return look;
+	}
+
 	void CCamera::recalculateViewMatrix()
 	{
 		endUpdate();
