@@ -2,6 +2,8 @@
 #include "SkylichtEngine.h"
 #include "@project_name@.h"
 
+#include "GridPlane/CGridPlane.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	@project_name@ *app = new @project_name@();
@@ -9,9 +11,10 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 @project_name@::@project_name@() :
-	m_scene(NULL)
+	m_scene(NULL),
+	m_forwardRP(NULL)
 #if defined(USE_FREETYPE)	
-	,m_largeFont(NULL)
+	, m_largeFont(NULL)
 #endif
 {
 
@@ -23,6 +26,7 @@ void installApplication(const std::vector<std::string>& argv)
 #if defined(USE_FREETYPE)	
 	delete m_largeFont;
 #endif
+	delete m_forwardRP;
 }
 
 void @project_name@::onInitApp()
@@ -54,6 +58,31 @@ void @project_name@::onInitApp()
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
+	// create 3D camera
+	CGameObject *camObj = zone->createEmptyObject();
+	camObj->addComponent<CCamera>();
+	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
+
+	m_camera = camObj->getComponent<CCamera>();
+	m_camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
+	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+
+	// 3d grid
+	CGameObject *grid = zone->createEmptyObject();
+	grid->addComponent<CGridPlane>();
+
+	// lighting
+	CGameObject *lightObj = zone->createEmptyObject();
+	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	SColor c(255, 255, 244, 214);
+	directionalLight->setColor(SColorf(c));
+
+	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
+
+	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
+	lightTransform->setOrientation(direction, CTransform::s_oy);
+
 #if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("Segoe UI Light", 50);
@@ -65,8 +94,11 @@ void @project_name@::onInitApp()
 	// create UI Text in Canvas
 	CGUIText *textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("@project_name@");
-	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Bottom);
 #endif
+
+	// rendering pipe line
+	m_forwardRP = new CForwardRP();
 }
 
 void @project_name@::onUpdate()
@@ -77,6 +109,9 @@ void @project_name@::onUpdate()
 
 void @project_name@::onRender()
 {
+	// render 3d scene
+	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
+
 	// render text in gui camera
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }

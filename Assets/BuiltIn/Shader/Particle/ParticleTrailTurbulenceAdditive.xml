@@ -1,0 +1,19 @@
+<shaderConfig name="ParticleTrailTurbulenceAdditive" baseShader="TRANSPARENT_ADD_COLOR">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorld" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uNoiseParam" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 0.1, 3.0" float="3"/>
+		</vs>
+		<fs>
+			<uniform name="uTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexture"/>
+		</ui>
+	</customUI>	
+	<shader type="GLSL" vs="GLSL/ParticleTrailTurbulenceVS.glsl" fs="GLSL/ParticleAdditiveFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ParticleTrailTurbulenceVS.hlsl" fs="HLSL/ParticleAdditiveFS.hlsl"/>
+</shaderConfig>
