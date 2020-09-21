@@ -7,6 +7,7 @@ struct PS_INPUT
 cbuffer cbPerFrame
 {
 	float4 uNoiseOffset;
+	float4 uElectricColor;
 };
 float hash( in float2 p )
 {
@@ -56,6 +57,12 @@ float pnoise( float2 p )
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float f = pnoise(uNoiseOffset.xy + input.tex0 * uNoiseOffset.w);
-	f = 0.5 + 0.5*f;
-	return input.color * float4(f, f, f, 1.0);
+	f = abs(f + 0.1);
+	f = pow(f, 0.2);
+	float3 col = float3(1.7, 1.7, 1.7);
+	col = col * -f + col;
+	col = col * col;
+	col = col * col;
+	col = col * uElectricColor.rgb;
+	return input.color * float4(col, 1.0);
 }

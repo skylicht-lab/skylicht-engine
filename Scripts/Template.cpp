@@ -27,6 +27,7 @@ void installApplication(const std::vector<std::string>& argv)
 	delete m_largeFont;
 #endif
 	delete m_forwardRP;
+	delete m_postProcessRP;
 }
 
 void @project_name@::onInitApp()
@@ -94,7 +95,7 @@ void @project_name@::onInitApp()
 	// create UI Text in Canvas
 	CGUIText *textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("@project_name@");
-	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Bottom);
+	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
 #endif
 
 	// rendering pipe line

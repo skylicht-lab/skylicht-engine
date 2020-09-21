@@ -10,12 +10,16 @@ private:
 	CCamera *m_camera;
 
 	CMaterial *m_noiseMaterial;
+	CMaterial *m_electricMaterial;
+	CMaterial *m_electricLightningMaterial;
 
 #if defined(USE_FREETYPE)	
 	CGlyphFont *m_largeFont;
 #endif
 
 	CForwardRP *m_forwardRP;
+
+	core::vector3df m_noiseOffset;
 
 public:
 	SampleNoise2D();

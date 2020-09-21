@@ -4,7 +4,7 @@
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 		</vs>
 		<fs>
-			<uniform name="uNoiseOffset" type="MATERIAL_PARAM" valueIndex="0" value="256.0,256.0,0.0,0.0" float="4"/>
+			<uniform name="uNoiseOffset" type="MATERIAL_PARAM" valueIndex="0" value="0.0,0.0,0.0,12.0" float="4"/>
 		</fs>
 	</uniforms>
 	<shader type="GLSL" vs="GLSL/Noise2DVS.glsl" fs="GLSL/Noise2DFS.glsl"/>
