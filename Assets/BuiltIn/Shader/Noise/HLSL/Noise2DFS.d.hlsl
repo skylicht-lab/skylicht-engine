@@ -14,11 +14,11 @@ cbuffer cbPerFrame
 
 float4 main(PS_INPUT input) : SV_TARGET
 {	
-	// float3 n = noised(input.tex0 * uNoiseOffset.xy);
+	// float3 n = noised(uNoiseOffset.xy + input.tex0 * uNoiseOffset.w);
 	// n = 0.5 + 0.5*n;	
 	// return input.color * float4(n.yzx, 1.0);
 	
-	float f = pnoise(input.tex0 * 8.0);
+	float f = pnoise(uNoiseOffset.xy + input.tex0 * uNoiseOffset.w);
 	f = 0.5 + 0.5*f;	
 	return input.color * float4(f, f, f, 1.0);
 }

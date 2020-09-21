@@ -29,6 +29,7 @@ SampleSkinnedMesh::~SampleSkinnedMesh()
 {
 	delete m_scene;
 	delete m_forwardRP;
+	delete m_postProcessRP;
 
 	Lightmapper::CLightmapper::releaseInstance();
 }

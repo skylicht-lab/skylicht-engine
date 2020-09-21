@@ -275,7 +275,7 @@ namespace Skylicht
 		CShaderMaterial::setMaterial(material);
 
 		material->setTexture(0, m_2dMaterial.getTexture(0));
-		material->applyMaterial(m_customMaterial);
+		material->updateTexture(m_customMaterial);
 
 		flushBuffer(m_buffer, m_customMaterial);
 	}

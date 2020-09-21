@@ -11,11 +11,11 @@ out vec4 FragColor;
 
 void main(void)
 {
-	// vec3 n = noised(varTexCoord0 * uNoiseOffset.xy);
+	// vec3 n = noised(uNoiseOffset.xy + varTexCoord0 * uNoiseOffset.w);
 	// n = 0.5 + 0.5*n;		
 	// FragColor = varColor * vec4(n.yzx, 1.0);
 	
-	float f = pnoise(varTexCoord0 * 8.0);
+	float f = pnoise(uNoiseOffset.xy + varTexCoord0 * uNoiseOffset.w);
 	f = 0.5 + 0.5*f;	
 	FragColor = varColor * vec4(f, f, f, 1.0);
 }
