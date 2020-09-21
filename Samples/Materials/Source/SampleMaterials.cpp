@@ -28,6 +28,9 @@ SampleMaterials::~SampleMaterials()
 {
 	delete m_scene;
 
+	delete m_forwardRP;
+	delete m_postProcessRP;
+
 	Lightmapper::CLightmapper::releaseInstance();
 }
 

@@ -130,9 +130,9 @@ void SampleNoise3D::onUpdate()
 	m_noiseOffset = m_noiseOffset + core::vector3df(-0.0003f, 0.0004f, 0.0003f) * getTimeStep();
 
 	float params[4];
-	params[0] = fmodf(m_noiseOffset.X, 256.0f);
-	params[1] = fmodf(m_noiseOffset.Y, 256.0f);
-	params[2] = fmodf(m_noiseOffset.Z, 256.0f);
+	params[0] = m_noiseOffset.X;
+	params[1] = m_noiseOffset.Y;
+	params[2] = m_noiseOffset.Z;
 	params[3] = 4.0f;
 
 	for (CMaterial *m : m_materials)

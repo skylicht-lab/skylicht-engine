@@ -34,6 +34,9 @@ SampleShader::~SampleShader()
 	delete m_font;
 
 	Lightmapper::CLightmapper::releaseInstance();
+
+	delete m_forwardRP;
+	delete m_postProcessRP;
 }
 
 void SampleShader::onInitApp()

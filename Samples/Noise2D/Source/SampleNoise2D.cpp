@@ -28,6 +28,8 @@ SampleNoise2D::~SampleNoise2D()
 	delete m_largeFont;
 #endif
 	delete m_noiseMaterial;
+	delete m_electricMaterial;
+	delete m_electricLightningMaterial;
 	delete m_forwardRP;
 }
 
@@ -61,6 +63,7 @@ void SampleNoise2D::onInitApp()
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// create 3D camera
+	/*
 	CGameObject *camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
@@ -72,6 +75,7 @@ void SampleNoise2D::onInitApp()
 	// 3d grid
 	CGameObject *grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
+	*/
 
 	// lighting
 	CGameObject *lightObj = zone->createEmptyObject();
@@ -96,16 +100,33 @@ void SampleNoise2D::onInitApp()
 	// create UI Text in Canvas
 	CGUIText *textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleNoise2D");
-	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Bottom);
+	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
 #endif
 
 	m_noiseMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Noise2D.xml");
+	m_electricMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Electric2D.xml");
+	m_electricLightningMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/ElectricLightning2D.xml");
 
-	CGUIRect *noiseRect1 = canvas->createRect(core::rectf(0.0f, 0.0f, 256.0f, 256.0f), SColor(255, 255, 255, 255));
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
+
+	f32 cx = w * 0.5f;
+	f32 cy = h * 0.5f;
+	f32 rectSize = 256.0f;
+	f32 offset = rectSize * 0.5f;
+	f32 padding = 1.5f;
+
+	CGUIRect *noiseRect1 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect1->setMaterial(m_noiseMaterial);
+	noiseRect1->setPosition(core::vector3df(cx - offset - rectSize * padding, cy - offset, 0.0f));
 
-	CGUIRect *noiseRect2 = canvas->createRect(core::rectf(0.0f, 280.0f, 256.0f, 536.0f), SColor(255, 255, 255, 255));
-	noiseRect2->setMaterial(m_noiseMaterial);
+	CGUIRect *noiseRect2 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	noiseRect2->setMaterial(m_electricMaterial);
+	noiseRect2->setPosition(core::vector3df(cx - offset, cy - offset, 0.0f));
+
+	CGUIRect *noiseRect3 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	noiseRect3->setMaterial(m_electricLightningMaterial);
+	noiseRect3->setPosition(core::vector3df(cx - offset + rectSize * padding, cy - offset, 0.0f));
 
 	// rendering pipe line
 	m_forwardRP = new CForwardRP();
@@ -113,6 +134,23 @@ void SampleNoise2D::onInitApp()
 
 void SampleNoise2D::onUpdate()
 {
+	m_noiseOffset = m_noiseOffset + core::vector3df(0.002f, 0.000f, 0.0000f) * getTimeStep();
+
+	float params[4];
+	params[0] = m_noiseOffset.X;
+	params[1] = m_noiseOffset.Y;
+	params[2] = m_noiseOffset.Z;
+	params[3] = 12.0f;
+
+	m_noiseMaterial->setUniform4("uNoiseOffset", params);
+	m_noiseMaterial->updateShaderParams();
+
+	m_electricMaterial->setUniform4("uNoiseOffset", params);
+	m_electricMaterial->updateShaderParams();
+
+	m_electricLightningMaterial->setUniform4("uNoiseOffset", params);
+	m_electricLightningMaterial->updateShaderParams();
+
 	// update application
 	m_scene->update();
 }
@@ -120,7 +158,7 @@ void SampleNoise2D::onUpdate()
 void SampleNoise2D::onRender()
 {
 	// render 3d scene
-	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
+	// m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
 
 	// render text in gui camera
 	CGraphics2D::getInstance()->render(m_guiCamera);
