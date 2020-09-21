@@ -232,7 +232,7 @@ This is demo code how to use noise library shader to make vfx effect, particle t
 
 <img src="Documents/Media/Samples/sample_noise_3d.jpg"/>
 
-Thanks [Inigo Quilez][https://www.shadertoy.com/view/4sfGzS] about code reference.
+Thanks [Inigo Quilez](https://www.shadertoy.com/view/4sfGzS) about code reference.
 
 ## Contributing
 Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join group. Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
