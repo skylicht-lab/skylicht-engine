@@ -1,0 +1,13 @@
+<shaderConfig name="StarSequence3D" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>			
+		</vs>
+		<fs>
+			<uniform name="uNoiseOffset" type="MATERIAL_PARAM" valueIndex="0" value="0.0,0.0,0.0,4.0" float="4"/>
+			<uniform name="uElectricColor" type="MATERIAL_PARAM" valueIndex="1" value="0.2,0.1,0.4,1.0" float="4"/>
+		</fs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/Noise3DVS.glsl" fs="GLSL/StarSequence3DFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/Noise3DVS.hlsl" fs="HLSL/StarSequence3DFS.hlsl"/>
+</shaderConfig>
