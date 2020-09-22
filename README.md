@@ -230,8 +230,6 @@ This is demo code how to use noise library shader to make vfx effect, particle t
 
 <img src="Documents/Media/Samples/sample_noise_2d.jpg"/>
 
-<img src="Documents/Media/Samples/sample_noise_3d.jpg"/>
-
 Thanks [Inigo Quilez](https://www.shadertoy.com/view/4sfGzS) about code reference.
 
 ## Contributing
