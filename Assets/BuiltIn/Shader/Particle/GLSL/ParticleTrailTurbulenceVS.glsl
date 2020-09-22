@@ -36,35 +36,14 @@ float pnoise( vec3 q )
 	f += 0.2500*noise( q ); q = m*q*2.02;
 	f += 0.1250*noise( q ); q = m*q*2.03;
 	f += 0.0625*noise( q ); q = m*q*2.01;
-	return f;
-}
-float fbm(vec3 p)
-{
-	float z=2.;
-	float rz = 0.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	return rz;
+	return -1.0 + f * 2.0;
 }
 void main(void)
 {
 	varTexCoord0 = inTexCoord0;
 	varColor = inColor/255.0;
 	vec3 worldPos = (uWorld * inPosition).xyz;
-	float n = pnoise(worldPos * uNoiseParam.x) * 2.0 - 1.0;
+	float n = pnoise(worldPos * uNoiseParam.x);
 	float weight = clamp(inTexCoord0.y * uNoiseParam.z, 0.0, 1.0);
 	vec4 noisePosition = inPosition + vec4(n * inNormal * weight * uNoiseParam.y, 0.0);
 	gl_Position = uMvpMatrix * noisePosition;

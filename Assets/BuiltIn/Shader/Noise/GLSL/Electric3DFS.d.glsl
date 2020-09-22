@@ -12,11 +12,16 @@ out vec4 FragColor;
 
 void main(void)
 {
-	float rz = fbm(uNoiseOffset.xyz + varWorldPos.xyz * uNoiseOffset.w);
+	float f = pnoise(uNoiseOffset.xyz + varWorldPos.xyz * uNoiseOffset.w);
 	
-	rz *= 2.0f;
+	f = abs(f + 0.1);
+	f = pow(f, 0.2);
 	
-	vec3 col = uElectricColor.rgb / rz;
+	vec3 col = vec3(1.7, 1.7, 1.7);
+	col = col * -f + col;                    
+	col = col * col;
+	col = col * col;
+	col = col * uElectricColor.rgb;
 	
 	FragColor = varColor * vec4(col, 1.0);
 }

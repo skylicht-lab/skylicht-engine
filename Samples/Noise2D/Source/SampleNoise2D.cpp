@@ -13,7 +13,8 @@ void installApplication(const std::vector<std::string>& argv)
 SampleNoise2D::SampleNoise2D() :
 	m_scene(NULL),
 	m_forwardRP(NULL),
-	m_noiseMaterial(NULL)
+	m_noiseMaterial(NULL),
+	m_noiseOffset(3.0f, 0.0f, 0.0f)
 #if defined(USE_FREETYPE)	
 	, m_largeFont(NULL)
 #endif

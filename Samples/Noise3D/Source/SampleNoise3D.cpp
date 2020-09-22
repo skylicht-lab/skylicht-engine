@@ -70,8 +70,8 @@ void SampleNoise3D::onInitApp()
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// 3d grid
-	CGameObject *grid = zone->createEmptyObject();
-	grid->addComponent<CGridPlane>();
+	// CGameObject *grid = zone->createEmptyObject();
+	// grid->addComponent<CGridPlane>();
 
 	// lighting
 	CGameObject *lightObj = zone->createEmptyObject();
@@ -93,12 +93,6 @@ void SampleNoise3D::onInitApp()
 	sphere = sphereObj->addComponent<CSphereComponent>();
 	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Noise3D.xml");
 	sphereObj->getTransformEuler()->setPosition(core::vector3df(3.0f, 0.0f, 0.0f));
-	m_materials.push_back(sphere->getMaterial());
-
-	sphereObj = zone->createEmptyObject();
-	sphere = sphereObj->addComponent<CSphereComponent>();
-	sphere->getMaterial()->changeShader("BuiltIn/Shader/Noise/Fbm3D.xml");
-	sphereObj->getTransformEuler()->setPosition(core::vector3df(-3.0f, 0.0f, 0.0f));
 	m_materials.push_back(sphere->getMaterial());
 
 	sphereObj = zone->createEmptyObject();
@@ -133,7 +127,7 @@ void SampleNoise3D::onUpdate()
 	params[0] = m_noiseOffset.X;
 	params[1] = m_noiseOffset.Y;
 	params[2] = m_noiseOffset.Z;
-	params[3] = 16.0f;
+	params[3] = 4.0f;
 
 	for (CMaterial *m : m_materials)
 	{
