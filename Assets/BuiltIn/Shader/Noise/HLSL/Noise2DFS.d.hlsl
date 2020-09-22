@@ -19,6 +19,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// return input.color * float4(n.yzx, 1.0);
 	
 	float f = pnoise(uNoiseOffset.xy + input.tex0 * uNoiseOffset.w);
-	f = 0.5 + 0.5*f;	
+	f = 0.5 + 0.5*f;
 	return input.color * float4(f, f, f, 1.0);
 }

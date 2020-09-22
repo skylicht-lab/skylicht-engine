@@ -29,7 +29,7 @@ VS_OUTPUT main(VS_INPUT input)
 	
 	float3 worldPos = mul(input.pos, uWorld).xyz;
 	
-	float n = pnoise(worldPos * uNoiseParam.x) * 2.0 - 1.0;
+	float n = pnoise(worldPos * uNoiseParam.x);
 	float weight = clamp(input.tex0.y * uNoiseParam.z, 0.0, 1.0);
 	
 	float4 noisePosition = input.pos + float4(n * input.norm * weight * uNoiseParam.y, 0.0);
