@@ -163,7 +163,7 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 
 	Particle::CNormalEmitter *pointSparkEmitter = factory->createNormalEmitter(false);
 	pointSparkEmitter->setFlow(100.0f);
-	pointSparkEmitter->setTank(100.0f);
+	pointSparkEmitter->setTank(100);
 	pointSparkEmitter->setForce(1.4f, 4.8f);
 	pointSparkEmitter->setZone(cylinder);
 	pointSparkGroup->addEmitter(pointSparkEmitter);

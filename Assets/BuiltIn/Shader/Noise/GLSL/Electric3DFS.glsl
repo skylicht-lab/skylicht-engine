@@ -33,33 +33,17 @@ float pnoise( vec3 q )
 	f += 0.2500*noise( q ); q = m*q*2.02;
 	f += 0.1250*noise( q ); q = m*q*2.03;
 	f += 0.0625*noise( q ); q = m*q*2.01;
-	return f;
-}
-float fbm(vec3 p)
-{
-	float z=2.;
-	float rz = 0.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	return rz;
+	return -1.0 + f * 2.0;
 }
 void main(void)
 {
-	float rz = fbm(uNoiseOffset.xyz + varWorldPos.xyz * uNoiseOffset.w);
-	rz *= 2.0f;
-	vec3 col = uElectricColor.rgb / rz;
+	float f = pnoise(uNoiseOffset.xyz + varWorldPos.xyz * uNoiseOffset.w);
+	f = abs(f + 0.1);
+	f = pow(f, 0.2);
+	vec3 col = vec3(1.7, 1.7, 1.7);
+	col = col * -f + col;
+	col = col * col;
+	col = col * col;
+	col = col * uElectricColor.rgb;
 	FragColor = varColor * vec4(col, 1.0);
 }

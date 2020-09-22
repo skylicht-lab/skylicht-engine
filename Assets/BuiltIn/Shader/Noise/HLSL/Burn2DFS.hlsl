@@ -42,28 +42,7 @@ float pnoise( float3 q )
 	q = mul(q, m)*2.03;
 	f += 0.0625*noise( q );
 	q = mul(q, m)*2.01;
-	return f;
-}
-float fbm(float3 p)
-{
-	float z=2.;
-	float rz = 0.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	rz+= abs((noise(p)-0.5)*2.)/z;
-	z = z*2.;
-	p = p*2.;
-	return rz;
+	return -1.0 + f * 2.0;
 }
 float snoise( in float3 x )
 {

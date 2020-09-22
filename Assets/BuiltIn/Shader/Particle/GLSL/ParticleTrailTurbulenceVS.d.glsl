@@ -19,7 +19,7 @@ void main(void)
 	
 	vec3 worldPos = (uWorld * inPosition).xyz;
 	
-	float n = pnoise(worldPos * uNoiseParam.x) * 2.0 - 1.0;
+	float n = pnoise(worldPos * uNoiseParam.x);
 	float weight = clamp(inTexCoord0.y * uNoiseParam.z, 0.0, 1.0);
 	
 	vec4 noisePosition = inPosition + vec4(n * inNormal * weight * uNoiseParam.y, 0.0);
