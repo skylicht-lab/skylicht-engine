@@ -1,6 +1,6 @@
 # Skylicht Engine
 ## About
-Skylicht Engine, which is an evolution of [Irrlicht Project](http://irrlicht.sourceforge.net). We have upgraded more feature: Sound Engine, Physics Engine, Particle Engine...
+Skylicht Engine, which is an evolution of the [Irrlicht Project](http://irrlicht.sourceforge.net). We have upgraded more features: Sound Engine, Physics Engine, Particle Engine...
 
 -   Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+, Google Angle GLES video driver backends.
 
@@ -8,8 +8,7 @@ Skylicht Engine, which is an evolution of [Irrlicht Project](http://irrlicht.sou
 
 -   Render pipeline: Forwarder & Deferred.
 
-
-Skylicht Engine is a super lightweight Game Engine, that target to mobile platform (Android, IOS). And, it's completely free.
+Skylicht Engine is a super lightweight Game Engine that targets mobile platforms (Android, IOS). And, it's completely free.
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d6fbf50a10a4cf38426b9fabfc1fabc)](https://www.codacy.com/manual/ducphamhong/skylicht-engine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=skylicht-lab/skylicht-engine&amp;utm_campaign=Badge_Grade)
 
@@ -28,6 +27,7 @@ Skylicht Engine is a super lightweight Game Engine, that target to mobile platfo
 -   [CMake](https://cmake.org/download/) 3.12 or higher
 -   [Python](https://www.python.org/downloads/) 3.x
 -   [Visual Studio](https://visualstudio.microsoft.com/downloads/)  (2017 or higher if you want to build on Windows OS)
+
 ### Build Command
 -   Clone this repo
 
@@ -120,11 +120,11 @@ Engine Components are used:
 <img src="Documents/Media/Samples/sample_hello_world.png"/>
 
 ### Samples\DrawPrimitives
-This demo to draw Cube 3D, setup transform and use component.
+This demo is to draw Cube 3D, set up, transform and use components.
 <img src="Documents/Media/Samples/sample_draw_cube.png"/>
 
 ### Samples\Materials
-This demo code, that render Sphere 3D, load textures (Diffuse, Normal, Specular), and bind SpecGloss shader to Material.
+This demo code, that renders Sphere 3D, loads textures (Diffuse, Normal, Specular), and binds SpecGloss shader to Material.
 <img src="Documents/Media/Samples/sample_material.jpg"/>
 
 ### Samples\SampleShader
@@ -178,8 +178,8 @@ Sponza indirect lighting baked by Skylicht Lightmapper
 <img src="Documents/Media/Samples/sponza/Sponza_indirect_02.jpg"/>
 
 ### Samples\Sponza
-This example how to setup simple lighting & lightmap. 
-This scene use basic diffuse bump specular shader.
+This example is how to set up a simple lighting & lightmap. 
+This scene uses basic diffuse bump specular shader.
 
 <img src="Documents/Media/Samples/sponza/Sponza_01.jpg"/>
 
@@ -230,10 +230,12 @@ This is demo code how to use noise library shader to make vfx effect, particle t
 
 <img src="Documents/Media/Samples/sample_noise_2d.jpg"/>
 
+<img src="Documents/Media/Samples/sample_noise_3d.jpg"/>
+
 Thanks [Inigo Quilez](https://www.shadertoy.com/view/4sfGzS) about code reference.
 
 ## Contributing
-Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join group. Open an issues and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join the group. Open an issue and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 
 ## License
 Skylicht Engine is licensed under [MIT License](LICENSE.md)
@@ -248,4 +250,4 @@ Skylicht Engine is based in part on the work of:
 -   [Freetype2](http://git.savannah.gnu.org/cgit/freetype/freetype2.git)
 -   Independent JPEG Group, libPng, zlib, curl...
 
-This means that if you've used the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used. It would also be nice to mention that you use the 3rd parties library... Please see the README files from 3rd parties for further informations.
+This means that if you've used the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used. It would also be nice to mention that you use the 3rd parties library... Please see the README files from 3rd parties for further information.
