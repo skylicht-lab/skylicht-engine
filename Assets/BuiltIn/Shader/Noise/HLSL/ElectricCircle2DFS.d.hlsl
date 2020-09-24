@@ -13,19 +13,29 @@ cbuffer cbPerFrame
 
 #include "LibNoise2D.hlsl"
 
+float paintCircle(float2 uv, float2 center, float rad) {
+    
+    float2 diff = center-uv;
+    float len = length(diff);
+	
+	return smoothstep(rad, 0.0, len);
+}
+
 float4 main(PS_INPUT input) : SV_TARGET
-{		
-	float f = pnoise(uNoiseOffset.xy + input.tex0 * uNoiseOffset.w);	
+{	
+	float f = pnoise(uNoiseOffset.xy + input.tex0 * uNoiseOffset.w);
 	float t = 0.2;
+
+	float radius = 0.7;
+    float2 center = float2(0.5, 0.5);
 	
-	// convert uvx [0 - 1] -> x [-1, 1] to claim lighting center	
-	float x = input.tex0.x * 2.0 - 1.0;
+	float c = (1.0 - paintCircle(input.tex0, center, radius));
 	
-	f = abs(f * t + x + 0.01);
-	f = pow(f, 0.2);
+	// convert to [-1, 1]
+	c = -1.0 + c * 2.0;
 	
-	// f = f * 2.0
-	// float3 col = uElectricColor.rgb / f;
+	f = abs(f * t + c + 0.01) * 0.3;
+	f = pow(f, 0.2);	
 	
 	float3 col = float3(1.7, 1.7, 1.7);
 	col = col * -f + col;                    
