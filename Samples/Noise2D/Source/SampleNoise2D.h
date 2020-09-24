@@ -13,6 +13,7 @@ private:
 	CMaterial *m_electricMaterial;
 	CMaterial *m_electricLightningMaterial;
 	CMaterial *m_burnMaterial;
+	CMaterial *m_electricCircleMaterial;
 
 #if defined(USE_FREETYPE)	
 	CGlyphFont *m_largeFont;
