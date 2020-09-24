@@ -33,6 +33,7 @@ SampleNoise2D::~SampleNoise2D()
 	delete m_electricMaterial;
 	delete m_electricLightningMaterial;
 	delete m_burnMaterial;
+	delete m_electricCircleMaterial;
 
 	delete m_forwardRP;
 }
@@ -111,6 +112,7 @@ void SampleNoise2D::onInitApp()
 	m_electricMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Electric2D.xml");
 	m_electricLightningMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/ElectricLightning2D.xml");
 	m_burnMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Burn2D.xml");
+	m_electricCircleMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/ElectricCircle2D.xml");
 
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
@@ -138,6 +140,10 @@ void SampleNoise2D::onInitApp()
 	noiseRect4->setMaterial(m_burnMaterial);
 	noiseRect4->setPosition(core::vector3df(cx - offset - rectSize * paddingX, cy - offset + rectSize * paddingY, 0.0f));
 
+	CGUIRect *noiseRect5 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	noiseRect5->setMaterial(m_electricCircleMaterial);
+	noiseRect5->setPosition(core::vector3df(cx - offset, cy - offset + rectSize * paddingY, 0.0f));
+
 	// rendering pipe line
 	m_forwardRP = new CForwardRP();
 }
@@ -163,6 +169,9 @@ void SampleNoise2D::onUpdate()
 
 	m_burnMaterial->setUniform4("uNoiseOffset", params);
 	m_burnMaterial->updateShaderParams();
+
+	m_electricCircleMaterial->setUniform4("uNoiseOffset", params);
+	m_electricCircleMaterial->updateShaderParams();
 
 	// update application
 	m_scene->update();
