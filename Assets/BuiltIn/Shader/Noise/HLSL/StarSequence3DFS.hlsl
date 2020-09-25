@@ -72,6 +72,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float r = color;
 	float g = pow(max(color, 0.0),2.0)*0.4;
 	float b = pow(max(color, 0.0),3.0)*0.15;
-	float3 col = float3(r, g, b);
-	return input.color * float4(col, 1.0);
+	return input.color * float4(r, g, b, 1.0);
 }

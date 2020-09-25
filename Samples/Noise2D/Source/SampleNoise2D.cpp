@@ -142,7 +142,7 @@ void SampleNoise2D::onInitApp()
 
 	CGUIRect *noiseRect5 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect5->setMaterial(m_electricCircleMaterial);
-	noiseRect5->setPosition(core::vector3df(cx - offset, cy - offset + rectSize * paddingY, 0.0f));
+	noiseRect5->setPosition(core::vector3df(cx - offset + rectSize * paddingX, cy - offset + rectSize * paddingY, 0.0f));
 
 	// rendering pipe line
 	m_forwardRP = new CForwardRP();
