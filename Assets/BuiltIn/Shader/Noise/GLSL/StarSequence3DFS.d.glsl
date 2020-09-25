@@ -45,8 +45,6 @@ void main(void)
 	float r = color;
 	float g = pow(max(color, 0.0),2.0)*0.4;
 	float b = pow(max(color, 0.0),3.0)*0.15;
-	
-	vec3 col = vec3(r, g, b);
 		
-	FragColor = varColor * vec4(col, 1.0);
+	FragColor = varColor * vec4(r, g, b, 1.0);
 }
