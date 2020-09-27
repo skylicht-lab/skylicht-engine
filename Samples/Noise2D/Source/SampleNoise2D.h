@@ -13,6 +13,7 @@ private:
 	CMaterial *m_electricMaterial;
 	CMaterial *m_electricLightningMaterial;
 	CMaterial *m_burnMaterial;
+	CMaterial *m_explosionMaterial;
 	CMaterial *m_electricCircleMaterial;
 
 #if defined(USE_FREETYPE)	
@@ -22,6 +23,7 @@ private:
 	CForwardRP *m_forwardRP;
 
 	core::vector3df m_noiseOffset;
+	core::vector3df m_explosionParam;
 
 public:
 	SampleNoise2D();
