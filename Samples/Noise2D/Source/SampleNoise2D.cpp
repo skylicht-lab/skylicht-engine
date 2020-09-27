@@ -33,6 +33,7 @@ SampleNoise2D::~SampleNoise2D()
 	delete m_electricMaterial;
 	delete m_electricLightningMaterial;
 	delete m_burnMaterial;
+	delete m_explosionMaterial;
 	delete m_electricCircleMaterial;
 
 	delete m_forwardRP;
@@ -113,6 +114,7 @@ void SampleNoise2D::onInitApp()
 	m_electricLightningMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/ElectricLightning2D.xml");
 	m_burnMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Burn2D.xml");
 	m_electricCircleMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/ElectricCircle2D.xml");
+	m_explosionMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Explosion2D.xml");
 
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
@@ -124,25 +126,39 @@ void SampleNoise2D::onInitApp()
 	f32 paddingX = 1.5f;
 	f32 paddingY = 0.7f;
 
+	// noise
 	CGUIRect *noiseRect1 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect1->setMaterial(m_noiseMaterial);
 	noiseRect1->setPosition(core::vector3df(cx - offset - rectSize * paddingX, cy - offset - rectSize * paddingY, 0.0f));
 
+	// electric
 	CGUIRect *noiseRect2 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect2->setMaterial(m_electricMaterial);
 	noiseRect2->setPosition(core::vector3df(cx - offset, cy - offset - rectSize * paddingY, 0.0f));
 
+	// lightning
 	CGUIRect *noiseRect3 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect3->setMaterial(m_electricLightningMaterial);
 	noiseRect3->setPosition(core::vector3df(cx - offset + rectSize * paddingX, cy - offset - rectSize * paddingY, 0.0f));
 
+	// burn
 	CGUIRect *noiseRect4 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect4->setMaterial(m_burnMaterial);
 	noiseRect4->setPosition(core::vector3df(cx - offset - rectSize * paddingX, cy - offset + rectSize * paddingY, 0.0f));
 
+	// background for explosion
+	CGUIRect *bg = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, (u32)(255 * 0.4f), (u32)(255 * 0.5f), (u32)(255 * 0.6f)));
+	bg->setPosition(core::vector3df(cx - offset, cy - offset + rectSize * paddingY, 0.0f));
+
+	// explosion
 	CGUIRect *noiseRect5 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
-	noiseRect5->setMaterial(m_electricCircleMaterial);
-	noiseRect5->setPosition(core::vector3df(cx - offset + rectSize * paddingX, cy - offset + rectSize * paddingY, 0.0f));
+	noiseRect5->setMaterial(m_explosionMaterial);
+	noiseRect5->setPosition(core::vector3df(cx - offset, cy - offset + rectSize * paddingY, 0.0f));
+
+	// circle electric
+	CGUIRect *noiseRect6 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	noiseRect6->setMaterial(m_electricCircleMaterial);
+	noiseRect6->setPosition(core::vector3df(cx - offset + rectSize * paddingX, cy - offset + rectSize * paddingY, 0.0f));
 
 	// rendering pipe line
 	m_forwardRP = new CForwardRP();
@@ -172,6 +188,45 @@ void SampleNoise2D::onUpdate()
 
 	m_electricCircleMaterial->setUniform4("uNoiseOffset", params);
 	m_electricCircleMaterial->updateShaderParams();
+
+
+	m_explosionMaterial->setUniform4("uNoiseOffset", params);
+
+	float totalTime = 5.0f;
+	float burnTime = 0.3f;
+	float fadeOutTime = 4.0f;
+
+	m_explosionParam.Z += getTimeStep();
+
+	float t = fmodf(m_explosionParam.Z * 0.001f, totalTime);
+	float spentTime = 0.0f;
+
+	if (t < burnTime)
+	{
+		// start
+		m_explosionParam.X = 1.0f;
+		m_explosionParam.Y = t / burnTime;
+	}
+	else if (t < fadeOutTime)
+	{
+		// burn
+		m_explosionParam.X = 1.0f - (t - burnTime) / (totalTime - burnTime);
+		m_explosionParam.Y = 1.0f;
+	}
+	else
+	{
+		// smoke
+		m_explosionParam.X = 1.0f - (t - burnTime) / (totalTime - burnTime);
+		m_explosionParam.Y = 1.0f - (t - fadeOutTime) / (totalTime - fadeOutTime);
+	}
+
+	params[0] = m_explosionParam.X;
+	params[1] = m_explosionParam.Y;
+	params[2] = m_explosionParam.Z;
+	params[3] = 0.0f;
+
+	m_explosionMaterial->setUniform4("uExplosionParams", params);
+	m_explosionMaterial->updateShaderParams();
 
 	// update application
 	m_scene->update();
