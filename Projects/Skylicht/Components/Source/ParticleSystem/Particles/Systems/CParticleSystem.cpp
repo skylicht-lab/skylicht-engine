@@ -130,7 +130,7 @@ namespace Skylicht
 				}
 
 				// update interpolate parameters
-				float x = p->Age / p->LifeTime;
+				float x = core::clamp(p->Age / p->LifeTime, 0.0f, 1.0f);
 
 				for (u32 j = 0; j < numModels; j++)
 				{
