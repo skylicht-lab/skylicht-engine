@@ -130,16 +130,22 @@ namespace Skylicht
 				if (m_deadTrails[i].Flag == 1)
 				{
 					m_deadTrails[i].DeleteData();
+					// printf("Delete dead %d\n", i);
 
 					if (numTrail > 1)
 					{
 						STrailInfo t = m_deadTrails[i];
 						m_deadTrails[i] = m_deadTrails[numTrail - 1];
 						m_deadTrails[numTrail - 1] = m_deadTrails[i];
-					}
 
-					i--;
-					numTrail--;
+						i--;
+						numTrail--;
+					}
+					else
+					{
+						numTrail = 0;
+						break;
+					}
 				}
 			}
 			m_deadTrails.set_used(numTrail);
@@ -303,8 +309,8 @@ namespace Skylicht
 						// note: we use updown as normal on billboard
 						// core::vector3df normal = direction.crossProduct(updown);
 
-						int vertex = totalSegDraw * 4;
-						int index = totalSegDraw * 6;
+						u32 vertex = totalSegDraw * 4;
+						u32 index = totalSegDraw * 6;
 
 						// vertex buffer
 						vertices[vertex + 0].Pos = pos1 - updown * thickness*0.5f;
@@ -361,75 +367,52 @@ namespace Skylicht
 				}
 			}
 
-			m_meshBuffer->setDirty(EBT_VERTEX_AND_INDEX);
-
 			index->set_used(totalSegDraw * 6);
+
+			m_meshBuffer->setDirty(EBT_VERTEX_AND_INDEX);
 		}
 
 		void CParticleTrail::OnParticleUpdate(CParticle *particles, int num, CGroup *group, float dt)
 		{
 			float seg2 = m_segmentLength * m_segmentLength;
 
-			// delete dead particle data
-			if (m_trails.size() >= (u32)num)
-			{
-				for (u32 i = (u32)num, n = m_trails.size(); i < n; i++)
-				{
-					// printf("Delete %d\n", i);
-					m_trails[i].DeleteData();
-				}
-
-				m_trailCount = num;
-			}
-
-			m_trails.set_used(num);
-
-			for (int i = 0; i < num; i++)
+			for (u32 i = 0; i < (u32)num; i++)
 			{
 				CParticle& p = particles[i];
 
-				STrailInfo &particlePos = m_trails[p.Index];
+				STrailInfo &trail = m_trails[p.Index];
 
-				if (m_trailCount <= i)
-				{
-					// init new particle data
-					particlePos.InitData();
-					m_trailCount = i + 1;
-
-					// printf("New %d\n", i);
-				}
-
-				particlePos.CurrentPosition = p.Position;
-				particlePos.CurrentColor.set(
+				trail.CurrentPosition = p.Position;
+				trail.CurrentColor.set(
 					(u32)(p.Params[ColorA] * 255.0f),
 					(u32)(p.Params[ColorR] * 255.0f),
 					(u32)(p.Params[ColorG] * 255.0f),
 					(u32)(p.Params[ColorB] * 255.0f)
 				);
 
-				if (particlePos.Position->size() == 0)
+				if (trail.Position->size() == 0)
 				{
 					SParticlePosition pos;
 					pos.Width = m_width;
 					pos.Alpha = 1.0f;
 					pos.Position = p.Position;
 
-					particlePos.Position->push_back(pos);
+					trail.Position->push_back(pos);
 
-					particlePos.LastPosition = p.Position;
+					trail.LastPosition = p.Position;
 				}
 				else
 				{
-					if (p.Position.getDistanceFromSQ(particlePos.LastPosition) >= seg2)
+					if (p.Position.getDistanceFromSQ(trail.LastPosition) >= seg2)
 					{
-						particlePos.Position->push_back(SParticlePosition());
+						trail.Position->push_back(SParticlePosition());
 
-						SParticlePosition& pos = particlePos.Position->getLast();
+						SParticlePosition& pos = trail.Position->getLast();
 						pos.Width = m_width;
 						pos.Alpha = 1.0f;
 						pos.Position = p.Position;
 
-						particlePos.LastPosition = p.Position;
+						trail.LastPosition = p.Position;
 					}
 				}
 			}
@@ -437,7 +420,13 @@ namespace Skylicht
 
 		void CParticleTrail::OnParticleBorn(CParticle &p)
 		{
+			m_trailCount++;
 
+			m_trails.push_back(STrailInfo());
+
+			// init new particle data
+			m_trails.getLast().InitData();
+			// printf("New %d\n", p.Index);
 		}
 
 		void CParticleTrail::OnParticleDead(CParticle &p)
@@ -450,10 +439,16 @@ namespace Skylicht
 
 				t.InitData();
 				t.Copy(m_trails[p.Index]);
-
-				// clear position data
-				m_trails[p.Index].Position->set_used(0);
+				// printf("New dead %d\n", m_deadTrails.size());
 			}
+
+			// delete this trail data
+			m_trails[p.Index].DeleteData();
+			// printf("Delete %d\n", p.Index);
+
+			// remove list
+			m_trailCount = m_trails.size() - 1;
+			m_trails.set_used(m_trailCount);
 		}
 
 		void CParticleTrail::OnSwapParticleData(CParticle &p1, CParticle &p2)

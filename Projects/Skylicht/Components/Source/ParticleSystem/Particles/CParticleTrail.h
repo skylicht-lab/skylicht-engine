@@ -91,7 +91,7 @@ namespace Skylicht
 
 			float m_length;
 
-			int m_trailCount;
+			u32 m_trailCount;
 
 			bool m_destroyWhenParticleDead;
 

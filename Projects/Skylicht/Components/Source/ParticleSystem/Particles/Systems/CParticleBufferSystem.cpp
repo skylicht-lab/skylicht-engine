@@ -50,6 +50,9 @@ namespace Skylicht
 
 			buffer->set_used(num);
 
+			if (num == 0)
+				return;
+
 			SParticleInstance *vtx = (SParticleInstance*)buffer->getVertices();
 
 			CParticle *p;
