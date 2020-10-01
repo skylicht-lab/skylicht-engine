@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 #include "Particles/CGroup.h"
+#include "Particles/CSubGroup.h"
 
 namespace Skylicht
 {
@@ -42,6 +43,8 @@ namespace Skylicht
 			virtual ~CParticleBufferData();
 
 			CGroup* createGroup();
+
+			CSubGroup* createSubGroup(CGroup *group);
 
 			void removeGroup(CGroup *group);
 		};

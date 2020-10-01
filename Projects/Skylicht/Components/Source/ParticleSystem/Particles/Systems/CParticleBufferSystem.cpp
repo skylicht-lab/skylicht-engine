@@ -63,15 +63,22 @@ namespace Skylicht
 			u32 frameY = 1;
 
 			IRenderer *renderer = group->getRenderer();
-			float sx = renderer->SizeX;
-			float sy = renderer->SizeY;
-			float sz = renderer->SizeZ;
+			float sx = 1.0f;
+			float sy = 1.0f;
+			float sz = 1.0f;
 
-			if (group->getRenderer()->getType() == Particle::Quad)
+			if (renderer != NULL)
 			{
-				CQuadRenderer *quadRenderer = (CQuadRenderer*)renderer;
-				frameX = quadRenderer->getAtlasX();
-				frameY = quadRenderer->getAtlasY();
+				sx = renderer->SizeX;
+				sy = renderer->SizeY;
+				sz = renderer->SizeZ;
+
+				if (renderer->getType() == Particle::Quad)
+				{
+					CQuadRenderer *quadRenderer = (CQuadRenderer*)renderer;
+					frameX = quadRenderer->getAtlasX();
+					frameY = quadRenderer->getAtlasY();
+				}
 			}
 
 			u32 totalFrames = frameX * frameY;
