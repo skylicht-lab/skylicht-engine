@@ -142,29 +142,28 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	Particle::CGroup *pointSparkGroup = ps->createParticleGroup();
 
 	Particle::CQuadRenderer *pointSpark = factory->createQuadRenderer();
-	pointSpark->SizeX = 0.1f;
-	pointSpark->SizeY = 0.1f;
-	pointSpark->SizeZ = 0.1f;
+	pointSpark->SizeX = 1.0f;
+	pointSpark->SizeY = 1.0f;
+	pointSpark->SizeZ = 1.0f;
 	pointSparkGroup->setRenderer(pointSpark);
 
-	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_twirl.png");
 	pointSpark->setMaterialType(Particle::Addtive, Particle::Camera);
 	pointSpark->getMaterial()->setTexture(0, texture);
 	pointSpark->getMaterial()->applyMaterial();
 
 	pointSparkGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
-	pointSparkGroup->createModel(Particle::ColorR)->setStart(1.0f);
-	pointSparkGroup->createModel(Particle::ColorG)->setStart(1.0f)->setEnd(0.3f, 0.1f);
-	pointSparkGroup->createModel(Particle::ColorB)->setStart(0.7f)->setEnd(0.3f);
+	pointSparkGroup->createModel(Particle::RotateSpeedZ)->setStart(3.0f, 5.0f);
+
 	pointSparkGroup->LifeMin = 4.0f;
 	pointSparkGroup->LifeMax = 8.0f;
 	pointSparkGroup->Friction = 0.4f;
 	pointSparkGroup->Gravity.set(0.0f, -0.1f, 0.0f);
 
 	Particle::CNormalEmitter *pointSparkEmitter = factory->createNormalEmitter(false);
-	pointSparkEmitter->setFlow(100.0f);
-	pointSparkEmitter->setTank(100);
-	pointSparkEmitter->setForce(1.4f, 4.8f);
+	pointSparkEmitter->setFlow(1.0f);
+	pointSparkEmitter->setTank(1);
+	pointSparkEmitter->setForce(2.5f, 6.0f);
 	pointSparkEmitter->setZone(cylinder);
 	pointSparkGroup->addEmitter(pointSparkEmitter);
 
@@ -173,8 +172,9 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	Particle::CParticleTrail *trail = psTrail->addTrail(pointSparkGroup);
 
 	CMaterial *material = trail->getMaterial();
-	material->setTexture(0, CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png"));
+	material->setTexture(0, CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_trail.png"));
 	trail->applyMaterial();
+	trail->setWidth(0.5f);
 }
 
 void SampleParticlesMagicSkill::onUpdate()
