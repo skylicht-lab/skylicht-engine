@@ -32,14 +32,14 @@ namespace Skylicht
 	{
 		CParticleTrail::CParticleTrail(CGroup *group) :
 			m_group(group),
-			m_segmentLength(0.05f),
-			m_width(0.1f),
+			m_segmentLength(0.5f),
+			m_width(1.0f),
 			m_trailCount(0),
 			m_maxSegmentCount(0),
 			m_destroyWhenParticleDead(false),
 			m_deadAlphaReduction(0.01f)
 		{
-			setLength(1.0f);
+			setLength(2.0f);
 
 			group->setCallback(this);
 
