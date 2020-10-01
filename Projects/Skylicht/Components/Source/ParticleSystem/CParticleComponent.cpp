@@ -75,6 +75,11 @@ namespace Skylicht
 			return m_data->createGroup();
 		}
 
+		CSubGroup* CParticleComponent::createParticleSubGroup(CGroup *group)
+		{
+			return m_data->createSubGroup(group);
+		}
+
 		void CParticleComponent::removeParticleGroup(CGroup* group)
 		{
 			m_data->removeGroup(group);

@@ -62,6 +62,8 @@ namespace Skylicht
 
 			CGroup* createParticleGroup();
 
+			CSubGroup* createParticleSubGroup(CGroup *group);
+
 			inline u32 getNumOfGroup()
 			{
 				return m_data->Groups.size();
