@@ -138,43 +138,55 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	Particle::CFactory *factory = ps->getParticleFactory();
 	Particle::CCylinder* cylinder = factory->createCylinderZone(core::vector3df(), core::vector3df(0.0f, 1.0f, 0.0f), 0.6, 0.1f);
 
-	// GROUP: POINT SPARK
-	Particle::CGroup *pointSparkGroup = ps->createParticleGroup();
+	// GROUP: SPARK
+	Particle::CGroup *sparkGroup = ps->createParticleGroup();
+
+	sparkGroup->LifeMin = 4.0f;
+	sparkGroup->LifeMax = 8.0f;
+	sparkGroup->Friction = 0.4f;
+	sparkGroup->Gravity.set(0.0f, -0.1f, 0.0f);
+	sparkGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
+
+	Particle::CNormalEmitter *sparkEmitter = factory->createNormalEmitter(false);
+	sparkEmitter->setFlow(100.0f);
+	sparkEmitter->setTank(1);
+	sparkEmitter->setForce(2.5f, 6.0f);
+	sparkEmitter->setZone(cylinder);
+	sparkGroup->addEmitter(sparkEmitter);
+
+	// ADD TRAIL
+	Particle::CParticleTrailComponent *psTrail = ps->getGameObject()->addComponent<Particle::CParticleTrailComponent>();
+	Particle::CParticleTrail *trail = psTrail->addTrail(sparkGroup);
+
+	CMaterial *material = trail->getMaterial();
+	material->setTexture(0, CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_trail.png"));
+	trail->applyMaterial();
+	trail->setWidth(0.5f);
+
+
+	// SUB GROUP: Arcane
+	Particle::CSubGroup *arcaneGroup = ps->createParticleSubGroup(sparkGroup);
 
 	Particle::CQuadRenderer *pointSpark = factory->createQuadRenderer();
 	pointSpark->SizeX = 1.0f;
 	pointSpark->SizeY = 1.0f;
 	pointSpark->SizeZ = 1.0f;
-	pointSparkGroup->setRenderer(pointSpark);
+	arcaneGroup->setRenderer(pointSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_twirl.png");
 	pointSpark->setMaterialType(Particle::Addtive, Particle::Camera);
 	pointSpark->getMaterial()->setTexture(0, texture);
 	pointSpark->getMaterial()->applyMaterial();
 
-	pointSparkGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
-	pointSparkGroup->createModel(Particle::RotateSpeedZ)->setStart(3.0f, 5.0f);
-
-	pointSparkGroup->LifeMin = 4.0f;
-	pointSparkGroup->LifeMax = 8.0f;
-	pointSparkGroup->Friction = 0.4f;
-	pointSparkGroup->Gravity.set(0.0f, -0.1f, 0.0f);
+	arcaneGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
+	arcaneGroup->createModel(Particle::RotateSpeedZ)->setStart(3.0f, 5.0f);
 
 	Particle::CNormalEmitter *pointSparkEmitter = factory->createNormalEmitter(false);
-	pointSparkEmitter->setFlow(1.0f);
+	pointSparkEmitter->setFlow(100.0f);
 	pointSparkEmitter->setTank(1);
-	pointSparkEmitter->setForce(2.5f, 6.0f);
+	pointSparkEmitter->setForce(0.0f, 0.0f);
 	pointSparkEmitter->setZone(cylinder);
-	pointSparkGroup->addEmitter(pointSparkEmitter);
-
-	// ADD TRAIL
-	Particle::CParticleTrailComponent *psTrail = ps->getGameObject()->addComponent<Particle::CParticleTrailComponent>();
-	Particle::CParticleTrail *trail = psTrail->addTrail(pointSparkGroup);
-
-	CMaterial *material = trail->getMaterial();
-	material->setTexture(0, CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_trail.png"));
-	trail->applyMaterial();
-	trail->setWidth(0.5f);
+	arcaneGroup->addEmitter(pointSparkEmitter);
 }
 
 void SampleParticlesMagicSkill::onUpdate()

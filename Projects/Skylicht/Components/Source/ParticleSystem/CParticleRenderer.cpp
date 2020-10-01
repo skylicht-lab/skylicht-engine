@@ -165,7 +165,9 @@ namespace Skylicht
 
 					CShaderParticle::setOrientationUp(g->OrientationUp);
 					CShaderParticle::setOrientationNormal(g->OrientationNormal);
-					CShaderMaterial::setMaterial(g->getRenderer()->getMaterial());
+
+					if (g->getRenderer() != NULL)
+						CShaderMaterial::setMaterial(g->getRenderer()->getMaterial());
 
 					driver->setMaterial(buffer->getMaterial());
 					driver->drawMeshBuffer(buffer);

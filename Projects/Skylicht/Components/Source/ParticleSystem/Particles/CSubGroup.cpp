@@ -23,46 +23,21 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CParticleBufferData.h"
+#include "CSubGroup.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticleBufferData::CParticleBufferData()
+		CSubGroup::CSubGroup(CGroup *group) :
+			m_group(group)
 		{
 
 		}
 
-		CParticleBufferData::~CParticleBufferData()
+		CSubGroup::~CSubGroup()
 		{
-			for (u32 i = 0, n = Groups.size(); i < n; i++)
-				delete Groups[i];
-			Groups.clear();
-		}
 
-		CGroup* CParticleBufferData::createGroup()
-		{
-			CGroup *g = new CGroup();
-			Groups.push_back(g);
-			return g;
-		}
-
-		CSubGroup* CParticleBufferData::createSubGroup(CGroup *group)
-		{
-			CSubGroup *g = new CSubGroup(group);
-			Groups.push_back(g);
-			return g;
-		}
-
-		void CParticleBufferData::removeGroup(CGroup *group)
-		{
-			int index = Groups.linear_search(group);
-			if (index > 0)
-			{
-				Groups.erase(index);
-				delete group;
-			}
 		}
 	}
 }
