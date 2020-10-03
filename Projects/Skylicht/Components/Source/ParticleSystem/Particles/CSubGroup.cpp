@@ -24,21 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSubGroup.h"
+#include "Systems/CParentRelativeSystem.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
 		CSubGroup::CSubGroup(CGroup *group) :
-			m_parentGroup(group)
+			m_parentGroup(group),
+			m_followParentTransform(false)
 		{
 			m_parentGroup->addCallback(this);
+
+			m_parentSystem = new CParentRelativeSystem();
+			m_parentSystem->setEnable(false);
+
+			addSystem(m_parentSystem);
 		}
 
 		CSubGroup::~CSubGroup()
 		{
 			if (m_parentGroup != NULL)
 				m_parentGroup->removeCallback(this);
+
+			removeSystem(m_parentSystem);
+			delete m_parentSystem;
 		}
 
 		void CSubGroup::OnParticleDead(CParticle &p)
@@ -116,6 +126,9 @@ namespace Skylicht
 
 		core::vector3df CSubGroup::getTransformPosition(const core::vector3df& pos)
 		{
+			if (m_followParentTransform == true)
+				return pos;
+
 			core::vector3df ret = m_position + pos;
 			return ret;
 		}
@@ -124,6 +137,13 @@ namespace Skylicht
 		{
 			core::vector3df ret = m_rotate * vec;
 			return ret;
+		}
+
+		void CSubGroup::setFollowParentTransform(bool b)
+		{
+			m_followParentTransform = b;
+
+			m_parentSystem->setEnable(b);
 		}
 	}
 }
