@@ -51,8 +51,21 @@ namespace Skylicht
 			delete m_parentSystem;
 		}
 
+		void CSubGroup::OnParticleBorn(CParticle &p)
+		{
+			for (CEmitter *e : m_emitters)
+			{
+				e->addBornData();
+			}
+		}
+
 		void CSubGroup::OnParticleDead(CParticle &p)
 		{
+			for (CEmitter *e : m_emitters)
+			{
+				e->deleteBornData();
+			}
+
 			CParticle* particles = getParticlePointer();
 			u32 n = getNumParticles();
 
@@ -65,6 +78,11 @@ namespace Skylicht
 
 		void CSubGroup::OnSwapParticleData(CParticle &p1, CParticle &p2)
 		{
+			for (CEmitter *e : m_emitters)
+			{
+				e->swapBornData(p1.Index, p2.Index);
+			}
+
 			CParticle* particles = getParticlePointer();
 			u32 n = getNumParticles();
 
@@ -82,44 +100,63 @@ namespace Skylicht
 			m_parentGroup = NULL;
 		}
 
+		void CSubGroup::updateLaunchEmitter()
+		{
+			float dt = getTimeStep();
+
+			// parent particle
+			u32 numberParticles = m_parentGroup->getNumParticles();
+
+			// update emitter
+			m_launch.set_used(0);
+			for (CEmitter *e : m_emitters)
+			{
+				for (u32 i = 0; i < numberParticles; i++)
+				{
+					u32 nb = e->updateBornData(i, dt);
+					if (nb > 0)
+					{
+						SLaunchParticle data;
+						data.Emitter = e;
+						data.Number = nb;
+						data.Parent = i;
+						m_launch.push_back(data);
+					}
+				}
+			}
+		}
+
 		void CSubGroup::bornParticle()
 		{
 			u32 emiterId = 0;
 			u32 emiterLaunch = m_launch.size();
 
-			// parent particle
 			CParticle* baseParticles = m_parentGroup->getParticlePointer();
-			u32 numberParticles = m_parentGroup->getNumParticles();
 
 			for (u32 i = emiterId; i < emiterLaunch; i++)
 			{
 				SLaunchParticle &launch = m_launch[i];
 				if (launch.Number > 0)
 				{
-					// emit new particles from base particle
-					for (u32 k = 0; k < numberParticles; k++)
+					s32 parentIndex = launch.Parent;
+
+					CParticle& base = baseParticles[parentIndex];
+
+					// base orientation
+					m_position = base.Position;
+					m_direction = base.Velocity;
+					m_direction.normalize();
+					m_rotate.rotationFromTo(CTransform::s_oy, m_direction);
+
+					// init new particle
+					CParticle* newParticles = create(launch.Number);
+
+					for (u32 j = 0, n = launch.Number; j < n; j++)
 					{
-						CParticle& base = baseParticles[k];
-
-						// base orientation
-						m_position = base.Position;
-						m_direction = base.Velocity;
-						m_direction.normalize();
-						m_rotate.rotationFromTo(CTransform::s_oy, m_direction);
-
-						// init new particle
-						CParticle* newParticles = create(launch.Number);
-
-						for (u32 j = 0, n = launch.Number; j < n; j++)
-						{
-							CParticle &p = newParticles[j];
-							p.ParentIndex = (s32)base.Index;
-							launchParticle(p, launch);
-							launch.Number = n;
-						}
+						CParticle &p = newParticles[j];
+						p.ParentIndex = parentIndex;
+						launchParticle(p, launch);
 					}
-
-					launch.Number = 0;
 				}
 			}
 		}

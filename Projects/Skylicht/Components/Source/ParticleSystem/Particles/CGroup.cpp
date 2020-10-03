@@ -90,7 +90,7 @@ namespace Skylicht
 		{
 			float dt = getTimeStep();
 
-			updateLauncEmitter();
+			updateLaunchEmitter();
 
 			CParticle *particles = m_particles.pointer();
 			u32 numParticles = m_particles.size();
@@ -144,7 +144,7 @@ namespace Skylicht
 			bornParticle();
 		}
 
-		void CGroup::updateLauncEmitter()
+		void CGroup::updateLaunchEmitter()
 		{
 			float dt = getTimeStep();
 
@@ -155,7 +155,9 @@ namespace Skylicht
 				u32 nb = e->updateNumber(dt);
 				if (nb > 0)
 				{
-					SLaunchParticle data = { e, nb };
+					SLaunchParticle data;
+					data.Emitter = e;
+					data.Number = nb;
 					m_launch.push_back(data);
 				}
 			}
