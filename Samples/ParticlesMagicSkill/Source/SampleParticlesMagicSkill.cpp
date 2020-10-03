@@ -164,15 +164,16 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	material->setTexture(0, CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_trail.png"));
 	trail->applyMaterial();
 	trail->setWidth(0.5f);
+	trail->setLength(3.0f);
 
 
 	// SUB GROUP: Arcane
 	Particle::CSubGroup *arcaneGroup = ps->createParticleSubGroup(sparkGroup);
 
 	Particle::CQuadRenderer *arcane = factory->createQuadRenderer();
-	arcane->SizeX = 1.0f;
-	arcane->SizeY = 1.0f;
-	arcane->SizeZ = 1.0f;
+	arcane->SizeX = 0.6f;
+	arcane->SizeY = 0.6f;
+	arcane->SizeZ = 0.6f;
 	arcaneGroup->setRenderer(arcane);
 	arcaneGroup->setFollowParentTransform(true);
 

@@ -39,7 +39,7 @@ namespace Skylicht
 			m_destroyWhenParticleDead(false),
 			m_deadAlphaReduction(0.01f)
 		{
-			setLength(2.0f);
+			setLength(1.0f);
 
 			group->addCallback(this);
 

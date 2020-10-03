@@ -43,18 +43,22 @@ namespace Skylicht
 			core::vector3df m_direction;
 			core::quaternion m_rotate;
 
-			bool m_followParentTransform;
+			bool m_followParentTransform;			
 
 		public:
 			CSubGroup(CGroup *group);
 
 			virtual ~CSubGroup();
 
+			virtual void OnParticleBorn(CParticle &p);
+
 			virtual void OnParticleDead(CParticle &p);
 
 			virtual void OnSwapParticleData(CParticle &p1, CParticle &p2);
 
 			virtual void OnGroupDestroy();
+
+			virtual void updateLaunchEmitter();
 
 			virtual void bornParticle();
 

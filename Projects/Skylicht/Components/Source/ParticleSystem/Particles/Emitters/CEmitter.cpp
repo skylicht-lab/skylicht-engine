@@ -80,6 +80,40 @@ namespace Skylicht
 			return (u32)nbBorn;
 		}
 
+		void CEmitter::setBornData(SBornData& data)
+		{
+			data.Tank = m_tank;
+			data.Fraction = 0.0f;
+		}
+
+		u32 CEmitter::updateBornData(SBornData& data, float deltaTime)
+		{
+			int nbBorn = 0;
+
+			if (m_flow <= 0.0f)
+			{
+				nbBorn = core::max_(0, data.Tank);
+				data.Tank = 0;
+			}
+			else if (data.Tank != 0)
+			{
+				data.Fraction += m_flow * deltaTime * 0.001f;
+				nbBorn = static_cast<int>(data.Fraction);
+				if (data.Tank > 0)
+				{
+					nbBorn = core::min_(data.Tank, nbBorn);
+					data.Tank -= nbBorn;
+				}
+				data.Fraction -= nbBorn;
+			}
+			else
+			{
+				nbBorn = 0;
+			}
+
+			return (u32)nbBorn;
+		}
+
 		void CEmitter::generateVelocity(CParticle& particle, CZone* zone, CGroup *group)
 		{
 			float force = random(m_forceMin, m_forceMax);
@@ -90,6 +124,25 @@ namespace Skylicht
 		{
 			zone->generatePosition(particle, m_emitFullZone, group);
 			generateVelocity(particle, zone, group);
+		}
+
+		u32 CEmitter::addBornData()
+		{
+			m_bornData.push_back(SBornData());
+			setBornData(m_bornData.getLast());
+			return m_bornData.size();
+		}
+
+		void CEmitter::swapBornData(int index1, int index2)
+		{
+			SBornData t = m_bornData[index1];
+			m_bornData[index1] = m_bornData[index2];
+			m_bornData[index2] = t;
+		}
+
+		void CEmitter::deleteBornData()
+		{
+			m_bornData.set_used(m_bornData.size() - 1);
 		}
 	}
 }

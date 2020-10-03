@@ -41,6 +41,18 @@ namespace Skylicht
 			NumOfEmitter,
 		};
 
+		struct SBornData
+		{
+			float Fraction;
+			s32 Tank;
+
+			SBornData()
+			{
+				Fraction = 0.0f;
+				Tank = 0;
+			}
+		};
+
 		class CEmitter
 		{
 		protected:
@@ -56,6 +68,12 @@ namespace Skylicht
 			CZone* m_zone;
 
 			EEmitter m_type;
+
+		protected:
+
+			// sub emitter
+			core::array<SBornData> m_bornData;
+
 		public:
 			CEmitter(EEmitter type);
 
@@ -157,11 +175,26 @@ namespace Skylicht
 
 			virtual u32 updateNumber(float deltaTime);
 
+			virtual void setBornData(SBornData& data);
+
+			inline u32 updateBornData(u32 index, float deltaTime)
+			{
+				return updateBornData(m_bornData[index], deltaTime);
+			}
+
+			virtual u32 updateBornData(SBornData& data, float deltaTime);
+
 			void generateVelocity(CParticle& particle, CZone* zone, CGroup *group);
 
 			void emitParticle(CParticle& particle, CZone* zone, CGroup *group);
 
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group) = 0;
+
+			u32 addBornData();
+
+			void swapBornData(int index1, int index2);
+
+			void deleteBornData();
 		};
 	}
 }
