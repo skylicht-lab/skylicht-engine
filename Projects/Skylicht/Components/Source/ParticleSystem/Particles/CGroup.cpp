@@ -90,17 +90,7 @@ namespace Skylicht
 		{
 			float dt = getTimeStep();
 
-			// update emitter
-			m_launch.set_used(0);
-			for (CEmitter *e : m_emitters)
-			{
-				u32 nb = e->updateNumber(dt);
-				if (nb > 0)
-				{
-					SLaunchParticle data = { e, nb };
-					m_launch.push_back(data);
-				}
-			}
+			updateLauncEmitter();
 
 			CParticle *particles = m_particles.pointer();
 			u32 numParticles = m_particles.size();
@@ -111,7 +101,10 @@ namespace Skylicht
 				m_particleSystem->update(particles, numParticles, this, dt);
 
 				for (ISystem *s : m_systems)
-					s->update(particles, numParticles, this, dt);
+				{
+					if (s->isEnable() == true)
+						s->update(particles, numParticles, this, dt);
+				}
 			}
 			else
 			{
@@ -149,6 +142,23 @@ namespace Skylicht
 				m_bufferSystem->update(particles, numParticles, this, dt);
 
 			bornParticle();
+		}
+
+		void CGroup::updateLauncEmitter()
+		{
+			float dt = getTimeStep();
+
+			// update emitter
+			m_launch.set_used(0);
+			for (CEmitter *e : m_emitters)
+			{
+				u32 nb = e->updateNumber(dt);
+				if (nb > 0)
+				{
+					SLaunchParticle data = { e, nb };
+					m_launch.push_back(data);
+				}
+			}
 		}
 
 		void CGroup::bornParticle()

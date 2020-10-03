@@ -37,9 +37,14 @@ namespace Skylicht
 		protected:
 			CGroup* m_parentGroup;
 
+			ISystem *m_parentSystem;
+
 			core::vector3df m_position;
 			core::vector3df m_direction;
 			core::quaternion m_rotate;
+
+			bool m_followParentTransform;
+
 		public:
 			CSubGroup(CGroup *group);
 
@@ -56,6 +61,13 @@ namespace Skylicht
 			virtual core::vector3df getTransformPosition(const core::vector3df& pos);
 
 			virtual core::vector3df getTransformVector(const core::vector3df& vec);
+
+			void setFollowParentTransform(bool b);
+
+			inline CGroup* getParentGroup()
+			{
+				return m_parentGroup;
+			}
 		};
 	}
 }

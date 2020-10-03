@@ -73,6 +73,8 @@ namespace Skylicht
 			core::vector3df Rotation;
 			core::vector3df Velocity;
 
+			core::vector3df LastPosition;
+
 		public:
 			CParticle(u32 index);
 

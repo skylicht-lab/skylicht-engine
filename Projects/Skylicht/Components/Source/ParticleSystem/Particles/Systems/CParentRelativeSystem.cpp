@@ -22,43 +22,47 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CParentRelativeSystem.h"
+
+#include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CSubGroup.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticle;
-		class CGroup;
-
-		class ISystem
+		CParentRelativeSystem::CParentRelativeSystem()
 		{
-		protected:
-			bool m_enable;
 
-		public:
-			ISystem() :
-				m_enable(true)
+		}
+
+		CParentRelativeSystem::~CParentRelativeSystem()
+		{
+
+		}
+
+		void CParentRelativeSystem::update(CParticle *particles, int num, CGroup *group, float dt)
+		{
+			CSubGroup *subGroup = dynamic_cast<CSubGroup*>(group);
+			if (subGroup == NULL)
+				return;
+
+			CGroup *parentGroup = subGroup->getParentGroup();
+
+			CParticle *baseParticles = parentGroup->getParticlePointer();
+			CParticle *p;
+
+#pragma omp parallel for private(p)
+			for (int i = 0; i < num; i++)
 			{
+				p = particles + i;
 
+				if (p->ParentIndex >= 0)
+				{
+					p->Position = (p->Position - p->LastPosition) + baseParticles[p->ParentIndex].Position;
+				}
 			}
-
-			virtual ~ISystem()
-			{
-
-			}
-
-			virtual void update(CParticle *particles, int num, CGroup *group, float dt) = 0;
-
-			inline void setEnable(bool b)
-			{
-				m_enable = b;
-			}
-
-			inline bool isEnable()
-			{
-				return m_enable;
-			}
-		};
+		}
 	}
 }
