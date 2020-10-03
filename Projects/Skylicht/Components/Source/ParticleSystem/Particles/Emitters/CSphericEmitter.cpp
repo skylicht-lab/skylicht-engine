@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "ParticleSystem/Particles/CParticle.h"
 #include "ParticleSystem/Particles/Zones/CZone.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
@@ -116,9 +117,13 @@ namespace Skylicht
 			float y = sinTheta * sinf(phi);
 			float z = cosf(theta);
 
-			particle.Velocity.X = speed * (m_matrix[0] * x + m_matrix[1] * y + m_matrix[2] * z);
-			particle.Velocity.Y = speed * (m_matrix[3] * x + m_matrix[4] * y + m_matrix[5] * z);
-			particle.Velocity.Z = speed * (m_matrix[6] * x + m_matrix[7] * y + m_matrix[8] * z);
+			particle.Velocity.X = (m_matrix[0] * x + m_matrix[1] * y + m_matrix[2] * z);
+			particle.Velocity.Y = (m_matrix[3] * x + m_matrix[4] * y + m_matrix[5] * z);
+			particle.Velocity.Z = (m_matrix[6] * x + m_matrix[7] * y + m_matrix[8] * z);
+
+			particle.Velocity = group->getTransformVector(particle.Velocity);
+			particle.Velocity.normalize();
+			particle.Velocity *= speed;
 		}
 	}
 }

@@ -136,7 +136,9 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 
 	// FACTORY & ZONE
 	Particle::CFactory *factory = ps->getParticleFactory();
+
 	Particle::CCylinder* cylinder = factory->createCylinderZone(core::vector3df(), core::vector3df(0.0f, 1.0f, 0.0f), 0.6, 0.1f);
+	Particle::CPoint* point = factory->createPointZone();
 
 	// GROUP: SPARK
 	Particle::CGroup *sparkGroup = ps->createParticleGroup();
@@ -147,9 +149,9 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	sparkGroup->Gravity.set(0.0f, -0.1f, 0.0f);
 	sparkGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 
-	Particle::CNormalEmitter *sparkEmitter = factory->createNormalEmitter(false);
+	Particle::CEmitter *sparkEmitter = factory->createNormalEmitter(false);
 	sparkEmitter->setFlow(100.0f);
-	sparkEmitter->setTank(1);
+	sparkEmitter->setTank(20);
 	sparkEmitter->setForce(2.5f, 6.0f);
 	sparkEmitter->setZone(cylinder);
 	sparkGroup->addEmitter(sparkEmitter);
@@ -167,26 +169,57 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	// SUB GROUP: Arcane
 	Particle::CSubGroup *arcaneGroup = ps->createParticleSubGroup(sparkGroup);
 
-	Particle::CQuadRenderer *pointSpark = factory->createQuadRenderer();
-	pointSpark->SizeX = 1.0f;
-	pointSpark->SizeY = 1.0f;
-	pointSpark->SizeZ = 1.0f;
-	arcaneGroup->setRenderer(pointSpark);
+	Particle::CQuadRenderer *arcane = factory->createQuadRenderer();
+	arcane->SizeX = 1.0f;
+	arcane->SizeY = 1.0f;
+	arcane->SizeZ = 1.0f;
+	arcaneGroup->setRenderer(arcane);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_twirl.png");
-	pointSpark->setMaterialType(Particle::Addtive, Particle::Camera);
-	pointSpark->getMaterial()->setTexture(0, texture);
-	pointSpark->getMaterial()->applyMaterial();
+	arcane->setMaterialType(Particle::Addtive, Particle::Camera);
+	arcane->getMaterial()->setTexture(0, texture);
+	arcane->getMaterial()->applyMaterial();
 
 	arcaneGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	arcaneGroup->createModel(Particle::RotateSpeedZ)->setStart(3.0f, 5.0f);
+	arcaneGroup->createModel(Particle::RotateZ)->setStart(0.0f, core::PI);
+	arcaneGroup->LifeMin = 4.0f;
+	arcaneGroup->LifeMin = 8.0f;
 
-	Particle::CNormalEmitter *pointSparkEmitter = factory->createNormalEmitter(false);
-	pointSparkEmitter->setFlow(100.0f);
-	pointSparkEmitter->setTank(1);
-	pointSparkEmitter->setForce(0.0f, 0.0f);
-	pointSparkEmitter->setZone(cylinder);
-	arcaneGroup->addEmitter(pointSparkEmitter);
+	Particle::CEmitter *arcaneEmitter = factory->createNormalEmitter(false);
+	arcaneEmitter->setFlow(100.0f);
+	arcaneEmitter->setTank(5);
+	arcaneEmitter->setForce(0.0f, 0.0f);
+	arcaneEmitter->setZone(point);
+	arcaneGroup->addEmitter(arcaneEmitter);
+
+	// SUB GROUP: Sphere
+	Particle::CSubGroup *sphereGroup = ps->createParticleSubGroup(sparkGroup);
+
+	Particle::CQuadRenderer *sphere = factory->createQuadRenderer();
+	sphere->SizeX = 0.2f;
+	sphere->SizeY = 0.2f;
+	sphere->SizeZ = 0.2f;
+	sphereGroup->setRenderer(sphere);
+
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_sphere.png");
+	sphere->setMaterialType(Particle::Addtive, Particle::Camera);
+	sphere->getMaterial()->setTexture(0, texture);
+	sphere->getMaterial()->applyMaterial();
+
+	sphereGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
+	sphereGroup->createModel(Particle::RotateSpeedZ)->setStart(3.0f, 5.0f);
+	sphereGroup->createModel(Particle::RotateZ)->setStart(0.0f, core::PI);
+	sphereGroup->LifeMin = 1.0f;
+	sphereGroup->LifeMin = 2.0f;
+	sphereGroup->Friction = 1.0f;
+
+	Particle::CEmitter *sphereEmitter = factory->createSphericEmitter(-CTransform::s_oy, 0.0f, 40.0f * core::DEGTORAD);
+	sphereEmitter->setFlow(8.0f);
+	sphereEmitter->setTank(-1);
+	sphereEmitter->setForce(0.6f, 1.0f);
+	sphereEmitter->setZone(point);
+	sphereGroup->addEmitter(sphereEmitter);
 }
 
 void SampleParticlesMagicSkill::onUpdate()

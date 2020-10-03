@@ -41,7 +41,7 @@ namespace Skylicht
 		{
 			setLength(2.0f);
 
-			group->setCallback(this);
+			group->addCallback(this);
 
 			m_meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD), EIT_32BIT);
 			m_meshBuffer->setHardwareMappingHint(EHM_STREAM);
@@ -53,7 +53,7 @@ namespace Skylicht
 		CParticleTrail::~CParticleTrail()
 		{
 			if (m_group != NULL)
-				m_group->setCallback(NULL);
+				m_group->removeCallback(this);
 
 			for (u32 i = 0, n = m_trails.size(); i < n; i++)
 			{

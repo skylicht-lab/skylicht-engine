@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CNormalEmitter.h"
 #include "ParticleSystem/Particles/CParticle.h"
 #include "ParticleSystem/Particles/Zones/CZone.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
@@ -48,7 +49,11 @@ namespace Skylicht
 			if (m_inverted)
 				speed = -speed;
 
-			particle.Velocity = zone->computeNormal(particle.Position, group) * speed;
+			particle.Velocity = zone->computeNormal(particle.Position, group);
+
+			particle.Velocity = group->getTransformVector(particle.Velocity);
+			particle.Velocity.normalize();
+			particle.Velocity *= speed;
 		}
 	}
 }
