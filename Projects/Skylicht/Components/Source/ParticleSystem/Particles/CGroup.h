@@ -46,6 +46,14 @@ namespace Skylicht
 		{
 			CEmitter *Emitter;
 			u32 Number;
+			s32 Parent;
+
+			SLaunchParticle()
+			{
+				Emitter = NULL;
+				Number = 0;
+				Parent = -1;
+			}
 		};
 
 		class IParticleCallback
@@ -250,7 +258,7 @@ namespace Skylicht
 
 		protected:
 
-			virtual void updateLauncEmitter();
+			virtual void updateLaunchEmitter();
 
 			virtual void bornParticle();
 
