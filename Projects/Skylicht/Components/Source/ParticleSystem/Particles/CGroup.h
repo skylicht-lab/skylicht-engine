@@ -250,6 +250,8 @@ namespace Skylicht
 
 		protected:
 
+			virtual void updateLauncEmitter();
+
 			virtual void bornParticle();
 
 			virtual bool launchParticle(CParticle& p, SLaunchParticle& launch);

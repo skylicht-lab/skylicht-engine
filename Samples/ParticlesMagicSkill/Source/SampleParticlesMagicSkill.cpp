@@ -174,6 +174,7 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	arcane->SizeY = 1.0f;
 	arcane->SizeZ = 1.0f;
 	arcaneGroup->setRenderer(arcane);
+	arcaneGroup->setFollowParentTransform(true);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_twirl.png");
 	arcane->setMaterialType(Particle::Addtive, Particle::Camera);
@@ -214,8 +215,8 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	sphereGroup->LifeMin = 2.0f;
 	sphereGroup->Friction = 1.0f;
 
-	Particle::CEmitter *sphereEmitter = factory->createSphericEmitter(-CTransform::s_oy, 0.0f, 40.0f * core::DEGTORAD);
-	sphereEmitter->setFlow(8.0f);
+	Particle::CEmitter *sphereEmitter = factory->createSphericEmitter(-CTransform::s_oy, 0.0f, 60.0f * core::DEGTORAD);
+	sphereEmitter->setFlow(10.0f);
 	sphereEmitter->setTank(-1);
 	sphereEmitter->setForce(0.6f, 1.0f);
 	sphereEmitter->setZone(point);

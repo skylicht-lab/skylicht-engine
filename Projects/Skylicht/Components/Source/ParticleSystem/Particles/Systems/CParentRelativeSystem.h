@@ -24,41 +24,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "ISystem.h"
+
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticle;
-		class CGroup;
-
-		class ISystem
+		class CParentRelativeSystem : public ISystem
 		{
-		protected:
-			bool m_enable;
-
 		public:
-			ISystem() :
-				m_enable(true)
-			{
+			CParentRelativeSystem();
 
-			}
+			virtual ~CParentRelativeSystem();
 
-			virtual ~ISystem()
-			{
-
-			}
-
-			virtual void update(CParticle *particles, int num, CGroup *group, float dt) = 0;
-
-			inline void setEnable(bool b)
-			{
-				m_enable = b;
-			}
-
-			inline bool isEnable()
-			{
-				return m_enable;
-			}
+			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
 		};
 	}
 }

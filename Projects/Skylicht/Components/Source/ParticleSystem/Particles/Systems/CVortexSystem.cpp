@@ -62,7 +62,7 @@ namespace Skylicht
 			float dist, angle, endRadius;
 			core::vector3df rotationCenter, normal, tangent, attraction;
 
-			// #pragma omp parallel for private(p, dist, angle, endRadius, rotationCenter, normal, tangent)
+#pragma omp parallel for private(p, dist, angle, endRadius, rotationCenter, normal, tangent, attraction)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
