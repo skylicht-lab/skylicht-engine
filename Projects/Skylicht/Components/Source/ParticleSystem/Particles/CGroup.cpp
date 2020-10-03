@@ -48,8 +48,8 @@ namespace Skylicht
 
 		CGroup::~CGroup()
 		{
-			if (m_callback != NULL)
-				m_callback->OnGroupDestroy();
+			for (IParticleCallback* cb : m_callback)
+				cb->OnGroupDestroy();
 
 			for (CModel *m : m_models)
 				delete m;
@@ -90,8 +90,6 @@ namespace Skylicht
 		{
 			float dt = getTimeStep();
 
-			u32 autoBorn = 0;
-
 			// update emitter
 			m_launch.set_used(0);
 			for (CEmitter *e : m_emitters)
@@ -101,7 +99,6 @@ namespace Skylicht
 				{
 					SLaunchParticle data = { e, nb };
 					m_launch.push_back(data);
-					autoBorn += nb;
 				}
 			}
 
@@ -122,8 +119,8 @@ namespace Skylicht
 				m_particleSystem->updateLifeTime(particles, numParticles, this, dt);
 			}
 
-			if (m_callback != NULL)
-				m_callback->OnParticleUpdate(particles, numParticles, this, dt);
+			for (IParticleCallback* cb : m_callback)
+				cb->OnParticleUpdate(particles, numParticles, this, dt);
 
 			if (numParticles > 0)
 				m_bbox.reset(particles[0].Position);
@@ -151,23 +148,25 @@ namespace Skylicht
 			if (visible == true)
 				m_bufferSystem->update(particles, numParticles, this, dt);
 
+			bornParticle();
+		}
+
+		void CGroup::bornParticle()
+		{
 			u32 emiterId = 0;
 			u32 emiterLaunch = m_launch.size();
 
 			// born new particle
-			if (autoBorn > 0)
+			for (u32 i = emiterId; i < emiterLaunch; i++)
 			{
-				for (u32 i = emiterId; i < emiterLaunch; i++)
+				SLaunchParticle &launch = m_launch[i];
+				if (launch.Number > 0)
 				{
-					SLaunchParticle &launch = m_launch[i];
-					if (launch.Number > 0)
+					CParticle* newParticles = create(launch.Number);
+					for (u32 j = 0, n = launch.Number; j < n; j++)
 					{
-						CParticle* newParticles = create(launch.Number);
-						for (u32 j = 0, n = launch.Number; j < n; j++)
-						{
-							CParticle &p = newParticles[j];
-							launchParticle(p, launch);
-						}
+						CParticle &p = newParticles[j];
+						launchParticle(p, launch);
 					}
 				}
 			}
@@ -218,8 +217,8 @@ namespace Skylicht
 					p.Rotation.Z = p.StartValue[t];
 			}
 
-			if (m_callback != NULL)
-				m_callback->OnParticleBorn(p);
+			for (IParticleCallback* cb : m_callback)
+				cb->OnParticleBorn(p);
 		}
 
 		void CGroup::addParticle(const core::vector3df& position, CEmitter *emitter)
@@ -252,13 +251,16 @@ namespace Skylicht
 			if (index >= total)
 				return;
 
-			if (m_callback != NULL)
-				m_callback->OnSwapParticleData(m_particles[index], m_particles.getLast());
+			if (index != total - 1)
+			{
+				for (IParticleCallback* cb : m_callback)
+					cb->OnSwapParticleData(m_particles[index], m_particles.getLast());
 
-			m_particles[index].swap(m_particles.getLast());
+				m_particles[index].swap(m_particles.getLast());
+			}
 
-			if (m_callback != NULL)
-				m_callback->OnParticleDead(m_particles.getLast());
+			for (IParticleCallback* cb : m_callback)
+				cb->OnParticleDead(m_particles.getLast());
 
 			m_particles.set_used(total - 1);
 		}
