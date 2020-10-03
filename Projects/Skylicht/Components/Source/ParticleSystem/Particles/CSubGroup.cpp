@@ -30,14 +30,100 @@ namespace Skylicht
 	namespace Particle
 	{
 		CSubGroup::CSubGroup(CGroup *group) :
-			m_group(group)
+			m_parentGroup(group)
 		{
-
+			m_parentGroup->addCallback(this);
 		}
 
 		CSubGroup::~CSubGroup()
 		{
+			if (m_parentGroup != NULL)
+				m_parentGroup->removeCallback(this);
+		}
 
+		void CSubGroup::OnParticleDead(CParticle &p)
+		{
+			CParticle* particles = getParticlePointer();
+			u32 n = getNumParticles();
+
+			for (u32 i = 0; i < n; i++)
+			{
+				if (particles[i].ParentIndex == p.Index)
+					particles[i].ParentIndex = -1;
+			}
+		}
+
+		void CSubGroup::OnSwapParticleData(CParticle &p1, CParticle &p2)
+		{
+			CParticle* particles = getParticlePointer();
+			u32 n = getNumParticles();
+
+			for (u32 i = 0; i < n; i++)
+			{
+				if (particles[i].ParentIndex == p1.Index)
+					particles[i].ParentIndex = p2.Index;
+				else if (particles[i].ParentIndex == p2.Index)
+					particles[i].ParentIndex = p1.Index;
+			}
+		}
+
+		void CSubGroup::OnGroupDestroy()
+		{
+			m_parentGroup = NULL;
+		}
+
+		void CSubGroup::bornParticle()
+		{
+			u32 emiterId = 0;
+			u32 emiterLaunch = m_launch.size();
+
+			// parent particle
+			CParticle* baseParticles = m_parentGroup->getParticlePointer();
+			u32 numberParticles = m_parentGroup->getNumParticles();
+
+			for (u32 i = emiterId; i < emiterLaunch; i++)
+			{
+				SLaunchParticle &launch = m_launch[i];
+				if (launch.Number > 0)
+				{
+					// emit new particles from base particle
+					for (u32 k = 0; k < numberParticles; k++)
+					{
+						CParticle& base = baseParticles[k];
+
+						// base orientation
+						m_position = base.Position;
+						m_direction = base.Velocity;
+						m_direction.normalize();
+						m_rotate.rotationFromTo(CTransform::s_oy, m_direction);
+
+						// init new particle
+						CParticle* newParticles = create(launch.Number);
+
+						for (u32 j = 0, n = launch.Number; j < n; j++)
+						{
+							CParticle &p = newParticles[j];
+							p.ParentIndex = (s32)base.Index;
+							launchParticle(p, launch);
+							launch.Number = n;
+						}
+					}
+
+					launch.Number = 0;
+				}
+			}
+		}
+
+		core::vector3df CSubGroup::getTransformPosition(const core::vector3df& pos)
+		{
+			core::vector3df ret = m_position + pos;
+			return ret;
+		}
+
+		core::vector3df CSubGroup::getTransformVector(const core::vector3df& vec)
+		{
+			core::vector3df ret = m_rotate * vec;
+			return ret;
 		}
 	}
 }

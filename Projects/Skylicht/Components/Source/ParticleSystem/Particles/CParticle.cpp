@@ -31,6 +31,7 @@ namespace Skylicht
 	{
 		CParticle::CParticle(u32 index) :
 			Index(index),
+			ParentIndex(-1),
 			Immortal(false),
 			Age(0.0f),
 			Life(0.0f),

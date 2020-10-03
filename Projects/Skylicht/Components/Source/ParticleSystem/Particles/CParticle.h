@@ -55,6 +55,7 @@ namespace Skylicht
 		{
 		public:
 			u32 Index;
+			s32 ParentIndex;
 
 			bool Immortal;
 

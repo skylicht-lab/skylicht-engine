@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CStraightEmitter.h"
 #include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
 
 namespace Skylicht
 {
@@ -44,7 +45,10 @@ namespace Skylicht
 
 		void CStraightEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group)
 		{
-			particle.Velocity = m_direction * speed;
+			core::vector3df direction = group->getTransformVector(m_direction);
+			direction.normalize();
+
+			particle.Velocity = direction * speed;
 		}
 	}
 }

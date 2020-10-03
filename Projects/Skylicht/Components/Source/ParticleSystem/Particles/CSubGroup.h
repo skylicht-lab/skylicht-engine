@@ -30,15 +30,32 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CSubGroup : public CGroup
+		class CSubGroup :
+			public CGroup,
+			public IParticleCallback
 		{
 		protected:
-			CGroup* m_group;
+			CGroup* m_parentGroup;
 
+			core::vector3df m_position;
+			core::vector3df m_direction;
+			core::quaternion m_rotate;
 		public:
 			CSubGroup(CGroup *group);
 
 			virtual ~CSubGroup();
+
+			virtual void OnParticleDead(CParticle &p);
+
+			virtual void OnSwapParticleData(CParticle &p1, CParticle &p2);
+
+			virtual void OnGroupDestroy();
+
+			virtual void bornParticle();
+
+			virtual core::vector3df getTransformPosition(const core::vector3df& pos);
+
+			virtual core::vector3df getTransformVector(const core::vector3df& vec);
 		};
 	}
 }

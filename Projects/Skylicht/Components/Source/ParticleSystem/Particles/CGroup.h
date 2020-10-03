@@ -104,7 +104,7 @@ namespace Skylicht
 			IRenderer* m_renderer;
 			CParticleInstancing *m_instancing;
 
-			IParticleCallback *m_callback;
+			std::vector<IParticleCallback*> m_callback;
 
 		public:
 			core::vector3df Gravity;
@@ -136,9 +136,9 @@ namespace Skylicht
 				return m_world;
 			}
 
-			core::vector3df getTransformPosition(const core::vector3df& pos);
+			virtual core::vector3df getTransformPosition(const core::vector3df& pos);
 
-			core::vector3df getTransformVector(const core::vector3df& vec);
+			virtual core::vector3df getTransformVector(const core::vector3df& vec);
 
 			inline const core::aabbox3df& getBBox()
 			{
@@ -173,12 +173,21 @@ namespace Skylicht
 					m_emitters.erase(i);
 			}
 
-			inline void setCallback(IParticleCallback *cb)
+			void addCallback(IParticleCallback *cb)
 			{
-				m_callback = cb;
+				std::vector<IParticleCallback*>::iterator i = std::find(m_callback.begin(), m_callback.end(), cb);
+				if (i == m_callback.end())
+					m_callback.push_back(cb);
 			}
 
-			inline IParticleCallback* getCallback()
+			void removeCallback(IParticleCallback *cb)
+			{
+				std::vector<IParticleCallback*>::iterator i = std::find(m_callback.begin(), m_callback.end(), cb);
+				if (i != m_callback.end())
+					m_callback.erase(i);
+			}
+
+			inline std::vector<IParticleCallback*>& getCallback()
 			{
 				return m_callback;
 			}
@@ -240,7 +249,10 @@ namespace Skylicht
 			}
 
 		protected:
-			bool launchParticle(CParticle& p, SLaunchParticle& launch);
+
+			virtual void bornParticle();
+
+			virtual bool launchParticle(CParticle& p, SLaunchParticle& launch);
 
 			void initParticleModel(CParticle& p);
 
