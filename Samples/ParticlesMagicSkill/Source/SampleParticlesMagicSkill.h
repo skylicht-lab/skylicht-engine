@@ -2,6 +2,7 @@
 
 #include "IApplicationEventReceiver.h"
 #include "ParticleSystem/CParticleComponent.h"
+#include "ParticleSystem/Particles/Systems/CVortexSystem.h"
 
 class SampleParticlesMagicSkill :
 	public IApplicationEventReceiver,
@@ -17,7 +18,9 @@ private:
 	CGlyphFont* m_font;
 
 	Particle::CParticleComponent* m_projectiles;
+	Particle::CVortexSystem *m_vortexSystem;
 
+	Particle::CParticleComponent* m_impacts;
 public:
 	SampleParticlesMagicSkill();
 
@@ -28,6 +31,8 @@ public:
 	void initProjectiles(Particle::CParticleComponent *ps);
 
 	void initTower(Particle::CParticleComponent *ps);
+
+	void initImpact(Particle::CParticleComponent *ps);
 
 	virtual void onUpdate();
 

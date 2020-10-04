@@ -37,7 +37,7 @@ namespace Skylicht
 			m_direction(direction),
 			m_rotationSpeed(rotationSpeed),
 			m_attractionSpeed(attractionSpeed),
-			m_eyeAttractionSpeed(1.0f),
+			m_eyeAttractionSpeed(0.0f),
 			m_eyeRadius(0.0f),
 			m_killingParticleEnabled(false)
 		{
