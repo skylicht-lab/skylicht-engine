@@ -77,6 +77,8 @@ namespace Skylicht
 
 			CPoint* createPointZone();
 
+			CPoint* createPointZone(const core::vector3df& pos);
+
 			CSphere* createSphereZone(const core::vector3df& pos, float radius);
 
 			CAABox* createAABoxZone(const core::vector3df& pos, const core::vector3df& dimension);

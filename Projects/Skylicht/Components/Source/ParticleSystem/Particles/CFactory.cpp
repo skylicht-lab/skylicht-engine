@@ -116,6 +116,14 @@ namespace Skylicht
 			return z;
 		}
 
+		CPoint* CFactory::createPointZone(const core::vector3df& pos)
+		{
+			CPoint *z = new CPoint();
+			z->setPosition(pos);
+			m_zones.push_back(z);
+			return z;
+		}
+
 		CSphere* CFactory::createSphereZone(const core::vector3df& pos, float radius)
 		{
 			CSphere *z = new CSphere(pos, radius);
