@@ -32,12 +32,22 @@ namespace Skylicht
 	{
 		class CParentRelativeSystem : public ISystem
 		{
+		protected:
+			bool m_syncLife;
+			bool m_syncColor;
+
 		public:
 			CParentRelativeSystem();
 
 			virtual ~CParentRelativeSystem();
 
 			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
+
+			void syncParams(bool life, bool color)
+			{
+				m_syncLife = life;
+				m_syncColor = color;
+			}
 		};
 	}
 }

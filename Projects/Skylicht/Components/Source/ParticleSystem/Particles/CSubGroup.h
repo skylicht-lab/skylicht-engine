@@ -43,7 +43,8 @@ namespace Skylicht
 			core::vector3df m_direction;
 			core::quaternion m_rotate;
 
-			bool m_followParentTransform;			
+			bool m_followParentTransform;
+			bool m_emitterWorldOrientation;
 
 		public:
 			CSubGroup(CGroup *group);
@@ -66,7 +67,18 @@ namespace Skylicht
 
 			virtual core::vector3df getTransformVector(const core::vector3df& vec);
 
-			void setFollowParentTransform(bool b);
+			inline void setFollowParentTransform(bool b)
+			{
+				m_followParentTransform = b;
+				m_parentSystem->setEnable(b);
+			}
+
+			inline void setEmitterWorldOrientation(bool b)
+			{
+				m_emitterWorldOrientation = b;
+			}
+
+			void syncParentParams(bool life, bool color);
 
 			inline CGroup* getParentGroup()
 			{

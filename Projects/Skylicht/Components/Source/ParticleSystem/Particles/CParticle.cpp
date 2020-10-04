@@ -84,7 +84,9 @@ namespace Skylicht
 			float life = Life;
 			float lifeTime = LifeTime;
 			bool haveRotate = HaveRotate;
+			int parentIndex = ParentIndex;
 
+			core::vector3df lastPosition = LastPosition;
 			core::vector3df position = Position;
 			core::vector3df rotation = Rotation;
 			core::vector3df velocity = Velocity;
@@ -94,18 +96,22 @@ namespace Skylicht
 			Age = p.Age;
 			Life = p.Life;
 			LifeTime = p.LifeTime;
+			LastPosition = p.LastPosition;
 			Position = p.Position;
 			Rotation = p.Rotation;
 			Velocity = p.Velocity;
 			HaveRotate = p.HaveRotate;
+			ParentIndex = p.ParentIndex;
 
 			p.Age = age;
 			p.Life = life;
 			p.LifeTime = lifeTime;
+			p.LastPosition = lastPosition;
 			p.Position = position;
 			p.Rotation = rotation;
 			p.Velocity = velocity;
 			p.HaveRotate = haveRotate;
+			p.ParentIndex = parentIndex;
 		}
 	}
 }
