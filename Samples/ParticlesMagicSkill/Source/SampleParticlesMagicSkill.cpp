@@ -69,13 +69,14 @@ void SampleParticlesMagicSkill::onInitApp()
 	CGameObject *grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
 
-	// particles pool
-	for (int i = 0; i < MAX_POOL; i++)
-	{
-		m_particlePool[i] = zone->createEmptyObject()->addComponent<Particle::CParticleComponent>();
-		initParticleSystem(m_particlePool[i]);
-		m_particlePool[i]->getGameObject()->setVisible(false);
-	}
+	// tower
+	Particle::CParticleComponent *tower = zone->createEmptyObject()->addComponent<Particle::CParticleComponent>();
+	initTower(tower);
+
+	// projectiles
+	m_projectiles = zone->createEmptyObject()->addComponent<Particle::CParticleComponent>();
+	initProjectiles(m_projectiles);
+	m_projectiles->getGameObject()->setVisible(false);
 
 	// init font
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
@@ -104,25 +105,15 @@ bool SampleParticlesMagicSkill::OnEvent(const SEvent& event)
 	{
 		if (event.KeyInput.Key == irr::KEY_SPACE && event.KeyInput.PressedDown == false)
 		{
-			for (int i = 0; i < MAX_POOL; i++)
+			if (m_projectiles->IsPlaying() == false)
 			{
-				if (m_particlePool[i]->IsPlaying() == false)
-				{
-					char debugLog[512];
-					sprintf(debugLog, "Play particle %d", i);
-					os::Printer::log(debugLog);
+				core::vector3df position(0.0f, 1.0f, 0.0f);
 
-					float radius = 2.0f;
-					float r1 = Particle::random(-1.0f, 1.0f);
-					float r2 = Particle::random(0.0f, 1.0f);
-					core::vector3df randomPosition(r1 * radius, r2 * radius, r1 * radius);
+				m_projectiles->getGameObject()->setVisible(true);
+				m_projectiles->getGameObject()->getTransformEuler()->setPosition(position);
+				m_projectiles->Play();
 
-					m_particlePool[i]->getGameObject()->setVisible(true);
-					m_particlePool[i]->getGameObject()->getTransformEuler()->setPosition(randomPosition);
-					m_particlePool[i]->Play();
-
-					return true;
-				}
+				return true;
 			}
 		}
 	}
@@ -130,7 +121,82 @@ bool SampleParticlesMagicSkill::OnEvent(const SEvent& event)
 	return false;
 }
 
-void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent *ps)
+void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
+{
+	ITexture *texture = NULL;
+
+	// FACTORY & ZONE
+	Particle::CFactory *factory = ps->getParticleFactory();
+
+	// GROUP: RING	
+	Particle::CGroup *ringGroup = ps->createParticleGroup();
+
+	ringGroup->LifeMin = 3.0f;
+	ringGroup->LifeMax = 3.0f;
+	ringGroup->Gravity.set(0.0f, 0.0f, 0.0f);
+	ringGroup->createModel(Particle::ColorR)->setStart(1.0f);
+	ringGroup->createModel(Particle::ColorG)->setStart(0.3f);
+	ringGroup->createModel(Particle::ColorB)->setStart(1.0f);
+	ringGroup->createModel(Particle::Scale)->setStart(0.0f)->setEnd(4.0f);
+	ringGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
+
+	Particle::CInterpolator *alphaInterpolator = ringGroup->createInterpolator();
+	alphaInterpolator->addEntry(0.0f, 0.0f);
+	alphaInterpolator->addEntry(0.4f, 0.6f);
+	alphaInterpolator->addEntry(0.6f, 1.0f);
+	alphaInterpolator->addEntry(1.0f, 0.0f);
+	ringGroup->createModel(Particle::ColorA)->setStart(0.0f)->setEnd(1.0f)->setInterpolator(alphaInterpolator);
+
+	ringGroup->OrientationNormal.set(0.0f, 1.0f, 0.0f);
+	ringGroup->OrientationUp.set(0.0f, 0.0f, 1.0f);
+
+	Particle::CQuadRenderer *ring = factory->createQuadRenderer();
+	ring->SizeX = 2.0f;
+	ring->SizeY = 2.0f;
+	ring->SizeZ = 2.0f;
+	ringGroup->setRenderer(ring);
+
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/modular_aura06.png");
+	ring->setMaterialType(Particle::Addtive, Particle::FixOrientation);
+	ring->getMaterial()->setTexture(0, texture);
+	ring->getMaterial()->applyMaterial();
+
+	Particle::CEmitter *ringEmitter = factory->createRandomEmitter();
+	ringEmitter->setFlow(1.0f);
+	ringEmitter->setTank(-1);
+	ringEmitter->setForce(0.0f, 0.0f);
+	ringEmitter->setZone(factory->createPointZone());
+	ringGroup->addEmitter(ringEmitter);
+
+	// GROUP: POINT
+	Particle::CGroup *pointGroup = ps->createParticleGroup();
+
+	pointGroup->LifeMin = 0.5f;
+	pointGroup->LifeMax = 0.7f;
+	pointGroup->Gravity.set(0.0f, 0.0f, 0.0f);
+	pointGroup->createModel(Particle::Scale)->setStart(0.8f)->setEnd(1.5f);
+	pointGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
+
+	Particle::CQuadRenderer *point = factory->createQuadRenderer();
+	point->SizeX = 2.0f;
+	point->SizeY = 2.0f;
+	point->SizeZ = 2.0f;
+
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_glow.png");
+	point->setMaterialType(Particle::Addtive, Particle::Camera);
+	point->getMaterial()->setTexture(0, texture);
+	point->getMaterial()->applyMaterial();
+	pointGroup->setRenderer(point);
+
+	Particle::CEmitter *pointEmitter = factory->createRandomEmitter();
+	pointEmitter->setFlow(7.0f);
+	pointEmitter->setTank(-1);
+	pointEmitter->setForce(0.0f, 0.0f);
+	pointEmitter->setZone(factory->createPointZone(core::vector3df(0.0f, 1.0f, 0.0f)));
+	pointGroup->addEmitter(pointEmitter);
+}
+
+void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps)
 {
 	ITexture *texture = NULL;
 
@@ -139,7 +205,7 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 
 	Particle::CCylinder* cylinder = factory->createCylinderZone(core::vector3df(), core::vector3df(0.0f, 1.0f, 0.0f), 0.6, 0.1f);
 	Particle::CPoint* point = factory->createPointZone();
-	Particle::CCylinder* trailCylinder = factory->createCylinderZone(core::vector3df(0.0f, -0.3f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 0.2, 0.7f);
+	Particle::CCylinder* trailCylinder = factory->createCylinderZone(core::vector3df(0.0f, -0.3f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 0.2, 0.4f);
 
 	// GROUP: SPARK
 	Particle::CGroup *sparkGroup = ps->createParticleGroup();
@@ -164,17 +230,17 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	CMaterial *material = trail->getMaterial();
 	material->setTexture(0, CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_trail.png"));
 	trail->applyMaterial();
-	trail->setWidth(0.5f);
-	trail->setLength(3.0f);
+	trail->setWidth(0.3f);
+	trail->setLength(2.0f);
 
 
 	// SUB GROUP: Arcane
 	Particle::CSubGroup *arcaneGroup = ps->createParticleSubGroup(sparkGroup);
 
 	Particle::CQuadRenderer *arcane = factory->createQuadRenderer();
-	arcane->SizeX = 0.6f;
-	arcane->SizeY = 0.6f;
-	arcane->SizeZ = 0.6f;
+	arcane->SizeX = 0.4f;
+	arcane->SizeY = 0.4f;
+	arcane->SizeZ = 0.4f;
 	arcaneGroup->setRenderer(arcane);
 	arcaneGroup->setFollowParentTransform(true);
 	arcaneGroup->syncParentParams(true, true);
@@ -185,13 +251,14 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	arcane->getMaterial()->applyMaterial();
 
 	arcaneGroup->createModel(Particle::RotateSpeedZ)->setStart(3.0f, 5.0f);
-	arcaneGroup->createModel(Particle::RotateZ)->setStart(0.0f, core::PI);
+	arcaneGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
+	arcaneGroup->createModel(Particle::Scale)->setStart(1.0f, 1.2f)->setEnd(0.6f);
 	arcaneGroup->LifeMin = 4.0f;
 	arcaneGroup->LifeMax = 8.0f;
 
 	Particle::CEmitter *arcaneEmitter = factory->createNormalEmitter(false);
 	arcaneEmitter->setFlow(100.0f);
-	arcaneEmitter->setTank(5);
+	arcaneEmitter->setTank(4);
 	arcaneEmitter->setForce(0.0f, 0.0f);
 	arcaneEmitter->setZone(point);
 	arcaneGroup->addEmitter(arcaneEmitter);
@@ -200,9 +267,9 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	Particle::CSubGroup *sphereGroup = ps->createParticleSubGroup(sparkGroup);
 
 	Particle::CQuadRenderer *sphere = factory->createQuadRenderer();
-	sphere->SizeX = 0.2f;
-	sphere->SizeY = 0.2f;
-	sphere->SizeZ = 0.2f;
+	sphere->SizeX = 0.1f;
+	sphere->SizeY = 0.1f;
+	sphere->SizeZ = 0.1f;
 	sphereGroup->setRenderer(sphere);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_sphere.png");
@@ -213,6 +280,7 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	sphereGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	sphereGroup->createModel(Particle::RotateSpeedZ)->setStart(3.0f, 5.0f);
 	sphereGroup->createModel(Particle::RotateZ)->setStart(0.0f, core::PI);
+	sphereGroup->createModel(Particle::Scale)->setStart(0.8f, 1.0f)->setEnd(0.0f);
 	sphereGroup->LifeMin = 0.5f;
 	sphereGroup->LifeMax = 1.5f;
 	sphereGroup->Friction = 1.0f;
