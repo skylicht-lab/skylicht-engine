@@ -38,7 +38,9 @@ namespace Skylicht
 			Friction(0.0f),
 			LifeMin(1.0f),
 			LifeMax(2.0f),
-			m_callback(NULL)
+			m_callback(NULL),
+			OrientationNormal(1.0f, 0.0f, 0.0f),
+			OrientationUp(0.0f, 1.0f, 0.0f)
 		{
 			m_particleSystem = new CParticleSystem();
 			m_bufferSystem = new CParticleBufferSystem();

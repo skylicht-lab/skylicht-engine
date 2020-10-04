@@ -3,8 +3,6 @@
 #include "IApplicationEventReceiver.h"
 #include "ParticleSystem/CParticleComponent.h"
 
-#define MAX_POOL 20
-
 class SampleParticlesMagicSkill :
 	public IApplicationEventReceiver,
 	public IEventReceiver
@@ -18,7 +16,7 @@ private:
 
 	CGlyphFont* m_font;
 
-	Particle::CParticleComponent* m_particlePool[MAX_POOL];
+	Particle::CParticleComponent* m_projectiles;
 
 public:
 	SampleParticlesMagicSkill();
@@ -27,7 +25,9 @@ public:
 
 	virtual bool OnEvent(const SEvent& event);
 
-	void initParticleSystem(Particle::CParticleComponent *ps);
+	void initProjectiles(Particle::CParticleComponent *ps);
+
+	void initTower(Particle::CParticleComponent *ps);
 
 	virtual void onUpdate();
 
