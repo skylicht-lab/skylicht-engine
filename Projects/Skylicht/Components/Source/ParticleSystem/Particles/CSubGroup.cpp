@@ -32,7 +32,8 @@ namespace Skylicht
 	{
 		CSubGroup::CSubGroup(CGroup *group) :
 			m_parentGroup(group),
-			m_followParentTransform(false)
+			m_followParentTransform(false),
+			m_emitterWorldOrientation(false)
 		{
 			m_parentGroup->addCallback(this);
 
@@ -166,21 +167,22 @@ namespace Skylicht
 			if (m_followParentTransform == true)
 				return pos;
 
-			core::vector3df ret = m_position + pos;
+			core::vector3df ret = m_position + m_rotate * pos;
 			return ret;
 		}
 
 		core::vector3df CSubGroup::getTransformVector(const core::vector3df& vec)
 		{
+			if (m_emitterWorldOrientation == true)
+				return CGroup::getTransformVector(vec);
+
 			core::vector3df ret = m_rotate * vec;
 			return ret;
-		}
+		}		
 
-		void CSubGroup::setFollowParentTransform(bool b)
+		void CSubGroup::syncParentParams(bool life, bool color)
 		{
-			m_followParentTransform = b;
-
-			m_parentSystem->setEnable(b);
+			((CParentRelativeSystem*)m_parentSystem)->syncParams(life, color);
 		}
 	}
 }
