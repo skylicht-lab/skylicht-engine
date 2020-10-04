@@ -139,6 +139,7 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 
 	Particle::CCylinder* cylinder = factory->createCylinderZone(core::vector3df(), core::vector3df(0.0f, 1.0f, 0.0f), 0.6, 0.1f);
 	Particle::CPoint* point = factory->createPointZone();
+	Particle::CCylinder* trailCylinder = factory->createCylinderZone(core::vector3df(0.0f, -0.3f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 0.2, 0.7f);
 
 	// GROUP: SPARK
 	Particle::CGroup *sparkGroup = ps->createParticleGroup();
@@ -176,17 +177,17 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	arcane->SizeZ = 0.6f;
 	arcaneGroup->setRenderer(arcane);
 	arcaneGroup->setFollowParentTransform(true);
+	arcaneGroup->syncParentParams(true, true);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_twirl.png");
 	arcane->setMaterialType(Particle::Addtive, Particle::Camera);
 	arcane->getMaterial()->setTexture(0, texture);
 	arcane->getMaterial()->applyMaterial();
 
-	arcaneGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	arcaneGroup->createModel(Particle::RotateSpeedZ)->setStart(3.0f, 5.0f);
 	arcaneGroup->createModel(Particle::RotateZ)->setStart(0.0f, core::PI);
 	arcaneGroup->LifeMin = 4.0f;
-	arcaneGroup->LifeMin = 8.0f;
+	arcaneGroup->LifeMax = 8.0f;
 
 	Particle::CEmitter *arcaneEmitter = factory->createNormalEmitter(false);
 	arcaneEmitter->setFlow(100.0f);
@@ -212,15 +213,15 @@ void SampleParticlesMagicSkill::initParticleSystem(Particle::CParticleComponent 
 	sphereGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	sphereGroup->createModel(Particle::RotateSpeedZ)->setStart(3.0f, 5.0f);
 	sphereGroup->createModel(Particle::RotateZ)->setStart(0.0f, core::PI);
-	sphereGroup->LifeMin = 1.0f;
-	sphereGroup->LifeMin = 2.0f;
+	sphereGroup->LifeMin = 0.5f;
+	sphereGroup->LifeMax = 1.5f;
 	sphereGroup->Friction = 1.0f;
 
 	Particle::CEmitter *sphereEmitter = factory->createSphericEmitter(-CTransform::s_oy, 0.0f, 60.0f * core::DEGTORAD);
 	sphereEmitter->setFlow(10.0f);
 	sphereEmitter->setTank(-1);
-	sphereEmitter->setForce(0.6f, 1.0f);
-	sphereEmitter->setZone(point);
+	sphereEmitter->setForce(0.0f, 0.6f);
+	sphereEmitter->setZone(trailCylinder);
 	sphereGroup->addEmitter(sphereEmitter);
 }
 

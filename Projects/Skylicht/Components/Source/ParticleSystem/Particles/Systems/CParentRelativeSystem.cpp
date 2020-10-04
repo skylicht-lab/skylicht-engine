@@ -32,7 +32,9 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CParentRelativeSystem::CParentRelativeSystem()
+		CParentRelativeSystem::CParentRelativeSystem() :
+			m_syncLife(false),
+			m_syncColor(false)
 		{
 
 		}
@@ -60,7 +62,24 @@ namespace Skylicht
 
 				if (p->ParentIndex >= 0)
 				{
-					p->Position = (p->Position - p->LastPosition) + baseParticles[p->ParentIndex].Position;
+					CParticle &parent = baseParticles[p->ParentIndex];
+
+					p->Position = (p->Position - p->LastPosition) + parent.Position;
+
+					if (m_syncLife == true)
+					{
+						p->Age = parent.Age;
+						p->Life = parent.Life;
+						p->LifeTime = parent.LifeTime;
+					}
+
+					if (m_syncColor == true)
+					{
+						p->Params[ColorR] = parent.Params[ColorR];
+						p->Params[ColorG] = parent.Params[ColorG];
+						p->Params[ColorB] = parent.Params[ColorB];
+						p->Params[ColorA] = parent.Params[ColorA];
+					}
 				}
 			}
 		}
