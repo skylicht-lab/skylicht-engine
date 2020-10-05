@@ -74,7 +74,11 @@ void SampleDrawPrimitives::onInitApp()
 	cubeObj2->getTransformEuler()->setPosition(core::vector3df(1.0f, 0.0f, 0.0f));
 
 	// Rendering
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
+
 	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
 }
 
 void SampleDrawPrimitives::onUpdate()

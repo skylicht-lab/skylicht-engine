@@ -70,7 +70,11 @@ void SampleParticlesVortex::onInitApp()
 	initParticleSystem(m_currentParticleObj->addComponent<Particle::CParticleComponent>());
 
 	// rendering pipe line
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
+
 	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
 }
 
 void SampleParticlesVortex::initParticleSystem(Particle::CParticleComponent *ps)
