@@ -15,6 +15,7 @@ cbuffer cbPerFrame
 };
 
 #include "LibNoise.hlsl"
+#include "../../PostProcessing/HLSL/LibToneMapping.hlsl"
 
 float snoise(float3 coord)
 {
@@ -50,5 +51,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float g = pow(max(color, 0.0),2.0)*0.4;
 	float b = pow(max(color, 0.0),3.0)*0.15;
 		
-	return input.color * float4(r, g, b, 1.0);
+	float4 ret = input.color * float4(r, g, b, 1.0);
+	return float4(sRGB(ret.rgb), ret.a);
 }

@@ -45,6 +45,16 @@ float pnoise( float3 q )
 	q = mul(q, m)*2.01;
 	return -1.0 + f * 2.0;
 }
+static const float gamma = 2.2;
+static const float invGamma = 1.0/2.2;
+float3 sRGB(float3 color)
+{
+	return pow(color, gamma);
+}
+float3 linearRGB(float3 color)
+{
+	return pow(color, invGamma);
+}
 float snoise(float3 coord)
 {
 	return 1.0 - noise(coord) * 2.0;
@@ -72,5 +82,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float r = color;
 	float g = pow(max(color, 0.0),2.0)*0.4;
 	float b = pow(max(color, 0.0),3.0)*0.15;
-	return input.color * float4(r, g, b, 1.0);
+	float4 ret = input.color * float4(r, g, b, 1.0);
+	return float4(sRGB(ret.rgb), ret.a);
 }

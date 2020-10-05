@@ -45,6 +45,16 @@ float pnoise( float3 q )
 	q = mul(q, m)*2.01;
 	return -1.0 + f * 2.0;
 }
+static const float gamma = 2.2;
+static const float invGamma = 1.0/2.2;
+float3 sRGB(float3 color)
+{
+	return pow(color, gamma);
+}
+float3 linearRGB(float3 color)
+{
+	return pow(color, invGamma);
+}
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float f = pnoise(uNoiseOffset.xyz + input.worldPos.xyz * uNoiseOffset.w);
@@ -55,5 +65,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	col = col * col;
 	col = col * col;
 	col = col * uElectricColor.rgb;
-	return input.color * float4(col, 1.0);
+	float4 ret = input.color * float4(col, 1.0);
+	return float4(sRGB(ret.rgb), ret.a);
 }

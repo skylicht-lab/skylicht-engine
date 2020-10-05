@@ -35,6 +35,16 @@ float pnoise( vec3 q )
 	f += 0.0625*noise( q ); q = m*q*2.01;
 	return -1.0 + f * 2.0;
 }
+const float gamma = 2.2;
+const float invGamma = 1.0/2.2;
+vec3 sRGB(vec3 color)
+{
+	return pow(color, vec3(gamma));
+}
+vec3 linearRGB(vec3 color)
+{
+	return pow(color, vec3(invGamma));
+}
 float snoise(vec3 coord)
 {
 	return 1.0 - noise(coord) * 2.0;
@@ -62,5 +72,6 @@ void main(void)
 	float r = color;
 	float g = pow(max(color, 0.0),2.0)*0.4;
 	float b = pow(max(color, 0.0),3.0)*0.15;
-	FragColor = varColor * vec4(r, g, b, 1.0);
+	vec4 ret = varColor * vec4(r, g, b, 1.0);
+	FragColor = vec4(sRGB(ret.rgb), ret.a);
 }

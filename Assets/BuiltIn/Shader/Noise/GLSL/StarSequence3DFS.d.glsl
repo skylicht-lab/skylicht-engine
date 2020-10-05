@@ -11,6 +11,7 @@ in vec4 varWorldPos;
 out vec4 FragColor;
 
 #include "LibNoise.glsl"
+#include "../../PostProcessing/GLSL/LibToneMapping.glsl"
 
 float snoise(vec3 coord)
 {
@@ -46,5 +47,6 @@ void main(void)
 	float g = pow(max(color, 0.0),2.0)*0.4;
 	float b = pow(max(color, 0.0),3.0)*0.15;
 		
-	FragColor = varColor * vec4(r, g, b, 1.0);
+	vec4 ret = varColor * vec4(r, g, b, 1.0);
+	FragColor = vec4(sRGB(ret.rgb), ret.a);
 }

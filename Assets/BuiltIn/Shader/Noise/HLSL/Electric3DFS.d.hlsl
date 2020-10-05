@@ -13,6 +13,7 @@ cbuffer cbPerFrame
 };
 
 #include "LibNoise.hlsl"
+#include "../../PostProcessing/HLSL/LibToneMapping.hlsl"
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
@@ -27,5 +28,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	col = col * col;
 	col = col * uElectricColor.rgb;
 	
-	return input.color * float4(col, 1.0);
+	float4 ret = input.color * float4(col, 1.0);
+	return float4(sRGB(ret.rgb), ret.a);
 }
