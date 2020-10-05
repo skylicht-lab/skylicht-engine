@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBaseRP.h"
 #include "IPostProcessor.h"
 
+#include "Material/CMaterial.h"
+
 namespace Skylicht
 {
 	class CPostProcessorRP :
@@ -41,9 +43,15 @@ namespace Skylicht
 		ITexture *m_adaptLum;
 		int m_lumTarget;
 
+		ITexture *m_rtt[4];
+
 		SMaterial m_finalPass;
 		SMaterial m_lumPass;
 		SMaterial m_adaptLumPass;
+		SMaterial m_effectPass;
+
+		bool m_glowEffect;
+		bool m_fxaa;
 
 	public:
 		CPostProcessorRP();
@@ -57,5 +65,19 @@ namespace Skylicht
 		virtual void postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport);
 
 		void luminanceMapGeneration(ITexture *color);
+
+		inline void enableGlowEffect(bool b)
+		{
+			m_glowEffect = b;
+		}
+
+		inline void enableFXAA(bool b)
+		{
+			m_fxaa = b;
+		}
+
+	protected:
+
+		void renderEffect(int fromTarget, int toTarget, CMaterial *material);
 	};
 }
