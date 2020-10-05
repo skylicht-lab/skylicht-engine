@@ -235,7 +235,7 @@ namespace Skylicht
 				cb->OnParticleBorn(p);
 		}
 
-		void CGroup::addParticle(const core::vector3df& position, CEmitter *emitter)
+		int CGroup::addParticleByEmitter(CEmitter *emitter, const core::vector3df& position, const core::vector3df& subEmitterDirection)
 		{
 			CParticle* p = create(1);
 
@@ -246,7 +246,31 @@ namespace Skylicht
 				emitter->generateVelocity(*p, emitter->getZone(), this);
 
 				initParticleModel(*p);
+
+				p->Position = position;
+				p->SubEmitterDirection = subEmitterDirection;
 			}
+
+			return (int)p->Index;
+		}
+
+		int CGroup::addParticleVelocityByEmitter(CEmitter *emitter, const core::vector3df& position, const core::vector3df& velocity)
+		{
+			CParticle* p = create(1);
+
+			initParticleLifeTime(*p);
+
+			if (p->LifeTime > 0)
+			{
+				emitter->generateVelocity(*p, emitter->getZone(), this);
+
+				initParticleModel(*p);
+
+				p->Position = position;
+				p->Velocity = velocity;
+			}
+
+			return (int)p->Index;
 		}
 
 		CParticle* CGroup::create(u32 num)

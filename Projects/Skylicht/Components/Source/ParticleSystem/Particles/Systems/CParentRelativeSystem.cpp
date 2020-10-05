@@ -81,6 +81,14 @@ namespace Skylicht
 						p->Params[ColorA] = parent.Params[ColorA];
 					}
 				}
+				else
+				{
+					// sync dead
+					if (m_syncLife == true)
+					{
+						p->Life = -1.0f;
+					}
+				}
 			}
 		}
 	}

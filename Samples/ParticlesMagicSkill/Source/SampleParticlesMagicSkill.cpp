@@ -8,6 +8,8 @@
 #include "ParticleSystem/CParticleComponent.h"
 #include "ParticleSystem/CParticleTrailComponent.h"
 
+#include "Projective/CProjective.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SampleParticlesMagicSkill *app = new SampleParticlesMagicSkill();
@@ -16,7 +18,11 @@ void installApplication(const std::vector<std::string>& argv)
 
 SampleParticlesMagicSkill::SampleParticlesMagicSkill() :
 	m_scene(NULL),
-	m_vortexSystem(NULL)
+	m_vortexSystem(NULL),
+	m_impactGroup(NULL),
+	m_projectileGroup(NULL),
+	m_shootDelay(0.0f),
+	m_target(NULL)
 {
 	CImguiManager::createGetInstance();
 
@@ -27,6 +33,7 @@ SampleParticlesMagicSkill::~SampleParticlesMagicSkill()
 {
 	CEventManager::getInstance()->unRegisterEvent(this);
 
+	delete m_target;
 	delete m_vortexSystem;
 	delete m_scene;
 
@@ -77,14 +84,12 @@ void SampleParticlesMagicSkill::onInitApp()
 	initTower(tower);
 
 	// projectiles
-	m_projectiles = zone->createEmptyObject()->addComponent<Particle::CParticleComponent>();
-	initProjectiles(m_projectiles);
-	m_projectiles->getGameObject()->setVisible(false);
+	m_projectile = zone->createEmptyObject()->addComponent<Particle::CParticleComponent>();
+	initProjectiles(m_projectile);
 
 	// impact
 	m_impacts = zone->createEmptyObject()->addComponent<Particle::CParticleComponent>();
 	initImpact(m_impacts);
-	m_impacts->getGameObject()->setVisible(false);
 
 	// init font
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
@@ -100,7 +105,7 @@ void SampleParticlesMagicSkill::onInitApp()
 	// create UI Text in Canvas
 	CGUIText *textLarge = canvas->createText(m_font);
 	textLarge->setPosition(core::vector3df(0.0f, -10.0f, 0.0f));
-	textLarge->setText("Press SPACE to simulate explosion");
+	textLarge->setText("Press LEFT MOUSE to simulate projectile");
 	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Bottom);
 
 	// rendering pipe line
@@ -109,22 +114,19 @@ void SampleParticlesMagicSkill::onInitApp()
 
 bool SampleParticlesMagicSkill::OnEvent(const SEvent& event)
 {
-	if (event.EventType == EET_KEY_INPUT_EVENT)
+	if (event.EventType == EET_MOUSE_INPUT_EVENT)
 	{
-		if (event.KeyInput.Key == irr::KEY_SPACE && event.KeyInput.PressedDown == false)
+		m_mousePosition.X = (float)event.MouseInput.X;
+		m_mousePosition.Y = (float)event.MouseInput.Y;
+
+		if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 		{
-			core::vector3df position(0.0f, 1.0f, 0.0f);
-
-			// demo project tiles
-			m_projectiles->getGameObject()->setVisible(true);
-			m_projectiles->getGameObject()->getTransformEuler()->setPosition(position);
-			m_projectiles->Play();
-
-			// demo impact
-			m_impacts->getGameObject()->setVisible(true);
-			m_impacts->getGameObject()->getTransformEuler()->setPosition(core::vector3df(3.0f, 0.0f, 0.0f));
-			m_impacts->Play();
-
+			m_mouseDown = true;
+			return true;
+		}
+		else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
+		{
+			m_mouseDown = false;
 			return true;
 		}
 	}
@@ -246,29 +248,31 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	// FACTORY & ZONE
 	Particle::CFactory *factory = ps->getParticleFactory();
 
-	Particle::CCylinder* cylinder = factory->createCylinderZone(core::vector3df(), core::vector3df(0.0f, 1.0f, 0.0f), 0.6, 0.1f);
 	Particle::CPoint* point = factory->createPointZone();
 	Particle::CCylinder* trailCylinder = factory->createCylinderZone(core::vector3df(0.0f, -0.3f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 0.2, 0.4f);
 
-	// GROUP: SPARK
-	Particle::CGroup *sparkGroup = ps->createParticleGroup();
+	// GROUP: PROJECTILE
+	Particle::CGroup *projectileGroup = ps->createParticleGroup();
+	m_projectileGroup = projectileGroup;
 
-	sparkGroup->LifeMin = 4.0f;
-	sparkGroup->LifeMax = 8.0f;
-	sparkGroup->Friction = 0.4f;
-	sparkGroup->Gravity.set(0.0f, -0.1f, 0.0f);
-	sparkGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
+	projectileGroup->LifeMin = 4.0f;
+	projectileGroup->LifeMax = 8.0f;
+	projectileGroup->Friction = 0.4f;
+	projectileGroup->Gravity.set(0.0f, 0.0f, 0.0f);
+	projectileGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 
-	Particle::CEmitter *sparkEmitter = factory->createNormalEmitter(false);
-	sparkEmitter->setFlow(100.0f);
-	sparkEmitter->setTank(20);
-	sparkEmitter->setForce(2.5f, 6.0f);
-	sparkEmitter->setZone(cylinder);
-	sparkGroup->addEmitter(sparkEmitter);
+	Particle::CEmitter *projectiveEmitter = factory->createRandomEmitter();
+	projectiveEmitter->setFlow(0.0f);
+	projectiveEmitter->setTank(0);
+	projectiveEmitter->setForce(2.5f, 6.0f);
+	projectiveEmitter->setZone(point);
+	projectileGroup->addEmitter(projectiveEmitter);
+
+	m_target = new CTargetProjectile(projectileGroup);
 
 	// ADD TRAIL
 	Particle::CParticleTrailComponent *psTrail = ps->getGameObject()->addComponent<Particle::CParticleTrailComponent>();
-	Particle::CParticleTrail *trail = psTrail->addTrail(sparkGroup);
+	Particle::CParticleTrail *trail = psTrail->addTrail(projectileGroup);
 
 	CMaterial *material = trail->getMaterial();
 	material->setTexture(0, CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_trail.png"));
@@ -278,7 +282,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 
 
 	// SUB GROUP: Arcane
-	Particle::CSubGroup *arcaneGroup = ps->createParticleSubGroup(sparkGroup);
+	Particle::CSubGroup *arcaneGroup = ps->createParticleSubGroup(projectileGroup);
 
 	Particle::CQuadRenderer *arcane = factory->createQuadRenderer();
 	arcane->SizeX = 0.4f;
@@ -307,7 +311,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	arcaneGroup->addEmitter(arcaneEmitter);
 
 	// SUB GROUP: Sphere
-	Particle::CSubGroup *sphereGroup = ps->createParticleSubGroup(sparkGroup);
+	Particle::CSubGroup *sphereGroup = ps->createParticleSubGroup(projectileGroup);
 
 	Particle::CQuadRenderer *sphere = factory->createQuadRenderer();
 	sphere->SizeX = 0.1f;
@@ -345,25 +349,29 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	Particle::CSphere* sphereZone = factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), 0.1f);
 	Particle::CSphere* largeSphereZone = factory->createSphereZone(core::vector3df(0.0f, 0.2f, 0.0f), 0.3f);
 
-	// GROUP: SPARK
-	Particle::CGroup *sparkGroup = ps->createParticleGroup();
+	// GROUP: IMPACT
+	Particle::CGroup *impactGroup = ps->createParticleGroup();
 
-	sparkGroup->LifeMin = 0.5f;
-	sparkGroup->LifeMax = 1.0f;
-	sparkGroup->Friction = 0.0f;
-	sparkGroup->Gravity.set(0.0f, 0.0f, 0.0f);
+	impactGroup->LifeMin = 0.5f;
+	impactGroup->LifeMax = 1.0f;
+	impactGroup->Friction = 0.0f;
+	impactGroup->Gravity.set(0.0f, 0.0f, 0.0f);
 
-	Particle::CEmitter *sparkEmitter = factory->createRandomEmitter();
-	sparkEmitter->setFlow(100.0f);
-	sparkEmitter->setTank(1);
-	sparkEmitter->setForce(0.0f, 0.0f);
-	sparkEmitter->setZone(factory->createPointZone());
-	sparkGroup->addEmitter(sparkEmitter);
+	Particle::CEmitter *impactEmitter = factory->createRandomEmitter();
+	impactEmitter->setFlow(0);
+	impactEmitter->setTank(0);
+	impactEmitter->setForce(0.0f, 0.0f);
+	impactEmitter->setZone(factory->createPointZone());
+	impactGroup->addEmitter(impactEmitter);
+
+	m_impactGroup = impactGroup;
+
+	m_target->setImpactGroup(impactGroup);
 
 	// SUBGROUP: GLOW
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_glow.png");
 
-	Particle::CSubGroup *glowGroup = ps->createParticleSubGroup(sparkGroup);
+	Particle::CSubGroup *glowGroup = ps->createParticleSubGroup(impactGroup);
 
 	glowGroup->LifeMin = 0.5f;
 	glowGroup->LifeMax = 0.6f;
@@ -390,7 +398,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	glowGroup->addEmitter(pointEmitter);
 
 	// GROUP: LINE SPARK
-	Particle::CSubGroup *lineSparkGroup = ps->createParticleSubGroup(sparkGroup);
+	Particle::CSubGroup *lineSparkGroup = ps->createParticleSubGroup(impactGroup);
 
 	Particle::CQuadRenderer *lineSpark = factory->createQuadRenderer();
 	lineSparkGroup->setRenderer(lineSpark);
@@ -419,7 +427,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	lineSparkGroup->addEmitter(lineSparkEmitter);
 
 	// GROUP: EXPLOSION SPARK
-	Particle::CSubGroup *sphereGroup = ps->createParticleSubGroup(sparkGroup);
+	Particle::CSubGroup *sphereGroup = ps->createParticleSubGroup(impactGroup);
 
 	Particle::CQuadRenderer *sphere = factory->createQuadRenderer();
 	sphere->SizeX = 0.5f;
@@ -473,7 +481,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	lingerGroup->addEmitter(lingerEmitter);
 
 	// GROUP: POINT
-	Particle::CSubGroup *pointGroup = ps->createParticleSubGroup(sparkGroup);
+	Particle::CSubGroup *pointGroup = ps->createParticleSubGroup(impactGroup);
 
 	Particle::CQuadRenderer *point = factory->createQuadRenderer();
 	point->SizeX = 0.2f;
@@ -500,8 +508,59 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	pointGroup->addEmitter(randomEmitter);
 }
 
+void SampleParticlesMagicSkill::updateProjectile()
+{
+	const float shootPerSecond = 10.0f;
+	const float shootSpeed = 15.0f;
+	const float farPoint = 20.0f;
+
+	if (m_shootDelay >= 0.0f)
+		m_shootDelay = m_shootDelay - getTimeStep();
+
+	if (m_mouseDown == true)
+	{
+		if (m_shootDelay < 0.0f)
+		{
+			core::vector3df projectilePosition(0.0f, 1.0f, 0.0f);
+			core::vector3df collide;
+
+			core::line3df viewRay = CProjective::getViewRay(m_camera, m_mousePosition.X, m_mousePosition.Y);
+
+			// plane test
+			core::plane3df p(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+			bool hitCollide = p.getIntersectionWithLimitedLine(viewRay.start, viewRay.end, collide);
+
+			core::vector3df viewDirection = viewRay.getVector();
+			viewDirection.normalize();
+
+			// bullet direction
+			core::vector3df speedDirection;
+			if (hitCollide == true)
+				speedDirection = collide - projectilePosition;
+			else
+				speedDirection = viewRay.start + viewDirection * farPoint - projectilePosition;
+			speedDirection.normalize();
+
+			// project tiles
+			int id = m_projectileGroup->addParticleVelocity(0, projectilePosition, speedDirection * shootSpeed);
+
+			// impact
+			if (hitCollide == true && id >= 0)
+			{
+				m_target->setTargetCollide(id, collide, core::vector3df(0.0f, 1.0f, 0.0f));
+			}
+
+			// restart delay shoot
+			m_shootDelay = 1000.0f / shootPerSecond;
+		}
+	}
+}
+
 void SampleParticlesMagicSkill::onUpdate()
 {
+	// update projective
+	updateProjectile();
+
 	// update application
 	m_scene->update();
 
