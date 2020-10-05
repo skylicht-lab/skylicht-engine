@@ -163,7 +163,7 @@ namespace Skylicht
 		}
 
 		CMaterial* clone(CGameObject *gameObject);
-		
+
 		void deleteAllParams();
 		void deleteExtramParams();
 
@@ -204,6 +204,16 @@ namespace Skylicht
 		inline void setFrontfaceCulling(bool b)
 		{
 			m_frontfaceCulling = b;
+		}
+
+		inline void setZWrite(bool b)
+		{
+			m_zWriteEnable = b;
+		}
+
+		inline void setZTest(video::E_COMPARISON_FUNC f)
+		{
+			m_zBuffer = f;
 		}
 
 		SUniformValue* getUniform(const char *name);
@@ -258,7 +268,7 @@ namespace Skylicht
 
 		void applyMaterial(SMaterial& mat);
 
-		void updateTexture(SMaterial& mat);		
+		void updateTexture(SMaterial& mat);
 
 		void updateShaderParams();
 

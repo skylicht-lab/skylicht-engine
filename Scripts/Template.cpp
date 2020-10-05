@@ -27,7 +27,6 @@ void installApplication(const std::vector<std::string>& argv)
 	delete m_largeFont;
 #endif
 	delete m_forwardRP;
-	delete m_postProcessRP;
 }
 
 void @project_name@::onInitApp()
@@ -104,11 +103,6 @@ void @project_name@::onInitApp()
 
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
-
-	m_postProcessRP = new CLinearColorRP();
-	m_postProcessRP->initRender(w, h);
-
-	m_forwardRP->setPostProcessor(m_postProcessRP);
 }
 
 void @project_name@::onUpdate()

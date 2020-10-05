@@ -25,10 +25,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CForwardRP.h"
 
+#include "Material/Shader/CShaderManager.h"
+
 namespace Skylicht
 {
-	CForwardRP::CForwardRP(bool postProcessor) :
-		m_usePostProcessor(postProcessor),
+	CForwardRP::CForwardRP(bool linearRGB) :
+		m_useLinearRGB(linearRGB),
 		m_postProcessor(NULL),
 		m_target(NULL)
 	{
@@ -45,8 +47,10 @@ namespace Skylicht
 	{
 		m_size.set(w, h);
 
-		if (m_usePostProcessor == true)
+		if (m_useLinearRGB == true)
 			m_target = getVideoDriver()->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
+
+		m_finalPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureLinearRGB");
 	}
 
 	void CForwardRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
@@ -58,7 +62,7 @@ namespace Skylicht
 
 		ITexture *currentTarget = NULL;
 
-		if (m_usePostProcessor == true && m_postProcessor != NULL)
+		if (m_useLinearRGB == true)
 		{
 			driver->setRenderTarget(m_target, true, true);
 			currentTarget = m_target;
@@ -95,9 +99,24 @@ namespace Skylicht
 
 		onNext(currentTarget, camera, entityManager, viewport);
 
-		if (m_usePostProcessor == true && m_postProcessor != NULL)
+		if (m_useLinearRGB && m_target != NULL)
 		{
-			m_postProcessor->postProcessing(target, m_target, NULL, NULL, viewport);
+			driver->setRenderTarget(target, false, false);
+
+			float renderW = (float)m_size.Width;
+			float renderH = (float)m_size.Height;
+
+			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+			{
+				driver->setViewPort(viewport);
+				renderW = (float)viewport.getWidth();
+				renderH = (float)viewport.getHeight();
+			}
+
+			m_finalPass.setTexture(0, m_target);
+
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 		}
 	}
 }

@@ -33,15 +33,17 @@ namespace Skylicht
 	{
 	protected:
 
-		bool m_usePostProcessor;
+		bool m_useLinearRGB;
 
 		ITexture *m_target;
 		core::dimension2du m_size;
 
 		IPostProcessor *m_postProcessor;
 
+		SMaterial m_finalPass;
+
 	public:
-		CForwardRP(bool postProcessor = true);
+		CForwardRP(bool linearRGB = true);
 
 		virtual ~CForwardRP();
 

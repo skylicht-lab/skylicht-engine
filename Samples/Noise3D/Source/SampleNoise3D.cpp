@@ -123,7 +123,11 @@ void SampleNoise3D::onInitApp()
 #endif
 
 	// rendering pipe line
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
+
 	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
 }
 
 void SampleNoise3D::onUpdate()

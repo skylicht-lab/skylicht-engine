@@ -52,7 +52,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderPipeline/CDeferredRP.h"
 #include "RenderPipeline/CShadowMapRP.h"
 #include "RenderPipeline/CPostProcessorRP.h"
-#include "RenderPipeline/CLinearColorRP.h"
 
 // Scene, GameObject
 #include "Scene/CScene.h"

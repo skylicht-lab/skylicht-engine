@@ -18,8 +18,7 @@ SampleMaterials::SampleMaterials() :
 	m_scene(NULL),
 	m_bakeSHLighting(true),
 	m_reflectionProbe(NULL),
-	m_forwardRP(NULL),
-	m_postProcessRP(NULL)
+	m_forwardRP(NULL)
 {
 	Lightmapper::CLightmapper::createGetInstance();
 }
@@ -29,7 +28,6 @@ SampleMaterials::~SampleMaterials()
 	delete m_scene;
 
 	delete m_forwardRP;
-	delete m_postProcessRP;
 
 	Lightmapper::CLightmapper::releaseInstance();
 }
@@ -128,11 +126,6 @@ void SampleMaterials::onInitApp()
 
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
-
-	m_postProcessRP = new CLinearColorRP();
-	m_postProcessRP->initRender(w, h);
-
-	m_forwardRP->setPostProcessor(m_postProcessRP);
 }
 
 void SampleMaterials::onUpdate()
