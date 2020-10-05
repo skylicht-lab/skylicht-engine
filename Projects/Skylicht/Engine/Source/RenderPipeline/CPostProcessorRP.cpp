@@ -25,15 +25,21 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CPostProcessorRP.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
 	CPostProcessorRP::CPostProcessorRP() :
 		m_adaptLum(NULL),
-		m_lumTarget(0)
+		m_lumTarget(0),
+		m_glowEffect(false),
+		m_fxaa(false)
 	{
 		m_luminance[0] = NULL;
 		m_luminance[1] = NULL;
+
+		for (int i = 0; i < 4; i++)
+			m_rtt[i] = NULL;
 	}
 
 	CPostProcessorRP::~CPostProcessorRP()
@@ -42,6 +48,12 @@ namespace Skylicht
 		driver->removeTexture(m_luminance[0]);
 		driver->removeTexture(m_luminance[1]);
 		driver->removeTexture(m_adaptLum);
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (m_rtt[i] != NULL)
+				driver->removeTexture(m_rtt[i]);
+		}
 	}
 
 	void CPostProcessorRP::initRender(int w, int h)
@@ -56,6 +68,15 @@ namespace Skylicht
 		m_luminance[0] = driver->addRenderTargetTexture(m_lumSize, "lum_0", ECF_R16F);
 		m_luminance[1] = driver->addRenderTargetTexture(m_lumSize, "lum_1", ECF_R16F);
 		m_adaptLum = driver->addRenderTargetTexture(m_lumSize, "lum_adapt", ECF_R16F);
+
+		// framebuffer for glow/fxaa
+		if (m_glowEffect == true)
+		{
+			m_rtt[0] = driver->addRenderTargetTexture(m_size, "rtt_0", ECF_A16B16G16R16F);
+			m_rtt[1] = driver->addRenderTargetTexture(m_size, "rtt_1", ECF_A16B16G16R16F);
+			m_rtt[2] = driver->addRenderTargetTexture(m_size / 2, "rtt_2", ECF_A16B16G16R16F);
+			m_rtt[3] = driver->addRenderTargetTexture(m_size / 4, "rtt_3", ECF_A16B16G16R16F);
+		}
 
 		// init final pass shader
 		m_finalPass.MaterialType = shaderMgr->getShaderIDByName("PostEffect");
@@ -103,7 +124,14 @@ namespace Skylicht
 
 		luminanceMapGeneration(color);
 
-		driver->setRenderTarget(finalTarget, false, false);
+		if (m_glowEffect || m_fxaa)
+		{
+			driver->setRenderTarget(m_rtt[0], false, false);
+		}
+		else
+		{
+			driver->setRenderTarget(finalTarget, false, false);
+		}
 
 		float renderW = (float)m_size.Width;
 		float renderH = (float)m_size.Height;
@@ -123,6 +151,30 @@ namespace Skylicht
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 
+		// update effect
+		if (m_glowEffect || m_fxaa)
+		{
+
+		}
+
 		m_lumTarget = !m_lumTarget;
+	}
+
+	void CPostProcessorRP::renderEffect(int fromTarget, int toTarget, CMaterial *material)
+	{
+		IVideoDriver *driver = getVideoDriver();
+
+		driver->setRenderTarget(m_rtt[toTarget]);
+
+		material->setTexture(0, m_rtt[fromTarget]);
+		material->applyMaterial(m_effectPass);
+
+		CShaderMaterial::setMaterial(material);
+
+		const core::dimension2du &toSize = m_rtt[toTarget]->getSize();
+		const core::dimension2du &fromSize = m_rtt[fromTarget]->getSize();
+
+		beginRender2D(toSize.Width, toSize.Height);
+		renderBufferToTarget(0, 0, fromSize.Width, fromSize.Height, m_effectPass);
 	}
 }
