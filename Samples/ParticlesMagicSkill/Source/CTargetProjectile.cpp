@@ -42,9 +42,10 @@ void CTargetProjectile::OnParticleUpdate(Particle::CParticle *particles, int num
 		Particle::CParticle &p = particles[i];
 		if (p.Position.getDistanceFromSQ(c.Position) < minLengthSQ)
 		{
+			// add impact particle
 			m_impactGroup->addParticle(0, c.Position, c.Normal);
 
-			// kill
+			// kill this particle
 			p.Life = -1.0f;
 		}
 	}
