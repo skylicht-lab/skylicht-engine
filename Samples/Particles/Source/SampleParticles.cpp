@@ -88,7 +88,11 @@ void SampleParticles::onInitApp()
 	createCanvasText("", core::vector3df(0.0f, 2.0f, 0.0f));
 
 	// Rendering pipe line
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
+
 	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
 }
 
 void SampleParticles::createCanvasText(const char *text, const core::vector3df& position)

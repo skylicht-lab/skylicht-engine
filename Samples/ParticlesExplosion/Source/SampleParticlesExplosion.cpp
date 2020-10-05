@@ -94,7 +94,11 @@ void SampleParticlesExplosion::onInitApp()
 	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Bottom);
 
 	// rendering pipe line
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
+
 	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
 }
 
 bool SampleParticlesExplosion::OnEvent(const SEvent& event)

@@ -36,7 +36,6 @@ SampleShader::~SampleShader()
 	Lightmapper::CLightmapper::releaseInstance();
 
 	delete m_forwardRP;
-	delete m_postProcessRP;
 }
 
 void SampleShader::onInitApp()
@@ -136,11 +135,6 @@ void SampleShader::onInitApp()
 
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
-
-	m_postProcessRP = new CLinearColorRP();
-	m_postProcessRP->initRender(w, h);
-
-	m_forwardRP->setPostProcessor(m_postProcessRP);
 }
 
 void SampleShader::initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial& materials)

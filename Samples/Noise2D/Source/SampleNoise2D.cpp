@@ -151,6 +151,7 @@ void SampleNoise2D::onInitApp()
 
 	// rendering pipe line
 	m_forwardRP = new CForwardRP();
+	m_forwardRP->initRender(w, h);
 }
 
 void SampleNoise2D::onUpdate()

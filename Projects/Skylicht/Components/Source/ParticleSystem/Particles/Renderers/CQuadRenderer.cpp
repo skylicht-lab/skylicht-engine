@@ -38,6 +38,7 @@ namespace Skylicht
 		{
 			m_material = new CMaterial("Particle", "BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
 			m_material->setBackfaceCulling(false);
+			m_material->setZWrite(false);
 
 			setMaterialType(m_baseShaderType, m_billboardType);
 		}
