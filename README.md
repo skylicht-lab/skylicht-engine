@@ -217,9 +217,6 @@ This is demo code how to create particle system and use [imgui](https://github.c
 #### Basic particle
 <img src="Documents/Media/Samples/sample_particles.jpg"/>
 
-#### Vortex system
-<img src="Documents/Media/Samples/sample_particles_vortex.jpg"/>
-
 #### Explosion demo
 <img src="Documents/Media/Samples/sample_particles_explosion.jpg"/>
 
