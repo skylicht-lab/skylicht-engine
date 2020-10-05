@@ -223,7 +223,9 @@ This is demo code how to create particle system and use [imgui](https://github.c
 #### Explosion demo
 <img src="Documents/Media/Samples/sample_particles_explosion.jpg"/>
 
-Thanks Julien Fryer ([SPARK](https://github.com/Synxis/SPARK)) about references and source code demo of particle system.
+#### Magic particle
+This is a demo code on how to use a simple projectile, impact, trail particle, sub emitter system.
+<img src="Documents/Media/Samples/sample_magic.jpg"/>
 
 ### Samples\Noise2D, Noise3D
 This is demo code how to use noise library shader to make vfx effect, particle turbulence.
@@ -232,10 +234,12 @@ This is demo code how to use noise library shader to make vfx effect, particle t
 
 <img src="Documents/Media/Samples/sample_noise_3d.jpg"/>
 
-Thanks [Inigo Quilez](https://www.shadertoy.com/view/4sfGzS) about code reference.
-
 ## Contributing
 Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join the group. Open an issue and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+
+## Thanks
+- Julien Fryer ([SPARK](https://github.com/Synxis/SPARK)) about references and source code demo of particle system.
+- [Inigo Quilez](https://www.shadertoy.com/view/4sfGzS) about noise code reference.
 
 ## License
 Skylicht Engine is licensed under [MIT License](LICENSE.md)
