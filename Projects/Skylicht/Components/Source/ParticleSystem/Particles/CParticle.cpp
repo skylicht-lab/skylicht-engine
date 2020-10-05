@@ -36,7 +36,8 @@ namespace Skylicht
 			Age(0.0f),
 			Life(0.0f),
 			LifeTime(0.0f),
-			HaveRotate(false)
+			HaveRotate(false),
+			SubEmitterDirection(0.0f, 1.0f, 0.0f)
 		{
 			memset(StartValue, 0, sizeof(float) * NumParams);
 			memset(EndValue, 0, sizeof(float) * NumParams);
@@ -90,6 +91,7 @@ namespace Skylicht
 			core::vector3df position = Position;
 			core::vector3df rotation = Rotation;
 			core::vector3df velocity = Velocity;
+			core::vector3df subEmitterDirection = SubEmitterDirection;
 
 			// note: 
 			// Dont swap [p.Index], just swap data
@@ -102,6 +104,7 @@ namespace Skylicht
 			Velocity = p.Velocity;
 			HaveRotate = p.HaveRotate;
 			ParentIndex = p.ParentIndex;
+			SubEmitterDirection = p.SubEmitterDirection;
 
 			p.Age = age;
 			p.Life = life;
@@ -112,6 +115,7 @@ namespace Skylicht
 			p.Velocity = velocity;
 			p.HaveRotate = haveRotate;
 			p.ParentIndex = parentIndex;
+			p.SubEmitterDirection = subEmitterDirection;
 		}
 	}
 }

@@ -217,7 +217,29 @@ namespace Skylicht
 					m_systems.erase(i);
 			}
 
-			void addParticle(const core::vector3df& position, CEmitter *emitter);
+			int addParticle(u32 emiterID, const core::vector3df& position, const core::vector3df& subEmitterDirection)
+			{
+				if (emiterID < m_emitters.size())
+				{
+					return addParticleByEmitter(m_emitters[emiterID], position, subEmitterDirection);
+				}
+
+				return -1;
+			}
+
+			int addParticleVelocity(u32 emiterID, const core::vector3df& position, const core::vector3df& velocity)
+			{
+				if (emiterID < m_emitters.size())
+				{
+					return addParticleVelocityByEmitter(m_emitters[emiterID], position, velocity);
+				}
+
+				return -1;
+			}
+
+			int addParticleByEmitter(CEmitter *emitter, const core::vector3df& position, const core::vector3df& subEmitterDirection);
+
+			int addParticleVelocityByEmitter(CEmitter *emitter, const core::vector3df& position, const core::vector3df& velocity);
 
 			IRenderer* setRenderer(IRenderer *r);
 
