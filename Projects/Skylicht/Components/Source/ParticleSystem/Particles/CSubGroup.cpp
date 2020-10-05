@@ -145,8 +145,12 @@ namespace Skylicht
 
 					// base orientation
 					m_position = base.Position;
+
 					m_direction = base.Velocity;
+					if (m_direction.getLengthSQ() == 0.0f)
+						m_direction = base.SubEmitterDirection;
 					m_direction.normalize();
+
 					m_rotate.rotationFromTo(CTransform::s_oy, m_direction);
 
 					// init new particle
@@ -178,7 +182,7 @@ namespace Skylicht
 
 			core::vector3df ret = m_rotate * vec;
 			return ret;
-		}		
+		}
 
 		void CSubGroup::syncParentParams(bool life, bool color)
 		{

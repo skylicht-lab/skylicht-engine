@@ -75,6 +75,8 @@ namespace Skylicht
 
 			core::vector3df LastPosition;
 
+			core::vector3df SubEmitterDirection;
+
 		public:
 			CParticle(u32 index);
 

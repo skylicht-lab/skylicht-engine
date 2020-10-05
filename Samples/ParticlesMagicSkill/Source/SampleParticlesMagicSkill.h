@@ -4,6 +4,8 @@
 #include "ParticleSystem/CParticleComponent.h"
 #include "ParticleSystem/Particles/Systems/CVortexSystem.h"
 
+#include "CTargetProjectile.h"
+
 class SampleParticlesMagicSkill :
 	public IApplicationEventReceiver,
 	public IEventReceiver
@@ -17,10 +19,19 @@ private:
 
 	CGlyphFont* m_font;
 
-	Particle::CParticleComponent* m_projectiles;
 	Particle::CVortexSystem *m_vortexSystem;
 
+	CTargetProjectile *m_target;
+	Particle::CParticleComponent* m_projectile;
+	Particle::CGroup* m_projectileGroup;
+
 	Particle::CParticleComponent* m_impacts;
+	Particle::CGroup* m_impactGroup;
+
+	core::vector2df m_mousePosition;
+	bool m_mouseDown;
+	float m_shootDelay;
+
 public:
 	SampleParticlesMagicSkill();
 
@@ -33,6 +44,8 @@ public:
 	void initTower(Particle::CParticleComponent *ps);
 
 	void initImpact(Particle::CParticleComponent *ps);
+
+	void updateProjectile();
 
 	virtual void onUpdate();
 
