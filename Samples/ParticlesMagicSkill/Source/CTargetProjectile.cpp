@@ -29,7 +29,7 @@ void CTargetProjectile::OnParticleUpdate(Particle::CParticle *particles, int num
 	if (m_impactGroup == NULL)
 		return;
 
-	float minLength = 0.1f;
+	float minLength = 0.3f;
 	float minLengthSQ = minLength * minLength;
 
 	for (int i = 0; i < num; i++)
