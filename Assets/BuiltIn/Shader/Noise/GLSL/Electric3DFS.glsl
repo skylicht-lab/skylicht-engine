@@ -35,6 +35,16 @@ float pnoise( vec3 q )
 	f += 0.0625*noise( q ); q = m*q*2.01;
 	return -1.0 + f * 2.0;
 }
+const float gamma = 2.2;
+const float invGamma = 1.0/2.2;
+vec3 sRGB(vec3 color)
+{
+	return pow(color, vec3(gamma));
+}
+vec3 linearRGB(vec3 color)
+{
+	return pow(color, vec3(invGamma));
+}
 void main(void)
 {
 	float f = pnoise(uNoiseOffset.xyz + varWorldPos.xyz * uNoiseOffset.w);
@@ -45,5 +55,6 @@ void main(void)
 	col = col * col;
 	col = col * col;
 	col = col * uElectricColor.rgb;
-	FragColor = varColor * vec4(col, 1.0);
+	vec4 ret = varColor * vec4(col, 1.0);
+	FragColor = vec4(sRGB(ret.rgb), ret.a);
 }

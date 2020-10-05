@@ -9,6 +9,7 @@ in vec4 varWorldPos;
 out vec4 FragColor;
 
 #include "LibNoise.glsl"
+#include "../../PostProcessing/GLSL/LibToneMapping.glsl"
 
 void main(void)
 {
@@ -23,5 +24,6 @@ void main(void)
 	col = col * col;
 	col = col * uElectricColor.rgb;
 	
-	FragColor = varColor * vec4(col, 1.0);
+	vec4 ret = varColor * vec4(col, 1.0);
+	FragColor = vec4(sRGB(ret.rgb), ret.a);
 }
