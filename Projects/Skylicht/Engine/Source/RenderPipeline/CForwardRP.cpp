@@ -99,7 +99,11 @@ namespace Skylicht
 
 		onNext(currentTarget, camera, entityManager, viewport);
 
-		if (m_useLinearRGB && m_target != NULL)
+		if (m_postProcessor != NULL && s_bakeMode == false)
+		{
+			m_postProcessor->postProcessing(target, m_target, NULL, NULL, viewport);
+		}
+		else if (m_useLinearRGB && m_target != NULL)
 		{
 			driver->setRenderTarget(target, false, false);
 

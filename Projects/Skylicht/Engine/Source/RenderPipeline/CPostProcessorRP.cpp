@@ -247,11 +247,6 @@ namespace Skylicht
 			blurUp(3, 2);
 
 			// bloom
-			core::dimension2du rrtSize = m_rtt[2]->getSize();
-			float params[2];
-			params[0] = 1.0f / (float)rrtSize.Width;
-			params[1] = 1.0f / (float)rrtSize.Height;
-			m_bloomFilter->setUniform2("uTexelSize", params);
 			m_bloomFilter->setTexture(0, m_rtt[colorID]);
 			m_bloomFilter->setTexture(1, m_rtt[2]);
 			m_bloomFilter->applyMaterial(m_effectPass);
@@ -263,10 +258,11 @@ namespace Skylicht
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
 		}
 
+		m_lumTarget = !m_lumTarget;
 
 		// test to target
 		/*
-		ITexture *tex = m_rtt[1];
+		ITexture *tex = m_rtt[2];
 		SMaterial t;
 		t.setTexture(0, tex);
 		t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
@@ -276,10 +272,8 @@ namespace Skylicht
 
 		driver->setRenderTarget(finalTarget, false, false);
 		beginRender2D(renderW, renderH);
-		renderBufferToTarget(0.0f, 0.0f, w, h, 0.0f, 0.0f, w, h, t);
+		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, w, h, t);
 		*/
-
-		m_lumTarget = !m_lumTarget;
 	}
 
 	void CPostProcessorRP::renderEffect(int fromTarget, int toTarget, CMaterial *material)
