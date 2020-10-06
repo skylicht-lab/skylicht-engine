@@ -14,6 +14,7 @@ private:
 #endif
 
 	CForwardRP *m_forwardRP;
+	CPostProcessorRP *m_postProcessorRP;
 
 	core::vector3df m_noiseOffset;
 	std::vector<CMaterial*> m_materials;

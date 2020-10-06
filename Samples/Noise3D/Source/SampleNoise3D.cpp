@@ -15,6 +15,7 @@ void installApplication(const std::vector<std::string>& argv)
 SampleNoise3D::SampleNoise3D() :
 	m_scene(NULL),
 	m_forwardRP(NULL),
+	m_postProcessorRP(NULL),
 	m_noiseOffset(3.0f, 0.0f, 0.0f)
 #if defined(USE_FREETYPE)	
 	, m_largeFont(NULL)
@@ -30,6 +31,7 @@ SampleNoise3D::~SampleNoise3D()
 	delete m_largeFont;
 #endif
 	delete m_forwardRP;
+	delete m_postProcessorRP;
 }
 
 void SampleNoise3D::onInitApp()
@@ -128,6 +130,13 @@ void SampleNoise3D::onInitApp()
 
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
+
+	m_postProcessorRP = new CPostProcessorRP();
+	m_postProcessorRP->enableBloomEffect(true);
+	m_postProcessorRP->enableFXAA(true);
+	m_postProcessorRP->initRender(w, h);
+
+	m_forwardRP->setPostProcessor(m_postProcessorRP);
 }
 
 void SampleNoise3D::onUpdate()
