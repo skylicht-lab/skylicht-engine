@@ -51,10 +51,12 @@ namespace Skylicht
 		SMaterial m_effectPass;
 
 		bool m_bloomEffect;
+		bool m_fxaa;
 
 		CMaterial *m_brightFilter;
 		CMaterial *m_blurFilter;
 		CMaterial *m_bloomFilter;
+		CMaterial *m_fxaaFilter;
 
 	public:
 		CPostProcessorRP();
@@ -78,6 +80,11 @@ namespace Skylicht
 		inline void enableBloomEffect(bool b)
 		{
 			m_bloomEffect = b;
+		}
+
+		inline void enableFXAA(bool b)
+		{
+			m_fxaa = b;
 		}
 
 	protected:

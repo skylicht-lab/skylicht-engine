@@ -34,9 +34,11 @@ namespace Skylicht
 		m_adaptLum(NULL),
 		m_lumTarget(0),
 		m_bloomEffect(false),
+		m_fxaa(false),
 		m_brightFilter(NULL),
 		m_blurFilter(NULL),
-		m_bloomFilter(NULL)
+		m_bloomFilter(NULL),
+		m_fxaaFilter(NULL)
 	{
 		m_luminance[0] = NULL;
 		m_luminance[1] = NULL;
@@ -66,6 +68,9 @@ namespace Skylicht
 
 		if (m_bloomFilter != NULL)
 			delete m_bloomFilter;
+
+		if (m_fxaaFilter != NULL)
+			delete m_fxaaFilter;
 	}
 
 	void CPostProcessorRP::initRender(int w, int h)
@@ -82,12 +87,16 @@ namespace Skylicht
 		m_adaptLum = driver->addRenderTargetTexture(m_lumSize, "lum_adapt", ECF_R16F);
 
 		// framebuffer for glow/fxaa
-		if (m_bloomEffect == true)
+		if (m_bloomEffect == true || m_fxaa == true)
 		{
 			m_rtt[0] = driver->addRenderTargetTexture(m_size, "rtt_0", ECF_A16B16G16R16F);
 			m_rtt[1] = driver->addRenderTargetTexture(m_size, "rtt_1", ECF_A16B16G16R16F);
-			m_rtt[2] = driver->addRenderTargetTexture(m_size / 2, "rtt_2", ECF_A16B16G16R16F);
-			m_rtt[3] = driver->addRenderTargetTexture(m_size / 4, "rtt_3", ECF_A16B16G16R16F);
+
+			if (m_bloomEffect == true)
+			{
+				m_rtt[2] = driver->addRenderTargetTexture(m_size / 2, "rtt_2", ECF_A16B16G16R16F);
+				m_rtt[3] = driver->addRenderTargetTexture(m_size / 4, "rtt_3", ECF_A16B16G16R16F);
+			}
 		}
 
 		// init final pass shader
@@ -100,6 +109,7 @@ namespace Skylicht
 		m_brightFilter = new CMaterial("BrightFilter", "BuiltIn/Shader/PostProcessing/BrightFilter.xml");
 		m_blurFilter = new CMaterial("DownBlurFilter", "BuiltIn/Shader/PostProcessing/DownsampleFilter.xml");
 		m_bloomFilter = new CMaterial("BloomFilter", "BuiltIn/Shader/PostProcessing/Bloom.xml");
+		m_fxaaFilter = new CMaterial("BloomFilter", "BuiltIn/Shader/PostProcessing/FXAA.xml");
 	}
 
 	void CPostProcessorRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
@@ -187,7 +197,7 @@ namespace Skylicht
 
 		luminanceMapGeneration(color);
 
-		if (m_bloomEffect)
+		if (m_bloomEffect || m_fxaa)
 		{
 			driver->setRenderTarget(m_rtt[0]);
 		}
@@ -204,22 +214,46 @@ namespace Skylicht
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 
+		int colorID = 0;
+
+		if (m_fxaa == true)
+		{
+			core::dimension2du rrtSize = m_rtt[colorID]->getSize();
+			float params[2];
+			params[0] = 1.0f / (float)rrtSize.Width;
+			params[1] = 1.0f / (float)rrtSize.Height;
+			m_fxaaFilter->setUniform2("uRCPFrame", params);
+			m_fxaaFilter->setTexture(0, m_rtt[colorID]);
+			m_fxaaFilter->applyMaterial(m_effectPass);
+
+			CShaderMaterial::setMaterial(m_fxaaFilter);
+
+			if (m_bloomEffect)
+				driver->setRenderTarget(m_rtt[1], false, false);
+			else
+				driver->setRenderTarget(finalTarget, false, false);
+
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
+
+			colorID = 1;
+		}
+
 		if (m_bloomEffect)
 		{
-			brightFilter(0, 1);
-			blurDown(1, 2);
+			brightFilter(colorID, !colorID);
+			blurDown(!colorID, 2);
 			blurDown(2, 3);
 			blurUp(3, 2);
-			blurUp(2, 1);
 
 			// bloom
-			core::dimension2du rrtSize = m_rtt[1]->getSize();
-			core::vector2df blurSize;
-			blurSize.X = 1.0f / (float)rrtSize.Width;
-			blurSize.Y = 1.0f / (float)rrtSize.Height;
-			m_bloomFilter->setUniform2("uTexelSize", &blurSize.X);
-			m_bloomFilter->setTexture(0, m_rtt[0]);
-			m_bloomFilter->setTexture(1, m_rtt[1]);
+			core::dimension2du rrtSize = m_rtt[2]->getSize();
+			float params[2];
+			params[0] = 1.0f / (float)rrtSize.Width;
+			params[1] = 1.0f / (float)rrtSize.Height;
+			m_bloomFilter->setUniform2("uTexelSize", params);
+			m_bloomFilter->setTexture(0, m_rtt[colorID]);
+			m_bloomFilter->setTexture(1, m_rtt[2]);
 			m_bloomFilter->applyMaterial(m_effectPass);
 
 			CShaderMaterial::setMaterial(m_bloomFilter);
@@ -227,22 +261,23 @@ namespace Skylicht
 			driver->setRenderTarget(finalTarget, false, false);
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
-
-			// test to target
-			/*
-			ITexture *tex = m_rtt[1];
-			SMaterial t;
-			t.setTexture(0, tex);
-			t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
-
-			float w = (float)tex->getSize().Width;
-			float h = (float)tex->getSize().Height;
-
-			driver->setRenderTarget(finalTarget, false, false);
-			beginRender2D(renderW, renderH);
-			renderBufferToTarget(0.0f, 0.0f, w, h, 0.0f, 0.0f, w, h, t);
-			*/
 		}
+
+
+		// test to target
+		/*
+		ITexture *tex = m_rtt[1];
+		SMaterial t;
+		t.setTexture(0, tex);
+		t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+
+		float w = (float)tex->getSize().Width;
+		float h = (float)tex->getSize().Height;
+
+		driver->setRenderTarget(finalTarget, false, false);
+		beginRender2D(renderW, renderH);
+		renderBufferToTarget(0.0f, 0.0f, w, h, 0.0f, 0.0f, w, h, t);
+		*/
 
 		m_lumTarget = !m_lumTarget;
 	}
