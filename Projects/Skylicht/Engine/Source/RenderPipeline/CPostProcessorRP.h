@@ -50,8 +50,11 @@ namespace Skylicht
 		SMaterial m_adaptLumPass;
 		SMaterial m_effectPass;
 
-		bool m_glowEffect;
-		bool m_fxaa;
+		bool m_bloomEffect;
+
+		CMaterial *m_brightFilter;
+		CMaterial *m_blurFilter;
+		CMaterial *m_bloomFilter;
 
 	public:
 		CPostProcessorRP();
@@ -66,14 +69,15 @@ namespace Skylicht
 
 		void luminanceMapGeneration(ITexture *color);
 
-		inline void enableGlowEffect(bool b)
-		{
-			m_glowEffect = b;
-		}
+		void brightFilter(int from, int to);
 
-		inline void enableFXAA(bool b)
+		void blurDown(int from, int to);
+
+		void blurUp(int from, int to);
+
+		inline void enableBloomEffect(bool b)
 		{
-			m_fxaa = b;
+			m_bloomEffect = b;
 		}
 
 	protected:

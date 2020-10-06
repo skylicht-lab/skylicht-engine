@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CPostProcessorRP.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/CShaderParams.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
@@ -32,8 +33,10 @@ namespace Skylicht
 	CPostProcessorRP::CPostProcessorRP() :
 		m_adaptLum(NULL),
 		m_lumTarget(0),
-		m_glowEffect(false),
-		m_fxaa(false)
+		m_bloomEffect(false),
+		m_brightFilter(NULL),
+		m_blurFilter(NULL),
+		m_bloomFilter(NULL)
 	{
 		m_luminance[0] = NULL;
 		m_luminance[1] = NULL;
@@ -54,6 +57,15 @@ namespace Skylicht
 			if (m_rtt[i] != NULL)
 				driver->removeTexture(m_rtt[i]);
 		}
+
+		if (m_brightFilter != NULL)
+			delete m_brightFilter;
+
+		if (m_blurFilter != NULL)
+			delete m_blurFilter;
+
+		if (m_bloomFilter != NULL)
+			delete m_bloomFilter;
 	}
 
 	void CPostProcessorRP::initRender(int w, int h)
@@ -70,7 +82,7 @@ namespace Skylicht
 		m_adaptLum = driver->addRenderTargetTexture(m_lumSize, "lum_adapt", ECF_R16F);
 
 		// framebuffer for glow/fxaa
-		if (m_glowEffect == true)
+		if (m_bloomEffect == true)
 		{
 			m_rtt[0] = driver->addRenderTargetTexture(m_size, "rtt_0", ECF_A16B16G16R16F);
 			m_rtt[1] = driver->addRenderTargetTexture(m_size, "rtt_1", ECF_A16B16G16R16F);
@@ -84,6 +96,10 @@ namespace Skylicht
 		// init lum pass shader
 		m_lumPass.MaterialType = shaderMgr->getShaderIDByName("Luminance");
 		m_adaptLumPass.MaterialType = shaderMgr->getShaderIDByName("AdaptLuminance");
+
+		m_brightFilter = new CMaterial("BrightFilter", "BuiltIn/Shader/PostProcessing/BrightFilter.xml");
+		m_blurFilter = new CMaterial("DownBlurFilter", "BuiltIn/Shader/PostProcessing/DownsampleFilter.xml");
+		m_bloomFilter = new CMaterial("BloomFilter", "BuiltIn/Shader/PostProcessing/Bloom.xml");
 	}
 
 	void CPostProcessorRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
@@ -118,20 +134,46 @@ namespace Skylicht
 		renderBufferToTarget(0.0f, 0.0f, w, h, m_adaptLumPass);
 	}
 
+	void CPostProcessorRP::brightFilter(int from, int to)
+	{
+		video::SVec4 curve;
+
+		float threshold = 0.9f;
+		float softKnee = 0.5f;
+		curve.W = threshold;
+
+		float knee = threshold * softKnee + 1e-5f;
+		curve.X = threshold - knee;
+		curve.Y = knee * 2.0f;
+		curve.Z = 0.25f / knee;
+
+		m_brightFilter->setUniform4("uCurve", &curve.X);
+		renderEffect(from, to, m_brightFilter);
+	}
+
+	void CPostProcessorRP::blurDown(int from, int to)
+	{
+		core::dimension2du rrtSize = m_rtt[from]->getSize();
+		core::vector2df blurSize;
+		blurSize.X = 1.0f / (float)rrtSize.Width;
+		blurSize.Y = 1.0f / (float)rrtSize.Height;
+		m_blurFilter->setUniform2("uTexelSize", &blurSize.X);
+		renderEffect(from, to, m_blurFilter);
+	}
+
+	void CPostProcessorRP::blurUp(int from, int to)
+	{
+		core::dimension2du rrtSize = m_rtt[from]->getSize();
+		core::vector2df blurSize;
+		blurSize.X = 1.0f / (float)rrtSize.Width;
+		blurSize.Y = 1.0f / (float)rrtSize.Height;
+		m_blurFilter->setUniform2("uTexelSize", &blurSize.X);
+		renderEffect(from, to, m_blurFilter);
+	}
+
 	void CPostProcessorRP::postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport)
 	{
 		IVideoDriver *driver = getVideoDriver();
-
-		luminanceMapGeneration(color);
-
-		if (m_glowEffect || m_fxaa)
-		{
-			driver->setRenderTarget(m_rtt[0], false, false);
-		}
-		else
-		{
-			driver->setRenderTarget(finalTarget, false, false);
-		}
 
 		float renderW = (float)m_size.Width;
 		float renderH = (float)m_size.Height;
@@ -143,6 +185,17 @@ namespace Skylicht
 			renderH = (float)viewport.getHeight();
 		}
 
+		luminanceMapGeneration(color);
+
+		if (m_bloomEffect)
+		{
+			driver->setRenderTarget(m_rtt[0]);
+		}
+		else
+		{
+			driver->setRenderTarget(finalTarget);
+		}
+
 		m_luminance[m_lumTarget]->regenerateMipMapLevels();
 
 		m_finalPass.setTexture(0, color);
@@ -151,10 +204,44 @@ namespace Skylicht
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 
-		// update effect
-		if (m_glowEffect || m_fxaa)
+		if (m_bloomEffect)
 		{
+			brightFilter(0, 1);
+			blurDown(1, 2);
+			blurDown(2, 3);
+			blurUp(3, 2);
+			blurUp(2, 1);
 
+			// bloom
+			core::dimension2du rrtSize = m_rtt[1]->getSize();
+			core::vector2df blurSize;
+			blurSize.X = 1.0f / (float)rrtSize.Width;
+			blurSize.Y = 1.0f / (float)rrtSize.Height;
+			m_bloomFilter->setUniform2("uTexelSize", &blurSize.X);
+			m_bloomFilter->setTexture(0, m_rtt[0]);
+			m_bloomFilter->setTexture(1, m_rtt[1]);
+			m_bloomFilter->applyMaterial(m_effectPass);
+
+			CShaderMaterial::setMaterial(m_bloomFilter);
+
+			driver->setRenderTarget(finalTarget, false, false);
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
+
+			// test to target
+			/*
+			ITexture *tex = m_rtt[1];
+			SMaterial t;
+			t.setTexture(0, tex);
+			t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+
+			float w = (float)tex->getSize().Width;
+			float h = (float)tex->getSize().Height;
+
+			driver->setRenderTarget(finalTarget, false, false);
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, w, h, 0.0f, 0.0f, w, h, t);
+			*/
 		}
 
 		m_lumTarget = !m_lumTarget;
@@ -174,7 +261,7 @@ namespace Skylicht
 		const core::dimension2du &toSize = m_rtt[toTarget]->getSize();
 		const core::dimension2du &fromSize = m_rtt[fromTarget]->getSize();
 
-		beginRender2D(toSize.Width, toSize.Height);
-		renderBufferToTarget(0, 0, fromSize.Width, fromSize.Height, m_effectPass);
+		beginRender2D((float)toSize.Width, (float)toSize.Height);
+		renderBufferToTarget(0, 0, (float)fromSize.Width, (float)fromSize.Height, m_effectPass);
 	}
 }
