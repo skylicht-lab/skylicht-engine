@@ -43,7 +43,8 @@ namespace Skylicht
 		ITexture *m_adaptLum;
 		int m_lumTarget;
 
-		ITexture *m_rtt[4];
+		ITexture *m_rtt[10];
+		int m_numTarget;
 
 		SMaterial m_finalPass;
 		SMaterial m_lumPass;
@@ -55,6 +56,7 @@ namespace Skylicht
 
 		CMaterial *m_brightFilter;
 		CMaterial *m_blurFilter;
+		CMaterial *m_blurUpFilter;
 		CMaterial *m_bloomFilter;
 		CMaterial *m_fxaaFilter;
 
