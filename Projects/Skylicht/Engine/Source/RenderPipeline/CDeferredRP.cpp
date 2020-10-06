@@ -482,7 +482,7 @@ namespace Skylicht
 		{
 			m_indirect->regenerateMipMapLevels();
 			SMaterial t = m_finalPass;
-			t.TextureLayer[0].Texture = m_indirect;
+			t.setTexture(0, m_indirect);
 			t.MaterialType = m_lightmapIndirectTestShader;
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, renderW, renderH, t);
 		}

@@ -38,5 +38,5 @@ void main(void)
 	Diffuse = vec4(baseMap, 1.0);
 	Position = vec4(vWorldPosition, 1.0);
 	Normal = vec4(n, 1.0);
-	SG = vec4(sgMap, 1.0);
+	SG = vec4(sgMap.r, max(sgMap.g, 0.01), sgMap.b, 1.0);
 }

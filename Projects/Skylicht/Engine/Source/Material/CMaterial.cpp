@@ -364,6 +364,7 @@ namespace Skylicht
 		for (int i = 0; i < num; i++)
 			m_textures[i] = textures[i];
 
+		m_manualInitMaterial = true;
 		readTexturePath();
 	}
 
@@ -371,6 +372,7 @@ namespace Skylicht
 	{
 		m_textures[slot] = texture;
 
+		m_manualInitMaterial = true;
 		readTexturePath();
 	}
 
@@ -758,6 +760,7 @@ namespace Skylicht
 						SUniformValue* v = getUniform(u->Name.c_str());
 						setDefaultValue(v, u);
 					}
+					/*
 					else
 					{
 						// revert default value
@@ -765,6 +768,7 @@ namespace Skylicht
 						if (v->ShaderDefaultValue == true)
 							setDefaultValue(v, u);
 					}
+					*/
 				}
 			}
 
@@ -780,6 +784,7 @@ namespace Skylicht
 						SUniformValue* v = getUniform(u->Name.c_str());
 						setDefaultValue(v, u);
 					}
+					/*
 					else
 					{
 						// revert default value
@@ -787,6 +792,7 @@ namespace Skylicht
 						if (v->ShaderDefaultValue == true)
 							setDefaultValue(v, u);
 					}
+					*/
 				}
 			}
 		}
@@ -1010,6 +1016,7 @@ namespace Skylicht
 						v.Z = uniformValue->FloatValue[2];
 						v.W = uniformValue->FloatValue[3];
 					}
+					uniformValue->ShaderDefaultValue = false;
 					break;
 				}
 				case MATERIAL_PARAM:
@@ -1019,6 +1026,7 @@ namespace Skylicht
 					v.Y = uniformValue->FloatValue[1];
 					v.Z = uniformValue->FloatValue[2];
 					v.W = uniformValue->FloatValue[3];
+					uniformValue->ShaderDefaultValue = false;
 					break;
 				}
 				default:

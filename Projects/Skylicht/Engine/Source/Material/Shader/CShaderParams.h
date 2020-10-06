@@ -48,7 +48,7 @@ namespace Skylicht
 			return &m_shaderParam[i].X;
 		}
 
-		void setShader(int i, SVec4& value)
+		void setValue(int i, SVec4& value)
 		{
 			m_shaderParam[i] = value;
 		}
