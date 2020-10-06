@@ -37,13 +37,15 @@ namespace Skylicht
 		m_fxaa(false),
 		m_brightFilter(NULL),
 		m_blurFilter(NULL),
+		m_blurUpFilter(NULL),
 		m_bloomFilter(NULL),
-		m_fxaaFilter(NULL)
+		m_fxaaFilter(NULL),
+		m_numTarget(0)
 	{
 		m_luminance[0] = NULL;
 		m_luminance[1] = NULL;
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 10; i++)
 			m_rtt[i] = NULL;
 	}
 
@@ -54,7 +56,7 @@ namespace Skylicht
 		driver->removeTexture(m_luminance[1]);
 		driver->removeTexture(m_adaptLum);
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 8; i++)
 		{
 			if (m_rtt[i] != NULL)
 				driver->removeTexture(m_rtt[i]);
@@ -94,8 +96,13 @@ namespace Skylicht
 
 			if (m_bloomEffect == true)
 			{
-				m_rtt[2] = driver->addRenderTargetTexture(m_size / 2, "rtt_2", ECF_A16B16G16R16F);
-				m_rtt[3] = driver->addRenderTargetTexture(m_size / 4, "rtt_3", ECF_A16B16G16R16F);
+				m_numTarget = 2;
+				core::dimension2du s = m_size;
+				do
+				{
+					s = s / 2;
+					m_rtt[m_numTarget++] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
+				} while (s.Height > 50);
 			}
 		}
 
@@ -108,6 +115,7 @@ namespace Skylicht
 
 		m_brightFilter = new CMaterial("BrightFilter", "BuiltIn/Shader/PostProcessing/BrightFilter.xml");
 		m_blurFilter = new CMaterial("DownBlurFilter", "BuiltIn/Shader/PostProcessing/DownsampleFilter.xml");
+		m_blurUpFilter = new CMaterial("DownBlurFilter", "BuiltIn/Shader/PostProcessing/BlurFilter.xml");
 		m_bloomFilter = new CMaterial("BloomFilter", "BuiltIn/Shader/PostProcessing/Bloom.xml");
 		m_fxaaFilter = new CMaterial("BloomFilter", "BuiltIn/Shader/PostProcessing/FXAA.xml");
 	}
@@ -177,8 +185,8 @@ namespace Skylicht
 		core::vector2df blurSize;
 		blurSize.X = 1.0f / (float)rrtSize.Width;
 		blurSize.Y = 1.0f / (float)rrtSize.Height;
-		m_blurFilter->setUniform2("uTexelSize", &blurSize.X);
-		renderEffect(from, to, m_blurFilter);
+		m_blurUpFilter->setUniform2("uTexelSize", &blurSize.X);
+		renderEffect(from, to, m_blurUpFilter);
 	}
 
 	void CPostProcessorRP::postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport)
@@ -243,8 +251,12 @@ namespace Skylicht
 		{
 			brightFilter(colorID, !colorID);
 			blurDown(!colorID, 2);
-			blurDown(2, 3);
-			blurUp(3, 2);
+
+			for (int i = 2; i < m_numTarget - 1; i++)
+				blurDown(i, i + 1);
+
+			for (int i = m_numTarget - 1; i > 2; i--)
+				blurDown(i, i - 1);
 
 			// bloom
 			m_bloomFilter->setTexture(0, m_rtt[colorID]);
@@ -284,6 +296,12 @@ namespace Skylicht
 
 		material->setTexture(0, m_rtt[fromTarget]);
 		material->applyMaterial(m_effectPass);
+
+		for (int i = 0; i < 2; i++)
+		{
+			m_effectPass.TextureLayer[i].TextureWrapU = ETC_CLAMP_TO_BORDER;
+			m_effectPass.TextureLayer[i].TextureWrapV = ETC_CLAMP_TO_BORDER;
+		}
 
 		CShaderMaterial::setMaterial(material);
 

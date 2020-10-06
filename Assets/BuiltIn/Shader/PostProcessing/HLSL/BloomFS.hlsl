@@ -24,7 +24,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// blur color
 	float3 blur = uBlurTex.Sample(uBlurTexSampler, input.tex0).rgb;
 		
-	float intensity = 1.3;
+	float intensity = 1.8;
 	float3 m = base + blur * intensity;
 	
 	return float4(m, 1.0);
