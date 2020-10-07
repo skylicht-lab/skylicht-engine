@@ -33,8 +33,8 @@ namespace Skylicht
 	CPostProcessorRP::CPostProcessorRP() :
 		m_adaptLum(NULL),
 		m_lumTarget(0),
-		m_autoExposure(true),
-		m_bloomEffect(false),
+		m_autoExposure(false),
+		m_bloomEffect(true),
 		m_fxaa(false),
 		m_brightFilter(NULL),
 		m_blurFilter(NULL),
@@ -242,35 +242,19 @@ namespace Skylicht
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
 		}
 
-		if (m_fxaa)
-		{
-			if (colorID >= 0)
-				colorBuffer = m_rtt[colorID];
-
-			core::dimension2du rrtSize = colorBuffer->getSize();
-			float params[2];
-			params[0] = 1.0f / (float)rrtSize.Width;
-			params[1] = 1.0f / (float)rrtSize.Height;
-			m_fxaaFilter->setUniform2("uRCPFrame", params);
-			m_fxaaFilter->setTexture(0, colorBuffer);
-			m_fxaaFilter->applyMaterial(m_effectPass);
-
-			CShaderMaterial::setMaterial(m_fxaaFilter);
-
-			colorID = !colorID;
-			driver->setRenderTarget(m_rtt[colorID], false, false);
-
-			beginRender2D(renderW, renderH);
-			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
-		}
-
 		if (colorID >= 0)
 			colorBuffer = m_rtt[colorID];
 
 		if (m_autoExposure == true)
 			luminanceMapGeneration(colorBuffer);
 
-		driver->setRenderTarget(finalTarget);
+		if (m_fxaa)
+		{
+			colorID = !colorID;
+			driver->setRenderTarget(m_rtt[colorID]);
+		}
+		else
+			driver->setRenderTarget(finalTarget);
 
 		if (m_autoExposure == true)
 		{
@@ -289,6 +273,27 @@ namespace Skylicht
 		}
 
 		m_lumTarget = !m_lumTarget;
+
+		if (m_fxaa)
+		{
+			if (colorID >= 0)
+				colorBuffer = m_rtt[colorID];
+
+			core::dimension2du rrtSize = colorBuffer->getSize();
+			float params[2];
+			params[0] = 1.0f / (float)rrtSize.Width;
+			params[1] = 1.0f / (float)rrtSize.Height;
+			m_fxaaFilter->setUniform2("uRCPFrame", params);
+			m_fxaaFilter->setTexture(0, colorBuffer);
+			m_fxaaFilter->applyMaterial(m_effectPass);
+
+			CShaderMaterial::setMaterial(m_fxaaFilter);
+
+			driver->setRenderTarget(finalTarget, false, false);
+
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
+		}
 
 		// test to target
 		/*
