@@ -23,7 +23,7 @@ cbuffer cbPerFrame
 
 PS_OUTPUT main(PS_INPUT input)
 {
-	PS_OUTPUT output;	
+	PS_OUTPUT output;
 
 	output.Diffuse = uColor;
 	output.Position = float4(input.worldPosition, 1.0);

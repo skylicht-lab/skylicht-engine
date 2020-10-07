@@ -4,7 +4,7 @@
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
 		</vs>
-		<fs>			
+		<fs>
 			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 		</fs>
 	</uniforms>

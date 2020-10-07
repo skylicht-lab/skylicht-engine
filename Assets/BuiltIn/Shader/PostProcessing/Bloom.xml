@@ -4,10 +4,10 @@
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 		</vs>
 		<fs>
-			<uniform name="uSourceTex"	type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
-			<uniform name="uBlurTex"	type="DEFAULT_VALUE" value="1" float="1" directX="false"/>			
+			<uniform name="uSourceTex" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uBlurTex" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
 		</fs>
-	</uniforms>	
+	</uniforms>
 	<shader type="GLSL" vs="GLSL/BloomVS.glsl" fs="GLSL/BloomFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/BloomVS.hlsl" fs="HLSL/BloomFS.hlsl"/>
 </shaderConfig>

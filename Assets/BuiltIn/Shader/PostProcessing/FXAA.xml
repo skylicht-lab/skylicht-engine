@@ -7,7 +7,7 @@
 			<uniform name="uSourceTex" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uRCPFrame" type="MATERIAL_PARAM" valueIndex="0" value="0,0" float="2"/>
 		</fs>
-	</uniforms>	
+	</uniforms>
 	<shader type="GLSL" vs="GLSL/FXAAVS.glsl" fs="GLSL/FXAAFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/FXAAVS.hlsl" fs="HLSL/FXAAFS.hlsl"/>
 </shaderConfig>

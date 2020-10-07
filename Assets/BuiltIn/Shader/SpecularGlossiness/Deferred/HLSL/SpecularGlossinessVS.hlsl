@@ -33,15 +33,15 @@ VS_OUTPUT main(VS_INPUT input)
 	output.pos = mul(input.pos, uMvpMatrix);
 	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
 	output.tangentw = input.tangentw.x;
-	
+
 	float4 worldPos = mul(input.pos, uWorldMatrix);
 	float4 worldNormal = mul(float4(input.norm, 0.0), uWorldMatrix);
 	float4 worldTangent = mul(float4(input.tangent, 0.0), uWorldMatrix);
-	
+
 	output.worldPosition = worldPos.xyz;
 	output.worldNormal = normalize(worldNormal.xyz);
 	output.worldTangent = normalize(worldTangent.xyz);
-	output.worldBinormal= normalize(cross(worldNormal.xyz, worldTangent.xyz));
-	
+	output.worldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
+
 	return output;
 }

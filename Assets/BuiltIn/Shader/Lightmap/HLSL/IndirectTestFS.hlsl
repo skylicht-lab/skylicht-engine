@@ -3,7 +3,7 @@ SamplerState uTexLightmapSampler : register(s0);
 
 struct PS_INPUT
 {
-	float4 pos : SV_POSITION;	
+	float4 pos : SV_POSITION;
 	float3 tex0 : LIGHTMAP;
 };
 

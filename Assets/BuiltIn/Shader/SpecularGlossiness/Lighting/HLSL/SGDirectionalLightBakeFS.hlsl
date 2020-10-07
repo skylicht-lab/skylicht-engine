@@ -26,7 +26,7 @@ cbuffer cbPerFrame
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
 };
-float texture2DCompare(float3 uv, float compare){
+float texture2DCompare(float3 uv, float compare) {
 	float depth = uShadowMap.SampleLevel(uShadowMapSampler, uv, 0).r;
 	return step(compare, depth);
 }
@@ -50,16 +50,16 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	depth = shadowUV.z;
 	float2 uv = shadowUV.xy;
 	[unroll]
-	for(int x=-1; x<=1; x++)
+	for (int x = -1; x <= 1; x++)
 	{
 		[unroll]
-		for(int y=-1; y<=1; y++)
+		for (int y = -1; y <= 1; y++)
 		{
-			float2 off = float2(x,y)/size;
-			result += texture2DCompare(float3(uv+off, id), depth - bias);
+			float2 off = float2(x, y) / size;
+			result += texture2DCompare(float3(uv + off, id), depth - bias);
 		}
 	}
-	return result/9.0;
+	return result / 9.0;
 }
 static const float PI = 3.1415926;
 static const float MinReflectance = 0.04;
@@ -78,7 +78,7 @@ float solveMetallic(float3 diffuse, float3 specular, float oneMinusSpecularStren
 	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
 }
 static const float gamma = 2.2;
-static const float invGamma = 1.0/2.2;
+static const float invGamma = 1.0 / 2.2;
 float3 sRGB(float3 color)
 {
 	return pow(color, gamma);
@@ -118,7 +118,7 @@ float3 SG(
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	NdotL = min(NdotL, 1.0);
 	float3 H = normalize(worldLightDir + worldViewDir);
-	float NdotE = max(0.0,dot(worldNormal, H));
+	float NdotE = max(0.0, dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	float3 directionalLight = NdotL * directionLightColor * visibility;
 	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;

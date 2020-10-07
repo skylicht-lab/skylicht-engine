@@ -7,7 +7,7 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 };
 static const float gamma = 2.2;
-static const float invGamma = 1.0/2.2;
+static const float invGamma = 1.0 / 2.2;
 float3 sRGB(float3 color)
 {
 	return pow(color, gamma);
