@@ -15,11 +15,11 @@ out vec2 vTexCoord0;
 void main(void)
 {
 	vWorldPosition = (uWorldMatrix*inPosition).xyz;
-	
-	vec4 worldNormal = uWorldMatrix * vec4(inNormal,0.0);
+
+	vec4 worldNormal = uWorldMatrix * vec4(inNormal, 0.0);
 	vWorldNormal = normalize(worldNormal.xyz);
-		
+
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
-	
+
 	gl_Position = uMvpMatrix * inPosition;
 }

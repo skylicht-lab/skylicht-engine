@@ -11,10 +11,10 @@ out vec3 vWorldNormal;
 
 void main(void)
 {
-	vColor = inColor/255.0;
-	
-	vec4 worldNormal = uWorldMatrix * vec4(inNormal,0.0);
+	vColor = inColor / 255.0;
+
+	vec4 worldNormal = uWorldMatrix * vec4(inNormal, 0.0);
 	vWorldNormal = normalize(worldNormal.xyz);
-	
+
 	gl_Position = uMvpMatrix * inPosition;
 }

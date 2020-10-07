@@ -13,7 +13,7 @@ void main(void)
 {
 	varTexCoord0 = inTexCoord0;
 	varTexCoord1 = inTexCoord1;
-	varColor = inColor/255.0;
-	
+	varColor = inColor / 255.0;
+
 	gl_Position = uMvpMatrix * inPosition;
 }

@@ -6,11 +6,11 @@ float getPerceivedBrightness(vec3 color)
 }
 
 // https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/examples/convert-between-workflows/js/three.pbrUtilities.js#L34
-float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength) 
+float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
 {
 	float specularBrightness = getPerceivedBrightness(specular);
 	float diffuseBrightness = getPerceivedBrightness(diffuse);
-	
+
 	float a = MinReflectance;
 	float b = diffuseBrightness * oneMinusSpecularStrength / (1.0 - MinReflectance) + specularBrightness - 2.0 * MinReflectance;
 	float c = MinReflectance - specularBrightness;

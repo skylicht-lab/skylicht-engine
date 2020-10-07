@@ -14,7 +14,7 @@ void main(void)
 
 	if (alphaColor.r < 0.5)
 		discard;
-	
+
 	vec3 result = texture(uTexDiffuse, varTexCoord0.xy).rgb;
 	FragColor = vec4(result, 1.0);
 }
