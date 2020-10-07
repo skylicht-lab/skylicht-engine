@@ -13,15 +13,15 @@ out vec4 FragColor;
 void main(void)
 {
 	float f = pnoise(uNoiseOffset.xy + varTexCoord0 * uNoiseOffset.w);
-	
+
 	f = abs(f + 0.1);
 	f = pow(f, 0.2);
-	
+
 	vec3 col = vec3(1.7, 1.7, 1.7);
-	col = col * -f + col;                    
+	col = col * -f + col;
 	col = col * col;
 	col = col * col;
 	col = col * uElectricColor.rgb;
-	
+
 	FragColor = varColor * vec4(col, 1.0);
 }

@@ -22,27 +22,27 @@ out vec4 vViewPosition;
 out vec3 vWorldPosition;
 
 void main(void)
-{	
+{
 	vTexCoord0 = inTexCoord0;
 	vTangentW = inTangentW.x;
-	
+
 	vec4 worldPos = uWorldMatrix * inPosition;
 	vec4 camPos = uWorldMatrix * uCameraPosition;
-	
+
 	vec4 worldViewDir = normalize(camPos - worldPos);
-	
+
 	vec4 worldNormal = uWorldMatrix * vec4(inNormal.xyz, 0.0);
 	vec4 worldTangent = uWorldMatrix * vec4(inTangent.xyz, 0.0);
-	
+
 	vWorldPosition = worldPos.xyz;
-	
+
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldTangent = normalize(worldTangent.xyz);
 	vWorldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
-	
+
 	vWorldViewDir = worldViewDir.xyz;
 	vWorldLightDir = normalize(uLightDirection.xyz);
 	vViewPosition = uMvpMatrix * inPosition;
-	
+
 	gl_Position = vViewPosition;
 }

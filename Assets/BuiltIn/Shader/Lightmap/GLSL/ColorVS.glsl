@@ -7,6 +7,6 @@ out vec4 varColor;
 
 void main(void)
 {
-	varColor = inColor/255.0;
+	varColor = inColor / 255.0;
 	gl_Position = uMvpMatrix * inPosition;
 }

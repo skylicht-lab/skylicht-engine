@@ -13,8 +13,8 @@ void main(void)
 {
 	float lum = texture(uTexLuminance, varTexCoord0).x;
 	float lastLum = texture(uTexLastLuminance, varTexCoord0).x;
-	
+
 	float adaptLum = lastLum + (lum - lastLum) * uTimeStep.x * 0.001;
-	
-	FragColor = vec4(adaptLum, 0, 0, 0);	 
+
+	FragColor = vec4(adaptLum, 0, 0, 0);
 }
