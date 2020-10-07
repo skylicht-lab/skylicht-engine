@@ -33,6 +33,7 @@ namespace Skylicht
 	CPostProcessorRP::CPostProcessorRP() :
 		m_adaptLum(NULL),
 		m_lumTarget(0),
+		m_autoExposure(true),
 		m_bloomEffect(false),
 		m_fxaa(false),
 		m_brightFilter(NULL),
@@ -52,9 +53,15 @@ namespace Skylicht
 	CPostProcessorRP::~CPostProcessorRP()
 	{
 		IVideoDriver *driver = getVideoDriver();
-		driver->removeTexture(m_luminance[0]);
-		driver->removeTexture(m_luminance[1]);
-		driver->removeTexture(m_adaptLum);
+
+		if (m_luminance[0] != NULL)
+			driver->removeTexture(m_luminance[0]);
+
+		if (m_luminance[1] != NULL)
+			driver->removeTexture(m_luminance[1]);
+
+		if (m_adaptLum != NULL)
+			driver->removeTexture(m_adaptLum);
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -84,9 +91,12 @@ namespace Skylicht
 		m_size = core::dimension2du((u32)w, (u32)h);
 		m_lumSize = core::dimension2du(1024, 1024);
 
-		m_luminance[0] = driver->addRenderTargetTexture(m_lumSize, "lum_0", ECF_R16F);
-		m_luminance[1] = driver->addRenderTargetTexture(m_lumSize, "lum_1", ECF_R16F);
-		m_adaptLum = driver->addRenderTargetTexture(m_lumSize, "lum_adapt", ECF_R16F);
+		if (m_autoExposure == true)
+		{
+			m_luminance[0] = driver->addRenderTargetTexture(m_lumSize, "lum_0", ECF_R16F);
+			m_luminance[1] = driver->addRenderTargetTexture(m_lumSize, "lum_1", ECF_R16F);
+			m_adaptLum = driver->addRenderTargetTexture(m_lumSize, "lum_adapt", ECF_R16F);
+		}
 
 		// framebuffer for glow/fxaa
 		if (m_bloomEffect == true || m_fxaa == true)
@@ -108,6 +118,7 @@ namespace Skylicht
 
 		// init final pass shader
 		m_finalPass.MaterialType = shaderMgr->getShaderIDByName("PostEffect");
+		m_linearPass.MaterialType = shaderMgr->getShaderIDByName("TextureLinearRGB");
 
 		// init lum pass shader
 		m_lumPass.MaterialType = shaderMgr->getShaderIDByName("Luminance");
@@ -203,7 +214,8 @@ namespace Skylicht
 			renderH = (float)viewport.getHeight();
 		}
 
-		luminanceMapGeneration(color);
+		if (m_autoExposure == true)
+			luminanceMapGeneration(color);
 
 		if (m_bloomEffect || m_fxaa)
 		{
@@ -214,13 +226,20 @@ namespace Skylicht
 			driver->setRenderTarget(finalTarget);
 		}
 
-		m_luminance[m_lumTarget]->regenerateMipMapLevels();
-
-		m_finalPass.setTexture(0, color);
-		m_finalPass.setTexture(1, m_luminance[m_lumTarget]);
-
-		beginRender2D(renderW, renderH);
-		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
+		if (m_autoExposure == true)
+		{
+			m_luminance[m_lumTarget]->regenerateMipMapLevels();
+			m_finalPass.setTexture(0, color);
+			m_finalPass.setTexture(1, m_luminance[m_lumTarget]);
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
+		}
+		else
+		{
+			m_linearPass.setTexture(0, color);
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_linearPass);
+		}
 
 		int colorID = 0;
 
