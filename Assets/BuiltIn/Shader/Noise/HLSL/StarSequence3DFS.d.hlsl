@@ -11,7 +11,6 @@ struct PS_INPUT
 cbuffer cbPerFrame
 {
 	float4 uNoiseOffset;
-	float4 uElectricColor;
 };
 
 #include "LibNoise.hlsl"

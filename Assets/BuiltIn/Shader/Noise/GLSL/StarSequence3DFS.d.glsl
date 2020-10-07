@@ -3,7 +3,6 @@
 precision mediump float;
 
 uniform vec4 uNoiseOffset;
-uniform vec4 uElectricColor;
 
 in vec4 varColor;
 in vec4 varWorldPos;

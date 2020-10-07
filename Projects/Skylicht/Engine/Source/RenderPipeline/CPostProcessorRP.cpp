@@ -163,7 +163,7 @@ namespace Skylicht
 		renderBufferToTarget(0.0f, 0.0f, w, h, m_adaptLumPass);
 	}
 
-	void CPostProcessorRP::brightFilter(int from, int to)
+	void CPostProcessorRP::brightFilter(ITexture* from, ITexture* to)
 	{
 		video::SVec4 curve;
 
@@ -214,62 +214,13 @@ namespace Skylicht
 			renderH = (float)viewport.getHeight();
 		}
 
-		if (m_autoExposure == true)
-			luminanceMapGeneration(color);
-
-		if (m_bloomEffect || m_fxaa)
-		{
-			driver->setRenderTarget(m_rtt[0]);
-		}
-		else
-		{
-			driver->setRenderTarget(finalTarget);
-		}
-
-		if (m_autoExposure == true)
-		{
-			m_luminance[m_lumTarget]->regenerateMipMapLevels();
-			m_finalPass.setTexture(0, color);
-			m_finalPass.setTexture(1, m_luminance[m_lumTarget]);
-			beginRender2D(renderW, renderH);
-			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
-		}
-		else
-		{
-			m_linearPass.setTexture(0, color);
-			beginRender2D(renderW, renderH);
-			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_linearPass);
-		}
-
-		int colorID = 0;
-
-		if (m_fxaa == true)
-		{
-			core::dimension2du rrtSize = m_rtt[colorID]->getSize();
-			float params[2];
-			params[0] = 1.0f / (float)rrtSize.Width;
-			params[1] = 1.0f / (float)rrtSize.Height;
-			m_fxaaFilter->setUniform2("uRCPFrame", params);
-			m_fxaaFilter->setTexture(0, m_rtt[colorID]);
-			m_fxaaFilter->applyMaterial(m_effectPass);
-
-			CShaderMaterial::setMaterial(m_fxaaFilter);
-
-			if (m_bloomEffect)
-				driver->setRenderTarget(m_rtt[1], false, false);
-			else
-				driver->setRenderTarget(finalTarget, false, false);
-
-			beginRender2D(renderW, renderH);
-			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
-
-			colorID = 1;
-		}
+		int colorID = -1;
+		ITexture *colorBuffer = color;
 
 		if (m_bloomEffect)
 		{
-			brightFilter(colorID, !colorID);
-			blurDown(!colorID, 2);
+			brightFilter(color, m_rtt[1]);
+			blurDown(1, 2);
 
 			for (int i = 2; i < m_numTarget - 1; i++)
 				blurDown(i, i + 1);
@@ -278,15 +229,63 @@ namespace Skylicht
 				blurUp(i, i - 1);
 
 			// bloom
-			m_bloomFilter->setTexture(0, m_rtt[colorID]);
+			m_bloomFilter->setTexture(0, color);
 			m_bloomFilter->setTexture(1, m_rtt[2]);
 			m_bloomFilter->applyMaterial(m_effectPass);
 
 			CShaderMaterial::setMaterial(m_bloomFilter);
 
-			driver->setRenderTarget(finalTarget, false, false);
+			colorID = 0;
+			driver->setRenderTarget(m_rtt[colorID], false, false);
+
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
+		}
+
+		if (m_fxaa)
+		{
+			if (colorID >= 0)
+				colorBuffer = m_rtt[colorID];
+
+			core::dimension2du rrtSize = colorBuffer->getSize();
+			float params[2];
+			params[0] = 1.0f / (float)rrtSize.Width;
+			params[1] = 1.0f / (float)rrtSize.Height;
+			m_fxaaFilter->setUniform2("uRCPFrame", params);
+			m_fxaaFilter->setTexture(0, colorBuffer);
+			m_fxaaFilter->applyMaterial(m_effectPass);
+
+			CShaderMaterial::setMaterial(m_fxaaFilter);
+
+			colorID = !colorID;
+			driver->setRenderTarget(m_rtt[colorID], false, false);
+
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
+		}
+
+		if (colorID >= 0)
+			colorBuffer = m_rtt[colorID];
+
+		if (m_autoExposure == true)
+			luminanceMapGeneration(colorBuffer);
+
+		driver->setRenderTarget(finalTarget);
+
+		if (m_autoExposure == true)
+		{
+			m_luminance[m_lumTarget]->regenerateMipMapLevels();
+
+			m_finalPass.setTexture(0, colorBuffer);
+			m_finalPass.setTexture(1, m_luminance[m_lumTarget]);
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
+		}
+		else
+		{
+			m_linearPass.setTexture(0, colorBuffer);
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_linearPass);
 		}
 
 		m_lumTarget = !m_lumTarget;
@@ -309,11 +308,16 @@ namespace Skylicht
 
 	void CPostProcessorRP::renderEffect(int fromTarget, int toTarget, CMaterial *material)
 	{
+		renderEffect(m_rtt[fromTarget], m_rtt[toTarget], material);
+	}
+
+	void CPostProcessorRP::renderEffect(ITexture *fromTarget, ITexture *toTarget, CMaterial *material)
+	{
 		IVideoDriver *driver = getVideoDriver();
 
-		driver->setRenderTarget(m_rtt[toTarget]);
+		driver->setRenderTarget(toTarget);
 
-		material->setTexture(0, m_rtt[fromTarget]);
+		material->setTexture(0, fromTarget);
 		material->applyMaterial(m_effectPass);
 
 		for (int i = 0; i < 2; i++)
@@ -324,8 +328,8 @@ namespace Skylicht
 
 		CShaderMaterial::setMaterial(material);
 
-		const core::dimension2du &toSize = m_rtt[toTarget]->getSize();
-		const core::dimension2du &fromSize = m_rtt[fromTarget]->getSize();
+		const core::dimension2du &toSize = toTarget->getSize();
+		const core::dimension2du &fromSize = fromTarget->getSize();
 
 		beginRender2D((float)toSize.Width, (float)toSize.Height);
 		renderBufferToTarget(0, 0, (float)fromSize.Width, (float)fromSize.Height, m_effectPass);
