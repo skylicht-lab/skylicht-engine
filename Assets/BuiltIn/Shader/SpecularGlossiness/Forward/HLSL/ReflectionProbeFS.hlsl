@@ -9,7 +9,7 @@ struct PS_INPUT
 };
 
 float4 main(PS_INPUT input) : SV_TARGET
-{	
+{
 	float4 result = input.color * uTexReflect.SampleLevel(uTexReflectSampler, input.worldNormal, 0);
 	return result;
 }

@@ -4,7 +4,7 @@
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
 		</vs>
-		<fs>			
+		<fs>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="9"/>
 		</fs>
 	</uniforms>

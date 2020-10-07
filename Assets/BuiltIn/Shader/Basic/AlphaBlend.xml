@@ -10,9 +10,9 @@
 	</uniforms>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
-			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>			
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/AlphaBlendVS.glsl" fs="GLSL/AlphaBlendFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/AlphaBlendVS.hlsl" fs="HLSL/AlphaBlendFS.hlsl"/>	
+	<shader type="HLSL" vs="HLSL/AlphaBlendVS.hlsl" fs="HLSL/AlphaBlendFS.hlsl"/>
 </shaderConfig>

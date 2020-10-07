@@ -11,7 +11,7 @@
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>
 		</ui>
-	</customUI>	
+	</customUI>
 	<shader type="GLSL" vs="GLSL/TextureColorVS.glsl" fs="GLSL/TextureColorFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/TextureColorVS.hlsl" fs="HLSL/TextureColorFS.hlsl"/>
 </shaderConfig>

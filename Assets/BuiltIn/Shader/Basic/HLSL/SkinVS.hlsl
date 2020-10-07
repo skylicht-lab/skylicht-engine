@@ -15,7 +15,6 @@ struct VS_OUTPUT
 	float2 tex0 : TEXCOORD0;
 };
 
-// adding constant buffer for transform matrices
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
@@ -25,31 +24,31 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	
+
 	float4x4 skinMatrix;
 	float4 skinPosition;
 	//float4 skinNormal;
-	
+
 	// bone 0
 	int index = int(input.blendIndex[0]);
 	skinMatrix = input.blendWeight[0] * uBoneMatrix[index];
-	
+
 	// bone 1
 	index = int(input.blendIndex[1]);
 	skinMatrix += input.blendWeight[1] * uBoneMatrix[index];
-	
+
 	// bone 2
 	index = int(input.blendIndex[2]);
 	skinMatrix += input.blendWeight[2] * uBoneMatrix[index];
-	
+
 	// bone 3
 	index = int(input.blendIndex[3]);
 	skinMatrix += input.blendWeight[3] * uBoneMatrix[index];
-	
+
 	// skin result
 	skinPosition = mul(input.pos, skinMatrix);
 	//skinNormal 	= mul(float4(input.norm, 0.0), skinMatrix);
-	
+
 	output.pos = mul(skinPosition, uMvpMatrix);
 	output.color = input.color;
 	output.tex0 = input.tex0;

@@ -7,12 +7,11 @@ struct VS_INPUT
 
 struct VS_OUTPUT
 {
-	float4 pos : SV_POSITION;	
+	float4 pos : SV_POSITION;
 	float4 color : COLOR0;
 	float3 worldNormal: WORLDNORMAL;
 };
 
-// adding constant buffer for transform matrices
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
@@ -22,12 +21,12 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	
+
 	float4 worldNormal = mul(float4(input.norm, 0.0), uWorldMatrix);
-	
+
 	output.pos = mul(input.pos, uMvpMatrix);
 	output.color = input.color;
 	output.worldNormal = normalize(worldNormal.xyz);
-	
+
 	return output;
 }

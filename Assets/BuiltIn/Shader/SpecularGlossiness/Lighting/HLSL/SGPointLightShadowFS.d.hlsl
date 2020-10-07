@@ -13,7 +13,7 @@ SamplerState uShadowMapSampler : register(s3);
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
-	float2 tex0 : TEXCOORD0;	
+	float2 tex0 : TEXCOORD0;
 };
 
 cbuffer cbPerFrame
@@ -32,58 +32,58 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
-	
+
 	float spec = data.r;
-	float gloss = data.g;	
-	
+	float gloss = data.g;
+
 	// Lighting	
 	float3 direction = uLightPosition.xyz - position;
-	float distance = length(direction);	
+	float distance = length(direction);
 	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.y)) * uLightColor.a;
-	
+
 	float3 lightDir = normalize(direction);
 	float NdotL = max(0.0, dot(lightDir, normal));
-	
+
 	// Specular
-	float3 H = normalize(direction + viewDir);	
+	float3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0,dot(normal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
-	
+
 	// Shadow
 	float bias = 0.2;
-	
+
 	/*
 	float sampledDistance = uShadowMap.SampleLevel(uShadowMapSampler, -lightDir, 0).r;
 	float shadow = 1.0;
 	if (distance - bias > sampledDistance)
 		shadow = 0.0f; // Inside the shadow
 	*/
-	
+
 	float shadow = 0.0;
 	float samples = 3.0;
 	float offset = 0.01;
-	
+
 	[unroll]
-	for(float x = -offset; x < offset; x += offset / (samples * 0.5))
+	for (float x = -offset; x < offset; x += offset / (samples * 0.5))
 	{
 		[unroll]
-		for(float y = -offset; y < offset; y += offset / (samples * 0.5))
+		for (float y = -offset; y < offset; y += offset / (samples * 0.5))
 		{
 			[unroll]
-			for(float z = -offset; z < offset; z += offset / (samples * 0.5))
+			for (float z = -offset; z < offset; z += offset / (samples * 0.5))
 			{
 				float3 fragToLight = -lightDir + float3(x, y, z);
 				float closestDepth = uShadowMap.SampleLevel(uShadowMapSampler, fragToLight, 0).r;
-				
+
 				if (distance - bias > closestDepth)
 					shadow += 1.0;
 			}
 		}
 	}
-	
+
 	shadow /= (samples * samples * samples);
 	shadow = max(1.0 - shadow, 0.0);
-	
+
 	float3 lightColor = uLightColor.rgb * (NdotL * attenuation) * shadow;
 	return float4(lightColor, specular * attenuation * shadow);
 }

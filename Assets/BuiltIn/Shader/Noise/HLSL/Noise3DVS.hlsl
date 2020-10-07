@@ -14,7 +14,6 @@ struct VS_OUTPUT
 	float4 worldPos: WORLD_POSITION;
 };
 
-// adding constant buffer for transform matrices
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;

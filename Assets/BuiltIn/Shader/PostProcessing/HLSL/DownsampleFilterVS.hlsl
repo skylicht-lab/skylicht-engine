@@ -13,7 +13,6 @@ struct VS_OUTPUT
 	float2 tex0 : TEXCOORD0;
 };
 
-// adding constant buffer for transform matrices
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
@@ -22,10 +21,10 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	
+
 	output.pos = mul(input.pos, uMvpMatrix);
 	output.color = input.color;
 	output.tex0 = input.tex0;
-	
+
 	return output;
 }

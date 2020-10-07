@@ -1,7 +1,7 @@
 <shaderConfig name="StarSequence3D" baseShader="SOLID">
 	<uniforms>
 		<vs>
-			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>			
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 		</vs>
 		<fs>
 			<uniform name="uNoiseOffset" type="MATERIAL_PARAM" valueIndex="0" value="0.0,0.0,0.0,4.0" float="4"/>

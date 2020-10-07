@@ -17,15 +17,15 @@ cbuffer cbPerFrame
 };
 
 float4 main(PS_INPUT input) : SV_TARGET
-{	
+{
 	// base color
 	float3 base = uSourceTex.Sample(uSourceTexSampler, input.tex0).rgb;
-		
+
 	// blur color
 	float3 blur = uBlurTex.Sample(uBlurTexSampler, input.tex0).rgb;
-		
+
 	float intensity = 1.8;
 	float3 m = base + blur * intensity;
-	
+
 	return float4(m, 1.0);
 }

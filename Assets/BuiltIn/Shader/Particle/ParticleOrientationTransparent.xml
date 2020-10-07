@@ -13,7 +13,7 @@
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexture"/>
 		</ui>
-	</customUI>	
+	</customUI>
 	<shader type="GLSL" vs="GLSL/ParticleOrientationVS.glsl" fs="GLSL/ParticleFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/ParticleOrientationVS.hlsl" fs="HLSL/ParticleFS.hlsl"/>
 </shaderConfig>

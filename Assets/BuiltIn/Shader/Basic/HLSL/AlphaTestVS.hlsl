@@ -20,9 +20,9 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	
+
 	output.pos = mul(input.pos, uMvpMatrix);
 	output.tex0 = input.tex0;
-	
+
 	return output;
 }
