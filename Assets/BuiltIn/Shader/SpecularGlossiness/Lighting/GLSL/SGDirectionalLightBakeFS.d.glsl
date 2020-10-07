@@ -25,21 +25,21 @@ out vec4 FragColor;
 #include "LibSG.glsl"
 
 void main(void)
-{	
+{
 	vec3 albedo = texture(uTexAlbedo, varTexCoord0.xy).rgb;
 	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
 	vec4 light = texture(uTexLight, varTexCoord0.xy);
 	vec3 indirect = texture(uTexIndirect, varTexCoord0.xy).rgb;
-	
+
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
-	
+
 	float directMul = uLightMultiplier.x;
 	float indirectMul = uLightMultiplier.y;
 	float lightMul = uLightMultiplier.z;
-	
+
 	// backface when render lightmap
 	if (dot(viewDir, normal) < 0.0)
 	{
@@ -48,7 +48,7 @@ void main(void)
 		indirectMul = 0.0;
 		lightMul = 0.0;
 	}
-	
+
 	// shadow
 	float depth = length(v);
 
@@ -63,11 +63,11 @@ void main(void)
 	shadowDistance[2] = uShadowDistance.z;
 
 	float visibility = shadow(shadowCoord, shadowDistance, depth);
-	
+
 	// lighting	
 	vec3 color = SG(
-		albedo, 
-		data.r, 
+		albedo,
+		data.r,
 		data.g,
 		viewDir,
 		uLightDirection.xyz,
@@ -79,6 +79,6 @@ void main(void)
 		directMul,
 		indirectMul,
 		lightMul);
-		
+
 	FragColor = vec4(color, 1.0);
 }

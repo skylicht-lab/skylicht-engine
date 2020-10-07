@@ -13,12 +13,12 @@ void main(void)
 {
 	// base color
 	vec3 base = texture(uSourceTex, varTexCoord0).rgb;
-		
+
 	// blur color
 	vec3 blur = texture(uBlurTex, varTexCoord0).rgb;
-		
+
 	float intensity = 1.8;
 	vec3 m = base + blur * intensity;
-	
+
 	FragColor = vec4(m, 1.0);
 }

@@ -9,7 +9,7 @@ out vec4 varWorldPos;
 
 void main(void)
 {
-	varColor = inColor/255.0;
+	varColor = inColor / 255.0;
 	varWorldPos = inPosition;
 	gl_Position = uMvpMatrix * inPosition;
 }

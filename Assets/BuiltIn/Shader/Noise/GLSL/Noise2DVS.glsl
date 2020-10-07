@@ -9,7 +9,7 @@ out vec2 varTexCoord0;
 
 void main(void)
 {
-	varColor = inColor/255.0;
-	varTexCoord0 = 	inTexCoord0;
+	varColor = inColor / 255.0;
+	varTexCoord0 = inTexCoord0;
 	gl_Position = uMvpMatrix * inPosition;
 }
