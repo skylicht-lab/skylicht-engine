@@ -45,6 +45,6 @@ PS_OUTPUT main(PS_INPUT input)
 	output.Position = float4(input.worldPosition, 1.0);
 	output.Normal = float4(n, 1.0);
 	output.SG = float4(sgMap, 1.0);
-	
+
 	return output;
 }

@@ -1,7 +1,7 @@
 <shaderConfig name="SGDirectionalLight" baseShader="SOLID">
 	<uniforms>
 		<vs>
-			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>					
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 		</vs>
 		<fs>
 			<uniform name="uTexAlbedo" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
@@ -11,9 +11,9 @@
 			<uniform name="uTexLight" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
 			<uniform name="uTexIndirect" type="DEFAULT_VALUE" value="5" float="1" directX="false"/>
 			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="6" float="1" directX="false"/>
-			
+
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
-			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>			
+			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uLightMultiplier" type="SHADER_VEC3" value="0.0" float="3"/>
 			<uniform name="uShadowDistance" type="SHADOW_MAP_DISTANCE" value="0" float="3"/>

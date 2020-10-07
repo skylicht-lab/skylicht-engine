@@ -1,14 +1,14 @@
 <shaderConfig name="SGPointLightShadow" baseShader="TRANSPARENT_ADD_COLOR">
 	<uniforms>
 		<vs>
-			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>					
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 		</vs>
-		<fs>			
+		<fs>
 			<uniform name="uTexPosition" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
 			<uniform name="uTexData" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
-			
+
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
 			<uniform name="uLightAttenuation" type="POINT_LIGHT_ATTENUATION" value="0" float="4"/>

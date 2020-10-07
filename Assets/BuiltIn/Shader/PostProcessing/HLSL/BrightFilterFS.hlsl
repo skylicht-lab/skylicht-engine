@@ -13,23 +13,22 @@ cbuffer cbPerFrame
 	float4 uCurve;
 };
 
-
 float brightness(float3 c)
 {
-    return max(max(c.r, c.g), c.b);
+	return max(max(c.r, c.g), c.b);
 }
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 m = uSourceTex.Sample(uSourceTexSampler, input.tex0).rgb;
 	float br = brightness(m);
-	
-	// Under-threshold part: quadratic curve
-    float rq = clamp(br - uCurve.x, 0, uCurve.y);
-    rq = uCurve.z * rq * rq;
 
-    // Combine and apply the brightness response curve.
-    m *= max(rq, br - uCurve.w) / max(br, 1e-5);
-	
+	// Under-threshold part: quadratic curve
+	float rq = clamp(br - uCurve.x, 0, uCurve.y);
+	rq = uCurve.z * rq * rq;
+
+	// Combine and apply the brightness response curve.
+	m *= max(rq, br - uCurve.w) / max(br, 1e-5);
+
 	return float4(m, 1.0);
 }

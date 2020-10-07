@@ -14,7 +14,6 @@ struct VS_OUTPUT
 	float3 tex0 : LIGHTMAP;
 };
 
-// adding constant buffer for transform matrices
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
@@ -23,9 +22,9 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	
-	output.pos = mul(input.pos, uMvpMatrix);	
+
+	output.pos = mul(input.pos, uMvpMatrix);
 	output.tex0 = input.lightmap;
-	
+
 	return output;
 }

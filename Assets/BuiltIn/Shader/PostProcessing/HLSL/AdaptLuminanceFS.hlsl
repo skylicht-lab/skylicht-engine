@@ -20,8 +20,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float lum = uTexLuminance.Sample(uTexLuminanceSampler, input.tex0).x;
 	float lastLum = uTexLastLuminance.Sample(uTexLastLuminanceSampler, input.tex0).x;
-	
+
 	float adaptLum = lastLum + (lum - lastLum) * uTimeStep.x * 0.001;
-	
+
 	return float4(adaptLum, 0, 0, 0);
 }

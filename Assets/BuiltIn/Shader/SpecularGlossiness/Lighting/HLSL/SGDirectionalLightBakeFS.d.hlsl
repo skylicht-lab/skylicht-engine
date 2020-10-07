@@ -22,13 +22,13 @@ SamplerState uShadowMapSampler : register(s6);
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
-	float2 tex0 : TEXCOORD0;	
+	float2 tex0 : TEXCOORD0;
 };
 
 cbuffer cbPerFrame
 {
 	float4 uCameraPosition;
-	float4 uLightDirection;	
+	float4 uLightDirection;
 	float4 uLightColor;
 	float3 uLightMultiplier;
 	float3 uShadowDistance;
@@ -49,11 +49,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
-	
+
 	float directMul = uLightMultiplier.x;
 	float indirectMul = uLightMultiplier.y;
 	float lightMul = uLightMultiplier.z;
-	
+
 	// backface when render lightmap
 	if (dot(viewDir, normal) < 0)
 	{
@@ -62,21 +62,21 @@ float4 main(PS_INPUT input) : SV_TARGET
 		indirectMul = 0.0;
 		lightMul = 0.0;
 	}
-	
+
 	// shadow
 	float depth = length(v);
-		
+
 	float4 shadowCoord[3];
 	shadowCoord[0] = mul(float4(position, 1.0), uShadowMatrix[0]);
 	shadowCoord[1] = mul(float4(position, 1.0), uShadowMatrix[1]);
 	shadowCoord[2] = mul(float4(position, 1.0), uShadowMatrix[2]);
-	
+
 	float shadowDistance[3];
 	shadowDistance[0] = uShadowDistance.x;
 	shadowDistance[1] = uShadowDistance.y;
 	shadowDistance[2] = uShadowDistance.z;
 	float visibility = shadow(shadowCoord, shadowDistance, depth);
-	
+
 	// lighting
 	float3 color = SG(
 		albedo,
@@ -92,6 +92,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 		directMul,
 		indirectMul,
 		lightMul);
-	
+
 	return float4(color, 1.0);
 }

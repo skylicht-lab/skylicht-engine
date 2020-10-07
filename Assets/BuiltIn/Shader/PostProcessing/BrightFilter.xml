@@ -7,7 +7,7 @@
 			<uniform name="uSourceTex" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uCurve" type="MATERIAL_PARAM" valueIndex="0" value="0" float="4"/>
 		</fs>
-	</uniforms>	
+	</uniforms>
 	<shader type="GLSL" vs="GLSL/BrightFilterVS.glsl" fs="GLSL/BrightFilterFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/BrightFilterVS.hlsl" fs="HLSL/BrightFilterFS.hlsl"/>
 </shaderConfig>

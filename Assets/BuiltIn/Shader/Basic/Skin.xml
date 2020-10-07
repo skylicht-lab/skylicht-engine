@@ -10,7 +10,7 @@
 	</uniforms>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
-			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>	
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/SkinVS.glsl" fs="GLSL/SkinFS.glsl"/>
