@@ -275,7 +275,7 @@ namespace Skylicht
 				blurDown(i, i + 1);
 
 			for (int i = m_numTarget - 1; i > 2; i--)
-				blurDown(i, i - 1);
+				blurUp(i, i - 1);
 
 			// bloom
 			m_bloomFilter->setTexture(0, m_rtt[colorID]);
