@@ -132,6 +132,7 @@ void SampleNoise3D::onInitApp()
 	m_forwardRP->initRender(w, h);
 
 	m_postProcessorRP = new CPostProcessorRP();
+	m_postProcessorRP->enableAutoExposure(false);
 	m_postProcessorRP->enableBloomEffect(true);
 	m_postProcessorRP->enableFXAA(true);
 	m_postProcessorRP->initRender(w, h);

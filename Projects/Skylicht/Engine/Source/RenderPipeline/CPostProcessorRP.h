@@ -47,10 +47,12 @@ namespace Skylicht
 		int m_numTarget;
 
 		SMaterial m_finalPass;
+		SMaterial m_linearPass;
 		SMaterial m_lumPass;
 		SMaterial m_adaptLumPass;
 		SMaterial m_effectPass;
 
+		bool m_autoExposure;
 		bool m_bloomEffect;
 		bool m_fxaa;
 
@@ -78,6 +80,11 @@ namespace Skylicht
 		void blurDown(int from, int to);
 
 		void blurUp(int from, int to);
+
+		inline void enableAutoExposure(bool b)
+		{
+			m_autoExposure = b;
+		}
 
 		inline void enableBloomEffect(bool b)
 		{
