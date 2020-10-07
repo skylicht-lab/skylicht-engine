@@ -16,6 +16,7 @@ private:
 	CCamera *m_camera;
 
 	CForwardRP *m_forwardRP;
+	CPostProcessorRP *m_postProcessorRP;
 
 	CGlyphFont* m_font;
 

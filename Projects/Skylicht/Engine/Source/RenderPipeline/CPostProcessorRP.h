@@ -52,6 +52,8 @@ namespace Skylicht
 		SMaterial m_adaptLumPass;
 		SMaterial m_effectPass;
 
+		float m_bloomThreshold;
+
 		bool m_autoExposure;
 		bool m_bloomEffect;
 		bool m_fxaa;
@@ -94,6 +96,11 @@ namespace Skylicht
 		inline void enableFXAA(bool b)
 		{
 			m_fxaa = b;
+		}
+
+		inline void setBloomThreshold(float f)
+		{
+			m_bloomThreshold = f;
 		}
 
 	protected:
