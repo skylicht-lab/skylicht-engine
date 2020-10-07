@@ -37,6 +37,9 @@ SampleParticlesMagicSkill::~SampleParticlesMagicSkill()
 	delete m_vortexSystem;
 	delete m_scene;
 
+	delete m_forwardRP;
+	delete m_postProcessorRP;
+
 	CImguiManager::releaseInstance();
 }
 
@@ -114,6 +117,11 @@ void SampleParticlesMagicSkill::onInitApp()
 
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
+
+	m_postProcessorRP = new CPostProcessorRP();
+	m_postProcessorRP->setBloomThreshold(0.7f);
+	m_postProcessorRP->initRender(w, h);
+	m_forwardRP->setPostProcessor(m_postProcessorRP);
 }
 
 bool SampleParticlesMagicSkill::OnEvent(const SEvent& event)

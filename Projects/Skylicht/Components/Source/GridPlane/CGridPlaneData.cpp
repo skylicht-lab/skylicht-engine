@@ -43,7 +43,7 @@ namespace Skylicht
 	{
 		clearBuffer();
 
-		SColor color(255, 50, 50, 50);
+		SColor color(255, 10, 10, 10);
 
 		core::vector3df start;
 		core::vector3df end;
@@ -56,9 +56,9 @@ namespace Skylicht
 		for (int i = 0; i <= NumGrid; i++)
 		{
 			if (i == NumGrid / 2)
-				color = SColor(255, 100, 100, 100);
+				color = SColor(255, 60, 60, 60);
 			else
-				color = SColor(255, 50, 50, 50);
+				color = SColor(255, 10, 10, 10);
 
 			addLineVertexBatch(start, end, color);
 
@@ -72,9 +72,9 @@ namespace Skylicht
 		for (int i = 0; i <= NumGrid; i++)
 		{
 			if (i == NumGrid / 2)
-				color = SColor(255, 100, 100, 100);
+				color = SColor(255, 60, 60, 60);
 			else
-				color = SColor(255, 50, 50, 50);
+				color = SColor(255, 10, 10, 10);
 
 			addLineVertexBatch(start, end, color);
 

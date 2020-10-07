@@ -41,7 +41,8 @@ namespace Skylicht
 		m_blurUpFilter(NULL),
 		m_bloomFilter(NULL),
 		m_fxaaFilter(NULL),
-		m_numTarget(0)
+		m_numTarget(0),
+		m_bloomThreshold(0.9f)
 	{
 		m_luminance[0] = NULL;
 		m_luminance[1] = NULL;
@@ -167,7 +168,7 @@ namespace Skylicht
 	{
 		video::SVec4 curve;
 
-		float threshold = 0.9f;
+		float threshold = m_bloomThreshold;
 		float softKnee = 0.5f;
 		curve.W = threshold;
 
