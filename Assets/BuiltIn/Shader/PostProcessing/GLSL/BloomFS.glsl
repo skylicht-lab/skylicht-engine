@@ -3,7 +3,7 @@ precision mediump float;
 uniform sampler2D uSourceTex;
 uniform sampler2D uBlurTex;
 
-uniform vec2 uTexelSize;
+uniform float uBloomIntensity;
 
 in vec2	varTexCoord0;
 
@@ -16,9 +16,8 @@ void main(void)
 
 	// blur color
 	vec3 blur = texture(uBlurTex, varTexCoord0).rgb;
-
-	float intensity = 1.0;
-	vec3 m = base + blur * intensity;
+	
+	vec3 m = base + blur * uBloomIntensity;
 
 	FragColor = vec4(m, 1.0);
 }
