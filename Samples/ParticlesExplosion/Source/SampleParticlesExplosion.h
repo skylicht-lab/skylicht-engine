@@ -29,6 +29,8 @@ public:
 
 	void initParticleSystem(Particle::CParticleComponent *ps);
 
+	void initFireSystem(Particle::CParticleComponent *ps);
+
 	virtual void onUpdate();
 
 	virtual void onRender();
