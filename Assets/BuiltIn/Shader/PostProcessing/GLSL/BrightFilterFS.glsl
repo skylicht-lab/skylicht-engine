@@ -19,7 +19,7 @@ void main(void)
 	float br = brightness(m);
 
 	// Under-threshold part: quadratic curve
-	float rq = clamp(br - uCurve.x, 0, uCurve.y);
+	float rq = clamp(br - uCurve.x, 0.0, uCurve.y);
 	rq = uCurve.z * rq * rq;
 
 	// Combine and apply the brightness response curve.
