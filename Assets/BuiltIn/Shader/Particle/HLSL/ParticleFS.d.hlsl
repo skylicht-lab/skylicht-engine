@@ -12,6 +12,8 @@ struct PS_INPUT
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float4 result = input.color * uTexture.Sample(uTextureSampler, input.tex0);
-	return float4(sRGB(result.rgb), result.a);
+	float4 color = uTexture.Sample(uTextureSampler, input.tex0);
+	float3 result = sRGB(color.rgb) * sRGB(input.color.rgb);
+	
+	return float4(result, color.a * input.color.a);
 }

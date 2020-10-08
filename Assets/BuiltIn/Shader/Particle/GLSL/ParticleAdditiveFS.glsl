@@ -18,6 +18,6 @@ void main(void)
 {
 	vec4 texColor = texture(uTexture, varTexCoord0.xy);
 	vec3 color = mix(vec3(0.0, 0.0, 0.0), texColor.rgb, texColor.a);
-	vec3 result = color * varColor.rgb;
-	FragColor = vec4(sRGB(result * varColor.a), 1.0);
+	vec3 result = sRGB(color) * sRGB(varColor.rgb);
+	FragColor = vec4(result * varColor.a, 1.0);
 }

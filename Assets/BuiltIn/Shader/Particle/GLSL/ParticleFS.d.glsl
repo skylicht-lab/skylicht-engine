@@ -11,6 +11,7 @@ out vec4 FragColor;
 
 void main(void)
 {
-	vec4 color = texture(uTexture, varTexCoord0.xy) * varColor;
-	FragColor = vec4(sRGB(color.rgb), color.a);
+	vec4 color = texture(uTexture, varTexCoord0.xy);
+	vec3 result = sRGB(color.rgb) * sRGB(varColor.rgb);	
+	FragColor = vec4(result, color.a * varColor.a);
 }

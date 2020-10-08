@@ -144,10 +144,13 @@ namespace Skylicht
 					{
 						// interpolate
 						y = modelInterpolators[j]->interpolate(x);
+						params[t] = y;
 					}
-
-					// update param value
-					params[t] = p->StartValue[t] + (p->EndValue[t] - p->StartValue[t]) * y;
+					else
+					{
+						// update param value
+						params[t] = p->StartValue[t] + (p->EndValue[t] - p->StartValue[t]) * y;
+					}
 
 					if (t == Scale)
 					{

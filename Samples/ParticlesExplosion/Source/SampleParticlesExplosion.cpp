@@ -68,13 +68,15 @@ void SampleParticlesExplosion::onInitApp()
 	CGameObject *grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
 
-	// particles pool
+	// particles pool	
 	for (int i = 0; i < MAX_POOL; i++)
 	{
 		m_particlePool[i] = zone->createEmptyObject()->addComponent<Particle::CParticleComponent>();
 		initParticleSystem(m_particlePool[i]);
 		m_particlePool[i]->getGameObject()->setVisible(false);
 	}
+
+	// initFireSystem(zone->createEmptyObject()->addComponent<Particle::CParticleComponent>());
 
 	// init font
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
@@ -133,6 +135,76 @@ bool SampleParticlesExplosion::OnEvent(const SEvent& event)
 	return false;
 }
 
+void SampleParticlesExplosion::initFireSystem(Particle::CParticleComponent *ps)
+{
+	ITexture *texture = NULL;
+	Particle::CFactory *factory = ps->getParticleFactory();
+
+	// GROUP: FIRE
+	Particle::CGroup *fireGroup = ps->createParticleGroup();
+
+	Particle::CQuadRenderer *fire = factory->createQuadRenderer();
+
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/fire2.png");
+	fire->setMaterialType(Particle::Addtive, Particle::Camera);
+	fire->setAtlas(2, 2);
+	fire->SizeX = 0.3f;
+	fire->SizeY = 0.3f;
+	fire->getMaterial()->setTexture(0, texture);
+	fire->getMaterial()->applyMaterial();
+
+	fireGroup->setRenderer(fire);
+	fireGroup->createModel(Particle::ColorR)->setStart(0.8f, 0.9f)->setEnd(0.8f, 0.9f);
+	fireGroup->createModel(Particle::ColorG)->setStart(0.5f, 0.6f)->setEnd(0.5f, 0.6f);
+	fireGroup->createModel(Particle::ColorB)->setStart(0.3f);
+	fireGroup->createModel(Particle::ColorA)->setStart(0.4)->setEnd(0.0f);
+	fireGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
+	fireGroup->createModel(Particle::RotateSpeedZ)->setStart(1.1f, 2.2f);
+	fireGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
+	fireGroup->LifeMin = 1.0f;
+	fireGroup->LifeMax = 1.5f;
+	fireGroup->Gravity.set(0.0f, 3.0f, 0.0f);
+
+	Particle::CInterpolator *fireSizeInterpolate = fireGroup->createInterpolator();
+	fireSizeInterpolate->addEntry(0.0f, 0.0f);
+	fireSizeInterpolate->addEntry(0.5f, 3.0f);
+	fireSizeInterpolate->addEntry(1.0f, 0.0f);
+	fireGroup->createModel(Particle::Scale)->setInterpolator(fireSizeInterpolate);
+
+	// Emitters
+	// The emitters are arranged so that the fire looks realistic
+	Particle::CStraightEmitter* fireEmitter1 = factory->createStraightEmitter(core::vector3df(0.0f, 1.0f, 0.0f));
+	fireEmitter1->setZone(factory->createSphereZone(core::vector3df(0.0f, -1.0f, 0.0f), 0.5f));
+	fireEmitter1->setFlow(40);
+	fireEmitter1->setForce(1.0f, 2.5f);
+
+	Particle::CStraightEmitter* fireEmitter2 = factory->createStraightEmitter(core::vector3df(1.0f, 0.6f, 0.0f));
+	fireEmitter2->setZone(factory->createSphereZone(core::vector3df(0.15f, -1.2f, 0.075f), 0.1f));
+	fireEmitter2->setFlow(15);
+	fireEmitter2->setForce(0.5f, 1.5f);
+
+	Particle::CStraightEmitter* fireEmitter3 = factory->createStraightEmitter(core::vector3df(-0.6f, 0.8f, -0.8f));
+	fireEmitter3->setZone(factory->createSphereZone(core::vector3df(-0.375f, -1.15f, -0.375f), 0.3f));
+	fireEmitter3->setFlow(15);
+	fireEmitter3->setForce(0.5f, 1.5f);
+
+	Particle::CStraightEmitter* fireEmitter4 = factory->createStraightEmitter(core::vector3df(-0.8f, 0.5f, 0.2f));
+	fireEmitter4->setZone(factory->createSphereZone(core::vector3df(-0.255f, -1.2f, 0.225f), 0.2f));
+	fireEmitter4->setFlow(10);
+	fireEmitter4->setForce(0.5f, 1.5f);
+
+	Particle::CStraightEmitter* fireEmitter5 = factory->createStraightEmitter(core::vector3df(0.1f, 0.8f, -1.0f));
+	fireEmitter5->setZone(factory->createSphereZone(core::vector3df(-0.075f, -1.2f, -0.3f), 0.2f));
+	fireEmitter5->setFlow(10);
+	fireEmitter5->setForce(0.5f, 1.5f);
+
+	fireGroup->addEmitter(fireEmitter1);
+	fireGroup->addEmitter(fireEmitter2);
+	fireGroup->addEmitter(fireEmitter3);
+	fireGroup->addEmitter(fireEmitter4);
+	fireGroup->addEmitter(fireEmitter5);
+}
+
 void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *ps)
 {
 	ITexture *texture = NULL;
@@ -171,7 +243,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	interpolatorSmokeAlpha->addEntry(0.4f, 0.6f);
 	interpolatorSmokeAlpha->addEntry(0.6f, 0.6f);
 	interpolatorSmokeAlpha->addEntry(1.0f, 0.0f);
-	smokeGroup->createModel(Particle::ColorA)->setStart(0.0f)->setEnd(1.0f)->setInterpolator(interpolatorSmokeAlpha);
+	smokeGroup->createModel(Particle::ColorA)->setInterpolator(interpolatorSmokeAlpha);
 
 	// create emitter
 	Particle::CRandomEmitter *smokeEmitter = NULL;
@@ -182,6 +254,37 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	smokeEmitter->setForce(0.04f, 0.1f);
 	smokeEmitter->setZone(sphere);
 	smokeGroup->addEmitter(smokeEmitter);
+
+	// GROUP: FLASH
+	Particle::CGroup *flashGroup = ps->createParticleGroup();
+
+	Particle::CQuadRenderer *flash = factory->createQuadRenderer();
+	flashGroup->setRenderer(flash);
+
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/flash.png");
+	flash->setMaterialType(Particle::Addtive, Particle::Camera);
+	flash->getMaterial()->setTexture(0, texture);
+	flash->getMaterial()->applyMaterial();
+
+	flashGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
+	flashGroup->LifeMin = 0.5f;
+	flashGroup->LifeMax = 0.5f;
+
+	Particle::CInterpolator *flashSizeInterpolator = flashGroup->createInterpolator();
+	flashSizeInterpolator->addEntry(0.0f, 0.25f);
+	flashSizeInterpolator->addEntry(0.1f, 1.5f);
+	flashGroup->createModel(Particle::Scale)->setInterpolator(flashSizeInterpolator);
+
+	Particle::CInterpolator *flashAlphaInterpolator = flashGroup->createInterpolator();
+	flashAlphaInterpolator->addEntry(0.0f, 1.0f);
+	flashAlphaInterpolator->addEntry(0.4f, 0.0f);
+	flashGroup->createModel(Particle::ColorA)->setInterpolator(flashAlphaInterpolator);
+
+	Particle::CRandomEmitter* randomEmitter = factory->createRandomEmitter();
+	randomEmitter->setZone(factory->createSphereZone(core::vector3df(), 0.1f));
+	randomEmitter->setFlow(-1);
+	randomEmitter->setTank(3);
+	flashGroup->addEmitter(randomEmitter);
 
 	// GROUP: FLAME
 	Particle::CGroup *flameGroup = ps->createParticleGroup();
@@ -207,12 +310,12 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	flameSizeInterpolator->addEntry(0.0f, 0.25f);
 	flameSizeInterpolator->addEntry(0.02f, 0.8f);
 	flameSizeInterpolator->addEntry(1.0f, 1.4f);
-	flameGroup->createModel(Particle::Scale)->setStart(0.0f)->setEnd(1.0f)->setInterpolator(flameSizeInterpolator);
+	flameGroup->createModel(Particle::Scale)->setInterpolator(flameSizeInterpolator);
 
 	Particle::CInterpolator *flameAlphaInterpolator = flameGroup->createInterpolator();
 	flameAlphaInterpolator->addEntry(0.5f, 1.0f);
 	flameAlphaInterpolator->addEntry(1.0f, 0.0f);
-	flameGroup->createModel(Particle::ColorA)->setStart(0.0f)->setEnd(1.0f)->setInterpolator(flameAlphaInterpolator);
+	flameGroup->createModel(Particle::ColorA)->setInterpolator(flameAlphaInterpolator);
 
 	Particle::CNormalEmitter *flameEmitter = factory->createNormalEmitter(false);
 	flameEmitter->setFlow(-1.0f);
@@ -220,37 +323,6 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	flameEmitter->setForce(0.06f, 0.1f);
 	flameEmitter->setZone(sphere);
 	flameGroup->addEmitter(flameEmitter);
-
-	// GROUP: FLASH
-	Particle::CGroup *flashGroup = ps->createParticleGroup();
-
-	Particle::CQuadRenderer *flash = factory->createQuadRenderer();
-	flashGroup->setRenderer(flash);
-
-	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/flash.png");
-	flash->setMaterialType(Particle::Addtive, Particle::Camera);
-	flash->getMaterial()->setTexture(0, texture);
-	flash->getMaterial()->applyMaterial();
-
-	flashGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
-	flashGroup->LifeMin = 0.5f;
-	flashGroup->LifeMax = 0.5f;
-
-	Particle::CInterpolator *flashSizeInterpolator = flashGroup->createInterpolator();
-	flashSizeInterpolator->addEntry(0.0f, 0.25f);
-	flashSizeInterpolator->addEntry(0.1f, 2.0f);
-	flashGroup->createModel(Particle::Scale)->setStart(0.0f)->setEnd(1.0f)->setInterpolator(flashSizeInterpolator);
-
-	Particle::CInterpolator *flashAlphaInterpolator = flashGroup->createInterpolator();
-	flashAlphaInterpolator->addEntry(0.0f, 1.0f);
-	flashAlphaInterpolator->addEntry(0.4f, 0.0f);
-	flashGroup->createModel(Particle::ColorA)->setStart(0.0f)->setEnd(1.0f)->setInterpolator(flashAlphaInterpolator);
-
-	Particle::CRandomEmitter* randomEmitter = factory->createRandomEmitter();
-	randomEmitter->setZone(factory->createSphereZone(core::vector3df(), 0.1f));
-	randomEmitter->setFlow(-1);
-	randomEmitter->setTank(3);
-	flashGroup->addEmitter(randomEmitter);
 
 	// GROUP: LINE SPARK
 	Particle::CGroup *lineSparkGroup = ps->createParticleGroup();
