@@ -53,6 +53,7 @@ namespace Skylicht
 		SMaterial m_effectPass;
 
 		float m_bloomThreshold;
+		float m_bloomIntensity;
 
 		bool m_autoExposure;
 		bool m_bloomEffect;
@@ -101,6 +102,11 @@ namespace Skylicht
 		inline void setBloomThreshold(float f)
 		{
 			m_bloomThreshold = f;
+		}
+
+		inline void setBloomIntensity(float f)
+		{
+			m_bloomIntensity = f;
 		}
 
 	protected:

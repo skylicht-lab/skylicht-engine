@@ -120,6 +120,7 @@ void SampleParticlesMagicSkill::onInitApp()
 
 	m_postProcessorRP = new CPostProcessorRP();
 	m_postProcessorRP->setBloomThreshold(0.7f);
+	m_postProcessorRP->setBloomIntensity(2.0f);
 	m_postProcessorRP->initRender(w, h);
 	m_forwardRP->setPostProcessor(m_postProcessorRP);
 }
