@@ -6,6 +6,7 @@
 		<fs>
 			<uniform name="uSourceTex" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uBlurTex" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uBloomIntensity" type="MATERIAL_PARAM" valueIndex="0" value="1.0" float="1"/>
 		</fs>
 	</uniforms>
 	<shader type="GLSL" vs="GLSL/BloomVS.glsl" fs="GLSL/BloomFS.glsl"/>

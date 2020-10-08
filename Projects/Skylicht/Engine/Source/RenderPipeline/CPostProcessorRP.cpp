@@ -42,7 +42,8 @@ namespace Skylicht
 		m_bloomFilter(NULL),
 		m_fxaaFilter(NULL),
 		m_numTarget(0),
-		m_bloomThreshold(0.9f)
+		m_bloomThreshold(0.9f),
+		m_bloomIntensity(1.0f)
 	{
 		m_luminance[0] = NULL;
 		m_luminance[1] = NULL;
@@ -233,6 +234,8 @@ namespace Skylicht
 			m_bloomFilter->setTexture(0, color);
 			m_bloomFilter->setTexture(1, m_rtt[2]);
 			m_bloomFilter->applyMaterial(m_effectPass);
+
+			m_bloomFilter->setUniform("uBloomIntensity", m_bloomIntensity);
 
 			CShaderMaterial::setMaterial(m_bloomFilter);
 

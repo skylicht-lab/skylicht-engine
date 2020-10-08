@@ -13,7 +13,7 @@ struct PS_INPUT
 
 cbuffer cbPerFrame
 {
-	float2 uTexelSize;
+	float uBloomIntensity;
 };
 
 float4 main(PS_INPUT input) : SV_TARGET
@@ -23,9 +23,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	// blur color
 	float3 blur = uBlurTex.Sample(uBlurTexSampler, input.tex0).rgb;
-
-	float intensity = 1.0;
-	float3 m = base + blur * intensity;
+	
+	float3 m = base + blur * uBloomIntensity;
 
 	return float4(m, 1.0);
 }
