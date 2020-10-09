@@ -43,9 +43,12 @@ namespace Skylicht
 			OrientationUp(0.0f, 1.0f, 0.0f)
 		{
 			m_particleSystem = new CParticleSystem();
-			m_bufferSystem = new CParticleBufferSystem();
+
+			m_instancingSystem = new CParticleInstancingSystem();
+			m_cpuBufferSystem = new CParticleCPUBufferSystem();
 
 			m_instancing = new CParticleInstancing();
+			m_cpuBuffer = new CParticleCPUBuffer();
 		}
 
 		CGroup::~CGroup()
@@ -62,9 +65,12 @@ namespace Skylicht
 			m_interpolators.clear();
 
 			delete m_particleSystem;
-			delete m_bufferSystem;
+
+			delete m_instancingSystem;
+			delete m_cpuBufferSystem;
 
 			delete m_instancing;
+			delete m_cpuBuffer;
 		}
 
 		IRenderer* CGroup::setRenderer(IRenderer *r)
@@ -140,8 +146,13 @@ namespace Skylicht
 			}
 
 			// update instancing buffer		
-			if (visible == true)
-				m_bufferSystem->update(particles, numParticles, this, dt);
+			if (visible == true && m_renderer != NULL)
+			{
+				if (m_renderer->useInstancing() == true)
+					m_instancingSystem->update(particles, numParticles, this, dt);
+				else
+					m_cpuBufferSystem->update(particles, numParticles, this, dt);
+			}
 
 			bornParticle();
 		}

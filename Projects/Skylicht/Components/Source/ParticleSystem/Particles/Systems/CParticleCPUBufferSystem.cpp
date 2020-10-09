@@ -22,71 +22,31 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
 #include "pch.h"
-#include "Material/CMaterial.h"
+#include "CParticleCPUBufferSystem.h"
+
+#include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CGroup.h"
+
+#include "ParticleSystem/Particles/Renderers/CQuadRenderer.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		enum ERenderer
+		CParticleCPUBufferSystem::CParticleCPUBufferSystem()
 		{
-			Quad
-		};
 
-		class IRenderer
+		}
+
+		CParticleCPUBufferSystem::~CParticleCPUBufferSystem()
 		{
-		protected:
-			ERenderer m_type;
-			CMaterial *m_material;
 
-			bool m_useInstancing;
+		}
 
-		public:
-			float SizeX;
-			float SizeY;
-			float SizeZ;
+		void CParticleCPUBufferSystem::update(CParticle *particles, int num, CGroup *group, float dt)
+		{
 
-		public:
-			IRenderer(ERenderer type) :
-				m_type(type),
-				m_material(NULL),
-				SizeX(1.0f),
-				SizeY(1.0f),
-				SizeZ(1.0f),
-				m_useInstancing(true)
-			{
-
-			}
-
-			virtual ~IRenderer()
-			{
-
-			}
-
-			inline ERenderer getType()
-			{
-				return m_type;
-			}
-
-			CMaterial* getMaterial()
-			{
-				return m_material;
-			}
-
-			bool useInstancing()
-			{
-				return m_useInstancing;
-			}
-
-			virtual void getParticleBuffer(IMeshBuffer *buffer) = 0;
-
-			virtual u32 getTotalFrames()
-			{
-				return 1;
-			}
-		};
+		}
 	}
 }
