@@ -24,20 +24,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "ISystem.h"
-
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleBufferSystem : public ISystem
+		class CParticleCPUBuffer
 		{
+		protected:
+			IMeshBuffer* m_meshBuffer;
+
 		public:
-			CParticleBufferSystem();
+			CParticleCPUBuffer();
 
-			virtual ~CParticleBufferSystem();
+			virtual ~CParticleCPUBuffer();
 
-			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
+			inline IMeshBuffer* getMeshBuffer()
+			{
+				return m_meshBuffer;
+			}
 		};
 	}
 }

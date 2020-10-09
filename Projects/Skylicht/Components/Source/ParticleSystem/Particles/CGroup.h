@@ -33,9 +33,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Systems/ISystem.h"
 
 #include "Systems/CParticleSystem.h"
-#include "Systems/CParticleBufferSystem.h"
+#include "Systems/CParticleInstancingSystem.h"
+#include "Systems/CParticleCPUBufferSystem.h"
 
 #include "CParticleInstancing.h"
+#include "CParticleCPUBuffer.h"
+
 #include "CModel.h"
 
 namespace Skylicht
@@ -107,10 +110,14 @@ namespace Skylicht
 			std::vector<CInterpolator*> m_interpolators;
 
 			CParticleSystem *m_particleSystem;
-			CParticleBufferSystem *m_bufferSystem;
+
+			CParticleInstancingSystem *m_instancingSystem;
+			CParticleCPUBufferSystem *m_cpuBufferSystem;
 
 			IRenderer* m_renderer;
+
 			CParticleInstancing *m_instancing;
+			CParticleCPUBuffer *m_cpuBuffer;
 
 			std::vector<IParticleCallback*> m_callback;
 
@@ -251,6 +258,11 @@ namespace Skylicht
 			CParticleInstancing* getIntancing()
 			{
 				return m_instancing;
+			}
+
+			CParticleCPUBuffer* getParticleBuffer()
+			{
+				return m_cpuBuffer;
 			}
 
 			inline u32 getCurrentParticleCount()

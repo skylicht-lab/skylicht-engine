@@ -22,71 +22,23 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
 #include "pch.h"
-#include "Material/CMaterial.h"
+#include "Material/Shader/CShaderManager.h"
+#include "CParticleCPUBuffer.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		enum ERenderer
+		CParticleCPUBuffer::CParticleCPUBuffer()
 		{
-			Quad
-		};
+			m_meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(video::EVT_STANDARD), video::EIT_32BIT);
+			m_meshBuffer->setHardwareMappingHint(EHM_STREAM);
+		}
 
-		class IRenderer
+		CParticleCPUBuffer::~CParticleCPUBuffer()
 		{
-		protected:
-			ERenderer m_type;
-			CMaterial *m_material;
-
-			bool m_useInstancing;
-
-		public:
-			float SizeX;
-			float SizeY;
-			float SizeZ;
-
-		public:
-			IRenderer(ERenderer type) :
-				m_type(type),
-				m_material(NULL),
-				SizeX(1.0f),
-				SizeY(1.0f),
-				SizeZ(1.0f),
-				m_useInstancing(true)
-			{
-
-			}
-
-			virtual ~IRenderer()
-			{
-
-			}
-
-			inline ERenderer getType()
-			{
-				return m_type;
-			}
-
-			CMaterial* getMaterial()
-			{
-				return m_material;
-			}
-
-			bool useInstancing()
-			{
-				return m_useInstancing;
-			}
-
-			virtual void getParticleBuffer(IMeshBuffer *buffer) = 0;
-
-			virtual u32 getTotalFrames()
-			{
-				return 1;
-			}
-		};
+			m_meshBuffer->drop();
+		}
 	}
 }
