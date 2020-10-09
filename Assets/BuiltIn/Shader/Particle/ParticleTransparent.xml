@@ -1,0 +1,17 @@
+<shaderConfig name="ParticleTransparent" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexture"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/ParticleVS.glsl" fs="GLSL/ParticleFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ParticleVS.hlsl" fs="HLSL/ParticleFS.hlsl"/>
+</shaderConfig>

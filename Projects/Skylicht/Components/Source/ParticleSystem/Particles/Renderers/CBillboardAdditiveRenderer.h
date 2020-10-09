@@ -22,37 +22,71 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CParticleCPUBufferSystem.h"
+#pragma once
 
+#include "IRenderer.h"
 #include "ParticleSystem/Particles/CParticle.h"
-#include "ParticleSystem/Particles/CGroup.h"
-
-#include "ParticleSystem/Particles/Renderers/CBillboardAdditiveRenderer.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticleCPUBufferSystem::CParticleCPUBufferSystem()
+		class CBillboardAdditiveRenderer : public IRenderer
 		{
+		protected:
+			u32 m_atlasNx;
+			u32 m_atlasNy;
 
-		}
+			static const u32 NB_INDICES_PER_QUAD = 6;
+			static const u32 NB_VERTICES_PER_QUAD = 4;
 
-		CParticleCPUBufferSystem::~CParticleCPUBufferSystem()
-		{
+		public:
+			CBillboardAdditiveRenderer();
 
-		}
+			virtual ~CBillboardAdditiveRenderer();
 
-		void CParticleCPUBufferSystem::update(CParticle *particles, int num, CGroup *group, float dt)
-		{
-			CBillboardAdditiveRenderer *billboard = dynamic_cast<CBillboardAdditiveRenderer*>(group->getRenderer());
-			IMeshBuffer *mb = group->getParticleBuffer()->getMeshBuffer();
+			virtual void getParticleBuffer(IMeshBuffer *buffer);
 
-			if (billboard != NULL)
+			virtual void updateParticleBuffer(IMeshBuffer *buffer, CParticle *particles, int num);
+
+			void setAtlas(u32 x, u32 y)
 			{
-				billboard->updateParticleBuffer(mb, particles, num);
+				m_atlasNx = x;
+				m_atlasNy = y;
+
+				if (m_atlasNx < 1)
+					m_atlasNx = 1;
+
+				if (m_atlasNy < 1)
+					m_atlasNy = 1;
 			}
-		}
+
+			inline u32 getAtlasX()
+			{
+				return m_atlasNx;
+			}
+
+			inline u32 getAtlasY()
+			{
+				return m_atlasNy;
+			}
+
+			void setTexture(int slot, ITexture *texture);
+
+			virtual u32 getTotalFrames()
+			{
+				return m_atlasNx * m_atlasNy;
+			}
+
+			inline float getFrameWidth()
+			{
+				return 1.0f / m_atlasNx;
+			}
+
+			inline float getFrameHeight()
+			{
+				return 1.0f / m_atlasNy;
+			}
+		};
 	}
 }

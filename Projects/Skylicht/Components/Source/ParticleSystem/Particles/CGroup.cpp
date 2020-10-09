@@ -76,7 +76,10 @@ namespace Skylicht
 		IRenderer* CGroup::setRenderer(IRenderer *r)
 		{
 			m_renderer = r;
-			m_renderer->getParticleBuffer(m_instancing->getMeshBuffer());
+			if (m_renderer->useInstancing() == true)
+				m_renderer->getParticleBuffer(m_instancing->getMeshBuffer());
+			else
+				m_renderer->getParticleBuffer(m_cpuBuffer->getMeshBuffer());
 			return r;
 		}
 

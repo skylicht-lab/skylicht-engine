@@ -161,16 +161,25 @@ namespace Skylicht
 				CGroup *g = groups[i];
 				if (g->getCurrentParticleCount() > 0)
 				{
-					IMeshBuffer *buffer = g->getIntancing()->getMeshBuffer();
+					IRenderer *renderer = g->getRenderer();
+					if (renderer != NULL)
+					{
+						IMeshBuffer *buffer = NULL;
 
-					CShaderParticle::setOrientationUp(g->OrientationUp);
-					CShaderParticle::setOrientationNormal(g->OrientationNormal);
+						if (renderer->useInstancing() == true)
+							buffer = g->getIntancing()->getMeshBuffer();
+						else
+							buffer = g->getParticleBuffer()->getMeshBuffer();
 
-					if (g->getRenderer() != NULL)
-						CShaderMaterial::setMaterial(g->getRenderer()->getMaterial());
+						CShaderParticle::setOrientationUp(g->OrientationUp);
+						CShaderParticle::setOrientationNormal(g->OrientationNormal);
 
-					driver->setMaterial(buffer->getMaterial());
-					driver->drawMeshBuffer(buffer);
+						if (renderer != NULL)
+							CShaderMaterial::setMaterial(renderer->getMaterial());
+
+						driver->setMaterial(buffer->getMaterial());
+						driver->drawMeshBuffer(buffer);
+					}
 				}
 			}
 		}

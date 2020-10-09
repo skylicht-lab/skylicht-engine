@@ -87,7 +87,7 @@ void SampleParticlesVortex::initParticleSystem(Particle::CParticleComponent *ps)
 	group->setRenderer(quadRenderer);
 
 	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
-	quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
+	quadRenderer->setMaterialType(Particle::Additive, Particle::Camera);
 	quadRenderer->setAtlas(1, 1);
 	quadRenderer->getMaterial()->setTexture(0, texture);
 	quadRenderer->getMaterial()->applyMaterial();

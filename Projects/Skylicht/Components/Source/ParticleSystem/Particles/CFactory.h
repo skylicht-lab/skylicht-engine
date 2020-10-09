@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Emitters/CEmitter.h"
 
 #include "Renderers/CQuadRenderer.h"
+#include "Renderers/CBillboardAdditiveRenderer.h"
 
 #include "Zones/CPoint.h"
 #include "Zones/CSphere.h"
@@ -72,6 +73,8 @@ namespace Skylicht
 			void deleteEmitter(CEmitter *e);
 
 			CQuadRenderer* createQuadRenderer();
+
+			CBillboardAdditiveRenderer* createBillboardAdditiveRenderer();
 
 			void deleteRenderer(IRenderer* r);
 

@@ -39,9 +39,9 @@ namespace Skylicht
 
 		enum EBaseShaderType
 		{
-			Addtive,
+			Additive,
 			Transparent,
-			AddtiveAlpha,
+			AdditiveAlpha,
 			TransparentAlpha,
 			Solid,
 		};
