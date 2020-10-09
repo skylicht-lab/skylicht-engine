@@ -34,7 +34,7 @@ namespace Skylicht
 			m_atlasNx(1),
 			m_atlasNy(1),
 			m_billboardType(Camera),
-			m_baseShaderType(Addtive)
+			m_baseShaderType(Additive)
 		{
 			m_material = new CMaterial("Particle", "BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
 			m_material->setBackfaceCulling(false);
@@ -56,7 +56,7 @@ namespace Skylicht
 
 		void CQuadRenderer::setMaterialType(EBaseShaderType shader, EBillboardType billboard)
 		{
-			if (shader == Addtive)
+			if (shader == Additive)
 			{
 				if (billboard == Camera)
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
@@ -74,7 +74,7 @@ namespace Skylicht
 				else if (billboard == FixOrientation)
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleOrientationTransparent.xml");
 			}
-			else if (shader == AddtiveAlpha)
+			else if (shader == AdditiveAlpha)
 			{
 				if (billboard == Camera)
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardAdditiveAlpha.xml");

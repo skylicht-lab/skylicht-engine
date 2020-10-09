@@ -153,10 +153,10 @@ void SampleParticlesExplosion::initFireSystem(Particle::CParticleComponent *ps)
 	// GROUP: FIRE
 	Particle::CGroup *fireGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer *fire = factory->createQuadRenderer();
+	// Billboard render use is slower but render additive look better
+	Particle::CBillboardAdditiveRenderer *fire = factory->createBillboardAdditiveRenderer();
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/fire2.png");
-	fire->setMaterialType(Particle::AddtiveAlpha, Particle::Camera);
 	fire->setAtlas(2, 2);
 	fire->SizeX = 0.3f;
 	fire->SizeY = 0.3f;
@@ -239,7 +239,7 @@ void SampleParticlesExplosion::initFireSystem(Particle::CParticleComponent *ps)
 	Particle::CQuadRenderer *smoke = factory->createQuadRenderer();
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
-	smoke->setMaterialType(Particle::AddtiveAlpha, Particle::Camera);
+	smoke->setMaterialType(Particle::AdditiveAlpha, Particle::Camera);
 	smoke->setAtlas(2, 2);
 	smoke->SizeX = 0.3f;
 	smoke->SizeY = 0.3f;
@@ -329,7 +329,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	flashGroup->setRenderer(flash);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/flash.png");
-	flash->setMaterialType(Particle::Addtive, Particle::Camera);
+	flash->setMaterialType(Particle::Additive, Particle::Camera);
 	flash->getMaterial()->setTexture(0, texture);
 	flash->getMaterial()->applyMaterial();
 
@@ -356,11 +356,15 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	// GROUP: FLAME
 	Particle::CGroup *flameGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer *flame = factory->createQuadRenderer();
+	// Billboard render use is slower but render additive look better
+	Particle::CBillboardAdditiveRenderer *flame = factory->createBillboardAdditiveRenderer();
+
+	//Particle::CQuadRenderer *flame = factory->createQuadRenderer();
+	//flame->setMaterialType(Particle::Additive, Particle::Camera);
+
 	flameGroup->setRenderer(flame);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
-	flame->setMaterialType(Particle::AddtiveAlpha, Particle::Camera);
 	flame->setAtlas(2, 2);
 	flame->getMaterial()->setTexture(0, texture);
 	flame->getMaterial()->applyMaterial();
@@ -399,7 +403,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	lineSparkGroup->setRenderer(lineSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png");
-	lineSpark->setMaterialType(Particle::Addtive, Particle::Velocity);
+	lineSpark->setMaterialType(Particle::Additive, Particle::Velocity);
 	lineSpark->getMaterial()->setTexture(0, texture);
 	lineSpark->getMaterial()->applyMaterial();
 	lineSpark->SizeX = 0.05f;
@@ -425,7 +429,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	pointSparkGroup->setRenderer(pointSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
-	pointSpark->setMaterialType(Particle::Addtive, Particle::Camera);
+	pointSpark->setMaterialType(Particle::Additive, Particle::Camera);
 	pointSpark->getMaterial()->setTexture(0, texture);
 	pointSpark->getMaterial()->applyMaterial();
 	pointSpark->SizeX = 0.02f;

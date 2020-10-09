@@ -98,6 +98,9 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/PostProcessing/AdaptLuminance.xml");
 		loadShader("BuiltIn/Shader/PostProcessing/PostEffect.xml");
 
+		loadShader("BuiltIn/Shader/Particle/ParticleAdditive.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleTransparent.xml");
+
 		loadShader("BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
 		loadShader("BuiltIn/Shader/Particle/ParticleBillboardAdditiveAlpha.xml");
 		loadShader("BuiltIn/Shader/Particle/ParticleBillboardTransparent.xml");

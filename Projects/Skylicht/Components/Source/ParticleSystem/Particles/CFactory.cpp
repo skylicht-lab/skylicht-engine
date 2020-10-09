@@ -99,6 +99,13 @@ namespace Skylicht
 			return r;
 		}
 
+		CBillboardAdditiveRenderer* CFactory::createBillboardAdditiveRenderer()
+		{
+			CBillboardAdditiveRenderer *r = new CBillboardAdditiveRenderer();
+			m_renderers.push_back(r);
+			return r;
+		}
+
 		void CFactory::deleteRenderer(IRenderer* r)
 		{
 			std::vector<IRenderer*>::iterator i = std::find(m_renderers.begin(), m_renderers.end(), r);

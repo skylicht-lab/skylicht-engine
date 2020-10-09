@@ -183,7 +183,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	ringGroup->setRenderer(ring);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/modular_aura06.png");
-	ring->setMaterialType(Particle::Addtive, Particle::FixOrientation);
+	ring->setMaterialType(Particle::Additive, Particle::FixOrientation);
 	ring->getMaterial()->setTexture(0, texture);
 	ring->getMaterial()->applyMaterial();
 
@@ -209,7 +209,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	point->SizeZ = 2.0f;
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_glow.png");
-	point->setMaterialType(Particle::Addtive, Particle::Camera);
+	point->setMaterialType(Particle::Additive, Particle::Camera);
 	point->getMaterial()->setTexture(0, texture);
 	point->getMaterial()->applyMaterial();
 	pointGroup->setRenderer(point);
@@ -231,7 +231,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	sphereGroup->setRenderer(sphere);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_sphere.png");
-	sphere->setMaterialType(Particle::Addtive, Particle::Camera);
+	sphere->setMaterialType(Particle::Additive, Particle::Camera);
 	sphere->getMaterial()->setTexture(0, texture);
 	sphere->getMaterial()->applyMaterial();
 
@@ -307,7 +307,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	arcaneGroup->syncParentParams(true, true);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_twirl.png");
-	arcane->setMaterialType(Particle::Addtive, Particle::Camera);
+	arcane->setMaterialType(Particle::Additive, Particle::Camera);
 	arcane->getMaterial()->setTexture(0, texture);
 	arcane->getMaterial()->applyMaterial();
 
@@ -334,7 +334,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	sphereGroup->setRenderer(sphere);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_sphere.png");
-	sphere->setMaterialType(Particle::Addtive, Particle::Camera);
+	sphere->setMaterialType(Particle::Additive, Particle::Camera);
 	sphere->getMaterial()->setTexture(0, texture);
 	sphere->getMaterial()->applyMaterial();
 
@@ -399,7 +399,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	glow->SizeZ = 1.2f;
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_glow.png");
-	glow->setMaterialType(Particle::Addtive, Particle::Camera);
+	glow->setMaterialType(Particle::Additive, Particle::Camera);
 	glow->getMaterial()->setTexture(0, texture);
 	glow->getMaterial()->setZTest(video::ECFN_DISABLED);
 	glow->getMaterial()->applyMaterial();
@@ -419,7 +419,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	lineSparkGroup->setRenderer(lineSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/vertical_glow3.png");
-	lineSpark->setMaterialType(Particle::Addtive, Particle::Velocity);
+	lineSpark->setMaterialType(Particle::Additive, Particle::Velocity);
 	lineSpark->getMaterial()->setTexture(0, texture);
 	lineSpark->getMaterial()->applyMaterial();
 	lineSpark->SizeX = 1.0f;
@@ -452,7 +452,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	sphereGroup->Gravity.set(0.0f, 0.0f, 0.0f);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_sphere.png");
-	sphere->setMaterialType(Particle::Addtive, Particle::Camera);
+	sphere->setMaterialType(Particle::Additive, Particle::Camera);
 	sphere->getMaterial()->setTexture(0, texture);
 	sphere->getMaterial()->applyMaterial();
 
@@ -479,7 +479,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	lingerGroup->setRenderer(linger);
 	lingerGroup->Gravity.set(0.0f, 0.0f, 0.0f);
 
-	linger->setMaterialType(Particle::Addtive, Particle::Camera);
+	linger->setMaterialType(Particle::Additive, Particle::Camera);
 	linger->getMaterial()->setTexture(0, texture);
 	linger->getMaterial()->applyMaterial();
 
@@ -505,7 +505,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	pointGroup->setRenderer(point);
 	pointGroup->Gravity.set(0.0f, -0.2f, 0.0f);
 
-	point->setMaterialType(Particle::Addtive, Particle::Camera);
+	point->setMaterialType(Particle::Additive, Particle::Camera);
 	point->getMaterial()->setTexture(0, texture);
 	point->getMaterial()->applyMaterial();
 
