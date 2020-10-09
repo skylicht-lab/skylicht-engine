@@ -74,6 +74,24 @@ namespace Skylicht
 				else if (billboard == FixOrientation)
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleOrientationTransparent.xml");
 			}
+			else if (shader == AddtiveAlpha)
+			{
+				if (billboard == Camera)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardAdditiveAlpha.xml");
+				else if (billboard == Velocity)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleVelocityAdditiveAlpha.xml");
+				else if (billboard == FixOrientation)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleOrientationAdditiveAlpha.xml");
+			}
+			else if (shader == TransparentAlpha)
+			{
+				if (billboard == Camera)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleBillboardTransparentAlpha.xml");
+				else if (billboard == Velocity)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleVelocityTransparentAlpha.xml");
+				else if (billboard == FixOrientation)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleOrientationTransparentAlpha.xml");
+			}
 			else
 			{
 

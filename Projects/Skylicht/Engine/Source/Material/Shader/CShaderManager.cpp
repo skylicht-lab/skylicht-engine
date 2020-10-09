@@ -99,12 +99,22 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/PostProcessing/PostEffect.xml");
 
 		loadShader("BuiltIn/Shader/Particle/ParticleBillboardAdditive.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleBillboardAdditiveAlpha.xml");
 		loadShader("BuiltIn/Shader/Particle/ParticleBillboardTransparent.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleBillboardTransparentAlpha.xml");
+
 		loadShader("BuiltIn/Shader/Particle/ParticleVelocityAdditive.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleVelocityAdditiveAlpha.xml");
 		loadShader("BuiltIn/Shader/Particle/ParticleVelocityTransparent.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleVelocityTransparentAlpha.xml");
+
 		loadShader("BuiltIn/Shader/Particle/ParticleOrientationAdditive.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleOrientationAdditiveAlpha.xml");
 		loadShader("BuiltIn/Shader/Particle/ParticleOrientationTransparent.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleOrientationTransparentAlpha.xml");
+
 		loadShader("BuiltIn/Shader/Particle/ParticleTrailTurbulenceAdditive.xml");
+		loadShader("BuiltIn/Shader/Particle/ParticleTrailTurbulenceAdditiveAlpha.xml");
 	}
 
 	void CShaderManager::initSGDeferredShader()
