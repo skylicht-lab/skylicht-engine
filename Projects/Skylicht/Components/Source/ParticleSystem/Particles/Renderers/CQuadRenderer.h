@@ -41,6 +41,8 @@ namespace Skylicht
 		{
 			Addtive,
 			Transparent,
+			AddtiveAlpha,
+			TransparentAlpha,
 			Solid,
 		};
 
