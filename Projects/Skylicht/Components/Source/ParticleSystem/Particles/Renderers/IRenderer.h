@@ -33,7 +33,8 @@ namespace Skylicht
 	{
 		enum ERenderer
 		{
-			Quad
+			Quad,
+			BillboardAddtive
 		};
 
 		class IRenderer

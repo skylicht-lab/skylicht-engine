@@ -254,7 +254,7 @@ Particle::IRenderer* SampleParticles::updateParticleRendererType(Particle::CPart
 	{
 		// point
 		ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
-		quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
+		quadRenderer->setMaterialType(Particle::Additive, Particle::Camera);
 		quadRenderer->setAtlas(1, 1);
 		quadRenderer->getMaterial()->setTexture(0, texture);
 		quadRenderer->getMaterial()->applyMaterial();
@@ -277,7 +277,7 @@ Particle::IRenderer* SampleParticles::updateParticleRendererType(Particle::CPart
 	{
 		// line
 		ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png");
-		quadRenderer->setMaterialType(Particle::Addtive, Particle::Velocity);
+		quadRenderer->setMaterialType(Particle::Additive, Particle::Velocity);
 		quadRenderer->setAtlas(1, 1);
 		quadRenderer->getMaterial()->setTexture(0, texture);
 		quadRenderer->getMaterial()->applyMaterial();
@@ -307,7 +307,7 @@ Particle::IRenderer* SampleParticles::updateParticleRenderer(Particle::CParticle
 	group->setRenderer(quadRenderer);
 
 	ITexture *texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
-	quadRenderer->setMaterialType(Particle::Addtive, Particle::Camera);
+	quadRenderer->setMaterialType(Particle::Additive, Particle::Camera);
 	quadRenderer->setAtlas(1, 1);
 	quadRenderer->getMaterial()->setUniformTexture("uTexture", texture);
 	quadRenderer->getMaterial()->applyMaterial();

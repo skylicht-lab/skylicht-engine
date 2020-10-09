@@ -52,5 +52,15 @@ namespace Skylicht
 		static void setOrientationUp(const core::vector3df& up);
 
 		static void setOrientationNormal(const core::vector3df& normal);
+
+		static core::vector3df getViewUp()
+		{
+			return s_viewUp;
+		}
+
+		static core::vector3df getViewLook()
+		{
+			return s_viewLook;
+		}
 	};
 }
