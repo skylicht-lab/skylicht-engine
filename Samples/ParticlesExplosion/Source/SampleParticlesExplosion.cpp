@@ -146,7 +146,7 @@ void SampleParticlesExplosion::initFireSystem(Particle::CParticleComponent *ps)
 	Particle::CQuadRenderer *fire = factory->createQuadRenderer();
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/fire2.png");
-	fire->setMaterialType(Particle::Addtive, Particle::Camera);
+	fire->setMaterialType(Particle::AddtiveAlpha, Particle::Camera);
 	fire->setAtlas(2, 2);
 	fire->SizeX = 0.3f;
 	fire->SizeY = 0.3f;
@@ -154,16 +154,16 @@ void SampleParticlesExplosion::initFireSystem(Particle::CParticleComponent *ps)
 	fire->getMaterial()->applyMaterial();
 
 	fireGroup->setRenderer(fire);
-	fireGroup->createModel(Particle::ColorR)->setStart(0.8f, 0.9f)->setEnd(0.8f, 0.9f);
-	fireGroup->createModel(Particle::ColorG)->setStart(0.5f, 0.6f)->setEnd(0.5f, 0.6f);
-	fireGroup->createModel(Particle::ColorB)->setStart(0.3f);
-	fireGroup->createModel(Particle::ColorA)->setStart(0.4)->setEnd(0.0f);
+	fireGroup->createModel(Particle::ColorR)->setStart(0.8f, 0.9f);
+	fireGroup->createModel(Particle::ColorG)->setStart(0.5f, 0.6f);
+	fireGroup->createModel(Particle::ColorB)->setStart(0.4f);
+	fireGroup->createModel(Particle::ColorA)->setStart(0.8)->setEnd(0.0f);
 	fireGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
 	fireGroup->createModel(Particle::RotateSpeedZ)->setStart(1.1f, 2.2f);
 	fireGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
 	fireGroup->LifeMin = 1.0f;
 	fireGroup->LifeMax = 1.5f;
-	fireGroup->Gravity.set(0.0f, 3.0f, 0.0f);
+	fireGroup->Gravity.set(0.0f, 2.0f, 0.0f);
 
 	Particle::CInterpolator *fireSizeInterpolate = fireGroup->createInterpolator();
 	fireSizeInterpolate->addEntry(0.0f, 0.0f);
@@ -178,31 +178,50 @@ void SampleParticlesExplosion::initFireSystem(Particle::CParticleComponent *ps)
 	fireEmitter1->setFlow(40);
 	fireEmitter1->setForce(1.0f, 2.5f);
 
-	Particle::CStraightEmitter* fireEmitter2 = factory->createStraightEmitter(core::vector3df(1.0f, 0.6f, 0.0f));
-	fireEmitter2->setZone(factory->createSphereZone(core::vector3df(0.15f, -1.2f, 0.075f), 0.1f));
+	core::vector3df position(0.15f, -1.2f, 0.075f);
+	core::vector3df direction(1.0f, 0.5f, 0.0f);
+	core::quaternion q;
+	q.fromAngleAxis(72.0f * core::DEGTORAD, CTransform::s_oy);
+
+	Particle::CStraightEmitter* fireEmitter2 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter2->setZone(factory->createSphereZone(position, 0.2f));
 	fireEmitter2->setFlow(15);
 	fireEmitter2->setForce(0.5f, 1.5f);
 
-	Particle::CStraightEmitter* fireEmitter3 = factory->createStraightEmitter(core::vector3df(-0.6f, 0.8f, -0.8f));
-	fireEmitter3->setZone(factory->createSphereZone(core::vector3df(-0.375f, -1.15f, -0.375f), 0.3f));
+	direction = q * direction;
+	q.getMatrix().transformVect(position);
+	Particle::CStraightEmitter* fireEmitter3 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter3->setZone(factory->createSphereZone(position, 0.2f));
 	fireEmitter3->setFlow(15);
 	fireEmitter3->setForce(0.5f, 1.5f);
 
-	Particle::CStraightEmitter* fireEmitter4 = factory->createStraightEmitter(core::vector3df(-0.8f, 0.5f, 0.2f));
-	fireEmitter4->setZone(factory->createSphereZone(core::vector3df(-0.255f, -1.2f, 0.225f), 0.2f));
+	direction = q * direction;
+	q.getMatrix().transformVect(position);
+	Particle::CStraightEmitter* fireEmitter4 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter4->setZone(factory->createSphereZone(position, 0.2f));
 	fireEmitter4->setFlow(10);
 	fireEmitter4->setForce(0.5f, 1.5f);
 
-	Particle::CStraightEmitter* fireEmitter5 = factory->createStraightEmitter(core::vector3df(0.1f, 0.8f, -1.0f));
-	fireEmitter5->setZone(factory->createSphereZone(core::vector3df(-0.075f, -1.2f, -0.3f), 0.2f));
+	direction = q * direction;
+	q.getMatrix().transformVect(position);
+	Particle::CStraightEmitter* fireEmitter5 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter5->setZone(factory->createSphereZone(position, 0.2f));
 	fireEmitter5->setFlow(10);
 	fireEmitter5->setForce(0.5f, 1.5f);
+
+	direction = q * direction;
+	q.getMatrix().transformVect(position);
+	Particle::CStraightEmitter* fireEmitter6 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter6->setZone(factory->createSphereZone(position, 0.2f));
+	fireEmitter6->setFlow(10);
+	fireEmitter6->setForce(0.5f, 1.5f);
 
 	fireGroup->addEmitter(fireEmitter1);
 	fireGroup->addEmitter(fireEmitter2);
 	fireGroup->addEmitter(fireEmitter3);
 	fireGroup->addEmitter(fireEmitter4);
 	fireGroup->addEmitter(fireEmitter5);
+	fireGroup->addEmitter(fireEmitter6);
 }
 
 void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *ps)
@@ -211,7 +230,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 
 	// FACTORY & EXPLOSION ZONE
 	Particle::CFactory *factory = ps->getParticleFactory();
-	Particle::CSphere* sphere = factory->createSphereZone(core::vector3df(), 0.6f);
+	Particle::CSphere* sphere = factory->createSphereZone(core::vector3df(), 0.4f);
 
 	// GROUP: SMOKE
 	Particle::CGroup *smokeGroup = ps->createParticleGroup();
@@ -219,8 +238,8 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	Particle::CQuadRenderer *smoke = factory->createQuadRenderer();
 	smokeGroup->setRenderer(smoke);
 
-	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion_alpha.png");
-	smoke->setMaterialType(Particle::Transparent, Particle::Camera);
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
+	smoke->setMaterialType(Particle::TransparentAlpha, Particle::Camera);
 	smoke->setAtlas(2, 2);
 	smoke->getMaterial()->setTexture(0, texture);
 	smoke->getMaterial()->applyMaterial();
@@ -230,6 +249,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	smokeGroup->createModel(Particle::ColorG)->setStart(0.2f);
 	smokeGroup->createModel(Particle::ColorB)->setStart(0.2f);
 	smokeGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
+	smokeGroup->createModel(Particle::RotateSpeedZ)->setStart(-0.5f, 0.5f);
 
 	// scale & lifetime
 	smokeGroup->createModel(Particle::Scale)->setStart(0.6f, 0.8f)->setEnd(1.0f, 1.4f);
@@ -293,15 +313,16 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	flameGroup->setRenderer(flame);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
-	flame->setMaterialType(Particle::Addtive, Particle::Camera);
+	flame->setMaterialType(Particle::AddtiveAlpha, Particle::Camera);
 	flame->setAtlas(2, 2);
 	flame->getMaterial()->setTexture(0, texture);
 	flame->getMaterial()->applyMaterial();
 
 	flameGroup->createModel(Particle::ColorR)->setStart(1.0f)->setEnd(0.2f);
-	flameGroup->createModel(Particle::ColorG)->setStart(0.5f)->setEnd(0.2f);
-	flameGroup->createModel(Particle::ColorB)->setStart(0.2f)->setEnd(0.2f);
+	flameGroup->createModel(Particle::ColorG)->setStart(0.6f)->setEnd(0.2f);
+	flameGroup->createModel(Particle::ColorB)->setStart(0.3f)->setEnd(0.2f);
 	flameGroup->createModel(Particle::RotateZ)->setStart(0.0f, core::PI * 0.5f);
+	flameGroup->createModel(Particle::RotateSpeedZ)->setStart(-0.5f, 0.5f);
 	flameGroup->createModel(Particle::FrameIndex)->setStart(0, 3);
 	flameGroup->LifeMin = 1.5f;
 	flameGroup->LifeMax = 2.0f;
