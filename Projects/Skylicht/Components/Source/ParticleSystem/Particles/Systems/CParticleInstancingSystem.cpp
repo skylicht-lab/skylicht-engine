@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CParticleBufferSystem.h"
+#include "CParticleInstancingSystem.h"
 
 #include "ParticleSystem/Particles/CParticle.h"
 #include "ParticleSystem/Particles/CGroup.h"
@@ -34,17 +34,17 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticleBufferSystem::CParticleBufferSystem()
+		CParticleInstancingSystem::CParticleInstancingSystem()
 		{
 
 		}
 
-		CParticleBufferSystem::~CParticleBufferSystem()
+		CParticleInstancingSystem::~CParticleInstancingSystem()
 		{
 
 		}
 
-		void CParticleBufferSystem::update(CParticle *particles, int num, CGroup *group, float dt)
+		void CParticleInstancingSystem::update(CParticle *particles, int num, CGroup *group, float dt)
 		{
 			CVertexBuffer<SParticleInstance>* buffer = group->getIntancing()->getInstanceBuffer();
 
