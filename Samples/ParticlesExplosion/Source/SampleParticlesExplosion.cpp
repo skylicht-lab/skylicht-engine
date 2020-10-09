@@ -14,7 +14,9 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 SampleParticlesExplosion::SampleParticlesExplosion() :
-	m_scene(NULL)
+	m_scene(NULL),
+	m_forwardRP(NULL),
+	m_postProcessorRP(NULL)
 {
 	CImguiManager::createGetInstance();
 
@@ -27,6 +29,9 @@ SampleParticlesExplosion::~SampleParticlesExplosion()
 
 	delete m_scene;
 	CImguiManager::releaseInstance();
+
+	delete m_forwardRP;
+	delete m_postProcessorRP;
 }
 
 void SampleParticlesExplosion::onInitApp()
@@ -101,6 +106,11 @@ void SampleParticlesExplosion::onInitApp()
 
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
+
+	m_postProcessorRP = new CPostProcessorRP();
+	m_postProcessorRP->enableBloomEffect(true);
+	m_postProcessorRP->initRender(w, h);
+	m_forwardRP->setPostProcessor(m_postProcessorRP);
 }
 
 bool SampleParticlesExplosion::OnEvent(const SEvent& event)
@@ -222,6 +232,43 @@ void SampleParticlesExplosion::initFireSystem(Particle::CParticleComponent *ps)
 	fireGroup->addEmitter(fireEmitter4);
 	fireGroup->addEmitter(fireEmitter5);
 	fireGroup->addEmitter(fireEmitter6);
+
+	// GROUP: SMOKE
+	Particle::CGroup *smokeGroup = ps->createParticleGroup();
+
+	Particle::CQuadRenderer *smoke = factory->createQuadRenderer();
+
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
+	smoke->setMaterialType(Particle::AddtiveAlpha, Particle::Camera);
+	smoke->setAtlas(2, 2);
+	smoke->SizeX = 0.3f;
+	smoke->SizeY = 0.3f;
+	smoke->getMaterial()->setTexture(0, texture);
+	smoke->getMaterial()->applyMaterial();
+
+	smokeGroup->setRenderer(smoke);
+	smokeGroup->createModel(Particle::ColorR)->setStart(0.3f)->setEnd(0.2f);
+	smokeGroup->createModel(Particle::ColorG)->setStart(0.25f)->setEnd(0.2f);
+	smokeGroup->createModel(Particle::ColorB)->setStart(0.2f);
+	smokeGroup->createModel(Particle::Scale)->setStart(5.0f)->setEnd(10.0f);
+	smokeGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
+	smokeGroup->createModel(Particle::RotateSpeedZ)->setStart(1.1f, 2.2f);
+	smokeGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
+	smokeGroup->LifeMin = 5.0f;
+	smokeGroup->LifeMax = 5.0f;
+
+	Particle::CInterpolator *smokeAlphaInterpolator = smokeGroup->createInterpolator();
+	smokeAlphaInterpolator->addEntry(0.0f, 0.0f);
+	smokeAlphaInterpolator->addEntry(0.2f, 0.2f);
+	smokeAlphaInterpolator->addEntry(1.0f, 0.0f);
+	smokeGroup->createModel(Particle::ColorA)->setInterpolator(smokeAlphaInterpolator);
+
+	Particle::CEmitter *smokeEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.5f * core::PI);
+	smokeEmitter->setZone(factory->createSphereZone(core::vector3df(), 1.2f));
+	smokeEmitter->setFlow(25);
+	smokeEmitter->setForce(0.5f, 1.0f);
+
+	smokeGroup->addEmitter(smokeEmitter);
 }
 
 void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *ps)

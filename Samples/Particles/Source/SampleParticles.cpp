@@ -607,7 +607,7 @@ void SampleParticles::onGUIZoneNode(int currentZone)
 			ImGui::SliderFloat("Radius", &r, minSize, maxSize, "r = %.3f");
 			ImGui::SliderFloat("Length", &l, minSize, maxSize, "l = %.3f");
 
-			core::vector3df direction = imguiDirection(CTransform::s_oy, rx, ry, rz, "Direction", "%.3f");
+			core::vector3df direction = imguiDirection(CTransform::s_oy, rx, ry, rz, "Direction rotate", "%.3f");
 
 			if (!core::equals(lastRadius, r) ||
 				!core::equals(lastLength, l) ||
@@ -714,7 +714,7 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 			static float rx = 0.0f;
 			static float ry = 0.0f;
 			static float rz = 0.0f;
-			core::vector3df direction = imguiDirection(-CTransform::s_oy, rx, ry, rz, "Direction", "%.3f");
+			core::vector3df direction = imguiDirection(-CTransform::s_oy, rx, ry, rz, "Direction rotate", "%.3f");
 
 			group->Gravity = direction * gravityValue;
 
@@ -747,7 +747,7 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 			static float rx = 0.0f;
 			static float ry = 0.0f;
 			static float rz = 0.0f;
-			core::vector3df direction = imguiDirection(CTransform::s_oy, rx, ry, rz, "Direction", "%.3f");
+			core::vector3df direction = imguiDirection(CTransform::s_oy, rx, ry, rz, "Direction rotate", "%.3f");
 			e->setDirection(direction);
 
 			ImGui::TreePop();
@@ -763,7 +763,7 @@ void SampleParticles::onGUIEmitterNode(int currentEmitter)
 			static float rx = 0.0f;
 			static float ry = 0.0f;
 			static float rz = 0.0f;
-			core::vector3df direction = imguiDirection(CTransform::s_oy, rx, ry, rz, "Direction", "%.3f");
+			core::vector3df direction = imguiDirection(CTransform::s_oy, rx, ry, rz, "Direction rotate", "%.3f");
 			e->setDirection(direction);
 
 			float angleMin = core::radToDeg(e->getAngleA());
