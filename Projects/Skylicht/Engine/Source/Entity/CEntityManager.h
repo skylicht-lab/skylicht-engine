@@ -58,7 +58,7 @@ namespace Skylicht
 
 		void render();
 
-		void render(IRenderSystem::ERenderPass pass);
+		void renderEmission();
 
 		void cullingAndRender();
 

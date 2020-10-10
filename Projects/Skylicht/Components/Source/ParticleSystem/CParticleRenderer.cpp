@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		CParticleRenderer::CParticleRenderer()
 		{
-
+			m_renderPass = Transparent;
 		}
 
 		CParticleRenderer::~CParticleRenderer()
@@ -112,7 +112,6 @@ namespace Skylicht
 		{
 			if (m_particles.size() == 0)
 				return;
-
 		}
 
 		void CParticleRenderer::renderTransparent(CEntityManager *entityManager)
@@ -140,6 +139,25 @@ namespace Skylicht
 			}
 		}
 
+		void CParticleRenderer::renderEmission(CEntityManager *entityManager)
+		{
+			if (m_particles.size() == 0)
+				return;
+
+			CParticleBufferData** particles = m_particles.pointer();
+			CWorldTransformData** transforms = m_transforms.pointer();
+			CCullingData** cullings = m_cullings.pointer();
+
+			for (u32 i = 0, n = m_particles.size(); i < n; i++)
+			{
+				CParticleBufferData *data = particles[i];
+
+				// render
+				if (cullings[i]->Visible == true)
+					renderParticleGroupEmission(data, transforms[i]->World);
+			}
+		}
+
 		void CParticleRenderer::renderParticleGroup(CParticleBufferData *data, const core::matrix4& world)
 		{
 			IVideoDriver *driver = getVideoDriver();
@@ -154,24 +172,50 @@ namespace Skylicht
 					IRenderer *renderer = g->getRenderer();
 					if (renderer != NULL)
 					{
-						IMeshBuffer *buffer = NULL;
-
-						if (renderer->useInstancing() == true)
-							buffer = g->getIntancing()->getMeshBuffer();
-						else
-							buffer = g->getParticleBuffer()->getMeshBuffer();
-
-						CShaderParticle::setOrientationUp(g->OrientationUp);
-						CShaderParticle::setOrientationNormal(g->OrientationNormal);
-
-						if (renderer != NULL)
-							CShaderMaterial::setMaterial(renderer->getMaterial());
-
-						driver->setMaterial(buffer->getMaterial());
-						driver->drawMeshBuffer(buffer);
+						renderGroup(driver, g);
 					}
 				}
 			}
+		}
+
+		void CParticleRenderer::renderParticleGroupEmission(CParticleBufferData *data, const core::matrix4& world)
+		{
+			IVideoDriver *driver = getVideoDriver();
+			driver->setTransform(video::ETS_WORLD, world);
+
+			CGroup** groups = data->Groups.pointer();
+			for (u32 i = 0, n = data->Groups.size(); i < n; i++)
+			{
+				CGroup *g = groups[i];
+				if (g->getCurrentParticleCount() > 0)
+				{
+					IRenderer *renderer = g->getRenderer();
+					if (renderer != NULL && renderer->isEmission())
+					{
+						renderGroup(driver, g);
+					}
+				}
+			}
+		}
+
+		void CParticleRenderer::renderGroup(IVideoDriver *driver, Particle::CGroup *group)
+		{
+			IMeshBuffer *buffer = NULL;
+			IRenderer *renderer = group->getRenderer();
+
+			if (renderer->useInstancing() == true)
+				buffer = group->getIntancing()->getMeshBuffer();
+			else
+				buffer = group->getParticleBuffer()->getMeshBuffer();
+
+			CShaderParticle::setOrientationUp(group->OrientationUp);
+			CShaderParticle::setOrientationNormal(group->OrientationNormal);
+
+			if (renderer != NULL)
+				CShaderMaterial::setMaterial(renderer->getMaterial());
+
+			driver->setMaterial(buffer->getMaterial());
+			driver->drawMeshBuffer(buffer);
 		}
 	}
 }

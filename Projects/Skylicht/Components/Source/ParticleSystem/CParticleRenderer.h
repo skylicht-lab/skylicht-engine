@@ -62,10 +62,15 @@ namespace Skylicht
 
 			virtual void renderTransparent(CEntityManager *entityManager);
 
+			virtual void renderEmission(CEntityManager *entityManager);
+
 		protected:
 
 			void renderParticleGroup(CParticleBufferData *data, const core::matrix4& world);
 
+			void renderParticleGroupEmission(CParticleBufferData *data, const core::matrix4& world);
+
+			void renderGroup(IVideoDriver *driver, Particle::CGroup *group);
 		};
 	}
 }

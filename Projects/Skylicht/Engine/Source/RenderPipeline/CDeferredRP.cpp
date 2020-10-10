@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDeferredRP.h"
+#include "CForwardRP.h"
 #include "RenderMesh/CMesh.h"
 #include "Material/CMaterial.h"
 #include "Material/Shader/CShaderManager.h"
@@ -464,7 +465,11 @@ namespace Skylicht
 		// final pass to screen
 		if (m_postProcessor != NULL && s_bakeMode == false)
 		{
-			m_postProcessor->postProcessing(target, m_target, m_normal, m_position, viewport);
+			ITexture *emission = NULL;
+			if (m_next->getType() == IRenderPipeline::Forwarder)
+				emission = ((CForwardRP*)m_next)->getEmissionTexture();
+
+			m_postProcessor->postProcessing(target, m_target, emission, m_normal, m_position, viewport);
 		}
 		else
 		{

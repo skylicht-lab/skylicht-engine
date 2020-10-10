@@ -73,6 +73,11 @@ namespace Skylicht
 
 		}
 
+		virtual void renderEmission(CEntityManager *entityManager)
+		{
+
+		}
+
 		virtual void postRender(CEntityManager *entityManager)
 		{
 

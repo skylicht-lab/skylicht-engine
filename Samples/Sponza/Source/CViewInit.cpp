@@ -249,6 +249,9 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	fire->getMaterial()->setTexture(0, texture);
 	fire->getMaterial()->applyMaterial();
 
+	// enable render emission buffer
+	fire->setEmission(true);
+
 	fireGroup->setRenderer(fire);
 	fireGroup->createModel(Particle::ColorR)->setStart(0.9f, 1.0f);
 	fireGroup->createModel(Particle::ColorG)->setStart(0.5f, 0.6f);
@@ -259,11 +262,11 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	fireGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
 	fireGroup->LifeMin = 1.0f;
 	fireGroup->LifeMax = 1.5f;
-	fireGroup->Gravity.set(0.0f, 2.0f, 0.0f);
+	fireGroup->Gravity.set(0.0f, 1.0f, 0.0f);
 
 	Particle::CInterpolator *fireSizeInterpolate = fireGroup->createInterpolator();
 	fireSizeInterpolate->addEntry(0.0f, 0.0f);
-	fireSizeInterpolate->addEntry(0.5f, 3.0f);
+	fireSizeInterpolate->addEntry(0.5f, 2.0f);
 	fireSizeInterpolate->addEntry(1.0f, 0.0f);
 	fireGroup->createModel(Particle::Scale)->setInterpolator(fireSizeInterpolate);
 
@@ -271,7 +274,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	// The emitters are arranged so that the fire looks realistic
 	Particle::CStraightEmitter* fireEmitter1 = factory->createStraightEmitter(core::vector3df(0.0f, 1.0f, 0.0f));
 	fireEmitter1->setZone(factory->createSphereZone(core::vector3df(0.0f, -1.0f, 0.0f), 0.5f));
-	fireEmitter1->setFlow(40);
+	fireEmitter1->setFlow(20);
 	fireEmitter1->setForce(1.0f, 2.5f);
 
 	core::vector3df position(0.15f, -1.2f, 0.075f);
@@ -417,8 +420,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -431,7 +434,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::InitScene;
 #endif
@@ -457,7 +460,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

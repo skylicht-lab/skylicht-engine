@@ -202,7 +202,7 @@ namespace Skylicht
 		renderEffect(from, to, m_blurUpFilter);
 	}
 
-	void CPostProcessorRP::postProcessing(ITexture *finalTarget, ITexture *color, ITexture *normal, ITexture *position, const core::recti& viewport)
+	void CPostProcessorRP::postProcessing(ITexture *finalTarget, ITexture *color, ITexture *emission, ITexture *normal, ITexture *position, const core::recti& viewport)
 	{
 		IVideoDriver *driver = getVideoDriver();
 
@@ -301,10 +301,10 @@ namespace Skylicht
 
 		// test to target
 		/*
-		ITexture *tex = m_rtt[2];
+		ITexture *tex = emission;
 		SMaterial t;
 		t.setTexture(0, tex);
-		t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+		t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureLinearRGB");
 
 		float w = (float)tex->getSize().Width;
 		float h = (float)tex->getSize().Height;
