@@ -39,8 +39,13 @@ namespace Skylicht
 
 	CForwardRP::~CForwardRP()
 	{
+		IVideoDriver *driver = getVideoDriver();
+
 		if (m_target != NULL)
-			getVideoDriver()->removeTexture(m_target);
+			driver->removeTexture(m_target);
+
+		if (m_emission != NULL)
+			driver->removeTexture(m_emission);
 	}
 
 	void CForwardRP::initRender(int w, int h)
@@ -48,7 +53,11 @@ namespace Skylicht
 		m_size.set(w, h);
 
 		if (m_useLinearRGB == true)
+		{
 			m_target = getVideoDriver()->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
+		}
+
+		m_emission = getVideoDriver()->addRenderTargetTexture(m_size, "emission", ECF_A16B16G16R16F);
 
 		m_finalPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureLinearRGB");
 	}
@@ -65,6 +74,7 @@ namespace Skylicht
 		if (m_useLinearRGB == true)
 		{
 			driver->setRenderTarget(m_target, true, true);
+
 			currentTarget = m_target;
 
 			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
@@ -76,6 +86,7 @@ namespace Skylicht
 		else
 		{
 			driver->setRenderTarget(target, false, false);
+
 			currentTarget = target;
 
 			// custom viewport
@@ -97,11 +108,18 @@ namespace Skylicht
 			entityManager->cullingAndRender();
 		}
 
+		// render emission
+		if (m_emission != NULL)
+		{
+			driver->setRenderTarget(m_emission, true, false);
+			entityManager->renderEmission();
+		}
+
 		onNext(currentTarget, camera, entityManager, viewport);
 
 		if (m_postProcessor != NULL && s_bakeMode == false)
 		{
-			m_postProcessor->postProcessing(target, m_target, NULL, NULL, viewport);
+			m_postProcessor->postProcessing(target, m_target, m_emission, NULL, NULL, viewport);
 		}
 		else if (m_useLinearRGB && m_target != NULL)
 		{

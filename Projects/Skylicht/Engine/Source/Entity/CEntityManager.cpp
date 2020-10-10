@@ -242,33 +242,6 @@ namespace Skylicht
 		}
 	}
 
-	void CEntityManager::render(IRenderSystem::ERenderPass pass)
-	{
-		for (IRenderSystem* &s : m_sortRender)
-		{
-			if (s->getRenderPass() == pass)
-			{
-				IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
-				if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
-				{
-					s->render(this);
-				}
-			}
-		}
-
-		for (IRenderSystem* &s : m_sortRender)
-		{
-			if (s->getRenderPass() == pass)
-			{
-				IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
-				if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
-				{
-					s->postRender(this);
-				}
-			}
-		}
-	}
-
 	void CEntityManager::cullingAndRender()
 	{
 		for (IRenderSystem* &s : m_renders)
@@ -316,6 +289,18 @@ namespace Skylicht
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
 			{
 				s->postRender(this);
+			}
+		}
+	}
+
+	void CEntityManager::renderEmission()
+	{
+		for (IRenderSystem* &s : m_sortRender)
+		{
+			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+			{
+				s->renderEmission(this);
 			}
 		}
 	}
