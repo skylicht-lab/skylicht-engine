@@ -81,8 +81,6 @@ void SampleParticlesExplosion::onInitApp()
 		m_particlePool[i]->getGameObject()->setVisible(false);
 	}
 
-	// initFireSystem(zone->createEmptyObject()->addComponent<Particle::CParticleComponent>());
-
 	// init font
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -145,139 +143,13 @@ bool SampleParticlesExplosion::OnEvent(const SEvent& event)
 	return false;
 }
 
-void SampleParticlesExplosion::initFireSystem(Particle::CParticleComponent *ps)
-{
-	ITexture *texture = NULL;
-	Particle::CFactory *factory = ps->getParticleFactory();
-
-	// GROUP: FIRE
-	Particle::CGroup *fireGroup = ps->createParticleGroup();
-
-	// Billboard render use is slower but render additive look better
-	Particle::CBillboardAdditiveRenderer *fire = factory->createBillboardAdditiveRenderer();
-
-	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/fire2.png");
-	fire->setAtlas(2, 2);
-	fire->SizeX = 0.3f;
-	fire->SizeY = 0.3f;
-	fire->getMaterial()->setTexture(0, texture);
-	fire->getMaterial()->applyMaterial();
-
-	fireGroup->setRenderer(fire);
-	fireGroup->createModel(Particle::ColorR)->setStart(0.8f, 0.9f);
-	fireGroup->createModel(Particle::ColorG)->setStart(0.5f, 0.6f);
-	fireGroup->createModel(Particle::ColorB)->setStart(0.4f);
-	fireGroup->createModel(Particle::ColorA)->setStart(0.8)->setEnd(0.0f);
-	fireGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
-	fireGroup->createModel(Particle::RotateSpeedZ)->setStart(1.1f, 2.2f);
-	fireGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
-	fireGroup->LifeMin = 1.0f;
-	fireGroup->LifeMax = 1.5f;
-	fireGroup->Gravity.set(0.0f, 2.0f, 0.0f);
-
-	Particle::CInterpolator *fireSizeInterpolate = fireGroup->createInterpolator();
-	fireSizeInterpolate->addEntry(0.0f, 0.0f);
-	fireSizeInterpolate->addEntry(0.5f, 3.0f);
-	fireSizeInterpolate->addEntry(1.0f, 0.0f);
-	fireGroup->createModel(Particle::Scale)->setInterpolator(fireSizeInterpolate);
-
-	// Emitters
-	// The emitters are arranged so that the fire looks realistic
-	Particle::CStraightEmitter* fireEmitter1 = factory->createStraightEmitter(core::vector3df(0.0f, 1.0f, 0.0f));
-	fireEmitter1->setZone(factory->createSphereZone(core::vector3df(0.0f, -1.0f, 0.0f), 0.5f));
-	fireEmitter1->setFlow(40);
-	fireEmitter1->setForce(1.0f, 2.5f);
-
-	core::vector3df position(0.15f, -1.2f, 0.075f);
-	core::vector3df direction(1.0f, 0.5f, 0.0f);
-	core::quaternion q;
-	q.fromAngleAxis(72.0f * core::DEGTORAD, CTransform::s_oy);
-
-	Particle::CStraightEmitter* fireEmitter2 = factory->createStraightEmitter(core::vector3df(direction));
-	fireEmitter2->setZone(factory->createSphereZone(position, 0.2f));
-	fireEmitter2->setFlow(15);
-	fireEmitter2->setForce(0.5f, 1.5f);
-
-	direction = q * direction;
-	q.getMatrix().transformVect(position);
-	Particle::CStraightEmitter* fireEmitter3 = factory->createStraightEmitter(core::vector3df(direction));
-	fireEmitter3->setZone(factory->createSphereZone(position, 0.2f));
-	fireEmitter3->setFlow(15);
-	fireEmitter3->setForce(0.5f, 1.5f);
-
-	direction = q * direction;
-	q.getMatrix().transformVect(position);
-	Particle::CStraightEmitter* fireEmitter4 = factory->createStraightEmitter(core::vector3df(direction));
-	fireEmitter4->setZone(factory->createSphereZone(position, 0.2f));
-	fireEmitter4->setFlow(10);
-	fireEmitter4->setForce(0.5f, 1.5f);
-
-	direction = q * direction;
-	q.getMatrix().transformVect(position);
-	Particle::CStraightEmitter* fireEmitter5 = factory->createStraightEmitter(core::vector3df(direction));
-	fireEmitter5->setZone(factory->createSphereZone(position, 0.2f));
-	fireEmitter5->setFlow(10);
-	fireEmitter5->setForce(0.5f, 1.5f);
-
-	direction = q * direction;
-	q.getMatrix().transformVect(position);
-	Particle::CStraightEmitter* fireEmitter6 = factory->createStraightEmitter(core::vector3df(direction));
-	fireEmitter6->setZone(factory->createSphereZone(position, 0.2f));
-	fireEmitter6->setFlow(10);
-	fireEmitter6->setForce(0.5f, 1.5f);
-
-	fireGroup->addEmitter(fireEmitter1);
-	fireGroup->addEmitter(fireEmitter2);
-	fireGroup->addEmitter(fireEmitter3);
-	fireGroup->addEmitter(fireEmitter4);
-	fireGroup->addEmitter(fireEmitter5);
-	fireGroup->addEmitter(fireEmitter6);
-
-	// GROUP: SMOKE
-	Particle::CGroup *smokeGroup = ps->createParticleGroup();
-
-	Particle::CQuadRenderer *smoke = factory->createQuadRenderer();
-
-	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
-	smoke->setMaterialType(Particle::AdditiveAlpha, Particle::Camera);
-	smoke->setAtlas(2, 2);
-	smoke->SizeX = 0.3f;
-	smoke->SizeY = 0.3f;
-	smoke->getMaterial()->setTexture(0, texture);
-	smoke->getMaterial()->applyMaterial();
-
-	smokeGroup->setRenderer(smoke);
-	smokeGroup->createModel(Particle::ColorR)->setStart(0.3f)->setEnd(0.2f);
-	smokeGroup->createModel(Particle::ColorG)->setStart(0.25f)->setEnd(0.2f);
-	smokeGroup->createModel(Particle::ColorB)->setStart(0.2f);
-	smokeGroup->createModel(Particle::Scale)->setStart(5.0f)->setEnd(10.0f);
-	smokeGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
-	smokeGroup->createModel(Particle::RotateSpeedZ)->setStart(1.1f, 2.2f);
-	smokeGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
-	smokeGroup->LifeMin = 5.0f;
-	smokeGroup->LifeMax = 5.0f;
-
-	Particle::CInterpolator *smokeAlphaInterpolator = smokeGroup->createInterpolator();
-	smokeAlphaInterpolator->addEntry(0.0f, 0.0f);
-	smokeAlphaInterpolator->addEntry(0.2f, 0.2f);
-	smokeAlphaInterpolator->addEntry(1.0f, 0.0f);
-	smokeGroup->createModel(Particle::ColorA)->setInterpolator(smokeAlphaInterpolator);
-
-	Particle::CEmitter *smokeEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.5f * core::PI);
-	smokeEmitter->setZone(factory->createSphereZone(core::vector3df(), 1.2f));
-	smokeEmitter->setFlow(25);
-	smokeEmitter->setForce(0.5f, 1.0f);
-
-	smokeGroup->addEmitter(smokeEmitter);
-}
-
 void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *ps)
 {
 	ITexture *texture = NULL;
 
 	// FACTORY & EXPLOSION ZONE
 	Particle::CFactory *factory = ps->getParticleFactory();
-	Particle::CSphere* sphere = factory->createSphereZone(core::vector3df(), 0.4f);
+	Particle::CSphere* sphere = factory->createSphereZone(core::vector3df(), 0.6f);
 
 	// GROUP: SMOKE
 	Particle::CGroup *smokeGroup = ps->createParticleGroup();
@@ -296,7 +168,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	smokeGroup->createModel(Particle::ColorG)->setStart(0.2f);
 	smokeGroup->createModel(Particle::ColorB)->setStart(0.2f);
 	smokeGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
-	smokeGroup->createModel(Particle::RotateSpeedZ)->setStart(-0.5f, 0.5f);
+	smokeGroup->createModel(Particle::RotateSpeedZ)->setStart(-0.2f, 0.2f);
 
 	// scale & lifetime
 	smokeGroup->createModel(Particle::Scale)->setStart(0.6f, 0.8f)->setEnd(1.0f, 1.4f);
@@ -373,7 +245,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	flameGroup->createModel(Particle::ColorG)->setStart(0.6f)->setEnd(0.2f);
 	flameGroup->createModel(Particle::ColorB)->setStart(0.3f)->setEnd(0.2f);
 	flameGroup->createModel(Particle::RotateZ)->setStart(0.0f, core::PI * 0.5f);
-	flameGroup->createModel(Particle::RotateSpeedZ)->setStart(-0.5f, 0.5f);
+	flameGroup->createModel(Particle::RotateSpeedZ)->setStart(-0.2f, 0.2f);
 	flameGroup->createModel(Particle::FrameIndex)->setStart(0, 3);
 	flameGroup->LifeMin = 1.5f;
 	flameGroup->LifeMax = 2.0f;

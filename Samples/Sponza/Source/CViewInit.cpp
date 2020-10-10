@@ -152,6 +152,17 @@ void CViewInit::initScene()
 		}
 	}
 
+	// init fire
+	for (int i = 0; i < 4; i++)
+	{
+		CGameObject *fire = zone->createEmptyObject();
+		Particle::CParticleComponent *fireParticle = fire->addComponent<Particle::CParticleComponent>();
+		initFireParticle(fireParticle);
+
+		fire->getTransformEuler()->setPosition(pointLightPosition[i] - core::vector3df(0.0f, 0.8f, 0.0f));
+		fire->getTransformEuler()->setScale(core::vector3df(0.41f, 0.41f, 0.41f));
+	}
+
 	// save to context
 	CContext *context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
@@ -160,7 +171,7 @@ void CViewInit::initScene()
 
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
-	
+
 	// context->getDefferredRP()->enableTestIndirect(true);
 
 	initProbes();
@@ -217,6 +228,140 @@ void CViewInit::initProbes()
 	context->setProbes(probes);
 }
 
+void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
+{
+	ITexture *texture = NULL;
+	Particle::CFactory *factory = ps->getParticleFactory();
+
+	// GROUP: FIRE
+	Particle::CGroup *fireGroup = ps->createParticleGroup();
+
+	// Billboard render use is slower but render additive look better
+	Particle::CBillboardAdditiveRenderer *fire = factory->createBillboardAdditiveRenderer();
+
+	// Particle::CQuadRenderer *fire = factory->createQuadRenderer();
+	// fire->setMaterialType(Particle::Additive, Particle::Camera);
+
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/fire2.png");
+	fire->setAtlas(2, 2);
+	fire->SizeX = 0.4f;
+	fire->SizeY = 0.4f;
+	fire->getMaterial()->setTexture(0, texture);
+	fire->getMaterial()->applyMaterial();
+
+	fireGroup->setRenderer(fire);
+	fireGroup->createModel(Particle::ColorR)->setStart(0.9f, 1.0f);
+	fireGroup->createModel(Particle::ColorG)->setStart(0.5f, 0.6f);
+	fireGroup->createModel(Particle::ColorB)->setStart(0.3f);
+	fireGroup->createModel(Particle::ColorA)->setStart(0.8)->setEnd(0.0f);
+	fireGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
+	fireGroup->createModel(Particle::RotateSpeedZ)->setStart(-0.5f, 0.5f);
+	fireGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
+	fireGroup->LifeMin = 1.0f;
+	fireGroup->LifeMax = 1.5f;
+	fireGroup->Gravity.set(0.0f, 2.0f, 0.0f);
+
+	Particle::CInterpolator *fireSizeInterpolate = fireGroup->createInterpolator();
+	fireSizeInterpolate->addEntry(0.0f, 0.0f);
+	fireSizeInterpolate->addEntry(0.5f, 3.0f);
+	fireSizeInterpolate->addEntry(1.0f, 0.0f);
+	fireGroup->createModel(Particle::Scale)->setInterpolator(fireSizeInterpolate);
+
+	// Emitters
+	// The emitters are arranged so that the fire looks realistic
+	Particle::CStraightEmitter* fireEmitter1 = factory->createStraightEmitter(core::vector3df(0.0f, 1.0f, 0.0f));
+	fireEmitter1->setZone(factory->createSphereZone(core::vector3df(0.0f, -1.0f, 0.0f), 0.5f));
+	fireEmitter1->setFlow(40);
+	fireEmitter1->setForce(1.0f, 2.5f);
+
+	core::vector3df position(0.15f, -1.2f, 0.075f);
+	core::vector3df direction(1.0f, 0.5f, 0.0f);
+	core::quaternion q;
+	q.fromAngleAxis(72.0f * core::DEGTORAD, CTransform::s_oy);
+	float radius = 0.2f;
+
+	Particle::CStraightEmitter* fireEmitter2 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter2->setZone(factory->createSphereZone(position, radius));
+	fireEmitter2->setFlow(15);
+	fireEmitter2->setForce(0.5f, 1.5f);
+
+	direction = q * direction;
+	q.getMatrix().transformVect(position);
+	Particle::CStraightEmitter* fireEmitter3 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter3->setZone(factory->createSphereZone(position, radius));
+	fireEmitter3->setFlow(15);
+	fireEmitter3->setForce(0.5f, 1.5f);
+
+	direction = q * direction;
+	q.getMatrix().transformVect(position);
+	Particle::CStraightEmitter* fireEmitter4 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter4->setZone(factory->createSphereZone(position, radius));
+	fireEmitter4->setFlow(10);
+	fireEmitter4->setForce(0.5f, 1.5f);
+
+	direction = q * direction;
+	q.getMatrix().transformVect(position);
+	Particle::CStraightEmitter* fireEmitter5 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter5->setZone(factory->createSphereZone(position, radius));
+	fireEmitter5->setFlow(10);
+	fireEmitter5->setForce(0.5f, 1.5f);
+
+	direction = q * direction;
+	q.getMatrix().transformVect(position);
+	Particle::CStraightEmitter* fireEmitter6 = factory->createStraightEmitter(core::vector3df(direction));
+	fireEmitter6->setZone(factory->createSphereZone(position, radius));
+	fireEmitter6->setFlow(10);
+	fireEmitter6->setForce(0.5f, 1.5f);
+
+	fireGroup->addEmitter(fireEmitter1);
+	fireGroup->addEmitter(fireEmitter2);
+	fireGroup->addEmitter(fireEmitter3);
+	fireGroup->addEmitter(fireEmitter4);
+	fireGroup->addEmitter(fireEmitter5);
+	fireGroup->addEmitter(fireEmitter6);
+
+	// GROUP: SMOKE
+	Particle::CGroup *smokeGroup = ps->createParticleGroup();
+
+	Particle::CBillboardAdditiveRenderer *smoke = factory->createBillboardAdditiveRenderer();
+
+	// Particle::CQuadRenderer *smoke = factory->createQuadRenderer();
+	// smoke->setMaterialType(Particle::Additive, Particle::Camera);
+
+	smokeGroup->setRenderer(smoke);
+
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
+	smoke->setAtlas(2, 2);
+	smoke->SizeX = 0.3f;
+	smoke->SizeY = 0.3f;
+	smoke->getMaterial()->setTexture(0, texture);
+	smoke->getMaterial()->applyMaterial();
+
+	smokeGroup->createModel(Particle::ColorR)->setStart(0.3f)->setEnd(0.2f);
+	smokeGroup->createModel(Particle::ColorG)->setStart(0.25f)->setEnd(0.2f);
+	smokeGroup->createModel(Particle::ColorB)->setStart(0.2f);
+	smokeGroup->createModel(Particle::Scale)->setStart(3.0f)->setEnd(6.0f);
+	smokeGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
+	smokeGroup->createModel(Particle::RotateSpeedZ)->setStart(-0.5f, .5f);
+	smokeGroup->createModel(Particle::FrameIndex)->setStart(0.0f, 3.0f);
+	smokeGroup->LifeMin = 3.0f;
+	smokeGroup->LifeMax = 4.0f;
+	smokeGroup->Gravity.set(0.0f, 0.4f, 0.0f);
+
+	Particle::CInterpolator *smokeAlphaInterpolator = smokeGroup->createInterpolator();
+	smokeAlphaInterpolator->addEntry(0.0f, 0.0f);
+	smokeAlphaInterpolator->addEntry(0.2f, 0.7f);
+	smokeAlphaInterpolator->addEntry(1.0f, 0.0f);
+	smokeGroup->createModel(Particle::ColorA)->setInterpolator(smokeAlphaInterpolator);
+
+	Particle::CEmitter *smokeEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.5f * core::PI);
+	smokeEmitter->setZone(factory->createSphereZone(core::vector3df(), 1.2f));
+	smokeEmitter->setFlow(25);
+	smokeEmitter->setForce(0.5f, 1.0f);
+
+	smokeGroup->addEmitter(smokeEmitter);
+}
+
 void CViewInit::onDestroy()
 {
 
@@ -235,6 +380,7 @@ void CViewInit::onUpdate()
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.Zip");
 		listBundles.push_back("Sponza.Zip");
+		listBundles.push_back("Particles.Zip");
 
 #ifdef __EMSCRIPTEN__
 		std::vector<std::string> listFile;

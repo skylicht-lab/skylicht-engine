@@ -20,5 +20,5 @@ float3 linearRGB(float3 color)
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 texColor = uTexture.Sample(uTextureSampler, input.tex0);
-	return float4(sRGB(input.color.rgb) * input.color.a * texColor.r, 1.0);
+	return float4(sRGB(input.color.rgb * input.color.a * texColor.r), 1.0);
 }

@@ -28,9 +28,7 @@ public:
 
 	virtual bool OnEvent(const SEvent& event);
 
-	void initParticleSystem(Particle::CParticleComponent *ps);
-
-	void initFireSystem(Particle::CParticleComponent *ps);
+	void initParticleSystem(Particle::CParticleComponent *ps);	
 
 	virtual void onUpdate();
 
