@@ -64,7 +64,7 @@ namespace Skylicht
 
 		protected:
 
-			void renderParticleGroup(CParticleBufferData *data);
+			void renderParticleGroup(CParticleBufferData *data, const core::matrix4& world);
 
 		};
 	}

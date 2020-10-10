@@ -292,7 +292,7 @@ namespace Skylicht
 			s->update(this);
 		}
 
-		for (IRenderSystem* &s : m_renders)
+		for (IRenderSystem* &s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
@@ -301,7 +301,16 @@ namespace Skylicht
 			}
 		}
 
-		for (IRenderSystem* &s : m_renders)
+		for (IRenderSystem* &s : m_sortRender)
+		{
+			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
+			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
+			{
+				s->renderTransparent(this);
+			}
+		}
+
+		for (IRenderSystem* &s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())

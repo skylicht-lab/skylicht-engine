@@ -64,7 +64,6 @@ namespace Skylicht
 					// update bbox for culling
 					// use last frame data
 					CCullingBBoxData *box = entity->getData<CCullingBBoxData>();
-					CWorldInverseTransformData *worldInverse = entity->getData<CWorldInverseTransformData>();
 
 					CGroup** groups = particleData->Groups.pointer();
 					for (u32 i = 0, n = particleData->Groups.size(); i < n; i++)
@@ -75,9 +74,6 @@ namespace Skylicht
 						else
 							box->BBox.addInternalBox(g->getBBox());
 					}
-
-					// convert world bbox to local
-					worldInverse->WorldInverse.transformBoxEx(box->BBox);
 
 					m_cullings.push_back(entity->getData<CCullingData>());
 				}
@@ -110,21 +106,6 @@ namespace Skylicht
 
 			CShaderParticle::setViewUp(up);
 			CShaderParticle::setViewLook(look);
-
-			CParticleBufferData** particles = m_particles.pointer();
-			CWorldTransformData** transforms = m_transforms.pointer();
-			CCullingData** cullings = m_cullings.pointer();
-
-			for (u32 i = 0, n = m_particles.size(); i < n; i++)
-			{
-				CParticleBufferData* data = particles[i];
-
-				for (u32 j = 0, m = data->Groups.size(); j < m; j++)
-				{
-					data->Groups[j]->setWorldMatrix(transforms[i]->World);
-					data->Groups[j]->update(cullings[i]->Visible);
-				}
-			}
 		}
 
 		void CParticleRenderer::render(CEntityManager *entityManager)
@@ -139,21 +120,30 @@ namespace Skylicht
 			if (m_particles.size() == 0)
 				return;
 
-			getVideoDriver()->setTransform(video::ETS_WORLD, core::IdentityMatrix);
-
 			CParticleBufferData** particles = m_particles.pointer();
+			CWorldTransformData** transforms = m_transforms.pointer();
 			CCullingData** cullings = m_cullings.pointer();
 
 			for (u32 i = 0, n = m_particles.size(); i < n; i++)
 			{
+				CParticleBufferData *data = particles[i];
+
+				// update group before render
+				for (u32 j = 0, m = data->Groups.size(); j < m; j++)
+				{
+					data->Groups[j]->update(cullings[i]->Visible);
+				}
+
+				// render
 				if (cullings[i]->Visible == true)
-					renderParticleGroup(particles[i]);
+					renderParticleGroup(data, transforms[i]->World);
 			}
 		}
 
-		void CParticleRenderer::renderParticleGroup(CParticleBufferData *data)
+		void CParticleRenderer::renderParticleGroup(CParticleBufferData *data, const core::matrix4& world)
 		{
 			IVideoDriver *driver = getVideoDriver();
+			driver->setTransform(video::ETS_WORLD, world);
 
 			CGroup** groups = data->Groups.pointer();
 			for (u32 i = 0, n = data->Groups.size(); i < n; i++)

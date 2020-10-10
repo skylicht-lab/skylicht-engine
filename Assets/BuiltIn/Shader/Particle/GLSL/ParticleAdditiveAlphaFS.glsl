@@ -17,5 +17,5 @@ vec3 linearRGB(vec3 color)
 void main(void)
 {
 	vec4 texColor = texture(uTexture, varTexCoord0.xy);
-	FragColor = vec4(sRGB(varColor.rgb) * varColor.a * texColor.r, 1.0);
+	FragColor = vec4(sRGB(varColor.rgb * varColor.a * texColor.r), 1.0);
 }
