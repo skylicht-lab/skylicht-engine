@@ -43,7 +43,7 @@ namespace Skylicht
 		m_fxaaFilter(NULL),
 		m_numTarget(0),
 		m_bloomThreshold(0.9f),
-		m_bloomIntensity(1.0f)
+		m_bloomIntensity(1.5f)
 	{
 		m_luminance[0] = NULL;
 		m_luminance[1] = NULL;
@@ -165,7 +165,7 @@ namespace Skylicht
 		renderBufferToTarget(0.0f, 0.0f, w, h, m_adaptLumPass);
 	}
 
-	void CPostProcessorRP::brightFilter(ITexture* from, ITexture* to)
+	void CPostProcessorRP::brightFilter(ITexture* from, ITexture* to, ITexture *emission)
 	{
 		video::SVec4 curve;
 
@@ -179,6 +179,8 @@ namespace Skylicht
 		curve.Z = 0.25f / knee;
 
 		m_brightFilter->setUniform4("uCurve", &curve.X);
+		m_brightFilter->setTexture(1, emission);
+
 		renderEffect(from, to, m_brightFilter);
 	}
 
@@ -221,7 +223,7 @@ namespace Skylicht
 
 		if (m_bloomEffect)
 		{
-			brightFilter(color, m_rtt[1]);
+			brightFilter(color, m_rtt[1], emission);
 			blurDown(1, 2);
 
 			for (int i = 2; i < m_numTarget - 1; i++)
@@ -301,7 +303,7 @@ namespace Skylicht
 
 		// test to target
 		/*
-		ITexture *tex = emission;
+		ITexture *tex = m_rtt[2];
 		SMaterial t;
 		t.setTexture(0, tex);
 		t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureLinearRGB");

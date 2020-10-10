@@ -9,6 +9,7 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 
+#include "CFireLight.h"
 #include "Lightmapper/Components/Probe/CLightProbe.h"
 #include "Lightmapper/Components/Probe/CLightProbeRender.h"
 
@@ -93,6 +94,8 @@ void CViewInit::initScene()
 		{-4.89f, 1.6f, 1.42f},
 	};
 
+	std::vector<CPointLight*> pointLights;
+
 	for (int i = 0; i < 4; i++)
 	{
 		CGameObject *pointLightObj = zone->createEmptyObject();
@@ -108,6 +111,10 @@ void CViewInit::initScene()
 
 		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
+
+		pointLightObj->addComponent<CFireLight>();
+
+		pointLights.push_back(pointLight);
 	}
 
 	// sponza
@@ -171,6 +178,7 @@ void CViewInit::initScene()
 
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
+	context->setPointLight(pointLights);
 
 	// context->getDefferredRP()->enableTestIndirect(true);
 
@@ -274,7 +282,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	// The emitters are arranged so that the fire looks realistic
 	Particle::CStraightEmitter* fireEmitter1 = factory->createStraightEmitter(core::vector3df(0.0f, 1.0f, 0.0f));
 	fireEmitter1->setZone(factory->createSphereZone(core::vector3df(0.0f, -1.0f, 0.0f), 0.5f));
-	fireEmitter1->setFlow(20);
+	fireEmitter1->setFlow(15);
 	fireEmitter1->setForce(1.0f, 2.5f);
 
 	core::vector3df position(0.15f, -1.2f, 0.075f);
@@ -285,14 +293,14 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 
 	Particle::CStraightEmitter* fireEmitter2 = factory->createStraightEmitter(core::vector3df(direction));
 	fireEmitter2->setZone(factory->createSphereZone(position, radius));
-	fireEmitter2->setFlow(15);
+	fireEmitter2->setFlow(10);
 	fireEmitter2->setForce(0.5f, 1.5f);
 
 	direction = q * direction;
 	q.getMatrix().transformVect(position);
 	Particle::CStraightEmitter* fireEmitter3 = factory->createStraightEmitter(core::vector3df(direction));
 	fireEmitter3->setZone(factory->createSphereZone(position, radius));
-	fireEmitter3->setFlow(15);
+	fireEmitter3->setFlow(10);
 	fireEmitter3->setForce(0.5f, 1.5f);
 
 	direction = q * direction;

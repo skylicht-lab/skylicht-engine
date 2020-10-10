@@ -17,6 +17,7 @@ protected:
 	CCamera *m_guiCamera;
 
 	CDirectionalLight *m_directionalLight;
+	std::vector<CPointLight*> m_pointLights;
 	std::vector<CLightProbe*> m_probes;
 
 	CBaseRP *m_beginRP;
@@ -77,6 +78,13 @@ public:
 	void updateDirectionLight();
 
 	void setDirectionalLight(CDirectionalLight *light);
+
+	void setPointLight(std::vector<CPointLight*> pointLight);
+
+	inline std::vector<CPointLight*>& getPointLight()
+	{
+		return m_pointLights;
+	}
 
 	inline CDirectionalLight* getDirectionalLight()
 	{

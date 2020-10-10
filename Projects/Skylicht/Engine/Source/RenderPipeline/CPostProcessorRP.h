@@ -78,7 +78,7 @@ namespace Skylicht
 
 		void luminanceMapGeneration(ITexture *color);
 
-		void brightFilter(ITexture* from, ITexture* to);
+		void brightFilter(ITexture* from, ITexture* to, ITexture *emission);
 
 		void blurDown(int from, int to);
 
