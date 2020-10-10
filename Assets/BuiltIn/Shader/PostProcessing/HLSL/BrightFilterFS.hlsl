@@ -1,6 +1,9 @@
 Texture2D uSourceTex : register(t0);
 SamplerState uSourceTexSampler : register(s0);
 
+Texture2D uSourceEmission : register(t1);
+SamplerState uSourceEmissionSampler : register(s1);
+
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
@@ -21,6 +24,8 @@ float brightness(float3 c)
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 m = uSourceTex.Sample(uSourceTexSampler, input.tex0).rgb;
+	float3 e = uSourceEmission.Sample(uSourceEmissionSampler, input.tex0).rgb;
+	
 	float br = brightness(m);
 
 	// Under-threshold part: quadratic curve
@@ -30,5 +35,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// Combine and apply the brightness response curve.
 	m *= max(rq, br - uCurve.w) / max(br, 1e-5);
 
-	return float4(m, 1.0);
+	return float4(m + e, 1.0);
 }
