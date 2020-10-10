@@ -21,6 +21,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 texColor = uTexture.Sample(uTextureSampler, input.tex0);
 	float3 color = lerp(float3(0.0, 0.0, 0.0), texColor.rgb, texColor.a);
-	float3 result = sRGB(input.color.rgb) * sRGB(color);
-	return float4(result * input.color.a, 1.0);
+	float3 result = sRGB(input.color.rgb * color * input.color.a);
+	return float4(result, 1.0);
 }

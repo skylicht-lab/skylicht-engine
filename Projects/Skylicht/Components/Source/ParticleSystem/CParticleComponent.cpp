@@ -59,7 +59,6 @@ namespace Skylicht
 			// add culling
 			entity->addData<CCullingData>();
 			entity->addData<CCullingBBoxData>();
-			entity->addData<CWorldInverseTransformData>();
 
 			// add renderer system
 			m_gameObject->getEntityManager()->addRenderSystem<CParticleRenderer>();

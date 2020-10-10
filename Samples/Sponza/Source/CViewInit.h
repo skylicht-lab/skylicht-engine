@@ -3,6 +3,7 @@
 #include "SkylichtEngine.h"
 #include "ViewManager/CView.h"
 #include "Emscripten/CGetFileURL.h"
+#include "ParticleSystem/CParticleComponent.h"
 
 class CViewInit : public CView
 {
@@ -42,4 +43,6 @@ protected:
 	void initScene();
 
 	void initProbes();
+
+	void initFireParticle(Particle::CParticleComponent *ps);
 };
