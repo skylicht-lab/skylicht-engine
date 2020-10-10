@@ -36,6 +36,8 @@ namespace Skylicht
 		bool m_useLinearRGB;
 
 		ITexture *m_target;
+		ITexture *m_emission;
+
 		core::dimension2du m_size;
 
 		IPostProcessor *m_postProcessor;
@@ -54,6 +56,11 @@ namespace Skylicht
 		inline void setPostProcessor(IPostProcessor *pp)
 		{
 			m_postProcessor = pp;
+		}
+
+		inline ITexture* getEmissionTexture()
+		{
+			return m_emission;
 		}
 	};
 }

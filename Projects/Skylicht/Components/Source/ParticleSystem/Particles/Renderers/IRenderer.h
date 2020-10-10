@@ -44,6 +44,7 @@ namespace Skylicht
 			CMaterial *m_material;
 
 			bool m_useInstancing;
+			bool m_emission;
 
 		public:
 			float SizeX;
@@ -57,7 +58,8 @@ namespace Skylicht
 				SizeX(1.0f),
 				SizeY(1.0f),
 				SizeZ(1.0f),
-				m_useInstancing(true)
+				m_useInstancing(true),
+				m_emission(false)
 			{
 
 			}
@@ -75,6 +77,16 @@ namespace Skylicht
 			CMaterial* getMaterial()
 			{
 				return m_material;
+			}
+
+			inline void setEmission(bool b)
+			{
+				m_emission = b;
+			}
+
+			inline bool isEmission()
+			{
+				return m_emission;
 			}
 
 			bool useInstancing()

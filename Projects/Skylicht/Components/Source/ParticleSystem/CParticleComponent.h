@@ -60,6 +60,8 @@ namespace Skylicht
 				return m_data;
 			}
 
+			void setGroupTransform(const core::matrix4& world);
+
 			CGroup* createParticleGroup();
 
 			CSubGroup* createParticleSubGroup(CGroup *group);
