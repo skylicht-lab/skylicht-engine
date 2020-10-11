@@ -371,6 +371,42 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	smokeEmitter->setForce(0.5f, 1.0f);
 
 	smokeGroup->addEmitter(smokeEmitter);
+
+	// GROUP: POINT SPARK
+	Particle::CGroup *pointSparkGroup = ps->createParticleGroup();
+
+	Particle::CQuadRenderer *pointSpark = factory->createQuadRenderer();
+	pointSparkGroup->setRenderer(pointSpark);
+
+	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
+	pointSpark->setMaterialType(Particle::Additive, Particle::Camera);
+	pointSpark->getMaterial()->setTexture(0, texture);
+	pointSpark->getMaterial()->applyMaterial();
+	pointSpark->SizeX = 0.15f;
+	pointSpark->SizeY = 0.15f;
+	pointSpark->setEmission(true);
+
+	Particle::CInterpolator *sparkInterpolator = pointSparkGroup->createInterpolator();
+	sparkInterpolator->addEntry(0.0f, 0.0f);
+	sparkInterpolator->addEntry(0.2f, 0.7f);
+	sparkInterpolator->addEntry(1.0f, 0.0f);
+	pointSparkGroup->createModel(Particle::ColorA)->setInterpolator(sparkInterpolator);
+
+	pointSparkGroup->createModel(Particle::ColorR)->setStart(1.0f);
+	pointSparkGroup->createModel(Particle::ColorG)->setStart(0.4f)->setEnd(0.3f, 0.1f);
+	pointSparkGroup->createModel(Particle::ColorB)->setStart(0.0f)->setEnd(0.3f);
+	pointSparkGroup->createModel(Particle::Scale)->setStart(1.0f)->setEnd(0.0f);
+	pointSparkGroup->LifeMin = 2.0f;
+	pointSparkGroup->LifeMax = 4.0f;
+	pointSparkGroup->Gravity.set(0.0f, 1.0f, 0.0f);
+	pointSparkGroup->Friction = 0.4f;
+
+	Particle::CEmitter *pointSparkEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.3f * core::PI);
+	pointSparkEmitter->setFlow(10);
+	pointSparkEmitter->setForce(1.5f, 2.0f);
+	pointSparkEmitter->setZone(factory->createSphereZone(core::vector3df(0.0f, -0.5f, 0.0f), 0.5f));
+	pointSparkGroup->addEmitter(pointSparkEmitter);
+
 }
 
 void CViewInit::onDestroy()
@@ -428,8 +464,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -442,7 +478,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif
@@ -468,7 +504,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()
