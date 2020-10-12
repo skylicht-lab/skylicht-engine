@@ -55,6 +55,12 @@ bool TankScene::onBack()
 	return CViewManager::getInstance()->onBack();
 }
 
+void TankScene::onResize(int w, int h)
+{
+	if (CContext::getInstance() != NULL)
+		CContext::getInstance()->resize(w, h);
+}
+
 void TankScene::onResume()
 {
 	// resume application

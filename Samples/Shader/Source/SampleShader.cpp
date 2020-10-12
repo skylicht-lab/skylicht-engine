@@ -401,6 +401,12 @@ bool SampleShader::onBack()
 	return true;
 }
 
+void SampleShader::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+}
+
 void SampleShader::onResume()
 {
 	// resume application

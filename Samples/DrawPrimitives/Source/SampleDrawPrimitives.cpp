@@ -124,3 +124,9 @@ void SampleDrawPrimitives::onQuitApp()
 	// end application
 	delete this;
 }
+
+void SampleDrawPrimitives::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+}

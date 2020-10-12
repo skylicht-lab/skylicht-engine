@@ -88,6 +88,11 @@ void CApp::onPause()
 
 }
 
+void CApp::onResize(int w, int h)
+{
+
+}
+
 void CApp::onQuitApp()
 {
 	m_passQuitApp = (m_frameCount == TEST_UPDATE_LOOP_COUNT);

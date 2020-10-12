@@ -93,6 +93,11 @@ bool CHelloWorld::onBack()
 	return true;
 }
 
+void CHelloWorld::onResize(int w, int h)
+{
+
+}
+
 void CHelloWorld::onResume()
 {
 	// resume application

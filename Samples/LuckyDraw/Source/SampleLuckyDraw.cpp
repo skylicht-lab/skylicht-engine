@@ -204,6 +204,11 @@ bool SampleLuckyDraw::onBack()
 	return true;
 }
 
+void SampleLuckyDraw::onResize(int w, int h)
+{
+
+}
+
 void SampleLuckyDraw::onResume()
 {
 	// resume application

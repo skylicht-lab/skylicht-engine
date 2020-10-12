@@ -182,6 +182,15 @@ bool SampleNoise3D::onBack()
 	return true;
 }
 
+void SampleNoise3D::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+
+	if (m_postProcessorRP != NULL)
+		m_postProcessorRP->resize(w, h);
+}
+
 void SampleNoise3D::onResume()
 {
 	// resume application

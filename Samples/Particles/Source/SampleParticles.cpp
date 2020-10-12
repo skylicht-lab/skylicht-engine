@@ -941,6 +941,12 @@ bool SampleParticles::onBack()
 	return true;
 }
 
+void SampleParticles::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+}
+
 void SampleParticles::onResume()
 {
 	// resume application

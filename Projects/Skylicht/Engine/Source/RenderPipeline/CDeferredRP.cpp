@@ -62,6 +62,35 @@ namespace Skylicht
 
 	CDeferredRP::~CDeferredRP()
 	{
+		releaseRTT();
+	}
+
+	void CDeferredRP::initRTT(int w, int h)
+	{
+		IVideoDriver *driver = getVideoDriver();
+
+		// init render target
+		m_size = core::dimension2du((u32)w, (u32)h);
+		m_albedo = driver->addRenderTargetTexture(m_size, "albedo", ECF_A8R8G8B8);
+		m_position = driver->addRenderTargetTexture(m_size, "position", ECF_A32B32G32R32F);
+		m_normal = driver->addRenderTargetTexture(m_size, "normal", ECF_A32B32G32R32F);
+		m_data = driver->addRenderTargetTexture(m_size, "data", ECF_A8R8G8B8);
+
+		m_indirect = driver->addRenderTargetTexture(m_size, "indirect", ECF_A16B16G16R16F);
+		m_lightBuffer = driver->addRenderTargetTexture(m_size, "light", ECF_A16B16G16R16F);
+
+		m_target = driver->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
+
+		// setup multi render target
+		// opengles just support 4 buffer
+		m_multiRenderTarget.push_back(m_albedo);
+		m_multiRenderTarget.push_back(m_position);
+		m_multiRenderTarget.push_back(m_normal);
+		m_multiRenderTarget.push_back(m_data);
+	}
+
+	void CDeferredRP::releaseRTT()
+	{
 		IVideoDriver *driver = getVideoDriver();
 
 		if (m_albedo != NULL)
@@ -86,7 +115,6 @@ namespace Skylicht
 			driver->removeTexture(m_target);
 
 		m_multiRenderTarget.clear();
-
 	}
 
 	void CDeferredRP::initRender(int w, int h)
@@ -94,23 +122,7 @@ namespace Skylicht
 		IVideoDriver *driver = getVideoDriver();
 
 		// init render target
-		m_size = core::dimension2du((u32)w, (u32)h);
-		m_albedo = driver->addRenderTargetTexture(m_size, "albedo", ECF_A8R8G8B8);
-		m_position = driver->addRenderTargetTexture(m_size, "position", ECF_A32B32G32R32F);
-		m_normal = driver->addRenderTargetTexture(m_size, "normal", ECF_A32B32G32R32F);
-		m_data = driver->addRenderTargetTexture(m_size, "data", ECF_A8R8G8B8);
-
-		m_indirect = driver->addRenderTargetTexture(m_size, "indirect", ECF_A16B16G16R16F);
-		m_lightBuffer = driver->addRenderTargetTexture(m_size, "light", ECF_A16B16G16R16F);
-
-		m_target = driver->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
-
-		// setup multi render target
-		// opengles just support 4 buffer
-		m_multiRenderTarget.push_back(m_albedo);
-		m_multiRenderTarget.push_back(m_position);
-		m_multiRenderTarget.push_back(m_normal);
-		m_multiRenderTarget.push_back(m_data);
+		initRTT(w, h);
 
 		// get basic shader
 		CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -127,10 +139,15 @@ namespace Skylicht
 		// setup material
 		initDefferredMaterial();
 		initPointLightMaterial();
+	}
 
-		// final pass
-		m_finalPass.setTexture(0, m_target);
-		m_finalPass.MaterialType = m_textureLinearRGBShader;
+	void CDeferredRP::resize(int w, int h)
+	{
+		releaseRTT();
+		initRTT(w, h);
+
+		initDefferredMaterial();
+		initPointLightMaterial();
 	}
 
 	void CDeferredRP::initDefferredMaterial()
@@ -479,6 +496,8 @@ namespace Skylicht
 				driver->setViewPort(viewport);
 
 			beginRender2D(renderW, renderH);
+			m_finalPass.setTexture(0, m_target);
+			m_finalPass.MaterialType = m_textureLinearRGBShader;
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 		}
 

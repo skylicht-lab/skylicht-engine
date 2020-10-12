@@ -65,11 +65,7 @@ namespace Skylicht
 		if (m_adaptLum != NULL)
 			driver->removeTexture(m_adaptLum);
 
-		for (int i = 0; i < 8; i++)
-		{
-			if (m_rtt[i] != NULL)
-				driver->removeTexture(m_rtt[i]);
-		}
+		releaseMainRTT();
 
 		if (m_brightFilter != NULL)
 			delete m_brightFilter;
@@ -84,23 +80,12 @@ namespace Skylicht
 			delete m_fxaaFilter;
 	}
 
-	void CPostProcessorRP::initRender(int w, int h)
+	void CPostProcessorRP::initMainRTT(int w, int h)
 	{
 		IVideoDriver *driver = getVideoDriver();
-		CShaderManager *shaderMgr = CShaderManager::getInstance();
 
-		// init size of framebuffer
 		m_size = core::dimension2du((u32)w, (u32)h);
-		m_lumSize = core::dimension2du(1024, 1024);
 
-		if (m_autoExposure == true)
-		{
-			m_luminance[0] = driver->addRenderTargetTexture(m_lumSize, "lum_0", ECF_R16F);
-			m_luminance[1] = driver->addRenderTargetTexture(m_lumSize, "lum_1", ECF_R16F);
-			m_adaptLum = driver->addRenderTargetTexture(m_lumSize, "lum_adapt", ECF_R16F);
-		}
-
-		// framebuffer for glow/fxaa
 		if (m_bloomEffect == true || m_fxaa == true)
 		{
 			m_rtt[0] = driver->addRenderTargetTexture(m_size, "rtt_0", ECF_A16B16G16R16F);
@@ -117,6 +102,36 @@ namespace Skylicht
 				} while (s.Height > 50 && m_numTarget < 8);
 			}
 		}
+	}
+
+	void CPostProcessorRP::releaseMainRTT()
+	{
+		IVideoDriver *driver = getVideoDriver();
+
+		for (int i = 0; i < 8; i++)
+		{
+			if (m_rtt[i] != NULL)
+				driver->removeTexture(m_rtt[i]);
+		}
+	}
+
+	void CPostProcessorRP::initRender(int w, int h)
+	{
+		IVideoDriver *driver = getVideoDriver();
+		CShaderManager *shaderMgr = CShaderManager::getInstance();
+
+		// init size of framebuffer		
+		m_lumSize = core::dimension2du(1024, 1024);
+
+		if (m_autoExposure == true)
+		{
+			m_luminance[0] = driver->addRenderTargetTexture(m_lumSize, "lum_0", ECF_R16F);
+			m_luminance[1] = driver->addRenderTargetTexture(m_lumSize, "lum_1", ECF_R16F);
+			m_adaptLum = driver->addRenderTargetTexture(m_lumSize, "lum_adapt", ECF_R16F);
+		}
+
+		// framebuffer for glow/fxaa
+		initMainRTT(w, h);
 
 		// init final pass shader
 		m_finalPass.MaterialType = shaderMgr->getShaderIDByName("PostEffect");
@@ -131,6 +146,13 @@ namespace Skylicht
 		m_blurUpFilter = new CMaterial("DownBlurFilter", "BuiltIn/Shader/PostProcessing/BlurFilter.xml");
 		m_bloomFilter = new CMaterial("BloomFilter", "BuiltIn/Shader/PostProcessing/Bloom.xml");
 		m_fxaaFilter = new CMaterial("BloomFilter", "BuiltIn/Shader/PostProcessing/FXAA.xml");
+	}
+
+	void CPostProcessorRP::resize(int w, int h)
+	{
+		releaseMainRTT();
+
+		initMainRTT(w, h);
 	}
 
 	void CPostProcessorRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)

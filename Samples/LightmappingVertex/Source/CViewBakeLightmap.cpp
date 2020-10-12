@@ -201,7 +201,7 @@ void CViewBakeLightmap::onUpdate()
 		m_currentMeshBuffer = 0;
 		m_currentVertex = 0;
 
-		if (m_lightBounce >= numLightBounce)
+		if (m_lightBounce >= (int)numLightBounce)
 		{
 			// test exporter
 			if (m_renderMesh.size() > 0)
