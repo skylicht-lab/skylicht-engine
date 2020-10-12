@@ -236,7 +236,7 @@ Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feat
 
 ## Thanks
 - Julien Fryer ([SPARK](https://github.com/Synxis/SPARK)) about references and source code demo of particle system.
-- [Inigo Quilez](https://www.shadertoy.com/view/4sfGzS) about noise code reference.
+- [Inigo Quilez](https://www.shadertoy.com/view/4sfGzS) about perlin noise reference.
 
 ## License
 Skylicht Engine is licensed under [MIT License](LICENSE.md)
