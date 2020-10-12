@@ -56,6 +56,13 @@ bool SampleLightmappingVertex::onBack()
 	return CViewManager::getInstance()->onBack();
 }
 
+void SampleLightmappingVertex::onResize(int w, int h)
+{
+	CContext *ctx = CContext::getInstance();
+	if (ctx != NULL)
+		ctx->resize(w, h);
+}
+
 void SampleLightmappingVertex::onResume()
 {
 	// resume application

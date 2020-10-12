@@ -39,6 +39,8 @@ public:
 
 	virtual bool onBack();
 
+	virtual void onResize(int w, int h);
+
 	virtual void onInitApp();
 
 	virtual void onQuitApp();

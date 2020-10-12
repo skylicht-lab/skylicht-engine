@@ -70,6 +70,13 @@ void SampleSponza::onPause()
 	CViewManager::getInstance()->onPause();
 }
 
+void SampleSponza::onResize(int w, int h)
+{
+	CContext *ctx = CContext::getInstance();
+	if (ctx != NULL)
+		ctx->resize(w, h);
+}
+
 void SampleSponza::onQuitApp()
 {
 	// end application

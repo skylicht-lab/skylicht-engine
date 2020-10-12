@@ -89,8 +89,6 @@ namespace Skylicht
 
 		static void SetBakeLightingMapBounce(int i);
 
-		static void SetBakeLightingTotalBounce(int i);
-
 		void unbindRTT();
 
 		void enableUpdateEntity(bool b)

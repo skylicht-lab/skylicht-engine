@@ -56,7 +56,6 @@ namespace Skylicht
 
 	CApplication::CApplication() :
 		m_pauseTime(0),
-		m_resizeWin(true),
 		m_width(0),
 		m_height(0),
 		m_runGame(false),
@@ -322,20 +321,25 @@ namespace Skylicht
 		if (m_device == NULL)
 			return;
 
-		m_width = w;
-		m_height = h;
+		if (m_width != w || m_height != h)
+		{
+			m_width = w;
+			m_height = h;
 
-		// resize window
-		m_driver->OnResize(core::dimension2du((u32)w, (u32)h));
+			// resize window
+			m_driver->OnResize(core::dimension2du((u32)w, (u32)h));
 
-		// resize mouse
-		core::rect<s32> winRect(0, 0, w, h);
-		m_device->getCursorControl()->setReferenceRect(&winRect);
+			// resize mouse
+			core::rect<s32> winRect(0, 0, w, h);
+			m_device->getCursorControl()->setReferenceRect(&winRect);
 
-		// todo auto scale
-		autoScaleUI();
+			// todo auto scale
+			autoScaleUI();
 
-		m_resizeWin = true;
+			// application receiver
+			os::Printer::log("CApplication::resize");
+			sendEventToAppReceiver(AppEventResize, w, h);
+		}
 	}
 
 	// updateTouch

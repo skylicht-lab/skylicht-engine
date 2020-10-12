@@ -51,6 +51,8 @@ namespace Skylicht
 
 		virtual void initRender(int w, int h);
 
+		virtual void resize(int w, int h);
+
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
 
 		inline void setPostProcessor(IPostProcessor *pp)
@@ -62,5 +64,12 @@ namespace Skylicht
 		{
 			return m_emission;
 		}
+
+	protected:
+
+		void initRTT(int w, int h);
+
+		void releaseRTT();
+
 	};
 }

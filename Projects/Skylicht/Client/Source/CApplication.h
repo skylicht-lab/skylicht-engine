@@ -40,9 +40,6 @@ namespace Skylicht
 		unsigned long m_pauseTime;
 
 	protected:
-		bool m_resizeWin;
-
-	protected:
 		int m_width;
 		int m_height;
 

@@ -91,6 +91,8 @@ namespace Skylicht
 
 		virtual void initRender(int w, int h);
 
+		virtual void resize(int w, int h);
+
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
 
 		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
@@ -120,5 +122,12 @@ namespace Skylicht
 		static bool isEnableRenderIndirect();
 
 		static void enableTestIndirect(bool b);
+
+	protected:
+
+		void initRTT(int w, int h);
+
+		void releaseRTT();
+
 	};
 }

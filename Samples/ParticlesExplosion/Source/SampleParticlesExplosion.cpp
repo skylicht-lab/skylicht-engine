@@ -204,6 +204,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	flash->setMaterialType(Particle::Additive, Particle::Camera);
 	flash->getMaterial()->setTexture(0, texture);
 	flash->getMaterial()->applyMaterial();
+	flash->setEmission(true);
 
 	flashGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
 	flashGroup->LifeMin = 0.5f;
@@ -280,6 +281,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	lineSpark->getMaterial()->applyMaterial();
 	lineSpark->SizeX = 0.05f;
 	lineSpark->SizeY = 1.0f;
+	lineSpark->setEmission(true);
 
 	lineSparkGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	lineSparkGroup->createModel(Particle::Scale)->setStart(0.2f)->setEnd(0.4f);
@@ -306,6 +308,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	pointSpark->getMaterial()->applyMaterial();
 	pointSpark->SizeX = 0.02f;
 	pointSpark->SizeY = 0.02f;
+	pointSpark->setEmission(true);
 
 	pointSparkGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	pointSparkGroup->createModel(Particle::ColorR)->setStart(1.0f);
@@ -380,6 +383,15 @@ bool SampleParticlesExplosion::onBack()
 	// return TRUE will run default by OS (Mobile)
 	// return FALSE will cancel BACK FUNCTION by OS (Mobile)
 	return true;
+}
+
+void SampleParticlesExplosion::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+
+	if (m_postProcessorRP != NULL)
+		m_postProcessorRP->resize(w, h);
 }
 
 void SampleParticlesExplosion::onResume()

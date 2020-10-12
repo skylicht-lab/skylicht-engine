@@ -54,6 +54,8 @@ namespace Skylicht
 
 		virtual void onQuitApp() = 0;
 
+		virtual void onResize(int w, int h) = 0;
+
 		// Android
 		// - Return false: your app will cancel OS Back Key
 		// - Return true: your app will process default OS Back Key

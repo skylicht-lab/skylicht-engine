@@ -133,6 +133,13 @@ bool @project_name@::onBack()
 	return true;
 }
 
+void @project_name@::onResize(int w, int h)
+{
+	// on window size changed
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+}
+
 void @project_name@::onResume()
 {
 	// resume application

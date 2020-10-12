@@ -79,7 +79,7 @@ namespace Skylicht
 		m_drawBuffer->drop();
 		m_verticesImage = NULL;
 		m_indicesImage = NULL;
-	}
+	}	
 
 	bool CBaseRP::canRenderMaterial(CMaterial *m)
 	{

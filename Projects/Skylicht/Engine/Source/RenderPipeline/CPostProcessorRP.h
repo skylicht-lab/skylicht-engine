@@ -72,6 +72,8 @@ namespace Skylicht
 
 		virtual void initRender(int w, int h);
 
+		virtual void resize(int w, int h);
+
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& vp);
 
 		virtual void postProcessing(ITexture *finalTarget, ITexture *color, ITexture *emission, ITexture *normal, ITexture *position, const core::recti& viewport);
@@ -110,6 +112,10 @@ namespace Skylicht
 		}
 
 	protected:
+
+		void initMainRTT(int w, int h);
+
+		void releaseMainRTT();
 
 		void renderEffect(int fromTarget, int toTarget, CMaterial *material);
 

@@ -78,6 +78,11 @@ namespace Skylicht
 		m_depthTexture = getVideoDriver()->addRenderTargetTextureArray(size, m_numCascade, "shadow_depth", ECF_R32F);
 	}
 
+	void CShadowMapRP::resize(int w, int h)
+	{
+
+	}
+
 	bool CShadowMapRP::canRenderMaterial(CMaterial *m)
 	{
 		// render all object

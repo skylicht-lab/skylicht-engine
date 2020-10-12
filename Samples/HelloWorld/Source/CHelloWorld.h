@@ -7,11 +7,11 @@ class CHelloWorld : public IApplicationEventReceiver
 private:
 	CScene *m_scene;
 	CCamera *m_guiCamera;
-    
+
 #if defined(USE_FREETYPE)
 	CGlyphFont *m_largeFont;
 #endif
-    
+
 public:
 	CHelloWorld();
 	virtual ~CHelloWorld();
@@ -27,6 +27,8 @@ public:
 	virtual void onPause();
 
 	virtual bool onBack();
+
+	virtual void onResize(int w, int h);
 
 	virtual void onInitApp();
 
