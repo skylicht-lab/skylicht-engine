@@ -215,6 +215,12 @@ void SampleNoise2D::onPause()
 	// pause application
 }
 
+void SampleNoise2D::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+}
+
 void SampleNoise2D::onQuitApp()
 {
 	// end application

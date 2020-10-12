@@ -53,6 +53,9 @@ namespace Skylicht
 		m_farValue = farValue;
 
 		float ratio = 1.0f;
+		if (screenHeight > 0)
+			ratio = screenWidth / (float)screenHeight;
+
 		for (int i = 0; i < m_splitCount; i++)
 			m_splits[i].Ratio = ratio;
 

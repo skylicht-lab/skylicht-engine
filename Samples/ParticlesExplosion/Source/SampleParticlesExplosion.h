@@ -28,7 +28,7 @@ public:
 
 	virtual bool OnEvent(const SEvent& event);
 
-	void initParticleSystem(Particle::CParticleComponent *ps);	
+	void initParticleSystem(Particle::CParticleComponent *ps);
 
 	virtual void onUpdate();
 
@@ -41,6 +41,8 @@ public:
 	virtual void onPause();
 
 	virtual bool onBack();
+
+	virtual void onResize(int w, int h);
 
 	virtual void onInitApp();
 

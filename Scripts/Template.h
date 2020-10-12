@@ -29,6 +29,8 @@ public:
 	virtual void onPause();
 
 	virtual bool onBack();
+	
+	virtual void onResize(int w, int h);
 
 	virtual void onInitApp();
 

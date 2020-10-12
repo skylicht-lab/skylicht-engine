@@ -250,6 +250,12 @@ bool SampleSkinnedMesh::onBack()
 	return true;
 }
 
+void SampleSkinnedMesh::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+}
+
 void SampleSkinnedMesh::onResume()
 {
 	// resume application

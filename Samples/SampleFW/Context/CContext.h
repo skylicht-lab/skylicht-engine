@@ -35,6 +35,8 @@ public:
 
 	CBaseRP* initRenderPipeline(int w, int h, bool postEffect = true);
 
+	void resize(int w, int h);
+
 	inline CScene* getScene()
 	{
 		return m_scene;

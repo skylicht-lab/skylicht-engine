@@ -54,6 +54,8 @@ public:
 
 	virtual void onPause();
 
+	virtual void onResize(int w, int h);
+
 	virtual void onInitApp();
 
 	virtual void onQuitApp();

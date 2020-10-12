@@ -193,6 +193,12 @@ bool SampleMaterials::onBack()
 	return true;
 }
 
+void SampleMaterials::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+}
+
 void SampleMaterials::onResume()
 {
 	// resume application

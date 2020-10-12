@@ -119,7 +119,6 @@ void SampleParticlesMagicSkill::onInitApp()
 	m_forwardRP->initRender(w, h);
 
 	m_postProcessorRP = new CPostProcessorRP();
-	m_postProcessorRP->setBloomThreshold(0.7f);
 	m_postProcessorRP->setBloomIntensity(2.0f);
 	m_postProcessorRP->initRender(w, h);
 	m_forwardRP->setPostProcessor(m_postProcessorRP);
@@ -302,6 +301,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	arcane->SizeX = 0.4f;
 	arcane->SizeY = 0.4f;
 	arcane->SizeZ = 0.4f;
+	arcane->setEmission(true);
 	arcaneGroup->setRenderer(arcane);
 	arcaneGroup->setFollowParentTransform(true);
 	arcaneGroup->syncParentParams(true, true);
@@ -397,6 +397,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	glow->SizeX = 1.2f;
 	glow->SizeY = 1.2f;
 	glow->SizeZ = 1.2f;
+	glow->setEmission(true);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_glow.png");
 	glow->setMaterialType(Particle::Additive, Particle::Camera);
@@ -448,6 +449,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	sphere->SizeX = 0.3f;
 	sphere->SizeY = 0.3f;
 	sphere->SizeZ = 0.3f;
+	sphere->setEmission(true);
 	sphereGroup->setRenderer(sphere);
 	sphereGroup->Gravity.set(0.0f, 0.0f, 0.0f);
 
@@ -476,6 +478,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	linger->SizeX = 0.1f;
 	linger->SizeY = 0.1f;
 	linger->SizeZ = 0.1f;
+	linger->setEmission(true);
 	lingerGroup->setRenderer(linger);
 	lingerGroup->Gravity.set(0.0f, 0.0f, 0.0f);
 
@@ -502,6 +505,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	point->SizeX = 0.2f;
 	point->SizeY = 0.2f;
 	point->SizeZ = 0.2f;
+	point->setEmission(true);
 	pointGroup->setRenderer(point);
 	pointGroup->Gravity.set(0.0f, -0.2f, 0.0f);
 
@@ -605,6 +609,15 @@ bool SampleParticlesMagicSkill::onBack()
 	// return TRUE will run default by OS (Mobile)
 	// return FALSE will cancel BACK FUNCTION by OS (Mobile)
 	return true;
+}
+
+void SampleParticlesMagicSkill::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+
+	if (m_postProcessorRP != NULL)
+		m_postProcessorRP->resize(w, h);
 }
 
 void SampleParticlesMagicSkill::onResume()

@@ -67,6 +67,13 @@ void SampleLightmapping::onPause()
 	CViewManager::getInstance()->onPause();
 }
 
+void SampleLightmapping::onResize(int w, int h)
+{
+	CContext *ctx = CContext::getInstance();
+	if (ctx != NULL)
+		ctx->resize(w, h);
+}
+
 void SampleLightmapping::onQuitApp()
 {
 	// end application

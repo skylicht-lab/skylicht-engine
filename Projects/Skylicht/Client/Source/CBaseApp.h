@@ -38,7 +38,8 @@ namespace Skylicht
 		AppEventResume,
 		AppEventBack,
 		AppEventQuit,
-		AppEventInit
+		AppEventInit,
+		AppEventResize
 	};
 
 	class CBaseApp
@@ -128,7 +129,7 @@ namespace Skylicht
 
 		void unRegisterAppEvent(IApplicationEventReceiver *pEvent);
 
-		void sendEventToAppReceiver(int eventID);
+		void sendEventToAppReceiver(int eventID, int param1 = 0, int param2 = 0);
 
 		void setLimitFPS(int fps)
 		{

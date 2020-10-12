@@ -76,6 +76,21 @@ CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect)
 	return m_beginRP;
 }
 
+void CContext::resize(int w, int h)
+{
+	if (m_shadowMapRendering != NULL)
+		m_shadowMapRendering->resize(w, h);
+
+	if (m_rendering != NULL)
+		m_rendering->resize(w, h);
+
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+
+	if (m_postProcessor != NULL)
+		m_postProcessor->resize(w, h);
+}
+
 void CContext::releaseRenderPipeline()
 {
 	if (m_rendering != NULL)

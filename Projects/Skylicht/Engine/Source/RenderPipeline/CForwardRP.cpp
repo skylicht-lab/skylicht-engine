@@ -39,6 +39,21 @@ namespace Skylicht
 
 	CForwardRP::~CForwardRP()
 	{
+		releaseRTT();
+	}
+
+	void CForwardRP::initRTT(int w, int h)
+	{
+		m_size.set(w, h);
+
+		if (m_useLinearRGB == true)
+			m_target = getVideoDriver()->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
+
+		m_emission = getVideoDriver()->addRenderTargetTexture(m_size, "emission", ECF_A16B16G16R16F);
+	}
+
+	void CForwardRP::releaseRTT()
+	{
 		IVideoDriver *driver = getVideoDriver();
 
 		if (m_target != NULL)
@@ -50,16 +65,16 @@ namespace Skylicht
 
 	void CForwardRP::initRender(int w, int h)
 	{
-		m_size.set(w, h);
-
-		if (m_useLinearRGB == true)
-		{
-			m_target = getVideoDriver()->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
-		}
-
-		m_emission = getVideoDriver()->addRenderTargetTexture(m_size, "emission", ECF_A16B16G16R16F);
+		initRTT(w, h);
 
 		m_finalPass.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureLinearRGB");
+	}
+
+	void CForwardRP::resize(int w, int h)
+	{
+		releaseRTT();
+
+		initRTT(w, h);
 	}
 
 	void CForwardRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)

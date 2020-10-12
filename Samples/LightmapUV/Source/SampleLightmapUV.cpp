@@ -147,7 +147,8 @@ void SampleLightmapUV::onInitApp()
 	}
 
 	// Render pipeline
-	m_forwardRP = new CForwardRP();
+	m_forwardRP = new CForwardRP(false);
+	m_forwardRP->initRender(app->getWidth(), app->getHeight());
 
 	// Create 2D camera
 	CGameObject *guiCameraObject = zone->createEmptyObject();
@@ -325,6 +326,12 @@ bool SampleLightmapUV::onBack()
 	// return TRUE will run default by OS (Mobile)
 	// return FALSE will cancel BACK FUNCTION by OS (Mobile)
 	return true;
+}
+
+void SampleLightmapUV::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
 }
 
 void SampleLightmapUV::onResume()

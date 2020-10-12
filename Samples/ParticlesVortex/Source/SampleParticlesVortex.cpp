@@ -165,6 +165,12 @@ bool SampleParticlesVortex::onBack()
 	return true;
 }
 
+void SampleParticlesVortex::onResize(int w, int h)
+{
+	if (m_forwardRP != NULL)
+		m_forwardRP->resize(w, h);
+}
+
 void SampleParticlesVortex::onResume()
 {
 	// resume application

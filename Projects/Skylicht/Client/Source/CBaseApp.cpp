@@ -92,7 +92,7 @@ namespace Skylicht
 		}
 	}
 
-	void CBaseApp::sendEventToAppReceiver(int eventID)
+	void CBaseApp::sendEventToAppReceiver(int eventID, int param1, int param2)
 	{
 		std::vector<appEventType>::iterator i = m_appEventReceivers.begin(), end = m_appEventReceivers.end();
 		while (i != end)
@@ -120,6 +120,8 @@ namespace Skylicht
 			case AppEventQuit:
 				i->second->onQuitApp();
 				break;
+			case AppEventResize:
+				i->second->onResize(param1, param2);
 			default:
 				break;
 			}
@@ -142,7 +144,7 @@ namespace Skylicht
 #else
 		return io::path(name);
 #endif
-	}
+}
 
 	int CBaseApp::getWidth()
 	{
