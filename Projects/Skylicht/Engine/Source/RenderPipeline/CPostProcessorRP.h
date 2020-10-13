@@ -43,6 +43,7 @@ namespace Skylicht
 		ITexture *m_adaptLum;
 		int m_lumTarget;
 
+		ITexture *m_lastFrameBuffer;
 		ITexture *m_rtt[10];
 		int m_numTarget;
 
@@ -109,6 +110,11 @@ namespace Skylicht
 		inline void setBloomIntensity(float f)
 		{
 			m_bloomIntensity = f;
+		}
+
+		inline ITexture* getLastFrameBuffer()
+		{
+			return m_lastFrameBuffer;
 		}
 
 	protected:
