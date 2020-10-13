@@ -43,7 +43,8 @@ namespace Skylicht
 		m_fxaaFilter(NULL),
 		m_numTarget(0),
 		m_bloomThreshold(0.9f),
-		m_bloomIntensity(1.5f)
+		m_bloomIntensity(1.5f),
+		m_lastFrameBuffer(NULL)
 	{
 		m_luminance[0] = NULL;
 		m_luminance[1] = NULL;
@@ -102,6 +103,8 @@ namespace Skylicht
 				} while (s.Height > 50 && m_numTarget < 8);
 			}
 		}
+
+		m_lastFrameBuffer = m_rtt[0];
 	}
 
 	void CPostProcessorRP::releaseMainRTT()
@@ -243,6 +246,7 @@ namespace Skylicht
 		int colorID = -1;
 		ITexture *colorBuffer = color;
 
+		// BLOOM
 		if (m_bloomEffect)
 		{
 			brightFilter(color, m_rtt[1], emission);
@@ -272,7 +276,9 @@ namespace Skylicht
 
 		if (colorID >= 0)
 			colorBuffer = m_rtt[colorID];
+		// END BLOOM
 
+		// AUTO EXPOSURE
 		if (m_autoExposure == true)
 			luminanceMapGeneration(colorBuffer);
 
@@ -301,7 +307,9 @@ namespace Skylicht
 		}
 
 		m_lumTarget = !m_lumTarget;
+		// END AUTO EXPOSURE
 
+		// BEGIN FXAA
 		if (m_fxaa)
 		{
 			if (colorID >= 0)
@@ -322,6 +330,10 @@ namespace Skylicht
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
 		}
+		// END FXAA
+
+		// Save framebuffer for Screen Space Reflection
+		m_lastFrameBuffer = m_rtt[colorID];
 
 		// test to target
 		/*
