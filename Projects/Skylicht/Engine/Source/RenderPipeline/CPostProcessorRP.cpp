@@ -36,6 +36,7 @@ namespace Skylicht
 		m_autoExposure(false),
 		m_bloomEffect(true),
 		m_fxaa(false),
+		m_screenSpaceReflection(false),
 		m_brightFilter(NULL),
 		m_blurFilter(NULL),
 		m_blurUpFilter(NULL),
@@ -104,7 +105,10 @@ namespace Skylicht
 			}
 		}
 
-		m_lastFrameBuffer = m_rtt[0];
+		if (m_screenSpaceReflection)
+			m_lastFrameBuffer = driver->addRenderTargetTexture(m_size, "last_frame", ECF_A8R8G8B8);
+		else
+			m_lastFrameBuffer = NULL;
 	}
 
 	void CPostProcessorRP::releaseMainRTT()
@@ -116,6 +120,9 @@ namespace Skylicht
 			if (m_rtt[i] != NULL)
 				driver->removeTexture(m_rtt[i]);
 		}
+
+		if (m_lastFrameBuffer != NULL)
+			driver->removeTexture(m_lastFrameBuffer);
 	}
 
 	void CPostProcessorRP::initRender(int w, int h)
@@ -278,6 +285,22 @@ namespace Skylicht
 			colorBuffer = m_rtt[colorID];
 		// END BLOOM
 
+		// SCREEN SPACE REFLECTION (save buffer for deferred rendering)
+		if (m_screenSpaceReflection == true)
+		{
+			driver->setRenderTarget(m_lastFrameBuffer, true, false);
+
+			m_linearPass.setTexture(0, colorBuffer);
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_linearPass);
+
+			m_lastFrameBuffer->regenerateMipMapLevels();
+
+			driver->setRenderTarget(finalTarget, false, false);
+		}
+		// END SCREEN SPACE REFLECTION
+
+
 		// AUTO EXPOSURE
 		if (m_autoExposure == true)
 			luminanceMapGeneration(colorBuffer);
@@ -330,10 +353,7 @@ namespace Skylicht
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
 		}
-		// END FXAA
-
-		// Save framebuffer for Screen Space Reflection
-		m_lastFrameBuffer = m_rtt[colorID];
+		// END FXAA		
 
 		// test to target
 		/*

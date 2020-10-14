@@ -8,6 +8,7 @@ uniform sampler2D uTexNormal;
 uniform sampler2D uTexData;
 uniform sampler2D uTexLight;
 uniform sampler2D uTexIndirect;
+uniform sampler2D uTexLastFrame;
 uniform sampler2DArray uShadowMap;
 
 uniform vec4 uCameraPosition;
