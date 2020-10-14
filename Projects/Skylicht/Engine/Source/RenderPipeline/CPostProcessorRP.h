@@ -45,6 +45,7 @@ namespace Skylicht
 
 		ITexture *m_lastFrameBuffer;
 		ITexture *m_rtt[10];
+
 		int m_numTarget;
 
 		SMaterial m_finalPass;
@@ -59,6 +60,7 @@ namespace Skylicht
 		bool m_autoExposure;
 		bool m_bloomEffect;
 		bool m_fxaa;
+		bool m_screenSpaceReflection;
 
 		CMaterial *m_brightFilter;
 		CMaterial *m_blurFilter;
@@ -102,6 +104,11 @@ namespace Skylicht
 			m_fxaa = b;
 		}
 
+		inline void enableScreenSpaceReflection(bool b)
+		{
+			m_screenSpaceReflection = b;
+		}
+
 		inline void setBloomThreshold(float f)
 		{
 			m_bloomThreshold = f;
@@ -112,7 +119,7 @@ namespace Skylicht
 			m_bloomIntensity = f;
 		}
 
-		inline ITexture* getLastFrameBuffer()
+		virtual ITexture* getLastFrameBuffer()
 		{
 			return m_lastFrameBuffer;
 		}

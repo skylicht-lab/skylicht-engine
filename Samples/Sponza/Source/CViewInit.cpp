@@ -167,7 +167,7 @@ void CViewInit::initScene()
 		initFireParticle(fireParticle);
 
 		fire->getTransformEuler()->setPosition(pointLightPosition[i] - core::vector3df(0.0f, 0.8f, 0.0f));
-		fire->getTransformEuler()->setScale(core::vector3df(0.41f, 0.41f, 0.41f));
+		fire->getTransformEuler()->setScale(core::vector3df(0.4f, 0.4f, 0.4f));
 	}
 
 	// save to context
@@ -286,7 +286,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	fireEmitter1->setForce(1.0f, 2.5f);
 
 	core::vector3df position(0.15f, -1.2f, 0.075f);
-	core::vector3df direction(1.0f, 0.5f, 0.0f);
+	core::vector3df direction(0.6f, 0.5f, 0.0f);
 	core::quaternion q;
 	q.fromAngleAxis(72.0f * core::DEGTORAD, CTransform::s_oy);
 	float radius = 0.2f;

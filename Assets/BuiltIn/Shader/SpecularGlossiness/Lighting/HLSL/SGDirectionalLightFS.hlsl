@@ -13,6 +13,8 @@ Texture2D uTexIndirect : register(t5);
 SamplerState uTexIndirectSampler : register(s5);
 Texture2DArray uShadowMap : register(t6);
 SamplerState uShadowMapSampler : register(s6);
+Texture2D uTexLastFrame : register(t7);
+SamplerState uTexLastFrameSampler : register(s7);
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
