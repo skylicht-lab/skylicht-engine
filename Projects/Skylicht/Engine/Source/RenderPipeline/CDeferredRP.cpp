@@ -463,6 +463,10 @@ namespace Skylicht
 		if (shadowRP != NULL)
 			m_directionalLightPass.TextureLayer[6].Texture = shadowRP->getDepthTexture();
 
+		// ssr (last frame)
+		if (m_postProcessor != NULL)
+			m_directionalLightPass.TextureLayer[7].Texture = m_postProcessor->getLastFrameBuffer();
+
 		beginRender2D(renderW, renderH);
 
 		// enable backface shader if bake lightmap mode
