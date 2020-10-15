@@ -61,7 +61,7 @@ float3 SG(
 	// IBL reflection
 #if defined(ENABLE_SSR)	
 	float3 reflection = -normalize(reflect(worldViewDir, worldNormal));
-	color = color + sRGB(SSR(position, reflection, roughness)) * metallic * specularColor;
+	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * metallic * specularColor;
 #endif
 
 	return color;
