@@ -231,7 +231,7 @@ void CViewInit::initProbes()
 		probes.push_back(probe);
 	}
 
-	CLightProbeRender::showProbe(true);
+	CLightProbeRender::showProbe(false);
 
 	context->setProbes(probes);
 }

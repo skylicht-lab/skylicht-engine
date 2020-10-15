@@ -82,6 +82,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		albedo,
 		data.r,
 		data.g,
+		position,
 		viewDir,
 		uLightDirection.xyz,
 		normal,

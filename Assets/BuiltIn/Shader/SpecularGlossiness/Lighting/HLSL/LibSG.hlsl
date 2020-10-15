@@ -1,12 +1,16 @@
 static const float PI = 3.1415926;
 
 #include "LibSolverMetallic.hlsl"
+#if defined(ENABLE_SSR)
+#include "../../../SSR/HLSL/LibSSR.hlsl"
+#endif
 #include "../../../PostProcessing/HLSL/LibToneMapping.hlsl"
 
 float3 SG(
 	const float3 baseColor,
 	const float spec,
 	const float gloss,
+	const float3 position,
 	const float3 worldViewDir,
 	const float3 worldLightDir,
 	const float3 worldNormal,
@@ -55,7 +59,10 @@ float3 SG(
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 
 	// IBL reflection
-	// ...
+#if defined(ENABLE_SSR)	
+	float3 reflection = -normalize(reflect(worldViewDir, worldNormal));
+	color = color + sRGB(SSR(position, reflection, roughness)) * metallic * specularColor;
+#endif
 
 	return color;
 }

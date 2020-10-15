@@ -36,7 +36,11 @@ cbuffer cbPerFrame
 	float3 uLightMultiplier;
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
+	float4x4 uProjection;
+	float4x4 uView;
 };
+
+#define ENABLE_SSR
 
 #include "LibShadow.hlsl"
 #include "LibSG.hlsl"
@@ -72,6 +76,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		albedo,
 		data.r,
 		data.g,
+		position,
 		viewDir,
 		uLightDirection.xyz,
 		normal,
