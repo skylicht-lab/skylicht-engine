@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ShaderCallback/CShaderShadow.h"
 #include "ShaderCallback/CShaderSH.h"
 #include "ShaderCallback/CShaderParticle.h"
+#include "ShaderCallback/CShaderDeferred.h"
 
 namespace Skylicht
 {
@@ -50,6 +51,7 @@ namespace Skylicht
 		addCallback<CShaderShadow>();
 		addCallback<CShaderSH>();
 		addCallback<CShaderParticle>();
+		addCallback<CShaderDeferred>();
 	}
 
 	CShader::~CShader()
@@ -1052,21 +1054,13 @@ namespace Skylicht
 		{
 		}
 		break;
-		case DEFERRED_VIEW:
-		{
-		}
-		break;
-		case DEFERRED_PROJECTION:
-		{
-		}
-		break;
+		*/
 		case CUSTOM_VALUE:
 		{
 			// todo
 			// set params in callback
 		}
 		break;
-		*/
 		default:
 			return false;
 		}

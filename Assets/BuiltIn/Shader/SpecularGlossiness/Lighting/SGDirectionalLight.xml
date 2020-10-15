@@ -19,6 +19,8 @@
 			<uniform name="uLightMultiplier" type="SHADER_VEC3" value="0.0" float="3"/>
 			<uniform name="uShadowDistance" type="SHADOW_MAP_DISTANCE" value="0" float="3"/>
 			<uniform name="uShadowMatrix" type="SHADOW_MAP_MATRIX" value="0" float="16" array="3" matrix="true"/>
+			<uniform name="uProjection" type="DEFERRED_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uView" type="DEFERRED_VIEW" value="0" float="16" matrix="true"/>
 		</fs>
 	</uniforms>
 	<resources>

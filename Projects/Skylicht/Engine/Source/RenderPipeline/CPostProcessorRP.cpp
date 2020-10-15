@@ -106,7 +106,12 @@ namespace Skylicht
 		}
 
 		if (m_screenSpaceReflection)
+		{
 			m_lastFrameBuffer = driver->addRenderTargetTexture(m_size, "last_frame", ECF_A8R8G8B8);
+
+			driver->setRenderTarget(m_lastFrameBuffer, true, false);
+			driver->setRenderTarget(NULL);
+		}
 		else
 			m_lastFrameBuffer = NULL;
 	}
