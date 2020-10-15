@@ -16,6 +16,8 @@ uniform vec4 uLightColor;
 uniform vec3 uLightMultiplier;
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
+uniform mat4 uViewProjection;
+uniform mat4 uView;
 in vec2 varTexCoord0;
 out vec4 FragColor;
 float texture2DCompare(vec3 uv, float compare) {
@@ -67,6 +69,41 @@ float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
 	float D = b * b - 4.0 * a * c;
 	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
 }
+vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const float roughness)
+{
+	vec4 projectedCoord;
+	vec3 beginPosition;
+	vec3 endPosition;
+	vec3 rayPosition = position;
+	vec4 viewPosition;
+	vec3 dir = reflection * 8.0;
+	float mipLevel = roughness * 5.0;
+	for (int i = 8; i >= 0; --i)
+	{
+		beginPosition = rayPosition;
+		endPosition = rayPosition + dir;
+		rayPosition += dir * 0.5;
+		projectedCoord = uViewProjection * vec4(rayPosition.xyz, 1.0);
+		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
+		projectedCoord.xy = 0.5 * projectedCoord.xy + vec2(0.5, 0.5);
+		vec3 testPosition = texture(uTexPosition, projectedCoord.xy).xyz;
+		vec3 d1 = testPosition - beginPosition;
+		float lengthSQ1 = d1.x*d1.x + d1.y*d1.y + d1.z*d1.z;
+		vec3 d2 = testPosition - endPosition;
+		float lengthSQ2 = d2.x*d2.x + d2.y*d2.y + d2.z*d2.z;
+		if (lengthSQ1 < lengthSQ2)
+		{
+			rayPosition = beginPosition;
+		}
+		dir *= 0.5;
+	}
+	float z = (uView * vec4(reflection, 0.0)).z;
+	z = clamp(z, 0.0, 1.0);
+	vec3 color = textureLod(uTexLastFrame, projectedCoord.xy, mipLevel).rgb;
+	vec2 dCoords = smoothstep(vec2(0.0, 0.0), vec2(0.5, 0.5), abs(vec2(0.5, 0.5) - projectedCoord.xy));
+	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
+	return mix(baseColor * 0.8, color, screenEdgefactor * z);
+}
 const float gamma = 2.2;
 const float invGamma = 1.0 / 2.2;
 vec3 sRGB(vec3 color)
@@ -81,6 +118,7 @@ vec3 SG(
 	const vec3 baseColor,
 	const float spec,
 	const float gloss,
+	const vec3 position,
 	const vec3 worldViewDir,
 	const vec3 worldLightDir,
 	const vec3 worldNormal,
@@ -113,6 +151,8 @@ vec3 SG(
 	vec3 directionalLight = NdotL * directionLightColor * visibility;
 	vec3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
+	vec3 reflection = -normalize(reflect(worldViewDir, worldNormal));
+	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * metallic * specularColor;
 	return color;
 }
 void main(void)
@@ -139,6 +179,7 @@ void main(void)
 		albedo,
 		data.r,
 		data.g,
+		position,
 		viewDir,
 		uLightDirection.xyz,
 		normal,

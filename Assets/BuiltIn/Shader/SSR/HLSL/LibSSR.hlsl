@@ -1,6 +1,6 @@
-#define LENGTH 20.0
+#define RAY_LENGTH 8.0
 
-float3 SSR(const float3 position, const float3 reflection, const float roughness)
+float3 SSR(const float3 baseColor, const float3 position, const float3 reflection, const float roughness)
 {	
 	float4 projectedCoord;
 	
@@ -10,22 +10,12 @@ float3 SSR(const float3 position, const float3 reflection, const float roughness
 	float3 rayPosition = position;
 	float4 viewPosition;
 		
-	float3 dir = reflection * LENGTH;
+	float3 dir = reflection * RAY_LENGTH;
 	
-	float mipLevel = roughness * 7.0;
-
-	// base color
-	// convert 3d position to 2d texture coord
-	viewPosition = mul(float4(position, 1.0), uView);
-	projectedCoord = mul(float4(viewPosition.xyz, 1.0), uProjection);
-	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-	projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
-	
-	// default reflect color is from position
-	float3 baseColor = uTexLastFrame.SampleLevel(uTexLastFrameSampler, projectedCoord.xy, mipLevel).rgb;
+	float mipLevel = roughness * 5.0;
 
 	// ray test
-	for (int i = 6; i >= 0; --i)
+	for (int i = 8; i >= 0; --i)
 	{
 		// begin ray
 		beginPosition = rayPosition;
@@ -36,11 +26,10 @@ float3 SSR(const float3 position, const float3 reflection, const float roughness
 		// mid ray
 		rayPosition += dir * 0.5;
 		
-		// convert 3d position to 2d texture coord
-		viewPosition = mul(float4(rayPosition, 1.0), uView);
-		projectedCoord = mul(float4(viewPosition.xyz, 1.0), uProjection);		
-        projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-	    projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
+		// convert 3d position to 2d texture coord		
+		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uViewProjection);
+		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
+		projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
 		
 		float3 testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy).xyz;
 		
@@ -60,21 +49,17 @@ float3 SSR(const float3 position, const float3 reflection, const float roughness
 		dir *= 0.5;
 	}
 	
+	// z clip when camera look down
 	float z = mul(float4(reflection, 0.0), uView).z;
 	z = clamp(z, 0.0, 1.0);
 	
-	// convert 3d position to 2d texture coord
-	viewPosition = mul(float4(rayPosition, 1.0), uView);
-	projectedCoord = mul(float4(viewPosition.xyz, 1.0), uProjection);
-	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-	projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
-	
-	// default reflect color is from position
+	// convert 3d position to 2d texture coord	
 	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, projectedCoord.xy, mipLevel).rgb;
 	
 	// edge factor
 	float2 dCoords = smoothstep(float2(0.0, 0.0), float2(0.5, 0.5), abs(float2(0.5, 0.5) - projectedCoord.xy));
 	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
 	
-	return lerp(baseColor * 0.7, color, screenEdgefactor * z);
+	return lerp(baseColor * 0.8, color, screenEdgefactor * z);
+	// return float3(screenEdgefactor * z, screenEdgefactor * z, screenEdgefactor * z);
 }
