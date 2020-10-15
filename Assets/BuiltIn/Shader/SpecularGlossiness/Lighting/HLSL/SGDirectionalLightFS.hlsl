@@ -28,7 +28,7 @@ cbuffer cbPerFrame
 	float3 uLightMultiplier;
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
-	float4x4 uProjection;
+	float4x4 uViewProjection;
 	float4x4 uView;
 };
 float texture2DCompare(float3 uv, float compare) {
@@ -82,29 +82,23 @@ float solveMetallic(float3 diffuse, float3 specular, float oneMinusSpecularStren
 	float D = b * b - 4.0 * a * c;
 	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
 }
-float3 SSR(const float3 position, const float3 reflection, const float roughness)
+float3 SSR(const float3 baseColor, const float3 position, const float3 reflection, const float roughness)
 {
 	float4 projectedCoord;
 	float3 beginPosition;
 	float3 endPosition;
 	float3 rayPosition = position;
 	float4 viewPosition;
-	float3 dir = reflection * 20.0;
-	float mipLevel = roughness * 7.0;
-	viewPosition = mul(float4(position, 1.0), uView);
-	projectedCoord = mul(float4(viewPosition.xyz, 1.0), uProjection);
-	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-	projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
-	float3 baseColor = uTexLastFrame.SampleLevel(uTexLastFrameSampler, projectedCoord.xy, mipLevel).rgb;
-	for (int i = 6; i >= 0; --i)
+	float3 dir = reflection * 8.0;
+	float mipLevel = roughness * 5.0;
+	for (int i = 8; i >= 0; --i)
 	{
 		beginPosition = rayPosition;
 		endPosition = rayPosition + dir;
 		rayPosition += dir * 0.5;
-		viewPosition = mul(float4(rayPosition, 1.0), uView);
-		projectedCoord = mul(float4(viewPosition.xyz, 1.0), uProjection);
-        projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-	    projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
+		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uViewProjection);
+		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
+		projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
 		float3 testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy).xyz;
 		float3 d1 = testPosition - beginPosition;
 		float lengthSQ1 = d1.x*d1.x + d1.y*d1.y + d1.z*d1.z;
@@ -118,14 +112,10 @@ float3 SSR(const float3 position, const float3 reflection, const float roughness
 	}
 	float z = mul(float4(reflection, 0.0), uView).z;
 	z = clamp(z, 0.0, 1.0);
-	viewPosition = mul(float4(rayPosition, 1.0), uView);
-	projectedCoord = mul(float4(viewPosition.xyz, 1.0), uProjection);
-	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-	projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
 	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, projectedCoord.xy, mipLevel).rgb;
 	float2 dCoords = smoothstep(float2(0.0, 0.0), float2(0.5, 0.5), abs(float2(0.5, 0.5) - projectedCoord.xy));
 	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
-	return lerp(baseColor * 0.7, color, screenEdgefactor * z);
+	return lerp(baseColor * 0.8, color, screenEdgefactor * z);
 }
 static const float gamma = 2.2;
 static const float invGamma = 1.0 / 2.2;
@@ -175,7 +165,7 @@ float3 SG(
 	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * visibility + light.a * specularColor;
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 	float3 reflection = -normalize(reflect(worldViewDir, worldNormal));
-	color = color + sRGB(SSR(position, reflection, roughness)) * metallic * specularColor;
+	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * metallic * specularColor;
 	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET

@@ -1,12 +1,16 @@
 const float PI = 3.1415926;
 
 #include "LibSolverMetallic.glsl"
+#if defined(ENABLE_SSR)
+#include "../../../SSR/GLSL/LibSSR.glsl"
+#endif
 #include "../../../PostProcessing/GLSL/LibToneMapping.glsl"
 
 vec3 SG(
 	const vec3 baseColor,
 	const float spec,
 	const float gloss,
+	const vec3 position,
 	const vec3 worldViewDir,
 	const vec3 worldLightDir,
 	const vec3 worldNormal,
@@ -55,7 +59,10 @@ vec3 SG(
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 
 	// IBL reflection
-	// ...
+#if defined(ENABLE_SSR)	
+	vec3 reflection = -normalize(reflect(worldViewDir, worldNormal));
+	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * metallic * specularColor;
+#endif
 
 	return color;
 }

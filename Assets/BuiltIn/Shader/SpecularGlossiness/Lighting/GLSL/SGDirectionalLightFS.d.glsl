@@ -17,10 +17,14 @@ uniform vec4 uLightColor;
 uniform vec3 uLightMultiplier;
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
+uniform mat4 uViewProjection;
+uniform mat4 uView;
 
 in vec2 varTexCoord0;
 
 out vec4 FragColor;
+
+#define ENABLE_SSR
 
 #include "LibShadow.glsl"
 #include "LibSG.glsl"
@@ -57,6 +61,7 @@ void main(void)
 		albedo,
 		data.r,
 		data.g,
+		position,
 		viewDir,
 		uLightDirection.xyz,
 		normal,

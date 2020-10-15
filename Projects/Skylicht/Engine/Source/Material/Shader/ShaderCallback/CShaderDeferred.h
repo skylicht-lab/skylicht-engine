@@ -33,6 +33,7 @@ namespace Skylicht
 	protected:
 		static core::matrix4 s_projection;
 		static core::matrix4 s_view;
+		static core::matrix4 s_viewProjection;
 
 	public:
 		CShaderDeferred();
@@ -45,11 +46,13 @@ namespace Skylicht
 		static void setProjection(const core::matrix4& mat)
 		{
 			s_projection = mat;
+			s_viewProjection = s_projection;
 		}
 
 		static void setView(const core::matrix4& mat)
 		{
 			s_view = mat;
+			s_viewProjection = s_projection * s_view;
 		}
 	};
 }

@@ -29,6 +29,7 @@ namespace Skylicht
 {
 	core::matrix4 CShaderDeferred::s_projection;
 	core::matrix4 CShaderDeferred::s_view;
+	core::matrix4 CShaderDeferred::s_viewProjection;
 
 	CShaderDeferred::CShaderDeferred()
 	{
@@ -58,6 +59,14 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform->UniformShaderID, s_projection.pointer(), uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 			else
 				matRender->setShaderVariable(uniform->UniformShaderID, s_projection.pointer(), uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+		}
+		break;
+		case DEFERRED_VIEW_PROJECTION:
+		{
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, s_viewProjection.pointer(), uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, s_viewProjection.pointer(), uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		default:

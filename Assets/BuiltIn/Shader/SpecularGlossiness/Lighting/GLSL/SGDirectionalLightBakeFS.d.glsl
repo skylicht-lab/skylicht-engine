@@ -69,6 +69,7 @@ void main(void)
 		albedo,
 		data.r,
 		data.g,
+		position,
 		viewDir,
 		uLightDirection.xyz,
 		normal,
