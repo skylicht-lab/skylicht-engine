@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/CShaderManager.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "Material/Shader/ShaderCallback/CShaderDeferred.h"
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
 #include "IndirectLighting/CIndirectLightingData.h"
@@ -338,6 +339,10 @@ namespace Skylicht
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
 
+		// save projection/view for advance shader SSR
+		CShaderDeferred::setProjection(driver->getTransform(video::ETS_PROJECTION));
+		CShaderDeferred::setView(m_viewMatrix = driver->getTransform(video::ETS_VIEW));
+
 		// STEP 01:
 		// draw baked indirect lighting
 		m_isIndirectPass = true;
@@ -465,7 +470,11 @@ namespace Skylicht
 
 		// ssr (last frame)
 		if (m_postProcessor != NULL)
+		{
 			m_directionalLightPass.TextureLayer[7].Texture = m_postProcessor->getLastFrameBuffer();
+			m_directionalLightPass.TextureLayer[7].TextureWrapU = ETC_CLAMP_TO_BORDER;
+			m_directionalLightPass.TextureLayer[7].TextureWrapV = ETC_CLAMP_TO_BORDER;
+		}
 
 		beginRender2D(renderW, renderH);
 
