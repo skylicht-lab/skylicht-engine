@@ -7,6 +7,6 @@
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 		</fs>
 	</uniforms>
-	<shader type="GLSL" vs="GLSL/TextureColorVS.glsl" fs="GLSL/TextureLinearRGBFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/TextureColorVS.hlsl" fs="HLSL/TextureLinearRGBFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/TextureColorVS.glsl" fs="GLSL/TextureLinearRGBFS.glsl" fs_source="GLSL/TextureLinearRGBFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/TextureColorVS.hlsl" fs="HLSL/TextureLinearRGBFS.hlsl" fs_source="HLSL/TextureLinearRGBFS.d.hlsl"/>
 </shaderConfig>

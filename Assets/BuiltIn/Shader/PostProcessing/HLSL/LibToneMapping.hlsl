@@ -55,6 +55,7 @@ float3 unreal(float3 x) {
 }
 #endif
 
+#if defined(TONE_MAPPING)
 float3 sRGB(float3 color)
 {
 	return pow(color, gamma);
@@ -75,3 +76,9 @@ float3 linearRGB(float3 color)
 #endif
 }
 
+#else
+
+#define sRGB(c) (c)
+#define linearRGB(c) (c)
+
+#endif

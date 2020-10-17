@@ -12,6 +12,6 @@
 			<ui control="UITexture" name="uTexture"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/ParticleVS.glsl" fs="GLSL/ParticleFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/ParticleVS.hlsl" fs="HLSL/ParticleFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/ParticleVS.glsl" fs="GLSL/ParticleFS.glsl" fs_source="GLSL/ParticleFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/ParticleVS.hlsl" fs="HLSL/ParticleFS.hlsl" fs_source="HLSL/ParticleFS.d.hlsl"/>
 </shaderConfig>

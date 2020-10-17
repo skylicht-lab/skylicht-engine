@@ -10,6 +10,6 @@
 	</uniforms>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/PostEffectVS.glsl" fs="GLSL/PostEffectFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/PostEffectVS.hlsl" fs="HLSL/PostEffectFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/PostEffectVS.glsl" fs="GLSL/PostEffectFS.glsl" fs_source="GLSL/PostEffectFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/PostEffectVS.hlsl" fs="HLSL/PostEffectFS.hlsl" fs_source="HLSL/PostEffectFS.d.hlsl"/>
 </shaderConfig>
