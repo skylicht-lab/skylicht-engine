@@ -174,7 +174,10 @@ namespace Skylicht
 		CComponentSystem** components = m_components.data();
 
 		for (int i = 0; i < numComponents; i++)
-			components[i]->updateComponent();
+		{
+			if (components[i]->isEnable())
+				components[i]->updateComponent();
+		}
 	}
 
 	void CGameObject::postUpdateObject()
@@ -183,7 +186,10 @@ namespace Skylicht
 		CComponentSystem** components = m_components.data();
 
 		for (int i = 0; i < numComponents; i++)
-			components[i]->postUpdateComponent();
+		{
+			if (components[i]->isEnable())
+				components[i]->postUpdateComponent();
+		}
 	}
 
 	void CGameObject::endUpdate()
@@ -192,6 +198,9 @@ namespace Skylicht
 		CComponentSystem** components = m_components.data();
 
 		for (int i = 0; i < numComponents; i++)
-			components[i]->endUpdate();
+		{
+			if (components[i]->isEnable())
+				components[i]->endUpdate();
+		}
 	}
 }

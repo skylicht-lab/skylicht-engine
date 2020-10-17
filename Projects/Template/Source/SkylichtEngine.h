@@ -57,6 +57,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Scene/CScene.h"
 #include "Camera/CCamera.h"
 #include "Camera/CEditorCamera.h"
+#include "Camera/CFpsMoveCamera.h"
 #include "GameObject/CGameObject.h"
 #include "GameObject/CZone.h"
 #include "Lighting/CDirectionalLight.h"
