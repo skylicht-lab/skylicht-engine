@@ -38,6 +38,8 @@ namespace Skylicht
 			m_gameObject = obj;
 		}
 
+		bool m_enable;
+
 	public:
 		friend class CGameObject;
 
@@ -54,6 +56,15 @@ namespace Skylicht
 		virtual void postUpdateComponent();
 
 		virtual void endUpdate();
+
+		virtual void onEnable(bool b);
+
+		void setEnable(bool b);
+
+		inline bool isEnable()
+		{
+			return m_enable;
+		}
 
 		inline CGameObject* getGameObject()
 		{
