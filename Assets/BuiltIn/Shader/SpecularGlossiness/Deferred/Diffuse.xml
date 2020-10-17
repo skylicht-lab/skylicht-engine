@@ -7,7 +7,7 @@
 		</vs>
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
-			<uniform name="uSpec" type="MATERIAL_PARAM" valueIndex="1"value="0.4" float="1"/>
+			<uniform name="uSpec" type="MATERIAL_PARAM" valueIndex="1" value="0.4" float="1"/>
 			<uniform name="uGloss" type="MATERIAL_PARAM" valueIndex="2" value="0.3" float="1"/>
 		</fs>
 	</uniforms>

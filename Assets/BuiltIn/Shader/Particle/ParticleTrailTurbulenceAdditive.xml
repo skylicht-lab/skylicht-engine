@@ -14,6 +14,6 @@
 			<ui control="UITexture" name="uTexture"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/ParticleTrailTurbulenceVS.glsl" fs="GLSL/ParticleAdditiveFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/ParticleTrailTurbulenceVS.hlsl" fs="HLSL/ParticleAdditiveFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/ParticleTrailTurbulenceVS.glsl" fs="GLSL/ParticleAdditiveFS.glsl" vs_source="GLSL/ParticleTrailTurbulenceVS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/ParticleTrailTurbulenceVS.hlsl" fs="HLSL/ParticleAdditiveFS.hlsl" vs_source="HLSL/ParticleTrailTurbulenceVS.d.hlsl"/>
 </shaderConfig>

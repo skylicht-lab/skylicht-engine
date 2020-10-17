@@ -19,8 +19,14 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	float avgLuminance = uTexLuminance.SampleLevel(uTexLuminanceSampler, input.tex0, 10.0).x;
 
+#if defined(TONE_MAPPING)
 	float target = 0.2;
+	float threshold = 2.5;	
+#else
+	float target = 0.3;
 	float threshold = 2.5;
+#endif
+
 	float linearExposure = max((target / avgLuminance), 0.0001);
 
 	// Function: exposure = exp(log(target/x)) see function graph for more detail
