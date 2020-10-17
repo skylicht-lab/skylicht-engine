@@ -8,6 +8,6 @@
 			<uniform name="uElectricColor" type="MATERIAL_PARAM" valueIndex="1" value="0.2,0.1,0.4,1.0" float="4"/>
 		</fs>
 	</uniforms>
-	<shader type="GLSL" vs="GLSL/Noise2DVS.glsl" fs="GLSL/ElectricLightning2DFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/Noise2DVS.hlsl" fs="HLSL/ElectricLightning2DFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/Noise2DVS.glsl" fs="GLSL/ElectricLightning2DFS.glsl" fs_source="GLSL/ElectricLightning2DFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/Noise2DVS.hlsl" fs="HLSL/ElectricLightning2DFS.hlsl" fs_source="HLSL/ElectricLightning2DFS.d.hlsl"/>
 </shaderConfig>

@@ -7,6 +7,6 @@
 			<uniform name="uNoiseOffset" type="MATERIAL_PARAM" valueIndex="0" value="0.0,0.0,0.0,4.0" float="4"/>
 		</fs>
 	</uniforms>
-	<shader type="GLSL" vs="GLSL/Noise3DVS.glsl" fs="GLSL/StarSequence3DFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/Noise3DVS.hlsl" fs="HLSL/StarSequence3DFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/Noise3DVS.glsl" fs="GLSL/StarSequence3DFS.glsl" fs_source="GLSL/StarSequence3DFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/Noise3DVS.hlsl" fs="HLSL/StarSequence3DFS.hlsl" fs_source="HLSL/StarSequence3DFS.d.hlsl"/>
 </shaderConfig>

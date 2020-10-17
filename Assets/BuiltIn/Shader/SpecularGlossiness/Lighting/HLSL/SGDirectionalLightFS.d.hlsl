@@ -19,8 +19,10 @@ SamplerState uTexIndirectSampler : register(s5);
 Texture2DArray uShadowMap : register(t6);
 SamplerState uShadowMapSampler : register(s6);
 
+#if defined(ENABLE_SSR)
 Texture2D uTexLastFrame : register(t7);
 SamplerState uTexLastFrameSampler : register(s7);
+#endif
 
 struct PS_INPUT
 {
@@ -36,11 +38,11 @@ cbuffer cbPerFrame
 	float3 uLightMultiplier;
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
+#if defined(ENABLE_SSR)
 	float4x4 uViewProjection;
 	float4x4 uView;
+#endif
 };
-
-#define ENABLE_SSR
 
 #include "LibShadow.hlsl"
 #include "LibSG.hlsl"
@@ -56,6 +58,21 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	float3 v = uCameraPosition.xyz - position;
 	float3 viewDir = normalize(v);
+
+	float directMul = uLightMultiplier.x;
+	float indirectMul = uLightMultiplier.y;
+	float lightMul = uLightMultiplier.z;
+
+#if defined(LIGHTMAP_BAKE)
+	// backface when render lightmap
+	if (dot(viewDir, normal) < 0)
+	{
+		normal = normal * -1.0;
+		directMul = 0.0;
+		indirectMul = 0.0;
+		lightMul = 0.0;
+	}
+#endif
 
 	// shadow
 	float depth = length(v);
@@ -84,9 +101,9 @@ float4 main(PS_INPUT input) : SV_TARGET
 		visibility,
 		light,
 		indirect,
-		uLightMultiplier.x,
-		uLightMultiplier.y,
-		uLightMultiplier.z);
+		directMul,
+		indirectMul,
+		lightMul);
 
 	return float4(color, 1.0);
 }

@@ -8,8 +8,10 @@ uniform sampler2D uTexNormal;
 uniform sampler2D uTexData;
 uniform sampler2D uTexLight;
 uniform sampler2D uTexIndirect;
-uniform sampler2D uTexLastFrame;
 uniform sampler2DArray uShadowMap;
+#if defined(ENABLE_SSR)
+uniform sampler2D uTexLastFrame;
+#endif
 
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
@@ -17,14 +19,15 @@ uniform vec4 uLightColor;
 uniform vec3 uLightMultiplier;
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
+
+#if defined(ENABLE_SSR)
 uniform mat4 uViewProjection;
 uniform mat4 uView;
+#endif
 
 in vec2 varTexCoord0;
 
 out vec4 FragColor;
-
-#define ENABLE_SSR
 
 #include "LibShadow.glsl"
 #include "LibSG.glsl"
@@ -40,6 +43,21 @@ void main(void)
 
 	vec3 v = uCameraPosition.xyz - position;
 	vec3 viewDir = normalize(v);
+
+	float directMul = uLightMultiplier.x;
+	float indirectMul = uLightMultiplier.y;
+	float lightMul = uLightMultiplier.z;
+
+#if defined(LIGHTMAP_BAKE)
+	// backface when render lightmap
+	if (dot(viewDir, normal) < 0.0)
+	{
+		normal = normal * -1.0;
+		directMul = 0.0;
+		indirectMul = 0.0;
+		lightMul = 0.0;
+	}
+#endif
 
 	// shadow
 	float depth = length(v);
@@ -69,9 +87,9 @@ void main(void)
 		visibility,
 		light,
 		indirect,
-		uLightMultiplier.x,
-		uLightMultiplier.y,
-		uLightMultiplier.z);
+		directMul,
+		indirectMul,
+		lightMul);
 
 	FragColor = vec4(color, 1.0);
 }
