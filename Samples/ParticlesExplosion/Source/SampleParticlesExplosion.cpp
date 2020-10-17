@@ -64,6 +64,7 @@ void SampleParticlesExplosion::onInitApp()
 	CGameObject *camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
+	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
 	m_camera = camObj->getComponent<CCamera>();
 	m_camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));

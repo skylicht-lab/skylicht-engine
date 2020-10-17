@@ -51,6 +51,7 @@ void CViewInit::initScene()
 	CGameObject *camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(1.0f);
+	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
 	CCamera *camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(1.0f, 2.0f, 1.0f));

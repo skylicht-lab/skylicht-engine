@@ -22,49 +22,62 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CComponentSystem.h"
-#include "GameObject/CGameObject.h"
+#pragma once
+
+#include "Components/CComponentSystem.h"
 
 namespace Skylicht
 {
-	CComponentSystem::CComponentSystem() :
-		m_enable(true)
+	class CFpsMoveCamera :
+		public CComponentSystem,
+		public IEventReceiver
 	{
-		m_gameObject = NULL;
-	}
-
-	const char* CComponentSystem::getName()
-	{
-		return m_gameObject->getNameA();
-	}
-
-	CComponentSystem::~CComponentSystem()
-	{
-
-	}
-
-	void CComponentSystem::postUpdateComponent()
-	{
-
-	}
-
-	void CComponentSystem::endUpdate()
-	{
-
-	}
-
-	void CComponentSystem::onEnable(bool b)
-	{
-
-	}
-
-	void CComponentSystem::setEnable(bool b)
-	{
-		if (m_enable != b)
+	public:
+		enum EMoveDirection
 		{
-			onEnable(b);
-			m_enable = b;
+			MoveForward = 0,
+			MoveBackward,
+			StrafeLeft,
+			StrafeRight,
+			DirectionCount
+		};
+
+		struct SKeyMap
+		{
+			EMoveDirection Direction;
+			EKEY_CODE KeyCode;
+		};
+
+	protected:
+		std::vector<SKeyMap> m_keyMap;
+
+		bool m_input[DirectionCount];
+
+		f32 m_moveSpeed;
+
+	public:
+		CFpsMoveCamera();
+
+		virtual ~CFpsMoveCamera();
+
+		virtual void initComponent();
+
+		virtual void updateComponent();
+
+		virtual void endUpdate();
+
+		virtual bool OnEvent(const SEvent& event);
+
+	public:
+
+		inline void setKeyMap(const std::vector<SKeyMap>& keyMap)
+		{
+			m_keyMap = keyMap;
 		}
-	}
+
+		inline void setMoveSpeed(float s)
+		{
+			m_moveSpeed = s;
+		}
+	};
 }
