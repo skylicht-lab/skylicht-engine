@@ -428,6 +428,7 @@ void CViewInit::onUpdate()
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.Zip");
 		listBundles.push_back("Sponza.Zip");
+		listBundles.push_back("SponzaDDS.Zip");
 		listBundles.push_back("Particles.Zip");
 
 #ifdef __EMSCRIPTEN__

@@ -1,7 +1,12 @@
 import zipfile
 import os
 
-compressExt = ["xml", "hlsl", "glsl", "png", "jpg", "dae", "dds", "ttf", "otf", "txt", "obj", "mtl", "smesh"]
+compressExt = ["xml", "hlsl", "glsl", "png",
+               "jpg", "ttf", "otf", "txt", "smesh"]
+compressResourceModel = ["dae", "obj", "mtl"]
+compressTextureDDSExt = ["dds"]
+compressTexturePVRExt = ["pvr"]
+compressTextureETCExt = ["etc"]
 
 
 def needCompress(filename):
@@ -11,15 +16,96 @@ def needCompress(filename):
     return False
 
 
+def needCompressResource(filename):
+    for fileType in compressResourceModel:
+        if filename.endswith(fileType):
+            return True
+    return False
+
+
+def needCompressDDS(filename):
+    for fileType in compressTextureDDSExt:
+        if filename.endswith(fileType):
+            return True
+    return False
+
+
+def needCompressPVR(filename):
+    for fileType in compressTexturePVRExt:
+        if filename.endswith(fileType):
+            return True
+    return False
+
+
+def needCompressETC(filename):
+    for fileType in compressTextureETCExt:
+        if filename.endswith(fileType):
+            return True
+    return False
+
+
 def compress(dirName):
     outputZip = "../Bin/" + dirName + ".zip"
-    z = zipfile.ZipFile(outputZip, "w", zipfile.ZIP_DEFLATED)
+    outputZipRes = "../Bin/" + dirName + "Resource.zip"
+    outputZipDDS = "../Bin/" + dirName + "DDS.zip"
+    outputZipPVR = "../Bin/" + dirName + "PVR.zip"
+    outputZipETC = "../Bin/" + dirName + "ETC.zip"
+    zipCommonFile = None
+    zipResFile = None
+    zipDDSFile = None
+    zipPVRFile = None
+    zipETCFile = None
     for root, dirs, files in os.walk(dirName):
         for file in files:
             if needCompress(file):
+                if zipCommonFile == None:
+                    zipCommonFile = zipfile.ZipFile(
+                        outputZip, "w", zipfile.ZIP_DEFLATED)
                 print("%s <-- %s - %s" % (outputZip, root, file))
-                z.write(os.path.join(root, file))
-    z.close
+                zipCommonFile.write(os.path.join(root, file))
+
+            if needCompressResource(file):
+                if zipResFile == None:
+                    zipResFile = zipfile.ZipFile(
+                        outputZipRes, "w", zipfile.ZIP_DEFLATED)
+                print("%s <-- %s - %s" % (outputZipRes, root, file))
+                zipResFile.write(os.path.join(root, file))
+
+            if needCompressDDS(file):
+                if zipDDSFile == None:
+                    zipDDSFile = zipfile.ZipFile(
+                        outputZipDDS, "w", zipfile.ZIP_DEFLATED)
+                print("%s <-- %s - %s" % (outputZipDDS, root, file))
+                zipDDSFile.write(os.path.join(root, file))
+
+            if needCompressPVR(file):
+                if zipPVRFile == None:
+                    zipPVRFile = zipfile.ZipFile(
+                        outputZipPVR, "w", zipfile.ZIP_DEFLATED)
+                print("%s <-- %s - %s" % (outputZipPVR, root, file))
+                zipPVRFile.write(os.path.join(root, file))
+
+            if needCompressETC(file):
+                if zipETCFile == None:
+                    zipETCFile = zipfile.ZipFile(
+                        outputZipETC, "w", zipfile.ZIP_DEFLATED)
+                print("%s <-- %s - %s" % (outputZipETC, root, file))
+                zipETCFile.write(os.path.join(root, file))
+
+    if zipCommonFile != None:
+        zipCommonFile.close()
+
+    if zipResFile != None:
+        zipResFile.close()
+
+    if zipDDSFile != None:
+        zipDDSFile.close()
+
+    if zipPVRFile != None:
+        zipPVRFile.close()
+
+    if zipETCFile != None:
+        zipETCFile.close()
 
 
 def main():

@@ -127,7 +127,7 @@ namespace Skylicht
 			{
 				int numMT = count - current;
 				numMT = core::min_(numMT, maxMT);
-				
+
 				// bake and get SH result
 				baker->bake(camera,
 					rp,
@@ -281,8 +281,16 @@ namespace Skylicht
 				// get result color
 				outSH[i].getSHIrradiance(normals[id], result);
 
+				// dark multipler
+				float l = 1.0f - core::clamp(0.21f * result.X + 0.72f * result.Y + 0.07f * result.Z, 0.0f, 1.0f);
+
+				// use QuadraticEaseIn function (y = x^2) or CubicEaseIn (y = x^3)
+				// [x -> 0.0 - 1.0] 
+				// [y -> 1.0 - 1.5]
+				float darkMultipler = 1.0f + 1.5f * l * l * l;
+
 				// compress lighting by 3.0
-				result *= 1.0f / 3.0f;
+				result *= darkMultipler / 3.0f;
 
 				r = core::clamp(result.X, 0.0f, 1.0f);
 				g = core::clamp(result.Y, 0.0f, 1.0f);
