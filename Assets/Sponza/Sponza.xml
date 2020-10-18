@@ -25,6 +25,10 @@
 			<Texture name='uTexDiffuse' path='Textures/vase_hanging.tga'/>
 			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png'/>
 		</Textures>
+		<Params>
+			<Param name='uSpec' floatSize='1' floatValue='1.0'>
+			<Param name='uGloss' floatSize='1' floatValue='0.3'>
+		</Params>
 	</Material>
 	<Material name='column_c-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
