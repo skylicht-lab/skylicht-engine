@@ -123,7 +123,7 @@ void CViewInit::initScene()
 
 	// save to context
 	CContext *context = CContext::getInstance();
-	context->initRenderPipeline(app->getWidth(), app->getHeight());
+	context->initRenderPipeline(app->getWidth(), app->getHeight(), false);
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
@@ -148,6 +148,8 @@ void CViewInit::onUpdate()
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.Zip");
 		listBundles.push_back("TankScene.Zip");
+		listBundles.push_back("TankSceneDDS.Zip");
+		listBundles.push_back("TankSceneResource.Zip");
 
 #ifdef __EMSCRIPTEN__
 		const char *filename = listBundles[m_downloaded].c_str();
@@ -181,8 +183,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -195,7 +197,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::InitScene;
 #endif

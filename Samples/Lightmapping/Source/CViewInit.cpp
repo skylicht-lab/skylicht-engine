@@ -29,8 +29,14 @@ void CViewInit::onInit()
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Common.zip"), false, false);
+
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModelsDDS.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModelsResource.zip"), false, false);
+
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SponzaResource.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SponzaDDS.zip"), false, false);
 
 	// load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -117,7 +123,7 @@ void CViewInit::onInit()
 
 		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
-	}
+}
 
 	// Load model from Sponza.smesh
 	// How to export "Sponza.smesh" see SampleLightmapUV

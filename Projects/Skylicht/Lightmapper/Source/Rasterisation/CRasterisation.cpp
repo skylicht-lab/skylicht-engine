@@ -644,8 +644,6 @@ namespace Skylicht
 
 				bakeResults[i].getSHIrradiance(p.Normal, result);
 
-				const core::vector3df& ambient = bakeResults[i].getValue()[0];
-
 				// dark multipler
 				float l = 1.0f - core::clamp(0.21f * result.X + 0.72f * result.Y + 0.07f * result.Z, 0.0f, 1.0f);
 
