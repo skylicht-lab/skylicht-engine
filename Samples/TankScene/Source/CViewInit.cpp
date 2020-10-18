@@ -141,6 +141,7 @@ void CViewInit::onUpdate()
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.Zip");
 		listBundles.push_back("TankScene.Zip");
+		listBundles.push_back("TankSceneDDS.Zip");
 
 #ifdef __EMSCRIPTEN__
 		const char *filename = listBundles[m_downloaded].c_str();

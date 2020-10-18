@@ -45,8 +45,14 @@ void SampleLightmapUV::onInitApp()
 
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
+
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModelsDDS.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModelsResource.zip"), false, false);
+
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SponzaResource.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SponzaDDS.zip"), false, false);
 
 	// Load Font
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
@@ -127,7 +133,7 @@ void SampleLightmapUV::onInitApp()
 			else if (name == "top_sponza")
 			{
 				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
-			}
+	}
 			else
 			{
 				// default mesh
@@ -137,7 +143,7 @@ void SampleLightmapUV::onInitApp()
 			m_unwrap.addMesh(renderData->getMesh(), 1.0f);
 #endif
 			meshID++;
-		}
+}
 
 		// save list renderer
 		m_allRenderers = renderers;
@@ -274,7 +280,7 @@ void SampleLightmapUV::updateMeshUV()
 	}
 
 	m_renderMesh->initMaterial(materials);
-}
+		}
 
 void SampleLightmapUV::updateThread()
 {
