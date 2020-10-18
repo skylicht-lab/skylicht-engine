@@ -523,5 +523,13 @@ namespace Skylicht
 			t.MaterialType = m_lightmapIndirectTestShader;
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, renderW, renderH, t);
 		}
+
+		// test
+		/*
+		SMaterial t = m_finalPass;
+		t.setTexture(0, m_data);
+		t.MaterialType = m_textureColorShader;
+		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, renderW, renderH, t);
+		*/
 	}
 }
