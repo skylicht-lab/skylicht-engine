@@ -65,7 +65,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL Android)
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL Linux)
-	set(BUILD_ENGINE_TOOL OFF)
 	set(BUILD_LINUX ON)
 	add_definitions(-DLINUX)
 endif()
@@ -293,8 +292,9 @@ subdirs (Projects/Skylicht/Lightmapper)
 
 subdirs (Projects/Skylicht/Client)
 
-#if (BUILD_ENGINE_TOOL)
-#endif()
+if (BUILD_ENGINE_TOOL)
+subdirs (Projects/Editor)
+endif()
 
 include(CMakeProjects.cmake)
 
