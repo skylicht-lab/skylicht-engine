@@ -262,6 +262,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	hWndStyle = WS_SYSMENU | WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 
+#if defined(SKYLICHT_EDITOR)
+	hWndStyle |= WS_OVERLAPPEDWINDOW;
+#endif
+
 	hWnd = CreateWindow(szWindowClass, szTitle, hWndStyle,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
@@ -390,7 +394,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_SIZE:
+	{
+		u32 width = LOWORD(lParam);
+		u32 height = HIWORD(lParam);
+		IrrlichtDevice *dev = getIrrlichtDevice();
+		if (width > 0 && height > 0)
+		{
+			if (dev != NULL)
+				dev->getVideoDriver()->OnResize(core::dimension2du(width, height));
 
+			if (g_application != NULL)
+				g_application->notifyResizeWin((int)width, (int)height);
+		}
+	}
+	break;
 	case WM_SYSKEYDOWN:
 	case WM_SYSKEYUP:
 	case WM_KEYDOWN:
