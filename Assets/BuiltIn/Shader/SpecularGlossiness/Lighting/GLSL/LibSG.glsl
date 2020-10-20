@@ -52,8 +52,9 @@ vec3 SG(
 	float NdotE = max(0.0, dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 
+	vec3 envSpecColor = mix(indirectColor, vec3(1.0, 1.0, 1.0), visibility);
 	vec3 directionalLight = NdotL * directionLightColor * visibility;
-	vec3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * indirectColor + light.a * specularColor;
+	vec3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * envSpecColor + light.a * specularColor;
 
 	// IBL Ambient
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;

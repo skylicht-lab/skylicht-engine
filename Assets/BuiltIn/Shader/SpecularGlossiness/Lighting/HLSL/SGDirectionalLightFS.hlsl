@@ -161,8 +161,9 @@ float3 SG(
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
+	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
 	float3 directionalLight = NdotL * directionLightColor * visibility;
-	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * indirectColor + light.a * specularColor;
+	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * envSpecColor + light.a * specularColor;
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 	float3 reflection = -normalize(reflect(worldViewDir, worldNormal));
 	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * metallic * specularColor;
