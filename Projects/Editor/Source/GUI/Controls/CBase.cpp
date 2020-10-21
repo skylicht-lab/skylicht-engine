@@ -25,7 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CBase.h"
 #include "CCanvas.h"
-#include "GUI/Renderer/CRenderer.h"
 #include "GUI/CGUIContext.h"
 
 namespace Skylicht
@@ -35,7 +34,7 @@ namespace Skylicht
 		namespace GUI
 		{
 			CBase::CBase(CBase* parent, const std::string& name) :
-				m_parent(parent),
+				m_parent(NULL),
 				m_name(name),
 				m_disabled(false),
 				m_hidden(false),
@@ -47,12 +46,28 @@ namespace Skylicht
 				m_mouseInputEnabled(true),
 				m_keyboardInputEnabled(true)
 			{
-
+				setParent(parent);
 			}
 
 			CBase::~CBase()
 			{
+				CCanvas *canvas = getCanvas();
+
+				if (canvas != NULL)
+					canvas->removeDelayDelete(this);
+
+				setParent(NULL);
+
 				releaseChildren();
+
+				if (CGUIContext::HoveredControl == this)
+					CGUIContext::HoveredControl = NULL;
+
+				if (CGUIContext::KeyboardFocus == this)
+					CGUIContext::KeyboardFocus = NULL;
+
+				if (CGUIContext::MouseFocus == this)
+					CGUIContext::MouseFocus = NULL;
 			}
 
 			void CBase::setHidden(bool hidden)
@@ -63,6 +78,12 @@ namespace Skylicht
 				m_hidden = hidden;
 				invalidate();
 				reDraw();
+			}
+
+			void CBase::remove()
+			{
+				CCanvas* canvas = getCanvas();
+				canvas->addDelayedDelete(this);
 			}
 
 			bool CBase::isHidden() const
@@ -285,8 +306,8 @@ namespace Skylicht
 			{
 				m_renderBounds.X = 0;
 				m_renderBounds.Y = 0;
-				m_renderBounds.X = m_bounds.Width;
-				m_renderBounds.Y = m_bounds.Height;
+				m_renderBounds.Width = m_bounds.Width;
+				m_renderBounds.Height = m_bounds.Height;
 			}
 
 			void CBase::moveTo(float x, float y)

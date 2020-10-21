@@ -2,6 +2,9 @@
 
 #include "IApplicationEventReceiver.h"
 
+#include "GUI/CGUIContext.h"
+#include "Editor/CEditor.h"
+
 class SkylichtEditor : public IApplicationEventReceiver
 {
 private:
@@ -10,6 +13,10 @@ private:
 	CCamera *m_camera;
 	CGlyphFont *m_largeFont;
 	CForwardRP *m_forwardRP;
+
+private:
+	Editor::CEditor *m_editor;
+
 public:
 	SkylichtEditor();
 	virtual ~SkylichtEditor();

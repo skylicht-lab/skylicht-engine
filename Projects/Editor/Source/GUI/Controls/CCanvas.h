@@ -33,8 +33,12 @@ namespace Skylicht
 		{
 			class CCanvas : public CBase
 			{
+			protected:
+				CBase::List m_deleteList;
+				std::set<CBase*> m_deleteSet;
+
 			public:
-				CCanvas();
+				CCanvas(float width, float height);
 
 				virtual ~CCanvas();
 
@@ -46,10 +50,13 @@ namespace Skylicht
 
 				virtual void update();
 
-				virtual CCanvas* getCanvas()
-				{
-					return this;
-				}
+				virtual CCanvas* getCanvas();
+
+				virtual void addDelayedDelete(CBase* control);
+
+				virtual void processDelayedDeletes();
+
+				virtual void removeDelayDelete(CBase *control);
 
 			public:
 

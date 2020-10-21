@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CCanvas.h"
-#include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
 {
@@ -32,11 +31,12 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CCanvas::CCanvas() :
+			CCanvas::CCanvas(float width, float height) :
 				CBase(NULL),
 				FirstTab(NULL),
 				NextTab(NULL)
 			{
+				setBounds(0.0, 0.0f, width, height);
 				initialize();
 			}
 
@@ -47,24 +47,65 @@ namespace Skylicht
 
 			void CCanvas::initialize()
 			{
+			}
 
+			CCanvas* CCanvas::getCanvas()
+			{
+				return this;
+			}
+
+			void CCanvas::addDelayedDelete(CBase* control)
+			{
+				if (m_deleteSet.find(control) == m_deleteSet.end())
+				{
+					m_deleteSet.insert(control);
+					m_deleteList.push_back(control);
+				}
+			}
+
+			void CCanvas::removeDelayDelete(CBase *control)
+			{
+				std::set<CBase*>::iterator itFind;
+
+				if ((itFind = m_deleteSet.find(control)) != m_deleteSet.end())
+				{
+					m_deleteList.remove(control);
+					m_deleteSet.erase(control);
+				}
+			}
+
+			void CCanvas::processDelayedDeletes()
+			{
+				CBase::List deleteList = m_deleteList;
+				m_deleteList.clear();
+				m_deleteSet.clear();
+
+				for (auto&& control : deleteList)
+				{
+					delete control;
+				}
+
+				reDraw();
 			}
 
 			void CCanvas::update()
 			{
+				processDelayedDeletes();
+
 				if (isHidden())
 					return;
+
+				recurseLayout();
+
+				if (NextTab == NULL)
+					NextTab = FirstTab;
 			}
 
 			void CCanvas::doRender()
 			{
-				update();
-
 				CRenderer *render = CRenderer::getRenderer();
 
 				render->begin();
-
-				recurseLayout();
 
 				render->setClipRegion(m_bounds);
 

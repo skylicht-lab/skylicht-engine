@@ -24,7 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include <functional>
+#include <set>
+
 #include "GUI/Type.h"
+#include "GUI/Theme/CTheme.h"
+#include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
 {
@@ -44,6 +48,8 @@ namespace Skylicht
 				virtual ~CBase();
 
 			public:
+				virtual void remove();
+
 				virtual void setHidden(bool hidden);
 
 				//!< Returns true only if this control is hidden.
