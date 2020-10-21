@@ -23,10 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGUIContext.h"
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Renderer/CSkylichtRenderer.h"
-#include "GUI/Theme/CSkylichtTheme.h"
+#include "CSkylichtTheme.h"
 
 namespace Skylicht
 {
@@ -34,51 +31,27 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CBase* CGUIContext::HoveredControl = NULL;
-			CBase* CGUIContext::MouseFocus = NULL;
-			CBase* CGUIContext::KeyboardFocus = NULL;
-
-			CCanvas* g_rootCanvas = NULL;
-
-			CSkylichtRenderer *g_renderer = NULL;
-			CSkylichtTheme *g_theme = NULL;
-
-			void CGUIContext::initGUI(float width, float height)
+			CSkylichtTheme::CSkylichtTheme()
 			{
-				g_rootCanvas = new CCanvas(width, height);
-
-				g_renderer = new CSkylichtRenderer();
-				CRenderer::setRenderer(g_renderer);
-
-				g_theme = new CSkylichtTheme();
-				CTheme::setTheme(g_theme);
+				m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 1024, 1024);
+				m_empty = m_sprite->addFrame("empty", "Editor/GUI/empty.png");
+				m_window = m_sprite->addFrame("draw_window", "Editor/GUI/draw_window.png");
+				m_windowShadow = m_sprite->addFrame("draw_window_shadow", "Editor/GUI/draw_window_shadow.png");
 			}
 
-			void CGUIContext::destroyGUI()
+			CSkylichtTheme::~CSkylichtTheme()
 			{
-				delete g_rootCanvas;
-				delete g_renderer;
-				delete g_theme;
+				delete m_sprite;
 			}
 
-			void CGUIContext::update()
+			void CSkylichtTheme::drawWindow(const SRect& rect, bool isFocussed)
 			{
-				g_rootCanvas->update();
+
 			}
 
-			void CGUIContext::render()
+			void CSkylichtTheme::drawWindowShadow(const SRect& rect)
 			{
-				g_rootCanvas->doRender();
-			}
 
-			void CGUIContext::resize(float width, float height)
-			{
-				g_rootCanvas->setBounds(0.0f, 0.0f, width, height);
-			}
-
-			CCanvas* CGUIContext::getRoot()
-			{
-				return g_rootCanvas;
 			}
 		}
 	}

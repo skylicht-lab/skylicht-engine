@@ -31,7 +31,27 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			CWindow::CWindow(CCanvas* parent, float x, float y, float w, float h) :
+				CBase(parent)
+			{
+				setBounds(x, y, w, h);
+			}
 
+			CWindow::~CWindow()
+			{
+
+			}
+
+			void CWindow::render()
+			{
+				bool isFocussed = isOnTop();
+				CTheme::getTheme()->drawWindow(getRenderBounds(), isFocussed);
+			}
+
+			void CWindow::renderUnder()
+			{
+				CTheme::getTheme()->drawWindowShadow(getRenderBounds());
+			}
 		}
 	}
 }
