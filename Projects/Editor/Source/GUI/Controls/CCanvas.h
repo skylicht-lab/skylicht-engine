@@ -23,13 +23,40 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
+#include "CBase.h"
+
 namespace Skylicht
 {
 	namespace Editor
 	{
 		namespace GUI
 		{
+			class CCanvas : public CBase
+			{
+			public:
+				CCanvas();
 
+				virtual ~CCanvas();
+
+				virtual void initialize();
+
+				virtual void doRender();
+
+				virtual void render();
+
+				virtual void update();
+
+				virtual CCanvas* getCanvas()
+				{
+					return this;
+				}
+
+			public:
+
+				CBase* FirstTab;
+				CBase* NextTab;
+
+			};
 		}
 	}
 }
