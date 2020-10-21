@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CBase.h"
 #include "GUI/Renderer/CRenderer.h"
+#include "GUI/CGUIContext.h"
 
 namespace Skylicht
 {
@@ -41,7 +42,9 @@ namespace Skylicht
 				m_dock(EPosition::None),
 				m_bounds(0.0f, 0.0f, 18.0f, 30.0f),
 				m_padding(0.0f, 0.0f, 0.0f, 0.0f),
-				m_margin(0.0f, 0.0f, 0.0f, 0.0f)
+				m_margin(0.0f, 0.0f, 0.0f, 0.0f),
+				m_mouseInputEnabled(true),
+				m_keyboardInputEnabled(true)
 			{
 
 			}
@@ -355,6 +358,379 @@ namespace Skylicht
 			}
 
 			void CBase::renderFocus()
+			{
+
+			}
+
+			bool CBase::isHovered() const
+			{
+				return CGUIContext::HoveredControl == this;
+			}
+
+			bool CBase::shouldDrawHover() const
+			{
+				return CGUIContext::MouseFocus == this || CGUIContext::MouseFocus == NULL;
+			}
+
+			void CBase::touch()
+			{
+				if (m_parent)
+					m_parent->onChildTouched(this);
+			}
+
+			void CBase::onChildTouched(CBase* child)
+			{
+				touch();
+			}
+
+			bool CBase::isOnTop()
+			{
+				if (!m_parent)
+					return false;
+
+				List::iterator iter = m_parent->Children.begin();
+				CBase* child = *iter;
+
+				if (child == this)
+					return true;
+
+				return false;
+			}
+
+			bool CBase::isFocussed()
+			{
+				return CGUIContext::KeyboardFocus == this;
+			}
+
+			void CBase::focus()
+			{
+				if (CGUIContext::KeyboardFocus == this)
+					return;
+
+				if (CGUIContext::KeyboardFocus)
+					CGUIContext::KeyboardFocus->onLostKeyboardFocus();
+
+				CGUIContext::KeyboardFocus = this;
+				onKeyboardFocus();
+				reDraw();
+			}
+
+			void CBase::unfocus()
+			{
+				if (CGUIContext::KeyboardFocus != this)
+					return;
+
+				CGUIContext::KeyboardFocus = NULL;
+				onLostKeyboardFocus();
+				reDraw();
+			}
+
+			void CBase::onMouseEnter()
+			{
+				OnHoverEnter(this);
+
+				reDraw();
+			}
+
+			void CBase::onMouseLeave()
+			{
+				OnHoverLeave(this);
+
+				reDraw();
+			}
+
+			bool CBase::onMouseWheeled(int iDelta)
+			{
+				if (m_parent)
+					return m_parent->onMouseWheeled(iDelta);
+
+				return false;
+			}
+
+			bool CBase::onKeyPress(int iKey, bool bPress)
+			{
+				bool handled = false;
+
+				switch (iKey)
+				{
+				case EKey::KEY_TAB:
+					handled = onKeyTab(bPress);
+					break;
+
+				case EKey::KEY_SPACE:
+					handled = onKeySpace(bPress);
+					break;
+
+				case EKey::KEY_HOME:
+					handled = onKeyHome(bPress);
+					break;
+
+				case EKey::KEY_END:
+					handled = onKeyEnd(bPress);
+					break;
+
+				case EKey::KEY_RETURN:
+					handled = onKeyReturn(bPress);
+					break;
+
+				case EKey::KEY_BACK:
+					handled = onKeyBackspace(bPress);
+					break;
+
+				case EKey::KEY_DELETE:
+					handled = onKeyDelete(bPress);
+					break;
+
+				case EKey::KEY_RIGHT:
+					handled = onKeyRight(bPress);
+					break;
+
+				case EKey::KEY_LEFT:
+					handled = onKeyLeft(bPress);
+					break;
+
+				case EKey::KEY_UP:
+					handled = onKeyUp(bPress);
+					break;
+
+				case EKey::KEY_DOWN:
+					handled = onKeyDown(bPress);
+					break;
+
+				case EKey::KEY_ESCAPE:
+					handled = onKeyEscape(bPress);
+					break;
+
+				default:
+					break;
+				}
+
+				if (!handled && m_parent)
+					m_parent->onKeyPress(iKey, bPress);
+
+				return handled;
+			}
+
+			bool CBase::onKeyRelease(int iKey)
+			{
+				return onKeyPress(iKey, false);
+			}
+
+			bool CBase::onKeyTab(bool bDown)
+			{
+				if (!bDown)
+					return true;
+
+				/*
+				if (getCanvas()->NextTab)
+				{
+					getCanvas()->NextTab->Focus();
+					reDraw();
+				}
+				*/
+
+				return true;
+			}
+
+			CBase* CBase::getControlAt(float x, float y, bool bOnlyIfMouseEnabled)
+			{
+				if (isHidden())
+					return NULL;
+
+				if (x < 0 || y < 0 || x >= width() || y >= height())
+					return NULL;
+
+				for (List::reverse_iterator iter = Children.rbegin(); iter != Children.rend(); ++iter)
+				{
+					CBase* child = *iter;
+					CBase* found = NULL;
+					found = child->getControlAt(x - child->X(), y - child->Y(), bOnlyIfMouseEnabled);
+
+					if (found)
+						return found;
+				}
+
+				if (bOnlyIfMouseEnabled && !getMouseInputEnabled())
+					return NULL;
+
+				return this;
+			}
+
+			SPoint CBase::localPosToCanvas(const SPoint& pnt)
+			{
+				if (m_parent)
+				{
+					float x = pnt.X + X();
+					float y = pnt.Y + Y();
+
+					return m_parent->localPosToCanvas(SPoint(x, y));
+				}
+
+				return pnt;
+			}
+
+			SPoint CBase::canvasPosToLocal(const SPoint& pnt)
+			{
+				if (m_parent)
+				{
+					float x = pnt.X - X();
+					float y = pnt.Y - Y();
+
+					return m_parent->canvasPosToLocal(SPoint(x, y));
+				}
+
+				return pnt;
+			}
+
+			void CBase::dock(EPosition dock)
+			{
+				if (m_dock == dock)
+					return;
+
+				m_dock = dock;
+
+				invalidate();
+				invalidateParent();
+			}
+
+			void CBase::recurseLayout()
+			{
+				if (isHidden())
+					return;
+
+				if (m_needsLayout)
+				{
+					m_needsLayout = false;
+					layout();
+				}
+
+				SRect rBounds = getRenderBounds();
+
+				// Adjust bounds for padding
+				rBounds.X = rBounds.X + m_padding.Left;
+				rBounds.Width = rBounds.Width - m_padding.Left + m_padding.Right;
+				rBounds.Y = rBounds.Y + m_padding.Top;
+				rBounds.Height = rBounds.Height - m_padding.Top + m_padding.Bottom;
+
+				for (auto&& child : Children)
+				{
+					if (child->isHidden())
+						continue;
+
+					EPosition dock = child->m_dock;
+
+					if (dock & EPosition::Fill)
+						continue;
+
+					if (dock & EPosition::Top)
+					{
+						const SMargin& margin = child->getMargin();
+
+						child->setBounds(
+							rBounds.X + margin.Left,
+							rBounds.Y + margin.Top,
+							rBounds.Width - margin.Left - margin.Right,
+							child->height()
+						);
+
+						float iHeight = margin.Top + margin.Bottom + child->height();
+
+						rBounds.Y = rBounds.Y + iHeight;
+						rBounds.Height = rBounds.Height - iHeight;
+					}
+
+					if (dock & EPosition::Left)
+					{
+						const SMargin& margin = child->getMargin();
+
+						child->setBounds(
+							rBounds.X + margin.Left,
+							rBounds.Y + margin.Top,
+							child->width(),
+							rBounds.Height - margin.Top - margin.Bottom
+						);
+
+						float iWidth = margin.Left + margin.Right + child->width();
+						rBounds.X = rBounds.X + iWidth;
+						rBounds.Width = rBounds.Width - iWidth;
+					}
+
+					if (dock & EPosition::Right)
+					{
+						// TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
+						const SMargin& margin = child->getMargin();
+
+						child->setBounds(
+							(rBounds.X + rBounds.Width) - child->width() - margin.Right,
+							rBounds.Y + margin.Top,
+							child->width(),
+							rBounds.Height - margin.Top - margin.Bottom
+						);
+
+						float iWidth = margin.Left + margin.Right + child->width();
+						rBounds.Width = rBounds.Width - iWidth;
+					}
+
+					if (dock & EPosition::Bottom)
+					{
+						// TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
+						const SMargin& margin = child->getMargin();
+
+						child->setBounds(
+							rBounds.X + margin.Left,
+							(rBounds.Y + rBounds.Height) - child->height() - margin.Bottom,
+							rBounds.Width - margin.Left - margin.Right,
+							child->height()
+						);
+
+						rBounds.Height = rBounds.Height - child->height() + margin.Bottom + margin.Top;
+					}
+
+					child->recurseLayout();
+				}
+
+				m_innerBounds = rBounds;
+
+				//
+				// Fill uses the left over space, so do that now.
+				//
+				for (auto&& child : Children)
+				{
+					EPosition dock = child->getDock();
+
+					if (dock & EPosition::Fill)
+					{
+						const SMargin& margin = child->getMargin();
+
+						child->setBounds(
+							rBounds.X + margin.Left,
+							rBounds.Y + margin.Top,
+							rBounds.Width - margin.Left - margin.Right,
+							rBounds.Height - margin.Top - margin.Bottom
+						);
+
+						child->recurseLayout();
+					}
+				}
+
+				postLayout();
+
+				/*
+				if (isTabable() && !isDisabled())
+				{
+					if (!getCanvas()->FirstTab)
+						getCanvas()->FirstTab = this;
+
+					if (!getCanvas()->NextTab)
+						getCanvas()->NextTab = this;
+				}
+				*/
+
+				// if (CGUIContext::KeyboardFocus == this)
+				//	getCanvas()->NextTab = nullptr;
+			}
+
+			void CBase::layout()
 			{
 
 			}

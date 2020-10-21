@@ -158,6 +158,11 @@ namespace Skylicht
 				inline void moveBy(float x, float y) { moveTo(X() + x, Y() + y); }
 
 				inline const SRect& getBounds() const { return m_bounds; }
+				inline const SRect& getRenderBounds() const { return m_renderBounds; }
+				inline const SRect& getInnerBounds() const { return m_innerBounds; }
+
+				inline EPosition getDock() { return m_dock; }
+				void dock(EPosition dock);
 
 				virtual void updateRenderBounds();
 
@@ -177,6 +182,86 @@ namespace Skylicht
 				virtual void renderUnder() {}
 				virtual void renderOver() {}
 
+			public:
+
+				virtual void onMouseMoved(int x, int y, int deltaX, int deltaY) {}
+				virtual bool onMouseWheeled(int iDelta);
+
+				virtual void onMouseClickLeft(int x, int y, bool bDown) {}
+				virtual void onMouseClickRight(int x, int y, bool bDown) {}
+
+				virtual void onMouseDoubleClickLeft(int x, int y)
+				{
+					onMouseClickLeft(x, y, true);
+				}
+
+				virtual void onMouseDoubleClickRight(int x, int y)
+				{
+					onMouseClickRight(x, y, true);
+				}
+
+				virtual void onMouseEnter();
+				virtual void onMouseLeave();
+
+				virtual void onLostKeyboardFocus() {}
+				virtual void onKeyboardFocus() {}
+
+				virtual void setMouseInputEnabled(bool b) { m_mouseInputEnabled = b; }
+				virtual bool getMouseInputEnabled() { return m_mouseInputEnabled; }
+
+				virtual void setKeyboardInputEnabled(bool b) { m_keyboardInputEnabled = b; }
+				virtual bool getKeyboardInputEnabled() const { return m_keyboardInputEnabled; }
+
+				virtual bool needsInputChars() { return false; }
+
+				virtual bool onChar(u32 c) { return false; }
+
+				virtual bool onKeyPress(int iKey, bool bPress = true);
+				virtual bool onKeyRelease(int iKey);
+
+				virtual bool onKeyTab(bool bDown);
+				virtual bool onKeySpace(bool bDown) { return false; }
+				virtual bool onKeyReturn(bool bDown) { return false; }
+				virtual bool onKeyBackspace(bool bDown) { return false; }
+				virtual bool onKeyDelete(bool bDown) { return false; }
+				virtual bool onKeyRight(bool bDown) { return false; }
+				virtual bool onKeyLeft(bool bDown) { return false; }
+				virtual bool onKeyHome(bool bDown) { return false; }
+				virtual bool onKeyEnd(bool bDown) { return false; }
+				virtual bool onKeyUp(bool bDown) { return false; }
+				virtual bool onKeyDown(bool bDown) { return false; }
+				virtual bool onKeyEscape(bool bDown) { return false; }
+
+				virtual bool isHovered() const;
+				virtual bool shouldDrawHover() const;
+
+				virtual void touch();
+				virtual void onChildTouched(CBase* child);
+
+				virtual bool isOnTop();
+
+				virtual bool isFocussed();
+				virtual void focus();
+				virtual void unfocus();
+
+			public:
+
+				virtual CBase* getControlAt(float x, float y, bool bOnlyIfMouseEnabled = true);
+
+				virtual SPoint localPosToCanvas(const SPoint& in = SPoint(0.0f, 0.0f));
+				virtual SPoint canvasPosToLocal(const SPoint& in);
+
+			protected:
+
+				virtual void recurseLayout();
+				virtual void layout();
+				virtual void postLayout() {}
+
+			public:
+
+				std::function<void(void*)> OnHoverEnter;
+				std::function<void(void*)> OnHoverLeave;
+
 			protected:
 				CBase *m_parent;
 
@@ -184,6 +269,7 @@ namespace Skylicht
 
 				SRect m_bounds;
 				SRect m_renderBounds;
+				SRect m_innerBounds;
 
 				SPadding m_padding;
 				SMargin m_margin;
@@ -191,6 +277,9 @@ namespace Skylicht
 				bool m_disabled;
 				bool m_hidden;
 				bool m_needsLayout;
+
+				bool m_mouseInputEnabled;
+				bool m_keyboardInputEnabled;
 
 				EPosition m_dock;
 			};
