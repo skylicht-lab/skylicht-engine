@@ -22,6 +22,8 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
+#pragma once
+
 namespace Skylicht
 {
 	namespace Editor
@@ -74,6 +76,101 @@ namespace Skylicht
 			{
 				return (static_cast<int>(a) & static_cast<int>(b)) != 0;
 			}
+
+			struct SRect
+			{
+				float X;
+				float Y;
+				float Width;
+				float Height;
+
+				SRect()
+				{
+					X = 0.0f;
+					Y = 0.0f;
+					Width = 0.0f;
+					Height = 0.0f;
+				}
+
+				SRect(const SRect& r)
+				{
+					X = r.X;
+					Y = r.Y;
+					Width = r.Width;
+					Height = r.Height;
+				}
+
+				SRect(float x, float y, float w, float h)
+				{
+					X = x;
+					Y = y;
+					Width = w;
+					Height = h;
+				}
+
+				bool operator==(const SRect& r)
+				{
+					return X == r.X && Y == r.Y && Width == r.Width && Height == r.Height;
+				}
+			};
+
+			struct SPoint
+			{
+				float X;
+				float Y;
+
+				SPoint()
+				{
+					X = 0.0f;
+					Y = 0.0f;
+				}
+
+				SPoint(const SPoint& p)
+				{
+					X = p.X;
+					Y = p.Y;
+				}
+
+				SPoint(float x, float y)
+				{
+					X = x;
+					Y = y;
+				}
+
+				bool operator==(const SPoint& p)
+				{
+					return X == p.X && Y == p.Y;
+				}
+			};
+
+			struct SDimension
+			{
+				float Width;
+				float Height;
+
+				SDimension()
+				{
+					Width = 0.0f;
+					Height = 0.0f;
+				}
+
+				SDimension(SDimension& p)
+				{
+					Width = p.Width;
+					Height = p.Height;
+				}
+
+				SDimension(float w, float h)
+				{
+					Width = w;
+					Height = h;
+				}
+
+				bool operator==(const SDimension& p)
+				{
+					return Width == p.Width && Height == p.Height;
+				}
+			};
 		}
 	}
 }
