@@ -21,6 +21,9 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+#pragma once
+
+#include "GUI/Type.h"
 
 namespace Skylicht
 {
@@ -31,8 +34,8 @@ namespace Skylicht
 			class CRenderer
 			{
 			protected:
-				core::vector2df m_renderOffset;
-				core::rectf m_rectClipRegion;
+				SPoint m_renderOffset;
+				SRect m_rectClipRegion;
 
 			public:
 
@@ -50,31 +53,32 @@ namespace Skylicht
 
 				virtual void endClip() {}
 
-				void setClipRegion(core::rectf const& rect)
+				void setClipRegion(const SRect& rect)
 				{
 					m_rectClipRegion = rect;
 				}
 
-				void addClipRegion(core::rectf rect);
+				void addClipRegion(SRect rect);
 
 				bool clipRegionVisible();
 
-				const core::rectf& clipRegion() const
+				const SRect& clipRegion() const
 				{
 					return m_rectClipRegion;
 				}
 
-				void setRenderOffset(const core::vector2df& offset)
+				void setRenderOffset(const SPoint& offset)
 				{
 					m_renderOffset = offset;
 				}
 
-				void addRenderOffset(const core::rectf& offset)
+				void addRenderOffset(const SRect& offset)
 				{
-					m_renderOffset += offset.UpperLeftCorner;
+					m_renderOffset.X = m_renderOffset.X + offset.X;
+					m_renderOffset.Y = m_renderOffset.Y + offset.Y;
 				}
 
-				const core::vector2df& getRenderOffset() const
+				const SPoint& getRenderOffset() const
 				{
 					return m_renderOffset;
 				}

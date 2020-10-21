@@ -53,56 +53,39 @@ namespace Skylicht
 
 			}
 
-			void CRenderer::addClipRegion(core::rectf clipRect)
+			void CRenderer::addClipRegion(SRect clipRect)
 			{
-				clipRect.UpperLeftCorner += m_renderOffset;
-				clipRect.LowerRightCorner += m_renderOffset;
+				clipRect.X = m_renderOffset.X;
+				clipRect.Y = m_renderOffset.Y;
 
-				struct SSimpleRect
+				SRect out = clipRect;
+				SRect rect = out;
+				SRect clip = m_rectClipRegion;
+
+				if (rect.X < clip.X)
 				{
-					float x, y, w, h;
-				};
-
-				SSimpleRect out = {
-					clipRect.UpperLeftCorner.X,
-					clipRect.UpperLeftCorner.Y,
-					clipRect.getWidth(),
-					clipRect.getHeight()
-				};
-
-				SSimpleRect rect = out;
-
-				SSimpleRect clip = {
-					m_rectClipRegion.UpperLeftCorner.X,
-					m_rectClipRegion.UpperLeftCorner.Y,
-					m_rectClipRegion.getWidth(),
-					m_rectClipRegion.getHeight()
-				};
-
-				if (rect.x < clip.x)
-				{
-					out.w -= clip.x - out.x;
-					out.x = clip.x;
+					out.Width -= clip.X - out.X;
+					out.X = clip.X;
 				}
 
-				if (rect.y < clip.y)
+				if (rect.Y < clip.Y)
 				{
-					out.h -= clip.y - out.y;
-					out.y = clip.y;
+					out.Height -= clip.Y - out.Y;
+					out.Y = clip.Y;
 				}
 
-				if (rect.x + rect.w > clip.x + clip.w)
-					out.w = (clip.x + clip.w) - out.x;
+				if (rect.X + rect.Width > clip.X + clip.Width)
+					out.Width = (clip.X + clip.Width) - out.X;
 
-				if (rect.y + rect.h > clip.y + clip.h)
-					out.h = (clip.y + clip.h) - out.y;
+				if (rect.Y + rect.Height > clip.Y + clip.Height)
+					out.Height = (clip.Y + clip.Height) - out.Y;
 
-				m_rectClipRegion = core::rectf(out.x, out.y, out.x + out.w, out.y + out.h);
+				m_rectClipRegion = out;
 			}
 
 			bool CRenderer::clipRegionVisible()
 			{
-				if (m_rectClipRegion.getWidth() <= 0.0f || m_rectClipRegion.getHeight() <= 0.0f)
+				if (m_rectClipRegion.Width <= 0.0f || m_rectClipRegion.Height <= 0.0f)
 					return false;
 
 				return true;

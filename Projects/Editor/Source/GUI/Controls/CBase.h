@@ -21,9 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+#pragma once
 
 #include <functional>
-#include "Type.h"
+#include "GUI/Type.h"
 
 namespace Skylicht
 {
@@ -82,8 +83,8 @@ namespace Skylicht
 					invalidate();
 				}
 
-				virtual void onBoundsChanged(const core::rectf oldBounds);
-				virtual void onChildBoundsChanged(const core::rectf oldChildBounds, CBase* child);
+				virtual void onBoundsChanged(const SRect oldBounds);
+				virtual void onChildBoundsChanged(const SRect oldChildBounds, CBase* child);
 
 			public:
 				List Children;
@@ -127,11 +128,11 @@ namespace Skylicht
 
 			public:
 
-				inline float X() const { return m_bounds.UpperLeftCorner.X; }
-				inline float Y() const { return m_bounds.UpperLeftCorner.Y; }
+				inline float X() const { return m_bounds.X; }
+				inline float Y() const { return m_bounds.Y; }
 
-				inline float width() const { return m_bounds.getWidth(); }
-				inline float height() const { return m_bounds.getHeight(); }
+				inline float width() const { return m_bounds.Width; }
+				inline float height() const { return m_bounds.Height; }
 
 				inline const SMargin& getMargin() const { return m_margin; }
 				inline const SPadding& getPadding() const { return m_padding; }
@@ -144,11 +145,11 @@ namespace Skylicht
 				inline void setHeight(float h) { setSize(width(), h); }
 
 				inline bool setSize(float w, float h) { setBounds(X(), Y(), w, h); }
-				inline bool setSize(const core::dimension2df& p) { setSize(p.Width, p.Height); }
-				inline core::dimension2df GetSize() const { return core::dimension2df(width(), height()); }
+				inline bool setSize(const SDimension& p) { setSize(p.Width, p.Height); }
+				inline SDimension GetSize() const { return SDimension(width(), height()); }
 
-				inline bool setBounds(float x, float y, float w, float h) { return setBounds(core::rectf(x, y, x + w, y + h)); }
-				virtual bool setBounds(const core::rectf& bounds);
+				inline bool setBounds(float x, float y, float w, float h) { return setBounds(SRect(x, y, w, h)); }
+				virtual bool setBounds(const SRect& bounds);
 
 				inline void setPadding(const SPadding& padding) { m_padding = padding; }
 				inline void setMargin(const SMargin& margin) { m_margin = margin; }
@@ -156,7 +157,7 @@ namespace Skylicht
 				virtual void moveTo(float x, float y);
 				inline void moveBy(float x, float y) { moveTo(X() + x, Y() + y); }
 
-				inline const core::rectf& getBounds() const { return m_bounds; }
+				inline const SRect& getBounds() const { return m_bounds; }
 
 				virtual void updateRenderBounds();
 
@@ -165,7 +166,7 @@ namespace Skylicht
 				virtual void think() {}
 
 				virtual void doRender();
-				virtual void renderRecursive(const core::rectf& cliprect);
+				virtual void renderRecursive(const SRect& cliprect);
 
 				virtual bool shouldClip() { return true; }
 
@@ -181,8 +182,8 @@ namespace Skylicht
 
 				std::string m_name;
 
-				core::rectf m_bounds;
-				core::rectf m_renderBounds;
+				SRect m_bounds;
+				SRect m_renderBounds;
 
 				SPadding m_padding;
 				SMargin m_margin;
