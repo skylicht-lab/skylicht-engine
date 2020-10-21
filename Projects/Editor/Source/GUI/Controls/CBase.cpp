@@ -231,18 +231,18 @@ namespace Skylicht
 					m_parent->addChild(this);
 			}
 
-			bool CBase::setBounds(const core::rectf& bounds)
+			bool CBase::setBounds(const SRect& bounds)
 			{
 				if (m_bounds == bounds)
 					return false;
 
-				const core::rectf oldBounds = m_bounds;
+				const SRect oldBounds = m_bounds;
 				m_bounds = bounds;
 				onBoundsChanged(oldBounds);
 				return true;
 			}
 
-			void CBase::onBoundsChanged(const core::rectf oldBounds)
+			void CBase::onBoundsChanged(const SRect oldBounds)
 			{
 				if (m_parent)
 					m_parent->onChildBoundsChanged(oldBounds, this);
@@ -252,17 +252,17 @@ namespace Skylicht
 				updateRenderBounds();
 			}
 
-			void CBase::onChildBoundsChanged(const core::rectf oldChildBounds, CBase* child)
+			void CBase::onChildBoundsChanged(const SRect oldChildBounds, CBase* child)
 			{
 
 			}
 
 			void CBase::updateRenderBounds()
 			{
-				m_renderBounds.UpperLeftCorner.X = 0;
-				m_renderBounds.UpperLeftCorner.Y = 0;
-				m_renderBounds.LowerRightCorner.X = m_bounds.getWidth();
-				m_renderBounds.LowerRightCorner.Y = m_bounds.getHeight();
+				m_renderBounds.X = 0;
+				m_renderBounds.Y = 0;
+				m_renderBounds.X = m_bounds.Width;
+				m_renderBounds.Y = m_bounds.Height;
 			}
 
 			void CBase::moveTo(float x, float y)
@@ -291,17 +291,17 @@ namespace Skylicht
 				renderRecursive(m_bounds);
 			}
 
-			void CBase::renderRecursive(const core::rectf& cliprect)
+			void CBase::renderRecursive(const SRect& cliprect)
 			{
 				CRenderer *render = CRenderer::getRenderer();
 
-				core::vector2df oldRenderOffset = render->getRenderOffset();
+				SPoint oldRenderOffset = render->getRenderOffset();
 
 				render->addRenderOffset(cliprect);
 
 				renderUnder();
 
-				core::rectf oldRegion = render->clipRegion();
+				SRect oldRegion = render->clipRegion();
 
 				// If this control is clipping, change the clip rect to ourselves
 				// else clip using our parents clip rect.
