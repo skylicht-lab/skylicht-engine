@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CBase.h"
+#include "CCanvas.h"
 #include "GUI/Renderer/CRenderer.h"
 #include "GUI/CGUIContext.h"
 
@@ -51,7 +52,7 @@ namespace Skylicht
 
 			CBase::~CBase()
 			{
-
+				releaseChildren();
 			}
 
 			void CBase::setHidden(bool hidden)
@@ -116,6 +117,18 @@ namespace Skylicht
 				while (Children.size() > 0)
 				{
 					removeChild(*Children.begin());
+				}
+			}
+
+			void CBase::releaseChildren()
+			{
+				List::iterator iter = Children.begin();
+
+				while (iter != Children.end())
+				{
+					CBase* child = *iter;
+					iter = Children.erase(iter);
+					delete child;
 				}
 			}
 
@@ -232,6 +245,14 @@ namespace Skylicht
 
 				if (m_parent)
 					m_parent->addChild(this);
+			}
+
+			CCanvas* CBase::getCanvas()
+			{
+				if (!m_parent)
+					return NULL;
+
+				return m_parent->getCanvas();
 			}
 
 			bool CBase::setBounds(const SRect& bounds)
@@ -521,13 +542,11 @@ namespace Skylicht
 				if (!bDown)
 					return true;
 
-				/*
 				if (getCanvas()->NextTab)
 				{
-					getCanvas()->NextTab->Focus();
+					getCanvas()->NextTab->focus();
 					reDraw();
 				}
-				*/
 
 				return true;
 			}

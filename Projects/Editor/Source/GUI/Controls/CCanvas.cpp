@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CCanvas.h"
+#include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
 {
@@ -31,7 +32,53 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			CCanvas::CCanvas() :
+				CBase(NULL),
+				FirstTab(NULL),
+				NextTab(NULL)
+			{
+				initialize();
+			}
 
+			CCanvas::~CCanvas()
+			{
+
+			}
+
+			void CCanvas::initialize()
+			{
+
+			}
+
+			void CCanvas::update()
+			{
+				if (isHidden())
+					return;
+			}
+
+			void CCanvas::doRender()
+			{
+				update();
+
+				CRenderer *render = CRenderer::getRenderer();
+
+				render->begin();
+
+				recurseLayout();
+
+				render->setClipRegion(m_bounds);
+
+				render->setRenderOffset(SPoint(0.0f, 0.0f));
+
+				CBase::doRender();
+
+				render->end();
+			}
+
+			void CCanvas::render()
+			{
+				// do nothing
+			}
 		}
 	}
 }
