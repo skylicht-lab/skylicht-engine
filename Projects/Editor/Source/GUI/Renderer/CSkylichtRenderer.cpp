@@ -23,10 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGUIContext.h"
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Renderer/CSkylichtRenderer.h"
-#include "GUI/Theme/CSkylichtTheme.h"
+#include "CSkylichtRenderer.h"
 
 namespace Skylicht
 {
@@ -34,51 +31,14 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CBase* CGUIContext::HoveredControl = NULL;
-			CBase* CGUIContext::MouseFocus = NULL;
-			CBase* CGUIContext::KeyboardFocus = NULL;
-
-			CCanvas* g_rootCanvas = NULL;
-
-			CSkylichtRenderer *g_renderer = NULL;
-			CSkylichtTheme *g_theme = NULL;
-
-			void CGUIContext::initGUI(float width, float height)
+			CSkylichtRenderer::CSkylichtRenderer()
 			{
-				g_rootCanvas = new CCanvas(width, height);
 
-				g_renderer = new CSkylichtRenderer();
-				CRenderer::setRenderer(g_renderer);
-
-				g_theme = new CSkylichtTheme();
-				CTheme::setTheme(g_theme);
 			}
 
-			void CGUIContext::destroyGUI()
+			CSkylichtRenderer::~CSkylichtRenderer()
 			{
-				delete g_rootCanvas;
-				delete g_renderer;
-				delete g_theme;
-			}
 
-			void CGUIContext::update()
-			{
-				g_rootCanvas->update();
-			}
-
-			void CGUIContext::render()
-			{
-				g_rootCanvas->doRender();
-			}
-
-			void CGUIContext::resize(float width, float height)
-			{
-				g_rootCanvas->setBounds(0.0f, 0.0f, width, height);
-			}
-
-			CCanvas* CGUIContext::getRoot()
-			{
-				return g_rootCanvas;
 			}
 		}
 	}

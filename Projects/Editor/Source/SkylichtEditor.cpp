@@ -13,13 +13,17 @@ void installApplication(const std::vector<std::string>& argv)
 SkylichtEditor::SkylichtEditor() :
 	m_scene(NULL),
 	m_forwardRP(NULL),
-	m_largeFont(NULL)
+	m_largeFont(NULL),
+	m_editor(NULL)
 {
 
 }
 
 SkylichtEditor::~SkylichtEditor()
 {
+	Editor::GUI::CGUIContext::destroyGUI();
+	delete m_editor;
+
 	delete m_scene;
 	delete m_largeFont;
 	delete m_forwardRP;
@@ -32,6 +36,7 @@ void SkylichtEditor::onInitApp()
 
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Editor.zip"), false, false);
 
 	// init segoeuil.ttf inside BuiltIn.zip
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
@@ -95,10 +100,16 @@ void SkylichtEditor::onInitApp()
 
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
+
+	Editor::GUI::CGUIContext::initGUI((float)w, (float)h);
+
+	m_editor = new Editor::CEditor();
 }
 
 void SkylichtEditor::onUpdate()
 {
+	Editor::GUI::CGUIContext::update();
+
 	// update application
 	m_scene->update();
 }
@@ -110,6 +121,8 @@ void SkylichtEditor::onRender()
 
 	// render text in gui camera
 	CGraphics2D::getInstance()->render(m_guiCamera);
+
+	Editor::GUI::CGUIContext::render();
 }
 
 void SkylichtEditor::onPostRender()
@@ -130,6 +143,8 @@ void SkylichtEditor::onResize(int w, int h)
 	// on window size changed
 	if (m_forwardRP != NULL)
 		m_forwardRP->resize(w, h);
+
+	Editor::GUI::CGUIContext::resize((float)w, (float)h);
 }
 
 void SkylichtEditor::onResume()
