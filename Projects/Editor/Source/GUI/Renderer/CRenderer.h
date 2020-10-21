@@ -47,6 +47,10 @@ namespace Skylicht
 
 				virtual ~CRenderer();
 
+				virtual void begin() {}
+
+				virtual void end() {}
+
 				virtual void setDrawColor(SColor color) {}
 
 				virtual void startClip() {}

@@ -154,7 +154,7 @@ namespace Skylicht
 					Height = 0.0f;
 				}
 
-				SDimension(SDimension& p)
+				SDimension(const SDimension& p)
 				{
 					Width = p.Width;
 					Height = p.Height;

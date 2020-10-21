@@ -32,6 +32,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CCanvas;
 			class CBase
 			{
 			public:
@@ -83,6 +84,8 @@ namespace Skylicht
 					invalidate();
 				}
 
+				virtual void releaseChildren();
+
 				virtual void onBoundsChanged(const SRect oldBounds);
 				virtual void onChildBoundsChanged(const SRect oldChildBounds, CBase* child);
 
@@ -111,6 +114,8 @@ namespace Skylicht
 				{
 					return Children;
 				}
+
+				virtual CCanvas* getCanvas();
 
 			public:
 				virtual void updateColors() {}
