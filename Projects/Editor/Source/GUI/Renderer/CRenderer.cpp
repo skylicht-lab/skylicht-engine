@@ -31,16 +31,16 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CRenderer *g_renderer = NULL;
+			CRenderer *g_baseRenderer = NULL;
 
 			CRenderer* CRenderer::getRenderer()
 			{
-				return g_renderer;
+				return g_baseRenderer;
 			}
 
 			void CRenderer::setRenderer(CRenderer* r)
 			{
-				g_renderer = r;
+				g_baseRenderer = r;
 			}
 
 			CRenderer::CRenderer()
