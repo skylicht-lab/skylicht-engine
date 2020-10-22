@@ -469,14 +469,16 @@ namespace Skylicht
 
 			void CBase::onMouseEnter()
 			{
-				OnHoverEnter(this);
+				if (OnHoverEnter != nullptr)
+					OnHoverEnter(this);
 
 				reDraw();
 			}
 
 			void CBase::onMouseLeave()
 			{
-				OnHoverLeave(this);
+				if (OnHoverLeave != nullptr)
+					OnHoverLeave(this);
 
 				reDraw();
 			}

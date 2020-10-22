@@ -22,14 +22,8 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CTheme.h"
-#include "CThemeColor.h"
-#include "GUI/Renderer/CSkylichtRenderer.h"
-#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
-#include "Graphics2D/CGraphics2D.h"
-#include "Material/Shader/CShaderManager.h"
+#include "pch.h"
+#include "CDragger.h"
 
 namespace Skylicht
 {
@@ -37,33 +31,46 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CSkylichtTheme : public CTheme
+			CDragger::CDragger(CBase* parent, float x, float y, float w, float h) :
+				CBase(parent),
+				m_pressed(false)
 			{
-			protected:
-				CSpriteAtlas *m_sprite;
-				SFrame *m_empty;
-				SFrame *m_window;
-				SFrame *m_windowShadow;
+				setBounds(x, y, w, h);
+			}
 
-				CGraphics2D *m_graphics;
-				CSkylichtRenderer *m_renderer;
+			CDragger::~CDragger()
+			{
 
-				int m_materialID;
+			}
 
-			public:
-				CSkylichtTheme();
+			void CDragger::onMouseMoved(float x, float y, float deltaX, float deltaY)
+			{
+				if (m_disabled)
+					return;
 
-				virtual ~CSkylichtTheme();
+				if (!m_pressed)
+					return;
 
-				virtual void drawWindowShadow(const SRect& rect);
+				SPoint p = SPoint(x - m_holdPosition.X, y - m_holdPosition.Y);
 
-				virtual void drawWindow(const SRect& rect, bool isFocussed);
+				if (m_parent->getParent() != NULL)
+					p = m_parent->getParent()->canvasPosToLocal(p);
 
-			private:
+				m_parent->moveTo(p.X, p.Y);
+			}
 
-				core::rectf getRect(const SRect& rect);
+			void CDragger::onMouseClickLeft(float x, float y, bool bDown)
+			{
+				if (m_disabled)
+					return;
 
-			};
+				m_pressed = bDown;
+
+				if (m_pressed == true)
+				{
+					m_holdPosition = m_parent->canvasPosToLocal(SPoint(x, y));
+				}
+			}
 		}
 	}
 }

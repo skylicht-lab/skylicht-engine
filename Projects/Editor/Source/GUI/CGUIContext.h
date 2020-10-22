@@ -46,7 +46,9 @@ namespace Skylicht
 
 				static void destroyGUI();
 
-				static void update();
+				static void update(float time);
+
+				static float getTime();
 
 				static void render();
 

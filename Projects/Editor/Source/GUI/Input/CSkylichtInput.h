@@ -21,15 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "CTheme.h"
-#include "CThemeColor.h"
-#include "GUI/Renderer/CSkylichtRenderer.h"
-#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
-#include "Graphics2D/CGraphics2D.h"
-#include "Material/Shader/CShaderManager.h"
+#include "GUI/Input/CInput.h"
+#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
@@ -37,32 +32,20 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CSkylichtTheme : public CTheme
+			class CSkylichtInput :
+				public CInput,
+				public IEventProcessor
 			{
 			protected:
-				CSpriteAtlas *m_sprite;
-				SFrame *m_empty;
-				SFrame *m_window;
-				SFrame *m_windowShadow;
-
-				CGraphics2D *m_graphics;
-				CSkylichtRenderer *m_renderer;
-
-				int m_materialID;
+				float m_mouseX;
+				float m_mouseY;
 
 			public:
-				CSkylichtTheme();
+				CSkylichtInput();
 
-				virtual ~CSkylichtTheme();
+				virtual ~CSkylichtInput();
 
-				virtual void drawWindowShadow(const SRect& rect);
-
-				virtual void drawWindow(const SRect& rect, bool isFocussed);
-
-			private:
-
-				core::rectf getRect(const SRect& rect);
-
+				virtual bool OnProcessEvent(const SEvent& event);
 			};
 		}
 	}

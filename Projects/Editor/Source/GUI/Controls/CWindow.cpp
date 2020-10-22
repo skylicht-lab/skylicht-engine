@@ -23,6 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "CDragger.h"
 #include "CWindow.h"
 
 namespace Skylicht
@@ -35,6 +36,13 @@ namespace Skylicht
 				CBase(parent)
 			{
 				setBounds(x, y, w, h);
+
+				CDragger *titleBar = new CDragger(this, 0.0f, 0.0f, 0.0f, 0.0f);
+				titleBar->setHeight(24);
+				titleBar->setPadding(SPadding(0, 0, 0, 0));
+				titleBar->setMargin(SMargin(0, 0, 0, 4));
+				titleBar->dock(EPosition::Top);
+
 			}
 
 			CWindow::~CWindow()

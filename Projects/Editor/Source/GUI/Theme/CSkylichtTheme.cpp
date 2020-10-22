@@ -41,8 +41,8 @@ namespace Skylicht
 
 				m_sprite->updateTexture();
 
-				m_graphics = CGraphics2D::getInstance();
 				m_renderer = dynamic_cast<CSkylichtRenderer*>(CRenderer::getRenderer());
+				m_graphics = CGraphics2D::getInstance();
 				m_materialID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 			}
 
@@ -58,27 +58,49 @@ namespace Skylicht
 
 			void CSkylichtTheme::drawWindow(const SRect& rect, bool isFocussed)
 			{
-				SColor color(252, 35, 35, 35);
+				float left = 11.0f;
+				float top = 11.0f;
+				float right = 55.0f;
+				float bottom = 55.0f;
+
+				SModuleOffset *module = &m_window->ModuleOffset[0];
+
+				core::rectf r = getRect(rect);
+				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top;
+				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right);
+				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom);
 
 				m_graphics->addModuleBatch(
-					&m_window->ModuleOffset[0],
-					color,
+					module,
+					CThemeColor::WindowBackgroundColor,
 					m_renderer->getWorldTransform(),
-					getRect(rect),
-					11.0f, 55.0f, 11.0f, 55.0f,
+					r,
+					left, right, top, bottom,
 					m_materialID);
 			}
 
 			void CSkylichtTheme::drawWindowShadow(const SRect& rect)
 			{
-				SColor color(255, 255, 255, 255);
+				float left = 11.0f;
+				float top = 11.0f;
+				float right = 55.0f;
+				float bottom = 55.0f;
+
+				SModuleOffset *module = &m_windowShadow->ModuleOffset[0];
+
+				core::rectf r = getRect(rect);
+				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top;
+				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right);
+				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom);
 
 				m_graphics->addModuleBatch(
-					&m_windowShadow->ModuleOffset[0],
-					color,
+					module,
+					CThemeColor::White,
 					m_renderer->getWorldTransform(),
-					getRect(rect),
-					11.0f, 55.0f, 11.0f, 55.0f,
+					r,
+					left, right, top, bottom,
 					m_materialID);
 			}
 		}
