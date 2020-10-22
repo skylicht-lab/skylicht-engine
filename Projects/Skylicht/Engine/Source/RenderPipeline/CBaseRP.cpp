@@ -38,6 +38,7 @@ namespace Skylicht
 	bool CBaseRP::s_bakeMode = false;
 	bool CBaseRP::s_bakeLMMode = false;
 	int CBaseRP::s_bakeBounce = 0;
+	SColor CBaseRP::s_clearColor;
 
 	CBaseRP::CBaseRP() :
 		m_next(NULL),
@@ -79,7 +80,7 @@ namespace Skylicht
 		m_drawBuffer->drop();
 		m_verticesImage = NULL;
 		m_indicesImage = NULL;
-	}	
+	}
 
 	bool CBaseRP::canRenderMaterial(CMaterial *m)
 	{
@@ -670,9 +671,14 @@ namespace Skylicht
 		s_bakeLMMode = b;
 	}
 
-	void CBaseRP::SetBakeLightingMapBounce(int i)
+	void CBaseRP::setBakeLightingMapBounce(int i)
 	{
 		s_bakeBounce = i;
+	}
+
+	void CBaseRP::setClearColor(const SColor& c)
+	{
+		s_clearColor = c;
 	}
 
 	void CBaseRP::drawSceneToTexture(ITexture *target, CEntityManager *entityMgr)

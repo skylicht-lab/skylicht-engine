@@ -47,7 +47,7 @@ namespace Skylicht
 			{
 				g_rootCanvas = new CCanvas(width, height);
 
-				g_renderer = new CSkylichtRenderer();
+				g_renderer = new CSkylichtRenderer(width, height);
 				CRenderer::setRenderer(g_renderer);
 
 				g_theme = new CSkylichtTheme();
@@ -73,6 +73,8 @@ namespace Skylicht
 
 			void CGUIContext::resize(float width, float height)
 			{
+				g_renderer->resize(width, height);
+
 				g_rootCanvas->setBounds(0.0f, 0.0f, width, height);
 			}
 
