@@ -11,7 +11,6 @@ private:
 	CScene *m_scene;
 	CCamera *m_guiCamera;
 	CCamera *m_camera;
-	CGlyphFont *m_largeFont;
 	CForwardRP *m_forwardRP;
 
 private:

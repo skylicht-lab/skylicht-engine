@@ -155,7 +155,7 @@ namespace Skylicht
 				inline void setWidth(float w) { setSize(w, height()); }
 				inline void setHeight(float h) { setSize(width(), h); }
 
-				inline bool setSize(float w, float h) { setBounds(X(), Y(), w, h); }
+				inline bool setSize(float w, float h) { return setBounds(X(), Y(), w, h); }
 				inline bool setSize(const SDimension& p) { setSize(p.Width, p.Height); }
 				inline SDimension GetSize() const { return SDimension(width(), height()); }
 
@@ -195,18 +195,20 @@ namespace Skylicht
 
 			public:
 
-				virtual void onMouseMoved(int x, int y, int deltaX, int deltaY) {}
+				virtual void updateCursor() {}
+
+				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY) {}
 				virtual bool onMouseWheeled(int iDelta);
 
-				virtual void onMouseClickLeft(int x, int y, bool bDown) {}
-				virtual void onMouseClickRight(int x, int y, bool bDown) {}
+				virtual void onMouseClickLeft(float x, float y, bool bDown) {}
+				virtual void onMouseClickRight(float x, float y, bool bDown) {}
 
-				virtual void onMouseDoubleClickLeft(int x, int y)
+				virtual void onMouseDoubleClickLeft(float x, float y)
 				{
 					onMouseClickLeft(x, y, true);
 				}
 
-				virtual void onMouseDoubleClickRight(int x, int y)
+				virtual void onMouseDoubleClickRight(float x, float y)
 				{
 					onMouseClickRight(x, y, true);
 				}

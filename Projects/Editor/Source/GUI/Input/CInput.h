@@ -21,15 +21,9 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "CTheme.h"
-#include "CThemeColor.h"
-#include "GUI/Renderer/CSkylichtRenderer.h"
-#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
-#include "Graphics2D/CGraphics2D.h"
-#include "Material/Shader/CShaderManager.h"
+#include "GUI/Controls/CBase.h"
 
 namespace Skylicht
 {
@@ -37,32 +31,34 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CSkylichtTheme : public CTheme
+			class CInput
 			{
 			protected:
-				CSpriteAtlas *m_sprite;
-				SFrame *m_empty;
-				SFrame *m_window;
-				SFrame *m_windowShadow;
+				float m_lastClickPositionX;
+				float m_lastClickPositionY;
 
-				CGraphics2D *m_graphics;
-				CSkylichtRenderer *m_renderer;
+				float m_mousePositionX;
+				float m_mousePositionY;
 
-				int m_materialID;
-
+				float m_lastClickTime[3];
 			public:
-				CSkylichtTheme();
+				CInput();
 
-				virtual ~CSkylichtTheme();
+				virtual ~CInput();
 
-				virtual void drawWindowShadow(const SRect& rect);
+				static void setInput(CInput *input);
 
-				virtual void drawWindow(const SRect& rect, bool isFocussed);
+				static CInput* getInput();
 
-			private:
+				bool inputMouseMoved(float x, float y, float deltaX, float deltaY);
 
-				core::rectf getRect(const SRect& rect);
+				bool inputMouseButton(int iButton, bool bDown);
 
+				bool inputMouseWheel(int wheel);
+
+				bool inputModifierKey(EKey key, bool bDown);
+
+				bool inputCharacter(u32 character);
 			};
 		}
 	}

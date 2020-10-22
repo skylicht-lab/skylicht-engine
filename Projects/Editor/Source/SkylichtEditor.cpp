@@ -14,7 +14,6 @@ void installApplication(const std::vector<std::string>& argv)
 SkylichtEditor::SkylichtEditor() :
 	m_scene(NULL),
 	m_forwardRP(NULL),
-	m_largeFont(NULL),
 	m_editor(NULL)
 {
 
@@ -26,7 +25,6 @@ SkylichtEditor::~SkylichtEditor()
 	delete m_editor;
 
 	delete m_scene;
-	delete m_largeFont;
 	delete m_forwardRP;
 }
 
@@ -84,18 +82,6 @@ void SkylichtEditor::onInitApp()
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-	m_largeFont = new CGlyphFont();
-	m_largeFont->setFont("Segoe UI Light", 50);
-
-	// create 2D Canvas
-	CGameObject *canvasObject = zone->createEmptyObject();
-	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
-
-	// create UI Text in Canvas
-	CGUIText *textLarge = canvas->createText(m_largeFont);
-	textLarge->setText("SkylichtEditor");
-	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
-
 	// rendering pipe line
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
@@ -110,7 +96,7 @@ void SkylichtEditor::onInitApp()
 
 void SkylichtEditor::onUpdate()
 {
-	Editor::GUI::CGUIContext::update();
+	Editor::GUI::CGUIContext::update((float)getIrrlichtDevice()->getTimer()->getTime());
 
 	// update application
 	m_scene->update();
@@ -120,9 +106,6 @@ void SkylichtEditor::onRender()
 {
 	// render 3d scene
 	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
-
-	// render text in gui camera
-	CGraphics2D::getInstance()->render(m_guiCamera);
 
 	Editor::GUI::CGUIContext::render();
 }

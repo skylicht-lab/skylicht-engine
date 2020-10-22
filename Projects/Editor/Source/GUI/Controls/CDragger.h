@@ -21,15 +21,9 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "CTheme.h"
-#include "CThemeColor.h"
-#include "GUI/Renderer/CSkylichtRenderer.h"
-#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
-#include "Graphics2D/CGraphics2D.h"
-#include "Material/Shader/CShaderManager.h"
+#include "GUI/Controls/CBase.h"
 
 namespace Skylicht
 {
@@ -37,32 +31,21 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CSkylichtTheme : public CTheme
+			class CDragger : public CBase
 			{
 			protected:
-				CSpriteAtlas *m_sprite;
-				SFrame *m_empty;
-				SFrame *m_window;
-				SFrame *m_windowShadow;
+				bool m_pressed;
 
-				CGraphics2D *m_graphics;
-				CSkylichtRenderer *m_renderer;
-
-				int m_materialID;
+				SPoint m_holdPosition;
 
 			public:
-				CSkylichtTheme();
+				CDragger(CBase* parent, float x, float y, float w, float h);
 
-				virtual ~CSkylichtTheme();
+				virtual ~CDragger();
 
-				virtual void drawWindowShadow(const SRect& rect);
+				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
 
-				virtual void drawWindow(const SRect& rect, bool isFocussed);
-
-			private:
-
-				core::rectf getRect(const SRect& rect);
-
+				virtual void onMouseClickLeft(float x, float y, bool bDown);
 			};
 		}
 	}
