@@ -33,10 +33,17 @@ namespace Skylicht
 		{
 			CSkylichtTheme::CSkylichtTheme()
 			{
-				m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 1024, 1024);
+				m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 512, 512);
+
 				m_empty = m_sprite->addFrame("empty", "Editor/GUI/empty.png");
 				m_window = m_sprite->addFrame("draw_window", "Editor/GUI/draw_window.png");
 				m_windowShadow = m_sprite->addFrame("draw_window_shadow", "Editor/GUI/draw_window_shadow.png");
+
+				m_sprite->updateTexture();
+
+				m_graphics = CGraphics2D::getInstance();
+				m_renderer = dynamic_cast<CSkylichtRenderer*>(CRenderer::getRenderer());
+				m_materialID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 			}
 
 			CSkylichtTheme::~CSkylichtTheme()
@@ -44,14 +51,35 @@ namespace Skylicht
 				delete m_sprite;
 			}
 
+			core::rectf CSkylichtTheme::getRect(const SRect& rect)
+			{
+				return core::rectf(rect.X, rect.Y, rect.X + rect.Width, rect.Y + rect.Height);
+			}
+
 			void CSkylichtTheme::drawWindow(const SRect& rect, bool isFocussed)
 			{
+				SColor color(252, 35, 35, 35);
 
+				m_graphics->addModuleBatch(
+					&m_window->ModuleOffset[0],
+					color,
+					m_renderer->getWorldTransform(),
+					getRect(rect),
+					11.0f, 55.0f, 11.0f, 55.0f,
+					m_materialID);
 			}
 
 			void CSkylichtTheme::drawWindowShadow(const SRect& rect)
 			{
+				SColor color(255, 255, 255, 255);
 
+				m_graphics->addModuleBatch(
+					&m_windowShadow->ModuleOffset[0],
+					color,
+					m_renderer->getWorldTransform(),
+					getRect(rect),
+					11.0f, 55.0f, 11.0f, 55.0f,
+					m_materialID);
 			}
 		}
 	}

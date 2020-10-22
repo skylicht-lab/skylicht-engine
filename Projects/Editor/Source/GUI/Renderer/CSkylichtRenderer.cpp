@@ -31,14 +31,36 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CSkylichtRenderer::CSkylichtRenderer()
+			CSkylichtRenderer::CSkylichtRenderer(float w, float h) :
+				m_width(w),
+				m_height(h)
 			{
-
+				m_projection.buildProjectionMatrixOrthoLH((f32)w, -(f32)h, -1.0f, 1.0f);
+				m_projection.setTranslation(core::vector3df(-1, 1, 0));
 			}
 
 			CSkylichtRenderer::~CSkylichtRenderer()
 			{
 
+			}
+
+			void CSkylichtRenderer::resize(float w, float h)
+			{
+				m_width = w;
+				m_height = h;
+
+				m_projection.buildProjectionMatrixOrthoLH((f32)w, -(f32)h, -1.0f, 1.0f);
+				m_projection.setTranslation(core::vector3df(-1, 1, 0));
+			}
+
+			void CSkylichtRenderer::begin()
+			{
+				CGraphics2D::getInstance()->beginRenderGUI(m_projection, m_view);
+			}
+
+			void CSkylichtRenderer::end()
+			{
+				CGraphics2D::getInstance()->flush();
 			}
 		}
 	}

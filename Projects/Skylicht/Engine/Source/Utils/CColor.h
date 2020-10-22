@@ -21,45 +21,16 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "CRenderer.h"
-#include "Graphics2D/CGraphics2D.h"
+#pragma once
 
 namespace Skylicht
 {
-	namespace Editor
+	class CColor
 	{
-		namespace GUI
-		{
-			class CSkylichtRenderer : public CRenderer
-			{
-			protected:
+	public:
+		static SColor toSRGB(const SColor& c);
 
-				core::matrix4 m_projection;
-				core::matrix4 m_view;
-				core::matrix4 m_world;
-
-				float m_width;
-				float m_height;
-
-			public:
-				CSkylichtRenderer(float w, float h);
-
-				virtual ~CSkylichtRenderer();
-
-				virtual void resize(float w, float h);
-
-				virtual void begin();
-
-				virtual void end();
-
-				core::matrix4& getWorldTransform()
-				{
-					m_world.setTranslation(core::vector3df(m_renderOffset.X, m_renderOffset.Y, 0.0f));
-					return m_world;
-				}
-			};
-		}
-	}
+		static SColor toLinear(const SColor& c);
+	};
 }

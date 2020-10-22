@@ -235,6 +235,21 @@ namespace Skylicht
 		}
 	}
 
+	void CGraphics2D::beginRenderGUI(const core::matrix4& projection, const core::matrix4& view)
+	{
+		IVideoDriver *driver = getVideoDriver();
+
+		// set projection & view
+		driver->setTransform(video::ETS_PROJECTION, projection);
+		driver->setTransform(video::ETS_VIEW, view);
+	}
+
+	void CGraphics2D::endRenderGUI()
+	{
+		// flush to screen
+		flush();
+	}
+
 	void CGraphics2D::flushBuffer(IMeshBuffer *meshBuffer, video::SMaterial& material)
 	{
 		scene::IVertexBuffer* vertices = meshBuffer->getVertexBuffer();
@@ -502,12 +517,715 @@ namespace Skylicht
 		module->getTexCoordBuffer(vertices, texWidth, texHeight);
 		module->getColorBuffer(vertices, color);
 
-		numVertices += 4;
-		vertices += 4;
-		indices += 6;
+		if (material != NULL)
+			flushWithMaterial(material);
+	}
+
+	void CGraphics2D::addModuleBatch(SModuleOffset *module,
+		const SColor& color,
+		const core::matrix4& absoluteMatrix,
+		const core::rectf& r,
+		int shaderID,
+		CMaterial *material)
+	{
+		ITexture *tex = module->Frame->Image->Texture;
+
+		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
+			flush();
+
+		int numSpriteVertex = 4;
+
+		int numVertices = m_vertices->getVertexCount();
+		int vertexUse = numVertices + numSpriteVertex;
+
+		int numSpriteIndex = 6;
+		int numIndices = m_indices->getIndexCount();
+		int indexUse = numIndices + numSpriteIndex;
+
+		if (vertexUse > MAX_VERTICES || indexUse > MAX_INDICES)
+		{
+			flush();
+			numVertices = 0;
+			numIndices = 0;
+			vertexUse = numSpriteVertex;
+			indexUse = numSpriteIndex;
+		}
+
+		m_2dMaterial.setTexture(0, tex);
+		m_2dMaterial.MaterialType = shaderID;
+
+		// alloc vertex
+		m_vertices->set_used(vertexUse);
+
+		// get vertex pointer
+		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		vertices += numVertices;
+
+		// alloc index
+		m_indices->set_used(indexUse);
+
+		// get indices pointer
+		s16 *indices = (s16*)m_indices->getIndices();
+		indices += numIndices;
+
+		float texWidth = 512.0f;
+		float texHeight = 512.0f;
+
+		if (tex)
+		{
+			texWidth = (float)tex->getSize().Width;
+			texHeight = (float)tex->getSize().Height;
+		}
+
+		{
+			s16 *ib = indices;
+			video::S3DVertex *vb = vertices;
+			int vertex = numVertices;
+
+			ib[0] = vertex;
+			ib[1] = vertex + 1;
+			ib[2] = vertex + 2;
+			ib[3] = vertex;
+			ib[4] = vertex + 2;
+			ib[5] = vertex + 3;
+
+			vb[0].Color = color;
+			vb[1].Color = color;
+			vb[2].Color = color;
+			vb[3].Color = color;
+		}
+
+		/*
+		*   [0][   1    ][2]
+		*   [3][   4    ][5]
+		*   [6][   7    ][8]
+		*/
+
+		SModuleRect *m = module->Module;
+		float width = r.getWidth();
+		float height = r.getHeight();
+
+		// [0]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner;
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width, height);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X, m->Y);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
 
 		if (material != NULL)
 			flushWithMaterial(material);
+	}
+
+	void CGraphics2D::addModuleBatchLR(SModuleOffset *module,
+		const SColor& color,
+		const core::matrix4& absoluteMatrix,
+		const core::rectf& r,
+		float anchorLeft,
+		float anchorRight,
+		int shaderID,
+		CMaterial *material)
+	{
+		ITexture *tex = module->Frame->Image->Texture;
+
+		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
+			flush();
+
+		int numRect = 3;
+
+		int numSpriteVertex = 4 * numRect;
+
+		int numVertices = m_vertices->getVertexCount();
+		int vertexUse = numVertices + numSpriteVertex;
+
+		int numSpriteIndex = 6 * numRect;
+		int numIndices = m_indices->getIndexCount();
+		int indexUse = numIndices + numSpriteIndex;
+
+		if (vertexUse > MAX_VERTICES || indexUse > MAX_INDICES)
+		{
+			flush();
+			numVertices = 0;
+			numIndices = 0;
+			vertexUse = numSpriteVertex;
+			indexUse = numSpriteIndex;
+		}
+
+		m_2dMaterial.setTexture(0, tex);
+		m_2dMaterial.MaterialType = shaderID;
+
+		// alloc vertex
+		m_vertices->set_used(vertexUse);
+
+		// get vertex pointer
+		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		vertices += numVertices;
+
+		// alloc index
+		m_indices->set_used(indexUse);
+
+		// get indices pointer
+		s16 *indices = (s16*)m_indices->getIndices();
+		indices += numIndices;
+
+		float texWidth = 512.0f;
+		float texHeight = 512.0f;
+
+		if (tex)
+		{
+			texWidth = (float)tex->getSize().Width;
+			texHeight = (float)tex->getSize().Height;
+		}
+
+		for (int i = 0; i < numRect; i++)
+		{
+			s16 *ib = indices + i * 6;
+			video::S3DVertex *vb = vertices + i * 4;
+			int vertex = numVertices + i * 4;
+
+			ib[0] = vertex;
+			ib[1] = vertex + 1;
+			ib[2] = vertex + 2;
+			ib[3] = vertex;
+			ib[4] = vertex + 2;
+			ib[5] = vertex + 3;
+
+			vb[0].Color = color;
+			vb[1].Color = color;
+			vb[2].Color = color;
+			vb[3].Color = color;
+		}
+
+		/*
+		*   [0][   1    ][2]
+		*/
+
+		SModuleRect *m = module->Module;
+		float width = r.getWidth();
+		float height = r.getHeight();
+		float right = m->W - anchorRight;
+
+		// [0]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner;
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(anchorLeft, height);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X, m->Y);
+			uv.LowerRightCorner = core::vector2df(m->X + anchorLeft, m->Y + m->H);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [1]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(anchorLeft, 0.0f);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width - right, height);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X + anchorLeft, m->Y);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W - right, m->Y + m->H);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [2]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(width - right, 0.0f);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width, height);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X + m->W - right, m->Y);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		if (material != NULL)
+			flushWithMaterial(material);
+	}
+
+	void CGraphics2D::addModuleBatchTB(SModuleOffset *module,
+		const SColor& color,
+		const core::matrix4& absoluteMatrix,
+		const core::rectf& r,
+		float anchorTop,
+		float anchorBottom,
+		int shaderID,
+		CMaterial *material)
+	{
+		ITexture *tex = module->Frame->Image->Texture;
+
+		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
+			flush();
+
+		int numRect = 3;
+
+		int numSpriteVertex = 4 * numRect;
+
+		int numVertices = m_vertices->getVertexCount();
+		int vertexUse = numVertices + numSpriteVertex;
+
+		int numSpriteIndex = 6 * numRect;
+		int numIndices = m_indices->getIndexCount();
+		int indexUse = numIndices + numSpriteIndex;
+
+		if (vertexUse > MAX_VERTICES || indexUse > MAX_INDICES)
+		{
+			flush();
+			numVertices = 0;
+			numIndices = 0;
+			vertexUse = numSpriteVertex;
+			indexUse = numSpriteIndex;
+		}
+
+		m_2dMaterial.setTexture(0, tex);
+		m_2dMaterial.MaterialType = shaderID;
+
+		// alloc vertex
+		m_vertices->set_used(vertexUse);
+
+		// get vertex pointer
+		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		vertices += numVertices;
+
+		// alloc index
+		m_indices->set_used(indexUse);
+
+		// get indices pointer
+		s16 *indices = (s16*)m_indices->getIndices();
+		indices += numIndices;
+
+		float texWidth = 512.0f;
+		float texHeight = 512.0f;
+
+		if (tex)
+		{
+			texWidth = (float)tex->getSize().Width;
+			texHeight = (float)tex->getSize().Height;
+		}
+
+		for (int i = 0; i < numRect; i++)
+		{
+			s16 *ib = indices + i * 6;
+			video::S3DVertex *vb = vertices + i * 4;
+			int vertex = numVertices + i * 4;
+
+			ib[0] = vertex;
+			ib[1] = vertex + 1;
+			ib[2] = vertex + 2;
+			ib[3] = vertex;
+			ib[4] = vertex + 2;
+			ib[5] = vertex + 3;
+
+			vb[0].Color = color;
+			vb[1].Color = color;
+			vb[2].Color = color;
+			vb[3].Color = color;
+		}
+
+		/*
+		*   [       0       ]
+		*   [       1       ]
+		*   [       2       ]
+		*/
+
+		SModuleRect *m = module->Module;
+		float width = r.getWidth();
+		float height = r.getHeight();
+		float bottom = m->H - anchorBottom;
+
+		// [0]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner;
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width, anchorTop);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X, m->Y);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + anchorTop);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [1]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(0.0, anchorTop);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width, height - bottom);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X, m->Y + anchorTop);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H - bottom);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [2]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(0.0f, height - bottom);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width, height);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X, m->Y + m->H - bottom);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		if (material != NULL)
+			flushWithMaterial(material);
+	}
+
+	void CGraphics2D::addModuleBatch(SModuleOffset *module,
+		const SColor& color,
+		const core::matrix4& absoluteMatrix,
+		const core::rectf& r,
+		float anchorLeft,
+		float anchorRight,
+		float anchorTop,
+		float anchorBottom,
+		int shaderID,
+		CMaterial *material)
+	{
+		ITexture *tex = module->Frame->Image->Texture;
+
+		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
+			flush();
+
+		int numRect = 9;
+
+		int numSpriteVertex = 4 * numRect;
+
+		int numVertices = m_vertices->getVertexCount();
+		int vertexUse = numVertices + numSpriteVertex;
+
+		int numSpriteIndex = 6 * numRect;
+		int numIndices = m_indices->getIndexCount();
+		int indexUse = numIndices + numSpriteIndex;
+
+		if (vertexUse > MAX_VERTICES || indexUse > MAX_INDICES)
+		{
+			flush();
+			numVertices = 0;
+			numIndices = 0;
+			vertexUse = numSpriteVertex;
+			indexUse = numSpriteIndex;
+		}
+
+		m_2dMaterial.setTexture(0, tex);
+		m_2dMaterial.MaterialType = shaderID;
+
+		// alloc vertex
+		m_vertices->set_used(vertexUse);
+
+		// get vertex pointer
+		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		vertices += numVertices;
+
+		// alloc index
+		m_indices->set_used(indexUse);
+
+		// get indices pointer
+		s16 *indices = (s16*)m_indices->getIndices();
+		indices += numIndices;
+
+		float texWidth = 512.0f;
+		float texHeight = 512.0f;
+
+		if (tex)
+		{
+			texWidth = (float)tex->getSize().Width;
+			texHeight = (float)tex->getSize().Height;
+		}
+
+		for (int i = 0; i < numRect; i++)
+		{
+			s16 *ib = indices + i * 6;
+			video::S3DVertex *vb = vertices + i * 4;
+			int vertex = numVertices + i * 4;
+
+			ib[0] = vertex;
+			ib[1] = vertex + 1;
+			ib[2] = vertex + 2;
+			ib[3] = vertex;
+			ib[4] = vertex + 2;
+			ib[5] = vertex + 3;
+
+			vb[0].Color = color;
+			vb[1].Color = color;
+			vb[2].Color = color;
+			vb[3].Color = color;
+		}
+
+		/*
+		*   [0][   1    ][2]
+		*   [3][   4    ][5]
+		*   [6][   7    ][8]
+		*/
+
+		SModuleRect *m = module->Module;
+		float width = r.getWidth();
+		float height = r.getHeight();
+		float right = m->W - anchorRight;
+		float bottom = m->H - anchorBottom;
+
+		// [0]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner;
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(anchorLeft, anchorTop);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X, m->Y);
+			uv.LowerRightCorner = core::vector2df(m->X + anchorLeft, m->Y + anchorTop);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [1]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(anchorLeft, 0.0f);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width - right, anchorTop);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X + anchorLeft, m->Y);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W - right, m->Y + anchorTop);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [2]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(width - right, 0.0f);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width, anchorTop);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X + m->W - right, m->Y);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + anchorTop);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [3]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(0.0f, anchorTop);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(anchorLeft, height - bottom);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X, m->Y + anchorTop);
+			uv.LowerRightCorner = core::vector2df(m->X + anchorLeft, m->Y + m->H - bottom);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [4]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(anchorLeft, anchorTop);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width - right, height - bottom);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X + anchorLeft, m->Y + anchorTop);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W - right, m->Y + m->H - bottom);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [5]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(width - right, anchorTop);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width, height - bottom);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X + m->W - right, m->Y + anchorTop);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H - bottom);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [6]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(0.0f, height - bottom);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(anchorLeft, height);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X, m->Y + m->H - bottom);
+			uv.LowerRightCorner = core::vector2df(m->X + anchorLeft, m->Y + m->H);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [7]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(anchorLeft, height - bottom);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width - right, height);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X + anchorLeft, m->Y + m->H - bottom);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W - right, m->Y + m->H);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		// [8]
+		{
+			// position
+			core::rectf rect;
+			rect.UpperLeftCorner = r.UpperLeftCorner + core::vector2df(width - right, height - bottom);
+			rect.LowerRightCorner = r.UpperLeftCorner + core::vector2df(width, height);
+			updateRectBuffer(vertices, rect, absoluteMatrix);
+
+			// uv
+			core::rectf uv;
+			uv.UpperLeftCorner = core::vector2df(m->X + m->W - right, m->Y + m->H - bottom);
+			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+
+			vertices += 4;
+			indices += 6;
+		}
+
+		if (material != NULL)
+			flushWithMaterial(material);
+	}
+
+	void CGraphics2D::updateRectBuffer(video::S3DVertex* vertices, const core::rectf& r, const core::matrix4& mat)
+	{
+		float x1 = (float)r.UpperLeftCorner.X;
+		float y1 = (float)r.UpperLeftCorner.Y;
+		float x2 = (float)r.LowerRightCorner.X;
+		float y2 = (float)r.LowerRightCorner.Y;
+
+		vertices[0].Pos.X = x1;
+		vertices[0].Pos.Y = y1;
+		vertices[0].Pos.Z = 0.0f;
+		mat.transformVect(vertices[0].Pos);
+
+		vertices[1].Pos.X = x2;
+		vertices[1].Pos.Y = y1;
+		vertices[1].Pos.Z = 0.0f;
+		mat.transformVect(vertices[1].Pos);
+
+		vertices[2].Pos.X = x2;
+		vertices[2].Pos.Y = y2;
+		vertices[2].Pos.Z = 0.0f;
+		mat.transformVect(vertices[2].Pos);
+
+		vertices[3].Pos.X = x1;
+		vertices[3].Pos.Y = y2;
+		vertices[3].Pos.Z = 0.0f;
+		mat.transformVect(vertices[3].Pos);
+	}
+
+	void CGraphics2D::updateRectTexcoordBuffer(video::S3DVertex* vertices, const core::rectf& r, float texWidth, float texHeight)
+	{
+		float x1 = r.UpperLeftCorner.X / texWidth;
+		float y1 = r.UpperLeftCorner.Y / texHeight;
+		float x2 = r.LowerRightCorner.X / texWidth;
+		float y2 = r.LowerRightCorner.Y / texHeight;
+
+		vertices[0].TCoords.X = x1;
+		vertices[0].TCoords.Y = y1;
+
+		vertices[1].TCoords.X = x2;
+		vertices[1].TCoords.Y = y1;
+
+		vertices[2].TCoords.X = x2;
+		vertices[2].TCoords.Y = y2;
+
+		vertices[3].TCoords.X = x1;
+		vertices[3].TCoords.Y = y2;
 	}
 
 	void CGraphics2D::addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, CMaterial *material)
