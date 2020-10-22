@@ -142,7 +142,7 @@ void CViewBakeLightmap::onUpdate()
 		else
 			CDeferredRP::enableRenderIndirect(true);
 
-		CBaseRP::SetBakeLightingMapBounce(m_lightBounce);
+		CBaseRP::setBakeLightingMapBounce(m_lightBounce);
 		CBaseRP::setBakeLightmapMode(true);
 
 		IMeshBuffer *mb = m_neshBuffers[m_currentMeshBuffer];
