@@ -31,16 +31,16 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTheme *g_theme = NULL;
+			CTheme *g_baseTheme = NULL;
 
 			CTheme* CTheme::getTheme()
 			{
-				return g_theme;
+				return g_baseTheme;
 			}
 
 			void CTheme::setTheme(CTheme* theme)
 			{
-				g_theme = theme;
+				g_baseTheme = theme;
 			}
 
 			CTheme::CTheme()
