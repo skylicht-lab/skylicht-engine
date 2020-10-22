@@ -60,6 +60,10 @@ namespace Skylicht
 
 			public:
 
+
+
+			public:
+
 				CBase* FirstTab;
 				CBase* NextTab;
 

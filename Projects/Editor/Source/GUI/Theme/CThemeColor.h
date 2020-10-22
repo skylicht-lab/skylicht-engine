@@ -24,45 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CTheme.h"
-#include "CThemeColor.h"
-#include "GUI/Renderer/CSkylichtRenderer.h"
-#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
-#include "Graphics2D/CGraphics2D.h"
-#include "Material/Shader/CShaderManager.h"
-
 namespace Skylicht
 {
 	namespace Editor
 	{
 		namespace GUI
 		{
-			class CSkylichtTheme : public CTheme
+			class CThemeColor
 			{
-			protected:
-				CSpriteAtlas *m_sprite;
-				SFrame *m_empty;
-				SFrame *m_window;
-				SFrame *m_windowShadow;
-
-				CGraphics2D *m_graphics;
-				CSkylichtRenderer *m_renderer;
-
-				int m_materialID;
-
 			public:
-				CSkylichtTheme();
-
-				virtual ~CSkylichtTheme();
-
-				virtual void drawWindowShadow(const SRect& rect);
-
-				virtual void drawWindow(const SRect& rect, bool isFocussed);
-
-			private:
-
-				core::rectf getRect(const SRect& rect);
-
+				static SColor White;
+				static SColor Black;
+				static SColor WindowBackgroundColor;
 			};
 		}
 	}

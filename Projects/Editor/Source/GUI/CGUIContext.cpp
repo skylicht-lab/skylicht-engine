@@ -25,8 +25,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGUIContext.h"
 #include "GUI/Controls/CCanvas.h"
+
 #include "GUI/Renderer/CSkylichtRenderer.h"
 #include "GUI/Theme/CSkylichtTheme.h"
+#include "GUI/Input/CSkylichtInput.h"
 
 namespace Skylicht
 {
@@ -39,9 +41,12 @@ namespace Skylicht
 			CBase* CGUIContext::KeyboardFocus = NULL;
 
 			CCanvas* g_rootCanvas = NULL;
+			CInput* g_input = NULL;
 
 			CSkylichtRenderer *g_renderer = NULL;
 			CSkylichtTheme *g_theme = NULL;
+
+			float g_guiUpdateTime = 0.0f;
 
 			void CGUIContext::initGUI(float width, float height)
 			{
@@ -52,6 +57,9 @@ namespace Skylicht
 
 				g_theme = new CSkylichtTheme();
 				CTheme::setTheme(g_theme);
+
+				g_input = new CSkylichtInput();
+				CInput::setInput(g_input);
 			}
 
 			void CGUIContext::destroyGUI()
@@ -59,11 +67,18 @@ namespace Skylicht
 				delete g_rootCanvas;
 				delete g_renderer;
 				delete g_theme;
+				delete g_input;
 			}
 
-			void CGUIContext::update()
+			void CGUIContext::update(float time)
 			{
 				g_rootCanvas->update();
+				g_guiUpdateTime = time;
+			}
+
+			float CGUIContext::getTime()
+			{
+				return g_guiUpdateTime;
 			}
 
 			void CGUIContext::render()
