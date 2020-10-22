@@ -51,6 +51,8 @@ namespace Skylicht
 
 				virtual void end() {}
 
+				virtual void resize(float w, float h) {}
+
 				virtual void setDrawColor(SColor color) {}
 
 				virtual void startClip() {}

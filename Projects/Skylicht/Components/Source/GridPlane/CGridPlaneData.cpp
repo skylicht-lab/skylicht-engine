@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGridPlaneData.h"
+#include "Utils/CColor.h"
 
 namespace Skylicht
 {
@@ -43,7 +44,11 @@ namespace Skylicht
 	{
 		clearBuffer();
 
-		SColor color(255, 10, 10, 10);
+		SColor color;
+
+		SColor grey = CColor::toSRGB(SColor(255, 70, 70, 70));
+		SColor red = CColor::toSRGB(SColor(255, 155, 65, 80));
+		SColor green = CColor::toSRGB(SColor(255, 105, 140, 45));
 
 		core::vector3df start;
 		core::vector3df end;
@@ -56,9 +61,9 @@ namespace Skylicht
 		for (int i = 0; i <= NumGrid; i++)
 		{
 			if (i == NumGrid / 2)
-				color = SColor(255, 60, 60, 60);
+				color = red;
 			else
-				color = SColor(255, 10, 10, 10);
+				color = grey;
 
 			addLineVertexBatch(start, end, color);
 
@@ -72,9 +77,9 @@ namespace Skylicht
 		for (int i = 0; i <= NumGrid; i++)
 		{
 			if (i == NumGrid / 2)
-				color = SColor(255, 60, 60, 60);
+				color = green;
 			else
-				color = SColor(255, 10, 10, 10);
+				color = grey;
 
 			addLineVertexBatch(start, end, color);
 

@@ -83,10 +83,7 @@ namespace Skylicht
 			return m_fileSystem;
 		}
 
-		inline void setClearColor(const video::SColor& c)
-		{
-			m_clearColor = c;
-		}
+		void setClearColor(const video::SColor& c);
 
 		inline SExposedVideoData& getVideoData()
 		{

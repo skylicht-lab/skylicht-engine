@@ -88,7 +88,7 @@ namespace Skylicht
 
 		if (m_useLinearRGB == true)
 		{
-			driver->setRenderTarget(m_target, true, true);
+			driver->setRenderTarget(m_target, true, true, s_clearColor);
 
 			currentTarget = m_target;
 

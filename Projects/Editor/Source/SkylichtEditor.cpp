@@ -3,6 +3,7 @@
 #include "SkylichtEditor.h"
 
 #include "GridPlane/CGridPlane.h"
+#include "Utils/CColor.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -33,6 +34,7 @@ void SkylichtEditor::onInitApp()
 {
 	// init application
 	CBaseApp* app = getApplication();
+	app->setClearColor(CColor::toSRGB(SColor(255, 56, 56, 56)));
 
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);

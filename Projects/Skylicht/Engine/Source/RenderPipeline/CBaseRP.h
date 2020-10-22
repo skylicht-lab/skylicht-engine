@@ -50,6 +50,8 @@ namespace Skylicht
 		static bool s_bakeLMMode;
 		static int s_bakeBounce;
 
+		static SColor s_clearColor;
+
 	public:
 		CBaseRP();
 
@@ -87,7 +89,9 @@ namespace Skylicht
 
 		static void setBakeLightmapMode(bool b);
 
-		static void SetBakeLightingMapBounce(int i);
+		static void setBakeLightingMapBounce(int i);
+
+		static void setClearColor(const SColor& c);
 
 		void unbindRTT();
 

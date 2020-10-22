@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBaseApp.h"
 
 #include "Graphics2D/CGraphics2D.h"
+#include "RenderPipeline/CBaseRP.h"
 #include "BuildConfig/CBuildConfig.h"
 
 #ifdef _DEBUG
@@ -144,7 +145,13 @@ namespace Skylicht
 #else
 		return io::path(name);
 #endif
-}
+	}
+
+	void CBaseApp::setClearColor(const video::SColor& c)
+	{
+		m_clearColor = c;
+		CBaseRP::setClearColor(c);
+	}
 
 	int CBaseApp::getWidth()
 	{
@@ -171,7 +178,7 @@ namespace Skylicht
 #else
 		return CGraphics2D::getInstance()->isHD();
 #endif
-	}
+}
 
 	bool CBaseApp::isWideScreen()
 	{

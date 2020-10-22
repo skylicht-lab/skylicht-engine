@@ -21,45 +21,35 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "CRenderer.h"
-#include "Graphics2D/CGraphics2D.h"
+#include "pch.h"
+#include "CColor.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	SColor CColor::toSRGB(const SColor& c)
 	{
-		namespace GUI
-		{
-			class CSkylichtRenderer : public CRenderer
-			{
-			protected:
+		float fr = pow((float)(c.getRed() / 255.0f), 2.2f);
+		float fg = pow((float)(c.getGreen() / 255.0f), 2.2f);
+		float fb = pow((float)(c.getBlue() / 255.0f), 2.2f);
 
-				core::matrix4 m_projection;
-				core::matrix4 m_view;
-				core::matrix4 m_world;
+		u32 r = core::clamp<u32>((u32)(fr * 255.0f), 0, 255);
+		u32 g = core::clamp<u32>((u32)(fg * 255.0f), 0, 255);
+		u32 b = core::clamp<u32>((u32)(fb * 255.0f), 0, 255);
 
-				float m_width;
-				float m_height;
+		return SColor(c.getAlpha(), r, g, b);
+	}
 
-			public:
-				CSkylichtRenderer(float w, float h);
+	SColor CColor::toLinear(const SColor& c)
+	{
+		float fr = pow((float)(c.getRed() / 255.0f), 1.0f / 2.2f);
+		float fg = pow((float)(c.getGreen() / 255.0f), 1.0f / 2.2f);
+		float fb = pow((float)(c.getBlue() / 255.0f), 1.0f / 2.2f);
 
-				virtual ~CSkylichtRenderer();
+		u32 r = core::clamp<u32>((u32)(fr * 255.0f), 0, 255);
+		u32 g = core::clamp<u32>((u32)(fg * 255.0f), 0, 255);
+		u32 b = core::clamp<u32>((u32)(fb * 255.0f), 0, 255);
 
-				virtual void resize(float w, float h);
-
-				virtual void begin();
-
-				virtual void end();
-
-				core::matrix4& getWorldTransform()
-				{
-					m_world.setTranslation(core::vector3df(m_renderOffset.X, m_renderOffset.Y, 0.0f));
-					return m_world;
-				}
-			};
-		}
+		return SColor(c.getAlpha(), r, g, b);
 	}
 }

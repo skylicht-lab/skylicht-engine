@@ -86,12 +86,16 @@ namespace Skylicht
 
 		void render(CCamera *camera);
 
+		void beginRenderGUI(const core::matrix4& projection, const core::matrix4& view);
+
+		void endRenderGUI();
+
 	public:
 
 		void flushBuffer(IMeshBuffer *meshBuffer, video::SMaterial& material);
 
 		void flush();
-		
+
 		void flushWithMaterial(CMaterial *material);
 
 		void addExternalBuffer(IMeshBuffer *meshBuffer, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material = NULL);
@@ -101,6 +105,42 @@ namespace Skylicht
 		void addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material = NULL, float pivotX = 0, float pivotY = 0);
 
 		void addModuleBatch(SModuleOffset *module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID, CMaterial *material = NULL);
+
+		void addModuleBatch(SModuleOffset *module,
+			const SColor& color,
+			const core::matrix4& absoluteMatrix,
+			const core::rectf& r,
+			float anchorLeft,
+			float anchorRight,
+			float anchorTop,
+			float anchorBottom,
+			int shaderID,
+			CMaterial *material = NULL);
+
+		void addModuleBatch(SModuleOffset *module,
+			const SColor& color,
+			const core::matrix4& absoluteMatrix,
+			const core::rectf& r,
+			int shaderID,
+			CMaterial *material = NULL);
+
+		void addModuleBatchLR(SModuleOffset *module,
+			const SColor& color,
+			const core::matrix4& absoluteMatrix,
+			const core::rectf& r,
+			float anchorLeft,
+			float anchorRight,
+			int shaderID,
+			CMaterial *material = NULL);
+
+		void addModuleBatchTB(SModuleOffset *module,
+			const SColor& color,
+			const core::matrix4& absoluteMatrix,
+			const core::rectf& r,
+			float anchorTop,
+			float anchorBottom,
+			int shaderID,
+			CMaterial *material = NULL);
 
 		void addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, CMaterial *material = NULL);
 
@@ -132,6 +172,12 @@ namespace Skylicht
 		{
 			return m_2dMaterial;
 		}
+
+	private:
+
+		void updateRectBuffer(video::S3DVertex* vtx, const core::rectf& r, const core::matrix4& mat);
+
+		void updateRectTexcoordBuffer(video::S3DVertex* vtx, const core::rectf& r, float texWidth, float texHeight);
 	};
 
 }
