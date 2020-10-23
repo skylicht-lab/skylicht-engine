@@ -56,7 +56,7 @@ namespace irr
 	//! constructor
 	CIrrDeviceSDL2::CIrrDeviceSDL2(const SIrrlichtCreationParameters& param)
 		: CIrrDeviceStub(param),
-		ScreenSurface(0), ScreenWindow(0), ScreenTexture(0),
+		ScreenSurface(0), ScreenWindow(0), ScreenTexture(0), ScreenRenderer(0),
 		MouseX(0), MouseY(0), MouseXRel(0), MouseYRel(0), MouseButtonStates(0),
 		Width(param.WindowSize.Width), Height(param.WindowSize.Height),
 		Resizable(false), WindowHasFocus(false), WindowMinimized(false)
@@ -392,7 +392,6 @@ namespace irr
 				{
 					// FIXME: Implement more precise window control
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
-					/*
 					// SKYLICHT: Need post an event to application, I will fix it later...
 					// FIXME: Check if the window is game window					
 					if ((SDL_event.window.data1 != (int)Width) || (SDL_event.window.data2 != (int)Height))
@@ -402,8 +401,12 @@ namespace irr
 						resizeWindow(Width, Height);
 						if (VideoDriver)
 							VideoDriver->OnResize(core::dimension2d<u32>(Width, Height));
+
+						irrevent.EventType = irr::EET_GAME_RESIZE;
+						irrevent.UserEvent.UserData1 = (s32)Width;
+						irrevent.UserEvent.UserData2 = (s32)Height;
+						postEventFromUser(irrevent);
 					}
-					*/
 					break;
 				case SDL_WINDOWEVENT_ENTER:
 				case SDL_WINDOWEVENT_FOCUS_GAINED:
@@ -903,6 +906,57 @@ namespace irr
 		{
 			ScreenTexture = SDL_CreateTexture(ScreenRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, Width, Height);
 		}
+	}
+
+	CIrrDeviceSDL2::CCursorControl::CCursorControl(CIrrDeviceSDL2* dev)
+		: Device(dev), IsVisible(true)
+	{
+		Cursor[gui::ECI_NORMAL] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+		Cursor[gui::ECI_IBEAM] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+		Cursor[gui::ECI_WAIT] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
+		Cursor[gui::ECI_CROSS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+		Cursor[gui::ECI_SIZENWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+		Cursor[gui::ECI_SIZENESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
+		Cursor[gui::ECI_SIZEWE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+		Cursor[gui::ECI_SIZENS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+		Cursor[gui::ECI_SIZEALL] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+		Cursor[gui::ECI_NO] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+		Cursor[gui::ECI_HAND] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+		Cursor[gui::ECI_HELP] = Cursor[gui::ECI_NORMAL];
+		Cursor[gui::ECI_UP] = Cursor[gui::ECI_NORMAL];
+	}
+
+	CIrrDeviceSDL2::CCursorControl::~CCursorControl()
+	{
+		for (int i = 0; i < gui::ECI_COUNT; i++)
+		{
+			SDL_FreeCursor(Cursor[i]);
+		}
+	}
+
+	void CIrrDeviceSDL2::CCursorControl::setActiveIcon(gui::ECURSOR_ICON iconId)
+	{
+		switch (iconId)
+		{
+		case gui::ECI_NORMAL:
+		case gui::ECI_CROSS:
+		case gui::ECI_HAND:
+		case gui::ECI_HELP:
+		case gui::ECI_IBEAM:
+		case gui::ECI_NO:
+		case gui::ECI_WAIT:
+		case gui::ECI_SIZEALL:
+		case gui::ECI_SIZENESW:
+		case gui::ECI_SIZENWSE:
+		case gui::ECI_SIZENS:
+		case gui::ECI_SIZEWE:
+		case gui::ECI_UP:
+		default:
+			SDL_SetCursor(Cursor[iconId]);
+			break;
+		}
+
+		CurrentIcon = iconId;
 	}
 
 } // end namespace irr

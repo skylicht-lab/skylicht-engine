@@ -39,6 +39,8 @@ CIrrDeviceWin32::CIrrDeviceWin32(const SIrrlichtCreationParameters& param)
 	setDebugName("CIrrDeviceWin32");
 #endif
 
+	CursorControl = new CCursorControl(this, CreationParams.WindowSize, (HWND)CreationParams.WindowId, CreationParams.Fullscreen);
+
 	createDriver();
 
 	if (VideoDriver)
@@ -67,6 +69,8 @@ bool CIrrDeviceWin32::run()
 		return false;
 
 	os::Timer::tick();
+
+	static_cast<CCursorControl*>(CursorControl)->update();
 
 	return Initialized;
 }
@@ -243,6 +247,101 @@ void CIrrDeviceWin32::createDriver()
 video::SExposedVideoData& CIrrDeviceWin32::getExposedVideoData()
 {
 	return ExposedVideoData;
+}
+
+CIrrDeviceWin32::CCursorControl::CCursorControl(CIrrDeviceWin32* device, const core::dimension2d<u32>& wsize, HWND hwnd, bool fullscreen)
+	: Device(device), WindowSize(wsize), InvWindowSize(0.0f, 0.0f),
+	HWnd(hwnd), BorderX(0), BorderY(0),
+	UseReferenceRect(false), IsVisible(true)
+	, ActiveIcon(gui::ECI_NORMAL), ActiveIconStartTime(0)
+{
+	if (WindowSize.Width != 0)
+		InvWindowSize.Width = 1.0f / WindowSize.Width;
+
+	if (WindowSize.Height != 0)
+		InvWindowSize.Height = 1.0f / WindowSize.Height;
+
+	updateBorderSize(fullscreen, false);
+	initCursors();
+}
+
+CIrrDeviceWin32::CCursorControl::~CCursorControl()
+{
+	for (u32 i = 0; i < Cursors.size(); ++i)
+	{
+		for (u32 f = 0; f < Cursors[i].Frames.size(); ++f)
+		{
+			DestroyCursor(Cursors[i].Frames[f].IconHW);
+		}
+	}
+}
+
+
+void CIrrDeviceWin32::CCursorControl::initCursors()
+{
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_ARROW)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_CROSS)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_HAND)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_HELP)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_IBEAM)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_NO)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_WAIT)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_SIZEALL)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_SIZENESW)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_SIZENWSE)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_SIZENS)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_SIZEWE)));
+	Cursors.push_back(CursorW32(LoadCursor(NULL, IDC_UPARROW)));
+}
+
+
+void CIrrDeviceWin32::CCursorControl::update()
+{
+	if (!Cursors[ActiveIcon].Frames.empty() && Cursors[ActiveIcon].FrameTime)
+	{
+		// update animated cursors. This could also be done by X11 in case someone wants to figure that out (this way was just easier to implement)
+		u32 now = Device->getTimer()->getRealTime();
+		u32 frame = ((now - ActiveIconStartTime) / Cursors[ActiveIcon].FrameTime) % Cursors[ActiveIcon].Frames.size();
+		SetCursor(Cursors[ActiveIcon].Frames[frame].IconHW);
+	}
+}
+
+//! Sets the active cursor icon
+void CIrrDeviceWin32::CCursorControl::setActiveIcon(gui::ECURSOR_ICON iconId)
+{
+	if (iconId >= (s32)Cursors.size())
+		return;
+
+	ActiveIcon = iconId;
+	ActiveIconStartTime = Device->getTimer()->getRealTime();
+	if (Cursors[ActiveIcon].Frames.size())
+		SetCursor(Cursors[ActiveIcon].Frames[0].IconHW);
+}
+
+
+//! Add a custom sprite as cursor icon.
+gui::ECURSOR_ICON CIrrDeviceWin32::CCursorControl::addIcon(const gui::SCursorSprite& icon)
+{	
+	return gui::ECI_NORMAL;
+}
+
+
+//! replace the given cursor icon.
+void CIrrDeviceWin32::CCursorControl::changeIcon(gui::ECURSOR_ICON iconId, const gui::SCursorSprite& icon)
+{
+
+}
+
+
+//! Return a system-specific size which is supported for cursors. Larger icons will fail, smaller icons might work.
+core::dimension2di CIrrDeviceWin32::CCursorControl::getSupportedIconSize() const
+{
+	core::dimension2di result;
+
+	result.Width = GetSystemMetrics(SM_CXCURSOR);
+	result.Height = GetSystemMetrics(SM_CYCURSOR);
+
+	return result;
 }
 
 } // end namespace irr

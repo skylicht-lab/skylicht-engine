@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBase.h"
 #include "CCanvas.h"
 #include "GUI/CGUIContext.h"
+#include "GUI/Input/CInput.h"
 
 namespace Skylicht
 {
@@ -40,11 +41,12 @@ namespace Skylicht
 				m_hidden(false),
 				m_needsLayout(true),
 				m_dock(EPosition::None),
-				m_bounds(0.0f, 0.0f, 18.0f, 30.0f),
+				m_bounds(0.0f, 0.0f, 0.0f, 0.0f),
 				m_padding(0.0f, 0.0f, 0.0f, 0.0f),
 				m_margin(0.0f, 0.0f, 0.0f, 0.0f),
 				m_mouseInputEnabled(true),
-				m_keyboardInputEnabled(true)
+				m_keyboardInputEnabled(true),
+				m_cursor(ECursorType::Normal)
 			{
 				setParent(parent);
 			}
@@ -116,6 +118,11 @@ namespace Skylicht
 				updateColors();
 				if (m_parent)
 					m_parent->reDraw();
+			}
+
+			void CBase::updateCursor()
+			{
+				CInput::getInput()->setCursor(m_cursor);
 			}
 
 			void CBase::addChild(CBase* child)
@@ -310,9 +317,35 @@ namespace Skylicht
 				m_renderBounds.Height = m_bounds.Height;
 			}
 
+			void CBase::dragTo(float x, float y, float dragPosX, float dragPosY)
+			{
+				float testX = x + dragPosX;
+				float testY = y + dragPosY;
+
+				if (m_parent)
+				{
+					if (testX - m_padding.Left < m_parent->m_margin.Left)
+						testX = m_parent->m_margin.Left + m_padding.Left;
+
+					if (testY - m_padding.Top < m_parent->m_margin.Top)
+						testY = m_parent->m_margin.Top + m_padding.Top;
+
+					if (testX + m_padding.Right > m_parent->width() - m_parent->m_margin.Right)
+						testX = m_parent->width() - m_parent->m_margin.Right - m_padding.Right;
+
+					if (testY + m_padding.Bottom > m_parent->height() - m_parent->m_margin.Bottom)
+						testY = m_parent->height() - m_parent->m_margin.Bottom - m_padding.Bottom;
+				}
+
+				x = testX - dragPosX;
+				y = testY - dragPosY;
+
+				setBounds(x, y, width(), height());
+			}
+
 			void CBase::moveTo(float x, float y)
 			{
-				if (m_parent)
+				if (m_parent && m_parent != CGUIContext::getRoot())
 				{
 					if (x - m_padding.Left < m_parent->m_margin.Left)
 						x = m_parent->m_margin.Left + m_padding.Left;

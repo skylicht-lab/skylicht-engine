@@ -210,15 +210,6 @@ u32 CIrrDeviceStub::checkSuccessiveClicks(s32 mouseX, s32 mouseY, EMOUSE_INPUT_E
 //! send the event to the right receiver
 bool CIrrDeviceStub::postEventFromUser(const SEvent& event)
 {
-	if (event.EventType == irr::EET_MOUSE_INPUT_EVENT)
-	{
-		CursorControl->setPosition(event.MouseInput.X, event.MouseInput.Y);
-
-		core::dimension2du screenSize = VideoDriver->getScreenSize();
-		core::recti r(0, 0, screenSize.Width, screenSize.Height);
-		CursorControl->setReferenceRect(&r);
-	}
-
 	bool absorbed = false;
 
 	if (UserReceiver)

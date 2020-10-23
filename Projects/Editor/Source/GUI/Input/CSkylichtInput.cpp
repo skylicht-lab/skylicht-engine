@@ -34,7 +34,8 @@ namespace Skylicht
 		{
 			CSkylichtInput::CSkylichtInput() :
 				m_mouseX(0.0f),
-				m_mouseY(0.0f)
+				m_mouseY(0.0f),
+				m_cursorType(ECursorType::CursorCount)
 			{
 				CEventManager::getInstance()->registerProcessorEvent("EditorEventManager", this);
 			}
@@ -139,6 +140,52 @@ namespace Skylicht
 				}
 
 				return true;
+			}
+
+			void CSkylichtInput::setCursor(ECursorType type)
+			{
+				if (m_cursorType == type)
+					return;
+
+				m_cursorType = type;
+
+				gui::ICursorControl* cursorControl = getIrrlichtDevice()->getCursorControl();
+
+				switch (type)
+				{
+				case Skylicht::Editor::GUI::Normal:
+					cursorControl->setActiveIcon(gui::ECI_NORMAL);
+					break;
+				case Skylicht::Editor::GUI::Beam:
+					cursorControl->setActiveIcon(gui::ECI_IBEAM);
+					break;
+				case Skylicht::Editor::GUI::SizeNS:
+					cursorControl->setActiveIcon(gui::ECI_SIZENS);
+					break;
+				case Skylicht::Editor::GUI::SizeWE:
+					cursorControl->setActiveIcon(gui::ECI_SIZEWE);
+					break;
+				case Skylicht::Editor::GUI::SizeNWSE:
+					cursorControl->setActiveIcon(gui::ECI_SIZENWSE);
+					break;
+				case Skylicht::Editor::GUI::SizeNESW:
+					cursorControl->setActiveIcon(gui::ECI_SIZENESW);
+					break;
+				case Skylicht::Editor::GUI::SizeAll:
+					cursorControl->setActiveIcon(gui::ECI_SIZEALL);
+					break;
+				case Skylicht::Editor::GUI::No:
+					cursorControl->setActiveIcon(gui::ECI_NO);
+					break;
+				case Skylicht::Editor::GUI::Wait:
+					cursorControl->setActiveIcon(gui::ECI_WAIT);
+					break;
+				case Skylicht::Editor::GUI::Finger:
+					cursorControl->setActiveIcon(gui::ECI_HAND);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
