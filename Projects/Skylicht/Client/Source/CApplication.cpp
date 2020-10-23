@@ -74,6 +74,11 @@ namespace Skylicht
 		if (eventMgr != NULL)
 			eventMgr->OnEvent(event);
 
+		if (event.EventType == EET_GAME_RESIZE)
+		{
+			notifyResizeWin(event.UserEvent.UserData1, event.UserEvent.UserData2);
+		}
+
 #if defined(_DEBUG) && defined(WIN32) && !defined(WINDOWS_STORE)
 		// simulate
 		if (event.EventType == EET_KEY_INPUT_EVENT)

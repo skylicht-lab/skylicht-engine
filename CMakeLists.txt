@@ -119,7 +119,6 @@ endif()
 
 if (BUILD_SDL)
 	add_definitions(-DSDL)
-	set(BUILD_ENGINE_TOOL OFF)
 endif()
 
 # skylicht bullet engine

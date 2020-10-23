@@ -40,7 +40,8 @@ namespace Skylicht
 				m_mousePositionX(0.0f),
 				m_mousePositionY(0.0f),
 				m_lastClickPositionX(0.0f),
-				m_lastClickPositionY(0.0f)
+				m_lastClickPositionY(0.0f),
+				m_capture(NULL)
 			{
 				for (int i = 0; i < 3; i++)
 					m_lastClickTime[i] = 0.0f;
@@ -65,6 +66,13 @@ namespace Skylicht
 			{
 				m_mousePositionX = x;
 				m_mousePositionY = y;
+
+				if (m_capture != NULL)
+				{
+					m_capture->onMouseMoved(x, y, deltaX, deltaY);
+					m_capture->updateCursor();
+					return false;
+				}
 
 				CBase *hover = CGUIContext::getRoot()->getControlAt(x, y);
 
@@ -97,7 +105,10 @@ namespace Skylicht
 					return true;
 
 				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
+				{
+					CGUIContext::HoveredControl->updateCursor();
 					return true;
+				}
 
 				CGUIContext::HoveredControl->onMouseMoved(x, y, deltaX, deltaY);
 				CGUIContext::HoveredControl->updateCursor();
@@ -107,15 +118,6 @@ namespace Skylicht
 
 			bool CInput::inputMouseButton(int iMouseButton, bool bDown)
 			{
-				if (!CGUIContext::HoveredControl)
-					return true;
-
-				if (!CGUIContext::HoveredControl->isVisible())
-					return true;
-
-				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
-					return true;
-
 				bool isDoubleClick = false;
 
 				if (bDown
@@ -133,7 +135,25 @@ namespace Skylicht
 					m_lastClickPositionY = m_mousePositionY;
 				}
 
+				if (m_capture != NULL)
+				{
+					if (isDoubleClick)
+						m_capture->onMouseDoubleClickLeft(m_mousePositionX, m_mousePositionY);
+					else
+						m_capture->onMouseClickLeft(m_mousePositionX, m_mousePositionY, bDown);
+					return false;
+				}
+
+				if (!CGUIContext::HoveredControl)
+					return true;
+
+				if (!CGUIContext::HoveredControl->isVisible())
+					return true;
+
 				CGUIContext::HoveredControl->updateCursor();
+
+				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
+					return true;
 
 				// Do keyboard focus
 

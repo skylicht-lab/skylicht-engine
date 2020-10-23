@@ -124,6 +124,17 @@ if (BUILD_DEBUG_VLD)
 	link_directories(${vld_lib_path})
 endif()
 	
+if (BUILD_SDL AND MSVC)
+	if (CMAKE_CL_64)
+		set(sdl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x64")
+		set(sdl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x64/*.dll")
+	else()
+		set(sdl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x86")
+		set(sdl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x86/*.dll")
+	endif()	
+	link_directories(${sdl_lib_path})
+endif()
+	
 if (MINGW OR CYGWIN)
 	# .rc build
 	set(CMAKE_RC_COMPILER_INIT windres)

@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 
+#if !defined(SDL)
+
 #if !defined(WINDOWS_STORE) && (defined(WIN32) || defined(CYGWIN) || defined(MINGW))
 #include <Windows.h>
 
@@ -483,10 +485,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		else
 			return 0;
 	}
+	case WM_SETCURSOR:
+	{
+		// because Windows forgot about that in the meantime
+		IrrlichtDevice *dev = getIrrlichtDevice();
+		if (dev)
+		{
+			dev->getCursorControl()->setActiveIcon(dev->getCursorControl()->getActiveIcon());
+			dev->getCursorControl()->setVisible(dev->getCursorControl()->isVisible());
+		}
+		break;
+	}
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
 }
+
+#endif
 
 #endif

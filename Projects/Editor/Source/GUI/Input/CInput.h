@@ -41,6 +41,9 @@ namespace Skylicht
 				float m_mousePositionY;
 
 				float m_lastClickTime[3];
+
+				CBase *m_capture;
+
 			public:
 				CInput();
 
@@ -59,6 +62,13 @@ namespace Skylicht
 				bool inputModifierKey(EKey key, bool bDown);
 
 				bool inputCharacter(u32 character);
+
+				virtual void setCursor(ECursorType type) {}
+
+				inline void setCapture(CBase *p)
+				{
+					m_capture = p;
+				}
 			};
 		}
 	}

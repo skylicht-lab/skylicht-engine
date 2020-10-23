@@ -330,6 +330,21 @@ namespace Skylicht
 
 				KEY_KEY_CODES_COUNT = 0xFF // this is not a key, but the amount of keycodes there are.
 			};
+
+			enum ECursorType
+			{
+				Normal = 0,
+				Beam = 1,
+				SizeNS = 2,
+				SizeWE = 3,
+				SizeNWSE = 4,
+				SizeNESW = 5,
+				SizeAll = 6,
+				No = 7,
+				Wait = 8,
+				Finger = 9,
+				CursorCount = 10
+			};
 		}
 	}
 }

@@ -21,10 +21,11 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+#pragma once
 
-#include "pch.h"
-#include "CDragger.h"
-#include "CWindow.h"
+#include "GUI/Controls/CBase.h"
+#include "GUI/Controls/CCanvas.h"
+#include "GUI/Controls/CResizer.h"
 
 namespace Skylicht
 {
@@ -32,31 +33,18 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CWindow::CWindow(CCanvas* parent, float x, float y, float w, float h) :
-				CResizableControl(parent, x, y, w, h)
+			class CResizableControl : public CBase
 			{
-				CDragger *titleBar = new CDragger(this, 0.0f, 0.0f, 0.0f, 0.0f);
-				titleBar->setHeight(24);
-				titleBar->setPadding(SPadding(0, 0, 0, 0));
-				titleBar->setMargin(SMargin(0, 0, 0, 4));
-				titleBar->dock(EPosition::Top);
-			}
+			protected:
+				CResizer *m_resizers[8];
 
-			CWindow::~CWindow()
-			{
+			public:
+				CResizableControl(CCanvas* parent, float x, float y, float w, float h);
 
-			}
+				virtual ~CResizableControl();
 
-			void CWindow::render()
-			{
-				bool isFocussed = isOnTop();
-				CTheme::getTheme()->drawWindow(getRenderBounds(), isFocussed);
-			}
-
-			void CWindow::renderUnder()
-			{
-				CTheme::getTheme()->drawWindowShadow(getRenderBounds());
-			}
+				void onResizedInternal(const CBase *sender);
+			};
 		}
 	}
 }
