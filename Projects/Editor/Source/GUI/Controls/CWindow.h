@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GUI/Controls/CBase.h"
-#include "GUI/Controls/CCanvas.h"
+#include "GUI/Controls/CResizableControl.h"
 
 namespace Skylicht
 {
@@ -32,7 +32,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CWindow : public CBase
+			class CWindow : public CResizableControl
 			{
 			public:
 				CWindow(CCanvas* parent, float x, float y, float w, float h);

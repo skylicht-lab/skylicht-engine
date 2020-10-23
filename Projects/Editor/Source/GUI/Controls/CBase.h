@@ -41,7 +41,7 @@ namespace Skylicht
 			{
 			public:
 				typedef std::list<CBase*> List;
-				typedef std::function<void(void*)> Listener;
+				typedef std::function<void(CBase*)> Listener;
 				typedef std::map<std::string, Listener> AccelMap;
 
 				CBase(CBase* parent, const std::string& name = "");
@@ -166,6 +166,7 @@ namespace Skylicht
 				inline void setMargin(const SMargin& margin) { m_margin = margin; }
 
 				virtual void moveTo(float x, float y);
+				virtual void dragTo(float x, float y, float dragPosX, float dragPosY);
 				inline void moveBy(float x, float y) { moveTo(X() + x, Y() + y); }
 
 				inline const SRect& getBounds() const { return m_bounds; }
@@ -194,8 +195,12 @@ namespace Skylicht
 				virtual void renderOver() {}
 
 			public:
+				inline void setCursor(ECursorType cursor)
+				{
+					m_cursor = cursor;
+				}
 
-				virtual void updateCursor() {}
+				virtual void updateCursor();
 
 				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY) {}
 				virtual bool onMouseWheeled(int iDelta);
@@ -264,6 +269,11 @@ namespace Skylicht
 				virtual SPoint localPosToCanvas(const SPoint& in = SPoint(0.0f, 0.0f));
 				virtual SPoint canvasPosToLocal(const SPoint& in);
 
+				virtual SPoint getMinimumSize()
+				{
+					return SPoint(1.0f, 1.0f);
+				}
+
 			protected:
 
 				virtual void recurseLayout();
@@ -295,6 +305,8 @@ namespace Skylicht
 				bool m_keyboardInputEnabled;
 
 				EPosition m_dock;
+
+				ECursorType m_cursor;
 			};
 		}
 	}

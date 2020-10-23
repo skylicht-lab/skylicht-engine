@@ -39,6 +39,8 @@ namespace Skylicht
 			protected:
 				float m_mouseX;
 				float m_mouseY;
+				
+				ECursorType m_cursorType;
 
 			public:
 				CSkylichtInput();
@@ -46,6 +48,8 @@ namespace Skylicht
 				virtual ~CSkylichtInput();
 
 				virtual bool OnProcessEvent(const SEvent& event);
+
+				virtual void setCursor(ECursorType type);
 			};
 		}
 	}

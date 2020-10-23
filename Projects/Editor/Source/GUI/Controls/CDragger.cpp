@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDragger.h"
+#include "GUI/Input/CInput.h"
 
 namespace Skylicht
 {
@@ -31,8 +32,17 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			CDragger::CDragger(CBase* parent) :
+				CBase(parent),
+				m_target(parent),
+				m_pressed(false)
+			{
+
+			}
+
 			CDragger::CDragger(CBase* parent, float x, float y, float w, float h) :
 				CBase(parent),
+				m_target(parent),
 				m_pressed(false)
 			{
 				setBounds(x, y, w, h);
@@ -53,10 +63,10 @@ namespace Skylicht
 
 				SPoint p = SPoint(x - m_holdPosition.X, y - m_holdPosition.Y);
 
-				if (m_parent->getParent() != NULL)
-					p = m_parent->getParent()->canvasPosToLocal(p);
+				if (m_target->getParent() != NULL)
+					p = m_target->getParent()->canvasPosToLocal(p);
 
-				m_parent->moveTo(p.X, p.Y);
+				m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y);
 			}
 
 			void CDragger::onMouseClickLeft(float x, float y, bool bDown)
@@ -68,7 +78,12 @@ namespace Skylicht
 
 				if (m_pressed == true)
 				{
-					m_holdPosition = m_parent->canvasPosToLocal(SPoint(x, y));
+					m_holdPosition = m_target->canvasPosToLocal(SPoint(x, y));
+					CInput::getInput()->setCapture(this);
+				}
+				else
+				{
+					CInput::getInput()->setCapture(NULL);
 				}
 			}
 		}

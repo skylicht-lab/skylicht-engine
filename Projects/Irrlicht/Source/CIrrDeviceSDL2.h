@@ -61,7 +61,7 @@ namespace irr
 		virtual video::IVideoModeList* getVideoModeList() _IRR_OVERRIDE_;
 
 		//! Sets if the window should be resizable in windowed mode.
-		virtual void setResizable(bool resize=false) _IRR_OVERRIDE_;
+		virtual void setResizable(bool resize = false) _IRR_OVERRIDE_;
 
 		//! Minimizes the window.
 		virtual void minimizeWindow() _IRR_OVERRIDE_;
@@ -83,10 +83,10 @@ namespace irr
 		virtual bool activateJoysticks(core::array<SJoystickInfo> & joystickInfo) _IRR_OVERRIDE_;
 
 		//! Set the current Gamma Value for the Display
-		virtual bool setGammaRamp( f32 red, f32 green, f32 blue, f32 brightness, f32 contrast ) _IRR_OVERRIDE_;
+		virtual bool setGammaRamp(f32 red, f32 green, f32 blue, f32 brightness, f32 contrast) _IRR_OVERRIDE_;
 
 		//! Get the current Gamma Value for the Display
-		virtual bool getGammaRamp( f32 &red, f32 &green, f32 &blue, f32 &brightness, f32 &contrast ) _IRR_OVERRIDE_;
+		virtual bool getGammaRamp(f32 &red, f32 &green, f32 &blue, f32 &brightness, f32 &contrast) _IRR_OVERRIDE_;
 
 		//! Get the device type
 		virtual E_DEVICE_TYPE getType() const _IRR_OVERRIDE_
@@ -99,20 +99,19 @@ namespace irr
 		{
 		public:
 
-			CCursorControl(CIrrDeviceSDL2* dev)
-				: Device(dev), IsVisible(true)
-			{
-			}
+			CCursorControl(CIrrDeviceSDL2* dev);
+
+			~CCursorControl();
 
 			//! Changes the visible state of the mouse cursor.
 			virtual void setVisible(bool visible) _IRR_OVERRIDE_
 			{
 				IsVisible = visible;
-				if ( visible )
-					SDL_ShowCursor( SDL_ENABLE );
+				if (visible)
+					SDL_ShowCursor(SDL_ENABLE);
 				else
 				{
-					SDL_ShowCursor( SDL_DISABLE );
+					SDL_ShowCursor(SDL_DISABLE);
 				}
 			}
 
@@ -143,7 +142,7 @@ namespace irr
 			//! Sets the new position of the cursor.
 			virtual void setPosition(s32 x, s32 y) _IRR_OVERRIDE_
 			{
-				SDL_WarpMouseInWindow(Device->ScreenWindow, x, y );
+				SDL_WarpMouseInWindow(Device->ScreenWindow, x, y);
 			}
 
 			//! Returns the current position of the mouse cursor.
@@ -161,8 +160,16 @@ namespace irr
 					CursorPos.Y / (f32)Device->Height);
 			}
 
-			virtual void setReferenceRect(core::rect<s32>* rect=0) _IRR_OVERRIDE_
+			virtual void setReferenceRect(core::rect<s32>* rect = 0) _IRR_OVERRIDE_
 			{
+			}
+
+			virtual void setActiveIcon(gui::ECURSOR_ICON iconId) _IRR_OVERRIDE_;
+
+			//! Gets the currently active icon
+			virtual gui::ECURSOR_ICON getActiveIcon() const _IRR_OVERRIDE_
+			{
+				return CurrentIcon;
 			}
 
 		private:
@@ -185,6 +192,10 @@ namespace irr
 			CIrrDeviceSDL2* Device;
 			core::position2d<s32> CursorPos;
 			bool IsVisible;
+
+			gui::ECURSOR_ICON CurrentIcon;
+
+			SDL_Cursor* Cursor[gui::ECI_COUNT];
 		};
 
 	private:
@@ -199,7 +210,7 @@ namespace irr
 		void logAttributes();
 
 		void resizeWindow(u32 x, u32 y);
-		
+
 		SDL_Surface* ScreenSurface;
 		SDL_Window* ScreenWindow;
 		SDL_Texture* ScreenTexture;
@@ -237,7 +248,7 @@ namespace irr
 
 			bool operator<(const SKeyMap& o) const
 			{
-				return SDLKey<o.SDLKey;
+				return SDLKey < o.SDLKey;
 			}
 		};
 

@@ -115,7 +115,7 @@ namespace video
 			EOFPS_DISABLE_TO_ENABLE // switch from programmable to fixed pipeline.
 		};
 
-		#ifdef _IRR_WINDOWS_API_
+		#if defined(_IRR_WINDOWS_API_) && !defined(_IRR_COMPILE_WITH_SDL_DEVICE_)
 		PIXELFORMATDESCRIPTOR PixelFormatInfo;
 		IVideoRenderTarget *CurrentVRT;
 

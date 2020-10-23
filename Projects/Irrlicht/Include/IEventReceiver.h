@@ -68,6 +68,8 @@ namespace irr
 		//! Skylicht framework event
 		EET_GAME_EVENT,
 
+		EET_GAME_RESIZE,
+
 		//! This enum is never used, it only forces the compiler to
 		//! compile these enumeration values to 32 bit.
 		EGUIET_FORCE_32_BIT = 0x7fffffff
