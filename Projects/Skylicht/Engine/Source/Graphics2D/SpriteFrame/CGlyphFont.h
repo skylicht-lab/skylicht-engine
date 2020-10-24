@@ -54,6 +54,8 @@ namespace Skylicht
 	public:
 		CGlyphFont();
 
+		CGlyphFont(const char *fontName, int sizePt);
+
 		virtual ~CGlyphFont();
 
 		inline void setFont(const char *fontName, int sizePt)

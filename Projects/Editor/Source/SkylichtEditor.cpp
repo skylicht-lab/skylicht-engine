@@ -36,11 +36,7 @@ void SkylichtEditor::onInitApp()
 
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Editor.zip"), false, false);
-
-	// init segoeuil.ttf inside BuiltIn.zip
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
-	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Editor.zip"), false, false);	
 
 	// load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();

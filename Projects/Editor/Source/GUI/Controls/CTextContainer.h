@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -21,40 +21,83 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "CSpriteFrame.h"
+#include "CBase.h"
+#include "CText.h"
 
 namespace Skylicht
 {
-	class CSpriteAtlas
+	namespace Editor
 	{
-	protected:
-		std::vector<SImage*> m_images;
-		std::vector<SFrame*> m_frames;
-		std::vector<SModuleRect*> m_modules;
+		namespace GUI
+		{
+			class CTextContainer : public CBase
+			{
+			public:
+				CTextContainer(CBase *parent);
 
-		std::map<std::string, SFrame*> m_names;
+				virtual ~CTextContainer();
 
-		int m_width;
-		int m_height;
-		ECOLOR_FORMAT m_fmt;
+				void setString(const std::wstring& string);
 
-	protected:
-		SImage* addEmptyAtlas();
+				inline const std::wstring& getString()
+				{
+					return m_string;
+				}
 
-	public:
-		CSpriteAtlas(ECOLOR_FORMAT format, int width, int height);
+				void setFontSize(EFontSize size);
 
-		virtual ~CSpriteAtlas();
+				inline EFontSize getFontSize()
+				{
+					return m_fontSize;
+				}
 
-		SFrame* addFrame(const char *name, const char *path);
+				inline u32 getLength()
+				{
+					return m_string.size();
+				}
 
-		SFrame* getFrame(const char *name);
+				void setWrap(bool b);
 
-		SImage* createAtlasRect(int w, int h, core::recti& outRegion);
+				inline bool isWrapMultiline()
+				{
+					return m_wrapMultiLine;
+				}
 
-		void updateTexture();
-	};
+				inline void setColor(const SGUIColor& color)
+				{
+					m_color = color;
+				}
+
+				inline const SGUIColor& getColor()
+				{
+					return m_color;
+				}
+
+				virtual void layout();
+
+			protected:
+
+				void refreshSize();
+
+				void removeAllLines();
+
+				void splitWords(std::wstring string, std::vector<std::wstring>& lines, float lineWidth);
+
+			protected:
+				std::wstring m_string;
+
+				bool m_wrapMultiLine;
+
+				bool m_textChange;
+
+				SGUIColor m_color;
+
+				EFontSize m_fontSize;
+
+				std::list<CText*> m_lines;
+			};
+		}
+	}
 }

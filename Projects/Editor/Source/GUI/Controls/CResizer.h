@@ -35,7 +35,7 @@ namespace Skylicht
 			class CResizer : public CDragger
 			{
 			protected:
-				EPosition m_resizeDir;				
+				EPosition m_resizeDir;
 
 			public:
 				CResizer(CBase* parent);
@@ -47,10 +47,6 @@ namespace Skylicht
 				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
 
 				virtual void onMouseClickLeft(float x, float y, bool bDown);
-
-			public:
-
-				Listener OnResize;
 			};
 		}
 	}

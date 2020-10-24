@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -21,40 +21,54 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "CSpriteFrame.h"
+#include "CBase.h"
 
 namespace Skylicht
 {
-	class CSpriteAtlas
+	namespace Editor
 	{
-	protected:
-		std::vector<SImage*> m_images;
-		std::vector<SFrame*> m_frames;
-		std::vector<SModuleRect*> m_modules;
+		namespace GUI
+		{
+			class CText : public CBase
+			{
+			protected:
+				std::wstring m_string;
+				EFontSize m_fontSize;
+				SGUIColor m_color;
 
-		std::map<std::string, SFrame*> m_names;
+			public:
+				CText(CBase *parent);
 
-		int m_width;
-		int m_height;
-		ECOLOR_FORMAT m_fmt;
+				virtual ~CText();
 
-	protected:
-		SImage* addEmptyAtlas();
+				virtual void render();
 
-	public:
-		CSpriteAtlas(ECOLOR_FORMAT format, int width, int height);
+				void setString(const std::wstring& string);
 
-		virtual ~CSpriteAtlas();
+				inline const std::wstring& getString()
+				{
+					return m_string;
+				}
 
-		SFrame* addFrame(const char *name, const char *path);
+				void setFontSize(EFontSize size);
 
-		SFrame* getFrame(const char *name);
+				inline EFontSize getFontSize()
+				{
+					return m_fontSize;
+				}
 
-		SImage* createAtlasRect(int w, int h, core::recti& outRegion);
+				inline void setColor(const SGUIColor& color)
+				{
+					m_color = color;
+				}
 
-		void updateTexture();
-	};
+				inline const SGUIColor& getColor()
+				{
+					return m_color;
+				}
+			};
+		}
+	}
 }

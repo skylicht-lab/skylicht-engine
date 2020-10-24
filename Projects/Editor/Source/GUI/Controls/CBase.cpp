@@ -283,6 +283,22 @@ namespace Skylicht
 				return m_parent->getCanvas();
 			}
 
+			SDimension CBase::getChildrenSize()
+			{
+				SDimension size;
+
+				for (auto&& child : Children)
+				{
+					if (child->isHidden())
+						continue;
+
+					size.Width = core::max_<float>(size.Width, child->right());
+					size.Height = core::max_<float>(size.Height, child->bottom());
+				}
+
+				return size;
+			}
+
 			bool CBase::setBounds(const SRect& bounds)
 			{
 				if (m_bounds == bounds)

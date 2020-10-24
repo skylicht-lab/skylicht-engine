@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CThemeColor.h"
+#pragma once
 
 namespace Skylicht
 {
@@ -31,9 +30,15 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			SColor CThemeColor::White = SColor(255, 255, 255, 255);
-			SColor CThemeColor::Black = SColor(255, 0, 0, 0);
-			SColor CThemeColor::WindowBackgroundColor = SColor(252, 35, 35, 35);
+			class CThemeConfig
+			{
+			public:
+				static std::string FontName;
+				static std::string FontPath;
+				static SColor White;
+				static SColor Black;
+				static SColor WindowBackgroundColor;
+			};
 		}
 	}
 }

@@ -150,6 +150,11 @@ namespace Skylicht
 		return (int)(pt * (8.0f / 6.0f));
 	}
 
+	int CGlyphFreetype::sizePxToPt(int pt)
+	{
+		return (int)(pt * (6.0f / 8.0f));
+	}
+
 	CAtlas *CGlyphFreetype::getCharImage(unsigned short code,
 		const char *name,
 		int fontSize,
@@ -183,6 +188,84 @@ namespace Skylicht
 
 			ge = new SGlyphEntity();
 			ge->m_atlas = m_atlas[atlasID];
+			ge->m_advance = (float)FT_CEIL(g->advance.x);
+			ge->m_uvX = *uvX;
+			ge->m_uvY = *uvY;
+			ge->m_uvW = *uvW;
+			ge->m_uvH = *uvH;
+
+			// Glyph metrics
+			// https://docs.microsoft.com/en-us/typography/opentype/spec/gpos
+			float height = (float)FT_CEIL(g->metrics.vertAdvance);
+			ge->m_offsetX = (float)FT_CEIL(g->metrics.horiBearingX);
+			ge->m_offsetY = -(float)FT_CEIL(g->metrics.horiBearingY) + height;
+
+			fe->m_ge[key] = ge;
+		}
+
+		if (ge != NULL)
+		{
+			*uvX = ge->m_uvX;
+			*uvY = ge->m_uvY;
+			*uvW = ge->m_uvW;
+			*uvH = ge->m_uvH;
+			*advance = ge->m_advance;
+			*offsetX = ge->m_offsetX;
+			*offsetY = ge->m_offsetY;
+			return ge->m_atlas;
+		}
+		else
+		{
+			*uvX = 0;
+			*uvY = 0;
+			*uvW = 0;
+			*uvH = 0;
+			*advance = 0;
+			*offsetX = 0;
+			*offsetY = 0;
+			return NULL;
+		}
+	}
+
+	CAtlas *CGlyphFreetype::getCharImage(
+		CSpriteAtlas *external,
+		unsigned short code,
+		const char *name,
+		int fontSize,
+		float *advance,
+		float *uvX,
+		float *uvY,
+		float *uvW,
+		float *uvH,
+		float *offsetX, float *offsetY)
+	{
+		SFaceEntity *fe = m_faceEntity[name];
+		if (fe == NULL)
+			return NULL;
+
+		u32 key = (fontSize << 16) | code;
+		SGlyphEntity *ge = fe->m_ge[key];
+
+		if (ge == NULL)
+		{
+			FT_Size_RequestRec req;
+			req.type = FT_SIZE_REQUEST_TYPE_REAL_DIM;
+			req.width = 0;
+			req.height = (uint32_t)fontSize * 64;
+			req.horiResolution = 0;
+			req.vertResolution = 0;
+			FT_Request_Size(fe->m_face, &req);
+
+			//FT_Set_Pixel_Sizes(fe->m_face, fontSize, fontSize);
+
+			if (FT_Load_Char(fe->m_face, code, FT_LOAD_RENDER))
+				return NULL;
+
+			const FT_GlyphSlot& g = fe->m_face->glyph;
+			CAtlas *atlas = putGlyphToTexture(external, g, uvX, uvY, uvW, uvH);
+
+			ge = new SGlyphEntity();
+			ge->m_atlas = atlas;
 			ge->m_advance = (float)FT_CEIL(g->advance.x);
 			ge->m_uvX = *uvX;
 			ge->m_uvY = *uvY;
@@ -288,6 +371,60 @@ namespace Skylicht
 		img->drop();
 
 		return atlasID;
+	}
+
+	CAtlas* CGlyphFreetype::putGlyphToTexture(CSpriteAtlas *external, const FT_GlyphSlot &glyph, float *uvX, float *uvY, float *uvW, float *uvH)
+	{
+		int glyphW = glyph->bitmap.width;
+		int glyphH = glyph->bitmap.rows;
+
+		int cellW = glyphW;
+		int cellH = glyphH;
+
+		CAtlas::calcCellSize(&cellW, &cellH);
+
+		core::recti region;
+
+		SImage *imageAtlas = external->createAtlasRect(cellW, cellH, region);
+		if (imageAtlas == NULL)
+			return NULL;
+
+		CAtlas *atlas = imageAtlas->Atlas;
+
+		// draw character at region
+		int x = region.UpperLeftCorner.X;
+		int y = region.UpperLeftCorner.Y;
+
+		x += (cellW - glyphW) / 2;
+		y += (cellH - glyphH) / 2;
+
+		*uvX = x / (float)m_width;
+		*uvY = y / (float)m_height;
+		*uvW = glyphW / (float)m_width;
+		*uvH = glyphH / (float)m_height;
+
+		unsigned char *alpha = glyph->bitmap.buffer;
+
+		// need convert to A8R8G8B8
+		IImage *img = getVideoDriver()->createImage(ECF_A8R8G8B8, core::dimension2du(glyphW, glyphH));
+		unsigned char *src = (unsigned char*)img->lock();
+		unsigned char *p = src;
+
+		for (int i = 0, size = glyphH * glyphW; i < size; i++)
+		{
+			*p++ = 255;
+			*p++ = 255;
+			*p++ = 255;
+			*p++ = *alpha++;
+		}
+
+		img->unlock();
+
+		atlas->bitBltImage(img, x, y);
+
+		img->drop();
+
+		return atlas;
 	}
 
 	CAtlas* CGlyphFreetype::addEmptyAtlas(ECOLOR_FORMAT color, int w, int h)
