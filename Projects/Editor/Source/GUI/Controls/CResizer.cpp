@@ -144,6 +144,7 @@ namespace Skylicht
 				}
 
 				m_target->setBounds(bounds);
+				m_target->onResized();
 			}
 
 			void CResizer::onMouseClickLeft(float x, float y, bool bDown)

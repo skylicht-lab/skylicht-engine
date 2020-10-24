@@ -40,14 +40,6 @@ namespace Skylicht
 
 			}
 
-			CDragger::CDragger(CBase* parent, float x, float y, float w, float h) :
-				CBase(parent),
-				m_target(parent),
-				m_pressed(false)
-			{
-				setBounds(x, y, w, h);
-			}
-
 			CDragger::~CDragger()
 			{
 
@@ -67,6 +59,7 @@ namespace Skylicht
 					p = m_target->getParent()->canvasPosToLocal(p);
 
 				m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y);
+				m_target->onMoved();
 			}
 
 			void CDragger::onMouseClickLeft(float x, float y, bool bDown)

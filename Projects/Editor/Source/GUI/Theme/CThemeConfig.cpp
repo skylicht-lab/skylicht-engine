@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,39 +22,20 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CSpriteFrame.h"
+#include "pch.h"
+#include "CThemeConfig.h"
 
 namespace Skylicht
 {
-	class CSpriteAtlas
+	namespace Editor
 	{
-	protected:
-		std::vector<SImage*> m_images;
-		std::vector<SFrame*> m_frames;
-		std::vector<SModuleRect*> m_modules;
-
-		std::map<std::string, SFrame*> m_names;
-
-		int m_width;
-		int m_height;
-		ECOLOR_FORMAT m_fmt;
-
-	protected:
-		SImage* addEmptyAtlas();
-
-	public:
-		CSpriteAtlas(ECOLOR_FORMAT format, int width, int height);
-
-		virtual ~CSpriteAtlas();
-
-		SFrame* addFrame(const char *name, const char *path);
-
-		SFrame* getFrame(const char *name);
-
-		SImage* createAtlasRect(int w, int h, core::recti& outRegion);
-
-		void updateTexture();
-	};
+		namespace GUI
+		{
+			std::string CThemeConfig::FontName = "Droid Sans";
+			std::string CThemeConfig::FontPath = "Editor/Font/droidsans.ttf";
+			SColor CThemeConfig::White = SColor(255, 255, 255, 255);
+			SColor CThemeConfig::Black = SColor(255, 0, 0, 0);
+			SColor CThemeConfig::WindowBackgroundColor = SColor(252, 35, 35, 35);
+		}
+	}
 }

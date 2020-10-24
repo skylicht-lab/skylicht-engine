@@ -55,6 +55,35 @@ namespace Skylicht
 		m_names.clear();
 	}
 
+	SImage* CSpriteAtlas::createAtlasRect(int w, int h, core::recti& outRegion)
+	{
+		SImage *image = NULL;
+		core::recti r;
+
+		for (SImage *&a : m_images)
+		{
+			r = a->Atlas->createRect(w, h);
+			if (r.getWidth() != 0 && r.getHeight() != 0)
+			{
+				image = a;
+				break;
+			}
+		}
+
+		if (image == NULL)
+		{
+			image = addEmptyAtlas();
+			r = image->Atlas->createRect(w, h);
+			if (r.getWidth() == 0 || r.getHeight() == 0)
+			{
+				return NULL;
+			}
+		}
+
+		outRegion = r;
+		return image;
+	}
+
 	SFrame* CSpriteAtlas::addFrame(const char *name, const char *path)
 	{
 		IImage *img = getVideoDriver()->createImageFromFile(path);

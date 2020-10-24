@@ -40,65 +40,52 @@ namespace Skylicht
 				m_resizers[0]->dock(EPosition::Bottom);
 				m_resizers[0]->setResizeDir(EPosition::Bottom);
 				m_resizers[0]->setTarget(this);
-				m_resizers[0]->OnResize = std::bind(&CResizableControl::onResizedInternal, this, std::placeholders::_1);
 
 				// bottom left
 				m_resizers[1] = new CResizer(m_resizers[0]);
 				m_resizers[1]->dock(EPosition::Left);
 				m_resizers[1]->setResizeDir(EPosition::Bottom | EPosition::Left);
 				m_resizers[1]->setTarget(this);
-				m_resizers[1]->OnResize = std::bind(&CResizableControl::onResizedInternal, this, std::placeholders::_1);
 
 				// bottom right
 				m_resizers[2] = new CResizer(m_resizers[0]);
 				m_resizers[2]->dock(EPosition::Right);
 				m_resizers[2]->setResizeDir(EPosition::Bottom | EPosition::Right);
 				m_resizers[2]->setTarget(this);
-				m_resizers[2]->OnResize = std::bind(&CResizableControl::onResizedInternal, this, std::placeholders::_1);
 
 				// top
 				m_resizers[3] = new CResizer(this);
 				m_resizers[3]->dock(EPosition::Top);
 				m_resizers[3]->setResizeDir(EPosition::Top);
 				m_resizers[3]->setTarget(this);
-				m_resizers[3]->OnResize = std::bind(&CResizableControl::onResizedInternal, this, std::placeholders::_1);
 
 				// top left
 				m_resizers[4] = new CResizer(m_resizers[3]);
 				m_resizers[4]->dock(EPosition::Left);
 				m_resizers[4]->setResizeDir(EPosition::Top | EPosition::Left);
 				m_resizers[4]->setTarget(this);
-				m_resizers[4]->OnResize = std::bind(&CResizableControl::onResizedInternal, this, std::placeholders::_1);
 
 				// top right
 				m_resizers[5] = new CResizer(m_resizers[3]);
 				m_resizers[5]->dock(EPosition::Right);
 				m_resizers[5]->setResizeDir(EPosition::Top | EPosition::Right);
 				m_resizers[5]->setTarget(this);
-				m_resizers[5]->OnResize = std::bind(&CResizableControl::onResizedInternal, this, std::placeholders::_1);
 
 				// left
 				m_resizers[6] = new CResizer(this);
 				m_resizers[6]->dock(EPosition::Left);
 				m_resizers[6]->setResizeDir(EPosition::Left);
 				m_resizers[6]->setTarget(this);
-				m_resizers[6]->OnResize = std::bind(&CResizableControl::onResizedInternal, this, std::placeholders::_1);
 
 				// right
 				m_resizers[7] = new CResizer(this);
 				m_resizers[7]->dock(EPosition::Right);
 				m_resizers[7]->setResizeDir(EPosition::Right);
 				m_resizers[7]->setTarget(this);
-				m_resizers[7]->OnResize = std::bind(&CResizableControl::onResizedInternal, this, std::placeholders::_1);
 			}
 
 			CResizableControl::~CResizableControl()
 			{
-			}
-
-			void CResizableControl::onResizedInternal(const CBase *sender)
-			{
-
 			}
 		}
 	}

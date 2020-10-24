@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSkylichtTheme.h"
+#include "GUI/CGUIContext.h"
 
 namespace Skylicht
 {
@@ -33,17 +34,19 @@ namespace Skylicht
 		{
 			CSkylichtTheme::CSkylichtTheme()
 			{
-				m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 512, 512);
+				m_renderer = dynamic_cast<CSkylichtRenderer*>(CRenderer::getRenderer());
+				m_graphics = CGraphics2D::getInstance();
+				m_materialID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
+
+				m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 1024, 1024);
 
 				m_empty = m_sprite->addFrame("empty", "Editor/GUI/empty.png");
 				m_window = m_sprite->addFrame("draw_window", "Editor/GUI/draw_window.png");
 				m_windowShadow = m_sprite->addFrame("draw_window_shadow", "Editor/GUI/draw_window_shadow.png");
 
-				m_sprite->updateTexture();
+				m_renderer->initFont(m_sprite);
 
-				m_renderer = dynamic_cast<CSkylichtRenderer*>(CRenderer::getRenderer());
-				m_graphics = CGraphics2D::getInstance();
-				m_materialID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
+				m_sprite->updateTexture();
 			}
 
 			CSkylichtTheme::~CSkylichtTheme()
@@ -73,7 +76,7 @@ namespace Skylicht
 
 				m_graphics->addModuleBatch(
 					module,
-					CThemeColor::WindowBackgroundColor,
+					CThemeConfig::WindowBackgroundColor,
 					m_renderer->getWorldTransform(),
 					r,
 					left, right, top, bottom,
@@ -97,7 +100,7 @@ namespace Skylicht
 
 				m_graphics->addModuleBatch(
 					module,
-					CThemeColor::White,
+					CThemeConfig::White,
 					m_renderer->getWorldTransform(),
 					r,
 					left, right, top, bottom,

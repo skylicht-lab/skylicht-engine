@@ -41,8 +41,6 @@ namespace Skylicht
 			public:
 				CDragger(CBase* parent);
 
-				CDragger(CBase* parent, float x, float y, float w, float h);
-
 				inline void setTarget(CBase *base)
 				{
 					m_target = base;

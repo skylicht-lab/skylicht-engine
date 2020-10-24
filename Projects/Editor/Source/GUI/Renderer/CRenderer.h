@@ -59,6 +59,10 @@ namespace Skylicht
 
 				virtual void endClip() {}
 
+				virtual void renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string) {}
+
+				virtual SDimension measureText(EFontSize fontSize, const std::wstring& string) = 0;
+
 				void setClipRegion(const SRect& rect)
 				{
 					m_rectClipRegion = rect;

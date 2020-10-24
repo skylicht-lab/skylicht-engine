@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CRenderer.h"
 #include "Graphics2D/CGraphics2D.h"
+#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
+#include "Graphics2D/SpriteFrame/CGlyphFont.h"
 
 namespace Skylicht
 {
@@ -43,6 +45,11 @@ namespace Skylicht
 				float m_width;
 				float m_height;
 
+				int m_materialID;
+
+				CGlyphFont *m_fontSmall;
+				CGlyphFont *m_fontNormal;
+
 			public:
 				CSkylichtRenderer(float w, float h);
 
@@ -54,7 +61,13 @@ namespace Skylicht
 
 				virtual void end();
 
-				core::matrix4& getWorldTransform()
+				virtual void renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string);
+
+				virtual SDimension measureText(EFontSize fontSize, const std::wstring& string);
+
+				void initFont(CSpriteAtlas *atlas);
+
+				const core::matrix4& getWorldTransform()
 				{
 					m_world.setTranslation(core::vector3df(m_renderOffset.X, m_renderOffset.Y, 0.0f));
 					return m_world;

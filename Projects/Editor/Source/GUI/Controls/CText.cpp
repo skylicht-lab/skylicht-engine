@@ -22,7 +22,9 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CText.h"
+#include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
 {
@@ -30,13 +32,31 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeColor
+			CText::CText(CBase *parent) :
+				CBase(parent)
 			{
-			public:
-				static SColor White;
-				static SColor Black;
-				static SColor WindowBackgroundColor;
-			};
+				setMouseInputEnabled(false);
+			}
+
+			CText::~CText()
+			{
+
+			}
+
+			void CText::setString(const std::wstring& string)
+			{
+				m_string = string;
+			}
+
+			void CText::setFontSize(EFontSize size)
+			{
+				m_fontSize = size;
+			}
+
+			void CText::render()
+			{
+				CRenderer::getRenderer()->renderText(getRenderBounds(), m_fontSize, m_color, m_string);
+			}
 		}
 	}
 }
