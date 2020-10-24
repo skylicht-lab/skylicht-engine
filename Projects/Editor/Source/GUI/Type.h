@@ -369,8 +369,8 @@ namespace Skylicht
 
 			enum EFontSize
 			{
-				SizeNormal = 11,
-				SizeSmall = 10,
+				SizeNormal = 0,
+				SizeLarge,
 			};
 		}
 	}

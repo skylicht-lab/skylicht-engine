@@ -45,7 +45,7 @@ namespace Skylicht
 		std::list<SFrame> m_frames;
 
 		std::string m_fontName;
-		int m_fontSizePt;
+		float m_fontSizePt;
 
 	protected:
 
@@ -54,11 +54,11 @@ namespace Skylicht
 	public:
 		CGlyphFont();
 
-		CGlyphFont(const char *fontName, int sizePt);
+		CGlyphFont(const char *fontName, float sizePt);
 
 		virtual ~CGlyphFont();
 
-		inline void setFont(const char *fontName, int sizePt)
+		inline void setFont(const char *fontName, float sizePt)
 		{
 			m_fontName = fontName;
 			m_fontSizePt = sizePt;
