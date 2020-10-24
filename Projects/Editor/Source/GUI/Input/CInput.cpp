@@ -188,7 +188,19 @@ namespace Skylicht
 
 			bool CInput::inputMouseWheel(int wheel)
 			{
-				return true;
+				if (!CGUIContext::HoveredControl)
+					return true;
+
+				if (!CGUIContext::HoveredControl->isVisible())
+					return true;
+
+				CGUIContext::HoveredControl->updateCursor();
+
+				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
+					return true;
+
+				CGUIContext::HoveredControl->onMouseWheeled(wheel);
+				return false;
 			}
 
 			bool CInput::inputModifierKey(EKey key, bool bDown)

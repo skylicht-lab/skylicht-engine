@@ -36,7 +36,7 @@ namespace Skylicht
 			CSkylichtRenderer::CSkylichtRenderer(float w, float h) :
 				m_width(w),
 				m_height(h),
-				m_fontSmall(NULL),
+				m_fontLarge(NULL),
 				m_fontNormal(NULL)
 			{
 				m_projection.buildProjectionMatrixOrthoLH((f32)w, -(f32)h, -1.0f, 1.0f);
@@ -47,7 +47,7 @@ namespace Skylicht
 
 			CSkylichtRenderer::~CSkylichtRenderer()
 			{
-				delete m_fontSmall;
+				delete m_fontLarge;
 				delete m_fontNormal;
 			}
 
@@ -73,8 +73,8 @@ namespace Skylicht
 			void CSkylichtRenderer::renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string)
 			{
 				CGlyphFont *font = m_fontNormal;
-				if (fontSize == EFontSize::SizeSmall)
-					font = m_fontSmall;
+				if (fontSize == EFontSize::SizeLarge)
+					font = m_fontLarge;
 
 				CGraphics2D *g = CGraphics2D::getInstance();
 
@@ -116,8 +116,8 @@ namespace Skylicht
 			SDimension CSkylichtRenderer::measureText(EFontSize fontSize, const std::wstring& string)
 			{
 				CGlyphFont *font = m_fontNormal;
-				if (fontSize == EFontSize::SizeSmall)
-					font = m_fontSmall;
+				if (fontSize == EFontSize::SizeLarge)
+					font = m_fontLarge;
 
 				float stringWidth = 0.0f;
 				float charSpacePadding = 0.0f;
@@ -177,13 +177,16 @@ namespace Skylicht
 				u32 unicodeSize = filesize / 2;
 				float advance = 0.0f, x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f, offsetX = 0, offsetY = 0;
 
+				float fontSmall = CThemeConfig::getFontSizePt(EFontSize::SizeLarge);
+				float fontNormal = CThemeConfig::getFontSizePt(EFontSize::SizeNormal);
+
 				// Cache character to sprite
 				for (u32 i = 0; i < unicodeSize; i++)
 				{
 					glyphFreetype->getCharImage(atlas,
 						unicode[i],
 						CThemeConfig::FontName.c_str(),
-						CGlyphFreetype::sizePtToPx(EFontSize::SizeSmall),
+						CGlyphFreetype::sizePtToPx(fontSmall),
 						&advance,
 						&x, &y, &w, &h,
 						&offsetX, &offsetY);
@@ -191,15 +194,15 @@ namespace Skylicht
 					glyphFreetype->getCharImage(atlas,
 						unicode[i],
 						CThemeConfig::FontName.c_str(),
-						CGlyphFreetype::sizePtToPx(EFontSize::SizeNormal),
+						CGlyphFreetype::sizePtToPx(fontNormal),
 						&advance,
 						&x, &y, &w, &h,
 						&offsetX, &offsetY);
 				}
 				delete data;
 
-				m_fontSmall = new CGlyphFont(CThemeConfig::FontName.c_str(), EFontSize::SizeSmall);
-				m_fontNormal = new CGlyphFont(CThemeConfig::FontName.c_str(), EFontSize::SizeNormal);
+				m_fontLarge = new CGlyphFont(CThemeConfig::FontName.c_str(), fontSmall);
+				m_fontNormal = new CGlyphFont(CThemeConfig::FontName.c_str(), fontNormal);
 			}
 		}
 	}

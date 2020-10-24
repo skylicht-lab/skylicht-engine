@@ -95,9 +95,9 @@ namespace Skylicht
 
 		void clearAtlas();
 
-		static int sizePtToPx(int pt);
+		static int sizePtToPx(float pt);
 
-		static int sizePxToPt(int pt);
+		static float sizePxToPt(int px);
 
 		CAtlas *getCharImage(unsigned short code,
 			const char *name,

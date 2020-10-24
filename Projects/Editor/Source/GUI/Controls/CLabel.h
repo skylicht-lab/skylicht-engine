@@ -21,10 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "GUI/Type.h"
+#include "CBase.h"
+#include "CTextContainer.h"
 
 namespace Skylicht
 {
@@ -32,21 +32,39 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeConfig
+			class CLabel : public CBase
 			{
+			protected:
+				CTextContainer *m_text;
+
 			public:
-				static std::string FontName;
-				static std::string FontPath;
+				CLabel(CBase *parent);
+				virtual ~CLabel();
 
-				static SGUIColor White;
-				static SGUIColor Black;
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowTextColor;
+				virtual void onBoundsChanged(const SRect& oldBounds);
 
-				static float WindowPaddingLeft;
-				static float WindowPaddingTop;
+				void setString(const std::wstring& text);
 
-				static float getFontSizePt(EFontSize size);
+				void setColor(const SGUIColor& color);
+
+				void setFontSize(EFontSize fontsize);
+
+				inline const std::wstring& getString()
+				{
+					return m_text->getString();
+				}
+
+				inline const SGUIColor& getColor()
+				{
+					return m_text->getColor();
+				}
+
+				inline EFontSize getFontSize()
+				{
+					return m_text->getFontSize();
+				}
+
+				Listener OnTextChanged;
 			};
 		}
 	}

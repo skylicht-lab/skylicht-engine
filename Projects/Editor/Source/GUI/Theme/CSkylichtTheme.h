@@ -63,6 +63,8 @@ namespace Skylicht
 
 				core::rectf getRect(const SRect& rect);
 
+				video::SColor getColor(const SGUIColor& color);
+
 			};
 		}
 	}

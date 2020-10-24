@@ -22,9 +22,8 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "GUI/Type.h"
+#include "pch.h"
+#include "CLabel.h"
 
 namespace Skylicht
 {
@@ -32,22 +31,45 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeConfig
+			CLabel::CLabel(CBase *parent) :
+				CBase(parent)
 			{
-			public:
-				static std::string FontName;
-				static std::string FontPath;
+				setMouseInputEnabled(false);
+				m_text = new CTextContainer(this);
+				m_text->dock(EPosition::Fill);
+			}
 
-				static SGUIColor White;
-				static SGUIColor Black;
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowTextColor;
+			CLabel::~CLabel()
+			{
 
-				static float WindowPaddingLeft;
-				static float WindowPaddingTop;
+			}
 
-				static float getFontSizePt(EFontSize size);
-			};
+			void CLabel::onBoundsChanged(const SRect& oldBounds)
+			{
+				CBase::onBoundsChanged(oldBounds);
+
+				m_text->refreshSize();
+				invalidate();
+			}
+
+			void CLabel::setString(const std::wstring& text)
+			{
+				m_text->setString(text);
+				reDraw();
+
+				if (OnTextChanged != nullptr)
+					OnTextChanged(this);
+			}
+
+			void CLabel::setColor(const SGUIColor& color)
+			{
+				m_text->setColor(color);
+			}
+
+			void CLabel::setFontSize(EFontSize fontsize)
+			{
+				m_text->setFontSize(fontsize);
+			}
 		}
 	}
 }

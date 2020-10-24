@@ -47,7 +47,7 @@ namespace Skylicht
 
 				int m_materialID;
 
-				CGlyphFont *m_fontSmall;
+				CGlyphFont *m_fontLarge;
 				CGlyphFont *m_fontNormal;
 
 			public:

@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GUI/Controls/CBase.h"
+#include "GUI/Controls/CLabel.h"
 #include "GUI/Controls/CResizableControl.h"
 
 namespace Skylicht
@@ -34,6 +35,10 @@ namespace Skylicht
 		{
 			class CWindow : public CResizableControl
 			{
+			protected:
+				CDragger *m_titleBar;
+				CLabel *m_title;
+
 			public:
 				CWindow(CCanvas* parent, float x, float y, float w, float h);
 
@@ -42,6 +47,11 @@ namespace Skylicht
 				virtual void render();
 
 				virtual void renderUnder();
+
+				void setCaption(const std::wstring& text)
+				{
+					m_title->setString(text);
+				}
 			};
 		}
 	}

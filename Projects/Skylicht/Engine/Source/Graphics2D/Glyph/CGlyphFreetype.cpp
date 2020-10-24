@@ -145,14 +145,14 @@ namespace Skylicht
 		addEmptyAtlas(ECF_A8R8G8B8, m_width, m_height);
 	}
 
-	int CGlyphFreetype::sizePtToPx(int pt)
+	int CGlyphFreetype::sizePtToPx(float pt)
 	{
 		return (int)(pt * (8.0f / 6.0f));
 	}
 
-	int CGlyphFreetype::sizePxToPt(int pt)
+	float CGlyphFreetype::sizePxToPt(int px)
 	{
-		return (int)(pt * (6.0f / 8.0f));
+		return ((float)px * (6.0f / 8.0f));
 	}
 
 	CAtlas *CGlyphFreetype::getCharImage(unsigned short code,
