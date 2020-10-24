@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	class CSpriteAtlas
-	{		
+	{
 	protected:
 		std::vector<SImage*> m_images;
 		std::vector<SFrame*> m_frames;
@@ -52,6 +52,8 @@ namespace Skylicht
 		SFrame* addFrame(const char *name, const char *path);
 
 		SFrame* getFrame(const char *name);
+
+		SImage* createAtlasRect(int w, int h, core::recti& outRegion);
 
 		void updateTexture();
 	};

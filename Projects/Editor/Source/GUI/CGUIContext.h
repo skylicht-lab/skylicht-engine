@@ -39,7 +39,6 @@ namespace Skylicht
 				static CBase* HoveredControl;
 				static CBase* MouseFocus;
 				static CBase* KeyboardFocus;
-
 			public:
 
 				static void initGUI(float width, float height);

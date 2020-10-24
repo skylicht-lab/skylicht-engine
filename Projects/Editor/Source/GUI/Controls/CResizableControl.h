@@ -42,8 +42,6 @@ namespace Skylicht
 				CResizableControl(CCanvas* parent, float x, float y, float w, float h);
 
 				virtual ~CResizableControl();
-
-				void onResizedInternal(const CBase *sender);
 			};
 		}
 	}

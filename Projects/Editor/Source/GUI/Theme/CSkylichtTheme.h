@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CTheme.h"
-#include "CThemeColor.h"
+#include "CThemeConfig.h"
 #include "GUI/Renderer/CSkylichtRenderer.h"
 #include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
 #include "Graphics2D/CGraphics2D.h"

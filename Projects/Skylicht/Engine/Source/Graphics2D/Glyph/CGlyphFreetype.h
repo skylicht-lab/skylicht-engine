@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "Graphics2D/Atlas/CAtlas.h"
+#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
 
 namespace Skylicht
 {
@@ -96,7 +97,21 @@ namespace Skylicht
 
 		static int sizePtToPx(int pt);
 
+		static int sizePxToPt(int pt);
+
 		CAtlas *getCharImage(unsigned short code,
+			const char *name,
+			int fontSize,
+			float *advance,
+			float *uvX,
+			float *uvY,
+			float *uvW,
+			float *uvH,
+			float *offsetX, float *offsetY);
+
+		CAtlas *getCharImage(
+			CSpriteAtlas *external,
+			unsigned short code,
 			const char *name,
 			int fontSize,
 			float *advance,
@@ -111,6 +126,8 @@ namespace Skylicht
 		CAtlas* addEmptyAtlas(ECOLOR_FORMAT color, int w, int h);
 
 		int putGlyphToTexture(const FT_GlyphSlot &glyph, float *uvx, float *uvy, float *uvW, float *uvH);
+
+		CAtlas* putGlyphToTexture(CSpriteAtlas *external, const FT_GlyphSlot &glyph, float *uvx, float *uvy, float *uvW, float *uvH);
 
 	};
 }

@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Theme/CTheme.h"
 #include "GUI/Renderer/CRenderer.h"
 
+#define BIND_LISTENER(A, B) std::bind(A, B, std::placeholders::_1)
+
 namespace Skylicht
 {
 	namespace Editor
@@ -145,6 +147,16 @@ namespace Skylicht
 				inline float width() const { return m_bounds.Width; }
 				inline float height() const { return m_bounds.Height; }
 
+				virtual float bottom() const
+				{
+					return m_bounds.Y + m_bounds.Height + m_margin.Bottom;
+				}
+
+				virtual float right() const
+				{
+					return m_bounds.X + m_bounds.Width + m_margin.Right;
+				}
+
 				inline const SMargin& getMargin() const { return m_margin; }
 				inline const SPadding& getPadding() const { return m_padding; }
 
@@ -157,7 +169,9 @@ namespace Skylicht
 
 				inline bool setSize(float w, float h) { return setBounds(X(), Y(), w, h); }
 				inline bool setSize(const SDimension& p) { setSize(p.Width, p.Height); }
-				inline SDimension GetSize() const { return SDimension(width(), height()); }
+				inline SDimension getSize() const { return SDimension(width(), height()); }
+
+				SDimension getChildrenSize();
 
 				inline bool setBounds(float x, float y, float w, float h) { return setBounds(SRect(x, y, w, h)); }
 				virtual bool setBounds(const SRect& bounds);
@@ -250,6 +264,9 @@ namespace Skylicht
 				virtual bool onKeyDown(bool bDown) { return false; }
 				virtual bool onKeyEscape(bool bDown) { return false; }
 
+				virtual void onMoved() {}
+				virtual void onResized() {}
+
 				virtual bool isHovered() const;
 				virtual bool shouldDrawHover() const;
 
@@ -271,7 +288,7 @@ namespace Skylicht
 
 				virtual SPoint getMinimumSize()
 				{
-					return SPoint(1.0f, 1.0f);
+					return SPoint(35.0f, 35.0f);
 				}
 
 			protected:

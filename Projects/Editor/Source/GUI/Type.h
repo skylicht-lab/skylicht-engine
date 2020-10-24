@@ -172,6 +172,27 @@ namespace Skylicht
 				}
 			};
 
+			struct SGUIColor
+			{
+				unsigned char A;
+				unsigned char R;
+				unsigned char G;
+				unsigned char B;
+
+				SGUIColor()
+				{
+					A = R = G = B = 255;
+				}
+
+				SGUIColor(unsigned char a, unsigned char r, unsigned char g, unsigned char b)
+				{
+					A = a;
+					R = r;
+					G = g;
+					B = b;
+				}
+			};
+
 			enum EKey
 			{
 				KEY_LBUTTON = 0x01,  // Left mouse button
@@ -344,6 +365,12 @@ namespace Skylicht
 				Wait = 8,
 				Finger = 9,
 				CursorCount = 10
+			};
+
+			enum EFontSize
+			{
+				SizeNormal = 11,
+				SizeSmall = 10,
 			};
 		}
 	}
