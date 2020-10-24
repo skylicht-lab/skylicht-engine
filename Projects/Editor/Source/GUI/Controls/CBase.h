@@ -94,8 +94,8 @@ namespace Skylicht
 
 				virtual void releaseChildren();
 
-				virtual void onBoundsChanged(const SRect oldBounds);
-				virtual void onChildBoundsChanged(const SRect oldChildBounds, CBase* child);
+				virtual void onBoundsChanged(const SRect& oldBounds);
+				virtual void onChildBoundsChanged(const SRect& oldChildBounds, CBase* child);
 
 			public:
 				List Children;

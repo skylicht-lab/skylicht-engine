@@ -76,7 +76,7 @@ namespace Skylicht
 
 				m_graphics->addModuleBatch(
 					module,
-					CThemeConfig::WindowBackgroundColor,
+					getColor(CThemeConfig::WindowBackgroundColor),
 					m_renderer->getWorldTransform(),
 					r,
 					left, right, top, bottom,
@@ -100,11 +100,16 @@ namespace Skylicht
 
 				m_graphics->addModuleBatch(
 					module,
-					CThemeConfig::White,
+					getColor(CThemeConfig::White),
 					m_renderer->getWorldTransform(),
 					r,
 					left, right, top, bottom,
 					m_materialID);
+			}
+
+			video::SColor CSkylichtTheme::getColor(const SGUIColor& color)
+			{
+				return SColor(color.A, color.R, color.G, color.B);
 			}
 		}
 	}

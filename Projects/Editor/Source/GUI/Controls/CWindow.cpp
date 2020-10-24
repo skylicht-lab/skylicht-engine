@@ -25,7 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CDragger.h"
 #include "CWindow.h"
-#include "CTextContainer.h"
+#include "CLabel.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -36,16 +37,17 @@ namespace Skylicht
 			CWindow::CWindow(CCanvas* parent, float x, float y, float w, float h) :
 				CResizableControl(parent, x, y, w, h)
 			{
-				CDragger *titleBar = new CDragger(this);
-				titleBar->setHeight(24);
-				titleBar->setPadding(SPadding(0, 0, 0, 0));
-				titleBar->setMargin(SMargin(0, 0, 0, 4));
-				titleBar->dock(EPosition::Top);
+				m_titleBar = new CDragger(this);
+				m_titleBar->setHeight(24);
+				m_titleBar->setPadding(SPadding(0, 0, 0, 0));
+				m_titleBar->setMargin(SMargin(0, 0, 0, 4));
+				m_titleBar->dock(EPosition::Top);
 
-				CTextContainer *text = new CTextContainer(titleBar);
-				text->setString(L"Window title");
-				text->dock(EPosition::Fill);
-				text->setPadding(SPadding(8.0f, 0.0f, 0.0f, 0.0f));
+				m_title = new CLabel(m_titleBar);
+				m_title->setString(L"Window title");
+				m_title->dock(EPosition::Fill);
+				m_title->setPadding(SPadding(CThemeConfig::WindowPaddingLeft, CThemeConfig::WindowPaddingTop, 0.0f, 0.0f));
+				m_title->setColor(CThemeConfig::WindowTextColor);
 			}
 
 			CWindow::~CWindow()

@@ -77,9 +77,9 @@ namespace Skylicht
 
 				virtual void layout();
 
-			protected:
-
 				void refreshSize();
+
+			protected:
 
 				void removeAllLines();
 

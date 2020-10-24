@@ -33,9 +33,28 @@ namespace Skylicht
 		{
 			std::string CThemeConfig::FontName = "Droid Sans";
 			std::string CThemeConfig::FontPath = "Editor/Font/droidsans.ttf";
-			SColor CThemeConfig::White = SColor(255, 255, 255, 255);
-			SColor CThemeConfig::Black = SColor(255, 0, 0, 0);
-			SColor CThemeConfig::WindowBackgroundColor = SColor(252, 35, 35, 35);
+
+			SGUIColor CThemeConfig::White = SGUIColor(255, 255, 255, 255);
+			SGUIColor CThemeConfig::Black = SGUIColor(255, 0, 0, 0);
+			SGUIColor CThemeConfig::WindowBackgroundColor = SGUIColor(252, 35, 35, 35);
+			SGUIColor CThemeConfig::WindowTextColor = SGUIColor(255, 165, 165, 165);
+
+			float CThemeConfig::WindowPaddingLeft = 10.0f;
+			float CThemeConfig::WindowPaddingTop = 4.0f;
+
+			float CThemeConfig::getFontSizePt(EFontSize size)
+			{
+				switch (size)
+				{
+				case SizeNormal:
+					return 10.5f;
+					break;
+				case SizeLarge:
+					return 12.5f;
+				}
+
+				return 10.0f;
+			}
 		}
 	}
 }

@@ -89,7 +89,7 @@ namespace Skylicht
 			{
 				removeAllLines();
 
-				// this is not yet layout, so calc from parent
+				// this is not yet layout, so calc from parent (Label, Edit,...)
 				float w = m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right;
 				float x = 0.0f;
 				float y = 0.0f;
@@ -117,7 +117,7 @@ namespace Skylicht
 						strLine += *it;
 						SDimension p = CRenderer::getRenderer()->measureText(m_fontSize, strLine);
 
-						if (p.Width > width() && p.Width > w)
+						if (p.Width > w)
 						{
 							finishLine = true;
 							wrapped = true;
@@ -156,11 +156,14 @@ namespace Skylicht
 				}
 				else
 				{
+					// compute size of text
+					SDimension p = CRenderer::getRenderer()->measureText(m_fontSize, m_string);
+
 					// single line
 					CText* t = new CText(this);
 					t->setFontSize(m_fontSize);
 					t->setColor(m_color);
-					t->setBounds(x, y, width(), height());
+					t->setBounds(x, y, p.Width, p.Height);
 					t->setString(m_string);
 					m_lines.push_back(t);
 				}

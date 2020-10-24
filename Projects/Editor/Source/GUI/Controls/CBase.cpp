@@ -310,7 +310,7 @@ namespace Skylicht
 				return true;
 			}
 
-			void CBase::onBoundsChanged(const SRect oldBounds)
+			void CBase::onBoundsChanged(const SRect& oldBounds)
 			{
 				if (m_parent)
 					m_parent->onChildBoundsChanged(oldBounds, this);
@@ -320,7 +320,7 @@ namespace Skylicht
 				updateRenderBounds();
 			}
 
-			void CBase::onChildBoundsChanged(const SRect oldChildBounds, CBase* child)
+			void CBase::onChildBoundsChanged(const SRect& oldChildBounds, CBase* child)
 			{
 
 			}

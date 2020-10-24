@@ -35,12 +35,12 @@ namespace Skylicht
 		m_charPadding(0.0f),
 		m_spacePadding(0.0f),
 		m_fontName("Segoe UI Light"), // default font
-		m_fontSizePt(24)
+		m_fontSizePt(24.0f)
 	{
 
 	}
 
-	CGlyphFont::CGlyphFont(const char *fontName, int sizePt) :
+	CGlyphFont::CGlyphFont(const char *fontName, float sizePt) :
 		m_charPadding(0.0f),
 		m_spacePadding(0.0f),
 		m_fontName(fontName), // default font
