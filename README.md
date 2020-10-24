@@ -108,7 +108,7 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 
 ### Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
-- [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6) (Planned)
+- [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6) (In progress)
 
 ### Samples\HelloWorld
 Engine Components are used:
