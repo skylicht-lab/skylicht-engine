@@ -57,13 +57,15 @@ namespace Skylicht
 
 			void CWindow::render()
 			{
-				bool isFocussed = isOnTop();
-				CTheme::getTheme()->drawWindow(getRenderBounds(), isFocussed);
+
 			}
 
 			void CWindow::renderUnder()
 			{
 				CTheme::getTheme()->drawWindowShadow(getRenderBounds());
+
+				bool isFocussed = isOnTop();
+				CTheme::getTheme()->drawWindow(getRenderBounds(), isFocussed);
 			}
 		}
 	}

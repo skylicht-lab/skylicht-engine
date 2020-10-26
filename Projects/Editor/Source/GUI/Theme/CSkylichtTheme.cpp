@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSkylichtTheme.h"
 #include "GUI/CGUIContext.h"
+#include "Utils/CPath.h"
 
 namespace Skylicht
 {
@@ -38,14 +39,27 @@ namespace Skylicht
 				m_graphics = CGraphics2D::getInstance();
 				m_materialID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 
+				// atlas texture 1024x1024
 				m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 1024, 1024);
 
+				// add empty
 				m_empty = m_sprite->addFrame("empty", "Editor/GUI/empty.png");
+
+				// add system icon
+				initSystemIcon();
+
+				// add window background
 				m_window = m_sprite->addFrame("draw_window", "Editor/GUI/draw_window.png");
 				m_windowShadow = m_sprite->addFrame("draw_window_shadow", "Editor/GUI/draw_window_shadow.png");
 
+				// add button background
+				m_button = m_sprite->addFrame("draw_button", "Editor/GUI/draw_button.png");
+				m_buttonShadow = m_sprite->addFrame("draw_button_shadow", "Editor/GUI/draw_button_shadow.png");
+
+				// add font text
 				m_renderer->initFont(m_sprite);
 
+				// compile texture
 				m_sprite->updateTexture();
 			}
 
@@ -54,9 +68,101 @@ namespace Skylicht
 				delete m_sprite;
 			}
 
-			core::rectf CSkylichtTheme::getRect(const SRect& rect)
+			void CSkylichtTheme::initSystemIcon()
 			{
-				return core::rectf(rect.X, rect.Y, rect.X + rect.Width, rect.Y + rect.Height);
+				for (int i = 0; i < ESystemIcon::NumSystemIcon; i++)
+				{
+					m_systemIcon16[i] = NULL;
+					m_systemIcon32[i] = NULL;
+				}
+
+				addSystemIcon(ESystemIcon::Close, "close.png");
+				addSystemIcon(ESystemIcon::Quit, "quit.png");
+				addSystemIcon(ESystemIcon::Plus, "plus.png");
+				addSystemIcon(ESystemIcon::Minus, "minus.png");
+				addSystemIcon(ESystemIcon::Maximize, "maximize.png");
+				addSystemIcon(ESystemIcon::RestoreDown, "restore_down.png");
+				addSystemIcon(ESystemIcon::TriangleLeft, "triangle_left.png");
+				addSystemIcon(ESystemIcon::TriangleRight, "triangle_right.png");
+				addSystemIcon(ESystemIcon::TriangleUp, "triangle_up.png");
+				addSystemIcon(ESystemIcon::TriangleDown, "triangle_down.png");
+				addSystemIcon(ESystemIcon::VRight, "v_right.png");
+				addSystemIcon(ESystemIcon::VDown, "v_down.png");
+				addSystemIcon(ESystemIcon::SmallTriangleRight, "small_triangle_right.png");
+				addSystemIcon(ESystemIcon::SmallTriangleDown, "small_triangle_down.png");
+				addSystemIcon(ESystemIcon::Question, "question.png");
+				addSystemIcon(ESystemIcon::Alert, "alert.png");
+				addSystemIcon(ESystemIcon::Error, "error.png");
+				addSystemIcon(ESystemIcon::Check, "check.png");
+				addSystemIcon(ESystemIcon::CheckBox, "checkbox.png");
+				addSystemIcon(ESystemIcon::CheckBoxSelect, "checkbox_select.png");
+				addSystemIcon(ESystemIcon::Radio, "radio.png");
+				addSystemIcon(ESystemIcon::RadioSelect, "radio_select.png");
+				addSystemIcon(ESystemIcon::Add, "add.png");
+				addSystemIcon(ESystemIcon::Setting, "setting.png");
+				addSystemIcon(ESystemIcon::Adjustment, "adjustment.png");
+				addSystemIcon(ESystemIcon::Tool, "tool.png");
+				addSystemIcon(ESystemIcon::ZoomIn, "zoom_in.png");
+				addSystemIcon(ESystemIcon::ZoomOut, "zoom_out.png");
+				addSystemIcon(ESystemIcon::Search, "search.png");
+				addSystemIcon(ESystemIcon::FileSearch, "file_search.png");
+				addSystemIcon(ESystemIcon::Lock, "lock.png");
+				addSystemIcon(ESystemIcon::Unlock, "unlock.png");
+				addSystemIcon(ESystemIcon::Visible, "visible.png");
+				addSystemIcon(ESystemIcon::Invisible, "invisible.png");
+				addSystemIcon(ESystemIcon::Link, "link.png");
+				addSystemIcon(ESystemIcon::Unlink, "unlink.png");
+				addSystemIcon(ESystemIcon::Import, "import.png");
+				addSystemIcon(ESystemIcon::Export, "export.png");
+				addSystemIcon(ESystemIcon::Attach, "attach.png");
+				addSystemIcon(ESystemIcon::Copy, "copy.png");
+				addSystemIcon(ESystemIcon::Paste, "paste.png");
+				addSystemIcon(ESystemIcon::Duplicate, "duplicate.png");
+				addSystemIcon(ESystemIcon::Bookmark, "bookmark.png");
+				addSystemIcon(ESystemIcon::Filter, "filter.png");
+				addSystemIcon(ESystemIcon::Home, "home.png");
+				addSystemIcon(ESystemIcon::User, "user.png");
+				addSystemIcon(ESystemIcon::Refresh, "refresh.png");
+				addSystemIcon(ESystemIcon::UpToParent, "up_to_parent.png");
+				addSystemIcon(ESystemIcon::Back, "back.png");
+				addSystemIcon(ESystemIcon::Next, "next.png");
+				addSystemIcon(ESystemIcon::NewFile, "new_file.png");
+				addSystemIcon(ESystemIcon::NewFolder, "new_folder.png");
+				addSystemIcon(ESystemIcon::Save, "save.png");
+				addSystemIcon(ESystemIcon::Open, "open.png");
+				addSystemIcon(ESystemIcon::Trash, "trash.png");
+				addSystemIcon(ESystemIcon::Collection, "collection.png");
+				addSystemIcon(ESystemIcon::AddCollection, "new_collection.png");
+				addSystemIcon(ESystemIcon::Res3D, "res_3d.png");
+				addSystemIcon(ESystemIcon::ResImage, "res_image.png");
+				addSystemIcon(ESystemIcon::ResMusic, "res_music.png");
+				addSystemIcon(ESystemIcon::ResFile, "res_file.png");
+				addSystemIcon(ESystemIcon::ResFolder, "res_folder.png");
+				addSystemIcon(ESystemIcon::ResVideo, "res_video.png");
+				addSystemIcon(ESystemIcon::SortAZ, "sort_az.png");
+				addSystemIcon(ESystemIcon::SortExt, "sort_ext.png");
+				addSystemIcon(ESystemIcon::SortTime, "sort_time.png");
+				addSystemIcon(ESystemIcon::SortDown, "sort_down.png");
+				addSystemIcon(ESystemIcon::SortUp, "sort_up.png");
+				addSystemIcon(ESystemIcon::PickColor, "pick_color.png");
+				addSystemIcon(ESystemIcon::Info, "info.png");
+				addSystemIcon(ESystemIcon::Guide, "guide.png");
+				addSystemIcon(ESystemIcon::Tree, "tree.png");
+				addSystemIcon(ESystemIcon::DragRow, "drag_row.png");
+			}
+
+			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char *name)
+			{
+				char path[512];
+				std::string nameNoExt = CPath::getFileNameNoExt(name);
+				if (nameNoExt.empty() == true)
+					return;
+
+				sprintf(path, "Editor/Icon/System/16/%s", name);
+				m_systemIcon16[type] = m_sprite->addFrame(nameNoExt.c_str(), path);
+
+				sprintf(path, "Editor/Icon/System/32/%s", name);
+				m_systemIcon32[type] = m_sprite->addFrame(nameNoExt.c_str(), path);
 			}
 
 			void CSkylichtTheme::drawWindow(const SRect& rect, bool isFocussed)
@@ -105,6 +211,11 @@ namespace Skylicht
 					r,
 					left, right, top, bottom,
 					m_materialID);
+			}
+
+			core::rectf CSkylichtTheme::getRect(const SRect& rect)
+			{
+				return core::rectf(rect.X, rect.Y, rect.X + rect.Width, rect.Y + rect.Height);
 			}
 
 			video::SColor CSkylichtTheme::getColor(const SGUIColor& color)
