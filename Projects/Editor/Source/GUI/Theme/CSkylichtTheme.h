@@ -41,9 +41,17 @@ namespace Skylicht
 			{
 			protected:
 				CSpriteAtlas *m_sprite;
+
 				SFrame *m_empty;
+
 				SFrame *m_window;
 				SFrame *m_windowShadow;
+
+				SFrame *m_button;
+				SFrame *m_buttonShadow;
+
+				SFrame *m_systemIcon16[NumSystemIcon];
+				SFrame *m_systemIcon32[NumSystemIcon];
 
 				CGraphics2D *m_graphics;
 				CSkylichtRenderer *m_renderer;
@@ -59,7 +67,23 @@ namespace Skylicht
 
 				virtual void drawWindow(const SRect& rect, bool isFocussed);
 
+			public:
+
+				SFrame* getSystemIcon16(ESystemIcon icon)
+				{
+					return m_systemIcon16[icon];
+				}
+
+				SFrame* getSystemIcon32(ESystemIcon icon)
+				{
+					return m_systemIcon32[icon];
+				}
+
 			private:
+
+				void initSystemIcon();
+
+				void addSystemIcon(ESystemIcon type, const char *name);
 
 				core::rectf getRect(const SRect& rect);
 
