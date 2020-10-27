@@ -87,7 +87,6 @@ namespace Skylicht
 			void CButton::setLabel(const std::wstring& text)
 			{
 				m_label->setString(text);
-				reDraw();
 
 				if (OnTextChanged != nullptr)
 					OnTextChanged(this);

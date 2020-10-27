@@ -71,8 +71,6 @@ namespace Skylicht
 					return m_disabled;
 				}
 
-				virtual void reDraw();
-
 				const std::string& getName()
 				{
 					return m_name;
@@ -126,7 +124,6 @@ namespace Skylicht
 				virtual CCanvas* getCanvas();
 
 			public:
-				virtual void updateColors() {}
 
 				virtual void invalidate()
 				{

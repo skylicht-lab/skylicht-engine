@@ -84,8 +84,6 @@ namespace Skylicht
 				{
 					delete control;
 				}
-
-				reDraw();
 			}
 
 			void CCanvas::update()
