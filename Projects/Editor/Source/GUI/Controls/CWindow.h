@@ -52,6 +52,10 @@ namespace Skylicht
 
 				virtual void renderUnder();
 
+				virtual void touch();
+
+				virtual void onChildTouched(CBase* child);
+
 				void setCaption(const std::wstring& text)
 				{
 					m_title->setString(text);

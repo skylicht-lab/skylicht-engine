@@ -50,6 +50,10 @@ namespace Skylicht
 				CGlyphFont *m_fontLarge;
 				CGlyphFont *m_fontNormal;
 
+				SRect m_clipRect;
+
+				std::stack<SRect> m_clipStack;
+
 			public:
 				CSkylichtRenderer(float w, float h);
 
@@ -60,6 +64,10 @@ namespace Skylicht
 				virtual void begin();
 
 				virtual void end();
+
+				virtual void startClip();
+
+				virtual void endClip();
 
 				virtual void renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string);
 

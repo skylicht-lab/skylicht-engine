@@ -189,13 +189,16 @@ namespace Skylicht
 				float right = 55.0f;
 				float bottom = 55.0f;
 
+				// corner radius
+				float margin = 3.0f;
+
 				SModuleOffset *module = &m_window->ModuleOffset[0];
 
 				core::rectf r = getRect(rect);
-				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left;
-				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top;
-				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right);
-				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom);
+				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + margin;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + margin;
+				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - margin);
+				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom - margin);
 
 				m_graphics->addModuleBatch(
 					module,
@@ -213,13 +216,16 @@ namespace Skylicht
 				float right = 55.0f;
 				float bottom = 55.0f;
 
+				// corner radius
+				float margin = 3.0f;
+
 				SModuleOffset *module = &m_windowShadow->ModuleOffset[0];
 
 				core::rectf r = getRect(rect);
-				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left;
-				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top;
-				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right);
-				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom);
+				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + margin;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + margin;
+				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - margin);
+				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom - margin);
 
 				m_graphics->addModuleBatch(
 					module,
@@ -237,13 +243,16 @@ namespace Skylicht
 				float right = 18.0f;
 				float bottom = 18.0f;
 
+				// corner radius
+				float margin = 3.0f;
+
 				SModuleOffset *module = &m_buttonShadow->ModuleOffset[0];
 
 				core::rectf r = getRect(rect);
-				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left;
-				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top;
-				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right);
-				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom);
+				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + margin;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + margin;
+				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - margin);
+				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom - margin);
 
 				m_graphics->addModuleBatch(
 					module,
@@ -261,13 +270,16 @@ namespace Skylicht
 				float right = 18.0f;
 				float bottom = 18.0f;
 
+				// corner radius
+				float margin = 3.0f;
+
 				SModuleOffset *module = &m_button->ModuleOffset[0];
 
 				core::rectf r = getRect(rect);
-				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left;
-				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top;
-				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right);
-				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom);
+				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + margin;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + margin;
+				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - margin);
+				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom - margin);
 
 				m_graphics->addModuleBatch(
 					module,

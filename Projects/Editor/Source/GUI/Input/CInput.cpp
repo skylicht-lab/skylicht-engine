@@ -94,7 +94,6 @@ namespace Skylicht
 				{
 					if (CGUIContext::HoveredControl)
 					{
-						CGUIContext::HoveredControl->reDraw();
 						CGUIContext::HoveredControl = NULL;
 					}
 
