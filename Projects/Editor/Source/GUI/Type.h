@@ -449,6 +449,8 @@ namespace Skylicht
 				Guide,
 				Tree,
 				DragRow,
+				Window,
+				Windows,
 				NumSystemIcon
 			};
 		}

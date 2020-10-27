@@ -38,24 +38,31 @@ namespace Skylicht
 				CResizableControl(parent, x, y, w, h)
 			{
 				m_titleBar = new CDragger(this);
-				m_titleBar->setHeight(24);
-				m_titleBar->setPadding(SPadding(0, 0, 0, 0));
-				m_titleBar->setMargin(SMargin(0, 0, 0, 4));
+				m_titleBar->setHeight(28.0f);
+				m_titleBar->setPadding(SPadding(0.0f, 4.0f, 0.0f, 0.0f));
+				m_titleBar->setMargin(SMargin(0.0f, 0.0f, 0.0f, 4.0f));
 				m_titleBar->dock(EPosition::Top);
+
+				m_close = new CButton(m_titleBar);
+				m_close->setSize(18.0f, 18.0f);
+				m_close->dock(EPosition::Right);
+				m_close->setIcon(ESystemIcon::Close);
+				m_close->setMargin(SMargin(0.0f, 0.0f, 4.0f, 6.0f));
+				m_close->setIconMargin(SMargin(-1.0f, -1.0f, 0.0f, 0.0f));
+				m_close->showIcon(true);
+				m_close->OnPress = BIND_LISTENER(&CWindow::onCloseButtonPress, this);
+
+				m_icon = new CIcon(m_titleBar, ESystemIcon::Window, false);
+				m_icon->dock(EPosition::Left);
+				m_icon->setMargin(SPadding(0.0f, -2.0f, 0.0f, 0.0f));
 
 				m_title = new CLabel(m_titleBar);
 				m_title->setString(L"Window title");
 				m_title->dock(EPosition::Fill);
-				m_title->setPadding(SPadding(CThemeConfig::WindowPaddingLeft, CThemeConfig::WindowPaddingTop, 0.0f, 0.0f));
-				m_title->setColor(CThemeConfig::WindowTextColor);
+				m_title->setPadding(SPadding(4.0f, 2.0f, 0.0f, 0.0f));
 			}
 
 			CWindow::~CWindow()
-			{
-
-			}
-
-			void CWindow::render()
 			{
 
 			}
@@ -66,6 +73,16 @@ namespace Skylicht
 
 				bool isFocussed = isOnTop();
 				CTheme::getTheme()->drawWindow(getRenderBounds(), isFocussed);
+			}
+
+			void CWindow::onCloseButtonPress(CBase *sender)
+			{
+				onCloseWindow();
+			}
+
+			void CWindow::onCloseWindow()
+			{
+				remove();
 			}
 		}
 	}

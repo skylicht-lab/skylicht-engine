@@ -122,6 +122,9 @@ namespace Skylicht
 
 			void CBase::updateCursor()
 			{
+				if (m_disabled)
+					return;
+
 				CInput::getInput()->setCursor(m_cursor);
 			}
 

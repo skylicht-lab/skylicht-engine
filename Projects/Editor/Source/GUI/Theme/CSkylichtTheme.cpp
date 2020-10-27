@@ -149,6 +149,8 @@ namespace Skylicht
 				addSystemIcon(ESystemIcon::Guide, "guide.png");
 				addSystemIcon(ESystemIcon::Tree, "tree.png");
 				addSystemIcon(ESystemIcon::DragRow, "drag_row.png");
+				addSystemIcon(ESystemIcon::Window, "window.png");
+				addSystemIcon(ESystemIcon::Windows, "windows.png");
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char *name)
@@ -163,6 +165,21 @@ namespace Skylicht
 
 				sprintf(path, "Editor/Icon/System/32/%s", name);
 				m_systemIcon32[type] = m_sprite->addFrame(nameNoExt.c_str(), path);
+			}
+
+			void CSkylichtTheme::drawIcon(const SRect &r, ESystemIcon icon, const SGUIColor& color, bool use32Bit)
+			{
+				SFrame *frame = NULL;
+
+				if (use32Bit == true)
+					frame = m_systemIcon32[icon];
+				else
+					frame = m_systemIcon16[icon];
+
+				if (frame == NULL)
+					return;
+
+				m_graphics->addFrameBatch(frame, getColor(color), m_renderer->getWorldTransform(), m_materialID);
 			}
 
 			void CSkylichtTheme::drawWindow(const SRect& rect, bool isFocussed)
@@ -207,6 +224,54 @@ namespace Skylicht
 				m_graphics->addModuleBatch(
 					module,
 					getColor(CThemeConfig::White),
+					m_renderer->getWorldTransform(),
+					r,
+					left, right, top, bottom,
+					m_materialID);
+			}
+
+			void CSkylichtTheme::drawButtonShadow(const SRect& rect)
+			{
+				float left = 6.0f;
+				float top = 6.0f;
+				float right = 18.0f;
+				float bottom = 18.0f;
+
+				SModuleOffset *module = &m_buttonShadow->ModuleOffset[0];
+
+				core::rectf r = getRect(rect);
+				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top;
+				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right);
+				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom);
+
+				m_graphics->addModuleBatch(
+					module,
+					getColor(CThemeConfig::White),
+					m_renderer->getWorldTransform(),
+					r,
+					left, right, top, bottom,
+					m_materialID);
+			}
+
+			void CSkylichtTheme::drawButton(const SRect& rect, const SGUIColor& color)
+			{
+				float left = 6.0f;
+				float top = 6.0f;
+				float right = 18.0f;
+				float bottom = 18.0f;
+
+				SModuleOffset *module = &m_button->ModuleOffset[0];
+
+				core::rectf r = getRect(rect);
+				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top;
+				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right);
+				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom);
+
+				m_graphics->addModuleBatch(
+					module,
+					getColor(color),
 					m_renderer->getWorldTransform(),
 					r,
 					left, right, top, bottom,

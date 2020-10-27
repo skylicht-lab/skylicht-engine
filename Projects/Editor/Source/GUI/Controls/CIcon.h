@@ -23,9 +23,8 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "GUI/Controls/CBase.h"
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Controls/CResizer.h"
+#include "CBase.h"
+#include "CText.h"
 
 namespace Skylicht
 {
@@ -33,17 +32,40 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CResizableControl : public CBase
+			class CIcon : public CBase
 			{
 			protected:
-				CResizer *m_resizers[8];
+				ESystemIcon m_icon;
+				SGUIColor m_color;
+
+				bool m_use32Bit;
 
 			public:
-				CResizableControl(CCanvas* parent, float x, float y, float w, float h);
+				CIcon(CBase *parent, ESystemIcon icon, bool use32Bit = false);
 
-				virtual ~CResizableControl();
+				virtual ~CIcon();
 
-				void setResizable(bool b);
+				virtual void render();
+
+				inline void setIcon(ESystemIcon icon)
+				{
+					m_icon = icon;
+				}
+
+				inline ESystemIcon getIcon()
+				{
+					return m_icon;
+				}
+
+				inline void setColor(const SGUIColor& c)
+				{
+					m_color = c;
+				}
+
+				inline const SGUIColor& getColor()
+				{
+					return m_color;
+				}
 			};
 		}
 	}
