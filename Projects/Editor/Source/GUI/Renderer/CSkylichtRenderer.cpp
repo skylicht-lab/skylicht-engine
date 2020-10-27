@@ -37,7 +37,8 @@ namespace Skylicht
 				m_width(w),
 				m_height(h),
 				m_fontLarge(NULL),
-				m_fontNormal(NULL)
+				m_fontNormal(NULL),
+				m_clipRect(0.0f, 0.0f, -1.0f, -1.0f)
 			{
 				m_projection.buildProjectionMatrixOrthoLH((f32)w, -(f32)h, -1.0f, 1.0f);
 				m_projection.setTranslation(core::vector3df(-1, 1, 0));
@@ -68,6 +69,48 @@ namespace Skylicht
 			void CSkylichtRenderer::end()
 			{
 				CGraphics2D::getInstance()->flush();
+			}
+
+			void CSkylichtRenderer::startClip()
+			{
+				m_clipStack.push(m_clipRect);
+
+				m_clipRect = m_rectClipRegion;
+
+				IVideoDriver *driver = getVideoDriver();
+
+				CGraphics2D *g = CGraphics2D::getInstance();
+				g->flush();
+
+				driver->enableScissor(true);
+				driver->setScissor(core::recti(
+					(s32)m_clipRect.X,
+					(s32)m_clipRect.Y,
+					(s32)(m_clipRect.X + m_clipRect.Width),
+					(s32)(m_clipRect.Y + m_clipRect.Height))
+				);
+			}
+
+			void CSkylichtRenderer::endClip()
+			{
+				IVideoDriver *driver = getVideoDriver();
+				m_clipRect = m_clipStack.top();
+				m_clipStack.pop();
+
+				if (m_clipRect.Width >= 0 && m_clipRect.Height >= 0)
+				{
+					driver->enableScissor(true);
+					driver->setScissor(core::recti(
+						(s32)m_clipRect.X,
+						(s32)m_clipRect.Y,
+						(s32)(m_clipRect.X + m_clipRect.Width),
+						(s32)(m_clipRect.Y + m_clipRect.Height))
+					);
+				}
+				else
+				{
+					driver->enableScissor(false);
+				}
 			}
 
 			void CSkylichtRenderer::renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string)

@@ -55,7 +55,6 @@ namespace Skylicht
 			void CLabel::setString(const std::wstring& text)
 			{
 				m_text->setString(text);
-				reDraw();
 
 				if (OnTextChanged != nullptr)
 					OnTextChanged(this);

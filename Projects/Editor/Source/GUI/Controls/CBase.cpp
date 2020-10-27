@@ -79,7 +79,6 @@ namespace Skylicht
 
 				m_hidden = hidden;
 				invalidate();
-				reDraw();
 			}
 
 			void CBase::remove()
@@ -110,14 +109,6 @@ namespace Skylicht
 					return;
 
 				m_disabled = active;
-				reDraw();
-			}
-
-			void CBase::reDraw()
-			{
-				updateColors();
-				if (m_parent)
-					m_parent->reDraw();
 			}
 
 			void CBase::updateCursor()
@@ -187,7 +178,6 @@ namespace Skylicht
 				m_parent->Children.remove(this);
 				m_parent->Children.push_back(this);
 				invalidateParent();
-				reDraw();
 			}
 
 			void CBase::bringNextToControl(CBase* child, bool bBehind)
@@ -319,7 +309,6 @@ namespace Skylicht
 					m_parent->onChildBoundsChanged(oldBounds, this);
 
 				invalidate();
-				reDraw();
 				updateRenderBounds();
 			}
 
@@ -506,7 +495,6 @@ namespace Skylicht
 
 				CGUIContext::KeyboardFocus = this;
 				onKeyboardFocus();
-				reDraw();
 			}
 
 			void CBase::unfocus()
@@ -516,23 +504,18 @@ namespace Skylicht
 
 				CGUIContext::KeyboardFocus = NULL;
 				onLostKeyboardFocus();
-				reDraw();
 			}
 
 			void CBase::onMouseEnter()
 			{
 				if (OnHoverEnter != nullptr)
 					OnHoverEnter(this);
-
-				reDraw();
 			}
 
 			void CBase::onMouseLeave()
 			{
 				if (OnHoverLeave != nullptr)
 					OnHoverLeave(this);
-
-				reDraw();
 			}
 
 			bool CBase::onMouseWheeled(int iDelta)
@@ -620,7 +603,6 @@ namespace Skylicht
 				if (getCanvas()->NextTab)
 				{
 					getCanvas()->NextTab->focus();
-					reDraw();
 				}
 
 				return true;
@@ -785,9 +767,7 @@ namespace Skylicht
 
 				m_innerBounds = rBounds;
 
-				//
 				// Fill uses the left over space, so do that now.
-				//
 				for (auto&& child : Children)
 				{
 					EPosition dock = child->getDock();

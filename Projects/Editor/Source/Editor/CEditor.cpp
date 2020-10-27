@@ -33,7 +33,8 @@ namespace Skylicht
 		{
 			GUI::CCanvas *canvas = GUI::CGUIContext::getRoot();
 
-			GUI::CWindow *window = new GUI::CWindow(canvas, 20.0f, 20.0f, 600.0f, 480.0f);
+			GUI::CWindow *window1 = new GUI::CWindow(canvas, 20.0f, 20.0f, 600.0f, 480.0f);
+			GUI::CWindow *window2 = new GUI::CWindow(canvas, 400.0f, 20.0f, 600.0f, 480.0f);
 		}
 
 		CEditor::~CEditor()
