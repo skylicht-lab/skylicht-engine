@@ -36,11 +36,17 @@ namespace Skylicht
 
 			SGUIColor CThemeConfig::White = SGUIColor(255, 255, 255, 255);
 			SGUIColor CThemeConfig::Black = SGUIColor(255, 0, 0, 0);
-			SGUIColor CThemeConfig::WindowBackgroundColor = SGUIColor(252, 35, 35, 35);
-			SGUIColor CThemeConfig::WindowTextColor = SGUIColor(255, 165, 165, 165);
 
-			float CThemeConfig::WindowPaddingLeft = 10.0f;
-			float CThemeConfig::WindowPaddingTop = 4.0f;
+			SGUIColor CThemeConfig::WindowBackgroundColor = SGUIColor(252, 35, 35, 35);
+			SGUIColor CThemeConfig::DefaultTextColor = SGUIColor(255, 165, 165, 165);
+			SGUIColor CThemeConfig::DefaultIconColor = SGUIColor(255, 215, 215, 215);
+			SGUIColor CThemeConfig::IconPressColor = SGUIColor(255, 255, 255, 255);
+			SGUIColor CThemeConfig::TextPressColor = SGUIColor(255, 255, 255, 255);
+
+			SGUIColor CThemeConfig::ButtonColor = SGUIColor(255, 88, 88, 88);
+			SGUIColor CThemeConfig::ButtonHoverColor = SGUIColor(255, 110, 110, 110);
+			SGUIColor CThemeConfig::ButtonPressColor = SGUIColor(255, 80, 120, 180);
+			SGUIColor CThemeConfig::ButtonFocusColor = SGUIColor(255, 85, 110, 140);
 
 			float CThemeConfig::getFontSizePt(EFontSize size)
 			{

@@ -87,6 +87,12 @@ namespace Skylicht
 			CResizableControl::~CResizableControl()
 			{
 			}
+
+			void CResizableControl::setResizable(bool b)
+			{
+				for (int i = 0; i < 8; i++)
+					m_resizers[i]->setDisabled(!b);
+			}
 		}
 	}
 }

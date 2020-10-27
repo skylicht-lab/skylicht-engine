@@ -21,11 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "GUI/Controls/CBase.h"
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Controls/CResizer.h"
+#include "pch.h"
+#include "CIcon.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -33,18 +32,29 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CResizableControl : public CBase
+			CIcon::CIcon(CBase *parent, ESystemIcon icon, bool use32Bit) :
+				m_icon(icon),
+				m_use32Bit(use32Bit),
+				m_color(CThemeConfig::DefaultIconColor),
+				CBase(parent)
 			{
-			protected:
-				CResizer *m_resizers[8];
+				setMouseInputEnabled(false);
 
-			public:
-				CResizableControl(CCanvas* parent, float x, float y, float w, float h);
+				if (use32Bit)
+					setSize(40, 40);
+				else
+					setSize(20, 20);
+			}
 
-				virtual ~CResizableControl();
+			CIcon::~CIcon()
+			{
 
-				void setResizable(bool b);
-			};
+			}
+
+			void CIcon::render()
+			{
+				CTheme::getTheme()->drawIcon(getRenderBounds(), m_icon, m_color, m_use32Bit);
+			}
 		}
 	}
 }

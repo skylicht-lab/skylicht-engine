@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CText.h"
 #include "GUI/Renderer/CRenderer.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -33,7 +34,8 @@ namespace Skylicht
 		namespace GUI
 		{
 			CText::CText(CBase *parent) :
-				CBase(parent)
+				CBase(parent),
+				m_color(CThemeConfig::DefaultTextColor)
 			{
 				setMouseInputEnabled(false);
 			}
