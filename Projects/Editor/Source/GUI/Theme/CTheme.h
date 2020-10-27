@@ -43,9 +43,15 @@ namespace Skylicht
 
 				virtual ~CTheme();
 
+				virtual void drawIcon(const SRect &r, ESystemIcon icon, const SGUIColor& color, bool use32Bit) {}
+
 				virtual void drawWindowShadow(const SRect& rect) {}
 
 				virtual void drawWindow(const SRect& rect, bool isFocussed) {}
+
+				virtual void drawButtonShadow(const SRect& rect) {}
+
+				virtual void drawButton(const SRect& rect, const SGUIColor& color) {}
 			};
 		}
 	}

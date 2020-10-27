@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GUI/Controls/CBase.h"
 #include "GUI/Controls/CLabel.h"
+#include "GUI/Controls/CIcon.h"
+#include "GUI/Controls/CButton.h"
 #include "GUI/Controls/CResizableControl.h"
 
 namespace Skylicht
@@ -38,13 +40,15 @@ namespace Skylicht
 			protected:
 				CDragger *m_titleBar;
 				CLabel *m_title;
+				CIcon *m_icon;
+				CButton *m_close;
 
 			public:
 				CWindow(CCanvas* parent, float x, float y, float w, float h);
 
 				virtual ~CWindow();
 
-				virtual void render();
+				virtual void onCloseWindow();
 
 				virtual void renderUnder();
 
@@ -52,6 +56,22 @@ namespace Skylicht
 				{
 					m_title->setString(text);
 				}
+
+				inline void showIcon(bool b)
+				{
+					m_icon->setHidden(!b);
+				}
+
+				void setIcon(ESystemIcon icon)
+				{
+					m_icon->setIcon(icon);
+					m_icon->setHidden(false);
+				}
+
+			protected:
+
+				void onCloseButtonPress(CBase *sender);
+
 			};
 		}
 	}

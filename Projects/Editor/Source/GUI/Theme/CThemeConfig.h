@@ -40,11 +40,17 @@ namespace Skylicht
 
 				static SGUIColor White;
 				static SGUIColor Black;
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowTextColor;
 
-				static float WindowPaddingLeft;
-				static float WindowPaddingTop;
+				static SGUIColor WindowBackgroundColor;
+				static SGUIColor DefaultTextColor;
+				static SGUIColor DefaultIconColor;
+				static SGUIColor IconPressColor;
+				static SGUIColor TextPressColor;
+
+				static SGUIColor ButtonColor;
+				static SGUIColor ButtonHoverColor;
+				static SGUIColor ButtonPressColor;
+				static SGUIColor ButtonFocusColor;
 
 				static float getFontSizePt(EFontSize size);
 			};
