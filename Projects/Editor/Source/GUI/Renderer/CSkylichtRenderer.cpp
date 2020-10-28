@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSkylichtRenderer.h"
 #include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/CSkylichtTheme.h"
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
 
 namespace Skylicht
@@ -111,6 +112,23 @@ namespace Skylicht
 				{
 					driver->enableScissor(false);
 				}
+			}
+
+			void CSkylichtRenderer::drawFillRect(const SRect &r, const SGUIColor& color)
+			{
+				CGraphics2D *g = CGraphics2D::getInstance();
+				CSkylichtTheme *theme = (CSkylichtTheme*)CTheme::getTheme();
+
+				float invW = 1.0f / (float)theme->getAtlasWidth();
+				float invH = 1.0f / (float)theme->getAtlasHeight();
+
+				const core::matrix4 &world = getWorldTransform();
+
+				float offsetX = 2.0f;
+				float offsetY = 2.0f;
+				core::rectf uv(offsetX * invW, offsetY * invH, offsetX * invW, offsetY * invH);
+
+				g->addRectangleBatch(getRect(r), uv, getColor(color), world, m_materialID, NULL);
 			}
 
 			void CSkylichtRenderer::renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string)
@@ -246,6 +264,16 @@ namespace Skylicht
 
 				m_fontLarge = new CGlyphFont(CThemeConfig::FontName.c_str(), fontSmall);
 				m_fontNormal = new CGlyphFont(CThemeConfig::FontName.c_str(), fontNormal);
+			}
+
+			core::rectf CSkylichtRenderer::getRect(const SRect& rect)
+			{
+				return core::rectf(rect.X, rect.Y, rect.X + rect.Width, rect.Y + rect.Height);
+			}
+
+			video::SColor CSkylichtRenderer::getColor(const SGUIColor& color)
+			{
+				return SColor(color.A, color.R, color.G, color.B);
 			}
 		}
 	}

@@ -31,7 +31,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CResizableControl::CResizableControl(CCanvas* parent, float x, float y, float w, float h) :
+			CResizableControl::CResizableControl(CBase* parent, float x, float y, float w, float h) :
 				CBase(parent)
 			{
 				setBounds(x, y, w, h);

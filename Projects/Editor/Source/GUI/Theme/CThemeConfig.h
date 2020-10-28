@@ -42,6 +42,7 @@ namespace Skylicht
 				static SGUIColor Black;
 
 				static SGUIColor WindowBackgroundColor;
+				static SGUIColor WindowInnerColor;
 				static SGUIColor DefaultTextColor;
 				static SGUIColor DefaultIconColor;
 				static SGUIColor IconPressColor;

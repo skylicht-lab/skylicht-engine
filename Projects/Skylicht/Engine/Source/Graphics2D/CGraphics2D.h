@@ -144,7 +144,7 @@ namespace Skylicht
 
 		void addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, CMaterial *material = NULL);
 
-		void addRectangleBatch(const core::rectf& pos, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, CMaterial *material = NULL);
+		void addRectangleBatch(const core::rectf& pos, const core::rectf& uv, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, CMaterial *material = NULL);
 
 		void beginDrawDepth();
 

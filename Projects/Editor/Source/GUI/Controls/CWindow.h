@@ -44,7 +44,7 @@ namespace Skylicht
 				CButton *m_close;
 
 			public:
-				CWindow(CCanvas* parent, float x, float y, float w, float h);
+				CWindow(CBase* parent, float x, float y, float w, float h);
 
 				virtual ~CWindow();
 

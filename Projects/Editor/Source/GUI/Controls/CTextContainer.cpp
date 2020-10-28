@@ -39,6 +39,7 @@ namespace Skylicht
 				m_fontSize(EFontSize::SizeNormal)
 			{
 				setMouseInputEnabled(false);
+				enableClip(true);
 			}
 
 			CTextContainer::~CTextContainer()

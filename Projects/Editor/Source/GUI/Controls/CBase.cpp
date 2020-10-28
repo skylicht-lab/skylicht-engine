@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBase.h"
 #include "CCanvas.h"
 #include "GUI/CGUIContext.h"
+#include "GUI/Theme/CThemeConfig.h"
 #include "GUI/Input/CInput.h"
 
 namespace Skylicht
@@ -36,6 +37,7 @@ namespace Skylicht
 		{
 			CBase::CBase(CBase* parent, const std::string& name) :
 				m_parent(NULL),
+				m_innerPanel(NULL),
 				m_name(name),
 				m_disabled(false),
 				m_hidden(false),
@@ -46,9 +48,13 @@ namespace Skylicht
 				m_margin(0.0f, 0.0f, 0.0f, 0.0f),
 				m_mouseInputEnabled(true),
 				m_keyboardInputEnabled(true),
-				m_cursor(ECursorType::Normal)
+				m_shouldClip(false),
+				m_cursor(ECursorType::Normal),
+				m_renderFillRect(false),
+				m_fillRectColor(CThemeConfig::WindowInnerColor)
 			{
-				setParent(parent);
+				if (parent != NULL)
+					setParent(parent->getInnerPanel());
 			}
 
 			CBase::~CBase()
@@ -325,10 +331,10 @@ namespace Skylicht
 				m_renderBounds.Height = m_bounds.Height;
 			}
 
-			void CBase::dragTo(float x, float y, float dragPosX, float dragPosY)
+			void CBase::dragTo(float x, float y, float dragPosX, float dragPosY, float paddingBottom)
 			{
 				float testX = x + dragPosX;
-				float testY = y + dragPosY;
+				float testY = y;
 
 				if (m_parent)
 				{
@@ -341,12 +347,12 @@ namespace Skylicht
 					if (testX + m_padding.Right > m_parent->width() - m_parent->m_margin.Right)
 						testX = m_parent->width() - m_parent->m_margin.Right - m_padding.Right;
 
-					if (testY + m_padding.Bottom > m_parent->height() - m_parent->m_margin.Bottom)
-						testY = m_parent->height() - m_parent->m_margin.Bottom - m_padding.Bottom;
+					if (testY + m_padding.Bottom > m_parent->height() - m_parent->m_margin.Bottom - paddingBottom)
+						testY = m_parent->height() - m_parent->m_margin.Bottom - m_padding.Bottom - paddingBottom;
 				}
 
 				x = testX - dragPosX;
-				y = testY - dragPosY;
+				y = testY;
 
 				setBounds(x, y, width(), height());
 			}
@@ -404,7 +410,11 @@ namespace Skylicht
 				}
 
 				// Render this control and children controls
-				render->startClip();
+				if (shouldClip())
+				{
+					render->startClip();
+				}
+
 				{
 					this->render();
 
@@ -420,24 +430,40 @@ namespace Skylicht
 						}
 					}
 				}
-				render->endClip();
+
+				if (shouldClip())
+				{
+					render->endClip();
+				}
 
 				// Render overlay/focus
 				{
 					render->setClipRegion(oldRegion);
-					render->startClip();
+					if (shouldClip())
+					{
+						render->startClip();
+					}
+
 					{
 						renderOver();
 						renderFocus();
 					}
-					render->endClip();
+
+					if (shouldClip())
+					{
+						render->endClip();
+					}
+
 					render->setRenderOffset(oldRenderOffset);
 				}
 			}
 
 			void CBase::render()
 			{
-
+				if (m_renderFillRect)
+				{
+					CRenderer::getRenderer()->drawFillRect(getRenderBounds(), m_fillRectColor);
+				}
 			}
 
 			void CBase::renderFocus()
