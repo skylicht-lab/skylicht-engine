@@ -86,7 +86,7 @@ namespace Skylicht
 			{
 				CBase::onBoundsChanged(oldBounds);
 
-				m_label->refreshSize();
+				m_label->sizeToContents();
 				invalidate();
 			}
 
@@ -108,6 +108,9 @@ namespace Skylicht
 					m_pressed = true;
 					m_icon->setColor(CThemeConfig::IconPressColor);
 					m_label->setColor(CThemeConfig::TextPressColor);
+
+					if (OnDown != nullptr)
+						OnDown(this);
 				}
 				else
 				{
@@ -154,7 +157,7 @@ namespace Skylicht
 
 			void CButton::sizeToContents()
 			{
-				m_label->refreshSize();
+				m_label->sizeToContents();
 
 				float w = m_padding.Left + m_padding.Right + m_label->width();
 				if (m_icon->isHidden() == false)

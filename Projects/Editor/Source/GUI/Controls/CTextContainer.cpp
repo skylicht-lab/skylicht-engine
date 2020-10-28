@@ -81,12 +81,12 @@ namespace Skylicht
 			{
 				if (m_textChange == true)
 				{
-					refreshSize();
+					sizeToContents();
 					m_textChange = false;
 				}
 			}
 
-			void CTextContainer::refreshSize()
+			void CTextContainer::sizeToContents()
 			{
 				removeAllLines();
 

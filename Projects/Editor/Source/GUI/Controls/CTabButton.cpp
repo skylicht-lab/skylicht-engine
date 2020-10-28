@@ -62,6 +62,9 @@ namespace Skylicht
 						c = m_hoverColor;
 				}
 
+				if (m_focus)
+					c = m_pressColor;
+
 				CTheme::getTheme()->drawTabButton(getRenderBounds(), c, m_focusColor, m_focus);
 			}
 		}
