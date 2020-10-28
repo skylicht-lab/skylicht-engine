@@ -21,10 +21,11 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "GUI/Type.h"
+#include "CBase.h"
+#include "CTabButton.h"
+#include "CTabStrip.h"
 
 namespace Skylicht
 {
@@ -32,33 +33,29 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeConfig
+			class CTabControl :public CBase
 			{
+			protected:
+				CTabStrip *m_tabStrip;
+
+				typedef std::list<CTabButton*> ListTabButton;
+				ListTabButton m_tabButtons;
+
 			public:
-				static std::string FontName;
-				static std::string FontPath;
+				CTabControl(CBase *parent);
 
-				static SGUIColor White;
-				static SGUIColor Black;
+				virtual ~CTabControl();
 
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowInnerColor;
-				static SGUIColor DefaultTextColor;
-				static SGUIColor DefaultIconColor;
-				static SGUIColor IconPressColor;
-				static SGUIColor TextPressColor;
+				CBase* addPage(const std::wstring& label, CBase *page);
 
-				static SGUIColor ButtonColor;
-				static SGUIColor ButtonHoverColor;
-				static SGUIColor ButtonPressColor;
-				static SGUIColor ButtonFocusColor;
+				void removePage(CBase *page);
 
-				static SGUIColor TabStripColor;
-				static SGUIColor TabButtonColor;
-				static SGUIColor TabButtonActiveColor;
-				static SGUIColor TabButtonFocusColor;
+			protected:
 
-				static float getFontSizePt(EFontSize size);
+				void addTabButton(CTabButton *button);
+
+				void removeTabButton(CTabButton *button);
+
 			};
 		}
 	}

@@ -39,12 +39,15 @@ namespace Skylicht
 				m_hoverColor(CThemeConfig::ButtonHoverColor),
 				m_pressColor(CThemeConfig::ButtonPressColor),
 				m_focusColor(CThemeConfig::ButtonFocusColor),
-				m_pressed(false)
+				m_pressed(false),
+				m_drawBackground(true)
 			{
+				setPadding(SPadding(8.0f, 0.0f, 8.0f, 0.0f));
 				m_icon = new CIcon(this, ESystemIcon::None);
 				m_icon->dock(EPosition::Left);
 
 				m_label = new CTextContainer(this);
+				m_label->setMargin(SMargin(0.0f, 6.0f, 0.0f, 0.0f));
 				m_label->dock(EPosition::Fill);
 
 				setSize(80.0f, 20.0f);
@@ -61,6 +64,9 @@ namespace Skylicht
 
 			void CButton::renderUnder()
 			{
+				if (!m_drawBackground)
+					return;
+
 				CTheme::getTheme()->drawButtonShadow(getRenderBounds());
 
 				SGUIColor c = m_color;
@@ -144,6 +150,23 @@ namespace Skylicht
 			{
 				m_icon->setColor(m_iconColor);
 				m_label->setColor(m_labelColor);
+			}
+
+			void CButton::sizeToContents()
+			{
+				m_label->refreshSize();
+
+				float w = m_padding.Left + m_padding.Right + m_label->width();
+				if (m_icon->isHidden() == false)
+					w = w + m_icon->width();
+
+				float h = m_padding.Top + m_padding.Bottom;
+				if (m_icon->isHidden() == false)
+					h = h + core::max_<float>(m_icon->height(), m_label->height());
+				else
+					h = h + m_label->height();
+
+				setSize(w, h);
 			}
 		}
 	}
