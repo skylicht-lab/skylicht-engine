@@ -39,7 +39,7 @@ namespace Skylicht
 				CResizer *m_resizers[8];
 
 			public:
-				CResizableControl(CCanvas* parent, float x, float y, float w, float h);
+				CResizableControl(CBase* parent, float x, float y, float w, float h);
 
 				virtual ~CResizableControl();
 

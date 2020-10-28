@@ -1294,7 +1294,7 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addRectangleBatch(const core::rectf& pos, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, CMaterial *material)
+	void CGraphics2D::addRectangleBatch(const core::rectf& pos, const core::rectf& uv, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, CMaterial *material)
 	{
 		if (m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -1314,12 +1314,17 @@ namespace Skylicht
 		index[numIndices + 4] = numVertices + 2;
 		index[numIndices + 5] = numVertices + 3;
 
+		float u1 = uv.UpperLeftCorner.X;
+		float v1 = uv.UpperLeftCorner.Y;
+		float u2 = uv.LowerRightCorner.X;
+		float v2 = uv.LowerRightCorner.Y;
+
 		m_vertices->set_used(vertexUse);
 		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
-		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0.0f, 0.0f);
-		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 1.0f, 0.0f);
-		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 1.0f, 1.0f);
-		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0.0f, 1.0f);
+		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u1, v1);
+		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u2, v1);
+		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u2, v2);
+		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u1, v2);
 
 		// transform
 		for (int i = 0; i < 4; i++)

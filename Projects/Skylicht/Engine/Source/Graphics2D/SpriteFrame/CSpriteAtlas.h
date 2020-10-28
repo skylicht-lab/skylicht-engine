@@ -56,5 +56,15 @@ namespace Skylicht
 		SImage* createAtlasRect(int w, int h, core::recti& outRegion);
 
 		void updateTexture();
+
+		inline int getWidth()
+		{
+			return m_width;
+		}
+
+		inline int getHeight()
+		{
+			return m_height;
+		}
 	};
 }

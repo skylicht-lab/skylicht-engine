@@ -111,9 +111,18 @@ namespace Skylicht
 				virtual CBase* getChild(u32 i);
 
 				virtual void setParent(CBase* parent);
-				virtual CBase* getParent() const
+
+				virtual CBase* getParent()
 				{
 					return m_parent;
+				}
+
+				virtual CBase* getInnerPanel()
+				{
+					if (m_innerPanel == NULL)
+						return this;
+
+					return m_innerPanel;
 				}
 
 				virtual const List& getChildren()
@@ -177,7 +186,7 @@ namespace Skylicht
 				inline void setMargin(const SMargin& margin) { m_margin = margin; }
 
 				virtual void moveTo(float x, float y);
-				virtual void dragTo(float x, float y, float dragPosX, float dragPosY);
+				virtual void dragTo(float x, float y, float dragPosX, float dragPosY, float paddingBottom);
 				inline void moveBy(float x, float y) { moveTo(X() + x, Y() + y); }
 
 				inline const SRect& getBounds() const { return m_bounds; }
@@ -196,7 +205,22 @@ namespace Skylicht
 				virtual void doRender();
 				virtual void renderRecursive(const SRect& cliprect);
 
-				virtual bool shouldClip() { return true; }
+				bool shouldClip() { return m_shouldClip; }
+
+				inline void enableClip(bool b)
+				{
+					m_shouldClip = b;
+				}
+
+				inline void enableRenderFillRect(bool b)
+				{
+					m_renderFillRect = b;
+				}
+
+				inline void setFillRectColor(const SGUIColor& c)
+				{
+					m_fillRectColor = c;
+				}
 
 			protected:
 
@@ -301,6 +325,7 @@ namespace Skylicht
 
 			protected:
 				CBase *m_parent;
+				CBase *m_innerPanel;
 
 				std::string m_name;
 
@@ -315,8 +340,13 @@ namespace Skylicht
 				bool m_hidden;
 				bool m_needsLayout;
 
+				bool m_shouldClip;
+
 				bool m_mouseInputEnabled;
 				bool m_keyboardInputEnabled;
+
+				bool m_renderFillRect;
+				SGUIColor m_fillRectColor;
 
 				EPosition m_dock;
 

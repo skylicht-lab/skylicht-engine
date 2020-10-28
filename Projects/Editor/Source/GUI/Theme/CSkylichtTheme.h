@@ -85,6 +85,16 @@ namespace Skylicht
 					return m_systemIcon32[icon];
 				}
 
+				inline int getAtlasWidth()
+				{
+					return m_sprite->getWidth();
+				}
+
+				inline int getAtlasHeight()
+				{
+					return m_sprite->getHeight();
+				}
+
 			private:
 
 				void initSystemIcon();

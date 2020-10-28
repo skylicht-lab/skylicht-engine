@@ -38,6 +38,7 @@ namespace Skylicht
 				m_color(CThemeConfig::DefaultTextColor)
 			{
 				setMouseInputEnabled(false);
+				enableClip(true);
 			}
 
 			CText::~CText()

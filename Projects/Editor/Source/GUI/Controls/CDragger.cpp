@@ -58,7 +58,7 @@ namespace Skylicht
 				if (m_target->getParent() != NULL)
 					p = m_target->getParent()->canvasPosToLocal(p);
 
-				m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y);
+				m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y, height());
 				m_target->onMoved();
 			}
 
