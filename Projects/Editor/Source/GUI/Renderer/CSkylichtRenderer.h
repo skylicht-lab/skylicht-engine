@@ -69,6 +69,8 @@ namespace Skylicht
 
 				virtual void endClip();
 
+				virtual void drawFillRect(const SRect &r, const SGUIColor& color);
+
 				virtual void renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string);
 
 				virtual SDimension measureText(EFontSize fontSize, const std::wstring& string);
@@ -80,6 +82,10 @@ namespace Skylicht
 					m_world.setTranslation(core::vector3df(m_renderOffset.X, m_renderOffset.Y, 0.0f));
 					return m_world;
 				}
+
+				core::rectf getRect(const SRect& rect);
+
+				video::SColor getColor(const SGUIColor& color);
 			};
 		}
 	}

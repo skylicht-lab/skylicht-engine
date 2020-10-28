@@ -38,6 +38,7 @@ namespace Skylicht
 			SGUIColor CThemeConfig::Black = SGUIColor(255, 0, 0, 0);
 
 			SGUIColor CThemeConfig::WindowBackgroundColor = SGUIColor(252, 35, 35, 35);
+			SGUIColor CThemeConfig::WindowInnerColor = SGUIColor(255, 55, 55, 55);
 			SGUIColor CThemeConfig::DefaultTextColor = SGUIColor(255, 165, 165, 165);
 			SGUIColor CThemeConfig::DefaultIconColor = SGUIColor(255, 215, 215, 215);
 			SGUIColor CThemeConfig::IconPressColor = SGUIColor(255, 255, 255, 255);
