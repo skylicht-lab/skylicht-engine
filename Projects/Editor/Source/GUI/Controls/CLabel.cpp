@@ -44,11 +44,20 @@ namespace Skylicht
 
 			}
 
+			void CLabel::sizeToContents()
+			{
+				m_text->sizeToContents();
+
+				float w = m_padding.Left + m_padding.Right + m_text->width();
+				float h = m_padding.Top + m_padding.Bottom + m_text->height();
+				setSize(w, h);
+			}
+
 			void CLabel::onBoundsChanged(const SRect& oldBounds)
 			{
 				CBase::onBoundsChanged(oldBounds);
 
-				m_text->refreshSize();
+				m_text->sizeToContents();
 				invalidate();
 			}
 
