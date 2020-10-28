@@ -36,11 +36,35 @@ namespace Skylicht
 			GUI::CWindow *window1 = new GUI::CWindow(canvas, 20.0f, 20.0f, 600.0f, 480.0f);
 			GUI::CTabControl *tab = new GUI::CTabControl(window1);
 			tab->dock(GUI::EPosition::Fill);
-			tab->addPage(L"Scene", NULL);
-			tab->addPage(L"Particle", NULL);
-			tab->addPage(L"Animation", NULL);
-			tab->addPage(L"Animator State", NULL);
-			tab->addPage(L"GUI", NULL);
+
+			GUI::CBase *p1 = tab->addPage(L"Scene", NULL);
+			GUI::CBase *p2 = tab->addPage(L"Particle", NULL);
+			GUI::CBase *p3 = tab->addPage(L"Animation", NULL);
+			GUI::CBase *p4 = tab->addPage(L"Animator State", NULL);
+			GUI::CBase *p5 = tab->addPage(L"GUI", NULL);
+
+			/*
+			GUI::CLabel *l1 = new GUI::CLabel(p1);
+			GUI::CLabel *l2 = new GUI::CLabel(p2);
+			GUI::CLabel *l3 = new GUI::CLabel(p3);
+			GUI::CLabel *l4 = new GUI::CLabel(p4);
+			GUI::CLabel *l5 = new GUI::CLabel(p5);
+
+			l1->setString(L"1");
+			l1->sizeToContents();
+
+			l2->setString(L"2");
+			l2->sizeToContents();
+
+			l3->setString(L"3");
+			l3->sizeToContents();
+
+			l4->setString(L"4");
+			l4->sizeToContents();
+
+			l5->setString(L"5");
+			l5->sizeToContents();
+			*/
 
 			GUI::CWindow *window2 = new GUI::CWindow(canvas, 400.0f, 100.0f, 600.0f, 480.0f);
 			GUI::CWindow *window3 = new GUI::CWindow(window2, 20.0f, 20.0f, 300.0f, 240.0f);

@@ -41,6 +41,8 @@ namespace Skylicht
 				CLabel(CBase *parent);
 				virtual ~CLabel();
 
+				virtual void sizeToContents();
+
 				virtual void onBoundsChanged(const SRect& oldBounds);
 
 				void setString(const std::wstring& text);

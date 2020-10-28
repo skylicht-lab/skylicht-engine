@@ -32,7 +32,8 @@ namespace Skylicht
 		namespace GUI
 		{
 			CTabControl::CTabControl(CBase *parent) :
-				CBase(parent)
+				CBase(parent),
+				m_currentTab(NULL)
 			{
 				m_tabStrip = new CTabStrip(this);
 				m_tabStrip->dock(EPosition::Top);
@@ -57,27 +58,108 @@ namespace Skylicht
 				tabButton->setLabel(label);
 
 				addTabButton(tabButton);
-
 				return page;
 			}
 
 			void CTabControl::removePage(CBase *page)
 			{
 				ListTabButton::iterator i = m_tabButtons.begin(), end = m_tabButtons.end();
+				ListTabButton::iterator next;
+
+				bool findNewFocus = false;
+
 				while (i != end)
 				{
-					if ((*i)->getPage() == page)
+					CTabButton *button = (*i);
+
+					if (button->getPage() == page)
 					{
-						removeTabButton((*i));
-						m_tabButtons.erase(i);						
+						if (button == m_currentTab)
+						{
+							next = i;
+							++next;
+							onTabUnfocus(m_currentTab);
+							findNewFocus = true;
+						}
+
+						onCloseTab(button);
+
+						removeTabButton(button);
+						m_tabButtons.erase(i);
+
+						if (findNewFocus == true)
+						{
+							if (next != m_tabButtons.end())
+							{
+								m_currentTab = (*next);
+								onTabFocus(m_currentTab);
+							}
+							else
+							{
+								m_currentTab = NULL;
+
+								if (m_tabButtons.size() > 0)
+									m_currentTab = m_tabButtons.front();
+
+								if (m_currentTab != NULL)
+									onTabFocus(m_currentTab);
+							}
+						}
+
 						return;
 					}
 					++i;
 				}
 			}
 
+			void CTabControl::onTabFocus(CTabButton *tab)
+			{
+				if (OnTabFocus != nullptr)
+					OnTabFocus(this, tab->getPage());
+
+				tab->setFocus(true);
+				tab->getPage()->setHidden(false);
+			}
+
+			void CTabControl::onTabUnfocus(CTabButton *tab)
+			{
+				if (OnTabUnfocus != nullptr)
+					OnTabUnfocus(this, tab->getPage());
+
+				tab->setFocus(false);
+				tab->getPage()->setHidden(true);
+			}
+
+			void CTabControl::onTabPressed(CBase *tab)
+			{
+				if (m_currentTab == tab)
+					return;
+
+				CTabButton *tabButton = (CTabButton*)tab;
+
+				if (m_currentTab)
+					onTabUnfocus(m_currentTab);
+
+				m_currentTab = tabButton;
+				onTabFocus(m_currentTab);
+
+				if (OnTabPressed != nullptr)
+					OnTabPressed(this, tabButton->getPage());
+			}
+
+			void CTabControl::onCloseTab(CTabButton *tab)
+			{
+				if (OnCloseTab != nullptr)
+					OnCloseTab(this, tab);
+			}
+
 			void CTabControl::addTabButton(CTabButton *button)
 			{
+				if (m_currentTab != NULL)
+				{
+					onTabUnfocus(m_currentTab);
+				}
+
 				CBase *page = button->getPage();
 				page->dock(EPosition::Fill);
 
@@ -89,7 +171,12 @@ namespace Skylicht
 				else
 					button->setMargin(SMargin(0.0f, 6.0f, 0.0f, 2.0f));
 
+				button->OnDown = BIND_LISTENER(&CTabControl::onTabPressed, this);
+
 				m_tabButtons.push_back(button);
+
+				m_currentTab = button;
+				onTabFocus(m_currentTab);
 
 				invalidate();
 			}

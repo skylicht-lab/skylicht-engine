@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTabButton.h"
 #include "CTabStrip.h"
 
+#define BIND_TABCONTROL_LISTENER(A, B) std::bind(A, B, std::placeholders::_1, std::placeholders::_2)
+
 namespace Skylicht
 {
 	namespace Editor
@@ -35,11 +37,16 @@ namespace Skylicht
 		{
 			class CTabControl :public CBase
 			{
+			public:
+				typedef std::function<void(CTabControl*, CBase*)> TabControlListener;
+
 			protected:
 				CTabStrip *m_tabStrip;
 
 				typedef std::list<CTabButton*> ListTabButton;
 				ListTabButton m_tabButtons;
+
+				CTabButton* m_currentTab;
 
 			public:
 				CTabControl(CBase *parent);
@@ -49,6 +56,22 @@ namespace Skylicht
 				CBase* addPage(const std::wstring& label, CBase *page);
 
 				void removePage(CBase *page);
+
+				virtual void onTabFocus(CTabButton *tab);
+
+				virtual void onTabUnfocus(CTabButton *tab);
+
+				virtual void onTabPressed(CBase *tab);
+
+				virtual void onCloseTab(CTabButton *tab);
+
+				TabControlListener OnTabFocus;
+
+				TabControlListener OnTabUnfocus;
+
+				TabControlListener OnTabPressed;
+
+				TabControlListener OnCloseTab;
 
 			protected:
 

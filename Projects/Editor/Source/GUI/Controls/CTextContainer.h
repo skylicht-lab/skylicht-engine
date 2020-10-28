@@ -77,7 +77,7 @@ namespace Skylicht
 
 				virtual void layout();
 
-				void refreshSize();
+				void sizeToContents();
 
 			protected:
 

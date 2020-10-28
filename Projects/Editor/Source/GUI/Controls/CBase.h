@@ -179,6 +179,8 @@ namespace Skylicht
 
 				SDimension getChildrenSize();
 
+				virtual void sizeToContents() { }
+
 				inline bool setBounds(float x, float y, float w, float h) { return setBounds(SRect(x, y, w, h)); }
 				virtual bool setBounds(const SRect& bounds);
 

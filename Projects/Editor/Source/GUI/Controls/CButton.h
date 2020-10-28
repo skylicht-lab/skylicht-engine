@@ -52,6 +52,7 @@ namespace Skylicht
 
 			public:
 
+				Listener OnDown;
 				Listener OnPress;
 				Listener OnRightPress;
 
