@@ -48,13 +48,17 @@ namespace Skylicht
 				// add system icon
 				initSystemIcon();
 
-				// add window background
+				// add window
 				m_window = m_sprite->addFrame("draw_window", "Editor/GUI/draw_window.png");
 				m_windowShadow = m_sprite->addFrame("draw_window_shadow", "Editor/GUI/draw_window_shadow.png");
 
-				// add button background
+				// add button
 				m_button = m_sprite->addFrame("draw_button", "Editor/GUI/draw_button.png");
 				m_buttonShadow = m_sprite->addFrame("draw_button_shadow", "Editor/GUI/draw_button_shadow.png");
+
+				// add tab button
+				m_tabButton = m_sprite->addFrame("draw_tab_button", "Editor/GUI/draw_tab_button.png");
+				m_tabButtonFocus = m_sprite->addFrame("draw_tab_button_focus", "Editor/GUI/draw_tab_button_focus.png");
 
 				// add font text
 				m_renderer->initFont(m_sprite);
@@ -182,104 +186,15 @@ namespace Skylicht
 				m_graphics->addFrameBatch(frame, getColor(color), m_renderer->getWorldTransform(), m_materialID);
 			}
 
-			void CSkylichtTheme::drawWindow(const SRect& rect, bool isFocussed)
+			void CSkylichtTheme::drawGUIModule(SFrame* frame, const SRect& rect, const SGUIColor& color, float left, float top, float right, float bottom, float cornerRadius)
 			{
-				float left = 11.0f;
-				float top = 11.0f;
-				float right = 55.0f;
-				float bottom = 55.0f;
-
-				// corner radius
-				float margin = 3.0f;
-
-				SModuleOffset *module = &m_window->ModuleOffset[0];
+				SModuleOffset *module = &frame->ModuleOffset[0];
 
 				core::rectf r = getRect(rect);
-				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + margin;
-				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + margin;
-				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - margin);
-				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom - margin);
-
-				m_graphics->addModuleBatch(
-					module,
-					getColor(CThemeConfig::WindowBackgroundColor),
-					m_renderer->getWorldTransform(),
-					r,
-					left, right, top, bottom,
-					m_materialID);
-			}
-
-			void CSkylichtTheme::drawWindowShadow(const SRect& rect)
-			{
-				float left = 11.0f;
-				float top = 11.0f;
-				float right = 55.0f;
-				float bottom = 55.0f;
-
-				// corner radius
-				float margin = 3.0f;
-
-				SModuleOffset *module = &m_windowShadow->ModuleOffset[0];
-
-				core::rectf r = getRect(rect);
-				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + margin;
-				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + margin;
-				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - margin);
-				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom - margin);
-
-				m_graphics->addModuleBatch(
-					module,
-					getColor(CThemeConfig::White),
-					m_renderer->getWorldTransform(),
-					r,
-					left, right, top, bottom,
-					m_materialID);
-			}
-
-			void CSkylichtTheme::drawButtonShadow(const SRect& rect)
-			{
-				float left = 6.0f;
-				float top = 6.0f;
-				float right = 18.0f;
-				float bottom = 18.0f;
-
-				// corner radius
-				float margin = 3.0f;
-
-				SModuleOffset *module = &m_buttonShadow->ModuleOffset[0];
-
-				core::rectf r = getRect(rect);
-				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + margin;
-				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + margin;
-				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - margin);
-				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom - margin);
-
-				m_graphics->addModuleBatch(
-					module,
-					getColor(CThemeConfig::White),
-					m_renderer->getWorldTransform(),
-					r,
-					left, right, top, bottom,
-					m_materialID);
-			}
-
-			void CSkylichtTheme::drawButton(const SRect& rect, const SGUIColor& color)
-			{
-				float left = 6.0f;
-				float top = 6.0f;
-				float right = 18.0f;
-				float bottom = 18.0f;
-
-				// corner radius
-				float margin = 3.0f;
-
-				SModuleOffset *module = &m_button->ModuleOffset[0];
-
-				core::rectf r = getRect(rect);
-				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + margin;
-				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + margin;
-				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - margin);
-				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom - margin);
+				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + cornerRadius;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + cornerRadius;
+				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - cornerRadius);
+				r.LowerRightCorner.Y = r.LowerRightCorner.Y + (module->Module->H - bottom - cornerRadius);
 
 				m_graphics->addModuleBatch(
 					module,
@@ -288,6 +203,64 @@ namespace Skylicht
 					r,
 					left, right, top, bottom,
 					m_materialID);
+			}
+
+			void CSkylichtTheme::drawWindow(const SRect& rect, bool isFocussed)
+			{
+				float left = 11.0f;
+				float top = 11.0f;
+				float right = 55.0f;
+				float bottom = 55.0f;
+				float radius = 3.0f;
+
+				drawGUIModule(m_window, rect, CThemeConfig::WindowBackgroundColor, left, top, right, bottom, radius);
+			}
+
+			void CSkylichtTheme::drawWindowShadow(const SRect& rect)
+			{
+				float left = 11.0f;
+				float top = 11.0f;
+				float right = 55.0f;
+				float bottom = 55.0f;
+				float radius = 3.0f;
+
+				drawGUIModule(m_windowShadow, rect, CThemeConfig::White, left, top, right, bottom, radius);
+			}
+
+			void CSkylichtTheme::drawButtonShadow(const SRect& rect)
+			{
+				float left = 6.0f;
+				float top = 6.0f;
+				float right = 18.0f;
+				float bottom = 18.0f;
+				float radius = 3.0f;
+
+				drawGUIModule(m_buttonShadow, rect, CThemeConfig::White, left, top, right, bottom, radius);
+			}
+
+			void CSkylichtTheme::drawButton(const SRect& rect, const SGUIColor& color)
+			{
+				float left = 6.0f;
+				float top = 6.0f;
+				float right = 18.0f;
+				float bottom = 18.0f;
+				float radius = 3.0f;
+
+				drawGUIModule(m_button, rect, color, left, top, right, bottom, radius);
+			}
+
+			void CSkylichtTheme::drawTabButton(const SRect& rect, const SGUIColor& color, const SGUIColor& focusColor, bool focus)
+			{
+				float left = 4.0f;
+				float top = 4.0f;
+				float right = 18.0f;
+				float bottom = 18.0f;
+				float radius = 3.0f;
+
+				drawGUIModule(m_tabButton, rect, color, left, top, right, bottom, radius);
+
+				if (focus)
+					drawGUIModule(m_tabButtonFocus, rect, focusColor, left, top, right, bottom, radius);
 			}
 
 			core::rectf CSkylichtTheme::getRect(const SRect& rect)

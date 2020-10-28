@@ -491,8 +491,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		IrrlichtDevice *dev = getIrrlichtDevice();
 		if (dev)
 		{
-			dev->getCursorControl()->setActiveIcon(dev->getCursorControl()->getActiveIcon());
-			dev->getCursorControl()->setVisible(dev->getCursorControl()->isVisible());
+			gui::ICursorControl* cursor = dev->getCursorControl();
+			cursor->setVisible(cursor->isVisible());
+
+			if (cursor->getActiveIcon() != gui::ECI_NORMAL)
+				cursor->setActiveIcon(cursor->getActiveIcon());
+			else
+				return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
 	}

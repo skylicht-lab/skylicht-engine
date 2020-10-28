@@ -50,6 +50,9 @@ namespace Skylicht
 				SFrame *m_button;
 				SFrame *m_buttonShadow;
 
+				SFrame *m_tabButton;
+				SFrame *m_tabButtonFocus;
+
 				SFrame *m_systemIcon16[NumSystemIcon];
 				SFrame *m_systemIcon32[NumSystemIcon];
 
@@ -72,6 +75,8 @@ namespace Skylicht
 				virtual void drawButtonShadow(const SRect& rect);
 
 				virtual void drawButton(const SRect& rect, const SGUIColor& color);
+
+				virtual void drawTabButton(const SRect& rect, const SGUIColor& color, const SGUIColor& focusColor, bool focus);
 
 			public:
 
@@ -100,6 +105,8 @@ namespace Skylicht
 				void initSystemIcon();
 
 				void addSystemIcon(ESystemIcon type, const char *name);
+
+				void drawGUIModule(SFrame* frame, const SRect& rect, const SGUIColor& color, float left, float top, float right, float bottom, float cornerRadius);
 
 				core::rectf getRect(const SRect& rect);
 
