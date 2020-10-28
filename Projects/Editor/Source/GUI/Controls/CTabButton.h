@@ -21,10 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "GUI/Type.h"
+#include "CBase.h"
+#include "CButton.h"
 
 namespace Skylicht
 {
@@ -32,33 +32,44 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeConfig
+			class CTabButton :public CButton
 			{
+			protected:
+				CBase *m_page;
+				bool m_focus;
+
+				SGUIColor m_focusColor;
 			public:
-				static std::string FontName;
-				static std::string FontPath;
+				CTabButton(CBase *parent, CBase *page);
 
-				static SGUIColor White;
-				static SGUIColor Black;
+				virtual ~CTabButton();
 
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowInnerColor;
-				static SGUIColor DefaultTextColor;
-				static SGUIColor DefaultIconColor;
-				static SGUIColor IconPressColor;
-				static SGUIColor TextPressColor;
+				virtual void renderUnder();
 
-				static SGUIColor ButtonColor;
-				static SGUIColor ButtonHoverColor;
-				static SGUIColor ButtonPressColor;
-				static SGUIColor ButtonFocusColor;
+				CBase* getPage()
+				{
+					return m_page;
+				}
 
-				static SGUIColor TabStripColor;
-				static SGUIColor TabButtonColor;
-				static SGUIColor TabButtonActiveColor;
-				static SGUIColor TabButtonFocusColor;
+				inline void setFocus(bool b)
+				{
+					m_focus = b;
+				}
 
-				static float getFontSizePt(EFontSize size);
+				inline bool isFocus()
+				{
+					return m_focus;
+				}
+
+				inline void setFocusColor(const SGUIColor& c)
+				{
+					m_focusColor = c;
+				}
+
+				const SGUIColor& getFocusColor()
+				{
+					return m_focusColor;
+				}
 			};
 		}
 	}

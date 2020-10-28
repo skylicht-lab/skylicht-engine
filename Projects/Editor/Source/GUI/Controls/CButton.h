@@ -48,6 +48,7 @@ namespace Skylicht
 				SGUIColor m_labelColor;
 
 				bool m_pressed;
+				bool m_drawBackground;
 
 			public:
 
@@ -69,6 +70,8 @@ namespace Skylicht
 				virtual void onMouseClickRight(float x, float y, bool bDown);
 
 				virtual void onMouseLeave();
+
+				virtual void sizeToContents();
 
 				inline void setLabelColor(const SGUIColor& color)
 				{
@@ -150,6 +153,11 @@ namespace Skylicht
 				inline void setFocusColor(const SGUIColor& c)
 				{
 					m_focusColor = c;
+				}
+
+				inline void enableDrawBackground(bool b)
+				{
+					m_drawBackground = b;
 				}
 
 				Listener OnTextChanged;

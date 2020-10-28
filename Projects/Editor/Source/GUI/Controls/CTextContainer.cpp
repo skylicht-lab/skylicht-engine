@@ -172,7 +172,7 @@ namespace Skylicht
 				// Size to children height and parent width
 				{
 					SDimension childsize = getChildrenSize();
-					setSize(w, childsize.Height);
+					setSize(childsize.Width, childsize.Height);
 				}
 
 				invalidateParent();

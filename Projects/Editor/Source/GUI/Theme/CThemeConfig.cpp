@@ -49,6 +49,11 @@ namespace Skylicht
 			SGUIColor CThemeConfig::ButtonPressColor = SGUIColor(255, 80, 120, 180);
 			SGUIColor CThemeConfig::ButtonFocusColor = SGUIColor(255, 85, 110, 140);
 
+			SGUIColor CThemeConfig::TabStripColor = SGUIColor(255, 35, 35, 35);
+			SGUIColor CThemeConfig::TabButtonColor = SGUIColor(255, 45, 45, 45);
+			SGUIColor CThemeConfig::TabButtonActiveColor = SGUIColor(255, 65, 65, 65);
+			SGUIColor CThemeConfig::TabButtonFocusColor = SGUIColor(255, 85, 110, 140);
+
 			float CThemeConfig::getFontSizePt(EFontSize size)
 			{
 				switch (size)

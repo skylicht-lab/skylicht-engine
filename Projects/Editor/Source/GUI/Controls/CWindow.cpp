@@ -60,6 +60,7 @@ namespace Skylicht
 				m_close->setIcon(ESystemIcon::Close);
 				m_close->setMargin(SMargin(0.0f, 0.0f, 0.0f, 2.0f));
 				m_close->showIcon(true);
+				m_close->setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 				m_close->OnPress = BIND_LISTENER(&CWindow::onCloseButtonPress, this);
 
 				m_innerPanel = new CBase(this);

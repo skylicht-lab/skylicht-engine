@@ -52,6 +52,8 @@ namespace Skylicht
 				virtual void drawButtonShadow(const SRect& rect) {}
 
 				virtual void drawButton(const SRect& rect, const SGUIColor& color) {}
+
+				virtual void drawTabButton(const SRect& rect, const SGUIColor& color, const SGUIColor& focusColor, bool focus) {}
 			};
 		}
 	}

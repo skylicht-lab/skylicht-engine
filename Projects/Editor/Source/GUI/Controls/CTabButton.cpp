@@ -22,9 +22,9 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "GUI/Type.h"
+#include "pch.h"
+#include "CTabButton.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -32,34 +32,38 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeConfig
+			CTabButton::CTabButton(CBase *parent, CBase *page) :
+				CButton(parent),
+				m_page(page),
+				m_focus(false)
 			{
-			public:
-				static std::string FontName;
-				static std::string FontPath;
+				m_color = CThemeConfig::TabButtonColor;
+				m_pressColor = CThemeConfig::TabButtonActiveColor;
+				m_hoverColor = CThemeConfig::TabButtonActiveColor;
+				m_focusColor = CThemeConfig::TabButtonFocusColor;
 
-				static SGUIColor White;
-				static SGUIColor Black;
+				m_label->setMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
+			}
 
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowInnerColor;
-				static SGUIColor DefaultTextColor;
-				static SGUIColor DefaultIconColor;
-				static SGUIColor IconPressColor;
-				static SGUIColor TextPressColor;
+			CTabButton::~CTabButton()
+			{
 
-				static SGUIColor ButtonColor;
-				static SGUIColor ButtonHoverColor;
-				static SGUIColor ButtonPressColor;
-				static SGUIColor ButtonFocusColor;
+			}
 
-				static SGUIColor TabStripColor;
-				static SGUIColor TabButtonColor;
-				static SGUIColor TabButtonActiveColor;
-				static SGUIColor TabButtonFocusColor;
+			void CTabButton::renderUnder()
+			{
+				SGUIColor c = m_color;
 
-				static float getFontSizePt(EFontSize size);
-			};
+				if (isHovered())
+				{
+					if (m_pressed == true)
+						c = m_pressColor;
+					else
+						c = m_hoverColor;
+				}
+
+				CTheme::getTheme()->drawTabButton(getRenderBounds(), c, m_focusColor, m_focus);
+			}
 		}
 	}
 }

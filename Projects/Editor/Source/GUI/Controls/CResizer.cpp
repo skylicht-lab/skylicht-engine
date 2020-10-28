@@ -34,7 +34,7 @@ namespace Skylicht
 			CResizer::CResizer(CBase* parent) :
 				CDragger(parent)
 			{
-				setSize(4.0f, 4.0f);
+				setSize(3.0f, 3.0f);
 				m_resizeDir = EPosition::Left;
 			}
 
