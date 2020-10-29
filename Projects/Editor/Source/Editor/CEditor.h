@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/CGUIContext.h"
 #include "GUI/Controls/CWindow.h"
 #include "GUI/Controls/CTabControl.h"
+#include "GUI/Controls/CSplitter.h"
 
 namespace Skylicht
 {
