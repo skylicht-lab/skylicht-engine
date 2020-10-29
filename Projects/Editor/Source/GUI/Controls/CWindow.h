@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CBase.h"
 #include "GUI/Controls/CLabel.h"
 #include "GUI/Controls/CIcon.h"
-#include "GUI/Controls/CButton.h"
+#include "GUI/Controls/CIconButton.h"
 #include "GUI/Controls/CResizableControl.h"
 
 namespace Skylicht
@@ -41,7 +41,7 @@ namespace Skylicht
 				CDragger *m_titleBar;
 				CLabel *m_title;
 				CIcon *m_icon;
-				CButton *m_close;
+				CIconButton *m_close;
 
 			public:
 				CWindow(CBase* parent, float x, float y, float w, float h);

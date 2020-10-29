@@ -54,13 +54,10 @@ namespace Skylicht
 				m_title->dock(EPosition::Fill);
 				m_title->setPadding(SPadding(4.0f, 4.0f, 0.0f, 0.0f));
 
-				m_close = new CButton(m_titleBar);
-				m_close->setSize(20.0f, 20.0f);
+				m_close = new CIconButton(m_titleBar);
 				m_close->dock(EPosition::Right);
 				m_close->setIcon(ESystemIcon::Close);
 				m_close->setMargin(SMargin(0.0f, 0.0f, 0.0f, 2.0f));
-				m_close->showIcon(true);
-				m_close->setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 				m_close->OnPress = BIND_LISTENER(&CWindow::onCloseButtonPress, this);
 
 				m_innerPanel = new CBase(this);

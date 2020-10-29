@@ -35,7 +35,8 @@ namespace Skylicht
 			CTabButton::CTabButton(CBase *parent, CBase *page) :
 				CButton(parent),
 				m_page(page),
-				m_focus(false)
+				m_focus(false),
+				m_showCloseButton(false)
 			{
 				m_color = CThemeConfig::TabButtonColor;
 				m_pressColor = CThemeConfig::TabButtonActiveColor;
@@ -43,6 +44,16 @@ namespace Skylicht
 				m_focusColor = CThemeConfig::TabButtonFocusColor;
 
 				m_label->setMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
+				m_label->setColor(CThemeConfig::TabTextColor);
+
+				m_close = new CIconButton(this);
+				m_close->setMargin(SMargin(0.0f, 1.0f, 8.0f, -1.0f));
+				m_close->dock(EPosition::Right);
+				m_close->setIcon(ESystemIcon::Close);
+				m_close->setHidden(!m_showCloseButton);
+				m_close->enableDrawBackground(false);
+				m_close->enableDrawHoverRectangle(true);
+				m_close->setHoverRectangleMargin(SMargin(3.0f, 3.0f, 3.0f, 3.0f));
 			}
 
 			CTabButton::~CTabButton()
@@ -54,7 +65,7 @@ namespace Skylicht
 			{
 				SGUIColor c = m_color;
 
-				if (isHovered())
+				if (isHovered() || m_close->isHovered())
 				{
 					if (m_pressed == true)
 						c = m_pressColor;
@@ -63,9 +74,30 @@ namespace Skylicht
 				}
 
 				if (m_focus)
+				{
 					c = m_pressColor;
 
+					m_label->setColor(CThemeConfig::TabTextFocusColor);
+				}
+				else
+				{
+					m_label->setColor(CThemeConfig::TabTextColor);
+				}
+
 				CTheme::getTheme()->drawTabButton(getRenderBounds(), c, m_focusColor, m_focus);
+			}
+
+			void CTabButton::sizeToContents()
+			{
+				CButton::sizeToContents();
+
+				if (m_showCloseButton)
+				{
+					float w = width() + m_close->width();
+					float h = height();
+
+					setSize(w, h);
+				}
 			}
 		}
 	}
