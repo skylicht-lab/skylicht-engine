@@ -47,8 +47,9 @@ namespace Skylicht
 				m_icon->dock(EPosition::Left);
 
 				m_label = new CTextContainer(this);
-				m_label->setMargin(SMargin(0.0f, 6.0f, 0.0f, 0.0f));
+				m_label->setMargin(SMargin(0.0f, 2.0f, 0.0f, 0.0f));
 				m_label->dock(EPosition::Fill);
+				m_label->setColor(CThemeConfig::ButtonTextColor);
 
 				setSize(80.0f, 20.0f);
 				m_icon->setHidden(true);
@@ -157,17 +158,13 @@ namespace Skylicht
 
 			void CButton::sizeToContents()
 			{
+				float h = height();
+
 				m_label->sizeToContents();
 
 				float w = m_padding.Left + m_padding.Right + m_label->width();
 				if (m_icon->isHidden() == false)
 					w = w + m_icon->width();
-
-				float h = m_padding.Top + m_padding.Bottom;
-				if (m_icon->isHidden() == false)
-					h = h + core::max_<float>(m_icon->height(), m_label->height());
-				else
-					h = h + m_label->height();
 
 				setSize(w, h);
 			}

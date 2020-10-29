@@ -34,17 +34,30 @@ namespace Skylicht
 			GUI::CCanvas *canvas = GUI::CGUIContext::getRoot();
 
 			GUI::CWindow *window1 = new GUI::CWindow(canvas, 20.0f, 20.0f, 600.0f, 480.0f);
-			GUI::CTabControl *tab = new GUI::CTabControl(window1);
-			tab->dock(GUI::EPosition::Fill);
 
-			GUI::CBase *p1 = tab->addPage(L"Scene", NULL);
-			GUI::CBase *p2 = tab->addPage(L"Particle", NULL);
-			GUI::CBase *p3 = tab->addPage(L"Animation", NULL);
-			GUI::CBase *p4 = tab->addPage(L"Animator State", NULL);
-			GUI::CBase *p5 = tab->addPage(L"GUI", NULL);
+			GUI::CSplitter *spliter = new GUI::CSplitter(window1);
+			spliter->dock(GUI::EPosition::Fill);
+			spliter->setNumberRowCol(1, 2);
+
+			GUI::CTabControl *tab1 = new GUI::CTabControl(window1);
+			GUI::CTabControl *tab2 = new GUI::CTabControl(window1);
+
+			spliter->setControl(tab1, 0, 0);
+			spliter->setControl(tab2, 0, 1);
+
+			GUI::CBase *p1 = tab1->addPage(L"Scene", NULL);
+			GUI::CBase *p2 = tab1->addPage(L"Particle", NULL);
+			GUI::CBase *p3 = tab1->addPage(L"Animation", NULL);
+			GUI::CBase *p4 = tab2->addPage(L"Animator", NULL);
+			GUI::CBase *p5 = tab2->addPage(L"GUI", NULL);
 
 			/*
-			GUI::CLabel *l1 = new GUI::CLabel(p1);
+			GUI::CButton *button = new GUI::CButton(p1);
+			button->setLabel(L"Test Button");
+			button->sizeToContents();
+			*/
+
+			/*
 			GUI::CLabel *l2 = new GUI::CLabel(p2);
 			GUI::CLabel *l3 = new GUI::CLabel(p3);
 			GUI::CLabel *l4 = new GUI::CLabel(p4);
@@ -66,10 +79,13 @@ namespace Skylicht
 			l5->sizeToContents();
 			*/
 
-			tab->showTabCloseButton(true);
+			tab1->showTabCloseButton(true);
+			tab2->showTabCloseButton(true);
 
+			/*
 			GUI::CWindow *window2 = new GUI::CWindow(canvas, 400.0f, 100.0f, 600.0f, 480.0f);
 			GUI::CWindow *window3 = new GUI::CWindow(window2, 20.0f, 20.0f, 300.0f, 240.0f);
+			*/
 		}
 
 		CEditor::~CEditor()
