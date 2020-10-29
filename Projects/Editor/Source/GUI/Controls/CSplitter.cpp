@@ -37,7 +37,8 @@ namespace Skylicht
 				CBase(parent),
 				m_row(1),
 				m_col(1),
-				m_expanderSize(4)
+				m_expanderSize(4),
+				m_minSize(50.0f)
 			{
 				for (int x = 0; x < MAX_SPLITER_COL; x++)
 				{
@@ -48,10 +49,16 @@ namespace Skylicht
 				}
 
 				for (int x = 0; x < MAX_SPLITER_COL; x++)
+				{
 					m_colWidth[x] = 0.0f;
+					m_adjustColWidth[x] = 0.0f;
+				}
 
 				for (int y = 0; y < MAX_SPLITER_ROW; y++)
+				{
 					m_rowHeight[y] = 0.0f;
+					m_adjustRowHeight[y] = 0.0f;
+				}
 			}
 
 			CSplitter::~CSplitter()
@@ -99,68 +106,191 @@ namespace Skylicht
 				int numColPredict = 0;
 				int numRowPredict = 0;
 
-				for (u32 i = 0; i < m_col; i++)
-				{
-					if (m_colWidth[i] > 0.0f && spaceWidth > 0.0f)
-					{
-						if (m_colWidth[i] > spaceWidth)
-							m_colWidth[i] = spaceWidth;
+				float minWidth = m_col * m_minSize + m_expanderSize * (m_col - 1);
+				float minHeight = m_row * m_minSize + m_expanderSize * (m_row - 1);
 
-						spaceWidth = spaceWidth - m_colWidth[i];
+				bool save = false;
+
+				// note: colwidth == 0, mean it is not yet init layout, we will calculate it
+				if (spaceWidth > minWidth)
+				{
+					for (u32 i = 0; i < m_col; i++)
+					{
+						if (m_colWidth[i] > 0.0f && spaceWidth > 0.0f)
+						{
+							if (m_colWidth[i] > spaceWidth)
+								m_colWidth[i] = spaceWidth;
+
+							spaceWidth = spaceWidth - m_colWidth[i];
+						}
+						else
+						{
+							// predict later
+							m_colWidth[i] = 0.0f;
+							numColPredict++;
+							save = true;
+						}
+					}
+
+					if (numColPredict > 0)
+					{
+						float avgColSize = spaceWidth / (float)numColPredict;
+						for (u32 i = 0; i < m_col; i++)
+						{
+							if (m_colWidth[i] <= 0.0f)
+								m_colWidth[i] = avgColSize;
+						}
 					}
 					else
 					{
-						// predict later
-						m_colWidth[i] = 0.0f;
-						numColPredict++;
+						if (spaceWidth > 0)
+							m_colWidth[m_col - 1] = m_colWidth[m_col - 1] + spaceWidth;
+					}
+				}
+
+				// note: rowheight == 0, mean it is not yet init layout, we will calculate it
+				if (spaceHeight > minHeight)
+				{
+					for (u32 i = 0; i < m_row; i++)
+					{
+						if (m_rowHeight[i] > 0.0f && spaceHeight > 0.0f)
+						{
+							if (m_rowHeight[i] > spaceHeight)
+								m_rowHeight[i] = spaceHeight;
+
+							spaceHeight = spaceHeight - m_rowHeight[i];
+						}
+						else
+						{
+							// predict later
+							m_rowHeight[i] = 0.0f;
+							numRowPredict++;
+							save = true;
+						}
+					}
+
+					if (numRowPredict > 0)
+					{
+						float avgRowSize = spaceHeight / (float)numRowPredict;
+						for (u32 i = 0; i < m_row; i++)
+						{
+							if (m_rowHeight[i] <= 0.0f)
+								m_rowHeight[i] = avgRowSize;
+						}
+					}
+					else
+					{
+						if (spaceHeight > 0)
+							m_rowHeight[m_row - 1] = m_rowHeight[m_row - 1] + spaceHeight;
+					}
+				}
+
+				fixForMinSize();
+
+				if (save)
+					saveUserExpectedSize();
+
+				fixForUserExpected();
+			}
+
+			void CSplitter::fixForMinSize()
+			{
+				for (u32 i = 0; i < m_col; i++)
+				{
+					if (m_colWidth[i] < m_minSize)
+					{
+						float delta = m_minSize - m_colWidth[i];
+
+						for (int j = (int)i - 1; j >= 0; j--)
+						{
+							if (m_colWidth[j] > delta + m_minSize)
+							{
+								m_colWidth[j] = m_colWidth[j] - delta;
+								m_colWidth[i] = m_colWidth[i] + delta;
+								break;
+							}
+						}
 					}
 				}
 
 				for (u32 i = 0; i < m_row; i++)
 				{
-					if (m_rowHeight[i] > 0.0f && spaceHeight > 0.0f)
+					if (m_rowHeight[i] < m_minSize)
 					{
-						if (m_rowHeight[i] > spaceHeight)
-							m_rowHeight[i] = spaceHeight;
+						float delta = m_minSize - m_rowHeight[i];
 
-						spaceHeight = spaceHeight - m_rowHeight[i];
+						for (int j = (int)i - 1; j >= 0; j--)
+						{
+							if (m_rowHeight[j] > delta + m_minSize)
+							{
+								m_rowHeight[j] = m_rowHeight[j] - delta;
+								m_rowHeight[i] = m_rowHeight[i] + delta;
+								break;
+							}
+						}
 					}
-					else
+				}
+			}
+
+			void CSplitter::saveUserExpectedSize()
+			{
+				for (int x = 0; x < MAX_SPLITER_COL; x++)
+					m_adjustColWidth[x] = m_colWidth[x];
+
+				for (int y = 0; y < MAX_SPLITER_ROW; y++)
+					m_adjustRowHeight[y] = m_rowHeight[y];
+			}
+
+			void CSplitter::fixForUserExpected()
+			{
+				for (u32 i = 0; i < m_col; i++)
+				{
+					if (m_colWidth[i] < m_adjustColWidth[i])
 					{
-						// predict later
-						m_rowHeight[i] = 0.0f;
-						numRowPredict++;
+						float target = m_adjustColWidth[i] - m_colWidth[i];
+
+						for (u32 j = i + 1; j < m_col; j++)
+						{
+							if (m_colWidth[j] > m_minSize)
+							{
+								float delta = m_colWidth[j] - m_minSize;
+								if (delta > target)
+									delta = target;
+
+								m_colWidth[i] = m_colWidth[i] + delta;
+								m_colWidth[j] = m_colWidth[j] - delta;
+
+								target = target - delta;
+								if (target <= 0.0f)
+									break;
+							}
+						}
 					}
 				}
 
-				if (numColPredict > 0)
+				for (u32 i = 0; i < m_row; i++)
 				{
-					float avgColSize = spaceWidth / (float)numColPredict;
-					for (u32 i = 0; i < m_col; i++)
+					if (m_rowHeight[i] < m_adjustRowHeight[i])
 					{
-						if (m_colWidth[i] <= 0.0f)
-							m_colWidth[i] = avgColSize;
-					}
-				}
-				else
-				{
-					if (spaceWidth > 0)
-						m_colWidth[m_col - 1] = m_colWidth[m_col - 1] + spaceWidth;
-				}
+						float target = m_adjustRowHeight[i] - m_rowHeight[i];
 
-				if (numRowPredict > 0)
-				{
-					float avgRowSize = spaceHeight / (float)numRowPredict;
-					for (u32 i = 0; i < m_row; i++)
-					{
-						if (m_rowHeight[i] <= 0.0f)
-							m_rowHeight[i] = avgRowSize;
+						for (u32 j = i + 1; j < m_row; j++)
+						{
+							if (m_rowHeight[j] > m_minSize)
+							{
+								float delta = m_rowHeight[j] - m_minSize;
+								if (delta > target)
+									delta = target;
+
+								m_rowHeight[i] = m_rowHeight[i] + delta;
+								m_rowHeight[j] = m_rowHeight[j] - delta;
+
+								target = target - delta;
+								if (target <= 0.0f)
+									break;
+							}
+						}
 					}
-				}
-				else
-				{
-					if (spaceHeight > 0)
-						m_rowHeight[m_row - 1] = m_rowHeight[m_row - 1] + spaceHeight;
 				}
 			}
 
@@ -209,7 +339,7 @@ namespace Skylicht
 
 			void CSplitter::renderUnder()
 			{
-				CRenderer::getRenderer()->drawFillRect(getRenderBounds(), CThemeConfig::WindowBackgroundColor);
+				CRenderer::getRenderer()->drawFillRect(getRenderBounds(), CThemeConfig::SpliterColor);
 			}
 
 			void CSplitter::onMouseMoved(float x, float y, float deltaX, float deltaY)

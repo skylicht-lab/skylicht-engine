@@ -37,19 +37,27 @@ namespace Skylicht
 
 			GUI::CSplitter *spliter = new GUI::CSplitter(window1);
 			spliter->dock(GUI::EPosition::Fill);
-			spliter->setNumberRowCol(1, 2);
+			spliter->setNumberRowCol(4, 1);
 
 			GUI::CTabControl *tab1 = new GUI::CTabControl(window1);
 			GUI::CTabControl *tab2 = new GUI::CTabControl(window1);
+			GUI::CTabControl *tab3 = new GUI::CTabControl(window1);
+			GUI::CTabControl *tab4 = new GUI::CTabControl(window1);
 
 			spliter->setControl(tab1, 0, 0);
-			spliter->setControl(tab2, 0, 1);
+			spliter->setControl(tab2, 1, 0);
+			spliter->setControl(tab3, 2, 0);
+			spliter->setControl(tab4, 3, 0);
 
 			GUI::CBase *p1 = tab1->addPage(L"Scene", NULL);
 			GUI::CBase *p2 = tab1->addPage(L"Particle", NULL);
 			GUI::CBase *p3 = tab1->addPage(L"Animation", NULL);
+
 			GUI::CBase *p4 = tab2->addPage(L"Animator", NULL);
 			GUI::CBase *p5 = tab2->addPage(L"GUI", NULL);
+
+			GUI::CBase *p6 = tab3->addPage(L"Animator", NULL);
+			GUI::CBase *p7 = tab4->addPage(L"GUI", NULL);
 
 			/*
 			GUI::CButton *button = new GUI::CButton(p1);
@@ -82,10 +90,8 @@ namespace Skylicht
 			tab1->showTabCloseButton(true);
 			tab2->showTabCloseButton(true);
 
-			/*
 			GUI::CWindow *window2 = new GUI::CWindow(canvas, 400.0f, 100.0f, 600.0f, 480.0f);
 			GUI::CWindow *window3 = new GUI::CWindow(window2, 20.0f, 20.0f, 300.0f, 240.0f);
-			*/
 		}
 
 		CEditor::~CEditor()

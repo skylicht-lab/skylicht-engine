@@ -46,8 +46,11 @@ namespace Skylicht
 				float m_rowHeight[MAX_SPLITER_ROW];
 				float m_colWidth[MAX_SPLITER_COL];
 
-				float m_expanderSize;
+				float m_adjustRowHeight[MAX_SPLITER_ROW];
+				float m_adjustColWidth[MAX_SPLITER_COL];
 
+				float m_expanderSize;
+				float m_minSize;
 			public:
 				CSplitter(CBase* parent);
 
@@ -70,6 +73,11 @@ namespace Skylicht
 					m_expanderSize = size;
 				}
 
+				inline void setMinSize(float size)
+				{
+					m_minSize = size;
+				}
+
 				inline int getMaxRow() { return MAX_SPLITER_ROW; }
 
 				inline int getMaxCol() { return MAX_SPLITER_COL; }
@@ -82,6 +90,11 @@ namespace Skylicht
 
 				void predictChildSize();
 
+				void fixForMinSize();
+
+				void saveUserExpectedSize();
+
+				void fixForUserExpected();
 			};
 		}
 	}
