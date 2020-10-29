@@ -58,6 +58,8 @@ namespace Skylicht
 			SGUIColor CThemeConfig::TabButtonFocusColor = ButtonFocusColor;
 			SGUIColor CThemeConfig::TabCloseButtonHoverColor = ButtonHoverColor;
 
+			SGUIColor CThemeConfig::SpliterColor = WindowBackgroundColor;
+
 			float CThemeConfig::getFontSizePt(EFontSize size)
 			{
 				switch (size)
