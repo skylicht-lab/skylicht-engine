@@ -23,10 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "CRenderer.h"
-#include "Graphics2D/CGraphics2D.h"
-#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
-#include "Graphics2D/SpriteFrame/CGlyphFont.h"
+#include "GUI/Controls/CBase.h"
 
 namespace Skylicht
 {
@@ -34,54 +31,57 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CSkylichtRenderer : public CRenderer
+
+#define MAX_SPLITER_ROW 20
+#define MAX_SPLITER_COL 20
+
+			class CSplitter : public CBase
 			{
 			protected:
+				u32 m_row;
+				u32 m_col;
 
-				core::matrix4 m_projection;
-				core::matrix4 m_view;
-				core::matrix4 m_world;
+				CBase *m_control[MAX_SPLITER_COL][MAX_SPLITER_ROW];
 
-				float m_width;
-				float m_height;
+				float m_rowHeight[MAX_SPLITER_ROW];
+				float m_colWidth[MAX_SPLITER_COL];
 
-				int m_materialID;
-
-				CGlyphFont *m_fontLarge;
-				CGlyphFont *m_fontNormal;
+				float m_expanderSize;
 
 			public:
-				CSkylichtRenderer(float w, float h);
+				CSplitter(CBase* parent);
 
-				virtual ~CSkylichtRenderer();
+				virtual ~CSplitter();
 
-				virtual void resize(float w, float h);
+				virtual void renderUnder();
 
-				virtual void begin();
+				virtual void layout();
 
-				virtual void end();
+				void setControl(CBase *base, u32 row, u32 col);
 
-				virtual void startClip();
+				void setNumberRowCol(u32 row, u32 col);
 
-				virtual void endClip();
+				void setRowHeight(u32 row, float height);
 
-				virtual void drawFillRect(const SRect &r, const SGUIColor& color);
+				void setColWidth(u32 col, float width);
 
-				virtual void renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string);
-
-				virtual SDimension measureText(EFontSize fontSize, const std::wstring& string);
-
-				void initFont(CSpriteAtlas *atlas);
-
-				const core::matrix4& getWorldTransform()
+				inline void setExpanderSize(float size)
 				{
-					m_world.setTranslation(core::vector3df(m_renderOffset.X, m_renderOffset.Y, 0.0f));
-					return m_world;
+					m_expanderSize = size;
 				}
 
-				core::rectf getRect(const SRect& rect);
+				inline int getMaxRow() { return MAX_SPLITER_ROW; }
 
-				video::SColor getColor(const SGUIColor& color);
+				inline int getMaxCol() { return MAX_SPLITER_COL; }
+
+				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
+
+				virtual void onMouseClickLeft(float x, float y, bool bDown);
+
+			protected:
+
+				void predictChildSize();
+
 			};
 		}
 	}

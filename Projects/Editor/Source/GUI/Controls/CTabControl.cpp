@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTabControl.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -36,11 +37,15 @@ namespace Skylicht
 				m_currentTab(NULL),
 				m_showTabCloseButton(false)
 			{
+				enableClip(true);
+
 				m_tabStrip = new CTabStrip(this);
 				m_tabStrip->dock(EPosition::Top);
 
 				m_innerPanel = new CBase(this);
 				m_innerPanel->dock(EPosition::Fill);
+				m_innerPanel->enableRenderFillRect(true);
+				m_innerPanel->setFillRectColor(CThemeConfig::WindowInnerColor);
 			}
 
 			CTabControl::~CTabControl()
