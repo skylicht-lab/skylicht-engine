@@ -21,10 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "CBase.h"
-#include "CText.h"
+#include "pch.h"
+#include "CIconButton.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -32,72 +32,41 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CTextContainer : public CBase
+			CIconButton::CIconButton(CBase *parent) :
+				CButton(parent),
+				m_drawHoverRectangle(false),
+				m_hoverRectangleColor(CThemeConfig::TabCloseButtonHoverColor)
 			{
-			public:
-				typedef std::list<CText*> ListTextControl;
+				setSize(20.0f, 20.0f);
+				showIcon(true);
+				setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 
-			public:
-				CTextContainer(CBase *parent);
+				m_label->setHidden(true);
+			}
 
-				virtual ~CTextContainer();
+			CIconButton::~CIconButton()
+			{
 
-				void setString(const std::wstring& string);
+			}
 
-				inline const std::wstring& getString()
+			void CIconButton::renderUnder()
+			{
+				if (m_drawBackground)
+					CButton::renderUnder();
+				else
 				{
-					return m_string;
+					if (m_drawHoverRectangle == true && isHovered())
+					{
+						SRect renderBounds = getRenderBounds();
+						renderBounds.X = renderBounds.X + m_hoverRectangleMargin.Left;
+						renderBounds.Y = renderBounds.Y + m_hoverRectangleMargin.Top;
+						renderBounds.Width = renderBounds.Width - m_hoverRectangleMargin.Right - m_hoverRectangleMargin.Left;
+						renderBounds.Height = renderBounds.Height - m_hoverRectangleMargin.Bottom - m_hoverRectangleMargin.Top;
+
+						CRenderer::getRenderer()->drawFillRect(renderBounds, m_hoverRectangleColor);
+					}
 				}
-
-				void setFontSize(EFontSize size);
-
-				inline EFontSize getFontSize()
-				{
-					return m_fontSize;
-				}
-
-				inline u32 getLength()
-				{
-					return m_string.size();
-				}
-
-				void setWrap(bool b);
-
-				inline bool isWrapMultiline()
-				{
-					return m_wrapMultiLine;
-				}
-
-				void setColor(const SGUIColor& color);
-
-				inline const SGUIColor& getColor()
-				{
-					return m_color;
-				}
-
-				virtual void layout();
-
-				void sizeToContents();
-
-			protected:
-
-				void removeAllLines();
-
-				void splitWords(std::wstring string, std::vector<std::wstring>& lines, float lineWidth);
-
-			protected:
-				std::wstring m_string;
-
-				bool m_wrapMultiLine;
-
-				bool m_textChange;
-
-				SGUIColor m_color;
-
-				EFontSize m_fontSize;
-
-				ListTextControl m_lines;
-			};
+			}
 		}
 	}
 }

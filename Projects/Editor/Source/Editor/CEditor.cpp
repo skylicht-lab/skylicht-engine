@@ -66,6 +66,8 @@ namespace Skylicht
 			l5->sizeToContents();
 			*/
 
+			tab->showTabCloseButton(true);
+
 			GUI::CWindow *window2 = new GUI::CWindow(canvas, 400.0f, 100.0f, 600.0f, 480.0f);
 			GUI::CWindow *window3 = new GUI::CWindow(window2, 20.0f, 20.0f, 300.0f, 240.0f);
 		}

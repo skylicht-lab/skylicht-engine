@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTextContainer.h"
+#include "GUI/Theme/CThemeConfig.h"
 #include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -36,7 +37,8 @@ namespace Skylicht
 				CBase(parent),
 				m_wrapMultiLine(false),
 				m_textChange(true),
-				m_fontSize(EFontSize::SizeNormal)
+				m_fontSize(EFontSize::SizeNormal),
+				m_color(CThemeConfig::DefaultTextColor)
 			{
 				setMouseInputEnabled(false);
 				enableClip(true);
@@ -83,6 +85,18 @@ namespace Skylicht
 				{
 					sizeToContents();
 					m_textChange = false;
+				}
+			}
+
+			void CTextContainer::setColor(const SGUIColor& color)
+			{
+				m_color = color;
+
+				ListTextControl::iterator i = m_lines.begin(), end = m_lines.end();
+				while (i != end)
+				{
+					(*i)->setColor(color);
+					++i;
 				}
 			}
 
@@ -224,7 +238,7 @@ namespace Skylicht
 
 			void CTextContainer::removeAllLines()
 			{
-				std::list<CText*>::iterator i = m_lines.begin(), end = m_lines.end();
+				ListTextControl::iterator i = m_lines.begin(), end = m_lines.end();
 				while (i != end)
 				{
 					CText *t = (*i);

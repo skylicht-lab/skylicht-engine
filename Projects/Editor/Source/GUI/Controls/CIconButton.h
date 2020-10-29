@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CText.h"
+#include "CButton.h"
 
 namespace Skylicht
 {
@@ -32,71 +32,30 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CTextContainer : public CBase
+			class CIconButton : public CButton
 			{
-			public:
-				typedef std::list<CText*> ListTextControl;
-
-			public:
-				CTextContainer(CBase *parent);
-
-				virtual ~CTextContainer();
-
-				void setString(const std::wstring& string);
-
-				inline const std::wstring& getString()
-				{
-					return m_string;
-				}
-
-				void setFontSize(EFontSize size);
-
-				inline EFontSize getFontSize()
-				{
-					return m_fontSize;
-				}
-
-				inline u32 getLength()
-				{
-					return m_string.size();
-				}
-
-				void setWrap(bool b);
-
-				inline bool isWrapMultiline()
-				{
-					return m_wrapMultiLine;
-				}
-
-				void setColor(const SGUIColor& color);
-
-				inline const SGUIColor& getColor()
-				{
-					return m_color;
-				}
-
-				virtual void layout();
-
-				void sizeToContents();
-
 			protected:
+				bool m_drawHoverRectangle;
 
-				void removeAllLines();
+				SGUIColor m_hoverRectangleColor;
+				SMargin m_hoverRectangleMargin;
 
-				void splitWords(std::wstring string, std::vector<std::wstring>& lines, float lineWidth);
+			public:
+				CIconButton(CBase *parent);
 
-			protected:
-				std::wstring m_string;
+				virtual ~CIconButton();
 
-				bool m_wrapMultiLine;
+				virtual void renderUnder();
 
-				bool m_textChange;
+				inline void enableDrawHoverRectangle(bool b)
+				{
+					m_drawHoverRectangle = b;
+				}
 
-				SGUIColor m_color;
-
-				EFontSize m_fontSize;
-
-				ListTextControl m_lines;
+				inline void setHoverRectangleMargin(const SMargin& m)
+				{
+					m_hoverRectangleMargin = m;
+				}
 			};
 		}
 	}

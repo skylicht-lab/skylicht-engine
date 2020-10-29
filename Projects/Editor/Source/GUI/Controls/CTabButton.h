@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBase.h"
 #include "CButton.h"
+#include "CIconButton.h"
 
 namespace Skylicht
 {
@@ -36,9 +37,14 @@ namespace Skylicht
 			{
 			protected:
 				CBase *m_page;
+
 				bool m_focus;
+				bool m_showCloseButton;
 
 				SGUIColor m_focusColor;
+
+				CIconButton *m_close;
+
 			public:
 				CTabButton(CBase *parent, CBase *page);
 
@@ -46,9 +52,23 @@ namespace Skylicht
 
 				virtual void renderUnder();
 
+				virtual void sizeToContents();
+
 				CBase* getPage()
 				{
 					return m_page;
+				}
+
+				CIconButton* getCloseButton()
+				{
+					return m_close;
+				}
+
+				inline void showCloseButton(bool b)
+				{
+					m_showCloseButton = b;
+					m_close->setHidden(!b);
+					sizeToContents();
 				}
 
 				inline void setFocus(bool b)
