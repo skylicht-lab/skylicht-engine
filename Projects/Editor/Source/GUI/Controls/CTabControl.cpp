@@ -33,7 +33,8 @@ namespace Skylicht
 		{
 			CTabControl::CTabControl(CBase *parent) :
 				CBase(parent),
-				m_currentTab(NULL)
+				m_currentTab(NULL),
+				m_showTabCloseButton(false)
 			{
 				m_tabStrip = new CTabStrip(this);
 				m_tabStrip->dock(EPosition::Top);
@@ -112,6 +113,18 @@ namespace Skylicht
 				}
 			}
 
+			void CTabControl::showTabCloseButton(bool b)
+			{
+				m_showTabCloseButton = b;
+				ListTabButton::iterator i = m_tabButtons.begin(), end = m_tabButtons.end();
+				while (i != end)
+				{
+					(*i)->showCloseButton(b);
+					++i;
+				}
+				invalidate();
+			}
+
 			void CTabControl::onTabFocus(CTabButton *tab)
 			{
 				if (OnTabFocus != nullptr)
@@ -147,6 +160,28 @@ namespace Skylicht
 					OnTabPressed(this, tabButton->getPage());
 			}
 
+			void CTabControl::onTabClosePressed(CBase *tabClose)
+			{
+				CTabButton *tabButton = NULL;
+
+				ListTabButton::iterator i = m_tabButtons.begin(), end = m_tabButtons.end();
+				while (i != end)
+				{
+					if ((*i)->getCloseButton() == tabClose)
+					{
+						tabButton = (*i);
+						break;
+					}
+
+					++i;
+				}
+
+				if (tabButton == NULL)
+					return;
+
+				removePage(tabButton->getPage());
+			}
+
 			void CTabControl::onCloseTab(CTabButton *tab)
 			{
 				if (OnCloseTab != nullptr)
@@ -172,6 +207,7 @@ namespace Skylicht
 					button->setMargin(SMargin(0.0f, 6.0f, 0.0f, 2.0f));
 
 				button->OnDown = BIND_LISTENER(&CTabControl::onTabPressed, this);
+				button->getCloseButton()->OnPress = BIND_LISTENER(&CTabControl::onTabClosePressed, this);
 
 				m_tabButtons.push_back(button);
 

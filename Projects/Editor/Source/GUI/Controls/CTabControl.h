@@ -48,6 +48,7 @@ namespace Skylicht
 
 				CTabButton* m_currentTab;
 
+				bool m_showTabCloseButton;
 			public:
 				CTabControl(CBase *parent);
 
@@ -57,13 +58,7 @@ namespace Skylicht
 
 				void removePage(CBase *page);
 
-				virtual void onTabFocus(CTabButton *tab);
-
-				virtual void onTabUnfocus(CTabButton *tab);
-
-				virtual void onTabPressed(CBase *tab);
-
-				virtual void onCloseTab(CTabButton *tab);
+				void showTabCloseButton(bool b);
 
 				TabControlListener OnTabFocus;
 
@@ -74,6 +69,16 @@ namespace Skylicht
 				TabControlListener OnCloseTab;
 
 			protected:
+
+				virtual void onTabFocus(CTabButton *tab);
+
+				virtual void onTabUnfocus(CTabButton *tab);
+
+				virtual void onTabPressed(CBase *tab);
+
+				virtual void onTabClosePressed(CBase *tabClose);
+
+				virtual void onCloseTab(CTabButton *tab);
 
 				void addTabButton(CTabButton *button);
 
