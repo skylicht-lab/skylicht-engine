@@ -42,6 +42,11 @@ namespace Skylicht
 				m_tabStrip = new CTabStrip(this);
 				m_tabStrip->dock(EPosition::Top);
 
+				m_dropDown = new CIconButton(m_tabStrip);
+				m_dropDown->setIcon(ESystemIcon::TriangleDown);
+				m_dropDown->OnPress = BIND_LISTENER(&CTabControl::onDropDownPressed, this);
+				m_dropDown->setHidden(true);
+
 				m_innerPanel = new CBase(this);
 				m_innerPanel->dock(EPosition::Fill);
 				m_innerPanel->enableRenderFillRect(true);
@@ -51,6 +56,24 @@ namespace Skylicht
 			CTabControl::~CTabControl()
 			{
 
+			}
+
+			void CTabControl::postLayout()
+			{
+				CBase::postLayout();
+
+				SDimension size = m_tabStrip->getChildrenSize();
+				if (size.Width > width())
+				{
+					// show drop down at right
+					m_dropDown->setHidden(false);
+					m_dropDown->setPos(m_tabStrip->width() - m_dropDown->width(), 6.0f);
+					m_dropDown->bringToFront();
+				}
+				else
+				{
+					m_dropDown->setHidden(true);
+				}
 			}
 
 			CBase* CTabControl::addPage(const std::wstring& label, CBase *page)
@@ -185,6 +208,11 @@ namespace Skylicht
 					return;
 
 				removePage(tabButton->getPage());
+			}
+
+			void CTabControl::onDropDownPressed(CBase *button)
+			{
+
 			}
 
 			void CTabControl::onCloseTab(CTabButton *tab)

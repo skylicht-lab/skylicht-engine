@@ -677,7 +677,7 @@ namespace Skylicht
 				}
 			}
 
-			void CSplitter::onMouseClickLeft(float x, float y, bool bDown)
+			void CSplitter::onMouseClickLeft(float x, float y, bool down)
 			{
 				if (m_disabled)
 					return;
@@ -685,7 +685,7 @@ namespace Skylicht
 				SPoint mousePoint(x, y);
 				mousePoint = canvasPosToLocal(mousePoint);
 
-				m_pressed = bDown;
+				m_pressed = down;
 				m_hitState = mouseHittest(mousePoint.X, mousePoint.Y, m_dragRow, m_dragCol);
 
 				if (m_pressed)

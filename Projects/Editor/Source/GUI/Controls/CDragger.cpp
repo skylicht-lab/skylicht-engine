@@ -62,12 +62,12 @@ namespace Skylicht
 				m_target->onMoved();
 			}
 
-			void CDragger::onMouseClickLeft(float x, float y, bool bDown)
+			void CDragger::onMouseClickLeft(float x, float y, bool down)
 			{
 				if (m_disabled)
 					return;
 
-				m_pressed = bDown;
+				m_pressed = down;
 
 				if (m_pressed == true)
 				{

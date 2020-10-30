@@ -117,7 +117,7 @@ namespace Skylicht
 
 				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
 
-				virtual void onMouseClickLeft(float x, float y, bool bDown);
+				virtual void onMouseClickLeft(float x, float y, bool down);
 
 			protected:
 

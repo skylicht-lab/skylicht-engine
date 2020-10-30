@@ -208,14 +208,14 @@ namespace Skylicht
 				invalidateParent();
 			}
 
-			CBase* CBase::findChildByName(const std::string& name, bool bRecursive)
+			CBase* CBase::findChildByName(const std::string& name, bool recursive)
 			{
 				for (auto&& child : Children)
 				{
 					if (!child->getName().empty() && child->getName() == name)
 						return child;
 
-					if (bRecursive)
+					if (recursive)
 					{
 						CBase* subChild = child->findChildByName(name, true);
 
@@ -383,6 +383,11 @@ namespace Skylicht
 				renderRecursive(m_bounds);
 			}
 
+			void CBase::doRenderOverlay()
+			{
+				renderOverlay();
+			}
+
 			void CBase::renderRecursive(const SRect& cliprect)
 			{
 				CRenderer *render = CRenderer::getRenderer();
@@ -445,7 +450,6 @@ namespace Skylicht
 					}
 
 					{
-						renderOver();
 						renderFocus();
 					}
 
@@ -455,6 +459,23 @@ namespace Skylicht
 					}
 
 					render->setRenderOffset(oldRenderOffset);
+				}
+			}
+
+			void CBase::renderOverlay()
+			{
+				renderOver();
+
+				if (!Children.empty())
+				{
+					// Now render my kids
+					for (auto&& child : Children)
+					{
+						if (child->isHidden())
+							continue;
+
+						child->doRenderOverlay();
+					}
 				}
 			}
 
@@ -621,9 +642,9 @@ namespace Skylicht
 				return onKeyPress(iKey, false);
 			}
 
-			bool CBase::onKeyTab(bool bDown)
+			bool CBase::onKeyTab(bool down)
 			{
-				if (!bDown)
+				if (!down)
 					return true;
 
 				if (getCanvas()->NextTab)

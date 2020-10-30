@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTabButton.h"
 #include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Input/CInput.h"
 
 namespace Skylicht
 {
@@ -36,7 +37,8 @@ namespace Skylicht
 				CButton(parent),
 				m_page(page),
 				m_focus(false),
-				m_showCloseButton(false)
+				m_showCloseButton(false),
+				m_enableRenderOver(false)
 			{
 				m_color = CThemeConfig::TabButtonColor;
 				m_pressColor = CThemeConfig::TabButtonActiveColor;
@@ -59,6 +61,48 @@ namespace Skylicht
 			CTabButton::~CTabButton()
 			{
 
+			}
+
+			void CTabButton::onMouseClickLeft(float x, float y, bool down)
+			{
+				CButton::onMouseClickLeft(x, y, down);
+
+				if (down)
+				{
+					m_holdPosition = canvasPosToLocal(SPoint(x, y));
+					CInput::getInput()->setCapture(this);
+				}
+				else
+				{
+					CInput::getInput()->setCapture(NULL);
+					m_enableRenderOver = false;
+				}
+			}
+
+			void CTabButton::onMouseMoved(float x, float y, float deltaX, float deltaY)
+			{
+				CButton::onMouseMoved(x, y, deltaX, deltaY);
+
+				if (m_pressed && (deltaX > 0 || deltaY > 0))
+					m_enableRenderOver = true;
+			}
+
+			void CTabButton::renderOver()
+			{
+				if (m_enableRenderOver)
+				{
+					SGUIColor c(150, m_pressColor.R, m_pressColor.G, m_pressColor.B);
+
+					SPoint oldOffset = CRenderer::getRenderer()->getRenderOffset();
+
+					SPoint mousePosition = CInput::getInput()->getMousePosition();
+					SPoint renderOffset(mousePosition.X - m_holdPosition.X, mousePosition.Y - m_holdPosition.Y);
+
+					CRenderer::getRenderer()->setRenderOffset(renderOffset);
+					CTheme::getTheme()->drawTabButton(getRenderBounds(), c, m_focusColor, m_focus);
+
+					CRenderer::getRenderer()->setRenderOffset(oldOffset);
+				}
 			}
 
 			void CTabButton::renderUnder()

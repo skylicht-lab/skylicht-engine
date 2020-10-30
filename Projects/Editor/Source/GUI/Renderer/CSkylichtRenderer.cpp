@@ -97,6 +97,14 @@ namespace Skylicht
 
 			}
 
+			void CSkylichtRenderer::disableClip(bool b)
+			{
+				CGraphics2D *g = CGraphics2D::getInstance();
+				g->flush();
+
+				getVideoDriver()->enableScissor(b);
+			}
+
 			void CSkylichtRenderer::drawFillRect(const SRect &r, const SGUIColor& color)
 			{
 				CGraphics2D *g = CGraphics2D::getInstance();

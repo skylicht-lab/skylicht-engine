@@ -66,9 +66,9 @@ namespace Skylicht
 
 				virtual void renderUnder();
 
-				virtual void onMouseClickLeft(float x, float y, bool bDown);
+				virtual void onMouseClickLeft(float x, float y, bool down);
 
-				virtual void onMouseClickRight(float x, float y, bool bDown);
+				virtual void onMouseClickRight(float x, float y, bool down);
 
 				virtual void onMouseLeave();
 
