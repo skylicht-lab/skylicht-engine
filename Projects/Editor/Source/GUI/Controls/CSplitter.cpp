@@ -704,7 +704,7 @@ namespace Skylicht
 				{
 					current += m_colWidth[i];
 
-					if ((DWORD)x >= current && (DWORD)x <= current + m_expanderSize)
+					if (x >= current && x <= current + m_expanderSize)
 					{
 						isHoverH = true;
 						outCol = i;
