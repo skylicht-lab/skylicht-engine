@@ -111,6 +111,14 @@ namespace Skylicht
 
 				CBase::doRender();
 
+				render->disableClip(true);
+
+				render->setRenderOffset(SPoint(0.0f, 0.0f));
+
+				CBase::doRenderOverlay();
+
+				render->disableClip(false);
+
 				render->end();
 			}
 

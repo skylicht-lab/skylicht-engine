@@ -99,12 +99,12 @@ namespace Skylicht
 					OnTextChanged(this);
 			}
 
-			void CButton::onMouseClickLeft(float x, float y, bool bDown)
+			void CButton::onMouseClickLeft(float x, float y, bool down)
 			{
 				if (isDisabled())
 					return;
 
-				if (bDown)
+				if (down)
 				{
 					m_pressed = true;
 					m_icon->setColor(CThemeConfig::IconPressColor);
@@ -126,12 +126,12 @@ namespace Skylicht
 				}
 			}
 
-			void CButton::onMouseClickRight(float x, float y, bool bDown)
+			void CButton::onMouseClickRight(float x, float y, bool down)
 			{
 				if (isDisabled())
 					return;
 
-				if (bDown)
+				if (down)
 				{
 					m_pressed = true;
 					m_icon->setColor(CThemeConfig::IconPressColor);
