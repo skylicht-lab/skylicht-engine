@@ -45,12 +45,22 @@ namespace Skylicht
 
 				CIconButton *m_close;
 
+				SPoint m_holdPosition;
+
+				bool m_enableRenderOver;
+
 			public:
 				CTabButton(CBase *parent, CBase *page);
 
 				virtual ~CTabButton();
 
+				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
+
+				virtual void onMouseClickLeft(float x, float y, bool down);
+
 				virtual void renderUnder();
+
+				virtual void renderOver();
 
 				virtual void sizeToContents();
 

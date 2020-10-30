@@ -103,7 +103,7 @@ namespace Skylicht
 				virtual void bringToFront(void);
 				virtual void bringNextToControl(CBase* child, bool bBehind);
 
-				virtual CBase* findChildByName(const std::string& name, bool bRecursive);
+				virtual CBase* findChildByName(const std::string& name, bool recursive);
 
 				virtual bool isChild(CBase* child);
 
@@ -167,8 +167,8 @@ namespace Skylicht
 				inline const SPadding& getPadding() const { return m_padding; }
 
 				inline void setPos(float x, float y) { setBounds(x, y, width(), height()); }
-				inline void setPos(const core::vector2df& p) { return setPos(p.X, p.Y); }
-				inline core::vector2df getPos() const { return core::vector2df(X(), Y()); }
+				inline void setPos(const SPoint& p) { return setPos(p.X, p.Y); }
+				inline SPoint getPos() const { return SPoint(X(), Y()); }
 
 				inline void setWidth(float w) { setSize(w, height()); }
 				inline void setHeight(float h) { setSize(width(), h); }
@@ -205,7 +205,12 @@ namespace Skylicht
 				virtual void think() {}
 
 				virtual void doRender();
+
+				virtual void doRenderOverlay();
+
 				virtual void renderRecursive(const SRect& cliprect);
+
+				virtual void renderOverlay();
 
 				bool shouldClip() { return m_shouldClip; }
 
@@ -242,8 +247,8 @@ namespace Skylicht
 				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY) {}
 				virtual bool onMouseWheeled(int iDelta);
 
-				virtual void onMouseClickLeft(float x, float y, bool bDown) {}
-				virtual void onMouseClickRight(float x, float y, bool bDown) {}
+				virtual void onMouseClickLeft(float x, float y, bool down) {}
+				virtual void onMouseClickRight(float x, float y, bool down) {}
 
 				virtual void onMouseDoubleClickLeft(float x, float y)
 				{
@@ -274,18 +279,18 @@ namespace Skylicht
 				virtual bool onKeyPress(int iKey, bool bPress = true);
 				virtual bool onKeyRelease(int iKey);
 
-				virtual bool onKeyTab(bool bDown);
-				virtual bool onKeySpace(bool bDown) { return false; }
-				virtual bool onKeyReturn(bool bDown) { return false; }
-				virtual bool onKeyBackspace(bool bDown) { return false; }
-				virtual bool onKeyDelete(bool bDown) { return false; }
-				virtual bool onKeyRight(bool bDown) { return false; }
-				virtual bool onKeyLeft(bool bDown) { return false; }
-				virtual bool onKeyHome(bool bDown) { return false; }
-				virtual bool onKeyEnd(bool bDown) { return false; }
-				virtual bool onKeyUp(bool bDown) { return false; }
-				virtual bool onKeyDown(bool bDown) { return false; }
-				virtual bool onKeyEscape(bool bDown) { return false; }
+				virtual bool onKeyTab(bool down);
+				virtual bool onKeySpace(bool down) { return false; }
+				virtual bool onKeyReturn(bool down) { return false; }
+				virtual bool onKeyBackspace(bool down) { return false; }
+				virtual bool onKeyDelete(bool down) { return false; }
+				virtual bool onKeyRight(bool down) { return false; }
+				virtual bool onKeyLeft(bool down) { return false; }
+				virtual bool onKeyHome(bool down) { return false; }
+				virtual bool onKeyEnd(bool down) { return false; }
+				virtual bool onKeyUp(bool down) { return false; }
+				virtual bool onKeyDown(bool down) { return false; }
+				virtual bool onKeyEscape(bool down) { return false; }
 
 				virtual void onMoved() {}
 				virtual void onResized() {}

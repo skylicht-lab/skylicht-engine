@@ -147,12 +147,12 @@ namespace Skylicht
 				m_target->onResized();
 			}
 
-			void CResizer::onMouseClickLeft(float x, float y, bool bDown)
+			void CResizer::onMouseClickLeft(float x, float y, bool down)
 			{
 				if (!m_target)
 					return;
 
-				CDragger::onMouseClickLeft(x, y, bDown);
+				CDragger::onMouseClickLeft(x, y, down);
 			}
 		}
 	}

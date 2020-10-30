@@ -47,12 +47,16 @@ namespace Skylicht
 				ListTabButton m_tabButtons;
 
 				CTabButton* m_currentTab;
+				CIconButton* m_dropDown;
 
 				bool m_showTabCloseButton;
+
 			public:
 				CTabControl(CBase *parent);
 
 				virtual ~CTabControl();
+
+				virtual void postLayout();
 
 				CBase* addPage(const std::wstring& label, CBase *page);
 
@@ -75,6 +79,8 @@ namespace Skylicht
 				virtual void onTabUnfocus(CTabButton *tab);
 
 				virtual void onTabPressed(CBase *tab);
+
+				virtual void onDropDownPressed(CBase *button);
 
 				virtual void onTabClosePressed(CBase *tabClose);
 

@@ -115,11 +115,11 @@ namespace Skylicht
 				return false;
 			}
 
-			bool CInput::inputMouseButton(int iMouseButton, bool bDown)
+			bool CInput::inputMouseButton(int iMouseButton, bool down)
 			{
 				bool isDoubleClick = false;
 
-				if (bDown
+				if (down
 					&& m_lastClickPositionX == m_mousePositionX
 					&& m_lastClickPositionY == m_mousePositionY
 					&& (CGUIContext::getTime() - m_lastClickTime[iMouseButton]) < 500.0f)
@@ -127,7 +127,7 @@ namespace Skylicht
 					isDoubleClick = true;
 				}
 
-				if (bDown && !isDoubleClick)
+				if (down && !isDoubleClick)
 				{
 					m_lastClickTime[iMouseButton] = CGUIContext::getTime();
 					m_lastClickPositionX = m_mousePositionX;
@@ -139,7 +139,7 @@ namespace Skylicht
 					if (isDoubleClick)
 						m_capture->onMouseDoubleClickLeft(m_mousePositionX, m_mousePositionY);
 					else
-						m_capture->onMouseClickLeft(m_mousePositionX, m_mousePositionY, bDown);
+						m_capture->onMouseClickLeft(m_mousePositionX, m_mousePositionY, down);
 					return false;
 				}
 
@@ -160,7 +160,7 @@ namespace Skylicht
 				// in turn tells its parents, who tell their parents.
 				// This is basically so that Windows can pop themselves
 				// to the top when one of their children has been clicked.
-				if (bDown)
+				if (down)
 					CGUIContext::HoveredControl->touch();
 
 				switch (iMouseButton)
@@ -169,7 +169,7 @@ namespace Skylicht
 					if (isDoubleClick)
 						CGUIContext::HoveredControl->onMouseDoubleClickLeft(m_mousePositionX, m_mousePositionY);
 					else
-						CGUIContext::HoveredControl->onMouseClickLeft(m_mousePositionX, m_mousePositionY, bDown);
+						CGUIContext::HoveredControl->onMouseClickLeft(m_mousePositionX, m_mousePositionY, down);
 
 					return false;
 
@@ -177,7 +177,7 @@ namespace Skylicht
 					if (isDoubleClick)
 						CGUIContext::HoveredControl->onMouseDoubleClickRight(m_mousePositionX, m_mousePositionY);
 					else
-						CGUIContext::HoveredControl->onMouseClickRight(m_mousePositionX, m_mousePositionY, bDown);
+						CGUIContext::HoveredControl->onMouseClickRight(m_mousePositionX, m_mousePositionY, down);
 
 					return false;
 				}
@@ -202,7 +202,7 @@ namespace Skylicht
 				return false;
 			}
 
-			bool CInput::inputModifierKey(EKey key, bool bDown)
+			bool CInput::inputModifierKey(EKey key, bool down)
 			{
 				return true;
 			}

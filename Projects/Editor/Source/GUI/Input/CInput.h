@@ -53,13 +53,18 @@ namespace Skylicht
 
 				static CInput* getInput();
 
+				SPoint getMousePosition()
+				{
+					return SPoint(m_mousePositionX, m_mousePositionY);
+				}
+
 				bool inputMouseMoved(float x, float y, float deltaX, float deltaY);
 
-				bool inputMouseButton(int iButton, bool bDown);
+				bool inputMouseButton(int iButton, bool down);
 
 				bool inputMouseWheel(int wheel);
 
-				bool inputModifierKey(EKey key, bool bDown);
+				bool inputModifierKey(EKey key, bool down);
 
 				bool inputCharacter(u32 character);
 
