@@ -33,11 +33,13 @@ namespace Skylicht
 		{
 			GUI::CCanvas *canvas = GUI::CGUIContext::getRoot();
 
-			GUI::CWindow *window1 = new GUI::CWindow(canvas, 20.0f, 20.0f, 600.0f, 480.0f);
+			GUI::CWindow *window1 = new GUI::CWindow(canvas, 20.0f, 20.0f, 900.0f, 600.0f);
 
 			GUI::CSplitter *spliter = new GUI::CSplitter(window1);
 			spliter->dock(GUI::EPosition::Fill);
 			spliter->setNumberRowCol(2, 2);
+			spliter->setColWidth(1, 300.0f);
+			spliter->setRowHeight(1, 200.0f);
 
 			GUI::CTabControl *tab1 = new GUI::CTabControl(window1);
 			GUI::CTabControl *tab2 = new GUI::CTabControl(window1);
@@ -56,8 +58,8 @@ namespace Skylicht
 			GUI::CBase *p4 = tab2->addPage(L"Animator", NULL);
 			GUI::CBase *p5 = tab2->addPage(L"GUI", NULL);
 
-			GUI::CBase *p6 = tab3->addPage(L"Animator", NULL);
-			GUI::CBase *p7 = tab4->addPage(L"GUI", NULL);
+			GUI::CBase *p6 = tab3->addPage(L"Console", NULL);
+			GUI::CBase *p7 = tab4->addPage(L"Property", NULL);
 
 			/*
 			GUI::CButton *button = new GUI::CButton(p1);
