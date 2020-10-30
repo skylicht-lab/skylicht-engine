@@ -37,6 +37,15 @@ namespace Skylicht
 
 			class CSplitter : public CBase
 			{
+			public:
+				enum EHoverState
+				{
+					None = 0,
+					Row = (1 << 1),
+					Col = (1 << 2),
+					RowAndCol = (Row | Col)
+				};
+
 			protected:
 				u32 m_row;
 				u32 m_col;
@@ -51,6 +60,20 @@ namespace Skylicht
 
 				float m_expanderSize;
 				float m_minSize;
+
+				bool m_pressed;
+				u32 m_dragRow;
+				u32 m_dragCol;
+				EHoverState m_hitState;
+
+				float m_lastSpaceWidth;
+				float m_lastSpaceHeight;
+
+				u32 m_weakCol;
+				u32 m_weakRow;
+
+				bool m_firstTimeLayout;
+
 			public:
 				CSplitter(CBase* parent);
 
@@ -78,6 +101,16 @@ namespace Skylicht
 					m_minSize = size;
 				}
 
+				inline void setWeakRow(u32 r)
+				{
+					m_weakRow = r;
+				}
+
+				inline void setWeakCol(u32 c)
+				{
+					m_weakCol = c;
+				}
+
 				inline int getMaxRow() { return MAX_SPLITER_ROW; }
 
 				inline int getMaxCol() { return MAX_SPLITER_COL; }
@@ -90,11 +123,29 @@ namespace Skylicht
 
 				void predictChildSize();
 
-				void fixForMinSize();
+				void predictChildWidth(float spaceWidth);
+
+				void predictChildHeight(float spaceHeight);
+
+				void updateWidthSmaller(float spaceWidth, float delta);
+
+				void updateHeightSmaller(float spaceHeight, float delta);
+
+				void updateWidthLarger();
+
+				void updateHeightLarger();
 
 				void saveUserExpectedSize();
 
-				void fixForUserExpected();
+				void getWeakPriorityRow(std::list < std::pair<u32, float>>& row, bool inverse = false);
+
+				void getWeakPriorityCol(std::list < std::pair<u32, float>>& col, bool inverse = false);
+
+			protected:
+
+				EHoverState mouseHittest(float x, float y, u32& outRow, u32 &outCol);
+
+				SRect getCellRect(u32 fromRow, u32 fromCol, u32 toRow, u32 toCol);
 			};
 		}
 	}

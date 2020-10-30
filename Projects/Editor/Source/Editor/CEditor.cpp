@@ -37,7 +37,7 @@ namespace Skylicht
 
 			GUI::CSplitter *spliter = new GUI::CSplitter(window1);
 			spliter->dock(GUI::EPosition::Fill);
-			spliter->setNumberRowCol(4, 1);
+			spliter->setNumberRowCol(2, 2);
 
 			GUI::CTabControl *tab1 = new GUI::CTabControl(window1);
 			GUI::CTabControl *tab2 = new GUI::CTabControl(window1);
@@ -45,9 +45,9 @@ namespace Skylicht
 			GUI::CTabControl *tab4 = new GUI::CTabControl(window1);
 
 			spliter->setControl(tab1, 0, 0);
-			spliter->setControl(tab2, 1, 0);
-			spliter->setControl(tab3, 2, 0);
-			spliter->setControl(tab4, 3, 0);
+			spliter->setControl(tab2, 0, 1);
+			spliter->setControl(tab3, 1, 0);
+			spliter->setControl(tab4, 1, 1);
 
 			GUI::CBase *p1 = tab1->addPage(L"Scene", NULL);
 			GUI::CBase *p2 = tab1->addPage(L"Particle", NULL);
