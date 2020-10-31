@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTabButton.h"
+#include "CTabControl.h"
 #include "GUI/Theme/CThemeConfig.h"
 #include "GUI/Input/CInput.h"
 
@@ -33,8 +34,9 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTabButton::CTabButton(CBase *parent, CBase *page) :
+			CTabButton::CTabButton(CTabControl *control, CBase *parent, CBase *page) :
 				CButton(parent),
+				m_control(control),
 				m_page(page),
 				m_focus(false),
 				m_showCloseButton(false),
@@ -70,6 +72,10 @@ namespace Skylicht
 				if (down)
 				{
 					m_holdPosition = canvasPosToLocal(SPoint(x, y));
+
+					m_tabPosition = localPosToCanvas();
+					m_tabStripPosition = m_parent->localPosToCanvas();
+
 					CInput::getInput()->setCapture(this);
 				}
 				else
@@ -83,25 +89,40 @@ namespace Skylicht
 			{
 				CButton::onMouseMoved(x, y, deltaX, deltaY);
 
-				if (m_pressed && (deltaX > 0 || deltaY > 0))
+				if (m_pressed)
+				{
 					m_enableRenderOver = true;
+
+					SPoint p = m_parent->canvasPosToLocal(SPoint(x, m_tabPosition.Y + height() * 0.5f));
+					CBase *control = m_parent->getControlAt(p.X, p.Y);
+
+					if (control != NULL)
+					{
+						CTabButton *btn = m_control->getTabButton(control);
+						if (btn != NULL && btn != this)
+							m_parent->bringSwapChildControl(this, btn);
+					}
+				}
 			}
 
 			void CTabButton::renderOver()
 			{
 				if (m_enableRenderOver)
 				{
-					SGUIColor c(150, m_pressColor.R, m_pressColor.G, m_pressColor.B);
-
-					SPoint oldOffset = CRenderer::getRenderer()->getRenderOffset();
-
+					CRenderer *renderer = CRenderer::getRenderer();
+					SPoint oldOffset = renderer->getRenderOffset();
 					SPoint mousePosition = CInput::getInput()->getMousePosition();
-					SPoint renderOffset(mousePosition.X - m_holdPosition.X, mousePosition.Y - m_holdPosition.Y);
 
-					CRenderer::getRenderer()->setRenderOffset(renderOffset);
-					CTheme::getTheme()->drawTabButton(getRenderBounds(), c, m_focusColor, m_focus);
+					float x = mousePosition.X - m_holdPosition.X;
+					float y = m_tabPosition.Y;
 
-					CRenderer::getRenderer()->setRenderOffset(oldOffset);
+					x = core::clamp<float>(x, m_tabStripPosition.X, m_tabStripPosition.X + m_parent->width() - width());
+
+					renderer->setRenderOffset(SPoint(x, y));
+
+					CTheme::getTheme()->drawTabButton(getRenderBounds(), SGUIColor(150, m_pressColor), m_focusColor, m_focus);
+
+					renderer->setRenderOffset(oldOffset);
 				}
 			}
 

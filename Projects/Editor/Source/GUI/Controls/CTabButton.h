@@ -33,9 +33,12 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CTabControl;
+
 			class CTabButton :public CButton
 			{
 			protected:
+				CTabControl *m_control;
 				CBase *m_page;
 
 				bool m_focus;
@@ -47,10 +50,13 @@ namespace Skylicht
 
 				SPoint m_holdPosition;
 
+				SPoint m_tabPosition;
+				SPoint m_tabStripPosition;
+
 				bool m_enableRenderOver;
 
 			public:
-				CTabButton(CBase *parent, CBase *page);
+				CTabButton(CTabControl *control, CBase *parent, CBase *page);
 
 				virtual ~CTabButton();
 

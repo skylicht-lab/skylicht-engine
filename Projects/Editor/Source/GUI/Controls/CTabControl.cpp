@@ -83,7 +83,7 @@ namespace Skylicht
 				else
 					page->setParent(this);
 
-				CTabButton *tabButton = new CTabButton(m_tabStrip, page);
+				CTabButton *tabButton = new CTabButton(this, m_tabStrip, page);
 				tabButton->setLabel(label);
 
 				addTabButton(tabButton);
@@ -254,6 +254,28 @@ namespace Skylicht
 			{
 				button->getPage()->remove();
 				button->remove();
+			}
+
+			CTabButton* CTabControl::getTabButton(CBase *base)
+			{
+				ListTabButton::iterator i = m_tabButtons.begin(), end = m_tabButtons.end();
+				while (i != end)
+				{
+					CTabButton *btn = (*i);
+
+					if (btn == base)
+						return btn;
+
+					if (btn == base->getParent())
+						return btn;
+
+					if (btn == base->getParent()->getParent())
+						return btn;
+
+					++i;
+				}
+
+				return NULL;
 			}
 		}
 	}

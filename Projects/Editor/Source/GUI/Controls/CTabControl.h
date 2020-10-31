@@ -37,6 +37,8 @@ namespace Skylicht
 		{
 			class CTabControl :public CBase
 			{
+				friend class CTabButton;
+
 			public:
 				typedef std::function<void(CTabControl*, CBase*)> TabControlListener;
 
@@ -72,6 +74,11 @@ namespace Skylicht
 
 				TabControlListener OnCloseTab;
 
+				inline u32 getNumTabButton()
+				{
+					return m_tabButtons.size();
+				}
+
 			protected:
 
 				virtual void onTabFocus(CTabButton *tab);
@@ -90,6 +97,9 @@ namespace Skylicht
 
 				void removeTabButton(CTabButton *button);
 
+			protected:
+
+				CTabButton* getTabButton(CBase *base);
 			};
 		}
 	}
