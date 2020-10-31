@@ -21,9 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "GUI/Controls/CBase.h"
+#include "pch.h"
+#include "CDockHintIcon.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -31,28 +32,23 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CDragger : public CBase
+			CDockHintIcon::CDockHintIcon(CBase *parent, EDockHintIcon icon) :
+				m_icon(icon),
+				m_color(CThemeConfig::DefaultIconColor),
+				CBase(parent)
 			{
-			protected:
-				CBase *m_target;
-				bool m_pressed;
-				bool m_callBeginMove;
-				SPoint m_holdPosition;
+				setSize(40, 40);
+			}
 
-			public:
-				CDragger(CBase* parent);
+			CDockHintIcon::~CDockHintIcon()
+			{
 
-				inline void setTarget(CBase *base)
-				{
-					m_target = base;
-				}
+			}
 
-				virtual ~CDragger();
-
-				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
-
-				virtual void onMouseClickLeft(float x, float y, bool down);
-			};
+			void CDockHintIcon::render()
+			{
+				CTheme::getTheme()->drawDockHintIcon(getRenderBounds(), m_icon, m_color);
+			}
 		}
 	}
 }

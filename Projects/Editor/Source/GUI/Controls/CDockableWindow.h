@@ -23,7 +23,9 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "GUI/Controls/CBase.h"
+#include "CBase.h"
+#include "CDockPanel.h"
+#include "CWindow.h"
 
 namespace Skylicht
 {
@@ -31,27 +33,21 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CDragger : public CBase
+			class CDockableWindow : public CWindow
 			{
 			protected:
-				CBase *m_target;
-				bool m_pressed;
-				bool m_callBeginMove;
-				SPoint m_holdPosition;
+				CDockPanel *m_rootDockPanel;
 
 			public:
-				CDragger(CBase* parent);
+				CDockableWindow(CDockPanel* parent, float x, float y, float w, float h);
 
-				inline void setTarget(CBase *base)
-				{
-					m_target = base;
-				}
+				virtual ~CDockableWindow();
 
-				virtual ~CDragger();
+				virtual void onBeginMoved();
 
-				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
+				virtual void onMoved();
 
-				virtual void onMouseClickLeft(float x, float y, bool down);
+				virtual void onEndMoved();
 			};
 		}
 	}

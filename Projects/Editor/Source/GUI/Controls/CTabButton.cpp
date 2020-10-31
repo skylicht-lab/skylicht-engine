@@ -89,7 +89,7 @@ namespace Skylicht
 			{
 				CButton::onMouseMoved(x, y, deltaX, deltaY);
 
-				if (m_pressed)
+				if (m_pressed && (fabsf(deltaX) > 0 || fabsf(deltaY) > 0))
 				{
 					m_enableRenderOver = true;
 

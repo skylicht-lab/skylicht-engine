@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GUI/CGUIContext.h"
-#include "GUI/Controls/CWindow.h"
+#include "GUI/Controls/CDockableWindow.h"
 #include "GUI/Controls/CTabControl.h"
 #include "GUI/Controls/CSplitter.h"
 

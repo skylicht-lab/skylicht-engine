@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
+#include "CDockPanel.h"
 
 namespace Skylicht
 {
@@ -31,7 +32,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CCanvas : public CBase
+			class CCanvas : public CDockPanel
 			{
 			protected:
 				CBase::List m_deleteList;
