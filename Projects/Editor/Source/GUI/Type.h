@@ -184,6 +184,22 @@ namespace Skylicht
 					A = R = G = B = 255;
 				}
 
+				SGUIColor(unsigned char a, const SGUIColor& c)
+				{
+					A = a;
+					R = c.R;
+					G = c.G;
+					B = c.B;
+				}
+
+				SGUIColor(const SGUIColor& c)
+				{
+					A = c.A;
+					R = c.R;
+					G = c.G;
+					B = c.B;
+				}
+
 				SGUIColor(unsigned char a, unsigned char r, unsigned char g, unsigned char b)
 				{
 					A = a;

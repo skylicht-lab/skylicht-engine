@@ -102,6 +102,7 @@ namespace Skylicht
 				virtual void sendToBack(void);
 				virtual void bringToFront(void);
 				virtual void bringNextToControl(CBase* child, bool bBehind);
+				virtual void bringSwapChildControl(CBase* control1, CBase* control2);
 
 				virtual CBase* findChildByName(const std::string& name, bool recursive);
 
@@ -309,7 +310,7 @@ namespace Skylicht
 
 			public:
 
-				virtual CBase* getControlAt(float x, float y, bool bOnlyIfMouseEnabled = true);
+				virtual CBase* getControlAt(float x, float y, bool onlyIfMouseEnabled = true);
 
 				virtual SPoint localPosToCanvas(const SPoint& in = SPoint(0.0f, 0.0f));
 				virtual SPoint canvasPosToLocal(const SPoint& in);
