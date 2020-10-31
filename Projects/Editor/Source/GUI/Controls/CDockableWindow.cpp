@@ -21,9 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "GUI/Controls/CBase.h"
+#include "pch.h"
+#include "CDockableWindow.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -31,28 +32,38 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CDragger : public CBase
+			CDockableWindow::CDockableWindow(CDockPanel* parent, float x, float y, float w, float h) :
+				CWindow(parent, x, y, w, h),
+				m_rootDockPanel(parent)
 			{
-			protected:
-				CBase *m_target;
-				bool m_pressed;
-				bool m_callBeginMove;
-				SPoint m_holdPosition;
+				m_innerPanel->remove();
+				m_innerPanel = NULL;
 
-			public:
-				CDragger(CBase* parent);
+				m_innerPanel = new CDockPanel(this);
+				m_innerPanel->dock(EPosition::Fill);
+				m_innerPanel->enableClip(true);
+				m_innerPanel->enableRenderFillRect(true);
+			}
 
-				inline void setTarget(CBase *base)
-				{
-					m_target = base;
-				}
+			CDockableWindow::~CDockableWindow()
+			{
 
-				virtual ~CDragger();
+			}
 
-				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
+			void CDockableWindow::onBeginMoved()
+			{
+				m_rootDockPanel->showDockHint();
+			}
 
-				virtual void onMouseClickLeft(float x, float y, bool down);
-			};
+			void CDockableWindow::onMoved()
+			{
+
+			}
+
+			void CDockableWindow::onEndMoved()
+			{
+				m_rootDockPanel->hideDockHint();
+			}
 		}
 	}
 }

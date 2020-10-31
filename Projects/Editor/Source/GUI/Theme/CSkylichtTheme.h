@@ -53,6 +53,8 @@ namespace Skylicht
 				SFrame *m_tabButton;
 				SFrame *m_tabButtonFocus;
 
+				SFrame *m_dockIcon[NumDockIcon];
+
 				SFrame *m_systemIcon16[NumSystemIcon];
 				SFrame *m_systemIcon32[NumSystemIcon];
 
@@ -67,6 +69,8 @@ namespace Skylicht
 				virtual ~CSkylichtTheme();
 
 				virtual void drawIcon(const SRect &r, ESystemIcon icon, const SGUIColor& color, bool use32Bit);
+
+				virtual void drawDockHintIcon(const SRect &r, EDockHintIcon icon, const SGUIColor& color);
 
 				virtual void drawWindowShadow(const SRect& rect);
 
@@ -101,6 +105,8 @@ namespace Skylicht
 				}
 
 			private:
+
+				void initDockHintIcon();
 
 				void initSystemIcon();
 

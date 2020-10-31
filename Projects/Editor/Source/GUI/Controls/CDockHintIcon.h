@@ -23,7 +23,8 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "GUI/Controls/CBase.h"
+#include "CBase.h"
+#include "CText.h"
 
 namespace Skylicht
 {
@@ -31,27 +32,38 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CDragger : public CBase
+			class CDockHintIcon : public CBase
 			{
 			protected:
-				CBase *m_target;
-				bool m_pressed;
-				bool m_callBeginMove;
-				SPoint m_holdPosition;
+				EDockHintIcon m_icon;
+				SGUIColor m_color;
 
 			public:
-				CDragger(CBase* parent);
+				CDockHintIcon(CBase *parent, EDockHintIcon icon);
 
-				inline void setTarget(CBase *base)
+				virtual ~CDockHintIcon();
+
+				virtual void render();
+
+				inline void setIcon(EDockHintIcon icon)
 				{
-					m_target = base;
+					m_icon = icon;
 				}
 
-				virtual ~CDragger();
+				inline EDockHintIcon getIcon()
+				{
+					return m_icon;
+				}
 
-				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
+				inline void setColor(const SGUIColor& c)
+				{
+					m_color = c;
+				}
 
-				virtual void onMouseClickLeft(float x, float y, bool down);
+				inline const SGUIColor& getColor()
+				{
+					return m_color;
+				}
 			};
 		}
 	}
