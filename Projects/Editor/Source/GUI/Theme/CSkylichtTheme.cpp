@@ -48,6 +48,9 @@ namespace Skylicht
 				// add system icon
 				initSystemIcon();
 
+				// add dock hint icon
+				initDockHintIcon();
+
 				// add window
 				m_window = m_sprite->addFrame("draw_window", "Editor/GUI/draw_window.png");
 				m_windowShadow = m_sprite->addFrame("draw_window_shadow", "Editor/GUI/draw_window_shadow.png");
@@ -70,6 +73,24 @@ namespace Skylicht
 			CSkylichtTheme::~CSkylichtTheme()
 			{
 				delete m_sprite;
+			}
+
+			void CSkylichtTheme::initDockHintIcon()
+			{
+				for (int i = 0; i < EDockHintIcon::NumDockIcon; i++)
+					m_dockIcon[i] = NULL;
+
+				m_dockIcon[Center] = m_sprite->addFrame("dock_center", "Editor/GUI/dock_target_center.png");
+
+				m_dockIcon[Left] = m_sprite->addFrame("dock_left", "Editor/GUI/dock_canvas_left.png");
+				m_dockIcon[Right] = m_sprite->addFrame("dock_right", "Editor/GUI/dock_canvas_right.png");
+				m_dockIcon[Top] = m_sprite->addFrame("dock_top", "Editor/GUI/dock_canvas_top.png");
+				m_dockIcon[Bottom] = m_sprite->addFrame("dock_bottom", "Editor/GUI/dock_canvas_bottom.png");
+
+				m_dockIcon[TargetLeft] = m_sprite->addFrame("dock_target_left", "Editor/GUI/dock_target_left.png");
+				m_dockIcon[TargetRight] = m_sprite->addFrame("dock_target_right", "Editor/GUI/dock_target_right.png");
+				m_dockIcon[TargetTop] = m_sprite->addFrame("dock_target_top", "Editor/GUI/dock_target_top.png");
+				m_dockIcon[TargetBottom] = m_sprite->addFrame("dock_target_bottom", "Editor/GUI/dock_target_bottom.png");
 			}
 
 			void CSkylichtTheme::initSystemIcon()
@@ -179,6 +200,16 @@ namespace Skylicht
 					frame = m_systemIcon32[icon];
 				else
 					frame = m_systemIcon16[icon];
+
+				if (frame == NULL)
+					return;
+
+				m_graphics->addFrameBatch(frame, getColor(color), m_renderer->getWorldTransform(), m_materialID);
+			}
+
+			void CSkylichtTheme::drawDockHintIcon(const SRect &r, EDockHintIcon icon, const SGUIColor& color)
+			{
+				SFrame *frame = m_dockIcon[icon];
 
 				if (frame == NULL)
 					return;

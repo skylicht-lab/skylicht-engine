@@ -32,7 +32,7 @@ namespace Skylicht
 		namespace GUI
 		{
 			CCanvas::CCanvas(float width, float height) :
-				CBase(NULL),
+				CDockPanel(NULL),
 				FirstTab(NULL),
 				NextTab(NULL)
 			{

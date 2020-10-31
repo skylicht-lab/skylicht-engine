@@ -45,6 +45,8 @@ namespace Skylicht
 
 				virtual void drawIcon(const SRect &r, ESystemIcon icon, const SGUIColor& color, bool use32Bit) {}
 
+				virtual void drawDockHintIcon(const SRect &r, EDockHintIcon icon, const SGUIColor& color) {}
+
 				virtual void drawWindowShadow(const SRect& rect) {}
 
 				virtual void drawWindow(const SRect& rect, bool isFocussed) {}

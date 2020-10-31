@@ -35,7 +35,8 @@ namespace Skylicht
 			CDragger::CDragger(CBase* parent) :
 				CBase(parent),
 				m_target(parent),
-				m_pressed(false)
+				m_pressed(false),
+				m_callBeginMove(false)
 			{
 
 			}
@@ -58,6 +59,12 @@ namespace Skylicht
 				if (m_target->getParent() != NULL)
 					p = m_target->getParent()->canvasPosToLocal(p);
 
+				if (m_callBeginMove)
+				{
+					m_target->onBeginMoved();
+					m_callBeginMove = false;
+				}
+
 				m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y, height());
 				m_target->onMoved();
 			}
@@ -73,10 +80,13 @@ namespace Skylicht
 				{
 					m_holdPosition = m_target->canvasPosToLocal(SPoint(x, y));
 					CInput::getInput()->setCapture(this);
+					m_callBeginMove = true;
 				}
 				else
 				{
 					CInput::getInput()->setCapture(NULL);
+					m_callBeginMove = false;
+					m_target->onEndMoved();
 				}
 			}
 		}

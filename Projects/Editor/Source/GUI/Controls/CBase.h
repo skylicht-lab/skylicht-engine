@@ -293,7 +293,9 @@ namespace Skylicht
 				virtual bool onKeyDown(bool down) { return false; }
 				virtual bool onKeyEscape(bool down) { return false; }
 
+				virtual void onBeginMoved() {}
 				virtual void onMoved() {}
+				virtual void onEndMoved() {}
 				virtual void onResized() {}
 
 				virtual bool isHovered() const;

@@ -469,6 +469,20 @@ namespace Skylicht
 				Windows,
 				NumSystemIcon
 			};
+
+			enum EDockHintIcon
+			{
+				Center,
+				Left,
+				Right,
+				Top,
+				Bottom,
+				TargetLeft,
+				TargetRight,
+				TargetTop,
+				TargetBottom,
+				NumDockIcon
+			};
 		}
 	}
 }
