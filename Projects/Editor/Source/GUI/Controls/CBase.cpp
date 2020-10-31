@@ -208,6 +208,19 @@ namespace Skylicht
 				invalidateParent();
 			}
 
+			void CBase::bringSwapChildControl(CBase* control1, CBase* control2)
+			{
+				List::iterator begin = Children.begin(), end = Children.end();
+				List::iterator it1 = std::find(begin, end, control1);
+				List::iterator it2 = std::find(begin, end, control2);
+
+				if (it1 != end && it2 != end)
+				{
+					std::swap(*it1, *it2);
+					invalidate();
+				}
+			}
+
 			CBase* CBase::findChildByName(const std::string& name, bool recursive)
 			{
 				for (auto&& child : Children)
@@ -655,7 +668,7 @@ namespace Skylicht
 				return true;
 			}
 
-			CBase* CBase::getControlAt(float x, float y, bool bOnlyIfMouseEnabled)
+			CBase* CBase::getControlAt(float x, float y, bool onlyIfMouseEnabled)
 			{
 				if (isHidden())
 					return NULL;
@@ -667,13 +680,13 @@ namespace Skylicht
 				{
 					CBase* child = *iter;
 					CBase* found = NULL;
-					found = child->getControlAt(x - child->X(), y - child->Y(), bOnlyIfMouseEnabled);
+					found = child->getControlAt(x - child->X(), y - child->Y(), onlyIfMouseEnabled);
 
 					if (found)
 						return found;
 				}
 
-				if (bOnlyIfMouseEnabled && !getMouseInputEnabled())
+				if (onlyIfMouseEnabled && !getMouseInputEnabled())
 					return NULL;
 
 				return this;
