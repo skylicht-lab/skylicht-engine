@@ -33,66 +33,28 @@ namespace Skylicht
 		{
 			GUI::CCanvas *canvas = GUI::CGUIContext::getRoot();
 
-			GUI::CDockableWindow *window1 = new GUI::CDockableWindow(canvas, 20.0f, 20.0f, 900.0f, 600.0f);
+			GUI::CDockPanel *dockPanel = new GUI::CDockPanel(canvas);
+			dockPanel->dock(GUI::EPosition::Fill);
 
-			GUI::CSplitter *spliter = new GUI::CSplitter(window1);
-			spliter->dock(GUI::EPosition::Fill);
-			spliter->setNumberRowCol(2, 2);
-			spliter->setColWidth(1, 300.0f);
-			spliter->setRowHeight(1, 200.0f);
+			GUI::CDockableWindow *scene = new GUI::CDockableWindow(dockPanel, 20.0f, 20.0f, 900.0f, 600.0f);
+			scene->setCaption(L"Scene");
 
-			GUI::CTabControl *tab1 = new GUI::CTabControl(window1);
-			GUI::CTabControl *tab2 = new GUI::CTabControl(window1);
-			GUI::CTabControl *tab3 = new GUI::CTabControl(window1);
-			GUI::CTabControl *tab4 = new GUI::CTabControl(window1);
+			//GUI::CDockableWindow *particle = new GUI::CDockableWindow(dockPanel, 40.0f, 40.0f, 300.0f, 600.0f);
+			//particle->setCaption(L"Particle");
 
-			spliter->setControl(tab1, 0, 0);
-			spliter->setControl(tab2, 0, 1);
-			spliter->setControl(tab3, 1, 0);
-			spliter->setControl(tab4, 1, 1);
+			//GUI::CDockableWindow *animation = new GUI::CDockableWindow(dockPanel, 60.0f, 60.0f, 900.0f, 300.0f);
+			//animation->setCaption(L"Animation");
 
-			GUI::CBase *p1 = tab1->addPage(L"Scene", NULL);
-			GUI::CBase *p2 = tab1->addPage(L"Particle", NULL);
-			GUI::CBase *p3 = tab1->addPage(L"Animation", NULL);
+			GUI::CDockableWindow *console = new GUI::CDockableWindow(dockPanel, 80.0f, 80.0f, 900.0f, 300.0f);
+			console->setCaption(L"Console");
 
-			GUI::CBase *p4 = tab2->addPage(L"Animator", NULL);
-			GUI::CBase *p5 = tab2->addPage(L"GUI", NULL);
+			GUI::CDockableWindow *property = new GUI::CDockableWindow(dockPanel, 100.0f, 100.0f, 300.0f, 600.0f);
+			property->setCaption(L"Property");
 
-			GUI::CBase *p6 = tab3->addPage(L"Console", NULL);
-			GUI::CBase *p7 = tab4->addPage(L"Property", NULL);
+			GUI::CDockableWindow *asset = new GUI::CDockableWindow(dockPanel, 120.0f, 120.0f, 900.0f, 300.0f);
+			asset->setCaption(L"Asset");
 
-			/*
-			GUI::CButton *button = new GUI::CButton(p1);
-			button->setLabel(L"Test Button");
-			button->sizeToContents();
-			*/
-
-			/*
-			GUI::CLabel *l2 = new GUI::CLabel(p2);
-			GUI::CLabel *l3 = new GUI::CLabel(p3);
-			GUI::CLabel *l4 = new GUI::CLabel(p4);
-			GUI::CLabel *l5 = new GUI::CLabel(p5);
-
-			l1->setString(L"1");
-			l1->sizeToContents();
-
-			l2->setString(L"2");
-			l2->sizeToContents();
-
-			l3->setString(L"3");
-			l3->sizeToContents();
-
-			l4->setString(L"4");
-			l4->sizeToContents();
-
-			l5->setString(L"5");
-			l5->sizeToContents();
-			*/
-
-			tab1->showTabCloseButton(true);
-			tab2->showTabCloseButton(true);
-
-			GUI::CDockableWindow *window2 = new GUI::CDockableWindow(canvas, 400.0f, 100.0f, 600.0f, 480.0f);
+			GUI::CDockableWindow *window2 = new GUI::CDockableWindow(dockPanel, 400.0f, 100.0f, 600.0f, 480.0f);
 			GUI::CWindow *window3 = new GUI::CWindow(window2, 20.0f, 20.0f, 300.0f, 240.0f);
 		}
 

@@ -35,7 +35,8 @@ namespace Skylicht
 		namespace GUI
 		{
 			CWindow::CWindow(CBase* parent, float x, float y, float w, float h) :
-				CResizableControl(parent, x, y, w, h)
+				CResizableControl(parent, x, y, w, h),
+				m_childStyle(false)
 			{
 				enableClip(true);
 
@@ -71,12 +72,22 @@ namespace Skylicht
 
 			}
 
+			void CWindow::setStyleChild(bool b)
+			{
+				m_childStyle = b;
+				m_titleBar->setHidden(b);
+				hideResizeBorder(b);
+			}
+
 			void CWindow::renderUnder()
 			{
-				CTheme::getTheme()->drawWindowShadow(getRenderBounds());
+				if (m_childStyle == false)
+				{
+					CTheme::getTheme()->drawWindowShadow(getRenderBounds());
 
-				bool isFocussed = isOnTop();
-				CTheme::getTheme()->drawWindow(getRenderBounds(), isFocussed);
+					bool isFocussed = isOnTop();
+					CTheme::getTheme()->drawWindow(getRenderBounds(), isFocussed);
+				}
 			}
 
 			void CWindow::touch()

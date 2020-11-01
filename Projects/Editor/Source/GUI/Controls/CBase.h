@@ -60,10 +60,6 @@ namespace Skylicht
 				//!< Returns false if this control or its parents are hidden.
 				virtual bool isVisible() const;
 
-				virtual void hide() { setHidden(true); }
-
-				virtual void show() { setHidden(false); }
-
 				virtual void setDisabled(bool active);
 
 				virtual bool isDisabled()
@@ -101,7 +97,7 @@ namespace Skylicht
 				virtual void removeAllChildren();
 				virtual void sendToBack(void);
 				virtual void bringToFront(void);
-				virtual void bringNextToControl(CBase* child, bool bBehind);
+				virtual void bringNextToControl(CBase* child, bool behind);
 				virtual void bringSwapChildControl(CBase* control1, CBase* control2);
 
 				virtual CBase* findChildByName(const std::string& name, bool recursive);

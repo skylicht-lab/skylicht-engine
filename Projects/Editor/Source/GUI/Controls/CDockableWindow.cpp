@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDockableWindow.h"
+#include "GUI/Input/CInput.h"
 #include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
@@ -36,13 +37,7 @@ namespace Skylicht
 				CWindow(parent, x, y, w, h),
 				m_rootDockPanel(parent)
 			{
-				m_innerPanel->remove();
-				m_innerPanel = NULL;
 
-				m_innerPanel = new CDockPanel(this);
-				m_innerPanel->dock(EPosition::Fill);
-				m_innerPanel->enableClip(true);
-				m_innerPanel->enableRenderFillRect(true);
 			}
 
 			CDockableWindow::~CDockableWindow()
@@ -57,11 +52,52 @@ namespace Skylicht
 
 			void CDockableWindow::onMoved()
 			{
+				SPoint mousePoint = CInput::getInput()->getMousePosition();
 
+				CDockHintIcon* hint = m_rootDockPanel->hitTestDockHint(mousePoint);
+				if (hint != NULL)
+					m_rootDockPanel->showDockHintWindow(hint, this);
+				else
+					m_rootDockPanel->hideDockHintWindow();
 			}
 
 			void CDockableWindow::onEndMoved()
 			{
+				SPoint mousePoint = CInput::getInput()->getMousePosition();
+
+				CDockHintIcon* hint = m_rootDockPanel->hitTestDockHint(mousePoint);
+				if (hint != NULL)
+				{
+					EDockHintIcon icon = hint->getIcon();
+
+					switch (icon)
+					{
+					case Center:
+						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockCenter);
+						break;
+					case Left:
+						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockLeft);
+						break;
+					case TargetLeft:
+						break;
+					case Right:
+						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockRight);
+						break;
+					case TargetRight:
+						break;
+					case Top:
+						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTop);
+						break;
+					case TargetTop:
+						break;
+					case Bottom:
+						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockBottom);
+						break;
+					case TargetBottom:
+						break;
+					}
+				}
+
 				m_rootDockPanel->hideDockHint();
 			}
 		}
