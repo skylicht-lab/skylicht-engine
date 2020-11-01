@@ -57,12 +57,15 @@ namespace Skylicht
 				static SGUIColor TabTextColor;
 				static SGUIColor TabTextFocusColor;
 				static SGUIColor TabStripColor;
+				static SGUIColor TabStripBorderColor;
 				static SGUIColor TabButtonColor;
 				static SGUIColor TabButtonActiveColor;
 				static SGUIColor TabButtonFocusColor;
 				static SGUIColor TabCloseButtonHoverColor;
 
 				static SGUIColor SpliterColor;
+
+				static SGUIColor DockHintWindowColor;
 
 				static float getFontSizePt(EFontSize size);
 			};

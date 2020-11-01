@@ -113,16 +113,36 @@ namespace Skylicht
 					SPoint oldOffset = renderer->getRenderOffset();
 					SPoint mousePosition = CInput::getInput()->getMousePosition();
 
+					float maxX = m_control->getMaxButtonRight();
 					float x = mousePosition.X - m_holdPosition.X;
 					float y = m_tabPosition.Y;
 
-					x = core::clamp<float>(x, m_tabStripPosition.X, m_tabStripPosition.X + m_parent->width() - width());
+					x = core::max_(x, m_tabStripPosition.X);
+					x = core::min_(x, m_tabStripPosition.X + maxX - width() - m_margin.Right);
+
+					SRect clip = renderer->clipRegion();
+					SPoint p = m_parent->localPosToCanvas();
+
+					// on clipping
+					renderer->enableClip(true);
+
+					// set clip rect
+					renderer->setClipRegion(SRect(p.X, p.Y, m_parent->width(), m_parent->height()));
+					renderer->startClip();
 
 					renderer->setRenderOffset(SPoint(x, y));
-
 					CTheme::getTheme()->drawTabButton(getRenderBounds(), SGUIColor(150, m_pressColor), m_focusColor, m_focus);
-
 					renderer->setRenderOffset(oldOffset);
+
+					renderer->endClip();
+
+					// set old clip rect
+					renderer->setClipRegion(clip);
+					renderer->startClip();
+					renderer->endClip();
+
+					// of clipping
+					renderer->enableClip(false);
 				}
 			}
 

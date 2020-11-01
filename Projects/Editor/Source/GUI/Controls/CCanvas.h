@@ -32,7 +32,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CCanvas : public CDockPanel
+			class CCanvas : public CBase
 			{
 			protected:
 				CBase::List m_deleteList;

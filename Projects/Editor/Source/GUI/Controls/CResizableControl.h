@@ -44,6 +44,8 @@ namespace Skylicht
 				virtual ~CResizableControl();
 
 				void setResizable(bool b);
+
+				void hideResizeBorder(bool b);
 			};
 		}
 	}

@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
+#include "CTabControl.h"
 #include "CDockPanel.h"
 #include "CWindow.h"
 

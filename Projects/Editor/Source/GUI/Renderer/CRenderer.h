@@ -59,7 +59,7 @@ namespace Skylicht
 
 				virtual void endClip() {}
 
-				virtual void disableClip(bool b) {}
+				virtual void enableClip(bool b) {}
 
 				virtual void drawFillRect(const SRect &r, const SGUIColor& color) {}
 

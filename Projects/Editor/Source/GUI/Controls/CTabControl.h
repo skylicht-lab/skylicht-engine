@@ -60,7 +60,7 @@ namespace Skylicht
 
 				virtual void postLayout();
 
-				CBase* addPage(const std::wstring& label, CBase *page);
+				virtual CBase* addPage(const std::wstring& label, CBase *page);
 
 				void removePage(CBase *page);
 
@@ -77,6 +77,11 @@ namespace Skylicht
 				inline u32 getNumTabButton()
 				{
 					return m_tabButtons.size();
+				}
+
+				inline CTabStrip* getTabStrip()
+				{
+					return m_tabStrip;
 				}
 
 			protected:
@@ -100,6 +105,8 @@ namespace Skylicht
 			protected:
 
 				CTabButton* getTabButton(CBase *base);
+
+				float getMaxButtonRight();
 			};
 		}
 	}

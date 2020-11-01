@@ -43,6 +43,7 @@ namespace Skylicht
 				CIcon *m_icon;
 				CIconButton *m_close;
 
+				bool m_childStyle;
 			public:
 				CWindow(CBase* parent, float x, float y, float w, float h);
 
@@ -56,9 +57,16 @@ namespace Skylicht
 
 				virtual void onChildTouched(CBase* child);
 
+				void setStyleChild(bool b);
+
 				void setCaption(const std::wstring& text)
 				{
 					m_title->setString(text);
+				}
+
+				const std::wstring& getCaption()
+				{
+					return m_title->getString();
 				}
 
 				inline void showIcon(bool b)
