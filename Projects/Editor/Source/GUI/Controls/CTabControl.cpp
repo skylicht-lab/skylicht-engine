@@ -39,6 +39,8 @@ namespace Skylicht
 			{
 				enableClip(true);
 
+				setPadding(SPadding(1.0f, 0.0f, 1.0f, 0.0f));
+
 				m_tabStrip = new CTabStrip(this);
 				m_tabStrip->dock(EPosition::Top);
 
@@ -233,12 +235,7 @@ namespace Skylicht
 
 				button->dock(EPosition::Left);
 				button->sizeToContents();
-
-				if (m_tabButtons.size() > 0)
-					button->setMargin(SMargin(2.0f, 6.0f, 0.0f, 2.0f));
-				else
-					button->setMargin(SMargin(0.0f, 6.0f, 0.0f, 2.0f));
-
+				button->setMargin(SMargin(0.0f, 6.0f, 2.0f, 2.0f));
 				button->OnDown = BIND_LISTENER(&CTabControl::onTabPressed, this);
 				button->getCloseButton()->OnPress = BIND_LISTENER(&CTabControl::onTabClosePressed, this);
 
@@ -276,6 +273,21 @@ namespace Skylicht
 				}
 
 				return NULL;
+			}
+
+			float CTabControl::getMaxButtonRight()
+			{
+				if (m_tabButtons.size() == 0)
+					return 0.0f;
+
+				float x = 0.0f;
+				ListTabButton::iterator i = m_tabButtons.begin(), end = m_tabButtons.end();
+				while (i != end)
+				{
+					x = core::max_(x, (*i)->right());
+					++i;
+				}
+				return x;
 			}
 		}
 	}

@@ -79,13 +79,21 @@ namespace Skylicht
 
 				virtual ~CSplitter();
 
-				virtual void renderUnder();
-
 				virtual void layout();
+
+				CBase* getControl(u32 row, u32 col);
 
 				void setControl(CBase *base, u32 row, u32 col);
 
 				void setNumberRowCol(u32 row, u32 col);
+
+				void insertCol(u32 position);
+
+				void insertRow(u32 position);
+
+				void removeCol(u32 position);
+
+				void removeRow(u32 position);
 
 				void setRowHeight(u32 row, float height);
 
@@ -111,13 +119,45 @@ namespace Skylicht
 					m_weakCol = c;
 				}
 
-				inline int getMaxRow() { return MAX_SPLITER_ROW; }
+				inline u32 getWeakRow()
+				{
+					return m_weakRow;
+				}
 
-				inline int getMaxCol() { return MAX_SPLITER_COL; }
+				inline u32 getWeakCol()
+				{
+					return m_weakCol;
+				}
+
+				inline bool isVertical()
+				{
+					return (m_row == 1 && m_col == 1) || m_col == 1;
+				}
+
+				inline bool isHorizontal()
+				{
+					return (m_row == 1 && m_col == 1) || m_row == 1;
+				}
+
+				inline u32 getNumRow()
+				{
+					return m_row;
+				}
+
+				inline u32 getNumCol()
+				{
+					return m_col;
+				}
+
+				inline u32 getMaxRow() { return MAX_SPLITER_ROW; }
+
+				inline u32 getMaxCol() { return MAX_SPLITER_COL; }
 
 				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
 
 				virtual void onMouseClickLeft(float x, float y, bool down);
+
+				SRect getCellRect(u32 fromRow, u32 fromCol, u32 toRow, u32 toCol);
 
 			protected:
 
@@ -144,8 +184,6 @@ namespace Skylicht
 			protected:
 
 				EHoverState mouseHittest(float x, float y, u32& outRow, u32 &outCol);
-
-				SRect getCellRect(u32 fromRow, u32 fromCol, u32 toRow, u32 toCol);
 			};
 		}
 	}

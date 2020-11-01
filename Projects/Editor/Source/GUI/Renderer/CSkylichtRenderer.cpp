@@ -97,7 +97,7 @@ namespace Skylicht
 
 			}
 
-			void CSkylichtRenderer::disableClip(bool b)
+			void CSkylichtRenderer::enableClip(bool b)
 			{
 				CGraphics2D *g = CGraphics2D::getInstance();
 				g->flush();

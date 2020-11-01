@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CCanvas.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -32,7 +33,7 @@ namespace Skylicht
 		namespace GUI
 		{
 			CCanvas::CCanvas(float width, float height) :
-				CDockPanel(NULL),
+				CBase(NULL),
 				FirstTab(NULL),
 				NextTab(NULL)
 			{
@@ -111,13 +112,11 @@ namespace Skylicht
 
 				CBase::doRender();
 
-				render->disableClip(true);
+				render->enableClip(false);
 
 				render->setRenderOffset(SPoint(0.0f, 0.0f));
 
 				CBase::doRenderOverlay();
-
-				render->disableClip(false);
 
 				render->end();
 			}

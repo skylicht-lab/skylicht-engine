@@ -21,10 +21,11 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+#pragma once
 
-#include "pch.h"
-#include "CTabStrip.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "CBase.h"
+#include "CTabControl.h"
+#include "CDockableWindow.h"
 
 namespace Skylicht
 {
@@ -32,38 +33,13 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTabStrip::CTabStrip(CBase *parent) :
-				CBase(parent),
-				m_borderColor(CThemeConfig::TabStripBorderColor)
+			class CDockTabControl :public CTabControl
 			{
-				setHeight(28.0f);
+			public:
+				CDockTabControl(CBase *parent);
 
-				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::TabStripColor);
-			}
-
-			CTabStrip::~CTabStrip()
-			{
-
-			}
-
-			void CTabStrip::render()
-			{
-				if (m_renderFillRect == false)
-					return;
-
-				CBase::render();
-
-				SRect upperBorder = getRenderBounds();
-				upperBorder.Height = 1.0f;
-				CRenderer::getRenderer()->drawFillRect(upperBorder, CThemeConfig::SpliterColor);
-
-				SRect underBorder = getRenderBounds();
-				underBorder.Y = 26.0f;
-				underBorder.Height = 2.0f;
-
-				CRenderer::getRenderer()->drawFillRect(underBorder, m_borderColor);
-			}
+				virtual CDockableWindow* dockWindow(CDockableWindow *window);
+			};
 		}
 	}
 }

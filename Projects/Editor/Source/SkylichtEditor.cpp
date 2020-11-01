@@ -36,7 +36,7 @@ void SkylichtEditor::onInitApp()
 
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Editor.zip"), false, false);	
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Editor.zip"), false, false);
 
 	// load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -101,7 +101,7 @@ void SkylichtEditor::onUpdate()
 void SkylichtEditor::onRender()
 {
 	// render 3d scene
-	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
+	// m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
 
 	Editor::GUI::CGUIContext::render();
 }

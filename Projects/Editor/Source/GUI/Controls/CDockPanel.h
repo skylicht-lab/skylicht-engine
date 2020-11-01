@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBase.h"
 #include "CDockHintIcon.h"
+#include "CSplitter.h"
 
 namespace Skylicht
 {
@@ -32,21 +33,60 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CDockableWindow;
+
 			class CDockPanel : public CBase
 			{
+			public:
+				enum EDock
+				{
+					DockCenter,
+					DockLeft,
+					DockRight,
+					DockTop,
+					DockBottom
+				};
+
 			protected:
-				CDockHintIcon *m_dockHint[5];
+				CSplitter *m_mainSpliter;
+
+				CBase *m_hintWindow;
+
+				CDockHintIcon *m_dockHint[9];
+				CDockHintIcon *m_hoverHint;
+
+			public:
+				static void setRootPanel(CDockPanel *panel);
+
+				static CDockPanel* getRootPanel();
 
 			public:
 				CDockPanel(CBase *parent);
 
 				virtual ~CDockPanel();
 
+				bool isRoot();
+
 				virtual void layout();
 
 				void showDockHint();
 
 				void hideDockHint();
+
+				CDockHintIcon* hitTestDockHint(const SPoint& mousePoint);
+
+				void showDockHintWindow(CDockHintIcon *hint, CDockableWindow *window);
+
+				void hideDockHintWindow();
+
+				void dockChildWindow(CDockableWindow *window, EDock dock);
+
+				SRect getSpaceBound(CSplitter* &outSpliter);
+
+			protected:
+
+				SRect getSpaceBound(CSplitter *spliter, float x, float y, CSplitter* &outSpliter);
+
 			};
 		}
 	}

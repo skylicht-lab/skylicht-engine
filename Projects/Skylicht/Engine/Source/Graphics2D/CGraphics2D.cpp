@@ -242,6 +242,7 @@ namespace Skylicht
 		// set projection & view
 		driver->setTransform(video::ETS_PROJECTION, projection);
 		driver->setTransform(video::ETS_VIEW, view);
+		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 	}
 
 	void CGraphics2D::endRenderGUI()

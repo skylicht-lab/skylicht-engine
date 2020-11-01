@@ -33,10 +33,25 @@ namespace Skylicht
 		{
 			class CTabStrip :public CBase
 			{
+			protected:
+				SGUIColor m_borderColor;
+
 			public:
 				CTabStrip(CBase *parent);
 
 				virtual ~CTabStrip();
+
+				virtual void render();
+
+				const SGUIColor& getBorderColor()
+				{
+					return m_borderColor;
+				}
+
+				inline void setBorderColor(const SGUIColor& c)
+				{
+					m_borderColor = c;
+				}
 			};
 		}
 	}

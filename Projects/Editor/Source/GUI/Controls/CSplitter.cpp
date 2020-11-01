@@ -37,7 +37,7 @@ namespace Skylicht
 				CBase(parent),
 				m_row(1),
 				m_col(1),
-				m_expanderSize(4),
+				m_expanderSize(3.0f),
 				m_minSize(50.0f),
 				m_pressed(false),
 				m_dragRow(0),
@@ -46,7 +46,8 @@ namespace Skylicht
 				m_lastSpaceHeight(0.0f),
 				m_weakCol(0),
 				m_weakRow(0),
-				m_firstTimeLayout(true)
+				m_firstTimeLayout(true),
+				m_hitState(EHoverState::None)
 			{
 				for (int x = 0; x < MAX_SPLITER_COL; x++)
 				{
@@ -67,6 +68,9 @@ namespace Skylicht
 					m_rowHeight[y] = 0.0f;
 					m_adjustRowHeight[y] = 0.0f;
 				}
+
+				enableRenderFillRect(true);
+				setFillRectColor(CThemeConfig::SpliterColor);
 			}
 
 			CSplitter::~CSplitter()
@@ -545,6 +549,14 @@ namespace Skylicht
 				}
 			}
 
+			CBase* CSplitter::getControl(u32 row, u32 col)
+			{
+				if (row >= m_row || col >= m_col)
+					return NULL;
+
+				return m_control[col][row];
+			}
+
 			void CSplitter::setControl(CBase *base, u32 row, u32 col)
 			{
 				if (row >= m_row || col >= m_col || m_control[col][row] != NULL)
@@ -569,7 +581,110 @@ namespace Skylicht
 				m_row = core::clamp<u32>(m_row, 1, MAX_SPLITER_ROW);
 				m_col = core::clamp<u32>(m_col, 1, MAX_SPLITER_COL);
 
+				m_lastSpaceWidth = 0.0f;
+				m_lastSpaceHeight = 0.0f;
+
+				for (int x = 0; x < MAX_SPLITER_COL; x++)
+					m_adjustColWidth[x] = 0.0f;
+
+				for (int y = 0; y < MAX_SPLITER_ROW; y++)
+					m_adjustRowHeight[y] = 0.0f;
+
 				invalidate();
+			}
+
+			void CSplitter::insertCol(u32 position)
+			{
+				setNumberRowCol(m_row, m_col + 1);
+
+				for (u32 col = m_col; col > position; col--)
+				{
+					for (u32 row = 0; row < m_row; row++)
+					{
+						m_control[col][row] = m_control[col - 1][row];
+					}
+
+					m_colWidth[col] = m_colWidth[col - 1];
+				}
+
+				// init col that inserted
+				for (u32 row = 0; row < m_row; row++)
+				{
+					m_control[position][row] = NULL;
+					m_colWidth[position] = 0.0f;
+				}
+			}
+
+			void CSplitter::insertRow(u32 position)
+			{
+				setNumberRowCol(m_row + 1, m_col);
+
+				for (u32 row = m_row; row > position; row--)
+				{
+					for (u32 col = 0; col < m_col; col++)
+					{
+						m_control[col][row] = m_control[col][row - 1];
+					}
+
+					m_rowHeight[row] = m_rowHeight[row - 1];
+				}
+
+				// init row that inserted
+				for (u32 col = 0; col < m_col; col++)
+				{
+					m_control[col][position] = NULL;
+					m_rowHeight[position] = 0.0f;
+				}
+			}
+
+			void CSplitter::removeCol(u32 position)
+			{
+				if (position > m_col)
+					return;
+
+				setNumberRowCol(m_col - 1, m_row);
+
+				for (u32 col = position; col < m_col; col++)
+				{
+					for (u32 row = 0; row < m_row; row++)
+					{
+						m_control[col][row] = m_control[col + 1][row];
+					}
+
+					m_colWidth[col] = m_colWidth[col + 1];
+				}
+
+				// erase last col that removed
+				for (u32 row = 0; row < m_row; row++)
+				{
+					m_control[m_col][row] = NULL;
+					m_colWidth[m_col] = 0.0f;
+				}
+			}
+
+			void CSplitter::removeRow(u32 position)
+			{
+				if (position > m_row)
+					return;
+
+				setNumberRowCol(m_col, m_row - 1);
+
+				for (u32 row = position; row < m_row; row++)
+				{
+					for (u32 col = 0; col < m_col; col++)
+					{
+						m_control[col][row] = m_control[col][row + 1];
+					}
+
+					m_rowHeight[row] = m_rowHeight[row + 1];
+				}
+
+				// erase last row that removed
+				for (u32 col = 0; col < m_col; col++)
+				{
+					m_control[col][m_row] = NULL;
+					m_rowHeight[m_row] = 0.0f;
+				}
 			}
 
 			void CSplitter::setRowHeight(u32 row, float height)
@@ -586,11 +701,6 @@ namespace Skylicht
 					m_colWidth[col] = width;
 
 				invalidate();
-			}
-
-			void CSplitter::renderUnder()
-			{
-				CRenderer::getRenderer()->drawFillRect(getRenderBounds(), CThemeConfig::SpliterColor);
 			}
 
 			void CSplitter::onMouseMoved(float x, float y, float deltaX, float deltaY)

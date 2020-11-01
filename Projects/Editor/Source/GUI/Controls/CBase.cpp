@@ -186,7 +186,7 @@ namespace Skylicht
 				invalidateParent();
 			}
 
-			void CBase::bringNextToControl(CBase* child, bool bBehind)
+			void CBase::bringNextToControl(CBase* child, bool behind)
 			{
 				if (!m_parent)
 					return;
@@ -197,7 +197,7 @@ namespace Skylicht
 				if (it == m_parent->Children.end())
 					return bringToFront();
 
-				if (bBehind)
+				if (behind)
 				{
 					++it;
 					if (it == m_parent->Children.end())
