@@ -81,11 +81,11 @@ namespace Skylicht
 
 				void dockChildWindow(CDockableWindow *window, EDock dock);
 
-				SRect getSpaceBound(CSplitter* &outSpliter);
+				SRect getSpaceBounds(CSplitter* &outSpliter);
 
 			protected:
 
-				SRect getSpaceBound(CSplitter *spliter, float x, float y, CSplitter* &outSpliter);
+				SRect getSpaceBounds(CSplitter *spliter, float x, float y, CSplitter* &outSpliter);
 
 			};
 		}

@@ -100,39 +100,42 @@ namespace Skylicht
 				CBase::layout();
 
 				SPoint center(
-					m_bounds.X + m_bounds.Width * 0.5f,
-					m_bounds.Y + m_bounds.Height * 0.5f
+					round(m_bounds.X + m_bounds.Width * 0.5f),
+					round(m_bounds.Y + m_bounds.Height * 0.5f)
 				);
 
 				float w = m_dockHint[0]->width();
 				float h = m_dockHint[0]->height();
+
+				float halfW = round(w * 0.5f);
+				float halfH = round(h * 0.5f);
 
 				float padding = 0.0f;
 
 				if (isRoot() == true)
 				{
 					padding = 60.0f;
-					m_dockHint[0]->setPos(center.X - w * 0.5f, center.Y - h * 0.5f);
-					m_dockHint[1]->setPos(center.X - w * 0.5f - padding, center.Y - h * 0.5f);
-					m_dockHint[2]->setPos(center.X - w * 0.5f + padding, center.Y - h * 0.5f);
-					m_dockHint[3]->setPos(center.X - w * 0.5f, center.Y - h * 0.5f - padding);
-					m_dockHint[4]->setPos(center.X - w * 0.5f, center.Y - h * 0.5f + padding);
+					m_dockHint[0]->setPos(center.X - halfW, center.Y - halfH);
+					m_dockHint[1]->setPos(center.X - halfW - padding, center.Y - halfH);
+					m_dockHint[2]->setPos(center.X - halfW + padding, center.Y - halfH);
+					m_dockHint[3]->setPos(center.X - halfW, center.Y - halfH - padding);
+					m_dockHint[4]->setPos(center.X - halfW, center.Y - halfH + padding);
 				}
 				else
 				{
 					padding = 60.0f;
-					m_dockHint[0]->setPos(center.X - w * 0.5f, center.Y - h * 0.5f);
+					m_dockHint[0]->setPos(center.X - halfW, center.Y - halfH);
 
-					m_dockHint[5]->setPos(center.X - w * 0.5f - padding, center.Y - h * 0.5f);
-					m_dockHint[6]->setPos(center.X - w * 0.5f + padding, center.Y - h * 0.5f);
-					m_dockHint[7]->setPos(center.X - w * 0.5f, center.Y - h * 0.5f - padding);
-					m_dockHint[8]->setPos(center.X - w * 0.5f, center.Y - h * 0.5f + padding);
+					m_dockHint[5]->setPos(center.X - halfW - padding, center.Y - halfH);
+					m_dockHint[6]->setPos(center.X - halfW + padding, center.Y - halfH);
+					m_dockHint[7]->setPos(center.X - halfW, center.Y - halfH - padding);
+					m_dockHint[8]->setPos(center.X - halfW, center.Y - halfH + padding);
 
 					padding = 120.0f;
-					m_dockHint[1]->setPos(center.X - w * 0.5f - padding, center.Y - h * 0.5f);
-					m_dockHint[2]->setPos(center.X - w * 0.5f + padding, center.Y - h * 0.5f);
-					m_dockHint[3]->setPos(center.X - w * 0.5f, center.Y - h * 0.5f - padding);
-					m_dockHint[4]->setPos(center.X - w * 0.5f, center.Y - h * 0.5f + padding);
+					m_dockHint[1]->setPos(center.X - halfW - padding, center.Y - halfH);
+					m_dockHint[2]->setPos(center.X - halfW + padding, center.Y - halfH);
+					m_dockHint[3]->setPos(center.X - halfW, center.Y - halfH - padding);
+					m_dockHint[4]->setPos(center.X - halfW, center.Y - halfH + padding);
 				}
 			}
 
@@ -146,8 +149,8 @@ namespace Skylicht
 
 				CSplitter *outSpliter = NULL;
 
-				SRect spaceBound = getSpaceBound(outSpliter);
-				SRect fullBound = getBounds();
+				SRect spaceBound = getSpaceBounds(outSpliter);
+				SRect fullBound = getRenderBounds();
 
 				float maxWidth = round(spaceBound.Width * 0.25f);
 				float maxHeight = round(spaceBound.Height * 0.25f);
@@ -200,12 +203,12 @@ namespace Skylicht
 				}
 			}
 
-			SRect CDockPanel::getSpaceBound(CSplitter* &outSpliter)
+			SRect CDockPanel::getSpaceBounds(CSplitter* &outSpliter)
 			{
-				return getSpaceBound(m_mainSpliter, 0.0f, 0.0f, outSpliter);
+				return getSpaceBounds(m_mainSpliter, 0.0f, 0.0f, outSpliter);
 			}
 
-			SRect CDockPanel::getSpaceBound(CSplitter *spliter, float x, float y, CSplitter* &outSpliter)
+			SRect CDockPanel::getSpaceBounds(CSplitter *spliter, float x, float y, CSplitter* &outSpliter)
 			{
 				u32 weakRow = spliter->getWeakRow();
 				u32 weakCol = spliter->getWeakCol();
@@ -219,7 +222,7 @@ namespace Skylicht
 				{
 					CSplitter *childSpliter = dynamic_cast<CSplitter*>(base);
 					if (childSpliter != NULL)
-						return getSpaceBound(childSpliter, x + childSpliter->X(), y + childSpliter->Y(), outSpliter);
+						return getSpaceBounds(childSpliter, x + childSpliter->X(), y + childSpliter->Y(), outSpliter);
 				}
 
 				outSpliter = spliter;
@@ -229,7 +232,10 @@ namespace Skylicht
 			void CDockPanel::dockChildWindow(CDockableWindow *window, EDock dock)
 			{
 				CSplitter *outSpliter = NULL;
-				SRect boundSpace = getSpaceBound(outSpliter);
+				SRect boundSpace = getSpaceBounds(outSpliter);
+
+				if (dock != DockCenter && isRoot())
+					boundSpace = getRenderBounds();
 
 				float maxWidth = round(boundSpace.Width * 0.25f);
 				float maxHeight = round(boundSpace.Height * 0.25f);
