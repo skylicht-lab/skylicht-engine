@@ -145,10 +145,19 @@ namespace Skylicht
 				m_hintWindow->setHidden(false);
 
 				CSplitter *outSpliter = NULL;
-				SRect spaceBound = getSpaceBound(outSpliter);
 
-				float maxWidth = spaceBound.Width * 0.25f;
-				float maxHeight = spaceBound.Height * 0.25f;
+				SRect spaceBound = getSpaceBound(outSpliter);
+				SRect fullBound = getBounds();
+
+				float maxWidth = round(spaceBound.Width * 0.25f);
+				float maxHeight = round(spaceBound.Height * 0.25f);
+
+				EDockHintIcon icon = hint->getIcon();
+				if (icon == Left || icon == Right || icon == Top || icon == Bottom)
+				{
+					maxWidth = round(fullBound.Width * 0.25f);
+					maxHeight = round(fullBound.Height * 0.25f);
+				}
 
 				SRect bound = window->getBounds();
 				if (bound.Width >= maxWidth)
@@ -157,7 +166,6 @@ namespace Skylicht
 				if (bound.Height > maxHeight)
 					bound.Height = maxHeight;
 
-				EDockHintIcon icon = hint->getIcon();
 				switch (icon)
 				{
 				case Center:
@@ -223,8 +231,8 @@ namespace Skylicht
 				CSplitter *outSpliter = NULL;
 				SRect boundSpace = getSpaceBound(outSpliter);
 
-				float maxWidth = boundSpace.Width * 0.25f;
-				float maxHeight = boundSpace.Height * 0.25f;
+				float maxWidth = round(boundSpace.Width * 0.25f);
+				float maxHeight = round(boundSpace.Height * 0.25f);
 
 				SRect bound = window->getBounds();
 				if (bound.Width >= maxWidth)
@@ -449,7 +457,9 @@ namespace Skylicht
 						}
 						else
 						{
-
+							CDockTabControl *tabControl = dynamic_cast<CDockTabControl*>(base);
+							if (tabControl != NULL)
+								tabControl->dockWindow(window);
 						}
 					}
 				}
@@ -461,6 +471,7 @@ namespace Skylicht
 				m_mainSpliter->setRowHeight(weakRow, 0.0f);
 
 				m_mainSpliter->sendToBack();
+
 				invalidate();
 			}
 
