@@ -37,7 +37,7 @@ namespace Skylicht
 				CBase(parent),
 				m_row(1),
 				m_col(1),
-				m_expanderSize(3.0f),
+				m_expanderSize(2.0f),
 				m_minSize(50.0f),
 				m_pressed(false),
 				m_dragRow(0),
