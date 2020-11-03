@@ -81,6 +81,8 @@ namespace Skylicht
 
 				virtual void layout();
 
+				virtual void removeChild(CBase* child);
+
 				CBase* getControl(u32 row, u32 col);
 
 				void setControl(CBase *base, u32 row, u32 col);

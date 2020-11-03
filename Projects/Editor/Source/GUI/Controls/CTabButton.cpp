@@ -169,7 +169,18 @@ namespace Skylicht
 					m_label->setColor(CThemeConfig::TabTextColor);
 				}
 
-				CTheme::getTheme()->drawTabButton(getRenderBounds(), c, m_focusColor, m_focus);
+				SRect renderBound = getRenderBounds();
+
+				if (m_focus)
+				{
+					renderBound.Height = renderBound.Height + 2.0f;
+					CTheme::getTheme()->drawTabButton(renderBound, c, m_focusColor, m_focus);
+				}
+				else
+				{
+					renderBound.Y = renderBound.Y + 2.0f;
+					CTheme::getTheme()->drawTabButton(renderBound, c, m_focusColor, m_focus);
+				}
 			}
 
 			void CTabButton::sizeToContents()

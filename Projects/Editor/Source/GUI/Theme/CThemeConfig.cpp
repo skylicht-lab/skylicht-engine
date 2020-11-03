@@ -55,7 +55,6 @@ namespace Skylicht
 			SGUIColor CThemeConfig::TabTextColor = SGUIColor(255, 145, 145, 145);
 			SGUIColor CThemeConfig::TabTextFocusColor = ButtonTextColor;
 			SGUIColor CThemeConfig::TabStripColor = WindowBackgroundColor;
-			SGUIColor CThemeConfig::TabStripBorderColor = SGUIColor(255, 65, 65, 65);
 			SGUIColor CThemeConfig::TabButtonColor = SGUIColor(255, 45, 45, 45);
 			SGUIColor CThemeConfig::TabButtonActiveColor = SGUIColor(255, 65, 65, 65);
 			SGUIColor CThemeConfig::TabButtonFocusColor = ButtonFocusColor;
