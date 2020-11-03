@@ -238,6 +238,7 @@ namespace Skylicht
 				button->setMargin(SMargin(0.0f, 6.0f, 2.0f, 2.0f));
 				button->OnDown = BIND_LISTENER(&CTabControl::onTabPressed, this);
 				button->getCloseButton()->OnPress = BIND_LISTENER(&CTabControl::onTabClosePressed, this);
+				button->showCloseButton(m_showTabCloseButton);
 
 				m_tabButtons.push_back(button);
 

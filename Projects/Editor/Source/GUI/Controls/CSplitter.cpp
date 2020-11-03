@@ -78,6 +78,23 @@ namespace Skylicht
 
 			}
 
+			void CSplitter::removeChild(CBase* child)
+			{
+				for (u32 i = 0; i < m_col; i++)
+				{
+					for (u32 j = 0; j < m_row; j++)
+					{
+						if (m_control[i][j] == child)
+						{
+							m_control[i][j] = NULL;
+						}
+					}
+				}
+
+				CBase::removeChild(child);
+				invalidate();
+			}
+
 			void CSplitter::layout()
 			{
 				predictChildSize();
