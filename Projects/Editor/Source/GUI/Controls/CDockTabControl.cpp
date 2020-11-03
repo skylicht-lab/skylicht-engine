@@ -35,7 +35,7 @@ namespace Skylicht
 			CDockTabControl::CDockTabControl(CBase *parent) :
 				CTabControl(parent)
 			{
-
+				showTabCloseButton(true);
 			}
 
 			CDockableWindow* CDockTabControl::dockWindow(CDockableWindow *window)

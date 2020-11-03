@@ -33,8 +33,7 @@ namespace Skylicht
 		namespace GUI
 		{
 			CTabStrip::CTabStrip(CBase *parent) :
-				CBase(parent),
-				m_borderColor(CThemeConfig::TabStripBorderColor)
+				CBase(parent)
 			{
 				setHeight(28.0f);
 
@@ -45,24 +44,6 @@ namespace Skylicht
 			CTabStrip::~CTabStrip()
 			{
 
-			}
-
-			void CTabStrip::render()
-			{
-				if (m_renderFillRect == false)
-					return;
-
-				CBase::render();
-
-				//SRect upperBorder = getRenderBounds();
-				//upperBorder.Height = 1.0f;
-				//CRenderer::getRenderer()->drawFillRect(upperBorder, CThemeConfig::SpliterColor);
-
-				SRect underBorder = getRenderBounds();
-				underBorder.Y = 26.0f;
-				underBorder.Height = 2.0f;
-
-				CRenderer::getRenderer()->drawFillRect(underBorder, m_borderColor);
 			}
 		}
 	}

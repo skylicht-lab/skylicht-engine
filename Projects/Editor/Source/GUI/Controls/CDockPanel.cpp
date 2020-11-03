@@ -105,8 +105,15 @@ namespace Skylicht
 
 			void CDockPanel::layoutHintIcon()
 			{
-				SPoint center;
-				SPoint rootCenter;
+				SPoint center, spaceCenter, rootCenter;
+
+				CSplitter *outSpliter;
+
+				SRect rootBound = getSpaceBounds(outSpliter);
+				spaceCenter = SPoint(
+					round(rootBound.X + rootBound.Width * 0.5f),
+					round(rootBound.Y + rootBound.Height * 0.5f)
+				);
 
 				rootCenter = SPoint(
 					round(m_bounds.X + m_bounds.Width * 0.5f),
@@ -139,7 +146,7 @@ namespace Skylicht
 				if (m_dragOverWindow == NULL)
 				{
 					padding = 20.0f;
-					m_dockHint[0]->setPos(center.X - halfW, center.Y - halfH);
+					m_dockHint[0]->setPos(spaceCenter.X - halfW, spaceCenter.Y - halfH);
 
 					m_dockHint[1]->setPos(padding, rootCenter.Y - halfH);
 					m_dockHint[2]->setPos(width() - padding - w, rootCenter.Y - halfH);
