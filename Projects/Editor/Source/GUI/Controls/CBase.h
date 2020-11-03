@@ -309,6 +309,7 @@ namespace Skylicht
 			public:
 
 				virtual CBase* getControlAt(float x, float y, bool onlyIfMouseEnabled = true);
+				virtual CBase* getControlAt(float x, float y, const std::type_info& type, bool onlyIfMouseEnabled = true);
 
 				virtual SPoint localPosToCanvas(const SPoint& in = SPoint(0.0f, 0.0f));
 				virtual SPoint canvasPosToLocal(const SPoint& in);

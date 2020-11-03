@@ -559,7 +559,7 @@ namespace Skylicht
 
 			void CSplitter::setControl(CBase *base, u32 row, u32 col)
 			{
-				if (row >= m_row || col >= m_col || m_control[col][row] != NULL)
+				if (row >= m_row || col >= m_col)
 					return;
 
 				m_control[col][row] = base;
@@ -571,6 +571,24 @@ namespace Skylicht
 				}
 
 				invalidate();
+			}
+
+			bool CSplitter::getColRowFromControl(CBase *base, u32 &outRow, u32 &outCol)
+			{
+				for (u32 i = 0; i < m_col; i++)
+				{
+					for (u32 j = 0; j < m_row; j++)
+					{
+						if (m_control[i][j] == base)
+						{
+							outRow = j;
+							outCol = i;
+							return true;
+						}
+					}
+				}
+
+				return false;
 			}
 
 			void CSplitter::setNumberRowCol(u32 row, u32 col)

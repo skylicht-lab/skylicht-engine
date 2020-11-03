@@ -404,10 +404,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (width > 0 && height > 0)
 		{
 			if (dev != NULL)
-				dev->getVideoDriver()->OnResize(core::dimension2du(width, height));
-
-			if (g_application != NULL)
-				g_application->notifyResizeWin((int)width, (int)height);
+			{
+				SEvent resize;
+				resize.EventType = irr::EET_GAME_RESIZE;
+				resize.UserEvent.UserData1 = (s32)width;
+				resize.UserEvent.UserData2 = (s32)height;
+				dev->postEventFromUser(resize);
+			}
 		}
 	}
 	break;

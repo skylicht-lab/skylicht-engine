@@ -692,6 +692,35 @@ namespace Skylicht
 				return this;
 			}
 
+			CBase* CBase::getControlAt(float x, float y, const std::type_info& type, bool onlyIfMouseEnabled)
+			{
+				if (isHidden())
+					return NULL;
+
+				if (x < 0 || y < 0 || x >= width() || y >= height())
+					return NULL;
+
+				for (List::reverse_iterator iter = Children.rbegin(); iter != Children.rend(); ++iter)
+				{
+					CBase* child = *iter;
+					CBase* found = NULL;
+					found = child->getControlAt(x - child->X(), y - child->Y(), type, onlyIfMouseEnabled);
+
+					if (found)
+						return found;
+				}
+
+				if (onlyIfMouseEnabled && !getMouseInputEnabled())
+					return NULL;
+
+				if (typeid(*this) == type)
+				{
+					return this;
+				}
+
+				return NULL;
+			}
+
 			SPoint CBase::localPosToCanvas(const SPoint& pnt)
 			{
 				if (m_parent)

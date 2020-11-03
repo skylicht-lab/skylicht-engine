@@ -54,9 +54,9 @@ namespace Skylicht
 
 				CBase::render();
 
-				SRect upperBorder = getRenderBounds();
-				upperBorder.Height = 1.0f;
-				CRenderer::getRenderer()->drawFillRect(upperBorder, CThemeConfig::SpliterColor);
+				//SRect upperBorder = getRenderBounds();
+				//upperBorder.Height = 1.0f;
+				//CRenderer::getRenderer()->drawFillRect(upperBorder, CThemeConfig::SpliterColor);
 
 				SRect underBorder = getRenderBounds();
 				underBorder.Y = 26.0f;

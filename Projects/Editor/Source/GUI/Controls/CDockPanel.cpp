@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDockTabControl.h"
 #include "GUI/Theme/CThemeConfig.h"
 #include "GUI/CGUIContext.h"
+#include "GUI/Input/CInput.h"
 
 namespace Skylicht
 {
@@ -49,7 +50,8 @@ namespace Skylicht
 
 			CDockPanel::CDockPanel(CBase *parent) :
 				CBase(parent),
-				m_hoverHint(NULL)
+				m_hoverHint(NULL),
+				m_dragOverWindow(NULL)
 			{
 				m_mainSpliter = new CSplitter(this);
 				m_mainSpliter->dock(EPosition::Fill);
@@ -98,11 +100,33 @@ namespace Skylicht
 			void CDockPanel::layout()
 			{
 				CBase::layout();
+				layoutHintIcon();
+			}
 
-				SPoint center(
+			void CDockPanel::layoutHintIcon()
+			{
+				SPoint center;
+				SPoint rootCenter;
+
+				rootCenter = SPoint(
 					round(m_bounds.X + m_bounds.Width * 0.5f),
 					round(m_bounds.Y + m_bounds.Height * 0.5f)
 				);
+
+				center = rootCenter;
+
+				if (m_dragOverWindow != NULL)
+				{
+					SRect winBound = m_dragOverWindow->getBounds();
+
+					SPoint canvasPos = m_dragOverWindow->localPosToCanvas();
+					SPoint panelPos = canvasPosToLocal(canvasPos);
+
+					center = SPoint(
+						round(panelPos.X + winBound.Width * 0.5f),
+						round(panelPos.Y + winBound.Height * 0.5f)
+					);
+				}
 
 				float w = m_dockHint[0]->width();
 				float h = m_dockHint[0]->height();
@@ -112,18 +136,19 @@ namespace Skylicht
 
 				float padding = 0.0f;
 
-				if (isRoot() == true)
+				if (m_dragOverWindow == NULL)
 				{
-					padding = 60.0f;
+					padding = 20.0f;
 					m_dockHint[0]->setPos(center.X - halfW, center.Y - halfH);
-					m_dockHint[1]->setPos(center.X - halfW - padding, center.Y - halfH);
-					m_dockHint[2]->setPos(center.X - halfW + padding, center.Y - halfH);
-					m_dockHint[3]->setPos(center.X - halfW, center.Y - halfH - padding);
-					m_dockHint[4]->setPos(center.X - halfW, center.Y - halfH + padding);
+
+					m_dockHint[1]->setPos(padding, rootCenter.Y - halfH);
+					m_dockHint[2]->setPos(width() - padding - w, rootCenter.Y - halfH);
+					m_dockHint[3]->setPos(rootCenter.X - halfW, padding);
+					m_dockHint[4]->setPos(rootCenter.X - halfW, height() - padding - h);
 				}
 				else
 				{
-					padding = 60.0f;
+					padding = 50.0f;
 					m_dockHint[0]->setPos(center.X - halfW, center.Y - halfH);
 
 					m_dockHint[5]->setPos(center.X - halfW - padding, center.Y - halfH);
@@ -131,35 +156,49 @@ namespace Skylicht
 					m_dockHint[7]->setPos(center.X - halfW, center.Y - halfH - padding);
 					m_dockHint[8]->setPos(center.X - halfW, center.Y - halfH + padding);
 
-					padding = 120.0f;
-					m_dockHint[1]->setPos(center.X - halfW - padding, center.Y - halfH);
-					m_dockHint[2]->setPos(center.X - halfW + padding, center.Y - halfH);
-					m_dockHint[3]->setPos(center.X - halfW, center.Y - halfH - padding);
-					m_dockHint[4]->setPos(center.X - halfW, center.Y - halfH + padding);
+					padding = 20.0f;
+					m_dockHint[1]->setPos(padding, rootCenter.Y - halfH);
+					m_dockHint[2]->setPos(width() - padding - w, rootCenter.Y - halfH);
+					m_dockHint[3]->setPos(rootCenter.X - halfW, padding);
+					m_dockHint[4]->setPos(rootCenter.X - halfW, height() - padding - h);
 				}
 			}
 
 			void CDockPanel::showDockHintWindow(CDockHintIcon *hint, CDockableWindow *window)
 			{
+				if (m_hoverHint != NULL && m_hoverHint != hint)
+					m_hoverHint->setColor(CThemeConfig::DefaultIconColor);
+
 				m_hoverHint = hint;
 				m_hoverHint->setColor(CThemeConfig::ButtonPressColor);
 
-				m_hintWindow->bringNextToControl(m_dockHint[0], true);
+				m_hintWindow->bringNextToControl(m_dockHint[0], false);
 				m_hintWindow->setHidden(false);
 
 				CSplitter *outSpliter = NULL;
 
-				SRect spaceBound = getSpaceBounds(outSpliter);
+				SRect spaceBounds;
+				if (m_dragOverWindow == NULL)
+					spaceBounds = getSpaceBounds(outSpliter);
+				else
+				{
+					spaceBounds = m_dragOverWindow->getBounds();
+					SPoint p = m_dragOverWindow->localPosToCanvas();
+					p = canvasPosToLocal(p);
+					spaceBounds.X = p.X;
+					spaceBounds.Y = p.Y;
+				}
+
 				SRect fullBound = getRenderBounds();
 
-				float maxWidth = round(spaceBound.Width * 0.25f);
-				float maxHeight = round(spaceBound.Height * 0.25f);
+				float maxWidth = round(spaceBounds.Width * 0.5f);
+				float maxHeight = round(spaceBounds.Height * 0.5f);
 
 				EDockHintIcon icon = hint->getIcon();
 				if (icon == Left || icon == Right || icon == Top || icon == Bottom)
 				{
-					maxWidth = round(fullBound.Width * 0.25f);
-					maxHeight = round(fullBound.Height * 0.25f);
+					maxWidth = round(fullBound.Width * 0.5f);
+					maxHeight = round(fullBound.Height * 0.5f);
 				}
 
 				SRect bound = window->getBounds();
@@ -172,31 +211,31 @@ namespace Skylicht
 				switch (icon)
 				{
 				case Center:
-					m_hintWindow->setBounds(spaceBound.X, spaceBound.Y, spaceBound.Width, spaceBound.Height);
+					m_hintWindow->setBounds(spaceBounds.X, spaceBounds.Y, spaceBounds.Width, spaceBounds.Height);
 					break;
 				case Left:
 					m_hintWindow->setBounds(0.0f, 0.0f, bound.Width, height());
 					break;
 				case TargetLeft:
-					m_hintWindow->setBounds(spaceBound.X, 0.0f, bound.Width, spaceBound.Height);
+					m_hintWindow->setBounds(spaceBounds.X, spaceBounds.Y, bound.Width, spaceBounds.Height);
 					break;
 				case Right:
 					m_hintWindow->setBounds(width() - bound.Width, 0.0f, bound.Width, height());
 					break;
 				case TargetRight:
-					m_hintWindow->setBounds(spaceBound.X + spaceBound.Width - bound.Width, 0.0f, bound.Width, spaceBound.Height);
+					m_hintWindow->setBounds(spaceBounds.X + spaceBounds.Width - bound.Width, spaceBounds.Y, bound.Width, spaceBounds.Height);
 					break;
 				case Top:
 					m_hintWindow->setBounds(0.0f, 0.0f, width(), bound.Height);
 					break;
 				case TargetTop:
-					m_hintWindow->setBounds(spaceBound.X, spaceBound.Y, spaceBound.Width, bound.Height);
+					m_hintWindow->setBounds(spaceBounds.X, spaceBounds.Y, spaceBounds.Width, bound.Height);
 					break;
 				case Bottom:
 					m_hintWindow->setBounds(0.0f, height() - bound.Height, width(), bound.Height);
 					break;
 				case TargetBottom:
-					m_hintWindow->setBounds(spaceBound.X, spaceBound.Y + spaceBound.Height - bound.Height, spaceBound.Width, bound.Height);
+					m_hintWindow->setBounds(spaceBounds.X, spaceBounds.Y + spaceBounds.Height - bound.Height, spaceBounds.Width, bound.Height);
 					break;
 				default:
 					break;
@@ -231,14 +270,33 @@ namespace Skylicht
 
 			void CDockPanel::dockChildWindow(CDockableWindow *window, EDock dock)
 			{
+				CSplitter *mainSpliter = NULL;
 				CSplitter *outSpliter = NULL;
-				SRect boundSpace = getSpaceBounds(outSpliter);
 
-				if (dock != DockCenter && isRoot())
-					boundSpace = getRenderBounds();
+				SRect spaceBounds;
 
-				float maxWidth = round(boundSpace.Width * 0.25f);
-				float maxHeight = round(boundSpace.Height * 0.25f);
+				if (m_dragOverWindow == NULL ||
+					dock == EDock::DockLeft ||
+					dock == EDock::DockRight ||
+					dock == EDock::DockBottom ||
+					dock == EDock::DockTop)
+				{
+					spaceBounds = getSpaceBounds(outSpliter);
+					mainSpliter = m_mainSpliter;
+				}
+				else
+				{
+					spaceBounds = m_dragOverWindow->getBounds();
+					SPoint p = m_dragOverWindow->localPosToCanvas();
+					p = canvasPosToLocal(p);
+					spaceBounds.X = p.X;
+					spaceBounds.Y = p.Y;
+
+					mainSpliter = (CSplitter*)m_dragOverWindow->getParent();
+				}
+
+				float maxWidth = round(spaceBounds.Width * 0.5f);
+				float maxHeight = round(spaceBounds.Height * 0.5f);
 
 				SRect bound = window->getBounds();
 				if (bound.Width >= maxWidth)
@@ -247,27 +305,27 @@ namespace Skylicht
 				if (bound.Height > maxHeight)
 					bound.Height = maxHeight;
 
-				u32 numRow = m_mainSpliter->getNumRow();
-				u32 numCol = m_mainSpliter->getNumCol();
+				u32 numRow = mainSpliter->getNumRow();
+				u32 numCol = mainSpliter->getNumCol();
 
-				u32 weakRow = m_mainSpliter->getWeakRow();
-				u32 weakCol = m_mainSpliter->getWeakCol();
+				u32 weakRow = mainSpliter->getWeakRow();
+				u32 weakCol = mainSpliter->getWeakCol();
 
 				if (dock == EDock::DockRight)
 				{
-					if (m_mainSpliter->isHorizontal())
+					if (mainSpliter->isHorizontal())
 					{
 						numCol++;
 						u32 rowID = numRow - 1;
 						u32 colID = numCol - 1;
 
-						m_mainSpliter->setNumberRowCol(numRow, numCol);
+						mainSpliter->setNumberRowCol(numRow, numCol);
 
-						CDockTabControl *tabControl = new CDockTabControl(m_mainSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
 						tabControl->dockWindow(window);
 
-						m_mainSpliter->setControl(tabControl, rowID, colID);
-						m_mainSpliter->setColWidth(colID, bound.Width);
+						mainSpliter->setControl(tabControl, rowID, colID);
+						mainSpliter->setColWidth(colID, bound.Width);
 					}
 					else
 					{
@@ -278,7 +336,7 @@ namespace Skylicht
 						newSpliter->dock(EPosition::Fill);
 						newSpliter->setNumberRowCol(1, 2);
 
-						newSpliter->setControl(m_mainSpliter, 0, 0);
+						newSpliter->setControl(mainSpliter, 0, 0);
 
 						CDockTabControl *tabControl = new CDockTabControl(newSpliter);
 						tabControl->dockWindow(window);
@@ -290,32 +348,77 @@ namespace Skylicht
 						weakRow = 0;
 						weakCol = 0;
 
-						newSpliter->setWeakRow(weakRow);
-						newSpliter->setWeakCol(weakCol);
-
-						window->setStyleChild(true);
-
+						mainSpliter = newSpliter;
 						m_mainSpliter = newSpliter;
 						m_innerPanel = base;
 					}
 				}
+				else if (dock == EDock::DockTargetRight)
+				{
+					if (m_dragOverWindow != NULL)
+					{
+						u32 row, col;
+						if (mainSpliter->getColRowFromControl(m_dragOverWindow, row, col) == true)
+						{
+							if (mainSpliter->isHorizontal() == true)
+							{
+								numCol++;
+								u32 rowID = row;
+								u32 colID = col + 1;
+
+								mainSpliter->insertCol(col + 1);
+
+								CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+								tabControl->dockWindow(window);
+
+								mainSpliter->setControl(tabControl, rowID, colID);
+								mainSpliter->setColWidth(colID, bound.Width);
+								mainSpliter->setColWidth(colID - 1, 0.0f);
+
+								if (weakCol > col)
+									weakCol++;
+							}
+							else
+							{
+
+								CBase *base = m_innerPanel;
+								m_innerPanel = NULL;
+
+								CSplitter *newSpliter = new CSplitter(mainSpliter);
+								newSpliter->setNumberRowCol(1, 2);
+								newSpliter->setControl(m_dragOverWindow, 0, 0);
+
+								CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+								tabControl->dockWindow(window);
+								newSpliter->setControl(tabControl, 0, 1);
+
+								newSpliter->setColWidth(0, 0.0f);
+								newSpliter->setColWidth(1, bound.Width);
+
+								// replace
+								mainSpliter->setControl(newSpliter, row, col);
+
+								mainSpliter = newSpliter;
+								m_innerPanel = base;
+							}
+						}
+					}
+				}
 				else if (dock == EDock::DockLeft)
 				{
-					if (m_mainSpliter->isHorizontal())
+					if (mainSpliter->isHorizontal())
 					{
 						numCol++;
 						u32 rowID = numRow - 1;
 						u32 colID = 0;
 
-						m_mainSpliter->insertCol(0);
+						mainSpliter->insertCol(0);
 
-						CDockTabControl *tabControl = new CDockTabControl(m_mainSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
 						tabControl->dockWindow(window);
 
-						m_mainSpliter->setControl(tabControl, rowID, colID);
-						m_mainSpliter->setColWidth(colID, bound.Width);
-
-						window->setStyleChild(true);
+						mainSpliter->setControl(tabControl, rowID, colID);
+						mainSpliter->setColWidth(colID, bound.Width);
 
 						weakCol++;
 					}
@@ -332,7 +435,7 @@ namespace Skylicht
 						tabControl->dockWindow(window);
 
 						newSpliter->setControl(tabControl, 0, 0);
-						newSpliter->setControl(m_mainSpliter, 0, 1);
+						newSpliter->setControl(mainSpliter, 0, 1);
 
 						newSpliter->setColWidth(0, bound.Width);
 						newSpliter->setColWidth(1, 0.0f);
@@ -340,32 +443,77 @@ namespace Skylicht
 						weakRow = 0;
 						weakCol = 1;
 
-						newSpliter->setWeakRow(weakRow);
-						newSpliter->setWeakCol(weakCol);
-
-						window->setStyleChild(true);
-
+						mainSpliter = newSpliter;
 						m_mainSpliter = newSpliter;
 						m_innerPanel = base;
 					}
 				}
+				else if (dock == EDock::DockTargetLeft)
+				{
+					if (m_dragOverWindow != NULL)
+					{
+						u32 row, col;
+						if (mainSpliter->getColRowFromControl(m_dragOverWindow, row, col) == true)
+						{
+							if (mainSpliter->isHorizontal() == true)
+							{
+								numCol++;
+								u32 rowID = row;
+								u32 colID = col;
+
+								mainSpliter->insertCol(col);
+
+								CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+								tabControl->dockWindow(window);
+
+								mainSpliter->setControl(tabControl, rowID, colID);
+								mainSpliter->setColWidth(colID, bound.Width);
+								mainSpliter->setColWidth(colID + 1, 0.0f);
+
+								if (weakCol > col)
+									weakCol++;
+							}
+							else
+							{
+								CBase *base = m_innerPanel;
+								m_innerPanel = NULL;
+
+								CSplitter *newSpliter = new CSplitter(mainSpliter);
+								newSpliter->setNumberRowCol(1, 2);
+
+								CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+								tabControl->dockWindow(window);
+								newSpliter->setControl(tabControl, 0, 0);
+
+								newSpliter->setControl(m_dragOverWindow, 0, 1);
+
+								newSpliter->setColWidth(0, bound.Width);
+								newSpliter->setColWidth(1, 0.0f);
+
+								// replace
+								mainSpliter->setControl(newSpliter, row, col);
+
+								mainSpliter = newSpliter;
+								m_innerPanel = base;
+							}
+						}
+					}
+				}
 				else if (dock == EDock::DockTop)
 				{
-					if (m_mainSpliter->isVertical())
+					if (mainSpliter->isVertical())
 					{
 						numRow++;
 						u32 rowID = 0;
 						u32 colID = numCol - 1;
 
-						m_mainSpliter->insertRow(0);
+						mainSpliter->insertRow(0);
 
-						CDockTabControl *tabControl = new CDockTabControl(m_mainSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
 						tabControl->dockWindow(window);
 
-						m_mainSpliter->setControl(tabControl, rowID, colID);
-						m_mainSpliter->setRowHeight(rowID, bound.Height);
-
-						window->setStyleChild(true);
+						mainSpliter->setControl(tabControl, rowID, colID);
+						mainSpliter->setRowHeight(rowID, bound.Height);
 
 						weakRow++;
 					}
@@ -382,7 +530,7 @@ namespace Skylicht
 						tabControl->dockWindow(window);
 
 						newSpliter->setControl(tabControl, 0, 0);
-						newSpliter->setControl(m_mainSpliter, 1, 0);
+						newSpliter->setControl(mainSpliter, 1, 0);
 
 						newSpliter->setRowHeight(0, bound.Height);
 						newSpliter->setRowHeight(1, 0.0f);
@@ -390,32 +538,77 @@ namespace Skylicht
 						weakRow = 1;
 						weakCol = 0;
 
-						newSpliter->setWeakRow(weakRow);
-						newSpliter->setWeakCol(weakCol);
-
-						window->setStyleChild(true);
-
+						mainSpliter = newSpliter;
 						m_mainSpliter = newSpliter;
 						m_innerPanel = base;
 					}
 				}
+				else if (dock == EDock::DockTargetTop)
+				{
+					if (m_dragOverWindow != NULL)
+					{
+						u32 row, col;
+						if (mainSpliter->getColRowFromControl(m_dragOverWindow, row, col) == true)
+						{
+							if (mainSpliter->isVertical() == true)
+							{
+								numRow++;
+								u32 rowID = row;
+								u32 colID = col;
+
+								mainSpliter->insertRow(row);
+
+								CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+								tabControl->dockWindow(window);
+
+								mainSpliter->setControl(tabControl, rowID, colID);
+								mainSpliter->setRowHeight(rowID, bound.Height);
+								mainSpliter->setRowHeight(rowID + 1, 0.0f);
+
+								if (weakRow > row)
+									weakRow++;
+							}
+							else
+							{
+								CBase *base = m_innerPanel;
+								m_innerPanel = NULL;
+
+								CSplitter *newSpliter = new CSplitter(mainSpliter);
+								newSpliter->setNumberRowCol(2, 1);
+
+								CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+								tabControl->dockWindow(window);
+								newSpliter->setControl(tabControl, 0, 0);
+
+								newSpliter->setControl(m_dragOverWindow, 1, 0);
+
+								newSpliter->setRowHeight(0, bound.Height);
+								newSpliter->setRowHeight(1, 0.0f);
+
+								// replace
+								mainSpliter->setControl(newSpliter, row, col);
+
+								mainSpliter = newSpliter;
+								m_innerPanel = base;
+							}
+						}
+					}
+				}
 				else if (dock == EDock::DockBottom)
 				{
-					if (m_mainSpliter->isVertical())
+					if (mainSpliter->isVertical())
 					{
 						numRow++;
-						m_mainSpliter->setNumberRowCol(numRow, numCol);
+						mainSpliter->setNumberRowCol(numRow, numCol);
 
 						u32 rowID = numRow - 1;
 						u32 colID = numCol - 1;
 
-						CDockTabControl *tabControl = new CDockTabControl(m_mainSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
 						tabControl->dockWindow(window);
 
-						m_mainSpliter->setControl(tabControl, rowID, colID);
-						m_mainSpliter->setRowHeight(rowID, bound.Height);
-
-						window->setStyleChild(true);
+						mainSpliter->setControl(tabControl, rowID, colID);
+						mainSpliter->setRowHeight(rowID, bound.Height);
 					}
 					else
 					{
@@ -429,22 +622,69 @@ namespace Skylicht
 						CDockTabControl *tabControl = new CDockTabControl(newSpliter);
 						tabControl->dockWindow(window);
 
-						newSpliter->setControl(m_mainSpliter, 0, 0);
+						newSpliter->setControl(mainSpliter, 0, 0);
 						newSpliter->setControl(tabControl, 1, 0);
 
 						newSpliter->setRowHeight(0, 0.0f);
 						newSpliter->setRowHeight(1, bound.Height);
 
-						window->setStyleChild(true);
-
 						weakRow = 0;
 						weakCol = 0;
 
-						newSpliter->setWeakRow(weakRow);
-						newSpliter->setWeakCol(weakCol);
-
+						mainSpliter = newSpliter;
 						m_mainSpliter = newSpliter;
 						m_innerPanel = base;
+					}
+				}
+				else if (dock == DockTargetBottom)
+				{
+					if (m_dragOverWindow != NULL)
+					{
+						u32 row, col;
+						if (mainSpliter->getColRowFromControl(m_dragOverWindow, row, col) == true)
+						{
+							if (mainSpliter->isVertical() == true)
+							{
+								numRow++;
+								u32 rowID = row + 1;
+								u32 colID = col;
+
+								mainSpliter->insertRow(row + 1);
+
+								CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+								tabControl->dockWindow(window);
+
+								mainSpliter->setControl(tabControl, rowID, colID);
+								mainSpliter->setRowHeight(rowID, bound.Height);
+								mainSpliter->setRowHeight(rowID - 1, 0.0f);
+
+								if (weakRow > row)
+									weakRow++;
+							}
+							else
+							{
+								CBase *base = m_innerPanel;
+								m_innerPanel = NULL;
+
+								CSplitter *newSpliter = new CSplitter(mainSpliter);
+								newSpliter->setNumberRowCol(2, 1);
+
+								CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+								tabControl->dockWindow(window);
+
+								newSpliter->setControl(m_dragOverWindow, 0, 0);
+								newSpliter->setControl(tabControl, 1, 0);
+
+								newSpliter->setRowHeight(0, 0.0f);
+								newSpliter->setRowHeight(1, bound.Height);
+
+								// replace
+								mainSpliter->setControl(newSpliter, row, col);
+
+								mainSpliter = newSpliter;
+								m_innerPanel = base;
+							}
+						}
 					}
 				}
 				else
@@ -468,13 +708,17 @@ namespace Skylicht
 								tabControl->dockWindow(window);
 						}
 					}
+					else if (m_dragOverWindow != NULL)
+					{
+						m_dragOverWindow->dockWindow(window);
+					}
 				}
 
-				m_mainSpliter->setWeakCol(weakCol);
-				m_mainSpliter->setWeakRow(weakRow);
+				mainSpliter->setWeakCol(weakCol);
+				mainSpliter->setWeakRow(weakRow);
 
-				m_mainSpliter->setColWidth(weakCol, 0.0f);
-				m_mainSpliter->setRowHeight(weakRow, 0.0f);
+				mainSpliter->setColWidth(weakCol, 0.0f);
+				mainSpliter->setRowHeight(weakRow, 0.0f);
 
 				m_mainSpliter->sendToBack();
 
@@ -492,9 +736,17 @@ namespace Skylicht
 
 			void CDockPanel::showDockHint()
 			{
+				SPoint mousePoint = CInput::getInput()->getMousePosition();
+
+				SPoint local = canvasPosToLocal(mousePoint);
+
+				m_dragOverWindow = (CDockTabControl*)getControlAt(local.X, local.Y, typeid(CDockTabControl));
+
+				layoutHintIcon();
+
 				for (int i = 0; i < 9; i++)
 				{
-					if (isRoot() == true && i >= 5)
+					if (m_dragOverWindow == NULL && i >= 5)
 					{
 						m_dockHint[i]->setHidden(true);
 						continue;
@@ -522,7 +774,7 @@ namespace Skylicht
 
 			CDockHintIcon* CDockPanel::hitTestDockHint(const SPoint& point)
 			{
-				for (int i = 0; i < 5; i++)
+				for (int i = 8; i >= 0; i--)
 				{
 					CDockHintIcon *hintControl = m_dockHint[i];
 					SPoint localPoint = hintControl->canvasPosToLocal(point);
