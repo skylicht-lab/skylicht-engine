@@ -34,6 +34,7 @@ namespace Skylicht
 		namespace GUI
 		{
 			class CDockableWindow;
+			class CDockTabControl;
 
 			class CDockPanel : public CBase
 			{
@@ -44,7 +45,11 @@ namespace Skylicht
 					DockLeft,
 					DockRight,
 					DockTop,
-					DockBottom
+					DockBottom,
+					DockTargetLeft,
+					DockTargetRight,
+					DockTargetTop,
+					DockTargetBottom,
 				};
 
 			protected:
@@ -54,6 +59,8 @@ namespace Skylicht
 
 				CDockHintIcon *m_dockHint[9];
 				CDockHintIcon *m_hoverHint;
+
+				CDockTabControl *m_dragOverWindow;
 
 			public:
 				static void setRootPanel(CDockPanel *panel);
@@ -68,6 +75,8 @@ namespace Skylicht
 				bool isRoot();
 
 				virtual void layout();
+
+				void layoutHintIcon();
 
 				void showDockHint();
 

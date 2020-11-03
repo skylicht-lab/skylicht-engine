@@ -85,6 +85,8 @@ namespace Skylicht
 
 				void setControl(CBase *base, u32 row, u32 col);
 
+				bool getColRowFromControl(CBase *base, u32 &outRow, u32 &outCol);
+
 				void setNumberRowCol(u32 row, u32 col);
 
 				void insertCol(u32 position);
