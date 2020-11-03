@@ -52,6 +52,8 @@ namespace Skylicht
 
 			void CDockableWindow::onMoved()
 			{
+				m_rootDockPanel->showDockHint();
+
 				SPoint mousePoint = CInput::getInput()->getMousePosition();
 
 				CDockHintIcon* hint = m_rootDockPanel->hitTestDockHint(mousePoint);
@@ -79,21 +81,27 @@ namespace Skylicht
 						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockLeft);
 						break;
 					case TargetLeft:
+						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTargetLeft);
 						break;
 					case Right:
 						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockRight);
 						break;
 					case TargetRight:
+						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTargetRight);
 						break;
 					case Top:
 						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTop);
 						break;
 					case TargetTop:
+						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTargetTop);
 						break;
 					case Bottom:
 						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockBottom);
 						break;
 					case TargetBottom:
+						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTargetBottom);
+						break;
+					default:
 						break;
 					}
 				}

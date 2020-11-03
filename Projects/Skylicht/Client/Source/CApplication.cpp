@@ -344,6 +344,9 @@ namespace Skylicht
 			// application receiver
 			os::Printer::log("CApplication::resize");
 			sendEventToAppReceiver(AppEventResize, w, h);
+
+			// update & repaint
+			mainLoop();
 		}
 	}
 
