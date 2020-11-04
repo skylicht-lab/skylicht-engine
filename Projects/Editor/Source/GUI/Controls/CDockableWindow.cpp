@@ -35,7 +35,8 @@ namespace Skylicht
 		{
 			CDockableWindow::CDockableWindow(CDockPanel* parent, float x, float y, float w, float h) :
 				CWindow(parent, x, y, w, h),
-				m_rootDockPanel(parent)
+				m_rootDockPanel(parent),
+				m_dockTab(NULL)
 			{
 
 			}

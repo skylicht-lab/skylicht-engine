@@ -730,6 +730,8 @@ namespace Skylicht
 				m_mainSpliter->sendToBack();
 
 				invalidate();
+
+				CGUIContext::getRoot()->notifySaveDockLayout();
 			}
 
 			void CDockPanel::hideDockHintWindow()

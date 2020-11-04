@@ -91,6 +91,7 @@ namespace Skylicht
 				g_renderer->resize(width, height);
 
 				g_rootCanvas->setBounds(0.0f, 0.0f, width, height);
+				g_rootCanvas->notifySaveDockLayout();
 			}
 
 			CCanvas* CGUIContext::getRoot()

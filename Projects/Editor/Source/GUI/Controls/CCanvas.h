@@ -38,6 +38,8 @@ namespace Skylicht
 				CBase::List m_deleteList;
 				std::set<CBase*> m_deleteSet;
 
+				bool m_needSaveDockLayout;
+
 			public:
 				CCanvas(float width, float height);
 
@@ -60,8 +62,24 @@ namespace Skylicht
 				virtual void removeDelayDelete(CBase *control);
 
 			public:
+				std::function<void(const std::string&)> OnSaveDockLayout;
 
+				inline void notifySaveDockLayout()
+				{
+					m_needSaveDockLayout = true;
+				}
 
+			private:
+
+				void saveDockLayoutToFile();
+
+				void saveDockState(std::string& data, CBase *base, int tab);
+
+				std::string getUTF8String(const std::wstring& s);
+
+				std::string generateTabSpace(int n);
+
+				std::string getRectString(const SRect& r);
 
 			public:
 

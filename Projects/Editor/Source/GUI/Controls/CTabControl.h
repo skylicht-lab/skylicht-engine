@@ -41,11 +41,11 @@ namespace Skylicht
 
 			public:
 				typedef std::function<void(CTabControl*, CBase*)> TabControlListener;
+				typedef std::list<CTabButton*> ListTabButton;
 
 			protected:
 				CTabStrip *m_tabStrip;
 
-				typedef std::list<CTabButton*> ListTabButton;
 				ListTabButton m_tabButtons;
 
 				CTabButton* m_currentTab;
@@ -77,6 +77,18 @@ namespace Skylicht
 				inline u32 getNumTabButton()
 				{
 					return m_tabButtons.size();
+				}
+
+				CTabButton* getTabButton(u32 id)
+				{
+					ListTabButton::iterator i = m_tabButtons.begin();
+					std::advance(i, id);
+					return (*i);
+				}
+
+				const ListTabButton& getListTabButton()
+				{
+					return m_tabButtons;
 				}
 
 				inline CTabStrip* getTabStrip()

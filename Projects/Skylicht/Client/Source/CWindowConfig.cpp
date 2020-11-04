@@ -38,7 +38,7 @@ namespace Skylicht
 		// read first line
 		char buffer[512];
 		fgets(buffer, 512, file);
-		sscanf(buffer, "<!-- %d;%d;%d;%d;%d -->", &rx, &ry, &rw, &rh, &rm);
+		sscanf(buffer, "<!-- %d;%d;%d;%d;%d -->\n", &rx, &ry, &rw, &rh, &rm);
 
 		x = (u32)rx;
 		y = (u32)ry;
@@ -68,7 +68,28 @@ namespace Skylicht
 			height = oldH;
 		}
 
-		fprintf(file, "<!-- %d;%d;%d;%d;%d -->", x, y, width, height, maximize == 1);
+		fprintf(file, "<!-- %d;%d;%d;%d;%d -->\n", x, y, width, height, maximize == 1);
+		fclose(file);
+	}
+
+	void CWindowConfig::saveExtraData(const char *data)
+	{
+		FILE *file = fopen("Window.xml", "rt");
+		if (file == NULL)
+			return;
+
+		// read first line
+		char buffer[512];
+		fgets(buffer, 512, file);
+		fclose(file);
+
+		// update
+		file = fopen("Window.xml", "wt");
+		if (file == NULL)
+			return;
+
+		fputs(buffer, file);
+		fputs(data, file);
 		fclose(file);
 	}
 }
