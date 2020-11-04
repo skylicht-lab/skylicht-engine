@@ -32,5 +32,7 @@ namespace Skylicht
 		static bool loadConfig(u32 &x, u32 &y, u32 &width, u32 &height, bool &maximize);
 
 		static void saveConfig(u32 x, u32 y, u32 width, u32 height, bool maximize);
+
+		static void saveExtraData(const char *data);
 	};
 }

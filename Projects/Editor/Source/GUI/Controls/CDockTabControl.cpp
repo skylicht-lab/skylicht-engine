@@ -42,6 +42,7 @@ namespace Skylicht
 			{
 				CBase *ret = CTabControl::addPage(window->getCaption(), window);
 				window->setStyleChild(true);
+				window->setCurrentDockTab(this);
 				return window;
 			}
 		}

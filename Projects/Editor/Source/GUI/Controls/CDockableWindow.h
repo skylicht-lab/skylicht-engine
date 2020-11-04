@@ -34,10 +34,13 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CDockTabControl;
+
 			class CDockableWindow : public CWindow
 			{
 			protected:
 				CDockPanel *m_rootDockPanel;
+				CDockTabControl *m_dockTab;
 
 			public:
 				CDockableWindow(CDockPanel* parent, float x, float y, float w, float h);
@@ -49,6 +52,16 @@ namespace Skylicht
 				virtual void onMoved();
 
 				virtual void onEndMoved();
+
+				inline void setCurrentDockTab(CDockTabControl* tab)
+				{
+					m_dockTab = tab;
+				}
+
+				inline CDockTabControl* getCurrentDockTab()
+				{
+					return m_dockTab;
+				}
 			};
 		}
 	}
