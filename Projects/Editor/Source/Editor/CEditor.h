@@ -39,6 +39,8 @@ namespace Skylicht
 			CEditor();
 
 			virtual ~CEditor();
+
+			void saveLayout(const std::string& data);
 		};
 	}
 }

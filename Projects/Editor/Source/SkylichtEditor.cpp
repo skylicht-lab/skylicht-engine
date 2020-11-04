@@ -21,8 +21,8 @@ SkylichtEditor::SkylichtEditor() :
 
 SkylichtEditor::~SkylichtEditor()
 {
-	Editor::GUI::CGUIContext::destroyGUI();
 	delete m_editor;
+	Editor::GUI::CGUIContext::destroyGUI();
 
 	delete m_scene;
 	delete m_forwardRP;

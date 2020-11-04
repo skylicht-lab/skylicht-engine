@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CEditor.h"
+#include "CWindowConfig.h"
 
 namespace Skylicht
 {
@@ -32,6 +33,7 @@ namespace Skylicht
 		CEditor::CEditor()
 		{
 			GUI::CCanvas *canvas = GUI::CGUIContext::getRoot();
+			canvas->OnSaveDockLayout = std::bind(&CEditor::saveLayout, this, std::placeholders::_1);
 
 			GUI::CDockPanel *dockPanel = new GUI::CDockPanel(canvas);
 			dockPanel->dock(GUI::EPosition::Fill);
@@ -39,11 +41,11 @@ namespace Skylicht
 			GUI::CDockableWindow *scene = new GUI::CDockableWindow(dockPanel, 20.0f, 20.0f, 900.0f, 600.0f);
 			scene->setCaption(L"Scene");
 
-			//GUI::CDockableWindow *particle = new GUI::CDockableWindow(dockPanel, 40.0f, 40.0f, 300.0f, 600.0f);
-			//particle->setCaption(L"Particle");
+			GUI::CDockableWindow *particle = new GUI::CDockableWindow(dockPanel, 40.0f, 40.0f, 300.0f, 600.0f);
+			particle->setCaption(L"Particle");
 
-			//GUI::CDockableWindow *animation = new GUI::CDockableWindow(dockPanel, 60.0f, 60.0f, 900.0f, 300.0f);
-			//animation->setCaption(L"Animation");
+			GUI::CDockableWindow *animation = new GUI::CDockableWindow(dockPanel, 60.0f, 60.0f, 900.0f, 300.0f);
+			animation->setCaption(L"Animation");
 
 			GUI::CDockableWindow *console = new GUI::CDockableWindow(dockPanel, 80.0f, 80.0f, 900.0f, 300.0f);
 			console->setCaption(L"Console");
@@ -60,7 +62,14 @@ namespace Skylicht
 
 		CEditor::~CEditor()
 		{
+			GUI::CCanvas *canvas = GUI::CGUIContext::getRoot();
+			canvas->notifySaveDockLayout();
+			canvas->update();
+		}
 
+		void CEditor::saveLayout(const std::string& data)
+		{
+			CWindowConfig::saveExtraData(data.c_str());
 		}
 	}
 }
