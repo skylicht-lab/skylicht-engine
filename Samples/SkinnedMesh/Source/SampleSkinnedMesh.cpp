@@ -42,7 +42,8 @@ void SampleSkinnedMesh::onInitApp()
 	io::IFileSystem* fs = app->getFileSystem();
 	fs->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 	fs->addFileArchive(app->getBuiltInPath("Common.zip"), false, false);
-	fs->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
+	fs->addFileArchive(app->getBuiltInPath("SampleModelsResource.zip"), false, false);
+	fs->addFileArchive(app->getBuiltInPath("SampleModelsDDS.zip"), false, false);
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();

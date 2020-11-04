@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Resource.h"
 #include "CApplication.h"
+#include "CWindowConfig.h"
 #include "BuildConfig/CBuildConfig.h"
 #include "Utils/CStringImp.h"
 #include "Control/CTouchManager.h"
@@ -80,6 +81,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	LoadString(hInstance, IDS_SKYLICHTDEMO, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
+	int show = nCmdShow;
+
+#if defined(SKYLICHT_EDITOR)
+	// read size from last session
+	u32 x, y, w, h;
+	bool maximize = false;
+	bool haveConfig = false;
+	haveConfig = CWindowConfig::loadConfig(x, y, w, h, maximize);
+#endif
+
 	// Perform application initialization:
 	if (!InitInstance(hInstance, nCmdShow))
 	{
@@ -112,6 +123,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//core::dimension2du winSize(480, 320);
 	//core::dimension2du winSize(320, 240);
 
+#if defined(SKYLICHT_EDITOR)
+	if (haveConfig)
+	{
+		winSize.Width = w;
+		winSize.Height = h;
+	}
+#endif
+
 	if (params.size() >= 2)
 	{
 		winSize.Width = atoi(params[0].c_str());
@@ -136,6 +155,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		windowLeft = 0;
 	if (windowTop < 0)
 		windowTop = 0;
+
+#if defined(SKYLICHT_EDITOR)
+	if (haveConfig)
+	{
+		windowLeft = x;
+		windowTop = y;
+	}
+#endif
 
 	MoveWindow(hWnd, windowLeft, windowTop, realWidth, realHeight, TRUE);
 
@@ -183,7 +210,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// init application
 	g_application->initApplication(device);
 
-	g_application->notifyResizeWin(winSize.Width, winSize.Height);
+#if defined(SKYLICHT_EDITOR)
+	if (maximize)
+		device->maximizeWindow();
+#endif
 
 	bool close = false;
 	while (close == false)
@@ -396,6 +426,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_WINDOWPOSCHANGED:
+#if defined(SKYLICHT_EDITOR)
+		RECT client;
+		WINDOWPLACEMENT wndpl;
+		GetWindowPlacement(hWnd, &wndpl);
+		GetClientRect(hWnd, &client);
+		CWindowConfig::saveConfig(
+			wndpl.rcNormalPosition.left,
+			wndpl.rcNormalPosition.top,
+			client.right - client.left,
+			client.bottom - client.top,
+			wndpl.showCmd == SW_SHOWMAXIMIZED
+		);
+#endif
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	case WM_SIZE:
 	{
 		u32 width = LOWORD(lParam);
@@ -411,7 +456,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				resize.UserEvent.UserData2 = (s32)height;
 				dev->postEventFromUser(resize);
 			}
+#if defined(SKYLICHT_EDITOR)
+			RECT client;
+			WINDOWPLACEMENT wndpl;
+			GetWindowPlacement(hWnd, &wndpl);
+			GetClientRect(hWnd, &client);
+			CWindowConfig::saveConfig(
+				wndpl.rcNormalPosition.left,
+				wndpl.rcNormalPosition.top,
+				client.right - client.left,
+				client.bottom - client.top,
+				wndpl.showCmd == SW_SHOWMAXIMIZED
+			);
+#endif
 		}
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	break;
 	case WM_SYSKEYDOWN:
