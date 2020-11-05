@@ -70,7 +70,9 @@ namespace Skylicht
 				if (m_capture != NULL)
 				{
 					m_capture->onMouseMoved(x, y, deltaX, deltaY);
-					m_capture->updateCursor();
+
+					if (m_capture != NULL)
+						m_capture->updateCursor();
 					return false;
 				}
 

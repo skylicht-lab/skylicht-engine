@@ -89,6 +89,23 @@ namespace Skylicht
 					m_target->onEndMoved();
 				}
 			}
+
+			void CDragger::dragMoveCommand(const SPoint& mouseOffset)
+			{
+				CInput *input = CInput::getInput();
+
+				SPoint p = input->getMousePosition();
+				SPoint localPos = m_target->getParent()->canvasPosToLocal(p);
+
+				m_holdPosition = mouseOffset;
+
+				m_target->moveTo(localPos.X - m_holdPosition.X, localPos.Y - m_holdPosition.Y);
+
+				m_pressed = true;
+				m_callBeginMove = true;
+
+				input->setCapture(this);
+			}
 		}
 	}
 }

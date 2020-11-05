@@ -74,6 +74,11 @@ namespace Skylicht
 				{
 					m_capture = p;
 				}
+
+				inline CBase* getCapture()
+				{
+					return m_capture;
+				}
 			};
 		}
 	}

@@ -40,7 +40,8 @@ namespace Skylicht
 				m_page(page),
 				m_focus(false),
 				m_showCloseButton(false),
-				m_enableRenderOver(false)
+				m_enableRenderOver(false),
+				m_dragOutTabStrip(false)
 			{
 				m_color = CThemeConfig::TabButtonColor;
 				m_pressColor = CThemeConfig::TabButtonActiveColor;
@@ -96,6 +97,20 @@ namespace Skylicht
 					SPoint p = m_parent->canvasPosToLocal(SPoint(x, m_tabPosition.Y + height() * 0.5f));
 					CBase *control = m_parent->getControlAt(p.X, p.Y);
 
+					if (x < m_tabStripPosition.X ||
+						x > m_tabStripPosition.X + m_parent->width() ||
+						y < m_tabStripPosition.Y ||
+						y > m_tabStripPosition.Y + m_parent->height())
+					{
+						m_dragOutTabStrip = true;
+						m_control->onDragOutTabStrip(this);
+					}
+					else
+					{
+						m_dragOutTabStrip = false;
+						m_control->onDragOverTabStrip(this);
+					}
+
 					if (control != NULL)
 					{
 						CTabButton *btn = m_control->getTabButton(control);
@@ -103,6 +118,15 @@ namespace Skylicht
 							m_parent->bringSwapChildControl(this, btn);
 					}
 				}
+			}
+
+			void CTabButton::cancelDragCommand()
+			{
+				if (CInput::getInput()->getCapture() == this)
+					CInput::getInput()->setCapture(NULL);
+
+				m_enableRenderOver = false;
+				m_pressed = false;
 			}
 
 			void CTabButton::renderOver()

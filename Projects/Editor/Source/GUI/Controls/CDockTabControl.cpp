@@ -59,6 +59,26 @@ namespace Skylicht
 					++i;
 				}
 			}
+
+			void CDockTabControl::onDragOutTabStrip(CTabButton *button)
+			{
+				const SPoint& holdPosition = button->getDragHoldPosition();
+				button->cancelDragCommand();
+
+				CDockableWindow *win = dynamic_cast<CDockableWindow*>(button->getPage());
+				if (win != NULL)
+				{
+					removeButtonOnly(button);
+
+					win->setParent(win->getDockPanel());
+					win->setCurrentDockTab(NULL);
+					win->setHidden(false);
+					win->setStyleChild(false);
+					win->dock(EPosition::None);
+					win->bringToFront();
+					win->dragMoveCommand(holdPosition);
+				}
+			}
 		}
 	}
 }

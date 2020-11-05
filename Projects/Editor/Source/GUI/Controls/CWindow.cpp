@@ -111,6 +111,11 @@ namespace Skylicht
 			{
 				remove();
 			}
+
+			void CWindow::dragMoveCommand(const SPoint& mouseOffset)
+			{
+				m_titleBar->dragMoveCommand(mouseOffset);
+			}
 		}
 	}
 }

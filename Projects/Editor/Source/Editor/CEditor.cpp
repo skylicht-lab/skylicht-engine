@@ -344,8 +344,12 @@ namespace Skylicht
 
 		void CEditor::readDockTab(io::IXMLReader* xmlRead, GUI::CDockTabControl *tabcontrol)
 		{
-			std::wstring current = xmlRead->getAttributeValue(L"current");
+			const wchar_t *currentTab = xmlRead->getAttributeValue(L"current");
+
+			std::wstring current;
 			GUI::CDockableWindow *currentWin = NULL;
+			if (currentTab != NULL)
+				current = currentTab;
 
 			while (xmlRead->read())
 			{
