@@ -196,10 +196,16 @@ namespace Skylicht
 				}
 				else if (spliter != NULL)
 				{
+					u32 weakRow = spliter->getWeakRow();
+					u32 weakCol = spliter->getWeakCol();
+
 					if (spliter->isHorizontal())
 					{
 						data += generateTabSpace(tab);
-						data += std::string("<horizontal ") + getRectString(bound) + " count='" + std::to_string(spliter->getNumCol()) + "'>\n";
+
+						char text[512];
+						sprintf(text, "<horizontal %s count='%d' weak-row='%d' weak-col='%d'>\n", getRectString(bound).c_str(), spliter->getNumCol(), weakRow, weakCol);
+						data += text;
 
 						for (u32 i = 0; i < spliter->getNumCol(); i++)
 						{
@@ -216,7 +222,10 @@ namespace Skylicht
 					else
 					{
 						data += generateTabSpace(tab);
-						data += std::string("<vertical ") + getRectString(bound) + " count='" + std::to_string(spliter->getNumRow()) + "'>\n";
+
+						char text[512];
+						sprintf(text, "<vertical %s count='%d' weak-row='%d' weak-col='%d'>\n", getRectString(bound).c_str(), spliter->getNumRow(), weakRow, weakCol);
+						data += text;
 
 						for (u32 i = 0; i < spliter->getNumRow(); i++)
 						{
@@ -233,8 +242,25 @@ namespace Skylicht
 				}
 				else if (dockTab != NULL)
 				{
+					CTabButton *currentTab = dockTab->getCurrentTab();
+					CDockableWindow *currentWin = NULL;
+
+					if (currentTab != NULL)
+						currentWin = dynamic_cast<CDockableWindow*>(currentTab->getPage());
+
 					data += generateTabSpace(tab);
-					data += std::string("<docktab ") + getRectString(bound) + ">\n";
+
+					if (currentWin != NULL)
+					{
+						char label[256];
+						CStringImp::convertUnicodeToUTF8(currentWin->getCaption().c_str(), label);
+
+						char text[512];
+						sprintf(text, "<docktab %s current='%s'>\n", getRectString(bound).c_str(), label);
+						data += text;
+					}
+					else
+						data += std::string("<docktab ") + getRectString(bound) + ">\n";
 
 					CTabControl::ListTabButton listTab = dockTab->getListTabButton();
 					CTabControl::ListTabButton::iterator i = listTab.begin(), end = listTab.end();

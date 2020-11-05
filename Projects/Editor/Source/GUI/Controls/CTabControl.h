@@ -79,6 +79,11 @@ namespace Skylicht
 					return m_tabButtons.size();
 				}
 
+				CTabButton* getCurrentTab()
+				{
+					return m_currentTab;
+				}
+
 				CTabButton* getTabButton(u32 id)
 				{
 					ListTabButton::iterator i = m_tabButtons.begin();
@@ -94,6 +99,15 @@ namespace Skylicht
 				inline CTabStrip* getTabStrip()
 				{
 					return m_tabStrip;
+				}
+
+				void setTab(CTabButton *tab)
+				{
+					if (m_currentTab != tab)
+						onTabUnfocus(m_currentTab);
+
+					onTabFocus(tab);
+					m_currentTab = tab;
 				}
 
 			protected:

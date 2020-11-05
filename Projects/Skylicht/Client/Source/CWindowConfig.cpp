@@ -36,8 +36,8 @@ namespace Skylicht
 		int rx, ry, rw, rh, rm;
 
 		// read first line
-		char buffer[512];
-		fgets(buffer, 512, file);
+		char buffer[1024];
+		fgets(buffer, 1024, file);
 		sscanf(buffer, "<!-- %d;%d;%d;%d;%d -->\n", &rx, &ry, &rw, &rh, &rm);
 
 		x = (u32)rx;
@@ -53,7 +53,9 @@ namespace Skylicht
 	{
 		u32 oldX, oldY, oldW, oldH;
 		bool oldMaximize;
-		bool loaded = loadConfig(oldX, oldY, oldW, oldH, oldMaximize);
+		std::string data;
+
+		bool loaded = loadConfigAndExtraData(oldX, oldY, oldW, oldH, oldMaximize, data);
 
 		FILE *file = fopen("Window.xml", "wt");
 		if (file == NULL)
@@ -68,7 +70,13 @@ namespace Skylicht
 			height = oldH;
 		}
 
+		// write window config
 		fprintf(file, "<!-- %d;%d;%d;%d;%d -->\n", x, y, width, height, maximize == 1);
+
+		// write old extra data
+		if (data.length() > 0)
+			fprintf(file, "%s", data.c_str());
+
 		fclose(file);
 	}
 
@@ -79,8 +87,8 @@ namespace Skylicht
 			return;
 
 		// read first line
-		char buffer[512];
-		fgets(buffer, 512, file);
+		char buffer[1024];
+		fgets(buffer, 1024, file);
 		fclose(file);
 
 		// update
@@ -91,5 +99,36 @@ namespace Skylicht
 		fputs(buffer, file);
 		fputs(data, file);
 		fclose(file);
+	}
+
+	bool CWindowConfig::loadConfigAndExtraData(u32 &x, u32 &y, u32 &width, u32 &height, bool &maximize, std::string &data)
+	{
+		data = "";
+		FILE *file = fopen("Window.xml", "rt");
+		if (file == NULL)
+			return false;
+
+		int rx, ry, rw, rh, rm;
+
+		// read first line
+		char buffer[1024];
+		fgets(buffer, 1024, file);
+		sscanf(buffer, "<!-- %d;%d;%d;%d;%d -->\n", &rx, &ry, &rw, &rh, &rm);
+
+		x = (u32)rx;
+		y = (u32)ry;
+		width = (u32)rw;
+		height = (u32)rh;
+		maximize = rm == 1;
+
+		// read extra data
+		while (!feof(file))
+		{
+			if (fgets(buffer, 1024, file) != NULL)
+				data += buffer;
+		}
+
+		fclose(file);
+		return true;
 	}
 }
