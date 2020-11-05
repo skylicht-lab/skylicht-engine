@@ -173,6 +173,8 @@ namespace Skylicht
 
 				SRect getCellRect(u32 fromRow, u32 fromCol, u32 toRow, u32 toCol);
 
+				void saveUserExpectedSize();
+
 			protected:
 
 				void predictChildSize();
@@ -188,8 +190,6 @@ namespace Skylicht
 				void updateWidthLarger();
 
 				void updateHeightLarger();
-
-				void saveUserExpectedSize();
 
 				void getWeakPriorityRow(std::list < std::pair<u32, float>>& row, bool inverse = false);
 

@@ -39,6 +39,8 @@ namespace Skylicht
 				CDockTabControl(CBase *parent);
 
 				virtual CDockableWindow* dockWindow(CDockableWindow *window);
+
+				void setCurrentWindow(CDockableWindow *window);
 			};
 		}
 	}

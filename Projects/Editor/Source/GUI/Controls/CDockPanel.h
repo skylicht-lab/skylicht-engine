@@ -82,6 +82,11 @@ namespace Skylicht
 
 				void hideDockHint();
 
+				CSplitter* getMainSpliter()
+				{
+					return m_mainSpliter;
+				}
+
 				CDockHintIcon* hitTestDockHint(const SPoint& mousePoint);
 
 				void showDockHintWindow(CDockHintIcon *hint, CDockableWindow *window);
