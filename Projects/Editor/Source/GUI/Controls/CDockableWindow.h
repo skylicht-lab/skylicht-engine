@@ -62,6 +62,11 @@ namespace Skylicht
 				{
 					return m_dockTab;
 				}
+
+				inline CDockPanel* getDockPanel()
+				{
+					return m_rootDockPanel;
+				}
 			};
 		}
 	}

@@ -80,6 +80,8 @@ namespace Skylicht
 					m_icon->setHidden(false);
 				}
 
+				void dragMoveCommand(const SPoint& mouseOffset);
+
 			protected:
 
 				void onCloseButtonPress(CBase *sender);

@@ -41,6 +41,8 @@ namespace Skylicht
 				virtual CDockableWindow* dockWindow(CDockableWindow *window);
 
 				void setCurrentWindow(CDockableWindow *window);
+
+				virtual void onDragOutTabStrip(CTabButton *button);
 			};
 		}
 	}

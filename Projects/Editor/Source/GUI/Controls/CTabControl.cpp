@@ -92,6 +92,58 @@ namespace Skylicht
 				return page;
 			}
 
+			void CTabControl::removeButtonOnly(CTabButton *removeButton)
+			{
+				ListTabButton::iterator i = m_tabButtons.begin(), end = m_tabButtons.end();
+				ListTabButton::iterator next;
+
+				bool findNewFocus = false;
+
+				while (i != end)
+				{
+					CTabButton *button = (*i);
+
+					if (button == removeButton)
+					{
+						if (button == m_currentTab)
+						{
+							next = i;
+							++next;
+							onTabUnfocus(m_currentTab);
+							findNewFocus = true;
+						}
+
+						onCloseTab(button);
+
+						removeButton->remove();
+
+						m_tabButtons.erase(i);
+
+						if (findNewFocus == true)
+						{
+							if (next != m_tabButtons.end())
+							{
+								m_currentTab = (*next);
+								onTabFocus(m_currentTab);
+							}
+							else
+							{
+								m_currentTab = NULL;
+
+								if (m_tabButtons.size() > 0)
+									m_currentTab = m_tabButtons.front();
+
+								if (m_currentTab != NULL)
+									onTabFocus(m_currentTab);
+							}
+						}
+
+						return;
+					}
+					++i;
+				}
+			}
+
 			void CTabControl::removePage(CBase *page)
 			{
 				ListTabButton::iterator i = m_tabButtons.begin(), end = m_tabButtons.end();
@@ -141,6 +193,18 @@ namespace Skylicht
 					}
 					++i;
 				}
+			}
+
+			CTabButton* CTabControl::getTabButtonByPage(CBase *page)
+			{
+				ListTabButton::iterator i = m_tabButtons.begin(), end = m_tabButtons.end();
+				while (i != end)
+				{
+					if ((*i)->getPage() == page)
+						return (*i);
+					++i;
+				}
+				return NULL;
 			}
 
 			void CTabControl::showTabCloseButton(bool b)

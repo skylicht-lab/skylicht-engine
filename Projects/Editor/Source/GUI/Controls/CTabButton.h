@@ -53,6 +53,7 @@ namespace Skylicht
 				SPoint m_tabPosition;
 				SPoint m_tabStripPosition;
 
+				bool m_dragOutTabStrip;
 				bool m_enableRenderOver;
 
 			public:
@@ -69,6 +70,13 @@ namespace Skylicht
 				virtual void renderOver();
 
 				virtual void sizeToContents();
+
+				void cancelDragCommand();
+
+				const SPoint& getDragHoldPosition()
+				{
+					return m_holdPosition;
+				}
 
 				CBase* getPage()
 				{
