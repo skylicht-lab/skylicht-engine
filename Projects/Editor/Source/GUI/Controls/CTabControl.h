@@ -132,6 +132,8 @@ namespace Skylicht
 
 				virtual void onCloseTab(CTabButton *tab);
 
+				virtual void doTabClose(CTabButton *button);
+
 				void addTabButton(CTabButton *button);
 
 				void removeTabButton(CTabButton *button);

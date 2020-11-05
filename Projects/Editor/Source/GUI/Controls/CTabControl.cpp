@@ -64,17 +64,20 @@ namespace Skylicht
 			{
 				CBase::postLayout();
 
-				SDimension size = m_tabStrip->getChildrenSize();
-				if (size.Width > width())
+				if (m_tabButtons.size() > 1)
 				{
-					// show drop down at right
-					m_dropDown->setHidden(false);
-					m_dropDown->setPos(m_tabStrip->width() - m_dropDown->width(), 6.0f);
-					m_dropDown->bringToFront();
-				}
-				else
-				{
-					m_dropDown->setHidden(true);
+					SDimension size = m_tabStrip->getChildrenSize();
+					if (size.Width > width())
+					{
+						// show drop down at right
+						m_dropDown->setHidden(false);
+						m_dropDown->setPos(m_tabStrip->width() - m_dropDown->width(), 6.0f);
+						m_dropDown->bringToFront();
+					}
+					else
+					{
+						m_dropDown->setHidden(true);
+					}
 				}
 			}
 
@@ -273,7 +276,12 @@ namespace Skylicht
 				if (tabButton == NULL)
 					return;
 
-				removePage(tabButton->getPage());
+				doTabClose(tabButton);
+			}
+
+			void CTabControl::doTabClose(CTabButton *button)
+			{
+				removePage(button->getPage());
 			}
 
 			void CTabControl::onDropDownPressed(CBase *button)
