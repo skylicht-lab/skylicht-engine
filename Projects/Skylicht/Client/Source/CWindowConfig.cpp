@@ -51,6 +51,9 @@ namespace Skylicht
 
 	void CWindowConfig::saveConfig(u32 x, u32 y, u32 width, u32 height, bool maximize)
 	{
+		if (width == 0 || height == 0)
+			return;
+
 		u32 oldX, oldY, oldW, oldH;
 		bool oldMaximize;
 		std::string data;

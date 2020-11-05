@@ -192,7 +192,7 @@ namespace Skylicht
 				{
 					if (numColPredict > 0)
 					{
-						float avgColSize = spaceWidth / (float)numColPredict;
+						float avgColSize = round(spaceWidth / (float)numColPredict);
 						for (u32 i = 0; i < m_col; i++)
 						{
 							if (m_colWidth[i] <= 0.0f)
@@ -234,7 +234,7 @@ namespace Skylicht
 				{
 					if (numRowPredict > 0)
 					{
-						float avgRowSize = spaceHeight / (float)numRowPredict;
+						float avgRowSize = round(spaceHeight / (float)numRowPredict);
 						for (u32 i = 0; i < m_row; i++)
 						{
 							if (m_rowHeight[i] <= 0.0f)
@@ -677,9 +677,7 @@ namespace Skylicht
 				if (position > m_col)
 					return;
 
-				setNumberRowCol(m_col - 1, m_row);
-
-				for (u32 col = position; col < m_col; col++)
+				for (u32 col = position; col < m_col - 1; col++)
 				{
 					for (u32 row = 0; row < m_row; row++)
 					{
@@ -692,9 +690,12 @@ namespace Skylicht
 				// erase last col that removed
 				for (u32 row = 0; row < m_row; row++)
 				{
-					m_control[m_col][row] = NULL;
-					m_colWidth[m_col] = 0.0f;
+					m_control[m_col - 1][row] = NULL;
+					m_colWidth[m_col - 1] = 0.0f;
 				}
+
+				setNumberRowCol(m_row, m_col - 1);
+				invalidate();
 			}
 
 			void CSplitter::removeRow(u32 position)
@@ -702,9 +703,7 @@ namespace Skylicht
 				if (position > m_row)
 					return;
 
-				setNumberRowCol(m_col, m_row - 1);
-
-				for (u32 row = position; row < m_row; row++)
+				for (u32 row = position; row < m_row - 1; row++)
 				{
 					for (u32 col = 0; col < m_col; col++)
 					{
@@ -717,9 +716,12 @@ namespace Skylicht
 				// erase last row that removed
 				for (u32 col = 0; col < m_col; col++)
 				{
-					m_control[col][m_row] = NULL;
-					m_rowHeight[m_row] = 0.0f;
+					m_control[col][m_row - 1] = NULL;
+					m_rowHeight[m_row - 1] = 0.0f;
 				}
+
+				setNumberRowCol(m_row - 1, m_col);
+				invalidate();
 			}
 
 			void CSplitter::setRowHeight(u32 row, float height)
@@ -736,6 +738,19 @@ namespace Skylicht
 					m_colWidth[col] = width;
 
 				invalidate();
+			}
+
+			bool CSplitter::isEmpty()
+			{
+				for (u32 i = 0; i < m_col; i++)
+				{
+					for (u32 j = 0; j < m_row; j++)
+					{
+						if (m_control[i][j] != NULL)
+							return false;
+					}
+				}
+				return true;
 			}
 
 			void CSplitter::onMouseMoved(float x, float y, float deltaX, float deltaY)

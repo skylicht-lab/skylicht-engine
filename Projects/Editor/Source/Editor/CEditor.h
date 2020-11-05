@@ -54,7 +54,7 @@ namespace Skylicht
 
 			void readDockLayout(io::IXMLReader* xml, GUI::CDockPanel *panel);
 
-			void readSpliterLayout(io::IXMLReader* xml, GUI::CSplitter *spliter, bool isHorizontal);
+			void readSpliterLayout(io::IXMLReader* xml, GUI::CDockPanel *panel, GUI::CSplitter *spliter, bool isHorizontal);
 
 			void readDockTab(io::IXMLReader* xml, GUI::CDockTabControl *tabcontrol);
 
