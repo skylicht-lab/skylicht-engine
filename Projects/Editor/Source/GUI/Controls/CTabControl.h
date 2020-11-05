@@ -62,6 +62,8 @@ namespace Skylicht
 
 				virtual CBase* addPage(const std::wstring& label, CBase *page);
 
+				void removeButtonOnly(CTabButton *button);
+
 				void removePage(CBase *page);
 
 				void showTabCloseButton(bool b);
@@ -91,6 +93,8 @@ namespace Skylicht
 					return (*i);
 				}
 
+				CTabButton* getTabButtonByPage(CBase *page);
+
 				const ListTabButton& getListTabButton()
 				{
 					return m_tabButtons;
@@ -111,6 +115,10 @@ namespace Skylicht
 				}
 
 			protected:
+
+				virtual void onDragOutTabStrip(CTabButton *tab) {}
+
+				virtual void onDragOverTabStrip(CTabButton *tab) {}
 
 				virtual void onTabFocus(CTabButton *tab);
 
