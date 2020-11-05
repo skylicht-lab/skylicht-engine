@@ -185,11 +185,11 @@ namespace Skylicht
 
 					if (nodeName == L"horizontal")
 					{
-						readSpliterLayout(xmlRead, panel->getMainSpliter(), true);
+						readSpliterLayout(xmlRead, panel, panel->getMainSpliter(), true);
 					}
 					else if (nodeName == L"vertical")
 					{
-						readSpliterLayout(xmlRead, panel->getMainSpliter(), false);
+						readSpliterLayout(xmlRead, panel, panel->getMainSpliter(), false);
 					}
 					else if (nodeName == L"window")
 					{
@@ -218,7 +218,7 @@ namespace Skylicht
 			}
 		}
 
-		void CEditor::readSpliterLayout(io::IXMLReader* xmlRead, GUI::CSplitter *spliter, bool isHorizontal)
+		void CEditor::readSpliterLayout(io::IXMLReader* xmlRead, GUI::CDockPanel *panel, GUI::CSplitter *spliter, bool isHorizontal)
 		{
 			u32 count;
 			u32 weakRow = 0;
@@ -296,17 +296,17 @@ namespace Skylicht
 					{
 						GUI::CSplitter *newSpliter = new GUI::CSplitter(spliter);
 						spliter->setControl(newSpliter, row, col);
-						readSpliterLayout(xmlRead, newSpliter, true);
+						readSpliterLayout(xmlRead, panel, newSpliter, true);
 					}
 					else if (nodeName == L"vertical")
 					{
 						GUI::CSplitter *newSpliter = new GUI::CSplitter(spliter);
 						spliter->setControl(newSpliter, row, col);
-						readSpliterLayout(xmlRead, newSpliter, false);
+						readSpliterLayout(xmlRead, panel, newSpliter, false);
 					}
 					if (nodeName == L"docktab")
 					{
-						GUI::CDockTabControl *docktab = new GUI::CDockTabControl(spliter);
+						GUI::CDockTabControl *docktab = new GUI::CDockTabControl(spliter, panel);
 						readBound(xmlRead, docktab);
 
 						spliter->setControl(docktab, row, col);

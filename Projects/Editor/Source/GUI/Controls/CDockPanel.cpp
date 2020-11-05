@@ -63,8 +63,6 @@ namespace Skylicht
 				// if this is not a canvas
 				if (!isRoot())
 					m_innerPanel = new CBase(m_mainSpliter);
-				else
-					m_mainSpliter->enableRenderFillRect(false);
 
 				m_mainSpliter->setControl(m_innerPanel, 0, 0);
 
@@ -275,6 +273,53 @@ namespace Skylicht
 				return result;
 			}
 
+			void CDockPanel::unDockChildWindow(CDockTabControl *win)
+			{
+				CSplitter *spliter = dynamic_cast<CSplitter*>(win->getParent());
+				if (spliter != NULL)
+				{
+					bool finish = false;
+					CBase *base = win;
+
+					do
+					{
+						u32 row, col;
+						if (spliter->getColRowFromControl(base, row, col) == true)
+						{
+							if (spliter->isHorizontal() == true)
+							{
+								spliter->removeCol(col);
+							}
+							else
+							{
+								spliter->removeRow(row);
+							}
+
+							base->remove();
+						}
+
+						if (spliter->isEmpty() && spliter != m_mainSpliter)
+						{
+							// continue remove empty spliter
+							CSplitter *parentSpliter = dynamic_cast<CSplitter*>(spliter->getParent());
+							if (parentSpliter != NULL)
+							{
+								base = spliter;
+								spliter = parentSpliter;
+							}
+							else
+							{
+								finish = true;
+							}
+						}
+						else
+						{
+							finish = true;
+						}
+					} while (finish == false);
+				}
+			}
+
 			void CDockPanel::dockChildWindow(CDockableWindow *window, EDock dock)
 			{
 				CSplitter *mainSpliter = NULL;
@@ -328,7 +373,7 @@ namespace Skylicht
 
 						mainSpliter->setNumberRowCol(numRow, numCol);
 
-						CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(mainSpliter, this);
 						tabControl->dockWindow(window);
 
 						mainSpliter->setControl(tabControl, rowID, colID);
@@ -345,7 +390,7 @@ namespace Skylicht
 
 						newSpliter->setControl(mainSpliter, 0, 0);
 
-						CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 						tabControl->dockWindow(window);
 						newSpliter->setControl(tabControl, 0, 1);
 
@@ -375,12 +420,14 @@ namespace Skylicht
 
 								mainSpliter->insertCol(col + 1);
 
-								CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+								CDockTabControl *tabControl = new CDockTabControl(mainSpliter, this);
 								tabControl->dockWindow(window);
 
 								mainSpliter->setControl(tabControl, rowID, colID);
 								mainSpliter->setColWidth(colID, bound.Width);
-								mainSpliter->setColWidth(colID - 1, 0.0f);
+
+								if (mainSpliter->getNumCol() == 2)
+									mainSpliter->setColWidth(colID - 1, 0.0f);
 
 								if (weakCol > col)
 									weakCol++;
@@ -395,7 +442,7 @@ namespace Skylicht
 								newSpliter->setNumberRowCol(1, 2);
 								newSpliter->setControl(m_dragOverWindow, 0, 0);
 
-								CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+								CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 								tabControl->dockWindow(window);
 								newSpliter->setControl(tabControl, 0, 1);
 
@@ -421,7 +468,7 @@ namespace Skylicht
 
 						mainSpliter->insertCol(0);
 
-						CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(mainSpliter, this);
 						tabControl->dockWindow(window);
 
 						mainSpliter->setControl(tabControl, rowID, colID);
@@ -438,7 +485,7 @@ namespace Skylicht
 						newSpliter->dock(EPosition::Fill);
 						newSpliter->setNumberRowCol(1, 2);
 
-						CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 						tabControl->dockWindow(window);
 
 						newSpliter->setControl(tabControl, 0, 0);
@@ -470,12 +517,14 @@ namespace Skylicht
 
 								mainSpliter->insertCol(col);
 
-								CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+								CDockTabControl *tabControl = new CDockTabControl(mainSpliter, this);
 								tabControl->dockWindow(window);
 
 								mainSpliter->setControl(tabControl, rowID, colID);
 								mainSpliter->setColWidth(colID, bound.Width);
-								mainSpliter->setColWidth(colID + 1, 0.0f);
+
+								if (mainSpliter->getNumCol() == 2)
+									mainSpliter->setColWidth(colID + 1, 0.0f);
 
 								if (weakCol > col)
 									weakCol++;
@@ -488,7 +537,7 @@ namespace Skylicht
 								CSplitter *newSpliter = new CSplitter(mainSpliter);
 								newSpliter->setNumberRowCol(1, 2);
 
-								CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+								CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 								tabControl->dockWindow(window);
 								newSpliter->setControl(tabControl, 0, 0);
 
@@ -516,7 +565,7 @@ namespace Skylicht
 
 						mainSpliter->insertRow(0);
 
-						CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(mainSpliter, this);
 						tabControl->dockWindow(window);
 
 						mainSpliter->setControl(tabControl, rowID, colID);
@@ -533,7 +582,7 @@ namespace Skylicht
 						newSpliter->dock(EPosition::Fill);
 						newSpliter->setNumberRowCol(2, 1);
 
-						CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 						tabControl->dockWindow(window);
 
 						newSpliter->setControl(tabControl, 0, 0);
@@ -565,7 +614,7 @@ namespace Skylicht
 
 								mainSpliter->insertRow(row);
 
-								CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+								CDockTabControl *tabControl = new CDockTabControl(mainSpliter, this);
 								tabControl->dockWindow(window);
 
 								mainSpliter->setControl(tabControl, rowID, colID);
@@ -583,7 +632,7 @@ namespace Skylicht
 								CSplitter *newSpliter = new CSplitter(mainSpliter);
 								newSpliter->setNumberRowCol(2, 1);
 
-								CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+								CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 								tabControl->dockWindow(window);
 								newSpliter->setControl(tabControl, 0, 0);
 
@@ -611,7 +660,7 @@ namespace Skylicht
 						u32 rowID = numRow - 1;
 						u32 colID = numCol - 1;
 
-						CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(mainSpliter, this);
 						tabControl->dockWindow(window);
 
 						mainSpliter->setControl(tabControl, rowID, colID);
@@ -626,7 +675,7 @@ namespace Skylicht
 						newSpliter->dock(EPosition::Fill);
 						newSpliter->setNumberRowCol(2, 1);
 
-						CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+						CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 						tabControl->dockWindow(window);
 
 						newSpliter->setControl(mainSpliter, 0, 0);
@@ -658,7 +707,7 @@ namespace Skylicht
 
 								mainSpliter->insertRow(row + 1);
 
-								CDockTabControl *tabControl = new CDockTabControl(mainSpliter);
+								CDockTabControl *tabControl = new CDockTabControl(mainSpliter, this);
 								tabControl->dockWindow(window);
 
 								mainSpliter->setControl(tabControl, rowID, colID);
@@ -676,7 +725,7 @@ namespace Skylicht
 								CSplitter *newSpliter = new CSplitter(mainSpliter);
 								newSpliter->setNumberRowCol(2, 1);
 
-								CDockTabControl *tabControl = new CDockTabControl(newSpliter);
+								CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 								tabControl->dockWindow(window);
 
 								newSpliter->setControl(m_dragOverWindow, 0, 0);
@@ -704,7 +753,7 @@ namespace Skylicht
 						CBase *base = outSpliter->getControl(row, col);
 						if (base == NULL)
 						{
-							CDockTabControl *tabControl = new CDockTabControl(outSpliter);
+							CDockTabControl *tabControl = new CDockTabControl(outSpliter, this);
 							tabControl->dockWindow(window);
 							outSpliter->setControl(tabControl, row, col);
 						}

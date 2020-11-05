@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CWindow.h"
 #include "CDockTabControl.h"
+#include "CDockPanel.h"
 
 namespace Skylicht
 {
@@ -32,8 +33,9 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CDockTabControl::CDockTabControl(CBase *parent) :
-				CTabControl(parent)
+			CDockTabControl::CDockTabControl(CBase *parent, CDockPanel *panel) :
+				CTabControl(parent),
+				m_dockPanel(panel)
 			{
 				showTabCloseButton(true);
 			}
@@ -78,6 +80,17 @@ namespace Skylicht
 					win->bringToFront();
 					win->dragMoveCommand(holdPosition);
 				}
+
+				if (m_tabButtons.size() == 0)
+					m_dockPanel->unDockChildWindow(this);
+			}
+
+			void CDockTabControl::doTabClose(CTabButton *button)
+			{
+				CTabControl::doTabClose(button);
+
+				if (m_tabButtons.size() == 0)
+					m_dockPanel->unDockChildWindow(this);
 			}
 		}
 	}

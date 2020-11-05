@@ -95,6 +95,8 @@ namespace Skylicht
 
 				void dockChildWindow(CDockableWindow *window, EDock dock);
 
+				void unDockChildWindow(CDockTabControl *win);
+
 				SRect getSpaceBounds(CSplitter* &outSpliter);
 
 			protected:

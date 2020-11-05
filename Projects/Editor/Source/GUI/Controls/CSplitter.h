@@ -103,6 +103,8 @@ namespace Skylicht
 
 				void setColWidth(u32 col, float width);
 
+				bool isEmpty();
+
 				inline float getRowHeight(u32 row)
 				{
 					return m_rowHeight[row];
@@ -116,6 +118,11 @@ namespace Skylicht
 				inline void setExpanderSize(float size)
 				{
 					m_expanderSize = size;
+				}
+
+				inline float getExpanderSize()
+				{
+					return m_expanderSize;
 				}
 
 				inline void setMinSize(float size)

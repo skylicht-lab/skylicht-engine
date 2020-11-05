@@ -33,16 +33,28 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CDockPanel;
+
 			class CDockTabControl :public CTabControl
 			{
+			protected:
+				CDockPanel* m_dockPanel;
+
 			public:
-				CDockTabControl(CBase *parent);
+				CDockTabControl(CBase *parent, CDockPanel *panel);
 
 				virtual CDockableWindow* dockWindow(CDockableWindow *window);
 
 				void setCurrentWindow(CDockableWindow *window);
 
+				inline CDockPanel* getDockPanel()
+				{
+					return m_dockPanel;
+				}
+
 				virtual void onDragOutTabStrip(CTabButton *button);
+
+				virtual void doTabClose(CTabButton *button);
 			};
 		}
 	}
