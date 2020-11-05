@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GUI/CGUIContext.h"
 #include "GUI/Controls/CDockableWindow.h"
-#include "GUI/Controls/CTabControl.h"
+#include "GUI/Controls/CDockTabControl.h"
 #include "GUI/Controls/CSplitter.h"
 
 namespace Skylicht
@@ -35,12 +35,30 @@ namespace Skylicht
 	{
 		class CEditor
 		{
+		private:
+			GUI::CCanvas *m_canvas;
+			GUI::CDockPanel *m_dockPanel;
+
 		public:
 			CEditor();
 
 			virtual ~CEditor();
 
 			void saveLayout(const std::string& data);
+
+		protected:
+
+			void initDefaultLayout();
+
+			void initSessionLayout(const std::string& data);
+
+			void readDockLayout(io::IXMLReader* xml, GUI::CDockPanel *panel);
+
+			void readSpliterLayout(io::IXMLReader* xml, GUI::CSplitter *spliter, bool isHorizontal);
+
+			void readDockTab(io::IXMLReader* xml, GUI::CDockTabControl *tabcontrol);
+
+			void readBound(io::IXMLReader* xml, GUI::CBase *base);
 		};
 	}
 }

@@ -45,6 +45,20 @@ namespace Skylicht
 				window->setCurrentDockTab(this);
 				return window;
 			}
+
+			void CDockTabControl::setCurrentWindow(CDockableWindow *window)
+			{
+				ListTabButton::iterator i = m_tabButtons.begin(), end = m_tabButtons.end();
+				while (i != end)
+				{
+					if ((*i)->getPage() == window)
+					{
+						setTab((*i));
+						return;
+					}
+					++i;
+				}
+			}
 		}
 	}
 }
