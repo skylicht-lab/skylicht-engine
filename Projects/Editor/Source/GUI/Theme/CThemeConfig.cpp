@@ -39,7 +39,7 @@ namespace Skylicht
 
 			SGUIColor CThemeConfig::WindowBackgroundColor = SGUIColor(252, 35, 35, 35);
 			SGUIColor CThemeConfig::WindowInnerColor = SGUIColor(255, 55, 55, 55);
-			SGUIColor CThemeConfig::DefaultTextColor = SGUIColor(255, 165, 165, 165);
+			SGUIColor CThemeConfig::DefaultTextColor = SGUIColor(255, 200, 200, 200);
 			SGUIColor CThemeConfig::DefaultIconColor = SGUIColor(255, 215, 215, 215);
 			SGUIColor CThemeConfig::IconPressColor = SGUIColor(255, 255, 255, 255);
 			SGUIColor CThemeConfig::TextPressColor = SGUIColor(255, 255, 255, 255);
@@ -62,12 +62,14 @@ namespace Skylicht
 
 			SGUIColor CThemeConfig::DockHintWindowColor = SGUIColor(150, 90, 90, 180);
 
+			SGUIColor CThemeConfig::MenuBarColor = WindowBackgroundColor;
+
 			float CThemeConfig::getFontSizePt(EFontSize size)
 			{
 				switch (size)
 				{
 				case SizeNormal:
-					return 10.5f;
+					return 10.0f;
 					break;
 				case SizeLarge:
 					return 12.5f;

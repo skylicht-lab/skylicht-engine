@@ -95,6 +95,11 @@ namespace Skylicht
 					return m_label->getColor();
 				}
 
+				inline void showLabel(bool b)
+				{
+					m_label->setHidden(!b);
+				}
+
 				inline EFontSize getFontSize()
 				{
 					return m_label->getFontSize();
@@ -108,6 +113,11 @@ namespace Skylicht
 				inline void setIcon(ESystemIcon icon)
 				{
 					m_icon->setIcon(icon);
+
+					if (icon == ESystemIcon::None)
+						showIcon(false);
+					else
+						showIcon(true);
 				}
 
 				inline ESystemIcon getIcon()
