@@ -320,14 +320,14 @@ namespace Skylicht
 				}
 			}
 
-			void CDockPanel::dockChildWindow(CDockableWindow *window, EDock dock)
+			void CDockPanel::dockChildWindow(CDockableWindow *window, CDockTabControl *neighborhood, EDock dock)
 			{
 				CSplitter *mainSpliter = NULL;
 				CSplitter *outSpliter = NULL;
 
 				SRect spaceBounds;
 
-				if (m_dragOverWindow == NULL ||
+				if (neighborhood == NULL ||
 					dock == EDock::DockLeft ||
 					dock == EDock::DockRight ||
 					dock == EDock::DockBottom ||
@@ -338,13 +338,13 @@ namespace Skylicht
 				}
 				else
 				{
-					spaceBounds = m_dragOverWindow->getBounds();
-					SPoint p = m_dragOverWindow->localPosToCanvas();
+					spaceBounds = neighborhood->getBounds();
+					SPoint p = neighborhood->localPosToCanvas();
 					p = canvasPosToLocal(p);
 					spaceBounds.X = p.X;
 					spaceBounds.Y = p.Y;
 
-					mainSpliter = (CSplitter*)m_dragOverWindow->getParent();
+					mainSpliter = (CSplitter*)neighborhood->getParent();
 				}
 
 				float maxWidth = round(spaceBounds.Width * 0.5f);
@@ -407,10 +407,10 @@ namespace Skylicht
 				}
 				else if (dock == EDock::DockTargetRight)
 				{
-					if (m_dragOverWindow != NULL)
+					if (neighborhood != NULL)
 					{
 						u32 row, col;
-						if (mainSpliter->getColRowFromControl(m_dragOverWindow, row, col) == true)
+						if (mainSpliter->getColRowFromControl(neighborhood, row, col) == true)
 						{
 							if (mainSpliter->isHorizontal() == true)
 							{
@@ -440,7 +440,7 @@ namespace Skylicht
 
 								CSplitter *newSpliter = new CSplitter(mainSpliter);
 								newSpliter->setNumberRowCol(1, 2);
-								newSpliter->setControl(m_dragOverWindow, 0, 0);
+								newSpliter->setControl(neighborhood, 0, 0);
 
 								CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 								tabControl->dockWindow(window);
@@ -504,10 +504,10 @@ namespace Skylicht
 				}
 				else if (dock == EDock::DockTargetLeft)
 				{
-					if (m_dragOverWindow != NULL)
+					if (neighborhood != NULL)
 					{
 						u32 row, col;
-						if (mainSpliter->getColRowFromControl(m_dragOverWindow, row, col) == true)
+						if (mainSpliter->getColRowFromControl(neighborhood, row, col) == true)
 						{
 							if (mainSpliter->isHorizontal() == true)
 							{
@@ -541,7 +541,7 @@ namespace Skylicht
 								tabControl->dockWindow(window);
 								newSpliter->setControl(tabControl, 0, 0);
 
-								newSpliter->setControl(m_dragOverWindow, 0, 1);
+								newSpliter->setControl(neighborhood, 0, 1);
 
 								newSpliter->setColWidth(0, bound.Width);
 								newSpliter->setColWidth(1, 0.0f);
@@ -601,10 +601,10 @@ namespace Skylicht
 				}
 				else if (dock == EDock::DockTargetTop)
 				{
-					if (m_dragOverWindow != NULL)
+					if (neighborhood != NULL)
 					{
 						u32 row, col;
-						if (mainSpliter->getColRowFromControl(m_dragOverWindow, row, col) == true)
+						if (mainSpliter->getColRowFromControl(neighborhood, row, col) == true)
 						{
 							if (mainSpliter->isVertical() == true)
 							{
@@ -636,7 +636,7 @@ namespace Skylicht
 								tabControl->dockWindow(window);
 								newSpliter->setControl(tabControl, 0, 0);
 
-								newSpliter->setControl(m_dragOverWindow, 1, 0);
+								newSpliter->setControl(neighborhood, 1, 0);
 
 								newSpliter->setRowHeight(0, bound.Height);
 								newSpliter->setRowHeight(1, 0.0f);
@@ -694,10 +694,10 @@ namespace Skylicht
 				}
 				else if (dock == DockTargetBottom)
 				{
-					if (m_dragOverWindow != NULL)
+					if (neighborhood != NULL)
 					{
 						u32 row, col;
-						if (mainSpliter->getColRowFromControl(m_dragOverWindow, row, col) == true)
+						if (mainSpliter->getColRowFromControl(neighborhood, row, col) == true)
 						{
 							if (mainSpliter->isVertical() == true)
 							{
@@ -728,7 +728,7 @@ namespace Skylicht
 								CDockTabControl *tabControl = new CDockTabControl(newSpliter, this);
 								tabControl->dockWindow(window);
 
-								newSpliter->setControl(m_dragOverWindow, 0, 0);
+								newSpliter->setControl(neighborhood, 0, 0);
 								newSpliter->setControl(tabControl, 1, 0);
 
 								newSpliter->setRowHeight(0, 0.0f);
@@ -764,9 +764,9 @@ namespace Skylicht
 								tabControl->dockWindow(window);
 						}
 					}
-					else if (m_dragOverWindow != NULL)
+					else if (neighborhood != NULL)
 					{
-						m_dragOverWindow->dockWindow(window);
+						neighborhood->dockWindow(window);
 					}
 				}
 

@@ -73,7 +73,7 @@ namespace Skylicht
 
 					if (m_capture != NULL)
 						m_capture->updateCursor();
-					return false;
+					return true;
 				}
 
 				CBase *hover = CGUIContext::getRoot()->getControlAt(x, y);
@@ -103,18 +103,17 @@ namespace Skylicht
 				}
 
 				if (!CGUIContext::HoveredControl)
-					return true;
+					return false;
 
 				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
 				{
 					CGUIContext::HoveredControl->updateCursor();
-					return true;
+					return false;
 				}
 
 				CGUIContext::HoveredControl->onMouseMoved(x, y, deltaX, deltaY);
 				CGUIContext::HoveredControl->updateCursor();
-
-				return false;
+				return true;
 			}
 
 			bool CInput::inputMouseButton(int iMouseButton, bool down)
@@ -142,19 +141,19 @@ namespace Skylicht
 						m_capture->onMouseDoubleClickLeft(m_mousePositionX, m_mousePositionY);
 					else
 						m_capture->onMouseClickLeft(m_mousePositionX, m_mousePositionY, down);
-					return false;
+					return true;
 				}
 
 				if (!CGUIContext::HoveredControl)
-					return true;
+					return false;
 
 				if (!CGUIContext::HoveredControl->isVisible())
-					return true;
+					return false;
 
 				CGUIContext::HoveredControl->updateCursor();
 
 				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
-					return true;
+					return false;
 
 				// Do keyboard focus
 
@@ -173,7 +172,7 @@ namespace Skylicht
 					else
 						CGUIContext::HoveredControl->onMouseClickLeft(m_mousePositionX, m_mousePositionY, down);
 
-					return false;
+					return true;
 
 				case 1:
 					if (isDoubleClick)
@@ -181,32 +180,32 @@ namespace Skylicht
 					else
 						CGUIContext::HoveredControl->onMouseClickRight(m_mousePositionX, m_mousePositionY, down);
 
-					return false;
+					return true;
 				}
 
-				return true;
+				return false;
 			}
 
 			bool CInput::inputMouseWheel(int wheel)
 			{
 				if (!CGUIContext::HoveredControl)
-					return true;
+					return false;
 
 				if (!CGUIContext::HoveredControl->isVisible())
-					return true;
+					return false;
 
 				CGUIContext::HoveredControl->updateCursor();
 
 				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
-					return true;
+					return false;
 
 				CGUIContext::HoveredControl->onMouseWheeled(wheel);
-				return false;
+				return true;
 			}
 
 			bool CInput::inputModifierKey(EKey key, bool down)
 			{
-				return true;
+				return false;
 			}
 
 			bool CInput::inputCharacter(u32 character)

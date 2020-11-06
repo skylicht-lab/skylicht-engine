@@ -73,34 +73,36 @@ namespace Skylicht
 				{
 					EDockHintIcon icon = hint->getIcon();
 
+					CDockTabControl *neighborhood = m_rootDockPanel->getDragOverWindow();
+
 					switch (icon)
 					{
 					case Center:
-						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockCenter);
+						m_rootDockPanel->dockChildWindow(this, neighborhood, CDockPanel::DockCenter);
 						break;
 					case Left:
-						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockLeft);
+						m_rootDockPanel->dockChildWindow(this, neighborhood, CDockPanel::DockLeft);
 						break;
 					case TargetLeft:
-						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTargetLeft);
+						m_rootDockPanel->dockChildWindow(this, neighborhood, CDockPanel::DockTargetLeft);
 						break;
 					case Right:
-						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockRight);
+						m_rootDockPanel->dockChildWindow(this, neighborhood, CDockPanel::DockRight);
 						break;
 					case TargetRight:
-						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTargetRight);
+						m_rootDockPanel->dockChildWindow(this, neighborhood, CDockPanel::DockTargetRight);
 						break;
 					case Top:
-						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTop);
+						m_rootDockPanel->dockChildWindow(this, neighborhood, CDockPanel::DockTop);
 						break;
 					case TargetTop:
-						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTargetTop);
+						m_rootDockPanel->dockChildWindow(this, neighborhood, CDockPanel::DockTargetTop);
 						break;
 					case Bottom:
-						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockBottom);
+						m_rootDockPanel->dockChildWindow(this, neighborhood, CDockPanel::DockBottom);
 						break;
 					case TargetBottom:
-						m_rootDockPanel->dockChildWindow(this, CDockPanel::DockTargetBottom);
+						m_rootDockPanel->dockChildWindow(this, neighborhood, CDockPanel::DockTargetBottom);
 						break;
 					default:
 						break;
