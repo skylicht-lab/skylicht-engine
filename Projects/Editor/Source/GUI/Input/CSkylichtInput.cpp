@@ -61,30 +61,31 @@ namespace Skylicht
 						float dy = y - m_mouseY;
 						m_mouseX = x;
 						m_mouseY = y;
-						return inputMouseMoved(x, y, dx, dy);
+						inputMouseMoved(x, y, dx, dy);
+						break;
 					}
 
 					case irr::EMIE_MOUSE_WHEEL:
-						return inputMouseWheel((int)-event.MouseInput.Wheel);
-
+						inputMouseWheel((int)-event.MouseInput.Wheel);
+						break;
 					case irr::EMIE_LMOUSE_PRESSED_DOWN:
-						return inputMouseButton(0, true);
-
+						inputMouseButton(0, true);
+						break;
 					case irr::EMIE_LMOUSE_LEFT_UP:
-						return inputMouseButton(0, false);
-
+						inputMouseButton(0, false);
+						break;
 					case irr::EMIE_RMOUSE_PRESSED_DOWN:
-						return inputMouseButton(1, true);
-
+						inputMouseButton(1, true);
+						break;
 					case irr::EMIE_RMOUSE_LEFT_UP:
-						return inputMouseButton(1, false);
-
+						inputMouseButton(1, false);
+						break;
 					case irr::EMIE_MMOUSE_PRESSED_DOWN:
-						return inputMouseButton(2, true);
-
+						inputMouseButton(2, true);
+						break;
 					case irr::EMIE_MMOUSE_LEFT_UP:
-						return inputMouseButton(2, false);
-
+						inputMouseButton(2, false);
+						break;
 					default:
 						break;
 					}
@@ -93,53 +94,55 @@ namespace Skylicht
 					switch (event.KeyInput.Key)
 					{
 					case irr::KEY_SHIFT:
-						return inputModifierKey(EKey::KEY_SHIFT, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_SHIFT, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_RETURN:
-						return inputModifierKey(EKey::KEY_RETURN, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_RETURN, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_BACK:
-						return inputModifierKey(EKey::KEY_BACK, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_BACK, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_DELETE:
-						return inputModifierKey(EKey::KEY_DELETE, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_DELETE, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_LEFT:
-						return inputModifierKey(EKey::KEY_LEFT, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_LEFT, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_RIGHT:
-						return inputModifierKey(EKey::KEY_RIGHT, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_RIGHT, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_TAB:
-						return inputModifierKey(EKey::KEY_TAB, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_TAB, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_SPACE:
-						return !inputModifierKey(EKey::KEY_SPACE, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_SPACE, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_HOME:
-						return inputModifierKey(EKey::KEY_HOME, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_HOME, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_END:
-						return inputModifierKey(EKey::KEY_END, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_END, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_CONTROL:
-						return inputModifierKey(EKey::KEY_CONTROL, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_CONTROL, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_UP:
-						return inputModifierKey(EKey::KEY_UP, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_UP, event.KeyInput.PressedDown);
+						break;
 					case irr::KEY_DOWN:
-						return inputModifierKey(EKey::KEY_DOWN, event.KeyInput.PressedDown);
-
+						inputModifierKey(EKey::KEY_DOWN, event.KeyInput.PressedDown);
+						break;
 					default:
-						return inputCharacter(event.KeyInput.Char);
+						inputCharacter(event.KeyInput.Char);
+						break;
 					}
 					break;
 				default:
 					break;
 				}
 
-				return true;
+				// Disable all event
+				return false;
 			}
 
 			void CSkylichtInput::setCursor(ECursorType type)

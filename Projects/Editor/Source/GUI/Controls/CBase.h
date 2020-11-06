@@ -319,8 +319,6 @@ namespace Skylicht
 					return SPoint(35.0f, 35.0f);
 				}
 
-			protected:
-
 				virtual void recurseLayout();
 				virtual void layout();
 				virtual void postLayout() {}
