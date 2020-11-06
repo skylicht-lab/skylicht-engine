@@ -93,11 +93,16 @@ namespace Skylicht
 
 				void hideDockHintWindow();
 
-				void dockChildWindow(CDockableWindow *window, EDock dock);
+				void dockChildWindow(CDockableWindow *window, CDockTabControl *neighborhood, EDock dock);
 
 				void unDockChildWindow(CDockTabControl *win);
 
 				SRect getSpaceBounds(CSplitter* &outSpliter);
+
+				CDockTabControl* getDragOverWindow()
+				{
+					return m_dragOverWindow;
+				}
 
 			protected:
 

@@ -44,6 +44,8 @@ namespace Skylicht
 			m_dockPanel = new GUI::CDockPanel(m_canvas);
 			m_dockPanel->dock(GUI::EPosition::Fill);
 
+			m_canvas->recurseLayout();
+
 			if (data.length() > 0)
 			{
 				initSessionLayout(data);
@@ -67,26 +69,37 @@ namespace Skylicht
 
 		void CEditor::initDefaultLayout()
 		{
-			GUI::CDockableWindow *scene = new GUI::CDockableWindow(m_dockPanel, 20.0f, 20.0f, 900.0f, 600.0f);
+			float width = m_dockPanel->width();
+			float height = m_dockPanel->height();
+			float w, h;
+
+			w = width;
+			h = round(height * 0.8f);
+			GUI::CDockableWindow *scene = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
 			scene->setCaption(L"Scene");
+			m_dockPanel->dockChildWindow(scene, NULL, GUI::CDockPanel::DockCenter);
+			m_dockPanel->recurseLayout();
 
-			GUI::CDockableWindow *particle = new GUI::CDockableWindow(m_dockPanel, 40.0f, 40.0f, 300.0f, 600.0f);
-			particle->setCaption(L"Particle");
-
-			GUI::CDockableWindow *animation = new GUI::CDockableWindow(m_dockPanel, 60.0f, 60.0f, 900.0f, 300.0f);
-			animation->setCaption(L"Animation");
-
-			GUI::CDockableWindow *console = new GUI::CDockableWindow(m_dockPanel, 80.0f, 80.0f, 900.0f, 300.0f);
-			console->setCaption(L"Console");
-
-			GUI::CDockableWindow *property = new GUI::CDockableWindow(m_dockPanel, 100.0f, 100.0f, 300.0f, 600.0f);
-			property->setCaption(L"Property");
-
-			GUI::CDockableWindow *asset = new GUI::CDockableWindow(m_dockPanel, 120.0f, 120.0f, 900.0f, 300.0f);
+			w = round(width * 0.7f);
+			h = round(height * 0.3f);
+			GUI::CDockableWindow *asset = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
 			asset->setCaption(L"Asset");
+			m_dockPanel->dockChildWindow(asset, NULL, GUI::CDockPanel::DockBottom);
+			m_dockPanel->recurseLayout();
 
-			GUI::CDockableWindow *window2 = new GUI::CDockableWindow(m_dockPanel, 400.0f, 100.0f, 600.0f, 480.0f);
-			GUI::CWindow *window3 = new GUI::CWindow(window2, 20.0f, 20.0f, 300.0f, 240.0f);
+			w = round(width * 0.35f);
+			h = round(height * 0.3f);
+			GUI::CDockableWindow *console = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			console->setCaption(L"Console");
+			m_dockPanel->dockChildWindow(console, asset->getCurrentDockTab(), GUI::CDockPanel::DockTargetRight);
+			m_dockPanel->recurseLayout();
+
+			w = width * 0.3f;
+			h = height;
+			GUI::CDockableWindow *property = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			property->setCaption(L"Property");
+			m_dockPanel->dockChildWindow(property, NULL, GUI::CDockPanel::DockRight);
+			m_dockPanel->recurseLayout();
 		}
 
 		void CEditor::initSessionLayout(const std::string& data)
