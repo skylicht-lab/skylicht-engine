@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CDockableWindow.h"
 #include "GUI/Controls/CDockTabControl.h"
 #include "GUI/Controls/CSplitter.h"
+#include "GUI/Controls/CMenuBar.h"
 
 namespace Skylicht
 {
@@ -37,6 +38,7 @@ namespace Skylicht
 		{
 		private:
 			GUI::CCanvas *m_canvas;
+			GUI::CMenuBar *m_menuBar;
 			GUI::CDockPanel *m_dockPanel;
 
 		public:

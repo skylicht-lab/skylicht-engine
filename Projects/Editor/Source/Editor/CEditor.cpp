@@ -41,6 +41,19 @@ namespace Skylicht
 			m_canvas = GUI::CGUIContext::getRoot();
 			m_canvas->OnSaveDockLayout = std::bind(&CEditor::saveLayout, this, std::placeholders::_1);
 
+			m_menuBar = new GUI::CMenuBar(m_canvas);
+
+			GUI::CMenuItem *logo = m_menuBar->addItem(L"", GUI::ESystemIcon::Windows, L"");
+			logo->setPadding(GUI::SPadding(6.0f, 0.0f, 0.0f, 0.0f));
+			logo->sizeToContents();
+
+			m_menuBar->addItem(L"Project", GUI::ESystemIcon::None, L"");
+			m_menuBar->addItem(L"Edit", GUI::ESystemIcon::None, L"");
+			m_menuBar->addItem(L"Assets", GUI::ESystemIcon::None, L"");
+			m_menuBar->addItem(L"GameObject", GUI::ESystemIcon::None, L"");
+			m_menuBar->addItem(L"Window", GUI::ESystemIcon::None, L"");
+			m_menuBar->addItem(L"Help", GUI::ESystemIcon::None, L"");
+
 			m_dockPanel = new GUI::CDockPanel(m_canvas);
 			m_dockPanel->dock(GUI::EPosition::Fill);
 
@@ -90,7 +103,7 @@ namespace Skylicht
 			w = round(width * 0.35f);
 			h = round(height * 0.3f);
 			GUI::CDockableWindow *console = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
-			console->setCaption(L"Console");
+			console->setCaption(L"Preview");
 			m_dockPanel->dockChildWindow(console, asset->getCurrentDockTab(), GUI::CDockPanel::DockTargetRight);
 			m_dockPanel->recurseLayout();
 

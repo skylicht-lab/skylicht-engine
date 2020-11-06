@@ -22,9 +22,9 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "GUI/Type.h"
+#include "pch.h"
+#include "CMenuItem.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -32,44 +32,51 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeConfig
+			CMenuItem::CMenuItem(CBase *parent) :
+				CButton(parent),
+				m_accelerator(NULL),
+				m_inMenuBar(false)
 			{
-			public:
-				static std::string FontName;
-				static std::string FontPath;
+				setLabelColor(CThemeConfig::DefaultTextColor);
+			}
 
-				static SGUIColor White;
-				static SGUIColor Black;
+			CMenuItem::~CMenuItem()
+			{
 
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowInnerColor;
-				static SGUIColor DefaultTextColor;
-				static SGUIColor DefaultIconColor;
-				static SGUIColor IconPressColor;
-				static SGUIColor TextPressColor;
+			}
 
-				static SGUIColor ButtonColor;
-				static SGUIColor ButtonTextColor;
-				static SGUIColor ButtonHoverColor;
-				static SGUIColor ButtonPressColor;
-				static SGUIColor ButtonFocusColor;
+			void CMenuItem::sizeToContents()
+			{
+				CButton::sizeToContents();
 
-				static SGUIColor TabTextColor;
-				static SGUIColor TabTextFocusColor;
-				static SGUIColor TabStripColor;
-				static SGUIColor TabButtonColor;
-				static SGUIColor TabButtonActiveColor;
-				static SGUIColor TabButtonFocusColor;
-				static SGUIColor TabCloseButtonHoverColor;
+				if (m_accelerator != NULL)
+				{
+					m_accelerator->sizeToContents();
+					setWidth(width() + m_accelerator->width());
+				}
+			}
 
-				static SGUIColor SpliterColor;
+			void CMenuItem::renderUnder()
+			{
 
-				static SGUIColor DockHintWindowColor;
+			}
 
-				static SGUIColor MenuBarColor;
+			void CMenuItem::setAccelerator(const std::wstring& accelerator)
+			{
+				if (m_accelerator != NULL)
+				{
+					m_accelerator->remove();
+					m_accelerator = NULL;
+				}
 
-				static float getFontSizePt(EFontSize size);
-			};
+				if (accelerator.empty())
+					return;
+
+				m_accelerator = new CTextContainer(this);
+				m_accelerator->dock(EPosition::Right);
+				m_accelerator->setMargin(SMargin(0.0f, 2.0f, 0.0f, 0.0f));
+				m_accelerator->setColor(getLabelColor());
+			}
 		}
 	}
 }
