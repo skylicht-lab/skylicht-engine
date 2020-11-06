@@ -21,10 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "GUI/Type.h"
+#include "CBase.h"
+#include "CMenu.h"
 
 namespace Skylicht
 {
@@ -32,43 +32,15 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeConfig
+			class CMenuBar : public CMenu
 			{
+			protected:
+
 			public:
-				static std::string FontName;
-				static std::string FontPath;
+				CMenuBar(CBase *parent);
+				virtual ~CMenuBar();
 
-				static SGUIColor White;
-				static SGUIColor Black;
-
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowInnerColor;
-				static SGUIColor DefaultTextColor;
-				static SGUIColor DefaultIconColor;
-				static SGUIColor IconPressColor;
-				static SGUIColor TextPressColor;
-
-				static SGUIColor ButtonColor;
-				static SGUIColor ButtonTextColor;
-				static SGUIColor ButtonHoverColor;
-				static SGUIColor ButtonPressColor;
-				static SGUIColor ButtonFocusColor;
-
-				static SGUIColor TabTextColor;
-				static SGUIColor TabTextFocusColor;
-				static SGUIColor TabStripColor;
-				static SGUIColor TabButtonColor;
-				static SGUIColor TabButtonActiveColor;
-				static SGUIColor TabButtonFocusColor;
-				static SGUIColor TabCloseButtonHoverColor;
-
-				static SGUIColor SpliterColor;
-
-				static SGUIColor DockHintWindowColor;
-
-				static SGUIColor MenuBarColor;
-
-				static float getFontSizePt(EFontSize size);
+				virtual void onAddItem(CMenuItem *item);
 			};
 		}
 	}

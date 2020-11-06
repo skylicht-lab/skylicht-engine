@@ -22,9 +22,9 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "GUI/Type.h"
+#include "pch.h"
+#include "CMenuBar.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -32,44 +32,29 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeConfig
+			CMenuBar::CMenuBar(CBase *parent) :
+				CMenu(parent)
 			{
-			public:
-				static std::string FontName;
-				static std::string FontPath;
+				dock(EPosition::Top);
+				setHeight(26.0f);
 
-				static SGUIColor White;
-				static SGUIColor Black;
+				enableRenderFillRect(true);
+				setFillRectColor(CThemeConfig::MenuBarColor);
+			}
 
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowInnerColor;
-				static SGUIColor DefaultTextColor;
-				static SGUIColor DefaultIconColor;
-				static SGUIColor IconPressColor;
-				static SGUIColor TextPressColor;
+			CMenuBar::~CMenuBar()
+			{
 
-				static SGUIColor ButtonColor;
-				static SGUIColor ButtonTextColor;
-				static SGUIColor ButtonHoverColor;
-				static SGUIColor ButtonPressColor;
-				static SGUIColor ButtonFocusColor;
+			}
 
-				static SGUIColor TabTextColor;
-				static SGUIColor TabTextFocusColor;
-				static SGUIColor TabStripColor;
-				static SGUIColor TabButtonColor;
-				static SGUIColor TabButtonActiveColor;
-				static SGUIColor TabButtonFocusColor;
-				static SGUIColor TabCloseButtonHoverColor;
-
-				static SGUIColor SpliterColor;
-
-				static SGUIColor DockHintWindowColor;
-
-				static SGUIColor MenuBarColor;
-
-				static float getFontSizePt(EFontSize size);
-			};
+			void CMenuBar::onAddItem(CMenuItem *item)
+			{
+				item->dock(EPosition::Left);
+				item->setPadding(SPadding(6.0f, 0.0f, 6.0f, 0.0f));
+				item->setMargin(SMargin(0.0f, 3.0f, 0.0f, 3.0f));
+				item->setInMenuBar(true);
+				item->sizeToContents();
+			}
 		}
 	}
 }

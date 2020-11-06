@@ -22,9 +22,8 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "GUI/Type.h"
+#include "pch.h"
+#include "CMenu.h"
 
 namespace Skylicht
 {
@@ -32,44 +31,36 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThemeConfig
+			CMenu::CMenu(CBase *parent) :
+				CBase(parent)
 			{
-			public:
-				static std::string FontName;
-				static std::string FontPath;
+				setBounds(0.0f, 0.0f, 100, 24.0f);
+			}
 
-				static SGUIColor White;
-				static SGUIColor Black;
+			CMenu::~CMenu()
+			{
 
-				static SGUIColor WindowBackgroundColor;
-				static SGUIColor WindowInnerColor;
-				static SGUIColor DefaultTextColor;
-				static SGUIColor DefaultIconColor;
-				static SGUIColor IconPressColor;
-				static SGUIColor TextPressColor;
+			}
 
-				static SGUIColor ButtonColor;
-				static SGUIColor ButtonTextColor;
-				static SGUIColor ButtonHoverColor;
-				static SGUIColor ButtonPressColor;
-				static SGUIColor ButtonFocusColor;
+			CMenuItem* CMenu::addItem(const std::wstring&  label, ESystemIcon icon, const std::wstring& accelerator)
+			{
+				CMenuItem *item = new CMenuItem(this);
+				item->setLabel(label);
+				item->setIcon(icon);
+				item->setAccelerator(accelerator);
+				onAddItem(item);
 
-				static SGUIColor TabTextColor;
-				static SGUIColor TabTextFocusColor;
-				static SGUIColor TabStripColor;
-				static SGUIColor TabButtonColor;
-				static SGUIColor TabButtonActiveColor;
-				static SGUIColor TabButtonFocusColor;
-				static SGUIColor TabCloseButtonHoverColor;
+				return item;
+			}
 
-				static SGUIColor SpliterColor;
+			void CMenu::onAddItem(CMenuItem *item)
+			{
+				item->dock(EPosition::Top);
+				item->sizeToContents();
 
-				static SGUIColor DockHintWindowColor;
-
-				static SGUIColor MenuBarColor;
-
-				static float getFontSizePt(EFontSize size);
-			};
+				float w = core::max_<float>(item->width() + 30.0f, width());
+				setSize(w, height());
+			}
 		}
 	}
 }
