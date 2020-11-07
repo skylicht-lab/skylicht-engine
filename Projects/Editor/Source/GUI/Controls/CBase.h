@@ -60,7 +60,7 @@ namespace Skylicht
 				//!< Returns false if this control or its parents are hidden.
 				virtual bool isVisible() const;
 
-				virtual void setDisabled(bool active);
+				virtual void setDisabled(bool disable);
 
 				virtual bool isDisabled()
 				{
@@ -322,6 +322,12 @@ namespace Skylicht
 				virtual void recurseLayout();
 				virtual void layout();
 				virtual void postLayout() {}
+
+			public:
+
+				virtual void closeMenu() {}
+
+				virtual bool isMenuComponent();
 
 			public:
 

@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBase.h"
 #include "CMenuItem.h"
+#include "CMenuSeparator.h"
 
 namespace Skylicht
 {
@@ -35,12 +36,34 @@ namespace Skylicht
 			class CMenu : public CBase
 			{
 			protected:
+				bool m_isOpenSubMenu;
 
 			public:
 				CMenu(CBase *parent);
 				virtual ~CMenu();
 
-				CMenuItem* addItem(const std::wstring&  label, ESystemIcon icon, const std::wstring& accelerator);
+				virtual void layout();
+
+				virtual void renderUnder();
+
+				CMenuItem* addItem(ESystemIcon icon);
+				CMenuItem* addItem(const std::wstring& label, ESystemIcon icon, const std::wstring& accelerator);
+				CMenuItem* addItem(const std::wstring& label);
+				CMenuItem* addItem(const std::wstring& label, const std::wstring& accelerator);
+				CMenuItem* addItem(const std::wstring& label, ESystemIcon icon);
+
+				CMenuSeparator* addSeparator();
+
+				virtual void onMenuItemHover(CBase *item);
+
+				virtual void openMenu(CMenuItem *item);
+
+				virtual void closeMenu();
+
+				virtual bool isMenuComponent()
+				{
+					return true;
+				}
 
 			protected:
 

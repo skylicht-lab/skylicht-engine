@@ -42,17 +42,7 @@ namespace Skylicht
 			m_canvas->OnSaveDockLayout = std::bind(&CEditor::saveLayout, this, std::placeholders::_1);
 
 			m_menuBar = new GUI::CMenuBar(m_canvas);
-
-			GUI::CMenuItem *logo = m_menuBar->addItem(L"", GUI::ESystemIcon::Windows, L"");
-			logo->setPadding(GUI::SPadding(6.0f, 0.0f, 0.0f, 0.0f));
-			logo->sizeToContents();
-
-			m_menuBar->addItem(L"Project", GUI::ESystemIcon::None, L"");
-			m_menuBar->addItem(L"Edit", GUI::ESystemIcon::None, L"");
-			m_menuBar->addItem(L"Assets", GUI::ESystemIcon::None, L"");
-			m_menuBar->addItem(L"GameObject", GUI::ESystemIcon::None, L"");
-			m_menuBar->addItem(L"Window", GUI::ESystemIcon::None, L"");
-			m_menuBar->addItem(L"Help", GUI::ESystemIcon::None, L"");
+			initMenuBar();
 
 			m_dockPanel = new GUI::CDockPanel(m_canvas);
 			m_dockPanel->dock(GUI::EPosition::Fill);
@@ -73,6 +63,130 @@ namespace Skylicht
 		{
 			m_canvas->notifySaveDockLayout();
 			m_canvas->update();
+		}
+
+		void CEditor::initMenuBar()
+		{
+			GUI::CMenu *submenu, *temp;
+
+			GUI::CMenuItem *logo = m_menuBar->addItem(GUI::ESystemIcon::Windows);
+			submenu = logo->getMenu();
+			submenu->addItem(L"About");
+			submenu->addItem(L"Development Fund", GUI::ESystemIcon::Web);
+			submenu->addSeparator();
+			submenu->addItem(L"Setting", GUI::ESystemIcon::Setting);
+
+			GUI::CMenuItem *file = m_menuBar->addItem(L"File");
+			submenu = file->getMenu();
+			submenu->addItem(L"New", GUI::ESystemIcon::NewFile, L"Ctrl + N");
+			submenu->addItem(L"Open", GUI::ESystemIcon::Open, L"Ctrl + O");
+			submenu->addItem(L"Open Recent")->setDisabled(true);
+			submenu->addSeparator();
+			submenu->addItem(L"Save", GUI::ESystemIcon::Save, L"Ctrl + S");
+			submenu->addItem(L"Save As");
+			submenu->addSeparator();
+			submenu->addItem(L"Close", GUI::ESystemIcon::Quit, L"Ctrl + Q");
+
+			GUI::CMenuItem *edit = m_menuBar->addItem(L"Edit");
+			submenu = edit->getMenu();
+			submenu->addItem(L"Search", GUI::ESystemIcon::Search, L"Ctrl + F");
+			submenu->addSeparator();
+			submenu->addItem(L"Undo", L"Ctrl + Z");
+			submenu->addItem(L"Redo", L"Ctrl + Y");
+			submenu->addSeparator();
+			submenu->addItem(L"Copy", GUI::ESystemIcon::Copy, L"Ctrl + C");
+			submenu->addItem(L"Paste", GUI::ESystemIcon::Paste, L"Ctrl + V");
+			submenu->addItem(L"Cut", GUI::ESystemIcon::None, L"Ctrl + X");
+			submenu->addSeparator();
+			submenu->addItem(L"Delete");
+
+			GUI::CMenuItem *asset = m_menuBar->addItem(L"Assets");
+			submenu = asset->getMenu();
+			temp = submenu;
+
+			GUI::CMenuItem *create = submenu->addItem(L"Create");
+			submenu = create->getMenu();
+			submenu->addItem(L"Scene");
+			submenu->addItem(L"Animation");
+			submenu->addItem(L"Material");
+			submenu->addItem(L"GUI");
+			submenu->addItem(L"Sprite");
+
+			submenu = temp;
+			submenu->addSeparator();
+			submenu->addItem(L"Copy path", GUI::ESystemIcon::Copy);
+			submenu->addSeparator();
+			submenu->addItem(L"Show in explorer");
+			submenu->addItem(L"Open");
+			submenu->addItem(L"Rename");
+			submenu->addItem(L"Delete");
+			submenu->addSeparator();
+			submenu->addItem(L"Refresh", L"Ctrl + R");
+
+			GUI::CMenuItem *gameObject = m_menuBar->addItem(L"GameObject");
+			submenu = gameObject->getMenu();
+			submenu->addItem(L"Empty Object");
+			submenu->addItem(L"Container Object");
+			submenu->addSeparator();
+			temp = submenu;
+
+			GUI::CMenuItem *object = submenu->addItem(L"Object");
+			submenu = object->getMenu();
+			submenu->addItem(L"Cube");
+			submenu->addItem(L"Sphere");
+			submenu->addItem(L"Capsule");
+			submenu->addItem(L"Cylinder");
+			submenu->addItem(L"Plane");
+			submenu->addSeparator();
+			submenu->addItem(L"Mesh");
+			submenu->addSeparator();
+			submenu->addItem(L"Terrain");
+			submenu->addSeparator();
+			submenu->addItem(L"Skydome");
+			submenu->addItem(L"Skybox");
+			submenu->addItem(L"Sky");
+
+			submenu = temp;
+			GUI::CMenuItem *effect = submenu->addItem(L"Effect");
+			submenu = effect->getMenu();
+			submenu->addItem(L"Particle System");
+			submenu->addItem(L"Line");
+			submenu->addItem(L"Trail");
+
+			submenu = temp;
+			GUI::CMenuItem *lighting = submenu->addItem(L"Lighting");
+			submenu = lighting->getMenu();
+			submenu->addItem(L"Direction Light");
+			submenu->addItem(L"Point Light");
+			submenu->addItem(L"Spot Light");
+			submenu->addSeparator();
+			submenu->addItem(L"Reflection Probe");
+			submenu->addItem(L"Light Probe");
+
+			submenu = temp;
+			submenu->addSeparator();
+			submenu->addItem(L"Camera");
+			submenu->addSeparator();
+			submenu->addItem(L"Trigger");
+
+			GUI::CMenuItem *window = m_menuBar->addItem(L"Window");
+			submenu = window->getMenu();
+			submenu->addItem(L"New workspace");
+			submenu->addSeparator();
+			submenu->addItem(L"Asset");
+			submenu->addItem(L"Property");
+			submenu->addItem(L"Scene");
+			submenu->addItem(L"GUI Design");
+			submenu->addItem(L"Animation");
+			submenu->addSeparator();
+			submenu->addItem(L"Reset layout");
+
+			GUI::CMenuItem *help = m_menuBar->addItem(L"Help");
+			submenu = help->getMenu();
+			submenu->addItem(L"Tutorial", GUI::ESystemIcon::Guide);
+			submenu->addItem(L"Report a bug", GUI::ESystemIcon::Web);
+			submenu->addSeparator();
+			submenu->addItem(L"Development Fund", GUI::ESystemIcon::Web);
 		}
 
 		void CEditor::saveLayout(const std::string& data)

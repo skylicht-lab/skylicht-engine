@@ -21,10 +21,11 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "CBase.h"
-#include "CMenu.h"
+#include "pch.h"
+#include "CMenuSeparator.h"
+#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
 {
@@ -32,24 +33,32 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CMenuBar : public CMenu
+			CMenuSeparator::CMenuSeparator(CBase *parent) :
+				CBase(parent)
 			{
-			protected:
+				setHeight(9.0f);
+			}
 
-			public:
-				CMenuBar(CBase *parent);
-				virtual ~CMenuBar();
+			CMenuSeparator::~CMenuSeparator()
+			{
+			}
 
-				virtual void layout();
+			void CMenuSeparator::layout()
+			{
+				setWidth(m_parent->width());
+				CBase::layout();
+			}
 
-				virtual void renderUnder();
+			void CMenuSeparator::renderUnder()
+			{
+				SRect renderBounds = getRenderBounds();
+				renderBounds.X = 1.0f;
+				renderBounds.Y = 5.0f;
+				renderBounds.Height = 1.0f;
+				renderBounds.Width = renderBounds.Width - 2.0f;
 
-				virtual void onAddItem(CMenuItem *item);
-
-				virtual void onMenuItemHover(CBase *item);
-
-				virtual void onMenuItemDown(CBase *item);
-			};
+				CRenderer::getRenderer()->drawFillRect(renderBounds, CThemeConfig::MenuItemSeparatorColor);
+			}
 		}
 	}
 }

@@ -94,6 +94,12 @@ namespace Skylicht
 				}
 			}
 
+			void CCanvas::closeMenu()
+			{
+				for (CBase *child : Children)
+					child->closeMenu();
+			}
+
 			void CCanvas::update()
 			{
 				processDelayedDeletes();
@@ -169,12 +175,8 @@ namespace Skylicht
 					data += generateTabSpace(tab);
 					data += std::string("<canvas ") + getRectString(bound) + ">\n";
 
-					CBase::List::iterator i = base->Children.begin(), end = base->Children.end();
-					while (i != end)
-					{
-						saveDockState(data, (*i), tab + 1);
-						++i;
-					}
+					for (CBase *c : base->Children)
+						saveDockState(data, c, tab + 1);
 
 					data += generateTabSpace(tab);
 					data += "</canvas>\n";
@@ -184,12 +186,8 @@ namespace Skylicht
 					data += generateTabSpace(tab);
 					data += std::string("<dock-panel ") + getRectString(bound) + ">\n";
 
-					CBase::List::iterator i = base->Children.begin(), end = base->Children.end();
-					while (i != end)
-					{
-						saveDockState(data, (*i), tab + 1);
-						++i;
-					}
+					for (CBase *c : base->Children)
+						saveDockState(data, c, tab + 1);
 
 					data += generateTabSpace(tab);
 					data += "</dock-panel>\n";
@@ -291,12 +289,8 @@ namespace Skylicht
 				}
 				else
 				{
-					CBase::List::iterator i = base->Children.begin(), end = base->Children.end();
-					while (i != end)
-					{
-						saveDockState(data, (*i), tab);
-						++i;
-					}
+					for (CBase *c : base->Children)
+						saveDockState(data, c, tab);
 				}
 			}
 
