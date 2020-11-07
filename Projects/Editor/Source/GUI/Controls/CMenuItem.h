@@ -32,12 +32,17 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CMenu;
 			class CMenuItem : public CButton
 			{
 			protected:
 				CTextContainer *m_accelerator;
+				CIcon *m_submenuArrow;
+
+				CMenu *m_menu;
 
 				bool m_inMenuBar;
+				bool m_isOpen;
 
 			public:
 				CMenuItem(CBase *parent);
@@ -49,9 +54,24 @@ namespace Skylicht
 
 				virtual void sizeToContents();
 
+				virtual void layout();
+
+				virtual void setLabelColor(const SGUIColor& color);
+
+				virtual CMenu* getMenu();
+
+				virtual void openMenu();
+
+				virtual void closeMenu();
+
 				inline void setInMenuBar(bool b)
 				{
 					m_inMenuBar = b;
+				}
+
+				inline bool isOpenMenu()
+				{
+					return m_isOpen;
 				}
 			};
 		}

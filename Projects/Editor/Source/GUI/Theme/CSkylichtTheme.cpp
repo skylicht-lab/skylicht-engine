@@ -176,6 +176,9 @@ namespace Skylicht
 				addSystemIcon(ESystemIcon::DragRow, "drag_row.png");
 				addSystemIcon(ESystemIcon::Window, "window.png");
 				addSystemIcon(ESystemIcon::Windows, "windows.png");
+				addSystemIcon(ESystemIcon::Pin, "pin.png");
+				addSystemIcon(ESystemIcon::Unpin, "unpin.png");
+				addSystemIcon(ESystemIcon::Web, "web.png");
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char *name)

@@ -53,6 +53,8 @@ namespace Skylicht
 
 				virtual void update();
 
+				virtual void closeMenu();
+
 				virtual CCanvas* getCanvas();
 
 				virtual void addDelayedDelete(CBase* control);

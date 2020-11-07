@@ -55,6 +55,7 @@ namespace Skylicht
 				Listener OnDown;
 				Listener OnPress;
 				Listener OnRightPress;
+				Listener OnHover;
 
 			public:
 				CButton(CBase *parent);
@@ -70,11 +71,13 @@ namespace Skylicht
 
 				virtual void onMouseClickRight(float x, float y, bool down);
 
+				virtual void onMouseEnter();
+
 				virtual void onMouseLeave();
 
 				virtual void sizeToContents();
 
-				inline void setLabelColor(const SGUIColor& color)
+				virtual void setLabelColor(const SGUIColor& color)
 				{
 					m_label->setColor(color);
 					m_labelColor = color;
@@ -113,11 +116,6 @@ namespace Skylicht
 				inline void setIcon(ESystemIcon icon)
 				{
 					m_icon->setIcon(icon);
-
-					if (icon == ESystemIcon::None)
-						showIcon(false);
-					else
-						showIcon(true);
 				}
 
 				inline ESystemIcon getIcon()

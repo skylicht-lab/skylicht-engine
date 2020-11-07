@@ -47,13 +47,45 @@ namespace Skylicht
 
 			}
 
+			void CMenuBar::layout()
+			{
+				CBase::layout();
+			}
+
+			void CMenuBar::renderUnder()
+			{
+				CBase::renderUnder();
+			}
+
 			void CMenuBar::onAddItem(CMenuItem *item)
 			{
+				if (item->getIcon() == ESystemIcon::None)
+					item->showIcon(false);
+
 				item->dock(EPosition::Left);
 				item->setPadding(SPadding(6.0f, 0.0f, 6.0f, 0.0f));
 				item->setMargin(SMargin(0.0f, 3.0f, 0.0f, 3.0f));
+				item->setLabelMargin(SMargin(0.0f, 2.0f, 0.0f, 0.0f));
 				item->setInMenuBar(true);
 				item->sizeToContents();
+				item->OnDown = BIND_LISTENER(&CMenuBar::onMenuItemDown, this);
+			}
+
+			void CMenuBar::onMenuItemHover(CBase *item)
+			{
+				if (m_isOpenSubMenu == true)
+				{
+					CMenu::onMenuItemHover(item);
+				}
+			}
+
+			void CMenuBar::onMenuItemDown(CBase *item)
+			{
+				CMenuItem *menuItem = dynamic_cast<CMenuItem*>(item);
+				if (menuItem != NULL)
+				{
+					openMenu(menuItem);
+				}
 			}
 		}
 	}

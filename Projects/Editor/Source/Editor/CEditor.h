@@ -50,6 +50,8 @@ namespace Skylicht
 
 		protected:
 
+			void initMenuBar();
+
 			void initDefaultLayout();
 
 			void initSessionLayout(const std::string& data);

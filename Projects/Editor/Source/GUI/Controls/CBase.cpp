@@ -110,12 +110,12 @@ namespace Skylicht
 				return true;
 			}
 
-			void CBase::setDisabled(bool active)
+			void CBase::setDisabled(bool disable)
 			{
-				if (m_disabled == active)
+				if (m_disabled == disable)
 					return;
 
-				m_disabled = active;
+				m_disabled = disable;
 			}
 
 			void CBase::updateCursor()
@@ -897,6 +897,14 @@ namespace Skylicht
 			void CBase::layout()
 			{
 
+			}
+
+			bool CBase::isMenuComponent()
+			{
+				if (!m_parent)
+					return false;
+
+				return m_parent->isMenuComponent();
 			}
 		}
 	}
