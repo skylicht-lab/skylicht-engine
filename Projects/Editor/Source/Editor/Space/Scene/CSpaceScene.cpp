@@ -22,62 +22,28 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "GUI/GUI.h"
-#include "Space/CSpace.h"
+#include "pch.h"
+#include "CSpaceScene.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CEditor
+		CSpaceScene::CSpaceScene(GUI::CDockableWindow *window, CEditor *editor) :
+			CSpace(window, editor)
 		{
-			friend class CSpace;
 
-		private:
-			GUI::CCanvas *m_canvas;
-			GUI::CMenuBar *m_menuBar;
-			GUI::CDockPanel *m_dockPanel;
+		}
 
-			std::list<CSpace*> m_workspaces;
+		CSpaceScene::~CSpaceScene()
+		{
+			int t = 0;
+			t++;
+		}
 
-		public:
-			CEditor();
+		void CSpaceScene::update()
+		{
 
-			virtual ~CEditor();
-
-			void update();
-
-			void initEditorGUI();
-
-			void initImportProjectGUI();
-
-			bool updateImporting();
-
-			void saveLayout(const std::string& data);
-
-		protected:
-
-			void initMenuBar();
-
-			void initDefaultLayout();
-
-			void initSessionLayout(const std::string& data);
-
-			void initWorkspace(GUI::CDockableWindow *window, const std::wstring& workspace);
-
-			void removeWorkspace(CSpace *space);
-
-		protected:
-
-			void readDockLayout(io::IXMLReader* xml, GUI::CDockPanel *panel);
-
-			void readSpliterLayout(io::IXMLReader* xml, GUI::CDockPanel *panel, GUI::CSplitter *spliter, bool isHorizontal);
-
-			void readDockTab(io::IXMLReader* xml, GUI::CDockTabControl *tabcontrol);
-
-			void readBound(io::IXMLReader* xml, GUI::CBase *base);
-		};
+		}
 	}
 }
