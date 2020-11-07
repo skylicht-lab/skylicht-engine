@@ -58,8 +58,7 @@ namespace Skylicht
 		m_pauseTime(0),
 		m_width(0),
 		m_height(0),
-		m_runGame(false),
-		m_showFPS(false)
+		m_runGame(false)
 	{
 		g_app = this;
 

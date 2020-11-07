@@ -25,6 +25,12 @@ void CViewInit::onInit()
 {
 	// init application
 	CBaseApp* app = getApplication();
+	
+	// show console
+	app->showDebugConsole();
+
+	// show console
+	app->showDebugConsole();
 
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);

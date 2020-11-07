@@ -44,7 +44,6 @@ namespace Skylicht
 		int m_height;
 
 		bool m_runGame;
-		bool m_showFPS;
 
 		std::vector<std::string> m_argv;
 
@@ -105,7 +104,7 @@ namespace Skylicht
 
 		void setDeviceID(const wchar_t* string);
 
-		void setDeviceID(const char* string);		
+		void setDeviceID(const char* string);
 	};
 
 }

@@ -43,6 +43,9 @@ void CViewInit::initScene()
 {
 	CBaseApp *app = getApplication();
 
+	// show console
+	app->showDebugConsole();
+
 	CScene *scene = CContext::getInstance()->initScene();
 	CZone *zone = scene->createZone();
 
