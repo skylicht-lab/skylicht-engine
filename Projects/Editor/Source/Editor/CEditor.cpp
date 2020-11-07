@@ -31,23 +31,51 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CEditor::CEditor()
+		CEditor::CEditor() :
+			m_menuBar(NULL),
+			m_canvas(NULL)
+
 		{
+			// init canvas
+			m_canvas = GUI::CGUIContext::getRoot();
+		}
+
+		CEditor::~CEditor()
+		{
+			m_canvas->notifySaveDockLayout();
+			m_canvas->update();
+		}
+
+		void CEditor::initImportProjectGUI()
+		{
+
+		}
+
+		bool CEditor::updateImporting()
+		{
+			return true;
+		}
+
+		void CEditor::initEditorGUI()
+		{
+			// bind save layout function
+			m_canvas->OnSaveDockLayout = std::bind(&CEditor::saveLayout, this, std::placeholders::_1);
+
+			// init menu bar
+			m_menuBar = new GUI::CMenuBar(m_canvas);
+			initMenuBar();
+
+			// init dock panel
+			m_dockPanel = new GUI::CDockPanel(m_canvas);
+			m_dockPanel->dock(GUI::EPosition::Fill);
+
+			// compute layout
+			m_canvas->recurseLayout();
+
 			u32 x, y, w, h;
 			bool maximize = false;
 			std::string data;
 			CWindowConfig::loadConfigAndExtraData(x, y, w, h, maximize, data);
-
-			m_canvas = GUI::CGUIContext::getRoot();
-			m_canvas->OnSaveDockLayout = std::bind(&CEditor::saveLayout, this, std::placeholders::_1);
-
-			m_menuBar = new GUI::CMenuBar(m_canvas);
-			initMenuBar();
-
-			m_dockPanel = new GUI::CDockPanel(m_canvas);
-			m_dockPanel->dock(GUI::EPosition::Fill);
-
-			m_canvas->recurseLayout();
 
 			if (data.length() > 0)
 			{
@@ -59,12 +87,6 @@ namespace Skylicht
 			}
 		}
 
-		CEditor::~CEditor()
-		{
-			m_canvas->notifySaveDockLayout();
-			m_canvas->update();
-		}
-
 		void CEditor::initMenuBar()
 		{
 			GUI::CMenu *submenu, *temp;
@@ -74,7 +96,7 @@ namespace Skylicht
 			submenu->addItem(L"About");
 			submenu->addItem(L"Development Fund", GUI::ESystemIcon::Web);
 			submenu->addSeparator();
-			submenu->addItem(L"Setting", GUI::ESystemIcon::Setting);
+			submenu->addItem(L"Project Setting", GUI::ESystemIcon::Setting);
 
 			GUI::CMenuItem *file = m_menuBar->addItem(L"File");
 			submenu = file->getMenu();
@@ -116,7 +138,7 @@ namespace Skylicht
 			submenu->addSeparator();
 			submenu->addItem(L"Copy path", GUI::ESystemIcon::Copy);
 			submenu->addSeparator();
-			submenu->addItem(L"Show in explorer");
+			submenu->addItem(L"Show in Explorer");
 			submenu->addItem(L"Open");
 			submenu->addItem(L"Rename");
 			submenu->addItem(L"Delete");

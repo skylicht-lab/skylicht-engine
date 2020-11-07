@@ -20,7 +20,7 @@ IDI_SMALL               ICON         "small.ico"
 
 STRINGTABLE
 BEGIN
-IDS_SKYLICHTDEMO	"SKYLICHT DEMO"
-IDS_APP_TITLE		"Skylicht Demo Application"
+IDS_SKYLICHT "SKYLICHT"
+IDS_APP_TITLE "Skylicht Engine"
 END
 #endif

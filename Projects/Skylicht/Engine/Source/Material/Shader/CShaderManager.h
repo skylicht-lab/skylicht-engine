@@ -91,6 +91,8 @@ namespace Skylicht
 			m_currentRenderID = id;
 		}
 
+		void initGUIShader();
+
 		void initBasicShader();
 
 		void initSGDeferredShader();

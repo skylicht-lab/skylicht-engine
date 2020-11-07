@@ -7,13 +7,19 @@
 
 class SkylichtEditor : public IApplicationEventReceiver
 {
-private:
-	CScene *m_scene;
-	CCamera *m_guiCamera;
-	CCamera *m_camera;
-	CForwardRP *m_forwardRP;
+public:
+	enum EEditorState
+	{
+		Startup = 0,
+		InitGUI,
+		InitEngine,
+		Loading,
+		Running,
+	};
 
 private:
+	EEditorState m_editorState;
+
 	Editor::CEditor *m_editor;
 
 public:

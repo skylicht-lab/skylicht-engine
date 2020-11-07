@@ -46,6 +46,12 @@ namespace Skylicht
 
 			virtual ~CEditor();
 
+			void initEditorGUI();
+
+			void initImportProjectGUI();
+
+			bool updateImporting();
+
 			void saveLayout(const std::string& data);
 
 		protected:

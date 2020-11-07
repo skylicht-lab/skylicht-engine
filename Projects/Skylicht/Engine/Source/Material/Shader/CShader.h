@@ -384,6 +384,10 @@ namespace Skylicht
 			return NULL;
 		}
 
+		void buildShader();
+
+		void buildUIUniform();
+
 	protected:
 
 		E_MATERIAL_TYPE getBaseShaderByName(const char *name);
@@ -393,10 +397,6 @@ namespace Skylicht
 		std::string getVSShaderFileName();
 
 		std::string getFSShaderFileName();
-
-		void buildShader();
-
-		void buildUIUniform();
 
 		void buildUIUniform(SUniformUI *ui);
 

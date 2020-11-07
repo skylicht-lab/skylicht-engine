@@ -1,5 +1,5 @@
 #define IDS_APP_TITLE			103
-#define IDS_SKYLICHTDEMO		104
+#define IDS_SKYLICHT			104
 
 #define IDI_SKYLICHT_DEMO		107
 #define IDI_SMALL				108

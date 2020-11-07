@@ -42,6 +42,7 @@ namespace Skylicht
 		m_driver(NULL),
 		m_timeStep(1.0f),
 		m_limitFPS(-1),
+		m_showFPS(false),
 		m_clearColor(255, 0, 0, 0),
 		m_clearScreenTime(0.0f),
 		m_enableRender(true)
@@ -49,20 +50,23 @@ namespace Skylicht
 #ifdef USE_VISUAL_LEAK_DETECTOR
 		VLDEnable();
 #endif
+}
 
+	CBaseApp::~CBaseApp()
+	{
+#ifdef USE_VISUAL_LEAK_DETECTOR
+		VLDDisable();
+#endif
+	}
+
+	void CBaseApp::showDebugConsole()
+	{
 #if defined(_WIN32) && !defined(SDL)
 #if WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP
 		AllocConsole();
 		freopen("con", "w", stdout);
 		freopen("con", "w", stderr);
 #endif
-#endif		
-	}
-
-	CBaseApp::~CBaseApp()
-	{
-#ifdef USE_VISUAL_LEAK_DETECTOR
-		VLDDisable();
 #endif
 	}
 
