@@ -468,6 +468,25 @@ namespace Skylicht
 			return (int)result.size();
 		}
 
+		static int splitString(const wchar_t *stringSplit, const wchar_t *search, std::vector<std::wstring>& result)
+		{
+			result.clear();
+
+			wchar_t stringResult[512];
+			int i = 0;
+
+			while (CStringImp::split<wchar_t>(stringResult, (wchar_t*)stringSplit, (wchar_t*)search, &i) == true)
+			{
+				trim<wchar_t>(stringResult);
+				result.push_back(stringResult);
+			}
+
+			if (result.size() == 0)
+				result.push_back(stringSplit);
+
+			return (int)result.size();
+		}
+
 		static bool format(char* lpString, const char* lpStringFormat, ...)
 		{
 			va_list listArgs;

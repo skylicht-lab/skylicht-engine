@@ -46,6 +46,14 @@ namespace Skylicht
 
 				virtual void renderUnder();
 
+				CMenuItem* getItemByPath(const std::wstring& path);
+				CMenuItem* getItemByLabel(const std::wstring& label);
+
+				CMenuItem* addItemByPath(const std::wstring& path);
+				CMenuItem* addItemByPath(const std::wstring& path, const std::wstring& accelerator);
+				CMenuItem* addItemByPath(const std::wstring& path, ESystemIcon icon);
+				CMenuItem* addItemByPath(const std::wstring& path, ESystemIcon icon, const std::wstring& accelerator);
+
 				CMenuItem* addItem(ESystemIcon icon);
 				CMenuItem* addItem(const std::wstring& label, ESystemIcon icon, const std::wstring& accelerator);
 				CMenuItem* addItem(const std::wstring& label);
@@ -65,10 +73,15 @@ namespace Skylicht
 					return true;
 				}
 
+				virtual void onMenuItemPress(CBase *item);
+
+			public:
+
+				Listener OnCommand;
+
 			protected:
 
 				virtual void onAddItem(CMenuItem *item);
-
 			};
 		}
 	}

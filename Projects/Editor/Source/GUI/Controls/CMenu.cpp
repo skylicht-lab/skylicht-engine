@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CMenu.h"
 #include "CCanvas.h"
 
+#include "Utils/CStringImp.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -84,6 +86,106 @@ namespace Skylicht
 				CTheme::getTheme()->drawWindow(getRenderBounds(), true);
 			}
 
+			CMenuItem* CMenu::getItemByPath(const std::wstring& path)
+			{
+				std::vector<std::wstring> result;
+				CStringImp::splitString(path.c_str(), L"/", result);
+
+				CMenu *menu = this;
+				CMenuItem *item = NULL;
+
+				while (result.size() > 0)
+				{
+					if (result[0].empty() == true)
+						return NULL;
+
+					item = menu->getItemByLabel(result[0]);
+					if (item == NULL)
+						return NULL;
+
+					result.erase(result.begin());
+
+					if (result.size() > 0)
+					{
+						if (item->haveSubMenu() == false)
+							return NULL;
+						else
+						{
+							menu = item->getMenu();
+							item = NULL;
+						}
+					}
+				}
+
+				return item;
+			}
+
+			CMenuItem* CMenu::getItemByLabel(const std::wstring& label)
+			{
+				for (CBase* child : Children)
+				{
+					CMenuItem *item = dynamic_cast<CMenuItem*>(child);
+					if (item != NULL && item->getLabel() == label)
+					{
+						return item;
+					}
+				}
+				return NULL;
+			}
+
+			CMenuItem* CMenu::addItemByPath(const std::wstring& path)
+			{
+				return addItemByPath(path, ESystemIcon::None, L"");
+			}
+
+			CMenuItem* CMenu::addItemByPath(const std::wstring& path, const std::wstring& accelerator)
+			{
+				return addItemByPath(path, ESystemIcon::None, accelerator);
+			}
+
+			CMenuItem* CMenu::addItemByPath(const std::wstring& path, ESystemIcon icon)
+			{
+				return addItemByPath(path, icon, L"");
+			}
+
+			CMenuItem* CMenu::addItemByPath(const std::wstring& path, ESystemIcon icon, const std::wstring& accelerator)
+			{
+				std::vector<std::wstring> result;
+				CStringImp::splitString(path.c_str(), L"/", result);
+
+				CMenu *menu = this;
+				CMenuItem *item = NULL;
+
+				while (result.size() > 0)
+				{
+					bool created = false;
+
+					if (result[0].empty() == true)
+						return NULL;
+
+					item = menu->getItemByLabel(result[0]);
+					if (item == NULL)
+					{
+						if (result.size() > 0)
+							item = menu->addItem(result[0]);
+						else
+							item = menu->addItem(result[0], icon, accelerator);
+
+						created = true;
+					}
+
+					result.erase(result.begin());
+
+					if (result.size() > 0)
+						menu = item->getMenu();
+
+					if (created == false)
+						item = NULL;
+				}
+
+				return item;
+			}
+
 			CMenuItem* CMenu::addItem(ESystemIcon icon)
 			{
 				CMenuItem *iconItem = addItem(std::wstring(L""), icon, std::wstring(L""));
@@ -117,6 +219,7 @@ namespace Skylicht
 				item->setAccelerator(accelerator);
 				item->setLabelMargin(SMargin(4.0f, 3.0f, 0.0f, 0.0f));
 				item->OnHover = BIND_LISTENER(&CMenu::onMenuItemHover, this);
+				item->OnPress = BIND_LISTENER(&CMenu::onMenuItemPress, this);
 				onAddItem(item);
 
 				return item;
@@ -144,6 +247,22 @@ namespace Skylicht
 				if (menuItem != NULL)
 				{
 					openMenu(menuItem);
+				}
+			}
+
+			void CMenu::onMenuItemPress(CBase *item)
+			{
+				CMenuItem *menuItem = dynamic_cast<CMenuItem*>(item);
+				if (menuItem != NULL)
+				{
+					if (menuItem->haveSubMenu() == false)
+						getCanvas()->closeMenu();
+
+					if (OnCommand != nullptr)
+					{
+
+						OnCommand(menuItem);
+					}
 				}
 			}
 
