@@ -73,6 +73,11 @@ namespace Skylicht
 				{
 					return m_isOpen;
 				}
+
+				inline bool haveSubMenu()
+				{
+					return m_menu != NULL;
+				}
 			};
 		}
 	}
