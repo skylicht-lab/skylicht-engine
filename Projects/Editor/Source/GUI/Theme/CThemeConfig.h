@@ -44,6 +44,7 @@ namespace Skylicht
 				static SGUIColor WindowBackgroundColor;
 				static SGUIColor WindowInnerColor;
 				static SGUIColor DefaultTextColor;
+				static SGUIColor DisableTextColor;
 				static SGUIColor DefaultIconColor;
 				static SGUIColor IconPressColor;
 				static SGUIColor TextPressColor;
@@ -67,6 +68,8 @@ namespace Skylicht
 				static SGUIColor DockHintWindowColor;
 
 				static SGUIColor MenuBarColor;
+				static SGUIColor MenuItemAcceleratorColor;
+				static SGUIColor MenuItemSeparatorColor;
 
 				static float getFontSizePt(EFontSize size);
 			};

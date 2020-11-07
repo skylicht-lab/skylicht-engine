@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CMenu.h"
+#include "CButton.h"
 
 namespace Skylicht
 {
@@ -32,23 +32,17 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CMenuBar : public CMenu
+			class CMenuSeparator : public CBase
 			{
 			protected:
 
 			public:
-				CMenuBar(CBase *parent);
-				virtual ~CMenuBar();
-
-				virtual void layout();
+				CMenuSeparator(CBase *parent);
+				virtual ~CMenuSeparator();
 
 				virtual void renderUnder();
 
-				virtual void onAddItem(CMenuItem *item);
-
-				virtual void onMenuItemHover(CBase *item);
-
-				virtual void onMenuItemDown(CBase *item);
+				virtual void layout();
 			};
 		}
 	}

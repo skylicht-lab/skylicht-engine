@@ -467,6 +467,9 @@ namespace Skylicht
 				DragRow,
 				Window,
 				Windows,
+				Pin,
+				Unpin,
+				Web,
 				NumSystemIcon
 			};
 

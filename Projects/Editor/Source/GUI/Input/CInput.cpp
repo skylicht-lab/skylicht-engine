@@ -118,6 +118,9 @@ namespace Skylicht
 
 			bool CInput::inputMouseButton(int iMouseButton, bool down)
 			{
+				if (down && (!CGUIContext::HoveredControl || !CGUIContext::HoveredControl->isMenuComponent()))
+					CGUIContext::getRoot()->closeMenu();
+
 				bool isDoubleClick = false;
 
 				if (down

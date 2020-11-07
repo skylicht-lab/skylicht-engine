@@ -150,6 +150,12 @@ namespace Skylicht
 				}
 			}
 
+			void CButton::onMouseEnter()
+			{
+				if (OnHover != nullptr)
+					OnHover(this);
+			}
+
 			void CButton::onMouseLeave()
 			{
 				m_icon->setColor(m_iconColor);
