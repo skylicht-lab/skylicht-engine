@@ -9,7 +9,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
-The above copyRight notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CWindowConfig.h"
 #include "Utils/CStringImp.h"
 
+#include "Space/Scene/CSpaceScene.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -42,8 +44,13 @@ namespace Skylicht
 
 		CEditor::~CEditor()
 		{
-			m_canvas->notifySaveDockLayout();
-			m_canvas->update();
+
+		}
+
+		void CEditor::update()
+		{
+			for (CSpace *s : m_workspaces)
+				s->update();
 		}
 
 		void CEditor::initImportProjectGUI()
@@ -238,9 +245,9 @@ namespace Skylicht
 
 			w = round(width * 0.35f);
 			h = round(height * 0.3f);
-			GUI::CDockableWindow *console = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
-			console->setCaption(L"Preview");
-			m_dockPanel->dockChildWindow(console, asset->getCurrentDockTab(), GUI::CDockPanel::DockTargetRight);
+			GUI::CDockableWindow *preview = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			preview->setCaption(L"Preview");
+			m_dockPanel->dockChildWindow(preview, asset->getCurrentDockTab(), GUI::CDockPanel::DockTargetRight);
 			m_dockPanel->recurseLayout();
 
 			w = width * 0.3f;
@@ -249,6 +256,49 @@ namespace Skylicht
 			property->setCaption(L"Property");
 			m_dockPanel->dockChildWindow(property, NULL, GUI::CDockPanel::DockRight);
 			m_dockPanel->recurseLayout();
+
+			initWorkspace(scene, scene->getCaption());
+			initWorkspace(asset, asset->getCaption());
+			initWorkspace(preview, preview->getCaption());
+			initWorkspace(property, property->getCaption());
+		}
+
+		void CEditor::initWorkspace(GUI::CDockableWindow *window, const std::wstring& workspace)
+		{
+			if (workspace == L"Scene")
+			{
+				m_workspaces.push_back(new CSpaceScene(window, this));
+			}
+			if (workspace == L"GUI Design")
+			{
+
+			}
+			if (workspace == L"Animation")
+			{
+
+			}
+			else if (workspace == L"Asset")
+			{
+
+			}
+			else if (workspace == L"Preview")
+			{
+
+			}
+			else if (workspace == L"Property")
+			{
+
+			}
+		}
+
+		void CEditor::removeWorkspace(CSpace *space)
+		{
+			std::list<CSpace*>::iterator i = std::find(m_workspaces.begin(), m_workspaces.end(), space);
+			if (i != m_workspaces.end())
+			{
+				delete (*i);
+				m_workspaces.erase(i);
+			}
 		}
 
 		void CEditor::initSessionLayout(const std::string& data)
@@ -362,6 +412,8 @@ namespace Skylicht
 							GUI::CDockableWindow *win = new GUI::CDockableWindow(panel, 0, 0, 1, 1);
 							readBound(xmlRead, win);
 							win->setCaption(name);
+
+							initWorkspace(win, name);
 						}
 					}
 				}
@@ -529,6 +581,8 @@ namespace Skylicht
 							GUI::CDockableWindow *win = new GUI::CDockableWindow(m_dockPanel, 0, 0, 1, 1);
 							win->setCaption(name);
 							tabcontrol->dockWindow(win);
+
+							initWorkspace(win, name);
 
 							if (CStringImp::comp(name, current.c_str()) == 0)
 								currentWin = win;

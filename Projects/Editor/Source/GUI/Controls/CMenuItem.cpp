@@ -139,7 +139,7 @@ namespace Skylicht
 
 					if (!m_inMenuBar)
 					{
-						m_submenuArrow = new CIcon(this, ESystemIcon::TriangleRight);
+						m_submenuArrow = new CIcon(this, ESystemIcon::VRight);
 						m_submenuArrow->setColor(CThemeConfig::MenuItemAcceleratorColor);
 					}
 
