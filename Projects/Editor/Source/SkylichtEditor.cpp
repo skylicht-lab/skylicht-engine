@@ -20,10 +20,10 @@ SkylichtEditor::SkylichtEditor() :
 
 SkylichtEditor::~SkylichtEditor()
 {
+	Editor::GUI::CGUIContext::destroyGUI();
+
 	if (m_editor != NULL)
 		delete m_editor;
-
-	Editor::GUI::CGUIContext::destroyGUI();
 }
 
 void SkylichtEditor::onInitApp()
@@ -133,6 +133,7 @@ void SkylichtEditor::onUpdate()
 	break;
 	default:
 		// Running
+		m_editor->update();
 		Editor::GUI::CGUIContext::update((float)getIrrlichtDevice()->getTimer()->getTime());
 		break;
 	}

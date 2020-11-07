@@ -59,6 +59,9 @@ namespace Skylicht
 
 			CBase::~CBase()
 			{
+				if (OnDestroy != nullptr)
+					OnDestroy(this);
+
 				CCanvas *canvas = getCanvas();
 
 				if (canvas != NULL)

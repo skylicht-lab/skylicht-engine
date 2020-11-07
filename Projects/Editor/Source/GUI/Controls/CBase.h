@@ -334,6 +334,8 @@ namespace Skylicht
 				std::function<void(void*)> OnHoverEnter;
 				std::function<void(void*)> OnHoverLeave;
 
+				Listener OnDestroy;
+
 			protected:
 				CBase *m_parent;
 				CBase *m_innerPanel;

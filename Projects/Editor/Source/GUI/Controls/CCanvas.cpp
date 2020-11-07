@@ -50,7 +50,7 @@ namespace Skylicht
 
 			CCanvas::~CCanvas()
 			{
-
+				saveDockLayoutToFile();
 			}
 
 			void CCanvas::initialize()
