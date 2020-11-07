@@ -29,6 +29,9 @@ void CHelloWorld::onInitApp()
 {
 	// init application
 	CBaseApp* app = getApplication();
+	
+	// Show console
+	app->showDebugConsole();
 
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);

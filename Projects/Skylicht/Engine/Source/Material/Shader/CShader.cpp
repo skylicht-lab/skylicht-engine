@@ -568,12 +568,6 @@ namespace Skylicht
 
 		m_numVSUniform = (int)m_vsUniforms.size();
 		m_numFSUniform = (int)m_fsUniforms.size();
-
-		// todo build shader
-		buildShader();
-
-		// update editor ui uniform
-		buildUIUniform();
 	}
 
 	void CShader::buildUIUniform()

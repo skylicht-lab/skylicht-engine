@@ -54,6 +54,8 @@ namespace Skylicht
 		float m_timeStep;
 		int m_limitFPS;
 
+		bool m_showFPS;
+
 		float m_clearScreenTime;
 		bool m_enableRender;
 
@@ -67,6 +69,8 @@ namespace Skylicht
 		std::vector<appEventType> m_appEventReceivers;
 
 	public:
+
+		void showDebugConsole();
 
 		inline IrrlichtDevice* getDevice()
 		{
@@ -96,6 +100,11 @@ namespace Skylicht
 		}
 
 		io::path getBuiltInPath(const char *name);
+
+		inline void showFPS(bool b)
+		{
+			m_showFPS = b;
+		}
 
 		int getWidth();
 

@@ -12,20 +12,18 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 SkylichtEditor::SkylichtEditor() :
-	m_scene(NULL),
-	m_forwardRP(NULL),
-	m_editor(NULL)
+	m_editor(NULL),
+	m_editorState(Startup)
 {
 
 }
 
 SkylichtEditor::~SkylichtEditor()
 {
-	delete m_editor;
-	Editor::GUI::CGUIContext::destroyGUI();
+	if (m_editor != NULL)
+		delete m_editor;
 
-	delete m_scene;
-	delete m_forwardRP;
+	Editor::GUI::CGUIContext::destroyGUI();
 }
 
 void SkylichtEditor::onInitApp()
@@ -33,14 +31,13 @@ void SkylichtEditor::onInitApp()
 	// init application
 	CBaseApp* app = getApplication();
 	app->setClearColor(CColor::toSRGB(SColor(255, 56, 56, 56)));
+	app->showFPS(false);
 
-	// load "BuiltIn.zip" to read files inside it
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Editor.zip"), false, false);
-
-	// load basic shader
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
-	shaderMgr->initBasicShader();
+	/*
+	CScene *m_scene;
+	CCamera *m_guiCamera;
+	CCamera *m_camera;
+	CForwardRP *m_forwardRP;
 
 	// create a Scene
 	m_scene = new CScene();
@@ -79,30 +76,70 @@ void SkylichtEditor::onInitApp()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// rendering pipe line
-	u32 w = app->getWidth();
-	u32 h = app->getHeight();
 
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
-
-	Editor::GUI::CGUIContext::initGUI((float)w, (float)h);
-
-	m_editor = new Editor::CEditor();
+	*/
 }
 
 void SkylichtEditor::onUpdate()
 {
-	Editor::GUI::CGUIContext::update((float)getIrrlichtDevice()->getTimer()->getTime());
+	switch (m_editorState)
+	{
+	case Startup:
+		// init engine
+		m_editorState = InitGUI;
+		break;
+	case InitGUI:
+	{
+		// import resources
+		CBaseApp* app = getApplication();
+		app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
+		app->getFileSystem()->addFileArchive(app->getBuiltInPath("Editor.zip"), false, false);
 
-	// update application
-	m_scene->update();
+		// load gui shader
+		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		shaderMgr->initGUIShader();
+
+		// init editor gui		
+		u32 w = app->getWidth();
+		u32 h = app->getHeight();
+		Editor::GUI::CGUIContext::initGUI((float)w, (float)h);
+
+		m_editor = new Editor::CEditor();
+		m_editor->initImportProjectGUI();
+
+		m_editorState = InitEngine;
+	}
+	break;
+	case InitEngine:
+	{
+		CShaderManager::getInstance()->initBasicShader();
+		CShaderManager::getInstance()->initSGDeferredShader();
+
+		// import project
+		m_editorState = Loading;
+	}
+	break;
+	case Loading:
+	{
+		// loading project
+		if (m_editor->updateImporting() == true)
+		{
+			m_editor->initEditorGUI();
+			m_editorState = Running;
+		}
+	}
+	break;
+	default:
+		// Running
+		Editor::GUI::CGUIContext::update((float)getIrrlichtDevice()->getTimer()->getTime());
+		break;
+	}
 }
 
 void SkylichtEditor::onRender()
 {
-	// render 3d scene
-	// m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
-
 	Editor::GUI::CGUIContext::render();
 }
 
@@ -122,9 +159,6 @@ bool SkylichtEditor::onBack()
 void SkylichtEditor::onResize(int w, int h)
 {
 	// on window size changed
-	if (m_forwardRP != NULL)
-		m_forwardRP->resize(w, h);
-
 	Editor::GUI::CGUIContext::resize((float)w, (float)h);
 }
 

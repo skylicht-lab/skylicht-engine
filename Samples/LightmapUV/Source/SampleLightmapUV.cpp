@@ -43,6 +43,9 @@ void SampleLightmapUV::onInitApp()
 	// init application
 	CBaseApp* app = getApplication();
 
+	// Show console
+	app->showDebugConsole();
+
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 
@@ -133,12 +136,12 @@ void SampleLightmapUV::onInitApp()
 			else if (name == "top_sponza")
 			{
 				m_unwrap.addMesh(renderData->getMesh(), 0.1f);
-	}
+			}
 			else
 			{
 				// default mesh
 				m_unwrap.addMesh(renderData->getMesh(), 1.0f);
-			}
+	}
 #else
 			m_unwrap.addMesh(renderData->getMesh(), 1.0f);
 #endif
@@ -280,7 +283,7 @@ void SampleLightmapUV::updateMeshUV()
 	}
 
 	m_renderMesh->initMaterial(materials);
-		}
+	}
 
 void SampleLightmapUV::updateThread()
 {

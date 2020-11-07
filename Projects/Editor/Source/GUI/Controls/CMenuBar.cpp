@@ -84,7 +84,10 @@ namespace Skylicht
 				CMenuItem *menuItem = dynamic_cast<CMenuItem*>(item);
 				if (menuItem != NULL)
 				{
-					openMenu(menuItem);
+					if (m_isOpenSubMenu)
+						closeMenu();
+					else
+						openMenu(menuItem);
 				}
 			}
 		}

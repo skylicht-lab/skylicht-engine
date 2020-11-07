@@ -64,15 +64,24 @@ namespace Skylicht
 
 			void CGUIContext::destroyGUI()
 			{
-				delete g_rootCanvas;
-				delete g_renderer;
-				delete g_theme;
-				delete g_input;
+				if (g_rootCanvas != NULL)
+					delete g_rootCanvas;
+
+				if (g_renderer != NULL)
+					delete g_renderer;
+
+				if (g_theme != NULL)
+					delete g_theme;
+
+				if (g_input != NULL)
+					delete g_input;
 			}
 
 			void CGUIContext::update(float time)
 			{
-				g_rootCanvas->update();
+				if (g_rootCanvas != NULL)
+					g_rootCanvas->update();
+
 				g_guiUpdateTime = time;
 			}
 
@@ -83,15 +92,20 @@ namespace Skylicht
 
 			void CGUIContext::render()
 			{
-				g_rootCanvas->doRender();
+				if (g_rootCanvas != NULL)
+					g_rootCanvas->doRender();
 			}
 
 			void CGUIContext::resize(float width, float height)
 			{
-				g_renderer->resize(width, height);
+				if (g_renderer != NULL)
+					g_renderer->resize(width, height);
 
-				g_rootCanvas->setBounds(0.0f, 0.0f, width, height);
-				g_rootCanvas->notifySaveDockLayout();
+				if (g_rootCanvas != NULL)
+				{
+					g_rootCanvas->setBounds(0.0f, 0.0f, width, height);
+					g_rootCanvas->notifySaveDockLayout();
+				}
 			}
 
 			CCanvas* CGUIContext::getRoot()

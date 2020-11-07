@@ -78,7 +78,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// Initialize global strings
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDS_SKYLICHTDEMO, szWindowClass, MAX_LOADSTRING);
+	LoadString(hInstance, IDS_SKYLICHT, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
 	int show = nCmdShow;

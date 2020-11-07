@@ -29,7 +29,9 @@ io::path CViewInit::getBuiltInPath(const char *name)
 
 void CViewInit::onInit()
 {
-	getApplication()->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
+	CBaseApp* app = getApplication();
+	app->showDebugConsole();
+	app->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
@@ -176,7 +178,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -236,7 +238,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()

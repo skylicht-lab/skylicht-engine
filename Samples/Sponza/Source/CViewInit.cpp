@@ -33,7 +33,9 @@ io::path CViewInit::getBuiltInPath(const char *name)
 
 void CViewInit::onInit()
 {
-	getApplication()->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
+	CBaseApp *app = getApplication();
+	app->showDebugConsole();
+	app->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
