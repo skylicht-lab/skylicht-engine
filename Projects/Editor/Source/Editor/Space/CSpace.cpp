@@ -35,6 +35,7 @@ namespace Skylicht
 			m_editor(editor)
 		{
 			m_window->OnDestroy = BIND_LISTENER(&CSpace::onDestroy, this);
+			m_window->OnResize = BIND_LISTENER(&CSpace::onWindowResize, this);
 		}
 
 		CSpace::~CSpace()
@@ -50,6 +51,14 @@ namespace Skylicht
 		void CSpace::onDestroy(GUI::CBase *base)
 		{
 			m_editor->removeWorkspace(this);
+		}
+
+		void CSpace::onWindowResize(GUI::CBase *base)
+		{
+			if (base == m_window)
+			{
+				onResize(base->width(), base->height());
+			}
 		}
 	}
 }

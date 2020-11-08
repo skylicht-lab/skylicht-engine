@@ -46,6 +46,10 @@ namespace Skylicht
 			virtual void update();
 
 			virtual void onDestroy(GUI::CBase *base);
+
+			virtual void onWindowResize(GUI::CBase *base);
+
+			virtual void onResize(float w, float h) {}
 		};
 	}
 }

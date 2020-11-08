@@ -335,6 +335,8 @@ namespace Skylicht
 				std::function<void(void*)> OnHoverLeave;
 
 				Listener OnDestroy;
+				Listener OnResize;
+				Listener OnRender;
 
 			protected:
 				CBase *m_parent;
