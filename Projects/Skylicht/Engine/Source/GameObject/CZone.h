@@ -29,13 +29,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CScene;
 	class CZone : public CContainerObject
 	{
 	protected:
 		CEntityManager *m_entityManager;
+		CScene *m_scene;
 
 	public:
-		CZone(CEntityManager *entityManager);
+		CZone(CScene *scene);
 		virtual ~CZone();
 
 		virtual void updateObject();
@@ -47,6 +49,11 @@ namespace Skylicht
 		inline CEntityManager* getEntityManager()
 		{
 			return m_entityManager;
+		}
+
+		inline CScene* getScene()
+		{
+			return m_scene;
 		}
 	};
 

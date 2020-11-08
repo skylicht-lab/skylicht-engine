@@ -2,7 +2,7 @@
 #include "CCamera.h"
 #include "CEditorCamera.h"
 #include "GameObject/CGameObject.h"
-#include "EventManager/CEventManager.h"
+#include "Scene/CScene.h"
 
 namespace Skylicht
 {
@@ -20,12 +20,12 @@ namespace Skylicht
 
 	CEditorCamera::~CEditorCamera()
 	{
-		CEventManager::getInstance()->unRegisterEvent(this);
+		getGameObject()->getScene()->unRegisterEvent(this);
 	}
 
 	void CEditorCamera::initComponent()
 	{
-		CEventManager::getInstance()->registerEvent("CEditorCamera", this);
+		getGameObject()->getScene()->registerEvent("CEditorCamera", this);
 	}
 
 	void CEditorCamera::updateComponent()

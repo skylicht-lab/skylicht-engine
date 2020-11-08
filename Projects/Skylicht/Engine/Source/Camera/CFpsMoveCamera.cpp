@@ -2,7 +2,7 @@
 #include "CCamera.h"
 #include "CFpsMoveCamera.h"
 #include "GameObject/CGameObject.h"
-#include "EventManager/CEventManager.h"
+#include "Scene/CScene.h"
 
 namespace Skylicht
 {
@@ -25,12 +25,12 @@ namespace Skylicht
 
 	CFpsMoveCamera::~CFpsMoveCamera()
 	{
-		CEventManager::getInstance()->unRegisterEvent(this);
+		getGameObject()->getScene()->unRegisterEvent(this);
 	}
 
 	void CFpsMoveCamera::initComponent()
 	{
-		CEventManager::getInstance()->registerEvent("CFpsMoveCamera", this);
+		getGameObject()->getScene()->registerEvent("CFpsMoveCamera", this);
 	}
 
 	void CFpsMoveCamera::updateComponent()
