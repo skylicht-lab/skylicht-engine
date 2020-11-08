@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 
 namespace Skylicht
@@ -33,13 +34,26 @@ namespace Skylicht
 		class CSpaceScene : public CSpace
 		{
 		protected:
+			CScene *m_scene;
+			CCamera *m_editorCamera;
+			IRenderPipeline *m_renderRP;
+
+			CGameObject *m_gridPlane;
 
 		public:
 			CSpaceScene(GUI::CDockableWindow *window, CEditor *editor);
 
 			virtual ~CSpaceScene();
 
+			void initDefaultScene();
+
+			virtual void onResize(float w, float h);
+
+			virtual void onRender(GUI::CBase *base);
+
 			virtual void update();
+
+			bool isEditorObject(CGameObject *object);
 		};
 	}
 }

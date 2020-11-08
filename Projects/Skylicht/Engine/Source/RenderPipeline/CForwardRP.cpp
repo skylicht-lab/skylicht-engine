@@ -128,6 +128,7 @@ namespace Skylicht
 		{
 			driver->setRenderTarget(m_emission, true, false);
 			entityManager->renderEmission();
+			driver->setRenderTarget(currentTarget, false, false);
 		}
 
 		onNext(currentTarget, camera, entityManager, viewport);

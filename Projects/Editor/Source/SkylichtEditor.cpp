@@ -2,7 +2,6 @@
 #include "SkylichtEngine.h"
 #include "SkylichtEditor.h"
 
-#include "GridPlane/CGridPlane.h"
 #include "Utils/CColor.h"
 
 void installApplication(const std::vector<std::string>& argv)
@@ -32,54 +31,6 @@ void SkylichtEditor::onInitApp()
 	CBaseApp* app = getApplication();
 	app->setClearColor(CColor::toSRGB(SColor(255, 56, 56, 56)));
 	app->showFPS(false);
-
-	/*
-	CScene *m_scene;
-	CCamera *m_guiCamera;
-	CCamera *m_camera;
-	CForwardRP *m_forwardRP;
-
-	// create a Scene
-	m_scene = new CScene();
-
-	// create a Zone in Scene
-	CZone *zone = m_scene->createZone();
-
-	// create 2D camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
-	m_guiCamera = guiCameraObject->addComponent<CCamera>();
-	m_guiCamera->setProjectionType(CCamera::OrthoUI);
-
-	// create 3D camera
-	CGameObject *camObj = zone->createEmptyObject();
-	camObj->addComponent<CCamera>();
-	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
-
-	m_camera = camObj->getComponent<CCamera>();
-	m_camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
-	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
-
-	// 3d grid
-	CGameObject *grid = zone->createEmptyObject();
-	grid->addComponent<CGridPlane>();
-
-	// lighting
-	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
-	SColor c(255, 255, 244, 214);
-	directionalLight->setColor(SColorf(c));
-
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
-	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
-
-	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
-	lightTransform->setOrientation(direction, CTransform::s_oy);
-
-	// rendering pipe line
-
-	m_forwardRP = new CForwardRP();
-	m_forwardRP->initRender(w, h);
-	*/
 }
 
 void SkylichtEditor::onUpdate()

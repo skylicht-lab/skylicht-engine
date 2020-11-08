@@ -112,6 +112,11 @@ namespace Skylicht
 			{
 				return g_rootCanvas;
 			}
+
+			CRenderer* CGUIContext::getRenderer()
+			{
+				return g_renderer;
+			}
 		}
 	}
 }
