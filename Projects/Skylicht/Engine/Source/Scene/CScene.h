@@ -26,18 +26,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GameObject/CZone.h"
 #include "Entity/CEntityManager.h"
+#include "EventManager/CEventManager.h"
 
 #include "RenderPipeline/CForwardRP.h"
 #include "RenderPipeline/CDeferredRP.h"
 
 namespace Skylicht
 {
-	class CScene
+	class CScene : public IEventReceiver
 	{
 	protected:
 		ArrayZone m_zones;
 
 		CEntityManager *m_entityManager;
+
+		typedef std::pair<std::string, IEventReceiver*> eventType;
+		std::vector<eventType> m_eventReceivers;
 
 	public:
 		CScene();
@@ -50,6 +54,7 @@ namespace Skylicht
 		void updateIndexSearchObject();
 
 		virtual CGameObject* searchObject(const char* name);
+
 		virtual CGameObject* searchObjectInChild(const char* name);
 
 		virtual CZone* createZone();
@@ -75,6 +80,12 @@ namespace Skylicht
 		{
 			return &m_zones;
 		}
+
+		void registerEvent(std::string name, IEventReceiver *pEvent);
+
+		void unRegisterEvent(IEventReceiver *pEvent);
+
+		virtual bool OnEvent(const SEvent& event);
 
 		virtual void update();
 	};

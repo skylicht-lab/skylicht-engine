@@ -24,16 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CZone.h"
+#include "Scene/CScene.h"
 
 #include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
 
-	CZone::CZone(CEntityManager *entityManager) :
+	CZone::CZone(CScene *scene) :
 		CContainerObject(NULL, this),
-		m_entityManager(entityManager)
+		m_scene(scene)
 	{
+		m_entityManager = scene->getEntityManager();
 	}
 
 	CZone::~CZone()

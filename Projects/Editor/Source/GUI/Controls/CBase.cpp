@@ -588,66 +588,69 @@ namespace Skylicht
 					OnHoverLeave(this);
 			}
 
-			bool CBase::onMouseWheeled(int iDelta)
+			bool CBase::onMouseWheeled(int delta)
 			{
+				if (OnMouseWheeled != nullptr)
+					OnMouseWheeled(this, delta);
+
 				if (m_parent)
-					return m_parent->onMouseWheeled(iDelta);
+					return m_parent->onMouseWheeled(delta);
 
 				return false;
 			}
 
-			bool CBase::onKeyPress(int iKey, bool bPress)
+			bool CBase::onKeyPress(int key, bool press)
 			{
 				bool handled = false;
 
-				switch (iKey)
+				switch (key)
 				{
 				case EKey::KEY_TAB:
-					handled = onKeyTab(bPress);
+					handled = onKeyTab(press);
 					break;
 
 				case EKey::KEY_SPACE:
-					handled = onKeySpace(bPress);
+					handled = onKeySpace(press);
 					break;
 
 				case EKey::KEY_HOME:
-					handled = onKeyHome(bPress);
+					handled = onKeyHome(press);
 					break;
 
 				case EKey::KEY_END:
-					handled = onKeyEnd(bPress);
+					handled = onKeyEnd(press);
 					break;
 
 				case EKey::KEY_RETURN:
-					handled = onKeyReturn(bPress);
+					handled = onKeyReturn(press);
 					break;
 
 				case EKey::KEY_BACK:
-					handled = onKeyBackspace(bPress);
+					handled = onKeyBackspace(press);
 					break;
 
 				case EKey::KEY_DELETE:
-					handled = onKeyDelete(bPress);
+					handled = onKeyDelete(press);
 					break;
 
 				case EKey::KEY_RIGHT:
-					handled = onKeyRight(bPress);
+					handled = onKeyRight(press);
 					break;
 
 				case EKey::KEY_LEFT:
-					handled = onKeyLeft(bPress);
+					handled = onKeyLeft(press);
 					break;
 
 				case EKey::KEY_UP:
-					handled = onKeyUp(bPress);
+					handled = onKeyUp(press);
 					break;
 
 				case EKey::KEY_DOWN:
-					handled = onKeyDown(bPress);
+					handled = onKeyDown(press);
 					break;
 
 				case EKey::KEY_ESCAPE:
-					handled = onKeyEscape(bPress);
+					handled = onKeyEscape(press);
 					break;
 
 				default:
@@ -655,14 +658,17 @@ namespace Skylicht
 				}
 
 				if (!handled && m_parent)
-					m_parent->onKeyPress(iKey, bPress);
+					m_parent->onKeyPress(key, press);
+
+				if (OnKeyPress != nullptr)
+					OnKeyPress(this, key, press);
 
 				return handled;
 			}
 
-			bool CBase::onKeyRelease(int iKey)
+			bool CBase::onKeyRelease(int key)
 			{
-				return onKeyPress(iKey, false);
+				return onKeyPress(key, false);
 			}
 
 			bool CBase::onKeyTab(bool down)

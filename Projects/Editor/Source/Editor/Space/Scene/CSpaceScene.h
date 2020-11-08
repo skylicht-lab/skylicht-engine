@@ -40,6 +40,13 @@ namespace Skylicht
 
 			CGameObject *m_gridPlane;
 
+			bool m_leftMouseDown;
+			bool m_rightMouseDown;
+			bool m_middleMouseDown;
+
+			float m_mouseX;
+			float m_mouseY;
+
 		public:
 			CSpaceScene(GUI::CDockableWindow *window, CEditor *editor);
 
@@ -51,9 +58,23 @@ namespace Skylicht
 
 			virtual void onRender(GUI::CBase *base);
 
+			virtual void onMouseMoved(GUI::CBase *base, float x, float y, float deltaX, float deltaY);
+
+			virtual void onLeftMouseClick(GUI::CBase *base, float x, float y, bool down);
+
+			virtual void onRightMouseClick(GUI::CBase *base, float x, float y, bool down);
+
+			virtual void onMiddleMouseClick(GUI::CBase *base, float x, float y, bool down);
+
+			virtual void onMouseWheeled(GUI::CBase *base, int wheel);
+
 			virtual void update();
 
 			bool isEditorObject(CGameObject *object);
+
+		protected:
+
+			void postMouseEventToScene(EMOUSE_INPUT_EVENT eventType, float x, float y);
 		};
 	}
 }

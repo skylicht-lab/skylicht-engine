@@ -26,9 +26,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGameObject.h"
 #include "CContainerObject.h"
 #include "CZone.h"
+#include "Scene/CScene.h"
 
 #include "Utils/CStringImp.h"
-
 #include "Culling/CVisibleData.h"
 
 namespace Skylicht
@@ -92,6 +92,11 @@ namespace Skylicht
 		CStringImp::convertUnicodeToUTF8(m_name.c_str(), name);
 		m_namec = name;
 		return m_namec.c_str();
+	}
+
+	CScene* CGameObject::getScene()
+	{
+		return m_zone->getScene();
 	}
 
 	CEntity* CGameObject::createEntity()
