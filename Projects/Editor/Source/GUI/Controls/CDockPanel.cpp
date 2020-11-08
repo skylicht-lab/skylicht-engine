@@ -317,6 +317,82 @@ namespace Skylicht
 							finish = true;
 						}
 					} while (finish == false);
+
+					mergeSpliter(m_mainSpliter);
+				}
+			}
+
+			void CDockPanel::mergeSpliter(CSplitter *spliter)
+			{
+				if (spliter->isHorizontal())
+				{
+					bool finish = true;
+					do
+					{
+						finish = true;
+						for (u32 col = 0, numCol = spliter->getNumCol(); col < numCol; col++)
+						{
+							CSplitter *child = dynamic_cast<CSplitter*>(spliter->getControl(0, col));
+							if (child != NULL)
+							{
+								mergeSpliter(child);
+
+								if (child->isHorizontal())
+								{
+									// merge to parent
+									for (int i = 0, n = child->getNumCol(); i < n; i++)
+									{
+										CBase *control = child->getControl(0, i);
+										spliter->insertCol(col + i + 1);
+										spliter->setControl(control, 0, col + i + 1);
+										spliter->setColWidth(col + i + 1, child->getColWidth(i));
+									}
+
+									// remove this col, that merged
+									child->remove();
+									spliter->removeCol(col);
+
+									finish = false;
+									break;
+								}
+							}
+						}
+					} while (finish == false);
+				}
+				else
+				{
+					bool finish = true;
+					do
+					{
+						finish = true;
+						for (u32 row = 0, numRow = spliter->getNumCol(); row < numRow; row++)
+						{
+							CSplitter *child = dynamic_cast<CSplitter*>(spliter->getControl(row, 0));
+							if (child != NULL)
+							{
+								mergeSpliter(child);
+
+								if (child->isVertical())
+								{
+									// merge to parent
+									for (int i = 0, n = child->getNumRow(); i < n; i++)
+									{
+										CBase *control = child->getControl(i, 0);
+										spliter->insertRow(row + i + 1);
+										spliter->setControl(control, row + i + 1, 0);
+										spliter->setRowHeight(row + i + 1, child->getRowHeight(i));
+									}
+
+									// remove this row, that merged
+									child->remove();
+									spliter->removeRow(row);
+
+									finish = false;
+									break;
+								}
+							}
+						}
+					} while (finish == false);
 				}
 			}
 
