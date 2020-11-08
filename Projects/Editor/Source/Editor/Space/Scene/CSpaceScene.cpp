@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSpaceScene.h"
 #include "GridPlane/CGridPlane.h"
 
+using namespace std::placeholders;
+
 namespace Skylicht
 {
 	namespace Editor
@@ -35,11 +37,23 @@ namespace Skylicht
 			m_scene(NULL),
 			m_renderRP(NULL),
 			m_editorCamera(NULL),
-			m_gridPlane(NULL)
+			m_gridPlane(NULL),
+			m_leftMouseDown(false),
+			m_rightMouseDown(false),
+			m_middleMouseDown(false),
+			m_mouseX(0.0f),
+			m_mouseY(0.0f)
 		{
 			initDefaultScene();
 
-			m_window->getInnerPanel()->OnRender = BIND_LISTENER(&CSpaceScene::onRender, this);
+			GUI::CBase *panel = m_window->getInnerPanel();
+
+			panel->OnRender = BIND_LISTENER(&CSpaceScene::onRender, this);
+			panel->OnMouseMoved = std::bind(&CSpaceScene::onMouseMoved, this, _1, _2, _3, _4, _5);
+			panel->OnLeftMouseClick = std::bind(&CSpaceScene::onLeftMouseClick, this, _1, _2, _3, _4);
+			panel->OnRightMouseClick = std::bind(&CSpaceScene::onRightMouseClick, this, _1, _2, _3, _4);
+			panel->OnMiddleMouseClick = std::bind(&CSpaceScene::onMiddleMouseClick, this, _1, _2, _3, _4);
+			panel->OnMouseWheeled = std::bind(&CSpaceScene::onMouseWheeled, this, _1, _2);
 		}
 
 		CSpaceScene::~CSpaceScene()
@@ -128,6 +142,85 @@ namespace Skylicht
 				getVideoDriver()->setViewPort(vp);
 				GUI::CGUIContext::getRenderer()->setProjection();
 			}
+		}
+
+		void CSpaceScene::onMouseMoved(GUI::CBase *base, float x, float y, float deltaX, float deltaY)
+		{
+			postMouseEventToScene(EMIE_MOUSE_MOVED, x, y);
+		}
+
+		void CSpaceScene::onLeftMouseClick(GUI::CBase *base, float x, float y, bool down)
+		{
+			m_leftMouseDown = down;
+
+			if (down)
+				postMouseEventToScene(EMIE_LMOUSE_PRESSED_DOWN, x, y);
+			else
+				postMouseEventToScene(EMIE_LMOUSE_LEFT_UP, x, y);
+		}
+
+		void CSpaceScene::onRightMouseClick(GUI::CBase *base, float x, float y, bool down)
+		{
+			m_rightMouseDown = down;
+
+			if (down)
+				postMouseEventToScene(EMIE_RMOUSE_PRESSED_DOWN, x, y);
+			else
+				postMouseEventToScene(EMIE_RMOUSE_LEFT_UP, x, y);
+		}
+
+		void CSpaceScene::onMiddleMouseClick(GUI::CBase *base, float x, float y, bool down)
+		{
+			m_middleMouseDown = down;
+
+			if (down)
+				postMouseEventToScene(EMIE_MMOUSE_PRESSED_DOWN, x, y);
+			else
+				postMouseEventToScene(EMIE_MMOUSE_LEFT_UP, x, y);
+		}
+
+		void CSpaceScene::onMouseWheeled(GUI::CBase *base, int wheel)
+		{
+			SEvent event;
+			event.EventType = EET_MOUSE_INPUT_EVENT;
+			event.MouseInput.Event = EMIE_MOUSE_WHEEL;
+			event.MouseInput.X = (int)m_mouseX;
+			event.MouseInput.Y = (int)m_mouseY;
+			event.MouseInput.Wheel = (float)wheel;
+			event.MouseInput.ButtonStates = 0;
+
+			if (m_leftMouseDown)
+				event.MouseInput.ButtonStates |= EMBSM_LEFT;
+
+			if (m_rightMouseDown)
+				event.MouseInput.ButtonStates |= EMBSM_RIGHT;
+
+			m_scene->OnEvent(event);
+		}
+
+		void CSpaceScene::postMouseEventToScene(EMOUSE_INPUT_EVENT eventType, float x, float y)
+		{
+			GUI::SPoint point(x, y);
+			point = m_window->canvasPosToLocal(point);
+
+			m_mouseX = point.X;
+			m_mouseY = point.Y;
+
+			SEvent event;
+			event.EventType = EET_MOUSE_INPUT_EVENT;
+			event.MouseInput.Event = eventType;
+			event.MouseInput.X = (int)point.X;
+			event.MouseInput.Y = (int)point.Y;
+			event.MouseInput.Wheel = 0.0f;
+			event.MouseInput.ButtonStates = 0;
+
+			if (m_leftMouseDown)
+				event.MouseInput.ButtonStates |= EMBSM_LEFT;
+
+			if (m_rightMouseDown)
+				event.MouseInput.ButtonStates |= EMBSM_RIGHT;
+
+			m_scene->OnEvent(event);
 		}
 
 		bool CSpaceScene::isEditorObject(CGameObject *object)

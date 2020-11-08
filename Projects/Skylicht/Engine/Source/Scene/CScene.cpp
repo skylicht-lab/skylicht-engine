@@ -25,17 +25,20 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CScene.h"
 #include "Utils/CStringImp.h"
+#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
 	CScene::CScene()
 	{
 		m_entityManager = new CEntityManager();
+		CEventManager::getInstance()->registerEvent("Scene", this);
 	}
 
 	CScene::~CScene()
 	{
 		releaseScene();
+		CEventManager::getInstance()->unRegisterEvent(this);
 	}
 
 	CGameObject* CScene::searchObject(const char* name)
@@ -103,7 +106,7 @@ namespace Skylicht
 
 	CZone* CScene::createZone()
 	{
-		CZone *zone = new CZone(m_entityManager);
+		CZone *zone = new CZone(this);
 
 		char name[512];
 		sprintf(name, "Zone_%d", (int)CGameObject::s_objectID);
@@ -133,6 +136,68 @@ namespace Skylicht
 			}
 			++iZone;
 		}
+	}
+
+	void CScene::registerEvent(std::string name, IEventReceiver *pEvent)
+	{
+		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
+		while (i != end)
+		{
+			if ((*i).second == pEvent)
+				return;
+			++i;
+		}
+
+		m_eventReceivers.push_back(eventType(name, pEvent));
+	}
+
+	void CScene::unRegisterEvent(IEventReceiver *pEvent)
+	{
+		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
+		while (i != end)
+		{
+			if ((*i).second == pEvent)
+			{
+				m_eventReceivers.erase(i);
+				return;
+			}
+			++i;
+		}
+	}
+
+	bool CScene::OnEvent(const SEvent& event)
+	{
+		// need copy to another array.
+		// because the application will crash if registerEvent or unregister on process list Event
+		std::vector<eventType> eventWillProcess = m_eventReceivers;
+
+		std::vector<eventType>::iterator i = eventWillProcess.begin(), end = eventWillProcess.end();
+		while (i != end)
+		{
+			bool sendEvent = false;
+
+			// we need check
+			std::vector<eventType>::iterator j = m_eventReceivers.begin(), jend = m_eventReceivers.end();
+			while (j != jend)
+			{
+				if ((*i).second == (*j).second)
+				{
+					sendEvent = true;
+					break;
+				}
+				++j;
+			}
+
+			// ok send event
+			if (sendEvent)
+			{
+				(*i).second->OnEvent(event);
+			}
+
+			++i;
+		}
+
+		return false;
 	}
 
 	void CScene::update()

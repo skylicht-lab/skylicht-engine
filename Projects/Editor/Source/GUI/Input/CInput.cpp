@@ -184,6 +184,13 @@ namespace Skylicht
 						CGUIContext::HoveredControl->onMouseClickRight(m_mousePositionX, m_mousePositionY, down);
 
 					return true;
+				case 2:
+					if (isDoubleClick)
+						CGUIContext::HoveredControl->onMouseDoubleClickMiddle(m_mousePositionX, m_mousePositionY);
+					else
+						CGUIContext::HoveredControl->onMouseClickMiddle(m_mousePositionX, m_mousePositionY, down);
+
+					return true;
 				}
 
 				return false;

@@ -66,7 +66,7 @@ namespace Skylicht
 					}
 
 					case irr::EMIE_MOUSE_WHEEL:
-						inputMouseWheel((int)-event.MouseInput.Wheel);
+						inputMouseWheel((int)event.MouseInput.Wheel);
 						break;
 					case irr::EMIE_LMOUSE_PRESSED_DOWN:
 						inputMouseButton(0, true);

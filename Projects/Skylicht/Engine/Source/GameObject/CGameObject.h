@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CScene;
 	class CZone;
 	class CEntity;
 	class CEntityManager;
@@ -124,6 +125,8 @@ namespace Skylicht
 		{
 			return m_zone;
 		}
+
+		CScene* getScene();
 
 		inline void setParent(CGameObject *p)
 		{

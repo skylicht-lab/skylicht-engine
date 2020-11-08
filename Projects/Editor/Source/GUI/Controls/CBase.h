@@ -241,20 +241,51 @@ namespace Skylicht
 
 				virtual void updateCursor();
 
-				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY) {}
-				virtual bool onMouseWheeled(int iDelta);
+				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY)
+				{
+					if (OnMouseMoved != nullptr)
+						OnMouseMoved(this, x, y, deltaX, deltaY);
+				}
 
-				virtual void onMouseClickLeft(float x, float y, bool down) {}
-				virtual void onMouseClickRight(float x, float y, bool down) {}
+				virtual bool onMouseWheeled(int delta);
+
+				virtual void onMouseClickLeft(float x, float y, bool down)
+				{
+					if (OnLeftMouseClick != nullptr)
+						OnLeftMouseClick(this, x, y, down);
+				}
+
+				virtual void onMouseClickRight(float x, float y, bool down)
+				{
+					if (OnRightMouseClick != nullptr)
+						OnRightMouseClick(this, x, y, down);
+				}
+
+				virtual void onMouseClickMiddle(float x, float y, bool down)
+				{
+					if (OnMiddleMouseClick != nullptr)
+						OnMiddleMouseClick(this, x, y, down);
+				}
 
 				virtual void onMouseDoubleClickLeft(float x, float y)
 				{
 					onMouseClickLeft(x, y, true);
+					if (OnDoubleLeftMouseClick != nullptr)
+						OnDoubleLeftMouseClick(this, x, y);
 				}
 
 				virtual void onMouseDoubleClickRight(float x, float y)
 				{
 					onMouseClickRight(x, y, true);
+					if (OnDoubleRightMouseClick != nullptr)
+						OnDoubleRightMouseClick(this, x, y);
+				}
+
+				virtual void onMouseDoubleClickMiddle(float x, float y)
+				{
+					onMouseClickMiddle(x, y, true);
+					if (OnDoubleMiddleMouseClick != nullptr)
+						OnDoubleMiddleMouseClick(this, x, y);
 				}
 
 				virtual void onMouseEnter();
@@ -271,10 +302,14 @@ namespace Skylicht
 
 				virtual bool needsInputChars() { return false; }
 
-				virtual bool onChar(u32 c) { return false; }
+				virtual bool onChar(u32 c) {
+					if (OnChar != nullptr)
+						OnChar(this, c);
+					return false;
+				}
 
-				virtual bool onKeyPress(int iKey, bool bPress = true);
-				virtual bool onKeyRelease(int iKey);
+				virtual bool onKeyPress(int key, bool press = true);
+				virtual bool onKeyRelease(int key);
 
 				virtual bool onKeyTab(bool down);
 				virtual bool onKeySpace(bool down) { return false; }
@@ -331,12 +366,22 @@ namespace Skylicht
 
 			public:
 
-				std::function<void(void*)> OnHoverEnter;
-				std::function<void(void*)> OnHoverLeave;
-
+				Listener OnHoverEnter;
+				Listener OnHoverLeave;
 				Listener OnDestroy;
 				Listener OnResize;
 				Listener OnRender;
+
+				std::function<void(CBase*, float, float, float, float)> OnMouseMoved;
+				std::function<void(CBase*, float, float, bool)> OnLeftMouseClick;
+				std::function<void(CBase*, float, float, bool)> OnRightMouseClick;
+				std::function<void(CBase*, float, float, bool)> OnMiddleMouseClick;
+				std::function<void(CBase*, float, float)> OnDoubleLeftMouseClick;
+				std::function<void(CBase*, float, float)> OnDoubleRightMouseClick;
+				std::function<void(CBase*, float, float)> OnDoubleMiddleMouseClick;
+				std::function<void(CBase*, int)> OnMouseWheeled;
+				std::function<void(CBase*, int, bool)> OnKeyPress;
+				std::function<void(CBase*, u32)> OnChar;
 
 			protected:
 				CBase *m_parent;
