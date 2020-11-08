@@ -106,6 +106,8 @@ namespace Skylicht
 
 			protected:
 
+				void mergeSpliter(CSplitter *spliter);
+
 				SRect getSpaceBounds(CSplitter *spliter, float x, float y, CSplitter* &outSpliter);
 
 			};
