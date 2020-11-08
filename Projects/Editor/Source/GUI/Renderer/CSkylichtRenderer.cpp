@@ -63,6 +63,9 @@ namespace Skylicht
 
 			void CSkylichtRenderer::begin()
 			{
+				// clear z
+				getVideoDriver()->clearZBuffer();
+
 				CGraphics2D::getInstance()->beginRenderGUI(m_projection, m_view);
 
 				// enable scissor
@@ -103,6 +106,16 @@ namespace Skylicht
 				g->flush();
 
 				getVideoDriver()->enableScissor(b);
+			}
+
+			void CSkylichtRenderer::setProjection()
+			{
+				CGraphics2D::getInstance()->beginRenderGUI(m_projection, m_view);
+			}
+
+			void CSkylichtRenderer::flush()
+			{
+				CGraphics2D::getInstance()->flush();
 			}
 
 			void CSkylichtRenderer::drawFillRect(const SRect &r, const SGUIColor& color)

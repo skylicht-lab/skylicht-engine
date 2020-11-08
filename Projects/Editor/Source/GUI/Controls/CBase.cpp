@@ -333,6 +333,9 @@ namespace Skylicht
 
 				invalidate();
 				updateRenderBounds();
+
+				if (OnResize != nullptr)
+					OnResize(this);
 			}
 
 			void CBase::onChildBoundsChanged(const SRect& oldChildBounds, CBase* child)
@@ -502,6 +505,9 @@ namespace Skylicht
 				{
 					CRenderer::getRenderer()->drawFillRect(getRenderBounds(), m_fillRectColor);
 				}
+
+				if (OnRender != nullptr)
+					OnRender(this);
 			}
 
 			void CBase::renderFocus()

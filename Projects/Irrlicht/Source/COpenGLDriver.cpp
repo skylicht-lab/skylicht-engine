@@ -2561,6 +2561,8 @@ ITexture* COpenGLDriver::addRenderTargetTexture(const core::dimension2d<u32>& si
 
 	//restore mip-mapping
 	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, generateMipLevels);
+	
+	ResetRenderStates = true;
 
 	return rtt;
 }

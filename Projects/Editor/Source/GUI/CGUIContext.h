@@ -54,6 +54,8 @@ namespace Skylicht
 				static void resize(float width, float height);
 
 				static CCanvas* getRoot();
+
+				static CRenderer* getRenderer();
 			};
 		}
 	}

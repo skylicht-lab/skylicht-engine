@@ -67,6 +67,10 @@ namespace Skylicht
 
 				virtual void enableClip(bool b);
 
+				virtual void setProjection();
+
+				virtual void flush();
+
 				virtual void drawFillRect(const SRect &r, const SGUIColor& color);
 
 				virtual void renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string);
