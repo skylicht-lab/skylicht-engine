@@ -21,9 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "GUI/Controls/CBase.h"
+#include "pch.h"
+#include "CScrollBarBar.h"
+#include "CScrollBar.h"
 
 namespace Skylicht
 {
@@ -31,37 +32,30 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CDragger : public CBase
+			CScrollBarBar::CScrollBarBar(CBase *parent) :
+				CDragger(parent)
 			{
-			protected:
-				CBase *m_target;
-				bool m_pressed;
-				bool m_callBeginMove;
-				SPoint m_holdPosition;
+				setTarget(this);
+				setSize(6.0f, 6.0f);
 
-				bool m_clampInsideParent;
+				enableRenderFillRect(true);
+				setFillRectColor(SGUIColor(255, 255, 255, 255));
+			}
 
-			public:
-				CDragger(CBase* parent);
+			CScrollBarBar::~CScrollBarBar()
+			{
 
-				inline void setTarget(CBase *base)
+			}
+
+			void CScrollBarBar::onMouseMoved(float x, float y, float deltaX, float deltaY)
+			{
+				CDragger::onMouseMoved(x, y, deltaX, deltaY);
+
+				if (!m_disabled && m_pressed && OnBarMoved != nullptr)
 				{
-					m_target = base;
+					OnBarMoved(this);
 				}
-
-				virtual ~CDragger();
-
-				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
-
-				virtual void onMouseClickLeft(float x, float y, bool down);
-
-				void dragMoveCommand(const SPoint& mouseOffset);
-
-				void setClampInsideParent(bool b)
-				{
-					m_clampInsideParent = b;
-				}
-			};
+			}
 		}
 	}
 }
