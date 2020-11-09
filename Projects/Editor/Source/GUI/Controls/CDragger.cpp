@@ -36,7 +36,8 @@ namespace Skylicht
 				CBase(parent),
 				m_target(parent),
 				m_pressed(false),
-				m_callBeginMove(false)
+				m_callBeginMove(false),
+				m_clampInsideParent(true)
 			{
 
 			}
@@ -65,7 +66,11 @@ namespace Skylicht
 					m_callBeginMove = false;
 				}
 
-				m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y, height());
+				if (m_clampInsideParent)
+					m_target->moveTo(p.X, p.Y);
+				else
+					m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y, height());
+
 				m_target->onMoved();
 			}
 

@@ -41,6 +41,7 @@ namespace Skylicht
 				enableClip(true);
 
 				m_titleBar = new CDragger(this);
+				m_titleBar->setClampInsideParent(false);
 				m_titleBar->setHeight(22.0f);
 				m_titleBar->setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 				m_titleBar->setMargin(SMargin(0.0f, 0.0f, 0.0f, 4.0f));

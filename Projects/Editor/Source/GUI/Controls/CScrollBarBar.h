@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "GUI/Controls/CBase.h"
+#include "CDragger.h"
 
 namespace Skylicht
 {
@@ -31,36 +31,17 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CDragger : public CBase
+			class CScrollBarBar : public CDragger
 			{
-			protected:
-				CBase *m_target;
-				bool m_pressed;
-				bool m_callBeginMove;
-				SPoint m_holdPosition;
-
-				bool m_clampInsideParent;
+			public:
+				Listener OnBarMoved;
 
 			public:
-				CDragger(CBase* parent);
+				CScrollBarBar(CBase *parent);
 
-				inline void setTarget(CBase *base)
-				{
-					m_target = base;
-				}
-
-				virtual ~CDragger();
+				virtual ~CScrollBarBar();
 
 				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
-
-				virtual void onMouseClickLeft(float x, float y, bool down);
-
-				void dragMoveCommand(const SPoint& mouseOffset);
-
-				void setClampInsideParent(bool b)
-				{
-					m_clampInsideParent = b;
-				}
 			};
 		}
 	}
