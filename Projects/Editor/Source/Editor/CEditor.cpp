@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 
 #include "Space/Scene/CSpaceScene.h"
+#include "Space/Assets/CSpaceAssets.h"
 
 namespace Skylicht
 {
@@ -202,7 +203,7 @@ namespace Skylicht
 			submenu = window->getMenu();
 			submenu->addItem(L"New workspace");
 			submenu->addSeparator();
-			submenu->addItem(L"Asset");
+			submenu->addItem(L"Assets");
 			submenu->addItem(L"Property");
 			submenu->addItem(L"Scene");
 			submenu->addItem(L"GUI Design");
@@ -239,7 +240,7 @@ namespace Skylicht
 			w = round(width * 0.7f);
 			h = round(height * 0.3f);
 			GUI::CDockableWindow *asset = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
-			asset->setCaption(L"Asset");
+			asset->setCaption(L"Assets");
 			m_dockPanel->dockChildWindow(asset, NULL, GUI::CDockPanel::DockBottom);
 			m_dockPanel->recurseLayout();
 
@@ -277,9 +278,9 @@ namespace Skylicht
 			{
 
 			}
-			else if (workspace == L"Asset")
+			else if (workspace == L"Assets")
 			{
-
+				m_workspaces.push_back(new CSpaceAssets(window, this));
 			}
 			else if (workspace == L"Preview")
 			{
