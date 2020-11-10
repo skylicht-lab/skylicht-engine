@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CScrollBar.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -39,8 +40,11 @@ namespace Skylicht
 				m_nudgeAmount(20.0f)
 			{
 				setSize(6.0f, 6.0f);
-				m_bar = new CScrollBarBar(this);
+				m_bar = new CScrollBarBar(this, horizontal);
 				m_bar->OnBarMoved = BIND_LISTENER(&CScrollBar::onBarMoved, this);
+
+				enableRenderFillRect(true);
+				setFillRectColor(CThemeConfig::ScrollBarColor);
 			}
 
 			CScrollBar::~CScrollBar()
@@ -82,12 +86,14 @@ namespace Skylicht
 			void CScrollBar::setHorizontal()
 			{
 				m_isHorizontal = true;
+				m_bar->setHorizontal();
 				invalidate();
 			}
 
 			void CScrollBar::setVertical()
 			{
 				m_isHorizontal = false;
+				m_bar->setVertical();
 				invalidate();
 			}
 

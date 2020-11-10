@@ -26,14 +26,18 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CScrollBarBar.h"
 #include "CScrollBar.h"
 
+#include "GUI/Theme/CTheme.h"
+#include "GUI/Theme/CThemeConfig.h"
+
 namespace Skylicht
 {
 	namespace Editor
 	{
 		namespace GUI
 		{
-			CScrollBarBar::CScrollBarBar(CBase *parent) :
-				CDragger(parent)
+			CScrollBarBar::CScrollBarBar(CBase *parent, bool horizontal) :
+				CDragger(parent),
+				m_isHoriontal(horizontal)
 			{
 				setTarget(this);
 				setSize(6.0f, 6.0f);
@@ -45,6 +49,15 @@ namespace Skylicht
 			CScrollBarBar::~CScrollBarBar()
 			{
 
+			}
+
+			void CScrollBarBar::render()
+			{
+				SGUIColor c = CThemeConfig::ScrollBarBarColor;
+				if (isHovered())
+					c = CThemeConfig::ScrollBarBarHoverColor;
+
+				CTheme::getTheme()->drawScrollbar(getRenderBounds(), c, m_isHoriontal);
 			}
 
 			void CScrollBarBar::onMouseMoved(float x, float y, float deltaX, float deltaY)

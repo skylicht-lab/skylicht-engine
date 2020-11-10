@@ -63,6 +63,10 @@ namespace Skylicht
 				m_tabButton = m_sprite->addFrame("draw_tab_button", "Editor/GUI/draw_tab_button.png");
 				m_tabButtonFocus = m_sprite->addFrame("draw_tab_button_focus", "Editor/GUI/draw_tab_button_focus.png");
 
+				// add scroll bar
+				m_scrollbarH = m_sprite->addFrame("draw_scroll_bar_h", "Editor/GUI/draw_scroll_bar_h.png");
+				m_scrollbarV = m_sprite->addFrame("draw_scroll_bar_v", "Editor/GUI/draw_scroll_bar_v.png");
+
 				// add font text
 				m_renderer->initFont(m_sprite);
 
@@ -295,6 +299,28 @@ namespace Skylicht
 
 				if (focus)
 					drawGUIModule(m_tabButtonFocus, rect, focusColor, left, top, right, bottom, radius);
+			}
+
+			void CSkylichtTheme::drawScrollbar(const SRect& rect, const SGUIColor& color, bool isHorizontal)
+			{
+				float left = 4.0f;
+				float top = 4.0f;
+				float right = 4.0f;
+				float bottom = 8.0f;
+				float radius = 3.0f;
+				SFrame *frame = m_scrollbarV;
+
+				if (isHorizontal == true)
+				{
+					left = 4.0f;
+					top = 4.0f;
+					right = 8.0f;
+					bottom = 4.0f;
+					radius = 3.0f;
+					frame = m_scrollbarH;
+				}
+
+				drawGUIModule(frame, rect, color, left, top, right, bottom, radius);
 			}
 
 			core::rectf CSkylichtTheme::getRect(const SRect& rect)
