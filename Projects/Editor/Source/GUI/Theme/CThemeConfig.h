@@ -71,6 +71,10 @@ namespace Skylicht
 				static SGUIColor MenuItemAcceleratorColor;
 				static SGUIColor MenuItemSeparatorColor;
 
+				static SGUIColor ScrollBarColor;
+				static SGUIColor ScrollBarBarColor;
+				static SGUIColor ScrollBarBarHoverColor;
+
 				static float getFontSizePt(EFontSize size);
 			};
 		}
