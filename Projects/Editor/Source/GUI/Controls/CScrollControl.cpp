@@ -48,6 +48,7 @@ namespace Skylicht
 				m_innerPanel = new CBase(this);
 				m_innerPanel->setPos(0.0f, 0.0f);
 				m_innerPanel->sendToBack();
+				m_innerPanel->enableClip(true);
 			}
 
 			CScrollControl::~CScrollControl()
