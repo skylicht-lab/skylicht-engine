@@ -25,8 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpaceAssets.h"
 
-#include "GUI/Controls/CScrollControl.h"
-
 namespace Skylicht
 {
 	namespace Editor
@@ -34,8 +32,29 @@ namespace Skylicht
 		CSpaceAssets::CSpaceAssets(GUI::CDockableWindow *window, CEditor *editor) :
 			CSpace(window, editor)
 		{
-			GUI::CScrollControl *scroll = new GUI::CScrollControl(window);
-			scroll->dock(GUI::EPosition::Fill);
+			GUI::CSplitter *spliter = new GUI::CSplitter(window);
+			spliter->dock(GUI::EPosition::Fill);
+			spliter->setNumberRowCol(1, 2);
+
+			m_folder = new GUI::CTreeControl(spliter);
+			m_folder->setText(L"../Assets");
+
+			m_folder->addNode(L"Child 1");
+
+			GUI::CTreeNode *child2 = m_folder->addNode(L"Child 2");
+			child2->addNode(L"Child a");
+			child2->addNode(L"Child b");
+
+			m_folder->addNode(L"Child 3");
+			m_folder->expand();
+
+			spliter->setControl(m_folder, 0, 0);
+
+			GUI::CScrollControl *scroll = new GUI::CScrollControl(spliter);
+			spliter->setControl(scroll, 0, 1);
+
+			spliter->setColWidth(0, 300.0f);
+			spliter->setWeakCol(1);
 
 			GUI::CBase *test = new GUI::CBase(scroll);
 			test->setBounds(GUI::SRect(0.0f, 0.0f, 2000.0f, 2000.0f));

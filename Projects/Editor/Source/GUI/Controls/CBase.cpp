@@ -315,6 +315,14 @@ namespace Skylicht
 				return size;
 			}
 
+			void CBase::sizeToChildren(bool w, bool h)
+			{
+				SDimension size = getChildrenSize();
+				size.Height = size.Height + getPadding().Bottom;
+				size.Width = size.Width + getPadding().Right;
+				setSize(w ? size.Width : width(), h ? size.Height : height());
+			}
+
 			bool CBase::setBounds(const SRect& bounds)
 			{
 				if (m_bounds == bounds)

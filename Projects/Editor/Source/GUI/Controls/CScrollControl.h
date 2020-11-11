@@ -49,6 +49,8 @@ namespace Skylicht
 
 				virtual void onChildBoundsChanged(const SRect& oldChildBounds, CBase* child);
 
+				virtual bool onMouseWheeled(int delta);
+
 				virtual void onScrollBarV(CBase *base);
 
 				virtual void onScrollBarH(CBase *base);

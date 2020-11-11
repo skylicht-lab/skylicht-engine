@@ -62,6 +62,23 @@ namespace Skylicht
 				CBase::layout();
 			}
 
+			bool CScrollControl::onMouseWheeled(int delta)
+			{
+				if (m_canScrollV && !m_vertical->isHidden())
+				{
+					m_vertical->setScroll(m_vertical->getScroll() + m_vertical->getNudgeAmount() * delta);
+					return true;
+				}
+
+				if (m_canScrollH && !m_horizontal->isHidden())
+				{
+					m_horizontal->setScroll(m_horizontal->getScroll() + m_horizontal->getNudgeAmount() * delta);
+					return true;
+				}
+
+				return false;
+			}
+
 			void CScrollControl::onChildBoundsChanged(const SRect& oldChildBounds, CBase* child)
 			{
 				updateScrollBar();
