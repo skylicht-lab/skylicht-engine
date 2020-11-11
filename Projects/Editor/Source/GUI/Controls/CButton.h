@@ -50,6 +50,9 @@ namespace Skylicht
 				bool m_pressed;
 				bool m_drawBackground;
 
+				bool m_isToggle;
+				bool m_toggleStatus;
+
 			public:
 
 				Listener OnDown;
@@ -167,6 +170,26 @@ namespace Skylicht
 				inline void enableDrawBackground(bool b)
 				{
 					m_drawBackground = b;
+				}
+
+				inline void setIsToggle(bool b)
+				{
+					m_isToggle = b;
+				}
+
+				inline bool isToggle()
+				{
+					return m_isToggle;
+				}
+
+				inline void setToggle(bool b)
+				{
+					m_toggleStatus = b;
+				}
+
+				inline bool getToggle()
+				{
+					return m_toggleStatus;
 				}
 
 				Listener OnTextChanged;

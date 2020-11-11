@@ -34,6 +34,8 @@ namespace Skylicht
 		class CSpaceAssets : public CSpace
 		{
 		protected:
+			GUI::CTreeControl *m_folder;
+
 		public:
 			CSpaceAssets(GUI::CDockableWindow *window, CEditor *editor);
 

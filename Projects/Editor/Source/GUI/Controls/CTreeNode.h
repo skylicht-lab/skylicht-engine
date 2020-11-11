@@ -9,7 +9,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
-The above copyRight notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -24,13 +24,52 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/CGUIContext.h"
+#include "CBase.h"
+#include "CButton.h"
+#include "CIconButton.h"
 
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Controls/CDockableWindow.h"
-#include "GUI/Controls/CDockTabControl.h"
-#include "GUI/Controls/CScrollControl.h"
-#include "GUI/Controls/CSplitter.h"
-#include "GUI/Controls/CMenuBar.h"
-#include "GUI/Controls/CTreeNode.h"
-#include "GUI/Controls/CTreeControl.h"
+namespace Skylicht
+{
+	namespace Editor
+	{
+		namespace GUI
+		{
+			class CTreeNode : public CBase
+			{
+			protected:
+				CButton *m_title;
+				CIconButton *m_expandButton;
+
+				bool m_expand;
+			public:
+				CTreeNode(CBase *parent);
+
+				virtual ~CTreeNode();
+
+				virtual void layout();
+
+				virtual void postLayout();
+
+				CTreeNode* addNode(const std::wstring& text);
+
+				void setText(const std::wstring& text);
+
+				void setIcon(ESystemIcon icon);
+
+				void onExpand(CBase *base);
+
+				inline void expand()
+				{
+					m_expand = true;
+					invalidate();
+				}
+
+				inline void collapse()
+				{
+					m_expand = false;
+					invalidate();
+				}
+			};
+		}
+	}
+}

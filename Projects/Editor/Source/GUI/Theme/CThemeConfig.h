@@ -76,6 +76,8 @@ namespace Skylicht
 				static SGUIColor ScrollBarBarHoverColor;
 
 				static float getFontSizePt(EFontSize size);
+
+				static float TreeIndentationSize;
 			};
 		}
 	}
