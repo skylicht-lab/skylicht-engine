@@ -175,6 +175,7 @@ namespace Skylicht
 				inline SDimension getSize() const { return SDimension(width(), height()); }
 
 				SDimension getChildrenSize();
+				void sizeToChildren(bool w, bool h);
 
 				virtual void sizeToContents() { }
 

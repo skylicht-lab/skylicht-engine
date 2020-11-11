@@ -40,7 +40,9 @@ namespace Skylicht
 				m_pressColor(CThemeConfig::ButtonPressColor),
 				m_focusColor(CThemeConfig::ButtonFocusColor),
 				m_pressed(false),
-				m_drawBackground(true)
+				m_drawBackground(true),
+				m_isToggle(false),
+				m_toggleStatus(false)
 			{
 				setPadding(SPadding(8.0f, 0.0f, 8.0f, 0.0f));
 				m_icon = new CIcon(this, ESystemIcon::None);
@@ -72,9 +74,11 @@ namespace Skylicht
 
 				SGUIColor c = m_color;
 
-				if (isHovered())
+				bool pressed = m_pressed;
+
+				if (isHovered() || isToggle())
 				{
-					if (m_pressed == true)
+					if (pressed == true || m_toggleStatus)
 						c = m_pressColor;
 					else
 						c = m_hoverColor;
