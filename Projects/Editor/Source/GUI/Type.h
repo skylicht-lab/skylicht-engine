@@ -472,7 +472,9 @@ namespace Skylicht
 				Web,
 				Folder,
 				OpenFolder,
-				AddFolder,
+				File,
+				FileDocument,
+				FileImage,
 				NumSystemIcon
 			};
 

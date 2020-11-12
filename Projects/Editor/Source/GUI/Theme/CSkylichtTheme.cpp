@@ -185,7 +185,9 @@ namespace Skylicht
 				addSystemIcon(ESystemIcon::Web, "web.png");
 				addSystemIcon(ESystemIcon::Folder, "folder.png");
 				addSystemIcon(ESystemIcon::OpenFolder, "open-folder.png");
-				addSystemIcon(ESystemIcon::AddFolder, "add-folder.png");
+				addSystemIcon(ESystemIcon::File, "file.png");
+				addSystemIcon(ESystemIcon::FileDocument, "file-document.png");
+				addSystemIcon(ESystemIcon::FileImage, "file-image.png");
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char *name)
