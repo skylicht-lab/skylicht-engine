@@ -470,6 +470,9 @@ namespace Skylicht
 				Pin,
 				Unpin,
 				Web,
+				Folder,
+				OpenFolder,
+				AddFolder,
 				NumSystemIcon
 			};
 

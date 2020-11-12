@@ -39,6 +39,10 @@ namespace Skylicht
 				CTreeControl(CBase *parent);
 				
 				~CTreeControl();
+
+				virtual void layout();
+
+				virtual void postLayout();
 			};
 		}
 	}
