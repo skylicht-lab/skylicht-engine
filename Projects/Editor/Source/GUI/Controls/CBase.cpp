@@ -46,12 +46,14 @@ namespace Skylicht
 				m_bounds(0.0f, 0.0f, 0.0f, 0.0f),
 				m_padding(0.0f, 0.0f, 0.0f, 0.0f),
 				m_margin(0.0f, 0.0f, 0.0f, 0.0f),
+				m_transparentMouseInput(false),
 				m_mouseInputEnabled(true),
 				m_keyboardInputEnabled(true),
 				m_shouldClip(false),
 				m_cursor(ECursorType::Normal),
 				m_renderFillRect(false),
-				m_fillRectColor(CThemeConfig::WindowInnerColor)
+				m_fillRectColor(CThemeConfig::WindowInnerColor),
+				m_debugValue(0)
 			{
 				if (parent != NULL)
 					setParent(parent->getInnerPanel());
@@ -698,13 +700,17 @@ namespace Skylicht
 				if (isHidden())
 					return NULL;
 
-				if (x < 0 || y < 0 || x >= width() || y >= height())
-					return NULL;
+				if (m_transparentMouseInput == false)
+				{
+					if (x < 0 || y < 0 || x >= width() || y >= height())
+						return NULL;
+				}
 
 				for (List::reverse_iterator iter = Children.rbegin(); iter != Children.rend(); ++iter)
 				{
 					CBase* child = *iter;
 					CBase* found = NULL;
+
 					found = child->getControlAt(x - child->X(), y - child->Y(), onlyIfMouseEnabled);
 
 					if (found)
@@ -712,6 +718,9 @@ namespace Skylicht
 				}
 
 				if (onlyIfMouseEnabled && !getMouseInputEnabled())
+					return NULL;
+
+				if (m_transparentMouseInput)
 					return NULL;
 
 				return this;
@@ -722,8 +731,11 @@ namespace Skylicht
 				if (isHidden())
 					return NULL;
 
-				if (x < 0 || y < 0 || x >= width() || y >= height())
-					return NULL;
+				if (m_transparentMouseInput == false)
+				{
+					if (x < 0 || y < 0 || x >= width() || y >= height())
+						return NULL;
+				}
 
 				for (List::reverse_iterator iter = Children.rbegin(); iter != Children.rend(); ++iter)
 				{
@@ -736,6 +748,9 @@ namespace Skylicht
 				}
 
 				if (onlyIfMouseEnabled && !getMouseInputEnabled())
+					return NULL;
+
+				if (m_transparentMouseInput)
 					return NULL;
 
 				if (typeid(*this) == type)
