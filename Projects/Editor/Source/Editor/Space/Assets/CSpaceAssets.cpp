@@ -42,8 +42,9 @@ namespace Skylicht
 			root->expand();
 
 			GUI::CTreeNode *child2 = root->addNode(L"Child 2", GUI::ESystemIcon::OpenFolder);
-			child2->addNode(L"Child a", GUI::ESystemIcon::Folder);
-			child2->addNode(L"Child b", GUI::ESystemIcon::Folder);
+			child2->addNode(L"File", GUI::ESystemIcon::File);
+			child2->addNode(L"Document", GUI::ESystemIcon::FileDocument);
+			child2->addNode(L"Image", GUI::ESystemIcon::FileImage);
 			child2->expand();
 
 			for (int i = 0; i < 20; i++)
