@@ -25,8 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CTreeNode.h"
-#include "CScrollControl.h"
+#include "CButton.h"
 
 namespace Skylicht
 {
@@ -34,28 +33,19 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CTreeControl : public CTreeNode
+			class CTreeRowItem : public CButton
 			{
 			protected:
-				CScrollControl *m_scrollControl;
+				CBase *m_root;
 
 			public:
-				CTreeControl(CBase *parent);
+				CTreeRowItem(CBase *base, CBase *root);
 
-				~CTreeControl();
+				virtual ~CTreeRowItem();
 
-				inline CScrollControl* getScrollControl()
-				{
-					return m_scrollControl;
-				}
+				virtual void renderUnder();
 
-				virtual void layout();
-
-				virtual void postLayout();
-
-				virtual void onNodeClick(CBase *base);
-
-				virtual void deselectAll();
+				virtual void renderBackground();
 			};
 		}
 	}

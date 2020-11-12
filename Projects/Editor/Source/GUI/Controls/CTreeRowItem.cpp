@@ -22,11 +22,9 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CBase.h"
+#include "pch.h"
+#include "CTreeRowItem.h"
 #include "CTreeNode.h"
-#include "CScrollControl.h"
 
 namespace Skylicht
 {
@@ -34,29 +32,47 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CTreeControl : public CTreeNode
+			CTreeRowItem::CTreeRowItem(CBase *base, CBase *root) :
+				CButton(base),
+				m_root(root)
 			{
-			protected:
-				CScrollControl *m_scrollControl;
+				setIsToggle(true);
+			}
 
-			public:
-				CTreeControl(CBase *parent);
+			CTreeRowItem::~CTreeRowItem()
+			{
 
-				~CTreeControl();
+			}
 
-				inline CScrollControl* getScrollControl()
+			void CTreeRowItem::renderUnder()
+			{
+				CTreeNode *treeNode = dynamic_cast<CTreeNode*>(m_parent);
+				if (treeNode != NULL)
 				{
-					return m_scrollControl;
+					if (treeNode->hoverOnChild() || m_toggleStatus)
+					{
+						renderBackground();
+					}
+				}
+			}
+
+			void CTreeRowItem::renderBackground()
+			{
+				SGUIColor c = m_color;
+
+				if (m_pressed == true)
+					c = m_pressColor;
+				else
+					c = m_hoverColor;
+
+				if (isToggle())
+				{
+					if (m_toggleStatus)
+						c = m_pressColor;
 				}
 
-				virtual void layout();
-
-				virtual void postLayout();
-
-				virtual void onNodeClick(CBase *base);
-
-				virtual void deselectAll();
-			};
+				CTheme::getTheme()->drawButton(getRenderBounds(), c);
+			}
 		}
 	}
 }

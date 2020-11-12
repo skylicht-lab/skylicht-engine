@@ -22,11 +22,9 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CBase.h"
-#include "CTreeNode.h"
-#include "CScrollControl.h"
+#include "pch.h"
+#include "CTreeTextItem.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -34,29 +32,43 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CTreeControl : public CTreeNode
+			CTreeTextItem::CTreeTextItem(CBase *base, CBase *root) :
+				CBase(base),
+				m_root(root)
 			{
-			protected:
-				CScrollControl *m_scrollControl;
+				setMouseInputEnabled(false);
 
-			public:
-				CTreeControl(CBase *parent);
+				m_icon = new CIcon(this, ESystemIcon::None);
+				m_icon->dock(EPosition::Left);
+				m_icon->setMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));
 
-				~CTreeControl();
+				m_label = new CTextContainer(this);
+				m_label->setMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
+				m_label->dock(EPosition::Fill);
+				m_label->setColor(CThemeConfig::ButtonTextColor);
 
-				inline CScrollControl* getScrollControl()
-				{
-					return m_scrollControl;
-				}
+				setSize(80.0f, 20.0f);
+				setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
+				setPadding(SPadding(8.0f, 0.0f, 8.0f, 0.0f));
+			}
 
-				virtual void layout();
+			CTreeTextItem::~CTreeTextItem()
+			{
 
-				virtual void postLayout();
+			}
 
-				virtual void onNodeClick(CBase *base);
+			void CTreeTextItem::sizeToContents()
+			{
+				float h = height();
 
-				virtual void deselectAll();
-			};
+				m_label->sizeToContents();
+
+				float w = m_padding.Left + m_padding.Right + m_label->width();
+				if (m_icon->isHidden() == false)
+					w = w + m_icon->width();
+
+				setSize(w, h);
+			}
 		}
 	}
 }

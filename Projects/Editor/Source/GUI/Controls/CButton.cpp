@@ -76,12 +76,18 @@ namespace Skylicht
 
 				bool pressed = m_pressed;
 
-				if (isHovered() || isToggle())
+				if (isHovered())
 				{
-					if (pressed == true || m_toggleStatus)
+					if (pressed == true)
 						c = m_pressColor;
 					else
 						c = m_hoverColor;
+				}
+
+				if (isToggle())
+				{
+					if (m_toggleStatus)
+						c = m_pressColor;
 				}
 
 				CTheme::getTheme()->drawButton(getRenderBounds(), c);
@@ -119,9 +125,10 @@ namespace Skylicht
 				}
 				else
 				{
-					if (isHovered() && OnPress != nullptr)
+					if (isHovered())
 					{
-						OnPress(this);
+						if (OnPress != nullptr)
+							OnPress(this);
 					}
 
 					m_pressed = false;

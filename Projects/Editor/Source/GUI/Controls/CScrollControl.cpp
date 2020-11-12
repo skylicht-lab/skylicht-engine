@@ -105,6 +105,16 @@ namespace Skylicht
 				m_horizontal->setHidden(!h);
 			}
 
+			float CScrollControl::getInnerWidth()
+			{
+				return width() - (m_vertical->isHidden() ? 0 : m_vertical->width());
+			}
+
+			float CScrollControl::getInnerHeight()
+			{
+				return height() - (m_horizontal->isHidden() ? 0 : m_horizontal->height());
+			}
+
 			void CScrollControl::updateScrollBar()
 			{
 				if (m_innerPanel == NULL)
@@ -113,8 +123,8 @@ namespace Skylicht
 				float childrenWidth = 0.0f;
 				float childrenHeight = 0.0f;
 
-				float w = width() - (m_vertical->isHidden() ? 0 : m_vertical->width());
-				float h = height() - (m_horizontal->isHidden() ? 0 : m_horizontal->height());
+				float w = getInnerWidth();
+				float h = getInnerHeight();
 
 
 				// Get the max size of all our children together

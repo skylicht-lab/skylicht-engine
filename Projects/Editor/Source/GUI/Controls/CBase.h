@@ -144,6 +144,11 @@ namespace Skylicht
 
 			public:
 
+				inline void setDebugValue(int d)
+				{
+					m_debugValue = d;
+				}
+
 				inline float X() const { return m_bounds.X; }
 				inline float Y() const { return m_bounds.Y; }
 
@@ -295,6 +300,7 @@ namespace Skylicht
 				virtual void onLostKeyboardFocus() {}
 				virtual void onKeyboardFocus() {}
 
+				virtual void setTransparentMouseInput(bool b) { m_transparentMouseInput = b; }
 				virtual void setMouseInputEnabled(bool b) { m_mouseInputEnabled = b; }
 				virtual bool getMouseInputEnabled() { return m_mouseInputEnabled; }
 
@@ -397,12 +403,15 @@ namespace Skylicht
 				SPadding m_padding;
 				SMargin m_margin;
 
+				int m_debugValue;
+
 				bool m_disabled;
 				bool m_hidden;
 				bool m_needsLayout;
 
 				bool m_shouldClip;
 
+				bool m_transparentMouseInput;
 				bool m_mouseInputEnabled;
 				bool m_keyboardInputEnabled;
 
