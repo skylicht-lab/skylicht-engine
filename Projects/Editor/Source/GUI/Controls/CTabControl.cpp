@@ -39,8 +39,6 @@ namespace Skylicht
 			{
 				enableClip(true);
 
-				setPadding(SPadding(1.0f, 0.0f, 1.0f, 0.0f));
-
 				m_tabStrip = new CTabStrip(this);
 				m_tabStrip->dock(EPosition::Top);
 

@@ -36,7 +36,7 @@ namespace Skylicht
 				m_canScrollV(true),
 				m_canScrollH(true)
 			{
-				setPadding(SPadding(0.0f, 0.0f, -1.0f, 0.0f));
+				setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 				m_vertical = new CScrollBar(this, false);
 				m_vertical->dock(EPosition::Right);
 				m_vertical->OnBarMoved = BIND_LISTENER(&CScrollControl::onScrollBarV, this);
@@ -48,7 +48,8 @@ namespace Skylicht
 				m_innerPanel = new CBase(this);
 				m_innerPanel->setPos(0.0f, 0.0f);
 				m_innerPanel->sendToBack();
-				m_innerPanel->enableClip(true);
+
+				enableClip(true);
 			}
 
 			CScrollControl::~CScrollControl()
@@ -144,7 +145,7 @@ namespace Skylicht
 					newInnerPanelPosX = -(m_innerPanel->width() - width() + m_vertical->width()) * m_horizontal->getScroll();
 				}
 
-				m_innerPanel->setPos(newInnerPanelPosX, newInnerPanelPosY);
+				m_innerPanel->setPos(round(newInnerPanelPosX), round(newInnerPanelPosY));
 			}
 		}
 	}

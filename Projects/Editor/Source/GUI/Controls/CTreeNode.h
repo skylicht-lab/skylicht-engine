@@ -40,9 +40,11 @@ namespace Skylicht
 				CButton *m_title;
 				CIconButton *m_expandButton;
 
+				CTreeNode *m_root;
+
 				bool m_expand;
 			public:
-				CTreeNode(CBase *parent);
+				CTreeNode(CBase *parent, CTreeNode *root);
 
 				virtual ~CTreeNode();
 
@@ -51,6 +53,8 @@ namespace Skylicht
 				virtual void postLayout();
 
 				CTreeNode* addNode(const std::wstring& text);
+
+				CTreeNode* addNode(const std::wstring& text, ESystemIcon icon);
 
 				void setText(const std::wstring& text);
 

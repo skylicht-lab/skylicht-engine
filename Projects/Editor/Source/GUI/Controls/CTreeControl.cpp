@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTreeControl.h"
+#include "CScrollControl.h"
 #include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
@@ -33,15 +34,36 @@ namespace Skylicht
 		namespace GUI
 		{
 			CTreeControl::CTreeControl(CBase *parent) :
-				CTreeNode(parent)
+				CTreeNode(parent, this)
 			{
-				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::WindowInnerColor);
+				m_title->remove();
+				m_expandButton->remove();
+				m_innerPanel->remove();
+
+				m_title = NULL;
+				m_expandButton = NULL;
+				m_innerPanel = NULL;
+
+				CScrollControl* scroll = new CScrollControl(this);
+				scroll->dock(EPosition::Fill);
+				scroll->showScrollBar(true, true);
+
+				m_innerPanel = scroll->getInnerPanel();
 			}
 
 			CTreeControl::~CTreeControl()
 			{
 
+			}
+
+			void CTreeControl::layout()
+			{
+				CBase::layout();
+			}
+
+			void CTreeControl::postLayout()
+			{
+				CBase::postLayout();
 			}
 		}
 	}

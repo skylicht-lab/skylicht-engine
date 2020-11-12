@@ -37,7 +37,8 @@ namespace Skylicht
 				m_isHorizontal(horizontal),
 				m_viewableContentSize(1.0f),
 				m_contentSize(2.0f),
-				m_nudgeAmount(20.0f)
+				m_nudgeAmount(20.0f),
+				m_scroll(0.0f)
 			{
 				setSize(6.0f, 6.0f);
 				m_bar = new CScrollBarBar(this, horizontal);
@@ -117,12 +118,12 @@ namespace Skylicht
 
 				if (m_isHorizontal)
 				{
-					float newX = m_scroll * (width() - m_bar->width());
+					float newX = round(m_scroll * (width() - m_bar->width()));
 					m_bar->moveTo(newX, m_bar->Y());
 				}
 				else
 				{
-					float newY = m_scroll * (height() - m_bar->height());
+					float newY = round(m_scroll * (height() - m_bar->height()));
 					m_bar->moveTo(m_bar->X(), newY);
 				}
 
