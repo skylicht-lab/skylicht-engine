@@ -37,18 +37,22 @@ namespace Skylicht
 			spliter->setNumberRowCol(1, 2);
 
 			m_folder = new GUI::CTreeControl(spliter);
-			m_folder->setText(L"../Assets");
 
-			m_folder->addNode(L"Child 1");
+			GUI::CTreeNode *root = m_folder->addNode(L"../Assets", GUI::ESystemIcon::OpenFolder);
+			root->expand();
 
-			GUI::CTreeNode *child2 = m_folder->addNode(L"Child 2");
-			child2->addNode(L"Child a");
-			child2->addNode(L"Child b");
+			GUI::CTreeNode *child2 = root->addNode(L"Child 2", GUI::ESystemIcon::OpenFolder);
+			child2->addNode(L"Child a", GUI::ESystemIcon::Folder);
+			child2->addNode(L"Child b", GUI::ESystemIcon::Folder);
+			child2->expand();
 
-			m_folder->addNode(L"Child 3");
-			m_folder->expand();
+			for (int i = 0; i < 20; i++)
+			{
+				root->addNode(L"Child _", GUI::ESystemIcon::Folder);
+			}
 
 			spliter->setControl(m_folder, 0, 0);
+
 
 			GUI::CScrollControl *scroll = new GUI::CScrollControl(spliter);
 			spliter->setControl(scroll, 0, 1);

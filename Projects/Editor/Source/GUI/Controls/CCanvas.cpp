@@ -102,12 +102,12 @@ namespace Skylicht
 
 			void CCanvas::update()
 			{
-				processDelayedDeletes();
-
 				if (isHidden())
 					return;
 
 				recurseLayout();
+
+				processDelayedDeletes();
 
 				if (NextTab == NULL)
 					NextTab = FirstTab;

@@ -348,7 +348,8 @@ namespace Skylicht
 
 			void CBase::onChildBoundsChanged(const SRect& oldChildBounds, CBase* child)
 			{
-
+				if (m_parent)
+					m_parent->onChildBoundsChanged(oldChildBounds, child);
 			}
 
 			void CBase::updateRenderBounds()

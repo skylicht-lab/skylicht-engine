@@ -33,17 +33,20 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTreeNode::CTreeNode(CBase *parent) :
+			CTreeNode::CTreeNode(CBase *parent, CTreeNode *root) :
 				CBase(parent),
+				m_root(root),
 				m_expand(false)
 			{
 				m_title = new CButton(this);
 				m_title->dock(EPosition::Top);
 				m_title->enableDrawBackground(false);
-				m_title->setMargin(SMargin(15.0f, 0.0f, 0.0f, 0.0f));
+				m_title->setIconMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));
+				m_title->setLabelMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
+				m_title->setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
 
 				m_expandButton = new CIconButton(this);
-				m_expandButton->setIcon(ESystemIcon::VRight);
+				m_expandButton->setIcon(ESystemIcon::TriangleRight);
 				m_expandButton->enableDrawBackground(false);
 				m_expandButton->setHidden(true);
 				m_expandButton->setPos(0.0f, 0.0f);
@@ -75,12 +78,12 @@ namespace Skylicht
 					if (m_expand == true)
 					{
 						m_innerPanel->setHidden(false);
-						m_expandButton->setIcon(ESystemIcon::VDown);
+						m_expandButton->setIcon(ESystemIcon::TriangleDown);
 					}
 					else
 					{
 						m_innerPanel->setHidden(true);
-						m_expandButton->setIcon(ESystemIcon::VRight);
+						m_expandButton->setIcon(ESystemIcon::TriangleRight);
 					}
 				}
 
@@ -98,25 +101,44 @@ namespace Skylicht
 
 			CTreeNode* CTreeNode::addNode(const std::wstring& text)
 			{
-				CTreeNode* node = new CTreeNode(this);
+				CTreeNode* node = new CTreeNode(this, m_root);
 				node->setText(text);
 				node->dock(EPosition::Top);
 				return node;
 			}
 
+			CTreeNode* CTreeNode::addNode(const std::wstring& text, ESystemIcon icon)
+			{
+				CTreeNode *node = addNode(text);
+				node->setIcon(icon);
+				return node;
+			}
+
 			void CTreeNode::setText(const std::wstring& text)
 			{
+				if (m_title == NULL)
+				{
+					// skip at root
+					return;
+				}
+
 				m_title->setLabel(text);
 				invalidate();
 			}
 
 			void CTreeNode::setIcon(ESystemIcon icon)
 			{
+				if (m_title == NULL)
+				{
+					// skip at root
+					return;
+				}
+
 				m_title->setIcon(icon);
 				if (icon != ESystemIcon::None)
-					m_title->setHidden(false);
+					m_title->showIcon(true);
 				else
-					m_title->setHidden(true);
+					m_title->showIcon(false);
 				invalidate();
 			}
 
