@@ -25,8 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CTreeNode.h"
-#include "CScrollControl.h"
+#include "CButton.h"
 
 namespace Skylicht
 {
@@ -34,28 +33,70 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CTreeControl : public CTreeNode
+			class CTreeTextItem : public CBase
 			{
 			protected:
-				CScrollControl *m_scrollControl;
+				CBase *m_root;
+
+				CIcon *m_icon;
+				CTextContainer *m_label;
 
 			public:
-				CTreeControl(CBase *parent);
+				CTreeTextItem(CBase *base, CBase *root);
 
-				~CTreeControl();
+				virtual ~CTreeTextItem();
 
-				inline CScrollControl* getScrollControl()
+				virtual void sizeToContents();
+
+				void setLabel(const std::wstring& text)
 				{
-					return m_scrollControl;
+					m_label->setString(text);
 				}
 
-				virtual void layout();
+				inline const std::wstring& getLabel()
+				{
+					return m_label->getString();
+				}
 
-				virtual void postLayout();
+				inline void setLabelFontSize(EFontSize fontsize)
+				{
+					m_label->setFontSize(fontsize);
+				}
 
-				virtual void onNodeClick(CBase *base);
+				inline const SGUIColor& getLabelColor()
+				{
+					return m_label->getColor();
+				}
 
-				virtual void deselectAll();
+				virtual void setLabelColor(const SGUIColor& color)
+				{
+					m_label->setColor(color);
+				}
+
+				inline void showIcon(bool b)
+				{
+					m_icon->setHidden(!b);
+				}
+
+				inline void setIcon(ESystemIcon icon)
+				{
+					m_icon->setIcon(icon);
+				}
+
+				inline ESystemIcon getIcon()
+				{
+					return m_icon->getIcon();
+				}
+
+				inline void setIconColor(const SGUIColor& c)
+				{
+					m_icon->setColor(c);
+				}
+
+				inline const SGUIColor& getIconColor()
+				{
+					return m_icon->getColor();
+				}
 			};
 		}
 	}

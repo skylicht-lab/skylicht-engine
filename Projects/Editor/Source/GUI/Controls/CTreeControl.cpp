@@ -39,16 +39,21 @@ namespace Skylicht
 				m_title->remove();
 				m_expandButton->remove();
 				m_innerPanel->remove();
+				m_row->remove();
 
 				m_title = NULL;
 				m_expandButton = NULL;
 				m_innerPanel = NULL;
+				m_row = NULL;
 
-				CScrollControl* scroll = new CScrollControl(this);
-				scroll->dock(EPosition::Fill);
-				scroll->showScrollBar(true, true);
+				m_scrollControl = new CScrollControl(this);
+				m_scrollControl->dock(EPosition::Fill);
+				m_scrollControl->showScrollBar(true, true);
+				m_scrollControl->getVerticalSroll()->setNudgeAmount(40.0f);
 
-				m_innerPanel = scroll->getInnerPanel();
+				m_innerPanel = m_scrollControl->getInnerPanel();
+
+				setTransparentMouseInput(false);
 			}
 
 			CTreeControl::~CTreeControl()
@@ -64,6 +69,23 @@ namespace Skylicht
 			void CTreeControl::postLayout()
 			{
 				CBase::postLayout();
+			}
+
+			void CTreeControl::onNodeClick(CBase *base)
+			{
+				deselectAll();
+			}
+
+			void CTreeControl::deselectAll()
+			{
+				for (CBase *c : m_innerPanel->Children)
+				{
+					CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+					if (node)
+					{
+						node->deselectAll();
+					}
+				}
 			}
 		}
 	}

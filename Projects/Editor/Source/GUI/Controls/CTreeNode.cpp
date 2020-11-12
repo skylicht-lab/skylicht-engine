@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTreeNode.h"
+#include "CScrollControl.h"
+#include "CTreeControl.h"
 
 #include "GUI/Theme/CThemeConfig.h"
 
@@ -36,14 +38,15 @@ namespace Skylicht
 			CTreeNode::CTreeNode(CBase *parent, CTreeNode *root) :
 				CBase(parent),
 				m_root(root),
-				m_expand(false)
+				m_expand(false),
+				m_selected(false)
 			{
-				m_title = new CButton(this);
+				m_row = new CTreeRowItem(this, root);
+				m_row->OnDown = BIND_LISTENER(&CTreeNode::onDown, this);
+				m_row->OnDoubleLeftMouseClick = BIND_LISTENER(&CTreeNode::onDoubleClick, this);
+
+				m_title = new CTreeTextItem(this, root);
 				m_title->dock(EPosition::Top);
-				m_title->enableDrawBackground(false);
-				m_title->setIconMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));
-				m_title->setLabelMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
-				m_title->setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
 
 				m_expandButton = new CIconButton(this);
 				m_expandButton->setIcon(ESystemIcon::TriangleRight);
@@ -57,6 +60,9 @@ namespace Skylicht
 				m_innerPanel->setHeight(20.0f);
 				m_innerPanel->setMargin(SMargin(CThemeConfig::TreeIndentationSize, 0.0f, 0.0f, 0.0f));
 				m_innerPanel->setHidden(true);
+				m_innerPanel->setTransparentMouseInput(true);
+
+				setTransparentMouseInput(true);
 			}
 
 			CTreeNode::~CTreeNode()
@@ -92,10 +98,27 @@ namespace Skylicht
 
 			void CTreeNode::postLayout()
 			{
-				if (m_innerPanel->isHidden() == false)
-					m_innerPanel->sizeToChildren(false, true);
+				if (m_title != NULL)
+					m_title->sizeToContents();
 
-				sizeToChildren(false, true);
+				if (m_innerPanel->isHidden() == false)
+					m_innerPanel->sizeToChildren(true, true);
+
+				sizeToChildren(true, true);
+
+				m_row->setPos(0.0f, 0.0f);
+				m_row->setWidth(width());
+				m_row->setHeight(m_title->height());
+
+				SPoint row = m_row->localPosToCanvas();
+				SPoint control = m_root->localPosToCanvas();
+
+				CTreeControl *treeControl = (CTreeControl*)(m_root);
+				SRect bounds = m_row->getBounds();
+				bounds.X = bounds.X - (row.X - control.X);
+				bounds.Width = treeControl->getScrollControl()->getInnerWidth();
+				m_row->setBounds(bounds);
+
 				CBase::postLayout();
 			}
 
@@ -146,6 +169,66 @@ namespace Skylicht
 			{
 				m_expand = !m_expand;
 				invalidate();
+			}
+
+			void CTreeNode::onDoubleClick(CBase *base)
+			{
+				onExpand(base);
+			}
+
+			void CTreeNode::onDown(CBase *base)
+			{
+				m_root->onNodeClick(base);
+				setSelected(!m_selected);
+			}
+
+			void CTreeNode::onNodeClick(CBase *base)
+			{
+
+			}
+
+			void CTreeNode::setSelected(bool b)
+			{
+				if (m_selected == b)
+					return;
+
+				m_selected = b;
+				m_row->setToggle(b);
+
+				if (b == true)
+				{
+					if (OnSelected != nullptr)
+						OnSelected(this);
+				}
+				else
+				{
+					if (OnUnselected != nullptr)
+						OnUnselected(this);
+				}
+
+				if (OnSelectChange != nullptr)
+					OnSelectChange(this);
+
+				invalidate();
+			}
+
+			void CTreeNode::deselectAll()
+			{
+				setSelected(false);
+
+				for (CBase *c : m_innerPanel->Children)
+				{
+					CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+					if (node)
+					{
+						node->deselectAll();
+					}
+				}
+			}
+
+			bool CTreeNode::hoverOnChild()
+			{
+				return m_expandButton->isHovered() || m_row->isHovered();
 			}
 		}
 	}

@@ -57,6 +57,20 @@ namespace Skylicht
 
 				void showScrollBar(bool h, bool v);
 
+				float getInnerWidth();
+
+				float getInnerHeight();
+
+				inline CScrollBar* getVerticalSroll()
+				{
+					return m_vertical;
+				}
+
+				inline CScrollBar* getHorizontalSroll()
+				{
+					return m_horizontal;
+				}
+
 			protected:
 				void updateScrollBar();
 

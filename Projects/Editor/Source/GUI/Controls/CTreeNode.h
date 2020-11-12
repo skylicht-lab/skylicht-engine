@@ -25,8 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CButton.h"
+#include "CTreeTextItem.h"
 #include "CIconButton.h"
+#include "CTreeRowItem.h"
 
 namespace Skylicht
 {
@@ -37,12 +38,21 @@ namespace Skylicht
 			class CTreeNode : public CBase
 			{
 			protected:
-				CButton *m_title;
+				CTreeTextItem *m_title;
 				CIconButton *m_expandButton;
+				CTreeRowItem *m_row;
 
 				CTreeNode *m_root;
 
 				bool m_expand;
+				bool m_selected;
+
+			public:
+
+				Listener OnSelected;
+				Listener OnUnselected;
+				Listener OnSelectChange;
+
 			public:
 				CTreeNode(CBase *parent, CTreeNode *root);
 
@@ -52,6 +62,11 @@ namespace Skylicht
 
 				virtual void postLayout();
 
+				inline CTreeTextItem *getTextItem()
+				{
+					return m_title;
+				}
+
 				CTreeNode* addNode(const std::wstring& text);
 
 				CTreeNode* addNode(const std::wstring& text, ESystemIcon icon);
@@ -60,7 +75,10 @@ namespace Skylicht
 
 				void setIcon(ESystemIcon icon);
 
-				void onExpand(CBase *base);
+				inline bool isExpand()
+				{
+					return m_expand;
+				}
 
 				inline void expand()
 				{
@@ -73,6 +91,22 @@ namespace Skylicht
 					m_expand = false;
 					invalidate();
 				}
+
+				void setSelected(bool b);
+
+				virtual void deselectAll();
+
+				bool hoverOnChild();
+
+			protected:
+
+				void onExpand(CBase *base);
+
+				void onDoubleClick(CBase *base);
+
+				void onDown(CBase *base);
+
+				virtual void onNodeClick(CBase *base);
 			};
 		}
 	}
