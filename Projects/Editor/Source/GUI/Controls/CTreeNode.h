@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CTreeTextItem.h"
+#include "CIconTextItem.h"
 #include "CIconButton.h"
 #include "CTreeRowItem.h"
 
@@ -38,7 +38,7 @@ namespace Skylicht
 			class CTreeNode : public CBase
 			{
 			protected:
-				CTreeTextItem *m_title;
+				CIconTextItem *m_title;
 				CIconButton *m_expandButton;
 				CTreeRowItem *m_row;
 
@@ -62,7 +62,7 @@ namespace Skylicht
 
 				virtual void postLayout();
 
-				inline CTreeTextItem *getTextItem()
+				inline CIconTextItem *getTextItem()
 				{
 					return m_title;
 				}

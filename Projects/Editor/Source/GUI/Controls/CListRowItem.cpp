@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CTreeTextItem.h"
+#include "CListRowItem.h"
 #include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
@@ -32,42 +32,57 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTreeTextItem::CTreeTextItem(CBase *base, CBase *root) :
-				CBase(base),
-				m_root(root)
+			CListRowItem::CListRowItem(CBase *base) :
+				CButton(base)
 			{
-				setMouseInputEnabled(false);
+				setIsToggle(true);
 
-				m_icon = new CIcon(this, ESystemIcon::None);
-				m_icon->dock(EPosition::Left);
 				m_icon->setMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));
-
-				m_label = new CTextContainer(this);
 				m_label->setMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
-				m_label->dock(EPosition::Fill);
 				m_label->setColor(CThemeConfig::ButtonTextColor);
 
 				setSize(80.0f, 20.0f);
-				setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
+				setMargin(SMargin(0.0f, 0.0f, 0.0f, 0.0f));
 				setPadding(SPadding(8.0f, 0.0f, 8.0f, 0.0f));
+
+				showIcon(true);
 			}
 
-			CTreeTextItem::~CTreeTextItem()
+			CListRowItem::~CListRowItem()
 			{
 
 			}
 
-			void CTreeTextItem::sizeToContents()
+			void CListRowItem::renderUnder()
 			{
-				float h = height();
+				if (isHovered() || m_toggleStatus)
+				{
+					renderBackground();
+				}
+			}
 
-				m_label->sizeToContents();
+			void CListRowItem::renderBackground()
+			{
+				SGUIColor c = m_color;
 
-				float w = m_padding.Left + m_padding.Right + m_label->width();
-				if (m_icon->isHidden() == false)
-					w = w + m_icon->width();
+				if (m_pressed == true)
+					c = m_pressColor;
+				else
+					c = m_hoverColor;
 
-				setSize(w, h);
+				if (isToggle())
+				{
+					if (m_toggleStatus)
+						c = m_pressColor;
+				}
+
+				SRect r = getRenderBounds();
+				r.X = r.X + 1.0f;
+				r.Y = r.Y + 1.0f;
+				r.Width = r.Width - 2.0f;
+				r.Height = r.Height - 1.0f;
+
+				CTheme::getTheme()->drawButton(r, c);
 			}
 		}
 	}
