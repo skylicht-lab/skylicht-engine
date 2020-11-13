@@ -24,63 +24,48 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/GUI.h"
-#include "Space/CSpace.h"
+#include "CBase.h"
+#include "CIconTextItem.h"
+
+#define MAX_COLUMN 16
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CEditor
+		namespace GUI
 		{
-			friend class CSpace;
+			class CTableRow : public CBase
+			{
+			protected:
+				CIconTextItem *m_columns[MAX_COLUMN];
 
-		private:
-			GUI::CCanvas *m_canvas;
-			GUI::CMenuBar *m_menuBar;
-			GUI::CDockPanel *m_dockPanel;
+				int m_numColumn;
 
-			GUI::CTableRow *m_statusInfo;
-			GUI::CIconTextItem *m_status;
+			public:
+				CTableRow(CBase *parent);
 
-			std::list<CSpace*> m_workspaces;
+				virtual ~CTableRow();
 
-		public:
-			CEditor();
+				void setColumnCount(int count);
 
-			virtual ~CEditor();
+				void setColumnWidth(int i, float width);
 
-			void update();
+				void setCellText(int i, const std::wstring& string);
 
-			void initEditorGUI();
+				void setCellIcon(int i, ESystemIcon icon);
 
-			void initImportProjectGUI();
+				void setCellText(int i, const std::wstring& string, ESystemIcon icon);
 
-			bool updateImporting();
+				void setCellContents(int i, CBase* control, bool enableMouseInput);
 
-			void saveLayout(const std::string& data);
+				CIconTextItem* getCellContents(int i)
+				{
+					return m_columns[i];
+				}
 
-		protected:
-
-			void initMenuBar();
-
-			void initDefaultLayout();
-
-			void initSessionLayout(const std::string& data);
-
-			void initWorkspace(GUI::CDockableWindow *window, const std::wstring& workspace);
-
-			void removeWorkspace(CSpace *space);
-
-		protected:
-
-			void readDockLayout(io::IXMLReader* xml, GUI::CDockPanel *panel);
-
-			void readSpliterLayout(io::IXMLReader* xml, GUI::CDockPanel *panel, GUI::CSplitter *spliter, bool isHorizontal);
-
-			void readDockTab(io::IXMLReader* xml, GUI::CDockTabControl *tabcontrol);
-
-			void readBound(io::IXMLReader* xml, GUI::CBase *base);
-		};
+				virtual void layout();
+			};
+		}
 	}
 }

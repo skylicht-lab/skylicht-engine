@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GUI/CGUIContext.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 #include "GUI/Controls/CCanvas.h"
 #include "GUI/Controls/CDockableWindow.h"
@@ -35,3 +36,4 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CTreeNode.h"
 #include "GUI/Controls/CTreeControl.h"
 #include "GUI/Controls/CListBox.h"
+#include "GUI/Controls/CTableRow.h"

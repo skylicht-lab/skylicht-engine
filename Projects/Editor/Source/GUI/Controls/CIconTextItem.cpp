@@ -47,7 +47,7 @@ namespace Skylicht
 				m_label->setColor(CThemeConfig::ButtonTextColor);
 
 				setSize(80.0f, 20.0f);
-				setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
+				setMargin(SMargin(0.0f, 0.0f, 0.0f, 0.0f));
 				setPadding(SPadding(8.0f, 0.0f, 8.0f, 0.0f));
 			}
 
