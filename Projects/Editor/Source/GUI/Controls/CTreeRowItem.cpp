@@ -71,7 +71,13 @@ namespace Skylicht
 						c = m_pressColor;
 				}
 
-				CTheme::getTheme()->drawButton(getRenderBounds(), c);
+				SRect r = getRenderBounds();
+				r.X = r.X + 1.0f;
+				r.Y = r.Y + 1.0f;
+				r.Width = r.Width - 2.0f;
+				r.Height = r.Height - 1.0f;
+
+				CTheme::getTheme()->drawButton(r, c);
 			}
 		}
 	}

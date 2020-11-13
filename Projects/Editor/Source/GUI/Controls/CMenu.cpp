@@ -36,7 +36,8 @@ namespace Skylicht
 		{
 			CMenu::CMenu(CBase *parent) :
 				CBase(parent),
-				m_isOpenSubMenu(false)
+				m_isOpenSubMenu(false),
+				m_isOpenPopup(false)
 			{
 				setBounds(0.0f, 0.0f, 210, 24.0f);
 			}
@@ -75,6 +76,13 @@ namespace Skylicht
 				}
 
 				setSize(width(), menuHeight);
+
+				SRect bound = m_parent->getBounds();
+				if (X() + width() > bound.X + bound.Width)
+				{
+					float newX = bound.X + bound.Width - width();
+					setPos(newX, Y());
+				}
 
 				CBase::layout();
 			}
@@ -266,18 +274,41 @@ namespace Skylicht
 				}
 			}
 
+			void CMenu::open(const SPoint& position)
+			{
+				setHidden(false);
+				setPos(position);
+				bringToFront();
+				m_isOpenPopup = true;
+			}
+
+			void CMenu::close()
+			{
+				if (m_isOpenPopup == true)
+				{
+					m_isOpenPopup = false;
+					setHidden(true);
+				}
+			}
+
 			void CMenu::openMenu(CMenuItem *menuItem)
 			{
 				if (menuItem->isOpenMenu())
 					return;
 
-				closeMenu();
+				closeChildMenu();
 				menuItem->openMenu();
 
 				m_isOpenSubMenu = true;
 			}
 
 			void CMenu::closeMenu()
+			{
+				closeChildMenu();
+				close();
+			}
+
+			void CMenu::closeChildMenu()
 			{
 				for (CBase *child : Children)
 				{

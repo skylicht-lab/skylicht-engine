@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBase.h"
 #include "CTabButton.h"
 #include "CTabStrip.h"
+#include "CMenu.h"
 
 #define BIND_TABCONTROL_LISTENER(A, B) std::bind(A, B, std::placeholders::_1, std::placeholders::_2)
 
@@ -50,6 +51,9 @@ namespace Skylicht
 
 				CTabButton* m_currentTab;
 				CIconButton* m_dropDown;
+
+				CMenu *m_dropDownMenu;
+				bool m_isOpenMenu;
 
 				bool m_showTabCloseButton;
 
@@ -143,6 +147,8 @@ namespace Skylicht
 				CTabButton* getTabButton(CBase *base);
 
 				float getMaxButtonRight();
+
+				virtual void onMenuItem(CBase *menu);
 			};
 		}
 	}
