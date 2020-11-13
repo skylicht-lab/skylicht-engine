@@ -45,7 +45,7 @@ namespace Skylicht
 				m_row->OnDown = BIND_LISTENER(&CTreeNode::onDown, this);
 				m_row->OnDoubleLeftMouseClick = BIND_LISTENER(&CTreeNode::onDoubleClick, this);
 
-				m_title = new CTreeTextItem(this, root);
+				m_title = new CIconTextItem(this);
 				m_title->dock(EPosition::Top);
 
 				m_expandButton = new CIconButton(this);

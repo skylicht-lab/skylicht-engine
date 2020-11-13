@@ -34,3 +34,4 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CMenuBar.h"
 #include "GUI/Controls/CTreeNode.h"
 #include "GUI/Controls/CTreeControl.h"
+#include "GUI/Controls/CListBox.h"

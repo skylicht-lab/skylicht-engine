@@ -22,57 +22,45 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CSpaceAssets.h"
+#pragma once
+
+#include "CBase.h"
+#include "CScrollControl.h"
+#include "CIconTextItem.h"
+#include "CListRowItem.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpaceAssets::CSpaceAssets(GUI::CDockableWindow *window, CEditor *editor) :
-			CSpace(window, editor)
+		namespace GUI
 		{
-			GUI::CSplitter *spliter = new GUI::CSplitter(window);
-			spliter->dock(GUI::EPosition::Fill);
-			spliter->setNumberRowCol(1, 2);
-
-			m_folder = new GUI::CTreeControl(spliter);
-
-			GUI::CTreeNode *root = m_folder->addNode(L"../Assets", GUI::ESystemIcon::OpenFolder);
-			root->expand();
-
-			GUI::CTreeNode *child2 = root->addNode(L"Child 2", GUI::ESystemIcon::OpenFolder);
-			child2->addNode(L"File", GUI::ESystemIcon::File);
-			child2->addNode(L"Document", GUI::ESystemIcon::FileDocument);
-			child2->addNode(L"Image", GUI::ESystemIcon::FileImage);
-			child2->expand();
-
-			for (int i = 0; i < 20; i++)
+			class CListBox : public CScrollControl
 			{
-				root->addNode(L"Child _", GUI::ESystemIcon::Folder);
-			}
+			public:
+				CListBox(CBase *parent);
 
-			spliter->setControl(m_folder, 0, 0);
+				virtual ~CListBox();
 
+				CListRowItem* addItem(const std::wstring& label, ESystemIcon icon);
 
-			GUI::CListBox *listBox = new GUI::CListBox(spliter);
-			spliter->setControl(listBox, 0, 1);
+				CListRowItem* addItem(const std::wstring& label);
 
-			for (int i = 0; i < 100; i++)
-			{
-				if (i != 5)
-					listBox->addItem(L"File _", GUI::ESystemIcon::File);
-				else
-					listBox->addItem(L"File _");
-			}
+				CListRowItem* getItemByLabel(const std::wstring& label);
 
-			spliter->setColWidth(0, 300.0f);
-			spliter->setWeakCol(1);
-		}
+				CListRowItem* getItemByTagValue(int value);
 
-		CSpaceAssets::~CSpaceAssets()
-		{
+			public:
 
+				Listener OnSelected;
+				Listener OnUnselected;
+				Listener OnSelectChange;
+
+			protected:
+
+				virtual void onItemDown(CBase *item);
+
+			};
 		}
 	}
 }

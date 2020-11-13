@@ -33,18 +33,16 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CTreeTextItem : public CBase
+			class CIconTextItem : public CBase
 			{
 			protected:
-				CBase *m_root;
-
 				CIcon *m_icon;
 				CTextContainer *m_label;
 
 			public:
-				CTreeTextItem(CBase *base, CBase *root);
+				CIconTextItem(CBase *base);
 
-				virtual ~CTreeTextItem();
+				virtual ~CIconTextItem();
 
 				virtual void sizeToContents();
 
@@ -61,6 +59,11 @@ namespace Skylicht
 				inline void setLabelFontSize(EFontSize fontsize)
 				{
 					m_label->setFontSize(fontsize);
+				}
+
+				inline void setLabelMargin(const SMargin& margin)
+				{
+					m_label->setMargin(margin);
 				}
 
 				inline const SGUIColor& getLabelColor()

@@ -23,56 +23,51 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CSpaceAssets.h"
+#include "CIconTextItem.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpaceAssets::CSpaceAssets(GUI::CDockableWindow *window, CEditor *editor) :
-			CSpace(window, editor)
+		namespace GUI
 		{
-			GUI::CSplitter *spliter = new GUI::CSplitter(window);
-			spliter->dock(GUI::EPosition::Fill);
-			spliter->setNumberRowCol(1, 2);
-
-			m_folder = new GUI::CTreeControl(spliter);
-
-			GUI::CTreeNode *root = m_folder->addNode(L"../Assets", GUI::ESystemIcon::OpenFolder);
-			root->expand();
-
-			GUI::CTreeNode *child2 = root->addNode(L"Child 2", GUI::ESystemIcon::OpenFolder);
-			child2->addNode(L"File", GUI::ESystemIcon::File);
-			child2->addNode(L"Document", GUI::ESystemIcon::FileDocument);
-			child2->addNode(L"Image", GUI::ESystemIcon::FileImage);
-			child2->expand();
-
-			for (int i = 0; i < 20; i++)
+			CIconTextItem::CIconTextItem(CBase *base) :
+				CBase(base)
 			{
-				root->addNode(L"Child _", GUI::ESystemIcon::Folder);
+				setMouseInputEnabled(false);
+
+				m_icon = new CIcon(this, ESystemIcon::None);
+				m_icon->dock(EPosition::Left);
+				m_icon->setMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));
+
+				m_label = new CTextContainer(this);
+				m_label->setMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
+				m_label->dock(EPosition::Fill);
+				m_label->setColor(CThemeConfig::ButtonTextColor);
+
+				setSize(80.0f, 20.0f);
+				setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
+				setPadding(SPadding(8.0f, 0.0f, 8.0f, 0.0f));
 			}
 
-			spliter->setControl(m_folder, 0, 0);
-
-
-			GUI::CListBox *listBox = new GUI::CListBox(spliter);
-			spliter->setControl(listBox, 0, 1);
-
-			for (int i = 0; i < 100; i++)
+			CIconTextItem::~CIconTextItem()
 			{
-				if (i != 5)
-					listBox->addItem(L"File _", GUI::ESystemIcon::File);
-				else
-					listBox->addItem(L"File _");
+
 			}
 
-			spliter->setColWidth(0, 300.0f);
-			spliter->setWeakCol(1);
-		}
+			void CIconTextItem::sizeToContents()
+			{
+				float h = height();
 
-		CSpaceAssets::~CSpaceAssets()
-		{
+				m_label->sizeToContents();
 
+				float w = m_padding.Left + m_padding.Right + m_label->width();
+				if (m_icon->isHidden() == false)
+					w = w + m_icon->width();
+
+				setSize(w, h);
+			}
 		}
 	}
 }
