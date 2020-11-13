@@ -126,7 +126,6 @@ namespace Skylicht
 				float w = getInnerWidth();
 				float h = getInnerHeight();
 
-
 				// Get the max size of all our children together
 				for (CBase* child : m_innerPanel->Children)
 				{

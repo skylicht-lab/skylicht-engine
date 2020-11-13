@@ -117,6 +117,18 @@ namespace Skylicht
 					}
 				}
 			}
+
+			void CListBox::unSelectAll()
+			{
+				for (CBase *child : m_innerPanel->Children)
+				{
+					CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+					if (item != NULL)
+					{
+						item->setToggle(false);
+					}
+				}
+			}
 		}
 	}
 }

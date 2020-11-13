@@ -55,7 +55,8 @@ namespace Skylicht
 
 			void CScrollBar::render()
 			{
-				CBase::render();
+				if (m_bar->isHidden() == false)
+					CBase::render();
 			}
 
 			void CScrollBar::layout()

@@ -73,6 +73,32 @@ namespace Skylicht
 			m_menuBar = new GUI::CMenuBar(m_canvas);
 			initMenuBar();
 
+			// init status bar
+			GUI::CBase *statusBar = new GUI::CBase(m_canvas);
+			statusBar->setHeight(20.0f);
+			statusBar->enableRenderFillRect(true);
+			statusBar->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
+			statusBar->dock(GUI::EPosition::Bottom);
+
+			m_statusInfo = new GUI::CTableRow(statusBar);
+			m_statusInfo->setWidth(450.0f);
+			m_statusInfo->setColumnCount(4);
+
+			float colWidth = round(m_statusInfo->width() / 4.0f);
+			for (int i = 0; i < 4; i++)
+				m_statusInfo->setColumnWidth(i, colWidth);
+
+			m_statusInfo->setCellText(0, L"CTRL");
+			m_statusInfo->setCellText(1, L"SHIFT");
+			m_statusInfo->setCellText(2, L"CAPLOCK");
+			m_statusInfo->setCellText(3, L"INS");
+			m_statusInfo->dock(GUI::EPosition::Right);
+
+			m_status = new GUI::CIconTextItem(statusBar);
+			m_status->setLabel(L"Item(s) Save!");
+			m_status->setIcon(GUI::ESystemIcon::Save);
+			m_status->dock(GUI::EPosition::Fill);
+
 			// init dock panel
 			m_dockPanel = new GUI::CDockPanel(m_canvas);
 			m_dockPanel->dock(GUI::EPosition::Fill);
