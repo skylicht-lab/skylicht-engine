@@ -46,6 +46,7 @@ namespace Skylicht
 				m_row->OnDoubleLeftMouseClick = BIND_LISTENER(&CTreeNode::onDoubleClick, this);
 
 				m_title = new CIconTextItem(this);
+				m_title->setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
 				m_title->dock(EPosition::Top);
 
 				m_expandButton = new CIconButton(this);

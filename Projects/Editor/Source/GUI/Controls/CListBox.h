@@ -50,6 +50,8 @@ namespace Skylicht
 
 				CListRowItem* getItemByTagValue(int value);
 
+				void unSelectAll();
+
 			public:
 
 				Listener OnSelected;
