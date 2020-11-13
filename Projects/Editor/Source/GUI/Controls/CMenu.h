@@ -37,6 +37,7 @@ namespace Skylicht
 			{
 			protected:
 				bool m_isOpenSubMenu;
+				bool m_isOpenPopup;
 
 			public:
 				CMenu(CBase *parent);
@@ -62,11 +63,17 @@ namespace Skylicht
 
 				CMenuSeparator* addSeparator();
 
+				virtual void open(const SPoint& position);
+
+				virtual void close();
+
 				virtual void onMenuItemHover(CBase *item);
 
 				virtual void openMenu(CMenuItem *item);
 
 				virtual void closeMenu();
+
+				virtual void closeChildMenu();
 
 				virtual bool isMenuComponent()
 				{
@@ -74,6 +81,11 @@ namespace Skylicht
 				}
 
 				virtual void onMenuItemPress(CBase *item);
+
+				inline bool isOpen()
+				{
+					return m_isOpenPopup;
+				}
 
 			public:
 

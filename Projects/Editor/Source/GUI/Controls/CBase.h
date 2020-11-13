@@ -86,8 +86,6 @@ namespace Skylicht
 					invalidate();
 				}
 
-				virtual void releaseChildren();
-
 				virtual void onBoundsChanged(const SRect& oldBounds);
 				virtual void onChildBoundsChanged(const SRect& oldChildBounds, CBase* child);
 
@@ -95,6 +93,7 @@ namespace Skylicht
 				List Children;
 
 				virtual void removeAllChildren();
+				virtual void releaseChildren();
 				virtual void sendToBack(void);
 				virtual void bringToFront(void);
 				virtual void bringNextToControl(CBase* child, bool behind);
@@ -147,6 +146,66 @@ namespace Skylicht
 				inline void setDebugValue(int d)
 				{
 					m_debugValue = d;
+				}
+
+				inline void tagInt(int intValue)
+				{
+					m_tagInt = intValue;
+				}
+
+				inline int getTagInt()
+				{
+					return m_tagInt;
+				}
+
+				inline void tagFloat(float floatValue)
+				{
+					m_tagFloat = floatValue;
+				}
+
+				inline float getTagFloat()
+				{
+					return m_tagFloat;
+				}
+
+				inline void tagBool(bool boolValue)
+				{
+					m_tagBool = boolValue;
+				}
+
+				inline bool getTagBool()
+				{
+					return m_tagBool;
+				}
+
+				inline void tagString(const std::string& s)
+				{
+					m_tagString = s;
+				}
+
+				inline const std::string& getTagString()
+				{
+					return m_tagString;
+				}
+
+				inline void tagString(const std::wstring& s)
+				{
+					m_tagWString = s;
+				}
+
+				inline const std::wstring& getTagWString()
+				{
+					return m_tagWString;
+				}
+
+				inline void tagData(void *data)
+				{
+					m_tagData = data;
+				}
+
+				inline void* getTagData()
+				{
+					return m_tagData;
 				}
 
 				inline float X() const { return m_bounds.X; }
@@ -421,6 +480,13 @@ namespace Skylicht
 				EPosition m_dock;
 
 				ECursorType m_cursor;
+
+				int m_tagInt;
+				float m_tagFloat;
+				bool m_tagBool;
+				std::string m_tagString;
+				std::wstring m_tagWString;
+				void *m_tagData;
 			};
 		}
 	}

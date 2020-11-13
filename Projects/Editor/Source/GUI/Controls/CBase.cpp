@@ -53,7 +53,11 @@ namespace Skylicht
 				m_cursor(ECursorType::Normal),
 				m_renderFillRect(false),
 				m_fillRectColor(CThemeConfig::WindowInnerColor),
-				m_debugValue(0)
+				m_debugValue(0),
+				m_tagInt(0),
+				m_tagFloat(0.0f),
+				m_tagBool(false),
+				m_tagData(NULL)
 			{
 				if (parent != NULL)
 					setParent(parent->getInnerPanel());

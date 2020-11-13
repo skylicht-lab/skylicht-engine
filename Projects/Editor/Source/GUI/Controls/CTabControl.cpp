@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTabControl.h"
+#include "CCanvas.h"
 #include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
@@ -35,7 +36,8 @@ namespace Skylicht
 			CTabControl::CTabControl(CBase *parent) :
 				CBase(parent),
 				m_currentTab(NULL),
-				m_showTabCloseButton(false)
+				m_showTabCloseButton(false),
+				m_isOpenMenu(false)
 			{
 				enableClip(true);
 
@@ -51,11 +53,16 @@ namespace Skylicht
 				m_innerPanel->dock(EPosition::Fill);
 				m_innerPanel->enableRenderFillRect(true);
 				m_innerPanel->setFillRectColor(CThemeConfig::WindowInnerColor);
+
+				m_dropDownMenu = new CMenu(getCanvas());
+				m_dropDownMenu->setHidden(true);
+				m_dropDownMenu->OnCommand = BIND_LISTENER(&CTabControl::onMenuItem, this);
 			}
 
 			CTabControl::~CTabControl()
 			{
-
+				if (getCanvas() != NULL)
+					m_dropDownMenu->remove();
 			}
 
 			void CTabControl::postLayout()
@@ -284,7 +291,38 @@ namespace Skylicht
 
 			void CTabControl::onDropDownPressed(CBase *button)
 			{
+				if (m_isOpenMenu == false)
+				{
+					m_dropDownMenu->releaseChildren();
 
+					int id = 0;
+					for (CTabButton* tabButton : m_tabButtons)
+					{
+						CMenuItem *item = m_dropDownMenu->addItem(tabButton->getLabel());
+						item->tagInt(id++);
+					}
+
+					SPoint position = m_dropDown->localPosToCanvas();
+					position.Y = position.Y + m_dropDown->height();
+					m_dropDownMenu->open(position);
+					m_isOpenMenu = true;
+				}
+				else
+				{
+					m_dropDownMenu->closeMenu();
+					m_isOpenMenu = false;
+				}
+			}
+
+			void CTabControl::onMenuItem(CBase *item)
+			{
+				CMenuItem *menuItem = dynamic_cast<CMenuItem*>(item);
+				if (menuItem != NULL)
+				{
+					int tabIndex = menuItem->getTagInt();
+					setTab(getTabButton(tabIndex));
+				}
+				m_isOpenMenu = false;
 			}
 
 			void CTabControl::onCloseTab(CTabButton *tab)
