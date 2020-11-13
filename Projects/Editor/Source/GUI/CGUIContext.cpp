@@ -104,6 +104,7 @@ namespace Skylicht
 				if (g_rootCanvas != NULL)
 				{
 					g_rootCanvas->setBounds(0.0f, 0.0f, width, height);
+					g_rootCanvas->closeMenu();
 					g_rootCanvas->notifySaveDockLayout();
 				}
 			}
