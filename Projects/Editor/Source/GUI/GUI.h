@@ -37,3 +37,4 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CTreeControl.h"
 #include "GUI/Controls/CListBox.h"
 #include "GUI/Controls/CTableRow.h"
+#include "GUI/Controls/CToolbar.h"

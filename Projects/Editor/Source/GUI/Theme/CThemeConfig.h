@@ -51,6 +51,7 @@ namespace Skylicht
 
 				static SGUIColor ButtonColor;
 				static SGUIColor ButtonTextColor;
+				static SGUIColor ButtonTextDisableColor;
 				static SGUIColor ButtonHoverColor;
 				static SGUIColor ButtonPressColor;
 				static SGUIColor ButtonFocusColor;
@@ -71,6 +72,7 @@ namespace Skylicht
 				static SGUIColor MenuItemAcceleratorColor;
 				static SGUIColor MenuItemSeparatorColor;
 
+				static SGUIColor ScrollControlBackgroundColor;
 				static SGUIColor ScrollBarColor;
 				static SGUIColor ScrollBarBarColor;
 				static SGUIColor ScrollBarBarHoverColor;
