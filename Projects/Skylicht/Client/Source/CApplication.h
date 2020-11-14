@@ -50,6 +50,8 @@ namespace Skylicht
 	public:
 		CApplication();
 
+		virtual ~CApplication();
+
 		virtual bool OnEvent(const SEvent& event);
 
 		// getBaseApp
@@ -105,6 +107,8 @@ namespace Skylicht
 		void setDeviceID(const wchar_t* string);
 
 		void setDeviceID(const char* string);
+
+		void enableWriteLog(bool b);
 	};
 
 }

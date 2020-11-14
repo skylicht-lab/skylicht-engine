@@ -170,6 +170,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	g_application = new CApplication();
 	g_application->setParams(params);
 
+#if defined(SKYLICHT_EDITOR)
+	g_application->enableWriteLog(true);
+#endif
+
 	// create irrlicht device
 	SIrrlichtCreationParameters p;
 	if (useDX11 == IDNO)

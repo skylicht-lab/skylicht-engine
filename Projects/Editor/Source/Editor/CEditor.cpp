@@ -74,7 +74,7 @@ namespace Skylicht
 			initMenuBar();
 
 			// init status bar
-			GUI::CToolbar *statusBar = new GUI::CToolbar(m_canvas);			
+			GUI::CToolbar *statusBar = new GUI::CToolbar(m_canvas);
 			statusBar->dock(GUI::EPosition::Bottom);
 
 			m_statusInfo = new GUI::CTableRow(statusBar);
@@ -268,9 +268,9 @@ namespace Skylicht
 
 			w = round(width * 0.35f);
 			h = round(height * 0.3f);
-			GUI::CDockableWindow *preview = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
-			preview->setCaption(L"Preview");
-			m_dockPanel->dockChildWindow(preview, asset->getCurrentDockTab(), GUI::CDockPanel::DockTargetRight);
+			GUI::CDockableWindow *console = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			console->setCaption(L"Console");
+			m_dockPanel->dockChildWindow(console, asset->getCurrentDockTab(), GUI::CDockPanel::DockTargetRight);
 			m_dockPanel->recurseLayout();
 
 			w = width * 0.3f;
@@ -282,7 +282,7 @@ namespace Skylicht
 
 			initWorkspace(scene, scene->getCaption());
 			initWorkspace(asset, asset->getCaption());
-			initWorkspace(preview, preview->getCaption());
+			initWorkspace(console, console->getCaption());
 			initWorkspace(property, property->getCaption());
 		}
 
@@ -304,7 +304,7 @@ namespace Skylicht
 			{
 				m_workspaces.push_back(new CSpaceAssets(window, this));
 			}
-			else if (workspace == L"Preview")
+			else if (workspace == L"Console")
 			{
 
 			}
