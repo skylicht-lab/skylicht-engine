@@ -67,16 +67,27 @@ namespace Skylicht
 
 			void CButton::renderUnder()
 			{
-				if (!m_drawBackground)
-					return;
-
-				CTheme::getTheme()->drawButtonShadow(getRenderBounds());
-
 				SGUIColor c = m_color;
 
 				bool pressed = m_pressed;
+				bool hover = isHovered();
+				bool disable = isDisabled();
 
-				if (isHovered())
+				if (disable)
+				{
+					m_label->setColor(CThemeConfig::ButtonTextDisableColor);
+					m_icon->setColor(CThemeConfig::ButtonTextDisableColor);
+				}
+				else
+				{
+					m_label->setColor(m_labelColor);
+					m_icon->setColor(m_iconColor);
+
+					if (m_drawBackground || hover)
+						CTheme::getTheme()->drawButtonShadow(getRenderBounds());
+				}
+
+				if (hover && !disable)
 				{
 					if (pressed == true)
 						c = m_pressColor;
@@ -90,7 +101,8 @@ namespace Skylicht
 						c = m_pressColor;
 				}
 
-				CTheme::getTheme()->drawButton(getRenderBounds(), c);
+				if (!disable && (m_drawBackground || hover))
+					CTheme::getTheme()->drawButton(getRenderBounds(), c);
 			}
 
 			void CButton::onBoundsChanged(const SRect& oldBounds)

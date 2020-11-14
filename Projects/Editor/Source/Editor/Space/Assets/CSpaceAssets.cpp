@@ -32,6 +32,12 @@ namespace Skylicht
 		CSpaceAssets::CSpaceAssets(GUI::CDockableWindow *window, CEditor *editor) :
 			CSpace(window, editor)
 		{
+			GUI::CToolbar *toolbar = new GUI::CToolbar(window);
+
+			toolbar->addButton(L"Add", GUI::ESystemIcon::Plus);
+			toolbar->addButton(L"Search", GUI::ESystemIcon::Search);
+			toolbar->addButton(GUI::ESystemIcon::Setting, true);
+
 			GUI::CSplitter *spliter = new GUI::CSplitter(window);
 			spliter->dock(GUI::EPosition::Fill);
 			spliter->setNumberRowCol(1, 2);

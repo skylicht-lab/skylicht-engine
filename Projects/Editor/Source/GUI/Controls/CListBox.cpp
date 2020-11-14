@@ -43,6 +43,18 @@ namespace Skylicht
 
 			}
 
+			void CListBox::postLayout()
+			{
+				CBase::postLayout();
+
+				float w = getInnerWidth();
+				for (CBase *child : m_innerPanel->Children)
+				{
+					if (child->width() < w)
+						child->setWidth(w);
+				}
+			}
+
 			CListRowItem* CListBox::addItem(const std::wstring& label, ESystemIcon icon)
 			{
 				CListRowItem *item = new CListRowItem(this);
