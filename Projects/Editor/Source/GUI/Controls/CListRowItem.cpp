@@ -53,6 +53,17 @@ namespace Skylicht
 
 			}
 
+			void CListRowItem::layout()
+			{
+				CBase::layout();
+
+				// compute child size
+				m_label->sizeToContents();
+
+				// fit to child size
+				sizeToChildren(true, false);
+			}
+
 			void CListRowItem::renderUnder()
 			{
 				if (isHovered() || m_toggleStatus)

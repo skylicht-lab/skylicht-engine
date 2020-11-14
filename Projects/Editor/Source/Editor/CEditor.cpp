@@ -74,10 +74,7 @@ namespace Skylicht
 			initMenuBar();
 
 			// init status bar
-			GUI::CBase *statusBar = new GUI::CBase(m_canvas);
-			statusBar->setHeight(20.0f);
-			statusBar->enableRenderFillRect(true);
-			statusBar->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
+			GUI::CToolbar *statusBar = new GUI::CToolbar(m_canvas);			
 			statusBar->dock(GUI::EPosition::Bottom);
 
 			m_statusInfo = new GUI::CTableRow(statusBar);
@@ -88,10 +85,9 @@ namespace Skylicht
 			for (int i = 0; i < 4; i++)
 				m_statusInfo->setColumnWidth(i, colWidth);
 
-			m_statusInfo->setCellText(0, L"CTRL");
-			m_statusInfo->setCellText(1, L"SHIFT");
-			m_statusInfo->setCellText(2, L"CAPLOCK");
-			m_statusInfo->setCellText(3, L"INS");
+			m_statusInfo->setCellText(1, L"CTRL");
+			m_statusInfo->setCellText(2, L"SHIFT");
+			m_statusInfo->setCellText(3, L"CAPLOCK");
 			m_statusInfo->dock(GUI::EPosition::Right);
 
 			m_status = new GUI::CIconTextItem(statusBar);

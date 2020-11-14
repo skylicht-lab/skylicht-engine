@@ -47,6 +47,7 @@ namespace Skylicht
 
 			SGUIColor CThemeConfig::ButtonColor = SGUIColor(255, 88, 88, 88);
 			SGUIColor CThemeConfig::ButtonTextColor = SGUIColor(255, 250, 250, 250);
+			SGUIColor CThemeConfig::ButtonTextDisableColor = SGUIColor(255, 85, 85, 85);
 			SGUIColor CThemeConfig::ButtonHoverColor = SGUIColor(255, 110, 110, 110);
 			SGUIColor CThemeConfig::ButtonPressColor = SGUIColor(255, 80, 120, 180);
 			SGUIColor CThemeConfig::ButtonFocusColor = SGUIColor(255, 85, 110, 140);
@@ -67,6 +68,7 @@ namespace Skylicht
 			SGUIColor CThemeConfig::MenuItemAcceleratorColor = SGUIColor(100, 250, 250, 250);
 			SGUIColor CThemeConfig::MenuItemSeparatorColor = WindowInnerColor;
 
+			SGUIColor CThemeConfig::ScrollControlBackgroundColor = SGUIColor(100, 20, 20, 20);
 			SGUIColor CThemeConfig::ScrollBarColor = WindowBackgroundColor;
 			SGUIColor CThemeConfig::ScrollBarBarColor = ButtonColor;
 			SGUIColor CThemeConfig::ScrollBarBarHoverColor = ButtonHoverColor;

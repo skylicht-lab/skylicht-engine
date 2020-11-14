@@ -42,6 +42,8 @@ namespace Skylicht
 
 				virtual ~CListBox();
 
+				virtual void postLayout();
+
 				CListRowItem* addItem(const std::wstring& label, ESystemIcon icon);
 
 				CListRowItem* addItem(const std::wstring& label);
