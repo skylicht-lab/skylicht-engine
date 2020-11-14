@@ -39,6 +39,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Control/CAccelerometer.h"
 #include "Control/CJoystick.h"
 
+// Console Log
+#include "ConsoleLog/CConsoleLog.h"
+
 // String Imp
 #include "Utils/CStringImp.h"
 
@@ -61,10 +64,16 @@ namespace Skylicht
 		m_runGame(false)
 	{
 		g_app = this;
+		CConsoleLog::createGetInstance();
 
 #if _DEBUG
 		m_showFPS = true;
 #endif
+	}
+
+	CApplication::~CApplication()
+	{
+		CConsoleLog::releaseInstance();
 	}
 
 	bool CApplication::OnEvent(const SEvent& event)
@@ -100,15 +109,19 @@ namespace Skylicht
 		}
 #endif
 
-#ifdef ANDROID
 		if (event.EventType == EET_LOG_TEXT_EVENT)
 		{
+#ifdef ANDROID
 			__android_log_print(ANDROID_LOG_INFO, "skylicht_client.so", "%s", event.LogEvent.Text);
-		}
 #endif
 
-		return false;
+			CConsoleLog *log = CConsoleLog::getInstance();
+			if (log->isEnable())
+				log->write(event.LogEvent.Text, event.LogEvent.Level);
 	}
+
+		return false;
+}
 
 	void CApplication::setParams(const std::vector<std::string>& argv)
 	{
@@ -456,5 +469,10 @@ namespace Skylicht
 		os::Printer::log(logString);
 
 		CBuildConfig::DeviceID = mac;
+	}
+
+	void CApplication::enableWriteLog(bool b)
+	{
+		CConsoleLog::getInstance()->setEnable(true);
 	}
 }
