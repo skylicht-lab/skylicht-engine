@@ -49,6 +49,8 @@ void SampleShader::onInitApp()
 	fs->addFileArchive(app->getBuiltInPath("Common.zip"), false, false);
 	fs->addFileArchive(app->getBuiltInPath("SampleShader.zip"), false, false);
 	fs->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
+	fs->addFileArchive(app->getBuiltInPath("SampleModelsResource.zip"), false, false);
+	fs->addFileArchive(app->getBuiltInPath("SampleModelsDDS.zip"), false, false);
 
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
