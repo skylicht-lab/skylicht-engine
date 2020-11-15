@@ -35,6 +35,8 @@ void SkylichtEditor::onInitApp()
 
 void SkylichtEditor::onUpdate()
 {
+	float currentTime = (float)getIrrlichtDevice()->getTimer()->getTime();
+
 	switch (m_editorState)
 	{
 	case Startup:
@@ -78,6 +80,8 @@ void SkylichtEditor::onUpdate()
 		if (m_editor->updateImporting() == true)
 		{
 			m_editor->initEditorGUI();
+			m_editor->update();
+			Editor::GUI::CGUIContext::update(currentTime);
 			m_editorState = Running;
 		}
 	}
@@ -85,7 +89,7 @@ void SkylichtEditor::onUpdate()
 	default:
 		// Running
 		m_editor->update();
-		Editor::GUI::CGUIContext::update((float)getIrrlichtDevice()->getTimer()->getTime());
+		Editor::GUI::CGUIContext::update(currentTime);
 		break;
 	}
 }

@@ -42,7 +42,25 @@ namespace Skylicht
 
 				virtual ~CTextContainer();
 
+				virtual void render();
+
 				void setString(const std::wstring& string);
+
+				u32 getClosestCharacter(const SPoint& point, u32& outLine, u32& outChar);
+
+				void setCaretBegin(u32 line, u32 c);
+
+				void setCaretEnd(u32 line, u32 c);
+
+				inline void showCaret(bool b)
+				{
+					m_showCaret = b;
+				}
+
+				inline void setCaretBlinkSpeed(float ms)
+				{
+					m_caretBlinkSpeed = ms;
+				}
 
 				inline const std::wstring& getString()
 				{
@@ -104,6 +122,22 @@ namespace Skylicht
 				EFontSize m_fontSize;
 
 				ListTextControl m_lines;
+
+				u32 m_caretBeginLine;
+
+				u32 m_caretBeginPosition;
+
+				u32 m_caretEndLine;
+
+				u32 m_caretEndPosition;
+
+				SRect m_caretRect;
+
+				float m_caretBlinkSpeed;
+
+				float m_caretBlink;
+
+				bool m_showCaret;
 			};
 		}
 	}

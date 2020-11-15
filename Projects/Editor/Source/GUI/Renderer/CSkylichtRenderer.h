@@ -77,6 +77,8 @@ namespace Skylicht
 
 				virtual SDimension measureText(EFontSize fontSize, const std::wstring& string);
 
+				virtual float measureCharWidth(EFontSize fontSize, wchar_t c);
+
 				void initFont(CSpriteAtlas *atlas);
 
 				const core::matrix4& getWorldTransform()

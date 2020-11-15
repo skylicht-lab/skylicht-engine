@@ -32,11 +32,16 @@ namespace Skylicht
 		namespace GUI
 		{
 			CTextBox::CTextBox(CBase *base) :
-				CScrollControl(base)
+				CScrollControl(base),
+				m_caretPosition(0),
+				m_caretEnd(0)
 			{
+				m_innerPanel->setMouseInputEnabled(false);
+
 				m_textContainer = new CTextContainer(this);
 				m_textContainer->setPos(4.0f, 4.0f);
 				m_textContainer->setInnerPaddingRight(4.0f);
+				m_textContainer->showCaret(true);
 
 				showScrollBar(false, false);
 			}
@@ -54,6 +59,35 @@ namespace Skylicht
 			void CTextBox::postLayout()
 			{
 				CScrollControl::postLayout();
+			}
+
+			void CTextBox::setCaretBegin(u32 pos)
+			{
+				m_caretPosition = pos;
+				if (m_caretPosition > m_textContainer->getLength())
+					m_caretPosition = m_textContainer->getLength();
+			}
+
+			void CTextBox::setCaretEnd(u32 pos)
+			{
+				m_caretEnd = pos;
+				if (m_caretEnd > m_textContainer->getLength())
+					m_caretEnd = m_textContainer->getLength();
+			}
+
+			void CTextBox::onMouseClickLeft(float x, float y, bool down)
+			{
+				GUI::SPoint pos = m_textContainer->canvasPosToLocal(SPoint(x, y));
+
+				u32 l = 0;
+				u32 c = 0;
+				u32 p = m_textContainer->getClosestCharacter(pos, l, c);
+
+				setCaretBegin(p);
+				setCaretEnd(p);
+
+				m_textContainer->setCaretBegin(l, c);
+				m_textContainer->setCaretEnd(l, c);
 			}
 		}
 	}

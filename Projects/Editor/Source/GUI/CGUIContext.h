@@ -49,6 +49,8 @@ namespace Skylicht
 
 				static float getTime();
 
+				static float getDeltaTime();
+
 				static void render();
 
 				static void resize(float width, float height);
