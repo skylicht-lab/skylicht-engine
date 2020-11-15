@@ -157,10 +157,14 @@ namespace Skylicht
 
 				while (lpString[i] != 0)
 				{
-					SModuleOffset *c = font->getCharacterModule((int)lpString[i]);
-					if (c != NULL)
+					if (lpString[i] != (int)'\n' &&
+						lpString[i] != (int)'\r')
 					{
-						modules.push_back(c);
+						SModuleOffset *c = font->getCharacterModule((int)lpString[i]);
+						if (c != NULL)
+						{
+							modules.push_back(c);
+						}
 					}
 					i++;
 				}

@@ -72,6 +72,9 @@ namespace Skylicht
 
 					m_bar->setWidth(barWidth);
 					m_bar->setHidden(width() <= barWidth);
+
+					float newX = round(m_scroll * (width() - m_bar->width()));
+					m_bar->moveTo(newX, m_bar->Y());
 				}
 				else
 				{
@@ -82,6 +85,9 @@ namespace Skylicht
 
 					m_bar->setHeight(barHeight);
 					m_bar->setHidden(height() <= barHeight);
+
+					float newY = round(m_scroll * (height() - m_bar->height()));
+					m_bar->moveTo(m_bar->X(), newY);
 				}
 			}
 

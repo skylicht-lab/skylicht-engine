@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBase.h"
 #include "CText.h"
+#include "CTextContainer.h"
+#include "CScrollControl.h"
 
 namespace Skylicht
 {
@@ -32,78 +34,65 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CTextContainer : public CBase
+			class CTextBox : public CScrollControl
 			{
-			public:
-				typedef std::list<CText*> ListTextControl;
+			protected:
+				CBase *m_container;
+				CTextContainer *m_textContainer;
 
 			public:
-				CTextContainer(CBase *parent);
+				CTextBox(CBase *base);
 
-				virtual ~CTextContainer();
+				virtual ~CTextBox();
 
-				void setString(const std::wstring& string);
+				virtual void layout();
+
+				virtual void postLayout();
+
+				inline void setString(const std::wstring& string)
+				{
+					m_textContainer->setString(string);
+				}
 
 				inline const std::wstring& getString()
 				{
-					return m_string;
+					return m_textContainer->getString();
 				}
 
-				void setFontSize(EFontSize size);
+				inline void setFontSize(EFontSize size)
+				{
+					m_textContainer->setFontSize(size);
+				}
 
 				inline EFontSize getFontSize()
 				{
-					return m_fontSize;
+					return m_textContainer->getFontSize();
 				}
 
 				inline u32 getLength()
 				{
-					return m_string.size();
+					return m_textContainer->getLength();
 				}
-
-				void setWrapMultiline(bool b);
 
 				inline bool isWrapMultiline()
 				{
-					return m_wrapMultiLine;
+					return m_textContainer->isWrapMultiline();
 				}
 
-				void setColor(const SGUIColor& color);
+				inline void setWrapMultiline(bool b)
+				{
+					m_textContainer->setWrapMultiline(b);
+				}
+
+				inline void setColor(const SGUIColor& color)
+				{
+					m_textContainer->setColor(color);
+				}
 
 				inline const SGUIColor& getColor()
 				{
-					return m_color;
+					return m_textContainer->getColor();
 				}
-
-				virtual void layout();
-
-				void sizeToContents();
-
-				inline void setInnerPaddingRight(float f)
-				{
-					m_paddingRight = f;
-				}
-
-			protected:
-
-				void removeAllLines();
-
-				bool splitWords(std::wstring string, std::vector<std::wstring>& lines, float lineWidth);
-
-			protected:
-				std::wstring m_string;
-
-				bool m_wrapMultiLine;
-
-				bool m_textChange;
-
-				float m_paddingRight;
-
-				SGUIColor m_color;
-
-				EFontSize m_fontSize;
-
-				ListTextControl m_lines;
 			};
 		}
 	}
