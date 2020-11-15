@@ -9,7 +9,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
-The above copyRight notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -22,20 +22,43 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CSpaceConsole.h"
 
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "ConsoleLog/CConsoleLog.h"
 
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Controls/CDockableWindow.h"
-#include "GUI/Controls/CDockTabControl.h"
-#include "GUI/Controls/CScrollControl.h"
-#include "GUI/Controls/CSplitter.h"
-#include "GUI/Controls/CMenuBar.h"
-#include "GUI/Controls/CTreeNode.h"
-#include "GUI/Controls/CTreeControl.h"
-#include "GUI/Controls/CListBox.h"
-#include "GUI/Controls/CTableRow.h"
-#include "GUI/Controls/CToolbar.h"
-#include "GUI/Controls/CTextBox.h"
+namespace Skylicht
+{
+	namespace Editor
+	{
+		CSpaceConsole::CSpaceConsole(GUI::CDockableWindow *window, CEditor *editor) :
+			CSpace(window, editor),
+			m_lastID(0)
+		{
+			m_textControl = new GUI::CTextBox(window);
+			m_textControl->dock(GUI::EPosition::Fill);
+			m_textControl->setWrapMultiline(true);
+			m_textControl->showScrollBar(false, true);
+		}
+
+		CSpaceConsole::~CSpaceConsole()
+		{
+
+		}
+
+		void CSpaceConsole::update()
+		{
+			CSpace::update();
+
+			const CConsoleLog::SLogInfo& log = CConsoleLog::getInstance()->getLast();
+			if (log.ID != m_lastID)
+			{
+				const std::string& buffer = CConsoleLog::getInstance()->getBuffer(true);
+				std::wstring stringw(buffer.begin(), buffer.end());
+				m_textControl->setString(stringw);
+				m_textControl->getVerticalSroll()->setScroll(1.0f);
+				m_lastID = log.ID;
+			}
+		}
+	}
+}

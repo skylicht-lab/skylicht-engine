@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,56 +23,38 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CConsoleLog.h"
+#include "CTextBox.h"
 
 namespace Skylicht
 {
-	CConsoleLog::CConsoleLog() :
-		m_enable(false),
-		m_maxLineBuffer(1000),
-		m_id(0)
+	namespace Editor
 	{
-
-	}
-
-	CConsoleLog::~CConsoleLog()
-	{
-
-	}
-
-	void CConsoleLog::setMaxLineBuffer(u32 num)
-	{
-		m_maxLineBuffer = num;
-		while (m_logs.size() > num)
+		namespace GUI
 		{
-			m_logs.erase(m_logs.begin());
-		}
-	}
-
-	void CConsoleLog::clear()
-	{
-		m_logs.clear();
-	}
-
-	void CConsoleLog::write(const char *log, ELOG_LEVEL logLevel)
-	{
-		m_logs.push_back(SLogInfo(log, logLevel, m_id++));
-		if (m_logs.size() > m_maxLineBuffer)
-			m_logs.erase(m_logs.begin());
-	}
-
-	const std::string& CConsoleLog::getBuffer(bool update)
-	{
-		if (update)
-		{
-			m_buffer.clear();
-			for (const SLogInfo& log : m_logs)
+			CTextBox::CTextBox(CBase *base) :
+				CScrollControl(base)
 			{
-				m_buffer += log.Log;
-				m_buffer += "\n";
+				m_textContainer = new CTextContainer(this);
+				m_textContainer->setPos(4.0f, 4.0f);
+				m_textContainer->setInnerPaddingRight(4.0f);
+
+				showScrollBar(false, false);
+			}
+
+			CTextBox::~CTextBox()
+			{
+
+			}
+
+			void CTextBox::layout()
+			{
+				CScrollControl::layout();
+			}
+
+			void CTextBox::postLayout()
+			{
+				CScrollControl::postLayout();
 			}
 		}
-
-		return m_buffer;
 	}
 }
