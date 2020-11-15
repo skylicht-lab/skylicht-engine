@@ -33,11 +33,13 @@ namespace Skylicht
 	public:
 		struct SLogInfo
 		{
+			u32 ID;
 			std::string Log;
 			ELOG_LEVEL LogLevel;
 
-			SLogInfo(const char *log, ELOG_LEVEL level)
+			SLogInfo(const char *log, ELOG_LEVEL level, u32 id)
 			{
+				ID = id;
 				Log = log;
 				LogLevel = level;
 			}
@@ -45,8 +47,13 @@ namespace Skylicht
 
 	protected:
 		bool m_enable;
+
+		u32 m_id;
 		u32 m_maxLineBuffer;
+
 		std::list<SLogInfo> m_logs;
+
+		std::string m_buffer;
 
 	public:
 		CConsoleLog();
@@ -59,9 +66,16 @@ namespace Skylicht
 
 		void write(const char *log, ELOG_LEVEL logLevel);
 
+		const std::string& getBuffer(bool update);
+
 		inline std::list<SLogInfo>& getLogs()
 		{
 			return m_logs;
+		}
+
+		inline const SLogInfo& getLast()
+		{
+			return m_logs.back();
 		}
 
 		inline void setEnable(bool b)

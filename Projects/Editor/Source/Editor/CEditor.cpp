@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Space/Scene/CSpaceScene.h"
 #include "Space/Assets/CSpaceAssets.h"
+#include "Space/Console/CSpaceConsole.h"
 
 namespace Skylicht
 {
@@ -306,7 +307,7 @@ namespace Skylicht
 			}
 			else if (workspace == L"Console")
 			{
-
+				m_workspaces.push_back(new CSpaceConsole(window, this));
 			}
 			else if (workspace == L"Property")
 			{

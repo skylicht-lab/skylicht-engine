@@ -38,7 +38,8 @@ namespace Skylicht
 				m_wrapMultiLine(false),
 				m_textChange(true),
 				m_fontSize(EFontSize::SizeNormal),
-				m_color(CThemeConfig::DefaultTextColor)
+				m_color(CThemeConfig::DefaultTextColor),
+				m_paddingRight(0.0f)
 			{
 				setMouseInputEnabled(false);
 				enableClip(true);
@@ -49,7 +50,7 @@ namespace Skylicht
 
 			}
 
-			void CTextContainer::setWrap(bool b)
+			void CTextContainer::setWrapMultiline(bool b)
 			{
 				if (m_wrapMultiLine == b)
 					return;
@@ -105,7 +106,8 @@ namespace Skylicht
 				removeAllLines();
 
 				// this is not yet layout, so calc from parent (Label, Edit,...)
-				float w = m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right;
+				float w = m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right - m_paddingRight;
+
 				float x = 0.0f;
 				float y = 0.0f;
 				std::wstring strLine;
@@ -115,7 +117,9 @@ namespace Skylicht
 					// multi line
 					std::vector<std::wstring> words;
 
-					splitWords(m_string, words, w);
+					if (splitWords(m_string, words, w) == false)
+						return;
+
 					words.push_back(L"");
 
 					for (auto&& it = words.begin(); it != words.end(); ++it)
@@ -165,7 +169,7 @@ namespace Skylicht
 
 							// Position the newline
 							y += p.Height;
-							x = 0;
+							x = 0.0f;
 						}
 					}
 				}
@@ -193,7 +197,7 @@ namespace Skylicht
 				invalidate();
 			}
 
-			void CTextContainer::splitWords(std::wstring s, std::vector<std::wstring>& lines, float lineWidth)
+			bool CTextContainer::splitWords(std::wstring s, std::vector<std::wstring>& lines, float lineWidth)
 			{
 				std::wstring str;
 
@@ -225,6 +229,10 @@ namespace Skylicht
 					{
 						//split words
 						str.pop_back();
+
+						if (str.empty())
+							return false;
+
 						lines.push_back(str);
 						str.clear();
 						--i;
@@ -234,6 +242,8 @@ namespace Skylicht
 
 				if (!str.empty())
 					lines.push_back(str);
+
+				return true;
 			}
 
 			void CTextContainer::removeAllLines()
