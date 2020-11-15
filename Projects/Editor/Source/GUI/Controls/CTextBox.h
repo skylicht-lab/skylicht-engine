@@ -37,8 +37,10 @@ namespace Skylicht
 			class CTextBox : public CScrollControl
 			{
 			protected:
-				CBase *m_container;
 				CTextContainer *m_textContainer;
+
+				u32 m_caretPosition;
+				u32 m_caretEnd;
 
 			public:
 				CTextBox(CBase *base);
@@ -49,10 +51,19 @@ namespace Skylicht
 
 				virtual void postLayout();
 
+				virtual void onMouseClickLeft(float x, float y, bool down);
+
 				inline void setString(const std::wstring& string)
 				{
 					m_textContainer->setString(string);
+
+					m_caretPosition = string.length();
+					m_caretEnd = m_caretPosition;
 				}
+
+				void setCaretBegin(u32 pos);
+
+				void setCaretEnd(u32 pos);
 
 				inline const std::wstring& getString()
 				{

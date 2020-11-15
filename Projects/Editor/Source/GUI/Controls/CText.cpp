@@ -51,6 +51,43 @@ namespace Skylicht
 				m_string = string;
 			}
 
+			SDimension CText::getCharacterPosition(u32 c)
+			{
+				if (getLength() == 0 || c == 0)
+				{
+					SDimension p = CRenderer::getRenderer()->measureText(m_fontSize, L" ");
+					return SDimension(0.0f, p.Height);
+				}
+
+				std::wstring sub = m_string.substr(0, c);
+				return CRenderer::getRenderer()->measureText(m_fontSize, sub);
+			}
+
+			u32 CText::getClosestCharacter(const SPoint& point)
+			{
+				u32 c = 0;
+				CRenderer *renderer = CRenderer::getRenderer();
+
+				float minDistance = 5000.0f;
+				float x = 0.0f;
+
+				for (u32 i = 0, n = m_string.size(); i < n; i++)
+				{
+					float distance = fabs(x - point.X);
+
+					if (distance < minDistance)
+					{
+						c = i;
+						minDistance = distance;
+					}
+
+					float charWidth = renderer->measureCharWidth(m_fontSize, m_string[i]);
+					x = x + charWidth;
+				}
+
+				return c;
+			}
+
 			void CText::setFontSize(EFontSize size)
 			{
 				m_fontSize = size;
