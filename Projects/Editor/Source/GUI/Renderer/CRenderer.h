@@ -71,6 +71,8 @@ namespace Skylicht
 
 				virtual SDimension measureText(EFontSize fontSize, const std::wstring& string) = 0;
 
+				virtual float measureCharWidth(EFontSize fontSize, wchar_t c) = 0;
+
 				void setClipRegion(const SRect& rect)
 				{
 					m_rectClipRegion = rect;

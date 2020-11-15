@@ -47,6 +47,15 @@ namespace Skylicht
 
 				void setString(const std::wstring& string);
 
+				SDimension getCharacterPosition(u32 c);
+
+				u32 getClosestCharacter(const SPoint& point);
+
+				inline u32 getLength()
+				{
+					return m_string.size();
+				}
+
 				inline const std::wstring& getString()
 				{
 					return m_string;

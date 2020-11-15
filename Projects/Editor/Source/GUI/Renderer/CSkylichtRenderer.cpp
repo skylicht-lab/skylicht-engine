@@ -182,6 +182,26 @@ namespace Skylicht
 				}
 			}
 
+			float CSkylichtRenderer::measureCharWidth(EFontSize fontSize, wchar_t c)
+			{
+				CGlyphFont *font = m_fontNormal;
+				if (fontSize == EFontSize::SizeLarge)
+					font = m_fontLarge;
+
+				float charSpacePadding = 0.0f;
+				float charPadding = 0.0f;
+
+				SModuleOffset *module = font->getCharacterModule(c);
+
+				float charWidth = 0.0f;
+				if (module->Character == ' ')
+					charWidth = module->XAdvance + charSpacePadding;
+				else
+					charWidth = module->XAdvance + charPadding;
+
+				return charWidth;
+			}
+
 			SDimension CSkylichtRenderer::measureText(EFontSize fontSize, const std::wstring& string)
 			{
 				CGlyphFont *font = m_fontNormal;

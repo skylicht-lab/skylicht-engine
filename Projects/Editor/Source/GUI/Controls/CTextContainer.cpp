@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTextContainer.h"
+#include "GUI/CGUIContext.h"
 #include "GUI/Theme/CThemeConfig.h"
 #include "GUI/Renderer/CRenderer.h"
 
@@ -39,7 +40,14 @@ namespace Skylicht
 				m_textChange(true),
 				m_fontSize(EFontSize::SizeNormal),
 				m_color(CThemeConfig::DefaultTextColor),
-				m_paddingRight(0.0f)
+				m_paddingRight(0.0f),
+				m_showCaret(false),
+				m_caretBeginLine(0),
+				m_caretBeginPosition(0),
+				m_caretEndLine(0),
+				m_caretEndPosition(0),
+				m_caretBlinkSpeed(500.0f),
+				m_caretBlink(0.0f)
 			{
 				setMouseInputEnabled(false);
 				enableClip(true);
@@ -48,6 +56,33 @@ namespace Skylicht
 			CTextContainer::~CTextContainer()
 			{
 
+			}
+
+			void CTextContainer::render()
+			{
+				if (m_showCaret == false)
+					return;
+
+				m_caretBlink = m_caretBlink + CGUIContext::getDeltaTime();
+				if (m_caretBlink > 2.0f * m_caretBlinkSpeed)
+					m_caretBlink = 0.0f;
+
+				u32 lineID = 0;
+				for (CText *line : m_lines)
+				{
+					if (lineID == m_caretBeginLine)
+					{
+						SDimension caretPosition = line->getCharacterPosition(m_caretBeginPosition);
+						m_caretRect.X = line->X() + caretPosition.Width;
+						m_caretRect.Y = line->Y() - 1.0f;
+						m_caretRect.Width = 1.0f;
+						m_caretRect.Height = caretPosition.Height + 1.0f;
+
+						if (m_caretBlink < m_caretBlinkSpeed)
+							CRenderer::getRenderer()->drawFillRect(m_caretRect, CThemeConfig::DefaultTextColor);
+					}
+					lineID++;
+				}
 			}
 
 			void CTextContainer::setWrapMultiline(bool b)
@@ -78,6 +113,64 @@ namespace Skylicht
 				m_string = string;
 				m_textChange = true;
 				invalidate();
+			}
+
+			void CTextContainer::setCaretBegin(u32 line, u32 c)
+			{
+				if (line > m_lines.size())
+					line = m_lines.size() - 1;
+
+				m_caretBeginLine = line;
+				m_caretBeginPosition = c;
+				m_caretBlink = 0.0f;
+			}
+
+			void CTextContainer::setCaretEnd(u32 line, u32 c)
+			{
+				if (line > m_lines.size())
+					line = m_lines.size() - 1;
+
+				m_caretEndLine = line;
+				m_caretEndPosition = c;
+				m_caretBlink = 0.0f;
+			}
+
+			u32 CTextContainer::getClosestCharacter(const SPoint& point, u32& outLine, u32& outChar)
+			{
+				outLine = 0;
+				outChar = 0;
+
+				u32 lineOffset = 0;
+				CText *foundLine = NULL;
+
+				for (CText *line : m_lines)
+				{
+					lineOffset += line->getLength();
+					outLine++;
+
+					if (point.Y < line->Y())
+						continue;
+
+					if (point.Y > line->bottom())
+						continue;
+
+					if (point.Y < line->bottom())
+					{
+						foundLine = line;
+						break;
+					}
+				}
+
+				if (foundLine != NULL)
+				{
+					lineOffset -= foundLine->getLength();
+					outLine--;
+					outChar = foundLine->getClosestCharacter(SPoint(point.X - foundLine->X(), point.Y - foundLine->Y()));
+
+					return lineOffset + outChar;
+				}
+
+				return 0;
 			}
 
 			void CTextContainer::layout()
@@ -185,6 +278,15 @@ namespace Skylicht
 					t->setBounds(x, y, p.Width, p.Height);
 					t->setString(m_string);
 					m_lines.push_back(t);
+				}
+
+				if (m_lines.size() > 0)
+				{
+					u32 caretLineID = m_lines.size() - 1;
+					u32 caretCharID = m_lines.back()->getLength();
+
+					setCaretBegin(caretLineID, caretCharID);
+					setCaretEnd(caretLineID, caretCharID);
 				}
 
 				// Size to children height and parent width

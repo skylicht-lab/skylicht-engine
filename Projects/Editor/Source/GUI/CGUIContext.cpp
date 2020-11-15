@@ -47,6 +47,7 @@ namespace Skylicht
 			CSkylichtTheme *g_theme = NULL;
 
 			float g_guiUpdateTime = 0.0f;
+			float g_guiDeltaTime = 0.0f;
 
 			void CGUIContext::initGUI(float width, float height)
 			{
@@ -82,12 +83,22 @@ namespace Skylicht
 				if (g_rootCanvas != NULL)
 					g_rootCanvas->update();
 
+				g_guiDeltaTime = time - g_guiUpdateTime;
+
+				if (g_guiDeltaTime > 1000.0f / 10.0f)
+					g_guiDeltaTime = 1000.0f / 10.0f;
+
 				g_guiUpdateTime = time;
 			}
 
 			float CGUIContext::getTime()
 			{
 				return g_guiUpdateTime;
+			}
+
+			float CGUIContext::getDeltaTime()
+			{
+				return g_guiDeltaTime;
 			}
 
 			void CGUIContext::render()
