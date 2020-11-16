@@ -67,9 +67,54 @@ namespace Skylicht
 				if (m_caretBlink > 2.0f * m_caretBlinkSpeed)
 					m_caretBlink = 0.0f;
 
+				u32 fromLine = m_caretBeginLine;
+				u32 from = m_caretBeginPosition;
+				u32 toLine = m_caretEndLine;
+				u32 to = m_caretEndPosition;
+
+				if (fromLine > toLine)
+				{
+					u32 temp = fromLine;
+					fromLine = toLine;
+					toLine = temp;
+
+					temp = from;
+					from = to;
+					to = temp;
+				}
+
 				u32 lineID = 0;
 				for (CText *line : m_lines)
 				{
+					if (fromLine != toLine || from != to)
+					{
+						// draw selection
+						if (lineID >= fromLine && lineID <= toLine)
+						{
+							if (lineID == fromLine && fromLine == toLine)
+							{
+								drawSelection(line, from, to);
+							}
+							else
+							{
+								// multi line
+								if (lineID == fromLine)
+								{
+									drawSelection(line, from, line->getLength() - 1);
+								}
+								else if (lineID == toLine)
+								{
+									drawSelection(line, 0, to);
+								}
+								else
+								{
+									drawSelection(line, 0, line->getLength() - 1);
+								}
+							}
+						}
+					}
+
+					// draw caret
 					if (lineID == m_caretBeginLine)
 					{
 						SDimension caretPosition = line->getCharacterPosition(m_caretBeginPosition);
@@ -79,10 +124,24 @@ namespace Skylicht
 						m_caretRect.Height = caretPosition.Height + 1.0f;
 
 						if (m_caretBlink < m_caretBlinkSpeed)
-							CRenderer::getRenderer()->drawFillRect(m_caretRect, CThemeConfig::DefaultTextColor);
+							CRenderer::getRenderer()->drawFillRect(m_caretRect, CThemeConfig::CaretColor);
 					}
 					lineID++;
 				}
+			}
+
+			void CTextContainer::drawSelection(CText *line, u32 from, u32 to)
+			{
+				SDimension selectBegin = line->getCharacterPosition(from);
+				SDimension selectEnd = line->getCharacterPosition(to);
+
+				SRect selectRect;
+				selectRect.X = line->X() + selectBegin.Width;
+				selectRect.Y = line->Y() - 1.0f;
+				selectRect.Width = (selectEnd.Width - selectBegin.Width);
+				selectRect.Height = selectBegin.Height + 1.0f;
+
+				CRenderer::getRenderer()->drawFillRect(selectRect, CThemeConfig::TextSelectColor);
 			}
 
 			void CTextContainer::setWrapMultiline(bool b)
