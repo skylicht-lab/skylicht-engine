@@ -44,6 +44,8 @@ namespace Skylicht
 
 				virtual void layout();
 
+				virtual void onBoundsChanged(const SRect& oldBounds);
+
 				virtual void renderUnder();
 
 				virtual void renderBackground();

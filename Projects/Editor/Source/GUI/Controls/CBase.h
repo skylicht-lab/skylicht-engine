@@ -339,6 +339,11 @@ namespace Skylicht
 						OnDoubleLeftMouseClick(this, x, y);
 				}
 
+				virtual void onMouseTripleClickLeft(float x, float y)
+				{
+					onMouseClickLeft(x, y, true);
+				}
+
 				virtual void onMouseDoubleClickRight(float x, float y)
 				{
 					onMouseClickRight(x, y, true);
@@ -346,11 +351,21 @@ namespace Skylicht
 						OnDoubleRightMouseClick(this, x, y);
 				}
 
+				virtual void onMouseTripleClickRight(float x, float y)
+				{
+					onMouseClickRight(x, y, true);
+				}
+
 				virtual void onMouseDoubleClickMiddle(float x, float y)
 				{
 					onMouseClickMiddle(x, y, true);
 					if (OnDoubleMiddleMouseClick != nullptr)
 						OnDoubleMiddleMouseClick(this, x, y);
+				}
+
+				virtual void onMouseTripleClickMiddle(float x, float y)
+				{
+					onMouseClickMiddle(x, y, true);
 				}
 
 				virtual void onMouseEnter();
