@@ -232,6 +232,103 @@ namespace Skylicht
 				return 0;
 			}
 
+			bool CTextContainer::isCharacter(wchar_t c)
+			{
+				if ('a' <= c && c <= 'z')
+					return true;
+
+				if ('A' <= c && c <= 'Z')
+					return true;
+
+				if ('0' <= c && c <= '9')
+					return true;
+
+				return false;
+			}
+
+			u32 CTextContainer::getWordAtPosition(u32 line, u32 charPosition, u32& from, u32& to)
+			{
+				u32 charID = 0;
+				u32 lineID = 0;
+
+				CText *foundLine = NULL;
+				for (CText *l : m_lines)
+				{
+					charID += l->getLength();
+
+					if (line == lineID)
+					{
+						charID -= l->getLength();
+						foundLine = l;
+						break;
+					}
+
+					lineID++;
+				}
+
+				if (foundLine != NULL)
+				{
+					const std::wstring& s = foundLine->getString();
+					u32 length = s.length();
+					if (charPosition < length)
+					{
+						bool isCharacterGroup = isCharacter(s[charPosition]);
+
+						from = to = charPosition;
+						while (from > 0)
+						{
+							from--;
+							bool g = isCharacter(s[from]);
+							if (g != isCharacterGroup)
+							{
+								from++;
+								break;
+							}
+						}
+
+						while (to < length - 1)
+						{
+							to++;
+							bool g = isCharacter(s[to]);
+							if (g != isCharacterGroup)
+							{
+								break;
+							}
+						}
+					}
+				}
+
+				return charID + to;
+			}
+
+			u32 CTextContainer::getLineAtPosition(u32 line, u32 charPosition, u32& to)
+			{
+				u32 charID = 0;
+				u32 lineID = 0;
+
+				CText *foundLine = NULL;
+				for (CText *l : m_lines)
+				{
+					charID += l->getLength();
+
+					if (line == lineID)
+					{
+						charID -= l->getLength();
+						foundLine = l;
+						break;
+					}
+
+					lineID++;
+				}
+
+				if (foundLine != NULL)
+				{
+					to = foundLine->getLength() - 1;
+				}
+
+				return charID + to;
+			}
+
 			void CTextContainer::layout()
 			{
 				if (m_textChange == true)
@@ -255,19 +352,19 @@ namespace Skylicht
 
 			void CTextContainer::sizeToContents()
 			{
-				removeAllLines();
-
-				// this is not yet layout, so calc from parent (Label, Edit,...)
-				float w = m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right - m_paddingRight;
-
 				float x = 0.0f;
 				float y = 0.0f;
-				std::wstring strLine;
 
 				if (m_wrapMultiLine == true)
 				{
+					removeAllLines();
+
+					// this is not yet layout, so calc from parent (Label, Edit,...)
+					float w = m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right - m_paddingRight;
+
 					// multi line
 					std::vector<std::wstring> words;
+					std::wstring strLine;
 
 					if (splitWords(m_string, words, w) == false)
 						return;
@@ -327,16 +424,22 @@ namespace Skylicht
 				}
 				else
 				{
-					// compute size of text
-					SDimension p = CRenderer::getRenderer()->measureText(m_fontSize, m_string);
+					// single line only update on text change
+					if (m_textChange)
+					{
+						removeAllLines();
 
-					// single line
-					CText* t = new CText(this);
-					t->setFontSize(m_fontSize);
-					t->setColor(m_color);
-					t->setBounds(x, y, p.Width, p.Height);
-					t->setString(m_string);
-					m_lines.push_back(t);
+						// compute size of text
+						SDimension p = CRenderer::getRenderer()->measureText(m_fontSize, m_string);
+
+						// single line
+						CText* t = new CText(this);
+						t->setFontSize(m_fontSize);
+						t->setColor(m_color);
+						t->setBounds(x, y, p.Width, p.Height);
+						t->setString(m_string);
+						m_lines.push_back(t);
+					}
 				}
 
 				if (m_lines.size() > 0)

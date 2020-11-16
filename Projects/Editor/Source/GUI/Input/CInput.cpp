@@ -41,7 +41,8 @@ namespace Skylicht
 				m_mousePositionY(0.0f),
 				m_lastClickPositionX(0.0f),
 				m_lastClickPositionY(0.0f),
-				m_capture(NULL)
+				m_capture(NULL),
+				m_fastClickCount(0)
 			{
 				for (int i = 0; i < 3; i++)
 					m_lastClickTime[i] = 0.0f;
@@ -122,6 +123,7 @@ namespace Skylicht
 					CGUIContext::getRoot()->closeMenu();
 
 				bool isDoubleClick = false;
+				bool isTripleClick = false;
 
 				if (down
 					&& m_lastClickPositionX == m_mousePositionX
@@ -129,6 +131,14 @@ namespace Skylicht
 					&& (CGUIContext::getTime() - m_lastClickTime[iMouseButton]) < 500.0f)
 				{
 					isDoubleClick = true;
+
+					m_fastClickCount++;
+					if (m_fastClickCount >= 3)
+						isTripleClick = true;
+				}
+				else if (down)
+				{
+					m_fastClickCount = 1;
 				}
 
 				if (down && !isDoubleClick)
@@ -170,7 +180,9 @@ namespace Skylicht
 				switch (iMouseButton)
 				{
 				case 0:
-					if (isDoubleClick)
+					if (isTripleClick)
+						CGUIContext::HoveredControl->onMouseTripleClickLeft(m_mousePositionX, m_mousePositionY);
+					else if (isDoubleClick)
 						CGUIContext::HoveredControl->onMouseDoubleClickLeft(m_mousePositionX, m_mousePositionY);
 					else
 						CGUIContext::HoveredControl->onMouseClickLeft(m_mousePositionX, m_mousePositionY, down);
@@ -178,13 +190,17 @@ namespace Skylicht
 					return true;
 
 				case 1:
-					if (isDoubleClick)
+					if (isTripleClick)
+						CGUIContext::HoveredControl->onMouseTripleClickRight(m_mousePositionX, m_mousePositionY);
+					else if (isDoubleClick)
 						CGUIContext::HoveredControl->onMouseDoubleClickRight(m_mousePositionX, m_mousePositionY);
 					else
 						CGUIContext::HoveredControl->onMouseClickRight(m_mousePositionX, m_mousePositionY, down);
 
 					return true;
 				case 2:
+					if (isTripleClick)
+						CGUIContext::HoveredControl->onMouseTripleClickMiddle(m_mousePositionX, m_mousePositionY);
 					if (isDoubleClick)
 						CGUIContext::HoveredControl->onMouseDoubleClickMiddle(m_mousePositionX, m_mousePositionY);
 					else

@@ -146,6 +146,45 @@ namespace Skylicht
 
 				m_press = down;
 			}
+
+			void CTextBox::onMouseDoubleClickLeft(float x, float y)
+			{
+				GUI::SPoint pos = m_textContainer->canvasPosToLocal(SPoint(x, y));
+
+				u32 l = 0;
+				u32 c = 0;
+				u32 from = 0;
+				u32 to = 0;
+				u32 p = 0;
+
+				p = m_textContainer->getClosestCharacter(pos, l, c);
+				p = m_textContainer->getWordAtPosition(l, c, from, to);
+
+				setCaretBegin(p);
+				setCaretEnd(p - (to - from));
+
+				m_textContainer->setCaretBegin(l, to);
+				m_textContainer->setCaretEnd(l, from);
+			}
+
+			void CTextBox::onMouseTripleClickLeft(float x, float y)
+			{
+				GUI::SPoint pos = m_textContainer->canvasPosToLocal(SPoint(x, y));
+
+				u32 l = 0;
+				u32 c = 0;
+				u32 p = 0;
+				u32 to = 0;
+
+				p = m_textContainer->getClosestCharacter(pos, l, c);
+				p = m_textContainer->getLineAtPosition(l, c, to);
+
+				setCaretBegin(p);
+				setCaretEnd(p - to);
+
+				m_textContainer->setCaretBegin(l, to);
+				m_textContainer->setCaretEnd(l, 0);
+			}
 		}
 	}
 }
