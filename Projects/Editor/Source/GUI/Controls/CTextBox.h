@@ -42,10 +42,14 @@ namespace Skylicht
 				u32 m_caretPosition;
 				u32 m_caretEnd;
 
+				bool m_press;
+
 			public:
 				CTextBox(CBase *base);
 
 				virtual ~CTextBox();
+
+				virtual void think();
 
 				virtual void layout();
 
