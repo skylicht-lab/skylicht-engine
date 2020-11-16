@@ -48,6 +48,10 @@ namespace Skylicht
 
 				u32 getClosestCharacter(const SPoint& point, u32& outLine, u32& outChar);
 
+				u32 getWordAtPosition(u32 line, u32 charPosition, u32& from, u32& to);
+
+				u32 getLineAtPosition(u32 line, u32 charPosition, u32& to);
+
 				void setCaretBegin(u32 line, u32 c);
 
 				void setCaretEnd(u32 line, u32 c);
@@ -103,6 +107,8 @@ namespace Skylicht
 				}
 
 			protected:
+
+				bool isCharacter(wchar_t c);
 
 				void removeAllLines();
 

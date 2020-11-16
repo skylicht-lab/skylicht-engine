@@ -64,6 +64,11 @@ namespace Skylicht
 				sizeToChildren(true, false);
 			}
 
+			void CListRowItem::onBoundsChanged(const SRect& oldBounds)
+			{
+				CBase::onBoundsChanged(oldBounds);
+			}
+
 			void CListRowItem::renderUnder()
 			{
 				if (isHovered() || m_toggleStatus)

@@ -108,8 +108,6 @@ namespace Skylicht
 			void CButton::onBoundsChanged(const SRect& oldBounds)
 			{
 				CBase::onBoundsChanged(oldBounds);
-
-				m_label->sizeToContents();
 				invalidate();
 			}
 

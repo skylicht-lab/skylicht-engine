@@ -57,6 +57,10 @@ namespace Skylicht
 
 				virtual void onMouseClickLeft(float x, float y, bool down);
 
+				virtual void onMouseDoubleClickLeft(float x, float y);
+
+				virtual void onMouseTripleClickLeft(float x, float y);
+
 				inline void setString(const std::wstring& string)
 				{
 					m_textContainer->setString(string);

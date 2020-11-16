@@ -41,6 +41,7 @@ namespace Skylicht
 				float m_mousePositionY;
 
 				float m_lastClickTime[3];
+				u32 m_fastClickCount;
 
 				CBase *m_capture;
 
