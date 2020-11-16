@@ -108,6 +108,8 @@ namespace Skylicht
 
 				bool splitWords(std::wstring string, std::vector<std::wstring>& lines, float lineWidth);
 
+				void drawSelection(CText *line, u32 from, u32 to);
+
 			protected:
 				std::wstring m_string;
 

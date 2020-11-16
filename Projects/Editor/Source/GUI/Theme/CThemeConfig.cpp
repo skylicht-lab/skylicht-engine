@@ -45,6 +45,9 @@ namespace Skylicht
 			SGUIColor CThemeConfig::IconPressColor = SGUIColor(255, 255, 255, 255);
 			SGUIColor CThemeConfig::TextPressColor = SGUIColor(255, 255, 255, 255);
 
+			SGUIColor CThemeConfig::CaretColor = SGUIColor(255, 50, 150, 230);
+			SGUIColor CThemeConfig::TextSelectColor = SGUIColor(255, 20, 60, 110);
+
 			SGUIColor CThemeConfig::ButtonColor = SGUIColor(255, 88, 88, 88);
 			SGUIColor CThemeConfig::ButtonTextColor = SGUIColor(255, 250, 250, 250);
 			SGUIColor CThemeConfig::ButtonTextDisableColor = SGUIColor(255, 85, 85, 85);
