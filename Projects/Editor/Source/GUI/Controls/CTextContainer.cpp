@@ -60,9 +60,6 @@ namespace Skylicht
 
 			void CTextContainer::render()
 			{
-				if (m_showCaret == false)
-					return;
-
 				m_caretBlink = m_caretBlink + CGUIContext::getDeltaTime();
 				if (m_caretBlink > 2.0f * m_caretBlinkSpeed)
 					m_caretBlink = 0.0f;
@@ -86,13 +83,15 @@ namespace Skylicht
 				u32 lineID = 0;
 				for (CText *line : m_lines)
 				{
+
+					// draw selection
 					if (fromLine != toLine || from != to)
 					{
-						// draw selection
 						if (lineID >= fromLine && lineID <= toLine)
 						{
 							if (lineID == fromLine && fromLine == toLine)
 							{
+								// single line
 								drawSelection(line, from, to);
 							}
 							else
@@ -115,17 +114,21 @@ namespace Skylicht
 					}
 
 					// draw caret
-					if (lineID == m_caretBeginLine)
+					if (m_showCaret)
 					{
-						SDimension caretPosition = line->getCharacterPosition(m_caretBeginPosition);
-						m_caretRect.X = line->X() + caretPosition.Width;
-						m_caretRect.Y = line->Y() - 1.0f;
-						m_caretRect.Width = 1.0f;
-						m_caretRect.Height = caretPosition.Height + 1.0f;
+						if (lineID == m_caretBeginLine)
+						{
+							SDimension caretPosition = line->getCharacterPosition(m_caretBeginPosition);
+							m_caretRect.X = line->X() + caretPosition.Width;
+							m_caretRect.Y = line->Y() - 1.0f;
+							m_caretRect.Width = 1.0f;
+							m_caretRect.Height = caretPosition.Height + 1.0f;
 
-						if (m_caretBlink < m_caretBlinkSpeed)
-							CRenderer::getRenderer()->drawFillRect(m_caretRect, CThemeConfig::CaretColor);
+							if (m_caretBlink < m_caretBlinkSpeed)
+								CRenderer::getRenderer()->drawFillRect(m_caretRect, CThemeConfig::CaretColor);
+						}
 					}
+
 					lineID++;
 				}
 			}

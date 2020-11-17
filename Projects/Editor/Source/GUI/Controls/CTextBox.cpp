@@ -37,14 +37,16 @@ namespace Skylicht
 				CScrollControl(base),
 				m_caretPosition(0),
 				m_caretEnd(0),
-				m_press(false)
+				m_press(false),
+				m_editable(true)
 			{
 				m_innerPanel->setMouseInputEnabled(false);
+
+				setKeyboardInputEnabled(true);
 
 				m_textContainer = new CTextContainer(this);
 				m_textContainer->setPos(4.0f, 4.0f);
 				m_textContainer->setInnerPaddingRight(4.0f);
-				m_textContainer->showCaret(true);
 
 				showScrollBar(false, false);
 				setCursor(GUI::ECursorType::Beam);
@@ -107,6 +109,28 @@ namespace Skylicht
 				CScrollControl::postLayout();
 			}
 
+			void CTextBox::onKeyboardFocus()
+			{
+				if (m_editable)
+					m_textContainer->showCaret(true);
+			}
+
+			void CTextBox::onLostKeyboardFocus()
+			{
+				if (m_editable)
+					m_textContainer->showCaret(false);
+			}
+
+			void CTextBox::setEditable(bool b)
+			{
+				m_editable = b;
+
+				if (CGUIContext::KeyboardFocus == this)
+					m_textContainer->showCaret(b);
+				else
+					m_textContainer->showCaret(false);
+			}
+
 			void CTextBox::setCaretBegin(u32 pos)
 			{
 				m_caretPosition = pos;
@@ -132,10 +156,13 @@ namespace Skylicht
 					u32 p = m_textContainer->getClosestCharacter(pos, l, c);
 
 					setCaretBegin(p);
-					setCaretEnd(p);
-
 					m_textContainer->setCaretBegin(l, c);
-					m_textContainer->setCaretEnd(l, c);
+
+					if (!CInput::getInput()->IsShiftDown())
+					{
+						setCaretEnd(p);
+						m_textContainer->setCaretEnd(l, c);
+					}
 
 					CInput::getInput()->setCapture(this);
 				}

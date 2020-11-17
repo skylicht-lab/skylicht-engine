@@ -42,7 +42,8 @@ namespace Skylicht
 				m_lastClickPositionX(0.0f),
 				m_lastClickPositionY(0.0f),
 				m_capture(NULL),
-				m_fastClickCount(0)
+				m_fastClickCount(0),
+				m_keyRepeatDelay(300)
 			{
 				for (int i = 0; i < 3; i++)
 					m_lastClickTime[i] = 0.0f;
@@ -61,6 +62,40 @@ namespace Skylicht
 			CInput* CInput::getInput()
 			{
 				return g_baseInput;
+			}
+
+			void CInput::update()
+			{
+				if (CGUIContext::MouseFocus && CGUIContext::MouseFocus->isHidden())
+					CGUIContext::MouseFocus = NULL;
+
+				if (CGUIContext::KeyboardFocus
+					&& (CGUIContext::KeyboardFocus->isHidden() || !CGUIContext::KeyboardFocus->getKeyboardInputEnabled()))
+				{
+					CGUIContext::KeyboardFocus = nullptr;
+				}
+
+				if (!CGUIContext::KeyboardFocus)
+					return;
+
+				float time = CGUIContext::getTime();
+
+				// Simulate hold key-repeats
+				for (int i = 0; i < EKey::KEY_KEY_CODES_COUNT; i++)
+				{
+					if (KeyData.KeyState[i] && KeyData.Target != CGUIContext::KeyboardFocus)
+					{
+						KeyData.KeyState[i] = false;
+						continue;
+					}
+
+					if (KeyData.KeyState[i] && time > KeyData.NextRepeat[i])
+					{
+						KeyData.NextRepeat[i] = time + m_keyRepeatDelay;
+						if (CGUIContext::KeyboardFocus)
+							CGUIContext::KeyboardFocus->onKeyPress(i);
+					}
+				}
 			}
 
 			bool CInput::inputMouseMoved(float x, float y, float deltaX, float deltaY)
@@ -117,7 +152,7 @@ namespace Skylicht
 				return true;
 			}
 
-			bool CInput::inputMouseButton(int iMouseButton, bool down)
+			bool CInput::inputMouseButton(int mouseButton, bool down)
 			{
 				if (down && (!CGUIContext::HoveredControl || !CGUIContext::HoveredControl->isMenuComponent()))
 					CGUIContext::getRoot()->closeMenu();
@@ -128,7 +163,7 @@ namespace Skylicht
 				if (down
 					&& m_lastClickPositionX == m_mousePositionX
 					&& m_lastClickPositionY == m_mousePositionY
-					&& (CGUIContext::getTime() - m_lastClickTime[iMouseButton]) < 500.0f)
+					&& (CGUIContext::getTime() - m_lastClickTime[mouseButton]) < 500.0f)
 				{
 					isDoubleClick = true;
 
@@ -141,9 +176,15 @@ namespace Skylicht
 					m_fastClickCount = 1;
 				}
 
+				if (mouseButton == 0)
+					KeyData.LeftMouseDown = down;
+				else if (mouseButton == 1)
+					KeyData.RightMouseDown = down;
+
+				m_lastClickTime[mouseButton] = CGUIContext::getTime();
+
 				if (down && !isDoubleClick)
-				{
-					m_lastClickTime[iMouseButton] = CGUIContext::getTime();
+				{					
 					m_lastClickPositionX = m_mousePositionX;
 					m_lastClickPositionY = m_mousePositionY;
 				}
@@ -169,6 +210,11 @@ namespace Skylicht
 					return false;
 
 				// Do keyboard focus
+				if (!keyboardFocus(CGUIContext::HoveredControl))
+				{
+					if (CGUIContext::KeyboardFocus)
+						CGUIContext::KeyboardFocus->unfocus();
+				}
 
 				// This tells the child it has been touched, which
 				// in turn tells its parents, who tell their parents.
@@ -177,7 +223,7 @@ namespace Skylicht
 				if (down)
 					CGUIContext::HoveredControl->touch();
 
-				switch (iMouseButton)
+				switch (mouseButton)
 				{
 				case 0:
 					if (isTripleClick)
@@ -212,6 +258,28 @@ namespace Skylicht
 				return false;
 			}
 
+			bool CInput::keyboardFocus(CBase *hoverControl)
+			{
+				if (hoverControl == NULL)
+					return false;
+
+				if (hoverControl->getKeyboardInputEnabled())
+				{
+					// Make sure none of our children have keyboard focus first
+					// todo recursive
+					for (auto&& child : hoverControl->Children)
+					{
+						if (child == CGUIContext::KeyboardFocus)
+							return false;
+					}
+
+					hoverControl->focus();
+					return true;
+				}
+
+				return keyboardFocus(hoverControl->getParent());
+			}
+
 			bool CInput::inputMouseWheel(int wheel)
 			{
 				if (!CGUIContext::HoveredControl)
@@ -229,14 +297,59 @@ namespace Skylicht
 				return true;
 			}
 
-			bool CInput::inputModifierKey(EKey key, bool down)
+			bool CInput::inputKeyEvent(EKey key, bool down)
 			{
+				CBase* target = CGUIContext::KeyboardFocus;
+				if (target && target->isHidden())
+					target = NULL;
+
+				if (down)
+				{
+					if (!KeyData.KeyState[key])
+					{
+						KeyData.KeyState[key] = true;
+						KeyData.NextRepeat[key] = CGUIContext::getTime() + m_keyRepeatDelay;
+						KeyData.Target = target;
+
+						if (target)
+							return target->onKeyPress(key);
+					}
+				}
+				else
+				{
+					if (KeyData.KeyState[key])
+					{
+						KeyData.KeyState[key] = false;
+
+						//! @bug This causes shift left arrow in textboxes
+						//! to not work. What is disabling it here breaking?
+						//! `KeyData.Target = nullptr;`
+
+						if (target)
+							return target->onKeyRelease(key);
+					}
+				}
+
 				return false;
 			}
 
 			bool CInput::inputCharacter(u32 character)
 			{
-				return false;
+				// Handle Accelerators
+				// if (handleAccelerator(character))
+				//	return true;
+
+				// Handle characters
+				if (!CGUIContext::KeyboardFocus)
+					return false;
+
+				if (!CGUIContext::KeyboardFocus->isVisible())
+					return false;
+
+				if (CInput::IsControlDown())
+					return false;
+
+				return CGUIContext::KeyboardFocus->onChar(character);
 			}
 		}
 	}
