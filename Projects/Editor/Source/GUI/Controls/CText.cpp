@@ -59,7 +59,13 @@ namespace Skylicht
 					return SDimension(0.0f, p.Height);
 				}
 
-				std::wstring sub = m_string.substr(0, c);
+				std::wstring sub;
+
+				if (c >= m_string.length())
+					sub = m_string;
+				else
+					sub = m_string.substr(0, c);
+
 				return CRenderer::getRenderer()->measureText(m_fontSize, sub);
 			}
 

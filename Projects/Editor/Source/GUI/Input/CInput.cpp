@@ -43,7 +43,8 @@ namespace Skylicht
 				m_lastClickPositionY(0.0f),
 				m_capture(NULL),
 				m_fastClickCount(0),
-				m_keyRepeatDelay(300)
+				m_keyRepeatDelay(50),
+				m_firstKeyRepeatDelay(300)
 			{
 				for (int i = 0; i < 3; i++)
 					m_lastClickTime[i] = 0.0f;
@@ -93,7 +94,7 @@ namespace Skylicht
 					{
 						KeyData.NextRepeat[i] = time + m_keyRepeatDelay;
 						if (CGUIContext::KeyboardFocus)
-							CGUIContext::KeyboardFocus->onKeyPress(i);
+							CGUIContext::KeyboardFocus->onKeyPress((EKey)i, true);
 					}
 				}
 			}
@@ -184,7 +185,7 @@ namespace Skylicht
 				m_lastClickTime[mouseButton] = CGUIContext::getTime();
 
 				if (down && !isDoubleClick)
-				{					
+				{
 					m_lastClickPositionX = m_mousePositionX;
 					m_lastClickPositionY = m_mousePositionY;
 				}
@@ -308,7 +309,7 @@ namespace Skylicht
 					if (!KeyData.KeyState[key])
 					{
 						KeyData.KeyState[key] = true;
-						KeyData.NextRepeat[key] = CGUIContext::getTime() + m_keyRepeatDelay;
+						KeyData.NextRepeat[key] = CGUIContext::getTime() + m_firstKeyRepeatDelay;
 						KeyData.Target = target;
 
 						if (target)

@@ -389,8 +389,8 @@ namespace Skylicht
 					return false;
 				}
 
-				virtual bool onKeyPress(int key, bool press = true);
-				virtual bool onKeyRelease(int key);
+				virtual bool onKeyPress(EKey key, bool press = true);
+				virtual bool onKeyRelease(EKey key);
 
 				virtual bool onKeyTab(bool down);
 				virtual bool onKeySpace(bool down) { return false; }

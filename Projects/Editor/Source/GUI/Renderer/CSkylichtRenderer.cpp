@@ -184,6 +184,9 @@ namespace Skylicht
 
 			float CSkylichtRenderer::measureCharWidth(EFontSize fontSize, wchar_t c)
 			{
+				if (c == '\n' || c == '\r')
+					return 0.0f;
+
 				CGlyphFont *font = m_fontNormal;
 				if (fontSize == EFontSize::SizeLarge)
 					font = m_fontLarge;
@@ -228,10 +231,14 @@ namespace Skylicht
 				int i = 0, n;
 				while (string[i] != 0)
 				{
-					SModuleOffset *c = font->getCharacterModule((int)string[i]);
-					if (c != NULL)
+					if (string[i] != (int)'\n' &&
+						string[i] != (int)'\r')
 					{
-						listModule.push_back(c);
+						SModuleOffset *c = font->getCharacterModule((int)string[i]);
+						if (c != NULL)
+						{
+							listModule.push_back(c);
+						}
 					}
 					i++;
 				}

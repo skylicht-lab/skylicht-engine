@@ -95,6 +95,7 @@ namespace Skylicht
 
 						setCaretBegin(p);
 						m_textContainer->setCaretBegin(l, c);
+						m_textContainer->resetCaretBlink();
 					}
 				}
 			}
@@ -119,6 +120,124 @@ namespace Skylicht
 			{
 				if (m_editable)
 					m_textContainer->showCaret(false);
+			}
+
+			bool CTextBox::onKeyPress(EKey key, bool press)
+			{
+				if (press)
+				{
+					u32 line, pos;
+					m_textContainer->getCaretBegin(line, pos);
+
+					u32 totalLine = m_textContainer->getNumLine();
+
+					switch (key)
+					{
+					case EKey::KEY_UP:
+					{
+						if (line > 0)
+							line--;
+					}
+					break;
+					case EKey::KEY_DOWN:
+					{
+						if (line < totalLine - 1)
+							line++;
+					}
+					break;
+					case EKey::KEY_LEFT:
+					{
+						u32 length = m_textContainer->getLine(line)->getLength();
+						pos = core::min_(pos, length);
+
+						if (pos == 0)
+						{
+							if (line > 0)
+							{
+								// end prev line
+								line--;
+								pos = m_textContainer->getLine(line)->getLength() - 1;
+							}
+						}
+						else
+						{
+							pos--;
+						}
+					}
+					break;
+					case EKey::KEY_RIGHT:
+					{
+						CText* text = m_textContainer->getLine(line);
+						if (pos == text->getLength() - 1 && line < totalLine)
+						{
+							// begin next line
+							pos = 0;
+							line++;
+						}
+						else
+							pos++;
+					}
+					break;
+					case EKey::KEY_HOME:
+						pos = 0;
+						break;
+					case EKey::KEY_END:
+						pos = m_textContainer->getLine(line)->getLength() - 1;
+						break;
+					case EKey::KEY_PRIOR:
+					{
+						// page up
+						u32 up = (u32)(height() / m_textContainer->getLine(line)->height());
+						if (up > 1)
+							up--;
+
+						if (line > up)
+							line -= up;
+						else
+							line = 0;
+					}
+					break;
+					case EKey::KEY_NEXT:
+					{
+						// page down
+						u32 down = (u32)(height() / m_textContainer->getLine(line)->height());
+						if (down > 1)
+							down--;
+
+						if (line < totalLine - 1 - down)
+							line += down;
+						else
+							line = totalLine - 1;
+					}
+					break;
+					}
+
+					// update new caret position
+					m_textContainer->setCaretBegin(line, pos);
+					m_textContainer->resetCaretBlink();
+
+					if (!CInput::getInput()->IsShiftDown())
+						m_textContainer->setCaretEnd(line, pos);
+
+					// auto scroll to caret position
+					if (m_canScrollV && !m_vertical->isHidden())
+					{
+						CText *text = m_textContainer->getLine(line);
+
+						SPoint p = canvasPosToLocal(text->localPosToCanvas());
+
+						if (p.Y < 0)
+						{
+							scrollVerticalOffset(p.Y);
+						}
+						else if (p.Y + text->height() > height())
+						{
+							scrollVerticalOffset(p.Y + text->height() - height());
+						}
+					}
+				}
+
+				return CBase::onKeyPress(key);
 			}
 
 			void CTextBox::setEditable(bool b)
@@ -157,6 +276,7 @@ namespace Skylicht
 
 					setCaretBegin(p);
 					m_textContainer->setCaretBegin(l, c);
+					m_textContainer->resetCaretBlink();
 
 					if (!CInput::getInput()->IsShiftDown())
 					{
@@ -192,6 +312,7 @@ namespace Skylicht
 
 				m_textContainer->setCaretBegin(l, to);
 				m_textContainer->setCaretEnd(l, from);
+				m_textContainer->resetCaretBlink();
 			}
 
 			void CTextBox::onMouseTripleClickLeft(float x, float y)
@@ -211,6 +332,7 @@ namespace Skylicht
 
 				m_textContainer->setCaretBegin(l, to);
 				m_textContainer->setCaretEnd(l, 0);
+				m_textContainer->resetCaretBlink();
 			}
 		}
 	}
