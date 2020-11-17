@@ -59,6 +59,7 @@ namespace Skylicht
 				SKeyData KeyData;
 
 			protected:
+				float m_firstKeyRepeatDelay;
 				float m_keyRepeatDelay;
 
 				float m_lastClickPositionX;

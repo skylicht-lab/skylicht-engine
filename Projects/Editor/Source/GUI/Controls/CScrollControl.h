@@ -71,6 +71,10 @@ namespace Skylicht
 					return m_horizontal;
 				}
 
+				void scrollVerticalOffset(float offset);
+
+				void scrollHorizontalOffset(float offset);
+
 			protected:
 				void updateScrollBar();
 

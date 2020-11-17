@@ -231,6 +231,7 @@ namespace Skylicht
 			submenu->addItem(L"Scene");
 			submenu->addItem(L"GUI Design");
 			submenu->addItem(L"Animation");
+			submenu->addItem(L"Console");
 			submenu->addSeparator();
 			submenu->addItem(L"Reset layout");
 

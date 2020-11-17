@@ -85,7 +85,6 @@ namespace Skylicht
 
 			void CScrollControl::onChildBoundsChanged(const SRect& oldChildBounds, CBase* child)
 			{
-				updateScrollBar();
 				invalidate();
 			}
 
@@ -116,6 +115,30 @@ namespace Skylicht
 			float CScrollControl::getInnerHeight()
 			{
 				return height() - (m_horizontal->isHidden() ? 0 : m_horizontal->height());
+			}
+
+			void CScrollControl::scrollVerticalOffset(float offset)
+			{
+				if (m_canScrollV && !m_vertical->isHidden())
+				{
+					float horizontalHeight = m_horizontal->isVisible() ? m_horizontal->height() : 0.0f;
+					float content = (m_innerPanel->height() - height() + horizontalHeight);
+
+					float newScroll = m_vertical->getScroll() + offset / content;
+					m_vertical->setScroll(newScroll);
+				}
+			}
+
+			void CScrollControl::scrollHorizontalOffset(float offset)
+			{
+				if (m_canScrollH && !m_horizontal->isHidden())
+				{
+					float verticalWidth = m_vertical->isVisible() ? m_vertical->width() : 0.0f;
+					float content = (m_innerPanel->width() - width() + verticalWidth);
+
+					float newScroll = m_vertical->getScroll() + offset / content;
+					m_horizontal->setScroll(newScroll);
+				}
 			}
 
 			void CScrollControl::updateScrollBar()
@@ -149,12 +172,14 @@ namespace Skylicht
 
 				if (m_canScrollV && !m_vertical->isHidden())
 				{
-					newInnerPanelPosY = -(m_innerPanel->height() - height() + m_horizontal->height()) * m_vertical->getScroll();
+					float horizontalHeight = m_horizontal->isVisible() ? m_horizontal->height() : 0.0f;
+					newInnerPanelPosY = -(m_innerPanel->height() - height() + horizontalHeight) * m_vertical->getScroll();
 				}
 
 				if (m_canScrollH && !m_horizontal->isHidden())
 				{
-					newInnerPanelPosX = -(m_innerPanel->width() - width() + m_vertical->width()) * m_horizontal->getScroll();
+					float verticalWidth = m_vertical->isVisible() ? m_vertical->width() : 0.0f;
+					newInnerPanelPosX = -(m_innerPanel->width() - width() + verticalWidth) * m_horizontal->getScroll();
 				}
 
 				m_innerPanel->setPos(round(newInnerPanelPosX), round(newInnerPanelPosY));
