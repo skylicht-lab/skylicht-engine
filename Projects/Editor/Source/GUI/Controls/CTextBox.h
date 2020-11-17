@@ -60,6 +60,8 @@ namespace Skylicht
 
 				virtual void onKeyboardFocus();
 
+				virtual bool onKeyPress(EKey key, bool press);
+
 				virtual void onMouseClickLeft(float x, float y, bool down);
 
 				virtual void onMouseDoubleClickLeft(float x, float y);

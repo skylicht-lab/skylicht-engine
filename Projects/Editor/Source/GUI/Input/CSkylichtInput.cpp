@@ -98,46 +98,16 @@ namespace Skylicht
 					case irr::KEY_RSHIFT:
 						inputKeyEvent(EKey::KEY_SHIFT, event.KeyInput.PressedDown);
 						break;
-					case irr::KEY_RETURN:
-						inputKeyEvent(EKey::KEY_RETURN, event.KeyInput.PressedDown);
-						break;
-					case irr::KEY_BACK:
-						inputKeyEvent(EKey::KEY_BACK, event.KeyInput.PressedDown);
-						break;
-					case irr::KEY_DELETE:
-						inputKeyEvent(EKey::KEY_DELETE, event.KeyInput.PressedDown);
-						break;
-					case irr::KEY_LEFT:
-						inputKeyEvent(EKey::KEY_LEFT, event.KeyInput.PressedDown);
-						break;
-					case irr::KEY_RIGHT:
-						inputKeyEvent(EKey::KEY_RIGHT, event.KeyInput.PressedDown);
-						break;
-					case irr::KEY_TAB:
-						inputKeyEvent(EKey::KEY_TAB, event.KeyInput.PressedDown);
-						break;
-					case irr::KEY_SPACE:
-						inputKeyEvent(EKey::KEY_SPACE, event.KeyInput.PressedDown);
-						break;
-					case irr::KEY_HOME:
-						inputKeyEvent(EKey::KEY_HOME, event.KeyInput.PressedDown);
-						break;
-					case irr::KEY_END:
-						inputKeyEvent(EKey::KEY_END, event.KeyInput.PressedDown);
-						break;
 					case irr::KEY_CONTROL:
 					case irr::KEY_LCONTROL:
 					case irr::KEY_RCONTROL:
 						inputKeyEvent(EKey::KEY_CONTROL, event.KeyInput.PressedDown);
 						break;
-					case irr::KEY_UP:
-						inputKeyEvent(EKey::KEY_UP, event.KeyInput.PressedDown);
-						break;
-					case irr::KEY_DOWN:
-						inputKeyEvent(EKey::KEY_DOWN, event.KeyInput.PressedDown);
-						break;
 					default:
-						inputCharacter(event.KeyInput.Char);
+						if (event.KeyInput.Char != 0)
+							inputCharacter(event.KeyInput.Char);
+						else
+							inputKeyEvent((EKey)event.KeyInput.Key, event.KeyInput.PressedDown);
 						break;
 					}
 					break;

@@ -184,7 +184,6 @@ namespace Skylicht
 
 				m_caretBeginLine = line;
 				m_caretBeginPosition = c;
-				m_caretBlink = 0.0f;
 			}
 
 			void CTextContainer::setCaretEnd(u32 line, u32 c)
@@ -194,7 +193,6 @@ namespace Skylicht
 
 				m_caretEndLine = line;
 				m_caretEndPosition = c;
-				m_caretBlink = 0.0f;
 			}
 
 			u32 CTextContainer::getClosestCharacter(const SPoint& point, u32& outLine, u32& outChar)

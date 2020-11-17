@@ -614,7 +614,7 @@ namespace Skylicht
 				return false;
 			}
 
-			bool CBase::onKeyPress(int key, bool press)
+			bool CBase::onKeyPress(EKey key, bool press)
 			{
 				bool handled = false;
 
@@ -681,7 +681,7 @@ namespace Skylicht
 				return handled;
 			}
 
-			bool CBase::onKeyRelease(int key)
+			bool CBase::onKeyRelease(EKey key)
 			{
 				return onKeyPress(key, false);
 			}

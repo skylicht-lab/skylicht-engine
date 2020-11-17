@@ -56,6 +56,38 @@ namespace Skylicht
 
 				void setCaretEnd(u32 line, u32 c);
 
+				inline void resetCaretBlink()
+				{
+					m_caretBlink = 0.0f;
+				}
+
+				inline void getCaretBegin(u32& line, u32& c)
+				{
+					line = m_caretBeginLine;
+					c = m_caretBeginPosition;
+				}
+
+				inline void getCaretEnd(u32& line, u32& c)
+				{
+					line = m_caretEndLine;
+					c = m_caretEndPosition;
+				}
+
+				inline u32 getNumLine()
+				{
+					return m_lines.size();
+				}
+
+				CText* getLine(u32 line)
+				{
+					if (line >= m_lines.size())
+						return NULL;
+
+					ListTextControl::iterator i = m_lines.begin();
+					std::advance(i, line);
+					return (*i);
+				}
+
 				inline void showCaret(bool b)
 				{
 					m_showCaret = b;
