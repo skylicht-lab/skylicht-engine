@@ -48,7 +48,7 @@ namespace Skylicht
 				m_margin(0.0f, 0.0f, 0.0f, 0.0f),
 				m_transparentMouseInput(false),
 				m_mouseInputEnabled(true),
-				m_keyboardInputEnabled(true),
+				m_keyboardInputEnabled(false),
 				m_shouldClip(false),
 				m_cursor(ECursorType::Normal),
 				m_renderFillRect(false),

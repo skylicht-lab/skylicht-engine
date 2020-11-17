@@ -33,7 +33,34 @@ namespace Skylicht
 		{
 			class CInput
 			{
+			public:
+				struct SKeyData
+				{
+					SKeyData()
+					{
+						for (int i = 0; i < EKey::KEY_KEY_CODES_COUNT; i++)
+						{
+							KeyState[i] = false;
+							NextRepeat[i] = 0;
+						}
+
+						Target = nullptr;
+						LeftMouseDown = false;
+						RightMouseDown = false;
+					}
+
+					bool KeyState[EKey::KEY_KEY_CODES_COUNT];
+					float NextRepeat[EKey::KEY_KEY_CODES_COUNT];
+					CBase* Target;
+					bool LeftMouseDown;
+					bool RightMouseDown;
+				};
+
+				SKeyData KeyData;
+
 			protected:
+				float m_keyRepeatDelay;
+
 				float m_lastClickPositionX;
 				float m_lastClickPositionY;
 
@@ -59,15 +86,44 @@ namespace Skylicht
 					return SPoint(m_mousePositionX, m_mousePositionY);
 				}
 
+				inline bool isKeyDown(EKey key)
+				{
+					return KeyData.KeyState[key];
+				}
+
+				inline bool isLeftMouseDown()
+				{
+					return KeyData.LeftMouseDown;
+				}
+
+				inline bool isRightMouseDown()
+				{
+					return KeyData.RightMouseDown;
+				}
+
+				inline bool IsShiftDown()
+				{
+					return isKeyDown(EKey::KEY_SHIFT);
+				}
+
+				inline bool IsControlDown()
+				{
+					return isKeyDown(EKey::KEY_CONTROL);
+				}
+
+				virtual void update();
+
 				bool inputMouseMoved(float x, float y, float deltaX, float deltaY);
 
 				bool inputMouseButton(int iButton, bool down);
 
 				bool inputMouseWheel(int wheel);
 
-				bool inputModifierKey(EKey key, bool down);
+				bool inputKeyEvent(EKey key, bool down);
 
 				bool inputCharacter(u32 character);
+
+				bool keyboardFocus(CBase *hoverControl);
 
 				virtual void setCursor(ECursorType type) {}
 
