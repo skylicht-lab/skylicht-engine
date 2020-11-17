@@ -43,6 +43,7 @@ namespace Skylicht
 				u32 m_caretEnd;
 
 				bool m_press;
+				bool m_editable;
 
 			public:
 				CTextBox(CBase *base);
@@ -54,6 +55,10 @@ namespace Skylicht
 				virtual void layout();
 
 				virtual void postLayout();
+
+				virtual void onLostKeyboardFocus();
+
+				virtual void onKeyboardFocus();
 
 				virtual void onMouseClickLeft(float x, float y, bool down);
 
@@ -68,6 +73,8 @@ namespace Skylicht
 					m_caretPosition = string.length();
 					m_caretEnd = m_caretPosition;
 				}
+
+				void setEditable(bool b);
 
 				void setCaretBegin(u32 pos);
 

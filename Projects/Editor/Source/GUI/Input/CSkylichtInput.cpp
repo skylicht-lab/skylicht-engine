@@ -94,43 +94,47 @@ namespace Skylicht
 					switch (event.KeyInput.Key)
 					{
 					case irr::KEY_SHIFT:
-						inputModifierKey(EKey::KEY_SHIFT, event.KeyInput.PressedDown);
+					case irr::KEY_LSHIFT:
+					case irr::KEY_RSHIFT:
+						inputKeyEvent(EKey::KEY_SHIFT, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_RETURN:
-						inputModifierKey(EKey::KEY_RETURN, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_RETURN, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_BACK:
-						inputModifierKey(EKey::KEY_BACK, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_BACK, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_DELETE:
-						inputModifierKey(EKey::KEY_DELETE, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_DELETE, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_LEFT:
-						inputModifierKey(EKey::KEY_LEFT, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_LEFT, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_RIGHT:
-						inputModifierKey(EKey::KEY_RIGHT, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_RIGHT, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_TAB:
-						inputModifierKey(EKey::KEY_TAB, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_TAB, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_SPACE:
-						inputModifierKey(EKey::KEY_SPACE, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_SPACE, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_HOME:
-						inputModifierKey(EKey::KEY_HOME, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_HOME, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_END:
-						inputModifierKey(EKey::KEY_END, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_END, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_CONTROL:
-						inputModifierKey(EKey::KEY_CONTROL, event.KeyInput.PressedDown);
+					case irr::KEY_LCONTROL:
+					case irr::KEY_RCONTROL:
+						inputKeyEvent(EKey::KEY_CONTROL, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_UP:
-						inputModifierKey(EKey::KEY_UP, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_UP, event.KeyInput.PressedDown);
 						break;
 					case irr::KEY_DOWN:
-						inputModifierKey(EKey::KEY_DOWN, event.KeyInput.PressedDown);
+						inputKeyEvent(EKey::KEY_DOWN, event.KeyInput.PressedDown);
 						break;
 					default:
 						inputCharacter(event.KeyInput.Char);
