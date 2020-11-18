@@ -533,6 +533,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				sizeof(keyChars),
 				(WCHAR*)&unicodeChar,
 				1);
+
+			if (event.KeyInput.Control)
+				unicodeChar += 64;
+
 			event.KeyInput.Char = unicodeChar;
 		}
 		else

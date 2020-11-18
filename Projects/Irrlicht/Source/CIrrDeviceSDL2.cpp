@@ -376,7 +376,10 @@ namespace irr
 					key = (EKEY_CODE)KeyMap[idx].Win32Key;
 
 				irrevent.EventType = irr::EET_KEY_INPUT_EVENT;
-				irrevent.KeyInput.Char = SDL_event.key.keysym.sym;
+				if (SDL_event.key.keysym.sym < 127)
+					irrevent.KeyInput.Char = SDL_event.key.keysym.sym;
+				else
+					irrevent.KeyInput.Char = 0;
 				irrevent.KeyInput.Key = key;
 				irrevent.KeyInput.PressedDown = (SDL_event.type == SDL_KEYDOWN);
 				irrevent.KeyInput.Shift = (SDL_event.key.keysym.mod & KMOD_SHIFT) != 0;
@@ -959,6 +962,16 @@ namespace irr
 		}
 
 		CurrentIcon = iconId;
+	}
+
+	void SDLCopyToClipboard(const c8* text)
+	{
+		SDL_SetClipboardText(text);
+	}
+
+	const c8* SDLGetTextFromClipboard()
+	{
+		return SDL_GetClipboardText();
 	}
 
 } // end namespace irr

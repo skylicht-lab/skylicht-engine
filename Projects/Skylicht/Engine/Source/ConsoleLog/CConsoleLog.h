@@ -68,6 +68,11 @@ namespace Skylicht
 
 		const std::string& getBuffer(bool update);
 
+		inline u32 getLogCount()
+		{
+			return m_logs.size();
+		}
+
 		inline std::list<SLogInfo>& getLogs()
 		{
 			return m_logs;
