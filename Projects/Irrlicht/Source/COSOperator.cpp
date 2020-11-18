@@ -25,20 +25,12 @@
 #include "CIrrDeviceLinux.h"
 #endif
 #ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
-//#include "MacOSX/OSXClipboard.h"
+#include "MacOSX/OSXClipboard.h"
 #endif
 #include "fast_atof.h"
 
 namespace irr
 {
-
-#if defined(_IRR_COMPILE_WITH_X11_DEVICE_)
-// constructor  linux
-	COSOperator::COSOperator(const core::stringc& osVersion, CIrrDeviceLinux* device)
-: OperatingSystem(osVersion), IrrDeviceLinux(device)
-{
-}
-#endif
 
 // constructor
 COSOperator::COSOperator(const core::stringc& osVersion) : OperatingSystem(osVersion)
@@ -87,14 +79,7 @@ void COSOperator::copyToClipboard(const c8* text) const
 
 // MacOSX version
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-
-	//OSXCopyToClipboard(text);
-
-#elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
-    if ( IrrDeviceLinux )
-        IrrDeviceLinux->copyToClipboard(text);
-#else
-
+	OSXCopyToClipboard(text);
 #endif
 }
 
@@ -104,9 +89,9 @@ void COSOperator::copyToClipboard(const c8* text) const
 const c8* COSOperator::getTextFromClipboard() const
 {
 #if defined(_IRR_XBOX_PLATFORM_)
-		return 0;
+	return 0;
 #elif defined(WINDOWS_STORE)
-		return 0;
+	return 0;
 #elif defined(_IRR_WINDOWS_API_)
 	if (!OpenClipboard(NULL))
 		return 0;
@@ -120,13 +105,7 @@ const c8* COSOperator::getTextFromClipboard() const
 	return buffer;
 
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-	//return (OSXCopyFromClipboard());
-    return 0;
-#elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
-    if ( IrrDeviceLinux )
-        return IrrDeviceLinux->getTextFromClipboard();
-    return 0;
-
+	return (OSXCopyFromClipboard());
 #else
 
 	return 0;

@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTextBox.h"
 #include "GUI/Input/CInput.h"
+#include "GUI/Clipboard/CClipboard.h"
 #include "GUI/CGUIContext.h"
 
 namespace Skylicht
@@ -371,7 +372,7 @@ namespace Skylicht
 
 			void CTextBox::onCopy(CBase *base)
 			{
-
+				// CClipboard::get()->copyTextToClipboard("Test clipboard");
 			}
 
 			void CTextBox::onCut(CBase *base)
