@@ -447,6 +447,17 @@ namespace Skylicht
 
 			public:
 
+				void addAccelerator(const std::string& accelerator, const Listener& function);
+
+				bool handleAccelerator(const std::string& accelerator);
+
+				inline bool accelOnlyFocus()
+				{
+					return m_accelOnlyFocus;
+				}
+
+			public:
+
 				Listener OnHoverEnter;
 				Listener OnHoverLeave;
 				Listener OnDestroy;
@@ -502,6 +513,9 @@ namespace Skylicht
 				std::string m_tagString;
 				std::wstring m_tagWString;
 				void *m_tagData;
+
+				AccelMap m_accelerators;
+				bool m_accelOnlyFocus;
 			};
 		}
 	}
