@@ -31,7 +31,12 @@ if(CYGWIN)
 	add_definitions(-DIRR_COMPILE_WITH_DX11_DEV_PACK)
 endif()
 
+if(BUILD_MACOS)
 file(GLOB_RECURSE irrlicht_source ./**.cpp ./**.c ./**.mm)
+else()
+file(GLOB_RECURSE irrlicht_source ./**.cpp ./**.c)
+endif()
+
 file(GLOB_RECURSE irrlicht_include ./**.h)
 
 source_group("Source" FILES "${irrlicht_source}")
