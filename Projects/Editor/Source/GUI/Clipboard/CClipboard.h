@@ -32,7 +32,7 @@ namespace Skylicht
 			class CClipboard
 			{
 			protected:
-				std::string m_text;
+				std::wstring m_text;
 
 			public:
 
@@ -44,9 +44,9 @@ namespace Skylicht
 
 				static CClipboard* get();
 
-				virtual void copyTextToClipboard(const std::string& string);
+				virtual void copyTextToClipboard(const std::wstring& string);
 
-				virtual std::string getTextFromClipboard();
+				virtual std::wstring getTextFromClipboard();
 			};
 		}
 	}

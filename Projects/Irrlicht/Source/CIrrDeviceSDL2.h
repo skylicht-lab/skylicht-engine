@@ -255,6 +255,10 @@ namespace irr
 		core::array<SKeyMap> KeyMap;
 	};
 
+	void SDLCopyToClipboard(const c8* text);
+
+	const c8* SDLGetTextFromClipboard();
+
 } // end namespace irr
 
 #endif // _IRR_COMPILE_WITH_SDL2_DEVICE_

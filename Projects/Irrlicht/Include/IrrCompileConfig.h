@@ -76,8 +76,6 @@
 	#define _IRR_LINUX_PLATFORM
 	#ifdef SDL
 		#define _IRR_COMPILE_WITH_SDL_DEVICE_
-	#else
-		#define _IRR_COMPILE_WITH_LINUX_DEVICE_
 	#endif
 #endif
 

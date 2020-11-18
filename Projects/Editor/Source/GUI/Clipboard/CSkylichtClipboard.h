@@ -38,9 +38,9 @@ namespace Skylicht
 
 				virtual ~CSkylichtClipboard();
 
-				virtual void copyTextToClipboard(const std::string& string);
+				virtual void copyTextToClipboard(const std::wstring& string);
 
-				virtual std::string getTextFromClipboard();
+				virtual std::wstring getTextFromClipboard();
 			};
 		}
 	}

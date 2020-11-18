@@ -32,6 +32,16 @@ public:
 	/** \return Returns 0 if no string is in there. */
 	virtual const c8* getTextFromClipboard() const = 0;
 
+	//! Check OS is support unicode clipboard
+	virtual bool isSupportUnicodeClipboard() = 0;
+
+	//! Copies unicode text to the clipboard
+	virtual void copyUnicodeToClipboard(const wchar_t* text) const = 0;
+
+	//! Get unicode text from the clipboard
+	/** \return Returns 0 if no string is in there. */
+	virtual const wchar_t* getUnicodeTextFromClipboard() const = 0;
+
 	//! Get the processor speed in megahertz
 	/** \param MHz The integer variable to store the speed in.
 	\return True if successful, false if not */

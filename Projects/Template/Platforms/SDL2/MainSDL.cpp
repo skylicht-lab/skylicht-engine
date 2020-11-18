@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <Windows.h> // for HINSTANCE
 #endif
 
+#include "CWindowConfig.h"
+
 using namespace irr;
 using namespace core;
 using namespace scene;
@@ -64,15 +66,32 @@ int main(int argc, char *argv[])
 	size = dimension2du(640, 480);
 #endif
 
+#if defined(SKYLICHT_EDITOR)
+	// read size from last session
+	u32 x, y, w, h;
+	bool maximize = false;
+	bool haveConfig = false;
+	if (CWindowConfig::loadConfig(x, y, w, h, maximize))
+	{
+		size.Width = w;
+		size.Height = h;
+	}
+
+	g_mainApp->enableWriteLog(true);
+#endif
+
 	g_device = createDevice(video::EDT_OPENGL, size, 32, false, false, false, g_mainApp);
 	if (!g_device)
 		return 1;
 
 #if defined(SKYLICHT_EDITOR)
 	g_device->setResizable(true);
+
+	if (maximize)
+		g_device->maximizeWindow();
 #endif
 
-	g_device->setWindowCaption(L"Skylicht Engine Demo");
+	g_device->setWindowCaption(L"Skylicht Engine");
 
 	g_mainApp->initApplication(g_device);
 

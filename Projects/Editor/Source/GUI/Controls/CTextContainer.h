@@ -46,6 +46,8 @@ namespace Skylicht
 
 				void setString(const std::wstring& string);
 
+				void getSelectString(std::wstring& string);
+
 				u32 getClosestCharacter(const SPoint& point, u32& outLine, u32& outChar);
 
 				u32 getWordAtPosition(u32 line, u32 charPosition, u32& from, u32& to);

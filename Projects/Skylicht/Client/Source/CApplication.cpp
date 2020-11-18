@@ -114,14 +114,13 @@ namespace Skylicht
 #ifdef ANDROID
 			__android_log_print(ANDROID_LOG_INFO, "skylicht_client.so", "%s", event.LogEvent.Text);
 #endif
-
 			CConsoleLog *log = CConsoleLog::getInstance();
 			if (log->isEnable())
 				log->write(event.LogEvent.Text, event.LogEvent.Level);
-	}
+		}
 
 		return false;
-}
+	}
 
 	void CApplication::setParams(const std::vector<std::string>& argv)
 	{

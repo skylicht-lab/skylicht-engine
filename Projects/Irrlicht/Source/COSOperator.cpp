@@ -6,226 +6,303 @@
 #include "COSOperator.h"
 
 #ifdef _IRR_WINDOWS_API_
-	#ifndef _IRR_XBOX_PLATFORM_
-	#include <windows.h>
-	#endif
+#ifndef _IRR_XBOX_PLATFORM_
+#include <windows.h>
+#endif
 #elif defined(_IRR_ANDROID_PLATFORM_)
-	#include <string.h>
-	#include <unistd.h>
+#include <string.h>
+#include <unistd.h>
 #else
-	#include <string.h>
-	#include <unistd.h>
-	#ifndef _IRR_SOLARIS_PLATFORM_
-	#include <sys/types.h>
-	#include <sys/sysctl.h>
-	#endif
+#include <string.h>
+#include <unistd.h>
+#ifndef _IRR_SOLARIS_PLATFORM_
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#endif
 #endif
 
-#if defined(_IRR_COMPILE_WITH_X11_DEVICE_)
-#include "CIrrDeviceLinux.h"
-#endif
 #ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
 #include "MacOSX/OSXClipboard.h"
 #endif
+
+#ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
+#include "CIrrDeviceSDL2.h"
+#endif
+
 #include "fast_atof.h"
 
 namespace irr
 {
 
-// constructor
-COSOperator::COSOperator(const core::stringc& osVersion) : OperatingSystem(osVersion)
-{
-	#ifdef _DEBUG
-	setDebugName("COSOperator");
-	#endif
-}
-
-
-//! returns the current operating system version as string.
-const core::stringc& COSOperator::getOperatingSystemVersion() const
-{
-	return OperatingSystem;
-}
-
-
-//! copies text to the clipboard
-void COSOperator::copyToClipboard(const c8* text) const
-{
-	if (strlen(text)==0)
-		return;
-
-// Windows version
-#if defined(_IRR_XBOX_PLATFORM_)
-	// do nothing
-#elif defined(WINDOWS_STORE)
-	// do nothing
-#elif defined(_IRR_WINDOWS_API_)
-	if (!OpenClipboard(NULL) || text == 0)
-		return;
-
-	EmptyClipboard();
-
-	HGLOBAL clipbuffer;
-	char * buffer;
-
-	clipbuffer = GlobalAlloc(GMEM_DDESHARE, strlen(text)+1);
-	buffer = (char*)GlobalLock(clipbuffer);
-
-	strcpy(buffer, text);
-
-	GlobalUnlock(clipbuffer);
-	SetClipboardData(CF_TEXT, clipbuffer);
-	CloseClipboard();
-
-// MacOSX version
-#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-	OSXCopyToClipboard(text);
+	// constructor
+	COSOperator::COSOperator(const core::stringc& osVersion) : OperatingSystem(osVersion)
+	{
+#ifdef _DEBUG
+		setDebugName("COSOperator");
 #endif
-}
+	}
 
 
-//! gets text from the clipboard
-//! \return Returns 0 if no string is in there.
-const c8* COSOperator::getTextFromClipboard() const
-{
+	//! returns the current operating system version as string.
+	const core::stringc& COSOperator::getOperatingSystemVersion() const
+	{
+		return OperatingSystem;
+	}
+
+
+	//! copies text to the clipboard
+	void COSOperator::copyToClipboard(const c8* text) const
+	{
+		if (strlen(text) == 0)
+			return;
+		// Windows version
 #if defined(_IRR_XBOX_PLATFORM_)
-	return 0;
+		// do nothing
 #elif defined(WINDOWS_STORE)
-	return 0;
+		// do nothing
+#elif defined(SDL)
+		return SDLCopyToClipboard(text);
 #elif defined(_IRR_WINDOWS_API_)
-	if (!OpenClipboard(NULL))
+		if (!OpenClipboard(NULL) || text == 0)
+			return;
+
+		EmptyClipboard();
+
+		HGLOBAL clipbuffer;
+		char * buffer;
+
+		clipbuffer = GlobalAlloc(GMEM_DDESHARE, strlen(text) + 1);
+		buffer = (char*)GlobalLock(clipbuffer);
+
+		strcpy(buffer, text);
+
+		GlobalUnlock(clipbuffer);
+		SetClipboardData(CF_TEXT, clipbuffer);
+		CloseClipboard();
+#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
+		// MacOSX version
+		OSXCopyToClipboard(text);
+#endif
+	}
+
+
+	//! gets text from the clipboard
+	//! \return Returns 0 if no string is in there.
+	const c8* COSOperator::getTextFromClipboard() const
+	{
+#if defined(_IRR_XBOX_PLATFORM_)
 		return 0;
+#elif defined(WINDOWS_STORE)
+		return 0;
+#elif defined(SDL)
+		return SDLGetTextFromClipboard();
+#elif defined(_IRR_WINDOWS_API_)
+		if (!OpenClipboard(NULL))
+			return 0;
 
-	char * buffer = 0;
+		char * buffer = 0;
 
-	HANDLE hData = GetClipboardData( CF_TEXT );
-	buffer = (char*)GlobalLock( hData );
-	GlobalUnlock( hData );
-	CloseClipboard();
-	return buffer;
+		HANDLE hData = GetClipboardData(CF_TEXT);
+		buffer = (char*)GlobalLock(hData);
+		GlobalUnlock(hData);
+		CloseClipboard();
+		return buffer;
 
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-	return (OSXCopyFromClipboard());
+		return OSXCopyFromClipboard();
 #else
-
-	return 0;
+		return 0;
 #endif
-}
+	}
 
+	//! Check OS is support unicode clipboard
+	bool COSOperator::isSupportUnicodeClipboard()
+	{
+#if defined(_IRR_XBOX_PLATFORM_)
+		return false;
+#elif defined(WINDOWS_STORE)
+		return false;
+#elif defined(SDL)
+		return false;
+#elif defined(_IRR_WINDOWS_API_)
+		return true;
+#else
+		return false;
+#endif
+	}
 
-bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
-{
-	if (MHz)
-		*MHz=0;
+	void COSOperator::copyUnicodeToClipboard(const wchar_t* text) const
+	{
+#if defined(_IRR_XBOX_PLATFORM_)
+		// nothing
+#elif defined(WINDOWS_STORE)
+		// nothing
+#elif defined(SDL)
+		// nothing
+#elif defined(_IRR_WINDOWS_API_)
+		if (!OpenClipboard(NULL) || text == 0)
+			return;
+
+		EmptyClipboard();
+
+		HGLOBAL clipbuffer;
+		char * buffer;
+
+		u32 length = wcslen(text);
+
+		clipbuffer = GlobalAlloc(GMEM_DDESHARE, (length + 1) * sizeof(wchar_t));
+		buffer = (char*)GlobalLock(clipbuffer);
+
+		memcpy(buffer, text, length * sizeof(wchar_t));
+
+		GlobalUnlock(clipbuffer);
+		SetClipboardData(CF_UNICODETEXT, clipbuffer);
+		CloseClipboard();
+#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
+		// nothing
+#else
+		// nothing
+#endif
+	}
+
+	const wchar_t* COSOperator::getUnicodeTextFromClipboard() const
+	{
+#if defined(_IRR_XBOX_PLATFORM_)
+		return 0;
+#elif defined(WINDOWS_STORE)
+		return 0;
+#elif defined(SDL)
+		return 0;
+#elif defined(_IRR_WINDOWS_API_)
+		if (!OpenClipboard(NULL))
+			return 0;
+
+		wchar_t * buffer = 0;
+		HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+		buffer = (wchar_t*)GlobalLock(hData);
+		GlobalUnlock(hData);
+		CloseClipboard();
+		return buffer;
+#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
+		return 0;
+#else
+		return 0;
+#endif
+	}
+
+	bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
+	{
+		if (MHz)
+			*MHz = 0;
 
 #if defined(WINDOWS_STORE)
-	return false;
+		return false;
 #elif defined(_IRR_WINDOWS_API_) && !defined (_IRR_XBOX_PLATFORM_)
-	LONG Error;
+		LONG Error;
 
-	HKEY Key;
-	Error = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+		HKEY Key;
+		Error = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
 			__TEXT("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"),
 			0, KEY_READ, &Key);
 
-	if(Error != ERROR_SUCCESS)
-		return false;
+		if (Error != ERROR_SUCCESS)
+			return false;
 
-	DWORD Speed = 0;
-	DWORD Size = sizeof(Speed);
-	Error = RegQueryValueEx(Key, __TEXT("~MHz"), NULL, NULL, (LPBYTE)&Speed, &Size);
+		DWORD Speed = 0;
+		DWORD Size = sizeof(Speed);
+		Error = RegQueryValueEx(Key, __TEXT("~MHz"), NULL, NULL, (LPBYTE)&Speed, &Size);
 
-	RegCloseKey(Key);
+		RegCloseKey(Key);
 
-	if (Error != ERROR_SUCCESS)
-		return false;
-	else if (MHz)
-		*MHz = Speed;
-	return true;
+		if (Error != ERROR_SUCCESS)
+			return false;
+		else if (MHz)
+			*MHz = Speed;
+		return true;
 #elif defined(_IRR_OSX_PLATFORM_)
-	struct clockinfo CpuClock;
-	size_t Size = sizeof(clockinfo);
+		struct clockinfo CpuClock;
+		size_t Size = sizeof(clockinfo);
 
-	if (!sysctlbyname("kern.clockrate", &CpuClock, &Size, NULL, 0))
-		return false;
-	else if (MHz)
-		*MHz = CpuClock.hz;
-	return true;
+		if (!sysctlbyname("kern.clockrate", &CpuClock, &Size, NULL, 0))
+			return false;
+		else if (MHz)
+			*MHz = CpuClock.hz;
+		return true;
 #else
-	// could probably be read from "/proc/cpuinfo" or "/proc/cpufreq"
-	FILE* file = fopen("/proc/cpuinfo", "r");
-	if (file)
-	{
-		char buffer[1024];
-		fread(buffer, 1, 1024, file);
-		buffer[1023]=0;
-		core::stringc str(buffer);
-		s32 pos = str.find("cpu MHz");
-		if (pos != -1)
+		// could probably be read from "/proc/cpuinfo" or "/proc/cpufreq"
+		FILE* file = fopen("/proc/cpuinfo", "r");
+		if (file)
 		{
-			pos = str.findNext(':', pos);
+			char buffer[1024];
+			fread(buffer, 1, 1024, file);
+			buffer[1023] = 0;
+			core::stringc str(buffer);
+			s32 pos = str.find("cpu MHz");
 			if (pos != -1)
 			{
-				*MHz = core::fast_atof(str.c_str()+pos+1);
+				pos = str.findNext(':', pos);
+				if (pos != -1)
+				{
+					*MHz = core::fast_atof(str.c_str() + pos + 1);
+				}
 			}
+			fclose(file);
 		}
-		fclose(file);
-	}
-	return (*MHz != 0);
+		return (*MHz != 0);
 #endif
-}
+	}
 
-bool COSOperator::getSystemMemory(u32* Total, u32* Avail) const
-{
+	bool COSOperator::getSystemMemory(u32* Total, u32* Avail) const
+	{
 #if defined(WINDOWS_STORE)
-	return false;
+		return false;
 #elif defined(_IRR_WINDOWS_API_) && !defined (_IRR_XBOX_PLATFORM_)
-	MEMORYSTATUS MemoryStatus;
-	MemoryStatus.dwLength = sizeof(MEMORYSTATUS);
+		MEMORYSTATUS MemoryStatus;
+		MemoryStatus.dwLength = sizeof(MEMORYSTATUS);
 
-	// cannot fail
-	GlobalMemoryStatus(&MemoryStatus);
+		// cannot fail
+		GlobalMemoryStatus(&MemoryStatus);
 
-	if (Total)
-		*Total = (u32)(MemoryStatus.dwTotalPhys>>10);
-	if (Avail)
-		*Avail = (u32)(MemoryStatus.dwAvailPhys>>10);
+		if (Total)
+			*Total = (u32)(MemoryStatus.dwTotalPhys >> 10);
+		if (Avail)
+			*Avail = (u32)(MemoryStatus.dwAvailPhys >> 10);
 
-	return true;
+		return true;
 #elif defined(_IRR_POSIX_API_) && !defined(__FreeBSD__)
 #if defined(_SC_PHYS_PAGES) && defined(_SC_AVPHYS_PAGES)
-        long ps = sysconf(_SC_PAGESIZE);
-        long pp = sysconf(_SC_PHYS_PAGES);
-        long ap = sysconf(_SC_AVPHYS_PAGES);
+		long ps = sysconf(_SC_PAGESIZE);
+		long pp = sysconf(_SC_PHYS_PAGES);
+		long ap = sysconf(_SC_AVPHYS_PAGES);
 
-	if ((ps==-1)||(pp==-1)||(ap==-1))
-		return false;
+		if ((ps == -1) || (pp == -1) || (ap == -1))
+			return false;
 
-	if (Total)
-		*Total = (u32)((ps*(long long)pp)>>10);
-	if (Avail)
-		*Avail = (u32)((ps*(long long)ap)>>10);
-	return true;
+		if (Total)
+			*Total = (u32)((ps*(long long)pp) >> 10);
+		if (Avail)
+			*Avail = (u32)((ps*(long long)ap) >> 10);
+		return true;
 #else
-	// TODO: implement for non-availablity of symbols/features
-	return false;
+		// TODO: implement for non-availablity of symbols/features
+		return false;
 #endif
 #elif defined(_IRR_OSX_PLATFORM_)
-	int mib[2];
-	int64_t physical_memory;
-	size_t length;
+		int mib[2];
+		int64_t physical_memory;
+		size_t length;
 
-	// Get the Physical memory size
-	mib[0] = CTL_HW;
-	mib[1] = HW_MEMSIZE;
-	length = sizeof(int64_t);
-	sysctl(mib, 2, &physical_memory, &length, NULL, 0);
-	return true;
+		// Get the Physical memory size
+		mib[0] = CTL_HW;
+		mib[1] = HW_MEMSIZE;
+		length = sizeof(int64_t);
+		sysctl(mib, 2, &physical_memory, &length, NULL, 0);
+		return true;
 #else
-	// TODO: implement for others
-	return false;
+		// TODO: implement for others
+		return false;
 #endif
-}
+	}
 
 
 } // end namespace

@@ -50,14 +50,18 @@ namespace Skylicht
 		{
 			CSpace::update();
 
-			const CConsoleLog::SLogInfo& log = CConsoleLog::getInstance()->getLast();
-			if (log.ID != m_lastID)
+			CConsoleLog *console = CConsoleLog::getInstance();
+			if (console->getLogCount() > 0)
 			{
-				const std::string& buffer = CConsoleLog::getInstance()->getBuffer(true);
-				std::wstring stringw(buffer.begin(), buffer.end());
-				m_textControl->setString(stringw);
-				m_textControl->getVerticalSroll()->setScroll(1.0f);
-				m_lastID = log.ID;
+				const CConsoleLog::SLogInfo& log = console->getLast();
+				if (log.ID != m_lastID)
+				{
+					const std::string& buffer = console->getBuffer(true);
+					std::wstring stringw(buffer.begin(), buffer.end());
+					m_textControl->setString(stringw);
+					m_textControl->getVerticalSroll()->setScroll(1.0f);
+					m_lastID = log.ID;
+				}
 			}
 		}
 	}

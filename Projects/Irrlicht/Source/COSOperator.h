@@ -33,6 +33,16 @@ public:
 	//! \return Returns 0 if no string is in there.
 	virtual const c8* getTextFromClipboard() const _IRR_OVERRIDE_;
 
+	//! Check OS is support unicode clipboard
+	virtual bool isSupportUnicodeClipboard() _IRR_OVERRIDE_;
+
+	//! Copies unicode text to the clipboard
+	virtual void copyUnicodeToClipboard(const wchar_t* text) const _IRR_OVERRIDE_;
+
+	//! Get unicode text from the clipboard
+	/** \return Returns 0 if no string is in there. */
+	virtual const wchar_t* getUnicodeTextFromClipboard() const _IRR_OVERRIDE_;
+
 	//! gets the processor speed in megahertz
 	//! \param Mhz:
 	//! \return Returns true if successful, false if not

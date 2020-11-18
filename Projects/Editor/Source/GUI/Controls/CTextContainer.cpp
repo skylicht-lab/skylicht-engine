@@ -177,6 +177,73 @@ namespace Skylicht
 				invalidate();
 			}
 
+			void CTextContainer::getSelectString(std::wstring& string)
+			{
+				u32 fromLine = m_caretBeginLine;
+				u32 from = m_caretBeginPosition;
+				u32 toLine = m_caretEndLine;
+				u32 to = m_caretEndPosition;
+
+				if (fromLine > toLine)
+				{
+					u32 temp = fromLine;
+					fromLine = toLine;
+					toLine = temp;
+
+					temp = from;
+					from = to;
+					to = temp;
+				}
+
+				string = L"";
+				u32 lineID = 0;
+
+				for (CText *line : m_lines)
+				{
+					// draw selection
+					if (fromLine != toLine || from != to)
+					{
+						if (lineID >= fromLine && lineID <= toLine)
+						{
+							if (lineID == fromLine && fromLine == toLine)
+							{
+								if (from > to)
+								{
+									u32 t = from;
+									from = to;
+									to = t;
+								}
+
+								// single line
+								u32 size = to - from;
+								string = line->getString().substr(from, size);
+								break;
+							}
+							else
+							{
+								// multi line
+								if (lineID == fromLine)
+								{
+									string = line->getString().substr(from, line->getLength() - 1 - from);
+									string += L"\n";
+								}
+								else if (lineID == toLine)
+								{
+									string += line->getString().substr(0, to);
+									break;
+								}
+								else
+								{
+									string += line->getString().substr(0, line->getLength() - 1);
+									string += L"\n";
+								}
+							}
+						}
+					}
+					lineID++;
+				}
+			}
+
 			void CTextContainer::setCaretBegin(u32 line, u32 c)
 			{
 				if (line > m_lines.size())
