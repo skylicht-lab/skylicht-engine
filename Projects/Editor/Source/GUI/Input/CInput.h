@@ -124,6 +124,8 @@ namespace Skylicht
 
 				bool inputCharacter(u32 character);
 
+				bool handleAccelerator(u32 character);
+
 				bool keyboardFocus(CBase *hoverControl);
 
 				virtual void setCursor(ECursorType type) {}

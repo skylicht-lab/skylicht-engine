@@ -68,6 +68,14 @@ namespace Skylicht
 
 				virtual void onMouseTripleClickLeft(float x, float y);
 
+				void onCopy(CBase *base);
+
+				void onCut(CBase *base);
+
+				void onPaste(CBase *base);
+
+				void onSelectAll(CBase *base);
+
 				inline void setString(const std::wstring& string)
 				{
 					m_textContainer->setString(string);

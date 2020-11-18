@@ -50,6 +50,11 @@ namespace Skylicht
 
 				showScrollBar(false, false);
 				setCursor(GUI::ECursorType::Beam);
+
+				addAccelerator("Ctrl + C", BIND_LISTENER(&CTextBox::onCopy, this));
+				addAccelerator("Ctrl + X", BIND_LISTENER(&CTextBox::onCut, this));
+				addAccelerator("Ctrl + V", BIND_LISTENER(&CTextBox::onPaste, this));
+				addAccelerator("Ctrl + A", BIND_LISTENER(&CTextBox::onSelectAll, this));
 			}
 
 			CTextBox::~CTextBox()
@@ -126,6 +131,8 @@ namespace Skylicht
 			{
 				if (press)
 				{
+					bool updateCaret = true;
+
 					u32 line, pos;
 					m_textContainer->getCaretBegin(line, pos);
 
@@ -179,10 +186,26 @@ namespace Skylicht
 					}
 					break;
 					case EKey::KEY_HOME:
-						pos = 0;
+						if (CInput::getInput()->IsControlDown())
+						{
+							line = 0;
+							pos = 0;
+						}
+						else
+						{
+							pos = 0;
+						}
 						break;
 					case EKey::KEY_END:
-						pos = m_textContainer->getLine(line)->getLength() - 1;
+						if (CInput::getInput()->IsControlDown())
+						{
+							line = totalLine - 1;
+							pos = m_textContainer->getLine(line)->getLength() - 1;
+						}
+						else
+						{
+							pos = m_textContainer->getLine(line)->getLength() - 1;
+						}
 						break;
 					case EKey::KEY_PRIOR:
 					{
@@ -210,29 +233,35 @@ namespace Skylicht
 							line = totalLine - 1;
 					}
 					break;
+					default:
+						updateCaret = false;
+						break;
 					}
 
-					// update new caret position
-					m_textContainer->setCaretBegin(line, pos);
-					m_textContainer->resetCaretBlink();
-
-					if (!CInput::getInput()->IsShiftDown())
-						m_textContainer->setCaretEnd(line, pos);
-
-					// auto scroll to caret position
-					if (m_canScrollV && !m_vertical->isHidden())
+					if (updateCaret == true)
 					{
-						CText *text = m_textContainer->getLine(line);
+						// update new caret position
+						m_textContainer->setCaretBegin(line, pos);
+						m_textContainer->resetCaretBlink();
 
-						SPoint p = canvasPosToLocal(text->localPosToCanvas());
+						if (!CInput::getInput()->IsShiftDown())
+							m_textContainer->setCaretEnd(line, pos);
 
-						if (p.Y < 0)
+						// auto scroll to caret position
+						if (m_canScrollV && !m_vertical->isHidden())
 						{
-							scrollVerticalOffset(p.Y);
-						}
-						else if (p.Y + text->height() > height())
-						{
-							scrollVerticalOffset(p.Y + text->height() - height());
+							CText *text = m_textContainer->getLine(line);
+
+							SPoint p = canvasPosToLocal(text->localPosToCanvas());
+
+							if (p.Y < 0)
+							{
+								scrollVerticalOffset(p.Y);
+							}
+							else if (p.Y + text->height() > height())
+							{
+								scrollVerticalOffset(p.Y + text->height() - height());
+							}
 						}
 					}
 				}
@@ -333,6 +362,37 @@ namespace Skylicht
 				m_textContainer->setCaretBegin(l, to);
 				m_textContainer->setCaretEnd(l, 0);
 				m_textContainer->resetCaretBlink();
+			}
+
+			void CTextBox::onCopy(CBase *base)
+			{
+
+			}
+
+			void CTextBox::onCut(CBase *base)
+			{
+				if (m_editable)
+				{
+
+				}
+			}
+
+			void CTextBox::onPaste(CBase *base)
+			{
+				if (m_editable)
+				{
+
+				}
+			}
+
+			void CTextBox::onSelectAll(CBase *base)
+			{
+				m_textContainer->setCaretEnd(0, 0);
+
+				u32 totalLine = m_textContainer->getNumLine();
+				u32 line = totalLine - 1;
+				u32 pos = m_textContainer->getLine(line)->getLength() - 1;
+				m_textContainer->setCaretBegin(line, pos);
 			}
 		}
 	}

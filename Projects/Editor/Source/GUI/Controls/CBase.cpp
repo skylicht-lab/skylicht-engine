@@ -53,6 +53,7 @@ namespace Skylicht
 				m_cursor(ECursorType::Normal),
 				m_renderFillRect(false),
 				m_fillRectColor(CThemeConfig::WindowInnerColor),
+				m_accelOnlyFocus(true),
 				m_debugValue(0),
 				m_tagInt(0),
 				m_tagFloat(0.0f),
@@ -948,6 +949,35 @@ namespace Skylicht
 					return false;
 
 				return m_parent->isMenuComponent();
+			}
+
+			void CBase::addAccelerator(const std::string& accelerator, const Listener& function)
+			{
+				std::string upper = accelerator;
+				std::transform(upper.begin(), upper.end(), upper.begin(), ::toupper);
+				m_accelerators[upper] = function;
+			}
+
+			bool CBase::handleAccelerator(const std::string& accelerator)
+			{
+				if (CGUIContext::KeyboardFocus == this || !accelOnlyFocus())
+				{
+					AccelMap::iterator iter = m_accelerators.find(accelerator);
+
+					if (iter != m_accelerators.end())
+					{
+						iter->second(this);
+						return true;
+					}
+				}
+
+				for (auto&& child : Children)
+				{
+					if (child->handleAccelerator(accelerator))
+						return true;
+				}
+
+				return false;
 			}
 		}
 	}
