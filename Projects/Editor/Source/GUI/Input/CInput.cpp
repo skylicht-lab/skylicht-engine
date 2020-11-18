@@ -360,8 +360,7 @@ namespace Skylicht
 
 				if (IsControlDown())
 				{
-					accelString += "CTRL + ";
-					character += 64;
+					accelString += "CTRL + ";					
 				}
 
 				if (IsShiftDown())

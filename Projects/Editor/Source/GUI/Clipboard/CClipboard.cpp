@@ -53,12 +53,12 @@ namespace Skylicht
 				return g_baseClipboard;
 			}
 
-			void CClipboard::copyTextToClipboard(const std::string& string)
+			void CClipboard::copyTextToClipboard(const std::wstring& string)
 			{
 				m_text = string;
 			}
 
-			std::string CClipboard::getTextFromClipboard()
+			std::wstring CClipboard::getTextFromClipboard()
 			{
 				return m_text;
 			}

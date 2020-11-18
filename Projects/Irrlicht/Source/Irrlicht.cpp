@@ -32,10 +32,6 @@ static const char* const copyright = "Irrlicht Engine (c) 2002-2012 Nikolaus Geb
 	#include "CIrrDevicePhone.h"
 #endif
 
-#ifdef _IRR_COMPILE_WITH_LINUX_DEVICE_
-	#include "CIrrDeviceLinux.h"
-#endif
-
 #ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
 #include "CIrrDeviceSDL2.h"
 #endif
@@ -88,11 +84,6 @@ namespace irr
 #ifdef _IRR_COMPILE_WITH_PHONE_DEVICE_
 		if (params.DeviceType == EIDT_PHONE || (!dev && params.DeviceType == EIDT_BEST))
 			dev = new CIrrDevicePhone(params);
-#endif
-
-#ifdef _IRR_COMPILE_WITH_LINUX_DEVICE_
-		if (params.DeviceType == EIDT_LINUX || (!dev && params.DeviceType == EIDT_BEST))
-			dev = new CIrrDeviceLinux(params);
 #endif
 
 		if (dev && !dev->getVideoDriver() && params.DriverType != video::EDT_NULL)

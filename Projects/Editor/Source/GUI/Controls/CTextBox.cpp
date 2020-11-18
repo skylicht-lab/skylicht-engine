@@ -372,13 +372,21 @@ namespace Skylicht
 
 			void CTextBox::onCopy(CBase *base)
 			{
-				// CClipboard::get()->copyTextToClipboard("Test clipboard");
+				std::wstring data;
+				m_textContainer->getSelectString(data);
+				if (data.size() > 0)
+					CClipboard::get()->copyTextToClipboard(data);
 			}
 
 			void CTextBox::onCut(CBase *base)
 			{
 				if (m_editable)
 				{
+					std::wstring data;
+					m_textContainer->getSelectString(data);
+					if (data.size() > 0)
+						CClipboard::get()->copyTextToClipboard(data);
+
 
 				}
 			}
@@ -387,7 +395,11 @@ namespace Skylicht
 			{
 				if (m_editable)
 				{
+					std::wstring text = CClipboard::get()->getTextFromClipboard();
+					if (text.length() > 0)
+					{
 
+					}
 				}
 			}
 
