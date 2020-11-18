@@ -337,8 +337,8 @@ namespace Skylicht
 			bool CInput::inputCharacter(u32 character)
 			{
 				// Handle Accelerators
-				// if (handleAccelerator(character))
-				//	return true;
+				if (handleAccelerator(character))
+					return true;
 
 				// Handle characters
 				if (!CGUIContext::KeyboardFocus)
@@ -351,6 +351,34 @@ namespace Skylicht
 					return false;
 
 				return CGUIContext::KeyboardFocus->onChar(character);
+			}
+
+			bool CInput::handleAccelerator(u32 character)
+			{
+				// Build the accelerator search string
+				std::string accelString;
+
+				if (IsControlDown())
+				{
+					accelString += "CTRL + ";
+					character += 64;
+				}
+
+				if (IsShiftDown())
+					accelString += "SHIFT + ";
+
+				accelString += toupper(character);
+
+				if (CGUIContext::KeyboardFocus && CGUIContext::KeyboardFocus->handleAccelerator(accelString))
+					return true;
+
+				if (CGUIContext::MouseFocus && CGUIContext::MouseFocus->handleAccelerator(accelString))
+					return true;
+
+				if (CGUIContext::getRoot()->handleAccelerator(accelString))
+					return true;
+
+				return false;
 			}
 		}
 	}
