@@ -27,6 +27,8 @@
 #include "SIrrCreationParameters.h"
 #include "SExposedVideoData.h"
 
+#include "COSOperator.h"
+
 namespace irr
 {
 	namespace video

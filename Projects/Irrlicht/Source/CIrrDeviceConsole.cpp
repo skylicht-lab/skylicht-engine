@@ -17,6 +17,8 @@
 #include <Windows.h>
 #endif
 
+#include "COSOperator.h"
+
 namespace irr
 {
 
@@ -26,6 +28,8 @@ CIrrDeviceConsole::CIrrDeviceConsole(const SIrrlichtCreationParameters& param)
 #ifdef _DEBUG
 	setDebugName("CIrrDeviceConsole");
 #endif
+
+	Operator = new COSOperator("Console");
 
 	createDriver();
 
