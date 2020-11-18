@@ -175,7 +175,7 @@ namespace Skylicht
 					case EKey::KEY_RIGHT:
 					{
 						CText* text = m_textContainer->getLine(line);
-						if (pos == text->getLength() - 1 && line < totalLine)
+						if (pos == text->getLength() - 1 && line < totalLine - 1)
 						{
 							// begin next line
 							pos = 0;
@@ -248,25 +248,30 @@ namespace Skylicht
 							m_textContainer->setCaretEnd(line, pos);
 
 						// auto scroll to caret position
-						if (m_canScrollV && !m_vertical->isHidden())
-						{
-							CText *text = m_textContainer->getLine(line);
-
-							SPoint p = canvasPosToLocal(text->localPosToCanvas());
-
-							if (p.Y < 0)
-							{
-								scrollVerticalOffset(p.Y);
-							}
-							else if (p.Y + text->height() > height())
-							{
-								scrollVerticalOffset(p.Y + text->height() - height());
-							}
-						}
+						scrollToLine(line);
 					}
 				}
 
 				return CBase::onKeyPress(key);
+			}
+
+			void CTextBox::scrollToLine(u32 line)
+			{
+				if (m_canScrollV && !m_vertical->isHidden())
+				{
+					CText *text = m_textContainer->getLine(line);
+
+					SPoint p = canvasPosToLocal(text->localPosToCanvas());
+
+					if (p.Y < 0)
+					{
+						scrollVerticalOffset(p.Y);
+					}
+					else if (p.Y + text->height() > height())
+					{
+						scrollVerticalOffset(p.Y + text->height() - height());
+					}
+				}
 			}
 
 			void CTextBox::setEditable(bool b)
@@ -393,6 +398,8 @@ namespace Skylicht
 				u32 line = totalLine - 1;
 				u32 pos = m_textContainer->getLine(line)->getLength() - 1;
 				m_textContainer->setCaretBegin(line, pos);
+
+				scrollToLine(line);
 			}
 		}
 	}
