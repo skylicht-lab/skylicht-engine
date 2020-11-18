@@ -11,6 +11,8 @@
 #include "CFileSystem.h"
 #include "ISceneManager.h"
 
+#include "COSOperator.h"
+
 namespace irr
 {
 	namespace video
@@ -30,7 +32,7 @@ namespace irr
 }
 
 namespace irr
-{
+{	
 
 CIrrDeviceWin32::CIrrDeviceWin32(const SIrrlichtCreationParameters& param)
 	: CIrrDeviceStub(param), Focused(false), Initialized(false), Paused(true)
@@ -38,6 +40,9 @@ CIrrDeviceWin32::CIrrDeviceWin32(const SIrrlichtCreationParameters& param)
 #ifdef _DEBUG
 	setDebugName("CIrrDeviceWin32");
 #endif
+
+	core::stringc winversion("Windows");
+	Operator = new COSOperator(winversion);
 
 	CursorControl = new CCursorControl(this, CreationParams.WindowSize, (HWND)CreationParams.WindowId, CreationParams.Fullscreen);
 

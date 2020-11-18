@@ -15,6 +15,8 @@
 #include <thread>
 #endif
 
+#include "COSOperator.h"
+
 namespace irr
 {
 	namespace video
@@ -38,6 +40,8 @@ CIrrDevicePhone::CIrrDevicePhone(const SIrrlichtCreationParameters& param)
 #ifdef _DEBUG
 	setDebugName("CIrrDevicePhone");
 #endif
+
+	Operator = new COSOperator("Device Phone");
 
 	createDriver();
 

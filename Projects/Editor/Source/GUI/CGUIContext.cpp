@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Renderer/CSkylichtRenderer.h"
 #include "GUI/Theme/CSkylichtTheme.h"
 #include "GUI/Input/CSkylichtInput.h"
+#include "GUI/Clipboard/CSkylichtClipboard.h"
 
 namespace Skylicht
 {
@@ -45,6 +46,7 @@ namespace Skylicht
 
 			CSkylichtRenderer *g_renderer = NULL;
 			CSkylichtTheme *g_theme = NULL;
+			CSkylichtClipboard *g_clipboard = NULL;
 
 			float g_guiUpdateTime = 0.0f;
 			float g_guiDeltaTime = 0.0f;
@@ -61,6 +63,9 @@ namespace Skylicht
 
 				g_input = new CSkylichtInput();
 				CInput::setInput(g_input);
+
+				g_clipboard = new CSkylichtClipboard();
+				CClipboard::setClipboard(g_clipboard);
 			}
 
 			void CGUIContext::destroyGUI()
@@ -76,6 +81,9 @@ namespace Skylicht
 
 				if (g_input != NULL)
 					delete g_input;
+
+				if (g_clipboard != NULL)
+					delete g_clipboard;
 			}
 
 			void CGUIContext::update(float time)
