@@ -62,7 +62,7 @@ namespace Skylicht
 
 				u32 getWordAtPosition(u32 line, u32 charPosition, u32& from, u32& to);
 
-				u32 getLineAtPosition(u32 line, u32 charPosition, u32& to);
+				u32 getEndLinePosition(u32 line, u32& to);
 
 				void setCaretBegin(u32 line, u32 c);
 

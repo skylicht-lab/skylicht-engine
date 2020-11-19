@@ -553,7 +553,7 @@ namespace Skylicht
 				return charID + to;
 			}
 
-			u32 CTextContainer::getLineAtPosition(u32 line, u32 charPosition, u32& to)
+			u32 CTextContainer::getEndLinePosition(u32 line, u32& to)
 			{
 				u32 charID = 0;
 				u32 lineID = 0;
@@ -575,7 +575,7 @@ namespace Skylicht
 
 				if (foundLine != NULL)
 				{
-					to = foundLine->getLength() - 1;
+					to = foundLine->getLengthNoNewLine();
 				}
 
 				return charID + to;
