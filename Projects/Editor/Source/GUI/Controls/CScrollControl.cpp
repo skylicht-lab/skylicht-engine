@@ -35,7 +35,9 @@ namespace Skylicht
 			CScrollControl::CScrollControl(CBase *parent) :
 				CBase(parent),
 				m_canScrollV(true),
-				m_canScrollH(true)
+				m_canScrollH(true),
+				m_widthScrollExpand(0.0f),
+				m_heightScrollExpand(0.0f)
 			{
 				setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 				m_vertical = new CScrollBar(this, false);
@@ -44,7 +46,7 @@ namespace Skylicht
 
 				m_horizontal = new CScrollBar(this, true);
 				m_horizontal->dock(EPosition::Bottom);
-				m_vertical->OnBarMoved = BIND_LISTENER(&CScrollControl::onScrollBarH, this);
+				m_horizontal->OnBarMoved = BIND_LISTENER(&CScrollControl::onScrollBarH, this);
 
 				m_innerPanel = new CBase(this);
 				m_innerPanel->setPos(0.0f, 0.0f);
@@ -68,13 +70,13 @@ namespace Skylicht
 
 			bool CScrollControl::onMouseWheeled(int delta)
 			{
-				if (m_canScrollV && !m_vertical->isHidden())
+				if (m_canScrollV || !m_vertical->isHidden())
 				{
 					m_vertical->setScroll(m_vertical->getScroll() + m_vertical->getNudgeAmount() * delta);
 					return true;
 				}
 
-				if (m_canScrollH && !m_horizontal->isHidden())
+				if (m_canScrollH || !m_horizontal->isHidden())
 				{
 					m_horizontal->setScroll(m_horizontal->getScroll() + m_horizontal->getNudgeAmount() * delta);
 					return true;
@@ -100,11 +102,14 @@ namespace Skylicht
 
 			void CScrollControl::showScrollBar(bool h, bool v)
 			{
-				m_canScrollV = v;
-				m_canScrollH = h;
-
 				m_vertical->setHidden(!v);
 				m_horizontal->setHidden(!h);
+			}
+
+			void CScrollControl::enableScroll(bool h, bool v)
+			{
+				m_canScrollH = h;
+				m_canScrollV = v;
 			}
 
 			float CScrollControl::getInnerWidth()
@@ -119,7 +124,7 @@ namespace Skylicht
 
 			void CScrollControl::scrollVerticalOffset(float offset)
 			{
-				if (m_canScrollV && !m_vertical->isHidden())
+				if (m_canScrollV || !m_vertical->isHidden())
 				{
 					float horizontalHeight = m_horizontal->isVisible() ? m_horizontal->height() : 0.0f;
 					float content = (m_innerPanel->height() - height() + horizontalHeight);
@@ -131,12 +136,12 @@ namespace Skylicht
 
 			void CScrollControl::scrollHorizontalOffset(float offset)
 			{
-				if (m_canScrollH && !m_horizontal->isHidden())
+				if (m_canScrollH || !m_horizontal->isHidden())
 				{
 					float verticalWidth = m_vertical->isVisible() ? m_vertical->width() : 0.0f;
 					float content = (m_innerPanel->width() - width() + verticalWidth);
 
-					float newScroll = m_vertical->getScroll() + offset / content;
+					float newScroll = m_horizontal->getScroll() + offset / content;
 					m_horizontal->setScroll(newScroll);
 				}
 			}
@@ -159,7 +164,9 @@ namespace Skylicht
 					childrenHeight = core::max_(childrenHeight, child->bottom());
 				}
 
-				m_innerPanel->setSize(core::max_(w, childrenWidth), core::max_(h, childrenHeight));
+				m_innerPanel->setSize(
+					core::max_(w, childrenWidth) + m_widthScrollExpand,
+					core::max_(h, childrenHeight) + m_heightScrollExpand);
 
 				m_vertical->setContentSize(m_innerPanel->height());
 				m_vertical->setViewableContentSize(h);
@@ -170,13 +177,13 @@ namespace Skylicht
 				float newInnerPanelPosX = 0.0f;
 				float newInnerPanelPosY = 0.0f;
 
-				if (m_canScrollV && !m_vertical->isHidden())
+				if (m_canScrollV || !m_vertical->isHidden())
 				{
 					float horizontalHeight = m_horizontal->isVisible() ? m_horizontal->height() : 0.0f;
 					newInnerPanelPosY = -(m_innerPanel->height() - height() + horizontalHeight) * m_vertical->getScroll();
 				}
 
-				if (m_canScrollH && !m_horizontal->isHidden())
+				if (m_canScrollH || !m_horizontal->isHidden())
 				{
 					float verticalWidth = m_vertical->isVisible() ? m_vertical->width() : 0.0f;
 					newInnerPanelPosX = -(m_innerPanel->width() - width() + verticalWidth) * m_horizontal->getScroll();

@@ -82,7 +82,7 @@ namespace Skylicht
 
 				void setEditable(bool b);
 
-				void scrollToLine(u32 line);
+				void scrollToLine(u32 line, u32 pos);
 
 				inline const std::wstring& getString()
 				{
@@ -111,6 +111,11 @@ namespace Skylicht
 
 				inline void setWrapMultiline(bool b)
 				{
+					if (b == true)
+						m_widthScrollExpand = 0.0f;
+					else
+						m_widthScrollExpand = 2.0f;
+
 					m_textContainer->setWrapMultiline(b);
 				}
 

@@ -59,7 +59,7 @@ namespace Skylicht
 
 			}
 
-			void CTextContainer::render()
+			void CTextContainer::renderUnder()
 			{
 				m_caretBlink = m_caretBlink + CGUIContext::getDeltaTime();
 				if (m_caretBlink > 2.0f * m_caretBlinkSpeed)
@@ -84,7 +84,6 @@ namespace Skylicht
 				u32 lineID = 0;
 				for (CText *line : m_lines)
 				{
-
 					// draw selection
 					if (fromLine != toLine || from != to)
 					{
@@ -612,7 +611,7 @@ namespace Skylicht
 				{
 					removeAllLines();
 
-					// this is not yet layout, so calc from parent (Label, Edit,...)
+					// this is not yet layout, so calc from parent (Label, TextBox,...)
 					float w = m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right - m_paddingRight;
 
 					// multi line

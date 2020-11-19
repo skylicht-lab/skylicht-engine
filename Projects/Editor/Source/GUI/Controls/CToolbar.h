@@ -44,7 +44,9 @@ namespace Skylicht
 
 				CButton* addButton(ESystemIcon icon, bool inRightToolbar = false);
 
-				CBase* addSpace();
+				CBase* addControl(CBase *control, bool inRightToolbar = false);
+
+				CBase* addSpace(bool inRightToolbar = false);
 			};
 		}
 	}

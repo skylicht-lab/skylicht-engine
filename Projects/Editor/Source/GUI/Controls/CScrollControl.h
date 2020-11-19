@@ -40,6 +40,9 @@ namespace Skylicht
 
 				bool m_canScrollV;
 				bool m_canScrollH;
+
+				float m_widthScrollExpand;
+				float m_heightScrollExpand;
 			public:
 				CScrollControl(CBase *parent);
 
@@ -56,6 +59,8 @@ namespace Skylicht
 				virtual void onScrollBarH(CBase *base);
 
 				void showScrollBar(bool h, bool v);
+
+				void enableScroll(bool h, bool v);
 
 				float getInnerWidth();
 
