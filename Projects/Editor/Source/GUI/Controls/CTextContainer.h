@@ -68,9 +68,9 @@ namespace Skylicht
 
 				void setCaretEnd(u32 line, u32 c);
 
-				u32 getCaretBeginAt();
+				u32 getCaretBegin();
 
-				u32 getCaretEndAt();
+				u32 getCaretEnd();
 
 				inline void resetCaretBlink()
 				{
@@ -164,7 +164,7 @@ namespace Skylicht
 
 				void drawSelection(CText *line, u32 from, u32 to);
 
-				u32 getCharacterPositionAt(u32 line, u32 pos);
+				u32 getCharacterPosition(u32 line, u32 pos);
 
 				bool updateCaretPosition();
 
