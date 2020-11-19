@@ -39,9 +39,6 @@ namespace Skylicht
 			protected:
 				CTextContainer *m_textContainer;
 
-				u32 m_caretPosition;
-				u32 m_caretEnd;
-
 				bool m_press;
 				bool m_editable;
 
@@ -62,6 +59,8 @@ namespace Skylicht
 
 				virtual bool onKeyPress(EKey key, bool press);
 
+				virtual bool onChar(u32 c);
+
 				virtual void onMouseClickLeft(float x, float y, bool down);
 
 				virtual void onMouseDoubleClickLeft(float x, float y);
@@ -79,16 +78,9 @@ namespace Skylicht
 				inline void setString(const std::wstring& string)
 				{
 					m_textContainer->setString(string);
-
-					m_caretPosition = string.length();
-					m_caretEnd = m_caretPosition;
 				}
 
 				void setEditable(bool b);
-
-				void setCaretBegin(u32 pos);
-
-				void setCaretEnd(u32 pos);
 
 				void scrollToLine(u32 line);
 

@@ -520,19 +520,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		// Handle unicode and deadkeys in a way that works since Windows 95 and nt4.0
 		// Using ToUnicode instead would be shorter, but would to my knowledge not run on 95 and 98.
-		WORD keyChars[2];
+		WCHAR keyChars[5];
 		UINT scanCode = HIWORD(lParam);
-		int conversionResult = ToAsciiEx(wParam, scanCode, allKeys, keyChars, 0, KEYBOARD_INPUT_HKL);
+		int conversionResult = ToUnicodeEx(wParam, scanCode, allKeys, keyChars, 5, 0, KEYBOARD_INPUT_HKL);
 		if (conversionResult == 1)
 		{
-			WORD unicodeChar;
-			MultiByteToWideChar(
-				KEYBOARD_INPUT_CODEPAGE,
-				MB_PRECOMPOSED, // default
-				(LPCSTR)keyChars,
-				sizeof(keyChars),
-				(WCHAR*)&unicodeChar,
-				1);
+			WORD unicodeChar = keyChars[0];
 
 			if (event.KeyInput.Control)
 				unicodeChar += 64;

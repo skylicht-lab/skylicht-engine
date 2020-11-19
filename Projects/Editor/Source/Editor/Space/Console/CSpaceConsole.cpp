@@ -39,6 +39,7 @@ namespace Skylicht
 			m_textControl->dock(GUI::EPosition::Fill);
 			m_textControl->setWrapMultiline(true);
 			m_textControl->showScrollBar(false, true);
+			m_textControl->setEditable(false);
 		}
 
 		CSpaceConsole::~CSpaceConsole()
