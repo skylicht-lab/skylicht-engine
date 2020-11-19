@@ -406,7 +406,7 @@ namespace Skylicht
 				u32 to = 0;
 
 				p = m_textContainer->getClosestCharacter(pos, l, c);
-				p = m_textContainer->getLineAtPosition(l, c, to);
+				p = m_textContainer->getEndLinePosition(l, to);
 
 				m_textContainer->setCaretBegin(l, to);
 				m_textContainer->setCaretEnd(l, 0);
