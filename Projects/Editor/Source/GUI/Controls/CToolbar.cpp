@@ -92,12 +92,29 @@ namespace Skylicht
 				return newButton;
 			}
 
-			CBase* CToolbar::addSpace()
+			CBase* CToolbar::addSpace(bool inRightToolbar)
 			{
 				CBase *space = new CBase(this);
 				space->setWidth(5.0f);
-				space->dock(EPosition::Left);
+
+				if (inRightToolbar)
+					space->dock(EPosition::Right);
+				else
+					space->dock(EPosition::Left);
+
 				return space;
+			}
+
+			CBase* CToolbar::addControl(CBase *control, bool inRightToolbar)
+			{
+				control->setParent(this);
+
+				if (inRightToolbar)
+					control->dock(EPosition::Right);
+				else
+					control->dock(EPosition::Left);
+
+				return control;
 			}
 		}
 	}
