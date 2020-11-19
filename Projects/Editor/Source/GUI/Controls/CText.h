@@ -56,6 +56,17 @@ namespace Skylicht
 					return m_string.size();
 				}
 
+				u32 getLengthNoNewLine()
+				{
+					u32 length = m_string.size();
+					if (length > 0)
+					{
+						if (m_string[length - 1] == '\n')
+							length--;
+					}
+					return length;
+				}
+
 				inline const std::wstring& getString()
 				{
 					return m_string;

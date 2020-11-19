@@ -81,7 +81,8 @@ namespace irr
 		CloseClipboard();
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
 		// MacOSX version
-		OSXCopyToClipboard(text);
+		// OSXCopyToClipboard(text);
+		return 0;
 #endif
 	}
 
@@ -109,11 +110,12 @@ namespace irr
 		return buffer;
 
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-		return OSXCopyFromClipboard();
+		// return OSXCopyFromClipboard();
+		return 0;
 #else
 		return 0;
 #endif
-	}
+}
 
 	//! Check OS is support unicode clipboard
 	bool COSOperator::isSupportUnicodeClipboard()
@@ -247,7 +249,7 @@ namespace irr
 				}
 			}
 			fclose(file);
-		}
+	}
 		return (*MHz != 0);
 #endif
 	}

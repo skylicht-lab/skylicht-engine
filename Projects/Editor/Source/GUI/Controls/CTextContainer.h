@@ -48,6 +48,16 @@ namespace Skylicht
 
 				void getSelectString(std::wstring& string);
 
+				void doDeleteTextInSelection();
+
+				void doBackspace();
+
+				void doDelete();
+
+				void doInsertCharacter(wchar_t c);
+
+				void doInsertString(const std::wstring& string);
+
 				u32 getClosestCharacter(const SPoint& point, u32& outLine, u32& outChar);
 
 				u32 getWordAtPosition(u32 line, u32 charPosition, u32& from, u32& to);
@@ -57,6 +67,10 @@ namespace Skylicht
 				void setCaretBegin(u32 line, u32 c);
 
 				void setCaretEnd(u32 line, u32 c);
+
+				u32 getCaretBeginAt();
+
+				u32 getCaretEndAt();
 
 				inline void resetCaretBlink()
 				{
@@ -150,6 +164,10 @@ namespace Skylicht
 
 				void drawSelection(CText *line, u32 from, u32 to);
 
+				u32 getCharacterPositionAt(u32 line, u32 pos);
+
+				bool updateCaretPosition();
+
 			protected:
 				std::wstring m_string;
 
@@ -173,6 +191,10 @@ namespace Skylicht
 
 				u32 m_caretEndPosition;
 
+				u32 m_caretBegin;
+
+				u32 m_caretEnd;
+
 				SRect m_caretRect;
 
 				float m_caretBlinkSpeed;
@@ -180,6 +202,8 @@ namespace Skylicht
 				float m_caretBlink;
 
 				bool m_showCaret;
+
+				bool m_moveCaretToEnd;
 			};
 		}
 	}

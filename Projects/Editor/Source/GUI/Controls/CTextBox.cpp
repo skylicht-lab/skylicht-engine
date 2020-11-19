@@ -36,8 +36,6 @@ namespace Skylicht
 		{
 			CTextBox::CTextBox(CBase *base) :
 				CScrollControl(base),
-				m_caretPosition(0),
-				m_caretEnd(0),
 				m_press(false),
 				m_editable(true)
 			{
@@ -99,7 +97,6 @@ namespace Skylicht
 						u32 c = 0;
 						u32 p = m_textContainer->getClosestCharacter(pos, l, c);
 
-						setCaretBegin(p);
 						m_textContainer->setCaretBegin(l, c);
 						m_textContainer->resetCaretBlink();
 					}
@@ -155,7 +152,7 @@ namespace Skylicht
 					break;
 					case EKey::KEY_LEFT:
 					{
-						u32 length = m_textContainer->getLine(line)->getLength();
+						u32 length = m_textContainer->getLine(line)->getLengthNoNewLine();
 						pos = core::min_(pos, length);
 
 						if (pos == 0)
@@ -164,26 +161,45 @@ namespace Skylicht
 							{
 								// end prev line
 								line--;
-								pos = m_textContainer->getLine(line)->getLength() - 1;
+								pos = m_textContainer->getLine(line)->getLengthNoNewLine();
 							}
 						}
 						else
 						{
-							pos--;
+							if (CInput::getInput()->IsControlDown())
+							{
+								u32 from, to;
+								m_textContainer->getWordAtPosition(line, pos - 1, from, to);
+								pos = from;
+							}
+							else
+							{
+								pos--;
+							}
 						}
 					}
 					break;
 					case EKey::KEY_RIGHT:
 					{
 						CText* text = m_textContainer->getLine(line);
-						if (pos == text->getLength() - 1 && line < totalLine - 1)
+						u32 length = text->getLengthNoNewLine();
+						if (pos >= length && line < totalLine - 1)
 						{
 							// begin next line
 							pos = 0;
 							line++;
 						}
 						else
-							pos++;
+						{
+							if (CInput::getInput()->IsControlDown())
+							{
+								u32 from, to;
+								m_textContainer->getWordAtPosition(line, pos + 1, from, to);
+								pos = to;
+							}
+							else
+								pos++;
+						}
 					}
 					break;
 					case EKey::KEY_HOME:
@@ -201,11 +217,11 @@ namespace Skylicht
 						if (CInput::getInput()->IsControlDown())
 						{
 							line = totalLine - 1;
-							pos = m_textContainer->getLine(line)->getLength() - 1;
+							pos = m_textContainer->getLine(line)->getLengthNoNewLine();
 						}
 						else
 						{
-							pos = m_textContainer->getLine(line)->getLength() - 1;
+							pos = m_textContainer->getLine(line)->getLengthNoNewLine();
 						}
 						break;
 					case EKey::KEY_PRIOR:
@@ -234,6 +250,13 @@ namespace Skylicht
 							line = totalLine - 1;
 					}
 					break;
+					case EKey::KEY_DELETE:
+						if (m_editable)
+						{
+							m_textContainer->doDelete();
+							updateCaret = false;
+						}
+						break;
 					default:
 						updateCaret = false;
 						break;
@@ -254,6 +277,27 @@ namespace Skylicht
 				}
 
 				return CBase::onKeyPress(key);
+			}
+
+			bool CTextBox::onChar(u32 c)
+			{
+				if (m_editable)
+				{
+					if (c == '\b')
+					{
+						m_textContainer->doBackspace();
+					}
+					else if (c == '\r')
+					{
+						m_textContainer->doInsertCharacter('\n');
+					}
+					else
+					{
+						m_textContainer->doInsertCharacter(c);
+					}
+				}
+
+				return CBase::onChar(c);
 			}
 
 			void CTextBox::scrollToLine(u32 line)
@@ -285,20 +329,6 @@ namespace Skylicht
 					m_textContainer->showCaret(false);
 			}
 
-			void CTextBox::setCaretBegin(u32 pos)
-			{
-				m_caretPosition = pos;
-				if (m_caretPosition > m_textContainer->getLength())
-					m_caretPosition = m_textContainer->getLength();
-			}
-
-			void CTextBox::setCaretEnd(u32 pos)
-			{
-				m_caretEnd = pos;
-				if (m_caretEnd > m_textContainer->getLength())
-					m_caretEnd = m_textContainer->getLength();
-			}
-
 			void CTextBox::onMouseClickLeft(float x, float y, bool down)
 			{
 				if (down)
@@ -309,15 +339,11 @@ namespace Skylicht
 					u32 c = 0;
 					u32 p = m_textContainer->getClosestCharacter(pos, l, c);
 
-					setCaretBegin(p);
 					m_textContainer->setCaretBegin(l, c);
 					m_textContainer->resetCaretBlink();
 
 					if (!CInput::getInput()->IsShiftDown())
-					{
-						setCaretEnd(p);
 						m_textContainer->setCaretEnd(l, c);
-					}
 
 					CInput::getInput()->setCapture(this);
 				}
@@ -342,9 +368,6 @@ namespace Skylicht
 				p = m_textContainer->getClosestCharacter(pos, l, c);
 				p = m_textContainer->getWordAtPosition(l, c, from, to);
 
-				setCaretBegin(p);
-				setCaretEnd(p - (to - from));
-
 				m_textContainer->setCaretBegin(l, to);
 				m_textContainer->setCaretEnd(l, from);
 				m_textContainer->resetCaretBlink();
@@ -361,9 +384,6 @@ namespace Skylicht
 
 				p = m_textContainer->getClosestCharacter(pos, l, c);
 				p = m_textContainer->getLineAtPosition(l, c, to);
-
-				setCaretBegin(p);
-				setCaretEnd(p - to);
 
 				m_textContainer->setCaretBegin(l, to);
 				m_textContainer->setCaretEnd(l, 0);
@@ -385,9 +405,10 @@ namespace Skylicht
 					std::wstring data;
 					m_textContainer->getSelectString(data);
 					if (data.size() > 0)
+					{
 						CClipboard::get()->copyTextToClipboard(data);
-
-
+						m_textContainer->doDeleteTextInSelection();
+					}
 				}
 			}
 
@@ -398,7 +419,7 @@ namespace Skylicht
 					std::wstring text = CClipboard::get()->getTextFromClipboard();
 					if (text.length() > 0)
 					{
-
+						m_textContainer->doInsertString(text);
 					}
 				}
 			}
@@ -409,7 +430,7 @@ namespace Skylicht
 
 				u32 totalLine = m_textContainer->getNumLine();
 				u32 line = totalLine - 1;
-				u32 pos = m_textContainer->getLine(line)->getLength() - 1;
+				u32 pos = m_textContainer->getLine(line)->getLengthNoNewLine();
 				m_textContainer->setCaretBegin(line, pos);
 
 				scrollToLine(line);
