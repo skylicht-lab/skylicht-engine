@@ -53,6 +53,45 @@ void SDLSwapBuffers()
 	}
 }
 
+wchar_t utf8Char2Unicode(const char *&str)
+{
+	char c = *str++;
+	if ((c & 0x80) == 0)
+		return c;
+
+	if (((c & 0xc0) == 0x80) || ((c & 0xfe) == 0xfe))
+	{
+		// I hope it should never happen
+		return static_cast<unsigned char>(c);
+	}
+
+#pragma warning( disable : 4309 )
+	char mask = 0xe0, value = 0xc0;
+#pragma warning( default : 4309 )
+
+	int i;
+	for (i = 1; i < 6; ++i)
+	{
+		if ((c & mask) == value)
+			break;
+		value = mask;
+		mask >>= 1;
+	}
+
+	wchar_t result = c & ~mask;
+	for (; i > 0; --i)
+	{
+		c = *str++;
+		if ((c & 0xc0) != 0x80)
+		{
+			// I hope should never happen
+		}
+		result <<= 6;
+		result |= c & 0x3f;
+	}
+	return result;
+}
+
 namespace irr
 {
 	//! constructor
@@ -376,18 +415,59 @@ namespace irr
 					key = (EKEY_CODE)KeyMap[idx].Win32Key;
 
 				irrevent.EventType = irr::EET_KEY_INPUT_EVENT;
-				if (SDL_event.key.keysym.sym < 127)
-					irrevent.KeyInput.Char = SDL_event.key.keysym.sym;
-				else
-					irrevent.KeyInput.Char = 0;
 				irrevent.KeyInput.Key = key;
 				irrevent.KeyInput.PressedDown = (SDL_event.type == SDL_KEYDOWN);
 				irrevent.KeyInput.Shift = (SDL_event.key.keysym.mod & KMOD_SHIFT) != 0;
 				irrevent.KeyInput.Control = (SDL_event.key.keysym.mod & KMOD_CTRL) != 0;
-				postEventFromUser(irrevent);
+
+				if (SDL_event.key.keysym.sym < 127)
+				{
+					if (irrevent.KeyInput.Control ||
+						SDL_event.key.keysym.sym == '\r' ||
+						SDL_event.key.keysym.sym == '\b')
+					{
+						// hold ctrl or enter or backspace
+						irrevent.KeyInput.Char = SDL_event.key.keysym.sym;
+						postEventFromUser(irrevent);
+					}
+					else if (!irrevent.KeyInput.PressedDown)
+					{
+						// key up
+						irrevent.KeyInput.Char = 0;
+						if (irrevent.KeyInput.Shift)
+							irrevent.KeyInput.Char = SDL_toupper(irrevent.KeyInput.Char);
+						postEventFromUser(irrevent);
+					}
+					else
+					{
+						// we will post char event on text input
+						irrevent.KeyInput.Char = 0;
+						postEventFromUser(irrevent);
+					}
+				}
+				else
+				{
+					// special key
+					irrevent.KeyInput.Char = 0;
+					postEventFromUser(irrevent);
+				}
 			}
 			break;
+			case SDL_TEXTINPUT:
+			{
+				// On Char
+				const char *utf8 = SDL_event.text.text;
+				irrevent.EventType = irr::EET_KEY_INPUT_EVENT;
+				irrevent.KeyInput.Key = KEY_KEY_CODES_COUNT;
+				irrevent.KeyInput.Char = utf8Char2Unicode(utf8);
+				irrevent.KeyInput.PressedDown = true;
+				irrevent.KeyInput.Shift = false;
+				irrevent.KeyInput.Control = false;
 
+				postEventFromUser(irrevent);
+				break;
+			}
+			break;
 			case SDL_QUIT:
 				Close = true;
 				break;

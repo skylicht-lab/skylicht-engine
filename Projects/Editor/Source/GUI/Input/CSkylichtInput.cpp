@@ -103,8 +103,13 @@ namespace Skylicht
 					case irr::KEY_RCONTROL:
 						inputKeyEvent(EKey::KEY_CONTROL, event.KeyInput.PressedDown);
 						break;
+					case irr::KEY_MENU:
+					case irr::KEY_LMENU:
+					case irr::KEY_RMENU:
+						inputKeyEvent(EKey::KEY_MENU, event.KeyInput.PressedDown);
+						break;
 					default:
-						if (event.KeyInput.Char != 0)
+						if (event.KeyInput.Char != 0 && !isKeyDown(EKey::KEY_MENU) && event.KeyInput.PressedDown)
 							inputCharacter(event.KeyInput.Char);
 						else
 							inputKeyEvent((EKey)event.KeyInput.Key, event.KeyInput.PressedDown);

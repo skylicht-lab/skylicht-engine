@@ -61,10 +61,10 @@ namespace Skylicht
 
 				std::wstring sub;
 
-				if (c >= m_string.length())
-					sub = m_string;
-				else
-					sub = m_string.substr(0, c);
+				if (c > getLengthNoNewLine())
+					c = getLengthNoNewLine();
+
+				sub = m_string.substr(0, c);
 
 				return CRenderer::getRenderer()->measureText(m_fontSize, sub);
 			}
@@ -77,7 +77,11 @@ namespace Skylicht
 				float minDistance = 5000.0f;
 				float x = 0.0f;
 
-				for (u32 i = 0, n = m_string.size(); i < n; i++)
+				std::wstring s = m_string;
+				if (s.length() > 0 && s[s.length() - 1] != '\n')
+					s += '\n';
+
+				for (u32 i = 0, n = s.length(); i < n; i++)
 				{
 					float distance = fabs(x - point.X);
 
@@ -87,7 +91,7 @@ namespace Skylicht
 						minDistance = distance;
 					}
 
-					float charWidth = renderer->measureCharWidth(m_fontSize, m_string[i]);
+					float charWidth = renderer->measureCharWidth(m_fontSize, s[i]);
 					x = x + charWidth;
 				}
 

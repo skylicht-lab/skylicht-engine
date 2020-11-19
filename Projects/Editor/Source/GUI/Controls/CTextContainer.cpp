@@ -47,7 +47,8 @@ namespace Skylicht
 				m_caretEndLine(0),
 				m_caretEndPosition(0),
 				m_caretBlinkSpeed(500.0f),
-				m_caretBlink(0.0f)
+				m_caretBlink(0.0f),
+				m_moveCaretToEnd(false)
 			{
 				setMouseInputEnabled(false);
 				enableClip(true);
@@ -99,7 +100,7 @@ namespace Skylicht
 								// multi line
 								if (lineID == fromLine)
 								{
-									drawSelection(line, from, line->getLength() - 1);
+									drawSelection(line, from, line->getLengthNoNewLine());
 								}
 								else if (lineID == toLine)
 								{
@@ -107,7 +108,7 @@ namespace Skylicht
 								}
 								else
 								{
-									drawSelection(line, 0, line->getLength() - 1);
+									drawSelection(line, 0, line->getLengthNoNewLine());
 								}
 							}
 						}
@@ -174,6 +175,7 @@ namespace Skylicht
 
 				m_string = string;
 				m_textChange = true;
+				m_moveCaretToEnd = true;
 				invalidate();
 			}
 
@@ -244,6 +246,104 @@ namespace Skylicht
 				}
 			}
 
+			void CTextContainer::doDeleteTextInSelection()
+			{
+				u32 begin = m_caretBegin;
+				u32 end = m_caretEnd;
+
+				if (end < begin)
+				{
+					u32 temp = end;
+					end = begin;
+					begin = temp;
+				}
+
+				m_string.erase(begin, end - begin);
+
+				m_textChange = true;
+
+				m_moveCaretToEnd = false;
+				m_caretBegin = begin;
+				m_caretEnd = begin;
+
+				invalidate();
+			}
+
+			void CTextContainer::doBackspace()
+			{
+				if (m_caretBegin != m_caretEnd)
+				{
+					doDeleteTextInSelection();
+				}
+				else if (m_caretBegin > 0)
+				{
+					m_string.erase(--m_caretBegin, 1);
+					m_textChange = true;
+
+					m_moveCaretToEnd = false;
+					m_caretEnd = m_caretBegin;
+
+					invalidate();
+				}
+
+				resetCaretBlink();
+			}
+
+			void CTextContainer::doDelete()
+			{
+				if (m_caretBegin != m_caretEnd)
+				{
+					doDeleteTextInSelection();
+				}
+				else if (m_caretBegin < m_string.length())
+				{
+					m_string.erase(m_caretBegin, 1);
+					m_textChange = true;
+
+					m_moveCaretToEnd = false;
+					m_caretEnd = m_caretBegin;
+
+					invalidate();
+				}
+
+				resetCaretBlink();
+			}
+
+			void CTextContainer::doInsertCharacter(wchar_t c)
+			{
+				if (m_caretBegin != m_caretEnd)
+				{
+					doDeleteTextInSelection();
+				}
+
+				m_string.insert(m_caretBegin, 1, c);
+
+				m_caretBegin++;
+				m_textChange = true;
+
+				m_moveCaretToEnd = false;
+				m_caretEnd = m_caretBegin;
+
+				invalidate();
+
+				resetCaretBlink();
+			}
+
+			void CTextContainer::doInsertString(const std::wstring& string)
+			{
+				m_string.insert(m_caretBegin, string);
+				m_caretBegin += string.length();
+
+				m_textChange = true;
+
+				m_moveCaretToEnd = false;
+				m_caretEnd = m_caretBegin;
+
+				invalidate();
+
+				resetCaretBlink();
+			}
+
 			void CTextContainer::setCaretBegin(u32 line, u32 c)
 			{
 				if (line > m_lines.size())
@@ -251,6 +351,8 @@ namespace Skylicht
 
 				m_caretBeginLine = line;
 				m_caretBeginPosition = c;
+
+				m_caretBegin = getCaretBeginAt();
 			}
 
 			void CTextContainer::setCaretEnd(u32 line, u32 c)
@@ -260,6 +362,73 @@ namespace Skylicht
 
 				m_caretEndLine = line;
 				m_caretEndPosition = c;
+
+				m_caretEnd = getCaretEndAt();
+			}
+
+			bool CTextContainer::updateCaretPosition()
+			{
+				u32 pos = 0;
+				u32 lineID = 0;
+
+				bool foundBegin = false;
+				bool foundEnd = false;
+
+				for (CText *l : m_lines)
+				{
+					if (pos <= m_caretBegin && m_caretBegin <= pos + l->getLengthNoNewLine())
+					{
+						m_caretBeginLine = lineID;
+						m_caretBeginPosition = m_caretBegin - pos;
+						foundBegin = true;
+					}
+
+					if (pos <= m_caretEnd && m_caretEnd <= pos + l->getLengthNoNewLine())
+					{
+						m_caretEndLine = lineID;
+						m_caretEndPosition = m_caretEnd - pos;
+						foundEnd = true;
+					}
+
+					if (foundBegin && foundEnd)
+						break;
+
+					pos = pos + l->getLength();
+					lineID++;
+				}
+
+				return foundBegin && foundEnd;
+			}
+
+			u32 CTextContainer::getCharacterPositionAt(u32 line, u32 pos)
+			{
+				u32 ret = 0;
+				u32 lineID = 0;
+
+				for (CText *l : m_lines)
+				{
+					if (lineID == line)
+					{
+						u32 p = core::min_(pos, l->getLengthNoNewLine());
+						ret += p;
+						break;
+					}
+
+					ret += l->getLength();
+					lineID++;
+				}
+
+				return ret;
+			}
+
+			u32 CTextContainer::getCaretBeginAt()
+			{
+				return getCharacterPositionAt(m_caretBeginLine, m_caretBeginPosition);
+			}
+
+			u32 CTextContainer::getCaretEndAt()
+			{
+				return getCharacterPositionAt(m_caretEndLine, m_caretEndPosition);
 			}
 
 			u32 CTextContainer::getClosestCharacter(const SPoint& point, u32& outLine, u32& outChar)
@@ -269,6 +438,7 @@ namespace Skylicht
 
 				u32 lineOffset = 0;
 				CText *foundLine = NULL;
+				CText *lastLine = NULL;
 
 				for (CText *line : m_lines)
 				{
@@ -276,7 +446,13 @@ namespace Skylicht
 					outLine++;
 
 					if (point.Y < line->Y())
-						continue;
+					{
+						// if position is above container
+						foundLine = line;
+						break;
+					}
+
+					lastLine = line;
 
 					if (point.Y > line->bottom())
 						continue;
@@ -295,6 +471,12 @@ namespace Skylicht
 					outChar = foundLine->getClosestCharacter(SPoint(point.X - foundLine->X(), point.Y - foundLine->Y()));
 
 					return lineOffset + outChar;
+				}
+				else if (lastLine != NULL)
+				{
+					outLine--;
+					outChar = lastLine->getLengthNoNewLine();
+					return lineOffset;
 				}
 
 				return 0;
@@ -318,6 +500,9 @@ namespace Skylicht
 			{
 				u32 charID = 0;
 				u32 lineID = 0;
+
+				from = charPosition;
+				to = charPosition;
 
 				CText *foundLine = NULL;
 				for (CText *l : m_lines)
@@ -354,14 +539,14 @@ namespace Skylicht
 							}
 						}
 
-						while (to < length - 1)
+						while (to < length)
 						{
-							to++;
 							bool g = isCharacter(s[to]);
 							if (g != isCharacterGroup)
 							{
 								break;
 							}
+							to++;
 						}
 					}
 				}
@@ -510,13 +695,25 @@ namespace Skylicht
 					}
 				}
 
-				if (m_lines.size() > 0)
+				if (m_showCaret)
 				{
-					u32 caretLineID = m_lines.size() - 1;
-					u32 caretCharID = m_lines.back()->getLength();
+					if (m_moveCaretToEnd)
+					{
+						if (m_lines.size() > 0)
+						{
+							u32 caretLineID = m_lines.size() - 1;
+							u32 caretCharID = m_lines.back()->getLength();
 
-					setCaretBegin(caretLineID, caretCharID);
-					setCaretEnd(caretLineID, caretCharID);
+							setCaretBegin(caretLineID, caretCharID);
+							setCaretEnd(caretLineID, caretCharID);
+
+							m_moveCaretToEnd = false;
+						}
+					}
+					else
+					{
+						updateCaretPosition();
+					}
 				}
 
 				// Size to children height and parent width
