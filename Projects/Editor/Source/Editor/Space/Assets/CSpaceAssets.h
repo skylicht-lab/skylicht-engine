@@ -35,6 +35,7 @@ namespace Skylicht
 		{
 		protected:
 			GUI::CTreeControl *m_folder;
+			GUI::CTextBox *m_search;
 
 		public:
 			CSpaceAssets(GUI::CDockableWindow *window, CEditor *editor);

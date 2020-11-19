@@ -42,7 +42,7 @@ namespace Skylicht
 
 				virtual ~CTextContainer();
 
-				virtual void render();
+				virtual void renderUnder();
 
 				void setString(const std::wstring& string);
 
