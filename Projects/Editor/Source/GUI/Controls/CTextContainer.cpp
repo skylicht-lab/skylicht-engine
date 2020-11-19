@@ -201,7 +201,6 @@ namespace Skylicht
 
 				for (CText *line : m_lines)
 				{
-					// draw selection
 					if (fromLine != toLine || from != to)
 					{
 						if (lineID >= fromLine && lineID <= toLine)
@@ -351,7 +350,7 @@ namespace Skylicht
 				m_caretBeginLine = line;
 				m_caretBeginPosition = c;
 
-				m_caretBegin = getCaretBeginAt();
+				m_caretBegin = getCaretBegin();
 			}
 
 			void CTextContainer::setCaretEnd(u32 line, u32 c)
@@ -362,7 +361,7 @@ namespace Skylicht
 				m_caretEndLine = line;
 				m_caretEndPosition = c;
 
-				m_caretEnd = getCaretEndAt();
+				m_caretEnd = getCaretEnd();
 			}
 
 			bool CTextContainer::updateCaretPosition()
@@ -399,7 +398,7 @@ namespace Skylicht
 				return foundBegin && foundEnd;
 			}
 
-			u32 CTextContainer::getCharacterPositionAt(u32 line, u32 pos)
+			u32 CTextContainer::getCharacterPosition(u32 line, u32 pos)
 			{
 				u32 ret = 0;
 				u32 lineID = 0;
@@ -420,14 +419,14 @@ namespace Skylicht
 				return ret;
 			}
 
-			u32 CTextContainer::getCaretBeginAt()
+			u32 CTextContainer::getCaretBegin()
 			{
-				return getCharacterPositionAt(m_caretBeginLine, m_caretBeginPosition);
+				return getCharacterPosition(m_caretBeginLine, m_caretBeginPosition);
 			}
 
-			u32 CTextContainer::getCaretEndAt()
+			u32 CTextContainer::getCaretEnd()
 			{
-				return getCharacterPositionAt(m_caretEndLine, m_caretEndPosition);
+				return getCharacterPosition(m_caretEndLine, m_caretEndPosition);
 			}
 
 			u32 CTextContainer::getClosestCharacter(const SPoint& point, u32& outLine, u32& outChar)
