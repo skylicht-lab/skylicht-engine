@@ -52,7 +52,15 @@ namespace Skylicht
 
 				CListRowItem* getItemByTagValue(int value);
 
-				void unSelectAll();
+				void unSelectAll();				
+
+				virtual bool onKeyUp(bool down);
+
+				virtual bool onKeyDown(bool down);
+
+				virtual bool onKeyHome(bool down);
+
+				virtual bool onKeyEnd(bool down);
 
 			public:
 

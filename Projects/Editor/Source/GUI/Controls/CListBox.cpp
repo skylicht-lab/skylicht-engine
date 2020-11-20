@@ -141,6 +141,172 @@ namespace Skylicht
 					}
 				}
 			}
+
+			bool CListBox::onKeyUp(bool down)
+			{
+				if (down)
+				{
+					CListRowItem *lastItem = NULL;
+					for (CBase *child : m_innerPanel->Children)
+					{
+						CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+						if (item != NULL)
+						{
+							if (item->getToggle() == true)
+							{
+								if (lastItem != NULL && !lastItem->isDisabled())
+								{
+									if (OnSelected != nullptr)
+										OnSelected(lastItem);
+
+									if (OnSelectChange != nullptr)
+										OnSelectChange(lastItem);
+
+									lastItem->setToggle(true);
+									item->setToggle(false);
+
+									scrollToItem(lastItem);
+									return true;
+								}
+								else
+								{
+									return true;
+								}
+							}
+						}
+						lastItem = item;
+					}
+				}
+
+				return true;
+			}
+
+			bool CListBox::onKeyDown(bool down)
+			{
+				if (down)
+				{
+					CListRowItem *lastItem = NULL;
+					for (CBase *child : m_innerPanel->Children)
+					{
+						CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+						if (item != NULL)
+						{
+							if (lastItem != NULL && !item->isDisabled())
+							{
+								if (OnSelected != nullptr)
+									OnSelected(item);
+
+								if (OnSelectChange != nullptr)
+									OnSelectChange(item);
+
+								item->setToggle(true);
+								lastItem->setToggle(false);
+
+								scrollToItem(item);
+								return true;
+							}
+							else if (item->getToggle() == true)
+							{
+								lastItem = item;
+							}
+						}
+					}
+				}
+				return true;
+			}
+
+			bool CListBox::onKeyHome(bool down)
+			{
+				if (down)
+				{
+					CListRowItem *firstItem = NULL;
+					CListRowItem *currentSelectItem = NULL;
+
+					for (CBase *child : m_innerPanel->Children)
+					{
+						CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+						if (item != NULL)
+						{
+							if (firstItem == NULL && !item->isDisabled())
+								firstItem = item;
+
+							if (item->getToggle() == true)
+							{
+								currentSelectItem = item;
+								break;
+							}
+						}
+					}
+
+					if (currentSelectItem != NULL &&
+						firstItem != NULL &&
+						currentSelectItem != firstItem)
+					{
+						if (OnSelected != nullptr)
+							OnSelected(firstItem);
+
+						if (OnSelectChange != nullptr)
+							OnSelectChange(firstItem);
+
+						firstItem->setToggle(true);
+						currentSelectItem->setToggle(false);
+
+						scrollToItem(firstItem);
+					}
+				}
+				return true;
+			}
+
+			bool CListBox::onKeyEnd(bool down)
+			{
+				if (down)
+				{
+					CListRowItem *lastItem = NULL;
+					CListRowItem *currentSelectItem = NULL;
+
+					for (CBase *child : m_innerPanel->Children)
+					{
+						CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+						if (item != NULL)
+						{
+							if (item->getToggle() == true)
+							{
+								currentSelectItem = item;
+								break;
+							}
+						}
+					}
+
+					List::reverse_iterator i = m_innerPanel->Children.rbegin(), end = m_innerPanel->Children.rend();
+					while (i != end)
+					{
+						CListRowItem *item = dynamic_cast<CListRowItem*>(*i);
+						if (item != NULL && !item->isDisabled())
+						{
+							lastItem = item;
+							break;
+						}
+						++i;
+					}
+
+					if (currentSelectItem != NULL &&
+						lastItem != NULL &&
+						currentSelectItem != lastItem)
+					{
+						if (OnSelected != nullptr)
+							OnSelected(lastItem);
+
+						if (OnSelectChange != nullptr)
+							OnSelectChange(lastItem);
+
+						lastItem->setToggle(true);
+						currentSelectItem->setToggle(false);
+
+						scrollToItem(lastItem);
+					}
+				}
+				return true;
+			}
 		}
 	}
 }

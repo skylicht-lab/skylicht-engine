@@ -88,6 +88,66 @@ namespace Skylicht
 					}
 				}
 			}
+
+			bool CTreeControl::onKeyUp(bool down)
+			{
+				return true;
+			}
+
+			bool CTreeControl::onKeyDown(bool down)
+			{
+				return true;
+			}
+
+			bool CTreeControl::onKeyHome(bool down)
+			{
+				if (down)
+				{
+					for (CBase *c : m_innerPanel->Children)
+					{
+						CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+						if (node && !node->isDisabled())
+						{
+							deselectAll();
+							node->setSelected(true);
+							m_scrollControl->scrollToItem(node->getTextItem());
+							return true;
+						}
+					}
+				}
+
+				return true;
+			}
+
+			bool CTreeControl::onKeyEnd(bool down)
+			{
+				if (down)
+				{
+					List::reverse_iterator i = m_innerPanel->Children.rbegin(), end = m_innerPanel->Children.rend();
+
+					while (i != end)
+					{
+						CTreeNode *node = dynamic_cast<CTreeNode*>(*i);
+						if (node && !node->isDisabled())
+						{
+							CTreeNode *child = node->selectLastChild();
+							if (child != NULL)
+							{
+								m_scrollControl->scrollToItem(child->getTextItem());
+							}
+							else
+							{
+								deselectAll();
+								node->setSelected(true);
+								m_scrollControl->scrollToItem(node->getTextItem());
+							}
+							return true;
+						}
+						++i;
+					}
+				}
+				return true;
+			}
 		}
 	}
 }

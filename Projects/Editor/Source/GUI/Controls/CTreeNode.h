@@ -67,6 +67,11 @@ namespace Skylicht
 					return m_title;
 				}
 
+				inline CTreeRowItem* getRowItem()
+				{
+					return m_row;
+				}
+
 				CTreeNode* addNode(const std::wstring& text);
 
 				CTreeNode* addNode(const std::wstring& text, ESystemIcon icon);
@@ -91,6 +96,15 @@ namespace Skylicht
 					m_expand = false;
 					invalidate();
 				}
+
+				inline bool isSelected()
+				{
+					return m_selected;
+				}
+
+				CTreeNode* selectFirstChild();
+
+				CTreeNode* selectLastChild();
 
 				void setSelected(bool b);
 

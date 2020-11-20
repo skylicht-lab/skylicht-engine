@@ -100,6 +100,22 @@ namespace Skylicht
 				invalidate();
 			}
 
+			void CScrollControl::scrollToItem(CBase *item)
+			{
+				SPoint p = canvasPosToLocal(item->localPosToCanvas());
+
+				if (p.Y < 0)
+				{
+					scrollVerticalOffset(p.Y);
+				}
+				else if (p.Y + item->height() > height())
+				{
+					scrollVerticalOffset(p.Y + item->height() - height());
+				}
+
+				updateScrollBar();
+			}
+
 			void CScrollControl::showScrollBar(bool h, bool v)
 			{
 				m_vertical->setHidden(!v);
