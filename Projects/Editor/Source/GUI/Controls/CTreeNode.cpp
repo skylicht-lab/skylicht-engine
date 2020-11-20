@@ -188,6 +188,70 @@ namespace Skylicht
 
 			}
 
+			CTreeNode* CTreeNode::selectFirstChild()
+			{
+				if (m_expand == false)
+					return NULL;
+
+				if (m_innerPanel->Children.size() == 0)
+					return NULL;
+
+				for (CBase *c : m_innerPanel->Children)
+				{
+					CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+					if (node && !node->isDisabled())
+					{
+						CTreeNode *child = node->selectFirstChild();
+
+						if (child == NULL)
+						{
+							m_root->deselectAll();
+							node->setSelected(true);
+							return node;
+						}
+						else
+						{
+							return child;
+						}
+					}
+				}
+
+				return NULL;
+			}
+
+			CTreeNode* CTreeNode::selectLastChild()
+			{
+				if (m_expand == false)
+					return NULL;
+
+				if (m_innerPanel->Children.size() == 0)
+					return NULL;
+
+				List::reverse_iterator i = m_innerPanel->Children.rbegin(), end = m_innerPanel->Children.rend();
+				while (i != end)
+				{
+					CTreeNode *node = dynamic_cast<CTreeNode*>(*i);
+					if (node && !node->isDisabled())
+					{
+						CTreeNode *child = node->selectLastChild();
+
+						if (child == NULL)
+						{
+							m_root->deselectAll();
+							node->setSelected(true);
+							return node;
+						}
+						else
+						{
+							return child;
+						}
+					}
+					++i;
+				}
+
+				return NULL;
+			}
+
 			void CTreeNode::setSelected(bool b)
 			{
 				if (m_selected == b)

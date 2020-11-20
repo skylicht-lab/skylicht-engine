@@ -58,6 +58,8 @@ namespace Skylicht
 
 				virtual void onScrollBarH(CBase *base);
 
+				void scrollToItem(CBase *item);
+
 				void showScrollBar(bool h, bool v);
 
 				void enableScroll(bool h, bool v);
