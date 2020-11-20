@@ -42,10 +42,18 @@ namespace Skylicht
 				bool m_press;
 				bool m_editable;
 
+				bool m_drawTextbox;
+
+				SGUIColor m_textBoxColor;
+
 			public:
 				CTextBox(CBase *base);
 
 				virtual ~CTextBox();
+
+				virtual void renderUnder();
+
+				virtual void render();
 
 				virtual void think();
 
@@ -127,6 +135,21 @@ namespace Skylicht
 				inline const SGUIColor& getColor()
 				{
 					return m_textContainer->getColor();
+				}
+
+				inline void setTextBoxColor(const SGUIColor& color)
+				{
+					m_textBoxColor = color;
+				}
+
+				inline const SGUIColor& getTextBoxColor()
+				{
+					return m_textBoxColor;
+				}
+
+				inline void enableDrawTextBox(bool b)
+				{
+					m_drawTextbox = b;
 				}
 			};
 		}

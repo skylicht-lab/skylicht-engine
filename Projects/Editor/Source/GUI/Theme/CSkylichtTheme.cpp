@@ -67,6 +67,11 @@ namespace Skylicht
 				m_scrollbarH = m_sprite->addFrame("draw_scroll_bar_h", "Editor/GUI/draw_scroll_bar_h.png");
 				m_scrollbarV = m_sprite->addFrame("draw_scroll_bar_v", "Editor/GUI/draw_scroll_bar_v.png");
 
+				// add text box
+				m_textboxShadow = m_sprite->addFrame("draw_textbox_shadow", "Editor/GUI/draw_textbox_shadow.png");
+				m_textbox = m_sprite->addFrame("draw_textbox", "Editor/GUI/draw_textbox.png");
+				m_textboxBorder = m_sprite->addFrame("draw_textbox_border", "Editor/GUI/draw_textbox_border.png");
+
 				// add font text
 				m_renderer->initFont(m_sprite);
 
@@ -290,6 +295,29 @@ namespace Skylicht
 				float radius = 3.0f;
 
 				drawGUIModule(m_button, rect, color, left, top, right, bottom, radius);
+			}
+
+			void CSkylichtTheme::drawTextbox(const SRect& rect, const SGUIColor& color)
+			{
+				float left = 5.0f;
+				float top = 4.0f;
+				float right = 19.0f;
+				float bottom = 18.0f;
+				float radius = 3.0f;
+
+				drawGUIModule(m_textboxShadow, rect, CThemeConfig::White, left, top, right, bottom, radius);
+				drawGUIModule(m_textbox, rect, color, left, top, right, bottom, radius);
+			}
+
+			void CSkylichtTheme::drawTextboxBorder(const SRect& rect, const SGUIColor& color)
+			{
+				float left = 5.0f;
+				float top = 4.0f;
+				float right = 19.0f;
+				float bottom = 18.0f;
+				float radius = 3.0f;
+
+				drawGUIModule(m_textboxBorder, rect, color, left, top, right, bottom, radius);
 			}
 
 			void CSkylichtTheme::drawTabButton(const SRect& rect, const SGUIColor& color, const SGUIColor& focusColor, bool focus)

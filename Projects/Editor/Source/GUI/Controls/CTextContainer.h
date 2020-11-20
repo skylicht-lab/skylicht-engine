@@ -109,6 +109,16 @@ namespace Skylicht
 					m_showCaret = b;
 				}
 
+				inline void setActivate(bool b)
+				{
+					m_activate = b;
+				}
+
+				inline bool isActivate()
+				{
+					return m_activate;
+				}
+
 				inline void setCaretBlinkSpeed(float ms)
 				{
 					m_caretBlinkSpeed = ms;
@@ -200,6 +210,8 @@ namespace Skylicht
 				float m_caretBlinkSpeed;
 
 				float m_caretBlink;
+
+				bool m_activate;
 
 				bool m_showCaret;
 
