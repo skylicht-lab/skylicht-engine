@@ -54,6 +54,7 @@ namespace Skylicht
 				m_renderFillRect(false),
 				m_fillRectColor(CThemeConfig::WindowInnerColor),
 				m_accelOnlyFocus(true),
+				m_keyboardFocus(false),
 				m_debugValue(0),
 				m_tagInt(0),
 				m_tagFloat(0.0f),

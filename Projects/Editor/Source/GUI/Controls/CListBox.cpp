@@ -35,7 +35,7 @@ namespace Skylicht
 			CListBox::CListBox(CBase *parent) :
 				CScrollControl(parent)
 			{
-
+				setKeyboardInputEnabled(true);
 			}
 
 			CListBox::~CListBox()

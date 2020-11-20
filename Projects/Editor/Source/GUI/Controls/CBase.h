@@ -371,8 +371,20 @@ namespace Skylicht
 				virtual void onMouseEnter();
 				virtual void onMouseLeave();
 
-				virtual void onLostKeyboardFocus() {}
-				virtual void onKeyboardFocus() {}
+				virtual void onLostKeyboardFocus()
+				{
+					m_keyboardFocus = false;
+				}
+
+				virtual void onKeyboardFocus()
+				{
+					m_keyboardFocus = true;
+				}
+
+				inline bool isKeyboardFocus()
+				{
+					return m_keyboardFocus;
+				}
 
 				virtual void setTransparentMouseInput(bool b) { m_transparentMouseInput = b; }
 				virtual void setMouseInputEnabled(bool b) { m_mouseInputEnabled = b; }
@@ -513,6 +525,8 @@ namespace Skylicht
 				std::string m_tagString;
 				std::wstring m_tagWString;
 				void *m_tagData;
+
+				bool m_keyboardFocus;
 
 				AccelMap m_accelerators;
 				bool m_accelOnlyFocus;

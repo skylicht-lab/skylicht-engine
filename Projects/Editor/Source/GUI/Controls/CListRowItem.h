@@ -36,6 +36,7 @@ namespace Skylicht
 			class CListRowItem : public CButton
 			{
 			protected:
+				CBase *m_owner;
 
 			public:
 				CListRowItem(CBase *base);
