@@ -106,6 +106,7 @@ namespace Skylicht
 			int atlasW = w + 2;
 			int atlasH = h + 2;
 
+			int imageID = 0;
 			SImage *image = NULL;
 			core::recti r;
 
@@ -117,6 +118,8 @@ namespace Skylicht
 					image = a;
 					break;
 				}
+
+				imageID++;
 			}
 
 			if (image == NULL)
@@ -159,7 +162,7 @@ namespace Skylicht
 			offset.OffsetY = 0;
 
 			char log[512];
-			sprintf(log, "[AtlasFrame] add %s - %dx%d", name, w, h);
+			sprintf(log, "[AtlasFrame] add %s - %dx%d - [%d]", name, w, h, imageID);
 			os::Printer::log(log);
 
 			m_frames.push_back(frame);

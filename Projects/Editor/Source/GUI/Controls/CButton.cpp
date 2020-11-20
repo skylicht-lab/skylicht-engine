@@ -181,6 +181,7 @@ namespace Skylicht
 			{
 				m_icon->setColor(m_iconColor);
 				m_label->setColor(m_labelColor);
+				m_pressed = false;
 			}
 
 			void CButton::sizeToContents()
