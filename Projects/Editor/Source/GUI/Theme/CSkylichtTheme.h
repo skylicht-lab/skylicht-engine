@@ -56,6 +56,10 @@ namespace Skylicht
 				SFrame *m_scrollbarH;
 				SFrame *m_scrollbarV;
 
+				SFrame *m_textboxShadow;
+				SFrame *m_textbox;
+				SFrame *m_textboxBorder;
+
 				SFrame *m_dockIcon[NumDockIcon];
 
 				SFrame *m_systemIcon16[NumSystemIcon];
@@ -82,6 +86,10 @@ namespace Skylicht
 				virtual void drawButtonShadow(const SRect& rect);
 
 				virtual void drawButton(const SRect& rect, const SGUIColor& color);
+
+				virtual void drawTextbox(const SRect& rect, const SGUIColor& color);
+
+				virtual void drawTextboxBorder(const SRect& rect, const SGUIColor& color);
 
 				virtual void drawTabButton(const SRect& rect, const SGUIColor& color, const SGUIColor& focusColor, bool focus);
 

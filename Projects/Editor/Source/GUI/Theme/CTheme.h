@@ -55,6 +55,10 @@ namespace Skylicht
 
 				virtual void drawButton(const SRect& rect, const SGUIColor& color) {}
 
+				virtual void drawTextbox(const SRect& rect, const SGUIColor& color) {}
+
+				virtual void drawTextboxBorder(const SRect& rect, const SGUIColor& color) {}
+
 				virtual void drawTabButton(const SRect& rect, const SGUIColor& color, const SGUIColor& focusColor, bool focus) {}
 
 				virtual void drawScrollbar(const SRect& rect, const SGUIColor& color, bool isHorizontal) {}
