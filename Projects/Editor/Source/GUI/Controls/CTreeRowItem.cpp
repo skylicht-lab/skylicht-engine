@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTreeRowItem.h"
 #include "CTreeNode.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -37,6 +38,9 @@ namespace Skylicht
 				m_root(root)
 			{
 				setIsToggle(true);
+
+				setHoverColor(CThemeConfig::ListItemBackgroundHoverColor);
+				setPressColor(CThemeConfig::ListItemBackgroundFocusColor);
 			}
 
 			CTreeRowItem::~CTreeRowItem()
@@ -68,7 +72,12 @@ namespace Skylicht
 				if (isToggle())
 				{
 					if (m_toggleStatus)
-						c = m_pressColor;
+					{
+						if (m_root->isKeyboardFocus() == true)
+							c = m_pressColor;
+						else
+							c = CThemeConfig::ListItemBackgroundUnfocusColor;
+					}
 				}
 
 				SRect r = getRenderBounds();

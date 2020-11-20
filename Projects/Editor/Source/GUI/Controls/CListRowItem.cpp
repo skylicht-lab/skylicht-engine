@@ -33,9 +33,13 @@ namespace Skylicht
 		namespace GUI
 		{
 			CListRowItem::CListRowItem(CBase *base) :
-				CButton(base)
+				CButton(base),
+				m_owner(base)
 			{
 				setIsToggle(true);
+
+				setHoverColor(CThemeConfig::ListItemBackgroundHoverColor);
+				setPressColor(CThemeConfig::ListItemBackgroundFocusColor);
 
 				m_icon->setMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));
 				m_label->setMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
@@ -89,7 +93,12 @@ namespace Skylicht
 				if (isToggle())
 				{
 					if (m_toggleStatus)
-						c = m_pressColor;
+					{
+						if (m_owner->isKeyboardFocus() == true)
+							c = m_pressColor;
+						else
+							c = CThemeConfig::ListItemBackgroundUnfocusColor;
+					}
 				}
 
 				SRect r = getRenderBounds();
