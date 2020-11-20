@@ -42,6 +42,7 @@ namespace Skylicht
 				m_color(CThemeConfig::DefaultTextColor),
 				m_paddingRight(0.0f),
 				m_showCaret(false),
+				m_activate(false),
 				m_caretBeginLine(0),
 				m_caretBeginPosition(0),
 				m_caretEndLine(0),
@@ -144,7 +145,10 @@ namespace Skylicht
 				selectRect.Width = (selectEnd.Width - selectBegin.Width);
 				selectRect.Height = selectBegin.Height + 1.0f;
 
-				CRenderer::getRenderer()->drawFillRect(selectRect, CThemeConfig::TextSelectColor);
+				if (m_activate)
+					CRenderer::getRenderer()->drawFillRect(selectRect, CThemeConfig::TextSelectColor);
+				else
+					CRenderer::getRenderer()->drawFillRect(selectRect, CThemeConfig::TextSelectUnfocusColor);
 			}
 
 			void CTextContainer::setWrapMultiline(bool b)

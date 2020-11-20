@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTextBox.h"
 #include "GUI/Input/CInput.h"
 #include "GUI/Clipboard/CClipboard.h"
+#include "GUI/Theme/CTheme.h"
+#include "GUI/Theme/CThemeConfig.h"
 #include "GUI/CGUIContext.h"
 
 namespace Skylicht
@@ -37,7 +39,9 @@ namespace Skylicht
 			CTextBox::CTextBox(CBase *base) :
 				CScrollControl(base),
 				m_press(false),
-				m_editable(true)
+				m_editable(true),
+				m_drawTextbox(true),
+				m_textBoxColor(CThemeConfig::TextBoxColor)
 			{
 				setSize(100.0f, 20.0f);
 
@@ -46,7 +50,7 @@ namespace Skylicht
 				setKeyboardInputEnabled(true);
 
 				m_textContainer = new CTextContainer(this);
-				m_textContainer->setPos(4.0f, 4.0f);
+				m_textContainer->setPos(4.0f, 3.0f);
 				m_textContainer->setInnerPaddingRight(4.0f);
 
 				setWrapMultiline(false);
@@ -64,6 +68,37 @@ namespace Skylicht
 			CTextBox::~CTextBox()
 			{
 
+			}
+
+			void CTextBox::renderUnder()
+			{
+				if (m_drawTextbox)
+				{
+					CTheme *theme = CTheme::getTheme();
+					theme->drawTextbox(getRenderBounds(), m_textBoxColor);
+
+					if (m_textContainer->isActivate())
+						theme->drawTextboxBorder(getRenderBounds(), CThemeConfig::ButtonPressColor);
+					else
+					{
+						if (isHovered())
+							theme->drawTextboxBorder(getRenderBounds(), CThemeConfig::ButtonHoverColor);
+						else
+							theme->drawTextboxBorder(getRenderBounds(), CThemeConfig::TextBoxBorderColor);
+					}
+				}
+				else
+				{
+					CScrollControl::renderUnder();
+				}
+			}
+
+			void CTextBox::render()
+			{
+				if (!m_drawTextbox)
+				{
+					CScrollControl::render();
+				}
 			}
 
 			void CTextBox::think()
@@ -122,12 +157,14 @@ namespace Skylicht
 			{
 				if (m_editable)
 					m_textContainer->showCaret(true);
+				m_textContainer->setActivate(true);
 			}
 
 			void CTextBox::onLostKeyboardFocus()
 			{
 				if (m_editable)
 					m_textContainer->showCaret(false);
+				m_textContainer->setActivate(false);
 			}
 
 			bool CTextBox::onKeyPress(EKey key, bool press)
