@@ -54,6 +54,7 @@ namespace Skylicht
 				m_innerPanel = m_scrollControl->getInnerPanel();
 
 				setTransparentMouseInput(false);
+				setKeyboardInputEnabled(true);
 			}
 
 			CTreeControl::~CTreeControl()

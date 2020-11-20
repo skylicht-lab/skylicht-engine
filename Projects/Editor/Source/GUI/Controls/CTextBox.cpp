@@ -158,6 +158,8 @@ namespace Skylicht
 				if (m_editable)
 					m_textContainer->showCaret(true);
 				m_textContainer->setActivate(true);
+
+				CScrollControl::onKeyboardFocus();
 			}
 
 			void CTextBox::onLostKeyboardFocus()
@@ -165,6 +167,8 @@ namespace Skylicht
 				if (m_editable)
 					m_textContainer->showCaret(false);
 				m_textContainer->setActivate(false);
+
+				CScrollControl::onLostKeyboardFocus();
 			}
 
 			bool CTextBox::onKeyPress(EKey key, bool press)
