@@ -56,6 +56,14 @@ namespace Skylicht
 				virtual void onNodeClick(CBase *base);
 
 				virtual void deselectAll();
+
+				virtual bool onKeyUp(bool down);
+
+				virtual bool onKeyDown(bool down);
+
+				virtual bool onKeyHome(bool down);
+
+				virtual bool onKeyEnd(bool down);
 			};
 		}
 	}
