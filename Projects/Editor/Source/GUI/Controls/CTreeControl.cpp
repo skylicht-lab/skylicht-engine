@@ -45,6 +45,7 @@ namespace Skylicht
 				m_expandButton = NULL;
 				m_innerPanel = NULL;
 				m_row = NULL;
+				m_expand = true;
 
 				m_scrollControl = new CScrollControl(this);
 				m_scrollControl->dock(EPosition::Fill);
@@ -91,11 +92,29 @@ namespace Skylicht
 
 			bool CTreeControl::onKeyUp(bool down)
 			{
+				if (down)
+				{
+					CTreeNode *child = selectPrevChild();
+					if (child != NULL)
+					{
+						m_scrollControl->scrollToItem(child->getTextItem());
+					}
+				}
+
 				return true;
 			}
 
 			bool CTreeControl::onKeyDown(bool down)
 			{
+				if (down)
+				{
+					CTreeNode *child = selectNextChild();
+					if (child != NULL)
+					{
+						m_scrollControl->scrollToItem(child->getTextItem());
+					}
+				}
+
 				return true;
 			}
 
@@ -144,6 +163,44 @@ namespace Skylicht
 							return true;
 						}
 						++i;
+					}
+				}
+				return true;
+			}
+
+			bool CTreeControl::onKeyLeft(bool down)
+			{
+				if (down)
+				{
+					CTreeNode* node = getChildSelected();
+					if (node != NULL)
+					{
+						if (node->haveChild() && node->isExpand())
+							node->collapse();
+						else
+						{
+							// select parent
+							CTreeNode *parent = node->getParentNode();
+							if (parent != NULL)
+							{
+								deselectAll();
+								parent->setSelected(true);
+								m_scrollControl->scrollToItem(parent->getTextItem());
+							}
+						}
+					}
+				}
+				return true;
+			}
+
+			bool CTreeControl::onKeyRight(bool down)
+			{
+				if (down)
+				{
+					CTreeNode* node = getChildSelected();
+					if (node != NULL)
+					{
+						node->expand();
 					}
 				}
 				return true;

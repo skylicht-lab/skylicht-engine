@@ -64,6 +64,10 @@ namespace Skylicht
 				virtual bool onKeyHome(bool down);
 
 				virtual bool onKeyEnd(bool down);
+
+				virtual bool onKeyLeft(bool down);
+
+				virtual bool onKeyRight(bool down);
 			};
 		}
 	}

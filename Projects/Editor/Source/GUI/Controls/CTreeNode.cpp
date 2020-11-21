@@ -41,6 +41,8 @@ namespace Skylicht
 				m_expand(false),
 				m_selected(false)
 			{
+				m_parentNode = dynamic_cast<CTreeNode*>(parent);
+
 				m_row = new CTreeRowItem(this, root);
 				m_row->OnDown = BIND_LISTENER(&CTreeNode::onDown, this);
 				m_row->OnDoubleLeftMouseClick = BIND_LISTENER(&CTreeNode::onDoubleClick, this);
@@ -188,6 +190,28 @@ namespace Skylicht
 
 			}
 
+			CTreeNode* CTreeNode::getChildSelected()
+			{
+				if (m_selected)
+					return this;
+
+				if (m_innerPanel->Children.size() == 0)
+					return NULL;
+
+				for (CBase *c : m_innerPanel->Children)
+				{
+					CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+					if (node && !node->isDisabled())
+					{
+						CTreeNode* child = node->getChildSelected();
+						if (child != NULL)
+							return child;
+					}
+				}
+
+				return NULL;
+			}
+
 			CTreeNode* CTreeNode::selectFirstChild()
 			{
 				if (m_expand == false)
@@ -201,18 +225,9 @@ namespace Skylicht
 					CTreeNode *node = dynamic_cast<CTreeNode*>(c);
 					if (node && !node->isDisabled())
 					{
-						CTreeNode *child = node->selectFirstChild();
-
-						if (child == NULL)
-						{
-							m_root->deselectAll();
-							node->setSelected(true);
-							return node;
-						}
-						else
-						{
-							return child;
-						}
+						m_root->deselectAll();
+						node->setSelected(true);
+						return node;
 					}
 				}
 
@@ -247,6 +262,93 @@ namespace Skylicht
 						}
 					}
 					++i;
+				}
+
+				return NULL;
+			}
+
+			CTreeNode* CTreeNode::selectPrevChild()
+			{
+				std::list<CTreeNode*> priorityQueue;
+				priorityQueue.push_back(this);
+
+				CTreeNode *lastItem = NULL;
+
+				while (priorityQueue.size() > 0)
+				{
+					CTreeNode* visit = priorityQueue.front();
+					priorityQueue.pop_front();
+
+					if (visit->isSelected() == true)
+					{
+						if (lastItem == NULL)
+							return NULL;
+
+						m_root->deselectAll();
+						lastItem->setSelected(true);
+						return lastItem;
+					}
+
+					if (visit->m_expand && visit->m_innerPanel->Children.size() > 0)
+					{
+						std::list<CTreeNode*>::iterator i = priorityQueue.begin();
+
+						for (CBase *c : visit->m_innerPanel->Children)
+						{
+							CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+							if (node && !node->isDisabled())
+							{
+								i = priorityQueue.insert(i, node);
+								++i;
+							}
+						}
+					}
+
+					if (visit != this)
+						lastItem = visit;
+				}
+
+				return NULL;
+			}
+
+			CTreeNode* CTreeNode::selectNextChild()
+			{
+				std::list<CTreeNode*> priorityQueue;
+				priorityQueue.push_back(this);
+
+				bool selectNext = false;
+
+				while (priorityQueue.size() > 0)
+				{
+					CTreeNode* visit = priorityQueue.front();
+					priorityQueue.pop_front();
+
+					if (selectNext == true)
+					{
+						m_root->deselectAll();
+						visit->setSelected(true);
+						return visit;
+					}
+
+					if (visit->isSelected() == true)
+					{
+						selectNext = true;
+					}
+
+					if (visit->m_expand && visit->m_innerPanel->Children.size() > 0)
+					{
+						std::list<CTreeNode*>::iterator i = priorityQueue.begin();
+
+						for (CBase *c : visit->m_innerPanel->Children)
+						{
+							CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+							if (node && !node->isDisabled())
+							{
+								i = priorityQueue.insert(i, node);
+								++i;
+							}
+						}
+					}
 				}
 
 				return NULL;
