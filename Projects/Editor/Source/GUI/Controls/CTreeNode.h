@@ -43,6 +43,7 @@ namespace Skylicht
 				CTreeRowItem *m_row;
 
 				CTreeNode *m_root;
+				CTreeNode *m_parentNode;
 
 				bool m_expand;
 				bool m_selected;
@@ -97,14 +98,30 @@ namespace Skylicht
 					invalidate();
 				}
 
+				inline bool haveChild()
+				{
+					return m_innerPanel->Children.size() > 0;
+				}
+
 				inline bool isSelected()
 				{
 					return m_selected;
 				}
 
+				inline CTreeNode* getParentNode()
+				{
+					return m_parentNode;
+				}
+
+				CTreeNode* getChildSelected();
+
 				CTreeNode* selectFirstChild();
 
 				CTreeNode* selectLastChild();
+
+				CTreeNode* selectNextChild();
+
+				CTreeNode* selectPrevChild();
 
 				void setSelected(bool b);
 
