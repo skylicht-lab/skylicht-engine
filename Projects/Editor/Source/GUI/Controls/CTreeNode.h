@@ -53,7 +53,7 @@ namespace Skylicht
 				Listener OnSelected;
 				Listener OnUnselected;
 				Listener OnSelectChange;
-
+				Listener OnItemContextMenu;
 			public:
 				CTreeNode(CBase *parent, CTreeNode *root);
 

@@ -34,15 +34,13 @@ namespace Skylicht
 		{
 			GUI::CToolbar *toolbar = new GUI::CToolbar(window);
 
-			// left
 			toolbar->addButton(L"Add", GUI::ESystemIcon::Plus);
-
-			// right
 			toolbar->addButton(GUI::ESystemIcon::Setting, true);
 			toolbar->addSpace(true);
 			m_search = new GUI::CTextBox(toolbar);
 			m_search->setWidth(200.0f);
-			m_search->setString(L"Search");
+			m_search->showIcon();
+			m_search->setStringHint(L"Search");
 			toolbar->addControl(m_search, true);
 
 			GUI::CSplitter *spliter = new GUI::CSplitter(window);

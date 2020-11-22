@@ -43,6 +43,8 @@ namespace Skylicht
 				m_paddingRight(0.0f),
 				m_showCaret(false),
 				m_activate(false),
+				m_caretBegin(0),
+				m_caretEnd(0),
 				m_caretBeginLine(0),
 				m_caretBeginPosition(0),
 				m_caretEndLine(0),
@@ -333,6 +335,11 @@ namespace Skylicht
 
 			void CTextContainer::doInsertString(const std::wstring& string)
 			{
+				if (m_caretBegin != m_caretEnd)
+				{
+					doDeleteTextInSelection();
+				}
+
 				m_string.insert(m_caretBegin, string);
 				m_caretBegin += string.length();
 

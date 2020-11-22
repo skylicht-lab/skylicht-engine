@@ -145,6 +145,8 @@ namespace Skylicht
 					m_icon->setColor(m_iconColor);
 					m_label->setColor(m_labelColor);
 				}
+
+				CBase::onMouseClickLeft(x, y, down);
 			}
 
 			void CButton::onMouseClickRight(float x, float y, bool down)
@@ -169,12 +171,13 @@ namespace Skylicht
 					m_icon->setColor(m_iconColor);
 					m_label->setColor(m_labelColor);
 				}
+
+				CBase::onMouseClickRight(x, y, down);
 			}
 
 			void CButton::onMouseEnter()
 			{
-				if (OnHover != nullptr)
-					OnHover(this);
+				CBase::onMouseEnter();
 			}
 
 			void CButton::onMouseLeave()
@@ -182,6 +185,8 @@ namespace Skylicht
 				m_icon->setColor(m_iconColor);
 				m_label->setColor(m_labelColor);
 				m_pressed = false;
+
+				CBase::onMouseLeave();
 			}
 
 			void CButton::sizeToContents()

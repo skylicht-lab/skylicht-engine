@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTextBox.h"
+#include "CCanvas.h"
 #include "GUI/Input/CInput.h"
 #include "GUI/Clipboard/CClipboard.h"
 #include "GUI/Theme/CTheme.h"
@@ -49,9 +50,27 @@ namespace Skylicht
 
 				setKeyboardInputEnabled(true);
 
+				m_icon = new CIcon(this, ESystemIcon::Search);
+				m_icon->setPos(2.0f, 0.0f);
+				m_icon->setHidden(true);
+
+				m_textHint = new CTextContainer(this);
+				m_textHint->setPos(4.0f, 3.0f);
+				m_textHint->setInnerPaddingRight(4.0f);
+				m_textHint->setColor(CThemeConfig::TextHintColor);
+
 				m_textContainer = new CTextContainer(this);
 				m_textContainer->setPos(4.0f, 3.0f);
 				m_textContainer->setInnerPaddingRight(4.0f);
+
+				m_contextMenu = new CMenu(getCanvas());
+				m_contextMenu->addItem(L"Cut", L"Ctrl + X");
+				m_contextMenu->addItem(L"Copy", ESystemIcon::Copy, L"Ctrl + C");
+				m_contextMenu->addItem(L"Paste", L"Ctrl + V");
+				m_contextMenu->addSeparator();
+				m_contextMenu->addItem(L"Select All", L"Ctrl + A");
+				m_contextMenu->OnOpen = BIND_LISTENER(&CTextBox::onOpenMenuContext, this);
+				m_contextMenu->OnCommand = BIND_LISTENER(&CTextBox::onOpenMenuCommand, this);
 
 				setWrapMultiline(false);
 
@@ -68,6 +87,27 @@ namespace Skylicht
 			CTextBox::~CTextBox()
 			{
 
+			}
+
+			void CTextBox::showIcon(ESystemIcon icon)
+			{
+				m_icon->setIcon(icon);
+				m_textContainer->setPos(24.0f, 3.0f);
+				m_textHint->setPos(24.0f, 3.0f);
+			}
+
+			void CTextBox::showIcon()
+			{
+				m_icon->setHidden(false);
+				m_textContainer->setPos(24.0f, 3.0f);
+				m_textHint->setPos(24.0f, 3.0f);
+			}
+
+			void CTextBox::hideIcon()
+			{
+				m_icon->setHidden(true);
+				m_textContainer->setPos(4.0f, 3.0f);
+				m_textHint->setPos(4.0f, 3.0f);
 			}
 
 			void CTextBox::renderUnder()
@@ -141,6 +181,12 @@ namespace Skylicht
 						m_textContainer->resetCaretBlink();
 					}
 				}
+
+				// hide hint
+				if (m_textContainer->getString().length() > 0)
+				{
+					m_textHint->setHidden(true);
+				}
 			}
 
 			void CTextBox::layout()
@@ -157,7 +203,9 @@ namespace Skylicht
 			{
 				if (m_editable)
 					m_textContainer->showCaret(true);
+
 				m_textContainer->setActivate(true);
+				m_textHint->setHidden(true);
 
 				CScrollControl::onKeyboardFocus();
 			}
@@ -167,6 +215,9 @@ namespace Skylicht
 				if (m_editable)
 					m_textContainer->showCaret(false);
 				m_textContainer->setActivate(false);
+
+				if (m_textContainer->getString().length() == 0)
+					m_textHint->setHidden(false);
 
 				CScrollControl::onLostKeyboardFocus();
 			}
@@ -393,6 +444,14 @@ namespace Skylicht
 					m_textContainer->showCaret(false);
 			}
 
+			void CTextBox::onMouseClickRight(float x, float y, bool down)
+			{
+				if (down == false)
+				{
+					m_contextMenu->open(SPoint(x, y));
+				}
+			}
+
 			void CTextBox::onMouseClickLeft(float x, float y, bool down)
 			{
 				if (down)
@@ -505,6 +564,42 @@ namespace Skylicht
 				u32 pos = m_textContainer->getLine(line)->getLengthNoNewLine();
 				m_textContainer->setCaretBegin(line, pos);
 				scrollToLine(line, pos);
+			}
+
+			void CTextBox::onOpenMenuContext(CBase *base)
+			{
+				if (base != m_contextMenu)
+					return;
+
+				if (m_editable)
+				{
+					m_contextMenu->getItemByLabel(L"Cut")->setDisabled(false);
+					m_contextMenu->getItemByLabel(L"Paste")->setDisabled(false);
+				}
+				else
+				{
+					m_contextMenu->getItemByLabel(L"Cut")->setDisabled(true);
+					m_contextMenu->getItemByLabel(L"Paste")->setDisabled(true);
+				}
+			}
+
+			void CTextBox::onOpenMenuCommand(CBase *base)
+			{
+				CMenuItem* item = dynamic_cast<CMenuItem*>(base);
+				if (item != NULL)
+				{
+					std::wstring label = item->getLabel();
+					if (label == L"Cut")
+						onCut(base);
+					else if (label == L"Copy")
+						onCopy(base);
+					else if (label == L"Paste")
+						onPaste(base);
+					else if (label == L"Select All")
+						onSelectAll(base);
+
+					focus();
+				}
 			}
 		}
 	}

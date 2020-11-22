@@ -50,6 +50,7 @@ namespace Skylicht
 				static SGUIColor TextPressColor;
 
 				static SGUIColor CaretColor;
+				static SGUIColor TextHintColor;
 				static SGUIColor TextSelectColor;
 				static SGUIColor TextSelectUnfocusColor;
 				static SGUIColor TextBoxColor;

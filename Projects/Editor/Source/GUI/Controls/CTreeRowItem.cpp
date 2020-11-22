@@ -88,6 +88,18 @@ namespace Skylicht
 
 				CTheme::getTheme()->drawButton(r, c);
 			}
+
+			void CTreeRowItem::onMouseClickRight(float x, float y, bool down)
+			{
+				if (isDisabled())
+					return;
+
+				CButton::onMouseClickRight(x, y, down);
+
+				CTreeNode *treeRoot = dynamic_cast<CTreeNode*>(m_root);
+				if (treeRoot->OnItemContextMenu != nullptr)
+					treeRoot->OnItemContextMenu(this);
+			}
 		}
 	}
 }

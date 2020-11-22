@@ -55,7 +55,6 @@ namespace Skylicht
 				m_innerPanel->setFillRectColor(CThemeConfig::WindowInnerColor);
 
 				m_dropDownMenu = new CMenu(getCanvas());
-				m_dropDownMenu->setHidden(true);
 				m_dropDownMenu->OnCommand = BIND_LISTENER(&CTabControl::onMenuItem, this);
 			}
 
