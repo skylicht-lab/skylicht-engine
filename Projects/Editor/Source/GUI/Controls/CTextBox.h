@@ -25,8 +25,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBase.h"
 #include "CText.h"
+#include "CIcon.h"
+#include "CMenu.h"
 #include "CTextContainer.h"
 #include "CScrollControl.h"
+
 
 namespace Skylicht
 {
@@ -37,7 +40,10 @@ namespace Skylicht
 			class CTextBox : public CScrollControl
 			{
 			protected:
+				CIcon *m_icon;
+				CTextContainer *m_textHint;
 				CTextContainer *m_textContainer;
+				CMenu *m_contextMenu;
 
 				bool m_press;
 				bool m_editable;
@@ -69,11 +75,19 @@ namespace Skylicht
 
 				virtual bool onChar(u32 c);
 
+				virtual void onMouseClickRight(float x, float y, bool down);
+
 				virtual void onMouseClickLeft(float x, float y, bool down);
 
 				virtual void onMouseDoubleClickLeft(float x, float y);
 
 				virtual void onMouseTripleClickLeft(float x, float y);
+
+				void showIcon(ESystemIcon icon);
+
+				void showIcon();
+
+				void hideIcon();
 
 				void onCopy(CBase *base);
 
@@ -83,9 +97,18 @@ namespace Skylicht
 
 				void onSelectAll(CBase *base);
 
+				void onOpenMenuContext(CBase *base);
+
+				void onOpenMenuCommand(CBase *base);
+
 				inline void setString(const std::wstring& string)
 				{
 					m_textContainer->setString(string);
+				}
+
+				inline void setStringHint(const std::wstring& string)
+				{
+					m_textHint->setString(string);
 				}
 
 				void setEditable(bool b);

@@ -52,7 +52,7 @@ namespace Skylicht
 
 				CListRowItem* getItemByTagValue(int value);
 
-				void unSelectAll();				
+				void unSelectAll();
 
 				virtual bool onKeyUp(bool down);
 
@@ -67,6 +67,7 @@ namespace Skylicht
 				Listener OnSelected;
 				Listener OnUnselected;
 				Listener OnSelectChange;
+				Listener OnItemContextMenu;
 
 			protected:
 

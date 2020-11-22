@@ -159,6 +159,9 @@ namespace Skylicht
 				m_menu->setHidden(false);
 				m_menu->bringToFront();
 
+				if (m_menu->OnOpen != nullptr)
+					m_menu->OnOpen(m_menu);
+
 				SPoint position = localPosToCanvas();
 
 				if (m_inMenuBar)

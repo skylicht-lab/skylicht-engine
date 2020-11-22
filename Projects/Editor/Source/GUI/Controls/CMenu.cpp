@@ -40,6 +40,7 @@ namespace Skylicht
 				m_isOpenPopup(false)
 			{
 				setBounds(0.0f, 0.0f, 210, 24.0f);
+				setHidden(true);
 			}
 
 			CMenu::~CMenu()
@@ -226,7 +227,7 @@ namespace Skylicht
 				item->showIcon(true);
 				item->setAccelerator(accelerator);
 				item->setLabelMargin(SMargin(4.0f, 3.0f, 0.0f, 0.0f));
-				item->OnHover = BIND_LISTENER(&CMenu::onMenuItemHover, this);
+				item->OnHoverEnter = BIND_LISTENER(&CMenu::onMenuItemHover, this);
 				item->OnPress = BIND_LISTENER(&CMenu::onMenuItemPress, this);
 				onAddItem(item);
 
@@ -278,6 +279,10 @@ namespace Skylicht
 			{
 				setHidden(false);
 				setPos(position);
+
+				if (OnOpen != nullptr)
+					OnOpen(this);
+
 				bringToFront();
 				m_isOpenPopup = true;
 			}

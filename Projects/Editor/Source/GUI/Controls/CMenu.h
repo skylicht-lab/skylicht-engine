@@ -90,6 +90,7 @@ namespace Skylicht
 			public:
 
 				Listener OnCommand;
+				Listener OnOpen;
 
 			protected:
 
