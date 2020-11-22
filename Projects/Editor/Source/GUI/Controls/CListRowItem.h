@@ -50,6 +50,8 @@ namespace Skylicht
 				virtual void renderUnder();
 
 				virtual void renderBackground();
+
+				virtual void onMouseClickRight(float x, float y, bool down);
 			};
 		}
 	}

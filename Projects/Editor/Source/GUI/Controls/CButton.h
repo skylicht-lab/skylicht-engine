@@ -58,7 +58,6 @@ namespace Skylicht
 				Listener OnDown;
 				Listener OnPress;
 				Listener OnRightPress;
-				Listener OnHover;
 
 			public:
 				CButton(CBase *parent);

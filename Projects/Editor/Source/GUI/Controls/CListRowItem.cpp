@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CListRowItem.h"
+#include "CListBox.h"
 #include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
@@ -108,6 +109,18 @@ namespace Skylicht
 				r.Height = r.Height - 1.0f;
 
 				CTheme::getTheme()->drawButton(r, c);
+			}
+
+			void CListRowItem::onMouseClickRight(float x, float y, bool down)
+			{
+				if (isDisabled())
+					return;
+
+				CButton::onMouseClickRight(x, y, down);
+
+				CListBox *listBox = dynamic_cast<CListBox*>(m_owner);
+				if (listBox->OnItemContextMenu != nullptr)
+					listBox->OnItemContextMenu(this);
 			}
 		}
 	}

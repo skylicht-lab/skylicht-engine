@@ -37,6 +37,7 @@ namespace Skylicht
 			{
 				dock(EPosition::Top);
 				setHeight(26.0f);
+				setHidden(false);
 
 				enableRenderFillRect(true);
 				setFillRectColor(CThemeConfig::MenuBarColor);
