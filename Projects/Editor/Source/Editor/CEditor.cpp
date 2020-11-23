@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/Scene/CSpaceScene.h"
 #include "Space/Assets/CSpaceAssets.h"
 #include "Space/Console/CSpaceConsole.h"
+#include "Space/Property/CSpaceProperty.h"
 
 namespace Skylicht
 {
@@ -312,7 +313,7 @@ namespace Skylicht
 			}
 			else if (workspace == L"Property")
 			{
-
+				m_workspaces.push_back(new CSpaceProperty(window, this));
 			}
 		}
 
