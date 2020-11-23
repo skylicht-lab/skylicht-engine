@@ -84,6 +84,9 @@ namespace Skylicht
 			SGUIColor CThemeConfig::ListItemBackgroundFocusColor = ButtonPressColor;
 			SGUIColor CThemeConfig::ListItemBackgroundUnfocusColor = SGUIColor(100, 80, 120, 180);
 
+			SGUIColor CThemeConfig::CCollapsibleColor = SGUIColor(255, 70, 70, 70);
+			SGUIColor CThemeConfig::CCollapsibleInnerColor = WindowInnerColor;
+
 			float CThemeConfig::TreeIndentationSize = 25.0f;
 
 			float CThemeConfig::getFontSizePt(EFontSize size)

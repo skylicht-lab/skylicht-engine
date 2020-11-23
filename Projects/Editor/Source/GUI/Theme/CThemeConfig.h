@@ -88,6 +88,9 @@ namespace Skylicht
 				static SGUIColor ListItemBackgroundFocusColor;
 				static SGUIColor ListItemBackgroundUnfocusColor;
 
+				static SGUIColor CCollapsibleColor;
+				static SGUIColor CCollapsibleInnerColor;
+
 				static float getFontSizePt(EFontSize size);
 
 				static float TreeIndentationSize;
