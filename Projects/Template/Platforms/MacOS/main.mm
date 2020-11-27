@@ -10,6 +10,8 @@
 #include "BuildConfig/CBuildConfig.h"
 #include <Carbon/Carbon.h>
 
+#ifndef TEST_APP
+
 int main(int argc, const char * argv[]) {
     NSBundle *main = [NSBundle mainBundle];
     const char *resourcePath = [[main resourcePath] UTF8String];
@@ -18,3 +20,5 @@ int main(int argc, const char * argv[]) {
     SkylichtApplication app(argc, (char**)argv);
     return app.run();
 }
+
+#endif
