@@ -29,12 +29,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	CPThread::CPThread(IThreadCallback *callback):
+	CPThread::CPThread(IThreadCallback *callback) :
 		IThread(callback),
 		m_run(false)
 	{
-		int result = pthread_create(&m_pthread, 0,CPThread::run, this);
-		if(result != 0)
+		int result = pthread_create(&m_pthread, 0, CPThread::run, this);
+		if (result != 0)
 		{
 			printf("CPThread::CPThread error in creating thread\n");
 		}
@@ -63,23 +63,22 @@ namespace SkylichtSystem
 		m_callback->runThread();
 
 		// callback
-		while(m_run)
+		while (m_run)
 		{
 			m_callback->updateThread();
 		}
 
-		IThread::sleep(500);
+		// IThread::sleep(1);
 	}
 
 	void CPThread::stop()
-	{	
+	{
 		if (m_run)
 		{
 			printf("CPThread::stop\n");
 			m_run = false;
 
 			pthread_join(m_pthread, 0);
-
 			printf("CPThread::stop Thread is stop!\n");
 		}
 	}
