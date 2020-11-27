@@ -9,16 +9,6 @@ commands:
           command: >
             brew install cmake
           name: Install CMake
-  install-cmake:
-    steps:
-      - run:
-          command: >
-            [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
-
-            $SUDO apt-get update
-
-            $SUDO apt-get install cmake
-          name: Install CMake
   install-ndk:
     description: Extend CircleCI's Android convenience images by installing a version of the Android NDK of your choice.
     parameters:
@@ -60,45 +50,18 @@ commands:
     steps:
       - run:
           command: >
-            cmake -S. -BPrjAndroid -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=24
+            cmake -S. -BPrjAndroid -DTARGET_ARCH=ANDROID -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=arm64-v8a -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=24
 
             make -C PrjAndroid
           name: Build Skylicht Engine Native SDK
-  build-xcode:
-    steps:
-      - run:
-          command: >
-            cd Assets
-            
-            python BuildAssetBundles.py
-            
-            cd ..
-            
-            cmake -S . -B ./PrjMac -G Xcode
-
-            cd PrjMac
-
-            xcodebuild
-          name: Build Xcode
 jobs:
   build-android:
     executor: android/android
-
     steps:
       - checkout
       - install-ndk
       - install-cmake
       - build-engine-native
-
-  build-macos:
-    macos:
-      xcode: 11.3.0
-    
-    steps:
-      - checkout
-      - install-cmake-mac
-      - build-xcode
-
 workflows:
   version: 2
   build_all:
