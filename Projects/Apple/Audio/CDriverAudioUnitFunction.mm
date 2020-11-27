@@ -1,4 +1,5 @@
-#import "AVFoundation/AVFoundation.h"
+#include <stdio.h>
+#import <AVFoundation/AVFoundation.h>
 
 float audioGetStreamBufferLength()
 {
@@ -14,6 +15,6 @@ void audioSetupStreamBufferLength(float time)
     [session setPreferredIOBufferDuration:time error:&error];
     if (error != nil)
     {
-        printf("Error: audioSetupStreamBufferLength\n");
+        printf("[SkylichtAudio] Error: AudioSetupStreamBufferLength\n");
     }
 }
