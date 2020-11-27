@@ -37,9 +37,8 @@ set_target_properties(Engine PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 target_link_libraries(Engine
 	Irrlicht
-#	Spark
 	System
-#	Audio 
+	Audio 
 #	Physics
 )
 	
