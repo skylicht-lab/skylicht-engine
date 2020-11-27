@@ -17,11 +17,24 @@ target_precompiled_header(Audio ./Source/stdafx.cpp ${skylicht_audio_source})
 set_target_properties(Audio PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 if (BUILD_LINUX)
-	target_link_libraries(Audio openal)
+	target_link_libraries(Audio 
+		System 
+		openal
+	)
 elseif(BUILD_ANDROID)
-	target_link_libraries(Audio OpenSLES)
+	target_link_libraries(Audio 
+		System 
+		OpenSLES
+	)
 elseif(BUILD_MACOS)
-	target_link_libraries(Audio)
+	find_library(AUDIO_UNIT NAME AudioUnit)
+	message(STATUS "AUDIO_UNIT = ${AUDIO_UNIT}")
+	target_link_libraries(Audio 
+		System 
+		${AUDIO_UNIT}
+	)
 else()
-	target_link_libraries(Audio)
+	target_link_libraries(Audio 
+		System
+	)
 endif()
