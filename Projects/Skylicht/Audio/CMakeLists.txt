@@ -17,7 +17,7 @@ target_precompiled_header(Audio ./Source/stdafx.cpp ${skylicht_audio_source})
 set_target_properties(Audio PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 if (BUILD_LINUX)
-	target_link_libraries(Audio OpenAL)
+	target_link_libraries(Audio openal)
 elseif(BUILD_ANDROID)
 	target_link_libraries(Audio OpenSLES)
 elseif(BUILD_MACOS)

@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtAudioConfig.h"
 
-#ifdef USE_REMOTEIO
+#ifdef USE_AUDIO_UNIT
 
 #import <AudioUnit/AudioUnit.h>
 
@@ -40,7 +40,7 @@ using namespace SkylichtSystem;
 namespace SkylichtAudio
 {
 
-	class CDriverRemoteIO : public CDriverNull
+	class CDriverAudioUnit : public CDriverNull
 	{
 	protected:
 		AudioComponentInstance m_audioUnit;
@@ -48,9 +48,9 @@ namespace SkylichtAudio
 		int m_bufferSizeIO;
 
 	public:
-		CDriverRemoteIO();
+		CDriverAudioUnit();
 
-		virtual ~CDriverRemoteIO();
+		virtual ~CDriverAudioUnit();
 
 		virtual void init();
 
@@ -61,6 +61,7 @@ namespace SkylichtAudio
 		virtual void resume();
 
 	public:
+
 		static OSStatus playbackCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData);
 	};
 
@@ -68,4 +69,4 @@ namespace SkylichtAudio
 
 #endif
 
-#endif /* CDriverRemoteIO_hpp */
+#endif /* CDriverAudioUnit_hpp */
