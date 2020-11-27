@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "CWavSubDecoderIMAADPCM.h"
 
+#if defined(__sparc__) || defined(__sun__)
+#define __BIG_ENDIAN__
+#endif
+
 namespace SkylichtAudio
 {
 	////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,16 +187,16 @@ namespace SkylichtAudio
 
 		m_states[0] = *curState;
 
-#if BIG_ENDIAN
-		m_states[0].ConvertToBE();
+#if __BIG_ENDIAN__
+		m_states[0].convertToBE();
 #endif
 		for (unsigned int i = 1; i < m_waveChunks->FormatHeader.NumChannels; i++)
 		{
 			++curState;
 			m_states[i] = *curState;
 
-#if BIG_ENDIAN
-			m_states[i].ConvertToBE();
+#if __BIG_ENDIAN__
+			m_states[i].convertToBE();
 #endif
 		}
 

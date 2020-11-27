@@ -100,7 +100,11 @@
 #define BRG_LITTLE_ENDIAN   1234 /* byte 0 is least significant (i386) */
 #define BRG_BIG_ENDIAN      4321 /* byte 0 is most significant (mc68k) */
 
-#ifdef __BIG_ENDIAN__
+#if defined(__sparc__) || defined(__sun__)
+#define __BIG_ENDIAN__
+#endif
+
+#if defined(__BIG_ENDIAN__)
 #define PLATFORM_BYTE_ORDER BRG_BIG_ENDIAN
 #else
 #define PLATFORM_BYTE_ORDER BRG_LITTLE_ENDIAN
