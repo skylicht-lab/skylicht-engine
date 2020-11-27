@@ -28,8 +28,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifdef USE_AUDIO_UNIT
 
-extern "C" void audioSetupStreamBufferLength(float time);
-extern "C" float audioGetStreamBufferLength();
+#if defined(IOS)
+extern "C" void AudioSetupStreamBufferLength(float time);
+extern "C" float AudioGetStreamBufferLength();
+#endif
 
 namespace SkylichtAudio
 {

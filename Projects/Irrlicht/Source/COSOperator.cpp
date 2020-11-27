@@ -22,10 +22,8 @@
 #endif
 
 #ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
-extern "C" {
-	void OSXCopyToClipboard(const char *text);
-	char* OSXCopyFromClipboard();
-}
+extern "C" void OSXCopyToClipboard(const char *text);
+extern "C" char* OSXCopyFromClipboard();
 #endif
 
 #ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
