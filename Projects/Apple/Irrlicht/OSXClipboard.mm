@@ -4,8 +4,6 @@
 // For conditions of distribution and use, see copyright notice in Irrlicht.h
 
 #include "OSXClipboard.h"
-
-#ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
 #import <Cocoa/Cocoa.h>
 
 void OSXCopyToClipboard(const char *text)
@@ -35,4 +33,3 @@ char* OSXCopyFromClipboard()
 		result = (char*)[str cStringUsingEncoding:NSWindowsCP1252StringEncoding];
 	return (result);
 }
-#endif

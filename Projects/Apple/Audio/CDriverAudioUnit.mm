@@ -1,4 +1,3 @@
-#ifdef USE_AUDIO_UNIT
 #include "stdafx.h"
 
 @import AVFoundation;
@@ -20,4 +19,3 @@ void audioSetupStreamBufferLength(float time)
         printf("Error: audioSetupStreamBufferLength\n");
     }
 }
-#endif
