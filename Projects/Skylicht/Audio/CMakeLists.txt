@@ -6,7 +6,8 @@ include_directories(
 file(GLOB_RECURSE skylicht_audio_source 
 	./Source/*.cpp 
 	./Source/*.hpp 
-	./Source/*.c 
+	./Source/*.c
+	./Source/*.mm
 	./Source/*.h)
 setup_project_group("${skylicht_audio_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -30,6 +31,7 @@ elseif(BUILD_MACOS)
 	target_link_libraries(Audio 
 		System 
 		"-framework AudioUnit"
+		"-framework AVFoundation"
 	)
 else()
 	target_link_libraries(Audio 
