@@ -15,8 +15,8 @@ void OSXCopyToClipboard(const char *text)
 	{
 		str = [NSString stringWithCString:text encoding:NSWindowsCP1252StringEncoding];
 		board = [NSPasteboard generalPasteboard];
-		[board declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:NSApp];
-		[board setString:str forType:NSStringPboardType];
+		[board declareTypes:[NSArray arrayWithObject:NSPasteboardTypeString] owner:NSApp];
+		[board setString:str forType:NSPasteboardTypeString];
 	}
 }
 
@@ -28,7 +28,7 @@ char* OSXCopyFromClipboard()
 
 	result = NULL;
 	board = [NSPasteboard generalPasteboard];
-	str = [board stringForType:NSStringPboardType];
+	str = [board stringForType:NSPasteboardTypeString];
 	if (str != nil)
 		result = (char*)[str cStringUsingEncoding:NSWindowsCP1252StringEncoding];
 	return (result);

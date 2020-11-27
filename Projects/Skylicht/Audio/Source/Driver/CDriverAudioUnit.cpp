@@ -59,6 +59,7 @@ namespace SkylichtAudio
 		// Describe audio component
 		AudioComponentDescription desc;
 		desc.componentType = kAudioUnitType_Output;
+
 #if defined(IOS)
 		desc.componentSubType = kAudioUnitSubType_RemoteIO;
 #else
@@ -69,6 +70,7 @@ namespace SkylichtAudio
 		desc.componentSubType = kAudioUnitSubType_DefaultOutput;
 		// desc.componentSubType = kAudioUnitSubType_HALOutput;
 #endif
+
 		desc.componentFlags = 0;
 		desc.componentFlagsMask = 0;
 		desc.componentManufacturer = kAudioUnitManufacturer_Apple;
@@ -146,8 +148,9 @@ namespace SkylichtAudio
 		// todo: very important!
 		m_bufferLength = (bufferSizeIO / (float)m_preferedRate) / 4.0f;
 
-
-		audioSetupStreamBufferLength(m_bufferLength);
+#if defined(IOS)
+		AudioSetupStreamBufferLength(m_bufferLength);
+#endif
 
 		// init Audio
 		status = AudioUnitInitialize(m_audioUnit);
@@ -159,11 +162,10 @@ namespace SkylichtAudio
 		if (status != noErr)
 			printLog("CDriverAudioUnit::init error [5]\n");
 
-		// sleep for 1s
-		// IThread::sleep(1000);
-
+#if defined(IOS)
 		// get buffer length
-		m_bufferLength = audioGetStreamBufferLength();
+		m_bufferLength = AudioGetStreamBufferLength();
+#endif
 
 		s_bufferSize = (static_cast<int>(m_bufferLength * m_preferedRate)) * 4;
 		s_sampleRate = m_preferedRate;
