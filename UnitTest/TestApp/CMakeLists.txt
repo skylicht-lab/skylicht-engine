@@ -11,6 +11,8 @@ include_directories(
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
 )
 
+add_definitions(-DTEST_APP)
+
 if (BUILD_FREETYPE)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include)
 endif()
@@ -19,10 +21,30 @@ if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Imgui/Source)
 endif()
 
+set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template)
+
+if (BUILD_MACOS)
+include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
+include_directories(${template_path}/Platforms/MacOS)
+
+file(GLOB_RECURSE test_app_source 
+	./**.cpp
+	./**.c 
+	./**.h
+	${template_path}/Platforms/MacOS/**.cpp 
+	${template_path}/Platforms/MacOS/**.c
+	${template_path}/Platforms/MacOS/**.h
+	${template_path}/Platforms/MacOS/**.m
+	${template_path}/Platforms/MacOS/**.mm
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm)
+else()
 file(GLOB_RECURSE test_app_source 
 	./**.cpp
 	./**.c 
 	./**.h)
+endif()
 
 if (MINGW OR CYGWIN)
 	add_executable(TestApp WIN32 ${test_app_source})
@@ -39,13 +61,27 @@ endif()
 
 if (BUILD_MACOS)
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
-	add_library(GLESv2 SHARED IMPORTED)
-	set_target_properties(GLESv2 PROPERTIES IMPORTED_LOCATION "${angle_lib_path}/libGLESv2.dylib")
-	target_link_libraries(TestApp GLESv2)
+
+	find_library(
+		LIBEGL 
+		libEGL.dylib
+		PATHS ${angle_lib_path})
+
+	find_library(
+		LIBGLESV2
+		libGLESv2.dylib
+		PATHS ${angle_lib_path})
+
+	target_link_libraries(TestApp ${LIBEGL} ${LIBGLESV2})
+	target_link_libraries(TestApp "-framework Cocoa")
 
 	add_custom_command(TARGET TestApp POST_BUILD COMMAND 
 		${CMAKE_COMMAND} -E copy_if_different "${angle_lib_path}/libGLESv2.dylib" 
-		$<TARGET_FILE_DIR:TestApp>)			
+		$<TARGET_FILE_DIR:TestApp>)
+
+	add_custom_command(TARGET TestApp POST_BUILD COMMAND 
+		${CMAKE_COMMAND} -E copy_if_different "${angle_lib_path}/libEGL.dylib" 
+		$<TARGET_FILE_DIR:TestApp>)	
 endif()
 
 if (BUILD_MACOS)
