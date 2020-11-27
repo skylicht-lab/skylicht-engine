@@ -27,11 +27,9 @@ elseif(BUILD_ANDROID)
 		OpenSLES
 	)
 elseif(BUILD_MACOS)
-	find_library(AUDIO_UNIT NAME AudioUnit)
-	message(STATUS "AUDIO_UNIT = ${AUDIO_UNIT}")
 	target_link_libraries(Audio 
 		System 
-		${AUDIO_UNIT}
+		"-framework AudioUnit"
 	)
 else()
 	target_link_libraries(Audio 
