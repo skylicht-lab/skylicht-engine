@@ -1,4 +1,4 @@
-@import AVFoundation;
+#import "AVFoundation/AVFoundation.h"
 
 float audioGetStreamBufferLength()
 {
