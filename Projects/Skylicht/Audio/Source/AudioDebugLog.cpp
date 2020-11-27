@@ -42,7 +42,7 @@ namespace SkylichtAudio
 		va_end(ap);
 
 #ifdef ANDROID
-		__android_log_print(ANDROID_LOG_INFO, "libAudio.so", buffer);
+		__android_log_print(ANDROID_LOG_INFO, "libAudio.so", logBuffer);
 #else
 		printf("%s\n", logBuffer);
 #endif		
