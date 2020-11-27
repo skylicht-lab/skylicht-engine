@@ -9,10 +9,9 @@
 
 namespace Angle
 {
-
 enum Key
 {
-    KEY_UNKNOWN = 0,
+    KEY_UNKNOWN,
     KEY_A,          // The A key
     KEY_B,          // The B key
     KEY_C,          // The C key

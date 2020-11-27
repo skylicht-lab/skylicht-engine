@@ -27,6 +27,8 @@ static std::set<OSXWindow *> &AllWindows()
     return allWindows;
 }
 
+using namespace Angle;
+
 @interface Application : NSApplication
 @end
 
@@ -166,219 +168,219 @@ static float YCoordToFromCG(float y)
 }
 @end
 
-static Angle::Key NSCodeToKey(int keyCode)
+static Key NSCodeToKey(int keyCode)
 {
-    // Missing Angle::KEY_PAUSE
+    // Missing KEY_PAUSE
     switch (keyCode)
     {
         case kVK_Shift:
-            return Angle::KEY_LSHIFT;
+            return KEY_LSHIFT;
         case kVK_RightShift:
-            return Angle::KEY_RSHIFT;
+            return KEY_RSHIFT;
         case kVK_Option:
-            return Angle::KEY_LALT;
+            return KEY_LALT;
         case kVK_RightOption:
-            return Angle::KEY_RALT;
+            return KEY_RALT;
         case kVK_Control:
-            return Angle::KEY_LCONTROL;
+            return KEY_LCONTROL;
         case kVK_RightControl:
-            return Angle::KEY_RCONTROL;
+            return KEY_RCONTROL;
         case kVK_Command:
-            return Angle::KEY_LSYSTEM;
+            return KEY_LSYSTEM;
         // Right System doesn't have a name, but shows up as 0x36.
         case 0x36:
-            return Angle::KEY_RSYSTEM;
+            return KEY_RSYSTEM;
         case kVK_Function:
-            return Angle::KEY_MENU;
+            return KEY_MENU;
 
         case kVK_ANSI_Semicolon:
-            return Angle::KEY_SEMICOLON;
+            return KEY_SEMICOLON;
         case kVK_ANSI_Slash:
-            return Angle::KEY_SLASH;
+            return KEY_SLASH;
         case kVK_ANSI_Equal:
-            return Angle::KEY_EQUAL;
+            return KEY_EQUAL;
         case kVK_ANSI_Minus:
-            return Angle::KEY_DASH;
+            return KEY_DASH;
         case kVK_ANSI_LeftBracket:
-            return Angle::KEY_LBRACKET;
+            return KEY_LBRACKET;
         case kVK_ANSI_RightBracket:
-            return Angle::KEY_RBRACKET;
+            return KEY_RBRACKET;
         case kVK_ANSI_Comma:
-            return Angle::KEY_COMMA;
+            return KEY_COMMA;
         case kVK_ANSI_Period:
-            return Angle::KEY_PERIOD;
+            return KEY_PERIOD;
         case kVK_ANSI_Backslash:
-            return Angle::KEY_BACKSLASH;
+            return KEY_BACKSLASH;
         case kVK_ANSI_Grave:
-            return Angle::KEY_TILDE;
+            return KEY_TILDE;
         case kVK_Escape:
-            return Angle::KEY_ESCAPE;
+            return KEY_ESCAPE;
         case kVK_Space:
-            return Angle::KEY_SPACE;
+            return KEY_SPACE;
         case kVK_Return:
-            return Angle::KEY_RETURN;
+            return KEY_RETURN;
         case kVK_Delete:
-            return Angle::KEY_BACK;
+            return KEY_BACK;
         case kVK_Tab:
-            return Angle::KEY_TAB;
+            return KEY_TAB;
         case kVK_PageUp:
-            return Angle::KEY_PAGEUP;
+            return KEY_PAGEUP;
         case kVK_PageDown:
-            return Angle::KEY_PAGEDOWN;
+            return KEY_PAGEDOWN;
         case kVK_End:
-            return Angle::KEY_END;
+            return KEY_END;
         case kVK_Home:
-            return Angle::KEY_HOME;
+            return KEY_HOME;
         case kVK_Help:
-            return Angle::KEY_INSERT;
+            return KEY_INSERT;
         case kVK_ForwardDelete:
-            return Angle::KEY_DELETE;
+            return KEY_DELETE;
         case kVK_ANSI_KeypadPlus:
-            return Angle::KEY_ADD;
+            return KEY_ADD;
         case kVK_ANSI_KeypadMinus:
-            return Angle::KEY_SUBTRACT;
+            return KEY_SUBTRACT;
         case kVK_ANSI_KeypadMultiply:
-            return Angle::KEY_MULTIPLY;
+            return KEY_MULTIPLY;
         case kVK_ANSI_KeypadDivide:
-            return Angle::KEY_DIVIDE;
+            return KEY_DIVIDE;
 
         case kVK_F1:
-            return Angle::KEY_F1;
+            return KEY_F1;
         case kVK_F2:
-            return Angle::KEY_F2;
+            return KEY_F2;
         case kVK_F3:
-            return Angle::KEY_F3;
+            return KEY_F3;
         case kVK_F4:
-            return Angle::KEY_F4;
+            return KEY_F4;
         case kVK_F5:
-            return Angle::KEY_F5;
+            return KEY_F5;
         case kVK_F6:
-            return Angle::KEY_F6;
+            return KEY_F6;
         case kVK_F7:
-            return Angle::KEY_F7;
+            return KEY_F7;
         case kVK_F8:
-            return Angle::KEY_F8;
+            return KEY_F8;
         case kVK_F9:
-            return Angle::KEY_F9;
+            return KEY_F9;
         case kVK_F10:
-            return Angle::KEY_F10;
+            return KEY_F10;
         case kVK_F11:
-            return Angle::KEY_F11;
+            return KEY_F11;
         case kVK_F12:
-            return Angle::KEY_F12;
+            return KEY_F12;
         case kVK_F13:
-            return Angle::KEY_F13;
+            return KEY_F13;
         case kVK_F14:
-            return Angle::KEY_F14;
+            return KEY_F14;
         case kVK_F15:
-            return Angle::KEY_F15;
+            return KEY_F15;
 
         case kVK_LeftArrow:
-            return Angle::KEY_LEFT;
+            return KEY_LEFT;
         case kVK_RightArrow:
-            return Angle::KEY_RIGHT;
+            return KEY_RIGHT;
         case kVK_DownArrow:
-            return Angle::KEY_DOWN;
+            return KEY_DOWN;
         case kVK_UpArrow:
-            return Angle::KEY_UP;
+            return KEY_UP;
 
         case kVK_ANSI_Keypad0:
-            return Angle::KEY_NUMPAD0;
+            return KEY_NUMPAD0;
         case kVK_ANSI_Keypad1:
-            return Angle::KEY_NUMPAD1;
+            return KEY_NUMPAD1;
         case kVK_ANSI_Keypad2:
-            return Angle::KEY_NUMPAD2;
+            return KEY_NUMPAD2;
         case kVK_ANSI_Keypad3:
-            return Angle::KEY_NUMPAD3;
+            return KEY_NUMPAD3;
         case kVK_ANSI_Keypad4:
-            return Angle::KEY_NUMPAD4;
+            return KEY_NUMPAD4;
         case kVK_ANSI_Keypad5:
-            return Angle::KEY_NUMPAD5;
+            return KEY_NUMPAD5;
         case kVK_ANSI_Keypad6:
-            return Angle::KEY_NUMPAD6;
+            return KEY_NUMPAD6;
         case kVK_ANSI_Keypad7:
-            return Angle::KEY_NUMPAD7;
+            return KEY_NUMPAD7;
         case kVK_ANSI_Keypad8:
-            return Angle::KEY_NUMPAD8;
+            return KEY_NUMPAD8;
         case kVK_ANSI_Keypad9:
-            return Angle::KEY_NUMPAD9;
+            return KEY_NUMPAD9;
 
         case kVK_ANSI_A:
-            return Angle::KEY_A;
+            return KEY_A;
         case kVK_ANSI_B:
-            return Angle::KEY_B;
+            return KEY_B;
         case kVK_ANSI_C:
-            return Angle::KEY_C;
+            return KEY_C;
         case kVK_ANSI_D:
-            return Angle::KEY_D;
+            return KEY_D;
         case kVK_ANSI_E:
-            return Angle::KEY_E;
+            return KEY_E;
         case kVK_ANSI_F:
-            return Angle::KEY_F;
+            return KEY_F;
         case kVK_ANSI_G:
-            return Angle::KEY_G;
+            return KEY_G;
         case kVK_ANSI_H:
-            return Angle::KEY_H;
+            return KEY_H;
         case kVK_ANSI_I:
-            return Angle::KEY_I;
+            return KEY_I;
         case kVK_ANSI_J:
-            return Angle::KEY_J;
+            return KEY_J;
         case kVK_ANSI_K:
-            return Angle::KEY_K;
+            return KEY_K;
         case kVK_ANSI_L:
-            return Angle::KEY_L;
+            return KEY_L;
         case kVK_ANSI_M:
-            return Angle::KEY_M;
+            return KEY_M;
         case kVK_ANSI_N:
-            return Angle::KEY_N;
+            return KEY_N;
         case kVK_ANSI_O:
-            return Angle::KEY_O;
+            return KEY_O;
         case kVK_ANSI_P:
-            return Angle::KEY_P;
+            return KEY_P;
         case kVK_ANSI_Q:
-            return Angle::KEY_Q;
+            return KEY_Q;
         case kVK_ANSI_R:
-            return Angle::KEY_R;
+            return KEY_R;
         case kVK_ANSI_S:
-            return Angle::KEY_S;
+            return KEY_S;
         case kVK_ANSI_T:
-            return Angle::KEY_T;
+            return KEY_T;
         case kVK_ANSI_U:
-            return Angle::KEY_U;
+            return KEY_U;
         case kVK_ANSI_V:
-            return Angle::KEY_V;
+            return KEY_V;
         case kVK_ANSI_W:
-            return Angle::KEY_W;
+            return KEY_W;
         case kVK_ANSI_X:
-            return Angle::KEY_X;
+            return KEY_X;
         case kVK_ANSI_Y:
-            return Angle::KEY_Y;
+            return KEY_Y;
         case kVK_ANSI_Z:
-            return Angle::KEY_Z;
+            return KEY_Z;
 
         case kVK_ANSI_1:
-            return Angle::KEY_NUM1;
+            return KEY_NUM1;
         case kVK_ANSI_2:
-            return Angle::KEY_NUM2;
+            return KEY_NUM2;
         case kVK_ANSI_3:
-            return Angle::KEY_NUM3;
+            return KEY_NUM3;
         case kVK_ANSI_4:
-            return Angle::KEY_NUM4;
+            return KEY_NUM4;
         case kVK_ANSI_5:
-            return Angle::KEY_NUM5;
+            return KEY_NUM5;
         case kVK_ANSI_6:
-            return Angle::KEY_NUM6;
+            return KEY_NUM6;
         case kVK_ANSI_7:
-            return Angle::KEY_NUM7;
+            return KEY_NUM7;
         case kVK_ANSI_8:
-            return Angle::KEY_NUM8;
+            return KEY_NUM8;
         case kVK_ANSI_9:
-            return Angle::KEY_NUM9;
+            return KEY_NUM9;
         case kVK_ANSI_0:
-            return Angle::KEY_NUM0;
+            return KEY_NUM0;
     }
 
-    return Angle::Key(0);
+    return Key(0);
 }
 
 static void AddNSKeyStateToEvent(Event *event, NSEventModifierFlags state)
@@ -481,11 +483,6 @@ static MouseButton TranslateMouseButton(NSInteger button)
     mWindow->pushEvent(event);
 }
 
-- (BOOL)acceptsFirstMouse:(NSEvent *)event;
-{
-    return YES;
-}
-
 - (void)mouseDown:(NSEvent *)event
 {
     [self addButtonEvent:event type:Event::EVENT_MOUSE_BUTTON_PRESSED button:MOUSEBUTTON_LEFT];
@@ -578,9 +575,6 @@ static MouseButton TranslateMouseButton(NSInteger button)
     Event event;
     event.Type     = Event::EVENT_KEY_PRESSED;
     event.Key.Code = NSCodeToKey([nsEvent keyCode]);
-    const char *c = [[nsEvent characters] UTF8String];
-    event.Key.Char = c[0];
-    
     AddNSKeyStateToEvent(&event, [nsEvent modifierFlags]);
     mWindow->pushEvent(event);
 }
@@ -590,8 +584,6 @@ static MouseButton TranslateMouseButton(NSInteger button)
     Event event;
     event.Type     = Event::EVENT_KEY_RELEASED;
     event.Key.Code = NSCodeToKey([nsEvent keyCode]);
-    event.Key.Char = 0;
-    
     AddNSKeyStateToEvent(&event, [nsEvent modifierFlags]);
     mWindow->pushEvent(event);
 }
@@ -617,8 +609,6 @@ static MouseButton TranslateMouseButton(NSInteger button)
     mCurrentModifier = modifier;
 
     event.Key.Code = NSCodeToKey([nsEvent keyCode]);
-    event.Key.Char = 0;
-    
     AddNSKeyStateToEvent(&event, [nsEvent modifierFlags]);
     mWindow->pushEvent(event);
 }
@@ -631,7 +621,7 @@ OSXWindow::~OSXWindow()
     destroy();
 }
 
-bool OSXWindow::initialize(const std::string &name, int width, int height)
+bool OSXWindow::initializeImpl(const std::string &name, int width, int height)
 {
     if (!InitializeAppKit())
     {
@@ -685,6 +675,8 @@ bool OSXWindow::initialize(const std::string &name, int width, int height)
     return true;
 }
 
+void OSXWindow::disableErrorMessageDialog() {}
+
 void OSXWindow::destroy()
 {
     AllWindows().erase(this);
@@ -694,6 +686,8 @@ void OSXWindow::destroy()
     [mDelegate onOSXWindowDeleted];
     [mDelegate release];
     mDelegate = nil;
+    // NSWindow won't be completely released unless its content view is set to nil:
+    [mWindow setContentView:nil];
     [mWindow release];
     mWindow = nil;
 }
@@ -746,6 +740,11 @@ void OSXWindow::setMousePosition(int x, int y)
     screenspace = [mWindow convertRectToScreen:NSMakeRect(x, y, 0, 0)].origin;
 #endif
     CGWarpMouseCursorPosition(CGPointMake(screenspace.x, YCoordToFromCG(screenspace.y)));
+}
+
+bool OSXWindow::setOrientation(int width, int height)
+{
+    return false;
 }
 
 bool OSXWindow::setPosition(int x, int y)
