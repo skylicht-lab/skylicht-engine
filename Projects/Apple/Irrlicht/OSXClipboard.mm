@@ -3,7 +3,6 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in Irrlicht.h
 
-#include "OSXClipboard.h"
 #import <Cocoa/Cocoa.h>
 
 void OSXCopyToClipboard(const char *text)
