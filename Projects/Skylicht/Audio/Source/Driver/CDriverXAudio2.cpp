@@ -141,7 +141,7 @@ namespace SkylichtAudio
 
 		if (FAILED(hr = m_xaudio->CreateSourceVoice(&m_sourceVoice, &waveFormat, 0, 1.0f, &m_voiceContext)))
 		{
-			printLog(L"Error %#X creating source voice", hr);
+			printLog("Error %#X creating source voice", hr);
 			return;
 		}
 

@@ -32,8 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 // Use OpenAL on Linux & Emscripten
 #define USE_OPENAL
 #elif defined(IOS) || defined(MACOS)
-// Use CoreAudio on IOS, MAC
-#define USE_REMOTEIO
+// Use AudioUnit on IOS, MAC
+#define USE_AUDIO_UNIT
 #elif defined(_WIN32)
 #include <Windows.h>
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP || WINAPI_FAMILY == WINAPI_FAMILY_PC_APP

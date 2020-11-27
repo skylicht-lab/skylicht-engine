@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDriverXAudio2.h"
 #include "CDriverOpenSL.h"
 #include "CDriverOpenAL.h"
-#include "CDriverRemoteIO.h"
+#include "CDriverAudioUnit.h"
 
 namespace SkylichtAudio
 {
@@ -46,8 +46,8 @@ namespace SkylichtAudio
 		return new CDriverOpenSL();
 #elif defined(USE_OPENAL)
 		return new CDriverOpenAL();
-#elif defined(USE_REMOTEIO)
-		return new CDriverRemoteIO();
+#elif defined(USE_AUDIO_UNIT)
+		return new CDriverAudioUnit();
 #else
 		return new CDriverNull();
 #endif
