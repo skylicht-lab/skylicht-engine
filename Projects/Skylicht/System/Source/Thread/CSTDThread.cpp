@@ -57,7 +57,7 @@ namespace SkylichtSystem
 			m_callback->updateThread();
 		}
 
-		IThread::sleep(500);
+		// IThread::sleep(1);
 	}
 
 	void CSTDThread::stop()

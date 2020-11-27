@@ -152,7 +152,8 @@ namespace Skylicht
 		m_height = viewport.getHeight();
 
 		// init skylicht component
-		initSkylicht(m_device);
+		Skylicht::initSkylicht(m_device);
+		SkylichtAudio::initSkylichtAudio();
 
 		// install application
 		installApplication(m_argv);
@@ -172,7 +173,8 @@ namespace Skylicht
 		sendEventToAppReceiver(AppEventQuit);
 
 		// release skylicht component
-		releaseSkylicht();
+		Skylicht::releaseSkylicht();
+		SkylichtAudio::releaseSkylichtAudio();
 	}
 
 	void CApplication::mainLoop()
@@ -200,7 +202,10 @@ namespace Skylicht
 		setTimeStep(m_timeStep);
 
 		// skylicht update
-		updateSkylicht();
+		Skylicht::updateSkylicht();
+
+		// update audio driver
+		SkylichtAudio::updateSkylichtAudio();
 
 		// application receiver
 		sendEventToAppReceiver(AppEventUpdate);
