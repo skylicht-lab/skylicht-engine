@@ -29,8 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifdef USE_AUDIO_UNIT
 
 #if defined(IOS)
-extern "C" void AudioSetupStreamBufferLength(float time);
-extern "C" float AudioGetStreamBufferLength();
+extern void AudioSetupStreamBufferLength(float time);
+extern float AudioGetStreamBufferLength();
 #endif
 
 namespace SkylichtAudio
@@ -69,8 +69,8 @@ namespace SkylichtAudio
 		// so we retain automatic output device switching when the default
 		// changes.  Once we have complete support for device notifications
 		// and switching, we can use the AUHAL for everything.
-		desc.componentSubType = kAudioUnitSubType_DefaultOutput;
-		// desc.componentSubType = kAudioUnitSubType_HALOutput;
+        desc.componentSubType = kAudioUnitSubType_DefaultOutput;
+        // desc.componentSubType = kAudioUnitSubType_HALOutput;
 #endif
 
 		desc.componentFlags = 0;
@@ -79,17 +79,20 @@ namespace SkylichtAudio
 
 		// Get component
 		AudioComponent inputComponent = AudioComponentFindNext(NULL, &desc);
-
+        if (inputComponent == nullptr)
+            printLog("CDriverAudioUnit::init null component");
+        
 		// Init audio component
 		status = AudioComponentInstanceNew(inputComponent, &m_audioUnit);
 		if (status != noErr)
 			printLog("CDriverAudioUnit::init error [0]");
 
-		// Enable IO for playback
-		UInt32 flag = 1;
-
 #define AU_OUTPUT_BUS   0
 #define AU_INPUT_BUS    1
+        
+#if defined(IOS)
+		// Enable IO for playback
+		UInt32 flag = 1;
 
 		status = AudioUnitSetProperty(m_audioUnit,
 			kAudioOutputUnitProperty_EnableIO,
@@ -99,7 +102,8 @@ namespace SkylichtAudio
 			sizeof(flag));
 		if (status != noErr)
 			printLog("CDriverAudioUnit::init error [1]\n");
-
+#endif
+        
 		AudioStreamBasicDescription audioFormat;
 
 		audioFormat.mSampleRate = m_preferedRate;
@@ -208,7 +212,7 @@ namespace SkylichtAudio
 
 				float duration = (dataSize / (float)s_sampleRate) / 4.0f;
 				driver->changeDuration(duration);
-
+                
 #ifndef USE_MULTITHREAD_UPDATE
 				SkylichtAudio::CAudioEngine::getSoundEngine()->updateEmitter();
 #endif
