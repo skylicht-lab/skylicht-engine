@@ -53,7 +53,7 @@ namespace SkylichtAudio
 
 	void CDriverXAudio2::init()
 	{
-		printLog("[SkylichtAudio] Init CoreAudio CDriverXAudio2");
+		printLog("[SkylichtAudio] Init CDriverXAudio2");
 
 		// Calc buffer size (byte)
 		// 2 channel u16 -> 4 bytes
@@ -141,7 +141,7 @@ namespace SkylichtAudio
 
 		if (FAILED(hr = m_xaudio->CreateSourceVoice(&m_sourceVoice, &waveFormat, 0, 1.0f, &m_voiceContext)))
 		{
-			wprintLog(L"\nError %#X creating source voice\n", hr);
+			printLog(L"Error %#X creating source voice", hr);
 			return;
 		}
 
