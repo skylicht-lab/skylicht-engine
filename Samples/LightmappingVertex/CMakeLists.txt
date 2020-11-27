@@ -100,6 +100,7 @@ if (BUILD_MACOS)
 		${template_path}/Platforms/MacOS/**.m
 		${template_path}/Platforms/MacOS/**.mm
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm)
 
 	list (APPEND application_source ${platform_mac_source})
