@@ -3,11 +3,15 @@ version: 2.1
 orbs:
   android: circleci/android@0.2.0
 commands:
-  install-cmake-mac:
+  install-cmake:
     steps:
       - run:
           command: >
-            brew install cmake
+            [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
+
+            $SUDO apt-get update
+
+            $SUDO apt-get install cmake
           name: Install CMake
   install-ndk:
     description: Extend CircleCI's Android convenience images by installing a version of the Android NDK of your choice.
