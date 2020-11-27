@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 @import AVFoundation;
 
 float audioGetStreamBufferLength()
