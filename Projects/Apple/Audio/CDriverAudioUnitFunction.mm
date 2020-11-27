@@ -1,13 +1,15 @@
 #include <stdio.h>
+
+#if defined(IOS)
 #import <AVFoundation/AVFoundation.h>
 
-float audioGetStreamBufferLength()
+float AudioGetStreamBufferLength()
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
     return (float)session.IOBufferDuration;
 }
 
-void audioSetupStreamBufferLength(float time)
+void AudioSetupStreamBufferLength(float time)
 {
     AVAudioSession *session = [AVAudioSession sharedInstance];
     
@@ -18,3 +20,4 @@ void audioSetupStreamBufferLength(float time)
         printf("[SkylichtAudio] Error: AudioSetupStreamBufferLength\n");
     }
 }
+#endif
