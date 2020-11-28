@@ -7,11 +7,16 @@
 #ifndef MPG123_MSVC_H
 #define MPG123_MSVC_H
 
+#if defined(_WIN32)
 #include <tchar.h>
+#endif
+
 #include <stdlib.h>
 #include <sys/types.h>
 
+#if defined(_WIN32)
 typedef long ssize_t;
+#endif
 
 // Needed for Visual Studio versions before VS 2010.
 #if (_MSC_VER < 1600)
