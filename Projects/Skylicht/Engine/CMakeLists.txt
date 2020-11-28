@@ -3,11 +3,10 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source	
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Spark/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source	
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
+	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source	
 )
 
 #if (BUILD_SKYLICHT_NETWORK)
@@ -37,9 +36,8 @@ set_target_properties(Engine PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 target_link_libraries(Engine
 	Irrlicht
-#	Spark
 	System
-#	Audio 
+	Audio 
 #	Physics
 )
 	

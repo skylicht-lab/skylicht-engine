@@ -56,6 +56,7 @@
 #define EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE 0x3209
 #define EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE 0x320A
 #define EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE 0x345E
+#define EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE 0x348F
 #endif /* EGL_ANGLE_platform_angle */
 
 #ifndef EGL_ANGLE_platform_angle_d3d
@@ -93,6 +94,8 @@
 #ifndef EGL_ANGLE_platform_angle_vulkan
 #define EGL_ANGLE_platform_angle_vulkan 1
 #define EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE 0x3450
+#define EGL_PLATFORM_VULKAN_DISPLAY_MODE_SIMPLE_ANGLE 0x34A4
+#define EGL_PLATFORM_VULKAN_DISPLAY_MODE_HEADLESS_ANGLE 0x34A5
 #endif /* EGL_ANGLE_platform_angle_vulkan */
 
 #ifndef EGL_ANGLE_platform_angle_metal
@@ -114,6 +117,16 @@
 #define EGL_ANGLE_platform_angle_context_virtualization 1
 #define EGL_PLATFORM_ANGLE_CONTEXT_VIRTUALIZATION_ANGLE 0x3481
 #endif /* EGL_ANGLE_platform_angle_context_virtualization */
+
+#ifndef EGL_ANGLE_platform_angle_device_context_volatile_eagl
+#define EGL_ANGLE_platform_angle_device_context_volatile_eagl 1
+#define EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE 0x34A2
+#endif /* EGL_ANGLE_platform_angle_device_context_volatile_eagl */
+
+#ifndef EGL_ANGLE_platform_angle_device_context_volatile_cgl
+#define EGL_ANGLE_platform_angle_device_context_volatile_cgl 1
+#define EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE 0x34A3
+#endif /* EGL_ANGLE_platform_angle_device_context_volatile_cgl */
 
 #ifndef EGL_ANGLE_x11_visual
 #define EGL_ANGLE_x11_visual
@@ -191,12 +204,12 @@ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseDeviceANGLE(EGLDeviceEXT device);
 typedef EGLint (EGLAPIENTRYP PFNEGLPROGRAMCACHEGETATTRIBANGLEPROC) (EGLDisplay dpy, EGLenum attrib);
 typedef void (EGLAPIENTRYP PFNEGLPROGRAMCACHEQUERYANGLEPROC) (EGLDisplay dpy, EGLint index, void *key, EGLint *keysize, void *binary, EGLint *binarysize);
 typedef void (EGLAPIENTRYP PFNEGLPROGRAMCACHEPOPULATEANGLEPROC) (EGLDisplay dpy, const void *key, EGLint keysize, const void *binary, EGLint binarysize);
-typedef EGLint (EGLAPIENTRYP PFNEGLPROGRAMCACHERESIZEANGLEPROC) (EGLDisplay dpy, EGLint limit, EGLenum mode);
+typedef EGLint (EGLAPIENTRYP PFNEGLPROGRAMCACHERESIZEANGLEPROC) (EGLDisplay dpy, EGLint limit, EGLint mode);
 #ifdef EGL_EGLEXT_PROTOTYPES
 EGLAPI EGLint EGLAPIENTRY eglProgramCacheGetAttribANGLE(EGLDisplay dpy, EGLenum attrib);
 EGLAPI void EGLAPIENTRY eglProgramCacheQueryANGLE(EGLDisplay dpy, EGLint index, void *key, EGLint *keysize, void *binary, EGLint *binarysize);
 EGLAPI void EGLAPIENTRY eglProgramCachePopulateANGLE(EGLDisplay dpy, const void *key, EGLint keysize, const void *binary, EGLint binarysize);
-EGLAPI EGLint EGLAPIENTRY eglProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limit, EGLenum mode);
+EGLAPI EGLint EGLAPIENTRY eglProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limit, EGLint mode);
 #endif
 #endif /* EGL_ANGLE_program_cache_control */
 
@@ -253,6 +266,14 @@ EGLAPI EGLBoolean EGLAPIENTRY eglGetMscRateANGLE(EGLDisplay dpy,
 #define EGL_POWER_PREFERENCE_ANGLE 0x3482
 #define EGL_LOW_POWER_ANGLE 0x0001
 #define EGL_HIGH_POWER_ANGLE 0x0002
+typedef void(EGLAPIENTRYP PFNEGLRELEASEHIGHPOWERGPUANGLEPROC) (EGLDisplay dpy, EGLContext ctx);
+typedef void(EGLAPIENTRYP PFNEGLREACQUIREHIGHPOWERGPUANGLEPROC) (EGLDisplay dpy, EGLContext ctx);
+typedef void(EGLAPIENTRYP PFNEGLHANDLEGPUSWITCHANGLEPROC) (EGLDisplay dpy);
+#ifdef EGL_EGLEXT_PROTOTYPES
+EGLAPI void EGLAPIENTRY eglReleaseHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx);
+EGLAPI void EGLAPIENTRY eglReacquireHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx);
+EGLAPI void EGLAPIENTRY eglHandleGPUSwitchANGLE(EGLDisplay dpy);
+#endif
 #endif /* EGL_ANGLE_power_preference */
 
 #ifndef EGL_ANGLE_feature_control
@@ -309,6 +330,11 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffersWithFrameTokenANGLE(EGLDisplay dpy, 
 #define EGL_ANGLE_device_eagl 1
 #define EGL_EAGL_CONTEXT_ANGLE 0x348C
 #endif
+
+#ifndef EGL_ANGLE_display_semaphore_share_group
+#define EGL_ANGLE_display_semaphore_share_group 1
+#define EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE 0x348D
+#endif /* EGL_ANGLE_display_semaphore_share_group */
 
 // clang-format on
 

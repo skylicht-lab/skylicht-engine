@@ -22,7 +22,8 @@
 #endif
 
 #ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
-#include "MacOSX/OSXClipboard.h"
+extern void OSXCopyToClipboard(const char *text);
+extern char* OSXCopyFromClipboard();
 #endif
 
 #ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
@@ -79,9 +80,8 @@ namespace irr
 		GlobalUnlock(clipbuffer);
 		SetClipboardData(CF_TEXT, clipbuffer);
 		CloseClipboard();
-#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-		// MacOSX version
-		// OSXCopyToClipboard(text);
+#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)		
+		OSXCopyToClipboard(text);
 		return 0;
 #endif
 	}
@@ -110,8 +110,7 @@ namespace irr
 		return buffer;
 
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-		// return OSXCopyFromClipboard();
-		return 0;
+		return OSXCopyFromClipboard();		
 #else
 		return 0;
 #endif
