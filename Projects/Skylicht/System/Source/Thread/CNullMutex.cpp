@@ -23,26 +23,25 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "stdafx.h"
-#include "IMutex.h"
-#include "SkylichtSystemConfig.h"
-
-#if defined(USE_PTHREAD)
-#include "CPThreadMutex.h"
-#elif defined(USE_STDTHREAD)
-#include "CSTDThreadMutex.h"
-#endif
 #include "CNullMutex.h"
 
 namespace SkylichtSystem
 {
-	IMutex* IMutex::createMutex()
+	CNullMutex::CNullMutex()
 	{
-#if defined(USE_PTHREAD)
-		return new CPThreadMutex();
-#elif defined(USE_STDTHREAD)
-		return new CSTDThreadMutex();
-#else
-		return new CNullMutex();
-#endif
+	}
+
+	CNullMutex::~CNullMutex()
+	{
+	}
+
+	void CNullMutex::lock()
+	{
+		// do nothing for nonthread system (Emscripten)
+	}
+
+	void CNullMutex::unlock()
+	{
+		// do nothing for nonthread system (Emscripten)
 	}
 }

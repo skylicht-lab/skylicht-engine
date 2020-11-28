@@ -12,14 +12,22 @@ CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
 	m_spriteArchive(NULL),
-	m_downloaded(0)
+	m_downloaded(0),
+	m_largeFont(NULL),
+	m_canvasObject(NULL),
+	m_guiText(NULL),
+	m_blinkTime(0.0f)
 {
 
 }
 
 CViewInit::~CViewInit()
 {
+	m_canvasObject->remove();
+	delete m_largeFont;
 
+	// handle click event
+	CEventManager::getInstance()->unRegisterEvent(this);
 }
 
 io::path CViewInit::getBuiltInPath(const char *name)
@@ -39,6 +47,9 @@ void CViewInit::onInit()
 
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+
+	// handle click event
+	CEventManager::getInstance()->registerEvent("ViewInit", this);
 }
 
 void CViewInit::initScene()
@@ -82,6 +93,20 @@ void CViewInit::initScene()
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
+
+	// 2d gui
+	m_largeFont = new CGlyphFont();
+	m_largeFont->setFont("Segoe UI Light", 30);
+
+	// create 2D Canvas
+	m_canvasObject = zone->createEmptyObject();
+	CCanvas *canvas = m_canvasObject->addComponent<CCanvas>();
+
+	// create UI Text in Canvas
+	m_guiText = canvas->createText(m_largeFont);
+	m_guiText->setPosition(core::vector3df(0.0f, -40.0f, 0.0f));
+	m_guiText->setText("Click to continue...");
+	m_guiText->setTextAlign(CGUIElement::Center, CGUIElement::Bottom);
 
 	// rendering pipe line
 	u32 w = app->getWidth();
@@ -203,8 +228,6 @@ void CViewInit::onUpdate()
 		CScene *scene = context->getScene();
 		if (scene != NULL)
 			scene->update();
-
-		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
 	}
@@ -212,5 +235,31 @@ void CViewInit::onUpdate()
 
 void CViewInit::onRender()
 {
+	if (m_initState == CViewInit::Finished)
+	{
+		float blink = 400.0f;
+		m_blinkTime = m_blinkTime + getTimeStep();
+		if (m_blinkTime < blink)
+			m_guiText->setVisible(false);
+		else
+			m_guiText->setVisible(true);
 
+		if (m_blinkTime > blink * 2.0f)
+			m_blinkTime = 0.0f;
+
+		CGraphics2D::getInstance()->render(CContext::getInstance()->getGUICamera());
+	}
+}
+
+bool CViewInit::OnEvent(const SEvent& event)
+{
+	if (event.EventType == EET_MOUSE_INPUT_EVENT)
+	{
+		if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
+		{
+			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+		}
+	}
+
+	return false;
 }

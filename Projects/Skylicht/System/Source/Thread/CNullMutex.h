@@ -22,27 +22,22 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "stdafx.h"
+#pragma once
+
 #include "IMutex.h"
 #include "SkylichtSystemConfig.h"
 
-#if defined(USE_PTHREAD)
-#include "CPThreadMutex.h"
-#elif defined(USE_STDTHREAD)
-#include "CSTDThreadMutex.h"
-#endif
-#include "CNullMutex.h"
-
 namespace SkylichtSystem
 {
-	IMutex* IMutex::createMutex()
+	class CNullMutex : public IMutex
 	{
-#if defined(USE_PTHREAD)
-		return new CPThreadMutex();
-#elif defined(USE_STDTHREAD)
-		return new CSTDThreadMutex();
-#else
-		return new CNullMutex();
-#endif
-	}
+	protected:
+
+	public:
+		CNullMutex();
+		virtual ~CNullMutex();
+
+		virtual void lock();
+		virtual void unlock();
+	};
 }
