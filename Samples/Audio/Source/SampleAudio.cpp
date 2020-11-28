@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "SampleSkinnedMesh.h"
+#include "SampleAudio.h"
 
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
@@ -8,46 +8,46 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleSkinnedMesh *app = new SampleSkinnedMesh();
-	getApplication()->registerAppEvent("SampleSkinnedMesh", app);
+	SampleAudio *app = new SampleAudio();
+	getApplication()->registerAppEvent("SampleAudio", app);
 }
 
-SampleSkinnedMesh::SampleSkinnedMesh()
+SampleAudio::SampleAudio()
 {
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
 }
 
-SampleSkinnedMesh::~SampleSkinnedMesh()
+SampleAudio::~SampleAudio()
 {
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();
 }
 
-void SampleSkinnedMesh::onInitApp()
+void SampleAudio::onInitApp()
 {
 	CViewManager::getInstance()->getLayer(0)->pushView<CViewInit>();
 }
 
-void SampleSkinnedMesh::onUpdate()
+void SampleAudio::onUpdate()
 {
 	CViewManager::getInstance()->update();
 }
 
-void SampleSkinnedMesh::onRender()
+void SampleAudio::onRender()
 {
 	CViewManager::getInstance()->render();
 }
 
-void SampleSkinnedMesh::onPostRender()
+void SampleAudio::onPostRender()
 {
 	// post render application
 	CViewManager::getInstance()->postRender();
 }
 
-bool SampleSkinnedMesh::onBack()
+bool SampleAudio::onBack()
 {
 	// on back key press
 	// return TRUE will run default by OS (Mobile)
@@ -55,25 +55,25 @@ bool SampleSkinnedMesh::onBack()
 	return CViewManager::getInstance()->onBack();
 }
 
-void SampleSkinnedMesh::onResize(int w, int h)
+void SampleAudio::onResize(int w, int h)
 {
 	if (CContext::getInstance() != NULL)
 		CContext::getInstance()->resize(w, h);
 }
 
-void SampleSkinnedMesh::onResume()
+void SampleAudio::onResume()
 {
 	// resume application
 	CViewManager::getInstance()->onResume();
 }
 
-void SampleSkinnedMesh::onPause()
+void SampleAudio::onPause()
 {
 	// pause application
 	CViewManager::getInstance()->onPause();
 }
 
-void SampleSkinnedMesh::onQuitApp()
+void SampleAudio::onQuitApp()
 {
 	// end application
 	delete this;

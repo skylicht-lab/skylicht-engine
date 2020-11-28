@@ -1,8 +1,11 @@
 import zipfile
 import os
 
-compressExt = ["xml", "hlsl", "glsl", "png",
-               "jpg", "ttf", "otf", "txt", "smesh"]
+compressExt = ["xml", "ttf", "otf", "txt",
+               "hlsl", "glsl",
+               "png", "jpg",
+               "smesh",
+               "mp3", "wav"]
 compressResourceModel = ["dae", "obj", "mtl"]
 compressTextureDDSExt = ["dds"]
 compressTexturePVRExt = ["pvr"]
