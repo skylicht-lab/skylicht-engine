@@ -1,8 +1,8 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SkinnedMesh/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/Audio/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include	
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
@@ -25,7 +25,7 @@ set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template)
 file(GLOB_RECURSE application_source 
 	./Source/**.cpp 
 	./Source/**.c 
-	./Source/**.h	
+	./Source/**.h
 	../SampleFW/**.cpp
 	../SampleFW/**.h)
 
@@ -44,24 +44,24 @@ if (BUILD_ANDROID)
 endif()
 
 if (BUILD_WINDOWS_STORE)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/Assets)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Audio)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Audio/Assets)
 	
 	file(GLOB uwp_assets 
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Assets/**.*
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/**.zip)
 	
 	foreach(asset_file ${uwp_assets})
-		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/Assets)
+		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Audio/Assets)
 	endforeach()
 
 	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Package.appxmanifest
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Audio)
 		
 	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/TemporaryKey.pfx
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Audio)
 
 	file(GLOB_RECURSE platform_uwp_source 
 		${template_path}/Platforms/UWP/**.cpp 
@@ -69,7 +69,7 @@ if (BUILD_WINDOWS_STORE)
 		${template_path}/Platforms/UWP/**.h)
 	
 	# copy resource to generate prj folder
-	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/Assets/**.*)
+	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Audio/Assets/**.*)
 	add_source_group("${platform_uwp_asset}" "Assets")
 	
 	list (APPEND application_source ${platform_uwp_source})
@@ -100,7 +100,6 @@ if (BUILD_MACOS)
 		${template_path}/Platforms/MacOS/**.m
 		${template_path}/Platforms/MacOS/**.mm
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm)
 
 	list (APPEND application_source ${platform_mac_source})
@@ -126,7 +125,7 @@ if (BUILD_DEBUG_VLD)
 	endif()	
 	link_directories(${vld_lib_path})
 endif()
-
+	
 if (BUILD_SDL AND MSVC)
 	if (CMAKE_CL_64)
 		set(sdl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x64")
@@ -136,8 +135,8 @@ if (BUILD_SDL AND MSVC)
 		set(sdl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x86/*.dll")
 	endif()	
 	link_directories(${sdl_lib_path})
-endif()
-
+endif()	
+	
 if (MINGW OR CYGWIN)
 	# .rc build
 	set(CMAKE_RC_COMPILER_INIT windres)
@@ -146,26 +145,26 @@ if (MINGW OR CYGWIN)
 endif()
 
 if (BUILD_EMSCRIPTEN)
-	add_executable(SampleSkinnedMesh 
+	add_executable(SampleAudio 
 		${application_source}
 		${template_path}/Platforms/Emscripten/MainWebGL.cpp
 	)
 elseif(BUILD_SDL)
-	add_executable(SampleSkinnedMesh 
+	add_executable(SampleAudio 
 		${application_source}
 		${template_path}/Platforms/SDL2/MainSDL.cpp
 	)
 elseif(BUILD_ANDROID)
-	add_library(SampleSkinnedMesh SHARED ${application_source})
+	add_library(SampleAudio SHARED ${application_source})
 elseif (BUILD_WINDOWS_STORE)
-	add_executable(SampleSkinnedMesh
+	add_executable(SampleAudio
 		${application_source}
 		${platform_uwp_asset}
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/TemporaryKey.pfx
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/Package.appxmanifest
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Audio/TemporaryKey.pfx
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Audio/Package.appxmanifest
 	)
 elseif (MSVC OR CYGWIN OR MINGW)
-	add_executable(SampleSkinnedMesh WIN32
+	add_executable(SampleAudio WIN32
 		${application_source}
 		${template_path}/Platforms/Win32/Skylicht.rc
 	)
@@ -175,13 +174,13 @@ elseif (BUILD_MACOS)
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
 	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
 
-	add_executable(SampleSkinnedMesh 
+	add_executable(SampleAudio 
 		${application_source} 
 		${resources_files}
 		${dylib_files}
 	)
 	
-	set_target_properties(SampleSkinnedMesh PROPERTIES MACOSX_BUNDLE TRUE)
+	set_target_properties(SampleAudio PROPERTIES MACOSX_BUNDLE TRUE)
 	
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
 	
@@ -195,10 +194,10 @@ elseif (BUILD_MACOS)
 		libGLESv2.dylib
 		PATHS ${angle_lib_path})
 
-	target_link_libraries(SampleSkinnedMesh ${LIBEGL} ${LIBGLESV2})
-	target_link_libraries(SampleSkinnedMesh "-framework Cocoa")
+	target_link_libraries(SampleAudio ${LIBEGL} ${LIBGLESV2})
+	target_link_libraries(SampleAudio "-framework Cocoa")
 		
-	message(STATUS "- Setup project: SampleSkinnedMesh")
+	message(STATUS "- Setup project: SampleAudio")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
 		message(STATUS "  - Add resources: ${res_path}")
@@ -212,57 +211,65 @@ elseif (BUILD_MACOS)
 		source_group("Libs" FILES "${lib_file}")
 	endforeach()
 
-	add_custom_command(TARGET SampleSkinnedMesh 
+	add_custom_command(TARGET SampleAudio 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libEGL.dylib @rpath/libEGL.dylib
-		$<TARGET_FILE:SampleSkinnedMesh>)
+		$<TARGET_FILE:SampleAudio>)
 
-	add_custom_command(TARGET SampleSkinnedMesh 
+	add_custom_command(TARGET SampleAudio 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libGLESv2.dylib @rpath/libGLESv2.dylib
-		$<TARGET_FILE:SampleSkinnedMesh>)
+		$<TARGET_FILE:SampleAudio>)
 
-	set_target_properties(SampleSkinnedMesh PROPERTIES
+	set_target_properties(SampleAudio PROPERTIES
 		MACOSX_RPATH ON
   		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
 else()
-	add_executable(SampleSkinnedMesh ${application_source})
+	add_executable(SampleAudio ${application_source})
 endif()
 
-target_precompiled_header(SampleSkinnedMesh ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleAudio ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)
-	target_link_libraries(SampleSkinnedMesh Client log)
+	target_link_libraries(SampleAudio Client log)
 else()
-	target_link_libraries(SampleSkinnedMesh Client)
+	target_link_libraries(SampleAudio Client)
 endif()
 
 # Imgui
 if (BUILD_IMGUI)
-	target_link_libraries(SampleSkinnedMesh Imgui)
+	target_link_libraries(SampleAudio Imgui)
 endif()
 
 # Emscripten
 if (BUILD_EMSCRIPTEN)
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(SampleSkinnedMesh PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	set_target_properties(SampleAudio PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
-	set(project_name SampleSkinnedMesh)
+	set(project_name SampleAudio)
 	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
-	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SampleSkinnedMesh.html)
+	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SampleAudio.html)
 endif()
 
 #VLD
 if (BUILD_DEBUG_VLD)
 	file(GLOB_RECURSE vld_bin_files ${vld_dll_path})
 	foreach(vld_bin ${vld_bin_files})
-		add_custom_command(TARGET SampleSkinnedMesh POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:SampleSkinnedMesh>)
+		add_custom_command(TARGET SampleAudio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:SampleAudio>)
 	endforeach()
 endif()
 
-set_target_properties(SampleSkinnedMesh PROPERTIES VERSION ${SKYLICHT_VERSION})
-set_target_properties(SampleSkinnedMesh PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+#SDL
+if (BUILD_SDL AND MSVC)
+	file(GLOB_RECURSE sdl_bin_files ${sdl_dll_path})
+	foreach(sdl_bin ${sdl_bin_files})
+		add_custom_command(TARGET SampleAudio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sdl_bin} $<TARGET_FILE_DIR:SampleAudio>)
+	endforeach()
+endif()
+
+set_target_properties(SampleAudio PROPERTIES VERSION ${SKYLICHT_VERSION})
+set_target_properties(SampleAudio PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

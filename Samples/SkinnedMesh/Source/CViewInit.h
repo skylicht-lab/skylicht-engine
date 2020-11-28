@@ -18,6 +18,11 @@ public:
 protected:
 	CGetFileURL *m_getFile;
 
+	bool m_bakeSHLighting;
+
+	CGameObject *m_character01;
+	CGameObject *m_character02;
+
 	EInitState m_initState;
 	unsigned int m_downloaded;
 
