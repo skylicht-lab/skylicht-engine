@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtAudio
 {
+
 	class CMemoryStreamCursor : public IStreamCursor
 	{
 	public:
@@ -45,6 +46,7 @@ namespace SkylichtAudio
 		virtual int read(unsigned char* buff, int len);
 		virtual bool endOfStream();
 		virtual int size();
+		virtual bool readyReadData(int len);
 	};
 
 	class CMemoryStream : public IStream

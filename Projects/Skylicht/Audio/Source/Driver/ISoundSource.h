@@ -97,7 +97,8 @@ namespace SkylichtAudio
 			StateInitial,
 			StatePlaying,
 			StatePause,
-			StateStopped
+			StateStopped,
+			StatePauseWaitData,
 		};
 
 	public:

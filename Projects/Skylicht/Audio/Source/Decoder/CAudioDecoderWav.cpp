@@ -21,11 +21,15 @@ namespace SkylichtAudio
 		delete m_streamCursor;
 	}
 
-	bool CAudioDecoderWav::initDecode()
+	EStatus CAudioDecoderWav::initDecode()
 	{
 		SChunkHeader chunkHeader;
 
 		bool success = false;
+
+		// wait stream download
+		if (m_streamCursor->readyReadData(FmtChunkSize) == false)
+			return WaitData;
 
 		// todo parse wav file
 		while (m_streamCursor->endOfStream() == false)
@@ -138,21 +142,36 @@ namespace SkylichtAudio
 				success = false;
 			}
 		}
-		return success;
+
+		if (success == true)
+			return Success;
+
+		return Failed;
 	}
 
-	int CAudioDecoderWav::decode(void* outputBuffer, int bufferSize)
+	EStatus CAudioDecoderWav::decode(void* outputBuffer, int bufferSize)
 	{
 		if (m_subDecoder == NULL)
-			return 0;
+			return Failed;
 
 		// silent buffer
 		memset(outputBuffer, 0, bufferSize);
 
+		// need wait data
+		// check safe data avaiable will be encode
+		if (m_streamCursor->readyReadData(bufferSize) == false)
+		{
+			// return state wait data
+			return WaitData;
+		}
+
 		// update loop
 		m_subDecoder->setLoop(m_loop);
 
-		return m_subDecoder->decode(outputBuffer, bufferSize);
+		if (m_subDecoder->decode(outputBuffer, bufferSize) > 0)
+			return Success;
+		else
+			return EndStream;
 	}
 
 	int CAudioDecoderWav::seek(int bufferSize)
@@ -175,5 +194,11 @@ namespace SkylichtAudio
 		{
 			*track = m_subDecoder->getTrackParams();
 		}
+	}
+
+	float CAudioDecoderWav::getCurrentTime()
+	{
+		// implement later
+		return 0.0f;
 	}
 }
