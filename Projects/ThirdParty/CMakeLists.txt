@@ -3,6 +3,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/zlib
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/libmpg123
 )
 
 #aesGladman
@@ -105,6 +106,15 @@ set(freetype_source
 	./source/freetype2/src/truetype/truetype.c)
 add_source_group("${freetype_source}" "source\\freetype2")
 
+#libmpg123
+file(GLOB_RECURSE libmpg123_source 
+	./source/libmpg123/**.cpp 
+	./source/libmpg123/**.hpp 
+	./source/libmpg123/**.c 
+	./source/libmpg123/**.h
+	./source/libmpg123/**.S)
+setup_project_group("${libmpg123_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_library(ThirdParty STATIC
 	${aes_gladman_source} 
 	${bzip2_source}
@@ -116,6 +126,7 @@ add_library(ThirdParty STATIC
 	${mpc_source}
 	${zlib_source}
 	${freetype_source}
+	${libmpg123_source}
 )
 
 set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})
