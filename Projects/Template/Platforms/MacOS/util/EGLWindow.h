@@ -24,6 +24,7 @@ namespace angle
 {
 class Library;
 struct PlatformMethods;
+using GenericProc = void (*)();
 }  // namespace angle
 
 struct ANGLE_UTIL_EXPORT ConfigParameters
@@ -69,6 +70,7 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
 
     virtual bool initializeGL(OSWindow *osWindow,
                               angle::Library *glWindowingLibrary,
+                              angle::GLESDriverType driverType,
                               const EGLPlatformParameters &platformParams,
                               const ConfigParameters &configParams) = 0;
     virtual bool isGLInitialized() const                            = 0;
@@ -77,6 +79,7 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
     virtual bool makeCurrent()                                      = 0;
     virtual bool hasError() const                                   = 0;
     virtual bool setSwapInterval(EGLint swapInterval)               = 0;
+    virtual angle::GenericProc getProcAddress(const char *name)     = 0;
 
     bool isMultisample() const { return mConfigParams.multisample; }
     bool isDebugEnabled() const { return mConfigParams.debug; }
@@ -112,6 +115,7 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
     // Internally initializes the Display, Surface and Context.
     bool initializeGL(OSWindow *osWindow,
                       angle::Library *glWindowingLibrary,
+                      angle::GLESDriverType driverType,
                       const EGLPlatformParameters &platformParams,
                       const ConfigParameters &configParams) override;
 
@@ -121,10 +125,12 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
     bool makeCurrent() override;
     bool hasError() const override;
     bool setSwapInterval(EGLint swapInterval) override;
+    angle::GenericProc getProcAddress(const char *name) override;
 
     // Only initializes the Display.
     bool initializeDisplay(OSWindow *osWindow,
                            angle::Library *glWindowingLibrary,
+                           angle::GLESDriverType driverType,
                            const EGLPlatformParameters &params);
 
     // Only initializes the Surface.

@@ -7,7 +7,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
 )
 
@@ -95,7 +95,9 @@ if (BUILD_MACOS)
 		${template_path}/Platforms/MacOS/**.c 
 		${template_path}/Platforms/MacOS/**.h
 		${template_path}/Platforms/MacOS/**.m
-		${template_path}/Platforms/MacOS/**.mm)
+		${template_path}/Platforms/MacOS/**.mm
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm)
 
 	list (APPEND application_source ${platform_mac_source})
 

@@ -38,6 +38,8 @@ using namespace irr::video;
 #include "Skylicht.h"
 using namespace Skylicht;
 
+#include "SkylichtAudio.h"
+
 // STL C++
 #include <algorithm>
 #include <vector>
