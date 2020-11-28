@@ -79,6 +79,9 @@ CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect)
 
 void CContext::resize(int w, int h)
 {
+	if (m_beginRP != NULL)
+		m_beginRP->resize(w, h);
+
 	if (m_shadowMapRendering != NULL)
 		m_shadowMapRendering->resize(w, h);
 

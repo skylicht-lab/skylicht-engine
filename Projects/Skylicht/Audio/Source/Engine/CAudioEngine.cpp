@@ -26,6 +26,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CAudioEngine.h"
 #include "CStreamFactory.h"
 
+// mp3 library
+#include "mpg123.h"
+
 namespace SkylichtAudio
 {
 	void initSkylichtAudio()
@@ -81,6 +84,9 @@ namespace SkylichtAudio
 		m_defaultStreamFactory = new CStreamFactory();
 		registerStreamFactory(m_defaultStreamFactory);
 
+		// init mp3 library
+		mpg123_init();
+
 		// start thread
 #ifdef USE_MULTITHREAD_UPDATE
 		m_thread = IThread::createThread(this);
@@ -110,6 +116,9 @@ namespace SkylichtAudio
 
 		// delete driver
 		delete m_driver;
+
+		// todo: free mp3 library
+		mpg123_exit();
 	}
 
 	void CAudioEngine::pauseEngine()
@@ -272,7 +281,11 @@ namespace SkylichtAudio
 			}
 
 			// cache
-			m_fileToStream[fileName] = stream;
+			if (stream != NULL)
+			{
+				m_fileToStream[fileName] = stream;
+				stream->grab();
+			}
 		}
 		else
 		{
@@ -323,7 +336,7 @@ namespace SkylichtAudio
 		std::map<std::string, IStream*>::iterator i = m_fileToStream.begin(), end = m_fileToStream.end();
 		while (i != end)
 		{
-			delete i->second;
+			i->second->drop();
 			++i;
 		}
 		m_fileToStream.clear();

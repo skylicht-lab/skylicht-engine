@@ -2,11 +2,11 @@
 
 #include "IApplicationEventReceiver.h"
 
-class SampleSkinnedMesh : public IApplicationEventReceiver
+class SampleAudio : public IApplicationEventReceiver
 {
 public:
-	SampleSkinnedMesh();
-	virtual ~SampleSkinnedMesh();
+	SampleAudio();
+	virtual ~SampleAudio();
 
 	virtual void onUpdate();
 
@@ -19,7 +19,7 @@ public:
 	virtual void onPause();
 
 	virtual bool onBack();
-
+	
 	virtual void onResize(int w, int h);
 
 	virtual void onInitApp();
