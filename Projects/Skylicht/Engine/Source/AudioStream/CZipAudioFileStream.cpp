@@ -156,14 +156,19 @@ namespace Skylicht
 
 			if (bytesLeft == 0)
 			{
+				// seedk to offset
 				m_file->seek(m_bufferOffset);
-				m_file->read(m_buffer, m_bufferSize);
 
-				m_bufferAvailableBytes = m_bufferSize;
+				// read buffer size
+				u32 readSize = m_file->read(m_buffer, m_bufferSize);
+
+				// cache available size
+				m_bufferAvailableBytes = readSize;
 
 				m_bufferOffset += m_bufferAvailableBytes;
 				m_bufferPos = 0;
 
+				// maybe end of stream
 				if (m_bufferAvailableBytes == 0)
 				{
 					m_pos += outBytes;
