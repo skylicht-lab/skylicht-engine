@@ -145,4 +145,9 @@ namespace SkylichtAudio
 	{
 		return m_size;
 	}
+
+	bool CMemoryStreamCursor::readyReadData(int len)
+	{
+		return true;
+	}
 }
