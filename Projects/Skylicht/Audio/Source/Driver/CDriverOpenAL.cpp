@@ -214,7 +214,7 @@ namespace SkylichtAudio
 		alGetSourcei(m_alSourceID, AL_SOURCE_STATE, &val);
 		if (val != AL_PLAYING)
 		{
-			printLog("Restart source AL: %d - %d\n", m_alSourceID, val);
+			printLog("Restart source AL: %d - %d", m_alSourceID, val);
 			alSourcePlay(m_alSourceID);
 		}
 
