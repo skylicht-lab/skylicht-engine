@@ -5,6 +5,8 @@
 
 CViewDemo::CViewDemo()
 {
+	SkylichtAudio::initSkylichtAudio();
+
 	// add to support read resource on ZIP Bundle
 	m_streamFactory = new CZipAudioStreamFactory();
 	SkylichtAudio::CAudioEngine::getSoundEngine()->registerStreamFactory(m_streamFactory);
@@ -14,6 +16,8 @@ CViewDemo::~CViewDemo()
 {
 	SkylichtAudio::CAudioEngine::getSoundEngine()->unRegisterStreamFactory(m_streamFactory);
 	delete m_streamFactory;
+
+	SkylichtAudio::releaseSkylichtAudio();
 }
 
 void CViewDemo::onInit()
@@ -44,6 +48,8 @@ void CViewDemo::onDestroy()
 
 void CViewDemo::onUpdate()
 {
+	SkylichtAudio::updateSkylichtAudio();
+
 	CContext *context = CContext::getInstance();
 	CScene *scene = context->getScene();
 	if (scene != NULL)
