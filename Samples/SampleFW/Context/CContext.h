@@ -42,6 +42,11 @@ public:
 		return m_scene;
 	}
 
+	inline void setCustomRP(CBaseRP *rp)
+	{
+		m_beginRP = rp;
+	}
+
 	inline CShadowMapRP* getShadowMapRenderPipeline()
 	{
 		return m_shadowMapRendering;
