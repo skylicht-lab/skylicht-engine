@@ -21,7 +21,6 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
 #include "pch.h"
 #include "CInput.h"
@@ -360,7 +359,7 @@ namespace Skylicht
 
 				if (IsControlDown())
 				{
-					accelString += "CTRL + ";					
+					accelString += "CTRL + ";
 				}
 
 				if (IsShiftDown())
