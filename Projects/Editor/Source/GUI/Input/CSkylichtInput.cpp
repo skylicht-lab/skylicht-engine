@@ -21,7 +21,6 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
 #include "pch.h"
 #include "CSkylichtInput.h"
