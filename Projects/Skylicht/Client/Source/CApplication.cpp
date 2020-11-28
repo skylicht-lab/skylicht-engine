@@ -153,7 +153,6 @@ namespace Skylicht
 
 		// init skylicht component
 		Skylicht::initSkylicht(m_device);
-		SkylichtAudio::initSkylichtAudio();
 
 		// install application
 		installApplication(m_argv);
@@ -174,7 +173,6 @@ namespace Skylicht
 
 		// release skylicht component
 		Skylicht::releaseSkylicht();
-		SkylichtAudio::releaseSkylichtAudio();
 	}
 
 	void CApplication::mainLoop()
@@ -202,10 +200,7 @@ namespace Skylicht
 		setTimeStep(m_timeStep);
 
 		// skylicht update
-		Skylicht::updateSkylicht();
-
-		// update audio driver
-		SkylichtAudio::updateSkylichtAudio();
+		Skylicht::updateSkylicht();		
 
 		// application receiver
 		sendEventToAppReceiver(AppEventUpdate);

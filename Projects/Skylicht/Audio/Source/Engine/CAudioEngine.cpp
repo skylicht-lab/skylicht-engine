@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtAudio
 {
+	CAudioEngine *g_engine = NULL;
+
 	void initSkylichtAudio()
 	{
 		CAudioEngine::getSoundEngine()->init();
@@ -43,10 +45,9 @@ namespace SkylichtAudio
 
 	void updateSkylichtAudio()
 	{
-		CAudioEngine::getSoundEngine()->updateDriver();
+		if (g_engine != NULL)
+			g_engine->updateDriver();
 	}
-
-	CAudioEngine *g_engine = NULL;
 
 	CAudioEngine* CAudioEngine::getSoundEngine()
 	{
