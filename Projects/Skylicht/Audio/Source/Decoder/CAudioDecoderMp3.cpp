@@ -300,7 +300,15 @@ namespace SkylichtAudio
 					if (readSize == 0)
 					{
 						if (m_streamCursor->endOfStream() == true)
+						{
+							if (m_loop == true)
+							{
+								if (seek(0) < 0)
+									return Failed;
+								return Success;
+							}
 							return EndStream;
+						}
 						else
 							return Failed;
 					}
@@ -322,7 +330,7 @@ namespace SkylichtAudio
 
 		int sample = bufferSize / 4;
 
-		printLog("CAudioDecoderMp3: begin seek: %d\n", sample);
+		printLog("CAudioDecoderMp3: Begin seek: %d\n", sample);
 
 		// seek to begin		
 		mpg123_feedseek(m_mp3Handle, 0, SEEK_SET, &inoffset);
