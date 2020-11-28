@@ -22,45 +22,62 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYLICHTAUDIO_MEMORYSTREAM_H_
-#define _SKYLICHTAUDIO_MEMORYSTREAM_H_
+#ifndef _SKYLICHTAUDIO_IAUDIODECODERMP3_H_
+#define _SKYLICHTAUDIO_IAUDIODECODERMP3_H_
 
-#include "IStream.h"
+#include "Stream/IStream.h"
+#include "Driver/ISoundSource.h"
+#include "Driver/ISoundDriver.h"
+
+#include "IAudioDecoder.h"
+
+// library mp3 mpg123
+#include "mpg123.h"
+
 
 namespace SkylichtAudio
 {
 
-	class CMemoryStreamCursor : public IStreamCursor
-	{
-	public:
-		unsigned char *m_buffer;
-		int m_size;
-		int m_pos;
-
-	public:
-		CMemoryStreamCursor(unsigned char *buffer, int size);
-		virtual ~CMemoryStreamCursor();
-
-		virtual int seek(int pos, EOrigin origin);
-		virtual int tell();
-		virtual int read(unsigned char* buff, int len);
-		virtual bool endOfStream();
-		virtual int size();
-		virtual bool readyReadData(int len);
-	};
-
-	class CMemoryStream : public IStream
+	class CAudioDecoderMp3 : public IAudioDecoder
 	{
 	protected:
-		unsigned char *m_buffer;
-		int m_size;
-		bool m_takeOwnership;
+		IStreamCursor	*m_streamCursor;
+
+		bool			m_floatSample;
+		int				m_bitPerSample;
+
+		mpg123_handle	*m_mp3Handle;
+		int				m_initState;
 
 	public:
-		CMemoryStream(unsigned char *buffer, int size, bool takeOwnership = false);
-		virtual ~CMemoryStream();
+		CAudioDecoderMp3(IStream *stream);
+		virtual ~CAudioDecoderMp3();
 
-		virtual IStreamCursor* createCursor();
+		virtual EStatus initDecode();
+		virtual EStatus decode(void* outputBuffer, int bufferSize);
+		virtual float getCurrentTime();
+		virtual int seek(int bufferSize);
+
+		virtual void getTrackParam(STrackParams* track);
+
+	protected:
+
+		// resizeData
+		void resizeData(int size);
+
+		// convertFloat32ToShort
+		void convertFloat32ToShort(short* dest, float* src, int size);
+
+	protected:
+		STrackParams	m_trackParams;
+
+		int m_dataInBuffer;
+		int m_dataInBufferConsumed;
+
+		int m_bufferSize;
+
+		unsigned char *m_sampleBuffer;
+		unsigned char *m_sampleDecodeBuffer;
 	};
 
 }

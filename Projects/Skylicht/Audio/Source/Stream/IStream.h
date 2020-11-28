@@ -46,17 +46,42 @@ namespace SkylichtAudio
 		virtual int read(unsigned char* buff, int len) = 0;
 		virtual bool endOfStream() = 0;
 		virtual int size() = 0;
+		virtual bool readyReadData(int len) = 0;
 	};
 
 
 	class IStream
 	{
+	protected:
+		int	m_referenceCount;
+
 	public:
+		IStream()
+		{
+			m_referenceCount = 1;
+		}
+
 		virtual ~IStream()
 		{
 		}
 
 		virtual IStreamCursor* createCursor() = 0;
+
+		virtual void grab()
+		{
+			m_referenceCount++;
+		}
+
+		virtual bool drop()
+		{
+			m_referenceCount--;
+			if (m_referenceCount <= 0)
+			{
+				delete this;
+				return true;
+			}
+			return false;
+		}
 	};
 
 }

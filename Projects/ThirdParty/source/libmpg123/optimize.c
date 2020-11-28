@@ -891,7 +891,7 @@ void check_decoders(void )
 	return;
 #else
 	const char **d = mpg123_supported_decoder_list;
-#if defined(OPT_X86) && !defined(ANDROID)
+#if defined(OPT_X86) && !defined(OPT_NO_OPTIMIZE)
 	getcpuflags(&cpu_flags);
 	if(cpu_i586(cpu_flags))
 	{

@@ -51,14 +51,15 @@ namespace SkylichtAudio
 		virtual int read(unsigned char* buff, int len);
 		virtual bool endOfStream();
 		virtual int size();
+		virtual bool readyReadData(int len);
 	};
 
 	class CFileStream : public IStream
 	{
 	protected:
-		std::string		m_fileName;
-		FILE			*m_file;
-		int				m_size;
+		std::string	m_fileName;
+		FILE *m_file;
+		int m_size;
 
 	public:
 		CFileStream(const char *fileName);

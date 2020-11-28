@@ -11,23 +11,29 @@
 
 namespace SkylichtAudio
 {
-	
-	class CAudioDecoderWav: public IAudioDecoder
+
+	class CAudioDecoderWav : public IAudioDecoder
 	{
 	protected:
-		IStreamCursor	*m_streamCursor;
-		SWaveChunk		m_waveChunk;
+		IStreamCursor *m_streamCursor;
+		SWaveChunk m_waveChunk;
 
-		IWavSubDecoder	*m_subDecoder;
+		IWavSubDecoder *m_subDecoder;
+
 	public:
 		CAudioDecoderWav(IStream *stream);
+
 		virtual ~CAudioDecoderWav();
 
-		virtual bool initDecode();
-		virtual int decode(void* outputBuffer, int bufferSize);
+		virtual EStatus initDecode();
+
+		virtual EStatus decode(void* outputBuffer, int bufferSize);
+
 		virtual int seek(int bufferSize);
 
 		virtual void getTrackParam(STrackParams* track);
+
+		virtual float getCurrentTime();
 	};
 
 }

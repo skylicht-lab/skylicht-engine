@@ -37,29 +37,22 @@ namespace SkylichtAudio
 	{
 	public:
 		CSoundSource(float length);
-
 		virtual ~CSoundSource();
 
 		virtual void init(const STrackParams& trackParam, const SSourceParam &driverParam);
-
 		virtual bool needData();
 
 		virtual void changeDuration(float duration);
 
 		virtual void play();
-
 		virtual void stop();
-
 		virtual void pause();
-
 		virtual void reset();
 
 		virtual ESourceState getState();
-
 		virtual void setState(ESourceState state);
 
 		virtual long getByteOffset();
-
 		virtual void setByteOffset(int offset);
 
 		virtual int getBufferSize();
@@ -67,34 +60,25 @@ namespace SkylichtAudio
 		virtual void uploadData(void* soundData, unsigned int bufferSize);
 
 		virtual void lockThread();
-
 		virtual void unlockThread();
 
 		virtual void fillBuffer(int* buffer, int nbSample, float gain = 1.0f);
 
 		virtual void setGain(float gain);
-
 		virtual void setPitch(float pitch);
-
 		virtual void setPosition(const SVector3& pos);
-
 		virtual void setRollOff(float rollOff);
-
 		virtual void set3DSound(bool b);
 
 		virtual float getGain();
-
 		virtual float getPitch();
 
 		virtual void update(float dt);
 
 	protected:
 		void update3D();
-
 		float calcDistanceGain(const SListener& listener);
-
 		void calcLeftRightGain(const SListener& listener, float &left, float &right);
-
 	protected:
 		STrackParams m_trackParams;
 		int m_numDriverBuffer;

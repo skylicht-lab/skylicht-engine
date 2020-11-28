@@ -24,8 +24,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "stdafx.h"
 #include "CAudioEmitter.h"
+
 #include "Decoder/CAudioDecoderWav.h"
+#include "Decoder/CAudioDecoderMp3.h"
 #include "Engine/CAudioEngine.h"
+
+// todo event
+/*
+#define EVENT_DECODE_FAILED	-1
+#define EVENT_PLAYING 0
+#define EVENT_STOP 1
+#define EVENT_PAUSE 2
+#define EVENT_ENDTRACK 3
+*/
 
 namespace SkylichtAudio
 {
@@ -57,6 +68,8 @@ namespace SkylichtAudio
 		m_decodeType = type;
 		m_driver = driver;
 		m_stream = stream;
+
+		m_stream->grab();
 	}
 
 	CAudioEmitter::CAudioEmitter(const char *file, bool cache, ISoundDriver* driver)
@@ -76,6 +89,7 @@ namespace SkylichtAudio
 		m_gain = 1.0f;
 		m_rollOff = 10.0f;	// 10m
 		m_is3DSound = false;
+		m_currentTime = 0.0f;
 
 		m_loop = false;
 		m_cache = false;
@@ -84,17 +98,19 @@ namespace SkylichtAudio
 		m_mutex = IMutex::createMutex();
 		m_state = ISoundSource::StateStopped;
 
-		m_decodeType = IAudioDecoder::Wav;
+		m_decodeType = IAudioDecoder::Mp3;
 		m_driver = NULL;
 		m_stream = NULL;
 		m_source = NULL;
 		m_decoder = NULL;
 
+		m_bufferLengthTime = 0.0f;
 		m_currentBuffer = 0;
 		m_numBuffer = 0;
 		m_decodeBuffer = NULL;
 
 		m_init = true;
+		m_initState = 0;
 	}
 
 	CAudioEmitter::~CAudioEmitter()
@@ -102,7 +118,6 @@ namespace SkylichtAudio
 		if (m_source)
 			m_driver->destroyDriverSource(m_source);
 
-		// delete decode buffer
 		for (int i = 0; i < m_numBuffer; i++)
 		{
 			if (m_buffer[i] != NULL)
@@ -118,90 +133,112 @@ namespace SkylichtAudio
 		if (m_decoder)
 			delete m_decoder;
 
+		if (m_stream)
+			m_stream->drop();
+
 		delete m_mutex;
 	}
 
-	bool CAudioEmitter::initEmitter()
+	EStatus CAudioEmitter::initEmitter()
 	{
-		m_source = m_driver->createSource();
-
-		if (m_stream == NULL && m_fileName.empty() == false)
+		// state 0
+		// init config & streaming
+		if (m_initState == 0)
 		{
-			printLog("[SkylichtAudio] Init emitter: %s\n", m_fileName.c_str());
-			m_stream = CAudioEngine::getSoundEngine()->createStreamFromFileAndCache(m_fileName.c_str(), m_cache);
-		}
+			m_source = m_driver->createSource();
 
-		if (m_stream == NULL)
-		{
-			return false;
-		}
-
-		switch (m_decodeType)
-		{
-		case IAudioDecoder::Wav:
-			m_decoder = new CAudioDecoderWav(m_stream);
-			break;
-		case IAudioDecoder::Mp3:
-			// m_decoder = new CAudioDecoderMpc(m_stream);
-			break;
-		default:
-			m_decoder = NULL;
-			break;
-		}
-
-		if (m_decoder == NULL)
-			return false;
-
-		m_currentBuffer = 0;
-		m_numBuffer = 0;
-
-		m_decodeBuffer = NULL;
-
-		// init decode
-		if (m_decoder->initDecode() == true)
-		{
-			// get param
-			SSourceParam sourceParam;
-			STrackParams trackParam;
-
-			m_driver->getSourceParam(&sourceParam);
-			m_decoder->getTrackParam(&trackParam);
-
-			// init source
-			m_source->init(trackParam, sourceParam);
-
-			// init decode buffer
-			m_numBuffer = sourceParam.NumBuffer;
-			m_bufferSize = m_source->getBufferSize();
-			m_buffer = new unsigned char*[m_numBuffer];
-			m_allocSize = m_bufferSize;
-
-			// init decode
-			m_decodeBuffer = new unsigned char[(int)(m_bufferSize * SKYLICHTAUDIO_MAX_PITCH)];
-
-			// silent buffer
-			for (int i = 0; i < m_numBuffer; i++)
+			if (m_stream == NULL && m_fileName.empty() == false)
 			{
-				m_buffer[i] = new unsigned char[m_bufferSize];
-				memset(m_buffer[i], 0, m_bufferSize);
+				printf("[SkylichtAudio] init emitter: %s\n", m_fileName.c_str());
+				m_stream = CAudioEngine::getSoundEngine()->createStreamFromFileAndCache(m_fileName.c_str(), m_cache);
 			}
 
-			m_state = ISoundSource::StateStopped;
+			if (m_stream == NULL)
+			{
+				return Failed;
+			}
+
+			switch (m_decodeType)
+			{
+			case IAudioDecoder::Wav:
+				m_decoder = new CAudioDecoderWav(m_stream);
+				break;
+			case IAudioDecoder::Mp3:
+				m_decoder = new CAudioDecoderMp3(m_stream);
+				break;
+			default:
+				m_decoder = NULL;
+				break;
+			}
+
+			if (m_decoder == NULL)
+				return Failed;
+
+			m_currentBuffer = 0;
+			m_numBuffer = 0;
+
+			m_decodeBuffer = NULL;
+			m_initState++;
 		}
-		else
+
+		// state 1
+		// init decode
+		if (m_initState == 1)
 		{
-			m_driver->destroyDriverSource(m_source);
+			EStatus status = m_decoder->initDecode();
+			if (status == WaitData)
+				return status;
 
-			if (m_decoder)
-				delete m_decoder;
+			// init decode
+			if (status == Success)
+			{
+				// get param
+				SSourceParam sourceParam;
+				STrackParams trackParam;
 
-			m_source = NULL;
-			m_decoder = NULL;
+				m_driver->getSourceParam(&sourceParam);
+				m_decoder->getTrackParam(&trackParam);
 
-			m_state = ISoundSource::StateError;
+				// init source
+				m_source->init(trackParam, sourceParam);
+
+				// init decode buffer
+				m_numBuffer = sourceParam.NumBuffer;
+				m_bufferSize = m_source->getBufferSize();
+				m_buffer = new unsigned char*[m_numBuffer];
+
+				// calc buffer length
+				m_bufferLengthTime = (m_bufferSize >> 2) / (float)sourceParam.SamplingRate;
+
+				// init decode
+				m_decodeBuffer = new unsigned char[(int)(m_bufferSize * SKYLICHTAUDIO_MAX_PITCH)];
+
+				// silent buffer
+				for (int i = 0; i < m_numBuffer; i++)
+				{
+					m_buffer[i] = new unsigned char[m_bufferSize];
+					memset(m_buffer[i], 0, m_bufferSize);
+				}
+
+				m_state = ISoundSource::StateStopped;
+			}
+			else
+			{
+				m_driver->destroyDriverSource(m_source);
+
+				if (m_decoder)
+					delete m_decoder;
+
+				m_source = NULL;
+				m_decoder = NULL;
+
+				m_state = ISoundSource::StateError;
+			}
+
+			m_initState++;
 		}
 
-		return true;
+		return Success;
 	}
 
 	void CAudioEmitter::update()
@@ -209,8 +246,31 @@ namespace SkylichtAudio
 		SScopeMutex scopelock(m_mutex);
 		if (m_init == true)
 		{
-			initEmitter();
-			m_init = false;
+			EStatus status = initEmitter();
+
+			if (status == Success)
+			{
+				// ok
+				m_init = false;
+			}
+			else if (status == Failed)
+			{
+				// todo event decode failed
+				// CAudioEngine::getSoundEngine()->pushEvent(EVENT_DECODE_FAILED);
+
+				// init decode failed
+				if (m_decoder != NULL)
+				{
+					delete m_decoder;
+					m_decoder = NULL;
+				}
+				m_init = false;
+			}
+			else
+			{
+				// need wait download data stream
+				return;
+			}
 		}
 
 		if (m_decoder == NULL || m_source == NULL)
@@ -262,6 +322,9 @@ namespace SkylichtAudio
 					m_decoder->seek(0);
 
 				m_state = ISoundSource::StateStopped;
+
+				// todo post event stop
+				// CAudioEngine::getSoundEngine()->pushEvent(EVENT_STOP);
 			}
 			else
 			{
@@ -269,39 +332,16 @@ namespace SkylichtAudio
 			}
 		}
 
-		// change buffer duration
-		if (m_bufferSize != m_source->getBufferSize())
-		{
-			m_bufferSize = m_source->getBufferSize();
-
-			if (m_allocSize < m_bufferSize)
-			{
-				// init decode
-				delete m_decodeBuffer;
-				m_decodeBuffer = new unsigned char[(int)(m_bufferSize * SKYLICHTAUDIO_MAX_PITCH)];
-
-				// silent buffer
-				for (int i = 0; i < m_numBuffer; i++)
-				{
-					delete m_buffer[i];
-					m_buffer[i] = new unsigned char[m_bufferSize];
-					memset(m_buffer[i], 0, m_bufferSize);
-				}
-
-				m_allocSize = m_bufferSize;
-			}
-		}
+		EStatus decodeResult;
 
 		// todo update emitter
 		if (m_state == ISoundSource::StatePlaying)
 		{
-			if (m_source->needData() == true)
+			if (m_source->needData() == true && m_decoder != NULL)
 			{
-				int sizeDecode = 0;
-
 				if (m_pitch == 1.0f)
 				{
-					sizeDecode = m_decoder->decode(m_buffer[m_currentBuffer], m_bufferSize);
+					decodeResult = m_decoder->decode(m_buffer[m_currentBuffer], m_bufferSize);
 				}
 				else
 				{
@@ -309,7 +349,7 @@ namespace SkylichtAudio
 
 					memset(m_buffer[m_currentBuffer], 0, m_bufferSize);
 
-					sizeDecode = m_decoder->decode(m_decodeBuffer, pitchSize);
+					decodeResult = m_decoder->decode(m_decodeBuffer, pitchSize);
 
 					STrackParams trackParam;
 					m_decoder->getTrackParam(&trackParam);
@@ -324,7 +364,7 @@ namespace SkylichtAudio
 					int sample = 0;
 
 					// in mono
-					float pitch = sizeDecode / (float)m_bufferSize;
+					float pitch = pitchSize / (float)m_bufferSize;
 
 					float fract = 0.0f;
 
@@ -377,9 +417,59 @@ namespace SkylichtAudio
 				m_currentBuffer = m_currentBuffer % m_numBuffer;
 
 				// stop
-				if (sizeDecode == 0)
+				if (decodeResult == WaitData)
+				{
+					m_state = ISoundSource::StatePauseWaitData;
+				}
+				else if (decodeResult == Failed || decodeResult == EndStream)
+				{
+					// todo post event stop
+					/*
+					if (decodeResult == Failed)
+						CAudioEngine::getSoundEngine()->pushEvent(EVENT_STOP);
+					else
+						CAudioEngine::getSoundEngine()->pushEvent(EVENT_ENDTRACK);
+					*/
+
 					m_state = ISoundSource::StateStopped;
+				}
+				else if (decodeResult == Success)
+				{
+					m_currentTime = m_currentTime + m_pitch * m_bufferLengthTime * 1000.0f;
+				}
 			}
+		}
+		else if (m_state == ISoundSource::StatePauseWaitData)
+		{
+			decodeResult = m_decoder->decode(m_buffer[m_currentBuffer], m_bufferSize);
+
+			if (decodeResult == Success)
+			{
+				// change to state playing
+				m_state = ISoundSource::StatePlaying;
+
+				// todo
+				// will seek to pause time
+				STrackParams trackParam;
+				m_decoder->getTrackParam(&trackParam);
+
+				int seekBufferSize = (int)(trackParam.SamplingRate * (m_currentTime / 1000.0f)) * 4;
+				m_decoder->seek(seekBufferSize);
+
+				if (m_source)
+				{
+					m_source->lockThread();
+
+					if (m_buffer)
+					{
+						for (int i = 0; i < m_numBuffer; i++)
+							memset(m_buffer[i], 0, m_bufferSize);
+					}
+
+					m_source->unlockThread();
+				}
+			}
+
 		}
 	}
 
@@ -388,6 +478,35 @@ namespace SkylichtAudio
 		m_fadeGain = m_gain;
 		m_fadeout = time;
 		m_stopWithFade = time;
+	}
+
+	void CAudioEmitter::seek(float time)
+	{
+		if (m_decoder == NULL && m_init == true)
+			return;
+
+		SScopeMutex scopelock(m_mutex);
+
+		STrackParams trackParam;
+		m_decoder->getTrackParam(&trackParam);
+
+		int seekBufferSize = (int)(trackParam.SamplingRate * (time / 1000.0f)) * 4;
+		m_decoder->seek(seekBufferSize);
+
+		if (m_state != ISoundSource::StatePause && m_source)
+		{
+			m_source->lockThread();
+
+			if (m_buffer)
+			{
+				for (int i = 0; i < m_numBuffer; i++)
+					memset(m_buffer[i], 0, m_bufferSize);
+			}
+
+			m_source->unlockThread();
+		}
+
+		m_currentTime = time;
 	}
 
 	void CAudioEmitter::play(bool fromBegin)
@@ -405,6 +524,8 @@ namespace SkylichtAudio
 			m_source->play();
 		else
 			m_forcePlay = true;
+
+		// CAudioEngine::getSoundEngine()->pushEvent(EVENT_PLAYING);
 	}
 
 	void CAudioEmitter::setGain(float g)
@@ -471,6 +592,7 @@ namespace SkylichtAudio
 			m_source->unlockThread();
 		}
 
+		// CAudioEngine::getSoundEngine()->pushEvent(EVENT_PAUSE);
 		m_state = ISoundSource::StatePause;
 
 		if (m_source)
