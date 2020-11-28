@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtAudio
 {
+
 	///////////////////////////////////////////
 	// CFileStream
 	///////////////////////////////////////////
@@ -235,4 +236,8 @@ namespace SkylichtAudio
 		return m_size;
 	}
 
+	bool CFileStreamCursor::readyReadData(int len)
+	{
+		return true;
+	}
 }

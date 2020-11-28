@@ -31,8 +31,8 @@ namespace SkylichtAudio
 {
 	CSoundSource::CSoundSource(float length)
 	{
-		m_bitPerSample = 16; // 16 bit
-		m_bufferDuration = length; // s
+		m_bitPerSample = 16;		// 16 bit
+		m_bufferDuration = length;	// s
 		m_driverBuffer = 0;
 		m_state = ISoundSource::StateInitial;
 		m_mutex = IMutex::createMutex();
@@ -42,7 +42,7 @@ namespace SkylichtAudio
 		m_rightGain = 1.0f;
 		m_gain = 1.0f;
 		m_pitch = 1.0f;
-		m_rollOff = 10.0f; // 10m
+		m_rollOff = 10.0f;		// 10m
 		m_is3DSound = false;
 	}
 

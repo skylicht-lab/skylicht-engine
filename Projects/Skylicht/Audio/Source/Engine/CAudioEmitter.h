@@ -61,12 +61,13 @@ namespace SkylichtAudio
 		unsigned char **m_buffer;
 		unsigned char *m_decodeBuffer;
 
+		float m_bufferLengthTime;
 		int m_currentBuffer;
 		int m_numBuffer;
 		int m_bufferSize;
-		int m_allocSize;
 
 		bool m_init;
+		int m_initState;
 
 		float m_gain;
 		bool m_loop;
@@ -82,13 +83,16 @@ namespace SkylichtAudio
 		float m_fadeout;
 		float m_stopWithFade;
 
+		float m_currentTime;
 	public:
 
 		static IAudioDecoder::EDecoderType getDecode(const char *fileName);
 
 	public:
 		CAudioEmitter(IStream *stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver);
+
 		CAudioEmitter(const char *file, bool cache, ISoundDriver* driver);
+
 		virtual ~CAudioEmitter();
 
 		void setName(const char *name)
@@ -101,19 +105,33 @@ namespace SkylichtAudio
 			return m_name.c_str();
 		}
 
+		IAudioDecoder::EDecoderType getDecoderType()
+		{
+			return m_decodeType;
+		}
+
+		IStream* getStream()
+		{
+			return m_stream;
+		}
+
+		ISoundSource::ESourceState	getState()
+		{
+			return m_state;
+		}
+
 		void initDefaultValue();
 
-		bool initEmitter();
+		EStatus initEmitter();
 
 		virtual void update();
 
 		virtual void play(bool fromBegin = false);
-
 		virtual void stop();
-
 		virtual void pause();
-
 		virtual void reset();
+
+		virtual void seek(float time);
 
 		void stopWithFade(float time);
 
@@ -143,6 +161,11 @@ namespace SkylichtAudio
 		void setPosition(float x, float y, float z);
 
 		void setRollOff(float rollOff);
+
+		float getCurrentTime()
+		{
+			return m_currentTime;
+		}
 	};
 }
 
