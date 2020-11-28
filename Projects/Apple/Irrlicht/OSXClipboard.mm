@@ -3,9 +3,6 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in Irrlicht.h
 
-#include "OSXClipboard.h"
-
-#ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
 #import <Cocoa/Cocoa.h>
 
 void OSXCopyToClipboard(const char *text)
@@ -17,8 +14,8 @@ void OSXCopyToClipboard(const char *text)
 	{
 		str = [NSString stringWithCString:text encoding:NSWindowsCP1252StringEncoding];
 		board = [NSPasteboard generalPasteboard];
-		[board declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:NSApp];
-		[board setString:str forType:NSStringPboardType];
+		[board declareTypes:[NSArray arrayWithObject:NSPasteboardTypeString] owner:NSApp];
+		[board setString:str forType:NSPasteboardTypeString];
 	}
 }
 
@@ -30,9 +27,8 @@ char* OSXCopyFromClipboard()
 
 	result = NULL;
 	board = [NSPasteboard generalPasteboard];
-	str = [board stringForType:NSStringPboardType];
+	str = [board stringForType:NSPasteboardTypeString];
 	if (str != nil)
 		result = (char*)[str cStringUsingEncoding:NSWindowsCP1252StringEncoding];
 	return (result);
 }
-#endif

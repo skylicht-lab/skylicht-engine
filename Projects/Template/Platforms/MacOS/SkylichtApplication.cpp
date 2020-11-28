@@ -1,4 +1,7 @@
 #include "pch.h"
+
+#ifndef TEST_APP
+
 #include "SkylichtApplication.h"
 
 using namespace irr::core;
@@ -393,3 +396,5 @@ void SkylichtApplication::createKeyMap()
 
     m_keyMap.sort();
 }
+
+#endif
