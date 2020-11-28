@@ -14,6 +14,7 @@ void installApplication(const std::vector<std::string>& argv)
 
 SampleAudio::SampleAudio()
 {
+	SkylichtAudio::initSkylichtAudio();
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
@@ -24,6 +25,7 @@ SampleAudio::~SampleAudio()
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();
+	SkylichtAudio::releaseSkylichtAudio();
 }
 
 void SampleAudio::onInitApp()
@@ -33,6 +35,8 @@ void SampleAudio::onInitApp()
 
 void SampleAudio::onUpdate()
 {
+	SkylichtAudio::updateSkylichtAudio();
+
 	CViewManager::getInstance()->update();
 }
 
