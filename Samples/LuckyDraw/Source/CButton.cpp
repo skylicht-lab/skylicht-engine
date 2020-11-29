@@ -20,6 +20,19 @@ CButton::CButton(CGUIElement *element, SFrame* frame, const char *label, CGlyphF
 	CEventManager::getInstance()->registerEvent("CButton", this);
 }
 
+CButton::CButton(CGUIElement *element, SFrame* frame) :
+	m_frame(frame),
+	m_text(NULL),
+	m_textColor(255, 255, 255, 255),
+	m_element(element),
+	m_mouseHold(false)
+{
+	CCanvas *canvas = element->getCanvas();
+	m_backround = canvas->createSprite(element, frame);
+
+	CEventManager::getInstance()->registerEvent("CButton", this);
+}
+
 CButton::~CButton()
 {
 	CEventManager::getInstance()->unRegisterEvent(this);
@@ -79,15 +92,31 @@ bool CButton::OnEvent(const SEvent& event)
 		if (t1.isPointInside(mousePos) == true || t2.isPointInside(mousePos) == true)
 			mouseOver = true;
 
-		if (mouseOver == true)
+		if (m_text != NULL)
 		{
-			SColor c = m_textColor;
-			c.setAlpha(200);
-			m_text->setColor(c);
+			if (mouseOver == true)
+			{
+				SColor c = m_textColor;
+				c.setAlpha(200);
+				m_text->setColor(c);
+			}
+			else
+			{
+				m_text->setColor(m_textColor);
+			}
 		}
 		else
 		{
-			m_text->setColor(m_textColor);
+			if (mouseOver == true)
+			{
+				SColor c = m_textColor;
+				c.setAlpha(200);
+				m_backround->setColor(c);
+			}
+			else
+			{
+				m_backround->setColor(m_textColor);
+			}
 		}
 
 		if (mouseOver == true)

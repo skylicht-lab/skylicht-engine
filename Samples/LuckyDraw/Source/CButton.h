@@ -23,6 +23,8 @@ public:
 public:
 	CButton(CGUIElement *element, SFrame* frame, const char *label, CGlyphFont *font, const SColor& textColor);
 
+	CButton(CGUIElement *element, SFrame* frame);
+
 	virtual ~CButton();
 
 	virtual bool OnEvent(const SEvent& event);
