@@ -48,8 +48,6 @@ void CViewDemo::onDestroy()
 
 void CViewDemo::onUpdate()
 {
-	SkylichtAudio::updateSkylichtAudio();
-
 	CContext *context = CContext::getInstance();
 	CScene *scene = context->getScene();
 	if (scene != NULL)

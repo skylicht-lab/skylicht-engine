@@ -208,9 +208,9 @@ void CViewInit::onUpdate()
 		io::IFileSystem* fileSystem = getApplication()->getFileSystem();
 
 		std::vector<std::string> listBundles;
-		listBundles.push_back("Common.Zip");
-		listBundles.push_back("SampleModelsResource.Zip");
-		listBundles.push_back("SampleModelsDDS.Zip");
+		listBundles.push_back("Common.zip");
+		listBundles.push_back("SampleModelsResource.zip");
+		listBundles.push_back("SampleModelsDDS.zip");
 
 #ifdef __EMSCRIPTEN__
 		const char *filename = listBundles[m_downloaded].c_str();
