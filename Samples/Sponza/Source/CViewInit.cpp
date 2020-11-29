@@ -428,10 +428,10 @@ void CViewInit::onUpdate()
 		io::IFileSystem* fileSystem = getApplication()->getFileSystem();
 
 		std::vector<std::string> listBundles;
-		listBundles.push_back("Common.Zip");
-		listBundles.push_back("Sponza.Zip");
-		listBundles.push_back("SponzaDDS.Zip");
-		listBundles.push_back("Particles.Zip");
+		listBundles.push_back("Common.zip");
+		listBundles.push_back("Sponza.zip");
+		listBundles.push_back("SponzaDDS.zip");
+		listBundles.push_back("Particles.zip");
 
 #ifdef __EMSCRIPTEN__
 		std::vector<std::string> listFile;

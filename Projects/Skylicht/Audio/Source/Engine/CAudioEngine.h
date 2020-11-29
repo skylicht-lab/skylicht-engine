@@ -25,9 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifndef _CSKYLICHT_AUDIO_H_
 #define _CSKYLICHT_AUDIO_H_
 
-//#define USE_MULTITHREAD_UPDATE
-
 #include "stdafx.h"
+
+#include "SkylichtAudioConfig.h"
 #include "Stream/IStreamFactory.h"
 
 #include "Decoder/IAudioDecoder.h"

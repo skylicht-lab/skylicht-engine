@@ -2,6 +2,12 @@
 #include "SkylichtEngine.h"
 #include "CScrollerController.h"
 
+// [0 - 9]
+#define NUMBER_RANGE 10.0f
+#define MAX_SPEED 2.0f
+#define SLOT_DELAY_ROLLING 200.0f
+#define READY_TARGET_SPEED 1.4f
+
 CScrollerController::CScrollerController(std::vector<CScroller*>& scrollers) :
 	m_targetNumber(0),
 	m_stopPosition(0)
@@ -55,7 +61,7 @@ void CScrollerController::update()
 				float f = s.Scroller->getOffset();
 				f = f + getTimeStep() * s.Speed;
 
-				float maxOffset = s.Scroller->getItemSize() * 10.0f;
+				float maxOffset = s.Scroller->getItemSize() * NUMBER_RANGE;
 				f = fmodf(f, maxOffset);
 
 				s.Scroller->setOffset(f);
@@ -98,7 +104,7 @@ void CScrollerController::update()
 				float f = s.Scroller->getOffset();
 				f = f + getTimeStep() * s.Speed;
 
-				float maxOffset = s.Scroller->getItemSize() * 10.0f;
+				float maxOffset = s.Scroller->getItemSize() * NUMBER_RANGE;
 				f = fmodf(f, maxOffset);
 
 				s.Scroller->setOffset(f);
@@ -120,12 +126,14 @@ void CScrollerController::update()
 
 void CScrollerController::beginScroll()
 {
+	m_stopPosition = 0;
+
 	for (u32 i = 0, n = m_scrollers.size(); i < n; i++)
 	{
 		SScrollerInfo& s = m_scrollers[i];
-		s.TargetSpeed = 2.0f;
+		s.TargetSpeed = MAX_SPEED;
 		s.Speed = 0.0f;
-		s.WaitScrollTime = i * 500.0f;
+		s.WaitScrollTime = i * SLOT_DELAY_ROLLING;
 		s.State = Scrolling;
 	}
 }
@@ -134,7 +142,7 @@ bool CScrollerController::stopReady()
 {
 	for (u32 i = 0, n = m_scrollers.size(); i < n; i++)
 	{
-		if (m_scrollers[i].Speed <= 1.5f ||
+		if (m_scrollers[i].Speed <= READY_TARGET_SPEED ||
 			m_scrollers[i].State != Scrolling)
 			return false;
 	}
@@ -151,6 +159,18 @@ bool CScrollerController::isFinished()
 	}
 
 	return true;
+}
+
+bool CScrollerController::isLastStopPosition()
+{
+	int scroll = m_scrollers.size() - 1;
+	if (scroll < 0)
+		scroll = 0;
+
+	if (m_stopPosition >= scroll)
+		return true;
+
+	return false;
 }
 
 void CScrollerController::stopOnNumber(int number)
@@ -171,7 +191,7 @@ void CScrollerController::stopOnNumber(int number)
 		if (number >= t)
 			num = number / t;
 
-		float stop = s.Scroller->getItemSize() * num + s.Scroller->getItemSize() * 10.0f;
+		float stop = s.Scroller->getItemSize() * num + s.Scroller->getItemSize() * NUMBER_RANGE;
 		s.State = WaitStop;
 		s.TargetStop = stop;
 		s.StopLengthDistance = stop - s.Scroller->getOffset();

@@ -25,6 +25,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifndef _SKYLICHT_AUDIO_CONFIG_
 #define _SKYLICHT_AUDIO_CONFIG_
 
+#ifndef __EMSCRIPTEN__
+#define USE_MULTITHREAD_UPDATE
+#endif
+
 #if defined(ANDROID)
 // Use OpenSL on Android
 #define USE_OPENSL
