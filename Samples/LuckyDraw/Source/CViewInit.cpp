@@ -58,6 +58,7 @@ void CViewInit::initScene()
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 	freetypeFont->initFont("LasVegas", "LuckyDraw/LasVegasJackpotRegular.otf");
+	freetypeFont->initFont("Sans", "LuckyDraw/droidsans.ttf");
 
 	// create a scene
 	CContext *context = CContext::getInstance();
@@ -138,7 +139,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -155,7 +156,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-		}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -175,7 +176,7 @@ void CViewInit::onUpdate()
 			scene->update();
 	}
 	break;
-	}
+}
 	}
 
 void CViewInit::onRender()
