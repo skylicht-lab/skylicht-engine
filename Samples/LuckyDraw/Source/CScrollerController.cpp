@@ -75,7 +75,7 @@ void CScrollerController::update()
 				float f = s.Scroller->getOffset();
 
 				float distance = s.TargetStop - f;
-				if (distance <= s.Scroller->getItemSize() * 0.1f)
+				if (distance <= s.Scroller->getItemSize() * 0.3f)
 					m_stopPosition++;
 
 				float speedOff = distance / s.StopLengthDistance;
@@ -89,7 +89,7 @@ void CScrollerController::update()
 				float f = s.Scroller->getOffset();
 
 				float distance = s.TargetStop - f;
-				if (distance <= 3.0f)
+				if (distance <= s.Scroller->getItemSize() * 0.2f)
 					s.State = Finish;
 				else
 				{
@@ -110,7 +110,10 @@ void CScrollerController::update()
 				s.Scroller->setOffset(f);
 			}
 		}
-		else if (s.State == CScrollerController::Finish)
+		else if (
+			s.State == CScrollerController::Finish ||
+			s.State == CScrollerController::NewRound
+			)
 		{
 			// keep smooth stop at target
 			float f = s.Scroller->getOffset();
@@ -148,6 +151,14 @@ bool CScrollerController::stopReady()
 	}
 
 	return true;
+}
+
+void CScrollerController::newRound()
+{
+	for (u32 i = 0, n = m_scrollers.size(); i < n; i++)
+	{
+		m_scrollers[i].State = NewRound;
+	}
 }
 
 bool CScrollerController::isFinished()

@@ -8,6 +8,7 @@ public:
 	enum EScrollerState
 	{
 		Stop,
+		NewRound,
 		Scrolling,
 		WaitStop,
 		Finish
@@ -40,6 +41,8 @@ public:
 	void beginScroll();
 
 	bool stopReady();
+
+	void newRound();
 
 	bool isFinished();
 
