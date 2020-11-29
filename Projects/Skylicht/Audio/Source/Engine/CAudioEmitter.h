@@ -82,6 +82,7 @@ namespace SkylichtAudio
 		float m_fadeGain;
 		float m_fadeout;
 		float m_stopWithFade;
+		float m_playWithFade;
 
 		float m_currentTime;
 	public:
@@ -126,7 +127,7 @@ namespace SkylichtAudio
 
 		virtual void update();
 
-		virtual void play(bool fromBegin = false);
+		virtual void play(bool fromBegin = true);
 		virtual void stop();
 		virtual void pause();
 		virtual void reset();
@@ -134,6 +135,8 @@ namespace SkylichtAudio
 		virtual void seek(float time);
 
 		void stopWithFade(float time);
+
+		void playWithFade(float gain, float time);
 
 		virtual void setLoop(bool loop);
 

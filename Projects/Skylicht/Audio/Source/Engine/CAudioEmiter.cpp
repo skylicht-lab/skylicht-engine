@@ -109,6 +109,11 @@ namespace SkylichtAudio
 		m_numBuffer = 0;
 		m_decodeBuffer = NULL;
 
+		m_fadeGain = 0.0f;
+		m_fadeout = -1.0f;
+		m_stopWithFade = -1.0f;
+		m_playWithFade = -1.0f;
+
 		m_init = true;
 		m_initState = 0;
 	}
@@ -309,26 +314,38 @@ namespace SkylichtAudio
 			if (m_fadeout < 0.0f)
 			{
 				m_fadeout = -1.0f;
-				m_stopWithFade = -1.0f;
 
-				// todo stop
-				if (m_buffer)
+				if (m_stopWithFade > 0)
 				{
-					for (int i = 0; i < m_numBuffer; i++)
-						memset(m_buffer[i], 0, m_bufferSize);
+					m_stopWithFade = -1.0f;
+
+					// todo stop
+					if (m_buffer)
+					{
+						for (int i = 0; i < m_numBuffer; i++)
+							memset(m_buffer[i], 0, m_bufferSize);
+					}
+
+					if (m_decoder)
+						m_decoder->seek(0);
+
+					m_gain = 1.0f;
+					m_state = ISoundSource::StateStopped;
+
+					// todo post event stop
+					// CAudioEngine::getSoundEngine()->pushEvent(EVENT_STOP);
 				}
-
-				if (m_decoder)
-					m_decoder->seek(0);
-
-				m_state = ISoundSource::StateStopped;
-
-				// todo post event stop
-				// CAudioEngine::getSoundEngine()->pushEvent(EVENT_STOP);
+				else
+				{
+					m_playWithFade = -1.0f;
+				}
 			}
 			else
 			{
-				m_gain = m_fadeGain * m_fadeout / m_stopWithFade;
+				if (m_stopWithFade > 0)
+					m_gain = m_fadeGain * m_fadeout / m_stopWithFade;
+				else
+					m_gain = m_fadeGain * (1.0f - m_fadeout / m_playWithFade);
 			}
 		}
 
@@ -478,6 +495,17 @@ namespace SkylichtAudio
 		m_fadeGain = m_gain;
 		m_fadeout = time;
 		m_stopWithFade = time;
+		m_playWithFade = -1.0f;
+	}
+
+	void CAudioEmitter::playWithFade(float gain, float time)
+	{
+		m_fadeGain = gain;
+		m_gain = 0.0f;
+		play();
+		m_fadeout = time;
+		m_playWithFade = time;
+		m_stopWithFade = -1.0f;
 	}
 
 	void CAudioEmitter::seek(float time)

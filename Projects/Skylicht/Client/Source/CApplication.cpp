@@ -200,7 +200,8 @@ namespace Skylicht
 		setTimeStep(m_timeStep);
 
 		// skylicht update
-		Skylicht::updateSkylicht();		
+		Skylicht::updateSkylicht();
+		SkylichtAudio::updateSkylichtAudio();
 
 		// application receiver
 		sendEventToAppReceiver(AppEventUpdate);

@@ -43,5 +43,7 @@ public:
 
 	bool isFinished();
 
+	bool isLastStopPosition();
+
 	void stopOnNumber(int number);	
 };
