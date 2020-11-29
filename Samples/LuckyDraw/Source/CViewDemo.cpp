@@ -9,7 +9,7 @@ CViewDemo::CViewDemo() :
 	m_sprite(NULL),
 	m_state(0),
 	m_spin(NULL),
-	m_quit(NULL),
+	m_stop(NULL),
 	m_controller(NULL),
 	m_countDown(false)
 {
@@ -25,8 +25,6 @@ CViewDemo::~CViewDemo()
 	delete m_largeFont;
 	delete m_smallFont;
 	delete m_sprite;
-	delete m_spin;
-	delete m_quit;
 	delete m_controller;
 
 	SkylichtAudio::CAudioEngine::getSoundEngine()->unRegisterStreamFactory(m_streamFactory);
@@ -66,7 +64,7 @@ void CViewDemo::onInit()
 	float itemH = 280.0f;
 	float paddingY = 0.0f;
 	float paddingX = 20.0f;
-	int numScroller = 4;
+	int numScroller = 3;
 	core::rectf scrollerSize(0.0f, 0.0f, numberW, numberH);
 
 	float scrollerPosX = screenW / 2 - (numScroller * numberW + (numScroller - 1) * paddingX) / 2.0f;
@@ -100,6 +98,7 @@ void CViewDemo::onInit()
 	float buttonW = btnYellowBackground->BoudingRect.getWidth();
 	float buttonH = btnYellowBackground->BoudingRect.getHeight();
 	float buttonPaddingY = 70.0f;
+	float buttonAcceptPaddingX = 180.0f;
 	core::rectf buttonSize(0.0f, 0.0f, buttonW, buttonH);
 	float buttonX = (screenW - buttonW) / 2.0f;
 	float buttonY = scrollerPosY + numberH + buttonPaddingY;
@@ -115,12 +114,17 @@ void CViewDemo::onInit()
 	m_stop->OnClick = std::bind(&CViewDemo::onStopClick, this);
 	m_stop->setVisible(false);
 
-	CGUIElement *buttonBackGUI = canvas->createElement(buttonSize);
-	buttonBackGUI->setPosition(core::vector3df(buttonX, buttonY + 70.0f, 0.0f));
-	m_quit = new CButton(buttonBackGUI, btnVioletBackground, "QUIT", m_smallFont, SColor(255, 187, 179, 234));
-	m_quit->OnClick = []() {
-		getIrrlichtDevice()->closeDevice();
-	};
+	CGUIElement *buttonAcceptGUI = canvas->createElement(buttonSize);
+	buttonAcceptGUI->setPosition(core::vector3df(buttonX - buttonAcceptPaddingX, buttonY, 0.0f));
+	m_accept = new CButton(buttonAcceptGUI, btnYellowBackground, "ACCEPT", m_smallFont, SColor(255, 107, 76, 8));
+	m_accept->OnClick = std::bind(&CViewDemo::onAcceptClick, this);
+	m_accept->setVisible(false);
+
+	CGUIElement *buttonQuitGUI = canvas->createElement(buttonSize);
+	buttonQuitGUI->setPosition(core::vector3df(buttonX + buttonAcceptPaddingX, buttonY, 0.0f));
+	m_ignore = new CButton(buttonQuitGUI, btnVioletBackground, "IGNORE", m_smallFont, SColor(255, 187, 179, 234));
+	m_ignore->OnClick = std::bind(&CViewDemo::onIgnoreClick, this);
+	m_ignore->setVisible(false);
 
 	// init audio
 	SkylichtAudio::CAudioEngine *engine = SkylichtAudio::CAudioEngine::getSoundEngine();
@@ -131,6 +135,8 @@ void CViewDemo::onInit()
 	m_soundStop = engine->createAudioEmitter("LuckyDraw/sm-bet.mp3", true);
 	m_soundShowStop = engine->createAudioEmitter("LuckyDraw/game-bonus.mp3", true);
 	m_soundCountDown = engine->createAudioEmitter("LuckyDraw/game-countdown.mp3", true);
+	m_soundAccept = engine->createAudioEmitter("LuckyDraw/fanfare-brass.mp3", true);
+	m_soundIgnore = engine->createAudioEmitter("LuckyDraw/game-over.mp3", true);
 }
 
 void CViewDemo::onSpinClick()
@@ -139,7 +145,6 @@ void CViewDemo::onSpinClick()
 	m_controller->beginScroll();
 
 	m_spin->setVisible(false);
-	m_quit->setVisible(false);
 
 	m_soundSpin->play();
 	m_countDown = false;
@@ -147,13 +152,33 @@ void CViewDemo::onSpinClick()
 
 void CViewDemo::onStopClick()
 {
-	int random = os::Randomizer::rand() % 9999;
+	int random = os::Randomizer::rand() % 999;
 	m_controller->stopOnNumber(random);
 
 	m_stop->setVisible(false);
 	printf("SampleLuckyDraw::onStopClick at: %d\n", random);
 
 	m_soundStop->play();
+}
+
+void CViewDemo::onAcceptClick()
+{
+	m_controller->newRound();
+	m_soundAccept->play();
+	m_spin->setVisible(true);
+
+	m_accept->setVisible(false);
+	m_ignore->setVisible(false);
+}
+
+void CViewDemo::onIgnoreClick()
+{
+	m_controller->newRound();
+	m_soundIgnore->play();
+	m_spin->setVisible(true);
+
+	m_accept->setVisible(false);
+	m_ignore->setVisible(false);
 }
 
 void CViewDemo::onDestroy()
@@ -178,15 +203,18 @@ void CViewDemo::onUpdate()
 		}
 
 		// show spin button when finish
-		if (m_controller->isFinished() == true && m_spin->isVisible() == false)
+		if (m_controller->isFinished() == true &&
+			m_accept->isVisible() == false &&
+			m_spin->isVisible() == false)
 		{
 			m_soundTada->play();
 			m_soundCountDown->stopWithFade(100.0f);
 
-			m_spin->setVisible(true);
-			m_quit->setVisible(true);
+			m_accept->setVisible(true);
+			m_ignore->setVisible(true);
 		}
 
+		// stop music and play count down at last stop number
 		if (m_controller->isLastStopPosition() == true && m_countDown == false)
 		{
 			m_musicBG->stopWithFade(1000.0f);

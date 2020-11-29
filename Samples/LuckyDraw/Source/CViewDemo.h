@@ -28,7 +28,8 @@ protected:
 
 	CButton* m_spin;
 	CButton* m_stop;
-	CButton* m_quit;
+	CButton* m_accept;
+	CButton* m_ignore;
 
 	SkylichtAudio::CAudioEmitter *m_musicBG;
 	SkylichtAudio::CAudioEmitter *m_soundTada;
@@ -36,6 +37,8 @@ protected:
 	SkylichtAudio::CAudioEmitter *m_soundStop;
 	SkylichtAudio::CAudioEmitter *m_soundShowStop;
 	SkylichtAudio::CAudioEmitter *m_soundCountDown;
+	SkylichtAudio::CAudioEmitter *m_soundAccept;
+	SkylichtAudio::CAudioEmitter *m_soundIgnore;
 
 	int m_state;
 	bool m_countDown;
@@ -60,6 +63,10 @@ protected:
 	void onSpinClick();
 
 	void onStopClick();
+
+	void onAcceptClick();
+
+	void onIgnoreClick();
 
 public:
 
