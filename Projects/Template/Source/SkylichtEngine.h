@@ -102,3 +102,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 // Importer
 #include "Importer/Utils/CMeshUtils.h"
+
+// Utils
+#include "Utils/CColor.h"
+#include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
+#include "Utils/CMemoryStream.h"
+#include "Utils/XMLSpreadsheet/CXMLSpreadsheet.h"
