@@ -369,7 +369,7 @@ namespace Skylicht
 	ITexture* loadDaeTexture(const std::wstring& path, std::vector<std::string>& textureFolder)
 	{
 		char realFilePath[1024];
-		CStringImp::convertUnicodeToUTF8(path.c_str(), realFilePath);
+		CStringImp::copy(realFilePath, path.c_str());
 		return CTextureManager::getInstance()->getTexture(realFilePath, textureFolder);
 	}
 
