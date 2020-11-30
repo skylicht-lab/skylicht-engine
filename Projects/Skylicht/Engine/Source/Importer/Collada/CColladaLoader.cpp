@@ -188,14 +188,14 @@ namespace Skylicht
 		const wchar_t *unitNameW = xmlRead->getAttributeValue(L"name");
 		if (unitNameW != NULL)
 		{
-			CStringImp::convertUnicodeToUTF8(unitNameW, unitName);
+			CStringImp::copy(unitName, unitNameW);
 			m_unit = unitName;
 		}
 
 		const wchar_t *meterW = xmlRead->getAttributeValue(L"meter");
 		if (meterW != NULL)
 		{
-			CStringImp::convertUnicodeToUTF8(meterW, unitValue);
+			CStringImp::copy(unitValue, meterW);
 			m_unitScale = (float)atof(unitValue);
 		}
 	}
@@ -933,7 +933,7 @@ namespace Skylicht
 				{
 					char log[512];
 					char nodeNameA[512];
-					CStringImp::convertUnicodeToUTF8(nodeName.c_str(), nodeNameA);
+					CStringImp::copy(nodeNameA, nodeName.c_str());
 					sprintf(log, "[Collada loader] unsupport %s - reimport <triangles> or <polylist>", nodeNameA);
 					os::Printer::log(log);
 				}
@@ -1566,7 +1566,7 @@ namespace Skylicht
 			core::matrix4 relativeTransform = node->Transform;
 
 			// add entity with transform
-			CStringImp::convertUnicodeToUTF8(node->Name.c_str(), name);
+			CStringImp::copy(name, node->Name.c_str());
 			output->addTransformData(entity, parent, relativeTransform, name);
 
 			// add joint data if this node is JOINT
@@ -1580,7 +1580,7 @@ namespace Skylicht
 
 				if (node->SID.size() > 0)
 				{
-					CStringImp::convertUnicodeToUTF8(node->SID.c_str(), name);
+					CStringImp::copy(name, node->SID.c_str());
 					jointData->SID = name;
 				}
 
@@ -1753,7 +1753,7 @@ namespace Skylicht
 			strcpy(materialName, "");
 
 			if (effect != NULL)
-				CStringImp::convertUnicodeToUTF8(effect->Id.c_str(), materialName);
+				CStringImp::copy(materialName, effect->Id.c_str());
 
 			if (buffer)
 			{
@@ -2210,7 +2210,7 @@ namespace Skylicht
 					p++;
 				begin = p;
 
-				CStringImp::convertUnicodeToUTF8(sidName.c_str(), name);
+				CStringImp::copy(name, sidName.c_str());
 				jointData = findJointData(name);
 
 				// we continue search joint name

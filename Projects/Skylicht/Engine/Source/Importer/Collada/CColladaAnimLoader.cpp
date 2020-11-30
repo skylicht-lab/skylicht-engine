@@ -156,7 +156,7 @@ namespace Skylicht
 				stackNode.pop();
 
 				// found node
-				CStringImp::convertUnicodeToUTF8(pNode->Name.c_str(), name);
+				CStringImp::copy(name, pNode->Name.c_str());
 
 				SEntityAnim *nodeAnim = m_nodeAnim[name];
 				if (nodeAnim == NULL)
@@ -267,14 +267,14 @@ namespace Skylicht
 		const wchar_t *unitNameW = xmlRead->getAttributeValue(L"name");
 		if (unitNameW != NULL)
 		{
-			CStringImp::convertUnicodeToUTF8(unitNameW, unitName);
+			CStringImp::copy(unitName, unitNameW);
 			m_unit = unitName;
 		}
 
 		const wchar_t *meterW = xmlRead->getAttributeValue(L"meter");
 		if (meterW != NULL)
 		{
-			CStringImp::convertUnicodeToUTF8(meterW, unitValue);
+			CStringImp::copy(unitValue, meterW);
 			m_unitScale = (float)atof(unitValue);
 		}
 	}
@@ -330,7 +330,7 @@ namespace Skylicht
 
 
 		char stringBuffer[1024];
-		CStringImp::convertUnicodeToUTF8(jointName.c_str(), stringBuffer);
+		CStringImp::copy(stringBuffer, jointName.c_str());
 
 		// create anim node
 		SEntityAnim *nodeAnim = m_nodeAnim[stringBuffer];
@@ -929,7 +929,7 @@ namespace Skylicht
 							isTranslateXYZ > 0)
 						{
 							char stringBuffer[1024];
-							CStringImp::convertUnicodeToUTF8(jointName.c_str(), stringBuffer);
+							CStringImp::copy(stringBuffer, jointName.c_str());
 
 							// create anim node
 							nodeAnim = m_nodeAnim[stringBuffer];
