@@ -163,7 +163,7 @@ namespace Skylicht
 
 					std::wstring ssType = xmlReader->getAttributeValue(L"ss:Type");
 					if (ssType == L"Number")
-						currentCell->Type = Number;
+						currentCell->Type = Decimal;
 					else if (ssType == L"DateTime")
 						currentCell->Type = DateTime;
 					else
@@ -188,7 +188,7 @@ namespace Skylicht
 					CStringImp::convertUTF8ToUnicode(text, textw);
 					currentCell->UnicodeValue = textw;
 
-					if (currentCell->Type == Number)
+					if (currentCell->Type == Decimal)
 					{
 						currentCell->NumberInt = atoi(text);
 						currentCell->NumberFloat = (float)atof(text);
@@ -282,7 +282,7 @@ namespace Skylicht
 		return NULL;
 	}
 
-	std::list<CXMLSpreadsheet::SCell*> CXMLSpreadsheet::getCellRange(SSheet* sheet, int fromRow, int fromCol, int toRow, int toCol)
+	std::list<CXMLSpreadsheet::SCell*> CXMLSpreadsheet::getRange(SSheet* sheet, int fromRow, int fromCol, int toRow, int toCol)
 	{
 		if (fromRow > toRow)
 		{
@@ -321,7 +321,7 @@ namespace Skylicht
 		return result;
 	}
 
-	std::list<CXMLSpreadsheet::SCell*> CXMLSpreadsheet::getCellRange(SSheet* sheet, const char *from, const char *to)
+	std::list<CXMLSpreadsheet::SCell*> CXMLSpreadsheet::getRange(SSheet* sheet, const char *from, const char *to)
 	{
 		int fromRow;
 		int fromCol;
@@ -331,7 +331,7 @@ namespace Skylicht
 		convertCellName(from, fromRow, fromCol);
 		convertCellName(to, toRow, toCol);
 
-		return getCellRange(sheet, fromRow, fromCol, toRow, toCol);
+		return getRange(sheet, fromRow, fromCol, toRow, toCol);
 	}
 
 	bool CXMLSpreadsheet::convertCellName(const char *cellName, int& row, int &col)

@@ -103,6 +103,9 @@ https://github.com/skylicht-lab/skylicht-engine
 // Importer
 #include "Importer/Utils/CMeshUtils.h"
 
+// Serializable
+#include "Serializable/CValueProperty.h"
+
 // Utils
 #include "Utils/CColor.h"
 #include "Utils/CStringImp.h"
