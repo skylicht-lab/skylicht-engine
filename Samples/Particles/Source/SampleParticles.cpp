@@ -347,7 +347,7 @@ void SampleParticles::onUpdate()
 		Particle::CParticleComponent *psComponent = m_currentParticleObj->getComponent<Particle::CParticleComponent>();
 		u32 totalParticle = psComponent->getGroup(0)->getNumParticles();
 		char text[64];
-		sprintf(text, "%ld", totalParticle);
+		sprintf(text, "%u", totalParticle);
 		m_label->setText(text);
 		textUpdate = 300.0f;
 	}

@@ -24,23 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Serializable/CValueProperty.h"
+
 namespace Skylicht
 {
 	class CXMLSpreadsheet
 	{
 	public:
-		enum EDataType
-		{
-			String,
-			Number,
-			DateTime
-		};
-
 		struct SCell
 		{
 			int Row;
 			int Col;
-			EDataType Type;
+			EPropertyDataType Type;
 			std::string Value;
 			std::wstring UnicodeValue;
 			int NumberInt;
@@ -134,9 +129,9 @@ namespace Skylicht
 
 		SCell* getCell(SSheet* sheet, const char *cellName);
 
-		std::list<SCell*> getCellRange(SSheet* sheet, int fromRow, int fromCol, int toRow, int toCol);
+		std::list<SCell*> getRange(SSheet* sheet, int fromRow, int fromCol, int toRow, int toCol);
 
-		std::list<SCell*> getCellRange(SSheet* sheet, const char *from, const char *to);
+		std::list<SCell*> getRange(SSheet* sheet, const char *from, const char *to);
 
 		bool convertCellName(const char *cellName, int& row, int &col);
 	};
