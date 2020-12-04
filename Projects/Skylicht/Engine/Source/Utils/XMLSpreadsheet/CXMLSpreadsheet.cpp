@@ -235,6 +235,8 @@ namespace Skylicht
 				else if (nodeName == L"Worksheet")
 				{
 					currentSheet = NULL;
+					row = -1;
+					col = -1;
 				}
 			}
 			break;
@@ -249,7 +251,7 @@ namespace Skylicht
 		return true;
 	}
 
-	CXMLSpreadsheet::SCell* CXMLSpreadsheet::getCell(SSheet* sheet, int row, int col)
+	CXMLSpreadsheet::SCell* CXMLSpreadsheet::getCell(SSheet* sheet, u32 row, u32 col)
 	{
 		for (SRow* r : sheet->Rows)
 		{
@@ -274,7 +276,7 @@ namespace Skylicht
 
 	CXMLSpreadsheet::SCell* CXMLSpreadsheet::getCell(SSheet* sheet, const char *cellName)
 	{
-		int row, col;
+		u32 row, col;
 		if (convertCellName(cellName, row, col))
 		{
 			return getCell(sheet, row, col);
@@ -282,18 +284,18 @@ namespace Skylicht
 		return NULL;
 	}
 
-	std::list<CXMLSpreadsheet::SCell*> CXMLSpreadsheet::getRange(SSheet* sheet, int fromRow, int fromCol, int toRow, int toCol)
+	std::list<CXMLSpreadsheet::SCell*> CXMLSpreadsheet::getRange(SSheet* sheet, u32 fromRow, u32 fromCol, u32 toRow, u32 toCol)
 	{
 		if (fromRow > toRow)
 		{
-			int t = fromRow;
+			u32 t = fromRow;
 			fromRow = toRow;
 			toRow = t;
 		}
 
 		if (fromCol > toCol)
 		{
-			int t = fromCol;
+			u32 t = fromCol;
 			fromCol = toCol;
 			toCol = t;
 		}
@@ -323,10 +325,10 @@ namespace Skylicht
 
 	std::list<CXMLSpreadsheet::SCell*> CXMLSpreadsheet::getRange(SSheet* sheet, const char *from, const char *to)
 	{
-		int fromRow;
-		int fromCol;
-		int toRow;
-		int toCol;
+		u32 fromRow;
+		u32 fromCol;
+		u32 toRow;
+		u32 toCol;
 
 		convertCellName(from, fromRow, fromCol);
 		convertCellName(to, toRow, toCol);
@@ -334,7 +336,7 @@ namespace Skylicht
 		return getRange(sheet, fromRow, fromCol, toRow, toCol);
 	}
 
-	bool CXMLSpreadsheet::convertCellName(const char *cellName, int& row, int &col)
+	bool CXMLSpreadsheet::convertCellName(const char *cellName, u32& row, u32 &col)
 	{
 		row = 0;
 		col = 0;

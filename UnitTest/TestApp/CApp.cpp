@@ -3,6 +3,7 @@
 #include "TestSystemThread.h"
 #include "TestScene.h"
 #include "TestMemoryStream.h"
+#include "TestSpreadsheet.h"
 
 #include "CApplication.h"
 #include "Material/Shader/CShaderManager.h"
@@ -54,6 +55,8 @@ void CApp::onInitApp()
 	testSystemThread();
 
 	testScene();
+
+	testSpreadsheet();
 }
 
 void CApp::onUpdate()

@@ -90,3 +90,5 @@ if (BUILD_MACOS)
 else()
 	add_test(NAME TestApp COMMAND $<TARGET_FILE:TestApp>)
 endif()
+
+set_target_properties(TestApp PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

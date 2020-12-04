@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CObjectSerizable.h"
+#include "CValueProperty.h"
 
 namespace Skylicht
 {
@@ -35,5 +36,15 @@ namespace Skylicht
 	CObjectSerizable::~CObjectSerizable()
 	{
 
+	}
+
+	CValueProperty* CObjectSerizable::getProperty(const char *name)
+	{
+		for (CValueProperty* p : m_value)
+		{
+			if (p->Name == name)
+				return p;
+		}
+		return NULL;
 	}
 }
