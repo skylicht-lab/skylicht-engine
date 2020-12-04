@@ -48,7 +48,8 @@ namespace Skylicht
 
 		CValueProperty(CObjectSerizable *owner, EPropertyDataType dataType, const char *name) :
 			m_owner(owner),
-			m_dataType(dataType)
+			m_dataType(dataType),
+			Name(name)
 		{
 			owner->addProperty(this);
 		}
@@ -129,12 +130,12 @@ namespace Skylicht
 	{
 	public:
 		CStringProperty(CObjectSerizable *owner, const char *name) :
-			CValuePropertyTemplate(owner, Float, name)
+			CValuePropertyTemplate(owner, String, name)
 		{
 		}
 
 		CStringProperty(CObjectSerizable *owner, const char *name, const char* value) :
-			CValuePropertyTemplate(owner, Float, name)
+			CValuePropertyTemplate(owner, String, name)
 		{
 			setValue(value);
 		}

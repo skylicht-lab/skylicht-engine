@@ -39,5 +39,15 @@ namespace Skylicht
 		CXMLColumn(EPropertyDataType type, const char *name);
 
 		virtual ~CXMLColumn();
+
+		inline const std::string& getName()
+		{
+			return m_name;
+		}
+
+		inline EPropertyDataType getDataType()
+		{
+			return m_dataType;
+		}
 	};
 }

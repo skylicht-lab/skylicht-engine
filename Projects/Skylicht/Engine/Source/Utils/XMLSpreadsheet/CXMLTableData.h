@@ -64,5 +64,83 @@ namespace Skylicht
 		{
 			return m_sheet->Rows.size();
 		}
+
+		template<class T>
+		void freeData(std::vector<T*>& data)
+		{
+			for (T *i : data)
+				delete i;
+			data.clear();
+		}
+
+		template<class T>
+		u32 fetchData(std::vector<T*>& data, u32 fromRow, int count)
+		{
+			std::list<CXMLSpreadsheet::SRow*>::iterator i = m_sheet->Rows.begin(), end = m_sheet->Rows.end();
+			while (i != end)
+			{
+				CXMLSpreadsheet::SRow* row = (*i);
+				if (row->Index < fromRow)
+				{
+					++i;
+					continue;
+				}
+
+				if (count > 0)
+				{
+					if (row->Index >= fromRow + (u32)count)
+						break;
+				}
+
+				T *obj = new T();
+				CObjectSerizable *objectSerizable = dynamic_cast<CObjectSerizable*>(obj);
+				if (objectSerizable == NULL)
+				{
+					delete obj;
+					return 0;
+				}
+
+				std::list<CXMLSpreadsheet::SCell*>::iterator j = row->Cells.begin(), e = row->Cells.end();
+				while (j != e)
+				{
+					CXMLSpreadsheet::SCell* cell = (*j);
+					if (cell->Col < m_column.size())
+					{
+						CXMLColumn *col = m_column[cell->Col];
+						{
+							CValueProperty *value = objectSerizable->getProperty(col->getName().c_str());
+							if (value == NULL)
+								continue;
+
+							switch (value->getType())
+							{
+							case String:
+								((CStringProperty*)value)->setValue(cell->Value.c_str());
+								break;
+							case Integer:
+								((CIntProperty*)value)->setValue(cell->NumberInt);
+								break;
+							case Float:
+								((CFloatProperty*)value)->setValue(cell->NumberFloat);
+								break;
+							case DateTime:
+								((CDateTimeProperty*)value)->setValue(cell->Time);
+								break;
+							default:
+								break;
+							}
+						}
+					}
+
+					++j;
+				}
+
+				data.push_back(obj);
+
+				++i;
+			}
+
+			return data.size();
+		}
 	};
 }

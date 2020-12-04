@@ -33,8 +33,8 @@ namespace Skylicht
 	public:
 		struct SCell
 		{
-			int Row;
-			int Col;
+			u32 Row;
+			u32 Col;
 			EPropertyDataType Type;
 			std::string Value;
 			std::wstring UnicodeValue;
@@ -50,8 +50,8 @@ namespace Skylicht
 
 			SCell()
 			{
-				Row = -1;
-				Col = -1;
+				Row = 0;
+				Col = 0;
 				Type = String;
 				NumberInt = 0;
 				NumberFloat = 0.0f;
@@ -67,7 +67,7 @@ namespace Skylicht
 
 		struct SRow
 		{
-			int Index;
+			u32 Index;
 			std::list<SCell*> Cells;
 
 			~SRow()
@@ -117,7 +117,7 @@ namespace Skylicht
 
 		SSheet* getSheet(int i)
 		{
-			return m_sheets[0];
+			return m_sheets[i];
 		}
 
 		SSheet* operator[](int i)
@@ -125,14 +125,14 @@ namespace Skylicht
 			return m_sheets[i];
 		}
 
-		SCell* getCell(SSheet* sheet, int row, int col);
+		SCell* getCell(SSheet* sheet, u32 row, u32 col);
 
 		SCell* getCell(SSheet* sheet, const char *cellName);
 
-		std::list<SCell*> getRange(SSheet* sheet, int fromRow, int fromCol, int toRow, int toCol);
+		std::list<SCell*> getRange(SSheet* sheet, u32 fromRow, u32 fromCol, u32 toRow, u32 toCol);
 
 		std::list<SCell*> getRange(SSheet* sheet, const char *from, const char *to);
 
-		bool convertCellName(const char *cellName, int& row, int &col);
+		bool convertCellName(const char *cellName, u32& row, u32 &col);
 	};
 }

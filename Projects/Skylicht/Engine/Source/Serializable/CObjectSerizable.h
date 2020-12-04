@@ -56,5 +56,7 @@ namespace Skylicht
 		{
 			return m_value[i];
 		}
+
+		CValueProperty* getProperty(const char *name);
 	};
 }
