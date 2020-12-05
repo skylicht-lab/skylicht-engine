@@ -88,8 +88,11 @@ namespace Skylicht
 
 	void CGUISprite::render(CCamera *camera)
 	{		
-		CGraphics2D::getInstance()->addFrameBatch(m_frame, m_color, m_absoluteTransform, m_shaderID, m_material);
-		CGUIElement::render(camera);
+		if (m_frame != NULL)
+		{
+			CGraphics2D::getInstance()->addFrameBatch(m_frame, m_color, m_absoluteTransform, m_shaderID, m_material);
+			CGUIElement::render(camera);
+		}
 	}
 
 	void CGUISprite::setFrame(SFrame *frame)

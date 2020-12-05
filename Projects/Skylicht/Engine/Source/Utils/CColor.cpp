@@ -52,4 +52,19 @@ namespace Skylicht
 
 		return SColor(c.getAlpha(), r, g, b);
 	}
+
+	SColor CColor::fromHex(const char* hex)
+	{
+		int r = 255, g = 255, b = 255, a = 255;
+		if (strlen(hex) == 6)
+		{
+			sscanf(hex, "%02x%02x%02x", &r, &g, &b);
+		}
+		else if (strlen(hex) == 8)
+		{
+			sscanf(hex, "%02x%02x%02x%02x", &a, &r, &g, &b);
+		}
+
+		return SColor(a, r, g, b);
+	}
 }
