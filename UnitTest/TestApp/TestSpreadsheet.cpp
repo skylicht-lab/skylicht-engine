@@ -74,8 +74,8 @@ void testSpreadsheet()
 
 		// test fetch table data
 		CXMLTableData table(excel.getSheet(1));
-		table.addColumn(EPropertyDataType::Integer, "ID");
-		table.addColumn(EPropertyDataType::String, "Name");
+		table.addColumn("ID");
+		table.addColumn("Name");
 
 		std::vector<RowData*> data;
 

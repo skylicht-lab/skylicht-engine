@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CXMLTableData::CXMLTableData(CXMLSpreadsheet::SSheet *sheet) :
+	CXMLTableData::CXMLTableData(CXMLSpreadsheet::SSheet* sheet) :
 		m_sheet(sheet)
 	{
 	}
@@ -37,35 +37,21 @@ namespace Skylicht
 
 	}
 
-	void CXMLTableData::addColumn(EPropertyDataType type, const char *name)
+	void CXMLTableData::addColumn(const char* name)
 	{
-		m_column.push_back(new CXMLColumn(type, name));
+		m_column.push_back(name);
 	}
 
-	void CXMLTableData::insertColumn(EPropertyDataType type, const char *name, u32 position)
+	void CXMLTableData::insertColumn(const char* name, u32 position)
 	{
-		std::vector<CXMLColumn*>::iterator i = m_column.begin();
+		std::vector<std::string>::iterator i = m_column.begin();
 		i += position;
-		m_column.insert(i, new CXMLColumn(type, name));
-	}
-
-	void CXMLTableData::removeColumn(CXMLColumn *col)
-	{
-		std::vector<CXMLColumn*>::iterator i = m_column.begin(), end = m_column.end();
-		while (i != end)
-		{
-			if ((*i) == col)
-			{
-				m_column.erase(i);
-				return;
-			}
-			++i;
-		}
+		m_column.insert(i, name);
 	}
 
 	void CXMLTableData::removeColumn(u32 index)
 	{
-		std::vector<CXMLColumn*>::iterator i = m_column.begin();
+		std::vector<std::string>::iterator i = m_column.begin();
 		i += index;
 		m_column.erase(i);
 	}
