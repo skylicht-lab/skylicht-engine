@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CXMLColumn.h"
 #include "CXMLSpreadsheet.h"
 #include "Serializable/CValueProperty.h"
 
@@ -33,26 +32,24 @@ namespace Skylicht
 	class CXMLTableData
 	{
 	protected:
-		std::vector<CXMLColumn*> m_column;
+		std::vector<std::string> m_column;
 
-		CXMLSpreadsheet::SSheet *m_sheet;
+		CXMLSpreadsheet::SSheet* m_sheet;
 
 	public:
-		CXMLTableData(CXMLSpreadsheet::SSheet *sheet);
+		CXMLTableData(CXMLSpreadsheet::SSheet* sheet);
 
 		virtual ~CXMLTableData();
 
-		void addColumn(EPropertyDataType type, const char *name);
+		void addColumn(const char* name);
 
-		void insertColumn(EPropertyDataType type, const char *name, u32 position);
-
-		void removeColumn(CXMLColumn *col);
+		void insertColumn(const char* name, u32 position);
 
 		void removeColumn(u32 index);
 
-		inline CXMLColumn* getColumn(u32 index)
+		inline const char* getColumn(u32 index)
 		{
-			return m_column[index];
+			return m_column[index].c_str();
 		}
 
 		u32 getNumColumn()
@@ -68,7 +65,7 @@ namespace Skylicht
 		template<class T>
 		void freeData(std::vector<T*>& data)
 		{
-			for (T *i : data)
+			for (T* i : data)
 				delete i;
 			data.clear();
 		}
@@ -92,8 +89,8 @@ namespace Skylicht
 						break;
 				}
 
-				T *obj = new T();
-				CObjectSerizable *objectSerizable = dynamic_cast<CObjectSerizable*>(obj);
+				T* obj = new T();
+				CObjectSerizable* objectSerizable = dynamic_cast<CObjectSerizable*>(obj);
 				if (objectSerizable == NULL)
 				{
 					delete obj;
@@ -106,25 +103,25 @@ namespace Skylicht
 					CXMLSpreadsheet::SCell* cell = (*j);
 					if (cell->Col < m_column.size())
 					{
-						CXMLColumn *col = m_column[cell->Col];
+						const std::string& colName = m_column[cell->Col];
 						{
-							CValueProperty *value = objectSerizable->getProperty(col->getName().c_str());
+							CValueProperty* value = objectSerizable->getProperty(colName.c_str());
 							if (value == NULL)
 								continue;
 
 							switch (value->getType())
 							{
 							case String:
-								((CStringProperty*)value)->setValue(cell->Value.c_str());
+								(dynamic_cast<CStringProperty*>(value))->setValue(cell->Value.c_str());
 								break;
 							case Integer:
-								((CIntProperty*)value)->setValue(cell->NumberInt);
+								(dynamic_cast<CIntProperty*>(value))->setValue(cell->NumberInt);
 								break;
 							case Float:
-								((CFloatProperty*)value)->setValue(cell->NumberFloat);
+								(dynamic_cast<CFloatProperty*>(value))->setValue(cell->NumberFloat);
 								break;
 							case DateTime:
-								((CDateTimeProperty*)value)->setValue(cell->Time);
+								(dynamic_cast<CDateTimeProperty*>(value))->setValue(cell->Time);
 								break;
 							default:
 								break;

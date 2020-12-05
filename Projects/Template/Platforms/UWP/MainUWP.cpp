@@ -184,6 +184,7 @@ void App::Load(Platform::String^ entryPoint)
 	if (m_device != NULL)
 	{
 		m_application->initApplication(m_device);
+		m_application->setLimitFPS(60);
 	}
 }
 
