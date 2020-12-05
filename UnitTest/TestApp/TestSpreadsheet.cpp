@@ -86,7 +86,7 @@ void testSpreadsheet()
 		TEST_ASSERT_THROW(data.size() == 4);
 		for (int i = 0; i < 4; i++)
 		{
-			TEST_ASSERT_THROW(data[i]->ID.getValue() == i);
+			TEST_ASSERT_THROW(data[i]->ID.get() == i);
 		}
 
 		table.freeData(data);
