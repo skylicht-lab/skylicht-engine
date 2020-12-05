@@ -112,16 +112,16 @@ namespace Skylicht
 							switch (value->getType())
 							{
 							case String:
-								(dynamic_cast<CStringProperty*>(value))->setValue(cell->Value.c_str());
+								(dynamic_cast<CStringProperty*>(value))->set(cell->Value.c_str());
 								break;
 							case Integer:
-								(dynamic_cast<CIntProperty*>(value))->setValue(cell->NumberInt);
+								(dynamic_cast<CIntProperty*>(value))->set(cell->NumberInt);
 								break;
 							case Float:
-								(dynamic_cast<CFloatProperty*>(value))->setValue(cell->NumberFloat);
+								(dynamic_cast<CFloatProperty*>(value))->set(cell->NumberFloat);
 								break;
 							case DateTime:
-								(dynamic_cast<CDateTimeProperty*>(value))->setValue(cell->Time);
+								(dynamic_cast<CDateTimeProperty*>(value))->set(cell->Time);
 								break;
 							default:
 								break;
