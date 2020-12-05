@@ -46,7 +46,7 @@ namespace Skylicht
 	public:
 		std::string Name;
 
-		CValueProperty(CObjectSerizable *owner, EPropertyDataType dataType, const char *name) :
+		CValueProperty(CObjectSerizable* owner, EPropertyDataType dataType, const char* name) :
 			m_owner(owner),
 			m_dataType(dataType),
 			Name(name)
@@ -72,10 +72,9 @@ namespace Skylicht
 		T m_value;
 
 	public:
-		CValuePropertyTemplate(CObjectSerizable *owner, EPropertyDataType dataType, const char *name) :
+		CValuePropertyTemplate(CObjectSerizable* owner, EPropertyDataType dataType, const char* name) :
 			CValueProperty(owner, dataType, name)
 		{
-
 		}
 
 		virtual ~CValuePropertyTemplate()
@@ -83,12 +82,17 @@ namespace Skylicht
 
 		}
 
-		inline void setValue(const T& v)
+		inline void set(const T& v)
 		{
 			m_value = v;
 		}
 
-		inline const T& getValue()
+		inline const T& get()
+		{
+			return m_value;
+		}
+
+		T& operator*()
 		{
 			return m_value;
 		}
@@ -97,62 +101,68 @@ namespace Skylicht
 	class CIntProperty : public CValuePropertyTemplate<int>
 	{
 	public:
-		CIntProperty(CObjectSerizable *owner, const char *name) :
+		CIntProperty(CObjectSerizable* owner, const char* name) :
 			CValuePropertyTemplate(owner, Integer, name)
 		{
-			setValue(0);
+			set(0);
 		}
 
-		CIntProperty(CObjectSerizable *owner, const char *name, int value) :
+		CIntProperty(CObjectSerizable* owner, const char* name, int value) :
 			CValuePropertyTemplate(owner, Integer, name)
 		{
-			setValue(value);
+			set(value);
 		}
 	};
 
 	class CFloatProperty : public CValuePropertyTemplate<float>
 	{
 	public:
-		CFloatProperty(CObjectSerizable *owner, const char *name) :
+		CFloatProperty(CObjectSerizable* owner, const char* name) :
 			CValuePropertyTemplate(owner, Float, name)
 		{
-			setValue(0.0f);
+			set(0.0f);
 		}
 
-		CFloatProperty(CObjectSerizable *owner, const char *name, float value) :
+		CFloatProperty(CObjectSerizable* owner, const char* name, float value) :
 			CValuePropertyTemplate(owner, Float, name)
 		{
-			setValue(value);
+			set(value);
 		}
 	};
 
 	class CStringProperty : public CValuePropertyTemplate<std::string>
 	{
 	public:
-		CStringProperty(CObjectSerizable *owner, const char *name) :
+		CStringProperty(CObjectSerizable* owner, const char* name) :
 			CValuePropertyTemplate(owner, String, name)
 		{
 		}
 
-		CStringProperty(CObjectSerizable *owner, const char *name, const char* value) :
+		CStringProperty(CObjectSerizable* owner, const char* name, const char* value) :
 			CValuePropertyTemplate(owner, String, name)
 		{
-			setValue(value);
+			set(value);
+		}
+
+		const char* getString()
+		{
+			return m_value.c_str();
 		}
 	};
 
 	class CDateTimeProperty : public CValuePropertyTemplate<long>
 	{
 	public:
-		CDateTimeProperty(CObjectSerizable *owner, const char *name) :
+		CDateTimeProperty(CObjectSerizable* owner, const char* name) :
 			CValuePropertyTemplate(owner, DateTime, name)
 		{
+			set(0);
 		}
 
-		CDateTimeProperty(CObjectSerizable *owner, const char *name, long value) :
+		CDateTimeProperty(CObjectSerizable* owner, const char* name, long value) :
 			CValuePropertyTemplate(owner, DateTime, name)
 		{
-			setValue(value);
+			set(value);
 		}
 	};
 }
