@@ -32,5 +32,7 @@ namespace Skylicht
 		static SColor toSRGB(const SColor& c);
 
 		static SColor toLinear(const SColor& c);
+
+		static SColor fromHex(const char* hex);
 	};
 }
