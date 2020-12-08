@@ -122,11 +122,11 @@ void CViewDemo::onInit()
 	m_sprite->updateTexture();
 
 	// init people
-	for (int i = 1; i < 200; i++)
+	for (int i = 0; i < 200; i++)
 	{
 		m_people.push_back(SPeople());
 		SPeople& p = m_people.back();
-		p.ID = i;
+		p.ID = i + 1;
 		p.IsLucky = false;
 	}
 
@@ -207,8 +207,8 @@ void CViewDemo::onInit()
 	m_title->setColor(SColor(200, 255, 255, 255));
 
 	// create spin/stop/accept/inorge button
-	float buttonW = btnYellowBackground->BoudingRect.getWidth();
-	float buttonH = btnYellowBackground->BoudingRect.getHeight();
+	float buttonW = btnYellowBackground->getWidth();
+	float buttonH = btnYellowBackground->getHeight();
 	float buttonPaddingY = 40.0f;
 	float buttonAcceptPaddingX = 180.0f;
 	core::rectf buttonSize(0.0f, 0.0f, buttonW, buttonH);
@@ -239,8 +239,8 @@ void CViewDemo::onInit()
 	m_ignore->setVisible(false);
 
 	// left/right button to change state
-	float leftW = btnLeft->BoudingRect.getWidth();
-	float leftH = btnLeft->BoudingRect.getHeight();
+	float leftW = btnLeft->getWidth();
+	float leftH = btnLeft->getHeight();
 	core::rectf leftBtnSize(0.0f, 0.0f, leftW, leftH);
 	buttonX = (screenW - leftW) / 2.0f;
 	buttonY = buttonY + 100.0f;
@@ -284,15 +284,15 @@ void CViewDemo::onInit()
 	m_switchPrize->setTextAlign(CGUIElement::Right, CGUIElement::Middle);
 
 	m_iconPeople = m_canvas->createSprite(
-		core::rectf(0.0f, 0.0f, people->BoudingRect.getWidth(), people->BoudingRect.getHeight()),
+		core::rectf(0.0f, 0.0f, people->getWidth(), people->getHeight()),
 		people
 	);
 	m_iconPeople->setScale(core::vector3df(0.5f, 0.5f, 1.0f));
-	m_iconPeople->setPosition(core::vector3df((screenW - people->BoudingRect.getWidth()) * 0.5f + 70.0f, buttonY, 0.0f));
+	m_iconPeople->setPosition(core::vector3df((screenW - people->getWidth()) * 0.5f + 70.0f, buttonY, 0.0f));
 
 	m_peopleText = m_canvas->createText(m_textSmallFont);
 	m_peopleText->setRect(core::rectf(0.0f, 0.0f, 100.0f, leftH));
-	m_peopleText->setPosition(core::vector3df((screenW - people->BoudingRect.getWidth()) * 0.5f + 105.0f, buttonY, 0.0f));
+	m_peopleText->setPosition(core::vector3df((screenW - people->getWidth()) * 0.5f + 105.0f, buttonY, 0.0f));
 	m_peopleText->setTextAlign(CGUIElement::Left, CGUIElement::Middle);
 
 	setState(getNumState() - 1);
@@ -361,7 +361,7 @@ void CViewDemo::checkToShowListLuckyPeople()
 		{
 			if (p.WinPrize == m_state)
 			{
-				core::rectf itemRect = core::rectf(0.0f, 0.0f, listElement->getRect().getWidth(), 50.0f);
+				core::rectf itemRect = core::rectf(0.0f, 0.0f, listElement->getWidth(), 50.0f);
 
 				height = height + itemRect.getHeight();
 
@@ -388,9 +388,9 @@ void CViewDemo::checkToShowListLuckyPeople()
 		}
 
 		// center item in list
-		if (height < listElement->getRect().getHeight())
+		if (height < listElement->getHeight())
 		{
-			float centerY = listElement->getRect().getHeight() / 2.0f - height / 2.0f;
+			float centerY = listElement->getHeight() / 2.0f - height / 2.0f;
 			m_list->setBasePosition(centerY);
 		}
 		else
@@ -450,7 +450,7 @@ void CViewDemo::onStopClick()
 	m_randomPeople = os::Randomizer::rand() % m_listPeople.size();
 	m_randomNumber = m_listPeople[m_randomPeople];
 
-	m_people[m_randomNumber].IsLucky = true;
+	m_people[m_randomNumber - 1].IsLucky = true;
 
 	m_controller->stopOnNumber(m_randomNumber);
 
@@ -464,7 +464,7 @@ void CViewDemo::onAcceptClick()
 {
 	m_prize[m_state].PeopleCount++;
 
-	m_people[m_randomNumber].WinPrize = m_state;
+	m_people[m_randomNumber - 1].WinPrize = m_state;
 
 	m_title->setText(m_prize[m_state].Name.c_str());
 

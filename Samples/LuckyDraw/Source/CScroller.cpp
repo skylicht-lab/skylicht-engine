@@ -69,7 +69,7 @@ void CScroller::updateItemPosition()
 
 	float x = 0.0f;
 	float y = m_offset;
-	float scrollHeight = m_element->getRect().getHeight();
+	float scrollHeight = m_element->getHeight();
 
 	int id = 0;
 
