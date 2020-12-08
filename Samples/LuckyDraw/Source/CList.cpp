@@ -143,7 +143,7 @@ void CList::updateItemPosition()
 	for (CGUIElement* item : m_items)
 	{
 		item->setPosition(core::vector3df(x, y, 0.0f));
-		y = y + item->getRect().getHeight();
+		y = y + item->getHeight();
 	}
 }
 
@@ -154,9 +154,8 @@ void CList::updateItemMovement()
 
 	float timestep = getTimeStep();
 
-	u32 items = m_items.size();
+	int items = (int)m_items.size();
 
-	float totalHeight;
 	float itemHeight = 0.0f;
 
 	m_minOffset = 0.0f;
@@ -164,9 +163,9 @@ void CList::updateItemMovement()
 
 	if (items > 0)
 	{
-		itemHeight = (float)m_items[0]->getRect().getHeight();
+		itemHeight = m_items[0]->getHeight();
 
-		int numRow = m_element->getRect().getHeight() / itemHeight;
+		int numRow = m_element->getHeight() / itemHeight;
 
 		m_maxOffset = itemHeight * 0.5f;
 
@@ -223,7 +222,7 @@ void CList::calcTargetOffset()
 		m_targetOffset = 0.0f;
 	else
 	{
-		float itemHeight = (float)m_items[0]->getRect().getHeight();
+		float itemHeight = (float)m_items[0]->getHeight();
 
 		int selectItem = m_offset / itemHeight;
 
