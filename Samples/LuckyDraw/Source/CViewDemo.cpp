@@ -5,11 +5,12 @@
 
 CViewDemo::CViewDemo() :
 	m_largeFont(NULL),
-	m_smallFont(NULL),
 	m_textMediumFont(NULL),
 	m_textSmallFont(NULL),
+	m_textMedium2Font(NULL),
 	m_sprite(NULL),
 	m_state(0),
+	m_canvas(NULL),
 	m_spin(NULL),
 	m_stop(NULL),
 	m_accept(NULL),
@@ -17,12 +18,11 @@ CViewDemo::CViewDemo() :
 	m_left(NULL),
 	m_right(NULL),
 	m_controller(NULL),
+	m_list(NULL),
 	m_countDown(false),
-	m_randomNumber(0)
+	m_randomNumber(0),
+	m_randomPeople(0)
 {
-	for (int i = 0; i < MAX_STATE; i++)
-		m_peopleCount[i] = 0;
-
 	SkylichtAudio::initSkylichtAudio();
 
 	// add to support read resource on ZIP Bundle
@@ -33,11 +33,16 @@ CViewDemo::CViewDemo() :
 CViewDemo::~CViewDemo()
 {
 	delete m_largeFont;
-	delete m_smallFont;
 	delete m_textMediumFont;
+	delete m_textMedium2Font;
 	delete m_textSmallFont;
 	delete m_sprite;
+
+	for (CScroller* s : m_scrollers)
+		delete s;
+	m_scrollers.clear();
 	delete m_controller;
+	delete m_list;
 
 	delete m_spin;
 	delete m_stop;
@@ -55,23 +60,23 @@ CViewDemo::~CViewDemo()
 void CViewDemo::onInit()
 {
 	// create a Scene
-	CScene *scene = CContext::getInstance()->getScene();
-	CZone *zone = scene->getZone(0);
+	CScene* scene = CContext::getInstance()->getScene();
+	CZone* zone = scene->getZone(0);
 
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("LasVegas", 200.0f);
 
-	m_smallFont = new CGlyphFont();
-	m_smallFont->setFont("LasVegas", 30.0f);
-
 	m_textMediumFont = new CGlyphFont();
 	m_textMediumFont->setFont("Sans", 40.0f);
 
+	m_textMedium2Font = new CGlyphFont();
+	m_textMedium2Font->setFont("Sans", 30.0f);
+
 	m_textSmallFont = new CGlyphFont();
-	m_textSmallFont->setFont("Sans", 20.0f);
+	m_textSmallFont->setFont("Sans", 18.0f);
 
 	// init audio
-	SkylichtAudio::CAudioEngine *engine = SkylichtAudio::CAudioEngine::getSoundEngine();
+	SkylichtAudio::CAudioEngine* engine = SkylichtAudio::CAudioEngine::getSoundEngine();
 	m_musicBG = engine->createAudioEmitter("LuckyDraw/background.mp3", false);
 	m_musicBG->setLoop(true);
 	m_soundTada = engine->createAudioEmitter("LuckyDraw/game-tada.mp3", false);
@@ -88,45 +93,60 @@ void CViewDemo::onInit()
 	SFrame* btnYellowBackground = m_sprite->addFrame("btn_yellow.png", "LuckyDraw/btn_yellow.png");
 	SFrame* btnVioletBackground = m_sprite->addFrame("btn_violet.png", "LuckyDraw/btn_violet.png");
 
-	m_icon[0] = m_sprite->addFrame("0.png", "LuckyDraw/0.png");
-	m_icon[1] = m_sprite->addFrame("1.png", "LuckyDraw/1.png");
-	m_icon[2] = m_sprite->addFrame("2.png", "LuckyDraw/2.png");
-	m_icon[3] = m_sprite->addFrame("3.png", "LuckyDraw/3.png");
+	// button, icon sprite
+	SFrame* btnLeft = m_sprite->addFrame("left.png", "LuckyDraw/left.png");
+	SFrame* btnRight = m_sprite->addFrame("right.png", "LuckyDraw/right.png");
+	SFrame* people = m_sprite->addFrame("people.png", "LuckyDraw/people.png");
 
-	SFrame *btnLeft = m_sprite->addFrame("left.png", "LuckyDraw/left.png");
-	SFrame *btnRight = m_sprite->addFrame("right.png", "LuckyDraw/right.png");
-	SFrame *people = m_sprite->addFrame("people.png", "LuckyDraw/people.png");
+	CTextureManager* tm = CTextureManager::getInstance();
+	m_prize[0].Background = tm->getTexture("LuckyDraw/state_0.png");
+	m_prize[1].Background = tm->getTexture("LuckyDraw/state_1.png");
+	m_prize[2].Background = tm->getTexture("LuckyDraw/state_2.png");
+	m_prize[3].Background = tm->getTexture("LuckyDraw/state_3.png");
+
+	m_prize[0].Name = CLocalize::get("TXT_PRIZE_0");
+	m_prize[1].Name = CLocalize::get("TXT_PRIZE_1");
+	m_prize[2].Name = CLocalize::get("TXT_PRIZE_2");
+	m_prize[3].Name = CLocalize::get("TXT_PRIZE_3");
+
+	m_prize[0].Icon = m_sprite->addFrame("0.png", "LuckyDraw/0.png");
+	m_prize[1].Icon = m_sprite->addFrame("1.png", "LuckyDraw/1.png");
+	m_prize[2].Icon = m_sprite->addFrame("2.png", "LuckyDraw/2.png");
+	m_prize[3].Icon = m_sprite->addFrame("3.png", "LuckyDraw/3.png");
+
+	m_prize[0].TotalPeopleCount = 1;
+	m_prize[1].TotalPeopleCount = 1;
+	m_prize[2].TotalPeopleCount = 2;
+	m_prize[3].TotalPeopleCount = 3;
 
 	m_sprite->updateTexture();
 
-	CTextureManager *tm = CTextureManager::getInstance();
-	m_stateTexture[0] = tm->getTexture("LuckyDraw/state_0.png");
-	m_stateTexture[1] = tm->getTexture("LuckyDraw/state_1.png");
-	m_stateTexture[2] = tm->getTexture("LuckyDraw/state_2.png");
-	m_stateTexture[3] = tm->getTexture("LuckyDraw/state_3.png");
-
-	m_stateName[0] = "PRIZE SPECIAL";
-	m_stateName[1] = "PRIZE 1";
-	m_stateName[2] = "PRIZE 2";
-	m_stateName[3] = "PRIZE 3";
+	// init people
+	for (int i = 1; i < 200; i++)
+	{
+		m_people.push_back(SPeople());
+		SPeople& p = m_people.back();
+		p.ID = i;
+		p.IsLucky = false;
+	}
 
 	// create 2D Canvas
-	CGameObject *canvasObject = zone->createEmptyObject();
-	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
+	CGameObject* canvasObject = zone->createEmptyObject();
+	m_canvas = canvasObject->addComponent<CCanvas>();
 
 	// get canvas size
-	const core::rectf& screenSize = canvas->getRootElement()->getRect();
+	const core::rectf& screenSize = m_canvas->getRootElement()->getRect();
 	float screenW = screenSize.getWidth();
 	float screenH = screenSize.getHeight();
 
 	// create background
-	m_backgroundImage = canvas->createImage();
+	m_backgroundImage = m_canvas->createImage();
 
 	// create icon
 	core::rectf iconSize = core::rectf(0.0f, 0.0f, 300.0f, 300.0f);
-	m_iconSprite = canvas->createSprite(iconSize, m_icon[0]);
+	m_iconSprite = m_canvas->createSprite(iconSize, NULL);
 	float iconX = screenW / 2.0f;
-	float iconY = screenH / 2.0f - 320.0f;
+	float iconY = screenH / 2.0f - 300.0f;
 	m_iconSprite->setPosition(core::vector3df(iconX, iconY, 0.0f));
 	m_iconSprite->setScale(core::vector3df(0.5f, 0.5f, 1.0f));
 
@@ -134,24 +154,26 @@ void CViewDemo::onInit()
 	float numberW = 184.0f;
 	float numberH = 305.0f;
 	float itemH = 280.0f;
-	float paddingY = 0.0f;
+	float paddingY = 30.0f;
 	float paddingX = 20.0f;
-	int numScroller = 3;
+
+	int numScroller = getNumScroller();
+
 	core::rectf scrollerSize(0.0f, 0.0f, numberW, numberH);
 
-	float scrollerPosX = screenW / 2 - (numScroller * numberW + (numScroller - 1) * paddingX) / 2.0f;
-	float scrollerPosY = screenH / 2 - numberH / 2.0f + paddingY;
+	float scrollerPosX = screenW / 2.0f - (numScroller * numberW + (numScroller - 1) * paddingX) / 2.0f;
+	float scrollerPosY = screenH / 2.0f - numberH / 2.0f + paddingY;
 
 	float startOffset = (numberH - itemH) / 2;
 
 	for (int i = 0; i < numScroller; i++)
 	{
 		// create scoller background
-		CGUIRect *scrollerGUI = canvas->createRect(scrollerSize, SColor(150, 0, 0, 0));
+		CGUIRect* scrollerGUI = m_canvas->createRect(scrollerSize, SColor(150, 0, 0, 0));
 		scrollerGUI->setPosition(core::vector3df(scrollerPosX, scrollerPosY, 0.0f));
 
 		// create scroller control
-		CScroller *scroller = new CScroller(scrollerGUI, itemH, this);
+		CScroller* scroller = new CScroller(scrollerGUI, itemH, this);
 		scroller->setStartOffset(startOffset);
 		m_scrollers.push_back(scroller);
 
@@ -161,128 +183,232 @@ void CViewDemo::onInit()
 
 	m_controller = new CScrollerController(m_scrollers);
 
+	// create list
+	float listWidth = 740.0f;
+	float listHeight = 300.0f;
+	float listX = screenW / 2.0f - listWidth / 2.0f;
+	float listY = screenH / 2.0f - listHeight / 2.0f + paddingY;
+	core::rectf listSize(0.0f, 0.0f, listWidth, listHeight);
+
+	CGUIRect* listGUI = m_canvas->createRect(listSize, SColor(150, 0, 0, 0));
+	listGUI->setPosition(core::vector3df(listX, listY, 0.0f));
+	m_list = new CList(listGUI);
+	m_list->setVisible(false);
+
 	// create label
 	float textWidth = 800.0f;
 	float textHeight = 60.0f;
 	float textX = (screenW - textWidth) / 2.0f;
-	float textY = (screenH - textHeight) / 2.0f - 220.0f;
-	m_title = canvas->createText(m_textMediumFont);
+	float textY = (screenH - textHeight) / 2.0f - 190.0f;
+	m_title = m_canvas->createText(m_textMediumFont);
 	m_title->setRect(core::rectf(0.0, 0.0, textWidth, textHeight));
 	m_title->setPosition(core::vector3df(textX, textY, 0.0f));
 	m_title->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
 	m_title->setColor(SColor(200, 255, 255, 255));
 
-	// create Button
+	// create spin/stop/accept/inorge button
 	float buttonW = btnYellowBackground->BoudingRect.getWidth();
 	float buttonH = btnYellowBackground->BoudingRect.getHeight();
-	float buttonPaddingY = 70.0f;
+	float buttonPaddingY = 40.0f;
 	float buttonAcceptPaddingX = 180.0f;
 	core::rectf buttonSize(0.0f, 0.0f, buttonW, buttonH);
 	float buttonX = (screenW - buttonW) / 2.0f;
 	float buttonY = scrollerPosY + numberH + buttonPaddingY;
 
-	CGUIElement *buttonSpinGUI = canvas->createElement(buttonSize);
+	CGUIElement* buttonSpinGUI = m_canvas->createElement(buttonSize);
 	buttonSpinGUI->setPosition(core::vector3df(buttonX, buttonY, 0.0f));
-	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, "SPIN", m_smallFont, SColor(255, 107, 76, 8));
+	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, CLocalize::get("TXT_SPIN"), m_textMedium2Font, SColor(255, 107, 76, 8));
 	m_spin->OnClick = std::bind(&CViewDemo::onSpinClick, this);
 
-	CGUIElement *buttonStopGUI = canvas->createElement(buttonSize);
+	CGUIElement* buttonStopGUI = m_canvas->createElement(buttonSize);
 	buttonStopGUI->setPosition(core::vector3df(buttonX, buttonY, 0.0f));
-	m_stop = new CButton(buttonStopGUI, btnYellowBackground, "STOP", m_smallFont, SColor(255, 107, 76, 8));
+	m_stop = new CButton(buttonStopGUI, btnYellowBackground, CLocalize::get("TXT_STOP"), m_textMedium2Font, SColor(255, 107, 76, 8));
 	m_stop->OnClick = std::bind(&CViewDemo::onStopClick, this);
 	m_stop->setVisible(false);
 
-	CGUIElement *buttonAcceptGUI = canvas->createElement(buttonSize);
+	CGUIElement* buttonAcceptGUI = m_canvas->createElement(buttonSize);
 	buttonAcceptGUI->setPosition(core::vector3df(buttonX - buttonAcceptPaddingX, buttonY, 0.0f));
-	m_accept = new CButton(buttonAcceptGUI, btnYellowBackground, "ACCEPT", m_smallFont, SColor(255, 107, 76, 8));
+	m_accept = new CButton(buttonAcceptGUI, btnYellowBackground, CLocalize::get("TXT_ACCEPT"), m_textMedium2Font, SColor(255, 107, 76, 8));
 	m_accept->OnClick = std::bind(&CViewDemo::onAcceptClick, this);
 	m_accept->setVisible(false);
 
-	CGUIElement *buttonQuitGUI = canvas->createElement(buttonSize);
+	CGUIElement* buttonQuitGUI = m_canvas->createElement(buttonSize);
 	buttonQuitGUI->setPosition(core::vector3df(buttonX + buttonAcceptPaddingX, buttonY, 0.0f));
-	m_ignore = new CButton(buttonQuitGUI, btnVioletBackground, "IGNORE", m_smallFont, SColor(255, 187, 179, 234));
+	m_ignore = new CButton(buttonQuitGUI, btnVioletBackground, CLocalize::get("TXT_IGNORE"), m_textMedium2Font, SColor(255, 187, 179, 234));
 	m_ignore->OnClick = std::bind(&CViewDemo::onIgnoreClick, this);
 	m_ignore->setVisible(false);
 
-	// button change state
+	// left/right button to change state
 	float leftW = btnLeft->BoudingRect.getWidth();
 	float leftH = btnLeft->BoudingRect.getHeight();
 	core::rectf leftBtnSize(0.0f, 0.0f, leftW, leftH);
 	buttonX = (screenW - leftW) / 2.0f;
 	buttonY = buttonY + 100.0f;
 
-	CGUIElement *buttonLeftGUI = canvas->createElement(leftBtnSize);
+	CGUIElement* buttonLeftGUI = m_canvas->createElement(leftBtnSize);
 	buttonLeftGUI->setPosition(core::vector3df(buttonX - 150.0f, buttonY, 0.0f));
 	m_left = new CButton(buttonLeftGUI, btnLeft);
 	m_left->setVisible(false);
 
-	CGUIElement *buttonRightGUI = canvas->createElement(leftBtnSize);
+	CGUIElement* buttonRightGUI = m_canvas->createElement(leftBtnSize);
 	buttonRightGUI->setPosition(core::vector3df(buttonX + 150.0f, buttonY, 0.0f));
 	m_right = new CButton(buttonRightGUI, btnRight);
 
-	m_left->OnClick = [x = this, r = m_right, l = m_left]() {
-		int state = x->getState();
-		if (state < MAX_STATE - 1)
+	m_left->OnClick = [demo = this, r = m_right, l = m_left]() {
+		int state = demo->getState();
+		if (state < demo->getNumState() - 1)
 		{
 			state++;
-			x->setState(state);
+			demo->setState(state);
 			r->setVisible(true);
 		}
-		if (state == MAX_STATE - 1)
+		if (state == demo->getNumState() - 1)
 			l->setVisible(false);
 	};
 
-	m_right->OnClick = [x = this, r = m_right, l = m_left]() {
-		int state = x->getState();
+	m_right->OnClick = [demo = this, r = m_right, l = m_left]() {
+		int state = demo->getState();
 		if (state > 0)
 		{
 			state--;
-			x->setState(state);
+			demo->setState(state);
 			l->setVisible(true);
 		}
 		if (state == 0)
 			r->setVisible(false);
 	};
 
-	m_switchPrize = canvas->createText(m_textSmallFont);
+	m_switchPrize = m_canvas->createText(m_textSmallFont);
 	m_switchPrize->setRect(core::rectf(0.0f, 0.0f, 200.0f, leftH));
-	m_switchPrize->setPosition(core::vector3df((screenW - 200.0f) * 0.5f - 50.0f, buttonY, 0.0f));
+	m_switchPrize->setPosition(core::vector3df((screenW - 200.0f) * 0.5f - 80.0f, buttonY, 0.0f));
 	m_switchPrize->setTextAlign(CGUIElement::Right, CGUIElement::Middle);
 
-	m_iconPeople = canvas->createSprite(
+	m_iconPeople = m_canvas->createSprite(
 		core::rectf(0.0f, 0.0f, people->BoudingRect.getWidth(), people->BoudingRect.getHeight()),
 		people
 	);
-	m_iconPeople->setScale(core::vector3df(0.7f, 0.7f, 1.0f));
-	m_iconPeople->setPosition(core::vector3df((screenW - people->BoudingRect.getWidth()) * 0.5f + 90.0f, buttonY + 10.0f, 0.0f));
+	m_iconPeople->setScale(core::vector3df(0.5f, 0.5f, 1.0f));
+	m_iconPeople->setPosition(core::vector3df((screenW - people->BoudingRect.getWidth()) * 0.5f + 70.0f, buttonY, 0.0f));
 
-	m_peopleText = canvas->createText(m_textSmallFont);
+	m_peopleText = m_canvas->createText(m_textSmallFont);
 	m_peopleText->setRect(core::rectf(0.0f, 0.0f, 100.0f, leftH));
-	m_peopleText->setPosition(core::vector3df((screenW - people->BoudingRect.getWidth()) * 0.5f + 135.0f, buttonY, 0.0f));
+	m_peopleText->setPosition(core::vector3df((screenW - people->BoudingRect.getWidth()) * 0.5f + 105.0f, buttonY, 0.0f));
 	m_peopleText->setTextAlign(CGUIElement::Left, CGUIElement::Middle);
 
-	setState(MAX_STATE - 1);
+	setState(getNumState() - 1);
+}
+
+int CViewDemo::getNumState()
+{
+	return MAX_STATE;
+}
+
+int CViewDemo::getNumScroller()
+{
+	int maxID = 0;
+	for (SPeople& p : m_people)
+	{
+		maxID = core::max_(maxID, p.ID);
+	}
+
+	int num = 0;
+	while (maxID > 0)
+	{
+		maxID = maxID / 10;
+		num++;
+	}
+
+	if (num < 2)
+		num = 2;
+
+	return num;
 }
 
 void CViewDemo::setState(int state)
 {
 	m_state = state;
-	m_title->setText(m_stateName[state].c_str());
-	m_switchPrize->setText(m_stateName[state].c_str());
-	m_backgroundImage->setImage(m_stateTexture[state]);
-	m_iconSprite->setFrame(m_icon[state]);
+
+	m_title->setText(m_prize[state].Name.c_str());
+	m_switchPrize->setText(m_prize[state].Name.c_str());
+	m_backgroundImage->setImage(m_prize[state].Background);
+	m_iconSprite->setFrame(m_prize[state].Icon);
 	m_iconSprite->setAlignCenterModule();
 
 	char num[32];
-	sprintf(num, "%d", m_peopleCount[state]);
+	sprintf(num, "%d/%d", m_prize[state].PeopleCount, m_prize[state].TotalPeopleCount);
 	m_peopleText->setText(num);
 
 	m_soundUp->play();
+
+	checkToShowListLuckyPeople();
+}
+
+void CViewDemo::checkToShowListLuckyPeople()
+{
+	if (m_prize[m_state].PeopleCount >= m_prize[m_state].TotalPeopleCount)
+	{
+		m_controller->setVisible(false);
+		m_spin->setVisible(false);
+		m_list->setVisible(true);
+
+		m_list->clearAllItem();
+
+		CGUIElement* listElement = m_list->getElement();
+
+		float height = 0.0f;
+
+		for (SPeople& p : m_people)
+		{
+			if (p.WinPrize == m_state)
+			{
+				core::rectf itemRect = core::rectf(0.0f, 0.0f, listElement->getRect().getWidth(), 50.0f);
+
+				height = height + itemRect.getHeight();
+
+				CGUIElement* element = m_canvas->createElement(listElement, itemRect);
+
+				CGUIText* nameText = m_canvas->createText(element, itemRect, m_textMedium2Font);
+				nameText->setPosition(core::vector3df(200.0f, 0.0f, 0.0f));
+
+				itemRect = core::rectf(0.0f, 0.0f, 120, 50.0f);
+				CGUIText* numText = m_canvas->createText(element, itemRect, m_textMedium2Font);
+				numText->setPosition(core::vector3df(50.0f, 0.0f, 0.0f));
+				numText->setTextAlign(CGUIElement::Right, CGUIElement::Top);
+
+				char text[512];
+				sprintf(text, CLocalize::get("TXT_LUCKY_PEOPLE_ID"), p.ID);
+
+				nameText->setText(text);
+
+				sprintf(text, "%d", p.ID);
+				numText->setText(text);
+
+				m_list->addItem(element);
+			}
+		}
+
+		// center item in list
+		if (height < listElement->getRect().getHeight())
+		{
+			float centerY = listElement->getRect().getHeight() / 2.0f - height / 2.0f;
+			m_list->setBasePosition(centerY);
+		}
+		else
+		{
+			m_list->setBasePosition(0.0f);
+		}
+	}
+	else
+	{
+		m_controller->setVisible(true);
+		m_spin->setVisible(true);
+		m_list->setVisible(false);
+	}
 }
 
 void CViewDemo::showLeftRightButton()
 {
-	if (m_state == MAX_STATE - 1)
+	if (m_state == getNumState() - 1)
 		m_left->setVisible(false);
 	else
 		m_left->setVisible(true);
@@ -295,6 +421,19 @@ void CViewDemo::showLeftRightButton()
 
 void CViewDemo::onSpinClick()
 {
+	m_listPeople.set_used(0);
+	for (SPeople& p : m_people)
+	{
+		if (p.IsLucky == false)
+			m_listPeople.push_back(p.ID);
+	}
+
+	if (m_listPeople.size() == 0)
+	{
+		m_soundStop->play();
+		return;
+	}
+
 	m_musicBG->playWithFade(1.0f, 500.0f);
 	m_controller->beginScroll();
 
@@ -308,7 +447,11 @@ void CViewDemo::onSpinClick()
 
 void CViewDemo::onStopClick()
 {
-	m_randomNumber = os::Randomizer::rand() % 999;
+	m_randomPeople = os::Randomizer::rand() % m_listPeople.size();
+	m_randomNumber = m_listPeople[m_randomPeople];
+
+	m_people[m_randomNumber].IsLucky = true;
+
 	m_controller->stopOnNumber(m_randomNumber);
 
 	m_stop->setVisible(false);
@@ -319,13 +462,15 @@ void CViewDemo::onStopClick()
 
 void CViewDemo::onAcceptClick()
 {
-	m_title->setText(m_stateName[m_state].c_str());
+	m_prize[m_state].PeopleCount++;
 
-	m_peopleCount[m_state]++;
+	m_people[m_randomNumber].WinPrize = m_state;
+
+	m_title->setText(m_prize[m_state].Name.c_str());
+
 	char num[32];
-	sprintf(num, "%d", m_peopleCount[m_state]);
+	sprintf(num, "%d/%d", m_prize[m_state].PeopleCount, m_prize[m_state].TotalPeopleCount);
 	m_peopleText->setText(num);
-
 
 	m_controller->newRound();
 	m_soundAccept->play();
@@ -335,11 +480,13 @@ void CViewDemo::onAcceptClick()
 
 	m_accept->setVisible(false);
 	m_ignore->setVisible(false);
+
+	checkToShowListLuckyPeople();
 }
 
 void CViewDemo::onIgnoreClick()
 {
-	m_title->setText(m_stateName[m_state].c_str());
+	m_title->setText(m_prize[m_state].Name.c_str());
 
 	m_controller->newRound();
 	m_soundIgnore->play();
@@ -358,10 +505,13 @@ void CViewDemo::onDestroy()
 
 void CViewDemo::onUpdate()
 {
-	CContext *context = CContext::getInstance();
-	CScene *scene = context->getScene();
+	CContext* context = CContext::getInstance();
+	CScene* scene = context->getScene();
 	if (scene != NULL)
 	{
+		// update list lucky people
+		m_list->update();
+
 		// update scroller
 		m_controller->update();
 
@@ -378,7 +528,8 @@ void CViewDemo::onUpdate()
 			m_spin->isVisible() == false)
 		{
 			char text[512];
-			sprintf(text, "Congratulation!\nPeople with number: %d", m_randomNumber);
+			sprintf(text, CLocalize::get("TXT_CONGRAT_PEOPLE_ID"), m_randomNumber);
+
 			m_title->setText(text);
 
 			m_soundTada->play();
@@ -403,7 +554,7 @@ void CViewDemo::onUpdate()
 
 void CViewDemo::onRender()
 {
-	CCamera *guiCamera = CContext::getInstance()->getGUICamera();
+	CCamera* guiCamera = CContext::getInstance()->getGUICamera();
 	if (guiCamera != NULL)
 	{
 		CGraphics2D::getInstance()->render(guiCamera);
@@ -415,11 +566,9 @@ void CViewDemo::onPostRender()
 
 }
 
-CGUIElement* CViewDemo::createScrollElement(CScroller *scroller, CGUIElement *parent, const core::rectf& itemRect)
+CGUIElement* CViewDemo::createScrollElement(CScroller* scroller, CGUIElement* parent, const core::rectf& itemRect)
 {
-	CCanvas *canvas = parent->getCanvas();
-
-	CGUIText *textLarge = canvas->createText(parent, itemRect, m_largeFont);
+	CGUIText* textLarge = m_canvas->createText(parent, itemRect, m_largeFont);
 	textLarge->setText("");
 	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Top);
 	textLarge->setColor(SColor(255, 255, 255, 255));
@@ -427,11 +576,11 @@ CGUIElement* CViewDemo::createScrollElement(CScroller *scroller, CGUIElement *pa
 	return textLarge;
 }
 
-void CViewDemo::updateScrollElement(CScroller *scroller, CGUIElement *item, int itemID)
+void CViewDemo::updateScrollElement(CScroller* scroller, CGUIElement* item, int itemID)
 {
 	int number = core::abs_(itemID % 10);
 
-	CGUIText *textLarge = dynamic_cast<CGUIText*>(item);
+	CGUIText* textLarge = dynamic_cast<CGUIText*>(item);
 	char t[32];
 	sprintf(t, "%d", number);
 	textLarge->setText(t);

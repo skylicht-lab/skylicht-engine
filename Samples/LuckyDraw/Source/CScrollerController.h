@@ -16,7 +16,7 @@ public:
 
 	struct SScrollerInfo
 	{
-		CScroller *Scroller;
+		CScroller* Scroller;
 		float Speed;
 		float TargetSpeed;
 		float WaitScrollTime;
@@ -48,5 +48,13 @@ public:
 
 	bool isLastStopPosition();
 
-	void stopOnNumber(int number);	
+	void stopOnNumber(int number);
+
+	void setVisible(bool b)
+	{
+		for (SScrollerInfo& s : m_scrollers)
+		{
+			s.Scroller->setVisible(b);
+		}
+	}
 };

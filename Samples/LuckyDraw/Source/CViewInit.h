@@ -50,4 +50,6 @@ public:
 protected:
 
 	void initScene();
+
+	void loadConfig();
 };

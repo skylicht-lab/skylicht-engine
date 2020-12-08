@@ -5,18 +5,18 @@ class CScroller;
 class IScrollerCallback
 {
 public:
-	virtual CGUIElement* createScrollElement(CScroller *scroller, CGUIElement *parent, const core::rectf& itemRect) = 0;
+	virtual CGUIElement* createScrollElement(CScroller* scroller, CGUIElement* parent, const core::rectf& itemRect) = 0;
 
-	virtual void updateScrollElement(CScroller *scroller, CGUIElement *item, int itemID) = 0;
+	virtual void updateScrollElement(CScroller* scroller, CGUIElement* item, int itemID) = 0;
 };
 
 class CScroller
 {
 protected:
-	CGUIElement *m_element;
+	CGUIElement* m_element;
 	std::vector<CGUIElement*> m_items;
 
-	IScrollerCallback *m_callback;
+	IScrollerCallback* m_callback;
 
 	float m_startOffset;
 	float m_absoluteOffset;
@@ -24,11 +24,16 @@ protected:
 	float m_itemSize;
 
 public:
-	CScroller(CGUIElement *element, float itemSize, IScrollerCallback *callback);
+	CScroller(CGUIElement* element, float itemSize, IScrollerCallback* callback);
 
 	virtual ~CScroller();
 
 	void update();
+
+	void setVisible(bool b)
+	{
+		m_element->setVisible(b);
+	}
 
 	const core::rectf& getRect()
 	{
