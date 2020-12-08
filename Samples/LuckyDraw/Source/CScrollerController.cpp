@@ -12,10 +12,10 @@ CScrollerController::CScrollerController(std::vector<CScroller*>& scrollers) :
 	m_targetNumber(0),
 	m_stopPosition(0)
 {
-	for (CScroller *s : scrollers)
+	for (CScroller* s : scrollers)
 	{
 		m_scrollers.push_back(SScrollerInfo());
-		SScrollerInfo &scroller = m_scrollers.back();
+		SScrollerInfo& scroller = m_scrollers.back();
 
 		scroller.Scroller = s;
 		scroller.WaitScrollTime = 0.0f;
@@ -38,7 +38,7 @@ void CScrollerController::update()
 	// gui scroller update
 	for (int i = 0, n = (int)m_scrollers.size(); i < n; i++)
 	{
-		SScrollerInfo &s = m_scrollers[i];
+		SScrollerInfo& s = m_scrollers[i];
 
 		if (s.State == CScrollerController::Stop)
 		{
@@ -206,6 +206,13 @@ void CScrollerController::stopOnNumber(int number)
 		s.State = WaitStop;
 		s.TargetStop = stop;
 		s.StopLengthDistance = stop - s.Scroller->getOffset();
+
+		if (s.StopLengthDistance < s.Scroller->getItemSize())
+		{
+			stop = stop + s.Scroller->getItemSize() * NUMBER_RANGE;
+			s.TargetStop = stop;
+			s.StopLengthDistance = stop - s.Scroller->getOffset();
+		}
 
 		if (number > t)
 			number = number % (num * t);

@@ -7,7 +7,9 @@
 
 #include "CScroller.h"
 #include "CScrollerController.h"
+#include "CLocalize.h"
 #include "CButton.h"
+#include "CList.h"
 
 #define MAX_STATE 4
 
@@ -15,25 +17,60 @@ class CViewDemo :
 	public CView,
 	public IScrollerCallback
 {
+public:
+	struct SPrize
+	{
+		SFrame* Icon;
+		ITexture* Background;
+		std::string Name;
+		int TotalPeopleCount;
+		int PeopleCount;
+
+		SPrize()
+		{
+			Icon = NULL;
+			Background = NULL;
+			TotalPeopleCount = 0;
+			PeopleCount = 0;
+		}
+	};
+
+	struct SPeople
+	{
+		int ID;
+		int WinPrize;
+		bool IsLucky;
+
+		SPeople()
+		{
+			ID = -1;
+			WinPrize = -1;
+			IsLucky = false;
+		}
+	};
+
 protected:
-	CZipAudioStreamFactory *m_streamFactory;
+	CZipAudioStreamFactory* m_streamFactory;
 
-	CGlyphFont *m_largeFont;
-	CGlyphFont *m_smallFont;
-	CGlyphFont *m_textMediumFont;
-	CGlyphFont *m_textSmallFont;
+	CGlyphFont* m_largeFont;
+	CGlyphFont* m_textMediumFont;
+	CGlyphFont* m_textMedium2Font;
+	CGlyphFont* m_textSmallFont;
 
-	CGUISprite *m_iconSprite;
-	CGUISprite *m_iconPeople;
-	CGUIImage *m_backgroundImage;
-	CGUIText *m_title;
-	CGUIText *m_switchPrize;
-	CGUIText *m_peopleText;
+	CCanvas* m_canvas;
+	CGUISprite* m_iconSprite;
+	CGUISprite* m_iconPeople;
+	CGUIImage* m_backgroundImage;
+	CGUIText* m_title;
+	CGUIText* m_switchPrize;
+	CGUIText* m_peopleText;
 
-	CSpriteAtlas *m_sprite;
+	CSpriteAtlas* m_sprite;
 
 	std::vector<CScroller*> m_scrollers;
-	CScrollerController *m_controller;
+	CScrollerController* m_controller;
+
+	CList* m_list;
 
 	CButton* m_spin;
 	CButton* m_stop;
@@ -43,25 +80,24 @@ protected:
 	CButton* m_left;
 	CButton* m_right;
 
-	SFrame* m_icon[MAX_STATE];
-	ITexture* m_stateTexture[MAX_STATE];
-	std::string m_stateName[MAX_STATE];
-	int m_peopleCount[MAX_STATE];
+	SkylichtAudio::CAudioEmitter* m_musicBG;
+	SkylichtAudio::CAudioEmitter* m_soundTada;
+	SkylichtAudio::CAudioEmitter* m_soundSpin;
+	SkylichtAudio::CAudioEmitter* m_soundStop;
+	SkylichtAudio::CAudioEmitter* m_soundShowStop;
+	SkylichtAudio::CAudioEmitter* m_soundCountDown;
+	SkylichtAudio::CAudioEmitter* m_soundAccept;
+	SkylichtAudio::CAudioEmitter* m_soundIgnore;
+	SkylichtAudio::CAudioEmitter* m_soundUp;
 
-	SkylichtAudio::CAudioEmitter *m_musicBG;
-	SkylichtAudio::CAudioEmitter *m_soundTada;
-	SkylichtAudio::CAudioEmitter *m_soundSpin;
-	SkylichtAudio::CAudioEmitter *m_soundStop;
-	SkylichtAudio::CAudioEmitter *m_soundShowStop;
-	SkylichtAudio::CAudioEmitter *m_soundCountDown;
-	SkylichtAudio::CAudioEmitter *m_soundAccept;
-	SkylichtAudio::CAudioEmitter *m_soundIgnore;
-	SkylichtAudio::CAudioEmitter *m_soundUp;
-
+	int m_randomPeople;
 	int m_randomNumber;
 	int m_state;
 	bool m_countDown;
 
+	SPrize m_prize[MAX_STATE];
+	std::vector<SPeople> m_people;
+	core::array<int> m_listPeople;
 public:
 	CViewDemo();
 
@@ -77,7 +113,13 @@ public:
 
 	virtual void onPostRender();
 
+	int getNumState();
+
+	int getNumScroller();
+
 	void setState(int state);
+
+	void checkToShowListLuckyPeople();
 
 	inline int getState()
 	{
@@ -98,7 +140,7 @@ protected:
 
 public:
 
-	virtual CGUIElement* createScrollElement(CScroller *scroller, CGUIElement *parent, const core::rectf& itemRect);
+	virtual CGUIElement* createScrollElement(CScroller* scroller, CGUIElement* parent, const core::rectf& itemRect);
 
-	virtual void updateScrollElement(CScroller *scroller, CGUIElement *item, int itemID);
+	virtual void updateScrollElement(CScroller* scroller, CGUIElement* item, int itemID);
 };

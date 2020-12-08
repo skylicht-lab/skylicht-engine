@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CViewInit.h"
 #include "CViewDemo.h"
+#include "CLocalize.h"
 
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
@@ -29,7 +30,7 @@ CViewInit::~CViewInit()
 	CEventManager::getInstance()->unRegisterEvent(this);
 }
 
-io::path CViewInit::getBuiltInPath(const char *name)
+io::path CViewInit::getBuiltInPath(const char* name)
 {
 	return getApplication()->getBuiltInPath(name);
 }
@@ -37,13 +38,12 @@ io::path CViewInit::getBuiltInPath(const char *name)
 void CViewInit::onInit()
 {
 	CBaseApp* app = getApplication();
-	app->showDebugConsole();
 	app->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 
 	// handle click event
@@ -55,19 +55,19 @@ void CViewInit::initScene()
 	CBaseApp* app = getApplication();
 
 	// init segoeuil.ttf inside BuiltIn.zip
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 	freetypeFont->initFont("LasVegas", "LuckyDraw/LasVegasJackpotRegular.otf");
 	freetypeFont->initFont("Sans", "LuckyDraw/droidsans.ttf");
 
 	// create a scene
-	CContext *context = CContext::getInstance();
-	CScene *scene = context->initScene();
-	CZone *zone = scene->createZone();
+	CContext* context = CContext::getInstance();
+	CScene* scene = context->initScene();
+	CZone* zone = scene->createZone();
 
-	// create 2D camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
-	CCamera *guiCamera = guiCameraObject->addComponent<CCamera>();
+	// create 2d camera
+	CGameObject* guiCameraObject = zone->createEmptyObject();
+	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// 2d gui
@@ -76,16 +76,27 @@ void CViewInit::initScene()
 
 	// create 2D Canvas
 	m_canvasObject = zone->createEmptyObject();
-	CCanvas *canvas = m_canvasObject->addComponent<CCanvas>();
+	CCanvas* canvas = m_canvasObject->addComponent<CCanvas>();
 
 	// create UI Text in Canvas
 	m_guiText = canvas->createText(m_largeFont);
 	m_guiText->setPosition(core::vector3df(0.0f, -40.0f, 0.0f));
-	m_guiText->setText("Click to continue...");
+	m_guiText->setText(CLocalize::get("TXT_CLICK_TO_CONTINUE"));
 	m_guiText->setTextAlign(CGUIElement::Center, CGUIElement::Bottom);
 
 	// set gui camera
 	context->setGUICamera(guiCamera);
+}
+
+void CViewInit::loadConfig()
+{
+	CXMLSpreadsheet xlsText;
+
+	if (xlsText.open("Luckydraw/text.xml") == true)
+	{
+		CLocalize::createGetInstance()->init(&xlsText);
+		CLocalize::getInstance()->setLanguage(ELanguage::EN);
+	}
 }
 
 void CViewInit::onDestroy()
@@ -95,7 +106,7 @@ void CViewInit::onDestroy()
 
 void CViewInit::onUpdate()
 {
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 
 	switch (m_initState)
 	{
@@ -107,7 +118,7 @@ void CViewInit::onUpdate()
 		listBundles.push_back("LuckyDraw.zip");
 
 #ifdef __EMSCRIPTEN__
-		const char *filename = listBundles[m_downloaded].c_str();
+		const char* filename = listBundles[m_downloaded].c_str();
 
 		if (m_getFile == NULL)
 		{
@@ -139,12 +150,12 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
 		{
-			const char *r = bundle.c_str();
+			const char* r = bundle.c_str();
 #if defined(WINDOWS_STORE)
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
 #elif defined(MACOS)
@@ -156,10 +167,11 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+		}
 	break;
 	case CViewInit::InitScene:
 	{
+		loadConfig();
 		initScene();
 		m_initState = CViewInit::Finished;
 	}
@@ -171,12 +183,12 @@ void CViewInit::onUpdate()
 	break;
 	default:
 	{
-		CScene *scene = context->getScene();
+		CScene* scene = context->getScene();
 		if (scene != NULL)
 			scene->update();
 	}
 	break;
-}
+	}
 	}
 
 void CViewInit::onRender()

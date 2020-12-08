@@ -8,7 +8,7 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleLuckyDraw *app = new SampleLuckyDraw();
+	SampleLuckyDraw* app = new SampleLuckyDraw();
 	getApplication()->registerAppEvent("SampleLuckyDraw", app);
 }
 
