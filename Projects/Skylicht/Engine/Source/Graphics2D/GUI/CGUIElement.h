@@ -57,10 +57,10 @@ namespace Skylicht
 		CGUIElement* m_parent;
 		core::array<CGUIElement*> m_childs;
 
-		CCanvas *m_canvas;
+		CCanvas* m_canvas;
 
-		CGUIMask *m_mask;
-		CGUIMask *m_applyParentMask;
+		CGUIMask* m_mask;
+		CGUIMask* m_applyParentMask;
 
 		core::rectf m_rect;
 
@@ -81,14 +81,14 @@ namespace Skylicht
 
 		SColor m_color;
 		int m_shaderID;
-		CMaterial *m_material;
+		CMaterial* m_material;
 
 	protected:
-		CGUIElement(CCanvas *canvas, const core::rectf& rect);
-		CGUIElement(CCanvas *canvas, CGUIElement *parent);
-		CGUIElement(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect);
+		CGUIElement(CCanvas* canvas, const core::rectf& rect);
+		CGUIElement(CCanvas* canvas, CGUIElement* parent);
+		CGUIElement(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
 
-		inline void applyParentMask(CGUIMask *mask)
+		inline void applyParentMask(CGUIMask* mask)
 		{
 			m_applyParentMask = mask;
 		}
@@ -128,6 +128,16 @@ namespace Skylicht
 		const SColor& getColor()
 		{
 			return m_color;
+		}
+
+		inline float getHeight()
+		{
+			return m_rect.getHeight();
+		}
+
+		inline float getWidth()
+		{
+			return m_rect.getWidth();
 		}
 
 		inline core::rectf& getRect()
@@ -238,17 +248,17 @@ namespace Skylicht
 			return m_mask;
 		}
 
-		inline void setMask(CGUIMask *mask)
+		inline void setMask(CGUIMask* mask)
 		{
 			m_mask = mask;
 		}
 
-		virtual void update(CCamera *camera)
+		virtual void update(CCamera* camera)
 		{
 
 		}
 
-		virtual void render(CCamera *camera);
+		virtual void render(CCamera* camera);
 
 		const core::matrix4& getRelativeTransform(bool forceRecalc = false);
 

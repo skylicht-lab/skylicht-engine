@@ -32,8 +32,8 @@ namespace Skylicht
 	{
 		int ID;
 		std::string Path;
-		ITexture *Texture;
-		CAtlas *Atlas;
+		ITexture* Texture;
+		CAtlas* Atlas;
 
 		SImage()
 		{
@@ -67,8 +67,8 @@ namespace Skylicht
 
 	struct SModuleOffset
 	{
-		SModuleRect *Module;
-		SFrame *Frame;
+		SModuleRect* Module;
+		SFrame* Frame;
 
 		float OffsetX;
 		float OffsetY;
@@ -80,13 +80,13 @@ namespace Skylicht
 
 		SModuleOffset();
 
-		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
+		void getPositionBuffer(video::S3DVertex* vertices, s16* indices, int vertexOffset, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
 
-		void getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, float offsetX, float offsetY, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
+		void getPositionBuffer(video::S3DVertex* vertices, s16* indices, int vertexOffset, float offsetX, float offsetY, const core::matrix4& mat, float scaleW = 1.0f, float scaleH = 1.0f);
 
-		void getTexCoordBuffer(video::S3DVertex *vertices, float texWidth, float texHeight, float scaleW = 1.0f, float scaleH = 1.0f);
+		void getTexCoordBuffer(video::S3DVertex* vertices, float texWidth, float texHeight, float scaleW = 1.0f, float scaleH = 1.0f);
 
-		void getColorBuffer(video::S3DVertex *vertices, const SColor& c);
+		void getColorBuffer(video::S3DVertex* vertices, const SColor& c);
 	};
 
 	struct SFrame
@@ -96,13 +96,23 @@ namespace Skylicht
 
 		std::vector<SModuleOffset> ModuleOffset;
 
-		SImage *Image;
+		SImage* Image;
 
 		core::rectf BoudingRect;
 
 		SFrame()
 		{
 			ID = -1;
+		}
+
+		inline float getWidth()
+		{
+			return BoudingRect.getWidth();
+		}
+
+		inline float getHeight()
+		{
+			return BoudingRect.getHeight();
 		}
 	};
 }
