@@ -112,3 +112,4 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 #include "Utils/CMemoryStream.h"
 #include "Utils/XMLSpreadsheet/CXMLSpreadsheet.h"
+#include "Utils/XMLSpreadsheet/CXMLTableData.h"
