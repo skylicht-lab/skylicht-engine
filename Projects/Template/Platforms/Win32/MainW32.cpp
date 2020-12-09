@@ -52,7 +52,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-CApplication *g_application;
+CApplication* g_application;
 bool g_restartApplication = false;
 bool g_update = true;
 
@@ -206,7 +206,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		p.AntiAlias = 1;
 
 	// create device
-	IrrlichtDevice *device = irr::createDeviceEx(p);
+	IrrlichtDevice* device = irr::createDeviceEx(p);
 
 	if (device == NULL)
 		return 1;
@@ -298,9 +298,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	hWndStyle = WS_SYSMENU | WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 
-#if defined(SKYLICHT_EDITOR)
+// #if defined(SKYLICHT_EDITOR)
 	hWndStyle |= WS_OVERLAPPEDWINDOW;
-#endif
+// #endif
 
 	hWnd = CreateWindow(szWindowClass, szTitle, hWndStyle,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
@@ -349,7 +349,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	};
 
 	// handle grouped events
-	messageMap * m = mouseMap;
+	messageMap* m = mouseMap;
 	while (m->group >= 0 && m->winMessage != message)
 		m += 1;
 
@@ -374,7 +374,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 
 		event.EventType = irr::EET_MOUSE_INPUT_EVENT;
-		event.MouseInput.Event = (irr::EMOUSE_INPUT_EVENT) m->irrMessage;
+		event.MouseInput.Event = (irr::EMOUSE_INPUT_EVENT)m->irrMessage;
 		event.MouseInput.X = (short)LOWORD(lParam);
 		event.MouseInput.Y = (short)HIWORD(lParam);
 		event.MouseInput.Shift = ((LOWORD(wParam) & MK_SHIFT) != 0);
@@ -408,7 +408,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				event.MouseInput.Wheel = 1.0f;
 		}
 
-		IrrlichtDevice *dev = getIrrlichtDevice();
+		IrrlichtDevice* dev = getIrrlichtDevice();
 		if (dev)
 			dev->postEventFromUser(event);
 		return 0;
@@ -449,7 +449,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		u32 width = LOWORD(lParam);
 		u32 height = HIWORD(lParam);
-		IrrlichtDevice *dev = getIrrlichtDevice();
+		IrrlichtDevice* dev = getIrrlichtDevice();
 		if (width > 0 && height > 0)
 		{
 			if (dev != NULL)
@@ -539,7 +539,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if ((allKeys[VK_MENU] & 0x80) != 0)
 			event.KeyInput.Control = 0;
 
-		IrrlichtDevice *dev = getIrrlichtDevice();
+		IrrlichtDevice* dev = getIrrlichtDevice();
 		if (dev)
 			dev->postEventFromUser(event);
 
@@ -551,7 +551,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SETCURSOR:
 	{
 		// because Windows forgot about that in the meantime
-		IrrlichtDevice *dev = getIrrlichtDevice();
+		IrrlichtDevice* dev = getIrrlichtDevice();
 		if (dev)
 		{
 			gui::ICursorControl* cursor = dev->getCursorControl();
@@ -566,9 +566,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
+		}
 	return 0;
-}
+	}
 
 #endif
 

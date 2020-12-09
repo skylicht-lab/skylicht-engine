@@ -71,6 +71,14 @@ namespace Skylicht
 	{
 	}
 
+	void CGraphics2D::resize()
+	{
+		for (CCanvas* c : m_canvas)
+		{
+			c->layout();
+		}
+	}
+
 	core::dimension2du CGraphics2D::getScreenSize()
 	{
 		core::dimension2du screenSize = getVideoDriver()->getScreenSize();
@@ -101,20 +109,20 @@ namespace Skylicht
 			return false;
 	}
 
-	void CGraphics2D::addCanvas(CCanvas *canvas)
+	void CGraphics2D::addCanvas(CCanvas* canvas)
 	{
 		if (std::find(m_canvas.begin(), m_canvas.end(), canvas) == m_canvas.end())
 			m_canvas.push_back(canvas);
 	}
 
-	void CGraphics2D::removeCanvas(CCanvas *canvas)
+	void CGraphics2D::removeCanvas(CCanvas* canvas)
 	{
 		std::vector<CCanvas*>::iterator i = std::find(m_canvas.begin(), m_canvas.end(), canvas);
 		if (i != m_canvas.end())
 			m_canvas.erase(i);
 	}
 
-	void CGraphics2D::render(CCamera *camera)
+	void CGraphics2D::render(CCamera* camera)
 	{
 		if (camera == NULL)
 			return;
@@ -130,7 +138,7 @@ namespace Skylicht
 
 		core::matrix4 billboardMatrix;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		// set projection & view			
 		const SViewFrustum& viewArea = camera->getViewFrustum();
@@ -162,7 +170,7 @@ namespace Skylicht
 			up.normalize();
 
 			// billboard matrix		
-			f32 *matData = billboardMatrix.pointer();
+			f32* matData = billboardMatrix.pointer();
 
 			matData[0] = right.X;
 			matData[1] = right.Y;
@@ -186,7 +194,7 @@ namespace Skylicht
 		}
 
 		// render graphics
-		for (CCanvas *canvas : m_canvas)
+		for (CCanvas* canvas : m_canvas)
 		{
 			if (canvas->getGameObject()->isVisible() == false)
 				continue;
@@ -237,7 +245,7 @@ namespace Skylicht
 
 	void CGraphics2D::beginRenderGUI(const core::matrix4& projection, const core::matrix4& view)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		// set projection & view
 		driver->setTransform(video::ETS_PROJECTION, projection);
@@ -251,7 +259,7 @@ namespace Skylicht
 		flush();
 	}
 
-	void CGraphics2D::flushBuffer(IMeshBuffer *meshBuffer, video::SMaterial& material)
+	void CGraphics2D::flushBuffer(IMeshBuffer* meshBuffer, video::SMaterial& material)
 	{
 		scene::IVertexBuffer* vertices = meshBuffer->getVertexBuffer();
 		scene::IIndexBuffer* indices = meshBuffer->getIndexBuffer();
@@ -286,7 +294,7 @@ namespace Skylicht
 		flushBuffer(m_buffer, m_2dMaterial);
 	}
 
-	void CGraphics2D::flushWithMaterial(CMaterial *material)
+	void CGraphics2D::flushWithMaterial(CMaterial* material)
 	{
 		CShaderMaterial::setMaterial(material);
 
@@ -296,7 +304,7 @@ namespace Skylicht
 		flushBuffer(m_buffer, m_customMaterial);
 	}
 
-	void CGraphics2D::addExternalBuffer(IMeshBuffer *meshBuffer, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material)
+	void CGraphics2D::addExternalBuffer(IMeshBuffer* meshBuffer, const core::matrix4& absoluteMatrix, int shaderID, CMaterial* material)
 	{
 		if (m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -304,8 +312,8 @@ namespace Skylicht
 		scene::IVertexBuffer* vtxBuffer = meshBuffer->getVertexBuffer();
 		scene::IIndexBuffer* idxBuffer = meshBuffer->getIndexBuffer();
 
-		u16 *idxData = (u16*)idxBuffer->getIndices();
-		S3DVertex *vtxData = (S3DVertex*)vtxBuffer->getVertices();
+		u16* idxData = (u16*)idxBuffer->getIndices();
+		S3DVertex* vtxData = (S3DVertex*)vtxBuffer->getVertices();
 
 		int numVtx = vtxBuffer->getVertexCount();
 		int numIdx = idxBuffer->getIndexCount();
@@ -325,12 +333,12 @@ namespace Skylicht
 		}
 
 		m_indices->set_used(numIndexUse);
-		u16 *index = (u16*)m_indices->getIndices();
+		u16* index = (u16*)m_indices->getIndices();
 		for (int i = 0; i < numIdx; i++)
 			index[numIndex + i] = numVertices + idxData[i];
 
 		m_vertices->set_used(numVerticesUse);
-		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
 
 		// add vertices
 		for (int i = 0; i < numVtx; i++)
@@ -348,7 +356,7 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addImageBatch(ITexture *img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material, float pivotX, float pivotY)
+	void CGraphics2D::addImageBatch(ITexture* img, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, CMaterial* material, float pivotX, float pivotY)
 	{
 		if (m_2dMaterial.getTexture(0) != img || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -368,7 +376,7 @@ namespace Skylicht
 		}
 
 		m_indices->set_used(numIndexUse);
-		u16 *index = (u16*)m_indices->getIndices();
+		u16* index = (u16*)m_indices->getIndices();
 		index[numIndex + 0] = numVertices + 0;
 		index[numIndex + 1] = numVertices + 1;
 		index[numIndex + 2] = numVertices + 2;
@@ -377,7 +385,7 @@ namespace Skylicht
 		index[numIndex + 5] = numVertices + 3;
 
 		m_vertices->set_used(numVerticesUse);
-		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
 
 		core::rectf pos;
 		pos.UpperLeftCorner.X = -pivotX;
@@ -404,7 +412,7 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addImageBatch(ITexture *img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, CMaterial *material, float pivotX, float pivotY)
+	void CGraphics2D::addImageBatch(ITexture* img, const core::rectf& dest, const core::rectf& source, const SColor& color, const core::matrix4& absoluteMatrix, int shaderID, CMaterial* material, float pivotX, float pivotY)
 	{
 		if (m_2dMaterial.getTexture(0) != img || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -424,7 +432,7 @@ namespace Skylicht
 		}
 
 		m_indices->set_used(numIndexUse);
-		u16 *index = (u16*)m_indices->getIndices();
+		u16* index = (u16*)m_indices->getIndices();
 		index[numIndex + 0] = numVertices + 0;
 		index[numIndex + 1] = numVertices + 1;
 		index[numIndex + 2] = numVertices + 2;
@@ -433,11 +441,11 @@ namespace Skylicht
 		index[numIndex + 5] = numVertices + 3;
 
 		m_vertices->set_used(numVerticesUse);
-		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
 
 		core::rectf pos;
-		pos.UpperLeftCorner.X = -pivotX;
-		pos.UpperLeftCorner.Y = -pivotY;
+		pos.UpperLeftCorner.X = -pivotX + dest.UpperLeftCorner.X;
+		pos.UpperLeftCorner.Y = -pivotY + dest.UpperLeftCorner.Y;
 		pos.LowerRightCorner.X = pos.UpperLeftCorner.X + dest.getWidth();
 		pos.LowerRightCorner.Y = pos.UpperLeftCorner.Y + dest.getHeight();
 
@@ -463,9 +471,9 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addModuleBatch(SModuleOffset *module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID, CMaterial *material)
+	void CGraphics2D::addModuleBatch(SModuleOffset* module, const SColor& color, const core::matrix4& absoluteMatrix, float offsetX, float offsetY, int shaderID, CMaterial* material)
 	{
-		ITexture *tex = module->Frame->Image->Texture;
+		ITexture* tex = module->Frame->Image->Texture;
 
 		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -495,14 +503,14 @@ namespace Skylicht
 		m_vertices->set_used(vertexUse);
 
 		// get vertex pointer
-		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		video::S3DVertex* vertices = (video::S3DVertex*)m_vertices->getVertices();
 		vertices += numVertices;
 
 		// alloc index
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16 *indices = (s16*)m_indices->getIndices();
+		s16* indices = (s16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -522,14 +530,14 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addModuleBatch(SModuleOffset *module,
+	void CGraphics2D::addModuleBatch(SModuleOffset* module,
 		const SColor& color,
 		const core::matrix4& absoluteMatrix,
 		const core::rectf& r,
 		int shaderID,
-		CMaterial *material)
+		CMaterial* material)
 	{
-		ITexture *tex = module->Frame->Image->Texture;
+		ITexture* tex = module->Frame->Image->Texture;
 
 		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -559,14 +567,14 @@ namespace Skylicht
 		m_vertices->set_used(vertexUse);
 
 		// get vertex pointer
-		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		video::S3DVertex* vertices = (video::S3DVertex*)m_vertices->getVertices();
 		vertices += numVertices;
 
 		// alloc index
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16 *indices = (s16*)m_indices->getIndices();
+		s16* indices = (s16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -579,8 +587,8 @@ namespace Skylicht
 		}
 
 		{
-			s16 *ib = indices;
-			video::S3DVertex *vb = vertices;
+			s16* ib = indices;
+			video::S3DVertex* vb = vertices;
 			int vertex = numVertices;
 
 			ib[0] = vertex;
@@ -602,7 +610,7 @@ namespace Skylicht
 		*   [6][   7    ][8]
 		*/
 
-		SModuleRect *m = module->Module;
+		SModuleRect* m = module->Module;
 		float width = r.getWidth();
 		float height = r.getHeight();
 
@@ -628,16 +636,16 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addModuleBatchLR(SModuleOffset *module,
+	void CGraphics2D::addModuleBatchLR(SModuleOffset* module,
 		const SColor& color,
 		const core::matrix4& absoluteMatrix,
 		const core::rectf& r,
 		float anchorLeft,
 		float anchorRight,
 		int shaderID,
-		CMaterial *material)
+		CMaterial* material)
 	{
-		ITexture *tex = module->Frame->Image->Texture;
+		ITexture* tex = module->Frame->Image->Texture;
 
 		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -669,14 +677,14 @@ namespace Skylicht
 		m_vertices->set_used(vertexUse);
 
 		// get vertex pointer
-		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		video::S3DVertex* vertices = (video::S3DVertex*)m_vertices->getVertices();
 		vertices += numVertices;
 
 		// alloc index
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16 *indices = (s16*)m_indices->getIndices();
+		s16* indices = (s16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -690,8 +698,8 @@ namespace Skylicht
 
 		for (int i = 0; i < numRect; i++)
 		{
-			s16 *ib = indices + i * 6;
-			video::S3DVertex *vb = vertices + i * 4;
+			s16* ib = indices + i * 6;
+			video::S3DVertex* vb = vertices + i * 4;
 			int vertex = numVertices + i * 4;
 
 			ib[0] = vertex;
@@ -711,7 +719,7 @@ namespace Skylicht
 		*   [0][   1    ][2]
 		*/
 
-		SModuleRect *m = module->Module;
+		SModuleRect* m = module->Module;
 		float width = r.getWidth();
 		float height = r.getHeight();
 		float right = m->W - anchorRight;
@@ -774,16 +782,16 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addModuleBatchTB(SModuleOffset *module,
+	void CGraphics2D::addModuleBatchTB(SModuleOffset* module,
 		const SColor& color,
 		const core::matrix4& absoluteMatrix,
 		const core::rectf& r,
 		float anchorTop,
 		float anchorBottom,
 		int shaderID,
-		CMaterial *material)
+		CMaterial* material)
 	{
-		ITexture *tex = module->Frame->Image->Texture;
+		ITexture* tex = module->Frame->Image->Texture;
 
 		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -815,14 +823,14 @@ namespace Skylicht
 		m_vertices->set_used(vertexUse);
 
 		// get vertex pointer
-		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		video::S3DVertex* vertices = (video::S3DVertex*)m_vertices->getVertices();
 		vertices += numVertices;
 
 		// alloc index
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16 *indices = (s16*)m_indices->getIndices();
+		s16* indices = (s16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -836,8 +844,8 @@ namespace Skylicht
 
 		for (int i = 0; i < numRect; i++)
 		{
-			s16 *ib = indices + i * 6;
-			video::S3DVertex *vb = vertices + i * 4;
+			s16* ib = indices + i * 6;
+			video::S3DVertex* vb = vertices + i * 4;
 			int vertex = numVertices + i * 4;
 
 			ib[0] = vertex;
@@ -859,7 +867,7 @@ namespace Skylicht
 		*   [       2       ]
 		*/
 
-		SModuleRect *m = module->Module;
+		SModuleRect* m = module->Module;
 		float width = r.getWidth();
 		float height = r.getHeight();
 		float bottom = m->H - anchorBottom;
@@ -922,7 +930,7 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addModuleBatch(SModuleOffset *module,
+	void CGraphics2D::addModuleBatch(SModuleOffset* module,
 		const SColor& color,
 		const core::matrix4& absoluteMatrix,
 		const core::rectf& r,
@@ -931,9 +939,9 @@ namespace Skylicht
 		float anchorTop,
 		float anchorBottom,
 		int shaderID,
-		CMaterial *material)
+		CMaterial* material)
 	{
-		ITexture *tex = module->Frame->Image->Texture;
+		ITexture* tex = module->Frame->Image->Texture;
 
 		if (m_2dMaterial.getTexture(0) != tex || m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -965,14 +973,14 @@ namespace Skylicht
 		m_vertices->set_used(vertexUse);
 
 		// get vertex pointer
-		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		video::S3DVertex* vertices = (video::S3DVertex*)m_vertices->getVertices();
 		vertices += numVertices;
 
 		// alloc index
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16 *indices = (s16*)m_indices->getIndices();
+		s16* indices = (s16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -986,8 +994,8 @@ namespace Skylicht
 
 		for (int i = 0; i < numRect; i++)
 		{
-			s16 *ib = indices + i * 6;
-			video::S3DVertex *vb = vertices + i * 4;
+			s16* ib = indices + i * 6;
+			video::S3DVertex* vb = vertices + i * 4;
 			int vertex = numVertices + i * 4;
 
 			ib[0] = vertex;
@@ -1009,7 +1017,7 @@ namespace Skylicht
 		*   [6][   7    ][8]
 		*/
 
-		SModuleRect *m = module->Module;
+		SModuleRect* m = module->Module;
 		float width = r.getWidth();
 		float height = r.getHeight();
 		float right = m->W - anchorRight;
@@ -1229,7 +1237,7 @@ namespace Skylicht
 		vertices[3].TCoords.Y = y2;
 	}
 
-	void CGraphics2D::addFrameBatch(SFrame *frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, CMaterial *material)
+	void CGraphics2D::addFrameBatch(SFrame* frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, CMaterial* material)
 	{
 		if (m_2dMaterial.getTexture(0) != frame->Image->Texture || m_2dMaterial.MaterialType != materialID || material != NULL)
 			flush();
@@ -1257,12 +1265,12 @@ namespace Skylicht
 
 		m_vertices->set_used(vertexUse);
 
-		video::S3DVertex *vertices = (video::S3DVertex*)m_vertices->getVertices();
+		video::S3DVertex* vertices = (video::S3DVertex*)m_vertices->getVertices();
 		vertices += numVertices;
 
 		m_indices->set_used(indexUse);
 
-		s16 *indices = (s16*)m_indices->getIndices();
+		s16* indices = (s16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -1295,7 +1303,7 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
-	void CGraphics2D::addRectangleBatch(const core::rectf& pos, const core::rectf& uv, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, CMaterial *material)
+	void CGraphics2D::addRectangleBatch(const core::rectf& pos, const core::rectf& uv, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, CMaterial* material)
 	{
 		if (m_2dMaterial.MaterialType != shaderID || material != NULL)
 			flush();
@@ -1307,7 +1315,7 @@ namespace Skylicht
 		int indexUse = numIndices + 6;
 
 		m_indices->set_used(indexUse);
-		u16 *index = (u16*)m_indices->getIndices();
+		u16* index = (u16*)m_indices->getIndices();
 		index[numIndices + 0] = numVertices + 0;
 		index[numIndices + 1] = numVertices + 1;
 		index[numIndices + 2] = numVertices + 2;
@@ -1321,7 +1329,7 @@ namespace Skylicht
 		float v2 = uv.LowerRightCorner.Y;
 
 		m_vertices->set_used(vertexUse);
-		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
 		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u1, v1);
 		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u2, v1);
 		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u2, v2);
@@ -1435,7 +1443,7 @@ namespace Skylicht
 		flush();
 
 		m_indices->set_used(6);
-		u16 *index = (u16*)m_indices->getIndices();
+		u16* index = (u16*)m_indices->getIndices();
 		index[0] = 0;
 		index[1] = 1;
 		index[2] = 2;
@@ -1444,7 +1452,7 @@ namespace Skylicht
 		index[5] = 3;
 
 		m_vertices->set_used(4);
-		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
 		vertices[0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
 		vertices[1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
 		vertices[2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
@@ -1469,7 +1477,7 @@ namespace Skylicht
 		flush();
 
 		m_indices->set_used(6);
-		u16 *index = (u16*)m_indices->getIndices();
+		u16* index = (u16*)m_indices->getIndices();
 		index[0] = 0;
 		index[1] = 1;
 		index[2] = 2;
@@ -1478,7 +1486,7 @@ namespace Skylicht
 		index[5] = 3;
 
 		m_vertices->set_used(4);
-		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
 		vertices[0] = S3DVertex(upleft.X, upleft.Y, upleft.Z, 0, 0, 1, color, 0, 0);
 		vertices[1] = S3DVertex(lowerright.X, upleft.Y, upleft.Z, 0, 0, 1, color, 0, 0);
 		vertices[2] = S3DVertex(lowerright.X, lowerright.Y, lowerright.Z, 0, 0, 1, color, 0, 0);
@@ -1503,7 +1511,7 @@ namespace Skylicht
 		flush();
 
 		m_indices->set_used(5);
-		u16 *index = (u16*)m_indices->getIndices();
+		u16* index = (u16*)m_indices->getIndices();
 		index[0] = 0;
 		index[1] = 1;
 		index[2] = 2;
@@ -1511,7 +1519,7 @@ namespace Skylicht
 		index[4] = 0;
 
 		m_vertices->set_used(4);
-		S3DVertex *vertices = (S3DVertex*)m_vertices->getVertices();
+		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
 		vertices[0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
 		vertices[1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);
 		vertices[2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0, 0);

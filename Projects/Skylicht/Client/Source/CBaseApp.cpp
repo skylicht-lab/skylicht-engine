@@ -191,25 +191,7 @@ namespace Skylicht
 #else
 		return false;
 #endif
-	}
-
-	void CBaseApp::autoScaleUI()
-	{
-#ifndef LINUX_SERVER
-		/*
-		core::dimension2du screenSize = getApplication()->getDriver()->getScreenSize();
-		core::dimension2du baseSize(1920, 1080);
-
-		float screenRatio = screenSize.Width / (float)screenSize.Height;
-		if (screenRatio < 1.5f)
-			baseSize.set(1920, 1440);
-
-		float scale = baseSize.Width / (float)screenSize.Width;
-
-		CGraphics2D::getInstance()->setScale(scale);
-		*/
-#endif
-	}
+	}	
 
 	void CBaseApp::alertError(wchar_t *lpString)
 	{

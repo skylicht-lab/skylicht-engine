@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUISprite::CGUISprite(CCanvas *canvas, const core::rectf& rect, SFrame *frame) :
+	CGUISprite::CGUISprite(CCanvas* canvas, const core::rectf& rect, SFrame* frame) :
 		CGUIElement(canvas, rect),
 		m_frame(frame),
 		m_animationTime(0),
@@ -39,7 +39,7 @@ namespace Skylicht
 
 	}
 
-	CGUISprite::CGUISprite(CCanvas *canvas, CGUIElement *parent, SFrame *frame) :
+	CGUISprite::CGUISprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame) :
 		CGUIElement(canvas, parent),
 		m_frame(frame),
 		m_animationTime(0),
@@ -50,7 +50,7 @@ namespace Skylicht
 
 	}
 
-	CGUISprite::CGUISprite(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect, SFrame *frame) :
+	CGUISprite::CGUISprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame) :
 		CGUIElement(canvas, parent, rect),
 		m_frame(frame),
 		m_animationTime(0),
@@ -66,8 +66,10 @@ namespace Skylicht
 
 	}
 
-	void CGUISprite::update(CCamera *camera)
+	void CGUISprite::update(CCamera* camera)
 	{
+		CGUIElement::update(camera);
+
 		if (m_autoRotate)
 		{
 			m_animationTime = m_animationTime - getTimeStep();
@@ -86,8 +88,8 @@ namespace Skylicht
 		}
 	}
 
-	void CGUISprite::render(CCamera *camera)
-	{		
+	void CGUISprite::render(CCamera* camera)
+	{
 		if (m_frame != NULL)
 		{
 			CGraphics2D::getInstance()->addFrameBatch(m_frame, m_color, m_absoluteTransform, m_shaderID, m_material);
@@ -95,7 +97,7 @@ namespace Skylicht
 		}
 	}
 
-	void CGUISprite::setFrame(SFrame *frame)
+	void CGUISprite::setFrame(SFrame* frame)
 	{
 		m_frame = frame;
 	}
@@ -113,8 +115,8 @@ namespace Skylicht
 	{
 		if (m_frame)
 		{
-			m_frame->ModuleOffset[0].OffsetX = -((float)m_frame->BoudingRect.getWidth()*0.5f);
-			m_frame->ModuleOffset[0].OffsetY = -((float)m_frame->BoudingRect.getHeight()*0.5f);
+			m_frame->ModuleOffset[0].OffsetX = -((float)m_frame->BoudingRect.getWidth() * 0.5f);
+			m_frame->ModuleOffset[0].OffsetY = -((float)m_frame->BoudingRect.getHeight() * 0.5f);
 		}
 	}
 

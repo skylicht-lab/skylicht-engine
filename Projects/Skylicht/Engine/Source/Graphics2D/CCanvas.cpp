@@ -33,7 +33,7 @@ namespace Skylicht
 		m_enable3DBillboard(false),
 		m_renderCamera(NULL)
 	{
-		CGraphics2D *g = CGraphics2D::getInstance();
+		CGraphics2D* g = CGraphics2D::getInstance();
 		float w = (float)g->getScreenSize().Width;
 		float h = (float)g->getScreenSize().Height;
 
@@ -42,6 +42,7 @@ namespace Skylicht
 
 		// add root
 		m_root = new CGUIElement(this, m_rect);
+		m_root->setDock(CGUIElement::DockFill);
 		m_entities.push_back(m_root);
 
 		// add this canvas
@@ -51,7 +52,7 @@ namespace Skylicht
 	CCanvas::~CCanvas()
 	{
 		// remove all entity gui
-		for (CGUIElement *entity : m_entities)
+		for (CGUIElement* entity : m_entities)
 			delete entity;
 		m_entities.clear();
 
@@ -67,7 +68,23 @@ namespace Skylicht
 	{
 	}
 
-	void CCanvas::render(CCamera *camera)
+	void CCanvas::layout()
+	{
+		// layout on 2d ui
+		if (m_renderCamera->getProjectionType() == CCamera::OrthoUI)
+		{
+			// get current screen size
+			CGraphics2D* g = CGraphics2D::getInstance();
+			float w = (float)g->getScreenSize().Width;
+			float h = (float)g->getScreenSize().Height;
+
+			m_rect = core::rectf(0.0f, 0.0f, w, h);
+
+			m_root->layout(m_rect);
+		}
+	}
+
+	void CCanvas::render(CCamera* camera)
 	{
 		m_renderCamera = camera;
 
@@ -78,10 +95,10 @@ namespace Skylicht
 		int maxLevel = 0;
 
 		// update all entities
-		for (CGUIElement *entity : m_entities)
+		for (CGUIElement* entity : m_entities)
 		{
 			int level = entity->getLevel();
-			CGUIElement *parent = entity->getParent();
+			CGUIElement* parent = entity->getParent();
 
 			// update entity
 			entity->update(camera);
@@ -112,7 +129,7 @@ namespace Skylicht
 			entity->applyParentMask(entity->getMask());
 			if (parent != NULL)
 			{
-				CGUIMask *mask = parent->getMask();
+				CGUIMask* mask = parent->getMask();
 				if (mask == NULL)
 					mask = parent->getCurrentMask();
 
@@ -136,7 +153,7 @@ namespace Skylicht
 		m_maxChildLevel = maxLevel;
 
 		// culling
-		for (CGUIElement *entity : m_entities)
+		for (CGUIElement* entity : m_entities)
 		{
 			if (entity->getParent() != NULL && entity->getParent()->isCullingVisisble() == false)
 			{
@@ -156,13 +173,13 @@ namespace Skylicht
 
 		while (renderEntity.size() > 0)
 		{
-			CGUIElement *entity = renderEntity.top();
+			CGUIElement* entity = renderEntity.top();
 			renderEntity.pop();
 
 			if (entity->isVisible() == false)
 				continue;
 
-			CGUIMask *mask = entity->getCurrentMask();
+			CGUIMask* mask = entity->getCurrentMask();
 			if (mask != NULL)
 				mask->beginMaskTest(camera);
 
@@ -185,21 +202,21 @@ namespace Skylicht
 
 	CGUIElement* CCanvas::createElement()
 	{
-		CGUIElement *element = new CGUIElement(this, m_root, m_rect);
+		CGUIElement* element = new CGUIElement(this, m_root, m_rect);
 		m_entities.push_back(element);
 		return element;
 	}
 
 	CGUIElement* CCanvas::createElement(const core::rectf& r)
 	{
-		CGUIElement *element = new CGUIElement(this, m_root, r);
+		CGUIElement* element = new CGUIElement(this, m_root, r);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIElement* CCanvas::createElement(CGUIElement *e, const core::rectf& r)
+	CGUIElement* CCanvas::createElement(CGUIElement* e, const core::rectf& r)
 	{
-		CGUIElement *element = new CGUIElement(this, e, r);
+		CGUIElement* element = new CGUIElement(this, e, r);
 		m_entities.push_back(element);
 		return element;
 	}
@@ -210,21 +227,21 @@ namespace Skylicht
 
 	CGUIImage* CCanvas::createImage()
 	{
-		CGUIImage *element = new CGUIImage(this, m_root, m_rect);
+		CGUIImage* element = new CGUIImage(this, m_root, m_rect);
 		m_entities.push_back(element);
 		return element;
 	}
 
 	CGUIImage* CCanvas::createImage(const core::rectf& r)
 	{
-		CGUIImage *element = new CGUIImage(this, m_root, r);
+		CGUIImage* element = new CGUIImage(this, m_root, r);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIImage* CCanvas::createImage(CGUIElement *e, const core::rectf& r)
+	CGUIImage* CCanvas::createImage(CGUIElement* e, const core::rectf& r)
 	{
-		CGUIImage *element = new CGUIImage(this, e, r);
+		CGUIImage* element = new CGUIImage(this, e, r);
 		m_entities.push_back(element);
 		return element;
 	}
@@ -233,30 +250,30 @@ namespace Skylicht
 	* Text constructor
 	*/
 
-	CGUIText* CCanvas::createText(IFont *font)
+	CGUIText* CCanvas::createText(IFont* font)
 	{
-		CGUIText *element = new CGUIText(this, m_root, m_rect, font);
+		CGUIText* element = new CGUIText(this, m_root, m_rect, font);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIText* CCanvas::createText(const core::rectf& r, IFont *font)
+	CGUIText* CCanvas::createText(const core::rectf& r, IFont* font)
 	{
-		CGUIText *element = new CGUIText(this, m_root, r, font);
+		CGUIText* element = new CGUIText(this, m_root, r, font);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIText* CCanvas::createText(CGUIElement *e, IFont *font)
+	CGUIText* CCanvas::createText(CGUIElement* e, IFont* font)
 	{
-		CGUIText *element = new CGUIText(this, e, e->getRect(), font);
+		CGUIText* element = new CGUIText(this, e, e->getRect(), font);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIText* CCanvas::createText(CGUIElement *e, const core::rectf& r, IFont *font)
+	CGUIText* CCanvas::createText(CGUIElement* e, const core::rectf& r, IFont* font)
 	{
-		CGUIText *element = new CGUIText(this, e, r, font);
+		CGUIText* element = new CGUIText(this, e, r, font);
 		m_entities.push_back(element);
 		return element;
 	}
@@ -265,30 +282,30 @@ namespace Skylicht
 	* Sprite constructor
 	*/
 
-	CGUISprite* CCanvas::createSprite(SFrame *frame)
+	CGUISprite* CCanvas::createSprite(SFrame* frame)
 	{
-		CGUISprite *element = new CGUISprite(this, m_root, m_rect, frame);
+		CGUISprite* element = new CGUISprite(this, m_root, m_rect, frame);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUISprite* CCanvas::createSprite(const core::rectf& r, SFrame *frame)
+	CGUISprite* CCanvas::createSprite(const core::rectf& r, SFrame* frame)
 	{
-		CGUISprite *element = new CGUISprite(this, m_root, r, frame);
+		CGUISprite* element = new CGUISprite(this, m_root, r, frame);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUISprite* CCanvas::createSprite(CGUIElement *e, SFrame *frame)
+	CGUISprite* CCanvas::createSprite(CGUIElement* e, SFrame* frame)
 	{
-		CGUISprite *element = new CGUISprite(this, e, e->getRect(), frame);
+		CGUISprite* element = new CGUISprite(this, e, e->getRect(), frame);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUISprite* CCanvas::createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame)
+	CGUISprite* CCanvas::createSprite(CGUIElement* e, const core::rectf& r, SFrame* frame)
 	{
-		CGUISprite *element = new CGUISprite(this, e, r, frame);
+		CGUISprite* element = new CGUISprite(this, e, r, frame);
 		m_entities.push_back(element);
 		return element;
 	}
@@ -299,14 +316,14 @@ namespace Skylicht
 
 	CGUIMask* CCanvas::createMask(const core::rectf& r)
 	{
-		CGUIMask *element = new CGUIMask(this, r);
+		CGUIMask* element = new CGUIMask(this, r);
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIMask* CCanvas::createMask(CGUIElement *e, const core::rectf& r)
+	CGUIMask* CCanvas::createMask(CGUIElement* e, const core::rectf& r)
 	{
-		CGUIMask *element = new CGUIMask(this, e, r);
+		CGUIMask* element = new CGUIMask(this, e, r);
 		m_entities.push_back(element);
 		return element;
 	}
@@ -315,27 +332,27 @@ namespace Skylicht
 	* Rect constructor
 	*/
 
-	CGUIRect* CCanvas::createRect(const video::SColor &c)
+	CGUIRect* CCanvas::createRect(const video::SColor& c)
 	{
-		CGUIRect *element = new CGUIRect(this, m_root, m_rect);
+		CGUIRect* element = new CGUIRect(this, m_root, m_rect);
 		element->setColor(c);
 
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIRect* CCanvas::createRect(const core::rectf& r, const video::SColor &c)
+	CGUIRect* CCanvas::createRect(const core::rectf& r, const video::SColor& c)
 	{
-		CGUIRect *element = new CGUIRect(this, m_root, r);
+		CGUIRect* element = new CGUIRect(this, m_root, r);
 		element->setColor(c);
 
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIRect* CCanvas::createRect(CGUIElement *e, const core::rectf& r, const video::SColor &c)
+	CGUIRect* CCanvas::createRect(CGUIElement* e, const core::rectf& r, const video::SColor& c)
 	{
-		CGUIRect *element = new CGUIRect(this, e, r);
+		CGUIRect* element = new CGUIRect(this, e, r);
 		element->setColor(c);
 
 		m_entities.push_back(element);
@@ -347,27 +364,27 @@ namespace Skylicht
 	* RoundedRect constructor
 	*/
 
-	CGUIRoundedRect* CCanvas::createRoundedRect(float radius, const video::SColor &c)
+	CGUIRoundedRect* CCanvas::createRoundedRect(float radius, const video::SColor& c)
 	{
-		CGUIRoundedRect *element = new CGUIRoundedRect(this, m_root, m_rect, radius);
+		CGUIRoundedRect* element = new CGUIRoundedRect(this, m_root, m_rect, radius);
 		element->setColor(c);
 
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIRoundedRect* CCanvas::createRoundedRect(const core::rectf& r, float radius, const video::SColor &c)
+	CGUIRoundedRect* CCanvas::createRoundedRect(const core::rectf& r, float radius, const video::SColor& c)
 	{
-		CGUIRoundedRect *element = new CGUIRoundedRect(this, m_root, r, radius);
+		CGUIRoundedRect* element = new CGUIRoundedRect(this, m_root, r, radius);
 		element->setColor(c);
 
 		m_entities.push_back(element);
 		return element;
 	}
 
-	CGUIRoundedRect* CCanvas::createRoundedRect(CGUIElement *e, const core::rectf& r, float radius, const video::SColor &c)
+	CGUIRoundedRect* CCanvas::createRoundedRect(CGUIElement* e, const core::rectf& r, float radius, const video::SColor& c)
 	{
-		CGUIRoundedRect *element = new CGUIRoundedRect(this, e, r, radius);
+		CGUIRoundedRect* element = new CGUIRoundedRect(this, e, r, radius);
 		element->setColor(c);
 
 		m_entities.push_back(element);
@@ -378,7 +395,7 @@ namespace Skylicht
 	* Element destructor
 	*/
 
-	void CCanvas::remove(CGUIElement *element)
+	void CCanvas::remove(CGUIElement* element)
 	{
 		// remove child firest
 		removeChildOfParent(element);
@@ -388,11 +405,11 @@ namespace Skylicht
 		m_entities.remove(element);
 	}
 
-	void CCanvas::removeChildOfParent(CGUIElement *parent)
+	void CCanvas::removeChildOfParent(CGUIElement* parent)
 	{
 		std::list<CGUIElement*> removeList;
 
-		for (CGUIElement *entity : m_entities)
+		for (CGUIElement* entity : m_entities)
 		{
 			if (entity->getParent() == parent)
 			{
@@ -400,7 +417,7 @@ namespace Skylicht
 			}
 		}
 
-		for (CGUIElement *entity : removeList)
+		for (CGUIElement* entity : removeList)
 		{
 			entity->remove();
 		}

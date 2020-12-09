@@ -29,14 +29,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUIMask::CGUIMask(CCanvas *canvas, const core::rectf& rect) :
+	CGUIMask::CGUIMask(CCanvas* canvas, const core::rectf& rect) :
 		CGUIElement(canvas, rect),
 		m_drawMask(false)
 	{
 
 	}
 
-	CGUIMask::CGUIMask(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect) :
+	CGUIMask::CGUIMask(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		CGUIElement(canvas, parent, rect),
 		m_drawMask(false)
 	{
@@ -48,12 +48,13 @@ namespace Skylicht
 
 	}
 
-	void CGUIMask::update(CCamera *camera)
+	void CGUIMask::update(CCamera* camera)
 	{
+		CGUIElement::update(camera);
 		m_drawMask = false;
 	}
 
-	void CGUIMask::render(CCamera *camera)
+	void CGUIMask::render(CCamera* camera)
 	{
 		if (m_drawMask == false)
 		{
@@ -69,7 +70,7 @@ namespace Skylicht
 			m_absoluteTransform.transformVect(topLeft);
 			m_absoluteTransform.transformVect(bottomRight);
 
-			CGraphics2D *g = CGraphics2D::getInstance();
+			CGraphics2D* g = CGraphics2D::getInstance();
 
 			// draw depth for mask
 			g->beginDrawDepth();
@@ -80,7 +81,7 @@ namespace Skylicht
 		m_drawMask = true;
 	}
 
-	void CGUIMask::beginMaskTest(CCamera *camera)
+	void CGUIMask::beginMaskTest(CCamera* camera)
 	{
 		if (m_drawMask == false)
 			render(camera);
