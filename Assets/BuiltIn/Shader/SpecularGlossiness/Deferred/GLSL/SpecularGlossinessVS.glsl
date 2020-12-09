@@ -27,7 +27,7 @@ void main(void)
 
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldTangent = normalize(worldTangent.xyz);
-	vWorldBinormal = cross(vWorldNormal.xyz, vWorldTangent.xyz);
+	vWorldBinormal = normalize(cross(vWorldNormal.xyz, vWorldTangent.xyz));
 
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
 	vTangentW = inTangentW.x;

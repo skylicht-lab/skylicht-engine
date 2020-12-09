@@ -1028,6 +1028,8 @@ namespace irr
 						// instancing
 						if (descriptor->getInstanceDataStepRate(attribBufferID) == video::EIDSR_PER_INSTANCE)
 							glVertexAttribDivisor(location, 1);
+						else
+							glVertexAttribDivisor(location, 0);
 					}
 				}
 

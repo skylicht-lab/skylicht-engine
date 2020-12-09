@@ -1440,6 +1440,8 @@ void COpenGLDriver::drawMeshBuffer(const scene::IMeshBuffer* mb)
 				// instancing
 				if (descriptor->getInstanceDataStepRate(attribBufferID) == video::EIDSR_PER_INSTANCE)
 					extGlVertexAttribDivisor(location, 1);
+				else
+					extGlVertexAttribDivisor(location, 0);
 			}
 		}
 		
