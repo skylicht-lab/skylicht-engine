@@ -99,7 +99,7 @@ namespace Skylicht
 			return m_timeStep;
 		}
 
-		io::path getBuiltInPath(const char *name);
+		io::path getBuiltInPath(const char* name);
 
 		inline void showFPS(bool b)
 		{
@@ -131,9 +131,9 @@ namespace Skylicht
 			return m_enableRender;
 		}
 
-		void registerAppEvent(std::string name, IApplicationEventReceiver *pEvent);
+		void registerAppEvent(std::string name, IApplicationEventReceiver* pEvent);
 
-		void unRegisterAppEvent(IApplicationEventReceiver *pEvent);
+		void unRegisterAppEvent(IApplicationEventReceiver* pEvent);
 
 		void sendEventToAppReceiver(int eventID, int param1 = 0, int param2 = 0);
 
@@ -142,13 +142,11 @@ namespace Skylicht
 			m_limitFPS = fps;
 		}
 
-		void autoScaleUI();
+		virtual void alertError(wchar_t* lpString);
 
-		virtual void alertError(wchar_t *lpString);
+		virtual bool yesNoQuestion(wchar_t* lpString);
 
-		virtual bool yesNoQuestion(wchar_t *lpString);
-
-		virtual void setStatusText(int part, wchar_t *lpString);
+		virtual void setStatusText(int part, wchar_t* lpString);
 	};
 
 	extern CBaseApp* getApplication();

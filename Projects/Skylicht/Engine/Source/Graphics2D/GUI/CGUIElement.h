@@ -51,6 +51,32 @@ namespace Skylicht
 			Right
 		};
 
+		enum EGUIDock
+		{
+			NoDock,
+			DockLeft,
+			DockRight,
+			DockTop,
+			DockBottom,
+			DockFill
+		};
+
+		struct SRect
+		{
+			float Left;
+			float Top;
+			float Right;
+			float Bottom;
+
+			SRect()
+			{
+				Left = 0.0f;
+				Top = 0.0f;
+				Right = 0.0f;
+				Bottom = 0.0f;
+			}
+		};
+
 	protected:
 		int m_level;
 
@@ -64,8 +90,13 @@ namespace Skylicht
 
 		core::rectf m_rect;
 
+		EGUIDock m_dock;
+		SRect m_margin;
+
 		bool m_visible;
 		bool m_transformChanged;
+
+		core::vector3df m_transformPosition;
 
 		core::vector3df	m_position;
 		core::vector3df	m_scale;
@@ -140,9 +171,37 @@ namespace Skylicht
 			return m_rect.getWidth();
 		}
 
+		inline void setDock(EGUIDock dock)
+		{
+			m_dock = dock;
+		}
+
+		inline EGUIDock getDock()
+		{
+			return m_dock;
+		}
+
 		inline core::rectf& getRect()
 		{
 			return m_rect;
+		}
+
+		inline const SRect& getMargin()
+		{
+			return m_margin;
+		}
+
+		inline void setMargin(const SRect& m)
+		{
+			m_margin = m;
+		}
+
+		inline void setMargin(float l, float t, float r, float b)
+		{
+			m_margin.Left = l;
+			m_margin.Top = t;
+			m_margin.Right = r;
+			m_margin.Bottom = b;
 		}
 
 		inline void setRect(const core::rectf& r)
@@ -193,7 +252,7 @@ namespace Skylicht
 			m_transformChanged = true;
 		}
 
-		inline EGUIVerticalAlign getVerticlaAlign()
+		inline EGUIVerticalAlign getVerticalAlign()
 		{
 			return m_vertical;
 		}
@@ -203,14 +262,23 @@ namespace Skylicht
 			return m_horizontal;
 		}
 
-		inline void setVerticlaAlign(EGUIVerticalAlign a)
+		inline void setVerticalAlign(EGUIVerticalAlign a)
 		{
 			m_vertical = a;
+			m_transformChanged = true;
 		}
 
 		inline void setHorizontalAlign(EGUIHorizontalAlign a)
 		{
 			m_horizontal = a;
+			m_transformChanged = true;
+		}
+
+		inline void setAlign(EGUIHorizontalAlign h, EGUIVerticalAlign v)
+		{
+			m_vertical = v;
+			m_horizontal = h;
+			m_transformChanged = true;
 		}
 
 		inline void setCullingVisisble(bool b)
@@ -253,12 +321,11 @@ namespace Skylicht
 			m_mask = mask;
 		}
 
-		virtual void update(CCamera* camera)
-		{
-
-		}
+		virtual void update(CCamera* camera);
 
 		virtual void render(CCamera* camera);
+
+		virtual void layout(const core::rectf& parentRect);
 
 		const core::matrix4& getRelativeTransform(bool forceRecalc = false);
 
@@ -278,5 +345,12 @@ namespace Skylicht
 		{
 			return m_visible;
 		}
+
+	protected:
+
+		void layoutNoDock(const core::rectf& parentRect);
+
+		void layoutDock(const core::rectf& parentRect);
+
 	};
 }

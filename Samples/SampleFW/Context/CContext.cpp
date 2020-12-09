@@ -93,6 +93,9 @@ void CContext::resize(int w, int h)
 
 	if (m_postProcessor != NULL)
 		m_postProcessor->resize(w, h);
+
+	if (m_guiCamera != NULL)
+		m_guiCamera->recalculateProjectionMatrix();
 }
 
 void CContext::releaseRenderPipeline()
@@ -122,7 +125,7 @@ void CContext::releaseRenderPipeline()
 	}
 }
 
-void CContext::setDirectionalLight(CDirectionalLight *light)
+void CContext::setDirectionalLight(CDirectionalLight* light)
 {
 	m_directionalLight = light;
 }

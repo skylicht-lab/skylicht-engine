@@ -45,6 +45,9 @@ https://github.com/skylicht-lab/skylicht-engine
 // String Imp
 #include "Utils/CStringImp.h"
 
+// Graphics
+#include "Graphics2D/CGraphics2D.h"
+
 CBaseApp* g_app = NULL;
 
 // external function
@@ -78,7 +81,7 @@ namespace Skylicht
 
 	bool CApplication::OnEvent(const SEvent& event)
 	{
-		CEventManager *eventMgr = CEventManager::getInstance();
+		CEventManager* eventMgr = CEventManager::getInstance();
 		if (eventMgr != NULL)
 			eventMgr->OnEvent(event);
 
@@ -114,7 +117,7 @@ namespace Skylicht
 #ifdef ANDROID
 			__android_log_print(ANDROID_LOG_INFO, "skylicht_client.so", "%s", event.LogEvent.Text);
 #endif
-			CConsoleLog *log = CConsoleLog::getInstance();
+			CConsoleLog* log = CConsoleLog::getInstance();
 			if (log->isEnable())
 				log->write(event.LogEvent.Text, event.LogEvent.Level);
 		}
@@ -350,8 +353,8 @@ namespace Skylicht
 			core::rect<s32> winRect(0, 0, w, h);
 			m_device->getCursorControl()->setReferenceRect(&winRect);
 
-			// todo auto scale
-			autoScaleUI();
+			// resize 2d
+			CGraphics2D::getInstance()->resize();
 
 			// application receiver
 			os::Printer::log("CApplication::resize");
@@ -419,7 +422,7 @@ namespace Skylicht
 		return CAccelerometer::getInstance()->isEnable();
 	}
 
-	void CApplication::setDeviceID(const wchar_t *string)
+	void CApplication::setDeviceID(const wchar_t* string)
 	{
 		if (string == NULL)
 		{
