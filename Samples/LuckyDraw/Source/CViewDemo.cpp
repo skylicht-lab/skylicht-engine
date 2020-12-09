@@ -134,20 +134,15 @@ void CViewDemo::onInit()
 	CGameObject* canvasObject = zone->createEmptyObject();
 	m_canvas = canvasObject->addComponent<CCanvas>();
 
-	// get canvas size
-	const core::rectf& screenSize = m_canvas->getRootElement()->getRect();
-	float screenW = screenSize.getWidth();
-	float screenH = screenSize.getHeight();
-
 	// create background
 	m_backgroundImage = m_canvas->createImage();
+	m_backgroundImage->setDock(CGUIElement::DockFill);
 
 	// create icon
-	core::rectf iconSize = core::rectf(0.0f, 0.0f, 300.0f, 300.0f);
+	core::rectf iconSize = core::rectf(0.0f, 0.0f, 260.0f, 260.0f);
 	m_iconSprite = m_canvas->createSprite(iconSize, NULL);
-	float iconX = screenW / 2.0f;
-	float iconY = screenH / 2.0f - 300.0f;
-	m_iconSprite->setPosition(core::vector3df(iconX, iconY, 0.0f));
+	m_iconSprite->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	m_iconSprite->setPosition(core::vector3df(130.0f, 130.0f - 300.0f, 0.0f));
 	m_iconSprite->setScale(core::vector3df(0.5f, 0.5f, 1.0f));
 
 	// create number scroller	
@@ -161,8 +156,8 @@ void CViewDemo::onInit()
 
 	core::rectf scrollerSize(0.0f, 0.0f, numberW, numberH);
 
-	float scrollerPosX = screenW / 2.0f - (numScroller * numberW + (numScroller - 1) * paddingX) / 2.0f;
-	float scrollerPosY = screenH / 2.0f - numberH / 2.0f + paddingY;
+	float scrollerPosX = -(numScroller * numberW + (numScroller - 1) * paddingX) * 0.5f + numberW * 0.5f;
+	float scrollerPosY = paddingY;
 
 	float startOffset = (numberH - itemH) / 2;
 
@@ -170,6 +165,7 @@ void CViewDemo::onInit()
 	{
 		// create scoller background
 		CGUIRect* scrollerGUI = m_canvas->createRect(scrollerSize, SColor(150, 0, 0, 0));
+		scrollerGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
 		scrollerGUI->setPosition(core::vector3df(scrollerPosX, scrollerPosY, 0.0f));
 
 		// create scroller control
@@ -186,54 +182,55 @@ void CViewDemo::onInit()
 	// create list
 	float listWidth = 740.0f;
 	float listHeight = 300.0f;
-	float listX = screenW / 2.0f - listWidth / 2.0f;
-	float listY = screenH / 2.0f - listHeight / 2.0f + paddingY;
+	float listY = paddingY;
 	core::rectf listSize(0.0f, 0.0f, listWidth, listHeight);
 
 	CGUIRect* listGUI = m_canvas->createRect(listSize, SColor(150, 0, 0, 0));
-	listGUI->setPosition(core::vector3df(listX, listY, 0.0f));
+	listGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	listGUI->setPosition(core::vector3df(0.0f, listY, 0.0f));
 	m_list = new CList(listGUI);
 	m_list->setVisible(false);
 
 	// create label
 	float textWidth = 800.0f;
 	float textHeight = 60.0f;
-	float textX = (screenW - textWidth) / 2.0f;
-	float textY = (screenH - textHeight) / 2.0f - 190.0f;
 	m_title = m_canvas->createText(m_textMediumFont);
 	m_title->setRect(core::rectf(0.0, 0.0, textWidth, textHeight));
-	m_title->setPosition(core::vector3df(textX, textY, 0.0f));
+	m_title->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	m_title->setPosition(core::vector3df(0.0f, -190.0f, 0.0f));
 	m_title->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
 	m_title->setColor(SColor(200, 255, 255, 255));
 
 	// create spin/stop/accept/inorge button
+	float buttonY = numberH * 0.5f + 100.0f;
 	float buttonW = btnYellowBackground->getWidth();
 	float buttonH = btnYellowBackground->getHeight();
-	float buttonPaddingY = 40.0f;
 	float buttonAcceptPaddingX = 180.0f;
 	core::rectf buttonSize(0.0f, 0.0f, buttonW, buttonH);
-	float buttonX = (screenW - buttonW) / 2.0f;
-	float buttonY = scrollerPosY + numberH + buttonPaddingY;
 
 	CGUIElement* buttonSpinGUI = m_canvas->createElement(buttonSize);
-	buttonSpinGUI->setPosition(core::vector3df(buttonX, buttonY, 0.0f));
+	buttonSpinGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	buttonSpinGUI->setPosition(core::vector3df(0.0f, buttonY, 0.0f));
 	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, CLocalize::get("TXT_SPIN"), m_textMedium2Font, SColor(255, 107, 76, 8));
 	m_spin->OnClick = std::bind(&CViewDemo::onSpinClick, this);
 
 	CGUIElement* buttonStopGUI = m_canvas->createElement(buttonSize);
-	buttonStopGUI->setPosition(core::vector3df(buttonX, buttonY, 0.0f));
+	buttonStopGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	buttonStopGUI->setPosition(core::vector3df(0.0f, buttonY, 0.0f));
 	m_stop = new CButton(buttonStopGUI, btnYellowBackground, CLocalize::get("TXT_STOP"), m_textMedium2Font, SColor(255, 107, 76, 8));
 	m_stop->OnClick = std::bind(&CViewDemo::onStopClick, this);
 	m_stop->setVisible(false);
 
 	CGUIElement* buttonAcceptGUI = m_canvas->createElement(buttonSize);
-	buttonAcceptGUI->setPosition(core::vector3df(buttonX - buttonAcceptPaddingX, buttonY, 0.0f));
+	buttonAcceptGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	buttonAcceptGUI->setPosition(core::vector3df(-buttonAcceptPaddingX, buttonY, 0.0f));
 	m_accept = new CButton(buttonAcceptGUI, btnYellowBackground, CLocalize::get("TXT_ACCEPT"), m_textMedium2Font, SColor(255, 107, 76, 8));
 	m_accept->OnClick = std::bind(&CViewDemo::onAcceptClick, this);
 	m_accept->setVisible(false);
 
 	CGUIElement* buttonQuitGUI = m_canvas->createElement(buttonSize);
-	buttonQuitGUI->setPosition(core::vector3df(buttonX + buttonAcceptPaddingX, buttonY, 0.0f));
+	buttonQuitGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	buttonQuitGUI->setPosition(core::vector3df(buttonAcceptPaddingX, buttonY, 0.0f));
 	m_ignore = new CButton(buttonQuitGUI, btnVioletBackground, CLocalize::get("TXT_IGNORE"), m_textMedium2Font, SColor(255, 187, 179, 234));
 	m_ignore->OnClick = std::bind(&CViewDemo::onIgnoreClick, this);
 	m_ignore->setVisible(false);
@@ -242,16 +239,17 @@ void CViewDemo::onInit()
 	float leftW = btnLeft->getWidth();
 	float leftH = btnLeft->getHeight();
 	core::rectf leftBtnSize(0.0f, 0.0f, leftW, leftH);
-	buttonX = (screenW - leftW) / 2.0f;
-	buttonY = buttonY + 100.0f;
+	buttonY = 20.0f;
 
 	CGUIElement* buttonLeftGUI = m_canvas->createElement(leftBtnSize);
-	buttonLeftGUI->setPosition(core::vector3df(buttonX - 150.0f, buttonY, 0.0f));
+	buttonLeftGUI->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	buttonLeftGUI->setPosition(core::vector3df(-150.0f, buttonY, 0.0f));
 	m_left = new CButton(buttonLeftGUI, btnLeft);
 	m_left->setVisible(false);
 
 	CGUIElement* buttonRightGUI = m_canvas->createElement(leftBtnSize);
-	buttonRightGUI->setPosition(core::vector3df(buttonX + 150.0f, buttonY, 0.0f));
+	buttonRightGUI->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	buttonRightGUI->setPosition(core::vector3df(150.0f, buttonY, 0.0f));
 	m_right = new CButton(buttonRightGUI, btnRight);
 
 	m_left->OnClick = [demo = this, r = m_right, l = m_left]() {
@@ -280,19 +278,22 @@ void CViewDemo::onInit()
 
 	m_switchPrize = m_canvas->createText(m_textSmallFont);
 	m_switchPrize->setRect(core::rectf(0.0f, 0.0f, 200.0f, leftH));
-	m_switchPrize->setPosition(core::vector3df((screenW - 200.0f) * 0.5f - 80.0f, buttonY, 0.0f));
+	m_switchPrize->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	m_switchPrize->setPosition(core::vector3df(-80.0f, buttonY, 0.0f));
 	m_switchPrize->setTextAlign(CGUIElement::Right, CGUIElement::Middle);
 
 	m_iconPeople = m_canvas->createSprite(
-		core::rectf(0.0f, 0.0f, people->getWidth(), people->getHeight()),
+		core::rectf(0.0f, 0.0f, people->getWidth() * 0.5f, people->getHeight() * 0.5f),
 		people
 	);
 	m_iconPeople->setScale(core::vector3df(0.5f, 0.5f, 1.0f));
-	m_iconPeople->setPosition(core::vector3df((screenW - people->getWidth()) * 0.5f + 70.0f, buttonY, 0.0f));
+	m_iconPeople->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	m_iconPeople->setPosition(core::vector3df(60.0f, buttonY, 0.0f));
 
 	m_peopleText = m_canvas->createText(m_textSmallFont);
 	m_peopleText->setRect(core::rectf(0.0f, 0.0f, 100.0f, leftH));
-	m_peopleText->setPosition(core::vector3df((screenW - people->getWidth()) * 0.5f + 105.0f, buttonY, 0.0f));
+	m_peopleText->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	m_peopleText->setPosition(core::vector3df(125.0f, buttonY, 0.0f));
 	m_peopleText->setTextAlign(CGUIElement::Left, CGUIElement::Middle);
 
 	setState(getNumState() - 1);
