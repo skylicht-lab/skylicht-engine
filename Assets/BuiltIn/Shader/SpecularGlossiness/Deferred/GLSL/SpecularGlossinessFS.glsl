@@ -23,7 +23,7 @@ void main(void)
 	vec3 sgMap = texture(uTexSpecGloss, vTexCoord0.xy).xyz;
 
 	mat3 rotation = mat3(vWorldTangent, vWorldBinormal, vWorldNormal);
-	vec3 localCoords = normalMap * 2.0 - vec3(1.0);
+	vec3 localCoords = normalMap * 2.0 - vec3(1.0, 1.0, 1.0);
 	localCoords.y = localCoords.y * vTangentW;
 	vec3 n = rotation * localCoords;
 	n = normalize(n);
