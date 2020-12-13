@@ -35,10 +35,10 @@ namespace Skylicht
 			class CLabel : public CBase
 			{
 			protected:
-				CTextContainer *m_text;
+				CTextContainer* m_text;
 
 			public:
-				CLabel(CBase *parent);
+				CLabel(CBase* parent);
 				virtual ~CLabel();
 
 				virtual void sizeToContents();
@@ -64,6 +64,16 @@ namespace Skylicht
 				inline EFontSize getFontSize()
 				{
 					return m_text->getFontSize();
+				}
+
+				inline void setTextAlignment(ETextAlign align)
+				{
+					m_text->setTextAlignment(align);
+				}
+
+				inline ETextAlign getTextAlignment()
+				{
+					return m_text->getTextAlignment();
 				}
 
 				Listener OnTextChanged;

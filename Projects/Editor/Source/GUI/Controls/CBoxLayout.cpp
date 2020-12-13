@@ -41,6 +41,8 @@ namespace Skylicht
 				layout->setPos(0.0f, 0.0f);
 				layout->sendToBack();
 
+				dock(EPosition::Top);
+
 				m_layoutStack.push(layout);
 			}
 
@@ -49,19 +51,11 @@ namespace Skylicht
 
 			}
 
-			void CBoxLayout::layout()
-			{
-				float w = m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right;
-				setWidth(w);
-
-				CBase::layout();
-
-				sizeToChildren(false, true);
-			}
-
 			void CBoxLayout::postLayout()
 			{
 				CBase::postLayout();
+
+				sizeToChildren(false, true);
 			}
 
 			CLayoutHorizontal* CBoxLayout::beginHorizontal()

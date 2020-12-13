@@ -61,7 +61,7 @@ namespace Skylicht
 
 			boxLayout = new GUI::CBoxLayout(transformColapsible);
 			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
-			addText(boxLayout, L"X", L"0.0");
+			addText(boxLayout, L"Position X", L"0.0");
 			addText(boxLayout, L"Y", L"0.0");
 			addText(boxLayout, L"Z", L"0.0");
 
@@ -86,7 +86,9 @@ namespace Skylicht
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
 			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
 			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
 
 			GUI::CTextBox* text = new GUI::CTextBox(layout);
 			text->setString(value);

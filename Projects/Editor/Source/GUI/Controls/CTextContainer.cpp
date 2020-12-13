@@ -34,7 +34,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTextContainer::CTextContainer(CBase *parent) :
+			CTextContainer::CTextContainer(CBase* parent) :
 				CBase(parent),
 				m_wrapMultiLine(false),
 				m_textChange(true),
@@ -51,7 +51,8 @@ namespace Skylicht
 				m_caretEndPosition(0),
 				m_caretBlinkSpeed(500.0f),
 				m_caretBlink(0.0f),
-				m_moveCaretToEnd(false)
+				m_moveCaretToEnd(false),
+				m_textAlign(ETextAlign::TextLeft)
 			{
 				setMouseInputEnabled(false);
 				enableClip(true);
@@ -85,7 +86,7 @@ namespace Skylicht
 				}
 
 				u32 lineID = 0;
-				for (CText *line : m_lines)
+				for (CText* line : m_lines)
 				{
 					// draw selection
 					if (fromLine != toLine || from != to)
@@ -136,7 +137,7 @@ namespace Skylicht
 				}
 			}
 
-			void CTextContainer::drawSelection(CText *line, u32 from, u32 to)
+			void CTextContainer::drawSelection(CText* line, u32 from, u32 to)
 			{
 				SDimension selectBegin = line->getCharacterPosition(from);
 				SDimension selectEnd = line->getCharacterPosition(to);
@@ -205,7 +206,7 @@ namespace Skylicht
 				string = L"";
 				u32 lineID = 0;
 
-				for (CText *line : m_lines)
+				for (CText* line : m_lines)
 				{
 					if (fromLine != toLine || from != to)
 					{
@@ -383,7 +384,7 @@ namespace Skylicht
 				bool foundBegin = false;
 				bool foundEnd = false;
 
-				for (CText *l : m_lines)
+				for (CText* l : m_lines)
 				{
 					if (pos <= m_caretBegin && m_caretBegin <= pos + l->getLengthNoNewLine())
 					{
@@ -414,7 +415,7 @@ namespace Skylicht
 				u32 ret = 0;
 				u32 lineID = 0;
 
-				for (CText *l : m_lines)
+				for (CText* l : m_lines)
 				{
 					if (lineID == line)
 					{
@@ -446,10 +447,10 @@ namespace Skylicht
 				outChar = 0;
 
 				u32 lineOffset = 0;
-				CText *foundLine = NULL;
-				CText *lastLine = NULL;
+				CText* foundLine = NULL;
+				CText* lastLine = NULL;
 
-				for (CText *line : m_lines)
+				for (CText* line : m_lines)
 				{
 					lineOffset += line->getLength();
 					outLine++;
@@ -513,8 +514,8 @@ namespace Skylicht
 				from = charPosition;
 				to = charPosition;
 
-				CText *foundLine = NULL;
-				for (CText *l : m_lines)
+				CText* foundLine = NULL;
+				for (CText* l : m_lines)
 				{
 					charID += l->getLength();
 
@@ -568,8 +569,8 @@ namespace Skylicht
 				u32 charID = 0;
 				u32 lineID = 0;
 
-				CText *foundLine = NULL;
-				for (CText *l : m_lines)
+				CText* foundLine = NULL;
+				for (CText* l : m_lines)
 				{
 					charID += l->getLength();
 
@@ -598,6 +599,36 @@ namespace Skylicht
 					sizeToContents();
 					m_textChange = false;
 				}
+
+				updateTextAlignment();
+			}
+
+			void CTextContainer::updateTextAlignment()
+			{
+				if (m_textAlign == ETextAlign::TextLeft)
+					return;
+
+				float x = 0.0f;
+				float w = floor(m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right - m_paddingRight);
+
+				ListTextControl::iterator i = m_lines.begin(), end = m_lines.end();
+				while (i != end)
+				{
+					CText* line = (*i);
+
+					if (m_textAlign == ETextAlign::TextRight)
+					{
+						x = w - line->width();
+					}
+					else if (m_textAlign == ETextAlign::TextCenter)
+					{
+						x = floorf(w * 0.5f - line->width() * 0.5f);
+					}
+
+					line->setPos(x, line->getPos().Y);
+
+					++i;
+				}
 			}
 
 			void CTextContainer::setColor(const SGUIColor& color)
@@ -617,12 +648,14 @@ namespace Skylicht
 				float x = 0.0f;
 				float y = 0.0f;
 
+				float lineWidth = 0.0f;
+
+				// this is not yet layout, so calc from parent (Label, TextBox,...)
+				float w = floor(m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right - m_paddingRight);
+
 				if (m_wrapMultiLine == true)
 				{
 					removeAllLines();
-
-					// this is not yet layout, so calc from parent (Label, TextBox,...)
-					float w = m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right - m_paddingRight;
 
 					// multi line
 					std::vector<std::wstring> words;
@@ -647,10 +680,17 @@ namespace Skylicht
 						strLine += *it;
 						SDimension p = CRenderer::getRenderer()->measureText(m_fontSize, strLine);
 
+						if (lineWidth == 0.0f)
+							lineWidth = p.Width;
+
 						if (p.Width > w)
 						{
 							finishLine = true;
 							wrapped = true;
+						}
+						else
+						{
+							lineWidth = p.Width;
 						}
 
 						// If this is the last word then finish the line
@@ -671,16 +711,27 @@ namespace Skylicht
 							}
 							else
 							{
-								t->setString(strLine.substr(0, strLine.length()));
+								t->setString(strLine);
 								//new line is empty
 								strLine.clear();
 							}
-							t->setBounds(x, y, w, p.Height);
+
+							if (m_textAlign == ETextAlign::TextRight)
+							{
+								x = w - lineWidth;
+							}
+							else if (m_textAlign == ETextAlign::TextCenter)
+							{
+								x = floorf(w * 0.5f - lineWidth * 0.5f);
+							}
+
+							t->setBounds(x, y, lineWidth, p.Height);
 							m_lines.push_back(t);
 
 							// Position the newline
 							y += p.Height;
 							x = 0.0f;
+							lineWidth = 0.0f;
 						}
 					}
 				}
@@ -693,6 +744,15 @@ namespace Skylicht
 
 						// compute size of text
 						SDimension p = CRenderer::getRenderer()->measureText(m_fontSize, m_string);
+
+						if (m_textAlign == ETextAlign::TextRight)
+						{
+							x = w - p.Width;
+						}
+						else if (m_textAlign == ETextAlign::TextCenter)
+						{
+							x = floorf(w * 0.5f - p.Width * 0.5f);
+						}
 
 						// single line
 						CText* t = new CText(this);
@@ -789,7 +849,7 @@ namespace Skylicht
 				ListTextControl::iterator i = m_lines.begin(), end = m_lines.end();
 				while (i != end)
 				{
-					CText *t = (*i);
+					CText* t = (*i);
 					removeChild(t);
 					delete t;
 					++i;
