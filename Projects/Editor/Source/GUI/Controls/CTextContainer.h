@@ -38,7 +38,7 @@ namespace Skylicht
 				typedef std::list<CText*> ListTextControl;
 
 			public:
-				CTextContainer(CBase *parent);
+				CTextContainer(CBase* parent);
 
 				virtual ~CTextContainer();
 
@@ -141,6 +141,16 @@ namespace Skylicht
 					return m_string.size();
 				}
 
+				inline void setTextAlignment(ETextAlign align)
+				{
+					m_textAlign = align;
+				}
+
+				inline ETextAlign getTextAlignment()
+				{
+					return m_textAlign;
+				}
+
 				void setWrapMultiline(bool b);
 
 				inline bool isWrapMultiline()
@@ -172,11 +182,13 @@ namespace Skylicht
 
 				bool splitWords(std::wstring string, std::vector<std::wstring>& lines, float lineWidth);
 
-				void drawSelection(CText *line, u32 from, u32 to);
+				void drawSelection(CText* line, u32 from, u32 to);
 
 				u32 getCharacterPosition(u32 line, u32 pos);
 
 				bool updateCaretPosition();
+
+				void updateTextAlignment();
 
 			protected:
 				std::wstring m_string;
@@ -192,6 +204,8 @@ namespace Skylicht
 				EFontSize m_fontSize;
 
 				ListTextControl m_lines;
+
+				ETextAlign m_textAlign;
 
 				u32 m_caretBeginLine;
 

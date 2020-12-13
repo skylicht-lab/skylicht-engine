@@ -57,7 +57,7 @@ namespace Skylicht
 			{
 				CBase::onBoundsChanged(oldBounds);
 
-				sizeToContents();
+				m_text->sizeToContents();
 				invalidate();
 			}
 

@@ -45,15 +45,19 @@ namespace Skylicht
 
 			void CLayoutVertical::layout()
 			{
-				int numChild = Children.size();
-				float size = (width() - m_childPadding * (numChild - 1)) / (float)numChild;
-				float x = 0.0f;
-				float y = 0.0f;
-
-				for (CBase* c : Children)
+				int numChild = (int)Children.size();
+				if (numChild > 0)
 				{
-					c->setBounds(x, y, size, c->height());
-					x = x + size + m_childPadding;
+					float size = (width() - m_childPadding * (numChild - 1)) / (float)numChild;
+					float x = 0.0f;
+					float y = 0.0f;
+
+					for (CBase* c : Children)
+					{
+						float h = core::max_(c->height(), height());
+						c->setBounds(x, y, size, h);
+						x = x + size + m_childPadding;
+					}
 				}
 
 				CLayout::layout();
