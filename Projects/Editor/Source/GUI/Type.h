@@ -491,6 +491,13 @@ namespace Skylicht
 				TargetBottom,
 				NumDockIcon
 			};
+
+			enum ETextAlign
+			{
+				TextLeft,
+				TextCenter,
+				TextRight
+			};
 		}
 	}
 }

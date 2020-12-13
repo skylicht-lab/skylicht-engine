@@ -44,8 +44,6 @@ namespace Skylicht
 
 				virtual ~CBoxLayout();
 
-				virtual void layout();
-
 				virtual void postLayout();
 
 				CLayoutHorizontal* beginHorizontal();
