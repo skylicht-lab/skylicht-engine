@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CLabel.h"
+#include "CLayoutVertical.h"
 
 namespace Skylicht
 {
@@ -31,52 +31,37 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CLabel::CLabel(CBase* parent) :
-				CBase(parent)
+			CLayoutVertical::CLayoutVertical(CBase* parent) :
+				CLayout(parent)
 			{
-				setMouseInputEnabled(false);
-				m_text = new CTextContainer(this);
-				m_text->dock(EPosition::Fill);
+				m_childPadding = 5.0f;
+				setHeight(20.0f);
 			}
 
-			CLabel::~CLabel()
+			CLayoutVertical::~CLayoutVertical()
 			{
 
 			}
 
-			void CLabel::sizeToContents()
+			void CLayoutVertical::layout()
 			{
-				m_text->sizeToContents();
+				int numChild = Children.size();
+				float size = (width() - m_childPadding * (numChild - 1)) / (float)numChild;
+				float x = 0.0f;
+				float y = 0.0f;
 
-				float w = m_padding.Left + m_padding.Right + m_text->width();
-				float h = m_padding.Top + m_padding.Bottom + m_text->height();
-				setSize(w, h);
+				for (CBase* c : Children)
+				{
+					c->setBounds(x, y, size, c->height());
+					x = x + size + m_childPadding;
+				}
+
+				CLayout::layout();
 			}
 
-			void CLabel::onBoundsChanged(const SRect& oldBounds)
+			void CLayoutVertical::postLayout()
 			{
-				CBase::onBoundsChanged(oldBounds);
-
-				sizeToContents();
-				invalidate();
-			}
-
-			void CLabel::setString(const std::wstring& text)
-			{
-				m_text->setString(text);
-
-				if (OnTextChanged != nullptr)
-					OnTextChanged(this);
-			}
-
-			void CLabel::setColor(const SGUIColor& color)
-			{
-				m_text->setColor(color);
-			}
-
-			void CLabel::setFontSize(EFontSize fontsize)
-			{
-				m_text->setFontSize(fontsize);
+				sizeToChildren(false, true);
 			}
 		}
 	}

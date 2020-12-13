@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CLabel.h"
+#include "CLayoutHorizontal.h"
 
 namespace Skylicht
 {
@@ -31,52 +31,28 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CLabel::CLabel(CBase* parent) :
-				CBase(parent)
+			CLayoutHorizontal::CLayoutHorizontal(CBase* parent) :
+				CLayout(parent)
 			{
-				setMouseInputEnabled(false);
-				m_text = new CTextContainer(this);
-				m_text->dock(EPosition::Fill);
+				m_childPadding = 1.0f;
+				setHeight(20.0f);
 			}
 
-			CLabel::~CLabel()
+			CLayoutHorizontal::~CLayoutHorizontal()
 			{
 
 			}
 
-			void CLabel::sizeToContents()
+			void CLayoutHorizontal::postLayout()
 			{
-				m_text->sizeToContents();
-
-				float w = m_padding.Left + m_padding.Right + m_text->width();
-				float h = m_padding.Top + m_padding.Bottom + m_text->height();
-				setSize(w, h);
+				sizeToChildren(false, true);
 			}
 
-			void CLabel::onBoundsChanged(const SRect& oldBounds)
+			void CLayoutHorizontal::onChildAdded(CBase* child)
 			{
-				CBase::onBoundsChanged(oldBounds);
-
-				sizeToContents();
-				invalidate();
-			}
-
-			void CLabel::setString(const std::wstring& text)
-			{
-				m_text->setString(text);
-
-				if (OnTextChanged != nullptr)
-					OnTextChanged(this);
-			}
-
-			void CLabel::setColor(const SGUIColor& color)
-			{
-				m_text->setColor(color);
-			}
-
-			void CLabel::setFontSize(EFontSize fontsize)
-			{
-				m_text->setFontSize(fontsize);
+				CLayout::onChildAdded(child);
+				child->dock(EPosition::Top);
+				child->setMargin(SMargin(0.0f, m_childPadding, 0.0f, 0.0f));
 			}
 		}
 	}

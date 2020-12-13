@@ -34,7 +34,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTabButton::CTabButton(CTabControl *control, CBase *parent, CBase *page) :
+			CTabButton::CTabButton(CTabControl* control, CBase* parent, CBase* page) :
 				CButton(parent),
 				m_control(control),
 				m_page(page),
@@ -43,6 +43,8 @@ namespace Skylicht
 				m_enableRenderOver(false),
 				m_dragOutTabStrip(false)
 			{
+				setPadding(SPadding(8.0f, 0.0f, 2.0f, 0.0f));
+
 				m_color = CThemeConfig::TabButtonColor;
 				m_pressColor = CThemeConfig::TabButtonActiveColor;
 				m_hoverColor = CThemeConfig::TabButtonActiveColor;
@@ -52,7 +54,7 @@ namespace Skylicht
 				m_label->setColor(CThemeConfig::TabTextColor);
 
 				m_close = new CIconButton(this);
-				m_close->setMargin(SMargin(0.0f, 1.0f, 8.0f, -1.0f));
+				m_close->setMargin(SMargin(0.0f, 1.0f, 0.0f, -1.0f));
 				m_close->dock(EPosition::Right);
 				m_close->setIcon(ESystemIcon::Close);
 				m_close->setHidden(!m_showCloseButton);
@@ -95,7 +97,7 @@ namespace Skylicht
 					m_enableRenderOver = true;
 
 					SPoint p = m_parent->canvasPosToLocal(SPoint(x, m_tabPosition.Y + height() * 0.5f));
-					CBase *control = m_parent->getControlAt(p.X, p.Y);
+					CBase* control = m_parent->getControlAt(p.X, p.Y);
 
 					if (x < m_tabStripPosition.X ||
 						x > m_tabStripPosition.X + m_parent->width() ||
@@ -113,7 +115,7 @@ namespace Skylicht
 
 					if (control != NULL)
 					{
-						CTabButton *btn = m_control->getTabButton(control);
+						CTabButton* btn = m_control->getTabButton(control);
 						if (btn != NULL && btn != this)
 							m_parent->bringSwapChildControl(this, btn);
 					}
@@ -133,7 +135,7 @@ namespace Skylicht
 			{
 				if (m_enableRenderOver)
 				{
-					CRenderer *renderer = CRenderer::getRenderer();
+					CRenderer* renderer = CRenderer::getRenderer();
 					SPoint oldOffset = renderer->getRenderOffset();
 					SPoint mousePosition = CInput::getInput()->getMousePosition();
 

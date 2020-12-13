@@ -29,46 +29,69 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpaceProperty::CSpaceProperty(GUI::CDockableWindow *window, CEditor *editor) :
+		CSpaceProperty::CSpaceProperty(GUI::CDockableWindow* window, CEditor* editor) :
 			CSpace(window, editor)
 		{
-			GUI::CBase *titleBar = new GUI::CBase(window);
+			GUI::CBase* titleBar = new GUI::CBase(window);
 			titleBar->setHeight(25.0f);
 			titleBar->dock(GUI::EPosition::Top);
 			titleBar->setPadding(GUI::SPadding(5.0f, 3.0f, 5.0f, -3.0f));
 			titleBar->enableRenderFillRect(true);
 			titleBar->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
 
-			GUI::CIcon *icon = new GUI::CIcon(titleBar, GUI::ESystemIcon::Res3D);
+			GUI::CIcon* icon = new GUI::CIcon(titleBar, GUI::ESystemIcon::Res3D);
 			icon->dock(GUI::EPosition::Left);
 
-			GUI::CLabel *id = new GUI::CLabel(titleBar);
+			GUI::CLabel* id = new GUI::CLabel(titleBar);
 			id->setSize(100.0f, 20.0f);
 			id->setMargin(GUI::SMargin(0.0f, 2.0f, 5.0f));
 			id->dock(GUI::EPosition::Right);
 			id->setString(L"ID: 298312903");
 
-			GUI::CLabel *name = new GUI::CLabel(titleBar);
+			GUI::CLabel* name = new GUI::CLabel(titleBar);
 			name->setMargin(GUI::SMargin(5.0f, 2.0f));
 			name->dock(GUI::EPosition::Fill);
 			name->setString(L"Object Name");
 
-			GUI::CCollapsibleGroup *transformColapsible = new GUI::CCollapsibleGroup(window);
+			GUI::CBoxLayout* boxLayout;
+
+			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(window);
 			transformColapsible->dock(GUI::EPosition::Top);
-			transformColapsible->setLabel(L"Transform");
+			transformColapsible->getHeader()->setLabel(L"Transform");
 
-			GUI::CCollapsibleGroup *rendererColapsible = new GUI::CCollapsibleGroup(window);
+			boxLayout = new GUI::CBoxLayout(transformColapsible);
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
+			addText(boxLayout, L"X", L"0.0");
+			addText(boxLayout, L"Y", L"0.0");
+			addText(boxLayout, L"Z", L"0.0");
+
+			transformColapsible->setExpand(true);
+
+			GUI::CCollapsibleGroup* rendererColapsible = new GUI::CCollapsibleGroup(window);
 			rendererColapsible->dock(GUI::EPosition::Top);
-			rendererColapsible->setLabel(L"Render Mesh");
+			rendererColapsible->getHeader()->setLabel(L"Render Mesh");
 
-			GUI::CCollapsibleGroup *indirectLighting = new GUI::CCollapsibleGroup(window);
+			GUI::CCollapsibleGroup* indirectLighting = new GUI::CCollapsibleGroup(window);
 			indirectLighting->dock(GUI::EPosition::Top);
-			indirectLighting->setLabel(L"Indirect Lighting");
+			indirectLighting->getHeader()->setLabel(L"Indirect Lighting");
 		}
 
 		CSpaceProperty::~CSpaceProperty()
 		{
 
+		}
+
+		void CSpaceProperty::addText(GUI::CBoxLayout* boxLayout, wchar_t* name, wchar_t* value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setString(name);
+
+			GUI::CTextBox* text = new GUI::CTextBox(layout);
+			text->setString(value);
+
+			boxLayout->endVertical();
 		}
 	}
 }
