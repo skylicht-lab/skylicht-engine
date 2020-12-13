@@ -21,9 +21,9 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+#pragma once
 
-#include "pch.h"
-#include "CLabel.h"
+#include "CLayout.h"
 
 namespace Skylicht
 {
@@ -31,53 +31,17 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CLabel::CLabel(CBase* parent) :
-				CBase(parent)
+			class CLayoutHorizontal : public CLayout
 			{
-				setMouseInputEnabled(false);
-				m_text = new CTextContainer(this);
-				m_text->dock(EPosition::Fill);
-			}
+			public:
+				CLayoutHorizontal(CBase* parent);
 
-			CLabel::~CLabel()
-			{
+				virtual ~CLayoutHorizontal();
 
-			}
+				virtual void postLayout();
 
-			void CLabel::sizeToContents()
-			{
-				m_text->sizeToContents();
-
-				float w = m_padding.Left + m_padding.Right + m_text->width();
-				float h = m_padding.Top + m_padding.Bottom + m_text->height();
-				setSize(w, h);
-			}
-
-			void CLabel::onBoundsChanged(const SRect& oldBounds)
-			{
-				CBase::onBoundsChanged(oldBounds);
-
-				sizeToContents();
-				invalidate();
-			}
-
-			void CLabel::setString(const std::wstring& text)
-			{
-				m_text->setString(text);
-
-				if (OnTextChanged != nullptr)
-					OnTextChanged(this);
-			}
-
-			void CLabel::setColor(const SGUIColor& color)
-			{
-				m_text->setColor(color);
-			}
-
-			void CLabel::setFontSize(EFontSize fontsize)
-			{
-				m_text->setFontSize(fontsize);
-			}
+				virtual void onChildAdded(CBase* child);
+			};
 		}
 	}
 }

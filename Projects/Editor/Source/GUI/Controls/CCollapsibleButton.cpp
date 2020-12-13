@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CCollapsibleGroup.h"
+#include "CCollapsibleButton.h"
 #include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
@@ -32,56 +32,67 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CCollapsibleGroup::CCollapsibleGroup(CBase* parent) :
-				CBase(parent)
+			CCollapsibleButton::CCollapsibleButton(CBase* parent) :
+				CButton(parent)
 			{
-				m_header = new CCollapsibleButton(this);
-				m_header->dock(EPosition::Top);
-				m_header->OnPress = BIND_LISTENER(&CCollapsibleGroup::onExpand, this);
+				setPadding(SPadding(0.0f, 0.0f, 8.0f, 0.0f));
+				setIcon(GUI::ESystemIcon::SmallTriangleRight);
+				showIcon(true);
+				setIsToggle(true);
 
-				m_innerPanel = new CBase(this);
-				m_innerPanel->dock(EPosition::Top);
-				m_innerPanel->setHeight(20.0f);
-				m_innerPanel->setHidden(true);
+				setColor(CThemeConfig::CCollapsibleColor);
+				setHoverColor(CThemeConfig::ButtonColor);
 			}
 
-			CCollapsibleGroup::~CCollapsibleGroup()
+			CCollapsibleButton::~CCollapsibleButton()
 			{
 
 			}
 
-			void CCollapsibleGroup::renderUnder()
+			void CCollapsibleButton::renderUnder()
 			{
-				CBase::renderUnder();
-			}
+				SGUIColor c = m_color;
 
-			void CCollapsibleGroup::postLayout()
-			{
-				if (m_innerPanel->isHidden() == false)
-					m_innerPanel->sizeToChildren(true, true);
+				bool pressed = m_pressed;
+				bool hover = isHovered();
+				bool disable = isDisabled();
 
-				sizeToChildren(true, true);
-			}
-
-			void CCollapsibleGroup::onExpand(CBase* sender)
-			{
-				if (m_header->getToggle() == true)
+				if (disable)
 				{
-					m_innerPanel->setHidden(false);
+					m_label->setColor(CThemeConfig::ButtonTextDisableColor);
+					m_icon->setColor(CThemeConfig::ButtonTextDisableColor);
 				}
 				else
 				{
-					m_innerPanel->setHidden(true);
+					m_label->setColor(m_labelColor);
+					m_icon->setColor(m_iconColor);
 				}
+
+				if (hover && !disable)
+				{
+					if (pressed == true)
+						c = m_pressColor;
+					else
+						c = m_hoverColor;
+				}
+
+				if (!disable && (m_drawBackground || hover))
+					CRenderer::getRenderer()->drawFillRect(getRenderBounds(), c);
 			}
 
-			void CCollapsibleGroup::setExpand(bool b)
+			void CCollapsibleButton::onMouseClickLeft(float x, float y, bool down)
 			{
-				m_header->setToggle(b);
-				if (b == true)
-					m_innerPanel->setHidden(false);
-				else
-					m_innerPanel->setHidden(true);
+				if (down == false)
+				{
+					m_toggleStatus = !m_toggleStatus;
+
+					if (m_toggleStatus == true)
+						setIcon(GUI::ESystemIcon::SmallTriangleDown);
+					else
+						setIcon(GUI::ESystemIcon::SmallTriangleRight);
+				}
+
+				CButton::onMouseClickLeft(x, y, down);
 			}
 		}
 	}

@@ -40,3 +40,4 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CToolbar.h"
 #include "GUI/Controls/CTextBox.h"
 #include "GUI/Controls/CCollapsibleGroup.h"
+#include "GUI/Controls/CBoxLayout.h"

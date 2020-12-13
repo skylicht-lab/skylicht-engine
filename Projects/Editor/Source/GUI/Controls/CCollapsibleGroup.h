@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBase.h"
 #include "CTextContainer.h"
 #include "CIcon.h"
-#include "CButton.h"
+#include "CCollapsibleButton.h"
 
 namespace Skylicht
 {
@@ -34,16 +34,28 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CCollapsibleGroup : public CButton
+			class CCollapsibleGroup : public CBase
 			{
+			protected:
+				CCollapsibleButton* m_header;
+
 			public:
-				CCollapsibleGroup(CBase *parent);
+				CCollapsibleGroup(CBase* parent);
 
 				virtual ~CCollapsibleGroup();
 
 				virtual void renderUnder();
 
-				virtual void onMouseClickLeft(float x, float y, bool down);
+				virtual void postLayout();
+
+				void onExpand(CBase* sender);
+
+				void setExpand(bool b);
+
+				inline CCollapsibleButton* getHeader()
+				{
+					return m_header;
+				}
 			};
 		}
 	}

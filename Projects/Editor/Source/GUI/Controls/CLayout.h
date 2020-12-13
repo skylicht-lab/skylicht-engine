@@ -21,9 +21,9 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+#pragma once
 
-#include "pch.h"
-#include "CLabel.h"
+#include "CBase.h"
 
 namespace Skylicht
 {
@@ -31,53 +31,26 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CLabel::CLabel(CBase* parent) :
-				CBase(parent)
+			class CLayout : public CBase
 			{
-				setMouseInputEnabled(false);
-				m_text = new CTextContainer(this);
-				m_text->dock(EPosition::Fill);
-			}
+			protected:
+				float m_childPadding;
 
-			CLabel::~CLabel()
-			{
+			public:
+				CLayout(CBase* parent);
 
-			}
+				virtual ~CLayout();
 
-			void CLabel::sizeToContents()
-			{
-				m_text->sizeToContents();
+				inline void setChildPadding(float p)
+				{
+					m_childPadding = p;
+				}
 
-				float w = m_padding.Left + m_padding.Right + m_text->width();
-				float h = m_padding.Top + m_padding.Bottom + m_text->height();
-				setSize(w, h);
-			}
-
-			void CLabel::onBoundsChanged(const SRect& oldBounds)
-			{
-				CBase::onBoundsChanged(oldBounds);
-
-				sizeToContents();
-				invalidate();
-			}
-
-			void CLabel::setString(const std::wstring& text)
-			{
-				m_text->setString(text);
-
-				if (OnTextChanged != nullptr)
-					OnTextChanged(this);
-			}
-
-			void CLabel::setColor(const SGUIColor& color)
-			{
-				m_text->setColor(color);
-			}
-
-			void CLabel::setFontSize(EFontSize fontsize)
-			{
-				m_text->setFontSize(fontsize);
-			}
+				inline float getChildPadding()
+				{
+					return m_childPadding;
+				}
+			};
 		}
 	}
 }

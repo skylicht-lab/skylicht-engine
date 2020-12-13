@@ -21,9 +21,12 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+#pragma once
 
-#include "pch.h"
-#include "CLabel.h"
+#include "CBase.h"
+#include "CScrollControl.h"
+#include "CLayoutVertical.h"
+#include "CLayoutHorizontal.h"
 
 namespace Skylicht
 {
@@ -31,53 +34,28 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CLabel::CLabel(CBase* parent) :
-				CBase(parent)
+			class CBoxLayout : public CBase
 			{
-				setMouseInputEnabled(false);
-				m_text = new CTextContainer(this);
-				m_text->dock(EPosition::Fill);
-			}
+			protected:
+				std::stack<CBase*> m_layoutStack;
 
-			CLabel::~CLabel()
-			{
+			public:
+				CBoxLayout(CBase* parent);
 
-			}
+				virtual ~CBoxLayout();
 
-			void CLabel::sizeToContents()
-			{
-				m_text->sizeToContents();
+				virtual void layout();
 
-				float w = m_padding.Left + m_padding.Right + m_text->width();
-				float h = m_padding.Top + m_padding.Bottom + m_text->height();
-				setSize(w, h);
-			}
+				virtual void postLayout();
 
-			void CLabel::onBoundsChanged(const SRect& oldBounds)
-			{
-				CBase::onBoundsChanged(oldBounds);
+				CLayoutHorizontal* beginHorizontal();
 
-				sizeToContents();
-				invalidate();
-			}
+				void endHorizontal();
 
-			void CLabel::setString(const std::wstring& text)
-			{
-				m_text->setString(text);
+				CLayoutVertical* beginVertical();
 
-				if (OnTextChanged != nullptr)
-					OnTextChanged(this);
-			}
-
-			void CLabel::setColor(const SGUIColor& color)
-			{
-				m_text->setColor(color);
-			}
-
-			void CLabel::setFontSize(EFontSize fontsize)
-			{
-				m_text->setFontSize(fontsize);
-			}
+				void endVertical();
+			};
 		}
 	}
 }
