@@ -21,12 +21,9 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "CBase.h"
-#include "CScrollControl.h"
-#include "CLayoutVertical.h"
-#include "CLayoutHorizontal.h"
+#include "pch.h"
+#include "CNumberInput.h"
 
 namespace Skylicht
 {
@@ -34,28 +31,30 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CBoxLayout : public CBase
+			CNumberInput::CNumberInput(CBase* base) :
+				CTextBox(base)
 			{
-			protected:
-				std::stack<CBase*> m_layoutStack;
+				m_textContainer->setTextAlignment(ETextAlign::TextCenter);
+			}
 
-			public:
-				CBoxLayout(CBase* parent);
+			CNumberInput::~CNumberInput()
+			{
 
-				virtual ~CBoxLayout();
+			}
 
-				virtual void postLayout();
+			bool CNumberInput::onChar(u32 c)
+			{
+				if ((c >= '0' && c <= '9') || c == '.' || c == '\b')
+				{
+					return CTextBox::onChar(c);
+				}
+				else if (c == '\r')
+				{
+					return true;
+				}
 
-				CLayoutHorizontal* beginHorizontal();
-
-				void endHorizontal();
-
-				void addSpace(float height);
-
-				CLayoutVertical* beginVertical();
-
-				void endVertical();
-			};
+				return false;
+			}
 		}
 	}
 }

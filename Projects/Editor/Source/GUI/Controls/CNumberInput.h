@@ -23,10 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "CBase.h"
-#include "CScrollControl.h"
-#include "CLayoutVertical.h"
-#include "CLayoutHorizontal.h"
+#include "CTextBox.h"
 
 namespace Skylicht
 {
@@ -34,27 +31,14 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CBoxLayout : public CBase
+			class CNumberInput : public CTextBox
 			{
-			protected:
-				std::stack<CBase*> m_layoutStack;
-
 			public:
-				CBoxLayout(CBase* parent);
+				CNumberInput(CBase* base);
 
-				virtual ~CBoxLayout();
+				virtual ~CNumberInput();
 
-				virtual void postLayout();
-
-				CLayoutHorizontal* beginHorizontal();
-
-				void endHorizontal();
-
-				void addSpace(float height);
-
-				CLayoutVertical* beginVertical();
-
-				void endVertical();
+				virtual bool onChar(u32 c);
 			};
 		}
 	}
