@@ -37,7 +37,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTextBox::CTextBox(CBase *base) :
+			CTextBox::CTextBox(CBase* base) :
 				CScrollControl(base),
 				m_press(false),
 				m_editable(true),
@@ -114,7 +114,7 @@ namespace Skylicht
 			{
 				if (m_drawTextbox)
 				{
-					CTheme *theme = CTheme::getTheme();
+					CTheme* theme = CTheme::getTheme();
 					theme->drawTextbox(getRenderBounds(), m_textBoxColor);
 
 					if (m_textContainer->isActivate())
@@ -389,6 +389,10 @@ namespace Skylicht
 						if (m_textContainer->isWrapMultiline())
 							m_textContainer->doInsertCharacter('\n');
 					}
+					else if (c == '\t')
+					{
+						m_textContainer->doInsertCharacter(' ');
+					}
 					else
 					{
 						m_textContainer->doInsertCharacter(c);
@@ -408,7 +412,7 @@ namespace Skylicht
 
 			void CTextBox::scrollToLine(u32 line, u32 pos)
 			{
-				CText *text = m_textContainer->getLine(line);
+				CText* text = m_textContainer->getLine(line);
 
 				SDimension s = text->getCharacterPosition(pos);
 				SPoint localCaretPosition(s.Width, 0.0f);
@@ -513,7 +517,7 @@ namespace Skylicht
 				m_textContainer->resetCaretBlink();
 			}
 
-			void CTextBox::onCopy(CBase *base)
+			void CTextBox::onCopy(CBase* base)
 			{
 				std::wstring data;
 				m_textContainer->getSelectString(data);
@@ -521,7 +525,7 @@ namespace Skylicht
 					CClipboard::get()->copyTextToClipboard(data);
 			}
 
-			void CTextBox::onCut(CBase *base)
+			void CTextBox::onCut(CBase* base)
 			{
 				if (m_editable)
 				{
@@ -535,7 +539,7 @@ namespace Skylicht
 				}
 			}
 
-			void CTextBox::onPaste(CBase *base)
+			void CTextBox::onPaste(CBase* base)
 			{
 				if (m_editable)
 				{
@@ -555,7 +559,7 @@ namespace Skylicht
 				}
 			}
 
-			void CTextBox::onSelectAll(CBase *base)
+			void CTextBox::onSelectAll(CBase* base)
 			{
 				m_textContainer->setCaretEnd(0, 0);
 
@@ -566,7 +570,7 @@ namespace Skylicht
 				scrollToLine(line, pos);
 			}
 
-			void CTextBox::onOpenMenuContext(CBase *base)
+			void CTextBox::onOpenMenuContext(CBase* base)
 			{
 				if (base != m_contextMenu)
 					return;
@@ -583,7 +587,7 @@ namespace Skylicht
 				}
 			}
 
-			void CTextBox::onOpenMenuCommand(CBase *base)
+			void CTextBox::onOpenMenuCommand(CBase* base)
 			{
 				CMenuItem* item = dynamic_cast<CMenuItem*>(base);
 				if (item != NULL)

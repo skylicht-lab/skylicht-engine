@@ -39,5 +39,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CTableRow.h"
 #include "GUI/Controls/CToolbar.h"
 #include "GUI/Controls/CTextBox.h"
+#include "GUI/Controls/CNumberInput.h"
 #include "GUI/Controls/CCollapsibleGroup.h"
 #include "GUI/Controls/CBoxLayout.h"

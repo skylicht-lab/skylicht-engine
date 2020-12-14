@@ -61,9 +61,18 @@ namespace Skylicht
 
 			boxLayout = new GUI::CBoxLayout(transformColapsible);
 			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
-			addText(boxLayout, L"Position X", L"0.0");
-			addText(boxLayout, L"Y", L"0.0");
-			addText(boxLayout, L"Z", L"0.0");
+
+			addNumberInput(boxLayout, L"Position X", L"0.0");
+			addNumberInput(boxLayout, L"Y", L"0.0");
+			addNumberInput(boxLayout, L"Z", L"0.0");
+			boxLayout->addSpace(5.0f);
+			addNumberInput(boxLayout, L"Rotation(Deg) X", L"0.0");
+			addNumberInput(boxLayout, L"Y", L"0.0");
+			addNumberInput(boxLayout, L"Z", L"0.0");
+			boxLayout->addSpace(5.0f);
+			addNumberInput(boxLayout, L"Scale X", L"1.0");
+			addNumberInput(boxLayout, L"Y", L"1.0");
+			addNumberInput(boxLayout, L"Z", L"1.0");
 
 			transformColapsible->setExpand(true);
 
@@ -81,7 +90,7 @@ namespace Skylicht
 
 		}
 
-		void CSpaceProperty::addText(GUI::CBoxLayout* boxLayout, wchar_t* name, wchar_t* value)
+		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, wchar_t* name, wchar_t* value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -90,8 +99,8 @@ namespace Skylicht
 			label->setString(name);
 			label->setTextAlignment(GUI::TextRight);
 
-			GUI::CTextBox* text = new GUI::CTextBox(layout);
-			text->setString(value);
+			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
+			input->setString(value);
 
 			boxLayout->endVertical();
 		}

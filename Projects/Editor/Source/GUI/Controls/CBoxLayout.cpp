@@ -77,6 +77,13 @@ namespace Skylicht
 #endif
 			}
 
+			void CBoxLayout::addSpace(float height)
+			{
+				CBase* space = new CBase(m_layoutStack.top());
+				space->dock(EPosition::Top);
+				space->setHeight(height);
+			}
+
 			CLayoutVertical* CBoxLayout::beginVertical()
 			{
 				CBase* parent = m_layoutStack.top();

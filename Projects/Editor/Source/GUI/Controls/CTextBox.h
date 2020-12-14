@@ -40,10 +40,10 @@ namespace Skylicht
 			class CTextBox : public CScrollControl
 			{
 			protected:
-				CIcon *m_icon;
-				CTextContainer *m_textHint;
-				CTextContainer *m_textContainer;
-				CMenu *m_contextMenu;
+				CIcon* m_icon;
+				CTextContainer* m_textHint;
+				CTextContainer* m_textContainer;
+				CMenu* m_contextMenu;
 
 				bool m_press;
 				bool m_editable;
@@ -53,7 +53,7 @@ namespace Skylicht
 				SGUIColor m_textBoxColor;
 
 			public:
-				CTextBox(CBase *base);
+				CTextBox(CBase* base);
 
 				virtual ~CTextBox();
 
@@ -89,17 +89,17 @@ namespace Skylicht
 
 				void hideIcon();
 
-				void onCopy(CBase *base);
+				void onCopy(CBase* base);
 
-				void onCut(CBase *base);
+				void onCut(CBase* base);
 
-				void onPaste(CBase *base);
+				void onPaste(CBase* base);
 
-				void onSelectAll(CBase *base);
+				void onSelectAll(CBase* base);
 
-				void onOpenMenuContext(CBase *base);
+				void onOpenMenuContext(CBase* base);
 
-				void onOpenMenuCommand(CBase *base);
+				void onOpenMenuCommand(CBase* base);
 
 				inline void setString(const std::wstring& string)
 				{
