@@ -487,6 +487,8 @@ namespace Skylicht
 						m_textContainer->setCaretEnd(l, c);
 
 					CInput::getInput()->setCapture(this);
+
+					// see drag update on think()
 				}
 				else
 				{

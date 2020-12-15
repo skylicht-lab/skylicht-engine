@@ -39,7 +39,7 @@ namespace Skylicht
 			protected:
 				float m_mouseX;
 				float m_mouseY;
-				
+
 				ECursorType m_cursorType;
 
 			public:
@@ -50,6 +50,12 @@ namespace Skylicht
 				virtual bool OnProcessEvent(const SEvent& event);
 
 				virtual void setCursor(ECursorType type);
+
+				virtual void hideCursor(bool b);
+
+				virtual void setCursorPosition(float x, float y);
+
+				virtual void getCursorPosition(float& x, float& y);
 			};
 		}
 	}

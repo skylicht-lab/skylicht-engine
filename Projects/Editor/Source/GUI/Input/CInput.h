@@ -71,14 +71,14 @@ namespace Skylicht
 				float m_lastClickTime[3];
 				u32 m_fastClickCount;
 
-				CBase *m_capture;
+				CBase* m_capture;
 
 			public:
 				CInput();
 
 				virtual ~CInput();
 
-				static void setInput(CInput *input);
+				static void setInput(CInput* input);
 
 				static CInput* getInput();
 
@@ -126,11 +126,17 @@ namespace Skylicht
 
 				bool handleAccelerator(u32 character);
 
-				bool keyboardFocus(CBase *hoverControl);
+				bool keyboardFocus(CBase* hoverControl);
 
 				virtual void setCursor(ECursorType type) {}
 
-				inline void setCapture(CBase *p)
+				virtual void hideCursor(bool b) {}
+
+				virtual void setCursorPosition(float x, float y) {}
+
+				virtual void getCursorPosition(float& x, float& y) {}
+
+				inline void setCapture(CBase* p)
 				{
 					m_capture = p;
 				}
