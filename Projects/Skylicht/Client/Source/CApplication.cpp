@@ -350,8 +350,11 @@ namespace Skylicht
 			m_driver->OnResize(core::dimension2du((u32)w, (u32)h));
 
 			// resize mouse
-			core::rect<s32> winRect(0, 0, w, h);
-			m_device->getCursorControl()->setReferenceRect(&winRect);
+			if (getIrrlichtDevice()->isFullscreen())
+			{
+				core::rect<s32> winRect(0, 0, w, h);
+				m_device->getCursorControl()->setReferenceRect(&winRect);
+			}
 
 			// resize 2d
 			CGraphics2D::getInstance()->resize();

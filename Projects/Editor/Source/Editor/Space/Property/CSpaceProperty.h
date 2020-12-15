@@ -40,7 +40,7 @@ namespace Skylicht
 
 			virtual ~CSpaceProperty();
 
-			void addNumberInput(GUI::CBoxLayout* boxLayout, wchar_t* name, wchar_t* value);
+			void addNumberInput(GUI::CBoxLayout* boxLayout, wchar_t* name, float value, float step);
 		};
 	}
 }

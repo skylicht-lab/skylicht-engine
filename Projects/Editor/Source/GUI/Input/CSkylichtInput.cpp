@@ -168,6 +168,28 @@ namespace Skylicht
 					break;
 				}
 			}
+
+			void CSkylichtInput::hideCursor(bool b)
+			{
+				gui::ICursorControl* cursorControl = getIrrlichtDevice()->getCursorControl();
+				cursorControl->setVisible(!b);
+			}
+
+			void CSkylichtInput::setCursorPosition(float x, float y)
+			{
+				CInput::setCursorPosition(x, y);
+
+				gui::ICursorControl* cursorControl = getIrrlichtDevice()->getCursorControl();
+				cursorControl->setPosition((int)x, (int)y);
+			}
+
+			void CSkylichtInput::getCursorPosition(float& x, float& y)
+			{
+				gui::ICursorControl* cursorControl = getIrrlichtDevice()->getCursorControl();
+				core::vector2di p = cursorControl->getPosition();
+				x = (float)p.X;
+				y = (float)p.Y;
+			}
 		}
 	}
 }

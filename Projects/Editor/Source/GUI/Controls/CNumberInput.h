@@ -33,15 +33,36 @@ namespace Skylicht
 		{
 			class CNumberInput : public CTextBox
 			{
+			public:
+				enum ENumberType
+				{
+					Float,
+					Integer
+				};
+
 			protected:
 				float m_mouseDownX;
 				float m_mouseDownY;
+
+				float m_cursorX;
+				float m_cursorY;
+
 				bool m_focusTextbox;
+
+				float m_stepValue;
+				float m_value;
+
+				bool m_mousePress;
+				bool m_drag;
+
+				ENumberType m_numberType;
 
 			public:
 				CNumberInput(CBase* base);
 
 				virtual ~CNumberInput();
+
+				virtual void think();
 
 				virtual void renderUnder();
 
@@ -51,7 +72,41 @@ namespace Skylicht
 
 				virtual void onMouseClickLeft(float x, float y, bool down);
 
+				virtual void onPaste(CBase* base);
+
 				virtual bool onChar(u32 c);
+
+				inline float getValue()
+				{
+					return m_value;
+				}
+
+				inline int getValueInt()
+				{
+					return (int)m_value;
+				}
+
+				void setValue(float value);
+
+				inline void setStep(float step)
+				{
+					m_stepValue = step;
+				}
+
+				inline float getStep()
+				{
+					return m_stepValue;
+				}
+
+				inline void setNumberType(ENumberType type)
+				{
+					m_numberType = type;
+				}
+
+			protected:
+
+				void applyTextValue();
+
 			};
 		}
 	}
