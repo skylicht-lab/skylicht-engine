@@ -438,6 +438,20 @@ namespace Skylicht
 				}
 			}
 
+			void CTextBox::setCaretToEnd()
+			{
+				u32 totalLine = m_textContainer->getNumLine();
+
+				u32 line = totalLine - 1;
+				u32 pos = m_textContainer->getLine(line)->getLengthNoNewLine();
+
+				m_textContainer->setCaretBegin(line, pos);
+				m_textContainer->setCaretEnd(line, pos);
+				m_textContainer->resetCaretBlink();
+
+				scrollToLine(line, pos);
+			}
+
 			void CTextBox::setEditable(bool b)
 			{
 				m_editable = b;

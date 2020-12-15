@@ -40,33 +40,38 @@ namespace Skylicht
 			class CSkylichtTheme : public CTheme
 			{
 			protected:
-				CSpriteAtlas *m_sprite;
+				CSpriteAtlas* m_sprite;
 
-				SFrame *m_empty;
+				SFrame* m_empty;
 
-				SFrame *m_window;
-				SFrame *m_windowShadow;
+				SFrame* m_window;
+				SFrame* m_windowShadow;
 
-				SFrame *m_button;
-				SFrame *m_buttonShadow;
+				SFrame* m_button;
+				SFrame* m_buttonShadow;
 
-				SFrame *m_tabButton;
-				SFrame *m_tabButtonFocus;
+				SFrame* m_tabButton;
+				SFrame* m_tabButtonFocus;
 
-				SFrame *m_scrollbarH;
-				SFrame *m_scrollbarV;
+				SFrame* m_scrollbarH;
+				SFrame* m_scrollbarV;
 
-				SFrame *m_textboxShadow;
-				SFrame *m_textbox;
-				SFrame *m_textboxBorder;
+				SFrame* m_textboxShadow;
+				SFrame* m_textbox;
+				SFrame* m_textboxBorder;
+				SFrame* m_textboxButtonLeft;
+				SFrame* m_textboxButtonRight;
+				SFrame* m_textboxButtonArrowLeft;
+				SFrame* m_textboxButtonArrowRight;
+				SFrame* m_textboxButtonArrowDown;
 
-				SFrame *m_dockIcon[NumDockIcon];
+				SFrame* m_dockIcon[NumDockIcon];
 
-				SFrame *m_systemIcon16[NumSystemIcon];
-				SFrame *m_systemIcon32[NumSystemIcon];
+				SFrame* m_systemIcon16[NumSystemIcon];
+				SFrame* m_systemIcon32[NumSystemIcon];
 
-				CGraphics2D *m_graphics;
-				CSkylichtRenderer *m_renderer;
+				CGraphics2D* m_graphics;
+				CSkylichtRenderer* m_renderer;
 
 				int m_materialID;
 
@@ -75,9 +80,9 @@ namespace Skylicht
 
 				virtual ~CSkylichtTheme();
 
-				virtual void drawIcon(const SRect &r, ESystemIcon icon, const SGUIColor& color, bool use32Bit);
+				virtual void drawIcon(const SRect& r, ESystemIcon icon, const SGUIColor& color, bool use32Bit);
 
-				virtual void drawDockHintIcon(const SRect &r, EDockHintIcon icon, const SGUIColor& color);
+				virtual void drawDockHintIcon(const SRect& r, EDockHintIcon icon, const SGUIColor& color);
 
 				virtual void drawWindowShadow(const SRect& rect);
 
@@ -88,6 +93,8 @@ namespace Skylicht
 				virtual void drawButton(const SRect& rect, const SGUIColor& color);
 
 				virtual void drawTextbox(const SRect& rect, const SGUIColor& color);
+
+				virtual void drawTexboxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor, bool left, bool right);
 
 				virtual void drawTextboxBorder(const SRect& rect, const SGUIColor& color);
 
@@ -123,7 +130,7 @@ namespace Skylicht
 
 				void initSystemIcon();
 
-				void addSystemIcon(ESystemIcon type, const char *name);
+				void addSystemIcon(ESystemIcon type, const char* name);
 
 				void drawGUIModule(SFrame* frame, const SRect& rect, const SGUIColor& color, float left, float top, float right, float bottom, float cornerRadius);
 

@@ -33,10 +33,23 @@ namespace Skylicht
 		{
 			class CNumberInput : public CTextBox
 			{
+			protected:
+				float m_mouseDownX;
+				float m_mouseDownY;
+				bool m_focusTextbox;
+
 			public:
 				CNumberInput(CBase* base);
 
 				virtual ~CNumberInput();
+
+				virtual void renderUnder();
+
+				virtual void onKeyboardFocus();
+
+				virtual void onLostKeyboardFocus();
+
+				virtual void onMouseClickLeft(float x, float y, bool down);
 
 				virtual bool onChar(u32 c);
 			};

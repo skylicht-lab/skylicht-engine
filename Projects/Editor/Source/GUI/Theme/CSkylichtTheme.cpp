@@ -71,6 +71,11 @@ namespace Skylicht
 				m_textboxShadow = m_sprite->addFrame("draw_textbox_shadow", "Editor/GUI/draw_textbox_shadow.png");
 				m_textbox = m_sprite->addFrame("draw_textbox", "Editor/GUI/draw_textbox.png");
 				m_textboxBorder = m_sprite->addFrame("draw_textbox_border", "Editor/GUI/draw_textbox_border.png");
+				m_textboxButtonLeft = m_sprite->addFrame("draw_textbox_button_left", "Editor/GUI/draw_textbox_button_left.png");
+				m_textboxButtonRight = m_sprite->addFrame("draw_textbox_button_right", "Editor/GUI/draw_textbox_button_right.png");
+				m_textboxButtonArrowLeft = m_sprite->addFrame("draw_textbox_button_arrow_left", "Editor/GUI/draw_textbox_button_arrow_left.png");
+				m_textboxButtonArrowRight = m_sprite->addFrame("draw_textbox_button_arrow_right", "Editor/GUI/draw_textbox_button_arrow_right.png");
+				m_textboxButtonArrowDown = m_sprite->addFrame("draw_textbox_button_arrow_down", "Editor/GUI/draw_textbox_button_arrow_down.png");
 
 				// add font text
 				m_renderer->initFont(m_sprite);
@@ -195,7 +200,7 @@ namespace Skylicht
 				addSystemIcon(ESystemIcon::FileImage, "file-image.png");
 			}
 
-			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char *name)
+			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char* name)
 			{
 				char path[512];
 				std::string nameNoExt = CPath::getFileNameNoExt(name);
@@ -209,9 +214,9 @@ namespace Skylicht
 				m_systemIcon32[type] = m_sprite->addFrame(nameNoExt.c_str(), path);
 			}
 
-			void CSkylichtTheme::drawIcon(const SRect &r, ESystemIcon icon, const SGUIColor& color, bool use32Bit)
+			void CSkylichtTheme::drawIcon(const SRect& r, ESystemIcon icon, const SGUIColor& color, bool use32Bit)
 			{
-				SFrame *frame = NULL;
+				SFrame* frame = NULL;
 
 				if (use32Bit == true)
 					frame = m_systemIcon32[icon];
@@ -224,9 +229,9 @@ namespace Skylicht
 				m_graphics->addFrameBatch(frame, getColor(color), m_renderer->getWorldTransform(), m_materialID);
 			}
 
-			void CSkylichtTheme::drawDockHintIcon(const SRect &r, EDockHintIcon icon, const SGUIColor& color)
+			void CSkylichtTheme::drawDockHintIcon(const SRect& r, EDockHintIcon icon, const SGUIColor& color)
 			{
-				SFrame *frame = m_dockIcon[icon];
+				SFrame* frame = m_dockIcon[icon];
 
 				if (frame == NULL)
 					return;
@@ -236,7 +241,7 @@ namespace Skylicht
 
 			void CSkylichtTheme::drawGUIModule(SFrame* frame, const SRect& rect, const SGUIColor& color, float left, float top, float right, float bottom, float cornerRadius)
 			{
-				SModuleOffset *module = &frame->ModuleOffset[0];
+				SModuleOffset* module = &frame->ModuleOffset[0];
 
 				core::rectf r = getRect(rect);
 				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + cornerRadius;
@@ -309,6 +314,61 @@ namespace Skylicht
 				drawGUIModule(m_textbox, rect, color, left, top, right, bottom, radius);
 			}
 
+			void CSkylichtTheme::drawTexboxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor, bool left, bool right)
+			{
+				if (left == true)
+				{
+					SModuleOffset* module = &m_textboxButtonLeft->ModuleOffset[0];
+
+					core::rectf r = getRect(rect);
+					r.UpperLeftCorner.X = r.UpperLeftCorner.X;
+					r.UpperLeftCorner.Y = r.UpperLeftCorner.Y + 1;
+					r.LowerRightCorner.X = r.UpperLeftCorner.X + module->Module->W;
+					r.LowerRightCorner.Y = r.UpperLeftCorner.Y + module->Module->H;
+
+					m_graphics->addModuleBatch(
+						module,
+						getColor(color),
+						m_renderer->getWorldTransform(),
+						r,
+						m_materialID);
+
+					module = &m_textboxButtonArrowLeft->ModuleOffset[0];
+					m_graphics->addModuleBatch(
+						module,
+						getColor(iconColor),
+						m_renderer->getWorldTransform(),
+						r,
+						m_materialID);
+				}
+
+				if (right == true)
+				{
+					SModuleOffset* module = &m_textboxButtonRight->ModuleOffset[0];
+
+					core::rectf r = getRect(rect);
+					r.UpperLeftCorner.X = r.LowerRightCorner.X - module->Module->W;
+					r.UpperLeftCorner.Y = r.UpperLeftCorner.Y + 1;
+					r.LowerRightCorner.X = r.UpperLeftCorner.X + module->Module->W;
+					r.LowerRightCorner.Y = r.UpperLeftCorner.Y + module->Module->H;
+
+					m_graphics->addModuleBatch(
+						module,
+						getColor(color),
+						m_renderer->getWorldTransform(),
+						r,
+						m_materialID);
+
+					module = &m_textboxButtonArrowRight->ModuleOffset[0];
+					m_graphics->addModuleBatch(
+						module,
+						getColor(iconColor),
+						m_renderer->getWorldTransform(),
+						r,
+						m_materialID);
+				}
+			}
+
 			void CSkylichtTheme::drawTextboxBorder(const SRect& rect, const SGUIColor& color)
 			{
 				float left = 5.0f;
@@ -341,7 +401,7 @@ namespace Skylicht
 				float right = 4.0f;
 				float bottom = 8.0f;
 				float radius = 3.0f;
-				SFrame *frame = m_scrollbarV;
+				SFrame* frame = m_scrollbarV;
 
 				if (isHorizontal == true)
 				{
