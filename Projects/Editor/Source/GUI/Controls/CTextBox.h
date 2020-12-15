@@ -93,7 +93,7 @@ namespace Skylicht
 
 				void onCut(CBase* base);
 
-				void onPaste(CBase* base);
+				virtual void onPaste(CBase* base);
 
 				void onSelectAll(CBase* base);
 
