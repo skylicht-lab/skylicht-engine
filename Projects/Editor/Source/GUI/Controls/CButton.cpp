@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CButton::CButton(CBase *parent) :
+			CButton::CButton(CBase* parent) :
 				CBase(parent),
 				m_color(CThemeConfig::ButtonColor),
 				m_hoverColor(CThemeConfig::ButtonHoverColor),
@@ -89,7 +89,7 @@ namespace Skylicht
 
 				if (hover && !disable)
 				{
-					if (pressed == true)
+					if (pressed == true && !m_isToggle)
 						c = m_pressColor;
 					else
 						c = m_hoverColor;

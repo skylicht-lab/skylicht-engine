@@ -62,6 +62,8 @@ namespace Skylicht
 			boxLayout = new GUI::CBoxLayout(transformColapsible);
 			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
 
+			addCheckBox(boxLayout, L"Enable", true);
+			boxLayout->addSpace(5.0f);
 			addNumberInput(boxLayout, L"Position X", 0.0f, 0.1f);
 			addNumberInput(boxLayout, L"Y", 0.0f, 0.1f);
 			addNumberInput(boxLayout, L"Z", 0.0f, 0.1f);
@@ -76,13 +78,29 @@ namespace Skylicht
 
 			transformColapsible->setExpand(true);
 
+
 			GUI::CCollapsibleGroup* rendererColapsible = new GUI::CCollapsibleGroup(window);
 			rendererColapsible->dock(GUI::EPosition::Top);
 			rendererColapsible->getHeader()->setLabel(L"Render Mesh");
 
+			boxLayout = new GUI::CBoxLayout(rendererColapsible);
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
+
+			addCheckBox(boxLayout, L"Enable", true);
+
+			rendererColapsible->setExpand(true);
+
+
 			GUI::CCollapsibleGroup* indirectLighting = new GUI::CCollapsibleGroup(window);
 			indirectLighting->dock(GUI::EPosition::Top);
 			indirectLighting->getHeader()->setLabel(L"Indirect Lighting");
+
+			boxLayout = new GUI::CBoxLayout(indirectLighting);
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
+
+			addCheckBox(boxLayout, L"Enable", true);
+
+			indirectLighting->setExpand(true);
 		}
 
 		CSpaceProperty::~CSpaceProperty()
@@ -102,6 +120,23 @@ namespace Skylicht
 			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
 			input->setValue(value);
 			input->setStep(step);
+
+			boxLayout->endVertical();
+		}
+
+		void CSpaceProperty::addCheckBox(GUI::CBoxLayout* boxLayout, wchar_t* name, bool value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CBase* subLayout = new GUI::CBase(layout);
+
+			GUI::CCheckBox* check = new GUI::CCheckBox(subLayout);
+			check->setToggle(value);
 
 			boxLayout->endVertical();
 		}
