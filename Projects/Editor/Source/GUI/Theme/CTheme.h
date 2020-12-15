@@ -43,9 +43,9 @@ namespace Skylicht
 
 				virtual ~CTheme();
 
-				virtual void drawIcon(const SRect &r, ESystemIcon icon, const SGUIColor& color, bool use32Bit) {}
+				virtual void drawIcon(const SRect& r, ESystemIcon icon, const SGUIColor& color, bool use32Bit) {}
 
-				virtual void drawDockHintIcon(const SRect &r, EDockHintIcon icon, const SGUIColor& color) {}
+				virtual void drawDockHintIcon(const SRect& r, EDockHintIcon icon, const SGUIColor& color) {}
 
 				virtual void drawWindowShadow(const SRect& rect) {}
 
@@ -56,6 +56,8 @@ namespace Skylicht
 				virtual void drawButton(const SRect& rect, const SGUIColor& color) {}
 
 				virtual void drawTextbox(const SRect& rect, const SGUIColor& color) {}
+
+				virtual void drawTexboxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor, bool left, bool right) {}
 
 				virtual void drawTextboxBorder(const SRect& rect, const SGUIColor& color) {}
 

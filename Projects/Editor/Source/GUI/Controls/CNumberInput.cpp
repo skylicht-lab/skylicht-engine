@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CNumberInput.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -32,14 +33,77 @@ namespace Skylicht
 		namespace GUI
 		{
 			CNumberInput::CNumberInput(CBase* base) :
-				CTextBox(base)
+				CTextBox(base),
+				m_mouseDownX(0.0f),
+				m_mouseDownY(0.0f),
+				m_focusTextbox(false)
 			{
 				m_textContainer->setTextAlignment(ETextAlign::TextCenter);
+				setCursor(ECursorType::SizeWE);
 			}
 
 			CNumberInput::~CNumberInput()
 			{
 
+			}
+
+			void CNumberInput::renderUnder()
+			{
+				CTextBox::renderUnder();
+
+				if (m_drawTextbox && isHovered() && !m_focusTextbox)
+				{
+					CTheme* theme = CTheme::getTheme();
+					const SRect& r = getRenderBounds();
+
+					theme->drawTexboxButton(r, CThemeConfig::TextBoxButtonColor, CThemeConfig::White, true, true);
+				}
+			}
+
+			void CNumberInput::onKeyboardFocus()
+			{
+				// disable default textbox focus
+			}
+
+			void CNumberInput::onLostKeyboardFocus()
+			{
+				CTextBox::onLostKeyboardFocus();
+
+				m_focusTextbox = false;
+				setCursor(ECursorType::SizeWE);
+				setCaretToEnd();
+			}
+
+			void CNumberInput::onMouseClickLeft(float x, float y, bool down)
+			{
+				if (m_focusTextbox == true)
+				{
+					// default textbox function
+					CTextBox::onMouseClickLeft(x, y, down);
+				}
+				else
+				{
+					// check state drag to adjust number value
+					if (down)
+					{
+						m_mouseDownX = x;
+						m_mouseDownY = y;
+					}
+					else
+					{
+						if (fabsf(x - m_mouseDownX) <= 1 && fabsf(y - m_mouseDownY) <= 1.0f)
+						{
+							CTextBox::onKeyboardFocus();
+							CTextBox::onMouseClickLeft(x, y, true);
+							CTextBox::onMouseClickLeft(x, y, false);
+
+							onSelectAll(this);
+
+							m_focusTextbox = true;
+							setCursor(ECursorType::Beam);
+						}
+					}
+				}
 			}
 
 			bool CNumberInput::onChar(u32 c)

@@ -115,6 +115,8 @@ namespace Skylicht
 
 				void scrollToLine(u32 line, u32 pos);
 
+				void setCaretToEnd();
+
 				inline const std::wstring& getString()
 				{
 					return m_textContainer->getString();
