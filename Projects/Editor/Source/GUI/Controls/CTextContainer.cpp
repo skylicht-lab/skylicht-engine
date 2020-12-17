@@ -722,10 +722,10 @@ namespace Skylicht
 							}
 							else if (m_textAlign == ETextAlign::TextCenter)
 							{
-								x = floorf(w * 0.5f - lineWidth * 0.5f);
+								x = w * 0.5f - lineWidth * 0.5f;
 							}
 
-							t->setBounds(x, y, lineWidth, p.Height);
+							t->setBounds(floorf(x), floorf(y), lineWidth, p.Height);
 							m_lines.push_back(t);
 
 							// Position the newline
@@ -751,14 +751,14 @@ namespace Skylicht
 						}
 						else if (m_textAlign == ETextAlign::TextCenter)
 						{
-							x = floorf(w * 0.5f - p.Width * 0.5f);
+							x = w * 0.5f - p.Width * 0.5f;
 						}
 
 						// single line
 						CText* t = new CText(this);
 						t->setFontSize(m_fontSize);
 						t->setColor(m_color);
-						t->setBounds(x, y, p.Width, p.Height);
+						t->setBounds(floorf(x), floorf(y), p.Width, p.Height);
 						t->setString(m_string);
 						m_lines.push_back(t);
 					}
