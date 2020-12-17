@@ -171,7 +171,6 @@ namespace Skylicht
 			CStringImp::convertUTF8ToUnicode(value.c_str(), wtext);
 
 			GUI::CComboBox* comboBox = new GUI::CComboBox(layout);
-			comboBox->setLabel(wtext);
 			comboBox->setListValue(list);
 
 			boxLayout->endVertical();
