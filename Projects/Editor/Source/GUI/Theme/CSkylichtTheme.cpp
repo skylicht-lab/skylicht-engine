@@ -302,7 +302,7 @@ namespace Skylicht
 				drawGUIModule(m_button, rect, color, left, top, right, bottom, radius);
 			}
 
-			void CSkylichtTheme::drawTextbox(const SRect& rect, const SGUIColor& color)
+			void CSkylichtTheme::drawTextBox(const SRect& rect, const SGUIColor& color)
 			{
 				float left = 5.0f;
 				float top = 4.0f;
@@ -314,7 +314,7 @@ namespace Skylicht
 				drawGUIModule(m_textbox, rect, color, left, top, right, bottom, radius);
 			}
 
-			void CSkylichtTheme::drawTexboxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor, bool left, bool right)
+			void CSkylichtTheme::drawTextBoxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor, bool left, bool right)
 			{
 				if (left == true)
 				{
@@ -369,7 +369,33 @@ namespace Skylicht
 				}
 			}
 
-			void CSkylichtTheme::drawTextboxBorder(const SRect& rect, const SGUIColor& color)
+			void CSkylichtTheme::drawComboBoxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor)
+			{
+				SModuleOffset* module = &m_textboxButtonRight->ModuleOffset[0];
+
+				core::rectf r = getRect(rect);
+				r.UpperLeftCorner.X = r.LowerRightCorner.X - module->Module->W;
+				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y + 1;
+				r.LowerRightCorner.X = r.UpperLeftCorner.X + module->Module->W;
+				r.LowerRightCorner.Y = r.UpperLeftCorner.Y + module->Module->H;
+
+				m_graphics->addModuleBatch(
+					module,
+					getColor(color),
+					m_renderer->getWorldTransform(),
+					r,
+					m_materialID);
+
+				module = &m_textboxButtonArrowDown->ModuleOffset[0];
+				m_graphics->addModuleBatch(
+					module,
+					getColor(iconColor),
+					m_renderer->getWorldTransform(),
+					r,
+					m_materialID);
+			}
+
+			void CSkylichtTheme::drawTextBoxBorder(const SRect& rect, const SGUIColor& color)
 			{
 				float left = 5.0f;
 				float top = 4.0f;
