@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CText::CText(CBase *parent) :
+			CText::CText(CBase* parent) :
 				CBase(parent),
 				m_color(CThemeConfig::DefaultTextColor)
 			{
@@ -72,7 +72,7 @@ namespace Skylicht
 			u32 CText::getClosestCharacter(const SPoint& point)
 			{
 				u32 c = 0;
-				CRenderer *renderer = CRenderer::getRenderer();
+				CRenderer* renderer = CRenderer::getRenderer();
 
 				float minDistance = 5000.0f;
 				float x = 0.0f;

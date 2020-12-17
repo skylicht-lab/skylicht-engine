@@ -55,7 +55,7 @@ namespace Skylicht
 					for (CBase* c : Children)
 					{
 						float h = core::max_(c->height(), height());
-						c->setBounds(x, y, size, h);
+						c->setBounds(floorf(x), floorf(y), size, h);
 						x = x + size + m_childPadding;
 					}
 				}
