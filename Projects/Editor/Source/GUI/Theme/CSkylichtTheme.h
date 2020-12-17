@@ -92,11 +92,13 @@ namespace Skylicht
 
 				virtual void drawButton(const SRect& rect, const SGUIColor& color);
 
-				virtual void drawTextbox(const SRect& rect, const SGUIColor& color);
+				virtual void drawTextBox(const SRect& rect, const SGUIColor& color);
 
-				virtual void drawTexboxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor, bool left, bool right);
+				virtual void drawTextBoxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor, bool left, bool right);
 
-				virtual void drawTextboxBorder(const SRect& rect, const SGUIColor& color);
+				virtual void drawTextBoxBorder(const SRect& rect, const SGUIColor& color);
+
+				virtual void drawComboBoxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor);
 
 				virtual void drawTabButton(const SRect& rect, const SGUIColor& color, const SGUIColor& focusColor, bool focus);
 

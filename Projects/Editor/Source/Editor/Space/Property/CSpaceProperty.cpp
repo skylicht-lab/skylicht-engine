@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSpaceProperty.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -99,6 +100,14 @@ namespace Skylicht
 			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
 
 			addCheckBox(boxLayout, L"Enable", true);
+			boxLayout->addSpace(5.0f);
+
+			std::vector<std::string> list;
+			list.push_back("LightmapArray");
+			list.push_back("VertexColor");
+			list.push_back("SH4");
+			list.push_back("SH9");
+			addComboBox(boxLayout, L"Type", list[0], list);
 
 			indirectLighting->setExpand(true);
 		}
@@ -137,6 +146,33 @@ namespace Skylicht
 
 			GUI::CCheckBox* check = new GUI::CCheckBox(subLayout);
 			check->setToggle(value);
+
+			boxLayout->endVertical();
+		}
+
+		void CSpaceProperty::addComboBox(GUI::CBoxLayout* boxLayout, wchar_t* name, const std::string& value, const std::vector<std::string>& listValue)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			wchar_t wtext[512];
+
+			std::vector<std::wstring> list;
+			for (const std::string& s : listValue)
+			{
+				CStringImp::convertUTF8ToUnicode(s.c_str(), wtext);
+				list.push_back(wtext);
+			}
+
+			CStringImp::convertUTF8ToUnicode(value.c_str(), wtext);
+
+			GUI::CComboBox* comboBox = new GUI::CComboBox(layout);
+			comboBox->setLabel(wtext);
+			comboBox->setListValue(list);
 
 			boxLayout->endVertical();
 		}
