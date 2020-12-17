@@ -37,7 +37,7 @@ namespace Skylicht
 			CCheckBox::CCheckBox(CBase* parent) :
 				CButton(parent)
 			{
-				setSize(15.0f, 15.0f);
+				setSize(16.0f, 16.0f);
 				setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 				setIsToggle(true);
 
@@ -61,7 +61,7 @@ namespace Skylicht
 
 					SPoint r;
 					r.X = renderOffset.X - 2.0f;
-					r.Y = renderOffset.Y - 3.0f;
+					r.Y = renderOffset.Y - 2.0f;
 
 					CRenderer::getRenderer()->setRenderOffset(r);
 					CTheme::getTheme()->drawIcon(getRenderBounds(), ESystemIcon::Check, CThemeConfig::DefaultIconColor, false);

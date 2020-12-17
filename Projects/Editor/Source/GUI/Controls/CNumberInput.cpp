@@ -90,7 +90,7 @@ namespace Skylicht
 					CTheme* theme = CTheme::getTheme();
 					const SRect& r = getRenderBounds();
 
-					theme->drawTexboxButton(r, CThemeConfig::TextBoxButtonColor, CThemeConfig::White, true, true);
+					theme->drawTextBoxButton(r, CThemeConfig::TextBoxButtonColor, CThemeConfig::White, true, true);
 				}
 			}
 

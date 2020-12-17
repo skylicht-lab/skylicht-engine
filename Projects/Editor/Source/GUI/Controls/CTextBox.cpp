@@ -115,16 +115,16 @@ namespace Skylicht
 				if (m_drawTextbox)
 				{
 					CTheme* theme = CTheme::getTheme();
-					theme->drawTextbox(getRenderBounds(), m_textBoxColor);
+					theme->drawTextBox(getRenderBounds(), m_textBoxColor);
 
 					if (m_textContainer->isActivate())
-						theme->drawTextboxBorder(getRenderBounds(), CThemeConfig::ButtonPressColor);
+						theme->drawTextBoxBorder(getRenderBounds(), CThemeConfig::ButtonPressColor);
 					else
 					{
 						if (isHovered())
-							theme->drawTextboxBorder(getRenderBounds(), CThemeConfig::ButtonHoverColor);
+							theme->drawTextBoxBorder(getRenderBounds(), CThemeConfig::ButtonHoverColor);
 						else
-							theme->drawTextboxBorder(getRenderBounds(), CThemeConfig::TextBoxBorderColor);
+							theme->drawTextBoxBorder(getRenderBounds(), CThemeConfig::TextBoxBorderColor);
 					}
 				}
 				else

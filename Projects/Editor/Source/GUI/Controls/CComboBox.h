@@ -23,8 +23,9 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "GUI/Type.h"
-#include "GUI/Renderer/CRenderer.h"
+#include "CButton.h"
+#include "CMenu.h"
+#include "CMenuItem.h"
 
 namespace Skylicht
 {
@@ -32,40 +33,50 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CTheme
+			class CComboBox : public CButton
 			{
+			protected:
+				std::vector<std::wstring> m_list;
+				std::vector<CMenuItem*> m_menuItems;
+
+				CMenu* m_menu;
+				u32 m_selectIndex;
+
 			public:
-				static CTheme* getTheme();
+				Listener OnChanged;
 
-				static void setTheme(CTheme* theme);
+			public:
+				CComboBox(CBase* parent);
 
-				CTheme();
+				virtual ~CComboBox();
 
-				virtual ~CTheme();
+				virtual void renderUnder();
 
-				virtual void drawIcon(const SRect& r, ESystemIcon icon, const SGUIColor& color, bool use32Bit) {}
+				void setListValue(const std::vector<std::wstring>& list);
 
-				virtual void drawDockHintIcon(const SRect& r, EDockHintIcon icon, const SGUIColor& color) {}
+				void addItem(const std::wstring& value);
 
-				virtual void drawWindowShadow(const SRect& rect) {}
+				void openMenu();
 
-				virtual void drawWindow(const SRect& rect, bool isFocussed) {}
+				void closeMenu();
 
-				virtual void drawButtonShadow(const SRect& rect) {}
+				virtual bool isMenuComponent()
+				{
+					return true;
+				}
 
-				virtual void drawButton(const SRect& rect, const SGUIColor& color) {}
+				u32 getSelectIndex()
+				{
+					return m_selectIndex;
+				}
 
-				virtual void drawTextBox(const SRect& rect, const SGUIColor& color) {}
+				void setSelectIndex(u32 index);
 
-				virtual void drawTextBoxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor, bool left, bool right) {}
+			protected:
 
-				virtual void drawComboBoxButton(const SRect& rect, const SGUIColor& color, const SGUIColor& iconColor) {}
+				void onClickDown(CBase* sender);
 
-				virtual void drawTextBoxBorder(const SRect& rect, const SGUIColor& color) {}
-
-				virtual void drawTabButton(const SRect& rect, const SGUIColor& color, const SGUIColor& focusColor, bool focus) {}
-
-				virtual void drawScrollbar(const SRect& rect, const SGUIColor& color, bool isHorizontal) {}
+				void onCommand(CBase* sender);
 			};
 		}
 	}
