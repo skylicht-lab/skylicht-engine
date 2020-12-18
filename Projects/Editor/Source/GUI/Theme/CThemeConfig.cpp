@@ -60,6 +60,9 @@ namespace Skylicht
 			SGUIColor CThemeConfig::ButtonPressColor = SGUIColor(255, 80, 120, 180);
 			SGUIColor CThemeConfig::ButtonFocusColor = SGUIColor(255, 85, 110, 140);
 
+			SGUIColor CThemeConfig::SliderColor = ButtonColor;
+			SGUIColor CThemeConfig::SliderBarColor = SGUIColor(255, 84, 126, 192);
+
 			SGUIColor CThemeConfig::SpliterColor = SGUIColor(255, 30, 30, 30);
 
 			SGUIColor CThemeConfig::TabTextColor = SGUIColor(255, 145, 145, 145);

@@ -61,13 +61,15 @@ namespace Skylicht
 
 				virtual void enableClip(bool b) {}
 
+				virtual bool isEnableClip() { return false; }
+
 				virtual void setProjection() {}
 
 				virtual void flush() {}
 
-				virtual void drawFillRect(const SRect &r, const SGUIColor& color) {}
+				virtual void drawFillRect(const SRect& r, const SGUIColor& color) {}
 
-				virtual void renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string) {}
+				virtual void renderText(const SRect& r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string) {}
 
 				virtual SDimension measureText(EFontSize fontSize, const std::wstring& string) = 0;
 

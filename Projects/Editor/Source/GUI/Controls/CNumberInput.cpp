@@ -46,7 +46,7 @@ namespace Skylicht
 				m_stepValue(1.0f),
 				m_mousePress(false),
 				m_drag(false),
-				m_numberType(CNumberInput::Float)
+				m_numberType(ENumberInputType::Float)
 			{
 				m_textContainer->setTextAlignment(ETextAlign::TextCenter);
 				setCursor(ECursorType::SizeWE);
