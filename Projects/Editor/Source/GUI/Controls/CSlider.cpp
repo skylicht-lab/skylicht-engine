@@ -97,22 +97,25 @@ namespace Skylicht
 					float d = m_max - m_min;
 					if (!m_focusTextbox && d > 0.0f)
 					{
-						const SRect oldClipRect = renderer->clipRegion();
-						bool isEnableClip = renderer->isEnableClip();
-
 						SRect clip = m_bounds;
 						float f = (m_value - m_min) / d;
 						clip.Width = clip.Width * f;
 
-						renderer->addClipRegion(clip);
-						renderer->enableClip(true);
-						renderer->startClip();
+						if (clip.Width > 0.0f)
+						{
+							const SRect oldClipRect = renderer->clipRegion();
+							bool isEnableClip = renderer->isEnableClip();
 
-						theme->drawTextBox(getRenderBounds(), CThemeConfig::SliderBarColor);
+							renderer->addClipRegion(clip);
+							renderer->enableClip(true);
+							renderer->startClip();
 
-						renderer->setClipRegion(oldClipRect);
-						renderer->enableClip(isEnableClip);
-						renderer->startClip();
+							theme->drawTextBox(getRenderBounds(), CThemeConfig::SliderBarColor);
+
+							renderer->setClipRegion(oldClipRect);
+							renderer->enableClip(isEnableClip);
+							renderer->startClip();
+						}
 					}
 
 					if (m_textContainer->isActivate())
