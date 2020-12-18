@@ -46,6 +46,7 @@ namespace Skylicht
 				float m_height;
 
 				int m_materialID;
+				bool m_enableClip;
 
 				CGlyphFont *m_fontLarge;
 				CGlyphFont *m_fontNormal;
@@ -66,6 +67,8 @@ namespace Skylicht
 				virtual void endClip();
 
 				virtual void enableClip(bool b);
+
+				virtual bool isEnableClip();
 
 				virtual void setProjection();
 

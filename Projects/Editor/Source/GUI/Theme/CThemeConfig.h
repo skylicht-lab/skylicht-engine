@@ -64,6 +64,9 @@ namespace Skylicht
 				static SGUIColor ButtonPressColor;
 				static SGUIColor ButtonFocusColor;
 
+				static SGUIColor SliderColor;
+				static SGUIColor SliderBarColor;
+
 				static SGUIColor TabTextColor;
 				static SGUIColor TabTextFocusColor;
 				static SGUIColor TabStripColor;

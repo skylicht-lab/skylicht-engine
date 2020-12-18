@@ -45,6 +45,8 @@ namespace Skylicht
 			void addCheckBox(GUI::CBoxLayout* boxLayout, wchar_t* name, bool value);
 
 			void addComboBox(GUI::CBoxLayout* boxLayout, wchar_t* name, const std::string& value, const std::vector<std::string>& listValue);
+
+			void addSlider(GUI::CBoxLayout* boxLayout, wchar_t* name, float value, float min, float max);
 		};
 	}
 }
