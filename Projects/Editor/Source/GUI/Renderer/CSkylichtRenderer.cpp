@@ -38,7 +38,8 @@ namespace Skylicht
 				m_width(w),
 				m_height(h),
 				m_fontLarge(NULL),
-				m_fontNormal(NULL)
+				m_fontNormal(NULL),
+				m_enableClip(false)
 			{
 				m_projection.buildProjectionMatrixOrthoLH((f32)w, -(f32)h, -1.0f, 1.0f);
 				m_projection.setTranslation(core::vector3df(-1, 1, 0));
@@ -70,6 +71,8 @@ namespace Skylicht
 
 				// enable scissor
 				getVideoDriver()->enableScissor(true);
+
+				m_enableClip = true;
 			}
 
 			void CSkylichtRenderer::end()
@@ -78,13 +81,15 @@ namespace Skylicht
 
 				// disable scissor
 				getVideoDriver()->enableScissor(false);
+
+				m_enableClip = false;
 			}
 
 			void CSkylichtRenderer::startClip()
 			{
-				IVideoDriver *driver = getVideoDriver();
+				IVideoDriver* driver = getVideoDriver();
 
-				CGraphics2D *g = CGraphics2D::getInstance();
+				CGraphics2D* g = CGraphics2D::getInstance();
 				g->flush();
 
 				driver->setScissor(core::recti(
@@ -102,10 +107,17 @@ namespace Skylicht
 
 			void CSkylichtRenderer::enableClip(bool b)
 			{
-				CGraphics2D *g = CGraphics2D::getInstance();
+				CGraphics2D* g = CGraphics2D::getInstance();
 				g->flush();
 
 				getVideoDriver()->enableScissor(b);
+
+				m_enableClip = b;
+			}
+
+			bool CSkylichtRenderer::isEnableClip()
+			{
+				return m_enableClip;
 			}
 
 			void CSkylichtRenderer::setProjection()
@@ -118,15 +130,15 @@ namespace Skylicht
 				CGraphics2D::getInstance()->flush();
 			}
 
-			void CSkylichtRenderer::drawFillRect(const SRect &r, const SGUIColor& color)
+			void CSkylichtRenderer::drawFillRect(const SRect& r, const SGUIColor& color)
 			{
-				CGraphics2D *g = CGraphics2D::getInstance();
-				CSkylichtTheme *theme = (CSkylichtTheme*)CTheme::getTheme();
+				CGraphics2D* g = CGraphics2D::getInstance();
+				CSkylichtTheme* theme = (CSkylichtTheme*)CTheme::getTheme();
 
 				float invW = 1.0f / (float)theme->getAtlasWidth();
 				float invH = 1.0f / (float)theme->getAtlasHeight();
 
-				const core::matrix4 &world = getWorldTransform();
+				const core::matrix4& world = getWorldTransform();
 
 				float offsetX = 2.0f;
 				float offsetY = 2.0f;
@@ -135,15 +147,15 @@ namespace Skylicht
 				g->addRectangleBatch(getRect(r), uv, getColor(color), world, m_materialID, NULL);
 			}
 
-			void CSkylichtRenderer::renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string)
+			void CSkylichtRenderer::renderText(const SRect& r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string)
 			{
-				CGlyphFont *font = m_fontNormal;
+				CGlyphFont* font = m_fontNormal;
 				if (fontSize == EFontSize::SizeLarge)
 					font = m_fontLarge;
 
-				CGraphics2D *g = CGraphics2D::getInstance();
+				CGraphics2D* g = CGraphics2D::getInstance();
 
-				const core::matrix4 &world = getWorldTransform();
+				const core::matrix4& world = getWorldTransform();
 
 				std::vector<SModuleOffset*> modules;
 				const wchar_t* lpString = string.c_str();
@@ -160,7 +172,7 @@ namespace Skylicht
 					if (lpString[i] != (int)'\n' &&
 						lpString[i] != (int)'\r')
 					{
-						SModuleOffset *c = font->getCharacterModule((int)lpString[i]);
+						SModuleOffset* c = font->getCharacterModule((int)lpString[i]);
 						if (c != NULL)
 						{
 							modules.push_back(c);
@@ -187,14 +199,14 @@ namespace Skylicht
 				if (c == '\n' || c == '\r')
 					return 0.0f;
 
-				CGlyphFont *font = m_fontNormal;
+				CGlyphFont* font = m_fontNormal;
 				if (fontSize == EFontSize::SizeLarge)
 					font = m_fontLarge;
 
 				float charSpacePadding = 0.0f;
 				float charPadding = 0.0f;
 
-				SModuleOffset *module = font->getCharacterModule(c);
+				SModuleOffset* module = font->getCharacterModule(c);
 
 				float charWidth = 0.0f;
 				if (module->Character == ' ')
@@ -207,7 +219,7 @@ namespace Skylicht
 
 			SDimension CSkylichtRenderer::measureText(EFontSize fontSize, const std::wstring& string)
 			{
-				CGlyphFont *font = m_fontNormal;
+				CGlyphFont* font = m_fontNormal;
 				if (fontSize == EFontSize::SizeLarge)
 					font = m_fontLarge;
 
@@ -218,7 +230,7 @@ namespace Skylicht
 				float textOffsetY = 0.0f;
 
 				// get text height
-				SModuleOffset *moduleCharA = font->getCharacterModule((int)'A');
+				SModuleOffset* moduleCharA = font->getCharacterModule((int)'A');
 				if (moduleCharA)
 				{
 					textHeight = moduleCharA->OffsetY + moduleCharA->Module->H;
@@ -234,7 +246,7 @@ namespace Skylicht
 					if (string[i] != (int)'\n' &&
 						string[i] != (int)'\r')
 					{
-						SModuleOffset *c = font->getCharacterModule((int)string[i]);
+						SModuleOffset* c = font->getCharacterModule((int)string[i]);
 						if (c != NULL)
 						{
 							listModule.push_back(c);
@@ -255,21 +267,21 @@ namespace Skylicht
 				return SDimension(stringWidth, textHeight + textOffsetY);
 			}
 
-			void CSkylichtRenderer::initFont(CSpriteAtlas *atlas)
+			void CSkylichtRenderer::initFont(CSpriteAtlas* atlas)
 			{
-				CGlyphFreetype *glyphFreetype = CGlyphFreetype::getInstance();
+				CGlyphFreetype* glyphFreetype = CGlyphFreetype::getInstance();
 				glyphFreetype->initFont(CThemeConfig::FontName.c_str(), CThemeConfig::FontPath.c_str());
 
 				io::IReadFile* charlist = getIrrlichtDevice()->getFileSystem()->createAndOpenFile("BuiltIn/Fonts/character-list.txt");
 				u32 filesize = charlist->getSize();
-				u8 *data = new u8[filesize + 2];
+				u8* data = new u8[filesize + 2];
 				memset(data, 0, filesize + 2);
 				charlist->read(data, filesize);
 				charlist->drop();
 				data[filesize] = 0;
 				data[filesize + 1] = 0;
 
-				wchar_t *unicode = (wchar_t*)data;
+				wchar_t* unicode = (wchar_t*)data;
 				u32 unicodeSize = filesize / 2;
 				float advance = 0.0f, x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f, offsetX = 0, offsetY = 0;
 

@@ -108,6 +108,8 @@ namespace Skylicht
 			list.push_back("SH4");
 			list.push_back("SH9");
 			addComboBox(boxLayout, L"Type", list[0], list);
+			addSlider(boxLayout, L"Indirect multipler", 1.0f, 0.0f, 1.0f);
+			addSlider(boxLayout, L"Direct multipler", 1.0f, 0.0f, 1.0f);
 
 			indirectLighting->setExpand(true);
 		}
@@ -172,6 +174,21 @@ namespace Skylicht
 
 			GUI::CComboBox* comboBox = new GUI::CComboBox(layout);
 			comboBox->setListValue(list);
+
+			boxLayout->endVertical();
+		}
+
+		void CSpaceProperty::addSlider(GUI::CBoxLayout* boxLayout, wchar_t* name, float value, float min, float max)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CSlider* slider = new GUI::CSlider(layout);
+			slider->setValue(value, min, max);
 
 			boxLayout->endVertical();
 		}

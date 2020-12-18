@@ -498,6 +498,12 @@ namespace Skylicht
 				TextCenter,
 				TextRight
 			};
+
+			enum ENumberInputType
+			{
+				Float,
+				Integer
+			};
 		}
 	}
 }

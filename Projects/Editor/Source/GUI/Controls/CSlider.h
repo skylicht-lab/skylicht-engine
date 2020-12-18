@@ -31,29 +31,27 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CNumberInput : public CTextBox
+			class CSlider : public CTextBox
 			{
 			protected:
-				float m_mouseDownX;
-				float m_mouseDownY;
-
-				float m_cursorX;
-				float m_cursorY;
+				float m_value;
+				float m_min;
+				float m_max;
 
 				bool m_focusTextbox;
 
-				float m_stepValue;
-				float m_value;
+				ENumberInputType m_numberType;
 
 				bool m_mousePress;
 				bool m_drag;
 
-				ENumberInputType m_numberType;
+				float m_mouseDownX;
+				float m_mouseDownY;
 
 			public:
-				CNumberInput(CBase* base);
+				CSlider(CBase* base);
 
-				virtual ~CNumberInput();
+				virtual ~CSlider();
 
 				virtual void think();
 
@@ -65,9 +63,9 @@ namespace Skylicht
 
 				virtual void onMouseClickLeft(float x, float y, bool down);
 
-				virtual void onPaste(CBase* base);
-
 				virtual bool onChar(u32 c);
+
+				void setValue(float value, float min, float max);
 
 				inline float getValue()
 				{
@@ -77,18 +75,6 @@ namespace Skylicht
 				inline int getValueInt()
 				{
 					return (int)m_value;
-				}
-
-				void setValue(float value);
-
-				inline void setStep(float step)
-				{
-					m_stepValue = step;
-				}
-
-				inline float getStep()
-				{
-					return m_stepValue;
 				}
 
 				inline void setNumberType(ENumberInputType type)
