@@ -45,3 +45,4 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CSlider.h"
 #include "GUI/Controls/CCollapsibleGroup.h"
 #include "GUI/Controls/CBoxLayout.h"
+#include "GUI/Controls/CContentSizeControl.h"
