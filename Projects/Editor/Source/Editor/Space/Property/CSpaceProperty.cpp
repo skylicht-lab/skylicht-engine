@@ -33,7 +33,16 @@ namespace Skylicht
 		CSpaceProperty::CSpaceProperty(GUI::CDockableWindow* window, CEditor* editor) :
 			CSpace(window, editor)
 		{
-			GUI::CBase* titleBar = new GUI::CBase(window);
+			GUI::CScrollControl* scrollWindow = new GUI::CScrollControl(window);
+			scrollWindow->dock(GUI::EPosition::Fill);
+			scrollWindow->enableScroll(false, true);
+			scrollWindow->showScrollBar(false, true);
+
+			GUI::CContentSizeControl* content = new GUI::CContentSizeControl(scrollWindow);
+			content->setFitType(GUI::CContentSizeControl::SizeToParent, GUI::CContentSizeControl::WrapChildren);
+			content->setTargetParent(window);
+
+			GUI::CBase* titleBar = new GUI::CBase(content);
 			titleBar->setHeight(25.0f);
 			titleBar->dock(GUI::EPosition::Top);
 			titleBar->setPadding(GUI::SPadding(5.0f, 3.0f, 5.0f, -3.0f));
@@ -56,12 +65,12 @@ namespace Skylicht
 
 			GUI::CBoxLayout* boxLayout;
 
-			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(window);
+			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(content);
 			transformColapsible->dock(GUI::EPosition::Top);
 			transformColapsible->getHeader()->setLabel(L"Transform");
 
 			boxLayout = new GUI::CBoxLayout(transformColapsible);
-			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
 
 			addCheckBox(boxLayout, L"Enable", true);
 			boxLayout->addSpace(5.0f);
@@ -80,24 +89,24 @@ namespace Skylicht
 			transformColapsible->setExpand(true);
 
 
-			GUI::CCollapsibleGroup* rendererColapsible = new GUI::CCollapsibleGroup(window);
+			GUI::CCollapsibleGroup* rendererColapsible = new GUI::CCollapsibleGroup(content);
 			rendererColapsible->dock(GUI::EPosition::Top);
 			rendererColapsible->getHeader()->setLabel(L"Render Mesh");
 
 			boxLayout = new GUI::CBoxLayout(rendererColapsible);
-			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
 
 			addCheckBox(boxLayout, L"Enable", true);
 
 			rendererColapsible->setExpand(true);
 
 
-			GUI::CCollapsibleGroup* indirectLighting = new GUI::CCollapsibleGroup(window);
+			GUI::CCollapsibleGroup* indirectLighting = new GUI::CCollapsibleGroup(content);
 			indirectLighting->dock(GUI::EPosition::Top);
 			indirectLighting->getHeader()->setLabel(L"Indirect Lighting");
 
 			boxLayout = new GUI::CBoxLayout(indirectLighting);
-			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 5.0, 5.0));
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
 
 			addCheckBox(boxLayout, L"Enable", true);
 			boxLayout->addSpace(5.0f);

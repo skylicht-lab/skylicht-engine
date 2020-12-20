@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CScrollBar.h"
 
 namespace Skylicht
 {
@@ -32,59 +31,47 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CScrollControl : public CBase
+			class CContentSizeControl : public CBase
 			{
-			protected:
-				CScrollBar* m_vertical;
-				CScrollBar* m_horizontal;
-
-				bool m_canScrollV;
-				bool m_canScrollH;
-
-				float m_widthScrollExpand;
-				float m_heightScrollExpand;
 			public:
-				CScrollControl(CBase* parent);
+				enum EFitType
+				{
+					WrapChildren,
+					SizeToParent
+				};
 
-				~CScrollControl();
+			protected:
+				EFitType m_horizontalFit;
+				EFitType m_verticalFit;
+
+				float m_parentWidth;
+				float m_parentHeight;
+
+				CBase* m_targetParent;
+
+			public:
+				CContentSizeControl(CBase* parent);
+
+				virtual ~CContentSizeControl();
+
+				virtual void think();
 
 				virtual void layout();
 
-				virtual void onChildBoundsChanged(const SRect& oldChildBounds, CBase* child);
+				virtual void postLayout();
 
-				virtual bool onMouseWheeled(int delta);
-
-				virtual void onScrollBarV(CBase* base);
-
-				virtual void onScrollBarH(CBase* base);
-
-				void scrollToItem(CBase* item);
-
-				void showScrollBar(bool h, bool v);
-
-				void enableScroll(bool h, bool v);
-
-				float getInnerWidth();
-
-				float getInnerHeight();
-
-				inline CScrollBar* getVerticalSroll()
+				inline void setTargetParent(CBase* parent)
 				{
-					return m_vertical;
+					m_targetParent = parent->getInnerPanel();
+					invalidate();
 				}
 
-				inline CScrollBar* getHorizontalSroll()
+				inline void setFitType(EFitType horizontal, EFitType vertical)
 				{
-					return m_horizontal;
+					m_horizontalFit = horizontal;
+					m_verticalFit = vertical;
+					invalidate();
 				}
-
-				void scrollVerticalOffset(float offset);
-
-				void scrollHorizontalOffset(float offset);
-
-			protected:
-				void updateScrollBar();
-
 			};
 		}
 	}

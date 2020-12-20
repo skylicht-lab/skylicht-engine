@@ -594,7 +594,7 @@ namespace Skylicht
 
 			void CTextContainer::layout()
 			{
-				if (m_textChange == true)
+				if (m_textChange == true || m_textAlign != ETextAlign::TextLeft)
 				{
 					sizeToContents();
 					m_textChange = false;
