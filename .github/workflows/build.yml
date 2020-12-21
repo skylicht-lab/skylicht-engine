@@ -23,11 +23,11 @@ jobs:
        echo Install WGET
        choco install wget -y
        echo Install SDL2LIB
-       wget -O SDL2-version_18.zip -q https://github.com/emscripten-ports/SDL2/archive/version_18.zip
+       wget -O SDL2-version_22.zip -q https://github.com/emscripten-ports/SDL2/archive/version_22.zip
        mkdir InstallLibs
        mkdir InstallLibs\SDL2
-       7z x SDL2-version_18.zip -oInstallLibs
-       copy InstallLibs\SDL2-version_18\include\*.* InstallLibs\SDL2
+       7z x SDL2-version_22.zip -oInstallLibs
+       copy InstallLibs\SDL2-version_22\include\*.* InstallLibs\SDL2
        echo Install success
     - name: Build
       shell: cmd
