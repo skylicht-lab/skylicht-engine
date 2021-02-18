@@ -38,6 +38,14 @@
 #pragma warning (disable: 4996)
 #endif
 
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 namespace FW
 {
 	/// Internal watch data
@@ -203,7 +211,7 @@ namespace FW
 		watch->mFileWatcher = this;
 		watch->mFileWatchListener = watcher;
 		watch->mDirName = new TCHAR[directory.length()+1];
-		std::memcpy(watch->mDirName, directory.c_str(), (directory.length() + 1) * sizeof(TCHAR));
+		memcpy(watch->mDirName, directory.c_str(), (directory.length() + 1) * sizeof(TCHAR));
 
 		mWatches.insert(std::make_pair(watchid, watch));
 
