@@ -35,7 +35,7 @@
 
 namespace FW
 {
-#if UNICODE
+#ifdef UNICODE
 	/// Type for a string
 	typedef std::wstring String;
 #else
