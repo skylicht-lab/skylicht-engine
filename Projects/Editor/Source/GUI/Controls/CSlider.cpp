@@ -29,8 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Renderer/CRenderer.h"
 #include "GUI/Theme/CThemeConfig.h"
 
-#include <codecvt>
-#include <locale>
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -249,12 +248,10 @@ namespace Skylicht
 			{
 				const std::wstring s = getString();
 
-				using convert_t = std::codecvt_utf8<wchar_t>;
-				std::wstring_convert<convert_t, wchar_t> strconverter;
+				char utf8[512];
+				CStringImp::convertUnicodeToUTF8(s.c_str(), utf8);
 
-				std::string utf8 = strconverter.to_bytes(s);
-
-				float value = atof(utf8.c_str());
+				float value = atof(utf8);
 				setValue(value, m_min, m_max);
 			}
 		}
