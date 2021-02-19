@@ -839,7 +839,7 @@ namespace Skylicht
 							};
 							int i = 0;
 
-							while (matrixInput[i] != NULL)
+							while (matrixInput[i] != 0)
 							{
 								pos = (int)idNodeName.find(matrixInput[i]);
 								if (pos > 0)
@@ -870,7 +870,7 @@ namespace Skylicht
 								NULL,
 							};
 							int i = 0;
-							while (translateInput[i] != NULL)
+							while (translateInput[i] != 0)
 							{
 								pos = (int)idNodeName.find(translateInput[i]);
 								if (pos > 0)
@@ -901,7 +901,7 @@ namespace Skylicht
 								NULL,
 							};
 							int i = 0;
-							while (rotateInput[i] != NULL)
+							while (rotateInput[i] != 0)
 							{
 								pos = (int)idNodeName.find(rotateInput[i]);
 								if (pos > 0)

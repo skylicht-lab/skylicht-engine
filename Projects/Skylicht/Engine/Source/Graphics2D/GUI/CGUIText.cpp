@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUIText::CGUIText(CCanvas *canvas, const core::rectf& rect, IFont *font) :
+	CGUIText::CGUIText(CCanvas* canvas, const core::rectf& rect, IFont* font) :
 		CGUIElement(canvas, rect),
 		TextVertical(Top),
 		TextHorizontal(Left),
@@ -44,7 +44,7 @@ namespace Skylicht
 
 	}
 
-	CGUIText::CGUIText(CCanvas *canvas, CGUIElement *parent, IFont *font) :
+	CGUIText::CGUIText(CCanvas* canvas, CGUIElement* parent, IFont* font) :
 		CGUIElement(canvas, parent),
 		TextVertical(Top),
 		TextHorizontal(Left),
@@ -59,7 +59,7 @@ namespace Skylicht
 
 	}
 
-	CGUIText::CGUIText(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect, IFont *font) :
+	CGUIText::CGUIText(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, IFont* font) :
 		CGUIElement(canvas, parent, rect),
 		TextVertical(Top),
 		TextHorizontal(Left),
@@ -83,7 +83,7 @@ namespace Skylicht
 		if (m_font)
 		{
 			// get text height
-			SModuleOffset *moduleCharA = m_font->getCharacterModule((int)'A');
+			SModuleOffset* moduleCharA = m_font->getCharacterModule((int)'A');
 			if (moduleCharA)
 			{
 				m_textHeight = (int)moduleCharA->OffsetY + (int)moduleCharA->Module->H;
@@ -91,7 +91,7 @@ namespace Skylicht
 			}
 
 			// get space width
-			SModuleOffset *moduleCharSpace = m_font->getCharacterModule((int)' ');
+			SModuleOffset* moduleCharSpace = m_font->getCharacterModule((int)' ');
 			if (moduleCharSpace)
 				m_textSpaceWidth = (int)moduleCharSpace->XAdvance;
 		}
@@ -105,7 +105,7 @@ namespace Skylicht
 
 	}
 
-	void CGUIText::setFormatText(const char *formatText)
+	void CGUIText::setFormatText(const char* formatText)
 	{
 		int i = 0;
 		int j = 0;
@@ -118,14 +118,14 @@ namespace Skylicht
 
 
 		int numUnicode = CStringImp::getUnicodeStringSize(formatText);
-		wchar_t *textw = new wchar_t[numUnicode];
+		wchar_t* textw = new wchar_t[numUnicode];
 		CStringImp::convertUTF8ToUnicode(formatText, textw);
 
 		m_textw = L"";
 		m_textFormat.clear();
 
 		// processing
-		while (textw[i] != NULL)
+		while (textw[i] != 0)
 		{
 			if (textw[i] == '<')
 			{
@@ -133,7 +133,7 @@ namespace Skylicht
 				iNumber = 0;
 				i++;
 
-				while (textw[i] != NULL)
+				while (textw[i] != 0)
 				{
 					if (textw[i] == '>')
 					{
@@ -164,51 +164,51 @@ namespace Skylicht
 		// utf8 string
 		int numUTF = CStringImp::getUTF8StringSize(m_textw.c_str());
 
-		char *texta = new char[numUTF + 2];
+		char* texta = new char[numUTF + 2];
 		CStringImp::convertUnicodeToUTF8(m_textw.c_str(), texta);
 		m_text = texta;
 
-		delete textw;
-		delete texta;
+		delete[]textw;
+		delete[]texta;
 
 		m_updateTextRender = true;
 	}
 
-	void CGUIText::setText(const char *text)
+	void CGUIText::setText(const char* text)
 	{
 		m_text = text;
 		int numUnicode = CStringImp::getUnicodeStringSize(text);
 
-		wchar_t *textw = new wchar_t[numUnicode + 2];
+		wchar_t* textw = new wchar_t[numUnicode + 2];
 
 		CStringImp::convertUTF8ToUnicode(text, textw);
 		m_textw = textw;
 
 		int i = 0;
 		m_textFormat.clear();
-		while (m_textw[i] != NULL)
+		while (m_textw[i] != 0)
 		{
 			m_textFormat.push_back(0);
 			++i;
 		}
 
-		delete textw;
+		delete[]textw;
 
 		m_updateTextRender = true;
 	}
 
-	void CGUIText::setTextStrim(const char *text)
+	void CGUIText::setTextStrim(const char* text)
 	{
 		int numUnicode = CStringImp::getUnicodeStringSize(text);
 
-		wchar_t *textw = new wchar_t[numUnicode];
+		wchar_t* textw = new wchar_t[numUnicode];
 		CStringImp::convertUTF8ToUnicode(text, textw);
 
 		int i = 0;
 		int stringWidth = 0;
 		int maxStringWidth = (int)getRect().getWidth();
 
-		while (textw[i] != NULL)
+		while (textw[i] != 0)
 		{
 			int w = getCharWidth(textw[i]);
 
@@ -235,7 +235,7 @@ namespace Skylicht
 		// string format
 		i = 0;
 		m_textFormat.clear();
-		while (textw[i] != NULL)
+		while (textw[i] != 0)
 		{
 			m_textFormat.push_back(0);
 			++i;
@@ -243,28 +243,28 @@ namespace Skylicht
 
 		// utf8 string
 		int numUTF = CStringImp::getUTF8StringSize(textw);
-		char *texta = new char[numUTF + 2];
+		char* texta = new char[numUTF + 2];
 		CStringImp::convertUnicodeToUTF8(textw, texta);
 		m_text = texta;
 
-		delete texta;
-		delete textw;
+		delete[]texta;
+		delete[]textw;
 
 		m_updateTextRender = true;
 	}
 
-	void CGUIText::setTextStrim(const wchar_t *text)
+	void CGUIText::setTextStrim(const wchar_t* text)
 	{
 		int numUnicode = CStringImp::length<const wchar_t>(text);
 
-		wchar_t *textw = new wchar_t[numUnicode];
+		wchar_t* textw = new wchar_t[numUnicode];
 		CStringImp::copy<wchar_t, const wchar_t>(textw, text);
 
 		int i = 0;
 		int stringWidth = 0;
 		int maxStringWidth = (int)getRect().getWidth();
 
-		while (textw[i] != NULL)
+		while (textw[i] != 0)
 		{
 			int w = getCharWidth(textw[i]);
 
@@ -291,7 +291,7 @@ namespace Skylicht
 		// string format
 		i = 0;
 		m_textFormat.clear();
-		while (textw[i] != NULL)
+		while (textw[i] != 0)
 		{
 			m_textFormat.push_back(0);
 			++i;
@@ -299,30 +299,30 @@ namespace Skylicht
 
 		// utf8 string
 		int numUTF = CStringImp::getUTF8StringSize(textw);
-		char *texta = new char[numUTF + 2];
+		char* texta = new char[numUTF + 2];
 		CStringImp::convertUnicodeToUTF8(textw, texta);
 		m_text = texta;
 
-		delete texta;
-		delete textw;
+		delete[]texta;
+		delete[]textw;
 
 		m_updateTextRender = true;
 	}
 
-	void CGUIText::setText(const wchar_t *text)
+	void CGUIText::setText(const wchar_t* text)
 	{
 		m_textw = text;
 		int numUTF = CStringImp::getUTF8StringSize(text);
 
-		char *texta = new char[numUTF + 2];
+		char* texta = new char[numUTF + 2];
 		CStringImp::convertUnicodeToUTF8(text, texta);
 		m_text = texta;
 
-		delete texta;
+		delete[]texta;
 
 		int i = 0;
 		m_textFormat.clear();
-		while (text[i] != NULL)
+		while (text[i] != 0)
 		{
 			m_textFormat.push_back(0);
 			++i;
@@ -357,7 +357,7 @@ namespace Skylicht
 		return stringWidth;
 	}
 
-	int CGUIText::getStringWidth(const char *text)
+	int CGUIText::getStringWidth(const char* text)
 	{
 		ArrayInt format;
 
@@ -365,7 +365,7 @@ namespace Skylicht
 		CStringImp::convertUTF8ToUnicode(text, wtext);
 
 		int i = 0;
-		while (wtext[i] != NULL)
+		while (wtext[i] != 0)
 		{
 			format.push_back(0);
 			++i;
@@ -390,7 +390,7 @@ namespace Skylicht
 		return stringWidth;
 	}
 
-	void CGUIText::render(CCamera *camera)
+	void CGUIText::render(CCamera* camera)
 	{
 		if (m_updateTextRender == true)
 		{
@@ -415,7 +415,7 @@ namespace Skylicht
 
 				while (lpString[i] != 0)
 				{
-					SModuleOffset *c = m_font->getCharacterModule((int)lpString[i]);
+					SModuleOffset* c = m_font->getCharacterModule((int)lpString[i]);
 					if (c != NULL)
 					{
 						modules.push_back(c);
@@ -459,7 +459,7 @@ namespace Skylicht
 		}
 	}
 
-	void CGUIText::renderText(ArrayModuleOffset &string, ArrayInt& stringFormat, int posY)
+	void CGUIText::renderText(ArrayModuleOffset& string, ArrayInt& stringFormat, int posY)
 	{
 		CGraphics2D* g = CGraphics2D::getInstance();
 
@@ -512,7 +512,7 @@ namespace Skylicht
 		}
 	}
 
-	void CGUIText::splitText(std::vector<ArrayModuleOffset>& split, std::vector<ArrayInt> &format, int width)
+	void CGUIText::splitText(std::vector<ArrayModuleOffset>& split, std::vector<ArrayInt>& format, int width)
 	{
 		split.clear();
 		format.clear();
@@ -540,7 +540,7 @@ namespace Skylicht
 				// loop all string on sentence
 				for (int j = begin; j < i; j++)
 				{
-					SModuleOffset *c = m_font->getCharacterModule((int)lpString[j]);
+					SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
 					if (c != NULL)
 					{
 						modules.push_back(c);
@@ -570,7 +570,7 @@ namespace Skylicht
 					// loop all string on sentence
 					for (int j = begin; j < i; j++)
 					{
-						SModuleOffset *c = m_font->getCharacterModule((int)lpString[j]);
+						SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
 						if (c != NULL)
 						{
 							modules.push_back(c);
@@ -592,7 +592,7 @@ namespace Skylicht
 				}
 			}
 
-			SModuleOffset *c = m_font->getCharacterModule((int)lpString[i]);
+			SModuleOffset* c = m_font->getCharacterModule((int)lpString[i]);
 			if (c == NULL)
 			{
 				i++;
@@ -626,7 +626,7 @@ namespace Skylicht
 
 				for (int j = begin; j < lastSpace; j++)
 				{
-					SModuleOffset *c = m_font->getCharacterModule((int)lpString[j]);
+					SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
 					if (c != NULL)
 					{
 						modules.push_back(c);
@@ -657,7 +657,7 @@ namespace Skylicht
 
 		for (int j = begin; j < i; j++)
 		{
-			SModuleOffset *c = m_font->getCharacterModule((int)lpString[j]);
+			SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
 			if (c != NULL)
 			{
 				modules.push_back(c);

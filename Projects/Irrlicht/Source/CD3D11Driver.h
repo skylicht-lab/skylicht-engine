@@ -27,7 +27,7 @@ namespace irr
 {
 namespace video
 {
-	inline void logFormatError(HRESULT hr, irr::core::stringc msg);
+	void logFormatError(HRESULT hr, irr::core::stringc msg);
 
 	class CD3D11VertexDeclaration;
 	class CD3D11HardwareBuffer;

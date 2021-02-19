@@ -433,7 +433,7 @@ namespace Skylicht
 			return;
 		}
 
-		char mac[1024] = { 0 };
+		char mac[512] = { 0 };
 		CStringImp::convertUnicodeToUTF8(string, mac);
 
 		for (int i = 0, n = strlen(mac); i < n; i++)

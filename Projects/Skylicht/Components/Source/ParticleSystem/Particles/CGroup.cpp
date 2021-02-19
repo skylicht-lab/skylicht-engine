@@ -38,7 +38,6 @@ namespace Skylicht
 			Friction(0.0f),
 			LifeMin(1.0f),
 			LifeMax(2.0f),
-			m_callback(NULL),
 			OrientationNormal(1.0f, 0.0f, 0.0f),
 			OrientationUp(0.0f, 1.0f, 0.0f)
 		{
@@ -56,11 +55,11 @@ namespace Skylicht
 			for (IParticleCallback* cb : m_callback)
 				cb->OnGroupDestroy();
 
-			for (CModel *m : m_models)
+			for (CModel* m : m_models)
 				delete m;
 			m_models.clear();
 
-			for (CInterpolator *i : m_interpolators)
+			for (CInterpolator* i : m_interpolators)
 				delete i;
 			m_interpolators.clear();
 
@@ -73,7 +72,7 @@ namespace Skylicht
 			delete m_cpuBuffer;
 		}
 
-		IRenderer* CGroup::setRenderer(IRenderer *r)
+		IRenderer* CGroup::setRenderer(IRenderer* r)
 		{
 			m_renderer = r;
 			if (m_renderer->useInstancing() == true)
@@ -103,7 +102,7 @@ namespace Skylicht
 
 			updateLaunchEmitter();
 
-			CParticle *particles = m_particles.pointer();
+			CParticle* particles = m_particles.pointer();
 			u32 numParticles = m_particles.size();
 
 			if (visible == true)
@@ -111,7 +110,7 @@ namespace Skylicht
 				// update particle system
 				m_particleSystem->update(particles, numParticles, this, dt);
 
-				for (ISystem *s : m_systems)
+				for (ISystem* s : m_systems)
 				{
 					if (s->isEnable() == true)
 						s->update(particles, numParticles, this, dt);
@@ -166,7 +165,7 @@ namespace Skylicht
 
 			// update emitter
 			m_launch.set_used(0);
-			for (CEmitter *e : m_emitters)
+			for (CEmitter* e : m_emitters)
 			{
 				u32 nb = e->updateNumber(dt);
 				if (nb > 0)
@@ -187,13 +186,13 @@ namespace Skylicht
 			// born new particle
 			for (u32 i = emiterId; i < emiterLaunch; i++)
 			{
-				SLaunchParticle &launch = m_launch[i];
+				SLaunchParticle& launch = m_launch[i];
 				if (launch.Number > 0)
 				{
 					CParticle* newParticles = create(launch.Number);
 					for (u32 j = 0, n = launch.Number; j < n; j++)
 					{
-						CParticle &p = newParticles[j];
+						CParticle& p = newParticles[j];
 						launchParticle(p, launch);
 					}
 				}
@@ -217,7 +216,7 @@ namespace Skylicht
 
 		void CGroup::initParticleModel(CParticle& p)
 		{
-			for (CModel *m : m_models)
+			for (CModel* m : m_models)
 			{
 				EParticleParams t = m->getType();
 
@@ -249,7 +248,7 @@ namespace Skylicht
 				cb->OnParticleBorn(p);
 		}
 
-		int CGroup::addParticleByEmitter(CEmitter *emitter, const core::vector3df& position, const core::vector3df& subEmitterDirection)
+		int CGroup::addParticleByEmitter(CEmitter* emitter, const core::vector3df& position, const core::vector3df& subEmitterDirection)
 		{
 			CParticle* p = create(1);
 
@@ -268,7 +267,7 @@ namespace Skylicht
 			return (int)p->Index;
 		}
 
-		int CGroup::addParticleVelocityByEmitter(CEmitter *emitter, const core::vector3df& position, const core::vector3df& velocity)
+		int CGroup::addParticleVelocityByEmitter(CEmitter* emitter, const core::vector3df& position, const core::vector3df& velocity)
 		{
 			CParticle* p = create(1);
 
@@ -319,7 +318,7 @@ namespace Skylicht
 
 		CModel* CGroup::createModel(EParticleParams param)
 		{
-			CModel *m = getModel(param);
+			CModel* m = getModel(param);
 
 			if (m == NULL)
 			{
@@ -332,7 +331,7 @@ namespace Skylicht
 
 		CModel* CGroup::getModel(EParticleParams param)
 		{
-			for (CModel *m : m_models)
+			for (CModel* m : m_models)
 			{
 				if (m->getType() == param)
 					return m;
@@ -360,7 +359,7 @@ namespace Skylicht
 
 		CInterpolator* CGroup::createInterpolator()
 		{
-			CInterpolator *interpolator = new CInterpolator();
+			CInterpolator* interpolator = new CInterpolator();
 			m_interpolators.push_back(interpolator);
 			return interpolator;
 		}

@@ -40,13 +40,13 @@ namespace Skylicht
 
 			virtual ~CSpaceProperty();
 
-			void addNumberInput(GUI::CBoxLayout* boxLayout, wchar_t* name, float value, float step);
+			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float step);
 
-			void addCheckBox(GUI::CBoxLayout* boxLayout, wchar_t* name, bool value);
+			void addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool value);
 
-			void addComboBox(GUI::CBoxLayout* boxLayout, wchar_t* name, const std::string& value, const std::vector<std::string>& listValue);
+			void addComboBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value, const std::vector<std::string>& listValue);
 
-			void addSlider(GUI::CBoxLayout* boxLayout, wchar_t* name, float value, float min, float max);
+			void addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float min, float max);
 		};
 	}
 }
