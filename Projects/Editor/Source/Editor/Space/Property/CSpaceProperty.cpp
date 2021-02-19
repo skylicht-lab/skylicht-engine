@@ -128,7 +128,7 @@ namespace Skylicht
 
 		}
 
-		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, wchar_t* name, float value, float step)
+		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float step)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -144,7 +144,7 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
-		void CSpaceProperty::addCheckBox(GUI::CBoxLayout* boxLayout, wchar_t* name, bool value)
+		void CSpaceProperty::addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -161,7 +161,7 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
-		void CSpaceProperty::addComboBox(GUI::CBoxLayout* boxLayout, wchar_t* name, const std::string& value, const std::vector<std::string>& listValue)
+		void CSpaceProperty::addComboBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value, const std::vector<std::string>& listValue)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -187,7 +187,7 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
-		void CSpaceProperty::addSlider(GUI::CBoxLayout* boxLayout, wchar_t* name, float value, float min, float max)
+		void CSpaceProperty::addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float min, float max)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 

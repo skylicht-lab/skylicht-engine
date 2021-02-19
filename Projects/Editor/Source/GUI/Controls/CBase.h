@@ -235,7 +235,7 @@ namespace Skylicht
 				inline void setHeight(float h) { setSize(width(), h); }
 
 				inline bool setSize(float w, float h) { return setBounds(X(), Y(), w, h); }
-				inline bool setSize(const SDimension& p) { setSize(p.Width, p.Height); }
+				inline bool setSize(const SDimension& p) { return setSize(p.Width, p.Height); }
 				inline SDimension getSize() const { return SDimension(width(), height()); }
 
 				SDimension getChildrenSize();

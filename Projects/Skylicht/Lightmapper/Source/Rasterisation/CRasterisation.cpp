@@ -262,10 +262,10 @@ namespace Skylicht
 		}
 
 		core::vector2di CRasterisation::setTriangle(
-			const core::vector3df *position,
-			const core::vector2df *uv,
-			const core::vector3df *normal,
-			const core::vector3df *tangent,
+			const core::vector3df* position,
+			const core::vector2df* uv,
+			const core::vector3df* normal,
+			const core::vector3df* tangent,
 			ERasterPass pass)
 		{
 			core::vector2df minUV, maxUV;
@@ -437,7 +437,7 @@ namespace Skylicht
 			if (useInterpolate == false)
 			{
 				m_bakePixels.push_back(SBakePixel());
-				SBakePixel &p = m_bakePixels.getLast();
+				SBakePixel& p = m_bakePixels.getLast();
 				p.Pixel = lmPixel;
 
 				// calc position 			
@@ -496,7 +496,7 @@ namespace Skylicht
 			return m_bakedData[dataOffset];
 		}
 
-		void CRasterisation::getLightmapPixel(int x, int y, float *color)
+		void CRasterisation::getLightmapPixel(int x, int y, float* color)
 		{
 			int dataOffset = y * m_width + x;
 
@@ -678,7 +678,7 @@ namespace Skylicht
 			int c = 3;
 
 			u32 sizeLightmapImage = m_width * m_height * 3;
-			unsigned char *tempData = new unsigned char[sizeLightmapImage];
+			unsigned char* tempData = new unsigned char[sizeLightmapImage];
 
 			for (int y = 0; y < m_height; y++)
 			{
@@ -740,7 +740,7 @@ namespace Skylicht
 			}
 
 			memcpy(m_lightmapData, tempData, sizeLightmapImage);
-			delete tempData;
+			delete[] tempData;
 		}
 
 		void CRasterisation::save(CMemoryStream* stream)
