@@ -33,7 +33,7 @@ namespace Skylicht
 		outputFormat.clear();
 
 		int i = 0;
-		while (string[i] != NULL)
+		while (string[i] != 0)
 		{
 			SModuleOffset* module = getCharacterModule(string[i]);
 			if (module)

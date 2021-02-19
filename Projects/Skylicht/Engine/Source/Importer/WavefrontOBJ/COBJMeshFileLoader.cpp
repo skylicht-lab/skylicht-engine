@@ -38,12 +38,12 @@ namespace Skylicht
 		m_materials.clear();
 	}
 
-	bool COBJMeshFileLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching)
+	bool COBJMeshFileLoader::loadModel(const char* resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching)
 	{
-		IrrlichtDevice	*device = getIrrlichtDevice();
-		io::IFileSystem *fs = device->getFileSystem();
+		IrrlichtDevice* device = getIrrlichtDevice();
+		io::IFileSystem* fs = device->getFileSystem();
 
-		io::IReadFile *file = fs->createAndOpenFile(resource);
+		io::IReadFile* file = fs->createAndOpenFile(resource);
 		if (file == NULL)
 		{
 			char log[64];
@@ -78,7 +78,7 @@ namespace Skylicht
 
 		m_modelName = fullName.c_str();
 
-		SObjMtl * currMtl = new SObjMtl();
+		SObjMtl* currMtl = new SObjMtl();
 		m_materials.push_back(currMtl);
 
 		// set default name is model name
@@ -184,7 +184,7 @@ namespace Skylicht
 				if (mtlChanged)
 				{
 					// retrieve the material
-					SObjMtl *useMtl = findMtl(mtlName, grpName);
+					SObjMtl* useMtl = findMtl(mtlName, grpName);
 					// only change material if we found it
 					if (useMtl)
 						currMtl = useMtl;
@@ -278,7 +278,7 @@ namespace Skylicht
 		constructScene(output, normalMap);
 
 		file->drop();
-		delete buf;
+		delete[] buf;
 		return true;
 	}
 
@@ -295,7 +295,7 @@ namespace Skylicht
 		{
 			if (m_materials[m]->Meshbuffer->getIndexBuffer()->getIndexCount() > 0)
 			{
-				CMesh *mesh = new CMesh();
+				CMesh* mesh = new CMesh();
 
 				// add entity
 				CEntity* entity = output->createEntity();
@@ -328,7 +328,7 @@ namespace Skylicht
 				mesh->setHardwareMappingHint(EHM_STATIC);
 
 				// add & clone new render mesh
-				CRenderMeshData *meshData = entity->addData<CRenderMeshData>();
+				CRenderMeshData* meshData = entity->addData<CRenderMeshData>();
 				meshData->setMesh(mesh);
 
 				// drop this mesh
@@ -340,9 +340,9 @@ namespace Skylicht
 	void COBJMeshFileLoader::readMTL(const c8* fileName, const io::path& relPath)
 	{
 		const io::path realFile(fileName);
-		io::IReadFile * mtlReader;
+		io::IReadFile* mtlReader;
 
-		io::IFileSystem *fileSystem = getIrrlichtDevice()->getFileSystem();
+		io::IFileSystem* fileSystem = getIrrlichtDevice()->getFileSystem();
 
 		if (fileSystem->existFile(realFile))
 			mtlReader = fileSystem->createAndOpenFile(realFile);
@@ -727,14 +727,14 @@ namespace Skylicht
 		io::path texname(textureNameBuf);
 		texname = relPath + texname;
 
-		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
 		SMaterial& material = currMaterial->Meshbuffer->getMaterial();
 		material.MaterialType = shaderMgr->getShaderIDByName("TextureColor");
 
 		if (texname.size() > 0)
 		{
-			video::ITexture *texture = CTextureManager::getInstance()->getTexture(texname.c_str(), m_textureFolder);
+			video::ITexture* texture = CTextureManager::getInstance()->getTexture(texname.c_str(), m_textureFolder);
 			if (texture)
 			{
 				if (type == 0)

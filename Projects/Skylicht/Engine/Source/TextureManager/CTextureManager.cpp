@@ -411,7 +411,7 @@ namespace Skylicht
 
 			if (loadImage == true)
 			{
-				char log[512];
+				char log[1024];
 				sprintf(log, "Load array texture: %s", ansiPath);
 				os::Printer::log(log);
 
@@ -440,7 +440,7 @@ namespace Skylicht
 				{
 					if (w != imageW || h != imageH)
 					{
-						char errorLog[512];
+						char errorLog[1024];
 						sprintf(errorLog, "Error: Texture size is not equal %d-%d: %s", w, h, ansiPath);
 						os::Printer::log(errorLog);
 
