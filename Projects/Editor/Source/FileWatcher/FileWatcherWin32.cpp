@@ -26,7 +26,6 @@
 
 #if FILEWATCHER_PLATFORM == FILEWATCHER_PLATFORM_WIN32
 
-#define _WIN32_WINNT 0x0550
 #include <windows.h>
 
 #if defined(_MSC_VER)
@@ -75,17 +74,17 @@ namespace FW
 	{
 		TCHAR szFile[MAX_PATH];
 		PFILE_NOTIFY_INFORMATION pNotify;
-		WatchStruct* pWatch = (WatchStruct*) lpOverlapped;
+		WatchStruct* pWatch = (WatchStruct*)lpOverlapped;
 		size_t offset = 0;
 
-		if(dwNumberOfBytesTransfered == 0)
+		if (dwNumberOfBytesTransfered == 0)
 			return;
 
 		if (dwErrorCode == ERROR_SUCCESS)
 		{
 			do
 			{
-				pNotify = (PFILE_NOTIFY_INFORMATION) &pWatch->mBuffer[offset];
+				pNotify = (PFILE_NOTIFY_INFORMATION)&pWatch->mBuffer[offset];
 				offset += pNotify->NextEntryOffset;
 
 #			if defined(UNICODE)
@@ -139,7 +138,7 @@ namespace FW
 
 			CloseHandle(pWatch->mOverlapped.hEvent);
 			CloseHandle(pWatch->mDirHandle);
-			delete [] pWatch->mDirName;
+			delete[] pWatch->mDirName;
 			HeapFree(GetProcessHeap(), 0, pWatch);
 		}
 	}
@@ -152,7 +151,7 @@ namespace FW
 		pWatch = static_cast<WatchStruct*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, ptrsize));
 
 		pWatch->mDirHandle = CreateFile(szDirectory, FILE_LIST_DIRECTORY,
-			FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, 
+			FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL,
 			OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL);
 
 		if (pWatch->mDirHandle != INVALID_HANDLE_VALUE)
@@ -189,7 +188,7 @@ namespace FW
 	{
 		WatchMap::iterator iter = mWatches.begin();
 		WatchMap::iterator end = mWatches.end();
-		for(; iter != end; ++iter)
+		for (; iter != end; ++iter)
 		{
 			DestroyWatch(iter->second);
 		}
@@ -204,13 +203,13 @@ namespace FW
 		WatchStruct* watch = CreateWatch(directory.c_str(), recursive,
 			FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE);
 
-		if(!watch)
+		if (!watch)
 			throw FileNotFoundException(directory);
 
 		watch->mWatchid = watchid;
 		watch->mFileWatcher = this;
 		watch->mFileWatchListener = watcher;
-		watch->mDirName = new TCHAR[directory.length()+1];
+		watch->mDirName = new TCHAR[directory.length() + 1];
 		memcpy(watch->mDirName, directory.c_str(), (directory.length() + 1) * sizeof(TCHAR));
 
 		mWatches.insert(std::make_pair(watchid, watch));
@@ -223,9 +222,9 @@ namespace FW
 	{
 		WatchMap::iterator iter = mWatches.begin();
 		WatchMap::iterator end = mWatches.end();
-		for(; iter != end; ++iter)
+		for (; iter != end; ++iter)
 		{
-			if(directory == iter->second->mDirName)
+			if (directory == iter->second->mDirName)
 			{
 				removeWatch(iter->first);
 				return;
@@ -238,7 +237,7 @@ namespace FW
 	{
 		WatchMap::iterator iter = mWatches.find(watchid);
 
-		if(iter == mWatches.end())
+		if (iter == mWatches.end())
 			return;
 
 		WatchStruct* watch = iter->second;
@@ -258,7 +257,7 @@ namespace FW
 	{
 		Action fwAction;
 
-		switch(action)
+		switch (action)
 		{
 		case FILE_ACTION_RENAMED_NEW_NAME:
 		case FILE_ACTION_ADDED:

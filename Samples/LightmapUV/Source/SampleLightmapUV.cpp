@@ -6,7 +6,7 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleLightmapUV *app = new SampleLightmapUV();
+	SampleLightmapUV* app = new SampleLightmapUV();
 	getApplication()->registerAppEvent("SampleLightmapUV", app);
 }
 
@@ -58,25 +58,25 @@ void SampleLightmapUV::onInitApp()
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SponzaDDS.zip"), false, false);
 
 	// Load Font
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 
 	// Load basic shader
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
 	// Create a Scene
 	m_scene = new CScene();
 
 	// Create a Zone in Scene
-	CZone *zone = m_scene->createZone();
+	CZone* zone = m_scene->createZone();
 
 	// 3D grid
-	CGameObject *grid = zone->createEmptyObject();
+	CGameObject* grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
 
 	// Camera
-	CGameObject *cameraObj = zone->createEmptyObject();
+	CGameObject* cameraObj = zone->createEmptyObject();
 	cameraObj->addComponent<CCamera>();
 	cameraObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
@@ -86,9 +86,9 @@ void SampleLightmapUV::onInitApp()
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// Direction lighting
-	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CGameObject* lightObj = zone->createEmptyObject();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
@@ -103,7 +103,7 @@ void SampleLightmapUV::onInitApp()
 
 	if (m_model != NULL)
 	{
-		CGameObject *renderObj = zone->createEmptyObject();
+		CGameObject* renderObj = zone->createEmptyObject();
 
 		m_renderMesh = renderObj->addComponent<CRenderMesh>();
 		m_renderMesh->initFromPrefab(m_model);
@@ -141,12 +141,12 @@ void SampleLightmapUV::onInitApp()
 			{
 				// default mesh
 				m_unwrap.addMesh(renderData->getMesh(), 1.0f);
-	}
+			}
 #else
 			m_unwrap.addMesh(renderData->getMesh(), 1.0f);
 #endif
 			meshID++;
-}
+		}
 
 		// save list renderer
 		m_allRenderers = renderers;
@@ -160,13 +160,13 @@ void SampleLightmapUV::onInitApp()
 	m_forwardRP->initRender(app->getWidth(), app->getHeight());
 
 	// Create 2D camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
+	CGameObject* guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// create gui object
 	m_guiObject = zone->createEmptyObject();
-	CCanvas *canvas = m_guiObject->addComponent<CCanvas>();
+	CCanvas* canvas = m_guiObject->addComponent<CCanvas>();
 
 	m_font = new CGlyphFont();
 	m_font->setFont("Segoe UI Light", 25);
@@ -205,13 +205,13 @@ void SampleLightmapUV::updateMeshUV()
 	// Update lightmap uv to renderer
 	for (CRenderMeshData* renderData : m_allRenderers)
 	{
-		CMesh *mesh = renderData->getMesh();
+		CMesh* mesh = renderData->getMesh();
 		for (u32 i = 0; i < mesh->getMeshBufferCount(); i++)
 		{
-			IMeshBuffer *mb = mesh->getMeshBuffer(i);
+			IMeshBuffer* mb = mesh->getMeshBuffer(i);
 
-			IVertexBuffer *vb = mb->getVertexBuffer(0);
-			IVertexDescriptor *vd = mb->getVertexDescriptor();
+			IVertexBuffer* vb = mb->getVertexBuffer(0);
+			IVertexDescriptor* vd = mb->getVertexDescriptor();
 
 			// alloc new vtx buffer (because current vtx buffer is on GPU Memory, that can't change)
 			CVertexBuffer<video::S3DVertex2TCoordsTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertex2TCoordsTangents>();
@@ -266,7 +266,7 @@ void SampleLightmapUV::updateMeshUV()
 	core::array<IImage*> arrayTexture;
 	for (int i = 0, n = m_unwrap.getAtlasCount(); i < n; i++)
 	{
-		IImage *img = m_unwrap.getChartsImage(i);
+		IImage* img = m_unwrap.getChartsImage(i);
 		arrayTexture.push_back(img);
 	}
 
@@ -276,14 +276,14 @@ void SampleLightmapUV::updateMeshUV()
 	// Get list default material
 	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(m_model);
 
-	for (CMaterial *m : materials)
+	for (CMaterial* m : materials)
 	{
 		m->changeShader("BuiltIn/Shader/Lightmap/LightmapUV.xml");
 		m->setUniformTexture("uTexLightmap", m_UVChartsTexture);
 	}
 
 	m_renderMesh->initMaterial(materials);
-	}
+}
 
 void SampleLightmapUV::updateThread()
 {
