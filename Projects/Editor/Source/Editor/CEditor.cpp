@@ -32,6 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/Console/CSpaceConsole.h"
 #include "Space/Property/CSpaceProperty.h"
 
+#include "AssetManager/CAssetManager.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -52,7 +54,9 @@ namespace Skylicht
 
 		void CEditor::update()
 		{
-			for (CSpace *s : m_workspaces)
+			Editor::CAssetManager::getInstance()->update();
+
+			for (CSpace* s : m_workspaces)
 				s->update();
 		}
 
@@ -63,6 +67,8 @@ namespace Skylicht
 
 		bool CEditor::updateImporting()
 		{
+			Editor::CAssetManager::getInstance()->update();
+
 			return true;
 		}
 
@@ -76,7 +82,7 @@ namespace Skylicht
 			initMenuBar();
 
 			// init status bar
-			GUI::CToolbar *statusBar = new GUI::CToolbar(m_canvas);
+			GUI::CToolbar* statusBar = new GUI::CToolbar(m_canvas);
 			statusBar->dock(GUI::EPosition::Bottom);
 
 			m_statusInfo = new GUI::CTableRow(statusBar);
@@ -121,16 +127,16 @@ namespace Skylicht
 
 		void CEditor::initMenuBar()
 		{
-			GUI::CMenu *submenu, *temp;
+			GUI::CMenu* submenu, * temp;
 
-			GUI::CMenuItem *logo = m_menuBar->addItem(GUI::ESystemIcon::Windows);
+			GUI::CMenuItem* logo = m_menuBar->addItem(GUI::ESystemIcon::Windows);
 			submenu = logo->getMenu();
 			submenu->addItem(L"About");
 			submenu->addItem(L"Development Fund", GUI::ESystemIcon::Web);
 			submenu->addSeparator();
 			submenu->addItem(L"Project Setting", GUI::ESystemIcon::Setting);
 
-			GUI::CMenuItem *file = m_menuBar->addItem(L"File");
+			GUI::CMenuItem* file = m_menuBar->addItem(L"File");
 			submenu = file->getMenu();
 			submenu->addItem(L"New", GUI::ESystemIcon::NewFile, L"Ctrl + N");
 			submenu->addItem(L"Open", GUI::ESystemIcon::Open, L"Ctrl + O");
@@ -141,7 +147,7 @@ namespace Skylicht
 			submenu->addSeparator();
 			submenu->addItem(L"Close", GUI::ESystemIcon::Quit, L"Ctrl + Q");
 
-			GUI::CMenuItem *edit = m_menuBar->addItem(L"Edit");
+			GUI::CMenuItem* edit = m_menuBar->addItem(L"Edit");
 			submenu = edit->getMenu();
 			submenu->addItem(L"Search", GUI::ESystemIcon::Search, L"Ctrl + F");
 			submenu->addSeparator();
@@ -154,11 +160,11 @@ namespace Skylicht
 			submenu->addSeparator();
 			submenu->addItem(L"Delete");
 
-			GUI::CMenuItem *asset = m_menuBar->addItem(L"Assets");
+			GUI::CMenuItem* asset = m_menuBar->addItem(L"Assets");
 			submenu = asset->getMenu();
 			temp = submenu;
 
-			GUI::CMenuItem *create = submenu->addItem(L"Create");
+			GUI::CMenuItem* create = submenu->addItem(L"Create");
 			submenu = create->getMenu();
 			submenu->addItem(L"Scene");
 			submenu->addItem(L"Animation");
@@ -177,14 +183,14 @@ namespace Skylicht
 			submenu->addSeparator();
 			submenu->addItem(L"Refresh", L"Ctrl + R");
 
-			GUI::CMenuItem *gameObject = m_menuBar->addItem(L"GameObject");
+			GUI::CMenuItem* gameObject = m_menuBar->addItem(L"GameObject");
 			submenu = gameObject->getMenu();
 			submenu->addItem(L"Empty Object");
 			submenu->addItem(L"Container Object");
 			submenu->addSeparator();
 			temp = submenu;
 
-			GUI::CMenuItem *object = submenu->addItem(L"Object");
+			GUI::CMenuItem* object = submenu->addItem(L"Object");
 			submenu = object->getMenu();
 			submenu->addItem(L"Cube");
 			submenu->addItem(L"Sphere");
@@ -201,14 +207,14 @@ namespace Skylicht
 			submenu->addItem(L"Sky");
 
 			submenu = temp;
-			GUI::CMenuItem *effect = submenu->addItem(L"Effect");
+			GUI::CMenuItem* effect = submenu->addItem(L"Effect");
 			submenu = effect->getMenu();
 			submenu->addItem(L"Particle System");
 			submenu->addItem(L"Line");
 			submenu->addItem(L"Trail");
 
 			submenu = temp;
-			GUI::CMenuItem *lighting = submenu->addItem(L"Lighting");
+			GUI::CMenuItem* lighting = submenu->addItem(L"Lighting");
 			submenu = lighting->getMenu();
 			submenu->addItem(L"Direction Light");
 			submenu->addItem(L"Point Light");
@@ -223,7 +229,7 @@ namespace Skylicht
 			submenu->addSeparator();
 			submenu->addItem(L"Trigger");
 
-			GUI::CMenuItem *window = m_menuBar->addItem(L"Window");
+			GUI::CMenuItem* window = m_menuBar->addItem(L"Window");
 			submenu = window->getMenu();
 			submenu->addItem(L"New workspace");
 			submenu->addSeparator();
@@ -236,7 +242,7 @@ namespace Skylicht
 			submenu->addSeparator();
 			submenu->addItem(L"Reset layout");
 
-			GUI::CMenuItem *help = m_menuBar->addItem(L"Help");
+			GUI::CMenuItem* help = m_menuBar->addItem(L"Help");
 			submenu = help->getMenu();
 			submenu->addItem(L"Tutorial", GUI::ESystemIcon::Guide);
 			submenu->addItem(L"Report a bug", GUI::ESystemIcon::Web);
@@ -257,28 +263,28 @@ namespace Skylicht
 
 			w = width;
 			h = round(height * 0.8f);
-			GUI::CDockableWindow *scene = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			GUI::CDockableWindow* scene = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
 			scene->setCaption(L"Scene");
 			m_dockPanel->dockChildWindow(scene, NULL, GUI::CDockPanel::DockCenter);
 			m_dockPanel->recurseLayout();
 
 			w = round(width * 0.7f);
 			h = round(height * 0.3f);
-			GUI::CDockableWindow *asset = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			GUI::CDockableWindow* asset = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
 			asset->setCaption(L"Assets");
 			m_dockPanel->dockChildWindow(asset, NULL, GUI::CDockPanel::DockBottom);
 			m_dockPanel->recurseLayout();
 
 			w = round(width * 0.35f);
 			h = round(height * 0.3f);
-			GUI::CDockableWindow *console = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			GUI::CDockableWindow* console = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
 			console->setCaption(L"Console");
 			m_dockPanel->dockChildWindow(console, asset->getCurrentDockTab(), GUI::CDockPanel::DockTargetRight);
 			m_dockPanel->recurseLayout();
 
 			w = width * 0.3f;
 			h = height;
-			GUI::CDockableWindow *property = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			GUI::CDockableWindow* property = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
 			property->setCaption(L"Property");
 			m_dockPanel->dockChildWindow(property, NULL, GUI::CDockPanel::DockRight);
 			m_dockPanel->recurseLayout();
@@ -289,7 +295,7 @@ namespace Skylicht
 			initWorkspace(property, property->getCaption());
 		}
 
-		void CEditor::initWorkspace(GUI::CDockableWindow *window, const std::wstring& workspace)
+		void CEditor::initWorkspace(GUI::CDockableWindow* window, const std::wstring& workspace)
 		{
 			if (workspace == L"Scene")
 			{
@@ -317,7 +323,7 @@ namespace Skylicht
 			}
 		}
 
-		void CEditor::removeWorkspace(CSpace *space)
+		void CEditor::removeWorkspace(CSpace* space)
 		{
 			std::list<CSpace*>::iterator i = std::find(m_workspaces.begin(), m_workspaces.end(), space);
 			if (i != m_workspaces.end())
@@ -330,8 +336,8 @@ namespace Skylicht
 		void CEditor::initSessionLayout(const std::string& data)
 		{
 			io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
-			io::IReadFile *file = fs->createMemoryReadFile(data.c_str(), data.length(), "data");
-			io::IXMLReader *xmlRead = fs->createXMLReader(file);
+			io::IReadFile* file = fs->createMemoryReadFile(data.c_str(), data.length(), "data");
+			io::IXMLReader* xmlRead = fs->createXMLReader(file);
 			if (xmlRead == NULL)
 				return;
 
@@ -371,13 +377,13 @@ namespace Skylicht
 			file->drop();
 		}
 
-		void CEditor::readBound(io::IXMLReader* xml, GUI::CBase *base)
+		void CEditor::readBound(io::IXMLReader* xml, GUI::CBase* base)
 		{
 			char ansiData[64];
-			const wchar_t *valueX = xml->getAttributeValue(L"x");
-			const wchar_t *valueY = xml->getAttributeValue(L"y");
-			const wchar_t *valueW = xml->getAttributeValue(L"w");
-			const wchar_t *valueH = xml->getAttributeValue(L"h");
+			const wchar_t* valueX = xml->getAttributeValue(L"x");
+			const wchar_t* valueY = xml->getAttributeValue(L"y");
+			const wchar_t* valueW = xml->getAttributeValue(L"w");
+			const wchar_t* valueH = xml->getAttributeValue(L"h");
 
 			if (valueX == NULL || valueY == NULL || valueW == NULL || valueH == NULL)
 				return;
@@ -411,7 +417,7 @@ namespace Skylicht
 			base->setBounds(x, y, w, h);
 		}
 
-		void CEditor::readDockLayout(io::IXMLReader* xmlRead, GUI::CDockPanel *panel)
+		void CEditor::readDockLayout(io::IXMLReader* xmlRead, GUI::CDockPanel* panel)
 		{
 			while (xmlRead->read())
 			{
@@ -431,11 +437,11 @@ namespace Skylicht
 					}
 					else if (nodeName == L"window")
 					{
-						const wchar_t *name;
+						const wchar_t* name;
 						name = xmlRead->getAttributeValue(L"name");
 						if (name != NULL)
 						{
-							GUI::CDockableWindow *win = new GUI::CDockableWindow(panel, 0, 0, 1, 1);
+							GUI::CDockableWindow* win = new GUI::CDockableWindow(panel, 0, 0, 1, 1);
 							readBound(xmlRead, win);
 							win->setCaption(name);
 
@@ -458,14 +464,14 @@ namespace Skylicht
 			}
 		}
 
-		void CEditor::readSpliterLayout(io::IXMLReader* xmlRead, GUI::CDockPanel *panel, GUI::CSplitter *spliter, bool isHorizontal)
+		void CEditor::readSpliterLayout(io::IXMLReader* xmlRead, GUI::CDockPanel* panel, GUI::CSplitter* spliter, bool isHorizontal)
 		{
 			u32 count;
 			u32 weakRow = 0;
 			u32 weakCol = 0;
 
 			char ansiData[64];
-			const wchar_t *valueCount;
+			const wchar_t* valueCount;
 
 			readBound(xmlRead, spliter);
 
@@ -534,19 +540,19 @@ namespace Skylicht
 					}
 					if (nodeName == L"horizontal")
 					{
-						GUI::CSplitter *newSpliter = new GUI::CSplitter(spliter);
+						GUI::CSplitter* newSpliter = new GUI::CSplitter(spliter);
 						spliter->setControl(newSpliter, row, col);
 						readSpliterLayout(xmlRead, panel, newSpliter, true);
 					}
 					else if (nodeName == L"vertical")
 					{
-						GUI::CSplitter *newSpliter = new GUI::CSplitter(spliter);
+						GUI::CSplitter* newSpliter = new GUI::CSplitter(spliter);
 						spliter->setControl(newSpliter, row, col);
 						readSpliterLayout(xmlRead, panel, newSpliter, false);
 					}
 					if (nodeName == L"docktab")
 					{
-						GUI::CDockTabControl *docktab = new GUI::CDockTabControl(spliter, panel);
+						GUI::CDockTabControl* docktab = new GUI::CDockTabControl(spliter, panel);
 						readBound(xmlRead, docktab);
 
 						spliter->setControl(docktab, row, col);
@@ -582,12 +588,12 @@ namespace Skylicht
 			}
 		}
 
-		void CEditor::readDockTab(io::IXMLReader* xmlRead, GUI::CDockTabControl *tabcontrol)
+		void CEditor::readDockTab(io::IXMLReader* xmlRead, GUI::CDockTabControl* tabcontrol)
 		{
-			const wchar_t *currentTab = xmlRead->getAttributeValue(L"current");
+			const wchar_t* currentTab = xmlRead->getAttributeValue(L"current");
 
 			std::wstring current;
-			GUI::CDockableWindow *currentWin = NULL;
+			GUI::CDockableWindow* currentWin = NULL;
 			if (currentTab != NULL)
 				current = currentTab;
 
@@ -600,11 +606,11 @@ namespace Skylicht
 					core::stringw nodeName = xmlRead->getNodeName();
 					if (nodeName == L"window")
 					{
-						const wchar_t *name;
+						const wchar_t* name;
 						name = xmlRead->getAttributeValue(L"name");
 						if (name != NULL)
 						{
-							GUI::CDockableWindow *win = new GUI::CDockableWindow(m_dockPanel, 0, 0, 1, 1);
+							GUI::CDockableWindow* win = new GUI::CDockableWindow(m_dockPanel, 0, 0, 1, 1);
 							win->setCaption(name);
 							tabcontrol->dockWindow(win);
 
