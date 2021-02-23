@@ -283,6 +283,7 @@ subdirs (Projects/Skylicht/Engine)
 subdirs (Projects/Skylicht/Components)
 subdirs (Projects/Skylicht/Lightmapper)
 subdirs (Projects/Skylicht/Audio)
+subdirs (Projects/Skylicht/Crypto)
 #subdirs (Projects/Skylicht/Physics)
 
 #if (BUILD_SKYLICHT_NETWORK)

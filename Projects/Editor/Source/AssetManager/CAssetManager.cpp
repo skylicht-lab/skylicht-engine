@@ -23,6 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "Version.h"
 #include "CAssetManager.h"
 
 #include <filesystem>
