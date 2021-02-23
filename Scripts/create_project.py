@@ -2,7 +2,6 @@ import sys
 import os
 import shutil
 
-
 def replace_text(file, find, replace):
     f = open(file, 'r')
     filedata = f.read()
@@ -63,6 +62,14 @@ def main():
 
         shutil.copy("Scripts/Template.cpp", source_cpp)
         replace_text(source_cpp, "@project_name@", project_name)
+
+        with open('Version.txt') as f:
+            version = f.read().replace('\n', '')
+
+            version_h = project_path + "/Source/Version.h"
+            shutil.copy("Scripts/Version.h", version_h)
+            replace_text(version_h, "@project_name@", project_name)
+            replace_text(version_h, "@project_version@", version)
 
 
 if __name__ == '__main__':
