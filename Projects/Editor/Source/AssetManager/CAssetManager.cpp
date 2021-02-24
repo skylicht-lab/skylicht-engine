@@ -37,6 +37,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "FileWatcher/FileWatcher.h"
 
+#if defined(__APPLE_CC__)
+namespace fs = std::__fs::filesystem;
+#else
+namespace fs = std::filesystem;
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
@@ -48,7 +54,7 @@ namespace Skylicht
 			m_assetFolder = m_workingFolder + "/../Assets";
 			m_assetFolder = CPath::normalizePath(m_assetFolder);
 
-			m_haveAssetFolder = std::filesystem::exists(m_assetFolder);
+			m_haveAssetFolder = fs::exists(m_assetFolder);
 			if (!m_haveAssetFolder)
 				os::Printer::log("[CAssetManager] Asset folder is not exists");
 
@@ -64,24 +70,42 @@ namespace Skylicht
 			m_files.clear();
 
 			if (m_haveAssetFolder)
-				discovery(m_assetFolder);
+			{
+				for (const auto& file : fs::directory_iterator(m_assetFolder))
+				{
+					std::string path = file.path().generic_u8string();
+
+					if (file.is_directory())
+					{
+						std::string bundle = CPath::getFileName(path);
+						discovery(bundle.c_str(), path.c_str());
+					}
+				}
+			}
 		}
 
-		void CAssetManager::discovery(const std::string& folder)
+		void CAssetManager::discovery(const std::string& bundle, const std::string& folder)
 		{
 			std::time_t now = std::time(0);
 
-			for (const auto& file : std::filesystem::directory_iterator(folder))
+			for (const auto& file : fs::directory_iterator(folder))
 			{
 				std::string path = file.path().generic_u8string();
 
 				if (file.is_directory())
-					discovery(path);
+					discovery(bundle, path);
 				else
 				{
 					time_t modifyTime, createTime;
 					if (getFileDate(path.c_str(), modifyTime, createTime) == true)
-						m_files.push_back(SFileNode(path.c_str(), generateHash(path.c_str(), createTime, now).c_str(), modifyTime, createTime));
+					{
+						// add db
+						m_files.push_back(SFileNode(bundle.c_str(), path.c_str(), generateHash(bundle.c_str(), path.c_str(), createTime, now).c_str(), modifyTime, createTime));
+
+						// map guid
+						SFileNode& file = m_files.back();
+						m_guidToFile[file.Guid] = &file;
+					}
 				}
 			}
 		}
@@ -104,10 +128,10 @@ namespace Skylicht
 			return false;
 		}
 
-		std::string CAssetManager::generateHash(const char* path, time_t createTime, time_t now)
+		std::string CAssetManager::generateHash(const char* bundle, const char* path, time_t createTime, time_t now)
 		{
 			std::string fileName = CPath::getFileName(std::string(path));
-			std::string hashString = std::string(PROJECT_NAME) + std::string(":") + fileName;
+			std::string hashString = std::string(bundle) + std::string(":") + fileName;
 			hashString += ":";
 			hashString += std::to_string(createTime);
 			hashString += ":";
