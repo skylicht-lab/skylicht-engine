@@ -4,9 +4,11 @@
 
 #include "Utils/CColor.h"
 
+#include "AssetManager/CAssetManager.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
-	SkylichtEditor *app = new SkylichtEditor();
+	SkylichtEditor* app = new SkylichtEditor();
 	getApplication()->registerAppEvent("SkylichtEditor", app);
 }
 
@@ -14,11 +16,13 @@ SkylichtEditor::SkylichtEditor() :
 	m_editor(NULL),
 	m_editorState(Startup)
 {
-
+	Editor::CAssetManager::createGetInstance();
 }
 
 SkylichtEditor::~SkylichtEditor()
 {
+	Editor::CAssetManager::releaseInstance();
+
 	Editor::GUI::CGUIContext::destroyGUI();
 
 	if (m_editor != NULL)
@@ -51,7 +55,7 @@ void SkylichtEditor::onUpdate()
 		app->getFileSystem()->addFileArchive(app->getBuiltInPath("Editor.zip"), false, false);
 
 		// load gui shader
-		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
 		shaderMgr->initGUIShader();
 
 		// init editor gui		

@@ -35,7 +35,7 @@
 
 namespace FW
 {
-#if defined(UNICODE) && !defined(__linux__)
+#if defined(UNICODE) && (defined(_WIN32) || defined(CYGWIN) || defined(MINGW))
 	/// Type for a string
 	typedef std::wstring String;
 #else
