@@ -34,13 +34,15 @@ namespace Skylicht
 	{
 		struct SFileNode
 		{
+			std::string Bundle;
 			std::string Path;
 			std::string Guid;
 			time_t ModifyTime;
 			time_t CreateTime;
 
-			SFileNode(const char* path, const char* guid, time_t modifyTime, time_t createTime)
+			SFileNode(const char* bundle, const char* path, const char* guid, time_t modifyTime, time_t createTime)
 			{
+				Bundle = bundle;
 				Path = path;
 				Guid = guid;
 				ModifyTime = modifyTime;
@@ -56,6 +58,7 @@ namespace Skylicht
 
 			bool m_haveAssetFolder;
 
+			std::map<std::string, SFileNode*> m_guidToFile;
 			std::list<SFileNode> m_files;
 
 		public:
@@ -77,11 +80,11 @@ namespace Skylicht
 
 			void discoveryAssetFolder();
 
-			void discovery(const std::string& folder);
+			void discovery(const std::string& bundle, const std::string& folder);
 
 			bool getFileDate(const char* path, time_t& modifyTime, time_t& createTime);
 
-			std::string generateHash(const char* path, time_t createTime, time_t now);
+			std::string generateHash(const char* bundle, const char* path, time_t createTime, time_t now);
 		};
 	}
 }
