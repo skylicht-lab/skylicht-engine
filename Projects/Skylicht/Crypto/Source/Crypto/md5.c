@@ -32,9 +32,9 @@
                             a = b + ROTLEFT(a,s); }
 
 /*********************** FUNCTION DEFINITIONS ***********************/
-void md5_transform(MD5_CTX *ctx, const BYTE data[])
+void md5_transform(MD5_CTX *ctx, const BYTE8 data[])
 {
-	WORD a, b, c, d, m[16], i, j;
+	WORD32 a, b, c, d, m[16], i, j;
 
 	// MD5 specifies big endian byte order, but this implementation assumes a little
 	// endian byte order CPU. Reverse all the bytes upon input, and re-reverse them
@@ -131,7 +131,7 @@ void md5_init(MD5_CTX *ctx)
 	ctx->state[3] = 0x10325476;
 }
 
-void md5_update(MD5_CTX *ctx, const BYTE data[], size_t len)
+void md5_update(MD5_CTX *ctx, const BYTE8 data[], size_t len)
 {
 	size_t i;
 
@@ -146,7 +146,7 @@ void md5_update(MD5_CTX *ctx, const BYTE data[], size_t len)
 	}
 }
 
-void md5_final(MD5_CTX *ctx, BYTE hash[])
+void md5_final(MD5_CTX *ctx, BYTE8 hash[])
 {
 	size_t i;
 
@@ -168,14 +168,14 @@ void md5_final(MD5_CTX *ctx, BYTE hash[])
 
 	// Append to the padding the total message's length in bits and transform.
 	ctx->bitlen += ctx->datalen * 8;
-	ctx->data[56] = (BYTE)(ctx->bitlen);
-	ctx->data[57] = (BYTE)(ctx->bitlen >> 8);
-	ctx->data[58] = (BYTE)(ctx->bitlen >> 16);
-	ctx->data[59] = (BYTE)(ctx->bitlen >> 24);
-	ctx->data[60] = (BYTE)(ctx->bitlen >> 32);
-	ctx->data[61] = (BYTE)(ctx->bitlen >> 40);
-	ctx->data[62] = (BYTE)(ctx->bitlen >> 48);
-	ctx->data[63] = (BYTE)(ctx->bitlen >> 56);
+	ctx->data[56] = (BYTE8)(ctx->bitlen);
+	ctx->data[57] = (BYTE8)(ctx->bitlen >> 8);
+	ctx->data[58] = (BYTE8)(ctx->bitlen >> 16);
+	ctx->data[59] = (BYTE8)(ctx->bitlen >> 24);
+	ctx->data[60] = (BYTE8)(ctx->bitlen >> 32);
+	ctx->data[61] = (BYTE8)(ctx->bitlen >> 40);
+	ctx->data[62] = (BYTE8)(ctx->bitlen >> 48);
+	ctx->data[63] = (BYTE8)(ctx->bitlen >> 56);
 	md5_transform(ctx, ctx->data);
 
 	// Since this implementation uses little endian byte ordering and MD uses big endian,

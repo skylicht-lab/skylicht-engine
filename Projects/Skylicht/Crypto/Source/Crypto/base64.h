@@ -12,16 +12,21 @@
 /*************************** HEADER FILES ***************************/
 #include <stddef.h>
 
-/**************************** DATA TYPES ****************************/
-typedef unsigned char BYTE;             // 8-bit byte
+#include "crypto_type.h"
 
 /*********************** FUNCTION DECLARATIONS **********************/
-// Returns the size of the output. If called with out = NULL, will just return
-// the size of what the output would have been (without a terminating NULL).
-size_t base64_encode(const BYTE in[], BYTE out[], size_t len, int newline_flag);
+#ifdef __cplusplus
+extern "C" {
+#endif 
+	// Returns the size of the output. If called with out = NULL, will just return
+	// the size of what the output would have been (without a terminating NULL).
+	size_t base64_encode(const BYTE8 in[], BYTE8 out[], size_t len, int newline_flag);
 
-// Returns the size of the output. If called with out = NULL, will just return
-// the size of what the output would have been (without a terminating NULL).
-size_t base64_decode(const BYTE in[], BYTE out[], size_t len);
+	// Returns the size of the output. If called with out = NULL, will just return
+	// the size of what the output would have been (without a terminating NULL).
+	size_t base64_decode(const BYTE8 in[], BYTE8 out[], size_t len);
+#ifdef __cplusplus
+}
+#endif 
 
 #endif   // BASE64_H
