@@ -8,6 +8,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Crypto/Source
 	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
 )
 
@@ -238,6 +239,9 @@ if (BUILD_ANDROID)
 else()
 	target_link_libraries(SkylichtEditor Client)
 endif()
+
+# Crypto
+target_link_libraries(SkylichtEditor Crypto)
 
 # Imgui
 if (BUILD_IMGUI)
