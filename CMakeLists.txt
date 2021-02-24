@@ -70,7 +70,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL Linux)
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
-	set(BUILD_ENGINE_TOOL OFF)
 	set(BUILD_MACOS ON)
 	set(XCODE ON)
 	add_definitions(-DMACOS)
@@ -151,10 +150,14 @@ add_definitions(-DUNICODE -D_UNICODE)
 
 if (CYGWIN)
 	add_definitions(-DCYGWIN)
+	# gcc7 not support std::filesystem so we disable
+	set(BUILD_ENGINE_TOOL OFF)
 endif()
 
 if (MINGW)
 	add_definitions(-DMINGW)
+	# gcc7 not support std::filesystem so we disable
+	set(BUILD_ENGINE_TOOL OFF)
 endif()
 
 if (USE_OPENMP)
