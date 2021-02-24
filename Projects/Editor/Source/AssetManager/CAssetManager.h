@@ -37,12 +37,14 @@ namespace Skylicht
 			std::string Path;
 			std::string Guid;
 			time_t ModifyTime;
+			time_t CreateTime;
 
-			SFileNode(const char* path, const char* guid, time_t modifyTime)
+			SFileNode(const char* path, const char* guid, time_t modifyTime, time_t createTime)
 			{
 				Path = path;
 				Guid = guid;
 				ModifyTime = modifyTime;
+				CreateTime = createTime;
 			}
 		};
 
@@ -77,7 +79,9 @@ namespace Skylicht
 
 			void discovery(const std::string& folder);
 
-			time_t getModifyDate(const char* path);
+			bool getFileDate(const char* path, time_t& modifyTime, time_t& createTime);
+
+			std::string generateHash(const char* path, time_t createTime, time_t now);
 		};
 	}
 }

@@ -12,23 +12,27 @@
 /*************************** HEADER FILES ***************************/
 #include <stddef.h>
 
+#include "crypto_type.h"
+
 /****************************** MACROS ******************************/
 #define MD5_BLOCK_SIZE 16               // MD5 outputs a 16 byte digest
 
-/**************************** DATA TYPES ****************************/
-typedef unsigned char BYTE;             // 8-bit byte
-typedef unsigned int  WORD;             // 32-bit word, change to "long" for 16-bit machines
-
 typedef struct {
-   BYTE data[64];
-   WORD datalen;
+   BYTE8 data[64];
+   WORD32 datalen;
    unsigned long long bitlen;
-   WORD state[4];
+   WORD32 state[4];
 } MD5_CTX;
 
 /*********************** FUNCTION DECLARATIONS **********************/
-void md5_init(MD5_CTX *ctx);
-void md5_update(MD5_CTX *ctx, const BYTE data[], size_t len);
-void md5_final(MD5_CTX *ctx, BYTE hash[]);
+#ifdef __cplusplus
+extern "C" {
+#endif
+	void md5_init(MD5_CTX* ctx);
+	void md5_update(MD5_CTX* ctx, const BYTE8 data[], size_t len);
+	void md5_final(MD5_CTX* ctx, BYTE8 hash[]);
+#ifdef __cplusplus
+}
+#endif 
 
 #endif   // MD5_H

@@ -240,6 +240,9 @@ else()
 	target_link_libraries(SkylichtEditor Client)
 endif()
 
+# Crypto
+target_link_libraries(SkylichtEditor Crypto)
+
 # Imgui
 if (BUILD_IMGUI)
 	target_link_libraries(SkylichtEditor Imgui)
