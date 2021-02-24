@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <filesystem>
 #include <chrono>
 #include <sstream>
+#include <sys/stat.h>
 
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
