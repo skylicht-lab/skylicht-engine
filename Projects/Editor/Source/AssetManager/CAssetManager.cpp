@@ -68,6 +68,8 @@ namespace Skylicht
 		void CAssetManager::discoveryAssetFolder()
 		{
 			m_files.clear();
+			m_guidToFile.clear();
+			m_pathToFile.clear();
 
 			if (m_haveAssetFolder)
 			{
@@ -86,7 +88,7 @@ namespace Skylicht
 
 		void CAssetManager::discovery(const std::string& bundle, const std::string& folder)
 		{
-			std::time_t now = std::time(0);
+			addFileNode(bundle, folder);
 
 			for (const auto& file : fs::directory_iterator(folder))
 			{
@@ -95,24 +97,47 @@ namespace Skylicht
 				if (file.is_directory())
 					discovery(bundle, path);
 				else
-				{
-					time_t modifyTime, createTime;
-					if (getFileDate(path.c_str(), modifyTime, createTime) == true)
-					{
-						// add db
-						m_files.push_back(SFileNode(bundle.c_str(), path.c_str(), generateHash(bundle.c_str(), path.c_str(), createTime, now).c_str(), modifyTime, createTime));
-
-						// map guid
-						SFileNode& file = m_files.back();
-						m_guidToFile[file.Guid] = &file;
-					}
-				}
+					addFileNode(bundle, path);
 			}
 		}
 
 		void CAssetManager::update()
 		{
 
+		}
+
+		bool CAssetManager::addFileNode(const std::string& bundle, const std::string& path)
+		{
+			std::time_t now = std::time(0);
+			std::string assetPath = m_assetFolder + "/";
+			time_t modifyTime, createTime;
+
+			if (getFileDate(path.c_str(), modifyTime, createTime) == true)
+			{
+				// get short path
+				std::string sortPath = path;
+				sortPath.replace(sortPath.find(assetPath.c_str()), assetPath.size(), "");
+
+				// add db
+				m_files.push_back(
+					SFileNode(
+						bundle.c_str(),
+						sortPath.c_str(),
+						path.c_str(),
+						generateHash(bundle.c_str(), path.c_str(), createTime, now).c_str(),
+						modifyTime,
+						createTime)
+				);
+
+				// map guid
+				SFileNode& file = m_files.back();
+				m_guidToFile[file.Guid] = &file;
+				m_pathToFile[sortPath] = &file;
+
+				return true;
+			}
+
+			return false;
 		}
 
 		bool CAssetManager::getFileDate(const char* path, time_t& modifyTime, time_t& createTime)
@@ -149,6 +174,82 @@ namespace Skylicht
 				result << std::setfill('0') << std::setw(2) << std::hex << (int)buf[i];
 
 			return result.str();
+		}
+
+		void CAssetManager::getRoot(std::vector<SFileInfo>& files)
+		{
+			files.clear();
+			std::string assetPath = m_assetFolder + "/";
+			wchar_t name[512];
+
+			for (const auto& file : fs::directory_iterator(m_assetFolder))
+			{
+				std::string path = file.path().generic_u8string();
+
+				if (file.is_directory())
+				{
+					files.push_back(SFileInfo());
+					SFileInfo& file = files.back();
+
+					file.Name = CPath::getFileName(path);
+					file.FullPath = path;
+					file.Path = path;
+					file.Path.replace(file.Path.find(assetPath.c_str()), assetPath.size(), "");
+					file.IsFolder = true;
+					file.Type = Folder;
+					file.Node = m_pathToFile[file.Path];
+
+					CStringImp::convertUTF8ToUnicode(file.Name.c_str(), name);
+					file.NameW = name;
+				}
+			}
+		}
+
+		void CAssetManager::getFolder(const char* folder, std::vector<SFileInfo>& files)
+		{
+			files.clear();
+			std::string assetPath = m_assetFolder + "/";
+			wchar_t name[512];
+
+			for (const auto& file : fs::directory_iterator(folder))
+			{
+				std::string path = file.path().generic_u8string();
+
+				if (file.is_directory())
+				{
+					files.push_back(SFileInfo());
+					SFileInfo& file = files.back();
+
+					file.Name = CPath::getFileName(path);
+					file.FullPath = path;
+					file.Path = path;
+					file.Path.replace(file.Path.find(assetPath.c_str()), assetPath.size(), "");
+					file.IsFolder = true;
+					file.Type = Folder;
+					file.Node = m_pathToFile[file.Path];
+
+					CStringImp::convertUTF8ToUnicode(file.Name.c_str(), name);
+					file.NameW = name;
+				}
+				else
+				{
+					files.push_back(SFileInfo());
+					SFileInfo& file = files.back();
+
+					file.Name = CPath::getFileName(path);
+					file.FullPath = path;
+					file.Path = path;
+					file.Path.replace(file.Path.find(assetPath.c_str()), assetPath.size(), "");
+					file.IsFolder = false;
+					file.Node = m_pathToFile[file.Path];
+
+					CStringImp::convertUTF8ToUnicode(file.Name.c_str(), name);
+					file.NameW = name;
+
+					std::string ext = CPath::getFileNameExt(path);
+
+				}
+			}
 		}
 	}
 }
