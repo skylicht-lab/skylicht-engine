@@ -67,9 +67,9 @@ namespace Skylicht
 
 		bool CEditor::updateImporting()
 		{
-			Editor::CAssetManager::getInstance()->discoveryAssetFolder();
-			Editor::CAssetManager::getInstance()->update();
-
+			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
+			assetManager->discoveryAssetFolder();
+			assetManager->update();
 			return true;
 		}
 
