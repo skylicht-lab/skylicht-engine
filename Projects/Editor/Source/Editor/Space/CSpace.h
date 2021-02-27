@@ -35,19 +35,19 @@ namespace Skylicht
 		class CSpace
 		{
 		protected:
-			GUI::CDockableWindow *m_window;
-			CEditor *m_editor;
+			GUI::CWindow* m_window;
+			CEditor* m_editor;
 
 		public:
-			CSpace(GUI::CDockableWindow *window, CEditor* editor);
+			CSpace(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpace();
 
 			virtual void update();
 
-			virtual void onDestroy(GUI::CBase *base);
+			virtual void onDestroy(GUI::CBase* base);
 
-			virtual void onWindowResize(GUI::CBase *base);
+			virtual void onWindowResize(GUI::CBase* base);
 
 			virtual void onResize(float w, float h) {}
 		};

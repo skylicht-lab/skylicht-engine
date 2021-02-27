@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpaceConsole::CSpaceConsole(GUI::CDockableWindow *window, CEditor *editor) :
+		CSpaceConsole::CSpaceConsole(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
 			m_lastID(0)
 		{
@@ -52,7 +52,7 @@ namespace Skylicht
 		{
 			CSpace::update();
 
-			CConsoleLog *console = CConsoleLog::getInstance();
+			CConsoleLog* console = CConsoleLog::getInstance();
 			if (console->getLogCount() > 0)
 			{
 				const CConsoleLog::SLogInfo& log = console->getLast();

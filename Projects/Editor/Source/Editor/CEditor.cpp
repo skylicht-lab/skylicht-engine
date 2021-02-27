@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CWindowConfig.h"
 #include "Utils/CStringImp.h"
 
+#include "Space/Import/CSpaceImport.h"
 #include "Space/Scene/CSpaceScene.h"
 #include "Space/Assets/CSpaceAssets.h"
 #include "Space/Console/CSpaceConsole.h"
@@ -75,10 +76,12 @@ namespace Skylicht
 
 		void CEditor::initImportGUI()
 		{
-			m_importDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 400.0f, 140.0f);
+			m_importDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 400.0f, 120.0f);
 			m_importDialog->setCaption(L"Import Assets");
 			m_importDialog->showCloseButton(false);
 			m_importDialog->bringToFront();
+
+			initWorkspace(m_importDialog, m_importDialog->getCaption());
 		}
 
 		void CEditor::initEditorGUI()
@@ -304,17 +307,21 @@ namespace Skylicht
 			initWorkspace(property, property->getCaption());
 		}
 
-		void CEditor::initWorkspace(GUI::CDockableWindow* window, const std::wstring& workspace)
+		void CEditor::initWorkspace(GUI::CWindow* window, const std::wstring& workspace)
 		{
 			if (workspace == L"Scene")
 			{
 				m_workspaces.push_back(new CSpaceScene(window, this));
 			}
-			if (workspace == L"GUI Design")
+			else if (workspace == L"Import Assets")
+			{
+				m_workspaces.push_back(new CSpaceImport(window, this));
+			}
+			else if (workspace == L"GUI Design")
 			{
 
 			}
-			if (workspace == L"Animation")
+			else if (workspace == L"Animation")
 			{
 
 			}

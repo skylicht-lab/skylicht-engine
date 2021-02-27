@@ -32,7 +32,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpaceScene::CSpaceScene(GUI::CDockableWindow *window, CEditor *editor) :
+		CSpaceScene::CSpaceScene(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
 			m_scene(NULL),
 			m_renderRP(NULL),
@@ -46,7 +46,7 @@ namespace Skylicht
 		{
 			initDefaultScene();
 
-			GUI::CBase *panel = m_window->getInnerPanel();
+			GUI::CBase* panel = m_window->getInnerPanel();
 
 			panel->OnRender = BIND_LISTENER(&CSpaceScene::onRender, this);
 			panel->OnMouseMoved = std::bind(&CSpaceScene::onMouseMoved, this, _1, _2, _3, _4, _5);
@@ -71,10 +71,10 @@ namespace Skylicht
 			m_scene = new CScene();
 
 			// create a zone in Scene
-			CZone *zone = m_scene->createZone();
+			CZone* zone = m_scene->createZone();
 
 			// create editor camera
-			CGameObject *camObj = zone->createEmptyObject();
+			CGameObject* camObj = zone->createEmptyObject();
 			camObj->addComponent<CCamera>();
 			camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
@@ -87,12 +87,12 @@ namespace Skylicht
 			m_gridPlane->addComponent<CGridPlane>();
 
 			// lighting
-			CGameObject *lightObj = zone->createEmptyObject();
-			CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+			CGameObject* lightObj = zone->createEmptyObject();
+			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 			SColor c(255, 255, 244, 214);
 			directionalLight->setColor(SColorf(c));
 
-			CTransformEuler *lightTransform = lightObj->getTransformEuler();
+			CTransformEuler* lightTransform = lightObj->getTransformEuler();
 			lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 			core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
@@ -122,7 +122,7 @@ namespace Skylicht
 			m_scene->update();
 		}
 
-		void CSpaceScene::onRender(GUI::CBase *base)
+		void CSpaceScene::onRender(GUI::CBase* base)
 		{
 			if (m_renderRP != NULL)
 			{
@@ -144,12 +144,12 @@ namespace Skylicht
 			}
 		}
 
-		void CSpaceScene::onMouseMoved(GUI::CBase *base, float x, float y, float deltaX, float deltaY)
+		void CSpaceScene::onMouseMoved(GUI::CBase* base, float x, float y, float deltaX, float deltaY)
 		{
 			postMouseEventToScene(EMIE_MOUSE_MOVED, x, y);
 		}
 
-		void CSpaceScene::onLeftMouseClick(GUI::CBase *base, float x, float y, bool down)
+		void CSpaceScene::onLeftMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_leftMouseDown = down;
 
@@ -159,7 +159,7 @@ namespace Skylicht
 				postMouseEventToScene(EMIE_LMOUSE_LEFT_UP, x, y);
 		}
 
-		void CSpaceScene::onRightMouseClick(GUI::CBase *base, float x, float y, bool down)
+		void CSpaceScene::onRightMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_rightMouseDown = down;
 
@@ -169,7 +169,7 @@ namespace Skylicht
 				postMouseEventToScene(EMIE_RMOUSE_LEFT_UP, x, y);
 		}
 
-		void CSpaceScene::onMiddleMouseClick(GUI::CBase *base, float x, float y, bool down)
+		void CSpaceScene::onMiddleMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_middleMouseDown = down;
 
@@ -179,7 +179,7 @@ namespace Skylicht
 				postMouseEventToScene(EMIE_MMOUSE_LEFT_UP, x, y);
 		}
 
-		void CSpaceScene::onMouseWheeled(GUI::CBase *base, int wheel)
+		void CSpaceScene::onMouseWheeled(GUI::CBase* base, int wheel)
 		{
 			SEvent event;
 			event.EventType = EET_MOUSE_INPUT_EVENT;
@@ -223,7 +223,7 @@ namespace Skylicht
 			m_scene->OnEvent(event);
 		}
 
-		bool CSpaceScene::isEditorObject(CGameObject *object)
+		bool CSpaceScene::isEditorObject(CGameObject* object)
 		{
 			if (m_editorCamera->getGameObject() == object ||
 				m_gridPlane == object)

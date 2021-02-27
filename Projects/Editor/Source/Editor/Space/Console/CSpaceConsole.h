@@ -34,12 +34,12 @@ namespace Skylicht
 		class CSpaceConsole : public CSpace
 		{
 		protected:
-			GUI::CTextBox *m_textControl;
+			GUI::CTextBox* m_textControl;
 
 			u32 m_lastID;
 
 		public:
-			CSpaceConsole(GUI::CDockableWindow *window, CEditor *editor);
+			CSpaceConsole(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceConsole();
 

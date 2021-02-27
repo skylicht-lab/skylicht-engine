@@ -72,7 +72,7 @@ namespace Skylicht
 
 			void initSessionLayout(const std::string& data);
 
-			void initWorkspace(GUI::CDockableWindow* window, const std::wstring& workspace);
+			void initWorkspace(GUI::CWindow* window, const std::wstring& workspace);
 
 			void removeWorkspace(CSpace* space);
 

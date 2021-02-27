@@ -2,7 +2,7 @@
 !@
 MIT License
 
-CopyRight (c) 2020 Skylicht Technology CO., LTD
+CopyRight (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -22,43 +22,29 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CSpace.h"
-#include "Editor/CEditor.h"
+#pragma once
+
+#include "SkylichtEngine.h"
+#include "Editor/Space/CSpace.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpace::CSpace(GUI::CWindow* window, CEditor* editor) :
-			m_window(window),
-			m_editor(editor)
+		class CSpaceImport : public CSpace
 		{
-			m_window->OnDestroy = BIND_LISTENER(&CSpace::onDestroy, this);
-			m_window->OnResize = BIND_LISTENER(&CSpace::onWindowResize, this);
-		}
+		protected:
+			GUI::CProgressBar* m_progressBar;
+			GUI::CLabel* m_statusText;
 
-		CSpace::~CSpace()
-		{
+		public:
+			CSpaceImport(GUI::CWindow* window, CEditor* editor);
 
-		}
+			virtual ~CSpaceImport();
 
-		void CSpace::update()
-		{
+			virtual void update();
 
-		}
-
-		void CSpace::onDestroy(GUI::CBase* base)
-		{
-			m_editor->removeWorkspace(this);
-		}
-
-		void CSpace::onWindowResize(GUI::CBase* base)
-		{
-			if (base == m_window)
-			{
-				onResize(base->width(), base->height());
-			}
-		}
+			virtual void onDestroy(GUI::CBase* base);
+		};
 	}
 }
