@@ -41,8 +41,11 @@ namespace Skylicht
 	{
 		CEditor::CEditor() :
 			m_menuBar(NULL),
-			m_canvas(NULL)
-
+			m_canvas(NULL),
+			m_dockPanel(NULL),
+			m_statusInfo(NULL),
+			m_status(NULL),
+			m_importDialog(NULL)
 		{
 			// init canvas
 			m_canvas = GUI::CGUIContext::getRoot();
@@ -61,17 +64,23 @@ namespace Skylicht
 				s->update();
 		}
 
-		void CEditor::initImportProjectGUI()
+		bool CEditor::isImportFinish()
 		{
+			CSpace* space = getWorkspace(m_importDialog);
+			if (space != NULL)
+			{
+				CSpaceImport* spaceImport = dynamic_cast<CSpaceImport*>(space);
+				if (spaceImport != NULL)
+					return spaceImport->isImportFinish();
+			}
 
+			return false;
 		}
 
-		bool CEditor::updateImporting()
+		void CEditor::closeImportDialog()
 		{
-			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
-			assetManager->discoveryAssetFolder();
-			assetManager->update();
-			return true;
+			m_importDialog->remove();
+			m_importDialog = NULL;
 		}
 
 		void CEditor::initImportGUI()
@@ -79,6 +88,7 @@ namespace Skylicht
 			m_importDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 400.0f, 120.0f);
 			m_importDialog->setCaption(L"Import Assets");
 			m_importDialog->showCloseButton(false);
+			m_importDialog->setCenterPosition();
 			m_importDialog->bringToFront();
 
 			initWorkspace(m_importDialog, m_importDialog->getCaption());
@@ -347,6 +357,16 @@ namespace Skylicht
 				delete (*i);
 				m_workspaces.erase(i);
 			}
+		}
+
+		CSpace* CEditor::getWorkspace(GUI::CWindow* window)
+		{
+			for (CSpace* s : m_workspaces)
+			{
+				if (s->getWindow() == window)
+					return s;
+			}
+			return NULL;
 		}
 
 		void CEditor::initSessionLayout(const std::string& data)

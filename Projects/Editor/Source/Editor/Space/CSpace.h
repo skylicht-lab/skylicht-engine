@@ -50,6 +50,11 @@ namespace Skylicht
 			virtual void onWindowResize(GUI::CBase* base);
 
 			virtual void onResize(float w, float h) {}
+
+			inline GUI::CWindow* getWindow()
+			{
+				return m_window;
+			}
 		};
 	}
 }

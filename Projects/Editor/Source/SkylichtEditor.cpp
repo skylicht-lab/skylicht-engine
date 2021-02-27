@@ -64,8 +64,6 @@ void SkylichtEditor::onUpdate()
 		Editor::GUI::CGUIContext::initGUI((float)w, (float)h);
 
 		m_editor = new Editor::CEditor();
-		m_editor->initImportProjectGUI();
-
 		m_editorState = InitEngine;
 	}
 	break;
@@ -74,25 +72,30 @@ void SkylichtEditor::onUpdate()
 		CShaderManager::getInstance()->initBasicShader();
 		CShaderManager::getInstance()->initSGDeferredShader();
 
-		// import project
-		m_editorState = Loading;
+		// import project		
 		m_editor->initImportGUI();
+
+		// change state loading
+		m_editorState = Loading;
 	}
 	break;
 	case Loading:
 	{
 		// loading project
-		if (m_editor->updateImporting() == true)
+		if (m_editor->isImportFinish() == true)
 		{
-			// m_editor->initEditorGUI();
-			m_editor->update();
-			Editor::GUI::CGUIContext::update(currentTime);
+			m_editor->closeImportDialog();
+			m_editor->initEditorGUI();
 			m_editorState = Running;
 		}
+
+		// running
+		m_editor->update();
+		Editor::GUI::CGUIContext::update(currentTime);
 	}
 	break;
 	default:
-		// Running
+		// running
 		m_editor->update();
 		Editor::GUI::CGUIContext::update(currentTime);
 		break;
