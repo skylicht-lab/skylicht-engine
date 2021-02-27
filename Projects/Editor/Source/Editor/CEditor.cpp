@@ -73,6 +73,14 @@ namespace Skylicht
 			return true;
 		}
 
+		void CEditor::initImportGUI()
+		{
+			m_importDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 400.0f, 140.0f);
+			m_importDialog->setCaption(L"Import Assets");
+			m_importDialog->showCloseButton(false);
+			m_importDialog->bringToFront();
+		}
+
 		void CEditor::initEditorGUI()
 		{
 			// bind save layout function

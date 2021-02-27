@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,11 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "GUI/Controls/CBase.h"
-#include "GUI/Controls/CLabel.h"
-#include "GUI/Controls/CIcon.h"
-#include "GUI/Controls/CIconButton.h"
-#include "GUI/Controls/CResizableControl.h"
+#include "GUI/Controls/CWindow.h"
 
 namespace Skylicht
 {
@@ -35,62 +31,22 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CWindow : public CResizableControl
+			class CDialogWindow : public CWindow
 			{
 			protected:
-				CDragger* m_titleBar;
-				CLabel* m_title;
-				CIcon* m_icon;
-				CIconButton* m_close;
+				int m_blink;
+				float m_blinkTime;
 
-				bool m_childStyle;
 			public:
-				CWindow(CBase* parent, float x, float y, float w, float h);
+				CDialogWindow(CBase* parent, float x, float y, float w, float h);
 
-				virtual ~CWindow();
+				virtual ~CDialogWindow();
 
-				virtual void onCloseWindow();
+				virtual void setHidden(bool hidden);
 
-				virtual void renderUnder();
+				virtual void think();
 
-				virtual void touch();
-
-				virtual void onChildTouched(CBase* child);
-
-				void setStyleChild(bool b);
-
-				void setCaption(const std::wstring& text)
-				{
-					m_title->setString(text);
-				}
-
-				const std::wstring& getCaption()
-				{
-					return m_title->getString();
-				}
-
-				inline void showIcon(bool b)
-				{
-					m_icon->setHidden(!b);
-				}
-
-				void setIcon(ESystemIcon icon)
-				{
-					m_icon->setIcon(icon);
-					m_icon->setHidden(false);
-				}
-
-				inline void showCloseButton(bool b)
-				{
-					m_close->setHidden(!b);
-				}
-
-				void dragMoveCommand(const SPoint& mouseOffset);
-
-			protected:
-
-				void onCloseButtonPress(CBase* sender);
-
+				void blinkCaption();
 			};
 		}
 	}
