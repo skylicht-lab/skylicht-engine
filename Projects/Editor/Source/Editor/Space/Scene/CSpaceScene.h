@@ -34,11 +34,11 @@ namespace Skylicht
 		class CSpaceScene : public CSpace
 		{
 		protected:
-			CScene *m_scene;
-			CCamera *m_editorCamera;
-			IRenderPipeline *m_renderRP;
+			CScene* m_scene;
+			CCamera* m_editorCamera;
+			IRenderPipeline* m_renderRP;
 
-			CGameObject *m_gridPlane;
+			CGameObject* m_gridPlane;
 
 			bool m_leftMouseDown;
 			bool m_rightMouseDown;
@@ -48,7 +48,7 @@ namespace Skylicht
 			float m_mouseY;
 
 		public:
-			CSpaceScene(GUI::CDockableWindow *window, CEditor *editor);
+			CSpaceScene(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceScene();
 
@@ -56,21 +56,21 @@ namespace Skylicht
 
 			virtual void onResize(float w, float h);
 
-			virtual void onRender(GUI::CBase *base);
+			virtual void onRender(GUI::CBase* base);
 
-			virtual void onMouseMoved(GUI::CBase *base, float x, float y, float deltaX, float deltaY);
+			virtual void onMouseMoved(GUI::CBase* base, float x, float y, float deltaX, float deltaY);
 
-			virtual void onLeftMouseClick(GUI::CBase *base, float x, float y, bool down);
+			virtual void onLeftMouseClick(GUI::CBase* base, float x, float y, bool down);
 
-			virtual void onRightMouseClick(GUI::CBase *base, float x, float y, bool down);
+			virtual void onRightMouseClick(GUI::CBase* base, float x, float y, bool down);
 
-			virtual void onMiddleMouseClick(GUI::CBase *base, float x, float y, bool down);
+			virtual void onMiddleMouseClick(GUI::CBase* base, float x, float y, bool down);
 
-			virtual void onMouseWheeled(GUI::CBase *base, int wheel);
+			virtual void onMouseWheeled(GUI::CBase* base, int wheel);
 
 			virtual void update();
 
-			bool isEditorObject(CGameObject *object);
+			bool isEditorObject(CGameObject* object);
 
 		protected:
 

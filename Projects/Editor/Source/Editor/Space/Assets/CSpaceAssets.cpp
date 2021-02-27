@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpaceAssets::CSpaceAssets(GUI::CDockableWindow* window, CEditor* editor) :
+		CSpaceAssets::CSpaceAssets(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor)
 		{
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
