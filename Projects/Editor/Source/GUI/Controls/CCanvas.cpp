@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDockableWindow.h"
 #include "CDockPanel.h"
 #include "CDockTabControl.h"
+#include "CDialogWindow.h"
 
 #include "Utils/CStringImp.h"
 
@@ -43,7 +44,8 @@ namespace Skylicht
 				CBase(NULL),
 				FirstTab(NULL),
 				NextTab(NULL),
-				m_needSaveDockLayout(false)
+				m_needSaveDockLayout(false),
+				m_dialog(NULL)
 			{
 				setBounds(0.0, 0.0f, width, height);
 				initialize();
@@ -72,7 +74,7 @@ namespace Skylicht
 				}
 			}
 
-			void CCanvas::removeDelayDelete(CBase *control)
+			void CCanvas::removeDelayDelete(CBase* control)
 			{
 				std::set<CBase*>::iterator itFind;
 
@@ -97,7 +99,7 @@ namespace Skylicht
 
 			void CCanvas::closeMenu()
 			{
-				for (CBase *child : Children)
+				for (CBase* child : Children)
 					child->closeMenu();
 			}
 
@@ -124,7 +126,7 @@ namespace Skylicht
 
 			void CCanvas::doRender()
 			{
-				CRenderer *render = CRenderer::getRenderer();
+				CRenderer* render = CRenderer::getRenderer();
 
 				render->begin();
 
@@ -159,7 +161,7 @@ namespace Skylicht
 				}
 			}
 
-			void CCanvas::saveDockState(std::string& data, CBase *base, int tab)
+			void CCanvas::saveDockState(std::string& data, CBase* base, int tab)
 			{
 				if (base == NULL)
 					return;
@@ -167,18 +169,18 @@ namespace Skylicht
 				const SRect& bound = base->getBounds();
 
 				// process
-				CCanvas *canvas = dynamic_cast<CCanvas*>(base);
-				CDockPanel *dockpanel = dynamic_cast<CDockPanel*>(base);
-				CSplitter *spliter = dynamic_cast<CSplitter*>(base);
-				CDockTabControl *dockTab = dynamic_cast<CDockTabControl*>(base);
-				CDockableWindow *window = dynamic_cast<CDockableWindow*>(base);
+				CCanvas* canvas = dynamic_cast<CCanvas*>(base);
+				CDockPanel* dockpanel = dynamic_cast<CDockPanel*>(base);
+				CSplitter* spliter = dynamic_cast<CSplitter*>(base);
+				CDockTabControl* dockTab = dynamic_cast<CDockTabControl*>(base);
+				CDockableWindow* window = dynamic_cast<CDockableWindow*>(base);
 
 				if (canvas != NULL)
 				{
 					data += generateTabSpace(tab);
 					data += std::string("<canvas ") + getRectString(bound) + ">\n";
 
-					for (CBase *c : base->Children)
+					for (CBase* c : base->Children)
 						saveDockState(data, c, tab + 1);
 
 					data += generateTabSpace(tab);
@@ -189,7 +191,7 @@ namespace Skylicht
 					data += generateTabSpace(tab);
 					data += std::string("<dock-panel ") + getRectString(bound) + ">\n";
 
-					for (CBase *c : base->Children)
+					for (CBase* c : base->Children)
 						saveDockState(data, c, tab + 1);
 
 					data += generateTabSpace(tab);
@@ -243,8 +245,8 @@ namespace Skylicht
 				}
 				else if (dockTab != NULL)
 				{
-					CTabButton *currentTab = dockTab->getCurrentTab();
-					CDockableWindow *currentWin = NULL;
+					CTabButton* currentTab = dockTab->getCurrentTab();
+					CDockableWindow* currentWin = NULL;
 
 					if (currentTab != NULL)
 						currentWin = dynamic_cast<CDockableWindow*>(currentTab->getPage());
@@ -268,8 +270,8 @@ namespace Skylicht
 
 					while (i != end)
 					{
-						CTabButton *tabButton = (*i);
-						CDockableWindow *child = dynamic_cast<CDockableWindow*>(tabButton->getPage());
+						CTabButton* tabButton = (*i);
+						CDockableWindow* child = dynamic_cast<CDockableWindow*>(tabButton->getPage());
 						if (child != NULL)
 						{
 							data += generateTabSpace(tab + 1);
@@ -292,7 +294,7 @@ namespace Skylicht
 				}
 				else
 				{
-					for (CBase *c : base->Children)
+					for (CBase* c : base->Children)
 						saveDockState(data, c, tab);
 				}
 			}
@@ -301,7 +303,7 @@ namespace Skylicht
 			{
 				int size = CStringImp::getUTF8StringSize(s.c_str());
 
-				char *data = new char[size + 1];
+				char* data = new char[size + 1];
 				memset(data, 0, size + 1);
 
 				CStringImp::convertUnicodeToUTF8(s.c_str(), data);

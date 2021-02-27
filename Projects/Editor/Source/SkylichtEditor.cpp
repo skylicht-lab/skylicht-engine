@@ -76,6 +76,7 @@ void SkylichtEditor::onUpdate()
 
 		// import project
 		m_editorState = Loading;
+		m_editor->initImportGUI();
 	}
 	break;
 	case Loading:
@@ -83,7 +84,7 @@ void SkylichtEditor::onUpdate()
 		// loading project
 		if (m_editor->updateImporting() == true)
 		{
-			m_editor->initEditorGUI();
+			// m_editor->initEditorGUI();
 			m_editor->update();
 			Editor::GUI::CGUIContext::update(currentTime);
 			m_editorState = Running;

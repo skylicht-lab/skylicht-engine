@@ -101,7 +101,7 @@ namespace Skylicht
 
 				virtual CBase* findChildByName(const std::string& name, bool recursive);
 
-				virtual bool isChild(CBase* child);
+				virtual bool isChild(CBase* child, bool recursive);
 
 				virtual u32 numChildren();
 				virtual CBase* getChild(u32 i);
