@@ -252,12 +252,19 @@ namespace Skylicht
 				return nullptr;
 			}
 
-			bool CBase::isChild(CBase* child)
+			bool CBase::isChild(CBase* child, bool recursive)
 			{
 				for (auto&& c : Children)
 				{
 					if (c == child)
 						return true;
+
+					if (recursive)
+					{
+						bool ret = c->isChild(child, true);
+						if (ret == true)
+							return true;
+					}
 				}
 
 				return false;

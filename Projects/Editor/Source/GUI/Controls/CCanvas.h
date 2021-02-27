@@ -32,6 +32,8 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CDialogWindow;
+
 			class CCanvas : public CBase
 			{
 			protected:
@@ -39,6 +41,8 @@ namespace Skylicht
 				std::set<CBase*> m_deleteSet;
 
 				bool m_needSaveDockLayout;
+
+				CDialogWindow* m_dialog;
 
 			public:
 				CCanvas(float width, float height);
@@ -61,7 +65,17 @@ namespace Skylicht
 
 				virtual void processDelayedDeletes();
 
-				virtual void removeDelayDelete(CBase *control);
+				virtual void removeDelayDelete(CBase* control);
+
+				inline void setTopmostDialog(CDialogWindow* dialog)
+				{
+					m_dialog = dialog;
+				}
+
+				inline CDialogWindow* getTopmostDialog()
+				{
+					return m_dialog;
+				}
 
 			public:
 				std::function<void(const std::string&)> OnSaveDockLayout;
@@ -75,7 +89,7 @@ namespace Skylicht
 
 				void saveDockLayoutToFile();
 
-				void saveDockState(std::string& data, CBase *base, int tab);
+				void saveDockState(std::string& data, CBase* base, int tab);
 
 				std::string getUTF8String(const std::wstring& s);
 

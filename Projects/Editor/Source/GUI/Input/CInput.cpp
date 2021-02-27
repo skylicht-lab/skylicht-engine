@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CInput.h"
+
+#include "GUI/Controls/CDialogWindow.h"
 #include "GUI/Controls/CCanvas.h"
 #include "GUI/CGUIContext.h"
 
@@ -33,7 +35,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CInput *g_baseInput = NULL;
+			CInput* g_baseInput = NULL;
 
 			CInput::CInput() :
 				m_mousePositionX(0.0f),
@@ -54,7 +56,7 @@ namespace Skylicht
 
 			}
 
-			void CInput::setInput(CInput *input)
+			void CInput::setInput(CInput* input)
 			{
 				g_baseInput = input;
 			}
@@ -112,7 +114,7 @@ namespace Skylicht
 					return true;
 				}
 
-				CBase *hover = CGUIContext::getRoot()->getControlAt(x, y);
+				CBase* hover = CGUIContext::getRoot()->getControlAt(x, y);
 
 				if (CGUIContext::HoveredControl != hover)
 				{
@@ -206,6 +208,17 @@ namespace Skylicht
 
 				CGUIContext::HoveredControl->updateCursor();
 
+				// Check is topmost dialog enable
+				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				if (dialog != NULL)
+				{
+					if (!dialog->isChild(CGUIContext::HoveredControl, true))
+					{
+						dialog->blinkCaption();
+						return false;
+					}
+				}
+
 				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
 					return false;
 
@@ -258,7 +271,7 @@ namespace Skylicht
 				return false;
 			}
 
-			bool CInput::keyboardFocus(CBase *hoverControl)
+			bool CInput::keyboardFocus(CBase* hoverControl)
 			{
 				if (hoverControl == NULL)
 					return false;
@@ -293,6 +306,16 @@ namespace Skylicht
 				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
 					return false;
 
+				// Check is topmost dialog enable
+				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				if (dialog != NULL)
+				{
+					if (!dialog->isChild(CGUIContext::HoveredControl, true))
+					{
+						return false;
+					}
+				}
+
 				CGUIContext::HoveredControl->onMouseWheeled(wheel);
 				return true;
 			}
@@ -302,6 +325,16 @@ namespace Skylicht
 				CBase* target = CGUIContext::KeyboardFocus;
 				if (target && target->isHidden())
 					target = NULL;
+
+				// Check is topmost dialog enable
+				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				if (dialog != NULL)
+				{
+					if (!dialog->isChild(target, true))
+					{
+						return false;
+					}
+				}
 
 				if (down)
 				{
@@ -349,6 +382,16 @@ namespace Skylicht
 				if (CInput::IsControlDown())
 					return false;
 
+				// Check is topmost dialog enable
+				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				if (dialog != NULL)
+				{
+					if (!dialog->isChild(CGUIContext::KeyboardFocus, true))
+					{
+						return false;
+					}
+				}
+
 				return CGUIContext::KeyboardFocus->onChar(character);
 			}
 
@@ -367,14 +410,28 @@ namespace Skylicht
 
 				accelString += toupper(character);
 
-				if (CGUIContext::KeyboardFocus && CGUIContext::KeyboardFocus->handleAccelerator(accelString))
-					return true;
+				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				if (dialog != NULL)
+				{
+					if (CGUIContext::KeyboardFocus && dialog->isChild(CGUIContext::KeyboardFocus, true) && CGUIContext::KeyboardFocus->handleAccelerator(accelString))
+						return true;
 
-				if (CGUIContext::MouseFocus && CGUIContext::MouseFocus->handleAccelerator(accelString))
-					return true;
+					if (CGUIContext::MouseFocus && dialog->isChild(CGUIContext::MouseFocus, true) && CGUIContext::MouseFocus->handleAccelerator(accelString))
+						return true;
 
-				if (CGUIContext::getRoot()->handleAccelerator(accelString))
-					return true;
+					return dialog->handleAccelerator(accelString);
+				}
+				else
+				{
+					if (CGUIContext::KeyboardFocus && CGUIContext::KeyboardFocus->handleAccelerator(accelString))
+						return true;
+
+					if (CGUIContext::MouseFocus && CGUIContext::MouseFocus->handleAccelerator(accelString))
+						return true;
+
+					if (CGUIContext::getRoot()->handleAccelerator(accelString))
+						return true;
+				}
 
 				return false;
 			}
