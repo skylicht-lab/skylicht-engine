@@ -36,7 +36,7 @@ namespace Skylicht
 		protected:
 
 		public:
-			CSpaceProperty(GUI::CDockableWindow* window, CEditor* editor);
+			CSpaceProperty(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceProperty();
 

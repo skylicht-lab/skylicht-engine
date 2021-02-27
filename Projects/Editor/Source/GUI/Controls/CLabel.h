@@ -51,6 +51,11 @@ namespace Skylicht
 
 				void setFontSize(EFontSize fontsize);
 
+				void setWrapMultiline(bool b)
+				{
+					m_text->setWrapMultiline(b);
+				}
+
 				inline const std::wstring& getString()
 				{
 					return m_text->getString();

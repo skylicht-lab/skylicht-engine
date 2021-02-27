@@ -23,42 +23,41 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CSpace.h"
-#include "Editor/CEditor.h"
+#include "CSpaceImport.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpace::CSpace(GUI::CWindow* window, CEditor* editor) :
-			m_window(window),
-			m_editor(editor)
+		CSpaceImport::CSpaceImport(GUI::CWindow* window, CEditor* editor) :
+			CSpace(window, editor)
 		{
-			m_window->OnDestroy = BIND_LISTENER(&CSpace::onDestroy, this);
-			m_window->OnResize = BIND_LISTENER(&CSpace::onWindowResize, this);
+			m_progressBar = new GUI::CProgressBar(window);
+			m_progressBar->dock(GUI::EPosition::Top);
+			m_progressBar->setMargin(GUI::SMargin(14.0f, 14.0, 14.0, 0.0f));
+
+			m_statusText = new GUI::CLabel(window);
+			m_statusText->dock(GUI::EPosition::Fill);
+			m_statusText->setMargin(GUI::SMargin(14.0f, 5.0, 14.0, 0.0f));
+			m_statusText->setWrapMultiline(true);
+			m_statusText->setString(L"Resolving...\nAssets/BuildIn");
 		}
 
-		CSpace::~CSpace()
+		CSpaceImport::~CSpaceImport()
 		{
 
 		}
 
-		void CSpace::update()
+		void CSpaceImport::update()
 		{
+			m_progressBar->setPercent(0.3f);
 
+			CSpace::update();
 		}
 
-		void CSpace::onDestroy(GUI::CBase* base)
+		void CSpaceImport::onDestroy(GUI::CBase* base)
 		{
-			m_editor->removeWorkspace(this);
-		}
-
-		void CSpace::onWindowResize(GUI::CBase* base)
-		{
-			if (base == m_window)
-			{
-				onResize(base->width(), base->height());
-			}
+			CSpace::onDestroy(base);
 		}
 	}
 }
