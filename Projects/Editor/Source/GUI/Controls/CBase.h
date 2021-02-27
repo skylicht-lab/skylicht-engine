@@ -231,6 +231,8 @@ namespace Skylicht
 				inline void setPos(const SPoint& p) { return setPos(p.X, p.Y); }
 				inline SPoint getPos() const { return SPoint(X(), Y()); }
 
+				void setCenterPosition();
+
 				inline void setWidth(float w) { setSize(w, height()); }
 				inline void setHeight(float h) { setSize(width(), h); }
 

@@ -58,9 +58,9 @@ namespace Skylicht
 
 			void initEditorGUI();
 
-			void initImportProjectGUI();
+			bool isImportFinish();
 
-			bool updateImporting();
+			void closeImportDialog();
 
 			void saveLayout(const std::string& data);
 
@@ -75,6 +75,8 @@ namespace Skylicht
 			void initWorkspace(GUI::CWindow* window, const std::wstring& workspace);
 
 			void removeWorkspace(CSpace* space);
+
+			CSpace* getWorkspace(GUI::CWindow* window);
 
 		protected:
 

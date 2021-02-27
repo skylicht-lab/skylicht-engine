@@ -23,14 +23,19 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "GUI/CGUIContext.h"
 #include "CSpaceImport.h"
+#include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
 		CSpaceImport::CSpaceImport(GUI::CWindow* window, CEditor* editor) :
-			CSpace(window, editor)
+			CSpace(window, editor),
+			m_progressBar(NULL),
+			m_statusText(NULL),
+			m_time(0.0f)
 		{
 			m_progressBar = new GUI::CProgressBar(window);
 			m_progressBar->dock(GUI::EPosition::Top);
@@ -40,7 +45,11 @@ namespace Skylicht
 			m_statusText->dock(GUI::EPosition::Fill);
 			m_statusText->setMargin(GUI::SMargin(14.0f, 5.0, 14.0, 0.0f));
 			m_statusText->setWrapMultiline(true);
-			m_statusText->setString(L"Resolving...\nAssets/BuildIn");
+			m_statusText->setString(L"Resolving...");
+
+			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
+			assetManager->discoveryAssetFolder();
+			assetManager->update();
 		}
 
 		CSpaceImport::~CSpaceImport()
@@ -50,14 +59,26 @@ namespace Skylicht
 
 		void CSpaceImport::update()
 		{
-			m_progressBar->setPercent(0.3f);
+			// test wait 4 second
+			m_time = m_time + GUI::CGUIContext::getDeltaTime();
+			if (m_time > 4000.0f)
+				m_time = 4000.0f;
 
+			m_progressBar->setPercent(m_time / 4000.0f);
 			CSpace::update();
 		}
 
 		void CSpaceImport::onDestroy(GUI::CBase* base)
 		{
 			CSpace::onDestroy(base);
+		}
+
+		bool CSpaceImport::isImportFinish()
+		{
+			if (m_time >= 4000.0f)
+				return true;
+
+			return false;
 		}
 	}
 }
