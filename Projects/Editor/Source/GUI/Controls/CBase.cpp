@@ -708,6 +708,17 @@ namespace Skylicht
 				return true;
 			}
 
+			void CBase::setCenterPosition()
+			{
+				if (m_parent)
+				{
+					float x = floorf(m_parent->width() * 0.5f - width() * 0.5f);
+					float y = floorf(m_parent->height() * 0.5f - height() * 0.5f);
+
+					setPos(x, y);
+				}
+			}
+
 			CBase* CBase::getControlAt(float x, float y, bool onlyIfMouseEnabled)
 			{
 				if (isHidden())

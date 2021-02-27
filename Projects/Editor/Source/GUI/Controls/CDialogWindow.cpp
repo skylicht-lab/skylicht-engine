@@ -74,7 +74,7 @@ namespace Skylicht
 				if (m_blink > 0)
 				{
 					m_blinkTime = m_blinkTime + dt;
-					if (m_blinkTime > 100.0f)
+					if (m_blinkTime > 80.0f)
 					{
 						m_blink--;
 						m_blinkTime = 0.0f;
@@ -93,7 +93,7 @@ namespace Skylicht
 
 			void CDialogWindow::blinkCaption()
 			{
-				m_blink = 10;
+				m_blink = 6;
 				m_blinkTime = 0.0f;
 			}
 		}
