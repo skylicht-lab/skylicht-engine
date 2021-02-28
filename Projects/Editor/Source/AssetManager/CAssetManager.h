@@ -92,6 +92,9 @@ namespace Skylicht
 			std::map<std::string, SFileNode*> m_pathToFile;
 
 			std::list<SFileNode> m_files;
+			std::list<SFileNode>::iterator m_fileIterator;
+			u32 m_fileID;
+			std::string m_lastGUIDFile;
 
 		public:
 			CAssetManager();
@@ -121,6 +124,18 @@ namespace Skylicht
 			void getRoot(std::vector<SFileInfo>& files);
 
 			void getFolder(const char* folder, std::vector<SFileInfo>& files);
+
+			void beginLoadGUID();
+
+			bool loadGUID(int count);
+
+			void saveGUID(const char* path, SFileNode& node);
+
+			void readGUID(const char *path, SFileNode& node);
+
+			bool isLoadGUIDFinish();
+
+			void getLoadGUIDStatus(float& percent, std::string& last);
 
 		protected:
 
