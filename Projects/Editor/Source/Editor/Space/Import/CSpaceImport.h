@@ -37,7 +37,6 @@ namespace Skylicht
 			GUI::CProgressBar* m_progressBar;
 			GUI::CLabel* m_statusText;
 
-			float m_time;
 		public:
 			CSpaceImport(GUI::CWindow* window, CEditor* editor);
 

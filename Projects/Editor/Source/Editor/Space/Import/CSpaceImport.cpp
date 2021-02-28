@@ -34,8 +34,7 @@ namespace Skylicht
 		CSpaceImport::CSpaceImport(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
 			m_progressBar(NULL),
-			m_statusText(NULL),
-			m_time(0.0f)
+			m_statusText(NULL)
 		{
 			m_progressBar = new GUI::CProgressBar(window);
 			m_progressBar->dock(GUI::EPosition::Top);
@@ -45,10 +44,11 @@ namespace Skylicht
 			m_statusText->dock(GUI::EPosition::Fill);
 			m_statusText->setMargin(GUI::SMargin(14.0f, 5.0, 14.0, 0.0f));
 			m_statusText->setWrapMultiline(true);
-			m_statusText->setString(L"Resolving...");
+			m_statusText->setString(L"Importing...");
 
 			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
 			assetManager->discoveryAssetFolder();
+			assetManager->beginLoadGUID();
 			assetManager->update();
 		}
 
@@ -59,12 +59,19 @@ namespace Skylicht
 
 		void CSpaceImport::update()
 		{
-			// test wait 4 second
-			m_time = m_time + GUI::CGUIContext::getDeltaTime();
-			if (m_time > 4000.0f)
-				m_time = 4000.0f;
+			float percent = 0.0f;
+			std::string last;
 
-			m_progressBar->setPercent(m_time / 4000.0f);
+			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
+			assetManager->loadGUID(10);
+			assetManager->getLoadGUIDStatus(percent, last);
+
+			m_progressBar->setPercent(percent);
+
+			std::string status = "Importing...\n";
+			status += last;
+			m_statusText->setString(status);
+
 			CSpace::update();
 		}
 
@@ -75,10 +82,7 @@ namespace Skylicht
 
 		bool CSpaceImport::isImportFinish()
 		{
-			if (m_time >= 4000.0f)
-				return true;
-
-			return false;
+			return Editor::CAssetManager::getInstance()->isLoadGUIDFinish();
 		}
 	}
 }
