@@ -85,7 +85,7 @@ namespace Skylicht
 
 		void CEditor::initImportGUI()
 		{
-			m_importDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 400.0f, 120.0f);
+			m_importDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
 			m_importDialog->setCaption(L"Import Assets");
 			m_importDialog->showCloseButton(false);
 			m_importDialog->setCenterPosition();
