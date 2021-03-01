@@ -36,17 +36,47 @@ namespace Skylicht
 		{
 			std::string Bundle;
 			std::string Path;
+			std::string FullPath;
 			std::string Guid;
 			time_t ModifyTime;
 			time_t CreateTime;
 
-			SFileNode(const char* bundle, const char* path, const char* guid, time_t modifyTime, time_t createTime)
+			SFileNode(const char* bundle, const char* path, const char* fullPath, const char* guid, time_t modifyTime, time_t createTime)
 			{
 				Bundle = bundle;
 				Path = path;
+				FullPath = fullPath;
 				Guid = guid;
 				ModifyTime = modifyTime;
 				CreateTime = createTime;
+			}
+		};
+
+		enum EFileType
+		{
+			Unknown = 0,
+			Folder,
+			Model3D,
+			Mesh,
+			Texture,
+			Script
+		};
+
+		struct SFileInfo
+		{
+			std::string Name;
+			std::wstring NameW;
+			std::string Path;
+			std::string FullPath;
+			bool IsFolder;
+			EFileType Type;
+			SFileNode* Node;
+
+			SFileInfo()
+			{
+				IsFolder = false;
+				Type = Unknown;
+				Node = NULL;
 			}
 		};
 
@@ -59,7 +89,12 @@ namespace Skylicht
 			bool m_haveAssetFolder;
 
 			std::map<std::string, SFileNode*> m_guidToFile;
+			std::map<std::string, SFileNode*> m_pathToFile;
+
 			std::list<SFileNode> m_files;
+			std::list<SFileNode>::iterator m_fileIterator;
+			u32 m_fileID;
+			std::string m_lastGUIDFile;
 
 		public:
 			CAssetManager();
@@ -85,6 +120,27 @@ namespace Skylicht
 			bool getFileDate(const char* path, time_t& modifyTime, time_t& createTime);
 
 			std::string generateHash(const char* bundle, const char* path, time_t createTime, time_t now);
+
+			void getRoot(std::vector<SFileInfo>& files);
+
+			void getFolder(const char* folder, std::vector<SFileInfo>& files);
+
+			void beginLoadGUID();
+
+			bool loadGUID(int count);
+
+			void saveGUID(const char* path, SFileNode& node);
+
+			void readGUID(const char *path, SFileNode& node);
+
+			bool isLoadGUIDFinish();
+
+			void getLoadGUIDStatus(float& percent, std::string& last);
+
+		protected:
+
+			bool addFileNode(const std::string& bundle, const std::string& path);
+
 		};
 	}
 }

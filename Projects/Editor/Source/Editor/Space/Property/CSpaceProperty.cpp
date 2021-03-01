@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpaceProperty::CSpaceProperty(GUI::CDockableWindow* window, CEditor* editor) :
+		CSpaceProperty::CSpaceProperty(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor)
 		{
 			GUI::CScrollControl* scrollWindow = new GUI::CScrollControl(window);
