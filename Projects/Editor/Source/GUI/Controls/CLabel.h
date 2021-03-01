@@ -47,9 +47,16 @@ namespace Skylicht
 
 				void setString(const std::wstring& text);
 
+				void setString(const std::string& text);
+
 				void setColor(const SGUIColor& color);
 
 				void setFontSize(EFontSize fontsize);
+
+				void setWrapMultiline(bool b)
+				{
+					m_text->setWrapMultiline(b);
+				}
 
 				inline const std::wstring& getString()
 				{

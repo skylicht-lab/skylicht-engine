@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CLabel.h"
 
+#include "Utils/CStringImp.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -67,6 +69,14 @@ namespace Skylicht
 
 				if (OnTextChanged != nullptr)
 					OnTextChanged(this);
+			}
+
+			void CLabel::setString(const std::string& text)
+			{
+				wchar_t* textw = new wchar_t[text.size() + 1];
+				CStringImp::convertUTF8ToUnicode(text.c_str(), textw);
+				setString(std::wstring(textw));
+				delete[]textw;
 			}
 
 			void CLabel::setColor(const SGUIColor& color)

@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpace::CSpace(GUI::CDockableWindow *window, CEditor* editor) :
+		CSpace::CSpace(GUI::CWindow* window, CEditor* editor) :
 			m_window(window),
 			m_editor(editor)
 		{
@@ -48,12 +48,12 @@ namespace Skylicht
 
 		}
 
-		void CSpace::onDestroy(GUI::CBase *base)
+		void CSpace::onDestroy(GUI::CBase* base)
 		{
 			m_editor->removeWorkspace(this);
 		}
 
-		void CSpace::onWindowResize(GUI::CBase *base)
+		void CSpace::onWindowResize(GUI::CBase* base)
 		{
 			if (base == m_window)
 			{
