@@ -38,10 +38,10 @@ namespace Skylicht
 			class CWindow : public CResizableControl
 			{
 			protected:
-				CDragger *m_titleBar;
-				CLabel *m_title;
-				CIcon *m_icon;
-				CIconButton *m_close;
+				CDragger* m_titleBar;
+				CLabel* m_title;
+				CIcon* m_icon;
+				CIconButton* m_close;
 
 				bool m_childStyle;
 			public:
@@ -80,11 +80,16 @@ namespace Skylicht
 					m_icon->setHidden(false);
 				}
 
+				inline void showCloseButton(bool b)
+				{
+					m_close->setHidden(!b);
+				}
+
 				void dragMoveCommand(const SPoint& mouseOffset);
 
 			protected:
 
-				void onCloseButtonPress(CBase *sender);
+				void onCloseButtonPress(CBase* sender);
 
 			};
 		}

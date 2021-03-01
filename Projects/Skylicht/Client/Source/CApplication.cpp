@@ -459,7 +459,7 @@ namespace Skylicht
 			return;
 		}
 
-		char mac[1024] = { 0 };
+		char mac[512] = { 0 };
 		strcpy(mac, string);
 
 		for (int i = 0, n = strlen(mac); i < n; i++)

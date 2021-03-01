@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Theme/CThemeConfig.h"
 
 #include "GUI/Controls/CCanvas.h"
+#include "GUI/Controls/CDialogWindow.h"
 #include "GUI/Controls/CDockableWindow.h"
 #include "GUI/Controls/CDockTabControl.h"
 #include "GUI/Controls/CScrollControl.h"
@@ -46,3 +47,4 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CCollapsibleGroup.h"
 #include "GUI/Controls/CBoxLayout.h"
 #include "GUI/Controls/CContentSizeControl.h"
+#include "GUI/Controls/CProgressBar.h"

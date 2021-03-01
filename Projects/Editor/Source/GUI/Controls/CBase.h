@@ -101,7 +101,7 @@ namespace Skylicht
 
 				virtual CBase* findChildByName(const std::string& name, bool recursive);
 
-				virtual bool isChild(CBase* child);
+				virtual bool isChild(CBase* child, bool recursive);
 
 				virtual u32 numChildren();
 				virtual CBase* getChild(u32 i);
@@ -230,6 +230,8 @@ namespace Skylicht
 				inline void setPos(float x, float y) { setBounds(x, y, width(), height()); }
 				inline void setPos(const SPoint& p) { return setPos(p.X, p.Y); }
 				inline SPoint getPos() const { return SPoint(X(), Y()); }
+
+				void setCenterPosition();
 
 				inline void setWidth(float w) { setSize(w, height()); }
 				inline void setHeight(float h) { setSize(width(), h); }

@@ -36,12 +36,14 @@ namespace Skylicht
 			friend class CSpace;
 
 		private:
-			GUI::CCanvas *m_canvas;
-			GUI::CMenuBar *m_menuBar;
-			GUI::CDockPanel *m_dockPanel;
+			GUI::CCanvas* m_canvas;
+			GUI::CMenuBar* m_menuBar;
+			GUI::CDockPanel* m_dockPanel;
 
-			GUI::CTableRow *m_statusInfo;
-			GUI::CIconTextItem *m_status;
+			GUI::CTableRow* m_statusInfo;
+			GUI::CIconTextItem* m_status;
+
+			GUI::CDialogWindow* m_importDialog;
 
 			std::list<CSpace*> m_workspaces;
 
@@ -52,11 +54,13 @@ namespace Skylicht
 
 			void update();
 
+			void initImportGUI();
+
 			void initEditorGUI();
 
-			void initImportProjectGUI();
+			bool isImportFinish();
 
-			bool updateImporting();
+			void closeImportDialog();
 
 			void saveLayout(const std::string& data);
 
@@ -68,19 +72,21 @@ namespace Skylicht
 
 			void initSessionLayout(const std::string& data);
 
-			void initWorkspace(GUI::CDockableWindow *window, const std::wstring& workspace);
+			void initWorkspace(GUI::CWindow* window, const std::wstring& workspace);
 
-			void removeWorkspace(CSpace *space);
+			void removeWorkspace(CSpace* space);
+
+			CSpace* getWorkspace(GUI::CWindow* window);
 
 		protected:
 
-			void readDockLayout(io::IXMLReader* xml, GUI::CDockPanel *panel);
+			void readDockLayout(io::IXMLReader* xml, GUI::CDockPanel* panel);
 
-			void readSpliterLayout(io::IXMLReader* xml, GUI::CDockPanel *panel, GUI::CSplitter *spliter, bool isHorizontal);
+			void readSpliterLayout(io::IXMLReader* xml, GUI::CDockPanel* panel, GUI::CSplitter* spliter, bool isHorizontal);
 
-			void readDockTab(io::IXMLReader* xml, GUI::CDockTabControl *tabcontrol);
+			void readDockTab(io::IXMLReader* xml, GUI::CDockTabControl* tabcontrol);
 
-			void readBound(io::IXMLReader* xml, GUI::CBase *base);
+			void readBound(io::IXMLReader* xml, GUI::CBase* base);
 		};
 	}
 }
