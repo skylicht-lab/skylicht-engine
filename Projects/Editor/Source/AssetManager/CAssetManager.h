@@ -91,6 +91,7 @@ namespace Skylicht
 			std::map<std::string, SFileNode*> m_guidToFile;
 			std::map<std::string, SFileNode*> m_pathToFile;
 
+			std::list<std::string> m_meta;
 			std::list<SFileNode> m_files;
 			std::list<SFileNode>::iterator m_fileIterator;
 			u32 m_fileID;
@@ -132,6 +133,8 @@ namespace Skylicht
 			void saveGUID(const char* path, SFileNode& node);
 
 			void readGUID(const char *path, SFileNode& node);
+
+			void removeUnusedMeta();
 
 			bool isLoadGUIDFinish();
 
