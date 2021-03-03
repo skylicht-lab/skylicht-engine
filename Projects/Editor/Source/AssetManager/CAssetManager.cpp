@@ -72,6 +72,7 @@ namespace Skylicht
 			m_files.clear();
 			m_guidToFile.clear();
 			m_pathToFile.clear();
+			m_meta.clear();
 
 			if (m_haveAssetFolder)
 			{
@@ -88,6 +89,8 @@ namespace Skylicht
 					{
 						if (CPath::getFileNameExt(path) != "meta")
 							addFileNode(".", path);
+						else
+							m_meta.push_back(path);
 					}
 				}
 			}
@@ -107,6 +110,8 @@ namespace Skylicht
 				{
 					if (CPath::getFileNameExt(path) != "meta")
 						addFileNode(bundle, path);
+					else
+						m_meta.push_back(path);
 				}
 			}
 		}
@@ -285,6 +290,9 @@ namespace Skylicht
 					// load meta
 					readGUID(meta.c_str(), node);
 
+					// remove meta
+					m_meta.remove(meta);
+
 					// check collision
 					if (node.Guid.empty() || node.Guid.size() != 64 || m_guidToFile.find(node.Guid) != m_guidToFile.end())
 					{
@@ -325,7 +333,10 @@ namespace Skylicht
 				++m_fileID;
 
 				if (m_fileIterator == m_files.end())
+				{
+					removeUnusedMeta();
 					return true;
+				}
 			}
 
 			return false;
@@ -396,6 +407,16 @@ namespace Skylicht
 				return true;
 
 			return false;
+		}
+
+		void CAssetManager::removeUnusedMeta()
+		{
+			for (const std::string& path : m_meta)
+			{
+				fs::remove(path);
+			}
+
+			m_meta.clear();
 		}
 	}
 }
