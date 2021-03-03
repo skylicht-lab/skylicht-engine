@@ -126,13 +126,15 @@ namespace Skylicht
 
 			void getFolder(const char* folder, std::vector<SFileInfo>& files);
 
+			bool isFolderEmpty(const char* folder);
+
 			void beginLoadGUID();
 
 			bool loadGUID(int count);
 
 			void saveGUID(const char* path, SFileNode& node);
 
-			void readGUID(const char *path, SFileNode& node);
+			void readGUID(const char* path, SFileNode& node);
 
 			void removeUnusedMeta();
 

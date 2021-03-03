@@ -263,6 +263,21 @@ namespace Skylicht
 			}
 		}
 
+		bool CAssetManager::isFolderEmpty(const char* folder)
+		{
+			for (const auto& file : fs::directory_iterator(folder))
+			{
+				std::string path = file.path().generic_u8string();
+
+				if (file.is_directory())
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		void CAssetManager::beginLoadGUID()
 		{
 			m_fileIterator = m_files.begin();

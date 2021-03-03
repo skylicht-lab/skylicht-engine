@@ -38,15 +38,17 @@ namespace Skylicht
 			class CTreeNode : public CBase
 			{
 			protected:
-				CIconTextItem *m_title;
-				CIconButton *m_expandButton;
-				CTreeRowItem *m_row;
+				CIconTextItem* m_title;
+				CIconButton* m_expandButton;
+				CTreeRowItem* m_row;
 
-				CTreeNode *m_root;
-				CTreeNode *m_parentNode;
+				CTreeNode* m_root;
+				CTreeNode* m_parentNode;
 
 				bool m_expand;
 				bool m_selected;
+
+				bool m_alwayShowExpandButton;
 
 			public:
 
@@ -54,8 +56,18 @@ namespace Skylicht
 				Listener OnUnselected;
 				Listener OnSelectChange;
 				Listener OnItemContextMenu;
+				Listener OnExpand;
+				Listener OnCollapse;
+
 			public:
-				CTreeNode(CBase *parent, CTreeNode *root);
+
+				std::string TagString;
+				int TagInt;
+				float TagFloat;
+				void* TagData;
+
+			public:
+				CTreeNode(CBase* parent, CTreeNode* root);
 
 				virtual ~CTreeNode();
 
@@ -63,7 +75,7 @@ namespace Skylicht
 
 				virtual void postLayout();
 
-				inline CIconTextItem *getTextItem()
+				inline CIconTextItem* getTextItem()
 				{
 					return m_title;
 				}
@@ -77,9 +89,16 @@ namespace Skylicht
 
 				CTreeNode* addNode(const std::wstring& text, ESystemIcon icon);
 
+				void removeAllTreeNode();
+
 				void setText(const std::wstring& text);
 
 				void setIcon(ESystemIcon icon);
+
+				inline void setAlwayShowExpandButton(bool b)
+				{
+					m_alwayShowExpandButton = b;
+				}
 
 				inline bool isExpand()
 				{
@@ -89,12 +108,20 @@ namespace Skylicht
 				inline void expand()
 				{
 					m_expand = true;
+
+					if (OnExpand != nullptr)
+						OnExpand(this);
+
 					invalidate();
 				}
 
 				inline void collapse()
 				{
 					m_expand = false;
+
+					if (OnCollapse != nullptr)
+						OnCollapse(this);
+
 					invalidate();
 				}
 
@@ -131,13 +158,13 @@ namespace Skylicht
 
 			protected:
 
-				void onExpand(CBase *base);
+				void onExpand(CBase* base);
 
-				void onDoubleClick(CBase *base);
+				void onDoubleClick(CBase* base);
 
-				void onDown(CBase *base);
+				void onDown(CBase* base);
 
-				virtual void onNodeClick(CBase *base);
+				virtual void onNodeClick(CBase* base);
 			};
 		}
 	}
