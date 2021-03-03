@@ -35,11 +35,15 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTreeNode::CTreeNode(CBase *parent, CTreeNode *root) :
+			CTreeNode::CTreeNode(CBase* parent, CTreeNode* root) :
 				CBase(parent),
 				m_root(root),
 				m_expand(false),
-				m_selected(false)
+				m_selected(false),
+				TagInt(0),
+				TagFloat(0.0f),
+				TagData(NULL),
+				m_alwayShowExpandButton(false)
 			{
 				m_parentNode = dynamic_cast<CTreeNode*>(parent);
 
@@ -75,7 +79,7 @@ namespace Skylicht
 
 			void CTreeNode::layout()
 			{
-				if (m_innerPanel->Children.size() == 0)
+				if (m_innerPanel->Children.size() == 0 && m_alwayShowExpandButton == false)
 				{
 					m_innerPanel->setHidden(true);
 					m_expandButton->setHidden(true);
@@ -116,7 +120,7 @@ namespace Skylicht
 				SPoint row = m_row->localPosToCanvas();
 				SPoint control = m_root->localPosToCanvas();
 
-				CTreeControl *treeControl = (CTreeControl*)(m_root);
+				CTreeControl* treeControl = (CTreeControl*)(m_root);
 				SRect bounds = m_row->getBounds();
 				bounds.X = bounds.X - (row.X - control.X);
 				bounds.Width = treeControl->getScrollControl()->getInnerWidth();
@@ -135,9 +139,14 @@ namespace Skylicht
 
 			CTreeNode* CTreeNode::addNode(const std::wstring& text, ESystemIcon icon)
 			{
-				CTreeNode *node = addNode(text);
+				CTreeNode* node = addNode(text);
 				node->setIcon(icon);
 				return node;
+			}
+
+			void CTreeNode::removeAllTreeNode()
+			{
+				m_innerPanel->removeAllChildren();
 			}
 
 			void CTreeNode::setText(const std::wstring& text)
@@ -165,27 +174,42 @@ namespace Skylicht
 					m_title->showIcon(true);
 				else
 					m_title->showIcon(false);
+
 				invalidate();
 			}
 
-			void CTreeNode::onExpand(CBase *base)
+			void CTreeNode::onExpand(CBase* base)
 			{
 				m_expand = !m_expand;
+
+				if (m_expand)
+				{
+					if (OnExpand != nullptr)
+						OnExpand(this);
+				}
+				else
+				{
+					if (OnCollapse != nullptr)
+						OnCollapse(this);
+				}
+
 				invalidate();
+
+				recurseLayout();
 			}
 
-			void CTreeNode::onDoubleClick(CBase *base)
+			void CTreeNode::onDoubleClick(CBase* base)
 			{
 				onExpand(base);
 			}
 
-			void CTreeNode::onDown(CBase *base)
+			void CTreeNode::onDown(CBase* base)
 			{
 				m_root->onNodeClick(base);
 				setSelected(!m_selected);
 			}
 
-			void CTreeNode::onNodeClick(CBase *base)
+			void CTreeNode::onNodeClick(CBase* base)
 			{
 
 			}
@@ -198,9 +222,9 @@ namespace Skylicht
 				if (m_innerPanel->Children.size() == 0)
 					return NULL;
 
-				for (CBase *c : m_innerPanel->Children)
+				for (CBase* c : m_innerPanel->Children)
 				{
-					CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+					CTreeNode* node = dynamic_cast<CTreeNode*>(c);
 					if (node && !node->isDisabled())
 					{
 						CTreeNode* child = node->getChildSelected();
@@ -220,9 +244,9 @@ namespace Skylicht
 				if (m_innerPanel->Children.size() == 0)
 					return NULL;
 
-				for (CBase *c : m_innerPanel->Children)
+				for (CBase* c : m_innerPanel->Children)
 				{
-					CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+					CTreeNode* node = dynamic_cast<CTreeNode*>(c);
 					if (node && !node->isDisabled())
 					{
 						m_root->deselectAll();
@@ -245,10 +269,10 @@ namespace Skylicht
 				List::reverse_iterator i = m_innerPanel->Children.rbegin(), end = m_innerPanel->Children.rend();
 				while (i != end)
 				{
-					CTreeNode *node = dynamic_cast<CTreeNode*>(*i);
+					CTreeNode* node = dynamic_cast<CTreeNode*>(*i);
 					if (node && !node->isDisabled())
 					{
-						CTreeNode *child = node->selectLastChild();
+						CTreeNode* child = node->selectLastChild();
 
 						if (child == NULL)
 						{
@@ -272,7 +296,7 @@ namespace Skylicht
 				std::list<CTreeNode*> priorityQueue;
 				priorityQueue.push_back(this);
 
-				CTreeNode *lastItem = NULL;
+				CTreeNode* lastItem = NULL;
 
 				while (priorityQueue.size() > 0)
 				{
@@ -293,9 +317,9 @@ namespace Skylicht
 					{
 						std::list<CTreeNode*>::iterator i = priorityQueue.begin();
 
-						for (CBase *c : visit->m_innerPanel->Children)
+						for (CBase* c : visit->m_innerPanel->Children)
 						{
-							CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+							CTreeNode* node = dynamic_cast<CTreeNode*>(c);
 							if (node && !node->isDisabled())
 							{
 								i = priorityQueue.insert(i, node);
@@ -339,9 +363,9 @@ namespace Skylicht
 					{
 						std::list<CTreeNode*>::iterator i = priorityQueue.begin();
 
-						for (CBase *c : visit->m_innerPanel->Children)
+						for (CBase* c : visit->m_innerPanel->Children)
 						{
-							CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+							CTreeNode* node = dynamic_cast<CTreeNode*>(c);
 							if (node && !node->isDisabled())
 							{
 								i = priorityQueue.insert(i, node);
@@ -383,9 +407,9 @@ namespace Skylicht
 			{
 				setSelected(false);
 
-				for (CBase *c : m_innerPanel->Children)
+				for (CBase* c : m_innerPanel->Children)
 				{
-					CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+					CTreeNode* node = dynamic_cast<CTreeNode*>(c);
 					if (node)
 					{
 						node->deselectAll();

@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "SkylichtEngine.h"
+#include "AssetManager/CAssetManager.h"
 #include "Editor/Space/CSpace.h"
 
 namespace Skylicht
@@ -41,6 +42,15 @@ namespace Skylicht
 			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceAssets();
+
+			void OnTreeNodeExpand(GUI::CBase* node);
+
+			void OnTreeNodeCollapse(GUI::CBase* node);
+
+		protected:
+
+			void addTreeFolder(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
+
 		};
 	}
 }
