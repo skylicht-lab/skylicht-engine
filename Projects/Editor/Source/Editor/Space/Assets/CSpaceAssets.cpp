@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSpaceAssets.h"
-#include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
 {
@@ -58,26 +57,9 @@ namespace Skylicht
 
 			// add root to tree folder
 			assetManager->getRoot(files);
-			for (const SFileInfo& f : files)
-			{
-				if (f.IsFolder == true)
-				{
-					root->addNode(f.NameW.c_str(), GUI::ESystemIcon::Folder);
-				}
-			}
+			addTreeFolder(root, files);
 
-			/*
-			GUI::CTreeNode* child2 = root->addNode(L"Child 2", GUI::ESystemIcon::OpenFolder);
-			child2->addNode(L"File", GUI::ESystemIcon::File);
-			child2->addNode(L"Document", GUI::ESystemIcon::FileDocument);
-			child2->addNode(L"Image", GUI::ESystemIcon::FileImage);
-			child2->expand();
-			for (int i = 0; i < 20; i++)
-			{
-				root->addNode(L"Child _", GUI::ESystemIcon::Folder);
-			}
-			*/
-
+			// spliter
 			spliter->setControl(m_folder, 0, 0);
 
 			GUI::CListBox* listBox = new GUI::CListBox(spliter);
@@ -98,6 +80,51 @@ namespace Skylicht
 		CSpaceAssets::~CSpaceAssets()
 		{
 
+		}
+
+		void CSpaceAssets::addTreeFolder(GUI::CTreeNode* node, std::vector<SFileInfo>& files)
+		{
+			CAssetManager* assetManager = CAssetManager::getInstance();
+
+			for (const SFileInfo& f : files)
+			{
+				if (f.IsFolder == true)
+				{
+					GUI::CTreeNode* childNode = node->addNode(f.NameW.c_str(), GUI::ESystemIcon::Folder);
+					childNode->TagString = f.FullPath;
+					childNode->OnExpand = BIND_LISTENER(&CSpaceAssets::OnTreeNodeExpand, this);
+					childNode->OnCollapse = BIND_LISTENER(&CSpaceAssets::OnTreeNodeCollapse, this);
+
+					if (assetManager->isFolderEmpty(f.FullPath.c_str()) == false)
+						childNode->setAlwayShowExpandButton(true);
+				}
+			}
+		}
+
+		void CSpaceAssets::OnTreeNodeExpand(GUI::CBase* node)
+		{
+			GUI::CTreeNode* treeNode = dynamic_cast<GUI::CTreeNode*>(node);
+			if (treeNode != NULL)
+			{
+				treeNode->setIcon(GUI::ESystemIcon::OpenFolder);
+
+				CAssetManager* assetManager = CAssetManager::getInstance();
+
+				std::vector<SFileInfo> files;
+				assetManager->getFolder(treeNode->TagString.c_str(), files);
+
+				addTreeFolder(treeNode, files);
+			}
+		}
+
+		void CSpaceAssets::OnTreeNodeCollapse(GUI::CBase* node)
+		{
+			GUI::CTreeNode* treeNode = dynamic_cast<GUI::CTreeNode*>(node);
+			if (treeNode != NULL)
+			{
+				treeNode->setIcon(GUI::ESystemIcon::Folder);
+				treeNode->removeAllTreeNode();
+			}
 		}
 	}
 }
