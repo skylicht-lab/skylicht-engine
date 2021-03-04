@@ -60,13 +60,6 @@ namespace Skylicht
 				Listener OnCollapse;
 
 			public:
-
-				std::string TagString;
-				int TagInt;
-				float TagFloat;
-				void* TagData;
-
-			public:
 				CTreeNode(CBase* parent, CTreeNode* root);
 
 				virtual ~CTreeNode();

@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTreeNode.h"
 #include "CScrollControl.h"
+#include "CContentSizeControl.h"
 #include "CTreeControl.h"
 
 #include "GUI/Theme/CThemeConfig.h"
@@ -40,11 +41,10 @@ namespace Skylicht
 				m_root(root),
 				m_expand(false),
 				m_selected(false),
-				TagInt(0),
-				TagFloat(0.0f),
-				TagData(NULL),
 				m_alwayShowExpandButton(false)
 			{
+				setHeight(20.0f);
+
 				m_parentNode = dynamic_cast<CTreeNode*>(parent);
 
 				m_row = new CTreeRowItem(this, root);
@@ -62,7 +62,10 @@ namespace Skylicht
 				m_expandButton->setPos(0.0f, 0.0f);
 				m_expandButton->OnPress = BIND_LISTENER(&CTreeNode::onExpand, this);
 
-				m_innerPanel = new CBase(this);
+				CContentSizeControl* sizeContent = new CContentSizeControl(this);
+				sizeContent->setFitType(CContentSizeControl::WrapChildren, CContentSizeControl::WrapChildren);
+
+				m_innerPanel = sizeContent;
 				m_innerPanel->dock(EPosition::Top);
 				m_innerPanel->setHeight(20.0f);
 				m_innerPanel->setMargin(SMargin(CThemeConfig::TreeIndentationSize, 0.0f, 0.0f, 0.0f));
@@ -105,6 +108,8 @@ namespace Skylicht
 
 			void CTreeNode::postLayout()
 			{
+				CBase::postLayout();
+
 				if (m_title != NULL)
 					m_title->sizeToContents();
 
@@ -125,8 +130,6 @@ namespace Skylicht
 				bounds.X = bounds.X - (row.X - control.X);
 				bounds.Width = treeControl->getScrollControl()->getInnerWidth();
 				m_row->setBounds(bounds);
-
-				CBase::postLayout();
 			}
 
 			CTreeNode* CTreeNode::addNode(const std::wstring& text)
@@ -180,6 +183,9 @@ namespace Skylicht
 
 			void CTreeNode::onExpand(CBase* base)
 			{
+				CTreeControl* treeControl = (CTreeControl*)(m_root);
+				float y = treeControl->getScrollControl()->getVertical();
+
 				m_expand = !m_expand;
 
 				if (m_expand)
@@ -195,7 +201,24 @@ namespace Skylicht
 
 				invalidate();
 
-				recurseLayout();
+				// OnExpande or OnCollapse maybe create new TreeNode
+				// so we need caculate height of TreeControl
+				int level = 0;
+				CTreeNode* node = this;
+
+				while (node != m_root)
+				{
+					level++;
+					node = node->getParentNode();
+				}
+
+				// each level, we just finish calculate the height of TreeNode [postLayout]
+				// so need continue calculate Y (Position::Top) on next call [layout]
+				for (int i = 0; i < level; i++)
+					treeControl->recurseLayout();
+
+				treeControl->getScrollControl()->layout();
+				treeControl->getScrollControl()->setVertical(y);
 			}
 
 			void CTreeNode::onDoubleClick(CBase* base)

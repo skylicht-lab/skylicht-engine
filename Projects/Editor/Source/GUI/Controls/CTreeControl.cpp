@@ -51,7 +51,6 @@ namespace Skylicht
 				m_scrollControl->dock(EPosition::Fill);
 				m_scrollControl->showScrollBar(true, true);
 				m_scrollControl->getVerticalSroll()->setNudgeAmount(40.0f);
-				m_scrollControl->setDebugValue(1);
 
 				m_innerPanel = m_scrollControl->getInnerPanel();
 
@@ -72,6 +71,8 @@ namespace Skylicht
 			void CTreeControl::postLayout()
 			{
 				CBase::postLayout();
+
+				sizeToChildren(true, true);
 			}
 
 			void CTreeControl::onNodeClick(CBase *base)

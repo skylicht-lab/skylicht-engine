@@ -54,6 +54,8 @@ namespace Skylicht
 
 				void unSelectAll();
 
+				void removeAllItem();
+
 				virtual bool onKeyUp(bool down);
 
 				virtual bool onKeyDown(bool down);
