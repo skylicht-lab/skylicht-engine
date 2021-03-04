@@ -32,7 +32,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CListBox::CListBox(CBase *parent) :
+			CListBox::CListBox(CBase* parent) :
 				CScrollControl(parent)
 			{
 				setKeyboardInputEnabled(true);
@@ -48,7 +48,7 @@ namespace Skylicht
 				CBase::postLayout();
 
 				float w = getInnerWidth();
-				for (CBase *child : m_innerPanel->Children)
+				for (CBase* child : m_innerPanel->Children)
 				{
 					if (child->width() < w)
 						child->setWidth(w);
@@ -57,7 +57,7 @@ namespace Skylicht
 
 			CListRowItem* CListBox::addItem(const std::wstring& label, ESystemIcon icon)
 			{
-				CListRowItem *item = new CListRowItem(this);
+				CListRowItem* item = new CListRowItem(this);
 				item->dock(EPosition::Top);
 				item->setLabel(label);
 				item->setIcon(icon);
@@ -67,7 +67,7 @@ namespace Skylicht
 
 			CListRowItem* CListBox::addItem(const std::wstring& label)
 			{
-				CListRowItem *item = new CListRowItem(this);
+				CListRowItem* item = new CListRowItem(this);
 				item->dock(EPosition::Top);
 				item->setLabel(label);
 				item->setIcon(ESystemIcon::None);
@@ -75,11 +75,16 @@ namespace Skylicht
 				return item;
 			}
 
+			void CListBox::removeAllItem()
+			{
+				m_innerPanel->removeAllChildren();
+			}
+
 			CListRowItem* CListBox::getItemByLabel(const std::wstring& label)
 			{
-				for (CBase *child : m_innerPanel->Children)
+				for (CBase* child : m_innerPanel->Children)
 				{
-					CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+					CListRowItem* item = dynamic_cast<CListRowItem*>(child);
 					if (item && item->getLabel() == label)
 					{
 						return item;
@@ -90,20 +95,20 @@ namespace Skylicht
 
 			CListRowItem* CListBox::getItemByTagValue(int value)
 			{
-				for (CBase *child : m_innerPanel->Children)
+				for (CBase* child : m_innerPanel->Children)
 				{
-					CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+					CListRowItem* item = dynamic_cast<CListRowItem*>(child);
 					if (item && item->getTagInt() == value)
 						return item;
 				}
 				return NULL;
 			}
 
-			void CListBox::onItemDown(CBase *base)
+			void CListBox::onItemDown(CBase* base)
 			{
-				for (CBase *child : m_innerPanel->Children)
+				for (CBase* child : m_innerPanel->Children)
 				{
-					CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+					CListRowItem* item = dynamic_cast<CListRowItem*>(child);
 					if (item != NULL)
 					{
 						if (item == base)
@@ -132,9 +137,9 @@ namespace Skylicht
 
 			void CListBox::unSelectAll()
 			{
-				for (CBase *child : m_innerPanel->Children)
+				for (CBase* child : m_innerPanel->Children)
 				{
-					CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+					CListRowItem* item = dynamic_cast<CListRowItem*>(child);
 					if (item != NULL)
 					{
 						item->setToggle(false);
@@ -146,10 +151,10 @@ namespace Skylicht
 			{
 				if (down)
 				{
-					CListRowItem *lastItem = NULL;
-					for (CBase *child : m_innerPanel->Children)
+					CListRowItem* lastItem = NULL;
+					for (CBase* child : m_innerPanel->Children)
 					{
-						CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+						CListRowItem* item = dynamic_cast<CListRowItem*>(child);
 						if (item != NULL)
 						{
 							if (item->getToggle() == true)
@@ -185,10 +190,10 @@ namespace Skylicht
 			{
 				if (down)
 				{
-					CListRowItem *lastItem = NULL;
-					for (CBase *child : m_innerPanel->Children)
+					CListRowItem* lastItem = NULL;
+					for (CBase* child : m_innerPanel->Children)
 					{
-						CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+						CListRowItem* item = dynamic_cast<CListRowItem*>(child);
 						if (item != NULL)
 						{
 							if (lastItem != NULL && !item->isDisabled())
@@ -219,12 +224,12 @@ namespace Skylicht
 			{
 				if (down)
 				{
-					CListRowItem *firstItem = NULL;
-					CListRowItem *currentSelectItem = NULL;
+					CListRowItem* firstItem = NULL;
+					CListRowItem* currentSelectItem = NULL;
 
-					for (CBase *child : m_innerPanel->Children)
+					for (CBase* child : m_innerPanel->Children)
 					{
-						CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+						CListRowItem* item = dynamic_cast<CListRowItem*>(child);
 						if (item != NULL)
 						{
 							if (firstItem == NULL && !item->isDisabled())
@@ -261,12 +266,12 @@ namespace Skylicht
 			{
 				if (down)
 				{
-					CListRowItem *lastItem = NULL;
-					CListRowItem *currentSelectItem = NULL;
+					CListRowItem* lastItem = NULL;
+					CListRowItem* currentSelectItem = NULL;
 
-					for (CBase *child : m_innerPanel->Children)
+					for (CBase* child : m_innerPanel->Children)
 					{
-						CListRowItem *item = dynamic_cast<CListRowItem*>(child);
+						CListRowItem* item = dynamic_cast<CListRowItem*>(child);
 						if (item != NULL)
 						{
 							if (item->getToggle() == true)
@@ -280,7 +285,7 @@ namespace Skylicht
 					List::reverse_iterator i = m_innerPanel->Children.rbegin(), end = m_innerPanel->Children.rend();
 					while (i != end)
 					{
-						CListRowItem *item = dynamic_cast<CListRowItem*>(*i);
+						CListRowItem* item = dynamic_cast<CListRowItem*>(*i);
 						if (item != NULL && !item->isDisabled())
 						{
 							lastItem = item;

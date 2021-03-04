@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CListRowItem::CListRowItem(CBase *base) :
+			CListRowItem::CListRowItem(CBase* base) :
 				CButton(base),
 				m_owner(base)
 			{
@@ -118,7 +118,7 @@ namespace Skylicht
 
 				CButton::onMouseClickRight(x, y, down);
 
-				CListBox *listBox = dynamic_cast<CListBox*>(m_owner);
+				CListBox* listBox = dynamic_cast<CListBox*>(m_owner);
 				if (listBox->OnItemContextMenu != nullptr)
 					listBox->OnItemContextMenu(this);
 			}

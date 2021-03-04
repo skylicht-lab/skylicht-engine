@@ -36,6 +36,8 @@ namespace Skylicht
 		{
 		protected:
 			GUI::CTreeControl* m_folder;
+			GUI::CListBox* m_listFiles;
+
 			GUI::CTextBox* m_search;
 
 		public:
@@ -47,10 +49,15 @@ namespace Skylicht
 
 			void OnTreeNodeCollapse(GUI::CBase* node);
 
+			void OnTreeNodeSelected(GUI::CBase* node);
+
+			void OnFileOpen(GUI::CBase* node);
+
 		protected:
 
 			void addTreeFolder(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
 
+			void addListFolder(std::vector<SFileInfo>& files);
 		};
 	}
 }

@@ -32,7 +32,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CScrollControl::CScrollControl(CBase *parent) :
+			CScrollControl::CScrollControl(CBase* parent) :
 				CBase(parent),
 				m_canScrollV(true),
 				m_canScrollH(true),
@@ -90,17 +90,17 @@ namespace Skylicht
 				invalidate();
 			}
 
-			void CScrollControl::onScrollBarV(CBase *base)
+			void CScrollControl::onScrollBarV(CBase* base)
 			{
 				invalidate();
 			}
 
-			void CScrollControl::onScrollBarH(CBase *base)
+			void CScrollControl::onScrollBarH(CBase* base)
 			{
 				invalidate();
 			}
 
-			void CScrollControl::scrollToItem(CBase *item)
+			void CScrollControl::scrollToItem(CBase* item)
 			{
 				SPoint p = canvasPosToLocal(item->localPosToCanvas());
 
@@ -138,6 +138,29 @@ namespace Skylicht
 				return height() - (m_horizontal->isHidden() ? 0 : m_horizontal->height());
 			}
 
+			float CScrollControl::getVertical()
+			{
+				return m_innerPanel->getPos().Y;
+			}
+
+			float CScrollControl::getHorizontal()
+			{
+				return m_innerPanel->getPos().X;
+			}
+
+			void CScrollControl::setVertical(float y)
+			{
+				if (m_canScrollV || !m_vertical->isHidden())
+				{
+					float horizontalHeight = m_horizontal->isVisible() ? m_horizontal->height() : 0.0f;
+					float content = (m_innerPanel->height() - height() + horizontalHeight);
+
+					float newScroll = -y / content;
+					newScroll = core::clamp(newScroll, 0.0f, 1.0f);
+					m_vertical->setScroll(newScroll);
+				}
+			}
+
 			void CScrollControl::scrollVerticalOffset(float offset)
 			{
 				if (m_canScrollV || !m_vertical->isHidden())
@@ -146,7 +169,22 @@ namespace Skylicht
 					float content = (m_innerPanel->height() - height() + horizontalHeight);
 
 					float newScroll = m_vertical->getScroll() + offset / content;
+					newScroll = core::clamp(newScroll, 0.0f, 1.0f);
 					m_vertical->setScroll(newScroll);
+				}
+			}
+
+
+			void CScrollControl::setHorizontal(float x)
+			{
+				if (m_canScrollH || !m_horizontal->isHidden())
+				{
+					float verticalWidth = m_vertical->isVisible() ? m_vertical->width() : 0.0f;
+					float content = (m_innerPanel->width() - width() + verticalWidth);
+
+					float newScroll = -x / content;
+					newScroll = core::clamp(newScroll, 0.0f, 1.0f);
+					m_horizontal->setScroll(x);
 				}
 			}
 

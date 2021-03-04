@@ -68,6 +68,14 @@ namespace Skylicht
 
 				float getInnerHeight();
 
+				float getVertical();
+
+				float getHorizontal();
+
+				void setVertical(float y);
+
+				void setHorizontal(float x);
+
 				inline CScrollBar* getVerticalSroll()
 				{
 					return m_vertical;
@@ -83,6 +91,7 @@ namespace Skylicht
 				void scrollHorizontalOffset(float offset);
 
 			protected:
+
 				void updateScrollBar();
 
 			};
