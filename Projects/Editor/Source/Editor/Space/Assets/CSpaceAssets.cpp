@@ -62,17 +62,11 @@ namespace Skylicht
 			// spliter
 			spliter->setControl(m_folder, 0, 0);
 
-			GUI::CListBox* listBox = new GUI::CListBox(spliter);
-			spliter->setControl(listBox, 0, 1);
-			/*
-			for (int i = 0; i < 100; i++)
-			{
-				if (i != 5)
-					listBox->addItem(L"File _", GUI::ESystemIcon::File);
-				else
-					listBox->addItem(L"File _");
-			}
-			*/
+			m_listFiles = new GUI::CListBox(spliter);
+			spliter->setControl(m_listFiles, 0, 1);
+
+			addListFolder(files);
+
 			spliter->setColWidth(0, 300.0f);
 			spliter->setWeakCol(1);
 		}
@@ -91,9 +85,10 @@ namespace Skylicht
 				if (f.IsFolder == true)
 				{
 					GUI::CTreeNode* childNode = node->addNode(f.NameW.c_str(), GUI::ESystemIcon::Folder);
-					childNode->TagString = f.FullPath;
+					childNode->tagString(f.FullPath);
 					childNode->OnExpand = BIND_LISTENER(&CSpaceAssets::OnTreeNodeExpand, this);
 					childNode->OnCollapse = BIND_LISTENER(&CSpaceAssets::OnTreeNodeCollapse, this);
+					childNode->OnSelectChange = BIND_LISTENER(&CSpaceAssets::OnTreeNodeSelected, this);
 
 					if (assetManager->isFolderEmpty(f.FullPath.c_str()) == false)
 						childNode->setAlwayShowExpandButton(true);
@@ -111,7 +106,7 @@ namespace Skylicht
 				CAssetManager* assetManager = CAssetManager::getInstance();
 
 				std::vector<SFileInfo> files;
-				assetManager->getFolder(treeNode->TagString.c_str(), files);
+				assetManager->getFolder(treeNode->getTagString().c_str(), files);
 
 				addTreeFolder(treeNode, files);
 			}
@@ -124,6 +119,49 @@ namespace Skylicht
 			{
 				treeNode->setIcon(GUI::ESystemIcon::Folder);
 				treeNode->removeAllTreeNode();
+			}
+		}
+
+		void CSpaceAssets::OnTreeNodeSelected(GUI::CBase* node)
+		{
+			GUI::CTreeNode* treeNode = dynamic_cast<GUI::CTreeNode*>(node);
+			if (treeNode != NULL)
+			{
+				treeNode->setIcon(GUI::ESystemIcon::OpenFolder);
+
+				CAssetManager* assetManager = CAssetManager::getInstance();
+
+				std::vector<SFileInfo> files;
+				assetManager->getFolder(treeNode->getTagString().c_str(), files);
+
+				addListFolder(files);
+			}
+		}
+
+		void CSpaceAssets::addListFolder(std::vector<SFileInfo>& files)
+		{
+			m_listFiles->removeAllItem();
+
+			for (SFileInfo& f : files)
+			{
+				GUI::CListRowItem* item;
+
+				if (f.IsFolder)
+					item = m_listFiles->addItem(f.NameW.c_str(), GUI::ESystemIcon::Folder);
+				else
+					item = m_listFiles->addItem(f.NameW.c_str(), GUI::ESystemIcon::File);
+
+				item->tagString(f.FullPath);
+				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CSpaceAssets::OnFileOpen, this);
+			}
+		}
+
+		void CSpaceAssets::OnFileOpen(GUI::CBase* node)
+		{
+			GUI::CListRowItem* rowNode = dynamic_cast<GUI::CListRowItem*>(node);
+			if (rowNode != NULL)
+			{
+				os::Printer::log(rowNode->getTagString().c_str());
 			}
 		}
 	}
