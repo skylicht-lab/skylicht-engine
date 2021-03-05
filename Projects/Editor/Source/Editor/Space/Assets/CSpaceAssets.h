@@ -37,6 +37,8 @@ namespace Skylicht
 		protected:
 			GUI::CTreeControl* m_folder;
 
+			GUI::CTreeNode* m_root;
+
 			GUI::CListBox* m_listFiles;
 
 			GUI::CTextBox* m_search;
@@ -57,6 +59,8 @@ namespace Skylicht
 			void OnFileOpen(GUI::CBase* node);
 
 		protected:
+
+			void expandTreeFolder(const std::string& folder);
 
 			void addTreeFolder(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
 

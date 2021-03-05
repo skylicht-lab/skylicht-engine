@@ -87,6 +87,7 @@ namespace Skylicht
 		protected:
 			std::string m_workingFolder;
 			std::string m_assetFolder;
+			std::string m_projectFolder;
 
 			bool m_haveAssetFolder;
 
@@ -118,8 +119,6 @@ namespace Skylicht
 
 			void discoveryAssetFolder();
 
-			void discovery(const std::string& bundle, const std::string& folder);
-
 			bool getFileDate(const char* path, time_t& modifyTime, time_t& createTime);
 
 			std::string generateHash(const char* bundle, const char* path, time_t createTime, time_t now);
@@ -130,7 +129,11 @@ namespace Skylicht
 
 			bool isFolderEmpty(const char* folder);
 
+			std::string getShortPath(const char* folder);
+
 		protected:
+
+			void discovery(const std::string& bundle, const std::string& folder);
 
 			bool addFileNode(const std::string& bundle, const std::string& path);
 

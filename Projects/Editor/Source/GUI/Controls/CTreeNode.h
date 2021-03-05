@@ -82,9 +82,13 @@ namespace Skylicht
 
 				CTreeNode* addNode(const std::wstring& text, ESystemIcon icon);
 
+				CTreeNode* getChildNodeByLabel(const std::wstring& label);
+
 				void removeAllTreeNode();
 
 				void setText(const std::wstring& text);
+
+				const std::wstring& getText();
 
 				void setIcon(ESystemIcon icon);
 
@@ -98,21 +102,21 @@ namespace Skylicht
 					return m_expand;
 				}
 
-				inline void expand()
+				inline void expand(bool invokeEvent)
 				{
 					m_expand = true;
 
-					if (OnExpand != nullptr)
+					if (OnExpand != nullptr && invokeEvent)
 						OnExpand(this);
 
 					invalidate();
 				}
 
-				inline void collapse()
+				inline void collapse(bool invokeEvent)
 				{
 					m_expand = false;
 
-					if (OnCollapse != nullptr)
+					if (OnCollapse != nullptr && invokeEvent)
 						OnCollapse(this);
 
 					invalidate();
@@ -148,6 +152,8 @@ namespace Skylicht
 				virtual void deselectAll();
 
 				bool hoverOnChild();
+				
+				void forceLayout();
 
 			protected:
 

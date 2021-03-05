@@ -55,6 +55,9 @@ namespace Skylicht
 			m_assetFolder = m_workingFolder + "/../Assets";
 			m_assetFolder = CPath::normalizePath(m_assetFolder);
 
+			m_projectFolder = m_workingFolder + "/..";
+			m_projectFolder = CPath::normalizePath(m_projectFolder);
+
 			m_haveAssetFolder = fs::exists(m_assetFolder);
 			if (!m_haveAssetFolder)
 				os::Printer::log("[CAssetManager] Asset folder is not exists");
@@ -195,7 +198,6 @@ namespace Skylicht
 		void CAssetManager::getFolder(const char* folder, std::vector<SFileInfo>& files)
 		{
 			files.clear();
-			std::string assetPath = m_assetFolder + "/";
 			wchar_t name[512];
 
 			for (const auto& file : fs::directory_iterator(folder))
@@ -209,8 +211,7 @@ namespace Skylicht
 
 					file.Name = CPath::getFileName(path);
 					file.FullPath = path;
-					file.Path = path;
-					file.Path.replace(file.Path.find(assetPath.c_str()), assetPath.size(), "");
+					file.Path = getShortPath(path.c_str());
 					file.IsFolder = true;
 					file.Type = Folder;
 					file.Node = m_pathToFile[file.Path];
@@ -228,8 +229,7 @@ namespace Skylicht
 
 					file.Name = CPath::getFileName(path);
 					file.FullPath = path;
-					file.Path = path;
-					file.Path.replace(file.Path.find(assetPath.c_str()), assetPath.size(), "");
+					file.Path = getShortPath(path.c_str());
 					file.IsFolder = false;
 					file.Node = m_pathToFile[file.Path];
 
@@ -282,6 +282,18 @@ namespace Skylicht
 			}
 
 			return true;
-		}		
+		}
+
+		std::string CAssetManager::getShortPath(const char* folder)
+		{
+			std::string assetPath = m_assetFolder + "/";
+			std::string sortPath = folder;
+
+			if (CStringImp::length(folder) < assetPath.size())
+				return std::string("");
+
+			sortPath.replace(sortPath.find(assetPath.c_str()), assetPath.size(), "");
+			return sortPath;
+		}
 	}
 }

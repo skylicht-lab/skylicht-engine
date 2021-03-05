@@ -178,7 +178,7 @@ namespace Skylicht
 					if (node != NULL)
 					{
 						if (node->haveChild() && node->isExpand())
-							node->collapse();
+							node->collapse(true);
 						else
 						{
 							// select parent
@@ -202,7 +202,7 @@ namespace Skylicht
 					CTreeNode* node = getChildSelected();
 					if (node != NULL)
 					{
-						node->expand();
+						node->expand(true);
 					}
 				}
 				return true;
