@@ -147,6 +147,18 @@ namespace Skylicht
 				return node;
 			}
 
+			CTreeNode* CTreeNode::getChildNodeByLabel(const std::wstring& label)
+			{
+				for (CBase* c : m_innerPanel->Children)
+				{
+					CTreeNode* n = dynamic_cast<CTreeNode*>(c);
+					if (n->getText() == label)
+						return n;
+				}
+
+				return NULL;
+			}
+
 			void CTreeNode::removeAllTreeNode()
 			{
 				m_innerPanel->removeAllChildren();
@@ -162,6 +174,11 @@ namespace Skylicht
 
 				m_title->setLabel(text);
 				invalidate();
+			}
+
+			const std::wstring& CTreeNode::getText()
+			{
+				return m_title->getLabel();
 			}
 
 			void CTreeNode::setIcon(ESystemIcon icon)
@@ -199,6 +216,14 @@ namespace Skylicht
 						OnCollapse(this);
 				}
 
+				forceLayout();
+
+				treeControl->getScrollControl()->layout();
+				treeControl->getScrollControl()->setScrollVertical(y);
+			}
+
+			void CTreeNode::forceLayout()
+			{
 				invalidate();
 
 				// OnExpande or OnCollapse maybe create new TreeNode
@@ -213,9 +238,7 @@ namespace Skylicht
 					node = node->getParentNode();
 				}
 
-				treeControl->recurseLayout();
-				treeControl->getScrollControl()->layout();
-				treeControl->getScrollControl()->setScrollVertical(y);
+				m_root->recurseLayout();
 			}
 
 			void CTreeNode::onDoubleClick(CBase* base)
