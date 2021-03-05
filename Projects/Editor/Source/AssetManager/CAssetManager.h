@@ -146,6 +146,7 @@ namespace Skylicht
 
 			bool addFileNode(const std::string& bundle, const std::string& path);
 
+			void sortFiles(std::vector<SFileInfo>& files);
 		};
 	}
 }

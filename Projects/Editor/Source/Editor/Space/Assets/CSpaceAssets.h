@@ -40,6 +40,8 @@ namespace Skylicht
 
 			GUI::CTextBox* m_search;
 
+			CAssetManager* m_assetManager;
+
 		public:
 			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
 
@@ -57,7 +59,7 @@ namespace Skylicht
 
 			void addTreeFolder(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
 
-			void addListFolder(std::vector<SFileInfo>& files);
+			void addListFolder(const std::string& currentFolder, std::vector<SFileInfo>& files);
 		};
 	}
 }
