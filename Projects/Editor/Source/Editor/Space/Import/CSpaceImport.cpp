@@ -48,13 +48,14 @@ namespace Skylicht
 
 			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
 			assetManager->discoveryAssetFolder();
-			assetManager->beginLoadGUID();
 			assetManager->update();
+
+			m_importer = new CAssetImporter();
 		}
 
 		CSpaceImport::~CSpaceImport()
 		{
-
+			delete m_importer;
 		}
 
 		void CSpaceImport::update()
@@ -62,9 +63,8 @@ namespace Skylicht
 			float percent = 0.0f;
 			std::string last;
 
-			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
-			assetManager->loadGUID(10);
-			assetManager->getLoadGUIDStatus(percent, last);
+			m_importer->loadGUID(10);
+			m_importer->getStatus(percent, last);
 
 			m_progressBar->setPercent(percent);
 
@@ -82,7 +82,7 @@ namespace Skylicht
 
 		bool CSpaceImport::isImportFinish()
 		{
-			return Editor::CAssetManager::getInstance()->isLoadGUIDFinish();
+			return m_importer->isFinish();
 		}
 	}
 }

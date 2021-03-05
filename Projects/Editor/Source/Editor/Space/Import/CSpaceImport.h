@@ -25,7 +25,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "SkylichtEngine.h"
+
 #include "Editor/Space/CSpace.h"
+
+#include "AssetManager/CAssetImporter.h"
 
 namespace Skylicht
 {
@@ -35,7 +38,10 @@ namespace Skylicht
 		{
 		protected:
 			GUI::CProgressBar* m_progressBar;
+
 			GUI::CLabel* m_statusText;
+
+			CAssetImporter* m_importer;
 
 		public:
 			CSpaceImport(GUI::CWindow* window, CEditor* editor);

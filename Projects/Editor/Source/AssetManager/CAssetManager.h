@@ -80,6 +80,8 @@ namespace Skylicht
 			}
 		};
 
+		class CAssetImporter;
+
 		class CAssetManager : public CGameSingleton<CAssetManager>
 		{
 		protected:
@@ -91,13 +93,13 @@ namespace Skylicht
 			std::map<std::string, SFileNode*> m_guidToFile;
 			std::map<std::string, SFileNode*> m_pathToFile;
 
-			std::list<std::string> m_meta;
 			std::list<SFileNode> m_files;
-			std::list<SFileNode>::iterator m_fileIterator;
-			u32 m_fileID;
-			std::string m_lastGUIDFile;
+			std::list<std::string> m_meta;
 
 		public:
+
+			friend class CAssetImporter;
+
 			CAssetManager();
 
 			virtual ~CAssetManager();
@@ -127,20 +129,6 @@ namespace Skylicht
 			void getFolder(const char* folder, std::vector<SFileInfo>& files);
 
 			bool isFolderEmpty(const char* folder);
-
-			void beginLoadGUID();
-
-			bool loadGUID(int count);
-
-			void saveGUID(const char* path, SFileNode& node);
-
-			void readGUID(const char* path, SFileNode& node);
-
-			void removeUnusedMeta();
-
-			bool isLoadGUIDFinish();
-
-			void getLoadGUIDStatus(float& percent, std::string& last);
 
 		protected:
 

@@ -169,6 +169,8 @@ namespace Skylicht
 				item->tagBool(f.IsFolder);
 				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CSpaceAssets::OnFileOpen, this);
 			}
+
+			m_listFiles->setScrollVertical(0.0f);
 		}
 
 		void CSpaceAssets::OnFileOpen(GUI::CBase* node)
