@@ -2,7 +2,7 @@
 !@
 MIT License
 
-CopyRight (c) 2020 Skylicht Technology CO., LTD
+CopyRight (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -22,45 +22,39 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-#include "AssetManager/CAssetManager.h"
-#include "Editor/Space/CSpace.h"
+#include "CAssetManager.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceAssets : public CSpace
+		class CAssetImporter
 		{
 		protected:
-			GUI::CTreeControl* m_folder;
+			u32 m_fileID;
 
-			GUI::CListBox* m_listFiles;
+			std::string m_lastGUIDFile;
 
-			GUI::CTextBox* m_search;
+			std::list<SFileNode>::iterator m_fileIterator;
 
 			CAssetManager* m_assetManager;
 
 		public:
-			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
+			CAssetImporter();
 
-			virtual ~CSpaceAssets();
+			virtual ~CAssetImporter();
 
-			void OnTreeNodeExpand(GUI::CBase* node);
+			bool loadGUID(int count);
 
-			void OnTreeNodeCollapse(GUI::CBase* node);
+			void saveGUID(const char* path, SFileNode& node);
 
-			void OnTreeNodeSelected(GUI::CBase* node);
+			void readGUID(const char* path, SFileNode& node);
 
-			void OnFileOpen(GUI::CBase* node);
+			void removeUnusedMeta();
 
-		protected:
+			bool isFinish();
 
-			void addTreeFolder(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
-
-			void addListFolder(const std::string& currentFolder, std::vector<SFileInfo>& files);
+			void getStatus(float& percent, std::string& last);
 		};
 	}
 }

@@ -184,7 +184,7 @@ namespace Skylicht
 			void CTreeNode::onExpand(CBase* base)
 			{
 				CTreeControl* treeControl = (CTreeControl*)(m_root);
-				float y = treeControl->getScrollControl()->getVertical();
+				float y = treeControl->getScrollControl()->getScrollVertical();
 
 				m_expand = !m_expand;
 
@@ -203,22 +203,19 @@ namespace Skylicht
 
 				// OnExpande or OnCollapse maybe create new TreeNode
 				// so we need caculate height of TreeControl
-				int level = 0;
 				CTreeNode* node = this;
-
-				while (node != m_root)
-				{
-					level++;
-					node = node->getParentNode();
-				}
 
 				// each level, we just finish calculate the height of TreeNode [postLayout]
 				// so need continue calculate Y (Position::Top) on next call [layout]
-				for (int i = 0; i < level; i++)
-					treeControl->recurseLayout();
+				while (node != m_root)
+				{
+					node->recurseLayout();
+					node = node->getParentNode();
+				}
 
+				treeControl->recurseLayout();
 				treeControl->getScrollControl()->layout();
-				treeControl->getScrollControl()->setVertical(y);
+				treeControl->getScrollControl()->setScrollVertical(y);
 			}
 
 			void CTreeNode::onDoubleClick(CBase* base)
