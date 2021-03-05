@@ -138,26 +138,30 @@ namespace Skylicht
 				return height() - (m_horizontal->isHidden() ? 0 : m_horizontal->height());
 			}
 
-			float CScrollControl::getVertical()
+			float CScrollControl::getScrollVertical()
 			{
 				return m_innerPanel->getPos().Y;
 			}
 
-			float CScrollControl::getHorizontal()
+			float CScrollControl::getScrollHorizontal()
 			{
 				return m_innerPanel->getPos().X;
 			}
 
-			void CScrollControl::setVertical(float y)
+			void CScrollControl::setScrollVertical(float y)
 			{
 				if (m_canScrollV || !m_vertical->isHidden())
 				{
 					float horizontalHeight = m_horizontal->isVisible() ? m_horizontal->height() : 0.0f;
 					float content = (m_innerPanel->height() - height() + horizontalHeight);
 
-					float newScroll = -y / content;
+					float newScroll = 0.0f;
+					if (content > 0.0f)
+						newScroll = -y / content;
 					newScroll = core::clamp(newScroll, 0.0f, 1.0f);
 					m_vertical->setScroll(newScroll);
+
+					invalidate();
 				}
 			}
 
@@ -175,16 +179,21 @@ namespace Skylicht
 			}
 
 
-			void CScrollControl::setHorizontal(float x)
+			void CScrollControl::setScrollHorizontal(float x)
 			{
 				if (m_canScrollH || !m_horizontal->isHidden())
 				{
 					float verticalWidth = m_vertical->isVisible() ? m_vertical->width() : 0.0f;
 					float content = (m_innerPanel->width() - width() + verticalWidth);
 
-					float newScroll = -x / content;
+					float newScroll = 0.0f;
+					if (content > 0.0f)
+						newScroll = -x / content;
+
 					newScroll = core::clamp(newScroll, 0.0f, 1.0f);
 					m_horizontal->setScroll(x);
+
+					invalidate();
 				}
 			}
 
