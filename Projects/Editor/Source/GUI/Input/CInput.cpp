@@ -165,12 +165,14 @@ namespace Skylicht
 				if (down
 					&& m_lastClickPositionX == m_mousePositionX
 					&& m_lastClickPositionY == m_mousePositionY
-					&& (CGUIContext::getTime() - m_lastClickTime[mouseButton]) < 500.0f)
+					&& (CGUIContext::getTime() - m_lastClickTime[mouseButton]) < 400.0f)
 				{
-					isDoubleClick = true;
-
 					m_fastClickCount++;
-					if (m_fastClickCount >= 3)
+
+					if (m_fastClickCount >= 2 && m_fastClickCount % 2 == 0)
+						isDoubleClick = true;
+
+					if (m_fastClickCount >= 3 && m_fastClickCount % 3 == 0)
 						isTripleClick = true;
 				}
 				else if (down)

@@ -49,23 +49,28 @@ namespace Skylicht
 
 			m_folder = new GUI::CTreeControl(spliter);
 
-			GUI::CTreeNode* root = m_folder->addNode(L"../Assets", GUI::ESystemIcon::OpenFolder);
+			m_assetManager = CAssetManager::getInstance();
+
+			GUI::CTreeNode* root = m_folder->addNode(L"Assets", GUI::ESystemIcon::OpenFolder);
+			root->tagString(m_assetManager->getAssetFolder());
+			root->OnExpand = BIND_LISTENER(&CSpaceAssets::OnTreeNodeExpand, this);
+			root->OnCollapse = BIND_LISTENER(&CSpaceAssets::OnTreeNodeCollapse, this);
+			root->OnSelectChange = BIND_LISTENER(&CSpaceAssets::OnTreeNodeSelected, this);
 			root->expand();
 
-			CAssetManager* assetManager = CAssetManager::getInstance();
 			std::vector<SFileInfo> files;
 
 			// add root to tree folder
-			assetManager->getRoot(files);
+			m_assetManager->getRoot(files);
 			addTreeFolder(root, files);
 
-			// spliter
+			// column spliter
 			spliter->setControl(m_folder, 0, 0);
 
 			m_listFiles = new GUI::CListBox(spliter);
 			spliter->setControl(m_listFiles, 0, 1);
 
-			addListFolder(files);
+			addListFolder("", files);
 
 			spliter->setColWidth(0, 300.0f);
 			spliter->setWeakCol(1);
@@ -78,8 +83,6 @@ namespace Skylicht
 
 		void CSpaceAssets::addTreeFolder(GUI::CTreeNode* node, std::vector<SFileInfo>& files)
 		{
-			CAssetManager* assetManager = CAssetManager::getInstance();
-
 			for (const SFileInfo& f : files)
 			{
 				if (f.IsFolder == true)
@@ -90,7 +93,7 @@ namespace Skylicht
 					childNode->OnCollapse = BIND_LISTENER(&CSpaceAssets::OnTreeNodeCollapse, this);
 					childNode->OnSelectChange = BIND_LISTENER(&CSpaceAssets::OnTreeNodeSelected, this);
 
-					if (assetManager->isFolderEmpty(f.FullPath.c_str()) == false)
+					if (m_assetManager->isFolderEmpty(f.FullPath.c_str()) == false)
 						childNode->setAlwayShowExpandButton(true);
 				}
 			}
@@ -103,10 +106,10 @@ namespace Skylicht
 			{
 				treeNode->setIcon(GUI::ESystemIcon::OpenFolder);
 
-				CAssetManager* assetManager = CAssetManager::getInstance();
+				const std::string& fullPath = treeNode->getTagString();
 
 				std::vector<SFileInfo> files;
-				assetManager->getFolder(treeNode->getTagString().c_str(), files);
+				m_assetManager->getFolder(fullPath.c_str(), files);
 
 				addTreeFolder(treeNode, files);
 			}
@@ -129,18 +132,29 @@ namespace Skylicht
 			{
 				treeNode->setIcon(GUI::ESystemIcon::OpenFolder);
 
-				CAssetManager* assetManager = CAssetManager::getInstance();
+				const std::string& fullPath = treeNode->getTagString();
 
 				std::vector<SFileInfo> files;
-				assetManager->getFolder(treeNode->getTagString().c_str(), files);
+				m_assetManager->getFolder(fullPath.c_str(), files);
 
-				addListFolder(files);
+				addListFolder(fullPath, files);
 			}
 		}
 
-		void CSpaceAssets::addListFolder(std::vector<SFileInfo>& files)
+		void CSpaceAssets::addListFolder(const std::string& currentFolder, std::vector<SFileInfo>& files)
 		{
 			m_listFiles->removeAllItem();
+
+			if (currentFolder.size() > 0 && 
+				currentFolder != m_assetManager->getAssetFolder())
+			{
+				GUI::CListRowItem* item = m_listFiles->addItem(L"..", GUI::ESystemIcon::Folder);
+
+				std::string parent = CPath::getFolderPath(currentFolder);
+				item->tagString(parent);
+				item->tagBool(true);
+				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CSpaceAssets::OnFileOpen, this);
+			}
 
 			for (SFileInfo& f : files)
 			{
@@ -152,6 +166,7 @@ namespace Skylicht
 					item = m_listFiles->addItem(f.NameW.c_str(), GUI::ESystemIcon::File);
 
 				item->tagString(f.FullPath);
+				item->tagBool(f.IsFolder);
 				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CSpaceAssets::OnFileOpen, this);
 			}
 		}
@@ -161,7 +176,21 @@ namespace Skylicht
 			GUI::CListRowItem* rowNode = dynamic_cast<GUI::CListRowItem*>(node);
 			if (rowNode != NULL)
 			{
-				os::Printer::log(rowNode->getTagString().c_str());
+				const std::string& fullPath = rowNode->getTagString();
+
+				bool isFolder = rowNode->getTagBool();
+				if (isFolder == true)
+				{
+					// browse folder
+					std::vector<SFileInfo> files;
+					m_assetManager->getFolder(fullPath.c_str(), files);
+
+					addListFolder(fullPath, files);
+				}
+				else
+				{
+					// shell open the file
+				}
 			}
 		}
 	}

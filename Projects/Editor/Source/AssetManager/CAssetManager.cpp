@@ -190,31 +190,7 @@ namespace Skylicht
 
 		void CAssetManager::getRoot(std::vector<SFileInfo>& files)
 		{
-			files.clear();
-			std::string assetPath = m_assetFolder + "/";
-			wchar_t name[512];
-
-			for (const auto& file : fs::directory_iterator(m_assetFolder))
-			{
-				std::string path = file.path().generic_u8string();
-
-				if (file.is_directory())
-				{
-					files.push_back(SFileInfo());
-					SFileInfo& file = files.back();
-
-					file.Name = CPath::getFileName(path);
-					file.FullPath = path;
-					file.Path = path;
-					file.Path.replace(file.Path.find(assetPath.c_str()), assetPath.size(), "");
-					file.IsFolder = true;
-					file.Type = Folder;
-					file.Node = m_pathToFile[file.Path];
-
-					CStringImp::convertUTF8ToUnicode(file.Name.c_str(), name);
-					file.NameW = name;
-				}
-			}
+			getFolder(m_assetFolder.c_str(), files);
 		}
 
 		void CAssetManager::getFolder(const char* folder, std::vector<SFileInfo>& files)
@@ -245,6 +221,9 @@ namespace Skylicht
 				}
 				else
 				{
+					if (CPath::getFileNameExt(path) == "meta")
+						continue;
+
 					files.push_back(SFileInfo());
 					SFileInfo& file = files.back();
 
@@ -261,6 +240,34 @@ namespace Skylicht
 					std::string ext = CPath::getFileNameExt(path);
 				}
 			}
+
+			sortFiles(files);
+		}
+
+		void CAssetManager::sortFiles(std::vector<SFileInfo>& files)
+		{
+			std::sort(files.begin(), files.end(),
+				[](SFileInfo& a, SFileInfo& b) {
+
+					if (a.IsFolder && b.IsFolder)
+					{
+						return a.Name < b.Name;
+					}
+					else if (!a.IsFolder && !b.IsFolder)
+					{
+						return a.Name < b.Name;
+					}
+					else
+					{
+						if (b.IsFolder == false)
+							return true;
+
+						return false;
+					}
+
+					return false;
+				}
+			);
 		}
 
 		bool CAssetManager::isFolderEmpty(const char* folder)
