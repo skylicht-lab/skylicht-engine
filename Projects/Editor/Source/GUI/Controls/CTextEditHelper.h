@@ -36,17 +36,24 @@ namespace Skylicht
 			class CTextEditHelper
 			{
 			protected:
+				CBase* m_base;
 				CTextContainer* m_textContainer;
-
 				CTextBox* m_textBox;
 
 				CBase::Listener m_onCancel;
 				CBase::Listener m_onEndEdit;
 
+				std::wstring m_oldValue;
+
 			public:
-				CTextEditHelper(CTextBox* textBox, CTextContainer* textContainer);
+				CTextEditHelper(CBase *base, CTextBox* textBox, CTextContainer* textContainer);
 
 				virtual ~CTextEditHelper();
+
+				inline CTextBox* getTextBox()
+				{
+					return m_textBox;
+				}
 
 				void beginEdit(CBase::Listener onCancel, CBase::Listener onEndEdit);
 

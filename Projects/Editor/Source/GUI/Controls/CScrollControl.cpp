@@ -223,8 +223,11 @@ namespace Skylicht
 				// Get the max size of all our children together
 				for (CBase* child : m_innerPanel->Children)
 				{
-					childrenWidth = core::max_(childrenWidth, child->right());
-					childrenHeight = core::max_(childrenHeight, child->bottom());
+					if (!child->isHidden())
+					{
+						childrenWidth = core::max_(childrenWidth, child->right());
+						childrenHeight = core::max_(childrenHeight, child->bottom());
+					}
 				}
 
 				m_innerPanel->setSize(
