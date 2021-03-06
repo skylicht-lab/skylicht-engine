@@ -32,7 +32,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CIconTextItem::CIconTextItem(CBase *base) :
+			CIconTextItem::CIconTextItem(CBase* base) :
 				CBase(base)
 			{
 				setMouseInputEnabled(false);
