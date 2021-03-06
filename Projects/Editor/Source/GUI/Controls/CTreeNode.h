@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CIconTextItem.h"
 #include "CIconButton.h"
 #include "CTreeRowItem.h"
+#include "CTextEditHelper.h"
 
 namespace Skylicht
 {
@@ -38,6 +39,8 @@ namespace Skylicht
 			class CTreeNode : public CBase
 			{
 			protected:
+				CTextEditHelper* m_textEditHelper;
+
 				CIconTextItem* m_title;
 				CIconButton* m_expandButton;
 				CTreeRowItem* m_row;
@@ -76,6 +79,11 @@ namespace Skylicht
 				inline CTreeRowItem* getRowItem()
 				{
 					return m_row;
+				}
+
+				inline CTextEditHelper* getTextEditHelper()
+				{
+					return m_textEditHelper;
 				}
 
 				CTreeNode* addNode(const std::wstring& text);
@@ -152,7 +160,7 @@ namespace Skylicht
 				virtual void deselectAll();
 
 				bool hoverOnChild();
-				
+
 				void forceLayout();
 
 			protected:

@@ -55,6 +55,8 @@ namespace Skylicht
 				m_title->setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
 				m_title->dock(EPosition::Top);
 
+				m_textEditHelper = new CTextEditHelper(new CTextBox(m_title), m_title->getTextContainer());
+
 				m_expandButton = new CIconButton(this);
 				m_expandButton->setIcon(ESystemIcon::TriangleRight);
 				m_expandButton->enableDrawBackground(false);
@@ -77,7 +79,7 @@ namespace Skylicht
 
 			CTreeNode::~CTreeNode()
 			{
-
+				delete m_textEditHelper;
 			}
 
 			void CTreeNode::layout()

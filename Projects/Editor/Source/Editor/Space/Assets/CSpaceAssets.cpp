@@ -56,6 +56,7 @@ namespace Skylicht
 			m_root->OnExpand = BIND_LISTENER(&CSpaceAssets::OnTreeNodeExpand, this);
 			m_root->OnCollapse = BIND_LISTENER(&CSpaceAssets::OnTreeNodeCollapse, this);
 			m_root->OnSelectChange = BIND_LISTENER(&CSpaceAssets::OnTreeNodeSelected, this);
+			m_root->setAlwayShowExpandButton(true);
 			m_root->expand(false);
 
 			std::vector<SFileInfo> files;
