@@ -46,7 +46,12 @@ namespace Skylicht
 
 				virtual void sizeToContents();
 
-				void setLabel(const std::wstring& text)
+				inline CTextContainer* getTextContainer()
+				{
+					return m_label;
+				}
+
+				inline void setLabel(const std::wstring& text)
 				{
 					m_label->setString(text);
 				}

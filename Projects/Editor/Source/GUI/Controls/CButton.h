@@ -191,6 +191,11 @@ namespace Skylicht
 					return m_toggleStatus;
 				}
 
+				inline CTextContainer* getTextContainer()
+				{
+					return m_label;
+				}
+
 				Listener OnTextChanged;
 			};
 		}
