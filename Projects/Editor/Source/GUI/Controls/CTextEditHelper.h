@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
+#include "CTextBox.h"
 #include "CTextContainer.h"
 
 namespace Skylicht
@@ -32,63 +33,32 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CLabel : public CBase
+			class CTextEditHelper
 			{
 			protected:
-				CTextContainer* m_text;
+				CTextContainer* m_textContainer;
+
+				CTextBox* m_textBox;
+
+				CBase::Listener m_onCancel;
+				CBase::Listener m_onEndEdit;
 
 			public:
-				CLabel(CBase* parent);
-				virtual ~CLabel();
+				CTextEditHelper(CTextBox* textBox, CTextContainer* textContainer);
 
-				virtual void sizeToContents();
+				virtual ~CTextEditHelper();
 
-				virtual void onBoundsChanged(const SRect& oldBounds);
+				void beginEdit(CBase::Listener onCancel, CBase::Listener onEndEdit);
 
-				void setString(const std::wstring& text);
+				void cancelEdit();
 
-				void setString(const std::string& text);
+				void endEnd();
 
-				void setColor(const SGUIColor& color);
+			protected:
+				
+				void updateTextBoxSize();
 
-				void setFontSize(EFontSize fontsize);
-
-				void setWrapMultiline(bool b)
-				{
-					m_text->setWrapMultiline(b);
-				}
-
-				inline const std::wstring& getString()
-				{
-					return m_text->getString();
-				}
-
-				inline const SGUIColor& getColor()
-				{
-					return m_text->getColor();
-				}
-
-				inline EFontSize getFontSize()
-				{
-					return m_text->getFontSize();
-				}
-
-				inline void setTextAlignment(ETextAlign align)
-				{
-					m_text->setTextAlignment(align);
-				}
-
-				inline ETextAlign getTextAlignment()
-				{
-					return m_text->getTextAlignment();
-				}
-
-				inline CTextContainer* getTextContainer()
-				{
-					return m_text;
-				}
-
-				Listener OnTextChanged;
+				void onChar(CBase* textBox);
 			};
 		}
 	}
