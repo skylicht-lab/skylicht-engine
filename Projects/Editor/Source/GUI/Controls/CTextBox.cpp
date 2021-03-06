@@ -352,6 +352,9 @@ namespace Skylicht
 						{
 							m_textContainer->doDelete();
 							updateCaret = false;
+
+							if (OnTextChange != nullptr)
+								OnTextChange(this);
 						}
 						break;
 					default:
@@ -373,7 +376,7 @@ namespace Skylicht
 					}
 				}
 
-				return CBase::onKeyPress(key);
+				return true;
 			}
 
 			bool CTextBox::onChar(u32 c)
@@ -407,7 +410,13 @@ namespace Skylicht
 					}
 				}
 
-				return CBase::onChar(c);
+				if (OnChar != nullptr)
+					OnChar(this, c);
+
+				if (OnTextChange != nullptr)
+					OnTextChange(this);
+
+				return true;
 			}
 
 			void CTextBox::scrollToLine(u32 line, u32 pos)

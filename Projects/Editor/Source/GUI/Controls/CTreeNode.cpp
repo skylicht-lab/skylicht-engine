@@ -55,7 +55,7 @@ namespace Skylicht
 				m_title->setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
 				m_title->dock(EPosition::Top);
 
-				m_textEditHelper = new CTextEditHelper(new CTextBox(m_title), m_title->getTextContainer());
+				m_textEditHelper = new CTextEditHelper(m_row, new CTextBox(m_title), m_title->getTextContainer());
 
 				m_expandButton = new CIconButton(this);
 				m_expandButton->setIcon(ESystemIcon::TriangleRight);
@@ -429,7 +429,9 @@ namespace Skylicht
 					return;
 
 				m_selected = b;
-				m_row->setToggle(b);
+
+				if (m_row != NULL)
+					m_row->setToggle(b);
 
 				if (b == true)
 				{

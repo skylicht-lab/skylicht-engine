@@ -31,12 +31,13 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTextEditHelper::CTextEditHelper(CTextBox* textBox, CTextContainer* textContainer) :
+			CTextEditHelper::CTextEditHelper(CBase* base, CTextBox* textBox, CTextContainer* textContainer) :
+				m_base(base),
 				m_textBox(textBox),
 				m_textContainer(textContainer)
 			{
 				m_textBox->setHidden(true);
-				m_textBox->OnChar = BIND_LISTENER(&CTextEditHelper::onChar, this);
+				m_textBox->OnTextChange = BIND_LISTENER(&CTextEditHelper::onChar, this);
 			}
 
 			CTextEditHelper::~CTextEditHelper()
@@ -48,10 +49,14 @@ namespace Skylicht
 			{
 				updateTextBoxSize();
 
-				m_textBox->setString(m_textContainer->getString());
+				m_oldValue = m_textContainer->getString();
+
+				m_textBox->setString(m_oldValue);
 				m_textBox->setWrapMultiline(m_textContainer->isWrapMultiline());
 
 				m_textBox->setHidden(false);
+				m_textBox->focus();
+
 				m_textContainer->setHidden(true);
 
 				m_onCancel = onCancel;
@@ -62,6 +67,7 @@ namespace Skylicht
 			{
 				m_textBox->setHidden(true);
 				m_textContainer->setHidden(false);
+				m_textContainer->setString(m_oldValue);
 
 				if (m_onCancel != nullptr)
 					m_onCancel(m_textBox);
@@ -80,17 +86,36 @@ namespace Skylicht
 
 			void CTextEditHelper::onChar(CBase* textBox)
 			{
+				// auto calc text size
 				m_textContainer->setString(m_textBox->getString());
 				m_textContainer->layout();
+
 				updateTextBoxSize();
+
+				// fix for scroll view
+				m_textContainer->setString(m_oldValue);
 			}
 
 			void CTextEditHelper::updateTextBoxSize()
 			{
+				SPoint p1 = m_textContainer->localPosToCanvas();
+				SPoint p2 = m_base->localPosToCanvas();
+
 				SRect bound = m_textContainer->getBounds();
 				bound.Y -= 3.0f;
 				bound.Height += 5.0f;
 				bound.Width += 8.0f;
+
+				SRect maxBound = m_base->getBounds();
+
+				float x1 = p1.X + bound.Width;
+				float x2 = p2.X + maxBound.Width - 4.0f;
+
+				if (x1 > x2)
+				{
+					float delta = x1 - x2;
+					bound.Width -= delta;
+				}
 
 				m_textBox->setBounds(bound);
 			}

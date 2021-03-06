@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTreeControl::CTreeControl(CBase *parent) :
+			CTreeControl::CTreeControl(CBase* parent) :
 				CTreeNode(parent, this)
 			{
 				m_title->remove();
@@ -75,16 +75,16 @@ namespace Skylicht
 				sizeToChildren(true, true);
 			}
 
-			void CTreeControl::onNodeClick(CBase *base)
+			void CTreeControl::onNodeClick(CBase* base)
 			{
 				deselectAll();
 			}
 
 			void CTreeControl::deselectAll()
 			{
-				for (CBase *c : m_innerPanel->Children)
+				for (CBase* c : m_innerPanel->Children)
 				{
-					CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+					CTreeNode* node = dynamic_cast<CTreeNode*>(c);
 					if (node)
 					{
 						node->deselectAll();
@@ -96,7 +96,7 @@ namespace Skylicht
 			{
 				if (down)
 				{
-					CTreeNode *child = selectPrevChild();
+					CTreeNode* child = selectPrevChild();
 					if (child != NULL)
 					{
 						m_scrollControl->scrollToItem(child->getTextItem());
@@ -110,7 +110,7 @@ namespace Skylicht
 			{
 				if (down)
 				{
-					CTreeNode *child = selectNextChild();
+					CTreeNode* child = selectNextChild();
 					if (child != NULL)
 					{
 						m_scrollControl->scrollToItem(child->getTextItem());
@@ -124,9 +124,9 @@ namespace Skylicht
 			{
 				if (down)
 				{
-					for (CBase *c : m_innerPanel->Children)
+					for (CBase* c : m_innerPanel->Children)
 					{
-						CTreeNode *node = dynamic_cast<CTreeNode*>(c);
+						CTreeNode* node = dynamic_cast<CTreeNode*>(c);
 						if (node && !node->isDisabled())
 						{
 							deselectAll();
@@ -148,10 +148,10 @@ namespace Skylicht
 
 					while (i != end)
 					{
-						CTreeNode *node = dynamic_cast<CTreeNode*>(*i);
+						CTreeNode* node = dynamic_cast<CTreeNode*>(*i);
 						if (node && !node->isDisabled())
 						{
-							CTreeNode *child = node->selectLastChild();
+							CTreeNode* child = node->selectLastChild();
 							if (child != NULL)
 							{
 								m_scrollControl->scrollToItem(child->getTextItem());
@@ -182,8 +182,8 @@ namespace Skylicht
 						else
 						{
 							// select parent
-							CTreeNode *parent = node->getParentNode();
-							if (parent != NULL)
+							CTreeNode* parent = node->getParentNode();
+							if (parent != NULL && parent != this)
 							{
 								deselectAll();
 								parent->setSelected(true);
@@ -200,10 +200,8 @@ namespace Skylicht
 				if (down)
 				{
 					CTreeNode* node = getChildSelected();
-					if (node != NULL)
-					{
+					if (node != NULL && !node->isExpand())
 						node->expand(true);
-					}
 				}
 				return true;
 			}
