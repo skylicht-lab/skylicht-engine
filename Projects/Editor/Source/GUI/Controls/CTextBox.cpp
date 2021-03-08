@@ -383,14 +383,28 @@ namespace Skylicht
 			{
 				if (m_editable)
 				{
-					if (c == '\b')
+					if (c == 27)
+					{
+						// press ESC
+						unfocus();
+
+						if (OnESC != nullptr)
+							OnESC(this);
+					}
+					else if (c == '\b')
 					{
 						m_textContainer->doBackspace();
 					}
 					else if (c == '\r')
 					{
+						// press Enter
 						if (m_textContainer->isWrapMultiline())
 							m_textContainer->doInsertCharacter('\n');
+						else
+							unfocus();
+
+						if (OnEnter != nullptr)
+							OnEnter(this);
 					}
 					else if (c == '\t')
 					{
