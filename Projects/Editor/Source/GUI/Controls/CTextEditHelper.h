@@ -45,6 +45,8 @@ namespace Skylicht
 
 				std::wstring m_oldValue;
 
+				bool m_end;
+
 			public:
 				CTextEditHelper(CBase* base, CTextBox* textBox, CTextContainer* textContainer);
 

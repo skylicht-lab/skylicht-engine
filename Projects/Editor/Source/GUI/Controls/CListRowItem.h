@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBase.h"
 #include "CButton.h"
+#include "CTextEditHelper.h"
 
 namespace Skylicht
 {
@@ -37,6 +38,8 @@ namespace Skylicht
 			{
 			protected:
 				CBase* m_owner;
+
+				CTextEditHelper* m_textEditHelper;
 
 			public:
 				CListRowItem(CBase* base);
@@ -52,6 +55,11 @@ namespace Skylicht
 				virtual void renderBackground();
 
 				virtual void onMouseClickRight(float x, float y, bool down);
+
+				inline CTextEditHelper* getTextEditHelper()
+				{
+					return m_textEditHelper;
+				}
 			};
 		}
 	}
