@@ -38,7 +38,7 @@ namespace Skylicht
 			class CListBox : public CScrollControl
 			{
 			public:
-				CListBox(CBase *parent);
+				CListBox(CBase* parent);
 
 				virtual ~CListBox();
 
@@ -51,6 +51,8 @@ namespace Skylicht
 				CListRowItem* getItemByLabel(const std::wstring& label);
 
 				CListRowItem* getItemByTagValue(int value);
+
+				CListRowItem* getSelected();
 
 				void unSelectAll();
 
@@ -73,7 +75,7 @@ namespace Skylicht
 
 			protected:
 
-				virtual void onItemDown(CBase *item);
+				virtual void onItemDown(CBase* item);
 
 			};
 		}
