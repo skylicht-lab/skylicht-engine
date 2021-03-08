@@ -50,12 +50,14 @@ namespace Skylicht
 
 			m_folder = new GUI::CTreeControl(spliter);
 			m_folder->OnKeyPress = std::bind(
-				&CSpaceAssets::OnTreeNodeKeyPress,
+				&CSpaceAssets::OnTreeKeyPress,
 				this,
 				std::placeholders::_1,
 				std::placeholders::_2,
 				std::placeholders::_3
 			);
+
+			m_folder->OnItemContextMenu = BIND_LISTENER(&CSpaceAssets::OnTreeContextMenu, this);
 
 			m_assetManager = CAssetManager::getInstance();
 
@@ -64,6 +66,7 @@ namespace Skylicht
 			m_root->OnExpand = BIND_LISTENER(&CSpaceAssets::OnTreeNodeExpand, this);
 			m_root->OnCollapse = BIND_LISTENER(&CSpaceAssets::OnTreeNodeCollapse, this);
 			m_root->OnSelectChange = BIND_LISTENER(&CSpaceAssets::OnTreeNodeSelected, this);
+
 			m_root->setAlwayShowExpandButton(true);
 			m_root->expand(false);
 
@@ -84,6 +87,7 @@ namespace Skylicht
 				std::placeholders::_2,
 				std::placeholders::_3
 			);
+			m_listFiles->OnItemContextMenu = BIND_LISTENER(&CSpaceAssets::OnListContextMenu, this);
 
 			spliter->setControl(m_listFiles, 0, 1);
 
@@ -252,7 +256,29 @@ namespace Skylicht
 			}
 		}
 
-		void CSpaceAssets::OnTreeNodeKeyPress(GUI::CBase* control, int key, bool press)
+		void CSpaceAssets::OnTreeContextMenu(GUI::CBase* row)
+		{
+			GUI::CTreeRowItem* rowItem = dynamic_cast<GUI::CTreeRowItem*>(row);
+			if (rowItem != NULL)
+			{
+				GUI::CTreeNode* node = rowItem->getNode();
+				if (node != NULL)
+				{
+					os::Printer::log(node->getTagString().c_str());
+				}
+			}
+		}
+
+		void CSpaceAssets::OnListContextMenu(GUI::CBase* row)
+		{
+			GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(row);
+			if (rowItem != NULL)
+			{
+				os::Printer::log(rowItem->getTagString().c_str());
+			}
+		}
+
+		void CSpaceAssets::OnTreeKeyPress(GUI::CBase* control, int key, bool press)
 		{
 			GUI::CTreeControl* tree = dynamic_cast<GUI::CTreeControl*>(control);
 			if (tree == NULL)

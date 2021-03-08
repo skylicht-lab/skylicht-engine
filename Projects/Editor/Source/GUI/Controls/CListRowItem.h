@@ -34,6 +34,8 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CListBox;
+
 			class CListRowItem : public CButton
 			{
 			protected:
@@ -60,6 +62,8 @@ namespace Skylicht
 				{
 					return m_textEditHelper;
 				}
+
+				CListBox* getListBox();
 			};
 		}
 	}
