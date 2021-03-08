@@ -38,6 +38,9 @@ namespace Skylicht
 			{
 				m_textBox->setHidden(true);
 				m_textBox->OnTextChange = BIND_LISTENER(&CTextEditHelper::onChar, this);
+				m_textBox->OnESC = BIND_LISTENER(&CTextEditHelper::onESC, this);
+				m_textBox->OnEnter = BIND_LISTENER(&CTextEditHelper::onEnter, this);
+				m_textBox->OnLostKeyboardFocus = BIND_LISTENER(&CTextEditHelper::onESC, this);
 			}
 
 			CTextEditHelper::~CTextEditHelper()
@@ -73,7 +76,7 @@ namespace Skylicht
 					m_onCancel(m_textBox);
 			}
 
-			void CTextEditHelper::endEnd()
+			void CTextEditHelper::endEdit()
 			{
 				m_textContainer->setString(m_textBox->getString());
 
@@ -118,6 +121,16 @@ namespace Skylicht
 				}
 
 				m_textBox->setBounds(bound);
+			}
+
+			void CTextEditHelper::onESC(CBase* textBox)
+			{
+				cancelEdit();
+			}
+
+			void CTextEditHelper::onEnter(CBase* textBox)
+			{
+				endEdit();
 			}
 		}
 	}
