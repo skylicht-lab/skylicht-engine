@@ -64,13 +64,20 @@ namespace Skylicht
 
 				m_onCancel = onCancel;
 				m_onEndEdit = onEndEdit;
+
+				m_end = false;
 			}
 
 			void CTextEditHelper::cancelEdit()
 			{
+				if (m_end == true)
+					return;
+
 				m_textBox->setHidden(true);
 				m_textContainer->setHidden(false);
 				m_textContainer->setString(m_oldValue);
+
+				m_end = true;
 
 				if (m_onCancel != nullptr)
 					m_onCancel(m_textBox);
@@ -83,12 +90,17 @@ namespace Skylicht
 				m_textBox->setHidden(true);
 				m_textContainer->setHidden(false);
 
+				m_end = true;
+
 				if (m_onEndEdit != nullptr)
 					m_onEndEdit(m_textBox);
 			}
 
 			void CTextEditHelper::onChar(CBase* textBox)
 			{
+				if (m_end == true)
+					return;
+
 				// auto calc text size
 				m_textContainer->setString(m_textBox->getString());
 				m_textContainer->layout();

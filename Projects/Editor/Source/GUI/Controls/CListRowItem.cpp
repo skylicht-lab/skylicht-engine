@@ -51,11 +51,13 @@ namespace Skylicht
 				setPadding(SPadding(8.0f, 0.0f, 0.0f, 0.0f));
 
 				showIcon(true);
+
+				m_textEditHelper = new CTextEditHelper(this, new CTextBox(this), m_label);
 			}
 
 			CListRowItem::~CListRowItem()
 			{
-
+				delete m_textEditHelper;
 			}
 
 			void CListRowItem::layout()

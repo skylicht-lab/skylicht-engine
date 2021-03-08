@@ -39,9 +39,13 @@ namespace Skylicht
 
 			GUI::CTreeNode* m_root;
 
+			GUI::CTreeNode* m_renameNode;
+
 			GUI::CListBox* m_listFiles;
 
 			GUI::CTextBox* m_search;
+
+			GUI::CListRowItem* m_renameItem;
 
 			CAssetManager* m_assetManager;
 
@@ -57,6 +61,18 @@ namespace Skylicht
 			void OnTreeNodeSelected(GUI::CBase* node);
 
 			void OnFileOpen(GUI::CBase* node);
+
+			void OnTreeNodeKeyPress(GUI::CBase* control, int key, bool press);
+
+			void OnTreeRename(GUI::CBase* control);
+
+			void OnTreeCancelRename(GUI::CBase* control);
+
+			void OnListKeyPress(GUI::CBase* control, int key, bool press);
+
+			void OnListRename(GUI::CBase* control);
+
+			void OnListCancelRename(GUI::CBase* control);
 
 		protected:
 

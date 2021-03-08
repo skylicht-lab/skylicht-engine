@@ -135,6 +135,20 @@ namespace Skylicht
 				}
 			}
 
+			CListRowItem* CListBox::getSelected()
+			{
+				for (CBase* child : m_innerPanel->Children)
+				{
+					CListRowItem* item = dynamic_cast<CListRowItem*>(child);
+					if (item != NULL && item->getToggle())
+					{
+						return item;
+					}
+				}
+
+				return NULL;
+			}
+
 			void CListBox::unSelectAll()
 			{
 				for (CBase* child : m_innerPanel->Children)

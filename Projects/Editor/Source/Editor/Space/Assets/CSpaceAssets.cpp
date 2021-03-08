@@ -30,7 +30,8 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSpaceAssets::CSpaceAssets(GUI::CWindow* window, CEditor* editor) :
-			CSpace(window, editor)
+			CSpace(window, editor),
+			m_renameNode(NULL)
 		{
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 
@@ -48,6 +49,13 @@ namespace Skylicht
 			spliter->setNumberRowCol(1, 2);
 
 			m_folder = new GUI::CTreeControl(spliter);
+			m_folder->OnKeyPress = std::bind(
+				&CSpaceAssets::OnTreeNodeKeyPress,
+				this,
+				std::placeholders::_1,
+				std::placeholders::_2,
+				std::placeholders::_3
+			);
 
 			m_assetManager = CAssetManager::getInstance();
 
@@ -69,6 +77,14 @@ namespace Skylicht
 			spliter->setControl(m_folder, 0, 0);
 
 			m_listFiles = new GUI::CListBox(spliter);
+			m_listFiles->OnKeyPress = std::bind(
+				&CSpaceAssets::OnListKeyPress,
+				this,
+				std::placeholders::_1,
+				std::placeholders::_2,
+				std::placeholders::_3
+			);
+
 			spliter->setControl(m_listFiles, 0, 1);
 
 			addListFolder("", files);
@@ -234,6 +250,68 @@ namespace Skylicht
 					m_folder->getScrollControl()->scrollToItem(node);
 				}
 			}
+		}
+
+		void CSpaceAssets::OnTreeNodeKeyPress(GUI::CBase* control, int key, bool press)
+		{
+			GUI::CTreeControl* tree = dynamic_cast<GUI::CTreeControl*>(control);
+			if (tree == NULL)
+				return;
+
+			if (key == GUI::KEY_F2)
+			{
+				GUI::CTreeNode* node = tree->getChildSelected();
+				if (node != NULL)
+				{
+					m_renameNode = node;
+
+					node->getTextEditHelper()->beginEdit(
+						BIND_LISTENER(&CSpaceAssets::OnTreeRename, this),
+						BIND_LISTENER(&CSpaceAssets::OnTreeCancelRename, this)
+					);
+				}
+			}
+		}
+
+		void CSpaceAssets::OnListKeyPress(GUI::CBase* control, int key, bool press)
+		{
+			GUI::CListBox* list = dynamic_cast<GUI::CListBox*>(control);
+			if (list == NULL)
+				return;
+
+			if (key == GUI::KEY_F2)
+			{
+				GUI::CListRowItem* node = list->getSelected();
+				if (node != NULL)
+				{
+					m_renameItem = node;
+
+					node->getTextEditHelper()->beginEdit(
+						BIND_LISTENER(&CSpaceAssets::OnListRename, this),
+						BIND_LISTENER(&CSpaceAssets::OnListCancelRename, this)
+					);
+				}
+			}
+		}
+
+		void CSpaceAssets::OnTreeRename(GUI::CBase* control)
+		{
+			m_folder->focus();
+		}
+
+		void CSpaceAssets::OnTreeCancelRename(GUI::CBase* control)
+		{
+			m_folder->focus();
+		}
+
+		void CSpaceAssets::OnListRename(GUI::CBase* control)
+		{
+			m_listFiles->focus();
+		}
+
+		void CSpaceAssets::OnListCancelRename(GUI::CBase* control)
+		{
+			m_listFiles->focus();
 		}
 	}
 }
