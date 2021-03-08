@@ -198,7 +198,7 @@ namespace Skylicht
 					return m_tagWString;
 				}
 
-				inline void tagData(void *data)
+				inline void tagData(void* data)
 				{
 					m_tagData = data;
 				}
@@ -376,11 +376,15 @@ namespace Skylicht
 				virtual void onLostKeyboardFocus()
 				{
 					m_keyboardFocus = false;
+					if (OnLostKeyboardFocus != nullptr)
+						OnLostKeyboardFocus(this);
 				}
 
 				virtual void onKeyboardFocus()
 				{
 					m_keyboardFocus = true;
+					if (OnKeyboardFocus != nullptr)
+						OnKeyboardFocus(this);
 				}
 
 				inline bool isKeyboardFocus()
@@ -477,6 +481,8 @@ namespace Skylicht
 				Listener OnDestroy;
 				Listener OnResize;
 				Listener OnRender;
+				Listener OnLostKeyboardFocus;
+				Listener OnKeyboardFocus;
 
 				std::function<void(CBase*, float, float, float, float)> OnMouseMoved;
 				std::function<void(CBase*, float, float, bool)> OnLeftMouseClick;
@@ -490,8 +496,8 @@ namespace Skylicht
 				std::function<void(CBase*, u32)> OnChar;
 
 			protected:
-				CBase *m_parent;
-				CBase *m_innerPanel;
+				CBase* m_parent;
+				CBase* m_innerPanel;
 
 				std::string m_name;
 
@@ -526,7 +532,7 @@ namespace Skylicht
 				bool m_tagBool;
 				std::string m_tagString;
 				std::wstring m_tagWString;
-				void *m_tagData;
+				void* m_tagData;
 
 				bool m_keyboardFocus;
 

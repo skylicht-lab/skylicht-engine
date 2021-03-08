@@ -178,6 +178,8 @@ namespace Skylicht
 				}
 
 				Listener OnTextChange;
+				Listener OnESC;
+				Listener OnEnter;
 			};
 		}
 	}
