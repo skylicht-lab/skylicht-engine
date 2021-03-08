@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTreeRowItem::CTreeRowItem(CBase *base, CBase *root) :
+			CTreeRowItem::CTreeRowItem(CBase* base, CBase* root) :
 				CButton(base),
 				m_root(root)
 			{
@@ -50,7 +50,7 @@ namespace Skylicht
 
 			void CTreeRowItem::renderUnder()
 			{
-				CTreeNode *treeNode = dynamic_cast<CTreeNode*>(m_parent);
+				CTreeNode* treeNode = dynamic_cast<CTreeNode*>(m_parent);
 				if (treeNode != NULL)
 				{
 					if (treeNode->hoverOnChild() || m_toggleStatus)
@@ -96,9 +96,17 @@ namespace Skylicht
 
 				CButton::onMouseClickRight(x, y, down);
 
-				CTreeNode *treeRoot = dynamic_cast<CTreeNode*>(m_root);
-				if (treeRoot->OnItemContextMenu != nullptr)
-					treeRoot->OnItemContextMenu(this);
+				if (down == false)
+				{
+					CTreeNode* treeRoot = dynamic_cast<CTreeNode*>(m_root);
+					if (treeRoot->OnItemContextMenu != nullptr)
+						treeRoot->OnItemContextMenu(this);
+				}
+			}
+
+			CTreeNode* CTreeRowItem::getNode()
+			{
+				return dynamic_cast<CTreeNode*>(m_parent);
 			}
 		}
 	}

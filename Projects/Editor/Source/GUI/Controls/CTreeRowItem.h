@@ -33,6 +33,8 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CTreeNode;
+
 			class CTreeRowItem : public CButton
 			{
 			protected:
@@ -48,6 +50,8 @@ namespace Skylicht
 				virtual void renderBackground();
 
 				virtual void onMouseClickRight(float x, float y, bool down);
+
+				CTreeNode* getNode();
 			};
 		}
 	}

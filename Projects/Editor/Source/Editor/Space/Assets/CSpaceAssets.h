@@ -62,11 +62,15 @@ namespace Skylicht
 
 			void OnFileOpen(GUI::CBase* node);
 
-			void OnTreeNodeKeyPress(GUI::CBase* control, int key, bool press);
+			void OnTreeContextMenu(GUI::CBase* row);
+
+			void OnTreeKeyPress(GUI::CBase* control, int key, bool press);
 
 			void OnTreeRename(GUI::CBase* control);
 
 			void OnTreeCancelRename(GUI::CBase* control);
+
+			void OnListContextMenu(GUI::CBase* row);
 
 			void OnListKeyPress(GUI::CBase* control, int key, bool press);
 
