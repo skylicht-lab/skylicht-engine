@@ -402,10 +402,11 @@ namespace Skylicht
 				// Build the accelerator search string
 				std::string accelString;
 
+				if (isAltDown())
+					accelString += "ALT + ";
+
 				if (IsControlDown())
-				{
 					accelString += "CTRL + ";
-				}
 
 				if (IsShiftDown())
 					accelString += "SHIFT + ";

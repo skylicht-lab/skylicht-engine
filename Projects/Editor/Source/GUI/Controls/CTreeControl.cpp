@@ -90,6 +90,8 @@ namespace Skylicht
 						node->deselectAll();
 					}
 				}
+				
+				invalidate();
 			}
 
 			bool CTreeControl::onKeyUp(bool down)

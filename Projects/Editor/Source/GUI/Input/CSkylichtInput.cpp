@@ -108,7 +108,7 @@ namespace Skylicht
 						inputKeyEvent(EKey::KEY_MENU, event.KeyInput.PressedDown);
 						break;
 					default:
-						if (event.KeyInput.Char != 0 && !isKeyDown(EKey::KEY_MENU) && event.KeyInput.PressedDown)
+						if (event.KeyInput.Char != 0 && /*!isKeyDown(EKey::KEY_MENU) &&*/ event.KeyInput.PressedDown)
 							inputCharacter(event.KeyInput.Char);
 						else
 							inputKeyEvent((EKey)event.KeyInput.Key, event.KeyInput.PressedDown);

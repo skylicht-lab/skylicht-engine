@@ -34,7 +34,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CMenu::CMenu(CBase *parent) :
+			CMenu::CMenu(CBase* parent) :
 				CBase(parent),
 				m_isOpenSubMenu(false),
 				m_isOpenPopup(false)
@@ -53,8 +53,11 @@ namespace Skylicht
 				float menuHeight = 5.0f;
 				bool firstMenu = true;
 
-				for (CBase *menuItem : Children)
+				for (CBase* menuItem : Children)
 				{
+					if (menuItem->isHidden())
+						continue;
+
 					if (firstMenu == true)
 					{
 						SMargin margin = menuItem->getMargin();
@@ -100,8 +103,8 @@ namespace Skylicht
 				std::vector<std::wstring> result;
 				CStringImp::splitString(path.c_str(), L"/", result);
 
-				CMenu *menu = this;
-				CMenuItem *item = NULL;
+				CMenu* menu = this;
+				CMenuItem* item = NULL;
 
 				while (result.size() > 0)
 				{
@@ -133,7 +136,7 @@ namespace Skylicht
 			{
 				for (CBase* child : Children)
 				{
-					CMenuItem *item = dynamic_cast<CMenuItem*>(child);
+					CMenuItem* item = dynamic_cast<CMenuItem*>(child);
 					if (item != NULL && item->getLabel() == label)
 					{
 						return item;
@@ -162,8 +165,8 @@ namespace Skylicht
 				std::vector<std::wstring> result;
 				CStringImp::splitString(path.c_str(), L"/", result);
 
-				CMenu *menu = this;
-				CMenuItem *item = NULL;
+				CMenu* menu = this;
+				CMenuItem* item = NULL;
 
 				while (result.size() > 0)
 				{
@@ -197,7 +200,7 @@ namespace Skylicht
 
 			CMenuItem* CMenu::addItem(ESystemIcon icon)
 			{
-				CMenuItem *iconItem = addItem(std::wstring(L""), icon, std::wstring(L""));
+				CMenuItem* iconItem = addItem(std::wstring(L""), icon, std::wstring(L""));
 				iconItem->setPadding(GUI::SPadding(6.0f, 0.0f, 0.0f, 0.0f));
 				iconItem->setIconMargin(GUI::SMargin(-2.0f, 0.0f, 0.0f, 0.0f));
 				iconItem->sizeToContents();
@@ -221,7 +224,7 @@ namespace Skylicht
 
 			CMenuItem* CMenu::addItem(const std::wstring& label, ESystemIcon icon, const std::wstring& accelerator)
 			{
-				CMenuItem *item = new CMenuItem(this);
+				CMenuItem* item = new CMenuItem(this);
 				item->setLabel(label);
 				item->setIcon(icon);
 				item->showIcon(true);
@@ -236,12 +239,12 @@ namespace Skylicht
 
 			CMenuSeparator* CMenu::addSeparator()
 			{
-				CMenuSeparator *item = new CMenuSeparator(this);
+				CMenuSeparator* item = new CMenuSeparator(this);
 				item->dock(EPosition::Top);
 				return item;
 			}
 
-			void CMenu::onAddItem(CMenuItem *item)
+			void CMenu::onAddItem(CMenuItem* item)
 			{
 				item->dock(EPosition::Top);
 				item->sizeToContents();
@@ -250,18 +253,18 @@ namespace Skylicht
 				setSize(w, height());
 			}
 
-			void CMenu::onMenuItemHover(CBase *item)
+			void CMenu::onMenuItemHover(CBase* item)
 			{
-				CMenuItem *menuItem = dynamic_cast<CMenuItem*>(item);
+				CMenuItem* menuItem = dynamic_cast<CMenuItem*>(item);
 				if (menuItem != NULL)
 				{
 					openMenu(menuItem);
 				}
 			}
 
-			void CMenu::onMenuItemPress(CBase *item)
+			void CMenu::onMenuItemPress(CBase* item)
 			{
-				CMenuItem *menuItem = dynamic_cast<CMenuItem*>(item);
+				CMenuItem* menuItem = dynamic_cast<CMenuItem*>(item);
 				if (menuItem != NULL)
 				{
 					if (menuItem->haveSubMenu() == false)
@@ -296,7 +299,7 @@ namespace Skylicht
 				}
 			}
 
-			void CMenu::openMenu(CMenuItem *menuItem)
+			void CMenu::openMenu(CMenuItem* menuItem)
 			{
 				if (menuItem->isOpenMenu())
 					return;
@@ -315,9 +318,9 @@ namespace Skylicht
 
 			void CMenu::closeChildMenu()
 			{
-				for (CBase *child : Children)
+				for (CBase* child : Children)
 				{
-					CMenuItem *menuItem = dynamic_cast<CMenuItem*>(child);
+					CMenuItem* menuItem = dynamic_cast<CMenuItem*>(child);
 					if (menuItem != NULL)
 						menuItem->closeMenu();
 				}

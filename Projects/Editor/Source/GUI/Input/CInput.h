@@ -112,6 +112,11 @@ namespace Skylicht
 					return isKeyDown(EKey::KEY_CONTROL);
 				}
 
+				inline bool isAltDown()
+				{
+					return isKeyDown(EKey::KEY_MENU);
+				}
+
 				virtual void update();
 
 				bool inputMouseMoved(float x, float y, float deltaX, float deltaY);
