@@ -120,7 +120,7 @@ namespace Skylicht
 
 				CButton::onMouseClickRight(x, y, down);
 
-				if (down != NULL)
+				if (down == false)
 				{
 					CListBox* listBox = dynamic_cast<CListBox*>(m_owner);
 					if (listBox->OnItemContextMenu != nullptr)

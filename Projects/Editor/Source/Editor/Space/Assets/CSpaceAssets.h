@@ -47,6 +47,16 @@ namespace Skylicht
 
 			GUI::CListRowItem* m_renameItem;
 
+			GUI::CMenuItem* m_openMenuItem;
+
+			GUI::CMenu* m_contextMenu;
+
+			GUI::CBase* m_contextMenuOwner;
+
+			GUI::CBase* m_selectedItem;
+
+			std::string m_selectedPath;
+
 			CAssetManager* m_assetManager;
 
 		public:
@@ -77,6 +87,10 @@ namespace Skylicht
 			void OnListRename(GUI::CBase* control);
 
 			void OnListCancelRename(GUI::CBase* control);
+
+			void OnCommand(GUI::CBase* item);
+
+			void OnCopyPath(GUI::CBase* item);
 
 		protected:
 
