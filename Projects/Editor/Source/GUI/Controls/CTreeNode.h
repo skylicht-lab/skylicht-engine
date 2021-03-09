@@ -86,6 +86,11 @@ namespace Skylicht
 					return m_textEditHelper;
 				}
 
+				inline CTreeNode* getRoot()
+				{
+					return m_root;
+				}
+
 				CTreeNode* addNode(const std::wstring& text);
 
 				CTreeNode* addNode(const std::wstring& text, ESystemIcon icon);
