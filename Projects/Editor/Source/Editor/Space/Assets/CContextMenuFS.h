@@ -35,6 +35,8 @@ namespace Skylicht
 		class CContextMenuFS
 		{
 		protected:
+			GUI::CCanvas* m_canvas;
+
 			GUI::CTreeControl* m_treeFS;
 
 			GUI::CListBox* m_listFS;
@@ -52,6 +54,8 @@ namespace Skylicht
 			CAssetManager* m_assetManager;
 
 			std::string m_selectedPath;
+
+			GUI::CMessageBox* m_msgBox;
 
 		public:
 			CContextMenuFS(GUI::CCanvas* canvas, GUI::CTreeControl* tree, GUI::CListBox* list, CListFSController* listFSController);

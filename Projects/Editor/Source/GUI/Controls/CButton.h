@@ -36,8 +36,8 @@ namespace Skylicht
 			class CButton : public CBase
 			{
 			protected:
-				CIcon *m_icon;
-				CTextContainer *m_label;
+				CIcon* m_icon;
+				CTextContainer* m_label;
 
 				SGUIColor m_color;
 				SGUIColor m_hoverColor;
@@ -60,7 +60,7 @@ namespace Skylicht
 				Listener OnRightPress;
 
 			public:
-				CButton(CBase *parent);
+				CButton(CBase* parent);
 				virtual ~CButton();
 
 				virtual void onBoundsChanged(const SRect& oldBounds);
@@ -103,6 +103,11 @@ namespace Skylicht
 				inline void showLabel(bool b)
 				{
 					m_label->setHidden(!b);
+				}
+
+				inline void setTextAlignment(GUI::ETextAlign alignment)
+				{
+					m_label->setTextAlignment(alignment);
 				}
 
 				inline EFontSize getFontSize()
