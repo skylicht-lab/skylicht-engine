@@ -344,7 +344,7 @@ namespace Skylicht
 		{
 			int id = -1;
 
-			for (u32 i = 0, n = m_models.size(); i < n; i++)
+			for (u32 i = 0, n = (u32)m_models.size(); i < n; i++)
 			{
 				if (m_models[i]->getType() == param)
 				{
@@ -368,7 +368,7 @@ namespace Skylicht
 		{
 			int id = -1;
 
-			for (u32 i = 0, n = m_interpolators.size(); i < n; i++)
+			for (u32 i = 0, n = (u32)m_interpolators.size(); i < n; i++)
 			{
 				if (m_interpolators[i] == interpolator)
 				{

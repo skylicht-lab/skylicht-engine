@@ -70,7 +70,7 @@ namespace Skylicht
 
 		inline u32 getLogCount()
 		{
-			return m_logs.size();
+			return (u32)m_logs.size();
 		}
 
 		inline std::list<SLogInfo>& getLogs()

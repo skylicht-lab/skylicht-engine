@@ -434,7 +434,7 @@ namespace Skylicht
 		m_font->updateFontTexture();
 
 		// calc multiline height
-		int textHeight = m_arrayCharRender.size() * (m_textHeight + m_linePadding);
+		int textHeight = (int)m_arrayCharRender.size() * (m_textHeight + m_linePadding);
 		textHeight -= m_linePadding;
 
 		int y = 0;

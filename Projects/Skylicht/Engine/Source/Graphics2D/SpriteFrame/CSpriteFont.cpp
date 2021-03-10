@@ -230,8 +230,8 @@ namespace Skylicht
 			return NULL;
 
 
-		u32 index = p - m_moduleMap;
-		if (m_frames.size() < index)
+		u32 index = (u32)(p - m_moduleMap);
+		if ((u32)m_frames.size() < index)
 			return NULL;
 
 		SFrame& frame = *std::next(m_frames.begin(), index);

@@ -1217,7 +1217,7 @@ namespace Skylicht
 				mesh->Joints[boneId].Weights.push_back(weightParam);
 
 				mesh->JointIndex.push_back(boneId);
-				mesh->JointIndex.push_back(mesh->Joints[boneId].Weights.size() - 1);
+				mesh->JointIndex.push_back((int)mesh->Joints[boneId].Weights.size() - 1);
 			}
 
 		}
@@ -1483,7 +1483,7 @@ namespace Skylicht
 
 	void CColladaLoader::loadEffectTexture()
 	{
-		for (u32 i = 0, n = m_listEffects.size(); i < n; i++)
+		for (u32 i = 0, n = (u32)m_listEffects.size(); i < n; i++)
 		{
 			SEffect& effect = m_listEffects[i];
 			ITexture *tex = NULL;
@@ -2165,7 +2165,7 @@ namespace Skylicht
 		int nJoint = (int)meshParam->Joints.size();
 
 		// setup joint name
-		int len = meshParam->ListJointName.size() + 1;
+		int len = (int)meshParam->ListJointName.size() + 1;
 
 		wchar_t *listJointName = new wchar_t[len + 1];
 		CStringImp::copy<wchar_t, const wchar_t>(listJointName, meshParam->ListJointName.c_str());
@@ -2250,7 +2250,7 @@ namespace Skylicht
 		memset(nBoneCount, 0, sizeof(int)*numVertex);
 
 		// apply joint to vertex
-		for (u32 i = 0, n = meshParam->JointIndex.size(); i < n; i += 2)
+		for (u32 i = 0, n = (u32)meshParam->JointIndex.size(); i < n; i += 2)
 		{
 			int boneID = meshParam->JointIndex[i];
 			int weightID = meshParam->JointIndex[i + 1];
@@ -2280,7 +2280,7 @@ namespace Skylicht
 				map.vertexId = weight.VertexID;
 
 				std::vector<s32>& arrayVertexId = m_meshVertexIndex[map];
-				u32 numVertexAffect = arrayVertexId.size();
+				u32 numVertexAffect = (u32)arrayVertexId.size();
 
 				for (u32 j = 0; j < numVertexAffect; j++)
 				{

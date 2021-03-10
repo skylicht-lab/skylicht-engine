@@ -487,7 +487,7 @@ void CViewBakeLightmap::saveProgress()
 	stream->writeUInt(m_numIndices);
 	stream->writeUInt(m_numVertices);
 	stream->writeUInt(m_lightmapSize);
-	stream->writeUInt(m_meshBuffers.size());
+	stream->writeUInt((u32)m_meshBuffers.size());
 
 	stream->writeInt(m_lightBounce);
 	stream->writeInt(m_currentPass);

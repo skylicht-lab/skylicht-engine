@@ -112,7 +112,7 @@ namespace Skylicht
 
 		inline u32 getSheetCount()
 		{
-			return m_sheets.size();
+			return (u32)m_sheets.size();
 		}
 
 		SSheet* getSheet(int i)

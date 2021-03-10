@@ -91,7 +91,7 @@ namespace Skylicht
 
 				inline u32 getNumLine()
 				{
-					return m_lines.size();
+					return (u32)m_lines.size();
 				}
 
 				CText* getLine(u32 line)
@@ -138,7 +138,7 @@ namespace Skylicht
 
 				inline u32 getLength()
 				{
-					return m_string.size();
+					return (u32)m_string.size();
 				}
 
 				inline void setTextAlignment(ETextAlign align)

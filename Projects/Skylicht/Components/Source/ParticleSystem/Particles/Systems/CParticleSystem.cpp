@@ -86,7 +86,7 @@ namespace Skylicht
 			}
 
 			// list model and param
-			u32 numModels = listModel.size();
+			u32 numModels = (u32)listModel.size();
 			CModel** models = listModel.data();
 			EParticleParams* paramTypes = listParams.data();
 			CInterpolator** modelInterpolators = listModelInterpolators.data();

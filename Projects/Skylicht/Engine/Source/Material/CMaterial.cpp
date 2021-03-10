@@ -664,7 +664,7 @@ namespace Skylicht
 						for (std::string &s : ui->AutoReplace)
 						{
 							found = false;
-							for (u32 i = 0, n = paths.size(); i < n; i++)
+							for (u32 i = 0, n = (u32)paths.size(); i < n; i++)
 							{
 								char t[512] = { 0 };
 								CStringImp::replaceText(
@@ -693,7 +693,7 @@ namespace Skylicht
 						{
 							for (std::string &s : ui->AutoReplace)
 							{
-								for (u32 i = 0, n = texNamePaths.size(); i < n; i++)
+								for (u32 i = 0, n = (u32)texNamePaths.size(); i < n; i++)
 								{
 									std::string fileName = texNamePaths[i];
 									fileName += s;

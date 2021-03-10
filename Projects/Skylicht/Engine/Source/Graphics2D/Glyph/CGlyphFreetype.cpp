@@ -318,7 +318,7 @@ namespace Skylicht
 		int atlasID = -1;
 		core::recti region;
 
-		for (u32 i = 0, n = m_atlas.size(); i < n; i++)
+		for (u32 i = 0, n = (u32)m_atlas.size(); i < n; i++)
 		{
 			region = m_atlas[i]->createRect(cellW, cellH);
 

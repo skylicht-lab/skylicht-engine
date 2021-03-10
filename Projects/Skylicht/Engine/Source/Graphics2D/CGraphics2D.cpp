@@ -1242,12 +1242,12 @@ namespace Skylicht
 		if (m_2dMaterial.getTexture(0) != frame->Image->Texture || m_2dMaterial.MaterialType != materialID || material != NULL)
 			flush();
 
-		int numSpriteVertex = frame->ModuleOffset.size() * 4;
+		int numSpriteVertex = (int)frame->ModuleOffset.size() * 4;
 
 		int numVertices = m_vertices->getVertexCount();
 		int vertexUse = numVertices + numSpriteVertex;
 
-		int numSpriteIndex = frame->ModuleOffset.size() * 6;
+		int numSpriteIndex = (int)frame->ModuleOffset.size() * 6;
 		int numIndices = m_indices->getIndexCount();
 		int indexUse = numIndices + numSpriteIndex;
 
