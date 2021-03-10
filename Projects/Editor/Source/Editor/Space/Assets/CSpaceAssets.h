@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "CTreeFSController.h"
 #include "CListFSController.h"
+#include "CContextMenuFS.h"
 
 namespace Skylicht
 {
@@ -45,32 +46,14 @@ namespace Skylicht
 
 			CListFSController* m_listFSController;
 
-			GUI::CTextBox* m_search;
+			CContextMenuFS* m_contextMenuFS;
 
-			GUI::CMenuItem* m_menuOpen;
-
-			GUI::CMenu* m_contextMenu;
-
-			GUI::CBase* m_contextMenuOwner;
-
-			GUI::CBase* m_selectedItem;
-
-			std::string m_selectedPath;
-
-			CAssetManager* m_assetManager;
+			GUI::CTextBox* m_search;			
 
 		public:
 			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceAssets();
-
-			void OnTreeContextMenu(GUI::CBase* row);
-
-			void OnListContextMenu(GUI::CBase* row);
-
-			void OnCommand(GUI::CBase* item);
-
-			void OnCopyPath(GUI::CBase* item);
 
 		protected:
 

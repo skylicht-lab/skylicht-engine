@@ -30,8 +30,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CListFSController::CListFSController(GUI::CListBox* list) :
-			m_renameItem(NULL)
+		CListFSController::CListFSController(GUI::CListBox* list, CTreeFSController* treeController) :
+			m_renameItem(NULL),
+			m_treeController(treeController)
 		{
 			m_assetManager = CAssetManager::getInstance();
 
@@ -133,7 +134,7 @@ namespace Skylicht
 
 					add(fullPath, files);
 
-					// expandTreeFolder(fullPath);
+					m_treeController->expand(fullPath);
 				}
 				else
 				{
