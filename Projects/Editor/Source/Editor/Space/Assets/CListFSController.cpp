@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CListFSController.h"
 #include "Utils/CPath.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -116,6 +117,8 @@ namespace Skylicht
 			}
 
 			m_listFS->setScrollVertical(0.0f);
+
+			m_currentFolder = currentFolder;
 		}
 
 		void CListFSController::OnFileOpen(GUI::CBase* node)
@@ -139,8 +142,25 @@ namespace Skylicht
 				else
 				{
 					// shell open the file
+#if WIN32
+					char path[512] = { 0 };
+					CStringImp::replaceText(path, fullPath.c_str(), "/", "\\");
+					ShellExecuteA(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT);
+#endif
 				}
 			}
+		}
+
+		void CListFSController::refresh()
+		{
+			std::vector<SFileInfo> files;
+
+			if (m_currentFolder.empty())
+				m_assetManager->getRoot(files);
+			else
+				m_assetManager->getFolder(m_currentFolder.c_str(), files);
+
+			add(m_currentFolder, files);
 		}
 	}
 }
