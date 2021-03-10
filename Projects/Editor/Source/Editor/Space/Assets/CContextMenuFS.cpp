@@ -33,9 +33,11 @@ namespace Skylicht
 	namespace Editor
 	{
 		CContextMenuFS::CContextMenuFS(GUI::CCanvas* canvas, GUI::CTreeControl* tree, GUI::CListBox* list, CListFSController* listFSController) :
+			m_canvas(canvas),
 			m_treeFS(tree),
 			m_listFS(list),
-			m_listFSController(listFSController)
+			m_listFSController(listFSController),
+			m_msgBox(NULL)
 		{
 			m_contextMenu = new GUI::CMenu(canvas);
 			m_contextMenu->setHidden(true);
@@ -44,10 +46,10 @@ namespace Skylicht
 			m_open = m_contextMenu->addItem(L"Open");
 			m_contextMenu->addItem(L"Show in Explorer");
 			m_contextMenu->addSeparator();
-			m_contextMenu->addItem(L"Delete");
+			m_contextMenu->addItem(L"Delete", GUI::ESystemIcon::Trash);
 			m_contextMenu->addItem(L"Rename", L"F2");
-			m_contextMenu->addItem(L"Copy path", L"SHIFT + C");
-			m_contextMenu->addItem(L"Duplicate", L"CTRL + D");
+			m_contextMenu->addItem(L"Copy path", GUI::ESystemIcon::Copy, L"SHIFT + C");
+			m_contextMenu->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"CTRL + D");
 
 			m_treeFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
 			m_listFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
@@ -119,6 +121,8 @@ namespace Skylicht
 			}
 			else if (label == L"Delete")
 			{
+				// m_msgBox = new GUI::CMessageBox(m_canvas);
+
 				if (m_assetManager->deleteAsset(m_selectedPath.c_str()))
 					m_listFSController->refresh();
 			}

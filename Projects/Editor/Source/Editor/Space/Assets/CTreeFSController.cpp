@@ -137,7 +137,7 @@ namespace Skylicht
 
 				wchar_t wname[512];
 
-				for (u32 i = 0, n = result.size(); i < n; i++)
+				for (u32 i = 0, n = (u32)result.size(); i < n; i++)
 				{
 					const std::string name = result[i];
 					CStringImp::convertUTF8ToUnicode(name.c_str(), wname);

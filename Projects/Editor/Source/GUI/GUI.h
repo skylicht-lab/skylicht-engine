@@ -48,3 +48,4 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CBoxLayout.h"
 #include "GUI/Controls/CContentSizeControl.h"
 #include "GUI/Controls/CProgressBar.h"
+#include "GUI/Controls/CMessageBox.h"
