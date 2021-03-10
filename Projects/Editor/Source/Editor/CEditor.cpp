@@ -372,7 +372,7 @@ namespace Skylicht
 		void CEditor::initSessionLayout(const std::string& data)
 		{
 			io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
-			io::IReadFile* file = fs->createMemoryReadFile(data.c_str(), data.length(), "data");
+			io::IReadFile* file = fs->createMemoryReadFile(data.c_str(), (s32)data.length(), "data");
 			io::IXMLReader* xmlRead = fs->createXMLReader(file);
 			if (xmlRead == NULL)
 				return;

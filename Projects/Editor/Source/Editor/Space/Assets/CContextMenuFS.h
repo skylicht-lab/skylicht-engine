@@ -25,40 +25,44 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GUI/GUI.h"
+#include "CListFSController.h"
 #include "AssetManager/CAssetManager.h"
-#include "CTreeFSController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CListFSController
+		class CContextMenuFS
 		{
 		protected:
+			GUI::CTreeControl* m_treeFS;
+			
 			GUI::CListBox* m_listFS;
+			
+			CListFSController* m_listFSController;
 
-			GUI::CListRowItem* m_renameItem;
+			GUI::CMenu* m_contextMenu;
 
-			CTreeFSController* m_treeController;
+			GUI::CMenuItem* m_open;
 
-			CAssetManager* m_assetManager;
+			GUI::CBase* m_ownerControl;
+
+			GUI::CBase* m_selected;
+
+			std::string m_selectedPath;
 
 		public:
-			CListFSController(GUI::CListBox* list, CTreeFSController* treeController);
+			CContextMenuFS(GUI::CCanvas* canvas, GUI::CTreeControl* tree, GUI::CListBox* list, CListFSController* listFSController);
 
-			virtual ~CListFSController();
+			virtual ~CContextMenuFS();
 
-			void OnKeyPress(GUI::CBase* control, int key, bool press);
+			void OnTreeContextMenu(GUI::CBase* row);
 
-			void OnRename(GUI::CBase* control);
+			void OnListContextMenu(GUI::CBase* row);
 
-			void OnCancelRename(GUI::CBase* control);
+			void OnCommand(GUI::CBase* item);
 
-			void OnFileOpen(GUI::CBase* node);
-
-		protected:
-
-			void add(const std::string& currentFolder, std::vector<SFileInfo>& files);
+			void OnCopyPath(GUI::CBase* item);
 		};
 	}
 }
