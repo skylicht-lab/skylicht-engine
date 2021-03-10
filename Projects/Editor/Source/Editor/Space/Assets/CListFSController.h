@@ -43,6 +43,8 @@ namespace Skylicht
 
 			CAssetManager* m_assetManager;
 
+			std::string m_currentFolder;
+
 		public:
 			CListFSController(GUI::CListBox* list, CTreeFSController* treeController);
 
@@ -55,6 +57,8 @@ namespace Skylicht
 			void OnCancelRename(GUI::CBase* control);
 
 			void OnFileOpen(GUI::CBase* node);
+
+			void refresh();
 
 		protected:
 

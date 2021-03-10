@@ -131,6 +131,10 @@ namespace Skylicht
 
 			std::string getShortPath(const char* folder);
 
+		public:
+
+			bool deleteAsset(const char* path);
+
 		protected:
 
 			void discovery(const std::string& bundle, const std::string& folder);

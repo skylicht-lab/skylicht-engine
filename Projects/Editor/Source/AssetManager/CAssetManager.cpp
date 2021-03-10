@@ -295,5 +295,10 @@ namespace Skylicht
 			sortPath.replace(sortPath.find(assetPath.c_str()), assetPath.size(), "");
 			return sortPath;
 		}
+
+		bool CAssetManager::deleteAsset(const char* path)
+		{
+			return true;
+		}
 	}
 }
