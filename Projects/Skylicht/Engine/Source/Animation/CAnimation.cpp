@@ -48,7 +48,7 @@ namespace Skylicht
 	{
 		m_clipName.clear();
 
-		u32 numAnim = m_clips.size();
+		u32 numAnim = (u32)m_clips.size();
 		for (u32 i = 0; i < numAnim - 1; i++)
 		{
 			for (u32 j = i + 1; j < numAnim; j++)

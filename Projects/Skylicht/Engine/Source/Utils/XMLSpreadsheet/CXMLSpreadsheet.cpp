@@ -341,7 +341,7 @@ namespace Skylicht
 		row = 0;
 		col = 0;
 
-		int n = strlen(cellName);
+		int n = (int)strlen(cellName);
 		if (n > 64)
 			return false;
 
@@ -374,7 +374,7 @@ namespace Skylicht
 		int rangeValue = 25; // 'Z' - 'A';
 		int base = 1;
 
-		for (int i = strlen(colName) - 1; i >= 0; i--)
+		for (int i = (int)strlen(colName) - 1; i >= 0; i--)
 		{
 			col += (colName[i] - 'A') * base;
 			base = base * rangeValue;

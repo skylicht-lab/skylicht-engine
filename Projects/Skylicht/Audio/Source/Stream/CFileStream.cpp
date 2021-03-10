@@ -195,8 +195,7 @@ namespace SkylichtAudio
 					return outBytes;
 				}
 
-				int result = fread(m_buffer, readSize, 1, m_file);
-
+				int result = (int)fread(m_buffer, readSize, 1, m_file);
 				if (result == 0)
 				{
 					m_pos += outBytes;

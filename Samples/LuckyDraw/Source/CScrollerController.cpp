@@ -131,7 +131,7 @@ void CScrollerController::beginScroll()
 {
 	m_stopPosition = 0;
 
-	for (u32 i = 0, n = m_scrollers.size(); i < n; i++)
+	for (u32 i = 0, n = (u32)m_scrollers.size(); i < n; i++)
 	{
 		SScrollerInfo& s = m_scrollers[i];
 		s.TargetSpeed = MAX_SPEED;
@@ -143,7 +143,7 @@ void CScrollerController::beginScroll()
 
 bool CScrollerController::stopReady()
 {
-	for (u32 i = 0, n = m_scrollers.size(); i < n; i++)
+	for (u32 i = 0, n = (u32)m_scrollers.size(); i < n; i++)
 	{
 		if (m_scrollers[i].Speed <= READY_TARGET_SPEED ||
 			m_scrollers[i].State != Scrolling)
@@ -155,7 +155,7 @@ bool CScrollerController::stopReady()
 
 void CScrollerController::newRound()
 {
-	for (u32 i = 0, n = m_scrollers.size(); i < n; i++)
+	for (u32 i = 0, n = (u32)m_scrollers.size(); i < n; i++)
 	{
 		m_scrollers[i].State = NewRound;
 	}
@@ -163,7 +163,7 @@ void CScrollerController::newRound()
 
 bool CScrollerController::isFinished()
 {
-	for (u32 i = 0, n = m_scrollers.size(); i < n; i++)
+	for (u32 i = 0, n = (u32)m_scrollers.size(); i < n; i++)
 	{
 		if (m_scrollers[i].State != Finish)
 			return false;
@@ -174,7 +174,7 @@ bool CScrollerController::isFinished()
 
 bool CScrollerController::isLastStopPosition()
 {
-	int scroll = m_scrollers.size() - 1;
+	int scroll = (int)m_scrollers.size() - 1;
 	if (scroll < 0)
 		scroll = 0;
 

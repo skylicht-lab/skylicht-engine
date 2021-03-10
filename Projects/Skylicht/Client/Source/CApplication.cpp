@@ -436,7 +436,7 @@ namespace Skylicht
 		char mac[512] = { 0 };
 		CStringImp::convertUnicodeToUTF8(string, mac);
 
-		for (int i = 0, n = strlen(mac); i < n; i++)
+		for (int i = 0, n = (int)strlen(mac); i < n; i++)
 		{
 			char c = mac[i];
 			bool isAnsi = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
@@ -462,7 +462,7 @@ namespace Skylicht
 		char mac[512] = { 0 };
 		strcpy(mac, string);
 
-		for (int i = 0, n = strlen(mac); i < n; i++)
+		for (int i = 0, n = (int)strlen(mac); i < n; i++)
 		{
 			char c = mac[i];
 			bool isAnsi = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';

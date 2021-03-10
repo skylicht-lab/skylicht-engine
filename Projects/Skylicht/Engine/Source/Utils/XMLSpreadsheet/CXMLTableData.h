@@ -54,12 +54,12 @@ namespace Skylicht
 
 		u32 getNumColumn()
 		{
-			return m_column.size();
+			return (u32)m_column.size();
 		}
 
 		u32 getNumRow()
 		{
-			return m_sheet->Rows.size();
+			return (u32)m_sheet->Rows.size();
 		}
 
 		template<class T>
@@ -137,7 +137,7 @@ namespace Skylicht
 				++i;
 			}
 
-			return data.size();
+			return (u32)data.size();
 		}
 	};
 }

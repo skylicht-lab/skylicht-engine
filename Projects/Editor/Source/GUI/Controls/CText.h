@@ -53,12 +53,12 @@ namespace Skylicht
 
 				inline u32 getLength()
 				{
-					return m_string.size();
+					return (u32)m_string.size();
 				}
 
 				u32 getLengthNoNewLine()
 				{
-					u32 length = m_string.size();
+					u32 length = (u32)m_string.size();
 					if (length > 0)
 					{
 						if (m_string[length - 1] == '\n')

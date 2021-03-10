@@ -219,7 +219,7 @@ namespace Skylicht
 
 		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
 
-		for (u32 i = 0, n = textureFolder.size(); i < n; i++)
+		for (u32 i = 0, n = (u32)textureFolder.size(); i < n; i++)
 		{
 			std::string s = textureFolder[i];
 			s += "/";
@@ -335,7 +335,7 @@ namespace Skylicht
 
 		core::array<io::path> paths;
 
-		for (u32 i = 0, n = listTexture.size(); i < n; i++)
+		for (u32 i = 0, n = (u32)listTexture.size(); i < n; i++)
 		{
 			std::string fixPath = CPath::normalizePath(listTexture[i]);
 			paths.push_back(fixPath.c_str());
@@ -465,7 +465,7 @@ namespace Skylicht
 		}
 		else
 		{
-			texture = driver->getTextureArray(listImage.data(), listImage.size());
+			texture = driver->getTextureArray(listImage.data(), (u32)listImage.size());
 
 			// register the texture
 			if (texture)
@@ -479,7 +479,7 @@ namespace Skylicht
 		}
 
 		// release
-		for (u32 i = 0, n = listImage.size(); i < n; i++)
+		for (u32 i = 0, n = (u32)listImage.size(); i < n; i++)
 		{
 			if (listImage[i] != NULL)
 				listImage[i]->drop();

@@ -47,7 +47,7 @@ namespace Skylicht
 		while (i != end)
 		{
 			ArrayMaterial &list = (*i).second;
-			for (int j = 0, n = list.size(); j < n; j++)
+			for (int j = 0, n = (int)list.size(); j < n; j++)
 			{
 				delete list[j];
 			}
@@ -341,7 +341,7 @@ namespace Skylicht
 		}
 
 		buffer += "</Materials>";
-		writeFile->write(buffer.c_str(), buffer.size());
+		writeFile->write(buffer.c_str(), (u32)buffer.size());
 		writeFile->drop();
 	}
 
@@ -441,7 +441,7 @@ namespace Skylicht
 		}
 
 		buffer += "</Materials>";
-		writeFile->write(buffer.c_str(), buffer.size());
+		writeFile->write(buffer.c_str(), (u32)buffer.size());
 		writeFile->drop();
 	}
 

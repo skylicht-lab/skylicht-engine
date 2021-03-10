@@ -261,7 +261,7 @@ namespace SkylichtAudio
 					{
 						if (m_bitPerSample == 32)
 						{
-							int numSample = bytes / 4;
+							int numSample = (int)(bytes / 4);
 
 							resultDataSize = numSample * 2;
 							resizeData(resultDataSize);
@@ -273,7 +273,7 @@ namespace SkylichtAudio
 					{
 						if (m_bitPerSample == 16)
 						{
-							resultDataSize = bytes;
+							resultDataSize = (int)bytes;
 							resizeData(resultDataSize);
 
 							memcpy(m_sampleDecodeBuffer, audio, bytes);

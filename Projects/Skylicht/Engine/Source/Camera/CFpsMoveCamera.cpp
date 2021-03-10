@@ -87,7 +87,7 @@ namespace Skylicht
 		switch (evt.EventType)
 		{
 		case EET_KEY_INPUT_EVENT:
-			for (u32 i = 0, n = m_keyMap.size(); i < n; ++i)
+			for (u32 i = 0, n = (u32)m_keyMap.size(); i < n; ++i)
 			{
 				if (m_keyMap[i].KeyCode == evt.KeyInput.Key)
 				{
