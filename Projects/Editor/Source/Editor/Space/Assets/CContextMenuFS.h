@@ -36,9 +36,9 @@ namespace Skylicht
 		{
 		protected:
 			GUI::CTreeControl* m_treeFS;
-			
+
 			GUI::CListBox* m_listFS;
-			
+
 			CListFSController* m_listFSController;
 
 			GUI::CMenu* m_contextMenu;
@@ -48,6 +48,8 @@ namespace Skylicht
 			GUI::CBase* m_ownerControl;
 
 			GUI::CBase* m_selected;
+
+			CAssetManager* m_assetManager;
 
 			std::string m_selectedPath;
 

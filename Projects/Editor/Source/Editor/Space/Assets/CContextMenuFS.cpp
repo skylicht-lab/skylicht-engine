@@ -54,6 +54,8 @@ namespace Skylicht
 
 			m_treeFS->OnItemContextMenu = BIND_LISTENER(&CContextMenuFS::OnTreeContextMenu, this);
 			m_listFS->OnItemContextMenu = BIND_LISTENER(&CContextMenuFS::OnListContextMenu, this);
+
+			m_assetManager = CAssetManager::getInstance();
 		}
 
 		CContextMenuFS::~CContextMenuFS()
@@ -102,11 +104,23 @@ namespace Skylicht
 			}
 			else if (label == L"Show in Explorer")
 			{
+#if defined(WIN32)
+				char path[512] = { 0 };
+				CStringImp::replaceText(path, m_selectedPath.c_str(), "/", "\\");
+				ShellExecuteA(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT);
+#elif defined(__APPLE__)
+				// QProcess::execute("/usr/bin/osascript", { "-e", "tell application \"Finder\" to reveal POSIX file \"" + path + "\"" });
+				// QProcess::execute("/usr/bin/osascript", { "-e", "tell application \"Finder\" to activate" });
 
+				char cmd[1024] = { 0 };
+				sprintf(cmd, "osascript -e 'tell app \"Finder\" to open POSIX file \"%s\"'", m_selectedPath.c_str());
+				system(cmd);
+#endif
 			}
 			else if (label == L"Delete")
 			{
-
+				if (m_assetManager->deleteAsset(m_selectedPath.c_str()))
+					m_listFSController->refresh();
 			}
 			else if (label == L"Rename")
 			{
