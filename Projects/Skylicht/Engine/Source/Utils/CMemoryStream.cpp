@@ -162,7 +162,7 @@ namespace Skylicht
 
 	void CMemoryStream::writeString(const std::string& s)
 	{
-		int size = s.size() + 1;
+		int size = (int)s.size() + 1;
 		autoGrow(size);
 
 		// write num char

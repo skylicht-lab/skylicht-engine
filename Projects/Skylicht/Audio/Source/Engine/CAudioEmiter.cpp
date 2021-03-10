@@ -43,7 +43,7 @@ namespace SkylichtAudio
 	IAudioDecoder::EDecoderType CAudioEmitter::getDecode(const char *fileName)
 	{
 		char ext[512] = { 0 };
-		int len = strlen(fileName);
+		int len = (int)strlen(fileName);
 		for (int i = len; i >= 0; i--)
 		{
 			if (fileName[i] == '.')

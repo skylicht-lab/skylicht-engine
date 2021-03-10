@@ -76,7 +76,7 @@ namespace Skylicht
 	{
 		core::recti ret(0, 0, 0, 0);
 
-		for (int i = 0, n = m_rects.size(); i < n; i++)
+		for (int i = 0, n = (int)m_rects.size(); i < n; i++)
 		{
 			if (m_rects[i].getWidth() >= w &&
 				m_rects[i].getHeight() >= h)
@@ -141,7 +141,7 @@ namespace Skylicht
 		bool add = false;
 		int h = r.getHeight();
 
-		for (int i = m_rects.size() - 1; i >= 0; i--)
+		for (int i = (int)m_rects.size() - 1; i >= 0; i--)
 		{
 			if (h > m_rects[i].getHeight())
 			{

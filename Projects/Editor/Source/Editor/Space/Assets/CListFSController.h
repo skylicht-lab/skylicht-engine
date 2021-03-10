@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+CopyRight (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -13,7 +13,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+IN NO EVENT SHALL THE AUTHORS OR COPYRight HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
@@ -22,27 +22,40 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CActivator.h"
+#pragma once
+
+#include "GUI/GUI.h"
+#include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
 {
-	bool CActivator::registerType(const char *type, ActivatorCreateInstance func)
+	namespace Editor
 	{
-		m_factoryFunc.push_back(func);
-		m_factoryName.push_back(type);
-		return true;
-	}
-
-	IActivatorObject* CActivator::createInstance(const char *type)
-	{
-		for (u32 i = 0, n = (u32)m_factoryName.size(); i < n; i++)
+		class CListFSController
 		{
-			if (m_factoryName[i] == type)
-			{
-				return m_factoryFunc[i]();
-			}
-		}
-		return NULL;
+		protected:
+			GUI::CListBox* m_listFS;
+
+			GUI::CListRowItem* m_renameItem;
+
+			CAssetManager* m_assetManager;
+
+		public:
+			CListFSController(GUI::CListBox* list);
+
+			virtual ~CListFSController();
+
+			void OnKeyPress(GUI::CBase* control, int key, bool press);
+
+			void OnRename(GUI::CBase* control);
+
+			void OnCancelRename(GUI::CBase* control);
+
+			void OnFileOpen(GUI::CBase* node);
+
+		protected:
+
+			void add(const std::string& currentFolder, std::vector<SFileInfo>& files);
+		};
 	}
 }

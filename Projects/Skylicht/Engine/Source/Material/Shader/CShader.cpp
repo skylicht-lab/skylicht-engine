@@ -406,7 +406,7 @@ namespace Skylicht
 
 						std::vector<std::string> listValue;
 						CStringImp::splitString(text, ",", listValue);
-						int numValue = listValue.size();
+						int numValue = (int)listValue.size();
 						if (numValue > uniform->FloatSize)
 							numValue = uniform->FloatSize;
 

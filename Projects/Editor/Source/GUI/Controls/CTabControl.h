@@ -82,7 +82,7 @@ namespace Skylicht
 
 				inline u32 getNumTabButton()
 				{
-					return m_tabButtons.size();
+					return (u32)m_tabButtons.size();
 				}
 
 				CTabButton* getCurrentTab()

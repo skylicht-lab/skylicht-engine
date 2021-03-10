@@ -230,7 +230,7 @@ namespace SkylichtAudio
 
 	IStream *CAudioEngine::createStreamFromMemory(unsigned char *buffer, int size, bool takeOwnerShip)
 	{
-		int numFactory = m_streamFactorys.size();
+		int numFactory = (int)m_streamFactorys.size();
 		for (int i = numFactory - 1; i >= 0; i--)
 		{
 			IStream* s = m_streamFactorys[i]->createStreamFromMemory(buffer, size, takeOwnerShip);
@@ -242,7 +242,7 @@ namespace SkylichtAudio
 
 	IStream *CAudioEngine::createStreamFromFile(const char *fileName)
 	{
-		int numFactory = m_streamFactorys.size();
+		int numFactory = (int)m_streamFactorys.size();
 		for (int i = numFactory - 1; i >= 0; i--)
 		{
 			IStream* s = m_streamFactorys[i]->createStreamFromFile(fileName);

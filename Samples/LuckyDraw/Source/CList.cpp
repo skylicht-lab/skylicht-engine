@@ -83,7 +83,7 @@ bool CList::OnEvent(const SEvent& gameEvent)
 		{
 			m_mousePress = true;
 			m_drag = 0.0f;
-			m_mousePosY = gameEvent.MouseInput.Y;
+			m_mousePosY = (float)gameEvent.MouseInput.Y;
 			m_mousePressPosY = m_mousePosY;
 			m_sendSelectEvent = false;
 			return true;
@@ -91,9 +91,9 @@ bool CList::OnEvent(const SEvent& gameEvent)
 		else if (gameEvent.MouseInput.Event == EMIE_MOUSE_MOVED && m_mousePress)
 		{
 			// drag
-			m_drag = gameEvent.MouseInput.Y - m_mousePressPosY;
-			m_dragSpeed = gameEvent.MouseInput.Y - m_mousePosY;
-			m_mousePosY = gameEvent.MouseInput.Y;
+			m_drag = (float)(gameEvent.MouseInput.Y - m_mousePressPosY);
+			m_dragSpeed = (float)(gameEvent.MouseInput.Y - m_mousePosY);
+			m_mousePosY = (float)gameEvent.MouseInput.Y;
 
 			// do not send select event
 			if (fabsf(m_drag) > 30)
@@ -165,7 +165,7 @@ void CList::updateItemMovement()
 	{
 		itemHeight = m_items[0]->getHeight();
 
-		int numRow = m_element->getHeight() / itemHeight;
+		int numRow = (int)(m_element->getHeight() / itemHeight);
 
 		m_maxOffset = itemHeight * 0.5f;
 
@@ -224,7 +224,7 @@ void CList::calcTargetOffset()
 	{
 		float itemHeight = (float)m_items[0]->getHeight();
 
-		int selectItem = m_offset / itemHeight;
+		int selectItem = (int)(m_offset / itemHeight);
 
 		if (-m_offset - (-selectItem * itemHeight) > itemHeight * 0.5f)
 			selectItem--;

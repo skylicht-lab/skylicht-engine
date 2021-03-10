@@ -153,7 +153,7 @@ namespace Skylicht
 			core::array<core::vector3df> normals;
 			core::array<core::vector3df> tangents;
 			core::array<core::vector3df> binormals;
-			for (u32 i = 0, n = probes.size(); i < n; i++)
+			for (u32 i = 0, n = (u32)probes.size(); i < n; i++)
 			{
 				CLightProbe* probe = probes[i];
 
@@ -183,7 +183,7 @@ namespace Skylicht
 				(int)probes.size());
 
 			// apply sh
-			for (u32 i = 0, n = probes.size(); i < n; i++)
+			for (u32 i = 0, n = (u32)probes.size(); i < n; i++)
 				probes[i]->setSH(out[i]);
 		}
 

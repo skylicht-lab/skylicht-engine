@@ -134,7 +134,7 @@ void CViewBakeLightmap::onUpdate()
 		numLightBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
 
 	// bake lightmap
-	u32 numMB = m_neshBuffers.size();
+	u32 numMB = (u32)m_neshBuffers.size();
 	if (m_currentMeshBuffer < numMB && numLightBounce > 0)
 	{
 		if (m_lightBounce == 0)
@@ -221,7 +221,7 @@ void CViewBakeLightmap::onUpdate()
 void CViewBakeLightmap::copyColorBufferToMeshBuffer()
 {
 	// copy baked color buffer to mesh buffer
-	for (u32 i = 0, n = m_neshBuffers.size(); i < n; i++)
+	for (u32 i = 0, n = (u32)m_neshBuffers.size(); i < n; i++)
 	{
 		IMeshBuffer *mb = m_neshBuffers[i];
 		SColorBuffer *cb = m_colorBuffers[i];

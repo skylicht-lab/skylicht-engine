@@ -175,7 +175,7 @@ namespace Skylicht
 
 	void CGameObject::updateObject()
 	{
-		int numComponents = m_components.size();
+		int numComponents = (int)m_components.size();
 		CComponentSystem** components = m_components.data();
 
 		for (int i = 0; i < numComponents; i++)
@@ -187,7 +187,7 @@ namespace Skylicht
 
 	void CGameObject::postUpdateObject()
 	{
-		int numComponents = m_components.size();
+		int numComponents = (int)m_components.size();
 		CComponentSystem** components = m_components.data();
 
 		for (int i = 0; i < numComponents; i++)
@@ -199,7 +199,7 @@ namespace Skylicht
 
 	void CGameObject::endUpdate()
 	{
-		int numComponents = m_components.size();
+		int numComponents = (int)m_components.size();
 		CComponentSystem** components = m_components.data();
 
 		for (int i = 0; i < numComponents; i++)

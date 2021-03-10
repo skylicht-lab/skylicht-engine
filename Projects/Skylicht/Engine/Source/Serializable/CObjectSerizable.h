@@ -49,7 +49,7 @@ namespace Skylicht
 
 		inline u32 getNumProperty()
 		{
-			return m_value.size();
+			return (u32)m_value.size();
 		}
 
 		inline CValueProperty* getPropertyID(int i)

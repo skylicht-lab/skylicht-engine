@@ -24,56 +24,45 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
+#include "GUI/GUI.h"
 #include "AssetManager/CAssetManager.h"
-#include "CTreeFSController.h"
-#include "CListFSController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceAssets : public CSpace
+		class CTreeFSController
 		{
 		protected:
 			GUI::CTreeControl* m_treeFS;
 
-			CTreeFSController* m_treeFSController;
-
-			GUI::CListBox* m_listFS;
-
-			CListFSController* m_listFSController;
-
-			GUI::CTextBox* m_search;
-
-			GUI::CMenuItem* m_menuOpen;
-
-			GUI::CMenu* m_contextMenu;
-
-			GUI::CBase* m_contextMenuOwner;
-
-			GUI::CBase* m_selectedItem;
-
-			std::string m_selectedPath;
-
 			CAssetManager* m_assetManager;
 
+			GUI::CTreeNode* m_nodeAssets;
+
+			GUI::CTreeNode* m_renameNode;
+
 		public:
-			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
+			CTreeFSController(GUI::CTreeControl* treeFS);
 
-			virtual ~CSpaceAssets();
+			virtual ~CTreeFSController();
 
-			void OnTreeContextMenu(GUI::CBase* row);
+			void OnExpand(GUI::CBase* node);
 
-			void OnListContextMenu(GUI::CBase* row);
+			void OnCollapse(GUI::CBase* node);
 
-			void OnCommand(GUI::CBase* item);
+			void OnSelected(GUI::CBase* node);
 
-			void OnCopyPath(GUI::CBase* item);
+			void OnKeyPress(GUI::CBase* control, int key, bool press);
 
-		protected:
+			void OnRename(GUI::CBase* control);
 
+			void OnCancelRename(GUI::CBase* control);
+
+		public:
+			void expand(const std::string& folder);
+
+			void add(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
 		};
 	}
 }
