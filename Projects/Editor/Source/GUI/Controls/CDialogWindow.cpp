@@ -80,13 +80,16 @@ namespace Skylicht
 						m_blinkTime = 0.0f;
 					}
 
-					if (m_blink % 2 == 0)
+					if (m_title != NULL)
 					{
-						m_title->setColor(CThemeConfig::DefaultTextColor);
-					}
-					else
-					{
-						m_title->setColor(CThemeConfig::DisableTextColor);
+						if (m_blink % 2 == 0)
+						{
+							m_title->setColor(CThemeConfig::DefaultTextColor);
+						}
+						else
+						{
+							m_title->setColor(CThemeConfig::DisableTextColor);
+						}
 					}
 				}
 			}
