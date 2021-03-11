@@ -32,8 +32,9 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CMessageBox::CMessageBox(CBase* base) :
-				CDialogWindow(base, 0.0f, 0.0f, 465.0f, 120.0f)
+			CMessageBox::CMessageBox(CBase* base, EMessageType type) :
+				CDialogWindow(base, 0.0f, 0.0f, 465.0f, 120.0f),
+				m_type(type)
 			{
 				m_titleBar->remove();
 				m_titleBar = NULL;
@@ -61,17 +62,18 @@ namespace Skylicht
 				content->setMargin(SPadding(10.0f, 20.0f, 15.0f, 0.0f));
 				content->setTransparentMouseInput(true);
 
-				m_info1 = new CLabel(content);
-				m_info1->dock(EPosition::Top);
-				m_info1->setString("Message Content");
-				m_info1->sizeToContents();
+				m_message1 = new CLabel(content);
+				m_message1->dock(EPosition::Top);
+				m_message1->setWrapMultiline(true);
+				m_message1->setString(" ");
+				m_message1->setHeight(20.0f);
 
-				m_info2 = new CLabel(content);
-				m_info2->dock(EPosition::Top);
-				m_info2->setMargin(SPadding(0.0f, 5.0f, 0.0f, 0.0f));
-				m_info2->setString("Target");
-				m_info2->setColor(CThemeConfig::ButtonTextDisableColor);
-				m_info2->sizeToContents();
+				m_message2 = new CLabel(content);
+				m_message2->dock(EPosition::Top);
+				m_message2->setMargin(SPadding(0.0f, 5.0f, 0.0f, 0.0f));
+				m_message2->setColor(CThemeConfig::ButtonTextDisableColor);
+				m_message2->setString(" ");
+				m_message2->setHeight(20.0f);
 
 				CBase* bottom = new CBase(content);
 				bottom->dock(EPosition::Top);
@@ -79,35 +81,139 @@ namespace Skylicht
 				bottom->setHeight(20.0f);
 				bottom->setTransparentMouseInput(true);
 
-				m_cancel = new CButton(bottom);
-				m_cancel->setWidth(110.0f);
-				m_cancel->setLabel(L"Cancel");
-				m_cancel->dock(EPosition::Right);
-				m_cancel->setTextAlignment(ETextAlign::TextCenter);
-				m_cancel->OnPress = [dialog = this](CBase* control) {
+				m_button1 = new CButton(bottom);
+				m_button1->setWidth(110.0f);
+				m_button1->dock(EPosition::Right);
+				m_button1->setTextAlignment(ETextAlign::TextCenter);
+				m_button1->OnPress = [dialog = this](CBase* control) {
+					CMessageBox::EMessageType type = dialog->getType();
+					switch (type)
+					{
+					case CMessageBox::OK:
+						if (dialog->OnOK != nullptr)
+							dialog->OnOK(dialog);
+						break;
+					case CMessageBox::OKCancel:
+						if (dialog->OnCancel != nullptr)
+							dialog->OnCancel(dialog);
+						break;
+					case CMessageBox::YesNo:
+						if (dialog->OnNo != nullptr)
+							dialog->OnNo(dialog);
+						break;
+					case CMessageBox::YesNoCancel:
+						if (dialog->OnCancel != nullptr)
+							dialog->OnCancel(dialog);
+						break;
+					default:
+						break;
+					}
 					dialog->onCloseButtonPress(control);
 				};
 
-				m_no = new CButton(bottom);
-				m_no->setWidth(110.0f);
-				m_no->setLabel(L"No");
-				m_no->dock(EPosition::Right);
-				m_no->setTextAlignment(ETextAlign::TextCenter);
-				m_no->setMargin(SPadding(0.0f, 0.0f, 10.0f, 0.0f));
+				m_button2 = new CButton(bottom);
+				m_button2->setWidth(110.0f);
+				m_button2->dock(EPosition::Right);
+				m_button2->setTextAlignment(ETextAlign::TextCenter);
+				m_button2->setMargin(SPadding(0.0f, 0.0f, 10.0f, 0.0f));
+				m_button2->OnPress = [dialog = this](CBase* control) {
+					CMessageBox::EMessageType type = dialog->getType();
+					switch (type)
+					{
+					case CMessageBox::OK:
+						break;
+					case CMessageBox::OKCancel:
+						if (dialog->OnOK != nullptr)
+							dialog->OnOK(dialog);
+						break;
+					case CMessageBox::YesNo:
+						if (dialog->OnYes != nullptr)
+							dialog->OnYes(dialog);
+						break;
+					case CMessageBox::YesNoCancel:
+						if (dialog->OnNo != nullptr)
+							dialog->OnNo(dialog);
+						break;
+					default:
+						break;
+					}
+					dialog->onCloseButtonPress(control);
+				};
 
-				m_yes = new CButton(bottom);
-				m_yes->setWidth(110.0f);
-				m_yes->setLabel(L"Yes");
-				m_yes->dock(EPosition::Right);
-				m_yes->setTextAlignment(ETextAlign::TextCenter);
-				m_yes->setMargin(SPadding(0.0f, 0.0f, 10.0f, 0.0f));
+				m_button3 = new CButton(bottom);
+				m_button3->setWidth(110.0f);
+				m_button3->dock(EPosition::Right);
+				m_button3->setTextAlignment(ETextAlign::TextCenter);
+				m_button3->setMargin(SPadding(0.0f, 0.0f, 10.0f, 0.0f));
+				m_button3->OnPress = [dialog = this](CBase* control) {
+					CMessageBox::EMessageType type = dialog->getType();
+					switch (type)
+					{
+					case CMessageBox::OK:
+						break;
+					case CMessageBox::OKCancel:
+						break;
+					case CMessageBox::YesNo:
+						break;
+					case CMessageBox::YesNoCancel:
+						if (dialog->OnYes != nullptr)
+							dialog->OnYes(dialog);
+						break;
+					default:
+						break;
+					}
+					dialog->onCloseButtonPress(control);
+				};
 
+				switch (type)
+				{
+				case CMessageBox::OK:
+					m_button1->setLabel(L"OK");
+					m_button2->setHidden(true);
+					m_button3->setHidden(true);
+					break;
+				case CMessageBox::OKCancel:
+					m_button1->setLabel(L"Cancel");
+					m_button2->setLabel(L"OK");
+					m_button3->setHidden(true);
+					break;
+				case CMessageBox::YesNo:
+					m_button1->setLabel(L"No");
+					m_button2->setLabel(L"Yes");
+					m_button3->setHidden(true);
+					break;
+				case CMessageBox::YesNoCancel:
+					m_button1->setLabel(L"Cancel");
+					m_button2->setLabel(L"No");
+					m_button3->setLabel(L"Yes");
+					break;
+				default:
+					break;
+				}
 				setCenterPosition();
 			}
 
 			CMessageBox::~CMessageBox()
 			{
 
+			}
+
+			void CMessageBox::setMessage(const std::wstring& msg, const std::wstring& target)
+			{
+				m_message1->setString(msg);
+				m_message2->setString(target);
+
+				m_message1->sizeToContents();
+				m_message2->sizeToContents();
+			}
+
+			void CMessageBox::setMessage(const std::string& msg, const std::string& target)
+			{
+				m_message1->setString(msg);
+				m_message2->setString(target);
+
+				m_message1->sizeToContents();
+				m_message2->sizeToContents();
 			}
 		}
 	}

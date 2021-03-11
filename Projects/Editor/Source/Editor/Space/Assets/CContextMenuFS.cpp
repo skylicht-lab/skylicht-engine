@@ -110,21 +110,27 @@ namespace Skylicht
 				char path[512] = { 0 };
 				CStringImp::replaceText(path, m_selectedPath.c_str(), "/", "\\");
 				ShellExecuteA(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT);
-#elif defined(__APPLE__)
-				// QProcess::execute("/usr/bin/osascript", { "-e", "tell application \"Finder\" to reveal POSIX file \"" + path + "\"" });
-				// QProcess::execute("/usr/bin/osascript", { "-e", "tell application \"Finder\" to activate" });
-
+#elif defined(__APPLE__)				
 				char cmd[1024] = { 0 };
-				sprintf(cmd, "osascript -e 'tell app \"Finder\" to open POSIX file \"%s\"'", m_selectedPath.c_str());
+				sprintf(cmd, "osascript -e 'tell app \"Finder\" to open POSIX file \"%s\"'", m_selectedPath.c_str()); // to reveal
+				system(cmd);
+
+				sprintf(cmd, "osascript -e 'tell app \"Finder\" to activate'");
 				system(cmd);
 #endif
 			}
 			else if (label == L"Delete")
 			{
-				// m_msgBox = new GUI::CMessageBox(m_canvas);
-
-				if (m_assetManager->deleteAsset(m_selectedPath.c_str()))
-					m_listFSController->refresh();
+				std::string shortPath = m_assetManager->getShortPath(m_selectedPath.c_str());
+				m_msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNo);
+				m_msgBox->setMessage("Delete selected asset?\nYou can't undo this action", shortPath.c_str());
+				m_msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+				m_msgBox->OnYes = [asset = m_assetManager, path = m_selectedPath, fsController = m_listFSController](GUI::CBase* dialog) {
+					if (asset->deleteAsset(path.c_str()))
+					{
+						fsController->refresh();
+					}
+				};
 			}
 			else if (label == L"Rename")
 			{
