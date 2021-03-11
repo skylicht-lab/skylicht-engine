@@ -300,5 +300,21 @@ namespace Skylicht
 		{
 			return true;
 		}
+
+		SFileNode* CAssetManager::getFileNodeByPath(const char* path)
+		{
+			std::map<std::string, SFileNode*>::iterator i = m_pathToFile.find(path);
+			if (i == m_pathToFile.end())
+				return NULL;
+			return i->second;
+		}
+
+		SFileNode* CAssetManager::getFileNodeByGUID(const char* GUID)
+		{
+			std::map<std::string, SFileNode*>::iterator i = m_guidToFile.find(GUID);
+			if (i == m_guidToFile.end())
+				return NULL;
+			return i->second;
+		}
 	}
 }
