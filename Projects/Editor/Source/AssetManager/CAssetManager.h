@@ -131,6 +131,10 @@ namespace Skylicht
 
 			std::string getShortPath(const char* folder);
 
+			SFileNode* getFileNodeByPath(const char* path);
+
+			SFileNode* getFileNodeByGUID(const char* GUID);
+
 		public:
 
 			bool deleteAsset(const char* path);

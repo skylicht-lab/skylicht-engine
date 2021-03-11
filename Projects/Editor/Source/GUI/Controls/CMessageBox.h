@@ -35,20 +35,66 @@ namespace Skylicht
 		{
 			class CMessageBox : public CDialogWindow
 			{
+			public:
+				enum EMessageType
+				{
+					OK = 0,
+					OKCancel,
+					YesNo,
+					YesNoCancel,
+				};
+
 			protected:
 				CIcon* m_msgIcon;
 
-				CLabel* m_info1;
-				CLabel* m_info2;
+				CLabel* m_message1;
+				CLabel* m_message2;
 
-				CButton* m_yes;
-				CButton* m_no;
-				CButton* m_cancel;
+				CButton* m_button3;
+				CButton* m_button2;
+				CButton* m_button1;
+
+				EMessageType m_type;
 
 			public:
-				CMessageBox(CBase* base);
+				Listener OnCancel;
+				Listener OnOK;
+				Listener OnYes;
+				Listener OnNo;
+
+			public:
+				CMessageBox(CBase* base, EMessageType type);
 
 				virtual ~CMessageBox();
+
+				void setMessage(const std::wstring& msg, const std::wstring& target);
+
+				void setMessage(const std::string& msg, const std::string& target);
+
+				inline CButton* getButton1()
+				{
+					return m_button1;
+				}
+
+				inline CButton* getButton2()
+				{
+					return m_button2;
+				}
+
+				inline CButton* getButton3()
+				{
+					return m_button3;
+				}
+
+				inline CIcon* getMessageIcon()
+				{
+					return m_msgIcon;
+				}
+
+				inline EMessageType getType()
+				{
+					return m_type;
+				}
 			};
 		}
 	}
