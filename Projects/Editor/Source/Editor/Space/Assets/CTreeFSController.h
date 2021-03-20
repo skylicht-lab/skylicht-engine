@@ -31,6 +31,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		class CListFSController;
+
 		class CTreeFSController
 		{
 		protected:
@@ -41,6 +43,8 @@ namespace Skylicht
 			GUI::CTreeNode* m_nodeAssets;
 
 			GUI::CTreeNode* m_renameNode;
+
+			CListFSController* m_listController;
 
 		public:
 			CTreeFSController(GUI::CTreeControl* treeFS);
@@ -58,6 +62,11 @@ namespace Skylicht
 			void OnRename(GUI::CBase* control);
 
 			void OnCancelRename(GUI::CBase* control);
+
+			void setListController(CListFSController* listController)
+			{
+				m_listController = listController;
+			}
 
 		public:
 			void expand(const std::string& folder);

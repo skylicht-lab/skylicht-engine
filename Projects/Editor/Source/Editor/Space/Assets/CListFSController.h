@@ -26,12 +26,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GUI/GUI.h"
 #include "AssetManager/CAssetManager.h"
-#include "CTreeFSController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
+		class CTreeFSController;
+
 		class CListFSController
 		{
 		protected:
@@ -46,7 +47,7 @@ namespace Skylicht
 			std::string m_currentFolder;
 
 		public:
-			CListFSController(GUI::CListBox* list, CTreeFSController* treeController);
+			CListFSController(GUI::CListBox* list);
 
 			virtual ~CListFSController();
 
@@ -60,7 +61,12 @@ namespace Skylicht
 
 			void refresh();
 
-		protected:
+			void setTreeController(CTreeFSController* treeController)
+			{
+				m_treeController = treeController;
+			}
+
+		public:
 
 			void add(const std::string& currentFolder, std::vector<SFileInfo>& files);
 		};

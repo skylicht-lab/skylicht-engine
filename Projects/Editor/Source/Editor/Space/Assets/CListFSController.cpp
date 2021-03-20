@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CListFSController.h"
+#include "CTreeFSController.h"
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
@@ -31,9 +32,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CListFSController::CListFSController(GUI::CListBox* list, CTreeFSController* treeController) :
+		CListFSController::CListFSController(GUI::CListBox* list) :
 			m_renameItem(NULL),
-			m_treeController(treeController)
+			m_treeController(NULL)
 		{
 			m_assetManager = CAssetManager::getInstance();
 
@@ -137,7 +138,8 @@ namespace Skylicht
 
 					add(fullPath, files);
 
-					m_treeController->expand(fullPath);
+					if (m_treeController != NULL)
+						m_treeController->expand(fullPath);
 				}
 				else
 				{

@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTreeFSController.h"
+#include "CListFSController.h"
 
 #include "Utils/CStringImp.h"
 
@@ -34,7 +35,8 @@ namespace Skylicht
 		CTreeFSController::CTreeFSController(GUI::CTreeControl* treeFS) :
 			m_treeFS(treeFS),
 			m_renameNode(NULL),
-			m_nodeAssets(NULL)
+			m_nodeAssets(NULL),
+			m_listController(NULL)
 		{
 			m_assetManager = CAssetManager::getInstance();
 
@@ -121,7 +123,8 @@ namespace Skylicht
 				std::vector<SFileInfo> files;
 				m_assetManager->getFolder(fullPath.c_str(), files);
 
-				// addListFolder(fullPath, files);
+				if (m_listController != NULL)
+					m_listController->add(fullPath, files);
 			}
 		}
 
@@ -156,7 +159,9 @@ namespace Skylicht
 
 				if (node != NULL)
 				{
+					m_nodeAssets->deselectAll(false);
 					node->forceLayout();
+					node->setSelected(true, false);
 					m_treeFS->getScrollControl()->scrollToItem(node);
 				}
 			}
