@@ -52,7 +52,10 @@ namespace Skylicht
 			m_treeFSController = new CTreeFSController(m_treeFS);
 
 			m_listFS = new GUI::CListBox(spliter);
-			m_listFSController = new CListFSController(m_listFS, m_treeFSController);
+			m_listFSController = new CListFSController(m_listFS);
+
+			m_listFSController->setTreeController(m_treeFSController);
+			m_treeFSController->setListController(m_listFSController);
 
 			spliter->setControl(m_treeFS, 0, 0);
 			spliter->setControl(m_listFS, 0, 1);

@@ -423,7 +423,7 @@ namespace Skylicht
 				return NULL;
 			}
 
-			void CTreeNode::setSelected(bool b)
+			void CTreeNode::setSelected(bool b, bool callEvent)
 			{
 				if (m_selected == b)
 					return;
@@ -433,33 +433,36 @@ namespace Skylicht
 				if (m_row != NULL)
 					m_row->setToggle(b);
 
-				if (b == true)
+				if (callEvent == true)
 				{
-					if (OnSelected != nullptr)
-						OnSelected(this);
-				}
-				else
-				{
-					if (OnUnselected != nullptr)
-						OnUnselected(this);
-				}
+					if (b == true)
+					{
+						if (OnSelected != nullptr)
+							OnSelected(this);
+					}
+					else
+					{
+						if (OnUnselected != nullptr)
+							OnUnselected(this);
+					}
 
-				if (OnSelectChange != nullptr)
-					OnSelectChange(this);
+					if (OnSelectChange != nullptr)
+						OnSelectChange(this);
+				}
 
 				invalidate();
 			}
 
-			void CTreeNode::deselectAll()
+			void CTreeNode::deselectAll(bool callEvent)
 			{
-				setSelected(false);
+				setSelected(false, callEvent);
 
 				for (CBase* c : m_innerPanel->Children)
 				{
 					CTreeNode* node = dynamic_cast<CTreeNode*>(c);
 					if (node)
 					{
-						node->deselectAll();
+						node->deselectAll(callEvent);
 					}
 				}
 			}
