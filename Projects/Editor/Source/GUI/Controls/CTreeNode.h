@@ -160,9 +160,9 @@ namespace Skylicht
 
 				CTreeNode* selectPrevChild();
 
-				void setSelected(bool b);
+				void setSelected(bool b, bool callEvent = true);
 
-				virtual void deselectAll();
+				virtual void deselectAll(bool callEvent = true);
 
 				bool hoverOnChild();
 
