@@ -27,8 +27,8 @@
 *.app
 
 # Build folder
-./Bin/
-./PrjMac/
-./PrjVisualStudio/
-./PrjUWP/
-./PrjEmscripten/
+/Bin/
+/PrjMac/
+/PrjVisualStudio/
+/PrjUWP/
+/PrjEmscripten/
