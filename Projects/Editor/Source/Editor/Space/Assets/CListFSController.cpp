@@ -140,6 +140,7 @@ namespace Skylicht
 
 			if (m_assetManager->renameAsset(path.c_str(), newName.c_str()))
 			{
+				m_renameItem = NULL;
 				refresh();
 				scrollAndSelectPath(newPath.c_str());
 			}

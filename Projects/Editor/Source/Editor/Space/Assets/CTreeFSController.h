@@ -46,6 +46,8 @@ namespace Skylicht
 
 			GUI::CTreeNode* m_renameNode;
 
+			std::wstring m_renameRevert;
+
 			CListFSController* m_listController;
 
 			GUI::CMessageBox* m_msgBox;
@@ -81,6 +83,8 @@ namespace Skylicht
 			void expand(const std::string& folder);
 
 			void add(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
+
+			void refresh(GUI::CTreeNode* node);
 		};
 	}
 }
