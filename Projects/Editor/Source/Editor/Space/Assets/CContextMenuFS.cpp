@@ -32,9 +32,14 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CContextMenuFS::CContextMenuFS(GUI::CCanvas* canvas, GUI::CTreeControl* tree, GUI::CListBox* list, CListFSController* listFSController) :
+		CContextMenuFS::CContextMenuFS(GUI::CCanvas* canvas,
+			GUI::CTreeControl* tree,
+			CTreeFSController* treeFSController,
+			GUI::CListBox* list,
+			CListFSController* listFSController) :
 			m_canvas(canvas),
 			m_treeFS(tree),
+			m_treeFSController(treeFSController),
 			m_listFS(list),
 			m_listFSController(listFSController),
 			m_msgBox(NULL)
@@ -44,12 +49,12 @@ namespace Skylicht
 			m_contextMenu->OnCommand = BIND_LISTENER(&CContextMenuFS::OnCommand, this);
 
 			m_open = m_contextMenu->addItem(L"Open");
-			m_contextMenu->addItem(L"Show in Explorer");
+			m_showExplorer = m_contextMenu->addItem(L"Show in Explorer");
 			m_contextMenu->addSeparator();
-			m_contextMenu->addItem(L"Delete", GUI::ESystemIcon::Trash);
-			m_contextMenu->addItem(L"Rename", L"F2");
-			m_contextMenu->addItem(L"Copy path", GUI::ESystemIcon::Copy, L"SHIFT + C");
-			m_contextMenu->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"CTRL + D");
+			m_delete = m_contextMenu->addItem(L"Delete", GUI::ESystemIcon::Trash);
+			m_rename = m_contextMenu->addItem(L"Rename", L"F2");
+			m_copyPath = m_contextMenu->addItem(L"Copy path", GUI::ESystemIcon::Copy, L"SHIFT + C");
+			m_duplicate = m_contextMenu->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"CTRL + D");
 
 			m_treeFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
 			m_listFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
@@ -76,7 +81,22 @@ namespace Skylicht
 					m_ownerControl = node->getRoot();
 					m_selected = node;
 					m_selectedPath = node->getTagString();
+
 					m_open->setHidden(true);
+
+					if (m_selectedPath == m_assetManager->getAssetFolder())
+					{
+						m_delete->setHidden(true);
+						m_rename->setHidden(true);
+						m_duplicate->setHidden(true);
+					}
+					else
+					{
+						m_delete->setHidden(false);
+						m_rename->setHidden(false);
+						m_duplicate->setHidden(false);
+					}
+
 					m_contextMenu->open(GUI::CInput::getInput()->getMousePosition());
 				}
 			}
@@ -90,7 +110,17 @@ namespace Skylicht
 				m_ownerControl = rowItem->getListBox();
 				m_selected = rowItem;
 				m_selectedPath = rowItem->getTagString();
+
 				m_open->setHidden(false);
+				m_delete->setHidden(false);
+				m_rename->setHidden(false);
+				m_copyPath->setHidden(false);
+
+				if (m_assetManager->isFolder(m_selectedPath.c_str()))
+					m_duplicate->setHidden(true);
+				else
+					m_duplicate->setHidden(false);
+
 				m_contextMenu->open(GUI::CInput::getInput()->getMousePosition());
 			}
 		}
@@ -125,16 +155,31 @@ namespace Skylicht
 				m_msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNo);
 				m_msgBox->setMessage("Delete selected asset?\nYou can't undo this action", shortPath.c_str());
 				m_msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
-				m_msgBox->OnYes = [asset = m_assetManager, path = m_selectedPath, fsController = m_listFSController](GUI::CBase* dialog) {
+				m_msgBox->OnYes = [asset = m_assetManager, path = m_selectedPath, listController = m_listFSController, treeController = m_treeFSController](GUI::CBase* dialog)
+				{
 					if (asset->deleteAsset(path.c_str()))
 					{
-						fsController->refresh();
+						listController->removePath(path.c_str());
+						treeController->removePath(path.c_str());
 					}
 				};
 			}
 			else if (label == L"Rename")
 			{
-
+				if (m_selected != NULL)
+				{
+					GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(m_selected);
+					if (rowItem != NULL)
+					{
+						m_listFSController->rename(rowItem);
+					}
+					else
+					{
+						GUI::CTreeNode* treeItem = dynamic_cast<GUI::CTreeNode*>(m_selected);
+						if (treeItem != NULL)
+							m_treeFSController->rename(treeItem);
+					}
+				}
 			}
 			else if (label == L"Copy path")
 			{

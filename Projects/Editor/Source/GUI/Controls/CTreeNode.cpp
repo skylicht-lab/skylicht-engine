@@ -154,7 +154,7 @@ namespace Skylicht
 				for (CBase* c : m_innerPanel->Children)
 				{
 					CTreeNode* n = dynamic_cast<CTreeNode*>(c);
-					if (n->getText() == label)
+					if (n != NULL && n->getText() == label)
 						return n;
 				}
 
@@ -164,6 +164,20 @@ namespace Skylicht
 			void CTreeNode::removeAllTreeNode()
 			{
 				m_innerPanel->removeAllChildren();
+			}
+
+			std::list<CTreeNode*> CTreeNode::getChildNodes()
+			{
+				std::list<CTreeNode*> result;
+
+				for (CBase* c : m_innerPanel->Children)
+				{
+					CTreeNode* n = dynamic_cast<CTreeNode*>(c);
+					if (n != NULL)
+						result.push_back(n);
+				}
+
+				return result;
 			}
 
 			void CTreeNode::setText(const std::wstring& text)

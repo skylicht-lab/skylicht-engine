@@ -66,6 +66,10 @@ namespace Skylicht
 				m_treeController = treeController;
 			}
 
+			void rename(GUI::CListRowItem* node);
+
+			void removePath(const char* path);
+
 		public:
 
 			void add(const std::string& currentFolder, std::vector<SFileInfo>& files);

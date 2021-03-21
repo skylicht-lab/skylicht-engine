@@ -54,6 +54,8 @@ namespace Skylicht
 
 				CListRowItem* getSelected();
 
+				std::list<CListRowItem*> getAllItems();
+
 				void unSelectAll();
 
 				void removeAllItem();
