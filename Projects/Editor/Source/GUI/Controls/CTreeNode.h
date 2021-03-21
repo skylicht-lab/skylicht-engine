@@ -99,6 +99,8 @@ namespace Skylicht
 
 				void removeAllTreeNode();
 
+				std::list<CTreeNode*> getChildNodes();
+
 				void setText(const std::wstring& text);
 
 				const std::wstring& getText();

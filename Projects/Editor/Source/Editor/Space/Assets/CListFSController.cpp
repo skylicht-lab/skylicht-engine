@@ -65,15 +65,34 @@ namespace Skylicht
 
 			if (key == GUI::KEY_F2)
 			{
-				GUI::CListRowItem* node = list->getSelected();
-				if (node != NULL)
-				{
-					m_renameItem = node;
+				rename(list->getSelected());
 
-					node->getTextEditHelper()->beginEdit(
-						BIND_LISTENER(&CListFSController::OnRename, this),
-						BIND_LISTENER(&CListFSController::OnCancelRename, this)
-					);
+			}
+		}
+
+		void CListFSController::rename(GUI::CListRowItem* node)
+		{
+			if (node != NULL)
+			{
+				m_renameItem = node;
+
+				node->getTextEditHelper()->beginEdit(
+					BIND_LISTENER(&CListFSController::OnRename, this),
+					BIND_LISTENER(&CListFSController::OnCancelRename, this)
+				);
+			}
+		}
+
+		void CListFSController::removePath(const char* path)
+		{
+			std::list<GUI::CListRowItem*> items = m_listFS->getAllItems();
+			for (GUI::CListRowItem* item : items)
+			{
+				const std::string& tagPath = item->getTagString();
+				if (tagPath == path)
+				{
+					item->remove();
+					return;
 				}
 			}
 		}

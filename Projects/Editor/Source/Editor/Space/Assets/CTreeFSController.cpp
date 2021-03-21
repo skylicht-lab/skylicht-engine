@@ -175,17 +175,48 @@ namespace Skylicht
 
 			if (key == GUI::KEY_F2)
 			{
-				GUI::CTreeNode* node = tree->getChildSelected();
-				if (node != NULL)
-				{
-					m_renameNode = node;
+				rename(tree->getChildSelected());
+			}
+		}
 
-					node->getTextEditHelper()->beginEdit(
-						BIND_LISTENER(&CTreeFSController::OnRename, this),
-						BIND_LISTENER(&CTreeFSController::OnCancelRename, this)
-					);
+		void CTreeFSController::rename(GUI::CTreeNode* node)
+		{
+			if (node != NULL)
+			{
+				m_renameNode = node;
+
+				node->getTextEditHelper()->beginEdit(
+					BIND_LISTENER(&CTreeFSController::OnRename, this),
+					BIND_LISTENER(&CTreeFSController::OnCancelRename, this)
+				);
+			}
+		}
+
+		void CTreeFSController::removePath(const char* path)
+		{
+			removePath(m_treeFS, path);
+		}
+
+		bool CTreeFSController::removePath(GUI::CTreeNode* node, const char* path)
+		{
+			std::list<GUI::CTreeNode*> childNodes = node->getChildNodes();
+			for (GUI::CTreeNode* node : childNodes)
+			{
+				const std::string& tagPath = node->getTagString();
+				if (tagPath == path)
+				{
+					node->remove();
+					return true;
+				}
+
+				if (node->isExpand())
+				{
+					if (removePath(node, path))
+						return true;
 				}
 			}
+
+			return false;
 		}
 
 		void CTreeFSController::OnRename(GUI::CBase* control)

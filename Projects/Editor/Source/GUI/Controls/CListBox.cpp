@@ -93,6 +93,20 @@ namespace Skylicht
 				return NULL;
 			}
 
+			std::list<CListRowItem*> CListBox::getAllItems()
+			{
+				std::list<CListRowItem*> result;
+				for (CBase* child : m_innerPanel->Children)
+				{
+					CListRowItem* item = dynamic_cast<CListRowItem*>(child);
+					if (item)
+					{
+						result.push_back(item);
+					}
+				}
+				return result;
+			}
+
 			CListRowItem* CListBox::getItemByTagValue(int value)
 			{
 				for (CBase* child : m_innerPanel->Children)
