@@ -57,7 +57,7 @@ namespace Skylicht
 					return m_textBox;
 				}
 
-				void beginEdit(CBase::Listener onCancel, CBase::Listener onEndEdit);
+				void beginEdit(CBase::Listener onEndEdit, CBase::Listener onCancel);
 
 				void cancelEdit();
 
@@ -72,6 +72,8 @@ namespace Skylicht
 				void onESC(CBase* textBox);
 
 				void onEnter(CBase* textBox);
+
+				void onLostFocus(CBase* textBox);
 			};
 		}
 	}

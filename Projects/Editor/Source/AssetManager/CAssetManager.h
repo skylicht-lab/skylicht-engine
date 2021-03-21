@@ -131,6 +131,8 @@ namespace Skylicht
 
 			bool isFolder(const char* folder);
 
+			bool isExist(const char* path);
+
 			std::string getShortPath(const char* folder);
 
 			SFileNode* getFileNodeByPath(const char* path);
@@ -140,6 +142,8 @@ namespace Skylicht
 		public:
 
 			bool deleteAsset(const char* path);
+
+			bool renameAsset(const char* path, const char* name);
 
 		protected:
 

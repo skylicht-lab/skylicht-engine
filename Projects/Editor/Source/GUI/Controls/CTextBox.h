@@ -52,6 +52,8 @@ namespace Skylicht
 
 				SGUIColor m_textBoxColor;
 
+				bool m_onCharEvent;
+
 			public:
 				CTextBox(CBase* base);
 
@@ -109,6 +111,11 @@ namespace Skylicht
 				inline void setStringHint(const std::wstring& string)
 				{
 					m_textHint->setString(string);
+				}
+
+				inline bool isOnCharEvent()
+				{
+					return m_onCharEvent;
 				}
 
 				void setEditable(bool b);

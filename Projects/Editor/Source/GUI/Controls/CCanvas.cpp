@@ -275,7 +275,7 @@ namespace Skylicht
 						if (child != NULL)
 						{
 							data += generateTabSpace(tab + 1);
-							data += std::string("<window name='") + getUTF8String(child->getCaption()) + "' " + getRectString(child->getBounds()) + "/>\n";
+							data += std::string("<window name='") + CStringImp::convertUnicodeToUTF8(child->getCaption().c_str()) + "' " + getRectString(child->getBounds()) + "/>\n";
 						}
 
 						++i;
@@ -289,7 +289,7 @@ namespace Skylicht
 					if (window->getCurrentDockTab() == NULL)
 					{
 						data += generateTabSpace(tab);
-						data += std::string("<window name='") + getUTF8String(window->getCaption()) + "' " + getRectString(bound) + "/>\n";
+						data += std::string("<window name='") + CStringImp::convertUnicodeToUTF8(window->getCaption().c_str()) + "' " + getRectString(bound) + "/>\n";
 					}
 				}
 				else
@@ -297,21 +297,6 @@ namespace Skylicht
 					for (CBase* c : base->Children)
 						saveDockState(data, c, tab);
 				}
-			}
-
-			std::string CCanvas::getUTF8String(const std::wstring& s)
-			{
-				int size = CStringImp::getUTF8StringSize(s.c_str());
-
-				char* data = new char[size + 1];
-				memset(data, 0, size + 1);
-
-				CStringImp::convertUnicodeToUTF8(s.c_str(), data);
-
-				std::string result(data);
-
-				delete data;
-				return result;
 			}
 
 			std::string CCanvas::generateTabSpace(int n)
