@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTreeFSController.h"
 #include "CListFSController.h"
-
+#include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
 namespace Skylicht
@@ -186,6 +186,7 @@ namespace Skylicht
 			if (node != NULL)
 			{
 				m_renameNode = node;
+				m_renameRevert = node->getText();
 
 				node->getTextEditHelper()->beginEdit(
 					BIND_LISTENER(&CTreeFSController::OnRename, this),
@@ -223,12 +224,46 @@ namespace Skylicht
 
 		void CTreeFSController::OnRename(GUI::CBase* control)
 		{
+			GUI::CTextBox* textbox = dynamic_cast<GUI::CTextBox*>(control);
+
+			std::wstring newNameW = textbox->getString();
+			std::string newName = CStringImp::convertUnicodeToUTF8(newNameW.c_str());
+
+			const std::string& path = m_renameNode->getTagString();
+			std::string newPath = CPath::getFolderPath(path);
+			newPath += "/";
+			newPath += newName;
+
+			if (m_assetManager->isExist(newPath.c_str()))
+			{
+				m_renameNode->setText(m_renameRevert);
+				m_msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::OK);
+				m_msgBox->setMessage("File or folder with the new name already exists!", newName.c_str());
+				m_msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+				return;
+			}
+
+			if (m_assetManager->renameAsset(path.c_str(), newName.c_str()))
+			{
+				GUI::CTreeNode* parentNode = m_renameNode->getParentNode();
+				m_renameNode = NULL;
+
+				refresh(parentNode);
+				expand(newPath);
+			}
+
 			m_treeFS->focus();
 		}
 
 		void CTreeFSController::OnCancelRename(GUI::CBase* control)
 		{
 			m_treeFS->focus();
+		}
+
+		void CTreeFSController::refresh(GUI::CTreeNode* node)
+		{
+			node->removeAllTreeNode();
+			OnExpand(node);
 		}
 	}
 }
