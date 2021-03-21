@@ -36,9 +36,13 @@ namespace Skylicht
 		class CListFSController
 		{
 		protected:
+			GUI::CCanvas* m_canvas;
+
 			GUI::CListBox* m_listFS;
 
 			GUI::CListRowItem* m_renameItem;
+			
+			std::wstring m_renameRevert;
 
 			CTreeFSController* m_treeController;
 
@@ -46,8 +50,10 @@ namespace Skylicht
 
 			std::string m_currentFolder;
 
+			GUI::CMessageBox* m_msgBox;
+
 		public:
-			CListFSController(GUI::CListBox* list);
+			CListFSController(GUI::CCanvas* canvas, GUI::CListBox* list);
 
 			virtual ~CListFSController();
 
@@ -69,6 +75,8 @@ namespace Skylicht
 			void rename(GUI::CListRowItem* node);
 
 			void removePath(const char* path);
+
+			void scrollAndSelectPath(const char* path);
 
 		public:
 

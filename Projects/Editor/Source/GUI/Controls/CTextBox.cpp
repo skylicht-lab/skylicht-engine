@@ -42,7 +42,8 @@ namespace Skylicht
 				m_press(false),
 				m_editable(true),
 				m_drawTextbox(true),
-				m_textBoxColor(CThemeConfig::TextBoxColor)
+				m_textBoxColor(CThemeConfig::TextBoxColor),
+				m_onCharEvent(false)
 			{
 				setSize(100.0f, 20.0f);
 
@@ -381,8 +382,10 @@ namespace Skylicht
 
 			bool CTextBox::onChar(u32 c)
 			{
+				m_onCharEvent = true;
+
 				if (m_editable)
-				{
+				{					
 					if (c == 27)
 					{
 						// press ESC
@@ -430,6 +433,7 @@ namespace Skylicht
 				if (OnTextChange != nullptr)
 					OnTextChange(this);
 
+				m_onCharEvent = false;
 				return true;
 			}
 

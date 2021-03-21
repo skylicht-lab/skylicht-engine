@@ -91,8 +91,6 @@ namespace Skylicht
 
 				void saveDockState(std::string& data, CBase* base, int tab);
 
-				std::string getUTF8String(const std::wstring& s);
-
 				std::string generateTabSpace(int n);
 
 				std::string getRectString(const SRect& r);

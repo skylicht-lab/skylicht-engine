@@ -32,9 +32,11 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CListFSController::CListFSController(GUI::CListBox* list) :
+		CListFSController::CListFSController(GUI::CCanvas* canvas, GUI::CListBox* list) :
 			m_renameItem(NULL),
-			m_treeController(NULL)
+			m_treeController(NULL),
+			m_canvas(canvas),
+			m_msgBox(NULL)
 		{
 			m_assetManager = CAssetManager::getInstance();
 
@@ -66,7 +68,6 @@ namespace Skylicht
 			if (key == GUI::KEY_F2)
 			{
 				rename(list->getSelected());
-
 			}
 		}
 
@@ -75,6 +76,7 @@ namespace Skylicht
 			if (node != NULL)
 			{
 				m_renameItem = node;
+				m_renameRevert = node->getLabel();
 
 				node->getTextEditHelper()->beginEdit(
 					BIND_LISTENER(&CListFSController::OnRename, this),
@@ -97,8 +99,51 @@ namespace Skylicht
 			}
 		}
 
+		void CListFSController::scrollAndSelectPath(const char* path)
+		{
+			std::list<GUI::CListRowItem*> items = m_listFS->getAllItems();
+			for (GUI::CListRowItem* item : items)
+			{
+				const std::string& tagPath = item->getTagString();
+				if (tagPath == path)
+				{
+					item->setToggle(true);
+
+					m_listFS->invalidate();
+					m_listFS->recurseLayout();
+					m_listFS->scrollToItem(item);
+					return;
+				}
+			}
+		}
+
 		void CListFSController::OnRename(GUI::CBase* control)
 		{
+			GUI::CTextBox* textbox = dynamic_cast<GUI::CTextBox*>(control);
+
+			std::wstring newNameW = textbox->getString();
+			std::string newName = CStringImp::convertUnicodeToUTF8(newNameW.c_str());
+
+			const std::string& path = m_renameItem->getTagString();
+			std::string newPath = CPath::getFolderPath(path);
+			newPath += "/";
+			newPath += newName;
+
+			if (m_assetManager->isExist(newPath.c_str()))
+			{
+				m_renameItem->setLabel(m_renameRevert);
+				m_msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::OK);
+				m_msgBox->setMessage("File or folder with the new name already exists!", newName.c_str());
+				m_msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+				return;
+			}
+
+			if (m_assetManager->renameAsset(path.c_str(), newName.c_str()))
+			{
+				refresh();
+				scrollAndSelectPath(newPath.c_str());
+			}
+
 			m_listFS->focus();
 		}
 

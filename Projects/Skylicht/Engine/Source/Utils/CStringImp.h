@@ -401,7 +401,7 @@ namespace Skylicht
 		}
 
 		template<class T>
-		static bool split(T* lpStrResult, const T* lpStringSearch, const T* lpStrSplit, int *pos)
+		static bool split(T* lpStrResult, const T* lpStringSearch, const T* lpStrSplit, int* pos)
 		{
 			int nLenSearch = CStringImp::length<const T>(lpStringSearch);
 			if (*pos >= nLenSearch)
@@ -449,7 +449,7 @@ namespace Skylicht
 			return true;
 		}
 
-		static int splitString(const char *stringSplit, const char *search, std::vector<std::string>& result)
+		static int splitString(const char* stringSplit, const char* search, std::vector<std::string>& result)
 		{
 			result.clear();
 
@@ -468,7 +468,7 @@ namespace Skylicht
 			return (int)result.size();
 		}
 
-		static int splitString(const wchar_t *stringSplit, const wchar_t *search, std::vector<std::wstring>& result)
+		static int splitString(const wchar_t* stringSplit, const wchar_t* search, std::vector<std::wstring>& result)
 		{
 			result.clear();
 
@@ -500,7 +500,7 @@ namespace Skylicht
 		}
 
 		template<class T>
-		static bool parseToInt(T* lpString, int *result)
+		static bool parseToInt(T* lpString, int* result)
 		{
 			wchar_t lpAString[400];
 			CStringImp::copy<wchar_t, T>(lpAString, lpString);
@@ -512,7 +512,7 @@ namespace Skylicht
 		}
 
 		template<class T>
-		static bool parseToFloat(T* lpString, float *result)
+		static bool parseToFloat(T* lpString, float* result)
 		{
 			wchar_t lpAString[400];
 			CStringImp::copy<wchar_t, T>(lpAString, lpString);
@@ -524,7 +524,7 @@ namespace Skylicht
 		}
 
 		template<class T>
-		static bool parseToUInt(T* lpString, int *result)
+		static bool parseToUInt(T* lpString, int* result)
 		{
 			wchar_t lpAString[400];
 			CStringImp::copy<wchar_t, T>(lpAString, lpString);
@@ -536,7 +536,7 @@ namespace Skylicht
 		}
 
 		template<class T>
-		static bool parseFromHex(T* lpString, int *result)
+		static bool parseFromHex(T* lpString, int* result)
 		{
 			wchar_t lpAString[400];
 			CStringImp::copy<wchar_t, T>(lpAString, lpString);
@@ -548,7 +548,7 @@ namespace Skylicht
 		}
 
 		template<class T>
-		static void toLower(T *lpString)
+		static void toLower(T* lpString)
 		{
 			int i = 0;
 			while (lpString[i] != 0)
@@ -559,7 +559,7 @@ namespace Skylicht
 		}
 
 		template<class T>
-		static void toUpper(T *lpString)
+		static void toUpper(T* lpString)
 		{
 			int i = 0;
 			while (lpString[i] != 0)
@@ -570,7 +570,7 @@ namespace Skylicht
 		}
 
 		template<class T1, class T2>
-		static void getFolderPath(T1 *dstString, T2 *lpString)
+		static void getFolderPath(T1* dstString, T2* lpString)
 		{
 			int i = CStringImp::length<T2>(lpString) - 1;
 			while (i >= 0)
@@ -586,7 +586,7 @@ namespace Skylicht
 		}
 
 		template<class T1, class T2>
-		static void getFileName(T1 *dstString, T2 *lpString)
+		static void getFileName(T1* dstString, T2* lpString)
 		{
 			int i = CStringImp::length<T2>(lpString) - 1;
 			while (i > 0)
@@ -602,7 +602,7 @@ namespace Skylicht
 		}
 
 		template<class T1, class T2>
-		static void getFileNameExt(T1 *dstString, T2 *lpString)
+		static void getFileNameExt(T1* dstString, T2* lpString)
 		{
 			int i = CStringImp::length<T2>(lpString) - 1;
 			while (i > 0)
@@ -618,7 +618,7 @@ namespace Skylicht
 		}
 
 		template<class T1, class T2>
-		static void getFileNameNoExt(T1 *dstString, T2 *lpString)
+		static void getFileNameNoExt(T1* dstString, T2* lpString)
 		{
 			int i = CStringImp::length<T2>(lpString) - 1;
 
@@ -673,7 +673,7 @@ namespace Skylicht
 		}
 
 		template<class T>
-		static void replaceText(T *result, const T *string, const T *search, const T *replace)
+		static void replaceText(T* result, const T* string, const T* search, const T* replace)
 		{
 			int lenSearch = length<const T>(search);
 			int lenReplace = length<const T>(replace);
@@ -703,7 +703,7 @@ namespace Skylicht
 				}
 			}
 		}
-		static wchar_t utf8Char2Unicode(const char *&str)
+		static wchar_t utf8Char2Unicode(const char*& str)
 		{
 			char c = *str++;
 			if ((c & 0x80) == 0)
@@ -742,7 +742,7 @@ namespace Skylicht
 			return result;
 		}
 
-		static unsigned short* getUnicodeString(const wchar_t *src)
+		static unsigned short* getUnicodeString(const wchar_t* src)
 		{
 			static unsigned short s_buffer[2048];
 
@@ -764,7 +764,7 @@ namespace Skylicht
 		{
 			int t = 0;
 
-			const char *pos = src;
+			const char* pos = src;
 
 			while (*pos != 0)
 				dst[t++] = utf8Char2Unicode(pos);
@@ -776,7 +776,7 @@ namespace Skylicht
 		{
 			int t = 0;
 
-			const char *pos = src;
+			const char* pos = src;
 
 			while (*pos != 0)
 			{
@@ -846,7 +846,7 @@ namespace Skylicht
 			return l;
 		}
 
-		static void replaceExt(char *lpPath, const char *lpExt)
+		static void replaceExt(char* lpPath, const char* lpExt)
 		{
 			char fileName[512] = { 0 };
 
@@ -855,7 +855,7 @@ namespace Skylicht
 			CStringImp::cat(lpPath, lpExt);
 		}
 
-		static void replacePathExt(char *lpPath, const char *lpExt)
+		static void replacePathExt(char* lpPath, const char* lpExt)
 		{
 			char fileName[512] = { 0 };
 			char folder[512] = { 0 };
@@ -871,7 +871,7 @@ namespace Skylicht
 			CStringImp::cat(lpPath, lpExt);
 		}
 
-		static int findStringInList(std::vector<std::string>& listString, const char *find)
+		static int findStringInList(std::vector<std::string>& listString, const char* find)
 		{
 			for (int i = 0, n = (int)listString.size(); i < n; i++)
 			{
@@ -881,6 +881,28 @@ namespace Skylicht
 				}
 			}
 			return -1;
+		}
+
+		static std::string convertUnicodeToUTF8(const wchar_t* src)
+		{
+			int size = getUTF8StringSize(src) + 1;
+			char* data = new char[size];
+			memset(data, 0, size);
+			convertUnicodeToUTF8(src, data);
+			std::string ret = data;
+			delete[]data;
+			return ret;
+		}
+
+		static std::wstring convertUTF8ToUnicode(const char* src)
+		{
+			int size = getUnicodeStringSize(src) + 1;
+			wchar_t* data = new wchar_t[size];
+			memset(data, 0, sizeof(wchar_t) * size);
+			convertUTF8ToUnicode(src, data);
+			std::wstring ret = data;
+			delete[]data;
+			return ret;
 		}
 	};
 

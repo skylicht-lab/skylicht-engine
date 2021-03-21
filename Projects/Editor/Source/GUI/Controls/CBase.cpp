@@ -272,7 +272,7 @@ namespace Skylicht
 
 			u32 CBase::numChildren()
 			{
-				return Children.size();
+				return (u32)Children.size();
 			}
 
 			CBase* CBase::getChild(u32 i)

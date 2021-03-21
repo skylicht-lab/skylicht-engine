@@ -293,6 +293,11 @@ namespace Skylicht
 			return fs::is_directory(folder);
 		}
 
+		bool CAssetManager::isExist(const char* path)
+		{
+			return fs::exists(path);
+		}
+
 		std::string CAssetManager::getShortPath(const char* folder)
 		{
 			std::string assetPath = m_assetFolder + "/";
@@ -330,6 +335,43 @@ namespace Skylicht
 			}
 
 			return false;
+		}
+
+		bool CAssetManager::renameAsset(const char* path, const char* name)
+		{
+			std::string shortPath = getShortPath(path);
+			SFileNode* node = getFileNodeByPath(shortPath.c_str());
+			if (node == NULL)
+				return false;
+
+			std::string newPath = CPath::getFolderPath(path);
+			newPath += "/";
+			newPath += name;
+
+			fs::rename(path, newPath.c_str());
+
+			std::string meta = std::string(path) + ".meta";
+			std::string newMeta = newPath + ".meta";
+			fs::rename(meta, newMeta);
+
+			node->FullPath = newPath;
+			node->Path = getShortPath(newPath.c_str());
+
+			m_pathToFile.erase(shortPath);
+			m_pathToFile[node->Path] = node;
+
+			if (shortPath == node->Bundle)
+			{
+				for (SFileNode* f : m_files)
+				{
+					if (f->Bundle == shortPath)
+					{
+						f->Bundle = node->Path;
+					}
+				}
+			}
+
+			return true;
 		}
 
 		SFileNode* CAssetManager::getFileNodeByPath(const char* path)
