@@ -36,6 +36,8 @@ namespace Skylicht
 		class CTreeFSController
 		{
 		protected:
+			GUI::CCanvas* m_canvas;
+
 			GUI::CTreeControl* m_treeFS;
 
 			CAssetManager* m_assetManager;
@@ -46,8 +48,9 @@ namespace Skylicht
 
 			CListFSController* m_listController;
 
+			GUI::CMessageBox* m_msgBox;
 		public:
-			CTreeFSController(GUI::CTreeControl* treeFS);
+			CTreeFSController(GUI::CCanvas* canvas, GUI::CTreeControl* treeFS);
 
 			virtual ~CTreeFSController();
 

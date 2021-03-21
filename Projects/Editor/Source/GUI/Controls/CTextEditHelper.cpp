@@ -40,7 +40,7 @@ namespace Skylicht
 				m_textBox->OnTextChange = BIND_LISTENER(&CTextEditHelper::onChar, this);
 				m_textBox->OnESC = BIND_LISTENER(&CTextEditHelper::onESC, this);
 				m_textBox->OnEnter = BIND_LISTENER(&CTextEditHelper::onEnter, this);
-				m_textBox->OnLostKeyboardFocus = BIND_LISTENER(&CTextEditHelper::onESC, this);
+				m_textBox->OnLostKeyboardFocus = BIND_LISTENER(&CTextEditHelper::onLostFocus, this);
 			}
 
 			CTextEditHelper::~CTextEditHelper()
@@ -48,7 +48,7 @@ namespace Skylicht
 
 			}
 
-			void CTextEditHelper::beginEdit(CBase::Listener onCancel, CBase::Listener onEndEdit)
+			void CTextEditHelper::beginEdit(CBase::Listener onEndEdit, CBase::Listener onCancel)
 			{
 				updateTextBoxSize();
 
@@ -62,8 +62,8 @@ namespace Skylicht
 
 				m_textContainer->setHidden(true);
 
-				m_onCancel = onCancel;
 				m_onEndEdit = onEndEdit;
+				m_onCancel = onCancel;
 
 				m_end = false;
 			}
@@ -143,6 +143,18 @@ namespace Skylicht
 			void CTextEditHelper::onEnter(CBase* textBox)
 			{
 				endEdit();
+			}
+
+			void CTextEditHelper::onLostFocus(CBase* textBox)
+			{
+				if (m_textBox->isOnCharEvent())
+				{
+					// ignore event lostFocus when press Enter or ESC
+					return;
+				}
+
+				// process event when mouse click out the textbox
+				cancelEdit();
 			}
 		}
 	}

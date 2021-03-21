@@ -32,11 +32,13 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CTreeFSController::CTreeFSController(GUI::CTreeControl* treeFS) :
+		CTreeFSController::CTreeFSController(GUI::CCanvas* canvas, GUI::CTreeControl* treeFS) :
+			m_canvas(canvas),
 			m_treeFS(treeFS),
 			m_renameNode(NULL),
 			m_nodeAssets(NULL),
-			m_listController(NULL)
+			m_listController(NULL),
+			m_msgBox(NULL)
 		{
 			m_assetManager = CAssetManager::getInstance();
 

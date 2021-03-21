@@ -502,7 +502,7 @@ namespace Skylicht
 
 		void CEditor::readSpliterLayout(io::IXMLReader* xmlRead, GUI::CDockPanel* panel, GUI::CSplitter* spliter, bool isHorizontal)
 		{
-			u32 count;
+			u32 count = 0;
 			u32 weakRow = 0;
 			u32 weakCol = 0;
 

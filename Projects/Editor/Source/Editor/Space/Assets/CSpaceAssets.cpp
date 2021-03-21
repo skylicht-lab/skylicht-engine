@@ -49,10 +49,10 @@ namespace Skylicht
 			spliter->setNumberRowCol(1, 2);
 
 			m_treeFS = new GUI::CTreeControl(spliter);
-			m_treeFSController = new CTreeFSController(m_treeFS);
+			m_treeFSController = new CTreeFSController(window->getCanvas(), m_treeFS);
 
 			m_listFS = new GUI::CListBox(spliter);
-			m_listFSController = new CListFSController(m_listFS);
+			m_listFSController = new CListFSController(window->getCanvas(), m_listFS);
 
 			m_listFSController->setTreeController(m_treeFSController);
 			m_treeFSController->setListController(m_listFSController);
