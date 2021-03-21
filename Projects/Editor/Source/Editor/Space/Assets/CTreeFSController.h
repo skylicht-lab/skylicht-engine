@@ -68,6 +68,12 @@ namespace Skylicht
 				m_listController = listController;
 			}
 
+			void rename(GUI::CTreeNode* node);
+
+			void removePath(const char* path);
+
+			bool removePath(GUI::CTreeNode* node, const char* path);
+
 		public:
 			void expand(const std::string& folder);
 

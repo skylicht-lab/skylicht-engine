@@ -94,7 +94,7 @@ namespace Skylicht
 			std::map<std::string, SFileNode*> m_guidToFile;
 			std::map<std::string, SFileNode*> m_pathToFile;
 
-			std::list<SFileNode> m_files;
+			std::list<SFileNode*> m_files;
 			std::list<std::string> m_meta;
 
 		public:
@@ -128,6 +128,8 @@ namespace Skylicht
 			void getFolder(const char* folder, std::vector<SFileInfo>& files);
 
 			bool isFolderEmpty(const char* folder);
+
+			bool isFolder(const char* folder);
 
 			std::string getShortPath(const char* folder);
 

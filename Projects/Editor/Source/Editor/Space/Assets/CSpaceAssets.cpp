@@ -63,7 +63,7 @@ namespace Skylicht
 			spliter->setColWidth(0, 300.0f);
 			spliter->setWeakCol(1);
 
-			m_contextMenuFS = new CContextMenuFS(window->getCanvas(), m_treeFS, m_listFS, m_listFSController);
+			m_contextMenuFS = new CContextMenuFS(window->getCanvas(), m_treeFS, m_treeFSController, m_listFS, m_listFSController);
 		}
 
 		CSpaceAssets::~CSpaceAssets()

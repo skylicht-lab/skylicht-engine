@@ -35,7 +35,7 @@ namespace Skylicht
 
 			std::string m_lastGUIDFile;
 
-			std::list<SFileNode>::iterator m_fileIterator;
+			std::list<SFileNode*>::iterator m_fileIterator;
 
 			CAssetManager* m_assetManager;
 
@@ -46,9 +46,9 @@ namespace Skylicht
 
 			bool loadGUID(int count);
 
-			void saveGUID(const char* path, SFileNode& node);
+			void saveGUID(const char* path, SFileNode* node);
 
-			void readGUID(const char* path, SFileNode& node);
+			void readGUID(const char* path, SFileNode* node);
 
 			void removeUnusedMeta();
 

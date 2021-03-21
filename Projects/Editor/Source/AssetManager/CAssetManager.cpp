@@ -66,7 +66,11 @@ namespace Skylicht
 
 		CAssetManager::~CAssetManager()
 		{
-
+			for (SFileNode* file : m_files)
+			{
+				delete file;
+			}
+			m_files.clear();
 		}
 
 		void CAssetManager::discoveryAssetFolder()
@@ -136,7 +140,7 @@ namespace Skylicht
 
 				// add db
 				m_files.push_back(
-					SFileNode(
+					new SFileNode(
 						bundle.c_str(),
 						sortPath.c_str(),
 						path.c_str(),
@@ -146,8 +150,8 @@ namespace Skylicht
 				);
 
 				// map guid
-				SFileNode& file = m_files.back();
-				m_pathToFile[sortPath] = &file;
+				SFileNode* file = m_files.back();
+				m_pathToFile[sortPath] = file;
 
 				return true;
 			}
@@ -284,6 +288,11 @@ namespace Skylicht
 			return true;
 		}
 
+		bool CAssetManager::isFolder(const char* folder)
+		{
+			return fs::is_directory(folder);
+		}
+
 		std::string CAssetManager::getShortPath(const char* folder)
 		{
 			std::string assetPath = m_assetFolder + "/";
@@ -298,7 +307,29 @@ namespace Skylicht
 
 		bool CAssetManager::deleteAsset(const char* path)
 		{
-			return true;
+			std::string shortPath = getShortPath(path);
+
+			std::map<std::string, SFileNode*>::iterator it = m_pathToFile.find(shortPath);
+			if (it != m_pathToFile.end())
+			{
+				SFileNode* node = it->second;
+
+				m_pathToFile.erase(node->Path);
+				m_guidToFile.erase(node->Guid);
+				m_files.remove(node);
+
+				std::string path = node->FullPath;
+				std::string meta = path + ".meta";
+
+				fs::remove_all(path);
+				fs::remove_all(meta);
+
+				delete node;
+
+				return true;
+			}
+
+			return false;
 		}
 
 		SFileNode* CAssetManager::getFileNodeByPath(const char* path)
