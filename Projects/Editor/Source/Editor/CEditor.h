@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GUI/GUI.h"
 #include "Space/CSpace.h"
+#include "AssetManager/CAssetWatcher.h"
 
 namespace Skylicht
 {
@@ -46,6 +47,8 @@ namespace Skylicht
 			GUI::CDialogWindow* m_importDialog;
 
 			std::list<CSpace*> m_workspaces;
+
+			CAssetWatcher* m_assetWatcher;
 
 		public:
 			CEditor();

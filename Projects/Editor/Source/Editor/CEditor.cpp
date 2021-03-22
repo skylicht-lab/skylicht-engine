@@ -49,15 +49,19 @@ namespace Skylicht
 		{
 			// init canvas
 			m_canvas = GUI::CGUIContext::getRoot();
+
+			m_assetWatcher = new CAssetWatcher();
 		}
 
 		CEditor::~CEditor()
 		{
-
+			delete m_assetWatcher;
 		}
 
 		void CEditor::update()
 		{
+			m_assetWatcher->update();
+
 			Editor::CAssetManager::getInstance()->update();
 
 			for (CSpace* s : m_workspaces)
