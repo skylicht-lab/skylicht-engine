@@ -35,8 +35,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 #include "Crypto/sha256.h"
 
-#include "FileWatcher/FileWatcher.h"
-
 #if defined(__APPLE_CC__)
 namespace fs = std::__fs::filesystem;
 #else

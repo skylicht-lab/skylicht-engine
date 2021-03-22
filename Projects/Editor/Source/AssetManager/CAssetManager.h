@@ -81,6 +81,7 @@ namespace Skylicht
 		};
 
 		class CAssetImporter;
+		class CAssetWatcher;
 
 		class CAssetManager : public CGameSingleton<CAssetManager>
 		{
@@ -100,6 +101,7 @@ namespace Skylicht
 		public:
 
 			friend class CAssetImporter;
+			friend class CAssetWatcher;
 
 			CAssetManager();
 

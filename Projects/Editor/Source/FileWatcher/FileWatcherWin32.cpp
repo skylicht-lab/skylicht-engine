@@ -201,7 +201,7 @@ namespace FW
 		WatchID watchid = ++mLastWatchID;
 
 		WatchStruct* watch = CreateWatch(directory.c_str(), recursive,
-			FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE);
+			FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE);
 
 		if (!watch)
 			throw FileNotFoundException(directory);
