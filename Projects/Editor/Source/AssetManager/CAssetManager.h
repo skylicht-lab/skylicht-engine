@@ -117,6 +117,11 @@ namespace Skylicht
 				return m_workingFolder;
 			}
 
+			inline std::list<SFileNode*>& getListFiles()
+			{
+				return m_files;
+			}
+
 			void update();
 
 			void discoveryAssetFolder();
@@ -151,7 +156,7 @@ namespace Skylicht
 
 			void discovery(const std::string& bundle, const std::string& folder);
 
-			bool addFileNode(const std::string& bundle, const std::string& path);
+			SFileNode* addFileNode(const std::string& bundle, const std::string& path);
 
 			void sortFiles(std::vector<SFileInfo>& files);
 		};

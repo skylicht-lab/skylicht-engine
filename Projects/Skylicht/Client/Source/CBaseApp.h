@@ -57,7 +57,10 @@ namespace Skylicht
 		bool m_showFPS;
 
 		float m_clearScreenTime;
+		
 		bool m_enableRender;
+
+		bool m_enableRunWhenPause;
 
 		video::SColor m_clearColor;
 	public:
@@ -147,6 +150,11 @@ namespace Skylicht
 		virtual bool yesNoQuestion(wchar_t* lpString);
 
 		virtual void setStatusText(int part, wchar_t* lpString);
+
+		void enableRunWhenPause(bool b)
+		{
+			m_enableRunWhenPause = b;
+		}
 	};
 
 	extern CBaseApp* getApplication();

@@ -13,7 +13,7 @@ public:
 		Startup = 0,
 		InitGUI,
 		InitEngine,
-		Loading,
+		Import,
 		Running,
 	};
 

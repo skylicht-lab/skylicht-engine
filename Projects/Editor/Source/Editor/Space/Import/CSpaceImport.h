@@ -48,6 +48,10 @@ namespace Skylicht
 
 			virtual ~CSpaceImport();
 
+			void initImportAll();
+
+			void initImportFiles(std::list<SFileNode*>& files);
+
 			virtual void update();
 
 			virtual void onDestroy(GUI::CBase* base);

@@ -45,12 +45,17 @@ namespace Skylicht
 		m_showFPS(false),
 		m_clearColor(255, 0, 0, 0),
 		m_clearScreenTime(0.0f),
-		m_enableRender(true)
+		m_enableRender(true),
+		m_enableRunWhenPause(false)
 	{
 #ifdef USE_VISUAL_LEAK_DETECTOR
 		VLDEnable();
 #endif
-}
+
+#if defined(_WIN32)
+		m_enableRunWhenPause = true;
+#endif
+	}
 
 	CBaseApp::~CBaseApp()
 	{
@@ -70,7 +75,7 @@ namespace Skylicht
 #endif
 	}
 
-	void CBaseApp::registerAppEvent(std::string name, IApplicationEventReceiver *pEvent)
+	void CBaseApp::registerAppEvent(std::string name, IApplicationEventReceiver* pEvent)
 	{
 		std::vector<appEventType>::iterator i = m_appEventReceivers.begin(), end = m_appEventReceivers.end();
 		while (i != end)
@@ -83,7 +88,7 @@ namespace Skylicht
 		m_appEventReceivers.push_back(appEventType(name, pEvent));
 	}
 
-	void CBaseApp::unRegisterAppEvent(IApplicationEventReceiver *pEvent)
+	void CBaseApp::unRegisterAppEvent(IApplicationEventReceiver* pEvent)
 	{
 		std::vector<appEventType>::iterator i = m_appEventReceivers.begin(), end = m_appEventReceivers.end();
 		while (i != end)
@@ -134,7 +139,7 @@ namespace Skylicht
 		}
 	}
 
-	io::path CBaseApp::getBuiltInPath(const char *name)
+	io::path CBaseApp::getBuiltInPath(const char* name)
 	{
 #ifdef __EMSCRIPTEN__
 		// path from ./PrjEmscripten/Projects/MainApp
@@ -191,20 +196,20 @@ namespace Skylicht
 #else
 		return false;
 #endif
-	}	
+	}
 
-	void CBaseApp::alertError(wchar_t *lpString)
+	void CBaseApp::alertError(wchar_t* lpString)
 	{
 		// implement on Editor
 	}
 
-	bool CBaseApp::yesNoQuestion(wchar_t *lpString)
+	bool CBaseApp::yesNoQuestion(wchar_t* lpString)
 	{
 		// implement on Editor
 		return false;
 	}
 
-	void CBaseApp::setStatusText(int part, wchar_t *lpString)
+	void CBaseApp::setStatusText(int part, wchar_t* lpString)
 	{
 		// implement on Editor
 	}

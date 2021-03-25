@@ -43,7 +43,7 @@ namespace Skylicht
 		int m_width;
 		int m_height;
 
-		bool m_runGame;
+		bool m_runGame;		
 
 		std::vector<std::string> m_argv;
 
@@ -108,7 +108,7 @@ namespace Skylicht
 
 		void setDeviceID(const char* string);
 
-		void enableWriteLog(bool b);
+		void enableWriteLog(bool b);		
 	};
 
 }

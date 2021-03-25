@@ -35,6 +35,7 @@ void SkylichtEditor::onInitApp()
 	CBaseApp* app = getApplication();
 	app->setClearColor(CColor::toSRGB(SColor(255, 56, 56, 56)));
 	app->showFPS(false);
+	app->enableRunWhenPause(true);
 }
 
 void SkylichtEditor::onUpdate()
@@ -76,16 +77,17 @@ void SkylichtEditor::onUpdate()
 		m_editor->initImportGUI();
 
 		// change state loading
-		m_editorState = Loading;
+		m_editorState = Import;
 	}
 	break;
-	case Loading:
+	case Import:
 	{
 		// loading project
 		if (m_editor->isImportFinish() == true)
 		{
 			m_editor->closeImportDialog();
-			m_editor->initEditorGUI();
+			if (m_editor->isUIInitiate() == false)
+				m_editor->initEditorGUI();
 			m_editorState = Running;
 		}
 
@@ -129,11 +131,17 @@ void SkylichtEditor::onResize(int w, int h)
 void SkylichtEditor::onResume()
 {
 	// resume application
+	m_editor->resume();
+
+	// change state to import
+	if (m_editor->needReImport())
+		m_editorState = Import;
 }
 
 void SkylichtEditor::onPause()
 {
 	// pause application
+	m_editor->pause();
 }
 
 void SkylichtEditor::onQuitApp()

@@ -50,6 +50,8 @@ namespace Skylicht
 
 			CAssetWatcher* m_assetWatcher;
 
+			bool m_uiInitiate;
+
 		public:
 			CEditor();
 
@@ -57,15 +59,26 @@ namespace Skylicht
 
 			void update();
 
-			void initImportGUI();
+			void initImportGUI(bool fromWatcher = false);
 
 			void initEditorGUI();
+
+			bool isUIInitiate()
+			{
+				return m_uiInitiate;
+			}
 
 			bool isImportFinish();
 
 			void closeImportDialog();
 
 			void saveLayout(const std::string& data);
+
+			void pause();
+
+			void resume();
+
+			bool needReImport();
 
 		protected:
 
