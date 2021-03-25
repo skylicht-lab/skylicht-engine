@@ -90,28 +90,6 @@ namespace Skylicht
 			notifyResizeWin(event.UserEvent.UserData1, event.UserEvent.UserData2);
 		}
 
-#if defined(_DEBUG) && defined(WIN32) && !defined(WINDOWS_STORE)
-		// simulate
-		if (event.EventType == EET_KEY_INPUT_EVENT)
-		{
-			if (event.KeyInput.Key == KEY_F1 && event.KeyInput.PressedDown == false)
-			{
-				static bool s_isPause = false;
-
-				if (s_isPause == false)
-				{
-					pause();
-					s_isPause = true;
-				}
-				else
-				{
-					resume();
-					s_isPause = false;
-				}
-			}
-		}
-#endif
-
 		if (event.EventType == EET_LOG_TEXT_EVENT)
 		{
 #ifdef ANDROID
@@ -180,7 +158,7 @@ namespace Skylicht
 
 	void CApplication::mainLoop()
 	{
-		if (m_runGame == false || m_device == NULL)
+		if (!m_enableRunWhenPause && (m_runGame == false || m_device == NULL))
 			return;
 
 		m_device->getTimer()->tick();
@@ -305,30 +283,33 @@ namespace Skylicht
 	{
 		if (m_runGame == true)
 		{
+			os::Printer::log(">>>>>>>>>>");
+			os::Printer::log("CApplication::pause");
+
 			m_runGame = false;
 
 			// application receiver
 			sendEventToAppReceiver(AppEventPause);
-			os::Printer::log("CApplication::pause");
+
+			os::Printer::log("CApplication::pause finished");
 		}
 	}
 
 	void CApplication::resume(int showConnecting)
 	{
-		os::Printer::log("CApplication::resume");
-
 		if (m_runGame == false)
 		{
-			os::Printer::log("Resume gamestate");
+			os::Printer::log("CApplication::resume");
 
 			resetTouch();
 
 			// application receiver
 			sendEventToAppReceiver(AppEventResume);
 			m_runGame = true;
-		}
 
-		os::Printer::log("CApplication::finish Resume");
+			os::Printer::log("CApplication::resume finished");
+			os::Printer::log("<<<<<<<<<<");
+		}
 	}
 
 	void CApplication::resetTouch()

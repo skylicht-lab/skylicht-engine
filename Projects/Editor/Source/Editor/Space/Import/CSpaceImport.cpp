@@ -34,7 +34,8 @@ namespace Skylicht
 		CSpaceImport::CSpaceImport(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
 			m_progressBar(NULL),
-			m_statusText(NULL)
+			m_statusText(NULL),
+			m_importer(NULL)
 		{
 			m_progressBar = new GUI::CProgressBar(window);
 			m_progressBar->dock(GUI::EPosition::Top);
@@ -45,17 +46,31 @@ namespace Skylicht
 			m_statusText->setMargin(GUI::SMargin(14.0f, 5.0, 14.0, 0.0f));
 			m_statusText->setWrapMultiline(true);
 			m_statusText->setString(L"Importing...");
-
-			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
-			assetManager->discoveryAssetFolder();
-			assetManager->update();
-
-			m_importer = new CAssetImporter();
 		}
 
 		CSpaceImport::~CSpaceImport()
 		{
 			delete m_importer;
+		}
+
+		void CSpaceImport::initImportAll()
+		{
+			if (m_importer != NULL)
+				delete m_importer;
+
+			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
+			assetManager->discoveryAssetFolder();
+			assetManager->update();
+
+			m_importer = new CAssetImporter(assetManager->getListFiles());
+		}
+
+		void CSpaceImport::initImportFiles(std::list<SFileNode*>& files)
+		{
+			if (m_importer != NULL)
+				delete m_importer;
+
+			m_importer = new CAssetImporter(files);
 		}
 
 		void CSpaceImport::update()

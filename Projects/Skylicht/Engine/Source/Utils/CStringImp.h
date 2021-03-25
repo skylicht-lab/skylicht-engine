@@ -468,6 +468,16 @@ namespace Skylicht
 			return (int)result.size();
 		}
 
+		static std::string replaceAll(std::string& string, const std::string& from, const std::string& to)
+		{
+			size_t start_pos = 0;
+			while ((start_pos = string.find(from, start_pos)) != std::string::npos) {
+				string.replace(start_pos, from.length(), to);
+				start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+			}
+			return string;
+		}
+
 		static int splitString(const wchar_t* stringSplit, const wchar_t* search, std::vector<std::wstring>& result)
 		{
 			result.clear();

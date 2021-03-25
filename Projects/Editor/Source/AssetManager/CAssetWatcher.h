@@ -29,12 +29,21 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CAssetWatcher: public FW::FileWatchListener
+		class CAssetWatcher : public FW::FileWatchListener
 		{
 		protected:
 			FW::FileWatcher* m_fileWatcher;
+			FW::WatchID m_watchID;
 
 			CAssetManager* m_assetManager;
+
+			std::list<std::string> m_add;
+			std::list<std::string> m_delete;
+
+			std::list<std::string> m_lockAdd;
+			std::list<std::string> m_lockDelete;
+
+			std::list<SFileNode*> m_files;
 
 		public:
 			CAssetWatcher();
@@ -42,6 +51,24 @@ namespace Skylicht
 			virtual ~CAssetWatcher();
 
 			void update();
+
+			void beginWatch();
+
+			void endWatch();
+
+			bool needReImport()
+			{
+				return m_add.size() > 0 || m_lockAdd.size() > 0;
+			}
+
+			void lock();
+
+			void unlock();
+
+			std::list<SFileNode*>& getFiles()
+			{
+				return m_files;
+			}
 
 			virtual void handleFileAction(FW::WatchID watchid, const FW::String& dir, const FW::String& filename, FW::Action action);
 		};

@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CAssetWatcher.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
 
 namespace Skylicht
 {
@@ -33,17 +34,7 @@ namespace Skylicht
 		CAssetWatcher::CAssetWatcher()
 		{
 			m_assetManager = CAssetManager::getInstance();
-
-			std::string assetFolder = m_assetManager->getAssetFolder();
-
 			m_fileWatcher = new FW::FileWatcher();
-
-#if defined(WIN32)
-			std::wstring assetFolderW = CStringImp::convertUTF8ToUnicode(assetFolder.c_str());
-			m_fileWatcher->addWatch(assetFolderW, this, true);
-#else
-			m_fileWatcher->addWatch(assetFolder, this, true);
-#endif
 		}
 
 		CAssetWatcher::~CAssetWatcher()
@@ -56,8 +47,28 @@ namespace Skylicht
 			m_fileWatcher->update();
 		}
 
+		void CAssetWatcher::beginWatch()
+		{
+			std::string assetFolder = m_assetManager->getAssetFolder();
+
+#if defined(WIN32)
+			std::wstring assetFolderW = CStringImp::convertUTF8ToUnicode(assetFolder.c_str());
+			m_watchID = m_fileWatcher->addWatch(assetFolderW, this, true);
+#else
+			m_watchID = m_fileWatcher->addWatch(assetFolder, this, true);
+#endif
+		}
+
+		void CAssetWatcher::endWatch()
+		{
+			m_fileWatcher->removeWatch(m_watchID);
+		}
+
 		void CAssetWatcher::handleFileAction(FW::WatchID watchid, const FW::String& dir, const FW::String& filename, FW::Action action)
 		{
+			if (m_watchID != watchid)
+				return;
+
 			std::string directory;
 			std::string file;
 
@@ -69,22 +80,93 @@ namespace Skylicht
 			file = filename;
 #endif
 
+			if (CPath::getFileNameExt(file) == "meta")
+				return;
+
 			std::string path = directory + "/" + file;
+			path = CStringImp::replaceAll(path, std::string("\\"), std::string("/"));
+
+			// std::string log;
 
 			switch (action)
 			{
 			case FW::Action::Add:
+				// log += "Add: ";
+				// log += path;
+				// os::Printer::log(log.c_str());
 
+				if (m_assetManager->isFolder(path.c_str()))
+				{
+					// todo later
+				}
+
+				m_add.push_back(path);
 				break;
 			case FW::Action::Delete:
+			{
+				// log += "Delete: ";
+				// log += path;
+				// os::Printer::log(log.c_str());
 
-				break;
+				bool addToDelete = true;
+
+				std::list<std::string>::iterator i = m_add.begin(), end = m_add.end();
+				while (i != end)
+				{
+					if (*i == path)
+					{
+						m_add.erase(i);
+						addToDelete = false;
+						break;
+					}
+					++i;
+				}
+
+				if (addToDelete)
+					m_delete.push_back(path);
+			}
+			break;
 			case FW::Action::Modified:
-				break;
+			{
+				// log += "Modified: ";
+				// log += path;
+				// os::Printer::log(log.c_str());
+			}
+			break;
 			default:
 				break;
 			}
+		}
 
+		void CAssetWatcher::lock()
+		{
+			m_lockAdd.insert(m_lockAdd.end(), m_add.begin(), m_add.end());
+			m_lockDelete.insert(m_lockDelete.end(), m_delete.begin(), m_delete.end());
+
+			m_add.clear();
+			m_delete.clear();
+
+			std::vector<std::string> splits;
+
+			for (std::string& path : m_lockAdd)
+			{
+				// read bundle from path
+				std::string shortPath = m_assetManager->getShortPath(path.c_str());
+				CStringImp::splitString(shortPath.c_str(), "/", splits);
+				std::string bundle = ".";
+				if (splits.size() > 1)
+					bundle = splits[0];
+
+				// add files
+				m_files.push_back(m_assetManager->addFileNode(bundle, path));
+			}
+		}
+
+		void CAssetWatcher::unlock()
+		{
+			m_lockAdd.clear();
+			m_lockDelete.clear();
+			m_files.clear();
 		}
 	}
 }

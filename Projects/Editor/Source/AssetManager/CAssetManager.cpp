@@ -125,7 +125,7 @@ namespace Skylicht
 
 		}
 
-		bool CAssetManager::addFileNode(const std::string& bundle, const std::string& path)
+		SFileNode* CAssetManager::addFileNode(const std::string& bundle, const std::string& path)
 		{
 			std::string assetPath = m_assetFolder + "/";
 			time_t modifyTime, createTime;
@@ -151,10 +151,10 @@ namespace Skylicht
 				SFileNode* file = m_files.back();
 				m_pathToFile[sortPath] = file;
 
-				return true;
+				return file;
 			}
 
-			return false;
+			return NULL;
 		}
 
 		bool CAssetManager::getFileDate(const char* path, time_t& modifyTime, time_t& createTime)

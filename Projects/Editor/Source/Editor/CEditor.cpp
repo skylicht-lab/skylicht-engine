@@ -45,7 +45,8 @@ namespace Skylicht
 			m_dockPanel(NULL),
 			m_statusInfo(NULL),
 			m_status(NULL),
-			m_importDialog(NULL)
+			m_importDialog(NULL),
+			m_uiInitiate(false)
 		{
 			// init canvas
 			m_canvas = GUI::CGUIContext::getRoot();
@@ -68,6 +69,27 @@ namespace Skylicht
 				s->update();
 		}
 
+		void CEditor::pause()
+		{
+			m_assetWatcher->beginWatch();
+		}
+
+		void CEditor::resume()
+		{
+			m_assetWatcher->endWatch();
+
+			if (m_assetWatcher->needReImport())
+			{
+				m_assetWatcher->lock();
+				initImportGUI(true);
+			}
+		}
+
+		bool CEditor::needReImport()
+		{
+			return m_assetWatcher->needReImport();
+		}
+
 		bool CEditor::isImportFinish()
 		{
 			CSpace* space = getWorkspace(m_importDialog);
@@ -85,9 +107,12 @@ namespace Skylicht
 		{
 			m_importDialog->remove();
 			m_importDialog = NULL;
+
+			if (m_assetWatcher->needReImport())
+				m_assetWatcher->unlock();
 		}
 
-		void CEditor::initImportGUI()
+		void CEditor::initImportGUI(bool fromWatcher)
 		{
 			m_importDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
 			m_importDialog->setCaption(L"Import Assets");
@@ -96,6 +121,14 @@ namespace Skylicht
 			m_importDialog->bringToFront();
 
 			initWorkspace(m_importDialog, m_importDialog->getCaption());
+
+			CSpace* space = getWorkspace(m_importDialog);
+			CSpaceImport* spaceImport = dynamic_cast<CSpaceImport*>(space);
+
+			if (fromWatcher == true)
+				spaceImport->initImportFiles(m_assetWatcher->getFiles());
+			else
+				spaceImport->initImportAll();
 		}
 
 		void CEditor::initEditorGUI()
@@ -149,6 +182,8 @@ namespace Skylicht
 			{
 				initDefaultLayout();
 			}
+
+			m_uiInitiate = true;
 		}
 
 		void CEditor::initMenuBar()

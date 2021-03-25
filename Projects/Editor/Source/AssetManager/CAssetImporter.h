@@ -32,15 +32,17 @@ namespace Skylicht
 		{
 		protected:
 			u32 m_fileID;
+			u32 m_total;
 
 			std::string m_lastGUIDFile;
 
 			std::list<SFileNode*>::iterator m_fileIterator;
+			std::list<SFileNode*>::iterator m_fileIteratorEnd;
 
 			CAssetManager* m_assetManager;
 
 		public:
-			CAssetImporter();
+			CAssetImporter(std::list<SFileNode*>& listFiles);
 
 			virtual ~CAssetImporter();
 
