@@ -37,11 +37,22 @@ namespace Skylicht
 		class CSpaceImport : public CSpace
 		{
 		protected:
+			enum EImportState
+			{
+				None = 0,
+				ImportAsset,
+				DeleteAsset,
+				Finish
+			};
+
+		protected:
 			GUI::CProgressBar* m_progressBar;
 
 			GUI::CLabel* m_statusText;
 
 			CAssetImporter* m_importer;
+
+			EImportState m_state;
 
 		public:
 			CSpaceImport(GUI::CWindow* window, CEditor* editor);
@@ -50,13 +61,13 @@ namespace Skylicht
 
 			void initImportAll();
 
-			void initImportFiles(std::list<SFileNode*>& files);
+			void initImportFiles(std::list<SFileNode*>& files, std::list<std::string>& deleted);
 
 			virtual void update();
 
 			virtual void onDestroy(GUI::CBase* base);
 
-			bool isImportFinish();
+			bool isFinish();
 		};
 	}
 }

@@ -148,6 +148,8 @@ namespace Skylicht
 
 		public:
 
+			void deleteChildAsset(const char* folderPath);
+
 			bool deleteAsset(const char* path);
 
 			bool renameAsset(const char* path, const char* name);
