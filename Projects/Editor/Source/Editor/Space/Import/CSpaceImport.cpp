@@ -35,7 +35,8 @@ namespace Skylicht
 			CSpace(window, editor),
 			m_progressBar(NULL),
 			m_statusText(NULL),
-			m_importer(NULL)
+			m_importer(NULL),
+			m_state(None)
 		{
 			m_progressBar = new GUI::CProgressBar(window);
 			m_progressBar->dock(GUI::EPosition::Top);
@@ -63,29 +64,64 @@ namespace Skylicht
 			assetManager->update();
 
 			m_importer = new CAssetImporter(assetManager->getListFiles());
+
+			m_state = ImportAsset;
 		}
 
-		void CSpaceImport::initImportFiles(std::list<SFileNode*>& files)
+		void CSpaceImport::initImportFiles(std::list<SFileNode*>& files, std::list<std::string>& deleted)
 		{
 			if (m_importer != NULL)
 				delete m_importer;
 
 			m_importer = new CAssetImporter(files);
+
+			if (deleted.size() > 0)
+				m_importer->addDeleted(deleted);
+
+			m_state = ImportAsset;
 		}
 
 		void CSpaceImport::update()
 		{
-			float percent = 0.0f;
-			std::string last;
+			if (m_state == ImportAsset)
+			{
+				float percent = 0.0f;
+				std::string last;
 
-			m_importer->loadGUID(10);
-			m_importer->getStatus(percent, last);
+				bool finish = m_importer->loadGUID(10);
+				m_importer->getImportStatus(percent, last);
 
-			m_progressBar->setPercent(percent);
+				m_progressBar->setPercent(percent);
 
-			std::string status = "Importing...\n";
-			status += last;
-			m_statusText->setString(status);
+				std::string status = "Importing...\n";
+				status += last;
+				m_statusText->setString(status);
+
+				if (finish == true)
+				{
+					if (m_importer->needDelete())
+						m_state = DeleteAsset;
+					else
+						m_state = Finish;
+				}
+			}
+			else if (m_state == DeleteAsset)
+			{
+				float percent = 0.0f;
+				std::string last;
+
+				bool finish = m_importer->deleteAsset(10);
+				m_importer->getDeleteStatus(percent, last);
+
+				m_progressBar->setPercent(percent);
+
+				std::string status = "Deleting...\n";
+				status += last;
+				m_statusText->setString(status);
+
+				if (finish == true)
+					m_state = Finish;
+			}
 
 			CSpace::update();
 		}
@@ -95,7 +131,7 @@ namespace Skylicht
 			CSpace::onDestroy(base);
 		}
 
-		bool CSpaceImport::isImportFinish()
+		bool CSpaceImport::isFinish()
 		{
 			return m_importer->isFinish();
 		}

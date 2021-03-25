@@ -44,18 +44,32 @@ namespace Skylicht
 	namespace Editor
 	{
 		CAssetImporter::CAssetImporter(std::list<SFileNode*>& listFiles) :
-			m_fileID(0)
+			m_fileID(0),
+			m_deleteID(0),
+			m_totalDeleted(0)
 		{
 			m_assetManager = CAssetManager::getInstance();
-			m_fileID = 0;
+
 			m_total = (u32)listFiles.size();
 			m_fileIterator = listFiles.begin();
 			m_fileIteratorEnd = listFiles.end();
+
+			m_deleteIterator = m_fileDeleted.begin();
+			m_deleteIteratorEnd = m_fileDeleted.end();
 		}
 
 		CAssetImporter::~CAssetImporter()
 		{
 
+		}
+
+		void CAssetImporter::addDeleted(std::list<std::string>& list)
+		{
+			m_fileDeleted.insert(m_fileDeleted.end(), list.begin(), list.end());
+
+			m_deleteIterator = m_fileDeleted.begin();
+			m_deleteIteratorEnd = m_fileDeleted.end();
+			m_totalDeleted = (u32)m_fileDeleted.size();
 		}
 
 		bool CAssetImporter::loadGUID(int count)
@@ -121,7 +135,7 @@ namespace Skylicht
 					}
 				}
 
-				m_lastGUIDFile = node->Path;
+				m_lastFile = node->Path;
 
 				++m_fileIterator;
 				++m_fileID;
@@ -189,15 +203,44 @@ namespace Skylicht
 			file->drop();
 		}
 
-		void CAssetImporter::getStatus(float& percent, std::string& last)
+		void CAssetImporter::getImportStatus(float& percent, std::string& last)
 		{
 			percent = m_fileID / (float)(m_total);
-			last = m_lastGUIDFile;
+			last = m_lastFile;
+		}
+
+		void CAssetImporter::getDeleteStatus(float& percent, std::string& last)
+		{
+			percent = m_deleteID / (float)(m_totalDeleted);
+			last = m_lastFile;
+		}
+
+		bool CAssetImporter::deleteAsset(int count)
+		{
+			if (m_deleteIterator == m_deleteIteratorEnd)
+				return true;
+
+			for (int j = 0; j < count; j++)
+			{
+				std::string path = (*m_deleteIterator);
+
+				m_assetManager->deleteChildAsset(path.c_str());
+
+				m_lastFile = path;
+
+				++m_deleteIterator;
+				++m_deleteID;
+
+				if (m_deleteIterator == m_deleteIteratorEnd)
+					return true;
+			}
+
+			return false;
 		}
 
 		bool CAssetImporter::isFinish()
 		{
-			if (m_fileIterator == m_fileIteratorEnd)
+			if (m_fileIterator == m_fileIteratorEnd && m_deleteIterator == m_deleteIteratorEnd)
 				return true;
 
 			return false;

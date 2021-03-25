@@ -97,7 +97,7 @@ namespace Skylicht
 			{
 				CSpaceImport* spaceImport = dynamic_cast<CSpaceImport*>(space);
 				if (spaceImport != NULL)
-					return spaceImport->isImportFinish();
+					return spaceImport->isFinish();
 			}
 
 			return false;
@@ -126,7 +126,7 @@ namespace Skylicht
 			CSpaceImport* spaceImport = dynamic_cast<CSpaceImport*>(space);
 
 			if (fromWatcher == true)
-				spaceImport->initImportFiles(m_assetWatcher->getFiles());
+				spaceImport->initImportFiles(m_assetWatcher->getFiles(), m_assetWatcher->getDeletedFiles());
 			else
 				spaceImport->initImportAll();
 		}

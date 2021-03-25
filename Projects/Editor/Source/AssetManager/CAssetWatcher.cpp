@@ -94,12 +94,6 @@ namespace Skylicht
 				// log += "Add: ";
 				// log += path;
 				// os::Printer::log(log.c_str());
-
-				if (m_assetManager->isFolder(path.c_str()))
-				{
-					// todo later
-				}
-
 				m_add.push_back(path);
 				break;
 			case FW::Action::Delete:
@@ -140,15 +134,9 @@ namespace Skylicht
 
 		void CAssetWatcher::lock()
 		{
-			m_lockAdd.insert(m_lockAdd.end(), m_add.begin(), m_add.end());
-			m_lockDelete.insert(m_lockDelete.end(), m_delete.begin(), m_delete.end());
-
-			m_add.clear();
-			m_delete.clear();
-
 			std::vector<std::string> splits;
 
-			for (std::string& path : m_lockAdd)
+			for (std::string& path : m_add)
 			{
 				// read bundle from path
 				std::string shortPath = m_assetManager->getShortPath(path.c_str());
@@ -157,16 +145,17 @@ namespace Skylicht
 				if (splits.size() > 1)
 					bundle = splits[0];
 
-				// add files
+				// add file or folder
 				m_files.push_back(m_assetManager->addFileNode(bundle, path));
 			}
+
+			m_add.clear();
 		}
 
 		void CAssetWatcher::unlock()
 		{
-			m_lockAdd.clear();
-			m_lockDelete.clear();
 			m_files.clear();
+			m_delete.clear();
 		}
 	}
 }

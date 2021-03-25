@@ -32,19 +32,27 @@ namespace Skylicht
 		{
 		protected:
 			u32 m_fileID;
+			u32 m_deleteID;
 			u32 m_total;
+			u32 m_totalDeleted;
 
-			std::string m_lastGUIDFile;
+			std::string m_lastFile;
 
 			std::list<SFileNode*>::iterator m_fileIterator;
 			std::list<SFileNode*>::iterator m_fileIteratorEnd;
 
 			CAssetManager* m_assetManager;
 
+			std::list<std::string> m_fileDeleted;
+			std::list<std::string>::iterator m_deleteIterator;
+			std::list<std::string>::iterator m_deleteIteratorEnd;
+
 		public:
 			CAssetImporter(std::list<SFileNode*>& listFiles);
 
 			virtual ~CAssetImporter();
+
+			void addDeleted(std::list<std::string>& list);
 
 			bool loadGUID(int count);
 
@@ -54,9 +62,18 @@ namespace Skylicht
 
 			void removeUnusedMeta();
 
+			bool deleteAsset(int count);
+
+			bool needDelete()
+			{
+				return m_fileDeleted.size() > 0;
+			}
+
 			bool isFinish();
 
-			void getStatus(float& percent, std::string& last);
+			void getImportStatus(float& percent, std::string& last);
+
+			void getDeleteStatus(float& percent, std::string& last);
 		};
 	}
 }

@@ -40,9 +40,6 @@ namespace Skylicht
 			std::list<std::string> m_add;
 			std::list<std::string> m_delete;
 
-			std::list<std::string> m_lockAdd;
-			std::list<std::string> m_lockDelete;
-
 			std::list<SFileNode*> m_files;
 
 		public:
@@ -58,7 +55,7 @@ namespace Skylicht
 
 			bool needReImport()
 			{
-				return m_add.size() > 0 || m_lockAdd.size() > 0;
+				return m_add.size() > 0 || m_files.size() > 0 || m_delete.size() > 0;
 			}
 
 			void lock();
@@ -68,6 +65,11 @@ namespace Skylicht
 			std::list<SFileNode*>& getFiles()
 			{
 				return m_files;
+			}
+
+			std::list<std::string>& getDeletedFiles()
+			{
+				return m_delete;
 			}
 
 			virtual void handleFileAction(FW::WatchID watchid, const FW::String& dir, const FW::String& filename, FW::Action action);
