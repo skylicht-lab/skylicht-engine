@@ -298,9 +298,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	hWndStyle = WS_SYSMENU | WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 
-// #if defined(SKYLICHT_EDITOR)
+	// #if defined(SKYLICHT_EDITOR)
 	hWndStyle |= WS_OVERLAPPEDWINDOW;
-// #endif
+	// #endif
 
 	hWnd = CreateWindow(szWindowClass, szTitle, hWndStyle,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
@@ -564,11 +564,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
+	case WM_ACTIVATE:
+		if (LOWORD(wParam) == WA_INACTIVE)
+		{
+			if (g_application != NULL)
+				g_application->pause();
+		}
+		else
+		{
+			if (g_application != NULL)
+				g_application->resume();
+		}
+		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-	return 0;
 	}
+	return 0;
+}
 
 #endif
 

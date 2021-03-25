@@ -43,12 +43,14 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CAssetImporter::CAssetImporter() :
+		CAssetImporter::CAssetImporter(std::list<SFileNode*>& listFiles) :
 			m_fileID(0)
 		{
 			m_assetManager = CAssetManager::getInstance();
-			m_fileIterator = m_assetManager->m_files.begin();
 			m_fileID = 0;
+			m_total = (u32)listFiles.size();
+			m_fileIterator = listFiles.begin();
+			m_fileIteratorEnd = listFiles.end();
 		}
 
 		CAssetImporter::~CAssetImporter()
@@ -58,7 +60,7 @@ namespace Skylicht
 
 		bool CAssetImporter::loadGUID(int count)
 		{
-			if (m_fileIterator == m_assetManager->m_files.end())
+			if (m_fileIterator == m_fileIteratorEnd)
 				return true;
 
 			std::time_t now = std::time(0);
@@ -70,50 +72,53 @@ namespace Skylicht
 				std::string path = node->FullPath;
 				std::string meta = path + ".meta";
 
-				bool regenerate = true;
-
-				if (fs::exists(meta))
+				if (fs::exists(path))
 				{
-					// load meta
-					readGUID(meta.c_str(), node);
+					bool regenerate = true;
 
-					// remove meta
-					m_assetManager->m_meta.remove(meta);
-
-					// check collision
-					if (node->Guid.empty()
-						|| node->Guid.size() != 64
-						|| m_assetManager->m_guidToFile.find(node->Guid) != m_assetManager->m_guidToFile.end())
+					if (fs::exists(meta))
 					{
-						regenerate = true;
+						// load meta
+						readGUID(meta.c_str(), node);
 
-						char log[1024];
-						sprintf(log, "[CAssetImporter::loadGUID] GUID Collision: %s\n", node->Path.c_str());
-						os::Printer::log(log);
+						// remove meta
+						m_assetManager->m_meta.remove(meta);
+
+						// check collision
+						if (node->Guid.empty()
+							|| node->Guid.size() != 64
+							|| m_assetManager->m_guidToFile.find(node->Guid) != m_assetManager->m_guidToFile.end())
+						{
+							regenerate = true;
+
+							char log[1024];
+							sprintf(log, "[CAssetImporter::loadGUID] GUID Collision: %s\n", node->Path.c_str());
+							os::Printer::log(log);
+						}
+						else
+						{
+							regenerate = false;
+
+							// map guid
+							m_assetManager->m_guidToFile[node->Guid] = node;
+						}
 					}
 					else
 					{
-						regenerate = false;
+						regenerate = true;
+					}
+
+					if (regenerate)
+					{
+						// generate guid
+						node->Guid = m_assetManager->generateHash(node->Bundle.c_str(), node->Path.c_str(), node->CreateTime, now);
+
+						// save meta
+						saveGUID(meta.c_str(), node);
 
 						// map guid
 						m_assetManager->m_guidToFile[node->Guid] = node;
 					}
-				}
-				else
-				{
-					regenerate = true;
-				}
-
-				if (regenerate)
-				{
-					// generate guid
-					node->Guid = m_assetManager->generateHash(node->Bundle.c_str(), node->Path.c_str(), node->CreateTime, now);
-
-					// save meta
-					saveGUID(meta.c_str(), node);
-
-					// map guid
-					m_assetManager->m_guidToFile[node->Guid] = node;
 				}
 
 				m_lastGUIDFile = node->Path;
@@ -121,7 +126,7 @@ namespace Skylicht
 				++m_fileIterator;
 				++m_fileID;
 
-				if (m_fileIterator == m_assetManager->m_files.end())
+				if (m_fileIterator == m_fileIteratorEnd)
 				{
 					removeUnusedMeta();
 					return true;
@@ -186,13 +191,13 @@ namespace Skylicht
 
 		void CAssetImporter::getStatus(float& percent, std::string& last)
 		{
-			percent = m_fileID / (float)(m_assetManager->m_files.size());
+			percent = m_fileID / (float)(m_total);
 			last = m_lastGUIDFile;
 		}
 
 		bool CAssetImporter::isFinish()
 		{
-			if (m_fileIterator == m_assetManager->m_files.end())
+			if (m_fileIterator == m_fileIteratorEnd)
 				return true;
 
 			return false;
