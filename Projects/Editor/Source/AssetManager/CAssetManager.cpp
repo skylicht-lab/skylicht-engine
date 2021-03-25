@@ -113,9 +113,13 @@ namespace Skylicht
 				else
 				{
 					if (CPath::getFileNameExt(path) != "meta")
+					{
 						addFileNode(bundle, path);
+					}
 					else
+					{
 						m_meta.push_back(path);
+					}
 				}
 			}
 		}
@@ -306,6 +310,36 @@ namespace Skylicht
 
 			sortPath.replace(sortPath.find(assetPath.c_str()), assetPath.size(), "");
 			return sortPath;
+		}
+
+		void CAssetManager::deleteChildAsset(const char* folderPath)
+		{
+			std::string shortPath = getShortPath(folderPath);
+
+			std::list<SFileNode*> deleteList;
+
+			for (SFileNode* node : m_files)
+			{
+				if (node->Path.find(shortPath) == 0)
+				{
+					m_pathToFile.erase(node->Path);
+					m_guidToFile.erase(node->Guid);
+
+					std::string path = node->FullPath;
+					std::string meta = path + ".meta";
+
+					if (fs::exists(meta))
+						fs::remove_all(meta);
+
+					deleteList.push_back(node);
+				}
+			}
+
+			for (SFileNode* node : deleteList)
+			{
+				m_files.remove(node);
+				delete node;
+			}
 		}
 
 		bool CAssetManager::deleteAsset(const char* path)
