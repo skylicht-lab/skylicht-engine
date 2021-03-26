@@ -61,7 +61,7 @@ namespace Skylicht
 			GUI::CLabel* name = new GUI::CLabel(titleBar);
 			name->setMargin(GUI::SMargin(5.0f, 2.0f));
 			name->dock(GUI::EPosition::Fill);
-			name->setString(L"Object Name");
+			name->setString(L"Object Name (Test control)");
 
 			GUI::CBoxLayout* boxLayout;
 
