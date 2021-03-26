@@ -24,42 +24,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
+#include "GUI/GUI.h"
 #include "AssetManager/CAssetManager.h"
-#include "CTreeFSController.h"
-#include "CListFSController.h"
-#include "CContextMenuFS.h"
-#include "CContextMenuAdd.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceAssets : public CSpace
+		class CContextMenuAdd
 		{
 		protected:
-			GUI::CTreeControl* m_treeFS;
-			CTreeFSController* m_treeFSController;
+			GUI::CMenu* m_contextMenu;
 
-			GUI::CListBox* m_listFS;
-			CListFSController* m_listFSController;
-
-			CContextMenuFS* m_contextMenuFS;
-			
-			CContextMenuAdd* m_contextMenuAdd;
-
-			GUI::CButton* m_btnAdd;
-			GUI::CButton* m_btnSetting;
-
-			GUI::CTextBox* m_inputSearch;
+			GUI::CCanvas* m_canvas;
 		public:
-			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
+			CContextMenuAdd(GUI::CCanvas* canvas);
 
-			virtual ~CSpaceAssets();
+			virtual ~CContextMenuAdd();
 
-		protected:
+			void popupMenu(GUI::CButton* button);
 
+			void OnCommand(GUI::CBase* item);
 		};
 	}
 }

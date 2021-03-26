@@ -228,19 +228,16 @@ namespace Skylicht
 			GUI::CMenuItem* create = submenu->addItem(L"Create");
 			submenu = create->getMenu();
 			submenu->addItem(L"Scene");
-			submenu->addItem(L"Animation");
 			submenu->addItem(L"Material");
+			submenu->addItem(L"Shader");
 			submenu->addItem(L"GUI");
 			submenu->addItem(L"Sprite");
+			submenu->addItem(L"Animation");
 
 			submenu = temp;
 			submenu->addSeparator();
 			submenu->addItem(L"Copy path", GUI::ESystemIcon::Copy);
-			submenu->addSeparator();
 			submenu->addItem(L"Show in Explorer");
-			submenu->addItem(L"Open");
-			submenu->addItem(L"Rename");
-			submenu->addItem(L"Delete");
 			submenu->addSeparator();
 			submenu->addItem(L"Refresh", L"Ctrl + R");
 
