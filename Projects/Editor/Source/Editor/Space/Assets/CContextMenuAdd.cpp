@@ -22,44 +22,46 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
-#include "AssetManager/CAssetManager.h"
-#include "CTreeFSController.h"
-#include "CListFSController.h"
-#include "CContextMenuFS.h"
+#include "pch.h"
 #include "CContextMenuAdd.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceAssets : public CSpace
+		CContextMenuAdd::CContextMenuAdd(GUI::CCanvas* canvas) :
+			m_canvas(canvas)
 		{
-		protected:
-			GUI::CTreeControl* m_treeFS;
-			CTreeFSController* m_treeFSController;
+			m_contextMenu = new GUI::CMenu(canvas);
+			m_contextMenu->setHidden(true);
+			m_contextMenu->OnCommand = BIND_LISTENER(&CContextMenuAdd::OnCommand, this);
 
-			GUI::CListBox* m_listFS;
-			CListFSController* m_listFSController;
+			m_contextMenu->addItem(L"Folder");
+			m_contextMenu->addSeparator();
+			m_contextMenu->addItem(L"Scene");
+			m_contextMenu->addItem(L"Material");
+			m_contextMenu->addItem(L"Shader");
+			m_contextMenu->addItem(L"GUI");
+			m_contextMenu->addItem(L"Sprite");
+			m_contextMenu->addItem(L"Animation");
+		}
 
-			CContextMenuFS* m_contextMenuFS;
-			
-			CContextMenuAdd* m_contextMenuAdd;
+		CContextMenuAdd::~CContextMenuAdd()
+		{
 
-			GUI::CButton* m_btnAdd;
-			GUI::CButton* m_btnSetting;
+		}
 
-			GUI::CTextBox* m_inputSearch;
-		public:
-			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
+		void CContextMenuAdd::popupMenu(GUI::CButton* button)
+		{
+			m_canvas->closeMenu();
 
-			virtual ~CSpaceAssets();
+			GUI::SPoint p = button->localPosToCanvas();
+			m_contextMenu->open(GUI::SPoint(p.X, p.Y + button->height()));
+		}
 
-		protected:
+		void CContextMenuAdd::OnCommand(GUI::CBase* item)
+		{
 
-		};
+		}
 	}
 }
