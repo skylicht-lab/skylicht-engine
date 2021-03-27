@@ -36,7 +36,8 @@ namespace Skylicht
 			m_renameItem(NULL),
 			m_treeController(NULL),
 			m_canvas(canvas),
-			m_msgBox(NULL)
+			m_msgBox(NULL),
+			m_newFolderItem(NULL)
 		{
 			m_assetManager = CAssetManager::getInstance();
 
@@ -57,32 +58,6 @@ namespace Skylicht
 		CListFSController::~CListFSController()
 		{
 
-		}
-
-		void CListFSController::OnKeyPress(GUI::CBase* control, int key, bool press)
-		{
-			GUI::CListBox* list = dynamic_cast<GUI::CListBox*>(control);
-			if (list == NULL)
-				return;
-
-			if (key == GUI::KEY_F2)
-			{
-				rename(list->getSelected());
-			}
-		}
-
-		void CListFSController::rename(GUI::CListRowItem* node)
-		{
-			if (node != NULL)
-			{
-				m_renameItem = node;
-				m_renameRevert = node->getLabel();
-
-				node->getTextEditHelper()->beginEdit(
-					BIND_LISTENER(&CListFSController::OnRename, this),
-					BIND_LISTENER(&CListFSController::OnCancelRename, this)
-				);
-			}
 		}
 
 		void CListFSController::removePath(const char* path)
@@ -117,6 +92,32 @@ namespace Skylicht
 			}
 		}
 
+		void CListFSController::OnKeyPress(GUI::CBase* control, int key, bool press)
+		{
+			GUI::CListBox* list = dynamic_cast<GUI::CListBox*>(control);
+			if (list == NULL)
+				return;
+
+			if (key == GUI::KEY_F2)
+			{
+				rename(list->getSelected());
+			}
+		}
+
+		void CListFSController::rename(GUI::CListRowItem* node)
+		{
+			if (node != NULL)
+			{
+				m_renameItem = node;
+				m_renameRevert = node->getLabel();
+
+				node->getTextEditHelper()->beginEdit(
+					BIND_LISTENER(&CListFSController::OnRename, this),
+					BIND_LISTENER(&CListFSController::OnCancelRename, this)
+				);
+			}
+		}
+
 		void CListFSController::OnRename(GUI::CBase* control)
 		{
 			GUI::CTextBox* textbox = dynamic_cast<GUI::CTextBox*>(control);
@@ -144,12 +145,17 @@ namespace Skylicht
 				refresh();
 				scrollAndSelectPath(newPath.c_str());
 			}
+			else
+			{
+				refresh();
+			}
 
 			m_listFS->focus();
 		}
 
 		void CListFSController::OnCancelRename(GUI::CBase* control)
 		{
+			m_renameItem = NULL;
 			m_listFS->focus();
 		}
 
@@ -185,6 +191,8 @@ namespace Skylicht
 			m_listFS->setScrollVertical(0.0f);
 
 			m_currentFolder = currentFolder;
+			if (m_currentFolder.empty())
+				m_currentFolder = m_assetManager->getAssetFolder();
 		}
 
 		void CListFSController::OnFileOpen(GUI::CBase* node)
@@ -228,6 +236,100 @@ namespace Skylicht
 				m_assetManager->getFolder(m_currentFolder.c_str(), files);
 
 			add(m_currentFolder, files);
+		}
+
+		void CListFSController::newFolder(const char* parent)
+		{
+			std::string baseName = "NewFolder";
+
+			int id = 1;
+			std::string name = baseName;
+			std::string path = parent;
+			path += "/";
+			path += name;
+
+			while (m_assetManager->isExist(path.c_str()))
+			{
+				++id;
+				path = parent;
+				path += "/";
+
+				name = baseName;
+				name += id;
+
+				path += name;
+			};
+
+			m_newFolderItem = m_listFS->addItem(CStringImp::convertUTF8ToUnicode(name.c_str()).c_str(), GUI::ESystemIcon::Folder);
+			m_newFolderItem->tagString(parent);
+
+			GUI::CListRowItem* next = m_listFS->getItemByLabel(L"..");
+			if (next != NULL)
+				m_newFolderItem->bringNextToControl(next, true);
+			else
+				m_newFolderItem->sendToBack();
+
+			m_newFolderItem->setToggle(true);
+
+			m_listFS->recurseLayout();
+
+			m_listFS->scrollToItem(m_newFolderItem);
+			m_listFS->focus();
+
+			m_newFolderItem->getTextEditHelper()->beginEdit(
+				BIND_LISTENER(&CListFSController::OnRenameFolder, this),
+				BIND_LISTENER(&CListFSController::OnCancelRenameFolder, this)
+			);
+		}
+
+		void CListFSController::OnRenameFolder(GUI::CBase* control)
+		{
+			GUI::CTextBox* textbox = dynamic_cast<GUI::CTextBox*>(control);
+
+			std::wstring newNameW = textbox->getString();
+			std::string newName = CStringImp::convertUnicodeToUTF8(newNameW.c_str());
+
+			const std::string& parent = m_newFolderItem->getTagString();
+			std::string newPath = parent;
+			newPath += "/";
+			newPath += newName;
+
+			if (m_assetManager->isExist(newPath.c_str()))
+			{
+				m_msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::OK);
+				m_msgBox->setMessage("Folder with the new name already exists!", newName.c_str());
+				m_msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+				m_msgBox->OnOK = [controller = this, parentPath = parent](GUI::CBase* base)
+				{
+					// Retry command new folder
+					controller->newFolder(parentPath.c_str());
+				};
+
+				m_newFolderItem->remove();
+				m_newFolderItem = NULL;
+				return;
+			}
+
+			// create new folder here
+			if (m_assetManager->newFolderAsset(newPath.c_str()))
+			{
+				m_newFolderItem = NULL;
+				refresh();
+				scrollAndSelectPath(newPath.c_str());
+			}
+			else
+			{
+				refresh();
+			}
+
+			m_listFS->focus();
+		}
+
+		void CListFSController::OnCancelRenameFolder(GUI::CBase* control)
+		{
+			m_newFolderItem->remove();
+			m_newFolderItem = NULL;
+			m_listFS->focus();
 		}
 	}
 }

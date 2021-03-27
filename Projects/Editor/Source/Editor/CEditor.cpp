@@ -72,6 +72,11 @@ namespace Skylicht
 		void CEditor::pause()
 		{
 			m_assetWatcher->beginWatch();
+
+			for (CSpace* s : m_workspaces)
+			{
+				s->pause();
+			}
 		}
 
 		void CEditor::resume()
@@ -82,6 +87,19 @@ namespace Skylicht
 			{
 				m_assetWatcher->lock();
 				initImportGUI(true);
+			}
+
+			for (CSpace* s : m_workspaces)
+			{
+				s->resume();
+			}
+		}
+
+		void CEditor::refresh()
+		{
+			for (CSpace* s : m_workspaces)
+			{
+				s->refresh();
 			}
 		}
 

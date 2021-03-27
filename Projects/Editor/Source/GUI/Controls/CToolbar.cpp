@@ -37,7 +37,7 @@ namespace Skylicht
 			{
 				setHeight(25.0f);
 
-				setPadding(SPadding(0.0f, 2.0f, 0.0f, -3.0f));
+				setPadding(SPadding(1.0f, 2.0f, 1.0f, -3.0f));
 				enableRenderFillRect(true);
 				setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
 

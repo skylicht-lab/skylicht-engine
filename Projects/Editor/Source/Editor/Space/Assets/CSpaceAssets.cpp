@@ -36,8 +36,6 @@ namespace Skylicht
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 
 			m_btnAdd = toolbar->addButton(L"Add", GUI::ESystemIcon::Plus);
-			m_btnSetting = toolbar->addButton(GUI::ESystemIcon::Setting, true);
-			toolbar->addSpace(true);
 
 			m_inputSearch = new GUI::CTextBox(toolbar);
 			m_inputSearch->setWidth(200.0f);
@@ -65,7 +63,7 @@ namespace Skylicht
 			spliter->setWeakCol(1);
 
 			m_contextMenuFS = new CContextMenuFS(window->getCanvas(), m_treeFS, m_treeFSController, m_listFS, m_listFSController);
-			m_contextMenuAdd = new CContextMenuAdd(window->getCanvas());
+			m_contextMenuAdd = new CContextMenuAdd(window->getCanvas(), m_listFSController);
 
 			m_btnAdd->OnDown = [contextMenu = m_contextMenuAdd](GUI::CBase* sender)
 			{
@@ -79,6 +77,11 @@ namespace Skylicht
 			delete m_listFSController;
 			delete m_contextMenuFS;
 			delete m_contextMenuAdd;
+		}
+
+		void CSpaceAssets::refresh()
+		{
+			m_listFSController->refresh();
 		}
 	}
 }

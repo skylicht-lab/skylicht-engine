@@ -76,63 +76,16 @@ namespace Skylicht
 		{
 			if (m_fileIterator == m_fileIteratorEnd)
 				return true;
-
-			std::time_t now = std::time(0);
-
+			
 			for (int j = 0; j < count; j++)
 			{
 				SFileNode* node = (*m_fileIterator);
 
 				std::string path = node->FullPath;
-				std::string meta = path + ".meta";
-
+				
 				if (fs::exists(path))
 				{
-					bool regenerate = true;
-
-					if (fs::exists(meta))
-					{
-						// load meta
-						readGUID(meta.c_str(), node);
-
-						// remove meta
-						m_assetManager->m_meta.remove(meta);
-
-						// check collision
-						if (node->Guid.empty()
-							|| node->Guid.size() != 64
-							|| m_assetManager->m_guidToFile.find(node->Guid) != m_assetManager->m_guidToFile.end())
-						{
-							regenerate = true;
-
-							char log[1024];
-							sprintf(log, "[CAssetImporter::loadGUID] GUID Collision: %s\n", node->Path.c_str());
-							os::Printer::log(log);
-						}
-						else
-						{
-							regenerate = false;
-
-							// map guid
-							m_assetManager->m_guidToFile[node->Guid] = node;
-						}
-					}
-					else
-					{
-						regenerate = true;
-					}
-
-					if (regenerate)
-					{
-						// generate guid
-						node->Guid = m_assetManager->generateHash(node->Bundle.c_str(), node->Path.c_str(), node->CreateTime, now);
-
-						// save meta
-						saveGUID(meta.c_str(), node);
-
-						// map guid
-						m_assetManager->m_guidToFile[node->Guid] = node;
-					}
+					m_assetManager->readOrGenerateMeta(path.c_str(), node);
 				}
 
 				m_lastFile = node->Path;
@@ -148,59 +101,6 @@ namespace Skylicht
 			}
 
 			return false;
-		}
-
-		void CAssetImporter::readGUID(const char* path, SFileNode* node)
-		{
-			io::IFileSystem* filesystem = getIrrlichtDevice()->getFileSystem();
-			io::IXMLReader* xmlRead = filesystem->createXMLReader(path);
-			if (xmlRead == NULL)
-				return;
-
-			while (xmlRead->read())
-			{
-				switch (xmlRead->getNodeType())
-				{
-				case io::EXN_ELEMENT:
-				{
-					std::wstring nodeName = xmlRead->getNodeName();
-					if (nodeName == L"guid")
-					{
-						const wchar_t* value = xmlRead->getAttributeValue(L"id");
-						if (value != NULL)
-						{
-							char text[70];
-							CStringImp::convertUnicodeToUTF8(value, text);
-							node->Guid = text;
-
-							xmlRead->drop();
-							return;
-						}
-					}
-					break;
-				}
-				default:
-					break;
-				}
-			}
-
-			xmlRead->drop();
-		}
-
-		void CAssetImporter::saveGUID(const char* path, SFileNode* node)
-		{
-			io::IFileSystem* filesystem = getIrrlichtDevice()->getFileSystem();
-			io::IWriteFile* file = filesystem->createAndWriteFile(path);
-			if (file == NULL)
-				return;
-
-			std::string data;
-			data += "<meta>\n";
-			data += "\t<guid id=\"" + node->Guid += "\"/>\n";
-			data += "</meta>";
-
-			file->write(data.c_str(), (u32)data.size());
-			file->drop();
 		}
 
 		void CAssetImporter::getImportStatus(float& percent, std::string& last)

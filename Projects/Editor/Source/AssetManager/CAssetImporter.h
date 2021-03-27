@@ -55,11 +55,7 @@ namespace Skylicht
 			void addDeleted(std::list<std::string>& list);
 
 			bool loadGUID(int count);
-
-			void saveGUID(const char* path, SFileNode* node);
-
-			void readGUID(const char* path, SFileNode* node);
-
+			
 			void removeUnusedMeta();
 
 			bool deleteAsset(int count);

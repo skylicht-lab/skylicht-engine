@@ -48,6 +48,7 @@ namespace Skylicht
 
 			GUI::CMenuItem* m_open;
 			GUI::CMenuItem* m_showExplorer;
+			GUI::CMenuItem* m_newFolder;
 			GUI::CMenuItem* m_delete;
 			GUI::CMenuItem* m_rename;
 			GUI::CMenuItem* m_copyPath;
