@@ -86,8 +86,12 @@ void SkylichtEditor::onUpdate()
 		if (m_editor->isImportFinish() == true)
 		{
 			m_editor->closeImportDialog();
+
 			if (m_editor->isUIInitiate() == false)
 				m_editor->initEditorGUI();
+			else
+				m_editor->refresh();
+
 			m_editorState = Running;
 		}
 

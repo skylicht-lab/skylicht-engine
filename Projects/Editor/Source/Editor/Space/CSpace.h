@@ -36,6 +36,7 @@ namespace Skylicht
 		{
 		protected:
 			GUI::CWindow* m_window;
+
 			CEditor* m_editor;
 
 		public:
@@ -50,6 +51,12 @@ namespace Skylicht
 			virtual void onWindowResize(GUI::CBase* base);
 
 			virtual void onResize(float w, float h) {}
+
+			virtual void pause() {}
+
+			virtual void resume() {}
+
+			virtual void refresh() {}
 
 			inline GUI::CWindow* getWindow()
 			{

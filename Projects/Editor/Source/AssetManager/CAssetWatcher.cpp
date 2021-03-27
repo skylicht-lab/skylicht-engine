@@ -134,16 +134,10 @@ namespace Skylicht
 
 		void CAssetWatcher::lock()
 		{
-			std::vector<std::string> splits;
-
 			for (std::string& path : m_add)
 			{
 				// read bundle from path
-				std::string shortPath = m_assetManager->getShortPath(path.c_str());
-				CStringImp::splitString(shortPath.c_str(), "/", splits);
-				std::string bundle = ".";
-				if (splits.size() > 1)
-					bundle = splits[0];
+				std::string bundle = m_assetManager->getBundleName(path.c_str());
 
 				// add file or folder
 				m_files.push_back(m_assetManager->addFileNode(bundle, path));

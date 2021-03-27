@@ -51,6 +51,8 @@ namespace Skylicht
 			m_open = m_contextMenu->addItem(L"Open");
 			m_showExplorer = m_contextMenu->addItem(L"Show in Explorer");
 			m_contextMenu->addSeparator();
+			m_newFolder = m_contextMenu->addItem(L"New folder");
+			m_contextMenu->addSeparator();
 			m_delete = m_contextMenu->addItem(L"Delete", GUI::ESystemIcon::Trash);
 			m_rename = m_contextMenu->addItem(L"Rename", L"F2");
 			m_copyPath = m_contextMenu->addItem(L"Copy path", GUI::ESystemIcon::Copy, L"SHIFT + C");
@@ -83,6 +85,8 @@ namespace Skylicht
 					m_selectedPath = node->getTagString();
 
 					m_open->setHidden(true);
+
+					m_newFolder->setHidden(false);
 
 					if (m_selectedPath == m_assetManager->getAssetFolder())
 					{
@@ -121,6 +125,8 @@ namespace Skylicht
 				else
 					m_duplicate->setHidden(false);
 
+				m_newFolder->setHidden(true);
+
 				m_contextMenu->open(GUI::CInput::getInput()->getMousePosition());
 			}
 		}
@@ -129,6 +135,7 @@ namespace Skylicht
 		{
 			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
 			const std::wstring& label = menuItem->getLabel();
+
 			if (label == L"Open")
 			{
 				if (m_ownerControl == m_listFS)
@@ -191,6 +198,10 @@ namespace Skylicht
 			else if (label == L"Duplicate")
 			{
 
+			}
+			else if (label == L"New folder")
+			{
+				m_listFSController->newFolder(m_selectedPath.c_str());
 			}
 		}
 

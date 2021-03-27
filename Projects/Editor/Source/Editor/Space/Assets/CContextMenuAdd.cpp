@@ -29,8 +29,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CContextMenuAdd::CContextMenuAdd(GUI::CCanvas* canvas) :
-			m_canvas(canvas)
+		CContextMenuAdd::CContextMenuAdd(GUI::CCanvas* canvas, CListFSController* listFSController) :
+			m_canvas(canvas),
+			m_listFSController(listFSController)
 		{
 			m_contextMenu = new GUI::CMenu(canvas);
 			m_contextMenu->setHidden(true);
@@ -61,7 +62,13 @@ namespace Skylicht
 
 		void CContextMenuAdd::OnCommand(GUI::CBase* item)
 		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
+			const std::wstring& label = menuItem->getLabel();
 
+			if (label == L"Folder")
+			{
+				m_listFSController->newFolder(m_listFSController->getCurrentFolder().c_str());
+			}
 		}
 	}
 }
