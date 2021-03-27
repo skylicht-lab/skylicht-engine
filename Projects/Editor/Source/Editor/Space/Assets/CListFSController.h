@@ -41,7 +41,7 @@ namespace Skylicht
 			GUI::CListBox* m_listFS;
 
 			GUI::CListRowItem* m_renameItem;
-			
+
 			std::wstring m_renameRevert;
 
 			CTreeFSController* m_treeController;
@@ -52,16 +52,14 @@ namespace Skylicht
 
 			GUI::CMessageBox* m_msgBox;
 
+			GUI::CListRowItem* m_newFolderItem;
+
 		public:
 			CListFSController(GUI::CCanvas* canvas, GUI::CListBox* list);
 
 			virtual ~CListFSController();
 
 			void OnKeyPress(GUI::CBase* control, int key, bool press);
-
-			void OnRename(GUI::CBase* control);
-
-			void OnCancelRename(GUI::CBase* control);
 
 			void OnFileOpen(GUI::CBase* node);
 
@@ -74,9 +72,24 @@ namespace Skylicht
 
 			void rename(GUI::CListRowItem* node);
 
+			void OnRename(GUI::CBase* control);
+
+			void OnCancelRename(GUI::CBase* control);
+
 			void removePath(const char* path);
 
 			void scrollAndSelectPath(const char* path);
+
+			void newFolder(const char* parent);
+
+			void OnRenameFolder(GUI::CBase* control);
+
+			void OnCancelRenameFolder(GUI::CBase* control);
+
+			const std::string& getCurrentFolder()
+			{
+				return m_currentFolder;
+			}
 
 		public:
 

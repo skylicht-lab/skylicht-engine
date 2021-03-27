@@ -46,17 +46,19 @@ namespace Skylicht
 			CListFSController* m_listFSController;
 
 			CContextMenuFS* m_contextMenuFS;
-			
+
 			CContextMenuAdd* m_contextMenuAdd;
 
 			GUI::CButton* m_btnAdd;
-			GUI::CButton* m_btnSetting;
 
 			GUI::CTextBox* m_inputSearch;
+
 		public:
 			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceAssets();
+
+			virtual void refresh();
 
 		protected:
 

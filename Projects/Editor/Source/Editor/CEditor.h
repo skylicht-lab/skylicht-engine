@@ -78,6 +78,8 @@ namespace Skylicht
 
 			void resume();
 
+			void refresh();
+
 			bool needReImport();
 
 		protected:

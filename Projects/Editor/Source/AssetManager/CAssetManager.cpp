@@ -331,6 +331,8 @@ namespace Skylicht
 					if (fs::exists(meta))
 						fs::remove_all(meta);
 
+					// try fix double node in list
+					deleteList.remove(node);
 					deleteList.push_back(node);
 				}
 			}
@@ -406,6 +408,35 @@ namespace Skylicht
 			return true;
 		}
 
+		std::string CAssetManager::getBundleName(const char* path)
+		{
+			std::string shortPath = getShortPath(path);
+
+			std::vector<std::string> splits;
+			CStringImp::splitString(shortPath.c_str(), "/", splits);
+
+			std::string bundle = ".";
+			if (splits.size() > 1)
+				bundle = splits[0];
+			return bundle;
+		}
+
+		bool CAssetManager::newFolderAsset(const char* path)
+		{
+			if (fs::create_directory(path))
+			{
+				std::string bundle = getBundleName(path);
+
+				SFileNode* fileNode = addFileNode(bundle, path);
+				m_files.push_back(fileNode);
+
+				readOrGenerateMeta(path, fileNode);
+				return true;
+			}
+
+			return false;
+		}
+
 		SFileNode* CAssetManager::getFileNodeByPath(const char* path)
 		{
 			std::map<std::string, SFileNode*>::iterator i = m_pathToFile.find(path);
@@ -420,6 +451,119 @@ namespace Skylicht
 			if (i == m_guidToFile.end())
 				return NULL;
 			return i->second;
+		}
+
+		bool CAssetManager::readGUID(const char* path, SFileNode* node)
+		{
+			io::IFileSystem* filesystem = getIrrlichtDevice()->getFileSystem();
+			io::IXMLReader* xmlRead = filesystem->createXMLReader(path);
+			if (xmlRead == NULL)
+				return false;
+
+			while (xmlRead->read())
+			{
+				switch (xmlRead->getNodeType())
+				{
+				case io::EXN_ELEMENT:
+				{
+					std::wstring nodeName = xmlRead->getNodeName();
+					if (nodeName == L"guid")
+					{
+						const wchar_t* value = xmlRead->getAttributeValue(L"id");
+						if (value != NULL)
+						{
+							char text[70];
+							CStringImp::convertUnicodeToUTF8(value, text);
+							node->Guid = text;
+
+							xmlRead->drop();
+							return true;
+						}
+					}
+					break;
+				}
+				default:
+					break;
+				}
+			}
+
+			xmlRead->drop();
+			return false;
+		}
+
+		void CAssetManager::saveGUID(const char* path, SFileNode* node)
+		{
+			io::IFileSystem* filesystem = getIrrlichtDevice()->getFileSystem();
+			io::IWriteFile* file = filesystem->createAndWriteFile(path);
+			if (file == NULL)
+				return;
+
+			std::string data;
+			data += "<meta>\n";
+			data += "\t<guid id=\"" + node->Guid += "\"/>\n";
+			data += "</meta>";
+
+			file->write(data.c_str(), (u32)data.size());
+			file->drop();
+		}
+
+		void CAssetManager::readOrGenerateMeta(const char* path, SFileNode* node)
+		{
+			bool regenerate = true;
+
+			std::string meta = std::string(path) + ".meta";
+
+			if (fs::exists(meta))
+			{
+				// load meta
+				if (readGUID(meta.c_str(), node) == true)
+				{
+					// remove meta
+					m_meta.remove(meta);
+
+					// check collision
+					if (node->Guid.empty()
+						|| node->Guid.size() != 64
+						|| m_guidToFile.find(node->Guid) != m_guidToFile.end())
+					{
+						regenerate = true;
+
+						char log[1024];
+						sprintf(log, "[CAssetImporter::loadGUID] GUID Collision: %s\n", node->Path.c_str());
+						os::Printer::log(log);
+					}
+					else
+					{
+						regenerate = false;
+
+						// map guid
+						m_guidToFile[node->Guid] = node;
+					}
+				}
+				else
+				{
+					regenerate = true;
+				}
+			}
+			else
+			{
+				regenerate = true;
+			}
+
+			if (regenerate)
+			{
+				// current time
+				std::time_t now = std::time(0);
+
+				// generate guid
+				node->Guid = generateHash(node->Bundle.c_str(), node->Path.c_str(), node->CreateTime, now);
+
+				// save meta
+				saveGUID(meta.c_str(), node);
+
+				// map guid
+				m_guidToFile[node->Guid] = node;
+			}
 		}
 	}
 }

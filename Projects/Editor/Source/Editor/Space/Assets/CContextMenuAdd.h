@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GUI/GUI.h"
+#include "CListFSController.h"
 #include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
@@ -37,8 +38,11 @@ namespace Skylicht
 			GUI::CMenu* m_contextMenu;
 
 			GUI::CCanvas* m_canvas;
+
+			CListFSController* m_listFSController;
+
 		public:
-			CContextMenuAdd(GUI::CCanvas* canvas);
+			CContextMenuAdd(GUI::CCanvas* canvas, CListFSController* listFSController);
 
 			virtual ~CContextMenuAdd();
 

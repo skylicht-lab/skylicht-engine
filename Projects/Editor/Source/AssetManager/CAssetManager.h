@@ -154,6 +154,10 @@ namespace Skylicht
 
 			bool renameAsset(const char* path, const char* name);
 
+			bool newFolderAsset(const char* path);
+
+			std::string getBundleName(const char* path);
+
 		protected:
 
 			void discovery(const std::string& bundle, const std::string& folder);
@@ -161,6 +165,12 @@ namespace Skylicht
 			SFileNode* addFileNode(const std::string& bundle, const std::string& path);
 
 			void sortFiles(std::vector<SFileInfo>& files);
+
+			void saveGUID(const char* path, SFileNode* node);
+
+			bool readGUID(const char* path, SFileNode* node);
+
+			void readOrGenerateMeta(const char* path, SFileNode* node);
 		};
 	}
 }
