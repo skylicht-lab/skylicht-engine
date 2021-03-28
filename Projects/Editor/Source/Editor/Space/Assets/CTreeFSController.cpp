@@ -265,5 +265,50 @@ namespace Skylicht
 			node->removeAllTreeNode();
 			OnExpand(node);
 		}
+
+		void CTreeFSController::refresh()
+		{
+			std::list<std::string> listExpand;
+
+			if (m_nodeAssets->isExpand() == false)
+				return;
+
+			GUI::CTreeNode* selectNode = m_treeFS->getChildSelected();
+			std::string selectePath;
+			if (selectNode != NULL)
+				selectePath = selectNode->getTagString();
+
+			std::list<GUI::CTreeNode*> stack = m_nodeAssets->getChildNodes();
+			while (stack.size() > 0)
+			{
+				GUI::CTreeNode* top = stack.front();
+				stack.pop_front();
+
+				if (top->isExpand())
+				{
+					const std::string& path = top->getTagString();
+					listExpand.push_back(path);
+
+					std::list<GUI::CTreeNode*> child = top->getChildNodes();
+					if (child.size() > 0)
+						stack.insert(stack.begin(), child.begin(), child.end());
+				}
+			}
+
+			// refresh root
+			refresh(m_nodeAssets);
+
+			// expand child
+			for (const std::string& path : listExpand)
+			{
+				expand(path);
+			}
+
+			// focus the select
+			if (!selectePath.empty())
+			{
+				expand(selectePath);
+			}
+		}
 	}
 }

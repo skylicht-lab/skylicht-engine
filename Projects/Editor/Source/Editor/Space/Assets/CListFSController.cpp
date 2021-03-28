@@ -316,6 +316,9 @@ namespace Skylicht
 				m_newFolderItem = NULL;
 				refresh();
 				scrollAndSelectPath(newPath.c_str());
+
+				// focus on tree
+				m_treeController->expand(newPath);
 			}
 			else
 			{
