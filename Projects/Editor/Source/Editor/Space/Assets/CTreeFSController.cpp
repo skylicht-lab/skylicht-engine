@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTreeFSController.h"
 #include "CListFSController.h"
+#include "CSearchAssetController.h"
+
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
@@ -38,6 +40,7 @@ namespace Skylicht
 			m_renameNode(NULL),
 			m_nodeAssets(NULL),
 			m_listController(NULL),
+			m_searchController(NULL),
 			m_msgBox(NULL)
 		{
 			m_assetManager = CAssetManager::getInstance();
@@ -124,6 +127,9 @@ namespace Skylicht
 
 				std::vector<SFileInfo> files;
 				m_assetManager->getFolder(fullPath.c_str(), files);
+
+				if (m_searchController != NULL)
+					m_searchController->hideSearchUI();
 
 				if (m_listController != NULL)
 					m_listController->add(fullPath, files);
