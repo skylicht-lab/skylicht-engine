@@ -50,14 +50,40 @@ namespace Skylicht
 			m_treeFS = new GUI::CTreeControl(spliter);
 			m_treeFSController = new CTreeFSController(window->getCanvas(), m_treeFS);
 
-			m_listFS = new GUI::CListBox(spliter);
-			m_listFSController = new CListFSController(window->getCanvas(), m_listFS);
+			GUI::CBase* listContainer = new GUI::CBase(spliter);
 
+			GUI::CBase* searchInfo = new GUI::CBase(listContainer);
+			searchInfo->setHeight(20.0f);
+			searchInfo->dock(GUI::EPosition::Top);
+			searchInfo->enableRenderFillRect(true);
+			searchInfo->setFillRectColor(GUI::CThemeConfig::WindowInnerColor);
+			searchInfo->setHidden(true);
+
+			m_labelSearch = new GUI::CLabel(searchInfo);
+			m_labelSearch->setString("Search asset: ");
+			m_labelSearch->setPadding(GUI::SPadding(5.0f, 3.0f, 0.0f, 0.0f));
+			m_labelSearch->dock(GUI::EPosition::Left);
+			m_labelSearch->sizeToContents();
+
+			m_buttonCancelSearch = new GUI::CIconButton(searchInfo);
+			m_buttonCancelSearch->setMargin(GUI::SMargin(5.0f, 0.0f, 0.0f, 0.0f));
+			m_buttonCancelSearch->setIcon(GUI::ESystemIcon::Close);
+			m_buttonCancelSearch->dock(GUI::EPosition::Left);
+
+
+			m_listFS = new GUI::CListBox(listContainer);
+			m_listFS->dock(GUI::EPosition::Fill);
+
+			m_listFSController = new CListFSController(window->getCanvas(), m_listFS);
 			m_listFSController->setTreeController(m_treeFSController);
+
+			m_searchController = new CSearchAssetController(m_inputSearch, searchInfo, m_labelSearch, m_buttonCancelSearch, m_listFSController);
+
 			m_treeFSController->setListController(m_listFSController);
+			m_treeFSController->setSearchController(m_searchController);
 
 			spliter->setControl(m_treeFS, 0, 0);
-			spliter->setControl(m_listFS, 0, 1);
+			spliter->setControl(listContainer, 0, 1);
 
 			spliter->setColWidth(0, 300.0f);
 			spliter->setWeakCol(1);
@@ -77,6 +103,12 @@ namespace Skylicht
 			delete m_listFSController;
 			delete m_contextMenuFS;
 			delete m_contextMenuAdd;
+			delete m_searchController;
+		}
+
+		void CSpaceAssets::update()
+		{
+			m_searchController->update();
 		}
 
 		void CSpaceAssets::refresh()
