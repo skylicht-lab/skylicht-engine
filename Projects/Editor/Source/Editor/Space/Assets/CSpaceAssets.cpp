@@ -82,6 +82,7 @@ namespace Skylicht
 		void CSpaceAssets::refresh()
 		{
 			m_listFSController->refresh();
+			m_treeFSController->refresh();
 		}
 	}
 }

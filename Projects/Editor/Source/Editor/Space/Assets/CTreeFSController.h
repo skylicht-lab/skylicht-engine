@@ -85,6 +85,8 @@ namespace Skylicht
 			void add(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
 
 			void refresh(GUI::CTreeNode* node);
+
+			void refresh();
 		};
 	}
 }
