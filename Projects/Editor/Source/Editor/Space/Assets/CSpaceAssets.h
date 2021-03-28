@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CListFSController.h"
 #include "CContextMenuFS.h"
 #include "CContextMenuAdd.h"
+#include "CSearchAssetController.h"
 
 namespace Skylicht
 {
@@ -46,17 +47,20 @@ namespace Skylicht
 			CListFSController* m_listFSController;
 
 			CContextMenuFS* m_contextMenuFS;
-
 			CContextMenuAdd* m_contextMenuAdd;
+			CSearchAssetController* m_searchController;
 
 			GUI::CButton* m_btnAdd;
-
 			GUI::CTextBox* m_inputSearch;
+			GUI::CLabel* m_labelSearch;
+			GUI::CIconButton* m_buttonCancelSearch;
 
 		public:
 			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceAssets();
+
+			virtual void update();
 
 			virtual void refresh();
 

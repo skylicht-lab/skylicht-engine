@@ -25,77 +25,44 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GUI/GUI.h"
+#include "CListFSController.h"
 #include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CListFSController;
-
-		class CSearchAssetController;
-
-		class CTreeFSController
+		class CSearchAssetController
 		{
 		protected:
-			GUI::CCanvas* m_canvas;
+			GUI::CTextBox* m_inputSearch;
+			GUI::CLabel* m_labelSearch;
+			GUI::CButton* m_buttonCancel;
+			GUI::CBase* m_searchInfo;
 
-			GUI::CTreeControl* m_treeFS;
+			CListFSController* m_listFSController;
 
-			CAssetManager* m_assetManager;
+			float m_inputTimeout;
+			bool m_changed;
 
-			GUI::CTreeNode* m_nodeAssets;
-
-			GUI::CTreeNode* m_renameNode;
-
-			std::wstring m_renameRevert;
-
-			CListFSController* m_listController;
-
-			CSearchAssetController* m_searchController;
-
-			GUI::CMessageBox* m_msgBox;
-		public:
-			CTreeFSController(GUI::CCanvas* canvas, GUI::CTreeControl* treeFS);
-
-			virtual ~CTreeFSController();
-
-			void OnExpand(GUI::CBase* node);
-
-			void OnCollapse(GUI::CBase* node);
-
-			void OnSelected(GUI::CBase* node);
-
-			void OnKeyPress(GUI::CBase* control, int key, bool press);
-
-			void OnRename(GUI::CBase* control);
-
-			void OnCancelRename(GUI::CBase* control);
-
-			void setListController(CListFSController* listController)
-			{
-				m_listController = listController;
-			}
-
-			void setSearchController(CSearchAssetController* searchController)
-			{
-				m_searchController = searchController;
-			}
-
-			void rename(GUI::CTreeNode* node);
-
-			void removePath(const char* path);
-
-			bool removePath(GUI::CTreeNode* node, const char* path);
+			std::wstring m_searchString;
 
 		public:
-			void expand(const std::string& folder);
+			CSearchAssetController(GUI::CTextBox* textbox, GUI::CBase* searchInfo, GUI::CLabel* labelSearch, GUI::CButton* buttonCancel, CListFSController* listController);
 
-			void add(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
+			virtual ~CSearchAssetController();
 
-			void refresh(GUI::CTreeNode* node);
+			void update();
 
-			void refresh();
+			void hideSearchUI();
+
+			void search(const std::wstring& string);
+
+		protected:
+
+			void OnSearchChanged(GUI::CBase* base);
+
+			void OnCancelSearch(GUI::CBase* base);
 		};
 	}
 }
