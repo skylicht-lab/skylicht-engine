@@ -300,6 +300,33 @@ namespace Skylicht
 			return fs::exists(path);
 		}
 
+		void CAssetManager::search(const char* search, std::vector<SFileInfo>& files)
+		{
+			files.clear();
+
+			wchar_t name[512];
+
+			for (SFileNode* f : m_files)
+			{												
+				if (CPath::searchMatch(f->Path, std::string(search)) == true)
+				{
+					files.push_back(SFileInfo());
+					SFileInfo& file = files.back();
+
+					file.Name = CPath::getFileName(f->Path);
+					file.FullPath = f->FullPath;
+					file.Path = f->Path;
+					file.IsFolder = isFolder(f->FullPath.c_str());
+					if (file.IsFolder)
+						file.Type = Folder;
+					file.Node = m_pathToFile[file.Path];
+
+					CStringImp::convertUTF8ToUnicode(file.Name.c_str(), name);
+					file.NameW = name;
+				}
+			}
+		}
+
 		std::string CAssetManager::getShortPath(const char* folder)
 		{
 			std::string assetPath = m_assetFolder + "/";
