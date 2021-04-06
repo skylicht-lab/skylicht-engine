@@ -167,7 +167,7 @@ namespace Skylicht
 
 		for (int i = 0; i < len - searchLen + 1; i++)
 		{
-			if (filename[i] == search[0] ||
+			if (tolower(filename[i]) == tolower(search[0]) ||
 				search[0] == '?' ||
 				search[0] == '*')
 			{
@@ -197,7 +197,7 @@ namespace Skylicht
 							j--;
 						}
 					}
-					else if (filename[i + l] != search[j])
+					else if (tolower(filename[i + l]) != tolower(search[j]))
 					{
 						// false
 						found = false;

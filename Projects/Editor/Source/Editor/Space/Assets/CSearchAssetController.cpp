@@ -66,6 +66,7 @@ namespace Skylicht
 						m_searchInfo->setHidden(true);
 
 						// refresh
+						m_listFSController->enableSearching(false);
 						m_listFSController->refresh();
 					}
 					else
@@ -99,8 +100,6 @@ namespace Skylicht
 			m_changed = true;
 			m_searchString = L"";
 			m_inputSearch->setString(m_searchString);
-
-			m_listFSController->refresh();
 		}
 
 		void CSearchAssetController::hideSearchUI()
@@ -119,6 +118,7 @@ namespace Skylicht
 			if (search.size() >= 2)
 				CAssetManager::getInstance()->search(search.c_str(), files);
 
+			m_listFSController->enableSearching(true);
 			m_listFSController->add(m_listFSController->getCurrentFolder(), files);
 		}
 	}

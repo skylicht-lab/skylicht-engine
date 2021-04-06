@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CListFSController.h"
 #include "CTreeFSController.h"
+#include "CSearchAssetController.h"
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
@@ -37,7 +38,9 @@ namespace Skylicht
 			m_treeController(NULL),
 			m_canvas(canvas),
 			m_msgBox(NULL),
-			m_newFolderItem(NULL)
+			m_newFolderItem(NULL),
+			m_searching(false),
+			m_searchController(NULL)
 		{
 			m_assetManager = CAssetManager::getInstance();
 
@@ -49,6 +52,8 @@ namespace Skylicht
 				std::placeholders::_2,
 				std::placeholders::_3
 			);
+
+			m_listFS->OnSelected = BIND_LISTENER(&CListFSController::OnSelected, this);
 
 			std::vector<SFileInfo> files;
 			m_assetManager->getRoot(files);
@@ -89,6 +94,37 @@ namespace Skylicht
 					m_listFS->scrollToItem(item);
 					return;
 				}
+			}
+		}
+
+		void CListFSController::OnSelected(GUI::CBase* item)
+		{
+			GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(item);
+			if (rowItem == NULL)
+				return;
+
+			if (m_searching)
+			{
+				const std::string& fullPath = rowItem->getTagString();
+
+				bool isFolder = rowItem->getTagBool();
+				if (isFolder == true)
+				{
+					if (m_treeController != NULL)
+						m_treeController->expand(fullPath);
+
+					m_currentFolder = fullPath;
+				}
+				else
+				{
+					std::string folderPath = CPath::getFolderPath(fullPath);
+					if (m_treeController != NULL)
+						m_treeController->expand(folderPath);
+
+					m_currentFolder = folderPath;
+				}
+
+				m_selectSearchPath = fullPath;
 			}
 		}
 
@@ -213,6 +249,13 @@ namespace Skylicht
 
 					if (m_treeController != NULL)
 						m_treeController->expand(fullPath);
+
+					// close searching
+					if (m_searching)
+					{
+						m_searchController->hideSearchUI();
+						m_searching = false;
+					}
 				}
 				else
 				{
@@ -236,6 +279,15 @@ namespace Skylicht
 				m_assetManager->getFolder(m_currentFolder.c_str(), files);
 
 			add(m_currentFolder, files);
+
+			m_listFS->invalidate();
+			m_listFS->recurseLayout();
+
+			if (!m_selectSearchPath.empty())
+			{
+				scrollAndSelectPath(m_selectSearchPath.c_str());
+				m_selectSearchPath = "";
+			}
 		}
 
 		void CListFSController::newFolder(const char* parent)
