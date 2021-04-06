@@ -154,4 +154,62 @@ namespace Skylicht
 		result += filename;
 		return result;
 	}
+
+	bool CPath::searchMatch(const std::string& path, const std::string& searchPattern)
+	{
+		std::string fn = CPath::getFileName(path);
+
+		const char* filename = fn.c_str();
+		const char* search = searchPattern.c_str();
+
+		int len = CStringImp::length(filename);
+		int searchLen = CStringImp::length(search);
+
+		for (int i = 0; i < len - searchLen + 1; i++)
+		{
+			if (filename[i] == search[0] ||
+				search[0] == '?' ||
+				search[0] == '*')
+			{
+				bool found = true;
+				bool passPattern = true;
+
+				for (int j = 0, l = 0; j < searchLen && i + l < len; j++, l++)
+				{
+					if (search[j] == '?')
+					{
+						// alway true
+					}
+					else if (search[j] == '*')
+					{
+						passPattern = false;
+
+						// next char == this char
+						if (j < searchLen - 1 &&
+							search[j + 1] == filename[i + l])
+						{
+							l--;
+							passPattern = true;
+						}
+						else
+						{
+							// rollback at * character
+							j--;
+						}
+					}
+					else if (filename[i + l] != search[j])
+					{
+						// false
+						found = false;
+						break;
+					}
+				}
+
+				if (found == true && passPattern)
+					return true;
+			}
+		}
+
+		return false;
+	}
 }

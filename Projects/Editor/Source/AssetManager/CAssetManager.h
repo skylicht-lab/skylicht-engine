@@ -140,6 +140,8 @@ namespace Skylicht
 
 			bool isExist(const char* path);
 
+			void search(const char* search, std::vector<SFileInfo>& files);
+
 			std::string getShortPath(const char* folder);
 
 			SFileNode* getFileNodeByPath(const char* path);
