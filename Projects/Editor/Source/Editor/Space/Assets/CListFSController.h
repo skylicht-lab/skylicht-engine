@@ -33,6 +33,8 @@ namespace Skylicht
 	{
 		class CTreeFSController;
 
+		class CSearchAssetController;
+
 		class CListFSController
 		{
 		protected:
@@ -46,18 +48,26 @@ namespace Skylicht
 
 			CTreeFSController* m_treeController;
 
+			CSearchAssetController* m_searchController;
+
 			CAssetManager* m_assetManager;
 
 			std::string m_currentFolder;
+
+			std::string m_selectSearchPath;
 
 			GUI::CMessageBox* m_msgBox;
 
 			GUI::CListRowItem* m_newFolderItem;
 
+			bool m_searching;
+
 		public:
 			CListFSController(GUI::CCanvas* canvas, GUI::CListBox* list);
 
 			virtual ~CListFSController();
+
+			void OnSelected(GUI::CBase* item);
 
 			void OnKeyPress(GUI::CBase* control, int key, bool press);
 
@@ -68,6 +78,11 @@ namespace Skylicht
 			void setTreeController(CTreeFSController* treeController)
 			{
 				m_treeController = treeController;
+			}
+
+			void setSearchController(CSearchAssetController* searchController)
+			{
+				m_searchController = searchController;
 			}
 
 			void rename(GUI::CListRowItem* node);
@@ -89,6 +104,18 @@ namespace Skylicht
 			const std::string& getCurrentFolder()
 			{
 				return m_currentFolder;
+			}
+
+			void enableSearching(bool b)
+			{
+				m_searching = b;
+				if (b == true)
+					m_selectSearchPath = "";
+			}
+
+			bool isSearching()
+			{
+				return m_searching;
 			}
 
 		public:
