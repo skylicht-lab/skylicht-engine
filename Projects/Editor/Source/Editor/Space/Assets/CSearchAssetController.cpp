@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSearchAssetController.h"
+#include "AssetManager/CAssetManager.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -62,6 +64,9 @@ namespace Skylicht
 					{
 						// hide search ui
 						m_searchInfo->setHidden(true);
+
+						// refresh
+						m_listFSController->refresh();
 					}
 					else
 					{
@@ -108,7 +113,13 @@ namespace Skylicht
 
 		void CSearchAssetController::search(const std::wstring& string)
 		{
+			std::vector<SFileInfo> files;
 
+			std::string search = CStringImp::convertUnicodeToUTF8(string.c_str());
+			if (search.size() >= 2)
+				CAssetManager::getInstance()->search(search.c_str(), files);
+
+			m_listFSController->add(m_listFSController->getCurrentFolder(), files);
 		}
 	}
 }
