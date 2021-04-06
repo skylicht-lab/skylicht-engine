@@ -325,6 +325,8 @@ namespace Skylicht
 					file.NameW = name;
 				}
 			}
+
+			sortFiles(files);
 		}
 
 		std::string CAssetManager::getShortPath(const char* folder)

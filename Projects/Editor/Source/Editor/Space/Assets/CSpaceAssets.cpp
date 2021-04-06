@@ -82,6 +82,8 @@ namespace Skylicht
 			m_treeFSController->setListController(m_listFSController);
 			m_treeFSController->setSearchController(m_searchController);
 
+			m_listFSController->setSearchController(m_searchController);
+
 			spliter->setControl(m_treeFS, 0, 0);
 			spliter->setControl(listContainer, 0, 1);
 
