@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CContainerObject::CContainerObject(CGameObject *parent, CZone *zone) :
+	CContainerObject::CContainerObject(CGameObject* parent, CZone* zone) :
 		CGameObject(parent, zone),
 		m_updateRemoveAdd(true)
 	{
@@ -51,7 +51,7 @@ namespace Skylicht
 
 		while (it != end)
 		{
-			CGameObject *pObj = (*it);
+			CGameObject* pObj = (*it);
 
 			++i;
 
@@ -76,21 +76,21 @@ namespace Skylicht
 			queueObjs.push(this);
 		else
 		{
-			for (CGameObject* &obj : m_childs)
+			for (CGameObject*& obj : m_childs)
 				queueObjs.push(obj);
 		}
 
 		while (queueObjs.size() != 0)
 		{
-			CGameObject *obj = queueObjs.front();
+			CGameObject* obj = queueObjs.front();
 			queueObjs.pop();
 
 			m_arrayChildObjects.push_back(obj);
 
-			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
 			if (container != NULL)
 			{
-				for (CGameObject* &child : container->m_childs)
+				for (CGameObject*& child : container->m_childs)
 					queueObjs.push(child);
 			}
 		}
@@ -108,7 +108,7 @@ namespace Skylicht
 	{
 		listObjs.clear();
 
-		for (CGameObject* &obj : m_childs)
+		for (CGameObject*& obj : m_childs)
 		{
 			if (typeid(*obj) == typeid(type))
 			{
@@ -119,15 +119,14 @@ namespace Skylicht
 
 	CGameObject* CContainerObject::createEmptyObject()
 	{
-		CGameObject *p = new CGameObject(this, m_zone);
+		CGameObject* p = new CGameObject(this, m_zone);
 		if (p == NULL)
 			return NULL;
 
-		char lpName[1024];
-		sprintf(lpName, "RunTimeEmptyObject_%d", (int)CGameObject::s_objectID);
+		std::string name = generateObjectName("GameObject");
 
-		p->setID(CGameObject::s_objectID++);
-		p->setName(lpName);
+		p->setID(generateRandomID().c_str());
+		p->setName(name.c_str());
 
 		addChild(p);
 
@@ -138,11 +137,11 @@ namespace Skylicht
 
 	CContainerObject* CContainerObject::createContainerObject()
 	{
-		CContainerObject *container = new CContainerObject(this, m_zone);
+		CContainerObject* container = new CContainerObject(this, m_zone);
 
 		std::string name = generateObjectName("Container");
 
-		container->setID(CGameObject::s_objectID++);
+		container->setID(generateRandomID().c_str());
 		container->setParent(this);
 
 		container->setName(name.c_str());
@@ -157,11 +156,11 @@ namespace Skylicht
 	{
 		m_objectByName.clear();
 
-		for (CGameObject*&obj : m_childs)
+		for (CGameObject*& obj : m_childs)
 		{
 			registerObjectName(obj);
 
-			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
 			if (container != NULL)
 			{
 				container->updateIndexSearchObject();
@@ -174,22 +173,22 @@ namespace Skylicht
 		return (int)m_childs.size();
 	}
 
-	CGameObject* CContainerObject::searchObject(const wchar_t *objectName)
+	CGameObject* CContainerObject::searchObject(const wchar_t* objectName)
 	{
-		core::map<std::wstring, CGameObject*>::Node *node = m_objectByName.find(std::wstring(objectName));
+		core::map<std::wstring, CGameObject*>::Node* node = m_objectByName.find(std::wstring(objectName));
 		if (node == NULL)
 			return NULL;
 		return node->getValue();
 	}
 
-	CGameObject* CContainerObject::searchObjectInChild(const wchar_t *objectName)
+	CGameObject* CContainerObject::searchObjectInChild(const wchar_t* objectName)
 	{
-		CGameObject *result = searchObject(objectName);
+		CGameObject* result = searchObject(objectName);
 		if (result == NULL)
 		{
-			for (CGameObject*&obj : m_childs)
+			for (CGameObject*& obj : m_childs)
 			{
-				CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
+				CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
 				if (container != NULL)
 				{
 					result = container->searchObjectInChild(objectName);
@@ -204,18 +203,33 @@ namespace Skylicht
 	std::string CContainerObject::generateObjectName(const char* objTemplate)
 	{
 		wchar_t name[1024];
-		char	lpName[1024];
+		char lpName[1024];
 
-		CGameObject::s_objectID--;
-
+		int objectID = 0;
 		do
 		{
-			CGameObject::s_objectID++;
-			sprintf(lpName, "%s_%d", objTemplate, (int)CGameObject::s_objectID);
+			objectID++;
+			sprintf(lpName, "%s %d", objTemplate, objectID);
 			CStringImp::convertUTF8ToUnicode(lpName, name);
 		} while (searchObject(name) != NULL);
 
 		return std::string(lpName);
+	}
+
+	std::string CContainerObject::generateRandomID()
+	{
+		std::string randomString;
+		static const char alphanum[] = "0123456789";
+
+		srand((unsigned int)time(NULL) + (unsigned int)os::Timer::getRealTime());
+
+		int len = 16;
+		randomString.reserve(len);
+
+		for (int i = 0; i < len; ++i)
+			randomString += alphanum[rand() % (sizeof(alphanum) - 1)];
+
+		return randomString;
 	}
 
 	void CContainerObject::registerObjectName(CGameObject* obj)
@@ -231,7 +245,7 @@ namespace Skylicht
 
 			if (m_add.size() > 0)
 			{
-				for (CGameObject* &obj : m_add)
+				for (CGameObject*& obj : m_add)
 					m_childs.push_back(obj);
 
 				m_add.clear();
@@ -242,7 +256,7 @@ namespace Skylicht
 				ArrayGameObject arrayRemove = m_remove;
 				m_remove.clear();
 
-				for (CGameObject* &obj : arrayRemove)
+				for (CGameObject*& obj : arrayRemove)
 				{
 					ArrayGameObjectIter iObj = m_childs.begin(), iObjEnd = m_childs.end();
 					while (iObj != iObjEnd)
@@ -262,9 +276,9 @@ namespace Skylicht
 		}
 
 		// update in children
-		for (CGameObject*&obj : m_childs)
+		for (CGameObject*& obj : m_childs)
 		{
-			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
 			if (container != NULL)
 			{
 				container->updateAddRemoveObject(force);
@@ -272,14 +286,14 @@ namespace Skylicht
 		}
 	}
 
-	void CContainerObject::addChild(CGameObject *p)
+	void CContainerObject::addChild(CGameObject* p)
 	{
 		p->setParent(this);
 		m_add.push_back(p);
 		m_updateRemoveAdd = true;
 	}
 
-	void CContainerObject::removeObject(CGameObject *pObj)
+	void CContainerObject::removeObject(CGameObject* pObj)
 	{
 		m_remove.push_back(pObj);
 		m_updateRemoveAdd = true;
