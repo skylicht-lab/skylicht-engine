@@ -34,9 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	long CGameObject::s_objectID = 1;
-
-	CGameObject::CGameObject(CGameObject *parent, CZone *zone)
+	CGameObject::CGameObject(CGameObject* parent, CZone* zone)
 	{
 		initNull();
 
@@ -46,7 +44,7 @@ namespace Skylicht
 
 	void CGameObject::initNull()
 	{
-		m_objectID = -1;
+		m_objectID = "";
 		m_name = L"NoNameObj";
 
 		m_lighting = true;
@@ -73,7 +71,7 @@ namespace Skylicht
 	{
 		if (m_parent != NULL)
 		{
-			CContainerObject *parent = dynamic_cast<CContainerObject*>(m_parent);
+			CContainerObject* parent = dynamic_cast<CContainerObject*>(m_parent);
 			if (parent)
 				parent->removeObject(this);
 		}
@@ -104,7 +102,7 @@ namespace Skylicht
 		if (m_entity != NULL)
 			return m_entity;
 
-		CEntityManager *entityManager = getEntityManager();
+		CEntityManager* entityManager = getEntityManager();
 		if (entityManager == NULL)
 			return NULL;
 
@@ -135,7 +133,7 @@ namespace Skylicht
 		m_cullingLayer = layer;
 		if (m_entity != NULL)
 		{
-			CVisibleData *visible = m_entity->getData<CVisibleData>();
+			CVisibleData* visible = m_entity->getData<CVisibleData>();
 			visible->CullingLayer = layer;
 		}
 	}
@@ -168,7 +166,7 @@ namespace Skylicht
 
 	void CGameObject::releaseAllComponent()
 	{
-		for (CComponentSystem* &comp : m_components)
+		for (CComponentSystem*& comp : m_components)
 			delete comp;
 		m_components.clear();
 	}

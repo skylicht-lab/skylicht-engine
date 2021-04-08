@@ -46,7 +46,7 @@ namespace Skylicht
 		wchar_t buffer[1024] = { 0 };
 		CStringImp::convertUTF8ToUnicode(name, buffer);
 
-		for (CZone* &zone : m_zones)
+		for (CZone*& zone : m_zones)
 		{
 			if (CStringImp::comp<const wchar_t>(zone->getName(), buffer) == 0)
 				return zone;
@@ -56,13 +56,13 @@ namespace Skylicht
 
 	CGameObject* CScene::searchObjectInChild(const char* name)
 	{
-		CGameObject *obj = searchObject(name);
+		CGameObject* obj = searchObject(name);
 		if (obj == NULL)
 		{
 			wchar_t buffer[1024] = { 0 };
 			CStringImp::convertUTF8ToUnicode(name, buffer);
 
-			for (CZone* &zone : m_zones)
+			for (CZone*& zone : m_zones)
 			{
 				obj = zone->searchObjectInChild(buffer);
 				if (obj != NULL)
@@ -75,7 +75,7 @@ namespace Skylicht
 
 	void CScene::releaseScene()
 	{
-		for (CZone* &zone : m_zones)
+		for (CZone*& zone : m_zones)
 		{
 			zone->updateAddRemoveObject();
 			delete zone;
@@ -94,25 +94,24 @@ namespace Skylicht
 	*/
 	void CScene::updateAddRemoveObject()
 	{
-		for (CZone* &zone : m_zones)
+		for (CZone*& zone : m_zones)
 			zone->updateAddRemoveObject(true);
 	}
 
 	void CScene::updateIndexSearchObject()
 	{
-		for (CZone* &zone : m_zones)
+		for (CZone*& zone : m_zones)
 			zone->updateIndexSearchObject();
 	}
 
 	CZone* CScene::createZone()
 	{
-		CZone *zone = new CZone(this);
+		CZone* zone = new CZone(this);
 
-		char name[512];
-		sprintf(name, "Zone_%d", (int)CGameObject::s_objectID);
+		std::string name = zone->generateObjectName("Zone");
 
-		zone->setName(name);
-		zone->setID(CGameObject::s_objectID++);
+		zone->setName(name.c_str());
+		zone->setID(zone->generateRandomID().c_str());
 		zone->createEntity();
 		zone->addComponent<CTransformEuler>();
 
@@ -125,7 +124,7 @@ namespace Skylicht
 		ArrayZoneIter iZone = m_zones.begin(), iEnd = m_zones.end();
 		while (iZone != iEnd)
 		{
-			CZone *p = (CZone*)(*iZone);
+			CZone* p = (CZone*)(*iZone);
 			if (p == zone)
 			{
 				p->updateAddRemoveObject();
@@ -138,7 +137,7 @@ namespace Skylicht
 		}
 	}
 
-	void CScene::registerEvent(std::string name, IEventReceiver *pEvent)
+	void CScene::registerEvent(std::string name, IEventReceiver* pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
 		while (i != end)
@@ -151,7 +150,7 @@ namespace Skylicht
 		m_eventReceivers.push_back(eventType(name, pEvent));
 	}
 
-	void CScene::unRegisterEvent(IEventReceiver *pEvent)
+	void CScene::unRegisterEvent(IEventReceiver* pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
 		while (i != end)
@@ -202,7 +201,7 @@ namespace Skylicht
 
 	void CScene::update()
 	{
-		for (CZone* &zone : m_zones)
+		for (CZone*& zone : m_zones)
 		{
 			// Update add/remove childs object
 			zone->updateAddRemoveObject();

@@ -66,6 +66,8 @@ namespace Skylicht
 
 		std::string generateObjectName(const char* objTemplate);
 
+		std::string generateRandomID();
+
 		void registerObjectName(CGameObject* obj);
 
 		void removeObject(CGameObject *pObj);
