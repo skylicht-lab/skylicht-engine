@@ -38,12 +38,10 @@ namespace Skylicht
 	class CEntityManager;
 
 	class CGameObject
-	{
-	public:
-		static long s_objectID;
-
+	{	
 	protected:
-		long m_objectID;
+		std::string m_objectID;
+
 		std::wstring m_name;
 		std::wstring m_defaultName;
 		std::string m_namec;
@@ -81,15 +79,12 @@ namespace Skylicht
 
 		void destroyEntity();
 
-		virtual void setID(long id)
+		virtual void setID(const char* id)
 		{
 			m_objectID = id;
-
-			if (s_objectID <= m_objectID)
-				s_objectID = m_objectID + 1;
 		}
 
-		inline long getID()
+		inline std::string& getID()
 		{
 			return m_objectID;
 		}
