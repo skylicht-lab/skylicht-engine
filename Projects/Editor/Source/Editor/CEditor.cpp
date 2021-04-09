@@ -317,6 +317,7 @@ namespace Skylicht
 			submenu->addItem(L"Console");
 			submenu->addSeparator();
 			submenu->addItem(L"Reset layout");
+			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandWindow, this);
 
 			GUI::CMenuItem* help = m_menuBar->addItem(L"Help");
 			submenu = help->getMenu();
@@ -336,6 +337,13 @@ namespace Skylicht
 			float width = m_dockPanel->width();
 			float height = m_dockPanel->height();
 			float w, h;
+
+			w = width * 0.2f;
+			h = round(height * 0.8f);
+			GUI::CDockableWindow* hierarchy = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			hierarchy->setCaption(L"Hierarchy");
+			m_dockPanel->dockChildWindow(hierarchy, NULL, GUI::CDockPanel::DockLeft);
+			m_dockPanel->recurseLayout();
 
 			w = width;
 			h = round(height * 0.8f);
@@ -373,6 +381,9 @@ namespace Skylicht
 
 		void CEditor::initWorkspace(GUI::CWindow* window, const std::wstring& workspace)
 		{
+			// note:
+			// Space will delete when window closed see CSpace::onDestroy
+
 			if (workspace == L"Scene")
 			{
 				m_workspaces.push_back(new CSpaceScene(window, this));
@@ -723,6 +734,31 @@ namespace Skylicht
 				}
 				break;
 				}
+			}
+		}
+
+		void CEditor::OnCommandWindow(GUI::CBase* item)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
+			const std::wstring& label = menuItem->getLabel();
+
+			if (label == L"Reset layout")
+			{
+				// delete old control
+				m_dockPanel->remove();
+				m_canvas->processDelayedDeletes();
+
+				// init dock panel
+				m_dockPanel = new GUI::CDockPanel(m_canvas);
+				m_dockPanel->dock(GUI::EPosition::Fill);
+
+				// compute layout
+				m_canvas->recurseLayout();
+
+				// reset layout
+				initDefaultLayout();
+
+				m_canvas->invalidate();
 			}
 		}
 	}

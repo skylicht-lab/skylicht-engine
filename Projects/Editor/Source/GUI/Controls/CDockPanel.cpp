@@ -87,7 +87,8 @@ namespace Skylicht
 
 			CDockPanel::~CDockPanel()
 			{
-
+				if (g_rootDockPanel == this)
+					g_rootDockPanel = NULL;
 			}
 
 			bool CDockPanel::isRoot()
