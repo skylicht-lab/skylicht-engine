@@ -105,6 +105,10 @@ namespace Skylicht
 			void readDockTab(io::IXMLReader* xml, GUI::CDockTabControl* tabcontrol);
 
 			void readBound(io::IXMLReader* xml, GUI::CBase* base);
+
+		protected:
+
+			void OnCommandWindow(GUI::CBase* item);
 		};
 	}
 }
