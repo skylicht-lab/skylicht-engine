@@ -2,7 +2,7 @@
 !@
 MIT License
 
-CopyRight (c) 2020 Skylicht Technology CO., LTD
+CopyRight (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -25,58 +25,23 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "SkylichtEngine.h"
+
 #include "Editor/Space/CSpace.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceScene : public CSpace
+		class CSpaceHierarchy : public CSpace
 		{
-		protected:
-			CScene* m_scene;
-			CCamera* m_editorCamera;
-			IRenderPipeline* m_renderRP;
-
-			CGameObject* m_gridPlane;
-
-			bool m_leftMouseDown;
-			bool m_rightMouseDown;
-			bool m_middleMouseDown;
-
-			float m_mouseX;
-			float m_mouseY;
-
 		public:
-			CSpaceScene(GUI::CWindow* window, CEditor* editor);
+			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
 
-			virtual ~CSpaceScene();
-
-			void initDefaultScene();
-
-			virtual void onResize(float w, float h);
-
-			virtual void onRender(GUI::CBase* base);
-
-			virtual void onMouseMoved(GUI::CBase* base, float x, float y, float deltaX, float deltaY);
-
-			virtual void onLeftMouseClick(GUI::CBase* base, float x, float y, bool down);
-
-			virtual void onRightMouseClick(GUI::CBase* base, float x, float y, bool down);
-
-			virtual void onMiddleMouseClick(GUI::CBase* base, float x, float y, bool down);
-
-			virtual void onMouseWheeled(GUI::CBase* base, int wheel);
+			virtual ~CSpaceHierarchy();
 
 			virtual void update();
 
-			bool isEditorObject(CGameObject* object);
-
-		protected:
-
-			void initRenderPipeline(float w, float h);
-
-			void postMouseEventToScene(EMOUSE_INPUT_EVENT eventType, float x, float y);
+			virtual void onDestroy(GUI::CBase* base);
 		};
 	}
 }

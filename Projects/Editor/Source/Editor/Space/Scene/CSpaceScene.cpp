@@ -54,6 +54,9 @@ namespace Skylicht
 			panel->OnRightMouseClick = std::bind(&CSpaceScene::onRightMouseClick, this, _1, _2, _3, _4);
 			panel->OnMiddleMouseClick = std::bind(&CSpaceScene::onMiddleMouseClick, this, _1, _2, _3, _4);
 			panel->OnMouseWheeled = std::bind(&CSpaceScene::onMouseWheeled, this, _1, _2);
+
+			GUI::SDimension size = window->getSize();
+			initRenderPipeline(size.Width, size.Height);
 		}
 
 		CSpaceScene::~CSpaceScene()
@@ -100,6 +103,11 @@ namespace Skylicht
 		}
 
 		void CSpaceScene::onResize(float w, float h)
+		{
+			initRenderPipeline(w, h);
+		}
+
+		void CSpaceScene::initRenderPipeline(float w, float h)
 		{
 			if (w >= 32.0f && h >= 32.0f)
 			{

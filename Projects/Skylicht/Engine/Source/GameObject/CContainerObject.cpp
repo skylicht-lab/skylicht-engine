@@ -221,7 +221,7 @@ namespace Skylicht
 		std::string randomString;
 		static const char alphanum[] = "0123456789";
 
-		srand((unsigned int)time(NULL) + (unsigned int)os::Timer::getRealTime());
+		srand((unsigned int)os::Timer::getRealTime());
 
 		int len = 16;
 		randomString.reserve(len);
