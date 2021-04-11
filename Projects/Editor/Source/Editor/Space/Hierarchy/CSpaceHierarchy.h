@@ -40,8 +40,6 @@ namespace Skylicht
 			virtual ~CSpaceHierarchy();
 
 			virtual void update();
-
-			virtual void onDestroy(GUI::CBase* base);
 		};
 	}
 }

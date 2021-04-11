@@ -48,6 +48,8 @@ namespace Skylicht
 
 			std::list<CSpace*> m_workspaces;
 
+			std::list<GUI::CMenuItem*> m_menuWindowItems;
+
 			CAssetWatcher* m_assetWatcher;
 
 			bool m_uiInitiate;
@@ -96,6 +98,8 @@ namespace Skylicht
 
 			CSpace* getWorkspace(GUI::CWindow* window);
 
+			CSpace* getWorkspaceByName(const std::wstring& name);
+
 		protected:
 
 			void readDockLayout(io::IXMLReader* xml, GUI::CDockPanel* panel);
@@ -108,7 +112,13 @@ namespace Skylicht
 
 		protected:
 
+			void OnCommandWindowOpen(GUI::CBase* item);
+
 			void OnCommandWindow(GUI::CBase* item);
+
+			void setCheckIcon(GUI::CMenuItem* item);
+
+			void closeOpenWorkspace(GUI::CMenuItem* item);
 		};
 	}
 }

@@ -50,9 +50,9 @@ namespace Skylicht
 
 			m_open = m_contextMenu->addItem(L"Open");
 			m_showExplorer = m_contextMenu->addItem(L"Show in Explorer");
-			m_contextMenu->addSeparator();
+			m_space1 = m_contextMenu->addSeparator();
 			m_newFolder = m_contextMenu->addItem(L"New folder");
-			m_contextMenu->addSeparator();
+			m_space2 = m_contextMenu->addSeparator();
 			m_delete = m_contextMenu->addItem(L"Delete", GUI::ESystemIcon::Trash);
 			m_rename = m_contextMenu->addItem(L"Rename", L"F2");
 			m_copyPath = m_contextMenu->addItem(L"Copy path", GUI::ESystemIcon::Copy, L"SHIFT + C");
@@ -86,6 +86,7 @@ namespace Skylicht
 
 					m_open->setHidden(true);
 
+					m_space1->setHidden(false);
 					m_newFolder->setHidden(false);
 
 					if (m_selectedPath == m_assetManager->getAssetFolder())
@@ -116,15 +117,26 @@ namespace Skylicht
 				m_selectedPath = rowItem->getTagString();
 
 				m_open->setHidden(false);
-				m_delete->setHidden(false);
-				m_rename->setHidden(false);
-				m_copyPath->setHidden(false);
+
+				if (rowItem->getLabel() == L"..")
+				{
+					m_delete->setHidden(true);
+					m_rename->setHidden(true);
+					m_copyPath->setHidden(false);
+				}
+				else
+				{
+					m_delete->setHidden(false);
+					m_rename->setHidden(false);
+					m_copyPath->setHidden(false);
+				}
 
 				if (m_assetManager->isFolder(m_selectedPath.c_str()))
 					m_duplicate->setHidden(true);
 				else
 					m_duplicate->setHidden(false);
 
+				m_space1->setHidden(true);
 				m_newFolder->setHidden(true);
 
 				m_contextMenu->open(GUI::CInput::getInput()->getMousePosition());
