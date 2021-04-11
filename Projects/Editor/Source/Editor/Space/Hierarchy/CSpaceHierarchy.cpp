@@ -44,10 +44,5 @@ namespace Skylicht
 		{
 
 		}
-
-		void CSpaceHierarchy::onDestroy(GUI::CBase* base)
-		{
-
-		}
 	}
 }

@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/Assets/CSpaceAssets.h"
 #include "Space/Console/CSpaceConsole.h"
 #include "Space/Property/CSpaceProperty.h"
+#include "Space/Hierarchy/CSpaceHierarchy.h"
 
 #include "AssetManager/CAssetManager.h"
 
@@ -184,7 +185,7 @@ namespace Skylicht
 			m_dockPanel = new GUI::CDockPanel(m_canvas);
 			m_dockPanel->dock(GUI::EPosition::Fill);
 
-			// compute layout
+			// calculate layout
 			m_canvas->recurseLayout();
 
 			u32 x, y, w, h;
@@ -309,14 +310,17 @@ namespace Skylicht
 			submenu = window->getMenu();
 			submenu->addItem(L"New workspace");
 			submenu->addSeparator();
-			submenu->addItem(L"Assets");
-			submenu->addItem(L"Property");
-			submenu->addItem(L"Scene");
-			submenu->addItem(L"GUI Design");
-			submenu->addItem(L"Animation");
-			submenu->addItem(L"Console");
+			m_menuWindowItems.clear();
+			m_menuWindowItems.push_back(submenu->addItem(L"Assets"));
+			m_menuWindowItems.push_back(submenu->addItem(L"Property"));
+			m_menuWindowItems.push_back(submenu->addItem(L"Scene"));
+			m_menuWindowItems.push_back(submenu->addItem(L"Hierarchy"));
+			m_menuWindowItems.push_back(submenu->addItem(L"GUI Design"));
+			m_menuWindowItems.push_back(submenu->addItem(L"Animation"));
+			m_menuWindowItems.push_back(submenu->addItem(L"Console"));
 			submenu->addSeparator();
 			submenu->addItem(L"Reset layout");
+			submenu->OnOpen = BIND_LISTENER(&CEditor::OnCommandWindowOpen, this);
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandWindow, this);
 
 			GUI::CMenuItem* help = m_menuBar->addItem(L"Help");
@@ -377,6 +381,7 @@ namespace Skylicht
 			initWorkspace(asset, asset->getCaption());
 			initWorkspace(console, console->getCaption());
 			initWorkspace(property, property->getCaption());
+			initWorkspace(hierarchy, hierarchy->getCaption());
 		}
 
 		void CEditor::initWorkspace(GUI::CWindow* window, const std::wstring& workspace)
@@ -412,6 +417,10 @@ namespace Skylicht
 			{
 				m_workspaces.push_back(new CSpaceProperty(window, this));
 			}
+			else if (workspace == L"Hierarchy")
+			{
+				m_workspaces.push_back(new CSpaceHierarchy(window, this));
+			}
 		}
 
 		void CEditor::removeWorkspace(CSpace* space)
@@ -429,6 +438,16 @@ namespace Skylicht
 			for (CSpace* s : m_workspaces)
 			{
 				if (s->getWindow() == window)
+					return s;
+			}
+			return NULL;
+		}
+
+		CSpace* CEditor::getWorkspaceByName(const std::wstring& name)
+		{
+			for (CSpace* s : m_workspaces)
+			{
+				if (s->getWindow()->getCaption() == name)
 					return s;
 			}
 			return NULL;
@@ -737,6 +756,73 @@ namespace Skylicht
 			}
 		}
 
+		void CEditor::OnCommandWindowOpen(GUI::CBase* item)
+		{
+			GUI::CMenu* menu = dynamic_cast<GUI::CMenu*>(item);
+			if (menu == NULL)
+				return;
+
+			for (GUI::CMenuItem* item : m_menuWindowItems)
+			{
+				setCheckIcon(item);
+			}
+		}
+
+		void CEditor::setCheckIcon(GUI::CMenuItem* item)
+		{
+			if (item == NULL)
+				return;
+
+			item->showIcon(true);
+
+			CSpace* space = getWorkspaceByName(item->getLabel());
+			if (space != NULL)
+				item->setIcon(GUI::ESystemIcon::Check);
+			else
+				item->setIcon(GUI::ESystemIcon::None);
+		}
+
+		void CEditor::closeOpenWorkspace(GUI::CMenuItem* item)
+		{
+			CSpace* space = getWorkspaceByName(item->getLabel());
+			if (space != NULL)
+			{
+				// Space is open -> close
+				GUI::CDockableWindow* dockWindow = dynamic_cast<GUI::CDockableWindow*>(space->getWindow());
+				if (dockWindow != NULL)
+				{
+					GUI::CDockTabControl* dockTab = dockWindow->getCurrentDockTab();
+					if (dockTab != NULL)
+					{
+						// if window is docked on TabControl
+						GUI::CTabButton* tabButton = dockTab->getTabButtonByPage(dockWindow);
+						if (tabButton != NULL)
+							dockTab->doTabClose(tabButton);
+					}
+					else
+					{
+						// call close on float window
+						space->getWindow()->onCloseWindow();
+					}
+				}
+				else
+				{
+					// call close non DockableWindow
+					space->getWindow()->onCloseWindow();
+				}
+			}
+			else
+			{
+				// Space is hide -> open
+				float w = 680.0f;
+				float h = 480.0f;
+				GUI::CDockableWindow* window = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+				window->setCaption(item->getLabel());
+				window->setCenterPosition();
+				initWorkspace(window, window->getCaption());
+			}
+		}
+
 		void CEditor::OnCommandWindow(GUI::CBase* item)
 		{
 			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
@@ -752,13 +838,25 @@ namespace Skylicht
 				m_dockPanel = new GUI::CDockPanel(m_canvas);
 				m_dockPanel->dock(GUI::EPosition::Fill);
 
-				// compute layout
+				// calculate layout
 				m_canvas->recurseLayout();
 
 				// reset layout
 				initDefaultLayout();
 
 				m_canvas->invalidate();
+			}
+			else
+			{
+				// do close/open the window by item label
+				for (GUI::CMenuItem* item : m_menuWindowItems)
+				{
+					if (item == menuItem)
+					{
+						closeOpenWorkspace(menuItem);
+						break;
+					}
+				}
 			}
 		}
 	}
