@@ -24,32 +24,46 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
+#include "Utils/CGameSingleton.h"
 
-#include "Editor/Space/CSpace.h"
-#include "CHierarchyController.h"
+#include "Editor/Space/Scene/CSpaceScene.h"
+#include "Editor/Space/Hierarchy/CSpaceHierarchy.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		class CSceneController : public CGameSingleton<CSceneController>
 		{
 		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
+			CSpaceScene* m_spaceScene;
 
-			GUI::CTreeControl* m_tree;
+			CSpaceHierarchy* m_spaceHierarchy;
 
-			CHierarchyController* m_hierarchyController;
 		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+			CSceneController();
 
-			virtual ~CSpaceHierarchy();
+			virtual ~CSceneController();
 
-			virtual void update();
+			inline void setSpaceScene(CSpaceScene* scene)
+			{
+				m_spaceScene = scene;
+			}
+
+			inline CSpaceScene* getSpaceScene()
+			{
+				return m_spaceScene;
+			}
+
+			inline void setSpaceHierarchy(CSpaceHierarchy* hierarchy)
+			{
+				m_spaceHierarchy = hierarchy;
+			}
+
+			inline CSpaceHierarchy* getSpaceHierarchy()
+			{
+				return m_spaceHierarchy;
+			}
 		};
 	}
 }

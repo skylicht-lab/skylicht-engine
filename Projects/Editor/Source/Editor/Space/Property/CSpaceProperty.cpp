@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpaceProperty.h"
 #include "Utils/CStringImp.h"
+#include "Editor/SpaceController/CPropertyController.h"
 
 namespace Skylicht
 {
@@ -121,11 +122,13 @@ namespace Skylicht
 			addSlider(boxLayout, L"Direct multipler", 1.0f, 0.0f, 1.0f);
 
 			indirectLighting->setExpand(true);
+
+			CPropertyController::getInstance()->setSpaceProperty(this);
 		}
 
 		CSpaceProperty::~CSpaceProperty()
 		{
-
+			CPropertyController::getInstance()->setSpaceProperty(NULL);
 		}
 
 		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float step)
