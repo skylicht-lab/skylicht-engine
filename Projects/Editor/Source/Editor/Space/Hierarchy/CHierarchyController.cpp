@@ -31,7 +31,8 @@ namespace Skylicht
 	{
 		CHierarchyController::CHierarchyController(GUI::CCanvas* canvas, GUI::CTreeControl* tree) :
 			m_canvas(canvas),
-			m_tree(tree)
+			m_tree(tree),
+			m_node(NULL)
 		{
 
 		}
@@ -47,23 +48,49 @@ namespace Skylicht
 
 			if (m_node != node)
 			{
-				m_node->nullGUI();
-				m_tree->removeAllTreeNode();
-
+				if (m_node != NULL)
+					m_node->nullGUI();
 				build = true;
 			}
 
 			m_node = node;
 
 			if (build)
-				buildHierarchyNode();
+			{
+				// remove all node
+				m_tree->removeAllTreeNode();
+
+				// add child nodes
+				GUI::CTreeNode* root0 = buildHierarchyNode(m_tree, m_node);
+
+				// expand tree
+				root0->expand(false);
+				for (GUI::CTreeNode* root1 : root0->getChildNodes())
+					root1->expand(false);
+			}
 			else
 				updateHierarchyNode();
 		}
 
-		void CHierarchyController::buildHierarchyNode()
+		GUI::CTreeNode* CHierarchyController::buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node)
 		{
+			// add node
+			GUI::CTreeNode* guiNode = parentGuiNode->addNode(node->getName(), node->getIcon());
 
+			// link data gui to node
+			guiNode->tagData(m_node);
+
+			// link data node to gui
+			node->setGUINode(guiNode);
+
+			// loop all childs
+			std::vector<CHierachyNode*>& childs = node->getChilds();
+			for (CHierachyNode* child : childs)
+			{
+				buildHierarchyNode(guiNode, child);
+			}
+
+			return guiNode;
 		}
 
 		void CHierarchyController::updateHierarchyNode()

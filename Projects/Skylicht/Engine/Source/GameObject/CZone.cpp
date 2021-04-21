@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	CZone::CZone(CScene *scene) :
+	CZone::CZone(CScene* scene) :
 		CContainerObject(NULL, this),
 		m_scene(scene)
 	{
@@ -49,11 +49,9 @@ namespace Skylicht
 
 	void CZone::postUpdateObject()
 	{
-
 	}
 
 	void CZone::endUpdate()
 	{
-
 	}
 }

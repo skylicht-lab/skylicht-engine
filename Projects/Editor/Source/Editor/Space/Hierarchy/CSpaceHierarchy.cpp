@@ -85,9 +85,9 @@ namespace Skylicht
 
 		}
 
-		void CSpaceHierarchy::clear()
+		void CSpaceHierarchy::setHierarchyNode(CHierachyNode* node)
 		{
-			m_tree->removeAllTreeNode();
+			m_hierarchyController->setHierarchyNode(node);
 		}
 	}
 }
