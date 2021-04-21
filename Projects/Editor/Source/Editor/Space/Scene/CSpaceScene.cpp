@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSpaceScene.h"
 #include "GridPlane/CGridPlane.h"
 
+#include "Editor/SpaceController/CSceneController.h"
+
 using namespace std::placeholders;
 
 namespace Skylicht
@@ -57,6 +59,8 @@ namespace Skylicht
 
 			GUI::SDimension size = window->getSize();
 			initRenderPipeline(size.Width, size.Height);
+
+			CSceneController::getInstance()->setSpaceScene(this);
 		}
 
 		CSpaceScene::~CSpaceScene()
@@ -66,6 +70,8 @@ namespace Skylicht
 
 			if (m_renderRP != NULL)
 				delete m_renderRP;
+
+			CSceneController::getInstance()->setSpaceScene(NULL);
 		}
 
 		void CSpaceScene::initDefaultScene()
