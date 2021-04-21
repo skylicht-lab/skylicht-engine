@@ -71,7 +71,9 @@ namespace Skylicht
 			if (m_renderRP != NULL)
 				delete m_renderRP;
 
-			CSceneController::getInstance()->setSpaceScene(NULL);
+			CSceneController* sceneController = CSceneController::getInstance();
+			sceneController->setScene(NULL);
+			sceneController->setSpaceScene(NULL);
 		}
 
 		void CSpaceScene::initDefaultScene()
@@ -106,6 +108,9 @@ namespace Skylicht
 
 			core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 			lightTransform->setOrientation(direction, CTransform::s_oy);
+
+			// set scene to controller
+			CSceneController::getInstance()->setScene(m_scene);
 		}
 
 		void CSpaceScene::onResize(float w, float h)

@@ -31,7 +31,8 @@ namespace Skylicht
 	{
 		CSceneController::CSceneController() :
 			m_spaceHierarchy(NULL),
-			m_spaceScene(NULL)
+			m_spaceScene(NULL),
+			m_scene(NULL)
 		{
 
 		}
@@ -39,6 +40,11 @@ namespace Skylicht
 		CSceneController::~CSceneController()
 		{
 
+		}
+
+		void CSceneController::setScene(CScene* scene)
+		{
+			m_scene = scene;
 		}
 	}
 }
