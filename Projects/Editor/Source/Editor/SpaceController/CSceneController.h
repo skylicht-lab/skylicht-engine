@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 
+#include "Scene/CScene.h"
+
 #include "Editor/Space/Scene/CSpaceScene.h"
 #include "Editor/Space/Hierarchy/CSpaceHierarchy.h"
 
@@ -39,6 +41,8 @@ namespace Skylicht
 			CSpaceScene* m_spaceScene;
 
 			CSpaceHierarchy* m_spaceHierarchy;
+
+			CScene* m_scene;
 
 		public:
 			CSceneController();
@@ -64,6 +68,8 @@ namespace Skylicht
 			{
 				return m_spaceHierarchy;
 			}
+
+			void setScene(CScene* scene);
 		};
 	}
 }

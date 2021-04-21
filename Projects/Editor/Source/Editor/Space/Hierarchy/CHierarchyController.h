@@ -23,6 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "GUI/GUI.h"
+#include "CHierachyNode.h"
 
 namespace Skylicht
 {
@@ -34,10 +35,20 @@ namespace Skylicht
 			GUI::CCanvas* m_canvas;
 			GUI::CTreeControl* m_tree;
 
+			CHierachyNode* m_node;
+
 		public:
 			CHierarchyController(GUI::CCanvas* canvas, GUI::CTreeControl* tree);
 
 			virtual ~CHierarchyController();
+
+			void setHierarchyNode(CHierachyNode* node);
+		
+			void updateHierarchyNode();
+
+		protected:
+
+			void buildHierarchyNode();
 		};
 	}
 }
