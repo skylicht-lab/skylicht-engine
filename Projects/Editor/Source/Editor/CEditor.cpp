@@ -34,6 +34,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/Property/CSpaceProperty.h"
 #include "Space/Hierarchy/CSpaceHierarchy.h"
 
+#include "SpaceController/CSceneController.h"
+#include "SpaceController/CPropertyController.h"
+
 #include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
@@ -53,10 +56,17 @@ namespace Skylicht
 			m_canvas = GUI::CGUIContext::getRoot();
 
 			m_assetWatcher = new CAssetWatcher();
+
+			// init controller
+			CSceneController::createGetInstance();
+			CPropertyController::createGetInstance();
 		}
 
 		CEditor::~CEditor()
 		{
+			CPropertyController::releaseInstance();
+			CSceneController::releaseInstance();
+
 			delete m_assetWatcher;
 		}
 
