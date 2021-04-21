@@ -86,6 +86,7 @@ namespace Skylicht
 
 			// create editor camera
 			CGameObject* camObj = zone->createEmptyObject();
+			camObj->setName(L"EditorCamera");
 			camObj->addComponent<CCamera>();
 			camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
@@ -95,10 +96,13 @@ namespace Skylicht
 
 			// grid
 			m_gridPlane = zone->createEmptyObject();
+			m_gridPlane->setName(L"Grid3D");
 			m_gridPlane->addComponent<CGridPlane>();
 
 			// lighting
 			CGameObject* lightObj = zone->createEmptyObject();
+			lightObj->setName(L"DirectionLight");
+
 			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 			SColor c(255, 255, 244, 214);
 			directionalLight->setColor(SColorf(c));

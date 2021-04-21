@@ -98,11 +98,6 @@ namespace Skylicht
 		return m_arrayChildObjects;
 	}
 
-	void CContainerObject::updateObject()
-	{
-		CGameObject::updateObject();
-	}
-
 	template<typename T>
 	void CContainerObject::getListObjectType(ArrayGameObject& listObjs, T type)
 	{
@@ -177,7 +172,19 @@ namespace Skylicht
 	{
 		core::map<std::wstring, CGameObject*>::Node* node = m_objectByName.find(std::wstring(objectName));
 		if (node == NULL)
+		{
+			// try search in list add
+			for (CGameObject* addObject : m_add)
+			{
+				if (std::wstring(addObject->getName()) == objectName)
+				{
+					return addObject;
+				}
+			}
+
 			return NULL;
+		}
+
 		return node->getValue();
 	}
 
@@ -209,7 +216,7 @@ namespace Skylicht
 		do
 		{
 			objectID++;
-			sprintf(lpName, "%s %d", objTemplate, objectID);
+			sprintf(lpName, "%s_%d", objTemplate, objectID);
 			CStringImp::convertUTF8ToUnicode(lpName, name);
 		} while (searchObject(name) != NULL);
 
