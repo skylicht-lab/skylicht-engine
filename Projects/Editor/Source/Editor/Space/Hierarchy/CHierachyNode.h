@@ -22,53 +22,94 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CHierarchyController.h"
+#pragma once
+
+#include "GUI/GUI.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CHierarchyController::CHierarchyController(GUI::CCanvas* canvas, GUI::CTreeControl* tree) :
-			m_canvas(canvas),
-			m_tree(tree)
+		class CHierachyNode
 		{
+		protected:
+			std::wstring m_name;
 
-		}
+			std::string m_id;
 
-		CHierarchyController::~CHierarchyController()
-		{
+			void* m_tagData;
 
-		}
+			GUI::ESystemIcon m_icon;
 
-		void CHierarchyController::setHierarchyNode(CHierachyNode* node)
-		{
-			bool build = false;
+			CHierachyNode* m_parent;
 
-			if (m_node != node)
+			std::vector<CHierachyNode*> m_childs;
+
+			GUI::CTreeNode* m_guiNode;
+
+		public:
+			CHierachyNode(CHierachyNode* parent);
+
+			virtual ~CHierachyNode();
+
+			inline void setID(const char* id)
 			{
-				m_node->nullGUI();
-				m_tree->removeAllTreeNode();
-
-				build = true;
+				m_id = id;
 			}
 
-			m_node = node;
+			inline const std::string& getID()
+			{
+				return m_id;
+			}
 
-			if (build)
-				buildHierarchyNode();
-			else
-				updateHierarchyNode();
-		}
+			inline CHierachyNode* getParent()
+			{
+				return m_parent;
+			}
 
-		void CHierarchyController::buildHierarchyNode()
-		{
+			inline void setTagData(void* data)
+			{
+				m_tagData = data;
+			}
 
-		}
+			inline void* getTagData()
+			{
+				return m_tagData;
+			}
 
-		void CHierarchyController::updateHierarchyNode()
-		{
+			inline void setGUINode(GUI::CTreeNode* node)
+			{
+				m_guiNode = node;
+			}
 
-		}
+			inline GUI::CTreeNode* getGUINode()
+			{
+				return m_guiNode;
+			}
+
+			void setName(const wchar_t* name);
+
+			void setIcon(GUI::ESystemIcon icon);
+
+			inline const std::wstring& getName()
+			{
+				return m_name;
+			}
+
+			inline const GUI::ESystemIcon getIcon()
+			{
+				return m_icon;
+			}
+
+			CHierachyNode* addChild();
+
+			bool removeChild(CHierachyNode* child);
+
+			void removeAllChild();
+
+			void bringNextNode(CHierachyNode* position, bool behind);
+
+			void nullGUI();
+		};
 	}
 }

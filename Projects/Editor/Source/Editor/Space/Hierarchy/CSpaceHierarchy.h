@@ -50,6 +50,8 @@ namespace Skylicht
 			virtual ~CSpaceHierarchy();
 
 			virtual void update();
+
+			void clear();
 		};
 	}
 }

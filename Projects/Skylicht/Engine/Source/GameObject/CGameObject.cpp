@@ -52,6 +52,8 @@ namespace Skylicht
 		m_visible = true;
 		m_static = false;
 
+		m_editorObject = false;
+
 		m_parent = NULL;
 		m_zone = NULL;
 		m_entity = NULL;

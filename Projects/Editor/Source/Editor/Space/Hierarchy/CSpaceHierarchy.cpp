@@ -84,5 +84,10 @@ namespace Skylicht
 		{
 
 		}
+
+		void CSpaceHierarchy::clear()
+		{
+			m_tree->removeAllTreeNode();
+		}
 	}
 }

@@ -51,7 +51,7 @@ namespace Skylicht
 		bool m_visible;
 		bool m_lighting;
 
-		bool m_lockObject;
+		bool m_editorObject;
 
 		u32 m_cullingLayer;
 
@@ -192,14 +192,14 @@ namespace Skylicht
 			return m_lighting;
 		}
 
-		inline void setLockObject(bool b)
+		inline void setEditorObject(bool b)
 		{
-			m_lockObject = b;
+			m_editorObject = b;
 		}
 
-		inline bool isLock()
+		inline bool isEditorObject()
 		{
-			return m_lockObject;
+			return m_editorObject;
 		}
 
 		inline void tagData(void *data)
