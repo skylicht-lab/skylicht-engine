@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/Space/Scene/CSpaceScene.h"
 #include "Editor/Space/Hierarchy/CSpaceHierarchy.h"
+#include "Editor/Space/Hierarchy/CHierachyNode.h"
 
 namespace Skylicht
 {
@@ -41,6 +42,8 @@ namespace Skylicht
 			CSpaceScene* m_spaceScene;
 
 			CSpaceHierarchy* m_spaceHierarchy;
+
+			CHierachyNode* m_sceneNode;
 
 			CScene* m_scene;
 
@@ -70,6 +73,13 @@ namespace Skylicht
 			}
 
 			void setScene(CScene* scene);
+
+			void buildHierarchyNodes();
+
+		protected:
+
+			CHierachyNode* buildHierarchyNodes(CGameObject* object, CHierachyNode* parentNode);
+
 		};
 	}
 }

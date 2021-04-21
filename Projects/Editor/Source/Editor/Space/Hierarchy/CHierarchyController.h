@@ -43,12 +43,12 @@ namespace Skylicht
 			virtual ~CHierarchyController();
 
 			void setHierarchyNode(CHierachyNode* node);
-		
+
 			void updateHierarchyNode();
 
 		protected:
 
-			void buildHierarchyNode();
+			GUI::CTreeNode* buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);
 		};
 	}
 }

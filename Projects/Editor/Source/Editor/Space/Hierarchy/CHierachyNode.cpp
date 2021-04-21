@@ -41,9 +41,6 @@ namespace Skylicht
 		CHierachyNode::~CHierachyNode()
 		{
 			removeAllChild();
-
-			if (m_guiNode)
-				m_guiNode->remove();
 		}
 
 		void CHierachyNode::setName(const wchar_t* name)

@@ -48,8 +48,6 @@ namespace Skylicht
 
 		virtual ~CContainerObject();
 
-		virtual void updateObject();
-
 		CGameObject* createEmptyObject();
 
 		CContainerObject* createContainerObject();

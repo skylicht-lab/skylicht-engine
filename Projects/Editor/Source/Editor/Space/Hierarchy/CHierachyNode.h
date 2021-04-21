@@ -110,6 +110,11 @@ namespace Skylicht
 			void bringNextNode(CHierachyNode* position, bool behind);
 
 			void nullGUI();
+
+			inline std::vector<CHierachyNode*>& getChilds()
+			{
+				return m_childs;
+			}
 		};
 	}
 }
