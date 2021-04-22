@@ -49,9 +49,11 @@ namespace Skylicht
 
 		void releaseScene();
 
+		void setVisibleAllZone(bool b);
+
 		void updateAddRemoveObject();
 
-		void updateIndexSearchObject();
+		void updateIndexSearchObject();		
 
 		virtual CGameObject* searchObject(const char* name);
 

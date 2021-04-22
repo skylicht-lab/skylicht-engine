@@ -58,9 +58,9 @@ namespace Skylicht
 
 		void updateIndexSearchObject();
 
-		CGameObject* searchObject(const wchar_t *objectName);
+		virtual CGameObject* searchObject(const wchar_t *objectName);
 
-		CGameObject* searchObjectInChild(const wchar_t *objectName);
+		virtual CGameObject* searchObjectInChild(const wchar_t *objectName);
 
 		std::string generateObjectName(const char* objTemplate);
 

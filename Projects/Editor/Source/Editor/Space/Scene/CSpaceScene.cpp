@@ -44,7 +44,8 @@ namespace Skylicht
 			m_rightMouseDown(false),
 			m_middleMouseDown(false),
 			m_mouseX(0.0f),
-			m_mouseY(0.0f)
+			m_mouseY(0.0f),
+			m_viewpointZone(NULL)
 		{
 			initDefaultScene();
 
@@ -81,12 +82,13 @@ namespace Skylicht
 			// create a scene
 			m_scene = new CScene();
 
-			// create a zone in Scene
+			// create a zone in scene
 			CZone* zone = m_scene->createZone();
 
 			// create editor camera
 			CGameObject* camObj = zone->createEmptyObject();
 			camObj->setName(L"EditorCamera");
+			camObj->setEditorObject(true);
 			camObj->addComponent<CCamera>();
 			camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
@@ -97,6 +99,7 @@ namespace Skylicht
 			// grid
 			m_gridPlane = zone->createEmptyObject();
 			m_gridPlane->setName(L"Grid3D");
+			m_gridPlane->setEditorObject(true);
 			m_gridPlane->addComponent<CGridPlane>();
 
 			// lighting
@@ -112,6 +115,27 @@ namespace Skylicht
 
 			core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 			lightTransform->setOrientation(direction, CTransform::s_oy);
+
+
+			// viewpoint zone
+			m_viewpointZone = m_scene->createZone();
+			m_viewpointZone->setEditorObject(true);
+
+			// camera
+			camObj = m_viewpointZone->createEmptyObject();
+			camObj->setName(L"ViewpointCamera");
+			camObj->setEditorObject(true);
+			camObj->addComponent<CCamera>();
+
+			m_viewpointCamera = camObj->getComponent<CCamera>();
+			m_viewpointCamera->setPosition(core::vector3df(1.5f, 1.5f, 1.5f));
+			m_viewpointCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+			m_viewpointCamera->setAspect(1.0f);
+
+			// grid
+			CGameObject* gridPlane = m_viewpointZone->createEmptyObject();
+			gridPlane->setName(L"Grid3D");
+			gridPlane->addComponent<CGridPlane>();
 
 			// set scene to controller
 			CSceneController::getInstance()->setScene(m_scene);
@@ -149,18 +173,44 @@ namespace Skylicht
 		{
 			if (m_renderRP != NULL)
 			{
+				// flush 2d gui
 				GUI::CGUIContext::getRenderer()->flush();
 				core::recti vp = getVideoDriver()->getViewPort();
 				getVideoDriver()->enableScissor(false);
 				getVideoDriver()->clearZBuffer();
 
+				// setup scene viewport
 				GUI::SPoint position = base->localPosToCanvas();
 				core::recti viewport;
 				viewport.UpperLeftCorner.set((int)position.X, (int)position.Y);
 				viewport.LowerRightCorner.set((int)(position.X + base->width()), (int)(position.Y + base->height()));
 
+				// draw scene
+				m_scene->setVisibleAllZone(true);
+				m_viewpointZone->setVisible(false);
+
 				m_renderRP->render(NULL, m_editorCamera, m_scene->getEntityManager(), viewport);
 
+				// setup viewpoint viewport
+				int paddingTop = 10;
+				int paddingLeft = 10;
+				int viewpointSize = 80;
+				viewport.UpperLeftCorner.set((int)(position.X + base->width()) - viewpointSize - paddingLeft, (int)position.Y + paddingTop);
+				viewport.LowerRightCorner = viewport.UpperLeftCorner + core::vector2di(viewpointSize, viewpointSize);
+
+				getVideoDriver()->clearZBuffer();
+
+				// draw viewpoint
+				m_scene->setVisibleAllZone(false);
+				m_viewpointZone->setVisible(true);
+
+				m_renderRP->render(NULL, m_viewpointCamera, m_scene->getEntityManager(), viewport);
+
+				// disable viewpoint
+				m_scene->setVisibleAllZone(true);
+				m_viewpointZone->setVisible(false);
+
+				// resume gui render
 				getVideoDriver()->enableScissor(true);
 				getVideoDriver()->setViewPort(vp);
 				GUI::CGUIContext::getRenderer()->setProjection();

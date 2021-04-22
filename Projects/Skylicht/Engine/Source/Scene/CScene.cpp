@@ -86,6 +86,14 @@ namespace Skylicht
 		m_entityManager = NULL;
 	}
 
+	void CScene::setVisibleAllZone(bool b)
+	{
+		for (CZone*& zone : m_zones)
+		{
+			zone->setVisible(b);
+		}
+	}
+
 	/**
 	* It will force add/remove object to scene tree
 	* Note: This function is called on CScene::update beforce update all CGameObject
