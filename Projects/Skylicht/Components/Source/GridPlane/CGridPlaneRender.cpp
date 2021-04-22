@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGridPlaneRender.h"
+#include "Culling/CVisibleData.h"
 
 namespace Skylicht
 {
@@ -33,13 +34,16 @@ namespace Skylicht
 		m_transforms.set_used(0);
 	}
 
-	void CGridPlaneRender::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CGridPlaneRender::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CGridPlaneData *gridPlane = entity->getData<CGridPlaneData>();
+		CGridPlaneData* gridPlane = entity->getData<CGridPlaneData>();
+
 		if (gridPlane != NULL)
 		{
-			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-			if (transform != NULL)
+			CVisibleData* visible = entity->getData<CVisibleData>();
+			CWorldTransformData* transform = entity->getData<CWorldTransformData>();
+
+			if (transform != NULL && visible->Visible)
 			{
 				m_gridPlanes.push_back(gridPlane);
 				m_transforms.push_back(transform);
@@ -47,19 +51,19 @@ namespace Skylicht
 		}
 	}
 
-	void CGridPlaneRender::init(CEntityManager *entityManager)
+	void CGridPlaneRender::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CGridPlaneRender::update(CEntityManager *entityManager)
+	void CGridPlaneRender::update(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CGridPlaneRender::render(CEntityManager *entityManager)
+	void CGridPlaneRender::render(CEntityManager* entityManager)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		CGridPlaneData** gridPlane = m_gridPlanes.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();

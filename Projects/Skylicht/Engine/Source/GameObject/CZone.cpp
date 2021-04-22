@@ -54,4 +54,21 @@ namespace Skylicht
 	void CZone::endUpdate()
 	{
 	}
+
+	CGameObject* CZone::searchObject(const wchar_t* objectName)
+	{
+		CGameObject* ret = CContainerObject::searchObject(objectName);
+		if (ret == NULL)
+		{
+			for (CZone* zone : *m_scene->getAllZone())
+			{
+				if (std::wstring(zone->getName()) == objectName)
+				{
+					ret = zone;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
 }
