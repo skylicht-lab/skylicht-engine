@@ -47,6 +47,9 @@ namespace Skylicht
 			float m_mouseX;
 			float m_mouseY;
 
+			CZone* m_viewpointZone;
+			CCamera* m_viewpointCamera;
+
 		public:
 			CSpaceScene(GUI::CWindow* window, CEditor* editor);
 

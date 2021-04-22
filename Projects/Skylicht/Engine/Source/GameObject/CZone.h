@@ -44,6 +44,8 @@ namespace Skylicht
 		virtual void postUpdateObject();
 		virtual void endUpdate();
 
+		virtual CGameObject* searchObject(const wchar_t* objectName);
+
 	public:
 
 		inline CEntityManager* getEntityManager()

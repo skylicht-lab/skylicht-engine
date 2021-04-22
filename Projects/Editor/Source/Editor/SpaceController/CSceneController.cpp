@@ -73,12 +73,17 @@ namespace Skylicht
 			ArrayZone* zones = m_scene->getAllZone();
 			for (CZone* zone : *zones)
 			{
-				buildHierarchyNodes(zone, m_sceneNode)->setIcon(GUI::ESystemIcon::Collection);
+				CHierachyNode* node = buildHierarchyNodes(zone, m_sceneNode);
+				if (node != NULL)
+					node->setIcon(GUI::ESystemIcon::Collection);
 			}
 		}
 
 		CHierachyNode* CSceneController::buildHierarchyNodes(CGameObject* object, CHierachyNode* parentNode)
 		{
+			if (object->isEditorObject())
+				return NULL;
+
 			CContainerObject* container = dynamic_cast<CContainerObject*>(object);
 
 			CHierachyNode* node = NULL;

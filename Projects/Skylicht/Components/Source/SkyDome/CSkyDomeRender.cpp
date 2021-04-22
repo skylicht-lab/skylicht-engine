@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSkyDomeRender.h"
 #include "Entity/CEntityManager.h"
+#include "Culling/CVisibleData.h"
 
 namespace Skylicht
 {
@@ -45,13 +46,16 @@ namespace Skylicht
 		m_worlds.set_used(0);
 	}
 
-	void CSkyDomeRender::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CSkyDomeRender::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CSkyDomeData *skyDomeData = entity->getData<CSkyDomeData>();
+		CSkyDomeData* skyDomeData = entity->getData<CSkyDomeData>();
+
 		if (skyDomeData != NULL)
 		{
-			CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
-			if (transformData != NULL)
+			CVisibleData* visible = entity->getData<CVisibleData>();
+			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+
+			if (transformData != NULL && visible->Visible)
 			{
 				m_skydomes.push_back(skyDomeData);
 				m_transforms.push_back(transformData);
@@ -60,14 +64,14 @@ namespace Skylicht
 		}
 	}
 
-	void CSkyDomeRender::init(CEntityManager *entityManager)
+	void CSkyDomeRender::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CSkyDomeRender::update(CEntityManager *entityManager)
+	void CSkyDomeRender::update(CEntityManager* entityManager)
 	{
-		CCamera *camera = entityManager->getCamera();
+		CCamera* camera = entityManager->getCamera();
 
 		core::vector3df cameraPosition = camera->getGameObject()->getPosition();
 		float cameraFar = camera->getFarValue();
@@ -82,9 +86,9 @@ namespace Skylicht
 		}
 	}
 
-	void CSkyDomeRender::render(CEntityManager *entityManager)
+	void CSkyDomeRender::render(CEntityManager* entityManager)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		CSkyDomeData** skydomes = m_skydomes.pointer();
 		core::matrix4* worlds = m_worlds.pointer();
