@@ -77,6 +77,8 @@ namespace Skylicht
 
 		protected:
 
+			void updateViewpoint();
+
 			void initRenderPipeline(float w, float h);
 
 			void postMouseEventToScene(EMOUSE_INPUT_EVENT eventType, float x, float y);

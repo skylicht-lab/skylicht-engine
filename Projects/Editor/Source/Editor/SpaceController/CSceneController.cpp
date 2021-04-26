@@ -65,7 +65,8 @@ namespace Skylicht
 
 			buildHierarchyNodes();
 
-			m_spaceHierarchy->setHierarchyNode(m_sceneNode);
+			if (m_spaceHierarchy != NULL)
+				m_spaceHierarchy->setHierarchyNode(m_sceneNode);
 		}
 
 		void CSceneController::buildHierarchyNodes()
