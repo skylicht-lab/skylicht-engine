@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpaceScene.h"
 #include "GridPlane/CGridPlane.h"
+#include "EditorComponents/Viewpoint/CViewpoint.h"
 
 #include "Editor/SpaceController/CSceneController.h"
 
@@ -128,14 +129,17 @@ namespace Skylicht
 			camObj->addComponent<CCamera>();
 
 			m_viewpointCamera = camObj->getComponent<CCamera>();
-			m_viewpointCamera->setPosition(core::vector3df(1.5f, 1.5f, 1.5f));
-			m_viewpointCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 			m_viewpointCamera->setAspect(1.0f);
 
 			// grid
 			CGameObject* gridPlane = m_viewpointZone->createEmptyObject();
 			gridPlane->setName(L"Grid3D");
 			gridPlane->addComponent<CGridPlane>();
+
+			// viewpoint
+			CGameObject* viewpoint = m_viewpointZone->createEmptyObject();
+			viewpoint->setName(L"Viewpoint");
+			viewpoint->addComponent<CViewpoint>();
 
 			// set scene to controller
 			CSceneController::getInstance()->setScene(m_scene);
@@ -166,7 +170,30 @@ namespace Skylicht
 
 		void CSpaceScene::update()
 		{
+			updateViewpoint();
+
 			m_scene->update();
+		}
+
+		void CSpaceScene::updateViewpoint()
+		{
+			const core::matrix4& view = m_editorCamera->getViewMatrix();
+
+			core::matrix4 cameraWorld;
+			view.getInverse(cameraWorld);
+			f32* matData = cameraWorld.pointer();
+
+			core::vector3df dir(matData[8], matData[9], matData[10]);
+			dir.normalize();
+
+			core::vector3df up(matData[4], matData[5], matData[6]);
+			up.normalize();
+
+			float distance = 2.0f;
+			core::vector3df pos = -dir * distance;
+
+			m_viewpointCamera->setPosition(pos);
+			m_viewpointCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), up);
 		}
 
 		void CSpaceScene::onRender(GUI::CBase* base)
