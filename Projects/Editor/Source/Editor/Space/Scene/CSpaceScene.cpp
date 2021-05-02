@@ -39,6 +39,7 @@ namespace Skylicht
 			CSpace(window, editor),
 			m_scene(NULL),
 			m_renderRP(NULL),
+			m_viewpointRP(NULL),
 			m_editorCamera(NULL),
 			m_gridPlane(NULL),
 			m_leftMouseDown(false),
@@ -72,6 +73,9 @@ namespace Skylicht
 
 			if (m_renderRP != NULL)
 				delete m_renderRP;
+
+			if (m_viewpointRP != NULL)
+				delete m_viewpointRP;
 
 			CSceneController* sceneController = CSceneController::getInstance();
 			sceneController->setScene(NULL);
@@ -131,11 +135,6 @@ namespace Skylicht
 			m_viewpointCamera = camObj->getComponent<CCamera>();
 			m_viewpointCamera->setAspect(1.0f);
 
-			// grid
-			CGameObject* gridPlane = m_viewpointZone->createEmptyObject();
-			gridPlane->setName(L"Grid3D");
-			gridPlane->addComponent<CGridPlane>();
-
 			// viewpoint
 			CGameObject* viewpoint = m_viewpointZone->createEmptyObject();
 			viewpoint->setName(L"Viewpoint");
@@ -165,6 +164,17 @@ namespace Skylicht
 					// resize
 					m_renderRP->resize((int)w, (int)h);
 				}
+
+				if (m_viewpointRP == NULL)
+				{
+					// rendering pipe line
+					m_viewpointRP = new CForwardRP(false);
+					m_viewpointRP->initRender((int)w, (int)h);
+				}
+				else
+				{
+					m_viewpointRP->resize((int)w, (int)h);
+				}
 			}
 		}
 
@@ -189,7 +199,7 @@ namespace Skylicht
 			core::vector3df up(matData[4], matData[5], matData[6]);
 			up.normalize();
 
-			float distance = 2.0f;
+			float distance = 2.5f;
 			core::vector3df pos = -dir * distance;
 
 			m_viewpointCamera->setPosition(pos);
@@ -221,7 +231,7 @@ namespace Skylicht
 				// setup viewpoint viewport
 				int paddingTop = 10;
 				int paddingLeft = 10;
-				int viewpointSize = 80;
+				int viewpointSize = 125;
 				viewport.UpperLeftCorner.set((int)(position.X + base->width()) - viewpointSize - paddingLeft, (int)position.Y + paddingTop);
 				viewport.LowerRightCorner = viewport.UpperLeftCorner + core::vector2di(viewpointSize, viewpointSize);
 
@@ -231,7 +241,7 @@ namespace Skylicht
 				m_scene->setVisibleAllZone(false);
 				m_viewpointZone->setVisible(true);
 
-				m_renderRP->render(NULL, m_viewpointCamera, m_scene->getEntityManager(), viewport);
+				m_viewpointRP->render(NULL, m_viewpointCamera, m_scene->getEntityManager(), viewport);
 
 				// disable viewpoint
 				m_scene->setVisibleAllZone(true);

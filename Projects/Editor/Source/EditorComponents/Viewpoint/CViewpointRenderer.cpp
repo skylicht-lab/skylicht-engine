@@ -78,13 +78,34 @@ namespace Skylicht
 			CViewpointData** viewpoints = m_viewpoints.pointer();
 			CWorldTransformData** transforms = m_transforms.pointer();
 
+			irr::core::matrix4 invModelView;
+			{
+				irr::core::matrix4 modelView(driver->getTransform(video::ETS_VIEW));
+				modelView.getInversePrimitive(invModelView); // wont work for odd modelview matrices (but should happen in very special cases)
+			}
+
+			core::vector3df look(invModelView[8], invModelView[9], invModelView[10]);
+			core::vector3df up(invModelView[4], invModelView[5], invModelView[6]);
+
+			look.normalize();
+			up.normalize();
+
 			for (u32 i = 0, n = m_viewpoints.size(); i < n; i++)
 			{
 				driver->setTransform(video::ETS_WORLD, transforms[i]->World);
-				
-				// IMeshBuffer* buffer = viewpoints[i]->Buffer;
-				// driver->setMaterial(buffer->getMaterial());
-				// driver->drawMeshBuffer(buffer);
+				IMeshBuffer* line = viewpoints[i]->LineBuffer;
+				driver->setMaterial(line->getMaterial());
+				driver->drawMeshBuffer(line);
+			}
+
+			for (u32 i = 0, n = m_viewpoints.size(); i < n; i++)
+			{
+				driver->setTransform(video::ETS_WORLD, transforms[i]->World);
+				viewpoints[i]->updateBillboard(look, up);				
+
+				IMeshBuffer* buffer = viewpoints[i]->Buffer;
+				driver->setMaterial(buffer->getMaterial());
+				driver->drawMeshBuffer(buffer);
 			}
 		}
 	}
