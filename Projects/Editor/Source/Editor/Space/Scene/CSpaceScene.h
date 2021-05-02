@@ -37,6 +37,7 @@ namespace Skylicht
 			CScene* m_scene;
 			CCamera* m_editorCamera;
 			IRenderPipeline* m_renderRP;
+			IRenderPipeline* m_viewpointRP;
 
 			CGameObject* m_gridPlane;
 
