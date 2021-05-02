@@ -25,17 +25,25 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
+#include "LineDraw/CLineDrawData.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CViewpointData : public IEntityData
+		class CViewpointData : public CLineDrawData
 		{
+		public:
+			IMeshBuffer* Buffer;
+
+			core::vector3df Position[6];
+
 		public:
 			CViewpointData();
 
 			virtual ~CViewpointData();
+
+			void updateBillboard(const core::vector3df& look, const core::vector3df& up);
 		};
 	}
 }
