@@ -49,6 +49,8 @@ namespace Skylicht
 			m_mouseX(0.0f),
 			m_mouseY(0.0f),
 			m_viewpointZone(NULL),
+			m_viewpoint(NULL),
+			m_viewpointCamera(NULL),
 			m_3dPanel(NULL)
 		{
 			initDefaultScene();
@@ -142,7 +144,7 @@ namespace Skylicht
 			// viewpoint
 			CGameObject* viewpoint = m_viewpointZone->createEmptyObject();
 			viewpoint->setName(L"Viewpoint");
-			viewpoint->addComponent<CViewpoint>();
+			m_viewpoint = viewpoint->addComponent<CViewpoint>();
 
 			// set scene to controller
 			CSceneController::getInstance()->setScene(m_scene);
@@ -239,6 +241,13 @@ namespace Skylicht
 				viewport.UpperLeftCorner.set((int)(position.X + base->width()) - viewpointSize - paddingLeft, (int)position.Y + paddingTop);
 				viewport.LowerRightCorner = viewport.UpperLeftCorner + core::vector2di(viewpointSize, viewpointSize);
 
+				// viewpoint rect (local)
+				GUI::SPoint upleft = m_3dPanel->canvasPosToLocal(GUI::SPoint((float)viewport.UpperLeftCorner.X, (float)viewport.UpperLeftCorner.Y));
+				GUI::SPoint lowerRight = m_3dPanel->canvasPosToLocal(GUI::SPoint((float)viewport.LowerRightCorner.X, (float)viewport.LowerRightCorner.Y));
+				m_viewpointRect.UpperLeftCorner.set(upleft.X, upleft.Y);
+				m_viewpointRect.LowerRightCorner.set(lowerRight.X, lowerRight.Y);
+				m_viewpointRect.repair();
+
 				getVideoDriver()->clearZBuffer();
 
 				// draw viewpoint
@@ -260,89 +269,132 @@ namespace Skylicht
 
 		void CSpaceScene::onMouseMoved(GUI::CBase* base, float x, float y, float deltaX, float deltaY)
 		{
-			postMouseEventToScene(EMIE_MOUSE_MOVED, x, y);
+			GUI::SPoint local = m_3dPanel->canvasPosToLocal(GUI::SPoint(x, y));
+			postMouseEventToScene(EMIE_MOUSE_MOVED, local.X, local.Y);
 		}
 
 		void CSpaceScene::onLeftMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_leftMouseDown = down;
+			GUI::SPoint local = m_3dPanel->canvasPosToLocal(GUI::SPoint(x, y));
 
-			if (down)
+			if (m_viewpointRect.isPointInside(core::vector2df(local.X, local.Y)))
 			{
-				GUI::CInput::getInput()->setCapture(m_3dPanel);
-				postMouseEventToScene(EMIE_LMOUSE_PRESSED_DOWN, x, y);
+				if (down)
+				{
+					// viewpoint
+					float x = local.X - m_viewpointRect.UpperLeftCorner.X;
+					float y = local.Y - m_viewpointRect.UpperLeftCorner.Y;
+					CViewpointData::EAxis hit = m_viewpoint->getViewpointData()->hit(m_viewpointCamera, x, y, (int)m_viewpointRect.getWidth(), (int)m_viewpointRect.getHeight());
+					if (hit >= CViewpointData::X)
+					{
+
+					}
+				}
 			}
 			else
 			{
-				GUI::CInput::getInput()->setCapture(NULL);
-				postMouseEventToScene(EMIE_LMOUSE_LEFT_UP, x, y);
+				// scene
+				if (down)
+				{
+					GUI::CInput::getInput()->setCapture(m_3dPanel);
+					postMouseEventToScene(EMIE_LMOUSE_PRESSED_DOWN, local.X, local.Y);
+				}
+				else
+				{
+					GUI::CInput::getInput()->setCapture(NULL);
+					postMouseEventToScene(EMIE_LMOUSE_LEFT_UP, local.X, local.Y);
+				}
 			}
 		}
 
 		void CSpaceScene::onRightMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_rightMouseDown = down;
+			GUI::SPoint local = m_3dPanel->canvasPosToLocal(GUI::SPoint(x, y));
 
-			if (down)
+			if (m_viewpointRect.isPointInside(core::vector2df(local.X, local.Y)))
 			{
-				GUI::CInput::getInput()->setCapture(m_3dPanel);
-				postMouseEventToScene(EMIE_RMOUSE_PRESSED_DOWN, x, y);
+				// viewpoint
 			}
 			else
 			{
-				GUI::CInput::getInput()->setCapture(NULL);
-				postMouseEventToScene(EMIE_RMOUSE_LEFT_UP, x, y);
+				// scene
+				if (down)
+				{
+					GUI::CInput::getInput()->setCapture(m_3dPanel);
+					postMouseEventToScene(EMIE_RMOUSE_PRESSED_DOWN, local.X, local.Y);
+				}
+				else
+				{
+					GUI::CInput::getInput()->setCapture(NULL);
+					postMouseEventToScene(EMIE_RMOUSE_LEFT_UP, local.X, local.Y);
+				}
 			}
 		}
 
 		void CSpaceScene::onMiddleMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_middleMouseDown = down;
+			GUI::SPoint local = m_3dPanel->canvasPosToLocal(GUI::SPoint(x, y));
 
-			if (down)
+			if (m_viewpointRect.isPointInside(core::vector2df(local.X, local.Y)))
 			{
-				GUI::CInput::getInput()->setCapture(m_3dPanel);
-				postMouseEventToScene(EMIE_MMOUSE_PRESSED_DOWN, x, y);
+				// viewpoint
 			}
 			else
 			{
-				GUI::CInput::getInput()->setCapture(NULL);
-				postMouseEventToScene(EMIE_MMOUSE_LEFT_UP, x, y);
+				// scene
+				if (down)
+				{
+					GUI::CInput::getInput()->setCapture(m_3dPanel);
+					postMouseEventToScene(EMIE_MMOUSE_PRESSED_DOWN, local.X, local.Y);
+				}
+				else
+				{
+					GUI::CInput::getInput()->setCapture(NULL);
+					postMouseEventToScene(EMIE_MMOUSE_LEFT_UP, local.X, local.Y);
+				}
 			}
 		}
 
 		void CSpaceScene::onMouseWheeled(GUI::CBase* base, int wheel)
 		{
-			SEvent event;
-			event.EventType = EET_MOUSE_INPUT_EVENT;
-			event.MouseInput.Event = EMIE_MOUSE_WHEEL;
-			event.MouseInput.X = (int)m_mouseX;
-			event.MouseInput.Y = (int)m_mouseY;
-			event.MouseInput.Wheel = (float)wheel;
-			event.MouseInput.ButtonStates = 0;
+			if (m_viewpointRect.isPointInside(core::vector2df(m_mouseX, m_mouseY)))
+			{
+				// viewpoint
+			}
+			else
+			{
+				// scene
+				SEvent event;
+				event.EventType = EET_MOUSE_INPUT_EVENT;
+				event.MouseInput.Event = EMIE_MOUSE_WHEEL;
+				event.MouseInput.X = (int)m_mouseX;
+				event.MouseInput.Y = (int)m_mouseY;
+				event.MouseInput.Wheel = (float)wheel;
+				event.MouseInput.ButtonStates = 0;
 
-			if (m_leftMouseDown)
-				event.MouseInput.ButtonStates |= EMBSM_LEFT;
+				if (m_leftMouseDown)
+					event.MouseInput.ButtonStates |= EMBSM_LEFT;
 
-			if (m_rightMouseDown)
-				event.MouseInput.ButtonStates |= EMBSM_RIGHT;
+				if (m_rightMouseDown)
+					event.MouseInput.ButtonStates |= EMBSM_RIGHT;
 
-			m_scene->OnEvent(event);
+				m_scene->OnEvent(event);
+			}
 		}
 
 		void CSpaceScene::postMouseEventToScene(EMOUSE_INPUT_EVENT eventType, float x, float y)
 		{
-			GUI::SPoint point(x, y);
-			point = m_window->canvasPosToLocal(point);
-
-			m_mouseX = point.X;
-			m_mouseY = point.Y;
+			m_mouseX = x;
+			m_mouseY = y;
 
 			SEvent event;
 			event.EventType = EET_MOUSE_INPUT_EVENT;
 			event.MouseInput.Event = eventType;
-			event.MouseInput.X = (int)point.X;
-			event.MouseInput.Y = (int)point.Y;
+			event.MouseInput.X = (int)m_mouseX;
+			event.MouseInput.Y = (int)m_mouseY;
 			event.MouseInput.Wheel = 0.0f;
 			event.MouseInput.ButtonStates = 0;
 

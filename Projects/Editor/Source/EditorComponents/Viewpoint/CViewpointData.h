@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Camera/CCamera.h"
 #include "Entity/IEntityData.h"
 #include "LineDraw/CLineDrawData.h"
 
@@ -33,6 +34,18 @@ namespace Skylicht
 	{
 		class CViewpointData : public CLineDrawData
 		{
+		public:
+			enum EAxis
+			{
+				None = -1,
+				X = 0,
+				XNeg,
+				Y,
+				YNeg,
+				Z,
+				ZNeg,
+			};
+
 		public:
 			IMeshBuffer* Buffer;
 
@@ -44,6 +57,8 @@ namespace Skylicht
 			virtual ~CViewpointData();
 
 			void updateBillboard(const core::vector3df& look, const core::vector3df& up);
+
+			EAxis hit(CCamera* camera, float x, float y, int viewportW, int viewportH);
 		};
 	}
 }

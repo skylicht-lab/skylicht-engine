@@ -56,13 +56,15 @@ bool CList::OnEvent(const SEvent& gameEvent)
 		p[2].set(r.UpperLeftCorner.X, r.LowerRightCorner.Y, 0.0f);
 		p[3].set(r.LowerRightCorner.X, r.LowerRightCorner.Y, 0.0f);
 
+		const core::recti& vp = getVideoDriver()->getViewPort();
+
 		for (int i = 0; i < 4; i++)
 		{
 			// get real 3d position
 			worldElementTransform.transformVect(p[i]);
 
 			// project to 2d screen
-			CProjective::getScreenCoordinatesFrom3DPosition(camera, p[i], p2d[i].X, p2d[i].Y);
+			CProjective::getScreenCoordinatesFrom3DPosition(camera, p[i], p2d[i].X, p2d[i].Y, vp.getWidth(), vp.getHeight());
 			p2d[i].Z = 0.0f;
 		}
 

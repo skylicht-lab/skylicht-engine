@@ -12,7 +12,7 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleParticlesMagicSkill *app = new SampleParticlesMagicSkill();
+	SampleParticlesMagicSkill* app = new SampleParticlesMagicSkill();
 	getApplication()->registerAppEvent("SampleParticlesMagicSkill", app);
 }
 
@@ -55,22 +55,22 @@ void SampleParticlesMagicSkill::onInitApp()
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Particles.zip"), false, false);
 
 	// load basic shader
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
 	// create a Scene
 	m_scene = new CScene();
 
 	// create a Zone in Scene
-	CZone *zone = m_scene->createZone();
+	CZone* zone = m_scene->createZone();
 
 	// create 2D camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
+	CGameObject* guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// create 3d camera
-	CGameObject *camObj = zone->createEmptyObject();
+	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
@@ -80,11 +80,11 @@ void SampleParticlesMagicSkill::onInitApp()
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// 3d grid
-	CGameObject *grid = zone->createEmptyObject();
+	CGameObject* grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
 
 	// tower
-	Particle::CParticleComponent *tower = zone->createEmptyObject()->addComponent<Particle::CParticleComponent>();
+	Particle::CParticleComponent* tower = zone->createEmptyObject()->addComponent<Particle::CParticleComponent>();
 	initTower(tower);
 
 	// projectiles
@@ -96,18 +96,18 @@ void SampleParticlesMagicSkill::onInitApp()
 	initImpact(m_impacts);
 
 	// init font
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 
 	m_font = new CGlyphFont();
 	m_font->setFont("Segoe UI Light", 30);
 
 	// create 2D Canvas
-	CGameObject *canvasObject = zone->createEmptyObject();
-	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
+	CGameObject* canvasObject = zone->createEmptyObject();
+	CCanvas* canvas = canvasObject->addComponent<CCanvas>();
 
 	// create UI Text in Canvas
-	CGUIText *textLarge = canvas->createText(m_font);
+	CGUIText* textLarge = canvas->createText(m_font);
 	textLarge->setPosition(core::vector3df(0.0f, -10.0f, 0.0f));
 	textLarge->setText("Press LEFT MOUSE to simulate projectile");
 	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Bottom);
@@ -120,7 +120,7 @@ void SampleParticlesMagicSkill::onInitApp()
 	m_forwardRP->initRender(w, h);
 
 	m_postProcessorRP = new CPostProcessorRP();
-	m_postProcessorRP->setBloomIntensity(2.0f);
+	m_postProcessorRP->setBloomIntensity(1.0f);
 	m_postProcessorRP->initRender(w, h);
 	m_forwardRP->setPostProcessor(m_postProcessorRP);
 }
@@ -147,15 +147,15 @@ bool SampleParticlesMagicSkill::OnEvent(const SEvent& event)
 	return false;
 }
 
-void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
+void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent* ps)
 {
-	ITexture *texture = NULL;
+	ITexture* texture = NULL;
 
 	// FACTORY & ZONE
-	Particle::CFactory *factory = ps->getParticleFactory();
+	Particle::CFactory* factory = ps->getParticleFactory();
 
 	// GROUP: RING	
-	Particle::CGroup *ringGroup = ps->createParticleGroup();
+	Particle::CGroup* ringGroup = ps->createParticleGroup();
 
 	ringGroup->LifeMin = 3.0f;
 	ringGroup->LifeMax = 3.0f;
@@ -166,7 +166,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	ringGroup->createModel(Particle::Scale)->setStart(0.0f)->setEnd(4.0f);
 	ringGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
 
-	Particle::CInterpolator *alphaInterpolator = ringGroup->createInterpolator();
+	Particle::CInterpolator* alphaInterpolator = ringGroup->createInterpolator();
 	alphaInterpolator->addEntry(0.0f, 0.0f);
 	alphaInterpolator->addEntry(0.4f, 0.6f);
 	alphaInterpolator->addEntry(0.6f, 1.0f);
@@ -176,7 +176,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	ringGroup->OrientationNormal.set(0.0f, 1.0f, 0.0f);
 	ringGroup->OrientationUp.set(0.0f, 0.0f, 1.0f);
 
-	Particle::CQuadRenderer *ring = factory->createQuadRenderer();
+	Particle::CQuadRenderer* ring = factory->createQuadRenderer();
 	ring->SizeX = 2.0f;
 	ring->SizeY = 2.0f;
 	ring->SizeZ = 2.0f;
@@ -187,7 +187,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	ring->getMaterial()->setTexture(0, texture);
 	ring->getMaterial()->applyMaterial();
 
-	Particle::CEmitter *ringEmitter = factory->createRandomEmitter();
+	Particle::CEmitter* ringEmitter = factory->createRandomEmitter();
 	ringEmitter->setFlow(1.0f);
 	ringEmitter->setTank(-1);
 	ringEmitter->setForce(0.0f, 0.0f);
@@ -195,7 +195,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	ringGroup->addEmitter(ringEmitter);
 
 	// GROUP: POINT
-	Particle::CGroup *pointGroup = ps->createParticleGroup();
+	Particle::CGroup* pointGroup = ps->createParticleGroup();
 
 	pointGroup->LifeMin = 0.5f;
 	pointGroup->LifeMax = 0.7f;
@@ -203,7 +203,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	pointGroup->createModel(Particle::Scale)->setStart(0.8f)->setEnd(1.5f);
 	pointGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 
-	Particle::CQuadRenderer *point = factory->createQuadRenderer();
+	Particle::CQuadRenderer* point = factory->createQuadRenderer();
 	point->SizeX = 2.0f;
 	point->SizeY = 2.0f;
 	point->SizeZ = 2.0f;
@@ -214,7 +214,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	point->getMaterial()->applyMaterial();
 	pointGroup->setRenderer(point);
 
-	Particle::CEmitter *pointEmitter = factory->createRandomEmitter();
+	Particle::CEmitter* pointEmitter = factory->createRandomEmitter();
 	pointEmitter->setFlow(7.0f);
 	pointEmitter->setTank(-1);
 	pointEmitter->setForce(0.0f, 0.0f);
@@ -222,9 +222,9 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	pointGroup->addEmitter(pointEmitter);
 
 	// GROUP: SPHERE
-	Particle::CGroup *sphereGroup = ps->createParticleGroup();
+	Particle::CGroup* sphereGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer *sphere = factory->createQuadRenderer();
+	Particle::CQuadRenderer* sphere = factory->createQuadRenderer();
 	sphere->SizeX = 0.1f;
 	sphere->SizeY = 0.1f;
 	sphere->SizeZ = 0.1f;
@@ -241,7 +241,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	sphereGroup->LifeMax = 3.5f;
 	sphereGroup->Friction = 1.0f;
 
-	Particle::CEmitter *sphereEmitter = factory->createRandomEmitter();
+	Particle::CEmitter* sphereEmitter = factory->createRandomEmitter();
 	sphereEmitter->setFlow(20.0f);
 	sphereEmitter->setTank(-1);
 	sphereEmitter->setForce(0.0f, 0.6f);
@@ -254,18 +254,18 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent *ps)
 	sphereGroup->addSystem(m_vortexSystem);
 }
 
-void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps)
+void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent* ps)
 {
-	ITexture *texture = NULL;
+	ITexture* texture = NULL;
 
 	// FACTORY & ZONE
-	Particle::CFactory *factory = ps->getParticleFactory();
+	Particle::CFactory* factory = ps->getParticleFactory();
 
 	Particle::CPoint* point = factory->createPointZone();
 	Particle::CCylinder* trailCylinder = factory->createCylinderZone(core::vector3df(0.0f, -0.3f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 0.2, 0.4f);
 
 	// GROUP: PROJECTILE
-	Particle::CGroup *projectileGroup = ps->createParticleGroup();
+	Particle::CGroup* projectileGroup = ps->createParticleGroup();
 	m_projectileGroup = projectileGroup;
 
 	projectileGroup->LifeMin = 4.0f;
@@ -274,7 +274,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	projectileGroup->Gravity.set(0.0f, 0.0f, 0.0f);
 	projectileGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 
-	Particle::CEmitter *projectiveEmitter = factory->createRandomEmitter();
+	Particle::CEmitter* projectiveEmitter = factory->createRandomEmitter();
 	projectiveEmitter->setFlow(0.0f);
 	projectiveEmitter->setTank(0);
 	projectiveEmitter->setForce(2.5f, 6.0f);
@@ -285,10 +285,10 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	m_target = new CTargetProjectile(projectileGroup);
 
 	// ADD TRAIL
-	Particle::CParticleTrailComponent *psTrail = ps->getGameObject()->addComponent<Particle::CParticleTrailComponent>();
-	Particle::CParticleTrail *trail = psTrail->addTrail(projectileGroup);
+	Particle::CParticleTrailComponent* psTrail = ps->getGameObject()->addComponent<Particle::CParticleTrailComponent>();
+	Particle::CParticleTrail* trail = psTrail->addTrail(projectileGroup);
 
-	CMaterial *material = trail->getMaterial();
+	CMaterial* material = trail->getMaterial();
 	material->setTexture(0, CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_trail.png"));
 	trail->applyMaterial();
 	trail->setWidth(0.3f);
@@ -296,9 +296,9 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 
 
 	// SUB GROUP: Arcane
-	Particle::CSubGroup *arcaneGroup = ps->createParticleSubGroup(projectileGroup);
+	Particle::CSubGroup* arcaneGroup = ps->createParticleSubGroup(projectileGroup);
 
-	Particle::CQuadRenderer *arcane = factory->createQuadRenderer();
+	Particle::CQuadRenderer* arcane = factory->createQuadRenderer();
 	arcane->SizeX = 0.4f;
 	arcane->SizeY = 0.4f;
 	arcane->SizeZ = 0.4f;
@@ -318,7 +318,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	arcaneGroup->LifeMin = 4.0f;
 	arcaneGroup->LifeMax = 8.0f;
 
-	Particle::CEmitter *arcaneEmitter = factory->createNormalEmitter(false);
+	Particle::CEmitter* arcaneEmitter = factory->createNormalEmitter(false);
 	arcaneEmitter->setFlow(-1.0f);
 	arcaneEmitter->setTank(4);
 	arcaneEmitter->setForce(0.0f, 0.0f);
@@ -326,9 +326,9 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	arcaneGroup->addEmitter(arcaneEmitter);
 
 	// SUB GROUP: Sphere
-	Particle::CSubGroup *sphereGroup = ps->createParticleSubGroup(projectileGroup);
+	Particle::CSubGroup* sphereGroup = ps->createParticleSubGroup(projectileGroup);
 
-	Particle::CQuadRenderer *sphere = factory->createQuadRenderer();
+	Particle::CQuadRenderer* sphere = factory->createQuadRenderer();
 	sphere->SizeX = 0.1f;
 	sphere->SizeY = 0.1f;
 	sphere->SizeZ = 0.1f;
@@ -346,7 +346,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	sphereGroup->LifeMax = 1.5f;
 	sphereGroup->Friction = 1.0f;
 
-	Particle::CEmitter *sphereEmitter = factory->createSphericEmitter(-CTransform::s_oy, 0.0f, 60.0f * core::DEGTORAD);
+	Particle::CEmitter* sphereEmitter = factory->createSphericEmitter(-CTransform::s_oy, 0.0f, 60.0f * core::DEGTORAD);
 	sphereEmitter->setFlow(20.0f);
 	sphereEmitter->setTank(-1);
 	sphereEmitter->setForce(0.0f, 0.6f);
@@ -354,25 +354,25 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent *ps
 	sphereGroup->addEmitter(sphereEmitter);
 }
 
-void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
+void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 {
-	ITexture *texture = NULL;
+	ITexture* texture = NULL;
 
 	// FACTORY & ZONE
-	Particle::CFactory *factory = ps->getParticleFactory();
+	Particle::CFactory* factory = ps->getParticleFactory();
 
 	Particle::CSphere* sphereZone = factory->createSphereZone(core::vector3df(0.0f, 0.0f, 0.0f), 0.1f);
 	Particle::CSphere* largeSphereZone = factory->createSphereZone(core::vector3df(0.0f, 0.1f, 0.0f), 0.3f);
 
 	// GROUP: IMPACT
-	Particle::CGroup *impactGroup = ps->createParticleGroup();
+	Particle::CGroup* impactGroup = ps->createParticleGroup();
 
 	impactGroup->LifeMin = 0.5f;
 	impactGroup->LifeMax = 1.0f;
 	impactGroup->Friction = 0.0f;
 	impactGroup->Gravity.set(0.0f, 0.0f, 0.0f);
 
-	Particle::CEmitter *impactEmitter = factory->createRandomEmitter();
+	Particle::CEmitter* impactEmitter = factory->createRandomEmitter();
 	impactEmitter->setFlow(0);
 	impactEmitter->setTank(0);
 	impactEmitter->setForce(0.0f, 0.0f);
@@ -386,7 +386,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	// SUBGROUP: GLOW
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_glow.png");
 
-	Particle::CSubGroup *glowGroup = ps->createParticleSubGroup(impactGroup);
+	Particle::CSubGroup* glowGroup = ps->createParticleSubGroup(impactGroup);
 
 	glowGroup->LifeMin = 0.5f;
 	glowGroup->LifeMax = 0.6f;
@@ -394,7 +394,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	glowGroup->createModel(Particle::Scale)->setStart(1.0f)->setEnd(0.0f);
 	glowGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 
-	Particle::CQuadRenderer *glow = factory->createQuadRenderer();
+	Particle::CQuadRenderer* glow = factory->createQuadRenderer();
 	glow->SizeX = 1.2f;
 	glow->SizeY = 1.2f;
 	glow->SizeZ = 1.2f;
@@ -407,7 +407,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	glow->getMaterial()->applyMaterial();
 	glowGroup->setRenderer(glow);
 
-	Particle::CEmitter *pointEmitter = factory->createRandomEmitter();
+	Particle::CEmitter* pointEmitter = factory->createRandomEmitter();
 	pointEmitter->setFlow(-1.0f);
 	pointEmitter->setTank(4);
 	pointEmitter->setForce(0.0f, 0.0f);
@@ -415,9 +415,9 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	glowGroup->addEmitter(pointEmitter);
 
 	// SUBGROUP: LINE SPARK
-	Particle::CSubGroup *lineSparkGroup = ps->createParticleSubGroup(impactGroup);
+	Particle::CSubGroup* lineSparkGroup = ps->createParticleSubGroup(impactGroup);
 
-	Particle::CQuadRenderer *lineSpark = factory->createQuadRenderer();
+	Particle::CQuadRenderer* lineSpark = factory->createQuadRenderer();
 	lineSparkGroup->setRenderer(lineSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/vertical_glow3.png");
@@ -436,7 +436,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	lineSparkGroup->LifeMax = 0.3f;
 	lineSparkGroup->Gravity.set(0.0f, -1.5f, 0.0f);
 
-	Particle::CEmitter *lineSparkEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.7f * core::PI);
+	Particle::CEmitter* lineSparkEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.7f * core::PI);
 	lineSparkEmitter->setFlow(-1.0f);
 	lineSparkEmitter->setTank(2);
 	lineSparkEmitter->setForce(3.0f, 5.0f);
@@ -444,9 +444,9 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	lineSparkGroup->addEmitter(lineSparkEmitter);
 
 	// SUBGROUP: EXPLOSION SPARK
-	Particle::CSubGroup *sphereGroup = ps->createParticleSubGroup(impactGroup);
+	Particle::CSubGroup* sphereGroup = ps->createParticleSubGroup(impactGroup);
 
-	Particle::CQuadRenderer *sphere = factory->createQuadRenderer();
+	Particle::CQuadRenderer* sphere = factory->createQuadRenderer();
 	sphere->SizeX = 0.3f;
 	sphere->SizeY = 0.3f;
 	sphere->SizeZ = 0.3f;
@@ -465,7 +465,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	sphereGroup->LifeMax = 0.2f;
 	sphereGroup->Friction = 0.1f;
 
-	Particle::CEmitter *sphereEmitter = factory->createSphericEmitter(CTransform::s_oy, 0.0f, core::PI);
+	Particle::CEmitter* sphereEmitter = factory->createSphericEmitter(CTransform::s_oy, 0.0f, core::PI);
 	sphereEmitter->setFlow(-1);
 	sphereEmitter->setTank(5);
 	sphereEmitter->setForce(4.0f, 7.0f);
@@ -473,9 +473,9 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	sphereGroup->addEmitter(sphereEmitter);
 
 	// SUBGROUP: LINGER
-	Particle::CSubGroup *lingerGroup = ps->createParticleSubGroup(sphereGroup);
+	Particle::CSubGroup* lingerGroup = ps->createParticleSubGroup(sphereGroup);
 
-	Particle::CQuadRenderer *linger = factory->createQuadRenderer();
+	Particle::CQuadRenderer* linger = factory->createQuadRenderer();
 	linger->SizeX = 0.1f;
 	linger->SizeY = 0.1f;
 	linger->SizeZ = 0.1f;
@@ -492,7 +492,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	lingerGroup->LifeMin = 0.4f;
 	lingerGroup->LifeMax = 0.5f;
 
-	Particle::CEmitter *lingerEmitter = factory->createRandomEmitter();
+	Particle::CEmitter* lingerEmitter = factory->createRandomEmitter();
 	lingerEmitter->setFlow(30.0f);
 	lingerEmitter->setTank(-1);
 	lingerEmitter->setForce(0.0f, 0.0f);
@@ -500,9 +500,9 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	lingerGroup->addEmitter(lingerEmitter);
 
 	// SUBGROUP: POINT
-	Particle::CSubGroup *pointGroup = ps->createParticleSubGroup(impactGroup);
+	Particle::CSubGroup* pointGroup = ps->createParticleSubGroup(impactGroup);
 
-	Particle::CQuadRenderer *point = factory->createQuadRenderer();
+	Particle::CQuadRenderer* point = factory->createQuadRenderer();
 	point->SizeX = 0.2f;
 	point->SizeY = 0.2f;
 	point->SizeZ = 0.2f;
@@ -520,7 +520,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent *ps)
 	pointGroup->LifeMax = 1.5f;
 	pointGroup->Friction = 0.1f;
 
-	Particle::CEmitter *randomEmitter = factory->createSphericEmitter(CTransform::s_oy, 0.0f, core::PI);
+	Particle::CEmitter* randomEmitter = factory->createSphericEmitter(CTransform::s_oy, 0.0f, core::PI);
 	randomEmitter->setFlow(-1);
 	randomEmitter->setTank(10);
 	randomEmitter->setForce(0.1f, 0.3f);
@@ -544,7 +544,9 @@ void SampleParticlesMagicSkill::updateProjectile()
 			core::vector3df projectilePosition(0.0f, 1.0f, 0.0f);
 			core::vector3df collide;
 
-			core::line3df viewRay = CProjective::getViewRay(m_camera, m_mousePosition.X, m_mousePosition.Y);
+			const core::recti& vp = getVideoDriver()->getViewPort();
+
+			core::line3df viewRay = CProjective::getViewRay(m_camera, m_mousePosition.X, m_mousePosition.Y, vp.getWidth(), vp.getHeight());
 
 			// plane test
 			core::plane3df p(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
