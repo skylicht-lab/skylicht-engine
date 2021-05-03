@@ -24,7 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CViewpointData.h"
+#include "Projective/CProjective.h"
 #include "Material/Shader/CShaderManager.h"
+
+#include "GameObject/CGameObject.h"
+#include "Camera/CCamera.h"
 
 namespace Skylicht
 {
@@ -67,7 +71,7 @@ namespace Skylicht
 			SColor red = SColor(255, 155, 65, 80);
 			SColor green = SColor(255, 105, 140, 45);
 			core::vector3df zero(0.0f, 0.0f, 0.0f);
-			
+
 			float s = 0.7f;
 			addLineVertexBatch(zero, Position[0] * s, red);
 			addLineVertexBatch(zero, Position[2] * s, blue);
@@ -139,6 +143,49 @@ namespace Skylicht
 			}
 
 			Buffer->setDirty(EBT_VERTEX);
+		}
+
+		CViewpointData::EAxis CViewpointData::hit(CCamera* camera, float x, float y, int viewportW, int viewportH)
+		{
+			video::S3DVertex* vtx = (video::S3DVertex*)Buffer->getVertexBuffer()->getVertices();
+
+			core::vector3df camPosition = camera->getGameObject()->getPosition();
+			core::line3df ray = CProjective::getViewRay(camera, x, y, viewportW, viewportH);
+
+			int result = -1;
+			float minD = FLT_MAX;
+
+			for (int i = 0; i < 6; i++)
+			{
+				int id = i * 4;
+
+				core::vector3df itersecion;
+				core::triangle3df tri;
+
+				tri.pointA = vtx[id].Pos;
+				tri.pointB = vtx[id + 1].Pos;
+				tri.pointC = vtx[id + 2].Pos;
+
+				if (tri.getIntersectionWithLimitedLine(ray, itersecion))
+				{
+					float d = camPosition.getDistanceFromSQ(itersecion);
+					if (d < minD)
+						result = i;
+				}
+
+				tri.pointA = vtx[id].Pos;
+				tri.pointB = vtx[id + 2].Pos;
+				tri.pointC = vtx[id + 3].Pos;
+
+				if (tri.getIntersectionWithLimitedLine(ray, itersecion))
+				{
+					float d = camPosition.getDistanceFromSQ(itersecion);
+					if (d < minD)
+						result = i;
+				}
+			}
+
+			return (EAxis)result;
 		}
 	}
 }

@@ -27,13 +27,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	bool CProjective::getScreenCoordinatesFrom3DPosition(CCamera *camera, const core::vector3df& pos3d, float &x, float &y)
+	bool CProjective::getScreenCoordinatesFrom3DPosition(CCamera* camera, const core::vector3df& pos3d, float& x, float& y, int viewportW, int viewportH)
 	{
-		const core::rect<s32>& viewPort = getVideoDriver()->getViewPort();
-
 		core::dimension2d<f32> dim(
-			(f32)viewPort.getWidth() * 0.5f,
-			(f32)viewPort.getHeight() * 0.5f
+			(f32)viewportW * 0.5f,
+			(f32)viewportH * 0.5f
 		);
 
 		core::matrix4 trans = camera->getProjectionMatrix();
@@ -48,13 +46,13 @@ namespace Skylicht
 		if (zDiv < 0)
 			zDiv = -zDiv;
 
-		x = dim.Width + dim.Width  * transformedPos[0] * zDiv;
+		x = dim.Width + dim.Width * transformedPos[0] * zDiv;
 		y = dim.Height - dim.Height * transformedPos[1] * zDiv;
 
 		return transformedPos[3] >= 0;
 	}
 
-	core::line3df CProjective::getViewRay(CCamera *camera, float x, float y)
+	core::line3df CProjective::getViewRay(CCamera* camera, float x, float y, int viewportW, int viewportH)
 	{
 		core::line3d<f32> ln(0, 0, 0, 0, 0, 0);
 
@@ -64,11 +62,8 @@ namespace Skylicht
 		core::vector3df lefttoright = f.getFarRightUp() - farLeftUp;
 		core::vector3df uptodown = f.getFarLeftDown() - farLeftUp;
 
-		const core::rect<s32>& viewPort = getVideoDriver()->getViewPort();
-		core::dimension2d<u32> screenSize(viewPort.getWidth(), viewPort.getHeight());
-
-		f32 dx = x / (f32)screenSize.Width;
-		f32 dy = y / (f32)screenSize.Height;
+		f32 dx = x / (f32)viewportW;
+		f32 dy = y / (f32)viewportH;
 
 		if (camera->getProjectionType() == CCamera::Ortho || camera->getProjectionType() == CCamera::OrthoUI)
 			ln.start = f.cameraPosition + (lefttoright * (dx - 0.5f)) + (uptodown * (dy - 0.5f));
