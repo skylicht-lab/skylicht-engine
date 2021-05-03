@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSpaceScene.h"
+#include "GUI/Input/CInput.h"
 #include "GridPlane/CGridPlane.h"
 #include "EditorComponents/Viewpoint/CViewpoint.h"
 
@@ -47,7 +48,8 @@ namespace Skylicht
 			m_middleMouseDown(false),
 			m_mouseX(0.0f),
 			m_mouseY(0.0f),
-			m_viewpointZone(NULL)
+			m_viewpointZone(NULL),
+			m_3dPanel(NULL)
 		{
 			initDefaultScene();
 
@@ -59,6 +61,8 @@ namespace Skylicht
 			panel->OnRightMouseClick = std::bind(&CSpaceScene::onRightMouseClick, this, _1, _2, _3, _4);
 			panel->OnMiddleMouseClick = std::bind(&CSpaceScene::onMiddleMouseClick, this, _1, _2, _3, _4);
 			panel->OnMouseWheeled = std::bind(&CSpaceScene::onMouseWheeled, this, _1, _2);
+
+			m_3dPanel = panel;
 
 			GUI::SDimension size = window->getSize();
 			initRenderPipeline(size.Width, size.Height);
@@ -264,9 +268,15 @@ namespace Skylicht
 			m_leftMouseDown = down;
 
 			if (down)
+			{
+				GUI::CInput::getInput()->setCapture(m_3dPanel);
 				postMouseEventToScene(EMIE_LMOUSE_PRESSED_DOWN, x, y);
+			}
 			else
+			{
+				GUI::CInput::getInput()->setCapture(NULL);
 				postMouseEventToScene(EMIE_LMOUSE_LEFT_UP, x, y);
+			}
 		}
 
 		void CSpaceScene::onRightMouseClick(GUI::CBase* base, float x, float y, bool down)
@@ -274,9 +284,15 @@ namespace Skylicht
 			m_rightMouseDown = down;
 
 			if (down)
+			{
+				GUI::CInput::getInput()->setCapture(m_3dPanel);
 				postMouseEventToScene(EMIE_RMOUSE_PRESSED_DOWN, x, y);
+			}
 			else
+			{
+				GUI::CInput::getInput()->setCapture(NULL);
 				postMouseEventToScene(EMIE_RMOUSE_LEFT_UP, x, y);
+			}
 		}
 
 		void CSpaceScene::onMiddleMouseClick(GUI::CBase* base, float x, float y, bool down)
@@ -284,9 +300,15 @@ namespace Skylicht
 			m_middleMouseDown = down;
 
 			if (down)
+			{
+				GUI::CInput::getInput()->setCapture(m_3dPanel);
 				postMouseEventToScene(EMIE_MMOUSE_PRESSED_DOWN, x, y);
+			}
 			else
+			{
+				GUI::CInput::getInput()->setCapture(NULL);
 				postMouseEventToScene(EMIE_MMOUSE_LEFT_UP, x, y);
+			}
 		}
 
 		void CSpaceScene::onMouseWheeled(GUI::CBase* base, int wheel)
