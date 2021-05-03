@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Components/CComponentSystem.h"
+#include "CViewpointData.h"
 
 namespace Skylicht
 {
@@ -38,8 +39,10 @@ namespace Skylicht
 			virtual ~CViewpoint();
 
 			virtual void initComponent();
-			
+
 			virtual void updateComponent();
+
+			CViewpointData* getViewpointData();
 		};
 	}
 }

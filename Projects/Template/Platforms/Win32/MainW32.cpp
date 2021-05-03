@@ -522,7 +522,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Using ToUnicode instead would be shorter, but would to my knowledge not run on 95 and 98.
 		WCHAR keyChars[5];
 		UINT scanCode = HIWORD(lParam);
-		int conversionResult = ToUnicodeEx(wParam, scanCode, allKeys, keyChars, 5, 0, KEYBOARD_INPUT_HKL);
+		int conversionResult = ToUnicodeEx((UINT)wParam, scanCode, allKeys, keyChars, 5, 0, KEYBOARD_INPUT_HKL);
 		if (conversionResult == 1)
 		{
 			WORD unicodeChar = keyChars[0];

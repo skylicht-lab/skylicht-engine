@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
+#include "EditorComponents/Viewpoint/CViewpoint.h"
 
 namespace Skylicht
 {
@@ -50,8 +51,11 @@ namespace Skylicht
 			float m_mouseX;
 			float m_mouseY;
 
+			CViewpoint* m_viewpoint;
 			CZone* m_viewpointZone;
 			CCamera* m_viewpointCamera;
+			
+			core::rectf m_viewpointRect;
 
 		public:
 			CSpaceScene(GUI::CWindow* window, CEditor* editor);
