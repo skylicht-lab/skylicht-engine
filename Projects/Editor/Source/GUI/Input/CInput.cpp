@@ -195,10 +195,34 @@ namespace Skylicht
 
 				if (m_capture != NULL)
 				{
-					if (isDoubleClick)
-						m_capture->onMouseDoubleClickLeft(m_mousePositionX, m_mousePositionY);
+					if (mouseButton == 0)
+					{
+						if (isTripleClick)
+							m_capture->onMouseTripleClickLeft(m_mousePositionX, m_mousePositionY);
+						else if (isDoubleClick)
+							m_capture->onMouseDoubleClickLeft(m_mousePositionX, m_mousePositionY);
+						else
+							m_capture->onMouseClickLeft(m_mousePositionX, m_mousePositionY, down);
+					}
+					else if (mouseButton == 1)
+					{
+						if (isTripleClick)
+							m_capture->onMouseTripleClickRight(m_mousePositionX, m_mousePositionY);
+						else if (isDoubleClick)
+							m_capture->onMouseDoubleClickRight(m_mousePositionX, m_mousePositionY);
+						else
+							m_capture->onMouseClickRight(m_mousePositionX, m_mousePositionY, down);
+					}
 					else
-						m_capture->onMouseClickLeft(m_mousePositionX, m_mousePositionY, down);
+					{
+						if (isTripleClick)
+							m_capture->onMouseTripleClickMiddle(m_mousePositionX, m_mousePositionY);
+						else if (isDoubleClick)
+							m_capture->onMouseDoubleClickMiddle(m_mousePositionX, m_mousePositionY);
+						else
+							m_capture->onMouseClickMiddle(m_mousePositionX, m_mousePositionY, down);
+					}
+
 					return true;
 				}
 
