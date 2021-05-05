@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CViewpointData.h"
 #include "Projective/CProjective.h"
 #include "Material/Shader/CShaderManager.h"
-
+#include "TextureManager/CTextureManager.h"
 #include "GameObject/CGameObject.h"
 #include "Camera/CCamera.h"
 
@@ -37,11 +37,14 @@ namespace Skylicht
 		CViewpointData::CViewpointData()
 		{
 			Buffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));
-			Buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColor");
+			Buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 			Buffer->getMaterial().BackfaceCulling = false;
 			Buffer->setHardwareMappingHint(EHM_STREAM);
 
-			const float p = 1.0f;
+			ITexture* texture = CTextureManager::getInstance()->getTexture("Editor/Textures/oxyz.png");
+			Buffer->getMaterial().setTexture(0, texture);
+
+			const float p = 0.8f;
 
 			Position[0].set(p, 0.0f, 0.0f);
 			Position[1].set(-p, 0.0f, 0.0f);
@@ -67,12 +70,12 @@ namespace Skylicht
 				idx[i * 6 + 5] = i * 4 + 3;
 			}
 
-			SColor blue = SColor(255, 65, 105, 140);
+			SColor blue = SColor(255, 44, 143, 255);
 			SColor red = SColor(255, 155, 65, 80);
 			SColor green = SColor(255, 105, 140, 45);
 			core::vector3df zero(0.0f, 0.0f, 0.0f);
 
-			float s = 0.7f;
+			float s = 0.8f;
 			addLineVertexBatch(zero, Position[0] * s, red);
 			addLineVertexBatch(zero, Position[2] * s, blue);
 			addLineVertexBatch(zero, Position[4] * s, green);
@@ -83,7 +86,7 @@ namespace Skylicht
 
 		}
 
-		void CViewpointData::updateBillboard(const core::vector3df& look, const core::vector3df& up)
+		void CViewpointData::updateBillboard(const core::vector3df& look, const core::vector3df& up, const core::vector3df& campos)
 		{
 			video::S3DVertex* vtx = (video::S3DVertex*)Buffer->getVertexBuffer()->getVertices();
 
@@ -97,17 +100,67 @@ namespace Skylicht
 			sideQuad *= 0.25f;
 
 			SColor color(255, 255, 255, 255);
-			core::vector2df uvScale(1.0f, 1.0f);
+			core::vector2df uvScale(0.5f, 0.5f);
 			core::vector2df uvOffset(0.0f, 0.0f);
+
+			// sort to fix alpha depth
+			std::vector<std::pair<int, float>> sortPosition;
+			for (int i = 0; i < 6; i++)
+			{
+				float d = Position[i].getDistanceFromSQ(campos);
+				sortPosition.push_back(std::pair<int, float>(i, d));
+			}
+			struct {
+				bool operator()(const std::pair<int, float>& a, const std::pair<int, float>& b) const { return a.second > b.second; }
+			} customLess;
+			std::sort(sortPosition.begin(), sortPosition.end(), customLess);
 
 			for (int i = 0; i < 6; i++)
 			{
 				int offset = i * 4;
-				int offsetVertex = offset;
 
-				float x = Position[i].X;
-				float y = Position[i].Y;
-				float z = Position[i].Z;
+				int id = sortPosition[i].first;
+
+				float x = Position[id].X;
+				float y = Position[id].Y;
+				float z = Position[id].Z;
+
+				if (id == 1)
+				{
+					// -x
+					uvOffset.set(0.5f, 0.5f);
+					color.set(255, 154, 57, 71);
+				}
+				else if (id == 3)
+				{
+					// -y
+					uvOffset.set(0.5f, 0.5f);
+					color.set(255, 52, 100, 154);
+				}
+				else if (id == 5)
+				{
+					// -z
+					uvOffset.set(0.5f, 0.5f);
+					color.set(255, 98, 138, 34);
+				}
+				else if (id == 0)
+				{
+					// x
+					uvOffset.set(0.0f, 0.0f);
+					color.set(255, 255, 255, 255);
+				}
+				else if (id == 2)
+				{
+					// y
+					uvOffset.set(0.0f, 0.5f);
+					color.set(255, 255, 255, 255);
+				}
+				else if (id == 4)
+				{
+					// z
+					uvOffset.set(0.5f, 0.0f);
+					color.set(255, 255, 255, 255);
+				}
 
 				// top left vertex
 				vtx[offset].Pos.set(
