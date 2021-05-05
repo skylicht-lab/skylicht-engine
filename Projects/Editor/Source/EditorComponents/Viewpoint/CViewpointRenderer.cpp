@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CViewpointRenderer.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
@@ -90,6 +91,8 @@ namespace Skylicht
 			look.normalize();
 			up.normalize();
 
+			core::vector3df camPos = entityManager->getCamera()->getGameObject()->getPosition();
+
 			for (u32 i = 0, n = m_viewpoints.size(); i < n; i++)
 			{
 				driver->setTransform(video::ETS_WORLD, transforms[i]->World);
@@ -101,7 +104,7 @@ namespace Skylicht
 			for (u32 i = 0, n = m_viewpoints.size(); i < n; i++)
 			{
 				driver->setTransform(video::ETS_WORLD, transforms[i]->World);
-				viewpoints[i]->updateBillboard(look, up);				
+				viewpoints[i]->updateBillboard(look, up, camPos);
 
 				IMeshBuffer* buffer = viewpoints[i]->Buffer;
 				driver->setMaterial(buffer->getMaterial());
