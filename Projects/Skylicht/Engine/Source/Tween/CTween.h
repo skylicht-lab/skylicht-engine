@@ -38,6 +38,9 @@ namespace Skylicht
 
 		void update();
 
+		virtual void updateValue() = 0;
+
+	protected:
 		void setBeginValue(int index, float value);
 
 		void setEndValue(int index, float value);
@@ -47,6 +50,12 @@ namespace Skylicht
 			m_numValue = num;
 		}
 
+		float getValueByIndex(int index)
+		{
+			return m_value[index];
+		}
+
+	public:
 		inline void setEase(EEasingFunctions ease)
 		{
 			m_function = getEasingFunction(m_ease);
