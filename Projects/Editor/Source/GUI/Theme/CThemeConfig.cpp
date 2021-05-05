@@ -32,7 +32,7 @@ namespace Skylicht
 		namespace GUI
 		{
 			std::string CThemeConfig::FontName = "Droid Sans";
-			std::string CThemeConfig::FontPath = "Editor/Font/droidsans.ttf";
+			std::string CThemeConfig::FontPath = "Editor/Fonts/droidsans.ttf";
 
 			SGUIColor CThemeConfig::White = SGUIColor(255, 255, 255, 255);
 			SGUIColor CThemeConfig::Black = SGUIColor(255, 0, 0, 0);

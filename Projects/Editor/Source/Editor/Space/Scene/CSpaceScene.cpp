@@ -205,7 +205,7 @@ namespace Skylicht
 			core::vector3df up(matData[4], matData[5], matData[6]);
 			up.normalize();
 
-			float distance = 2.5f;
+			float distance = 2.0f;
 			core::vector3df pos = -dir * distance;
 
 			m_viewpointCamera->setPosition(pos);

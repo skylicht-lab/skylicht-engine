@@ -56,7 +56,7 @@ namespace Skylicht
 
 			virtual ~CViewpointData();
 
-			void updateBillboard(const core::vector3df& look, const core::vector3df& up);
+			void updateBillboard(const core::vector3df& look, const core::vector3df& up, const core::vector3df& campos);
 
 			EAxis hit(CCamera* camera, float x, float y, int viewportW, int viewportH);
 		};
