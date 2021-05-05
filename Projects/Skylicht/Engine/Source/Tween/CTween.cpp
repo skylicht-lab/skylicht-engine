@@ -51,10 +51,12 @@ namespace Skylicht
 				m_value[i] = m_fromValue[i] + (m_toValue[i] - m_fromValue[i]) * m_percentValue;
 			}
 
+			updateValue();
+
 			if (OnUpdate != nullptr)
 				OnUpdate(this);
 
-			if (f == 1.0f)
+			if (f >= 1.0f)
 			{
 				if (OnFinish != nullptr)
 					OnFinish(this);
