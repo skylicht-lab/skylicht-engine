@@ -43,6 +43,9 @@ namespace Skylicht
 
 			ITexture* texture = CTextureManager::getInstance()->getTexture("Editor/Textures/oxyz.png");
 			Buffer->getMaterial().setTexture(0, texture);
+			Buffer->getMaterial().TextureLayer[0].BilinearFilter = false;
+			Buffer->getMaterial().TextureLayer[0].TrilinearFilter = false;
+			Buffer->getMaterial().TextureLayer[0].AnisotropicFilter = 8;
 
 			const float p = 0.8f;
 
@@ -104,22 +107,22 @@ namespace Skylicht
 			core::vector2df uvOffset(0.0f, 0.0f);
 
 			// sort to fix alpha depth
-			std::vector<std::pair<int, float>> sortPosition;
+			m_sortPosition.clear();
 			for (int i = 0; i < 6; i++)
 			{
 				float d = Position[i].getDistanceFromSQ(campos);
-				sortPosition.push_back(std::pair<int, float>(i, d));
+				m_sortPosition.push_back(std::pair<int, float>(i, d));
 			}
 			struct {
 				bool operator()(const std::pair<int, float>& a, const std::pair<int, float>& b) const { return a.second > b.second; }
 			} customLess;
-			std::sort(sortPosition.begin(), sortPosition.end(), customLess);
+			std::sort(m_sortPosition.begin(), m_sortPosition.end(), customLess);
 
 			for (int i = 0; i < 6; i++)
 			{
 				int offset = i * 4;
 
-				int id = sortPosition[i].first;
+				int id = m_sortPosition[i].first;
 
 				float x = Position[id].X;
 				float y = Position[id].Y;
@@ -238,7 +241,13 @@ namespace Skylicht
 				}
 			}
 
-			return (EAxis)result;
+			if (result >= 0)
+			{
+				int id = m_sortPosition[result].first;
+				return (EAxis)id;
+			}
+
+			return None;
 		}
 	}
 }

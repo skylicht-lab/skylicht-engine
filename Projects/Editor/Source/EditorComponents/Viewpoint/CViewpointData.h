@@ -51,6 +51,9 @@ namespace Skylicht
 
 			core::vector3df Position[6];
 
+		protected:
+			std::vector<std::pair<int, float>> m_sortPosition;
+
 		public:
 			CViewpointData();
 
