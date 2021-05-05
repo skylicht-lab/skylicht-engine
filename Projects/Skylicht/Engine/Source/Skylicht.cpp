@@ -43,6 +43,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Animation/CAnimationManager.h"
 #include "TextureManager/CTextureManager.h"
 
+// Tween
+#include "Tween/CTweenManager.h"
+
 #if defined(USE_FREETYPE)
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
 #endif
@@ -52,10 +55,10 @@ namespace Skylicht
 {
 
 	IrrlichtDevice* g_device = NULL;
-	IVideoDriver*	g_video = NULL;
+	IVideoDriver* g_video = NULL;
 	float g_timestep = 0.0f;
 
-	void initSkylicht(IrrlichtDevice *device, bool server)
+	void initSkylicht(IrrlichtDevice* device, bool server)
 	{
 		g_device = device;
 		g_video = device->getVideoDriver();
@@ -73,6 +76,8 @@ namespace Skylicht
 		CMeshManager::createGetInstance();
 		CAnimationManager::createGetInstance();
 		CMaterialManager::createGetInstance();
+
+		CTweenManager::createGetInstance();
 
 #if defined(USE_FREETYPE)
 		CGlyphFreetype::createGetInstance();
@@ -93,6 +98,8 @@ namespace Skylicht
 		CGlyphFreetype::releaseInstance();
 #endif
 
+		CTweenManager::releaseInstance();
+
 		CMaterialManager::releaseInstance();
 		CAnimationManager::releaseInstance();
 		CMeshManager::releaseInstance();
@@ -112,6 +119,7 @@ namespace Skylicht
 		CTouchManager::getInstance()->update();
 		CAccelerometer::getInstance()->update();
 		CJoystick::getInstance()->update();
+		CTweenManager::getInstance()->update();
 	}
 
 	IrrlichtDevice* getIrrlichtDevice()
