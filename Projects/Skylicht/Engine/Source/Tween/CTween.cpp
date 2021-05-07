@@ -11,7 +11,8 @@ namespace Skylicht
 		m_ease(EaseInCubic),
 		m_numValue(1),
 		m_percentTime(0.0f),
-		m_percentValue(0.0f)
+		m_percentValue(0.0f),
+		m_start(false)
 	{
 		m_function = getEasingFunction(m_ease);
 
@@ -36,6 +37,13 @@ namespace Skylicht
 			if (OnDelay != nullptr)
 				OnDelay(this);
 			return;
+		}
+
+		if (m_start == false)
+		{
+			if (OnStart != nullptr)
+				OnStart(this);
+			m_start = true;
 		}
 
 		if (m_duration > 0.0f)
@@ -83,5 +91,12 @@ namespace Skylicht
 		m_toValue[index] = value;
 		if (index >= m_numValue)
 			m_numValue = index + 1;
+	}
+
+	void CTween::stop()
+	{
+		if (OnStop != nullptr)
+			OnStop(this);
+		CTweenManager::getInstance()->removeTween(this);
 	}
 }

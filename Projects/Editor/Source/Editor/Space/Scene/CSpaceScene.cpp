@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSpaceScene.h"
 #include "GUI/Input/CInput.h"
 #include "GridPlane/CGridPlane.h"
+#include "Tween/CTweenManager.h"
 #include "EditorComponents/Viewpoint/CViewpoint.h"
 
 #include "Editor/SpaceController/CSceneController.h"
@@ -104,8 +105,8 @@ namespace Skylicht
 			camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
 			m_editorCamera = camObj->getComponent<CCamera>();
-			m_editorCamera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
-			m_editorCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+			m_editorCamera->setPosition(core::vector3df(0.0f, 1.5f, 0.0f));
+			m_editorCamera->lookAt(core::vector3df(0.0f, 0.0f, 4.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 			// grid
 			m_gridPlane = zone->createEmptyObject();
@@ -193,23 +194,101 @@ namespace Skylicht
 
 		void CSpaceScene::updateViewpoint()
 		{
-			const core::matrix4& view = m_editorCamera->getViewMatrix();
-
-			core::matrix4 cameraWorld;
-			view.getInverse(cameraWorld);
-			f32* matData = cameraWorld.pointer();
-
-			core::vector3df dir(matData[8], matData[9], matData[10]);
-			dir.normalize();
-
-			core::vector3df up(matData[4], matData[5], matData[6]);
-			up.normalize();
+			core::vector3df look = m_editorCamera->getLookVector();
+			core::vector3df up = m_editorCamera->getUpVector();
 
 			float distance = 2.2f;
-			core::vector3df pos = -dir * distance;
+			core::vector3df pos = -look * distance;
 
 			m_viewpointCamera->setPosition(pos);
 			m_viewpointCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), up);
+		}
+
+		void CSpaceScene::setCameraLook(CViewpointData::EAxis axis)
+		{
+			float time = 350.0f;
+
+			core::vector3df look = m_editorCamera->getLookVector();
+			core::vector3df up = m_editorCamera->getUpVector();
+
+			if (axis == CViewpointData::X)
+			{
+				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(-1.0f, 0.0f, 0.0f), time);
+				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
+
+				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
+				tweenUp->setEase(EEasingFunctions::EaseLinear);
+
+				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
+				tweenLook->setEase(EEasingFunctions::EaseLinear);
+
+				CTweenManager::getInstance()->addTween(tweenUp);
+				CTweenManager::getInstance()->addTween(tweenLook);
+			}
+			else if (axis == CViewpointData::XNeg)
+			{
+				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(1.0f, 0.0f, 0.0f), time);
+				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
+
+				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
+				tweenUp->setEase(EEasingFunctions::EaseLinear);
+
+				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
+				tweenLook->setEase(EEasingFunctions::EaseLinear);
+
+				CTweenManager::getInstance()->addTween(tweenUp);
+				CTweenManager::getInstance()->addTween(tweenLook);
+			}
+			else if (axis == CViewpointData::Z)
+			{
+				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, 0.0f, -1.0f), time);
+				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
+
+				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
+				tweenUp->setEase(EEasingFunctions::EaseLinear);
+
+				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
+				tweenLook->setEase(EEasingFunctions::EaseLinear);
+
+				CTweenManager::getInstance()->addTween(tweenUp);
+				CTweenManager::getInstance()->addTween(tweenLook);
+			}
+			else if (axis == CViewpointData::ZNeg)
+			{
+				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, 0.0f, 1.0f), time);
+				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
+
+				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
+				tweenUp->setEase(EEasingFunctions::EaseLinear);
+
+				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
+				tweenLook->setEase(EEasingFunctions::EaseLinear);
+
+				CTweenManager::getInstance()->addTween(tweenUp);
+				CTweenManager::getInstance()->addTween(tweenLook);
+			}
+			else if (axis == CViewpointData::Y)
+			{
+				//core::vector3df targetLook(0.0f, -1.0f, 0.0f);
+				//core::vector3df targetUp(0.0f, 0.0f, -1.0f);
+
+				//m_editorCamera->setUpVector(targetUp);
+				//m_editorCamera->setLookVector(targetLook);
+
+				/*
+				CTweenVector3df* tweenLook = new CTweenVector3df(look, targetLook, time);
+				CTweenVector3df* tweenUp = new CTweenVector3df(up, targetUp, time);
+
+				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
+				tweenUp->setEase(EEasingFunctions::EaseLinear);
+
+				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
+				tweenLook->setEase(EEasingFunctions::EaseLinear);
+
+				CTweenManager::getInstance()->addTween(tweenUp);
+				CTweenManager::getInstance()->addTween(tweenLook);
+				*/
+			}
 		}
 
 		void CSpaceScene::onRender(GUI::CBase* base)
@@ -285,11 +364,10 @@ namespace Skylicht
 					// viewpoint
 					float x = local.X - m_viewpointRect.UpperLeftCorner.X;
 					float y = local.Y - m_viewpointRect.UpperLeftCorner.Y;
-					CViewpointData::EAxis hit = m_viewpoint->getViewpointData()->hit(m_viewpointCamera, x, y, (int)m_viewpointRect.getWidth(), (int)m_viewpointRect.getHeight());
-					if (hit >= CViewpointData::X)
-					{
+					CViewpointData::EAxis axis = m_viewpoint->getViewpointData()->hit(m_viewpointCamera, x, y, (int)m_viewpointRect.getWidth(), (int)m_viewpointRect.getHeight());
 
-					}
+					if (axis != CViewpointData::None)
+						setCameraLook(axis);
 				}
 			}
 			else

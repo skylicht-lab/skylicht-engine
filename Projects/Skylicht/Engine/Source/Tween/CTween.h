@@ -26,9 +26,12 @@ namespace Skylicht
 
 		int m_numValue;
 
+		bool m_start;
 	public:
 		std::function<void(CTween*)> OnUpdate;
 		std::function<void(CTween*)> OnFinish;
+		std::function<void(CTween*)> OnStart;
+		std::function<void(CTween*)> OnStop;		
 		std::function<void(CTween*)> OnDelay;
 
 	public:
@@ -37,6 +40,8 @@ namespace Skylicht
 		virtual ~CTween();
 
 		void update();
+
+		void stop();
 
 		virtual void updateValue() = 0;
 
@@ -58,7 +63,13 @@ namespace Skylicht
 	public:
 		inline void setEase(EEasingFunctions ease)
 		{
-			m_function = getEasingFunction(m_ease);
+			m_ease = ease;
+			m_function = getEasingFunction(ease);
+		}
+
+		inline EEasingFunctions getEase()
+		{
+			return m_ease;
 		}
 
 		inline void setDelay(float delay)
