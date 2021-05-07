@@ -1,6 +1,12 @@
 #pragma once 
 
 #include "CTween.h"
+#include "CTweenFloat.h"
+#include "CTweenVector2df.h"
+#include "CTweenVector3df.h"
+#include "CTweenColor.h"
+#include "CTweenMatrix4.h"
+
 #include "Utils/CGameSingleton.h"
 
 namespace Skylicht
