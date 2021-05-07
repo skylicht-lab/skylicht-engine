@@ -77,8 +77,11 @@ namespace Skylicht
 			// update lookat matrix
 			const core::matrix4& mat = m_gameObject->getTransform()->getMatrixTransform();
 			position = mat.getTranslation();
+
 			core::vector3df target = CTransform::s_oz;
 			mat.rotateVect(target);
+			target.normalize();
+
 			m_viewArea.getTransform(video::ETS_VIEW).buildCameraLookAtMatrixLH(position, position + target, m_up);
 		}
 
@@ -123,14 +126,14 @@ namespace Skylicht
 
 	void CCamera::setPosition(const core::vector3df& position)
 	{
-		CTransformEuler *t = m_gameObject->getTransformEuler();
+		CTransformEuler* t = m_gameObject->getTransformEuler();
 		if (t != NULL)
 			t->setPosition(position);
 	}
 
 	void CCamera::lookAt(const core::vector3df& position, const core::vector3df& target, const core::vector3df& up)
 	{
-		CTransformEuler *t = m_gameObject->getTransformEuler();
+		CTransformEuler* t = m_gameObject->getTransformEuler();
 		if (t != NULL)
 		{
 			core::vector3df front = target - position;
@@ -141,7 +144,7 @@ namespace Skylicht
 
 	void CCamera::lookAt(const core::vector3df& target, const core::vector3df& up)
 	{
-		CTransformEuler *t = m_gameObject->getTransformEuler();
+		CTransformEuler* t = m_gameObject->getTransformEuler();
 		if (t != NULL)
 		{
 			core::vector3df front = target - t->getPosition();
@@ -152,11 +155,22 @@ namespace Skylicht
 	void CCamera::setUpVector(const core::vector3df& up)
 	{
 		m_up = up;
+		m_up.normalize();
+	}
+
+	void CCamera::setLookVector(core::vector3df look)
+	{
+		CTransformEuler* t = m_gameObject->getTransformEuler();
+		if (t != NULL)
+		{
+			look.normalize();
+			t->setOrientation(look, m_up);
+		}
 	}
 
 	core::vector3df CCamera::getLookVector()
 	{
-		const core::matrix4 &m = m_gameObject->getTransform()->getMatrixTransform();
+		const core::matrix4& m = m_gameObject->getTransform()->getMatrixTransform();
 
 		core::vector3df look = CTransform::s_oz;
 		m.rotateVect(look);
@@ -197,7 +211,7 @@ namespace Skylicht
 			float t = scale;
 			float b = -t;
 
-			f32 *m = m_viewArea.getTransform(video::ETS_PROJECTION).pointer();
+			f32* m = m_viewArea.getTransform(video::ETS_PROJECTION).pointer();
 
 #define mat(x, y) m[(x << 2) + y]
 			mat(0, 0) = 2 * n / (r - l);

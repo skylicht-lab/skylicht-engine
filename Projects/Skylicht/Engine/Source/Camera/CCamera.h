@@ -92,6 +92,8 @@ namespace Skylicht
 
 		void setUpVector(const core::vector3df& up);
 
+		void setLookVector(core::vector3df look);
+
 		inline const core::vector3df& getUpVector()
 		{
 			return m_up;

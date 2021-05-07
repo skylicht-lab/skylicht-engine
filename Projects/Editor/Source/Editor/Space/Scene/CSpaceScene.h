@@ -86,6 +86,8 @@ namespace Skylicht
 
 			void updateViewpoint();
 
+			void setCameraLook(CViewpointData::EAxis axis);
+
 			void initRenderPipeline(float w, float h);
 
 			void postMouseEventToScene(EMOUSE_INPUT_EVENT eventType, float x, float y);
