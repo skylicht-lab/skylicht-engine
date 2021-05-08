@@ -269,15 +269,8 @@ namespace Skylicht
 			}
 			else if (axis == CViewpointData::Y)
 			{
-				//core::vector3df targetLook(0.0f, -1.0f, 0.0f);
-				//core::vector3df targetUp(0.0f, 0.0f, -1.0f);
-
-				//m_editorCamera->setUpVector(targetUp);
-				//m_editorCamera->setLookVector(targetLook);
-
-				/*
-				CTweenVector3df* tweenLook = new CTweenVector3df(look, targetLook, time);
-				CTweenVector3df* tweenUp = new CTweenVector3df(up, targetUp, time);
+				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, -1.0f, 0.0f), time);
+				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 0.0f, 1.0f), time);
 
 				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
 				tweenUp->setEase(EEasingFunctions::EaseLinear);
@@ -287,7 +280,20 @@ namespace Skylicht
 
 				CTweenManager::getInstance()->addTween(tweenUp);
 				CTweenManager::getInstance()->addTween(tweenLook);
-				*/
+			}
+			else if (axis == CViewpointData::YNeg)
+			{
+				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, 1.0f, 0.0f), time);
+				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 0.0f, 1.0f), time);
+
+				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
+				tweenUp->setEase(EEasingFunctions::EaseLinear);
+
+				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
+				tweenLook->setEase(EEasingFunctions::EaseLinear);
+
+				CTweenManager::getInstance()->addTween(tweenUp);
+				CTweenManager::getInstance()->addTween(tweenLook);
 			}
 		}
 

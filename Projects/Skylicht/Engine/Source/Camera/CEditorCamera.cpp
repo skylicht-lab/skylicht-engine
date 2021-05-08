@@ -35,8 +35,8 @@ namespace Skylicht
 
 	void CEditorCamera::endUpdate()
 	{
-		CTransformEuler *transform = m_gameObject->getTransformEuler();
-		CCamera *camera = m_gameObject->getComponent<CCamera>();
+		CTransformEuler* transform = m_gameObject->getTransformEuler();
+		CCamera* camera = m_gameObject->getComponent<CCamera>();
 
 		if (camera == NULL || transform == NULL)
 			return;
@@ -52,7 +52,18 @@ namespace Skylicht
 			timeDiff = delta;
 
 		core::vector3df pos = transform->getPosition();
+
 		core::vector3df target = transform->getFront();
+
+		// fix something wrong in math
+		if (fabsf(target.X) < 0.00001)
+			target.X = 0.0f;
+		if (fabsf(target.Y) < 0.00001)
+			target.Y = 0.0f;
+		if (fabsf(target.Z) < 0.00001)
+			target.Z = 0.0f;
+
+		core::vector3df	up, right;
 
 		core::vector3df relativeRotation = target.getHorizontalAngle();
 		core::vector3df offsetPosition;
@@ -64,13 +75,18 @@ namespace Skylicht
 
 		// calc target after rotation
 		target.set(0.0f, 0.0f, 1.0f);
+		right.set(1.0f, 0.0f, 0.0f);
+
 		core::matrix4 mat;
 		mat.setRotationDegrees(core::vector3df(relativeRotation.X, relativeRotation.Y, 0));
 		mat.transformVect(target);
+		mat.transformVect(right);
+
+		target.normalize();
+		right.normalize();
 
 		// set position
 		core::vector3df movedir = target;
-		movedir.normalize();
 
 		if (m_mouseWhell)
 		{
@@ -82,22 +98,25 @@ namespace Skylicht
 		{
 			// move left, right
 			core::vector3df strafevect = target;
-			strafevect = strafevect.crossProduct(CTransform::s_oy);
+			strafevect = strafevect.crossProduct(transform->getUp());
 			strafevect.normalize();
 			pos += strafevect * offsetPosition.X;
 
 			// move up, down
-			core::vector3df	up = strafevect;
-			up = up.crossProduct(movedir);
+			up = strafevect.crossProduct(target);
 			up.normalize();
 			pos += up * offsetPosition.Y;
 		}
 
+		// caculate up vector
+		up = -right.crossProduct(target);
+		up.normalize();
+
 		// write right target
-		camera->lookAt(pos, pos + target, CTransform::s_oy);
+		camera->lookAt(pos, pos + target, up);
 	}
 
-	void CEditorCamera::updateInputRotate(core::vector3df &relativeRotation, f32 timeDiff)
+	void CEditorCamera::updateInputRotate(core::vector3df& relativeRotation, f32 timeDiff)
 	{
 		const float MaxVerticalAngle = 88;
 		const int MouseYDirection = 1;
@@ -121,7 +140,7 @@ namespace Skylicht
 		m_cursorPos = m_centerCursor;
 	}
 
-	void CEditorCamera::updateInputOffset(core::vector3df &offsetPosition, f32 timeDiff)
+	void CEditorCamera::updateInputOffset(core::vector3df& offsetPosition, f32 timeDiff)
 	{
 		offsetPosition.X = (m_cursorPos.X - m_centerCursor.X);
 		offsetPosition.Y = (m_cursorPos.Y - m_centerCursor.Y);
