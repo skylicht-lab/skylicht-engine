@@ -26,8 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSpaceScene.h"
 #include "GUI/Input/CInput.h"
 #include "GridPlane/CGridPlane.h"
-#include "Tween/CTweenManager.h"
-#include "EditorComponents/Viewpoint/CViewpoint.h"
 
 #include "Editor/SpaceController/CSceneController.h"
 
@@ -52,7 +50,8 @@ namespace Skylicht
 			m_viewpointZone(NULL),
 			m_viewpoint(NULL),
 			m_viewpointCamera(NULL),
-			m_3dPanel(NULL)
+			m_3dPanel(NULL),
+			m_handlesRenderer(NULL)
 		{
 			initDefaultScene();
 
@@ -147,6 +146,9 @@ namespace Skylicht
 			viewpoint->setName(L"Viewpoint");
 			m_viewpoint = viewpoint->addComponent<CViewpoint>();
 
+			// handles
+			m_handlesRenderer = m_scene->getEntityManager()->addRenderSystem<CHandlesRenderer>();
+
 			// set scene to controller
 			CSceneController::getInstance()->setScene(m_scene);
 		}
@@ -204,6 +206,21 @@ namespace Skylicht
 			m_viewpointCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), up);
 		}
 
+		void CSpaceScene::setupCameraTween(CTweenVector3df* look, CTweenVector3df* up)
+		{
+			look->OnUpdate = [camera = m_editorCamera, up, look](CTween* t)
+			{
+				camera->setUpVector(up->getValue());
+				camera->setLookVector(look->getValue());
+			};
+
+			up->setEase(EEasingFunctions::EaseLinear);
+			look->setEase(EEasingFunctions::EaseLinear);
+
+			CTweenManager::getInstance()->addTween(up);
+			CTweenManager::getInstance()->addTween(look);
+		}
+
 		void CSpaceScene::setCameraLook(CViewpointData::EAxis axis)
 		{
 			float time = 350.0f;
@@ -215,85 +232,37 @@ namespace Skylicht
 			{
 				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(-1.0f, 0.0f, 0.0f), time);
 				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
-
-				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
-				tweenUp->setEase(EEasingFunctions::EaseLinear);
-
-				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
-				tweenLook->setEase(EEasingFunctions::EaseLinear);
-
-				CTweenManager::getInstance()->addTween(tweenUp);
-				CTweenManager::getInstance()->addTween(tweenLook);
+				setupCameraTween(tweenLook, tweenUp);
 			}
 			else if (axis == CViewpointData::XNeg)
 			{
 				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(1.0f, 0.0f, 0.0f), time);
 				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
-
-				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
-				tweenUp->setEase(EEasingFunctions::EaseLinear);
-
-				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
-				tweenLook->setEase(EEasingFunctions::EaseLinear);
-
-				CTweenManager::getInstance()->addTween(tweenUp);
-				CTweenManager::getInstance()->addTween(tweenLook);
+				setupCameraTween(tweenLook, tweenUp);
 			}
 			else if (axis == CViewpointData::Z)
 			{
 				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, 0.0f, -1.0f), time);
 				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
-
-				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
-				tweenUp->setEase(EEasingFunctions::EaseLinear);
-
-				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
-				tweenLook->setEase(EEasingFunctions::EaseLinear);
-
-				CTweenManager::getInstance()->addTween(tweenUp);
-				CTweenManager::getInstance()->addTween(tweenLook);
+				setupCameraTween(tweenLook, tweenUp);
 			}
 			else if (axis == CViewpointData::ZNeg)
 			{
 				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, 0.0f, 1.0f), time);
 				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
-
-				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
-				tweenUp->setEase(EEasingFunctions::EaseLinear);
-
-				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
-				tweenLook->setEase(EEasingFunctions::EaseLinear);
-
-				CTweenManager::getInstance()->addTween(tweenUp);
-				CTweenManager::getInstance()->addTween(tweenLook);
+				setupCameraTween(tweenLook, tweenUp);
 			}
 			else if (axis == CViewpointData::Y)
 			{
 				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, -1.0f, 0.0f), time);
 				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 0.0f, 1.0f), time);
-
-				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
-				tweenUp->setEase(EEasingFunctions::EaseLinear);
-
-				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
-				tweenLook->setEase(EEasingFunctions::EaseLinear);
-
-				CTweenManager::getInstance()->addTween(tweenUp);
-				CTweenManager::getInstance()->addTween(tweenLook);
+				setupCameraTween(tweenLook, tweenUp);
 			}
 			else if (axis == CViewpointData::YNeg)
 			{
 				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, 1.0f, 0.0f), time);
 				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 0.0f, 1.0f), time);
-
-				tweenUp->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setUpVector(((CTweenVector3df*)t)->getValue()); };
-				tweenUp->setEase(EEasingFunctions::EaseLinear);
-
-				tweenLook->OnUpdate = [camera = m_editorCamera](CTween* t) {camera->setLookVector(((CTweenVector3df*)t)->getValue()); };
-				tweenLook->setEase(EEasingFunctions::EaseLinear);
-
-				CTweenManager::getInstance()->addTween(tweenUp);
-				CTweenManager::getInstance()->addTween(tweenLook);
+				setupCameraTween(tweenLook, tweenUp);
 			}
 		}
 
@@ -316,6 +285,7 @@ namespace Skylicht
 				// draw scene
 				m_scene->setVisibleAllZone(true);
 				m_viewpointZone->setVisible(false);
+				m_handlesRenderer->setEnable(true);
 
 				m_renderRP->render(NULL, m_editorCamera, m_scene->getEntityManager(), viewport);
 
@@ -338,12 +308,14 @@ namespace Skylicht
 				// draw viewpoint
 				m_scene->setVisibleAllZone(false);
 				m_viewpointZone->setVisible(true);
+				m_handlesRenderer->setEnable(false);
 
 				m_viewpointRP->render(NULL, m_viewpointCamera, m_scene->getEntityManager(), viewport);
 
 				// disable viewpoint
 				m_scene->setVisibleAllZone(true);
 				m_viewpointZone->setVisible(false);
+				m_handlesRenderer->setEnable(true);
 
 				// resume gui render
 				getVideoDriver()->enableScissor(true);

@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 #include "EditorComponents/Viewpoint/CViewpoint.h"
+#include "EditorComponents/Handles/CHandlesRenderer.h"
+#include "Tween/CTweenManager.h"
 
 namespace Skylicht
 {
@@ -54,6 +56,8 @@ namespace Skylicht
 			CViewpoint* m_viewpoint;
 			CZone* m_viewpointZone;
 			CCamera* m_viewpointCamera;
+
+			CHandlesRenderer* m_handlesRenderer;
 
 			core::rectf m_viewpointRect;
 
@@ -85,6 +89,8 @@ namespace Skylicht
 		protected:
 
 			void updateViewpoint();
+
+			void setupCameraTween(CTweenVector3df* look, CTweenVector3df* up);
 
 			void setCameraLook(CViewpointData::EAxis axis);
 
