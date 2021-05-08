@@ -139,6 +139,8 @@ namespace Skylicht
 			core::vector3df front = target - position;
 			t->setOrientation(front, up);
 			t->setPosition(position);
+
+			setUpVector(up);
 		}
 	}
 
@@ -149,6 +151,8 @@ namespace Skylicht
 		{
 			core::vector3df front = target - t->getPosition();
 			t->setOrientation(front, up);
+
+			setUpVector(up);
 		}
 	}
 

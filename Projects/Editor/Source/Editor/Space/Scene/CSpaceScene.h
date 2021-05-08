@@ -54,7 +54,7 @@ namespace Skylicht
 			CViewpoint* m_viewpoint;
 			CZone* m_viewpointZone;
 			CCamera* m_viewpointCamera;
-			
+
 			core::rectf m_viewpointRect;
 
 		public:
