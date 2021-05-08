@@ -74,5 +74,7 @@ namespace Skylicht
 		void updateInputRotate(core::vector3df &relativeRotation, f32 timeDiff);
 
 		void updateInputOffset(core::vector3df &offsetPosition, f32 timeDiff);
+
+
 	};
 }
