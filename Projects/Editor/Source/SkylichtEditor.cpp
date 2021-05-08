@@ -5,6 +5,7 @@
 #include "Utils/CColor.h"
 
 #include "AssetManager/CAssetManager.h"
+#include "Handles/CHandles.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -17,13 +18,16 @@ SkylichtEditor::SkylichtEditor() :
 	m_editorState(Startup)
 {
 	Editor::CAssetManager::createGetInstance();
+	Editor::CHandles::createGetInstance();
 }
 
 SkylichtEditor::~SkylichtEditor()
 {
 	Editor::CAssetManager::releaseInstance();
+	Editor::CHandles::releaseInstance();
 
 	Editor::GUI::CGUIContext::destroyGUI();
+
 
 	if (m_editor != NULL)
 		delete m_editor;
