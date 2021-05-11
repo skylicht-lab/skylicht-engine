@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GridPlane/CGridPlane.h"
 
 #include "Editor/SpaceController/CSceneController.h"
+#include "Handles/CHandles.h"
 
 using namespace std::placeholders;
 
@@ -50,6 +51,7 @@ namespace Skylicht
 			m_viewpointZone(NULL),
 			m_viewpoint(NULL),
 			m_viewpointCamera(NULL),
+			m_viewpointController(NULL),
 			m_3dPanel(NULL),
 			m_handlesRenderer(NULL)
 		{
@@ -82,6 +84,9 @@ namespace Skylicht
 
 			if (m_viewpointRP != NULL)
 				delete m_viewpointRP;
+
+			if (m_viewpointController != NULL)
+				delete m_viewpointController;
 
 			CSceneController* sceneController = CSceneController::getInstance();
 			sceneController->setScene(NULL);
@@ -146,6 +151,13 @@ namespace Skylicht
 			viewpoint->setName(L"Viewpoint");
 			m_viewpoint = viewpoint->addComponent<CViewpoint>();
 
+			// delete old viewpoint
+			if (m_viewpointController != NULL)
+				delete m_viewpointController;
+
+			m_viewpointController = new CViewpointController();
+			m_viewpointController->setCamera(m_editorCamera, m_viewpointCamera);
+
 			// handles
 			m_handlesRenderer = m_scene->getEntityManager()->addRenderSystem<CHandlesRenderer>();
 
@@ -189,81 +201,12 @@ namespace Skylicht
 
 		void CSpaceScene::update()
 		{
-			updateViewpoint();
+			// test handles
+			static core::vector3df drag;
+			CHandles::getInstance()->positionHandle(drag);
 
+			m_viewpointController->update();
 			m_scene->update();
-		}
-
-		void CSpaceScene::updateViewpoint()
-		{
-			core::vector3df look = m_editorCamera->getLookVector();
-			core::vector3df up = m_editorCamera->getUpVector();
-
-			float distance = 2.2f;
-			core::vector3df pos = -look * distance;
-
-			m_viewpointCamera->setPosition(pos);
-			m_viewpointCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), up);
-		}
-
-		void CSpaceScene::setupCameraTween(CTweenVector3df* look, CTweenVector3df* up)
-		{
-			look->OnUpdate = [camera = m_editorCamera, up, look](CTween* t)
-			{
-				camera->setUpVector(up->getValue());
-				camera->setLookVector(look->getValue());
-			};
-
-			up->setEase(EEasingFunctions::EaseLinear);
-			look->setEase(EEasingFunctions::EaseLinear);
-
-			CTweenManager::getInstance()->addTween(up);
-			CTweenManager::getInstance()->addTween(look);
-		}
-
-		void CSpaceScene::setCameraLook(CViewpointData::EAxis axis)
-		{
-			float time = 350.0f;
-
-			core::vector3df look = m_editorCamera->getLookVector();
-			core::vector3df up = m_editorCamera->getUpVector();
-
-			if (axis == CViewpointData::X)
-			{
-				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(-1.0f, 0.0f, 0.0f), time);
-				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
-				setupCameraTween(tweenLook, tweenUp);
-			}
-			else if (axis == CViewpointData::XNeg)
-			{
-				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(1.0f, 0.0f, 0.0f), time);
-				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
-				setupCameraTween(tweenLook, tweenUp);
-			}
-			else if (axis == CViewpointData::Z)
-			{
-				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, 0.0f, -1.0f), time);
-				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
-				setupCameraTween(tweenLook, tweenUp);
-			}
-			else if (axis == CViewpointData::ZNeg)
-			{
-				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, 0.0f, 1.0f), time);
-				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 1.0f, 0.0f), time);
-				setupCameraTween(tweenLook, tweenUp);
-			}
-			else if (axis == CViewpointData::Y)
-			{
-				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, -1.0f, 0.0f), time);
-				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 0.0f, 1.0f), time);
-				setupCameraTween(tweenLook, tweenUp);
-			}
-			else if (axis == CViewpointData::YNeg)
-			{
-				CTweenVector3df* tweenLook = new CTweenVector3df(look, core::vector3df(0.0f, 1.0f, 0.0f), time);
-				CTweenVector3df* tweenUp = new CTweenVector3df(up, core::vector3df(0.0f, 0.0f, 1.0f), time);
-				setupCameraTween(tweenLook, tweenUp);
-			}
 		}
 
 		void CSpaceScene::onRender(GUI::CBase* base)
@@ -337,15 +280,15 @@ namespace Skylicht
 
 			if (m_viewpointRect.isPointInside(core::vector2df(local.X, local.Y)))
 			{
+				// viewpoint
 				if (down)
 				{
-					// viewpoint
 					float x = local.X - m_viewpointRect.UpperLeftCorner.X;
 					float y = local.Y - m_viewpointRect.UpperLeftCorner.Y;
 					CViewpointData::EAxis axis = m_viewpoint->getViewpointData()->hit(m_viewpointCamera, x, y, (int)m_viewpointRect.getWidth(), (int)m_viewpointRect.getHeight());
 
 					if (axis != CViewpointData::None)
-						setCameraLook(axis);
+						m_viewpointController->setCameraLook(axis);
 				}
 			}
 			else
