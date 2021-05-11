@@ -51,6 +51,8 @@ namespace Skylicht
 
 		core::vector3df CHandles::positionHandle(const core::vector3df& position)
 		{
+			m_position = position;
+			m_handlePosition = true;
 			return position;
 		}
 

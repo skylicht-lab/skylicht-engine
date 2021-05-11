@@ -61,9 +61,24 @@ namespace Skylicht
 				return;
 
 			m_data->clearBuffer();
+
+			CHandles* handles = CHandles::getInstance();
+			if (handles->isHandlePosition())
+			{
+				const core::vector3df& pos = handles->getHandlePosition();
+
+				m_data->addLineVertexBatch(pos, pos + core::vector3df(1.0f, 0.0f, 0.0f), SColor(255, 255, 0, 0));
+				m_data->addLineVertexBatch(pos, pos + core::vector3df(0.0f, 1.0f, 0.0f), SColor(255, 0, 255, 0));
+				m_data->addLineVertexBatch(pos, pos + core::vector3df(0.0f, 0.0f, 1.0f), SColor(255, 0, 0, 255));
+			}
 		}
 
 		void CHandlesRenderer::render(CEntityManager* entityManager)
+		{
+
+		}
+
+		void CHandlesRenderer::postRender(CEntityManager* entityManager)
 		{
 			if (m_enable == false)
 				return;
@@ -71,9 +86,9 @@ namespace Skylicht
 			IVideoDriver* driver = getVideoDriver();
 			driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
-			// IMeshBuffer* buffer = m_data->Buffer;
-			// driver->setMaterial(buffer->getMaterial());
-			// driver->drawMeshBuffer(buffer);
+			IMeshBuffer* buffer = m_data->LineBuffer;
+			driver->setMaterial(buffer->getMaterial());
+			driver->drawMeshBuffer(buffer);
 		}
 	}
 }
