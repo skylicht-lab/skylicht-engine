@@ -24,45 +24,39 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Tween/CTweenManager.h"
+#include "EditorComponents/Viewpoint/CViewpoint.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CHandles : public CGameSingleton<CHandles>
+		class CViewpointController
 		{
 		protected:
-			core::vector3df m_position;
-
-			bool m_handlePosition;
-
-		public:
-			CHandles();
-
-			virtual ~CHandles();
-
-			void beginCheck();
-
-			bool endCheck();
-
-			core::vector3df positionHandle(const core::vector3df& position);
-
-			core::vector3df scaleHandle(const core::vector3df& scale, const core::vector3df& origin);
-
-			core::quaternion rotateHandle(const core::quaternion& rotate, const core::vector3df& origin);
+			CCamera* m_editorCamera;
+			CCamera* m_viewpointCamera;
 
 		public:
+			CViewpointController();
 
-			inline bool isHandlePosition()
+			virtual ~CViewpointController();
+
+			void update();
+
+			void setCameraLook(CViewpointData::EAxis axis);
+
+			inline void setCamera(CCamera* editorCamera, CCamera* viewpointCamera)
 			{
-				return m_handlePosition;
+				m_editorCamera = editorCamera;
+				m_viewpointCamera = viewpointCamera;
 			}
 
-			const core::vector3df& getHandlePosition()
-			{
-				return m_position;
-			}
+		protected:
+
+			void updateViewpoint();
+
+			void setupCameraTween(CTweenVector3df* look, CTweenVector3df* up);
 		};
 	}
 }

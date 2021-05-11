@@ -26,9 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
-#include "EditorComponents/Viewpoint/CViewpoint.h"
 #include "EditorComponents/Handles/CHandlesRenderer.h"
-#include "Tween/CTweenManager.h"
+#include "CViewpointController.h"
 
 namespace Skylicht
 {
@@ -54,12 +53,12 @@ namespace Skylicht
 			float m_mouseY;
 
 			CViewpoint* m_viewpoint;
+			core::rectf m_viewpointRect;
 			CZone* m_viewpointZone;
 			CCamera* m_viewpointCamera;
+			CViewpointController* m_viewpointController;
 
 			CHandlesRenderer* m_handlesRenderer;
-
-			core::rectf m_viewpointRect;
 
 		public:
 			CSpaceScene(GUI::CWindow* window, CEditor* editor);
@@ -87,12 +86,6 @@ namespace Skylicht
 			bool isEditorObject(CGameObject* object);
 
 		protected:
-
-			void updateViewpoint();
-
-			void setupCameraTween(CTweenVector3df* look, CTweenVector3df* up);
-
-			void setCameraLook(CViewpointData::EAxis axis);
 
 			void initRenderPipeline(float w, float h);
 

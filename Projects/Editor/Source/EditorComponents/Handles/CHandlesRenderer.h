@@ -53,6 +53,8 @@ namespace Skylicht
 
 			virtual void render(CEntityManager* entityManager);
 
+			virtual void postRender(CEntityManager* entityManager);
+
 			inline void setEnable(bool b)
 			{
 				m_enable = b;
