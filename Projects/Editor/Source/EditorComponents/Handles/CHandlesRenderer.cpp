@@ -25,14 +25,34 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CHandlesRenderer.h"
 #include "Handles/CHandles.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CHandlesRenderer::CHandlesRenderer()
+		CHandlesRenderer::CHandlesRenderer() :
+			m_screenFactor(1.0f),
+			m_allowAxisFlip(true)
 		{
 			m_data = new CHandlesData();
+			m_data->LineBuffer->getMaterial().ZBuffer = ECFN_DISABLED;
+			m_data->LineBuffer->getMaterial().ZWriteEnable = false;
+
+			m_directionUnary[0] = core::vector3df(1.f, 0.f, 0.f);
+			m_directionUnary[1] = core::vector3df(0.f, 1.f, 0.f);
+			m_directionUnary[2] = core::vector3df(0.f, 0.f, 1.f);
+
+			m_directionColor[0].set(0xFF0000AA);
+			m_directionColor[1].set(0xFFAA0000);
+			m_directionColor[2].set(0xFF00AA00);
+
+			for (int i = 0; i < 3; i++)
+			{
+				m_axisFactor[i] = 1.0f;
+				m_belowAxisLimit[i] = true;
+				m_belowPlaneLimit[i] = true;
+			}
 		}
 
 		CHandlesRenderer::~CHandlesRenderer()
@@ -62,15 +82,157 @@ namespace Skylicht
 
 			m_data->clearBuffer();
 
+			// Caculate the screen scale factor
+			irr::core::matrix4 invView;
+			{
+				irr::core::matrix4 view(getVideoDriver()->getTransform(video::ETS_VIEW));
+				view.getInversePrimitive(invView);
+			}
+			core::vector3df cameraRight(invView[0], invView[1], invView[2]);
+			cameraRight.normalize();
+			m_screenFactor = 0.2f / getSegmentLengthClipSpace(core::vector3df(), cameraRight, entityManager->getCamera());
+
+			// Draw position axis
 			CHandles* handles = CHandles::getInstance();
 			if (handles->isHandlePosition())
 			{
 				const core::vector3df& pos = handles->getHandlePosition();
 
-				m_data->addLineVertexBatch(pos, pos + core::vector3df(1.0f, 0.0f, 0.0f), SColor(255, 255, 0, 0));
-				m_data->addLineVertexBatch(pos, pos + core::vector3df(0.0f, 1.0f, 0.0f), SColor(255, 0, 255, 0));
-				m_data->addLineVertexBatch(pos, pos + core::vector3df(0.0f, 0.0f, 1.0f), SColor(255, 0, 0, 255));
+				float quadMin = 0.2f;
+				float quadMax = 0.6f;
+
+				core::vector3df quad[4] = {
+					core::vector3df(quadMin, quadMin, 0.0f),
+					core::vector3df(quadMin, quadMax, 0.0f),
+					core::vector3df(quadMax, quadMax, 0.0f),
+					core::vector3df(quadMax, quadMin, 0.0f),
+				};
+
+				for (int i = 0; i < 3; i++)
+				{
+					core::vector3df dirAxis, dirPlaneX, dirPlaneY;
+					bool belowAxisLimit, belowPlaneLimit;
+
+					computeTripodAxisAndVisibility(i, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, entityManager->getCamera());
+
+					if (belowAxisLimit)
+					{
+						// draw axis
+						m_data->addLineVertexBatch(pos, pos + dirAxis * m_screenFactor, m_directionColor[i]);
+					}
+
+					if (belowPlaneLimit)
+					{
+						// draw plane
+						core::vector3df planeLine[4];
+						for (int j = 0; j < 4; j++)
+							planeLine[j] = (dirPlaneX * quad[j].X + dirPlaneY * quad[j].Y) * m_screenFactor;
+
+						m_data->addLineVertexBatch(planeLine[0], planeLine[1], m_directionColor[i]);
+						m_data->addLineVertexBatch(planeLine[1], planeLine[2], m_directionColor[i]);
+						m_data->addLineVertexBatch(planeLine[2], planeLine[3], m_directionColor[i]);
+						m_data->addLineVertexBatch(planeLine[3], planeLine[0], m_directionColor[i]);
+					}
+				}
 			}
+
+			m_data->LineBuffer->setDirty();
+		}
+
+		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
+		float CHandlesRenderer::getSegmentLengthClipSpace(const core::vector3df& start, const core::vector3df& end, CCamera* camera)
+		{
+			core::matrix4 trans = getVideoDriver()->getTransform(video::ETS_VIEW_PROJECTION);
+
+			f32 start4[4] = { start.X, start.Y, start.Z, 1.0f };
+			f32 end4[4] = { end.X, end.Y, end.Z, 1.0f };
+
+			trans.multiplyWith1x4Matrix(start4);
+			core::vector3df startOfSegment(start4[0], start4[1], start4[2]);
+			if (fabsf(start4[3]) > FLT_EPSILON) // check for axis aligned with camera direction
+			{
+				startOfSegment *= 1.f / start4[3];
+			}
+
+			trans.multiplyWith1x4Matrix(end4);
+			core::vector3df endOfSegment(end4[0], end4[1], end4[2]);
+			if (fabsf(end4[3]) > FLT_EPSILON) // check for axis aligned with camera direction
+			{
+				endOfSegment *= 1.f / end4[3];
+			}
+
+			core::vector3df clipSpaceAxis = endOfSegment - startOfSegment;
+			clipSpaceAxis.Y /= camera->getAspect();
+			float segmentLengthInClipSpace = sqrtf(clipSpaceAxis.X * clipSpaceAxis.X + clipSpaceAxis.Y * clipSpaceAxis.Y);
+			return segmentLengthInClipSpace;
+		}
+
+		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
+		float CHandlesRenderer::getParallelogram(const core::vector3df& ptO, const core::vector3df& ptA, const core::vector3df& ptB, CCamera* camera)
+		{
+			core::matrix4 trans = getVideoDriver()->getTransform(video::ETS_VIEW_PROJECTION);
+			core::vector3df pts[] = { ptO, ptA, ptB };
+
+			for (unsigned int i = 0; i < 3; i++)
+			{
+				f32 vec4[4] = { pts[i].X, pts[i].Y, pts[i].Z, 1.0f };
+				trans.multiplyWith1x4Matrix(vec4);
+				pts[i].set(vec4[0], vec4[1], vec4[2]);
+				if (fabsf(vec4[3]) > FLT_EPSILON) // check for axis aligned with camera direction
+				{
+					pts[i] *= 1.f / vec4[3];
+				}
+			}
+
+			core::vector3df segA = pts[1] - pts[0];
+			core::vector3df segB = pts[2] - pts[0];
+			segA.Y /= camera->getAspect();
+			segB.Y /= camera->getAspect();
+			core::vector3df segAOrtho = core::vector3df(-segA.Y, segA.X, 0.0f);
+			segAOrtho.normalize();
+			float dt = segAOrtho.dotProduct(segB);
+			float surface = sqrtf(segA.X * segA.X + segA.Y * segA.Y) * fabsf(dt);
+			return surface;
+		}
+
+		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
+		void CHandlesRenderer::computeTripodAxisAndVisibility(int axisIndex, core::vector3df& dirAxis, core::vector3df& dirPlaneX, core::vector3df& dirPlaneY, bool& belowAxisLimit, bool& belowPlaneLimit, CCamera* camera)
+		{
+			dirAxis = m_directionUnary[axisIndex];
+			dirPlaneX = m_directionUnary[(axisIndex + 1) % 3];
+			dirPlaneY = m_directionUnary[(axisIndex + 2) % 3];
+
+			float lenDir = getSegmentLengthClipSpace(core::vector3df(0.f, 0.f, 0.f), dirAxis, camera);
+			float lenDirMinus = getSegmentLengthClipSpace(core::vector3df(0.f, 0.f, 0.f), -dirAxis, camera);
+
+			float lenDirPlaneX = getSegmentLengthClipSpace(core::vector3df(0.f, 0.f, 0.f), dirPlaneX, camera);
+			float lenDirMinusPlaneX = getSegmentLengthClipSpace(core::vector3df(0.f, 0.f, 0.f), -dirPlaneX, camera);
+
+			float lenDirPlaneY = getSegmentLengthClipSpace(core::vector3df(0.f, 0.f, 0.f), dirPlaneY, camera);
+			float lenDirMinusPlaneY = getSegmentLengthClipSpace(core::vector3df(0.f, 0.f, 0.f), -dirPlaneY, camera);
+
+			// For readability
+			bool& allowFlip = m_allowAxisFlip;
+			float mulAxis = (allowFlip && lenDir < lenDirMinus&& fabsf(lenDir - lenDirMinus) > FLT_EPSILON) ? -1.f : 1.f;
+			float mulAxisX = (allowFlip && lenDirPlaneX < lenDirMinusPlaneX&& fabsf(lenDirPlaneX - lenDirMinusPlaneX) > FLT_EPSILON) ? -1.f : 1.f;
+			float mulAxisY = (allowFlip && lenDirPlaneY < lenDirMinusPlaneY&& fabsf(lenDirPlaneY - lenDirMinusPlaneY) > FLT_EPSILON) ? -1.f : 1.f;
+			dirAxis *= mulAxis;
+			dirPlaneX *= mulAxisX;
+			dirPlaneY *= mulAxisY;
+
+			// for axis
+			float axisLengthInClipSpace = getSegmentLengthClipSpace(core::vector3df(0.f, 0.f, 0.f), dirAxis * m_screenFactor, camera);
+
+			float paraSurf = getParallelogram(core::vector3df(0.f, 0.f, 0.f), dirPlaneX * m_screenFactor, dirPlaneY * m_screenFactor, camera);
+			belowPlaneLimit = (paraSurf > 0.02f);
+			belowAxisLimit = (axisLengthInClipSpace > 0.08f);
+
+			// and store values
+			m_axisFactor[axisIndex] = mulAxis;
+			m_axisFactor[(axisIndex + 1) % 3] = mulAxisX;
+			m_axisFactor[(axisIndex + 2) % 3] = mulAxisY;
+			m_belowAxisLimit[axisIndex] = belowAxisLimit;
+			m_belowPlaneLimit[axisIndex] = belowPlaneLimit;
 		}
 
 		void CHandlesRenderer::render(CEntityManager* entityManager)

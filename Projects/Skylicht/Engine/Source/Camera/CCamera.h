@@ -140,6 +140,11 @@ namespace Skylicht
 			recalculateProjectionMatrix();
 		}
 
+		inline float getAspect()
+		{
+			return m_aspect;
+		}
+
 		inline u32 getCullingMask()
 		{
 			return m_cullingMask;
