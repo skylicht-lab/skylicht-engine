@@ -5,7 +5,9 @@
 
 namespace Skylicht
 {
-	class CGridPlaneData : public CLineDrawData
+	class CGridPlaneData :
+		public CLineDrawData,
+		public IEntityData
 	{
 	public:
 		int NumGrid;

@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLineDrawData : public IEntityData
+	class CLineDrawData
 	{
 	public:
 		IMeshBuffer* LineBuffer;
