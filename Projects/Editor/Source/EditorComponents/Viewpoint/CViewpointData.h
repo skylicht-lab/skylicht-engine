@@ -32,7 +32,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CViewpointData : public CLineDrawData
+		class CViewpointData :
+			public CLineDrawData,
+			public IEntityData
 		{
 		public:
 			enum EAxis

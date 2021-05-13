@@ -38,6 +38,15 @@ namespace Skylicht
 
 			bool m_enable;
 
+			float m_screenFactor;
+
+			core::vector3df m_directionUnary[3];
+			video::SColor m_directionColor[3];
+			float m_axisFactor[3];
+			bool m_belowAxisLimit[3];
+			bool m_belowPlaneLimit[3];
+
+			bool m_allowAxisFlip;
 		public:
 			CHandlesRenderer();
 
@@ -64,6 +73,14 @@ namespace Skylicht
 			{
 				return m_enable;
 			}
+
+		protected:
+
+			float getSegmentLengthClipSpace(const core::vector3df& start, const core::vector3df& end, CCamera* camera);
+
+			float getParallelogram(const core::vector3df& ptO, const core::vector3df& ptA, const core::vector3df& ptB, CCamera* camera);
+
+			void computeTripodAxisAndVisibility(int axisIndex, core::vector3df& dirAxis, core::vector3df& dirPlaneX, core::vector3df& dirPlaneY, bool& belowAxisLimit, bool& belowPlaneLimit, CCamera* camera);
 		};
 	}
 }
