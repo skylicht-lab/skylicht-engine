@@ -62,18 +62,21 @@ namespace Skylicht
 
 	void CLineDrawData::addLineVertexBatch(const core::vector3df& v1, const core::vector3df& v2, const SColor& color)
 	{
-		int idxCount = LineBuffer->getVertexBuffer()->getVertexCount();
+		IVertexBuffer* vtxBuffer = LineBuffer->getVertexBuffer();
+		IIndexBuffer* idxBuffer = LineBuffer->getIndexBuffer();
+
+		u32 idxCount = vtxBuffer->getVertexCount();
 
 		video::S3DVertex vert;
 		vert.Color = color;
 
 		vert.Pos = v1;
-		LineBuffer->getVertexBuffer()->addVertex(&vert);
+		vtxBuffer->addVertex(&vert);
 		vert.Pos = v2;
-		LineBuffer->getVertexBuffer()->addVertex(&vert);
+		vtxBuffer->addVertex(&vert);
 
-		LineBuffer->getIndexBuffer()->addIndex(idxCount++);
-		LineBuffer->getIndexBuffer()->addIndex(idxCount);
+		idxBuffer->addIndex(idxCount++);
+		idxBuffer->addIndex(idxCount);
 	}
 
 	void CLineDrawData::clearBuffer()

@@ -2,10 +2,10 @@
 !@
 MIT License
 
-CopyRight (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -13,7 +13,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRight HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
@@ -25,21 +25,25 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
-#include "LineDraw/CLineDrawData.h"
-#include "PolygonDraw/CPolygonDrawData.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	class CPolygonDrawData
 	{
-		class CHandlesData :
-			public CLineDrawData,
-			public CPolygonDrawData
-		{
-		public:
-			CHandlesData();
+	public:
+		IMeshBuffer* PolygonBuffer;
 
-			virtual ~CHandlesData();
-		};
-	}
+	public:
+		CPolygonDrawData();
+
+		virtual ~CPolygonDrawData();
+
+		void clearBuffer();
+
+		void updateBuffer();
+
+		void addPolygonFill(core::vector3df* points, u32 count, const SColor& color);
+
+		void addTriangleFill(const core::vector3df& a, const core::vector3df& b, const core::vector3df& c, const SColor& color);
+	};
 }

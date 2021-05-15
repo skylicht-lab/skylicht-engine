@@ -39,6 +39,9 @@ namespace Skylicht
 			m_data->LineBuffer->getMaterial().ZBuffer = ECFN_DISABLED;
 			m_data->LineBuffer->getMaterial().ZWriteEnable = false;
 
+			m_data->PolygonBuffer->getMaterial().ZBuffer = ECFN_DISABLED;
+			m_data->PolygonBuffer->getMaterial().ZWriteEnable = false;
+
 			m_directionUnary[0] = core::vector3df(1.f, 0.f, 0.f);
 			m_directionUnary[1] = core::vector3df(0.f, 1.f, 0.f);
 			m_directionUnary[2] = core::vector3df(0.f, 0.f, 1.f);
@@ -80,7 +83,8 @@ namespace Skylicht
 			if (m_enable == false)
 				return;
 
-			m_data->clearBuffer();
+			((CLineDrawData*)m_data)->clearBuffer();
+			((CPolygonDrawData*)m_data)->clearBuffer();
 
 			// Caculate the screen scale factor
 			irr::core::matrix4 invView;
@@ -88,8 +92,15 @@ namespace Skylicht
 				irr::core::matrix4 view(getVideoDriver()->getTransform(video::ETS_VIEW));
 				view.getInversePrimitive(invView);
 			}
+
 			core::vector3df cameraRight(invView[0], invView[1], invView[2]);
+			core::vector3df cameraLook(invView[8], invView[9], invView[10]);
+			core::vector3df cameraUp(invView[4], invView[5], invView[6]);
+
 			cameraRight.normalize();
+			cameraLook.normalize();
+			cameraUp.normalize();
+
 			m_screenFactor = 0.2f / getSegmentLengthClipSpace(core::vector3df(), cameraRight, entityManager->getCamera());
 
 			// Draw position axis
@@ -98,8 +109,8 @@ namespace Skylicht
 			{
 				const core::vector3df& pos = handles->getHandlePosition();
 
-				float quadMin = 0.2f;
-				float quadMax = 0.6f;
+				float quadMin = 0.1f;
+				float quadMax = 0.4f;
 
 				core::vector3df quad[4] = {
 					core::vector3df(quadMin, quadMin, 0.0f),
@@ -119,6 +130,54 @@ namespace Skylicht
 					{
 						// draw axis
 						m_data->addLineVertexBatch(pos, pos + dirAxis * m_screenFactor, m_directionColor[i]);
+
+						// draw arrow
+						float arrowSize1 = m_screenFactor * 0.1f;
+						float arrowSize2 = m_screenFactor * 0.05f;
+
+						core::vector3df side = dirAxis.crossProduct(cameraLook);
+						side.normalize();
+
+						core::vector3df a = pos + dirAxis * m_screenFactor;
+						core::vector3df m = a - dirAxis * arrowSize1;
+						core::vector3df b = m + side * arrowSize2;
+						core::vector3df c = m - side * arrowSize2;
+						m_data->addTriangleFill(a, b, c, m_directionColor[i]);
+
+						// draw quad
+						/*
+						float arrowSize1 = m_screenFactor * 0.1f;
+						float arrowSize2 = m_screenFactor * 0.05f;
+
+						core::vector3df a = pos + dirAxis * m_screenFactor;
+
+						core::vector3df sideQuad = side * arrowSize2;
+						core::vector3df upQuad = cameraUp * arrowSize2;
+
+						core::vector3df v1, v2, v3, v4;
+						v1.set(
+							a.X - sideQuad.X + upQuad.X,
+							a.Y - sideQuad.Y + upQuad.Y,
+							a.Z - sideQuad.Z + upQuad.Z
+						);
+						v2.set(
+							a.X + sideQuad.X + upQuad.X,
+							a.Y + sideQuad.Y + upQuad.Y,
+							a.Z + sideQuad.Z + upQuad.Z
+						);
+						v3.set(
+							a.X + sideQuad.X - upQuad.X,
+							a.Y + sideQuad.Y - upQuad.Y,
+							a.Z + sideQuad.Z - upQuad.Z
+						);
+						v4.set(
+							a.X - sideQuad.X - upQuad.X,
+							a.Y - sideQuad.Y - upQuad.Y,
+							a.Z - sideQuad.Z - upQuad.Z
+						);
+						core::vector3df arrow[] = { v1, v2, v3, v4 };
+						m_data->addPolygonFill(arrow, 4, m_directionColor[i]);
+						*/
 					}
 
 					if (belowPlaneLimit)
@@ -132,11 +191,16 @@ namespace Skylicht
 						m_data->addLineVertexBatch(planeLine[1], planeLine[2], m_directionColor[i]);
 						m_data->addLineVertexBatch(planeLine[2], planeLine[3], m_directionColor[i]);
 						m_data->addLineVertexBatch(planeLine[3], planeLine[0], m_directionColor[i]);
+
+						SColor fillColor = m_directionColor[i];
+						fillColor.setAlpha(50);
+						m_data->addPolygonFill(planeLine, 4, fillColor);
 					}
 				}
 			}
 
-			m_data->LineBuffer->setDirty();
+			((CLineDrawData*)m_data)->updateBuffer();
+			((CPolygonDrawData*)m_data)->updateBuffer();
 		}
 
 		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
@@ -248,7 +312,13 @@ namespace Skylicht
 			IVideoDriver* driver = getVideoDriver();
 			driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
-			IMeshBuffer* buffer = m_data->LineBuffer;
+			IMeshBuffer* buffer = NULL;
+
+			buffer = m_data->PolygonBuffer;
+			driver->setMaterial(buffer->getMaterial());
+			driver->drawMeshBuffer(buffer);
+
+			buffer = m_data->LineBuffer;
 			driver->setMaterial(buffer->getMaterial());
 			driver->drawMeshBuffer(buffer);
 		}
