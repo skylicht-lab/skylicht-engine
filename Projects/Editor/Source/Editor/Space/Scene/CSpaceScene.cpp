@@ -109,8 +109,8 @@ namespace Skylicht
 			camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
 			m_editorCamera = camObj->getComponent<CCamera>();
-			m_editorCamera->setPosition(core::vector3df(0.0f, 1.5f, 0.0f));
-			m_editorCamera->lookAt(core::vector3df(0.0f, 0.0f, 4.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+			m_editorCamera->setPosition(core::vector3df(-2.0f, 1.5f, -2.0f));
+			m_editorCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 			// grid
 			m_gridPlane = zone->createEmptyObject();

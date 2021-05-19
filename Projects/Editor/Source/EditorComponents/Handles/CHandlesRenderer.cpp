@@ -96,12 +96,15 @@ namespace Skylicht
 			core::vector3df cameraRight(invView[0], invView[1], invView[2]);
 			core::vector3df cameraLook(invView[8], invView[9], invView[10]);
 			core::vector3df cameraUp(invView[4], invView[5], invView[6]);
+			core::vector3df cameraPos = entityManager->getCamera()->getGameObject()->getPosition();
 
 			cameraRight.normalize();
 			cameraLook.normalize();
 			cameraUp.normalize();
 
-			m_screenFactor = 0.2f / getSegmentLengthClipSpace(core::vector3df(), cameraRight, entityManager->getCamera());
+			CCamera* camera = entityManager->getCamera();
+
+			m_screenFactor = 0.2f / getSegmentLengthClipSpace(core::vector3df(), cameraRight, camera);
 
 			// Draw position axis
 			CHandles* handles = CHandles::getInstance();
@@ -109,98 +112,166 @@ namespace Skylicht
 			{
 				const core::vector3df& pos = handles->getHandlePosition();
 
-				float quadMin = 0.1f;
-				float quadMax = 0.4f;
-
-				core::vector3df quad[4] = {
-					core::vector3df(quadMin, quadMin, 0.0f),
-					core::vector3df(quadMin, quadMax, 0.0f),
-					core::vector3df(quadMax, quadMax, 0.0f),
-					core::vector3df(quadMax, quadMin, 0.0f),
-				};
-
-				for (int i = 0; i < 3; i++)
-				{
-					core::vector3df dirAxis, dirPlaneX, dirPlaneY;
-					bool belowAxisLimit, belowPlaneLimit;
-
-					computeTripodAxisAndVisibility(i, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, entityManager->getCamera());
-
-					if (belowAxisLimit)
-					{
-						// draw axis
-						m_data->addLineVertexBatch(pos, pos + dirAxis * m_screenFactor, m_directionColor[i]);
-
-						// draw arrow
-						float arrowSize1 = m_screenFactor * 0.1f;
-						float arrowSize2 = m_screenFactor * 0.05f;
-
-						core::vector3df side = dirAxis.crossProduct(cameraLook);
-						side.normalize();
-
-						core::vector3df a = pos + dirAxis * m_screenFactor;
-						core::vector3df m = a - dirAxis * arrowSize1;
-						core::vector3df b = m + side * arrowSize2;
-						core::vector3df c = m - side * arrowSize2;
-						m_data->addTriangleFill(a, b, c, m_directionColor[i]);
-
-						// draw quad
-						/*
-						float arrowSize1 = m_screenFactor * 0.1f;
-						float arrowSize2 = m_screenFactor * 0.05f;
-
-						core::vector3df a = pos + dirAxis * m_screenFactor;
-
-						core::vector3df sideQuad = side * arrowSize2;
-						core::vector3df upQuad = cameraUp * arrowSize2;
-
-						core::vector3df v1, v2, v3, v4;
-						v1.set(
-							a.X - sideQuad.X + upQuad.X,
-							a.Y - sideQuad.Y + upQuad.Y,
-							a.Z - sideQuad.Z + upQuad.Z
-						);
-						v2.set(
-							a.X + sideQuad.X + upQuad.X,
-							a.Y + sideQuad.Y + upQuad.Y,
-							a.Z + sideQuad.Z + upQuad.Z
-						);
-						v3.set(
-							a.X + sideQuad.X - upQuad.X,
-							a.Y + sideQuad.Y - upQuad.Y,
-							a.Z + sideQuad.Z - upQuad.Z
-						);
-						v4.set(
-							a.X - sideQuad.X - upQuad.X,
-							a.Y - sideQuad.Y - upQuad.Y,
-							a.Z - sideQuad.Z - upQuad.Z
-						);
-						core::vector3df arrow[] = { v1, v2, v3, v4 };
-						m_data->addPolygonFill(arrow, 4, m_directionColor[i]);
-						*/
-					}
-
-					if (belowPlaneLimit)
-					{
-						// draw plane
-						core::vector3df planeLine[4];
-						for (int j = 0; j < 4; j++)
-							planeLine[j] = (dirPlaneX * quad[j].X + dirPlaneY * quad[j].Y) * m_screenFactor;
-
-						m_data->addLineVertexBatch(planeLine[0], planeLine[1], m_directionColor[i]);
-						m_data->addLineVertexBatch(planeLine[1], planeLine[2], m_directionColor[i]);
-						m_data->addLineVertexBatch(planeLine[2], planeLine[3], m_directionColor[i]);
-						m_data->addLineVertexBatch(planeLine[3], planeLine[0], m_directionColor[i]);
-
-						SColor fillColor = m_directionColor[i];
-						fillColor.setAlpha(50);
-						m_data->addPolygonFill(planeLine, 4, fillColor);
-					}
-				}
+				drawTranslateGizmo(pos, cameraLook, camera);
+				//drawRotationGizmo(pos, cameraPos);				
+				//drawScaleGizmo(pos, cameraLook, cameraUp, camera);
 			}
 
 			((CLineDrawData*)m_data)->updateBuffer();
 			((CPolygonDrawData*)m_data)->updateBuffer();
+		}
+
+		void CHandlesRenderer::drawRotationGizmo(const core::vector3df& pos, const core::vector3df& cameraPos)
+		{
+			core::vector3df cameraToObject = pos - cameraPos;
+			cameraToObject.normalize();
+
+			const int halfCircleSegmentCount = 64;
+			const int circleMul = 1;
+
+			core::vector3df* circlePos = new core::vector3df[circleMul * halfCircleSegmentCount + 1];
+
+			for (int axis = 0; axis < 3; axis++)
+			{
+				// draw rotation
+				float* p = &cameraToObject.X;
+				float angleStart = atan2f(p[(4 - axis) % 3], p[(3 - axis) % 3]) + core::PI * 0.5f;
+
+				for (unsigned int i = 0; i < circleMul * halfCircleSegmentCount + 1; i++)
+				{
+					float ng = angleStart + core::PI * ((float)i / (float)halfCircleSegmentCount);
+
+					core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
+					p = &axisPos.X;
+
+					circlePos[i] = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]) * m_screenFactor;
+				}
+
+				// draw circle
+				m_data->addPolyline(circlePos, circleMul * halfCircleSegmentCount, false, m_directionColor[axis]);
+			}
+
+			delete[]circlePos;
+		}
+
+		void CHandlesRenderer::drawScaleGizmo(const core::vector3df& pos, const core::vector3df& cameraLook, const core::vector3df& cameraUp, CCamera* camera)
+		{
+			float quadMin = 0.1f;
+			float quadMax = 0.4f;
+
+			core::vector3df quad[4] = {
+				core::vector3df(quadMin, quadMin, 0.0f),
+				core::vector3df(quadMin, quadMax, 0.0f),
+				core::vector3df(quadMax, quadMax, 0.0f),
+				core::vector3df(quadMax, quadMin, 0.0f),
+			};
+
+			for (int i = 0; i < 3; i++)
+			{
+				core::vector3df dirAxis, dirPlaneX, dirPlaneY;
+				bool belowAxisLimit, belowPlaneLimit;
+
+				computeTripodAxisAndVisibility(i, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera);
+
+				if (belowAxisLimit)
+				{
+					// draw axis
+					m_data->addLine(pos, pos + dirAxis * m_screenFactor, m_directionColor[i]);
+
+					// draw quad
+					float arrowSize1 = m_screenFactor * 0.1f;
+					float arrowSize2 = m_screenFactor * 0.05f;
+
+					core::vector3df side = cameraUp.crossProduct(cameraLook);
+					side.normalize();
+
+					core::vector3df a = pos + dirAxis * m_screenFactor;
+
+					core::vector3df sideQuad = side * arrowSize2;
+					core::vector3df upQuad = cameraUp * arrowSize2;
+
+					core::vector3df v1, v2, v3, v4;
+					v1.set(
+						a.X - sideQuad.X + upQuad.X,
+						a.Y - sideQuad.Y + upQuad.Y,
+						a.Z - sideQuad.Z + upQuad.Z
+					);
+					v2.set(
+						a.X + sideQuad.X + upQuad.X,
+						a.Y + sideQuad.Y + upQuad.Y,
+						a.Z + sideQuad.Z + upQuad.Z
+					);
+					v3.set(
+						a.X + sideQuad.X - upQuad.X,
+						a.Y + sideQuad.Y - upQuad.Y,
+						a.Z + sideQuad.Z - upQuad.Z
+					);
+					v4.set(
+						a.X - sideQuad.X - upQuad.X,
+						a.Y - sideQuad.Y - upQuad.Y,
+						a.Z - sideQuad.Z - upQuad.Z
+					);
+					core::vector3df arrow[] = { v1, v2, v3, v4 };
+					m_data->addPolygonFill(arrow, 4, m_directionColor[i]);
+				}
+			}
+		}
+
+		void CHandlesRenderer::drawTranslateGizmo(const core::vector3df& pos, const core::vector3df& cameraLook, CCamera* camera)
+		{
+			float quadMin = 0.1f;
+			float quadMax = 0.4f;
+
+			core::vector3df quad[4] = {
+				core::vector3df(quadMin, quadMin, 0.0f),
+				core::vector3df(quadMin, quadMax, 0.0f),
+				core::vector3df(quadMax, quadMax, 0.0f),
+				core::vector3df(quadMax, quadMin, 0.0f),
+			};
+
+			for (int i = 0; i < 3; i++)
+			{
+				core::vector3df dirAxis, dirPlaneX, dirPlaneY;
+				bool belowAxisLimit, belowPlaneLimit;
+
+				computeTripodAxisAndVisibility(i, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera);
+
+				if (belowAxisLimit)
+				{
+					// draw axis
+					m_data->addLine(pos, pos + dirAxis * m_screenFactor, m_directionColor[i]);
+
+					// draw arrow
+					float arrowSize1 = m_screenFactor * 0.1f;
+					float arrowSize2 = m_screenFactor * 0.05f;
+
+					core::vector3df side = dirAxis.crossProduct(cameraLook);
+					side.normalize();
+
+					core::vector3df a = pos + dirAxis * m_screenFactor;
+					core::vector3df m = a - dirAxis * arrowSize1;
+					core::vector3df b = m + side * arrowSize2;
+					core::vector3df c = m - side * arrowSize2;
+					m_data->addTriangleFill(a, b, c, m_directionColor[i]);
+				}
+
+				if (belowPlaneLimit)
+				{
+					// draw plane
+					core::vector3df planeLine[4];
+					for (int j = 0; j < 4; j++)
+						planeLine[j] = (dirPlaneX * quad[j].X + dirPlaneY * quad[j].Y) * m_screenFactor;
+
+					m_data->addLine(planeLine[0], planeLine[1], m_directionColor[i]);
+					m_data->addLine(planeLine[1], planeLine[2], m_directionColor[i]);
+					m_data->addLine(planeLine[2], planeLine[3], m_directionColor[i]);
+					m_data->addLine(planeLine[3], planeLine[0], m_directionColor[i]);
+
+					SColor fillColor = m_directionColor[i];
+					fillColor.setAlpha(50);
+					m_data->addPolygonFill(planeLine, 4, fillColor);
+				}
+			}
 		}
 
 		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
