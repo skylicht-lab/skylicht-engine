@@ -65,7 +65,7 @@ namespace Skylicht
 			else
 				color = grey;
 
-			addLineVertexBatch(start, end, color);
+			addLine(start, end, color);
 
 			start.Z += GridSize;
 			end.Z += GridSize;
@@ -81,7 +81,7 @@ namespace Skylicht
 			else
 				color = grey;
 
-			addLineVertexBatch(start, end, color);
+			addLine(start, end, color);
 
 			start.X += GridSize;
 			end.X += GridSize;

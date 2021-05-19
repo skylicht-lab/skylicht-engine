@@ -76,6 +76,12 @@ namespace Skylicht
 
 		protected:
 
+			void drawRotationGizmo(const core::vector3df& pos, const core::vector3df& cameraPos);
+
+			void drawScaleGizmo(const core::vector3df& pos, const core::vector3df& cameraLook, const core::vector3df& cameraUp, CCamera* camera);
+
+			void drawTranslateGizmo(const core::vector3df& pos, const core::vector3df& cameraLook, CCamera* camera);
+
 			float getSegmentLengthClipSpace(const core::vector3df& start, const core::vector3df& end, CCamera* camera);
 
 			float getParallelogram(const core::vector3df& ptO, const core::vector3df& ptA, const core::vector3df& ptB, CCamera* camera);
