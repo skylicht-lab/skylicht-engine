@@ -79,9 +79,9 @@ namespace Skylicht
 			core::vector3df zero(0.0f, 0.0f, 0.0f);
 
 			float s = 0.8f;
-			addLineVertexBatch(zero, Position[0] * s, red);
-			addLineVertexBatch(zero, Position[2] * s, blue);
-			addLineVertexBatch(zero, Position[4] * s, green);
+			addLine(zero, Position[0] * s, red);
+			addLine(zero, Position[2] * s, blue);
+			addLine(zero, Position[4] * s, green);
 		}
 
 		CViewpointData::~CViewpointData()

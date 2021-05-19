@@ -38,9 +38,11 @@ namespace Skylicht
 
 		virtual ~CLineDrawData();
 
-		void add3DBoxToBuffer(const core::aabbox3d<f32>& box, SColor color);
+		void add3DBox(const core::aabbox3d<f32>& box, SColor color);
 
-		void addLineVertexBatch(const core::vector3df& v1, const core::vector3df& v2, const SColor& color);
+		void addLine(const core::vector3df& v1, const core::vector3df& v2, const SColor& color);
+
+		void addPolyline(const core::vector3df* points, u32 count, bool close, const SColor& color);
 
 		void clearBuffer();
 

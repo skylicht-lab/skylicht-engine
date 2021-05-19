@@ -41,26 +41,26 @@ namespace Skylicht
 		LineBuffer->drop();
 	}
 
-	void CLineDrawData::add3DBoxToBuffer(const core::aabbox3d<f32>& box, SColor color)
+	void CLineDrawData::add3DBox(const core::aabbox3d<f32>& box, SColor color)
 	{
 		core::vector3df edges[8];
 		box.getEdges(edges);
 
-		addLineVertexBatch(edges[5], edges[1], color);
-		addLineVertexBatch(edges[1], edges[3], color);
-		addLineVertexBatch(edges[3], edges[7], color);
-		addLineVertexBatch(edges[7], edges[5], color);
-		addLineVertexBatch(edges[0], edges[2], color);
-		addLineVertexBatch(edges[2], edges[6], color);
-		addLineVertexBatch(edges[6], edges[4], color);
-		addLineVertexBatch(edges[4], edges[0], color);
-		addLineVertexBatch(edges[1], edges[0], color);
-		addLineVertexBatch(edges[3], edges[2], color);
-		addLineVertexBatch(edges[7], edges[6], color);
-		addLineVertexBatch(edges[5], edges[4], color);
+		addLine(edges[5], edges[1], color);
+		addLine(edges[1], edges[3], color);
+		addLine(edges[3], edges[7], color);
+		addLine(edges[7], edges[5], color);
+		addLine(edges[0], edges[2], color);
+		addLine(edges[2], edges[6], color);
+		addLine(edges[6], edges[4], color);
+		addLine(edges[4], edges[0], color);
+		addLine(edges[1], edges[0], color);
+		addLine(edges[3], edges[2], color);
+		addLine(edges[7], edges[6], color);
+		addLine(edges[5], edges[4], color);
 	}
 
-	void CLineDrawData::addLineVertexBatch(const core::vector3df& v1, const core::vector3df& v2, const SColor& color)
+	void CLineDrawData::addLine(const core::vector3df& v1, const core::vector3df& v2, const SColor& color)
 	{
 		IVertexBuffer* vtxBuffer = LineBuffer->getVertexBuffer();
 		IIndexBuffer* idxBuffer = LineBuffer->getIndexBuffer();
@@ -77,6 +77,41 @@ namespace Skylicht
 
 		idxBuffer->addIndex(idxCount++);
 		idxBuffer->addIndex(idxCount);
+	}
+
+	void CLineDrawData::addPolyline(const core::vector3df* points, u32 count, bool close, const SColor& color)
+	{
+		IVertexBuffer* vtxBuffer = LineBuffer->getVertexBuffer();
+		IIndexBuffer* idxBuffer = LineBuffer->getIndexBuffer();
+
+		u32 idxCount = vtxBuffer->getVertexCount();
+
+		video::S3DVertex vert;
+		vert.Color = color;
+
+		for (u32 i = 1; i < count; i++)
+		{
+			vert.Pos = points[i - 1];
+			vtxBuffer->addVertex(&vert);
+
+			vert.Pos = points[i];
+			vtxBuffer->addVertex(&vert);
+
+			idxBuffer->addIndex(idxCount++);
+			idxBuffer->addIndex(idxCount++);
+		}
+
+		if (close)
+		{
+			vert.Pos = points[count - 1];
+			vtxBuffer->addVertex(&vert);
+
+			vert.Pos = points[0];
+			vtxBuffer->addVertex(&vert);
+
+			idxBuffer->addIndex(idxCount++);
+			idxBuffer->addIndex(idxCount++);
+		}
 	}
 
 	void CLineDrawData::clearBuffer()
