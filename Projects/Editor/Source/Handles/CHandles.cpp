@@ -24,12 +24,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CHandles.h"
+#include "Scene/CScene.h"
+#include "EditorComponents/Handles/CHandlesRenderer.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CHandles::CHandles()
+		CHandles::CHandles() :
+			m_handlePosition(false),
+			m_mouseState(0)
 		{
 
 		}
@@ -64,6 +68,42 @@ namespace Skylicht
 		core::quaternion CHandles::rotateHandle(const core::quaternion& rotate, const core::vector3df& origin)
 		{
 			return rotate;
+		}
+
+		bool CHandles::OnEvent(const SEvent& event)
+		{
+			if (event.EventType == EET_MOUSE_INPUT_EVENT)
+			{
+				int mouseX = event.MouseInput.X;
+				int mouseY = event.MouseInput.Y;
+
+				CScene* scene = (CScene*)event.GameEvent.Sender;
+				CHandlesRenderer* handleRenderer = scene->getEntityManager()->getSystem<CHandlesRenderer>();
+
+				if (handleRenderer != NULL)
+				{
+					if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
+					{
+						if (m_mouseState == 2)
+							m_mouseState = 0;
+						handleRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
+					}
+					else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
+					{
+						m_mouseState = 1;
+						handleRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
+					}
+					else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
+					{
+						m_mouseState = 2;
+						handleRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
+					}
+
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

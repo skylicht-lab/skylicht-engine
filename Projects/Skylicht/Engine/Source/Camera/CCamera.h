@@ -47,6 +47,7 @@ namespace Skylicht
 		float m_farValue;
 		float m_fov;
 		float m_aspect;
+		float m_viewportAspect;
 
 		core::vector3df m_up;
 
@@ -142,7 +143,10 @@ namespace Skylicht
 
 		inline float getAspect()
 		{
-			return m_aspect;
+			if (m_aspect > 0)
+				return m_aspect;
+
+			return m_viewportAspect;
 		}
 
 		inline u32 getCullingMask()
