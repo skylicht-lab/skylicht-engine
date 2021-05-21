@@ -33,20 +33,40 @@ namespace Skylicht
 	{
 		class CHandlesRenderer : public IRenderSystem
 		{
+		public:
+			struct SPlane
+			{
+				core::vector3df Point[4];
+				core::vector3df DirX;
+				core::vector3df DirY;
+			};
+
 		protected:
 			CHandlesData* m_data;
 
 			bool m_enable;
-
-			float m_screenFactor;
-
+			
 			core::vector3df m_directionUnary[3];
 			video::SColor m_directionColor[3];
+			video::SColor m_selectionColor;
+
+			float m_screenFactor;
 			float m_axisFactor[3];
 			bool m_belowAxisLimit[3];
 			bool m_belowPlaneLimit[3];
 
 			bool m_allowAxisFlip;
+
+			bool m_hoverOnAxis[3];
+			bool m_hoverOnPlane[3];
+
+			core::line3df m_translateAxis[3];
+			SPlane m_translsatePlane[3];
+			core::line3df m_scaleAxis[3];
+
+			CCamera* m_camera;
+			core::recti m_viewport;
+
 		public:
 			CHandlesRenderer();
 
@@ -74,6 +94,16 @@ namespace Skylicht
 				return m_enable;
 			}
 
+		public:
+
+			void onMouseEvent(int x, int y, int state);
+
+			void setCameraAndViewport(CCamera* cam, const core::recti& vp)
+			{
+				m_camera = cam;
+				m_viewport = vp;
+			}
+
 		protected:
 
 			void drawRotationGizmo(const core::vector3df& pos, const core::vector3df& cameraPos);
@@ -87,6 +117,10 @@ namespace Skylicht
 			float getParallelogram(const core::vector3df& ptO, const core::vector3df& ptA, const core::vector3df& ptB, CCamera* camera);
 
 			void computeTripodAxisAndVisibility(int axisIndex, core::vector3df& dirAxis, core::vector3df& dirPlaneX, core::vector3df& dirPlaneY, bool& belowAxisLimit, bool& belowPlaneLimit, CCamera* camera);
+
+			core::vector3df pointOnSegment(const core::vector3df& point, const core::vector3df& vertPos1, const core::vector3df& vertPos2);
+
+			void handleTranslate(int x, int y, int state);
 		};
 	}
 }

@@ -25,17 +25,22 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CGameSingleton.h"
+#include "Scene/CScene.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CHandles : public CGameSingleton<CHandles>
+		class CHandles :
+			public CGameSingleton<CHandles>,
+			public IEventReceiver
 		{
 		protected:
 			core::vector3df m_position;
 
 			bool m_handlePosition;
+
+			int m_mouseState;
 
 		public:
 			CHandles();
@@ -51,6 +56,8 @@ namespace Skylicht
 			core::vector3df scaleHandle(const core::vector3df& scale, const core::vector3df& origin);
 
 			core::quaternion rotateHandle(const core::quaternion& rotate, const core::vector3df& origin);
+
+			virtual bool OnEvent(const SEvent& event);
 
 		public:
 

@@ -193,6 +193,8 @@ namespace Skylicht
 		core::dimension2du screenSize = getVideoDriver()->getCurrentRenderTargetSize();
 		float aspect = (float)screenSize.Width / (float)screenSize.Height;
 
+		m_viewportAspect = aspect;
+
 		if (m_aspect > 0)
 			aspect = m_aspect;
 

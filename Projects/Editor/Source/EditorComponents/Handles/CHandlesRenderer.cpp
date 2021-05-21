@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CHandlesRenderer.h"
 #include "Handles/CHandles.h"
 #include "Entity/CEntityManager.h"
+#include "Projective/CProjective.h"
 
 namespace Skylicht
 {
@@ -33,7 +34,8 @@ namespace Skylicht
 	{
 		CHandlesRenderer::CHandlesRenderer() :
 			m_screenFactor(1.0f),
-			m_allowAxisFlip(true)
+			m_allowAxisFlip(true),
+			m_camera(NULL)
 		{
 			m_data = new CHandlesData();
 			m_data->LineBuffer->getMaterial().ZBuffer = ECFN_DISABLED;
@@ -50,11 +52,15 @@ namespace Skylicht
 			m_directionColor[1].set(0xFFAA0000);
 			m_directionColor[2].set(0xFF00AA00);
 
+			m_selectionColor.set(0xFF1080FF);
+
 			for (int i = 0; i < 3; i++)
 			{
 				m_axisFactor[i] = 1.0f;
 				m_belowAxisLimit[i] = true;
 				m_belowPlaneLimit[i] = true;
+				m_hoverOnAxis[i] = false;
+				m_hoverOnPlane[i] = false;
 			}
 		}
 
@@ -148,7 +154,7 @@ namespace Skylicht
 				}
 
 				// draw circle
-				m_data->addPolyline(circlePos, circleMul * halfCircleSegmentCount, false, m_directionColor[axis]);
+				m_data->addPolyline(circlePos, circleMul * halfCircleSegmentCount, false, m_hoverOnAxis[axis] ? m_selectionColor : m_directionColor[axis]);
 			}
 
 			delete[]circlePos;
@@ -156,16 +162,6 @@ namespace Skylicht
 
 		void CHandlesRenderer::drawScaleGizmo(const core::vector3df& pos, const core::vector3df& cameraLook, const core::vector3df& cameraUp, CCamera* camera)
 		{
-			float quadMin = 0.1f;
-			float quadMax = 0.4f;
-
-			core::vector3df quad[4] = {
-				core::vector3df(quadMin, quadMin, 0.0f),
-				core::vector3df(quadMin, quadMax, 0.0f),
-				core::vector3df(quadMax, quadMax, 0.0f),
-				core::vector3df(quadMax, quadMin, 0.0f),
-			};
-
 			for (int i = 0; i < 3; i++)
 			{
 				core::vector3df dirAxis, dirPlaneX, dirPlaneY;
@@ -175,8 +171,11 @@ namespace Skylicht
 
 				if (belowAxisLimit)
 				{
+					m_scaleAxis[i].start = pos;
+					m_scaleAxis[i].end = pos + dirAxis * m_screenFactor;
+
 					// draw axis
-					m_data->addLine(pos, pos + dirAxis * m_screenFactor, m_directionColor[i]);
+					m_data->addLine(m_scaleAxis[i].start, m_scaleAxis[i].end, m_hoverOnAxis[i] ? m_selectionColor : m_directionColor[i]);
 
 					// draw quad
 					float arrowSize1 = m_screenFactor * 0.1f;
@@ -212,7 +211,7 @@ namespace Skylicht
 						a.Z - sideQuad.Z - upQuad.Z
 					);
 					core::vector3df arrow[] = { v1, v2, v3, v4 };
-					m_data->addPolygonFill(arrow, 4, m_directionColor[i]);
+					m_data->addPolygonFill(arrow, 4, m_hoverOnAxis[i] ? m_selectionColor : m_directionColor[i]);
 				}
 			}
 		}
@@ -238,8 +237,12 @@ namespace Skylicht
 
 				if (belowAxisLimit)
 				{
+					// save the position
+					m_translateAxis[i].start = pos;
+					m_translateAxis[i].end = pos + dirAxis * m_screenFactor;
+
 					// draw axis
-					m_data->addLine(pos, pos + dirAxis * m_screenFactor, m_directionColor[i]);
+					m_data->addLine(m_translateAxis[i].start, m_translateAxis[i].end, m_hoverOnAxis[i] ? m_selectionColor : m_directionColor[i]);
 
 					// draw arrow
 					float arrowSize1 = m_screenFactor * 0.1f;
@@ -252,7 +255,7 @@ namespace Skylicht
 					core::vector3df m = a - dirAxis * arrowSize1;
 					core::vector3df b = m + side * arrowSize2;
 					core::vector3df c = m - side * arrowSize2;
-					m_data->addTriangleFill(a, b, c, m_directionColor[i]);
+					m_data->addTriangleFill(a, b, c, m_hoverOnAxis[i] ? m_selectionColor : m_directionColor[i]);
 				}
 
 				if (belowPlaneLimit)
@@ -260,14 +263,23 @@ namespace Skylicht
 					// draw plane
 					core::vector3df planeLine[4];
 					for (int j = 0; j < 4; j++)
+					{
 						planeLine[j] = (dirPlaneX * quad[j].X + dirPlaneY * quad[j].Y) * m_screenFactor;
 
-					m_data->addLine(planeLine[0], planeLine[1], m_directionColor[i]);
-					m_data->addLine(planeLine[1], planeLine[2], m_directionColor[i]);
-					m_data->addLine(planeLine[2], planeLine[3], m_directionColor[i]);
-					m_data->addLine(planeLine[3], planeLine[0], m_directionColor[i]);
+						// save the position
+						m_translsatePlane[i].Point[j] = planeLine[j];
+						m_translsatePlane[i].DirX = dirPlaneX;
+						m_translsatePlane[i].DirY = dirPlaneY;
+					}
 
-					SColor fillColor = m_directionColor[i];
+					const SColor& color = m_hoverOnPlane[i] ? m_selectionColor : m_directionColor[i];
+
+					m_data->addLine(planeLine[0], planeLine[1], color);
+					m_data->addLine(planeLine[1], planeLine[2], color);
+					m_data->addLine(planeLine[2], planeLine[3], color);
+					m_data->addLine(planeLine[3], planeLine[0], color);
+
+					SColor fillColor = color;
 					fillColor.setAlpha(50);
 					m_data->addPolygonFill(planeLine, 4, fillColor);
 				}
@@ -370,6 +382,31 @@ namespace Skylicht
 			m_belowPlaneLimit[axisIndex] = belowPlaneLimit;
 		}
 
+		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
+		core::vector3df CHandlesRenderer::pointOnSegment(const core::vector3df& point, const core::vector3df& vertPos1, const core::vector3df& vertPos2)
+		{
+			core::vector3df c = point - vertPos1;
+			core::vector3df v;
+
+			v = vertPos2 - vertPos1;
+			v.normalize();
+
+			float d = (vertPos2 - vertPos1).getLength();
+			float t = v.dotProduct(c);
+
+			if (t < 0.f)
+			{
+				return vertPos1;
+			}
+
+			if (t > d)
+			{
+				return vertPos2;
+			}
+
+			return vertPos1 + v * t;
+		}
+
 		void CHandlesRenderer::render(CEntityManager* entityManager)
 		{
 
@@ -392,6 +429,78 @@ namespace Skylicht
 			buffer = m_data->LineBuffer;
 			driver->setMaterial(buffer->getMaterial());
 			driver->drawMeshBuffer(buffer);
+		}
+
+		void CHandlesRenderer::onMouseEvent(int x, int y, int state)
+		{
+			if (m_enable == false || m_camera == NULL)
+				return;
+
+			CHandles* handles = CHandles::getInstance();
+			if (handles->isHandlePosition())
+				handleTranslate(x, y, state);
+		}
+
+		void CHandlesRenderer::handleTranslate(int x, int y, int state)
+		{
+			core::vector3df mouse((float)x, (float)y, 0.0f);
+
+			int vpWidth = m_viewport.getWidth();
+			int vpHeight = m_viewport.getHeight();
+
+			for (int i = 0; i < 3; i++)
+			{
+				if (m_belowAxisLimit[i])
+				{
+					core::vector3df start, end;
+
+					if (CProjective::getScreenCoordinatesFrom3DPosition(m_camera, m_translateAxis[i].start, start.X, start.Y, vpWidth, vpHeight))
+					{
+						if (CProjective::getScreenCoordinatesFrom3DPosition(m_camera, m_translateAxis[i].end, end.X, end.Y, vpWidth, vpHeight))
+						{
+							core::vector3df projective = pointOnSegment(mouse, start, end);
+							float length = projective.getDistanceFrom(mouse);
+							float length1 = mouse.getDistanceFrom(start);
+
+							if (length < 10.0f && length1 > 10.0f)
+							{
+								m_hoverOnAxis[i] = true;
+							}
+							else
+							{
+								m_hoverOnAxis[i] = false;
+							}
+						}
+					}
+				}
+
+				if (m_belowPlaneLimit[i] && !m_hoverOnAxis[i] && m_screenFactor > 0.0f)
+				{
+					core::line3df viewRay = CProjective::getViewRay(m_camera, mouse.X, mouse.Y, vpWidth, vpHeight);
+					core::plane3df plane(m_translateAxis[i].start, m_translateAxis[i].getVector());
+					core::vector3df out;
+					float quadMin = 0.1f;
+					float quadMax = 0.4f;
+
+					if (plane.getIntersectionWithLine(viewRay.start, viewRay.getVector(), out))
+					{
+						core::vector3df v = out - m_translateAxis[i].start;
+
+						// Project vector V to dirX and dirY
+						const float dx = m_translsatePlane[i].DirX.dotProduct(v / m_screenFactor);
+						const float dy = m_translsatePlane[i].DirY.dotProduct(v / m_screenFactor);
+
+						if (dx >= quadMin && dx <= quadMax && dy >= quadMin && dy < quadMax)
+						{
+							m_hoverOnPlane[i] = true;
+						}
+						else
+						{
+							m_hoverOnPlane[i] = false;
+						}
+					}
+				}
+			}
 		}
 	}
 }
