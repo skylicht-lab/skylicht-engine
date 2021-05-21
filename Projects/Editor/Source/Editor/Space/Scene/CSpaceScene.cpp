@@ -163,6 +163,9 @@ namespace Skylicht
 
 			// set scene to controller
 			CSceneController::getInstance()->setScene(m_scene);
+
+			// register event
+			m_scene->registerEvent("Handles", CHandles::getInstance());
 		}
 
 		void CSpaceScene::onResize(float w, float h)
@@ -203,7 +206,9 @@ namespace Skylicht
 		{
 			// test handles
 			static core::vector3df drag;
-			CHandles::getInstance()->positionHandle(drag);
+
+			CHandles* handle = CHandles::getInstance();
+			drag = handle->positionHandle(drag);
 
 			m_viewpointController->update();
 			m_scene->update();
@@ -224,11 +229,14 @@ namespace Skylicht
 				core::recti viewport;
 				viewport.UpperLeftCorner.set((int)position.X, (int)position.Y);
 				viewport.LowerRightCorner.set((int)(position.X + base->width()), (int)(position.Y + base->height()));
+				m_sceneRect = viewport;
 
 				// draw scene
 				m_scene->setVisibleAllZone(true);
 				m_viewpointZone->setVisible(false);
+				
 				m_handlesRenderer->setEnable(true);
+				m_handlesRenderer->setCameraAndViewport(m_editorCamera, viewport);
 
 				m_renderRP->render(NULL, m_editorCamera, m_scene->getEntityManager(), viewport);
 
@@ -380,6 +388,8 @@ namespace Skylicht
 				if (m_rightMouseDown)
 					event.MouseInput.ButtonStates |= EMBSM_RIGHT;
 
+				event.GameEvent.Sender = m_scene;
+
 				m_scene->OnEvent(event);
 			}
 		}
@@ -402,6 +412,8 @@ namespace Skylicht
 
 			if (m_rightMouseDown)
 				event.MouseInput.ButtonStates |= EMBSM_RIGHT;
+
+			event.GameEvent.Sender = m_scene;
 
 			m_scene->OnEvent(event);
 		}
