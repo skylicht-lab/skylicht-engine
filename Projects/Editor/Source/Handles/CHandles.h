@@ -39,8 +39,11 @@ namespace Skylicht
 			core::vector3df m_position;
 
 			bool m_handlePosition;
+			
+			core::vector3df m_translateOffset;
 
 			int m_mouseState;
+
 
 		public:
 			CHandles();
@@ -69,6 +72,11 @@ namespace Skylicht
 			const core::vector3df& getHandlePosition()
 			{
 				return m_position;
+			}
+
+			const void setTranslateOffset(const core::vector3df& offset)
+			{
+				m_translateOffset = offset;
 			}
 		};
 	}
