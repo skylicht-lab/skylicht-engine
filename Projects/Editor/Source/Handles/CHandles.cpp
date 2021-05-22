@@ -55,9 +55,10 @@ namespace Skylicht
 
 		core::vector3df CHandles::positionHandle(const core::vector3df& position)
 		{
-			m_position = position;
 			m_handlePosition = true;
-			return position;
+			m_position = position + m_translateOffset;
+			m_translateOffset.set(0.0f, 0.0f, 0.0f);
+			return m_position;
 		}
 
 		core::vector3df CHandles::scaleHandle(const core::vector3df& scale, const core::vector3df& origin)
