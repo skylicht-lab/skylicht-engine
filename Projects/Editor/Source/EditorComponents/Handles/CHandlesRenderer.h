@@ -45,7 +45,7 @@ namespace Skylicht
 			CHandlesData* m_data;
 
 			bool m_enable;
-			
+
 			core::vector3df m_directionUnary[3];
 			video::SColor m_directionColor[3];
 			video::SColor m_selectionColor;
@@ -66,6 +66,12 @@ namespace Skylicht
 
 			CCamera* m_camera;
 			core::recti m_viewport;
+
+			int m_mouseState;
+			bool m_mouseDown;
+
+			core::vector3df m_lastMouse;
+			core::vector3df m_lastTranslatePosition;
 
 		public:
 			CHandlesRenderer();
@@ -110,13 +116,13 @@ namespace Skylicht
 
 			void drawScaleGizmo(const core::vector3df& pos, const core::vector3df& cameraLook, const core::vector3df& cameraUp, CCamera* camera);
 
-			void drawTranslateGizmo(const core::vector3df& pos, const core::vector3df& cameraLook, CCamera* camera);
+			void drawTranslateGizmo(const core::vector3df& pos, const core::vector3df& cameraPos, CCamera* camera);
 
 			float getSegmentLengthClipSpace(const core::vector3df& start, const core::vector3df& end, CCamera* camera);
 
 			float getParallelogram(const core::vector3df& ptO, const core::vector3df& ptA, const core::vector3df& ptB, CCamera* camera);
 
-			void computeTripodAxisAndVisibility(int axisIndex, core::vector3df& dirAxis, core::vector3df& dirPlaneX, core::vector3df& dirPlaneY, bool& belowAxisLimit, bool& belowPlaneLimit, CCamera* camera);
+			void computeTripodAxisAndVisibility(int axisIndex, const core::vector3df& origin, core::vector3df& dirAxis, core::vector3df& dirPlaneX, core::vector3df& dirPlaneY, bool& belowAxisLimit, bool& belowPlaneLimit, CCamera* camera);
 
 			core::vector3df pointOnSegment(const core::vector3df& point, const core::vector3df& vertPos1, const core::vector3df& vertPos2);
 
