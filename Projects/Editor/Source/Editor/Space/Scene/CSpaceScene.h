@@ -87,6 +87,8 @@ namespace Skylicht
 
 			virtual void onKeyPressed(GUI::CBase* base, int key, bool down);
 
+			virtual void onRenderResize(GUI::CBase* base);
+
 			virtual void update();
 
 			bool isEditorObject(CGameObject* object);

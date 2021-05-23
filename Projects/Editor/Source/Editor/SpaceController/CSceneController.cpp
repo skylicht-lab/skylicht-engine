@@ -69,6 +69,18 @@ namespace Skylicht
 				m_spaceHierarchy->setHierarchyNode(m_sceneNode);
 		}
 
+		void CSceneController::setSpaceScene(CSpaceScene* scene)
+		{
+			m_spaceScene = scene;
+		}
+
+		void CSceneController::setSpaceHierarchy(CSpaceHierarchy* hierarchy)
+		{
+			m_spaceHierarchy = hierarchy;
+			if (m_spaceHierarchy != NULL && m_sceneNode != NULL)
+				m_spaceHierarchy->setHierarchyNode(m_sceneNode);
+		}
+
 		void CSceneController::buildHierarchyNodes()
 		{
 			ArrayZone* zones = m_scene->getAllZone();
