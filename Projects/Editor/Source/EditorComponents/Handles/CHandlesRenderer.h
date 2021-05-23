@@ -69,6 +69,7 @@ namespace Skylicht
 
 			int m_mouseState;
 			bool m_mouseDown;
+			bool m_cancel;
 
 			core::vector3df m_lastMouse;
 			core::vector3df m_lastTranslatePosition;
@@ -109,6 +110,8 @@ namespace Skylicht
 				m_camera = cam;
 				m_viewport = vp;
 			}
+
+			void cancel();
 
 		protected:
 

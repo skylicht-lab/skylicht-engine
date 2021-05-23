@@ -58,13 +58,16 @@ namespace Skylicht
 			initDefaultScene();
 
 			GUI::CBase* panel = m_window->getInnerPanel();
-
 			panel->OnRender = BIND_LISTENER(&CSpaceScene::onRender, this);
 			panel->OnMouseMoved = std::bind(&CSpaceScene::onMouseMoved, this, _1, _2, _3, _4, _5);
 			panel->OnLeftMouseClick = std::bind(&CSpaceScene::onLeftMouseClick, this, _1, _2, _3, _4);
 			panel->OnRightMouseClick = std::bind(&CSpaceScene::onRightMouseClick, this, _1, _2, _3, _4);
 			panel->OnMiddleMouseClick = std::bind(&CSpaceScene::onMiddleMouseClick, this, _1, _2, _3, _4);
 			panel->OnMouseWheeled = std::bind(&CSpaceScene::onMouseWheeled, this, _1, _2);
+
+			panel->setKeyboardInputEnabled(true);
+			panel->OnKeyPress = std::bind(&CSpaceScene::onKeyPressed, this, _1, _2, _3);
+			panel->OnChar = std::bind(&CSpaceScene::onChar, this, _1, _2);
 
 			m_3dPanel = panel;
 
@@ -205,10 +208,25 @@ namespace Skylicht
 		void CSpaceScene::update()
 		{
 			// test handles
-			static core::vector3df drag;
+			static core::vector3df pos;
+			static core::quaternion rot;
 
 			CHandles* handle = CHandles::getInstance();
-			drag = handle->positionHandle(drag);
+
+			// test handle position
+			pos = handle->positionHandle(pos);
+			if (handle->endCheck())
+			{
+				os::Printer::log("Handles changed!");
+			}
+
+			/*
+			rot = handle->rotateHandle(rot, pos);
+			if (handle->endCheck())
+			{
+				os::Printer::log("Handles changed!");
+			}
+			*/
 
 			m_viewpointController->update();
 			m_scene->update();
@@ -234,7 +252,7 @@ namespace Skylicht
 				// draw scene
 				m_scene->setVisibleAllZone(true);
 				m_viewpointZone->setVisible(false);
-				
+
 				m_handlesRenderer->setEnable(true);
 				m_handlesRenderer->setCameraAndViewport(m_editorCamera, viewport);
 
@@ -412,6 +430,27 @@ namespace Skylicht
 
 			if (m_rightMouseDown)
 				event.MouseInput.ButtonStates |= EMBSM_RIGHT;
+
+			event.GameEvent.Sender = m_scene;
+
+			m_scene->OnEvent(event);
+		}
+
+		void CSpaceScene::onChar(GUI::CBase* base, u32 c)
+		{
+
+		}
+
+		void CSpaceScene::onKeyPressed(GUI::CBase* base, int key, bool down)
+		{
+			GUI::CInput* input = GUI::CInput::getInput();
+
+			SEvent event;
+			event.EventType = EET_KEY_INPUT_EVENT;
+			event.KeyInput.Key = (irr::EKEY_CODE)key;
+			event.KeyInput.PressedDown = down;
+			event.KeyInput.Control = input->IsControlDown();
+			event.KeyInput.Shift = input->IsShiftDown();
 
 			event.GameEvent.Sender = m_scene;
 

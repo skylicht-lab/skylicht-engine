@@ -33,7 +33,9 @@ namespace Skylicht
 	{
 		CHandles::CHandles() :
 			m_handlePosition(false),
-			m_mouseState(0)
+			m_handleRotation(false),
+			m_mouseState(0),
+			m_endCheck(false)
 		{
 
 		}
@@ -43,14 +45,18 @@ namespace Skylicht
 
 		}
 
-		void CHandles::beginCheck()
+		void CHandles::end()
 		{
-
+			m_handlePosition = false;
+			m_handleRotation = false;
 		}
 
 		bool CHandles::endCheck()
 		{
-			return false;
+			bool ret = m_endCheck;
+			if (m_endCheck == true)
+				m_endCheck = false;
+			return ret;
 		}
 
 		core::vector3df CHandles::positionHandle(const core::vector3df& position)
@@ -68,6 +74,9 @@ namespace Skylicht
 
 		core::quaternion CHandles::rotateHandle(const core::quaternion& rotate, const core::vector3df& origin)
 		{
+			m_handleRotation = true;
+			m_position = origin;
+			m_rotation = rotate;
 			return rotate;
 		}
 
@@ -100,6 +109,20 @@ namespace Skylicht
 						handleRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
 					}
 
+					return true;
+				}
+			}
+			else if (event.EventType == EET_KEY_INPUT_EVENT)
+			{
+				CScene* scene = (CScene*)event.GameEvent.Sender;
+				CHandlesRenderer* handleRenderer = scene->getEntityManager()->getSystem<CHandlesRenderer>();
+
+				if (event.KeyInput.PressedDown && event.KeyInput.Key == irr::KEY_ESCAPE)
+				{
+					if (m_mouseState == 1)
+					{
+						handleRenderer->cancel();
+					}
 					return true;
 				}
 			}
