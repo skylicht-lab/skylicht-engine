@@ -52,20 +52,14 @@ namespace Skylicht
 
 			virtual ~CSceneController();
 
-			inline void setSpaceScene(CSpaceScene* scene)
-			{
-				m_spaceScene = scene;
-			}
+			void setSpaceScene(CSpaceScene* scene);
 
 			inline CSpaceScene* getSpaceScene()
 			{
 				return m_spaceScene;
 			}
 
-			inline void setSpaceHierarchy(CSpaceHierarchy* hierarchy)
-			{
-				m_spaceHierarchy = hierarchy;
-			}
+			void setSpaceHierarchy(CSpaceHierarchy* hierarchy);
 
 			inline CSpaceHierarchy* getSpaceHierarchy()
 			{

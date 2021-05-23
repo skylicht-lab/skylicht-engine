@@ -69,6 +69,8 @@ namespace Skylicht
 			panel->OnKeyPress = std::bind(&CSpaceScene::onKeyPressed, this, _1, _2, _3);
 			panel->OnChar = std::bind(&CSpaceScene::onChar, this, _1, _2);
 
+			panel->OnResize = BIND_LISTENER(&CSpaceScene::onRenderResize, this);
+
 			m_3dPanel = panel;
 
 			GUI::SDimension size = window->getSize();
@@ -176,6 +178,11 @@ namespace Skylicht
 			initRenderPipeline(w, h);
 		}
 
+		void CSpaceScene::onRenderResize(GUI::CBase* base)
+		{
+			initRenderPipeline(base->getSize().Width, base->getSize().Height);
+		}
+
 		void CSpaceScene::initRenderPipeline(float w, float h)
 		{
 			if (w >= 32.0f && h >= 32.0f)
@@ -202,6 +209,9 @@ namespace Skylicht
 				{
 					m_viewpointRP->resize((int)w, (int)h);
 				}
+
+				// update camera aspect
+				m_editorCamera->setAspect(w / h);
 			}
 		}
 
