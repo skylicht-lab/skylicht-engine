@@ -37,22 +37,25 @@ namespace Skylicht
 		{
 		protected:
 			core::vector3df m_position;
+			core::quaternion m_rotation;
 
 			bool m_handlePosition;
-			
+			bool m_handleRotation;
+
 			core::vector3df m_translateOffset;
 
 			int m_mouseState;
 
+			bool m_endCheck;
 
 		public:
 			CHandles();
 
 			virtual ~CHandles();
 
-			void beginCheck();
-
 			bool endCheck();
+
+			void end();
 
 			core::vector3df positionHandle(const core::vector3df& position);
 
@@ -69,14 +72,29 @@ namespace Skylicht
 				return m_handlePosition;
 			}
 
+			inline bool isHandleRotation()
+			{
+				return m_handleRotation;
+			}
+
 			const core::vector3df& getHandlePosition()
 			{
 				return m_position;
 			}
 
-			const void setTranslateOffset(const core::vector3df& offset)
+			void setTranslateOffset(const core::vector3df& offset)
 			{
 				m_translateOffset = offset;
+			}
+
+			const core::quaternion& getHandleRotation()
+			{
+				return m_rotation;
+			}
+
+			void setEndCheck(bool b)
+			{
+				m_endCheck = b;
 			}
 		};
 	}
