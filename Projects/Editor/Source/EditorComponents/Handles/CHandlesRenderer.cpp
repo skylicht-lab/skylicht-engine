@@ -38,7 +38,9 @@ namespace Skylicht
 			m_camera(NULL),
 			m_mouseDown(false),
 			m_mouseState(0),
-			m_cancel(false)
+			m_cancel(false),
+			m_using(false),
+			m_rotationAngle(0.0f)
 		{
 			m_data = new CHandlesData();
 			m_data->LineBuffer->getMaterial().ZBuffer = ECFN_DISABLED;
@@ -143,7 +145,7 @@ namespace Skylicht
 			const int halfCircleSegmentCount = 64;
 			const int circleMul = 1;
 
-			core::vector3df* circlePos = new core::vector3df[circleMul * halfCircleSegmentCount + 1];
+			core::vector3df circlePos[circleMul * halfCircleSegmentCount + 1];
 
 			for (int axis = 0; axis < 3; axis++)
 			{
@@ -165,7 +167,51 @@ namespace Skylicht
 				m_data->addPolyline(circlePos, circleMul * halfCircleSegmentCount, false, m_hoverOnAxis[axis] ? m_selectionColor : m_directionColor[axis]);
 			}
 
-			delete[]circlePos;
+			if (m_using)
+			{
+				core::vector3df normal[] = {
+					{0.0f, 0.0f, 1.0f},
+					{0.0f, 1.0f, 0.0f},
+					{1.0f, 0.0f, 0.0f}
+				};
+
+				int hitAxis = 0;
+				for (int i = 0; i < 3; i++)
+				{
+					if (m_hoverOnAxis[i] == true)
+					{
+						hitAxis = i;
+						break;
+					}
+				}
+
+				SColor fillColor = m_selectionColor;
+				fillColor.setAlpha(50);
+
+				if (fabsf(m_rotationAngle) > FLT_EPSILON)
+				{
+					circlePos[0] = pos;
+					for (int i = 1; i < halfCircleSegmentCount; i++)
+					{
+						float ng = m_rotationAngle * ((float)(i - 1) / (float)(halfCircleSegmentCount - 1));
+						core::quaternion rotateVector;
+						rotateVector.fromAngleAxis(ng, normal[hitAxis]);
+
+						core::vector3df arcPos;
+						arcPos = rotateVector * m_rotationVectorSource;
+						arcPos *= m_screenFactor;
+
+						circlePos[i] = pos + arcPos;
+					}
+
+					m_data->addPolygonFill(circlePos, halfCircleSegmentCount, fillColor);
+					m_data->addPolyline(circlePos, halfCircleSegmentCount, true, m_selectionColor);
+				}
+				else
+				{
+					m_data->addLine(pos, pos + m_rotationVectorSource * m_screenFactor, m_selectionColor);
+				}
+			}
 		}
 
 		void CHandlesRenderer::drawScaleGizmo(const core::vector3df& pos, const core::vector3df& cameraLook, const core::vector3df& cameraUp, CCamera* camera)
@@ -359,37 +405,49 @@ namespace Skylicht
 			dirPlaneX = m_directionUnary[(axisIndex + 1) % 3];
 			dirPlaneY = m_directionUnary[(axisIndex + 2) % 3];
 
-			float lenDir = getSegmentLengthClipSpace(origin, origin + dirAxis, camera);
-			float lenDirMinus = getSegmentLengthClipSpace(origin, origin - dirAxis, camera);
+			if (m_using)
+			{
+				belowAxisLimit = m_belowAxisLimit[axisIndex];
+				belowPlaneLimit = m_belowPlaneLimit[axisIndex];
 
-			float lenDirPlaneX = getSegmentLengthClipSpace(origin, origin + dirPlaneX, camera);
-			float lenDirMinusPlaneX = getSegmentLengthClipSpace(origin, origin - dirPlaneX, camera);
+				dirAxis *= m_axisFactor[axisIndex];
+				dirPlaneX *= m_axisFactor[(axisIndex + 1) % 3];
+				dirPlaneY *= m_axisFactor[(axisIndex + 2) % 3];
+			}
+			else
+			{
+				float lenDir = getSegmentLengthClipSpace(origin, origin + dirAxis, camera);
+				float lenDirMinus = getSegmentLengthClipSpace(origin, origin - dirAxis, camera);
 
-			float lenDirPlaneY = getSegmentLengthClipSpace(origin, origin + dirPlaneY, camera);
-			float lenDirMinusPlaneY = getSegmentLengthClipSpace(origin, origin - dirPlaneY, camera);
+				float lenDirPlaneX = getSegmentLengthClipSpace(origin, origin + dirPlaneX, camera);
+				float lenDirMinusPlaneX = getSegmentLengthClipSpace(origin, origin - dirPlaneX, camera);
 
-			// For readability
-			bool& allowFlip = m_allowAxisFlip;
-			float mulAxis = (allowFlip && lenDir < lenDirMinus&& fabsf(lenDir - lenDirMinus) > FLT_EPSILON) ? -1.f : 1.f;
-			float mulAxisX = (allowFlip && lenDirPlaneX < lenDirMinusPlaneX&& fabsf(lenDirPlaneX - lenDirMinusPlaneX) > FLT_EPSILON) ? -1.f : 1.f;
-			float mulAxisY = (allowFlip && lenDirPlaneY < lenDirMinusPlaneY&& fabsf(lenDirPlaneY - lenDirMinusPlaneY) > FLT_EPSILON) ? -1.f : 1.f;
-			dirAxis *= mulAxis;
-			dirPlaneX *= mulAxisX;
-			dirPlaneY *= mulAxisY;
+				float lenDirPlaneY = getSegmentLengthClipSpace(origin, origin + dirPlaneY, camera);
+				float lenDirMinusPlaneY = getSegmentLengthClipSpace(origin, origin - dirPlaneY, camera);
 
-			// for axis
-			float axisLengthInClipSpace = getSegmentLengthClipSpace(origin, origin + dirAxis * m_screenFactor, camera);
-			float paraSurf = getParallelogram(origin, origin + dirPlaneX * m_screenFactor, origin + dirPlaneY * m_screenFactor, camera);
+				// For readability
+				bool& allowFlip = m_allowAxisFlip;
+				float mulAxis = (allowFlip && lenDir < lenDirMinus&& fabsf(lenDir - lenDirMinus) > FLT_EPSILON) ? -1.f : 1.f;
+				float mulAxisX = (allowFlip && lenDirPlaneX < lenDirMinusPlaneX&& fabsf(lenDirPlaneX - lenDirMinusPlaneX) > FLT_EPSILON) ? -1.f : 1.f;
+				float mulAxisY = (allowFlip && lenDirPlaneY < lenDirMinusPlaneY&& fabsf(lenDirPlaneY - lenDirMinusPlaneY) > FLT_EPSILON) ? -1.f : 1.f;
+				dirAxis *= mulAxis;
+				dirPlaneX *= mulAxisX;
+				dirPlaneY *= mulAxisY;
 
-			belowPlaneLimit = (paraSurf > 0.0025f);
-			belowAxisLimit = (axisLengthInClipSpace > 0.02f);
+				// for axis
+				float axisLengthInClipSpace = getSegmentLengthClipSpace(origin, origin + dirAxis * m_screenFactor, camera);
+				float paraSurf = getParallelogram(origin, origin + dirPlaneX * m_screenFactor, origin + dirPlaneY * m_screenFactor, camera);
 
-			// and store values
-			m_axisFactor[axisIndex] = mulAxis;
-			m_axisFactor[(axisIndex + 1) % 3] = mulAxisX;
-			m_axisFactor[(axisIndex + 2) % 3] = mulAxisY;
-			m_belowAxisLimit[axisIndex] = belowAxisLimit;
-			m_belowPlaneLimit[axisIndex] = belowPlaneLimit;
+				belowPlaneLimit = (paraSurf > 0.0025f);
+				belowAxisLimit = (axisLengthInClipSpace > 0.02f);
+
+				// and store values
+				m_axisFactor[axisIndex] = mulAxis;
+				m_axisFactor[(axisIndex + 1) % 3] = mulAxisX;
+				m_axisFactor[(axisIndex + 2) % 3] = mulAxisY;
+				m_belowAxisLimit[axisIndex] = belowAxisLimit;
+				m_belowPlaneLimit[axisIndex] = belowPlaneLimit;
+			}
 		}
 
 		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
@@ -415,6 +473,19 @@ namespace Skylicht
 			}
 
 			return vertPos1 + v * t;
+		}
+
+		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
+		float CHandlesRenderer::computeAngleOnPlan(const core::vector3df& vector, const core::vector3df& normal)
+		{
+			core::vector3df perpendicularVector;
+			perpendicularVector = m_rotationVectorSource.crossProduct(normal);
+			perpendicularVector.normalize();
+
+			float acosAngle = core::clamp(vector.dotProduct(m_rotationVectorSource), -1.f, 1.f);
+			float angle = acosf(acosAngle);
+			angle *= (vector.dotProduct(perpendicularVector) < 0.f) ? 1.f : -1.f;
+			return angle;
 		}
 
 		void CHandlesRenderer::render(CEntityManager* entityManager)
@@ -449,6 +520,8 @@ namespace Skylicht
 			CHandles* handles = CHandles::getInstance();
 			if (handles->isHandlePosition())
 				handleTranslate(x, y, state);
+			else if (handles->isHandleRotation())
+				handleRotation(x, y, state);
 		}
 
 		void CHandlesRenderer::handleTranslate(int x, int y, int state)
@@ -459,6 +532,8 @@ namespace Skylicht
 			int vpHeight = m_viewport.getHeight();
 
 			CHandles* handles = CHandles::getInstance();
+
+			core::vector3df resultPosition;
 
 			if (!m_cancel)
 			{
@@ -535,6 +610,8 @@ namespace Skylicht
 					{
 						if (m_hoverOnAxis[i])
 						{
+							m_using = true;
+
 							core::vector3df vec = m_translsatePlane[i].DirX;
 							vec.normalize();
 
@@ -555,8 +632,8 @@ namespace Skylicht
 									float h1 = axis.dotProduct(out1);
 
 									core::vector3df offset = axis * (h1 - h0);
-									core::vector3df result = m_lastTranslatePosition + offset;
-									handles->setTranslateOffset(result - handles->getHandlePosition());
+									resultPosition = m_lastTranslatePosition + offset;
+									handles->setTranslateOffset(resultPosition - handles->getHandlePosition());
 
 									break;
 								}
@@ -565,6 +642,8 @@ namespace Skylicht
 
 						if (m_hoverOnPlane[i])
 						{
+							m_using = true;
+
 							core::vector3df vec = m_translateAxis[i].getVector();
 							vec.normalize();
 
@@ -579,8 +658,8 @@ namespace Skylicht
 								if (plane.getIntersectionWithLine(viewRay1.start, viewRay1.getVector(), out1))
 								{
 									core::vector3df offset = out1 - out0;
-									core::vector3df result = m_lastTranslatePosition + offset;
-									handles->setTranslateOffset(result - handles->getHandlePosition());
+									resultPosition = m_lastTranslatePosition + offset;
+									handles->setTranslateOffset(resultPosition - handles->getHandlePosition());
 
 									break;
 								}
@@ -605,13 +684,140 @@ namespace Skylicht
 					if (!m_cancel)
 					{
 						m_mouseDown = false;
-						handles->setEndCheck(true);
+						m_using = false;
+
+						if (resultPosition != m_lastTranslatePosition)
+							handles->setEndCheck(true);
 					}
 					m_cancel = false;
 				}
 			}
 
 			m_mouseState = state;
+		}
+
+		void CHandlesRenderer::handleRotation(int x, int y, int state)
+		{
+			core::vector3df mouse((float)x, (float)y, 0.0f);
+
+			int vpWidth = m_viewport.getWidth();
+			int vpHeight = m_viewport.getHeight();
+
+			CHandles* handles = CHandles::getInstance();
+
+			core::vector3df pos = handles->getHandlePosition();
+
+			core::line3df viewRay = CProjective::getViewRay(m_camera, mouse.X, mouse.Y, vpWidth, vpHeight);
+			core::vector3df normal[] = {
+				{0.0f, 0.0f, 1.0f},
+				{0.0f, 1.0f, 0.0f},
+				{1.0f, 0.0f, 0.0f}
+			};
+
+			core::vector3df out;
+			core::quaternion resultRotation;
+
+			if (!m_cancel)
+			{
+				if (m_mouseDown == false)
+				{
+					for (int i = 0; i < 3; i++)
+						m_hoverOnAxis[i] = false;
+
+					for (int i = 0; i < 3; i++)
+					{
+						core::plane3df p(pos, normal[i]);
+
+						core::vector3df viewVector = viewRay.getVector();
+						viewVector.normalize();
+
+						if (p.getIntersectionWithLine(viewRay.start, viewVector, out))
+						{
+							core::vector3df hitVector = out - pos;
+							hitVector.normalize();
+
+							// check backface
+							if (viewVector.dotProduct(hitVector) > FLT_EPSILON)
+							{
+								continue;
+							}
+
+							m_rotationVectorSource = hitVector;
+							m_rotationAngle = 0.0f;
+
+							core::vector3df idealPosOnCircle = out - pos;
+							idealPosOnCircle.normalize();
+							idealPosOnCircle *= m_screenFactor;
+							idealPosOnCircle += pos;
+
+							core::vector3df p1, p2;
+							if (CProjective::getScreenCoordinatesFrom3DPosition(m_camera, out, p1.X, p1.Y, vpWidth, vpHeight))
+							{
+								if (CProjective::getScreenCoordinatesFrom3DPosition(m_camera, idealPosOnCircle, p2.X, p2.Y, vpWidth, vpHeight))
+								{
+									float length = p1.getDistanceFrom(p2);
+									if (length < 10.0f)
+									{
+										m_hoverOnAxis[i] = true;
+										break;
+									}
+									else
+									{
+										m_hoverOnAxis[i] = false;
+									}
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						if (m_hoverOnAxis[i])
+						{
+							m_using = true;
+
+							core::plane3df p(pos, normal[i]);
+
+							core::vector3df viewVector = viewRay.getVector();
+							viewVector.normalize();
+
+							if (p.getIntersectionWithLine(viewRay.start, viewVector, out))
+							{
+								core::vector3df hitVector = out - pos;
+								hitVector.normalize();
+								m_rotationAngle = computeAngleOnPlan(hitVector, normal[i]);
+							}
+						}
+					}
+				} // mouse down
+			} // cancel
+
+			if (m_mouseState != state)
+			{
+				if (state == 1)
+				{
+					// mouse down
+					m_mouseDown = true;
+					m_using = true;
+					m_lastMouse = mouse;
+					m_lastRotation = handles->getHandleRotation();
+				}
+				else if (state == 2)
+				{
+					// mouse up
+					if (!m_cancel)
+					{
+						m_mouseDown = false;
+						m_using = false;
+
+						if (resultRotation != m_lastRotation)
+							handles->setEndCheck(true);
+					}
+					m_cancel = false;
+				}
+			}
 		}
 
 		void CHandlesRenderer::cancel()

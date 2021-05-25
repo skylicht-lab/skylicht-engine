@@ -224,19 +224,19 @@ namespace Skylicht
 			CHandles* handle = CHandles::getInstance();
 
 			// test handle position
+			/*
 			pos = handle->positionHandle(pos);
 			if (handle->endCheck())
 			{
 				os::Printer::log("Handles changed!");
 			}
+			*/
 
-			/*
 			rot = handle->rotateHandle(rot, pos);
 			if (handle->endCheck())
 			{
 				os::Printer::log("Handles changed!");
 			}
-			*/
 
 			m_viewpointController->update();
 			m_scene->update();

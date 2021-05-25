@@ -45,6 +45,7 @@ namespace Skylicht
 			CHandlesData* m_data;
 
 			bool m_enable;
+			bool m_using;
 
 			core::vector3df m_directionUnary[3];
 			video::SColor m_directionColor[3];
@@ -73,6 +74,10 @@ namespace Skylicht
 
 			core::vector3df m_lastMouse;
 			core::vector3df m_lastTranslatePosition;
+
+			core::quaternion m_lastRotation;
+			core::vector3df m_rotationVectorSource;
+			float m_rotationAngle;
 
 		public:
 			CHandlesRenderer();
@@ -127,9 +132,13 @@ namespace Skylicht
 
 			void computeTripodAxisAndVisibility(int axisIndex, const core::vector3df& origin, core::vector3df& dirAxis, core::vector3df& dirPlaneX, core::vector3df& dirPlaneY, bool& belowAxisLimit, bool& belowPlaneLimit, CCamera* camera);
 
+			float computeAngleOnPlan(const core::vector3df& vector, const core::vector3df& normal);
+
 			core::vector3df pointOnSegment(const core::vector3df& point, const core::vector3df& vertPos1, const core::vector3df& vertPos2);
 
 			void handleTranslate(int x, int y, int state);
+
+			void handleRotation(int x, int y, int state);
 		};
 	}
 }
