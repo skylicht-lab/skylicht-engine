@@ -229,13 +229,15 @@ namespace Skylicht
 			if (handle->endCheck())
 			{
 				os::Printer::log("Handles changed!");
+				handle->end();
 			}
 			*/
 
-			rot = handle->rotateHandle(rot, pos);
+			rot = handle->rotateHandle(rot, core::vector3df(0.0f, 0.0f, 0.0f));
 			if (handle->endCheck())
 			{
 				os::Printer::log("Handles changed!");
+				handle->end();
 			}
 
 			m_viewpointController->update();

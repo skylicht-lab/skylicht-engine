@@ -61,10 +61,14 @@ namespace Skylicht
 
 		core::vector3df CHandles::positionHandle(const core::vector3df& position)
 		{
+			if (!m_handlePosition)
+				m_targetPosition = position;
+
 			m_handlePosition = true;
-			m_position = position + m_translateOffset;
-			m_translateOffset.set(0.0f, 0.0f, 0.0f);
-			return m_position;
+			m_handleRotation = false;
+
+			m_position = position;
+			return m_targetPosition;
 		}
 
 		core::vector3df CHandles::scaleHandle(const core::vector3df& scale, const core::vector3df& origin)
@@ -74,10 +78,15 @@ namespace Skylicht
 
 		core::quaternion CHandles::rotateHandle(const core::quaternion& rotate, const core::vector3df& origin)
 		{
+			if (!m_handleRotation)
+				m_targetRotation = rotate;
+
 			m_handleRotation = true;
+			m_handlePosition = false;
+
 			m_position = origin;
 			m_rotation = rotate;
-			return rotate;
+			return m_targetRotation;
 		}
 
 		bool CHandles::OnEvent(const SEvent& event)

@@ -160,12 +160,35 @@ namespace Skylicht
 					core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
 					p = &axisPos.X;
 
-					circlePos[i] = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]) * m_screenFactor;
+					circlePos[i] = pos + core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]) * m_screenFactor;
 				}
 
 				// draw circle
 				m_data->addPolyline(circlePos, circleMul * halfCircleSegmentCount, false, m_hoverOnAxis[axis] ? m_selectionColor : m_directionColor[axis]);
 			}
+
+			// test
+			core::vector3df ox(1.0f, 0.0f, 0.0f);
+			core::vector3df oy(0.0f, 1.0f, 0.0f);
+			core::vector3df oz(0.0f, 0.0f, 1.0f);
+
+			const core::quaternion& q = CHandles::getInstance()->getHandleRotation();
+
+			ox = q * ox;
+			ox.normalize();
+
+			oy = q * oy;
+			oy.normalize();
+
+			oz = q * oz;
+			oz.normalize();
+
+			float length = 0.5f;
+
+			m_data->addLine(pos, pos + ox * length, m_directionColor[0]);
+			m_data->addLine(pos, pos + oy * length, m_directionColor[1]);
+			m_data->addLine(pos, pos + oz * length, m_directionColor[2]);
+
 
 			if (m_using)
 			{
@@ -633,7 +656,7 @@ namespace Skylicht
 
 									core::vector3df offset = axis * (h1 - h0);
 									resultPosition = m_lastTranslatePosition + offset;
-									handles->setTranslateOffset(resultPosition - handles->getHandlePosition());
+									handles->setTargetPosition(resultPosition);
 
 									break;
 								}
@@ -659,7 +682,7 @@ namespace Skylicht
 								{
 									core::vector3df offset = out1 - out0;
 									resultPosition = m_lastTranslatePosition + offset;
-									handles->setTranslateOffset(resultPosition - handles->getHandlePosition());
+									handles->setTargetPosition(resultPosition);
 
 									break;
 								}
@@ -787,7 +810,15 @@ namespace Skylicht
 							{
 								core::vector3df hitVector = out - pos;
 								hitVector.normalize();
+
 								m_rotationAngle = computeAngleOnPlan(hitVector, normal[i]);
+
+								core::quaternion q;
+								q.fromAngleAxis(m_rotationAngle, normal[i]);
+
+								resultRotation = m_lastRotation * q;
+								handles->setTargetRotation(resultRotation);
+								break;
 							}
 						}
 					}
@@ -818,11 +849,15 @@ namespace Skylicht
 					m_cancel = false;
 				}
 			}
+
+			m_mouseState = state;
 		}
 
 		void CHandlesRenderer::cancel()
 		{
 			m_mouseDown = false;
+			m_using = false;
+
 			CHandles* handles = CHandles::getInstance();
 			if (handles->isHandlePosition())
 			{
@@ -831,8 +866,15 @@ namespace Skylicht
 					m_hoverOnAxis[i] = false;
 					m_hoverOnPlane[i] = false;
 				}
-				// reset position
-				handles->setTranslateOffset(m_lastTranslatePosition - handles->getHandlePosition());
+				handles->setTargetPosition(m_lastTranslatePosition);
+			}
+			else if (handles->isHandleRotation())
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					m_hoverOnAxis[i] = false;
+				}
+				handles->setTargetRotation(m_lastRotation);
 			}
 		}
 	}
