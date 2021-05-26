@@ -42,7 +42,8 @@ namespace Skylicht
 			bool m_handlePosition;
 			bool m_handleRotation;
 
-			core::vector3df m_translateOffset;
+			core::vector3df m_targetPosition;
+			core::quaternion m_targetRotation;
 
 			int m_mouseState;
 
@@ -82,9 +83,14 @@ namespace Skylicht
 				return m_position;
 			}
 
-			void setTranslateOffset(const core::vector3df& offset)
+			void setTargetPosition(const core::vector3df& target)
 			{
-				m_translateOffset = offset;
+				m_targetPosition = target;
+			}
+
+			void setTargetRotation(const core::quaternion& target)
+			{
+				m_targetRotation = target;
 			}
 
 			const core::quaternion& getHandleRotation()
