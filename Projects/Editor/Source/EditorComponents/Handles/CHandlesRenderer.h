@@ -62,7 +62,7 @@ namespace Skylicht
 			bool m_hoverOnPlane[3];
 
 			core::line3df m_translateAxis[3];
-			SPlane m_translsatePlane[3];
+			SPlane m_translatePlane[3];
 			core::line3df m_scaleAxis[3];
 
 			CCamera* m_camera;
@@ -74,7 +74,7 @@ namespace Skylicht
 
 			core::vector3df m_lastMouse;
 			core::vector3df m_lastTranslatePosition;
-
+			core::vector3df m_lastScale;
 			core::quaternion m_lastRotation;
 			core::vector3df m_rotationVectorSource;
 			float m_rotationAngle;
@@ -139,6 +139,8 @@ namespace Skylicht
 			void handleTranslate(int x, int y, int state);
 
 			void handleRotation(int x, int y, int state);
+
+			void handleScale(int x, int y, int state);
 		};
 	}
 }
