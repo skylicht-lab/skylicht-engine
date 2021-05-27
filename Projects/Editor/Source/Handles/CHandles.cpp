@@ -34,6 +34,7 @@ namespace Skylicht
 		CHandles::CHandles() :
 			m_handlePosition(false),
 			m_handleRotation(false),
+			m_handleScale(false),
 			m_mouseState(0),
 			m_endCheck(false)
 		{
@@ -49,6 +50,7 @@ namespace Skylicht
 		{
 			m_handlePosition = false;
 			m_handleRotation = false;
+			m_handleScale = false;
 		}
 
 		bool CHandles::endCheck()
@@ -66,6 +68,7 @@ namespace Skylicht
 
 			m_handlePosition = true;
 			m_handleRotation = false;
+			m_handleScale = false;
 
 			m_position = position;
 			return m_targetPosition;
@@ -73,7 +76,16 @@ namespace Skylicht
 
 		core::vector3df CHandles::scaleHandle(const core::vector3df& scale, const core::vector3df& origin)
 		{
-			return scale;
+			if (!m_handleScale)
+				m_targetScale = scale;
+
+			m_handleRotation = false;
+			m_handlePosition = false;
+			m_handleScale = true;
+
+			m_position = origin;
+			m_scale = scale;
+			return m_targetScale;
 		}
 
 		core::quaternion CHandles::rotateHandle(const core::quaternion& rotate, const core::vector3df& origin)
@@ -83,6 +95,7 @@ namespace Skylicht
 
 			m_handleRotation = true;
 			m_handlePosition = false;
+			m_handleScale = false;
 
 			m_position = origin;
 			m_rotation = rotate;
