@@ -64,6 +64,7 @@ namespace Skylicht
 			core::line3df m_translateAxis[3];
 			SPlane m_translatePlane[3];
 			core::line3df m_scaleAxis[3];
+			SPlane m_scalePlane;
 
 			CCamera* m_camera;
 			core::recti m_viewport;
