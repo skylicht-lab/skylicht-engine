@@ -245,6 +245,8 @@ namespace Skylicht
 		{
 			CHandles* handles = CHandles::getInstance();
 
+			float planeMin = 0.3f;
+
 			for (int i = 0; i < 3; i++)
 			{
 				core::vector3df dirAxis, dirPlaneX, dirPlaneY;
@@ -266,6 +268,9 @@ namespace Skylicht
 
 					// draw axis
 					m_data->addLine(m_scaleAxis[i].start, end, m_hoverOnAxis[i] ? m_selectionColor : m_directionColor[i]);
+
+					// plane
+					m_scalePlane.Point[i] = pos + dirAxis * m_screenFactor * planeMin;
 
 					// draw quad
 					float size = m_screenFactor * 0.05f;
@@ -305,6 +310,12 @@ namespace Skylicht
 					m_translatePlane[i].DirY = dirPlaneY;
 				}
 			}
+
+			// draw scale plane
+			video::SColor color = m_selectionColor;
+			color.setAlpha(50);
+			m_data->addPolygonFill(m_scalePlane.Point, 3, m_hoverOnPlane[0] ? m_selectionColor : color);
+			m_data->addPolyline(m_scalePlane.Point, 3, true, m_selectionColor);
 		}
 
 		void CHandlesRenderer::drawTranslateGizmo(const core::vector3df& pos, const core::vector3df& cameraPos, CCamera* camera)
@@ -376,6 +387,43 @@ namespace Skylicht
 					SColor fillColor = color;
 					fillColor.setAlpha(50);
 					m_data->addPolygonFill(planeLine, 4, fillColor);
+				}
+			}
+
+			if (m_using)
+			{
+				video::SColor color(255, 100, 100, 100);
+				m_data->addLine(m_lastTranslatePosition, pos, color);
+
+				core::vector3df d = pos - m_lastTranslatePosition;
+				core::vector3df p;
+				float min = 0.001f;
+
+				if (fabsf(d.X) > min)
+				{
+					color.set(100, 50, 0, 0);
+					p = m_lastTranslatePosition;
+					p.X += d.X;
+					m_data->addLine(m_lastTranslatePosition, p, color);
+					m_data->addLine(pos, p, color);
+				}
+
+				if (fabsf(d.Y) > min)
+				{
+					color.set(100, 0, 0, 50);
+					p = m_lastTranslatePosition;
+					p.Y += d.Y;
+					m_data->addLine(m_lastTranslatePosition, p, color);
+					m_data->addLine(pos, p, color);
+				}
+
+				if (fabsf(d.Z) > min)
+				{
+					color.set(100, 0, 50, 0);
+					p = m_lastTranslatePosition;
+					p.Z += d.Z;
+					m_data->addLine(m_lastTranslatePosition, p, color);
+					m_data->addLine(pos, p, color);
 				}
 			}
 		}
@@ -573,6 +621,31 @@ namespace Skylicht
 
 			CHandles* handles = CHandles::getInstance();
 
+			if (m_mouseState != state)
+			{
+				if (state == 1)
+				{
+					// mouse down
+					m_mouseDown = true;
+					m_lastMouse = mouse;
+					m_lastTranslatePosition = handles->getHandlePosition();
+				}
+				else if (state == 2)
+				{
+					// mouse up
+					if (!m_cancel)
+					{
+						m_mouseDown = false;
+						m_using = false;
+
+						handles->setEndCheck(true);
+					}
+					m_cancel = false;
+				}
+			}
+
+			m_mouseState = state;
+
 			core::vector3df resultPosition;
 
 			if (!m_cancel)
@@ -707,33 +780,7 @@ namespace Skylicht
 						}
 					}
 				} // mouse down
-			} // cancel
-
-			if (m_mouseState != state)
-			{
-				if (state == 1)
-				{
-					// mouse down
-					m_mouseDown = true;
-					m_lastMouse = mouse;
-					m_lastTranslatePosition = handles->getHandlePosition();
-				}
-				else if (state == 2)
-				{
-					// mouse up
-					if (!m_cancel)
-					{
-						m_mouseDown = false;
-						m_using = false;
-
-						if (resultPosition != m_lastTranslatePosition)
-							handles->setEndCheck(true);
-					}
-					m_cancel = false;
-				}
-			}
-
-			m_mouseState = state;
+			} // cancel			
 		}
 
 		void CHandlesRenderer::handleRotation(int x, int y, int state)
@@ -744,6 +791,31 @@ namespace Skylicht
 			int vpHeight = m_viewport.getHeight();
 
 			CHandles* handles = CHandles::getInstance();
+
+			if (m_mouseState != state)
+			{
+				if (state == 1)
+				{
+					// mouse down
+					m_mouseDown = true;
+					m_using = true;
+					m_lastMouse = mouse;
+					m_lastRotation = handles->getHandleRotation();
+				}
+				else if (state == 2)
+				{
+					// mouse up
+					if (!m_cancel)
+					{
+						m_mouseDown = false;
+						m_using = false;
+						handles->setEndCheck(true);
+					}
+					m_cancel = false;
+				}
+			}
+
+			m_mouseState = state;
 
 			core::vector3df pos = handles->getHandlePosition();
 
@@ -840,34 +912,7 @@ namespace Skylicht
 						}
 					}
 				} // mouse down
-			} // cancel
-
-			if (m_mouseState != state)
-			{
-				if (state == 1)
-				{
-					// mouse down
-					m_mouseDown = true;
-					m_using = true;
-					m_lastMouse = mouse;
-					m_lastRotation = handles->getHandleRotation();
-				}
-				else if (state == 2)
-				{
-					// mouse up
-					if (!m_cancel)
-					{
-						m_mouseDown = false;
-						m_using = false;
-
-						if (resultRotation != m_lastRotation)
-							handles->setEndCheck(true);
-					}
-					m_cancel = false;
-				}
-			}
-
-			m_mouseState = state;
+			} // cancel			
 		}
 
 		void CHandlesRenderer::handleScale(int x, int y, int state)
@@ -879,102 +924,13 @@ namespace Skylicht
 
 			CHandles* handles = CHandles::getInstance();
 
-			core::vector3df resultScale;
-
-			if (!m_cancel)
-			{
-				if (m_mouseDown == false)
-				{
-					for (int i = 0; i < 3; i++)
-						m_hoverOnAxis[i] = false;
-
-					// check hittest axis or plane on mouse move
-					for (int i = 0; i < 3; i++)
-					{
-						if (m_belowAxisLimit[i])
-						{
-							core::vector3df start, end;
-							if (CProjective::getScreenCoordinatesFrom3DPosition(m_camera, m_scaleAxis[i].start, start.X, start.Y, vpWidth, vpHeight))
-							{
-								if (CProjective::getScreenCoordinatesFrom3DPosition(m_camera, m_scaleAxis[i].end, end.X, end.Y, vpWidth, vpHeight))
-								{
-									core::vector3df projective = pointOnSegment(mouse, start, end);
-									float length = projective.getDistanceFrom(mouse);
-									float length1 = mouse.getDistanceFrom(start);
-
-									if (length < 10.0f && length1 > 10.0f)
-									{
-										m_hoverOnAxis[i] = true;
-										break;
-									}
-									else
-									{
-										m_hoverOnAxis[i] = false;
-									}
-								}
-							}
-						}
-					}
-				}
-				else
-				{
-					// mouse dragging
-					for (int i = 0; i < 3; i++)
-					{
-						if (m_hoverOnAxis[i])
-						{
-							m_using = true;
-
-							core::vector3df vec = m_translatePlane[i].DirX;
-							vec.normalize();
-
-							core::line3df viewRay0 = CProjective::getViewRay(m_camera, m_lastMouse.X, m_lastMouse.Y, vpWidth, vpHeight);
-							core::line3df viewRay1 = CProjective::getViewRay(m_camera, mouse.X, mouse.Y, vpWidth, vpHeight);
-
-							core::plane3df plane(m_scaleAxis[i].start, vec);
-							core::vector3df out0, out1;
-
-							if (plane.getIntersectionWithLine(viewRay0.start, viewRay0.getVector(), out0))
-							{
-								if (plane.getIntersectionWithLine(viewRay1.start, viewRay1.getVector(), out1))
-								{
-									core::vector3df axis = m_scaleAxis[i].getVector();
-									axis.normalize();
-
-									float h0 = axis.dotProduct(out0);
-									float h1 = axis.dotProduct(out1);
-
-									core::vector3df offset = axis * (h1 - h0);
-
-									core::vector3df from = axis * m_screenFactor;
-									core::vector3df target = from + offset;
-
-									float s[3]{ 1.0f, 1.0f, 1.0f };
-									float* f = &from.X;
-									float* t = &target.X;
-
-									s[i] = t[i] / f[i];
-
-									resultScale.set(s[0], s[1], s[2]);
-									resultScale *= m_lastScale;
-
-									handles->setTargetScale(resultScale);
-
-									break;
-								}
-							}
-						}
-					}
-				} // mouse down
-			} // cancel
-
 			if (m_mouseState != state)
 			{
 				if (state == 1)
 				{
 					// mouse down
 					const core::vector3df& s = handles->getHandleScale();
-					if (s.X > 0 && s.Y > 0 && s.Z > 0)
+					if (s.X != 0 && s.Y != 0 && s.Z != 0)
 					{
 						m_mouseDown = true;
 						m_lastMouse = mouse;
@@ -988,15 +944,139 @@ namespace Skylicht
 					{
 						m_mouseDown = false;
 						m_using = false;
-
-						if (resultScale != m_lastScale)
-							handles->setEndCheck(true);
+						handles->setEndCheck(true);
 					}
 					m_cancel = false;
 				}
 			}
 
 			m_mouseState = state;
+
+			core::vector3df resultScale;
+
+			if (!m_cancel)
+			{
+				if (m_mouseDown == false)
+				{
+					for (int i = 0; i < 3; i++)
+						m_hoverOnAxis[i] = false;
+
+					m_hoverOnPlane[0] = false;
+
+					// check hittest axis or plane on mouse move
+					core::line3df viewRay = CProjective::getViewRay(m_camera, mouse.X, mouse.Y, vpWidth, vpHeight);
+					core::vector3df out;
+
+					core::triangle3df tris(m_scalePlane.Point[0], m_scalePlane.Point[1], m_scalePlane.Point[2]);
+					if (tris.getIntersectionWithLine(viewRay.start, viewRay.getVector(), out))
+					{
+						if (tris.isPointInside(out))
+						{
+							m_hoverOnPlane[0] = true;
+						}
+					}
+
+					if (m_hoverOnPlane[0] == false)
+					{
+						for (int i = 0; i < 3; i++)
+						{
+							if (m_belowAxisLimit[i])
+							{
+								core::vector3df start, end;
+								if (CProjective::getScreenCoordinatesFrom3DPosition(m_camera, m_scaleAxis[i].start, start.X, start.Y, vpWidth, vpHeight))
+								{
+									if (CProjective::getScreenCoordinatesFrom3DPosition(m_camera, m_scaleAxis[i].end, end.X, end.Y, vpWidth, vpHeight))
+									{
+										core::vector3df projective = pointOnSegment(mouse, start, end);
+										float length = projective.getDistanceFrom(mouse);
+										float length1 = mouse.getDistanceFrom(start);
+
+										if (length < 10.0f)
+										{
+											m_hoverOnAxis[i] = true;
+											break;
+										}
+										else
+										{
+											m_hoverOnAxis[i] = false;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					// mouse dragging
+					if (m_hoverOnPlane[0] == true)
+					{
+						float dx = mouse.X - m_lastMouse.X;
+						float dy = m_lastMouse.Y - mouse.Y;
+
+						float drag = 0.0f;
+						float d = core::max_(vpWidth, vpHeight) * 0.2f;
+
+						drag = fabsf(dx) > fabsf(dy) ? dx : dy;
+
+						if (d > 0.0f)
+						{
+							m_using = true;
+							float scale = 1.0f + drag / d;
+							resultScale = m_lastScale * scale;
+							handles->setTargetScale(resultScale);
+						}
+					}
+					else
+					{
+						for (int i = 0; i < 3; i++)
+						{
+							if (m_hoverOnAxis[i])
+							{
+								m_using = true;
+
+								core::vector3df vec = m_translatePlane[i].DirX;
+								vec.normalize();
+
+								core::line3df viewRay0 = CProjective::getViewRay(m_camera, m_lastMouse.X, m_lastMouse.Y, vpWidth, vpHeight);
+								core::line3df viewRay1 = CProjective::getViewRay(m_camera, mouse.X, mouse.Y, vpWidth, vpHeight);
+
+								core::plane3df plane(m_scaleAxis[i].start, vec);
+								core::vector3df out0, out1;
+
+								if (plane.getIntersectionWithLine(viewRay0.start, viewRay0.getVector(), out0))
+								{
+									if (plane.getIntersectionWithLine(viewRay1.start, viewRay1.getVector(), out1))
+									{
+										core::vector3df axis = m_scaleAxis[i].getVector();
+										axis.normalize();
+
+										float h0 = axis.dotProduct(out0);
+										float h1 = axis.dotProduct(out1);
+
+										core::vector3df offset = axis * (h1 - h0);
+
+										core::vector3df from = axis * m_screenFactor;
+										core::vector3df target = from + offset;
+
+										float s[3]{ 1.0f, 1.0f, 1.0f };
+										float* f = &from.X;
+										float* t = &target.X;
+
+										s[i] = t[i] / f[i];
+
+										resultScale.set(s[0], s[1], s[2]);
+										resultScale *= m_lastScale;
+
+										handles->setTargetScale(resultScale);
+										break;
+									}
+								}
+							}
+						}
+					}
+				} // mouse down
+			} // cancel			
 		}
 
 		void CHandlesRenderer::cancel()
@@ -1027,6 +1107,7 @@ namespace Skylicht
 				for (int i = 0; i < 3; i++)
 				{
 					m_hoverOnAxis[i] = false;
+					m_hoverOnPlane[i] = false;
 				}
 				handles->setTargetRotation(m_lastScale);
 			}
