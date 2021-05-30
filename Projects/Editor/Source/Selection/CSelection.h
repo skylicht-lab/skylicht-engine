@@ -24,36 +24,39 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-#include "CHierarchyController.h"
+#include "Utils/CGameSingleton.h"
+#include "CSelectObject.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		class CSelection : public CGameSingleton<CSelection>
 		{
 		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
+			std::vector<CSelectObject*> m_selected;
 
-			GUI::CTreeControl* m_tree;
-
-			CHierarchyController* m_hierarchyController;
 		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+			CSelection();
 
-			virtual ~CSpaceHierarchy();
+			virtual ~CSelection();
 
-			virtual void update();
+			std::vector<CSelectObject*>& getSelected()
+			{
+				return m_selected;
+			}
 
-			void setHierarchyNode(CHierachyNode* node);
+			std::vector<CSelectObject*> getSelectedByType(CSelectObject::ESelectType type);
 
-			void add(CHierachyNode* node);
+			void clear();
+
+			void addSelect(CSelectObject* obj);
+
+			void addSelect(const std::vector<CSelectObject*>& obj);
+
+			void unSelect(CSelectObject* obj);
+
+			void unSelect(const std::vector<CSelectObject*>& obj);
 		};
 	}
 }

@@ -115,6 +115,8 @@ namespace Skylicht
 			{
 				return m_childs;
 			}
+
+			CHierachyNode* getNodeByTag(void* tag);
 		};
 	}
 }
