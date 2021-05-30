@@ -33,23 +33,24 @@ namespace Skylicht
 			m_spaceHierarchy(NULL),
 			m_spaceScene(NULL),
 			m_scene(NULL),
-			m_sceneNode(NULL)
+			m_zone(NULL),
+			m_hierachyNode(NULL)
 		{
 
 		}
 
 		CSceneController::~CSceneController()
 		{
-			if (m_sceneNode != NULL)
-				delete m_sceneNode;
+			if (m_hierachyNode != NULL)
+				delete m_hierachyNode;
 		}
 
 		void CSceneController::setScene(CScene* scene)
 		{
-			if (m_sceneNode != NULL)
+			if (m_hierachyNode != NULL)
 			{
-				delete m_sceneNode;
-				m_sceneNode = NULL;
+				delete m_hierachyNode;
+				m_hierachyNode = NULL;
 			}
 
 			m_scene = scene;
@@ -58,15 +59,30 @@ namespace Skylicht
 
 			m_scene->update();
 
-			m_sceneNode = new CHierachyNode(NULL);
-			m_sceneNode->setName(L"Scene");
-			m_sceneNode->setIcon(GUI::ESystemIcon::Folder);
-			m_sceneNode->setTagData(m_scene);
+			setZone(m_scene->getZone(0));
+
+			m_hierachyNode = new CHierachyNode(NULL);
+			m_hierachyNode->setName(L"Scene");
+			m_hierachyNode->setIcon(GUI::ESystemIcon::Folder);
+			m_hierachyNode->setTagData(m_scene);
 
 			buildHierarchyNodes();
 
 			if (m_spaceHierarchy != NULL)
-				m_spaceHierarchy->setHierarchyNode(m_sceneNode);
+				m_spaceHierarchy->setHierarchyNode(m_hierachyNode);
+		}
+
+		void CSceneController::setZone(CZone* zone)
+		{
+			ArrayZone* zones = m_scene->getAllZone();
+			for (CZone* z : *zones)
+			{
+				if (z == zone)
+				{
+					m_zone = z;
+					return;
+				}
+			}
 		}
 
 		void CSceneController::setSpaceScene(CSpaceScene* scene)
@@ -77,8 +93,8 @@ namespace Skylicht
 		void CSceneController::setSpaceHierarchy(CSpaceHierarchy* hierarchy)
 		{
 			m_spaceHierarchy = hierarchy;
-			if (m_spaceHierarchy != NULL && m_sceneNode != NULL)
-				m_spaceHierarchy->setHierarchyNode(m_sceneNode);
+			if (m_spaceHierarchy != NULL && m_hierachyNode != NULL)
+				m_spaceHierarchy->setHierarchyNode(m_hierachyNode);
 		}
 
 		void CSceneController::buildHierarchyNodes()
@@ -86,7 +102,7 @@ namespace Skylicht
 			ArrayZone* zones = m_scene->getAllZone();
 			for (CZone* zone : *zones)
 			{
-				CHierachyNode* node = buildHierarchyNodes(zone, m_sceneNode);
+				CHierachyNode* node = buildHierarchyNodes(zone, m_hierachyNode);
 				if (node != NULL)
 					node->setIcon(GUI::ESystemIcon::Collection);
 			}
@@ -125,6 +141,49 @@ namespace Skylicht
 			}
 
 			return node;
+		}
+
+		void CSceneController::onCommand(const std::wstring& objectType)
+		{
+			if (m_scene == NULL || m_zone == NULL)
+				return;
+
+			if (objectType == L"Empty Object")
+			{
+				CGameObject* newObject = m_zone->createEmptyObject();
+				m_zone->updateAddRemoveObject();
+				m_zone->updateIndexSearchObject();
+
+				CHierachyNode* zoneNode = m_hierachyNode->getNodeByTag(m_zone);
+				if (zoneNode != NULL)
+				{
+					CHierachyNode* node = zoneNode->addChild();
+					node->setName(newObject->getName());
+					node->setIcon(GUI::ESystemIcon::Res3D);
+					node->setTagData(newObject);
+
+					if (m_spaceHierarchy != NULL)
+						m_spaceHierarchy->add(node);
+				}
+			}
+			else if (objectType == L"Container Object")
+			{
+				CGameObject* newObject = m_zone->createContainerObject();
+				m_zone->updateAddRemoveObject();
+				m_zone->updateIndexSearchObject();
+
+				CHierachyNode* zoneNode = m_hierachyNode->getNodeByTag(m_zone);
+				if (zoneNode != NULL)
+				{
+					CHierachyNode* node = zoneNode->addChild();
+					node->setName(newObject->getName());
+					node->setIcon(GUI::ESystemIcon::Folder);
+					node->setTagData(newObject);
+
+					if (m_spaceHierarchy != NULL)
+						m_spaceHierarchy->add(node);
+				}
+			}
 		}
 	}
 }

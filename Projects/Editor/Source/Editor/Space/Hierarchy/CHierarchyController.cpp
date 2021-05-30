@@ -44,32 +44,24 @@ namespace Skylicht
 
 		void CHierarchyController::setHierarchyNode(CHierachyNode* node)
 		{
-			bool build = false;
-
 			if (m_node != node)
 			{
 				if (m_node != NULL)
 					m_node->nullGUI();
-				build = true;
 			}
 
 			m_node = node;
 
-			if (build)
-			{
-				// remove all node
-				m_tree->removeAllTreeNode();
+			// remove all node
+			m_tree->removeAllTreeNode();
 
-				// add child nodes
-				GUI::CTreeNode* root0 = buildHierarchyNode(m_tree, m_node);
+			// add child nodes
+			GUI::CTreeNode* root0 = buildHierarchyNode(m_tree, m_node);
 
-				// expand tree
-				root0->expand(false);
-				for (GUI::CTreeNode* root1 : root0->getChildNodes())
-					root1->expand(false);
-			}
-			else
-				updateHierarchyNode();
+			// expand tree
+			root0->expand(false);
+			for (GUI::CTreeNode* root1 : root0->getChildNodes())
+				root1->expand(false);
 		}
 
 		GUI::CTreeNode* CHierarchyController::buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node)
@@ -78,7 +70,7 @@ namespace Skylicht
 			GUI::CTreeNode* guiNode = parentGuiNode->addNode(node->getName(), node->getIcon());
 
 			// link data gui to node
-			guiNode->tagData(m_node);
+			guiNode->tagData(node);
 
 			// link data node to gui
 			node->setGUINode(guiNode);
@@ -93,9 +85,12 @@ namespace Skylicht
 			return guiNode;
 		}
 
-		void CHierarchyController::updateHierarchyNode()
+		GUI::CTreeNode* CHierarchyController::add(CHierachyNode* node)
 		{
+			CHierachyNode* parent = node->getParent();
+			GUI::CTreeNode* parentGuiNode = parent->getGUINode();
 
+			return buildHierarchyNode(parentGuiNode, node);
 		}
 	}
 }

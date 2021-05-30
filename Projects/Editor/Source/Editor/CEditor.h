@@ -116,6 +116,8 @@ namespace Skylicht
 
 			void OnCommandWindow(GUI::CBase* item);
 
+			void OnCommandGameObject(GUI::CBase* item);
+
 			void setCheckIcon(GUI::CMenuItem* item);
 
 			void closeOpenWorkspace(GUI::CMenuItem* item);

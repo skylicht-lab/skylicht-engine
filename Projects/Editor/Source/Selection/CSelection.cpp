@@ -22,38 +22,81 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-#include "CHierarchyController.h"
+#include "pch.h"
+#include "CSelection.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		CSelection::CSelection()
 		{
-		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
 
-			GUI::CTreeControl* m_tree;
+		}
 
-			CHierarchyController* m_hierarchyController;
-		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+		CSelection::~CSelection()
+		{
 
-			virtual ~CSpaceHierarchy();
+		}
 
-			virtual void update();
+		void CSelection::clear()
+		{
+			m_selected.clear();
+		}
 
-			void setHierarchyNode(CHierachyNode* node);
+		std::vector<CSelectObject*> CSelection::getSelectedByType(CSelectObject::ESelectType type)
+		{
+			std::vector<CSelectObject*> result;
 
-			void add(CHierachyNode* node);
-		};
+			for (CSelectObject* selected : m_selected)
+			{
+				if (selected->getType() == type)
+				{
+					result.push_back(selected);
+				}
+			}
+
+			return result;
+		}
+
+		void CSelection::addSelect(CSelectObject* obj)
+		{
+			for (CSelectObject* selected : m_selected)
+			{
+				if (selected == obj)
+					return;
+			}
+			m_selected.push_back(obj);
+		}
+
+		void CSelection::addSelect(const std::vector<CSelectObject*>& obj)
+		{
+			for (CSelectObject* s : obj)
+			{
+				addSelect(s);
+			}
+		}
+
+		void CSelection::unSelect(CSelectObject* obj)
+		{
+			std::vector<CSelectObject*>::iterator i = m_selected.begin(), end = m_selected.end();
+			while (i != end)
+			{
+				if ((*i) == obj)
+				{
+					m_selected.erase(i);
+					return;
+				}
+				++i;
+			}
+		}
+
+		void CSelection::unSelect(const std::vector<CSelectObject*>& obj)
+		{
+			for (CSelectObject* s : obj)
+			{
+				unSelect(s);
+			}
+		}
 	}
 }

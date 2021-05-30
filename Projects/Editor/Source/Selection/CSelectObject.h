@@ -24,36 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-#include "CHierarchyController.h"
-
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		class CSelectObject
 		{
-		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
-
-			GUI::CTreeControl* m_tree;
-
-			CHierarchyController* m_hierarchyController;
 		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+			enum ESelectType
+			{
+				Asset,
+				GameObject,
+				Entity
+			};
 
-			virtual ~CSpaceHierarchy();
+		protected:
 
-			virtual void update();
+			ESelectType m_type;
 
-			void setHierarchyNode(CHierachyNode* node);
+		public:
+			CSelectObject(ESelectType type);
 
-			void add(CHierachyNode* node);
+			virtual ~CSelectObject();
+
+			inline ESelectType getType()
+			{
+				return m_type;
+			}
 		};
 	}
 }
