@@ -272,6 +272,8 @@ namespace Skylicht
 
 			GUI::CMenuItem* gameObject = m_menuBar->addItem(L"GameObject");
 			submenu = gameObject->getMenu();
+			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
+
 			submenu->addItem(L"Empty Object");
 			submenu->addItem(L"Container Object");
 			submenu->addSeparator();
@@ -279,6 +281,8 @@ namespace Skylicht
 
 			GUI::CMenuItem* object = submenu->addItem(L"Object");
 			submenu = object->getMenu();
+			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
+
 			submenu->addItem(L"Cube");
 			submenu->addItem(L"Sphere");
 			submenu->addItem(L"Capsule");
@@ -296,6 +300,8 @@ namespace Skylicht
 			submenu = temp;
 			GUI::CMenuItem* effect = submenu->addItem(L"Effect");
 			submenu = effect->getMenu();
+			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
+
 			submenu->addItem(L"Particle System");
 			submenu->addItem(L"Line");
 			submenu->addItem(L"Trail");
@@ -303,6 +309,8 @@ namespace Skylicht
 			submenu = temp;
 			GUI::CMenuItem* lighting = submenu->addItem(L"Lighting");
 			submenu = lighting->getMenu();
+			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
+
 			submenu->addItem(L"Direction Light");
 			submenu->addItem(L"Point Light");
 			submenu->addItem(L"Spot Light");
@@ -868,6 +876,14 @@ namespace Skylicht
 					}
 				}
 			}
+		}
+
+		void CEditor::OnCommandGameObject(GUI::CBase* item)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
+			const std::wstring& label = menuItem->getLabel();
+
+			CSceneController::getInstance()->onCommand(label);
 		}
 	}
 }

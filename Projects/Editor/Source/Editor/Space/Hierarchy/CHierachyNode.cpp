@@ -142,5 +142,25 @@ namespace Skylicht
 				i->nullGUI();
 			}
 		}
+
+		CHierachyNode* CHierachyNode::getNodeByTag(void* tag)
+		{
+			for (CHierachyNode* i : m_childs)
+			{
+				if (i->getTagData() == tag)
+					return i;
+				else
+				{
+					std::vector<CHierachyNode*>& childs = i->getChilds();
+					for (CHierachyNode* child : childs)
+					{
+						CHierachyNode* result = getNodeByTag(child);
+						if (result != NULL)
+							return result;
+					}
+				}
+			}
+			return NULL;
+		}
 	}
 }

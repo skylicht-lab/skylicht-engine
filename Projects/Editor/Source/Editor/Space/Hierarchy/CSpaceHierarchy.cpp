@@ -89,5 +89,10 @@ namespace Skylicht
 		{
 			m_hierarchyController->setHierarchyNode(node);
 		}
+
+		void CSpaceHierarchy::add(CHierachyNode* node)
+		{
+			m_hierarchyController->add(node);
+		}
 	}
 }

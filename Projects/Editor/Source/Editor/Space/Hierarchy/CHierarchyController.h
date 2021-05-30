@@ -44,7 +44,7 @@ namespace Skylicht
 
 			void setHierarchyNode(CHierachyNode* node);
 
-			void updateHierarchyNode();
+			GUI::CTreeNode* add(CHierachyNode* node);
 
 		protected:
 

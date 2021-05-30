@@ -43,9 +43,11 @@ namespace Skylicht
 
 			CSpaceHierarchy* m_spaceHierarchy;
 
-			CHierachyNode* m_sceneNode;
+			CHierachyNode* m_hierachyNode;
 
 			CScene* m_scene;
+
+			CZone* m_zone;
 
 		public:
 			CSceneController();
@@ -68,7 +70,11 @@ namespace Skylicht
 
 			void setScene(CScene* scene);
 
+			void setZone(CZone* zone);
+
 			void buildHierarchyNodes();
+
+			void onCommand(const std::wstring& objectType);
 
 		protected:
 
