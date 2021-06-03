@@ -33,7 +33,8 @@ namespace Skylicht
 			m_icon(GUI::ESystemIcon::None),
 			m_tagData(NULL),
 			m_guiNode(NULL),
-			m_parent(parent)
+			m_parent(parent),
+			m_dataType(Unknown)
 		{
 
 		}

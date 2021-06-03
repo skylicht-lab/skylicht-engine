@@ -22,41 +22,39 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-
-#include "CHierarchyController.h"
+#include "pch.h"
 #include "CHierachyContextMenu.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		CHierachyContextMenu::CHierachyContextMenu(GUI::CTreeControl* tree)
 		{
-		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
+			tree->OnItemContextMenu = BIND_LISTENER(&CHierachyContextMenu::OnTreeContextMenu, this);
+		}
 
-			GUI::CTreeControl* m_tree;
+		CHierachyContextMenu::~CHierachyContextMenu()
+		{
 
-			CHierarchyController* m_hierarchyController;
-			CHierachyContextMenu* m_hierarchyContextMenu;
-		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+		}
 
-			virtual ~CSpaceHierarchy();
-
-			virtual void update();
-
-			void setHierarchyNode(CHierachyNode* node);
-
-			void add(CHierachyNode* node);
-		};
+		void CHierachyContextMenu::OnTreeContextMenu(GUI::CBase* row)
+		{
+			GUI::CTreeRowItem* rowItem = dynamic_cast<GUI::CTreeRowItem*>(row);
+			if (rowItem != NULL)
+			{
+				CHierachyNode* node = (CHierachyNode*)rowItem->getNode()->getTagData();
+				if (node != NULL)
+				{
+					if (node->getTagDataType() == CHierachyNode::Scene ||
+						node->getTagDataType() == CHierachyNode::GameObject)
+					{
+						CSceneController::getInstance()->onContextMenu(node);
+					}
+				}
+			}
+		}
 	}
 }

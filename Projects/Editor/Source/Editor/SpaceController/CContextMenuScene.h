@@ -26,37 +26,39 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 
-#include "Editor/Space/CSpace.h"
+#include "Scene/CScene.h"
+#include "GameObject/CZone.h"
 
-#include "CHierarchyController.h"
-#include "CHierachyContextMenu.h"
+#include "Editor/Space/CSpace.h"
+#include "Editor/Space/Hierarchy/CHierachyNode.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		class CContextMenuScene
 		{
 		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
+			GUI::CCanvas* m_canvas;
 
-			GUI::CTreeControl* m_tree;
+			CHierachyNode* m_contextNode;
+			GUI::CMenu* m_contextMenuScene;
+			GUI::CMenu* m_contextMenuGameObject;
+			GUI::CMenu* m_contextMenuContainer;
 
-			CHierarchyController* m_hierarchyController;
-			CHierachyContextMenu* m_hierarchyContextMenu;
+			CScene* m_scene;
+			CZone* m_zone;
+
 		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+			CContextMenuScene(GUI::CCanvas* canvas);
 
-			virtual ~CSpaceHierarchy();
+			~CContextMenuScene();
 
-			virtual void update();
+			bool onContextMenu(CHierachyNode* node, CScene* scene, CZone* zone);
 
-			void setHierarchyNode(CHierachyNode* node);
+		protected:
 
-			void add(CHierachyNode* node);
+			void OnContextMenuCommand(GUI::CBase* sender);
 		};
 	}
 }

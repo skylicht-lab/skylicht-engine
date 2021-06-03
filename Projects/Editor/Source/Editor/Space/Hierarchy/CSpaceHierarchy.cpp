@@ -66,9 +66,10 @@ namespace Skylicht
 			m_buttonCancelSearch->dock(GUI::EPosition::Left);
 
 			m_tree = new GUI::CTreeControl(treeContainer);
-			m_tree->dock(GUI::EPosition::Fill);
+			m_tree->dock(GUI::EPosition::Fill);			
 
 			m_hierarchyController = new CHierarchyController(window->getCanvas(), m_tree);
+			m_hierarchyContextMenu = new CHierachyContextMenu(m_tree);
 
 			CSceneController::getInstance()->setSpaceHierarchy(this);
 		}
@@ -76,6 +77,7 @@ namespace Skylicht
 		CSpaceHierarchy::~CSpaceHierarchy()
 		{
 			delete m_hierarchyController;
+			delete m_hierarchyContextMenu;
 
 			CSceneController::getInstance()->setSpaceHierarchy(NULL);
 		}

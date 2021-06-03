@@ -34,15 +34,23 @@ namespace Skylicht
 			m_spaceScene(NULL),
 			m_scene(NULL),
 			m_zone(NULL),
-			m_hierachyNode(NULL)
+			m_hierachyNode(NULL),
+			m_canvas(NULL)
 		{
-
 		}
 
 		CSceneController::~CSceneController()
 		{
+			delete m_contextMenuScene;
+
 			if (m_hierachyNode != NULL)
 				delete m_hierachyNode;
+		}
+
+		void CSceneController::initContextMenu(GUI::CCanvas* canvas)
+		{
+			m_canvas = canvas;
+			m_contextMenuScene = new CContextMenuScene(canvas);
 		}
 
 		void CSceneController::setScene(CScene* scene)
@@ -64,7 +72,7 @@ namespace Skylicht
 			m_hierachyNode = new CHierachyNode(NULL);
 			m_hierachyNode->setName(L"Scene");
 			m_hierachyNode->setIcon(GUI::ESystemIcon::Folder);
-			m_hierachyNode->setTagData(m_scene);
+			m_hierachyNode->setTagData(m_scene, CHierachyNode::Scene);
 
 			buildHierarchyNodes();
 
@@ -123,7 +131,7 @@ namespace Skylicht
 				node = parentNode->addChild();
 				node->setName(object->getName());
 				node->setIcon(GUI::ESystemIcon::Folder);
-				node->setTagData(object);
+				node->setTagData(object, CHierachyNode::GameObject);
 
 				ArrayGameObject* childs = container->getChilds();
 				for (CGameObject* childObject : *childs)
@@ -137,7 +145,7 @@ namespace Skylicht
 				node = parentNode->addChild();
 				node->setName(object->getName());
 				node->setIcon(GUI::ESystemIcon::Res3D);
-				node->setTagData(object);
+				node->setTagData(object, CHierachyNode::GameObject);
 			}
 
 			return node;
@@ -160,7 +168,7 @@ namespace Skylicht
 					CHierachyNode* node = zoneNode->addChild();
 					node->setName(newObject->getName());
 					node->setIcon(GUI::ESystemIcon::Res3D);
-					node->setTagData(newObject);
+					node->setTagData(newObject, CHierachyNode::GameObject);
 
 					if (m_spaceHierarchy != NULL)
 						m_spaceHierarchy->add(node);
@@ -178,12 +186,21 @@ namespace Skylicht
 					CHierachyNode* node = zoneNode->addChild();
 					node->setName(newObject->getName());
 					node->setIcon(GUI::ESystemIcon::Folder);
-					node->setTagData(newObject);
+					node->setTagData(newObject, CHierachyNode::GameObject);
 
 					if (m_spaceHierarchy != NULL)
 						m_spaceHierarchy->add(node);
 				}
 			}
+		}
+
+		void CSceneController::onContextMenu(CHierachyNode* node)
+		{
+			if (m_canvas == NULL)
+				return;
+
+			if (m_contextMenuScene->onContextMenu(node, m_scene, m_zone))
+				m_contextNode = node;
 		}
 	}
 }

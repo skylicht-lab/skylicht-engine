@@ -58,7 +58,7 @@ namespace Skylicht
 			m_assetWatcher = new CAssetWatcher();
 
 			// init controller
-			CSceneController::createGetInstance();
+			CSceneController::createGetInstance()->initContextMenu(m_canvas);
 			CPropertyController::createGetInstance();
 		}
 
@@ -246,6 +246,7 @@ namespace Skylicht
 			submenu->addSeparator();
 			submenu->addItem(L"Copy", GUI::ESystemIcon::Copy, L"Ctrl + C");
 			submenu->addItem(L"Paste", GUI::ESystemIcon::Paste, L"Ctrl + V");
+			submenu->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"Ctrl + D");
 			submenu->addItem(L"Cut", GUI::ESystemIcon::None, L"Ctrl + X");
 			submenu->addSeparator();
 			submenu->addItem(L"Delete");
@@ -274,8 +275,8 @@ namespace Skylicht
 			submenu = gameObject->getMenu();
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
 
-			submenu->addItem(L"Empty Object");
-			submenu->addItem(L"Container Object");
+			submenu->addItem(L"Empty Object", GUI::ESystemIcon::Res3D);
+			submenu->addItem(L"Container Object", GUI::ESystemIcon::Folder);
 			submenu->addSeparator();
 			temp = submenu;
 
