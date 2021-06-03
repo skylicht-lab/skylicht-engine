@@ -32,12 +32,21 @@ namespace Skylicht
 	{
 		class CHierachyNode
 		{
+		public:
+			enum EDataType
+			{
+				Unknown,
+				Scene,
+				GameObject,
+			};
 		protected:
 			std::wstring m_name;
 
 			std::string m_id;
 
 			void* m_tagData;
+
+			EDataType m_dataType;
 
 			GUI::ESystemIcon m_icon;
 
@@ -67,14 +76,20 @@ namespace Skylicht
 				return m_parent;
 			}
 
-			inline void setTagData(void* data)
+			inline void setTagData(void* data, EDataType type)
 			{
 				m_tagData = data;
+				m_dataType = type;
 			}
 
 			inline void* getTagData()
 			{
 				return m_tagData;
+			}
+
+			inline EDataType getTagDataType()
+			{
+				return m_dataType;
 			}
 
 			inline void setGUINode(GUI::CTreeNode* node)

@@ -27,36 +27,22 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 
 #include "Editor/Space/CSpace.h"
-
 #include "CHierarchyController.h"
-#include "CHierachyContextMenu.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		class CHierachyContextMenu
 		{
-		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
-
-			GUI::CTreeControl* m_tree;
-
-			CHierarchyController* m_hierarchyController;
-			CHierachyContextMenu* m_hierarchyContextMenu;
 		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+			CHierachyContextMenu(GUI::CTreeControl* tree);
 
-			virtual ~CSpaceHierarchy();
+			virtual ~CHierachyContextMenu();
 
-			virtual void update();
+		public:
 
-			void setHierarchyNode(CHierachyNode* node);
-
-			void add(CHierachyNode* node);
+			void OnTreeContextMenu(GUI::CBase* row);
 		};
 	}
 }

@@ -22,6 +22,8 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
+#pragma once
+
 #include "GUI/GUI.h"
 #include "CHierachyNode.h"
 
