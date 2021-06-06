@@ -134,7 +134,41 @@ namespace Skylicht
 
 		void CContextMenuScene::OnContextMenuCommand(GUI::CBase* sender)
 		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(sender);
+			if (menuItem == NULL)
+				return;
 
+			const std::wstring& command = menuItem->getLabel();
+
+			CSceneController* sceneController = CSceneController::getInstance();
+
+			CHierachyNode* contextNode = sceneController->getContextNode();
+			CGameObject* contextObject = NULL;
+
+			if (contextNode->getTagDataType() == CHierachyNode::GameObject)
+				contextObject = (CGameObject*)contextNode->getTagData();
+
+			if (contextObject == NULL)
+				return;
+
+			if (command == L"Empty Object")
+			{
+				CContainerObject* container = dynamic_cast<CContainerObject*>(contextObject);
+				if (container != NULL)
+					sceneController->createEmptyObject(container);
+			}
+			else if (command == L"Container Object")
+			{
+				CContainerObject* container = dynamic_cast<CContainerObject*>(contextObject);
+				if (container != NULL)
+					sceneController->createContainerObject(container);
+			}
+			else if (command == L"Delete")
+			{
+				contextObject->remove();
+				contextNode->remove();
+				sceneController->clearContextNode();
+			}
 		}
 	}
 }

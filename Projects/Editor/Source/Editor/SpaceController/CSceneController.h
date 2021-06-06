@@ -52,7 +52,7 @@ namespace Skylicht
 			CScene* m_scene;
 
 			CZone* m_zone;
-		
+
 			GUI::CCanvas* m_canvas;
 
 			CContextMenuScene* m_contextMenuScene;
@@ -92,6 +92,22 @@ namespace Skylicht
 			void onCommand(const std::wstring& objectType);
 
 			void onContextMenu(CHierachyNode* node);
+
+			inline CHierachyNode* getContextNode()
+			{
+				return m_contextNode;
+			}
+
+			inline void clearContextNode()
+			{
+				m_contextNode = NULL;
+			}
+
+			void createZone();
+
+			void createEmptyObject(CContainerObject* parent);
+
+			void createContainerObject(CContainerObject* parent);
 
 		protected:
 

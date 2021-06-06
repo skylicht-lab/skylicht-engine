@@ -44,6 +44,9 @@ namespace Skylicht
 		CHierachyNode::~CHierachyNode()
 		{
 			removeAllChild();
+
+			if (m_guiNode != NULL)
+				m_guiNode->remove();
 		}
 
 		void CHierachyNode::setName(const wchar_t* name)
@@ -67,6 +70,11 @@ namespace Skylicht
 			CHierachyNode* child = new CHierachyNode(this);
 			m_childs.push_back(child);
 			return child;
+		}
+
+		void CHierachyNode::remove()
+		{
+			getParent()->removeChild(this);
 		}
 
 		bool CHierachyNode::removeChild(CHierachyNode* child)
@@ -169,20 +177,14 @@ namespace Skylicht
 
 		CHierachyNode* CHierachyNode::getNodeByTag(void* tag)
 		{
+			if (getTagData() == tag)
+				return this;
+
 			for (CHierachyNode* i : m_childs)
 			{
-				if (i->getTagData() == tag)
-					return i;
-				else
-				{
-					std::vector<CHierachyNode*>& childs = i->getChilds();
-					for (CHierachyNode* child : childs)
-					{
-						CHierachyNode* result = getNodeByTag(child);
-						if (result != NULL)
-							return result;
-					}
-				}
+				CHierachyNode* result = i->getNodeByTag(tag);
+				if (result != NULL)
+					return result;
 			}
 			return NULL;
 		}

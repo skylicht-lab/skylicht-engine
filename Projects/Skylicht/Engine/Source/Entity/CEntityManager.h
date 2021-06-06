@@ -45,9 +45,9 @@ namespace Skylicht
 		std::vector<IRenderSystem*> m_sortRender;
 		bool m_systemChanged;
 
-		CCamera *m_camera;
+		CCamera* m_camera;
 
-		IRenderPipeline *m_renderPipeline;
+		IRenderPipeline* m_renderPipeline;
 
 	public:
 		CEntityManager();
@@ -64,7 +64,7 @@ namespace Skylicht
 
 	public:
 
-		inline void setCamera(CCamera *camera)
+		inline void setCamera(CCamera* camera)
 		{
 			m_camera = camera;
 		}
@@ -74,7 +74,7 @@ namespace Skylicht
 			return m_camera;
 		}
 
-		inline void setRenderPipeline(IRenderPipeline *p)
+		inline void setRenderPipeline(IRenderPipeline* p)
 		{
 			m_renderPipeline = p;
 		}
@@ -104,7 +104,7 @@ namespace Skylicht
 
 		void removeEntity(int index);
 
-		void removeEntity(CEntity *entity);
+		void removeEntity(CEntity* entity);
 
 		template<class T>
 		T* addSystem();
@@ -115,9 +115,14 @@ namespace Skylicht
 		template<class T>
 		T* getSystem();
 
-		bool removeSystem(IEntitySystem *system);
+		bool removeSystem(IEntitySystem* system);
 
-		void addTransformDataToEntity(CEntity *entity, CTransform *transform);
+		void addTransformDataToEntity(CEntity* entity, CTransform* transform);
+
+	protected:
+
+		void initDefaultData(CEntity* entity);
+
 	};
 
 	template<class T>
@@ -125,7 +130,7 @@ namespace Skylicht
 	{
 		T* newSystem = new T();
 
-		IEntitySystem *system = dynamic_cast<IEntitySystem*>(newSystem);
+		IEntitySystem* system = dynamic_cast<IEntitySystem*>(newSystem);
 		if (system == NULL)
 		{
 			char exceptionInfo[512];
@@ -154,7 +159,7 @@ namespace Skylicht
 
 		T* newSystem = new T();
 
-		IRenderSystem *render = dynamic_cast<IRenderSystem*>(newSystem);
+		IRenderSystem* render = dynamic_cast<IRenderSystem*>(newSystem);
 		if (render == NULL)
 		{
 			char exceptionInfo[512];
@@ -175,9 +180,9 @@ namespace Skylicht
 	template<class T>
 	T* CEntityManager::getSystem()
 	{
-		for (IEntitySystem* &s : m_systems)
+		for (IEntitySystem*& s : m_systems)
 		{
-			T *system = dynamic_cast<T*>(s);
+			T* system = dynamic_cast<T*>(s);
 			if (system != NULL)
 			{
 				return system;

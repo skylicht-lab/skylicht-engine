@@ -39,7 +39,8 @@ namespace Skylicht
 
 		CHierarchyController::~CHierarchyController()
 		{
-
+			if (m_node != NULL)
+				m_node->nullGUI();
 		}
 
 		void CHierarchyController::setHierarchyNode(CHierachyNode* node)
@@ -93,6 +94,9 @@ namespace Skylicht
 				buildHierarchyNode(guiNode, child);
 			}
 
+			// expand
+			parentGuiNode->expand(false);
+
 			return guiNode;
 		}
 
@@ -101,7 +105,12 @@ namespace Skylicht
 			CHierachyNode* parent = node->getParent();
 			GUI::CTreeNode* parentGuiNode = parent->getGUINode();
 
-			return buildHierarchyNode(parentGuiNode, node);
+			GUI::CTreeNode* ret = buildHierarchyNode(parentGuiNode, node);
+			m_tree->deselectAll();
+			m_tree->getScrollControl()->scrollToItem(ret);
+
+			ret->setSelected(true);
+			return ret;
 		}
 	}
 }
