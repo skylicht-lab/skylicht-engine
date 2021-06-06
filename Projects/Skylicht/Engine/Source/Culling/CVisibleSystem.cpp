@@ -44,10 +44,10 @@ namespace Skylicht
 	{
 	}
 
-	void CVisibleSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CVisibleData *visible = entity->getData<CVisibleData>();
-		CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+		CVisibleData* visible = entity->getData<CVisibleData>();
+		CWorldTransformData* transform = entity->getData<CWorldTransformData>();
 
 		if (visible != NULL)
 		{
@@ -57,30 +57,29 @@ namespace Skylicht
 			if (visible->Visible == true && transform->ParentIndex >= 0)
 			{
 				// link parent visible
-				CEntity *parentEntity = entityManager->getEntity(transform->ParentIndex);
-				CVisibleData *parentVisible = parentEntity->getData<CVisibleData>();
-
+				CEntity* parentEntity = entityManager->getEntity(transform->ParentIndex);
+				CVisibleData* parentVisible = parentEntity->getData<CVisibleData>();
 				visible->Visible = parentVisible->Visible;
 			}
 		}
 	}
 
-	void CVisibleSystem::init(CEntityManager *entityManager)
+	void CVisibleSystem::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CVisibleSystem::update(CEntityManager *entityManager)
+	void CVisibleSystem::update(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CVisibleSystem::render(CEntityManager *entityManager)
+	void CVisibleSystem::render(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CVisibleSystem::postRender(CEntityManager *entityManager)
+	void CVisibleSystem::postRender(CEntityManager* entityManager)
 	{
 
 	}

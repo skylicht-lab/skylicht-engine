@@ -85,7 +85,7 @@ namespace Skylicht
 
 	void CEntityManager::releaseAllSystems()
 	{
-		for (IEntitySystem* &s : m_systems)
+		for (IEntitySystem*& s : m_systems)
 		{
 			delete s;
 		}
@@ -100,15 +100,16 @@ namespace Skylicht
 		{
 			int last = (int)m_unused.size() - 1;
 
-			CEntity *entity = m_unused[last];
+			CEntity* entity = m_unused[last];
+			initDefaultData(entity);
 			entity->setAlive(true);
 
 			m_unused.erase(last);
 			return entity;
 		}
 
-		CEntity *entity = new CEntity(this);
-		entity->addData<CVisibleData>();
+		CEntity* entity = new CEntity(this);
+		initDefaultData(entity);
 		m_entities.push_back(entity);
 		return entity;
 	}
@@ -120,27 +121,32 @@ namespace Skylicht
 
 		for (int i = 0; i < num; i++)
 		{
-			CEntity *entity = new CEntity(this);
-			entity->addData<CVisibleData>();
-			m_entities.push_back(entity);
+			CEntity* entity = new CEntity(this);
+			initDefaultData(entity);
 
+			m_entities.push_back(entity);
 			entities.push_back(entity);
 		}
 
 		return entities.pointer();
 	}
 
-	void CEntityManager::addTransformDataToEntity(CEntity *entity, CTransform *transform)
+	void CEntityManager::initDefaultData(CEntity* entity)
 	{
-		CWorldTransformData *transformData = entity->addData<CWorldTransformData>();
-		CTransformComponentData *componentData = entity->addData<CTransformComponentData>();
+		entity->addData<CVisibleData>();
+	}
+
+	void CEntityManager::addTransformDataToEntity(CEntity* entity, CTransform* transform)
+	{
+		CWorldTransformData* transformData = entity->addData<CWorldTransformData>();
+		CTransformComponentData* componentData = entity->addData<CTransformComponentData>();
 
 		// add component to transform
 		componentData->TransformComponent = transform;
 		componentData->TransformComponent->setChanged(true);
 
 		// add parent relative
-		CEntity *parent = componentData->TransformComponent->getParentEntity();
+		CEntity* parent = componentData->TransformComponent->getParentEntity();
 		if (parent != NULL)
 		{
 			transformData->Name = transform->getName();
@@ -157,7 +163,7 @@ namespace Skylicht
 		m_unused.push_back(entity);
 	}
 
-	void CEntityManager::removeEntity(CEntity *entity)
+	void CEntityManager::removeEntity(CEntity* entity)
 	{
 		entity->setAlive(false);
 		entity->removeAllData();
@@ -166,7 +172,7 @@ namespace Skylicht
 
 	void CEntityManager::update()
 	{
-		for (IEntitySystem* &s : m_systems)
+		for (IEntitySystem*& s : m_systems)
 		{
 			s->beginQuery();
 		}
@@ -174,7 +180,7 @@ namespace Skylicht
 		CEntity** entity = m_entities.pointer();
 		int numEntity = m_entities.size();
 
-		for (IEntitySystem* &s : m_systems)
+		for (IEntitySystem*& s : m_systems)
 		{
 			for (int i = 0; i < numEntity; i++)
 			{
@@ -195,7 +201,7 @@ namespace Skylicht
 			m_sortRender = m_renders;
 
 			struct {
-				bool operator()(IRenderSystem *a, IRenderSystem *b) const
+				bool operator()(IRenderSystem* a, IRenderSystem* b) const
 				{
 					int priorityA = (int)a->getRenderPass();
 					int priorityB = (int)b->getRenderPass();
@@ -212,7 +218,7 @@ namespace Skylicht
 			m_systemChanged = false;
 		}
 
-		for (IRenderSystem* &s : m_sortRender)
+		for (IRenderSystem*& s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
@@ -222,7 +228,7 @@ namespace Skylicht
 		}
 
 		// transparent pass
-		for (IRenderSystem* &s : m_sortRender)
+		for (IRenderSystem*& s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
@@ -232,7 +238,7 @@ namespace Skylicht
 		}
 
 		// post render
-		for (IRenderSystem* &s : m_sortRender)
+		for (IRenderSystem*& s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
@@ -244,7 +250,7 @@ namespace Skylicht
 
 	void CEntityManager::cullingAndRender()
 	{
-		for (IRenderSystem* &s : m_renders)
+		for (IRenderSystem*& s : m_renders)
 		{
 			s->beginQuery();
 		}
@@ -252,7 +258,7 @@ namespace Skylicht
 		CEntity** entity = m_entities.pointer();
 		int numEntity = m_entities.size();
 
-		for (IRenderSystem* &s : m_renders)
+		for (IRenderSystem*& s : m_renders)
 		{
 			for (int i = 0; i < numEntity; i++)
 			{
@@ -265,7 +271,7 @@ namespace Skylicht
 			s->update(this);
 		}
 
-		for (IRenderSystem* &s : m_sortRender)
+		for (IRenderSystem*& s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
@@ -274,7 +280,7 @@ namespace Skylicht
 			}
 		}
 
-		for (IRenderSystem* &s : m_sortRender)
+		for (IRenderSystem*& s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
@@ -283,7 +289,7 @@ namespace Skylicht
 			}
 		}
 
-		for (IRenderSystem* &s : m_sortRender)
+		for (IRenderSystem*& s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
@@ -295,7 +301,7 @@ namespace Skylicht
 
 	void CEntityManager::renderEmission()
 	{
-		for (IRenderSystem* &s : m_sortRender)
+		for (IRenderSystem*& s : m_sortRender)
 		{
 			IRenderPipeline::ERenderPipelineType t = s->getPipelineType();
 			if (t == IRenderPipeline::Mix || t == m_renderPipeline->getType())
@@ -305,7 +311,7 @@ namespace Skylicht
 		}
 	}
 
-	bool CEntityManager::removeSystem(IEntitySystem *system)
+	bool CEntityManager::removeSystem(IEntitySystem* system)
 	{
 		bool release = false;
 

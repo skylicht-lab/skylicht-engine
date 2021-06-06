@@ -39,6 +39,10 @@ namespace Skylicht
 	CContainerObject::~CContainerObject()
 	{
 		removeAllObject(true);
+
+		char logText[512];
+		sprintf(logText, "Release obj %s", getNameA());
+		os::Printer::log(logText);
 	}
 
 	void CContainerObject::removeAllObject(bool force)
@@ -56,7 +60,7 @@ namespace Skylicht
 			++i;
 
 			char logText[512];
-			sprintf(logText, "Release obj %d - %s", i, pObj->getNameA());
+			sprintf(logText, "Release obj pos: %d - %s", i, pObj->getNameA());
 			os::Printer::log(logText);
 
 			delete pObj;

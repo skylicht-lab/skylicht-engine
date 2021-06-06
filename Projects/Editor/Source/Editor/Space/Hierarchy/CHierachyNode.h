@@ -142,6 +142,8 @@ namespace Skylicht
 
 			CHierachyNode* addChild();
 
+			void remove();
+
 			bool removeChild(CHierachyNode* child);
 
 			void removeAllChild();
