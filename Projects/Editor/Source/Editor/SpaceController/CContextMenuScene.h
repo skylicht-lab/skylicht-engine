@@ -45,6 +45,8 @@ namespace Skylicht
 			GUI::CMenu* m_contextMenuScene;
 			GUI::CMenu* m_contextMenuGameObject;
 			GUI::CMenu* m_contextMenuContainer;
+			GUI::CMenuItem* m_setCurrentZoneItem;
+			GUI::CMenuSeparator* m_spaceZone;
 
 			CScene* m_scene;
 			CZone* m_zone;

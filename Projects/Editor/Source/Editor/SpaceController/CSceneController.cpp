@@ -133,6 +133,10 @@ namespace Skylicht
 				node->setIcon(GUI::ESystemIcon::Folder);
 				node->setTagData(object, CHierachyNode::GameObject);
 
+				// enable color on current zone
+				if (m_zone == object)
+					node->EnableColor(true);
+
 				ArrayGameObject* childs = container->getChilds();
 				for (CGameObject* childObject : *childs)
 				{
@@ -156,6 +160,18 @@ namespace Skylicht
 			if (m_scene == NULL || m_zone == NULL)
 				return;
 
+			if (objectType == L"Zone")
+			{
+				CZone* zone = m_scene->createZone();
+
+				CHierachyNode* node = m_hierachyNode->addChild();
+				node->setName(zone->getName());
+				node->setIcon(GUI::ESystemIcon::Collection);
+				node->setTagData(zone, CHierachyNode::GameObject);
+
+				if (m_spaceHierarchy != NULL)
+					m_spaceHierarchy->add(node);
+			}
 			if (objectType == L"Empty Object")
 			{
 				CGameObject* newObject = m_zone->createEmptyObject();

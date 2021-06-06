@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CMenuBar.h"
 #include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Controls/CCanvas.h"
 
 namespace Skylicht
 {
@@ -88,7 +89,10 @@ namespace Skylicht
 					if (m_isOpenSubMenu)
 						closeMenu();
 					else
+					{
+						getCanvas()->closeMenu();
 						openMenu(menuItem);
+					}
 				}
 			}
 		}
