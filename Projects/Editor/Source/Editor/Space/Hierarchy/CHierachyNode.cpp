@@ -34,7 +34,9 @@ namespace Skylicht
 			m_tagData(NULL),
 			m_guiNode(NULL),
 			m_parent(parent),
-			m_dataType(Unknown)
+			m_dataType(Unknown),
+			m_color(false),
+			m_bgColor(255, 45, 140, 95)
 		{
 
 		}
@@ -141,6 +143,27 @@ namespace Skylicht
 			for (CHierachyNode* i : m_childs)
 			{
 				i->nullGUI();
+			}
+		}
+
+		void CHierachyNode::refreshGUI()
+		{
+			if (m_guiNode != NULL)
+			{
+				// update text & icon
+				m_guiNode->setText(m_name);
+				m_guiNode->setIcon(m_icon);
+
+				// update background color
+				if (m_color)
+				{
+					m_guiNode->getRowItem()->setColor(m_bgColor);
+					m_guiNode->getRowItem()->enableDrawBackground(true);
+				}
+				else
+				{
+					m_guiNode->getRowItem()->enableDrawBackground(false);
+				}
 			}
 		}
 

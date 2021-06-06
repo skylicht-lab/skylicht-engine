@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CContextMenuScene.h"
+#include "CSceneController.h"
 #include "GUI/Input/CInput.h"
 
 namespace Skylicht
@@ -39,7 +40,7 @@ namespace Skylicht
 			m_contextMenuScene = new GUI::CMenu(canvas);
 			m_contextMenuScene->setHidden(true);
 			m_contextMenuScene->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
-			m_contextMenuScene->addItem(L"Add Scene", GUI::ESystemIcon::Folder);
+			m_contextMenuScene->addItem(L"Add Zone", GUI::ESystemIcon::Collection);
 
 			// game object
 			m_contextMenuGameObject = new GUI::CMenu(canvas);
@@ -57,6 +58,10 @@ namespace Skylicht
 			m_contextMenuContainer = new GUI::CMenu(canvas);
 			m_contextMenuContainer->setHidden(true);
 			m_contextMenuContainer->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
+			m_setCurrentZoneItem = m_contextMenuContainer->addItem(L"Set as Current Zone");
+			m_spaceZone = m_contextMenuContainer->addSeparator();
+			m_setCurrentZoneItem->setHidden(true);
+			m_spaceZone->setHidden(true);
 
 			GUI::CMenuItem* add = m_contextMenuContainer->addItem(L"Add");
 			GUI::CMenu* submenu = add->getMenu();
@@ -98,7 +103,26 @@ namespace Skylicht
 
 					CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
 					if (container != NULL)
+					{
+						CZone* zone = dynamic_cast<CZone*>(gameObject);
+						if (zone != NULL)
+						{
+							m_setCurrentZoneItem->setHidden(false);
+							m_spaceZone->setHidden(false);
+
+							if (CSceneController::getInstance()->getZone() == zone)
+								m_setCurrentZoneItem->setIcon(GUI::ESystemIcon::Check);
+							else
+								m_setCurrentZoneItem->setIcon(GUI::ESystemIcon::None);
+						}
+						else
+						{
+							m_setCurrentZoneItem->setHidden(true);
+							m_spaceZone->setHidden(true);
+						}
+
 						m_contextMenuContainer->open(mousePos);
+					}
 					else
 						m_contextMenuGameObject->open(mousePos);
 
