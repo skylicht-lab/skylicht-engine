@@ -82,6 +82,11 @@ namespace Skylicht
 
 			void setZone(CZone* zone);
 
+			CZone* getZone()
+			{
+				return m_zone;
+			}
+
 			void buildHierarchyNodes();
 
 			void onCommand(const std::wstring& objectType);

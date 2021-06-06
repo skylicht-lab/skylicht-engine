@@ -274,9 +274,9 @@ namespace Skylicht
 			GUI::CMenuItem* gameObject = m_menuBar->addItem(L"GameObject");
 			submenu = gameObject->getMenu();
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
-
-			submenu->addItem(L"Empty Object", GUI::ESystemIcon::Res3D);
+			submenu->addItem(L"Zone", GUI::ESystemIcon::Collection);
 			submenu->addItem(L"Container Object", GUI::ESystemIcon::Folder);
+			submenu->addItem(L"Empty Object", GUI::ESystemIcon::Res3D);
 			submenu->addSeparator();
 			temp = submenu;
 

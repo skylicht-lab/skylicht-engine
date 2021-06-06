@@ -38,6 +38,7 @@ namespace Skylicht
 				m_root(root)
 			{
 				setIsToggle(true);
+				enableDrawBackground(false);
 
 				setHoverColor(CThemeConfig::ListItemBackgroundHoverColor);
 				setPressColor(CThemeConfig::ListItemBackgroundFocusColor);
@@ -57,6 +58,11 @@ namespace Skylicht
 					{
 						renderBackground();
 					}
+				}
+
+				if (m_drawBackground)
+				{
+					CButton::renderUnder();
 				}
 			}
 

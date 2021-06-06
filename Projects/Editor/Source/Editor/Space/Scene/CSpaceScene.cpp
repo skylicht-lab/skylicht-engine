@@ -140,6 +140,7 @@ namespace Skylicht
 
 			// viewpoint zone
 			m_viewpointZone = m_scene->createZone();
+			m_viewpointZone->setName(L"ViewpointZone");
 			m_viewpointZone->setEditorObject(true);
 
 			// camera

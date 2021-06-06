@@ -60,7 +60,9 @@ namespace Skylicht
 		CGameObject* ret = CContainerObject::searchObject(objectName);
 		if (ret == NULL)
 		{
-			for (CZone* zone : *m_scene->getAllZone())
+			ArrayZone& zones = *m_scene->getAllZone();
+
+			for (CZone* zone : zones)
 			{
 				if (std::wstring(zone->getName()) == objectName)
 				{

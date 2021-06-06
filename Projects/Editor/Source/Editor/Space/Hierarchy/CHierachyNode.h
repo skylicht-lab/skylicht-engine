@@ -48,6 +48,10 @@ namespace Skylicht
 
 			EDataType m_dataType;
 
+			bool m_color;
+
+			GUI::SGUIColor m_bgColor;
+
 			GUI::ESystemIcon m_icon;
 
 			CHierachyNode* m_parent;
@@ -116,6 +120,26 @@ namespace Skylicht
 				return m_icon;
 			}
 
+			inline bool HaveColor()
+			{
+				return m_color;
+			}
+
+			inline void EnableColor(bool b)
+			{
+				m_color = b;
+			}
+
+			inline GUI::SGUIColor& getBGColor()
+			{
+				return m_bgColor;
+			}
+
+			inline void setBGColor(const GUI::SGUIColor& c)
+			{
+				m_bgColor = c;
+			}
+
 			CHierachyNode* addChild();
 
 			bool removeChild(CHierachyNode* child);
@@ -125,6 +149,8 @@ namespace Skylicht
 			void bringNextNode(CHierachyNode* position, bool behind);
 
 			void nullGUI();
+
+			void refreshGUI();
 
 			inline std::vector<CHierachyNode*>& getChilds()
 			{
