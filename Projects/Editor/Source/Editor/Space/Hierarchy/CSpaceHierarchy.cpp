@@ -66,7 +66,7 @@ namespace Skylicht
 			m_buttonCancelSearch->dock(GUI::EPosition::Left);
 
 			m_tree = new GUI::CTreeControl(treeContainer);
-			m_tree->dock(GUI::EPosition::Fill);			
+			m_tree->dock(GUI::EPosition::Fill);
 
 			m_hierarchyController = new CHierarchyController(window->getCanvas(), m_tree);
 			m_hierarchyContextMenu = new CHierachyContextMenu(m_tree);
@@ -95,6 +95,11 @@ namespace Skylicht
 		void CSpaceHierarchy::add(CHierachyNode* node)
 		{
 			m_hierarchyController->add(node);
+		}
+
+		void CSpaceHierarchy::rename(CHierachyNode* node)
+		{
+			m_hierarchyController->rename(node->getGUINode());
 		}
 	}
 }

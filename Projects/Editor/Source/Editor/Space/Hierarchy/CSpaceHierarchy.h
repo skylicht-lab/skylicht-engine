@@ -57,6 +57,8 @@ namespace Skylicht
 			void setHierarchyNode(CHierachyNode* node);
 
 			void add(CHierachyNode* node);
+
+			void rename(CHierachyNode* node);
 		};
 	}
 }

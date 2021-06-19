@@ -39,6 +39,9 @@ namespace Skylicht
 				Scene,
 				GameObject,
 			};
+
+			std::function<void(CHierachyNode*)> OnUpdate;
+
 		protected:
 			std::wstring m_name;
 
