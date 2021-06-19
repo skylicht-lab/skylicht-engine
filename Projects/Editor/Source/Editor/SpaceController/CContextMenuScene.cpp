@@ -34,7 +34,9 @@ namespace Skylicht
 		CContextMenuScene::CContextMenuScene(GUI::CCanvas* canvas) :
 			m_canvas(canvas),
 			m_scene(NULL),
-			m_zone(NULL)
+			m_zone(NULL),
+			m_spaceHierarchy(NULL),
+			m_contextNode(NULL)
 		{
 			// scene
 			m_contextMenuScene = new GUI::CMenu(canvas);
@@ -47,6 +49,8 @@ namespace Skylicht
 			m_contextMenuGameObject->setHidden(true);
 			m_contextMenuGameObject->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
 
+			m_contextMenuGameObject->addItem(L"Rename", L"F2");
+			m_contextMenuGameObject->addSeparator();
 			m_contextMenuGameObject->addItem(L"Copy", GUI::ESystemIcon::Copy, L"Ctrl + C");
 			m_contextMenuGameObject->addItem(L"Paste", GUI::ESystemIcon::Paste, L"Ctrl + V");
 			m_contextMenuGameObject->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"Ctrl + D");
@@ -70,6 +74,8 @@ namespace Skylicht
 			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
 
 			m_contextMenuContainer->addSeparator();
+			m_contextMenuContainer->addItem(L"Rename", L"F2");
+			m_contextMenuContainer->addSeparator();
 			m_contextMenuContainer->addItem(L"Copy", GUI::ESystemIcon::Copy);
 			m_contextMenuContainer->addItem(L"Paste", GUI::ESystemIcon::Paste);
 			m_contextMenuContainer->addSeparator();
@@ -81,12 +87,13 @@ namespace Skylicht
 
 		}
 
-		bool CContextMenuScene::onContextMenu(CHierachyNode* node, CScene* scene, CZone* zone)
+		bool CContextMenuScene::onContextMenu(CSpaceHierarchy* spaceHierachy, CHierachyNode* node, CScene* scene, CZone* zone)
 		{
 			GUI::CInput* input = GUI::CInput::getInput();
 			GUI::SPoint mousePos = input->getMousePosition();
 
 			m_contextNode = node;
+			m_spaceHierarchy = spaceHierachy;
 
 			if (node->getTagDataType() == CHierachyNode::Scene)
 			{
@@ -168,6 +175,10 @@ namespace Skylicht
 				contextObject->remove();
 				contextNode->remove();
 				sceneController->clearContextNode();
+			}
+			else if (command == L"Rename")
+			{
+				m_spaceHierarchy->rename(contextNode);
 			}
 		}
 	}

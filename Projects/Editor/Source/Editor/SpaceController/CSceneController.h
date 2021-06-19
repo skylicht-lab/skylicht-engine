@@ -93,6 +93,8 @@ namespace Skylicht
 
 			void onContextMenu(CHierachyNode* node);
 
+			void onUpdate(CHierachyNode* node);
+
 			inline CHierachyNode* getContextNode()
 			{
 				return m_contextNode;

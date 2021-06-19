@@ -39,6 +39,8 @@ namespace Skylicht
 
 			CHierachyNode* m_node;
 
+			GUI::CTreeNode* m_renameNode;
+
 		public:
 			CHierarchyController(GUI::CCanvas* canvas, GUI::CTreeControl* tree);
 
@@ -48,7 +50,15 @@ namespace Skylicht
 
 			GUI::CTreeNode* add(CHierachyNode* node);
 
+			void rename(GUI::CTreeNode* node);
+
 		protected:
+
+			void OnKeyPress(GUI::CBase* control, int key, bool press);
+
+			void OnRename(GUI::CBase* control);
+
+			void OnCancelRename(GUI::CBase* control);
 
 			GUI::CTreeNode* buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);
 		};
