@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CHierarchyController.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -34,7 +35,13 @@ namespace Skylicht
 			m_tree(tree),
 			m_node(NULL)
 		{
-
+			m_tree->OnKeyPress = std::bind(
+				&CHierarchyController::OnKeyPress,
+				this,
+				std::placeholders::_1,
+				std::placeholders::_2,
+				std::placeholders::_3
+			);
 		}
 
 		CHierarchyController::~CHierarchyController()
@@ -111,6 +118,51 @@ namespace Skylicht
 
 			ret->setSelected(true);
 			return ret;
+		}
+
+		void CHierarchyController::OnKeyPress(GUI::CBase* control, int key, bool press)
+		{
+			GUI::CTreeControl* tree = dynamic_cast<GUI::CTreeControl*>(control);
+			if (tree == NULL)
+				return;
+
+			if (key == GUI::KEY_F2)
+			{
+				rename(tree->getChildSelected());
+			}
+		}
+
+		void CHierarchyController::rename(GUI::CTreeNode* node)
+		{
+			if (node != NULL)
+			{
+				m_renameNode = node;
+
+				node->getTextEditHelper()->beginEdit(
+					BIND_LISTENER(&CHierarchyController::OnRename, this),
+					BIND_LISTENER(&CHierarchyController::OnCancelRename, this)
+				);
+			}
+		}
+
+		void CHierarchyController::OnRename(GUI::CBase* control)
+		{
+			GUI::CTextBox* textbox = dynamic_cast<GUI::CTextBox*>(control);
+
+			std::wstring newNameW = textbox->getString();
+
+			CHierachyNode* node = (CHierachyNode*)m_renameNode->getTagData();
+			node->setName(newNameW.c_str());
+
+			if (node->OnUpdate != nullptr)
+				node->OnUpdate(node);
+
+			m_tree->focus();
+		}
+
+		void CHierarchyController::OnCancelRename(GUI::CBase* control)
+		{
+			m_tree->focus();
 		}
 	}
 }

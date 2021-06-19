@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/Space/CSpace.h"
 #include "Editor/Space/Hierarchy/CHierachyNode.h"
+#include "Editor/Space/Hierarchy/CSpaceHierarchy.h"
 
 namespace Skylicht
 {
@@ -41,7 +42,9 @@ namespace Skylicht
 		protected:
 			GUI::CCanvas* m_canvas;
 
+			CSpaceHierarchy* m_spaceHierarchy;
 			CHierachyNode* m_contextNode;
+
 			GUI::CMenu* m_contextMenuScene;
 			GUI::CMenu* m_contextMenuGameObject;
 			GUI::CMenu* m_contextMenuContainer;
@@ -56,7 +59,7 @@ namespace Skylicht
 
 			~CContextMenuScene();
 
-			bool onContextMenu(CHierachyNode* node, CScene* scene, CZone* zone);
+			bool onContextMenu(CSpaceHierarchy *spaceHierachy, CHierachyNode* node, CScene* scene, CZone* zone);
 
 		protected:
 

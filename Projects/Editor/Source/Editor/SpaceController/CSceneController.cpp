@@ -152,6 +152,9 @@ namespace Skylicht
 				node->setTagData(object, CHierachyNode::GameObject);
 			}
 
+			if (node != NULL)
+				node->OnUpdate = std::bind(&CSceneController::onUpdate, this, std::placeholders::_1);
+
 			return node;
 		}
 
@@ -173,8 +176,18 @@ namespace Skylicht
 			if (m_canvas == NULL)
 				return;
 
-			if (m_contextMenuScene->onContextMenu(node, m_scene, m_zone))
+			if (m_contextMenuScene->onContextMenu(m_spaceHierarchy, node, m_scene, m_zone))
 				m_contextNode = node;
+		}
+
+		void CSceneController::onUpdate(CHierachyNode* node)
+		{
+			CHierachyNode::EDataType dataType = node->getTagDataType();
+			if (dataType == CHierachyNode::GameObject)
+			{
+				CGameObject* obj = (CGameObject*)node->getTagData();
+				obj->setName(node->getName().c_str());
+			}
 		}
 
 		void CSceneController::createZone()
@@ -185,6 +198,7 @@ namespace Skylicht
 			node->setName(zone->getName());
 			node->setIcon(GUI::ESystemIcon::Collection);
 			node->setTagData(zone, CHierachyNode::GameObject);
+			node->OnUpdate = std::bind(&CSceneController::onUpdate, this, std::placeholders::_1);
 
 			if (m_spaceHierarchy != NULL)
 				m_spaceHierarchy->add(node);
@@ -206,6 +220,7 @@ namespace Skylicht
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Res3D);
 				node->setTagData(newObject, CHierachyNode::GameObject);
+				node->OnUpdate = std::bind(&CSceneController::onUpdate, this, std::placeholders::_1);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->add(node);
@@ -227,6 +242,7 @@ namespace Skylicht
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Folder);
 				node->setTagData(newObject, CHierachyNode::GameObject);
+				node->OnUpdate = std::bind(&CSceneController::onUpdate, this, std::placeholders::_1);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->add(node);
