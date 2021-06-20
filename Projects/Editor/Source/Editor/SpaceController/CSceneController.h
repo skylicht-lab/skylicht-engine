@@ -93,7 +93,9 @@ namespace Skylicht
 
 			void onContextMenu(CHierachyNode* node);
 
-			void onUpdate(CHierachyNode* node);
+			void onUpdateNode(CHierachyNode* node);
+
+			void onSelectNode(CHierachyNode* node, bool selected);			
 
 			inline CHierachyNode* getContextNode()
 			{
@@ -115,6 +117,7 @@ namespace Skylicht
 
 			CHierachyNode* buildHierarchyNodes(CGameObject* object, CHierachyNode* parentNode);
 
+			void setNodeEvent(CHierachyNode* node);
 		};
 	}
 }

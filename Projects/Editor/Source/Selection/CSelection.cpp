@@ -44,13 +44,13 @@ namespace Skylicht
 			m_selected.clear();
 		}
 
-		std::vector<CSelectObject*> CSelection::getSelectedByType(CSelectObject::ESelectType type)
+		std::vector<CSelectObject> CSelection::getSelectedByType(CSelectObject::ESelectType type)
 		{
-			std::vector<CSelectObject*> result;
+			std::vector<CSelectObject> result;
 
-			for (CSelectObject* selected : m_selected)
+			for (CSelectObject selected : m_selected)
 			{
-				if (selected->getType() == type)
+				if (selected.getType() == type)
 				{
 					result.push_back(selected);
 				}
@@ -59,9 +59,9 @@ namespace Skylicht
 			return result;
 		}
 
-		void CSelection::addSelect(CSelectObject* obj)
+		void CSelection::addSelect(const CSelectObject& obj)
 		{
-			for (CSelectObject* selected : m_selected)
+			for (CSelectObject selected : m_selected)
 			{
 				if (selected == obj)
 					return;
@@ -69,17 +69,17 @@ namespace Skylicht
 			m_selected.push_back(obj);
 		}
 
-		void CSelection::addSelect(const std::vector<CSelectObject*>& obj)
+		void CSelection::addSelect(const std::vector<CSelectObject>& obj)
 		{
-			for (CSelectObject* s : obj)
+			for (CSelectObject s : obj)
 			{
 				addSelect(s);
 			}
 		}
 
-		void CSelection::unSelect(CSelectObject* obj)
+		void CSelection::unSelect(const CSelectObject& obj)
 		{
-			std::vector<CSelectObject*>::iterator i = m_selected.begin(), end = m_selected.end();
+			std::vector<CSelectObject>::iterator i = m_selected.begin(), end = m_selected.end();
 			while (i != end)
 			{
 				if ((*i) == obj)
@@ -91,9 +91,9 @@ namespace Skylicht
 			}
 		}
 
-		void CSelection::unSelect(const std::vector<CSelectObject*>& obj)
+		void CSelection::unSelect(const std::vector<CSelectObject>& obj)
 		{
-			for (CSelectObject* s : obj)
+			for (CSelectObject s : obj)
 			{
 				unSelect(s);
 			}

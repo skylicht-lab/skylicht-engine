@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSceneController.h"
+#include "Selection/CSelection.h"
 
 namespace Skylicht
 {
@@ -70,9 +71,11 @@ namespace Skylicht
 			setZone(m_scene->getZone(0));
 
 			m_hierachyNode = new CHierachyNode(NULL);
-			m_hierachyNode->setName(L"Scene");
+			m_hierachyNode->setName(m_scene->getName());
 			m_hierachyNode->setIcon(GUI::ESystemIcon::Folder);
 			m_hierachyNode->setTagData(m_scene, CHierachyNode::Scene);
+
+			setNodeEvent(m_hierachyNode);
 
 			buildHierarchyNodes();
 
@@ -153,7 +156,7 @@ namespace Skylicht
 			}
 
 			if (node != NULL)
-				node->OnUpdate = std::bind(&CSceneController::onUpdate, this, std::placeholders::_1);
+				setNodeEvent(node);
 
 			return node;
 		}
@@ -180,16 +183,6 @@ namespace Skylicht
 				m_contextNode = node;
 		}
 
-		void CSceneController::onUpdate(CHierachyNode* node)
-		{
-			CHierachyNode::EDataType dataType = node->getTagDataType();
-			if (dataType == CHierachyNode::GameObject)
-			{
-				CGameObject* obj = (CGameObject*)node->getTagData();
-				obj->setName(node->getName().c_str());
-			}
-		}
-
 		void CSceneController::createZone()
 		{
 			CZone* zone = m_scene->createZone();
@@ -198,7 +191,8 @@ namespace Skylicht
 			node->setName(zone->getName());
 			node->setIcon(GUI::ESystemIcon::Collection);
 			node->setTagData(zone, CHierachyNode::GameObject);
-			node->OnUpdate = std::bind(&CSceneController::onUpdate, this, std::placeholders::_1);
+
+			setNodeEvent(node);
 
 			if (m_spaceHierarchy != NULL)
 				m_spaceHierarchy->add(node);
@@ -220,7 +214,8 @@ namespace Skylicht
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Res3D);
 				node->setTagData(newObject, CHierachyNode::GameObject);
-				node->OnUpdate = std::bind(&CSceneController::onUpdate, this, std::placeholders::_1);
+
+				setNodeEvent(node);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->add(node);
@@ -242,10 +237,47 @@ namespace Skylicht
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Folder);
 				node->setTagData(newObject, CHierachyNode::GameObject);
-				node->OnUpdate = std::bind(&CSceneController::onUpdate, this, std::placeholders::_1);
+
+				setNodeEvent(node);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->add(node);
+			}
+		}
+
+		void CSceneController::setNodeEvent(CHierachyNode* node)
+		{
+			node->OnUpdate = std::bind(&CSceneController::onUpdateNode, this, std::placeholders::_1);
+			node->OnSelected = std::bind(&CSceneController::onSelectNode, this, std::placeholders::_1, std::placeholders::_2);
+		}
+
+		void CSceneController::onUpdateNode(CHierachyNode* node)
+		{
+			CHierachyNode::EDataType dataType = node->getTagDataType();
+			if (dataType == CHierachyNode::GameObject)
+			{
+				CGameObject* obj = (CGameObject*)node->getTagData();
+				obj->setName(node->getName().c_str());
+			}
+			else if (dataType == CHierachyNode::Scene)
+			{
+				CScene* scene = (CScene*)node->getTagData();
+				scene->setName(node->getName().c_str());
+			}
+		}
+
+		void CSceneController::onSelectNode(CHierachyNode* node, bool selected)
+		{
+			CHierachyNode::EDataType dataType = node->getTagDataType();
+			if (dataType == CHierachyNode::GameObject)
+			{
+				CGameObject* obj = (CGameObject*)node->getTagData();
+
+				CSelection* selection = CSelection::getInstance();
+				if (selected)
+					selection->addSelect(CSelectObject(obj));
+				else
+					selection->unSelect(CSelectObject(obj));
 			}
 		}
 	}
