@@ -36,9 +36,13 @@ namespace Skylicht
 	class CScene : public IEventReceiver
 	{
 	protected:
+
+		std::wstring m_name;
+		std::string m_namec;
+
 		ArrayZone m_zones;
 
-		CEntityManager *m_entityManager;
+		CEntityManager* m_entityManager;
 
 		typedef std::pair<std::string, IEventReceiver*> eventType;
 		std::vector<eventType> m_eventReceivers;
@@ -49,11 +53,25 @@ namespace Skylicht
 
 		void releaseScene();
 
+		inline void setName(const wchar_t* lpName)
+		{
+			m_name = lpName;
+		}
+
+		void setName(const char* lpName);
+
+		const char* getNameA();
+
+		inline const wchar_t* getName()
+		{
+			return m_name.c_str();
+		}
+
 		void setVisibleAllZone(bool b);
 
 		void updateAddRemoveObject();
 
-		void updateIndexSearchObject();		
+		void updateIndexSearchObject();
 
 		virtual CGameObject* searchObject(const char* name);
 
@@ -83,9 +101,9 @@ namespace Skylicht
 			return &m_zones;
 		}
 
-		void registerEvent(std::string name, IEventReceiver *pEvent);
+		void registerEvent(std::string name, IEventReceiver* pEvent);
 
-		void unRegisterEvent(IEventReceiver *pEvent);
+		void unRegisterEvent(IEventReceiver* pEvent);
 
 		virtual bool OnEvent(const SEvent& event);
 

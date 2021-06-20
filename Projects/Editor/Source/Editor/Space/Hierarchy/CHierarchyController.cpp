@@ -77,6 +77,9 @@ namespace Skylicht
 			// add node
 			GUI::CTreeNode* guiNode = parentGuiNode->addNode(node->getName(), node->getIcon());
 
+			// apply select event
+			guiNode->OnSelectChange = BIND_LISTENER(&CHierarchyController::OnSelectChange, this);
+
 			// link data gui to node
 			guiNode->tagData(node);
 
@@ -163,6 +166,17 @@ namespace Skylicht
 		void CHierarchyController::OnCancelRename(GUI::CBase* control)
 		{
 			m_tree->focus();
+		}
+
+		void CHierarchyController::OnSelectChange(GUI::CBase* control)
+		{
+			GUI::CTreeNode* treeNode = dynamic_cast<GUI::CTreeNode*>(control);
+			if (treeNode != NULL)
+			{
+				CHierachyNode* node = (CHierachyNode*)treeNode->getTagData();
+				if (node->OnSelected != nullptr)
+					node->OnSelected(node, treeNode->isSelected());
+			}
 		}
 	}
 }

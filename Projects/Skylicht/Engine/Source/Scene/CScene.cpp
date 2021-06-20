@@ -33,12 +33,29 @@ namespace Skylicht
 	{
 		m_entityManager = new CEntityManager();
 		CEventManager::getInstance()->registerEvent("Scene", this);
+
+		setName(L"Scene");
 	}
 
 	CScene::~CScene()
 	{
 		releaseScene();
 		CEventManager::getInstance()->unRegisterEvent(this);
+	}
+
+	void CScene::setName(const char* lpName)
+	{
+		wchar_t name[1024];
+		CStringImp::convertUTF8ToUnicode(lpName, name);
+		m_name = name;
+	}
+
+	const char* CScene::getNameA()
+	{
+		char name[1024];
+		CStringImp::convertUnicodeToUTF8(m_name.c_str(), name);
+		m_namec = name;
+		return m_namec.c_str();
 	}
 
 	CGameObject* CScene::searchObject(const char* name)
