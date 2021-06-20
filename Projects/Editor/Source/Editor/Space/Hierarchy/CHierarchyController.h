@@ -60,6 +60,8 @@ namespace Skylicht
 
 			void OnCancelRename(GUI::CBase* control);
 
+			void OnSelectChange(GUI::CBase* control);
+
 			GUI::CTreeNode* buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);
 		};
 	}

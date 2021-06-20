@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "GameObject/CGameObject.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -42,14 +44,30 @@ namespace Skylicht
 
 			ESelectType m_type;
 
+			std::string m_id;
+
 		public:
-			CSelectObject(ESelectType type);
+			CSelectObject(ESelectType type, const char* id);
+
+			CSelectObject(ESelectType type, const std::string& id);
+
+			CSelectObject(CGameObject* obj);
 
 			virtual ~CSelectObject();
 
 			inline ESelectType getType()
 			{
 				return m_type;
+			}
+
+			inline std::string& getID()
+			{
+				return m_id;
+			}
+
+			bool operator==(const CSelectObject& obj)
+			{
+				return m_type == obj.m_type && m_id == obj.m_id;
 			}
 		};
 	}

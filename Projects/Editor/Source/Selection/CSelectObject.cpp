@@ -29,8 +29,23 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSelectObject::CSelectObject(ESelectType type) :
-			m_type(type)
+		CSelectObject::CSelectObject(ESelectType type, const char* id) :
+			m_type(type),
+			m_id(id)
+		{
+
+		}
+
+		CSelectObject::CSelectObject(ESelectType type, const std::string& id) :
+			m_type(type),
+			m_id(id)
+		{
+
+		}
+
+		CSelectObject::CSelectObject(CGameObject* obj) :
+			m_type(GameObject),
+			m_id(obj->getID())
 		{
 
 		}
