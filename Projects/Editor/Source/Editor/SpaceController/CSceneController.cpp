@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSceneController.h"
+#include "CPropertyController.h"
 #include "Selection/CSelection.h"
 
 namespace Skylicht
@@ -274,10 +275,20 @@ namespace Skylicht
 				CGameObject* obj = (CGameObject*)node->getTagData();
 
 				CSelection* selection = CSelection::getInstance();
+				CPropertyController* propertyController = CPropertyController::getInstance();
+
 				if (selected)
-					selection->addSelect(CSelectObject(obj));
+				{
+					CSelectObject selectObject(obj);
+
+					selection->addSelect(selectObject);
+					propertyController->setProperty(selectObject);
+				}
 				else
+				{
 					selection->unSelect(CSelectObject(obj));
+					propertyController->setProperty(CSelectObject());
+				}
 			}
 		}
 	}

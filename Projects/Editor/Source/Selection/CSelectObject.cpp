@@ -29,6 +29,12 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		CSelectObject::CSelectObject() :
+			m_type(None)
+		{
+
+		}
+
 		CSelectObject::CSelectObject(ESelectType type, const char* id) :
 			m_type(type),
 			m_id(id)

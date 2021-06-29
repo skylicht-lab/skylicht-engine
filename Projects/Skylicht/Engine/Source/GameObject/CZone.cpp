@@ -55,22 +55,16 @@ namespace Skylicht
 	{
 	}
 
-	CGameObject* CZone::searchObject(const wchar_t* objectName)
+	CGameObject* CZone::searchObjectInScene(const wchar_t* objectName)
 	{
-		CGameObject* ret = CContainerObject::searchObject(objectName);
-		if (ret == NULL)
-		{
-			ArrayZone& zones = *m_scene->getAllZone();
+		return m_scene->searchObjectInChild(objectName);
+	}
 
-			for (CZone* zone : zones)
-			{
-				if (std::wstring(zone->getName()) == objectName)
-				{
-					ret = zone;
-					break;
-				}
-			}
-		}
-		return ret;
+	bool CZone::testConflictName(const wchar_t* objectName)
+	{
+		if (CContainerObject::testConflictName(objectName) == true)
+			return true;
+
+		return m_scene->searchObject(objectName) != NULL;
 	}
 }

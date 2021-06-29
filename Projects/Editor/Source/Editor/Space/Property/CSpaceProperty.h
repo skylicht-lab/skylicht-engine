@@ -34,6 +34,11 @@ namespace Skylicht
 		class CSpaceProperty : public CSpace
 		{
 		protected:
+			GUI::CContentSizeControl* m_content;
+			GUI::CIcon* m_icon;
+			GUI::CLabel* m_label;
+
+			std::vector<GUI::CCollapsibleGroup*> m_groups;
 
 		public:
 			CSpaceProperty(GUI::CWindow* window, CEditor* editor);
@@ -47,6 +52,20 @@ namespace Skylicht
 			void addComboBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value, const std::vector<std::string>& listValue);
 
 			void addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float min, float max);
+
+			inline void setLabel(const wchar_t* label)
+			{
+				m_label->setString(label);
+			}
+
+			inline void setIcon(GUI::ESystemIcon icon)
+			{
+				m_icon->setIcon(icon);
+			}
+
+			GUI::CCollapsibleGroup* addGroup(const wchar_t* label);
+
+			GUI::CBoxLayout* createBoxLayout(GUI::CCollapsibleGroup* group);
 		};
 	}
 }

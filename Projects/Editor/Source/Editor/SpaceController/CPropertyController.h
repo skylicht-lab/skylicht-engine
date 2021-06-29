@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CGameSingleton.h"
+#include "Selection/CSelectObject.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
 
 namespace Skylicht
@@ -50,6 +51,8 @@ namespace Skylicht
 			{
 				return m_spaceProperty;
 			}
+
+			void setProperty(CSelectObject& object);
 		};
 	}
 }

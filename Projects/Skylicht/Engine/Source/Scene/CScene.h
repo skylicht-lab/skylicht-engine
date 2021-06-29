@@ -73,9 +73,13 @@ namespace Skylicht
 
 		void updateIndexSearchObject();
 
-		virtual CGameObject* searchObject(const char* name);
+		virtual CGameObject* searchObject(const wchar_t* name);
 
-		virtual CGameObject* searchObjectInChild(const char* name);
+		virtual CGameObject* searchObjectInChild(const wchar_t* name);
+
+		virtual CGameObject* searchObjectByID(const char* name);
+
+		virtual CGameObject* searchObjectInChildByID(const char* name);
 
 		virtual CZone* createZone();
 

@@ -151,35 +151,54 @@ namespace Skylicht
 
 			CHierachyNode* contextNode = sceneController->getContextNode();
 			CGameObject* contextObject = NULL;
+			CScene* contextScene = NULL;
 
-			if (contextNode->getTagDataType() == CHierachyNode::GameObject)
+			CHierachyNode::EDataType contextMenuType = contextNode->getTagDataType();
+			if (contextMenuType == CHierachyNode::GameObject)
 				contextObject = (CGameObject*)contextNode->getTagData();
+			else if (contextMenuType == CHierachyNode::Scene)
+				contextScene = (CScene*)contextNode->getTagData();
 
-			if (contextObject == NULL)
+			if (contextObject == NULL && contextScene == NULL)
 				return;
 
-			if (command == L"Empty Object")
+			if (contextObject != NULL)
 			{
-				CContainerObject* container = dynamic_cast<CContainerObject*>(contextObject);
-				if (container != NULL)
-					sceneController->createEmptyObject(container);
+				if (command == L"Empty Object")
+				{
+					CContainerObject* container = dynamic_cast<CContainerObject*>(contextObject);
+					if (container != NULL)
+						sceneController->createEmptyObject(container);
+				}
+				else if (command == L"Container Object")
+				{
+					CContainerObject* container = dynamic_cast<CContainerObject*>(contextObject);
+					if (container != NULL)
+						sceneController->createContainerObject(container);
+				}
+				else if (command == L"Delete")
+				{
+					contextObject->remove();
+					contextNode->remove();
+					sceneController->clearContextNode();
+				}
+				else if (command == L"Rename")
+				{
+					m_spaceHierarchy->rename(contextNode);
+				}
+				else if (command == L"Set as Current Zone")
+				{
+
+				}
 			}
-			else if (command == L"Container Object")
+			else if (contextScene)
 			{
-				CContainerObject* container = dynamic_cast<CContainerObject*>(contextObject);
-				if (container != NULL)
-					sceneController->createContainerObject(container);
+				if (command == L"Add Zone")
+				{
+					CSceneController::getInstance()->createZone();
+				}
 			}
-			else if (command == L"Delete")
-			{
-				contextObject->remove();
-				contextNode->remove();
-				sceneController->clearContextNode();
-			}
-			else if (command == L"Rename")
-			{
-				m_spaceHierarchy->rename(contextNode);
-			}
+
 		}
 	}
 }
