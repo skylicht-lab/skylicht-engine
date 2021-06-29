@@ -39,40 +39,29 @@ namespace Skylicht
 			scrollWindow->enableScroll(false, true);
 			scrollWindow->showScrollBar(false, true);
 
-			GUI::CContentSizeControl* content = new GUI::CContentSizeControl(scrollWindow);
-			content->setFitType(GUI::CContentSizeControl::SizeToParent, GUI::CContentSizeControl::WrapChildren);
-			content->setTargetParent(window);
+			m_content = new GUI::CContentSizeControl(scrollWindow);
+			m_content->setFitType(GUI::CContentSizeControl::SizeToParent, GUI::CContentSizeControl::WrapChildren);
+			m_content->setTargetParent(window);
 
-			GUI::CBase* titleBar = new GUI::CBase(content);
+			GUI::CBase* titleBar = new GUI::CBase(m_content);
 			titleBar->setHeight(25.0f);
 			titleBar->dock(GUI::EPosition::Top);
 			titleBar->setPadding(GUI::SPadding(5.0f, 3.0f, 5.0f, -3.0f));
 			titleBar->enableRenderFillRect(true);
 			titleBar->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
 
-			GUI::CIcon* icon = new GUI::CIcon(titleBar, GUI::ESystemIcon::Res3D);
-			icon->dock(GUI::EPosition::Left);
+			m_icon = new GUI::CIcon(titleBar, GUI::ESystemIcon::None);
+			m_icon->dock(GUI::EPosition::Left);
 
-			GUI::CLabel* id = new GUI::CLabel(titleBar);
-			id->setSize(100.0f, 20.0f);
-			id->setMargin(GUI::SMargin(0.0f, 2.0f, 5.0f));
-			id->dock(GUI::EPosition::Right);
-			id->setString(L"ID: 298312903");
+			m_label = new GUI::CLabel(titleBar);
+			m_label->setMargin(GUI::SMargin(5.0f, 2.0f));
+			m_label->dock(GUI::EPosition::Fill);
 
-			GUI::CLabel* name = new GUI::CLabel(titleBar);
-			name->setMargin(GUI::SMargin(5.0f, 2.0f));
-			name->dock(GUI::EPosition::Fill);
-			name->setString(L"Object Name (Test control)");
-
+			/*
 			GUI::CBoxLayout* boxLayout;
 
-			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(content);
-			transformColapsible->dock(GUI::EPosition::Top);
-			transformColapsible->getHeader()->setLabel(L"Transform");
-
-			boxLayout = new GUI::CBoxLayout(transformColapsible);
-			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
-
+			GUI::CCollapsibleGroup* transformColapsible = addGroup(L"Transform");
+			boxLayout = createBoxLayout(transformColapsible);
 			addCheckBox(boxLayout, L"Enable", true);
 			boxLayout->addSpace(5.0f);
 			addNumberInput(boxLayout, L"Position X", 0.0f, 0.1f);
@@ -86,28 +75,16 @@ namespace Skylicht
 			addNumberInput(boxLayout, L"Scale X", 1.0f, 0.1f);
 			addNumberInput(boxLayout, L"Y", 1.0f, 0.1f);
 			addNumberInput(boxLayout, L"Z", 1.0f, 0.1f);
-
 			transformColapsible->setExpand(true);
 
-
-			GUI::CCollapsibleGroup* rendererColapsible = new GUI::CCollapsibleGroup(content);
-			rendererColapsible->dock(GUI::EPosition::Top);
-			rendererColapsible->getHeader()->setLabel(L"Render Mesh");
-
-			boxLayout = new GUI::CBoxLayout(rendererColapsible);
-			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
-
+			GUI::CCollapsibleGroup* rendererColapsible = addGroup(L"Render Mesh");
+			boxLayout = createBoxLayout(rendererColapsible);
 			addCheckBox(boxLayout, L"Enable", true);
-
 			rendererColapsible->setExpand(true);
 
 
-			GUI::CCollapsibleGroup* indirectLighting = new GUI::CCollapsibleGroup(content);
-			indirectLighting->dock(GUI::EPosition::Top);
-			indirectLighting->getHeader()->setLabel(L"Indirect Lighting");
-
-			boxLayout = new GUI::CBoxLayout(indirectLighting);
-			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
+			GUI::CCollapsibleGroup* indirectLighting = addGroup(L"Indirect Lighting");
+			boxLayout = createBoxLayout(indirectLighting);
 
 			addCheckBox(boxLayout, L"Enable", true);
 			boxLayout->addSpace(5.0f);
@@ -122,6 +99,7 @@ namespace Skylicht
 			addSlider(boxLayout, L"Direct multipler", 1.0f, 0.0f, 1.0f);
 
 			indirectLighting->setExpand(true);
+			*/
 
 			CPropertyController::getInstance()->setSpaceProperty(this);
 		}
@@ -129,6 +107,22 @@ namespace Skylicht
 		CSpaceProperty::~CSpaceProperty()
 		{
 			CPropertyController::getInstance()->setSpaceProperty(NULL);
+		}
+
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label)
+		{
+			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(m_content);
+			transformColapsible->dock(GUI::EPosition::Top);
+			transformColapsible->getHeader()->setLabel(label);
+			m_groups.push_back(transformColapsible);
+			return transformColapsible;
+		}
+
+		GUI::CBoxLayout* CSpaceProperty::createBoxLayout(GUI::CCollapsibleGroup* group)
+		{
+			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(group);
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
+			return boxLayout;
 		}
 
 		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float step)

@@ -33,18 +33,18 @@ namespace Skylicht
 	class CZone : public CContainerObject
 	{
 	protected:
-		CEntityManager *m_entityManager;
-		CScene *m_scene;
+		CEntityManager* m_entityManager;
+		CScene* m_scene;
 
 	public:
-		CZone(CScene *scene);
+		CZone(CScene* scene);
 		virtual ~CZone();
 
 		virtual void updateObject();
 		virtual void postUpdateObject();
 		virtual void endUpdate();
-
-		virtual CGameObject* searchObject(const wchar_t* objectName);
+		virtual CGameObject* searchObjectInScene(const wchar_t* objectName);
+		virtual bool testConflictName(const wchar_t* objectName);
 
 	public:
 

@@ -58,35 +58,53 @@ namespace Skylicht
 		return m_namec.c_str();
 	}
 
-	CGameObject* CScene::searchObject(const char* name)
+	CGameObject* CScene::searchObject(const wchar_t* name)
 	{
-		wchar_t buffer[1024] = { 0 };
-		CStringImp::convertUTF8ToUnicode(name, buffer);
-
 		for (CZone*& zone : m_zones)
 		{
-			if (CStringImp::comp<const wchar_t>(zone->getName(), buffer) == 0)
+			if (CStringImp::comp<const wchar_t>(zone->getName(), name) == 0)
 				return zone;
 		}
 		return NULL;
 	}
 
-	CGameObject* CScene::searchObjectInChild(const char* name)
+	CGameObject* CScene::searchObjectInChild(const wchar_t* name)
 	{
 		CGameObject* obj = searchObject(name);
 		if (obj == NULL)
 		{
-			wchar_t buffer[1024] = { 0 };
-			CStringImp::convertUTF8ToUnicode(name, buffer);
-
 			for (CZone*& zone : m_zones)
 			{
-				obj = zone->searchObjectInChild(buffer);
+				obj = zone->searchObjectInChild(name);
 				if (obj != NULL)
 					return obj;
 			}
 		}
+		return obj;
+	}
 
+	CGameObject* CScene::searchObjectByID(const char* id)
+	{
+		for (CZone*& zone : m_zones)
+		{
+			if (zone->getID() == id)
+				return zone;
+		}
+		return NULL;
+	}
+
+	CGameObject* CScene::searchObjectInChildByID(const char* id)
+	{
+		CGameObject* obj = searchObjectByID(id);
+		if (obj == NULL)
+		{
+			for (CZone*& zone : m_zones)
+			{
+				obj = zone->searchObjectInChildByID(id);
+				if (obj != NULL)
+					return obj;
+			}
+		}
 		return obj;
 	}
 

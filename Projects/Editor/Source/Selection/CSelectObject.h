@@ -35,6 +35,7 @@ namespace Skylicht
 		public:
 			enum ESelectType
 			{
+				None,
 				Asset,
 				GameObject,
 				Entity
@@ -47,6 +48,8 @@ namespace Skylicht
 			std::string m_id;
 
 		public:
+			CSelectObject();
+
 			CSelectObject(ESelectType type, const char* id);
 
 			CSelectObject(ESelectType type, const std::string& id);

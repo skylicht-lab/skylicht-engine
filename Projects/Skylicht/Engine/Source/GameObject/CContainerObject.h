@@ -41,10 +41,11 @@ namespace Skylicht
 		core::array<CContainerObject*> m_childContainer;
 
 		core::map<std::wstring, CGameObject*> m_objectByName;
+		core::map<std::string, CGameObject*> m_objectByID;
 
 		bool m_updateRemoveAdd;
 	public:
-		CContainerObject(CGameObject *parent, CZone *zone);
+		CContainerObject(CGameObject* parent, CZone* zone);
 
 		virtual ~CContainerObject();
 
@@ -58,19 +59,27 @@ namespace Skylicht
 
 		void updateIndexSearchObject();
 
-		virtual CGameObject* searchObject(const wchar_t *objectName);
+		virtual CGameObject* searchObject(const wchar_t* objectName);
 
-		virtual CGameObject* searchObjectInChild(const wchar_t *objectName);
+		virtual CGameObject* searchObjectInChild(const wchar_t* objectName);
+
+		virtual CGameObject* searchObjectByID(const char* id);
+
+		virtual CGameObject* searchObjectInChildByID(const char* id);
+
+		virtual CGameObject* searchObjectInScene(const wchar_t* objectName);
+
+		virtual bool testConflictName(const wchar_t* objectName);
 
 		std::string generateObjectName(const char* objTemplate);
 
 		std::string generateRandomID();
 
-		void registerObjectName(CGameObject* obj);
+		void registerObjectInSearchList(CGameObject* obj);
 
-		void removeObject(CGameObject *pObj);
+		void removeObject(CGameObject* pObj);
 
-		void addChild(CGameObject *p);
+		void addChild(CGameObject* p);
 
 		inline ArrayGameObject* getChilds()
 		{
@@ -98,23 +107,23 @@ namespace Skylicht
 			queueObjs.push(this);
 		else
 		{
-			for (CGameObject* &obj : m_childs)
+			for (CGameObject*& obj : m_childs)
 				queueObjs.push(obj);
 		}
 
 		while (queueObjs.size() != 0)
 		{
-			CGameObject *obj = queueObjs.front();
+			CGameObject* obj = queueObjs.front();
 			queueObjs.pop();
 
 			T* comp = obj->getComponent<T>();
 			if (comp != NULL)
 				result.push_back(comp);
 
-			CContainerObject *container = dynamic_cast<CContainerObject*>(obj);
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
 			if (container != NULL)
 			{
-				for (CGameObject* &child : container->m_childs)
+				for (CGameObject*& child : container->m_childs)
 					queueObjs.push(child);
 			}
 		}
