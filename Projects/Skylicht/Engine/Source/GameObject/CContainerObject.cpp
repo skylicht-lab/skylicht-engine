@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CContainerObject.h"
 #include "Utils/CStringImp.h"
 
+#include "Scene/CScene.h"
+
 namespace Skylicht
 {
 
@@ -69,6 +71,7 @@ namespace Skylicht
 
 		m_childs.clear();
 		m_objectByName.clear();
+		m_objectByID.clear();
 	}
 
 	core::array<CGameObject*>& CContainerObject::getArrayChilds(bool addThis)
@@ -154,10 +157,22 @@ namespace Skylicht
 	void CContainerObject::updateIndexSearchObject()
 	{
 		m_objectByName.clear();
+		m_objectByID.clear();
 
 		for (CGameObject*& obj : m_childs)
 		{
-			registerObjectName(obj);
+			registerObjectInSearchList(obj);
+
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+			if (container != NULL)
+			{
+				container->updateIndexSearchObject();
+			}
+		}
+
+		for (CGameObject*& obj : m_add)
+		{
+			registerObjectInSearchList(obj);
 
 			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
 			if (container != NULL)
@@ -211,6 +226,55 @@ namespace Skylicht
 		return result;
 	}
 
+	CGameObject* CContainerObject::searchObjectByID(const char* id)
+	{
+		core::map<std::string, CGameObject*>::Node* node = m_objectByID.find(std::string(id));
+		if (node == NULL)
+		{
+			// try search in list add
+			for (CGameObject* addObject : m_add)
+			{
+				if (addObject->getID() == id)
+				{
+					return addObject;
+				}
+			}
+
+			return NULL;
+		}
+
+		return node->getValue();
+	}
+
+	CGameObject* CContainerObject::searchObjectInChildByID(const char* id)
+	{
+		CGameObject* result = searchObjectByID(id);
+		if (result == NULL)
+		{
+			for (CGameObject*& obj : m_childs)
+			{
+				CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+				if (container != NULL)
+				{
+					result = container->searchObjectInChildByID(id);
+					if (result != NULL)
+						return result;
+				}
+			}
+		}
+		return result;
+	}
+
+	CGameObject* CContainerObject::searchObjectInScene(const wchar_t* objectName)
+	{
+		return m_zone->getScene()->searchObjectInChild(objectName);
+	}
+
+	bool CContainerObject::testConflictName(const wchar_t* objectName)
+	{
+		return searchObject(objectName) != NULL;
+	}
+
 	std::string CContainerObject::generateObjectName(const char* objTemplate)
 	{
 		wchar_t name[1024];
@@ -222,7 +286,7 @@ namespace Skylicht
 			objectID++;
 			sprintf(lpName, "%s_%d", objTemplate, objectID);
 			CStringImp::convertUTF8ToUnicode(lpName, name);
-		} while (searchObject(name) != NULL);
+		} while (testConflictName(name));
 
 		return std::string(lpName);
 	}
@@ -230,9 +294,7 @@ namespace Skylicht
 	std::string CContainerObject::generateRandomID()
 	{
 		std::string randomString;
-		static const char alphanum[] = "0123456789";
-
-		srand((unsigned int)os::Timer::getRealTime());
+		static const char alphanum[] = "0123456789";		
 
 		int len = 16;
 		randomString.reserve(len);
@@ -240,12 +302,14 @@ namespace Skylicht
 		for (int i = 0; i < len; ++i)
 			randomString += alphanum[rand() % (sizeof(alphanum) - 1)];
 
+		os::Printer::log(randomString.c_str());
 		return randomString;
 	}
 
-	void CContainerObject::registerObjectName(CGameObject* obj)
+	void CContainerObject::registerObjectInSearchList(CGameObject* obj)
 	{
 		m_objectByName[obj->getName()] = obj;
+		m_objectByID[obj->getID()] = obj;
 	}
 
 	void CContainerObject::updateAddRemoveObject(bool force)
@@ -275,6 +339,8 @@ namespace Skylicht
 						if (obj == (*iObj))
 						{
 							m_objectByName.remove(obj->getDefaultName());
+							m_objectByID.remove(obj->getID());
+
 							m_childs.erase(iObj);
 
 							delete obj;

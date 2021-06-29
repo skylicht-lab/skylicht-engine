@@ -167,6 +167,10 @@ namespace Skylicht
 			// handles
 			m_handlesRenderer = m_scene->getEntityManager()->addRenderSystem<CHandlesRenderer>();
 
+			// update search index
+			m_scene->updateAddRemoveObject();
+			m_scene->updateIndexSearchObject();
+
 			// set scene to controller
 			CSceneController::getInstance()->setScene(m_scene);
 

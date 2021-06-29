@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CPropertyController.h"
+#include "CSceneController.h"
 
 namespace Skylicht
 {
@@ -38,6 +39,27 @@ namespace Skylicht
 		CPropertyController::~CPropertyController()
 		{
 
+		}
+
+		void CPropertyController::setProperty(CSelectObject& object)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
+
+			if (object.getType() == CSelectObject::GameObject)
+			{
+				CGameObject* obj = scene->searchObjectInChildByID(object.getID().c_str());
+				if (obj != NULL)
+				{
+					m_spaceProperty->setIcon(GUI::ESystemIcon::Res3D);
+					m_spaceProperty->setLabel(obj->getName());
+				}
+			}
+			else if (object.getType() == CSelectObject::None)
+			{
+				m_spaceProperty->setIcon(GUI::ESystemIcon::None);
+				m_spaceProperty->setLabel(L"");
+			}
 		}
 	}
 }

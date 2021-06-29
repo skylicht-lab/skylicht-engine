@@ -80,6 +80,11 @@ namespace Skylicht
 
 			void setScene(CScene* scene);
 
+			inline CScene* getScene()
+			{
+				return m_scene;
+			}
+
 			void setZone(CZone* zone);
 
 			CZone* getZone()
@@ -95,7 +100,7 @@ namespace Skylicht
 
 			void onUpdateNode(CHierachyNode* node);
 
-			void onSelectNode(CHierachyNode* node, bool selected);			
+			void onSelectNode(CHierachyNode* node, bool selected);
 
 			inline CHierachyNode* getContextNode()
 			{
