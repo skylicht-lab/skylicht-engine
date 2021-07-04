@@ -287,7 +287,9 @@ namespace Skylicht
 				else
 				{
 					selection->unSelect(CSelectObject(obj));
-					propertyController->setProperty(CSelectObject());
+
+					CSelectObject nullObject;
+					propertyController->setProperty(nullObject);
 				}
 			}
 		}
