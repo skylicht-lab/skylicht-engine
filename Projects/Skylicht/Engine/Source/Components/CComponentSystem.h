@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Utils/CActivator.h"
+
 namespace Skylicht
 {
 	class CGameObject;
@@ -31,9 +33,9 @@ namespace Skylicht
 	class CComponentSystem
 	{
 	protected:
-		CGameObject *m_gameObject;
+		CGameObject* m_gameObject;
 
-		void setOwner(CGameObject *obj)
+		void setOwner(CGameObject* obj)
 		{
 			m_gameObject = obj;
 		}
@@ -47,7 +49,7 @@ namespace Skylicht
 
 		virtual ~CComponentSystem();
 
-		const char *getName();
+		const char* getName();
 
 		virtual void initComponent() = 0;
 
@@ -70,5 +72,7 @@ namespace Skylicht
 		{
 			return m_gameObject;
 		}
+
+		DECLARE_GETTYPENAME(CComponentSystem)
 	};
 }

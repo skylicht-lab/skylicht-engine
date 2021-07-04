@@ -2,7 +2,7 @@
 !@
 MIT License
 
-CopyRight (c) 2020 Skylicht Technology CO., LTD
+CopyRight (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,52 +24,30 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
+#include "Utils/CGameSingleton.h"
+#include "Editor/Components/CComponentEditor.h"
+
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceProperty : public CSpace
+		typedef CComponentEditor* (*ActivatorCreateEditor)();
+
+#define EDITOR_REGISTER(type, componentType)  \
+		CComponentEditor* type##componentType##CreateFunc() { return new type(); } \
+		bool type##componentType##Activator = CEditorActivator::createGetInstance()->registerEditor(#componentType, &type##componentType##CreateFunc);
+
+		class CEditorActivator : public CGameSingleton<CEditorActivator>
 		{
 		protected:
-			GUI::CContentSizeControl* m_content;
-			GUI::CIcon* m_icon;
-			GUI::CLabel* m_label;
-
-			std::vector<GUI::CCollapsibleGroup*> m_groups;
+			std::vector<ActivatorCreateEditor> m_factoryFunc;
+			std::map<std::string, int> m_mapComponent;
 
 		public:
-			CSpaceProperty(GUI::CWindow* window, CEditor* editor);
+			bool registerEditor(const char* componentType, ActivatorCreateEditor func);
 
-			virtual ~CSpaceProperty();
-
-			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float step);
-
-			void addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool value);
-
-			void addComboBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value, const std::vector<std::string>& listValue);
-
-			void addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float min, float max);
-
-			inline void setLabel(const wchar_t* label)
-			{
-				m_label->setString(label);
-			}
-
-			inline void setIcon(GUI::ESystemIcon icon)
-			{
-				m_icon->setIcon(icon);
-			}
-
-			GUI::CCollapsibleGroup* addGroup(const wchar_t* label);
-
-			GUI::CCollapsibleGroup* addGroup(const char* label);
-
-			void clearAllGroup();
-
-			GUI::CBoxLayout* createBoxLayout(GUI::CCollapsibleGroup* group);			
+			CComponentEditor* createInstance(const char* componentType);
 		};
 	}
 }

@@ -109,11 +109,31 @@ namespace Skylicht
 			CPropertyController::getInstance()->setSpaceProperty(NULL);
 		}
 
+		void CSpaceProperty::clearAllGroup()
+		{
+			for (GUI::CCollapsibleGroup* group : m_groups)
+			{
+				group->remove();
+			}
+			m_groups.clear();
+		}
+
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label)
 		{
 			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(m_content);
 			transformColapsible->dock(GUI::EPosition::Top);
 			transformColapsible->getHeader()->setLabel(label);
+			m_groups.push_back(transformColapsible);
+			return transformColapsible;
+		}
+
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label)
+		{
+			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
+
+			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(m_content);
+			transformColapsible->dock(GUI::EPosition::Top);
+			transformColapsible->getHeader()->setLabel(wlabel.c_str());
 			m_groups.push_back(transformColapsible);
 			return transformColapsible;
 		}
