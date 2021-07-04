@@ -38,7 +38,7 @@ namespace Skylicht
 	class CEntityManager;
 
 	class CGameObject
-	{	
+	{
 	protected:
 		std::string m_objectID;
 
@@ -55,11 +55,11 @@ namespace Skylicht
 
 		u32 m_cullingLayer;
 
-		CEntity *m_entity;
-		CGameObject *m_parent;
-		CZone *m_zone;
+		CEntity* m_entity;
+		CGameObject* m_parent;
+		CZone* m_zone;
 
-		void *m_tagData;
+		void* m_tagData;
 		int m_tagDataInt;
 		std::string m_tagDataString;
 
@@ -67,7 +67,7 @@ namespace Skylicht
 
 		std::vector<CComponentSystem*> m_components;
 	public:
-		CGameObject(CGameObject *parent, CZone *zone);
+		CGameObject(CGameObject* parent, CZone* zone);
 
 		virtual ~CGameObject();
 
@@ -99,7 +99,7 @@ namespace Skylicht
 			return m_defaultName.c_str();
 		}
 
-		inline void setName(const wchar_t *lpName)
+		inline void setName(const wchar_t* lpName)
 		{
 			m_name = lpName;
 
@@ -109,7 +109,7 @@ namespace Skylicht
 
 		void setName(const char* lpName);
 
-		const char *getNameA();
+		const char* getNameA();
 
 		inline CGameObject* getParent()
 		{
@@ -123,7 +123,7 @@ namespace Skylicht
 
 		CScene* getScene();
 
-		inline void setParent(CGameObject *p)
+		inline void setParent(CGameObject* p)
 		{
 			m_parent = p;
 		}
@@ -202,7 +202,7 @@ namespace Skylicht
 			return m_editorObject;
 		}
 
-		inline void tagData(void *data)
+		inline void tagData(void* data)
 		{
 			m_tagData = data;
 		}
@@ -250,6 +250,11 @@ namespace Skylicht
 		bool removeComponent();
 
 		void releaseAllComponent();
+
+		inline std::vector<CComponentSystem*>& getListComponent()
+		{
+			return m_components;
+		}
 	};
 
 	// typedef for array object
@@ -264,7 +269,7 @@ namespace Skylicht
 	T* CGameObject::addComponent()
 	{
 		T* newComp = new T();
-		CComponentSystem *compSystem = dynamic_cast<CComponentSystem*>(newComp);
+		CComponentSystem* compSystem = dynamic_cast<CComponentSystem*>(newComp);
 		if (compSystem == NULL)
 		{
 			char exceptionInfo[512];
@@ -288,7 +293,7 @@ namespace Skylicht
 		ArrayComponentIter i = m_components.begin(), end = m_components.end();
 		while (i != end)
 		{
-			T *c = dynamic_cast<T*>(*i);
+			T* c = dynamic_cast<T*>(*i);
 			if (c != NULL)
 				return c;
 			++i;
@@ -302,7 +307,7 @@ namespace Skylicht
 		ArrayComponentIter i = m_components.begin(), end = m_components.end();
 		while (i != end)
 		{
-			T *c = dynamic_cast<T*>(*i);
+			T* c = dynamic_cast<T*>(*i);
 			if (c != NULL)
 			{
 				delete c;
