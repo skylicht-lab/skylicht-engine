@@ -72,5 +72,7 @@ namespace Skylicht
 		virtual const core::matrix4& getMatrixTransform() = 0;
 
 		virtual void getMatrixTransform(core::matrix4& matrix) = 0;
+
+		DECLARE_GETTYPENAME(CTransform)
 	};
 }

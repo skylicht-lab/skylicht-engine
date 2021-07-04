@@ -26,6 +26,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CPropertyController.h"
 #include "CSceneController.h"
 
+#include "Activator/CEditorActivator.h"
+#include "Editor/Components/CComponentEditor.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -53,6 +56,24 @@ namespace Skylicht
 				{
 					m_spaceProperty->setIcon(GUI::ESystemIcon::Res3D);
 					m_spaceProperty->setLabel(obj->getName());
+					m_spaceProperty->clearAllGroup();
+
+					CEditorActivator* activator = CEditorActivator::getInstance();
+
+					ArrayComponent& listComponents = obj->getListComponent();
+					for (CComponentSystem* component : listComponents)
+					{
+						CComponentEditor* editor = activator->createInstance(component->getTypeName().c_str());
+						if (editor != NULL)
+						{
+							editor->onGUI(component, m_spaceProperty);
+							delete editor;
+						}
+						else
+						{
+							// null editor
+						}
+					}
 				}
 			}
 			else if (object.getType() == CSelectObject::None)

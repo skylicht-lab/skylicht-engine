@@ -49,7 +49,7 @@ namespace Skylicht
 	class CActivator : public CGameSingleton<CActivator>
 	{
 	protected:
-		std::vector<std::string> m_factoryName;
+		std::map<std::string, int> m_factoryName;
 		std::vector<ActivatorCreateInstance> m_factoryFunc;
 
 	public:
