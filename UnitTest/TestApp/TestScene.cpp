@@ -82,14 +82,14 @@ void TestScene::update()
 	if (m_testStep == 0)
 	{
 		TEST_CASE("Search object");
-		CGameObject *obj = m_scene->searchObjectInChild("TransformC");
+		CGameObject *obj = m_scene->searchObjectInChild(L"TransformC");
 		TEST_ASSERT_THROW(obj != NULL);
 		TEST_ASSERT_STRING_EQUAL(obj->getNameA(), "TransformC");
 	}
 	else if (m_testStep == 1)
 	{
 		TEST_CASE("Search object");
-		CGameObject *obj = m_scene->searchObjectInChild("TransformB");
+		CGameObject *obj = m_scene->searchObjectInChild(L"TransformB");
 		TEST_ASSERT_THROW(obj != NULL);
 		TEST_ASSERT_STRING_EQUAL(obj->getNameA(), "TransformB");
 
@@ -103,10 +103,10 @@ void TestScene::update()
 		
 		// this object is removed because parent is removed at step 1
 		CGameObject *obj = NULL;
-		obj = m_scene->searchObjectInChild("TransformC");
+		obj = m_scene->searchObjectInChild(L"TransformC");
 		TEST_ASSERT_THROW(obj == NULL);
 
-		obj = m_scene->searchObjectInChild("ObjectD");
+		obj = m_scene->searchObjectInChild(L"ObjectD");
 		TEST_ASSERT_THROW(obj == NULL);
 	}	
 
