@@ -1,4 +1,4 @@
-#in/*
+/*
 !@
 MIT License
 
