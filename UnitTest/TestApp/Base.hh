@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <string>
+#include <map>
+#include <vector>
 
 #define EPSILON    (1.0e-4)
 
