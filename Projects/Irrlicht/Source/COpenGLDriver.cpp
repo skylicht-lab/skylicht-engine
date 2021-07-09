@@ -299,6 +299,96 @@ void COpenGLHardwareBuffer::removeFromArray(bool status)
 }
 
 // -----------------------------------------------------------------------
+// LINUX CONSTRUCTOR
+// -----------------------------------------------------------------------
+#ifdef _IRR_COMPILE_WITH_X11_DEVICE_
+//! Linux constructor and init code
+COpenGLDriver::COpenGLDriver(const SIrrlichtCreationParameters& params,
+	io::IFileSystem* io, CIrrDeviceLinux* device)
+	: CNullDriver(io, params.WindowSize), COpenGLExtensionHandler(),
+	CurrentRenderMode(ERM_NONE), ResetRenderStates(true),
+	Transformation3DChanged(true), AntiAlias(params.AntiAlias),
+	RenderTargetTexture(0), CurrentRendertargetSize(0, 0), ColorFormat(ECF_R8G8B8),
+	CurrentTarget(ERT_FRAME_BUFFER), Params(params),
+	DeviceType(EIDT_LINUX)
+{
+#ifdef _DEBUG
+	setDebugName("COpenGLDriver");
+#endif
+
+#ifdef _IRR_COMPILE_WITH_CG_
+	CgContext = 0;
+#endif
+}
+
+
+bool COpenGLDriver::changeRenderContext(const SExposedVideoData& videoData)
+{
+	if (videoData.OpenGLLinux.X11Window)
+	{
+		if (videoData.OpenGLLinux.X11Display && videoData.OpenGLLinux.X11Context)
+		{
+			if (!glXMakeCurrent((Display*)videoData.OpenGLLinux.X11Display, videoData.OpenGLLinux.X11Window, (GLXContext)videoData.OpenGLLinux.X11Context))
+			{
+				os::Printer::log("Render Context switch failed.");
+				return false;
+			}
+			else
+			{
+				Drawable = videoData.OpenGLLinux.X11Window;
+				X11Display = (Display*)videoData.OpenGLLinux.X11Display;
+			}
+		}
+		else
+		{
+			// in case we only got a window ID, try with the existing values for display and context
+			if (!glXMakeCurrent((Display*)ExposedData.OpenGLLinux.X11Display, videoData.OpenGLLinux.X11Window, (GLXContext)ExposedData.OpenGLLinux.X11Context))
+			{
+				os::Printer::log("Render Context switch failed.");
+				return false;
+			}
+			else
+			{
+				Drawable = videoData.OpenGLLinux.X11Window;
+				X11Display = (Display*)ExposedData.OpenGLLinux.X11Display;
+			}
+		}
+	}
+	// set back to main context
+	else if (X11Display != ExposedData.OpenGLLinux.X11Display)
+	{
+		if (!glXMakeCurrent((Display*)ExposedData.OpenGLLinux.X11Display, ExposedData.OpenGLLinux.X11Window, (GLXContext)ExposedData.OpenGLLinux.X11Context))
+		{
+			os::Printer::log("Render Context switch failed.");
+			return false;
+		}
+		else
+		{
+			Drawable = ExposedData.OpenGLLinux.X11Window;
+			X11Display = (Display*)ExposedData.OpenGLLinux.X11Display;
+		}
+	}
+	return true;
+}
+
+
+//! inits the open gl driver
+bool COpenGLDriver::initDriver()
+{
+	ExposedData.OpenGLLinux.X11Context = glXGetCurrentContext();
+	ExposedData.OpenGLLinux.X11Display = glXGetCurrentDisplay();
+	ExposedData.OpenGLLinux.X11Window = (unsigned long)Params.WindowId;
+	Drawable = glXGetCurrentDrawable();
+	X11Display = (Display*)ExposedData.OpenGLLinux.X11Display;
+
+	// set vsync
+	extGlSwapInterval(Params.Vsync ? 1 : 0);
+	return true;
+}
+
+#endif // _IRR_COMPILE_WITH_X11_DEVICE_
+
+// -----------------------------------------------------------------------
 // SDL CONSTRUCTOR
 // -----------------------------------------------------------------------
 #ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
@@ -1012,6 +1102,14 @@ bool COpenGLDriver::endScene()
 	}
 #endif
 
+#ifdef _IRR_COMPILE_WITH_X11_DEVICE_
+	if (DeviceType == EIDT_LINUX)
+	{
+		glXSwapBuffers(X11Display, Drawable);
+		return true;
+	}
+#endif
+
 	return false;
 }
 
@@ -1055,6 +1153,12 @@ bool COpenGLDriver::beginScene(bool backBuffer, bool zBuffer, SColor color,
 	{
 #ifdef _IRR_COMPILE_WITH_WINDOWS_DEVICE_
 	case EIDT_WIN32:
+		changeRenderContext(videoData);
+		break;
+#endif
+
+#ifdef _IRR_COMPILE_WITH_X11_DEVICE_
+	case EIDT_LINUX:
 		changeRenderContext(videoData);
 		break;
 #endif
