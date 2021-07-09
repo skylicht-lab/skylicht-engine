@@ -12,7 +12,7 @@
 #include "CIrrDeviceStub.h"
 #include "IrrlichtDevice.h"
 #include "ICursorControl.h"
-#include "os.h"
+#include "irrOS.h"
 
 #ifdef _IRR_COMPILE_WITH_X11_
 
