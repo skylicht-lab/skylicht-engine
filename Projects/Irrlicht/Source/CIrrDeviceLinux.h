@@ -120,7 +120,7 @@ namespace irr
 		//! Get the device type
 		virtual E_DEVICE_TYPE getType() const
 		{
-				return EIDT_X11;
+				return EIDT_LINUX;
 		}
 
 #ifdef _IRR_COMPILE_WITH_X11_

@@ -152,6 +152,11 @@ elseif(BUILD_SDL)
 		${application_source}
 		${template_path}/Platforms/SDL2/MainSDL.cpp
 	)
+elseif(BUILD_LINUX)
+	add_executable(SampleLightmapUV
+		${application_source}
+		${template_path}/Platforms/Linux/MainLinux.cpp
+	)
 elseif(BUILD_ANDROID)
 	add_library(SampleLightmapUV SHARED ${application_source})
 elseif (BUILD_WINDOWS_STORE)
