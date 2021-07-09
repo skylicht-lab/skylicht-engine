@@ -44,7 +44,7 @@
 namespace irr
 {
 
-	class CIrrDeviceLinux : public CIrrDeviceStub, public video::IImagePresenter
+	class CIrrDeviceLinux : public CIrrDeviceStub
 	{
 	public:
 
@@ -78,9 +78,6 @@ namespace irr
 
 		//! returns color format of the window.
 		virtual video::ECOLOR_FORMAT getColorFormat() const;
-
-		//! presents a surface in the client area
-		virtual bool present(video::IImage* surface, void* windowId=0, core::rect<s32>* src=0 );
 
 		//! notifies the device that it should close itself
 		virtual void closeDevice();
@@ -387,7 +384,6 @@ namespace irr
 		Window window;
 		XSetWindowAttributes attributes;
 		XSizeHints* StdHints;
-		XImage* SoftwareImage;
 		mutable core::stringc Clipboard;
 		#ifdef _IRR_LINUX_X11_VIDMODE_
 		XF86VidModeModeInfo oldVideoMode;
