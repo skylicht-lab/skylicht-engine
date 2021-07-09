@@ -74,9 +74,7 @@
 
 #ifdef LINUX
 	#define _IRR_LINUX_PLATFORM
-	#ifdef SDL
-		#define _IRR_COMPILE_WITH_SDL_DEVICE_
-	#endif
+	#define _IRR_COMPILE_WITH_X11_DEVICE_
 #endif
 
 #ifdef EMSCRIPTEN
