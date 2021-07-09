@@ -12,7 +12,6 @@
 #include <time.h>
 #include "IEventReceiver.h"
 #include "ISceneManager.h"
-#include "IGUIEnvironment.h"
 #include "os.h"
 #include "CTimer.h"
 #include "irrString.h"
@@ -143,16 +142,12 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 	}
 
 	// Must free OpenGL textures etc before destroying context, so can't wait for stub destructor
-	if ( GUIEnvironment )
-	{
-		GUIEnvironment->drop();
-		GUIEnvironment = NULL;
-	}
 	if ( SceneManager )
 	{
 		SceneManager->drop();
 		SceneManager = NULL;
 	}
+
 	if ( VideoDriver )
 	{
 		VideoDriver->drop();
