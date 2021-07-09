@@ -11,7 +11,6 @@
 
 #include "CIrrDeviceStub.h"
 #include "IrrlichtDevice.h"
-#include "IImagePresenter.h"
 #include "ICursorControl.h"
 #include "os.h"
 
