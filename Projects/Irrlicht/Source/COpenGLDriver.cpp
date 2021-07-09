@@ -305,11 +305,13 @@ void COpenGLHardwareBuffer::removeFromArray(bool status)
 //! Linux constructor and init code
 COpenGLDriver::COpenGLDriver(const SIrrlichtCreationParameters& params, io::IFileSystem* io)
 	: CNullDriver(io, params.WindowSize), COpenGLExtensionHandler(),
-	CurrentRenderMode(ERM_NONE), ResetRenderStates(true),
-	Transformation3DChanged(true), AntiAlias(params.AntiAlias),
-	RenderTargetTexture(0), CurrentRendertargetSize(0, 0), ColorFormat(ECF_R8G8B8),
-	CurrentTarget(ERT_FRAME_BUFFER), Params(params),
-	DeviceType(EIDT_LINUX)
+	ResetRenderStates(true), 
+	AntiAlias(params.AntiAlias),
+	RenderTargetTexture(0), CurrentRendertargetSize(0, 0), 
+	ColorFormat(ECF_R8G8B8),
+	CurrentTarget(ERT_FRAME_BUFFER), Params(params), 
+	ActiveGLSLProgram(0), LastVertexDescriptor(0),
+	BridgeCalls(0), DeviceType(EIDT_LINUX)
 {
 #ifdef _DEBUG
 	setDebugName("COpenGLDriver");
