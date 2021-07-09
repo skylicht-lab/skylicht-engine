@@ -73,7 +73,7 @@ const char* wmDeleteWindow = "WM_DELETE_WINDOW";
 CIrrDeviceLinux::CIrrDeviceLinux(const SIrrlichtCreationParameters& param)
 	: CIrrDeviceStub(param),
 #ifdef _IRR_COMPILE_WITH_X11_
-	display(0), visual(0), screennr(0), window(0), StdHints(0), SoftwareImage(0),
+	display(0), visual(0), screennr(0), window(0), StdHints(0),
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	glxWin(0),
 	Context(0),
@@ -182,9 +182,6 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 
 		// Reset fullscreen resolution change
 		switchToFullscreen(true);
-
-		if (SoftwareImage)
-			XDestroyImage(SoftwareImage);
 
 		if (!ExternalWindow)
 		{
@@ -776,23 +773,6 @@ bool CIrrDeviceLinux::createWindow()
 	long num;
 	XGetWMNormalHints(display, window, StdHints, &num);
 
-	// create an XImage for the software renderer
-	//(thx to Nadav for some clues on how to do that!)
-
-	/*
-	if (CreationParams.DriverType == video::EDT_SOFTWARE || CreationParams.DriverType == video::EDT_BURNINGSVIDEO)
-	{
-		SoftwareImage = XCreateImage(display,
-			visual->visual, visual->depth,
-			ZPixmap, 0, 0, Width, Height,
-			BitmapPad(display), 0);
-
-		// use malloc because X will free it later on
-		if (SoftwareImage)
-			SoftwareImage->data = (char*) malloc(SoftwareImage->bytes_per_line * SoftwareImage->height * sizeof(char));
-	}
-	*/
-
 	initXAtoms();
 
 #endif // #ifdef _IRR_COMPILE_WITH_X11_
@@ -869,21 +849,6 @@ bool CIrrDeviceLinux::run()
 				{
 					Width = event.xconfigure.width;
 					Height = event.xconfigure.height;
-
-					// resize image data
-					if (SoftwareImage)
-					{
-						XDestroyImage(SoftwareImage);
-
-						SoftwareImage = XCreateImage(display,
-							visual->visual, visual->depth,
-							ZPixmap, 0, 0, Width, Height,
-							BitmapPad(display), 0);
-
-						// use malloc because X will free it later on
-						if (SoftwareImage)
-							SoftwareImage->data = (char*) malloc(SoftwareImage->bytes_per_line * SoftwareImage->height * sizeof(char));
-					}
 
 					if (VideoDriver)
 						VideoDriver->OnResize(core::dimension2d<u32>(Width, Height));
@@ -1188,61 +1153,6 @@ void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)
 		XFree(txt.value);
 	}
 #endif
-}
-
-
-//! presents a surface in the client area
-bool CIrrDeviceLinux::present(video::IImage* image, void* windowId, core::rect<s32>* srcRect)
-{
-#ifdef _IRR_COMPILE_WITH_X11_
-	// this is only necessary for software drivers.
-	if (!SoftwareImage)
-		return true;
-
-	// thx to Nadav, who send me some clues of how to display the image
-	// to the X Server.
-
-	const u32 destwidth = SoftwareImage->width;
-	const u32 minWidth = core::min_(image->getDimension().Width, destwidth);
-	const u32 destPitch = SoftwareImage->bytes_per_line;
-
-	video::ECOLOR_FORMAT destColor;
-	switch (SoftwareImage->bits_per_pixel)
-	{
-		case 16:
-			if (SoftwareImage->depth==16)
-				destColor = video::ECF_R5G6B5;
-			else
-				destColor = video::ECF_A1R5G5B5;
-		break;
-		case 24: destColor = video::ECF_R8G8B8; break;
-		case 32: destColor = video::ECF_A8R8G8B8; break;
-		default:
-			os::Printer::log("Unsupported screen depth.");
-			return false;
-	}
-
-	u8* srcdata = reinterpret_cast<u8*>(image->lock());
-	u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
-
-	const u32 destheight = SoftwareImage->height;
-	const u32 srcheight = core::min_(image->getDimension().Height, destheight);
-	const u32 srcPitch = image->getPitch();
-	for (u32 y=0; y!=srcheight; ++y)
-	{
-		video::CColorConverter::convert_viaFormat(srcdata,image->getColorFormat(), minWidth, destData, destColor);
-		srcdata+=srcPitch;
-		destData+=destPitch;
-	}
-	image->unlock();
-
-	GC gc = DefaultGC(display, DefaultScreen(display));
-	Window myWindow=window;
-	if (windowId)
-		myWindow = reinterpret_cast<Window>(windowId);
-	XPutImage(display, myWindow, gc, SoftwareImage, 0, 0, 0, 0, destwidth, destheight);
-#endif
-	return true;
 }
 
 
