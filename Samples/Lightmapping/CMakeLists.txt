@@ -155,6 +155,11 @@ elseif(BUILD_SDL)
 		${application_source}
 		${template_path}/Platforms/SDL2/MainSDL.cpp
 	)
+elseif(BUILD_LINUX)
+	add_executable(SampleLightmapping
+		${application_source}
+		${template_path}/Platforms/Linux/MainLinux.cpp
+	)
 elseif(BUILD_ANDROID)
 	add_library(SampleLightmapping SHARED ${application_source})
 elseif (BUILD_WINDOWS_STORE)
