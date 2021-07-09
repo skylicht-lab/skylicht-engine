@@ -387,6 +387,33 @@ void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 		#define IRR_OGL_LOAD_EXTENSION(x) wglGetProcAddress(reinterpret_cast<const char*>(x))
 	#elif defined(_IRR_COMPILE_WITH_SDL_DEVICE_)
 		#define IRR_OGL_LOAD_EXTENSION(x) SDL_GL_GetProcAddress(reinterpret_cast<const char*>(x))
+	#else
+		// Accessing the correct function is quite complex
+		// All libraries should support the ARB version, however
+		// since GLX 1.4 the non-ARB version is the official one
+		// So we have to check the runtime environment and
+		// choose the proper symbol
+		// In case you still have problems please enable the
+		// next line by uncommenting it
+		// #define _IRR_GETPROCADDRESS_WORKAROUND_
+
+		#ifndef _IRR_GETPROCADDRESS_WORKAROUND_
+			__GLXextFuncPtr(*IRR_OGL_LOAD_EXTENSION_FUNCP)(const GLubyte*) = 0;
+
+			#ifdef GLX_VERSION_1_4
+				int major = 0, minor = 0;
+				if (glXGetCurrentDisplay())
+					glXQueryVersion(glXGetCurrentDisplay(), &major, &minor);
+				if ((major > 1) || (minor > 3))
+					IRR_OGL_LOAD_EXTENSION_FUNCP = glXGetProcAddress;
+				else
+			#endif
+					IRR_OGL_LOAD_EXTENSION_FUNCP = glXGetProcAddressARB;
+
+			#define IRR_OGL_LOAD_EXTENSION(X) IRR_OGL_LOAD_EXTENSION_FUNCP(reinterpret_cast<const GLubyte*>(X))
+		#else
+			#define IRR_OGL_LOAD_EXTENSION(X) glXGetProcAddressARB(reinterpret_cast<const GLubyte*>(X))
+		#endif // workaround
 	#endif
 
 	// get multitexturing function pointers
