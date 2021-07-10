@@ -63,11 +63,10 @@ namespace Skylicht
 					ArrayComponent& listComponents = obj->getListComponent();
 					for (CComponentSystem* component : listComponents)
 					{
-						CComponentEditor* editor = activator->createInstance(component->getTypeName().c_str());
+						CComponentEditor* editor = activator->getEditorInstance(component->getTypeName().c_str());
 						if (editor != NULL)
 						{
-							editor->onGUI(component, m_spaceProperty);
-							delete editor;
+							editor->onInitGUI(component, m_spaceProperty);
 						}
 						else
 						{
@@ -80,6 +79,7 @@ namespace Skylicht
 			{
 				m_spaceProperty->setIcon(GUI::ESystemIcon::None);
 				m_spaceProperty->setLabel(L"");
+				m_spaceProperty->clearAllGroup();
 			}
 		}
 	}

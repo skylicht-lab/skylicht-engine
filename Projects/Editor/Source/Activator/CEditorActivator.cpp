@@ -29,6 +29,16 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		CEditorActivator::CEditorActivator()
+		{
+
+		}
+
+		CEditorActivator::~CEditorActivator()
+		{
+			releaseAllInstance();
+		}
+
 		bool CEditorActivator::registerEditor(const char* componentType, ActivatorCreateEditor func)
 		{
 			std::map<std::string, int>::iterator i = m_mapComponent.find(componentType);
@@ -40,14 +50,34 @@ namespace Skylicht
 			return true;
 		}
 
-		CComponentEditor* CEditorActivator::createInstance(const char* componentType)
+		CComponentEditor* CEditorActivator::getEditorInstance(const char* componentType)
 		{
+			// find componentType
 			std::map<std::string, int>::iterator i = m_mapComponent.find(componentType);
 			if (i == m_mapComponent.end())
 				return NULL;
 
+			// re-used
+			std::map<std::string, CComponentEditor*>::iterator j = m_mapInstance.find(componentType);
+			if (j != m_mapInstance.end() && (*j).second != NULL)
+				return (*j).second;
+
+			// create and cache to re-used
 			int id = (*i).second;
-			return m_factoryFunc[id]();
+			CComponentEditor* result = m_factoryFunc[id]();
+			m_mapInstance[componentType] = result;
+			return result;
+		}
+
+		void CEditorActivator::releaseAllInstance()
+		{
+			std::map<std::string, CComponentEditor*>::iterator i = m_mapInstance.begin(), end = m_mapInstance.end();
+			while (i != end)
+			{
+				delete (*i).second;
+				++i;
+			}
+			m_mapInstance.clear();
 		}
 	}
 }

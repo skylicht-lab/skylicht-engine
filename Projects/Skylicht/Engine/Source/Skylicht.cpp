@@ -46,6 +46,9 @@ https://github.com/skylicht-lab/skylicht-engine
 // Tween
 #include "Tween/CTweenManager.h"
 
+// Activator
+#include "Utils/CActivator.h"
+
 #if defined(USE_FREETYPE)
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
 #endif
@@ -78,6 +81,7 @@ namespace Skylicht
 		CMaterialManager::createGetInstance();
 
 		CTweenManager::createGetInstance();
+		CActivator::createGetInstance();
 
 #if defined(USE_FREETYPE)
 		CGlyphFreetype::createGetInstance();
@@ -98,6 +102,7 @@ namespace Skylicht
 		CGlyphFreetype::releaseInstance();
 #endif
 
+		CActivator::releaseInstance();
 		CTweenManager::releaseInstance();
 
 		CMaterialManager::releaseInstance();
