@@ -222,42 +222,13 @@ namespace Skylicht
 
 		void CSpaceScene::update()
 		{
-			/*
-			static core::vector3df pos;
-			static core::quaternion rot;
-			static core::vector3df scale(1.0f, 1.0f, 1.0f);
+			// update controller
+			CSceneController::getInstance()->update();
 
-			CHandles* handle = CHandles::getInstance();
-			*/
-
-			/*
-			pos = handle->positionHandle(pos);
-			if (handle->endCheck())
-			{
-				os::Printer::log("Handles changed!");
-				handle->end();
-			}
-			*/
-
-			/*
-			rot = handle->rotateHandle(rot, core::vector3df(0.0f, 0.0f, 0.0f));
-			if (handle->endCheck())
-			{
-				os::Printer::log("Handles changed!");
-				handle->end();
-			}
-			*/
-
-			/*
-			scale = handle->scaleHandle(scale, core::vector3df(1.0f, 0.0f, 1.0f));
-			if (handle->endCheck())
-			{
-				os::Printer::log("Handles changed!");
-				handle->end();
-			}
-			*/
-
+			// update viewpoint
 			m_viewpointController->update();
+
+			// update scene
 			m_scene->update();
 		}
 

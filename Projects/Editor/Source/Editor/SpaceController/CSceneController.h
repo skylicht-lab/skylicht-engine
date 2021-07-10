@@ -32,6 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/Hierarchy/CSpaceHierarchy.h"
 #include "Editor/Space/Hierarchy/CHierachyNode.h"
 
+#include "Editor/Gizmos/CGizmos.h"
+
 #include "CContextMenuScene.h"
 
 namespace Skylicht
@@ -57,10 +59,18 @@ namespace Skylicht
 
 			CContextMenuScene* m_contextMenuScene;
 
+			std::vector<CGizmos*> m_gizmos;
+
 		public:
 			CSceneController();
 
 			virtual ~CSceneController();
+
+			void update();
+
+			void addGizmos(CGizmos* gizmos);
+
+			void removeGizmos(CGizmos* gizmos);
 
 			void initContextMenu(GUI::CCanvas* canvas);
 

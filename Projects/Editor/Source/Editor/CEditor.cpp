@@ -39,6 +39,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "AssetManager/CAssetManager.h"
 #include "Selection/CSelection.h"
+#include "Activator/CEditorActivator.h"
 
 namespace Skylicht
 {
@@ -62,10 +63,12 @@ namespace Skylicht
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
 			CPropertyController::createGetInstance();
 			CSelection::createGetInstance();
+			CEditorActivator::createGetInstance();
 		}
 
 		CEditor::~CEditor()
 		{
+			CEditorActivator::releaseInstance();
 			CPropertyController::releaseInstance();
 			CSceneController::releaseInstance();
 			CSelection::releaseInstance();

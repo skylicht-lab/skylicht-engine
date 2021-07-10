@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/Components/CComponentEditor.h"
 #include "Activator/CEditorActivator.h"
+#include "Editor/Gizmos/Transform/CTransformGizmos.h"
 
 namespace Skylicht
 {
@@ -33,12 +34,15 @@ namespace Skylicht
 	{
 		class CTransformEditor : public CComponentEditor
 		{
+		protected:
+			CTransformGizmos* m_gizmos;
+
 		public:
 			CTransformEditor();
 
 			virtual ~CTransformEditor();
 
-			virtual void onGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+			virtual void onInitGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
 		};
 	}
 }

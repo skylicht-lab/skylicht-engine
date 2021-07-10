@@ -43,11 +43,18 @@ namespace Skylicht
 		protected:
 			std::vector<ActivatorCreateEditor> m_factoryFunc;
 			std::map<std::string, int> m_mapComponent;
+			std::map<std::string, CComponentEditor*> m_mapInstance;
 
 		public:
+			CEditorActivator();
+
+			virtual ~CEditorActivator();
+
 			bool registerEditor(const char* componentType, ActivatorCreateEditor func);
 
-			CComponentEditor* createInstance(const char* componentType);
+			CComponentEditor* getEditorInstance(const char* componentType);
+
+			void releaseAllInstance();
 		};
 	}
 }
