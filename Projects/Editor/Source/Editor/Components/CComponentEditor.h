@@ -39,7 +39,7 @@ namespace Skylicht
 
 			virtual ~CComponentEditor();
 
-			virtual void onGUI(CComponentSystem* target, CSpaceProperty *spaceProperty) = 0;
+			virtual void onInitGUI(CComponentSystem* target, CSpaceProperty *spaceProperty) = 0;
 		};
 	}
 }

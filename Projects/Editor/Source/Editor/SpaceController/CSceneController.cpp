@@ -162,6 +162,38 @@ namespace Skylicht
 			return node;
 		}
 
+		void CSceneController::update()
+		{
+			for (CGizmos* g : m_gizmos)
+			{
+				g->onGizmos();
+			}
+		}
+
+		void CSceneController::addGizmos(CGizmos* gizmos)
+		{
+			for (CGizmos* g : m_gizmos)
+			{
+				if (g == gizmos)
+					return;
+			}
+			m_gizmos.push_back(gizmos);
+		}
+
+		void CSceneController::removeGizmos(CGizmos* gizmos)
+		{
+			std::vector<CGizmos*>::iterator i = m_gizmos.begin(), end = m_gizmos.end();
+			while (i != end)
+			{
+				if ((*i) == gizmos)
+				{
+					m_gizmos.erase(i);
+					return;
+				}
+				++i;
+			}
+		}
+
 		void CSceneController::onCommand(const std::wstring& objectType)
 		{
 			if (m_scene == NULL || m_zone == NULL)

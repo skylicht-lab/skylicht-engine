@@ -50,6 +50,8 @@ namespace Skylicht
 
 			void clear();
 
+			CSelectObject getLastSelected();
+
 			void addSelect(const CSelectObject& obj);
 
 			void addSelect(const std::vector<CSelectObject>& obj);

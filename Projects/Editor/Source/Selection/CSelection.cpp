@@ -59,6 +59,16 @@ namespace Skylicht
 			return result;
 		}
 
+		CSelectObject CSelection::getLastSelected()
+		{
+			CSelectObject ret;
+			if (m_selected.size() > 0)
+			{
+				ret = m_selected.back();
+			}
+			return ret;
+		}
+
 		void CSelection::addSelect(const CSelectObject& obj)
 		{
 			for (CSelectObject selected : m_selected)

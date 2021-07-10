@@ -23,35 +23,20 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "Transform/CTransform.h"
-#include "CTransformEditor.h"
-#include "Editor/Space/Property/CSpaceProperty.h"
-#include "Editor/SpaceController/CSceneController.h"
+#include "CGizmos.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CTransformEditor::CTransformEditor()
+		CGizmos::CGizmos()
 		{
-			m_gizmos = new CTransformGizmos();
+
 		}
 
-		CTransformEditor::~CTransformEditor()
+		CGizmos::~CGizmos()
 		{
-			CSceneController::getInstance()->removeGizmos(m_gizmos);
-			delete m_gizmos;
+
 		}
-
-		void CTransformEditor::onInitGUI(CComponentSystem* target, CSpaceProperty* spaceProperty)
-		{
-			// setup gizmos
-			CSceneController::getInstance()->addGizmos(m_gizmos);
-
-			// setup gui
-			GUI::CCollapsibleGroup* group = spaceProperty->addGroup("Transform");
-		}
-
-		EDITOR_REGISTER(CTransformEditor, CTransform)
 	}
 }
