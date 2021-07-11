@@ -93,11 +93,11 @@ CIrrDeviceLinux::CIrrDeviceLinux(const SIrrlichtCreationParameters& param)
 	uname(&LinuxInfo);
 
 	linuxversion += LinuxInfo.sysname;
-	linuxversion += " ";
+	linuxversion += "\n";
 	linuxversion += LinuxInfo.release;
-	linuxversion += " ";
+	linuxversion += "\n";
 	linuxversion += LinuxInfo.version;
-	linuxversion += " ";
+	linuxversion += "\n";
 	linuxversion += LinuxInfo.machine;
 
 	Operator = new COSOperator(linuxversion, this);
@@ -400,6 +400,22 @@ bool CIrrDeviceLinux::createWindow()
 #endif
 			if (major==1 && minor>2 && glxChooseFBConfig)
 			{
+                static int visualAttrBuffer[] = {
+                    GLX_RENDER_TYPE, GLX_RGBA_BIT,
+                    GLX_X_RENDERABLE, True,
+                    GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+                    GLX_DOUBLEBUFFER, CreationParams.Doublebuffer?True:False,
+                    GLX_RED_SIZE, 8,
+                    GLX_BLUE_SIZE, 8,
+                    GLX_GREEN_SIZE, 8,
+                    0
+                };
+
+                CreationParams.AntiAlias = false;
+                CreationParams.Stencilbuffer = false;
+                CreationParams.Stereobuffer = false;
+
+/*
 				// attribute array for the draw buffer
 				int visualAttrBuffer[] =
 				{
@@ -407,32 +423,35 @@ bool CIrrDeviceLinux::createWindow()
 					GLX_RED_SIZE, 4,
 					GLX_GREEN_SIZE, 4,
 					GLX_BLUE_SIZE, 4,
-					GLX_ALPHA_SIZE, CreationParams.WithAlphaChannel?1:0,
+//					GLX_ALPHA_SIZE, CreationParams.WithAlphaChannel?1:0,
 					GLX_DEPTH_SIZE, CreationParams.ZBufferBits, //10,11
 					GLX_DOUBLEBUFFER, CreationParams.Doublebuffer?True:False,
-					GLX_STENCIL_SIZE, CreationParams.Stencilbuffer?1:0,
-#if defined(GLX_VERSION_1_4) && defined(GLX_SAMPLE_BUFFERS) // we need to check the extension string!
-					GLX_SAMPLE_BUFFERS, 1,
-					GLX_SAMPLES, CreationParams.AntiAlias, // 18,19
-#elif defined(GLX_ARB_multisample)
-					GLX_SAMPLE_BUFFERS_ARB, 1,
-					GLX_SAMPLES_ARB, CreationParams.AntiAlias, // 18,19
-#elif defined(GLX_SGIS_multisample)
-					GLX_SAMPLE_BUFFERS_SGIS, 1,
-					GLX_SAMPLES_SGIS, CreationParams.AntiAlias, // 18,19
-#endif
+//					GLX_STENCIL_SIZE, CreationParams.Stencilbuffer?1:0,
+					GLX_X_RENDERABLE, True,
+                    GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+//#if defined(GLX_VERSION_1_4) && defined(GLX_SAMPLE_BUFFERS) // we need to check the extension string!
+//					GLX_SAMPLE_BUFFERS, 1,
+//					GLX_SAMPLES, CreationParams.AntiAlias, // 18,19
+//#elif defined(GLX_ARB_multisample)
+//					GLX_SAMPLE_BUFFERS_ARB, 1,
+//					GLX_SAMPLES_ARB, CreationParams.AntiAlias, // 18,19
+//#elif defined(GLX_SGIS_multisample)
+//					GLX_SAMPLE_BUFFERS_SGIS, 1,
+//					GLX_SAMPLES_SGIS, CreationParams.AntiAlias, // 18,19
+//#endif
 //#ifdef GL_ARB_framebuffer_sRGB
 //					GLX_FRAMEBUFFER_SRGB_CAPABLE_ARB, CreationParams.HandleSRGB,
 //#elif defined(GL_EXT_framebuffer_sRGB)
 //					GLX_FRAMEBUFFER_SRGB_CAPABLE_EXT, CreationParams.HandleSRGB,
 //#endif
-					GLX_STEREO, CreationParams.Stereobuffer?True:False,
+//					GLX_STEREO, CreationParams.Stereobuffer?True:False,
 					None
 				};
+*/
 
 				GLXFBConfig *configList=0;
 				int nitems=0;
-				if (CreationParams.AntiAlias<2)
+				// if (CreationParams.AntiAlias<2)
 				{
 					visualAttrBuffer[17] = 0;
 					visualAttrBuffer[19] = 0;
@@ -440,6 +459,8 @@ bool CIrrDeviceLinux::createWindow()
 				// first round with unchanged values
 				{
 					configList=glxChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
+
+					/*
 					if (!configList && CreationParams.AntiAlias)
 					{
 						while (!configList && (visualAttrBuffer[19]>1))
@@ -465,11 +486,13 @@ bool CIrrDeviceLinux::createWindow()
 							}
 						}
 					}
+					*/
 				}
 				// Next try with flipped stencil buffer value
 				// If the first round was with stencil flag it's now without
 				// Other way round also makes sense because some configs
 				// only have depth buffer combined with stencil buffer
+				/*
 				if (!configList)
 				{
 					if (CreationParams.Stencilbuffer)
@@ -539,6 +562,8 @@ bool CIrrDeviceLinux::createWindow()
 						}
 					}
 				}
+				*/
+
 				if (configList)
 				{
 					glxFBConfig=configList[0];
@@ -663,9 +688,11 @@ bool CIrrDeviceLinux::createWindow()
 				&attributes);
 		XMapRaised(display, window);
 		CreationParams.WindowId = (void*)window;
-		Atom wmDelete;
-		wmDelete = XInternAtom(display, wmDeleteWindow, True);
-		XSetWMProtocols(display, window, &wmDelete, 1);
+
+		//Atom wmDelete;
+		//wmDelete = XInternAtom(display, wmDeleteWindow, True);
+		//XSetWMProtocols(display, window, &wmDelete, 1);
+
 		if (CreationParams.Fullscreen)
 		{
 			XSetInputFocus(display, window, RevertToParent, CurrentTime);
@@ -779,7 +806,7 @@ void CIrrDeviceLinux::createDriver()
 {
 	switch(CreationParams.DriverType)
 	{
-#ifdef _IRR_COMPILE_WITH_X11_	
+#ifdef _IRR_COMPILE_WITH_X11_
 	case video::EDT_OPENGL:
 		#ifdef _IRR_COMPILE_WITH_OPENGL_
 		if (Context)
@@ -789,8 +816,7 @@ void CIrrDeviceLinux::createDriver()
 		#endif
 		break;
 
-	case video::EDT_DIRECT3D8:
-	case video::EDT_DIRECT3D9:
+	case video::EDT_DIRECT3D11:
 		os::Printer::log("This driver is not available in Linux. Try OpenGL or Software renderer.",
 			ELL_ERROR);
 		break;
@@ -924,7 +950,7 @@ bool CIrrDeviceLinux::run()
 					if (event.type == ButtonPress)
 					{
 						irrevent.MouseInput.Event = EMIE_MOUSE_WHEEL;
-						irrevent.MouseInput.Wheel = 1.0f;
+						irrevent.MouseInput.Wheel = -1.0f;
 					}
 					break;
 
@@ -932,7 +958,7 @@ bool CIrrDeviceLinux::run()
 					if (event.type == ButtonPress)
 					{
 						irrevent.MouseInput.Event = EMIE_MOUSE_WHEEL;
-						irrevent.MouseInput.Wheel = -1.0f;
+						irrevent.MouseInput.Wheel = 1.0f;
 					}
 					break;
 				}
@@ -1323,6 +1349,11 @@ void CIrrDeviceLinux::restoreWindow()
 #endif
 }
 
+//! Get the position of the frame on-screen
+core::position2di CIrrDeviceLinux::getWindowPosition()
+{
+    return core::position2di(0, 0);
+}
 
 void CIrrDeviceLinux::createKeyMap()
 {
