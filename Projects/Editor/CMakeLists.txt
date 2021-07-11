@@ -157,6 +157,11 @@ elseif(BUILD_SDL)
 	)
 elseif(BUILD_ANDROID)
 	add_library(SkylichtEditor SHARED ${application_source})
+elseif(BUILD_LINUX)
+	add_executable(SkylichtEditor
+		${application_source}
+		${template_path}/Platforms/Linux/MainLinux.cpp
+	)
 elseif (BUILD_WINDOWS_STORE)
 	add_executable(SkylichtEditor
 		${application_source}

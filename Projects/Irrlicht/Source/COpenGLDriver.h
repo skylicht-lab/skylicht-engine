@@ -137,6 +137,13 @@ namespace video
 		bool initDriver();		
 		#endif
 
+#ifdef _IRR_COMPILE_WITH_X11_DEVICE_
+		COpenGLDriver(const SIrrlichtCreationParameters& params, io::IFileSystem* io);
+		//! inits the GLX specific parts of the open gl driver
+		bool initDriver();
+		bool changeRenderContext(const SExposedVideoData& videoData);
+#endif
+
 		//! destructor
 		virtual ~COpenGLDriver();
 
@@ -542,6 +549,11 @@ namespace video
 			HWND Window;
 		#endif
 		
+		#ifdef _IRR_COMPILE_WITH_X11_DEVICE_
+			GLXDrawable Drawable;
+			Display* X11Display;
+		#endif
+
 		#ifdef _IRR_COMPILE_WITH_CG_
 		CGcontext CgContext;
 		#endif

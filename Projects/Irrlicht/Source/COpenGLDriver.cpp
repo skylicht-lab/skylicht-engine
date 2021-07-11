@@ -299,6 +299,98 @@ void COpenGLHardwareBuffer::removeFromArray(bool status)
 }
 
 // -----------------------------------------------------------------------
+// LINUX CONSTRUCTOR
+// -----------------------------------------------------------------------
+#ifdef _IRR_COMPILE_WITH_X11_DEVICE_
+//! Linux constructor and init code
+COpenGLDriver::COpenGLDriver(const SIrrlichtCreationParameters& params, io::IFileSystem* io)
+	: CNullDriver(io, params.WindowSize), COpenGLExtensionHandler(),
+	ResetRenderStates(true),
+	AntiAlias(params.AntiAlias),
+	RenderTargetTexture(0), CurrentRendertargetSize(0, 0),
+	ColorFormat(ECF_R8G8B8),
+	CurrentTarget(ERT_FRAME_BUFFER), Params(params),
+	ActiveGLSLProgram(0), LastVertexDescriptor(0),
+	BridgeCalls(0), DeviceType(EIDT_LINUX)
+{
+#ifdef _DEBUG
+	setDebugName("COpenGLDriver");
+#endif
+
+#ifdef _IRR_COMPILE_WITH_CG_
+	CgContext = 0;
+#endif
+}
+
+
+bool COpenGLDriver::changeRenderContext(const SExposedVideoData& videoData)
+{
+	if (videoData.OpenGLLinux.X11Window)
+	{
+		if (videoData.OpenGLLinux.X11Display && videoData.OpenGLLinux.X11Context)
+		{
+			if (!glXMakeCurrent((Display*)videoData.OpenGLLinux.X11Display, videoData.OpenGLLinux.X11Window, (GLXContext)videoData.OpenGLLinux.X11Context))
+			{
+				os::Printer::log("Render Context switch failed.");
+				return false;
+			}
+			else
+			{
+				Drawable = videoData.OpenGLLinux.X11Window;
+				X11Display = (Display*)videoData.OpenGLLinux.X11Display;
+			}
+		}
+		else
+		{
+			// in case we only got a window ID, try with the existing values for display and context
+			if (!glXMakeCurrent((Display*)ExposedData.OpenGLLinux.X11Display, videoData.OpenGLLinux.X11Window, (GLXContext)ExposedData.OpenGLLinux.X11Context))
+			{
+				os::Printer::log("Render Context switch failed.");
+				return false;
+			}
+			else
+			{
+				Drawable = videoData.OpenGLLinux.X11Window;
+				X11Display = (Display*)ExposedData.OpenGLLinux.X11Display;
+			}
+		}
+	}
+	// set back to main context
+	else if (X11Display != ExposedData.OpenGLLinux.X11Display)
+	{
+		if (!glXMakeCurrent((Display*)ExposedData.OpenGLLinux.X11Display, ExposedData.OpenGLLinux.X11Window, (GLXContext)ExposedData.OpenGLLinux.X11Context))
+		{
+			os::Printer::log("Render Context switch failed.");
+			return false;
+		}
+		else
+		{
+			Drawable = ExposedData.OpenGLLinux.X11Window;
+			X11Display = (Display*)ExposedData.OpenGLLinux.X11Display;
+		}
+	}
+	return true;
+}
+
+
+//! inits the open gl driver
+bool COpenGLDriver::initDriver()
+{
+	ExposedData.OpenGLLinux.X11Context = glXGetCurrentContext();
+	ExposedData.OpenGLLinux.X11Display = glXGetCurrentDisplay();
+	ExposedData.OpenGLLinux.X11Window = (unsigned long)Params.WindowId;
+	Drawable = glXGetCurrentDrawable();
+	X11Display = (Display*)ExposedData.OpenGLLinux.X11Display;
+
+	// set vsync
+	extGlSwapInterval(Params.Vsync ? 1 : 0);
+
+	return genericDriverInit();
+}
+
+#endif // _IRR_COMPILE_WITH_X11_DEVICE_
+
+// -----------------------------------------------------------------------
 // SDL CONSTRUCTOR
 // -----------------------------------------------------------------------
 #ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
@@ -323,7 +415,7 @@ COpenGLDriver::COpenGLDriver(const SIrrlichtCreationParameters& params,
 
 #ifdef _IRR_COMPILE_WITH_CG_
 	CgContext = 0;
-#endif	
+#endif
 }
 
 bool COpenGLDriver::initDriver()
@@ -545,7 +637,7 @@ bool COpenGLDriver::initDriver()
 	data.OpenGLWin32.HDc = HDc;
 	data.OpenGLWin32.HRc = hrc;
 	data.OpenGLWin32.HWnd = temporary_wnd;
-	
+
 	if (!changeRenderContext(data))
 	{
 		os::Printer::log("Cannot activate a temporary GL rendering context.", ELL_ERROR);
@@ -845,7 +937,7 @@ COpenGLDriver::~COpenGLDriver()
 	if (CgContext)
 		cgDestroyContext(CgContext);
 	#endif
-	
+
 	deleteMaterialRenders();
 
 	CurrentTexture.clear();
@@ -1004,10 +1096,18 @@ bool COpenGLDriver::endScene()
 		return SwapBuffers(HDc) == TRUE;
 #endif
 
-#ifdef _IRR_COMPILE_WITH_SDL_DEVICE_	
+#ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
 	if (DeviceType == EIDT_SDL)
 	{
 		SDLSwapBuffers();
+		return true;
+	}
+#endif
+
+#ifdef _IRR_COMPILE_WITH_X11_DEVICE_
+	if (DeviceType == EIDT_LINUX)
+	{
+		glXSwapBuffers(X11Display, Drawable);
 		return true;
 	}
 #endif
@@ -1055,6 +1155,12 @@ bool COpenGLDriver::beginScene(bool backBuffer, bool zBuffer, SColor color,
 	{
 #ifdef _IRR_COMPILE_WITH_WINDOWS_DEVICE_
 	case EIDT_WIN32:
+		changeRenderContext(videoData);
+		break;
+#endif
+
+#ifdef _IRR_COMPILE_WITH_X11_DEVICE_
+	case EIDT_LINUX:
 		changeRenderContext(videoData);
 		break;
 #endif
@@ -1303,7 +1409,7 @@ void COpenGLDriver::drawMeshBuffer(const scene::IMeshBuffer* mb)
 
 	u32 instanceVertexCount = 0;
 	bool perInstanceBufferPresent = false;
-	
+
 	// support hw instancing
 	for (u32 i = 0; i < mb->getVertexBufferCount(); ++i)
 	{
@@ -1335,7 +1441,7 @@ void COpenGLDriver::drawMeshBuffer(const scene::IMeshBuffer* mb)
 
 		u8* attribData = vertexData + attribOffset;
 
-		GLenum attribTypeGL = 0;		
+		GLenum attribTypeGL = 0;
 
 		switch (attribType)
 		{
@@ -1403,7 +1509,7 @@ void COpenGLDriver::drawMeshBuffer(const scene::IMeshBuffer* mb)
 			extGlBindBuffer(GL_ARRAY_BUFFER, hwVertexBuffer);
 		}
 #endif
-		
+
 		if (glslProgram)
 		{
 			s32 status = attribute->getLocationStatus((u32)Material.MaterialType);
@@ -1444,7 +1550,7 @@ void COpenGLDriver::drawMeshBuffer(const scene::IMeshBuffer* mb)
 					extGlVertexAttribDivisor(location, 0);
 			}
 		}
-		
+
 	}
 
 	// Update IBO.
@@ -1507,7 +1613,7 @@ void COpenGLDriver::drawMeshBuffer(const scene::IMeshBuffer* mb)
 void COpenGLDriver::renderInstance(const void* indices, GLenum indexType, u32 primitiveCount, scene::E_PRIMITIVE_TYPE primitiveType, u32 instanceCount)
 {
 	switch (primitiveType)
-	{	
+	{
 	case scene::EPT_LINE_STRIP:
 		extGlDrawElementsInstanced(GL_LINE_STRIP, primitiveCount + 1, indexType, indices, instanceCount);
 		break;
@@ -1710,7 +1816,7 @@ void COpenGLDriver::setRenderStates3DMode()
 	BridgeCalls->setAlphaTest(false);
 	BridgeCalls->setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	ResetRenderStates = true;	
+	ResetRenderStates = true;
 
 #ifdef GL_EXT_clip_volume_hint
 	if (FeatureAvailable[IRR_EXT_clip_volume_hint])
@@ -1732,7 +1838,7 @@ void COpenGLDriver::setRenderStates3DMode()
 		if (Material.MaterialType < numMaterialRenderers)
 			MaterialRenderers[Material.MaterialType].Renderer->OnSetMaterial(Material, LastMaterial, ResetRenderStates, this);
 
-		LastMaterial = Material;		
+		LastMaterial = Material;
 	}
 
 	if (Material.MaterialType < numMaterialRenderers)
@@ -2130,14 +2236,14 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 	// Set textures to TU/TIU and apply filters to them
 
 	for (s32 i = MaxTextureUnits - 1; i >= 0; --i)
-	{		
+	{
 		BridgeCalls->setTexture(i);
 
 		if (!CurrentTexture[i])
-			continue;		
+			continue;
 
 		if (CurrentTexture[i]->getTextureType() == ETT_TEXTURE_CUBE)
-		{			
+		{
 			if (material.UseMipMaps && CurrentTexture[i]->hasMipMaps())
 			{
 				if (material.TextureLayer[i].AnisotropicFilter > 1 &&
@@ -2191,7 +2297,7 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 				glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			}
-			
+
 			// wrap mode
 			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, getTextureWrapMode(material.TextureLayer[i].TextureWrapU));
 			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, getTextureWrapMode(material.TextureLayer[i].TextureWrapV));
@@ -2333,7 +2439,7 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 			{
 				const SColorf &color = material.TextureLayer[i].BorderColor;
 				GLfloat borderColor[] = { color.r, color.g, color.b, color.a };
-				glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);				
+				glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 			}
 
 			tmpTexture->getStatesCache().IsCached = true;
@@ -2403,7 +2509,7 @@ void COpenGLDriver::setFog(SColor c, E_FOG_TYPE fogType, f32 start,
 //! Draws a 3d line.
 void COpenGLDriver::draw3DLine(const core::vector3df& start, const core::vector3df& end, SColor color)
 {
-	
+
 }
 
 
@@ -2563,7 +2669,7 @@ ITexture* COpenGLDriver::addRenderTargetTexture(const core::dimension2d<u32>& si
 
 	//restore mip-mapping
 	setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, generateMipLevels);
-	
+
 	ResetRenderStates = true;
 
 	return rtt;
@@ -2692,7 +2798,7 @@ bool COpenGLDriver::setRenderTarget(video::ITexture* texture, bool clearBackBuff
 		{
 			// we want to set a new target. so do this.
 			BridgeCalls->setViewport(0, 0, texture->getSize().Width, texture->getSize().Height);
-			
+
 			COpenGLTexture *rtt = static_cast<COpenGLTexture*>(texture);
 			RenderTargetTexture = rtt;
 
@@ -2819,7 +2925,7 @@ bool COpenGLDriver::setRenderTargetArray(video::ITexture* texture, int arrayID, 
 		BridgeCalls->setViewport(0, 0, texture->getSize().Width, texture->getSize().Height);
 		RenderTargetTexture = texture;
 
-		
+
 		COpenGLTextureArray *rtt = static_cast<COpenGLTextureArray*>(texture);
 		RenderTargetTexture = rtt;
 
@@ -3869,7 +3975,7 @@ void COpenGLCallBridge::resetTexture(const ITexture* texture)
 
 		if (Texture[i] == texture)
 		{
-			glBindTexture(GL_TEXTURE_2D, 0);			
+			glBindTexture(GL_TEXTURE_2D, 0);
 			Texture[i] = 0;
 		}
 	}
@@ -3899,7 +4005,7 @@ void COpenGLCallBridge::setTexture(GLuint stage)
 				}
 				else if (Driver->CurrentTexture[stage]->getTextureType() == ETT_TEXTURE_ARRAY)
 				{
-					// texture array					
+					// texture array
 					glBindTexture(GL_TEXTURE_2D_ARRAY, static_cast<const COpenGLTextureArray*>(Driver->CurrentTexture[stage])->getOpenGLTextureName());
 				}
 

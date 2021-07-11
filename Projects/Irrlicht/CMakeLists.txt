@@ -58,6 +58,7 @@ endif()
 # Linux
 if (BUILD_LINUX)
 	target_link_libraries(Irrlicht GL)
+	target_link_libraries(Irrlicht X11)
 endif()
 
 # Android
