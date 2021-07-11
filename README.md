@@ -117,7 +117,7 @@ Engine Components are used:
 - **Canvas Component**
 - **Graphics2D**
 - **GUI Text**
-<img src="Documents/Media/Samples/sample_hello_world.png"/>
+<img src="Documents/Media/Samples/sample_hello_world.jpg"/>
 
 ### Samples\DrawPrimitives
 This demo is to draw Cube 3D, set up, transform and use components.
@@ -188,6 +188,9 @@ This scene uses basic diffuse bump specular shader.
 <img src="Documents/Media/Samples/sponza/Sponza_03.jpg"/>
 
 <img src="Documents/Media/Samples/sponza/Sponza_04.jpg"/>
+
+Run on Ubuntu 20.04
+<img src="Documents/Media/Samples/sponza/sponza_ubuntu.jpg"/>
 
 ### Samples\LightmappingVertex
 This is a demo to use lightmapper to set indirect lighting color on vertex color.

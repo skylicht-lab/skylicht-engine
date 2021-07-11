@@ -442,7 +442,7 @@ namespace Skylicht
 						}
 					}
 
-					// add to list effect params				
+					// add to list effect params
 					effect->EffectParams.push_back(effectParam);
 
 				}
@@ -515,7 +515,7 @@ namespace Skylicht
 												}
 												else if (node == ambientNode)
 												{
-													// ambient lightmap texture:										
+													// ambient lightmap texture:
 													// see lightmap component
 												}
 												else if (node == specularNode)
@@ -931,8 +931,8 @@ namespace Skylicht
 				//<polygons>
 				else if (nodeName == polygonsNode)
 				{
-					char log[512];
-					char nodeNameA[512];
+					char log[1024];
+					char nodeNameA[256];
 					CStringImp::copy(nodeNameA, nodeName.c_str());
 					sprintf(log, "[Collada loader] unsupport %s - reimport <triangles> or <polylist>", nodeNameA);
 					os::Printer::log(log);
@@ -1201,7 +1201,7 @@ namespace Skylicht
 			// num of bone in vertex
 			int nBone = vCountArray[i];
 
-			// loop on bone in vertex		
+			// loop on bone in vertex
 			for (int iBone = 0; iBone < nBone; iBone++, id += 2)
 			{
 				u32 boneId = vArray[id];
@@ -2205,7 +2205,7 @@ namespace Skylicht
 
 				p++;
 
-				// fix next new line 
+				// fix next new line
 				while (*p && *p == L'\n')
 					p++;
 				begin = p;
