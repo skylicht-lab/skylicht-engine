@@ -111,7 +111,7 @@ namespace Skylicht
 		int j = 0;
 
 		char number[64];
-		number[0] = NULL;
+		number[0] = 0;
 
 		int iNumber = 0;
 		int currentFormat = 0;
@@ -137,7 +137,7 @@ namespace Skylicht
 				{
 					if (textw[i] == '>')
 					{
-						number[iNumber] = NULL;
+						number[iNumber] = 0;
 						currentFormat = atoi(number);
 
 						if (currentFormat >= MAX_FORMATCOLOR)
@@ -217,7 +217,7 @@ namespace Skylicht
 			else
 			{
 				// todo: add ... at the end of string
-				textw[i] = NULL;
+				textw[i] = 0;
 				if (i - 1 > 0)
 					textw[i - 1] = L'.';
 				if (i - 2 > 0)
@@ -273,7 +273,7 @@ namespace Skylicht
 			else
 			{
 				// todo: add ... at the end of string
-				textw[i] = NULL;
+				textw[i] = 0;
 				if (i - 1 > 0)
 					textw[i - 1] = L'.';
 				if (i - 2 > 0)
@@ -610,7 +610,7 @@ namespace Skylicht
 				continue;
 			}
 
-			// ------------------		
+			// ------------------
 			if (c)
 				x = x + (int)c->XAdvance + m_charPadding;
 
@@ -641,7 +641,7 @@ namespace Skylicht
 				while (lpString[i] == ' ')
 				{
 					i++;
-					if (lpString[i] == NULL)
+					if (lpString[i] == 0)
 						return;
 				}
 				begin = i;
