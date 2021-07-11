@@ -97,6 +97,9 @@ namespace irr
 		//! Restores the window size.
 		virtual void restoreWindow();
 
+		//! Get the position of the frame on-screen
+		virtual core::position2di getWindowPosition();
+
 		//! Activate any joysticks, and generate events for them.
 		virtual bool activateJoysticks(core::array<SJoystickInfo> & joystickInfo);
 
