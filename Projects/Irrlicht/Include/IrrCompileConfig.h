@@ -54,7 +54,7 @@
 #define _IRR_WINDOWS_API_
 
 #ifdef WINDOWS_STORE
-	#define _IRR_WINDOW_UNIVERSAL_PLATFORM_	
+	#define _IRR_WINDOW_UNIVERSAL_PLATFORM_
 	#define _IRR_COMPILE_WITH_PHONE_DEVICE_
 	#define NO_IRR_COMPILE_WITH_OGLES3_
 	#define NO_IRR_COMPILE_WITH_OPENGL_
@@ -73,10 +73,10 @@
 #endif
 
 #ifdef LINUX
+    #define _IRR_POSIX_API_
 	#define _IRR_LINUX_PLATFORM
-	#ifdef SDL
-		#define _IRR_COMPILE_WITH_SDL_DEVICE_
-	#endif
+	#define _IRR_COMPILE_WITH_X11_
+	#define _IRR_COMPILE_WITH_X11_DEVICE_
 #endif
 
 #ifdef EMSCRIPTEN
