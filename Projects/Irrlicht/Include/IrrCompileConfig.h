@@ -73,6 +73,7 @@
 #endif
 
 #ifdef LINUX
+    #define _IRR_POSIX_API_
 	#define _IRR_LINUX_PLATFORM
 	#define _IRR_COMPILE_WITH_X11_
 	#define _IRR_COMPILE_WITH_X11_DEVICE_
