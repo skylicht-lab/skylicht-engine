@@ -81,7 +81,7 @@ namespace irr
 #endif
 
 #ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_
-		if (params.DeviceType == EIDT_CONSOLE || (!dev && params.DeviceType == EIDT_BEST))
+		if (params.DeviceType == EIDT_CONSOLE)
 			dev = new CIrrDeviceConsole(params);
 #endif
 
