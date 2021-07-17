@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Skylicht Engine</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="write_access">Request Storage Permission</string>
+    <string name="write_permission_rationale">This permission lets the game load and save your game data on storage.\n\nWithout this permission, the game cannot load data resource, so it will stop</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="write_permission_denied">You have denied to read/write on storage.\nSo, the game will stop.</string>
+    <string name="change">Change</string>
+</resources>
