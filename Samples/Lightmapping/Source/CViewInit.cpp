@@ -16,7 +16,7 @@ CViewInit::~CViewInit()
 
 }
 
-io::path CViewInit::getBuiltInPath(const char *name)
+io::path CViewInit::getBuiltInPath(const char* name)
 {
 	return getApplication()->getBuiltInPath(name);
 }
@@ -25,7 +25,7 @@ void CViewInit::onInit()
 {
 	// init application
 	CBaseApp* app = getApplication();
-	
+
 	// show console
 	app->showDebugConsole();
 
@@ -37,65 +37,65 @@ void CViewInit::onInit()
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Common.zip"), false, false);
 
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModelsDDS.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModelsResource.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath(app->getTexturePackageName("SampleModels").c_str()), false, false);
 
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SponzaResource.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SponzaDDS.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath(app->getTexturePackageName("Sponza").c_str()), false, false);
 
 	// load basic shader
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->initSGDeferredShader();
 
 	// load font
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 
 	// create a Scene
-	CContext *context = CContext::getInstance();
-	CScene *scene = context->initScene();
+	CContext* context = CContext::getInstance();
+	CScene* scene = context->initScene();
 
 	// create a Zone in Scene
-	CZone *zone = scene->createZone();
+	CZone* zone = scene->createZone();
 
 	// camera 2D
-	CGameObject *guiCameraObject = zone->createEmptyObject();
+	CGameObject* guiCameraObject = zone->createEmptyObject();
 	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// camera 3D
-	CGameObject *camObj = zone->createEmptyObject();
+	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
-	CCamera *camera = camObj->getComponent<CCamera>();
+	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(-10.0f, 5.0f, 10.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// sky
 #ifdef LIGHTMAP_SPONZA
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/Helipad.png");
+	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/Helipad.png");
 #else
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
+	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
 #endif
 	if (skyDomeTexture != NULL)
 	{
-		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
+		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
 		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
 	}
 
 #ifdef LIGHTMAP_SPONZA
 	// lighting
-	CGameObject *lightObj = zone->createEmptyObject();
+	CGameObject* lightObj = zone->createEmptyObject();
 
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 	directionalLight->setIntensity(1.0f);
 	directionalLight->setBounce(3);
 
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(2.0f, -5.0f, 1.0f);
@@ -115,9 +115,9 @@ void CViewInit::onInit()
 
 	for (int i = 0; i < 4; i++)
 	{
-		CGameObject *pointLightObj = zone->createEmptyObject();
+		CGameObject* pointLightObj = zone->createEmptyObject();
 
-		CPointLight *pointLight = pointLightObj->addComponent<CPointLight>();
+		CPointLight* pointLight = pointLightObj->addComponent<CPointLight>();
 		pointLight->setShadow(true);
 		pointLight->setColor(SColor(255, 221, 123, 34));
 		pointLight->setBounce(1);
@@ -127,33 +127,33 @@ void CViewInit::onInit()
 		else
 			pointLight->setRadius(4.0f);
 
-		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
+		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
-}
+	}
 
 	// Load model from Sponza.smesh
 	// How to export "Sponza.smesh" see SampleLightmapUV
-	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.smesh", NULL, true);
+	CEntityPrefab* model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.smesh", NULL, true);
 #else
-	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CGameObject* lightObj = zone->createEmptyObject();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 	directionalLight->setBounce(2);
 
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-	CEntityPrefab *model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.smesh", "LightmapUV");
+	CEntityPrefab* model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.smesh", "LightmapUV");
 #endif	
 
 	if (model != NULL)
 	{
-		CGameObject *gazeboObj = zone->createEmptyObject();
+		CGameObject* gazeboObj = zone->createEmptyObject();
 		gazeboObj->setStatic(true);
 
-		CRenderMesh *renderMesh = gazeboObj->addComponent<CRenderMesh>();
+		CRenderMesh* renderMesh = gazeboObj->addComponent<CRenderMesh>();
 		renderMesh->initFromPrefab(model);
 
 #ifdef LIGHTMAP_SPONZA
@@ -165,7 +165,7 @@ void CViewInit::onInit()
 #else
 		// init default material
 		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(model);
-		for (CMaterial *material : materials)
+		for (CMaterial* material : materials)
 		{
 			material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 
@@ -197,8 +197,8 @@ void CViewInit::onDestroy()
 
 void CViewInit::onUpdate()
 {
-	CContext *context = CContext::getInstance();
-	CScene *scene = context->getScene();
+	CContext* context = CContext::getInstance();
+	CScene* scene = context->getScene();
 	if (scene != NULL)
 		scene->update();
 
