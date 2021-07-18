@@ -10,8 +10,6 @@ Skylicht Engine, which is an evolution of the [Irrlicht Project](http://irrlicht
 
 Skylicht Engine is a super lightweight Game Engine that targets mobile platforms (Android, IOS). And, it's completely free.
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d6fbf50a10a4cf38426b9fabfc1fabc)](https://www.codacy.com/manual/ducphamhong/skylicht-engine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=skylicht-lab/skylicht-engine&amp;utm_campaign=Badge_Grade)
-
 ## How To Build
 | Platform                                                                                 | Build Status                                                                                                                                                                      |
 | -----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -101,10 +99,70 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
     C:\skylicht-engine>python Scripts\create_project.py NewApplication Samples\NewApplication
 ```
 - Edit **CMakeProjects.cmake**, add new line:"*subdirs (Samples/NewApplication)*" and regenerate projects
-```console
-    C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
-```
 - Open Visual Studio Solution and click **NewApplication** - **"Set as StartUp Project"**.
+
+### Android
+##### Prerequisites
+- Install [Android Studio and SDK](https://developer.android.com/studio)
+- Install [mingw-w64](http://mingw-w64.org/doku.php/download/mingw-builds) for Windows
+- Install [Android NDK](https://developer.android.com/ndk/downloads)
+
+##### How to build
+###### **Step 1: Build native library**
+- Open **BuildCommand/BuildAndroidNDK.cmd** by text editor and update your path **MINGW** and **NDK**
+
+```code
+# BuildAndroidNDK.cmd
+# Set your pc folder, example
+set MINGW=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
+set NDK=C:\SDK\android-ndk-r21e
+```
+
+- Run **BuildCommand/BuildAndroidNDK.cmd** to build Android Native Library
+- More details about **cmake android ndk**, [please read here](https://developer.android.com/ndk/guides/cmake)
+
+###### **Step 2: Copy native library to Gradle Project**
+```console
+# Make folder jniLibs on Android Project
+C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\armeabi-v7a
+C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
+
+# Copy result native ndk (from step 1) to jniLibs
+# Example test project SampleSkinnedMesh
+C:\skylicht-engine>copy Bin\Android\Libs\arm64-v8a\libSampleSkinnedMesh.so Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
+C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Projects\Android\SkylichtEngine\app\src\main\jniLibs\armeabi-v7a
+```
+- More details about **Link Gradle to your native library**, [please read here](https://developer.android.com/studio/projects/gradle-external-native-builds)
+
+###### **Step 3: Copy Resource to Gradle (Android) Project**
+```console
+C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
+C:\skylicht-engine\Assets>python BuildAssetBundles.py
+C:\skylicht-engine\Assets>cd..
+
+# Create Assets Gradle
+C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\assets
+
+# Copy built-in asset
+C:\skylicht-engine>copy Bin\BuiltIn.zip Projects\Android\SkylichtEngine\app\src\main\assets
+
+# Copy project asset
+# Example test project SampleSkinnedMesh
+C:\skylicht-engine>copy Bin\Common.zip Projects\Android\SkylichtEngine\app\src\main\assets
+C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\SkylichtEngine\app\src\main\assets
+
+# Dont forget copy ETC texture
+C:\skylicht-engine>copy Bin\SampleModelsETC.zip Projects\Android\SkylichtEngine\app\src\main\assets
+```
+
+###### **Step 4: Build APK by Android Studio or Gradle**
+Open Android Studio and import project **C:\skylicht-engine\Projects\Android\SkylichtEngine**
+
+<img src="Documents/Media/Samples/android/android-studio.jpg"/>
+
+Run Build from Android Studio:
+
+<img src="Documents/Media/Samples/android/build-apk.jpg"/>
 
 ### Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
@@ -255,3 +313,6 @@ Skylicht Engine is based in part on the work of:
 -   Independent JPEG Group, libPng, zlib, curl...
 
 This means that if you've used the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used. It would also be nice to mention that you use the 3rd parties library... Please see the README files from 3rd parties for further information.
+
+Thanks,
+Project Maintainer: Pham Hong Duc
