@@ -16,7 +16,11 @@ file(STRINGS "Version.txt" SKYLICHT_VERSION)
 message(STATUS "- Skylicht Engine version ${SKYLICHT_VERSION}")
 
 # output
-set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs CACHE PATH "Single output directory for building all libraries.")
+if (CMAKE_SYSTEM_NAME STREQUAL Android)
+	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs/${ANDROID_ABI} CACHE PATH "Single output directory for building all libraries.")
+else()
+	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs CACHE PATH "Single output directory for building all libraries.")
+endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin CACHE PATH "Single output directory for building executables.")
 
