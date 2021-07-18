@@ -156,6 +156,33 @@ namespace Skylicht
 #endif
 	}
 
+	std::string CBaseApp::getTexturePackageName(const char* name)
+	{
+		std::string result = name;
+#ifdef __EMSCRIPTEN__
+		IVideoDriver* driver = getVideoDriver();
+		if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
+			result += "DDS.zip";
+		else if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC) || driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC2))
+			result += "PVR.zip";
+		else
+			result += "ETC.zip";
+#elif defined(WINDOWS_STORE)
+		result += "DDS.zip";
+#elif defined(MACOS)
+		result += "DDS.zip";
+#elif defined(LINUX)
+		result += "DDS.zip";
+#elif defined(ANDROID)
+		result += "ETC.zip";
+#elif defined(IOS)
+		result += "PVR.zip";
+#else
+		result += "DDS.zip";
+#endif
+		return result;
+	}
+
 	void CBaseApp::setClearColor(const video::SColor& c)
 	{
 		m_clearColor = c;

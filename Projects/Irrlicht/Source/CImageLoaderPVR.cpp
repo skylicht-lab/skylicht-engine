@@ -22,7 +22,7 @@ namespace video
 //! based on the file extension (e.g. ".tga")
 bool CImageLoaderPVR::isALoadableFileExtension(const io::path& filename) const
 {
-	return core::hasFileExtension(filename, "pvr");
+	return core::hasFileExtension(filename, "pvr") || core::hasFileExtension(filename, "etc2");
 }
 
 
