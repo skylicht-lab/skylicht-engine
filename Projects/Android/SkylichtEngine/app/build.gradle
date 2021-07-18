@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.skylicht.engine3d"
+        applicationId "com.yourteam.appname"
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1

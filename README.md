@@ -101,10 +101,68 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
     C:\skylicht-engine>python Scripts\create_project.py NewApplication Samples\NewApplication
 ```
 - Edit **CMakeProjects.cmake**, add new line:"*subdirs (Samples/NewApplication)*" and regenerate projects
-```console
-    C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
-```
 - Open Visual Studio Solution and click **NewApplication** - **"Set as StartUp Project"**.
+
+### Android
+##### Prerequisites
+- Install [mingw-w64](http://mingw-w64.org/doku.php/download/mingw-builds) for Windows
+- Install [Android NDK](https://developer.android.com/ndk/downloads)
+
+##### How to build
+###### **Step 1: Build Native SDK**
+- Open BuildCommand/BuildAndroidNDK.cmd and update your path **MINGW** and **NDK**
+```code
+set MINGW=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
+set NDK=C:\SDK\android-ndk-r21e
+set MINSDKVERSION=24
+cd..
+set PATH=%PATH%;%MINGW%
+
+set ABI="armeabi-v7a"
+cmake -S . -B ./PrjAndroid-%ABI% -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE=%NDK%/build/cmake/android.toolchain.cmake -DANDROID_ABI=%ABI% -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=%MINSDKVERSION%
+mingw32-make -C PrjAndroid-%ABI%
+
+set ABI="arm64-v8a"
+cmake -S . -B ./PrjAndroid-%ABI% -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE=%NDK%/build/cmake/android.toolchain.cmake -DANDROID_ABI=%ABI% -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=%MINSDKVERSION%
+mingw32-make -C PrjAndroid-%ABI%
+```
+- Run **C:\skylicht-engine>BuildCommand/BuildAndroidNDK.cmd** to build Android Native Library
+- More details about **cmake android ndk**, [please read here](https://developer.android.com/ndk/guides/cmake)
+
+###### **Step 2: Copy Native Library to Gradle (Android) Project**
+```console
+# Make folder for jniLibs for Android Studio Project
+C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\armeabi-v7a
+C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
+
+# Copy result native ndk (from step 1) to jniLibs
+C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
+C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Projects\Android\SkylichtEngine\app\src\main\jniLibs\armeabi-v7a
+```
+- More details about **Link Gradle to your native library**, [please read here](https://developer.android.com/studio/projects/gradle-external-native-builds)
+
+###### **Step 3: Copy Resource to Gradle (Android) Project**
+```console
+C:\skylicht-engine\Assets>python BuildAssetBundles.py
+C:\skylicht-engine\Assets>cd..
+
+# Create Assets Gradle
+C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\assets
+
+# Copy built-in asset
+C:\skylicht-engine>copy Bin\BuiltIn.zip Projects\Android\SkylichtEngine\app\src\main\assets
+
+# Copy project asset
+C:\skylicht-engine>copy Bin\Common.zip Projects\Android\SkylichtEngine\app\src\main\assets
+C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\SkylichtEngine\app\src\main\assets
+```
+
+###### **Step 4: Build APK by Android Studio or Gradle**
+Open Android Studio and import project **C:\skylicht-engine\Projects\Android\SkylichtEngine**
+<img src="Documents/Media/Samples/android/android-studio.jpg"/>
+Run Build from Android Studio
+<img src="Documents/Media/Samples/android/build-apk.jpg"/>
+The apk output stored: **C:\Projects\skylicht-engine\Projects\Android\SkylichtEngine\app\build\outputs**
 
 ### Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
@@ -255,3 +313,6 @@ Skylicht Engine is based in part on the work of:
 -   Independent JPEG Group, libPng, zlib, curl...
 
 This means that if you've used the Skylicht Engine in your product, you must acknowledge somewhere in your documentation that you've used. It would also be nice to mention that you use the 3rd parties library... Please see the README files from 3rd parties for further information.
+
+Thanks,
+Project Maintainer: Pham Hong Duc
