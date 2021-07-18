@@ -10,8 +10,6 @@ Skylicht Engine, which is an evolution of the [Irrlicht Project](http://irrlicht
 
 Skylicht Engine is a super lightweight Game Engine that targets mobile platforms (Android, IOS). And, it's completely free.
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d6fbf50a10a4cf38426b9fabfc1fabc)](https://www.codacy.com/manual/ducphamhong/skylicht-engine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=skylicht-lab/skylicht-engine&amp;utm_campaign=Badge_Grade)
-
 ## How To Build
 | Platform                                                                                 | Build Status                                                                                                                                                                      |
 | -----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -105,6 +103,7 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 
 ### Android
 ##### Prerequisites
+- Install [Android Studio and SDK](https://developer.android.com/studio)
 - Install [mingw-w64](http://mingw-w64.org/doku.php/download/mingw-builds) for Windows
 - Install [Android NDK](https://developer.android.com/ndk/downloads)
 
@@ -136,7 +135,7 @@ C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\ar
 C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
 
 # Copy result native ndk (from step 1) to jniLibs
-C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
+C:\skylicht-engine>copy Bin\Android\Libs\arm64-v8a\libSampleSkinnedMesh.so Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
 C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Projects\Android\SkylichtEngine\app\src\main\jniLibs\armeabi-v7a
 ```
 - More details about **Link Gradle to your native library**, [please read here](https://developer.android.com/studio/projects/gradle-external-native-builds)
@@ -159,9 +158,13 @@ C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\SkylichtEn
 
 ###### **Step 4: Build APK by Android Studio or Gradle**
 Open Android Studio and import project **C:\skylicht-engine\Projects\Android\SkylichtEngine**
+
 <img src="Documents/Media/Samples/android/android-studio.jpg"/>
-Run Build from Android Studio
+
+Run Build from Android Studio:
+
 <img src="Documents/Media/Samples/android/build-apk.jpg"/>
+
 The apk output stored: **C:\Projects\skylicht-engine\Projects\Android\SkylichtEngine\app\build\outputs**
 
 ### Roadmap
