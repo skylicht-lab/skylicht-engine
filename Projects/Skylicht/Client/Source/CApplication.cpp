@@ -138,6 +138,11 @@ namespace Skylicht
 		// install application
 		installApplication(m_argv);
 
+#ifdef ANDROID
+		os::Printer::log("Init file archive .apk");
+		m_fileSystem->addFileArchive(CBuildConfig::APKPath.c_str(), true, true);
+#endif
+
 		// send app init event
 		sendEventToAppReceiver(AppEventInit);
 

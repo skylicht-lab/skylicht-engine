@@ -45,11 +45,7 @@ namespace Skylicht
 	std::string CBuildConfig::Model = "";
 #endif
 
-	std::string CBuildConfig::CPID = "0";
-
 	std::string CBuildConfig::APKPath = "";
-	std::string	CBuildConfig::ObbPath = "";
-
 	std::string	CBuildConfig::BundleID = "";
 
 #ifdef USE_DATA_IN_ZIP_FILE
@@ -57,11 +53,4 @@ namespace Skylicht
 #else
 	bool CBuildConfig::UseZipData = false;
 #endif
-
-#ifdef IOS
-	std::string CBuildConfig::DLCVersion = "v0.0.1i";
-#elif ANDROID
-	std::string	CBuildConfig::DLCVersion = "v0.0.1a";
-#endif
-
 }

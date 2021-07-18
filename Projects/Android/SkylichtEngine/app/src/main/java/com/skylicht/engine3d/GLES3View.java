@@ -16,7 +16,7 @@ public class GLES3View extends GLSurfaceView {
         super(context);
 
         setEGLContextFactory(new ContextFactory());
-        setEGLConfigChooser(new ConfigChooser(5, 6, 5, 0, 16, 0));
+        setEGLConfigChooser(new ConfigChooser(8, 8, 8, 0, 16, 0));
 
         setPreserveEGLContextOnPause(true);
         setRenderer(new Renderer());
