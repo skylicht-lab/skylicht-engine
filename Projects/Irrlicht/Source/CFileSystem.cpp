@@ -231,6 +231,8 @@ bool CFileSystem::addFileArchive(const io::path& filename, bool ignoreCase,
 			  const core::stringc& password,
 			  IFileArchive** retArchive)
 {
+	os::Printer::log("Begin create archive for: ", filename);
+
 	IFileArchive* archive = 0;
 	bool ret = false;
 

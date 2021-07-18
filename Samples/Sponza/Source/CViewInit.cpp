@@ -26,60 +26,60 @@ CViewInit::~CViewInit()
 
 }
 
-io::path CViewInit::getBuiltInPath(const char *name)
+io::path CViewInit::getBuiltInPath(const char* name)
 {
 	return getApplication()->getBuiltInPath(name);
 }
 
 void CViewInit::onInit()
 {
-	CBaseApp *app = getApplication();
+	CBaseApp* app = getApplication();
 	app->showDebugConsole();
 	app->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->initSGDeferredShader();
 }
 
 void CViewInit::initScene()
 {
-	CBaseApp *app = getApplication();
+	CBaseApp* app = getApplication();
 
-	CScene *scene = CContext::getInstance()->initScene();
-	CZone *zone = scene->createZone();
+	CScene* scene = CContext::getInstance()->initScene();
+	CZone* zone = scene->createZone();
 
 	// camera
-	CGameObject *camObj = zone->createEmptyObject();
+	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(1.0f);
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
-	CCamera *camera = camObj->getComponent<CCamera>();
+	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(1.0f, 2.0f, 1.0f));
 	camera->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
-	CGameObject *guiCameraObj = zone->createEmptyObject();
+	CGameObject* guiCameraObj = zone->createEmptyObject();
 	guiCameraObj->addComponent<CCamera>();
-	CCamera *guiCamera = guiCameraObj->getComponent<CCamera>();
+	CCamera* guiCamera = guiCameraObj->getComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/Helipad.png");
+	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/Helipad.png");
 	if (skyDomeTexture != NULL)
 	{
-		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
+		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
 		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
 	}
 
 	// lighting
-	CGameObject *lightObj = zone->createEmptyObject();
+	CGameObject* lightObj = zone->createEmptyObject();
 
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 	directionalLight->setIntensity(1.3f);
 
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(2.0f, -5.0f, 1.0f);
@@ -101,9 +101,9 @@ void CViewInit::initScene()
 
 	for (int i = 0; i < 4; i++)
 	{
-		CGameObject *pointLightObj = zone->createEmptyObject();
+		CGameObject* pointLightObj = zone->createEmptyObject();
 
-		CPointLight *pointLight = pointLightObj->addComponent<CPointLight>();
+		CPointLight* pointLight = pointLightObj->addComponent<CPointLight>();
 		pointLight->setShadow(true);
 		pointLight->setColor(SColor(255, 221, 123, 34));
 
@@ -112,7 +112,7 @@ void CViewInit::initScene()
 		else
 			pointLight->setRadius(4.0f);
 
-		CTransformEuler *pointLightTransform = pointLightObj->getTransformEuler();
+		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
 
 		pointLightObj->addComponent<CFireLight>();
@@ -121,8 +121,8 @@ void CViewInit::initScene()
 	}
 
 	// sponza
-	CMeshManager *meshManager = CMeshManager::getInstance();
-	CEntityPrefab *prefab = NULL;
+	CMeshManager* meshManager = CMeshManager::getInstance();
+	CEntityPrefab* prefab = NULL;
 
 	std::vector<std::string> textureFolders;
 	textureFolders.push_back("Sponza/Textures");
@@ -136,16 +136,16 @@ void CViewInit::initScene()
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Sponza/Sponza.xml", true, textureFolders);
 
 		// create render mesh object
-		CGameObject *sponza = zone->createEmptyObject();
+		CGameObject* sponza = zone->createEmptyObject();
 		sponza->setStatic(true);
 
 		// renderer
-		CRenderMesh *renderer = sponza->addComponent<CRenderMesh>();
+		CRenderMesh* renderer = sponza->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
 
 		// indirect indirect lighting
-		CIndirectLighting *indirectLighting = sponza->addComponent<CIndirectLighting>();
+		CIndirectLighting* indirectLighting = sponza->addComponent<CIndirectLighting>();
 
 		// init lightmap texture array
 		// See SampleLightmapping, that how to render this
@@ -165,8 +165,8 @@ void CViewInit::initScene()
 	// init fire
 	for (int i = 0; i < 4; i++)
 	{
-		CGameObject *fire = zone->createEmptyObject();
-		Particle::CParticleComponent *fireParticle = fire->addComponent<Particle::CParticleComponent>();
+		CGameObject* fire = zone->createEmptyObject();
+		Particle::CParticleComponent* fireParticle = fire->addComponent<Particle::CParticleComponent>();
 		initFireParticle(fireParticle);
 
 		fire->getTransformEuler()->setPosition(pointLightPosition[i] - core::vector3df(0.0f, 0.8f, 0.0f));
@@ -174,7 +174,7 @@ void CViewInit::initScene()
 	}
 
 	// save to context
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
@@ -190,15 +190,15 @@ void CViewInit::initScene()
 
 void CViewInit::initProbes()
 {
-	CContext *context = CContext::getInstance();
-	CZone *zone = context->getActiveZone();
+	CContext* context = CContext::getInstance();
+	CZone* zone = context->getActiveZone();
 
 	std::vector<core::vector3df> probesPosition;
 
 	for (int i = 0; i < 7; i++)
 	{
 		float dis = 4.0f;
-		float x = i * dis - 3.0f *dis;
+		float x = i * dis - 3.0f * dis;
 
 		// row 0
 		probesPosition.push_back(core::vector3df(x, 2.0f, -0.4f));
@@ -225,10 +225,10 @@ void CViewInit::initProbes()
 	for (u32 i = 0, n = (int)probesPosition.size(); i < n; i++)
 	{
 		// probe
-		CGameObject *probeObj = zone->createEmptyObject();
-		CLightProbe *probe = probeObj->addComponent<Lightmapper::CLightProbe>();
+		CGameObject* probeObj = zone->createEmptyObject();
+		CLightProbe* probe = probeObj->addComponent<Lightmapper::CLightProbe>();
 
-		CTransformEuler *probeTransform = probeObj->getTransformEuler();
+		CTransformEuler* probeTransform = probeObj->getTransformEuler();
 		probeTransform->setPosition(probesPosition[i]);
 
 		probes.push_back(probe);
@@ -239,16 +239,16 @@ void CViewInit::initProbes()
 	context->setProbes(probes);
 }
 
-void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
+void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 {
-	ITexture *texture = NULL;
-	Particle::CFactory *factory = ps->getParticleFactory();
+	ITexture* texture = NULL;
+	Particle::CFactory* factory = ps->getParticleFactory();
 
 	// GROUP: FIRE
-	Particle::CGroup *fireGroup = ps->createParticleGroup();
+	Particle::CGroup* fireGroup = ps->createParticleGroup();
 
 	// Billboard render use is slower but render additive look better
-	Particle::CBillboardAdditiveRenderer *fire = factory->createBillboardAdditiveRenderer();
+	Particle::CBillboardAdditiveRenderer* fire = factory->createBillboardAdditiveRenderer();
 
 	// Particle::CQuadRenderer *fire = factory->createQuadRenderer();
 	// fire->setMaterialType(Particle::Additive, Particle::Camera);
@@ -275,7 +275,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	fireGroup->LifeMax = 1.5f;
 	fireGroup->Gravity.set(0.0f, 1.0f, 0.0f);
 
-	Particle::CInterpolator *fireSizeInterpolate = fireGroup->createInterpolator();
+	Particle::CInterpolator* fireSizeInterpolate = fireGroup->createInterpolator();
 	fireSizeInterpolate->addEntry(0.0f, 0.0f);
 	fireSizeInterpolate->addEntry(0.5f, 2.0f);
 	fireSizeInterpolate->addEntry(1.0f, 0.0f);
@@ -335,9 +335,9 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	fireGroup->addEmitter(fireEmitter6);
 
 	// GROUP: SMOKE
-	Particle::CGroup *smokeGroup = ps->createParticleGroup();
+	Particle::CGroup* smokeGroup = ps->createParticleGroup();
 
-	Particle::CBillboardAdditiveRenderer *smoke = factory->createBillboardAdditiveRenderer();
+	Particle::CBillboardAdditiveRenderer* smoke = factory->createBillboardAdditiveRenderer();
 
 	// Particle::CQuadRenderer *smoke = factory->createQuadRenderer();
 	// smoke->setMaterialType(Particle::Additive, Particle::Camera);
@@ -362,13 +362,13 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	smokeGroup->LifeMax = 4.0f;
 	smokeGroup->Gravity.set(0.0f, 0.4f, 0.0f);
 
-	Particle::CInterpolator *smokeAlphaInterpolator = smokeGroup->createInterpolator();
+	Particle::CInterpolator* smokeAlphaInterpolator = smokeGroup->createInterpolator();
 	smokeAlphaInterpolator->addEntry(0.0f, 0.0f);
 	smokeAlphaInterpolator->addEntry(0.2f, 0.7f);
 	smokeAlphaInterpolator->addEntry(1.0f, 0.0f);
 	smokeGroup->createModel(Particle::ColorA)->setInterpolator(smokeAlphaInterpolator);
 
-	Particle::CEmitter *smokeEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.5f * core::PI);
+	Particle::CEmitter* smokeEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.5f * core::PI);
 	smokeEmitter->setZone(factory->createSphereZone(core::vector3df(), 1.2f));
 	smokeEmitter->setFlow(25);
 	smokeEmitter->setForce(0.5f, 1.0f);
@@ -376,9 +376,9 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	smokeGroup->addEmitter(smokeEmitter);
 
 	// GROUP: POINT SPARK
-	Particle::CGroup *pointSparkGroup = ps->createParticleGroup();
+	Particle::CGroup* pointSparkGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer *pointSpark = factory->createQuadRenderer();
+	Particle::CQuadRenderer* pointSpark = factory->createQuadRenderer();
 	pointSparkGroup->setRenderer(pointSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
@@ -389,7 +389,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	pointSpark->SizeY = 0.15f;
 	pointSpark->setEmission(true);
 
-	Particle::CInterpolator *sparkInterpolator = pointSparkGroup->createInterpolator();
+	Particle::CInterpolator* sparkInterpolator = pointSparkGroup->createInterpolator();
 	sparkInterpolator->addEntry(0.0f, 0.0f);
 	sparkInterpolator->addEntry(0.2f, 0.7f);
 	sparkInterpolator->addEntry(1.0f, 0.0f);
@@ -404,7 +404,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent *ps)
 	pointSparkGroup->Gravity.set(0.0f, 1.0f, 0.0f);
 	pointSparkGroup->Friction = 0.4f;
 
-	Particle::CEmitter *pointSparkEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.3f * core::PI);
+	Particle::CEmitter* pointSparkEmitter = factory->createSphericEmitter(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f, 0.3f * core::PI);
 	pointSparkEmitter->setFlow(10);
 	pointSparkEmitter->setForce(1.5f, 2.0f);
 	pointSparkEmitter->setZone(factory->createSphereZone(core::vector3df(0.0f, -0.5f, 0.0f), 0.5f));
@@ -419,7 +419,7 @@ void CViewInit::onDestroy()
 
 void CViewInit::onUpdate()
 {
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 
 	switch (m_initState)
 	{
@@ -430,14 +430,14 @@ void CViewInit::onUpdate()
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
 		listBundles.push_back("Sponza.zip");
-		listBundles.push_back("SponzaDDS.zip");
+		listBundles.push_back(getApplication()->getTexturePackageName("Sponza"));
 		listBundles.push_back("Particles.zip");
 
 #ifdef __EMSCRIPTEN__
 		std::vector<std::string> listFile;
 		listFile.insert(listFile.end(), listBundles.begin(), listBundles.end());
 
-		const char *filename = listFile[m_downloaded].c_str();
+		const char* filename = listFile[m_downloaded].c_str();
 
 		if (m_getFile == NULL)
 		{
@@ -474,7 +474,7 @@ void CViewInit::onUpdate()
 
 		for (std::string& bundle : listBundles)
 		{
-			const char *r = bundle.c_str();
+			const char* r = bundle.c_str();
 #if defined(WINDOWS_STORE)
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
 #elif defined(MACOS)
@@ -501,7 +501,7 @@ void CViewInit::onUpdate()
 	break;
 	default:
 	{
-		CScene *scene = context->getScene();
+		CScene* scene = context->getScene();
 		if (scene != NULL)
 			scene->update();
 
