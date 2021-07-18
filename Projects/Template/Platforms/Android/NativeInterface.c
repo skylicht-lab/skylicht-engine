@@ -41,12 +41,10 @@ void applicationTouchUp(int touchID, int x, int y);
 void applicationUpdateAccelerometer(float x, float y, float z);
 void applicationSetAccelerometer(int b);
 void applicationSetAPK(const char *path);
-void applicationSetObbPath(const char *obbPath);
 void applicationSetBundleID(const char *id);
 void applicationSetSaveFolder(const char *path);
 void applicationSetDownloadFolder(const char *path);
 void applicationSetDeviceID(const char *id);
-void applicationSetCPID(const char *cpid);
 void applicationSetAndroidDeviceInfo(const char *manu, const char *model, const char *os);
 int applicationOnBack();
 
@@ -203,19 +201,6 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setApkPath)(JNIEnv* env, job
 
 
 // native member function setApkPath
-JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setObbPath)(JNIEnv* env, jobject thiz, jstring apkPath)
-{
-	const char *path = getJString(env, apkPath);
-
-	// set apkPath
-	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Set Obb path: %s", path);
-	applicationSetObbPath(path);
-
-	(*env)->ReleaseStringUTFChars(env, apkPath, path);
-}
-
-
-// native member function setApkPath
 JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setBundleID)(JNIEnv* env, jobject thiz, jstring bundleID)
 {
 	const char *id = getJString(env, bundleID);
@@ -261,18 +246,6 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setDeviceID)(JNIEnv* env, jo
 	applicationSetDeviceID(id);
 
 	(*env)->ReleaseStringUTFChars(env, deviceID, id);
-}
-
-
-// native member function setCPID
-JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setCPID)(JNIEnv* env, jobject thiz, jstring cpid)
-{
-	const char *pCPID = getJString(env, cpid);
-
-	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Set CPID: %s", pCPID);
-	applicationSetCPID(pCPID);
-
-	(*env)->ReleaseStringUTFChars(env, cpid, pCPID);
 }
 
 

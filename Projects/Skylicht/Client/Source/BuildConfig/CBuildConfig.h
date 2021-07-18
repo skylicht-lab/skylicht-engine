@@ -42,14 +42,8 @@ namespace Skylicht
 		static std::string Factory;
 		static std::string Model;
 
-		static std::string CPID;
-
 		static std::string APKPath;
-		static std::string ObbPath;
-
 		static std::string BundleID;
-
-		static std::string DLCVersion;
 
 		static bool UseZipData;
 	};
