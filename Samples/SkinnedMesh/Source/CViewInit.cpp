@@ -24,7 +24,7 @@ CViewInit::~CViewInit()
 
 }
 
-io::path CViewInit::getBuiltInPath(const char *name)
+io::path CViewInit::getBuiltInPath(const char* name)
 {
 	return getApplication()->getBuiltInPath(name);
 }
@@ -35,14 +35,14 @@ void CViewInit::onInit()
 	app->showDebugConsole();
 	app->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
 	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
 
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 }
 
@@ -51,59 +51,59 @@ void CViewInit::initScene()
 	CBaseApp* app = getApplication();
 
 	// load basic shader
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
 	// create a scene
-	CScene *scene = CContext::getInstance()->initScene();
-	CZone *zone = scene->createZone();
+	CScene* scene = CContext::getInstance()->initScene();
+	CZone* zone = scene->createZone();
 
 	// camera
-	CGameObject *camObj = zone->createEmptyObject();
+	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
-	CCamera *camera = camObj->getComponent<CCamera>();
+	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(0.0f, 1.8f, 3.0f));
 	camera->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
-	CCamera *guiCamera = guiCameraObject->addComponent<CCamera>();
+	CGameObject* guiCameraObject = zone->createEmptyObject();
+	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
+	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
 	if (skyDomeTexture != NULL)
 	{
-		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
+		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
 		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
 	}
 
 	// reflection probe
-	CGameObject *reflectionProbeObj = zone->createEmptyObject();
-	CReflectionProbe *reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
+	CGameObject* reflectionProbeObj = zone->createEmptyObject();
+	CReflectionProbe* reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
 	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
 	// 3D grid
-	CGameObject *grid = zone->createEmptyObject();
+	CGameObject* grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
 
 	// lighting
-	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CGameObject* lightObj = zone->createEmptyObject();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// load dae animation
-	CAnimationManager *animManager = CAnimationManager::getInstance();
-	CAnimationClip *clip1 = animManager->loadAnimation("SampleModels/MixamoCharacter/Hip_Hop_Dancing.dae");
-	CAnimationClip *clip2 = animManager->loadAnimation("SampleModels/MixamoCharacter/Samba_Dancing.dae");
+	CAnimationManager* animManager = CAnimationManager::getInstance();
+	CAnimationClip* clip1 = animManager->loadAnimation("SampleModels/MixamoCharacter/Hip_Hop_Dancing.dae");
+	CAnimationClip* clip2 = animManager->loadAnimation("SampleModels/MixamoCharacter/Samba_Dancing.dae");
 
 	// skinned mesh
 	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SampleModels/MixamoCharacter/Ch17_nonPBR.dae", "SampleModels/MixamoCharacter/textures");
@@ -136,20 +136,20 @@ void CViewInit::initScene()
 		m_character01 = zone->createEmptyObject();
 
 		// load skinned mesh character 01
-		CRenderMesh *renderMesh1 = m_character01->addComponent<CRenderMesh>();
+		CRenderMesh* renderMesh1 = m_character01->addComponent<CRenderMesh>();
 		renderMesh1->initFromPrefab(prefab);
 		renderMesh1->initMaterial(material);
 
 		// apply animation to character 01
-		CAnimationController *animController1 = m_character01->addComponent<CAnimationController>();
-		CSkeleton *skeleton1 = animController1->createSkeleton();
+		CAnimationController* animController1 = m_character01->addComponent<CAnimationController>();
+		CSkeleton* skeleton1 = animController1->createSkeleton();
 		skeleton1->setAnimation(clip1, true);
 
 		// set position for character 01
 		m_character01->getTransformEuler()->setPosition(core::vector3df(-1.0f, 0.0f, 0.0f));
 
 		// set sh lighting
-		CIndirectLighting *indirectLighting = m_character01->addComponent<CIndirectLighting>();
+		CIndirectLighting* indirectLighting = m_character01->addComponent<CIndirectLighting>();
 		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
 
 
@@ -160,13 +160,13 @@ void CViewInit::initScene()
 		m_character02 = zone->createEmptyObject();
 
 		// load skinned mesh character 02
-		CRenderMesh *renderMesh2 = m_character02->addComponent<CRenderMesh>();
+		CRenderMesh* renderMesh2 = m_character02->addComponent<CRenderMesh>();
 		renderMesh2->initFromPrefab(prefab);
 		renderMesh2->initMaterial(material);
 
 		// apply animation to character 02
-		CAnimationController *animController2 = m_character02->addComponent<CAnimationController>();
-		CSkeleton *skeleton2 = animController2->createSkeleton();
+		CAnimationController* animController2 = m_character02->addComponent<CAnimationController>();
+		CSkeleton* skeleton2 = animController2->createSkeleton();
 		skeleton2->setAnimation(clip2, true);
 
 		// set position for character 02
@@ -181,8 +181,8 @@ void CViewInit::initScene()
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
 
-	CContext *context = CContext::getInstance();
-	CForwardRP  *fwrp = new CForwardRP();
+	CContext* context = CContext::getInstance();
+	CForwardRP* fwrp = new CForwardRP();
 	fwrp->initRender(w, h);
 
 	context->setCustomRP(fwrp);
@@ -199,7 +199,7 @@ void CViewInit::onDestroy()
 
 void CViewInit::onUpdate()
 {
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 
 	switch (m_initState)
 	{
@@ -210,10 +210,10 @@ void CViewInit::onUpdate()
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
 		listBundles.push_back("SampleModelsResource.zip");
-		listBundles.push_back("SampleModelsDDS.zip");
+		listBundles.push_back(getApplication()->getTexturePackageName("SampleModels").c_str());
 
 #ifdef __EMSCRIPTEN__
-		const char *filename = listBundles[m_downloaded].c_str();
+		const char* filename = listBundles[m_downloaded].c_str();
 
 		if (m_getFile == NULL)
 		{
@@ -250,7 +250,7 @@ void CViewInit::onUpdate()
 
 		for (std::string& bundle : listBundles)
 		{
-			const char *r = bundle.c_str();
+			const char* r = bundle.c_str();
 #if defined(WINDOWS_STORE)
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
 #elif defined(MACOS)
@@ -277,7 +277,7 @@ void CViewInit::onUpdate()
 	break;
 	default:
 	{
-		CScene *scene = context->getScene();
+		CScene* scene = context->getScene();
 		if (scene != NULL)
 			scene->update();
 
@@ -291,10 +291,10 @@ void CViewInit::onRender()
 {
 	if (m_initState == CViewInit::Finished)
 	{
-		CContext *context = CContext::getInstance();
-		CScene *scene = CContext::getInstance()->getScene();
-		CBaseRP *rp = CContext::getInstance()->getRenderPipeline();
-		CCamera *camera = context->getActiveCamera();
+		CContext* context = CContext::getInstance();
+		CScene* scene = CContext::getInstance()->getScene();
+		CBaseRP* rp = CContext::getInstance()->getRenderPipeline();
+		CCamera* camera = context->getActiveCamera();
 
 		if (m_bakeSHLighting == true)
 		{
@@ -303,8 +303,8 @@ void CViewInit::onRender()
 			m_character01->setVisible(false);
 			m_character02->setVisible(false);
 
-			CGameObject *bakeCameraObj = scene->getZone(0)->createEmptyObject();
-			CCamera *bakeCamera = bakeCameraObj->addComponent<CCamera>();
+			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
+			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
 			scene->updateAddRemoveObject();
 
 			core::vector3df pos(0.0f, 0.0f, 0.0f);
@@ -314,7 +314,7 @@ void CViewInit::onRender()
 			core::vector3df binormal = normal.crossProduct(tangent);
 			binormal.normalize();
 
-			Lightmapper::CLightmapper *lm = Lightmapper::CLightmapper::getInstance();
+			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
 			lm->initBaker(64);
 			Lightmapper::CSH9 sh = lm->bakeAtPosition(
 				bakeCamera,

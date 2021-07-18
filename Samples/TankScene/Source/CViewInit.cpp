@@ -21,7 +21,7 @@ CViewInit::~CViewInit()
 
 }
 
-io::path CViewInit::getBuiltInPath(const char *name)
+io::path CViewInit::getBuiltInPath(const char* name)
 {
 	return getApplication()->getBuiltInPath(name);
 }
@@ -32,59 +32,59 @@ void CViewInit::onInit()
 	app->showDebugConsole();
 	app->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->initSGDeferredShader();
 
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 }
 
 void CViewInit::initScene()
 {
-	CBaseApp *app = getApplication();
+	CBaseApp* app = getApplication();
 
-	CScene *scene = CContext::getInstance()->initScene();
-	CZone *zone = scene->createZone();
+	CScene* scene = CContext::getInstance()->initScene();
+	CZone* zone = scene->createZone();
 
 	// camera
-	CGameObject *camObj = zone->createEmptyObject();
+	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
-	CCamera *camera = camObj->getComponent<CCamera>();
+	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(-10.0f, 5.0f, 10.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
-	CGameObject *guiCameraObj = zone->createEmptyObject();
+	CGameObject* guiCameraObj = zone->createEmptyObject();
 	guiCameraObj->addComponent<CCamera>();
-	CCamera *guiCamera = guiCameraObj->getComponent<CCamera>();
+	CCamera* guiCamera = guiCameraObj->getComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/MonValley.png");
+	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/MonValley.png");
 	if (skyDomeTexture != NULL)
 	{
-		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
+		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
 		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
 	}
 
 	// lighting
-	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CGameObject* lightObj = zone->createEmptyObject();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 	SColor c(255, 255, 244, 214);
 	directionalLight->setColor(SColorf(c));
 
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-	CMeshManager *meshManager = CMeshManager::getInstance();
-	CEntityPrefab *prefab = NULL;
+	CMeshManager* meshManager = CMeshManager::getInstance();
+	CEntityPrefab* prefab = NULL;
 
 	std::vector<std::string> textureFolders;
 	textureFolders.push_back("Sponza/Textures");
@@ -98,22 +98,22 @@ void CViewInit::initScene()
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("TankScene/TankScene.xml", true, textureFolders);
 
 		// create render mesh object
-		CGameObject *tankScene = zone->createEmptyObject();
+		CGameObject* tankScene = zone->createEmptyObject();
 		tankScene->setStatic(true);
 
 		// render mesh & init material
-		CRenderMesh *renderer = tankScene->addComponent<CRenderMesh>();
+		CRenderMesh* renderer = tankScene->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
 
 		// set indirect lighting by VertexColor
 		// See SampleLightmappingVertex, that compute vertex color as indirect lighting
-		CIndirectLighting *indirectLighting = tankScene->addComponent<CIndirectLighting>();
+		CIndirectLighting* indirectLighting = tankScene->addComponent<CIndirectLighting>();
 		indirectLighting->setIndirectLightingType(CIndirectLighting::VertexColor);
 	}
 
 	// save to context
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
@@ -131,7 +131,7 @@ void CViewInit::onDestroy()
 
 void CViewInit::onUpdate()
 {
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 
 	switch (m_initState)
 	{
@@ -142,10 +142,10 @@ void CViewInit::onUpdate()
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
 		listBundles.push_back("TankScene.zip");
-		listBundles.push_back("TankSceneDDS.zip");
+		listBundles.push_back(getApplication()->getTexturePackageName("TankScene"));
 
 #ifdef __EMSCRIPTEN__
-		const char *filename = listBundles[m_downloaded].c_str();
+		const char* filename = listBundles[m_downloaded].c_str();
 
 		if (m_getFile == NULL)
 		{
@@ -182,7 +182,7 @@ void CViewInit::onUpdate()
 
 		for (std::string& bundle : listBundles)
 		{
-			const char *r = bundle.c_str();
+			const char* r = bundle.c_str();
 #if defined(WINDOWS_STORE)
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
 #elif defined(MACOS)
@@ -209,7 +209,7 @@ void CViewInit::onUpdate()
 	break;
 	default:
 	{
-		CScene *scene = context->getScene();
+		CScene* scene = context->getScene();
 		if (scene != NULL)
 			scene->update();
 

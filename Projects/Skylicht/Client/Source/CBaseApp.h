@@ -104,6 +104,8 @@ namespace Skylicht
 
 		io::path getBuiltInPath(const char* name);
 
+		std::string getTexturePackageName(const char* name);
+
 		inline void showFPS(bool b)
 		{
 			m_showFPS = b;
