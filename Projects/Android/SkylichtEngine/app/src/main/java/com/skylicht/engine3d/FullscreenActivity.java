@@ -95,15 +95,6 @@ public class FullscreenActivity extends AppCompatActivity {
         final ApplicationInfo applicationInfo = this.getApplicationInfo();
         NativeInterface.getInstance().setApkPath(applicationInfo.sourceDir);
 
-        // set the obb path
-        // Android/obb/{domain}/main.{version_code}.{domain}.obb
-        String obbPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/obb/";
-        obbPath += getPackageName();
-        obbPath += "/main.100.";
-        obbPath += getPackageName();
-        obbPath += ".obb";
-        NativeInterface.getInstance().setObbPath(obbPath);
-
         // set the package name
         NativeInterface.getInstance().setBundleID(getPackageName());
 
@@ -386,7 +377,7 @@ public class FullscreenActivity extends AppCompatActivity {
                     .create();
             dialog.show();
         } else {
-            gotoSettings();
+            runOnUiThread(() -> gotoSettings());
         }
     }
 

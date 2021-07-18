@@ -37,15 +37,11 @@ public class NativeInterface {
 
     public native void setApkPath(String path);
 
-    public native void setObbPath(String path);
-
     public native void setBundleID(String id);
 
     public native void setSaveFolder(String path);
 
     public native void setDownloadFolder(String path);
-
-    public native void setCPID(String cpid);
 
     public native void setDeviceID(String deviceID);
 
