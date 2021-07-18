@@ -108,8 +108,8 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 - Install [Android NDK](https://developer.android.com/ndk/downloads)
 
 ##### How to build
-**Step 1: Build Native SDK**
-- Open **BuildCommand/BuildAndroidNDK.cmd** and update your path **MINGW** and **NDK**
+###### **Step 1: Build native library**
+- Open **BuildCommand/BuildAndroidNDK.cmd** by text editor and update your path **MINGW** and **NDK**
 
 ```code
 # BuildAndroidNDK.cmd
@@ -121,9 +121,9 @@ set NDK=C:\SDK\android-ndk-r21e
 - Run **BuildCommand/BuildAndroidNDK.cmd** to build Android Native Library
 - More details about **cmake android ndk**, [please read here](https://developer.android.com/ndk/guides/cmake)
 
-**Step 2: Copy Native Library to Gradle (Android) Project**
+###### **Step 2: Copy native library to Gradle Project**
 ```console
-# Make folder for jniLibs for Android Studio Project
+# Make folder jniLibs on Android Project
 C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\armeabi-v7a
 C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
 
@@ -134,8 +134,9 @@ C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Pro
 ```
 - More details about **Link Gradle to your native library**, [please read here](https://developer.android.com/studio/projects/gradle-external-native-builds)
 
-**Step 3: Copy Resource to Gradle (Android) Project**
+###### **Step 3: Copy Resource to Gradle (Android) Project**
 ```console
+C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
 C:\skylicht-engine\Assets>python BuildAssetBundles.py
 C:\skylicht-engine\Assets>cd..
 
@@ -150,11 +151,11 @@ C:\skylicht-engine>copy Bin\BuiltIn.zip Projects\Android\SkylichtEngine\app\src\
 C:\skylicht-engine>copy Bin\Common.zip Projects\Android\SkylichtEngine\app\src\main\assets
 C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\SkylichtEngine\app\src\main\assets
 
-# Dont forget copy ETC texture for Android
+# Dont forget copy ETC texture
 C:\skylicht-engine>copy Bin\SampleModelsETC.zip Projects\Android\SkylichtEngine\app\src\main\assets
 ```
 
-**Step 4: Build APK by Android Studio or Gradle**
+###### **Step 4: Build APK by Android Studio or Gradle**
 Open Android Studio and import project **C:\skylicht-engine\Projects\Android\SkylichtEngine**
 
 <img src="Documents/Media/Samples/android/android-studio.jpg"/>

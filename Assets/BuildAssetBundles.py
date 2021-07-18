@@ -9,7 +9,7 @@ compressExt = ["xml", "ttf", "otf", "txt",
 compressResourceModel = ["dae", "obj", "mtl"]
 compressTextureDDSExt = ["dds"]
 compressTexturePVRExt = ["pvr"]
-compressTextureETCExt = ["etc"]
+compressTextureETCExt = ["etc2"]
 
 
 def needCompress(filename):
