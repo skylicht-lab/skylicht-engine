@@ -50,12 +50,12 @@ void SampleLightmapUV::onInitApp()
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModels.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModelsDDS.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SampleModelsResource.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath(app->getTexturePackageName("SampleModels").c_str()), false, false);
 
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Sponza.zip"), false, false);
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SponzaResource.zip"), false, false);
-	app->getFileSystem()->addFileArchive(app->getBuiltInPath("SponzaDDS.zip"), false, false);
+	app->getFileSystem()->addFileArchive(app->getBuiltInPath(app->getTexturePackageName("Sponza").c_str()), false, false);
 
 	// Load Font
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
