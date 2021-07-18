@@ -109,30 +109,29 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 
 ##### How to build
 ###### **Step 1: Build native library**
-- Open **BuildCommand/BuildAndroidNDK.cmd** by text editor and update your path **MINGW** and **NDK**
+- Edit the file BuildCommand/BuildAndroidNDK.cmd by text editor and update your path **MINGW** and **NDK**
 
 ```code
 # BuildAndroidNDK.cmd
 # Set your pc folder, example
 set MINGW=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
 set NDK=C:\SDK\android-ndk-r21e
+...
 ```
 
-- Run **BuildCommand/BuildAndroidNDK.cmd** to build Android Native Library
-- More details about **cmake android ndk**, [please read here](https://developer.android.com/ndk/guides/cmake)
+- Run **BuildCommand/BuildAndroidNDK.cmd** to build android native library
 
 ###### **Step 2: Copy native library to Gradle Project**
 ```console
 # Make folder jniLibs on Android Project
-C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\armeabi-v7a
-C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
+C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\armeabi-v7a
+C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\arm64-v8a
 
 # Copy result native ndk (from step 1) to jniLibs
 # Example test project SampleSkinnedMesh
-C:\skylicht-engine>copy Bin\Android\Libs\arm64-v8a\libSampleSkinnedMesh.so Projects\Android\SkylichtEngine\app\src\main\jniLibs\arm64-v8a
-C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Projects\Android\SkylichtEngine\app\src\main\jniLibs\armeabi-v7a
+C:\skylicht-engine>copy Bin\Android\Libs\arm64-v8a\libSampleSkinnedMesh.so Projects\Android\app\src\main\jniLibs\arm64-v8a
+C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Projects\Android\app\src\main\jniLibs\armeabi-v7a
 ```
-- More details about **Link Gradle to your native library**, [please read here](https://developer.android.com/studio/projects/gradle-external-native-builds)
 
 ###### **Step 3: Copy Resource to Gradle (Android) Project**
 ```console
@@ -141,18 +140,18 @@ C:\skylicht-engine\Assets>python BuildAssetBundles.py
 C:\skylicht-engine\Assets>cd..
 
 # Create Assets Gradle
-C:\skylicht-engine>mkdir Projects\Android\SkylichtEngine\app\src\main\assets
+C:\skylicht-engine>mkdir Projects\Android\app\src\main\assets
 
 # Copy built-in asset
-C:\skylicht-engine>copy Bin\BuiltIn.zip Projects\Android\SkylichtEngine\app\src\main\assets
+C:\skylicht-engine>copy Bin\BuiltIn.zip Projects\Android\app\src\main\assets
 
 # Copy project asset
 # Example test project SampleSkinnedMesh
-C:\skylicht-engine>copy Bin\Common.zip Projects\Android\SkylichtEngine\app\src\main\assets
-C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\SkylichtEngine\app\src\main\assets
+C:\skylicht-engine>copy Bin\Common.zip Projects\Android\app\src\main\assets
+C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\app\src\main\assets
 
 # Dont forget copy ETC texture
-C:\skylicht-engine>copy Bin\SampleModelsETC.zip Projects\Android\SkylichtEngine\app\src\main\assets
+C:\skylicht-engine>copy Bin\SampleModelsETC.zip Projects\Android\app\src\main\assets
 ```
 
 ###### **Step 4: Build APK by Android Studio or Gradle**
@@ -163,6 +162,13 @@ Open Android Studio and import project **C:\skylicht-engine\Projects\Android\Sky
 Run Build from Android Studio:
 
 <img src="Documents/Media/Samples/android/build-apk.jpg"/>
+
+
+##### Android development
+- You can rename your package name at **build.gradle** (Projects\Android\app)
+- You can rename your application name at **string.xml** (Projects\Android\app\src\main\res\values)
+- Reference: **cmake android ndk**, [please read here](https://developer.android.com/ndk/guides/cmake)
+- Reference: **Link Gradle to your native library**, [please read here](https://developer.android.com/studio/projects/gradle-external-native-builds)
 
 ### Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
