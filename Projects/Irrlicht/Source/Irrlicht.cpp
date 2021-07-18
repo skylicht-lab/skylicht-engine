@@ -80,24 +80,19 @@ namespace irr
 			dev = new CIrrDevicePhone(params);
 #endif
 
-#ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_
-		if (params.DeviceType == EIDT_CONSOLE)
-			dev = new CIrrDeviceConsole(params);
-#endif
-
 #ifdef _IRR_COMPILE_WITH_X11_DEVICE_
 		if (params.DeviceType == EIDT_LINUX || (!dev && params.DeviceType == EIDT_BEST))
 			dev = new CIrrDeviceLinux(params);
 #endif
 
-#ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_
-		if (params.DeviceType == EIDT_CONSOLE || (!dev && params.DeviceType == EIDT_BEST))
-			dev = new CIrrDeviceConsole(params);
-#endif
-
 #ifdef _IRR_COMPILE_WITH_PHONE_DEVICE_
 		if (params.DeviceType == EIDT_PHONE || (!dev && params.DeviceType == EIDT_BEST))
 			dev = new CIrrDevicePhone(params);
+#endif
+
+#ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_
+		if (params.DeviceType == EIDT_CONSOLE)
+			dev = new CIrrDeviceConsole(params);
 #endif
 
 		if (dev && !dev->getVideoDriver() && params.DriverType != video::EDT_NULL)

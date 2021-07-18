@@ -227,19 +227,9 @@ extern "C" {
 		CBuildConfig::MountFolder = mountPath;
 	}
 
-	void applicationSetObbPath(const char *obbPath)
-	{
-		CBuildConfig::ObbPath = obbPath;
-	}
-
 	void applicationSetBundleID(const char *id)
 	{
 		CBuildConfig::BundleID = id;
-	}
-
-	void applicationSetCPID(const char *cpid)
-	{
-		CBuildConfig::CPID = cpid;
 	}
 
 	void applicationSetDeviceID(const char *id)
@@ -260,31 +250,6 @@ extern "C" {
 		CBuildConfig::Factory = manu;
 		CBuildConfig::Model = model;
 		CBuildConfig::OSVersion = os;
-	}
-		
-	void applicationOnRWVideoSuccess(int amount)
-	{
-
-	}
-
-	void applicationOnRWVideoFailed()
-	{
-
-	}
-
-	void applicationOnRWVideoStart()
-	{
-
-	}
-
-	void applicationOnRWVideoOpen()
-	{
-
-	}
-
-	void applicationOnRWVideoClose()
-	{
-
-	}
+	}	
 }
 #endif
