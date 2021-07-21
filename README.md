@@ -128,25 +128,25 @@ C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\armeabi-v7a
 C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\arm64-v8a
 
 # Copy result native ndk (from step 1) to jniLibs
-# Example test project SampleSkinnedMesh
+# Project SampleSkinnedMesh
 C:\skylicht-engine>copy Bin\Android\Libs\arm64-v8a\libSampleSkinnedMesh.so Projects\Android\app\src\main\jniLibs\arm64-v8a
 C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Projects\Android\app\src\main\jniLibs\armeabi-v7a
 ```
 
-###### **Step 3: Copy Resource to Gradle (Android) Project**
+###### **Step 3: Copy Resource to Gradle Project**
 ```console
 C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
 C:\skylicht-engine\Assets>python BuildAssetBundles.py
 C:\skylicht-engine\Assets>cd..
 
-# Create Assets Gradle
+# Create assets folder in Gradle Project
 C:\skylicht-engine>mkdir Projects\Android\app\src\main\assets
 
 # Copy built-in asset
 C:\skylicht-engine>copy Bin\BuiltIn.zip Projects\Android\app\src\main\assets
 
 # Copy project asset
-# Example test project SampleSkinnedMesh
+# Project SampleSkinnedMesh
 C:\skylicht-engine>copy Bin\Common.zip Projects\Android\app\src\main\assets
 C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\app\src\main\assets
 
@@ -155,11 +155,11 @@ C:\skylicht-engine>copy Bin\SampleModelsETC.zip Projects\Android\app\src\main\as
 ```
 
 ###### **Step 4: Build APK by Android Studio or Gradle**
-Open Android Studio and import project **C:\skylicht-engine\Projects\Android\SkylichtEngine**
+Open Android Studio and import project **Projects\Android**
 
 <img src="Documents/Media/Samples/android/android-studio.jpg"/>
 
-Run Build from Android Studio:
+Run command build from Android Studio:
 
 <img src="Documents/Media/Samples/android/build-apk.jpg"/>
 
