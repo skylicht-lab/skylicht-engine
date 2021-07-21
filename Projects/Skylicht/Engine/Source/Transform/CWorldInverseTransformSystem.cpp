@@ -43,12 +43,14 @@ namespace Skylicht
 		m_worldInv.set_used(0);
 	}
 
-	void CWorldInverseTransformSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CWorldInverseTransformSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CWorldInverseTransformData *worldInv = entity->getData<CWorldInverseTransformData>();
+		CWorldInverseTransformData* worldInv = entity->getData<CWorldInverseTransformData>();
+
+		// worldInv->HasChanged is trigged at CWorldTransformSystem
 		if (worldInv != NULL && worldInv->HasChanged == true)
 		{
-			CWorldTransformData *world = entity->getData<CWorldTransformData>();
+			CWorldTransformData* world = entity->getData<CWorldTransformData>();
 			if (world != NULL)
 			{
 				m_world.push_back(world);
@@ -57,21 +59,21 @@ namespace Skylicht
 		}
 	}
 
-	void CWorldInverseTransformSystem::init(CEntityManager *entityManager)
+	void CWorldInverseTransformSystem::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CWorldInverseTransformSystem::update(CEntityManager *entityManager)
+	void CWorldInverseTransformSystem::update(CEntityManager* entityManager)
 	{
-		CWorldTransformData **worlds = m_world.pointer();
-		CWorldInverseTransformData **worldInvs = m_worldInv.pointer();
+		CWorldTransformData** worlds = m_world.pointer();
+		CWorldInverseTransformData** worldInvs = m_worldInv.pointer();
 
 		for (u32 i = 0, n = m_world.size(); i < n; i++)
 		{
 			// Get inverse matrix of world
 			worlds[i]->World.getInverse(worldInvs[i]->WorldInverse);
-			worlds[i]->HasChanged = false;
+			worldInvs[i]->HasChanged = false;
 		}
 	}
 }

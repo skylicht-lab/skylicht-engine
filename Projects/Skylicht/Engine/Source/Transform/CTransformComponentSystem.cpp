@@ -46,15 +46,17 @@ namespace Skylicht
 		m_components.set_used(0);
 	}
 
-	void CComponentTransformSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CComponentTransformSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CTransformComponentData *component = entity->getData<CTransformComponentData>();
-		if (component != NULL && component->TransformComponent && component->TransformComponent->hasChanged())
+		CTransformComponentData* component = entity->getData<CTransformComponentData>();
+		if (component != NULL
+			&& component->TransformComponent != NULL
+			&& component->TransformComponent->hasChanged())
 		{
-			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
+			CWorldTransformData* transform = entity->getData<CWorldTransformData>();
 			if (transform != NULL)
 			{
-				// notify changed for CWorldTransformSystem query
+				// notify changed for CWorldTransformSystem, sync in TransformComponent->hasChanged()
 				transform->HasChanged = true;
 
 				m_transforms.push_back(transform);
@@ -63,15 +65,15 @@ namespace Skylicht
 		}
 	}
 
-	void CComponentTransformSystem::init(CEntityManager *entityManager)
+	void CComponentTransformSystem::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CComponentTransformSystem::update(CEntityManager *entityManager)
+	void CComponentTransformSystem::update(CEntityManager* entityManager)
 	{
-		CWorldTransformData **transforms = m_transforms.pointer();
-		CTransformComponentData **components = m_components.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
+		CTransformComponentData** components = m_components.pointer();
 		u32 numEntity = m_components.size();
 
 		for (u32 i = 0; i < numEntity; i++)

@@ -27,7 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CWorldInverseTransformData::CWorldInverseTransformData()
+	CWorldInverseTransformData::CWorldInverseTransformData() :
+		HasChanged(true)
 	{
 	}
 
