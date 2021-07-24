@@ -45,19 +45,6 @@
 #include "mpc/requant.h"
 #include "mpc/mpc_bits_reader.h"
 
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-	
-void* VoxAlloc_c(unsigned int size, const char* filename, const char* function, int line);
-void VoxFree_c(void* ptr);	
-
-#ifdef __cplusplus
-}
-#endif
-
 //------------------------------------------------------------------------------
 // types
 //------------------------------------------------------------------------------

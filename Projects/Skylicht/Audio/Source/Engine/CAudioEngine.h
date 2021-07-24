@@ -50,17 +50,17 @@ namespace SkylichtAudio
 	class CAudioEngine : public IThreadCallback
 	{
 	protected:
-		IThread	*m_thread;
+		IThread* m_thread;
 
-		IMutex *m_mutex;
+		IMutex* m_mutex;
 
-		ISoundDriver *m_driver;
+		ISoundDriver* m_driver;
 
-		IStreamFactory *m_defaultStreamFactory;
+		IStreamFactory* m_defaultStreamFactory;
 
 		std::vector<IStreamFactory*> m_streamFactorys;
 
-		std::vector<CAudioEmitter*>	m_emitters;
+		std::vector<CAudioEmitter*> m_emitters;
 
 		std::map<std::string, IStream*>	m_fileToStream;
 
@@ -112,19 +112,19 @@ namespace SkylichtAudio
 			return m_driver;
 		}
 
-		void registerStreamFactory(IStreamFactory *streamFactory);
+		void registerStreamFactory(IStreamFactory* streamFactory);
 
-		void unRegisterStreamFactory(IStreamFactory *streamFactory);
+		void unRegisterStreamFactory(IStreamFactory* streamFactory);
 
-		IStream *createStreamFromMemory(unsigned char *buffer, int size, bool takeOwnerShip = false);
+		IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnerShip = false);
 
-		IStream *createStreamFromFile(const char *fileName);
+		IStream* createStreamFromFile(const char* fileName);
 
-		IStream *createStreamFromFileAndCache(const char *fileName, bool cache);
+		IStream* createStreamFromFileAndCache(const char* fileName, bool cache);
 
-		CAudioEmitter* createAudioEmitter(IStream *stream, IAudioDecoder::EDecoderType decode);
+		CAudioEmitter* createAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType decode);
 
-		CAudioEmitter* createAudioEmitter(const char *fileName, bool cache);
+		CAudioEmitter* createAudioEmitter(const char* fileName, bool cache);
 
 		void destroyEmitter(CAudioEmitter* emitter);
 

@@ -43,11 +43,11 @@ namespace SkylichtAudio
 		int* m_mixBuffer;
 		int m_numMixSampler;
 
-		unsigned char *m_buffer;
+		unsigned char* m_buffer;
 		float m_bufferLength;
 		int m_preferedRate;
 
-		IMutex*	m_mutex;
+		IMutex* m_mutex;
 
 		float m_masterGain;
 
@@ -88,7 +88,7 @@ namespace SkylichtAudio
 
 		virtual void destroyAllSource();
 
-		virtual void getSourceParam(SSourceParam *source);
+		virtual void getSourceParam(SSourceParam* source);
 
 		virtual int getBufferSize();
 

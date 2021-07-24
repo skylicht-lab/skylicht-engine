@@ -529,7 +529,7 @@ namespace Skylicht
 
 			std::string data;
 			data += "<meta>\n";
-			data += "\t<guid id=\"" + node->Guid += "\"/>\n";
+			data += "    <guid id=\"" + node->Guid += "\"/>\n";
 			data += "</meta>";
 
 			file->write(data.c_str(), (u32)data.size());
