@@ -75,7 +75,7 @@ namespace SkylichtAudio
 			STATIC_BUFFER_SIZE = 1024
 		};
 
-		static const char  s_adpcmIndexTable[ADPCM_NUM_INDEX_IN_TABLE];
+		static const char s_adpcmIndexTable[ADPCM_NUM_INDEX_IN_TABLE];
 		static const short s_adpcmStepSizeTable[ADPCM_INDEX_NUM];
 
 	public:
@@ -93,7 +93,7 @@ namespace SkylichtAudio
 
 	protected:
 
-		CAdpcmState	m_states[8];
+		CAdpcmState m_states[8];
 
 		unsigned char* m_readBuffer;
 
@@ -101,8 +101,8 @@ namespace SkylichtAudio
 		unsigned int m_totalDataBytesRead;
 		int m_dataStartPosition;
 
-		int	m_samplesInBuffer;
-		int	m_samplesInBufferConsumed;
+		int m_samplesInBuffer;
+		int m_samplesInBufferConsumed;
 		unsigned int m_totalSampleDecoded;
 
 		unsigned char* m_blockReadBuffer;
@@ -112,7 +112,7 @@ namespace SkylichtAudio
 		unsigned char* m_extraReadBufferSpecialAlignment;
 		unsigned char* m_extraBlockReadBuffer;
 		int m_samplesInExtraBuffer;
-		int	m_samplesInExtraBufferConsumed;
+		int m_samplesInExtraBufferConsumed;
 	};
 }
 

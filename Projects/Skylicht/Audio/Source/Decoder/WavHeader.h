@@ -15,17 +15,15 @@ namespace SkylichtAudio
 		CompressITUG_723_ADPCM   = 0x0016,
 		CompressGSM_6_10         = 0x0031,
 		CompressITUG_721_ADPCM   = 0x0040,
-		CompressMPEG             = 0x0050,
-		CompressMPC				 = 0x0800,	// Vox custom value. Not in wav standard.
-		CompressExperimental     = 0xFFFF
+		CompressMPEG             = 0x0050
 	};
 
 	enum EChunkSize
 	{
-		ChunkHeaderSize	= 8,
-		RiffChunkSize	= 12,
-		FmtChunkSize	= 24,
-		FactChunkSize	= 12
+		ChunkHeaderSize = 8,
+		RiffChunkSize   = 12,
+		FmtChunkSize    = 24,
+		FactChunkSize   = 12
 	};
 
 	struct SRiffHeader
@@ -123,11 +121,11 @@ namespace SkylichtAudio
 			DataNodes = NULL;
 		}
 
-		SRiffHeader		RiffHeader;
-		SFormatHeader	FormatHeader;
-		SDataHeader		DataHeader;
-		SFactHeader		FactHeader;
-		SDataNode*		DataNodes;
+		SRiffHeader   RiffHeader;
+		SFormatHeader FormatHeader;
+		SDataHeader   DataHeader;
+		SFactHeader   FactHeader;
+		SDataNode*    DataNodes;
 	};
 
 }

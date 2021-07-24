@@ -39,7 +39,7 @@ namespace SkylichtAudio
 		CSoundSource(float length);
 		virtual ~CSoundSource();
 
-		virtual void init(const STrackParams& trackParam, const SSourceParam &driverParam);
+		virtual void init(const STrackParams& trackParam, const SSourceParam& driverParam);
 		virtual bool needData();
 
 		virtual void changeDuration(float duration);
@@ -78,7 +78,7 @@ namespace SkylichtAudio
 	protected:
 		void update3D();
 		float calcDistanceGain(const SListener& listener);
-		void calcLeftRightGain(const SListener& listener, float &left, float &right);
+		void calcLeftRightGain(const SListener& listener, float& left, float& right);
 	protected:
 		STrackParams m_trackParams;
 		int m_numDriverBuffer;
@@ -92,7 +92,7 @@ namespace SkylichtAudio
 		int m_numChannels;
 
 		std::vector<SDriverBuffer> m_buffers;
-		IMutex *m_mutex;
+		IMutex* m_mutex;
 
 		float m_distanceGain;
 		float m_leftGain;

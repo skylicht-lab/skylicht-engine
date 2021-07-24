@@ -85,11 +85,11 @@ namespace SkylichtAudio
 		public IThreadCallback
 	{
 	protected:
-		IXAudio2*	m_xaudio;
+		IXAudio2* m_xaudio;
 		IXAudio2MasteringVoice* m_masteringVoice;
 
-		StreamingVoiceContext	m_voiceContext;
-		IXAudio2SourceVoice*	m_sourceVoice;
+		StreamingVoiceContext m_voiceContext;
+		IXAudio2SourceVoice* m_sourceVoice;
 
 	public:
 		CDriverXAudio2();
@@ -102,21 +102,21 @@ namespace SkylichtAudio
 
 		virtual void updateThread();
 	protected:
-		int	m_minBufferSize;
-		int	m_v5MinLatency;
-		int	m_v6MinLatency;
+		int m_minBufferSize;
+		int m_v5MinLatency;
+		int m_v6MinLatency;
 
 		// Buffer parameters
 		struct SBufferParam
 		{
-			int	NumBuffers;
-			int	BufferSize;
-			int	CurrentBuffer;
-			unsigned char**	Buffers;
+			int NumBuffers;
+			int BufferSize;
+			int CurrentBuffer;
+			unsigned char** Buffers;
 
 			// MMSytem parameters
-			// WAVEFORMATEX	Waveformat;			
-			// WAVEHDR			*WaveBlocks;		// Objects containing buffer address provided (by reference) to mmsystem.
+			// WAVEFORMATEX Waveformat;
+			// WAVEHDR *WaveBlocks;		// Objects containing buffer address provided (by reference) to mmsystem.
 
 			IThread* UpdateThread;
 			bool IsThreadRunning;

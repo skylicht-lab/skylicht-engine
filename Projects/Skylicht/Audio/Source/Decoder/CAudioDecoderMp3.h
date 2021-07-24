@@ -41,16 +41,16 @@ namespace SkylichtAudio
 	class CAudioDecoderMp3 : public IAudioDecoder
 	{
 	protected:
-		IStreamCursor	*m_streamCursor;
+		IStreamCursor* m_streamCursor;
 
-		bool			m_floatSample;
-		int				m_bitPerSample;
+		bool m_floatSample;
+		int m_bitPerSample;
 
-		mpg123_handle	*m_mp3Handle;
-		int				m_initState;
+		mpg123_handle* m_mp3Handle;
+		int m_initState;
 
 	public:
-		CAudioDecoderMp3(IStream *stream);
+		CAudioDecoderMp3(IStream* stream);
 		virtual ~CAudioDecoderMp3();
 
 		virtual EStatus initDecode();
@@ -62,22 +62,20 @@ namespace SkylichtAudio
 
 	protected:
 
-		// resizeData
 		void resizeData(int size);
 
-		// convertFloat32ToShort
 		void convertFloat32ToShort(short* dest, float* src, int size);
 
 	protected:
-		STrackParams	m_trackParams;
+		STrackParams m_trackParams;
 
 		int m_dataInBuffer;
 		int m_dataInBufferConsumed;
 
 		int m_bufferSize;
 
-		unsigned char *m_sampleBuffer;
-		unsigned char *m_sampleDecodeBuffer;
+		unsigned char* m_sampleBuffer;
+		unsigned char* m_sampleDecodeBuffer;
 	};
 
 }

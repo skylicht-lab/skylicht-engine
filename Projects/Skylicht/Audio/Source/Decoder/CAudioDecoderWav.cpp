@@ -101,13 +101,7 @@ namespace SkylichtAudio
 				success = true;
 			}
 			else // skip other chunk
-			{
-				// An adpcm file is valid if a "voxu" or "voxa" chunk has been found
-				if (memcmp(chunkHeader.ChunkId, "vox", 3) == 0)
-				{
-					// todo adpcm file
-				}
-
+			{			
 				m_streamCursor->seek(chunkHeader.ChunkSize, IStreamCursor::OriginCurrent);
 			}
 		}

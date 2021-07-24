@@ -42,11 +42,11 @@ namespace SkylichtAudio
 		}
 
 	protected:
-		IStreamCursor	*m_streamCursor;
+		IStreamCursor* m_streamCursor;
 
-		SWaveChunk		*m_waveChunks;
-		SDataNode		*m_currentDataNode;
-		STrackParams	m_trackParams;
+		SWaveChunk* m_waveChunks;
+		SDataNode* m_currentDataNode;
+		STrackParams m_trackParams;
 
 		int m_currentChunkPosition;
 		int m_decodedSamples;

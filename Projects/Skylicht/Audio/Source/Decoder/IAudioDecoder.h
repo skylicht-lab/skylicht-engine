@@ -53,10 +53,10 @@ namespace SkylichtAudio
 	protected:
 		bool m_loop;
 
-		IStream *m_stream;
+		IStream* m_stream;
 
 	public:
-		IAudioDecoder(IStream *stream)
+		IAudioDecoder(IStream* stream)
 		{
 			m_loop = false;
 			m_stream = stream;

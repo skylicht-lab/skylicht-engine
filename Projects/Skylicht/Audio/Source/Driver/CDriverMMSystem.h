@@ -63,14 +63,14 @@ namespace SkylichtAudio
 		// Buffer parameters
 		struct SBufferParam
 		{
-			int	NumBuffers;
+			int NumBuffers;
 			int BufferSize;
 			int CurrentBuffer;
-			unsigned char**	Buffers;
+			unsigned char** Buffers;
 
 			// MMSytem parameters
 			WAVEFORMATEX Waveformat;
-			WAVEHDR *WaveBlocks;		// Objects containing buffer address provided (by reference) to mmsystem.
+			WAVEHDR* WaveBlocks;		// Objects containing buffer address provided (by reference) to mmsystem.
 
 			IThread* UpdateThread;
 			bool IsThreadRunning;

@@ -15,13 +15,13 @@ namespace SkylichtAudio
 	class CAudioDecoderWav : public IAudioDecoder
 	{
 	protected:
-		IStreamCursor *m_streamCursor;
+		IStreamCursor* m_streamCursor;
 		SWaveChunk m_waveChunk;
 
-		IWavSubDecoder *m_subDecoder;
+		IWavSubDecoder* m_subDecoder;
 
 	public:
-		CAudioDecoderWav(IStream *stream);
+		CAudioDecoderWav(IStream* stream);
 
 		virtual ~CAudioDecoderWav();
 
