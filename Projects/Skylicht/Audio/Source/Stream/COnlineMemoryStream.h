@@ -13,11 +13,11 @@ namespace SkylichtAudio
 	class COnlineMemoryStreamCursor : public IStreamCursor
 	{
 	public:
-		int		m_pos;
-		COnlineMemoryStream		*m_stream;
+		int m_pos;
+		COnlineMemoryStream* m_stream;
 
 	public:
-		COnlineMemoryStreamCursor(COnlineMemoryStream *stream);
+		COnlineMemoryStreamCursor(COnlineMemoryStream* stream);
 		virtual ~COnlineMemoryStreamCursor();
 
 		virtual int seek(int pos, EOrigin origin);
@@ -31,11 +31,11 @@ namespace SkylichtAudio
 	class COnlineMemoryStream : public IStream
 	{
 	protected:
-		unsigned char *m_buffer;
+		unsigned char* m_buffer;
 		int m_size;
 		int m_allocSize;
 
-		IMutex *m_mutex;
+		IMutex* m_mutex;
 		bool m_fullDataStream;
 
 		bool m_stopStream;
@@ -51,7 +51,7 @@ namespace SkylichtAudio
 		// remember lock stream mutex before run this function
 		int getDataBufferSize();
 
-		void uploadData(unsigned char *buffer, int size);
+		void uploadData(unsigned char* buffer, int size);
 
 		IMutex* getMutex()
 		{

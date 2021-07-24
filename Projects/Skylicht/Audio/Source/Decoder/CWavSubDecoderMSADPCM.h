@@ -58,7 +58,7 @@ namespace SkylichtAudio
 	protected:
 		int decodeBlock(void* outbuf);
 
-		short decodeSample(SMsAdpcmState *state, unsigned int code, const short *coefficient);
+		short decodeSample(SMsAdpcmState* state, unsigned int code, const short* coefficient);
 
 	protected:
 
