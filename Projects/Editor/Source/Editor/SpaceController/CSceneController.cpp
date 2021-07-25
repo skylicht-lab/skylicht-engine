@@ -138,8 +138,8 @@ namespace Skylicht
 				node->setTagData(object, CHierachyNode::GameObject);
 
 				// enable color on current zone
-				if (m_zone == object)
-					node->EnableColor(true);
+				// if (m_zone == object)
+				//	node->EnableColor(true);
 
 				ArrayGameObject* childs = container->getChilds();
 				for (CGameObject* childObject : *childs)
@@ -187,6 +187,7 @@ namespace Skylicht
 			{
 				if ((*i) == gizmos)
 				{
+					gizmos->onRemove();
 					m_gizmos.erase(i);
 					return;
 				}

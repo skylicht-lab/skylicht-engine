@@ -109,5 +109,16 @@ namespace Skylicht
 			}
 			*/
 		}
+
+		void CTransformGizmos::onRemove()
+		{
+			m_selectObject = NULL;
+			m_transform = NULL;
+			m_selectID = "";
+
+			CHandles* handles = CHandles::getInstance();
+			if (handles != NULL)
+				handles->end();
+		}
 	}
 }

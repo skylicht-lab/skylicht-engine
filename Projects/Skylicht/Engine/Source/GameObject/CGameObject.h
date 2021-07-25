@@ -52,6 +52,8 @@ namespace Skylicht
 		bool m_lighting;
 
 		bool m_editorObject;
+		bool m_enableEditorChange;
+		bool m_enableEditorSelect;
 
 		u32 m_cullingLayer;
 
@@ -66,6 +68,7 @@ namespace Skylicht
 		CShaderParams m_shaderParams;
 
 		std::vector<CComponentSystem*> m_components;
+
 	public:
 		CGameObject(CGameObject* parent, CZone* zone);
 
@@ -254,6 +257,26 @@ namespace Skylicht
 		inline std::vector<CComponentSystem*>& getListComponent()
 		{
 			return m_components;
+		}
+
+		inline void enableEditorChange(bool b)
+		{
+			m_enableEditorChange = b;
+		}
+
+		inline void enableEditorSelect(bool b)
+		{
+			m_enableEditorSelect = b;
+		}
+
+		inline bool isEnableEditorChange()
+		{
+			return m_enableEditorChange;
+		}
+
+		inline bool isEnableEditorSelect()
+		{
+			return m_enableEditorSelect;
 		}
 	};
 

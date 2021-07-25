@@ -38,6 +38,8 @@ namespace Skylicht
 			virtual ~CGizmos();
 
 			virtual void onGizmos() = 0;
+
+			virtual void onRemove() = 0;
 		};
 	}
 }
