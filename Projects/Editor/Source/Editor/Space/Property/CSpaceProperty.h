@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
+#include "Editor/Components/CComponentEditor.h"
 
 namespace Skylicht
 {
@@ -39,11 +40,16 @@ namespace Skylicht
 			GUI::CLabel* m_label;
 
 			std::vector<GUI::CCollapsibleGroup*> m_groups;
+			std::vector<CComponentEditor*> m_groupOwner;
+
+			std::vector<CComponentEditor*> m_components;
 
 		public:
 			CSpaceProperty(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceProperty();
+
+			virtual void update();
 
 			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float step);
 
@@ -63,13 +69,17 @@ namespace Skylicht
 				m_icon->setIcon(icon);
 			}
 
-			GUI::CCollapsibleGroup* addGroup(const wchar_t* label);
+			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CComponentEditor* editor);
 
-			GUI::CCollapsibleGroup* addGroup(const char* label);
+			GUI::CCollapsibleGroup* addGroup(const char* label, CComponentEditor* editor);
+
+			void removeGroupByOwner(CComponentEditor* editor);
+
+			void addComponent(CComponentEditor* editor, CComponentSystem* component);
 
 			void clearAllGroup();
 
-			GUI::CBoxLayout* createBoxLayout(GUI::CCollapsibleGroup* group);			
+			GUI::CBoxLayout* createBoxLayout(GUI::CCollapsibleGroup* group);
 		};
 	}
 }

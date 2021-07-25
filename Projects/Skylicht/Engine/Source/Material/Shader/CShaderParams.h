@@ -24,14 +24,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#define MAX_SHADERPARAMS	20
+#define MAX_SHADERPARAMS 20
 
 namespace Skylicht
 {
 	class CShaderParams
 	{
 	protected:
-		SVec4	m_shaderParam[MAX_SHADERPARAMS];
+		SVec4 m_shaderParam[MAX_SHADERPARAMS];
 
 	public:
 		CShaderParams();
