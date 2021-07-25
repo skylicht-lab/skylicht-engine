@@ -48,6 +48,8 @@ namespace Skylicht
 			virtual ~CTransformGizmos();
 
 			virtual void onGizmos();
+
+			virtual void onRemove();
 		};
 	}
 }

@@ -35,6 +35,8 @@ namespace Skylicht
 		CContainerObject(NULL, this),
 		m_scene(scene)
 	{
+		m_enableEditorChange = false;
+
 		m_entityManager = scene->getEntityManager();
 	}
 

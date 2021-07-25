@@ -66,7 +66,7 @@ namespace Skylicht
 						CComponentEditor* editor = activator->getEditorInstance(component->getTypeName().c_str());
 						if (editor != NULL)
 						{
-							editor->onInitGUI(component, m_spaceProperty);
+							m_spaceProperty->addComponent(editor, component);
 						}
 						else
 						{

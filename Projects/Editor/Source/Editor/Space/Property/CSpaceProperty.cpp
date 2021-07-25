@@ -60,23 +60,6 @@ namespace Skylicht
 			/*
 			GUI::CBoxLayout* boxLayout;
 
-			GUI::CCollapsibleGroup* transformColapsible = addGroup(L"Transform");
-			boxLayout = createBoxLayout(transformColapsible);
-			addCheckBox(boxLayout, L"Enable", true);
-			boxLayout->addSpace(5.0f);
-			addNumberInput(boxLayout, L"Position X", 0.0f, 0.1f);
-			addNumberInput(boxLayout, L"Y", 0.0f, 0.1f);
-			addNumberInput(boxLayout, L"Z", 0.0f, 0.1f);
-			boxLayout->addSpace(5.0f);
-			addNumberInput(boxLayout, L"Rotation(Deg) X", 0.0f, 0.1f);
-			addNumberInput(boxLayout, L"Y", 0.0f, 0.1f);
-			addNumberInput(boxLayout, L"Z", 0.0f, 0.1f);
-			boxLayout->addSpace(5.0f);
-			addNumberInput(boxLayout, L"Scale X", 1.0f, 0.1f);
-			addNumberInput(boxLayout, L"Y", 1.0f, 0.1f);
-			addNumberInput(boxLayout, L"Z", 1.0f, 0.1f);
-			transformColapsible->setExpand(true);
-
 			GUI::CCollapsibleGroup* rendererColapsible = addGroup(L"Render Mesh");
 			boxLayout = createBoxLayout(rendererColapsible);
 			addCheckBox(boxLayout, L"Enable", true);
@@ -109,6 +92,21 @@ namespace Skylicht
 			CPropertyController::getInstance()->setSpaceProperty(NULL);
 		}
 
+		void CSpaceProperty::update()
+		{
+			for (CComponentEditor* c : m_components)
+			{
+				c->update();
+			}
+		}
+
+		void CSpaceProperty::addComponent(CComponentEditor* editor, CComponentSystem* component)
+		{
+			editor->initGUI(component, this);
+
+			m_components.push_back(editor);
+		}
+
 		void CSpaceProperty::clearAllGroup()
 		{
 			for (GUI::CCollapsibleGroup* group : m_groups)
@@ -116,26 +114,48 @@ namespace Skylicht
 				group->remove();
 			}
 			m_groups.clear();
+			m_groupOwner.clear();
+			m_components.clear();
 		}
 
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label)
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CComponentEditor* editor)
 		{
 			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(m_content);
 			transformColapsible->dock(GUI::EPosition::Top);
 			transformColapsible->getHeader()->setLabel(label);
+
 			m_groups.push_back(transformColapsible);
+			m_groupOwner.push_back(editor);
+
 			return transformColapsible;
 		}
 
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label)
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CComponentEditor* editor)
 		{
 			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
 
 			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(m_content);
 			transformColapsible->dock(GUI::EPosition::Top);
 			transformColapsible->getHeader()->setLabel(wlabel.c_str());
+
 			m_groups.push_back(transformColapsible);
+			m_groupOwner.push_back(editor);
+
 			return transformColapsible;
+		}
+
+		void CSpaceProperty::removeGroupByOwner(CComponentEditor* editor)
+		{
+			for (size_t i = 0, n = m_groupOwner.size(); i < n; i++)
+			{
+				if (m_groupOwner[i] == editor)
+				{
+					m_groups[i]->remove();
+					m_groups.erase(m_groups.begin() + i);
+					m_groupOwner.erase(m_groupOwner.begin() + i);
+					return;
+				}
+			}
 		}
 
 		GUI::CBoxLayout* CSpaceProperty::createBoxLayout(GUI::CCollapsibleGroup* group)

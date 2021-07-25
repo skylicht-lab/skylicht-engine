@@ -32,7 +32,10 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CTransformEditor::CTransformEditor()
+		CTransformEditor::CTransformEditor() :
+			m_gameObject(NULL),
+			m_transform(NULL),
+			m_skip(false)
 		{
 			m_gizmos = new CTransformGizmos();
 		}
@@ -43,13 +46,55 @@ namespace Skylicht
 			delete m_gizmos;
 		}
 
-		void CTransformEditor::onInitGUI(CComponentSystem* target, CSpaceProperty* spaceProperty)
+		void CTransformEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
 		{
-			// setup gizmos
-			CSceneController::getInstance()->addGizmos(m_gizmos);
+			m_gameObject = target->getGameObject();
+			m_transform = dynamic_cast<CTransformEuler*>(target);
 
-			// setup gui
-			GUI::CCollapsibleGroup* group = spaceProperty->addGroup("Transform");
+			if (m_gameObject->isEnableEditorChange() && m_transform != NULL)
+			{
+				// setup gizmos
+				CSceneController::getInstance()->addGizmos(m_gizmos);
+
+				// setup gui
+				GUI::CCollapsibleGroup* group = ui->addGroup("Transform", this);
+
+				const core::vector3df& pos = m_transform->getPosition();
+				const core::vector3df& rot = m_transform->getRotation();
+				const core::vector3df& scale = m_transform->getScale();
+
+				GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+				ui->addCheckBox(layout, L"Enable", true);
+				layout->addSpace(5.0f);
+				ui->addNumberInput(layout, L"Position X", pos.X, 0.01f);
+				ui->addNumberInput(layout, L"Y", pos.Y, 0.01f);
+				ui->addNumberInput(layout, L"Z", pos.Z, 0.01f);
+				layout->addSpace(5.0f);
+				ui->addNumberInput(layout, L"Rotation(Deg) X", rot.X, 0.1f);
+				ui->addNumberInput(layout, L"Y", rot.Y, 0.1f);
+				ui->addNumberInput(layout, L"Z", rot.Z, 0.1f);
+				layout->addSpace(5.0f);
+				ui->addNumberInput(layout, L"Scale X", scale.X, 0.01f);
+				ui->addNumberInput(layout, L"Y", scale.Y, 0.01f);
+				ui->addNumberInput(layout, L"Z", scale.Z, 0.01f);
+
+				group->setExpand(true);
+
+				m_skip = false;
+			}
+			else
+			{
+				// remove current gizmos
+				CSceneController::getInstance()->removeGizmos(m_gizmos);
+
+				m_skip = true;
+			}
+		}
+
+		void CTransformEditor::update()
+		{
+			if (m_gameObject == NULL || m_transform == NULL || m_skip)
+				return;
 		}
 
 		EDITOR_REGISTER(CTransformEditor, CTransform)

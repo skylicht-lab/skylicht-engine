@@ -37,12 +37,19 @@ namespace Skylicht
 		protected:
 			CTransformGizmos* m_gizmos;
 
+			CGameObject* m_gameObject;
+			CTransformEuler* m_transform;
+
+			bool m_skip;
+
 		public:
 			CTransformEditor();
 
 			virtual ~CTransformEditor();
 
-			virtual void onInitGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+
+			virtual void update();
 		};
 	}
 }

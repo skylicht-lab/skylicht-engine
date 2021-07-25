@@ -53,6 +53,8 @@ namespace Skylicht
 		m_static = false;
 
 		m_editorObject = false;
+		m_enableEditorChange = true;
+		m_enableEditorSelect = true;
 
 		m_parent = NULL;
 		m_zone = NULL;
