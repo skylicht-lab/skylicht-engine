@@ -71,13 +71,12 @@ namespace Skylicht
 					OnDestroy(this);
 
 				CCanvas* canvas = getCanvas();
-
 				if (canvas != NULL)
 					canvas->removeDelayDelete(this);
 
-				setParent(NULL);
-
 				releaseChildren();
+
+				setParent(NULL);
 
 				if (CGUIContext::HoveredControl == this)
 					CGUIContext::HoveredControl = NULL;

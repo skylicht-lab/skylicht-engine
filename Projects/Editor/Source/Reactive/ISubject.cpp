@@ -22,38 +22,75 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Editor/Components/CComponentEditor.h"
-#include "Activator/CEditorActivator.h"
-#include "Editor/Gizmos/Transform/CTransformGizmos.h"
+#include "pch.h"
+#include "ISubject.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CTransformEditor : public CComponentEditor
+		ISubject::ISubject()
 		{
-		public:
-			CSubject<float> X;
-			CSubject<float> Y;
-			CSubject<float> Z;
 
-		protected:
-			CTransformGizmos* m_gizmos;
+		}
 
-			CGameObject* m_gameObject;
-			CTransformEuler* m_transform;
+		ISubject::~ISubject()
+		{
+			int i = 0;
+			for (IObserver* observer : m_observers)
+			{
+				if (m_autoRelease[i])
+				{
+					delete observer;
+				}
+				++i;
+			}
+		}
 
-			bool m_skip;
-		public:
-			CTransformEditor();
+		IObserver* ISubject::addObserver(IObserver* observer, bool autoRelease)
+		{
+			for (IObserver* o : m_observers)
+			{
+				if (o == observer)
+					return observer;
+			}
 
-			virtual ~CTransformEditor();
+			m_observers.push_back(observer);
+			m_autoRelease.push_back(autoRelease);
+			return observer;
+		}
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+		void ISubject::removeObserver(IObserver* observer)
+		{
+			int i = 0;
+			for (IObserver* o : m_observers)
+			{
+				if (o == observer)
+				{
+					if (m_autoRelease[i])
+					{
+						delete observer;
+					}
 
-			virtual void update();
-		};
+					m_observers.erase(m_observers.begin() + i);
+					m_autoRelease.erase(m_autoRelease.begin() + i);
+					return;
+				}
+				++i;
+			}
+		}
+
+		void ISubject::notify(IObserver* from)
+		{
+			for (IObserver* o : m_observers)
+			{
+				o->OnNotify(this, from);
+			}
+		}
+
+		void ISubject::removeAllObserver()
+		{
+			m_observers.clear();
+		}
 	}
 }

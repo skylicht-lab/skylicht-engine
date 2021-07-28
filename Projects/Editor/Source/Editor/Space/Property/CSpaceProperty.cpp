@@ -89,73 +89,90 @@ namespace Skylicht
 
 		CSpaceProperty::~CSpaceProperty()
 		{
+			for (SGroup* group : m_groups)
+			{
+				for (IObserver* o : group->Observer)
+				{
+					delete o;
+				}
+
+				delete group;
+			}
+			m_groups.clear();
+
 			CPropertyController::getInstance()->setSpaceProperty(NULL);
+		}
+
+		void CSpaceProperty::clearAllGroup()
+		{
+			for (SGroup* group : m_groups)
+			{
+				group->releaseObserver();
+				group->GroupUI->remove();
+				delete group;
+			}
+
+			m_groups.clear();
 		}
 
 		void CSpaceProperty::update()
 		{
-			for (CComponentEditor* c : m_components)
+			for (SGroup* group : m_groups)
 			{
-				c->update();
+				group->Owner->update();
 			}
 		}
 
 		void CSpaceProperty::addComponent(CComponentEditor* editor, CComponentSystem* component)
 		{
 			editor->initGUI(component, this);
-
-			m_components.push_back(editor);
-		}
-
-		void CSpaceProperty::clearAllGroup()
-		{
-			for (GUI::CCollapsibleGroup* group : m_groups)
-			{
-				group->remove();
-			}
-			m_groups.clear();
-			m_groupOwner.clear();
-			m_components.clear();
 		}
 
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CComponentEditor* editor)
 		{
-			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(m_content);
-			transformColapsible->dock(GUI::EPosition::Top);
-			transformColapsible->getHeader()->setLabel(label);
+			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
+			colapsible->dock(GUI::EPosition::Top);
+			colapsible->getHeader()->setLabel(label);
 
-			m_groups.push_back(transformColapsible);
-			m_groupOwner.push_back(editor);
+			SGroup* g = new SGroup();
+			g->Owner = editor;
+			g->GroupUI = colapsible;
 
-			return transformColapsible;
+			m_groups.push_back(g);
+			return colapsible;
 		}
 
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CComponentEditor* editor)
 		{
 			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
-
-			GUI::CCollapsibleGroup* transformColapsible = new GUI::CCollapsibleGroup(m_content);
-			transformColapsible->dock(GUI::EPosition::Top);
-			transformColapsible->getHeader()->setLabel(wlabel.c_str());
-
-			m_groups.push_back(transformColapsible);
-			m_groupOwner.push_back(editor);
-
-			return transformColapsible;
+			return addGroup(wlabel.c_str(), editor);
 		}
 
 		void CSpaceProperty::removeGroupByOwner(CComponentEditor* editor)
 		{
-			for (size_t i = 0, n = m_groupOwner.size(); i < n; i++)
+			for (size_t i = 0, n = m_groups.size(); i < n; i++)
 			{
-				if (m_groupOwner[i] == editor)
+				if (m_groups[i]->Owner == editor)
 				{
-					m_groups[i]->remove();
+					m_groups[i]->releaseObserver();
+					m_groups[i]->GroupUI->remove();
 					m_groups.erase(m_groups.begin() + i);
-					m_groupOwner.erase(m_groupOwner.begin() + i);
 					return;
 				}
 			}
+		}
+
+		CSpaceProperty::SGroup* CSpaceProperty::getGroupByLayout(GUI::CBoxLayout* layout)
+		{
+			for (SGroup* group : m_groups)
+			{
+				// inner of parent -> parent
+				if (layout->getParent()->getParent() == group->GroupUI)
+				{
+					return group;
+				}
+			}
+			return NULL;
 		}
 
 		GUI::CBoxLayout* CSpaceProperty::createBoxLayout(GUI::CCollapsibleGroup* group)
@@ -165,7 +182,7 @@ namespace Skylicht
 			return boxLayout;
 		}
 
-		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float step)
+		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<float>* value, float step)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -175,10 +192,31 @@ namespace Skylicht
 			label->setTextAlignment(GUI::TextRight);
 
 			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
-			input->setValue(value);
+			input->setValue(value->get(), false);
 			input->setStep(step);
 
 			boxLayout->endVertical();
+
+			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
+			if (group != NULL)
+			{
+				// when value change
+				IObserver* observer = value->addObserver(new CObserver<GUI::CNumberInput>(input,
+					[](ISubject* subject, IObserver* from, GUI::CNumberInput* target)
+					{
+						CSubject<float>* floatValue = (CSubject<float>*)subject;
+						target->setValue(floatValue->get(), false);
+					}));
+
+				// when input text change
+				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+					value->set(input->getValue());
+					value->notify(observer);
+				};
+
+				// hold observer to release later
+				group->Observer.push_back(observer);
+			}
 		}
 
 		void CSpaceProperty::addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool value)

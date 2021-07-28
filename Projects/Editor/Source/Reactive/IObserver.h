@@ -24,36 +24,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Editor/Components/CComponentEditor.h"
-#include "Activator/CEditorActivator.h"
-#include "Editor/Gizmos/Transform/CTransformGizmos.h"
-
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CTransformEditor : public CComponentEditor
+		class ISubject;
+
+		class IObserver
 		{
 		public:
-			CSubject<float> X;
-			CSubject<float> Y;
-			CSubject<float> Z;
+			IObserver()
+			{
 
-		protected:
-			CTransformGizmos* m_gizmos;
+			}
 
-			CGameObject* m_gameObject;
-			CTransformEuler* m_transform;
+			virtual ~IObserver()
+			{
 
-			bool m_skip;
-		public:
-			CTransformEditor();
+			}
 
-			virtual ~CTransformEditor();
-
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
-
-			virtual void update();
+			virtual void OnNotify(ISubject* subject, IObserver* from) = 0;
 		};
 	}
 }

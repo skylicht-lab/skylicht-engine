@@ -73,7 +73,7 @@ namespace Skylicht
 
 							float value = m_value;
 							value = value + m_stepValue * dx;
-							setValue(value);
+							setValue(value, true);
 
 							CInput::getInput()->setCursorPosition(m_cursorX, m_cursorY);
 						}
@@ -169,6 +169,16 @@ namespace Skylicht
 				{
 					return CTextBox::onChar(c);
 				}
+				else if (c == '-')
+				{
+					const std::wstring& s = getString();
+					if (s.empty() == true)
+						return CTextBox::onChar(c);
+					else if (m_textContainer->getCaretBegin() == 0 && s.find(L'-') == std::wstring::npos)
+						return CTextBox::onChar(c);
+					else
+						return false;
+				}
 				else if (c == '.')
 				{
 					if (m_numberType == Integer)
@@ -205,10 +215,10 @@ namespace Skylicht
 				std::string utf8 = strconverter.to_bytes(s);
 
 				float value = atof(utf8.c_str());
-				setValue(value);
+				setValue(value, false);
 			}
 
-			void CNumberInput::setValue(float value)
+			void CNumberInput::setValue(float value, bool invokeEvent)
 			{
 				m_value = value;
 
@@ -220,6 +230,9 @@ namespace Skylicht
 					swprintf(text, 64, L"%d", (int)m_value);
 
 				setString(std::wstring(text));
+
+				if (invokeEvent && OnTextChanged != nullptr)
+					OnTextChanged(this);
 			}
 		}
 	}
