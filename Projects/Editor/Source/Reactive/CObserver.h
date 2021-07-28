@@ -24,36 +24,47 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Editor/Components/CComponentEditor.h"
-#include "Activator/CEditorActivator.h"
-#include "Editor/Gizmos/Transform/CTransformGizmos.h"
+#include "IObserver.h"
+#include <functional>
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CTransformEditor : public CComponentEditor
+		template<class T>
+		class CObserver : public IObserver
 		{
-		public:
-			CSubject<float> X;
-			CSubject<float> Y;
-			CSubject<float> Z;
-
 		protected:
-			CTransformGizmos* m_gizmos;
+			T* m_target;
 
-			CGameObject* m_gameObject;
-			CTransformEuler* m_transform;
-
-			bool m_skip;
 		public:
-			CTransformEditor();
+			CObserver(T* target) :
+				m_target(target)
+			{
 
-			virtual ~CTransformEditor();
+			}
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+			CObserver(T* target, const std::function<void(ISubject* subject, IObserver* from, T* target)>& notify) :
+				m_target(target),
+				Notify(notify)
+			{
 
-			virtual void update();
+			}
+
+			virtual void OnNotify(ISubject* subject, IObserver* from)
+			{
+				if (Notify != nullptr)
+				{
+					Notify(subject, from, m_target);
+				}
+			}
+
+			T* getTarget()
+			{
+				return m_target;
+			}
+
+			std::function<void(ISubject* subject, IObserver* from, T* target)> Notify;
 		};
 	}
 }

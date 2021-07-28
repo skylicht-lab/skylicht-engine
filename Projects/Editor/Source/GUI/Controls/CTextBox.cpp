@@ -354,8 +354,8 @@ namespace Skylicht
 							m_textContainer->doDelete();
 							updateCaret = false;
 
-							if (OnTextChange != nullptr)
-								OnTextChange(this);
+							if (OnTextChanged != nullptr)
+								OnTextChanged(this);
 						}
 						break;
 					default:
@@ -430,8 +430,8 @@ namespace Skylicht
 				if (OnChar != nullptr)
 					OnChar(this, c);
 
-				if (OnTextChange != nullptr)
-					OnTextChange(this);
+				if (OnTextChanged != nullptr)
+					OnTextChanged(this);
 
 				m_onCharEvent = false;
 				return true;

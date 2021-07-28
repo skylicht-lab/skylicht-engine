@@ -26,21 +26,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Transform/CTransformEuler.h"
 #include "Editor/Gizmos/CGizmos.h"
+#include "Reactive/CSubject.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CTransformGizmos : public CGizmos
+		class CTransformGizmos :
+			public CGizmos,
+			public IObserver
 		{
 		protected:
 			std::string m_selectID;
 			CGameObject* m_selectObject;
 			CTransformEuler* m_transform;
 
-			core::vector3df m_position;
-			core::quaternion m_rotation;
-			core::vector3df m_scale;
+			CSubject<core::vector3df> m_position;
+			CSubject<core::quaternion> m_rotation;
+			CSubject<core::vector3df> m_scale;
 
 		public:
 			CTransformGizmos();
@@ -50,6 +53,25 @@ namespace Skylicht
 			virtual void onGizmos();
 
 			virtual void onRemove();
+
+			void setPosition(const core::vector3df& pos);
+
+			CSubject<core::vector3df>& getPosition()
+			{
+				return m_position;
+			}
+
+			CSubject<core::quaternion>& getRotation()
+			{
+				return m_rotation;
+			}
+
+			CSubject<core::vector3df>& getScale()
+			{
+				return m_scale;
+			}
+
+			virtual void OnNotify(ISubject* subject, IObserver* from);
 		};
 	}
 }

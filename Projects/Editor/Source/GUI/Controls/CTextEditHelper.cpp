@@ -37,7 +37,7 @@ namespace Skylicht
 				m_textContainer(textContainer)
 			{
 				m_textBox->setHidden(true);
-				m_textBox->OnTextChange = BIND_LISTENER(&CTextEditHelper::onChar, this);
+				m_textBox->OnTextChanged = BIND_LISTENER(&CTextEditHelper::onChar, this);
 				m_textBox->OnESC = BIND_LISTENER(&CTextEditHelper::onESC, this);
 				m_textBox->OnEnter = BIND_LISTENER(&CTextEditHelper::onEnter, this);
 				m_textBox->OnLostKeyboardFocus = BIND_LISTENER(&CTextEditHelper::onLostFocus, this);
