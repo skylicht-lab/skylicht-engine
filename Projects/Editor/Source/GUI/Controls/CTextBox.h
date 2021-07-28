@@ -184,7 +184,7 @@ namespace Skylicht
 					m_drawTextbox = b;
 				}
 
-				Listener OnTextChange;
+				Listener OnTextChanged;
 				Listener OnESC;
 				Listener OnEnter;
 			};

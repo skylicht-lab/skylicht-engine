@@ -1,4 +1,5 @@
 /*
+/*
 !@
 MIT License
 
@@ -27,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 #include "Editor/Components/CComponentEditor.h"
+#include "Reactive/CSubject.h"
+#include "Reactive/CObserver.h"
 
 namespace Skylicht
 {
@@ -34,16 +37,33 @@ namespace Skylicht
 	{
 		class CSpaceProperty : public CSpace
 		{
+		public:
+			struct SGroup
+			{
+				CComponentEditor* Owner;
+				GUI::CCollapsibleGroup* GroupUI;
+				std::vector<IObserver*> Observer;
+
+				SGroup()
+				{
+					Owner = NULL;
+					GroupUI = NULL;
+				}
+
+				void releaseObserver()
+				{
+					for (IObserver* o : Observer)
+						delete o;
+					Observer.clear();
+				}
+			};
+
 		protected:
 			GUI::CContentSizeControl* m_content;
 			GUI::CIcon* m_icon;
 			GUI::CLabel* m_label;
 
-			std::vector<GUI::CCollapsibleGroup*> m_groups;
-			std::vector<CComponentEditor*> m_groupOwner;
-
-			std::vector<CComponentEditor*> m_components;
-
+			std::vector<SGroup*> m_groups;
 		public:
 			CSpaceProperty(GUI::CWindow* window, CEditor* editor);
 
@@ -51,7 +71,7 @@ namespace Skylicht
 
 			virtual void update();
 
-			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float step);
+			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<float>* value, float step);
 
 			void addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool value);
 
@@ -78,6 +98,8 @@ namespace Skylicht
 			void addComponent(CComponentEditor* editor, CComponentSystem* component);
 
 			void clearAllGroup();
+
+			SGroup* getGroupByLayout(GUI::CBoxLayout* layout);
 
 			GUI::CBoxLayout* createBoxLayout(GUI::CCollapsibleGroup* group);
 		};

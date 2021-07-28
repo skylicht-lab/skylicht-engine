@@ -34,7 +34,10 @@ namespace Skylicht
 	{
 		CTransformGizmos::CTransformGizmos() :
 			m_transform(NULL),
-			m_selectObject(NULL)
+			m_selectObject(NULL),
+			m_position(core::vector3df()),
+			m_rotation(core::quaternion()),
+			m_scale(core::vector3df(1.0f, 1.0f, 1.0f))
 		{
 
 		}
@@ -42,6 +45,16 @@ namespace Skylicht
 		CTransformGizmos::~CTransformGizmos()
 		{
 
+		}
+
+		void CTransformGizmos::OnNotify(ISubject* subject, IObserver* from)
+		{
+		}
+
+		void CTransformGizmos::setPosition(const core::vector3df& pos)
+		{
+			CHandles::getInstance()->end();
+			m_position = pos;
 		}
 
 		void CTransformGizmos::onGizmos()
@@ -79,10 +92,14 @@ namespace Skylicht
 			}
 
 			// show gizmos move position
-			m_position = handle->positionHandle(m_position);
+			core::vector3df newPos = handle->positionHandle(*m_position);
+			if (newPos != *m_position)
+				m_position.notify(this);
+
+			m_position = newPos;
 			if (handle->endCheck())
 			{
-				m_transform->setPosition(m_position);
+				m_transform->setPosition(*m_position);
 				handle->end();
 			}
 

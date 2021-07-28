@@ -40,7 +40,7 @@ namespace Skylicht
 			m_changed(false),
 			m_listFSController(listController)
 		{
-			m_inputSearch->OnTextChange = BIND_LISTENER(&CSearchAssetController::OnSearchChanged, this);
+			m_inputSearch->OnTextChanged = BIND_LISTENER(&CSearchAssetController::OnSearchChanged, this);
 
 			m_buttonCancel->OnPress = BIND_LISTENER(&CSearchAssetController::OnCancelSearch, this);
 		}

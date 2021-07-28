@@ -79,7 +79,7 @@ namespace Skylicht
 					return (int)m_value;
 				}
 
-				void setValue(float value);
+				void setValue(float value, bool invokeEvent);
 
 				inline void setStep(float step)
 				{
