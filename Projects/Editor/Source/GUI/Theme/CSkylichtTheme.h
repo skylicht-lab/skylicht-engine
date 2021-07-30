@@ -134,6 +134,8 @@ namespace Skylicht
 
 				void addSystemIcon(ESystemIcon type, const char* name);
 
+				void addEditorIcon(ESystemIcon type, const char* name);
+
 				void drawGUIModule(SFrame* frame, const SRect& rect, const SGUIColor& color, float left, float top, float right, float bottom, float cornerRadius);
 
 				core::rectf getRect(const SRect& rect);

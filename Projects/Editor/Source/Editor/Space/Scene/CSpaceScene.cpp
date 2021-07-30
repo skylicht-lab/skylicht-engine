@@ -52,26 +52,54 @@ namespace Skylicht
 			m_viewpoint(NULL),
 			m_viewpointCamera(NULL),
 			m_viewpointController(NULL),
-			m_3dPanel(NULL),
+			m_view(NULL),
 			m_handlesRenderer(NULL)
 		{
 			initDefaultScene();
 
-			GUI::CBase* panel = m_window->getInnerPanel();
-			panel->OnRender = BIND_LISTENER(&CSpaceScene::onRender, this);
-			panel->OnMouseMoved = std::bind(&CSpaceScene::onMouseMoved, this, _1, _2, _3, _4, _5);
-			panel->OnLeftMouseClick = std::bind(&CSpaceScene::onLeftMouseClick, this, _1, _2, _3, _4);
-			panel->OnRightMouseClick = std::bind(&CSpaceScene::onRightMouseClick, this, _1, _2, _3, _4);
-			panel->OnMiddleMouseClick = std::bind(&CSpaceScene::onMiddleMouseClick, this, _1, _2, _3, _4);
-			panel->OnMouseWheeled = std::bind(&CSpaceScene::onMouseWheeled, this, _1, _2);
+			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 
-			panel->setKeyboardInputEnabled(true);
-			panel->OnKeyPress = std::bind(&CSpaceScene::onKeyPressed, this, _1, _2, _3);
-			panel->OnChar = std::bind(&CSpaceScene::onChar, this, _1, _2);
+			// transform
+			GUI::CButton* button = toolbar->addButton(L"Move (G)", GUI::ESystemIcon::Move);
+			button->setToggle(true);
+			button->setIsToggle(true);
 
-			panel->OnResize = BIND_LISTENER(&CSpaceScene::onRenderResize, this);
+			button = toolbar->addButton(L"Rotate (R)", GUI::ESystemIcon::Rotate);
+			button->setToggle(true);
+			button->setIsToggle(false);
 
-			m_3dPanel = panel;
+			button = toolbar->addButton(L"Scale (S)", GUI::ESystemIcon::Scale);
+			button->setToggle(true);
+			button->setIsToggle(false);
+
+			// camera			
+			button = toolbar->addButton(L"Ortho", GUI::ESystemIcon::Ortho, true);
+			button->setToggle(true);
+			button->setIsToggle(false);
+
+			button = toolbar->addButton(L"Perspective", GUI::ESystemIcon::Perspective, true);
+			button->setToggle(true);
+			button->setIsToggle(true);
+
+			button = toolbar->addButton(L"Camera", GUI::ESystemIcon::Camera, true);
+
+
+			// 3d view
+			m_view = new GUI::CBase(window);
+			m_view->dock(GUI::EPosition::Fill);
+
+			m_view->OnRender = BIND_LISTENER(&CSpaceScene::onRender, this);
+			m_view->OnMouseMoved = std::bind(&CSpaceScene::onMouseMoved, this, _1, _2, _3, _4, _5);
+			m_view->OnLeftMouseClick = std::bind(&CSpaceScene::onLeftMouseClick, this, _1, _2, _3, _4);
+			m_view->OnRightMouseClick = std::bind(&CSpaceScene::onRightMouseClick, this, _1, _2, _3, _4);
+			m_view->OnMiddleMouseClick = std::bind(&CSpaceScene::onMiddleMouseClick, this, _1, _2, _3, _4);
+			m_view->OnMouseWheeled = std::bind(&CSpaceScene::onMouseWheeled, this, _1, _2);
+
+			m_view->setKeyboardInputEnabled(true);
+			m_view->OnKeyPress = std::bind(&CSpaceScene::onKeyPressed, this, _1, _2, _3);
+			m_view->OnChar = std::bind(&CSpaceScene::onChar, this, _1, _2);
+
+			m_view->OnResize = BIND_LISTENER(&CSpaceScene::onRenderResize, this);
 
 			GUI::SDimension size = window->getSize();
 			initRenderPipeline(size.Width, size.Height);
@@ -266,8 +294,8 @@ namespace Skylicht
 				viewport.LowerRightCorner = viewport.UpperLeftCorner + core::vector2di(viewpointSize, viewpointSize);
 
 				// viewpoint rect (local)
-				GUI::SPoint upleft = m_3dPanel->canvasPosToLocal(GUI::SPoint((float)viewport.UpperLeftCorner.X, (float)viewport.UpperLeftCorner.Y));
-				GUI::SPoint lowerRight = m_3dPanel->canvasPosToLocal(GUI::SPoint((float)viewport.LowerRightCorner.X, (float)viewport.LowerRightCorner.Y));
+				GUI::SPoint upleft = m_view->canvasPosToLocal(GUI::SPoint((float)viewport.UpperLeftCorner.X, (float)viewport.UpperLeftCorner.Y));
+				GUI::SPoint lowerRight = m_view->canvasPosToLocal(GUI::SPoint((float)viewport.LowerRightCorner.X, (float)viewport.LowerRightCorner.Y));
 				m_viewpointRect.UpperLeftCorner.set(upleft.X, upleft.Y);
 				m_viewpointRect.LowerRightCorner.set(lowerRight.X, lowerRight.Y);
 				m_viewpointRect.repair();
@@ -295,14 +323,14 @@ namespace Skylicht
 
 		void CSpaceScene::onMouseMoved(GUI::CBase* base, float x, float y, float deltaX, float deltaY)
 		{
-			GUI::SPoint local = m_3dPanel->canvasPosToLocal(GUI::SPoint(x, y));
+			GUI::SPoint local = m_view->canvasPosToLocal(GUI::SPoint(x, y));
 			postMouseEventToScene(EMIE_MOUSE_MOVED, local.X, local.Y);
 		}
 
 		void CSpaceScene::onLeftMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_leftMouseDown = down;
-			GUI::SPoint local = m_3dPanel->canvasPosToLocal(GUI::SPoint(x, y));
+			GUI::SPoint local = m_view->canvasPosToLocal(GUI::SPoint(x, y));
 
 			if (m_viewpointRect.isPointInside(core::vector2df(local.X, local.Y)))
 			{
@@ -322,7 +350,7 @@ namespace Skylicht
 				// scene
 				if (down)
 				{
-					GUI::CInput::getInput()->setCapture(m_3dPanel);
+					GUI::CInput::getInput()->setCapture(m_view);
 					postMouseEventToScene(EMIE_LMOUSE_PRESSED_DOWN, local.X, local.Y);
 				}
 				else
@@ -336,7 +364,7 @@ namespace Skylicht
 		void CSpaceScene::onRightMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_rightMouseDown = down;
-			GUI::SPoint local = m_3dPanel->canvasPosToLocal(GUI::SPoint(x, y));
+			GUI::SPoint local = m_view->canvasPosToLocal(GUI::SPoint(x, y));
 
 			if (m_viewpointRect.isPointInside(core::vector2df(local.X, local.Y)))
 			{
@@ -347,7 +375,7 @@ namespace Skylicht
 				// scene
 				if (down)
 				{
-					GUI::CInput::getInput()->setCapture(m_3dPanel);
+					GUI::CInput::getInput()->setCapture(m_view);
 					postMouseEventToScene(EMIE_RMOUSE_PRESSED_DOWN, local.X, local.Y);
 				}
 				else
@@ -361,7 +389,7 @@ namespace Skylicht
 		void CSpaceScene::onMiddleMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_middleMouseDown = down;
-			GUI::SPoint local = m_3dPanel->canvasPosToLocal(GUI::SPoint(x, y));
+			GUI::SPoint local = m_view->canvasPosToLocal(GUI::SPoint(x, y));
 
 			if (m_viewpointRect.isPointInside(core::vector2df(local.X, local.Y)))
 			{
@@ -372,7 +400,7 @@ namespace Skylicht
 				// scene
 				if (down)
 				{
-					GUI::CInput::getInput()->setCapture(m_3dPanel);
+					GUI::CInput::getInput()->setCapture(m_view);
 					postMouseEventToScene(EMIE_MMOUSE_PRESSED_DOWN, local.X, local.Y);
 				}
 				else

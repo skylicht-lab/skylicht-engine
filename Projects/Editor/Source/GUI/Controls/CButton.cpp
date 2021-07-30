@@ -101,7 +101,7 @@ namespace Skylicht
 						c = m_pressColor;
 				}
 
-				if (!disable && (m_drawBackground || hover))
+				if (!disable && (m_drawBackground || hover || (m_isToggle && m_toggleStatus)))
 					CTheme::getTheme()->drawButton(getRenderBounds(), c);
 			}
 

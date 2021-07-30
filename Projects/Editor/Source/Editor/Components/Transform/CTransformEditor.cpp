@@ -79,7 +79,7 @@ namespace Skylicht
 				Z = pos.Z;
 
 				// Position change callback
-				IObserver* gizmosObserver = m_gizmos->getPosition().addObserver(new CObserver<CTransformEditor>(this,
+				m_gizmos->getPosition().addObserver(new CObserver<CTransformEditor>(this,
 					[x = &X, y = &Y, z = &Z](ISubject* subject, IObserver* from, CTransformEditor* target) {
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& pos = value->get();
@@ -101,7 +101,7 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Z", &Z, 0.01f);
 
 				X.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos, gizmosObserver](ISubject* subject, IObserver* from, CTransformEditor* target)
+					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
 					{
 						if (from != g)
 						{
@@ -114,7 +114,7 @@ namespace Skylicht
 					}), true);
 
 				Y.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos, gizmosObserver](ISubject* subject, IObserver* from, CTransformEditor* target)
+					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
 					{
 						if (from != g)
 						{
@@ -127,7 +127,7 @@ namespace Skylicht
 					}), true);
 
 				Z.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos, gizmosObserver](ISubject* subject, IObserver* from, CTransformEditor* target)
+					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
 					{
 						if (from != g)
 						{
