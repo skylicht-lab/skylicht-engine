@@ -36,7 +36,7 @@ namespace Skylicht
 		class CSpaceScene : public CSpace
 		{
 		protected:
-			GUI::CBase* m_3dPanel;
+			GUI::CBase* m_view;
 
 			CScene* m_scene;
 			CCamera* m_editorCamera;

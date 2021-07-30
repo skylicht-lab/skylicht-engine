@@ -198,6 +198,33 @@ namespace Skylicht
 				addSystemIcon(ESystemIcon::File, "file.png");
 				addSystemIcon(ESystemIcon::FileDocument, "file-document.png");
 				addSystemIcon(ESystemIcon::FileImage, "file-image.png");
+
+				addEditorIcon(ESystemIcon::Camera, "camera.png");
+				addEditorIcon(ESystemIcon::Ortho, "camera_ortho.png");
+				addEditorIcon(ESystemIcon::Perspective, "camera_perspective.png");
+				addEditorIcon(ESystemIcon::Poly, "draw_poly.png");
+				addEditorIcon(ESystemIcon::Spline, "draw_spline.png");
+				addEditorIcon(ESystemIcon::LightAreaCircle, "light_area_circle.png");
+				addEditorIcon(ESystemIcon::LightAreaRect, "light_area_rect.png");
+				addEditorIcon(ESystemIcon::LightDirection, "light_direction.png");
+				addEditorIcon(ESystemIcon::LightPoint, "light_point.png");
+				addEditorIcon(ESystemIcon::LightSpot, "light_spot.png");
+				addEditorIcon(ESystemIcon::ObjectBox, "obj_box.png");
+				addEditorIcon(ESystemIcon::ObjectCamera, "obj_camera.png");
+				addEditorIcon(ESystemIcon::ObjectCapsule, "obj_capsule.png");
+				addEditorIcon(ESystemIcon::ObjectCircle, "obj_circle.png");
+				addEditorIcon(ESystemIcon::ObjectCone, "obj_cone.png");
+				addEditorIcon(ESystemIcon::ObjectCylinder, "obj_cylinder.png");
+				addEditorIcon(ESystemIcon::ObjectIcosphere, "obj_icosphere.png");
+				addEditorIcon(ESystemIcon::ObjectLight, "obj_light.png");
+				addEditorIcon(ESystemIcon::ObjectMonkey, "obj_monkey.png");
+				addEditorIcon(ESystemIcon::ObjectPlane, "obj_plane.png");
+				addEditorIcon(ESystemIcon::ObjectRect, "obj_rect.png");
+				addEditorIcon(ESystemIcon::ObjectSphere, "obj_sphere.png");
+				addEditorIcon(ESystemIcon::ObjectTorus, "obj_torus.png");
+				addEditorIcon(ESystemIcon::Move, "tool_move.png");
+				addEditorIcon(ESystemIcon::Rotate, "tool_rotate.png");
+				addEditorIcon(ESystemIcon::Scale, "tool_scale.png");
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char* name)
@@ -211,6 +238,20 @@ namespace Skylicht
 				m_systemIcon16[type] = m_sprite->addFrame(nameNoExt.c_str(), path);
 
 				sprintf(path, "Editor/Icon/System/32/%s", name);
+				m_systemIcon32[type] = m_sprite->addFrame(nameNoExt.c_str(), path);
+			}
+
+			void CSkylichtTheme::addEditorIcon(ESystemIcon type, const char* name)
+			{
+				char path[512];
+				std::string nameNoExt = CPath::getFileNameNoExt(name);
+				if (nameNoExt.empty() == true)
+					return;
+
+				sprintf(path, "Editor/Icon/Editor/16/%s", name);
+				m_systemIcon16[type] = m_sprite->addFrame(nameNoExt.c_str(), path);
+
+				sprintf(path, "Editor/Icon/Editor/32/%s", name);
 				m_systemIcon32[type] = m_sprite->addFrame(nameNoExt.c_str(), path);
 			}
 
