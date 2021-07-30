@@ -60,9 +60,15 @@ namespace Skylicht
 					newButton->showIcon(true);
 
 				if (inRightToolbar)
+				{
 					newButton->dock(EPosition::Right);
+					newButton->setMargin(SMargin(2.0f, 0.0f, 0.0f, 0.0f));
+				}
 				else
+				{
 					newButton->dock(EPosition::Left);
+					newButton->setMargin(SMargin(0.0f, 0.0f, 2.0f, 0.0f));
+				}
 
 				newButton->enableDrawBackground(false);
 				newButton->sizeToContents();
