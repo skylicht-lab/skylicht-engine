@@ -2,7 +2,7 @@
 !@
 MIT License
 
-CopyRight (c) 2020 Skylicht Technology CO., LTD
+CopyRight (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,30 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Controls/CButton.h"
 
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Controls/CDialogWindow.h"
-#include "GUI/Controls/CDockableWindow.h"
-#include "GUI/Controls/CDockTabControl.h"
-#include "GUI/Controls/CScrollControl.h"
-#include "GUI/Controls/CSplitter.h"
-#include "GUI/Controls/CMenuBar.h"
-#include "GUI/Controls/CTreeNode.h"
-#include "GUI/Controls/CTreeControl.h"
-#include "GUI/Controls/CListBox.h"
-#include "GUI/Controls/CTableRow.h"
-#include "GUI/Controls/CToolbar.h"
-#include "GUI/Controls/CTextBox.h"
-#include "GUI/Controls/CCheckBox.h"
-#include "GUI/Controls/CComboBox.h"
-#include "GUI/Controls/CNumberInput.h"
-#include "GUI/Controls/CSlider.h"
-#include "GUI/Controls/CCollapsibleGroup.h"
-#include "GUI/Controls/CBoxLayout.h"
-#include "GUI/Controls/CContentSizeControl.h"
-#include "GUI/Controls/CProgressBar.h"
-#include "GUI/Controls/CMessageBox.h"
+namespace Skylicht
+{
+	namespace Editor
+	{
+		namespace GUI
+		{
+			class CToggleGroup
+			{
+			protected:
+				std::vector<CButton*> m_buttons;
 
-#include "GUI/Utils/CToggleGroup.h"
+				CButton* selected;
+
+			public:
+				CToggleGroup();
+
+				virtual ~CToggleGroup();
+
+				void addButton(CButton* button);
+
+				void removeButton(CButton* button);
+
+				void selectButton(CButton* button);
+
+				void enable(bool b);
+			};
+		}
+	}
+}

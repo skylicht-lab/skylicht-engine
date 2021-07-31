@@ -71,11 +71,9 @@ namespace Skylicht
 
 		void CSelection::addSelect(const CSelectObject& obj)
 		{
-			for (CSelectObject selected : m_selected)
-			{
-				if (selected == obj)
-					return;
-			}
+			if (std::find(m_selected.begin(), m_selected.end(), obj) != m_selected.end())
+				return;
+
 			m_selected.push_back(obj);
 		}
 

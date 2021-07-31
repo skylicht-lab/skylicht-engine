@@ -33,6 +33,18 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		enum ESceneToolBar
+		{
+			Select = 0,
+			Hand,
+			Move,
+			Rotate,
+			Scale,
+			Perspective,
+			Ortho,
+			ToolbarCount
+		};
+
 		class CSpaceScene : public CSpace
 		{
 		protected:
@@ -62,6 +74,12 @@ namespace Skylicht
 
 			CHandlesRenderer* m_handlesRenderer;
 
+			GUI::CButton* m_toolbarButton[ToolbarCount];
+
+			GUI::CToggleGroup* m_groupEditor;
+			GUI::CToggleGroup* m_groupTransform;
+			GUI::CToggleGroup* m_groupCameraView;
+
 		public:
 			CSpaceScene(GUI::CWindow* window, CEditor* editor);
 
@@ -88,6 +106,14 @@ namespace Skylicht
 			virtual void onKeyPressed(GUI::CBase* base, int key, bool down);
 
 			virtual void onRenderResize(GUI::CBase* base);
+
+			void onCameraPerspective(GUI::CBase* base);
+
+			void onCameraOrtho(GUI::CBase* base);
+
+			void onEditorSelect(GUI::CBase* base);
+
+			void onEditorHand(GUI::CBase* base);
 
 			virtual void update();
 

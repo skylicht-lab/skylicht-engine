@@ -502,6 +502,8 @@ namespace Skylicht
 				Move,
 				Rotate,
 				Scale,
+				ViewSelect,
+				ViewHand,
 				// End
 				NumSystemIcon
 			};
