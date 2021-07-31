@@ -9,7 +9,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyRight notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -23,71 +23,61 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "ISubject.h"
+#include "CToggleGroup.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		ISubject::ISubject()
+		namespace GUI
 		{
-
-		}
-
-		ISubject::~ISubject()
-		{
-			int i = 0;
-			for (IObserver* observer : m_observers)
+			CToggleGroup::CToggleGroup() :
+				selected(NULL)
 			{
-				if (m_autoRelease[i])
-				{
-					delete observer;
-				}
-				++i;
+
 			}
-		}
 
-		IObserver* ISubject::addObserver(IObserver* observer, bool autoRelease)
-		{
-			if (std::find(m_observers.begin(), m_observers.end(), observer) != m_observers.end())
-				return observer;
-
-			m_observers.push_back(observer);
-			m_autoRelease.push_back(autoRelease);
-			return observer;
-		}
-
-		void ISubject::removeObserver(IObserver* observer)
-		{
-			int i = 0;
-			for (IObserver* o : m_observers)
+			CToggleGroup::~CToggleGroup()
 			{
-				if (o == observer)
-				{
-					if (m_autoRelease[i])
-					{
-						delete observer;
-					}
 
-					m_observers.erase(m_observers.begin() + i);
-					m_autoRelease.erase(m_autoRelease.begin() + i);
+			}
+
+			void CToggleGroup::addButton(CButton* button)
+			{
+				if (std::find(m_buttons.begin(), m_buttons.end(), button) != m_buttons.end())
 					return;
-				}
-				++i;
-			}
-		}
 
-		void ISubject::notify(IObserver* from)
-		{
-			for (IObserver* o : m_observers)
+				button->setToggle(true);
+				button->setIsToggle(false);
+
+				m_buttons.push_back(button);
+			}
+
+			void CToggleGroup::removeButton(CButton* button)
 			{
-				o->OnNotify(this, from);
+				std::vector<CButton*>::iterator i = std::find(m_buttons.begin(), m_buttons.end(), button);
+				if (i != m_buttons.end())
+					m_buttons.erase(i);
 			}
-		}
 
-		void ISubject::removeAllObserver()
-		{
-			m_observers.clear();
+			void CToggleGroup::selectButton(CButton* button)
+			{
+				for (CButton* b : m_buttons)
+				{
+					if (b == button)
+						b->setIsToggle(true);
+					else
+						b->setIsToggle(false);
+				}
+			}
+
+			void CToggleGroup::enable(bool b)
+			{
+				for (CButton* button : m_buttons)
+				{
+					button->setDisabled(!b);
+				}
+			}
 		}
 	}
 }
