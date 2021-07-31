@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/SpaceController/CSceneController.h"
 #include "Handles/CHandles.h"
+#include "Selection/CSelection.h"
 
 using namespace std::placeholders;
 
@@ -58,31 +59,59 @@ namespace Skylicht
 			initDefaultScene();
 
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
+			m_groupEditor = new GUI::CToggleGroup();
+			m_groupTransform = new GUI::CToggleGroup();
+			m_groupCameraView = new GUI::CToggleGroup();
 
-			// transform
-			GUI::CButton* button = toolbar->addButton(L"Move (G)", GUI::ESystemIcon::Move);
-			button->setToggle(true);
-			button->setIsToggle(true);
+			GUI::CButton* button = NULL;
 
-			button = toolbar->addButton(L"Rotate (R)", GUI::ESystemIcon::Rotate);
-			button->setToggle(true);
-			button->setIsToggle(false);
+			// select & hand
+			button = toolbar->addButton(L"Select", GUI::ESystemIcon::ViewSelect);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onEditorSelect, this);
+			m_toolbarButton[ESceneToolBar::Select] = button;
+			m_groupEditor->addButton(button);
 
-			button = toolbar->addButton(L"Scale (S)", GUI::ESystemIcon::Scale);
-			button->setToggle(true);
-			button->setIsToggle(false);
+			button = toolbar->addButton(L"Hand", GUI::ESystemIcon::ViewHand);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onEditorHand, this);
+			m_toolbarButton[ESceneToolBar::Hand] = button;
+			m_groupEditor->addButton(button);
+
+			toolbar->addSpace();
+
+			// transform			
+			button = toolbar->addButton(L"Move", GUI::ESystemIcon::Move);
+			m_toolbarButton[ESceneToolBar::Move] = button;
+			m_groupTransform->addButton(button);
+
+			button = toolbar->addButton(L"Rotate", GUI::ESystemIcon::Rotate);
+			m_toolbarButton[ESceneToolBar::Rotate] = button;
+			m_groupTransform->addButton(button);
+
+			button = toolbar->addButton(L"Scale", GUI::ESystemIcon::Scale);
+			m_toolbarButton[ESceneToolBar::Scale] = button;
+			m_groupTransform->addButton(button);
 
 			// camera			
 			button = toolbar->addButton(L"Ortho", GUI::ESystemIcon::Ortho, true);
-			button->setToggle(true);
-			button->setIsToggle(false);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onCameraOrtho, this);
+			m_toolbarButton[ESceneToolBar::Ortho] = button;
+			m_groupCameraView->addButton(button);
 
 			button = toolbar->addButton(L"Perspective", GUI::ESystemIcon::Perspective, true);
-			button->setToggle(true);
-			button->setIsToggle(true);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onCameraPerspective, this);
+			m_toolbarButton[ESceneToolBar::Perspective] = button;
+			m_groupCameraView->addButton(button);
 
 			button = toolbar->addButton(L"Camera", GUI::ESystemIcon::Camera, true);
 
+			// init group
+			m_groupEditor->enable(true);
+			m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Select]);
+
+			m_groupCameraView->enable(true);
+			m_groupCameraView->selectButton(m_toolbarButton[ESceneToolBar::Perspective]);
+
+			m_groupTransform->enable(false);
 
 			// 3d view
 			m_view = new GUI::CBase(window);
@@ -120,6 +149,10 @@ namespace Skylicht
 
 			if (m_viewpointController != NULL)
 				delete m_viewpointController;
+
+			delete m_groupEditor;
+			delete m_groupTransform;
+			delete m_groupCameraView;
 
 			CSceneController* sceneController = CSceneController::getInstance();
 			sceneController->setScene(NULL);
@@ -215,6 +248,41 @@ namespace Skylicht
 		{
 			initRenderPipeline(base->getSize().Width, base->getSize().Height);
 		}
+
+		// tool bar
+		void CSpaceScene::onCameraPerspective(GUI::CBase* base)
+		{
+			m_groupCameraView->selectButton(m_toolbarButton[ESceneToolBar::Perspective]);
+			if (m_editorCamera != NULL)
+				m_editorCamera->setProjectionType(CCamera::Perspective);
+		}
+
+		void CSpaceScene::onCameraOrtho(GUI::CBase* base)
+		{
+			m_groupCameraView->selectButton(m_toolbarButton[ESceneToolBar::Ortho]);
+			if (m_editorCamera != NULL)
+				m_editorCamera->setProjectionType(CCamera::Ortho);
+		}
+
+		void CSpaceScene::onEditorSelect(GUI::CBase* base)
+		{
+			if (CSelection::getInstance()->getSelected().size() == 0)
+				m_groupTransform->enable(false);
+			else
+				m_groupTransform->enable(true);
+
+			m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Select]);
+			m_view->setCursor(GUI::ECursorType::Normal);
+		}
+
+		void CSpaceScene::onEditorHand(GUI::CBase* base)
+		{
+			m_groupTransform->enable(false);
+
+			m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Hand]);
+			m_view->setCursor(GUI::ECursorType::Finger);
+		}
+		// end toolbar
 
 		void CSpaceScene::initRenderPipeline(float w, float h)
 		{

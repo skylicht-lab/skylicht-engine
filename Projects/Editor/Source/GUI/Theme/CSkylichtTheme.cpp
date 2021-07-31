@@ -225,6 +225,8 @@ namespace Skylicht
 				addEditorIcon(ESystemIcon::Move, "tool_move.png");
 				addEditorIcon(ESystemIcon::Rotate, "tool_rotate.png");
 				addEditorIcon(ESystemIcon::Scale, "tool_scale.png");
+				addEditorIcon(ESystemIcon::ViewSelect, "view_select.png");
+				addEditorIcon(ESystemIcon::ViewHand, "view_hand.png");
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char* name)

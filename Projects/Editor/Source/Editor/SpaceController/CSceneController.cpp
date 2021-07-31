@@ -172,26 +172,19 @@ namespace Skylicht
 
 		void CSceneController::addGizmos(CGizmos* gizmos)
 		{
-			for (CGizmos* g : m_gizmos)
-			{
-				if (g == gizmos)
-					return;
-			}
+			if (std::find(m_gizmos.begin(), m_gizmos.end(), gizmos) != m_gizmos.end())
+				return;
+
 			m_gizmos.push_back(gizmos);
 		}
 
 		void CSceneController::removeGizmos(CGizmos* gizmos)
 		{
-			std::vector<CGizmos*>::iterator i = m_gizmos.begin(), end = m_gizmos.end();
-			while (i != end)
+			std::vector<CGizmos*>::iterator i = std::find(m_gizmos.begin(), m_gizmos.end(), gizmos);
+			if (i != m_gizmos.end())
 			{
-				if ((*i) == gizmos)
-				{
-					gizmos->onRemove();
-					m_gizmos.erase(i);
-					return;
-				}
-				++i;
+				gizmos->onRemove();
+				m_gizmos.erase(i);
 			}
 		}
 

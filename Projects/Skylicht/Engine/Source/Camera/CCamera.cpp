@@ -36,7 +36,8 @@ namespace Skylicht
 		m_fov(60.0f),
 		m_aspect(-1.0f),
 		m_up(CTransform::s_oy),
-		m_cullingMask(1)
+		m_cullingMask(1),
+		m_orthoScale(10.0f)
 	{
 	}
 
@@ -246,7 +247,7 @@ namespace Skylicht
 			float n = m_nearValue;
 			float f = m_farValue;
 
-			float scale = tanf(m_fov * 0.5f * core::DEGTORAD) * 3.0f;
+			float scale = tanf(m_fov * 0.5f * core::DEGTORAD) * m_orthoScale;
 			float r = aspect * scale;
 			float l = -r;
 			float t = scale;

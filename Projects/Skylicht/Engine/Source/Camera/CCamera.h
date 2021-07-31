@@ -49,6 +49,8 @@ namespace Skylicht
 		float m_aspect;
 		float m_viewportAspect;
 
+		float m_orthoScale;
+
 		core::vector3df m_up;
 
 		SViewFrustum m_viewArea;
@@ -133,6 +135,16 @@ namespace Skylicht
 		inline float getFOV()
 		{
 			return m_fov;
+		}
+
+		inline void setOrthoScale(float s)
+		{
+			m_orthoScale = s;
+		}
+
+		inline float getOrthoScale()
+		{
+			return m_orthoScale;
 		}
 
 		inline void setAspect(float f)
