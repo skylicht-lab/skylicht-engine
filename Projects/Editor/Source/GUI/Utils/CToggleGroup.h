@@ -50,6 +50,8 @@ namespace Skylicht
 
 				void selectButton(CButton* button);
 
+				CButton* getSelectButton();
+
 				void enable(bool b);
 			};
 		}

@@ -100,6 +100,8 @@ namespace Skylicht
 
 				void applyTextValue();
 
+				virtual void onValidateValue();
+
 			};
 		}
 	}

@@ -39,6 +39,14 @@ namespace Skylicht
 			CSubject<float> Y;
 			CSubject<float> Z;
 
+			CSubject<float> ScaleX;
+			CSubject<float> ScaleY;
+			CSubject<float> ScaleZ;
+
+			CSubject<float> RotateX;
+			CSubject<float> RotateY;
+			CSubject<float> RotateZ;
+
 		protected:
 			CTransformGizmos* m_gizmos;
 

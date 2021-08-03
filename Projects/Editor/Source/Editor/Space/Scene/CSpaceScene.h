@@ -29,6 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "EditorComponents/Handles/CHandlesRenderer.h"
 #include "CViewpointController.h"
 
+#include "Reactive/ISubject.h"
+#include "Reactive/IObserver.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -45,7 +48,9 @@ namespace Skylicht
 			ToolbarCount
 		};
 
-		class CSpaceScene : public CSpace
+		class CSpaceScene :
+			public CSpace,
+			public IObserver
 		{
 		protected:
 			GUI::CBase* m_view;
@@ -106,6 +111,10 @@ namespace Skylicht
 			virtual void onKeyPressed(GUI::CBase* base, int key, bool down);
 
 			virtual void onRenderResize(GUI::CBase* base);
+
+			virtual void onNotify(ISubject* subject, IObserver* from);
+
+			void onToolbarTransform(GUI::CBase* base);
 
 			void onCameraPerspective(GUI::CBase* base);
 

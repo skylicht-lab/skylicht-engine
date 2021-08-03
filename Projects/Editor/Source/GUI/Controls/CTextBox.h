@@ -187,6 +187,14 @@ namespace Skylicht
 				Listener OnTextChanged;
 				Listener OnESC;
 				Listener OnEnter;
+
+			protected:
+
+				virtual void onValidateValue()
+				{
+
+				}
+
 			};
 		}
 	}

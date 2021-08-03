@@ -39,7 +39,9 @@ namespace Skylicht
 
 			virtual void onGizmos() = 0;
 
-			virtual void onRemove() = 0;
+			virtual void onEnable() = 0;
+
+			virtual void onRemove() = 0;			
 		};
 	}
 }

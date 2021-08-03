@@ -81,7 +81,7 @@ namespace Skylicht
 		{
 			for (IObserver* o : m_observers)
 			{
-				o->OnNotify(this, from);
+				o->onNotify(this, from);
 			}
 		}
 

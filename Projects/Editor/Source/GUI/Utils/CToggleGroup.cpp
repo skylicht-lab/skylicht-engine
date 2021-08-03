@@ -71,6 +71,17 @@ namespace Skylicht
 				}
 			}
 
+			CButton* CToggleGroup::getSelectButton()
+			{
+				for (CButton* b : m_buttons)
+				{
+					if (b->isToggle())
+						return b;
+				}
+
+				return NULL;
+			}
+
 			void CToggleGroup::enable(bool b)
 			{
 				for (CButton* button : m_buttons)
