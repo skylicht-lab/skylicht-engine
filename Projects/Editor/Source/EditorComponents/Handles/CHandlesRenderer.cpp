@@ -254,11 +254,11 @@ namespace Skylicht
 
 				computeTripodAxisAndVisibility(i, pos, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera);
 
+				m_scaleAxis[i].start = pos;
+				m_scaleAxis[i].end = pos + dirAxis * m_screenFactor;
+
 				if (belowAxisLimit)
 				{
-					m_scaleAxis[i].start = pos;
-					m_scaleAxis[i].end = pos + dirAxis * m_screenFactor;
-
 					// update draging axis with scale
 					core::vector3df scale(1.0f, 1.0f, 1.0f);
 					if (m_using)
@@ -337,12 +337,12 @@ namespace Skylicht
 
 				computeTripodAxisAndVisibility(i, pos, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera);
 
+				// save the position
+				m_translateAxis[i].start = pos;
+				m_translateAxis[i].end = pos + dirAxis * m_screenFactor;
+
 				if (belowAxisLimit)
 				{
-					// save the position
-					m_translateAxis[i].start = pos;
-					m_translateAxis[i].end = pos + dirAxis * m_screenFactor;
-
 					// draw axis
 					m_data->addLine(m_translateAxis[i].start, m_translateAxis[i].end, m_hoverOnAxis[i] ? m_selectionColor : m_directionColor[i]);
 
@@ -363,20 +363,20 @@ namespace Skylicht
 					m_data->addTriangleFill(a, b, c, m_hoverOnAxis[i] ? m_selectionColor : m_directionColor[i]);
 				}
 
+				core::vector3df planeLine[4];
+				for (int j = 0; j < 4; j++)
+				{
+					planeLine[j] = pos + (dirPlaneX * quad[j].X + dirPlaneY * quad[j].Y) * m_screenFactor;
+
+					// save the position
+					m_translatePlane[i].Point[j] = planeLine[j];
+					m_translatePlane[i].DirX = dirPlaneX;
+					m_translatePlane[i].DirY = dirPlaneY;
+				}
+
+				// draw plane
 				if (belowPlaneLimit)
 				{
-					// draw plane
-					core::vector3df planeLine[4];
-					for (int j = 0; j < 4; j++)
-					{
-						planeLine[j] = pos + (dirPlaneX * quad[j].X + dirPlaneY * quad[j].Y) * m_screenFactor;
-
-						// save the position
-						m_translatePlane[i].Point[j] = planeLine[j];
-						m_translatePlane[i].DirX = dirPlaneX;
-						m_translatePlane[i].DirY = dirPlaneY;
-					}
-
 					const SColor& color = m_hoverOnPlane[i] ? m_selectionColor : m_directionColor[i];
 
 					m_data->addLine(planeLine[0], planeLine[1], color);
@@ -512,7 +512,8 @@ namespace Skylicht
 				float lenDirMinusPlaneY = getSegmentLengthClipSpace(origin, origin - dirPlaneY, camera);
 
 				// For readability
-				bool& allowFlip = m_allowAxisFlip;
+				bool allowFlip = m_allowAxisFlip && camera->getProjectionType() == CCamera::Perspective;
+
 				float mulAxis = (allowFlip && lenDir < lenDirMinus&& fabsf(lenDir - lenDirMinus) > FLT_EPSILON) ? -1.f : 1.f;
 				float mulAxisX = (allowFlip && lenDirPlaneX < lenDirMinusPlaneX&& fabsf(lenDirPlaneX - lenDirMinusPlaneX) > FLT_EPSILON) ? -1.f : 1.f;
 				float mulAxisY = (allowFlip && lenDirPlaneY < lenDirMinusPlaneY&& fabsf(lenDirPlaneY - lenDirMinusPlaneY) > FLT_EPSILON) ? -1.f : 1.f;
@@ -726,6 +727,13 @@ namespace Skylicht
 							m_using = true;
 
 							core::vector3df vec = m_translatePlane[i].DirX;
+
+							if (i == 2)
+							{
+								// drag OZ
+								vec = m_translatePlane[i].DirY;
+							}
+
 							vec.normalize();
 
 							core::line3df viewRay0 = CProjective::getViewRay(m_camera, m_lastMouse.X, m_lastMouse.Y, vpWidth, vpHeight);
@@ -1036,6 +1044,11 @@ namespace Skylicht
 								m_using = true;
 
 								core::vector3df vec = m_translatePlane[i].DirX;
+								if (i == 2)
+								{
+									// drag OZ
+									vec = m_translatePlane[i].DirY;
+								}
 								vec.normalize();
 
 								core::line3df viewRay0 = CProjective::getViewRay(m_camera, m_lastMouse.X, m_lastMouse.Y, vpWidth, vpHeight);
