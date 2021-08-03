@@ -363,6 +363,7 @@ namespace Skylicht
 				m_caretBeginPosition = c;
 
 				m_caretBegin = getCaretBegin();
+				m_moveCaretToEnd = false;
 			}
 
 			void CTextContainer::setCaretEnd(u32 line, u32 c)
