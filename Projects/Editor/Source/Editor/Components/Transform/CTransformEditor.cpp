@@ -60,10 +60,22 @@ namespace Skylicht
 			m_gameObject = target->getGameObject();
 			m_transform = dynamic_cast<CTransformEuler*>(target);
 
+			// clear all registered observer
 			X.removeAllObserver();
 			Y.removeAllObserver();
 			Z.removeAllObserver();
+
+			ScaleX.removeAllObserver();
+			ScaleY.removeAllObserver();
+			ScaleZ.removeAllObserver();
+
+			RotateX.removeAllObserver();
+			RotateY.removeAllObserver();
+			RotateZ.removeAllObserver();
+
 			m_gizmos->getPosition().removeAllObserver();
+			m_gizmos->getRotation().removeAllObserver();
+			m_gizmos->getScale().removeAllObserver();
 
 			// init ui event & sync gizmos
 			if (m_gameObject->isEnableEditorChange() && m_transform != NULL)
@@ -85,24 +97,20 @@ namespace Skylicht
 				Y = pos.Y;
 				Z = pos.Z;
 
-				// Position change callback
 				m_gizmos->getPosition().addObserver(new CObserver<CTransformEditor>(this,
 					[x = &X, y = &Y, z = &Z](ISubject* subject, IObserver* from, CTransformEditor* target) {
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& pos = value->get();
 
-						// update subject
 						x->set(pos.X);
 						y->set(pos.Y);
 						z->set(pos.Z);
 
-						// notify change ui
 						x->notify(from);
 						y->notify(from);
 						z->notify(from);
 					}), true);
 
-				// input x,y,z
 				ui->addNumberInput(layout, L"Position X", &X, 0.01f);
 				ui->addNumberInput(layout, L"Y", &Y, 0.01f);
 				ui->addNumberInput(layout, L"Z", &Z, 0.01f);
@@ -163,12 +171,10 @@ namespace Skylicht
 						core::vector3df rot;
 						value->get().toEuler(rot);
 
-						// update subject
 						x->set(rot.X * core::RADTODEG);
 						y->set(rot.Y * core::RADTODEG);
 						z->set(rot.Z * core::RADTODEG);
 
-						// notify change ui
 						x->notify(from);
 						y->notify(from);
 						z->notify(from);
@@ -230,12 +236,10 @@ namespace Skylicht
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& scale = value->get();
 
-						// update subject
 						x->set(scale.X);
 						y->set(scale.Y);
 						z->set(scale.Z);
 
-						// notify change ui
 						x->notify(from);
 						y->notify(from);
 						z->notify(from);
