@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBase.h"
 #include "CDockPanel.h"
 
+#include "GUI/Utils/CTabableGroup.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -38,6 +40,7 @@ namespace Skylicht
 			{
 			protected:
 				CBase::List m_deleteList;
+
 				std::set<CBase*> m_deleteSet;
 
 				bool m_needSaveDockLayout;
@@ -97,8 +100,7 @@ namespace Skylicht
 
 			public:
 
-				CBase* FirstTab;
-				CBase* NextTab;
+				CTabableGroup TabableGroup;
 
 			};
 		}

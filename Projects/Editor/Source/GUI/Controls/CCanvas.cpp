@@ -42,8 +42,6 @@ namespace Skylicht
 		{
 			CCanvas::CCanvas(float width, float height) :
 				CBase(NULL),
-				FirstTab(NULL),
-				NextTab(NULL),
 				m_needSaveDockLayout(false),
 				m_dialog(NULL)
 			{
@@ -111,9 +109,6 @@ namespace Skylicht
 				recurseLayout();
 
 				processDelayedDeletes();
-
-				if (NextTab == NULL)
-					NextTab = FirstTab;
 
 				CInput::getInput()->update();
 

@@ -439,6 +439,7 @@ namespace Skylicht
 				virtual bool isFocussed();
 				virtual void focus();
 				virtual void unfocus();
+				virtual void onTabableFocus() {}
 
 			public:
 

@@ -99,6 +99,16 @@ namespace Skylicht
 				// disable default textbox focus
 			}
 
+			void CNumberInput::onTabableFocus()
+			{
+				CTextBox::onKeyboardFocus();
+
+				onSelectAll(this);
+
+				m_focusTextbox = true;
+				setCursor(ECursorType::Beam);
+			}
+
 			void CNumberInput::onLostKeyboardFocus()
 			{
 				CTextBox::onLostKeyboardFocus();
@@ -161,6 +171,16 @@ namespace Skylicht
 			void CNumberInput::onPaste(CBase* base)
 			{
 				CTextBox::onPaste(base);
+			}
+
+			bool CNumberInput::onKeyPress(EKey key, bool press)
+			{
+				if (key == EKey::KEY_TAB)
+				{
+					return CBase::onKeyTab(press);
+				}
+
+				return CTextBox::onKeyPress(key, press);
 			}
 
 			bool CNumberInput::onChar(u32 c)

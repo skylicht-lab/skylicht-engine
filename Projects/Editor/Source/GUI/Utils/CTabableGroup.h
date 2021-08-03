@@ -22,72 +22,49 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "ISubject.h"
+#pragma once
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		ISubject::ISubject()
+		namespace GUI
 		{
+			class CBase;
 
-		}
-
-		ISubject::~ISubject()
-		{
-			int i = 0;
-			for (IObserver* observer : m_observers)
+			class CTabableGroup
 			{
-				if (m_autoRelease[i])
+			public:
+				CBase* CurrentTab;
+
+			protected:
+				bool m_enable;
+
+				std::list<CBase*> m_list;
+
+			public:
+				CTabableGroup();
+
+				virtual ~CTabableGroup();
+
+				void add(CBase* control);
+
+				void remove(CBase* control);
+
+				void next();
+
+				void clear();
+
+				inline bool isEnable()
 				{
-					delete observer;
+					return m_enable;
 				}
-				++i;
-			}
-		}
 
-		IObserver* ISubject::addObserver(IObserver* observer, bool autoRelease)
-		{
-			if (std::find(m_observers.begin(), m_observers.end(), observer) != m_observers.end())
-				return observer;
-
-			m_observers.push_back(observer);
-			m_autoRelease.push_back(autoRelease);
-			return observer;
-		}
-
-		void ISubject::removeObserver(IObserver* observer)
-		{
-			int i = 0;
-			for (IObserver* o : m_observers)
-			{
-				if (o == observer)
+				inline void setEnable(bool b)
 				{
-					if (m_autoRelease[i])
-					{
-						delete observer;
-					}
-
-					m_observers.erase(m_observers.begin() + i);
-					m_autoRelease.erase(m_autoRelease.begin() + i);
-					return;
+					m_enable = b;
 				}
-				++i;
-			}
-		}
-
-		void ISubject::notify(IObserver* from)
-		{
-			for (IObserver* o : m_observers)
-			{
-				o->onNotify(this, from);
-			}
-		}
-
-		void ISubject::removeAllObserver()
-		{
-			m_observers.clear();
+			};
 		}
 	}
 }

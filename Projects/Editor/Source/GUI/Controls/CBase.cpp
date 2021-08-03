@@ -699,9 +699,16 @@ namespace Skylicht
 				if (!down)
 					return true;
 
-				if (getCanvas()->NextTab)
+				CTabableGroup& tabableGroup = getCanvas()->TabableGroup;
+				if (tabableGroup.CurrentTab == this)
 				{
-					getCanvas()->NextTab->focus();
+					tabableGroup.next();
+
+					if (tabableGroup.CurrentTab != NULL)
+					{
+						tabableGroup.CurrentTab->focus();
+						tabableGroup.CurrentTab->onTabableFocus();
+					}
 				}
 
 				return true;
@@ -941,19 +948,8 @@ namespace Skylicht
 
 				postLayout();
 
-				/*
-				if (isTabable() && !isDisabled())
-				{
-					if (!getCanvas()->FirstTab)
-						getCanvas()->FirstTab = this;
-
-					if (!getCanvas()->NextTab)
-						getCanvas()->NextTab = this;
-				}
-				*/
-
-				// if (CGUIContext::KeyboardFocus == this)
-				//	getCanvas()->NextTab = nullptr;
+				if (CGUIContext::KeyboardFocus == this)
+					getCanvas()->TabableGroup.CurrentTab = this;
 			}
 
 			void CBase::layout()

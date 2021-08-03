@@ -23,71 +23,57 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "ISubject.h"
+#include "CTabableGroup.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		ISubject::ISubject()
+		namespace GUI
 		{
-
-		}
-
-		ISubject::~ISubject()
-		{
-			int i = 0;
-			for (IObserver* observer : m_observers)
+			CTabableGroup::CTabableGroup() :
+				m_enable(false),
+				CurrentTab(NULL)
 			{
-				if (m_autoRelease[i])
+
+			}
+
+			CTabableGroup::~CTabableGroup()
+			{
+
+			}
+
+			void CTabableGroup::add(CBase* control)
+			{
+				m_list.push_back(control);
+			}
+
+			void CTabableGroup::remove(CBase* control)
+			{
+				m_list.remove(control);
+			}
+
+			void CTabableGroup::next()
+			{
+				std::list<CBase*>::iterator it = std::find(m_list.begin(), m_list.end(), CurrentTab);
+				if (it != --m_list.end())
 				{
-					delete observer;
+					++it;
+					CurrentTab = (*it);
 				}
-				++i;
-			}
-		}
-
-		IObserver* ISubject::addObserver(IObserver* observer, bool autoRelease)
-		{
-			if (std::find(m_observers.begin(), m_observers.end(), observer) != m_observers.end())
-				return observer;
-
-			m_observers.push_back(observer);
-			m_autoRelease.push_back(autoRelease);
-			return observer;
-		}
-
-		void ISubject::removeObserver(IObserver* observer)
-		{
-			int i = 0;
-			for (IObserver* o : m_observers)
-			{
-				if (o == observer)
+				else
 				{
-					if (m_autoRelease[i])
-					{
-						delete observer;
-					}
-
-					m_observers.erase(m_observers.begin() + i);
-					m_autoRelease.erase(m_autoRelease.begin() + i);
-					return;
+					if (m_list.size() > 0)
+						CurrentTab = m_list.front();
+					else
+						CurrentTab = NULL;
 				}
-				++i;
 			}
-		}
 
-		void ISubject::notify(IObserver* from)
-		{
-			for (IObserver* o : m_observers)
+			void CTabableGroup::clear()
 			{
-				o->onNotify(this, from);
+				m_list.clear();
 			}
-		}
-
-		void ISubject::removeAllObserver()
-		{
-			m_observers.clear();
 		}
 	}
 }
