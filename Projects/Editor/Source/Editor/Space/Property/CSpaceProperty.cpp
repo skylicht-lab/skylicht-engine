@@ -2,7 +2,7 @@
 !@
 MIT License
 
-CopyRight (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -13,7 +13,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRight HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
@@ -42,6 +42,7 @@ namespace Skylicht
 			m_content = new GUI::CContentSizeControl(scrollWindow);
 			m_content->setFitType(GUI::CContentSizeControl::SizeToParent, GUI::CContentSizeControl::WrapChildren);
 			m_content->setTargetParent(window);
+
 
 			GUI::CBase* titleBar = new GUI::CBase(m_content);
 			titleBar->setHeight(25.0f);
@@ -194,6 +195,8 @@ namespace Skylicht
 			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
 			input->setValue(value->get(), false);
 			input->setStep(step);
+
+			m_window->getCanvas()->TabableGroup.add(input);
 
 			boxLayout->endVertical();
 

@@ -59,6 +59,8 @@ namespace Skylicht
 
 				virtual void renderUnder();
 
+				virtual void onTabableFocus();
+
 				virtual void onKeyboardFocus();
 
 				virtual void onLostKeyboardFocus();
@@ -66,6 +68,8 @@ namespace Skylicht
 				virtual void onMouseClickLeft(float x, float y, bool down);
 
 				virtual void onPaste(CBase* base);
+
+				virtual bool onKeyPress(EKey key, bool press);
 
 				virtual bool onChar(u32 c);
 
