@@ -425,6 +425,8 @@ namespace Skylicht
 						m_textContainer->getCaretBegin(line, pos);
 						scrollToLine(line, pos);
 					}
+
+					onValidateValue();
 				}
 
 				if (OnChar != nullptr)

@@ -218,6 +218,18 @@ namespace Skylicht
 				setValue(value, false);
 			}
 
+			void CNumberInput::onValidateValue()
+			{
+				const std::wstring s = getString();
+
+				using convert_t = std::codecvt_utf8<wchar_t>;
+				std::wstring_convert<convert_t, wchar_t> strconverter;
+
+				std::string utf8 = strconverter.to_bytes(s);
+
+				m_value = atof(utf8.c_str());
+			}
+
 			void CNumberInput::setValue(float value, bool invokeEvent)
 			{
 				m_value = value;

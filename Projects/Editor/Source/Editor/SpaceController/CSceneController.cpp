@@ -175,6 +175,7 @@ namespace Skylicht
 			if (std::find(m_gizmos.begin(), m_gizmos.end(), gizmos) != m_gizmos.end())
 				return;
 
+			gizmos->onEnable();
 			m_gizmos.push_back(gizmos);
 		}
 

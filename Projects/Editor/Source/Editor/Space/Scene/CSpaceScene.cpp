@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Handles/CHandles.h"
 #include "Selection/CSelection.h"
 
+#include "Editor/Gizmos/Transform/CTransformGizmos.h"
+
 using namespace std::placeholders;
 
 namespace Skylicht
@@ -80,16 +82,21 @@ namespace Skylicht
 
 			// transform			
 			button = toolbar->addButton(L"Move", GUI::ESystemIcon::Move);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onToolbarTransform, this);
 			m_toolbarButton[ESceneToolBar::Move] = button;
 			m_groupTransform->addButton(button);
 
 			button = toolbar->addButton(L"Rotate", GUI::ESystemIcon::Rotate);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onToolbarTransform, this);
 			m_toolbarButton[ESceneToolBar::Rotate] = button;
 			m_groupTransform->addButton(button);
 
 			button = toolbar->addButton(L"Scale", GUI::ESystemIcon::Scale);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onToolbarTransform, this);
 			m_toolbarButton[ESceneToolBar::Scale] = button;
 			m_groupTransform->addButton(button);
+
+			CTransformGizmos::getGizmosSubject()->addObserver(this);
 
 			// camera			
 			button = toolbar->addButton(L"Ortho", GUI::ESystemIcon::Ortho, true);
@@ -153,6 +160,8 @@ namespace Skylicht
 			delete m_groupEditor;
 			delete m_groupTransform;
 			delete m_groupCameraView;
+
+			CTransformGizmos::getGizmosSubject()->removeObserver(this);
 
 			CSceneController* sceneController = CSceneController::getInstance();
 			sceneController->setScene(NULL);
@@ -269,7 +278,22 @@ namespace Skylicht
 			if (CSelection::getInstance()->getSelected().size() == 0)
 				m_groupTransform->enable(false);
 			else
+			{
 				m_groupTransform->enable(true);
+
+				GUI::CButton* button = m_groupTransform->getSelectButton();
+				if (button != NULL)
+				{
+					CSubject<CTransformGizmos::ETransformGizmo>* gizmos = CTransformGizmos::getGizmosSubject();
+					if (button == m_toolbarButton[ESceneToolBar::Move])
+						gizmos->set(CTransformGizmos::Translate);
+					else if (button == m_toolbarButton[ESceneToolBar::Rotate])
+						gizmos->set(CTransformGizmos::Rotate);
+					else if (button == m_toolbarButton[ESceneToolBar::Scale])
+						gizmos->set(CTransformGizmos::Scale);
+					gizmos->notify(this);
+				}
+			}
 
 			m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Select]);
 			m_view->setCursor(GUI::ECursorType::Normal);
@@ -279,9 +303,70 @@ namespace Skylicht
 		{
 			m_groupTransform->enable(false);
 
+			CSubject<CTransformGizmos::ETransformGizmo>* gizmos = CTransformGizmos::getGizmosSubject();
+			gizmos->set(CTransformGizmos::None);
+			gizmos->notify(this);
+
 			m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Hand]);
 			m_view->setCursor(GUI::ECursorType::Finger);
 		}
+
+		void CSpaceScene::onToolbarTransform(GUI::CBase* base)
+		{
+			CSubject<CTransformGizmos::ETransformGizmo>* gizmos = CTransformGizmos::getGizmosSubject();
+			CTransformGizmos::ETransformGizmo type = gizmos->get();
+
+			if (base == m_toolbarButton[ESceneToolBar::Move] && type != CTransformGizmos::Translate)
+			{
+				gizmos->set(CTransformGizmos::Translate);
+				gizmos->notify(this);
+			}
+			else if (base == m_toolbarButton[ESceneToolBar::Rotate] && type != CTransformGizmos::Rotate)
+			{
+				gizmos->set(CTransformGizmos::Rotate);
+				gizmos->notify(this);
+			}
+			else if (base == m_toolbarButton[ESceneToolBar::Scale] && type != CTransformGizmos::Scale)
+			{
+				gizmos->set(CTransformGizmos::Scale);
+				gizmos->notify(this);
+			}
+
+			m_groupTransform->selectButton(dynamic_cast<GUI::CButton*>(base));
+		}
+
+		void CSpaceScene::onNotify(ISubject* subject, IObserver* from)
+		{
+			if (from == this)
+				return;
+
+			CSubject<CTransformGizmos::ETransformGizmo>* gizmos = CTransformGizmos::getGizmosSubject();
+			if (subject == gizmos)
+			{
+				CTransformGizmos::ETransformGizmo type = gizmos->get();
+				switch (type)
+				{
+				case CTransformGizmos::None:
+					m_groupTransform->enable(false);
+					break;
+				case CTransformGizmos::Translate:
+					m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Move]);
+					m_groupTransform->enable(true);
+					break;
+				case CTransformGizmos::Rotate:
+					m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Rotate]);
+					m_groupTransform->enable(true);
+					break;
+				case CTransformGizmos::Scale:
+					m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Scale]);
+					m_groupTransform->enable(true);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
 		// end toolbar
 
 		void CSpaceScene::initRenderPipeline(float w, float h)

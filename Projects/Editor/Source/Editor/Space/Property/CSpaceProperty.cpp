@@ -201,12 +201,16 @@ namespace Skylicht
 			if (group != NULL)
 			{
 				// when value change
-				IObserver* observer = value->addObserver(new CObserver<GUI::CNumberInput>(input,
-					[](ISubject* subject, IObserver* from, GUI::CNumberInput* target)
+				CObserver<GUI::CNumberInput>* onChange = new CObserver<GUI::CNumberInput>(input);
+				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CNumberInput* target)
+				{
+					if (from != me)
 					{
 						CSubject<float>* floatValue = (CSubject<float>*)subject;
 						target->setValue(floatValue->get(), false);
-					}));
+					}
+				};
+				IObserver* observer = value->addObserver(onChange);
 
 				// when input text change
 				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {

@@ -43,7 +43,7 @@ namespace Skylicht
 
 			}
 
-			virtual void OnNotify(ISubject* subject, IObserver* from) = 0;
+			virtual void onNotify(ISubject* subject, IObserver* from) = 0;
 		};
 	}
 }
