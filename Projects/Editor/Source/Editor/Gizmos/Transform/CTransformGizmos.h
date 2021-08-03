@@ -36,6 +36,15 @@ namespace Skylicht
 			public CGizmos,
 			public IObserver
 		{
+		public:
+			enum ETransformGizmo
+			{
+				None,
+				Translate,
+				Rotate,
+				Scale
+			};
+
 		protected:
 			std::string m_selectID;
 			CGameObject* m_selectObject;
@@ -45,6 +54,10 @@ namespace Skylicht
 			CSubject<core::quaternion> m_rotation;
 			CSubject<core::vector3df> m_scale;
 
+			static CSubject<ETransformGizmo> s_transformGizmos;
+
+			ETransformGizmo m_lastType;
+
 		public:
 			CTransformGizmos();
 
@@ -52,9 +65,15 @@ namespace Skylicht
 
 			virtual void onGizmos();
 
+			virtual void onEnable();
+
 			virtual void onRemove();
 
 			void setPosition(const core::vector3df& pos);
+
+			void setScale(const core::vector3df& scale);
+
+			void setRotation(const core::vector3df& rotate);
 
 			CSubject<core::vector3df>& getPosition()
 			{
@@ -71,7 +90,12 @@ namespace Skylicht
 				return m_scale;
 			}
 
-			virtual void OnNotify(ISubject* subject, IObserver* from);
+			virtual void onNotify(ISubject* subject, IObserver* from);
+
+			static CSubject<ETransformGizmo>* getGizmosSubject()
+			{
+				return &s_transformGizmos;
+			}
 		};
 	}
 }

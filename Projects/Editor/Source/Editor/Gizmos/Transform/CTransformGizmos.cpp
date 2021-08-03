@@ -32,12 +32,15 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		CSubject<CTransformGizmos::ETransformGizmo> CTransformGizmos::s_transformGizmos(CTransformGizmos::None);
+
 		CTransformGizmos::CTransformGizmos() :
 			m_transform(NULL),
 			m_selectObject(NULL),
 			m_position(core::vector3df()),
 			m_rotation(core::quaternion()),
-			m_scale(core::vector3df(1.0f, 1.0f, 1.0f))
+			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
+			m_lastType(CTransformGizmos::Translate)
 		{
 
 		}
@@ -47,7 +50,7 @@ namespace Skylicht
 
 		}
 
-		void CTransformGizmos::OnNotify(ISubject* subject, IObserver* from)
+		void CTransformGizmos::onNotify(ISubject* subject, IObserver* from)
 		{
 		}
 
@@ -55,6 +58,18 @@ namespace Skylicht
 		{
 			CHandles::getInstance()->end();
 			m_position = pos;
+		}
+
+		void CTransformGizmos::setScale(const core::vector3df& scale)
+		{
+			CHandles::getInstance()->end();
+			m_scale = scale;
+		}
+
+		void CTransformGizmos::setRotation(const core::vector3df& rotate)
+		{
+			CHandles::getInstance()->end();
+			m_rotation = core::quaternion(rotate);
 		}
 
 		void CTransformGizmos::onGizmos()
@@ -91,40 +106,58 @@ namespace Skylicht
 				return;
 			}
 
-			// show gizmos move position
-			core::vector3df newPos = handle->positionHandle(*m_position);
-			if (newPos != *m_position)
-				m_position.notify(this);
+			ETransformGizmo type = s_transformGizmos.get();
 
-			m_position = newPos;
-			if (handle->endCheck())
+			if (type == CTransformGizmos::Translate)
 			{
-				m_transform->setPosition(*m_position);
+				core::vector3df newPos = handle->positionHandle(*m_position);
+				if (newPos != *m_position)
+					m_position.notify(this);
+
+				m_position = newPos;
+				if (handle->endCheck())
+				{
+					m_transform->setPosition(*m_position);
+					handle->end();
+				}
+			}
+			else if (type == CTransformGizmos::Rotate)
+			{
+				core::quaternion newRot = handle->rotateHandle(*m_rotation, m_transform->getPosition());
+				if (newRot != *m_rotation)
+					m_rotation.notify(this);
+
+				m_rotation = newRot;
+				if (handle->endCheck())
+				{
+					m_transform->setRotation(*m_rotation);
+					handle->end();
+				}
+			}
+			else if (type == CTransformGizmos::Scale)
+			{
+				core::vector3df newScale = handle->scaleHandle(*m_scale, m_transform->getPosition());
+				if (newScale != *m_scale)
+					m_scale.notify(this);
+
+				m_scale = newScale;
+				if (handle->endCheck())
+				{
+					m_transform->setScale(*m_scale);
+					handle->end();
+				}
+			}
+			else
+			{
 				handle->end();
 			}
 
-			/*
-			static core::quaternion rot;
-			static core::vector3df scale(1.0f, 1.0f, 1.0f);
-			*/
+		}
 
-			/*
-			rot = handle->rotateHandle(rot, core::vector3df(0.0f, 0.0f, 0.0f));
-			if (handle->endCheck())
-			{
-				os::Printer::log("Handles changed!");
-				handle->end();
-			}
-			*/
-
-			/*
-			scale = handle->scaleHandle(scale, core::vector3df(1.0f, 0.0f, 1.0f));
-			if (handle->endCheck())
-			{
-				os::Printer::log("Handles changed!");
-				handle->end();
-			}
-			*/
+		void CTransformGizmos::onEnable()
+		{
+			s_transformGizmos.set(m_lastType);
+			s_transformGizmos.notify(this);
 		}
 
 		void CTransformGizmos::onRemove()
@@ -132,6 +165,8 @@ namespace Skylicht
 			m_selectObject = NULL;
 			m_transform = NULL;
 			m_selectID = "";
+
+			m_lastType = s_transformGizmos.get();
 
 			CHandles* handles = CHandles::getInstance();
 			if (handles != NULL)

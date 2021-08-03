@@ -51,7 +51,7 @@ namespace Skylicht
 
 			}
 
-			virtual void OnNotify(ISubject* subject, IObserver* from)
+			virtual void onNotify(ISubject* subject, IObserver* from)
 			{
 				if (Notify != nullptr)
 				{
