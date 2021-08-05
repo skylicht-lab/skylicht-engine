@@ -119,12 +119,14 @@ namespace Skylicht
 
 			// Caculate the screen factor
 			const core::vector3df& pos = handles->getHandlePosition();
+			const core::quaternion& rot = handles->getHandleRotation();
+
 			m_screenFactor = 0.2f / getSegmentLengthClipSpace(pos, pos + cameraRight, camera);
 
 			// Draw position axis			
 			if (handles->isHandlePosition())
 			{
-				drawTranslateGizmo(pos, cameraPos, camera);
+				drawTranslateGizmo(pos, rot, cameraPos, camera);
 			}
 			else if (handles->isHandleRotation())
 			{
@@ -134,7 +136,7 @@ namespace Skylicht
 			else if (handles->isHandleScale())
 			{
 				const core::vector3df& pos = handles->getHandlePosition();
-				drawScaleGizmo(pos, cameraLook, cameraUp, camera);
+				drawScaleGizmo(pos, rot, cameraLook, cameraUp, camera);
 			}
 
 			((CLineDrawData*)m_data)->updateBuffer();
@@ -172,6 +174,7 @@ namespace Skylicht
 			}
 
 			// test
+			/*
 			core::vector3df ox(1.0f, 0.0f, 0.0f);
 			core::vector3df oy(0.0f, 1.0f, 0.0f);
 			core::vector3df oz(0.0f, 0.0f, 1.0f);
@@ -192,7 +195,7 @@ namespace Skylicht
 			m_data->addLine(pos, pos + ox * length, m_directionColor[0]);
 			m_data->addLine(pos, pos + oy * length, m_directionColor[1]);
 			m_data->addLine(pos, pos + oz * length, m_directionColor[2]);
-
+			*/
 
 			if (m_using)
 			{
@@ -241,7 +244,7 @@ namespace Skylicht
 			}
 		}
 
-		void CHandlesRenderer::drawScaleGizmo(const core::vector3df& pos, const core::vector3df& cameraLook, const core::vector3df& cameraUp, CCamera* camera)
+		void CHandlesRenderer::drawScaleGizmo(const core::vector3df& pos, const core::quaternion& rot, const core::vector3df& cameraLook, const core::vector3df& cameraUp, CCamera* camera)
 		{
 			CHandles* handles = CHandles::getInstance();
 
@@ -252,7 +255,7 @@ namespace Skylicht
 				core::vector3df dirAxis, dirPlaneX, dirPlaneY;
 				bool belowAxisLimit, belowPlaneLimit;
 
-				computeTripodAxisAndVisibility(i, pos, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera);
+				computeTripodAxisAndVisibility(i, pos, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera, rot);
 
 				m_scaleAxis[i].start = pos;
 				m_scaleAxis[i].end = pos + dirAxis * m_screenFactor;
@@ -263,8 +266,10 @@ namespace Skylicht
 					core::vector3df scale(1.0f, 1.0f, 1.0f);
 					if (m_using)
 						scale = handles->getHandleScale() / m_lastScale;
+					float* s = &scale.X;
 
-					core::vector3df end = pos + dirAxis * m_screenFactor * scale;
+					// apply drag scale
+					core::vector3df end = pos + dirAxis * m_screenFactor * s[i];
 
 					// draw axis
 					m_data->addLine(m_scaleAxis[i].start, end, m_hoverOnAxis[i] ? m_selectionColor : m_directionColor[i]);
@@ -318,7 +323,7 @@ namespace Skylicht
 			m_data->addPolyline(m_scalePlane.Point, 3, true, m_selectionColor);
 		}
 
-		void CHandlesRenderer::drawTranslateGizmo(const core::vector3df& pos, const core::vector3df& cameraPos, CCamera* camera)
+		void CHandlesRenderer::drawTranslateGizmo(const core::vector3df& pos, const core::quaternion& rot, const core::vector3df& cameraPos, CCamera* camera)
 		{
 			float quadMin = 0.1f;
 			float quadMax = 0.4f;
@@ -335,7 +340,7 @@ namespace Skylicht
 				core::vector3df dirAxis, dirPlaneX, dirPlaneY;
 				bool belowAxisLimit, belowPlaneLimit;
 
-				computeTripodAxisAndVisibility(i, pos, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera);
+				computeTripodAxisAndVisibility(i, pos, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera, rot);
 
 				// save the position
 				m_translateAxis[i].start = pos;
@@ -485,11 +490,20 @@ namespace Skylicht
 		}
 
 		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
-		void CHandlesRenderer::computeTripodAxisAndVisibility(int axisIndex, const core::vector3df& origin, core::vector3df& dirAxis, core::vector3df& dirPlaneX, core::vector3df& dirPlaneY, bool& belowAxisLimit, bool& belowPlaneLimit, CCamera* camera)
+		void CHandlesRenderer::computeTripodAxisAndVisibility(int axisIndex, const core::vector3df& origin, core::vector3df& dirAxis, core::vector3df& dirPlaneX, core::vector3df& dirPlaneY, bool& belowAxisLimit, bool& belowPlaneLimit, CCamera* camera, const core::quaternion& rot)
 		{
 			dirAxis = m_directionUnary[axisIndex];
 			dirPlaneX = m_directionUnary[(axisIndex + 1) % 3];
 			dirPlaneY = m_directionUnary[(axisIndex + 2) % 3];
+
+			dirAxis = rot * dirAxis;
+			dirAxis.normalize();
+
+			dirPlaneX = rot * dirPlaneX;
+			dirPlaneX.normalize();
+
+			dirPlaneY = rot * dirPlaneY;
+			dirPlaneY.normalize();
 
 			if (m_using)
 			{

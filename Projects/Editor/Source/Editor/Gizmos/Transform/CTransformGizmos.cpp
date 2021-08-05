@@ -110,7 +110,7 @@ namespace Skylicht
 
 			if (type == CTransformGizmos::Translate)
 			{
-				core::vector3df newPos = handle->positionHandle(*m_position);
+				core::vector3df newPos = handle->positionHandle(*m_position, m_transform->getRotation());
 				if (newPos != *m_position)
 					m_position.notify(this);
 
@@ -136,7 +136,7 @@ namespace Skylicht
 			}
 			else if (type == CTransformGizmos::Scale)
 			{
-				core::vector3df newScale = handle->scaleHandle(*m_scale, m_transform->getPosition());
+				core::vector3df newScale = handle->scaleHandle(*m_scale, m_transform->getPosition(), m_transform->getRotation());
 				if (newScale != *m_scale)
 					m_scale.notify(this);
 

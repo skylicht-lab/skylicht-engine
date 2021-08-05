@@ -61,7 +61,7 @@ namespace Skylicht
 			return ret;
 		}
 
-		core::vector3df CHandles::positionHandle(const core::vector3df& position)
+		core::vector3df CHandles::positionHandle(const core::vector3df& position, const core::vector3df& localRotation)
 		{
 			if (!m_handlePosition)
 				m_targetPosition = position;
@@ -71,10 +71,12 @@ namespace Skylicht
 			m_handleScale = false;
 
 			m_position = position;
+			m_rotation = localRotation;
+
 			return m_targetPosition;
 		}
 
-		core::vector3df CHandles::scaleHandle(const core::vector3df& scale, const core::vector3df& origin)
+		core::vector3df CHandles::scaleHandle(const core::vector3df& scale, const core::vector3df& origin, const core::vector3df& localRotation)
 		{
 			if (!m_handleScale)
 				m_targetScale = scale;
@@ -83,6 +85,7 @@ namespace Skylicht
 			m_handlePosition = false;
 			m_handleScale = true;
 
+			m_rotation = localRotation;
 			m_position = origin;
 			m_scale = scale;
 			return m_targetScale;

@@ -106,6 +106,8 @@ namespace Skylicht
 				if (isHidden())
 					return;
 
+				TabableGroup.disableAllControl();
+
 				recurseLayout();
 
 				processDelayedDeletes();

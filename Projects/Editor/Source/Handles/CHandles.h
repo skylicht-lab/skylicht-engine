@@ -61,9 +61,9 @@ namespace Skylicht
 
 			void end();
 
-			core::vector3df positionHandle(const core::vector3df& position);
+			core::vector3df positionHandle(const core::vector3df& position, const core::vector3df& localRotation);
 
-			core::vector3df scaleHandle(const core::vector3df& scale, const core::vector3df& origin);
+			core::vector3df scaleHandle(const core::vector3df& scale, const core::vector3df& origin, const core::vector3df& localRotation);
 
 			core::quaternion rotateHandle(const core::quaternion& rotate, const core::vector3df& origin);
 
@@ -94,7 +94,7 @@ namespace Skylicht
 			void setTargetPosition(const core::vector3df& target)
 			{
 				m_targetPosition = target;
-			}			
+			}
 
 			const core::quaternion& getHandleRotation()
 			{
