@@ -59,7 +59,8 @@ namespace Skylicht
 				m_tagInt(0),
 				m_tagFloat(0.0f),
 				m_tagBool(false),
-				m_tagData(NULL)
+				m_tagData(NULL),
+				m_isTabable(false)
 			{
 				if (parent != NULL)
 					setParent(parent->getInnerPanel());
@@ -708,10 +709,12 @@ namespace Skylicht
 					{
 						tabableGroup.CurrentTab->focus();
 						tabableGroup.CurrentTab->onTabableFocus();
+
+						return true;
 					}
 				}
 
-				return true;
+				return false;
 			}
 
 			void CBase::setCenterPosition()
@@ -948,8 +951,13 @@ namespace Skylicht
 
 				postLayout();
 
-				if (CGUIContext::KeyboardFocus == this)
-					getCanvas()->TabableGroup.CurrentTab = this;
+				if (m_isTabable)
+				{
+					getCanvas()->TabableGroup.setEnableControl(this);
+
+					if (CGUIContext::KeyboardFocus == this)
+						getCanvas()->TabableGroup.CurrentTab = this;
+				}
 			}
 
 			void CBase::layout()
