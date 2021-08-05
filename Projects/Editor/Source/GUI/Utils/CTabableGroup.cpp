@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTabableGroup.h"
+#include "GUI/Controls/CBase.h"
 
 namespace Skylicht
 {
@@ -45,33 +46,101 @@ namespace Skylicht
 
 			void CTabableGroup::add(CBase* control)
 			{
-				m_list.push_back(control);
+				std::list<SElement>::iterator i = m_list.begin(), end = m_list.end();
+				while (i != end)
+				{
+					if (i->Control == control)
+						return;
+					++i;
+				}
+
+				control->setTabable(true);
+
+				m_list.push_back(SElement(control, true));
 			}
 
 			void CTabableGroup::remove(CBase* control)
 			{
-				m_list.remove(control);
+				std::list<SElement>::iterator i = m_list.begin(), end = m_list.end();
+				while (i != end)
+				{
+					if (i->Control == control)
+					{
+						control->setTabable(false);
+
+						m_list.erase(i);
+						return;
+					}
+					++i;
+				}
 			}
 
 			void CTabableGroup::next()
 			{
-				std::list<CBase*>::iterator it = std::find(m_list.begin(), m_list.end(), CurrentTab);
+				std::list<SElement>::iterator it = m_list.begin(), end = m_list.end();
+				while (it != end)
+				{
+					if (it->Control == CurrentTab)
+						break;
+					++it;
+				}
+
 				if (it != --m_list.end())
 				{
+					// next
 					++it;
-					CurrentTab = (*it);
 				}
 				else
 				{
-					if (m_list.size() > 0)
-						CurrentTab = m_list.front();
-					else
-						CurrentTab = NULL;
+					// go to begin
+					it = m_list.begin();
+				}
+
+				// focus to enable control
+				CurrentTab = NULL;
+				do
+				{
+					if (it->Enable == true)
+					{
+						CurrentTab = it->Control;
+						break;
+					}
+					++it;
+				} while (it != end);
+			}
+
+			void CTabableGroup::disableAllControl()
+			{
+				std::list<SElement>::iterator it = m_list.begin(), end = m_list.end();
+				while (it != end)
+				{
+					it->Enable = false;
+					++it;
+				}
+			}
+
+			void CTabableGroup::setEnableControl(CBase* control)
+			{
+				std::list<SElement>::iterator it = m_list.begin(), end = m_list.end();
+				while (it != end)
+				{
+					if (it->Control == control)
+					{
+						it->Enable = true;
+					}
+					++it;
 				}
 			}
 
 			void CTabableGroup::clear()
 			{
+				std::list<SElement>::iterator i = m_list.begin(), end = m_list.end();
+				while (i != end)
+				{
+					i->Control->setTabable(false);
+					++i;
+				}
+
 				m_list.clear();
 			}
 		}

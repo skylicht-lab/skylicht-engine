@@ -208,6 +208,16 @@ namespace Skylicht
 					return m_tagData;
 				}
 
+				inline void setTabable(bool b)
+				{
+					m_isTabable = b;
+				}
+
+				inline bool isTabable()
+				{
+					return m_isTabable;
+				}
+
 				inline float X() const { return m_bounds.X; }
 				inline float Y() const { return m_bounds.Y; }
 
@@ -539,6 +549,8 @@ namespace Skylicht
 
 				AccelMap m_accelerators;
 				bool m_accelOnlyFocus;
+
+				bool m_isTabable;
 			};
 		}
 	}

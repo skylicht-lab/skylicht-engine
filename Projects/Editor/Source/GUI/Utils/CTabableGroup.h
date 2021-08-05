@@ -40,12 +40,28 @@ namespace Skylicht
 			protected:
 				bool m_enable;
 
-				std::list<CBase*> m_list;
+				struct SElement
+				{
+					bool Enable;
+					CBase* Control;
+
+					SElement(CBase* control, bool enable)
+					{
+						Control = control;
+						Enable = enable;
+					}
+				};
+
+				std::list<SElement> m_list;
 
 			public:
 				CTabableGroup();
 
 				virtual ~CTabableGroup();
+
+				void disableAllControl();
+
+				void setEnableControl(CBase* control);
 
 				void add(CBase* control);
 
