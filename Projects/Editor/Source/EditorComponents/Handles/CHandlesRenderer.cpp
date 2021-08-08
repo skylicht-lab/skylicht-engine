@@ -131,7 +131,7 @@ namespace Skylicht
 			else if (handles->isHandleRotation())
 			{
 				const core::vector3df& pos = handles->getHandlePosition();
-				drawRotationGizmo(pos, cameraPos);
+				drawRotationGizmo(pos, cameraPos, rot);
 			}
 			else if (handles->isHandleScale())
 			{
@@ -143,68 +143,70 @@ namespace Skylicht
 			((CPolygonDrawData*)m_data)->updateBuffer();
 		}
 
-		void CHandlesRenderer::drawRotationGizmo(const core::vector3df& pos, const core::vector3df& cameraPos)
+		void CHandlesRenderer::drawRotationGizmo(const core::vector3df& pos, const core::vector3df& cameraPos, const core::quaternion& rot)
 		{
-			core::vector3df cameraToObject = pos - cameraPos;
-			cameraToObject.normalize();
+			core::vector3df viewVector = pos - cameraPos;
+			viewVector.normalize();
 
 			const int halfCircleSegmentCount = 64;
-			const int circleMul = 1;
+			const int circleMul = 2;
 
 			core::vector3df circlePos[circleMul * halfCircleSegmentCount + 1];
 
-			for (int axis = 0; axis < 3; axis++)
+			core::vector3df normal[] = {
+				{0.0f, 0.0f, 1.0f},
+				{0.0f, 1.0f, 0.0f},
+				{1.0f, 0.0f, 0.0f}
+			};
+
+			for (int i = 0; i < 3; i++)
 			{
-				// draw rotation
-				float* p = &cameraToObject.X;
-				float angleStart = atan2f(p[(4 - axis) % 3], p[(3 - axis) % 3]) + core::PI * 0.5f;
-
-				for (unsigned int i = 0; i < circleMul * halfCircleSegmentCount + 1; i++)
-				{
-					float ng = angleStart + core::PI * ((float)i / (float)halfCircleSegmentCount);
-
-					core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
-					p = &axisPos.X;
-
-					circlePos[i] = pos + core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]) * m_screenFactor;
-				}
-
-				// draw circle
-				m_data->addPolyline(circlePos, circleMul * halfCircleSegmentCount, false, m_hoverOnAxis[axis] ? m_selectionColor : m_directionColor[axis]);
+				normal[i] = rot * normal[i];
+				normal[i].normalize();
 			}
 
-			// test
-			/*
-			core::vector3df ox(1.0f, 0.0f, 0.0f);
-			core::vector3df oy(0.0f, 1.0f, 0.0f);
-			core::vector3df oz(0.0f, 0.0f, 1.0f);
+			for (int axis = 0; axis < 3; axis++)
+			{
+				video::SColor color = m_hoverOnAxis[axis] ? m_selectionColor : m_directionColor[axis];
+				core::vector3df lastPosition;
+				bool lastBackface = false;
 
-			const core::quaternion& q = CHandles::getInstance()->getHandleRotation();
+				// draw rotation
+				for (unsigned int i = 0; i <= circleMul * halfCircleSegmentCount; i++)
+				{
+					float ng = core::PI * ((float)i / (float)halfCircleSegmentCount);
 
-			ox = q * ox;
-			ox.normalize();
+					core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
+					float* p = &axisPos.X;
 
-			oy = q * oy;
-			oy.normalize();
+					// circle point
+					core::vector3df r = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]);
 
-			oz = q * oz;
-			oz.normalize();
+					// local rotation
+					r = rot * r;
+					r.normalize();
 
-			float length = 0.5f;
+					// back face
+					if (viewVector.dotProduct(r) > FLT_EPSILON)
+					{
+						lastBackface = true;
+						continue;
+					}
 
-			m_data->addLine(pos, pos + ox * length, m_directionColor[0]);
-			m_data->addLine(pos, pos + oy * length, m_directionColor[1]);
-			m_data->addLine(pos, pos + oz * length, m_directionColor[2]);
-			*/
+					core::vector3df circlePosition = pos + r * m_screenFactor;
+
+					if (i > 0 && !lastBackface)
+					{
+						m_data->addLine(lastPosition, circlePosition, color);
+					}
+
+					lastPosition = circlePosition;
+					lastBackface = false;
+				}
+			}
 
 			if (m_using)
 			{
-				core::vector3df normal[] = {
-					{0.0f, 0.0f, 1.0f},
-					{0.0f, 1.0f, 0.0f},
-					{1.0f, 0.0f, 0.0f}
-				};
-
 				int hitAxis = 0;
 				for (int i = 0; i < 3; i++)
 				{
@@ -527,10 +529,12 @@ namespace Skylicht
 
 				// For readability
 				bool allowFlip = m_allowAxisFlip && camera->getProjectionType() == CCamera::Perspective;
+				const float epsilon = 0.001f;
 
-				float mulAxis = (allowFlip && lenDir < lenDirMinus&& fabsf(lenDir - lenDirMinus) > FLT_EPSILON) ? -1.f : 1.f;
-				float mulAxisX = (allowFlip && lenDirPlaneX < lenDirMinusPlaneX&& fabsf(lenDirPlaneX - lenDirMinusPlaneX) > FLT_EPSILON) ? -1.f : 1.f;
-				float mulAxisY = (allowFlip && lenDirPlaneY < lenDirMinusPlaneY&& fabsf(lenDirPlaneY - lenDirMinusPlaneY) > FLT_EPSILON) ? -1.f : 1.f;
+				float mulAxis = (allowFlip && lenDir < lenDirMinus&& fabsf(lenDir - lenDirMinus) > epsilon) ? -1.f : 1.f;
+				float mulAxisX = (allowFlip && lenDirPlaneX < lenDirMinusPlaneX&& fabsf(lenDirPlaneX - lenDirMinusPlaneX) > epsilon) ? -1.f : 1.f;
+				float mulAxisY = (allowFlip && lenDirPlaneY < lenDirMinusPlaneY&& fabsf(lenDirPlaneY - lenDirMinusPlaneY) > epsilon) ? -1.f : 1.f;
+
 				dirAxis *= mulAxis;
 				dirPlaneX *= mulAxisX;
 				dirPlaneY *= mulAxisY;
@@ -839,14 +843,26 @@ namespace Skylicht
 
 			m_mouseState = state;
 
-			core::vector3df pos = handles->getHandlePosition();
+			const core::vector3df& pos = handles->getHandlePosition();
+			const core::quaternion& rot = handles->getHandleRotation();
 
 			core::line3df viewRay = CProjective::getViewRay(m_camera, mouse.X, mouse.Y, vpWidth, vpHeight);
+
 			core::vector3df normal[] = {
 				{0.0f, 0.0f, 1.0f},
 				{0.0f, 1.0f, 0.0f},
 				{1.0f, 0.0f, 0.0f}
 			};
+
+			for (int i = 0; i < 3; i++)
+			{
+				if (m_mouseState == 0)
+					normal[i] = rot * normal[i];
+				else
+					normal[i] = m_lastRotation * normal[i];
+
+				normal[i].normalize();
+			}
 
 			core::vector3df out;
 			core::quaternion resultRotation;
@@ -928,6 +944,8 @@ namespace Skylicht
 								q.fromAngleAxis(m_rotationAngle, normal[i]);
 
 								resultRotation = m_lastRotation * q;
+								resultRotation.normalize();
+
 								handles->setTargetRotation(resultRotation);
 								break;
 							}
