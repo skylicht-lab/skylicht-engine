@@ -121,7 +121,7 @@ namespace Skylicht
 
 		protected:
 
-			void drawRotationGizmo(const core::vector3df& pos, const core::vector3df& cameraPos);
+			void drawRotationGizmo(const core::vector3df& pos, const core::vector3df& cameraPos, const core::quaternion& rot);
 
 			void drawScaleGizmo(const core::vector3df& pos, const core::quaternion& rot, const core::vector3df& cameraLook, const core::vector3df& cameraUp, CCamera* camera);
 

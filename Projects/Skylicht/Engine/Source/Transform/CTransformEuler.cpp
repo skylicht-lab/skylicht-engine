@@ -61,7 +61,7 @@ namespace Skylicht
 		upVec = frontVec.crossProduct(rightVec);
 
 		core::matrix4 rotationMatrix;
-		f32 *matData = rotationMatrix.pointer();
+		f32* matData = rotationMatrix.pointer();
 
 		matData[0] = rightVec.X;
 		matData[1] = rightVec.Y;
@@ -110,7 +110,7 @@ namespace Skylicht
 		core::vector3df right = up.crossProduct(front);
 
 		core::matrix4 rotationMatrix;
-		f32 *matData = rotationMatrix.pointer();
+		f32* matData = rotationMatrix.pointer();
 		matData[0] = right.X;
 		matData[1] = right.Y;
 		matData[2] = right.Z;
@@ -157,7 +157,7 @@ namespace Skylicht
 		matrix.makeIdentity();
 		matrix.setRotationDegrees(m_rotation);
 
-		f32 *m = matrix.pointer();
+		f32* m = matrix.pointer();
 
 		m[0] *= m_scale.X;
 		m[1] *= m_scale.X;
@@ -181,16 +181,12 @@ namespace Skylicht
 
 	void CTransformEuler::getRotation(core::quaternion& q)
 	{
-		core::matrix4 mat;
-		mat.setRotationDegrees(m_rotation);
-		q = mat;
+		q = core::quaternion(m_rotation * core::DEGTORAD);
 	}
 
 	core::quaternion CTransformEuler::getRotationQuaternion()
 	{
-		core::matrix4 mat;
-		mat.setRotationDegrees(m_rotation);
-		return core::quaternion(mat);
+		return core::quaternion(m_rotation * core::DEGTORAD);
 	}
 
 	void CTransformEuler::getFront(core::vector3df& front)
