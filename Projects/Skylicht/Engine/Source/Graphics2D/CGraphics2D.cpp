@@ -510,7 +510,7 @@ namespace Skylicht
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16* indices = (s16*)m_indices->getIndices();
+		u16* indices = (u16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -1270,7 +1270,7 @@ namespace Skylicht
 
 		m_indices->set_used(indexUse);
 
-		s16* indices = (s16*)m_indices->getIndices();
+		u16* indices = (u16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
