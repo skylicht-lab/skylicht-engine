@@ -42,7 +42,7 @@ namespace Skylicht
 		Module = NULL;
 	}
 
-	void SModuleOffset::getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, const core::matrix4& mat, float scaleW, float scaleH)
+	void SModuleOffset::getPositionBuffer(video::S3DVertex* vertices, u16* indices, int vertexOffset, const core::matrix4& mat, float scaleW, float scaleH)
 	{
 		float x1 = (float)OffsetX;
 		float y1 = (float)OffsetY;
@@ -77,7 +77,7 @@ namespace Skylicht
 		indices[5] = vertexOffset + 3;
 	}
 
-	void SModuleOffset::getPositionBuffer(video::S3DVertex *vertices, s16 *indices, int vertexOffset, float offsetX, float offsetY, const core::matrix4& mat, float scaleW, float scaleH)
+	void SModuleOffset::getPositionBuffer(video::S3DVertex* vertices, u16* indices, int vertexOffset, float offsetX, float offsetY, const core::matrix4& mat, float scaleW, float scaleH)
 	{
 		float x1 = (float)OffsetX + offsetX;
 		float y1 = (float)OffsetY + offsetY;
@@ -112,7 +112,7 @@ namespace Skylicht
 		indices[5] = vertexOffset + 3;
 	}
 
-	void SModuleOffset::getTexCoordBuffer(video::S3DVertex *vertices, float texWidth, float texHeight, float scaleW, float scaleH)
+	void SModuleOffset::getTexCoordBuffer(video::S3DVertex* vertices, float texWidth, float texHeight, float scaleW, float scaleH)
 	{
 		float x1 = Module->X / texWidth;
 		float y1 = Module->Y / texHeight;
@@ -137,7 +137,7 @@ namespace Skylicht
 		vertices[3].TCoords.Y = y2;
 	}
 
-	void SModuleOffset::getColorBuffer(video::S3DVertex *vertices, const SColor& c)
+	void SModuleOffset::getColorBuffer(video::S3DVertex* vertices, const SColor& c)
 	{
 		vertices[0].Color = c;
 		vertices[1].Color = c;
