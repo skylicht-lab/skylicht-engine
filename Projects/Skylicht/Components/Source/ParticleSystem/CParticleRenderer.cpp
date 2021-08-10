@@ -110,8 +110,7 @@ namespace Skylicht
 
 		void CParticleRenderer::render(CEntityManager *entityManager)
 		{
-			if (m_particles.size() == 0)
-				return;
+
 		}
 
 		void CParticleRenderer::renderTransparent(CEntityManager *entityManager)
