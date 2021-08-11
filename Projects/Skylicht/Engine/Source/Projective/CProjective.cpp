@@ -73,4 +73,32 @@ namespace Skylicht
 		ln.end = farLeftUp + (lefttoright * dx) + (uptodown * dy);
 		return ln;
 	}
+
+	// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
+	float CProjective::getSegmentLengthClipSpace(CCamera* camera, const core::vector3df& start, const core::vector3df& end)
+	{
+		core::matrix4 trans = getVideoDriver()->getTransform(video::ETS_VIEW_PROJECTION);
+
+		f32 start4[4] = { start.X, start.Y, start.Z, 1.0f };
+		f32 end4[4] = { end.X, end.Y, end.Z, 1.0f };
+
+		trans.multiplyWith1x4Matrix(start4);
+		core::vector3df startOfSegment(start4[0], start4[1], start4[2]);
+		if (fabsf(start4[3]) > FLT_EPSILON) // check for axis aligned with camera direction
+		{
+			startOfSegment *= 1.f / start4[3];
+		}
+
+		trans.multiplyWith1x4Matrix(end4);
+		core::vector3df endOfSegment(end4[0], end4[1], end4[2]);
+		if (fabsf(end4[3]) > FLT_EPSILON) // check for axis aligned with camera direction
+		{
+			endOfSegment *= 1.f / end4[3];
+		}
+
+		core::vector3df clipSpaceAxis = endOfSegment - startOfSegment;
+		clipSpaceAxis.Y /= camera->getAspect();
+		float segmentLengthInClipSpace = sqrtf(clipSpaceAxis.X * clipSpaceAxis.X + clipSpaceAxis.Y * clipSpaceAxis.Y);
+		return segmentLengthInClipSpace;
+	}
 }

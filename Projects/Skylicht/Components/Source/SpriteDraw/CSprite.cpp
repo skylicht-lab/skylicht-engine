@@ -23,23 +23,56 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CSpriteDrawData.h"
+#include "CSprite.h"
+#include "CSpriteRenderer.h"
+#include "GameObject/CGameObject.h"
+#include "Entity/CEntity.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
-	CSpriteDrawData::CSpriteDrawData() :
-		Frame(NULL),
-		Scale(1.0f),
-		Color(255, 255, 255, 255),
-		Center(false),
-		Billboard(false),
-		AutoScaleInViewSpace(false)
+	CSprite::CSprite() :
+		m_data(NULL)
 	{
 
 	}
 
-	CSpriteDrawData::~CSpriteDrawData()
+	CSprite::~CSprite()
 	{
 
+	}
+
+	void CSprite::initComponent()
+	{
+		m_data = m_gameObject->getEntity()->addData<CSpriteDrawData>();
+
+		m_gameObject->getEntityManager()->addRenderSystem<CSpriteRenderer>();
+	}
+
+	void CSprite::updateComponent()
+	{
+
+	}
+
+	void CSprite::setFrame(SFrame* frame, float scale, const SColor& color)
+	{
+		m_data->Frame = frame;
+		m_data->Scale = scale;
+		m_data->Color = color;
+	}
+
+	void CSprite::setCenter(bool b)
+	{
+		m_data->Center = b;
+	}
+
+	void CSprite::setBillboard(bool b)
+	{
+		m_data->Billboard = b;
+	}
+
+	void CSprite::setAutoScaleInViewSpace(bool b)
+	{
+		m_data->AutoScaleInViewSpace = b;
 	}
 }

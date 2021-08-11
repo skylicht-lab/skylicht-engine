@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/GUI.h"
 #include "Space/CSpace.h"
 #include "AssetManager/CAssetWatcher.h"
+#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
 
 namespace Skylicht
 {
@@ -51,6 +52,8 @@ namespace Skylicht
 			std::list<GUI::CMenuItem*> m_menuWindowItems;
 
 			CAssetWatcher* m_assetWatcher;
+
+			CSpriteAtlas* m_spriteIcon;
 
 			bool m_uiInitiate;
 
@@ -83,6 +86,13 @@ namespace Skylicht
 			void refresh();
 
 			bool needReImport();
+
+		public:
+
+			CSpriteAtlas* getSpriteIcon()
+			{
+				return m_spriteIcon;
+			}
 
 		protected:
 
