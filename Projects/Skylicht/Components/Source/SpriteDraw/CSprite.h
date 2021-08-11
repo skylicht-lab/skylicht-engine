@@ -22,24 +22,33 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
+#pragma once
+
+#include "Components/CComponentSystem.h"
 #include "CSpriteDrawData.h"
 
 namespace Skylicht
 {
-	CSpriteDrawData::CSpriteDrawData() :
-		Frame(NULL),
-		Scale(1.0f),
-		Color(255, 255, 255, 255),
-		Center(false),
-		Billboard(false),
-		AutoScaleInViewSpace(false)
+	class CSprite : public CComponentSystem
 	{
+	protected:
+		CSpriteDrawData* m_data;
 
-	}
+	public:
+		CSprite();
 
-	CSpriteDrawData::~CSpriteDrawData()
-	{
+		virtual ~CSprite();
 
-	}
+		virtual void initComponent();
+
+		virtual void updateComponent();
+
+		void setFrame(SFrame* frame, float scale, const SColor& color);
+
+		void setCenter(bool b);
+
+		void setBillboard(bool b);
+
+		void setAutoScaleInViewSpace(bool b);
+	};
 }

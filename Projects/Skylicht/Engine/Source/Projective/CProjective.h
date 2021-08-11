@@ -31,8 +31,10 @@ namespace Skylicht
 	class CProjective
 	{
 	public:
-		static bool getScreenCoordinatesFrom3DPosition(CCamera *camera, const core::vector3df& pos3d, float &x, float &y, int viewportW, int viewportH);
+		static bool getScreenCoordinatesFrom3DPosition(CCamera* camera, const core::vector3df& pos3d, float& x, float& y, int viewportW, int viewportH);
 
-		static core::line3df getViewRay(CCamera *camera, float x, float y, int viewportW, int viewportH);
+		static core::line3df getViewRay(CCamera* camera, float x, float y, int viewportW, int viewportH);
+
+		static float CProjective::getSegmentLengthClipSpace(CCamera* camera, const core::vector3df& start, const core::vector3df& end);
 	};
 }

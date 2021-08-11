@@ -41,5 +41,11 @@ namespace Skylicht
 		SColor Color;
 
 		float Scale;
+
+		bool Center;
+
+		bool Billboard;
+
+		bool AutoScaleInViewSpace;
 	};
 }

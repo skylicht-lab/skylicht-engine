@@ -57,7 +57,14 @@ namespace Skylicht
 			// init canvas
 			m_canvas = GUI::CGUIContext::getRoot();
 
+			// file watcher
 			m_assetWatcher = new CAssetWatcher();
+
+			// scene icon
+			m_spriteIcon = new CSpriteAtlas(video::ECF_A8R8G8B8, 256, 256);
+			m_spriteIcon->addFrame("light", "Editor/Icon/Objects/Light.png");
+			m_spriteIcon->addFrame("camera", "Editor/Icon/Objects/Camera.png");
+			m_spriteIcon->updateTexture();
 
 			// init controller
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
@@ -73,6 +80,7 @@ namespace Skylicht
 			CSceneController::releaseInstance();
 			CSelection::releaseInstance();
 
+			delete m_spriteIcon;
 			delete m_assetWatcher;
 		}
 

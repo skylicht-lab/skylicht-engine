@@ -25,6 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpriteRenderer.h"
 #include "Culling/CVisibleData.h"
+#include "Material/Shader/CShaderManager.h"
+#include "Entity/CEntityManager.h"
+#include "Projective/CProjective.h"
 #include <functional>
 
 namespace Skylicht
@@ -33,6 +36,9 @@ namespace Skylicht
 	{
 		m_meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(video::EVT_STANDARD), video::EIT_16BIT);
 		m_meshBuffer->setHardwareMappingHint(EHM_STREAM);
+
+		m_meshBuffer->getMaterial().BackfaceCulling = false;
+		m_meshBuffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 
 		m_renderPass = Transparent;
 	}
@@ -128,14 +134,53 @@ namespace Skylicht
 
 		IVideoDriver* driver = getVideoDriver();
 
-		int vertexOffset = 0;
-		video::S3DVertex* vertices = (video::S3DVertex*)vb->getVertices();
-		u16* indices = (u16*)ib->getIndices();
+		int numVertex = 0;
+		int numIndex = 0;
 
-		for (u32 i = 1, n = m_sprites.size(); i < n; i++)
+		irr::core::matrix4 invModelView;
+		{
+			irr::core::matrix4 modelView(driver->getTransform(video::ETS_VIEW));
+			modelView.getInversePrimitive(invModelView); // wont work for odd modelview matrices (but should happen in very special cases)
+		}
+
+		core::vector3df right(invModelView[0], invModelView[1], invModelView[2]);
+		core::vector3df look(invModelView[8], invModelView[9], invModelView[10]);
+		core::vector3df up(invModelView[4], invModelView[5], invModelView[6]);
+
+		right.normalize();
+		look.normalize();
+		up.normalize();
+
+		core::matrix4 transform;
+		f32* matData = transform.pointer();
+		matData[0] = right.X;
+		matData[1] = right.Y;
+		matData[2] = right.Z;
+		matData[3] = 0.0f;
+
+		matData[4] = up.X;
+		matData[5] = up.Y;
+		matData[6] = up.Z;
+		matData[7] = 0.0f;
+
+		matData[8] = look.X;
+		matData[9] = look.Y;
+		matData[10] = look.Z;
+		matData[11] = 0.0f;
+
+		CCamera* camera = entityManager->getCamera();
+
+		for (u32 i = 0, n = m_sprites.size(); i < n; i++)
 		{
 			SFrame* frame = m_sprites[i]->Frame;
+
+			// position
+			core::vector3df pos = m_transforms[i]->World.getTranslation();
+
+			// scale
 			float scale = m_sprites[i]->Scale;
+			if (m_sprites[i]->AutoScaleInViewSpace)
+				scale = scale * 0.0015f / CProjective::getSegmentLengthClipSpace(camera, pos, pos + right);
 
 			// render buffer
 			currentTexture = frame->Image->Texture;
@@ -150,13 +195,44 @@ namespace Skylicht
 			{
 				SModuleOffset& module = (*it);
 
-				module.getPositionBuffer(vertices, indices, vertexOffset, m_transforms[i]->World, scale, scale);
+				vb->set_used(numVertex + 4);
+				ib->set_used(numIndex + 6);
+
+				video::S3DVertex* vertices = (video::S3DVertex*)vb->getVertices();
+				vertices += numVertex;
+
+				u16* indices = (u16*)ib->getIndices();
+				indices += numIndex;
+
+				// center
+				float offsetX = 0.0f;
+				float offsetY = 0.0f;
+
+				if (m_sprites[i]->Center)
+				{
+					offsetX = module.Module->W * 0.5f * scale;
+					offsetY = module.Module->H * 0.5f * scale;
+				}
+
+				if (m_sprites[i]->Billboard)
+				{
+					matData[12] = pos.X;
+					matData[13] = pos.Y;
+					matData[14] = pos.Z;
+					matData[15] = 1.0f;
+
+					module.getPositionBuffer(vertices, indices, numVertex, -offsetX, offsetY, transform, scale, -scale);
+				}
+				else
+				{
+					module.getPositionBuffer(vertices, indices, numVertex, -offsetX, offsetY, m_transforms[i]->World, scale, -scale);
+				}
+
 				module.getTexCoordBuffer(vertices, texWidth, texHeight);
 				module.getColorBuffer(vertices, m_sprites[i]->Color);
 
-				vertexOffset += 4;
-				vertices += 4;
-				indices += 6;
+				numVertex += 4;
+				numIndex += 6;
 
 				++it;
 			}
@@ -165,17 +241,19 @@ namespace Skylicht
 			if (i == n - 1 || currentTexture != m_sprites[i + 1]->Frame->Image->Texture)
 			{
 				// flush render
+				m_meshBuffer->getMaterial().setTexture(0, currentTexture);
 				m_meshBuffer->setDirty();
+
+				driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
+				driver->setMaterial(m_meshBuffer->getMaterial());
 				driver->drawMeshBuffer(m_meshBuffer);
 
 				// clean
 				vb->set_used(0);
 				ib->set_used(0);
 
-				// reset buffer position
-				vertexOffset = 0;
-				vertices = (video::S3DVertex*)vb->getVertices();
-				indices = (u16*)ib->getIndices();
+				numVertex = 0;
+				numIndex = 0;
 			}
 		}
 	}
