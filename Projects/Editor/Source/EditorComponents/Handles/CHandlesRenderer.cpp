@@ -121,7 +121,7 @@ namespace Skylicht
 			const core::vector3df& pos = handles->getHandlePosition();
 			const core::quaternion& rot = handles->getHandleRotation();
 
-			m_screenFactor = 0.2f / getSegmentLengthClipSpace(pos, pos + cameraRight, camera);
+			m_screenFactor = 0.2f / CProjective::getSegmentLengthClipSpace(camera, pos, pos + cameraRight);
 
 			// Draw position axis			
 			if (handles->isHandlePosition())
@@ -436,34 +436,6 @@ namespace Skylicht
 		}
 
 		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
-		float CHandlesRenderer::getSegmentLengthClipSpace(const core::vector3df& start, const core::vector3df& end, CCamera* camera)
-		{
-			core::matrix4 trans = getVideoDriver()->getTransform(video::ETS_VIEW_PROJECTION);
-
-			f32 start4[4] = { start.X, start.Y, start.Z, 1.0f };
-			f32 end4[4] = { end.X, end.Y, end.Z, 1.0f };
-
-			trans.multiplyWith1x4Matrix(start4);
-			core::vector3df startOfSegment(start4[0], start4[1], start4[2]);
-			if (fabsf(start4[3]) > FLT_EPSILON) // check for axis aligned with camera direction
-			{
-				startOfSegment *= 1.f / start4[3];
-			}
-
-			trans.multiplyWith1x4Matrix(end4);
-			core::vector3df endOfSegment(end4[0], end4[1], end4[2]);
-			if (fabsf(end4[3]) > FLT_EPSILON) // check for axis aligned with camera direction
-			{
-				endOfSegment *= 1.f / end4[3];
-			}
-
-			core::vector3df clipSpaceAxis = endOfSegment - startOfSegment;
-			clipSpaceAxis.Y /= camera->getAspect();
-			float segmentLengthInClipSpace = sqrtf(clipSpaceAxis.X * clipSpaceAxis.X + clipSpaceAxis.Y * clipSpaceAxis.Y);
-			return segmentLengthInClipSpace;
-		}
-
-		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
 		float CHandlesRenderer::getParallelogram(const core::vector3df& ptO, const core::vector3df& ptA, const core::vector3df& ptB, CCamera* camera)
 		{
 			core::matrix4 trans = getVideoDriver()->getTransform(video::ETS_VIEW_PROJECTION);
@@ -518,14 +490,14 @@ namespace Skylicht
 			}
 			else
 			{
-				float lenDir = getSegmentLengthClipSpace(origin, origin + dirAxis, camera);
-				float lenDirMinus = getSegmentLengthClipSpace(origin, origin - dirAxis, camera);
+				float lenDir = CProjective::getSegmentLengthClipSpace(camera, origin, origin + dirAxis);
+				float lenDirMinus = CProjective::getSegmentLengthClipSpace(camera, origin, origin - dirAxis);
 
-				float lenDirPlaneX = getSegmentLengthClipSpace(origin, origin + dirPlaneX, camera);
-				float lenDirMinusPlaneX = getSegmentLengthClipSpace(origin, origin - dirPlaneX, camera);
+				float lenDirPlaneX = CProjective::getSegmentLengthClipSpace(camera, origin, origin + dirPlaneX);
+				float lenDirMinusPlaneX = CProjective::getSegmentLengthClipSpace(camera, origin, origin - dirPlaneX);
 
-				float lenDirPlaneY = getSegmentLengthClipSpace(origin, origin + dirPlaneY, camera);
-				float lenDirMinusPlaneY = getSegmentLengthClipSpace(origin, origin - dirPlaneY, camera);
+				float lenDirPlaneY = CProjective::getSegmentLengthClipSpace(camera, origin, origin + dirPlaneY);
+				float lenDirMinusPlaneY = CProjective::getSegmentLengthClipSpace(camera, origin, origin - dirPlaneY);
 
 				// For readability
 				bool allowFlip = m_allowAxisFlip && camera->getProjectionType() == CCamera::Perspective;
@@ -540,7 +512,7 @@ namespace Skylicht
 				dirPlaneY *= mulAxisY;
 
 				// for axis
-				float axisLengthInClipSpace = getSegmentLengthClipSpace(origin, origin + dirAxis * m_screenFactor, camera);
+				float axisLengthInClipSpace = CProjective::getSegmentLengthClipSpace(camera, origin, origin + dirAxis * m_screenFactor);
 				float paraSurf = getParallelogram(origin, origin + dirPlaneX * m_screenFactor, origin + dirPlaneY * m_screenFactor, camera);
 
 				belowPlaneLimit = (paraSurf > 0.0025f);

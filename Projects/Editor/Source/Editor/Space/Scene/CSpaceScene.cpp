@@ -26,7 +26,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSpaceScene.h"
 #include "GUI/Input/CInput.h"
 #include "GridPlane/CGridPlane.h"
+#include "SpriteDraw/CSprite.h"
 
+#include "Editor/CEditor.h"
 #include "Editor/SpaceController/CSceneController.h"
 #include "Handles/CHandles.h"
 #include "Selection/CSelection.h"
@@ -207,6 +209,11 @@ namespace Skylicht
 			core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 			lightTransform->setOrientation(direction, CTransform::s_oy);
 
+			CSprite* spriteDraw = lightObj->addComponent<CSprite>();
+			spriteDraw->setFrame(m_editor->getSpriteIcon()->getFrame("light"), 1.0f, SColor(255, 255, 255, 255));
+			spriteDraw->setCenter(true);
+			spriteDraw->setBillboard(true);
+			spriteDraw->setAutoScaleInViewSpace(true);
 
 			// viewpoint zone
 			m_viewpointZone = m_scene->createZone();
