@@ -35,6 +35,6 @@ namespace Skylicht
 
 		static core::line3df getViewRay(CCamera* camera, float x, float y, int viewportW, int viewportH);
 
-		static float CProjective::getSegmentLengthClipSpace(CCamera* camera, const core::vector3df& start, const core::vector3df& end);
+		static float getSegmentLengthClipSpace(CCamera* camera, const core::vector3df& start, const core::vector3df& end);
 	};
 }
