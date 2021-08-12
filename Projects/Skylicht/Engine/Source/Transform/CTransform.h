@@ -67,11 +67,11 @@ namespace Skylicht
 
 	public:
 
-		virtual void setMatrixTransform(const core::matrix4& mat) = 0;
+		virtual void setRelativeTransform(const core::matrix4& mat) = 0;
 
-		virtual const core::matrix4& getMatrixTransform() = 0;
+		virtual const core::matrix4& getRelativeTransform() = 0;
 
-		virtual void getMatrixTransform(core::matrix4& matrix) = 0;
+		virtual void getRelativeTransform(core::matrix4& matrix) = 0;
 
 		DECLARE_GETTYPENAME(CTransform)
 	};

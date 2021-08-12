@@ -159,12 +159,12 @@ namespace Skylicht
 
 	core::vector3df CGameObject::getPosition()
 	{
-		return getTransform()->getMatrixTransform().getTranslation();
+		return getTransform()->getRelativeTransform().getTranslation();
 	}
 
 	core::quaternion CGameObject::getRotation()
 	{
-		const core::matrix4& matrix = getTransform()->getMatrixTransform();
+		const core::matrix4& matrix = getTransform()->getRelativeTransform();
 		return core::quaternion(matrix);
 	}
 

@@ -151,7 +151,7 @@ namespace Skylicht
 		{
 			// Calculate billboard matrix
 			// this is invert view camera
-			const core::matrix4& cameraTransform = camera->getGameObject()->getTransform()->getMatrixTransform();
+			const core::matrix4& cameraTransform = camera->getGameObject()->getTransform()->getRelativeTransform();
 
 			// look vector
 			core::vector3df cameraPosition = cameraTransform.getTranslation();

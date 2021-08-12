@@ -28,7 +28,7 @@ void testTransform(CGameObject *obj)
 	core::matrix4 m;
 	m.setRotationDegrees(core::vector3df(0.0f, 90.0f, 0.0f));
 	m.setTranslation(core::vector3df(100, 100, 100));
-	transform->setMatrixTransform(m);
+	transform->setRelativeTransform(m);
 
 	core::vector3df pos = transform->getPosition();
 	core::vector3df rot = transform->getRotation();
@@ -49,7 +49,7 @@ void testTransform(CGameObject *obj)
 	q.fromAngleAxis(90.0f * core::DEGTORAD, CTransform::s_ox);
 	transform->setPosition(core::vector3df(100.0f, 200.0f, 300.0f));
 	transform->setRotation(q);
-	transform->getMatrixTransform(m);
+	transform->getRelativeTransform(m);
 
 	pos = m.getTranslation();
 	TEST_ASSERT_FLOAT_EQUAL(pos.X, 100.0f);
