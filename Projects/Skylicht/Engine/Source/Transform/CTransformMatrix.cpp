@@ -47,18 +47,18 @@ namespace Skylicht
 
 	}
 
-	void CTransformMatrix::setMatrixTransform(const core::matrix4& mat)
+	void CTransformMatrix::setRelativeTransform(const core::matrix4& mat)
 	{
 		m_transform = mat;
 		m_hasChanged = true;
 	}
 
-	const core::matrix4& CTransformMatrix::getMatrixTransform()
+	const core::matrix4& CTransformMatrix::getRelativeTransform()
 	{
 		return m_transform;
 	}
 
-	void CTransformMatrix::getMatrixTransform(core::matrix4& matrix)
+	void CTransformMatrix::getRelativeTransform(core::matrix4& matrix)
 	{
 		matrix = m_transform;
 	}

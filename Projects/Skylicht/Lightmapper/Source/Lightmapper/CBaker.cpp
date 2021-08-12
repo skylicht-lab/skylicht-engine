@@ -87,7 +87,7 @@ namespace Skylicht
 				setRow(toTangentSpace[face], 3, core::vector3df(0.0f, 0.0f, 0.0f), 1.0f);
 
 				// camera world
-				camera->getGameObject()->getTransform()->setMatrixTransform(cameraWorld);
+				camera->getGameObject()->getTransform()->setRelativeTransform(cameraWorld);
 
 				// view matrix is world inverse
 				cameraWorld.makeInverse();

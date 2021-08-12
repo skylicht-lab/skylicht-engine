@@ -187,22 +187,6 @@ namespace Skylicht
 		return (int)m_childs.size();
 	}
 
-	CTransform* CContainerObject::getTransform()
-	{
-#if _DEBUG
-		os::Printer::log("[CContainerObject::getTransform] Warning: Container always Identity");
-#endif
-		return NULL;
-	}
-
-	CTransformEuler* CContainerObject::getTransformEuler()
-	{
-#if _DEBUG
-		os::Printer::log("[CContainerObject::getTransformEuler] Warning: Container always Identity");
-#endif
-		return NULL;
-	}
-
 	CGameObject* CContainerObject::searchObject(const wchar_t* objectName)
 	{
 		core::map<std::wstring, CGameObject*>::Node* node = m_objectByName.find(std::wstring(objectName));

@@ -76,7 +76,7 @@ namespace Skylicht
 		else
 		{
 			// update lookat matrix
-			const core::matrix4& mat = m_gameObject->getTransform()->getMatrixTransform();
+			const core::matrix4& mat = m_gameObject->getTransform()->getRelativeTransform();
 			position = mat.getTranslation();
 
 			core::vector3df target = CTransform::s_oz;
@@ -175,7 +175,7 @@ namespace Skylicht
 
 	core::vector3df CCamera::getLookVector()
 	{
-		const core::matrix4& m = m_gameObject->getTransform()->getMatrixTransform();
+		const core::matrix4& m = m_gameObject->getTransform()->getRelativeTransform();
 
 		core::vector3df look = CTransform::s_oz;
 		m.rotateVect(look);
