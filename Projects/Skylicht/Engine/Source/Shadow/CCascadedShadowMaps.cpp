@@ -97,7 +97,7 @@ namespace Skylicht
 		CTransform *cameraTransform = camera->getGameObject()->getTransform();
 
 		// camera position
-		const core::matrix4& mat = cameraTransform->getMatrixTransform();
+		const core::matrix4& mat = cameraTransform->getRelativeTransform();
 		core::vector3df cameraPosition = mat.getTranslation();
 
 		// camera forward

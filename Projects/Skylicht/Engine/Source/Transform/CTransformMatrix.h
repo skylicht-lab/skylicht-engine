@@ -59,10 +59,10 @@ namespace Skylicht
 			return m_transform.getScale();
 		}
 
-		virtual void setMatrixTransform(const core::matrix4& mat);
+		virtual void setRelativeTransform(const core::matrix4& mat);
 
-		virtual const core::matrix4& getMatrixTransform();
+		virtual const core::matrix4& getRelativeTransform();
 
-		virtual void getMatrixTransform(core::matrix4& matrix);
+		virtual void getRelativeTransform(core::matrix4& matrix);
 	};
 }

@@ -96,7 +96,7 @@ namespace Skylicht
 		m_matrixChanged = true;
 	}
 
-	void CTransformEuler::setMatrixTransform(const core::matrix4& mat)
+	void CTransformEuler::setRelativeTransform(const core::matrix4& mat)
 	{
 		core::vector3df front = s_oz;
 		core::vector3df up = s_oy;
@@ -141,18 +141,18 @@ namespace Skylicht
 		m_matrixChanged = false;
 	}
 
-	const core::matrix4& CTransformEuler::getMatrixTransform()
+	const core::matrix4& CTransformEuler::getRelativeTransform()
 	{
 		if (m_matrixChanged == true)
 		{
 			m_matrixChanged = false;
-			getMatrixTransform(m_transform);
+			getRelativeTransform(m_transform);
 		}
 
 		return m_transform;
 	}
 
-	void CTransformEuler::getMatrixTransform(core::matrix4& matrix)
+	void CTransformEuler::getRelativeTransform(core::matrix4& matrix)
 	{
 		matrix.makeIdentity();
 		matrix.setRotationDegrees(m_rotation);

@@ -79,7 +79,7 @@ namespace Skylicht
 		for (u32 i = 0; i < numEntity; i++)
 		{
 			// copy transform to relative matrix
-			components[i]->TransformComponent->getMatrixTransform(transforms[i]->Relative);
+			components[i]->TransformComponent->getRelativeTransform(transforms[i]->Relative);
 			components[i]->TransformComponent->setChanged(false);
 		}
 	}
