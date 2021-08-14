@@ -49,7 +49,6 @@ namespace Skylicht
 		bool m_static;
 		bool m_enable;
 		bool m_visible;
-		bool m_lighting;
 
 		bool m_editorObject;
 		bool m_enableEditorChange;
@@ -185,16 +184,6 @@ namespace Skylicht
 			return m_cullingLayer;
 		}
 
-		inline void setLighting(bool b)
-		{
-			m_lighting = b;
-		}
-
-		inline bool isLighting()
-		{
-			return m_lighting;
-		}
-
 		inline void setEditorObject(bool b)
 		{
 			m_editorObject = b;
@@ -278,6 +267,8 @@ namespace Skylicht
 		{
 			return m_enableEditorSelect;
 		}
+
+		DECLARE_GETTYPENAME(CGameObject)
 	};
 
 	// typedef for array object

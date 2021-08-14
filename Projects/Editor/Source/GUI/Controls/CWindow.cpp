@@ -103,7 +103,7 @@ namespace Skylicht
 				CBase::onChildTouched(child);
 			}
 
-			void CWindow::onCloseButtonPress(CBase *sender)
+			void CWindow::onCloseButtonPress(CBase* sender)
 			{
 				onCloseWindow();
 			}
@@ -116,6 +116,12 @@ namespace Skylicht
 			void CWindow::dragMoveCommand(const SPoint& mouseOffset)
 			{
 				m_titleBar->dragMoveCommand(mouseOffset);
+			}
+
+			void CWindow::forceUpdateLayout()
+			{
+				layout();
+				recurseLayout();
 			}
 		}
 	}

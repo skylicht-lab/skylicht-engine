@@ -87,6 +87,8 @@ namespace Skylicht
 
 				void dragMoveCommand(const SPoint& mouseOffset);
 
+				void forceUpdateLayout();
+
 			protected:
 
 				void onCloseButtonPress(CBase* sender);
