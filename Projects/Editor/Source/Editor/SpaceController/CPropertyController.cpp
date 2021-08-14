@@ -54,14 +54,22 @@ namespace Skylicht
 				CGameObject* obj = scene->searchObjectInChildByID(object.getID().c_str());
 				if (obj != NULL)
 				{
+					// Name and icon
 					m_spaceProperty->setIcon(GUI::ESystemIcon::Res3D);
 					m_spaceProperty->setLabel(obj->getName());
 					m_spaceProperty->clearAllGroup();
 
+					// Tabable
 					m_spaceProperty->getWindow()->getCanvas()->TabableGroup.clear();
 
+					// Activator
 					CEditorActivator* activator = CEditorActivator::getInstance();
 
+					// GameObject property
+					CComponentEditor* editor = activator->getEditorInstance(obj->getTypeName().c_str());
+					m_spaceProperty->addComponent(editor, obj);
+
+					// Component property					
 					ArrayComponent& listComponents = obj->getListComponent();
 					for (CComponentSystem* component : listComponents)
 					{
@@ -83,6 +91,9 @@ namespace Skylicht
 				m_spaceProperty->setLabel(L"");
 				m_spaceProperty->clearAllGroup();
 			}
+
+			// force update layout
+			m_spaceProperty->getWindow()->forceUpdateLayout();
 		}
 	}
 }
