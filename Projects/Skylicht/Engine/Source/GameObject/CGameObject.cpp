@@ -47,7 +47,6 @@ namespace Skylicht
 		m_objectID = "";
 		m_name = L"NoNameObj";
 
-		m_lighting = true;
 		m_enable = true;
 		m_visible = true;
 		m_static = false;

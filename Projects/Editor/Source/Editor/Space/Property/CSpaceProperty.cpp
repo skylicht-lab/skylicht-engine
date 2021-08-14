@@ -129,6 +129,11 @@ namespace Skylicht
 			editor->initGUI(component, this);
 		}
 
+		void CSpaceProperty::addComponent(CComponentEditor* editor, CGameObject* gameobject)
+		{
+			editor->initGUI(gameobject, this);
+		}
+
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CComponentEditor* editor)
 		{
 			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
@@ -213,6 +218,7 @@ namespace Skylicht
 						target->setValue(floatValue->get(), false);
 					}
 				};
+
 				IObserver* observer = value->addObserver(onChange);
 
 				// when input text change
@@ -226,7 +232,45 @@ namespace Skylicht
 			}
 		}
 
-		void CSpaceProperty::addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool value)
+		void CSpaceProperty::addTextBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::wstring>* value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CTextBox* input = new GUI::CTextBox(layout);
+			input->setString(value->get());
+
+			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
+			if (group != NULL)
+			{
+				CObserver<GUI::CTextBox>* onChange = new CObserver<GUI::CTextBox>(input);
+				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CTextBox* target)
+				{
+					if (from != me)
+					{
+						CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
+						target->setString(value->get());
+					}
+				};
+
+				IObserver* observer = value->addObserver(onChange);
+				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+					value->set(input->getString());
+					value->notify(observer);
+				};
+
+				// hold observer to release later			
+				group->Observer.push_back(observer);
+			}
+
+			boxLayout->endVertical();
+		}
+
+		void CSpaceProperty::addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<bool>* value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -238,7 +282,30 @@ namespace Skylicht
 			GUI::CBase* subLayout = new GUI::CBase(layout);
 
 			GUI::CCheckBox* check = new GUI::CCheckBox(subLayout);
-			check->setToggle(value);
+			check->setToggle(value->get());
+
+			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
+			if (group != NULL)
+			{
+				CObserver<GUI::CCheckBox>* onChange = new CObserver<GUI::CCheckBox>(check);
+				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CCheckBox* target)
+				{
+					if (from != me)
+					{
+						CSubject<bool>* value = (CSubject<bool>*)subject;
+						target->setToggle(value->get());
+					}
+				};
+
+				IObserver* observer = value->addObserver(onChange);
+				check->OnChanged = [value, check, observer](GUI::CBase* base) {
+					value->set(check->getToggle());
+					value->notify(observer);
+				};
+
+				// hold observer to release later			
+				group->Observer.push_back(observer);
+			}
 
 			boxLayout->endVertical();
 		}

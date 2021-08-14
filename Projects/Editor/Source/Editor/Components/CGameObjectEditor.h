@@ -24,30 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
+#include "CComponentEditor.h"
+#include "Activator/CEditorActivator.h"
+#include "Reactive/CSubject.h"
+#include "Reactive/CObserver.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceProperty;
-
-		class CComponentEditor
+		class CGameObjectEditor : public CComponentEditor
 		{
 		public:
-			CComponentEditor();
+			CSubject<std::wstring> Name;
+			CSubject<bool> Enable;
+			CSubject<bool> Visible;
+			CSubject<bool> Static;
 
-			virtual ~CComponentEditor();
+		public:
+			CGameObjectEditor();
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui)
-			{
-			}
+			virtual ~CGameObjectEditor();
 
-			virtual void initGUI(CGameObject* object, CSpaceProperty* ui)
-			{
-			}
+			virtual void initGUI(CGameObject* object, CSpaceProperty* ui);
 
-			virtual void update() = 0;
+			virtual void update();
 		};
 	}
 }
