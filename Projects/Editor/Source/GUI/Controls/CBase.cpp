@@ -101,8 +101,10 @@ namespace Skylicht
 			void CBase::remove()
 			{
 				setHidden(true);
+
 				CCanvas* canvas = getCanvas();
-				canvas->addDelayedDelete(this);
+				if (canvas != NULL)
+					canvas->addDelayedDelete(this);
 			}
 
 			bool CBase::isHidden() const

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
+#include "Editor/History/CSceneHistory.h"
 #include "EditorComponents/Handles/CHandlesRenderer.h"
 #include "CViewpointController.h"
 
@@ -54,6 +55,8 @@ namespace Skylicht
 		{
 		protected:
 			GUI::CBase* m_view;
+
+			CSceneHistory* m_history;
 
 			CScene* m_scene;
 			CCamera* m_editorCamera;

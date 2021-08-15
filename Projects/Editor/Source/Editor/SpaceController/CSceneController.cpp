@@ -37,7 +37,8 @@ namespace Skylicht
 			m_scene(NULL),
 			m_zone(NULL),
 			m_hierachyNode(NULL),
-			m_canvas(NULL)
+			m_canvas(NULL),
+			m_history(NULL)
 		{
 		}
 
@@ -55,7 +56,7 @@ namespace Skylicht
 			m_contextMenuScene = new CContextMenuScene(canvas);
 		}
 
-		void CSceneController::setScene(CScene* scene)
+		void CSceneController::setScene(CScene* scene, CSceneHistory* history)
 		{
 			if (m_hierachyNode != NULL)
 			{
@@ -64,6 +65,8 @@ namespace Skylicht
 			}
 
 			m_scene = scene;
+			m_history = history;
+
 			if (m_scene == NULL)
 				return;
 
@@ -82,6 +85,11 @@ namespace Skylicht
 
 			if (m_spaceHierarchy != NULL)
 				m_spaceHierarchy->setHierarchyNode(m_hierachyNode);
+
+			m_history->addObserver(new CObserver<CGameObject>(NULL,
+				[controller = this, history = m_history](ISubject* subject, IObserver* from, CGameObject* target) {
+					controller->onHistoryChange(history->getCurrentObject());
+				}), true);
 		}
 
 		void CSceneController::setZone(CZone* zone)
@@ -319,6 +327,11 @@ namespace Skylicht
 					propertyController->setProperty(nullObject);
 				}
 			}
+		}
+
+		void CSceneController::onHistoryChange(CGameObject* object)
+		{
+
 		}
 	}
 }
