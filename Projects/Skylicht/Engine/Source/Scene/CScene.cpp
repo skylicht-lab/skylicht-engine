@@ -249,6 +249,9 @@ namespace Skylicht
 			// Update add/remove childs object
 			zone->updateAddRemoveObject();
 
+			if (!zone->isEnable())
+				continue;
+
 			// we add all child to array to optimize performance
 			core::array<CGameObject*>& listChilds = zone->getArrayChilds(false);
 			CGameObject** objs = listChilds.pointer();

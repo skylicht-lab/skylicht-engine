@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,43 +24,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CContainerObject.h"
-#include "Entity/CEntityManager.h"
+#include "Reactive/ISubject.h"
 
 namespace Skylicht
 {
-	class CScene;
-	class CZone : public CContainerObject
+	namespace Editor
 	{
-	protected:
-		CEntityManager* m_entityManager;
-		CScene* m_scene;
-
-	public:
-		CZone(CScene* scene);
-		virtual ~CZone();
-
-		virtual void updateObject();
-		virtual void postUpdateObject();
-		virtual void endUpdate();
-		virtual CGameObject* searchObjectInScene(const wchar_t* objectName);
-		virtual bool testConflictName(const wchar_t* objectName);
-
-		DECLARE_GETTYPENAME(CZone)
-
-	public:
-
-		inline CEntityManager* getEntityManager()
+		class CHistory : public ISubject
 		{
-			return m_entityManager;
-		}
+		protected:
 
-		inline CScene* getScene()
-		{
-			return m_scene;
-		}
-	};
+		public:
+			CHistory();
 
-	typedef std::vector<CZone*> ArrayZone;
-	typedef std::vector<CZone*>::iterator ArrayZoneIter;
+			virtual ~CHistory();
+
+			void clearHistory();
+		};
+	}
 }

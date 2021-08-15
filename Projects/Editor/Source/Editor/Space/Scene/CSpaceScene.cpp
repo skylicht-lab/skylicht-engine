@@ -44,6 +44,7 @@ namespace Skylicht
 		CSpaceScene::CSpaceScene(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
 			m_scene(NULL),
+			m_history(NULL),
 			m_renderRP(NULL),
 			m_viewpointRP(NULL),
 			m_editorCamera(NULL),
@@ -150,6 +151,9 @@ namespace Skylicht
 			if (m_scene != NULL)
 				delete m_scene;
 
+			if (m_history != NULL)
+				delete m_history;
+
 			if (m_renderRP != NULL)
 				delete m_renderRP;
 
@@ -166,7 +170,7 @@ namespace Skylicht
 			CTransformGizmos::getGizmosSubject()->removeObserver(this);
 
 			CSceneController* sceneController = CSceneController::getInstance();
-			sceneController->setScene(NULL);
+			sceneController->setScene(NULL, NULL);
 			sceneController->setSpaceScene(NULL);
 		}
 
@@ -174,6 +178,9 @@ namespace Skylicht
 		{
 			// create a scene
 			m_scene = new CScene();
+
+			// history
+			m_history = new CSceneHistory(m_scene);
 
 			// create a zone in scene
 			CZone* zone = m_scene->createZone();
@@ -249,7 +256,7 @@ namespace Skylicht
 			m_scene->updateIndexSearchObject();
 
 			// set scene to controller
-			CSceneController::getInstance()->setScene(m_scene);
+			CSceneController::getInstance()->setScene(m_scene, m_history);
 
 			// register event
 			m_scene->registerEvent("Handles", CHandles::getInstance());
