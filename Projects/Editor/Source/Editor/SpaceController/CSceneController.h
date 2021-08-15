@@ -36,6 +36,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CContextMenuScene.h"
 
+#include "Reactive/CObserver.h"
+#include "Reactive/CSubject.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -54,6 +57,8 @@ namespace Skylicht
 			CScene* m_scene;
 
 			CZone* m_zone;
+
+			CSceneHistory* m_history;
 
 			GUI::CCanvas* m_canvas;
 
@@ -88,7 +93,7 @@ namespace Skylicht
 				return m_spaceHierarchy;
 			}
 
-			void setScene(CScene* scene);
+			void setScene(CScene* scene, CSceneHistory* history);
 
 			inline CScene* getScene()
 			{
@@ -102,6 +107,11 @@ namespace Skylicht
 				return m_zone;
 			}
 
+			CSceneHistory* getHistory()
+			{
+				return m_history;
+			}
+
 			void buildHierarchyNodes();
 
 			void onCommand(const std::wstring& objectType);
@@ -111,6 +121,8 @@ namespace Skylicht
 			void onUpdateNode(CHierachyNode* node);
 
 			void onSelectNode(CHierachyNode* node, bool selected);
+
+			void onHistoryChange(CGameObject* object);
 
 			inline CHierachyNode* getContextNode()
 			{

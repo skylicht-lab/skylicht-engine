@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGameObjectEditor.h"
+#include "CZoneEditor.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/SpaceController/CSceneController.h"
 
@@ -31,41 +31,33 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CGameObjectEditor::CGameObjectEditor() :
+		CZoneEditor::CZoneEditor() :
 			Name(L""),
-			Enable(true),
-			Visible(true),
-			Static(false)
+			Enable(true)
 		{
 
 		}
 
-		CGameObjectEditor::~CGameObjectEditor()
+		CZoneEditor::~CZoneEditor()
 		{
 
 		}
 
-		void CGameObjectEditor::initGUI(CGameObject* object, CSpaceProperty* ui)
+		void CZoneEditor::initGUI(CGameObject* object, CSpaceProperty* ui)
 		{
 			CSceneHistory* history = CSceneController::getInstance()->getHistory();
 
 			Name.removeAllObserver();
 			Enable.removeAllObserver();
-			Visible.removeAllObserver();
-			Static.removeAllObserver();
 
 			Name = object->getName();
 			Enable = object->isEnable();
-			Visible = object->isVisible();
-			Static = object->isStatic();
 
-			GUI::CCollapsibleGroup* group = ui->addGroup("GameObject", this);
+			GUI::CCollapsibleGroup* group = ui->addGroup("Zone", this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 
 			ui->addTextBox(layout, L"Name", &Name);
 			ui->addCheckBox(layout, L"Enable", &Enable);
-			ui->addCheckBox(layout, L"Visible", &Visible);
-			ui->addCheckBox(layout, L"Static", &Static);
 
 			Name.addObserver(new CObserver<CGameObject>(object,
 				[history](ISubject* subject, IObserver* from, CGameObject* target)
@@ -83,30 +75,14 @@ namespace Skylicht
 					history->notifyChange(target, from);
 				}), true);
 
-			Visible.addObserver(new CObserver<CGameObject>(object,
-				[history](ISubject* subject, IObserver* from, CGameObject* target)
-				{
-					CSubject<bool>* value = (CSubject<bool>*) subject;
-					target->setVisible(value->get());
-					history->notifyChange(target, from);
-				}), true);
-
-			Static.addObserver(new CObserver<CGameObject>(object,
-				[history](ISubject* subject, IObserver* from, CGameObject* target)
-				{
-					CSubject<bool>* value = (CSubject<bool>*) subject;
-					target->setStatic(value->get());
-					history->notifyChange(target, from);
-				}), true);
-
 			group->setExpand(true);
 		}
 
-		void CGameObjectEditor::update()
+		void CZoneEditor::update()
 		{
 
 		}
 
-		EDITOR_REGISTER(CGameObjectEditor, CGameObject)
+		EDITOR_REGISTER(CZoneEditor, CZone)
 	}
 }
