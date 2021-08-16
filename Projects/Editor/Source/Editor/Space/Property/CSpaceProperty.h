@@ -81,6 +81,8 @@ namespace Skylicht
 
 			void addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float min, float max);
 
+			GUI::CDropdownBox* addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value);
+
 			inline void setLabel(const wchar_t* label)
 			{
 				m_label->setString(label);
