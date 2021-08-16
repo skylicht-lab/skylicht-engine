@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CZoneEditor.h"
+#include "Selection/CSelection.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/SpaceController/CSceneController.h"
 
@@ -45,8 +46,6 @@ namespace Skylicht
 
 		void CZoneEditor::initGUI(CGameObject* object, CSpaceProperty* ui)
 		{
-			CSceneHistory* history = CSceneController::getInstance()->getHistory();
-
 			Name.removeAllObserver();
 			Enable.removeAllObserver();
 
@@ -60,25 +59,43 @@ namespace Skylicht
 			ui->addCheckBox(layout, L"Enable", &Enable);
 
 			Name.addObserver(new CObserver<CGameObject>(object,
-				[history](ISubject* subject, IObserver* from, CGameObject* target)
+				[me = this](ISubject* subject, IObserver* from, CGameObject* target)
 				{
 					CSubject<std::wstring>* value = (CSubject<std::wstring>*) subject;
 					target->setName(value->get().c_str());
-					history->notifyChange(target, from);
+					CSelection::getInstance()->notify(target, me);
 				}), true);
 
+			CSelectObject* selectObject = CSelection::getInstance()->getSelected(object);
+			if (selectObject != NULL)
+			{
+				selectObject->addObserver(new CObserver<CGameObject>(object,
+					[n = &Name, me = this](ISubject* subject, IObserver* from, CGameObject* target) {
+						if (from != me)
+						{
+							n->set(target->getName());
+							n->notify(from);
+						}
+					}), true);
+			}
+
 			Enable.addObserver(new CObserver<CGameObject>(object,
-				[history](ISubject* subject, IObserver* from, CGameObject* target)
+				[me = this](ISubject* subject, IObserver* from, CGameObject* target)
 				{
 					CSubject<bool>* value = (CSubject<bool>*) subject;
 					target->setEnable(value->get());
-					history->notifyChange(target, from);
+					CSelection::getInstance()->notify(target, me);
 				}), true);
 
 			group->setExpand(true);
 		}
 
 		void CZoneEditor::update()
+		{
+
+		}
+
+		void CZoneEditor::onNotify(ISubject* subject, IObserver* from)
 		{
 
 		}

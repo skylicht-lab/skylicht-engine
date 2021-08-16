@@ -34,31 +34,35 @@ namespace Skylicht
 		class CSelection : public CGameSingleton<CSelection>
 		{
 		protected:
-			std::vector<CSelectObject> m_selected;
+			std::vector<CSelectObject*> m_selected;
 
 		public:
 			CSelection();
 
 			virtual ~CSelection();
 
-			std::vector<CSelectObject>& getSelected()
+			std::vector<CSelectObject*>& getSelected()
 			{
 				return m_selected;
 			}
 
-			std::vector<CSelectObject> getSelectedByType(CSelectObject::ESelectType type);
+			std::vector<CSelectObject*> getSelectedByType(CSelectObject::ESelectType type);
 
 			void clear();
 
-			CSelectObject getLastSelected();
+			CSelectObject* getLastSelected();
 
-			void addSelect(const CSelectObject& obj);
+			CSelectObject* getSelected(CGameObject* obj);
 
-			void addSelect(const std::vector<CSelectObject>& obj);
+			CSelectObject* addSelect(CGameObject* obj);
 
-			void unSelect(const CSelectObject& obj);
+			void notify(CGameObject* obj, IObserver *from);
 
-			void unSelect(const std::vector<CSelectObject>& obj);
+			void addSelect(const std::vector<CGameObject*>& obj);
+
+			void unSelect(CGameObject* obj);
+
+			void unSelect(const std::vector<CGameObject*>& obj);
 		};
 	}
 }

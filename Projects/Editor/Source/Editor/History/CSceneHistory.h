@@ -37,19 +37,10 @@ namespace Skylicht
 		protected:
 			CScene* m_scene;
 
-			CGameObject* m_currentObject;
-
 		public:
 			CSceneHistory(CScene* scene);
 
 			virtual ~CSceneHistory();
-
-			void notifyChange(CGameObject* object, IObserver* modifyFrom);
-
-			CGameObject* getCurrentObject()
-			{
-				return m_currentObject;
-			}
 		};
 	}
 }

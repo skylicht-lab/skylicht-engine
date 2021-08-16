@@ -39,11 +39,5 @@ namespace Skylicht
 		{
 
 		}
-
-		void CSceneHistory::notifyChange(CGameObject* gameObject, IObserver* modifyFrom)
-		{
-			m_currentObject = gameObject;
-			notify(modifyFrom);
-		}
 	}
 }

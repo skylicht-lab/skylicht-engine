@@ -36,15 +36,7 @@ namespace Skylicht
 
 		ISubject::~ISubject()
 		{
-			int i = 0;
-			for (IObserver* observer : m_observers)
-			{
-				if (m_autoRelease[i])
-				{
-					delete observer;
-				}
-				++i;
-			}
+			removeAllObserver();
 		}
 
 		IObserver* ISubject::addObserver(IObserver* observer, bool autoRelease)
@@ -87,6 +79,16 @@ namespace Skylicht
 
 		void ISubject::removeAllObserver()
 		{
+			int i = 0;
+			for (IObserver* observer : m_observers)
+			{
+				if (m_autoRelease[i])
+				{
+					delete observer;
+				}
+				++i;
+			}
+
 			m_observers.clear();
 		}
 	}
