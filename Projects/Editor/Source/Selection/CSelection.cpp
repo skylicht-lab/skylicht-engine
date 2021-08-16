@@ -36,21 +36,24 @@ namespace Skylicht
 
 		CSelection::~CSelection()
 		{
-
+			clear();
 		}
 
 		void CSelection::clear()
 		{
+			for (CSelectObject* selectObject : m_selected)
+				delete selectObject;
+
 			m_selected.clear();
 		}
 
-		std::vector<CSelectObject> CSelection::getSelectedByType(CSelectObject::ESelectType type)
+		std::vector<CSelectObject*> CSelection::getSelectedByType(CSelectObject::ESelectType type)
 		{
-			std::vector<CSelectObject> result;
+			std::vector<CSelectObject*> result;
 
-			for (CSelectObject selected : m_selected)
+			for (CSelectObject* selected : m_selected)
 			{
-				if (selected.getType() == type)
+				if (selected->getType() == type)
 				{
 					result.push_back(selected);
 				}
@@ -59,9 +62,9 @@ namespace Skylicht
 			return result;
 		}
 
-		CSelectObject CSelection::getLastSelected()
+		CSelectObject* CSelection::getLastSelected()
 		{
-			CSelectObject ret;
+			CSelectObject* ret = NULL;
 			if (m_selected.size() > 0)
 			{
 				ret = m_selected.back();
@@ -69,29 +72,54 @@ namespace Skylicht
 			return ret;
 		}
 
-		void CSelection::addSelect(const CSelectObject& obj)
+		void CSelection::notify(CGameObject* obj, IObserver* from)
 		{
-			if (std::find(m_selected.begin(), m_selected.end(), obj) != m_selected.end())
-				return;
-
-			m_selected.push_back(obj);
+			CSelectObject* select = getSelected(obj);
+			if (select != NULL)
+				select->notify(from);
 		}
 
-		void CSelection::addSelect(const std::vector<CSelectObject>& obj)
+		CSelectObject* CSelection::getSelected(CGameObject* obj)
 		{
-			for (CSelectObject s : obj)
+			for (CSelectObject* selected : m_selected)
+			{
+				if (selected->getType() == CSelectObject::GameObject && selected->getID() == obj->getID())
+				{
+					return selected;
+				}
+			}
+			return NULL;
+		}
+
+		CSelectObject* CSelection::addSelect(CGameObject* obj)
+		{
+			CSelectObject* selected = getSelected(obj);
+			if (selected != NULL)
+				return selected;
+
+			selected = new CSelectObject(obj);
+			m_selected.push_back(selected);
+			return selected;
+		}
+
+		void CSelection::addSelect(const std::vector<CGameObject*>& obj)
+		{
+			for (CGameObject* s : obj)
 			{
 				addSelect(s);
 			}
 		}
 
-		void CSelection::unSelect(const CSelectObject& obj)
+		void CSelection::unSelect(CGameObject* obj)
 		{
-			std::vector<CSelectObject>::iterator i = m_selected.begin(), end = m_selected.end();
+			std::vector<CSelectObject*>::iterator i = m_selected.begin(), end = m_selected.end();
 			while (i != end)
 			{
-				if ((*i) == obj)
+				CSelectObject* sel = (*i);
+
+				if (sel->getType() == CSelectObject::GameObject && sel->getID() == obj->getID())
 				{
+					delete sel;
 					m_selected.erase(i);
 					return;
 				}
@@ -99,11 +127,11 @@ namespace Skylicht
 			}
 		}
 
-		void CSelection::unSelect(const std::vector<CSelectObject>& obj)
+		void CSelection::unSelect(const std::vector<CGameObject*>& obj)
 		{
-			for (CSelectObject s : obj)
+			for (CGameObject* gameObject : obj)
 			{
-				unSelect(s);
+				unSelect(gameObject);
 			}
 		}
 	}

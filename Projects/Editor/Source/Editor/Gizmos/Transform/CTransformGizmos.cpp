@@ -76,16 +76,16 @@ namespace Skylicht
 		{
 			CHandles* handle = CHandles::getInstance();
 
-			CSelectObject selectObject = CSelection::getInstance()->getLastSelected();
-			if (selectObject.getID() != m_selectID)
+			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+			if (selectObject->getID() != m_selectID)
 			{
-				m_selectID = selectObject.getID();
+				m_selectID = selectObject->getID();
 				m_selectObject = NULL;
 
 				CSceneController* sceneController = CSceneController::getInstance();
 				CScene* scene = sceneController->getScene();
 
-				if (selectObject.getType() == CSelectObject::GameObject)
+				if (selectObject->getType() == CSelectObject::GameObject)
 				{
 					m_selectObject = scene->searchObjectInChildByID(m_selectID.c_str());
 					if (m_selectObject != NULL)

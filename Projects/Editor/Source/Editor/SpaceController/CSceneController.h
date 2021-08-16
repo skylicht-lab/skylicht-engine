@@ -43,7 +43,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSceneController : public CGameSingleton<CSceneController>
+		class CSceneController : 
+			public CGameSingleton<CSceneController>,
+			public IObserver
 		{
 		protected:
 			CSpaceScene* m_spaceScene;
@@ -53,6 +55,8 @@ namespace Skylicht
 			CHierachyNode* m_hierachyNode;
 
 			CHierachyNode* m_contextNode;
+
+			CHierachyNode* m_focusNode;
 
 			CScene* m_scene;
 
@@ -122,7 +126,9 @@ namespace Skylicht
 
 			void onSelectNode(CHierachyNode* node, bool selected);
 
-			void onHistoryChange(CGameObject* object);
+			void onObjectChange(CGameObject* object);
+
+			virtual void onNotify(ISubject* subject, IObserver* from);
 
 			inline CHierachyNode* getContextNode()
 			{
