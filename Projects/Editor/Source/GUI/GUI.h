@@ -42,6 +42,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CTextBox.h"
 #include "GUI/Controls/CCheckBox.h"
 #include "GUI/Controls/CComboBox.h"
+#include "GUI/Controls/CDropdownBox.h"
 #include "GUI/Controls/CNumberInput.h"
 #include "GUI/Controls/CSlider.h"
 #include "GUI/Controls/CCollapsibleGroup.h"

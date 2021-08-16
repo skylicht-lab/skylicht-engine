@@ -23,11 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "CBase.h"
-#include "CScrollControl.h"
-#include "CLayoutVertical.h"
-#include "CLayoutHorizontal.h"
-#include "CLayoutColumn.h"
+#include "CLayout.h"
 
 namespace Skylicht
 {
@@ -35,31 +31,18 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CBoxLayout : public CBase
+			class CLayoutColumn : public CLayout
 			{
 			protected:
-				std::stack<CBase*> m_layoutStack;
 
 			public:
-				CBoxLayout(CBase* parent);
+				CLayoutColumn(CBase* parent);
 
-				virtual ~CBoxLayout();
+				virtual ~CLayoutColumn();
+
+				virtual void layout();
 
 				virtual void postLayout();
-
-				CLayoutHorizontal* beginHorizontal();
-
-				void endHorizontal();
-
-				void addSpace(float height);
-
-				CLayoutVertical* beginVertical();
-
-				void endVertical();
-
-				CLayoutColumn* beginColumn();
-
-				void endColumn();
 			};
 		}
 	}

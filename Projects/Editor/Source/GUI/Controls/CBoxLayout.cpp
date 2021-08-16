@@ -102,6 +102,25 @@ namespace Skylicht
 					assert(false);
 #endif
 			}
+
+			CLayoutColumn* CBoxLayout::beginColumn()
+			{
+				CBase* parent = m_layoutStack.top();
+				CLayoutColumn* v = new CLayoutColumn(parent);
+				v->dock(EPosition::Top);
+				m_layoutStack.push(v);
+				return v;
+			}
+
+			void CBoxLayout::endColumn()
+			{
+				if (dynamic_cast<CLayoutColumn*>(m_layoutStack.top()) != NULL && m_layoutStack.size() > 1)
+					m_layoutStack.pop();
+#if _DEBUG
+				else
+					assert(false);
+#endif
+			}
 		}
 	}
 }

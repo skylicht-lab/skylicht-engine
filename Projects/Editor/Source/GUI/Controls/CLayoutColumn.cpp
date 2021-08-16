@@ -21,12 +21,8 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "CBase.h"
-#include "CScrollControl.h"
-#include "CLayoutVertical.h"
-#include "CLayoutHorizontal.h"
+#include "pch.h"
 #include "CLayoutColumn.h"
 
 namespace Skylicht
@@ -35,32 +31,52 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CBoxLayout : public CBase
+			CLayoutColumn::CLayoutColumn(CBase* parent) :
+				CLayout(parent)
 			{
-			protected:
-				std::stack<CBase*> m_layoutStack;
+				m_childPadding = 5.0f;
+				setHeight(20.0f);
+			}
 
-			public:
-				CBoxLayout(CBase* parent);
+			CLayoutColumn::~CLayoutColumn()
+			{
 
-				virtual ~CBoxLayout();
+			}
 
-				virtual void postLayout();
+			void CLayoutColumn::layout()
+			{
+				int numChild = (int)Children.size();
+				if (numChild > 0)
+				{
+					float x = 0.0f;
+					float y = 0.0f;
 
-				CLayoutHorizontal* beginHorizontal();
+					int id = 0;
 
-				void endHorizontal();
+					for (CBase* c : Children)
+					{
+						float w = c->width();
 
-				void addSpace(float height);
+						if (id == numChild - 1)
+							w = width() - x;
 
-				CLayoutVertical* beginVertical();
+						float h = c->height();
+						if (h == 0.0f)
+							h = height();
 
-				void endVertical();
+						c->setBounds(floorf(x), floorf(y), w, h);
+						x = x + w + m_childPadding;
+						id++;
+					}
+				}
 
-				CLayoutColumn* beginColumn();
+				CLayout::layout();
+			}
 
-				void endColumn();
-			};
+			void CLayoutColumn::postLayout()
+			{
+				sizeToChildren(false, true);
+			}
 		}
 	}
 }

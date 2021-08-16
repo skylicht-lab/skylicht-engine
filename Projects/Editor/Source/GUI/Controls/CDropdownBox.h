@@ -23,11 +23,8 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "CBase.h"
-#include "CScrollControl.h"
-#include "CLayoutVertical.h"
-#include "CLayoutHorizontal.h"
-#include "CLayoutColumn.h"
+#include "CButton.h"
+#include "CMenuEx.h"
 
 namespace Skylicht
 {
@@ -35,31 +32,38 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CBoxLayout : public CBase
+			class CDropdownBox : public CButton
 			{
 			protected:
-				std::stack<CBase*> m_layoutStack;
+				CMenuEx* m_menu;
 
 			public:
-				CBoxLayout(CBase* parent);
+				Listener OnChanged;
 
-				virtual ~CBoxLayout();
+			public:
+				CDropdownBox(CBase* parent);
 
-				virtual void postLayout();
+				virtual ~CDropdownBox();
 
-				CLayoutHorizontal* beginHorizontal();
+				virtual void renderUnder();
 
-				void endHorizontal();
+				void openMenu();
 
-				void addSpace(float height);
+				void closeMenu();
 
-				CLayoutVertical* beginVertical();
+				virtual bool isMenuComponent()
+				{
+					return true;
+				}
 
-				void endVertical();
+				CMenuEx* getMenu()
+				{
+					return m_menu;
+				}
 
-				CLayoutColumn* beginColumn();
+			protected:
 
-				void endColumn();
+				void onClickDown(CBase* sender);
 			};
 		}
 	}
