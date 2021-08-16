@@ -38,7 +38,10 @@ namespace Skylicht
 			m_zone(NULL),
 			m_hierachyNode(NULL),
 			m_canvas(NULL),
-			m_history(NULL)
+			m_history(NULL),
+			m_focusNode(NULL),
+			m_contextNode(NULL),
+			m_contextMenuScene(NULL)
 		{
 		}
 
@@ -86,10 +89,8 @@ namespace Skylicht
 			if (m_spaceHierarchy != NULL)
 				m_spaceHierarchy->setHierarchyNode(m_hierachyNode);
 
-			m_history->addObserver(new CObserver<CGameObject>(NULL,
-				[controller = this, history = m_history](ISubject* subject, IObserver* from, CGameObject* target) {
-					controller->onHistoryChange(history->getCurrentObject());
-				}), true);
+			m_focusNode = NULL;
+			m_contextNode = NULL;
 		}
 
 		void CSceneController::setZone(CZone* zone)
@@ -294,6 +295,11 @@ namespace Skylicht
 			{
 				CGameObject* obj = (CGameObject*)node->getTagData();
 				obj->setName(node->getName().c_str());
+
+				// notify object changed
+				CSelectObject* selectedObject = CSelection::getInstance()->getSelected(obj);
+				if (selectedObject != NULL)
+					selectedObject->notify(this);
 			}
 			else if (dataType == CHierachyNode::Scene)
 			{
@@ -304,34 +310,62 @@ namespace Skylicht
 
 		void CSceneController::onSelectNode(CHierachyNode* node, bool selected)
 		{
+			m_focusNode = node;
+
 			CHierachyNode::EDataType dataType = node->getTagDataType();
 			if (dataType == CHierachyNode::GameObject)
 			{
 				CGameObject* obj = (CGameObject*)node->getTagData();
-
 				CSelection* selection = CSelection::getInstance();
-				CPropertyController* propertyController = CPropertyController::getInstance();
 
+				// remove last observer
+				CSelectObject* selectedObject = selection->getLastSelected();
+				if (selectedObject != NULL)
+					selectedObject->removeAllObserver();
+
+				// Set property & event
+				CPropertyController* propertyController = CPropertyController::getInstance();
 				if (selected)
 				{
-					CSelectObject selectObject(obj);
+					selectedObject = selection->addSelect(obj);
+					propertyController->setProperty(selectedObject);
 
-					selection->addSelect(selectObject);
-					propertyController->setProperty(selectObject);
+					// add new observer
+					selectedObject->addObserver(this);
 				}
 				else
 				{
-					selection->unSelect(CSelectObject(obj));
-
-					CSelectObject nullObject;
-					propertyController->setProperty(nullObject);
+					selection->unSelect(obj);
+					propertyController->setProperty(NULL);
 				}
 			}
 		}
 
-		void CSceneController::onHistoryChange(CGameObject* object)
+		void CSceneController::onObjectChange(CGameObject* object)
 		{
+			CHierachyNode* node = NULL;
+			if (m_focusNode->getTagData() == object)
+				node = m_focusNode;
 
+			if (node == NULL)
+				m_hierachyNode->getNodeByTag(object);
+
+			if (node != NULL)
+				node->getGUINode()->setText(object->getName());
+		}
+
+		void CSceneController::onNotify(ISubject* subject, IObserver* from)
+		{
+			CSelectObject* selected = dynamic_cast<CSelectObject*>(subject);
+			if (selected != NULL && from != this)
+			{
+				if (selected->getType() == CSelectObject::GameObject)
+				{
+					CGameObject* obj = m_scene->searchObjectInChildByID(selected->getID().c_str());
+					if (obj != NULL)
+						onObjectChange(obj);
+				}
+			}
 		}
 	}
 }

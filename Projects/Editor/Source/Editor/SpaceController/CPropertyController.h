@@ -37,6 +37,8 @@ namespace Skylicht
 		protected:
 			CSpaceProperty* m_spaceProperty;
 
+
+
 		public:
 			CPropertyController();
 
@@ -52,7 +54,7 @@ namespace Skylicht
 				return m_spaceProperty;
 			}
 
-			void setProperty(CSelectObject& object);
+			void setProperty(CSelectObject* object);
 		};
 	}
 }

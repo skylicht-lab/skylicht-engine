@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CHistory : public ISubject
+		class CHistory
 		{
 		protected:
 

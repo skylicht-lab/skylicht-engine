@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Activator/CEditorActivator.h"
 #include "Editor/Components/CComponentEditor.h"
 
+#include "Reactive/CObserver.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -44,20 +46,25 @@ namespace Skylicht
 
 		}
 
-		void CPropertyController::setProperty(CSelectObject& object)
+		void CPropertyController::setProperty(CSelectObject* object)
 		{
 			CSceneController* sceneController = CSceneController::getInstance();
 			CScene* scene = sceneController->getScene();
 
-			if (object.getType() == CSelectObject::GameObject)
+			if (object != NULL && object->getType() == CSelectObject::GameObject)
 			{
-				CGameObject* obj = scene->searchObjectInChildByID(object.getID().c_str());
+				CGameObject* obj = scene->searchObjectInChildByID(object->getID().c_str());
 				if (obj != NULL)
 				{
 					// Name and icon
 					m_spaceProperty->setIcon(GUI::ESystemIcon::Res3D);
 					m_spaceProperty->setLabel(obj->getName());
 					m_spaceProperty->clearAllGroup();
+
+					// When change the name
+					object->addObserver(new CObserver<CGameObject>(obj, [space = m_spaceProperty](ISubject* subject, IObserver* from, CGameObject* target) {
+						space->setLabel(target->getName());
+						}), true);
 
 					// Tabable
 					m_spaceProperty->getWindow()->getCanvas()->TabableGroup.clear();
@@ -85,7 +92,7 @@ namespace Skylicht
 					}
 				}
 			}
-			else if (object.getType() == CSelectObject::None)
+			else
 			{
 				m_spaceProperty->setIcon(GUI::ESystemIcon::None);
 				m_spaceProperty->setLabel(L"");

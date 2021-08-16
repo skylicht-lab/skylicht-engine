@@ -25,17 +25,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GameObject/CGameObject.h"
+#include "Reactive/ISubject.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSelectObject
+		class CSelectObject : public ISubject
 		{
 		public:
 			enum ESelectType
 			{
-				None,
 				Asset,
 				GameObject,
 				Entity
@@ -48,8 +48,6 @@ namespace Skylicht
 			std::string m_id;
 
 		public:
-			CSelectObject();
-
 			CSelectObject(ESelectType type, const char* id);
 
 			CSelectObject(ESelectType type, const std::string& id);

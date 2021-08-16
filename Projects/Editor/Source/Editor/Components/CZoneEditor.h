@@ -33,7 +33,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CZoneEditor : public CComponentEditor
+		class CZoneEditor :
+			public CComponentEditor,
+			public IObserver
 		{
 		public:
 			CSubject<std::wstring> Name;
@@ -47,6 +49,8 @@ namespace Skylicht
 			virtual void initGUI(CGameObject* object, CSpaceProperty* ui);
 
 			virtual void update();
+
+			virtual void onNotify(ISubject* subject, IObserver* from);
 		};
 	}
 }
