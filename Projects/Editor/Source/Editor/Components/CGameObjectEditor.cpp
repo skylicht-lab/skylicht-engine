@@ -62,6 +62,9 @@ namespace Skylicht
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 
 			ui->addTextBox(layout, L"Name", &Name);
+
+			initObjectLayerMenu(ui->addDropBox(layout, L"Culling", "Default"));
+
 			ui->addCheckBox(layout, L"Enable", &Enable);
 			ui->addCheckBox(layout, L"Visible", &Visible);
 			ui->addCheckBox(layout, L"Static", &Static);
@@ -122,6 +125,29 @@ namespace Skylicht
 		void CGameObjectEditor::onNotify(ISubject* subject, IObserver* from)
 		{
 
+		}
+
+		void CGameObjectEditor::initObjectLayerMenu(GUI::CDropdownBox* dropDown)
+		{
+			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(dropDown->getMenu());
+			boxLayout->dock(GUI::EPosition::Top);
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
+
+			for (int i = 0; i < 16; i++)
+			{
+				GUI::CLayoutColumn* row = boxLayout->beginColumn();
+				GUI::CCheckBox* check = new GUI::CCheckBox(row);
+				check->setToggle(true);
+
+				GUI::CLabel* label = new GUI::CLabel(row);
+				label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+
+				wchar_t labelw[32];
+				swprintf(labelw, 32, L"%d", i + 1);
+				label->setString(labelw);
+				label->setTextAlignment(GUI::TextLeft);
+				boxLayout->endColumn();
+			}
 		}
 
 		EDITOR_REGISTER(CGameObjectEditor, CGameObject)

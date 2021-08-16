@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Activator/CEditorActivator.h"
 #include "Reactive/CSubject.h"
 #include "Reactive/CObserver.h"
+#include "GUI/GUI.h"
 
 namespace Skylicht
 {
@@ -53,6 +54,11 @@ namespace Skylicht
 			virtual void update();
 
 			virtual void onNotify(ISubject* subject, IObserver* from);
+
+		protected:
+
+			void initObjectLayerMenu(GUI::CDropdownBox* dropDown);
+
 		};
 	}
 }

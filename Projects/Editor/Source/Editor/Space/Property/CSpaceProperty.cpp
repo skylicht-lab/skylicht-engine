@@ -350,5 +350,25 @@ namespace Skylicht
 
 			boxLayout->endVertical();
 		}
+
+		GUI::CDropdownBox* CSpaceProperty::addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			wchar_t wtext[512];
+			CStringImp::convertUTF8ToUnicode(value.c_str(), wtext);
+
+			GUI::CDropdownBox* comboBox = new GUI::CDropdownBox(layout);
+			comboBox->setLabel(wtext);
+
+			boxLayout->endVertical();
+
+			return comboBox;
+		}
 	}
 }
