@@ -36,10 +36,26 @@ namespace Skylicht
 			protected:
 				float m_childPadding;
 
+				bool m_renderHover;
+
+				SGUIColor m_hoverColor;
+
 			public:
 				CLayout(CBase* parent);
 
 				virtual ~CLayout();
+
+				virtual void renderUnder();
+
+				inline void enableRenderHover(bool b)
+				{
+					m_renderHover = b;
+				}
+
+				inline void setHoverColor(const SGUIColor& c)
+				{
+					m_hoverColor = c;
+				}
 
 				inline void setChildPadding(float p)
 				{

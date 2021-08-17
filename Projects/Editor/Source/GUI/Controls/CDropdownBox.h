@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CButton.h"
-#include "CMenuEx.h"
+#include "CMenu.h"
 
 namespace Skylicht
 {
@@ -35,7 +35,7 @@ namespace Skylicht
 			class CDropdownBox : public CButton
 			{
 			protected:
-				CMenuEx* m_menu;
+				CMenu* m_menu;
 
 			public:
 				Listener OnChanged;
@@ -56,7 +56,7 @@ namespace Skylicht
 					return true;
 				}
 
-				CMenuEx* getMenu()
+				CMenu* getMenu()
 				{
 					return m_menu;
 				}
