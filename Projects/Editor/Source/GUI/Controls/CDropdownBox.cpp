@@ -36,7 +36,7 @@ namespace Skylicht
 			CDropdownBox::CDropdownBox(CBase* parent) :
 				CButton(parent)
 			{
-				m_menu = new CMenuEx(getCanvas());
+				m_menu = new CMenu(getCanvas());
 				m_menu->setHidden(true);
 
 				OnDown = BIND_LISTENER(&CDropdownBox::onClickDown, this);

@@ -310,7 +310,7 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
-		void CSpaceProperty::addComboBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value, const std::vector<std::string>& listValue)
+		void CSpaceProperty::addComboBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::wstring>* value, const std::vector<std::wstring>& listValue)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -319,19 +319,25 @@ namespace Skylicht
 			label->setString(name);
 			label->setTextAlignment(GUI::TextRight);
 
-			wchar_t wtext[512];
-
-			std::vector<std::wstring> list;
-			for (const std::string& s : listValue)
-			{
-				CStringImp::convertUTF8ToUnicode(s.c_str(), wtext);
-				list.push_back(wtext);
-			}
-
-			CStringImp::convertUTF8ToUnicode(value.c_str(), wtext);
-
 			GUI::CComboBox* comboBox = new GUI::CComboBox(layout);
-			comboBox->setListValue(list);
+			comboBox->setListValue(listValue);
+
+			CObserver<GUI::CComboBox>* onChange = new CObserver<GUI::CComboBox>(comboBox);
+			onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CComboBox* target)
+			{
+				if (from != me)
+				{
+					CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
+					target->setLabel(value->get());
+				}
+			};
+
+			IObserver* observer = value->addObserver(onChange);
+			comboBox->OnChanged = [value, comboBox, observer](GUI::CBase* base)
+			{
+				value->set(comboBox->getLabel());
+				value->notify(observer);
+			};
 
 			boxLayout->endVertical();
 		}
@@ -351,7 +357,7 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
-		GUI::CDropdownBox* CSpaceProperty::addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value)
+		GUI::CDropdownBox* CSpaceProperty::addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -360,11 +366,8 @@ namespace Skylicht
 			label->setString(name);
 			label->setTextAlignment(GUI::TextRight);
 
-			wchar_t wtext[512];
-			CStringImp::convertUTF8ToUnicode(value.c_str(), wtext);
-
 			GUI::CDropdownBox* comboBox = new GUI::CDropdownBox(layout);
-			comboBox->setLabel(wtext);
+			comboBox->setLabel(value);
 
 			boxLayout->endVertical();
 

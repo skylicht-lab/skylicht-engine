@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CLayout.h"
+#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/CGUIContext.h"
 
 namespace Skylicht
 {
@@ -33,7 +35,9 @@ namespace Skylicht
 		{
 			CLayout::CLayout(CBase* parent) :
 				CBase(parent),
-				m_childPadding(0.0f)
+				m_childPadding(0.0f),
+				m_renderHover(false),
+				m_hoverColor(CThemeConfig::ButtonPressColor)
 			{
 
 			}
@@ -41,6 +45,21 @@ namespace Skylicht
 			CLayout::~CLayout()
 			{
 
+			}
+
+			void CLayout::renderUnder()
+			{
+				CBase::renderUnder();
+
+				if (m_renderHover && (isHovered() || isChild(CGUIContext::HoveredControl, true)))
+				{
+					SRect bound = getRenderBounds();
+					bound.X = 2.0f;
+					bound.Y = 1.0f;
+					bound.Height = 18.0f;
+					bound.Width = bound.Width - 4.0f;
+					CRenderer::getRenderer()->drawFillRect(bound, m_hoverColor);
+				}
 			}
 		}
 	}

@@ -77,11 +77,11 @@ namespace Skylicht
 
 			void addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<bool>* value);
 
-			void addComboBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value, const std::vector<std::string>& listValue);
+			void addComboBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::wstring>* value, const std::vector<std::wstring>& listValue);
 
 			void addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float min, float max);
 
-			GUI::CDropdownBox* addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::string& value);
+			GUI::CDropdownBox* addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value);
 
 			inline void setLabel(const wchar_t* label)
 			{
