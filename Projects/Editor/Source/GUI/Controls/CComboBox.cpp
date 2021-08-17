@@ -90,13 +90,13 @@ namespace Skylicht
 				}
 			}
 
-			void CComboBox::setSelectIndex(u32 index)
+			void CComboBox::setSelectIndex(u32 index, bool invokeEvent)
 			{
 				if (m_selectIndex < m_list.size())
 				{
 					setLabel(m_list[m_selectIndex]);
 
-					if (OnChanged != nullptr)
+					if (invokeEvent && OnChanged != nullptr)
 						OnChanged(this);
 				}
 			}

@@ -57,6 +57,9 @@ namespace Skylicht
 					{
 						float w = c->width();
 
+						x = x + c->getPadding().Left;
+						y = c->getPadding().Top;
+
 						if (id == numChild - 1)
 							w = width() - x;
 

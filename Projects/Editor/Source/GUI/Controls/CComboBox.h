@@ -70,7 +70,7 @@ namespace Skylicht
 					return m_selectIndex;
 				}
 
-				void setSelectIndex(u32 index);
+				void setSelectIndex(u32 index, bool invokeEvent);
 
 			protected:
 

@@ -63,7 +63,7 @@ namespace Skylicht
 
 			ui->addTextBox(layout, L"Name", &Name);
 
-			initObjectLayerMenu(ui->addDropBox(layout, L"Culling", "Default"));
+			initObjectLayerMenu(ui->addDropBox(layout, L"Culling", L"Default"));
 
 			ui->addCheckBox(layout, L"Enable", &Enable);
 			ui->addCheckBox(layout, L"Visible", &Visible);
@@ -129,15 +129,20 @@ namespace Skylicht
 
 		void CGameObjectEditor::initObjectLayerMenu(GUI::CDropdownBox* dropDown)
 		{
-			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(dropDown->getMenu());
+			GUI::CMenu* menu = dropDown->getMenu();
+
+			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(menu);
 			boxLayout->dock(GUI::EPosition::Top);
-			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
+			boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 5.0));
 
 			for (int i = 0; i < 16; i++)
 			{
 				GUI::CLayoutColumn* row = boxLayout->beginColumn();
+				row->enableRenderHover(true);
+
 				GUI::CCheckBox* check = new GUI::CCheckBox(row);
 				check->setToggle(true);
+				check->setPadding(GUI::SPadding(4.0f, 1.0f));
 
 				GUI::CLabel* label = new GUI::CLabel(row);
 				label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
