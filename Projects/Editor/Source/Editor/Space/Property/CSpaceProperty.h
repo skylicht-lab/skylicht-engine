@@ -59,7 +59,7 @@ namespace Skylicht
 			};
 
 		protected:
-			GUI::CContentSizeControl* m_content;
+			GUI::CBase* m_content;
 			GUI::CIcon* m_icon;
 			GUI::CLabel* m_label;
 

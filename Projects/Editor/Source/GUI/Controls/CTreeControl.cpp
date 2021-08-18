@@ -50,7 +50,7 @@ namespace Skylicht
 				m_scrollControl = new CScrollControl(this);
 				m_scrollControl->dock(EPosition::Fill);
 				m_scrollControl->showScrollBar(true, true);
-				m_scrollControl->getVerticalSroll()->setNudgeAmount(40.0f);
+				m_scrollControl->getVerticalScroll()->setNudgeAmount(40.0f);
 
 				m_innerPanel = m_scrollControl->getInnerPanel();
 

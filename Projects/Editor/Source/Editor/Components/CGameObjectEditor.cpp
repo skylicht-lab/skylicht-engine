@@ -133,7 +133,7 @@ namespace Skylicht
 
 			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(menu);
 			boxLayout->dock(GUI::EPosition::Top);
-			boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 5.0));
+			boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 0.0));
 
 			for (int i = 0; i < 16; i++)
 			{

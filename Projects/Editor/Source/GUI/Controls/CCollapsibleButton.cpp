@@ -35,7 +35,7 @@ namespace Skylicht
 			CCollapsibleButton::CCollapsibleButton(CBase* parent) :
 				CButton(parent)
 			{
-				setPadding(SPadding(0.0f, 0.0f, 8.0f, 0.0f));
+				setPadding(SPadding(0.0f, 0.0f, -8.0f, 0.0f));
 				setIcon(GUI::ESystemIcon::SmallTriangleRight);
 				showIcon(true);
 				setIsToggle(true);

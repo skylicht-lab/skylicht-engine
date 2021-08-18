@@ -37,7 +37,7 @@ namespace Skylicht
 			{
 				setHeight(25.0f);
 
-				setPadding(SPadding(1.0f, 2.0f, 1.0f, -3.0f));
+				setPadding(SPadding(1.0f, 2.0f, -1.0f, -3.0f));
 				enableRenderFillRect(true);
 				setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
 
@@ -54,7 +54,7 @@ namespace Skylicht
 				CButton *newButton = new CButton(this);
 				newButton->setLabel(label);
 				newButton->setIcon(icon);
-				newButton->setPadding(SPadding(0.0f, 0.0f, 6.0f, 0.0f));
+				newButton->setPadding(SPadding(0.0f, 0.0f, -6.0f, 0.0f));
 
 				if (icon != ESystemIcon::None)
 					newButton->showIcon(true);

@@ -59,7 +59,7 @@ namespace Skylicht
 
 				CBase* content = new CBase(this);
 				content->dock(EPosition::Fill);
-				content->setMargin(SPadding(10.0f, 20.0f, 15.0f, 0.0f));
+				content->setMargin(SMargin(10.0f, 20.0f, 15.0f, 0.0f));
 				content->setTransparentMouseInput(true);
 
 				m_message1 = new CLabel(content);

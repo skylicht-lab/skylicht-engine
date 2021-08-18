@@ -61,7 +61,7 @@ namespace Skylicht
 					const std::string& buffer = console->getBuffer(true);
 					std::wstring stringw(buffer.begin(), buffer.end());
 					m_textControl->setString(stringw);
-					m_textControl->getVerticalSroll()->setScroll(1.0f);
+					m_textControl->getVerticalScroll()->setScroll(1.0f);
 					m_lastID = log.ID;
 				}
 			}
