@@ -77,6 +77,13 @@ namespace Skylicht
 			CHandles* handle = CHandles::getInstance();
 
 			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+
+			if (selectObject == NULL)
+			{
+				handle->end();
+				return;
+			}
+
 			if (selectObject->getID() != m_selectID)
 			{
 				m_selectID = selectObject->getID();

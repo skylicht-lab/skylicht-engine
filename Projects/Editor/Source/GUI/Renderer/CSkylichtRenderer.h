@@ -48,8 +48,8 @@ namespace Skylicht
 				int m_materialID;
 				bool m_enableClip;
 
-				CGlyphFont *m_fontLarge;
-				CGlyphFont *m_fontNormal;
+				CGlyphFont* m_fontLarge;
+				CGlyphFont* m_fontNormal;
 
 			public:
 				CSkylichtRenderer(float w, float h);
@@ -74,15 +74,17 @@ namespace Skylicht
 
 				virtual void flush();
 
-				virtual void drawFillRect(const SRect &r, const SGUIColor& color);
+				virtual void drawFillRect(const SRect& r, const SGUIColor& color);
 
-				virtual void renderText(const SRect &r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string);
+				virtual void drawBorderRect(const SRect& r, const SGUIColor& color, bool left, bool top, bool right, bool bottom);
+
+				virtual void renderText(const SRect& r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string);
 
 				virtual SDimension measureText(EFontSize fontSize, const std::wstring& string);
 
 				virtual float measureCharWidth(EFontSize fontSize, wchar_t c);
 
-				void initFont(CSpriteAtlas *atlas);
+				void initFont(CSpriteAtlas* atlas);
 
 				const core::matrix4& getWorldTransform()
 				{
