@@ -48,7 +48,7 @@ namespace Skylicht
 
 				void removeButton(CButton* button);
 
-				void selectButton(CButton* button);
+				int selectButton(CButton* button);
 
 				CButton* getSelectButton();
 

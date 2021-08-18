@@ -31,8 +31,45 @@ namespace Skylicht
 	{
 		CSpaceProjectSettings::CSpaceProjectSettings(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
-			m_menuGroup(NULL)
+			m_menuGroup(NULL),
+			m_gui(NULL)
 		{
+			GUI::CBase* bottom = new GUI::CBase(window);
+			bottom->setHeight(50.0f);
+			bottom->setPadding(GUI::SPadding(23.0f, 15.0f, -23.0f, -15.0f));
+			bottom->dock(GUI::EPosition::Bottom);
+			bottom->enableRenderFillRect(true);
+			bottom->setFillRectColor(GUI::SGUIColor(255, 65, 65, 65));
+
+			m_apply = new GUI::CButton(bottom);
+			m_apply->dock(GUI::EPosition::Right);
+			m_apply->setLabel(L"Apply");
+			m_apply->setTextAlignment(GUI::ETextAlign::TextCenter);
+			m_apply->setWidth(100.0f);
+			m_apply->setDisabled(true);
+			m_apply->enableDrawDisable(true);
+			m_apply->OnPress = BIND_LISTENER(&CSpaceProjectSettings::onApply, this);
+
+			GUI::CButton* cancel = new GUI::CButton(bottom);
+			cancel->dock(GUI::EPosition::Right);
+			cancel->setLabel(L"Cancel");
+			cancel->setTextAlignment(GUI::ETextAlign::TextCenter);
+			cancel->setWidth(100.0f);
+			cancel->setMargin(GUI::SMargin(0.0f, 0.0f, 10.0f, 0.0f));
+			cancel->OnPress = [window](GUI::CBase* button)
+			{
+				window->onCloseWindow();
+			};
+
+			GUI::CButton* ok = new GUI::CButton(bottom);
+			ok->dock(GUI::EPosition::Right);
+			ok->setLabel(L"OK");
+			ok->setTextAlignment(GUI::ETextAlign::TextCenter);
+			ok->setWidth(100.0f);
+			ok->setMargin(GUI::SMargin(0.0f, 0.0f, 10.0f, 0.0f));
+			ok->OnPress = BIND_LISTENER(&CSpaceProjectSettings::onOK, this);
+
+
 			GUI::CSplitter* mainSplit = new GUI::CSplitter(window);
 			mainSplit->dock(GUI::EPosition::Fill);
 			mainSplit->enableRenderFillRect(true);
@@ -53,27 +90,16 @@ namespace Skylicht
 			m_menuContainer->getVerticalScroll()->enableRenderFillRect(false);
 			mainSplit->setControl(menuBase, 0, 0);
 
+			m_infoContainer = new GUI::CBase(mainSplit);
+			m_infoContainer->enableRenderFillRect(true);
+			m_infoContainer->setFillRectColor(GUI::SGUIColor(255, 55, 55, 55));
+
 			addMenuButton(L"Layer name");
 			addMenuButton(L"Collision");
 
-			GUI::CBase* infoBase = new GUI::CBase(mainSplit);
-			infoBase->enableRenderFillRect(true);
-			infoBase->setFillRectColor(GUI::SGUIColor(255, 55, 55, 55));
+			setSelectMenu(0);
 
-			m_infoContainer = new GUI::CScrollControl(infoBase);
-			m_infoContainer->dock(GUI::EPosition::Fill);
-			m_infoContainer->enableRenderFillRect(false);
-			m_infoContainer->enableScroll(false, true);
-			m_infoContainer->showScrollBar(false, true);
-			m_infoContainer->enableModifyChildWidth(true);
-
-			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_infoContainer);
-			colapsible->dock(GUI::EPosition::Top);
-			colapsible->getHeader()->setFillRectColor(GUI::SGUIColor(255, 65, 65, 65));
-			colapsible->getHeader()->setLabel(L"Layer Name");
-			colapsible->setExpand(true);
-
-			mainSplit->setControl(infoBase, 0, 1);
+			mainSplit->setControl(m_infoContainer, 0, 1);
 		}
 
 		CSpaceProjectSettings::~CSpaceProjectSettings()
@@ -82,7 +108,7 @@ namespace Skylicht
 				delete m_menuGroup;
 		}
 
-		void CSpaceProjectSettings::addMenuButton(const wchar_t* label)
+		void CSpaceProjectSettings::addMenuButton(const std::wstring& label)
 		{
 			if (m_menuGroup == NULL)
 				m_menuGroup = new GUI::CToggleGroup();
@@ -105,11 +131,67 @@ namespace Skylicht
 				m_menuButtons[m_menuButtons.size() - 1]->enableRenderBorder(true, true, true, false);
 
 			m_menuButtons.push_back(button);
+
+			GUI::CScrollControl* info = new GUI::CScrollControl(m_infoContainer);
+			info->dock(GUI::EPosition::Fill);
+			info->enableRenderFillRect(false);
+			info->enableScroll(false, true);
+			info->showScrollBar(false, true);
+			info->enableModifyChildWidth(true);
+
+			if (label == L"Layer name")
+				m_guis.push_back(new CLayerNameUI(this, info, label));
+			else
+				m_guis.push_back(new CProjectSettingUI(this, info, label));
+
+			m_guis.back()->setHidden(true);
+		}
+
+		void CSpaceProjectSettings::setSelectMenu(int id)
+		{
+			if (m_gui != NULL)
+				m_gui->setHidden(true);
+
+			m_menuGroup->selectButton(m_menuButtons[id]);
+
+			m_gui = m_guis[id];
+			m_gui->setHidden(false);
+		}
+
+		void CSpaceProjectSettings::enableApply()
+		{
+			m_apply->setDisabled(false);
 		}
 
 		void CSpaceProjectSettings::onSelectMenu(GUI::CBase* button)
 		{
-			m_menuGroup->selectButton((GUI::CButton*)button);
+			if (m_gui != NULL)
+				m_gui->setHidden(true);
+
+			int i = m_menuGroup->selectButton((GUI::CButton*)button);
+			if (i >= 0)
+			{
+				m_gui = m_guis[i];
+				m_gui->setHidden(false);
+			}
+		}
+
+		void CSpaceProjectSettings::onOK(GUI::CBase* button)
+		{
+			for (CProjectSettingUI* ui : m_guis)
+			{
+				ui->save();
+			}
+			m_window->onCloseWindow();
+		}
+
+		void CSpaceProjectSettings::onApply(GUI::CBase* button)
+		{
+			for (CProjectSettingUI* ui : m_guis)
+			{
+				ui->save();
+			}
+			button->setDisabled(true);
 		}
 	}
 }

@@ -58,6 +58,7 @@ namespace Skylicht
 				static SGUIColor TextBoxButtonColor;
 
 				static SGUIColor ButtonColor;
+				static SGUIColor ButtonDisableColor;
 				static SGUIColor ButtonTextColor;
 				static SGUIColor ButtonTextDisableColor;
 				static SGUIColor ButtonHoverColor;

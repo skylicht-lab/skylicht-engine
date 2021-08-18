@@ -42,7 +42,8 @@ namespace Skylicht
 				m_pressed(false),
 				m_drawBackground(true),
 				m_isToggle(false),
-				m_toggleStatus(false)
+				m_toggleStatus(false),
+				m_drawDisableButton(false)
 			{
 				setPadding(SPadding(8.0f, 0.0f, -8.0f, 0.0f));
 				m_icon = new CIcon(this, ESystemIcon::None);
@@ -77,6 +78,9 @@ namespace Skylicht
 				{
 					m_label->setColor(CThemeConfig::ButtonTextDisableColor);
 					m_icon->setColor(CThemeConfig::ButtonTextDisableColor);
+
+					if (m_drawDisableButton)
+						CTheme::getTheme()->drawButtonShadow(getRenderBounds());
 				}
 				else
 				{
@@ -100,6 +104,9 @@ namespace Skylicht
 					if (m_toggleStatus)
 						c = m_pressColor;
 				}
+
+				if (disable && m_drawDisableButton)
+					CTheme::getTheme()->drawButton(getRenderBounds(), CThemeConfig::ButtonDisableColor);
 
 				if (!disable && (m_drawBackground || hover || (m_isToggle && m_toggleStatus)))
 					CTheme::getTheme()->drawButton(getRenderBounds(), c);

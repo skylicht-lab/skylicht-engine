@@ -131,6 +131,7 @@ namespace Skylicht
 		{
 			GUI::CMenu* menu = dropDown->getMenu();
 
+			/*
 			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(menu);
 			boxLayout->dock(GUI::EPosition::Top);
 			boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 0.0));
@@ -153,6 +154,7 @@ namespace Skylicht
 				label->setTextAlignment(GUI::TextLeft);
 				boxLayout->endColumn();
 			}
+			*/
 		}
 
 		EDITOR_REGISTER(CGameObjectEditor, CGameObject)
