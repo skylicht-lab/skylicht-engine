@@ -60,15 +60,25 @@ namespace Skylicht
 					m_buttons.erase(i);
 			}
 
-			void CToggleGroup::selectButton(CButton* button)
+			int CToggleGroup::selectButton(CButton* button)
 			{
+				int result = -1;
+				int i = 0;
+
 				for (CButton* b : m_buttons)
 				{
 					if (b == button)
+					{
 						b->setIsToggle(true);
+						result = i;
+					}
 					else
 						b->setIsToggle(false);
+
+					i++;
 				}
+
+				return result;
 			}
 
 			CButton* CToggleGroup::getSelectButton()

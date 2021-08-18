@@ -22,52 +22,56 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-
-#include "CProjectSettingUI.h"
+#include "pch.h"
 #include "CLayerNameUI.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceProjectSettings : public CSpace
+		CLayerNameUI::CLayerNameUI(CSpaceProjectSettings* settings, GUI::CBase* base, const std::wstring& name) :
+			CProjectSettingUI(settings, base, name)
 		{
-		protected:
-			GUI::CToggleGroup* m_menuGroup;
+			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(base);
+			colapsible->dock(GUI::EPosition::Top);
+			colapsible->getHeader()->setFillRectColor(GUI::SGUIColor(255, 65, 65, 65));
+			colapsible->getHeader()->setLabel(name);
 
-			GUI::CButton* m_apply;
+			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(colapsible);
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, -15.0, 5.0));
 
-			GUI::CScrollControl* m_menuContainer;
-			GUI::CBase* m_infoContainer;
+			wchar_t text[256];
 
-			std::vector<GUI::CFlatButton*> m_menuButtons;
-			std::vector<CProjectSettingUI*> m_guis;
+			for (int i = 0; i < 16; i++)
+			{
+				GUI::CLayout* layout = boxLayout->beginColumn();
 
-			CProjectSettingUI* m_gui;
+				GUI::CLabel* label = new GUI::CLabel(layout);
+				label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+				label->setWidth(150.0f);
 
-		public:
-			CSpaceProjectSettings(GUI::CWindow* window, CEditor* editor);
+				swprintf(text, L"%d", i);
+				label->setString(text);
 
-			virtual ~CSpaceProjectSettings();
+				label->setTextAlignment(GUI::TextRight);
 
-		protected:
+				GUI::CTextBox* input = new GUI::CTextBox(layout);
 
-			void addMenuButton(const std::wstring& label);
+				if (i == 0)
+				{
+					input->setString(L"Default");
+					input->setEditable(false);
+				}
 
-			void setSelectMenu(int i);
+				boxLayout->endColumn();
+			}
 
-			void enableApply();
+			colapsible->setExpand(true);
+		}
 
-			void onSelectMenu(GUI::CBase* button);
+		CLayerNameUI::~CLayerNameUI()
+		{
 
-			void onApply(GUI::CBase* button);
-
-			void onOK(GUI::CBase* button);
-		};
+		}
 	}
 }
