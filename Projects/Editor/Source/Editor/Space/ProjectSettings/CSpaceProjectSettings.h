@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,32 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "SkylichtEngine.h"
 
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Controls/CDialogWindow.h"
-#include "GUI/Controls/CDockableWindow.h"
-#include "GUI/Controls/CDockTabControl.h"
-#include "GUI/Controls/CScrollControl.h"
-#include "GUI/Controls/CSplitter.h"
-#include "GUI/Controls/CMenuBar.h"
-#include "GUI/Controls/CTreeNode.h"
-#include "GUI/Controls/CTreeControl.h"
-#include "GUI/Controls/CListBox.h"
-#include "GUI/Controls/CTableRow.h"
-#include "GUI/Controls/CToolbar.h"
-#include "GUI/Controls/CTextBox.h"
-#include "GUI/Controls/CCheckBox.h"
-#include "GUI/Controls/CComboBox.h"
-#include "GUI/Controls/CDropdownBox.h"
-#include "GUI/Controls/CNumberInput.h"
-#include "GUI/Controls/CSlider.h"
-#include "GUI/Controls/CCollapsibleGroup.h"
-#include "GUI/Controls/CBoxLayout.h"
-#include "GUI/Controls/CContentSizeControl.h"
-#include "GUI/Controls/CProgressBar.h"
-#include "GUI/Controls/CMessageBox.h"
-#include "GUI/Controls/CFlatButton.h"
+#include "Editor/Space/CSpace.h"
 
-#include "GUI/Utils/CToggleGroup.h"
+namespace Skylicht
+{
+	namespace Editor
+	{
+		class CSpaceProjectSettings : public CSpace
+		{
+		protected:
+			GUI::CToggleGroup* m_menuGroup;
+
+			GUI::CBase* m_menuContainer;
+			GUI::CBase* m_infoContainer;
+
+			std::vector<GUI::CFlatButton*> m_menuButtons;
+		public:
+			CSpaceProjectSettings(GUI::CWindow* window, CEditor* editor);
+
+			virtual ~CSpaceProjectSettings();
+
+		protected:
+
+			void addMenuButton(const wchar_t* label);
+
+			void onSelectMenu(GUI::CBase* button);
+		};
+	}
+}

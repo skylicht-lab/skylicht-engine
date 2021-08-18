@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/Console/CSpaceConsole.h"
 #include "Space/Property/CSpaceProperty.h"
 #include "Space/Hierarchy/CSpaceHierarchy.h"
+#include "Space/ProjectSettings/CSpaceProjectSettings.h"
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
@@ -40,6 +41,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "Selection/CSelection.h"
 #include "Activator/CEditorActivator.h"
+#include "ProjectSettings/CCullingLayer.h"
 
 namespace Skylicht
 {
@@ -71,10 +73,12 @@ namespace Skylicht
 			CPropertyController::createGetInstance();
 			CSelection::createGetInstance();
 			CEditorActivator::createGetInstance();
+			CCullingLayer::createGetInstance();
 		}
 
 		CEditor::~CEditor()
 		{
+			CCullingLayer::releaseInstance();
 			CEditorActivator::releaseInstance();
 			CPropertyController::releaseInstance();
 			CSceneController::releaseInstance();
@@ -236,20 +240,16 @@ namespace Skylicht
 			GUI::CMenuItem* logo = m_menuBar->addItem(GUI::ESystemIcon::Windows);
 			submenu = logo->getMenu();
 			submenu->addItem(L"About");
-			submenu->addItem(L"Development Fund", GUI::ESystemIcon::Web);
+			submenu->addItem(L"Development funding", GUI::ESystemIcon::Web);
 			submenu->addSeparator();
-			submenu->addItem(L"Project Setting", GUI::ESystemIcon::Setting);
+			submenu->addItem(L"Close", GUI::ESystemIcon::Quit, L"Ctrl + Q");
 
 			GUI::CMenuItem* file = m_menuBar->addItem(L"File");
 			submenu = file->getMenu();
-			submenu->addItem(L"New", GUI::ESystemIcon::NewFile, L"Ctrl + N");
-			submenu->addItem(L"Open", GUI::ESystemIcon::Open, L"Ctrl + O");
 			submenu->addItem(L"Open Recent")->setDisabled(true);
 			submenu->addSeparator();
 			submenu->addItem(L"Save", GUI::ESystemIcon::Save, L"Ctrl + S");
 			submenu->addItem(L"Save As");
-			submenu->addSeparator();
-			submenu->addItem(L"Close", GUI::ESystemIcon::Quit, L"Ctrl + Q");
 
 			GUI::CMenuItem* edit = m_menuBar->addItem(L"Edit");
 			submenu = edit->getMenu();
@@ -279,9 +279,6 @@ namespace Skylicht
 			submenu->addItem(L"Animation");
 
 			submenu = temp;
-			submenu->addSeparator();
-			submenu->addItem(L"Copy path", GUI::ESystemIcon::Copy);
-			submenu->addItem(L"Show in Explorer");
 			submenu->addSeparator();
 			submenu->addItem(L"Refresh", L"Ctrl + R");
 
@@ -341,7 +338,7 @@ namespace Skylicht
 
 			GUI::CMenuItem* window = m_menuBar->addItem(L"Window");
 			submenu = window->getMenu();
-			submenu->addItem(L"New workspace");
+			submenu->addItem(L"Project Setting", GUI::ESystemIcon::Setting);
 			submenu->addSeparator();
 			m_menuWindowItems.clear();
 			m_menuWindowItems.push_back(submenu->addItem(L"Assets"));
@@ -361,7 +358,7 @@ namespace Skylicht
 			submenu->addItem(L"Tutorial", GUI::ESystemIcon::Guide);
 			submenu->addItem(L"Report a bug", GUI::ESystemIcon::Web);
 			submenu->addSeparator();
-			submenu->addItem(L"Development Fund", GUI::ESystemIcon::Web);
+			submenu->addItem(L"Development funding", GUI::ESystemIcon::Web);
 		}
 
 		void CEditor::saveLayout(const std::string& data)
@@ -453,6 +450,10 @@ namespace Skylicht
 			else if (workspace == L"Hierarchy")
 			{
 				m_workspaces.push_back(new CSpaceHierarchy(window, this));
+			}
+			else if (workspace == L"Project Setting")
+			{
+				m_workspaces.push_back(new CSpaceProjectSettings(window, this));
 			}
 		}
 
@@ -878,6 +879,16 @@ namespace Skylicht
 				initDefaultLayout();
 
 				m_canvas->invalidate();
+			}
+			else if (label == L"Project Setting")
+			{
+				float w = 680.0f;
+				float h = 480.0f;
+				GUI::CDialogWindow* window = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, w, h);
+				window->setCaption(menuItem->getLabel());
+				window->setCenterPosition();
+				window->setResizable(true);
+				initWorkspace(window, window->getCaption());
 			}
 			else
 			{
