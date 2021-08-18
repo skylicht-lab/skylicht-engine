@@ -36,6 +36,7 @@ namespace Skylicht
 				CBase(parent),
 				m_canScrollV(true),
 				m_canScrollH(true),
+				m_modifyChildWidth(false),
 				m_widthScrollExpand(0.0f),
 				m_heightScrollExpand(0.0f)
 			{
@@ -230,9 +231,18 @@ namespace Skylicht
 					}
 				}
 
-				m_innerPanel->setSize(
-					core::max_(w, childrenWidth) + m_widthScrollExpand,
-					core::max_(h, childrenHeight) + m_heightScrollExpand);
+				if (!m_canScrollH && m_modifyChildWidth == true)
+				{
+					m_innerPanel->setSize(
+						w + m_widthScrollExpand,
+						core::max_(h, childrenHeight) + m_heightScrollExpand);
+				}
+				else
+				{
+					m_innerPanel->setSize(
+						core::max_(w, childrenWidth) + m_widthScrollExpand,
+						core::max_(h, childrenHeight) + m_heightScrollExpand);
+				}
 
 				m_vertical->setContentSize(m_innerPanel->height());
 				m_vertical->setViewableContentSize(h);

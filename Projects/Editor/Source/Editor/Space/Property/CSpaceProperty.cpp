@@ -38,16 +38,14 @@ namespace Skylicht
 			scrollWindow->dock(GUI::EPosition::Fill);
 			scrollWindow->enableScroll(false, true);
 			scrollWindow->showScrollBar(false, true);
+			scrollWindow->enableModifyChildWidth(true);
 
-			m_content = new GUI::CContentSizeControl(scrollWindow);
-			m_content->setFitType(GUI::CContentSizeControl::SizeToParent, GUI::CContentSizeControl::WrapChildren);
-			m_content->setTargetParent(window);
-
+			m_content = scrollWindow;
 
 			GUI::CBase* titleBar = new GUI::CBase(m_content);
 			titleBar->setHeight(25.0f);
 			titleBar->dock(GUI::EPosition::Top);
-			titleBar->setPadding(GUI::SPadding(5.0f, 3.0f, 5.0f, -3.0f));
+			titleBar->setPadding(GUI::SPadding(5.0f, 3.0f, -5.0f, -3.0f));
 			titleBar->enableRenderFillRect(true);
 			titleBar->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
 
@@ -184,7 +182,7 @@ namespace Skylicht
 		GUI::CBoxLayout* CSpaceProperty::createBoxLayout(GUI::CCollapsibleGroup* group)
 		{
 			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(group);
-			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, 15.0, 5.0));
+			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, -15.0, 5.0));
 			return boxLayout;
 		}
 

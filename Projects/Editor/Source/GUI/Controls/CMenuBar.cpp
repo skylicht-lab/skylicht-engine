@@ -65,7 +65,7 @@ namespace Skylicht
 					item->showIcon(false);
 
 				item->dock(EPosition::Left);
-				item->setPadding(SPadding(6.0f, 0.0f, 6.0f, 0.0f));
+				item->setPadding(SPadding(6.0f, 0.0f, -6.0f, 0.0f));
 				item->setMargin(SMargin(0.0f, 3.0f, 0.0f, 3.0f));
 				item->setLabelMargin(SMargin(0.0f, 2.0f, 0.0f, 0.0f));
 				item->setInMenuBar(true);

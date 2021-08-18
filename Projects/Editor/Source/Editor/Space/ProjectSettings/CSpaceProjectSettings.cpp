@@ -41,17 +41,39 @@ namespace Skylicht
 			mainSplit->setColWidth(0, 200.0f);
 			mainSplit->setWeakCol(1);
 
-			m_menuContainer = new GUI::CBase(mainSplit);
-			m_menuContainer->setPadding(GUI::SPadding(5.0f, 5.0f, 5.0f, 5.0f));
-			mainSplit->setControl(m_menuContainer, 0, 0);
+			GUI::CBase* menuBase = new GUI::CBase(mainSplit);
+			menuBase->setPadding(GUI::SPadding(5.0f, 5.0f, -5.0f, -5.0f));
+
+			m_menuContainer = new GUI::CScrollControl(menuBase);
+			m_menuContainer->dock(GUI::EPosition::Fill);
+			m_menuContainer->enableScroll(false, true);
+			m_menuContainer->showScrollBar(false, true);
+			m_menuContainer->enableModifyChildWidth(true);
+			m_menuContainer->enableRenderFillRect(false);
+			m_menuContainer->getVerticalScroll()->enableRenderFillRect(false);
+			mainSplit->setControl(menuBase, 0, 0);
 
 			addMenuButton(L"Layer name");
 			addMenuButton(L"Collision");
 
-			m_infoContainer = new GUI::CBase(mainSplit);
-			m_infoContainer->enableRenderFillRect(true);
-			m_infoContainer->setFillRectColor(GUI::SGUIColor(255, 65, 65, 65));
-			mainSplit->setControl(m_infoContainer, 0, 1);
+			GUI::CBase* infoBase = new GUI::CBase(mainSplit);
+			infoBase->enableRenderFillRect(true);
+			infoBase->setFillRectColor(GUI::SGUIColor(255, 55, 55, 55));
+
+			m_infoContainer = new GUI::CScrollControl(infoBase);
+			m_infoContainer->dock(GUI::EPosition::Fill);
+			m_infoContainer->enableRenderFillRect(false);
+			m_infoContainer->enableScroll(false, true);
+			m_infoContainer->showScrollBar(false, true);
+			m_infoContainer->enableModifyChildWidth(true);
+
+			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_infoContainer);
+			colapsible->dock(GUI::EPosition::Top);
+			colapsible->getHeader()->setFillRectColor(GUI::SGUIColor(255, 65, 65, 65));
+			colapsible->getHeader()->setLabel(L"Layer Name");
+			colapsible->setExpand(true);
+
+			mainSplit->setControl(infoBase, 0, 1);
 		}
 
 		CSpaceProjectSettings::~CSpaceProjectSettings()
@@ -68,6 +90,11 @@ namespace Skylicht
 			GUI::CFlatButton* button = new GUI::CFlatButton(m_menuContainer);
 			button->setLabel(label);
 			button->dock(GUI::EPosition::Top);
+
+			GUI::SMargin m = button->getMargin();
+			m.Right = m.Right + 1.0f;
+			button->setMargin(m);
+
 			button->OnPress = BIND_LISTENER(&CSpaceProjectSettings::onSelectMenu, this);
 
 			m_menuGroup->addButton(button);
