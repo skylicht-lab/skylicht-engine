@@ -44,7 +44,7 @@ namespace Skylicht
 				m_isToggle(false),
 				m_toggleStatus(false)
 			{
-				setPadding(SPadding(8.0f, 0.0f, 8.0f, 0.0f));
+				setPadding(SPadding(8.0f, 0.0f, -8.0f, 0.0f));
 				m_icon = new CIcon(this, ESystemIcon::None);
 				m_icon->dock(EPosition::Left);
 
@@ -198,7 +198,7 @@ namespace Skylicht
 
 				m_label->sizeToContents();
 
-				float w = m_padding.Left + m_padding.Right + m_label->width();
+				float w = m_padding.Left - m_padding.Right + m_label->width();
 				if (m_icon->isHidden() == false)
 					w = w + m_icon->width();
 

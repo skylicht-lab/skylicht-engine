@@ -43,7 +43,7 @@ namespace Skylicht
 				m_enableRenderOver(false),
 				m_dragOutTabStrip(false)
 			{
-				setPadding(SPadding(8.0f, 0.0f, 2.0f, 0.0f));
+				setPadding(SPadding(8.0f, 0.0f, -2.0f, 0.0f));
 
 				m_color = CThemeConfig::TabButtonColor;
 				m_pressColor = CThemeConfig::TabButtonActiveColor;

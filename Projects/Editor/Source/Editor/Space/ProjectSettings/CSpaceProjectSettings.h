@@ -37,8 +37,9 @@ namespace Skylicht
 		protected:
 			GUI::CToggleGroup* m_menuGroup;
 
-			GUI::CBase* m_menuContainer;
-			GUI::CBase* m_infoContainer;
+			GUI::CScrollControl* m_menuContainer;
+			GUI::CScrollControl* m_infoContainer;
+			GUI::CContentSizeControl* m_content;
 
 			std::vector<GUI::CFlatButton*> m_menuButtons;
 		public:

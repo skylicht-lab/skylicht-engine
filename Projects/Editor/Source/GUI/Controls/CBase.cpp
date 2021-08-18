@@ -336,7 +336,7 @@ namespace Skylicht
 			{
 				SDimension size = getChildrenSize();
 				size.Height = size.Height + m_padding.Bottom;
-				size.Width = size.Width - m_padding.Right;
+				size.Width = size.Width + m_padding.Right;
 				setSize(w ? size.Width : width(), h ? size.Height : height());
 			}
 
@@ -848,7 +848,7 @@ namespace Skylicht
 
 				// Adjust bounds for padding
 				rBounds.X = rBounds.X + m_padding.Left;
-				rBounds.Width = rBounds.Width - m_padding.Left - m_padding.Right;
+				rBounds.Width = rBounds.Width - m_padding.Left + m_padding.Right;
 				rBounds.Y = rBounds.Y + m_padding.Top;
 				rBounds.Height = rBounds.Height - m_padding.Top + m_padding.Bottom;
 

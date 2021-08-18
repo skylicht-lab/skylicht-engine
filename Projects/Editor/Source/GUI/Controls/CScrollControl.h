@@ -43,6 +43,9 @@ namespace Skylicht
 
 				float m_widthScrollExpand;
 				float m_heightScrollExpand;
+
+				bool m_modifyChildWidth;
+
 			public:
 				CScrollControl(CBase* parent);
 
@@ -64,6 +67,11 @@ namespace Skylicht
 
 				void enableScroll(bool h, bool v);
 
+				void enableModifyChildWidth(bool b)
+				{
+					m_modifyChildWidth = b;
+				}
+
 				float getInnerWidth();
 
 				float getInnerHeight();
@@ -76,12 +84,12 @@ namespace Skylicht
 
 				void setScrollHorizontal(float x);
 
-				inline CScrollBar* getVerticalSroll()
+				inline CScrollBar* getVerticalScroll()
 				{
 					return m_vertical;
 				}
 
-				inline CScrollBar* getHorizontalSroll()
+				inline CScrollBar* getHorizontalScroll()
 				{
 					return m_horizontal;
 				}
