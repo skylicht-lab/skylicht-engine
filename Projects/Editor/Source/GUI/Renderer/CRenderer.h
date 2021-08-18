@@ -69,6 +69,8 @@ namespace Skylicht
 
 				virtual void drawFillRect(const SRect& r, const SGUIColor& color) {}
 
+				virtual void drawBorderRect(const SRect& r, const SGUIColor& color, bool left, bool top, bool right, bool bottom) {}
+
 				virtual void renderText(const SRect& r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string) {}
 
 				virtual SDimension measureText(EFontSize fontSize, const std::wstring& string) = 0;

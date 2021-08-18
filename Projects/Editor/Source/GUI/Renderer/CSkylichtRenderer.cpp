@@ -147,6 +147,45 @@ namespace Skylicht
 				g->addRectangleBatch(getRect(r), uv, getColor(color), world, m_materialID, NULL);
 			}
 
+			void CSkylichtRenderer::drawBorderRect(const SRect& r, const SGUIColor& color, bool left, bool top, bool right, bool bottom)
+			{
+				CGraphics2D* g = CGraphics2D::getInstance();
+				CSkylichtTheme* theme = (CSkylichtTheme*)CTheme::getTheme();
+
+				float invW = 1.0f / (float)theme->getAtlasWidth();
+				float invH = 1.0f / (float)theme->getAtlasHeight();
+
+				const core::matrix4& world = getWorldTransform();
+
+				float offsetX = 2.0f;
+				float offsetY = 2.0f;
+				core::rectf uv(offsetX * invW, offsetY * invH, offsetX * invW, offsetY * invH);
+
+				if (left)
+				{
+					core::rectf leftRect(r.X, r.Y, r.X + 1.0f, r.Y + r.Height);
+					g->addRectangleBatch(leftRect, uv, getColor(color), world, m_materialID, NULL);
+				}
+
+				if (top)
+				{
+					core::rectf leftRect(r.X, r.Y, r.X + r.Width, r.Y + 1.0f);
+					g->addRectangleBatch(leftRect, uv, getColor(color), world, m_materialID, NULL);
+				}
+
+				if (right)
+				{
+					core::rectf leftRect(r.X + r.Width - 1.0f, r.Y, r.X + r.Width, r.Y + r.Height);
+					g->addRectangleBatch(leftRect, uv, getColor(color), world, m_materialID, NULL);
+				}
+
+				if (bottom)
+				{
+					core::rectf leftRect(r.X, r.Y + r.Height - 1.0f, r.X + r.Width, r.Y + r.Height);
+					g->addRectangleBatch(leftRect, uv, getColor(color), world, m_materialID, NULL);
+				}
+			}
+
 			void CSkylichtRenderer::renderText(const SRect& r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string)
 			{
 				CGlyphFont* font = m_fontNormal;
