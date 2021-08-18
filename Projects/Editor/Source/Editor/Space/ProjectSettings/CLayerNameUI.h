@@ -24,50 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-
 #include "CProjectSettingUI.h"
-#include "CLayerNameUI.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceProjectSettings : public CSpace
+		class CLayerNameUI : public CProjectSettingUI
 		{
-		protected:
-			GUI::CToggleGroup* m_menuGroup;
-
-			GUI::CButton* m_apply;
-
-			GUI::CScrollControl* m_menuContainer;
-			GUI::CBase* m_infoContainer;
-
-			std::vector<GUI::CFlatButton*> m_menuButtons;
-			std::vector<CProjectSettingUI*> m_guis;
-
-			CProjectSettingUI* m_gui;
-
 		public:
-			CSpaceProjectSettings(GUI::CWindow* window, CEditor* editor);
+			CLayerNameUI(CSpaceProjectSettings *settings, GUI::CBase* base, const std::wstring& name);
 
-			virtual ~CSpaceProjectSettings();
-
-		protected:
-
-			void addMenuButton(const std::wstring& label);
-
-			void setSelectMenu(int i);
-
-			void enableApply();
-
-			void onSelectMenu(GUI::CBase* button);
-
-			void onApply(GUI::CBase* button);
-
-			void onOK(GUI::CBase* button);
+			virtual ~CLayerNameUI();
 		};
 	}
 }

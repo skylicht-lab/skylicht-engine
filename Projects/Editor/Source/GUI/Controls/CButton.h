@@ -53,6 +53,7 @@ namespace Skylicht
 				bool m_isToggle;
 				bool m_toggleStatus;
 
+				bool m_drawDisableButton;
 			public:
 
 				Listener OnDown;
@@ -174,6 +175,11 @@ namespace Skylicht
 				inline void enableDrawBackground(bool b)
 				{
 					m_drawBackground = b;
+				}
+
+				inline void enableDrawDisable(bool b)
+				{
+					m_drawDisableButton = b;
 				}
 
 				inline void setIsToggle(bool b)

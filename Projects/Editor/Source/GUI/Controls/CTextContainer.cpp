@@ -610,7 +610,7 @@ namespace Skylicht
 					return;
 
 				float x = 0.0f;
-				float w = floor(m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right - m_paddingRight);
+				float w = floor(m_parent->width() - m_parent->getPadding().Left + m_parent->getPadding().Right - m_paddingRight);
 
 				ListTextControl::iterator i = m_lines.begin(), end = m_lines.end();
 				while (i != end)

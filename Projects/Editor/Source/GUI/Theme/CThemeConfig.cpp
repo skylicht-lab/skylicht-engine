@@ -54,6 +54,7 @@ namespace Skylicht
 			SGUIColor CThemeConfig::TextBoxButtonColor = SGUIColor(255, 110, 110, 110);
 
 			SGUIColor CThemeConfig::ButtonColor = SGUIColor(255, 88, 88, 88);
+			SGUIColor CThemeConfig::ButtonDisableColor = SGUIColor(255, 55, 55, 55);
 			SGUIColor CThemeConfig::ButtonTextColor = SGUIColor(255, 250, 250, 250);
 			SGUIColor CThemeConfig::ButtonTextDisableColor = SGUIColor(255, 85, 85, 85);
 			SGUIColor CThemeConfig::ButtonHoverColor = SGUIColor(255, 110, 110, 110);
