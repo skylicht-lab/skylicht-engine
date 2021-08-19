@@ -104,6 +104,9 @@ namespace Skylicht
 
 		CSpaceProjectSettings::~CSpaceProjectSettings()
 		{
+			for (CProjectSettingUI* ui : m_guis)
+				delete ui;
+
 			if (m_menuGroup != NULL)
 				delete m_menuGroup;
 		}
@@ -179,18 +182,16 @@ namespace Skylicht
 		void CSpaceProjectSettings::onOK(GUI::CBase* button)
 		{
 			for (CProjectSettingUI* ui : m_guis)
-			{
 				ui->save();
-			}
+
 			m_window->onCloseWindow();
 		}
 
 		void CSpaceProjectSettings::onApply(GUI::CBase* button)
 		{
 			for (CProjectSettingUI* ui : m_guis)
-			{
 				ui->save();
-			}
+
 			button->setDisabled(true);
 		}
 	}
