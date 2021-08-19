@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Serializable/CValueProperty.h"
+#include "Serializable/CObjectSerializable.h"
 
 namespace Skylicht
 {
@@ -106,9 +106,9 @@ namespace Skylicht
 
 		virtual ~CXMLSpreadsheet();
 
-		bool open(const char *file);
+		bool open(const char* file);
 
-		bool open(io::IXMLReader *xmlReader);
+		bool open(io::IXMLReader* xmlReader);
 
 		inline u32 getSheetCount()
 		{
@@ -127,12 +127,12 @@ namespace Skylicht
 
 		SCell* getCell(SSheet* sheet, u32 row, u32 col);
 
-		SCell* getCell(SSheet* sheet, const char *cellName);
+		SCell* getCell(SSheet* sheet, const char* cellName);
 
 		std::list<SCell*> getRange(SSheet* sheet, u32 fromRow, u32 fromCol, u32 toRow, u32 toCol);
 
-		std::list<SCell*> getRange(SSheet* sheet, const char *from, const char *to);
+		std::list<SCell*> getRange(SSheet* sheet, const char* from, const char* to);
 
-		bool convertCellName(const char *cellName, u32& row, u32 &col);
+		bool convertCellName(const char* cellName, u32& row, u32& col);
 	};
 }

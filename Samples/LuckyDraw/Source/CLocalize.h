@@ -6,7 +6,7 @@ enum class ELanguage
 	VN
 };
 
-class CDataText : public CObjectSerizable
+class CDataText : public CObjectSerializable
 {
 public:
 	CStringProperty SRING_ID;
