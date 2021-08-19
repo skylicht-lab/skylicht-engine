@@ -22,21 +22,21 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Utils/CGameSingleton.h"
-#include "Serializable/CObjectSerizable.h"
+#include "pch.h"
+#include "CObjectLayer.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CCullingLayer : public CGameSingleton<CCullingLayer>
+		CObjectLayer::CObjectLayer()
 		{
-		public:
-			CCullingLayer();
 
-			virtual ~CCullingLayer();
-		};
+		}
+
+		CObjectLayer::~CObjectLayer()
+		{
+
+		}
 	}
 }
