@@ -22,29 +22,62 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CObjectSerizable.h"
+#pragma once
+
 #include "CValueProperty.h"
+#include "CValuePropertyTemplate.h"
 
 namespace Skylicht
 {
-	CObjectSerizable::CObjectSerizable()
+	class CObjectSerializable : public CValueProperty
 	{
+		friend class CValueProperty;
 
-	}
+	protected:
+		std::vector<CValueProperty*> m_value;
+		std::vector<CValueProperty*> m_autoRelease;
 
-	CObjectSerizable::~CObjectSerizable()
-	{
+	protected:
 
-	}
-
-	CValueProperty* CObjectSerizable::getProperty(const char *name)
-	{
-		for (CValueProperty* p : m_value)
+		void addProperty(CValueProperty* p)
 		{
-			if (p->Name == name)
-				return p;
+			m_value.push_back(p);
 		}
-		return NULL;
-	}
+
+		void addAutoRelease(CValueProperty* p)
+		{
+			m_autoRelease.push_back(p);
+		}
+
+	public:
+		CObjectSerializable();
+
+		CObjectSerializable(CObjectSerializable* parent);
+
+		virtual ~CObjectSerializable();
+
+		inline u32 getNumProperty()
+		{
+			return (u32)m_value.size();
+		}
+
+		inline CValueProperty* getPropertyID(int i)
+		{
+			return m_value[i];
+		}
+
+		CValueProperty* getProperty(const char* name);
+
+		virtual void serialize(io::IAttributes* io);
+
+		virtual void deserialize(io::IAttributes* io);
+
+		void save(const char* file);
+
+		void load(const char* file);
+
+		void save(io::IXMLWriter* writer);
+
+		void load(io::IXMLReader* reader);
+	};
 }
