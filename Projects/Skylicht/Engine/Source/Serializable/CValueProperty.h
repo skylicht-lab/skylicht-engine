@@ -24,145 +24,41 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CObjectSerizable.h"
-
 namespace Skylicht
 {
+	class CObjectSerializable;
+
 	enum EPropertyDataType
 	{
 		String,
 		Integer,
 		Float,
 		Decimal,
-		DateTime
+		DateTime,
+		Object
 	};
 
 	class CValueProperty
 	{
 	protected:
 		EPropertyDataType m_dataType;
-		CObjectSerizable* m_owner;
+
+		CObjectSerializable* m_owner;
 
 	public:
 		std::string Name;
 
-		CValueProperty(CObjectSerizable* owner, EPropertyDataType dataType, const char* name) :
-			m_owner(owner),
-			m_dataType(dataType),
-			Name(name)
-		{
-			owner->addProperty(this);
-		}
+		CValueProperty(CObjectSerializable* owner, EPropertyDataType dataType, const char* name);
 
-		virtual ~CValueProperty()
-		{
-
-		}
+		virtual ~CValueProperty();
 
 		EPropertyDataType getType()
 		{
 			return m_dataType;
 		}
-	};
 
-	template<class T>
-	class CValuePropertyTemplate : public CValueProperty
-	{
-	protected:
-		T m_value;
+		virtual void serialize(io::IAttributes* io) = 0;
 
-	public:
-		CValuePropertyTemplate(CObjectSerizable* owner, EPropertyDataType dataType, const char* name) :
-			CValueProperty(owner, dataType, name)
-		{
-		}
-
-		virtual ~CValuePropertyTemplate()
-		{
-
-		}
-
-		inline void set(const T& v)
-		{
-			m_value = v;
-		}
-
-		inline const T& get()
-		{
-			return m_value;
-		}
-
-		T& operator*()
-		{
-			return m_value;
-		}
-	};
-
-	class CIntProperty : public CValuePropertyTemplate<int>
-	{
-	public:
-		CIntProperty(CObjectSerizable* owner, const char* name) :
-			CValuePropertyTemplate(owner, Integer, name)
-		{
-			set(0);
-		}
-
-		CIntProperty(CObjectSerizable* owner, const char* name, int value) :
-			CValuePropertyTemplate(owner, Integer, name)
-		{
-			set(value);
-		}
-	};
-
-	class CFloatProperty : public CValuePropertyTemplate<float>
-	{
-	public:
-		CFloatProperty(CObjectSerizable* owner, const char* name) :
-			CValuePropertyTemplate(owner, Float, name)
-		{
-			set(0.0f);
-		}
-
-		CFloatProperty(CObjectSerizable* owner, const char* name, float value) :
-			CValuePropertyTemplate(owner, Float, name)
-		{
-			set(value);
-		}
-	};
-
-	class CStringProperty : public CValuePropertyTemplate<std::string>
-	{
-	public:
-		CStringProperty(CObjectSerizable* owner, const char* name) :
-			CValuePropertyTemplate(owner, String, name)
-		{
-		}
-
-		CStringProperty(CObjectSerizable* owner, const char* name, const char* value) :
-			CValuePropertyTemplate(owner, String, name)
-		{
-			set(value);
-		}
-
-		const char* getString()
-		{
-			return m_value.c_str();
-		}
-	};
-
-	class CDateTimeProperty : public CValuePropertyTemplate<long>
-	{
-	public:
-		CDateTimeProperty(CObjectSerizable* owner, const char* name) :
-			CValuePropertyTemplate(owner, DateTime, name)
-		{
-			set(0);
-		}
-
-		CDateTimeProperty(CObjectSerizable* owner, const char* name, long value) :
-			CValuePropertyTemplate(owner, DateTime, name)
-		{
-			set(value);
-		}
+		virtual void deserialize(io::IAttributes* io) = 0;
 	};
 }

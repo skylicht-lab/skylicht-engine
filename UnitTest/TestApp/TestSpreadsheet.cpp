@@ -6,7 +6,7 @@
 using namespace irr;
 using namespace Skylicht;
 
-class RowData : public CObjectSerizable
+class RowData : public CObjectSerializable
 {
 public:
 	CIntProperty ID;

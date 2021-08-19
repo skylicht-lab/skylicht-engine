@@ -22,41 +22,23 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CValueProperty.h"
+#include "CObjectSerializable.h"
 
 namespace Skylicht
 {
-	class CValueProperty;
-
-	class CObjectSerizable
+	CValueProperty::CValueProperty(CObjectSerializable* owner, EPropertyDataType dataType, const char* name) :
+		m_owner(owner),
+		m_dataType(dataType),
+		Name(name)
 	{
-		friend class CValueProperty;
+		if (owner != NULL)
+			owner->addProperty(this);
+	}
 
-	protected:
-		std::vector<CValueProperty*> m_value;
+	CValueProperty::~CValueProperty()
+	{
 
-	protected:
-
-		void addProperty(CValueProperty *p)
-		{
-			m_value.push_back(p);
-		}
-
-	public:
-		CObjectSerizable();
-
-		virtual ~CObjectSerizable();
-
-		inline u32 getNumProperty()
-		{
-			return (u32)m_value.size();
-		}
-
-		inline CValueProperty* getPropertyID(int i)
-		{
-			return m_value[i];
-		}
-
-		CValueProperty* getProperty(const char *name);
-	};
+	}
 }

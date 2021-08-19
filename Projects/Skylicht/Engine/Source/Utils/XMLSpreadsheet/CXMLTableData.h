@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CXMLSpreadsheet.h"
-#include "Serializable/CValueProperty.h"
+#include "Serializable/CObjectSerializable.h"
 
 namespace Skylicht
 {
@@ -90,7 +90,7 @@ namespace Skylicht
 				}
 
 				T* obj = new T();
-				CObjectSerizable* objectSerizable = dynamic_cast<CObjectSerizable*>(obj);
+				CObjectSerializable* objectSerizable = dynamic_cast<CObjectSerializable*>(obj);
 				if (objectSerizable == NULL)
 				{
 					delete obj;

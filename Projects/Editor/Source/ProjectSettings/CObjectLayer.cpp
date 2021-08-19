@@ -31,12 +31,33 @@ namespace Skylicht
 	{
 		CObjectLayer::CObjectLayer()
 		{
+			Name = "CObjectLayer";
 
+			char name[64];
+			for (int i = 0; i < 16; i++)
+			{
+				sprintf(name, "%d", i);
+				addAutoRelease(new CStringProperty(this, name, ""));
+			}
+
+			setName(0, "Default");
 		}
 
 		CObjectLayer::~CObjectLayer()
 		{
 
+		}
+
+		const std::string& CObjectLayer::getName(int i)
+		{
+			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
+			return value->get();
+		}
+
+		void CObjectLayer::setName(int i, const char* name)
+		{
+			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
+			value->set(name);
 		}
 	}
 }

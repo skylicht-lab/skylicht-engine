@@ -41,7 +41,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "Selection/CSelection.h"
 #include "Activator/CEditorActivator.h"
-#include "ProjectSettings/CObjectLayer.h"
 
 namespace Skylicht
 {
@@ -73,12 +72,10 @@ namespace Skylicht
 			CPropertyController::createGetInstance();
 			CSelection::createGetInstance();
 			CEditorActivator::createGetInstance();
-			CObjectLayer::createGetInstance();
 		}
 
 		CEditor::~CEditor()
 		{
-			CObjectLayer::releaseInstance();
 			CEditorActivator::releaseInstance();
 			CPropertyController::releaseInstance();
 			CSceneController::releaseInstance();

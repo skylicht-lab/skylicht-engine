@@ -24,19 +24,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "Serializable/CObjectSerizable.h"
+#include "Serializable/CObjectSerializable.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CObjectLayer : public CGameSingleton<CObjectLayer>
+		class CObjectLayer : public CObjectSerializable
 		{
 		public:
 			CObjectLayer();
 
 			virtual ~CObjectLayer();
+
+			const std::string& getName(int i);
+
+			void setName(int i, const char* name);
 		};
 	}
 }
