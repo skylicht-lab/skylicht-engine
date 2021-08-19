@@ -48,9 +48,9 @@ namespace Skylicht
 
 				GUI::CLabel* label = new GUI::CLabel(layout);
 				label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
-				label->setWidth(150.0f);
+				label->setWidth(200.0f);
 
-				swprintf(text, L"%d", i);
+				swprintf(text, L"Layer: %d", i);
 				label->setString(text);
 
 				label->setTextAlignment(GUI::TextRight);

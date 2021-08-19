@@ -49,7 +49,7 @@ namespace Skylicht
 
 			}
 
-			virtual CProjectSettingUI::~CProjectSettingUI()
+			virtual ~CProjectSettingUI()
 			{
 
 			}
