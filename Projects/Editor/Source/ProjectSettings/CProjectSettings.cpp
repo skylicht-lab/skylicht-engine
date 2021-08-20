@@ -22,52 +22,43 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-
-#include "CProjectSettingUI.h"
-#include "CLayerNameUI.h"
+#include "pch.h"
+#include "CProjectSettings.h"
+#include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceProjectSettings : public CSpace
+		CProjectSettings::CProjectSettings()
 		{
-		protected:
-			GUI::CToggleGroup* m_menuGroup;
+			m_objectLayer = new CObjectLayer();
 
-			GUI::CButton* m_apply;
+			load();
+		}
 
-			GUI::CScrollControl* m_menuContainer;
-			GUI::CBase* m_infoContainer;
+		CProjectSettings::~CProjectSettings()
+		{
 
-			std::vector<GUI::CFlatButton*> m_menuButtons;
-			std::vector<CProjectSettingUI*> m_guis;
+		}
 
-			CProjectSettingUI* m_gui;
+		void CProjectSettings::load()
+		{
+			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+			std::string settingFolder = assetFolder + "/BuiltIn/Settings";
+			std::string layerSetting = settingFolder + "/ObjectLayer.xml";
 
-		public:
-			CSpaceProjectSettings(GUI::CWindow* window, CEditor* editor);
+			if (m_objectLayer->load(layerSetting.c_str()) == false)
+				m_objectLayer->save(layerSetting.c_str());
+		}
 
-			virtual ~CSpaceProjectSettings();
+		void CProjectSettings::save()
+		{
+			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+			std::string settingFolder = assetFolder + "/BuiltIn/Settings";
+			std::string layerSetting = settingFolder + "/ObjectLayer.xml";
 
-			void enableApply();
-
-		protected:
-
-			void addMenuButton(const std::wstring& label);
-
-			void setSelectMenu(int i);
-
-			void onSelectMenu(GUI::CBase* button);
-
-			void onApply(GUI::CBase* button);
-
-			void onOK(GUI::CBase* button);
-		};
+			m_objectLayer->save(layerSetting.c_str());
+		}
 	}
 }

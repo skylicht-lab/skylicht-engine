@@ -41,6 +41,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "Selection/CSelection.h"
 #include "Activator/CEditorActivator.h"
+#include "ProjectSettings/CProjectSettings.h"
 
 namespace Skylicht
 {
@@ -72,6 +73,7 @@ namespace Skylicht
 			CPropertyController::createGetInstance();
 			CSelection::createGetInstance();
 			CEditorActivator::createGetInstance();
+			CProjectSettings::createGetInstance();
 		}
 
 		CEditor::~CEditor()
@@ -80,6 +82,7 @@ namespace Skylicht
 			CPropertyController::releaseInstance();
 			CSceneController::releaseInstance();
 			CSelection::releaseInstance();
+			CProjectSettings::releaseInstance();
 
 			delete m_spriteIcon;
 			delete m_assetWatcher;
@@ -879,13 +882,7 @@ namespace Skylicht
 			}
 			else if (label == L"Project Setting")
 			{
-				float w = 680.0f;
-				float h = 480.0f;
-				GUI::CDialogWindow* window = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, w, h);
-				window->setCaption(menuItem->getLabel());
-				window->setCenterPosition();
-				window->setResizable(true);
-				initWorkspace(window, window->getCaption());
+				showProjectSetting();
 			}
 			else
 			{
@@ -899,6 +896,17 @@ namespace Skylicht
 					}
 				}
 			}
+		}
+
+		void CEditor::showProjectSetting()
+		{
+			float w = 680.0f;
+			float h = 480.0f;
+			GUI::CDialogWindow* window = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, w, h);
+			window->setCaption(L"Project Setting");
+			window->setCenterPosition();
+			window->setResizable(true);
+			initWorkspace(window, window->getCaption());
 		}
 
 		void CEditor::OnCommandGameObject(GUI::CBase* item)

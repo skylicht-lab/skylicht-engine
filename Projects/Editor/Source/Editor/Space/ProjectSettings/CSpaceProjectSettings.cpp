@@ -189,8 +189,8 @@ namespace Skylicht
 
 		void CSpaceProjectSettings::onApply(GUI::CBase* button)
 		{
-			for (CProjectSettingUI* ui : m_guis)
-				ui->save();
+			if (m_gui != NULL)
+				m_gui->save();
 
 			button->setDisabled(true);
 		}

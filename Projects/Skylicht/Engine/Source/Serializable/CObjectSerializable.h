@@ -36,6 +36,7 @@ namespace Skylicht
 	protected:
 		std::vector<CValueProperty*> m_value;
 		std::vector<CValueProperty*> m_autoRelease;
+		std::string m_savePath;
 
 	protected:
 
@@ -72,9 +73,9 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io);
 
-		void save(const char* file);
+		bool save(const char* file);
 
-		void load(const char* file);
+		bool load(const char* file);
 
 		void save(io::IXMLWriter* writer);
 

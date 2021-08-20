@@ -33,9 +33,11 @@ namespace Skylicht
 		class CLayerNameUI : public CProjectSettingUI
 		{
 		public:
-			CLayerNameUI(CSpaceProjectSettings *settings, GUI::CBase* base, const std::wstring& name);
+			CLayerNameUI(CSpaceProjectSettings* settings, GUI::CBase* base, const std::wstring& name);
 
 			virtual ~CLayerNameUI();
+
+			virtual void save();
 		};
 	}
 }

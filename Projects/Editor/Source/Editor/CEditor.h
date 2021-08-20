@@ -131,6 +131,11 @@ namespace Skylicht
 			void setCheckIcon(GUI::CMenuItem* item);
 
 			void closeOpenWorkspace(GUI::CMenuItem* item);
+
+		public:
+
+			void showProjectSetting();
+
 		};
 	}
 }
