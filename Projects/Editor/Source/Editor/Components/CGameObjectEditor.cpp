@@ -25,8 +25,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGameObjectEditor.h"
 #include "Selection/CSelection.h"
+#include "ProjectSettings/CProjectSettings.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/CEditor.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -63,7 +66,7 @@ namespace Skylicht
 
 			ui->addTextBox(layout, L"Name", &Name);
 
-			initObjectLayerMenu(ui->addDropBox(layout, L"Culling", L"Default"));
+			initObjectLayerMenu(object, ui->addDropBox(layout, L"Culling", L""), ui);
 
 			ui->addCheckBox(layout, L"Enable", &Enable);
 			ui->addCheckBox(layout, L"Visible", &Visible);
@@ -127,9 +130,71 @@ namespace Skylicht
 
 		}
 
-		void CGameObjectEditor::initObjectLayerMenu(GUI::CDropdownBox* dropDown)
+		void CGameObjectEditor::initObjectLayerMenu(CGameObject* object, GUI::CDropdownBox* dropDown, CSpaceProperty* ui)
 		{
 			GUI::CMenu* menu = dropDown->getMenu();
+
+			wchar_t labelw[256];
+			CObjectLayer* objectLayer = CProjectSettings::getInstance()->getObjectLayer();
+
+			for (int i = 0; i < 16; i++)
+			{
+				std::wstring name = objectLayer->getName(i);
+				CStringImp::copy(labelw, name.c_str());
+				CStringImp::trim(labelw);
+
+				GUI::CMenuItem* item = NULL;
+
+				if (CStringImp::length(labelw) > 0)
+					item = menu->addItem(labelw);
+				else
+				{
+					swprintf(labelw, 256, L"Layer: %d", i);
+					item = menu->addItem(labelw);
+				}
+
+				u32 value = (1 << i);
+				if (object->getCullingLayer() == value)
+				{
+					item->setIcon(GUI::ESystemIcon::Check);
+					dropDown->setLabel(labelw);
+				}
+				else
+				{
+					item->setIcon(GUI::ESystemIcon::None);
+				}
+
+				item->OnPress = [object, item, value, dropDown, ui](GUI::CBase* base)
+				{
+					// uncheck all menu item
+					GUI::CMenu* menu = dropDown->getMenu();
+					for (GUI::CBase* childMenu : menu->getChildren())
+					{
+						GUI::CMenuItem* item = dynamic_cast<GUI::CMenuItem*>(childMenu);
+						if (item != NULL)
+							item->setIcon(GUI::ESystemIcon::None);
+					}
+
+					// check this item
+					item->setIcon(GUI::ESystemIcon::Check);
+
+					// apply culling
+					object->setCullingLayer(value);
+
+					// apply value
+					dropDown->setLabel(item->getLabel());
+
+					// close menu
+					ui->getWindow()->getCanvas()->closeMenu();
+				};
+			}
+
+			menu->addSeparator();
+			menu->addItem(L"Edit layer")->OnPress = [ui](GUI::CBase* base)
+			{
+				ui->getWindow()->getCanvas()->closeMenu();
+				ui->getEditor()->showProjectSetting();
+			};
 
 			/*
 			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(menu);

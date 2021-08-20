@@ -62,6 +62,11 @@ namespace Skylicht
 			{
 				return m_window;
 			}
+
+			inline CEditor* getEditor()
+			{
+				return m_editor;
+			}
 		};
 	}
 }

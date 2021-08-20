@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,42 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CObjectLayer.h"
+#include "Utils/CGameSingleton.h"
+
 namespace Skylicht
 {
-	class CObjectSerializable;
-
-	enum EPropertyDataType
+	namespace Editor
 	{
-		String,
-		StringW,
-		Integer,
-		Float,
-		Decimal,
-		DateTime,
-		Object
-	};
-
-	class CValueProperty
-	{
-	protected:
-		EPropertyDataType m_dataType;
-
-		CObjectSerializable* m_owner;
-
-	public:
-		std::string Name;
-
-		CValueProperty(CObjectSerializable* owner, EPropertyDataType dataType, const char* name);
-
-		virtual ~CValueProperty();
-
-		EPropertyDataType getType()
+		class CProjectSettings : public CGameSingleton<CProjectSettings>
 		{
-			return m_dataType;
-		}
+		protected:
+			CObjectLayer* m_objectLayer;
 
-		virtual void serialize(io::IAttributes* io) = 0;
+		public:
+			CProjectSettings();
 
-		virtual void deserialize(io::IAttributes* io) = 0;
-	};
+			virtual ~CProjectSettings();
+
+			void load();
+
+			void save();
+
+			CObjectLayer* getObjectLayer()
+			{
+				return m_objectLayer;
+			}
+		};
+	}
 }
