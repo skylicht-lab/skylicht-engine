@@ -76,28 +76,34 @@ namespace Skylicht
 		}
 	}
 
-	void CObjectSerializable::save(const char* file)
+	bool CObjectSerializable::save(const char* file)
 	{
 		io::IXMLWriter* writer = getIrrlichtDevice()->getFileSystem()->createXMLWriter(file);
 		if (writer == NULL)
-			return;
+			return false;
 
 		writer->writeXMLHeader();
 
 		save(writer);
 
 		writer->drop();
+		m_savePath = file;
+
+		return true;
 	}
 
-	void CObjectSerializable::load(const char* file)
+	bool CObjectSerializable::load(const char* file)
 	{
 		io::IXMLReader* reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
 		if (reader == NULL)
-			return;
+			return false;
 
 		load(reader);
 
 		reader->drop();
+		m_savePath = file;
+
+		return true;
 	}
 
 	void CObjectSerializable::save(io::IXMLWriter* writer)

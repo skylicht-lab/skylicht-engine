@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CLayerNameUI.h"
+#include "CSpaceProjectSettings.h"
+#include "ProjectSettings/CProjectSettings.h"
 
 namespace Skylicht
 {
@@ -41,6 +43,8 @@ namespace Skylicht
 			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, -15.0, 5.0));
 
 			wchar_t text[256];
+
+			CObjectLayer* objectLayer = CProjectSettings::getInstance()->getObjectLayer();
 
 			for (int i = 0; i < 16; i++)
 			{
@@ -62,6 +66,15 @@ namespace Skylicht
 					input->setString(L"Default");
 					input->setEditable(false);
 				}
+				else
+				{
+					input->setString(objectLayer->getName(i).c_str());
+					input->OnTextChanged = [i, objectLayer, input, settings = m_settings](GUI::CBase* base)
+					{
+						objectLayer->setName(i, input->getString().c_str());
+						settings->enableApply();
+					};
+				}
 
 				boxLayout->endColumn();
 			}
@@ -72,6 +85,11 @@ namespace Skylicht
 		CLayerNameUI::~CLayerNameUI()
 		{
 
+		}
+
+		void CLayerNameUI::save()
+		{
+			CProjectSettings::getInstance()->getObjectLayer()->saveToFile();
 		}
 	}
 }

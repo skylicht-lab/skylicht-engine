@@ -57,7 +57,7 @@ namespace Skylicht
 
 		protected:
 
-			void initObjectLayerMenu(GUI::CDropdownBox* dropDown);
+			void initObjectLayerMenu(CGameObject *object, GUI::CDropdownBox* dropDown, CSpaceProperty* ui);
 
 		};
 	}

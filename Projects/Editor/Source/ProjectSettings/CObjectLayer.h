@@ -37,9 +37,11 @@ namespace Skylicht
 
 			virtual ~CObjectLayer();
 
-			const std::string& getName(int i);
+			const std::wstring& getName(int i);
 
-			void setName(int i, const char* name);
+			void setName(int i, const wchar_t* name);
+
+			void saveToFile();
 		};
 	}
 }
