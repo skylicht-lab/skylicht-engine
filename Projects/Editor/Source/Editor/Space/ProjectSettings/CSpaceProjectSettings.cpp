@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSpaceProjectSettings.h"
+#include "Editor/CEditor.h"
 
 namespace Skylicht
 {
@@ -163,6 +164,9 @@ namespace Skylicht
 
 		void CSpaceProjectSettings::enableApply()
 		{
+			if (m_gui != NULL)
+				m_gui->setModify(true);
+
 			m_apply->setDisabled(false);
 		}
 
@@ -185,14 +189,22 @@ namespace Skylicht
 				ui->save();
 
 			m_window->onCloseWindow();
+			m_editor->refresh();
 		}
 
 		void CSpaceProjectSettings::onApply(GUI::CBase* button)
 		{
-			if (m_gui != NULL)
-				m_gui->save();
+			for (CProjectSettingUI* ui : m_guis)
+			{
+				if (ui->isModify())
+				{
+					ui->save();
+					ui->setModify(false);
+				}
+			}
 
 			button->setDisabled(true);
+			m_editor->refresh();
 		}
 	}
 }
