@@ -25,7 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpaceProperty.h"
 #include "Utils/CStringImp.h"
+#include "Selection/CSelection.h"
 #include "Editor/SpaceController/CPropertyController.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
@@ -120,6 +122,26 @@ namespace Skylicht
 			{
 				group->Owner->update();
 			}
+		}
+
+		void CSpaceProperty::refresh()
+		{
+			CSelection* selection = CSelection::getInstance();
+
+			CSelectObject* selectedObject = selection->getLastSelected();
+			if (selectedObject != NULL)
+				selectedObject->removeAllObserver();
+			else
+				return;
+
+			// Set property & event
+			CPropertyController* propertyController = CPropertyController::getInstance();
+
+			// Update property
+			propertyController->setProperty(selectedObject);
+
+			// Register observer because we removed
+			selectedObject->addObserver(CSceneController::getInstance());
 		}
 
 		void CSpaceProperty::addComponent(CComponentEditor* editor, CComponentSystem* component)

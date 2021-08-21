@@ -43,8 +43,9 @@ namespace Skylicht
 			setName(0, L"Default");
 			setName(1, L"UI");
 			setName(2, L"Transparent FX");
-			setName(3, L"Enviroment");
-			setName(4, L"Collision");
+			setName(3, L"Sky");
+			setName(4, L"Enviroment");
+			setName(5, L"Collision");
 		}
 
 		CObjectLayer::~CObjectLayer()

@@ -39,12 +39,14 @@ namespace Skylicht
 			CSpaceProjectSettings* m_settings;
 			GUI::CBase* m_parent;
 			std::wstring m_name;
+			bool m_modify;
 
 		public:
 			CProjectSettingUI(CSpaceProjectSettings* settings, GUI::CBase* base, const std::wstring& name) :
 				m_settings(settings),
 				m_parent(base),
-				m_name(name)
+				m_name(name),
+				m_modify(false)
 			{
 
 			}
@@ -62,6 +64,16 @@ namespace Skylicht
 			virtual void save()
 			{
 
+			}
+
+			void setModify(bool b)
+			{
+				m_modify = b;
+			}
+
+			bool isModify()
+			{
+				return m_modify;
 			}
 		};
 	}

@@ -61,9 +61,9 @@ namespace Skylicht
 
 				GUI::CTextBox* input = new GUI::CTextBox(layout);
 
-				if (i == 0)
+				if (i <= 5)
 				{
-					input->setString(L"Default");
+					input->setString(objectLayer->getName(i).c_str());
 					input->setEditable(false);
 				}
 				else
