@@ -71,6 +71,8 @@ namespace Skylicht
 
 			virtual void update();
 
+			virtual void refresh();
+
 			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<float>* value, float step);
 
 			void addTextBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::wstring>* value);

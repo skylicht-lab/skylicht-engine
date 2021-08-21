@@ -59,6 +59,8 @@ namespace Skylicht
 					// Name and icon
 					m_spaceProperty->setIcon(GUI::ESystemIcon::Res3D);
 					m_spaceProperty->setLabel(obj->getName());
+
+					// Clear old ui
 					m_spaceProperty->clearAllGroup();
 
 					// When change the name
