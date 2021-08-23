@@ -39,6 +39,25 @@ namespace Skylicht
 		namespace GUI
 		{
 			class CCanvas;
+			class CBase;
+
+			struct SDragDropPackage
+			{
+				std::string Name;
+				CBase* Control;
+				void* UserData;
+				float HoldOffsetX;
+				float HoldOffsetY;
+
+				SDragDropPackage()
+				{
+					Control = NULL;
+					UserData = NULL;
+					HoldOffsetX = 0.0f;
+					HoldOffsetY = 0.0f;
+				}
+			};
+
 			class CBase
 			{
 			public:
@@ -451,6 +470,11 @@ namespace Skylicht
 				virtual void unfocus();
 				virtual void onTabableFocus() {}
 
+				virtual void onStartDragging(SDragDropPackage* package, int x, int y) {}
+				virtual void onDraggingEnter(SDragDropPackage* package, int x, int y) {}
+				virtual void onDraggingHover(SDragDropPackage* package, int x, int y) {}
+				virtual void onDrop(SDragDropPackage* package, int x, int y) {}
+
 			public:
 
 				virtual CBase* getControlAt(float x, float y, bool onlyIfMouseEnabled = true);
@@ -485,6 +509,13 @@ namespace Skylicht
 					return m_accelOnlyFocus;
 				}
 
+				void setDragDropPackage(const std::string& name, void* userData);
+
+				inline SDragDropPackage* getDragDropPackage()
+				{
+					return m_dragDropData;
+				}
+
 			public:
 
 				Listener OnHoverEnter;
@@ -494,6 +525,10 @@ namespace Skylicht
 				Listener OnRender;
 				Listener OnLostKeyboardFocus;
 				Listener OnKeyboardFocus;
+
+				std::function<bool(const std::string& name)> OnAcceptDragDrop;
+				std::function<bool(SDragDropPackage*)> OnDragDropHover;
+				std::function<bool(SDragDropPackage*)> OnDrop;
 
 				std::function<void(CBase*, float, float, float, float)> OnMouseMoved;
 				std::function<void(CBase*, float, float, bool)> OnLeftMouseClick;
@@ -551,6 +586,8 @@ namespace Skylicht
 				bool m_accelOnlyFocus;
 
 				bool m_isTabable;
+
+				SDragDropPackage* m_dragDropData;
 			};
 		}
 	}

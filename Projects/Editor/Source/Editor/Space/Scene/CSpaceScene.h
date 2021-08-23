@@ -129,6 +129,8 @@ namespace Skylicht
 
 			virtual void update();
 
+			virtual void refresh();
+
 			bool isEditorObject(CGameObject* object);
 
 		protected:

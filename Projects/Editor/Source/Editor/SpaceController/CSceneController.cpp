@@ -179,6 +179,26 @@ namespace Skylicht
 			}
 		}
 
+		void CSceneController::refresh()
+		{
+			CSelection* selection = CSelection::getInstance();
+
+			CSelectObject* selectedObject = selection->getLastSelected();
+			if (selectedObject != NULL)
+				selectedObject->removeAllObserver();
+			else
+				return;
+
+			// Set property & event
+			CPropertyController* propertyController = CPropertyController::getInstance();
+
+			// Update property
+			propertyController->setProperty(selectedObject);
+
+			// Register observer because we removed
+			selectedObject->addObserver(this);
+		}
+
 		void CSceneController::addGizmos(CGizmos* gizmos)
 		{
 			if (std::find(m_gizmos.begin(), m_gizmos.end(), gizmos) != m_gizmos.end())
