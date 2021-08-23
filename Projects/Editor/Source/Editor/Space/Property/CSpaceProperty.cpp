@@ -126,22 +126,7 @@ namespace Skylicht
 
 		void CSpaceProperty::refresh()
 		{
-			CSelection* selection = CSelection::getInstance();
-
-			CSelectObject* selectedObject = selection->getLastSelected();
-			if (selectedObject != NULL)
-				selectedObject->removeAllObserver();
-			else
-				return;
-
-			// Set property & event
-			CPropertyController* propertyController = CPropertyController::getInstance();
-
-			// Update property
-			propertyController->setProperty(selectedObject);
-
-			// Register observer because we removed
-			selectedObject->addObserver(CSceneController::getInstance());
+			
 		}
 
 		void CSpaceProperty::addComponent(CComponentEditor* editor, CComponentSystem* component)

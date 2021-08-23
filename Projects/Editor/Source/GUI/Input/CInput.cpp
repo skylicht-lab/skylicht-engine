@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CCanvas.h"
 #include "GUI/CGUIContext.h"
 
+#include "GUI/Utils/CDragAndDrop.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -151,6 +153,9 @@ namespace Skylicht
 
 				CGUIContext::HoveredControl->onMouseMoved(x, y, deltaX, deltaY);
 				CGUIContext::HoveredControl->updateCursor();
+
+				CDragAndDrop::onMouseMoved(CGUIContext::HoveredControl, x, y);
+
 				return true;
 			}
 
@@ -265,6 +270,9 @@ namespace Skylicht
 				switch (mouseButton)
 				{
 				case 0:
+					if (CDragAndDrop::onMouseButton(CGUIContext::HoveredControl, m_mousePositionX, m_mousePositionY, down))
+						return true;
+
 					if (isTripleClick)
 						CGUIContext::HoveredControl->onMouseTripleClickLeft(m_mousePositionX, m_mousePositionY);
 					else if (isDoubleClick)

@@ -121,6 +121,7 @@ namespace Skylicht
 			m_groupCameraView->enable(true);
 			m_groupCameraView->selectButton(m_toolbarButton[ESceneToolBar::Perspective]);
 
+			m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Move]);
 			m_groupTransform->enable(false);
 
 			// 3d view
@@ -425,6 +426,11 @@ namespace Skylicht
 
 			// update scene
 			m_scene->update();
+		}
+
+		void CSpaceScene::refresh()
+		{
+			CSceneController::getInstance()->refresh();
 		}
 
 		void CSpaceScene::onRender(GUI::CBase* base)

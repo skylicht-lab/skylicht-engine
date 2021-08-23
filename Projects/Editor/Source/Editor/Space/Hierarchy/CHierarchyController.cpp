@@ -42,6 +42,12 @@ namespace Skylicht
 				std::placeholders::_2,
 				std::placeholders::_3
 			);
+
+			m_tree->OnAcceptDragDrop = [](const std::string& name) {
+				if (name == "HierarchyNode")
+					return true;
+				return false;
+			};
 		}
 
 		CHierarchyController::~CHierarchyController()
@@ -82,6 +88,9 @@ namespace Skylicht
 
 			// link data gui to node
 			guiNode->tagData(node);
+
+			// set drag drop data
+			guiNode->setDragDropPackage("HierarchyNode", node);
 
 			// link data node to gui
 			node->setGUINode(guiNode);

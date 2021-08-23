@@ -60,7 +60,8 @@ namespace Skylicht
 				m_tagFloat(0.0f),
 				m_tagBool(false),
 				m_tagData(NULL),
-				m_isTabable(false)
+				m_isTabable(false),
+				m_dragDropData(NULL)
 			{
 				if (parent != NULL)
 					setParent(parent->getInnerPanel());
@@ -87,6 +88,9 @@ namespace Skylicht
 
 				if (CGUIContext::MouseFocus == this)
 					CGUIContext::MouseFocus = NULL;
+
+				if (m_dragDropData != NULL)
+					delete m_dragDropData;
 			}
 
 			void CBase::setHidden(bool hidden)
@@ -1002,6 +1006,16 @@ namespace Skylicht
 				}
 
 				return false;
+			}
+
+			void CBase::setDragDropPackage(const std::string& name, void* userData)
+			{
+				if (m_dragDropData == NULL)
+					m_dragDropData = new SDragDropPackage();
+
+				m_dragDropData->Name = name;
+				m_dragDropData->Control = this;
+				m_dragDropData->UserData = userData;
 			}
 		}
 	}
