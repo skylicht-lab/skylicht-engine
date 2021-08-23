@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CCanvas.h"
 #include "GUI/Theme/CThemeConfig.h"
 #include "GUI/Input/CInput.h"
+#include "GUI/Utils/CDragAndDrop.h"
 
 #include "CDockableWindow.h"
 #include "CDockPanel.h"
@@ -138,6 +139,8 @@ namespace Skylicht
 				render->setRenderOffset(SPoint(0.0f, 0.0f));
 
 				CBase::doRenderOverlay();
+
+				CDragAndDrop::onRenderOverlay(this, render);
 
 				render->end();
 			}

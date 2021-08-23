@@ -77,6 +77,8 @@ namespace Skylicht
 
 			void update();
 
+			void refresh();
+
 			void addGizmos(CGizmos* gizmos);
 
 			void removeGizmos(CGizmos* gizmos);
