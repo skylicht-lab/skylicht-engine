@@ -33,14 +33,25 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			SDragDropPackage* CDragAndDrop::s_dragPackage = NULL;
-
 			static float s_mouseX;
 			static float s_mouseY;
 			static float s_lastMousePositionX = 0;
 			static float s_lastMousePositionY = 0;
 			static GUI::CBase* s_lastPressedControl = NULL;
+			static GUI::CBase* s_lastHoverControl = NULL;
 			static bool s_dragging = false;
+
+			void CDragAndDrop::onControlDeleted(GUI::CBase* control)
+			{
+				if (control == s_lastHoverControl)
+					s_lastHoverControl = NULL;
+
+				if (control == s_lastPressedControl)
+				{
+					s_lastPressedControl = NULL;
+					s_dragging = false;
+				}
+			}
 
 			bool CDragAndDrop::onMouseButton(GUI::CBase* hoveredControl, float x, float y, bool down)
 			{
@@ -53,11 +64,12 @@ namespace Skylicht
 						accept = hoveredControl->OnAcceptDragDrop(s_lastPressedControl->getDragDropPackage()->Name);
 
 					if (hoveredControl->OnDrop != nullptr && accept)
-						hoveredControl->OnDrop(s_lastPressedControl->getDragDropPackage());
+						hoveredControl->OnDrop(s_lastPressedControl->getDragDropPackage(), x, y);
 
 					s_lastMousePositionX = x;
 					s_lastMousePositionY = y;
 					s_lastPressedControl = NULL;
+					s_lastHoverControl = NULL;
 					s_dragging = false;
 					return true;
 				}
@@ -74,7 +86,7 @@ namespace Skylicht
 				s_lastMousePositionX = x;
 				s_lastMousePositionY = y;
 				s_lastPressedControl = hoveredControl;
-
+				s_lastHoverControl = NULL;
 				return false;
 			}
 
@@ -98,13 +110,21 @@ namespace Skylicht
 				bool accept = false;
 				s_dragging = true;
 
+				if (s_lastHoverControl != NULL && s_lastHoverControl != hoveredControl)
+				{
+					if (s_lastHoverControl->OnDragDropOut != nullptr)
+						s_lastHoverControl->OnDragDropOut(s_lastPressedControl->getDragDropPackage(), x, y);
+				}
+
+				s_lastHoverControl = hoveredControl;
+
 				if (s_lastPressedControl != hoveredControl)
 				{
 					if (hoveredControl->OnAcceptDragDrop != nullptr)
 						accept = hoveredControl->OnAcceptDragDrop(s_lastPressedControl->getDragDropPackage()->Name);
 
 					if (accept && hoveredControl->OnDragDropHover != nullptr)
-						hoveredControl->OnDragDropHover(s_lastPressedControl->getDragDropPackage());
+						hoveredControl->OnDragDropHover(s_lastPressedControl->getDragDropPackage(), x, y);
 				}
 
 				if (!accept)

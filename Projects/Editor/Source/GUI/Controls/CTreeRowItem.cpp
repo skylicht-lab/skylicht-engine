@@ -35,7 +35,11 @@ namespace Skylicht
 		{
 			CTreeRowItem::CTreeRowItem(CBase* base, CBase* root) :
 				CButton(base),
-				m_root(root)
+				m_root(root),
+				m_itemOffsetX(0.0f),
+				m_lineColor(255, 255, 255, 255),
+				m_drawLineTop(false),
+				m_drawLineBottom(false)
 			{
 				setIsToggle(true);
 				enableDrawBackground(false);
@@ -93,6 +97,25 @@ namespace Skylicht
 				r.Height = r.Height - 1.0f;
 
 				CTheme::getTheme()->drawButton(r, c);
+
+				float y = r.Y;
+				float height = r.Height;
+
+				// top
+				if (m_drawLineTop)
+				{
+					r.X = r.X + m_itemOffsetX;
+					r.Width = r.Width - m_itemOffsetX;
+					r.Height = 2.0f;
+					CRenderer::getRenderer()->drawFillRect(r, m_lineColor);
+				}
+
+				// bottom
+				if (m_drawLineBottom)
+				{
+					r.Y = y + height - 2.0f;
+					CRenderer::getRenderer()->drawFillRect(r, m_lineColor);
+				}
 			}
 
 			void CTreeRowItem::onMouseClickRight(float x, float y, bool down)

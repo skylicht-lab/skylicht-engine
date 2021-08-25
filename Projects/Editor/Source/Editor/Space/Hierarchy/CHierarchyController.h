@@ -63,6 +63,8 @@ namespace Skylicht
 			void OnSelectChange(GUI::CBase* control);
 
 			GUI::CTreeNode* buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);
+
+			void initDragDrop(GUI::CTreeNode* guiNode, CHierachyNode* node);
 		};
 	}
 }
