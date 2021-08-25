@@ -152,9 +152,9 @@ namespace Skylicht
 				}
 
 				CGUIContext::HoveredControl->onMouseMoved(x, y, deltaX, deltaY);
-				CGUIContext::HoveredControl->updateCursor();
 
-				CDragAndDrop::onMouseMoved(CGUIContext::HoveredControl, x, y);
+				if (CDragAndDrop::onMouseMoved(CGUIContext::HoveredControl, x, y) == false)
+					CGUIContext::HoveredControl->updateCursor();
 
 				return true;
 			}

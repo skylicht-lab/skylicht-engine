@@ -37,9 +37,9 @@ namespace Skylicht
 
 			public:
 
-				static bool onMouseButton(GUI::CBase* hoveredControl, int x, int y, bool down);
+				static bool onMouseButton(GUI::CBase* hoveredControl, float x, float y, bool down);
 
-				static void onMouseMoved(GUI::CBase* hoveredControl, int x, int y);
+				static bool onMouseMoved(GUI::CBase* hoveredControl, float x, float y);
 
 				static void onRenderOverlay(GUI::CCanvas* canvas, CRenderer* renderer);
 

@@ -90,7 +90,8 @@ namespace Skylicht
 			guiNode->tagData(node);
 
 			// set drag drop data
-			guiNode->setDragDropPackage("HierarchyNode", node);
+			GUI::SDragDropPackage* dragDrop = guiNode->getRowItem()->setDragDropPackage("HierarchyNode", node);
+			dragDrop->DrawControl = guiNode->getTextItem();
 
 			// link data node to gui
 			node->setGUINode(guiNode);
