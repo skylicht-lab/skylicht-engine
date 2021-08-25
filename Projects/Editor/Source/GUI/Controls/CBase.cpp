@@ -1008,14 +1008,32 @@ namespace Skylicht
 				return false;
 			}
 
-			void CBase::setDragDropPackage(const std::string& name, void* userData)
+			SDragDropPackage* CBase::setDragDropPackage(const std::string& name, void* userData)
 			{
 				if (m_dragDropData == NULL)
 					m_dragDropData = new SDragDropPackage();
 
 				m_dragDropData->Name = name;
 				m_dragDropData->Control = this;
+				m_dragDropData->DrawControl = this;
 				m_dragDropData->UserData = userData;
+				return m_dragDropData;
+			}
+
+			void CBase::onStartDragging(float x, float y)
+			{
+				if (m_dragDropData != NULL)
+				{
+					SPoint local;
+
+					if (m_dragDropData->DrawControl != NULL)
+						local = m_dragDropData->DrawControl->canvasPosToLocal(SPoint(x, y));
+					else
+						local = canvasPosToLocal(SPoint(x, y));
+
+					m_dragDropData->HoldOffsetX = local.X;
+					m_dragDropData->HoldOffsetY = local.Y;
+				}
 			}
 		}
 	}
