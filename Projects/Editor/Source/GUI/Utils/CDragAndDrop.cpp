@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDragAndDrop.h"
+#include "GUI/Input/CInput.h"
+#include "GUI//Renderer/CRenderer.h"
 
 namespace Skylicht
 {
@@ -33,23 +35,106 @@ namespace Skylicht
 		{
 			SDragDropPackage* CDragAndDrop::s_dragPackage = NULL;
 
-			bool CDragAndDrop::onMouseButton(GUI::CBase* hoveredControl, int x, int y, bool down)
+			static float s_mouseX;
+			static float s_mouseY;
+			static float s_lastMousePositionX = 0;
+			static float s_lastMousePositionY = 0;
+			static GUI::CBase* s_lastPressedControl = NULL;
+			static bool s_dragging = false;
+
+			bool CDragAndDrop::onMouseButton(GUI::CBase* hoveredControl, float x, float y, bool down)
 			{
+				if (!down && s_lastPressedControl != NULL)
+				{
+					// mouse up
+					bool accept = false;
+
+					if (hoveredControl->OnAcceptDragDrop != nullptr)
+						accept = hoveredControl->OnAcceptDragDrop(s_lastPressedControl->getDragDropPackage()->Name);
+
+					if (hoveredControl->OnDrop != nullptr && accept)
+						hoveredControl->OnDrop(s_lastPressedControl->getDragDropPackage());
+
+					s_lastMousePositionX = x;
+					s_lastMousePositionY = y;
+					s_lastPressedControl = NULL;
+					s_dragging = false;
+					return true;
+				}
+
 				SDragDropPackage* drag = hoveredControl->getDragDropPackage();
 				if (drag == NULL)
 					return false;
 
+				if (hoveredControl->OnShouldDrag != nullptr && hoveredControl->OnShouldDrag() == false)
+					return false;
+
+				s_mouseX = x;
+				s_mouseY = y;
+				s_lastMousePositionX = x;
+				s_lastMousePositionY = y;
+				s_lastPressedControl = hoveredControl;
+
 				return false;
 			}
 
-			void CDragAndDrop::onMouseMoved(GUI::CBase* hoveredControl, int x, int y)
+			bool CDragAndDrop::onMouseMoved(GUI::CBase* hoveredControl, float x, float y)
 			{
+				if (s_lastPressedControl == NULL)
+					return false;
 
+				float iLength = std::abs(x - s_lastMousePositionX) + std::abs(y - s_lastMousePositionY);
+				if (iLength < 5.0f)
+					return false;
+
+				if (s_dragging == false)
+				{
+					if (s_lastPressedControl->OnStartDragging != nullptr)
+						s_lastPressedControl->OnStartDragging(s_lastPressedControl->getDragDropPackage(), x, y);
+
+					s_lastPressedControl->onStartDragging(x, y);
+				}
+
+				bool accept = false;
+				s_dragging = true;
+
+				if (s_lastPressedControl != hoveredControl)
+				{
+					if (hoveredControl->OnAcceptDragDrop != nullptr)
+						accept = hoveredControl->OnAcceptDragDrop(s_lastPressedControl->getDragDropPackage()->Name);
+
+					if (accept && hoveredControl->OnDragDropHover != nullptr)
+						hoveredControl->OnDragDropHover(s_lastPressedControl->getDragDropPackage());
+				}
+
+				if (!accept)
+					CInput::getInput()->setCursor(GUI::ECursorType::No);
+				else
+					CInput::getInput()->setCursor(GUI::ECursorType::Normal);
+
+				s_mouseX = x;
+				s_mouseY = y;
+
+				return true;
 			}
 
 			void CDragAndDrop::onRenderOverlay(GUI::CCanvas* canvas, CRenderer* renderer)
 			{
+				if (s_dragging && s_lastPressedControl != NULL && s_lastPressedControl->getDragDropPackage()->DrawControl != NULL)
+				{
+					SDragDropPackage* dragDrop = s_lastPressedControl->getDragDropPackage();
 
+					CRenderer* renderer = CRenderer::getRenderer();
+					SPoint offset = renderer->getRenderOffset();
+
+					renderer->setRenderOffset(SPoint(
+						s_mouseX - dragDrop->HoldOffsetX,
+						s_mouseY - dragDrop->HoldOffsetY)
+					);
+					dragDrop->DrawControl->doRender();
+
+					renderer->setRenderOffset(offset);
+				}
 			}
 		}
 	}

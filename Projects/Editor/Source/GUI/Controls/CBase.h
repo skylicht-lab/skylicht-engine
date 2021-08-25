@@ -45,6 +45,7 @@ namespace Skylicht
 			{
 				std::string Name;
 				CBase* Control;
+				CBase* DrawControl;
 				void* UserData;
 				float HoldOffsetX;
 				float HoldOffsetY;
@@ -53,6 +54,7 @@ namespace Skylicht
 				{
 					Control = NULL;
 					UserData = NULL;
+					DrawControl = NULL;
 					HoldOffsetX = 0.0f;
 					HoldOffsetY = 0.0f;
 				}
@@ -509,12 +511,14 @@ namespace Skylicht
 					return m_accelOnlyFocus;
 				}
 
-				void setDragDropPackage(const std::string& name, void* userData);
+				SDragDropPackage* setDragDropPackage(const std::string& name, void* userData);
 
 				inline SDragDropPackage* getDragDropPackage()
 				{
 					return m_dragDropData;
 				}
+
+				virtual void onStartDragging(float x, float y);
 
 			public:
 
@@ -526,6 +530,8 @@ namespace Skylicht
 				Listener OnLostKeyboardFocus;
 				Listener OnKeyboardFocus;
 
+				std::function<bool()> OnShouldDrag;
+				std::function<bool(SDragDropPackage*, float, float)> OnStartDragging;
 				std::function<bool(const std::string& name)> OnAcceptDragDrop;
 				std::function<bool(SDragDropPackage*)> OnDragDropHover;
 				std::function<bool(SDragDropPackage*)> OnDrop;
