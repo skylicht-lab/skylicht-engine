@@ -38,10 +38,18 @@ namespace Skylicht
 			class CTreeRowItem : public CButton
 			{
 			protected:
-				CBase *m_root;
+				CBase* m_root;
+
+				float m_itemOffsetX;
+
+				bool m_drawLineTop;
+
+				bool m_drawLineBottom;
+
+				SGUIColor m_lineColor;
 
 			public:
-				CTreeRowItem(CBase *base, CBase *root);
+				CTreeRowItem(CBase* base, CBase* root);
 
 				virtual ~CTreeRowItem();
 
@@ -52,6 +60,22 @@ namespace Skylicht
 				virtual void onMouseClickRight(float x, float y, bool down);
 
 				CTreeNode* getNode();
+
+				inline void setItemOffset(float x)
+				{
+					m_itemOffsetX = x;
+				}
+
+				inline void enableDrawLine(bool top, bool bottom)
+				{
+					m_drawLineTop = top;
+					m_drawLineBottom = bottom;
+				}
+
+				inline void setDrawLineColor(const SGUIColor& c)
+				{
+					m_lineColor = c;
+				}
 			};
 		}
 	}

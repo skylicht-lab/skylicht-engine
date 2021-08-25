@@ -132,6 +132,8 @@ namespace Skylicht
 				bounds.X = bounds.X - (row.X - control.X);
 				bounds.Width = treeControl->getScrollControl()->getInnerWidth();
 				m_row->setBounds(bounds);
+
+				m_row->setItemOffset(row.X - control.X + m_title->getMargin().Left);
 			}
 
 			CTreeNode* CTreeNode::addNode(const std::wstring& text)
