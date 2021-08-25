@@ -90,8 +90,7 @@ namespace Skylicht
 			guiNode->tagData(node);
 
 			// set drag drop data
-			GUI::SDragDropPackage* dragDrop = guiNode->getRowItem()->setDragDropPackage("HierarchyNode", node);
-			dragDrop->DrawControl = guiNode->getTextItem();
+			initDragDrop(guiNode, node);
 
 			// link data node to gui
 			node->setGUINode(guiNode);
@@ -187,6 +186,40 @@ namespace Skylicht
 				if (node->OnSelected != nullptr)
 					node->OnSelected(node, treeNode->isSelected());
 			}
+		}
+
+		void CHierarchyController::initDragDrop(GUI::CTreeNode* guiNode, CHierachyNode* node)
+		{
+			GUI::CTreeRowItem* rowItem = guiNode->getRowItem();
+
+			GUI::SDragDropPackage* dragDrop = rowItem->setDragDropPackage("HierarchyNode", node);
+
+			dragDrop->DrawControl = guiNode->getTextItem();
+
+			rowItem->OnAcceptDragDrop = [node](const std::string& name)
+			{
+				if (node->getTagDataType() == CHierachyNode::GameObject)
+				{
+					if (name == "HierarchyNode")
+						return true;
+				}
+				return false;
+			};
+
+			rowItem->OnDragDropHover = [rowItem](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			{
+				// rowItem->enableDrawLine(true, false);
+			};
+
+			rowItem->OnDragDropOut = [rowItem](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			{
+				rowItem->enableDrawLine(false, false);
+			};
+
+			rowItem->OnDrop = [rowItem](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			{
+				rowItem->enableDrawLine(false, false);
+			};
 		}
 	}
 }

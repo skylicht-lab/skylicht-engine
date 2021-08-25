@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Theme/CThemeConfig.h"
 #include "GUI/Input/CInput.h"
 
+#include "GUI/Utils/CDragAndDrop.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -88,6 +90,8 @@ namespace Skylicht
 
 				if (CGUIContext::MouseFocus == this)
 					CGUIContext::MouseFocus = NULL;
+
+				CDragAndDrop::onControlDeleted(this);
 
 				if (m_dragDropData != NULL)
 					delete m_dragDropData;

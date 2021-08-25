@@ -533,8 +533,9 @@ namespace Skylicht
 				std::function<bool()> OnShouldDrag;
 				std::function<bool(SDragDropPackage*, float, float)> OnStartDragging;
 				std::function<bool(const std::string& name)> OnAcceptDragDrop;
-				std::function<bool(SDragDropPackage*)> OnDragDropHover;
-				std::function<bool(SDragDropPackage*)> OnDrop;
+				std::function<void(SDragDropPackage*, float, float)> OnDragDropHover;
+				std::function<void(SDragDropPackage*, float, float)> OnDragDropOut;
+				std::function<void(SDragDropPackage*, float, float)> OnDrop;
 
 				std::function<void(CBase*, float, float, float, float)> OnMouseMoved;
 				std::function<void(CBase*, float, float, bool)> OnLeftMouseClick;
