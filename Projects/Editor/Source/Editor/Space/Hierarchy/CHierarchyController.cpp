@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CHierarchyController.h"
 #include "Utils/CStringImp.h"
 
+#include "GameObject/CZone.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -42,12 +44,6 @@ namespace Skylicht
 				std::placeholders::_2,
 				std::placeholders::_3
 			);
-
-			m_tree->OnAcceptDragDrop = [](const std::string& name) {
-				if (name == "HierarchyNode")
-					return true;
-				return false;
-			};
 		}
 
 		CHierarchyController::~CHierarchyController()
@@ -192,34 +188,151 @@ namespace Skylicht
 		{
 			GUI::CTreeRowItem* rowItem = guiNode->getRowItem();
 
-			GUI::SDragDropPackage* dragDrop = rowItem->setDragDropPackage("HierarchyNode", node);
+			bool allowDrag = true;
 
-			dragDrop->DrawControl = guiNode->getTextItem();
+			if (node == m_node)
+				allowDrag = false;
 
-			rowItem->OnAcceptDragDrop = [node](const std::string& name)
+			if (allowDrag)
 			{
-				if (node->getTagDataType() == CHierachyNode::GameObject)
+				GUI::SDragDropPackage* dragDrop = rowItem->setDragDropPackage("HierarchyNode", node);
+				dragDrop->DrawControl = guiNode->getTextItem();
+			}
+
+			rowItem->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
+			{
+				CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+
+				if (node->getTagDataType() == CHierachyNode::GameObject ||
+					node->getTagDataType() == CHierachyNode::Container)
 				{
-					if (name == "HierarchyNode")
-						return true;
+					if (dragNode->getTagDataType() != CHierachyNode::Zone)
+					{
+						// dont accept drag zone to
+						if (data->Name == "HierarchyNode")
+							return true;
+					}
+				}
+				else if (node->getTagDataType() == CHierachyNode::Zone)
+				{
+
+				}
+				else if (node->getTagDataType() == CHierachyNode::Scene)
+				{
+
 				}
 				return false;
 			};
 
-			rowItem->OnDragDropHover = [rowItem](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			rowItem->OnDragDropHover = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
-				// rowItem->enableDrawLine(true, false);
+				if (node->getTagDataType() == CHierachyNode::Zone)
+				{
+
+				}
+				if (node->getTagDataType() == CHierachyNode::Container)
+				{
+					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+					if (local.Y < rowItem->height() * 0.25f)
+					{
+						rowItem->enableDrawLine(true, false);
+					}
+					else if (local.Y > rowItem->height() * 0.75f)
+					{
+						rowItem->enableDrawLine(false, true);
+					}
+					else
+					{
+						rowItem->enableDrawLine(false, false);
+					}
+				}
+				else if (node->getTagDataType() == CHierachyNode::GameObject)
+				{
+					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+					if (local.Y < rowItem->height() * 0.5f)
+					{
+						rowItem->enableDrawLine(true, false);
+					}
+					else
+					{
+						rowItem->enableDrawLine(false, true);
+					}
+				}
 			};
 
-			rowItem->OnDragDropOut = [rowItem](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			rowItem->OnDragDropOut = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
 				rowItem->enableDrawLine(false, false);
 			};
 
-			rowItem->OnDrop = [rowItem](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			rowItem->OnDrop = [controller = this, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
+				CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+
+				if (node->getTagDataType() == CHierachyNode::Zone)
+				{
+
+				}
+				else if (node->getTagDataType() == CHierachyNode::Container)
+				{
+					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+					if (local.Y < rowItem->height() * 0.25f)
+					{
+						// drop on top
+						controller->move(dragNode, node, true);
+					}
+					else if (local.Y > rowItem->height() * 0.75f)
+					{
+						// drop on bottom
+						controller->move(dragNode, node, false);
+					}
+					else
+					{
+						// drop in child
+						controller->moveToChild(dragNode, node);
+					}
+				}
+				else if (node->getTagDataType() == CHierachyNode::GameObject)
+				{
+					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+					if (local.Y < rowItem->height() * 0.5f)
+					{
+						// drop top
+						controller->move(dragNode, node, true);
+					}
+					else
+					{
+						// drop bottom
+						controller->move(dragNode, node, false);
+					}
+				}
+
 				rowItem->enableDrawLine(false, false);
 			};
+		}
+
+		void CHierarchyController::move(CHierachyNode* from, CHierachyNode* target, bool before)
+		{
+			if (from->getParent() == target->getParent())
+			{
+				// same parent
+			}
+			else
+			{
+
+			}
+		}
+
+		void CHierarchyController::moveToChild(CHierachyNode* from, CHierachyNode* target)
+		{
+			if (from->getParent() == target)
+			{
+
+			}
+			else
+			{
+
+			}
 		}
 	}
 }

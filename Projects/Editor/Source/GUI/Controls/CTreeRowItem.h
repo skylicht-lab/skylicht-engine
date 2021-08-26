@@ -48,6 +48,8 @@ namespace Skylicht
 
 				SGUIColor m_lineColor;
 
+				SPoint m_renderOffset;
+
 			public:
 				CTreeRowItem(CBase* base, CBase* root);
 
@@ -56,6 +58,8 @@ namespace Skylicht
 				virtual void renderUnder();
 
 				virtual void renderBackground();
+
+				virtual void renderOver();
 
 				virtual void onMouseClickRight(float x, float y, bool down);
 

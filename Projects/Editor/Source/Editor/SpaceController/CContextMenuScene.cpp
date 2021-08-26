@@ -101,7 +101,9 @@ namespace Skylicht
 				m_contextMenuScene->open(mousePos);
 				return true;
 			}
-			else if (node->getTagDataType() == CHierachyNode::GameObject)
+			else if (node->getTagDataType() == CHierachyNode::GameObject ||
+				node->getTagDataType() == CHierachyNode::Container ||
+				node->getTagDataType() == CHierachyNode::Zone)
 			{
 				CGameObject* gameObject = (CGameObject*)node->getTagData();
 				if (gameObject)
@@ -154,7 +156,10 @@ namespace Skylicht
 			CScene* contextScene = NULL;
 
 			CHierachyNode::EDataType contextMenuType = contextNode->getTagDataType();
-			if (contextMenuType == CHierachyNode::GameObject)
+
+			if (contextMenuType == CHierachyNode::GameObject ||
+				contextMenuType == CHierachyNode::Container ||
+				contextMenuType == CHierachyNode::Zone)
 				contextObject = (CGameObject*)contextNode->getTagData();
 			else if (contextMenuType == CHierachyNode::Scene)
 				contextScene = (CScene*)contextNode->getTagData();

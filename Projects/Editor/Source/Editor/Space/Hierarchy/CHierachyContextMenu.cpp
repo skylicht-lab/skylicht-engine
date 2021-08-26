@@ -49,6 +49,8 @@ namespace Skylicht
 				if (node != NULL)
 				{
 					if (node->getTagDataType() == CHierachyNode::Scene ||
+						node->getTagDataType() == CHierachyNode::Container ||
+						node->getTagDataType() == CHierachyNode::Zone ||
 						node->getTagDataType() == CHierachyNode::GameObject)
 					{
 						CSceneController::getInstance()->onContextMenu(node);
