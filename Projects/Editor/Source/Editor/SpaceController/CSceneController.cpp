@@ -124,8 +124,6 @@ namespace Skylicht
 			for (CZone* zone : *zones)
 			{
 				CHierachyNode* node = buildHierarchyNodes(zone, m_hierachyNode);
-				if (node != NULL)
-					node->setIcon(GUI::ESystemIcon::Collection);
 			}
 		}
 
@@ -135,6 +133,7 @@ namespace Skylicht
 				return NULL;
 
 			CContainerObject* container = dynamic_cast<CContainerObject*>(object);
+			CZone* zone = dynamic_cast<CZone*>(object);
 
 			CHierachyNode* node = NULL;
 
@@ -143,8 +142,17 @@ namespace Skylicht
 				// add container child
 				node = parentNode->addChild();
 				node->setName(object->getName());
-				node->setIcon(GUI::ESystemIcon::Folder);
-				node->setTagData(object, CHierachyNode::GameObject);
+
+				if (zone != NULL)
+				{
+					node->setTagData(object, CHierachyNode::Zone);
+					node->setIcon(GUI::ESystemIcon::Collection);
+				}
+				else
+				{
+					node->setTagData(object, CHierachyNode::Container);
+					node->setIcon(GUI::ESystemIcon::Folder);
+				}
 
 				// enable color on current zone
 				// if (m_zone == object)
@@ -247,7 +255,7 @@ namespace Skylicht
 			CHierachyNode* node = m_hierachyNode->addChild();
 			node->setName(zone->getName());
 			node->setIcon(GUI::ESystemIcon::Collection);
-			node->setTagData(zone, CHierachyNode::GameObject);
+			node->setTagData(zone, CHierachyNode::Zone);
 
 			setNodeEvent(node);
 
@@ -293,7 +301,7 @@ namespace Skylicht
 				CHierachyNode* node = parentNode->addChild();
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Folder);
-				node->setTagData(newObject, CHierachyNode::GameObject);
+				node->setTagData(newObject, CHierachyNode::Container);
 
 				setNodeEvent(node);
 
@@ -311,7 +319,7 @@ namespace Skylicht
 		void CSceneController::onUpdateNode(CHierachyNode* node)
 		{
 			CHierachyNode::EDataType dataType = node->getTagDataType();
-			if (dataType == CHierachyNode::GameObject)
+			if (dataType == CHierachyNode::GameObject || dataType == CHierachyNode::Container)
 			{
 				CGameObject* obj = (CGameObject*)node->getTagData();
 				obj->setName(node->getName().c_str());
@@ -333,7 +341,7 @@ namespace Skylicht
 			m_focusNode = node;
 
 			CHierachyNode::EDataType dataType = node->getTagDataType();
-			if (dataType == CHierachyNode::GameObject)
+			if (dataType == CHierachyNode::GameObject || dataType == CHierachyNode::Container)
 			{
 				CGameObject* obj = (CGameObject*)node->getTagData();
 				CSelection* selection = CSelection::getInstance();

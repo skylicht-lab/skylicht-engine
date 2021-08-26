@@ -65,6 +65,10 @@ namespace Skylicht
 			GUI::CTreeNode* buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);
 
 			void initDragDrop(GUI::CTreeNode* guiNode, CHierachyNode* node);
+
+			void move(CHierachyNode* from, CHierachyNode* target, bool before);
+
+			void moveToChild(CHierachyNode* from, CHierachyNode* target);
 		};
 	}
 }
