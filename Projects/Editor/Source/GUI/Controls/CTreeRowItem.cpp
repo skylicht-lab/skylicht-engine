@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTreeRowItem.h"
 #include "CTreeNode.h"
 #include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
 {
@@ -98,24 +99,44 @@ namespace Skylicht
 
 				CTheme::getTheme()->drawButton(r, c);
 
+				m_renderOffset = CRenderer::getRenderer()->getRenderOffset();
+			}
+
+			void CTreeRowItem::renderOver()
+			{
+				CBase::renderOver();
+
+				SPoint currentOffset = CRenderer::getRenderer()->getRenderOffset();
+				CRenderer::getRenderer()->setRenderOffset(m_renderOffset);
+
+				SRect r = getRenderBounds();
+				r.X = r.X + 1.0f;
+				r.Y = r.Y + 1.0f;
+				r.Width = r.Width - 2.0f;
+				r.Height = r.Height - 1.0f;
+
 				float y = r.Y;
 				float height = r.Height;
+
+				r.X = r.X + m_itemOffsetX;
+				r.Width = r.Width - m_itemOffsetX;
+				r.Height = 2.0f;
 
 				// top
 				if (m_drawLineTop)
 				{
-					r.X = r.X + m_itemOffsetX;
-					r.Width = r.Width - m_itemOffsetX;
-					r.Height = 2.0f;
+					r.Y = r.Y - 1.0f;
 					CRenderer::getRenderer()->drawFillRect(r, m_lineColor);
 				}
 
 				// bottom
 				if (m_drawLineBottom)
 				{
-					r.Y = y + height - 2.0f;
+					r.Y = y + height;
 					CRenderer::getRenderer()->drawFillRect(r, m_lineColor);
 				}
+
+				CRenderer::getRenderer()->setRenderOffset(currentOffset);
 			}
 
 			void CTreeRowItem::onMouseClickRight(float x, float y, bool down)

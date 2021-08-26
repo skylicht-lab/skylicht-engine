@@ -37,6 +37,8 @@ namespace Skylicht
 			{
 				Unknown,
 				Scene,
+				Zone,
+				Container,
 				GameObject,
 			};
 
