@@ -57,7 +57,7 @@ namespace Skylicht
 
 	CTransform* CTransform::getParent()
 	{
-		CGameObject *parent = getParentObject();
+		CGameObject* parent = getParentObject();
 		if (parent != NULL)
 			return parent->getTransform();
 		return NULL;
@@ -70,9 +70,23 @@ namespace Skylicht
 
 	CEntity* CTransform::getParentEntity()
 	{
-		CGameObject *parent = getParentObject();
+		CGameObject* parent = getParentObject();
 		if (parent != NULL)
 			return parent->getEntity();
 		return NULL;
+	}
+
+	core::matrix4 CTransform::calcWorldTransform()
+	{
+		core::matrix4 result = getRelativeTransform();
+
+		CTransform* parent = getParent();
+		while (parent != NULL)
+		{
+			result = parent->getRelativeTransform() * result;
+			parent = parent->getParent();
+		}
+
+		return result;
 	}
 }

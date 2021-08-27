@@ -80,6 +80,8 @@ namespace Skylicht
 
 			if (selectObject == NULL)
 			{
+				m_parentWorld.makeIdentity();
+				handle->setWorld(m_parentWorld);
 				handle->end();
 				return;
 			}
@@ -98,17 +100,26 @@ namespace Skylicht
 					if (m_selectObject != NULL)
 					{
 						m_transform = m_selectObject->getComponent<CTransformEuler>();
+
+						m_parentWorld.makeIdentity();
+						CTransform* parentTransform = m_transform->getParent();
+						if (parentTransform != NULL)
+							m_parentWorld = parentTransform->calcWorldTransform();
+
 						m_position = m_transform->getPosition();
 						m_rotation = m_transform->getRotationQuaternion();
 						m_scale = m_transform->getScale();
 					}
 				}
 
+				handle->setWorld(m_parentWorld);
 				handle->end();
 			}
 
 			if (m_selectObject == NULL)
 			{
+				m_parentWorld.makeIdentity();
+				handle->setWorld(m_parentWorld);
 				handle->end();
 				return;
 			}
