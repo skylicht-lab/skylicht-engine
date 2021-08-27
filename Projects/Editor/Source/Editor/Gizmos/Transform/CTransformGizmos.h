@@ -46,6 +46,8 @@ namespace Skylicht
 			};
 
 		protected:
+			core::matrix4 m_parentWorld;
+
 			std::string m_selectID;
 			CGameObject* m_selectObject;
 			CTransformEuler* m_transform;

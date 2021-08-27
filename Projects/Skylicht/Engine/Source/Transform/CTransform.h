@@ -65,6 +65,8 @@ namespace Skylicht
 
 		CEntity* getParentEntity();
 
+		core::matrix4 calcWorldTransform();
+
 	public:
 
 		virtual void setRelativeTransform(const core::matrix4& mat) = 0;

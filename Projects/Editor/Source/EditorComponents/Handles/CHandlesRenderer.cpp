@@ -118,8 +118,14 @@ namespace Skylicht
 			CHandles* handles = CHandles::getInstance();
 
 			// Caculate the screen factor
-			const core::vector3df& pos = handles->getHandlePosition();
-			const core::quaternion& rot = handles->getHandleRotation();
+			core::vector3df pos = handles->getHandlePosition();
+			handles->getWorld().transformVect(pos);
+
+			core::quaternion worldRot(handles->getWorld());
+			worldRot.normalize();
+
+			core::quaternion rot = worldRot * handles->getHandleRotation();
+			rot.normalize();
 
 			m_screenFactor = 0.2f / CProjective::getSegmentLengthClipSpace(camera, pos, pos + cameraRight);
 
@@ -130,12 +136,10 @@ namespace Skylicht
 			}
 			else if (handles->isHandleRotation())
 			{
-				const core::vector3df& pos = handles->getHandlePosition();
 				drawRotationGizmo(pos, cameraPos, rot);
 			}
 			else if (handles->isHandleScale())
 			{
-				const core::vector3df& pos = handles->getHandlePosition();
 				drawScaleGizmo(pos, rot, cameraLook, cameraUp, camera);
 			}
 
@@ -399,37 +403,39 @@ namespace Skylicht
 
 			if (m_using)
 			{
-				video::SColor color(255, 100, 100, 100);
-				m_data->addLine(m_lastTranslatePosition, pos, color);
+				core::vector3df lastPosition = m_lastTranslatePosition;
 
-				core::vector3df d = pos - m_lastTranslatePosition;
+				video::SColor color(255, 100, 100, 100);
+				m_data->addLine(lastPosition, pos, color);
+
+				core::vector3df d = pos - lastPosition;
 				core::vector3df p;
 				float min = 0.001f;
 
 				if (fabsf(d.X) > min)
 				{
 					color.set(100, 50, 0, 0);
-					p = m_lastTranslatePosition;
+					p = lastPosition;
 					p.X += d.X;
-					m_data->addLine(m_lastTranslatePosition, p, color);
+					m_data->addLine(lastPosition, p, color);
 					m_data->addLine(pos, p, color);
 				}
 
 				if (fabsf(d.Y) > min)
 				{
 					color.set(100, 0, 0, 50);
-					p = m_lastTranslatePosition;
+					p = lastPosition;
 					p.Y += d.Y;
-					m_data->addLine(m_lastTranslatePosition, p, color);
+					m_data->addLine(lastPosition, p, color);
 					m_data->addLine(pos, p, color);
 				}
 
 				if (fabsf(d.Z) > min)
 				{
 					color.set(100, 0, 50, 0);
-					p = m_lastTranslatePosition;
+					p = lastPosition;
 					p.Z += d.Z;
-					m_data->addLine(m_lastTranslatePosition, p, color);
+					m_data->addLine(lastPosition, p, color);
 					m_data->addLine(pos, p, color);
 				}
 			}
@@ -620,6 +626,7 @@ namespace Skylicht
 					m_mouseDown = true;
 					m_lastMouse = mouse;
 					m_lastTranslatePosition = handles->getHandlePosition();
+					handles->getWorld().transformVect(m_lastTranslatePosition);
 				}
 				else if (state == 2)
 				{
@@ -744,6 +751,8 @@ namespace Skylicht
 
 									core::vector3df offset = axis * (h1 - h0);
 									resultPosition = m_lastTranslatePosition + offset;
+
+									handles->getWorldInv().transformVect(resultPosition);
 									handles->setTargetPosition(resultPosition);
 
 									break;
@@ -770,6 +779,8 @@ namespace Skylicht
 								{
 									core::vector3df offset = out1 - out0;
 									resultPosition = m_lastTranslatePosition + offset;
+
+									handles->getWorldInv().transformVect(resultPosition);
 									handles->setTargetPosition(resultPosition);
 
 									break;
@@ -790,6 +801,15 @@ namespace Skylicht
 
 			CHandles* handles = CHandles::getInstance();
 
+			core::vector3df pos = handles->getHandlePosition();
+			handles->getWorld().transformVect(pos);
+
+			core::quaternion worldRot(handles->getWorld());
+			worldRot.normalize();
+
+			core::quaternion rot = worldRot * handles->getHandleRotation();
+			rot.normalize();
+
 			if (m_mouseState != state)
 			{
 				if (state == 1)
@@ -798,7 +818,9 @@ namespace Skylicht
 					m_mouseDown = true;
 					m_using = true;
 					m_lastMouse = mouse;
-					m_lastRotation = handles->getHandleRotation();
+
+					m_lastRotation = worldRot * handles->getHandleRotation();
+					m_lastRotation.normalize();
 				}
 				else if (state == 2)
 				{
@@ -814,9 +836,6 @@ namespace Skylicht
 			}
 
 			m_mouseState = state;
-
-			const core::vector3df& pos = handles->getHandlePosition();
-			const core::quaternion& rot = handles->getHandleRotation();
 
 			core::line3df viewRay = CProjective::getViewRay(m_camera, mouse.X, mouse.Y, vpWidth, vpHeight);
 
@@ -918,7 +937,10 @@ namespace Skylicht
 								resultRotation = m_lastRotation * q;
 								resultRotation.normalize();
 
-								handles->setTargetRotation(resultRotation);
+								q = worldRot;
+								q.makeInverse();
+
+								handles->setTargetRotation(q * resultRotation);
 								break;
 							}
 						}

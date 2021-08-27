@@ -36,6 +36,9 @@ namespace Skylicht
 			public IEventReceiver
 		{
 		protected:
+			core::matrix4 m_world;
+			core::matrix4 m_worldInv;
+
 			core::vector3df m_position;
 			core::quaternion m_rotation;
 			core::vector3df m_scale;
@@ -86,39 +89,55 @@ namespace Skylicht
 				return m_handleScale;
 			}
 
-			const core::vector3df& getHandlePosition()
+			inline const core::vector3df& getHandlePosition()
 			{
 				return m_position;
 			}
 
-			void setTargetPosition(const core::vector3df& target)
+			inline void setTargetPosition(const core::vector3df& target)
 			{
 				m_targetPosition = target;
 			}
 
-			const core::quaternion& getHandleRotation()
+			inline const core::quaternion& getHandleRotation()
 			{
 				return m_rotation;
 			}
 
-			void setTargetRotation(const core::quaternion& target)
+			inline void setTargetRotation(const core::quaternion& target)
 			{
 				m_targetRotation = target;
 			}
 
-			const core::vector3df& getHandleScale()
+			inline const core::vector3df& getHandleScale()
 			{
 				return m_scale;
 			}
 
-			void setTargetScale(const core::vector3df& scale)
+			inline void setTargetScale(const core::vector3df& scale)
 			{
 				m_targetScale = scale;
 			}
 
-			void setEndCheck(bool b)
+			inline void setEndCheck(bool b)
 			{
 				m_endCheck = b;
+			}
+
+			inline void setWorld(const core::matrix4& m)
+			{
+				m_world = m;
+				m.getInverse(m_worldInv);
+			}
+
+			inline core::matrix4& getWorld()
+			{
+				return m_world;
+			}
+
+			inline core::matrix4& getWorldInv()
+			{
+				return m_worldInv;
 			}
 		};
 	}
