@@ -119,6 +119,8 @@ namespace Skylicht
 
 		void addTransformDataToEntity(CEntity* entity, CTransform* transform);
 
+		void updateEntityParent(CEntity* entity);
+
 	protected:
 
 		void initDefaultData(CEntity* entity);

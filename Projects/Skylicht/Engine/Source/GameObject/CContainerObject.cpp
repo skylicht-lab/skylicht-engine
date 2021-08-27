@@ -187,6 +187,42 @@ namespace Skylicht
 		return (int)m_childs.size();
 	}
 
+	void CContainerObject::bringToNext(CGameObject* object, CGameObject* target, bool behind)
+	{
+		if (target->getParent() != this)
+			return;
+
+		if (object->getParent() == this)
+		{
+			// remove old position
+			ArrayGameObject::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
+			m_childs.erase(i);
+		}
+		else
+		{
+			// remove old parent
+			CContainerObject* oldParent = (CContainerObject*)object->getParent();
+			ArrayGameObject::iterator i = std::find(oldParent->m_childs.begin(), oldParent->m_childs.end(), object);
+			if (i != oldParent->m_childs.end())
+			{
+				oldParent->m_childs.erase(i);
+				oldParent->updateIndexSearchObject();
+			}
+
+			// set new parent
+			object->setParent(this);
+			object->updateEntityParent();
+		}
+
+		// insert new position
+		ArrayGameObject::iterator pos = std::find(m_childs.begin(), m_childs.end(), target);
+		if (behind)
+			++pos;
+
+		m_childs.insert(pos, object);
+		updateIndexSearchObject();
+	}
+
 	CGameObject* CContainerObject::searchObject(const wchar_t* objectName)
 	{
 		core::map<std::wstring, CGameObject*>::Node* node = m_objectByName.find(std::wstring(objectName));
