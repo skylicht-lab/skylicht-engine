@@ -81,6 +81,8 @@ namespace Skylicht
 
 		void destroyEntity();
 
+		void updateEntityParent();
+
 		virtual void setID(const char* id)
 		{
 			m_objectID = id;

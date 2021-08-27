@@ -155,6 +155,32 @@ namespace Skylicht
 		}
 	}
 
+	void CEntityManager::updateEntityParent(CEntity* entity)
+	{
+		CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+		CTransformComponentData* componentData = entity->getData<CTransformComponentData>();
+
+		// no component
+		if (componentData->TransformComponent == NULL)
+			return;
+
+		// notify update
+		componentData->TransformComponent->setChanged(true);
+
+		// update parent
+		CEntity* parent = componentData->TransformComponent->getParentEntity();
+		if (parent != NULL)
+		{
+			transformData->ParentIndex = parent->getIndex();
+			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
+		}
+		else
+		{
+			transformData->ParentIndex = -1;
+			transformData->Depth = 0;
+		}
+	}
+
 	void CEntityManager::removeEntity(int index)
 	{
 		CEntity* entity = m_entities[index];

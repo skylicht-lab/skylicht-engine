@@ -124,6 +124,14 @@ namespace Skylicht
 		}
 	}
 
+	void CGameObject::updateEntityParent()
+	{
+		if (m_entity != NULL && getEntityManager() != NULL)
+		{
+			getEntityManager()->updateEntityParent(m_entity);
+		}
+	}
+
 	void CGameObject::setVisible(bool b)
 	{
 		m_visible = b;
