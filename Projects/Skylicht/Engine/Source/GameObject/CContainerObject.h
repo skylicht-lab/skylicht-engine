@@ -37,9 +37,6 @@ namespace Skylicht
 
 		core::array<CGameObject*> m_arrayChildObjects;
 
-		core::array<CGameObject*> m_objectsAffectLight;
-		core::array<CContainerObject*> m_childContainer;
-
 		core::map<std::wstring, CGameObject*> m_objectByName;
 		core::map<std::string, CGameObject*> m_objectByID;
 
@@ -58,6 +55,8 @@ namespace Skylicht
 		int getNumberObjects();
 
 		void updateIndexSearchObject();
+
+		void bringToNext(CGameObject* object, CGameObject* target, bool behind);
 
 		virtual CGameObject* searchObject(const wchar_t* objectName);
 

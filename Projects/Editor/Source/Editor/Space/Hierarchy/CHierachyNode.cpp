@@ -102,46 +102,76 @@ namespace Skylicht
 			m_childs.clear();
 		}
 
+		bool CHierachyNode::removeChildNoDelete(CHierachyNode* child)
+		{
+			std::vector<CHierachyNode*>::iterator i = m_childs.begin(), end = m_childs.end();
+			while (i != end)
+			{
+				if ((*i) == child)
+				{
+					m_childs.erase(i);
+
+					if (m_guiNode != NULL)
+					{
+						m_guiNode->remove();
+						m_guiNode = NULL;
+					}
+
+					return true;
+				}
+				++i;
+			}
+			return false;
+		}
+
+		void CHierachyNode::removeGUI()
+		{
+			if (m_guiNode != NULL)
+			{
+				m_guiNode->remove();
+				m_guiNode = NULL;
+			}
+		}
+
 		void CHierachyNode::bringNextNode(CHierachyNode* position, bool behind)
 		{
 			std::vector<CHierachyNode*>::iterator i = m_parent->m_childs.begin(), end = m_parent->m_childs.end();
-			std::vector<CHierachyNode*>::iterator p = end;
-			std::vector<CHierachyNode*>::iterator m = end;
+			std::vector<CHierachyNode*>::iterator p;
 
 			while (i != end)
 			{
 				if ((*i) == this)
-					m = i;
-
-				if ((*i) == position)
-					p = i;
-
-				if (p != end && m != end)
+				{
+					m_parent->m_childs.erase(i);
 					break;
+				}
+				++i;
 			}
 
-			if (p != end && m != end)
-			{
-				m_parent->m_childs.erase(m);
+			m_parent = position->m_parent;
 
-				if (!behind)
+			i = m_parent->m_childs.begin();
+			end = m_parent->m_childs.end();
+			while (i != end)
+			{
+				if ((*i) == position)
 				{
-					if (p == m_parent->m_childs.begin())
-					{
-						m_parent->m_childs.insert(m_parent->m_childs.begin(), this);
-					}
-					else
-					{
-						m_parent->m_childs.insert(++p, this);
-					}
+					p = i;
+					break;
+				}
+				++i;
+			}
+
+			if (p != end)
+			{
+				if (behind)
+				{
+					m_parent->m_childs.insert(++p, this);
 				}
 				else
 				{
 					m_parent->m_childs.insert(p, this);
 				}
-
-				if (m_guiNode)
-					m_guiNode->bringNextToControl(position->getGUINode(), behind);
 			}
 		}
 

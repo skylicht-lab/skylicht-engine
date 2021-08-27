@@ -32,6 +32,8 @@ namespace Skylicht
 	{
 		class CHierachyNode
 		{
+			friend class CHierarchyController;
+
 		public:
 			enum EDataType
 			{
@@ -97,6 +99,16 @@ namespace Skylicht
 				return m_tagData;
 			}
 
+			inline bool isTagGameObject()
+			{
+				return m_dataType == GameObject || m_dataType == Container || m_dataType == Zone;
+			}
+
+			inline bool isTagScene()
+			{
+				return m_dataType == Scene;
+			}
+
 			inline EDataType getTagDataType()
 			{
 				return m_dataType;
@@ -154,7 +166,9 @@ namespace Skylicht
 
 			void removeAllChild();
 
-			void bringNextNode(CHierachyNode* position, bool behind);
+			bool removeChildNoDelete(CHierachyNode* child);
+
+			void removeGUI();
 
 			void nullGUI();
 
@@ -166,6 +180,10 @@ namespace Skylicht
 			}
 
 			CHierachyNode* getNodeByTag(void* tag);
+
+		protected:
+
+			void bringNextNode(CHierachyNode* position, bool behind);
 		};
 	}
 }

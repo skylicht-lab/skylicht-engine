@@ -318,9 +318,9 @@ namespace Skylicht
 
 		void CSceneController::onUpdateNode(CHierachyNode* node)
 		{
-			CHierachyNode::EDataType dataType = node->getTagDataType();
-			if (dataType == CHierachyNode::GameObject || dataType == CHierachyNode::Container)
+			if (node->isTagGameObject())
 			{
+				// change object name
 				CGameObject* obj = (CGameObject*)node->getTagData();
 				obj->setName(node->getName().c_str());
 
@@ -329,8 +329,9 @@ namespace Skylicht
 				if (selectedObject != NULL)
 					selectedObject->notify(this);
 			}
-			else if (dataType == CHierachyNode::Scene)
+			else if (node->isTagScene())
 			{
+				// change scene name
 				CScene* scene = (CScene*)node->getTagData();
 				scene->setName(node->getName().c_str());
 			}
@@ -340,8 +341,7 @@ namespace Skylicht
 		{
 			m_focusNode = node;
 
-			CHierachyNode::EDataType dataType = node->getTagDataType();
-			if (dataType == CHierachyNode::GameObject || dataType == CHierachyNode::Container)
+			if (node->isTagGameObject())
 			{
 				CGameObject* obj = (CGameObject*)node->getTagData();
 				CSelection* selection = CSelection::getInstance();

@@ -145,6 +145,7 @@ namespace Skylicht
 			if (node != NULL)
 			{
 				m_renameNode = node;
+				m_renameNode = node;
 
 				node->getTextEditHelper()->beginEdit(
 					BIND_LISTENER(&CHierarchyController::OnRename, this),
@@ -277,57 +278,62 @@ namespace Skylicht
 				{
 					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 					if (local.Y < rowItem->height() * 0.25f)
-					{
-						// drop on top
-						controller->move(dragNode, node, true);
-					}
-					else if (local.Y > rowItem->height() * 0.75f)
-					{
-						// drop on bottom
 						controller->move(dragNode, node, false);
-					}
+					else if (local.Y > rowItem->height() * 0.75f)
+						controller->move(dragNode, node, true);
 					else
-					{
-						// drop in child
 						controller->moveToChild(dragNode, node);
-					}
 				}
 				else if (node->getTagDataType() == CHierachyNode::GameObject)
 				{
 					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 					if (local.Y < rowItem->height() * 0.5f)
-					{
-						// drop top
-						controller->move(dragNode, node, true);
-					}
-					else
-					{
-						// drop bottom
 						controller->move(dragNode, node, false);
-					}
+					else
+						controller->move(dragNode, node, true);
 				}
 
 				rowItem->enableDrawLine(false, false);
 			};
 		}
 
-		void CHierarchyController::move(CHierachyNode* from, CHierachyNode* target, bool before)
+		void CHierarchyController::move(CHierachyNode* from, CHierachyNode* target, bool behind)
 		{
-			if (from->getParent() == target->getParent())
-			{
-				// same parent
-			}
-			else
-			{
+			if (!from->isTagGameObject() || !target->isTagGameObject())
+				return;
 
-			}
+			// remove parent gui
+			bool isExpand = from->getGUINode()->isExpand();
+
+			from->removeGUI();
+			from->nullGUI();
+
+			// update position
+			from->bringNextNode(target, behind);
+
+			// add new tree gui at new position
+			GUI::CTreeNode* gui = buildHierarchyNode(target->getParent()->getGUINode(), from);
+
+			// move gui to near target
+			gui->bringNextToControl(target->getGUINode(), behind);
+
+			if (isExpand)
+				gui->expand(false);
+			else
+				gui->collapse(false);
+
+			// move game object
+			CGameObject* fromObject = (CGameObject*)from->getTagData();
+			CGameObject* targetObject = (CGameObject*)target->getTagData();
+			CContainerObject* parent = (CContainerObject*)targetObject->getParent();
+			parent->bringToNext(fromObject, targetObject, behind);
 		}
 
 		void CHierarchyController::moveToChild(CHierachyNode* from, CHierachyNode* target)
 		{
 			if (from->getParent() == target)
 			{
-
+				// move front
 			}
 			else
 			{

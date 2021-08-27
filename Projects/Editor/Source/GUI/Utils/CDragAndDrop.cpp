@@ -59,7 +59,7 @@ namespace Skylicht
 				{
 					bool ret = false;
 
-					if (s_lastPressedControl != NULL)
+					if (s_lastPressedControl != NULL && s_dragging && s_lastPressedControl != hoveredControl)
 					{
 						// mouse up
 						bool accept = false;
