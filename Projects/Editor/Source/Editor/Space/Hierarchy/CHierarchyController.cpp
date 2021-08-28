@@ -32,7 +32,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CHierarchyController::CHierarchyController(GUI::CCanvas* canvas, GUI::CTreeControl* tree) :
+		CHierarchyController::CHierarchyController(GUI::CCanvas* canvas, GUI::CTreeControl* tree, CEditor* editor) :
+			m_editor(editor),
 			m_canvas(canvas),
 			m_tree(tree),
 			m_node(NULL)
@@ -202,16 +203,19 @@ namespace Skylicht
 
 			rowItem->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
 			{
-				CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
-
 				if (node->getTagDataType() == CHierachyNode::GameObject ||
 					node->getTagDataType() == CHierachyNode::Container)
 				{
-					if (dragNode->getTagDataType() != CHierachyNode::Zone)
+					// accept hierarchy node
+					if (data->Name == "HierarchyNode")
 					{
-						// dont accept drag zone to
-						if (data->Name == "HierarchyNode")
-							return true;
+						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+
+						// dont accept drag to child node
+						if (dragNode->isChild(node))
+							return false;
+
+						return true;
 					}
 				}
 				else if (node->getTagDataType() == CHierachyNode::Zone)
@@ -266,7 +270,7 @@ namespace Skylicht
 				rowItem->enableDrawLine(false, false);
 			};
 
-			rowItem->OnDrop = [controller = this, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			rowItem->OnDrop = [controller = this, editor = m_editor, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
 				CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
 
@@ -294,6 +298,8 @@ namespace Skylicht
 				}
 
 				rowItem->enableDrawLine(false, false);
+
+				editor->refresh();
 			};
 		}
 
@@ -331,14 +337,30 @@ namespace Skylicht
 
 		void CHierarchyController::moveToChild(CHierachyNode* from, CHierachyNode* target)
 		{
-			if (from->getParent() == target)
-			{
-				// move front
-			}
-			else
-			{
+			if (!from->isTagGameObject() || !target->isTagGameObject())
+				return;
 
-			}
+			// remove parent gui
+			bool isExpand = from->getGUINode()->isExpand();
+
+			from->removeGUI();
+			from->nullGUI();
+
+			target->bringToChild(from);
+
+			// add new tree item
+			GUI::CTreeNode* gui = buildHierarchyNode(target->getGUINode(), from);
+
+			if (isExpand)
+				gui->expand(false);
+			else
+				gui->collapse(false);
+
+			// move game object
+			CGameObject* fromObject = (CGameObject*)from->getTagData();
+			CGameObject* targetObject = (CGameObject*)target->getTagData();
+			CContainerObject* parent = (CContainerObject*)targetObject;
+			parent->bringToChild(fromObject);
 		}
 	}
 }

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GUI/GUI.h"
 #include "CHierachyNode.h"
+#include "Editor/CEditor.h"
 
 namespace Skylicht
 {
@@ -34,6 +35,7 @@ namespace Skylicht
 		class CHierarchyController
 		{
 		protected:
+			CEditor* m_editor;
 			GUI::CCanvas* m_canvas;
 			GUI::CTreeControl* m_tree;
 
@@ -42,7 +44,7 @@ namespace Skylicht
 			GUI::CTreeNode* m_renameNode;
 
 		public:
-			CHierarchyController(GUI::CCanvas* canvas, GUI::CTreeControl* tree);
+			CHierarchyController(GUI::CCanvas* canvas, GUI::CTreeControl* tree, CEditor* editor);
 
 			virtual ~CHierarchyController();
 

@@ -77,7 +77,6 @@ namespace Skylicht
 			CHandles* handle = CHandles::getInstance();
 
 			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
-
 			if (selectObject == NULL)
 			{
 				m_parentWorld.makeIdentity();
@@ -189,6 +188,11 @@ namespace Skylicht
 			CHandles* handles = CHandles::getInstance();
 			if (handles != NULL)
 				handles->end();
+		}
+
+		void CTransformGizmos::refresh()
+		{
+			onRemove();
 		}
 	}
 }

@@ -174,6 +174,8 @@ namespace Skylicht
 
 			void refreshGUI();
 
+			bool isChild(CHierachyNode* child);
+
 			inline std::vector<CHierachyNode*>& getChilds()
 			{
 				return m_childs;
@@ -184,6 +186,8 @@ namespace Skylicht
 		protected:
 
 			void bringNextNode(CHierachyNode* position, bool behind);
+
+			void bringToChild(CHierachyNode* node);
 		};
 	}
 }
