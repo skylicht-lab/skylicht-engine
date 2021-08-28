@@ -71,6 +71,8 @@ namespace Skylicht
 
 			virtual void onRemove();
 
+			virtual void refresh();
+
 			void setPosition(const core::vector3df& pos);
 
 			void setScale(const core::vector3df& scale);

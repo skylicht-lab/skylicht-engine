@@ -68,7 +68,7 @@ namespace Skylicht
 			m_tree = new GUI::CTreeControl(treeContainer);
 			m_tree->dock(GUI::EPosition::Fill);
 
-			m_hierarchyController = new CHierarchyController(window->getCanvas(), m_tree);
+			m_hierarchyController = new CHierarchyController(window->getCanvas(), m_tree, m_editor);
 			m_hierarchyContextMenu = new CHierachyContextMenu(m_tree);
 
 			CSceneController::getInstance()->setSpaceHierarchy(this);

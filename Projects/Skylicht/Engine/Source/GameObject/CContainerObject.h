@@ -58,6 +58,8 @@ namespace Skylicht
 
 		void bringToNext(CGameObject* object, CGameObject* target, bool behind);
 
+		void bringToChild(CGameObject* object);
+
 		virtual CGameObject* searchObject(const wchar_t* objectName);
 
 		virtual CGameObject* searchObjectInChild(const wchar_t* objectName);
