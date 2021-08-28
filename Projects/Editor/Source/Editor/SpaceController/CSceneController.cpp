@@ -197,6 +197,10 @@ namespace Skylicht
 			else
 				return;
 
+			// refresh gizmos
+			for (CGizmos* g : m_gizmos)
+				g->refresh();
+
 			// Set property & event
 			CPropertyController* propertyController = CPropertyController::getInstance();
 
@@ -210,7 +214,10 @@ namespace Skylicht
 		void CSceneController::addGizmos(CGizmos* gizmos)
 		{
 			if (std::find(m_gizmos.begin(), m_gizmos.end(), gizmos) != m_gizmos.end())
+			{
+				gizmos->onEnable();
 				return;
+			}
 
 			gizmos->onEnable();
 			m_gizmos.push_back(gizmos);

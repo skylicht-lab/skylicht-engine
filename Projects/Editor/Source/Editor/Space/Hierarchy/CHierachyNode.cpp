@@ -110,13 +110,7 @@ namespace Skylicht
 				if ((*i) == child)
 				{
 					m_childs.erase(i);
-
-					if (m_guiNode != NULL)
-					{
-						m_guiNode->remove();
-						m_guiNode = NULL;
-					}
-
+					child->removeGUI();
 					return true;
 				}
 				++i;
@@ -173,6 +167,33 @@ namespace Skylicht
 					m_parent->m_childs.insert(p, this);
 				}
 			}
+		}
+
+		void CHierachyNode::bringToChild(CHierachyNode* node)
+		{
+			// remove old parent
+			node->m_parent->removeChildNoDelete(node);
+
+			// change parent
+			m_childs.push_back(node);
+			node->m_parent = this;
+		}
+
+		bool CHierachyNode::isChild(CHierachyNode* child)
+		{
+			for (CHierachyNode* c : m_childs)
+			{
+				if (c == child)
+					return true;
+				else
+				{
+					bool r = c->isChild(child);
+					if (r == true)
+						return true;
+				}
+			}
+
+			return false;
 		}
 
 		void CHierachyNode::nullGUI()

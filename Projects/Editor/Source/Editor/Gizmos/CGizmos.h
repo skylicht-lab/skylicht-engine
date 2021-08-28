@@ -41,7 +41,9 @@ namespace Skylicht
 
 			virtual void onEnable() = 0;
 
-			virtual void onRemove() = 0;			
+			virtual void onRemove() = 0;
+
+			virtual void refresh() = 0;
 		};
 	}
 }
