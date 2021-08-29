@@ -37,8 +37,7 @@ namespace Skylicht
 
 	CWorldTransformSystem::~CWorldTransformSystem()
 	{
-		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
-			m_entities[depth].set_used(0);
+
 	}
 
 	void CWorldTransformSystem::beginQuery()
@@ -49,7 +48,7 @@ namespace Skylicht
 		m_maxDepth = 0;
 	}
 
-	void CWorldTransformSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CWorldTransformSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
 		// transform data
 		CWorldTransformData* t = entity->getData<CWorldTransformData>();
@@ -72,7 +71,7 @@ namespace Skylicht
 		}
 		else if (t->ParentIndex != -1)
 		{
-			CEntity *p = entityManager->getEntity(t->ParentIndex);
+			CEntity* p = entityManager->getEntity(t->ParentIndex);
 			CWorldTransformData* parent = p->getData<CWorldTransformData>();
 			if (parent->HasChanged == true)
 			{
@@ -89,11 +88,11 @@ namespace Skylicht
 		}
 	}
 
-	void CWorldTransformSystem::init(CEntityManager *entityManager)
+	void CWorldTransformSystem::init(CEntityManager* entityManager)
 	{
 	}
 
-	void CWorldTransformSystem::update(CEntityManager *entityManager)
+	void CWorldTransformSystem::update(CEntityManager* entityManager)
 	{
 		CWorldTransformData** entities = m_entities[0].pointer();
 		u32 numEntity = m_entities[0].size();
@@ -101,7 +100,7 @@ namespace Skylicht
 		// root transform
 		for (u32 i = 0; i < numEntity; i++)
 		{
-			CWorldTransformData *t = entities[i];
+			CWorldTransformData* t = entities[i];
 			t->World = t->Relative;
 			t->HasChanged = false;
 		}
@@ -115,11 +114,11 @@ namespace Skylicht
 			for (u32 i = 0; i < numEntity; i++)
 			{
 				// this entity
-				CWorldTransformData *t = entities[i];
+				CWorldTransformData* t = entities[i];
 
 				// parent entity
-				CEntity *parent = entityManager->getEntity(t->ParentIndex);
-				CWorldTransformData *p = parent->getData<CWorldTransformData>();
+				CEntity* parent = entityManager->getEntity(t->ParentIndex);
+				CWorldTransformData* p = parent->getData<CWorldTransformData>();
 
 				// calc world = parent * relative
 				// - relative is copied from CTransformComponentSystem
