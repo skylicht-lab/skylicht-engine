@@ -26,12 +26,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CVisibleData.h"
 #include "Entity/IRenderSystem.h"
+#include "Transform/CWorldTransformData.h"
+
+#define MAX_CHILD_DEPTH 512
 
 namespace Skylicht
 {
 	class CVisibleSystem : public IRenderSystem
 	{
 	protected:
+		struct SVisibleData
+		{
+			CVisibleData* Visible;
+			CWorldTransformData* Transform;
+			CEntity* Entity;
+
+			SVisibleData()
+			{
+				Visible = NULL;
+				Transform = NULL;
+				Entity = NULL;
+			}
+		};
+
+		int m_maxDepth;
+		core::array<SVisibleData> m_entities[MAX_CHILD_DEPTH];
 
 	public:
 		CVisibleSystem();
@@ -40,14 +59,14 @@ namespace Skylicht
 
 		virtual void beginQuery();
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 
-		virtual void render(CEntityManager *entityManager);
+		virtual void render(CEntityManager* entityManager);
 
-		virtual void postRender(CEntityManager *entityManager);
+		virtual void postRender(CEntityManager* entityManager);
 	};
 }

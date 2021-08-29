@@ -203,24 +203,30 @@ namespace Skylicht
 
 			rowItem->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
 			{
-				if (node->getTagDataType() == CHierachyNode::GameObject ||
-					node->getTagDataType() == CHierachyNode::Container)
+				if (node->isTagGameObject())
 				{
 					// accept hierarchy node
 					if (data->Name == "HierarchyNode")
 					{
 						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
 
-						// dont accept drag to child node
-						if (dragNode->isChild(node))
+						if (dragNode->getTagDataType() == CHierachyNode::Zone)
+						{
+							if (node->getTagDataType() == CHierachyNode::Zone)
+							{
+								// only allow zone drag over on zone
+								return true;
+							}
 							return false;
-
+						}
+						else
+						{
+							// dont accept drag to child node
+							if (dragNode->isChild(node))
+								return false;
+						}
 						return true;
 					}
-				}
-				else if (node->getTagDataType() == CHierachyNode::Zone)
-				{
-
 				}
 				else if (node->getTagDataType() == CHierachyNode::Scene)
 				{
@@ -233,7 +239,24 @@ namespace Skylicht
 			{
 				if (node->getTagDataType() == CHierachyNode::Zone)
 				{
+					CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
 
+					if (dragNode->getTagDataType() == CHierachyNode::Zone)
+					{
+						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+						if (local.Y < rowItem->height() * 0.5f)
+						{
+							rowItem->enableDrawLine(true, false);
+						}
+						else
+						{
+							rowItem->enableDrawLine(false, true);
+						}
+					}
+					else
+					{
+
+					}
 				}
 				if (node->getTagDataType() == CHierachyNode::Container)
 				{
@@ -276,7 +299,22 @@ namespace Skylicht
 
 				if (node->getTagDataType() == CHierachyNode::Zone)
 				{
-
+					if (dragNode->getTagDataType() == CHierachyNode::Zone)
+					{
+						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+						if (local.Y < rowItem->height() * 0.5f)
+						{
+							// controller->move(dragNode, node, false);
+						}
+						else
+						{
+							// controller->move(dragNode, node, true);
+						}
+					}
+					else
+					{
+						controller->moveToChild(dragNode, node);
+					}
 				}
 				else if (node->getTagDataType() == CHierachyNode::Container)
 				{

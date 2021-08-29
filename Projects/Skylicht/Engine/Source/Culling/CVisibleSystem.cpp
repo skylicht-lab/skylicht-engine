@@ -26,13 +26,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CVisibleSystem.h"
 #include "RenderPipeline/IRenderPipeline.h"
 #include "Entity/CEntityManager.h"
-#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	CVisibleSystem::CVisibleSystem()
+	CVisibleSystem::CVisibleSystem() :
+		m_maxDepth(0)
 	{
-		m_pipelineType = IRenderPipeline::Mix;
+
 	}
 
 	CVisibleSystem::~CVisibleSystem()
@@ -42,26 +42,31 @@ namespace Skylicht
 
 	void CVisibleSystem::beginQuery()
 	{
+		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
+			m_entities[depth].set_used(0);
+
+		m_maxDepth = 0;
 	}
 
 	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
 		CVisibleData* visible = entity->getData<CVisibleData>();
+		if (visible == NULL)
+			return;
+
 		CWorldTransformData* transform = entity->getData<CWorldTransformData>();
+		if (transform == NULL)
+			return;
 
-		if (visible != NULL)
-		{
-			visible->SelfVisible = entity->isVisible();
-			visible->Visible = visible->SelfVisible;
+		if (transform->Depth > m_maxDepth)
+			m_maxDepth = transform->Depth;
 
-			if (visible->Visible == true && transform->ParentIndex >= 0)
-			{
-				// link parent visible
-				CEntity* parentEntity = entityManager->getEntity(transform->ParentIndex);
-				CVisibleData* parentVisible = parentEntity->getData<CVisibleData>();
-				visible->Visible = parentVisible->Visible;
-			}
-		}
+		m_entities[transform->Depth].push_back(SVisibleData());
+
+		SVisibleData& data = m_entities[transform->Depth].getLast();
+		data.Transform = transform;
+		data.Visible = visible;
+		data.Entity = entity;
 	}
 
 	void CVisibleSystem::init(CEntityManager* entityManager)
@@ -71,7 +76,27 @@ namespace Skylicht
 
 	void CVisibleSystem::update(CEntityManager* entityManager)
 	{
+		for (int depth = 0; depth <= m_maxDepth; depth++)
+		{
+			SVisibleData* entities = m_entities[depth].pointer();
+			u32 numEntity = m_entities[depth].size();
 
+			for (u32 i = 0; i < numEntity; i++)
+			{
+				SVisibleData& data = entities[i];
+
+				data.Visible->SelfVisible = data.Entity->isVisible();
+				data.Visible->Visible = data.Visible->SelfVisible;
+
+				if (data.Visible->Visible == true && data.Transform->ParentIndex >= 0)
+				{
+					// link parent visible
+					CEntity* parentEntity = entityManager->getEntity(data.Transform->ParentIndex);
+					CVisibleData* parentVisible = parentEntity->getData<CVisibleData>();
+					data.Visible->Visible = parentVisible->Visible;
+				}
+			}
+		}
 	}
 
 	void CVisibleSystem::render(CEntityManager* entityManager)
