@@ -67,6 +67,8 @@ namespace Skylicht
 
 		core::matrix4 calcWorldTransform();
 
+		void setWorldMatrix(const core::matrix4& world);
+
 	public:
 
 		virtual void setRelativeTransform(const core::matrix4& mat) = 0;

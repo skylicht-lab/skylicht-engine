@@ -42,16 +42,21 @@ namespace Skylicht
 			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
 			m_lastType(CTransformGizmos::Translate)
 		{
-
+			s_transformGizmos.addObserver(this);
 		}
 
 		CTransformGizmos::~CTransformGizmos()
 		{
-
+			s_transformGizmos.removeObserver(this);
 		}
 
 		void CTransformGizmos::onNotify(ISubject* subject, IObserver* from)
 		{
+			if (from == this)
+				return;
+
+			CSubject<CTransformGizmos::ETransformGizmo>* gizmos = (CSubject<CTransformGizmos::ETransformGizmo>*)subject;
+			m_lastType = gizmos->get();
 		}
 
 		void CTransformGizmos::setPosition(const core::vector3df& pos)
