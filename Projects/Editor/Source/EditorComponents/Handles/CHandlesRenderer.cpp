@@ -163,10 +163,19 @@ namespace Skylicht
 				{1.0f, 0.0f, 0.0f}
 			};
 
-			for (int i = 0; i < 3; i++)
+			core::quaternion localRotation = rot;
+
+			if (CHandles::getInstance()->useLocalSpace())
 			{
-				normal[i] = rot * normal[i];
-				normal[i].normalize();
+				for (int i = 0; i < 3; i++)
+				{
+					normal[i] = rot * normal[i];
+					normal[i].normalize();
+				}
+			}
+			else
+			{
+				localRotation.makeIdentity();
 			}
 
 			for (int axis = 0; axis < 3; axis++)
@@ -187,7 +196,7 @@ namespace Skylicht
 					core::vector3df r = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]);
 
 					// local rotation
-					r = rot * r;
+					r = localRotation * r;
 					r.normalize();
 
 					// back face
@@ -341,12 +350,16 @@ namespace Skylicht
 				core::vector3df(quadMax, quadMin, 0.0f),
 			};
 
+			core::quaternion localRotation = rot;
+			if (!CHandles::getInstance()->useLocalSpace())
+				localRotation.makeIdentity();
+
 			for (int i = 0; i < 3; i++)
 			{
 				core::vector3df dirAxis, dirPlaneX, dirPlaneY;
 				bool belowAxisLimit, belowPlaneLimit;
 
-				computeTripodAxisAndVisibility(i, pos, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera, rot);
+				computeTripodAxisAndVisibility(i, pos, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit, camera, localRotation);
 
 				// save the position
 				m_translateAxis[i].start = pos;
@@ -853,14 +866,17 @@ namespace Skylicht
 				{1.0f, 0.0f, 0.0f}
 			};
 
-			for (int i = 0; i < 3; i++)
+			if (handles->useLocalSpace())
 			{
-				if (m_mouseState == 0)
-					normal[i] = rot * normal[i];
-				else
-					normal[i] = m_lastRotation * normal[i];
+				for (int i = 0; i < 3; i++)
+				{
+					if (m_mouseState == 0)
+						normal[i] = rot * normal[i];
+					else
+						normal[i] = m_lastRotation * normal[i];
 
-				normal[i].normalize();
+					normal[i].normalize();
+				}
 			}
 
 			core::vector3df out;
