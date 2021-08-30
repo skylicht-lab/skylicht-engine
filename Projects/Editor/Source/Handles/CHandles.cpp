@@ -36,7 +36,8 @@ namespace Skylicht
 			m_handleRotation(false),
 			m_handleScale(false),
 			m_mouseState(0),
-			m_endCheck(false)
+			m_endCheck(false),
+			m_useLocalSpace(true)
 		{
 
 		}

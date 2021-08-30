@@ -107,6 +107,7 @@ namespace Skylicht
 			worldSpaceDropDown->addItem(L"World space");
 			worldSpaceDropDown->setSelectIndex(0, false);
 			worldSpaceDropDown->setDisabled(true);
+			worldSpaceDropDown->OnChanged = BIND_LISTENER(&CSpaceScene::onToolbarWorldSpace, this);
 
 			m_toolbarButton[World] = worldSpaceDropDown;
 
@@ -364,6 +365,17 @@ namespace Skylicht
 			}
 
 			m_groupTransform->selectButton(dynamic_cast<GUI::CButton*>(base));
+		}
+
+		void CSpaceScene::onToolbarWorldSpace(GUI::CBase* base)
+		{
+			CHandles* handles = CHandles::getInstance();
+			GUI::CComboBox* btn = (GUI::CComboBox*)base;
+			if (btn->getSelectIndex() == 0)
+				handles->setUseLocalSpace(true);
+			else
+				handles->setUseLocalSpace(false);
+			m_editor->refresh();
 		}
 
 		void CSpaceScene::onNotify(ISubject* subject, IObserver* from)
