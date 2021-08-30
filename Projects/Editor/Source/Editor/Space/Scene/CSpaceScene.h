@@ -120,6 +120,8 @@ namespace Skylicht
 
 			void onToolbarTransform(GUI::CBase* base);
 
+			void onToolbarWorldSpace(GUI::CBase* base);
+
 			void onCameraPerspective(GUI::CBase* base);
 
 			void onCameraOrtho(GUI::CBase* base);

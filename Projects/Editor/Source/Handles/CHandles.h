@@ -54,6 +54,7 @@ namespace Skylicht
 			int m_mouseState;
 
 			bool m_endCheck;
+			bool m_useLocalSpace;
 
 		public:
 			CHandles();
@@ -69,6 +70,16 @@ namespace Skylicht
 			core::vector3df scaleHandle(const core::vector3df& scale, const core::vector3df& origin, const core::quaternion& localRotation);
 
 			core::quaternion rotateHandle(const core::quaternion& rotate, const core::vector3df& origin);
+
+			inline void setUseLocalSpace(bool b)
+			{
+				m_useLocalSpace = b;
+			}
+
+			inline bool useLocalSpace()
+			{
+				return m_useLocalSpace;
+			}
 
 			virtual bool OnEvent(const SEvent& event);
 

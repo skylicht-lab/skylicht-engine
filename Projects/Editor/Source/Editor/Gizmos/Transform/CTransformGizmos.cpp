@@ -32,7 +32,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSubject<CTransformGizmos::ETransformGizmo> CTransformGizmos::s_transformGizmos(CTransformGizmos::None);
+		CSubject<CTransformGizmos::ETransformGizmo> CTransformGizmos::s_transformGizmos(CTransformGizmos::Translate);
 
 		CTransformGizmos::CTransformGizmos() :
 			m_transform(NULL),
@@ -43,6 +43,7 @@ namespace Skylicht
 			m_lastType(CTransformGizmos::Translate)
 		{
 			s_transformGizmos.addObserver(this);
+			m_lastType = s_transformGizmos.get();
 		}
 
 		CTransformGizmos::~CTransformGizmos()
