@@ -721,16 +721,24 @@ namespace Skylicht
 					{
 						if (m_hoverOnAxis[i])
 						{
-							m_using = true;
-
-							core::vector3df vec = m_translatePlane[i].DirX;
-
-							if (i == 2)
+							if (m_using == false)
 							{
-								// drag OZ
-								vec = m_translatePlane[i].DirY;
+								const core::vector3df& v1 = m_translatePlane[i].DirX;
+								const core::vector3df& v2 = m_translatePlane[i].DirY;
+
+								core::vector3df look = m_camera->getLookVector();
+								float d1 = look.dotProduct(v1);
+								float d2 = look.dotProduct(v2);
+
+								if (d1 < d2)
+									m_planNormal = v1;
+								else
+									m_planNormal = v2;
 							}
 
+							m_using = true;
+
+							core::vector3df vec = m_planNormal;
 							vec.normalize();
 
 							core::line3df viewRay0 = CProjective::getViewRay(m_camera, m_lastMouse.X, m_lastMouse.Y, vpWidth, vpHeight);
@@ -1067,14 +1075,24 @@ namespace Skylicht
 						{
 							if (m_hoverOnAxis[i])
 							{
+								if (m_using == false)
+								{
+									const core::vector3df& v1 = m_translatePlane[i].DirX;
+									const core::vector3df& v2 = m_translatePlane[i].DirY;
+
+									core::vector3df look = m_camera->getLookVector();
+									float d1 = look.dotProduct(v1);
+									float d2 = look.dotProduct(v2);
+
+									if (d1 < d2)
+										m_planNormal = v1;
+									else
+										m_planNormal = v2;
+								}
+
 								m_using = true;
 
-								core::vector3df vec = m_translatePlane[i].DirX;
-								if (i == 2)
-								{
-									// drag OZ
-									vec = m_translatePlane[i].DirY;
-								}
+								core::vector3df vec = m_planNormal;
 								vec.normalize();
 
 								core::line3df viewRay0 = CProjective::getViewRay(m_camera, m_lastMouse.X, m_lastMouse.Y, vpWidth, vpHeight);
