@@ -89,4 +89,19 @@ namespace Skylicht
 
 		return result;
 	}
+
+	void CTransform::setWorldMatrix(const core::matrix4& world)
+	{
+		core::matrix4 parentInv;
+
+		CTransform* parent = getParent();
+		if (parent != NULL)
+		{
+			parentInv = parent->calcWorldTransform();
+			parentInv.makeInverse();
+		}
+
+		core::matrix4 relative = parentInv * world;
+		setRelativeTransform(relative);
+	}
 }

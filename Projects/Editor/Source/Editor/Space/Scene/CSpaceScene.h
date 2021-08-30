@@ -44,6 +44,7 @@ namespace Skylicht
 			Move,
 			Rotate,
 			Scale,
+			World,
 			Perspective,
 			Ortho,
 			ToolbarCount
