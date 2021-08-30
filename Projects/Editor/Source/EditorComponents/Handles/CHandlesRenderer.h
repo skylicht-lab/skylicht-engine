@@ -50,6 +50,8 @@ namespace Skylicht
 			core::vector3df m_directionUnary[3];
 			video::SColor m_directionColor[3];
 			video::SColor m_selectionColor;
+			
+			core::vector3df m_planNormal;
 
 			float m_screenFactor;
 			float m_axisFactor[3];
