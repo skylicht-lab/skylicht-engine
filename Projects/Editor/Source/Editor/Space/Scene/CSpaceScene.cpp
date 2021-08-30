@@ -99,6 +99,17 @@ namespace Skylicht
 			m_toolbarButton[ESceneToolBar::Scale] = button;
 			m_groupTransform->addButton(button);
 
+			toolbar->addSpace();
+
+			GUI::CComboBox* worldSpaceDropDown = (GUI::CComboBox*)toolbar->addControl(new GUI::CComboBox(toolbar));
+			worldSpaceDropDown->setWidth(120.0f);
+			worldSpaceDropDown->addItem(L"Local space");
+			worldSpaceDropDown->addItem(L"World space");
+			worldSpaceDropDown->setSelectIndex(0, false);
+			worldSpaceDropDown->setDisabled(true);
+
+			m_toolbarButton[World] = worldSpaceDropDown;
+
 			CTransformGizmos::getGizmosSubject()->addObserver(this);
 
 			// camera			
@@ -291,10 +302,14 @@ namespace Skylicht
 		void CSpaceScene::onEditorSelect(GUI::CBase* base)
 		{
 			if (CSelection::getInstance()->getSelected().size() == 0)
+			{
 				m_groupTransform->enable(false);
+				m_toolbarButton[World]->setDisabled(true);
+			}
 			else
 			{
 				m_groupTransform->enable(true);
+				m_toolbarButton[World]->setDisabled(false);
 
 				GUI::CButton* button = m_groupTransform->getSelectButton();
 				if (button != NULL)
@@ -317,6 +332,7 @@ namespace Skylicht
 		void CSpaceScene::onEditorHand(GUI::CBase* base)
 		{
 			m_groupTransform->enable(false);
+			m_toolbarButton[World]->setDisabled(true);
 
 			CSubject<CTransformGizmos::ETransformGizmo>* gizmos = CTransformGizmos::getGizmosSubject();
 			gizmos->set(CTransformGizmos::None);
@@ -363,18 +379,22 @@ namespace Skylicht
 				{
 				case CTransformGizmos::None:
 					m_groupTransform->enable(false);
+					m_toolbarButton[World]->setDisabled(true);
 					break;
 				case CTransformGizmos::Translate:
 					m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Move]);
 					m_groupTransform->enable(true);
+					m_toolbarButton[World]->setDisabled(false);
 					break;
 				case CTransformGizmos::Rotate:
 					m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Rotate]);
 					m_groupTransform->enable(true);
+					m_toolbarButton[World]->setDisabled(false);
 					break;
 				case CTransformGizmos::Scale:
 					m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Scale]);
 					m_groupTransform->enable(true);
+					m_toolbarButton[World]->setDisabled(false);
 					break;
 				default:
 					break;

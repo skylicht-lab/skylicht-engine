@@ -192,6 +192,8 @@ namespace Skylicht
 		if (target->getParent() != this)
 			return;
 
+		core::matrix4 world = object->getTransform()->calcWorldTransform();
+
 		if (object->getParent() == this)
 		{
 			// remove old position
@@ -221,10 +223,14 @@ namespace Skylicht
 
 		m_childs.insert(pos, object);
 		updateIndexSearchObject();
+
+		object->getTransform()->setWorldMatrix(world);
 	}
 
 	void CContainerObject::bringToChild(CGameObject* object)
 	{
+		core::matrix4 world = object->getTransform()->calcWorldTransform();
+
 		if (object->getParent() == this)
 		{
 			// remove old position
@@ -250,6 +256,8 @@ namespace Skylicht
 		// insert new position
 		m_childs.push_back(object);
 		updateIndexSearchObject();
+
+		object->getTransform()->setWorldMatrix(world);
 	}
 
 	CGameObject* CContainerObject::searchObject(const wchar_t* objectName)

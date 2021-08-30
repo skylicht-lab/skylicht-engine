@@ -55,6 +55,17 @@ namespace Skylicht
 
 				const SRect& r = getRenderBounds();
 
+				if (isDisabled())
+				{
+					m_label->setColor(CThemeConfig::ButtonTextDisableColor);
+					m_icon->setColor(CThemeConfig::ButtonTextDisableColor);
+				}
+				else
+				{
+					m_label->setColor(m_labelColor);
+					m_icon->setColor(m_iconColor);
+				}
+
 				theme->drawTextBox(r, CThemeConfig::TextBoxColor);
 
 				if (m_menu->isOpen())
