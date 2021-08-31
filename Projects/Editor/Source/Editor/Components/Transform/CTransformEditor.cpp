@@ -98,7 +98,7 @@ namespace Skylicht
 				Z = pos.Z;
 
 				m_gizmos->getPosition().addObserver(new CObserver<CTransformEditor>(this,
-					[x = &X, y = &Y, z = &Z](ISubject* subject, IObserver* from, CTransformEditor* target) {
+					[x = &X, y = &Y, z = &Z, t = m_transform](ISubject* subject, IObserver* from, CTransformEditor* target) {
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& pos = value->get();
 
@@ -109,6 +109,8 @@ namespace Skylicht
 						x->notify(from);
 						y->notify(from);
 						z->notify(from);
+
+						t->setPosition(pos);
 					}), true);
 
 				ui->addNumberInput(layout, L"Position X", &X, 0.01f);
@@ -165,7 +167,7 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Z", &RotateZ, 0.1f);
 
 				m_gizmos->getRotation().addObserver(new CObserver<CTransformEditor>(this,
-					[x = &RotateX, y = &RotateY, z = &RotateZ](ISubject* subject, IObserver* from, CTransformEditor* target) {
+					[x = &RotateX, y = &RotateY, z = &RotateZ, t = m_transform](ISubject* subject, IObserver* from, CTransformEditor* target) {
 						CSubject<core::quaternion>* value = (CSubject<core::quaternion>*)subject;
 
 						core::vector3df rot;
@@ -178,6 +180,8 @@ namespace Skylicht
 						x->notify(from);
 						y->notify(from);
 						z->notify(from);
+
+						t->setRotation(rot);
 					}), true);
 
 				RotateX.addObserver(new CObserver<CTransformEditor>(this,
@@ -232,7 +236,7 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Z", &ScaleZ, 0.01f);
 
 				m_gizmos->getScale().addObserver(new CObserver<CTransformEditor>(this,
-					[x = &ScaleX, y = &ScaleY, z = &ScaleZ](ISubject* subject, IObserver* from, CTransformEditor* target) {
+					[x = &ScaleX, y = &ScaleY, z = &ScaleZ, t = m_transform](ISubject* subject, IObserver* from, CTransformEditor* target) {
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& scale = value->get();
 
@@ -243,6 +247,8 @@ namespace Skylicht
 						x->notify(from);
 						y->notify(from);
 						z->notify(from);
+
+						t->setScale(scale);
 					}), true);
 
 				ScaleX.addObserver(new CObserver<CTransformEditor>(this,

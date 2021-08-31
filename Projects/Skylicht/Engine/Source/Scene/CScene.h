@@ -105,6 +105,8 @@ namespace Skylicht
 			return &m_zones;
 		}
 
+		void bringToNext(CZone* object, CZone* target, bool behind);
+
 		void registerEvent(std::string name, IEventReceiver* pEvent);
 
 		void unRegisterEvent(IEventReceiver* pEvent);
