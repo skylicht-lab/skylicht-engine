@@ -3,6 +3,7 @@
 #include "CLocalize.h"
 
 CDataText::CDataText() :
+	CObjectSerializable("CDataText"),
 	SRING_ID(this, "STRING_ID"),
 	LANG_EN(this, "LANG_EN"),
 	LANG_VN(this, "LANG_VN")

@@ -29,7 +29,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CObjectLayer::CObjectLayer()
+		CObjectLayer::CObjectLayer() :
+			CObjectSerializable("ObjectLayer")
 		{
 			Name = "CObjectLayer";
 
