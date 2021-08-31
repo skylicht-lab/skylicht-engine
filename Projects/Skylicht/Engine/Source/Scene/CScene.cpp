@@ -180,6 +180,20 @@ namespace Skylicht
 		}
 	}
 
+	void CScene::bringToNext(CZone* object, CZone* target, bool behind)
+	{
+		ArrayZone::iterator i = std::find(m_zones.begin(), m_zones.end(), object);
+		if (i != m_zones.end())
+			m_zones.erase(i);
+
+		// insert new position
+		ArrayZone::iterator pos = std::find(m_zones.begin(), m_zones.end(), target);
+		if (behind)
+			++pos;
+
+		m_zones.insert(pos, object);
+	}
+
 	void CScene::registerEvent(std::string name, IEventReceiver* pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();

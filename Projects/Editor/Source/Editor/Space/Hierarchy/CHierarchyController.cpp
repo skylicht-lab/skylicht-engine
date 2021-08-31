@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 
 #include "GameObject/CZone.h"
+#include "Scene/CScene.h"
 
 namespace Skylicht
 {
@@ -304,11 +305,11 @@ namespace Skylicht
 						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 						if (local.Y < rowItem->height() * 0.5f)
 						{
-							// controller->move(dragNode, node, false);
+							controller->move(dragNode, node, false);
 						}
 						else
 						{
-							// controller->move(dragNode, node, true);
+							controller->move(dragNode, node, true);
 						}
 					}
 					else
@@ -369,8 +370,18 @@ namespace Skylicht
 			// move game object
 			CGameObject* fromObject = (CGameObject*)from->getTagData();
 			CGameObject* targetObject = (CGameObject*)target->getTagData();
-			CContainerObject* parent = (CContainerObject*)targetObject->getParent();
-			parent->bringToNext(fromObject, targetObject, behind);
+
+			if (dynamic_cast<CZone*>(fromObject) != NULL &&
+				dynamic_cast<CZone*>(targetObject) != NULL)
+			{
+				CScene* scene = fromObject->getScene();
+				scene->bringToNext(dynamic_cast<CZone*>(fromObject), dynamic_cast<CZone*>(targetObject), behind);
+			}
+			else
+			{
+				CContainerObject* parent = (CContainerObject*)targetObject->getParent();
+				parent->bringToNext(fromObject, targetObject, behind);
+			}
 		}
 
 		void CHierarchyController::moveToChild(CHierachyNode* from, CHierachyNode* target)
