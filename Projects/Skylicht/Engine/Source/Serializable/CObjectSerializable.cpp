@@ -25,17 +25,18 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CObjectSerializable.h"
 #include "CValueProperty.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
-	CObjectSerializable::CObjectSerializable() :
-		CValueProperty(NULL, EPropertyDataType::Object, "")
+	CObjectSerializable::CObjectSerializable(const char* name) :
+		CValueProperty(NULL, EPropertyDataType::Object, name)
 	{
 
 	}
 
-	CObjectSerializable::CObjectSerializable(CObjectSerializable* parent) :
-		CValueProperty(parent, EPropertyDataType::Object, "")
+	CObjectSerializable::CObjectSerializable(const char* name, CObjectSerializable* parent) :
+		CValueProperty(parent, EPropertyDataType::Object, name)
 	{
 
 	}
@@ -108,7 +109,10 @@ namespace Skylicht
 
 	void CObjectSerializable::save(io::IXMLWriter* writer)
 	{
-		writer->writeElement(L"CObjectSerializable", false);
+		char elementName[512];
+		sprintf(elementName, "CObjectSerializable type=\"%s\"", Name.c_str());
+
+		writer->writeElement(CStringImp::convertUTF8ToUnicode(elementName).c_str(), false);
 		writer->writeLineBreak();
 
 		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
@@ -140,15 +144,31 @@ namespace Skylicht
 
 		bool done = false;
 
-		// load attribute
+		std::wstring nodeName = L"CObjectSerializable";
+		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(Name.c_str());
+
 		while (reader->read() && !done)
 		{
 			switch (reader->getNodeType())
 			{
 			case io::EXN_ELEMENT:
-				attr->read(reader);
-				deserialize(attr);
-				done = true;
+				if (nodeName == reader->getNodeName() && attributeName == reader->getAttributeValue(L"type"))
+				{
+					attr->read(reader);
+					deserialize(attr);
+					done = true;
+				}
+				else
+				{
+					char log[512];
+					sprintf("[CObjectSerializable::load] Skip wrong data: type: %s <- %s",
+						Name.c_str(),
+						CStringImp::convertUnicodeToUTF8(reader->getAttributeValue(L"type")).c_str()
+					);
+					os::Printer::log(log);
+				}
+				break;
+			default:
 				break;
 			}
 		}
