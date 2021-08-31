@@ -129,7 +129,6 @@ namespace Skylicht
 
 			m_screenFactor = 0.2f / CProjective::getSegmentLengthClipSpace(camera, pos, pos + cameraRight);
 
-			// Draw position axis			
 			if (handles->isHandlePosition())
 			{
 				drawTranslateGizmo(pos, rot, cameraPos, camera);

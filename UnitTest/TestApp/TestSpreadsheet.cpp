@@ -14,6 +14,7 @@ public:
 
 public:
 	RowData() :
+		CObjectSerializable("RowData"),
 		ID(this, "ID"),
 		Name(this, "Name")
 	{

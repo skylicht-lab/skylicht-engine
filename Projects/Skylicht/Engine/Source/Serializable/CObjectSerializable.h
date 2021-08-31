@@ -51,9 +51,9 @@ namespace Skylicht
 		}
 
 	public:
-		CObjectSerializable();
+		CObjectSerializable(const char* name);
 
-		CObjectSerializable(CObjectSerializable* parent);
+		CObjectSerializable(const char* name, CObjectSerializable* parent);
 
 		virtual ~CObjectSerializable();
 
