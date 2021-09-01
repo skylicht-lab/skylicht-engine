@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 #include "Culling/CVisibleData.h"
 
+#include "Utils/CActivator.h"
+
 namespace Skylicht
 {
 
@@ -184,7 +186,7 @@ namespace Skylicht
 
 	void CGameObject::updateObject()
 	{
-		int numComponents = (int)m_components.size();
+		size_t numComponents = m_components.size();
 		CComponentSystem** components = m_components.data();
 
 		for (int i = 0; i < numComponents; i++)
@@ -196,7 +198,7 @@ namespace Skylicht
 
 	void CGameObject::postUpdateObject()
 	{
-		int numComponents = (int)m_components.size();
+		size_t numComponents = m_components.size();
 		CComponentSystem** components = m_components.data();
 
 		for (int i = 0; i < numComponents; i++)
@@ -208,13 +210,102 @@ namespace Skylicht
 
 	void CGameObject::endUpdate()
 	{
-		int numComponents = (int)m_components.size();
+		size_t numComponents = m_components.size();
 		CComponentSystem** components = m_components.data();
 
 		for (int i = 0; i < numComponents; i++)
 		{
 			if (components[i]->isEnable())
 				components[i]->endUpdate();
+		}
+	}
+
+	CComponentSystem* CGameObject::addComponentByTypeName(const char* name)
+	{
+		IActivatorObject* activator = CActivator::getInstance()->createInstance(name);
+		if (activator == NULL)
+			return NULL;
+
+		CComponentSystem* compSystem = dynamic_cast<CComponentSystem*>(activator);
+		if (compSystem == NULL)
+			return NULL;
+
+		m_components.push_back(compSystem);
+
+		compSystem->setOwner(this);
+		compSystem->initComponent();
+
+		return compSystem;
+	}
+
+	CComponentSystem* CGameObject::getComponentByTypeName(const char* name)
+	{
+		size_t numComponents = m_components.size();
+		CComponentSystem** components = m_components.data();
+
+		for (int i = 0; i < numComponents; i++)
+		{
+			if (components[i]->getTypeName() == name)
+				return components[i];
+		}
+
+		return NULL;
+	}
+
+	CObjectSerializable* CGameObject::createSerializable()
+	{
+		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
+		object->addAutoRelease(new CStringProperty(object, "id", getID().c_str()));
+		object->addAutoRelease(new CStringWProperty(object, "name", getName()));
+		object->addAutoRelease(new CBoolProperty(object, "enable", isEnable()));
+		object->addAutoRelease(new CBoolProperty(object, "visible", isVisible()));
+		object->addAutoRelease(new CBoolProperty(object, "static", isStatic()));
+		object->addAutoRelease(new CUIntProperty(object, "culling", getCullingLayer()));
+
+		CObjectSerializable* coms = new CObjectSerializable("Components");
+		object->addProperty(coms);
+		object->addAutoRelease(coms);
+
+		size_t numComponents = m_components.size();
+		CComponentSystem** components = m_components.data();
+
+		for (int i = 0; i < numComponents; i++)
+		{
+			CObjectSerializable* component = components[i]->createSerializable();
+			if (component != NULL && component->Name != "CComponentSystem")
+			{
+				coms->addProperty(component);
+				coms->addAutoRelease(component);
+			}
+		}
+
+		return object;
+	}
+
+	void CGameObject::loadSerializable(CObjectSerializable* object)
+	{
+		setID(object->get("id", std::string("")).c_str());
+		setName(object->get("name", std::wstring(L"")).c_str());
+		setEnable(object->get("enable", true));
+		setVisible(object->get("visible", true));
+		setVisible(object->get("static", true));
+		setCullingLayer(object->get<u32>("culling", 1));
+
+		CObjectSerializable* coms = object->getProperty<CObjectSerializable>("Components");
+		for (int i = 0, n = coms->getNumProperty(); i < n; i++)
+		{
+			CObjectSerializable* componentData = dynamic_cast<CObjectSerializable*>(coms->getPropertyID(i));
+			if (componentData != NULL)
+			{
+				CComponentSystem* comSystem = getComponentByTypeName(componentData->Name.c_str());
+				if (comSystem == NULL)
+				{
+					comSystem = addComponentByTypeName(componentData->Name.c_str());
+					if (comSystem == NULL)
+						continue;
+				}
+				comSystem->loadSerializable(componentData);
+			}
 		}
 	}
 }

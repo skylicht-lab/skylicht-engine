@@ -140,5 +140,11 @@ namespace Skylicht
 		virtual const core::matrix4& getRelativeTransform();
 
 		virtual void getRelativeTransform(core::matrix4& matrix);
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
+
+		DECLARE_GETTYPENAME(CTransformEuler)
 	};
 }

@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CRenderMeshData);
+
 	CRenderMeshData::CRenderMeshData() :
 		RenderMesh(NULL),
 		OriginalMesh(NULL),
@@ -49,7 +51,7 @@ namespace Skylicht
 			OriginalMesh->drop();
 	}
 
-	void CRenderMeshData::setMesh(CMesh *mesh)
+	void CRenderMeshData::setMesh(CMesh* mesh)
 	{
 		if (RenderMesh)
 		{
@@ -60,10 +62,10 @@ namespace Skylicht
 		RenderMesh = mesh->clone();
 	}
 
-	void CRenderMeshData::setMaterial(CMaterial *material)
+	void CRenderMeshData::setMaterial(CMaterial* material)
 	{
-		CMesh *mesh = RenderMesh;
-		const char *name = material->getName();
+		CMesh* mesh = RenderMesh;
+		const char* name = material->getName();
 
 		int bufferID = 0;
 		for (std::string& materialName : mesh->MaterialName)
@@ -80,7 +82,7 @@ namespace Skylicht
 
 	void CRenderMeshData::initSoftwareSkinning()
 	{
-		CSkinnedMesh *mesh = new CSkinnedMesh();
+		CSkinnedMesh* mesh = new CSkinnedMesh();
 
 		for (int i = 0, n = RenderMesh->getMeshBufferCount(); i < n; i++)
 		{
@@ -144,7 +146,7 @@ namespace Skylicht
 			meshBuffer->getMaterial() = originalMeshBuffer->getMaterial();
 
 			// apply static material
-			CShaderManager *shaderMgr = CShaderManager::getInstance();
+			CShaderManager* shaderMgr = CShaderManager::getInstance();
 
 			if (meshBuffer->getMaterial().getTexture(0) != NULL)
 				meshBuffer->getMaterial().MaterialType = shaderMgr->getShaderIDByName("TextureColor");
@@ -167,17 +169,17 @@ namespace Skylicht
 		RenderMesh = mesh;
 	}
 
-	bool CRenderMeshData::serializable(CMemoryStream *stream, IMeshExporter *exporter)
+	bool CRenderMeshData::serializable(CMemoryStream* stream, IMeshExporter* exporter)
 	{
 		stream->writeChar(IsSkinnedMesh ? 1 : 0);
 
-		CMesh *mesh = RenderMesh;
+		CMesh* mesh = RenderMesh;
 		if (SoftwareSkinning == true)
 			mesh = OriginalMesh;
 
 		if (IsSkinnedMesh == true)
 		{
-			CSkinnedMesh *smesh = dynamic_cast<CSkinnedMesh*>(mesh);
+			CSkinnedMesh* smesh = dynamic_cast<CSkinnedMesh*>(mesh);
 
 			// write joint data
 			u32 numJoint = smesh->Joints.size();
@@ -185,7 +187,7 @@ namespace Skylicht
 
 			for (u32 i = 0; i < numJoint; i++)
 			{
-				CSkinnedMesh::SJoint &j = smesh->Joints[i];
+				CSkinnedMesh::SJoint& j = smesh->Joints[i];
 
 				stream->writeString(j.Name);
 				stream->writeInt(j.EntityIndex);
@@ -202,15 +204,15 @@ namespace Skylicht
 			// write bind material name
 			stream->writeString(mesh->MaterialName[i]);
 
-			IMeshBuffer *mb = mesh->getMeshBuffer(i);
-			IVertexBuffer *vb = mb->getVertexBuffer(0);
-			IIndexBuffer *ib = mb->getIndexBuffer();
+			IMeshBuffer* mb = mesh->getMeshBuffer(i);
+			IVertexBuffer* vb = mb->getVertexBuffer(0);
+			IIndexBuffer* ib = mb->getIndexBuffer();
 
 			// write texture name
-			SMaterial &material = mb->getMaterial();
+			SMaterial& material = mb->getMaterial();
 			for (int t = 0; t < 3; t++)
 			{
-				ITexture *texture = material.TextureLayer[t].Texture;
+				ITexture* texture = material.TextureLayer[t].Texture;
 				if (texture != NULL)
 				{
 					std::string path = texture->getName().getInternalName().c_str();
@@ -248,7 +250,7 @@ namespace Skylicht
 			stream->writeUInt(numAttribute);
 			for (u32 j = 0; j < numAttribute; j++)
 			{
-				IVertexAttribute *attribute = vtxInfo->getAttribute(j);
+				IVertexAttribute* attribute = vtxInfo->getAttribute(j);
 				stream->writeString(attribute->getName().c_str());
 				stream->writeShort(attribute->getOffset());
 				stream->writeShort(attribute->getElementCount());
@@ -265,22 +267,22 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CRenderMeshData::deserializable(CMemoryStream *stream, IMeshImporter *importer)
+	bool CRenderMeshData::deserializable(CMemoryStream* stream, IMeshImporter* importer)
 	{
-		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
 		IsSkinnedMesh = stream->readChar() == 1 ? true : false;
 
 		if (IsSkinnedMesh == true)
 		{
-			CSkinnedMesh *smesh = new CSkinnedMesh();
+			CSkinnedMesh* smesh = new CSkinnedMesh();
 
 			u32 numJoint = stream->readUInt();
 
 			for (u32 i = 0; i < numJoint; i++)
 			{
 				smesh->Joints.push_back(CSkinnedMesh::SJoint());
-				CSkinnedMesh::SJoint &j = smesh->Joints[i];
+				CSkinnedMesh::SJoint& j = smesh->Joints[i];
 
 				j.Name = stream->readString();
 				j.EntityIndex = stream->readInt();
@@ -323,11 +325,11 @@ namespace Skylicht
 
 			std::string vertexTypeName = stream->readString();
 
-			IMeshBuffer *mb = NULL;
+			IMeshBuffer* mb = NULL;
 
 			bool vertexCompatible = true;
 
-			IVertexDescriptor *vertexDes = getVideoDriver()->getVertexDescriptor(vertexTypeName.c_str());
+			IVertexDescriptor* vertexDes = getVideoDriver()->getVertexDescriptor(vertexTypeName.c_str());
 			if (vertexDes != NULL)
 			{
 				if (vertexDes->getVertexSize(0) == vtxSize)
@@ -373,8 +375,8 @@ namespace Skylicht
 
 			if (mb != NULL)
 			{
-				IVertexBuffer *vtxBuffer = mb->getVertexBuffer();
-				IIndexBuffer *idxBuffer = mb->getIndexBuffer();
+				IVertexBuffer* vtxBuffer = mb->getVertexBuffer();
+				IIndexBuffer* idxBuffer = mb->getIndexBuffer();
 
 				vtxBuffer->set_used(vtxCount);
 				stream->readData(vtxBuffer->getVertices(), vtxBufferSize);
@@ -391,7 +393,7 @@ namespace Skylicht
 				{
 					if (textures[t].empty() == false)
 					{
-						ITexture *texture = CTextureManager::getInstance()->getTexture(textures[t].c_str(), importer->getTextureFolder());
+						ITexture* texture = CTextureManager::getInstance()->getTexture(textures[t].c_str(), importer->getTextureFolder());
 						if (texture != NULL)
 							irrMaterial.setTexture(t, texture);
 
@@ -414,6 +416,4 @@ namespace Skylicht
 
 		return true;
 	}
-
-	ACTIVATOR_REGISTER(CRenderMeshData);
 }

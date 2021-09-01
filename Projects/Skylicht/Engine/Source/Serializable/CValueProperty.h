@@ -33,10 +33,16 @@ namespace Skylicht
 		String,
 		StringW,
 		Integer,
+		UInteger,
 		Float,
 		Decimal,
 		DateTime,
-		Object
+		Bool,
+		Vector3,
+		Quaternion,
+		Color,
+		Matrix4,
+		Object,
 	};
 
 	class CValueProperty
@@ -52,6 +58,11 @@ namespace Skylicht
 		CValueProperty(CObjectSerializable* owner, EPropertyDataType dataType, const char* name);
 
 		virtual ~CValueProperty();
+
+		void setOwner(CObjectSerializable* owner)
+		{
+			m_owner = owner;
+		}
 
 		EPropertyDataType getType()
 		{

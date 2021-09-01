@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CTransformMatrix);
+
 	CTransformMatrix::CTransformMatrix()
 	{
 
@@ -61,5 +63,12 @@ namespace Skylicht
 	void CTransformMatrix::getRelativeTransform(core::matrix4& matrix)
 	{
 		matrix = m_transform;
+	}
+
+	CObjectSerializable* CTransformMatrix::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+		object->addAutoRelease(new CMatrixProperty(object, "matrix", m_transform));
+		return object;
 	}
 }

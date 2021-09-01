@@ -25,12 +25,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CActivator.h"
+#include "Serializable/CObjectSerializable.h"
 
 namespace Skylicht
 {
 	class CGameObject;
 
-	class CComponentSystem
+	class CComponentSystem : public IActivatorObject
 	{
 	protected:
 		CGameObject* m_gameObject;
@@ -60,6 +61,10 @@ namespace Skylicht
 		virtual void endUpdate();
 
 		virtual void onEnable(bool b);
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 
 		void setEnable(bool b);
 

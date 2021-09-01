@@ -96,6 +96,8 @@ namespace Skylicht
 		std::vector<T*> getComponentsInChild(bool addThis);
 
 		core::array<CGameObject*>& getArrayChilds(bool addThis);
+
+		DECLARE_GETTYPENAME(CContainerObject)
 	};
 
 	template<typename T>
