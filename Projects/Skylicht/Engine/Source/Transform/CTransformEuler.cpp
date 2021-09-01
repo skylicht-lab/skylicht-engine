@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CTransformEuler);
+
 	CTransformEuler::CTransformEuler() :
 		m_scale(1.0f, 1.0f, 1.0f),
 		m_matrixChanged(true)
@@ -244,5 +246,22 @@ namespace Skylicht
 		core::vector3df right = s_ox;
 		mat.rotateVect(right);
 		return right;
+	}
+
+	CObjectSerializable* CTransformEuler::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+		object->addAutoRelease(new CVector3Property(object, "position", getPosition()));
+		object->addAutoRelease(new CVector3Property(object, "rotation", getRotation()));
+		object->addAutoRelease(new CVector3Property(object, "scale", getScale()));
+		return NULL;
+	}
+
+	void CTransformEuler::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
+		setPosition(object->get("position", core::vector3df()));
+		setRotation(object->get("rotation", core::vector3df()));
+		setScale(object->get("scale", core::vector3df(1.0f, 1.0f, 1.0f)));
 	}
 }

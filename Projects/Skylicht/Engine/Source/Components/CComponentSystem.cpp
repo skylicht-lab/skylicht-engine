@@ -67,4 +67,16 @@ namespace Skylicht
 			m_enable = b;
 		}
 	}
+
+	CObjectSerializable* CComponentSystem::createSerializable()
+	{
+		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
+		object->addAutoRelease(new CBoolProperty(object, "enable", isEnable()));
+		return object;
+	}
+
+	void CComponentSystem::loadSerializable(CObjectSerializable* object)
+	{
+		setEnable(object->get("enable", true));
+	}
 }

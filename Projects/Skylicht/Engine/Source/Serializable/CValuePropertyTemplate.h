@@ -87,6 +87,32 @@ namespace Skylicht
 		}
 	};
 
+	class CUIntProperty : public CValuePropertyTemplate<u32>
+	{
+	public:
+		CUIntProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, UInteger, name)
+		{
+			set(0);
+		}
+
+		CUIntProperty(CObjectSerializable* owner, const char* name, u32 value) :
+			CValuePropertyTemplate(owner, Integer, name)
+		{
+			set(value);
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addInt(Name.c_str(), m_value);
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsInt(Name.c_str());
+		}
+	};
+
 	class CFloatProperty : public CValuePropertyTemplate<float>
 	{
 	public:
@@ -143,6 +169,31 @@ namespace Skylicht
 		}
 	};
 
+	class CBoolProperty : public CValuePropertyTemplate<bool>
+	{
+	public:
+		CBoolProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, Bool, name)
+		{
+		}
+
+		CBoolProperty(CObjectSerializable* owner, const char* name, bool value) :
+			CValuePropertyTemplate(owner, Bool, name)
+		{
+			set(value);
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addBool(Name.c_str(), m_value);
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsBool(Name.c_str());
+		}
+	};
+
 	class CStringWProperty : public CValuePropertyTemplate<std::wstring>
 	{
 	public:
@@ -196,6 +247,110 @@ namespace Skylicht
 		virtual void deserialize(io::IAttributes* io)
 		{
 			m_value = (long)io->getAttributeAsFloat(Name.c_str());
+		}
+	};
+
+	class CVector3Property : public CValuePropertyTemplate<core::vector3df>
+	{
+	public:
+		CVector3Property(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, Vector3, name)
+		{
+			set(core::vector3df());
+		}
+
+		CVector3Property(CObjectSerializable* owner, const char* name, const core::vector3df& value) :
+			CValuePropertyTemplate(owner, Vector3, name)
+		{
+			set(value);
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addVector3d(Name.c_str(), m_value);
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsVector3d(Name.c_str());
+		}
+	};
+
+	class CQuaternionProperty : public CValuePropertyTemplate<core::quaternion>
+	{
+	public:
+		CQuaternionProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, Quaternion, name)
+		{
+			set(core::quaternion());
+		}
+
+		CQuaternionProperty(CObjectSerializable* owner, const char* name, const core::quaternion& value) :
+			CValuePropertyTemplate(owner, Quaternion, name)
+		{
+			set(value);
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addQuaternion(Name.c_str(), m_value);
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsQuaternion(Name.c_str());
+		}
+	};
+
+	class CColorProperty : public CValuePropertyTemplate<video::SColor>
+	{
+	public:
+		CColorProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, Color, name)
+		{
+			set(SColor(255, 255, 255, 255));
+		}
+
+		CColorProperty(CObjectSerializable* owner, const char* name, const video::SColor& value) :
+			CValuePropertyTemplate(owner, Color, name)
+		{
+			set(value);
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addColor(Name.c_str(), m_value);
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsColor(Name.c_str());
+		}
+	};
+
+	class CMatrixProperty : public CValuePropertyTemplate<core::matrix4>
+	{
+	public:
+		CMatrixProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, Matrix4, name)
+		{
+			set(core::IdentityMatrix);
+		}
+
+		CMatrixProperty(CObjectSerializable* owner, const char* name, const core::matrix4& value) :
+			CValuePropertyTemplate(owner, Matrix4, name)
+		{
+			set(value);
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addMatrix(Name.c_str(), m_value);
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsMatrix(Name.c_str());
 		}
 	};
 }

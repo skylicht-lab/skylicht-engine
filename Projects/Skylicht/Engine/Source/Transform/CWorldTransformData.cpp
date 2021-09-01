@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CWorldTransformData);
+
 	CWorldTransformData::CWorldTransformData() :
 		HasChanged(true),
 		Depth(0),
@@ -39,7 +41,7 @@ namespace Skylicht
 
 	}
 
-	bool CWorldTransformData::serializable(CMemoryStream *stream, IMeshExporter *exporter)
+	bool CWorldTransformData::serializable(CMemoryStream* stream, IMeshExporter* exporter)
 	{
 		stream->writeString(Name);
 		stream->writeInt(ParentIndex);
@@ -49,7 +51,7 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CWorldTransformData::deserializable(CMemoryStream *stream, IMeshImporter *importer)
+	bool CWorldTransformData::deserializable(CMemoryStream* stream, IMeshImporter* importer)
 	{
 		Name = stream->readString();
 		ParentIndex = stream->readInt();
@@ -59,6 +61,4 @@ namespace Skylicht
 		HasChanged = true;
 		return true;
 	}
-
-	ACTIVATOR_REGISTER(CWorldTransformData);
 }

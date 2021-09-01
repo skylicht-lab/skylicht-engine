@@ -114,5 +114,9 @@ namespace Skylicht
 		virtual bool OnEvent(const SEvent& event);
 
 		virtual void update();
+
+		CObjectSerializable* createSerializable();
+
+		DECLARE_GETTYPENAME(CScene)
 	};
 }

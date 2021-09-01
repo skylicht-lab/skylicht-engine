@@ -38,10 +38,11 @@ namespace Skylicht
 		std::vector<CValueProperty*> m_autoRelease;
 		std::string m_savePath;
 
-	protected:
+	public:
 
 		void addProperty(CValueProperty* p)
 		{
+			p->setOwner(this);
 			m_value.push_back(p);
 		}
 
@@ -68,6 +69,30 @@ namespace Skylicht
 		}
 
 		CValueProperty* getProperty(const char* name);
+
+		template<class T>
+		T* getProperty(const char* name)
+		{
+			CValueProperty* p = getProperty(name);
+			if (p == NULL)
+				return NULL;
+
+			return dynamic_cast<T*>(p);
+		}
+
+		template<class T>
+		T get(const char* name, T defaultValue)
+		{
+			CValueProperty* p = getProperty(name);
+			if (p == NULL)
+				return defaultValue;
+
+			CValuePropertyTemplate<T>* t = dynamic_cast<CValuePropertyTemplate<T>*>(p);
+			if (t == NULL)
+				return defaultValue;
+
+			return t->get();
+		}
 
 		virtual void serialize(io::IAttributes* io);
 
