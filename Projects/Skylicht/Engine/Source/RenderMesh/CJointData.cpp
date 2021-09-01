@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CJointData);
+
 	CJointData::CJointData() :
 		BoneRoot(false),
 		RootIndex(-1)
@@ -39,7 +41,7 @@ namespace Skylicht
 
 	}
 
-	bool CJointData::serializable(CMemoryStream *stream, IMeshExporter *exporter)
+	bool CJointData::serializable(CMemoryStream* stream, IMeshExporter* exporter)
 	{
 		stream->writeChar(BoneRoot == true ? 1 : 0);
 
@@ -53,7 +55,7 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CJointData::deserializable(CMemoryStream *stream, IMeshImporter *importer)
+	bool CJointData::deserializable(CMemoryStream* stream, IMeshImporter* importer)
 	{
 		BoneRoot = stream->readChar() == 1 ? true : false;
 
@@ -66,6 +68,4 @@ namespace Skylicht
 
 		return true;
 	}
-
-	ACTIVATOR_REGISTER(CJointData)
 }

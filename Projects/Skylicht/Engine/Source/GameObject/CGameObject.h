@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Components/CComponentSystem.h"
 #include "Transform/CTransformEuler.h"
 #include "Transform/CTransformMatrix.h"
+#include "Serializable/CObjectSerializable.h"
 
 namespace Skylicht
 {
@@ -245,6 +246,10 @@ namespace Skylicht
 
 		void releaseAllComponent();
 
+		CComponentSystem* addComponentByTypeName(const char* name);
+
+		CComponentSystem* getComponentByTypeName(const char* name);
+
 		inline std::vector<CComponentSystem*>& getListComponent()
 		{
 			return m_components;
@@ -269,6 +274,10 @@ namespace Skylicht
 		{
 			return m_enableEditorSelect;
 		}
+
+		CObjectSerializable* createSerializable();
+
+		void loadSerializable(CObjectSerializable* object);
 
 		DECLARE_GETTYPENAME(CGameObject)
 	};
