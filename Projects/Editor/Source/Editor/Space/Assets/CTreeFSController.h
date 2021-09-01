@@ -96,6 +96,11 @@ namespace Skylicht
 			void refresh(GUI::CTreeNode* node);
 
 			void refresh();
+
+		protected:
+
+			void initDragDrop(GUI::CTreeNode* node);
+
 		};
 	}
 }

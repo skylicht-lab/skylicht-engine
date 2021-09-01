@@ -271,11 +271,18 @@ namespace Skylicht
 
 		for (int i = 0; i < numComponents; i++)
 		{
-			CObjectSerializable* component = components[i]->createSerializable();
-			if (component != NULL && component->Name != "CComponentSystem")
+			CObjectSerializable* data = components[i]->createSerializable();
+			if (data != NULL)
 			{
-				coms->addProperty(component);
-				coms->addAutoRelease(component);
+				if (data->Name != "CComponentSystem")
+				{
+					coms->addProperty(data);
+					coms->addAutoRelease(data);
+				}
+				else
+				{
+					delete data;
+				}
 			}
 		}
 

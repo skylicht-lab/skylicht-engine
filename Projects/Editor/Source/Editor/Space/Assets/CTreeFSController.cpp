@@ -30,6 +30,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
+#include "GameObject/CGameObject.h"
+#include "Editor/Space/Hierarchy/CHierachyNode.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -62,6 +65,8 @@ namespace Skylicht
 			m_nodeAssets->setAlwayShowExpandButton(true);
 			m_nodeAssets->expand(false);
 
+			initDragDrop(m_nodeAssets);
+
 			std::vector<SFileInfo> files;
 			m_assetManager->getRoot(files);
 			add(m_nodeAssets, files);
@@ -83,6 +88,8 @@ namespace Skylicht
 					childNode->OnExpand = BIND_LISTENER(&CTreeFSController::OnExpand, this);
 					childNode->OnCollapse = BIND_LISTENER(&CTreeFSController::OnCollapse, this);
 					childNode->OnSelectChange = BIND_LISTENER(&CTreeFSController::OnSelected, this);
+
+					initDragDrop(childNode);
 
 					if (m_assetManager->isFolderEmpty(f.FullPath.c_str()) == false)
 						childNode->setAlwayShowExpandButton(true);
@@ -315,6 +322,44 @@ namespace Skylicht
 			{
 				expand(selectePath);
 			}
+		}
+
+		void CTreeFSController::initDragDrop(GUI::CTreeNode* node)
+		{
+			std::string folderPath = node->getTagString();
+
+			GUI::CTreeRowItem* row = node->getRowItem();
+			row->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
+			{
+				if (data->Name == "HierarchyNode")
+				{
+					CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+					if (dragNode->isTagGameObject() &&
+						dragNode->getTagDataType() != CHierachyNode::Zone)
+					{
+						return true;
+					}
+				}
+				return false;
+			};
+
+			row->OnDrop = [node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			{
+				if (data->Name == "HierarchyNode")
+				{
+					CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+					CGameObject* object = (CGameObject*)dragNode->getTagData();
+
+					std::string path = node->getTagString();
+					path += "/";
+					path += object->getNameA();
+					path += ".xml";
+
+					CObjectSerializable* data = object->createSerializable();
+					data->save(path.c_str());
+					delete data;
+				}
+			};
 		}
 	}
 }
