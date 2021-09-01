@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "Transform/CTransform.h"
+#include "Transform/CTransformEuler.h"
 #include "CTransformEditor.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/SpaceController/CSceneController.h"
@@ -306,6 +306,6 @@ namespace Skylicht
 
 		}
 
-		EDITOR_REGISTER(CTransformEditor, CTransform)
+		EDITOR_REGISTER(CTransformEditor, CTransformEuler)
 	}
 }
