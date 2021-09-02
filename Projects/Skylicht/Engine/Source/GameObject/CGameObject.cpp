@@ -228,7 +228,10 @@ namespace Skylicht
 
 		CComponentSystem* compSystem = dynamic_cast<CComponentSystem*>(activator);
 		if (compSystem == NULL)
+		{
+			delete activator;
 			return NULL;
+		}
 
 		m_components.push_back(compSystem);
 

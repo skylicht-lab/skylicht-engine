@@ -32,6 +32,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		EDITOR_REGISTER(CZoneEditor, CZone);
+
 		CZoneEditor::CZoneEditor() :
 			Name(L""),
 			Enable(true)
@@ -99,7 +101,5 @@ namespace Skylicht
 		{
 
 		}
-
-		EDITOR_REGISTER(CZoneEditor, CZone)
 	}
 }

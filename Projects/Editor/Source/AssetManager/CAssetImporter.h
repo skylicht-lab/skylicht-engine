@@ -38,6 +38,8 @@ namespace Skylicht
 
 			std::string m_lastFile;
 
+			std::list<SFileNode*> m_files;
+
 			std::list<SFileNode*>::iterator m_fileIterator;
 			std::list<SFileNode*>::iterator m_fileIteratorEnd;
 
@@ -50,12 +52,14 @@ namespace Skylicht
 		public:
 			CAssetImporter(std::list<SFileNode*>& listFiles);
 
+			CAssetImporter();
+
 			virtual ~CAssetImporter();
 
 			void addDeleted(std::list<std::string>& list);
 
 			bool loadGUID(int count);
-			
+
 			void removeUnusedMeta();
 
 			bool deleteAsset(int count);
@@ -70,6 +74,10 @@ namespace Skylicht
 			void getImportStatus(float& percent, std::string& last);
 
 			void getDeleteStatus(float& percent, std::string& last);
+
+			void add(const char* path);
+
+			void importAll();
 		};
 	}
 }

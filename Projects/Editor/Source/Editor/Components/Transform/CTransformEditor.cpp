@@ -32,6 +32,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		EDITOR_REGISTER(CTransformEditor, CTransformEuler);
+
 		CTransformEditor::CTransformEditor() :
 			m_gameObject(NULL),
 			m_transform(NULL),
@@ -305,7 +307,5 @@ namespace Skylicht
 		{
 
 		}
-
-		EDITOR_REGISTER(CTransformEditor, CTransformEuler)
 	}
 }
