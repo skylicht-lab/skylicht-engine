@@ -35,6 +35,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		EDITOR_REGISTER(CGameObjectEditor, CGameObject);
+		EDITOR_REGISTER(CGameObjectEditor, CContainerObject);
+
 		CGameObjectEditor::CGameObjectEditor() :
 			Name(L""),
 			Enable(true),
@@ -221,7 +224,5 @@ namespace Skylicht
 			}
 			*/
 		}
-
-		EDITOR_REGISTER(CGameObjectEditor, CGameObject)
 	}
 }

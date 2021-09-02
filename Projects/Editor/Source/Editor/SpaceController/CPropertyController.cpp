@@ -76,7 +76,8 @@ namespace Skylicht
 
 					// GameObject property
 					CComponentEditor* editor = activator->getEditorInstance(obj->getTypeName().c_str());
-					m_spaceProperty->addComponent(editor, obj);
+					if (editor != NULL)
+						m_spaceProperty->addComponent(editor, obj);
 
 					// Component property					
 					ArrayComponent& listComponents = obj->getListComponent();

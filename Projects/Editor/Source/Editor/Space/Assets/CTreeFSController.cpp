@@ -30,8 +30,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
-#include "GameObject/CGameObject.h"
 #include "Editor/Space/Hierarchy/CHierachyNode.h"
+
+#include "AssetManager/CAssetImporter.h"
+#include "Scene/CSceneExporter.h"
 
 namespace Skylicht
 {
@@ -355,9 +357,11 @@ namespace Skylicht
 					path += object->getNameA();
 					path += ".xml";
 
-					CObjectSerializable* data = object->createSerializable();
-					data->save(path.c_str());
-					delete data;
+					CSceneExporter::exportGameObject(object, path.c_str());					
+
+					CAssetImporter importer;
+					importer.add(path.c_str());
+					importer.importAll();
 				}
 			};
 		}

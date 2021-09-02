@@ -58,6 +58,19 @@ namespace Skylicht
 			m_deleteIteratorEnd = m_fileDeleted.end();
 		}
 
+		CAssetImporter::CAssetImporter() :
+			m_fileID(0),
+			m_deleteID(0),
+			m_totalDeleted(0)
+		{
+			m_assetManager = CAssetManager::getInstance();
+
+			m_total = 0;
+
+			m_deleteIterator = m_fileDeleted.begin();
+			m_deleteIteratorEnd = m_fileDeleted.end();
+		}
+
 		CAssetImporter::~CAssetImporter()
 		{
 
@@ -76,13 +89,13 @@ namespace Skylicht
 		{
 			if (m_fileIterator == m_fileIteratorEnd)
 				return true;
-			
+
 			for (int j = 0; j < count; j++)
 			{
 				SFileNode* node = (*m_fileIterator);
 
 				std::string path = node->FullPath;
-				
+
 				if (fs::exists(path))
 				{
 					m_assetManager->readOrGenerateMeta(path.c_str(), node);
@@ -154,6 +167,45 @@ namespace Skylicht
 			}
 
 			m_assetManager->m_meta.clear();
+		}
+
+		void CAssetImporter::add(const char* path)
+		{
+			std::string bundle = m_assetManager->getBundleName(path);
+			m_files.push_back(m_assetManager->addFileNode(bundle, path));
+
+			m_fileID = 0;
+			m_total = m_files.size();
+			m_fileIterator = m_files.begin();
+			m_fileIteratorEnd = m_files.end();
+		}
+
+		void CAssetImporter::importAll()
+		{
+			if (m_fileIterator == m_fileIteratorEnd)
+				return;
+
+			while (m_fileIterator != m_fileIteratorEnd)
+			{
+				SFileNode* node = (*m_fileIterator);
+
+				std::string path = node->FullPath;
+
+				if (fs::exists(path))
+				{
+					m_assetManager->readOrGenerateMeta(path.c_str(), node);
+				}
+
+				m_lastFile = node->Path;
+
+				++m_fileIterator;
+				++m_fileID;
+
+				if (m_fileIterator == m_fileIteratorEnd)
+				{
+					removeUnusedMeta();
+				}
+			}
 		}
 	}
 }
