@@ -106,6 +106,8 @@ namespace Skylicht
 					m_label->setHidden(!b);
 				}
 
+				void setTextPaddingTop(float top);
+
 				inline void setTextAlignment(GUI::ETextAlign alignment)
 				{
 					m_label->setTextAlignment(alignment);

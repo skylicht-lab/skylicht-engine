@@ -93,8 +93,11 @@ namespace Skylicht
 				static SGUIColor ListItemBackgroundFocusColor;
 				static SGUIColor ListItemBackgroundUnfocusColor;
 
-				static SGUIColor CCollapsibleColor;
-				static SGUIColor CCollapsibleInnerColor;
+				static SGUIColor CollapsibleColor;
+				static SGUIColor CollapsibleInnerColor;
+
+				static SGUIColor OpenSaveDialogTop;
+				static SGUIColor OpenSaveDialogBottom;
 
 				static float getFontSizePt(EFontSize size);
 

@@ -46,7 +46,7 @@ namespace Skylicht
 
 				CBase* addControl(CBase *control, bool inRightToolbar = false);
 
-				CBase* addSpace(bool inRightToolbar = false);
+				CBase* addSpace(float size = 5.0f, bool inRightToolbar = false);
 			};
 		}
 	}

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -21,23 +21,34 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "GameObject/CZone.h"
-#include "CScene.h"
-#include "Serializable/CObjectSerializable.h"
+#include "CBase.h"
+#include "CDialogWindow.h"
 
 namespace Skylicht
 {
-	class CSceneExporter
+	namespace Editor
 	{
-	protected:
-		static void loadChildObjectSerializable(CContainerObject* container, CObjectSerializable* data);
+		namespace GUI
+		{
+			class COpenSaveDialog : public CDialogWindow
+			{
+			public:
+				enum EDialogType
+				{
+					Open = 0,
+					Save,
+					SaveAs
+				};
 
-	public:
-		static void exportGameObject(CGameObject* object, const char* path);
+			protected:
 
-		static void exportScene(CScene* scene, const char* path);
-	};
+			public:
+				COpenSaveDialog(CBase* base, EDialogType type);
+
+				virtual ~COpenSaveDialog();
+			};
+		}
+	}
 }

@@ -196,6 +196,8 @@ namespace Skylicht
 						return CTextBox::onChar(c);
 					else if (m_textContainer->getCaretBegin() == 0 && s.find(L'-') == std::wstring::npos)
 						return CTextBox::onChar(c);
+					else if (m_textContainer->getCaretEnd() == 0 && m_textContainer->getCaretBegin() == (u32)s.size())
+						return CTextBox::onChar(c);
 					else
 						return false;
 				}

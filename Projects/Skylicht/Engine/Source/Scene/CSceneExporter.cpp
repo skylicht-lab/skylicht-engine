@@ -59,4 +59,27 @@ namespace Skylicht
 		data->save(path);
 		delete data;
 	}
+
+	void CSceneExporter::exportScene(CScene* scene, const char* path)
+	{
+		CObjectSerializable* data = scene->createSerializable();
+
+		ArrayZone* zone = scene->getAllZone();
+		ArrayZoneIter i = zone->begin(), end = zone->end();
+
+		while (i != end)
+		{
+			CZone* zone = (*i);
+			CObjectSerializable* zoneData = zone->createSerializable();
+
+			loadChildObjectSerializable(zone, zoneData);
+
+			data->addProperty(zoneData);
+			data->addAutoRelease(zoneData);
+			++i;
+		}
+
+		data->save(path);
+		delete data;
+	}
 }
