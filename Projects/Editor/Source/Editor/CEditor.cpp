@@ -250,6 +250,7 @@ namespace Skylicht
 			submenu->addSeparator();
 			submenu->addItem(L"Save", GUI::ESystemIcon::Save, L"Ctrl + S");
 			submenu->addItem(L"Save As");
+			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandFile, this);
 
 			GUI::CMenuItem* edit = m_menuBar->addItem(L"Edit");
 			submenu = edit->getMenu();
@@ -787,6 +788,21 @@ namespace Skylicht
 				}
 				break;
 				}
+			}
+		}
+
+		void CEditor::OnCommandFile(GUI::CBase* item)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
+			const std::wstring& label = menuItem->getLabel();
+
+			if (label == L"Save")
+			{
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save);
+			}
+			else if (label == L"Save As")
+			{
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::SaveAs);
 			}
 		}
 

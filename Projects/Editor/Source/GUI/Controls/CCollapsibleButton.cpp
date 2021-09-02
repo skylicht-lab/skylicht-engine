@@ -40,7 +40,7 @@ namespace Skylicht
 				showIcon(true);
 				setIsToggle(true);
 
-				setColor(CThemeConfig::CCollapsibleColor);
+				setColor(CThemeConfig::CollapsibleColor);
 				setHoverColor(CThemeConfig::ButtonColor);
 			}
 

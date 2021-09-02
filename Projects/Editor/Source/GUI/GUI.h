@@ -51,5 +51,5 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CProgressBar.h"
 #include "GUI/Controls/CMessageBox.h"
 #include "GUI/Controls/CFlatButton.h"
-
+#include "GUI/Controls/COpenSaveDialog.h"
 #include "GUI/Utils/CToggleGroup.h"

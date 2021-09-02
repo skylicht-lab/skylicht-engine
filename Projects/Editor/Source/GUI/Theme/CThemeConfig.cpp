@@ -89,8 +89,11 @@ namespace Skylicht
 			SGUIColor CThemeConfig::ListItemBackgroundFocusColor = ButtonPressColor;
 			SGUIColor CThemeConfig::ListItemBackgroundUnfocusColor = SGUIColor(100, 80, 120, 180);
 
-			SGUIColor CThemeConfig::CCollapsibleColor = SGUIColor(255, 70, 70, 70);
-			SGUIColor CThemeConfig::CCollapsibleInnerColor = WindowInnerColor;
+			SGUIColor CThemeConfig::CollapsibleColor = SGUIColor(255, 70, 70, 70);
+			SGUIColor CThemeConfig::CollapsibleInnerColor = WindowInnerColor;
+
+			SGUIColor CThemeConfig::OpenSaveDialogTop = SGUIColor(255, 75, 75, 75);
+			SGUIColor CThemeConfig::OpenSaveDialogBottom = SGUIColor(255, 68, 68, 68);
 
 			float CThemeConfig::TreeIndentationSize = 25.0f;
 

@@ -118,6 +118,13 @@ namespace Skylicht
 				invalidate();
 			}
 
+			void CButton::setTextPaddingTop(float top)
+			{
+				SMargin m = m_label->getMargin();
+				m.Top = top;
+				m_label->setMargin(m);
+			}
+
 			void CButton::setLabel(const std::wstring& text)
 			{
 				m_label->setString(text);
