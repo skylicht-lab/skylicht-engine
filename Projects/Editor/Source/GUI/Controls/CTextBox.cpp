@@ -93,6 +93,7 @@ namespace Skylicht
 			void CTextBox::showIcon(ESystemIcon icon)
 			{
 				m_icon->setIcon(icon);
+				m_icon->setHidden(false);
 				m_textContainer->setPos(24.0f, 3.0f);
 				m_textHint->setPos(24.0f, 3.0f);
 			}
@@ -385,7 +386,7 @@ namespace Skylicht
 				m_onCharEvent = true;
 
 				if (m_editable)
-				{					
+				{
 					if (c == 27)
 					{
 						// press ESC

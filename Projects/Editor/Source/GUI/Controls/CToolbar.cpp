@@ -32,7 +32,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CToolbar::CToolbar(CBase *parent) :
+			CToolbar::CToolbar(CBase* parent) :
 				CBase(parent)
 			{
 				setHeight(25.0f);
@@ -51,7 +51,7 @@ namespace Skylicht
 
 			CButton* CToolbar::addButton(const std::wstring& label, ESystemIcon icon, bool inRightToolbar)
 			{
-				CButton *newButton = new CButton(this);
+				CButton* newButton = new CButton(this);
 				newButton->setLabel(label);
 				newButton->setIcon(icon);
 				newButton->setPadding(SPadding(0.0f, 0.0f, -6.0f, 0.0f));
@@ -78,7 +78,7 @@ namespace Skylicht
 
 			CButton* CToolbar::addButton(ESystemIcon icon, bool inRightToolbar)
 			{
-				CButton *newButton = new CButton(this);
+				CButton* newButton = new CButton(this);
 				newButton->setSize(20.0f, 20.0f);
 				newButton->setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 				newButton->showLabel(false);
@@ -98,10 +98,10 @@ namespace Skylicht
 				return newButton;
 			}
 
-			CBase* CToolbar::addSpace(bool inRightToolbar)
+			CBase* CToolbar::addSpace(float size, bool inRightToolbar)
 			{
-				CBase *space = new CBase(this);
-				space->setWidth(5.0f);
+				CBase* space = new CBase(this);
+				space->setWidth(size);
 
 				if (inRightToolbar)
 					space->dock(EPosition::Right);
@@ -111,7 +111,7 @@ namespace Skylicht
 				return space;
 			}
 
-			CBase* CToolbar::addControl(CBase *control, bool inRightToolbar)
+			CBase* CToolbar::addControl(CBase* control, bool inRightToolbar)
 			{
 				control->setParent(this);
 
