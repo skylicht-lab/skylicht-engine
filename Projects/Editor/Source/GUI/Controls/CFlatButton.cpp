@@ -39,7 +39,8 @@ namespace Skylicht
 				m_borderL(true),
 				m_borderR(true),
 				m_borderT(true),
-				m_borderB(true)
+				m_borderB(true),
+				m_borderColor(CThemeConfig::WindowInnerColor)
 			{
 				setHeight(25.0f);
 				m_label->setMargin(SMargin(0.0f, 5.0f, 0.0f, 0.0f));
@@ -88,7 +89,7 @@ namespace Skylicht
 					CRenderer::getRenderer()->drawFillRect(getRenderBounds(), c);
 					CRenderer::getRenderer()->drawBorderRect(
 						getRenderBounds(),
-						CThemeConfig::WindowInnerColor,
+						m_borderColor,
 						m_borderL, m_borderT, m_borderR, m_borderB
 					);
 				}

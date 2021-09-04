@@ -95,6 +95,10 @@ namespace Skylicht
 			SGUIColor CThemeConfig::OpenSaveDialogTop = SGUIColor(255, 75, 75, 75);
 			SGUIColor CThemeConfig::OpenSaveDialogBottom = SGUIColor(255, 68, 68, 68);
 
+			SGUIColor CThemeConfig::Header = SGUIColor(255, 50, 50, 50);
+			SGUIColor CThemeConfig::HeaderHover = SGUIColor(255, 60, 60, 60);
+			SGUIColor CThemeConfig::HeaderBorder = SGUIColor(255, 30, 30, 30);
+
 			float CThemeConfig::TreeIndentationSize = 25.0f;
 
 			float CThemeConfig::getFontSizePt(EFontSize size)

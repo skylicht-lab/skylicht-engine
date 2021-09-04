@@ -134,6 +134,15 @@ namespace Skylicht
 				filename->dock(EPosition::Fill);
 				filename->setMargin(SMargin(10.0f, 0.0f, 10.0f, 0.0f));
 
+				m_files = new CDataGridView(this, 3);
+				m_files->dock(EPosition::Fill);
+				m_files->getHeader()->setLabel(0, L"Name");
+				m_files->getHeader()->setLabel(1, L"Date Modified");
+				m_files->getHeader()->setLabel(2, L"Size");
+
+				m_files->setColumnWidth(this, 0, 400.0f);
+
+				setResizable(true);
 				setCenterPosition();
 			}
 
