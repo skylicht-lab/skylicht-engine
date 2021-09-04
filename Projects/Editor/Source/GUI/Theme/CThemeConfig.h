@@ -98,6 +98,10 @@ namespace Skylicht
 
 				static SGUIColor OpenSaveDialogTop;
 				static SGUIColor OpenSaveDialogBottom;
+				
+				static SGUIColor Header;
+				static SGUIColor HeaderHover;
+				static SGUIColor HeaderBorder;
 
 				static float getFontSizePt(EFontSize size);
 

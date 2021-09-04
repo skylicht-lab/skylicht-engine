@@ -21,11 +21,9 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "CBase.h"
-#include "CDialogWindow.h"
-#include "CDataGridView.h"
+#include "pch.h"
+#include "CDataRowView.h"
 
 namespace Skylicht
 {
@@ -33,24 +31,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class COpenSaveDialog : public CDialogWindow
-			{
-			public:
-				enum EDialogType
-				{
-					Open = 0,
-					Save,
-					SaveAs
-				};
 
-			protected:
-				CDataGridView* m_files;
-
-			public:
-				COpenSaveDialog(CBase* base, EDialogType type);
-
-				virtual ~COpenSaveDialog();
-			};
 		}
 	}
 }

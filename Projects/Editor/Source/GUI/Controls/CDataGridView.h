@@ -21,11 +21,14 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+
 #pragma once
 
 #include "CBase.h"
-#include "CDialogWindow.h"
-#include "CDataGridView.h"
+#include "CScrollControl.h"
+#include "CDataHeader.h"
+
+#define GRIDVIEW_MAX_COLUMN 20
 
 namespace Skylicht
 {
@@ -33,23 +36,72 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class COpenSaveDialog : public CDialogWindow
+			class CDataGridView : public CBase
 			{
+			protected:
+				int m_numColumn;
+
+				float m_resizeWidth;
+
+				float m_width[GRIDVIEW_MAX_COLUMN];
+
+				CDataHeader* m_header;
+				CScrollControl* m_view;
+
 			public:
-				enum EDialogType
+				CDataGridView(CBase* parent, int numColumn);
+
+				virtual ~CDataGridView();
+
+				virtual void layout();
+
+				virtual void postLayout();
+
+				void unSelectAll();
+
+				void removeAllItem();
+
+				CDataHeader* getHeader()
 				{
-					Open = 0,
-					Save,
-					SaveAs
-				};
+					return m_header;
+				}
+
+				inline int getNumColumn()
+				{
+					return m_numColumn;
+				}
+
+				void setColumnWidth(CBase* control, int c, float w);
+
+				inline float getColumnWidth(int c)
+				{
+					return m_width[c];
+				}
+
+				inline float getResizerWidth()
+				{
+					return m_resizeWidth;
+				}
+
+				virtual bool onKeyUp(bool down);
+
+				virtual bool onKeyDown(bool down);
+
+				virtual bool onKeyHome(bool down);
+
+				virtual bool onKeyEnd(bool down);
+
+			public:
+
+				Listener OnSelected;
+				Listener OnUnselected;
+				Listener OnSelectChange;
+				Listener OnItemContextMenu;
 
 			protected:
-				CDataGridView* m_files;
 
-			public:
-				COpenSaveDialog(CBase* base, EDialogType type);
+				virtual void onItemDown(CBase* item);
 
-				virtual ~COpenSaveDialog();
 			};
 		}
 	}
