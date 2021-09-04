@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,9 +23,8 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#include "CBase.h"
-#include "CDialogWindow.h"
-#include "CDataGridView.h"
+#include "GUI/Controls/CDragger.h"
+#include "GUI/Controls/CCanvas.h"
 
 namespace Skylicht
 {
@@ -33,23 +32,36 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class COpenSaveDialog : public CDialogWindow
+			class CResizerLR : public CDragger
 			{
-			public:
-				enum EDialogType
-				{
-					Open = 0,
-					Save,
-					SaveAs
-				};
-
 			protected:
-				CDataGridView* m_files;
+				EPosition m_resizeDir;
 
+				CBase* m_target2;
+
+				float m_renderBorderPadding;
 			public:
-				COpenSaveDialog(CBase* base, EDialogType type);
+				CResizerLR(CBase* parent);
 
-				virtual ~COpenSaveDialog();
+				virtual ~CResizerLR();
+
+				inline void setRenderBorderPadding(float borderPadding)
+				{
+					m_renderBorderPadding = borderPadding;
+				}
+
+				inline void setTarget2(CBase* base)
+				{
+					m_target2 = base;
+				}
+
+				void setResizeDir(EPosition dir);
+
+				virtual void renderUnder();
+
+				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
+
+				virtual void onMouseClickLeft(float x, float y, bool down);
 			};
 		}
 	}

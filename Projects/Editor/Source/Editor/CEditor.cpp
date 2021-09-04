@@ -199,14 +199,14 @@ namespace Skylicht
 			for (int i = 0; i < 4; i++)
 				m_statusInfo->setColumnWidth(i, colWidth);
 
-			m_statusInfo->setCellText(1, L"CTRL");
-			m_statusInfo->setCellText(2, L"SHIFT");
-			m_statusInfo->setCellText(3, L"CAPLOCK");
+			m_statusInfo->setCellText(1, L"");
+			m_statusInfo->setCellText(2, L"");
+			m_statusInfo->setCellText(3, L"");
 			m_statusInfo->dock(GUI::EPosition::Right);
 
 			m_status = new GUI::CIconTextItem(statusBar);
-			m_status->setLabel(L"Item(s) Save!");
-			m_status->setIcon(GUI::ESystemIcon::Save);
+			m_status->setLabel(L"");
+			m_status->setIcon(GUI::ESystemIcon::None);
 			m_status->dock(GUI::EPosition::Fill);
 
 			// init dock panel

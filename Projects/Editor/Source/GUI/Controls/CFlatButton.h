@@ -40,6 +40,7 @@ namespace Skylicht
 				bool m_borderT;
 				bool m_borderB;
 
+				SGUIColor m_borderColor;
 			public:
 				CFlatButton(CBase* parent);
 
@@ -53,6 +54,11 @@ namespace Skylicht
 					m_borderT = t;
 					m_borderR = r;
 					m_borderB = b;
+				}
+
+				inline void setBorderColor(const SGUIColor& c)
+				{
+					m_borderColor = c;
 				}
 			};
 		}

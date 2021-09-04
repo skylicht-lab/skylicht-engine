@@ -21,11 +21,13 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+
 #pragma once
 
 #include "CBase.h"
-#include "CDialogWindow.h"
-#include "CDataGridView.h"
+#include "CLabel.h"
+#include "CFlatButton.h"
+#include "CResizerLR.h"
 
 namespace Skylicht
 {
@@ -33,23 +35,27 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class COpenSaveDialog : public CDialogWindow
+			class CDataGridView;
+
+			class CDataHeader : public CBase
 			{
-			public:
-				enum EDialogType
-				{
-					Open = 0,
-					Save,
-					SaveAs
-				};
-
 			protected:
-				CDataGridView* m_files;
+				std::vector<CFlatButton*> m_label;
+
+				CDataGridView* m_gridView;
 
 			public:
-				COpenSaveDialog(CBase* base, EDialogType type);
+				CDataHeader(CDataGridView* view);
 
-				virtual ~COpenSaveDialog();
+				virtual ~CDataHeader();
+
+				virtual void renderUnder();
+
+				virtual void layout();
+
+				void setLabel(int col, const std::wstring& label);
+
+				void onHeaderResize(CBase* label);
 			};
 		}
 	}
