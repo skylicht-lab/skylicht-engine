@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
+#include "CLabel.h"
+#include "CButton.h"
 
 namespace Skylicht
 {
@@ -32,6 +34,49 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CDataGridView;
+
+			class CDataRowView : public CButton
+			{
+				friend class CDataGridView;
+
+			protected:
+				CDataGridView* m_owner;
+
+				int m_rowID;
+
+				std::vector<CBase*> m_childs;
+
+			public:
+				CDataRowView(CBase* base, CDataGridView* gridView, const wchar_t* label, ESystemIcon icon);
+
+				virtual ~CDataRowView();
+
+				virtual void layout();
+
+				virtual void onBoundsChanged(const SRect& oldBounds);
+
+				virtual void renderUnder();
+
+				virtual void renderBackground();
+
+				virtual void onMouseClickRight(float x, float y, bool down);
+
+				CDataGridView* getDataGridView();
+
+				CBase* setControl(int col, CBase* control);
+
+				CLabel* setLabel(int col, wchar_t* text);
+
+			protected:
+
+				void updateColumnSize();
+
+				inline void setRowID(int id)
+				{
+					m_rowID = id;
+				}
+			};
 		}
 	}
 }

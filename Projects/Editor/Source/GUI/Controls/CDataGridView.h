@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBase.h"
 #include "CScrollControl.h"
 #include "CDataHeader.h"
+#include "CDataRowView.h"
 
 #define GRIDVIEW_MAX_COLUMN 20
 
@@ -48,6 +49,8 @@ namespace Skylicht
 				CDataHeader* m_header;
 				CScrollControl* m_view;
 
+				std::vector<CDataRowView*> m_items;
+
 			public:
 				CDataGridView(CBase* parent, int numColumn);
 
@@ -59,12 +62,16 @@ namespace Skylicht
 
 				void unSelectAll();
 
-				void removeAllItem();
-
 				CDataHeader* getHeader()
 				{
 					return m_header;
 				}
+
+				CDataRowView* addItem(const wchar_t* label, ESystemIcon icon);
+
+				void removeItem(CDataRowView* row);
+
+				void removeAllItem();
 
 				inline int getNumColumn()
 				{
@@ -100,7 +107,7 @@ namespace Skylicht
 
 			protected:
 
-				virtual void onItemDown(CBase* item);
+				virtual void onItemDown(CBase* base);
 
 			};
 		}

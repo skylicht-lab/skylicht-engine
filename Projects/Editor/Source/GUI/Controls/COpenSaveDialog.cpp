@@ -142,6 +142,13 @@ namespace Skylicht
 
 				m_files->setColumnWidth(this, 0, 400.0f);
 
+				for (int i = 0; i < 5; i++)
+				{
+					CDataRowView* row = m_files->addItem(L"File", ESystemIcon::Folder);
+					row->setLabel(1, L"00/00/0000 - 00:00:00");
+					row->setLabel(2, L"1024 bytes");
+				}
+
 				setResizable(true);
 				setCenterPosition();
 			}
