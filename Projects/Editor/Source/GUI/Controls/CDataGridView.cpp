@@ -80,6 +80,10 @@ namespace Skylicht
 					if (m_width[i] <= 0)
 						m_width[i] = colSize;
 				}
+
+				int id = 0;
+				for (CDataRowView* row : m_items)
+					row->setRowID(id++);
 			}
 
 			void CDataGridView::postLayout()
@@ -99,15 +103,40 @@ namespace Skylicht
 
 			}
 
+			CDataRowView* CDataGridView::addItem(const wchar_t* label, ESystemIcon icon)
+			{
+				CDataRowView* item = new CDataRowView(m_view, this, label, icon);
+				m_items.push_back(item);
+
+				item->dock(EPosition::Top);
+				item->OnDown = BIND_LISTENER(&CDataGridView::onItemDown, this);
+				return item;
+			}
+
+			void CDataGridView::removeItem(CDataRowView* row)
+			{
+				std::vector<CDataRowView*>::iterator i = std::find(m_items.begin(), m_items.end(), row);
+				if (i != m_items.end())
+				{
+					m_items.erase(i);
+					row->remove();
+				}
+			}
+
 			void CDataGridView::removeAllItem()
 			{
+				for (CDataRowView* row : m_items)
+				{
+					row->remove();
+				}
 
+				m_items.clear();
 			}
 
 			void CDataGridView::setColumnWidth(CBase* control, int c, float w)
 			{
 				m_width[c] = w;
-
+				invalidate();
 			}
 
 			bool CDataGridView::onKeyUp(bool down)
@@ -130,9 +159,34 @@ namespace Skylicht
 				return true;
 			}
 
-			void CDataGridView::onItemDown(CBase* item)
+			void CDataGridView::onItemDown(CBase* base)
 			{
+				for (CDataRowView* item : m_items)
+				{
+					if (item != NULL)
+					{
+						if (item == base)
+						{
+							if (item->getToggle() == false)
+							{
+								if (OnSelected != nullptr)
+									OnSelected(item);
 
+								if (OnSelectChange != nullptr)
+									OnSelectChange(item);
+							}
+
+							item->setToggle(true);
+						}
+						else
+						{
+							if (item->getToggle() == true && OnUnselected != nullptr)
+								OnUnselected(item);
+
+							item->setToggle(false);
+						}
+					}
+				}
 			}
 		}
 	}
