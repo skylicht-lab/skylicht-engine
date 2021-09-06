@@ -173,6 +173,7 @@ Run command build from Android Studio:
 # Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
 - [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6) (In progress)
+<img src="Documents/Media/Editor/skylicht-engine-editor.jpg"/>
 
 # Sample Project
 ### Samples\HelloWorld
