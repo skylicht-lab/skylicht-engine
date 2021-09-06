@@ -29,15 +29,33 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTextBox.h"
 #include "GUI/Theme/CThemeConfig.h"
 
+#include <filesystem>
+#include <chrono>
+#include <sstream>
+#include <sys/stat.h>
+
+#include "Utils/CPath.h"
+#include "Utils/CStringImp.h"
+
+#if defined(__APPLE_CC__)
+namespace fs = std::__fs::filesystem;
+#else
+namespace fs = std::filesystem;
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
 	{
 		namespace GUI
 		{
-			COpenSaveDialog::COpenSaveDialog(CBase* base, EDialogType type) :
-				CDialogWindow(base, 0.0f, 0.0f, 760.0f, 400.0f)
+			COpenSaveDialog::COpenSaveDialog(CBase* base, EDialogType type, const char* folder, const char* filter) :
+				CDialogWindow(base, 0.0f, 0.0f, 760.0f, 400.0f),
+				m_type(type),
+				m_folder(folder)
 			{
+				CStringImp::splitString(filter, ";", m_filter);
+
 				switch (type)
 				{
 				case Open:
@@ -64,38 +82,41 @@ namespace Skylicht
 				CButton* btn;
 				SMargin buttonMargin(0.0f, 0.0f, 2.0f, 0.0f);
 
-				btn = toolbar->addButton(ESystemIcon::Back);
-				btn->enableDrawBackground(true);
-				btn->setMargin(SMargin(10.0f, 0.0f, 2.0f, 0.0f));
+				m_back = toolbar->addButton(ESystemIcon::Back);
+				m_back->enableDrawBackground(true);
+				m_back->setMargin(SMargin(10.0f, 0.0f, 2.0f, 0.0f));
+				m_back->setDisabled(true);
 
-				btn = toolbar->addButton(ESystemIcon::Next);
-				btn->enableDrawBackground(true);
-				btn->setMargin(buttonMargin);
+				m_next = toolbar->addButton(ESystemIcon::Next);
+				m_next->enableDrawBackground(true);
+				m_next->setMargin(buttonMargin);
+				m_next->setDisabled(true);
 
-				btn = toolbar->addButton(ESystemIcon::UpToParent);
-				btn->enableDrawBackground(true);
-				btn->setMargin(buttonMargin);
+				m_up = toolbar->addButton(ESystemIcon::UpToParent);
+				m_up->enableDrawBackground(true);
+				m_up->setMargin(buttonMargin);
+				m_up->setDisabled(true);
 
-				btn = toolbar->addButton(ESystemIcon::Refresh);
-				btn->enableDrawBackground(true);
-
-				toolbar->addSpace(10.0f);
-
-				btn = toolbar->addButton(ESystemIcon::NewFolder);
-				btn->enableDrawBackground(true);
+				m_refresh = toolbar->addButton(ESystemIcon::Refresh);
+				m_refresh->enableDrawBackground(true);
 
 				toolbar->addSpace(10.0f);
 
-				CTextBox* textbox = (CTextBox*)toolbar->addControl(new CTextBox(toolbar));
-				textbox->setWidth(285.0f);
-				textbox->setWrapMultiline(false);
+				m_newfolder = toolbar->addButton(ESystemIcon::NewFolder);
+				m_newfolder->enableDrawBackground(true);
 
 				toolbar->addSpace(10.0f);
 
-				textbox = (CTextBox*)toolbar->addControl(new CTextBox(toolbar));
-				textbox->setWidth(150.0f);
-				textbox->setWrapMultiline(false);
-				textbox->showIcon();
+				m_path = (CTextBox*)toolbar->addControl(new CTextBox(toolbar));
+				m_path->setWidth(285.0f);
+				m_path->setWrapMultiline(false);
+
+				toolbar->addSpace(10.0f);
+
+				m_search = (CTextBox*)toolbar->addControl(new CTextBox(toolbar));
+				m_search->setWidth(150.0f);
+				m_search->setWrapMultiline(false);
+				m_search->showIcon();
 
 				btn = toolbar->addButton(ESystemIcon::Setting, true);
 				btn->enableDrawBackground(true);
@@ -122,17 +143,22 @@ namespace Skylicht
 				cancel->setWidth(130.0f);
 				cancel->setTextAlignment(ETextAlign::TextCenter);
 				cancel->dock(EPosition::Right);
+				cancel->OnPress = BIND_LISTENER(&COpenSaveDialog::onCancel, this);
 
-				CButton* save = new CButton(bottom);
-				save->setMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));
-				save->setLabel(L"Save");
-				save->setWidth(130.0f);
-				save->setTextAlignment(ETextAlign::TextCenter);
-				save->dock(EPosition::Right);
+				CButton* action = new CButton(bottom);
+				action->setMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));
+				if (type == COpenSaveDialog::Save || type == COpenSaveDialog::SaveAs)
+					action->setLabel(L"Save");
+				else if (type == COpenSaveDialog::Open)
+					action->setLabel(L"Open");
+				action->setWidth(130.0f);
+				action->setTextAlignment(ETextAlign::TextCenter);
+				action->dock(EPosition::Right);
+				action->OnPress = BIND_LISTENER(&COpenSaveDialog::onSaveOpen, this);
 
-				CTextBox* filename = new CTextBox(bottom);
-				filename->dock(EPosition::Fill);
-				filename->setMargin(SMargin(10.0f, 0.0f, 10.0f, 0.0f));
+				m_fileName = new CTextBox(bottom);
+				m_fileName->dock(EPosition::Fill);
+				m_fileName->setMargin(SMargin(10.0f, 0.0f, 10.0f, 0.0f));
 
 				m_files = new CDataGridView(this, 3);
 				m_files->dock(EPosition::Fill);
@@ -142,13 +168,7 @@ namespace Skylicht
 
 				m_files->setColumnWidth(this, 0, 400.0f);
 
-				for (int i = 0; i < 5; i++)
-				{
-					CDataRowView* row = m_files->addItem(L"File", ESystemIcon::Folder);
-					row->setIconColor(CThemeConfig::FolderColor);
-					row->setLabel(1, L"00/00/0000 - 00:00:00");
-					row->setLabel(2, L"1024 bytes");
-				}
+				browseFolder(m_folder.c_str());
 
 				setResizable(true);
 				setCenterPosition();
@@ -157,6 +177,106 @@ namespace Skylicht
 			COpenSaveDialog::~COpenSaveDialog()
 			{
 
+			}
+
+			void COpenSaveDialog::browseFolder(const char* folder)
+			{
+				m_currentFolder = folder;
+
+				m_files->removeAllItem();
+
+				wchar_t text[512];
+
+				for (const auto& file : fs::directory_iterator(m_currentFolder))
+				{
+					std::string path = file.path().generic_u8string();
+					std::string fileName = CPath::getFileName(path);
+
+					CDataRowView* row = NULL;
+
+					if (file.is_directory())
+					{
+						row = m_files->addItem(CStringImp::convertUTF8ToUnicode(fileName.c_str()).c_str(), ESystemIcon::Folder);
+						row->setIconColor(CThemeConfig::FolderColor);
+					}
+					else
+					{
+						row = m_files->addItem(CStringImp::convertUTF8ToUnicode(fileName.c_str()).c_str(), ESystemIcon::File);
+
+						uintmax_t fileSize = fs::file_size(file);
+						if (fileSize < 1024)
+							swprintf(text, 512, L"%d bytes", (int)fileSize);
+						else if (fileSize < 1024 * 1024)
+							swprintf(text, 512, L"%d kb", (int)(fileSize / 1024));
+						else if (fileSize < 1024 * 1024 * 1024)
+							swprintf(text, 512, L"%d mb", (int)(fileSize / (1024 * 1024)));
+						else
+							swprintf(text, 512, L"%d gb", (int)(fileSize / (1024 * 1024 * 1024)));
+
+						row->setLabel(2, text);
+					}
+
+					struct stat result;
+					if (stat(path.c_str(), &result) == 0)
+					{
+						time_t modifyTime = result.st_mtime;
+						tm* timeinfo = gmtime(&modifyTime);
+
+						const wchar_t* monthString[] = { L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec" };
+
+						swprintf(text, 512, L"%02d %s %d %02d:%02d",
+							timeinfo->tm_mday,
+							monthString[timeinfo->tm_mon],
+							timeinfo->tm_year + 1900,
+							timeinfo->tm_hour,
+							timeinfo->tm_min);
+
+						row->setLabel(1, text);
+					}
+				}
+			}
+
+			void COpenSaveDialog::onBtnBack(CBase* base)
+			{
+
+			}
+
+			void COpenSaveDialog::onBtnNext(CBase* base)
+			{
+
+			}
+
+			void COpenSaveDialog::onBtnRefresh(CBase* base)
+			{
+
+			}
+
+			void COpenSaveDialog::onBtnNewFolder(CBase* base)
+			{
+
+			}
+
+			void COpenSaveDialog::onSaveOpen(CBase* base)
+			{
+				if (m_type == COpenSaveDialog::Save || m_type == COpenSaveDialog::SaveAs)
+				{
+					if (OnSave != nullptr)
+						OnSave(this);
+				}
+				else
+				{
+					if (OnOpen != nullptr)
+						OnOpen(this);
+				}
+
+				onCloseWindow();
+			}
+
+			void COpenSaveDialog::onCancel(CBase* base)
+			{
+				if (OnCancel != nullptr)
+					OnCancel(this);
+				onCloseWindow();
 			}
 		}
 	}
