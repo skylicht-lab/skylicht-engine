@@ -21,71 +21,24 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-#pragma once
 
-#include "CBase.h"
-#include "CDialogWindow.h"
-#include "CDataGridView.h"
-#include "CTextBox.h"
+#pragma once
 
 namespace Skylicht
 {
-	namespace Editor
+	class CDateTimeUtils
 	{
-		namespace GUI
-		{
-			class COpenSaveDialog : public CDialogWindow
-			{
-			public:
-				enum EDialogType
-				{
-					Open = 0,
-					Save,
-					SaveAs
-				};
+	public:
+		static unsigned long getSecondByDate(int fromYear, int month, int day, int years, int hour, int minute, int second);
 
-			protected:
-				CDataGridView* m_files;
+		static unsigned long getTimeBySecond();
 
-				CButton* m_back;
-				CButton* m_next;
-				CButton* m_up;
-				CButton* m_refresh;
-				CButton* m_newfolder;
+		static void getDateTimeBySecond(unsigned long second, int& day, int& hour, int& min, int& sec);
 
-				CTextBox* m_path;
-				CTextBox* m_search;
-				CTextBox* m_fileName;
+		static ITimer::RealTimeDate getDateBySecond(unsigned long second);
 
-				EDialogType m_type;
+		static long getDateToSecond(int day);
 
-				std::string m_folder;
-				std::string m_currentFolder;
-
-				std::vector<std::string> m_filter;
-				std::vector<std::wstring> m_history;
-
-			public:
-				COpenSaveDialog(CBase* base, EDialogType type, const char* folder, const char* filter = "*.xml;*.*");
-
-				virtual ~COpenSaveDialog();
-
-				Listener OnSave;
-				Listener OnOpen;
-				Listener OnCancel;
-
-			protected:
-
-				void browseFolder(const char* folder);
-
-				void onBtnBack(CBase* base);
-				void onBtnNext(CBase* base);
-				void onBtnRefresh(CBase* base);
-				void onBtnNewFolder(CBase* base);
-
-				void onSaveOpen(CBase* base);
-				void onCancel(CBase* base);
-			};
-		}
-	}
+		static long getHourToSecond(int hour);
+	};
 }
