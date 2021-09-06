@@ -66,6 +66,20 @@ namespace Skylicht
 		return resultPath;
 	}
 
+	std::string CPath::getParentFolderPath(const std::string& path)
+	{
+		CStringImp::copy<char, const char>(tempPath, path.c_str());
+
+		int len = CStringImp::length(tempPath);
+		while (len > 1 && tempPath[len - 1] == '\\' || tempPath[len - 1] == '/')
+		{
+			tempPath[--len] = 0;
+		}
+
+		CStringImp::getFolderPath<char, char>(resultPath, tempPath);
+		return resultPath;
+	}
+
 	std::string CPath::normalizePath(const std::string& path)
 	{
 		std::vector<std::string> listFolder;

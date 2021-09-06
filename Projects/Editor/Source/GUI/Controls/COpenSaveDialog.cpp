@@ -49,10 +49,11 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			COpenSaveDialog::COpenSaveDialog(CBase* base, EDialogType type, const char* folder, const char* filter) :
+			COpenSaveDialog::COpenSaveDialog(CBase* base, EDialogType type, const char* root, const char* folder, const char* filter) :
 				CDialogWindow(base, 0.0f, 0.0f, 760.0f, 400.0f),
 				m_type(type),
-				m_folder(folder)
+				m_folder(folder),
+				m_root(root)
 			{
 				CStringImp::splitString(filter, ";", m_filter);
 
@@ -86,24 +87,23 @@ namespace Skylicht
 				m_back->enableDrawBackground(true);
 				m_back->setMargin(SMargin(10.0f, 0.0f, 2.0f, 0.0f));
 				m_back->setDisabled(true);
+				m_back->OnPress = BIND_LISTENER(&COpenSaveDialog::onBtnBack, this);
 
 				m_next = toolbar->addButton(ESystemIcon::Next);
 				m_next->enableDrawBackground(true);
 				m_next->setMargin(buttonMargin);
 				m_next->setDisabled(true);
+				m_next->OnPress = BIND_LISTENER(&COpenSaveDialog::onBtnNext, this);
 
 				m_up = toolbar->addButton(ESystemIcon::UpToParent);
 				m_up->enableDrawBackground(true);
 				m_up->setMargin(buttonMargin);
 				m_up->setDisabled(true);
+				m_up->OnPress = BIND_LISTENER(&COpenSaveDialog::onBtnUp, this);
 
 				m_refresh = toolbar->addButton(ESystemIcon::Refresh);
 				m_refresh->enableDrawBackground(true);
-
-				toolbar->addSpace(10.0f);
-
-				m_newfolder = toolbar->addButton(ESystemIcon::NewFolder);
-				m_newfolder->enableDrawBackground(true);
+				m_refresh->OnPress = BIND_LISTENER(&COpenSaveDialog::onBtnRefresh, this);
 
 				toolbar->addSpace(10.0f);
 
@@ -168,7 +168,7 @@ namespace Skylicht
 
 				m_files->setColumnWidth(this, 0, 400.0f);
 
-				browseFolder(m_folder.c_str());
+				browseFolder(m_folder.c_str(), false);
 
 				setResizable(true);
 				setCenterPosition();
@@ -179,10 +179,53 @@ namespace Skylicht
 
 			}
 
-			void COpenSaveDialog::browseFolder(const char* folder)
+			std::string COpenSaveDialog::getRelativePath(const char* folder)
 			{
+				std::string sortPath = folder;
+
+				if (CStringImp::length(folder) < m_root.size())
+					return std::string("/");
+
+				sortPath.replace(sortPath.find(m_root.c_str()), m_root.size(), "");
+				if (sortPath.size() == 0)
+					sortPath = "/";
+				return sortPath;
+			}
+
+			void COpenSaveDialog::browseFolder(const char* folder, bool addHistory)
+			{
+				// add to history
+				if (addHistory && !m_currentFolder.empty())
+				{
+					m_backHistory.push_back(m_currentFolder);
+					m_nextHistory.clear();
+				}
+
 				m_currentFolder = folder;
 
+				// show back?
+				if (m_backHistory.size() > 0)
+					m_back->setDisabled(false);
+				else
+					m_back->setDisabled(true);
+
+				// show next?
+				if (m_nextHistory.size() > 0)
+					m_next->setDisabled(false);
+				else
+					m_next->setDisabled(true);
+
+				// show relative path
+				std::string relative = getRelativePath(folder);
+				m_path->setString(CStringImp::convertUTF8ToUnicode(relative.c_str()));
+
+				// show up
+				if (relative.size() > 1)	// root is character '\'
+					m_up->setDisabled(false);
+				else
+					m_up->setDisabled(true);
+
+				// clear all old files and list at current folder
 				m_files->removeAllItem();
 
 				wchar_t text[512];
@@ -216,6 +259,10 @@ namespace Skylicht
 						row->setLabel(2, text);
 					}
 
+					row->tagString(path);
+					row->OnPress = BIND_LISTENER(&COpenSaveDialog::onClickFile, this);
+					row->OnDoubleLeftMouseClick = BIND_LISTENER(&COpenSaveDialog::onDbClickFile, this);
+
 					struct stat result;
 					if (stat(path.c_str(), &result) == 0)
 					{
@@ -236,24 +283,79 @@ namespace Skylicht
 				}
 			}
 
+			void COpenSaveDialog::onClickFile(CBase* base)
+			{
+				CDataRowView* row = dynamic_cast<CDataRowView*>(base);
+				if (row != NULL)
+				{
+					const std::string& file = row->getTagString();
+					if (!fs::is_directory(file.c_str()))
+					{
+						std::string filename = CPath::getFileName(file);
+						m_fileName->setString(CStringImp::convertUTF8ToUnicode(filename.c_str()));
+					}
+					else
+					{
+						m_fileName->setString(L"");
+					}
+				}
+			}
+
+			void COpenSaveDialog::onDbClickFile(CBase* base)
+			{
+				CDataRowView* row = dynamic_cast<CDataRowView*>(base);
+				if (row != NULL)
+				{
+					const std::string& file = row->getTagString();
+					if (!fs::exists(file.c_str()))
+					{
+						browseFolder(m_root.c_str());
+					}
+					else if (fs::is_directory(file.c_str()))
+					{
+						browseFolder(file.c_str());
+					}
+				}
+			}
+
 			void COpenSaveDialog::onBtnBack(CBase* base)
 			{
+				if (m_backHistory.size() > 0)
+				{
+					std::string folder = m_backHistory.back();
+					m_backHistory.pop_back();
+					m_nextHistory.push_back(m_currentFolder);
 
+					browseFolder(folder.c_str(), false);
+				}
 			}
 
 			void COpenSaveDialog::onBtnNext(CBase* base)
 			{
+				if (m_nextHistory.size() > 0)
+				{
+					std::string folder = m_nextHistory.back();
+					m_nextHistory.pop_back();
+					m_backHistory.push_back(m_currentFolder);
 
+					browseFolder(folder.c_str(), false);
+				}
+			}
+
+			void COpenSaveDialog::onBtnUp(CBase* base)
+			{
+				std::string parentPath = CPath::getParentFolderPath(m_currentFolder.c_str());
+				browseFolder(parentPath.c_str());
 			}
 
 			void COpenSaveDialog::onBtnRefresh(CBase* base)
 			{
-
-			}
-
-			void COpenSaveDialog::onBtnNewFolder(CBase* base)
-			{
-
+				if (fs::exists(m_currentFolder.c_str()))
+					browseFolder(m_currentFolder.c_str(), false);
+				else if (fs::exists(m_folder.c_str()))
+					browseFolder(m_folder.c_str());
+				else
+					browseFolder(m_root.c_str());
 			}
 
 			void COpenSaveDialog::onSaveOpen(CBase* base)
