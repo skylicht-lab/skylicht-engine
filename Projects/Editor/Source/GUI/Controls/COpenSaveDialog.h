@@ -51,7 +51,6 @@ namespace Skylicht
 				CButton* m_next;
 				CButton* m_up;
 				CButton* m_refresh;
-				CButton* m_newfolder;
 
 				CTextBox* m_path;
 				CTextBox* m_search;
@@ -59,14 +58,16 @@ namespace Skylicht
 
 				EDialogType m_type;
 
+				std::string m_root;
 				std::string m_folder;
 				std::string m_currentFolder;
 
 				std::vector<std::string> m_filter;
-				std::vector<std::wstring> m_history;
+				std::vector<std::string> m_backHistory;
+				std::vector<std::string> m_nextHistory;
 
 			public:
-				COpenSaveDialog(CBase* base, EDialogType type, const char* folder, const char* filter = "*.xml;*.*");
+				COpenSaveDialog(CBase* base, EDialogType type, const char* root, const char* folder, const char* filter = "*.xml;*.*");
 
 				virtual ~COpenSaveDialog();
 
@@ -76,12 +77,17 @@ namespace Skylicht
 
 			protected:
 
-				void browseFolder(const char* folder);
+				std::string getRelativePath(const char* folder);
+
+				void browseFolder(const char* folder, bool addHistory = true);
+
+				void onClickFile(CBase* base);
+				void onDbClickFile(CBase* base);
 
 				void onBtnBack(CBase* base);
 				void onBtnNext(CBase* base);
+				void onBtnUp(CBase* base);
 				void onBtnRefresh(CBase* base);
-				void onBtnNewFolder(CBase* base);
 
 				void onSaveOpen(CBase* base);
 				void onCancel(CBase* base);

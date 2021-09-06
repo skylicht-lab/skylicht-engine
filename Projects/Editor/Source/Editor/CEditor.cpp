@@ -800,11 +800,11 @@ namespace Skylicht
 
 			if (label == L"Save")
 			{
-				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str());
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str());
 			}
 			else if (label == L"Save As")
 			{
-				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::SaveAs, assetFolder.c_str());
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::SaveAs, assetFolder.c_str(), assetFolder.c_str());
 			}
 		}
 

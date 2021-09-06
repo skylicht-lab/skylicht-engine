@@ -175,7 +175,7 @@ namespace Skylicht
 			m_files.push_back(m_assetManager->addFileNode(bundle, path));
 
 			m_fileID = 0;
-			m_total = m_files.size();
+			m_total = (u32)m_files.size();
 			m_fileIterator = m_files.begin();
 			m_fileIteratorEnd = m_files.end();
 		}
