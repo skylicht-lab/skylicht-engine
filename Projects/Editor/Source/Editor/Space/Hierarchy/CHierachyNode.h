@@ -60,6 +60,8 @@ namespace Skylicht
 
 			GUI::SGUIColor m_bgColor;
 
+			GUI::SGUIColor m_iconColor;
+
 			GUI::ESystemIcon m_icon;
 
 			CHierachyNode* m_parent;
@@ -127,6 +129,8 @@ namespace Skylicht
 			void setName(const wchar_t* name);
 
 			void setIcon(GUI::ESystemIcon icon);
+
+			void setIconColor(const GUI::SGUIColor& c);
 
 			inline const std::wstring& getName()
 			{
