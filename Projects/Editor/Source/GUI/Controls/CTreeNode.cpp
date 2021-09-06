@@ -216,6 +216,11 @@ namespace Skylicht
 				invalidate();
 			}
 
+			void CTreeNode::setIconColor(const SGUIColor& color)
+			{
+				m_title->setIconColor(color);
+			}
+
 			void CTreeNode::onExpand(CBase* base)
 			{
 				CTreeControl* treeControl = (CTreeControl*)(m_root);
