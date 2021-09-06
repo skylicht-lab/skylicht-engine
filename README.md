@@ -1,5 +1,4 @@
 # Skylicht Engine
-## About
 Skylicht Engine, which is an evolution of the [Irrlicht Project](http://irrlicht.sourceforge.net). We have upgraded more features: Sound Engine, Physics Engine, Particle Engine...
 
 -   Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+, Google Angle GLES video driver backends.
@@ -10,7 +9,7 @@ Skylicht Engine, which is an evolution of the [Irrlicht Project](http://irrlicht
 
 Skylicht Engine is a super lightweight Game Engine that targets mobile platforms (Android, IOS). And, it's completely free.
 
-## How To Build
+# How to build the project
 | Platform                                                                                 | Build Status                                                                                                                                                                      |
 | -----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <img src="Documents/Media/Platforms/windows.png" width="25" valign="middle"> Windows     | [![Build status](https://ci.appveyor.com/api/projects/status/a95huci4g5o25ts5/branch/master?svg=true)](https://ci.appveyor.com/project/ducphamhong/skylicht-engine/branch/master) |
@@ -21,12 +20,12 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 | <img src="Documents/Media/Platforms/html5.png" width="25" valign="middle"> Emscripten    | [![Build status](https://github.com/skylicht-lab/skylicht-engine/workflows/build/badge.svg)](https://github.com/skylicht-lab/skylicht-engine/actions?workflow=build)              |
 | <img src="Documents/Media/Platforms/android.png" width="25" valign="middle"> Android     | [![Build status](https://circleci.com/gh/skylicht-lab/skylicht-engine.svg?style=shield)](https://circleci.com/gh/skylicht-lab/skylicht-engine/tree/master)                        |
 
-### Prerequisites
+## Prerequisites
 -   [CMake](https://cmake.org/download/) 3.12 or higher
 -   [Python](https://www.python.org/downloads/) 3.x
 -   [Visual Studio](https://visualstudio.microsoft.com/downloads/)  (2017 or higher if you want to build on Windows OS)
 
-### Build Command
+## Build source code
 -   Clone this repo
 
 -   Build assets bundle
@@ -53,9 +52,11 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 
 -   More details: please preview command in **BuildCommand** folder.
 
-### Build Compress Texture, Shader
-
--   This python tool will convert texture .TGA to compressed texture (.DDS, .ETC2, .PVRTC) to optimize gpu memory on runtime. (**Optional**, just rebuild when you modify/add texture to asset)
+## Build data assets
+ 
+### Compress Texture
+-   **Optional**, You can skip this step if you don't modify any resource texture.
+-   This python tool will convert texture .TGA to compressed texture (.DDS, .ETC2, .PVRTC) to optimize gpu memory on runtime.
     ```console
     # Install Tinydb
     # https://pypi.org/project/tinydb
@@ -72,8 +73,9 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
     C:\skylicht-engine\Assets>python BuildTextureCompressPVR.py
     C:\skylicht-engine\Assets>cd ..
     ```
-    
--   This python tool use C Preprocessor to inline shader script (HLSL, HLSL) (**Optional**, just rebuild when you modify built-in shader)
+### Build Shader
+-   **Optional**, You can skip this step if you don't modify any shader.
+-   This python tool use C Preprocessor to inline shader script (HLSL, HLSL)
     ```console
     # Install pcpp (C Preprocessor tool)
     # https://pypi.org/project/pcpp
@@ -85,15 +87,15 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
     C:\skylicht-engine\Assets>cd ..
     ```
     
-### Add your code to  Project
+# Add your code to Project
 
-#### Add source code
+## Add source code
 - Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project
     ```console
     C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
     ```
 
-#### Create application project
+## Create application project
 - Run **Scripts/create_project.py**. Example: Create application *NewApplication* at folder *Samples\NewApplication*
 ```console
     C:\skylicht-engine>python Scripts\create_project.py NewApplication Samples\NewApplication
@@ -101,14 +103,14 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 - Edit **CMakeProjects.cmake**, add new line:"*subdirs (Samples/NewApplication)*" and regenerate projects
 - Open Visual Studio Solution and click **NewApplication** - **"Set as StartUp Project"**.
 
-### Android
-##### Prerequisites
+# Android
+## Prerequisites
 - Install [Android Studio and SDK](https://developer.android.com/studio)
 - Install [mingw-w64](http://mingw-w64.org/doku.php/download/mingw-builds) for Windows
 - Install [Android NDK](https://developer.android.com/ndk/downloads)
 
-##### How to build
-###### **Step 1: Build native library**
+## How to build
+### **Step 1: Build native library**
 - Edit the file BuildCommand/BuildAndroidNDK.cmd by text editor and update your path **MINGW** and **NDK**
 
 ```code
@@ -121,7 +123,7 @@ set NDK=C:\SDK\android-ndk-r21e
 
 - Run **BuildCommand/BuildAndroidNDK.cmd** to build android native library
 
-###### **Step 2: Copy native library to Gradle Project**
+### **Step 2: Copy native library to Gradle Project**
 ```console
 # Make folder jniLibs on Android Project
 C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\armeabi-v7a
@@ -133,7 +135,7 @@ C:\skylicht-engine>copy Bin\Android\Libs\arm64-v8a\libSampleSkinnedMesh.so Proje
 C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Projects\Android\app\src\main\jniLibs\armeabi-v7a
 ```
 
-###### **Step 3: Copy Resource to Gradle Project**
+### **Step 3: Copy asset resource to Gradle Project**
 ```console
 C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
 C:\skylicht-engine\Assets>python BuildAssetBundles.py
@@ -154,7 +156,7 @@ C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\app\src\ma
 C:\skylicht-engine>copy Bin\SampleModelsETC.zip Projects\Android\app\src\main\assets
 ```
 
-###### **Step 4: Build APK by Android Studio or Gradle**
+### **Step 4: Build APK by Android Studio or Gradle**
 Open Android Studio and import project **Projects\Android**
 
 <img src="Documents/Media/Samples/android/android-studio.jpg"/>
@@ -164,16 +166,15 @@ Run command build from Android Studio:
 <img src="Documents/Media/Samples/android/build-apk.jpg"/>
 
 
-##### Android development
+### Android development
 - You can rename your package name at **build.gradle** (Projects\Android\app)
 - You can rename your application name at **string.xml** (Projects\Android\app\src\main\res\values)
-- Reference: **cmake android ndk**, [please read here](https://developer.android.com/ndk/guides/cmake)
-- Reference: **Link Gradle to your native library**, [please read here](https://developer.android.com/studio/projects/gradle-external-native-builds)
 
-### Roadmap
+# Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
 - [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6) (In progress)
 
+# Sample Project
 ### Samples\HelloWorld
 Engine Components are used:
 - **FreeType Font**
@@ -298,14 +299,14 @@ This is demo code how to use noise library shader to make vfx effect, particle t
 
 <img src="Documents/Media/Samples/sample_noise_3d.jpg"/>
 
-## Contributing
+# Contributing
 Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feature or fix bug). Wellcome to join the group. Open an issue and submit a pull request to this repository. Please read [CONTRIBUTING.md](Documents/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 
-## Thanks
+# Thanks
 - Julien Fryer ([SPARK](https://github.com/Synxis/SPARK)) about references and source code demo of particle system.
 - [Inigo Quilez](https://www.shadertoy.com/view/4sfGzS) about perlin noise reference.
 
-## License
+# License
 Skylicht Engine is licensed under [MIT License](LICENSE.md)
 
 Skylicht Engine is based in part on the work of:
