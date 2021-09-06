@@ -141,7 +141,6 @@ namespace Skylicht
 				if (down)
 				{
 					m_pressed = true;
-					m_icon->setColor(CThemeConfig::IconPressColor);
 					m_label->setColor(CThemeConfig::TextPressColor);
 
 					if (OnDown != nullptr)

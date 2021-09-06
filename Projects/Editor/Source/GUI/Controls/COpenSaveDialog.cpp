@@ -145,6 +145,7 @@ namespace Skylicht
 				for (int i = 0; i < 5; i++)
 				{
 					CDataRowView* row = m_files->addItem(L"File", ESystemIcon::Folder);
+					row->setIconColor(CThemeConfig::FolderColor);
 					row->setLabel(1, L"00/00/0000 - 00:00:00");
 					row->setLabel(2, L"1024 bytes");
 				}

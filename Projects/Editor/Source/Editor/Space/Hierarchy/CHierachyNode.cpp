@@ -36,7 +36,8 @@ namespace Skylicht
 			m_parent(parent),
 			m_dataType(Unknown),
 			m_color(false),
-			m_bgColor(255, 45, 140, 95)
+			m_bgColor(255, 45, 140, 95),
+			m_iconColor(255, 255, 255, 255)
 		{
 
 		}
@@ -63,6 +64,14 @@ namespace Skylicht
 
 			if (m_guiNode != NULL)
 				m_guiNode->setIcon(icon);
+		}
+
+		void CHierachyNode::setIconColor(const GUI::SGUIColor& c)
+		{
+			m_iconColor = c;
+
+			if (m_guiNode != NULL)
+				m_guiNode->setIconColor(c);
 		}
 
 		CHierachyNode* CHierachyNode::addChild()

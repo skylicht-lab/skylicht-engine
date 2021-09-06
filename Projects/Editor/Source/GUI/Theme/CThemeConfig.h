@@ -103,6 +103,8 @@ namespace Skylicht
 				static SGUIColor HeaderHover;
 				static SGUIColor HeaderBorder;
 
+				static SGUIColor FolderColor;
+
 				static float getFontSizePt(EFontSize size);
 
 				static float TreeIndentationSize;
