@@ -575,7 +575,7 @@ namespace Skylicht
 				if (!m_parent)
 					return false;
 
-				List::iterator iter = m_parent->Children.begin();
+				List::iterator iter = --m_parent->Children.end();
 				CBase* child = *iter;
 
 				if (child == this)

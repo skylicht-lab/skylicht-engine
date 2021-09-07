@@ -27,6 +27,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDialogWindow.h"
 #include "CDataGridView.h"
 #include "CTextBox.h"
+#include "CBoxLayout.h"
+#include "CMenu.h"
+#include "CCheckBox.h"
 
 namespace Skylicht
 {
@@ -56,6 +59,9 @@ namespace Skylicht
 				CTextBox* m_search;
 				CTextBox* m_fileName;
 
+				CMenu* m_menuSetting;
+				CMenu* m_menuFilter;
+
 				EDialogType m_type;
 
 				std::string m_root;
@@ -77,6 +83,8 @@ namespace Skylicht
 
 			protected:
 
+				void addCheckItemOnMenu(CBoxLayout* menu, const wchar_t* name, bool isCheck, Listener onCheck);
+
 				std::string getRelativePath(const char* folder);
 
 				void browseFolder(const char* folder, bool addHistory = true);
@@ -91,6 +99,9 @@ namespace Skylicht
 
 				void onSaveOpen(CBase* base);
 				void onCancel(CBase* base);
+
+				void onBtnFilter(CBase* base);
+				void onBtnSetting(CBase* base);
 			};
 		}
 	}

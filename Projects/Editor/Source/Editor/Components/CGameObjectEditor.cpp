@@ -198,31 +198,6 @@ namespace Skylicht
 				ui->getWindow()->getCanvas()->closeMenu();
 				ui->getEditor()->showProjectSetting();
 			};
-
-			/*
-			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(menu);
-			boxLayout->dock(GUI::EPosition::Top);
-			boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 0.0));
-
-			for (int i = 0; i < 16; i++)
-			{
-				GUI::CLayoutColumn* row = boxLayout->beginColumn();
-				row->enableRenderHover(true);
-
-				GUI::CCheckBox* check = new GUI::CCheckBox(row);
-				check->setToggle(true);
-				check->setPadding(GUI::SPadding(4.0f, 1.0f));
-
-				GUI::CLabel* label = new GUI::CLabel(row);
-				label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
-
-				wchar_t labelw[32];
-				swprintf(labelw, 32, L"%d", i + 1);
-				label->setString(labelw);
-				label->setTextAlignment(GUI::TextLeft);
-				boxLayout->endColumn();
-			}
-			*/
 		}
 	}
 }
