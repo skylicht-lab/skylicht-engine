@@ -121,10 +121,24 @@ namespace Skylicht
 				btn = toolbar->addButton(ESystemIcon::Setting, true);
 				btn->enableDrawBackground(true);
 				btn->setMargin(SMargin(0.0f, 0.0f, 10.0f, 0.0f));
+				btn->OnPress = BIND_LISTENER(&COpenSaveDialog::onBtnSetting, this);
+
+				CCanvas* canvas = getCanvas();
+				m_menuSetting = new GUI::CMenu(canvas);
+				m_menuFilter = new GUI::CMenu(canvas);
+
+				GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(m_menuSetting);
+				boxLayout->dock(GUI::EPosition::Top);
+				boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 0.0));
+				addCheckItemOnMenu(boxLayout, L"Show folders", true, nullptr);
+				addCheckItemOnMenu(boxLayout, L"Show hidden files", true, nullptr);
+				addCheckItemOnMenu(boxLayout, L"Show meta files", true, nullptr);
+
 
 				btn = toolbar->addButton(ESystemIcon::Filter, true);
 				btn->enableDrawBackground(true);
 				btn->setMargin(SMargin(0.0f, 0.0f, 10.0f, 0.0f));
+				btn->OnPress = BIND_LISTENER(&COpenSaveDialog::onBtnFilter, this);
 
 				CBase* bottomPanel = new CBase(this);
 				bottomPanel->setHeight(40.0f);
@@ -179,6 +193,23 @@ namespace Skylicht
 
 			}
 
+			void COpenSaveDialog::addCheckItemOnMenu(CBoxLayout* menu, const wchar_t* name, bool isCheck, Listener onCheck)
+			{
+				GUI::CLayoutColumn* row = menu->beginColumn();
+				row->enableRenderHover(true);
+
+				GUI::CCheckBox* check = new GUI::CCheckBox(row);
+				check->setToggle(isCheck);
+				check->setPadding(GUI::SPadding(4.0f, 1.0f));
+
+				GUI::CLabel* label = new GUI::CLabel(row);
+				label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+
+				label->setString(name);
+				label->setTextAlignment(GUI::TextLeft);
+				menu->endColumn();
+			}
+
 			std::string COpenSaveDialog::getRelativePath(const char* folder)
 			{
 				std::string sortPath = folder;
@@ -230,7 +261,22 @@ namespace Skylicht
 
 				wchar_t text[512];
 
+				std::vector<fs::directory_entry> folders;
+				std::vector<fs::directory_entry> files;
+
 				for (const auto& file : fs::directory_iterator(m_currentFolder))
+				{
+					if (file.is_directory())
+						folders.push_back(file);
+					else
+						files.push_back(file);
+				}
+
+				std::vector<fs::directory_entry> all;
+				all.insert(all.end(), folders.begin(), folders.end());
+				all.insert(all.end(), files.begin(), files.end());
+
+				for (const auto& file : all)
 				{
 					std::string path = file.path().generic_u8string();
 					std::string fileName = CPath::getFileName(path);
@@ -379,6 +425,27 @@ namespace Skylicht
 				if (OnCancel != nullptr)
 					OnCancel(this);
 				onCloseWindow();
+			}
+
+			void COpenSaveDialog::onBtnFilter(CBase* base)
+			{
+
+			}
+
+			void COpenSaveDialog::onBtnSetting(CBase* base)
+			{
+				if (!m_menuSetting->isOpen())
+				{
+					getCanvas()->closeMenu();
+
+					SPoint p = base->localPosToCanvas();
+					m_menuSetting->open(SPoint(p.X, p.Y + base->height()));
+					m_menuSetting->setWidth(150.0f);
+				}
+				else
+				{
+					getCanvas()->closeMenu();
+				}
 			}
 		}
 	}

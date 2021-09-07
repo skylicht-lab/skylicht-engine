@@ -150,6 +150,8 @@ namespace Skylicht
 				{
 					return m_capture;
 				}
+
+				bool isControlInTopmostMenu(CBase* control);
 			};
 		}
 	}

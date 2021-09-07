@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CInput.h"
 
 #include "GUI/Controls/CDialogWindow.h"
+#include "GUI/Controls/CMenu.h"
 #include "GUI/Controls/CCanvas.h"
 #include "GUI/CGUIContext.h"
 
@@ -243,7 +244,7 @@ namespace Skylicht
 				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (!dialog->isChild(CGUIContext::HoveredControl, true))
+					if (!dialog->isChild(CGUIContext::HoveredControl, true) && !isControlInTopmostMenu(CGUIContext::HoveredControl))
 					{
 						dialog->blinkCaption();
 						return false;
@@ -344,7 +345,7 @@ namespace Skylicht
 				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (!dialog->isChild(CGUIContext::HoveredControl, true))
+					if (!dialog->isChild(CGUIContext::HoveredControl, true) && !isControlInTopmostMenu(CGUIContext::HoveredControl))
 					{
 						return false;
 					}
@@ -364,7 +365,7 @@ namespace Skylicht
 				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (!dialog->isChild(target, true))
+					if (!dialog->isChild(target, true) && !isControlInTopmostMenu(target))
 					{
 						return false;
 					}
@@ -420,7 +421,7 @@ namespace Skylicht
 				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (!dialog->isChild(CGUIContext::KeyboardFocus, true))
+					if (!dialog->isChild(CGUIContext::KeyboardFocus, true) && !isControlInTopmostMenu(CGUIContext::KeyboardFocus))
 					{
 						return false;
 					}
@@ -467,6 +468,21 @@ namespace Skylicht
 					if (CGUIContext::getRoot()->handleAccelerator(accelString))
 						return true;
 				}
+
+				return false;
+			}
+
+			bool CInput::isControlInTopmostMenu(CBase* control)
+			{
+				CBase* p = control;
+				do
+				{
+					if (dynamic_cast<CMenu*>(p) != NULL)
+					{
+						return dynamic_cast<CMenu*>(p)->isOnTop();
+					}
+					p = p->getParent();
+				} while (p != NULL);
 
 				return false;
 			}
