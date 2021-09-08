@@ -53,9 +53,19 @@ namespace Skylicht
 				CDialogWindow(base, 0.0f, 0.0f, 760.0f, 400.0f),
 				m_type(type),
 				m_folder(folder),
-				m_root(root)
+				m_root(root),
+				m_showFolder(true),
+				m_showMeta(false)
 			{
 				CStringImp::splitString(filter, ";", m_filter);
+
+				for (size_t i = 0, n = m_filter.size(); i < n; i++)
+				{
+					if (i == 0)
+						m_enableFilter.push_back(true);
+					else
+						m_enableFilter.push_back(false);
+				}
 
 				switch (type)
 				{
@@ -130,15 +140,41 @@ namespace Skylicht
 				GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(m_menuSetting);
 				boxLayout->dock(GUI::EPosition::Top);
 				boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 0.0));
-				addCheckItemOnMenu(boxLayout, L"Show folders", true, nullptr);
-				addCheckItemOnMenu(boxLayout, L"Show hidden files", true, nullptr);
-				addCheckItemOnMenu(boxLayout, L"Show meta files", true, nullptr);
+				addCheckItemOnMenu(boxLayout, L"Show folders", true,
+					[&c = m_showFolder, dialog = this](CBase* check)
+					{
+						CCheckBox* cb = dynamic_cast<CCheckBox*>(check);
+						c = cb->getToggle();
+						dialog->refresh();
+					});
 
+				addCheckItemOnMenu(boxLayout, L"Show meta files", false,
+					[&c = m_showMeta, dialog = this](CBase* check)
+					{
+						CCheckBox* cb = dynamic_cast<CCheckBox*>(check);
+						c = cb->getToggle();
+						dialog->refresh();
+					});
 
 				btn = toolbar->addButton(ESystemIcon::Filter, true);
 				btn->enableDrawBackground(true);
 				btn->setMargin(SMargin(0.0f, 0.0f, 10.0f, 0.0f));
 				btn->OnPress = BIND_LISTENER(&COpenSaveDialog::onBtnFilter, this);
+
+				boxLayout = new GUI::CBoxLayout(m_menuFilter);
+				boxLayout->dock(GUI::EPosition::Top);
+				boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 0.0));
+				for (size_t i = 0, n = m_filter.size(); i < n; i++)
+				{
+					addCheckItemOnMenu(boxLayout, CStringImp::convertUTF8ToUnicode(m_filter[i].c_str()).c_str(), i == 0 ? true : false,
+						[i, &filter = m_enableFilter, dialog = this](CBase* check)
+						{
+							CCheckBox* cb = dynamic_cast<CCheckBox*>(check);
+							filter[i] = cb->getToggle();
+							dialog->refresh();
+						});
+				}
+
 
 				CBase* bottomPanel = new CBase(this);
 				bottomPanel->setHeight(40.0f);
@@ -193,6 +229,11 @@ namespace Skylicht
 
 			}
 
+			void COpenSaveDialog::refresh()
+			{
+				browseFolder(m_currentFolder.c_str(), false);
+			}
+
 			void COpenSaveDialog::addCheckItemOnMenu(CBoxLayout* menu, const wchar_t* name, bool isCheck, Listener onCheck)
 			{
 				GUI::CLayoutColumn* row = menu->beginColumn();
@@ -201,6 +242,7 @@ namespace Skylicht
 				GUI::CCheckBox* check = new GUI::CCheckBox(row);
 				check->setToggle(isCheck);
 				check->setPadding(GUI::SPadding(4.0f, 1.0f));
+				check->OnChanged = onCheck;
 
 				GUI::CLabel* label = new GUI::CLabel(row);
 				label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
@@ -221,6 +263,21 @@ namespace Skylicht
 				if (sortPath.size() == 0)
 					sortPath = "/";
 				return sortPath;
+			}
+
+			bool COpenSaveDialog::isFilter(const std::string& ext)
+			{
+				for (size_t i = 0, n = m_enableFilter.size(); i < n; i++)
+				{
+					if (m_enableFilter[i] == true)
+					{
+						if (ext == m_filter[i])
+							return true;
+						else if (m_filter[i] == "*")
+							return true;
+					}
+				}
+				return false;
 			}
 
 			void COpenSaveDialog::browseFolder(const char* folder, bool addHistory)
@@ -269,11 +326,29 @@ namespace Skylicht
 					if (file.is_directory())
 						folders.push_back(file);
 					else
+					{
+						std::string path = file.path().generic_u8string();
+						std::string ext = CPath::getFileNameExt(path);
+
+						if (!m_showMeta)
+						{
+							if (ext == "meta")
+							{
+								continue;
+							}
+						}
+
+						if (!isFilter(ext))
+							continue;
+
 						files.push_back(file);
+					}
 				}
 
 				std::vector<fs::directory_entry> all;
-				all.insert(all.end(), folders.begin(), folders.end());
+				if (m_showFolder)
+					all.insert(all.end(), folders.begin(), folders.end());
+
 				all.insert(all.end(), files.begin(), files.end());
 
 				for (const auto& file : all)
@@ -327,6 +402,9 @@ namespace Skylicht
 						row->setLabel(1, text);
 					}
 				}
+
+				m_files->invalidate();
+				m_files->recurseLayout();
 			}
 
 			void COpenSaveDialog::onClickFile(CBase* base)
@@ -416,7 +494,6 @@ namespace Skylicht
 					if (OnOpen != nullptr)
 						OnOpen(this);
 				}
-
 				onCloseWindow();
 			}
 
@@ -429,7 +506,18 @@ namespace Skylicht
 
 			void COpenSaveDialog::onBtnFilter(CBase* base)
 			{
+				if (!m_menuFilter->isOpen())
+				{
+					getCanvas()->closeMenu();
 
+					SPoint p = base->localPosToCanvas();
+					m_menuFilter->open(SPoint(p.X, p.Y + base->height()));
+					m_menuFilter->setWidth(100.0f);
+				}
+				else
+				{
+					getCanvas()->closeMenu();
+				}
 			}
 
 			void COpenSaveDialog::onBtnSetting(CBase* base)
