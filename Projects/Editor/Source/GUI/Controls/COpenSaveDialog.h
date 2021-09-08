@@ -48,6 +48,9 @@ namespace Skylicht
 				};
 
 			protected:
+				bool m_showFolder;
+				bool m_showMeta;
+
 				CDataGridView* m_files;
 
 				CButton* m_back;
@@ -69,11 +72,13 @@ namespace Skylicht
 				std::string m_currentFolder;
 
 				std::vector<std::string> m_filter;
+				std::vector<bool> m_enableFilter;
+
 				std::vector<std::string> m_backHistory;
 				std::vector<std::string> m_nextHistory;
 
 			public:
-				COpenSaveDialog(CBase* base, EDialogType type, const char* root, const char* folder, const char* filter = "*.xml;*.*");
+				COpenSaveDialog(CBase* base, EDialogType type, const char* root, const char* folder, const char* filter = "xml;*");
 
 				virtual ~COpenSaveDialog();
 
@@ -82,6 +87,10 @@ namespace Skylicht
 				Listener OnCancel;
 
 			protected:
+
+				bool isFilter(const std::string& ext);
+
+				void refresh();
 
 				void addCheckItemOnMenu(CBoxLayout* menu, const wchar_t* name, bool isCheck, Listener onCheck);
 
