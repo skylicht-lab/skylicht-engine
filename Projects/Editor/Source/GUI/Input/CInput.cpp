@@ -475,15 +475,14 @@ namespace Skylicht
 			bool CInput::isControlInTopmostMenu(CBase* control)
 			{
 				CBase* p = control;
-				do
+				while (p != NULL)
 				{
 					if (dynamic_cast<CMenu*>(p) != NULL)
 					{
 						return dynamic_cast<CMenu*>(p)->isOnTop();
 					}
 					p = p->getParent();
-				} while (p != NULL);
-
+				}
 				return false;
 			}
 		}

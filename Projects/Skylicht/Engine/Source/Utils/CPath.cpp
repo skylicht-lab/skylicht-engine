@@ -143,6 +143,9 @@ namespace Skylicht
 		}
 
 		// they are not relative
+		if (listFolderOfPath.size() == 0 || listFolder.size() == 0)
+			return path;
+
 		if (listFolderOfPath[0] != listFolder[0])
 			return path;
 
@@ -187,9 +190,14 @@ namespace Skylicht
 			{
 				bool found = true;
 				bool passPattern = true;
+				int checkEnd1 = 0;
+				int checkEnd2 = 0;
 
 				for (int j = 0, l = 0; j < searchLen && i + l < len; j++, l++)
 				{
+					checkEnd1 = i + l;
+					checkEnd2 = j;
+
 					if (search[j] == '?')
 					{
 						// alway true
@@ -219,7 +227,7 @@ namespace Skylicht
 					}
 				}
 
-				if (found == true && passPattern)
+				if (found == true && (passPattern || (checkEnd1 == len - 1 && checkEnd2 == searchLen - 1)))
 					return true;
 			}
 		}

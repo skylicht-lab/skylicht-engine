@@ -85,30 +85,29 @@ namespace Skylicht
 				m_button1->setWidth(110.0f);
 				m_button1->dock(EPosition::Right);
 				m_button1->setTextAlignment(ETextAlign::TextCenter);
-				m_button1->OnPress = [dialog = this](CBase* control) {
-					CMessageBox::EMessageType type = dialog->getType();
-					switch (type)
+				m_button1->OnPress = [&](CBase* control) {
+					switch (m_type)
 					{
 					case CMessageBox::OK:
-						if (dialog->OnOK != nullptr)
-							dialog->OnOK(dialog);
+						if (OnOK != nullptr)
+							OnOK(this);
 						break;
 					case CMessageBox::OKCancel:
-						if (dialog->OnCancel != nullptr)
-							dialog->OnCancel(dialog);
+						if (OnCancel != nullptr)
+							OnCancel(this);
 						break;
 					case CMessageBox::YesNo:
-						if (dialog->OnNo != nullptr)
-							dialog->OnNo(dialog);
+						if (OnNo != nullptr)
+							OnNo(this);
 						break;
 					case CMessageBox::YesNoCancel:
-						if (dialog->OnCancel != nullptr)
-							dialog->OnCancel(dialog);
+						if (OnCancel != nullptr)
+							OnCancel(this);
 						break;
 					default:
 						break;
 					}
-					dialog->onCloseButtonPress(control);
+					onCloseButtonPress(control);
 				};
 
 				m_button2 = new CButton(bottom);

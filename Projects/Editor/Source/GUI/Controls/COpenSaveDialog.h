@@ -82,8 +82,8 @@ namespace Skylicht
 
 				virtual ~COpenSaveDialog();
 
-				Listener OnSave;
-				Listener OnOpen;
+				std::function<void(std::string path)> OnSave;
+				std::function<void(std::string path)> OnOpen;
 				Listener OnCancel;
 
 			protected:
@@ -97,7 +97,7 @@ namespace Skylicht
 				std::string getRelativePath(const char* folder);
 
 				void browseFolder(const char* folder, bool addHistory = true);
-
+				
 				void onClickFile(CBase* base);
 				void onDbClickFile(CBase* base);
 
@@ -106,6 +106,9 @@ namespace Skylicht
 				void onBtnUp(CBase* base);
 				void onBtnRefresh(CBase* base);
 
+				void onEnterPath(CBase* base);
+				void onEnterFilename(CBase* base);
+				void onFilenameLostFocus(CBase* base);
 				void onSaveOpen(CBase* base);
 				void onCancel(CBase* base);
 
