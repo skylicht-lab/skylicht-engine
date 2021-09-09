@@ -294,7 +294,7 @@ namespace Skylicht
 				rowItem->enableDrawLine(false, false);
 			};
 
-			rowItem->OnDrop = [controller = this, editor = m_editor, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			rowItem->OnDrop = [&, editor = m_editor, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
 				CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
 
@@ -305,35 +305,35 @@ namespace Skylicht
 						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 						if (local.Y < rowItem->height() * 0.5f)
 						{
-							controller->move(dragNode, node, false);
+							move(dragNode, node, false);
 						}
 						else
 						{
-							controller->move(dragNode, node, true);
+							move(dragNode, node, true);
 						}
 					}
 					else
 					{
-						controller->moveToChild(dragNode, node);
+						moveToChild(dragNode, node);
 					}
 				}
 				else if (node->getTagDataType() == CHierachyNode::Container)
 				{
 					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 					if (local.Y < rowItem->height() * 0.25f)
-						controller->move(dragNode, node, false);
+						move(dragNode, node, false);
 					else if (local.Y > rowItem->height() * 0.75f)
-						controller->move(dragNode, node, true);
+						move(dragNode, node, true);
 					else
-						controller->moveToChild(dragNode, node);
+						moveToChild(dragNode, node);
 				}
 				else if (node->getTagDataType() == CHierachyNode::GameObject)
 				{
 					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 					if (local.Y < rowItem->height() * 0.5f)
-						controller->move(dragNode, node, false);
+						move(dragNode, node, false);
 					else
-						controller->move(dragNode, node, true);
+						move(dragNode, node, true);
 				}
 
 				rowItem->enableDrawLine(false, false);

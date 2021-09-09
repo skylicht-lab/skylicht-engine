@@ -615,14 +615,25 @@ namespace Skylicht
 		static void getFileNameExt(T1* dstString, T2* lpString)
 		{
 			int i = CStringImp::length<T2>(lpString) - 1;
+			bool haveExt = false;
+
 			while (i > 0)
 			{
-				if (lpString[i] == '\\' || lpString[i] == '/' || lpString[i] == '.')
+				if (lpString[i] == '.')
+				{
+					haveExt = true;
 					break;
+				}
+
+				if (lpString[i] == '\\' || lpString[i] == '/')
+				{
+					break;
+				}
 				i--;
 			}
-			if (i == 0)
-				CStringImp::copy<T1, T2>(dstString, lpString);
+
+			if (i == 0 || !haveExt)
+				CStringImp::copy<T1, T2>(dstString, "");
 			else
 				CStringImp::copy<T1, T2>(dstString, lpString + i + 1);
 		}

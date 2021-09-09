@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CToolbar.h"
 #include "COpenSaveDialog.h"
+#include "CMessageBox.h"
 #include "CTextBox.h"
 #include "GUI/Theme/CThemeConfig.h"
 
@@ -120,6 +121,7 @@ namespace Skylicht
 				m_path = (CTextBox*)toolbar->addControl(new CTextBox(toolbar));
 				m_path->setWidth(285.0f);
 				m_path->setWrapMultiline(false);
+				m_path->OnEnter = BIND_LISTENER(&COpenSaveDialog::onEnterPath, this);
 
 				toolbar->addSpace(10.0f);
 
@@ -141,19 +143,19 @@ namespace Skylicht
 				boxLayout->dock(GUI::EPosition::Top);
 				boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 0.0));
 				addCheckItemOnMenu(boxLayout, L"Show folders", true,
-					[&c = m_showFolder, dialog = this](CBase* check)
+					[&](CBase* check)
 					{
 						CCheckBox* cb = dynamic_cast<CCheckBox*>(check);
-						c = cb->getToggle();
-						dialog->refresh();
+						m_showFolder = cb->getToggle();
+						refresh();
 					});
 
 				addCheckItemOnMenu(boxLayout, L"Show meta files", false,
-					[&c = m_showMeta, dialog = this](CBase* check)
+					[&](CBase* check)
 					{
 						CCheckBox* cb = dynamic_cast<CCheckBox*>(check);
-						c = cb->getToggle();
-						dialog->refresh();
+						m_showMeta = cb->getToggle();
+						refresh();
 					});
 
 				btn = toolbar->addButton(ESystemIcon::Filter, true);
@@ -167,11 +169,11 @@ namespace Skylicht
 				for (size_t i = 0, n = m_filter.size(); i < n; i++)
 				{
 					addCheckItemOnMenu(boxLayout, CStringImp::convertUTF8ToUnicode(m_filter[i].c_str()).c_str(), i == 0 ? true : false,
-						[i, &filter = m_enableFilter, dialog = this](CBase* check)
+						[&, i](CBase* check)
 						{
 							CCheckBox* cb = dynamic_cast<CCheckBox*>(check);
-							filter[i] = cb->getToggle();
-							dialog->refresh();
+							m_filter[i] = cb->getToggle();
+							refresh();
 						});
 				}
 
@@ -209,6 +211,15 @@ namespace Skylicht
 				m_fileName = new CTextBox(bottom);
 				m_fileName->dock(EPosition::Fill);
 				m_fileName->setMargin(SMargin(10.0f, 0.0f, 10.0f, 0.0f));
+				m_fileName->OnLostKeyboardFocus = BIND_LISTENER(&COpenSaveDialog::onFilenameLostFocus, this);
+				m_fileName->OnEnter = BIND_LISTENER(&COpenSaveDialog::onEnterFilename, this);
+
+				if (m_type == COpenSaveDialog::Save || m_type == COpenSaveDialog::SaveAs)
+				{
+					std::string name = "Untitled.";
+					name += m_filter[0];
+					m_fileName->setString(CStringImp::convertUTF8ToUnicode(name.c_str()));
+				}
 
 				m_files = new CDataGridView(this, 3);
 				m_files->dock(EPosition::Fill);
@@ -259,9 +270,13 @@ namespace Skylicht
 				if (CStringImp::length(folder) < m_root.size())
 					return std::string("/");
 
-				sortPath.replace(sortPath.find(m_root.c_str()), m_root.size(), "");
+				size_t pos = sortPath.find(m_root.c_str());
+				if (pos == 0)
+					sortPath.replace(pos, m_root.size(), "");
+
 				if (sortPath.size() == 0)
 					sortPath = "/";
+
 				return sortPath;
 			}
 
@@ -482,18 +497,113 @@ namespace Skylicht
 					browseFolder(m_root.c_str());
 			}
 
+			void COpenSaveDialog::onFilenameLostFocus(CBase* base)
+			{
+				const std::wstring filenameW = m_fileName->getString();
+
+				char filename[512];
+				CStringImp::convertUnicodeToUTF8(filenameW.c_str(), filename);
+				CStringImp::trim(filename);
+
+				// no input name
+				if (CStringImp::length(filename) == 0)
+				{
+					std::string name = "Untitled.";
+					name += m_filter[0];
+					m_fileName->setString(CStringImp::convertUTF8ToUnicode(name.c_str()));
+					CStringImp::copy(filename, name.c_str());
+					return;
+				}
+
+				// no input ext
+				std::string ext = CPath::getFileNameExt(std::string(filename));
+				if (ext.size() == 0)
+				{
+					CStringImp::cat(filename, ".");
+					CStringImp::cat(filename, m_filter[0].c_str());
+					m_fileName->setString(CStringImp::convertUTF8ToUnicode(filename));
+				}
+			}
+
+			void COpenSaveDialog::onEnterPath(CBase* base)
+			{
+				const std::wstring fullpathW = m_path->getString();
+
+				char fullPath[512];
+				CStringImp::convertUnicodeToUTF8(fullpathW.c_str(), fullPath);
+				CStringImp::trim(fullPath);
+
+				std::string relative = CPath::getRelativePath(fullPath, m_root);
+				if (relative == fullPath)
+				{
+					// enter relative path
+					std::string realPath = m_root;
+					realPath += fullPath;
+
+					if (fs::exists(realPath))
+					{
+						browseFolder(realPath.c_str());
+					}
+				}
+				else if (relative.size() > 0 && relative[0] != '.')
+				{
+					// enter full child path
+					std::string realPath = CPath::normalizePath(fullPath);
+					if (fs::exists(realPath.c_str()))
+					{
+						browseFolder(realPath.c_str());
+					}
+				}
+			}
+
+			void COpenSaveDialog::onEnterFilename(CBase* base)
+			{
+				onSaveOpen(base);
+			}
+
 			void COpenSaveDialog::onSaveOpen(CBase* base)
 			{
+				const std::wstring filenameW = m_fileName->getString();
+
+				char filename[512];
+				CStringImp::convertUnicodeToUTF8(filenameW.c_str(), filename);
+				CStringImp::trim(filename);
+
+				if (CStringImp::length(filename) == 0)
+					return;
+
+				std::string ext = CPath::getFileNameExt(std::string(filename));
+				if (ext.size() == 0)
+					return;
+
+				std::string path = m_currentFolder;
+				path += "/";
+				path += filename;
+
 				if (m_type == COpenSaveDialog::Save || m_type == COpenSaveDialog::SaveAs)
 				{
+					if (fs::exists(path))
+					{
+						onCloseWindow();
+						CMessageBox* msb = new CMessageBox(getCanvas(), CMessageBox::YesNoCancel);
+						msb->setMessage("Are you sure to save override this file?", filename);
+						msb->OnYes = [save = OnSave, fullPath = path](CBase* base)
+						{
+							if (save != nullptr)
+								save(fullPath);
+						};
+						return;
+					}
+
 					if (OnSave != nullptr)
-						OnSave(this);
+						OnSave(path);
 				}
 				else
 				{
 					if (OnOpen != nullptr)
-						OnOpen(this);
+						OnOpen(path);
 				}
+
 				onCloseWindow();
 			}
 
