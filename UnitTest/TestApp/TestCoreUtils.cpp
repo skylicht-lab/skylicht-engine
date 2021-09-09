@@ -30,6 +30,10 @@ void testStringImp()
 	TEST_ASSERT_THROW(s == "md");
 	s = CPath::getFileNameExt(".\\Readme.md");
 	TEST_ASSERT_THROW(s == "md");
+	s = CPath::getFileNameExt(".\\Readme");
+	TEST_ASSERT_THROW(s == "");
+	s = CPath::getFileNameExt("Readme");
+	TEST_ASSERT_THROW(s == "");
 
 
 	TEST_CASE("CPath::getFileNameNoExt");
@@ -80,6 +84,36 @@ void testStringImp()
 	TEST_ASSERT_THROW(s == "Readme.md");
 	s = CPath::getRelativePath("C:\\Data\\Readme.md", "C:\\");
 	TEST_ASSERT_THROW(s == "Data/Readme.md");
+	s = CPath::getRelativePath("C:\\", "C:\\Data");
+	TEST_ASSERT_THROW(s == "../");
+	s = CPath::getRelativePath("C:\\Data", "C:\\Data");
+	TEST_ASSERT_THROW(s == "../Data");
+
+	TEST_CASE("CPath::searchMatch");
+	bool b = CPath::searchMatch("C:\\Data\\Test.txt", "Test");
+	TEST_ASSERT_THROW(b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "Tes");
+	TEST_ASSERT_THROW(b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "Te?t");
+	TEST_ASSERT_THROW(b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "Te?");
+	TEST_ASSERT_THROW(b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "T??t");
+	TEST_ASSERT_THROW(b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "Te*");
+	TEST_ASSERT_THROW(b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "T*t");
+	TEST_ASSERT_THROW(b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "*.txt");
+	TEST_ASSERT_THROW(b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "*.t");
+	TEST_ASSERT_THROW(b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "*.ttt");
+	TEST_ASSERT_THROW(!b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "Te*z");
+	TEST_ASSERT_THROW(!b);
+	b = CPath::searchMatch("C:\\Data\\Test.txt", "Te?z");
+	TEST_ASSERT_THROW(!b);
 
 	// UNIT TEST: CStringImp
 	TEST_CASE("CStringImp::convertUTF8ToUnicode");
@@ -276,7 +310,7 @@ void testStringImp()
 	CStringImp::getFileNameExt(stringTest, "C:\\Data\\Readme.md");
 	TEST_ASSERT_STRING_EQUAL(stringTest, "md");
 	CStringImp::getFileNameExt(stringTest, "C/Data/Readme");
-	TEST_ASSERT_STRING_EQUAL(stringTest, "Readme");
+	TEST_ASSERT_STRING_EQUAL(stringTest, "");
 
 
 	TEST_CASE("CStringImp::getFileNameNoExt");
