@@ -57,6 +57,7 @@ namespace Skylicht
 
 			bool m_uiInitiate;
 
+			bool m_confirmQuit;
 		public:
 			CEditor();
 
@@ -84,6 +85,8 @@ namespace Skylicht
 			void resume();
 
 			void refresh();
+
+			bool onClose();
 
 			bool needReImport();
 
