@@ -161,6 +161,22 @@ namespace Skylicht
 		Skylicht::releaseSkylicht();
 	}
 
+	bool CApplication::onClose()
+	{
+		bool close = true;
+
+		for (appEventType& app : m_appEventReceivers)
+		{
+			if (app.second->onClose() == false)
+			{
+				close = false;
+				break;
+			}
+		}
+
+		return close;
+	}
+
 	void CApplication::mainLoop()
 	{
 		if (!m_enableRunWhenPause && (m_runGame == false || m_device == NULL))

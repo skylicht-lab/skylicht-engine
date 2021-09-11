@@ -54,7 +54,8 @@ namespace Skylicht
 			m_statusInfo(NULL),
 			m_status(NULL),
 			m_importDialog(NULL),
-			m_uiInitiate(false)
+			m_uiInitiate(false),
+			m_confirmQuit(false)
 		{
 			// init canvas
 			m_canvas = GUI::CGUIContext::getRoot();
@@ -130,6 +131,28 @@ namespace Skylicht
 			{
 				s->refresh();
 			}
+		}
+
+		bool CEditor::onClose()
+		{
+			if (getWorkspaceByName(L"Scene") == NULL)
+			{
+				// don't open the scene!
+				return true;
+			}
+
+			if (m_confirmQuit == false)
+			{
+				GUI::CMessageBox* msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNoCancel);
+				msgBox->setMessage("Are you sure to quit Editor?", "");
+				msgBox->OnYes = [&](GUI::CBase* button) {
+					m_confirmQuit = true;
+					getIrrlichtDevice()->closeDevice();
+				};
+				return false;
+			}
+			else
+				return true;
 		}
 
 		bool CEditor::needReImport()

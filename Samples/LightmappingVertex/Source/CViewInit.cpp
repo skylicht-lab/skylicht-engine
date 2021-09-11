@@ -89,7 +89,6 @@ void CViewInit::initScene()
 	CEntityPrefab* prefab = NULL;
 
 	std::vector<std::string> textureFolders;
-	textureFolders.push_back("Sponza/Textures");
 
 	// load model
 	prefab = meshManager->loadModel("TankScene/TankScene.obj", NULL, true);
