@@ -43,8 +43,7 @@ namespace Skylicht
 		m_currentW(-1),
 		m_currentH(-1),
 		m_scaleRatio(1.0f),
-		m_vertexColorShader(0),
-		m_bufferID(0)
+		m_vertexColorShader(0)
 	{
 		m_driver = getVideoDriver();
 
@@ -53,9 +52,6 @@ namespace Skylicht
 
 		m_vertices = (SVertexBuffer*)m_buffer->getVertexBuffer();
 		m_indices = (CIndexBuffer*)m_buffer->getIndexBuffer();
-
-		m_allBuffers.push_back(m_buffer);
-		m_bufferID = 0;
 
 		m_2dMaterial.ZBuffer = ECFN_ALWAYS;
 		m_2dMaterial.ZWriteEnable = false;
@@ -67,13 +63,8 @@ namespace Skylicht
 
 	CGraphics2D::~CGraphics2D()
 	{
-		for (IMeshBuffer* buffer : m_allBuffers)
-		{
-			if (buffer)
-				buffer->drop();
-		}
-
-		m_allBuffers.clear();
+		if (m_buffer)
+			m_buffer->drop();
 	}
 
 	void CGraphics2D::resize()
@@ -131,8 +122,6 @@ namespace Skylicht
 	{
 		if (camera == NULL)
 			return;
-
-		prepareBuffer();
 
 		// sort canvas by depth
 		struct {
@@ -258,43 +247,12 @@ namespace Skylicht
 		driver->setTransform(video::ETS_PROJECTION, projection);
 		driver->setTransform(video::ETS_VIEW, view);
 		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
-
-		prepareBuffer();
 	}
 
 	void CGraphics2D::endRenderGUI()
 	{
 		// flush to screen
 		flush();
-	}
-
-	void CGraphics2D::prepareBuffer()
-	{
-		m_bufferID = 0;
-		m_buffer = m_allBuffers[m_bufferID];
-		m_vertices = (SVertexBuffer*)m_buffer->getVertexBuffer();
-		m_indices = (CIndexBuffer*)m_buffer->getIndexBuffer();
-	}
-
-	void CGraphics2D::nextBuffer()
-	{
-		m_bufferID++;
-		if (m_bufferID >= m_allBuffers.size())
-		{
-			m_buffer = new CMeshBuffer<S3DVertex>(m_driver->getVertexDescriptor(EVT_STANDARD), video::EIT_16BIT);
-			m_buffer->setHardwareMappingHint(EHM_STREAM);
-
-			m_vertices = (SVertexBuffer*)m_buffer->getVertexBuffer();
-			m_indices = (CIndexBuffer*)m_buffer->getIndexBuffer();
-
-			m_allBuffers.push_back(m_buffer);
-		}
-		else
-		{
-			m_buffer = m_allBuffers[m_bufferID];
-			m_vertices = (SVertexBuffer*)m_buffer->getVertexBuffer();
-			m_indices = (CIndexBuffer*)m_buffer->getIndexBuffer();
-		}
 	}
 
 	void CGraphics2D::flushBuffer(IMeshBuffer* meshBuffer, video::SMaterial& material)
@@ -329,25 +287,17 @@ namespace Skylicht
 
 	void CGraphics2D::flush()
 	{
-		if (m_indices->getIndexCount() > 0 && m_vertices->getVertexCount() > 0)
-		{
-			flushBuffer(m_buffer, m_2dMaterial);
-			nextBuffer();
-		}
+		flushBuffer(m_buffer, m_2dMaterial);
 	}
 
 	void CGraphics2D::flushWithMaterial(CMaterial* material)
 	{
-		if (m_indices->getIndexCount() > 0 && m_vertices->getVertexCount() > 0)
-		{
-			CShaderMaterial::setMaterial(material);
+		CShaderMaterial::setMaterial(material);
 
-			material->setTexture(0, m_2dMaterial.getTexture(0));
-			material->updateTexture(m_customMaterial);
+		material->setTexture(0, m_2dMaterial.getTexture(0));
+		material->updateTexture(m_customMaterial);
 
-			flushBuffer(m_buffer, m_customMaterial);
-			nextBuffer();
-		}
+		flushBuffer(m_buffer, m_customMaterial);
 	}
 
 	void CGraphics2D::addExternalBuffer(IMeshBuffer* meshBuffer, const core::matrix4& absoluteMatrix, int shaderID, CMaterial* material)
