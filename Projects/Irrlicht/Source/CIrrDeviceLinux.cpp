@@ -872,6 +872,12 @@ bool CIrrDeviceLinux::run()
 
 					if (VideoDriver)
 						VideoDriver->OnResize(core::dimension2d<u32>(Width, Height));
+
+                    SEvent irrevent;
+                    irrevent.EventType = irr::EET_GAME_RESIZE;
+                    irrevent.UserEvent.UserData1 = (s32)Width;
+                    irrevent.UserEvent.UserData2 = (s32)Height;
+                    postEventFromUser(irrevent);
 				}
 				break;
 
