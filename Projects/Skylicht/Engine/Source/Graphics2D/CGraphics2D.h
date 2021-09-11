@@ -54,6 +54,9 @@ namespace Skylicht
 
 		int m_vertexColorShader;
 
+		std::vector<IMeshBuffer*> m_allBuffers;
+		int m_bufferID;
+
 		IMeshBuffer* m_buffer;
 		scene::SVertexBuffer* m_vertices;
 		scene::CIndexBuffer* m_indices;
@@ -61,8 +64,6 @@ namespace Skylicht
 	public:
 		CGraphics2D();
 		virtual ~CGraphics2D();
-
-		void init();
 
 		void resize();
 
@@ -91,6 +92,10 @@ namespace Skylicht
 		void beginRenderGUI(const core::matrix4& projection, const core::matrix4& view);
 
 		void endRenderGUI();
+
+		void prepareBuffer();
+
+		void nextBuffer();
 
 	public:
 
