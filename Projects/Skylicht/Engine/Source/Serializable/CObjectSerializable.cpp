@@ -161,7 +161,7 @@ namespace Skylicht
 				else
 				{
 					char log[512];
-					sprintf("[CObjectSerializable::load] Skip wrong data: type: %s <- %s",
+					sprintf(log, "[CObjectSerializable::load] Skip wrong data: type: %s <- %s",
 						Name.c_str(),
 						CStringImp::convertUnicodeToUTF8(reader->getAttributeValue(L"type")).c_str()
 					);
