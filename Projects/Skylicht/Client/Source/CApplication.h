@@ -71,6 +71,8 @@ namespace Skylicht
 
 		void mainLoop();
 
+		bool onClose();
+
 		int back();
 
 		void pause();

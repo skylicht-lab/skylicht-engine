@@ -252,24 +252,24 @@ void CViewDemo::onInit()
 	buttonRightGUI->setPosition(core::vector3df(150.0f, buttonY, 0.0f));
 	m_right = new CButton(buttonRightGUI, btnRight);
 
-	m_left->OnClick = [demo = this, r = m_right, l = m_left]() {
-		int state = demo->getState();
-		if (state < demo->getNumState() - 1)
+	m_left->OnClick = [&, r = m_right, l = m_left]() {
+		int state = getState();
+		if (state < getNumState() - 1)
 		{
 			state++;
-			demo->setState(state);
+			setState(state);
 			r->setVisible(true);
 		}
-		if (state == demo->getNumState() - 1)
+		if (state == getNumState() - 1)
 			l->setVisible(false);
 	};
 
-	m_right->OnClick = [demo = this, r = m_right, l = m_left]() {
-		int state = demo->getState();
+	m_right->OnClick = [&, r = m_right, l = m_left]() {
+		int state = getState();
 		if (state > 0)
 		{
 			state--;
-			demo->setState(state);
+			setState(state);
 			l->setVisible(true);
 		}
 		if (state == 0)

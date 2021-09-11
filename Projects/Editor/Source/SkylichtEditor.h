@@ -20,7 +20,7 @@ public:
 private:
 	EEditorState m_editorState;
 
-	Editor::CEditor *m_editor;
+	Editor::CEditor* m_editor;
 
 public:
 	SkylichtEditor();
@@ -43,4 +43,6 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
+
+	virtual bool onClose();
 };

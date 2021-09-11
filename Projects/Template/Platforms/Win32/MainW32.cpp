@@ -316,6 +316,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	return TRUE;
 }
 
+bool IsMainWindow(HWND h)
+{
+	return h == hWnd;
+}
+
 bool g_mouseDown = false;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -427,6 +432,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// TODO: Add any drawing code here...
 		EndPaint(hWnd, &ps);
 		break;
+	case WM_CLOSE:
+		if (IsMainWindow(hWnd) && g_application != NULL && g_application->onClose() == false)
+			return (LRESULT)1;
+		else
+			return DefWindowProc(hWnd, message, wParam, lParam);
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

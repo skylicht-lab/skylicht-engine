@@ -152,6 +152,11 @@ void SkylichtEditor::onPause()
 	m_editor->pause();
 }
 
+bool SkylichtEditor::onClose()
+{
+	return m_editor->onClose();
+}
+
 void SkylichtEditor::onQuitApp()
 {
 	// end application

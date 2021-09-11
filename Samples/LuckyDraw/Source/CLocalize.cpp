@@ -50,11 +50,11 @@ CLocalize::~CLocalize()
 
 void CLocalize::init(CXMLSpreadsheet* excel)
 {
-	CXMLTableData peopleTable(excel->getSheet(0));
-	peopleTable.addColumn("STRING_ID");
-	peopleTable.addColumn("LANG_EN");
-	peopleTable.addColumn("LANG_VN");
-	peopleTable.fetchData(m_text, 1, -1);
+	CXMLTableData table(excel->getSheet(0));
+	table.addColumn("STRING_ID");
+	table.addColumn("LANG_EN");
+	table.addColumn("LANG_VN");
+	table.fetchData(m_text, 1, -1);
 
 	for (CDataText* t : m_text)
 		m_map[t->SRING_ID.get()] = t;

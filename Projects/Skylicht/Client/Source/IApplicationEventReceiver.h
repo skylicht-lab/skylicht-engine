@@ -60,6 +60,11 @@ namespace Skylicht
 		// - Return false: your app will cancel OS Back Key
 		// - Return true: your app will process default OS Back Key
 		virtual bool onBack() = 0;
+
+		// Window Editor
+		// - Return true: your app will close
+		// - Return false: your app will skip os close function
+		virtual bool onClose() { return true; }
 	};
 
 }
