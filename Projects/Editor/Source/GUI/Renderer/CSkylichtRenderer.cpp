@@ -320,7 +320,7 @@ namespace Skylicht
 				data[filesize] = 0;
 				data[filesize + 1] = 0;
 
-				wchar_t* unicode = (wchar_t*)data;
+				u16* unicode = (u16*)data;
 				u32 unicodeSize = filesize / 2;
 				float advance = 0.0f, x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f, offsetX = 0, offsetY = 0;
 
