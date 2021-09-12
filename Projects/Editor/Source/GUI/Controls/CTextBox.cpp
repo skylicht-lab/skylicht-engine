@@ -395,10 +395,10 @@ namespace Skylicht
 						if (OnESC != nullptr)
 							OnESC(this);
 					}
-                    else if (c == 127)
-                    {
-                        // press Delete
-                    }
+					else if (c == 127)
+					{
+						// press Delete
+					}
 					else if (c == '\b')
 					{
 						m_textContainer->doBackspace();

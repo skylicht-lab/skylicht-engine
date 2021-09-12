@@ -82,7 +82,10 @@ namespace Skylicht
 
 				virtual ~COpenSaveDialog();
 
+				virtual bool onKeyEscape(bool down);
+
 				std::function<void(std::string path)> OnSave;
+
 				std::function<void(std::string path)> OnOpen;
 				Listener OnCancel;
 

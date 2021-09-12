@@ -70,6 +70,8 @@ namespace Skylicht
 
 				virtual void removeDelayDelete(CBase* control);
 
+				virtual bool handleAccelerator(const std::string& accelerator);
+
 				inline void setTopmostDialog(CDialogWindow* dialog)
 				{
 					m_dialog = dialog;

@@ -27,6 +27,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CPropertyController.h"
 #include "Selection/CSelection.h"
 
+#include "Scene/CSceneExporter.h"
+#include "AssetManager/CAssetImporter.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -41,7 +44,8 @@ namespace Skylicht
 			m_history(NULL),
 			m_focusNode(NULL),
 			m_contextNode(NULL),
-			m_contextMenuScene(NULL)
+			m_contextMenuScene(NULL),
+			m_modify(false)
 		{
 		}
 
@@ -57,6 +61,30 @@ namespace Skylicht
 		{
 			m_canvas = canvas;
 			m_contextMenuScene = new CContextMenuScene(canvas);
+		}
+
+		bool CSceneController::needSave()
+		{
+			if (m_scenePath.empty())
+				return true;
+
+			return m_modify;
+		}
+
+		void CSceneController::save(const char* path)
+		{
+			m_modify = false;
+			m_scenePath = path;
+
+			CSceneExporter::exportScene(m_scene, path);
+
+			std::string sceneName = CPath::getFileNameNoExt(path);
+			m_hierachyNode->setName(CStringImp::convertUTF8ToUnicode(sceneName.c_str()).c_str());
+			m_hierachyNode->refreshGUI();
+
+			CAssetImporter importer;
+			importer.add(path);
+			importer.importAll();
 		}
 
 		void CSceneController::setScene(CScene* scene, CSceneHistory* history)
@@ -79,7 +107,7 @@ namespace Skylicht
 
 			m_hierachyNode = new CHierachyNode(NULL);
 			m_hierachyNode->setName(m_scene->getName());
-			m_hierachyNode->setIcon(GUI::ESystemIcon::Folder);
+			m_hierachyNode->setIcon(GUI::ESystemIcon::Collection);
 			m_hierachyNode->setTagData(m_scene, CHierachyNode::Scene);
 
 			setNodeEvent(m_hierachyNode);
@@ -146,7 +174,7 @@ namespace Skylicht
 				if (zone != NULL)
 				{
 					node->setTagData(object, CHierachyNode::Zone);
-					node->setIcon(GUI::ESystemIcon::Collection);
+					node->setIcon(GUI::ESystemIcon::Folder);
 				}
 				else
 				{

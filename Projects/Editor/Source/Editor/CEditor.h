@@ -125,6 +125,14 @@ namespace Skylicht
 
 		protected:
 
+			void OnMenuQuit(GUI::CBase* item);
+
+			void OnMenuSave(GUI::CBase* item);
+
+			void OnCommandLogo(GUI::CBase* item);
+
+			void OnOpenMenuFile(GUI::CBase* item);
+
 			void OnCommandFile(GUI::CBase* item);
 
 			void OnCommandWindowOpen(GUI::CBase* item);
