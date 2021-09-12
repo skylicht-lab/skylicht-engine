@@ -58,6 +58,8 @@ namespace Skylicht
 				m_showFolder(true),
 				m_showMeta(false)
 			{
+				setKeyboardInputEnabled(true);
+
 				CStringImp::splitString(filter, ";", m_filter);
 
 				for (size_t i = 0, n = m_filter.size(); i < n; i++)
@@ -233,11 +235,20 @@ namespace Skylicht
 
 				setResizable(true);
 				setCenterPosition();
+				focus();
 			}
 
 			COpenSaveDialog::~COpenSaveDialog()
 			{
 
+			}
+
+			bool COpenSaveDialog::onKeyEscape(bool down)
+			{
+				if (OnCancel != nullptr)
+					OnCancel(this);
+				onCloseWindow();
+				return true;
 			}
 
 			void COpenSaveDialog::refresh()

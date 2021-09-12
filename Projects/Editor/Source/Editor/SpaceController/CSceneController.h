@@ -43,7 +43,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSceneController : 
+		class CSceneController :
 			public CGameSingleton<CSceneController>,
 			public IObserver
 		{
@@ -69,6 +69,10 @@ namespace Skylicht
 			CContextMenuScene* m_contextMenuScene;
 
 			std::vector<CGizmos*> m_gizmos;
+
+			std::string m_scenePath;
+
+			bool m_modify;
 
 		public:
 			CSceneController();
@@ -97,6 +101,20 @@ namespace Skylicht
 			inline CSpaceHierarchy* getSpaceHierarchy()
 			{
 				return m_spaceHierarchy;
+			}
+
+			inline void modify()
+			{
+				m_modify = true;
+			}
+
+			bool needSave();
+
+			void save(const char* path);
+
+			const std::string& getScenePath()
+			{
+				return m_scenePath;
 			}
 
 			void setScene(CScene* scene, CSceneHistory* history);

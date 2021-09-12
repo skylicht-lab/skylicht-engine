@@ -313,6 +313,19 @@ namespace Skylicht
 				sprintf(string, "x='%d' y='%d' w='%d' h='%d'", (int)r.X, (int)r.Y, (int)r.Width, (int)r.Height);
 				return string;
 			}
+
+			bool CCanvas::handleAccelerator(const std::string& accelerator)
+			{
+				AccelMap::iterator iter = m_accelerators.find(accelerator);
+
+				if (iter != m_accelerators.end())
+				{
+					iter->second(this);
+					return true;
+				}
+
+				return false;
+			}
 		}
 	}
 }

@@ -365,7 +365,9 @@ namespace Skylicht
 				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (!dialog->isChild(target, true) && !isControlInTopmostMenu(target))
+					if (!dialog->isChild(target, true) &&
+						dialog != target &&
+						!isControlInTopmostMenu(target))
 					{
 						return false;
 					}
@@ -421,7 +423,9 @@ namespace Skylicht
 				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (!dialog->isChild(CGUIContext::KeyboardFocus, true) && !isControlInTopmostMenu(CGUIContext::KeyboardFocus))
+					if (!dialog->isChild(CGUIContext::KeyboardFocus, true) &&
+						dialog != CGUIContext::KeyboardFocus &&
+						!isControlInTopmostMenu(CGUIContext::KeyboardFocus))
 					{
 						return false;
 					}

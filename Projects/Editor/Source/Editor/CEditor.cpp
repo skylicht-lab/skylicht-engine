@@ -133,28 +133,6 @@ namespace Skylicht
 			}
 		}
 
-		bool CEditor::onClose()
-		{
-			if (getWorkspaceByName(L"Scene") == NULL)
-			{
-				// don't open the scene!
-				return true;
-			}
-
-			if (m_confirmQuit == false)
-			{
-				GUI::CMessageBox* msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNoCancel);
-				msgBox->setMessage("Are you sure to quit Editor?", "");
-				msgBox->OnYes = [&](GUI::CBase* button) {
-					m_confirmQuit = true;
-					getIrrlichtDevice()->closeDevice();
-				};
-				return false;
-			}
-			else
-				return true;
-		}
-
 		bool CEditor::needReImport()
 		{
 			return m_assetWatcher->needReImport();
@@ -266,13 +244,13 @@ namespace Skylicht
 			submenu->addItem(L"Development funding", GUI::ESystemIcon::Web);
 			submenu->addSeparator();
 			submenu->addItem(L"Close", GUI::ESystemIcon::Quit, L"Ctrl + Q");
+			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandLogo, this);
 
 			GUI::CMenuItem* file = m_menuBar->addItem(L"File");
 			submenu = file->getMenu();
-			submenu->addItem(L"Open Recent")->setDisabled(true);
-			submenu->addSeparator();
 			submenu->addItem(L"Save", GUI::ESystemIcon::Save, L"Ctrl + S");
 			submenu->addItem(L"Save As");
+			submenu->OnOpen = BIND_LISTENER(&CEditor::OnOpenMenuFile, this);
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandFile, this);
 
 			GUI::CMenuItem* edit = m_menuBar->addItem(L"Edit");
@@ -383,6 +361,9 @@ namespace Skylicht
 			submenu->addItem(L"Report a bug", GUI::ESystemIcon::Web);
 			submenu->addSeparator();
 			submenu->addItem(L"Development funding", GUI::ESystemIcon::Web);
+
+			m_canvas->addAccelerator("Ctrl + Q", BIND_LISTENER(&CEditor::OnMenuQuit, this));
+			m_canvas->addAccelerator("Ctrl + S", BIND_LISTENER(&CEditor::OnMenuSave, this));
 		}
 
 		void CEditor::saveLayout(const std::string& data)
@@ -814,20 +795,144 @@ namespace Skylicht
 			}
 		}
 
+		bool CEditor::onClose()
+		{
+			if (getWorkspaceByName(L"Scene") == NULL)
+			{
+				// don't open the scene!
+				m_confirmQuit = true;
+				return true;
+			}
+
+			if (m_confirmQuit == false)
+			{
+				CSceneController* sceneController = CSceneController::getInstance();
+				if (sceneController->needSave())
+				{
+					const std::string& path = sceneController->getScenePath();
+					std::string name = CPath::getFileName(path);
+					if (name.empty())
+						name = "UntitledScene.xml";
+
+					GUI::CMessageBox* msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNoCancel);
+					msgBox->setMessage("Save changes before close the Editor?", name);
+					msgBox->OnYes = [&, &p = path, controller = sceneController](GUI::CBase* button) {
+						if (p.empty())
+						{
+							std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+							GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str());
+							dialog->OnSave = [&, controller = controller](std::string path)
+							{
+								controller->save(path.c_str());
+							};
+						}
+						else
+						{
+							controller->save(path.c_str());
+							m_confirmQuit = true;
+							getIrrlichtDevice()->closeDevice();
+						}
+					};
+					msgBox->OnNo = [&](GUI::CBase* button) {
+						m_confirmQuit = true;
+						getIrrlichtDevice()->closeDevice();
+					};
+					return false;
+				}
+				else
+				{
+					m_confirmQuit = true;
+					return true;
+				}
+			}
+			else
+			{
+				m_confirmQuit = true;
+				return true;
+			}
+		}
+
+		void CEditor::OnMenuQuit(GUI::CBase* item)
+		{
+			if (onClose() == true)
+			{
+				getIrrlichtDevice()->closeDevice();
+			}
+		}
+
+		void CEditor::OnMenuSave(GUI::CBase* item)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			const std::string& fileName = sceneController->getScenePath();
+
+			if (fileName.empty())
+			{
+				std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str());
+				dialog->OnSave = [&, controller = sceneController](std::string path)
+				{
+					controller->save(path.c_str());
+				};
+			}
+			else
+			{
+				sceneController->save(fileName.c_str());
+			}
+		}
+
+		void CEditor::OnCommandLogo(GUI::CBase* item)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
+			const std::wstring& label = menuItem->getLabel();
+
+			if (label == L"Close")
+			{
+				OnMenuQuit(item);
+			}
+		}
+
+		void CEditor::OnOpenMenuFile(GUI::CBase* item)
+		{
+			GUI::CMenu* file = dynamic_cast<GUI::CMenu*>(item);
+			GUI::CMenuItem* save = file->getItemByLabel(L"Save");
+			GUI::CMenuItem* saveAs = file->getItemByLabel(L"Save As");
+
+			if (getWorkspaceByName(L"Scene") == NULL)
+			{
+				// don't open the scene!
+				save->setDisabled(true);
+				saveAs->setDisabled(true);
+				return;
+			}
+
+			CSceneController* sceneController = CSceneController::getInstance();
+			if (sceneController->needSave())
+				save->setDisabled(false);
+			else
+				save->setDisabled(true);
+
+			saveAs->setDisabled(false);
+		}
+
 		void CEditor::OnCommandFile(GUI::CBase* item)
 		{
 			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
 			const std::wstring& label = menuItem->getLabel();
 
-			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
-
 			if (label == L"Save")
 			{
-				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str());
+				OnMenuSave(item);
 			}
 			else if (label == L"Save As")
 			{
+				std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+
 				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::SaveAs, assetFolder.c_str(), assetFolder.c_str());
+				dialog->OnSave = [&, controller = CSceneController::getInstance()](std::string path)
+				{
+					controller->save(path.c_str());
+				};
 			}
 		}
 
