@@ -504,7 +504,7 @@ namespace Skylicht
 
 				void addAccelerator(const std::string& accelerator, const Listener& function);
 
-				bool handleAccelerator(const std::string& accelerator);
+				virtual bool handleAccelerator(const std::string& accelerator);
 
 				inline bool accelOnlyFocus()
 				{

@@ -38,6 +38,9 @@ namespace Skylicht
 		{
 			CGameObject* childObject = go->at(i);
 
+			if (childObject->isEditorObject())
+				continue;
+
 			CObjectSerializable* childData = childObject->createSerializable();
 			childs->addProperty(childData);
 			childs->addAutoRelease(childData);
@@ -70,8 +73,14 @@ namespace Skylicht
 		while (i != end)
 		{
 			CZone* zone = (*i);
-			CObjectSerializable* zoneData = zone->createSerializable();
 
+			if (zone->isEditorObject())
+			{
+				++i;
+				continue;
+			}
+
+			CObjectSerializable* zoneData = zone->createSerializable();
 			loadChildObjectSerializable(zone, zoneData);
 
 			data->addProperty(zoneData);
