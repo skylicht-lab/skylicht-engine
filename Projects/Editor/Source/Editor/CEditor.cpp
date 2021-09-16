@@ -352,7 +352,7 @@ namespace Skylicht
 			m_menuWindowItems.push_back(submenu->addItem(L"Console"));
 			submenu->addSeparator();
 			submenu->addItem(L"Reset layout");
-			submenu->OnOpen = BIND_LISTENER(&CEditor::OnCommandWindowOpen, this);
+			submenu->OnOpen = BIND_LISTENER(&CEditor::OnOpenMenuWindow, this);
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandWindow, this);
 
 			GUI::CMenuItem* help = m_menuBar->addItem(L"Help");
@@ -797,13 +797,6 @@ namespace Skylicht
 
 		bool CEditor::onClose()
 		{
-			if (getWorkspaceByName(L"Scene") == NULL)
-			{
-				// don't open the scene!
-				m_confirmQuit = true;
-				return true;
-			}
-
 			if (m_confirmQuit == false)
 			{
 				CSceneController* sceneController = CSceneController::getInstance();
@@ -897,14 +890,6 @@ namespace Skylicht
 			GUI::CMenu* file = dynamic_cast<GUI::CMenu*>(item);
 			GUI::CMenuItem* save = file->getItemByLabel(L"Save");
 			GUI::CMenuItem* saveAs = file->getItemByLabel(L"Save As");
-
-			if (getWorkspaceByName(L"Scene") == NULL)
-			{
-				// don't open the scene!
-				save->setDisabled(true);
-				saveAs->setDisabled(true);
-				return;
-			}
 
 			CSceneController* sceneController = CSceneController::getInstance();
 			if (sceneController->needSave())

@@ -117,7 +117,7 @@ namespace Skylicht
 				return m_scenePath;
 			}
 
-			void setScene(CScene* scene, CSceneHistory* history);
+			void setScene(CScene* scene);
 
 			inline CScene* getScene()
 			{

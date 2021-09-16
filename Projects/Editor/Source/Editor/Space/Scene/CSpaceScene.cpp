@@ -183,7 +183,7 @@ namespace Skylicht
 			CTransformGizmos::getGizmosSubject()->removeObserver(this);
 
 			CSceneController* sceneController = CSceneController::getInstance();
-			sceneController->setScene(NULL, NULL);
+			sceneController->setScene(NULL);
 			sceneController->setSpaceScene(NULL);
 		}
 
@@ -269,7 +269,7 @@ namespace Skylicht
 			m_scene->updateIndexSearchObject();
 
 			// set scene to controller
-			CSceneController::getInstance()->setScene(m_scene, m_history);
+			CSceneController::getInstance()->setScene(m_scene);
 
 			// register event
 			m_scene->registerEvent("Handles", CHandles::getInstance());
