@@ -117,6 +117,8 @@ namespace Skylicht
 
 		CObjectSerializable* createSerializable();
 
+		void loadSerializable(CObjectSerializable* object);
+
 		DECLARE_GETTYPENAME(CScene)
 	};
 }
