@@ -299,4 +299,9 @@ namespace Skylicht
 		object->addAutoRelease(new CStringWProperty(object, "name", getName()));
 		return object;
 	}
+
+	void CScene::loadSerializable(CObjectSerializable* object)
+	{
+		setName(object->getProperty<std::wstring>("name")->c_str());
+	}
 }

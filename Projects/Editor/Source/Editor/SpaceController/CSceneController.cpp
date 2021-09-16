@@ -87,7 +87,7 @@ namespace Skylicht
 			importer.importAll();
 		}
 
-		void CSceneController::setScene(CScene* scene, CSceneHistory* history)
+		void CSceneController::setScene(CScene* scene)
 		{
 			if (m_hierachyNode != NULL)
 			{
@@ -96,7 +96,6 @@ namespace Skylicht
 			}
 
 			m_scene = scene;
-			m_history = history;
 
 			if (m_scene == NULL)
 				return;
