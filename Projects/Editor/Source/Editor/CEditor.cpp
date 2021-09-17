@@ -352,7 +352,7 @@ namespace Skylicht
 			m_menuWindowItems.push_back(submenu->addItem(L"Console"));
 			submenu->addSeparator();
 			submenu->addItem(L"Reset layout");
-			submenu->OnOpen = BIND_LISTENER(&CEditor::OnOpenMenuWindow, this);
+			submenu->OnOpen = BIND_LISTENER(&CEditor::OnCommandWindowOpen, this);
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandWindow, this);
 
 			GUI::CMenuItem* help = m_menuBar->addItem(L"Help");
@@ -805,7 +805,7 @@ namespace Skylicht
 					const std::string& path = sceneController->getScenePath();
 					std::string name = CPath::getFileName(path);
 					if (name.empty())
-						name = "UntitledScene.xml";
+						name = "UntitledScene.scene";
 
 					GUI::CMessageBox* msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNoCancel);
 					msgBox->setMessage("Save changes before close the Editor?", name);
@@ -813,7 +813,7 @@ namespace Skylicht
 						if (p.empty())
 						{
 							std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
-							GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str());
+							GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
 							dialog->OnSave = [&, controller = controller](std::string path)
 							{
 								controller->save(path.c_str());
@@ -862,7 +862,7 @@ namespace Skylicht
 			{
 				std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
 
-				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str());
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
 				dialog->OnSave = [&, controller = sceneController](std::string path)
 				{
 					controller->save(path.c_str());
@@ -913,7 +913,7 @@ namespace Skylicht
 			{
 				std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
 
-				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::SaveAs, assetFolder.c_str(), assetFolder.c_str());
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::SaveAs, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
 				dialog->OnSave = [&, controller = CSceneController::getInstance()](std::string path)
 				{
 					controller->save(path.c_str());
