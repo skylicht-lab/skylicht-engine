@@ -45,7 +45,8 @@ namespace Skylicht
 	{
 		class CSceneController :
 			public CGameSingleton<CSceneController>,
-			public IObserver
+			public IObserver,
+			public IFileLoader
 		{
 		protected:
 			CSpaceScene* m_spaceScene;
@@ -111,6 +112,8 @@ namespace Skylicht
 			bool needSave();
 
 			void save(const char* path);
+
+			virtual void loadFile(const std::string& path);
 
 			const std::string& getScenePath()
 			{

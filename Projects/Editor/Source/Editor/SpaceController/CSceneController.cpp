@@ -28,7 +28,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Selection/CSelection.h"
 
 #include "Scene/CSceneExporter.h"
+#include "Scene/CSceneImporter.h"
+
 #include "AssetManager/CAssetImporter.h"
+#include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
 {
@@ -47,6 +50,7 @@ namespace Skylicht
 			m_contextMenuScene(NULL),
 			m_modify(false)
 		{
+			CAssetManager::getInstance()->registerFileLoader("scene", this);
 		}
 
 		CSceneController::~CSceneController()
@@ -55,6 +59,8 @@ namespace Skylicht
 
 			if (m_hierachyNode != NULL)
 				delete m_hierachyNode;
+
+			CAssetManager::getInstance()->unRegisterFileLoader("scene", this);
 		}
 
 		void CSceneController::initContextMenu(GUI::CCanvas* canvas)
@@ -85,6 +91,36 @@ namespace Skylicht
 			CAssetImporter importer;
 			importer.add(path);
 			importer.importAll();
+		}
+
+		void CSceneController::loadFile(const std::string& path)
+		{
+			m_modify = false;
+			m_scenePath = path;
+
+			CSelection::getInstance()->clear();
+			CPropertyController::getInstance()->setProperty(NULL);
+
+			m_scene = m_spaceScene->initNullScene();
+
+			CSceneImporter::importScene(m_scene, path.c_str());
+
+			CZone* zone = m_scene->getZone(0);
+			if (zone != NULL && !zone->isEditorObject())
+			{
+				m_spaceScene->initEditorObject(zone);
+			}
+			else
+			{
+				m_spaceScene->initEditorObject(m_scene->createZone());
+			}
+
+			std::string sceneName = CPath::getFileName(path);
+			m_scene->setName(sceneName.c_str());
+
+			setScene(m_scene);
+
+			m_spaceScene->getEditor()->refresh();
 		}
 
 		void CSceneController::setScene(CScene* scene)

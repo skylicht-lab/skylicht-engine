@@ -265,10 +265,20 @@ namespace Skylicht
 				else
 				{
 					// shell open the file
+					std::string ext = CPath::getFileNameExt(fullPath);
+					ext = CStringImp::toLower(ext);
+
+
+					IFileLoader* fileLoader = m_assetManager->getFileLoader(ext.c_str());
+					if (fileLoader != NULL)
+						fileLoader->loadFile(fullPath);
 #if WIN32
-					char path[512] = { 0 };
-					CStringImp::replaceText(path, fullPath.c_str(), "/", "\\");
-					ShellExecuteA(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT);
+					else
+					{
+						char path[512] = { 0 };
+						CStringImp::replaceText(path, fullPath.c_str(), "/", "\\");
+						ShellExecuteA(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT);
+					}
 #endif
 				}
 			}

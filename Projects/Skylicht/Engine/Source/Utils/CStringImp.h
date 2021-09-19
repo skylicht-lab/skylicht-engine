@@ -925,6 +925,38 @@ namespace Skylicht
 			delete[]data;
 			return ret;
 		}
+
+		static std::string toLower(std::string& s)
+		{
+			std::string ret;
+			for (char& c : s)
+				ret += tolower(c);
+			return ret;
+		}
+
+		static std::wstring toLower(std::wstring& s)
+		{
+			std::wstring ret;
+			for (wchar_t& c : s)
+				ret += towlower(c);
+			return ret;
+		}
+
+		static std::string toUpper(std::string& s)
+		{
+			std::string ret;
+			for (char& c : s)
+				ret += toupper(c);
+			return ret;
+		}
+
+		static std::wstring toUpper(std::wstring& s)
+		{
+			std::wstring ret;
+			for (wchar_t& c : s)
+				ret += towupper(c);
+			return ret;
+		}
 	};
 
 }
