@@ -57,8 +57,6 @@ namespace Skylicht
 		protected:
 			GUI::CBase* m_view;
 
-			CSceneHistory* m_history;
-
 			CScene* m_scene;
 			CCamera* m_editorCamera;
 			IRenderPipeline* m_renderRP;
@@ -94,7 +92,11 @@ namespace Skylicht
 
 			virtual ~CSpaceScene();
 
+			void initEditorObject(CZone* zone);
+
 			void initDefaultScene();
+
+			CScene* initNullScene();
 
 			virtual void onResize(float w, float h);
 

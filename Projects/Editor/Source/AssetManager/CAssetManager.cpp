@@ -307,7 +307,7 @@ namespace Skylicht
 			wchar_t name[512];
 
 			for (SFileNode* f : m_files)
-			{												
+			{
 				if (CPath::searchMatch(f->Path, std::string(search)) == true)
 				{
 					files.push_back(SFileInfo());
@@ -555,11 +555,23 @@ namespace Skylicht
 						|| node->Guid.size() != 64
 						|| m_guidToFile.find(node->Guid) != m_guidToFile.end())
 					{
-						regenerate = true;
+						if (m_guidToFile[node->Guid]->Path != path)
+						{
+							regenerate = true;
 
-						char log[1024];
-						sprintf(log, "[CAssetImporter::loadGUID] GUID Collision: %s\n", node->Path.c_str());
-						os::Printer::log(log);
+							char log[1024];
+							sprintf(log, "[CAssetImporter::loadGUID] GUID Collision: %s\n", node->Path.c_str());
+							os::Printer::log(log);
+						}
+						else
+						{
+							// file updated, so no need generate guid
+							m_guidToFile[node->Guid] = node;
+
+							char log[1024];
+							sprintf(log, "[CAssetImporter::loadGUID] GUID Updated: %s\n", node->Path.c_str());
+							os::Printer::log(log);
+						}
 					}
 					else
 					{
@@ -593,6 +605,28 @@ namespace Skylicht
 				// map guid
 				m_guidToFile[node->Guid] = node;
 			}
+		}
+
+		void CAssetManager::registerFileLoader(const char* ext, IFileLoader* loader)
+		{
+			m_fileLoader[ext] = loader;
+		}
+
+		void CAssetManager::unRegisterFileLoader(const char* ext, IFileLoader* loader)
+		{
+			if (m_fileLoader.find(ext) == m_fileLoader.end())
+				return;
+
+			if (m_fileLoader[ext] == loader)
+				m_fileLoader[ext] = NULL;
+		}
+
+		IFileLoader* CAssetManager::getFileLoader(const char* ext)
+		{
+			if (m_fileLoader.find(ext) == m_fileLoader.end())
+				return NULL;
+
+			return m_fileLoader[ext];
 		}
 	}
 }

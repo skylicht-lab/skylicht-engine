@@ -44,7 +44,6 @@ namespace Skylicht
 		CSpaceScene::CSpaceScene(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
 			m_scene(NULL),
-			m_history(NULL),
 			m_renderRP(NULL),
 			m_viewpointRP(NULL),
 			m_editorCamera(NULL),
@@ -164,9 +163,6 @@ namespace Skylicht
 			if (m_scene != NULL)
 				delete m_scene;
 
-			if (m_history != NULL)
-				delete m_history;
-
 			if (m_renderRP != NULL)
 				delete m_renderRP;
 
@@ -187,17 +183,8 @@ namespace Skylicht
 			sceneController->setSpaceScene(NULL);
 		}
 
-		void CSpaceScene::initDefaultScene()
+		void CSpaceScene::initEditorObject(CZone* zone)
 		{
-			// create a scene
-			m_scene = new CScene();
-
-			// history
-			m_history = new CSceneHistory(m_scene);
-
-			// create a zone in scene
-			CZone* zone = m_scene->createZone();
-
 			// create editor camera
 			CGameObject* camObj = zone->createEmptyObject();
 			camObj->setName(L"EditorCamera");
@@ -215,25 +202,6 @@ namespace Skylicht
 			m_gridPlane->setEditorObject(true);
 			m_gridPlane->addComponent<CGridPlane>();
 
-			// lighting
-			CGameObject* lightObj = zone->createEmptyObject();
-			lightObj->setName(L"DirectionLight");
-
-			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
-			SColor c(255, 255, 244, 214);
-			directionalLight->setColor(SColorf(c));
-
-			CTransformEuler* lightTransform = lightObj->getTransformEuler();
-			lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
-
-			core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
-			lightTransform->setOrientation(direction, CTransform::s_oy);
-
-			CSprite* spriteDraw = lightObj->addComponent<CSprite>();
-			spriteDraw->setFrame(m_editor->getSpriteIcon()->getFrame("light"), 1.0f, SColor(255, 255, 255, 255));
-			spriteDraw->setCenter(true);
-			spriteDraw->setBillboard(true);
-			spriteDraw->setAutoScaleInViewSpace(true);
 
 			// viewpoint zone
 			m_viewpointZone = m_scene->createZone();
@@ -261,8 +229,51 @@ namespace Skylicht
 			m_viewpointController = new CViewpointController();
 			m_viewpointController->setCamera(m_editorCamera, m_viewpointCamera);
 
-			// handles
+			// add handle renderer
 			m_handlesRenderer = m_scene->getEntityManager()->addRenderSystem<CHandlesRenderer>();
+
+			// register event
+			m_scene->registerEvent("Handles", CHandles::getInstance());
+		}
+
+		CScene* CSpaceScene::initNullScene()
+		{
+			if (m_scene != NULL)
+				delete m_scene;
+
+			m_scene = new CScene();
+			return m_scene;
+		}
+
+		void CSpaceScene::initDefaultScene()
+		{
+			// create a scene
+			m_scene = new CScene();
+
+			// create a zone in scene
+			CZone* zone = m_scene->createZone();
+
+			initEditorObject(zone);
+
+			// lighting
+			CGameObject* lightObj = zone->createEmptyObject();
+			lightObj->setName(L"DirectionLight");
+
+			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
+			SColor c(255, 255, 244, 214);
+			directionalLight->setColor(SColorf(c));
+
+			CTransformEuler* lightTransform = lightObj->getTransformEuler();
+			lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
+
+			core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
+			lightTransform->setOrientation(direction, CTransform::s_oy);
+
+			CSprite* spriteDraw = lightObj->addComponent<CSprite>();
+			spriteDraw->setFrame(m_editor->getSpriteIcon()->getFrame("light"), 1.0f, SColor(255, 255, 255, 255));
+			spriteDraw->setCenter(true);
+			spriteDraw->setBillboard(true);
+			spriteDraw->setAutoScaleInViewSpace(true);
 
 			// update search index
 			m_scene->updateAddRemoveObject();
@@ -270,9 +281,6 @@ namespace Skylicht
 
 			// set scene to controller
 			CSceneController::getInstance()->setScene(m_scene);
-
-			// register event
-			m_scene->registerEvent("Handles", CHandles::getInstance());
 		}
 
 		void CSpaceScene::onResize(float w, float h)

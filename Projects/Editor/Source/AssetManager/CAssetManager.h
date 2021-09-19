@@ -80,6 +80,12 @@ namespace Skylicht
 			}
 		};
 
+		class IFileLoader
+		{
+		public:
+			virtual void loadFile(const std::string& path) = 0;
+		};
+
 		class CAssetImporter;
 		class CAssetWatcher;
 
@@ -97,6 +103,8 @@ namespace Skylicht
 
 			std::list<SFileNode*> m_files;
 			std::list<std::string> m_meta;
+
+			std::map<std::string, IFileLoader*> m_fileLoader;
 
 		public:
 
@@ -159,6 +167,14 @@ namespace Skylicht
 			bool newFolderAsset(const char* path);
 
 			std::string getBundleName(const char* path);
+
+		public:
+
+			void registerFileLoader(const char* ext, IFileLoader* loader);
+
+			void unRegisterFileLoader(const char* ext, IFileLoader* loader);
+
+			IFileLoader* getFileLoader(const char* ext);
 
 		protected:
 
