@@ -29,7 +29,7 @@ namespace Skylicht
 {
 	void CSceneImporter::load(CScene* scene, io::IXMLReader* reader)
 	{
-
+		scene->createSerializable();
 	}
 
 	void CSceneImporter::buildScene(CScene* scene, io::IXMLReader* reader)

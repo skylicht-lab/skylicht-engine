@@ -23,14 +23,13 @@ SkylichtEditor::SkylichtEditor() :
 
 SkylichtEditor::~SkylichtEditor()
 {
-	Editor::CAssetManager::releaseInstance();
-	Editor::CHandles::releaseInstance();
-
 	Editor::GUI::CGUIContext::destroyGUI();
-
 
 	if (m_editor != NULL)
 		delete m_editor;
+
+	Editor::CHandles::releaseInstance();
+	Editor::CAssetManager::releaseInstance();
 }
 
 void SkylichtEditor::onInitApp()
