@@ -58,7 +58,8 @@ namespace Skylicht
 			m_viewpointCamera(NULL),
 			m_viewpointController(NULL),
 			m_view(NULL),
-			m_handlesRenderer(NULL)
+			m_handlesRenderer(NULL),
+			m_enableRender(true)
 		{
 			initDefaultScene();
 
@@ -242,6 +243,9 @@ namespace Skylicht
 				delete m_scene;
 
 			m_scene = new CScene();
+
+			m_viewpointController = NULL;
+
 			return m_scene;
 		}
 
@@ -462,7 +466,8 @@ namespace Skylicht
 			CSceneController::getInstance()->update();
 
 			// update viewpoint
-			m_viewpointController->update();
+			if (m_viewpointController != NULL)
+				m_viewpointController->update();
 
 			// update scene
 			m_scene->update();
@@ -483,49 +488,56 @@ namespace Skylicht
 				getVideoDriver()->enableScissor(false);
 				getVideoDriver()->clearZBuffer();
 
-				// setup scene viewport
-				GUI::SPoint position = base->localPosToCanvas();
-				core::recti viewport;
-				viewport.UpperLeftCorner.set((int)position.X, (int)position.Y);
-				viewport.LowerRightCorner.set((int)(position.X + base->width()), (int)(position.Y + base->height()));
-				m_sceneRect = viewport;
+				if (m_enableRender)
+				{
+					// setup scene viewport
+					GUI::SPoint position = base->localPosToCanvas();
+					core::recti viewport;
+					viewport.UpperLeftCorner.set((int)position.X, (int)position.Y);
+					viewport.LowerRightCorner.set((int)(position.X + base->width()), (int)(position.Y + base->height()));
+					m_sceneRect = viewport;
 
-				// draw scene
-				m_scene->setVisibleAllZone(true);
-				m_viewpointZone->setVisible(false);
+					// draw scene
+					m_scene->setVisibleAllZone(true);
+					m_viewpointZone->setVisible(false);
 
-				m_handlesRenderer->setEnable(true);
-				m_handlesRenderer->setCameraAndViewport(m_editorCamera, viewport);
+					m_handlesRenderer->setEnable(true);
+					m_handlesRenderer->setCameraAndViewport(m_editorCamera, viewport);
 
-				m_renderRP->render(NULL, m_editorCamera, m_scene->getEntityManager(), viewport);
+					m_renderRP->render(NULL, m_editorCamera, m_scene->getEntityManager(), viewport);
 
-				// setup viewpoint viewport
-				int paddingTop = 10;
-				int paddingLeft = 10;
-				int viewpointSize = 125;
-				viewport.UpperLeftCorner.set((int)(position.X + base->width()) - viewpointSize - paddingLeft, (int)position.Y + paddingTop);
-				viewport.LowerRightCorner = viewport.UpperLeftCorner + core::vector2di(viewpointSize, viewpointSize);
+					// setup viewpoint viewport
+					int paddingTop = 10;
+					int paddingLeft = 10;
+					int viewpointSize = 125;
+					viewport.UpperLeftCorner.set((int)(position.X + base->width()) - viewpointSize - paddingLeft, (int)position.Y + paddingTop);
+					viewport.LowerRightCorner = viewport.UpperLeftCorner + core::vector2di(viewpointSize, viewpointSize);
 
-				// viewpoint rect (local)
-				GUI::SPoint upleft = m_view->canvasPosToLocal(GUI::SPoint((float)viewport.UpperLeftCorner.X, (float)viewport.UpperLeftCorner.Y));
-				GUI::SPoint lowerRight = m_view->canvasPosToLocal(GUI::SPoint((float)viewport.LowerRightCorner.X, (float)viewport.LowerRightCorner.Y));
-				m_viewpointRect.UpperLeftCorner.set(upleft.X, upleft.Y);
-				m_viewpointRect.LowerRightCorner.set(lowerRight.X, lowerRight.Y);
-				m_viewpointRect.repair();
+					// viewpoint rect (local)
+					GUI::SPoint upleft = m_view->canvasPosToLocal(GUI::SPoint((float)viewport.UpperLeftCorner.X, (float)viewport.UpperLeftCorner.Y));
+					GUI::SPoint lowerRight = m_view->canvasPosToLocal(GUI::SPoint((float)viewport.LowerRightCorner.X, (float)viewport.LowerRightCorner.Y));
+					m_viewpointRect.UpperLeftCorner.set(upleft.X, upleft.Y);
+					m_viewpointRect.LowerRightCorner.set(lowerRight.X, lowerRight.Y);
+					m_viewpointRect.repair();
 
-				getVideoDriver()->clearZBuffer();
+					getVideoDriver()->clearZBuffer();
 
-				// draw viewpoint
-				m_scene->setVisibleAllZone(false);
-				m_viewpointZone->setVisible(true);
-				m_handlesRenderer->setEnable(false);
+					// draw viewpoint
+					m_scene->setVisibleAllZone(false);
+					m_viewpointZone->setVisible(true);
+					m_handlesRenderer->setEnable(false);
 
-				m_viewpointRP->render(NULL, m_viewpointCamera, m_scene->getEntityManager(), viewport);
+					m_viewpointRP->render(NULL, m_viewpointCamera, m_scene->getEntityManager(), viewport);
 
-				// disable viewpoint
-				m_scene->setVisibleAllZone(true);
-				m_viewpointZone->setVisible(false);
-				m_handlesRenderer->setEnable(true);
+					// disable viewpoint
+					m_scene->setVisibleAllZone(true);
+					m_viewpointZone->setVisible(false);
+					m_handlesRenderer->setEnable(true);
+				}
+				else
+				{
+
+				}
 
 				// resume gui render
 				getVideoDriver()->enableScissor(true);

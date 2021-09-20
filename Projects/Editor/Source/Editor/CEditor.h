@@ -46,6 +46,7 @@ namespace Skylicht
 			GUI::CIconTextItem* m_status;
 
 			GUI::CDialogWindow* m_importDialog;
+			GUI::CDialogWindow* m_loadSceneDialog;
 
 			std::list<CSpace*> m_workspaces;
 
@@ -67,6 +68,8 @@ namespace Skylicht
 
 			void initImportGUI(bool fromWatcher = false);
 
+			void initLoadSceneGUI(const char* path);
+
 			void initEditorGUI();
 
 			bool isUIInitiate()
@@ -77,6 +80,8 @@ namespace Skylicht
 			bool isImportFinish();
 
 			void closeImportDialog();
+
+			void closeLoadSceneDialog();
 
 			void saveLayout(const std::string& data);
 

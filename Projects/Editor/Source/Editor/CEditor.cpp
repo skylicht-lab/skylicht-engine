@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/Console/CSpaceConsole.h"
 #include "Space/Property/CSpaceProperty.h"
 #include "Space/Hierarchy/CSpaceHierarchy.h"
+#include "Space/LoadScene/CSpaceLoadScene.h"
 #include "Space/ProjectSettings/CSpaceProjectSettings.h"
 
 #include "SpaceController/CSceneController.h"
@@ -54,6 +55,7 @@ namespace Skylicht
 			m_statusInfo(NULL),
 			m_status(NULL),
 			m_importDialog(NULL),
+			m_loadSceneDialog(NULL),
 			m_uiInitiate(false),
 			m_confirmQuit(false)
 		{
@@ -97,6 +99,19 @@ namespace Skylicht
 
 			for (CSpace* s : m_workspaces)
 				s->update();
+
+			if (m_loadSceneDialog != NULL)
+			{
+				CSpace* space = getWorkspace(m_loadSceneDialog);
+				if (space != NULL)
+				{
+					CSpaceLoadScene* spaceLoadScene = dynamic_cast<CSpaceLoadScene*>(space);
+					if (spaceLoadScene != NULL && spaceLoadScene->isFinish())
+					{
+						closeLoadSceneDialog();
+					}
+				}
+			}
 		}
 
 		void CEditor::pause()
@@ -160,6 +175,14 @@ namespace Skylicht
 				m_assetWatcher->unlock();
 		}
 
+		void CEditor::closeLoadSceneDialog()
+		{
+			m_loadSceneDialog->remove();
+			m_loadSceneDialog = NULL;
+
+			refresh();
+		}
+
 		void CEditor::initImportGUI(bool fromWatcher)
 		{
 			m_importDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
@@ -177,6 +200,22 @@ namespace Skylicht
 				spaceImport->initImportFiles(m_assetWatcher->getFiles(), m_assetWatcher->getDeletedFiles());
 			else
 				spaceImport->initImportAll();
+		}
+
+		void CEditor::initLoadSceneGUI(const char* path)
+		{
+			m_loadSceneDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_loadSceneDialog->setCaption(L"Load Scene");
+			m_loadSceneDialog->showCloseButton(false);
+			m_loadSceneDialog->setCenterPosition();
+			m_loadSceneDialog->bringToFront();
+
+			initWorkspace(m_loadSceneDialog, m_loadSceneDialog->getCaption());
+
+			CSpace* space = getWorkspace(m_loadSceneDialog);
+			CSpaceLoadScene* spaceLoadScene = dynamic_cast<CSpaceLoadScene*>(space);
+
+			spaceLoadScene->loadScene(path);
 		}
 
 		void CEditor::initEditorGUI()
@@ -459,6 +498,10 @@ namespace Skylicht
 			else if (workspace == L"Project Setting")
 			{
 				m_workspaces.push_back(new CSpaceProjectSettings(window, this));
+			}
+			else if (workspace == L"Load Scene")
+			{
+				m_workspaces.push_back(new CSpaceLoadScene(window, this));
 			}
 		}
 
