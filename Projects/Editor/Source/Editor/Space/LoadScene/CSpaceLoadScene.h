@@ -5,7 +5,7 @@ MIT License
 Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,27 +24,35 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GameObject/CZone.h"
-#include "CScene.h"
-#include "Serializable/CObjectSerializable.h"
+#include "SkylichtEngine.h"
+#include "Editor/Space/CSpace.h"
 
 namespace Skylicht
 {
-	class CSceneImporter
+	namespace Editor
 	{
-		static io::IXMLReader* s_reader;
+		class CSpaceLoadScene : public CSpace
+		{
+		protected:
+			bool m_finished;
 
-		static std::string s_scenePath;
+		protected:
+			GUI::CProgressBar* m_progressBar;
 
-		static CScene* s_scene;
+			GUI::CLabel* m_statusText;
 
-		static void buildScene(CScene* scene, io::IXMLReader* xmlReader);
+		public:
+			CSpaceLoadScene(GUI::CWindow* window, CEditor* editor);
 
-		static bool loadStep();
+			virtual ~CSpaceLoadScene();
 
-	public:
-		static bool beginImportScene(CScene* scene, const char* path);
+			virtual void update();
 
-		static bool updateLoadScene();
-	};
+			virtual void onDestroy(GUI::CBase* base);
+
+			void loadScene(const char *path);
+
+			bool isFinish();
+		};
+	}
 }

@@ -27,10 +27,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	void CSceneImporter::load(CScene* scene, io::IXMLReader* reader)
-	{
-		scene->createSerializable();
-	}
+	io::IXMLReader* CSceneImporter::s_reader = NULL;
+	std::string CSceneImporter::s_scenePath;
+	CScene* CSceneImporter::s_scene = NULL;
 
 	void CSceneImporter::buildScene(CScene* scene, io::IXMLReader* reader)
 	{
@@ -60,14 +59,12 @@ namespace Skylicht
 						{
 							CContainerObject* currentContainer = container.top();
 							CContainerObject* object = currentContainer->createContainerObject();
-							currentContainer->updateAddRemoveObject();
 							container.push(object);
 						}
 						else if (attributeName == L"CGameObject")
 						{
 							CContainerObject* currentContainer = container.top();
 							currentContainer->createEmptyObject();
-							currentContainer->updateAddRemoveObject();
 						}
 
 						serializableTree.push(attributeName);
@@ -95,27 +92,50 @@ namespace Skylicht
 		}
 	}
 
-	void CSceneImporter::importScene(CScene* scene, const char* file)
+	bool CSceneImporter::beginImportScene(CScene* scene, const char* file)
 	{
 		// step 1
 		// build scene object
-		io::IXMLReader* reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
-		if (reader == NULL)
-			return;
+		s_reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
+		if (s_reader == NULL)
+			return false;
 
-		buildScene(scene, reader);
+		buildScene(scene, s_reader);
 
-		reader->drop();
+		s_reader->drop();
 
+		s_reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(s_scenePath.c_str());
+
+		s_scenePath = file;
+		s_scene = scene;
+
+		return true;
+	}
+
+	bool CSceneImporter::loadStep()
+	{
+		return true;
+	}
+
+	bool CSceneImporter::updateLoadScene()
+	{
 		// step 2
 		// load object attribute
-		reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
+		if (CSceneImporter::loadStep())
+		{
+			// drop
+			if (s_reader)
+			{
+				s_reader->drop();
+				s_reader = NULL;
+			}
 
-		load(scene, reader);
+			// final index search object
+			s_scene->updateIndexSearchObject();
+			s_scene = NULL;
+			return true;
+		}
 
-		reader->drop();
-
-		// final index search object
-		scene->updateIndexSearchObject();
+		return false;
 	}
 }

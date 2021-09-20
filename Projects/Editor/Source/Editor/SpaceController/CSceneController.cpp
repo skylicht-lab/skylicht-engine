@@ -91,21 +91,75 @@ namespace Skylicht
 			CAssetImporter importer;
 			importer.add(path);
 			importer.importAll();
+
+			m_spaceScene->getEditor()->refresh();
 		}
 
 		void CSceneController::loadFile(const std::string& path)
 		{
+			if (m_modify)
+			{
+				GUI::CMessageBox* msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNoCancel);
+				msgBox->setMessage(L"Do you want to save current scene?", m_scene->getName());
+				msgBox->OnYes = [&, p = path](GUI::CBase* button) {
+					if (m_scenePath.empty() == true)
+					{
+						std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+						GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
+						dialog->OnSave = [&](std::string path)
+						{
+							save(path.c_str());
+						};
+					}
+					else
+					{
+						save(m_scenePath.c_str());
+						doLoadScene(p);
+					}
+				};
+				msgBox->OnNo = [&, p = path](GUI::CBase* button) {
+					doLoadScene(p);
+				};
+			}
+			else
+			{
+				doLoadScene(path);
+			}
+		}
+
+		void CSceneController::doLoadScene(const std::string& path)
+		{
 			m_modify = false;
 			m_scenePath = path;
 
+			// clear current scene gui
 			CSelection::getInstance()->clear();
 			CPropertyController::getInstance()->setProperty(NULL);
 
+			if (m_hierachyNode != NULL)
+			{
+				delete m_hierachyNode;
+				m_hierachyNode = NULL;
+			}
+
+			m_gizmos.clear();
+
+			// create new scene
 			m_scene = m_spaceScene->initNullScene();
 
-			CSceneImporter::importScene(m_scene, path.c_str());
+			// set scene name
+			std::string sceneName = CPath::getFileName(path);
+			m_scene->setName(sceneName.c_str());
 
+			// init load scene space
+			m_spaceScene->enableRender(false);
+			m_spaceScene->getEditor()->initLoadSceneGUI(path.c_str());
+		}
+
+		void CSceneController::doFinishLoadScene()
+		{
 			CZone* zone = m_scene->getZone(0);
+
 			if (zone != NULL && !zone->isEditorObject())
 			{
 				m_spaceScene->initEditorObject(zone);
@@ -115,12 +169,9 @@ namespace Skylicht
 				m_spaceScene->initEditorObject(m_scene->createZone());
 			}
 
-			std::string sceneName = CPath::getFileName(path);
-			m_scene->setName(sceneName.c_str());
-
 			setScene(m_scene);
 
-			m_spaceScene->getEditor()->refresh();
+			m_spaceScene->enableRender(true);
 		}
 
 		void CSceneController::setScene(CScene* scene)
