@@ -87,6 +87,8 @@ namespace Skylicht
 			GUI::CToggleGroup* m_groupTransform;
 			GUI::CToggleGroup* m_groupCameraView;
 
+			bool m_enableRender;
+
 		public:
 			CSpaceScene(GUI::CWindow* window, CEditor* editor);
 
@@ -137,6 +139,11 @@ namespace Skylicht
 			virtual void refresh();
 
 			bool isEditorObject(CGameObject* object);
+
+			inline void enableRender(bool b)
+			{
+				m_enableRender = b;
+			}
 
 		protected:
 

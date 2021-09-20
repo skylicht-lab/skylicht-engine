@@ -115,6 +115,10 @@ namespace Skylicht
 
 			virtual void loadFile(const std::string& path);
 
+			void doLoadScene(const std::string& path);
+
+			void doFinishLoadScene();
+
 			const std::string& getScenePath()
 			{
 				return m_scenePath;
