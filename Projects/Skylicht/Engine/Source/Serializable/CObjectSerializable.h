@@ -105,5 +105,7 @@ namespace Skylicht
 		void save(io::IXMLWriter* writer);
 
 		void load(io::IXMLReader* reader);
+
+		void parseSerializable(io::IXMLReader* reader);
 	};
 }

@@ -44,6 +44,11 @@ namespace Skylicht
 
 	}
 
+	void CComponentSystem::startComponent()
+	{
+
+	}
+
 	void CComponentSystem::postUpdateComponent()
 	{
 

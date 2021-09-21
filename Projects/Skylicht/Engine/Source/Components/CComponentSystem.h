@@ -54,6 +54,8 @@ namespace Skylicht
 
 		virtual void initComponent() = 0;
 
+		virtual void startComponent();
+
 		virtual void updateComponent() = 0;
 
 		virtual void postUpdateComponent();

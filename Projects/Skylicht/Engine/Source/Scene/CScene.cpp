@@ -302,6 +302,6 @@ namespace Skylicht
 
 	void CScene::loadSerializable(CObjectSerializable* object)
 	{
-		setName(object->getProperty<std::wstring>("name")->c_str());
+		setName(object->get<std::wstring>("name", std::wstring(L"Scene")).c_str());
 	}
 }

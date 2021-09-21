@@ -137,6 +137,40 @@ namespace Skylicht
 		attr->drop();
 	}
 
+	void CObjectSerializable::parseSerializable(io::IXMLReader* reader)
+	{
+		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
+		io::IAttributes* attr = fs->createEmptyAttributes();
+
+		std::wstring nodeName = L"CObjectSerializable";
+		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(Name.c_str());
+
+		if (nodeName == reader->getNodeName() && attributeName == reader->getAttributeValue(L"type"))
+		{
+			attr->read(reader);
+			deserialize(attr);
+		}
+		else
+		{
+			char log[512];
+			sprintf(log, "[CObjectSerializable::load] Skip wrong data: type: %s", Name.c_str());
+			os::Printer::log(log);
+			attr->drop();
+			return;
+		}
+
+		// load child object
+		for (CValueProperty* p : m_value)
+		{
+			if (p->getType() == EPropertyDataType::Object)
+			{
+				((CObjectSerializable*)p)->load(reader);
+			}
+		}
+
+		attr->drop();
+	}
+
 	void CObjectSerializable::load(io::IXMLReader* reader)
 	{
 		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
@@ -147,7 +181,7 @@ namespace Skylicht
 		std::wstring nodeName = L"CObjectSerializable";
 		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(Name.c_str());
 
-		while (reader->read() && !done)
+		while (!done && reader->read())
 		{
 			switch (reader->getNodeType())
 			{
@@ -161,10 +195,7 @@ namespace Skylicht
 				else
 				{
 					char log[512];
-					sprintf(log, "[CObjectSerializable::load] Skip wrong data: type: %s <- %s",
-						Name.c_str(),
-						CStringImp::convertUnicodeToUTF8(reader->getAttributeValue(L"type")).c_str()
-					);
+					sprintf(log, "[CObjectSerializable::load] Skip wrong data: type: %s", Name.c_str());
 					os::Printer::log(log);
 				}
 				break;
