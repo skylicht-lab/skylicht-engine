@@ -255,6 +255,17 @@ namespace Skylicht
 		return NULL;
 	}
 
+	void CGameObject::startComponent()
+	{
+		size_t numComponents = m_components.size();
+		CComponentSystem** components = m_components.data();
+
+		for (int i = 0; i < numComponents; i++)
+		{
+			components[i]->startComponent();
+		}
+	}
+
 	CObjectSerializable* CGameObject::createSerializable()
 	{
 		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());

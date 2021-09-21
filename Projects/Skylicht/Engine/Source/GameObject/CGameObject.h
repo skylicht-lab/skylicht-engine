@@ -275,6 +275,8 @@ namespace Skylicht
 			return m_enableEditorSelect;
 		}
 
+		void startComponent();
+
 		CObjectSerializable* createSerializable();
 
 		void loadSerializable(CObjectSerializable* object);

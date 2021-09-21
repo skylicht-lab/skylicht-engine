@@ -53,10 +53,12 @@ namespace Skylicht
 		{
 
 		}
-		
+
 		void CSpaceLoadScene::update()
 		{
 			CSpace::update();
+
+			m_progressBar->setPercent(CSceneImporter::getLoadingPercent());
 
 			if (m_finished == false)
 			{
