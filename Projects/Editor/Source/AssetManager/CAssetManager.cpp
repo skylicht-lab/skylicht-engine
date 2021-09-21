@@ -555,7 +555,7 @@ namespace Skylicht
 						|| node->Guid.size() != 64
 						|| m_guidToFile.find(node->Guid) != m_guidToFile.end())
 					{
-						if (m_guidToFile[node->Guid]->Path != path)
+						if (m_guidToFile[node->Guid]->Path != getShortPath(path))
 						{
 							regenerate = true;
 

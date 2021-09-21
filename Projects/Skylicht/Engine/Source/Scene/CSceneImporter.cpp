@@ -24,12 +24,61 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSceneImporter.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
 	io::IXMLReader* CSceneImporter::s_reader = NULL;
 	std::string CSceneImporter::s_scenePath;
 	CScene* CSceneImporter::s_scene = NULL;
+
+	int CSceneImporter::s_loadStep = 10;
+	int CSceneImporter::s_loading = 0;
+
+	std::list<CGameObject*> CSceneImporter::s_listObject;
+	std::list<CGameObject*>::iterator CSceneImporter::s_current;
+
+	void CSceneImporter::buildComponent(CGameObject* object, io::IXMLReader* reader)
+	{
+		std::wstring nodeName = L"CObjectSerializable";
+		std::wstring attributeName;
+
+		int tree = 1;
+		bool done = false;
+
+		while (!done && reader->read())
+		{
+			switch (reader->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+				if (nodeName == reader->getNodeName())
+				{
+					tree++;
+					if (reader->getAttributeValue(L"type") != NULL)
+					{
+						attributeName = reader->getAttributeValue(L"type");
+						std::string componentName = CStringImp::convertUnicodeToUTF8(attributeName.c_str());
+
+						CComponentSystem* comSystem = object->getComponentByTypeName(componentName.c_str());
+						if (comSystem == NULL)
+						{
+							object->addComponentByTypeName(componentName.c_str());
+						}
+					}
+				}
+				break;
+			case io::EXN_ELEMENT_END:
+				if (nodeName == reader->getNodeName())
+				{
+					tree--;
+					done = tree == 0;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
 
 	void CSceneImporter::buildScene(CScene* scene, io::IXMLReader* reader)
 	{
@@ -38,6 +87,10 @@ namespace Skylicht
 
 		std::stack<std::wstring> serializableTree;
 		std::stack<CContainerObject*> container;
+
+		s_listObject.clear();
+
+		CGameObject* currentObject = NULL;
 
 		while (reader->read())
 		{
@@ -50,21 +103,37 @@ namespace Skylicht
 					{
 						attributeName = reader->getAttributeValue(L"type");
 
+						bool skipPush = false;
+
 						if (attributeName == L"CZone")
 						{
 							CZone* zone = scene->createZone();
 							container.push((CContainerObject*)zone);
+							s_listObject.push_back(zone);
+							currentObject = zone;
 						}
 						else if (attributeName == L"CContainerObject")
 						{
 							CContainerObject* currentContainer = container.top();
 							CContainerObject* object = currentContainer->createContainerObject();
 							container.push(object);
+							s_listObject.push_back(object);
+							currentObject = object;
 						}
 						else if (attributeName == L"CGameObject")
 						{
 							CContainerObject* currentContainer = container.top();
-							currentContainer->createEmptyObject();
+							CGameObject* object = currentContainer->createEmptyObject();
+							s_listObject.push_back(object);
+							currentObject = object;
+						}
+						else if (attributeName == L"Components")
+						{
+							if (currentObject != NULL)
+							{
+								buildComponent(currentObject, reader);
+								continue;
+							}
 						}
 
 						serializableTree.push(attributeName);
@@ -90,6 +159,8 @@ namespace Skylicht
 				break;
 			}
 		}
+
+		s_current = s_listObject.begin();
 	}
 
 	bool CSceneImporter::beginImportScene(CScene* scene, const char* file)
@@ -102,26 +173,80 @@ namespace Skylicht
 
 		buildScene(scene, s_reader);
 
+		// close
 		s_reader->drop();
 
-		s_reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(s_scenePath.c_str());
-
+		// re-open the scene file
+		s_reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
 		s_scenePath = file;
 		s_scene = scene;
+		s_loading = 0;
 
 		return true;
 	}
 
-	bool CSceneImporter::loadStep()
+	bool CSceneImporter::loadStep(CScene* scene, io::IXMLReader* reader)
 	{
-		return true;
+		std::wstring nodeName = L"CObjectSerializable";
+		std::wstring attributeName;
+
+		int step = 0;
+
+		while (step < s_loadStep && reader->read())
+		{
+			switch (reader->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+				if (nodeName == reader->getNodeName())
+				{
+					if (reader->getAttributeValue(L"type") != NULL)
+					{
+						attributeName = reader->getAttributeValue(L"type");
+
+						if (attributeName == L"CScene")
+						{
+							CObjectSerializable* data = scene->createSerializable();
+							data->parseSerializable(reader);
+							scene->loadSerializable(data);
+							delete data;
+						}
+						else if (attributeName == L"CZone" ||
+							attributeName == L"CContainerObject" ||
+							attributeName == L"CGameObject")
+						{
+							CGameObject* gameobject = dynamic_cast<CGameObject*>(*s_current);
+							++s_current;
+							++s_loading;
+							++step;
+
+							CObjectSerializable* data = gameobject->createSerializable();
+							data->parseSerializable(reader);
+							gameobject->loadSerializable(data);
+							gameobject->startComponent();
+							delete data;
+						}
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		return s_current == s_listObject.end();
+	}
+
+	float CSceneImporter::getLoadingPercent()
+	{
+		int size = (int)s_listObject.size();
+		return s_loading / (float)size;
 	}
 
 	bool CSceneImporter::updateLoadScene()
 	{
 		// step 2
 		// load object attribute
-		if (CSceneImporter::loadStep())
+		if (CSceneImporter::loadStep(s_scene, s_reader))
 		{
 			// drop
 			if (s_reader)
