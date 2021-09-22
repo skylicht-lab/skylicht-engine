@@ -250,6 +250,13 @@ namespace Skylicht
 		{
 			if (components[i]->getTypeName() == name)
 				return components[i];
+			else if (m_components[i]->getTypeName() == "CNullComponent")
+			{
+				// unsupport component
+				CNullComponent* nullComp = (CNullComponent*)m_components[i];
+				if (nullComp->getName() == name)
+					return nullComp;
+			}
 		}
 
 		return NULL;

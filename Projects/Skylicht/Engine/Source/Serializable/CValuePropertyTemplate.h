@@ -97,7 +97,7 @@ namespace Skylicht
 		}
 
 		CUIntProperty(CObjectSerializable* owner, const char* name, u32 value) :
-			CValuePropertyTemplate(owner, Integer, name)
+			CValuePropertyTemplate(owner, UInteger, name)
 		{
 			set(value);
 		}
