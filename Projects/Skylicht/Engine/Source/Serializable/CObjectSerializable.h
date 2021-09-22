@@ -98,14 +98,14 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io);
 
-		bool save(const char* file);
+		virtual bool save(const char* file);
 
-		bool load(const char* file);
+		virtual bool load(const char* file);
 
-		void save(io::IXMLWriter* writer);
+		virtual void save(io::IXMLWriter* writer);
 
-		void load(io::IXMLReader* reader);
+		virtual void load(io::IXMLReader* reader);
 
-		void parseSerializable(io::IXMLReader* reader);
+		virtual void parseSerializable(io::IXMLReader* reader);
 	};
 }

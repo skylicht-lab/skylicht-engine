@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,41 +24,39 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CLight.h"
-#include "CLightCullingData.h"
+#include "CObjectSerializable.h"
 
 namespace Skylicht
 {
-	class CPointLight : public CLight
+	class CAttributeSerializable : public CObjectSerializable
 	{
+	public:
+		io::IAttributes* m_attribute;
+
+	public:
+		CAttributeSerializable(const char* name);
+
+		CAttributeSerializable(const char* name, CAttributeSerializable* parent);
+
+		virtual ~CAttributeSerializable();
+
+		virtual void serialize(io::IAttributes* io);
+
+		virtual void deserialize(io::IAttributes* io);
+
+		virtual bool save(const char* file);
+
+		virtual bool load(const char* file);
+
+		virtual void save(io::IXMLWriter* writer);
+
+		virtual void load(io::IXMLReader* reader);
+
+		virtual void parseSerializable(io::IXMLReader* reader);
+
 	protected:
-		CLightCullingData *m_cullingData;
 
-		ITexture* m_depth;
+		void copyAttribute(io::IAttributes* from, io::IAttributes* to);
 
-		bool m_needRenderShadowDepth;
-
-	public:
-		CPointLight();
-
-		virtual ~CPointLight();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		DECLARE_GETTYPENAME(CPointLight);
-
-	public:
-
-		bool needRenderShadowDepth();
-
-		void beginRenderShadowDepth();
-
-		void endRenderShadowDepth();
-
-		core::vector3df getPosition();
-
-		ITexture* createGetDepthTexture();
 	};
 }
