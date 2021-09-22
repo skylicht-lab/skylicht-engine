@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "Material/Shader/CShaderParams.h"
 #include "Components/CComponentSystem.h"
+#include "Components/CNullComponent.h"
 #include "Transform/CTransformEuler.h"
 #include "Transform/CTransformMatrix.h"
 #include "Serializable/CObjectSerializable.h"

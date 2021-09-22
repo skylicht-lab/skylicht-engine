@@ -41,4 +41,25 @@ namespace Skylicht
 	{
 
 	}
+
+	CObjectSerializable* CLight::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+		object->addAutoRelease(new CBoolProperty(object, "castShadow", m_castShadow));
+		object->addAutoRelease(new CColorProperty(object, "color", m_color.toSColor()));
+		object->addAutoRelease(new CFloatProperty(object, "spotCutoff", m_spotCutoff));
+		object->addAutoRelease(new CFloatProperty(object, "intensity", m_intensity));
+		object->addAutoRelease(new CUIntProperty(object, "bakeBounce", m_bakeBounce));
+		return object;
+	}
+
+	void CLight::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
+		m_castShadow = object->get<bool>("castShadow", false);
+		m_color = object->get<SColor>("color", SColor(255, 255, 255, 255));
+		m_spotCutoff = object->get<float>("spotCutoff", core::PI / 4.0f);
+		m_intensity = object->get<float>("intensity", 1.0f);
+		m_bakeBounce = object->get<u32>("bakeBounce", 1);
+	}
 }

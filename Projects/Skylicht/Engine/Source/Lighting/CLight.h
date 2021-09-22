@@ -63,6 +63,10 @@ namespace Skylicht
 
 		virtual ~CLight();
 
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
+
 		inline const SColorf& getColor()
 		{
 			return m_color;

@@ -62,7 +62,17 @@ namespace Skylicht
 						CComponentSystem* comSystem = object->getComponentByTypeName(componentName.c_str());
 						if (comSystem == NULL)
 						{
-							object->addComponentByTypeName(componentName.c_str());
+							// try add component
+							if (object->addComponentByTypeName(componentName.c_str()) == NULL)
+							{
+								char log[512];
+								sprintf(log, "[CSceneImporter] Found unsupport component '%s'", componentName.c_str());
+								os::Printer::log(log);
+
+								// unsupport component
+								CNullComponent* nullComponent = object->addComponent<CNullComponent>();
+								nullComponent->setName(componentName);
+							}
 						}
 					}
 				}

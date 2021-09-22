@@ -30,7 +30,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CDirectionalLight *CDirectionalLight::s_currentLight = NULL;
+	ACTIVATOR_REGISTER(CDirectionalLight);
+
+	CDirectionalLight* CDirectionalLight::s_currentLight = NULL;
 
 	CDirectionalLight::CDirectionalLight()
 	{

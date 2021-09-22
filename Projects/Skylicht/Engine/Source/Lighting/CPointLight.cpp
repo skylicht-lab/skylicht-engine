@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CPointLight);
+
 	CPointLight::CPointLight() :
 		m_depth(NULL),
 		m_needRenderShadowDepth(true),
@@ -46,7 +48,7 @@ namespace Skylicht
 
 	void CPointLight::initComponent()
 	{
-		CEntity *entity = m_gameObject->getEntity();
+		CEntity* entity = m_gameObject->getEntity();
 		m_cullingData = entity->addData<CLightCullingData>();
 		m_cullingData->Light = this;
 

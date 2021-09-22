@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,41 +24,41 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CLight.h"
-#include "CLightCullingData.h"
+#include "CComponentSystem.h"
 
 namespace Skylicht
 {
-	class CPointLight : public CLight
+	class CGameObject;
+
+	class CNullComponent : public CComponentSystem
 	{
 	protected:
-		CLightCullingData *m_cullingData;
-
-		ITexture* m_depth;
-
-		bool m_needRenderShadowDepth;
+		std::string m_name;
+		io::IAttributes* m_attributes;
 
 	public:
-		CPointLight();
+		CNullComponent();
 
-		virtual ~CPointLight();
+		virtual ~CNullComponent();
 
 		virtual void initComponent();
 
 		virtual void updateComponent();
 
-		DECLARE_GETTYPENAME(CPointLight);
+		inline void setName(const std::string& name)
+		{
+			m_name = name;
+		}
 
-	public:
+		inline const std::string& getName()
+		{
+			return m_name;
+		}
 
-		bool needRenderShadowDepth();
+		virtual CObjectSerializable* createSerializable();
 
-		void beginRenderShadowDepth();
+		virtual void loadSerializable(CObjectSerializable* object);
 
-		void endRenderShadowDepth();
-
-		core::vector3df getPosition();
-
-		ITexture* createGetDepthTexture();
+		DECLARE_GETTYPENAME(CNullComponent);
 	};
 }
