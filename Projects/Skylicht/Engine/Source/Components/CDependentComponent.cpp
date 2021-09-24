@@ -23,69 +23,60 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "CDependentComponent.h"
 #include "CComponentSystem.h"
+#include "Utils/CActivator.h"
 #include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
-	CComponentSystem::CComponentSystem() :
-		m_enable(true),
-		m_serializable(true)
-	{
-		m_gameObject = NULL;
-	}
-
-	const char* CComponentSystem::getName()
-	{
-		return m_gameObject->getNameA();
-	}
-
-	CComponentSystem::~CComponentSystem()
-	{
-		for (CComponentSystem* comp : m_linkComponent)
-			m_gameObject->removeComponent(comp);
-
-		m_linkComponent.clear();
-	}
-
-	void CComponentSystem::startComponent()
+	CDependentComponent::CDependentComponent()
 	{
 
 	}
 
-	void CComponentSystem::postUpdateComponent()
+	CDependentComponent::~CDependentComponent()
 	{
 
 	}
 
-	void CComponentSystem::endUpdate()
+	bool CDependentComponent::registerDependent(const char* componentName, const char* dependentComponent)
 	{
+		std::map<std::string, std::vector<std::string>>::iterator it = m_dependent.find(componentName);
+		if (it != m_dependent.end())
+			return false;
 
+		m_dependent[componentName].push_back(dependentComponent);
+		return true;
 	}
 
-	void CComponentSystem::onEnable(bool b)
+	void CDependentComponent::createDependentComponent(CComponentSystem* component)
 	{
+		std::map<std::string, std::vector<std::string>>::iterator it = m_dependent.find(component->getTypeName().c_str());
+		if (it == m_dependent.end())
+			return;
 
-	}
+		std::vector<std::string>& list = it->second;
 
-	void CComponentSystem::setEnable(bool b)
-	{
-		if (m_enable != b)
+		CGameObject* gameObject = component->getGameObject();
+
+		for (std::string componentName : list)
 		{
-			onEnable(b);
-			m_enable = b;
+			IActivatorObject* object = CActivator::getInstance()->createInstance(componentName.c_str());
+			CComponentSystem* dependentComp = dynamic_cast<CComponentSystem*>(object);
+			if (dependentComp != NULL)
+			{
+				gameObject->m_components.push_back(dependentComp);
+
+				dependentComp->setOwner(gameObject);
+				dependentComp->initComponent();
+
+				component->addLinkComponent(dependentComp);
+			}
+			else
+			{
+				delete object;
+			}
 		}
-	}
-
-	CObjectSerializable* CComponentSystem::createSerializable()
-	{
-		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
-		object->addAutoRelease(new CBoolProperty(object, "enable", isEnable()));
-		return object;
-	}
-
-	void CComponentSystem::loadSerializable(CObjectSerializable* object)
-	{
-		setEnable(object->get("enable", true));
 	}
 }

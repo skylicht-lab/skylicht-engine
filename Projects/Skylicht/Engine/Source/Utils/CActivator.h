@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #define ACTIVATOR_REGISTER(type)  \
 	IActivatorObject* type##CreateFunc() { return new type(); } \
-	bool type##Activator = CActivator::createGetInstance()->registerType(#type, &type##CreateFunc);
+	bool type##_Activator = CActivator::createGetInstance()->registerType(#type, &type##CreateFunc);
 
 #define DECLARE_GETTYPENAME(type) \
 	virtual std::string getTypeName() {return #type;}

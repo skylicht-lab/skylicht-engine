@@ -24,25 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "CViewpointData.h"
+#include "Components/CComponentSystem.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CViewpoint : public CGizmosComponent
+		class CGizmosComponent : public CComponentSystem
 		{
 		public:
-			CViewpoint();
+			CGizmosComponent();
 
-			virtual ~CViewpoint();
-
-			virtual void initComponent();
-
-			virtual void updateComponent();
-
-			CViewpointData* getViewpointData();
+			virtual ~CGizmosComponent();
 		};
 	}
 }

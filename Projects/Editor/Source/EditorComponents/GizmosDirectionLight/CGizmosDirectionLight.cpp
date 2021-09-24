@@ -22,27 +22,48 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "EditorComponents/CGizmosComponent.h"
-#include "CViewpointData.h"
+#include "pch.h"
+#include "CGizmosDirectionLight.h"
+#include "Editor/CEditor.h"
+#include "GameObject/CGameObject.h"
+#include "Utils/CActivator.h"
+#include "Lighting/CDirectionalLight.h"
+#include "SpriteDraw/CSprite.h"
+#include "Components/CDependentComponent.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CViewpoint : public CGizmosComponent
+		ACTIVATOR_REGISTER(CGizmosDirectionLight);
+
+		DEPENDENT_COMPONENT_REGISTER(CDirectionalLight, CGizmosDirectionLight);
+
+		CGizmosDirectionLight::CGizmosDirectionLight()
 		{
-		public:
-			CViewpoint();
 
-			virtual ~CViewpoint();
+		}
 
-			virtual void initComponent();
+		CGizmosDirectionLight::~CGizmosDirectionLight()
+		{
 
-			virtual void updateComponent();
+		}
 
-			CViewpointData* getViewpointData();
-		};
+		void CGizmosDirectionLight::initComponent()
+		{
+			CSprite* spriteDraw = m_gameObject->addComponent<CSprite>();
+			spriteDraw->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrame("light"), 1.0f, SColor(255, 255, 255, 255));
+			spriteDraw->setCenter(true);
+			spriteDraw->setBillboard(true);
+			spriteDraw->setAutoScaleInViewSpace(true);
+			spriteDraw->setEnableSerializable(false);
+
+			addLinkComponent(spriteDraw);
+		}
+
+		void CGizmosDirectionLight::updateComponent()
+		{
+
+		}
 	}
 }

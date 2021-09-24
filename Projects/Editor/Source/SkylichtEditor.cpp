@@ -25,9 +25,7 @@ SkylichtEditor::~SkylichtEditor()
 {
 	Editor::GUI::CGUIContext::destroyGUI();
 
-	if (m_editor != NULL)
-		delete m_editor;
-
+	Editor::CEditor::releaseInstance();
 	Editor::CHandles::releaseInstance();
 	Editor::CAssetManager::releaseInstance();
 }
@@ -67,7 +65,7 @@ void SkylichtEditor::onUpdate()
 		u32 h = app->getHeight();
 		Editor::GUI::CGUIContext::initGUI((float)w, (float)h);
 
-		m_editor = new Editor::CEditor();
+		m_editor = Editor::CEditor::createGetInstance();
 		m_editorState = InitEngine;
 	}
 	break;
