@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	class CGameObject;
+	class CDependentComponent;
 
 	class CComponentSystem : public IActivatorObject
 	{
@@ -42,9 +43,13 @@ namespace Skylicht
 		}
 
 		bool m_enable;
+		bool m_serializable;
+
+		std::vector<CComponentSystem*> m_linkComponent;
 
 	public:
 		friend class CGameObject;
+		friend class CDependentComponent;
 
 		CComponentSystem();
 
@@ -78,6 +83,27 @@ namespace Skylicht
 		inline CGameObject* getGameObject()
 		{
 			return m_gameObject;
+		}
+
+		inline void setEnableSerializable(bool b)
+		{
+			m_serializable = b;
+		}
+
+		inline bool isSerializable()
+		{
+			return m_serializable;
+		}
+
+		inline void addLinkComponent(CComponentSystem* comp)
+		{
+			if (comp->getGameObject() == m_gameObject)
+				m_linkComponent.push_back(comp);
+		}
+
+		inline void removeAllLink()
+		{
+			m_linkComponent.clear();
 		}
 
 		DECLARE_GETTYPENAME(CComponentSystem)

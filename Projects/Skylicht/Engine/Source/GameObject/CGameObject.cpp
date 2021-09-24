@@ -180,6 +180,9 @@ namespace Skylicht
 	void CGameObject::releaseAllComponent()
 	{
 		for (CComponentSystem*& comp : m_components)
+			comp->removeAllLink();
+
+		for (CComponentSystem*& comp : m_components)
 			delete comp;
 		m_components.clear();
 	}
@@ -238,6 +241,7 @@ namespace Skylicht
 		compSystem->setOwner(this);
 		compSystem->initComponent();
 
+		CDependentComponent::getInstance()->createDependentComponent(compSystem);
 		return compSystem;
 	}
 
@@ -260,6 +264,23 @@ namespace Skylicht
 		}
 
 		return NULL;
+	}
+
+	bool CGameObject::removeComponent(CComponentSystem* comp)
+	{
+		ArrayComponentIter i = m_components.begin(), end = m_components.end();
+		while (i != end)
+		{
+			if (*i != comp)
+			{
+				delete comp;
+				m_components.erase(i);
+				return true;
+			}
+			++i;
+		}
+
+		return false;
 	}
 
 	void CGameObject::startComponent()
@@ -292,6 +313,9 @@ namespace Skylicht
 
 		for (int i = 0; i < numComponents; i++)
 		{
+			if (!components[i]->isSerializable())
+				continue;
+
 			CObjectSerializable* data = components[i]->createSerializable();
 			if (data != NULL)
 			{
@@ -316,7 +340,7 @@ namespace Skylicht
 		setName(object->get("name", std::wstring(L"")).c_str());
 		setEnable(object->get("enable", true));
 		setVisible(object->get("visible", true));
-		setVisible(object->get("static", true));
+		setStatic(object->get("static", true));
 		setCullingLayer(object->get<u32>("culling", 1));
 
 		CObjectSerializable* coms = object->getProperty<CObjectSerializable>("Components");

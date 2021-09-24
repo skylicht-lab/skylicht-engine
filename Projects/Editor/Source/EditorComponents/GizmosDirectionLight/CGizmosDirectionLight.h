@@ -25,24 +25,21 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "EditorComponents/CGizmosComponent.h"
-#include "CViewpointData.h"
 
 namespace Skylicht
 {
 	namespace Editor
-	{
-		class CViewpoint : public CGizmosComponent
+	{		
+		class CGizmosDirectionLight : public CGizmosComponent
 		{
 		public:
-			CViewpoint();
+			CGizmosDirectionLight();
 
-			virtual ~CViewpoint();
+			virtual ~CGizmosDirectionLight();
 
 			virtual void initComponent();
 
 			virtual void updateComponent();
-
-			CViewpointData* getViewpointData();
 		};
 	}
 }
