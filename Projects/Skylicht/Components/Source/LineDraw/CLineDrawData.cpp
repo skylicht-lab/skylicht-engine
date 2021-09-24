@@ -41,7 +41,7 @@ namespace Skylicht
 		LineBuffer->drop();
 	}
 
-	void CLineDrawData::add3DBox(const core::aabbox3d<f32>& box, SColor color)
+	void CLineDrawData::add3DBox(const core::aabbox3d<f32>& box, const SColor& color)
 	{
 		core::vector3df edges[8];
 		box.getEdges(edges);

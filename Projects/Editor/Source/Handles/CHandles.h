@@ -31,6 +31,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		class CHandlesRenderer;
+		class CGizmosRenderer;
+
 		class CHandles :
 			public CGameSingleton<CHandles>,
 			public IEventReceiver
@@ -56,6 +59,9 @@ namespace Skylicht
 			bool m_endCheck;
 			bool m_useLocalSpace;
 
+			CHandlesRenderer* m_handlesRenderer;
+			CGizmosRenderer* m_gizmosRenderer;
+
 		public:
 			CHandles();
 
@@ -64,6 +70,8 @@ namespace Skylicht
 			bool endCheck();
 
 			void end();
+
+			void refresh();
 
 			core::vector3df positionHandle(const core::vector3df& position, const core::quaternion& localRotation);
 
@@ -150,6 +158,15 @@ namespace Skylicht
 			{
 				return m_worldInv;
 			}
+
+		public:
+
+			void draw3DBox(const core::aabbox3d<f32>& box, const SColor& color);
+
+			void drawLine(const core::vector3df& v1, const core::vector3df& v2, const SColor& color);
+
+			void drawPolyline(const core::vector3df* points, u32 count, bool close, const SColor& color);
+
 		};
 	}
 }

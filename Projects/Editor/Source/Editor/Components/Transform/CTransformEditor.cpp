@@ -183,7 +183,7 @@ namespace Skylicht
 						y->notify(from);
 						z->notify(from);
 
-						t->setRotation(rot);
+						t->setRotation(rot * core::RADTODEG);
 					}), true);
 
 				RotateX.addObserver(new CObserver<CTransformEditor>(this,

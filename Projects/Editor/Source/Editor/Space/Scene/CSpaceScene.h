@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/CSpace.h"
 #include "Editor/History/CSceneHistory.h"
 #include "EditorComponents/Handles/CHandlesRenderer.h"
+#include "EditorComponents/Gizmos/CGizmosRenderer.h"
 #include "CViewpointController.h"
 
 #include "Reactive/ISubject.h"
@@ -80,6 +81,7 @@ namespace Skylicht
 			CViewpointController* m_viewpointController;
 
 			CHandlesRenderer* m_handlesRenderer;
+			CGizmosRenderer* m_gizmosRenderer;
 
 			GUI::CButton* m_toolbarButton[ToolbarCount];
 
