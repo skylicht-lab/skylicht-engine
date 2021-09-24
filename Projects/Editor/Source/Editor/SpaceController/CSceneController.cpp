@@ -33,6 +33,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetImporter.h"
 #include "AssetManager/CAssetManager.h"
 
+#include "Handles/CHandles.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -205,6 +207,8 @@ namespace Skylicht
 
 			m_focusNode = NULL;
 			m_contextNode = NULL;
+
+			CHandles::getInstance()->refresh();
 		}
 
 		void CSceneController::setZone(CZone* zone)

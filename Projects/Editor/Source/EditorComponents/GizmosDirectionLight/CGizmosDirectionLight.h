@@ -32,6 +32,9 @@ namespace Skylicht
 	{		
 		class CGizmosDirectionLight : public CGizmosComponent
 		{
+		protected:
+			CDirectionalLight* m_directionLight;
+
 		public:
 			CGizmosDirectionLight();
 

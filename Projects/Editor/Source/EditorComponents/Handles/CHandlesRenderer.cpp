@@ -40,7 +40,8 @@ namespace Skylicht
 			m_mouseState(0),
 			m_cancel(false),
 			m_using(false),
-			m_rotationAngle(0.0f)
+			m_rotationAngle(0.0f),
+			m_enable(true)
 		{
 			m_data = new CHandlesData();
 			m_data->LineBuffer->getMaterial().ZBuffer = ECFN_DISABLED;

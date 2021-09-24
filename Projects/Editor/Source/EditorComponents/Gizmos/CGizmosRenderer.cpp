@@ -23,55 +23,68 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "Utils/CActivator.h"
-#include "Lighting/CDirectionalLight.h"
-#include "Components/CDependentComponent.h"
-#include "CGizmosDirectionLight.h"
-
-#include "GameObject/CGameObject.h"
-#include "Editor/CEditor.h"
-#include "SpriteDraw/CSprite.h"
-#include "Handles/CHandles.h"
+#include "CGizmosRenderer.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		ACTIVATOR_REGISTER(CGizmosDirectionLight);
+		CGizmosRenderer::CGizmosRenderer() :
+			m_enable(true)
+		{
+			m_data = new CGizmosData();
+		}
 
-		DEPENDENT_COMPONENT_REGISTER(CDirectionalLight, CGizmosDirectionLight);
+		CGizmosRenderer::~CGizmosRenderer()
+		{
+			delete m_data;
+		}
 
-		CGizmosDirectionLight::CGizmosDirectionLight() :
-			m_directionLight(NULL)
+		void CGizmosRenderer::init(CEntityManager* entityManager)
 		{
 
 		}
 
-		CGizmosDirectionLight::~CGizmosDirectionLight()
+		void CGizmosRenderer::beginQuery()
 		{
 
 		}
 
-		void CGizmosDirectionLight::initComponent()
+
+		void CGizmosRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 		{
-			CSprite* spriteDraw = m_gameObject->addComponent<CSprite>();
-			spriteDraw->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrame("light"), 1.0f, SColor(255, 255, 255, 255));
-			spriteDraw->setCenter(true);
-			spriteDraw->setBillboard(true);
-			spriteDraw->setAutoScaleInViewSpace(true);
-			spriteDraw->setEnableSerializable(false);
 
-			addLinkComponent(spriteDraw);
-
-			m_directionLight = m_gameObject->getComponent<CDirectionalLight>();
 		}
 
-		void CGizmosDirectionLight::updateComponent()
+		void CGizmosRenderer::update(CEntityManager* entityManager)
 		{
-			const core::vector3df pos = m_gameObject->getPosition();
-			const core::vector3df v = m_directionLight->getDirection() * 2.0f;
+			if (m_enable == false)
+				return;
 
-			CHandles::getInstance()->drawLine(pos, pos + v, SColor(255, 255, 255, 255));
+			((CLineDrawData*)m_data)->updateBuffer();
+			((CPolygonDrawData*)m_data)->updateBuffer();
+		}
+
+		void CGizmosRenderer::render(CEntityManager* entityManager)
+		{
+			if (m_enable == false)
+				return;
+
+			IVideoDriver* driver = getVideoDriver();
+			driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
+
+			IMeshBuffer* buffer = NULL;
+
+			buffer = m_data->PolygonBuffer;
+			driver->setMaterial(buffer->getMaterial());
+			driver->drawMeshBuffer(buffer);
+
+			buffer = m_data->LineBuffer;
+			driver->setMaterial(buffer->getMaterial());
+			driver->drawMeshBuffer(buffer);
+
+			((CLineDrawData*)m_data)->clearBuffer();
+			((CPolygonDrawData*)m_data)->clearBuffer();
 		}
 	}
 }
