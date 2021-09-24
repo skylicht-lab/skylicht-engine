@@ -28,12 +28,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/CSpace.h"
 #include "AssetManager/CAssetWatcher.h"
 #include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
+#include "Utils/CGameSingleton.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CEditor
+		class CEditor : public CGameSingleton<CEditor>
 		{
 			friend class CSpace;
 

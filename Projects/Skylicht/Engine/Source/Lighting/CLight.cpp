@@ -49,6 +49,7 @@ namespace Skylicht
 		object->addAutoRelease(new CColorProperty(object, "color", m_color.toSColor()));
 		object->addAutoRelease(new CFloatProperty(object, "spotCutoff", m_spotCutoff));
 		object->addAutoRelease(new CFloatProperty(object, "intensity", m_intensity));
+		object->addAutoRelease(new CFloatProperty(object, "radius", m_radius));
 		object->addAutoRelease(new CUIntProperty(object, "bakeBounce", m_bakeBounce));
 		return object;
 	}
@@ -60,6 +61,9 @@ namespace Skylicht
 		m_color = object->get<SColor>("color", SColor(255, 255, 255, 255));
 		m_spotCutoff = object->get<float>("spotCutoff", core::PI / 4.0f);
 		m_intensity = object->get<float>("intensity", 1.0f);
+		m_radius = object->get<float>("radius", 3.0f);
 		m_bakeBounce = object->get<u32>("bakeBounce", 1);
+
+		setRadius(m_radius);
 	}
 }

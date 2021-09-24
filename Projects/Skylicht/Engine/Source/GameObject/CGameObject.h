@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/CShaderParams.h"
 #include "Components/CComponentSystem.h"
 #include "Components/CNullComponent.h"
+#include "Components/CDependentComponent.h"
 #include "Transform/CTransformEuler.h"
 #include "Transform/CTransformMatrix.h"
 #include "Serializable/CObjectSerializable.h"
@@ -41,6 +42,8 @@ namespace Skylicht
 
 	class CGameObject
 	{
+		friend class CDependentComponent;
+
 	protected:
 		std::string m_objectID;
 
@@ -245,6 +248,8 @@ namespace Skylicht
 		template<class T>
 		bool removeComponent();
 
+		bool removeComponent(CComponentSystem* comp);
+
 		void releaseAllComponent();
 
 		CComponentSystem* addComponentByTypeName(const char* name);
@@ -312,6 +317,7 @@ namespace Skylicht
 		compSystem->setOwner(this);
 		compSystem->initComponent();
 
+		CDependentComponent::createGetInstance()->createDependentComponent(compSystem);
 		return newComp;
 	}
 

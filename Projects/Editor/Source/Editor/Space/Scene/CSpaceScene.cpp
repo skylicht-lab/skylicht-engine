@@ -273,12 +273,6 @@ namespace Skylicht
 			core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 			lightTransform->setOrientation(direction, CTransform::s_oy);
 
-			CSprite* spriteDraw = lightObj->addComponent<CSprite>();
-			spriteDraw->setFrame(m_editor->getSpriteIcon()->getFrame("light"), 1.0f, SColor(255, 255, 255, 255));
-			spriteDraw->setCenter(true);
-			spriteDraw->setBillboard(true);
-			spriteDraw->setAutoScaleInViewSpace(true);
-
 			// update search index
 			m_scene->updateAddRemoveObject();
 			m_scene->updateIndexSearchObject();
