@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,28 +22,21 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Utils/CGameSingleton.h"
+#include "pch.h"
+#include "CGizmosData.h"
 
 namespace Skylicht
 {
-	class CComponentSystem;
-
-#define DEPENDENT_COMPONENT_REGISTER(comp, dependentComp) bool comp##_dependentComp##_dependent = CDependentComponent::createGetInstance()->registerDependent(#comp, #dependentComp);
-
-	class CDependentComponent : public CGameSingleton<CDependentComponent>
+	namespace Editor
 	{
-	protected:
-		std::map<std::string, std::vector<std::string>> m_dependent;
+		CGizmosData::CGizmosData()
+		{
 
-	public:
-		CDependentComponent();
+		}
 
-		virtual ~CDependentComponent();
+		CGizmosData::~CGizmosData()
+		{
 
-		bool registerDependent(const char* componentName, const char* dependentComponent);
-
-		void createDependentComponent(CComponentSystem* componentName);
-	};
+		}
+	}
 }

@@ -25,8 +25,8 @@ SkylichtEditor::~SkylichtEditor()
 {
 	Editor::GUI::CGUIContext::destroyGUI();
 
-	Editor::CEditor::releaseInstance();
 	Editor::CHandles::releaseInstance();
+	Editor::CEditor::releaseInstance();
 	Editor::CAssetManager::releaseInstance();
 }
 

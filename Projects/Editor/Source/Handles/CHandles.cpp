@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CHandles.h"
 #include "Scene/CScene.h"
 #include "EditorComponents/Handles/CHandlesRenderer.h"
+#include "EditorComponents/Gizmos/CGizmosRenderer.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
@@ -37,7 +39,9 @@ namespace Skylicht
 			m_handleScale(false),
 			m_mouseState(0),
 			m_endCheck(false),
-			m_useLocalSpace(true)
+			m_useLocalSpace(true),
+			m_handlesRenderer(NULL),
+			m_gizmosRenderer(NULL)
 		{
 
 		}
@@ -45,6 +49,13 @@ namespace Skylicht
 		CHandles::~CHandles()
 		{
 
+		}
+
+		void CHandles::refresh()
+		{
+			CScene* scene = CSceneController::getInstance()->getScene();
+			m_handlesRenderer = scene->getEntityManager()->getSystem<CHandlesRenderer>();
+			m_gizmosRenderer = scene->getEntityManager()->getSystem<CGizmosRenderer>();
 		}
 
 		void CHandles::end()
@@ -113,26 +124,23 @@ namespace Skylicht
 				int mouseX = event.MouseInput.X;
 				int mouseY = event.MouseInput.Y;
 
-				CScene* scene = (CScene*)event.GameEvent.Sender;
-				CHandlesRenderer* handleRenderer = scene->getEntityManager()->getSystem<CHandlesRenderer>();
-
-				if (handleRenderer != NULL)
+				if (m_handlesRenderer != NULL)
 				{
 					if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
 					{
 						if (m_mouseState == 2)
 							m_mouseState = 0;
-						handleRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
+						m_handlesRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
 					}
 					else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 					{
 						m_mouseState = 1;
-						handleRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
+						m_handlesRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
 					}
 					else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 					{
 						m_mouseState = 2;
-						handleRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
+						m_handlesRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
 					}
 
 					return true;
@@ -140,20 +148,41 @@ namespace Skylicht
 			}
 			else if (event.EventType == EET_KEY_INPUT_EVENT)
 			{
-				CScene* scene = (CScene*)event.GameEvent.Sender;
-				CHandlesRenderer* handleRenderer = scene->getEntityManager()->getSystem<CHandlesRenderer>();
-
 				if (event.KeyInput.PressedDown && event.KeyInput.Key == irr::KEY_ESCAPE)
 				{
 					if (m_mouseState == 1)
 					{
-						handleRenderer->cancel();
+						m_handlesRenderer->cancel();
 					}
 					return true;
 				}
 			}
 
 			return false;
+		}
+
+		void CHandles::draw3DBox(const core::aabbox3d<f32>& box, const SColor& color)
+		{
+			if (m_gizmosRenderer == NULL)
+				return;
+
+			m_gizmosRenderer->getLineData()->add3DBox(box, color);
+		}
+
+		void CHandles::drawLine(const core::vector3df& v1, const core::vector3df& v2, const SColor& color)
+		{
+			if (m_gizmosRenderer == NULL)
+				return;
+
+			m_gizmosRenderer->getLineData()->addLine(v1, v2, color);
+		}
+
+		void CHandles::drawPolyline(const core::vector3df* points, u32 count, bool close, const SColor& color)
+		{
+			if (m_gizmosRenderer == NULL)
+				return;
+
+			m_gizmosRenderer->getLineData()->addPolyline(points, count, close, color);
 		}
 	}
 }

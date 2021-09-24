@@ -38,7 +38,7 @@ namespace Skylicht
 
 		virtual ~CLineDrawData();
 
-		void add3DBox(const core::aabbox3d<f32>& box, SColor color);
+		void add3DBox(const core::aabbox3d<f32>& box, const SColor& color);
 
 		void addLine(const core::vector3df& v1, const core::vector3df& v2, const SColor& color);
 

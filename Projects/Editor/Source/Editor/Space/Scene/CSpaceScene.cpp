@@ -59,6 +59,7 @@ namespace Skylicht
 			m_viewpointController(NULL),
 			m_view(NULL),
 			m_handlesRenderer(NULL),
+			m_gizmosRenderer(NULL),
 			m_enableRender(true)
 		{
 			initDefaultScene();
@@ -231,7 +232,9 @@ namespace Skylicht
 			m_viewpointController->setCamera(m_editorCamera, m_viewpointCamera);
 
 			// add handle renderer
-			m_handlesRenderer = m_scene->getEntityManager()->addRenderSystem<CHandlesRenderer>();
+			CEntityManager* entityMgr = m_scene->getEntityManager();
+			m_handlesRenderer = entityMgr->addRenderSystem<CHandlesRenderer>();
+			m_gizmosRenderer = entityMgr->addRenderSystem<CGizmosRenderer>();
 
 			// register event
 			m_scene->registerEvent("Handles", CHandles::getInstance());
@@ -498,6 +501,8 @@ namespace Skylicht
 					m_handlesRenderer->setEnable(true);
 					m_handlesRenderer->setCameraAndViewport(m_editorCamera, viewport);
 
+					m_gizmosRenderer->setEnable(true);
+
 					m_renderRP->render(NULL, m_editorCamera, m_scene->getEntityManager(), viewport);
 
 					// setup viewpoint viewport
@@ -520,6 +525,7 @@ namespace Skylicht
 					m_scene->setVisibleAllZone(false);
 					m_viewpointZone->setVisible(true);
 					m_handlesRenderer->setEnable(false);
+					m_gizmosRenderer->setEnable(false);
 
 					m_viewpointRP->render(NULL, m_viewpointCamera, m_scene->getEntityManager(), viewport);
 
