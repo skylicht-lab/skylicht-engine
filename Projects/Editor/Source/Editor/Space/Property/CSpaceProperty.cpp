@@ -58,33 +58,6 @@ namespace Skylicht
 			m_label->setMargin(GUI::SMargin(5.0f, 2.0f));
 			m_label->dock(GUI::EPosition::Fill);
 
-			/*
-			GUI::CBoxLayout* boxLayout;
-
-			GUI::CCollapsibleGroup* rendererColapsible = addGroup(L"Render Mesh");
-			boxLayout = createBoxLayout(rendererColapsible);
-			addCheckBox(boxLayout, L"Enable", true);
-			rendererColapsible->setExpand(true);
-
-
-			GUI::CCollapsibleGroup* indirectLighting = addGroup(L"Indirect Lighting");
-			boxLayout = createBoxLayout(indirectLighting);
-
-			addCheckBox(boxLayout, L"Enable", true);
-			boxLayout->addSpace(5.0f);
-
-			std::vector<std::string> list;
-			list.push_back("LightmapArray");
-			list.push_back("VertexColor");
-			list.push_back("SH4");
-			list.push_back("SH9");
-			addComboBox(boxLayout, L"Type", list[0], list);
-			addSlider(boxLayout, L"Indirect multipler", 1.0f, 0.0f, 1.0f);
-			addSlider(boxLayout, L"Direct multipler", 1.0f, 0.0f, 1.0f);
-
-			indirectLighting->setExpand(true);
-			*/
-
 			CPropertyController::getInstance()->setSpaceProperty(this);
 		}
 
@@ -101,6 +74,12 @@ namespace Skylicht
 			}
 			m_groups.clear();
 
+			for (CComponentEditor* editor : m_releaseComponents)
+			{
+				delete editor;
+			}
+			m_releaseComponents.clear();
+
 			CPropertyController::getInstance()->setSpaceProperty(NULL);
 		}
 
@@ -114,6 +93,12 @@ namespace Skylicht
 			}
 
 			m_groups.clear();
+
+			for (CComponentEditor* editor : m_releaseComponents)
+			{
+				delete editor;
+			}
+			m_releaseComponents.clear();
 		}
 
 		void CSpaceProperty::update()
@@ -126,12 +111,15 @@ namespace Skylicht
 
 		void CSpaceProperty::refresh()
 		{
-			
+
 		}
 
-		void CSpaceProperty::addComponent(CComponentEditor* editor, CComponentSystem* component)
+		void CSpaceProperty::addComponent(CComponentEditor* editor, CComponentSystem* component, bool autoRelease)
 		{
 			editor->initGUI(component, this);
+
+			if (autoRelease)
+				m_releaseComponents.push_back(editor);
 		}
 
 		void CSpaceProperty::addComponent(CComponentEditor* editor, CGameObject* gameobject)
@@ -252,6 +240,7 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
+				// when value change
 				CObserver<GUI::CTextBox>* onChange = new CObserver<GUI::CTextBox>(input);
 				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CTextBox* target)
 				{
@@ -262,6 +251,7 @@ namespace Skylicht
 					}
 				};
 
+				// when input text change
 				IObserver* observer = value->addObserver(onChange);
 				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
 					value->set(input->getString());
@@ -292,6 +282,7 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
+				// when check value c hange
 				CObserver<GUI::CCheckBox>* onChange = new CObserver<GUI::CCheckBox>(check);
 				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CCheckBox* target)
 				{
@@ -302,6 +293,7 @@ namespace Skylicht
 					}
 				};
 
+				// when check control change
 				IObserver* observer = value->addObserver(onChange);
 				check->OnChanged = [value, check, observer](GUI::CBase* base) {
 					value->set(check->getToggle());
@@ -327,6 +319,7 @@ namespace Skylicht
 			GUI::CComboBox* comboBox = new GUI::CComboBox(layout);
 			comboBox->setListValue(listValue);
 
+			// when value change
 			CObserver<GUI::CComboBox>* onChange = new CObserver<GUI::CComboBox>(comboBox);
 			onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CComboBox* target)
 			{
@@ -337,6 +330,7 @@ namespace Skylicht
 				}
 			};
 
+			// when combobox change
 			IObserver* observer = value->addObserver(onChange);
 			comboBox->OnChanged = [value, comboBox, observer](GUI::CBase* base)
 			{
@@ -347,7 +341,7 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
-		void CSpaceProperty::addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float min, float max)
+		void CSpaceProperty::addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<float>* value, float min, float max)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -357,7 +351,25 @@ namespace Skylicht
 			label->setTextAlignment(GUI::TextRight);
 
 			GUI::CSlider* slider = new GUI::CSlider(layout);
-			slider->setValue(value, min, max);
+			slider->setValue(value->get(), min, max, false);
+
+			// when value change
+			CObserver<GUI::CSlider>* onChange = new CObserver<GUI::CSlider>(slider);
+			onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CSlider* target)
+			{
+				if (from != me)
+				{
+					CSubject<float>* value = (CSubject<float>*)subject;
+					target->setValue(value->get(), false);
+				}
+			};
+
+			// when slider change
+			IObserver* observer = value->addObserver(onChange);
+			slider->OnTextChanged = [value, slider, observer](GUI::CBase* base) {
+				value->set(slider->getValue());
+				value->notify(observer);
+			};
 
 			boxLayout->endVertical();
 		}

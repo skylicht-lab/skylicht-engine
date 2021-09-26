@@ -137,6 +137,7 @@ namespace Skylicht
 			// clear current scene gui
 			CSelection::getInstance()->clear();
 			CPropertyController::getInstance()->setProperty(NULL);
+			CHandles::getInstance()->setNullRenderer();
 
 			if (m_hierachyNode != NULL)
 			{
