@@ -23,9 +23,10 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "CGizmosDirectionLight.h"
+
 #include "Utils/CActivator.h"
 #include "Components/CDependentComponent.h"
-#include "CGizmosDirectionLight.h"
 
 #include "GameObject/CGameObject.h"
 #include "Editor/CEditor.h"
