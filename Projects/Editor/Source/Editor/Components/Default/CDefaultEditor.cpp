@@ -5,7 +5,7 @@ MIT License
 Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,38 +22,49 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CDefaultEditor.h"
 
-#include "Components/CComponentSystem.h"
-#include "CSpriteDrawData.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
+#include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
-	class CSprite : public CComponentSystem
+	namespace Editor
 	{
-	protected:
-		CSpriteDrawData* m_data;
-
-	public:
-		CSprite();
-
-		virtual ~CSprite();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		inline void setColor(const SColor& color)
+		CDefaultEditor::CDefaultEditor() :
+			m_component(NULL),
+			m_gameObject(NULL),
+			m_data(NULL)
 		{
-			m_data->Color = color;
+
 		}
 
-		void setFrame(SFrame* frame, float scale, const SColor& color);
+		CDefaultEditor::~CDefaultEditor()
+		{
+			if (m_data != NULL)
+				delete m_data;
+		}
 
-		void setCenter(bool b);
+		void CDefaultEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
+		{
+			m_component = target;
+			m_gameObject = target->getGameObject();
+			m_data = target->createSerializable();
 
-		void setBillboard(bool b);
+			if (m_gameObject->isEnableEditorChange() && m_component != NULL)
+			{
+				// setup gui
+				GUI::CCollapsibleGroup* group = ui->addGroup(m_component->getTypeName().c_str(), this);
 
-		void setAutoScaleInViewSpace(bool b);
-	};
+				// add serializable data control
+
+			}
+		}
+
+		void CDefaultEditor::update()
+		{
+
+		}
+	}
 }

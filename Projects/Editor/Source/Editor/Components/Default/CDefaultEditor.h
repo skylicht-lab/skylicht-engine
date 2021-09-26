@@ -5,7 +5,7 @@ MIT License
 Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,36 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "CSpriteDrawData.h"
+#include "Serializable/CObjectSerializable.h"
+#include "Editor/Components/CComponentEditor.h"
+#include "Activator/CEditorActivator.h"
 
 namespace Skylicht
 {
-	class CSprite : public CComponentSystem
+	namespace Editor
 	{
-	protected:
-		CSpriteDrawData* m_data;
-
-	public:
-		CSprite();
-
-		virtual ~CSprite();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		inline void setColor(const SColor& color)
+		class CDefaultEditor : public CComponentEditor
 		{
-			m_data->Color = color;
-		}
+		public:
 
-		void setFrame(SFrame* frame, float scale, const SColor& color);
+		protected:
+			CGameObject* m_gameObject;
+			CComponentSystem* m_component;
+			CObjectSerializable* m_data;
 
-		void setCenter(bool b);
+		public:
+			CDefaultEditor();
 
-		void setBillboard(bool b);
+			virtual ~CDefaultEditor();
 
-		void setAutoScaleInViewSpace(bool b);
-	};
+			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+
+			virtual void update();
+		};
+	}
 }

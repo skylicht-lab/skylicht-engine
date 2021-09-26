@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "EditorComponents/CGizmosComponent.h"
+#include "Lighting/CDirectionalLight.h"
+#include "SpriteDraw/CSprite.h"
 
 namespace Skylicht
 {
@@ -34,6 +36,7 @@ namespace Skylicht
 		{
 		protected:
 			CDirectionalLight* m_directionLight;
+			CSprite* m_sprite;
 
 		public:
 			CGizmosDirectionLight();
