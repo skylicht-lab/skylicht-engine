@@ -25,6 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGizmosRenderer.h"
 
+#include "Entity/CEntityManager.h"
+#include "Projective/CProjective.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -56,13 +59,118 @@ namespace Skylicht
 
 		}
 
+		void CGizmosRenderer::drawArrowInViewSpace(const core::vector3df& pos, const core::vector3df& v, float length, float arrowSize, const SColor& color)
+		{
+			m_arrows.push_back(SLineArrow());
+
+			SLineArrow& arrow = m_arrows.getLast();
+			arrow.Position = pos;
+			arrow.Vector = v;
+			arrow.Length = length;
+			arrow.ArrowSize = arrowSize;
+			arrow.Color = color;
+		}
+
+		void CGizmosRenderer::drawRectBillboard(const core::vector3df& pos, float width, float height, const SColor& color)
+		{
+			m_rectBillboard.push_back(SRectBillboard());
+
+			SRectBillboard& billboard = m_rectBillboard.getLast();
+			billboard.Position = pos;
+			billboard.Width = width;
+			billboard.Height = height;
+			billboard.Color = color;
+		}
+
 		void CGizmosRenderer::update(CEntityManager* entityManager)
 		{
 			if (m_enable == false)
 				return;
 
+			irr::core::matrix4 invView;
+			{
+				irr::core::matrix4 view(getVideoDriver()->getTransform(video::ETS_VIEW));
+				view.getInversePrimitive(invView);
+			}
+
+			core::vector3df cameraRight(invView[0], invView[1], invView[2]);
+			core::vector3df cameraLook(invView[8], invView[9], invView[10]);
+			core::vector3df cameraUp(invView[4], invView[5], invView[6]);
+			core::vector3df cameraPos = entityManager->getCamera()->getGameObject()->getPosition();
+
+			cameraRight.normalize();
+			cameraLook.normalize();
+			cameraUp.normalize();
+
+			CCamera* camera = entityManager->getCamera();
+
+			// draw arrow
+			for (u32 i = 0, n = m_arrows.size(); i < n; i++)
+			{
+				SLineArrow& arrow = m_arrows[i];
+				float length = arrow.Length / CProjective::getSegmentLengthClipSpace(camera, arrow.Position, arrow.Position + cameraRight);
+
+				core::vector3df end = arrow.Position + arrow.Vector * length;
+
+				// add line
+				m_data->addLine(arrow.Position, end, arrow.Color);
+
+				// add arrow
+				float arrowSize1 = length * arrow.ArrowSize;
+				float arrowSize2 = arrowSize1 * 0.5f;
+
+				core::vector3df side = arrow.Vector.crossProduct(cameraLook);
+				side.normalize();
+
+				core::vector3df a = end;
+				core::vector3df m = a - arrow.Vector * arrowSize1;
+				core::vector3df b = m + side * arrowSize2;
+				core::vector3df c = m - side * arrowSize2;
+				m_data->addTriangleFill(a, b, c, arrow.Color);
+			}
+
+			// draw rect billboard
+			for (u32 i = 0, n = m_rectBillboard.size(); i < n; i++)
+			{
+				SRectBillboard& r = m_rectBillboard[i];
+
+				core::vector3df side = cameraUp.crossProduct(cameraLook);
+				side.normalize();
+
+				core::vector3df sideQuad = side * r.Width;
+				core::vector3df upQuad = cameraUp * r.Height;
+
+				core::vector3df v1, v2, v3, v4;
+				v1.set(
+					r.Position.X - sideQuad.X + upQuad.X,
+					r.Position.Y - sideQuad.Y + upQuad.Y,
+					r.Position.Z - sideQuad.Z + upQuad.Z
+				);
+				v2.set(
+					r.Position.X + sideQuad.X + upQuad.X,
+					r.Position.Y + sideQuad.Y + upQuad.Y,
+					r.Position.Z + sideQuad.Z + upQuad.Z
+				);
+				v3.set(
+					r.Position.X + sideQuad.X - upQuad.X,
+					r.Position.Y + sideQuad.Y - upQuad.Y,
+					r.Position.Z + sideQuad.Z - upQuad.Z
+				);
+				v4.set(
+					r.Position.X - sideQuad.X - upQuad.X,
+					r.Position.Y - sideQuad.Y - upQuad.Y,
+					r.Position.Z - sideQuad.Z - upQuad.Z
+				);
+
+				core::vector3df quad[] = { v1, v2, v3, v4 };
+				m_data->addPolygonFill(quad, 4, r.Color);
+			}
+
+			// update buffer
 			((CLineDrawData*)m_data)->updateBuffer();
 			((CPolygonDrawData*)m_data)->updateBuffer();
+
+			m_arrows.set_used(0);
 		}
 
 		void CGizmosRenderer::render(CEntityManager* entityManager)

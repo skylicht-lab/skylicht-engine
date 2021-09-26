@@ -182,7 +182,6 @@ namespace Skylicht
 			{
 				video::SColor color = m_hoverOnAxis[axis] ? m_selectionColor : m_directionColor[axis];
 				core::vector3df lastPosition;
-				bool lastBackface = false;
 
 				// draw rotation
 				for (unsigned int i = 0; i <= circleMul * halfCircleSegmentCount; i++)
@@ -199,22 +198,22 @@ namespace Skylicht
 					r = localRotation * r;
 					r.normalize();
 
+					SColor lineColor = color;
+
 					// back face
 					if (viewVector.dotProduct(r) > FLT_EPSILON)
 					{
-						lastBackface = true;
-						continue;
+						lineColor.setAlpha(50);
 					}
 
 					core::vector3df circlePosition = pos + r * m_screenFactor;
 
-					if (i > 0 && !lastBackface)
+					if (i > 0)
 					{
-						m_data->addLine(lastPosition, circlePosition, color);
+						m_data->addLine(lastPosition, circlePosition, lineColor);
 					}
 
 					lastPosition = circlePosition;
-					lastBackface = false;
 				}
 			}
 
@@ -900,12 +899,6 @@ namespace Skylicht
 						{
 							core::vector3df hitVector = out - pos;
 							hitVector.normalize();
-
-							// check backface
-							if (viewVector.dotProduct(hitVector) > FLT_EPSILON)
-							{
-								continue;
-							}
 
 							m_rotationVectorSource = hitVector;
 							m_rotationAngle = 0.0f;
