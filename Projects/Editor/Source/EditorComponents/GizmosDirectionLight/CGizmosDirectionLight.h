@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	namespace Editor
-	{		
+	{
 		class CGizmosDirectionLight : public CGizmosComponent
 		{
 		protected:
