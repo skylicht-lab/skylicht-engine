@@ -31,12 +31,32 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		struct SLineArrow
+		{
+			core::vector3df Position;
+			core::vector3df Vector;
+			float Length;
+			float ArrowSize;
+			SColor Color;
+		};
+
+		struct SRectBillboard
+		{
+			core::vector3df Position;
+			float Width;
+			float Height;
+			SColor Color;
+		};
+
 		class CGizmosRenderer : public IRenderSystem
 		{
 		protected:
 			CGizmosData* m_data;
 
 			bool m_enable;
+
+			core::array<SLineArrow> m_arrows;
+			core::array<SRectBillboard> m_rectBillboard;
 
 		public:
 			CGizmosRenderer();
@@ -72,6 +92,10 @@ namespace Skylicht
 			{
 				return (CPolygonDrawData*)m_data;
 			}
+
+			void drawRectBillboard(const core::vector3df& pos, float width, float height, const SColor& color);
+
+			void drawArrowInViewSpace(const core::vector3df& pos, const core::vector3df& v, float length, float arrowSize, const SColor& color);
 		};
 	}
 }

@@ -24,13 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "Utils/CActivator.h"
-#include "Lighting/CDirectionalLight.h"
 #include "Components/CDependentComponent.h"
 #include "CGizmosDirectionLight.h"
 
 #include "GameObject/CGameObject.h"
 #include "Editor/CEditor.h"
-#include "SpriteDraw/CSprite.h"
 #include "Handles/CHandles.h"
 
 namespace Skylicht
@@ -54,24 +52,25 @@ namespace Skylicht
 
 		void CGizmosDirectionLight::initComponent()
 		{
-			CSprite* spriteDraw = m_gameObject->addComponent<CSprite>();
-			spriteDraw->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrame("light"), 1.0f, SColor(255, 255, 255, 255));
-			spriteDraw->setCenter(true);
-			spriteDraw->setBillboard(true);
-			spriteDraw->setAutoScaleInViewSpace(true);
-			spriteDraw->setEnableSerializable(false);
-
-			addLinkComponent(spriteDraw);
-
 			m_directionLight = m_gameObject->getComponent<CDirectionalLight>();
+
+			m_sprite = m_gameObject->addComponent<CSprite>();
+			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrame("light"), 1.0f, m_directionLight->getColor().toSColor());
+			m_sprite->setCenter(true);
+			m_sprite->setBillboard(true);
+			m_sprite->setAutoScaleInViewSpace(true);
+			m_sprite->setEnableSerializable(false);
+
+			addLinkComponent(m_sprite);
 		}
 
 		void CGizmosDirectionLight::updateComponent()
 		{
-			const core::vector3df pos = m_gameObject->getPosition();
-			const core::vector3df v = m_directionLight->getDirection() * 2.0f;
+			SColor lightColor = m_directionLight->getColor().toSColor();
 
-			CHandles::getInstance()->drawLine(pos, pos + v, SColor(255, 255, 255, 255));
+			m_sprite->setColor(lightColor);
+
+			CHandles::getInstance()->drawArrowInViewSpace(m_gameObject->getPosition(), m_directionLight->getDirection(), 0.5f, 0.05f, lightColor);
 		}
 	}
 }

@@ -31,7 +31,7 @@ namespace Skylicht
 	CLineDrawData::CLineDrawData()
 	{
 		LineBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));
-		LineBuffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColor");
+		LineBuffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
 		LineBuffer->setPrimitiveType(EPT_LINES);
 		LineBuffer->setHardwareMappingHint(EHM_STREAM);
 	}
