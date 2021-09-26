@@ -184,5 +184,21 @@ namespace Skylicht
 
 			m_gizmosRenderer->getLineData()->addPolyline(points, count, close, color);
 		}
+
+		void CHandles::drawRectBillboard(const core::vector3df& pos, float w, float h, const SColor& color)
+		{
+			if (m_gizmosRenderer == NULL)
+				return;
+
+			m_gizmosRenderer->drawRectBillboard(pos, w, h, color);
+		}
+
+		void CHandles::drawArrowInViewSpace(const core::vector3df& pos, const core::vector3df& v, float length, float arrowSize, const SColor& color)
+		{
+			if (m_gizmosRenderer == NULL)
+				return;
+
+			m_gizmosRenderer->drawArrowInViewSpace(pos, v, length, arrowSize, color);
+		}
 	}
 }

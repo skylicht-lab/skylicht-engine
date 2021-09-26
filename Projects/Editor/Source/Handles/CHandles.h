@@ -167,6 +167,9 @@ namespace Skylicht
 
 			void drawPolyline(const core::vector3df* points, u32 count, bool close, const SColor& color);
 
+			void drawRectBillboard(const core::vector3df& pos, float w, float h, const SColor& color);
+
+			void drawArrowInViewSpace(const core::vector3df& pos, const core::vector3df& v, float length, float arrowSize, const SColor& color);
 		};
 	}
 }
