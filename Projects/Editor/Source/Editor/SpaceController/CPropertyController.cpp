@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Activator/CEditorActivator.h"
 #include "Editor/Components/CComponentEditor.h"
+#include "Editor/Components/Default/CDefaultEditor.h"
 
 #include "Reactive/CObserver.h"
 
@@ -86,11 +87,13 @@ namespace Skylicht
 						CComponentEditor* editor = activator->getEditorInstance(component->getTypeName().c_str());
 						if (editor != NULL)
 						{
+							// custom editor
 							m_spaceProperty->addComponent(editor, component);
 						}
-						else
+						else if (component->isSerializable())
 						{
-							// null editor
+							// default editor
+							m_spaceProperty->addComponent(new CDefaultEditor(), component, true);
 						}
 					}
 				}

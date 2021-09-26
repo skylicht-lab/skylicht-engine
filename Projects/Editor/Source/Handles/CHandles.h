@@ -73,6 +73,8 @@ namespace Skylicht
 
 			void refresh();
 
+			void setNullRenderer();
+
 			core::vector3df positionHandle(const core::vector3df& position, const core::quaternion& localRotation);
 
 			core::vector3df scaleHandle(const core::vector3df& scale, const core::vector3df& origin, const core::quaternion& localRotation);

@@ -64,6 +64,7 @@ namespace Skylicht
 			GUI::CLabel* m_label;
 
 			std::vector<SGroup*> m_groups;
+			std::vector<CComponentEditor*> m_releaseComponents;
 		public:
 			CSpaceProperty(GUI::CWindow* window, CEditor* editor);
 
@@ -81,7 +82,7 @@ namespace Skylicht
 
 			void addComboBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::wstring>* value, const std::vector<std::wstring>& listValue);
 
-			void addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, float value, float min, float max);
+			void addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<float>* value, float min, float max);
 
 			GUI::CDropdownBox* addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value);
 
@@ -101,7 +102,7 @@ namespace Skylicht
 
 			void removeGroupByOwner(CComponentEditor* editor);
 
-			void addComponent(CComponentEditor* editor, CComponentSystem* component);
+			void addComponent(CComponentEditor* editor, CComponentSystem* component, bool autoRelease = false);
 
 			void addComponent(CComponentEditor* editor, CGameObject* gameobject);
 

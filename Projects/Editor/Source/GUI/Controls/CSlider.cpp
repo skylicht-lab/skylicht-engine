@@ -77,7 +77,7 @@ namespace Skylicht
 							float f = x / m_bounds.Width;
 
 							float value = (m_max - m_min) * f;
-							setValue(value, m_min, m_max);
+							setValue(value, m_min, m_max, true);
 						}
 
 					}
@@ -225,7 +225,7 @@ namespace Skylicht
 				}
 			}
 
-			void CSlider::setValue(float value, float min, float max)
+			void CSlider::setValue(float value, float min, float max, bool invokeEvent)
 			{
 				m_value = value;
 				m_min = min;
@@ -242,6 +242,15 @@ namespace Skylicht
 				else
 					swprintf(text, 64, L"%d", (int)m_value);
 				setString(std::wstring(text));
+
+
+				if (invokeEvent && OnTextChanged != nullptr)
+					OnTextChanged(this);
+			}
+
+			void CSlider::setValue(float value, bool invokeEvent)
+			{
+				setValue(value, m_min, m_max, invokeEvent);
 			}
 
 			void CSlider::applyTextValue()
@@ -251,8 +260,8 @@ namespace Skylicht
 				char utf8[512];
 				CStringImp::convertUnicodeToUTF8(s.c_str(), utf8);
 
-				float value = atof(utf8);
-				setValue(value, m_min, m_max);
+				float value = (float)atof(utf8);
+				setValue(value, m_min, m_max, true);
 			}
 		}
 	}

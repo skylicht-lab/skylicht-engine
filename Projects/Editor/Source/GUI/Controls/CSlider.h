@@ -65,7 +65,9 @@ namespace Skylicht
 
 				virtual bool onChar(u32 c);
 
-				void setValue(float value, float min, float max);
+				void setValue(float value, float min, float max, bool invokeEvent);
+
+				void setValue(float value, bool invokeEvent);
 
 				inline float getValue()
 				{

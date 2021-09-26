@@ -51,6 +51,12 @@ namespace Skylicht
 
 		}
 
+		void CHandles::setNullRenderer()
+		{
+			m_handlesRenderer = NULL;
+			m_gizmosRenderer = NULL;
+		}
+
 		void CHandles::refresh()
 		{
 			CScene* scene = CSceneController::getInstance()->getScene();
