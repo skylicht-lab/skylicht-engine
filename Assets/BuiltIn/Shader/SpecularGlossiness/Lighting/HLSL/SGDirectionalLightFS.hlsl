@@ -31,6 +31,9 @@ cbuffer cbPerFrame
 	float4x4 uViewProjection;
 	float4x4 uView;
 };
+float2 rand(float2 co){
+    return float2(frac(sin(dot(co.xy ,float2(12.9898,78.233))) * 43758.5453), frac(sin(dot(co.yx ,float2(12.9898,78.233))) * 43758.5453)) * 0.00047;
+}
 float texture2DCompare(float3 uv, float compare) {
 	float depth = uShadowMap.SampleLevel(uShadowMapSampler, uv, 0).r;
 	return step(compare, depth);
@@ -61,7 +64,7 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 		for (int y = -1; y <= 1; y++)
 		{
 			float2 off = float2(x, y) / size;
-			result += texture2DCompare(float3(uv + off, id), depth - bias);
+			result += texture2DCompare(float3(uv + off + rand(uv + off), id), depth - bias);
 		}
 	}
 	return result / 9.0;
