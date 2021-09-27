@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Selection/CSelection.h"
 #include "Editor/SpaceController/CPropertyController.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -70,6 +71,47 @@ namespace Skylicht
 			m_componentContextMenu->addSeparator();
 			m_menuRemove = m_componentContextMenu->addItem(L"Remove Component");
 			m_componentContextMenu->OnCommand = BIND_LISTENER(&CSpaceProperty::OnComponentCommand, this);
+
+			m_addComponentMenu = new GUI::CMenu(window->getCanvas());
+
+			GUI::CBase* searchPanel = new GUI::CBase(m_addComponentMenu);
+			GUI::CTextBox* inputSearch = new GUI::CTextBox(searchPanel);
+			inputSearch->showIcon();
+			inputSearch->setStringHint(L"Search");
+			inputSearch->setMargin(GUI::SMargin(10.0f, 10.0f, 10.0f, 10.0f));
+			inputSearch->dock(GUI::EPosition::Top);
+
+			searchPanel->setHeight(40.0f);
+			searchPanel->dock(GUI::EPosition::Top);
+
+			GUI::CBase* categoryPanel = new GUI::CBase(m_addComponentMenu);
+			categoryPanel->setHeight(20.0f);
+			categoryPanel->setFillRectColor(GUI::CThemeConfig::CollapsibleColor);
+			categoryPanel->enableRenderFillRect(true);
+			categoryPanel->dock(GUI::EPosition::Top);
+
+			GUI::CButton* back = new GUI::CButton(categoryPanel);
+			back->setWidth(20.0f);
+			back->setPadding(GUI::SPadding(0.0f, 0.0f, 0.0f, 0.0f));
+			back->dock(GUI::EPosition::Left);
+			back->setIcon(GUI::ESystemIcon::TriangleLeft);
+			back->showIcon(true);
+			back->showLabel(false);
+			back->enableDrawBackground(false);
+
+			GUI::CLabel* label = new GUI::CLabel(categoryPanel);
+			label->setPadding(GUI::SPadding(0.0f, 2.0f, -20.0f, 0.0f));
+			label->setString(L"Components");
+			label->setTextAlignment(GUI::ETextAlign::TextCenter);
+			label->dock(GUI::EPosition::Fill);
+
+			GUI::CListBox* list = new GUI::CListBox(m_addComponentMenu);
+			list->setHeight(250.0f);
+			list->dock(GUI::EPosition::Top);
+			for (int i = 0; i < 20; i++)
+			{
+				GUI::CListRowItem* item = list->addItem(L"Component", GUI::ESystemIcon::Folder);
+			}
 
 			CPropertyController::getInstance()->setSpaceProperty(this);
 		}
@@ -152,7 +194,8 @@ namespace Skylicht
 		{
 			for (SGroup* group : m_groups)
 			{
-				group->Owner->update();
+				if (group->Owner != NULL)
+					group->Owner->update();
 			}
 		}
 
@@ -251,6 +294,41 @@ namespace Skylicht
 					return;
 				}
 			}
+		}
+
+		GUI::CButton* CSpaceProperty::addButton(const wchar_t* label)
+		{
+			GUI::CBase* content = new GUI::CBase(m_content);
+			content->setHeight(45);
+			content->setMargin(GUI::SMargin(0.0f, 10.0f, 0.0f, 0.0f));
+			content->dock(GUI::EPosition::Top);
+			content->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
+			content->enableRenderFillRect(true);
+
+			GUI::CBase* line = new GUI::CBase(content);
+			line->setHeight(1.0f);
+			line->setFillRectColor(GUI::SGUIColor(255, 0, 0, 0));
+			line->enableRenderFillRect(true);
+			line->dock(GUI::EPosition::Top);
+
+			GUI::CButton* button = new GUI::CButton(content);
+			button->setMargin(GUI::SMargin(10.0f, 10.0f, 10.0f, 0.0f));
+			button->setLabel(label);
+			button->setTextAlignment(GUI::ETextAlign::TextCenter);
+			button->dock(GUI::EPosition::Top);
+
+			SGroup* g = new SGroup();
+			g->Owner = NULL;
+			g->GroupUI = content;
+			m_groups.push_back(g);
+
+			return button;
+		}
+
+		void CSpaceProperty::popupComponentMenu(GUI::CBase* position)
+		{
+			m_addComponentMenu->setWidth(position->width());
+			m_addComponentMenu->open(position);
 		}
 
 		CSpaceProperty::SGroup* CSpaceProperty::getGroupByLayout(GUI::CBoxLayout* layout)
