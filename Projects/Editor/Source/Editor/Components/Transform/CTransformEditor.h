@@ -50,7 +50,6 @@ namespace Skylicht
 		protected:
 			CTransformGizmos* m_gizmos;
 
-			CGameObject* m_gameObject;
 			CTransformEuler* m_transform;
 
 			bool m_skip;

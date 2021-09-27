@@ -36,10 +36,10 @@ namespace Skylicht
 		{
 		public:
 
-		protected:
-			CGameObject* m_gameObject;
-			CComponentSystem* m_component;
+		protected:			
 			CObjectSerializable* m_data;
+
+			std::string m_name;
 
 		public:
 			CDefaultEditor();
@@ -49,6 +49,11 @@ namespace Skylicht
 			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
 
 			virtual void update();
+
+			void setName(const char* name)
+			{
+				m_name = name;
+			}
 		};
 	}
 }

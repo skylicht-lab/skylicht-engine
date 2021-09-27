@@ -63,12 +63,21 @@ namespace Skylicht
 			GUI::CIcon* m_icon;
 			GUI::CLabel* m_label;
 
+			GUI::CMenu* m_componentContextMenu;
+			GUI::CMenuItem* m_menuUp;
+			GUI::CMenuItem* m_menuDown;
+			GUI::CMenuItem* m_menuRemove;
+			CComponentEditor* m_menuContextEditor;
+
 			std::vector<SGroup*> m_groups;
 			std::vector<CComponentEditor*> m_releaseComponents;
+
 		public:
 			CSpaceProperty(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceProperty();
+
+			void OnComponentCommand(GUI::CBase* base);
 
 			virtual void update();
 

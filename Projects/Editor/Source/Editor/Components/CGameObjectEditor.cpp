@@ -54,6 +54,8 @@ namespace Skylicht
 
 		void CGameObjectEditor::initGUI(CGameObject* object, CSpaceProperty* ui)
 		{
+			m_gameObject = object;
+
 			Name.removeAllObserver();
 			Enable.removeAllObserver();
 			Visible.removeAllObserver();

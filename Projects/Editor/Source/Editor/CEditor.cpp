@@ -146,6 +146,9 @@ namespace Skylicht
 			{
 				s->refresh();
 			}
+
+			m_canvas->invalidate();
+			m_canvas->recurseLayout();
 		}
 
 		bool CEditor::needReImport()
