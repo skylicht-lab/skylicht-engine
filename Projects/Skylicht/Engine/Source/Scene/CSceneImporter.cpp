@@ -40,7 +40,7 @@ namespace Skylicht
 
 	void CSceneImporter::buildComponent(CGameObject* object, io::IXMLReader* reader)
 	{
-		std::wstring nodeName = L"CObjectSerializable";
+		std::wstring nodeName = L"node";
 		std::wstring attributeName;
 
 		int tree = 1;
@@ -92,7 +92,7 @@ namespace Skylicht
 
 	void CSceneImporter::buildScene(CScene* scene, io::IXMLReader* reader)
 	{
-		std::wstring nodeName = L"CObjectSerializable";
+		std::wstring nodeName = L"node";
 		std::wstring attributeName;
 
 		std::stack<std::wstring> serializableTree;
@@ -197,7 +197,7 @@ namespace Skylicht
 
 	bool CSceneImporter::loadStep(CScene* scene, io::IXMLReader* reader)
 	{
-		std::wstring nodeName = L"CObjectSerializable";
+		std::wstring nodeName = L"node";
 		std::wstring attributeName;
 
 		int step = 0;
