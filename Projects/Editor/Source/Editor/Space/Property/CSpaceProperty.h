@@ -41,7 +41,7 @@ namespace Skylicht
 			struct SGroup
 			{
 				CComponentEditor* Owner;
-				GUI::CCollapsibleGroup* GroupUI;
+				GUI::CBase* GroupUI;
 				std::vector<IObserver*> Observer;
 
 				SGroup()
@@ -62,6 +62,8 @@ namespace Skylicht
 			GUI::CBase* m_content;
 			GUI::CIcon* m_icon;
 			GUI::CLabel* m_label;
+
+			GUI::CMenu* m_addComponentMenu;
 
 			GUI::CMenu* m_componentContextMenu;
 			GUI::CMenuItem* m_menuUp;
@@ -108,6 +110,10 @@ namespace Skylicht
 			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CComponentEditor* editor);
 
 			GUI::CCollapsibleGroup* addGroup(const char* label, CComponentEditor* editor);
+
+			GUI::CButton* addButton(const wchar_t* label);
+
+			void popupComponentMenu(GUI::CBase* position);
 
 			void removeGroupByOwner(CComponentEditor* editor);
 
