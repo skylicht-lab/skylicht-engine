@@ -41,6 +41,16 @@ namespace Skylicht
 
 	}
 
+	void CTransformEuler::reset()
+	{
+		m_scale.set(1.0f, 1.0f, 1.0f);
+		m_position.set(0.0f, 0.0f, 0.0f);
+		m_rotation.set(0.0f, 0.0f, 0.0f);
+		m_transform.makeIdentity();
+		m_hasChanged = true;
+		m_matrixChanged = true;
+	}
+
 	void CTransformEuler::initComponent()
 	{
 		CTransform::initComponent();

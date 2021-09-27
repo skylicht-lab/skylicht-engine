@@ -65,6 +65,8 @@ namespace Skylicht
 
 				virtual void open(const SPoint& position);
 
+				virtual void open(GUI::CBase* base);
+
 				virtual void close();
 
 				virtual void onMenuItemHover(CBase *item);

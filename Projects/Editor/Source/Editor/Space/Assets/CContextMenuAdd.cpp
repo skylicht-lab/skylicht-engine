@@ -55,9 +55,7 @@ namespace Skylicht
 		void CContextMenuAdd::popupMenu(GUI::CButton* button)
 		{
 			m_canvas->closeMenu();
-
-			GUI::SPoint p = button->localPosToCanvas();
-			m_contextMenu->open(GUI::SPoint(p.X, p.Y + button->height()));
+			m_contextMenu->open(button);
 		}
 
 		void CContextMenuAdd::OnCommand(GUI::CBase* item)

@@ -34,7 +34,8 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSpaceProperty::CSpaceProperty(GUI::CWindow* window, CEditor* editor) :
-			CSpace(window, editor)
+			CSpace(window, editor),
+			m_menuContextEditor(NULL)
 		{
 			GUI::CScrollControl* scrollWindow = new GUI::CScrollControl(window);
 			scrollWindow->dock(GUI::EPosition::Fill);
@@ -57,6 +58,18 @@ namespace Skylicht
 			m_label = new GUI::CLabel(titleBar);
 			m_label->setMargin(GUI::SMargin(5.0f, 2.0f));
 			m_label->dock(GUI::EPosition::Fill);
+
+			m_componentContextMenu = new GUI::CMenu(window->getCanvas());
+			m_componentContextMenu->addItem(L"Reset");
+			m_componentContextMenu->addSeparator();
+			m_componentContextMenu->addItem(L"Copy");
+			m_componentContextMenu->addItem(L"Paste");
+			m_componentContextMenu->addSeparator();
+			m_menuUp = m_componentContextMenu->addItem(L"Move up");
+			m_menuDown = m_componentContextMenu->addItem(L"Move down");
+			m_componentContextMenu->addSeparator();
+			m_menuRemove = m_componentContextMenu->addItem(L"Remove Component");
+			m_componentContextMenu->OnCommand = BIND_LISTENER(&CSpaceProperty::OnComponentCommand, this);
 
 			CPropertyController::getInstance()->setSpaceProperty(this);
 		}
@@ -81,6 +94,40 @@ namespace Skylicht
 			m_releaseComponents.clear();
 
 			CPropertyController::getInstance()->setSpaceProperty(NULL);
+		}
+
+		void CSpaceProperty::OnComponentCommand(GUI::CBase* base)
+		{
+			if (m_menuContextEditor == NULL)
+				return;
+
+			CGameObject* gameObject = m_menuContextEditor->getGameObject();
+			CComponentSystem* component = m_menuContextEditor->getComponent();
+
+			if (gameObject == NULL || component == NULL)
+				return;
+
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(base);
+			const std::wstring& label = menuItem->getLabel();
+
+			if (label == L"Reset")
+			{
+				component->reset();
+			}
+			else if (label == L"Move up")
+			{
+				gameObject->moveSerializableComponentUp(component);
+			}
+			else if (label == L"Move down")
+			{
+				gameObject->moveSerializableComponentDown(component);
+			}
+			else if (label == L"Remove Component")
+			{
+				gameObject->removeComponent(component);
+			}
+
+			getEditor()->refresh();
 		}
 
 		void CSpaceProperty::clearAllGroup()
@@ -136,6 +183,51 @@ namespace Skylicht
 			SGroup* g = new SGroup();
 			g->Owner = editor;
 			g->GroupUI = colapsible;
+
+			if (editor->getComponent() != NULL)
+			{
+				// add setting button on component group
+				GUI::CButton* btn = new GUI::CButton(colapsible->getHeader());
+				btn->setWidth(20.0f);
+				btn->setPadding(GUI::SPadding(0.0f, 0.0f, 0.0f, 0.0f));
+				btn->dock(GUI::EPosition::Right);
+				btn->setIcon(GUI::ESystemIcon::Setting);
+				btn->showIcon(true);
+				btn->showLabel(false);
+				btn->enableDrawBackground(false);
+				btn->tagData(editor);
+				btn->OnPress = [&, editor](GUI::CBase* button)
+				{
+					CGameObject* object = editor->getGameObject();
+					CComponentSystem* component = editor->getComponent();
+
+					if (dynamic_cast<CTransformEuler*>(component) != NULL)
+					{
+						// disable move & delete on transform editor
+						m_menuUp->setDisabled(true);
+						m_menuDown->setDisabled(true);
+						m_menuRemove->setDisabled(true);
+					}
+					else
+					{
+						int pos = object->getComponentPosition(component);
+						if (pos > 1)
+							m_menuUp->setDisabled(false);
+						else
+							m_menuUp->setDisabled(true);
+
+						if (pos < object->getSerializableComponentCount() - 1)
+							m_menuDown->setDisabled(false);
+						else
+							m_menuDown->setDisabled(true);
+
+						m_menuRemove->setDisabled(false);
+					}
+
+					m_menuContextEditor = editor;
+					m_componentContextMenu->open(button);
+				};
+			}
 
 			m_groups.push_back(g);
 			return colapsible;

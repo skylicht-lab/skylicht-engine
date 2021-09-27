@@ -57,6 +57,8 @@ namespace Skylicht
 
 		const char* getName();
 
+		virtual void reset();
+
 		virtual void initComponent() = 0;
 
 		virtual void startComponent();

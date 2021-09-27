@@ -48,6 +48,8 @@ namespace Skylicht
 
 		void CZoneEditor::initGUI(CGameObject* object, CSpaceProperty* ui)
 		{
+			m_gameObject = object;
+
 			Name.removeAllObserver();
 			Enable.removeAllObserver();
 

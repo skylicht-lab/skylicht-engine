@@ -93,7 +93,18 @@ namespace Skylicht
 						else if (component->isSerializable())
 						{
 							// default editor
-							m_spaceProperty->addComponent(new CDefaultEditor(), component, true);
+							CDefaultEditor* defaultEditor = new CDefaultEditor();
+
+							// check unsupported component
+							CNullComponent* nullComp = dynamic_cast<CNullComponent*>(component);
+							if (nullComp != NULL)
+							{
+								std::string name = nullComp->getName() + std::string(" (Unsupported)");
+								defaultEditor->setName(name.c_str());
+							}
+
+							// set default editor
+							m_spaceProperty->addComponent(defaultEditor, component, true);
 						}
 					}
 				}

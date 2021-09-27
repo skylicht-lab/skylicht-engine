@@ -44,6 +44,8 @@ namespace Skylicht
 
 		virtual ~CTransformEuler();
 
+		virtual void reset();
+
 		virtual void initComponent();
 
 		virtual void updateComponent();

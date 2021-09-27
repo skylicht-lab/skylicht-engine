@@ -631,8 +631,7 @@ namespace Skylicht
 				{
 					getCanvas()->closeMenu();
 
-					SPoint p = base->localPosToCanvas();
-					m_menuFilter->open(SPoint(p.X, p.Y + base->height()));
+					m_menuFilter->open(base);
 					m_menuFilter->setWidth(100.0f);
 				}
 				else
@@ -647,8 +646,7 @@ namespace Skylicht
 				{
 					getCanvas()->closeMenu();
 
-					SPoint p = base->localPosToCanvas();
-					m_menuSetting->open(SPoint(p.X, p.Y + base->height()));
+					m_menuSetting->open(base);
 					m_menuSetting->setWidth(150.0f);
 				}
 				else
