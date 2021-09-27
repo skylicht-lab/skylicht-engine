@@ -48,6 +48,11 @@ namespace Skylicht
 		m_linkComponent.clear();
 	}
 
+	void CComponentSystem::reset()
+	{
+
+	}
+
 	void CComponentSystem::startComponent()
 	{
 

@@ -261,6 +261,23 @@ namespace Skylicht
 			return m_components;
 		}
 
+		int getComponentPosition(CComponentSystem* comp);
+
+		inline int getComponentCount()
+		{
+			return (int)m_components.size();
+		}
+
+		void moveComponentUp(CComponentSystem* comp);
+
+		void moveComponentDown(CComponentSystem* comp);
+
+		int getSerializableComponentCount();
+
+		void moveSerializableComponentUp(CComponentSystem* comp);
+
+		void moveSerializableComponentDown(CComponentSystem* comp);
+
 		inline void enableEditorChange(bool b)
 		{
 			m_enableEditorChange = b;
@@ -344,8 +361,8 @@ namespace Skylicht
 			T* c = dynamic_cast<T*>(*i);
 			if (c != NULL)
 			{
-				delete c;
 				m_components.erase(i);
+				delete c;
 				return true;
 			}
 			++i;

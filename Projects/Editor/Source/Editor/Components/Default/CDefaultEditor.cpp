@@ -33,8 +33,6 @@ namespace Skylicht
 	namespace Editor
 	{
 		CDefaultEditor::CDefaultEditor() :
-			m_component(NULL),
-			m_gameObject(NULL),
 			m_data(NULL)
 		{
 
@@ -55,7 +53,11 @@ namespace Skylicht
 			if (m_gameObject->isEnableEditorChange() && m_component != NULL)
 			{
 				// setup gui
-				GUI::CCollapsibleGroup* group = ui->addGroup(m_component->getTypeName().c_str(), this);
+				std::string name = m_component->getTypeName().c_str();
+				if (!m_name.empty())
+					name = m_name;
+
+				GUI::CCollapsibleGroup* group = ui->addGroup(name.c_str(), this);
 
 				// add serializable data control
 

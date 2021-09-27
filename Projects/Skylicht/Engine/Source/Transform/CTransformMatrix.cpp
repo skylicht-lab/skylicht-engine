@@ -39,6 +39,12 @@ namespace Skylicht
 
 	}
 
+	void CTransformMatrix::reset()
+	{
+		m_hasChanged = true;
+		m_transform.makeIdentity();
+	}
+
 	void CTransformMatrix::initComponent()
 	{
 		CTransform::initComponent();

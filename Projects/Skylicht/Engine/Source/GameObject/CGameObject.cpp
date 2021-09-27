@@ -271,16 +271,105 @@ namespace Skylicht
 		ArrayComponentIter i = m_components.begin(), end = m_components.end();
 		while (i != end)
 		{
-			if (*i != comp)
+			if (*i == comp)
 			{
-				delete comp;
 				m_components.erase(i);
+				delete comp;
 				return true;
 			}
 			++i;
 		}
 
 		return false;
+	}
+
+	int CGameObject::getSerializableComponentCount()
+	{
+		int count = 0;
+		ArrayComponentIter i = m_components.begin(), end = m_components.end();
+		while (i != end)
+		{
+			if ((*i)->isSerializable())
+			{
+				count++;
+			}
+			++i;
+		}
+
+		return count;
+	}
+
+	void CGameObject::moveSerializableComponentUp(CComponentSystem* comp)
+	{
+		int pos = getComponentPosition(comp);
+		if (pos > 0)
+		{
+			for (int i = pos - 1; i >= 0; i--)
+			{
+				if (m_components[i]->isSerializable())
+				{
+					CComponentSystem* temp = m_components[i];
+					m_components[i] = comp;
+					m_components[pos] = temp;
+					return;
+				}
+			}
+		}
+	}
+
+	void CGameObject::moveSerializableComponentDown(CComponentSystem* comp)
+	{
+		int pos = getComponentPosition(comp);
+		if (pos < (int)m_components.size() - 1)
+		{
+			for (int i = pos + 1, n = (int)m_components.size(); i < n; i++)
+			{
+				if (m_components[i]->isSerializable())
+				{
+					CComponentSystem* temp = m_components[i];
+					m_components[i] = comp;
+					m_components[pos] = temp;
+					return;
+				}
+			}
+		}
+	}
+
+	int CGameObject::getComponentPosition(CComponentSystem* comp)
+	{
+		int pos = 0;
+		ArrayComponentIter i = m_components.begin(), end = m_components.end();
+		while (i != end)
+		{
+			if (*i == comp)
+				break;
+			++pos;
+			++i;
+		}
+
+		return pos;
+	}
+
+	void CGameObject::moveComponentUp(CComponentSystem* comp)
+	{
+		int pos = getComponentPosition(comp);
+		if (pos > 0)
+		{
+			CComponentSystem* temp = m_components[pos - 1];
+			m_components[pos - 1] = comp;
+			m_components[pos] = temp;
+		}
+	}
+
+	void CGameObject::moveComponentDown(CComponentSystem* comp)
+	{
+		int pos = getComponentPosition(comp);
+		if (pos < (int)m_components.size() - 1)
+		{
+			CComponentSystem* temp = m_components[pos + 1];
+			m_components[pos + 1] = comp;
+			m_components[pos] = temp;
+		}
 	}
 
 	void CGameObject::startComponent()

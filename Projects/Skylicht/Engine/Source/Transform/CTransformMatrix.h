@@ -38,6 +38,8 @@ namespace Skylicht
 
 		virtual ~CTransformMatrix();
 
+		virtual void reset();
+
 		virtual void initComponent();
 
 		virtual void updateComponent();

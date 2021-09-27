@@ -290,6 +290,12 @@ namespace Skylicht
 				m_isOpenPopup = true;
 			}
 
+			void CMenu::open(GUI::CBase* base)
+			{
+				GUI::SPoint p = base->localPosToCanvas();
+				open(GUI::SPoint(p.X, p.Y + base->height()));
+			}
+
 			void CMenu::close()
 			{
 				if (m_isOpenPopup == true)

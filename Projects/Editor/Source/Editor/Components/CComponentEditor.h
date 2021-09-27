@@ -34,6 +34,10 @@ namespace Skylicht
 
 		class CComponentEditor
 		{
+		protected:
+			CComponentSystem* m_component;
+			CGameObject* m_gameObject;
+
 		public:
 			CComponentEditor();
 
@@ -48,6 +52,16 @@ namespace Skylicht
 			}
 
 			virtual void update() = 0;
+
+			CComponentSystem* getComponent()
+			{
+				return m_component;
+			}
+
+			CGameObject* getGameObject()
+			{
+				return m_gameObject;
+			}
 		};
 	}
 }

@@ -35,7 +35,6 @@ namespace Skylicht
 		EDITOR_REGISTER(CTransformEditor, CTransformEuler);
 
 		CTransformEditor::CTransformEditor() :
-			m_gameObject(NULL),
 			m_transform(NULL),
 			m_skip(false),
 			X(0.0f),
@@ -59,6 +58,7 @@ namespace Skylicht
 
 		void CTransformEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
 		{
+			m_component = target;
 			m_gameObject = target->getGameObject();
 			m_transform = dynamic_cast<CTransformEuler*>(target);
 

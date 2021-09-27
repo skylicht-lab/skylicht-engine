@@ -85,7 +85,7 @@ namespace Skylicht
 				getCanvas()->closeMenu();
 
 				SPoint p = localPosToCanvas();
-				m_menu->open(SPoint(p.X, p.Y + height()));
+				m_menu->open(this);
 				m_menu->setWidth(width());
 			}
 
