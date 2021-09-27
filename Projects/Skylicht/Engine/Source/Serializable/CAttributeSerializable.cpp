@@ -129,7 +129,7 @@ namespace Skylicht
 	void CAttributeSerializable::save(io::IXMLWriter* writer)
 	{
 		char elementName[512];
-		sprintf(elementName, "CObjectSerializable type=\"%s\"", Name.c_str());
+		sprintf(elementName, "node type=\"%s\"", Name.c_str());
 
 		writer->writeElement(CStringImp::convertUTF8ToUnicode(elementName).c_str(), false);
 		writer->writeLineBreak();
@@ -139,7 +139,7 @@ namespace Skylicht
 		// save attribute
 		m_attribute->write(writer);
 
-		writer->writeClosingTag(L"CObjectSerializable");
+		writer->writeClosingTag(L"node");
 		writer->writeLineBreak();
 	}
 
@@ -147,7 +147,7 @@ namespace Skylicht
 	{
 		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 
-		std::wstring nodeName = L"CObjectSerializable";
+		std::wstring nodeName = L"node";
 		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(Name.c_str());
 
 		m_attribute->clear();
@@ -172,7 +172,7 @@ namespace Skylicht
 
 		bool done = false;
 
-		std::wstring nodeName = L"CObjectSerializable";
+		std::wstring nodeName = L"node";
 		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(Name.c_str());
 
 		m_attribute->clear();
