@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	class CComponentSystem;
 
-#define DEPENDENT_COMPONENT_REGISTER(comp, dependentComp) bool comp##dependentComp##_dependent = CDependentComponent::createGetInstance()->registerDependent(#comp, #dependentComp);
+#define DEPENDENT_COMPONENT(comp, dependentComp) bool comp##dependentComp##_dependent = CDependentComponent::createGetInstance()->registerDependent(#comp, #dependentComp);
 
 	class CDependentComponent : public CGameSingleton<CDependentComponent>
 	{

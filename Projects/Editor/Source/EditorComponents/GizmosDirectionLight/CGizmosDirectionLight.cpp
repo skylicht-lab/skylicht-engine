@@ -38,7 +38,7 @@ namespace Skylicht
 	{
 		ACTIVATOR_REGISTER(CGizmosDirectionLight);
 
-		DEPENDENT_COMPONENT_REGISTER(CDirectionalLight, CGizmosDirectionLight);
+		DEPENDENT_COMPONENT(CDirectionalLight, CGizmosDirectionLight);
 
 		CGizmosDirectionLight::CGizmosDirectionLight() :
 			m_directionLight(NULL)
