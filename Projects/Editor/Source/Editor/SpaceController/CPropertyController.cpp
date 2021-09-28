@@ -108,14 +108,14 @@ namespace Skylicht
 						}
 					}
 
-					// add button "add component"
+					// add button "add" to popup menu component
 					bool isZone = dynamic_cast<CZone*>(obj) != NULL;
 					if (!isZone)
 					{
 						GUI::CButton* button = m_spaceProperty->addButton(L"Add");
-						button->OnPress = [&](GUI::CBase* button)
+						button->OnPress = [&, obj](GUI::CBase* button)
 						{
-							m_spaceProperty->popupComponentMenu(button);
+							m_spaceProperty->popupComponentMenu(obj, button);
 						};
 					}
 				}

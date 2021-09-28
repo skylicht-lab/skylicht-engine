@@ -73,51 +73,15 @@ namespace Skylicht
 			m_componentContextMenu->OnCommand = BIND_LISTENER(&CSpaceProperty::OnComponentCommand, this);
 
 			m_addComponentMenu = new GUI::CMenu(window->getCanvas());
-
-			GUI::CBase* searchPanel = new GUI::CBase(m_addComponentMenu);
-			GUI::CTextBox* inputSearch = new GUI::CTextBox(searchPanel);
-			inputSearch->showIcon();
-			inputSearch->setStringHint(L"Search");
-			inputSearch->setMargin(GUI::SMargin(10.0f, 10.0f, 10.0f, 10.0f));
-			inputSearch->dock(GUI::EPosition::Top);
-
-			searchPanel->setHeight(40.0f);
-			searchPanel->dock(GUI::EPosition::Top);
-
-			GUI::CBase* categoryPanel = new GUI::CBase(m_addComponentMenu);
-			categoryPanel->setHeight(20.0f);
-			categoryPanel->setFillRectColor(GUI::CThemeConfig::CollapsibleColor);
-			categoryPanel->enableRenderFillRect(true);
-			categoryPanel->dock(GUI::EPosition::Top);
-
-			GUI::CButton* back = new GUI::CButton(categoryPanel);
-			back->setWidth(20.0f);
-			back->setPadding(GUI::SPadding(0.0f, 0.0f, 0.0f, 0.0f));
-			back->dock(GUI::EPosition::Left);
-			back->setIcon(GUI::ESystemIcon::TriangleLeft);
-			back->showIcon(true);
-			back->showLabel(false);
-			back->enableDrawBackground(false);
-
-			GUI::CLabel* label = new GUI::CLabel(categoryPanel);
-			label->setPadding(GUI::SPadding(0.0f, 2.0f, -20.0f, 0.0f));
-			label->setString(L"Components");
-			label->setTextAlignment(GUI::ETextAlign::TextCenter);
-			label->dock(GUI::EPosition::Fill);
-
-			GUI::CListBox* list = new GUI::CListBox(m_addComponentMenu);
-			list->setHeight(250.0f);
-			list->dock(GUI::EPosition::Top);
-			for (int i = 0; i < 20; i++)
-			{
-				GUI::CListRowItem* item = list->addItem(L"Component", GUI::ESystemIcon::Folder);
-			}
+			m_addComponentController = new CAddComponentController(editor, m_addComponentMenu);
 
 			CPropertyController::getInstance()->setSpaceProperty(this);
 		}
 
 		CSpaceProperty::~CSpaceProperty()
 		{
+			delete m_addComponentController;
+
 			for (SGroup* group : m_groups)
 			{
 				for (IObserver* o : group->Observer)
@@ -325,8 +289,10 @@ namespace Skylicht
 			return button;
 		}
 
-		void CSpaceProperty::popupComponentMenu(GUI::CBase* position)
+		void CSpaceProperty::popupComponentMenu(CGameObject* gameObject, GUI::CBase* position)
 		{
+			m_addComponentController->SetGameObject(gameObject);
+
 			m_addComponentMenu->setWidth(position->width());
 			m_addComponentMenu->open(position);
 		}

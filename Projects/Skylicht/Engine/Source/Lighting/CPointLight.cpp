@@ -32,6 +32,8 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CPointLight);
 
+	CATEGORY_COMPONENT(CPointLight, "Point Light", "Lighting");
+
 	CPointLight::CPointLight() :
 		m_depth(NULL),
 		m_needRenderShadowDepth(true),

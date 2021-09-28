@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CActivator.h"
 #include "Serializable/CObjectSerializable.h"
+#include "CComponentCategory.h"
 
 namespace Skylicht
 {
