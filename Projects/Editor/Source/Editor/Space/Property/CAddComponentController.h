@@ -1,11 +1,12 @@
 /*
+/*
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,44 +23,53 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CDirectionalLight.h"
+#pragma once
 
+#include "GUI/GUI.h"
 #include "GameObject/CGameObject.h"
-#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "Components/CComponentCategory.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CDirectionalLight);
-
-	CATEGORY_COMPONENT(CDirectionalLight, "Direction Light", "Lighting");
-
-	CDirectionalLight* CDirectionalLight::s_currentLight = NULL;
-
-	CDirectionalLight::CDirectionalLight()
+	namespace Editor
 	{
-		// default 2 bounce
-		m_bakeBounce = 2;
-	}
+		class CEditor;
 
-	CDirectionalLight::~CDirectionalLight()
-	{
-		if (CShaderLighting::getDirectionalLight() == this)
-			CShaderLighting::setDirectionalLight(NULL);
-	}
+		class CAddComponentController
+		{
+		protected:
+			CEditor* m_editor;
+			GUI::CMenu* m_menu;
 
-	void CDirectionalLight::initComponent()
-	{
-		CShaderLighting::setDirectionalLight(this);
+			GUI::CTextBox* m_search;
+			GUI::CLabel* m_folder;
+			GUI::CButton* m_back;
+			GUI::CListBox* m_list;
 
-		s_currentLight = this;
-	}
+			const CComponentCategory::SCategory* m_category;
 
-	void CDirectionalLight::updateComponent()
-	{
-		m_direction.set(0.0f, 0.0f, 1.0f);
-		const core::matrix4& transform = m_gameObject->getTransform()->getRelativeTransform();
-		transform.rotateVect(m_direction);
-		m_direction.normalize();
+			CGameObject* m_gameObject;
+
+		public:
+			CAddComponentController(CEditor *editor, GUI::CMenu* menu);
+
+			virtual ~CAddComponentController();			
+
+			inline void SetGameObject(CGameObject* gameObject)
+			{
+				m_gameObject = gameObject;
+			}
+
+		protected:
+
+			void OnSelectCategory(GUI::CBase* item);
+
+			void OnSelectComponent(GUI::CBase* item);
+
+			void OnBack(GUI::CBase* button);
+			
+			void listCurrentCategory();
+
+		};
 	}
 }

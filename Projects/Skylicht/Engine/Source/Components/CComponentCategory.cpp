@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,43 +23,42 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CDirectionalLight.h"
-
-#include "GameObject/CGameObject.h"
-#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "CComponentCategory.h"
+#include "Utils/CPath.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CDirectionalLight);
-
-	CATEGORY_COMPONENT(CDirectionalLight, "Direction Light", "Lighting");
-
-	CDirectionalLight* CDirectionalLight::s_currentLight = NULL;
-
-	CDirectionalLight::CDirectionalLight()
+	CComponentCategory::CComponentCategory()
 	{
-		// default 2 bounce
-		m_bakeBounce = 2;
+		m_category = new SCategory();
+		m_category->Name = "Components";
 	}
 
-	CDirectionalLight::~CDirectionalLight()
+	CComponentCategory::~CComponentCategory()
 	{
-		if (CShaderLighting::getDirectionalLight() == this)
-			CShaderLighting::setDirectionalLight(NULL);
+		delete m_category;
 	}
 
-	void CDirectionalLight::initComponent()
+	int CComponentCategory::addToCategory(const char* componentName, const char* name, const char* path)
 	{
-		CShaderLighting::setDirectionalLight(this);
+		std::vector<std::string> folder;
+		CStringImp::splitString(path, "/", folder);
 
-		s_currentLight = this;
-	}
+		SCategory* current = m_category;
 
-	void CDirectionalLight::updateComponent()
-	{
-		m_direction.set(0.0f, 0.0f, 1.0f);
-		const core::matrix4& transform = m_gameObject->getTransform()->getRelativeTransform();
-		transform.rotateVect(m_direction);
-		m_direction.normalize();
+		for (std::string& s : folder)
+		{
+			SCategory* child = current->getChild(s.c_str());
+			if (child == NULL)
+				child = current->addChild(s.c_str());
+
+			current = child;
+		}
+
+		SComponent* comp = current->add(componentName, name, path);
+		m_components.push_back(comp);
+
+		return (int)m_components.size();
 	}
 }

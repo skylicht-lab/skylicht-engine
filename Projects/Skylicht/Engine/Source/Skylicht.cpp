@@ -49,6 +49,7 @@ https://github.com/skylicht-lab/skylicht-engine
 // Activator
 #include "Utils/CActivator.h"
 #include "Components/CDependentComponent.h"
+#include "Components/CComponentCategory.h"
 
 #if defined(USE_FREETYPE)
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
@@ -84,6 +85,7 @@ namespace Skylicht
 		CTweenManager::createGetInstance();
 		CActivator::createGetInstance();
 		CDependentComponent::createGetInstance();
+		CComponentCategory::createGetInstance();
 
 #if defined(USE_FREETYPE)
 		CGlyphFreetype::createGetInstance();
@@ -104,6 +106,7 @@ namespace Skylicht
 		CGlyphFreetype::releaseInstance();
 #endif
 
+		CComponentCategory::releaseInstance();
 		CDependentComponent::releaseInstance();
 		CActivator::releaseInstance();
 		CTweenManager::releaseInstance();

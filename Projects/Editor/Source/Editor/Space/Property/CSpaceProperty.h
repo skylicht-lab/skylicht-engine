@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/CSubject.h"
 #include "Reactive/CObserver.h"
 
+#include "CAddComponentController.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -64,6 +66,7 @@ namespace Skylicht
 			GUI::CLabel* m_label;
 
 			GUI::CMenu* m_addComponentMenu;
+			CAddComponentController* m_addComponentController;
 
 			GUI::CMenu* m_componentContextMenu;
 			GUI::CMenuItem* m_menuUp;
@@ -113,7 +116,7 @@ namespace Skylicht
 
 			GUI::CButton* addButton(const wchar_t* label);
 
-			void popupComponentMenu(GUI::CBase* position);
+			void popupComponentMenu(CGameObject *gameObject, GUI::CBase* position);
 
 			void removeGroupByOwner(CComponentEditor* editor);
 
