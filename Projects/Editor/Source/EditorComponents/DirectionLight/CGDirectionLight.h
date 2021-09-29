@@ -32,16 +32,16 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CGizmosDirectionLight : public CGizmosComponent
+		class CGDirectionLight : public CGizmosComponent
 		{
 		protected:
 			CDirectionalLight* m_directionLight;
 			CSprite* m_sprite;
 
 		public:
-			CGizmosDirectionLight();
+			CGDirectionLight();
 
-			virtual ~CGizmosDirectionLight();
+			virtual ~CGDirectionLight();
 
 			virtual void initComponent();
 
