@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGizmosDirectionLight.h"
+#include "CGDirectionLight.h"
 
 #include "Utils/CActivator.h"
 #include "Components/CDependentComponent.h"
@@ -36,22 +36,22 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		ACTIVATOR_REGISTER(CGizmosDirectionLight);
+		ACTIVATOR_REGISTER(CGDirectionLight);
 
-		DEPENDENT_COMPONENT(CDirectionalLight, CGizmosDirectionLight);
+		DEPENDENT_COMPONENT(CDirectionalLight, CGDirectionLight);
 
-		CGizmosDirectionLight::CGizmosDirectionLight() :
+		CGDirectionLight::CGDirectionLight() :
 			m_directionLight(NULL)
 		{
 
 		}
 
-		CGizmosDirectionLight::~CGizmosDirectionLight()
+		CGDirectionLight::~CGDirectionLight()
 		{
 
 		}
 
-		void CGizmosDirectionLight::initComponent()
+		void CGDirectionLight::initComponent()
 		{
 			m_directionLight = m_gameObject->getComponent<CDirectionalLight>();
 
@@ -65,7 +65,7 @@ namespace Skylicht
 			addLinkComponent(m_sprite);
 		}
 
-		void CGizmosDirectionLight::updateComponent()
+		void CGDirectionLight::updateComponent()
 		{
 			SColor lightColor = m_directionLight->getColor().toSColor();
 
