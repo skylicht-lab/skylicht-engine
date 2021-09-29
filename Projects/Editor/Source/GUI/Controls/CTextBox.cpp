@@ -64,6 +64,16 @@ namespace Skylicht
 				m_textContainer->setPos(4.0f, 3.0f);
 				m_textContainer->setInnerPaddingRight(4.0f);
 
+				CBase* panel = m_innerPanel;
+				m_innerPanel = NULL;
+				m_closeButton = new GUI::CIconButton(this);
+				m_closeButton->setPadding(GUI::SPadding(-2.0f, -2.0f));
+				m_closeButton->setSize(16.0f, 16.0f);
+				m_closeButton->setMargin(GUI::SMargin(5.0f, 0.0f, 0.0f, 0.0f));
+				m_closeButton->setIcon(GUI::ESystemIcon::Close);
+				m_closeButton->setHidden(true);
+				m_innerPanel = panel;
+
 				m_contextMenu = new CMenu(getCanvas());
 				m_contextMenu->addItem(L"Cut", L"Ctrl + X");
 				m_contextMenu->addItem(L"Copy", ESystemIcon::Copy, L"Ctrl + C");
@@ -191,9 +201,17 @@ namespace Skylicht
 				}
 			}
 
+			void CTextBox::showCloseButton(bool b)
+			{
+				m_closeButton->setHidden(!b);
+			}
+
 			void CTextBox::layout()
 			{
 				CScrollControl::layout();
+
+				if (!m_closeButton->isHidden())
+					m_closeButton->setPos(width() - m_closeButton->width() - 2.0f, 2.0f);
 			}
 
 			void CTextBox::postLayout()

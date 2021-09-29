@@ -46,28 +46,45 @@ namespace Skylicht
 			GUI::CButton* m_back;
 			GUI::CListBox* m_list;
 
+			float m_inputTimeout;
+			bool m_changed;
+
+			std::wstring m_searchString;
+
 			const CComponentCategory::SCategory* m_category;
 
 			CGameObject* m_gameObject;
 
 		public:
-			CAddComponentController(CEditor *editor, GUI::CMenu* menu);
+			CAddComponentController(CEditor* editor, GUI::CMenu* menu);
 
-			virtual ~CAddComponentController();			
+			virtual ~CAddComponentController();
 
 			inline void SetGameObject(CGameObject* gameObject)
 			{
 				m_gameObject = gameObject;
 			}
 
+			void focusSearch();
+
+			void update();
+
 		protected:
+
+			void cancelSearch();
+
+			void search(const std::string& searchString);
+
+			void OnSearch(GUI::CBase* base);
+
+			void OnCancel(GUI::CBase* base);
 
 			void OnSelectCategory(GUI::CBase* item);
 
 			void OnSelectComponent(GUI::CBase* item);
 
 			void OnBack(GUI::CBase* button);
-			
+
 			void listCurrentCategory();
 
 		};

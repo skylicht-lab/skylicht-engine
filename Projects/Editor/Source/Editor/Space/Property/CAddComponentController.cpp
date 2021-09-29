@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CAddComponentController.h"
 #include "Editor/CEditor.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
 
 namespace Skylicht
 {
@@ -35,7 +36,9 @@ namespace Skylicht
 		CAddComponentController::CAddComponentController(CEditor* editor, GUI::CMenu* menu) :
 			m_editor(editor),
 			m_menu(menu),
-			m_gameObject(NULL)
+			m_gameObject(NULL),
+			m_inputTimeout(0.0f),
+			m_changed(false)
 		{
 			GUI::CBase* searchPanel = new GUI::CBase(menu);
 
@@ -44,6 +47,9 @@ namespace Skylicht
 			m_search->setStringHint(L"Search");
 			m_search->setMargin(GUI::SMargin(10.0f, 10.0f, 10.0f, 10.0f));
 			m_search->dock(GUI::EPosition::Top);
+
+			m_search->OnTextChanged = BIND_LISTENER(&CAddComponentController::OnSearch, this);
+			m_search->getCloseButton()->OnPress = BIND_LISTENER(&CAddComponentController::OnCancel, this);
 
 			searchPanel->setHeight(40.0f);
 			searchPanel->dock(GUI::EPosition::Top);
@@ -112,15 +118,99 @@ namespace Skylicht
 			m_folder->setString(m_category->Name);
 		}
 
+		void CAddComponentController::focusSearch()
+		{
+			m_search->focus();
+		}
+
+		void CAddComponentController::update()
+		{
+			if (m_changed)
+			{
+				m_inputTimeout = m_inputTimeout - getTimeStep();
+				if (m_inputTimeout <= 0.0f)
+				{
+					m_inputTimeout = 0.0f;
+					m_changed = false;
+
+					if (m_searchString.empty())
+					{
+						// hide search ui
+						cancelSearch();
+					}
+					else
+					{
+						// begin search
+						std::string s = CStringImp::convertUnicodeToUTF8(m_searchString.c_str());
+						search(s);
+					}
+				}
+			}
+		}
+
+		void CAddComponentController::cancelSearch()
+		{
+			m_search->showCloseButton(false);
+			m_folder->setHidden(false);
+
+			if (m_category->Parent != NULL)
+				m_back->setHidden(false);
+			else
+				m_back->setHidden(true);
+
+			listCurrentCategory();
+		}
+
+		void CAddComponentController::search(const std::string& searchString)
+		{
+			m_search->showCloseButton(true);
+			m_back->setHidden(true);
+			m_folder->setHidden(true);
+
+			m_list->removeAllItem();
+
+			const std::vector<CComponentCategory::SComponent*>& all = CComponentCategory::getInstance()->getAllComponents();
+			for (const CComponentCategory::SComponent* c : all)
+			{
+				bool match = CPath::searchMatch(c->ComponentName.c_str(), searchString);
+				if (match == false)
+					match = CPath::searchMatch(c->Name.c_str(), searchString);
+
+				if (match)
+				{
+					std::wstring name = CStringImp::convertUTF8ToUnicode(c->Name.c_str());
+					GUI::CListRowItem* item = m_list->addItem(name.c_str(), GUI::ESystemIcon::ResFile);
+					item->tagString(c->ComponentName);
+					item->OnDoubleLeftMouseClick = BIND_LISTENER(&CAddComponentController::OnSelectComponent, this);
+				}
+			}
+
+			m_list->setScrollVertical(0.0f);
+			m_menu->recurseLayout();
+		}
+
+		void CAddComponentController::OnSearch(GUI::CBase* base)
+		{
+			m_changed = true;
+			m_inputTimeout = 500.0f;
+			m_searchString = m_search->getString();
+		}
+
+		void CAddComponentController::OnCancel(GUI::CBase* base)
+		{
+			m_inputTimeout = 0.0f;
+			m_changed = true;
+			m_searchString = L"";
+			m_search->setString(m_searchString);
+		}
+
 		void CAddComponentController::OnSelectCategory(GUI::CBase* item)
 		{
 			std::string name = item->getTagString();
 			m_category = m_category->getChild(name.c_str());
 
 			if (m_category->Parent != NULL)
-			{
 				m_back->setHidden(false);
-			}
 			else
 				m_back->setHidden(true);
 

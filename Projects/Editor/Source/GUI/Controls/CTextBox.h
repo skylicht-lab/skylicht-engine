@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CMenu.h"
 #include "CTextContainer.h"
 #include "CScrollControl.h"
-
+#include "CIconButton.h"
 
 namespace Skylicht
 {
@@ -43,6 +43,8 @@ namespace Skylicht
 				CIcon* m_icon;
 				CTextContainer* m_textHint;
 				CTextContainer* m_textContainer;
+				CIconButton* m_closeButton;
+
 				CMenu* m_contextMenu;
 
 				bool m_press;
@@ -183,6 +185,13 @@ namespace Skylicht
 				{
 					m_drawTextbox = b;
 				}
+
+				inline CButton* getCloseButton()
+				{
+					return m_closeButton;
+				}
+
+				void showCloseButton(bool b);
 
 				Listener OnTextChanged;
 				Listener OnESC;
