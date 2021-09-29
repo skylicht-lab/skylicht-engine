@@ -156,6 +156,9 @@ namespace Skylicht
 
 		void CSpaceProperty::update()
 		{
+			if (!m_addComponentMenu->isHidden())
+				m_addComponentController->update();
+
 			for (SGroup* group : m_groups)
 			{
 				if (group->Owner != NULL)
@@ -295,6 +298,8 @@ namespace Skylicht
 
 			m_addComponentMenu->setWidth(position->width());
 			m_addComponentMenu->open(position);
+
+			m_addComponentController->focusSearch();
 		}
 
 		CSpaceProperty::SGroup* CSpaceProperty::getGroupByLayout(GUI::CBoxLayout* layout)
