@@ -49,10 +49,6 @@ using namespace irr;
 using namespace irr::scene;
 using namespace irr::video;
 
-// SPARK ENGINE
-// #include "SPK.h"
-// #include "SPK_IRR.h"
-
 
 // STL C++
 #include <algorithm>
