@@ -5,10 +5,12 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Collision/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
 )
 
 if (BUILD_FREETYPE)
@@ -104,14 +106,6 @@ if (BUILD_MACOS)
 
 	setup_project_group("${platform_mac_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
-
-#if (BUILD_SKYLICHT_NETWORK)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtNetwork/Source)
-#endif()
-
-#if(BUILD_RECAST_NAVIGATION_LIB)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/RecastNavigation/Source)
-#endif()
 	
 if (BUILD_DEBUG_VLD)
 	if (CMAKE_CL_64)
