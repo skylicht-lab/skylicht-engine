@@ -96,8 +96,6 @@ if (NOT BUILD_SHARED_LIBS)
 endif()
 
 # skylicht engine option
-option(BUILD_SKYLICHT_NETWORK "Build Skylicht Network" ON)
-
 option(BUILD_DEBUG_VLD "Build with debug visual leak detector" OFF)
 
 option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform development library" OFF)
@@ -109,11 +107,6 @@ option(BUILD_FREETYPE "Build Font Freetype" ON)
 if (BUILD_FREETYPE)
 	add_definitions(-DUSE_FREETYPE)
 	add_definitions(-DFT2_BUILD_LIBRARY)
-endif()
-
-# skylicht network
-if (BUILD_SKYLICHT_NETWORK)
-	add_definitions(-DUSE_SKYLICHT_NETWORK)
 endif()
 
 # skylicht debug leak memory
@@ -289,14 +282,11 @@ endif()
 subdirs (Projects/Skylicht/System)
 subdirs (Projects/Skylicht/Engine)
 subdirs (Projects/Skylicht/Components)
+subdirs (Projects/Skylicht/Collision)
+subdirs (Projects/Skylicht/Physics)
 subdirs (Projects/Skylicht/Lightmapper)
 subdirs (Projects/Skylicht/Audio)
 subdirs (Projects/Skylicht/Crypto)
-#subdirs (Projects/Skylicht/Physics)
-
-#if (BUILD_SKYLICHT_NETWORK)
-#subdirs (Projects/Skylicht/Network)
-#endif()
 
 subdirs (Projects/Skylicht/Client)
 
