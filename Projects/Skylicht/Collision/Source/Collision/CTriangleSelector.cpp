@@ -27,8 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CTriangleSelector::CTriangleSelector(CGameObject* gameObject) :
-		m_gameObject(gameObject)
+	CTriangleSelector::CTriangleSelector(CEntity* entity) :
+		m_entity(entity)
 	{
 
 	}
@@ -38,11 +38,9 @@ namespace Skylicht
 
 	}
 
-	void CTriangleSelector::getTriangles(core::triangle3df* triangles, s32 arraySize, s32& outTriangleCount, const core::matrix4* transform)
+	void CTriangleSelector::getTriangles(core::triangle3df* triangles, const core::matrix4* transform)
 	{
 		u32 cnt = m_triangles.size();
-		if (cnt > (u32)arraySize)
-			cnt = (u32)arraySize;
 
 		core::matrix4 mat;
 		if (transform)
@@ -54,7 +52,5 @@ namespace Skylicht
 			mat.transformVect(triangles[i].pointB, m_triangles[i].pointB);
 			mat.transformVect(triangles[i].pointC, m_triangles[i].pointC);
 		}
-
-		outTriangleCount = cnt;
 	}
 }

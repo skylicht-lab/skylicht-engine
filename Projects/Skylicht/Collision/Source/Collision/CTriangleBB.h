@@ -34,10 +34,10 @@ namespace Skylicht
 		core::aabbox3df m_bbox;
 
 	public:
-		CTriangleBB(CGameObject* gameObject, const core::aabbox3df& bbox);
+		CTriangleBB(CEntity* entity, const core::aabbox3df& bbox);
 
 		virtual ~CTriangleBB();
 
-		virtual void getTriangles(core::triangle3df* triangles, s32 arraySize, s32& outTriangleCount, const core::matrix4* transform);
+		virtual void getTriangles(core::triangle3df* triangles, const core::matrix4* transform);
 	};
 }
