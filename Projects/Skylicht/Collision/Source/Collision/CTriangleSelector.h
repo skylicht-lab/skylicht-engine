@@ -24,26 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GameObject/CGameObject.h"
+#include "Entity/CEntity.h"
 
 namespace Skylicht
 {
 	class CTriangleSelector
 	{
 	protected:
+		CEntity* m_entity;
+
 		core::array<core::triangle3df> m_triangles;
-		CGameObject* m_gameObject;
 
 	public:
-		CTriangleSelector(CGameObject* gameObject);
+		CTriangleSelector(CEntity* entity);
 
 		virtual ~CTriangleSelector();
 
-		virtual void getTriangles(core::triangle3df* triangles, s32 arraySize, s32& outTriangleCount, const core::matrix4* transform);
+		virtual void getTriangles(core::triangle3df* triangles, const core::matrix4* transform);
 
-		inline CGameObject* getGameObject()
+		inline u32 getTriangleCount()
 		{
-			return m_gameObject;
+			return m_triangles.size();
+		}
+
+		inline CEntity* getEntity()
+		{
+			return m_entity;
 		}
 	};
 }

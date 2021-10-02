@@ -23,45 +23,34 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CTriangleBB.h"
+#include "CCollisionNode.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	CTriangleBB::CTriangleBB(CEntity* entity, const core::aabbox3df& bbox) :
-		CTriangleSelector(entity),
-		m_bbox(bbox)
-	{
-		m_triangles.set_used(12);
-	}
-
-	CTriangleBB::~CTriangleBB()
+	CCollisionNode::CCollisionNode(CGameObject* gameObject, CEntity* entity, CTriangleSelector* selector) :
+		GameObject(gameObject),
+		Entity(entity),
+		Selector(selector)
 	{
 
 	}
 
-	void CTriangleBB::getTriangles(core::triangle3df* triangles, const core::matrix4* transform)
+	CCollisionNode::~CCollisionNode()
 	{
-		core::vector3df edges[8];
-		m_bbox.getEdges(edges);
 
-		m_triangles[0].set(edges[3], edges[0], edges[2]);
-		m_triangles[1].set(edges[3], edges[1], edges[0]);
+	}
 
-		m_triangles[2].set(edges[3], edges[2], edges[7]);
-		m_triangles[3].set(edges[7], edges[2], edges[6]);
+	void CCollisionNode::updateTransform()
+	{
+		if (Selector != NULL && Entity != NULL)
+		{
+			CWorldTransformData* world = Entity->getData<CWorldTransformData>();
+			// CCollisionData* data = Entity->getData<CCollisionData>();
 
-		m_triangles[4].set(edges[7], edges[6], edges[4]);
-		m_triangles[5].set(edges[5], edges[7], edges[4]);
+			Triangles.set_used(Selector->getTriangleCount());
 
-		m_triangles[6].set(edges[5], edges[4], edges[0]);
-		m_triangles[7].set(edges[5], edges[0], edges[1]);
-
-		m_triangles[8].set(edges[1], edges[3], edges[7]);
-		m_triangles[9].set(edges[1], edges[7], edges[5]);
-
-		m_triangles[10].set(edges[0], edges[6], edges[2]);
-		m_triangles[11].set(edges[0], edges[4], edges[6]);
-
-		CTriangleSelector::getTriangles(triangles, transform);
+			Selector->getTriangles(Triangles.pointer(), &world->World);
+		}
 	}
 }
