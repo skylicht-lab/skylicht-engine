@@ -24,30 +24,37 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "Lighting/CDirectionalLight.h"
-#include "SpriteDraw/CSprite.h"
-#include "Collision/CCollisionNode.h"
+#include "COctreeNode.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	class COctreeBuilder
 	{
-		class CGDirectionLight : public CGizmosComponent
-		{
-		protected:
-			CDirectionalLight* m_directionLight;
-			CSprite* m_sprite;
-			CCollisionNode* m_collisionNode;
+	protected:
+		core::array<CCollisionNode*> m_nodes;
 
-		public:
-			CGDirectionLight();
+		COctreeNode* m_root;
 
-			virtual ~CGDirectionLight();
+		u32 m_minimalPolysPerNode;
+		u32 m_nodeCount;
 
-			virtual void initComponent();
+	public:
+		COctreeBuilder();
 
-			virtual void updateComponent();
-		};
-	}
+		virtual ~COctreeBuilder();
+
+		void clear();
+
+		void rebuildOctree();
+
+		void removeCollision(CGameObject* object);
+
+		void removeCollision(CCollisionNode** nodes, int count);
+
+	protected:
+
+		void constructOctree(COctreeNode* node);
+
+		int findNode(CCollisionNode* node, CCollisionNode** nodes, int count);
+	};
 }

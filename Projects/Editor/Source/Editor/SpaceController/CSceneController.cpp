@@ -23,8 +23,11 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+
 #include "CSceneController.h"
 #include "CPropertyController.h"
+#include "CCollisionController.h"
+
 #include "Selection/CSelection.h"
 
 #include "Scene/CSceneExporter.h"
@@ -137,6 +140,8 @@ namespace Skylicht
 			// clear current scene gui
 			CSelection::getInstance()->clear();
 			CPropertyController::getInstance()->setProperty(NULL);
+			CCollisionController::getInstance()->clear();
+
 			CHandles::getInstance()->end();
 			CHandles::getInstance()->setNullRenderer();
 

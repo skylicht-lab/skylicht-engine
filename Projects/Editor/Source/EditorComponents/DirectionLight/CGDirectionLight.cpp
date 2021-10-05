@@ -32,6 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/CEditor.h"
 #include "Handles/CHandles.h"
 
+#include "Editor/SpaceController/CCollisionController.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -48,7 +50,8 @@ namespace Skylicht
 
 		CGDirectionLight::~CGDirectionLight()
 		{
-
+			CBBCollisionManager* bbCollision = CCollisionController::getInstance()->getBBCollision();
+			bbCollision->removeCollision(&m_collisionNode, 1);
 		}
 
 		void CGDirectionLight::initComponent()
@@ -63,6 +66,9 @@ namespace Skylicht
 			m_sprite->setEnableSerializable(false);
 
 			addLinkComponent(m_sprite);
+
+			CBBCollisionManager* bbCollision = CCollisionController::getInstance()->getBBCollision();
+			m_collisionNode = bbCollision->addBBCollision(m_gameObject, core::aabbox3df(core::vector3df(-2.0f, -2.0f, -2.0f), core::vector3df(2.0f, 2.0f, 2.0f)));
 		}
 
 		void CGDirectionLight::updateComponent()
