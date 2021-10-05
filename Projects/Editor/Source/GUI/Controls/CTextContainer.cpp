@@ -342,7 +342,7 @@ namespace Skylicht
 				}
 
 				m_string.insert(m_caretBegin, string);
-				m_caretBegin += string.length();
+				m_caretBegin += (u32)string.length();
 
 				m_textChange = true;
 
@@ -357,7 +357,7 @@ namespace Skylicht
 			void CTextContainer::setCaretBegin(u32 line, u32 c)
 			{
 				if (line > m_lines.size())
-					line = m_lines.size() - 1;
+					line = (u32)m_lines.size() - 1;
 
 				m_caretBeginLine = line;
 				m_caretBeginPosition = c;
@@ -369,7 +369,7 @@ namespace Skylicht
 			void CTextContainer::setCaretEnd(u32 line, u32 c)
 			{
 				if (line > m_lines.size())
-					line = m_lines.size() - 1;
+					line = (u32)m_lines.size() - 1;
 
 				m_caretEndLine = line;
 				m_caretEndPosition = c;
@@ -533,7 +533,7 @@ namespace Skylicht
 				if (foundLine != NULL)
 				{
 					const std::wstring& s = foundLine->getString();
-					u32 length = s.length();
+					u32 length = (u32)s.length();
 					if (charPosition < length)
 					{
 						bool isCharacterGroup = isCharacter(s[charPosition]);
@@ -771,7 +771,7 @@ namespace Skylicht
 					{
 						if (m_lines.size() > 0)
 						{
-							u32 caretLineID = m_lines.size() - 1;
+							u32 caretLineID = (u32)m_lines.size() - 1;
 							u32 caretCharID = m_lines.back()->getLength();
 
 							setCaretBegin(caretLineID, caretCharID);

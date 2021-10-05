@@ -27,35 +27,22 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTriangleSelector.h"
 #include "CCollisionNode.h"
 #include "COctreeNode.h"
+#include "COctreeBuilder.h"
 
 #include "GameObject/CGameObject.h"
 #include "Utils/CGameSingleton.h"
 
 namespace Skylicht
 {
-	class CBBCollisionManager
+	class CBBCollisionManager : public COctreeBuilder
 	{
 	protected:
-		core::array<CCollisionNode*> m_nodes;
-
-		COctreeNode* m_root;
-
-		u32 m_minimalPolysPerNode;
-		u32 m_nodeCount;
 
 	public:
 		CBBCollisionManager();
 
 		virtual ~CBBCollisionManager();
 
-		void addBBCollision(CGameObject* object, const core::aabbox3df& bbox);
-
-		void removeBBCollision(CGameObject* object);
-
-	protected:
-
-		void rebuildOctree();
-
-		void constructOctree(COctreeNode* node);
+		CCollisionNode* addBBCollision(CGameObject* object, const core::aabbox3df& bbox);
 	};
 }

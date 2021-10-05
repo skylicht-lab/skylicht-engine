@@ -81,7 +81,7 @@ namespace Skylicht
 				if (s.length() > 0 && s[s.length() - 1] != '\n')
 					s += '\n';
 
-				for (u32 i = 0, n = s.length(); i < n; i++)
+				for (u32 i = 0, n = (u32)s.length(); i < n; i++)
 				{
 					float distance = fabs(x - point.X);
 
