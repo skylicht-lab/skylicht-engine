@@ -22,32 +22,26 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "EditorComponents/CGizmosComponent.h"
-#include "Lighting/CDirectionalLight.h"
-#include "SpriteDraw/CSprite.h"
-#include "Collision/CCollisionNode.h"
+#include "pch.h"
+#include "CCollisionController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CGDirectionLight : public CGizmosComponent
+		CCollisionController::CCollisionController()
 		{
-		protected:
-			CDirectionalLight* m_directionLight;
-			CSprite* m_sprite;
-			CCollisionNode* m_collisionNode;
+			m_bbCollision = new CBBCollisionManager();
+		}
 
-		public:
-			CGDirectionLight();
+		CCollisionController::~CCollisionController()
+		{
+			delete m_bbCollision;
+		}
 
-			virtual ~CGDirectionLight();
-
-			virtual void initComponent();
-
-			virtual void updateComponent();
-		};
+		void CCollisionController::clear()
+		{
+			m_bbCollision->clear();
+		}
 	}
 }

@@ -34,7 +34,7 @@ namespace Skylicht
 		//! Triangle index of CCollisionNode
 		core::array<int> Triangles;
 
-		//! CollisionNode
+		//! CollisionNode of Triangles
 		core::array<CCollisionNode*> Collisions;
 
 		COctreeNode* Childs[8];
