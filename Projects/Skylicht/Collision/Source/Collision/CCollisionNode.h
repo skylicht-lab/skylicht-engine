@@ -39,18 +39,17 @@ namespace Skylicht
 
 		CTriangleSelector* Selector;
 
-		//! Transform BBox
-		core::aabbox3df BBox;
-
 		//! Triangles that calculated World Transform
 		core::array<core::triangle3df> Triangles;
 
 	public:
 
-		CCollisionNode(CGameObject *gameObject, CEntity *entity, CTriangleSelector *selector);
+		CCollisionNode(CGameObject* gameObject, CEntity* entity, CTriangleSelector* selector);
 
 		virtual ~CCollisionNode();
 
 		void updateTransform();
+
+		core::aabbox3df getTransformBBox();
 	};
 }

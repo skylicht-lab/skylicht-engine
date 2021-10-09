@@ -46,11 +46,24 @@ namespace Skylicht
 		if (Selector != NULL && Entity != NULL)
 		{
 			CWorldTransformData* world = Entity->getData<CWorldTransformData>();
-			// CCollisionData* data = Entity->getData<CCollisionData>();
 
 			Triangles.set_used(Selector->getTriangleCount());
 
 			Selector->getTriangles(Triangles.pointer(), &world->World);
 		}
+	}
+
+	core::aabbox3df CCollisionNode::getTransformBBox()
+	{
+		core::aabbox3df ret;
+
+		if (Selector != NULL && Entity != NULL)
+		{
+			CWorldTransformData* world = Entity->getData<CWorldTransformData>();
+			ret = Selector->getBBox();
+			world->World.transformBoxEx(ret);
+		}
+
+		return ret;
 	}
 }
