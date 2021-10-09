@@ -26,15 +26,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CTriangleSelector.h"
 #include "CCollisionNode.h"
-#include "COctreeNode.h"
-#include "COctreeBuilder.h"
+
+#include "CBBoxPatchBuilder.h"
 
 #include "GameObject/CGameObject.h"
 #include "Utils/CGameSingleton.h"
 
 namespace Skylicht
 {
-	class CBBCollisionManager : public COctreeBuilder
+	class CBBCollisionManager : public CBBoxPatchBuilder
 	{
 	protected:
 

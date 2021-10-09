@@ -24,12 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 
-#include <codecvt>
-#include <locale>
-
 #include "CNumberInput.h"
 #include "GUI/Theme/CThemeConfig.h"
 #include "GUI/Input/CInput.h"
+
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -230,26 +229,18 @@ namespace Skylicht
 			void CNumberInput::applyTextValue()
 			{
 				const std::wstring s = getString();
+				std::string utf8 = CStringImp::convertUnicodeToUTF8(s.c_str());
 
-				using convert_t = std::codecvt_utf8<wchar_t>;
-				std::wstring_convert<convert_t, wchar_t> strconverter;
-
-				std::string utf8 = strconverter.to_bytes(s);
-
-				float value = atof(utf8.c_str());
+				float value = (float)atof(utf8.c_str());
 				setValue(value, false);
 			}
 
 			void CNumberInput::onValidateValue()
 			{
 				const std::wstring s = getString();
+				std::string utf8 = CStringImp::convertUnicodeToUTF8(s.c_str());
 
-				using convert_t = std::codecvt_utf8<wchar_t>;
-				std::wstring_convert<convert_t, wchar_t> strconverter;
-
-				std::string utf8 = strconverter.to_bytes(s);
-
-				m_value = atof(utf8.c_str());
+				m_value = (float)atof(utf8.c_str());
 			}
 
 			void CNumberInput::setValue(float value, bool invokeEvent)
