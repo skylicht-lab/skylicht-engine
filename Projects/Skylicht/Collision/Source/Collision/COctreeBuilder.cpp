@@ -29,8 +29,7 @@ namespace Skylicht
 {
 	COctreeBuilder::COctreeBuilder() :
 		m_root(NULL),
-		m_minimalPolysPerNode(128),
-		m_nodeCount(0)
+		m_minimalPolysPerNode(128)
 	{
 
 	}
@@ -102,7 +101,7 @@ namespace Skylicht
 		constructOctree(m_root);
 
 		c8 tmp[256];
-		sprintf(tmp, "Needed %ums to COctreeBuilder::build (%d nodes, %u polys)", os::Timer::getRealTime() - start, m_nodeCount, numPoly);
+		sprintf(tmp, "Needed %ums to COctreeBuilder::build (%u polys)", os::Timer::getRealTime() - start, numPoly);
 		os::Printer::log(tmp, ELL_INFORMATION);
 	}
 

@@ -41,9 +41,10 @@ namespace Skylicht
 	CCollisionNode* CBBCollisionManager::addBBCollision(CGameObject* object, const core::aabbox3df& bbox)
 	{
 		CEntity* entity = object->getEntity();
-		CCollisionNode* node = new CCollisionNode(object, entity, new CTriangleBB(entity, bbox));
 
+		CCollisionNode* node = new CCollisionNode(object, entity, new CTriangleBB(entity, bbox));
 		m_nodes.push_back(node);
+
 		build();
 
 		return node;

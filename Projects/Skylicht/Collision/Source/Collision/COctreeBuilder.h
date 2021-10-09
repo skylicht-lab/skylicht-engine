@@ -34,7 +34,6 @@ namespace Skylicht
 		COctreeNode* m_root;
 
 		u32 m_minimalPolysPerNode;
-		u32 m_nodeCount;
 
 	public:
 		COctreeBuilder();
