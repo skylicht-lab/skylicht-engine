@@ -28,10 +28,10 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CTriangleBB::CTriangleBB(CEntity* entity, const core::aabbox3df& bbox) :
-		CTriangleSelector(entity),
-		m_bbox(bbox)
+		CTriangleSelector(entity)
 	{
 		m_triangles.set_used(12);
+		m_bbox = bbox;
 	}
 
 	CTriangleBB::~CTriangleBB()
@@ -63,5 +63,10 @@ namespace Skylicht
 		m_triangles[11].set(edges[0], edges[4], edges[6]);
 
 		CTriangleSelector::getTriangles(triangles, transform);
+	}
+
+	const core::aabbox3df& CTriangleBB::getBBox()
+	{
+		return m_bbox;
 	}
 }

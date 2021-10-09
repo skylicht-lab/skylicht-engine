@@ -53,4 +53,19 @@ namespace Skylicht
 			mat.transformVect(triangles[i].pointC, m_triangles[i].pointC);
 		}
 	}
+
+	const core::aabbox3df& CTriangleSelector::getBBox()
+	{
+		m_bbox.reset(m_triangles[0].pointA);
+
+		u32 cnt = m_triangles.size();
+		for (u32 i = 0; i < cnt; ++i)
+		{
+			m_bbox.addInternalPoint(m_triangles[i].pointA);
+			m_bbox.addInternalPoint(m_triangles[i].pointB);
+			m_bbox.addInternalPoint(m_triangles[i].pointC);
+		}
+
+		return m_bbox;
+	}
 }

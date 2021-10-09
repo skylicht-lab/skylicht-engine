@@ -44,6 +44,22 @@ namespace Skylicht
 
 	void CBBoxPatchBuilder::build()
 	{
+		const u32 start = os::Timer::getRealTime();
+		u32 numPoly = 0;
 
+		core::aabbox3df size;
+
+		// step 1: caculator the box size
+		for (u32 i = 0, n = m_nodes.size(); i < n; i++)
+		{
+			if (i == 0)
+				size = m_nodes[i]->getTransformBBox();
+			else
+				size.addInternalBox(m_nodes[i]->getTransformBBox());
+		}
+
+		c8 tmp[256];
+		sprintf(tmp, "Needed %ums to CBBoxPatchBuilder::build", os::Timer::getRealTime() - start);
+		os::Printer::log(tmp, ELL_INFORMATION);
 	}
 }

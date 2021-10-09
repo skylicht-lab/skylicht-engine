@@ -30,14 +30,13 @@ namespace Skylicht
 {
 	class CTriangleBB : public CTriangleSelector
 	{
-	protected:
-		core::aabbox3df m_bbox;
-
 	public:
 		CTriangleBB(CEntity* entity, const core::aabbox3df& bbox);
 
 		virtual ~CTriangleBB();
 
 		virtual void getTriangles(core::triangle3df* triangles, const core::matrix4* transform);
+
+		virtual const core::aabbox3df& getBBox();
 	};
 }
