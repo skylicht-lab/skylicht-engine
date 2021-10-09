@@ -24,29 +24,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CCollisionBuilder.h"
+#include "COctreeNode.h"
 
 namespace Skylicht
 {
-	class COctreeBuilder : public CCollisionBuilder
+	class CCollisionBuilder
 	{
 	protected:
-		COctreeNode* m_root;
-
-		u32 m_minimalPolysPerNode;
-		u32 m_nodeCount;
+		core::array<CCollisionNode*> m_nodes;
 
 	public:
-		COctreeBuilder();
+		CCollisionBuilder();
 
-		virtual ~COctreeBuilder();
+		virtual ~CCollisionBuilder();
 
-		virtual void build();
+		void removeCollision(CGameObject* object);
+
+		void removeCollision(CCollisionNode** nodes, int count);
 
 		virtual void clear();
 
-	protected:
+		int findNode(CCollisionNode* node, CCollisionNode** nodes, int count);
 
-		void constructOctree(COctreeNode* node);
+		virtual void build() = 0;
 	};
 }

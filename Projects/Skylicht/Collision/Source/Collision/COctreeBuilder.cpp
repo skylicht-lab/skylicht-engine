@@ -44,90 +44,12 @@ namespace Skylicht
 	{
 		if (m_root != NULL)
 			delete m_root;
-
 		m_root = NULL;
 
-		for (u32 i = 0, n = m_nodes.size(); i < n; i++)
-		{
-			delete m_nodes[i]->Selector;
-			delete m_nodes[i];
-		}
-		m_nodes.clear();
+		CCollisionBuilder::clear();
 	}
 
-	void COctreeBuilder::removeCollision(CGameObject* object)
-	{
-		for (u32 i = 0, n = m_nodes.size(); i < n; i++)
-		{
-			if (m_nodes[i]->GameObject == object)
-			{
-				if (n >= 2)
-				{
-					// swap to last and delete
-					CCollisionNode* t = m_nodes[n - 1];
-					m_nodes[n - 1] = m_nodes[i];
-					m_nodes[i] = t;
-					delete m_nodes[n - 1];
-					m_nodes.erase(n - 1);
-					return;
-				}
-				else
-				{
-					delete m_nodes[i];
-					m_nodes.erase(i);
-					return;
-				}
-			}
-		}
-
-		rebuildOctree();
-	}
-
-	void COctreeBuilder::removeCollision(CCollisionNode** nodes, int count)
-	{
-		for (u32 i = 0, n = m_nodes.size(); i < n; i++)
-		{
-			int id = findNode(m_nodes[i], nodes, count);
-			if (id >= 0)
-			{
-				nodes[id] = NULL;
-
-				if (n >= 2)
-				{
-					// swap to last and delete
-					CCollisionNode* t = m_nodes[n - 1];
-					m_nodes[n - 1] = m_nodes[i];
-					m_nodes[i] = t;
-					delete m_nodes[n - 1];
-					m_nodes.erase(n - 1);
-					return;
-				}
-				else
-				{
-					delete m_nodes[i];
-					m_nodes.erase(i);
-					return;
-				}
-			}
-		}
-
-		rebuildOctree();
-	}
-
-	int COctreeBuilder::findNode(CCollisionNode* node, CCollisionNode** nodes, int count)
-	{
-		for (int i = 0; i < count; i++)
-		{
-			if (nodes[i] == node)
-			{
-				return i;
-			}
-		}
-
-		return -1;
-	}
-
-	void COctreeBuilder::rebuildOctree()
+	void COctreeBuilder::build()
 	{
 		if (m_root != NULL)
 			delete m_root;
@@ -180,7 +102,7 @@ namespace Skylicht
 		constructOctree(m_root);
 
 		c8 tmp[256];
-		sprintf(tmp, "Needed %ums to COctreeBuilder::rebuildOctree (%d nodes, %u polys)", os::Timer::getRealTime() - start, m_nodeCount, numPoly);
+		sprintf(tmp, "Needed %ums to COctreeBuilder::build (%d nodes, %u polys)", os::Timer::getRealTime() - start, m_nodeCount, numPoly);
 		os::Printer::log(tmp, ELL_INFORMATION);
 	}
 

@@ -44,7 +44,7 @@ namespace Skylicht
 		CCollisionNode* node = new CCollisionNode(object, entity, new CTriangleBB(entity, bbox));
 
 		m_nodes.push_back(node);
-		rebuildOctree();
+		build();
 
 		return node;
 	}
