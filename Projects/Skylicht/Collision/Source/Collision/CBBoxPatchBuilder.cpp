@@ -22,31 +22,28 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CCollisionBuilder.h"
+#include "pch.h"
+#include "CBBoxPatchBuilder.h"
 
 namespace Skylicht
 {
-	class COctreeBuilder : public CCollisionBuilder
+	CBBoxPatchBuilder::CBBoxPatchBuilder()
 	{
-	protected:
-		COctreeNode* m_root;
 
-		u32 m_minimalPolysPerNode;
-		u32 m_nodeCount;
+	}
 
-	public:
-		COctreeBuilder();
+	CBBoxPatchBuilder::~CBBoxPatchBuilder()
+	{
+		clear();
+	}
 
-		virtual ~COctreeBuilder();
+	void CBBoxPatchBuilder::clear()
+	{
+		CCollisionBuilder::clear();
+	}
 
-		virtual void build();
+	void CBBoxPatchBuilder::build()
+	{
 
-		virtual void clear();
-
-	protected:
-
-		void constructOctree(COctreeNode* node);
-	};
+	}
 }
