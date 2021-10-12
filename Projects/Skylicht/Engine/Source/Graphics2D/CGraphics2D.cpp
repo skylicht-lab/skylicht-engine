@@ -570,7 +570,7 @@ namespace Skylicht
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16* indices = (s16*)m_indices->getIndices();
+		u16* indices = (u16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -583,7 +583,7 @@ namespace Skylicht
 		}
 
 		{
-			s16* ib = indices;
+			u16* ib = indices;
 			video::S3DVertex* vb = vertices;
 			int vertex = numVertices;
 
@@ -680,7 +680,7 @@ namespace Skylicht
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16* indices = (s16*)m_indices->getIndices();
+		u16* indices = (u16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -694,7 +694,7 @@ namespace Skylicht
 
 		for (int i = 0; i < numRect; i++)
 		{
-			s16* ib = indices + i * 6;
+			u16* ib = indices + i * 6;
 			video::S3DVertex* vb = vertices + i * 4;
 			int vertex = numVertices + i * 4;
 
@@ -826,7 +826,7 @@ namespace Skylicht
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16* indices = (s16*)m_indices->getIndices();
+		u16* indices = (u16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -840,7 +840,7 @@ namespace Skylicht
 
 		for (int i = 0; i < numRect; i++)
 		{
-			s16* ib = indices + i * 6;
+			u16* ib = indices + i * 6;
 			video::S3DVertex* vb = vertices + i * 4;
 			int vertex = numVertices + i * 4;
 
@@ -976,7 +976,7 @@ namespace Skylicht
 		m_indices->set_used(indexUse);
 
 		// get indices pointer
-		s16* indices = (s16*)m_indices->getIndices();
+		u16* indices = (u16*)m_indices->getIndices();
 		indices += numIndices;
 
 		float texWidth = 512.0f;
@@ -990,7 +990,7 @@ namespace Skylicht
 
 		for (int i = 0; i < numRect; i++)
 		{
-			s16* ib = indices + i * 6;
+			u16* ib = indices + i * 6;
 			video::S3DVertex* vb = vertices + i * 4;
 			int vertex = numVertices + i * 4;
 

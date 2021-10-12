@@ -59,9 +59,9 @@ namespace Skylicht
 
 		if (Selector != NULL && Entity != NULL)
 		{
-			CWorldTransformData* world = Entity->getData<CWorldTransformData>();
+			core::matrix4 world = GameObject->getTransform()->calcWorldTransform();
 			ret = Selector->getBBox();
-			world->World.transformBoxEx(ret);
+			world.transformBoxEx(ret);
 		}
 
 		return ret;
