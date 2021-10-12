@@ -266,15 +266,25 @@ namespace Skylicht
 			CGameObject* lightObj = zone->createEmptyObject();
 			lightObj->setName(L"DirectionLight");
 
-			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
-			SColor c(255, 255, 244, 214);
-			directionalLight->setColor(SColorf(c));
-
 			CTransformEuler* lightTransform = lightObj->getTransformEuler();
 			lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 			core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 			lightTransform->setOrientation(direction, CTransform::s_oy);
+
+			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
+			SColor c(255, 255, 244, 214);
+			directionalLight->setColor(SColorf(c));
+
+			lightObj = zone->createEmptyObject();
+			lightObj->setName(L"DirectionLight 1");
+
+			lightTransform = lightObj->getTransformEuler();
+			lightTransform->setPosition(core::vector3df(120.0f, 2.0f, 120.0f));
+
+			directionalLight = lightObj->addComponent<CDirectionalLight>();
+			c = SColor(255, 255, 244, 214);
+			directionalLight->setColor(SColorf(c));
 
 			// update search index
 			m_scene->updateAddRemoveObject();

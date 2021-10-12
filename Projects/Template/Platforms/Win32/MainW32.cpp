@@ -442,6 +442,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_WINDOWPOSCHANGED:
 #if defined(SKYLICHT_EDITOR)
+		/*
 		RECT client;
 		WINDOWPLACEMENT wndpl;
 		GetWindowPlacement(hWnd, &wndpl);
@@ -453,6 +454,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			client.bottom - client.top,
 			wndpl.showCmd == SW_SHOWMAXIMIZED
 		);
+		*/
 #endif
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	case WM_SIZE:
@@ -471,6 +473,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				dev->postEventFromUser(resize);
 			}
 #if defined(SKYLICHT_EDITOR)
+			/*
 			RECT client;
 			WINDOWPLACEMENT wndpl;
 			GetWindowPlacement(hWnd, &wndpl);
@@ -482,6 +485,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				client.bottom - client.top,
 				wndpl.showCmd == SW_SHOWMAXIMIZED
 			);
+			*/
 #endif
 		}
 		return DefWindowProc(hWnd, message, wParam, lParam);
