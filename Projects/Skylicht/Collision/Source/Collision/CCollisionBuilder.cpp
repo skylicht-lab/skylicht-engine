@@ -94,8 +94,6 @@ namespace Skylicht
 				}
 			}
 		}
-
-		build();
 	}
 
 	void CCollisionBuilder::clear()

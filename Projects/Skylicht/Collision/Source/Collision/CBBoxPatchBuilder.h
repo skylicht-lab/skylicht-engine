@@ -30,6 +30,23 @@ namespace Skylicht
 {
 	class CBBoxPatchBuilder : public CCollisionBuilder
 	{
+	protected:
+		struct SPatch
+		{
+			core::aabbox3df BBox;
+			int X;
+			int Y;
+			int Z;
+			core::array<CCollisionNode*> Collisions;
+		};
+
+		core::array<SPatch*> m_collisionPatchs;
+		core::array<SPatch*> m_patchs;
+		core::aabbox3df m_size;
+		float m_patchSize;
+		int m_numX;
+		int m_numY;
+		int m_numZ;
 	public:
 		CBBoxPatchBuilder();
 
@@ -38,5 +55,15 @@ namespace Skylicht
 		virtual void clear();
 
 		virtual void build();
+
+		SPatch* getPatch(int x, int y, int z);
+
+		void addNodeToPatch(CCollisionNode* collision);
+
+		void removeNode(CCollisionNode* collision);
+
+	protected:
+		void removeNode(CCollisionNode* collision, SPatch *patch);
+
 	};
 }
