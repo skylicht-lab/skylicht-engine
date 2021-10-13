@@ -76,7 +76,7 @@ namespace Skylicht
 							float x = core::clamp(local.X, 0.0f, m_bounds.Width);
 							float f = x / m_bounds.Width;
 
-							float value = (m_max - m_min) * f;
+							float value = m_min + (m_max - m_min) * f;
 							setValue(value, m_min, m_max, true);
 						}
 
