@@ -44,6 +44,29 @@ namespace Skylicht
 
 		virtual void clear();
 
+	public:
+
+		virtual CGameObject* getObjectWithRay(
+			const core::line3d<f32>& ray,
+			f32& outBestDistanceSquared,
+			core::vector3df& outCollisionPoint,
+			core::triangle3df& outTriangle,
+			CCollisionNode*& outNode);
+
+		virtual bool getCollisionPoint(
+			const core::line3d<f32>& ray,
+			f32& outBestDistanceSquared,
+			core::vector3df& outIntersection,
+			core::triangle3df& outTriangle,
+			CCollisionNode*& outNode);
+
+		virtual bool getCollisionPoint(
+			const core::vector3df& target,
+			const core::vector3df& pos,
+			core::vector3df& outPos,
+			core::triangle3df& outTri,
+			CCollisionNode*& outNode);
+
 	protected:
 
 		void constructOctree(COctreeNode* node);

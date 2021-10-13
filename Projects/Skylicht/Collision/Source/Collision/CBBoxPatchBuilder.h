@@ -38,8 +38,16 @@ namespace Skylicht
 			int Y;
 			int Z;
 			core::array<CCollisionNode*> Collisions;
+
+			SPatch()
+			{
+				X = 0;
+				Y = 0;
+				Z = 0;
+			}
 		};
 
+		SPatch m_global;
 		core::array<SPatch*> m_collisionPatchs;
 		core::array<SPatch*> m_patchs;
 		core::aabbox3df m_size;
@@ -56,14 +64,42 @@ namespace Skylicht
 
 		virtual void build();
 
+		int getPatchID(int x, int y, int z);
+
 		SPatch* getPatch(int x, int y, int z);
+
+		void updateNode(CCollisionNode* collision);
 
 		void addNodeToPatch(CCollisionNode* collision);
 
 		void removeNode(CCollisionNode* collision);
 
+	public:
+
+		virtual CGameObject* getObjectWithRay(
+			const core::line3d<f32>& ray,
+			f32& outBestDistanceSquared,
+			core::vector3df& outCollisionPoint,
+			core::triangle3df& outTriangle,
+			CCollisionNode*& outNode);
+
+		virtual bool getCollisionPoint(
+			const core::line3d<f32>& ray,
+			f32& outBestDistanceSquared,
+			core::vector3df& outIntersection,
+			core::triangle3df& outTriangle,
+			CCollisionNode*& outNode);
+
+		virtual bool getCollisionPoint(
+			const core::vector3df& target,
+			const core::vector3df& pos,
+			core::vector3df& outPos,
+			core::triangle3df& outTri,
+			CCollisionNode*& outNode);
+
 	protected:
-		void removeNode(CCollisionNode* collision, SPatch *patch);
+
+		void removeNode(CCollisionNode* collision, SPatch* patch);
 
 	};
 }

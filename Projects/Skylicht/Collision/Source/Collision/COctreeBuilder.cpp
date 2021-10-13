@@ -199,4 +199,34 @@ namespace Skylicht
 			}
 		}
 	}
+
+	CGameObject* COctreeBuilder::getObjectWithRay(
+		const core::line3d<f32>& ray,
+		f32& outBestDistanceSquared,
+		core::vector3df& outCollisionPoint,
+		core::triangle3df& outTriangle,
+		CCollisionNode*& outNode)
+	{
+		return NULL;
+	}
+
+	bool COctreeBuilder::getCollisionPoint(
+		const core::line3d<f32>& ray,
+		f32& outBestDistanceSquared,
+		core::vector3df& outIntersection,
+		core::triangle3df& outTriangle,
+		CCollisionNode*& outNode)
+	{
+		return false;
+	}
+
+	bool COctreeBuilder::getCollisionPoint(
+		const core::vector3df& target,
+		const core::vector3df& pos,
+		core::vector3df& outPos,
+		core::triangle3df& outTri,
+		CCollisionNode*& outNode)
+	{
+		return false;
+	}
 }

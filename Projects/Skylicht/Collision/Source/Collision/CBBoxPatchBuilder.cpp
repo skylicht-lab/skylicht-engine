@@ -57,6 +57,7 @@ namespace Skylicht
 
 		m_patchs.set_used(0);
 		m_collisionPatchs.set_used(0);
+		m_global.Collisions.set_used(0);
 
 		const u32 start = os::Timer::getRealTime();
 		u32 numPoly = 0;
@@ -77,6 +78,10 @@ namespace Skylicht
 		m_numY = core::ceil32(s.Y / m_patchSize);
 		m_numZ = core::ceil32(s.Z / m_patchSize);
 
+		core::vector3df patchSize(m_patchSize, m_patchSize, m_patchSize);
+
+		m_global.BBox = m_size;
+
 		for (int x = 0; x < m_numX; x++)
 		{
 			for (int z = 0; z < m_numZ; z++)
@@ -91,7 +96,7 @@ namespace Skylicht
 					p.Z = z;
 
 					p.BBox.MinEdge = m_size.MinEdge + core::vector3df(x * m_patchSize, y * m_patchSize, z * m_patchSize);
-					p.BBox.MaxEdge = p.BBox.MinEdge + core::vector3df(m_patchSize, m_patchSize, m_patchSize);
+					p.BBox.MaxEdge = p.BBox.MinEdge + patchSize;
 				}
 			}
 		}
@@ -111,18 +116,38 @@ namespace Skylicht
 			}
 		}
 
-
 		c8 tmp[256];
 		sprintf(tmp, "Needed %ums to CBBoxPatchBuilder::build", os::Timer::getRealTime() - start);
 		os::Printer::log(tmp, ELL_INFORMATION);
 	}
 
+	int CBBoxPatchBuilder::getPatchID(int x, int y, int z)
+	{
+		return  x * m_numZ * m_numY + z * m_numY + y;
+	}
+
 	CBBoxPatchBuilder::SPatch* CBBoxPatchBuilder::getPatch(int x, int y, int z)
 	{
-		int id = x * m_numZ * m_numY + z * m_numY + y;
+		int id = getPatchID(x, y, z);
 		if (id < 0 || id >= (int)m_patchs.size())
 			return NULL;
 		return m_patchs[id];
+	}
+
+	void CBBoxPatchBuilder::updateNode(CCollisionNode* collision)
+	{
+		core::aabbox3df bbox = collision->getTransformBBox();
+		if (bbox.isFullInside(m_size))
+		{
+			// just update the collision
+			removeNode(collision);
+			addNodeToPatch(collision);
+		}
+		else
+		{
+			// rebuild
+			build();
+		}
 	}
 
 	void CBBoxPatchBuilder::addNodeToPatch(CCollisionNode* collision)
@@ -145,9 +170,13 @@ namespace Skylicht
 					SPatch* patch = getPatch(x, y, z);
 					if (patch)
 					{
-						if (patch->BBox.intersectsWithBox(bbox))
+						if (bbox.isFullInside(patch->BBox))
 						{
 							patch->Collisions.push_back(collision);
+						}
+						else
+						{
+							m_global.Collisions.push_back(collision);
 						}
 					}
 				}
@@ -175,7 +204,7 @@ namespace Skylicht
 					SPatch* patch = getPatch(x, y, z);
 					if (patch)
 					{
-						if (patch->BBox.intersectsWithBox(bbox))
+						if (bbox.isFullInside(patch->BBox))
 						{
 							removeNode(collision, patch);
 						}
@@ -183,6 +212,8 @@ namespace Skylicht
 				}
 			}
 		}
+
+		removeNode(collision, &m_global);
 	}
 
 	void CBBoxPatchBuilder::removeNode(CCollisionNode* collision, SPatch* patch)
@@ -195,5 +226,35 @@ namespace Skylicht
 				return;
 			}
 		}
+	}
+
+	CGameObject* CBBoxPatchBuilder::getObjectWithRay(
+		const core::line3d<f32>& ray,
+		f32& outBestDistanceSquared,
+		core::vector3df& outCollisionPoint,
+		core::triangle3df& outTriangle,
+		CCollisionNode*& outNode)
+	{
+		return NULL;
+	}
+
+	bool CBBoxPatchBuilder::getCollisionPoint(
+		const core::line3d<f32>& ray,
+		f32& outBestDistanceSquared,
+		core::vector3df& outIntersection,
+		core::triangle3df& outTriangle,
+		CCollisionNode*& outNode)
+	{
+		return false;
+	}
+
+	bool CBBoxPatchBuilder::getCollisionPoint(
+		const core::vector3df& target,
+		const core::vector3df& pos,
+		core::vector3df& outPos,
+		core::triangle3df& outTri,
+		CCollisionNode*& outNode)
+	{
+		return false;
 	}
 }
