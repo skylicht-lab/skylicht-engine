@@ -45,11 +45,11 @@ namespace Skylicht
 	{
 		if (Selector != NULL && Entity != NULL)
 		{
-			CWorldTransformData* world = Entity->getData<CWorldTransformData>();
+			core::matrix4 world = GameObject->getTransform()->calcWorldTransform();
 
 			Triangles.set_used(Selector->getTriangleCount());
 
-			Selector->getTriangles(Triangles.pointer(), &world->World);
+			Selector->getTriangles(Triangles.pointer(), &world);
 		}
 	}
 
