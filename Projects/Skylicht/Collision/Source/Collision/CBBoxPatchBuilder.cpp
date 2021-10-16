@@ -65,6 +65,8 @@ namespace Skylicht
 		// step 1: caculator the box size
 		for (u32 i = 0, n = m_nodes.size(); i < n; i++)
 		{
+			m_nodes[i]->updateTransform();
+
 			if (i == 0)
 				m_size = m_nodes[i]->getTransformBBox();
 			else
@@ -228,14 +230,33 @@ namespace Skylicht
 		}
 	}
 
-	CGameObject* CBBoxPatchBuilder::getObjectWithRay(
-		const core::line3d<f32>& ray,
-		f32& outBestDistanceSquared,
-		core::vector3df& outCollisionPoint,
-		core::triangle3df& outTriangle,
-		CCollisionNode*& outNode)
+	bool CBBoxPatchBuilder::isIntersection(CCollisionNode* node, const core::line3df& line, float& d, core::triangle3df& outTris, core::vector3df& outPoint)
 	{
-		return NULL;
+		core::vector3df point;
+		bool ret = false;
+
+		core::vector3df vec = line.getVector().normalize();
+		const f32 lineLength = line.getLengthSQ();
+
+		for (u32 i = 0, n = node->Triangles.size(); i < n; i++)
+		{
+			const core::triangle3df& tris = node->Triangles[i];
+			if (tris.getIntersectionWithLine(line.start, vec, point))
+			{
+				const f32 dis1 = point.getDistanceFromSQ(line.start);
+				const f32 dis2 = point.getDistanceFromSQ(line.end);
+
+				if (dis1 < lineLength && dis2 < lineLength && dis1 < d)
+				{
+					d = dis1;
+					outTris = tris;
+					outPoint = point;
+					ret = true;
+				}
+			}
+		}
+
+		return ret;
 	}
 
 	bool CBBoxPatchBuilder::getCollisionPoint(
@@ -245,16 +266,38 @@ namespace Skylicht
 		core::triangle3df& outTriangle,
 		CCollisionNode*& outNode)
 	{
-		return false;
-	}
+		outNode = NULL;
 
-	bool CBBoxPatchBuilder::getCollisionPoint(
-		const core::vector3df& target,
-		const core::vector3df& pos,
-		core::vector3df& outPos,
-		core::triangle3df& outTri,
-		CCollisionNode*& outNode)
-	{
+		f32 nearest = outBestDistanceSquared;
+		float d = nearest;
+
+		core::triangle3df outTris;
+		core::vector3df outPoint;
+
+		for (u32 i = 0, n = m_collisionPatchs.size(); i < n; i++)
+		{
+			SPatch* patch = m_collisionPatchs[i];
+			if (patch->BBox.intersectsWithLine(ray))
+			{
+				for (u32 j = 0, m = patch->Collisions.size(); j < m; j++)
+				{
+					CCollisionNode* node = patch->Collisions[j];
+					if (isIntersection(node, ray, d, outTris, outPoint))
+					{
+						if (d < nearest)
+						{
+							nearest = d;
+							outBestDistanceSquared = nearest;
+							outNode = node;
+							outIntersection = outPoint;
+							outTriangle = outTris;
+						}
+					}
+				}
+			}
+		}
+		if (outNode != NULL)
+			return true;
 		return false;
 	}
 }

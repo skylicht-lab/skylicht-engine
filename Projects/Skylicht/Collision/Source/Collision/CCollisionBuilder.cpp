@@ -118,4 +118,30 @@ namespace Skylicht
 
 		return -1;
 	}
+
+	CGameObject* CCollisionBuilder::getObjectWithRay(
+		const core::line3d<f32>& ray,
+		f32& outBestDistanceSquared,
+		core::vector3df& outIntersection,
+		core::triangle3df& outTriangle,
+		CCollisionNode*& outNode)
+	{
+		if (getCollisionPoint(ray, outBestDistanceSquared, outIntersection, outTriangle, outNode))
+		{
+			return outNode->GameObject;
+		}
+		return NULL;
+	}
+
+	bool CCollisionBuilder::getCollisionPoint(
+		const core::vector3df& target,
+		const core::vector3df& pos,
+		core::vector3df& outIntersection,
+		core::triangle3df& outTriangle,
+		CCollisionNode*& outNode)
+	{
+		const core::line3df ray(pos, target);
+		float outBestDistanceSquared = ray.getLengthSQ();
+		return getCollisionPoint(ray, outBestDistanceSquared, outIntersection, outTriangle, outNode);
+	}
 }

@@ -200,16 +200,6 @@ namespace Skylicht
 		}
 	}
 
-	CGameObject* COctreeBuilder::getObjectWithRay(
-		const core::line3d<f32>& ray,
-		f32& outBestDistanceSquared,
-		core::vector3df& outCollisionPoint,
-		core::triangle3df& outTriangle,
-		CCollisionNode*& outNode)
-	{
-		return NULL;
-	}
-
 	bool COctreeBuilder::getCollisionPoint(
 		const core::line3d<f32>& ray,
 		f32& outBestDistanceSquared,
@@ -217,16 +207,112 @@ namespace Skylicht
 		core::triangle3df& outTriangle,
 		CCollisionNode*& outNode)
 	{
-		return false;
+		outNode = NULL;
+
+		core::vector3df mid = ray.getMiddle();
+		core::vector3df	vec = ray.getVector().normalize();
+
+		float halfLength = ray.getLength() * 0.5f;
+		core::aabbox3df box;
+		box.reset(ray.start);
+		box.addInternalPoint(ray.end);
+
+		m_triangles.set_used(0);
+		m_collisions.set_used(0);
+
+		// step 1: get list triangle collide with ray
+		getTrianglesFromOctree(m_triangles, m_collisions, m_root, mid, vec, halfLength, box);
+
+		// step 2: find nearest triangle
+		s32 cnt = (s32)m_triangles.size();
+		core::triangle3df** listTris = m_triangles.pointer();
+
+		core::vector3df intersection;
+		f32 nearest = outBestDistanceSquared;
+		const f32 raylength = ray.getLengthSQ();
+
+		bool found = false;
+
+		const f32 minX = core::min_(ray.start.X, ray.end.X);
+		const f32 maxX = core::max_(ray.start.X, ray.end.X);
+		const f32 minY = core::min_(ray.start.Y, ray.end.Y);
+		const f32 maxY = core::max_(ray.start.Y, ray.end.Y);
+		const f32 minZ = core::min_(ray.start.Z, ray.end.Z);
+		const f32 maxZ = core::max_(ray.start.Z, ray.end.Z);
+
+		for (s32 i = 0; i < cnt; ++i)
+		{
+			const core::triangle3df* triangle = listTris[i];
+
+			if (minX > triangle->pointA.X && minX > triangle->pointB.X && minX > triangle->pointC.X)
+				continue;
+			if (maxX < triangle->pointA.X && maxX < triangle->pointB.X && maxX < triangle->pointC.X)
+				continue;
+			if (minY > triangle->pointA.Y && minY > triangle->pointB.Y && minY > triangle->pointC.Y)
+				continue;
+			if (maxY < triangle->pointA.Y && maxY < triangle->pointB.Y && maxY < triangle->pointC.Y)
+				continue;
+			if (minZ > triangle->pointA.Z && minZ > triangle->pointB.Z && minZ > triangle->pointC.Z)
+				continue;
+			if (maxZ < triangle->pointA.Z && maxZ < triangle->pointB.Z && maxZ < triangle->pointC.Z)
+				continue;
+
+			if (triangle->getIntersectionWithLine(ray.start, vec, intersection))
+			{
+				const f32 tmp = intersection.getDistanceFromSQ(ray.start);
+				const f32 tmp2 = intersection.getDistanceFromSQ(ray.end);
+
+				if (tmp < raylength && tmp2 < raylength && tmp < nearest)
+				{
+					nearest = tmp;
+					outBestDistanceSquared = nearest;
+
+					outTriangle = *triangle;
+					outIntersection = intersection;
+					outNode = m_collisions[i];
+					found = true;
+				}
+			}
+		}
+
+		return found;
 	}
 
-	bool COctreeBuilder::getCollisionPoint(
-		const core::vector3df& target,
-		const core::vector3df& pos,
-		core::vector3df& outPos,
-		core::triangle3df& outTri,
-		CCollisionNode*& outNode)
+	void COctreeBuilder::getTrianglesFromOctree(
+		core::array<core::triangle3df*>& listTriangle,
+		core::array<CCollisionNode*>& listCollisions,
+		COctreeNode* node,
+		const core::vector3df& midLine,
+		const core::vector3df& lineVect,
+		float halfLength,
+		const core::aabbox3df& box)
 	{
-		return false;
+		u32 cnt = node->Triangles.size();
+		u32 i = 0;
+
+		int* listTriID = node->Triangles.pointer();
+
+		// optimize function core::array::insert
+		int n = listTriangle.size();
+		listTriangle.set_used(n + cnt);
+		listCollisions.set_used(n + cnt);
+
+		core::triangle3df** p = listTriangle.pointer();
+		CCollisionNode** c = listCollisions.pointer();
+
+		// list triangles
+		for (i = 0; i < cnt; ++i)
+		{
+			CCollisionNode* collision = node->Collisions[i];
+
+			p[n + i] = &collision->Triangles[listTriID[i]];
+			c[n + i] = collision;
+		}
+
+		for (i = 0; i < 8; ++i)
+		{
+			if (node->Childs[i] && node->Childs[i]->Box.intersectsWithLine(midLine, lineVect, halfLength) == true)
+				getTrianglesFromOctree(listTriangle, listCollisions, node->Childs[i], midLine, lineVect, halfLength, box);
+		}
 	}
 }
