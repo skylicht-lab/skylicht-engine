@@ -76,13 +76,6 @@ namespace Skylicht
 
 	public:
 
-		virtual CGameObject* getObjectWithRay(
-			const core::line3d<f32>& ray,
-			f32& outBestDistanceSquared,
-			core::vector3df& outCollisionPoint,
-			core::triangle3df& outTriangle,
-			CCollisionNode*& outNode);
-
 		virtual bool getCollisionPoint(
 			const core::line3d<f32>& ray,
 			f32& outBestDistanceSquared,
@@ -90,16 +83,11 @@ namespace Skylicht
 			core::triangle3df& outTriangle,
 			CCollisionNode*& outNode);
 
-		virtual bool getCollisionPoint(
-			const core::vector3df& target,
-			const core::vector3df& pos,
-			core::vector3df& outPos,
-			core::triangle3df& outTri,
-			CCollisionNode*& outNode);
-
 	protected:
 
 		void removeNode(CCollisionNode* collision, SPatch* patch);
+
+		bool isIntersection(CCollisionNode* node, const core::line3df& line, float& d, core::triangle3df& outTris, core::vector3df& outPoint);
 
 	};
 }
