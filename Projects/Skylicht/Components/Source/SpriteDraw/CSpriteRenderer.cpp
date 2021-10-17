@@ -179,8 +179,12 @@ namespace Skylicht
 
 			// scale
 			float scale = m_sprites[i]->Scale;
+			m_sprites[i]->ViewScale = scale;
 			if (m_sprites[i]->AutoScaleInViewSpace)
+			{
 				scale = scale * 0.0015f / CProjective::getSegmentLengthClipSpace(camera, pos, pos + right);
+				m_sprites[i]->ViewScale = scale;
+			}
 
 			// render buffer
 			currentTexture = frame->Image->Texture;

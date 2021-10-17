@@ -43,6 +43,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Animation/CAnimationManager.h"
 #include "TextureManager/CTextureManager.h"
 
+#include "Debug/CSceneDebug.h"
+
 // Tween
 #include "Tween/CTweenManager.h"
 
@@ -91,6 +93,8 @@ namespace Skylicht
 		CGlyphFreetype::createGetInstance();
 #endif
 
+		CSceneDebug::createGetInstance();
+
 		// alway use HW
 		g_video->setMinHardwareBufferVertexCount(0);
 
@@ -101,6 +105,8 @@ namespace Skylicht
 	void releaseSkylicht()
 	{
 		os::Printer::log("Close skylicht core");
+
+		CSceneDebug::releaseInstance();
 
 #if defined(USE_FREETYPE)
 		CGlyphFreetype::releaseInstance();

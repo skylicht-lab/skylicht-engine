@@ -48,6 +48,16 @@ namespace Skylicht
 			m_data->Color = color;
 		}
 
+		inline float getScale()
+		{
+			return m_data->Scale;
+		}
+
+		inline float getViewScale()
+		{
+			return m_data->ViewScale;
+		}
+
 		void setFrame(SFrame* frame, float scale, const SColor& color);
 
 		void setCenter(bool b);

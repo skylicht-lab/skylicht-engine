@@ -76,6 +76,8 @@ namespace Skylicht
 
 	public:
 
+		virtual void drawDebug();
+
 		virtual bool getCollisionPoint(
 			const core::line3d<f32>& ray,
 			f32& outBestDistanceSquared,

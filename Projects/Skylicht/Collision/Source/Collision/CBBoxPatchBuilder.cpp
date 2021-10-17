@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CBBoxPatchBuilder.h"
+#include "Debug/CSceneDebug.h"
 
 namespace Skylicht
 {
@@ -257,6 +258,27 @@ namespace Skylicht
 		}
 
 		return ret;
+	}
+
+	void CBBoxPatchBuilder::drawDebug()
+	{
+		/*
+		CSceneDebug* debug = CSceneDebug::getInstance();
+
+		debug->addBoudingBox(m_global.BBox, SColor(255, 255, 0, 255));
+
+		for (u32 i = 0, n = m_collisionPatchs.size(); i < n; i++)
+		{
+			debug->addBoudingBox(m_collisionPatchs[i]->BBox, SColor(255, 255, 0, 255));
+
+			SPatch* patch = m_collisionPatchs[i];
+			for (u32 j = 0, m = patch->Collisions.size(); j < m; j++)
+			{
+				CCollisionNode* node = patch->Collisions[j];
+				debug->addBoudingBox(node->getTransformBBox(), SColor(255, 255, 255, 0));
+			}
+		}
+		*/
 	}
 
 	bool CBBoxPatchBuilder::getCollisionPoint(

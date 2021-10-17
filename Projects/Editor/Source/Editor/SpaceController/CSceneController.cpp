@@ -310,6 +310,8 @@ namespace Skylicht
 			{
 				g->onGizmos();
 			}
+
+			CCollisionController::getInstance()->getBBCollision()->drawDebug();
 		}
 
 		void CSceneController::refresh()

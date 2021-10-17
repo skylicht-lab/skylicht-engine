@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CCullingSystem.h"
 #include "Lighting/CLightCullingSystem.h"
 #include "ReflectionProbe/CReflectionProbeSystem.h"
+#include "Debug/CDebugRenderer.h"
 
 namespace Skylicht
 {
@@ -62,6 +63,7 @@ namespace Skylicht
 		// systems run after culling
 		addRenderSystem<CMeshRenderer>();
 		addRenderSystem<CSkinnedMeshRenderer>();
+		addRenderSystem<CDebugRenderer>();
 	}
 
 	CEntityManager::~CEntityManager()
