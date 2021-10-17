@@ -42,6 +42,8 @@ namespace Skylicht
 
 		float Scale;
 
+		float ViewScale;
+
 		bool Center;
 
 		bool Billboard;

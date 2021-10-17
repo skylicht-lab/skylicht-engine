@@ -68,16 +68,21 @@ namespace Skylicht
 			addLinkComponent(m_sprite);
 
 			CBBCollisionManager* bbCollision = CCollisionController::getInstance()->getBBCollision();
-			m_collisionNode = bbCollision->addBBCollision(m_gameObject, core::aabbox3df(core::vector3df(-2.0f, -2.0f, -2.0f), core::vector3df(2.0f, 2.0f, 2.0f)));
+			m_collisionNode = bbCollision->addBBCollision(m_gameObject, core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f), core::vector3df(1.0f, 1.0f, 1.0f)));
 		}
 
 		void CGDirectionLight::updateComponent()
 		{
+			// update color of light
 			SColor lightColor = m_directionLight->getColor().toSColor();
-
 			m_sprite->setColor(lightColor);
 
+			// draw light direction arrow
 			CHandles::getInstance()->drawArrowInViewSpace(m_gameObject->getPosition(), m_directionLight->getDirection(), 0.5f, 0.05f, lightColor);
+
+			// update collision bbox
+			float boxScale = m_sprite->getViewScale() * 10.0f;
+			m_collisionNode->updateBBox(core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f) * boxScale, core::vector3df(1.0f, 1.0f, 1.0f) * boxScale));
 		}
 	}
 }

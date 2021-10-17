@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,37 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/CEntity.h"
+#include "Entity/IRenderSystem.h"
+#include "LineDraw/CLineDrawData.h"
 
 namespace Skylicht
 {
-	class CTriangleSelector
+	class CDebugRenderer : public IRenderSystem
 	{
 	protected:
-		CEntity* m_entity;
-
-		core::aabbox3df m_bbox;
-		core::array<core::triangle3df> m_triangles;
+		CLineDrawData* m_drawData;
 
 	public:
-		CTriangleSelector(CEntity* entity);
+		CDebugRenderer();
 
-		virtual ~CTriangleSelector();
+		virtual ~CDebugRenderer();
 
-		virtual void getTriangles(core::triangle3df* triangles, const core::matrix4* transform);
+		virtual void beginQuery();
 
-		virtual const core::aabbox3df& getBBox();
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
-		virtual void updateBBox(const core::aabbox3df& box);
+		virtual void init(CEntityManager* entityManager);
 
-		inline u32 getTriangleCount()
-		{
-			return m_triangles.size();
-		}
+		virtual void update(CEntityManager* entityManager);
 
-		inline CEntity* getEntity()
-		{
-			return m_entity;
-		}
+		virtual void render(CEntityManager* entityManager);
+
+		virtual void postRender(CEntityManager* entityManager);
 	};
 }
