@@ -53,6 +53,14 @@ namespace Skylicht
 		}
 	}
 
+	void CCollisionNode::updateBBox(const core::aabbox3df& box)
+	{
+		if (Selector != NULL)
+		{
+			Selector->updateBBox(box);
+		}
+	}
+
 	core::aabbox3df CCollisionNode::getTransformBBox()
 	{
 		core::aabbox3df ret;

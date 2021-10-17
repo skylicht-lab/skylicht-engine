@@ -48,6 +48,8 @@ namespace Skylicht
 
 		virtual void build() = 0;
 
+		virtual void drawDebug() {}
+
 		virtual CGameObject* getObjectWithRay(
 			const core::line3d<f32>& ray,
 			f32& outBestDistanceSquared,
