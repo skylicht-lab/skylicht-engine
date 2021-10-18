@@ -99,6 +99,11 @@ namespace Skylicht
 			SGUIColor CThemeConfig::HeaderHover = SGUIColor(255, 60, 60, 60);
 			SGUIColor CThemeConfig::HeaderBorder = SGUIColor(255, 30, 30, 30);
 
+			SGUIColor CThemeConfig::RulerBG = SGUIColor(255, 40, 40, 40);
+			SGUIColor CThemeConfig::RulerLine1 = SGUIColor(255, 70, 70, 70);
+			SGUIColor CThemeConfig::RulerLine2 = SGUIColor(255, 100, 100, 100);
+			SGUIColor CThemeConfig::RulerLine3 = SGUIColor(255, 140, 140, 140);
+
 			SGUIColor CThemeConfig::FolderColor = SGUIColor(255, 190, 160, 95);
 
 			float CThemeConfig::TreeIndentationSize = 25.0f;

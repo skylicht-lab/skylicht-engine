@@ -98,10 +98,15 @@ namespace Skylicht
 
 				static SGUIColor OpenSaveDialogTop;
 				static SGUIColor OpenSaveDialogBottom;
-				
+
 				static SGUIColor Header;
 				static SGUIColor HeaderHover;
 				static SGUIColor HeaderBorder;
+
+				static SGUIColor RulerBG;
+				static SGUIColor RulerLine1;
+				static SGUIColor RulerLine2;
+				static SGUIColor RulerLine3;
 
 				static SGUIColor FolderColor;
 

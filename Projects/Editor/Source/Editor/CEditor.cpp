@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/Hierarchy/CSpaceHierarchy.h"
 #include "Space/LoadScene/CSpaceLoadScene.h"
 #include "Space/ProjectSettings/CSpaceProjectSettings.h"
+#include "Space/GUIDesign/CSpaceGUIDesign.h"
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
@@ -479,7 +480,7 @@ namespace Skylicht
 			}
 			else if (workspace == L"GUI Design")
 			{
-
+				m_workspaces.push_back(new CSpaceGUIDesign(window, this));
 			}
 			else if (workspace == L"Animation")
 			{
