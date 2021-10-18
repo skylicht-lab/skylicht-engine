@@ -32,6 +32,7 @@ namespace Skylicht
 	{
 	public:
 		bool HasChanged;
+		bool NeedValidate;
 		core::matrix4 World;
 		core::matrix4 Relative;
 		int Depth;
@@ -43,9 +44,9 @@ namespace Skylicht
 
 		virtual ~CWorldTransformData();
 
-		virtual bool serializable(CMemoryStream *stream, IMeshExporter *exporter);
+		virtual bool serializable(CMemoryStream* stream, IMeshExporter* exporter);
 
-		virtual bool deserializable(CMemoryStream *stream, IMeshImporter *importer);
+		virtual bool deserializable(CMemoryStream* stream, IMeshImporter* importer);
 
 		DECLARE_GETTYPENAME(CWorldTransformData);
 	};

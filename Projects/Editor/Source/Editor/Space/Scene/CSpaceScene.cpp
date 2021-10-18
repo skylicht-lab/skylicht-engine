@@ -236,6 +236,7 @@ namespace Skylicht
 
 			// add handle renderer
 			CEntityManager* entityMgr = m_scene->getEntityManager();
+			entityMgr->addSystem<CPickCollisionSystem>();
 			m_handlesRenderer = entityMgr->addRenderSystem<CHandlesRenderer>();
 			m_gizmosRenderer = entityMgr->addRenderSystem<CGizmosRenderer>();
 
@@ -277,7 +278,7 @@ namespace Skylicht
 
 			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 			SColor c(255, 255, 244, 214);
-			directionalLight->setColor(SColorf(c));			
+			directionalLight->setColor(SColorf(c));
 
 			// update search index
 			m_scene->updateAddRemoveObject();
