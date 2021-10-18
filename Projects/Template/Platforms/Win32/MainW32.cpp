@@ -236,7 +236,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				close = true;
 		}
 
-		if (g_update == true)
+		if (g_update == true && !close)
 			g_application->mainLoop();
 
 		if (g_restartApplication == true)
