@@ -22,36 +22,30 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CSpaceGUIDesign.h"
 
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+namespace Skylicht
+{
+	namespace Editor
+	{
+		CSpaceGUIDesign::CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor) :
+			CSpace(window, editor)
+		{
+			m_leftRuler = new GUI::CRulerBar(window, false);
+			m_leftRuler->setHeight(100.0f);
+			m_leftRuler->setBeginOffset(40.0f);
 
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Controls/CDialogWindow.h"
-#include "GUI/Controls/CDockableWindow.h"
-#include "GUI/Controls/CDockTabControl.h"
-#include "GUI/Controls/CScrollControl.h"
-#include "GUI/Controls/CSplitter.h"
-#include "GUI/Controls/CMenuBar.h"
-#include "GUI/Controls/CTreeNode.h"
-#include "GUI/Controls/CTreeControl.h"
-#include "GUI/Controls/CListBox.h"
-#include "GUI/Controls/CTableRow.h"
-#include "GUI/Controls/CToolbar.h"
-#include "GUI/Controls/CTextBox.h"
-#include "GUI/Controls/CCheckBox.h"
-#include "GUI/Controls/CComboBox.h"
-#include "GUI/Controls/CDropdownBox.h"
-#include "GUI/Controls/CNumberInput.h"
-#include "GUI/Controls/CSlider.h"
-#include "GUI/Controls/CCollapsibleGroup.h"
-#include "GUI/Controls/CBoxLayout.h"
-#include "GUI/Controls/CContentSizeControl.h"
-#include "GUI/Controls/CProgressBar.h"
-#include "GUI/Controls/CMessageBox.h"
-#include "GUI/Controls/CFlatButton.h"
-#include "GUI/Controls/CDataGridView.h"
-#include "GUI/Controls/COpenSaveDialog.h"
-#include "GUI/Controls/CRulerBar.h"
-#include "GUI/Utils/CToggleGroup.h"
+			m_topRuler = new GUI::CRulerBar(window, true);
+			m_topRuler->setWidth(200.0f);
+
+			m_leftRuler->setPosition(0.0f);
+			m_topRuler->setPosition(0.0f);
+		}
+
+		CSpaceGUIDesign::~CSpaceGUIDesign()
+		{
+
+		}
+	}
+}

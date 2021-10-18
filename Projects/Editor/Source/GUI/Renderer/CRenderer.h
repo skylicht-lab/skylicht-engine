@@ -69,6 +69,10 @@ namespace Skylicht
 
 				virtual void drawFillRect(const SRect& r, const SGUIColor& color) {}
 
+				virtual void drawLineX(float x1, float y1, float width, const SGUIColor& color) {}
+
+				virtual void drawLineY(float x1, float y1, float height, const SGUIColor& color) {}
+
 				virtual void drawBorderRect(const SRect& r, const SGUIColor& color, bool left, bool top, bool right, bool bottom) {}
 
 				virtual void renderText(const SRect& r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string) {}
