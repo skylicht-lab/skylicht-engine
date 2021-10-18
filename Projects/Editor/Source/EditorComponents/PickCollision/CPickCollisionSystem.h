@@ -24,31 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Entity/IEntityData.h"
+#include "Entity/IEntitySystem.h"
 
-#include "Collision/CBBCollisionManager.h"
-#include "EditorComponents/PickCollision/CPickCollisionData.h"
+#include "CPickCollisionData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CCollisionController :public CGameSingleton<CCollisionController>
+		class CPickCollisionSystem : public IEntitySystem
 		{
 		protected:
-			CBBCollisionManager* m_bbCollision;
+			core::array<CPickCollisionData*> m_pickCollisions;
 
 		public:
-			CCollisionController();
+			CPickCollisionSystem();
 
-			virtual ~CCollisionController();
+			virtual ~CPickCollisionSystem();
 
-			inline CBBCollisionManager* getBBCollision()
-			{
-				return m_bbCollision;
-			}
+			virtual void beginQuery();
 
-			void clear();
+			virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
+
+			virtual void init(CEntityManager* entityManager);
+
+			virtual void update(CEntityManager* entityManager);
 		};
 	}
 }

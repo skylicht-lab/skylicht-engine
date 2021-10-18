@@ -60,8 +60,12 @@ namespace Skylicht
 		if (t->Depth > m_maxDepth)
 			m_maxDepth = t->Depth;
 
+		t->NeedValidate = false;
+
 		if (t->HasChanged == true)
 		{
+			t->NeedValidate = true;
+
 			// my transform changed
 			m_entities[t->Depth].push_back(t);
 
@@ -77,6 +81,7 @@ namespace Skylicht
 			{
 				// this transform changed because parent is changed
 				t->HasChanged = true;
+				t->NeedValidate = true;
 
 				// notify recalc inverse matrix
 				if (tInverse != NULL)
