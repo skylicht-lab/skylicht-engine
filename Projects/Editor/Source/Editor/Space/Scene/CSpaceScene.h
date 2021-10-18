@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/History/CSceneHistory.h"
 #include "EditorComponents/Handles/CHandlesRenderer.h"
 #include "EditorComponents/Gizmos/CGizmosRenderer.h"
+#include "EditorComponents/PickCollision/CPickCollisionSystem.h"
+
 #include "CViewpointController.h"
 
 #include "Reactive/ISubject.h"

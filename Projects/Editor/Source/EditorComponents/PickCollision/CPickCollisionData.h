@@ -24,31 +24,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-
-#include "Collision/CBBCollisionManager.h"
-#include "EditorComponents/PickCollision/CPickCollisionData.h"
+#include "Entity/IEntityData.h"
+#include "Collision/CCollisionNode.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CCollisionController :public CGameSingleton<CCollisionController>
+		class CPickCollisionData : public IEntityData
 		{
-		protected:
-			CBBCollisionManager* m_bbCollision;
+		public:
+			CCollisionNode* CollisionNode;
+			bool IsBBoxCollision;
+			bool IsChanged;
 
 		public:
-			CCollisionController();
+			CPickCollisionData();
 
-			virtual ~CCollisionController();
-
-			inline CBBCollisionManager* getBBCollision()
-			{
-				return m_bbCollision;
-			}
-
-			void clear();
+			virtual ~CPickCollisionData();
 		};
 	}
 }

@@ -33,6 +33,7 @@ namespace Skylicht
 	protected:
 		struct SPatch
 		{
+			core::aabbox3df VolumeBox;
 			core::aabbox3df BBox;
 			int X;
 			int Y;
@@ -44,6 +45,19 @@ namespace Skylicht
 				X = 0;
 				Y = 0;
 				Z = 0;
+			}
+
+			void calculateBBox()
+			{
+				BBox.reset(core::vector3df());
+
+				for (u32 i = 0, n = Collisions.size(); i < n; i++)
+				{
+					if (i == 0)
+						BBox = Collisions[0]->getTransformBBox();
+					else
+						BBox.addInternalBox(Collisions[i]->getTransformBBox());
+				}
 			}
 		};
 

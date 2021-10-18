@@ -69,6 +69,10 @@ namespace Skylicht
 
 			CBBCollisionManager* bbCollision = CCollisionController::getInstance()->getBBCollision();
 			m_collisionNode = bbCollision->addBBCollision(m_gameObject, core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f), core::vector3df(1.0f, 1.0f, 1.0f)));
+
+			CPickCollisionData* pickData = m_gameObject->getEntity()->addData<CPickCollisionData>();
+			pickData->CollisionNode = m_collisionNode;
+			pickData->IsBBoxCollision = true;
 		}
 
 		void CGDirectionLight::updateComponent()

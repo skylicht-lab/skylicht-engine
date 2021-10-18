@@ -83,6 +83,8 @@ namespace Skylicht
 
 		core::vector3df patchSize(m_patchSize, m_patchSize, m_patchSize);
 
+		m_global.VolumeBox.MinEdge = m_size.MinEdge;
+		m_global.VolumeBox.MaxEdge = m_size.MinEdge + core::vector3df(m_numX * m_patchSize, m_numY * m_patchSize, m_numZ * m_patchSize);
 		m_global.BBox = m_size;
 
 		for (int x = 0; x < m_numX; x++)
@@ -98,8 +100,8 @@ namespace Skylicht
 					p.Y = y;
 					p.Z = z;
 
-					p.BBox.MinEdge = m_size.MinEdge + core::vector3df(x * m_patchSize, y * m_patchSize, z * m_patchSize);
-					p.BBox.MaxEdge = p.BBox.MinEdge + patchSize;
+					p.VolumeBox.MinEdge = m_size.MinEdge + core::vector3df(x * m_patchSize, y * m_patchSize, z * m_patchSize);
+					p.VolumeBox.MaxEdge = p.VolumeBox.MinEdge + patchSize;
 				}
 			}
 		}
@@ -113,9 +115,12 @@ namespace Skylicht
 		// step4: collect the patch have collisions
 		for (u32 i = 0, n = m_patchs.size(); i < n; i++)
 		{
-			if (m_patchs[i]->Collisions.size() > 0)
+			SPatch* patch = m_patchs[i];
+
+			if (patch->Collisions.size() > 0)
 			{
-				m_collisionPatchs.push_back(m_patchs[i]);
+				patch->calculateBBox();
+				m_collisionPatchs.push_back(patch);
 			}
 		}
 
@@ -173,7 +178,7 @@ namespace Skylicht
 					SPatch* patch = getPatch(x, y, z);
 					if (patch)
 					{
-						if (bbox.isFullInside(patch->BBox))
+						if (bbox.isFullInside(patch->VolumeBox))
 						{
 							patch->Collisions.push_back(collision);
 						}
@@ -226,6 +231,7 @@ namespace Skylicht
 			if (patch->Collisions[i] == collision)
 			{
 				patch->Collisions.erase(i);
+				patch->calculateBBox();
 				return;
 			}
 		}
@@ -262,7 +268,6 @@ namespace Skylicht
 
 	void CBBoxPatchBuilder::drawDebug()
 	{
-		/*
 		CSceneDebug* debug = CSceneDebug::getInstance();
 
 		debug->addBoudingBox(m_global.BBox, SColor(255, 255, 0, 255));
@@ -278,7 +283,6 @@ namespace Skylicht
 				debug->addBoudingBox(node->getTransformBBox(), SColor(255, 255, 255, 0));
 			}
 		}
-		*/
 	}
 
 	bool CBBoxPatchBuilder::getCollisionPoint(
