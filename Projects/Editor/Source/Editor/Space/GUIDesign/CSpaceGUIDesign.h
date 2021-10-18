@@ -24,34 +24,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "SkylichtEngine.h"
+#include "Editor/Space/CSpace.h"
 
-#include "GUI/Controls/CCanvas.h"
-#include "GUI/Controls/CDialogWindow.h"
-#include "GUI/Controls/CDockableWindow.h"
-#include "GUI/Controls/CDockTabControl.h"
-#include "GUI/Controls/CScrollControl.h"
-#include "GUI/Controls/CSplitter.h"
-#include "GUI/Controls/CMenuBar.h"
-#include "GUI/Controls/CTreeNode.h"
-#include "GUI/Controls/CTreeControl.h"
-#include "GUI/Controls/CListBox.h"
-#include "GUI/Controls/CTableRow.h"
-#include "GUI/Controls/CToolbar.h"
-#include "GUI/Controls/CTextBox.h"
-#include "GUI/Controls/CCheckBox.h"
-#include "GUI/Controls/CComboBox.h"
-#include "GUI/Controls/CDropdownBox.h"
-#include "GUI/Controls/CNumberInput.h"
-#include "GUI/Controls/CSlider.h"
-#include "GUI/Controls/CCollapsibleGroup.h"
-#include "GUI/Controls/CBoxLayout.h"
-#include "GUI/Controls/CContentSizeControl.h"
-#include "GUI/Controls/CProgressBar.h"
-#include "GUI/Controls/CMessageBox.h"
-#include "GUI/Controls/CFlatButton.h"
-#include "GUI/Controls/CDataGridView.h"
-#include "GUI/Controls/COpenSaveDialog.h"
-#include "GUI/Controls/CRulerBar.h"
-#include "GUI/Utils/CToggleGroup.h"
+namespace Skylicht
+{
+	namespace Editor
+	{
+		class CSpaceGUIDesign : public CSpace
+		{
+		protected:
+			GUI::CRulerBar* m_topRuler;
+			GUI::CRulerBar* m_leftRuler;
+
+		public:
+			CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor);
+
+			virtual ~CSpaceGUIDesign();
+		};
+	}
+}
