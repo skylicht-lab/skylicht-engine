@@ -113,7 +113,8 @@ namespace Skylicht
 
 				processDelayedDeletes();
 
-				CInput::getInput()->update();
+				if (CInput::getInput() != NULL)
+					CInput::getInput()->update();
 
 				if (m_needSaveDockLayout == true)
 				{

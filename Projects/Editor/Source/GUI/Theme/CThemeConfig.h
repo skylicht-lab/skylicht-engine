@@ -107,6 +107,11 @@ namespace Skylicht
 				static SGUIColor RulerLine1;
 				static SGUIColor RulerLine2;
 				static SGUIColor RulerLine3;
+				static SGUIColor Timeline;
+				static SGUIColor TimelineItemBG;
+				static SGUIColor TimelineItemBorder;
+				static SGUIColor TimelineBG;
+				static SGUIColor TimelineBorder;
 
 				static SGUIColor FolderColor;
 

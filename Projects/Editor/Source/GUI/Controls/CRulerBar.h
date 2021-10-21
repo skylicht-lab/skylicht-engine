@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CScrollBarBar.h"
 
 namespace Skylicht
 {
@@ -52,6 +51,11 @@ namespace Skylicht
 				inline void setBeginOffset(float offset)
 				{
 					m_beginOffset = offset;
+				}
+
+				inline float getBeginOffset()
+				{
+					return m_beginOffset;
 				}
 
 				inline void setPosition(float pos)

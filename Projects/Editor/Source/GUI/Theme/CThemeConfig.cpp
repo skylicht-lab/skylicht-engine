@@ -104,6 +104,13 @@ namespace Skylicht
 			SGUIColor CThemeConfig::RulerLine2 = SGUIColor(255, 100, 100, 100);
 			SGUIColor CThemeConfig::RulerLine3 = SGUIColor(255, 140, 140, 140);
 
+			SGUIColor CThemeConfig::Timeline = SGUIColor(255, 60, 60, 60);
+			SGUIColor CThemeConfig::TimelineItemBG = SGUIColor(255, 35, 35, 35);
+			SGUIColor CThemeConfig::TimelineItemBorder = SGUIColor(255, 10, 10, 10);
+
+			SGUIColor CThemeConfig::TimelineBG = SGUIColor(255, 40, 40, 40);
+			SGUIColor CThemeConfig::TimelineBorder = SGUIColor(255, 60, 60, 60);
+
 			SGUIColor CThemeConfig::FolderColor = SGUIColor(255, 190, 160, 95);
 
 			float CThemeConfig::TreeIndentationSize = 25.0f;

@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -21,26 +21,59 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "EditorComponents/PickCollision/CPickCollisionData.h"
+#include "CBase.h"
+#include "CTimelineValue.h"
+#include "CContentSizeControl.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CCollisionController :public CGameSingleton<CCollisionController>
+		namespace GUI
 		{
-		protected:
+			class CTimeline;
 
-		public:
-			CCollisionController();
+			class CTimelineContainer : public CContentSizeControl
+			{
+			protected:
+				float m_contentSize;
+				CTimeline* m_timeline;
 
-			virtual ~CCollisionController();
+			public:
+				CTimelineContainer(CBase* parent, CTimeline* timeline);
 
-			void clear();
-		};
+				virtual ~CTimelineContainer();
+
+				virtual bool onMouseWheeled(int delta);
+
+				inline void setContentSize(float s)
+				{
+					m_contentSize = s;
+				}
+			};
+
+			class CTimelineItem : public CBase
+			{
+			protected:
+				float m_contentSize;
+				CTimelineValue* m_value;
+				CTimeline* m_timeline;
+			public:
+				CTimelineItem(CBase* base, CTimeline* timeline);
+
+				virtual ~CTimelineItem();
+
+				virtual void render();
+
+				inline CTimelineValue* getTimelineValue()
+				{
+					return m_value;
+				}
+
+				void setContentSize(float size);
+			};
+		}
 	}
 }

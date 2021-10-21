@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -21,26 +21,66 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "EditorComponents/PickCollision/CPickCollisionData.h"
+#include "CBase.h"
+#include "CRulerBar.h"
+#include "CScrollControl.h"
+#include "CTimelineItem.h"
+#include "CTimelineValue.h"
+#include "CTimelineFocus.h"
+#include "CContentSizeControl.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CCollisionController :public CGameSingleton<CCollisionController>
+		namespace GUI
 		{
-		protected:
+			class CTimeline : public CBase
+			{
+			protected:
+				CRulerBar* m_ruler;
 
-		public:
-			CCollisionController();
+				CTimelineFocus* m_focus;
 
-			virtual ~CCollisionController();
+				CScrollControl* m_scrollPanel;
 
-			void clear();
-		};
+				CTimelineContainer* m_itemPanel;
+
+				float m_contentWidth;
+
+				float m_focusPosition;
+
+				CScrollBar* m_timelineScrollBar;
+
+				SDimension m_maxSize;
+
+			public:
+				CTimeline(CBase* base);
+
+				virtual ~CTimeline();
+
+				CTimelineItem* addItem(float height);
+
+				virtual void render();
+
+				virtual void layout();
+
+				inline void setFocusPosition(float pos)
+				{
+					m_focusPosition = pos;
+				}
+
+				void onTimelineScroll(CBase* base);
+
+				void onTimelineMouseWheeled(int delta);
+
+			protected:
+
+				void updateFocusPosition();
+
+			};
+		}
 	}
 }
