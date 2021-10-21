@@ -31,17 +31,14 @@ namespace Skylicht
 	{
 		CCollisionController::CCollisionController()
 		{
-			m_bbCollision = new CBBCollisionManager();
 		}
 
 		CCollisionController::~CCollisionController()
 		{
-			delete m_bbCollision;
 		}
 
 		void CCollisionController::clear()
 		{
-			m_bbCollision->clear();
 		}
 	}
 }

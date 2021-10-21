@@ -50,8 +50,7 @@ namespace Skylicht
 
 		CGDirectionLight::~CGDirectionLight()
 		{
-			CBBCollisionManager* bbCollision = CCollisionController::getInstance()->getBBCollision();
-			bbCollision->removeCollision(&m_collisionNode, 1);
+
 		}
 
 		void CGDirectionLight::initComponent()
@@ -67,12 +66,11 @@ namespace Skylicht
 
 			addLinkComponent(m_sprite);
 
-			CBBCollisionManager* bbCollision = CCollisionController::getInstance()->getBBCollision();
-			m_collisionNode = bbCollision->addBBCollision(m_gameObject, core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f), core::vector3df(1.0f, 1.0f, 1.0f)));
+			// m_collisionNode = bbCollision->addBBCollision(m_gameObject, core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f), core::vector3df(1.0f, 1.0f, 1.0f)));
 
-			CPickCollisionData* pickData = m_gameObject->getEntity()->addData<CPickCollisionData>();
-			pickData->CollisionNode = m_collisionNode;
-			pickData->IsBBoxCollision = true;
+			// CPickCollisionData* pickData = m_gameObject->getEntity()->addData<CPickCollisionData>();
+			// pickData->CollisionNode = m_collisionNode;
+			// pickData->IsBBoxCollision = true;
 		}
 
 		void CGDirectionLight::updateComponent()
@@ -85,8 +83,8 @@ namespace Skylicht
 			CHandles::getInstance()->drawArrowInViewSpace(m_gameObject->getPosition(), m_directionLight->getDirection(), 0.5f, 0.05f, lightColor);
 
 			// update collision bbox
-			float boxScale = m_sprite->getViewScale() * 10.0f;
-			m_collisionNode->updateBBox(core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f) * boxScale, core::vector3df(1.0f, 1.0f, 1.0f) * boxScale));
+			// float boxScale = m_sprite->getViewScale() * 10.0f;
+			// m_collisionNode->updateBBox(core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f) * boxScale, core::vector3df(1.0f, 1.0f, 1.0f) * boxScale));
 		}
 	}
 }

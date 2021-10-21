@@ -38,7 +38,7 @@ namespace Skylicht
 				bool m_isHorizontal;
 				float m_barMinSize;
 
-				CScrollBarBar *m_bar;
+				CScrollBarBar* m_bar;
 
 				float m_viewableContentSize;
 				float m_contentSize;
@@ -50,7 +50,7 @@ namespace Skylicht
 				Listener OnBarMoved;
 
 			public:
-				CScrollBar(CBase *parent, bool horizontal);
+				CScrollBar(CBase* parent, bool horizontal);
 
 				~CScrollBar();
 
@@ -100,7 +100,7 @@ namespace Skylicht
 					invalidate();
 				}
 
-				virtual void onBarMoved(CBase *base);
+				virtual void onBarMoved(CBase* base);
 
 				virtual float getNudgeAmount()
 				{
@@ -110,6 +110,11 @@ namespace Skylicht
 				virtual void setNudgeAmount(float nudge)
 				{
 					m_nudgeAmount = nudge;
+				}
+
+				bool canScroll()
+				{
+					return !m_bar->isHidden();
 				}
 
 			protected:

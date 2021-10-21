@@ -51,6 +51,7 @@ namespace Skylicht
 					dock(EPosition::Left);
 				}
 
+				enableClip(true);
 				enableRenderFillRect(true);
 				setFillRectColor(CThemeConfig::RulerBG);
 			}

@@ -392,17 +392,17 @@ namespace Skylicht
 
 				if (m_parent)
 				{
-					if (testX - m_padding.Left < m_parent->m_margin.Left)
-						testX = m_parent->m_margin.Left + m_padding.Left;
+					if (testX - m_margin.Left < m_parent->m_padding.Left)
+						testX = m_parent->m_padding.Left + m_margin.Left;
 
-					if (testY - m_padding.Top < m_parent->m_margin.Top)
-						testY = m_parent->m_margin.Top + m_padding.Top;
+					if (testY - m_margin.Top < m_parent->m_padding.Top)
+						testY = m_parent->m_padding.Top + m_margin.Top;
 
-					if (testX + m_padding.Right > m_parent->width() - m_parent->m_margin.Right)
-						testX = m_parent->width() - m_parent->m_margin.Right - m_padding.Right;
+					if (testX + m_margin.Right > m_parent->width() - m_parent->m_padding.Right)
+						testX = m_parent->width() - m_parent->m_padding.Right - m_margin.Right;
 
-					if (testY + m_padding.Bottom > m_parent->height() - m_parent->m_margin.Bottom - paddingBottom)
-						testY = m_parent->height() - m_parent->m_margin.Bottom - m_padding.Bottom - paddingBottom;
+					if (testY + m_margin.Bottom > m_parent->height() - m_parent->m_padding.Bottom - paddingBottom)
+						testY = m_parent->height() - m_parent->m_padding.Bottom - m_margin.Bottom - paddingBottom;
 				}
 
 				x = testX - dragPosX;
@@ -415,17 +415,17 @@ namespace Skylicht
 			{
 				if (m_parent && m_parent != CGUIContext::getRoot())
 				{
-					if (x - m_padding.Left < m_parent->m_margin.Left)
-						x = m_parent->m_margin.Left + m_padding.Left;
+					if (x - m_margin.Left < m_parent->m_padding.Left)
+						x = m_parent->m_padding.Left + m_margin.Left;
 
-					if (y - m_padding.Top < m_parent->m_margin.Top)
-						y = m_parent->m_margin.Top + m_padding.Top;
+					if (y - m_margin.Top < m_parent->m_padding.Top)
+						y = m_parent->m_padding.Top + m_margin.Top;
 
-					if (x + width() + m_padding.Right > m_parent->width() - m_parent->m_margin.Right)
-						x = m_parent->width() - m_parent->m_margin.Right - width() - m_padding.Right;
+					if (x + width() + m_margin.Right > m_parent->width() - m_parent->m_padding.Right)
+						x = m_parent->width() - m_parent->m_padding.Right - width() - m_margin.Right;
 
-					if (y + height() + m_padding.Bottom > m_parent->height() - m_parent->m_margin.Bottom)
-						y = m_parent->height() - m_parent->m_margin.Bottom - height() - m_padding.Bottom;
+					if (y + height() + m_margin.Bottom > m_parent->height() - m_parent->m_padding.Bottom)
+						y = m_parent->height() - m_parent->m_padding.Bottom - height() - m_margin.Bottom;
 				}
 
 				setBounds(x, y, width(), height());

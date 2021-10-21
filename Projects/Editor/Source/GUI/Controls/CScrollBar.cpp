@@ -32,13 +32,14 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CScrollBar::CScrollBar(CBase *parent, bool horizontal) :
+			CScrollBar::CScrollBar(CBase* parent, bool horizontal) :
 				CBase(parent),
 				m_isHorizontal(horizontal),
 				m_viewableContentSize(1.0f),
 				m_contentSize(2.0f),
-				m_nudgeAmount(20.0f),
-				m_scroll(0.0f)
+				m_nudgeAmount(50.0f),
+				m_scroll(0.0f),
+				m_barMinSize(10.0f)
 			{
 				setSize(6.0f, 6.0f);
 				m_bar = new CScrollBarBar(this, horizontal);
@@ -112,7 +113,7 @@ namespace Skylicht
 				return m_bar->Y() / (height() - m_bar->height());
 			}
 
-			void CScrollBar::onBarMoved(CBase *base)
+			void CScrollBar::onBarMoved(CBase* base)
 			{
 				setScroll(calculateScrolledAmount());
 				invalidateParent();

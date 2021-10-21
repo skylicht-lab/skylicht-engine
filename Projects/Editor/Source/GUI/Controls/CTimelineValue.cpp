@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -23,54 +23,53 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CPickCollisionSystem.h"
-#include "Editor/SpaceController/CCollisionController.h"
+#include "CTimeline.h"
+#include "CTimelineValue.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CPickCollisionSystem::CPickCollisionSystem()
+		namespace GUI
 		{
-
-
-		}
-
-		CPickCollisionSystem::~CPickCollisionSystem()
-		{
-
-		}
-
-		void CPickCollisionSystem::beginQuery()
-		{
-			m_pickCollisions.set_used(0);
-		}
-
-		void CPickCollisionSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
-		{
-			// if transform is changed
-			CPickCollisionData* collisionData = entity->getData<CPickCollisionData>();
-			if (collisionData != NULL &&
-				collisionData->CollisionNode != NULL &&
-				collisionData->IsChanged)
+			CTimelineValue::CTimelineValue(CBase* base, CTimeline* timeline) :
+				CBase(base),
+				m_timeline(timeline)
 			{
-				m_pickCollisions.push_back(collisionData);
+				m_innerPanel = new CBase(this);
+				m_innerPanel->setPos(0.0f, 0.0f);
+				m_innerPanel->sendToBack();
+
+				enableClip(true);
 			}
-		}
 
-		void CPickCollisionSystem::init(CEntityManager* entityManager)
-		{
-
-		}
-
-		void CPickCollisionSystem::update(CEntityManager* entityManager)
-		{
-			CPickCollisionData** listCollision = m_pickCollisions.pointer();
-			u32 numCollision = m_pickCollisions.size();
-
-			for (u32 i = 0; i < numCollision; i++)
+			CTimelineValue::~CTimelineValue()
 			{
 
+			}
+
+			void CTimelineValue::render()
+			{
+				CBase::render();
+				CRenderer* renderer = CRenderer::getRenderer();
+
+				SRect bound = getRenderBounds();
+
+				renderer->drawFillRect(bound, CThemeConfig::TimelineBG);
+				renderer->drawBorderRect(bound, CThemeConfig::TimelineItemBorder, false, true, false, true);
+			}
+
+			void CTimelineValue::layout()
+			{
+				CBase::layout();
+				m_innerPanel->sizeToChildren(true, true);
+			}
+
+			bool CTimelineValue::onMouseWheeled(int delta)
+			{
+				m_timeline->onTimelineMouseWheeled(delta);
+				return true;
 			}
 		}
 	}

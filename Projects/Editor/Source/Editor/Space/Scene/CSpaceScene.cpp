@@ -588,19 +588,7 @@ namespace Skylicht
 					postMouseEventToScene(EMIE_LMOUSE_LEFT_UP, local.X, local.Y);
 
 					// try test selection
-					core::line3df ray = CProjective::getViewRay(m_editorCamera, local.X, local.Y, m_sceneRect.getWidth(), m_sceneRect.getHeight());
-
-					CBBCollisionManager* bbCollision = CCollisionController::getInstance()->getBBCollision();
-
-					float outSQDistance = ray.getLengthSQ();
-					core::vector3df outPoint;
-					core::triangle3df outTris;
-					CCollisionNode* outNode;
-					CGameObject* pickObject = bbCollision->getObjectWithRay(ray, outSQDistance, outPoint, outTris, outNode);
-					if (pickObject != NULL)
-					{
-						os::Printer::log(pickObject->getNameA());
-					}
+					// core::line3df ray = CProjective::getViewRay(m_editorCamera, local.X, local.Y, m_sceneRect.getWidth(), m_sceneRect.getHeight());
 				}
 			}
 		}
