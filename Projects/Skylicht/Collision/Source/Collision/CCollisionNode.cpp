@@ -52,26 +52,4 @@ namespace Skylicht
 			Selector->getTriangles(Triangles.pointer(), &world);
 		}
 	}
-
-	void CCollisionNode::updateBBox(const core::aabbox3df& box)
-	{
-		if (Selector != NULL)
-		{
-			Selector->updateBBox(box);
-		}
-	}
-
-	core::aabbox3df CCollisionNode::getTransformBBox()
-	{
-		core::aabbox3df ret;
-
-		if (Selector != NULL && Entity != NULL)
-		{
-			core::matrix4 world = GameObject->getTransform()->calcWorldTransform();
-			ret = Selector->getBBox();
-			world.transformBoxEx(ret);
-		}
-
-		return ret;
-	}
 }

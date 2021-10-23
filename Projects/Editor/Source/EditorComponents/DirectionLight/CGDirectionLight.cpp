@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Components/CDependentComponent.h"
 
 #include "GameObject/CGameObject.h"
+#include "Transform/CWorldInverseTransformData.h"
+
 #include "Editor/CEditor.h"
 #include "Handles/CHandles.h"
 
@@ -66,11 +68,14 @@ namespace Skylicht
 
 			addLinkComponent(m_sprite);
 
-			// m_collisionNode = bbCollision->addBBCollision(m_gameObject, core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f), core::vector3df(1.0f, 1.0f, 1.0f)));
+			m_defaultBBox = core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f), core::vector3df(1.0f, 1.0f, 1.0f));
 
-			// CPickCollisionData* pickData = m_gameObject->getEntity()->addData<CPickCollisionData>();
-			// pickData->CollisionNode = m_collisionNode;
-			// pickData->IsBBoxCollision = true;
+			// pick collision
+			CEntity* entity = m_gameObject->getEntity();
+			entity->addData<CWorldInverseTransformData>();
+			CPickCollisionData* pickData = entity->addData<CPickCollisionData>();
+			pickData->GameObject = m_gameObject;
+			pickData->BBox = m_defaultBBox;
 		}
 
 		void CGDirectionLight::updateComponent()
@@ -83,8 +88,11 @@ namespace Skylicht
 			CHandles::getInstance()->drawArrowInViewSpace(m_gameObject->getPosition(), m_directionLight->getDirection(), 0.5f, 0.05f, lightColor);
 
 			// update collision bbox
-			// float boxScale = m_sprite->getViewScale() * 10.0f;
-			// m_collisionNode->updateBBox(core::aabbox3df(core::vector3df(-1.0f, -1.0f, -1.0f) * boxScale, core::vector3df(1.0f, 1.0f, 1.0f) * boxScale));
+			float boxScale = m_sprite->getViewScale() * 10.0f;
+			CPickCollisionData* pickData = m_gameObject->getEntity()->getData<CPickCollisionData>();
+			pickData->GameObject = m_gameObject;
+			pickData->BBox.MinEdge = m_defaultBBox.MinEdge * boxScale;
+			pickData->BBox.MaxEdge = m_defaultBBox.MaxEdge * boxScale;
 		}
 	}
 }

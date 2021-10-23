@@ -29,6 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CPickCollisionData.h"
 #include "Transform/CWorldTransformData.h"
+#include "Transform/CWorldInverseTransformData.h"
+
+#include "Camera/CCamera.h"
 
 namespace Skylicht
 {
@@ -37,20 +40,38 @@ namespace Skylicht
 		class CPickCollisionSystem : public IEntitySystem
 		{
 		protected:
-			core::array<CPickCollisionData*> m_pickCollisions;
+			core::array<CPickCollisionData*> m_results;
+
+			core::array<CPickCollisionData*> m_collision;
+			core::array<CWorldTransformData*> m_transform;
+			core::array<CWorldInverseTransformData*> m_invTransform;
+
+			CCamera* m_cullingCamera;
+
+			bool m_skipUpdate;
 
 		public:
 			CPickCollisionSystem();
 
 			virtual ~CPickCollisionSystem();
 
-			virtual void beginQuery();
+			virtual void beginQuery(CEntityManager* entityManager);
 
 			virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
 			virtual void init(CEntityManager* entityManager);
 
 			virtual void update(CEntityManager* entityManager);
+
+			inline void setCullingCamera(CCamera* camera)
+			{
+				m_cullingCamera = camera;
+			}
+
+			inline core::array<CPickCollisionData*>& getCulledCollision()
+			{
+				return m_results;
+			}
 		};
 	}
 }

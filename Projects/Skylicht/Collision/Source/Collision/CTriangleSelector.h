@@ -34,6 +34,7 @@ namespace Skylicht
 		CEntity* m_entity;
 
 		core::aabbox3df m_bbox;
+
 		core::array<core::triangle3df> m_triangles;
 
 	public:
@@ -44,8 +45,6 @@ namespace Skylicht
 		virtual void getTriangles(core::triangle3df* triangles, const core::matrix4* transform);
 
 		virtual const core::aabbox3df& getBBox();
-
-		virtual void updateBBox(const core::aabbox3df& box);
 
 		inline u32 getTriangleCount()
 		{

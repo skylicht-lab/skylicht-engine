@@ -44,7 +44,7 @@ namespace Skylicht
 
 		}
 
-		void CParticleTrailRenderer::beginQuery()
+		void CParticleTrailRenderer::beginQuery(CEntityManager* entityManager)
 		{
 			m_trails.set_used(0);
 			m_cullings.set_used(0);

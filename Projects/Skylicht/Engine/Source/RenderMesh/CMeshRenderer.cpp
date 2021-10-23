@@ -42,7 +42,7 @@ namespace Skylicht
 
 	}
 
-	void CMeshRenderer::beginQuery()
+	void CMeshRenderer::beginQuery(CEntityManager* entityManager)
 	{
 		m_meshs.set_used(0);
 		m_transforms.set_used(0);

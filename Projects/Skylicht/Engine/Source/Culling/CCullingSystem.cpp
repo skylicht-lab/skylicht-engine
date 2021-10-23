@@ -43,7 +43,7 @@ namespace Skylicht
 
 	}
 
-	void CCullingSystem::beginQuery()
+	void CCullingSystem::beginQuery(CEntityManager* entityManager)
 	{
 		m_cullings.set_used(0);
 		m_transforms.set_used(0);
@@ -51,13 +51,13 @@ namespace Skylicht
 		m_bboxAndMaterials.set_used(0);
 	}
 
-	void CCullingSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CCullingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CCullingData *culling = entity->getData<CCullingData>();
+		CCullingData* culling = entity->getData<CCullingData>();
 		if (culling == NULL)
 			return;
 
-		CVisibleData *visible = entity->getData<CVisibleData>();
+		CVisibleData* visible = entity->getData<CVisibleData>();
 		if (visible != NULL)
 			culling->CullingLayer = visible->CullingLayer;
 		else
@@ -69,17 +69,17 @@ namespace Skylicht
 		}
 		else if (culling != NULL)
 		{
-			CRenderMeshData *mesh = entity->getData<CRenderMeshData>();
+			CRenderMeshData* mesh = entity->getData<CRenderMeshData>();
 			if (mesh != NULL)
 			{
-				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-				CWorldInverseTransformData *invTransform = entity->getData<CWorldInverseTransformData>();
+				CWorldTransformData* transform = entity->getData<CWorldTransformData>();
+				CWorldInverseTransformData* invTransform = entity->getData<CWorldInverseTransformData>();
 
 				if (transform != NULL)
 				{
 					m_cullings.push_back(culling);
 
-					CMesh *meshObj = mesh->getMesh();
+					CMesh* meshObj = mesh->getMesh();
 
 					m_bboxAndMaterials.push_back(
 						SBBoxAndMaterial(
@@ -94,11 +94,11 @@ namespace Skylicht
 			}
 			else
 			{
-				CCullingBBoxData *bbox = entity->getData<CCullingBBoxData>();
+				CCullingBBoxData* bbox = entity->getData<CCullingBBoxData>();
 				if (bbox != NULL)
 				{
-					CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-					CWorldInverseTransformData *invTransform = entity->getData<CWorldInverseTransformData>();
+					CWorldTransformData* transform = entity->getData<CWorldTransformData>();
+					CWorldInverseTransformData* invTransform = entity->getData<CWorldInverseTransformData>();
 
 					m_cullings.push_back(culling);
 
@@ -116,35 +116,35 @@ namespace Skylicht
 		}
 	}
 
-	void CCullingSystem::init(CEntityManager *entityManager)
+	void CCullingSystem::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CCullingSystem::update(CEntityManager *entityManager)
+	void CCullingSystem::update(CEntityManager* entityManager)
 	{
-		CCullingData **cullings = m_cullings.pointer();
-		SBBoxAndMaterial *bboxAndMaterials = m_bboxAndMaterials.pointer();
-		CWorldTransformData **transforms = m_transforms.pointer();
-		CWorldInverseTransformData **invTransforms = m_invTransforms.pointer();
+		CCullingData** cullings = m_cullings.pointer();
+		SBBoxAndMaterial* bboxAndMaterials = m_bboxAndMaterials.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
+		CWorldInverseTransformData** invTransforms = m_invTransforms.pointer();
 
-		IRenderPipeline *rp = entityManager->getRenderPipeline();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
 		if (rp == NULL)
 			return;
 
 		core::matrix4 invTrans;
 
+		// camera
+		CCamera* camera = entityManager->getCamera();
+
 		u32 numEntity = m_cullings.size();
 		for (u32 i = 0; i < numEntity; i++)
 		{
-			// camera
-			CCamera *camera = entityManager->getCamera();
-
 			// get mesh bbox
-			CCullingData *culling = cullings[i];
-			CWorldTransformData *transform = transforms[i];
-			CWorldInverseTransformData *invTransform = invTransforms[i];
-			SBBoxAndMaterial &bbBoxMat = bboxAndMaterials[i];
+			CCullingData* culling = cullings[i];
+			CWorldTransformData* transform = transforms[i];
+			CWorldInverseTransformData* invTransform = invTransforms[i];
+			SBBoxAndMaterial& bbBoxMat = bboxAndMaterials[i];
 
 			culling->Visible = true;
 
@@ -159,7 +159,7 @@ namespace Skylicht
 			// check material first
 			if (bbBoxMat.Materials != NULL)
 			{
-				for (CMaterial *material : *bbBoxMat.Materials)
+				for (CMaterial* material : *bbBoxMat.Materials)
 				{
 					if (material != NULL && rp->canRenderMaterial(material) == false)
 					{
@@ -182,7 +182,7 @@ namespace Skylicht
 
 			if (rp->getType() == IRenderPipeline::ShadowMap)
 			{
-				CShadowMapRP *shadowMapRP = (CShadowMapRP*)rp;
+				CShadowMapRP* shadowMapRP = (CShadowMapRP*)rp;
 
 				const core::aabbox3df& box = shadowMapRP->getFrustumBox();
 				culling->Visible = culling->BBox.intersectsWithBox(box);
@@ -234,12 +234,12 @@ namespace Skylicht
 		}
 	}
 
-	void CCullingSystem::render(CEntityManager *entityManager)
+	void CCullingSystem::render(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CCullingSystem::postRender(CEntityManager *entityManager)
+	void CCullingSystem::postRender(CEntityManager* entityManager)
 	{
 
 	}

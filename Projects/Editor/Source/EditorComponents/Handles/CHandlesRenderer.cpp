@@ -75,7 +75,7 @@ namespace Skylicht
 			delete m_data;
 		}
 
-		void CHandlesRenderer::beginQuery()
+		void CHandlesRenderer::beginQuery(CEntityManager* entityManager)
 		{
 
 		}

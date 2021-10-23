@@ -41,7 +41,7 @@ namespace Skylicht
 
 		}
 
-		void CParticleRenderer::beginQuery()
+		void CParticleRenderer::beginQuery(CEntityManager* entityManager)
 		{
 			m_particles.set_used(0);
 			m_transforms.set_used(0);

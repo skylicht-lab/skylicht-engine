@@ -34,9 +34,9 @@ namespace Skylicht
 		class CPickCollisionData : public IEntityData
 		{
 		public:
-			CCollisionNode* CollisionNode;
-			bool IsBBoxCollision;
-			bool IsChanged;
+			CGameObject* GameObject;
+
+			core::aabbox3df BBox;
 
 		public:
 			CPickCollisionData();

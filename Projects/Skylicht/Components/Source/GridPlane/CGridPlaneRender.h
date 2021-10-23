@@ -13,7 +13,7 @@ namespace Skylicht
 		core::array<CWorldTransformData*> m_transforms;
 
 	public:
-		virtual void beginQuery();
+		virtual void beginQuery(CEntityManager* entityManager);
 
 		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 

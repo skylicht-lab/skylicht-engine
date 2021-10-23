@@ -42,7 +42,7 @@ namespace Skylicht
 
 		virtual ~CComponentTransformSystem();
 
-		virtual void beginQuery();
+		virtual void beginQuery(CEntityManager* entityManager);
 
 		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 

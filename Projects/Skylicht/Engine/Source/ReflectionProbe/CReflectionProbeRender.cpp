@@ -41,7 +41,7 @@ namespace Skylicht
 
 	}
 
-	void CReflectionProbeRender::beginQuery()
+	void CReflectionProbeRender::beginQuery(CEntityManager* entityManager)
 	{
 		m_probes.set_used(0);
 		m_transforms.set_used(0);

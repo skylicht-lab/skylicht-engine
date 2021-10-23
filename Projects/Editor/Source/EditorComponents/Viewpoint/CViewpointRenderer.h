@@ -46,7 +46,7 @@ namespace Skylicht
 
 			virtual ~CViewpointRenderer();
 
-			virtual void beginQuery();
+			virtual void beginQuery(CEntityManager* entityManager);
 
 			virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
