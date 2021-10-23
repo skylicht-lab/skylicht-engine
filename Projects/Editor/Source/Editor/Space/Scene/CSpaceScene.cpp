@@ -63,6 +63,7 @@ namespace Skylicht
 			m_view(NULL),
 			m_handlesRenderer(NULL),
 			m_gizmosRenderer(NULL),
+			m_pickSystem(NULL),
 			m_enableRender(true)
 		{
 			initDefaultScene();
@@ -236,7 +237,10 @@ namespace Skylicht
 
 			// add handle renderer
 			CEntityManager* entityMgr = m_scene->getEntityManager();
-			entityMgr->addSystem<CPickCollisionSystem>();
+
+			m_pickSystem = entityMgr->addSystem<CPickCollisionSystem>();
+			m_pickSystem->setCullingCamera(m_editorCamera);
+
 			m_handlesRenderer = entityMgr->addRenderSystem<CHandlesRenderer>();
 			m_gizmosRenderer = entityMgr->addRenderSystem<CGizmosRenderer>();
 

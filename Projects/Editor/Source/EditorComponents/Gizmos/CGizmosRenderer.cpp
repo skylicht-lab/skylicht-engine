@@ -48,7 +48,7 @@ namespace Skylicht
 
 		}
 
-		void CGizmosRenderer::beginQuery()
+		void CGizmosRenderer::beginQuery(CEntityManager* entityManager)
 		{
 
 		}

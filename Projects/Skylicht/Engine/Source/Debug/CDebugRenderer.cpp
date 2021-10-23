@@ -38,7 +38,7 @@ namespace Skylicht
 		delete m_drawData;
 	}
 
-	void CDebugRenderer::beginQuery()
+	void CDebugRenderer::beginQuery(CEntityManager* entityManager)
 	{
 
 	}

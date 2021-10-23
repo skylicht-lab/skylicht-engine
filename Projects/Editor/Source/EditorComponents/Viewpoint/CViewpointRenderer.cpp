@@ -39,7 +39,7 @@ namespace Skylicht
 
 		}
 
-		void CViewpointRenderer::beginQuery()
+		void CViewpointRenderer::beginQuery(CEntityManager* entityManager)
 		{
 			m_viewpoints.set_used(0);
 			m_transforms.set_used(0);

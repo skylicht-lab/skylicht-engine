@@ -44,7 +44,7 @@ namespace Skylicht
 
 		virtual ~CSkyDomeRender();
 
-		virtual void beginQuery();
+		virtual void beginQuery(CEntityManager* entityManager);
 
 		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 

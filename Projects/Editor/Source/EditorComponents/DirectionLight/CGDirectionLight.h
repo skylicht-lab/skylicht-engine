@@ -36,6 +36,8 @@ namespace Skylicht
 		class CGDirectionLight : public CGizmosComponent
 		{
 		protected:
+			core::aabbox3df m_defaultBBox;
+
 			CDirectionalLight* m_directionLight;
 			CSprite* m_sprite;
 			CCollisionNode* m_collisionNode;

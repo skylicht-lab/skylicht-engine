@@ -40,7 +40,7 @@ namespace Skylicht
 
 	}
 
-	void CComponentTransformSystem::beginQuery()
+	void CComponentTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
 		m_transforms.set_used(0);
 		m_components.set_used(0);

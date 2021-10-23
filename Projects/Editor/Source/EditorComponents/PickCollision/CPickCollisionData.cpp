@@ -29,10 +29,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CPickCollisionData::CPickCollisionData() :
-			CollisionNode(NULL),
-			IsBBoxCollision(false),
-			IsChanged(true)
+		CPickCollisionData::CPickCollisionData()
 		{
 
 		}

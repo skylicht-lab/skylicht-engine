@@ -38,7 +38,7 @@ namespace Skylicht
 
 	}
 
-	void CJointAnimationSystem::beginQuery()
+	void CJointAnimationSystem::beginQuery(CEntityManager* entityManager)
 	{
 		m_joints.set_used(0);
 		m_transforms.set_used(0);

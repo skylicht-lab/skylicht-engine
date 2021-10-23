@@ -37,7 +37,7 @@ namespace Skylicht
 
 	}
 
-	void CSkinnedMeshSystem::beginQuery()
+	void CSkinnedMeshSystem::beginQuery(CEntityManager* entityManager)
 	{
 		m_meshs.set_used(0);
 	}

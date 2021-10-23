@@ -41,7 +41,7 @@ namespace Skylicht
 
 		virtual ~CWorldInverseTransformSystem();
 
-		virtual void beginQuery();
+		virtual void beginQuery(CEntityManager* entityManager);
 
 		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 

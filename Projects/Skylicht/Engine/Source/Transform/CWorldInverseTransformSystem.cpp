@@ -37,7 +37,7 @@ namespace Skylicht
 	{
 	}
 
-	void CWorldInverseTransformSystem::beginQuery()
+	void CWorldInverseTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
 		m_world.set_used(0);
 		m_worldInv.set_used(0);

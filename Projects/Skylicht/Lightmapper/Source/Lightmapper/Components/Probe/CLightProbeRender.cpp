@@ -43,7 +43,7 @@ namespace Skylicht
 
 		}
 
-		void CLightProbeRender::beginQuery()
+		void CLightProbeRender::beginQuery(CEntityManager* entityManager)
 		{
 			m_probes.set_used(0);
 			m_transforms.set_used(0);

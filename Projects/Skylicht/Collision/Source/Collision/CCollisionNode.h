@@ -49,9 +49,5 @@ namespace Skylicht
 		virtual ~CCollisionNode();
 
 		void updateTransform();
-
-		void updateBBox(const core::aabbox3df& box);
-
-		core::aabbox3df getTransformBBox();
 	};
 }

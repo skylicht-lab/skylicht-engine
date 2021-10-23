@@ -39,7 +39,7 @@ namespace Skylicht
 
 	}
 
-	void CSkyDomeRender::beginQuery()
+	void CSkyDomeRender::beginQuery(CEntityManager* entityManager)
 	{
 		m_skydomes.set_used(0);
 		m_transforms.set_used(0);

@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	void CGridPlaneRender::beginQuery()
+	void CGridPlaneRender::beginQuery(CEntityManager* entityManager)
 	{
 		m_gridPlanes.set_used(0);
 		m_transforms.set_used(0);
