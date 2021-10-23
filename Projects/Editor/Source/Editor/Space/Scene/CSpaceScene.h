@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/History/CSceneHistory.h"
 #include "EditorComponents/Handles/CHandlesRenderer.h"
 #include "EditorComponents/Gizmos/CGizmosRenderer.h"
-#include "EditorComponents/PickCollision/CPickCollisionSystem.h"
+#include "EditorComponents/SelectObject/CSelectObjectSystem.h"
 
 #include "CViewpointController.h"
 
@@ -85,7 +85,7 @@ namespace Skylicht
 			CHandlesRenderer* m_handlesRenderer;
 			CGizmosRenderer* m_gizmosRenderer;
 
-			CPickCollisionSystem* m_pickSystem;
+			CSelectObjectSystem* m_selectObjectSystem;
 
 			GUI::CButton* m_toolbarButton[ToolbarCount];
 
