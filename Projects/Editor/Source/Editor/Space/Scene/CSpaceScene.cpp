@@ -34,7 +34,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Projective/CProjective.h"
 
 #include "Editor/SpaceController/CSceneController.h"
-#include "Editor/SpaceController/CCollisionController.h"
 
 #include "Editor/Gizmos/Transform/CTransformGizmos.h"
 
@@ -63,7 +62,7 @@ namespace Skylicht
 			m_view(NULL),
 			m_handlesRenderer(NULL),
 			m_gizmosRenderer(NULL),
-			m_pickSystem(NULL),
+			m_selectObjectSystem(NULL),
 			m_enableRender(true)
 		{
 			initDefaultScene();
@@ -238,8 +237,8 @@ namespace Skylicht
 			// add handle renderer
 			CEntityManager* entityMgr = m_scene->getEntityManager();
 
-			m_pickSystem = entityMgr->addSystem<CPickCollisionSystem>();
-			m_pickSystem->setCullingCamera(m_editorCamera);
+			m_selectObjectSystem = entityMgr->addSystem<CSelectObjectSystem>();
+			m_selectObjectSystem->setCullingCamera(m_editorCamera);
 
 			m_handlesRenderer = entityMgr->addRenderSystem<CHandlesRenderer>();
 			m_gizmosRenderer = entityMgr->addRenderSystem<CGizmosRenderer>();

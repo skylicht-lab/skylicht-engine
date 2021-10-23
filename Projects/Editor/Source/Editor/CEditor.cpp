@@ -39,7 +39,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
-#include "SpaceController/CCollisionController.h"
 
 #include "AssetManager/CAssetManager.h"
 #include "Selection/CSelection.h"
@@ -74,7 +73,6 @@ namespace Skylicht
 			m_spriteIcon->updateTexture();
 
 			// init controller
-			CCollisionController::createGetInstance();
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
 			CPropertyController::createGetInstance();
 			CSelection::createGetInstance();
@@ -87,7 +85,6 @@ namespace Skylicht
 			CEditorActivator::releaseInstance();
 			CPropertyController::releaseInstance();
 			CSceneController::releaseInstance();
-			CCollisionController::releaseInstance();
 			CSelection::releaseInstance();
 			CProjectSettings::releaseInstance();
 

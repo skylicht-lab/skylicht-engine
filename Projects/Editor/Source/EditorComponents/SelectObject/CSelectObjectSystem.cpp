@@ -23,8 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CPickCollisionSystem.h"
-#include "Editor/SpaceController/CCollisionController.h"
+#include "CSelectObjectSystem.h"
 
 #include "Culling/CCullingData.h"
 #include "Culling/CVisibleData.h"
@@ -35,18 +34,18 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CPickCollisionSystem::CPickCollisionSystem() :
+		CSelectObjectSystem::CSelectObjectSystem() :
 			m_cullingCamera(NULL)
 		{
 
 		}
 
-		CPickCollisionSystem::~CPickCollisionSystem()
+		CSelectObjectSystem::~CSelectObjectSystem()
 		{
 
 		}
 
-		void CPickCollisionSystem::beginQuery(CEntityManager* entityManager)
+		void CSelectObjectSystem::beginQuery(CEntityManager* entityManager)
 		{
 			if (entityManager->getCamera() != m_cullingCamera)
 			{
@@ -62,7 +61,7 @@ namespace Skylicht
 			m_skipUpdate = false;
 		}
 
-		void CPickCollisionSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+		void CSelectObjectSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 		{
 			if (m_skipUpdate)
 				return;
@@ -77,7 +76,7 @@ namespace Skylicht
 			if (visibleData != NULL && !visibleData->Visible)
 				return;
 
-			CPickCollisionData* collisionData = entity->getData<CPickCollisionData>();
+			CSelectObjectData* collisionData = entity->getData<CSelectObjectData>();
 			if (collisionData != NULL)
 			{
 				CWorldTransformData* transform = entity->getData<CWorldTransformData>();
@@ -89,17 +88,17 @@ namespace Skylicht
 			}
 		}
 
-		void CPickCollisionSystem::init(CEntityManager* entityManager)
+		void CSelectObjectSystem::init(CEntityManager* entityManager)
 		{
 
 		}
 
-		void CPickCollisionSystem::update(CEntityManager* entityManager)
+		void CSelectObjectSystem::update(CEntityManager* entityManager)
 		{
 			if (m_skipUpdate)
 				return;
 
-			CPickCollisionData** collisions = m_collision.pointer();
+			CSelectObjectData** collisions = m_collision.pointer();
 			CWorldTransformData** transforms = m_transform.pointer();
 			CWorldInverseTransformData** invTransforms = m_invTransform.pointer();
 
@@ -112,7 +111,7 @@ namespace Skylicht
 			{
 				CWorldTransformData* transform = transforms[i];
 				CWorldInverseTransformData* invTransform = invTransforms[i];
-				CPickCollisionData* collision = collisions[i];
+				CSelectObjectData* collision = collisions[i];
 
 				core::aabbox3df transformBBox = collision->BBox;
 				transform->World.transformBoxEx(transformBBox);
