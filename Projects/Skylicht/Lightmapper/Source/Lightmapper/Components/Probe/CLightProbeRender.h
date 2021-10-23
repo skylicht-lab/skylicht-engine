@@ -47,7 +47,7 @@ namespace Skylicht
 
 			virtual ~CLightProbeRender();
 
-			virtual void beginQuery();
+			virtual void beginQuery(CEntityManager* entityManager);
 
 			virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 

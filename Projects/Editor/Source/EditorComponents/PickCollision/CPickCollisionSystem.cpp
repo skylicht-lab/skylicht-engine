@@ -26,13 +26,18 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CPickCollisionSystem.h"
 #include "Editor/SpaceController/CCollisionController.h"
 
+#include "Culling/CCullingData.h"
+#include "Culling/CVisibleData.h"
+
+#include "Entity/CEntityManager.h"
+
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CPickCollisionSystem::CPickCollisionSystem()
+		CPickCollisionSystem::CPickCollisionSystem() :
+			m_cullingCamera(NULL)
 		{
-
 
 		}
 
@@ -41,20 +46,46 @@ namespace Skylicht
 
 		}
 
-		void CPickCollisionSystem::beginQuery()
+		void CPickCollisionSystem::beginQuery(CEntityManager* entityManager)
 		{
-			m_pickCollisions.set_used(0);
+			if (entityManager->getCamera() != m_cullingCamera)
+			{
+				m_skipUpdate = true;
+				return;
+			}
+
+			m_results.set_used(0);
+			m_collision.set_used(0);
+			m_transform.set_used(0);
+			m_invTransform.set_used(0);
+
+			m_skipUpdate = false;
 		}
 
 		void CPickCollisionSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 		{
-			// if transform is changed
+			if (m_skipUpdate)
+				return;
+
+			// check this entity is culled from camera?
+			CCullingData* cullingData = entity->getData<CCullingData>();
+			if (cullingData != NULL && !cullingData->Visible)
+				return;
+
+			// check this entity is visible?
+			CVisibleData* visibleData = entity->getData<CVisibleData>();
+			if (visibleData != NULL && !visibleData->Visible)
+				return;
+
 			CPickCollisionData* collisionData = entity->getData<CPickCollisionData>();
-			if (collisionData != NULL &&
-				collisionData->CollisionNode != NULL &&
-				collisionData->IsChanged)
+			if (collisionData != NULL)
 			{
-				m_pickCollisions.push_back(collisionData);
+				CWorldTransformData* transform = entity->getData<CWorldTransformData>();
+				CWorldInverseTransformData* invTransform = entity->getData<CWorldInverseTransformData>();
+
+				m_collision.push_back(collisionData);
+				m_transform.push_back(transform);
+				m_invTransform.push_back(invTransform);
 			}
 		}
 
@@ -65,12 +96,65 @@ namespace Skylicht
 
 		void CPickCollisionSystem::update(CEntityManager* entityManager)
 		{
-			CPickCollisionData** listCollision = m_pickCollisions.pointer();
-			u32 numCollision = m_pickCollisions.size();
+			if (m_skipUpdate)
+				return;
 
-			for (u32 i = 0; i < numCollision; i++)
+			CPickCollisionData** collisions = m_collision.pointer();
+			CWorldTransformData** transforms = m_transform.pointer();
+			CWorldInverseTransformData** invTransforms = m_invTransform.pointer();
+
+			CCamera* camera = entityManager->getCamera();
+
+			core::matrix4 invTrans;
+
+			u32 numEntity = m_collision.size();
+			for (u32 i = 0; i < numEntity; i++)
 			{
+				CWorldTransformData* transform = transforms[i];
+				CWorldInverseTransformData* invTransform = invTransforms[i];
+				CPickCollisionData* collision = collisions[i];
 
+				core::aabbox3df transformBBox = collision->BBox;
+				transform->World.transformBoxEx(transformBBox);
+
+				// 1. Detect by bounding box
+				SViewFrustum frust;
+
+				frust = camera->getViewFrustum();
+				bool visible = transformBBox.intersectsWithBox(frust.getBoundingBox());
+
+				// 2. Detect algorithm
+				if (visible == true && invTransform != NULL)
+				{
+					// transform the frustum to the node's current absolute transformation
+					invTrans = invTransform->WorldInverse;
+					frust.transform(invTrans);
+
+					core::vector3df edges[8];
+					collision->BBox.getEdges(edges);
+
+					for (s32 i = 0; i < scene::SViewFrustum::VF_PLANE_COUNT; ++i)
+					{
+						bool boxInFrustum = false;
+						for (u32 j = 0; j < 8; ++j)
+						{
+							if (frust.planes[i].classifyPointRelation(edges[j]) != core::ISREL3D_FRONT)
+							{
+								boxInFrustum = true;
+								break;
+							}
+						}
+
+						if (!boxInFrustum)
+						{
+							visible = false;
+							break;
+						}
+					}
+				}
+
+				if (visible)
+					m_results.push_back(collision);
 			}
 		}
 	}

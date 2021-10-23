@@ -39,7 +39,7 @@ namespace Skylicht
 
 	}
 
-	void CLightCullingSystem::beginQuery()
+	void CLightCullingSystem::beginQuery(CEntityManager* entityManager)
 	{
 		m_cullings.set_used(0);
 		m_visible.set_used(0);

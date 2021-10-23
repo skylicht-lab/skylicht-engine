@@ -202,7 +202,7 @@ namespace Skylicht
 	{
 		for (IEntitySystem*& s : m_systems)
 		{
-			s->beginQuery();
+			s->beginQuery(this);
 		}
 
 		CEntity** entity = m_entities.pointer();
@@ -280,7 +280,7 @@ namespace Skylicht
 	{
 		for (IRenderSystem*& s : m_renders)
 		{
-			s->beginQuery();
+			s->beginQuery(this);
 		}
 
 		CEntity** entity = m_entities.pointer();

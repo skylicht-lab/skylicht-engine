@@ -44,7 +44,7 @@ CTestRenderSystem::~CTestRenderSystem()
 
 }
 
-void CTestRenderSystem::beginQuery()
+void CTestRenderSystem::beginQuery(CEntityManager* entityManager)
 {
 	m_testEntities.set_used(0);
 	m_testTransforms.set_used(0);

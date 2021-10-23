@@ -37,7 +37,7 @@ namespace Skylicht
 
 	}
 
-	void CReflectionProbeSystem::beginQuery()
+	void CReflectionProbeSystem::beginQuery(CEntityManager* entityManager)
 	{
 		m_probes.set_used(0);
 		m_probePositions.set_used(0);

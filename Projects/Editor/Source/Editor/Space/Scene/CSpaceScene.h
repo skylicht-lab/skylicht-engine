@@ -85,6 +85,8 @@ namespace Skylicht
 			CHandlesRenderer* m_handlesRenderer;
 			CGizmosRenderer* m_gizmosRenderer;
 
+			CPickCollisionSystem* m_pickSystem;
+
 			GUI::CButton* m_toolbarButton[ToolbarCount];
 
 			GUI::CToggleGroup* m_groupEditor;

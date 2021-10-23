@@ -58,7 +58,7 @@ namespace Skylicht
 
 		virtual ~CCullingSystem();
 
-		virtual void beginQuery();
+		virtual void beginQuery(CEntityManager* entityManager);
 
 		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 

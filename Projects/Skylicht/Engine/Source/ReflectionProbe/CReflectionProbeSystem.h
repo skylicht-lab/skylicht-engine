@@ -48,7 +48,7 @@ namespace Skylicht
 
 		virtual ~CReflectionProbeSystem();
 
-		virtual void beginQuery();
+		virtual void beginQuery(CEntityManager* entityManager);
 
 		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
 

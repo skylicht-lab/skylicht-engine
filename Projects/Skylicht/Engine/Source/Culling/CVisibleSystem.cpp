@@ -40,7 +40,7 @@ namespace Skylicht
 
 	}
 
-	void CVisibleSystem::beginQuery()
+	void CVisibleSystem::beginQuery(CEntityManager* entityManager)
 	{
 		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
 			m_entities[depth].set_used(0);

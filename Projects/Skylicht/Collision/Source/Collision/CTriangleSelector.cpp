@@ -68,9 +68,4 @@ namespace Skylicht
 
 		return m_bbox;
 	}
-
-	void CTriangleSelector::updateBBox(const core::aabbox3df& box)
-	{
-		m_bbox = box;
-	}
 }

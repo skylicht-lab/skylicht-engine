@@ -48,7 +48,7 @@ namespace Skylicht
 		m_meshBuffer->drop();
 	}
 
-	void CSpriteRenderer::beginQuery()
+	void CSpriteRenderer::beginQuery(CEntityManager* entityManager)
 	{
 		m_sprites.set_used(0);
 		m_transforms.set_used(0);

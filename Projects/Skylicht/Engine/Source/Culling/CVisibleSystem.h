@@ -57,7 +57,7 @@ namespace Skylicht
 
 		virtual ~CVisibleSystem();
 
-		virtual void beginQuery();
+		virtual void beginQuery(CEntityManager* entityManager);
 
 		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 

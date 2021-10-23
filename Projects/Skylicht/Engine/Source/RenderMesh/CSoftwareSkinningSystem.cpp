@@ -38,7 +38,7 @@ namespace Skylicht
 
 	}
 
-	void CSoftwareSkinningSystem::beginQuery()
+	void CSoftwareSkinningSystem::beginQuery(CEntityManager* entityManager)
 	{
 		m_renderers.set_used(0);
 	}
