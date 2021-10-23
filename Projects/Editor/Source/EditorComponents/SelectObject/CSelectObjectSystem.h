@@ -24,23 +24,54 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "EditorComponents/PickCollision/CPickCollisionData.h"
+#include "Entity/IEntityData.h"
+#include "Entity/IEntitySystem.h"
+
+#include "CSelectObjectData.h"
+#include "Transform/CWorldTransformData.h"
+#include "Transform/CWorldInverseTransformData.h"
+
+#include "Camera/CCamera.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CCollisionController :public CGameSingleton<CCollisionController>
+		class CSelectObjectSystem : public IEntitySystem
 		{
 		protected:
+			core::array<CSelectObjectData*> m_results;
+
+			core::array<CSelectObjectData*> m_collision;
+			core::array<CWorldTransformData*> m_transform;
+			core::array<CWorldInverseTransformData*> m_invTransform;
+
+			CCamera* m_cullingCamera;
+
+			bool m_skipUpdate;
 
 		public:
-			CCollisionController();
+			CSelectObjectSystem();
 
-			virtual ~CCollisionController();
+			virtual ~CSelectObjectSystem();
 
-			void clear();
+			virtual void beginQuery(CEntityManager* entityManager);
+
+			virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
+
+			virtual void init(CEntityManager* entityManager);
+
+			virtual void update(CEntityManager* entityManager);
+
+			inline void setCullingCamera(CCamera* camera)
+			{
+				m_cullingCamera = camera;
+			}
+
+			inline core::array<CSelectObjectData*>& getCulledCollision()
+			{
+				return m_results;
+			}
 		};
 	}
 }

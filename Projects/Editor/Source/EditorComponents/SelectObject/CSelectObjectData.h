@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CPickCollisionData : public IEntityData
+		class CSelectObjectData : public IEntityData
 		{
 		public:
 			CGameObject* GameObject;
@@ -39,9 +39,9 @@ namespace Skylicht
 			core::aabbox3df BBox;
 
 		public:
-			CPickCollisionData();
+			CSelectObjectData();
 
-			virtual ~CPickCollisionData();
+			virtual ~CSelectObjectData();
 		};
 	}
 }
