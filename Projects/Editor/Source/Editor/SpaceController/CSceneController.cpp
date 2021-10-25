@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 
 #include "Handles/CHandles.h"
+#include "Selection/CSelecting.h"
 
 namespace Skylicht
 {
@@ -138,6 +139,8 @@ namespace Skylicht
 
 			// clear current scene gui
 			CSelection::getInstance()->clear();
+			CSelecting::getInstance()->end();
+
 			CPropertyController::getInstance()->setProperty(NULL);
 
 			CHandles::getInstance()->end();
@@ -438,6 +441,18 @@ namespace Skylicht
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->add(node);
 			}
+		}
+
+		void CSceneController::deselectAllOnHierachy()
+		{
+			m_spaceHierarchy->deselectAll();
+		}
+
+		void CSceneController::selectOnHierachy(CGameObject* gameObject)
+		{
+			CHierachyNode* node = m_hierachyNode->getNodeByTag(gameObject);
+			if (node != NULL)
+				node->getGUINode()->setSelected(true, true);
 		}
 
 		void CSceneController::setNodeEvent(CHierachyNode* node)

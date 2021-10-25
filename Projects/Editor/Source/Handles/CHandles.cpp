@@ -79,6 +79,13 @@ namespace Skylicht
 			return ret;
 		}
 
+		bool CHandles::isHoverOnAxisOrPlane()
+		{
+			if (m_handlesRenderer)
+				return m_handlesRenderer->isHoverOnAxisOrPlane();
+			return false;
+		}
+
 		core::vector3df CHandles::positionHandle(const core::vector3df& position, const core::quaternion& localRotation)
 		{
 			if (!m_handlePosition)

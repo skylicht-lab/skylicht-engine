@@ -151,6 +151,11 @@ namespace Skylicht
 				m_enableRender = b;
 			}
 
+			inline CSelectObjectSystem* getSelectObjectSystem()
+			{
+				return m_selectObjectSystem;
+			}
+
 		protected:
 
 			void initRenderPipeline(float w, float h);
