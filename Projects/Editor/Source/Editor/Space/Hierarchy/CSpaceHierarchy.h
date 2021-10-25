@@ -61,6 +61,8 @@ namespace Skylicht
 			void add(CHierachyNode* node);
 
 			void rename(CHierachyNode* node);
+
+			void scrollToNode(GUI::CTreeNode* node);
 		};
 	}
 }
