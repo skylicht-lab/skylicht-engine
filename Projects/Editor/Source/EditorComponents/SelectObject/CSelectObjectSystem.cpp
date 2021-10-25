@@ -35,7 +35,7 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSelectObjectSystem::CSelectObjectSystem() :
-			m_cullingCamera(NULL)
+			m_camera(NULL)
 		{
 
 		}
@@ -47,7 +47,7 @@ namespace Skylicht
 
 		void CSelectObjectSystem::beginQuery(CEntityManager* entityManager)
 		{
-			if (entityManager->getCamera() != m_cullingCamera)
+			if (entityManager->getCamera() != m_camera)
 			{
 				m_skipUpdate = true;
 				return;
@@ -113,14 +113,14 @@ namespace Skylicht
 				CWorldInverseTransformData* invTransform = invTransforms[i];
 				CSelectObjectData* collision = collisions[i];
 
-				core::aabbox3df transformBBox = collision->BBox;
-				transform->World.transformBoxEx(transformBBox);
+				collision->TransformBBox = collision->BBox;
+				transform->World.transformBoxEx(collision->TransformBBox);
 
 				// 1. Detect by bounding box
 				SViewFrustum frust;
 
 				frust = camera->getViewFrustum();
-				bool visible = transformBBox.intersectsWithBox(frust.getBoundingBox());
+				bool visible = collision->TransformBBox.intersectsWithBox(frust.getBoundingBox());
 
 				// 2. Detect algorithm
 				if (visible == true && invTransform != NULL)

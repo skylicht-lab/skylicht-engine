@@ -24,43 +24,30 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-
-#include "CHierarchyController.h"
-#include "CHierachyContextMenu.h"
+#include "Utils/CGameSingleton.h"
+#include "Scene/CScene.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		class CSelecting :
+			public CGameSingleton<CSelecting>,
+			public IEventReceiver
 		{
 		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
+			core::triangle3df m_triangles[12];
 
-			GUI::CTreeControl* m_tree;
-
-			CHierarchyController* m_hierarchyController;
-			CHierachyContextMenu* m_hierarchyContextMenu;
 		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+			CSelecting();
 
-			virtual ~CSpaceHierarchy();
+			virtual ~CSelecting();
 
-			virtual void update();
+			void end();
 
-			void deselectAll();
+			virtual bool OnEvent(const SEvent& event);
 
-			void setHierarchyNode(CHierachyNode* node);
-
-			void add(CHierachyNode* node);
-
-			void rename(CHierachyNode* node);
+			CGameObject* getObjectWithRay(const core::line3d<f32>& ray, f32& outBestDistanceSquared);
 		};
 	}
 }

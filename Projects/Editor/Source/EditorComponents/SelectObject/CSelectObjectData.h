@@ -37,6 +37,7 @@ namespace Skylicht
 			CGameObject* GameObject;
 
 			core::aabbox3df BBox;
+			core::aabbox3df TransformBBox;
 
 		public:
 			CSelectObjectData();

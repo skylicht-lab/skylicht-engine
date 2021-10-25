@@ -46,7 +46,8 @@ namespace Skylicht
 			core::array<CWorldTransformData*> m_transform;
 			core::array<CWorldInverseTransformData*> m_invTransform;
 
-			CCamera* m_cullingCamera;
+			CCamera* m_camera;
+			core::recti m_viewport;
 
 			bool m_skipUpdate;
 
@@ -63,9 +64,30 @@ namespace Skylicht
 
 			virtual void update(CEntityManager* entityManager);
 
-			inline void setCullingCamera(CCamera* camera)
+			inline void setCameraAndViewport(CCamera* camera, const core::recti& viewport)
 			{
-				m_cullingCamera = camera;
+				m_camera = camera;
+				m_viewport = viewport;
+			}
+
+			inline CCamera* getCamera()
+			{
+				return m_camera;
+			}
+
+			inline const core::recti& getViewport()
+			{
+				return m_viewport;
+			}
+
+			inline int getViewportWidth()
+			{
+				return m_viewport.getWidth();
+			}
+
+			inline int getViewportHeight()
+			{
+				return m_viewport.getHeight();
 			}
 
 			inline core::array<CSelectObjectData*>& getCulledCollision()

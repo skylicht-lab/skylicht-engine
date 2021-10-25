@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/CEditor.h"
 #include "Handles/CHandles.h"
 #include "Selection/CSelection.h"
+#include "Selection/CSelecting.h"
 #include "Projective/CProjective.h"
 
 #include "Editor/SpaceController/CSceneController.h"
@@ -238,13 +239,13 @@ namespace Skylicht
 			CEntityManager* entityMgr = m_scene->getEntityManager();
 
 			m_selectObjectSystem = entityMgr->addSystem<CSelectObjectSystem>();
-			m_selectObjectSystem->setCullingCamera(m_editorCamera);
 
 			m_handlesRenderer = entityMgr->addRenderSystem<CHandlesRenderer>();
 			m_gizmosRenderer = entityMgr->addRenderSystem<CGizmosRenderer>();
 
 			// register event
 			m_scene->registerEvent("Handles", CHandles::getInstance());
+			m_scene->registerEvent("Selecting", CSelecting::getInstance());
 		}
 
 		CScene* CSpaceScene::initNullScene()
@@ -507,6 +508,8 @@ namespace Skylicht
 
 					m_handlesRenderer->setEnable(true);
 					m_handlesRenderer->setCameraAndViewport(m_editorCamera, viewport);
+
+					m_selectObjectSystem->setCameraAndViewport(m_editorCamera, viewport);
 
 					m_gizmosRenderer->setEnable(true);
 
