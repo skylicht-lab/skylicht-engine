@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Serializable/CObjectSerializable.h"
+#include "Reactive/IObserver.h"
+#include "Reactive/ISubject.h"
 #include "Editor/Components/CComponentEditor.h"
 #include "Activator/CEditorActivator.h"
 
@@ -36,10 +38,12 @@ namespace Skylicht
 		{
 		public:
 
-		protected:			
+		protected:
 			CObjectSerializable* m_data;
 
 			std::string m_name;
+
+			std::vector<ISubject*> m_subjects;
 
 		public:
 			CDefaultEditor();
