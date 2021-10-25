@@ -106,5 +106,10 @@ namespace Skylicht
 		{
 			m_hierarchyController->rename(node->getGUINode());
 		}
+
+		void CSpaceHierarchy::scrollToNode(GUI::CTreeNode* node)
+		{
+			m_tree->getScrollControl()->scrollToItem(node);
+		}
 	}
 }

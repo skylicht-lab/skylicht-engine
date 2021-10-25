@@ -40,6 +40,10 @@ namespace Skylicht
 
 		CDefaultEditor::~CDefaultEditor()
 		{
+			for (size_t i = 0, n = m_subjects.size(); i < n; i++)
+				delete m_subjects[i];
+			m_subjects.clear();
+
 			if (m_data != NULL)
 				delete m_data;
 		}
@@ -59,8 +63,27 @@ namespace Skylicht
 
 				GUI::CCollapsibleGroup* group = ui->addGroup(name.c_str(), this);
 
-				// add serializable data control
+				GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 
+				// add serializable data control
+				for (u32 i = 0, n = m_data->getNumProperty(); i < n; i++)
+				{
+					CValueProperty* valueProperty = m_data->getPropertyID(i);
+					if (valueProperty->getType() == EPropertyDataType::Bool)
+					{
+						CBoolProperty* value = dynamic_cast<CBoolProperty*>(valueProperty);
+
+						CSubject<bool>* subject = new CSubject<bool>(value->get());
+						subject->addObserver(new CObserver<CDefaultEditor>(this, [value, s = subject](ISubject* subject, IObserver* from, CDefaultEditor* target)
+							{
+								value->set(s->get());
+							}), true);
+
+						ui->addCheckBox(layout, CStringImp::convertUTF8ToUnicode(value->Name.c_str()).c_str(), subject);
+
+						m_subjects.push_back(subject);
+					}
+				}
 			}
 		}
 

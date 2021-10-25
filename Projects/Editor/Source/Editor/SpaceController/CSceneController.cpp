@@ -452,7 +452,11 @@ namespace Skylicht
 		{
 			CHierachyNode* node = m_hierachyNode->getNodeByTag(gameObject);
 			if (node != NULL)
-				node->getGUINode()->setSelected(true, true);
+			{
+				GUI::CTreeNode* treeNode = node->getGUINode();
+				treeNode->setSelected(true);
+				m_spaceHierarchy->scrollToNode(treeNode);
+			}
 		}
 
 		void CSceneController::setNodeEvent(CHierachyNode* node)
