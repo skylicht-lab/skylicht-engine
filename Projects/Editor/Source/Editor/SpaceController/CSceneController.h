@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/Hierarchy/CHierachyNode.h"
 
 #include "Editor/Gizmos/CGizmos.h"
+#include "EditorComponents/SelectObject/CSelectObjectSystem.h"
 
 #include "CContextMenuScene.h"
 
@@ -97,6 +98,11 @@ namespace Skylicht
 				return m_spaceScene;
 			}
 
+			CSelectObjectSystem* getSelectObjectSystem()
+			{
+				return m_spaceScene->getSelectObjectSystem();
+			}
+
 			void setSpaceHierarchy(CSpaceHierarchy* hierarchy);
 
 			inline CSpaceHierarchy* getSpaceHierarchy()
@@ -156,6 +162,10 @@ namespace Skylicht
 			void onObjectChange(CGameObject* object);
 
 			virtual void onNotify(ISubject* subject, IObserver* from);
+
+			void deselectAllOnHierachy();
+
+			void selectOnHierachy(CGameObject* gameObject);
 
 			inline CHierachyNode* getContextNode()
 			{

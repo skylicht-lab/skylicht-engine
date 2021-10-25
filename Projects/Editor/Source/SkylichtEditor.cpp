@@ -5,7 +5,9 @@
 #include "Utils/CColor.h"
 
 #include "AssetManager/CAssetManager.h"
+
 #include "Handles/CHandles.h"
+#include "Selection/CSelecting.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -19,12 +21,14 @@ SkylichtEditor::SkylichtEditor() :
 {
 	Editor::CAssetManager::createGetInstance();
 	Editor::CHandles::createGetInstance();
+	Editor::CSelecting::createGetInstance();
 }
 
 SkylichtEditor::~SkylichtEditor()
 {
 	Editor::GUI::CGUIContext::destroyGUI();
 
+	Editor::CSelecting::releaseInstance();
 	Editor::CHandles::releaseInstance();
 	Editor::CEditor::releaseInstance();
 	Editor::CAssetManager::releaseInstance();

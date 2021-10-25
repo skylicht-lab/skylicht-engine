@@ -109,6 +109,16 @@ namespace Skylicht
 				return m_enable;
 			}
 
+			bool isHoverOnAxisOrPlane()
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					if (m_hoverOnAxis[i] || m_hoverOnPlane[i])
+						return true;
+				}
+				return false;
+			}
+
 		public:
 
 			void onMouseEvent(int x, int y, int state);
