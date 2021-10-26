@@ -73,7 +73,6 @@ namespace Skylicht
 					if (valueProperty->getType() == EPropertyDataType::Bool)
 					{
 						CBoolProperty* value = dynamic_cast<CBoolProperty*>(valueProperty);
-
 						CSubject<bool>* subject = new CSubject<bool>(value->get());
 						subject->addObserver(new CObserver<CDefaultEditor>(this, [&, value, s = subject](ISubject* subject, IObserver* from, CDefaultEditor* target)
 							{
@@ -82,15 +81,12 @@ namespace Skylicht
 							}), true);
 
 						ui->addCheckBox(layout, getPrettyName(value->Name), subject);
-
 						m_subjects.push_back(subject);
 					}
 					else if (valueProperty->getType() == EPropertyDataType::Float)
 					{
 						CFloatProperty* value = dynamic_cast<CFloatProperty*>(valueProperty);
-
 						CSubject<float>* subject = new CSubject<float>(value->get());
-
 						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
 						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
 						{
@@ -120,10 +116,83 @@ namespace Skylicht
 							}
 						};
 						subject->addObserver(observer, true);
-
 						ui->addNumberInput(layout, getPrettyName(value->Name), subject, 0.01f);
-
 						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::Integer)
+					{
+						CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);
+						CSubject<int>* subject = new CSubject<int>(value->get());
+						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						{
+							if (from != o)
+							{
+								int v = s->get();
+								bool notifyUI = false;
+
+								if (value->ClampMin && v < value->Min)
+								{
+									v = value->Min;
+									notifyUI = true;
+								}
+								if (value->ClampMax && v > value->Max)
+								{
+									v = value->Max;
+									notifyUI = true;
+								}
+
+								value->set(v);
+								s->set(v);
+
+								if (notifyUI)
+									s->notify(o);
+
+								m_component->loadSerializable(m_data);
+							}
+						};
+						subject->addObserver(observer, true);
+						ui->addNumberInput(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::UInteger)
+					{
+						CUIntProperty* value = dynamic_cast<CUIntProperty*>(valueProperty);
+						CSubject<u32>* subject = new CSubject<u32>(value->get());
+						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						{
+							if (from != o)
+							{
+								u32 v = s->get();
+								bool notifyUI = false;
+
+								if (value->ClampMax && v > value->Max)
+								{
+									v = value->Max;
+									notifyUI = true;
+								}
+
+								value->set(v);
+								s->set(v);
+
+								if (notifyUI)
+									s->notify(o);
+
+								m_component->loadSerializable(m_data);
+							}
+						};
+						subject->addObserver(observer, true);
+						ui->addNumberInput(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::String)
+					{
+
+					}
+					else if (valueProperty->getType() == EPropertyDataType::StringW)
+					{
+
 					}
 				}
 

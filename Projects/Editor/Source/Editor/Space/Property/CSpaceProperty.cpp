@@ -366,6 +366,96 @@ namespace Skylicht
 			}
 		}
 
+		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<int>* value, int step)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
+			input->setNumberType(GUI::Integer);
+			input->setValue(value->get(), false);
+			input->setStep((float)step);
+
+			m_window->getCanvas()->TabableGroup.add(input);
+
+			boxLayout->endVertical();
+
+			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
+			if (group != NULL)
+			{
+				// when value change
+				CObserver<GUI::CNumberInput>* onChange = new CObserver<GUI::CNumberInput>(input);
+				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CNumberInput* target)
+				{
+					if (from != me)
+					{
+						CSubject<int>* intValue = (CSubject<int>*)subject;
+						target->setValue((float)intValue->get(), false);
+					}
+				};
+
+				IObserver* observer = value->addObserver(onChange);
+
+				// when input text change
+				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+					value->set(input->getValue());
+					value->notify(observer);
+				};
+
+				// hold observer to release later
+				group->Observer.push_back(observer);
+			}
+		}
+
+		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<u32>* value, int step)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
+			input->setNumberType(GUI::UInteger);
+			input->setValue(value->get(), false);
+			input->setStep((float)step);
+
+			m_window->getCanvas()->TabableGroup.add(input);
+
+			boxLayout->endVertical();
+
+			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
+			if (group != NULL)
+			{
+				// when value change
+				CObserver<GUI::CNumberInput>* onChange = new CObserver<GUI::CNumberInput>(input);
+				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CNumberInput* target)
+				{
+					if (from != me)
+					{
+						CSubject<u32>* intValue = (CSubject<u32>*)subject;
+						target->setValue((float)intValue->get(), false);
+					}
+				};
+
+				IObserver* observer = value->addObserver(onChange);
+
+				// when input text change
+				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+					value->set(input->getValue());
+					value->notify(observer);
+				};
+
+				// hold observer to release later
+				group->Observer.push_back(observer);
+			}
+		}
+
 		void CSpaceProperty::addTextBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::wstring>* value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();

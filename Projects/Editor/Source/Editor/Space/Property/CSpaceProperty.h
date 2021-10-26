@@ -90,6 +90,10 @@ namespace Skylicht
 
 			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<float>* value, float step);
 
+			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<int>* value, int step = 1);
+
+			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<u32>* value, int step = 1);
+
 			void addTextBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::wstring>* value);
 
 			void addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<bool>* value);
@@ -116,7 +120,7 @@ namespace Skylicht
 
 			GUI::CButton* addButton(const wchar_t* label);
 
-			void popupComponentMenu(CGameObject *gameObject, GUI::CBase* position);
+			void popupComponentMenu(CGameObject* gameObject, GUI::CBase* position);
 
 			void removeGroupByOwner(CComponentEditor* editor);
 
