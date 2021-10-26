@@ -69,27 +69,102 @@ namespace Skylicht
 				for (u32 i = 0, n = m_data->getNumProperty(); i < n; i++)
 				{
 					CValueProperty* valueProperty = m_data->getPropertyID(i);
+
 					if (valueProperty->getType() == EPropertyDataType::Bool)
 					{
 						CBoolProperty* value = dynamic_cast<CBoolProperty*>(valueProperty);
 
 						CSubject<bool>* subject = new CSubject<bool>(value->get());
-						subject->addObserver(new CObserver<CDefaultEditor>(this, [value, s = subject](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						subject->addObserver(new CObserver<CDefaultEditor>(this, [&, value, s = subject](ISubject* subject, IObserver* from, CDefaultEditor* target)
 							{
 								value->set(s->get());
+								m_component->loadSerializable(m_data);
 							}), true);
 
-						ui->addCheckBox(layout, CStringImp::convertUTF8ToUnicode(value->Name.c_str()).c_str(), subject);
+						ui->addCheckBox(layout, getPrettyName(value->Name), subject);
+
+						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::Float)
+					{
+						CFloatProperty* value = dynamic_cast<CFloatProperty*>(valueProperty);
+
+						CSubject<float>* subject = new CSubject<float>(value->get());
+
+						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						{
+							if (from != o)
+							{
+								float v = s->get();
+								bool notifyUI = false;
+
+								if (value->ClampMin && v < value->Min)
+								{
+									v = value->Min;
+									notifyUI = true;
+								}
+								if (value->ClampMax && v > value->Max)
+								{
+									v = value->Max;
+									notifyUI = true;
+								}
+
+								value->set(v);
+								s->set(v);
+
+								if (notifyUI)
+									s->notify(o);
+
+								m_component->loadSerializable(m_data);
+							}
+						};
+						subject->addObserver(observer, true);
+
+						ui->addNumberInput(layout, getPrettyName(value->Name), subject, 0.01f);
 
 						m_subjects.push_back(subject);
 					}
 				}
+
+				group->setExpand(true);
 			}
 		}
 
 		void CDefaultEditor::update()
 		{
 
+		}
+
+		const wchar_t* CDefaultEditor::getPrettyName(const std::string& name)
+		{
+			char prettyName[512] = { 0 };
+			int j = 0;
+			bool lastCharIsUpper = false;
+
+			for (size_t i = 0, j = 0, n = name.length(); i < n; i++, j++)
+			{
+				char c = name[i];
+
+				if (i == 0)
+				{
+					prettyName[j] = toupper(c);
+				}
+				else if (isupper(c) && !lastCharIsUpper)
+				{
+					prettyName[j++] = ' ';
+					prettyName[j] = c;
+				}
+				else
+				{
+					prettyName[j] = c;
+				}
+
+				lastCharIsUpper = isupper(c);
+			}
+
+			m_tempName = CStringImp::convertUTF8ToUnicode(prettyName);
+			return m_tempName.c_str();
 		}
 	}
 }
