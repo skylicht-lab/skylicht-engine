@@ -287,7 +287,7 @@ namespace Skylicht
 		}
 
 		CStringWProperty(CObjectSerializable* owner, const char* name, const wchar_t* value) :
-			CValuePropertyTemplate(owner, String, name)
+			CValuePropertyTemplate(owner, StringW, name)
 		{
 			set(value);
 		}
