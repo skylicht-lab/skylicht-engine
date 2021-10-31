@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "GameObject/CGameObject.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -127,10 +128,12 @@ namespace Skylicht
 									}
 
 									value->set(v);
-									s->set(v);
 
 									if (notifyUI)
+									{
+										s->set(v);
 										s->notify(o);
+									}
 
 									m_component->loadSerializable(m_data);
 								}
@@ -164,10 +167,12 @@ namespace Skylicht
 								}
 
 								value->set(v);
-								s->set(v);
 
 								if (notifyUI)
+								{
+									s->set(v);
 									s->notify(o);
+								}
 
 								m_component->loadSerializable(m_data);
 							}
@@ -195,10 +200,12 @@ namespace Skylicht
 								}
 
 								value->set(v);
-								s->set(v);
 
 								if (notifyUI)
+								{
+									s->set(v);
 									s->notify(o);
+								}
 
 								m_component->loadSerializable(m_data);
 							}
@@ -209,11 +216,46 @@ namespace Skylicht
 					}
 					else if (valueProperty->getType() == EPropertyDataType::String)
 					{
+						CStringProperty* value = dynamic_cast<CStringProperty*>(valueProperty);
+						std::wstring stringValue = CStringImp::convertUTF8ToUnicode(value->get().c_str());
 
+						CSubject<std::wstring>* subject = new CSubject<std::wstring>(stringValue);
+						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
+
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						{
+							if (from != o)
+							{
+								const std::wstring& stringValue = s->get();
+								std::string stringValueA = CStringImp::convertUnicodeToUTF8(stringValue.c_str());
+								value->set(stringValueA);
+								m_component->loadSerializable(m_data);
+							}
+						};
+
+						subject->addObserver(observer, true);
+						ui->addTextBox(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
 					}
 					else if (valueProperty->getType() == EPropertyDataType::StringW)
 					{
+						CStringWProperty* value = dynamic_cast<CStringWProperty*>(valueProperty);
+						CSubject<std::wstring>* subject = new CSubject<std::wstring>(value->get());
+						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
 
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						{
+							if (from != o)
+							{
+								const std::wstring& stringValue = s->get();
+								value->set(stringValue);
+								m_component->loadSerializable(m_data);
+							}
+						};
+
+						subject->addObserver(observer, true);
+						ui->addTextBox(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
 					}
 				}
 
