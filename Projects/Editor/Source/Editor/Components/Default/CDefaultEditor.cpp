@@ -86,38 +86,59 @@ namespace Skylicht
 					else if (valueProperty->getType() == EPropertyDataType::Float)
 					{
 						CFloatProperty* value = dynamic_cast<CFloatProperty*>(valueProperty);
-						CSubject<float>* subject = new CSubject<float>(value->get());
-						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
-						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						if (value->ClampMin && value->ClampMax)
 						{
-							if (from != o)
+							// add slider control on Limit Float
+							CSubject<float>* subject = new CSubject<float>(value->get());
+							CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
+							observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
 							{
-								float v = s->get();
-								bool notifyUI = false;
-
-								if (value->ClampMin && v < value->Min)
+								if (from != o)
 								{
-									v = value->Min;
-									notifyUI = true;
+									float v = s->get();
+									value->set(v);
+									s->set(v);
+									m_component->loadSerializable(m_data);
 								}
-								if (value->ClampMax && v > value->Max)
+							};
+							subject->addObserver(observer, true);
+							ui->addSlider(layout, getPrettyName(value->Name), subject, value->Min, value->Max);
+						}
+						else
+						{
+							CSubject<float>* subject = new CSubject<float>(value->get());
+							CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
+							observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+							{
+								if (from != o)
 								{
-									v = value->Max;
-									notifyUI = true;
+									float v = s->get();
+									bool notifyUI = false;
+
+									if (value->ClampMin && v < value->Min)
+									{
+										v = value->Min;
+										notifyUI = true;
+									}
+									if (value->ClampMax && v > value->Max)
+									{
+										v = value->Max;
+										notifyUI = true;
+									}
+
+									value->set(v);
+									s->set(v);
+
+									if (notifyUI)
+										s->notify(o);
+
+									m_component->loadSerializable(m_data);
 								}
-
-								value->set(v);
-								s->set(v);
-
-								if (notifyUI)
-									s->notify(o);
-
-								m_component->loadSerializable(m_data);
-							}
-						};
-						subject->addObserver(observer, true);
-						ui->addNumberInput(layout, getPrettyName(value->Name), subject, 0.01f);
-						m_subjects.push_back(subject);
+							};
+							subject->addObserver(observer, true);
+							ui->addNumberInput(layout, getPrettyName(value->Name), subject, 0.01f);
+							m_subjects.push_back(subject);
+						}
 					}
 					else if (valueProperty->getType() == EPropertyDataType::Integer)
 					{
