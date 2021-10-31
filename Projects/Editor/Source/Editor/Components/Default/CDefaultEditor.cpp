@@ -75,7 +75,7 @@ namespace Skylicht
 					{
 						CBoolProperty* value = dynamic_cast<CBoolProperty*>(valueProperty);
 						CSubject<bool>* subject = new CSubject<bool>(value->get());
-						subject->addObserver(new CObserver<CDefaultEditor>(this, [&, value, s = subject](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						subject->addObserver(new CObserver([&, value, s = subject](ISubject* subject, IObserver* from)
 							{
 								value->set(s->get());
 								m_component->loadSerializable(m_data);
@@ -91,8 +91,8 @@ namespace Skylicht
 						{
 							// add slider control on Limit Float
 							CSubject<float>* subject = new CSubject<float>(value->get());
-							CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
-							observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+							CObserver* observer = new CObserver();
+							observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 							{
 								if (from != o)
 								{
@@ -108,8 +108,8 @@ namespace Skylicht
 						else
 						{
 							CSubject<float>* subject = new CSubject<float>(value->get());
-							CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
-							observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+							CObserver* observer = new CObserver();
+							observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 							{
 								if (from != o)
 								{
@@ -147,8 +147,8 @@ namespace Skylicht
 					{
 						CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);
 						CSubject<int>* subject = new CSubject<int>(value->get());
-						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
-						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -185,8 +185,8 @@ namespace Skylicht
 					{
 						CUIntProperty* value = dynamic_cast<CUIntProperty*>(valueProperty);
 						CSubject<u32>* subject = new CSubject<u32>(value->get());
-						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
-						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -220,9 +220,9 @@ namespace Skylicht
 						std::wstring stringValue = CStringImp::convertUTF8ToUnicode(value->get().c_str());
 
 						CSubject<std::wstring>* subject = new CSubject<std::wstring>(stringValue);
-						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
-
-						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -241,9 +241,8 @@ namespace Skylicht
 					{
 						CStringWProperty* value = dynamic_cast<CStringWProperty*>(valueProperty);
 						CSubject<std::wstring>* subject = new CSubject<std::wstring>(value->get());
-						CObserver<CDefaultEditor>* observer = new CObserver<CDefaultEditor>(this);
-
-						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
