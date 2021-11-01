@@ -301,6 +301,8 @@ namespace Skylicht
 
 				virtual void doRender();
 
+				virtual void doRenderDragOverlay();
+
 				virtual void doRenderOverlay();
 
 				virtual void renderRecursive(const SRect& cliprect);
