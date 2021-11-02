@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "GameObject/CGameObject.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -69,27 +70,232 @@ namespace Skylicht
 				for (u32 i = 0, n = m_data->getNumProperty(); i < n; i++)
 				{
 					CValueProperty* valueProperty = m_data->getPropertyID(i);
+
 					if (valueProperty->getType() == EPropertyDataType::Bool)
 					{
 						CBoolProperty* value = dynamic_cast<CBoolProperty*>(valueProperty);
-
 						CSubject<bool>* subject = new CSubject<bool>(value->get());
-						subject->addObserver(new CObserver<CDefaultEditor>(this, [value, s = subject](ISubject* subject, IObserver* from, CDefaultEditor* target)
+						subject->addObserver(new CObserver([&, value, s = subject](ISubject* subject, IObserver* from)
 							{
 								value->set(s->get());
+								m_component->loadSerializable(m_data);
 							}), true);
 
-						ui->addCheckBox(layout, CStringImp::convertUTF8ToUnicode(value->Name.c_str()).c_str(), subject);
+						ui->addCheckBox(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::Float)
+					{
+						CFloatProperty* value = dynamic_cast<CFloatProperty*>(valueProperty);
+						if (value->ClampMin && value->ClampMax)
+						{
+							// add slider control on Limit Float
+							CSubject<float>* subject = new CSubject<float>(value->get());
+							CObserver* observer = new CObserver();
+							observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									float v = s->get();
+									value->set(v);
+									s->set(v);
+									m_component->loadSerializable(m_data);
+								}
+							};
+							subject->addObserver(observer, true);
+							ui->addSlider(layout, getPrettyName(value->Name), subject, value->Min, value->Max);
+						}
+						else
+						{
+							CSubject<float>* subject = new CSubject<float>(value->get());
+							CObserver* observer = new CObserver();
+							observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									float v = s->get();
+									bool notifyUI = false;
 
+									if (value->ClampMin && v < value->Min)
+									{
+										v = value->Min;
+										notifyUI = true;
+									}
+									if (value->ClampMax && v > value->Max)
+									{
+										v = value->Max;
+										notifyUI = true;
+									}
+
+									value->set(v);
+
+									if (notifyUI)
+									{
+										s->set(v);
+										s->notify(o);
+									}
+
+									m_component->loadSerializable(m_data);
+								}
+							};
+							subject->addObserver(observer, true);
+							ui->addNumberInput(layout, getPrettyName(value->Name), subject, 0.01f);
+							m_subjects.push_back(subject);
+						}
+					}
+					else if (valueProperty->getType() == EPropertyDataType::Integer)
+					{
+						CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);
+						CSubject<int>* subject = new CSubject<int>(value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+						{
+							if (from != o)
+							{
+								int v = s->get();
+								bool notifyUI = false;
+
+								if (value->ClampMin && v < value->Min)
+								{
+									v = value->Min;
+									notifyUI = true;
+								}
+								if (value->ClampMax && v > value->Max)
+								{
+									v = value->Max;
+									notifyUI = true;
+								}
+
+								value->set(v);
+
+								if (notifyUI)
+								{
+									s->set(v);
+									s->notify(o);
+								}
+
+								m_component->loadSerializable(m_data);
+							}
+						};
+						subject->addObserver(observer, true);
+						ui->addNumberInput(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::UInteger)
+					{
+						CUIntProperty* value = dynamic_cast<CUIntProperty*>(valueProperty);
+						CSubject<u32>* subject = new CSubject<u32>(value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+						{
+							if (from != o)
+							{
+								u32 v = s->get();
+								bool notifyUI = false;
+
+								if (value->ClampMax && v > value->Max)
+								{
+									v = value->Max;
+									notifyUI = true;
+								}
+
+								value->set(v);
+
+								if (notifyUI)
+								{
+									s->set(v);
+									s->notify(o);
+								}
+
+								m_component->loadSerializable(m_data);
+							}
+						};
+						subject->addObserver(observer, true);
+						ui->addNumberInput(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::String)
+					{
+						CStringProperty* value = dynamic_cast<CStringProperty*>(valueProperty);
+						std::wstring stringValue = CStringImp::convertUTF8ToUnicode(value->get().c_str());
+
+						CSubject<std::wstring>* subject = new CSubject<std::wstring>(stringValue);
+						
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+						{
+							if (from != o)
+							{
+								const std::wstring& stringValue = s->get();
+								std::string stringValueA = CStringImp::convertUnicodeToUTF8(stringValue.c_str());
+								value->set(stringValueA);
+								m_component->loadSerializable(m_data);
+							}
+						};
+
+						subject->addObserver(observer, true);
+						ui->addTextBox(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::StringW)
+					{
+						CStringWProperty* value = dynamic_cast<CStringWProperty*>(valueProperty);
+						CSubject<std::wstring>* subject = new CSubject<std::wstring>(value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+						{
+							if (from != o)
+							{
+								const std::wstring& stringValue = s->get();
+								value->set(stringValue);
+								m_component->loadSerializable(m_data);
+							}
+						};
+
+						subject->addObserver(observer, true);
+						ui->addTextBox(layout, getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
 				}
+
+				group->setExpand(true);
 			}
 		}
 
 		void CDefaultEditor::update()
 		{
 
+		}
+
+		const wchar_t* CDefaultEditor::getPrettyName(const std::string& name)
+		{
+			char prettyName[512] = { 0 };
+			int j = 0;
+			bool lastCharIsUpper = false;
+
+			for (size_t i = 0, j = 0, n = name.length(); i < n; i++, j++)
+			{
+				char c = name[i];
+
+				if (i == 0)
+				{
+					prettyName[j] = toupper(c);
+				}
+				else if (isupper(c) && !lastCharIsUpper)
+				{
+					prettyName[j++] = ' ';
+					prettyName[j] = c;
+				}
+				else
+				{
+					prettyName[j] = c;
+				}
+
+				lastCharIsUpper = isupper(c);
+			}
+
+			m_tempName = CStringImp::convertUTF8ToUnicode(prettyName);
+			return m_tempName.c_str();
 		}
 	}
 }

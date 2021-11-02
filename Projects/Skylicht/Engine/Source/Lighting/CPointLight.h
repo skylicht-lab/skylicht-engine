@@ -47,6 +47,10 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
+
 		DECLARE_GETTYPENAME(CPointLight);
 
 	public:
