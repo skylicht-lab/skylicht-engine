@@ -67,6 +67,22 @@ namespace Skylicht
 			m_needRenderShadowDepth = true;
 	}
 
+	CObjectSerializable* CPointLight::createSerializable()
+	{
+		CObjectSerializable* object = CLight::createSerializable();
+
+		object->addAutoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
+		return object;
+	}
+
+	void CPointLight::loadSerializable(CObjectSerializable* object)
+	{
+		CLight::loadSerializable(object);
+
+		float radius = object->get<float>("radius", 3.0f);
+		setRadius(radius);
+	}
+
 	core::vector3df CPointLight::getPosition()
 	{
 		return m_gameObject->getPosition();

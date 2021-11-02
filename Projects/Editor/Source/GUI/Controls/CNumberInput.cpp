@@ -202,7 +202,8 @@ namespace Skylicht
 				}
 				else if (c == '.')
 				{
-					if (m_numberType == Integer)
+					if (m_numberType == Integer ||
+						m_numberType == UInteger)
 					{
 						// no dot
 						return false;
@@ -246,6 +247,9 @@ namespace Skylicht
 			void CNumberInput::setValue(float value, bool invokeEvent)
 			{
 				m_value = value;
+
+				if (m_numberType == UInteger && m_value < 0)
+					m_value = 0.0f;
 
 				wchar_t text[64];
 

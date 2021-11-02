@@ -62,8 +62,7 @@ namespace Skylicht
 			ui->addTextBox(layout, L"Name", &Name);
 			ui->addCheckBox(layout, L"Enable", &Enable);
 
-			Name.addObserver(new CObserver<CGameObject>(object,
-				[&](ISubject* subject, IObserver* from, CGameObject* target)
+			Name.addObserver(new CObserver([&, target = object](ISubject* subject, IObserver* from)
 				{
 					CSubject<std::wstring>* value = (CSubject<std::wstring>*) subject;
 					target->setName(value->get().c_str());
@@ -73,8 +72,8 @@ namespace Skylicht
 			CSelectObject* selectObject = CSelection::getInstance()->getSelected(object);
 			if (selectObject != NULL)
 			{
-				selectObject->addObserver(new CObserver<CGameObject>(object,
-					[&,n = &Name](ISubject* subject, IObserver* from, CGameObject* target) {
+				selectObject->addObserver(new CObserver([&, n = &Name, target = object](ISubject* subject, IObserver* from)
+					{
 						if (from != this)
 						{
 							n->set(target->getName());
@@ -83,8 +82,7 @@ namespace Skylicht
 					}), true);
 			}
 
-			Enable.addObserver(new CObserver<CGameObject>(object,
-				[&](ISubject* subject, IObserver* from, CGameObject* target)
+			Enable.addObserver(new CObserver([&, n = &Name, target = object](ISubject* subject, IObserver* from)
 				{
 					CSubject<bool>* value = (CSubject<bool>*) subject;
 					target->setEnable(value->get());

@@ -31,21 +31,17 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		template<class T>
 		class CObserver : public IObserver
 		{
 		protected:
-			T* m_target;
 
 		public:
-			CObserver(T* target) :
-				m_target(target)
+			CObserver()
 			{
 
 			}
 
-			CObserver(T* target, const std::function<void(ISubject* subject, IObserver* from, T* target)>& notify) :
-				m_target(target),
+			CObserver(const std::function<void(ISubject* subject, IObserver* from)>& notify) :
 				Notify(notify)
 			{
 
@@ -55,16 +51,11 @@ namespace Skylicht
 			{
 				if (Notify != nullptr)
 				{
-					Notify(subject, from, m_target);
+					Notify(subject, from);
 				}
 			}
 
-			T* getTarget()
-			{
-				return m_target;
-			}
-
-			std::function<void(ISubject* subject, IObserver* from, T* target)> Notify;
+			std::function<void(ISubject* subject, IObserver* from)> Notify;
 		};
 	}
 }

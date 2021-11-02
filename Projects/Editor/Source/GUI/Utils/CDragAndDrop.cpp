@@ -159,7 +159,7 @@ namespace Skylicht
 						s_mouseX - dragDrop->HoldOffsetX,
 						s_mouseY - dragDrop->HoldOffsetY)
 					);
-					dragDrop->DrawControl->doRender();
+					dragDrop->DrawControl->doRenderDragOverlay();
 
 					renderer->setRenderOffset(offset);
 				}
