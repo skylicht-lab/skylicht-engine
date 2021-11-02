@@ -343,8 +343,8 @@ namespace Skylicht
 			if (group != NULL)
 			{
 				// when value change
-				CObserver<GUI::CNumberInput>* onChange = new CObserver<GUI::CNumberInput>(input);
-				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CNumberInput* target)
+				CObserver* onChange = new CObserver();
+				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
 					if (from != me)
 					{
@@ -358,6 +358,96 @@ namespace Skylicht
 				// when input text change
 				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
 					value->set(input->getValue());
+					value->notify(observer);
+				};
+
+				// hold observer to release later
+				group->Observer.push_back(observer);
+			}
+		}
+
+		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<int>* value, int step)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
+			input->setNumberType(GUI::Integer);
+			input->setValue((float)value->get(), false);
+			input->setStep((float)step);
+
+			m_window->getCanvas()->TabableGroup.add(input);
+
+			boxLayout->endVertical();
+
+			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
+			if (group != NULL)
+			{
+				// when value change
+				CObserver* onChange = new CObserver();
+				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+				{
+					if (from != me)
+					{
+						CSubject<int>* intValue = (CSubject<int>*)subject;
+						target->setValue((float)intValue->get(), false);
+					}
+				};
+
+				IObserver* observer = value->addObserver(onChange);
+
+				// when input text change
+				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+					value->set((int)input->getValue());
+					value->notify(observer);
+				};
+
+				// hold observer to release later
+				group->Observer.push_back(observer);
+			}
+		}
+
+		void CSpaceProperty::addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<u32>* value, int step)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
+			input->setNumberType(GUI::UInteger);
+			input->setValue((float)value->get(), false);
+			input->setStep((float)step);
+
+			m_window->getCanvas()->TabableGroup.add(input);
+
+			boxLayout->endVertical();
+
+			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
+			if (group != NULL)
+			{
+				// when value change
+				CObserver* onChange = new CObserver();
+				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+				{
+					if (from != me)
+					{
+						CSubject<u32>* intValue = (CSubject<u32>*)subject;
+						target->setValue((float)intValue->get(), false);
+					}
+				};
+
+				IObserver* observer = value->addObserver(onChange);
+
+				// when input text change
+				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+					value->set((u32)input->getValue());
 					value->notify(observer);
 				};
 
@@ -382,8 +472,8 @@ namespace Skylicht
 			if (group != NULL)
 			{
 				// when value change
-				CObserver<GUI::CTextBox>* onChange = new CObserver<GUI::CTextBox>(input);
-				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CTextBox* target)
+				CObserver* onChange = new CObserver();
+				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
 					if (from != me)
 					{
@@ -424,8 +514,8 @@ namespace Skylicht
 			if (group != NULL)
 			{
 				// when check value c hange
-				CObserver<GUI::CCheckBox>* onChange = new CObserver<GUI::CCheckBox>(check);
-				onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CCheckBox* target)
+				CObserver* onChange = new CObserver();
+				onChange->Notify = [me = onChange, target = check](ISubject* subject, IObserver* from)
 				{
 					if (from != me)
 					{
@@ -461,8 +551,8 @@ namespace Skylicht
 			comboBox->setListValue(listValue);
 
 			// when value change
-			CObserver<GUI::CComboBox>* onChange = new CObserver<GUI::CComboBox>(comboBox);
-			onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CComboBox* target)
+			CObserver* onChange = new CObserver();
+			onChange->Notify = [me = onChange, target = comboBox](ISubject* subject, IObserver* from)
 			{
 				if (from != me)
 				{
@@ -495,8 +585,8 @@ namespace Skylicht
 			slider->setValue(value->get(), min, max, false);
 
 			// when value change
-			CObserver<GUI::CSlider>* onChange = new CObserver<GUI::CSlider>(slider);
-			onChange->Notify = [me = onChange](ISubject* subject, IObserver* from, GUI::CSlider* target)
+			CObserver* onChange = new CObserver();
+			onChange->Notify = [me = onChange, target = slider](ISubject* subject, IObserver* from)
 			{
 				if (from != me)
 				{

@@ -532,7 +532,8 @@ namespace Skylicht
 			enum ENumberInputType
 			{
 				Float,
-				Integer
+				Integer,
+				UInteger
 			};
 		}
 	}

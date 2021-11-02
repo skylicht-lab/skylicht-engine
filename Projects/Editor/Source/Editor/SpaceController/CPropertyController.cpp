@@ -65,8 +65,9 @@ namespace Skylicht
 					m_spaceProperty->clearAllGroup();
 
 					// When change the name
-					object->addObserver(new CObserver<CGameObject>(obj, [space = m_spaceProperty](ISubject* subject, IObserver* from, CGameObject* target) {
-						space->setLabel(target->getName());
+					object->addObserver(new CObserver([space = m_spaceProperty, target = obj](ISubject* subject, IObserver* from)
+						{
+							space->setLabel(target->getName());
 						}), true);
 
 					// Tabable

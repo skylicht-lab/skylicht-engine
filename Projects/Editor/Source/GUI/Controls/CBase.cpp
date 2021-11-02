@@ -437,6 +437,16 @@ namespace Skylicht
 				renderRecursive(m_bounds);
 			}
 
+			void CBase::doRenderDragOverlay()
+			{
+				think();
+
+				SRect bounds = m_bounds;
+				bounds.X = 0.0f;
+				bounds.Y = 0.0f;
+				renderRecursive(bounds);
+			}
+
 			void CBase::doRenderOverlay()
 			{
 				renderOverlay();
