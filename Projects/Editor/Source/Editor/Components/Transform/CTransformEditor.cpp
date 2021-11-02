@@ -99,8 +99,8 @@ namespace Skylicht
 				Y = pos.Y;
 				Z = pos.Z;
 
-				m_gizmos->getPosition().addObserver(new CObserver<CTransformEditor>(this,
-					[x = &X, y = &Y, z = &Z, t = m_transform](ISubject* subject, IObserver* from, CTransformEditor* target) {
+				m_gizmos->getPosition().addObserver(new CObserver([x = &X, y = &Y, z = &Z, t = m_transform](ISubject* subject, IObserver* from)
+					{
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& pos = value->get();
 
@@ -119,8 +119,7 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Y", &Y, 0.01f);
 				ui->addNumberInput(layout, L"Z", &Z, 0.01f);
 
-				X.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
+				X.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -132,8 +131,7 @@ namespace Skylicht
 						}
 					}), true);
 
-				Y.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
+				Y.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -145,8 +143,7 @@ namespace Skylicht
 						}
 					}), true);
 
-				Z.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
+				Z.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -168,8 +165,8 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Y", &RotateY, 0.1f);
 				ui->addNumberInput(layout, L"Z", &RotateZ, 0.1f);
 
-				m_gizmos->getRotation().addObserver(new CObserver<CTransformEditor>(this,
-					[x = &RotateX, y = &RotateY, z = &RotateZ, t = m_transform](ISubject* subject, IObserver* from, CTransformEditor* target) {
+				m_gizmos->getRotation().addObserver(new CObserver([x = &RotateX, y = &RotateY, z = &RotateZ, t = m_transform](ISubject* subject, IObserver* from)
+					{
 						CSubject<core::quaternion>* value = (CSubject<core::quaternion>*)subject;
 
 						core::vector3df rot;
@@ -186,8 +183,7 @@ namespace Skylicht
 						t->setRotation(rot * core::RADTODEG);
 					}), true);
 
-				RotateX.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
+				RotateX.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -199,8 +195,7 @@ namespace Skylicht
 						}
 					}), true);
 
-				RotateY.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
+				RotateY.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -212,8 +207,7 @@ namespace Skylicht
 						}
 					}), true);
 
-				RotateZ.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
+				RotateZ.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -237,8 +231,8 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Y", &ScaleY, 0.01f);
 				ui->addNumberInput(layout, L"Z", &ScaleZ, 0.01f);
 
-				m_gizmos->getScale().addObserver(new CObserver<CTransformEditor>(this,
-					[x = &ScaleX, y = &ScaleY, z = &ScaleZ, t = m_transform](ISubject* subject, IObserver* from, CTransformEditor* target) {
+				m_gizmos->getScale().addObserver(new CObserver([x = &ScaleX, y = &ScaleY, z = &ScaleZ, t = m_transform](ISubject* subject, IObserver* from)
+					{
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& scale = value->get();
 
@@ -253,8 +247,7 @@ namespace Skylicht
 						t->setScale(scale);
 					}), true);
 
-				ScaleX.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
+				ScaleX.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -266,8 +259,7 @@ namespace Skylicht
 						}
 					}), true);
 
-				ScaleY.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
+				ScaleY.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -279,8 +271,7 @@ namespace Skylicht
 						}
 					}), true);
 
-				ScaleZ.addObserver(new CObserver<CTransformEditor>(this,
-					[t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from, CTransformEditor* target)
+				ScaleZ.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{

@@ -64,14 +64,48 @@ namespace Skylicht
 	class CIntProperty : public CValuePropertyTemplate<int>
 	{
 	public:
+		int Min;
+		int Max;
+		bool ClampMin;
+		bool ClampMax;
+
+	public:
 		CIntProperty(CObjectSerializable* owner, const char* name) :
-			CValuePropertyTemplate(owner, Integer, name)
+			CValuePropertyTemplate(owner, Integer, name),
+			Min(INT_MIN),
+			Max(INT_MAX),
+			ClampMin(false),
+			ClampMax(false)
 		{
 			set(0);
 		}
 
 		CIntProperty(CObjectSerializable* owner, const char* name, int value) :
-			CValuePropertyTemplate(owner, Integer, name)
+			CValuePropertyTemplate(owner, Integer, name),
+			Min(INT_MIN),
+			Max(INT_MAX),
+			ClampMin(false),
+			ClampMax(false)
+		{
+			set(value);
+		}
+
+		CIntProperty(CObjectSerializable* owner, const char* name, int value, int min) :
+			CValuePropertyTemplate(owner, Integer, name),
+			Min(min),
+			Max(INT_MAX),
+			ClampMin(true),
+			ClampMax(false)
+		{
+			set(value);
+		}
+
+		CIntProperty(CObjectSerializable* owner, const char* name, int value, int min, int max) :
+			CValuePropertyTemplate(owner, Integer, name),
+			Min(min),
+			Max(max),
+			ClampMin(true),
+			ClampMax(true)
 		{
 			set(value);
 		}
@@ -90,14 +124,30 @@ namespace Skylicht
 	class CUIntProperty : public CValuePropertyTemplate<u32>
 	{
 	public:
+		u32 Max;
+		bool ClampMax;
+
+	public:
 		CUIntProperty(CObjectSerializable* owner, const char* name) :
-			CValuePropertyTemplate(owner, UInteger, name)
+			CValuePropertyTemplate(owner, UInteger, name),
+			Max(UINT_MAX),
+			ClampMax(false)
 		{
 			set(0);
 		}
 
 		CUIntProperty(CObjectSerializable* owner, const char* name, u32 value) :
-			CValuePropertyTemplate(owner, UInteger, name)
+			CValuePropertyTemplate(owner, UInteger, name),
+			Max(UINT_MAX),
+			ClampMax(false)
+		{
+			set(value);
+		}
+
+		CUIntProperty(CObjectSerializable* owner, const char* name, u32 value, u32 max) :
+			CValuePropertyTemplate(owner, UInteger, name),
+			Max(max),
+			ClampMax(true)
 		{
 			set(value);
 		}
@@ -116,14 +166,48 @@ namespace Skylicht
 	class CFloatProperty : public CValuePropertyTemplate<float>
 	{
 	public:
+		float Min;
+		float Max;
+		bool ClampMin;
+		bool ClampMax;
+
+	public:
 		CFloatProperty(CObjectSerializable* owner, const char* name) :
-			CValuePropertyTemplate(owner, Float, name)
+			CValuePropertyTemplate(owner, Float, name),
+			ClampMin(false),
+			ClampMax(false),
+			Min(FLT_MIN),
+			Max(FLT_MAX)
 		{
 			set(0.0f);
 		}
 
 		CFloatProperty(CObjectSerializable* owner, const char* name, float value) :
-			CValuePropertyTemplate(owner, Float, name)
+			CValuePropertyTemplate(owner, Float, name),
+			ClampMin(false),
+			ClampMax(false),
+			Min(FLT_MIN),
+			Max(FLT_MAX)
+		{
+			set(value);
+		}
+
+		CFloatProperty(CObjectSerializable* owner, const char* name, float value, float min, float max) :
+			CValuePropertyTemplate(owner, Float, name),
+			ClampMin(true),
+			ClampMax(true),
+			Min(min),
+			Max(max)
+		{
+			set(value);
+		}
+
+		CFloatProperty(CObjectSerializable* owner, const char* name, float value, float min) :
+			CValuePropertyTemplate(owner, Float, name),
+			ClampMin(true),
+			ClampMax(false),
+			Min(min),
+			Max(FLT_MAX)
 		{
 			set(value);
 		}
@@ -203,7 +287,7 @@ namespace Skylicht
 		}
 
 		CStringWProperty(CObjectSerializable* owner, const char* name, const wchar_t* value) :
-			CValuePropertyTemplate(owner, String, name)
+			CValuePropertyTemplate(owner, StringW, name)
 		{
 			set(value);
 		}
