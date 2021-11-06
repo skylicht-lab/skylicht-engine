@@ -35,7 +35,7 @@ namespace Skylicht
 			CTimeline::CTimeline(CBase* base) :
 				CBase(base),
 				m_contentWidth(250.0f),
-				m_focusPosition(0.0f),
+				m_cursorPosition(0.0f),
 				m_contentPadding(50.0f)
 			{
 				enableRenderFillRect(true);
@@ -62,7 +62,7 @@ namespace Skylicht
 				m_itemPanel->dock(EPosition::Fill);
 				m_itemPanel->setFitType(CContentSizeControl::WrapChildren, CContentSizeControl::WrapChildren);
 
-				m_focus = new CTimelineFocus(this, this);
+				m_cursorLine = new CTimelineFocus(this, this);
 			}
 
 			CTimeline::~CTimeline()
@@ -108,27 +108,41 @@ namespace Skylicht
 				m_timelineScrollBar->setContentSize(m_maxSize.Width + m_contentPadding);
 				m_timelineScrollBar->setViewableContentSize(width() - m_contentWidth);
 
-				updateFocusPosition();
+				updateCursorPosition();
 
 				// fix the first time layout the value is zero
 				if (m_maxSize.Width == 0.0f)
 					invalidate();
 			}
 
-			void CTimeline::updateFocusPosition()
+			void CTimeline::updateCursorPosition()
 			{
 				float rulerX = m_ruler->getPos().X;
 
-				float position = rulerX + m_ruler->getBeginOffset() + m_focusPosition;
-				m_focus->setPos(position, 0.0f);
+				float position = rulerX + m_ruler->getBeginOffset() + m_cursorPosition;
+				m_cursorLine->setPos(position, 0.0f);
 
 				float maxWidth = m_maxSize.Width + m_ruler->getBeginOffset();
-				m_focus->setDragLimitRect(SRect(rulerX, 0.0f, maxWidth, 0.0f));
+				m_cursorLine->setDragLimitRect(SRect(rulerX, 0.0f, maxWidth, 0.0f));
 
 				if (position < rulerX || m_maxSize.Width == 0.0f)
-					m_focus->setHidden(true);
+					m_cursorLine->setHidden(true);
 				else
-					m_focus->setHidden(false);
+					m_cursorLine->setHidden(false);
+			}
+
+			float CTimeline::getCursorPosition()
+			{
+				float rulerX = m_ruler->getPos().X;
+				float position = m_cursorLine->getPos().X;
+
+				m_cursorPosition = position - rulerX - m_ruler->getBeginOffset();
+				return m_cursorPosition;
+			}
+
+			void CTimeline::enableDragCursor(bool b)
+			{
+				m_cursorLine->enableDrag(b);
 			}
 
 			void CTimeline::onTimelineScroll(CBase* base)
@@ -146,7 +160,7 @@ namespace Skylicht
 
 						m_ruler->setBeginOffset(newInnerPanelPosX);
 
-						updateFocusPosition();
+						updateCursorPosition();
 					}
 				}
 			}

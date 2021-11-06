@@ -46,6 +46,10 @@ namespace Skylicht
 				virtual void postLayout();
 
 				virtual void enableDrag(bool b);
+
+				virtual void onMoved();
+
+				virtual void onEndMoved();
 			};
 		}
 	}

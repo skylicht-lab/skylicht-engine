@@ -64,6 +64,18 @@ namespace Skylicht
 				else
 					setCursor(ECursorType::Normal);
 			}
+
+			void CTimelineFocus::onMoved()
+			{
+				if (m_timeline->OnDragCursor != nullptr)
+					m_timeline->OnDragCursor(this, m_timeline->getCursorPosition());
+			}
+
+			void CTimelineFocus::onEndMoved()
+			{
+				if (m_timeline->OnEndDragCursor != nullptr)
+					m_timeline->OnEndDragCursor(this, m_timeline->getCursorPosition());
+			}
 		}
 	}
 }

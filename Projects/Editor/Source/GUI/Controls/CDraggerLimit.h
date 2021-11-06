@@ -41,7 +41,7 @@ namespace Skylicht
 
 				virtual ~CDraggerLimit();
 
-				inline void setDragLimitRect(SRect& r)
+				inline void setDragLimitRect(const SRect& r)
 				{
 					m_limitRect = r;
 				}
