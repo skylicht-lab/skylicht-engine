@@ -42,7 +42,7 @@ namespace Skylicht
 			protected:
 				CRulerBar* m_ruler;
 
-				CTimelineFocus* m_focus;
+				CTimelineFocus* m_cursorLine;
 
 				CScrollControl* m_scrollPanel;
 
@@ -52,11 +52,15 @@ namespace Skylicht
 
 				float m_contentWidth;
 
-				float m_focusPosition;
+				float m_cursorPosition;
 
 				CScrollBar* m_timelineScrollBar;
 
 				SDimension m_maxSize;
+
+			public:
+				std::function<void(CBase*, float)> OnDragCursor;
+				std::function<void(CBase*, float)> OnEndDragCursor;
 
 			public:
 				CTimeline(CBase* base);
@@ -79,11 +83,15 @@ namespace Skylicht
 
 				virtual void layout();
 
-				inline void setFocusPosition(float pos)
+				inline void setCursorPosition(float pos)
 				{
-					m_focusPosition = pos;
-					updateFocusPosition();
+					m_cursorPosition = pos;
+					updateCursorPosition();
 				}
+
+				float getCursorPosition();
+
+				void enableDragCursor(bool b);
 
 				inline void setContentPadding(float padding)
 				{
@@ -96,7 +104,7 @@ namespace Skylicht
 
 			protected:
 
-				void updateFocusPosition();
+				void updateCursorPosition();
 
 			};
 		}
