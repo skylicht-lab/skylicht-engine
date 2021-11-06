@@ -34,19 +34,25 @@ namespace Skylicht
 			class CDragger : public CBase
 			{
 			protected:
-				CBase *m_target;
+				CBase* m_target;
 				bool m_pressed;
 				bool m_callBeginMove;
 				SPoint m_holdPosition;
 
 				bool m_clampInsideParent;
+				bool m_enableDrag;
 
 			public:
 				CDragger(CBase* parent);
 
-				inline void setTarget(CBase *base)
+				inline void setTarget(CBase* base)
 				{
 					m_target = base;
+				}
+
+				virtual void enableDrag(bool b)
+				{
+					m_enableDrag = b;
 				}
 
 				virtual ~CDragger();

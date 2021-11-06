@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CDragger.h"
+#include "CDraggerLimit.h"
 #include "GUI/Input/CInput.h"
 
 namespace Skylicht
@@ -32,23 +32,17 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CDragger::CDragger(CBase* parent) :
-				CBase(parent),
-				m_target(parent),
-				m_pressed(false),
-				m_callBeginMove(false),
-				m_clampInsideParent(true),
-				m_enableDrag(true)
+			CDraggerLimit::CDraggerLimit(CBase* parent) :CDragger(parent)
 			{
 
 			}
 
-			CDragger::~CDragger()
+			CDraggerLimit::~CDraggerLimit()
 			{
 
 			}
 
-			void CDragger::onMouseMoved(float x, float y, float deltaX, float deltaY)
+			void CDraggerLimit::onMouseMoved(float x, float y, float deltaX, float deltaY)
 			{
 				if (m_disabled)
 					return;
@@ -70,50 +64,22 @@ namespace Skylicht
 					m_callBeginMove = false;
 				}
 
+				if (p.X < m_limitRect.X)
+					p.X = m_limitRect.X;
+				if (p.X > m_limitRect.X + m_limitRect.Width)
+					p.X = m_limitRect.X + m_limitRect.Width;
+				if (p.Y < m_limitRect.Y)
+					p.Y = m_limitRect.Y;
+				if (p.Y > m_limitRect.Y + m_limitRect.Height)
+					p.Y = m_limitRect.Y + m_limitRect.Height;
+
+				// clamp limit
 				if (m_clampInsideParent)
 					m_target->moveTo(p.X, p.Y);
 				else
 					m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y, height());
 
 				m_target->onMoved();
-			}
-
-			void CDragger::onMouseClickLeft(float x, float y, bool down)
-			{
-				if (m_disabled)
-					return;
-
-				m_pressed = down;
-
-				if (m_pressed == true)
-				{
-					m_holdPosition = m_target->canvasPosToLocal(SPoint(x, y));
-					CInput::getInput()->setCapture(this);
-					m_callBeginMove = true;
-				}
-				else
-				{
-					CInput::getInput()->setCapture(NULL);
-					m_callBeginMove = false;
-					m_target->onEndMoved();
-				}
-			}
-
-			void CDragger::dragMoveCommand(const SPoint& mouseOffset)
-			{
-				CInput* input = CInput::getInput();
-
-				SPoint p = input->getMousePosition();
-				SPoint localPos = m_target->getParent()->canvasPosToLocal(p);
-
-				m_holdPosition = mouseOffset;
-
-				m_target->moveTo(localPos.X - m_holdPosition.X, localPos.Y - m_holdPosition.Y);
-
-				m_pressed = true;
-				m_callBeginMove = true;
-
-				input->setCapture(this);
 			}
 		}
 	}

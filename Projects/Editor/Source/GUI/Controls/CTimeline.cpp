@@ -35,7 +35,8 @@ namespace Skylicht
 			CTimeline::CTimeline(CBase* base) :
 				CBase(base),
 				m_contentWidth(250.0f),
-				m_focusPosition(0.0f)
+				m_focusPosition(0.0f),
+				m_contentPadding(50.0f)
 			{
 				enableRenderFillRect(true);
 				setFillRectColor(CThemeConfig::TimelineItemBG);
@@ -104,7 +105,7 @@ namespace Skylicht
 					}
 				}
 
-				m_timelineScrollBar->setContentSize(m_maxSize.Width);
+				m_timelineScrollBar->setContentSize(m_maxSize.Width + m_contentPadding);
 				m_timelineScrollBar->setViewableContentSize(width() - m_contentWidth);
 
 				updateFocusPosition();
@@ -121,6 +122,9 @@ namespace Skylicht
 				float position = rulerX + m_ruler->getBeginOffset() + m_focusPosition;
 				m_focus->setPos(position, 0.0f);
 
+				float maxWidth = m_maxSize.Width + m_ruler->getBeginOffset();
+				m_focus->setDragLimitRect(SRect(rulerX, 0.0f, maxWidth, 0.0f));
+
 				if (position < rulerX || m_maxSize.Width == 0.0f)
 					m_focus->setHidden(true);
 				else
@@ -130,7 +134,7 @@ namespace Skylicht
 			void CTimeline::onTimelineScroll(CBase* base)
 			{
 				float scroll = m_timelineScrollBar->getScroll();
-				float newInnerPanelPosX = -(m_maxSize.Width - width() + m_contentWidth) * scroll;
+				float newInnerPanelPosX = -((m_maxSize.Width + m_contentPadding) - width() + m_contentWidth) * scroll;
 
 				for (CBase* child : m_itemPanel->Children)
 				{
