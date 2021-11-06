@@ -209,6 +209,8 @@ namespace Skylicht
 				}
 			};
 
+			typedef irr::video::ITexture CGUIImage;
+
 			enum EKey
 			{
 				KEY_LBUTTON = 0x01,  // Left mouse button

@@ -26,7 +26,7 @@
 #endif
 
 #ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
-extern void OSXCopyToClipboard(const char *text);
+extern void OSXCopyToClipboard(const char* text);
 extern char* OSXCopyFromClipboard();
 #endif
 
@@ -82,7 +82,7 @@ namespace irr
 		EmptyClipboard();
 
 		HGLOBAL clipbuffer;
-		char * buffer;
+		char* buffer;
 
 		clipbuffer = GlobalAlloc(GMEM_DDESHARE, strlen(text) + 1);
 		buffer = (char*)GlobalLock(clipbuffer);
@@ -117,7 +117,7 @@ namespace irr
 		if (!OpenClipboard(NULL))
 			return 0;
 
-		char * buffer = 0;
+		char* buffer = 0;
 
 		HANDLE hData = GetClipboardData(CF_TEXT);
 		buffer = (char*)GlobalLock(hData);
@@ -126,7 +126,7 @@ namespace irr
 		return buffer;
 
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-		return OSXCopyFromClipboard();		
+		return OSXCopyFromClipboard();
 #elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
 		if (IrrDeviceLinux)
 			return IrrDeviceLinux->getTextFromClipboard();
@@ -134,7 +134,7 @@ namespace irr
 #else
 		return 0;
 #endif
-}
+	}
 
 	//! Check OS is support unicode clipboard
 	bool COSOperator::isSupportUnicodeClipboard()
@@ -167,9 +167,9 @@ namespace irr
 		EmptyClipboard();
 
 		HGLOBAL clipbuffer;
-		char * buffer;
+		char* buffer;
 
-		u32 length = wcslen(text);
+		u32 length = (u32)wcslen(text);
 
 		clipbuffer = GlobalAlloc(GMEM_DDESHARE, (length + 1) * sizeof(wchar_t));
 		buffer = (char*)GlobalLock(clipbuffer);
@@ -198,7 +198,7 @@ namespace irr
 		if (!OpenClipboard(NULL))
 			return 0;
 
-		wchar_t * buffer = 0;
+		wchar_t* buffer = 0;
 		HANDLE hData = GetClipboardData(CF_UNICODETEXT);
 		buffer = (wchar_t*)GlobalLock(hData);
 		GlobalUnlock(hData);
@@ -268,7 +268,7 @@ namespace irr
 				}
 			}
 			fclose(file);
-	}
+		}
 		return (*MHz != 0);
 #endif
 	}
@@ -300,9 +300,9 @@ namespace irr
 			return false;
 
 		if (Total)
-			*Total = (u32)((ps*(long long)pp) >> 10);
+			*Total = (u32)((ps * (long long)pp) >> 10);
 		if (Avail)
-			*Avail = (u32)((ps*(long long)ap) >> 10);
+			*Avail = (u32)((ps * (long long)ap) >> 10);
 		return true;
 #else
 		// TODO: implement for non-availablity of symbols/features
