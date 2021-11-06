@@ -48,6 +48,8 @@ namespace Skylicht
 
 				CTimelineContainer* m_itemPanel;
 
+				float m_contentPadding;
+
 				float m_contentWidth;
 
 				float m_focusPosition;
@@ -63,6 +65,16 @@ namespace Skylicht
 
 				CTimelineItem* addItem(float height);
 
+				inline CScrollControl* getScrollControl()
+				{
+					return m_scrollPanel;
+				}
+
+				inline CRulerBar* getRuler()
+				{
+					return m_ruler;
+				}
+
 				virtual void render();
 
 				virtual void layout();
@@ -70,6 +82,12 @@ namespace Skylicht
 				inline void setFocusPosition(float pos)
 				{
 					m_focusPosition = pos;
+					updateFocusPosition();
+				}
+
+				inline void setContentPadding(float padding)
+				{
+					m_contentPadding = padding;
 				}
 
 				void onTimelineScroll(CBase* base);
