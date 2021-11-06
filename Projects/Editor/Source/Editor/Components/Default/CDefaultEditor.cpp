@@ -220,7 +220,7 @@ namespace Skylicht
 						std::wstring stringValue = CStringImp::convertUTF8ToUnicode(value->get().c_str());
 
 						CSubject<std::wstring>* subject = new CSubject<std::wstring>(stringValue);
-						
+
 						CObserver* observer = new CObserver();
 						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
@@ -254,6 +254,25 @@ namespace Skylicht
 
 						subject->addObserver(observer, true);
 						ui->addTextBox(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::Color)
+					{
+						CColorProperty* value = dynamic_cast<CColorProperty*>(valueProperty);
+						CSubject<SColor>* subject = new CSubject<SColor>(value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+						{
+							if (from != o)
+							{
+								const SColor& color = s->get();
+								value->set(color);
+								m_component->loadSerializable(m_data);
+							}
+						};
+
+						subject->addObserver(observer, true);
+						ui->addColorPicker(layout, getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
 				}

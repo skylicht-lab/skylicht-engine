@@ -130,6 +130,12 @@ namespace Skylicht
 				CGraphics2D::getInstance()->flush();
 			}
 
+			void CSkylichtRenderer::drawImage(CGUIImage* image, const SGUIColor& color, const SRect& sourceRect, const SRect& dest)
+			{
+				const core::matrix4& world = getWorldTransform();
+				CGraphics2D::getInstance()->addImageBatch(image, getRect(dest), getRect(sourceRect), getColor(color), world, m_materialID);
+			}
+
 			void CSkylichtRenderer::drawFillRect(const SRect& r, const SGUIColor& color)
 			{
 				CGraphics2D* g = CGraphics2D::getInstance();
