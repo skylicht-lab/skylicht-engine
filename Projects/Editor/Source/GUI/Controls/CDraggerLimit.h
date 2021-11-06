@@ -21,11 +21,9 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+#pragma once
 
-#include "pch.h"
-#include "CTimelineFocus.h"
-#include "CTimeline.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Controls/CDragger.h"
 
 namespace Skylicht
 {
@@ -33,37 +31,23 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CTimelineFocus::CTimelineFocus(CBase* base, CTimeline* timeline) :
-				CDraggerLimit(base),
-				m_timeline(timeline)
+			class CDraggerLimit : public CDragger
 			{
-				setWidth(3.0f);
-				setTarget(this);
+			protected:
+				SRect m_limitRect;
 
-				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::White);
-			}
+			public:
+				CDraggerLimit(CBase* parent);
 
-			CTimelineFocus::~CTimelineFocus()
-			{
+				virtual ~CDraggerLimit();
 
-			}
+				inline void setDragLimitRect(SRect& r)
+				{
+					m_limitRect = r;
+				}
 
-			void CTimelineFocus::postLayout()
-			{
-				CBase::postLayout();
-				setHeight(m_timeline->height());
-			}
-
-			void CTimelineFocus::enableDrag(bool b)
-			{
-				CDraggerLimit::enableDrag(b);
-
-				if (b)
-					setCursor(ECursorType::SizeWE);
-				else
-					setCursor(ECursorType::Normal);
-			}
+				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
+			};
 		}
 	}
 }

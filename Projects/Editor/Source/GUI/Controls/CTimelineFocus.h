@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
+#include "CDraggerLimit.h"
 
 namespace Skylicht
 {
@@ -32,7 +33,7 @@ namespace Skylicht
 		namespace GUI
 		{
 			class CTimeline;
-			class CTimelineFocus : public CBase
+			class CTimelineFocus : public CDraggerLimit
 			{
 			protected:
 				CTimeline* m_timeline;
@@ -43,6 +44,8 @@ namespace Skylicht
 				virtual ~CTimelineFocus();
 
 				virtual void postLayout();
+
+				virtual void enableDrag(bool b);
 			};
 		}
 	}
