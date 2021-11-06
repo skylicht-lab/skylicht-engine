@@ -605,6 +605,42 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
+		void CSpaceProperty::addColorPicker(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<SColor>* value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			const SColor& c = value->get();
+			GUI::CColorPicker* colorPicker = new GUI::CColorPicker(layout);
+			colorPicker->setColor(GUI::SGUIColor(c.getAlpha(), c.getRed(), c.getGreen(), c.getBlue()));
+
+			// when value change
+			CObserver* onChange = new CObserver();
+			onChange->Notify = [me = onChange, target = colorPicker](ISubject* subject, IObserver* from)
+			{
+				if (from != me)
+				{
+					CSubject<SColor>* value = (CSubject<SColor>*)subject;
+					const SColor& c = value->get();
+					target->setColor(GUI::SGUIColor(c.getAlpha(), c.getRed(), c.getGreen(), c.getBlue()));
+				}
+			};
+
+			// when color pick change
+			IObserver* observer = value->addObserver(onChange);
+			colorPicker->OnChanged = [value, colorPicker, observer](GUI::CBase* base) {
+				const GUI::SGUIColor& guiColor = colorPicker->getColor();
+				value->set(SColor(guiColor.A, guiColor.R, guiColor.G, guiColor.B));
+				value->notify(observer);
+			};
+
+			boxLayout->endVertical();
+		}
+
 		GUI::CDropdownBox* CSpaceProperty::addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();

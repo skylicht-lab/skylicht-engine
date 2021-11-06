@@ -102,6 +102,8 @@ namespace Skylicht
 
 			void addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<float>* value, float min, float max);
 
+			void addColorPicker(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<SColor>* value);
+
 			GUI::CDropdownBox* addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value);
 
 			inline void setLabel(const wchar_t* label)

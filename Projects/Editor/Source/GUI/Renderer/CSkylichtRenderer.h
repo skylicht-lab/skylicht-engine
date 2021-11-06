@@ -74,6 +74,8 @@ namespace Skylicht
 
 				virtual void flush();
 
+				virtual void drawImage(CGUIImage* image, const SGUIColor& color, const SRect& sourceRect, const SRect& dest);
+
 				virtual void drawFillRect(const SRect& r, const SGUIColor& color);
 
 				virtual void drawLineX(float x1, float y1, float width, const SGUIColor& color);
