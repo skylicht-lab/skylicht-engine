@@ -42,11 +42,19 @@ namespace Skylicht
 				int m_textPerUnit;
 
 			public:
+				std::function<void(float x, float y, bool down, float value)> OnMouseClickLeftValue;
+				std::function<void(float x, float y, bool down, float value)> OnMouseClickRightValue;
+
+			public:
 				CRulerBar(CBase* parent, bool horizontal);
 
 				virtual ~CRulerBar();
 
 				virtual void render();
+
+				virtual void onMouseClickLeft(float x, float y, bool down);
+
+				virtual void onMouseClickRight(float x, float y, bool down);
 
 				inline void setBeginOffset(float offset)
 				{
@@ -76,6 +84,11 @@ namespace Skylicht
 				inline void setPixelPerUnit(float value)
 				{
 					m_pixelPerUnit = value;
+				}
+
+				inline float getPixelPerUnit()
+				{
+					return m_pixelPerUnit;
 				}
 			};
 		}

@@ -41,6 +41,12 @@ namespace Skylicht
 				enableRenderFillRect(true);
 				setFillRectColor(CThemeConfig::TimelineItemBG);
 
+				m_timelineInfo = new CLabel(this);
+				m_timelineInfo->setTextAlignment(ETextAlign::TextCenter);
+				m_timelineInfo->setFontSize(EFontSize::SizeLarge);
+				m_timelineInfo->setPos(0.0f, 5.0f);
+				m_timelineInfo->setWidth(m_contentWidth);
+
 				m_ruler = new CRulerBar(this, true);
 				m_ruler->dock(EPosition::Top);
 				m_ruler->setMargin(SMargin(m_contentWidth, 0.0f, 0.0f, 0.0f));
