@@ -166,6 +166,54 @@ namespace Skylicht
 					}
 				}
 			}
+
+			void CRulerBar::onMouseClickLeft(float x, float y, bool down)
+			{
+				CBase::onMouseClickLeft(x, y, down);
+				SPoint mousePosition(x, y);
+				SPoint local = canvasPosToLocal(mousePosition);
+
+				if (m_isHorizontal)
+				{
+					float valueX = local.X - m_beginOffset;
+					float value = valueX / m_pixelPerUnit;
+
+					if (OnMouseClickLeftValue != nullptr)
+						OnMouseClickLeftValue(x, y, down, value);
+				}
+				else
+				{
+					float valueY = local.Y - m_beginOffset;
+					float value = valueY / m_pixelPerUnit;
+
+					if (OnMouseClickLeftValue != nullptr)
+						OnMouseClickLeftValue(x, y, down, value);
+				}
+			}
+
+			void CRulerBar::onMouseClickRight(float x, float y, bool down)
+			{
+				CBase::onMouseClickRight(x, y, down);
+				SPoint mousePosition(x, y);
+				SPoint local = canvasPosToLocal(mousePosition);
+
+				if (m_isHorizontal)
+				{
+					float valueX = local.X - m_beginOffset;
+					float value = valueX / m_pixelPerUnit;
+
+					if (OnMouseClickRightValue != nullptr)
+						OnMouseClickRightValue(x, y, down, value);
+				}
+				else
+				{
+					float valueY = local.Y - m_beginOffset;
+					float value = valueY / m_pixelPerUnit;
+
+					if (OnMouseClickRightValue != nullptr)
+						OnMouseClickRightValue(x, y, down, value);
+				}
+			}
 		}
 	}
 }

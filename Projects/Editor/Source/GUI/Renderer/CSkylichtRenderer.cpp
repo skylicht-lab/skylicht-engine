@@ -368,7 +368,7 @@ namespace Skylicht
 				u32 unicodeSize = filesize / 2;
 				float advance = 0.0f, x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f, offsetX = 0, offsetY = 0;
 
-				float fontSmall = CThemeConfig::getFontSizePt(EFontSize::SizeLarge);
+				float fontLarge = CThemeConfig::getFontSizePt(EFontSize::SizeLarge);
 				float fontNormal = CThemeConfig::getFontSizePt(EFontSize::SizeNormal);
 
 				// Cache character to sprite
@@ -377,7 +377,7 @@ namespace Skylicht
 					glyphFreetype->getCharImage(atlas,
 						unicode[i],
 						CThemeConfig::FontName.c_str(),
-						CGlyphFreetype::sizePtToPx(fontSmall),
+						CGlyphFreetype::sizePtToPx(fontLarge),
 						&advance,
 						&x, &y, &w, &h,
 						&offsetX, &offsetY);
@@ -392,7 +392,7 @@ namespace Skylicht
 				}
 				delete data;
 
-				m_fontLarge = new CGlyphFont(CThemeConfig::FontName.c_str(), fontSmall);
+				m_fontLarge = new CGlyphFont(CThemeConfig::FontName.c_str(), fontLarge);
 				m_fontNormal = new CGlyphFont(CThemeConfig::FontName.c_str(), fontNormal);
 			}
 

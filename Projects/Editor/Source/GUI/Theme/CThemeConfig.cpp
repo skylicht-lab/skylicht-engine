@@ -123,7 +123,7 @@ namespace Skylicht
 					return 10.0f;
 					break;
 				case SizeLarge:
-					return 12.5f;
+					return 20.0f;
 				}
 
 				return 10.0f;

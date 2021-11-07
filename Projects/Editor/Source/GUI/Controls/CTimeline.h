@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTimelineValue.h"
 #include "CTimelineFocus.h"
 #include "CContentSizeControl.h"
+#include "CLabel.h"
 
 namespace Skylicht
 {
@@ -40,6 +41,8 @@ namespace Skylicht
 			class CTimeline : public CBase
 			{
 			protected:
+				CLabel* m_timelineInfo;
+
 				CRulerBar* m_ruler;
 
 				CTimelineFocus* m_cursorLine;
@@ -101,6 +104,16 @@ namespace Skylicht
 				void onTimelineScroll(CBase* base);
 
 				void onTimelineMouseWheeled(int delta);
+
+				inline void setTimelineInfo(const char* text)
+				{
+					m_timelineInfo->setString(text);
+				}
+
+				inline void setTimelineInfo(const wchar_t* text)
+				{
+					m_timelineInfo->setString(text);
+				}
 
 			protected:
 
