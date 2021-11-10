@@ -41,7 +41,7 @@ namespace Skylicht
 
 				bool m_clampInsideParent;
 				bool m_enableDrag;
-
+				bool m_isMoved;
 			public:
 				CDragger(CBase* parent);
 

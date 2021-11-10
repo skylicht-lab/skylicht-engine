@@ -79,6 +79,7 @@ namespace Skylicht
 				else
 					m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y, height());
 
+				m_isMoved = true;
 				m_target->onMoved();
 			}
 		}

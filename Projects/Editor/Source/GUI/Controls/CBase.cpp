@@ -851,6 +851,15 @@ namespace Skylicht
 				invalidateParent();
 			}
 
+			void CBase::invalidateChildren()
+			{
+				for (CBase* child : Children)
+				{
+					child->invalidate();
+					child->invalidateChildren();
+				}
+			}
+
 			void CBase::recurseLayout()
 			{
 				if (isHidden())

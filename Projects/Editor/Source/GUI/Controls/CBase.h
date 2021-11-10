@@ -162,6 +162,8 @@ namespace Skylicht
 						m_parent->invalidate();
 				}
 
+				void invalidateChildren();
+
 			public:
 
 				inline void setDebugValue(int d)
