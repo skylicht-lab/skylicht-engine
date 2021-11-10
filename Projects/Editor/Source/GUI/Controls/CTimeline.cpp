@@ -96,6 +96,15 @@ namespace Skylicht
 			{
 				CBase::layout();
 
+				// fix the first time layout the value is zero
+				if (m_maxSize.Width == 0.0f)
+					invalidate();
+			}
+
+			void CTimeline::postLayout()
+			{
+				CBase::postLayout();
+
 				m_maxSize = SDimension(0.0f, 0.0f);
 				for (CBase* child : m_itemPanel->Children)
 				{
@@ -115,10 +124,6 @@ namespace Skylicht
 				m_timelineScrollBar->setViewableContentSize(width() - m_contentWidth);
 
 				updateCursorPosition();
-
-				// fix the first time layout the value is zero
-				if (m_maxSize.Width == 0.0f)
-					invalidate();
 			}
 
 			void CTimeline::updateCursorPosition()
