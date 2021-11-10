@@ -86,6 +86,8 @@ namespace Skylicht
 
 				virtual void layout();
 
+				virtual void postLayout();
+
 				inline void setCursorPosition(float pos)
 				{
 					m_cursorPosition = pos;

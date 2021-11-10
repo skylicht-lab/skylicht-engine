@@ -38,7 +38,8 @@ namespace Skylicht
 				m_pressed(false),
 				m_callBeginMove(false),
 				m_clampInsideParent(true),
-				m_enableDrag(true)
+				m_enableDrag(true),
+				m_isMoved(false)
 			{
 
 			}
@@ -75,6 +76,7 @@ namespace Skylicht
 				else
 					m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y, height());
 
+				m_isMoved = true;
 				m_target->onMoved();
 			}
 
@@ -95,8 +97,12 @@ namespace Skylicht
 				{
 					CInput::getInput()->setCapture(NULL);
 					m_callBeginMove = false;
-					m_target->onEndMoved();
+
+					if (m_isMoved)
+						m_target->onEndMoved();
 				}
+
+				m_isMoved = false;
 			}
 
 			void CDragger::dragMoveCommand(const SPoint& mouseOffset)
