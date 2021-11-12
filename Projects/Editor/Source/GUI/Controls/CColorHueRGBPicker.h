@@ -21,10 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+
 #pragma once
 
-#include "CButton.h"
-#include "CMenu.h"
+#include "CBase.h"
 
 namespace Skylicht
 {
@@ -32,37 +32,12 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CColorPicker : public CButton
+			class CColorHueRGBPicker : public CBase
 			{
 			public:
-				Listener OnChanged;
+				CColorHueRGBPicker(CBase* parent);
 
-			protected:
-
-				CMenu* m_menuPicker;
-
-				SGUIColor m_color;
-
-			public:
-				CColorPicker(CBase* parent);
-
-				virtual ~CColorPicker();
-
-				virtual void renderUnder();
-
-				inline void setColor(const SGUIColor& color)
-				{
-					m_color = color;
-				}
-
-				inline const SGUIColor& getColor()
-				{
-					return m_color;
-				}
-
-			protected:
-
-				void onClickDown(CBase* sender);
+				virtual ~CColorHueRGBPicker();
 			};
 		}
 	}

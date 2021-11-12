@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CColorPicker.h"
+#include "CColorHueRGBPicker.h"
+#include "CCanvas.h"
 #include "GUI//Renderer/CRenderer.h"
 #include "GUI/Theme/CTheme.h"
 #include "GUI/Theme/CThemeConfig.h"
@@ -44,6 +46,12 @@ namespace Skylicht
 				OnDown = BIND_LISTENER(&CColorPicker::onClickDown, this);
 
 				m_label->setHidden(true);
+
+				m_menuPicker = new CMenu(parent->getCanvas());
+
+				CColorHueRGBPicker* picker = new CColorHueRGBPicker(m_menuPicker);
+				picker->setHeight(300.0f);
+				picker->dock(GUI::EPosition::Top);
 			}
 
 			CColorPicker::~CColorPicker()
@@ -67,8 +75,8 @@ namespace Skylicht
 
 			void CColorPicker::onClickDown(CBase* sender)
 			{
-				if (OnChanged != nullptr)
-					OnChanged(sender);
+				m_menuPicker->setWidth(300.0f);
+				m_menuPicker->open(this);
 			}
 		}
 	}
