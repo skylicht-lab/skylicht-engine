@@ -67,6 +67,12 @@ namespace Skylicht
 
 				virtual void flush() {}
 
+				virtual bool useImageDataBGR() { return true; }
+
+				virtual CGUIImage* createImage(u32 width, u32 height, bool is32Bit) { return NULL; }
+
+				virtual void removeImage(CGUIImage* image) {};
+
 				virtual void drawImage(CGUIImage* image, const SGUIColor& color, const SRect& sourceRect, const SRect& dest) {}
 
 				virtual void drawFillRect(const SRect& r, const SGUIColor& color) {}

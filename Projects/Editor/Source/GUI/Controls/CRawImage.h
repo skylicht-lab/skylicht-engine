@@ -40,9 +40,11 @@ namespace Skylicht
 				SRect m_sourceRect;
 
 			public:
-				CRawImage(CBase* parent, CGUIImage* image, const SRect& sourceRect);
+				CRawImage(CBase* parent);
 
 				virtual ~CRawImage();
+
+				void setImage(CGUIImage* image, const SRect& sourceRect);
 
 				virtual void render();
 

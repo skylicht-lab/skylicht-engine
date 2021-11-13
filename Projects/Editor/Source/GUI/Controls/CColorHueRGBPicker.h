@@ -25,6 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
+#include "CButton.h"
+#include "CTextBox.h"
+#include "CRawImage.h"
 
 namespace Skylicht
 {
@@ -34,10 +37,40 @@ namespace Skylicht
 		{
 			class CColorHueRGBPicker : public CBase
 			{
+			protected:
+				CGUIImage* m_hsvImage;
+				CGUIImage* m_hueImage;
+
+				CRawImage* m_hsv;
+				CRawImage* m_hue;
+
+				CButton* m_buttonOK;
+				CButton* m_buttonCancel;
+
+				CTextBox* m_textboxHex;
+				CTextBox* m_textboxColor;
+
+				SGUIColor m_color;
+
 			public:
 				CColorHueRGBPicker(CBase* parent);
 
 				virtual ~CColorHueRGBPicker();
+
+				const SGUIColor& getColor()
+				{
+					return m_color;
+				}
+
+				void setColor(const SGUIColor& c);
+
+			protected:
+
+				void updateColorText();
+
+				void setupHSVBitmap();
+
+				void setupHUEBitmap();
 			};
 		}
 	}
