@@ -130,6 +130,30 @@ namespace Skylicht
 				CGraphics2D::getInstance()->flush();
 			}
 
+			bool CSkylichtRenderer::useImageDataBGR()
+			{
+				bool isBGR = false;
+
+				// Note: DX11 & OpenGLES is RGB after read texture data
+				if (getVideoDriver()->getDriverType() == video::EDT_OPENGL)
+					isBGR = true;
+
+				return isBGR;
+			}
+
+			CGUIImage* CSkylichtRenderer::createImage(u32 width, u32 height, bool is32Bit)
+			{
+				IImage* image = getVideoDriver()->createImage(is32Bit ? ECF_A8R8G8B8 : ECF_R8G8B8, core::dimension2du(width, height));
+				ITexture* texture = getVideoDriver()->addTexture("GUIImage", image);
+				image->drop();
+				return texture;
+			}
+
+			void CSkylichtRenderer::removeImage(CGUIImage* image)
+			{
+				getVideoDriver()->removeTexture(image);
+			}
+
 			void CSkylichtRenderer::drawImage(CGUIImage* image, const SGUIColor& color, const SRect& sourceRect, const SRect& dest)
 			{
 				const core::matrix4& world = getWorldTransform();

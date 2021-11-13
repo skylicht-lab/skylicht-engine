@@ -33,19 +33,24 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CRawImage::CRawImage(CBase* parent, CGUIImage* image, const SRect& sourceRect) :
+			CRawImage::CRawImage(CBase* parent) :
 				CBase(parent),
 				m_color(CThemeConfig::White),
-				m_image(image),
-				m_sourceRect(sourceRect)
+				m_image(NULL)
+
 			{
 				setMouseInputEnabled(false);
-				setSize(sourceRect.Width, sourceRect.Height);
 			}
 
 			CRawImage::~CRawImage()
 			{
 
+			}
+
+			void CRawImage::setImage(CGUIImage* image, const SRect& sourceRect)
+			{
+				m_image = image;
+				m_sourceRect = sourceRect;
 			}
 
 			void CRawImage::render()
