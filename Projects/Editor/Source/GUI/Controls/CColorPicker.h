@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CButton.h"
 #include "CMenu.h"
+#include "CColorHueRGBPicker.h"
 
 namespace Skylicht
 {
@@ -40,6 +41,7 @@ namespace Skylicht
 			protected:
 
 				CMenu* m_menuPicker;
+				CColorHueRGBPicker* m_hueRGBPicker;
 
 				SGUIColor m_color;
 
@@ -50,10 +52,7 @@ namespace Skylicht
 
 				virtual void renderUnder();
 
-				inline void setColor(const SGUIColor& color)
-				{
-					m_color = color;
-				}
+				void setColor(const SGUIColor& color);
 
 				inline const SGUIColor& getColor()
 				{
