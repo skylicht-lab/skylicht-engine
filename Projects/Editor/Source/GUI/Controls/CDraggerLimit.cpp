@@ -77,7 +77,7 @@ namespace Skylicht
 				if (m_clampInsideParent)
 					m_target->moveTo(p.X, p.Y);
 				else
-					m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y, height());
+					m_target->dragTo(p.X, p.Y, m_holdPosition.X, m_holdPosition.Y, height(), m_clampDragPosInsideParent);
 
 				m_isMoved = true;
 				m_target->onMoved();
