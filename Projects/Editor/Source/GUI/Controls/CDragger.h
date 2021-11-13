@@ -40,6 +40,8 @@ namespace Skylicht
 				SPoint m_holdPosition;
 
 				bool m_clampInsideParent;
+				bool m_clampDragPosInsideParent;
+
 				bool m_enableDrag;
 				bool m_isMoved;
 			public:
@@ -66,6 +68,11 @@ namespace Skylicht
 				void setClampInsideParent(bool b)
 				{
 					m_clampInsideParent = b;
+				}
+
+				void setClampDragPosInsideParent(bool b)
+				{
+					m_clampDragPosInsideParent = b;
 				}
 			};
 		}

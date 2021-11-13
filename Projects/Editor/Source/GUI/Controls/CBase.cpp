@@ -385,12 +385,12 @@ namespace Skylicht
 				m_renderBounds.Height = m_bounds.Height;
 			}
 
-			void CBase::dragTo(float x, float y, float dragPosX, float dragPosY, float paddingBottom)
+			void CBase::dragTo(float x, float y, float dragPosX, float dragPosY, float paddingBottom, bool clampDragPos)
 			{
 				float testX = x + dragPosX;
 				float testY = y;
 
-				if (m_parent)
+				if (m_parent && clampDragPos)
 				{
 					if (testX - m_margin.Left < m_parent->m_padding.Left)
 						testX = m_parent->m_padding.Left + m_margin.Left;

@@ -285,7 +285,7 @@ namespace Skylicht
 				inline void setMargin(const SMargin& margin) { m_margin = margin; }
 
 				virtual void moveTo(float x, float y);
-				virtual void dragTo(float x, float y, float dragPosX, float dragPosY, float paddingBottom);
+				virtual void dragTo(float x, float y, float dragPosX, float dragPosY, float paddingBottom, bool clampDragPos);
 				inline void moveBy(float x, float y) { moveTo(X() + x, Y() + y); }
 
 				inline const SRect& getBounds() const { return m_bounds; }
