@@ -42,6 +42,7 @@ namespace Skylicht
 			protected:
 				CGUIImage* m_hsvImage;
 				CGUIImage* m_hueImage;
+				CGUIImage* m_colorBGImage;
 
 				CRawImage* m_hsv;
 				CRawImage* m_hue;
@@ -62,15 +63,24 @@ namespace Skylicht
 				CSlider* m_v;
 
 				SGUIColor m_color;
+				SGUIColor m_oldColor;
 
+				SRect m_previewBounds;
 			public:
 				CColorHueRGBPicker(CBase* parent);
 
 				virtual ~CColorHueRGBPicker();
 
+				virtual void renderUnder();
+
 				const SGUIColor& getColor()
 				{
 					return m_color;
+				}
+
+				inline void setOldColor(const SGUIColor& c)
+				{
+					m_oldColor = c;
 				}
 
 				void setColor(const SGUIColor& c);
@@ -82,6 +92,8 @@ namespace Skylicht
 				void setupHSVBitmap(unsigned char h, unsigned char s, unsigned char v);
 
 				void setupHUEBitmap();
+
+				void setupColorBGBitmap();
 			};
 		}
 	}

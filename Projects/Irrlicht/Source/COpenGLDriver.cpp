@@ -2000,11 +2000,6 @@ void COpenGLDriver::setBasicRenderStates(const SMaterial& material, const SMater
 		break;
 	}
 
-	// Scissor
-	BridgeCalls->enableScissor(EnableScissor);
-	if (EnableScissor == true)
-		BridgeCalls->setScissor(ScissorRect.UpperLeftCorner.X, ScissorRect.UpperLeftCorner.Y, ScissorRect.getWidth(), ScissorRect.getHeight());
-
 	// ZWrite
 	if (material.ZWriteEnable && (AllowZWriteOnTransparent || (material.BlendOperation == EBO_NONE &&
 		!MaterialRenderers[material.MaterialType].Renderer->isTransparent())))
