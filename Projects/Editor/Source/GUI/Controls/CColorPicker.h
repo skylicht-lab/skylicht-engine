@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CButton.h"
 #include "CMenu.h"
-#include "CColorHueRGBPicker.h"
+#include "CColorHSVRGBPicker.h"
 
 namespace Skylicht
 {
