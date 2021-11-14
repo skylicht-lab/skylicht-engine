@@ -211,10 +211,10 @@ namespace Skylicht
 
 				WCHAR text[512];
 
-				wsprintf(text, L"%02X%02X%02X,%02X", r, g, b, a);
+				swprintf(text, 512, L"%02X%02X%02X,%02X", r, g, b, a);
 				m_textboxHex->setString(text);
 
-				wsprintf(text, L"%d,%d,%d,%d", r, g, b, a);
+				swprintf(text, 512, L"%d,%d,%d,%d", r, g, b, a);
 				m_textboxColor->setString(text);
 			}
 
