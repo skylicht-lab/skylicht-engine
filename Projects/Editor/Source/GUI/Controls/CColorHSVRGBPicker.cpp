@@ -26,6 +26,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CColorHSVRGBPicker.h"
 #include "GUI/Renderer/CRenderer.h"
 
+#ifndef max
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
@@ -149,7 +157,7 @@ namespace Skylicht
 				c.A = 255;
 			}
 
-			CColorHueRGBPicker::CColorHueRGBPicker(CBase* parent) :
+			CColorHSVRGBPicker::CColorHSVRGBPicker(CBase* parent) :
 				CBase(parent)
 			{
 				int s = 256;
@@ -241,17 +249,6 @@ namespace Skylicht
 
 				posY = posY + 25.0f;
 
-				CLabel* hLabel = new CLabel(this);
-				hLabel->setString(L"H");
-				hLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
-
-				m_h = new CSlider(this);
-				m_h->setBounds(40, posY, 270.0f, 20.0f);
-				m_h->setNumberType(ENumberInputType::Integer);
-				m_h->setValue(0.0f, 0.0f, 255.0f, false);
-
-				posY = posY + 25.0f;
-
 				CLabel* sLabel = new CLabel(this);
 				sLabel->setString(L"S");
 				sLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
@@ -293,7 +290,7 @@ namespace Skylicht
 				m_buttonCancel->setBounds(210.0f, posY, 100.0f, 20.0f);
 			}
 
-			CColorHueRGBPicker::~CColorHueRGBPicker()
+			CColorHSVRGBPicker::~CColorHSVRGBPicker()
 			{
 				CRenderer* render = CRenderer::getRenderer();
 				render->removeImage(m_hsvImage);
@@ -301,7 +298,7 @@ namespace Skylicht
 				render->removeImage(m_colorBGImage);
 			}
 
-			void CColorHueRGBPicker::renderUnder()
+			void CColorHSVRGBPicker::renderUnder()
 			{
 				CBase::renderUnder();
 
@@ -316,7 +313,7 @@ namespace Skylicht
 				renderer->drawFillRect(r2, m_oldColor);
 			}
 
-			void CColorHueRGBPicker::setColor(const SGUIColor& c)
+			void CColorHSVRGBPicker::setColor(const SGUIColor& c)
 			{
 				m_color = c;
 
@@ -328,7 +325,6 @@ namespace Skylicht
 				unsigned char h, s, v;
 				rgbToHSV(m_color, h, s, v);
 
-				m_h->setValue((float)h, false);
 				m_s->setValue((float)s, false);
 				m_v->setValue((float)v, false);
 
@@ -337,7 +333,7 @@ namespace Skylicht
 				updateColorText();
 			}
 
-			void CColorHueRGBPicker::updateColorText()
+			void CColorHSVRGBPicker::updateColorText()
 			{
 				unsigned char r = m_color.R;
 				unsigned char g = m_color.G;
@@ -353,7 +349,7 @@ namespace Skylicht
 				m_textboxColor->setString(text);
 			}
 
-			void CColorHueRGBPicker::setupHSVBitmap(unsigned char h, unsigned char s, unsigned char v)
+			void CColorHSVRGBPicker::setupHSVBitmap(unsigned char h, unsigned char s, unsigned char v)
 			{
 				s = 255;
 				v = 255;
@@ -430,7 +426,7 @@ namespace Skylicht
 				m_hsvImage->unlock();
 			}
 
-			void CColorHueRGBPicker::setupHUEBitmap()
+			void CColorHSVRGBPicker::setupHUEBitmap()
 			{
 				u32 w = m_hueImage->getSize().Width;
 				u32 h = m_hueImage->getSize().Height;
@@ -497,7 +493,7 @@ namespace Skylicht
 				m_hueImage->regenerateMipMapLevels();
 			}
 
-			void CColorHueRGBPicker::setupColorBGBitmap()
+			void CColorHSVRGBPicker::setupColorBGBitmap()
 			{
 				unsigned char* bitmapData = (unsigned char*)m_colorBGImage->lock();
 				unsigned char* p = bitmapData;

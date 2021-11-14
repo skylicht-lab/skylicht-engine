@@ -37,7 +37,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CColorHueRGBPicker : public CBase
+			class CColorHSVRGBPicker : public CBase
 			{
 			protected:
 				CGUIImage* m_hsvImage;
@@ -58,7 +58,6 @@ namespace Skylicht
 				CSlider* m_blue;
 				CSlider* m_alpha;
 
-				CSlider* m_h;
 				CSlider* m_s;
 				CSlider* m_v;
 
@@ -67,9 +66,9 @@ namespace Skylicht
 
 				SRect m_previewBounds;
 			public:
-				CColorHueRGBPicker(CBase* parent);
+				CColorHSVRGBPicker(CBase* parent);
 
-				virtual ~CColorHueRGBPicker();
+				virtual ~CColorHSVRGBPicker();
 
 				virtual void renderUnder();
 
