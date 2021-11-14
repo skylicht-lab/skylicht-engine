@@ -106,6 +106,11 @@ namespace Skylicht
 
 			public:
 
+				SFrame* getEmptyFrame()
+				{
+					return m_empty;
+				}
+
 				SFrame* getSystemIcon16(ESystemIcon icon)
 				{
 					return m_systemIcon16[icon];
