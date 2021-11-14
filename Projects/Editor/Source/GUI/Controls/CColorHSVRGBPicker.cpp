@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CColorHueRGBPicker.h"
+#include "CColorHSVRGBPicker.h"
 #include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -344,7 +344,7 @@ namespace Skylicht
 				unsigned char b = m_color.B;
 				unsigned char a = m_color.A;
 
-				WCHAR text[512];
+				wchar_t text[512];
 
 				swprintf(text, 512, L"%02X%02X%02X,%02X", r, g, b, a);
 				m_textboxHex->setString(text);
