@@ -169,21 +169,115 @@ namespace Skylicht
 				m_hue->setSize(20.0f, (float)s);
 				m_hue->setImage(m_hueImage, SRect(0.0f, 0.0f, 32.0f, (float)s));
 
+				float posY = 275.0f;
+				float labelOffset = 2.0f;
+
+				CLabel* rgbLabel = new CLabel(this);
+				rgbLabel->setString(L"RGBA");
+				rgbLabel->setBounds(15.0f, posY + labelOffset, 180.0f, 20.0f);
+
+				posY = posY + 25.0f;
+
+				CLabel* rLabel = new CLabel(this);
+				rLabel->setString(L"R");
+				rLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
+
+				m_red = new CSlider(this);
+				m_red->setBounds(40.0f, posY, 270.0f, 20.0f);
+				m_red->setNumberType(ENumberInputType::Integer);
+				m_red->setValue(0.0f, 0.0f, 255.0f, false);
+
+				posY = posY + 25.0f;
+
+				CLabel* gLabel = new CLabel(this);
+				gLabel->setString(L"G");
+				gLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
+
+				m_green = new CSlider(this);
+				m_green->setBounds(40, posY, 270.0f, 20.0f);
+				m_green->setNumberType(ENumberInputType::Integer);
+				m_green->setValue(0.0f, 0.0f, 255.0f, false);
+
+				posY = posY + 25.0f;
+
+				CLabel* bLabel = new CLabel(this);
+				bLabel->setString(L"B");
+				bLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
+
+				m_blue = new CSlider(this);
+				m_blue->setBounds(40, posY, 270.0f, 20.0f);
+				m_blue->setNumberType(ENumberInputType::Integer);
+				m_blue->setValue(0.0f, 0.0f, 255.0f, false);
+
+				posY = posY + 25.0f;
+
+				CLabel* aLabel = new CLabel(this);
+				aLabel->setString(L"A");
+				aLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
+
+				m_alpha = new CSlider(this);
+				m_alpha->setBounds(40, posY, 270.0f, 20.0f);
+				m_alpha->setNumberType(ENumberInputType::Integer);
+				m_alpha->setValue(0.0f, 0.0f, 255.0f, false);
+
+				posY = posY + 25.0f;
+
+				CLabel* hsvLabel = new CLabel(this);
+				hsvLabel->setString(L"HSV");
+				hsvLabel->setBounds(15.0f, posY + labelOffset, 180.0f, 20.0f);
+
+				posY = posY + 25.0f;
+
+				CLabel* hLabel = new CLabel(this);
+				hLabel->setString(L"H");
+				hLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
+
+				m_h = new CSlider(this);
+				m_h->setBounds(40, posY, 270.0f, 20.0f);
+				m_h->setNumberType(ENumberInputType::Integer);
+				m_h->setValue(0.0f, 0.0f, 255.0f, false);
+
+				posY = posY + 25.0f;
+
+				CLabel* sLabel = new CLabel(this);
+				sLabel->setString(L"S");
+				sLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
+
+				m_s = new CSlider(this);
+				m_s->setBounds(40, posY, 270.0f, 20.0f);
+				m_s->setNumberType(ENumberInputType::Integer);
+				m_s->setValue(0.0f, 0.0f, 255.0f, false);
+
+				posY = posY + 25.0f;
+
+				CLabel* vLabel = new CLabel(this);
+				vLabel->setString(L"V");
+				vLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
+
+				m_v = new CSlider(this);
+				m_v->setBounds(40, posY, 270.0f, 20.0f);
+				m_v->setNumberType(ENumberInputType::Integer);
+				m_v->setValue(0.0f, 0.0f, 255.0f, false);
+
+				posY = posY + 25.0f;
+
+				m_textboxHex = new CTextBox(this);
+				m_textboxHex->setBounds(15.0f, posY, 180.0f, 20.0f);
+
 				m_buttonOK = new CButton(this);
 				m_buttonOK->setLabel(L"OK");
 				m_buttonOK->setTextAlignment(ETextAlign::TextCenter);
-				m_buttonOK->setBounds(210.0f, 275.0f, 100.0f, 20.0f);
+				m_buttonOK->setBounds(210.0f, posY, 100.0f, 20.0f);
+
+				posY = posY + 25.0f;
+
+				m_textboxColor = new CTextBox(this);
+				m_textboxColor->setBounds(15.0f, posY, 180.0f, 20.0f);
 
 				m_buttonCancel = new CButton(this);
 				m_buttonCancel->setLabel(L"Cancel");
 				m_buttonCancel->setTextAlignment(ETextAlign::TextCenter);
-				m_buttonCancel->setBounds(210.0f, 300.0f, 100.0f, 20.0f);
-
-				m_textboxHex = new CTextBox(this);
-				m_textboxHex->setBounds(15.0f, 275.0f, 180.0f, 20.0f);
-
-				m_textboxColor = new CTextBox(this);
-				m_textboxColor->setBounds(15.0f, 300.0f, 180.0f, 20.0f);
+				m_buttonCancel->setBounds(210.0f, posY, 100.0f, 20.0f);
 			}
 
 			CColorHueRGBPicker::~CColorHueRGBPicker()
@@ -197,7 +291,19 @@ namespace Skylicht
 			{
 				m_color = c;
 
-				setupHSVBitmap();
+				m_red->setValue(c.R, false);
+				m_green->setValue(c.G, false);
+				m_blue->setValue(c.B, false);
+				m_alpha->setValue(c.A, false);
+
+				unsigned char h, s, v;
+				rgbToHSV(m_color, h, s, v);
+
+				m_h->setValue((float)h, false);
+				m_s->setValue((float)s, false);
+				m_v->setValue((float)v, false);
+
+				setupHSVBitmap(h, s, v);
 
 				updateColorText();
 			}
@@ -218,11 +324,8 @@ namespace Skylicht
 				m_textboxColor->setString(text);
 			}
 
-			void CColorHueRGBPicker::setupHSVBitmap()
+			void CColorHueRGBPicker::setupHSVBitmap(unsigned char h, unsigned char s, unsigned char v)
 			{
-				unsigned char h, s, v;
-				rgbToHSV(m_color, h, s, v);
-
 				s = 255;
 				v = 255;
 
