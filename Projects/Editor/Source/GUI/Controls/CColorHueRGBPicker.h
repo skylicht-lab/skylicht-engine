@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CButton.h"
 #include "CTextBox.h"
 #include "CRawImage.h"
+#include "CLabel.h"
+#include "CSlider.h"
 
 namespace Skylicht
 {
@@ -50,6 +52,15 @@ namespace Skylicht
 				CTextBox* m_textboxHex;
 				CTextBox* m_textboxColor;
 
+				CSlider* m_red;
+				CSlider* m_green;
+				CSlider* m_blue;
+				CSlider* m_alpha;
+
+				CSlider* m_h;
+				CSlider* m_s;
+				CSlider* m_v;
+
 				SGUIColor m_color;
 
 			public:
@@ -68,7 +79,7 @@ namespace Skylicht
 
 				void updateColorText();
 
-				void setupHSVBitmap();
+				void setupHSVBitmap(unsigned char h, unsigned char s, unsigned char v);
 
 				void setupHUEBitmap();
 			};
