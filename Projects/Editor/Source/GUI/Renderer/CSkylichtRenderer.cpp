@@ -174,6 +174,13 @@ namespace Skylicht
 				float offsetY = 2.0f;
 				core::rectf uv(offsetX * invW, offsetY * invH, offsetX * invW, offsetY * invH);
 
+				ITexture* empty = theme->getEmptyFrame()->Image->Texture;
+				if (g->getMaterial().getTexture(0) != empty)
+				{
+					g->flush();
+					g->getMaterial().setTexture(0, empty);
+				}
+
 				g->addRectangleBatch(getRect(r), uv, getColor(color), world, m_materialID, NULL);
 			}
 
@@ -228,6 +235,13 @@ namespace Skylicht
 				float offsetX = 2.0f;
 				float offsetY = 2.0f;
 				core::rectf uv(offsetX * invW, offsetY * invH, offsetX * invW, offsetY * invH);
+
+				ITexture* empty = theme->getEmptyFrame()->Image->Texture;
+				if (g->getMaterial().getTexture(0) != empty)
+				{
+					g->flush();
+					g->getMaterial().setTexture(0, empty);
+				}
 
 				if (left)
 				{
