@@ -172,6 +172,19 @@ namespace Skylicht
 				float posY = 275.0f;
 				float labelOffset = 2.0f;
 
+				CLabel* colorLabel = new CLabel(this);
+				colorLabel->setString(L"Color");
+				colorLabel->setBounds(15.0f, posY + labelOffset, 180.0f, 20.0f);
+
+				posY = posY + 25.0f;
+
+				m_colorBGImage = render->createImage(256, 32, false);
+				setupColorBGBitmap();
+
+				m_previewBounds = SRect(40.0f, posY, 270.0f, 32.0f);
+
+				posY = posY + 45.0f;
+
 				CLabel* rgbLabel = new CLabel(this);
 				rgbLabel->setString(L"RGBA");
 				rgbLabel->setBounds(15.0f, posY + labelOffset, 180.0f, 20.0f);
@@ -285,6 +298,22 @@ namespace Skylicht
 				CRenderer* render = CRenderer::getRenderer();
 				render->removeImage(m_hsvImage);
 				render->removeImage(m_hueImage);
+				render->removeImage(m_colorBGImage);
+			}
+
+			void CColorHueRGBPicker::renderUnder()
+			{
+				CBase::renderUnder();
+
+				SGUIColor white(255, 255, 255, 255);
+				CRenderer* renderer = CRenderer::getRenderer();
+				renderer->drawImage(m_colorBGImage, white, SRect(0.0f, 0.0f, 256.0f, 32.0f), m_previewBounds);
+
+				SRect r1 = SRect(m_previewBounds.X, m_previewBounds.Y, m_previewBounds.Width * 0.5f, m_previewBounds.Height);
+				renderer->drawFillRect(r1, m_oldColor);
+
+				SRect r2 = SRect(m_previewBounds.X + m_previewBounds.Width * 0.5f, m_previewBounds.Y, m_previewBounds.Width * 0.5f, m_previewBounds.Height);
+				renderer->drawFillRect(r2, m_oldColor);
 			}
 
 			void CColorHueRGBPicker::setColor(const SGUIColor& c)
@@ -466,6 +495,62 @@ namespace Skylicht
 
 				m_hueImage->unlock();
 				m_hueImage->regenerateMipMapLevels();
+			}
+
+			void CColorHueRGBPicker::setupColorBGBitmap()
+			{
+				unsigned char* bitmapData = (unsigned char*)m_colorBGImage->lock();
+				unsigned char* p = bitmapData;
+
+				u32 w = m_colorBGImage->getSize().Width;
+				u32 h = m_colorBGImage->getSize().Height;
+
+				int bwTileSize = 8;
+
+				int p1 = 0;
+				int p2 = 1;
+				int p3 = 2;
+
+				if (CRenderer::getRenderer()->useImageDataBGR())
+				{
+					p1 = 2;
+					p3 = 0;
+				}
+
+				for (u32 i = 0; i < h; i++)
+				{
+					bool invert = false;
+					if ((i / bwTileSize) % 2 == 0)
+						invert = true;
+
+					for (u32 j = 0; j < w; j++)
+					{
+						int bg = 200;
+
+						if ((j / bwTileSize) % 2 == 0)
+							bg = 255;
+
+						if (invert == true)
+						{
+							if (bg == 200)
+								bg = 255;
+							else
+								bg = 200;
+						}
+
+						// RGB
+						p[p1] = (unsigned char)bg;
+						p[p2] = (unsigned char)bg;
+						p[p3] = (unsigned char)bg;
+
+						// alpha
+						p[3] = 255;
+						p += 4;
+					}
+				}
+
+				m_colorBGImage->unlock();
+				m_colorBGImage->regenerateMipMapLevels();
 			}
 		}
 	}
