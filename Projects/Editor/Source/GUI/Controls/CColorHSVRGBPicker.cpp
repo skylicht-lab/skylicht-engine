@@ -164,15 +164,15 @@ namespace Skylicht
 				CRenderer* render = CRenderer::getRenderer();
 
 				m_hsvImage = render->createImage(s, s, false);
-				m_hsv = new CRawImage(this);
-				m_hsv->setPos(15.0f, 10.0f);
-				m_hsv->setSize((float)s, (float)s);
-				m_hsv->setImage(m_hsvImage, SRect(0.0f, 0.0f, (float)s, (float)s));
+				m_sv = new CColorSVPicker(this);
+				m_sv->setPos(15.0f, 10.0f);
+				m_sv->setSize((float)s, (float)s);
+				m_sv->setImage(m_hsvImage, SRect(0.0f, 0.0f, (float)s, (float)s));
 
 				m_hueImage = render->createImage(32, s, false);
 				setupHUEBitmap();
 
-				m_hue = new CRawImage(this);
+				m_hue = new CColorHuePicker(this);
 				m_hue->setPos(290.0f, 10.0f);
 				m_hue->setSize(20.0f, (float)s);
 				m_hue->setImage(m_hueImage, SRect(0.0f, 0.0f, 32.0f, (float)s));
@@ -269,7 +269,7 @@ namespace Skylicht
 				m_v->setNumberType(ENumberInputType::Integer);
 				m_v->setValue(0.0f, 0.0f, 255.0f, false);
 
-				posY = posY + 25.0f;
+				posY = posY + 50.0f;
 
 				m_textboxHex = new CTextBox(this);
 				m_textboxHex->setBounds(15.0f, posY, 180.0f, 20.0f);
@@ -288,6 +288,14 @@ namespace Skylicht
 				m_buttonCancel->setLabel(L"Cancel");
 				m_buttonCancel->setTextAlignment(ETextAlign::TextCenter);
 				m_buttonCancel->setBounds(210.0f, posY, 100.0f, 20.0f);
+
+				m_red->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
+				m_green->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
+				m_blue->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
+				m_alpha->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
+
+				m_s->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onSVChange, this);
+				m_v->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onSVChange, this);
 			}
 
 			CColorHSVRGBPicker::~CColorHSVRGBPicker()
@@ -310,7 +318,7 @@ namespace Skylicht
 				renderer->drawFillRect(r1, m_oldColor);
 
 				SRect r2 = SRect(m_previewBounds.X + m_previewBounds.Width * 0.5f, m_previewBounds.Y, m_previewBounds.Width * 0.5f, m_previewBounds.Height);
-				renderer->drawFillRect(r2, m_oldColor);
+				renderer->drawFillRect(r2, m_color);
 			}
 
 			void CColorHSVRGBPicker::setColor(const SGUIColor& c)
@@ -328,9 +336,80 @@ namespace Skylicht
 				m_s->setValue((float)s, false);
 				m_v->setValue((float)v, false);
 
+				m_sv->setSV(s, v);
+				m_hue->setHue(h);
+
 				setupHSVBitmap(h, s, v);
 
 				updateColorText();
+			}
+
+			void CColorHSVRGBPicker::changeHue(int hue)
+			{
+				m_hue->setHue(hue);
+
+				int s = m_s->getValueInt();
+				int v = m_v->getValueInt();
+
+				hsvToRGB((unsigned char)hue, (unsigned char)s, (unsigned char)v, m_color);
+				setupHSVBitmap((unsigned char)hue, (unsigned char)s, (unsigned char)v);
+
+				refreshColor();
+			}
+
+			void CColorHSVRGBPicker::changeSV(int s, int v)
+			{
+				m_s->setValue((float)s, false);
+				m_v->setValue((float)v, false);
+
+				int hue = m_hue->getHue();
+				hsvToRGB((unsigned char)hue, (unsigned char)s, (unsigned char)v, m_color);
+
+				refreshColor();
+			}
+
+			void CColorHSVRGBPicker::refreshColor()
+			{
+				m_red->setValue(m_color.R, false);
+				m_green->setValue(m_color.G, false);
+				m_blue->setValue(m_color.B, false);
+				m_alpha->setValue(m_color.A, false);
+
+				updateColorText();
+			}
+
+			void CColorHSVRGBPicker::onRGBAChange(CBase* base)
+			{
+				m_color.R = (unsigned char)(m_red->getValueInt());
+				m_color.G = (unsigned char)(m_green->getValueInt());
+				m_color.B = (unsigned char)(m_blue->getValueInt());
+				m_color.A = (unsigned char)(m_alpha->getValueInt());
+
+				unsigned char h, s, v;
+				rgbToHSV(m_color, h, s, v);
+
+				m_s->setValue((float)s, false);
+				m_v->setValue((float)v, false);
+
+				m_sv->setSV(s, v);
+				m_hue->setHue(h);
+
+				setupHSVBitmap(h, s, v);
+
+				updateColorText();
+			}
+
+			void CColorHSVRGBPicker::onSVChange(CBase* base)
+			{
+				unsigned char h = (unsigned char)m_hue->getHue();
+				unsigned char s = (unsigned char)m_s->getValueInt();
+				unsigned char v = (unsigned char)m_v->getValueInt();
+
+				hsvToRGB(h, s, v, m_color);
+
+				refreshColor();
+
+				m_sv->setSV(s, v);
 			}
 
 			void CColorHSVRGBPicker::updateColorText()

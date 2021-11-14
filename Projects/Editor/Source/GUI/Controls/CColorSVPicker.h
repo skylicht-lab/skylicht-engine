@@ -24,15 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CBase.h"
-#include "CButton.h"
-#include "CTextBox.h"
 #include "CRawImage.h"
-#include "CLabel.h"
-#include "CSlider.h"
-
-#include "CColorHuePicker.h"
-#include "CColorSVPicker.h"
 
 namespace Skylicht
 {
@@ -40,72 +32,28 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CColorHSVRGBPicker : public CBase
+			class CColorSVPicker : public CRawImage
 			{
 			protected:
-				CGUIImage* m_hsvImage;
-				CGUIImage* m_hueImage;
-				CGUIImage* m_colorBGImage;
-
-				CColorSVPicker* m_sv;
-				CColorHuePicker* m_hue;
-
-				CButton* m_buttonOK;
-				CButton* m_buttonCancel;
-
-				CTextBox* m_textboxHex;
-				CTextBox* m_textboxColor;
-
-				CSlider* m_red;
-				CSlider* m_green;
-				CSlider* m_blue;
-				CSlider* m_alpha;
-
-				CSlider* m_s;
-				CSlider* m_v;
-
-				SGUIColor m_color;
-				SGUIColor m_oldColor;
-
-				SRect m_previewBounds;
+				int m_s;
+				int m_v;
+				bool m_mouseDown;
 			public:
-				CColorHSVRGBPicker(CBase* parent);
+				CColorSVPicker(CBase* parent);
 
-				virtual ~CColorHSVRGBPicker();
+				virtual ~CColorSVPicker();
 
-				virtual void renderUnder();
+				virtual void render();
 
-				const SGUIColor& getColor()
+				virtual void onMouseClickLeft(float x, float y, bool down);
+
+				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
+
+				inline void setSV(int s, int v)
 				{
-					return m_color;
+					m_s = s;
+					m_v = v;
 				}
-
-				inline void setOldColor(const SGUIColor& c)
-				{
-					m_oldColor = c;
-				}
-
-				void setColor(const SGUIColor& c);
-
-				void changeHue(int hue);
-
-				void changeSV(int s, int v);
-
-				void refreshColor();
-
-			protected:
-
-				void onRGBAChange(CBase* base);
-
-				void onSVChange(CBase* base);
-
-				void updateColorText();
-
-				void setupHSVBitmap(unsigned char h, unsigned char s, unsigned char v);
-
-				void setupHUEBitmap();
-
-				void setupColorBGBitmap();
 			};
 		}
 	}
