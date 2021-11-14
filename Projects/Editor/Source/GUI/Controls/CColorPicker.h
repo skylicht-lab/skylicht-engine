@@ -41,7 +41,7 @@ namespace Skylicht
 			protected:
 
 				CMenu* m_menuPicker;
-				CColorHueRGBPicker* m_hueRGBPicker;
+				CColorHSVRGBPicker* m_hueRGBPicker;
 
 				SGUIColor m_color;
 
