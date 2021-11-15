@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CColorHuePicker.h"
 #include "CColorSVPicker.h"
+#include "CColorChannelPicker.h"
 
 namespace Skylicht
 {
@@ -47,6 +48,14 @@ namespace Skylicht
 				CGUIImage* m_hueImage;
 				CGUIImage* m_colorBGImage;
 
+				CGUIImage* m_redImage;
+				CGUIImage* m_greenImage;
+				CGUIImage* m_blueImage;
+				CGUIImage* m_alphaImage;
+				CGUIImage* m_sImage;
+				CGUIImage* m_vImage;
+
+
 				CColorSVPicker* m_sv;
 				CColorHuePicker* m_hue;
 
@@ -56,13 +65,13 @@ namespace Skylicht
 				CTextBox* m_textboxHex;
 				CTextBox* m_textboxColor;
 
-				CSlider* m_red;
-				CSlider* m_green;
-				CSlider* m_blue;
-				CSlider* m_alpha;
+				CColorChannelPicker* m_red;
+				CColorChannelPicker* m_green;
+				CColorChannelPicker* m_blue;
+				CColorChannelPicker* m_alpha;
 
-				CSlider* m_s;
-				CSlider* m_v;
+				CColorChannelPicker* m_s;
+				CColorChannelPicker* m_v;
 
 				SGUIColor m_color;
 				SGUIColor m_oldColor;
@@ -87,9 +96,9 @@ namespace Skylicht
 
 				void setColor(const SGUIColor& c);
 
-				void changeHue(int hue);
+				void changeHue(CBase* base);
 
-				void changeSV(int s, int v);
+				void changeSV(CBase* base);
 
 				void refreshColor();
 
@@ -106,6 +115,8 @@ namespace Skylicht
 				void setupHUEBitmap();
 
 				void setupColorBGBitmap();
+
+				void setupColorChannelBitmap();
 			};
 		}
 	}

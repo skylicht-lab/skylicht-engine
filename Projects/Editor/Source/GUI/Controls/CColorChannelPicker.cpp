@@ -23,9 +23,8 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CColorSVPicker.h"
+#include "CColorChannelPicker.h"
 #include "CColorHSVRGBPicker.h"
-#include "GUI/Renderer/CRenderer.h"
 #include "GUI/Input/CInput.h"
 
 namespace Skylicht
@@ -34,44 +33,44 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CColorSVPicker::CColorSVPicker(CBase* parent) :
+			CColorChannelPicker::CColorChannelPicker(CBase* parent) :
 				CRawImage(parent),
-				m_s(0),
-				m_v(0),
+				m_value(0),
 				m_mouseDown(false)
 			{
 				enableClip(true);
 				setMouseInputEnabled(true);
 			}
 
-			CColorSVPicker::~CColorSVPicker()
+			CColorChannelPicker::~CColorChannelPicker()
 			{
 
 			}
 
-			void CColorSVPicker::render()
+			void CColorChannelPicker::render()
 			{
 				CRawImage::render();
 
 				CRenderer* renderer = CRenderer::getRenderer();
-				SGUIColor white(255, 255, 255, 255);
+
 				SGUIColor black(255, 0, 0, 0);
+				SGUIColor white(255, 255, 255, 255);
 
 				SRect r;
-				r.X = (float)m_s - 4.0f;
-				r.Y = (float)(255 - m_v) - 4.0f;
-				r.Width = 8.0f;
-				r.Height = 8.0f;
-				renderer->drawBorderRect(r, white, true, true, true, true);
+				r.X = (float)m_value - 1.0f;
+				r.Y = 0.0f;
+				r.Width = 3;
+				r.Height = height();
+				renderer->drawFillRect(r, black);
 
-				r.X = (float)m_s - 5.0f;
-				r.Y = (float)(255 - m_v) - 5.0f;
-				r.Width = 10.0f;
-				r.Height = 10.0f;
-				renderer->drawBorderRect(r, black, true, true, true, true);
+				r.X = (float)m_value;
+				r.Y = 0.0f;
+				r.Width = 1;
+				r.Height = height();
+				renderer->drawFillRect(r, white);
 			}
 
-			void CColorSVPicker::onMouseClickLeft(float x, float y, bool down)
+			void CColorChannelPicker::onMouseClickLeft(float x, float y, bool down)
 			{
 				m_mouseDown = down;
 				CInput::getInput()->setCapture(m_mouseDown ? this : NULL);
@@ -79,42 +78,28 @@ namespace Skylicht
 				SPoint in = SPoint(x, y);
 				SPoint point = canvasPosToLocal(in);
 
-				m_s = (int)point.X;
-				m_v = 255 - (int)point.Y;
-
-				if (m_s < 0)
-					m_s = 0;
-				if (m_s > 255)
-					m_s = 255;
-
-				if (m_v < 0)
-					m_v = 0;
-				if (m_v > 255)
-					m_v = 255;
+				m_value = (int)point.X;
+				if (m_value < 0)
+					m_value = 0;
+				if (m_value > 255)
+					m_value = 255;
 
 				if (OnValueChanged != nullptr)
 					OnValueChanged(this);
 			}
 
-			void CColorSVPicker::onMouseMoved(float x, float y, float deltaX, float deltaY)
+			void CColorChannelPicker::onMouseMoved(float x, float y, float deltaX, float deltaY)
 			{
 				if (m_mouseDown)
 				{
 					SPoint in = SPoint(x, y);
 					SPoint point = canvasPosToLocal(in);
 
-					m_s = (int)point.X;
-					m_v = 255 - (int)point.Y;
-
-					if (m_s < 0)
-						m_s = 0;
-					if (m_s > 255)
-						m_s = 255;
-
-					if (m_v < 0)
-						m_v = 0;
-					if (m_v > 255)
-						m_v = 255;
+					m_value = (int)point.X;
+					if (m_value < 0)
+						m_value = 0;
+					if (m_value > 255)
+						m_value = 255;
 
 					if (OnValueChanged != nullptr)
 						OnValueChanged(this);
