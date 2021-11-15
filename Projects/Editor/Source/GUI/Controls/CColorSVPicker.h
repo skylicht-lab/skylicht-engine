@@ -38,6 +38,11 @@ namespace Skylicht
 				int m_s;
 				int m_v;
 				bool m_mouseDown;
+
+			public:
+
+				Listener OnValueChanged;
+
 			public:
 				CColorSVPicker(CBase* parent);
 
@@ -53,6 +58,16 @@ namespace Skylicht
 				{
 					m_s = s;
 					m_v = v;
+				}
+
+				inline int getS()
+				{
+					return m_s;
+				}
+
+				inline int getV()
+				{
+					return m_v;
 				}
 			};
 		}

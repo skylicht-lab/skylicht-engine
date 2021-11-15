@@ -21,11 +21,10 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+
 #pragma once
 
-#include "CButton.h"
-#include "CMenu.h"
-#include "CColorHSVRGBPicker.h"
+#include "CRawImage.h"
 
 namespace Skylicht
 {
@@ -33,36 +32,37 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CColorPicker : public CButton
+			class CColorChannelPicker : public CRawImage
 			{
-			public:
-				Listener OnChanged;
-
 			protected:
+				int m_value;
 
-				CMenu* m_menuPicker;
-
-				CColorHSVRGBPicker* m_hsvrgbPicker;
-
-				SGUIColor m_color;
+				bool m_mouseDown;
 
 			public:
-				CColorPicker(CBase* parent);
 
-				virtual ~CColorPicker();
+				Listener OnValueChanged;
 
-				virtual void renderUnder();
+			public:
+				CColorChannelPicker(CBase* parent);
 
-				void setColor(const SGUIColor& color);
+				virtual ~CColorChannelPicker();
 
-				inline const SGUIColor& getColor()
+				virtual void render();
+
+				virtual void onMouseClickLeft(float x, float y, bool down);
+
+				virtual void onMouseMoved(float x, float y, float deltaX, float deltaY);
+
+				inline void setValue(int v)
 				{
-					return m_color;
+					m_value = v;
 				}
 
-			protected:
-
-				void onClickDown(CBase* sender);
+				inline int getValue()
+				{
+					return m_value;
+				}
 			};
 		}
 	}

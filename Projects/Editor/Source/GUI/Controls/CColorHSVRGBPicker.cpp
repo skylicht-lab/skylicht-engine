@@ -163,13 +163,13 @@ namespace Skylicht
 				int s = 256;
 				CRenderer* render = CRenderer::getRenderer();
 
-				m_hsvImage = render->createImage(s, s, false);
+				m_hsvImage = render->createImage(s, s);
 				m_sv = new CColorSVPicker(this);
 				m_sv->setPos(15.0f, 10.0f);
 				m_sv->setSize((float)s, (float)s);
 				m_sv->setImage(m_hsvImage, SRect(0.0f, 0.0f, (float)s, (float)s));
 
-				m_hueImage = render->createImage(32, s, false);
+				m_hueImage = render->createImage(32, s);
 				setupHUEBitmap();
 
 				m_hue = new CColorHuePicker(this);
@@ -186,7 +186,7 @@ namespace Skylicht
 
 				posY = posY + 25.0f;
 
-				m_colorBGImage = render->createImage(256, 32, false);
+				m_colorBGImage = render->createImage(256, 32);
 				setupColorBGBitmap();
 
 				m_previewBounds = SRect(40.0f, posY, 270.0f, 32.0f);
@@ -203,10 +203,16 @@ namespace Skylicht
 				rLabel->setString(L"R");
 				rLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
 
-				m_red = new CSlider(this);
+				m_redImage = render->createImage(256, 16);
+				m_greenImage = render->createImage(256, 16);
+				m_blueImage = render->createImage(256, 16);
+				m_alphaImage = render->createImage(256, 16);
+				m_sImage = render->createImage(256, 16);
+				m_vImage = render->createImage(256, 16);
+
+				m_red = new CColorChannelPicker(this);
 				m_red->setBounds(40.0f, posY, 270.0f, 20.0f);
-				m_red->setNumberType(ENumberInputType::Integer);
-				m_red->setValue(0.0f, 0.0f, 255.0f, false);
+				m_red->setImage(m_redImage, SRect(0.0f, 0.0f, 256.0f, 16.0f));
 
 				posY = posY + 25.0f;
 
@@ -214,10 +220,9 @@ namespace Skylicht
 				gLabel->setString(L"G");
 				gLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
 
-				m_green = new CSlider(this);
+				m_green = new CColorChannelPicker(this);
 				m_green->setBounds(40, posY, 270.0f, 20.0f);
-				m_green->setNumberType(ENumberInputType::Integer);
-				m_green->setValue(0.0f, 0.0f, 255.0f, false);
+				m_green->setImage(m_greenImage, SRect(0.0f, 0.0f, 256.0f, 16.0f));
 
 				posY = posY + 25.0f;
 
@@ -225,10 +230,9 @@ namespace Skylicht
 				bLabel->setString(L"B");
 				bLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
 
-				m_blue = new CSlider(this);
+				m_blue = new CColorChannelPicker(this);
 				m_blue->setBounds(40, posY, 270.0f, 20.0f);
-				m_blue->setNumberType(ENumberInputType::Integer);
-				m_blue->setValue(0.0f, 0.0f, 255.0f, false);
+				m_blue->setImage(m_blueImage, SRect(0.0f, 0.0f, 256.0f, 16.0f));
 
 				posY = posY + 25.0f;
 
@@ -236,10 +240,9 @@ namespace Skylicht
 				aLabel->setString(L"A");
 				aLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
 
-				m_alpha = new CSlider(this);
+				m_alpha = new CColorChannelPicker(this);
 				m_alpha->setBounds(40, posY, 270.0f, 20.0f);
-				m_alpha->setNumberType(ENumberInputType::Integer);
-				m_alpha->setValue(0.0f, 0.0f, 255.0f, false);
+				m_alpha->setImage(m_alphaImage, SRect(0.0f, 0.0f, 256.0f, 16.0f));
 
 				posY = posY + 25.0f;
 
@@ -253,10 +256,9 @@ namespace Skylicht
 				sLabel->setString(L"S");
 				sLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
 
-				m_s = new CSlider(this);
+				m_s = new CColorChannelPicker(this);
 				m_s->setBounds(40, posY, 270.0f, 20.0f);
-				m_s->setNumberType(ENumberInputType::Integer);
-				m_s->setValue(0.0f, 0.0f, 255.0f, false);
+				m_s->setImage(m_sImage, SRect(0.0f, 0.0f, 256.0f, 16.0f));
 
 				posY = posY + 25.0f;
 
@@ -264,10 +266,9 @@ namespace Skylicht
 				vLabel->setString(L"V");
 				vLabel->setBounds(15.0f, posY + labelOffset, 30.0f, 20.0f);
 
-				m_v = new CSlider(this);
+				m_v = new CColorChannelPicker(this);
 				m_v->setBounds(40, posY, 270.0f, 20.0f);
-				m_v->setNumberType(ENumberInputType::Integer);
-				m_v->setValue(0.0f, 0.0f, 255.0f, false);
+				m_v->setImage(m_vImage, SRect(0.0f, 0.0f, 256.0f, 16.0f));
 
 				posY = posY + 50.0f;
 
@@ -289,13 +290,16 @@ namespace Skylicht
 				m_buttonCancel->setTextAlignment(ETextAlign::TextCenter);
 				m_buttonCancel->setBounds(210.0f, posY, 100.0f, 20.0f);
 
-				m_red->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
-				m_green->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
-				m_blue->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
-				m_alpha->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
+				m_red->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
+				m_green->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
+				m_blue->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
+				m_alpha->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
 
-				m_s->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onSVChange, this);
-				m_v->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onSVChange, this);
+				m_s->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::onSVChange, this);
+				m_v->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::onSVChange, this);
+
+				m_hue->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::changeHue, this);
+				m_sv->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::changeSV, this);
 			}
 
 			CColorHSVRGBPicker::~CColorHSVRGBPicker()
@@ -304,6 +308,11 @@ namespace Skylicht
 				render->removeImage(m_hsvImage);
 				render->removeImage(m_hueImage);
 				render->removeImage(m_colorBGImage);
+
+				render->removeImage(m_redImage);
+				render->removeImage(m_greenImage);
+				render->removeImage(m_blueImage);
+				render->removeImage(m_alphaImage);
 			}
 
 			void CColorHSVRGBPicker::renderUnder()
@@ -325,31 +334,31 @@ namespace Skylicht
 			{
 				m_color = c;
 
-				m_red->setValue(c.R, false);
-				m_green->setValue(c.G, false);
-				m_blue->setValue(c.B, false);
-				m_alpha->setValue(c.A, false);
+				m_red->setValue(c.R);
+				m_green->setValue(c.G);
+				m_blue->setValue(c.B);
+				m_alpha->setValue(c.A);
 
 				unsigned char h, s, v;
 				rgbToHSV(m_color, h, s, v);
 
-				m_s->setValue((float)s, false);
-				m_v->setValue((float)v, false);
+				m_s->setValue(s);
+				m_v->setValue(v);
 
 				m_sv->setSV(s, v);
 				m_hue->setHue(h);
 
 				setupHSVBitmap(h, s, v);
+				setupColorChannelBitmap();
 
 				updateColorText();
 			}
 
-			void CColorHSVRGBPicker::changeHue(int hue)
+			void CColorHSVRGBPicker::changeHue(CBase* base)
 			{
-				m_hue->setHue(hue);
-
-				int s = m_s->getValueInt();
-				int v = m_v->getValueInt();
+				int hue = m_hue->getHue();
+				int s = m_s->getValue();
+				int v = m_v->getValue();
 
 				hsvToRGB((unsigned char)hue, (unsigned char)s, (unsigned char)v, m_color);
 				setupHSVBitmap((unsigned char)hue, (unsigned char)s, (unsigned char)v);
@@ -357,10 +366,13 @@ namespace Skylicht
 				refreshColor();
 			}
 
-			void CColorHSVRGBPicker::changeSV(int s, int v)
+			void CColorHSVRGBPicker::changeSV(CBase* base)
 			{
-				m_s->setValue((float)s, false);
-				m_v->setValue((float)v, false);
+				int s = m_sv->getS();
+				int v = m_sv->getV();
+
+				m_s->setValue(s);
+				m_v->setValue(v);
 
 				int hue = m_hue->getHue();
 				hsvToRGB((unsigned char)hue, (unsigned char)s, (unsigned char)v, m_color);
@@ -370,26 +382,28 @@ namespace Skylicht
 
 			void CColorHSVRGBPicker::refreshColor()
 			{
-				m_red->setValue(m_color.R, false);
-				m_green->setValue(m_color.G, false);
-				m_blue->setValue(m_color.B, false);
-				m_alpha->setValue(m_color.A, false);
+				m_red->setValue(m_color.R);
+				m_green->setValue(m_color.G);
+				m_blue->setValue(m_color.B);
+				m_alpha->setValue(m_color.A);
 
 				updateColorText();
+
+				setupColorChannelBitmap();
 			}
 
 			void CColorHSVRGBPicker::onRGBAChange(CBase* base)
 			{
-				m_color.R = (unsigned char)(m_red->getValueInt());
-				m_color.G = (unsigned char)(m_green->getValueInt());
-				m_color.B = (unsigned char)(m_blue->getValueInt());
-				m_color.A = (unsigned char)(m_alpha->getValueInt());
+				m_color.R = (unsigned char)(m_red->getValue());
+				m_color.G = (unsigned char)(m_green->getValue());
+				m_color.B = (unsigned char)(m_blue->getValue());
+				m_color.A = (unsigned char)(m_alpha->getValue());
 
 				unsigned char h, s, v;
 				rgbToHSV(m_color, h, s, v);
 
-				m_s->setValue((float)s, false);
-				m_v->setValue((float)v, false);
+				m_s->setValue(s);
+				m_v->setValue(v);
 
 				m_sv->setSV(s, v);
 				m_hue->setHue(h);
@@ -402,8 +416,8 @@ namespace Skylicht
 			void CColorHSVRGBPicker::onSVChange(CBase* base)
 			{
 				unsigned char h = (unsigned char)m_hue->getHue();
-				unsigned char s = (unsigned char)m_s->getValueInt();
-				unsigned char v = (unsigned char)m_v->getValueInt();
+				unsigned char s = (unsigned char)m_s->getValue();
+				unsigned char v = (unsigned char)m_v->getValue();
 
 				hsvToRGB(h, s, v, m_color);
 
@@ -626,6 +640,139 @@ namespace Skylicht
 
 				m_colorBGImage->unlock();
 				m_colorBGImage->regenerateMipMapLevels();
+			}
+
+			void CColorHSVRGBPicker::setupColorChannelBitmap()
+			{
+				unsigned char* redData = (unsigned char*)m_redImage->lock();
+				unsigned char* pRed = redData;
+
+				unsigned char* greenData = (unsigned char*)m_greenImage->lock();
+				unsigned char* pGreen = greenData;
+
+				unsigned char* blueData = (unsigned char*)m_blueImage->lock();
+				unsigned char* pBlue = blueData;
+
+				unsigned char* alphaData = (unsigned char*)m_alphaImage->lock();
+				unsigned char* pAlpha = alphaData;
+
+				unsigned char* sData = (unsigned char*)m_sImage->lock();
+				unsigned char* pS = sData;
+
+				unsigned char* vData = (unsigned char*)m_vImage->lock();
+				unsigned char* pV = vData;
+
+				u32 w = m_redImage->getSize().Width;
+				u32 h = m_redImage->getSize().Height;
+
+				int p1 = 0;
+				int p2 = 1;
+				int p3 = 2;
+				int p4 = 3;
+
+				if (CRenderer::getRenderer()->useImageDataBGR())
+				{
+					p1 = 2;
+					p3 = 0;
+				}
+
+				unsigned char r = m_color.R;
+				unsigned char g = m_color.G;
+				unsigned char b = m_color.B;
+				unsigned char a = m_color.A;
+
+				for (u32 i = 0; i < h; i++)
+				{
+					for (u32 j = 0; j < w; j++)
+					{
+						pRed[p1] = (unsigned char)j;
+						pRed[p2] = g;
+						pRed[p3] = b;
+						pRed[p4] = 255;
+
+						pGreen[p1] = r;
+						pGreen[p2] = (unsigned char)j;
+						pGreen[p3] = b;
+						pGreen[p4] = 255;
+
+						pBlue[p1] = r;
+						pBlue[p2] = g;
+						pBlue[p3] = (unsigned char)j;
+						pBlue[p4] = 255;
+
+						pAlpha[p1] = r;
+						pAlpha[p2] = g;
+						pAlpha[p3] = b;
+						pAlpha[p4] = (unsigned char)j;
+
+						pRed += 4;
+						pGreen += 4;
+						pBlue += 4;
+						pAlpha += 4;
+					}
+				}
+
+				SGUIColor tempColor1, tempColor2;
+				unsigned char hue = (unsigned char)m_hue->getHue();
+				unsigned char s = (unsigned char)m_s->getValue();
+				unsigned char v = (unsigned char)m_v->getValue();
+
+				// 1st row
+				for (u32 j = 0; j < w; j++)
+				{
+					hsvToRGB(hue, j, v, tempColor1);
+					hsvToRGB(hue, s, j, tempColor2);
+
+					pS[p1] = tempColor1.R;
+					pS[p2] = tempColor1.G;
+					pS[p3] = tempColor1.B;
+					pS[p4] = 255;
+
+					pV[p1] = tempColor2.R;
+					pV[p2] = tempColor2.G;
+					pV[p3] = tempColor2.B;
+					pV[p4] = 255;
+
+					pS += 4;
+					pV += 4;
+				}
+
+				// copy from 1st row
+				int widthSize = w * 4;
+				for (u32 i = 1; i < h; i++)
+				{
+					for (u32 j = 0; j < w; j++)
+					{
+						pS[p1] = pS[p1 - widthSize];
+						pS[p2] = pS[p2 - widthSize];
+						pS[p3] = pS[p3 - widthSize];
+						pS[p4] = pS[p4 - widthSize];
+
+						pV[p1] = pV[p1 - widthSize];
+						pV[p2] = pV[p2 - widthSize];
+						pV[p3] = pV[p3 - widthSize];
+						pV[p4] = pV[p4 - widthSize];
+
+						pS += 4;
+						pV += 4;
+					}
+				}
+
+				m_redImage->unlock();
+				m_greenImage->unlock();
+				m_blueImage->unlock();
+				m_alphaImage->unlock();
+
+				m_sImage->unlock();
+				m_vImage->unlock();
+
+				m_redImage->regenerateMipMapLevels();
+				m_greenImage->regenerateMipMapLevels();
+				m_blueImage->regenerateMipMapLevels();
+				m_alphaImage->regenerateMipMapLevels();
+
+				m_sImage->regenerateMipMapLevels();
+				m_vImage->regenerateMipMapLevels();
 			}
 		}
 	}

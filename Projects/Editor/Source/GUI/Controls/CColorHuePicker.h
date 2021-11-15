@@ -36,7 +36,12 @@ namespace Skylicht
 			{
 			protected:
 				int m_h;
+
 				bool m_mouseDown;
+
+			public:
+
+				Listener OnValueChanged;
 
 			public:
 				CColorHuePicker(CBase* parent);

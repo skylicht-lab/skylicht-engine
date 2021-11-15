@@ -69,7 +69,7 @@ namespace Skylicht
 
 				virtual bool useImageDataBGR() { return true; }
 
-				virtual CGUIImage* createImage(u32 width, u32 height, bool is32Bit) { return NULL; }
+				virtual CGUIImage* createImage(u32 width, u32 height) { return NULL; }
 
 				virtual void removeImage(CGUIImage* image) {};
 
