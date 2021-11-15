@@ -84,7 +84,8 @@ namespace Skylicht
 				if (m_h > 255)
 					m_h = 255;
 
-				((CColorHSVRGBPicker*)m_parent)->changeHue(m_h);
+				if (OnValueChanged != nullptr)
+					OnValueChanged(this);
 			}
 
 			void CColorHuePicker::onMouseMoved(float x, float y, float deltaX, float deltaY)
@@ -100,7 +101,8 @@ namespace Skylicht
 					if (m_h > 255)
 						m_h = 255;
 
-					((CColorHSVRGBPicker*)m_parent)->changeHue(m_h);
+					if (OnValueChanged != nullptr)
+						OnValueChanged(this);
 				}
 			}
 		}

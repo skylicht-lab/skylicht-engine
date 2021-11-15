@@ -141,9 +141,9 @@ namespace Skylicht
 				return isBGR;
 			}
 
-			CGUIImage* CSkylichtRenderer::createImage(u32 width, u32 height, bool is32Bit)
+			CGUIImage* CSkylichtRenderer::createImage(u32 width, u32 height)
 			{
-				IImage* image = getVideoDriver()->createImage(is32Bit ? ECF_A8R8G8B8 : ECF_R8G8B8, core::dimension2du(width, height));
+				IImage* image = getVideoDriver()->createImage(ECF_A8R8G8B8, core::dimension2du(width, height));
 				ITexture* texture = getVideoDriver()->addTexture("GUIImage", image);
 				image->drop();
 				return texture;

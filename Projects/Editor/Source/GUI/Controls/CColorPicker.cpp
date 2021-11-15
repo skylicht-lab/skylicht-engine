@@ -48,9 +48,9 @@ namespace Skylicht
 
 				m_menuPicker = new CMenu(parent->getCanvas());
 
-				m_hueRGBPicker = new CColorHSVRGBPicker(m_menuPicker);
-				m_hueRGBPicker->setHeight(625.0f);
-				m_hueRGBPicker->dock(GUI::EPosition::Top);
+				m_hsvrgbPicker = new CColorHSVRGBPicker(m_menuPicker);
+				m_hsvrgbPicker->setHeight(625.0f);
+				m_hsvrgbPicker->dock(GUI::EPosition::Top);
 			}
 
 			CColorPicker::~CColorPicker()
@@ -62,8 +62,8 @@ namespace Skylicht
 			void CColorPicker::setColor(const SGUIColor& color)
 			{
 				m_color = color;
-				m_hueRGBPicker->setColor(m_color);
-				m_hueRGBPicker->setOldColor(m_color);
+				m_hsvrgbPicker->setColor(m_color);
+				m_hsvrgbPicker->setOldColor(m_color);
 			}
 
 			void CColorPicker::renderUnder()
