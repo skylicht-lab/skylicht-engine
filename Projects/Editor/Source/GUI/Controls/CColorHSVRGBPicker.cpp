@@ -471,8 +471,8 @@ namespace Skylicht
 
 			void CColorHSVRGBPicker::onColorHexChanged(CBase* base)
 			{
-				WCHAR text[512];
-				WCHAR ret[512];
+				wchar_t text[512];
+				wchar_t ret[512];
 
 				std::vector<std::wstring> params;
 				std::wstring string = ((CTextBox*)(base))->getString();
