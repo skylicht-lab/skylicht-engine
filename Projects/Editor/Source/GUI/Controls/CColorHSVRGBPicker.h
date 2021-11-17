@@ -77,6 +77,13 @@ namespace Skylicht
 				SGUIColor m_oldColor;
 
 				SRect m_previewBounds;
+
+			public:
+
+				Listener OnCancel;
+				Listener OnOK;
+				Listener OnModify;
+
 			public:
 				CColorHSVRGBPicker(CBase* parent);
 
@@ -87,6 +94,11 @@ namespace Skylicht
 				const SGUIColor& getColor()
 				{
 					return m_color;
+				}
+
+				const SGUIColor& getOldColor()
+				{
+					return m_oldColor;
 				}
 
 				inline void setOldColor(const SGUIColor& c)
@@ -102,11 +114,21 @@ namespace Skylicht
 
 				void refreshColor();
 
+				void refreshColorUI();
+
 			protected:
 
 				void onRGBAChange(CBase* base);
 
 				void onSVChange(CBase* base);
+
+				void onColorHexChanged(CBase* base);
+
+				void onColorTextChanged(CBase* base);
+
+				void onCancel(CBase* base);
+
+				void onOK(CBase* base);
 
 				void updateColorText();
 

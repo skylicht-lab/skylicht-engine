@@ -63,6 +63,12 @@ namespace Skylicht
 			protected:
 
 				void onClickDown(CBase* sender);
+
+				void onSelectColorModify(CBase* sender);
+
+				void onSelectColorOK(CBase* sender);
+
+				void onSelectColorCancel(CBase* sender);
 			};
 		}
 	}
