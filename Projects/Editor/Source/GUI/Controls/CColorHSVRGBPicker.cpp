@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CColorHSVRGBPicker.h"
 #include "GUI/Renderer/CRenderer.h"
+#include "Utils/CStringImp.h"
 
 #ifndef max
 #define max(a,b) (((a) > (b)) ? (a) : (b))
@@ -274,21 +275,25 @@ namespace Skylicht
 
 				m_textboxHex = new CTextBox(this);
 				m_textboxHex->setBounds(15.0f, posY, 180.0f, 20.0f);
+				m_textboxHex->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onColorHexChanged, this);
 
 				m_buttonOK = new CButton(this);
 				m_buttonOK->setLabel(L"OK");
 				m_buttonOK->setTextAlignment(ETextAlign::TextCenter);
 				m_buttonOK->setBounds(210.0f, posY, 100.0f, 20.0f);
+				m_buttonOK->OnPress = BIND_LISTENER(&CColorHSVRGBPicker::onOK, this);
 
 				posY = posY + 25.0f;
 
 				m_textboxColor = new CTextBox(this);
 				m_textboxColor->setBounds(15.0f, posY, 180.0f, 20.0f);
+				m_textboxColor->OnTextChanged = BIND_LISTENER(&CColorHSVRGBPicker::onColorTextChanged, this);
 
 				m_buttonCancel = new CButton(this);
 				m_buttonCancel->setLabel(L"Cancel");
 				m_buttonCancel->setTextAlignment(ETextAlign::TextCenter);
 				m_buttonCancel->setBounds(210.0f, posY, 100.0f, 20.0f);
+				m_buttonCancel->OnPress = BIND_LISTENER(&CColorHSVRGBPicker::onCancel, this);
 
 				m_red->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
 				m_green->OnValueChanged = BIND_LISTENER(&CColorHSVRGBPicker::onRGBAChange, this);
@@ -390,6 +395,44 @@ namespace Skylicht
 				updateColorText();
 
 				setupColorChannelBitmap();
+
+				if (OnModify != nullptr)
+					OnModify(this);
+			}
+
+			void CColorHSVRGBPicker::refreshColorUI()
+			{
+				m_red->setValue(m_color.R);
+				m_green->setValue(m_color.G);
+				m_blue->setValue(m_color.B);
+				m_alpha->setValue(m_color.A);
+
+				unsigned char h, s, v;
+				rgbToHSV(m_color, h, s, v);
+
+				m_s->setValue(s);
+				m_v->setValue(v);
+
+				m_sv->setSV(s, v);
+				m_hue->setHue(h);
+
+				setupHSVBitmap(h, s, v);
+				setupColorChannelBitmap();
+
+				if (OnModify != nullptr)
+					OnModify(this);
+			}
+
+			void CColorHSVRGBPicker::onCancel(CBase* base)
+			{
+				if (OnCancel != nullptr)
+					OnCancel(this);
+			}
+
+			void CColorHSVRGBPicker::onOK(CBase* base)
+			{
+				if (OnOK != nullptr)
+					OnOK(this);
 			}
 
 			void CColorHSVRGBPicker::onRGBAChange(CBase* base)
@@ -424,6 +467,81 @@ namespace Skylicht
 				refreshColor();
 
 				m_sv->setSV(s, v);
+			}
+
+			void CColorHSVRGBPicker::onColorHexChanged(CBase* base)
+			{
+				WCHAR text[512];
+				WCHAR ret[512];
+
+				std::vector<std::wstring> params;
+				std::wstring string = ((CTextBox*)(base))->getString();
+				std::wstring lower = CStringImp::toLower(string);
+
+				int pos = 0;
+				while (CStringImp::split(ret, lower.c_str(), L",", &pos) == true)
+				{
+					params.push_back(ret);
+				}
+
+				if (params.size() == 2 &&
+					params[0].size() == 6 &&
+					params[1].size() == 2)
+				{
+					long dwColor = wcstol(params[0].c_str(), NULL, 16);
+
+					m_color.R = (unsigned char)((dwColor & 0xFF0000) >> 16);
+					m_color.G = (unsigned char)((dwColor & 0x00FF00) >> 8);
+					m_color.B = (unsigned char)(dwColor & 0x0000FF);
+					m_color.A = (unsigned char)wcstol(params[1].c_str(), NULL, 16);
+
+					refreshColorUI();
+
+					swprintf(text, 512, L"%d,%d,%d,%d", m_color.R, m_color.G, m_color.B, m_color.A);
+					m_textboxColor->setString(text);
+				}
+				else if (params.size() == 1 && params[0].size() == 6)
+				{
+					long dwColor = wcstol(params[0].c_str(), NULL, 16);
+
+					m_color.R = (unsigned char)((dwColor & 0xFF0000) >> 16);
+					m_color.G = (unsigned char)((dwColor & 0x00FF00) >> 8);
+					m_color.B = (unsigned char)(dwColor & 0x0000FF);
+					m_color.A = 255;
+
+					refreshColorUI();
+
+					swprintf(text, 512, L"%d,%d,%d,%d", m_color.R, m_color.G, m_color.B, m_color.A);
+					m_textboxColor->setString(text);
+				}
+			}
+
+			void CColorHSVRGBPicker::onColorTextChanged(CBase* base)
+			{
+				wchar_t text[512];
+				wchar_t ret[512];
+
+				std::vector<std::wstring> params;
+				const std::wstring string = ((CTextBox*)(base))->getString();
+
+				int pos = 0;
+				while (CStringImp::split(ret, string.c_str(), L",", &pos) == true)
+				{
+					params.push_back(ret);
+				}
+
+				if (params.size() == 4)
+				{
+					m_color.R = (unsigned char)std::stoi(params[0]);
+					m_color.G = (unsigned char)std::stoi(params[1]);
+					m_color.B = (unsigned char)std::stoi(params[2]);
+					m_color.A = (unsigned char)std::stoi(params[3]);
+
+					refreshColorUI();
+
+					swprintf(text, 512, L"%02X%02X%02X,%02X", m_color.R, m_color.G, m_color.B, m_color.A);
+					m_textboxHex->setString(text);
+				}
 			}
 
 			void CColorHSVRGBPicker::updateColorText()

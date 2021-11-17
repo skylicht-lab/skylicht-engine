@@ -51,6 +51,10 @@ namespace Skylicht
 				m_hsvrgbPicker = new CColorHSVRGBPicker(m_menuPicker);
 				m_hsvrgbPicker->setHeight(625.0f);
 				m_hsvrgbPicker->dock(GUI::EPosition::Top);
+
+				m_hsvrgbPicker->OnCancel = BIND_LISTENER(&CColorPicker::onSelectColorCancel, this);
+				m_hsvrgbPicker->OnOK = BIND_LISTENER(&CColorPicker::onSelectColorOK, this);
+				m_hsvrgbPicker->OnModify = BIND_LISTENER(&CColorPicker::onSelectColorModify, this);
 			}
 
 			CColorPicker::~CColorPicker()
@@ -82,8 +86,34 @@ namespace Skylicht
 
 			void CColorPicker::onClickDown(CBase* sender)
 			{
+				m_hsvrgbPicker->setColor(m_color);
+				m_hsvrgbPicker->setOldColor(m_color);
+
 				m_menuPicker->setWidth(325.0f);
 				m_menuPicker->open(this);
+			}
+
+			void CColorPicker::onSelectColorModify(CBase* sender)
+			{
+				m_color = m_hsvrgbPicker->getColor();
+				if (OnChanged != nullptr)
+					OnChanged(this);
+			}
+
+			void CColorPicker::onSelectColorOK(CBase* sender)
+			{
+				m_color = m_hsvrgbPicker->getColor();
+				if (OnChanged != nullptr)
+					OnChanged(this);
+				m_menuPicker->close();
+			}
+
+			void CColorPicker::onSelectColorCancel(CBase* sender)
+			{
+				m_color = m_hsvrgbPicker->getOldColor();
+				if (OnChanged != nullptr)
+					OnChanged(this);
+				m_menuPicker->close();
 			}
 		}
 	}
