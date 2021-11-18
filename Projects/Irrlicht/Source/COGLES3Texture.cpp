@@ -557,6 +557,8 @@ namespace irr
 
 			if (Driver->testGLError())
 				os::Printer::log("Could not glTexImage2D", ELL_ERROR);
+			
+			Driver->ResetRenderStates = true;
 		}
 
 
@@ -787,6 +789,8 @@ namespace irr
 			// cleanup
 			if (!mipmapData)
 				delete[] target;
+			
+			Driver->ResetRenderStates = true;
 		}
 
 
