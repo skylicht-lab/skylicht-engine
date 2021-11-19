@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/LoadScene/CSpaceLoadScene.h"
 #include "Space/ProjectSettings/CSpaceProjectSettings.h"
 #include "Space/GUIDesign/CSpaceGUIDesign.h"
+#include "Space/GoogleMap/CSpaceGMap.h"
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
@@ -117,7 +118,8 @@ namespace Skylicht
 
 		void CEditor::pause()
 		{
-			m_assetWatcher->beginWatch();
+			if (m_assetWatcher)
+				m_assetWatcher->beginWatch();
 
 			for (CSpace* s : m_workspaces)
 			{
@@ -127,12 +129,14 @@ namespace Skylicht
 
 		void CEditor::resume()
 		{
-			m_assetWatcher->endWatch();
-
-			if (m_assetWatcher->needReImport())
+			if (m_assetWatcher)
 			{
-				m_assetWatcher->lock();
-				initImportGUI(true);
+				m_assetWatcher->endWatch();
+				if (m_assetWatcher->needReImport())
+				{
+					m_assetWatcher->lock();
+					initImportGUI(true);
+				}
 			}
 
 			for (CSpace* s : m_workspaces)
@@ -394,6 +398,8 @@ namespace Skylicht
 			m_menuWindowItems.push_back(submenu->addItem(L"Animation"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Console"));
 			submenu->addSeparator();
+			m_menuWindowItems.push_back(submenu->addItem(L"Google Map"));
+			submenu->addSeparator();
 			submenu->addItem(L"Reset layout");
 			submenu->OnOpen = BIND_LISTENER(&CEditor::OnCommandWindowOpen, this);
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandWindow, this);
@@ -494,6 +500,10 @@ namespace Skylicht
 			else if (workspace == L"Property")
 			{
 				m_workspaces.push_back(new CSpaceProperty(window, this));
+			}
+			else if (workspace == L"Google Map")
+			{
+				m_workspaces.push_back(new CSpaceGMap(window, this));
 			}
 			else if (workspace == L"Hierarchy")
 			{
@@ -1062,6 +1072,10 @@ namespace Skylicht
 			{
 				showProjectSetting();
 			}
+			else if (label == L"Google Map")
+			{
+				showGoogleMap();
+			}
 			else
 			{
 				// do close/open the window by item label
@@ -1082,6 +1096,17 @@ namespace Skylicht
 			float h = 480.0f;
 			GUI::CDialogWindow* window = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, w, h);
 			window->setCaption(L"Project Setting");
+			window->setCenterPosition();
+			window->setResizable(true);
+			initWorkspace(window, window->getCaption());
+		}
+
+		void CEditor::showGoogleMap()
+		{
+			float w = 1024.0f;
+			float h = 768.0f;
+			GUI::CWindow* window = new GUI::CWindow(m_canvas, 0.0f, 0.0f, w, h);
+			window->setCaption(L"Google Map");
 			window->setCenterPosition();
 			window->setResizable(true);
 			initWorkspace(window, window->getCaption());

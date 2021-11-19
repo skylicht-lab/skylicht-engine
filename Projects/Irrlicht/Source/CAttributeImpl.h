@@ -1289,6 +1289,14 @@ public:
 		u32 c;
 		int characters;
 		int items = sscanf(text, "%08x%n", &c, &characters);
+
+		unsigned char a = (c >> 24) & 0xff;
+		unsigned char r = (c >> 16) & 0xff;
+		unsigned char g = (c >> 8) & 0xff;
+		unsigned char b = c & 0xff;
+
+		c = (((a & 0xff) << 24) | ((b & 0xff) << 16) | ((g & 0xff) << 8) | (r & 0xff));
+
 		if (items != 1 || characters != 8 )
 		{
 			CNumbersAttribute::setString(text);
