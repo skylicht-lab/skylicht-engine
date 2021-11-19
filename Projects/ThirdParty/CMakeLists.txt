@@ -24,6 +24,7 @@ setup_project_group("${bzip2_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 #curl
 if (BUILD_CURL)
+add_definitions(-DHAVE_CURL)
 file(GLOB_RECURSE curl_source 
 	./source/curl/**.cpp 
 	./source/curl/**.hpp 

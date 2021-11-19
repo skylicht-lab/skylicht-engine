@@ -155,6 +155,8 @@ namespace Skylicht
 
 			void showProjectSetting();
 
+			void showGoogleMap();
+
 		};
 	}
 }
