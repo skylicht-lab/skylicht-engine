@@ -90,6 +90,13 @@ namespace Skylicht
 
 						sceneController->selectOnHierachy(object);
 					}
+					else
+					{
+						// clear selection
+						CSelection* selection = CSelection::getInstance();
+						sceneController->deselectAllOnHierachy();
+						selection->clear();
+					}
 				}
 
 				return true;

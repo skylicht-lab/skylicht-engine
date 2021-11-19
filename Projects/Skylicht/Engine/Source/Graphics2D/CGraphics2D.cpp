@@ -1534,4 +1534,107 @@ namespace Skylicht
 		m_indices->set_used(0);
 		m_vertices->set_used(0);
 	}
+
+	void CGraphics2D::drawText(const core::position2df& pos, CGlyphFont* font, const SColor& color, const std::wstring& string, int materialID, CMaterial* material)
+	{
+		std::vector<SModuleOffset*> modules;
+		const wchar_t* lpString = string.c_str();
+
+		int i = 0, n = 0;
+		float charSpacePadding = 0.0f;
+		float charPadding = 0.0f;
+		float x = (float)pos.X;
+		float y = (float)pos.Y;
+
+		while (lpString[i] != 0)
+		{
+			if (lpString[i] != (int)'\n' &&
+				lpString[i] != (int)'\r')
+			{
+				SModuleOffset* c = font->getCharacterModule((int)lpString[i]);
+				if (c != NULL)
+				{
+					modules.push_back(c);
+				}
+			}
+			i++;
+		}
+
+		for (i = 0, n = (int)modules.size(); i < n; i++)
+		{
+			SModuleOffset* moduleOffset = modules[i];
+
+			addModuleBatch(moduleOffset, color, core::IdentityMatrix, (float)x, (float)y, materialID, material);
+
+			if (moduleOffset->Character == ' ')
+				x += ((int)moduleOffset->XAdvance + charSpacePadding);
+			else
+				x += ((int)moduleOffset->XAdvance + charPadding);
+		}
+	}
+
+	float CGraphics2D::measureCharWidth(CGlyphFont* font, wchar_t c)
+	{
+		if (c == '\n' || c == '\r')
+			return 0.0f;
+
+		float charSpacePadding = 0.0f;
+		float charPadding = 0.0f;
+
+		SModuleOffset* module = font->getCharacterModule(c);
+
+		float charWidth = 0.0f;
+		if (module->Character == ' ')
+			charWidth = module->XAdvance + charSpacePadding;
+		else
+			charWidth = module->XAdvance + charPadding;
+
+		return charWidth;
+	}
+
+	core::dimension2df CGraphics2D::measureText(CGlyphFont* font, const std::wstring& string)
+	{
+		float stringWidth = 0.0f;
+		float charSpacePadding = 0.0f;
+		float charPadding = 0.0f;
+		float textHeight = 0.0f;
+		float textOffsetY = 0.0f;
+
+		// get text height
+		SModuleOffset* moduleCharA = font->getCharacterModule((int)'A');
+		if (moduleCharA)
+		{
+			textHeight = moduleCharA->OffsetY + moduleCharA->Module->H;
+			textOffsetY = moduleCharA->OffsetY;
+		}
+
+		// get text width
+		std::vector<SModuleOffset*>	listModule;
+
+		int i = 0, n;
+		while (string[i] != 0)
+		{
+			if (string[i] != (int)'\n' &&
+				string[i] != (int)'\r')
+			{
+				SModuleOffset* c = font->getCharacterModule((int)string[i]);
+				if (c != NULL)
+				{
+					listModule.push_back(c);
+				}
+			}
+			i++;
+		}
+
+		for (i = 0, n = (int)listModule.size(); i < n; i++)
+		{
+			SModuleOffset* moduleOffset = listModule[i];
+			if (moduleOffset->Character == ' ')
+				stringWidth = stringWidth + (moduleOffset->XAdvance + charSpacePadding);
+			else
+				stringWidth = stringWidth + (moduleOffset->XAdvance + charPadding);
+		}
+
+		return core::dimension2df(stringWidth, textHeight + textOffsetY);
+	}
 }

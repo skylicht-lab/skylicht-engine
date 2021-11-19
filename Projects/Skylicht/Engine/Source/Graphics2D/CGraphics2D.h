@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "Graphics2D/SpriteFrame/CSpriteFrame.h"
+#include "Graphics2D/SpriteFrame/CGlyphFont.h"
 #include "Material/CMaterial.h"
 
 namespace Skylicht
@@ -167,6 +168,12 @@ namespace Skylicht
 		void draw2DRectangle(const core::vector3df& upleft, const core::vector3df& lowerright, const SColor& color);
 
 		void draw2DRectangleOutline(const core::rectf& pos, const SColor& color);
+
+		void drawText(const core::position2df& pos, CGlyphFont* font, const SColor& color, const std::wstring& string, int materialID, CMaterial* material = NULL);
+
+		float measureCharWidth(CGlyphFont* font, wchar_t c);
+
+		core::dimension2df measureText(CGlyphFont* font, const std::wstring& string);
 
 		video::SMaterial& getMaterial()
 		{
