@@ -193,7 +193,7 @@ namespace Skylicht
 			// draw grid
 			for (int i = 0; i < m_renderMap.CountX; i++)
 			{
-				if (realX == 0.0f)
+				if (realX == 0.0f || m_renderMap.From.X + i == m_renderMap.To.X)
 				{
 					core::rectf r(x - 2.0f, 0.0f, x + 2.0f, h);
 					pGraphics->draw2DRectangle(r, black);
@@ -209,7 +209,7 @@ namespace Skylicht
 
 			for (int i = 0; i < m_renderMap.CountY; i++)
 			{
-				if (realY == 0.0f)
+				if (realY == 0.0f || m_renderMap.From.Y + i == m_renderMap.To.Y)
 				{
 					core::rectf r(0.0f, y - 2.0f, w, y + 2.0f);
 					pGraphics->draw2DRectangle(r, black);
@@ -234,7 +234,7 @@ namespace Skylicht
 			wchar_t string[512];
 			SColor black(255, 10, 10, 10);
 
-			for (long i = m_renderMap.From.Y; i < m_renderMap.From.Y + m_renderMap.CountY; i++)
+			for (long i = m_renderMap.From.Y; i < m_renderMap.From.Y + m_renderMap.CountY && i < m_renderMap.To.Y; i++)
 			{
 				if (i < 0)
 				{
@@ -242,7 +242,7 @@ namespace Skylicht
 					continue;
 				}
 
-				for (int j = m_renderMap.From.X; j < m_renderMap.From.X + m_renderMap.CountX; j++)
+				for (int j = m_renderMap.From.X; j < m_renderMap.From.X + m_renderMap.CountX && j < m_renderMap.To.X; j++)
 				{
 					if (j < 0)
 					{
@@ -250,19 +250,18 @@ namespace Skylicht
 						continue;
 					}
 
-					long realX = j * m_gridSize + m_gridSize / 2;
-					long realY = i * m_gridSize + m_gridSize / 2;
+					long realX = j * m_gridSize;
+					long realY = i * m_gridSize;
 
 					double lat, lng;
 					getLatLngByPixel((long)realX, (long)realY, m_zoom, &lat, &lng);
 
 					swprintf(string, 512, L"%.3lf, %.3lf", lat, lng);
 
-					core::dimension2df size = pGraphics->measureText(m_fontLarge, string);
-					float centerX = m_gridSize * 0.5f - size.Width * 0.5f;
-					float centerY = m_gridSize * 0.5f - size.Height * 0.5f;
+					float centerX = 5.0f;
+					float centerY = 5.0f;
 
-					pGraphics->drawText(core::position2df(x + centerX, y + centerY), m_fontLarge, black, string, m_materialID);
+					pGraphics->drawText(core::position2df(x + centerX, y + centerY), m_fontNormal, black, string, m_materialID);
 
 					x += m_gridSize;
 				}
