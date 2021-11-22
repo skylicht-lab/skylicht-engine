@@ -31,6 +31,10 @@
 #define II(a,b,c,d,m,s,t) { a += I(b,c,d) + m + t; \
                             a = b + ROTLEFT(a,s); }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*********************** FUNCTION DEFINITIONS ***********************/
 void md5_transform(MD5_CTX *ctx, const BYTE8 data[])
 {
@@ -187,3 +191,7 @@ void md5_final(MD5_CTX *ctx, BYTE8 hash[])
 		hash[i + 12] = (ctx->state[3] >> (i * 8)) & 0x000000ff;
 	}
 }
+
+#ifdef __cplusplus
+}
+#endif 

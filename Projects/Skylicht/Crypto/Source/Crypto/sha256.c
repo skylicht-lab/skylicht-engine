@@ -28,6 +28,10 @@
 #define SIG0(x) (ROTRIGHT(x,7) ^ ROTRIGHT(x,18) ^ ((x) >> 3))
 #define SIG1(x) (ROTRIGHT(x,17) ^ ROTRIGHT(x,19) ^ ((x) >> 10))
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************** VARIABLES *****************************/
 static const WORD32 k[64] = {
 	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
@@ -156,3 +160,7 @@ void sha256_final(SHA256_CTX *ctx, BYTE8 hash[])
 		hash[i + 28] = (ctx->state[7] >> (24 - i * 8)) & 0x000000ff;
 	}
 }
+
+#ifdef __cplusplus
+}
+#endif
