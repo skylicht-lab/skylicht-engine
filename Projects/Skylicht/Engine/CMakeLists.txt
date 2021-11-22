@@ -6,16 +6,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
-	#${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source	
 )
-
-#if (BUILD_SKYLICHT_NETWORK)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source)
-#endif()
-
-#if(BUILD_RECAST_NAVIGATION_LIB)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/RecastNavigation/Source)
-#endif()
 
 file(GLOB_RECURSE skylicht_source 
 	./Source/*.cpp 
@@ -30,17 +21,8 @@ target_precompiled_header(Engine ./Source/pch.cpp ${skylicht_source})
 
 set_target_properties(Engine PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-#if(BUILD_RECAST_NAVIGATION_LIB)
-#target_link_libraries(Engine RecastNavigation)
-#endif()
-
 target_link_libraries(Engine
 	Irrlicht
 	System
-	Audio 
-#	Physics
+	Audio
 )
-	
-#if (BUILD_SKYLICHT_NETWORK)
-#target_link_libraries(Engine Skylicht/Network)
-#endif()
