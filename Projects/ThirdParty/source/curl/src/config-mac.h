@@ -80,6 +80,8 @@
 #define HAVE_IOCTL              1
 #define HAVE_IOCTL_FIONBIO      1
 
+#define HAVE_LONGLONG 1
+
 #define SIZEOF_INT              4
 #define SIZEOF_SHORT            2
 #define SIZEOF_SIZE_T           4
