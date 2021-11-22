@@ -26,14 +26,12 @@ set_target_properties(Network PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 if (MSVC OR CYGWIN OR MINGW)
 	target_link_libraries(Network ws2_32)
-	# curl
-	target_link_libraries(Network Wldap32.Lib)
 endif()
 
 if (BUILD_EMSCRIPTEN)
-target_link_libraries(Network Engine System)
+target_link_libraries(Network Engine System Crypto)
 elseif(MSVC)
-target_link_libraries(Network Engine System)
+target_link_libraries(Network Engine System Crypto)
 elseif(CYGWIN OR MINGW)
-target_link_libraries(Network Engine System)
+target_link_libraries(Network Engine System Crypto)
 endif()
