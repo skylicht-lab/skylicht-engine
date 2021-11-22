@@ -75,7 +75,19 @@
 #  endif
 #endif
 
-#if defined(MACOS) || defined(LINUX) || defined(macintosh) && defined(__MRC__)
+#if defined(ANDROID)
+#  include "config-android.h"
+#endif
+
+#if defined(LINUX) || defined(CYGWIN) || defined(EMSCRIPTEN)
+#  include "config-linux.h"
+#endif
+
+#if defined(IOS)
+#  include "config-ios.h"
+#endif
+
+#if defined(MACOS)
 #  include "config-mac.h"
 #endif
 

@@ -704,13 +704,8 @@ Vista
 #define HAVE_LDAP_URL_PARSE 1
 #else
 #undef HAVE_LDAP_URL_PARSE
-
-#if defined(WINDOWS_STORE)
-#else
 #define HAVE_LDAP_SSL 1
 #define USE_WIN32_LDAP 1
-#endif
-
 #endif
 
 #if defined(__WATCOMC__) && defined(USE_WIN32_LDAP)
