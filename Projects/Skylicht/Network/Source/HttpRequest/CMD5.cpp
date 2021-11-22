@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CMD5.h"
+#include "Crypto/md5.h"
 
 namespace Skylicht
 {
