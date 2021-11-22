@@ -40,7 +40,10 @@ namespace Skylicht
 			m_viewX(0),
 			m_viewY(0),
 			m_gridSize(256),
-			m_rightPress(false)
+			m_rightPress(false),
+			m_downloadMapThread(NULL),
+			m_lock(NULL),
+			m_mapBGType(EImageMapType::GSatellite)
 		{
 			m_view = new GUI::CBase(window);
 			m_view->dock(GUI::EPosition::Fill);
@@ -56,12 +59,205 @@ namespace Skylicht
 
 			m_fontLarge = new CGlyphFont(GUI::CThemeConfig::FontName.c_str(), GUI::CThemeConfig::getFontSizePt(GUI::EFontSize::SizeLarge));
 			m_fontNormal = new CGlyphFont(GUI::CThemeConfig::FontName.c_str(), GUI::CThemeConfig::getFontSizePt(GUI::EFontSize::SizeNormal));
+
+			for (int i = 0; i < NUM_HTTPREQUEST; i++)
+			{
+				m_imgDownloading[i] = NULL;
+				m_httpStream[i] = new CHttpStream();
+				m_httpRequest[i] = new CHttpRequest(m_httpStream[i]);
+			}
+
+			m_lock = IMutex::createMutex();
+			m_downloadMapThread = IThread::createThread(this);
 		}
 
 		CSpaceGMap::~CSpaceGMap()
 		{
 			delete m_fontLarge;
 			delete m_fontNormal;
+
+			if (m_downloadMapThread != NULL)
+				m_downloadMapThread->stop();
+
+			if (m_lock != NULL)
+				delete m_lock;
+
+			for (int i = 0; i < NUM_HTTPREQUEST; i++)
+			{
+				m_imgDownloading[i] = NULL;
+				delete m_httpStream[i];
+				m_httpStream[i] = NULL;
+
+				delete m_httpRequest[i];
+				m_httpRequest[i] = NULL;
+			}
+		}
+
+		void CSpaceGMap::updateThread()
+		{
+			m_lock->lock();
+
+			for (int r = 0; r < NUM_HTTPREQUEST; r++)
+			{
+				// need create new request
+				if (m_queueDownload.size() > 0 && m_imgDownloading[r] == NULL)
+				{
+					std::list<SImageDownload>::iterator i = m_queueDownload.begin();
+					SImageDownload& img = (*i);
+
+					SImageMapElement* pImg = &img.Image;
+
+					m_httpRequest[r]->setURL(img.Url.c_str());
+					m_httpRequest[r]->sendRequestByGet();
+
+					// push queue to downloading
+					m_downloading.push_back((*i));
+					m_imgDownloading[r] = &(m_downloading.back());
+
+					m_queueDownload.pop_front();
+				}
+				else
+				{
+					// update request download
+					if (m_imgDownloading[r] && m_httpRequest[r]->updateRequest() == true)
+					{
+						if (m_httpRequest[r]->getResponseCode() > 0)
+						{
+							m_imgDownloading[r]->Image.Status = EImageMapStatus::Downloaded;
+
+							char fileName[512] = { 0 };
+							switch (m_imgDownloading[r]->Image.Type)
+							{
+							case EImageMapType::GSatellite:
+							{
+								sprintf(fileName, "gmap_%d_%d_%d.jpg",
+									m_imgDownloading[r]->Image.Z,
+									m_imgDownloading[r]->Image.X,
+									m_imgDownloading[r]->Image.Y
+								);
+								break;
+							}
+							case EImageMapType::OSMTerrain:
+								sprintf(fileName, "osm_%d_%d_%d.png",
+									m_imgDownloading[r]->Image.Z,
+									m_imgDownloading[r]->Image.X,
+									m_imgDownloading[r]->Image.Y
+								);
+								break;
+							default:
+								break;
+							}
+
+							m_imgDownloading[r]->Image.Path = fileName;
+
+							io::IWriteFile* file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(fileName);
+							file->write(m_httpStream[r]->getData(), m_httpStream[r]->getDataSize());
+							file->drop();
+						}
+						else
+						{
+							m_imgDownloading[r]->Image.Status = EImageMapStatus::Error;
+						}
+
+						std::list<SImageDownload>::iterator iDown = m_downloading.begin(), endDown = m_downloading.end();
+						while (iDown != endDown)
+						{
+							if (iDown->Image.Type == m_imgDownloading[r]->Image.Type &&
+								iDown->Image.X == m_imgDownloading[r]->Image.X &&
+								iDown->Image.Y == m_imgDownloading[r]->Image.Y &&
+								iDown->Image.Z == m_imgDownloading[r]->Image.Z)
+							{
+								// remove on downloading list
+								m_downloading.erase(iDown);
+								break;
+							}
+							++iDown;
+						}
+
+						m_imgDownloading[r] = NULL;
+					}
+				}
+			}
+			m_lock->unlock();
+
+			if (m_queueDownload.size() == 0 && m_downloading.size() == 0)
+				IThread::sleep(200);
+			else
+				IThread::sleep(1);
+		}
+
+		void CSpaceGMap::requestDownloadMap(long x, long y, int z)
+		{
+			m_lock->lock();
+
+			SImageMapElement img;
+
+			img.Type = m_mapBGType;
+			img.X = x;
+			img.Y = y;
+			img.Z = z;
+
+			std::list<SImageDownload>::iterator i = m_queueDownload.begin(), end = m_queueDownload.end();
+			while (i != end)
+			{
+				if (i->Image.Type == img.Type &&
+					i->Image.X == img.X &&
+					i->Image.Y == img.Y &&
+					i->Image.Z == img.Z)
+				{
+					m_lock->unlock();
+					return;
+				}
+				++i;
+			}
+
+			i = m_downloading.begin(), end = m_downloading.end();
+			while (i != end)
+			{
+				if (i->Image.Type == img.Type &&
+					i->Image.X == img.X &&
+					i->Image.Y == img.Y &&
+					i->Image.Z == img.Z)
+				{
+					m_lock->unlock();
+					return;
+				}
+				++i;
+			}
+
+
+			SImageDownload download;
+
+			char lpUrl[512];
+
+			switch (m_mapBGType)
+			{
+			case EImageMapType::GSatellite:
+				sprintf(lpUrl,
+					"https://khms0.google.com/kh/v=908?x=%ld&y=%ld&z=%d",
+					img.X, img.Y, img.Z
+				);
+				break;
+			case EImageMapType::OSMTerrain:
+				sprintf(lpUrl,
+					"https://api.maptiler.com/maps/outdoor/%d/%ld/%ld.png",
+					img.Z, img.X, img.Y
+				);
+				break;
+				break;
+			default:
+				break;
+			}
+
+			download.Image.Type = m_mapBGType;
+			download.Image.X = img.X;
+			download.Image.Y = img.Y;
+			download.Image.Z = img.Z;
+			download.Url = lpUrl;
+
+			m_queueDownload.push_back(download);
+
+			m_lock->unlock();
 		}
 
 		void CSpaceGMap::onResize(float w, float h)
@@ -86,6 +282,10 @@ namespace Skylicht
 		void CSpaceGMap::onRightMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
 			m_rightPress = down;
+			if (down)
+				GUI::CInput::getInput()->setCapture(m_view);
+			else
+				GUI::CInput::getInput()->setCapture(NULL);
 		}
 
 		void CSpaceGMap::onMiddleMouseClick(GUI::CBase* base, float x, float y, bool down)
@@ -112,16 +312,19 @@ namespace Skylicht
 		{
 			// flush 2d gui
 			GUI::CGUIContext::getRenderer()->flush();
+
+			IVideoDriver* driver = getVideoDriver();
+
 			core::recti vp = getVideoDriver()->getViewPort();
-			getVideoDriver()->enableScissor(false);
-			getVideoDriver()->clearZBuffer();
+			driver->enableScissor(false);
+			driver->clearZBuffer();
 
 			// setup space window viewport
 			GUI::SPoint position = base->localPosToCanvas();
 			core::recti viewport;
 			viewport.UpperLeftCorner.set((int)position.X, (int)position.Y);
 			viewport.LowerRightCorner.set((int)(position.X + base->width()), (int)(position.Y + base->height()));
-			getVideoDriver()->setViewPort(viewport);
+			driver->setViewPort(viewport);
 
 			// setup 2d projection
 			core::matrix4 projection, view;
@@ -138,8 +341,8 @@ namespace Skylicht
 			pG->endRenderGUI();
 
 			// resume gui render
-			getVideoDriver()->enableScissor(true);
-			getVideoDriver()->setViewPort(vp);
+			driver->enableScissor(true);
+			driver->setViewPort(vp);
 			GUI::CGUIContext::getRenderer()->setProjection();
 		}
 
@@ -169,7 +372,14 @@ namespace Skylicht
 
 		void CSpaceGMap::renderMap()
 		{
+			// clear
+			CGraphics2D* pGraphics = CGraphics2D::getInstance();
+			pGraphics->draw2DRectangle(core::rectf(0.0f, 0.0f, m_view->width(), m_view->height()), SColor(255, 200, 200, 200));
+
+			// draw grid
 			renderGrid();
+
+			// draw lng, lat
 			renderString();
 		}
 
@@ -188,7 +398,7 @@ namespace Skylicht
 			float w = (float)m_view->width();
 			float h = (float)m_view->height();
 
-			SColor black(255, 10, 10, 10);
+			SColor black(0xffe1e1e1);
 
 			// draw grid
 			for (int i = 0; i < m_renderMap.CountX; i++)
@@ -233,6 +443,7 @@ namespace Skylicht
 
 			wchar_t string[512];
 			SColor black(255, 10, 10, 10);
+			SColor red(255, 255, 0, 0);
 
 			for (long i = m_renderMap.From.Y; i < m_renderMap.From.Y + m_renderMap.CountY && i < m_renderMap.To.Y; i++)
 			{
@@ -269,6 +480,14 @@ namespace Skylicht
 				y += m_gridSize;
 				x = -m_viewX % m_gridSize;
 			}
+
+#ifndef HAVE_SKYLICHT_NETWORK
+			wchar_t* warningString = L"BUILD_SKYLICHT_NETWORK is Disable! Please Enable this feature on CMakeLists.txt";
+			core::dimension2df size = pGraphics->measureText(m_fontNormal, warningString);
+			float centerX = m_view->width() / 2 - size.Width / 2;
+			float centerY = m_view->height() / 2 - size.Height / 2;
+			pGraphics->drawText(core::position2df(centerX, centerY), m_fontNormal, red, warningString, m_materialID);
+#endif
 		}
 
 		void CSpaceGMap::setZoom(int z)
