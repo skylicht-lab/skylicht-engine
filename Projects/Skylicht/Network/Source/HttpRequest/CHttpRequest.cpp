@@ -138,6 +138,8 @@ namespace Skylicht
 		m_downloading = 0;
 		m_total = 0;
 
+		m_md5Context = new MD5_CTX();
+
 		memset(m_hashString, 0, 32);
 	}
 
@@ -166,6 +168,8 @@ namespace Skylicht
 		}
 
 		curl_easy_cleanup(m_curl);
+
+		delete m_md5Context;
 	}
 
 	void CHttpRequest::addFormRequest(const char* name, const char* value)
@@ -303,7 +307,7 @@ namespace Skylicht
 
 		// calc hash data revc
 		memset(m_hashString, 0, HASHSTRING_SIZE);
-		md5_init(&m_md5Context);
+		md5_init((MD5_CTX*)m_md5Context);
 	}
 
 	void CHttpRequest::sendRequestByDelete()
@@ -347,7 +351,7 @@ namespace Skylicht
 
 		// calc hash data revc
 		memset(m_hashString, 0, HASHSTRING_SIZE);
-		md5_init(&m_md5Context);
+		md5_init((MD5_CTX*)m_md5Context);
 	}
 
 	void CHttpRequest::sendRequestByPost()
@@ -472,7 +476,7 @@ namespace Skylicht
 
 		// calc hash data revc
 		memset(m_hashString, 0, HASHSTRING_SIZE);
-		md5_init(&m_md5Context);
+		md5_init((MD5_CTX*)m_md5Context);
 	}
 
 	void CHttpRequest::sendRequestByPostJson()
@@ -574,7 +578,7 @@ namespace Skylicht
 
 		// calc hash data revc
 		memset(m_hashString, 0, HASHSTRING_SIZE);
-		md5_init(&m_md5Context);
+		md5_init((MD5_CTX*)m_md5Context);
 	}
 
 	void CHttpRequest::sendRequestByGet()
@@ -617,7 +621,7 @@ namespace Skylicht
 
 		// calc hash data revc
 		memset(m_hashString, 0, HASHSTRING_SIZE);
-		md5_init(&m_md5Context);
+		md5_init((MD5_CTX*)m_md5Context);
 	}
 
 	bool CHttpRequest::checkTimeOut()
@@ -726,7 +730,7 @@ namespace Skylicht
 			m_downloadBuffer[m_sizeBuffer] = NULL;
 
 			// update hash
-			md5_update(&m_md5Context, m_downloadBuffer, m_sizeBuffer);
+			md5_update((MD5_CTX*)m_md5Context, m_downloadBuffer, m_sizeBuffer);
 
 			// write file
 			if (m_dataStream)
@@ -741,7 +745,7 @@ namespace Skylicht
 		// calc hash
 		memset(m_hashString, 0, HASHSTRING_SIZE);
 		unsigned char digest[16]; // 16*8 = 128bit
-		md5_final(&m_md5Context, digest);
+		md5_final((MD5_CTX*)m_md5Context, digest);
 
 		// get hash string
 		for (int i = 0; i < 16; ++i)
@@ -774,7 +778,7 @@ namespace Skylicht
 		if (m_sizeBuffer + size > DOWNLOADBUFFER_SIZE)
 		{
 			// update hash
-			md5_update(&m_md5Context, m_downloadBuffer, m_sizeBuffer);
+			md5_update((MD5_CTX*)m_md5Context, m_downloadBuffer, m_sizeBuffer);
 
 			// flush
 			if (m_dataStream)

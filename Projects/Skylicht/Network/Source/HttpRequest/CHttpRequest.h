@@ -74,7 +74,7 @@ namespace Skylicht
 		unsigned char* m_downloadBuffer;
 		long m_sizeBuffer;
 
-		MD5_CTX m_md5Context;
+		void* m_md5Context;
 		char m_hashString[HASHSTRING_SIZE];
 
 		unsigned long m_requestTime;
