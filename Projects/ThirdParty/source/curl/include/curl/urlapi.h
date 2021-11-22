@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2018 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2018 - 2021, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -47,7 +47,8 @@ typedef enum {
   CURLUE_NO_HOST,             /* 14 */
   CURLUE_NO_PORT,             /* 15 */
   CURLUE_NO_QUERY,            /* 16 */
-  CURLUE_NO_FRAGMENT          /* 17 */
+  CURLUE_NO_FRAGMENT,         /* 17 */
+  CURLUE_LAST
 } CURLUcode;
 
 typedef enum {
@@ -79,6 +80,7 @@ typedef enum {
 #define CURLU_GUESS_SCHEME (1<<9)       /* legacy curl-style guessing */
 #define CURLU_NO_AUTHORITY (1<<10)      /* Allow empty authority when the
                                            scheme is unknown. */
+#define CURLU_ALLOW_SPACE (1<<11)       /* Allow spaces in the URL */
 
 typedef struct Curl_URL CURLU;
 
@@ -117,6 +119,12 @@ CURL_EXTERN CURLUcode curl_url_get(CURLU *handle, CURLUPart what,
 CURL_EXTERN CURLUcode curl_url_set(CURLU *handle, CURLUPart what,
                                    const char *part, unsigned int flags);
 
+/*
+ * curl_url_strerror() turns a CURLUcode value into the equivalent human
+ * readable error string.  This is useful for printing meaningful error
+ * messages.
+ */
+CURL_EXTERN const char *curl_url_strerror(CURLUcode);
 
 #ifdef __cplusplus
 } /* end of extern "C" */

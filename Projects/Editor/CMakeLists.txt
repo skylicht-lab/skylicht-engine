@@ -12,6 +12,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Crypto/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
 )
 
 add_definitions(-DSKYLICHT_EDITOR)
