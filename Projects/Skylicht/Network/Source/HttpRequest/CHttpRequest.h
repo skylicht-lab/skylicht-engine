@@ -26,18 +26,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "curl/curl.h"
-#include "Crypto/md5.h"
 #include "CHttpStream.h"
 
 // 100kb buffer download
 #define DOWNLOADBUFFER_SIZE 102400
 #define HASHSTRING_SIZE	35
 
-struct curl_slist;
-
 namespace Skylicht
-{
-
+{	
 	class CHttpRequest
 	{
 	public:
