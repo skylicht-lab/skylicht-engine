@@ -2925,8 +2925,9 @@ CURLcode Curl_vsetopt(struct Curl_easy *data, CURLoption option, va_list param)
  */
 
 #undef curl_easy_setopt
-CURLcode curl_easy_setopt(struct Curl_easy *data, CURLoption tag, ...)
+CURLcode curl_easy_setopt(CURL *curl, CURLoption tag, ...)
 {
+  struct Curl_easy* data = (struct Curl_easy*)curl;
   va_list arg;
   CURLcode result;
 
