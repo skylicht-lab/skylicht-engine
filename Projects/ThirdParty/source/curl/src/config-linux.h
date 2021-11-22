@@ -78,11 +78,14 @@
 
 #define HAVE_FCNTL_O_NONBLOCK	1
 
+#define HAVE_LONGLONG 1
+
 #define RETSIGTYPE void
 
 #define SIZEOF_INT              4
 #define SIZEOF_SHORT            2
 #define SIZEOF_SIZE_T           4
+#define SIZEOF_CURL_OFF_T       8
 
 #define HAVE_GETNAMEINFO 1
 #define GETNAMEINFO_QUAL_ARG1 const
@@ -117,4 +120,4 @@
 #define SEND_TYPE_ARG4 int
 #define SEND_TYPE_RETV ssize_t
 
-#endif /* HEADER_CURL_CONFIG_MAC_H */
+#endif

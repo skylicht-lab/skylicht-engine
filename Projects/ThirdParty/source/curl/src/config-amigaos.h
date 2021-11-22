@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2021, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -31,13 +31,10 @@
 #define HAVE_ARPA_INET_H 1
 #define HAVE_CLOSESOCKET_CAMEL 1
 #define HAVE_ERRNO_H 1
-#define HAVE_GETHOSTBYADDR 1
 #define HAVE_INET_ADDR 1
 #define HAVE_INTTYPES_H 1
 #define HAVE_IOCTLSOCKET_CAMEL 1
 #define HAVE_IOCTLSOCKET_CAMEL_FIONBIO 1
-#define HAVE_LIBCRYPTO 1
-#define HAVE_LIBSSL 1
 #define HAVE_LIBZ 1
 #define HAVE_LONGLONG 1
 #define HAVE_MALLOC_H 1
@@ -51,16 +48,13 @@
 #define HAVE_OPENSSL_RSA_H 1
 #define HAVE_OPENSSL_SSL_H 1
 #define HAVE_OPENSSL_X509_H 1
-#define HAVE_PERROR 1
 #define HAVE_PWD_H 1
 #define HAVE_RAND_EGD 1
 #define HAVE_RAND_STATUS 1
 #define HAVE_SELECT 1
 #define HAVE_SETJMP_H 1
-#define HAVE_SGTTY_H 1
 #define HAVE_SIGNAL 1
 #define HAVE_SIGNAL_H 1
-#define HAVE_SIG_ATOMIC_T 1
 #define HAVE_SOCKET 1
 #define HAVE_STRCASECMP 1
 #define HAVE_STRDUP 1
@@ -93,20 +87,18 @@
 
 #define USE_MANUAL 1
 #define USE_OPENSSL 1
-#define USE_SSLEAY 1
 #define CURL_DISABLE_LDAP 1
 
 #define OS "AmigaOS"
 
 #define PACKAGE "curl"
-#define PACKAGE_BUGREPORT "curl-bug@haxx.se"
+#define PACKAGE_BUGREPORT "a suitable mailing list: https://curl.se/mail/"
 #define PACKAGE_NAME "curl"
 #define PACKAGE_STRING "curl -"
 #define PACKAGE_TARNAME "curl"
 #define PACKAGE_VERSION "-"
 #define CURL_CA_BUNDLE "s:curl-ca-bundle.crt"
 
-#define RETSIGTYPE void
 #define SELECT_TYPE_ARG1 int
 #define SELECT_TYPE_ARG234 (fd_set *)
 #define SELECT_TYPE_ARG5 (struct timeval *)
@@ -131,13 +123,6 @@
 #ifndef LONG_MIN
 #  define LONG_MIN (-0x7fffffffL-1)
 #endif
-
-#define HAVE_GETNAMEINFO 1
-#define GETNAMEINFO_QUAL_ARG1 const
-#define GETNAMEINFO_TYPE_ARG1 struct sockaddr *
-#define GETNAMEINFO_TYPE_ARG2 int
-#define GETNAMEINFO_TYPE_ARG46 size_t
-#define GETNAMEINFO_TYPE_ARG7 int
 
 #define HAVE_RECV 1
 #define RECV_TYPE_ARG1 long

@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2013, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2021, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <time.h>
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
@@ -55,13 +56,6 @@
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#ifdef TIME_WITH_SYS_TIME
-#include <time.h>
-#endif
-#else
-#ifdef HAVE_TIME_H
-#include <time.h>
-#endif
 #endif
 
 #ifdef WIN32
@@ -100,7 +94,6 @@
 #    endif
 #  endif
 #endif
-
 
 /*
  * Definition of timeval struct for platforms that don't have it.
@@ -196,7 +189,7 @@ struct timeval {
   /* */
 #else
 #define swrite(x,y,z) (ssize_t)send((SEND_TYPE_ARG1)(x), \
-                                    (SEND_TYPE_ARG2)(y), \
+                                    (SEND_QUAL_ARG2 SEND_TYPE_ARG2)(y), \
                                     (SEND_TYPE_ARG3)(z), \
                                     (SEND_TYPE_ARG4)(SEND_4TH_ARG))
 #endif
@@ -274,25 +267,6 @@ struct timeval {
 #  define sfcntl  fcntl
 #endif
 
-/*
- * Uppercase macro versions of ANSI/ISO is*() functions/macros which
- * avoid negative number inputs with argument byte codes > 127.
- */
-
-#define ISSPACE(x)  (isspace((int)  ((unsigned char)x)))
-#define ISDIGIT(x)  (isdigit((int)  ((unsigned char)x)))
-#define ISALNUM(x)  (isalnum((int)  ((unsigned char)x)))
-#define ISXDIGIT(x) (isxdigit((int) ((unsigned char)x)))
-#define ISGRAPH(x)  (isgraph((int)  ((unsigned char)x)))
-#define ISALPHA(x)  (isalpha((int)  ((unsigned char)x)))
-#define ISPRINT(x)  (isprint((int)  ((unsigned char)x)))
-#define ISUPPER(x)  (isupper((int)  ((unsigned char)x)))
-#define ISLOWER(x)  (islower((int)  ((unsigned char)x)))
-#define ISASCII(x)  (isascii((int)  ((unsigned char)x)))
-
-#define ISBLANK(x)  (int)((((unsigned char)x) == ' ') || \
-                          (((unsigned char)x) == '\t'))
-
 #define TOLOWER(x)  (tolower((int)  ((unsigned char)x)))
 
 
@@ -347,56 +321,7 @@ struct timeval {
 #define FALSE false
 #endif
 
-
-/*
- * Macro WHILE_FALSE may be used to build single-iteration do-while loops,
- * avoiding compiler warnings. Mostly intended for other macro definitions.
- */
-
-#define WHILE_FALSE  while(0)
-
-#if defined(_MSC_VER) && !defined(__POCC__)
-#  undef WHILE_FALSE
-#  if (_MSC_VER < 1500)
-#    define WHILE_FALSE  while(1, 0)
-#  else
-#    define WHILE_FALSE \
-__pragma(warning(push)) \
-__pragma(warning(disable:4127)) \
-while(0) \
-__pragma(warning(pop))
-#  endif
-#endif
-
-
-/*
- * Typedef to 'int' if sig_atomic_t is not an available 'typedefed' type.
- */
-
-#ifndef HAVE_SIG_ATOMIC_T
-typedef int sig_atomic_t;
-#define HAVE_SIG_ATOMIC_T
-#endif
-
-
-/*
- * Convenience SIG_ATOMIC_T definition
- */
-
-#ifdef HAVE_SIG_ATOMIC_T_VOLATILE
-#define SIG_ATOMIC_T static sig_atomic_t
-#else
-#define SIG_ATOMIC_T static volatile sig_atomic_t
-#endif
-
-
-/*
- * Default return type for signal handlers.
- */
-
-#ifndef RETSIGTYPE
-#define RETSIGTYPE void
-#endif
+#include "curl_ctype.h"
 
 
 /*
@@ -406,7 +331,7 @@ typedef int sig_atomic_t;
 #ifdef DEBUGBUILD
 #define DEBUGF(x) x
 #else
-#define DEBUGF(x) do { } WHILE_FALSE
+#define DEBUGF(x) do { } while(0)
 #endif
 
 
@@ -414,10 +339,11 @@ typedef int sig_atomic_t;
  * Macro used to include assertion code only in debug builds.
  */
 
+#undef DEBUGASSERT
 #if defined(DEBUGBUILD) && defined(HAVE_ASSERT_H)
 #define DEBUGASSERT(x) assert(x)
 #else
-#define DEBUGASSERT(x) do { } WHILE_FALSE
+#define DEBUGASSERT(x) do { } while(0)
 #endif
 
 
@@ -432,20 +358,6 @@ typedef int sig_atomic_t;
 #else
 #define SOCKERRNO         (errno)
 #define SET_SOCKERRNO(x)  (errno = (x))
-#endif
-
-
-/*
- * Macro ERRNO / SET_ERRNO() returns / sets the NOT *socket-related* errno
- * (or equivalent) on this platform to hide platform details to code using it.
- */
-
-#ifdef WIN32
-#define ERRNO         ((int)GetLastError())
-#define SET_ERRNO(x)  (SetLastError((DWORD)(x)))
-#else
-#define ERRNO         (errno)
-#define SET_ERRNO(x)  (errno = (x))
 #endif
 
 
@@ -534,6 +446,8 @@ typedef int sig_atomic_t;
 
 #ifdef __VMS
 #define argv_item_t  __char_ptr32
+#elif defined(_UNICODE)
+#define argv_item_t wchar_t *
 #else
 #define argv_item_t  char *
 #endif
@@ -548,4 +462,3 @@ typedef int sig_atomic_t;
 
 
 #endif /* HEADER_CURL_SETUP_ONCE_H */
-
