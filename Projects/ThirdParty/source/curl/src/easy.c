@@ -697,9 +697,9 @@ static CURLcode easy_perform(struct Curl_easy *data, bool events)
  * curl_easy_perform() is the external interface that performs a blocking
  * transfer as previously setup.
  */
-CURLcode curl_easy_perform(struct Curl_easy *data)
+CURLcode curl_easy_perform(CURL* curl)
 {
-  return easy_perform(data, FALSE);
+  return easy_perform((struct Curl_easy*)curl, FALSE);
 }
 
 #ifdef CURLDEBUG
@@ -718,8 +718,9 @@ CURLcode curl_easy_perform_ev(struct Curl_easy *data)
  * curl_easy_cleanup() is the external interface to cleaning/freeing the given
  * easy handle.
  */
-void curl_easy_cleanup(struct Curl_easy *data)
+void curl_easy_cleanup(CURL* curl)
 {
+  struct Curl_easy* data = (struct Curl_easy*)curl;
   SIGPIPE_VARIABLE(pipe_st);
 
   if(!data)
@@ -735,8 +736,9 @@ void curl_easy_cleanup(struct Curl_easy *data)
  * information from a performed transfer and similar.
  */
 #undef curl_easy_getinfo
-CURLcode curl_easy_getinfo(struct Curl_easy *data, CURLINFO info, ...)
+CURLcode curl_easy_getinfo(CURL *curl, CURLINFO info, ...)
 {
+  struct Curl_easy* data = (struct Curl_easy*)curl;
   va_list arg;
   void *paramp;
   CURLcode result;
@@ -807,8 +809,9 @@ static CURLcode dupset(struct Curl_easy *dst, struct Curl_easy *src)
  * given input easy handle. The returned handle will be a new working handle
  * with all options set exactly as the input source handle.
  */
-CURL*curl_easy_duphandle(struct Curl_easy *data)
+CURL*curl_easy_duphandle(CURL* curl)
 {
+  struct Curl_easy* data = (struct Curl_easy*)curl;
   struct Curl_easy *outcurl = calloc(1, sizeof(struct Curl_easy));
   if(NULL == outcurl)
     goto fail;
@@ -953,8 +956,9 @@ CURL*curl_easy_duphandle(struct Curl_easy *data)
  * curl_easy_reset() is an external interface that allows an app to re-
  * initialize a session handle to the default values.
  */
-void curl_easy_reset(struct Curl_easy *data)
+void curl_easy_reset(CURL* curl)
 {
+  struct Curl_easy* data = (struct Curl_easy*)curl;
   Curl_free_request_state(data);
 
   /* zero out UserDefined data: */
@@ -1125,9 +1129,11 @@ static CURLcode easy_connection(struct Curl_easy *data,
  * curl_easy_perform() with CURLOPT_CONNECT_ONLY option.
  * Returns CURLE_OK on success, error code on error.
  */
-CURLcode curl_easy_recv(struct Curl_easy *data, void *buffer, size_t buflen,
+CURLcode curl_easy_recv(CURL*curl, void *buffer, size_t buflen,
                         size_t *n)
 {
+  struct Curl_easy* data = (struct Curl_easy*)curl;
+
   curl_socket_t sfd;
   CURLcode result;
   ssize_t n1;
@@ -1155,9 +1161,10 @@ CURLcode curl_easy_recv(struct Curl_easy *data, void *buffer, size_t buflen,
  * Sends data over the connected socket. Use after successful
  * curl_easy_perform() with CURLOPT_CONNECT_ONLY option.
  */
-CURLcode curl_easy_send(struct Curl_easy *data, const void *buffer,
+CURLcode curl_easy_send(CURL* curl, const void *buffer,
                         size_t buflen, size_t *n)
 {
+  struct Curl_easy* data = (struct Curl_easy*)curl;
   curl_socket_t sfd;
   CURLcode result;
   ssize_t n1;
@@ -1217,8 +1224,10 @@ static CURLcode upkeep(struct conncache *conn_cache, void *data)
 /*
  * Performs connection upkeep for the given session handle.
  */
-CURLcode curl_easy_upkeep(struct Curl_easy *data)
+CURLcode curl_easy_upkeep(CURL* curl)
 {
+  struct Curl_easy* data = (struct Curl_easy*)curl;
+
   /* Verify that we got an easy handle we can work with. */
   if(!GOOD_EASY_HANDLE(data))
     return CURLE_BAD_FUNCTION_ARGUMENT;
