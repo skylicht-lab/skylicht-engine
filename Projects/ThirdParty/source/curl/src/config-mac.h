@@ -78,6 +78,7 @@
 #define HAVE_RAND_EGD           1
 
 #define HAVE_IOCTL              1
+#define HAVE_IOCTL_FIONBIO      1
 
 #define HAVE_LONGLONG 1
 
