@@ -11,6 +11,8 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Crypto/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
 )
 
 add_definitions(-DSKYLICHT_EDITOR)
@@ -246,8 +248,10 @@ else()
 	target_link_libraries(SkylichtEditor Client)
 endif()
 
+if (NOT BUILD_SKYLICHT_NETWORK)
 # Crypto
 target_link_libraries(SkylichtEditor Crypto)
+endif()
 
 # Imgui
 if (BUILD_IMGUI)
