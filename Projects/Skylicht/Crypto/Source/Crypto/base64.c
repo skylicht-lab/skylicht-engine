@@ -10,10 +10,6 @@
 #include <stdlib.h>
 #include "base64.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /****************************** MACROS ******************************/
 #define NEWLINE_INVL 76
 
@@ -136,8 +132,3 @@ size_t base64_decode(const BYTE8 in[], BYTE8 out[], size_t len)
 
 	return(idx);
 }
-
-
-#ifdef __cplusplus
-}
-#endif
