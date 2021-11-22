@@ -15,13 +15,9 @@ if (BUILD_DEBUG_VLD)
 	include_directories(${vld_inc_path})
 endif()
 
-#if (BUILD_SKYLICHT_NETWORK)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source)
-#endif()
-
-#if(BUILD_RECAST_NAVIGATION_LIB)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/RecastNavigation/Source)
-#endif()
+if (BUILD_SKYLICHT_NETWORK)
+include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source)
+endif()
 
 file(GLOB_RECURSE skylicht_client_source 
 	./Source/**.cpp 
@@ -37,6 +33,10 @@ target_precompiled_header(Client ./Source/pch.cpp ${skylicht_client_source})
 set_target_properties(Client PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 target_link_libraries(Client Engine Components Collision Physics Lightmapper)
+
+if (BUILD_SKYLICHT_NETWORK)
+	target_link_libraries(Client Network)
+endif()
 
 if (BUILD_DEBUG_VLD)
 	target_link_libraries(Client vld)

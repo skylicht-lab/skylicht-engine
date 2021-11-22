@@ -11,6 +11,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Crypto/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source
 )
 
 add_definitions(-DSKYLICHT_EDITOR)

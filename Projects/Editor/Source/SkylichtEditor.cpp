@@ -9,6 +9,10 @@
 #include "Handles/CHandles.h"
 #include "Selection/CSelecting.h"
 
+#if defined(HAVE_SKYLICHT_NETWORK)
+#include "HttpRequest/CHttpRequest.h"
+#endif
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SkylichtEditor* app = new SkylichtEditor();
@@ -19,6 +23,10 @@ SkylichtEditor::SkylichtEditor() :
 	m_editor(NULL),
 	m_editorState(Startup)
 {
+#if defined(HAVE_SKYLICHT_NETWORK)
+	CHttpRequest::globalInit();
+#endif
+
 	Editor::CAssetManager::createGetInstance();
 	Editor::CHandles::createGetInstance();
 	Editor::CSelecting::createGetInstance();
@@ -26,6 +34,10 @@ SkylichtEditor::SkylichtEditor() :
 
 SkylichtEditor::~SkylichtEditor()
 {
+#if defined(HAVE_SKYLICHT_NETWORK)
+	CHttpRequest::globalFree();
+#endif
+
 	Editor::GUI::CGUIContext::destroyGUI();
 
 	Editor::CSelecting::releaseInstance();

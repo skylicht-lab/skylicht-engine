@@ -48,7 +48,6 @@ option(BUILD_EXAMPLE "Build example application" ON)
 
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
-set(BUILD_CURL OFF)
 
 if (CMAKE_SYSTEM_NAME STREQUAL WindowsStore)
 	set(BUILD_ENGINE_TOOL OFF)
@@ -103,6 +102,16 @@ option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform develo
 option(BUILD_IMGUI "Build Ocornut Imgui" ON)
 
 option(BUILD_FREETYPE "Build Font Freetype" ON)
+
+option(BUILD_SKYLICHT_NETWORK "Build Http, Socket module" ON)
+
+if (BUILD_SKYLICHT_NETWORK)
+	add_definitions(-DHAVE_SKYLICHT_NETWORK)
+	# enable curl
+	set(BUILD_CURL ON)
+else()
+	set(BUILD_CURL OFF)
+endif()
 
 if (BUILD_FREETYPE)
 	add_definitions(-DUSE_FREETYPE)
@@ -250,14 +259,6 @@ if (BUILD_IMGUI)
 subdirs (Projects/Imgui)
 endif()
 
-#if (BUILD_BULLET_PHYSIC2_LIB)
-#subdirs (Projects/BulletPhysics2)
-#endif()
-
-#if (BUILD_RECAST_NAVIGATION_LIB)
-#subdirs (Projects/RecastNavigation)
-#endif()
-
 # skylicht engine
 subdirs (Projects/Skylicht/System)
 subdirs (Projects/Skylicht/Engine)
@@ -267,6 +268,10 @@ subdirs (Projects/Skylicht/Physics)
 subdirs (Projects/Skylicht/Lightmapper)
 subdirs (Projects/Skylicht/Audio)
 subdirs (Projects/Skylicht/Crypto)
+
+if (BUILD_SKYLICHT_NETWORK)
+subdirs (Projects/Skylicht/Network)
+endif()
 
 subdirs (Projects/Skylicht/Client)
 
