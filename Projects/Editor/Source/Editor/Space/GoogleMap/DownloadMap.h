@@ -10,6 +10,7 @@ namespace Skylicht
 		{
 			None = 0,
 			Error,
+			FileError,
 			Downloaded,
 		};
 
@@ -21,6 +22,7 @@ namespace Skylicht
 
 		struct SImageMapElement
 		{
+			ITexture* Texture;
 			EImageMapStatus Status;
 			EImageMapType Type;
 			std::string Path;
@@ -30,6 +32,7 @@ namespace Skylicht
 
 			SImageMapElement()
 			{
+				Texture = NULL;
 				Status = EImageMapStatus::None;
 				Type = EImageMapType::GSatellite;
 				X = 0;
