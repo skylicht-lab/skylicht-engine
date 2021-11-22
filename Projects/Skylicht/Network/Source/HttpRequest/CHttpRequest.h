@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "pch.h"
-
+#include "curl/curl.h"
 #include "Crypto/md5.h"
 #include "CHttpStream.h"
 
@@ -51,8 +51,8 @@ namespace Skylicht
 		};
 	protected:
 		// curl handle
-		void* m_curl;
-		void* m_multiHandle;
+		CURL* m_curl;
+		CURLM* m_multiHandle;
 
 		void* m_formpost;
 		void* m_lastptr;

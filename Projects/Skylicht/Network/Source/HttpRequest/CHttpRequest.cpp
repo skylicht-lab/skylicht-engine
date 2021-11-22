@@ -24,8 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CHttpRequest.h"
-
-#include "curl/curl.h"
 #include "CMD5.h"
 
 namespace Skylicht

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2004 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2004 - 2021, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -188,8 +188,8 @@ curl_easy_strerror(CURLcode error)
   case CURLE_UNKNOWN_OPTION:
     return "An unknown option was passed in to libcurl";
 
-  case CURLE_TELNET_OPTION_SYNTAX :
-    return "Malformed telnet option";
+  case CURLE_SETOPT_OPTION_SYNTAX :
+    return "Malformed option provided in a setopt";
 
   case CURLE_GOT_NOTHING:
     return "Server returned nothing (no headers, no data)";
@@ -320,8 +320,11 @@ curl_easy_strerror(CURLcode error)
   case CURLE_QUIC_CONNECT_ERROR:
     return "QUIC connection error";
 
- case CURLE_PROXY:
+  case CURLE_PROXY:
     return "proxy handshake error";
+
+  case CURLE_SSL_CLIENTCERT:
+    return "SSL Client Certificate required";
 
     /* error codes not used by current libcurl */
   case CURLE_OBSOLETE20:
@@ -444,6 +447,78 @@ curl_share_strerror(CURLSHcode error)
   return "CURLSHcode unknown";
 #else
   if(error == CURLSHE_OK)
+    return "No error";
+  else
+    return "Error";
+#endif
+}
+
+const char *
+curl_url_strerror(CURLUcode error)
+{
+#ifndef CURL_DISABLE_VERBOSE_STRINGS
+  switch(error) {
+  case CURLUE_OK:
+    return "No error";
+
+  case CURLUE_BAD_HANDLE:
+    return "An invalid CURLU pointer was passed as argument";
+
+  case CURLUE_BAD_PARTPOINTER:
+    return "An invalid 'part' argument was passed as argument";
+
+  case CURLUE_MALFORMED_INPUT:
+    return "A malformed input was passed to a URL API function";
+
+  case CURLUE_BAD_PORT_NUMBER:
+    return "The port number was not a decimal number between 0 and 65535";
+
+  case CURLUE_UNSUPPORTED_SCHEME:
+    return "This libcurl build doesn't support the given URL scheme";
+
+  case CURLUE_URLDECODE:
+    return "URL decode error, most likely because of rubbish in the input";
+
+  case CURLUE_OUT_OF_MEMORY:
+    return "A memory function failed";
+
+  case CURLUE_USER_NOT_ALLOWED:
+    return "Credentials was passed in the URL when prohibited";
+
+  case CURLUE_UNKNOWN_PART:
+    return "An unknown part ID was passed to a URL API function";
+
+  case CURLUE_NO_SCHEME:
+    return "There is no scheme part in the URL";
+
+  case CURLUE_NO_USER:
+    return "There is no user part in the URL";
+
+  case CURLUE_NO_PASSWORD:
+    return "There is no password part in the URL";
+
+  case CURLUE_NO_OPTIONS:
+    return "There is no options part in the URL";
+
+  case CURLUE_NO_HOST:
+    return "There is no host part in the URL";
+
+  case CURLUE_NO_PORT:
+    return "There is no port part in the URL";
+
+  case CURLUE_NO_QUERY:
+    return "There is no query part in the URL";
+
+  case CURLUE_NO_FRAGMENT:
+    return "There is no fragment part in the URL";
+
+  case CURLUE_LAST:
+    break;
+  }
+
+  return "CURLUcode unknown";
+#else
+  if(error == CURLUE_OK)
     return "No error";
   else
     return "Error";
@@ -721,7 +796,9 @@ const char *Curl_strerror(int err, char *buf, size_t buflen)
   if(!buflen)
     return NULL;
 
+#ifndef WIN32
   DEBUGASSERT(err >= 0);
+#endif
 
   max = buflen - 1;
   *buf = '\0';
@@ -730,7 +807,7 @@ const char *Curl_strerror(int err, char *buf, size_t buflen)
 #if defined(WIN32)
   /* 'sys_nerr' is the maximum errno number, it is not widely portable */
   if(err >= 0 && err < sys_nerr)
-    strncpy(buf, strerror(err), max);
+    strncpy(buf, sys_errlist[err], max);
   else
 #endif
   {
@@ -781,6 +858,7 @@ const char *Curl_strerror(int err, char *buf, size_t buflen)
   }
 #else
   {
+    /* !checksrc! disable STRERROR 1 */
     const char *msg = strerror(err);
     if(msg)
       strncpy(buf, msg, max);
