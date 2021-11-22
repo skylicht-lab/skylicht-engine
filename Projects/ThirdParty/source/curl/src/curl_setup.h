@@ -75,7 +75,7 @@
 #  endif
 #endif
 
-#if defined(macintosh) && defined(__MRC__)
+#if defined(MACOS) || defined(LINUX) || defined(macintosh) && defined(__MRC__)
 #  include "config-mac.h"
 #endif
 
