@@ -24,10 +24,10 @@ target_precompiled_header(Network ./Source/pch.cpp ${skylicht_network})
 
 set_target_properties(Network PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-if (MSVC OR CYGWIN OR MINGW)	
+if (MSVC OR CYGWIN OR MINGW)
 	target_link_libraries(Network ws2_32)
-else()
-	target_link_libraries(Network socket)
+	# curl
+	target_link_libraries(Network Wldap32.Lib)
 endif()
 
 if (BUILD_EMSCRIPTEN)

@@ -65,7 +65,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Android)
 	set(BUILD_ENGINE_TOOL OFF)
 	set(BUILD_ANDROID ON)
 	set(USE_OPENMP OFF)
-	add_definitions(-DANDROID)	
+	add_definitions(-DANDROID)
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL Linux)
@@ -105,10 +105,17 @@ option(BUILD_FREETYPE "Build Font Freetype" ON)
 
 option(BUILD_SKYLICHT_NETWORK "Build Http, Socket module" ON)
 
+if (BUILD_EMSCRIPTEN)
+	# disable network, socket on emscripten
+	set (BUILD_SKYLICHT_NETWORK OFF)
+endif()
+
 if (BUILD_SKYLICHT_NETWORK)
 	add_definitions(-DHAVE_SKYLICHT_NETWORK)
 	# enable curl
 	set(BUILD_CURL ON)
+	add_definitions(-DHAVE_CURL)
+	add_definitions(-DCURL_STATICLIB)
 else()
 	set(BUILD_CURL OFF)
 endif()

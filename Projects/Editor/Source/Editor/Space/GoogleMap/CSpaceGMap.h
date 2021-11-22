@@ -70,6 +70,7 @@ namespace Skylicht
 
 			IThread* m_downloadMapThread;
 			IMutex* m_lock;
+			IMutex* m_lockFile;
 
 			std::list<SImageDownload> m_queueDownload;
 			std::list<SImageDownload> m_downloading;
@@ -80,10 +81,14 @@ namespace Skylicht
 
 			EImageMapType m_mapBGType;
 
+			std::vector<SImageMapElement> m_mapOverlay;
+
 		public:
 			CSpaceGMap(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceGMap();
+
+			void clear();
 
 			virtual void updateThread();
 
@@ -105,9 +110,17 @@ namespace Skylicht
 
 			void requestDownloadMap(long x, long y, int z);
 
+			std::string getMapLocalPath(EImageMapType type, long x, long y, int z);
+
+			ITexture* searchMapTileset(long x, long y, int z);
+
+			ITexture* searchMapTilesetOnLocal(long x, long y, int z);
+
 			void updateMap();
 
 			void renderMap();
+
+			void renderMapBG();
 
 			void renderGrid();
 

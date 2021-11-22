@@ -68,6 +68,7 @@ namespace Skylicht
 			}
 
 			m_lock = IMutex::createMutex();
+			m_lockFile = IMutex::createMutex();
 			m_downloadMapThread = IThread::createThread(this);
 		}
 
@@ -82,15 +83,29 @@ namespace Skylicht
 			if (m_lock != NULL)
 				delete m_lock;
 
+			if (m_lockFile != NULL)
+				delete m_lockFile;
+
 			for (int i = 0; i < NUM_HTTPREQUEST; i++)
 			{
 				m_imgDownloading[i] = NULL;
-				delete m_httpStream[i];
 				m_httpStream[i] = NULL;
 
 				delete m_httpRequest[i];
 				m_httpRequest[i] = NULL;
 			}
+
+			clear();
+		}
+
+		void CSpaceGMap::clear()
+		{
+			for (SImageMapElement& map : m_mapOverlay)
+			{
+				if (map.Texture != NULL)
+					getVideoDriver()->removeTexture(map.Texture);
+			}
+			m_mapOverlay.clear();
 		}
 
 		void CSpaceGMap::updateThread()
@@ -123,36 +138,48 @@ namespace Skylicht
 					{
 						if (m_httpRequest[r]->getResponseCode() > 0)
 						{
-							m_imgDownloading[r]->Image.Status = EImageMapStatus::Downloaded;
+							std::string path = getMapLocalPath(
+								m_imgDownloading[r]->Image.Type,
+								m_imgDownloading[r]->Image.X,
+								m_imgDownloading[r]->Image.Y,
+								m_imgDownloading[r]->Image.Z);
 
-							char fileName[512] = { 0 };
-							switch (m_imgDownloading[r]->Image.Type)
+							m_lockFile->lock();
+							io::IWriteFile* file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(path.c_str());
+							if (file != NULL)
 							{
-							case EImageMapType::GSatellite:
+								const unsigned char* data = m_httpStream[r]->getData();
+
+								bool isPNG = false;
+								bool isJPEG = false;
+
+								static unsigned char PNGSignature[] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+								if (memcmp(data, PNGSignature, sizeof(PNGSignature)) == 0)
+									isPNG = true;
+
+								static unsigned char JPGSignature[] = { 0xFF, 0xD8, 0xFF };
+								if (memcmp(data, JPGSignature, sizeof(JPGSignature)) == 0)
+									isJPEG = true;
+
+								if (isPNG || isJPEG)
+								{
+									file->write(m_httpStream[r]->getData(), m_httpStream[r]->getDataSize());
+									file->drop();
+
+									m_imgDownloading[r]->Image.Status = EImageMapStatus::Downloaded;
+									m_imgDownloading[r]->Image.Path = path;
+								}
+								else
+								{
+									m_imgDownloading[r]->Image.Status = EImageMapStatus::FileError;
+								}
+							}
+							else
 							{
-								sprintf(fileName, "gmap_%d_%d_%d.jpg",
-									m_imgDownloading[r]->Image.Z,
-									m_imgDownloading[r]->Image.X,
-									m_imgDownloading[r]->Image.Y
-								);
-								break;
-							}
-							case EImageMapType::OSMTerrain:
-								sprintf(fileName, "osm_%d_%d_%d.png",
-									m_imgDownloading[r]->Image.Z,
-									m_imgDownloading[r]->Image.X,
-									m_imgDownloading[r]->Image.Y
-								);
-								break;
-							default:
-								break;
+								m_imgDownloading[r]->Image.Status = EImageMapStatus::FileError;
 							}
 
-							m_imgDownloading[r]->Image.Path = fileName;
-
-							io::IWriteFile* file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(fileName);
-							file->write(m_httpStream[r]->getData(), m_httpStream[r]->getDataSize());
-							file->drop();
+							m_lockFile->unlock();
 						}
 						else
 						{
@@ -175,6 +202,12 @@ namespace Skylicht
 						}
 
 						m_imgDownloading[r] = NULL;
+						m_httpStream[r] = NULL;
+
+						delete m_httpRequest[r];
+
+						m_httpStream[r] = new CHttpStream();
+						m_httpRequest[r] = new CHttpRequest(m_httpStream[r]);
 					}
 				}
 			}
@@ -228,7 +261,7 @@ namespace Skylicht
 
 			SImageDownload download;
 
-			char lpUrl[512];
+			char lpUrl[512] = { 0 };
 
 			switch (m_mapBGType)
 			{
@@ -258,6 +291,77 @@ namespace Skylicht
 			m_queueDownload.push_back(download);
 
 			m_lock->unlock();
+		}
+
+		std::string CSpaceGMap::getMapLocalPath(EImageMapType type, long x, long y, int z)
+		{
+			char fileName[512] = { 0 };
+			switch (type)
+			{
+			case EImageMapType::GSatellite:
+			{
+				sprintf(fileName, "gmap_%d_%d_%d.jpg", z, x, y);
+				break;
+			}
+			case EImageMapType::OSMTerrain:
+				sprintf(fileName, "osm_%d_%d_%d.png", z, x, y);
+				break;
+			default:
+				break;
+			}
+			return std::string(fileName);
+		}
+
+		ITexture* CSpaceGMap::searchMapTileset(long x, long y, int z)
+		{
+			int n = (int)m_mapOverlay.size();
+			for (int i = n - 1; i >= 0; i--)
+			{
+				SImageMapElement& pImg = m_mapOverlay[i];
+				if (pImg.X == x &&
+					pImg.Y == y &&
+					pImg.Z == z &&
+					pImg.Type == m_mapBGType)
+				{
+					return pImg.Texture;
+				}
+			}
+
+			return NULL;
+		}
+
+		ITexture* CSpaceGMap::searchMapTilesetOnLocal(long x, long y, int z)
+		{
+			std::string path = getMapLocalPath(m_mapBGType, x, y, z);
+
+			m_lockFile->lock();
+
+			io::IReadFile* file = getIrrlichtDevice()->getFileSystem()->createAndOpenFile(path.c_str());
+			if (file == NULL)
+			{
+				m_lockFile->unlock();
+				return NULL;
+			}
+
+			m_lockFile->unlock();
+
+			ITexture* texture = getVideoDriver()->getTexture(file);
+
+			if (texture != NULL)
+			{
+				SImageMapElement mapElement;
+
+				mapElement.Type = m_mapBGType;
+				mapElement.Status = EImageMapStatus::Downloaded;
+				mapElement.Texture = texture;
+				mapElement.X = x;
+				mapElement.Y = y;
+				mapElement.Z = z;
+
+				m_mapOverlay.push_back(mapElement);
+			}
+
+			return texture;
 		}
 
 		void CSpaceGMap::onResize(float w, float h)
@@ -376,11 +480,75 @@ namespace Skylicht
 			CGraphics2D* pGraphics = CGraphics2D::getInstance();
 			pGraphics->draw2DRectangle(core::rectf(0.0f, 0.0f, m_view->width(), m_view->height()), SColor(255, 200, 200, 200));
 
+			// draw download image
+			renderMapBG();
+
 			// draw grid
 			renderGrid();
 
 			// draw lng, lat
 			renderString();
+		}
+
+		void CSpaceGMap::renderMapBG()
+		{
+			CGraphics2D* pGraphics = CGraphics2D::getInstance();
+
+			float x = (float)(-m_viewX % m_gridSize);
+			float y = (float)(-m_viewY % m_gridSize);
+
+			core::rectf dest, source;
+			SColor white(255, 255, 255, 255);
+
+			source = core::rectf(0, 0, (f32)m_gridSize, (f32)m_gridSize);
+
+			for (int i = m_renderMap.From.Y; i < m_renderMap.To.Y; i++)
+			{
+				if (i < 0)
+				{
+					y = y + (float)m_gridSize;
+					continue;
+				}
+
+				for (int j = m_renderMap.From.X; j < m_renderMap.To.X; j++)
+				{
+					if (j < 0)
+					{
+						x = x + (float)m_gridSize;
+						continue;
+					}
+
+					// seach image in cache
+					ITexture* pImage = searchMapTileset(j, i, m_zoom);
+
+					if (pImage == NULL)
+					{
+						// search on local
+						pImage = searchMapTilesetOnLocal(j, i, m_zoom);
+
+						// add to download
+						if (pImage == NULL)
+							requestDownloadMap(j, i, m_zoom);
+					}
+
+					// draw image tileset
+					if (pImage)
+					{
+						dest.UpperLeftCorner.X = x;
+						dest.UpperLeftCorner.Y = y;
+						dest.LowerRightCorner.X = x + (float)m_gridSize;
+						dest.LowerRightCorner.Y = y + (float)m_gridSize;
+
+						pGraphics->addImageBatch(pImage, dest, source, white, core::IdentityMatrix, m_materialID);
+					}
+
+					x = x + (float)m_gridSize;
+				}
+
+				y = y + (float)m_gridSize;
+
+				x = (float)(-m_viewX % m_gridSize);
+			}
 		}
 
 		void CSpaceGMap::renderGrid()
