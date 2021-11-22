@@ -78,6 +78,8 @@
 
 #define HAVE_FCNTL_O_NONBLOCK	1
 
+#define HAVE_LONGLONG 1
+
 #define RETSIGTYPE void
 
 #define SIZEOF_INT              4
