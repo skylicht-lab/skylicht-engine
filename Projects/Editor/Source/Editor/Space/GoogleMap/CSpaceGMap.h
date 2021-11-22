@@ -27,6 +27,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 
+#include "Thread/IThread.h"
+#include "Thread/IMutex.h"
+#include "DownloadMap.h"
+
+#ifdef HAVE_SKYLICHT_NETWORK
+#include "HttpRequest/CHttpRequest.h"
+#endif
+
+#define NUM_HTTPREQUEST	8
+
 namespace Skylicht
 {
 	namespace Editor
@@ -39,7 +49,7 @@ namespace Skylicht
 			long CountY;
 		};
 
-		class CSpaceGMap : public CSpace
+		class CSpaceGMap : public CSpace, IThreadCallback
 		{
 		protected:
 			GUI::CBase* m_view;
@@ -58,10 +68,24 @@ namespace Skylicht
 
 			bool m_rightPress;
 
+			IThread* m_downloadMapThread;
+			IMutex* m_lock;
+
+			std::list<SImageDownload> m_queueDownload;
+			std::list<SImageDownload> m_downloading;
+
+			SImageDownload* m_imgDownloading[NUM_HTTPREQUEST];
+			CHttpRequest* m_httpRequest[NUM_HTTPREQUEST];
+			CHttpStream* m_httpStream[NUM_HTTPREQUEST];
+
+			EImageMapType m_mapBGType;
+
 		public:
 			CSpaceGMap(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceGMap();
+
+			virtual void updateThread();
 
 			virtual void onResize(float w, float h);
 
@@ -78,6 +102,8 @@ namespace Skylicht
 			virtual void onMouseWheeled(GUI::CBase* base, int wheel);
 
 		protected:
+
+			void requestDownloadMap(long x, long y, int z);
 
 			void updateMap();
 
