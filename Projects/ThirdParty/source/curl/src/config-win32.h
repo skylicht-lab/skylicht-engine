@@ -678,7 +678,13 @@ Vista
 /* Default define to enable threaded asynchronous DNS lookups. */
 #if !defined(USE_SYNC_DNS) && !defined(USE_ARES) && \
     !defined(USE_THREADS_WIN32)
-#  define USE_THREADS_WIN32 1
+
+#if defined(WINDOWS_STORE)
+    // submit with function WaitForSingleObject, InitializeCriticalSection will be reject
+#else
+    #define USE_THREADS_WIN32 1
+#endif
+
 #endif
 
 #if defined(USE_ARES) && defined(USE_THREADS_WIN32)
@@ -698,8 +704,13 @@ Vista
 #define HAVE_LDAP_URL_PARSE 1
 #else
 #undef HAVE_LDAP_URL_PARSE
+
+#if defined(WINDOWS_STORE)
+#else
 #define HAVE_LDAP_SSL 1
 #define USE_WIN32_LDAP 1
+#endif
+
 #endif
 
 #if defined(__WATCOMC__) && defined(USE_WIN32_LDAP)
