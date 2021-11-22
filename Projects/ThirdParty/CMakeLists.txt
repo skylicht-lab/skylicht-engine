@@ -2,6 +2,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/zlib
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/src
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/libmpg123
 )
@@ -24,7 +25,6 @@ setup_project_group("${bzip2_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 #curl
 if (BUILD_CURL)
-add_definitions(-DHAVE_CURL)
 file(GLOB_RECURSE curl_source 
 	./source/curl/**.cpp 
 	./source/curl/**.hpp 

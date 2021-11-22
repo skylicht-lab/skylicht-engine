@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2021, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at http://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -67,10 +67,8 @@
 
 #define HAVE_SIGACTION          1
 #define HAVE_SIGNAL_H           1
-#define HAVE_SIG_ATOMIC_T       1
 
 #ifdef MACOS_SSL_SUPPORT
-#  define USE_SSLEAY            1
 #  define USE_OPENSSL           1
 #endif
 
@@ -80,21 +78,15 @@
 #define HAVE_RAND_EGD           1
 
 #define HAVE_IOCTL              1
-
+//#define HAVE_IOCTL_FIONBIO      1
 #define HAVE_FCNTL_O_NONBLOCK    1
 
-#define RETSIGTYPE void
+#define HAVE_LONGLONG 1
 
 #define SIZEOF_INT              4
 #define SIZEOF_SHORT            2
 #define SIZEOF_SIZE_T           4
-
-#define HAVE_GETNAMEINFO 1
-#define GETNAMEINFO_QUAL_ARG1 const
-#define GETNAMEINFO_TYPE_ARG1 struct sockaddr *
-#define GETNAMEINFO_TYPE_ARG2 socklen_t
-#define GETNAMEINFO_TYPE_ARG46 size_t
-#define GETNAMEINFO_TYPE_ARG7 int
+#define SIZEOF_CURL_OFF_T       8
 
 #define HAVE_RECV 1
 #define RECV_TYPE_ARG1 int

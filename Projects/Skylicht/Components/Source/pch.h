@@ -7,7 +7,7 @@
 
 #if defined(_WIN32)
 
-#ifdef USE_SKYLICHT_NETWORK
+#ifdef HAVE_SKYLICHT_NETWORK
 #include <Ws2tcpip.h>
 #include <Winsock2.h>
 #endif
@@ -21,7 +21,7 @@
 #include <memory.h>
 #include <unistd.h>
 
-#ifdef USE_SKYLICHT_NETWORK
+#ifdef HAVE_SKYLICHT_NETWORK
 #include <netinet/in.h>
 #include <net/if.h>
 #include <arpa/inet.h>
