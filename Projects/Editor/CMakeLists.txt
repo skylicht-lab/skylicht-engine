@@ -110,14 +110,6 @@ if (BUILD_MACOS)
 
 	setup_project_group("${platform_mac_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
-
-#if (BUILD_SKYLICHT_NETWORK)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/SkylichtNetwork/Source)
-#endif()
-
-#if(BUILD_RECAST_NAVIGATION_LIB)
-#include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/RecastNavigation/Source)
-#endif()
 	
 if (BUILD_DEBUG_VLD)
 	if (CMAKE_CL_64)
@@ -140,7 +132,18 @@ if (BUILD_SDL AND MSVC)
 	endif()	
 	link_directories(${sdl_lib_path})
 endif()
-	
+
+if (BUILD_OPENSSL AND MSVC)
+	if (CMAKE_CL_64)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x64")
+		set(openssl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x64/*.dll")
+	else()
+		set(openssl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x86")
+		set(openssl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x86/*.dll")
+	endif()	
+	link_directories(${openssl_lib_path})
+endif()
+
 if (MINGW OR CYGWIN)
 	# .rc build
 	set(CMAKE_RC_COMPILER_INIT windres)
@@ -250,12 +253,17 @@ endif()
 
 if (NOT BUILD_SKYLICHT_NETWORK)
 # Crypto
-target_link_libraries(SkylichtEditor Crypto)
+target_link_libraries(SkylichtEditor CryptoLib)
 endif()
 
 # Imgui
 if (BUILD_IMGUI)
 	target_link_libraries(SkylichtEditor Imgui)
+endif()
+
+# OpenSSL
+if (BUILD_OPENSSL AND MSVC)
+	target_link_libraries(SkylichtEditor crypto.lib decrepit.lib ssl.lib Crypt32.lib)
 endif()
 
 # Emscripten
@@ -282,6 +290,14 @@ if (BUILD_SDL AND MSVC)
 	file(GLOB_RECURSE sdl_bin_files ${sdl_dll_path})
 	foreach(sdl_bin ${sdl_bin_files})
 		add_custom_command(TARGET SkylichtEditor POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sdl_bin} $<TARGET_FILE_DIR:SkylichtEditor>)
+	endforeach()
+endif()
+
+#OPENSSL
+if (BUILD_OPENSSL AND MSVC)
+	file(GLOB_RECURSE openssl_bin_files ${openssl_dll_path})
+	foreach(openssl_bin ${openssl_bin_files})
+		add_custom_command(TARGET SkylichtEditor POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${openssl_bin} $<TARGET_FILE_DIR:SkylichtEditor>)
 	endforeach()
 endif()
 
