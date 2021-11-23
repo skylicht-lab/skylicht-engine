@@ -9,6 +9,6 @@ file(GLOB_RECURSE crypto_source
 	./Source/*.h)
 setup_project_group("${crypto_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(Crypto STATIC ${crypto_source})
+add_library(CryptoLib STATIC ${crypto_source})
 
-set_target_properties(Crypto PROPERTIES VERSION ${SKYLICHT_VERSION})
+set_target_properties(CryptoLib PROPERTIES VERSION ${SKYLICHT_VERSION})

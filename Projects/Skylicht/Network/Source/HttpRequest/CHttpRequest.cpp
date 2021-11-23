@@ -163,7 +163,7 @@ namespace Skylicht
 
 		if (m_multiHandle != NULL)
 		{
-			// curl_multi_remove_handle(m_multiHandle, m_curl);
+			curl_multi_remove_handle(m_multiHandle, m_curl);
 			curl_multi_cleanup(m_multiHandle);
 		}
 

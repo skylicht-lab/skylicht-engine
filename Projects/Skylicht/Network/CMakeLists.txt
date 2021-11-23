@@ -28,4 +28,4 @@ if (MSVC OR CYGWIN OR MINGW)
 	target_link_libraries(Network ws2_32)
 endif()
 
-target_link_libraries(Network Engine System Crypto)
+target_link_libraries(Network Engine System CryptoLib)
