@@ -219,6 +219,41 @@ namespace Skylicht
 				IThread::sleep(1);
 		}
 
+		int CSpaceGMap::getMapState(long x, long y, int z)
+		{
+			int ret = 0;
+			m_lock->lock();
+			std::list<SImageDownload>::iterator i = m_queueDownload.begin(), end = m_queueDownload.end();
+			while (i != end)
+			{
+				if (i->Image.X == x &&
+					i->Image.Y == y &&
+					i->Image.Z == z)
+				{
+					// queue
+					ret = 1;
+					break;
+				}
+				++i;
+			}
+
+			i = m_downloading.begin(), end = m_downloading.end();
+			while (i != end)
+			{
+				if (i->Image.X == x &&
+					i->Image.Y == y &&
+					i->Image.Z == z)
+				{
+					// downloading
+					ret = 2;
+					break;
+				}
+				++i;
+			}
+			m_lock->unlock();
+			return ret;
+		}
+
 		void CSpaceGMap::requestDownloadMap(long x, long y, int z)
 		{
 			m_lock->lock();
@@ -300,11 +335,11 @@ namespace Skylicht
 			{
 			case EImageMapType::GSatellite:
 			{
-				sprintf(fileName, "gmap_%d_%d_%d.jpg", z, x, y);
+				sprintf(fileName, "gmap_%d_%ld_%ld.jpg", z, x, y);
 				break;
 			}
 			case EImageMapType::OSMTerrain:
-				sprintf(fileName, "osm_%d_%d_%d.png", z, x, y);
+				sprintf(fileName, "osm_%d_%ld_%ld.png", z, x, y);
 				break;
 			default:
 				break;
@@ -361,6 +396,7 @@ namespace Skylicht
 				m_mapOverlay.push_back(mapElement);
 			}
 
+			file->drop();
 			return texture;
 		}
 
@@ -471,7 +507,7 @@ namespace Skylicht
 			m_renderMap.From.X = core::min_(m_viewX / m_gridSize, maxElementX);
 			m_renderMap.From.Y = core::min_(m_viewY / m_gridSize, maxElementY);
 			m_renderMap.To.X = core::min_(m_renderMap.From.X + m_renderMap.CountX, maxElementX);
-			m_renderMap.To.Y = core::min_(m_renderMap.To.Y + m_renderMap.CountY, maxElementY);
+			m_renderMap.To.Y = core::min_(m_renderMap.From.Y + m_renderMap.CountY, maxElementY);
 		}
 
 		void CSpaceGMap::renderMap()
@@ -613,7 +649,7 @@ namespace Skylicht
 			SColor black(255, 10, 10, 10);
 			SColor red(255, 255, 0, 0);
 
-			for (long i = m_renderMap.From.Y; i < m_renderMap.From.Y + m_renderMap.CountY && i < m_renderMap.To.Y; i++)
+			for (long i = m_renderMap.From.Y; i < m_renderMap.To.Y; i++)
 			{
 				if (i < 0)
 				{
@@ -621,7 +657,7 @@ namespace Skylicht
 					continue;
 				}
 
-				for (int j = m_renderMap.From.X; j < m_renderMap.From.X + m_renderMap.CountX && j < m_renderMap.To.X; j++)
+				for (int j = m_renderMap.From.X; j < m_renderMap.To.X; j++)
 				{
 					if (j < 0)
 					{
@@ -642,6 +678,17 @@ namespace Skylicht
 
 					pGraphics->drawText(core::position2df(x + centerX, y + centerY), m_fontNormal, black, string, m_materialID);
 
+					ITexture* pImage = searchMapTileset(j, i, m_zoom);
+					if (pImage == NULL)
+					{
+						centerY = 25.0f;
+						int state = getMapState(j, i, m_zoom);
+						if (state == 1)
+							pGraphics->drawText(core::position2df(x + centerX, y + centerY), m_fontNormal, black, L"Wait downloading", m_materialID);
+						else if (state == 2)
+							pGraphics->drawText(core::position2df(x + centerX, y + centerY), m_fontNormal, black, L"Downloading", m_materialID);
+					}
+
 					x += m_gridSize;
 				}
 
@@ -660,6 +707,9 @@ namespace Skylicht
 
 		void CSpaceGMap::setZoom(int z)
 		{
+			cancelDownload();
+			clear();
+
 			if (z >= 4 && z <= 22)
 			{
 				// clearDownloadOverlayList();
@@ -690,6 +740,16 @@ namespace Skylicht
 
 				m_zoom = z;
 
+			}
+		}
+
+		void CSpaceGMap::cancelDownload()
+		{
+			m_queueDownload.clear();
+			for (int i = 0; i < NUM_HTTPREQUEST; i++)
+			{
+				if (m_httpRequest[i]->isSendRequest())
+					m_httpRequest[i]->cancel();
 			}
 		}
 

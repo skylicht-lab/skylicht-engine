@@ -1,4 +1,4 @@
-include_directories(	
+include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/zlib
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
@@ -6,6 +6,10 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/libmpg123
 )
+
+if (BUILD_OPENSSL)
+include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/include)
+endif()
 
 #aesGladman
 file(GLOB_RECURSE aes_gladman_source 

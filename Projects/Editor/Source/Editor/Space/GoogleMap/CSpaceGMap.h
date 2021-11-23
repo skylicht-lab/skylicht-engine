@@ -108,6 +108,8 @@ namespace Skylicht
 
 		protected:
 
+			int getMapState(long x, long y, int z);
+
 			void requestDownloadMap(long x, long y, int z);
 
 			std::string getMapLocalPath(EImageMapType type, long x, long y, int z);
@@ -135,6 +137,8 @@ namespace Skylicht
 			void zoomOut();
 
 			void zoomOut(long viewX, long viewY);
+
+			void cancelDownload();
 		};
 	}
 }
