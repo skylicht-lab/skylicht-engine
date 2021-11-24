@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -28,10 +28,21 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		void getLatLngByPixel(long px, long py, int zoom, double* lat, double* lng);
+		class CHitTest2D
+		{
+		public:
+			enum EHit
+			{
+				None = 0,
+				Top = 1,
+				Bottom = 1 << 2,
+				Left = 1 << 3,
+				Right = 1 << 4
+			};
+		public:
+			static bool isLineHit(const core::vector2df& p1, const core::vector2df& p2, const core::vector2df& point);
 
-		void getPixelByLatLng(double lat, double lng, int zoom, long* px, long* py);
-
-		double measure(double lat1, double lng1, double lat2, double lng2);
+			static int isRectBorderHit(const core::rectf& rect, const core::vector2df& point);
+		};
 	}
 }

@@ -81,5 +81,22 @@ namespace Skylicht
 			*px = (long)clip(x * mapSize + 0.5, 0, mapSize - 1);
 			*py = (long)clip(y * mapSize + 0.5, 0, mapSize - 1);
 		}
+
+		double measure(double lat1, double lng1, double lat2, double lng2)
+		{
+			const double R = 6378.137; // Radius of earth in KM
+
+			double dLat = lat2 * GMapConst::PI / 180.0 - lat1 * GMapConst::PI / 180.0;
+			double dLon = lng2 * GMapConst::PI / 180.0 - lng1 * GMapConst::PI / 180.0;
+
+			double a = sin(dLat * 0.5) * sin(dLat * 0.5) 
+				+ cos(lat1 * GMapConst::PI / 180.0) * cos(lat2 * GMapConst::PI / 180) 
+				* sin(dLon * 0.5) * sin(dLon * 0.5);
+
+			double c = 2.0 * atan2(sqrt(a), sqrt(1 - a));
+			double d = R * c;
+
+			return d; // km
+		}
 	}
 }

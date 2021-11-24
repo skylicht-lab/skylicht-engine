@@ -47,6 +47,32 @@ namespace Skylicht
 			core::vector2d<long> To;
 			long CountX;
 			long CountY;
+
+			SRenderMap()
+			{
+				CountX = 0;
+				CountY = 0;
+			}
+		};
+
+		struct SExportRect
+		{
+			int MouseHit;
+			bool Ready;
+			double Lat1;
+			double Lng1;
+			double Lat2;
+			double Lng2;
+
+			SExportRect()
+			{
+				MouseHit = 0;
+				Ready = false;
+				Lat1 = 0.0;
+				Lng1 = 0.0;
+				Lat2 = 0.0;
+				Lng2 = 0.0;
+			}
 		};
 
 		class CSpaceGMap : public CSpace, IThreadCallback
@@ -67,6 +93,7 @@ namespace Skylicht
 			CGlyphFont* m_fontLarge;
 
 			bool m_rightPress;
+			bool m_leftPress;
 
 			IThread* m_downloadMapThread;
 			IMutex* m_lock;
@@ -74,6 +101,7 @@ namespace Skylicht
 
 			std::list<SImageDownload> m_queueDownload;
 			std::list<SImageDownload> m_downloading;
+			std::list<SImageDownload> m_notfound;
 
 			SImageDownload* m_imgDownloading[NUM_HTTPREQUEST];
 			CHttpRequest* m_httpRequest[NUM_HTTPREQUEST];
@@ -83,12 +111,26 @@ namespace Skylicht
 
 			std::vector<SImageMapElement> m_mapOverlay;
 
+			GUI::CLabel* m_zoomLabel;
+			GUI::CButton* m_btnExportRect;
+			GUI::CButton* m_btnRemoveExport;
+			GUI::CButton* m_btnExport;
+
+			SExportRect m_exportRect;
+			GUI::SPoint m_mouseLocal;
+
 		public:
 			CSpaceGMap(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceGMap();
 
 			void clear();
+
+			void onAddExportArea(GUI::CBase* base);
+
+			void onRemoveExport(GUI::CBase* base);
+
+			void onExport(GUI::CBase* base);
 
 			virtual void updateThread();
 
@@ -124,21 +166,21 @@ namespace Skylicht
 
 			void renderMapBG();
 
+			void renderExportArea();
+
+			core::rectf getExportRectInVP();
+
 			void renderGrid();
 
 			void renderString();
 
-			void setZoom(int z);
-
-			void zoomIn();
-
 			void zoomIn(long viewX, long viewY);
-
-			void zoomOut();
 
 			void zoomOut(long viewX, long viewY);
 
 			void cancelDownload();
+
+			void updateZoomString();
 		};
 	}
 }
