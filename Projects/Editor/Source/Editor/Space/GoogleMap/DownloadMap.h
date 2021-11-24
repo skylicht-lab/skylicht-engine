@@ -11,6 +11,7 @@ namespace Skylicht
 			None = 0,
 			Error,
 			FileError,
+			NotFound,
 			Downloaded,
 		};
 
