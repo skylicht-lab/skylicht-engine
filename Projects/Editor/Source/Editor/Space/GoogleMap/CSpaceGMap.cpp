@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GMapUtils.h"
 #include "GUI/Theme/CThemeConfig.h"
 #include "GUI/Input/CInput.h"
+#include "HitTest2D/CHitTest2D.h"
 
 using namespace std::placeholders;
 
@@ -45,6 +46,34 @@ namespace Skylicht
 			m_lock(NULL),
 			m_mapBGType(EImageMapType::GSatellite)
 		{
+			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
+
+			m_zoomLabel = new GUI::CLabel(toolbar);
+			m_zoomLabel->setWidth(150.0f);
+			m_zoomLabel->setTextAlignment(GUI::ETextAlign::TextRight);
+			updateZoomString();
+			toolbar->addControl(m_zoomLabel, true);
+
+			m_btnExportRect = toolbar->addButton(GUI::ESystemIcon::ResImage);
+			m_btnExportRect->setLabel(L"Add export area");
+			m_btnExportRect->showLabel(true);
+			m_btnExportRect->sizeToContents();
+			m_btnExportRect->OnPress = BIND_LISTENER(&CSpaceGMap::onAddExportArea, this);
+
+			m_btnRemoveExport = toolbar->addButton(GUI::ESystemIcon::Trash);
+			m_btnRemoveExport->setLabel(L"Remove");
+			m_btnRemoveExport->showLabel(true);
+			m_btnRemoveExport->sizeToContents();
+			m_btnRemoveExport->setDisabled(true);
+			m_btnRemoveExport->OnPress = BIND_LISTENER(&CSpaceGMap::onRemoveExport, this);
+
+			m_btnExport = toolbar->addButton(GUI::ESystemIcon::Export);
+			m_btnExport->setLabel(L"Export");
+			m_btnExport->showLabel(true);
+			m_btnExport->sizeToContents();
+			m_btnExport->setDisabled(true);
+			m_btnExport->OnPress = BIND_LISTENER(&CSpaceGMap::onExport, this);
+
 			m_view = new GUI::CBase(window);
 			m_view->dock(GUI::EPosition::Fill);
 
@@ -108,6 +137,38 @@ namespace Skylicht
 			m_mapOverlay.clear();
 		}
 
+		void CSpaceGMap::onAddExportArea(GUI::CBase* base)
+		{
+			long padding = 50;
+
+			getLatLngByPixel(m_viewX + padding, m_viewY + padding, m_zoom, &m_exportRect.Lat1, &m_exportRect.Lng1);
+
+			long width = (long)m_view->width();
+			long height = (long)m_view->height();
+
+			getLatLngByPixel(m_viewX + width - padding, m_viewY + height - padding, m_zoom, &m_exportRect.Lat2, &m_exportRect.Lng2);
+
+			m_exportRect.Ready = true;
+
+			m_btnExportRect->setDisabled(true);
+			m_btnRemoveExport->setDisabled(false);
+			m_btnExport->setDisabled(false);
+		}
+
+		void CSpaceGMap::onRemoveExport(GUI::CBase* base)
+		{
+			m_exportRect.Ready = false;
+
+			m_btnExportRect->setDisabled(false);
+			m_btnRemoveExport->setDisabled(true);
+			m_btnExport->setDisabled(true);
+		}
+
+		void CSpaceGMap::onExport(GUI::CBase* base)
+		{
+
+		}
+
 		void CSpaceGMap::updateThread()
 		{
 			m_lock->lock();
@@ -144,46 +205,44 @@ namespace Skylicht
 								m_imgDownloading[r]->Image.Y,
 								m_imgDownloading[r]->Image.Z);
 
-							m_lockFile->lock();
-							io::IWriteFile* file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(path.c_str());
-							if (file != NULL)
+
+							const unsigned char* data = m_httpStream[r]->getData();
+
+							bool isPNG = false;
+							bool isJPEG = false;
+
+							static unsigned char PNGSignature[] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+							if (memcmp(data, PNGSignature, sizeof(PNGSignature)) == 0)
+								isPNG = true;
+
+							static unsigned char JPGSignature[] = { 0xFF, 0xD8, 0xFF };
+							if (memcmp(data, JPGSignature, sizeof(JPGSignature)) == 0)
+								isJPEG = true;
+
+							if (isPNG || isJPEG)
 							{
-								const unsigned char* data = m_httpStream[r]->getData();
-
-								bool isPNG = false;
-								bool isJPEG = false;
-
-								static unsigned char PNGSignature[] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-								if (memcmp(data, PNGSignature, sizeof(PNGSignature)) == 0)
-									isPNG = true;
-
-								static unsigned char JPGSignature[] = { 0xFF, 0xD8, 0xFF };
-								if (memcmp(data, JPGSignature, sizeof(JPGSignature)) == 0)
-									isJPEG = true;
-
-								if (isPNG || isJPEG)
+								io::IWriteFile* file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(path.c_str());
+								if (file != NULL)
 								{
+									m_lockFile->lock();
 									file->write(m_httpStream[r]->getData(), m_httpStream[r]->getDataSize());
 									file->drop();
+									m_lockFile->unlock();
 
 									m_imgDownloading[r]->Image.Status = EImageMapStatus::Downloaded;
 									m_imgDownloading[r]->Image.Path = path;
 								}
 								else
 								{
-									m_imgDownloading[r]->Image.Status = EImageMapStatus::FileError;
+									m_imgDownloading[r]->Image.Status = EImageMapStatus::NotFound;
+									m_notfound.push_back(*m_imgDownloading[r]);
 								}
 							}
 							else
 							{
-								m_imgDownloading[r]->Image.Status = EImageMapStatus::FileError;
+								m_imgDownloading[r]->Image.Status = EImageMapStatus::NotFound;
+								m_notfound.push_back(*m_imgDownloading[r]);
 							}
-
-							m_lockFile->unlock();
-						}
-						else
-						{
-							m_imgDownloading[r]->Image.Status = EImageMapStatus::Error;
 						}
 
 						std::list<SImageDownload>::iterator iDown = m_downloading.begin(), endDown = m_downloading.end();
@@ -265,7 +324,21 @@ namespace Skylicht
 			img.Y = y;
 			img.Z = z;
 
-			std::list<SImageDownload>::iterator i = m_queueDownload.begin(), end = m_queueDownload.end();
+			std::list<SImageDownload>::iterator i = m_notfound.begin(), end = m_notfound.end();
+			while (i != end)
+			{
+				if (i->Image.Type == img.Type &&
+					i->Image.X == img.X &&
+					i->Image.Y == img.Y &&
+					i->Image.Z == img.Z)
+				{
+					m_lock->unlock();
+					return;
+				}
+				++i;
+			}
+
+			i = m_queueDownload.begin(), end = m_queueDownload.end();
 			while (i != end)
 			{
 				if (i->Image.Type == img.Type &&
@@ -311,7 +384,6 @@ namespace Skylicht
 					"https://api.maptiler.com/maps/outdoor/%d/%ld/%ld.png",
 					img.Z, img.X, img.Y
 				);
-				break;
 				break;
 			default:
 				break;
@@ -407,16 +479,99 @@ namespace Skylicht
 
 		void CSpaceGMap::onMouseMoved(GUI::CBase* base, float x, float y, float deltaX, float deltaY)
 		{
+			m_mouseLocal = m_view->canvasPosToLocal(GUI::SPoint(x, y));
+
 			if (m_rightPress)
 			{
+				// right drag viewport
 				m_viewX = m_viewX - (long)deltaX;
 				m_viewY = m_viewY - (long)deltaY;
+			}
+			else if (m_leftPress)
+			{
+				// left drag
+				if (m_exportRect.Ready && m_exportRect.MouseHit)
+				{
+					long x = m_viewX + (long)m_mouseLocal.X;
+					long y = m_viewY + (long)m_mouseLocal.Y;
+
+					double lat, lng;
+					getLatLngByPixel(x, y, m_zoom, &lat, &lng);
+
+					if (m_exportRect.MouseHit & CHitTest2D::Left)
+						m_exportRect.Lng1 = lng;
+					if (m_exportRect.MouseHit & CHitTest2D::Right)
+						m_exportRect.Lng2 = lng;
+					if (m_exportRect.MouseHit & CHitTest2D::Top)
+						m_exportRect.Lat1 = lat;
+					if (m_exportRect.MouseHit & CHitTest2D::Bottom)
+						m_exportRect.Lat2 = lat;
+				}
+			}
+			else
+			{
+				// mouse move
+				if (m_exportRect.Ready)
+				{
+					GUI::SPoint local = m_view->canvasPosToLocal(GUI::SPoint(x, y));
+					core::rectf rect = getExportRectInVP();
+
+					int hit = CHitTest2D::isRectBorderHit(rect, core::vector2df(local.X, local.Y));
+					if (hit & CHitTest2D::Left)
+					{
+						m_view->setCursor(GUI::ECursorType::SizeWE);
+						if (hit & CHitTest2D::Top)
+							m_view->setCursor(GUI::ECursorType::SizeNWSE);
+						else if (hit & CHitTest2D::Bottom)
+							m_view->setCursor(GUI::ECursorType::SizeNESW);
+					}
+					else if (hit & CHitTest2D::Right)
+					{
+						m_view->setCursor(GUI::ECursorType::SizeWE);
+						if (hit & CHitTest2D::Top)
+							m_view->setCursor(GUI::ECursorType::SizeNESW);
+						else if (hit & CHitTest2D::Bottom)
+							m_view->setCursor(GUI::ECursorType::SizeNWSE);
+					}
+					else if (hit & CHitTest2D::Top)
+						m_view->setCursor(GUI::ECursorType::SizeNS);
+					else if (hit & CHitTest2D::Bottom)
+						m_view->setCursor(GUI::ECursorType::SizeNS);
+					else
+						m_view->setCursor(GUI::ECursorType::Normal);
+				}
+				else
+				{
+					m_view->setCursor(GUI::ECursorType::Normal);
+				}
 			}
 		}
 
 		void CSpaceGMap::onLeftMouseClick(GUI::CBase* base, float x, float y, bool down)
 		{
+			m_leftPress = down;
+			if (down)
+			{
+				if (m_exportRect.Ready)
+				{
+					GUI::SPoint local = m_view->canvasPosToLocal(GUI::SPoint(x, y));
+					core::rectf rect = getExportRectInVP();
 
+					m_exportRect.MouseHit = CHitTest2D::isRectBorderHit(rect, core::vector2df(local.X, local.Y));
+				}
+			}
+			else
+			{
+				if (m_exportRect.MouseHit)
+				{
+					if (m_exportRect.Lng1 > m_exportRect.Lng2)
+						core::swap(m_exportRect.Lng1, m_exportRect.Lng2);
+
+					if (m_exportRect.Lat1 < m_exportRect.Lat2)
+						core::swap(m_exportRect.Lat1, m_exportRect.Lat2);
+				}
+				m_exportRect.MouseHit = 0;
+			}
 		}
 
 		void CSpaceGMap::onRightMouseClick(GUI::CBase* base, float x, float y, bool down)
@@ -519,6 +674,9 @@ namespace Skylicht
 			// draw download image
 			renderMapBG();
 
+			// draw export area
+			renderExportArea();
+
 			// draw grid
 			renderGrid();
 
@@ -587,6 +745,47 @@ namespace Skylicht
 			}
 		}
 
+		void CSpaceGMap::renderExportArea()
+		{
+			CGraphics2D* pGraphics = CGraphics2D::getInstance();
+			if (m_exportRect.Ready)
+			{
+				core::rectf rect = getExportRectInVP();
+				pGraphics->draw2DRectangleOutline(rect, SColor(255, 255, 255, 0));
+
+				double w = measure(m_exportRect.Lat1, m_exportRect.Lng1, m_exportRect.Lat1, m_exportRect.Lng2);
+				double h = measure(m_exportRect.Lat1, m_exportRect.Lng1, m_exportRect.Lat2, m_exportRect.Lng1);
+
+				wchar_t text[512];
+				swprintf(text, 512, L"%.2lfkm x %.2lfkm", w, h);
+				core::dimension2df size = pGraphics->measureText(m_fontNormal, text);
+				pGraphics->drawText(rect.LowerRightCorner - size, m_fontNormal, SColor(255, 255, 255, 255), text, m_materialID);
+
+				long x1, x2, y1, y2;
+				getPixelByLatLng(m_exportRect.Lat1, m_exportRect.Lng1, m_zoom, &x1, &y1);
+				getPixelByLatLng(m_exportRect.Lat2, m_exportRect.Lng2, m_zoom, &x2, &y2);
+				long dw = x2 - x1;
+				long dh = y2 - y1;
+				swprintf(text, 512, L"Export size: %ldpx x %ldpx", dw, dh);
+				size = pGraphics->measureText(m_fontNormal, text);
+				pGraphics->drawText(
+					core::position2df(m_view->width() - size.Width, m_view->height() - size.Height),
+					m_fontNormal,
+					SColor(255, 255, 255, 255),
+					text,
+					m_materialID);
+			}
+		}
+
+		core::rectf CSpaceGMap::getExportRectInVP()
+		{
+			long x1, y1, x2, y2;
+			getPixelByLatLng(m_exportRect.Lat1, m_exportRect.Lng1, m_zoom, &x1, &y1);
+			getPixelByLatLng(m_exportRect.Lat2, m_exportRect.Lng2, m_zoom, &x2, &y2);
+			core::rectf rect((float)(x1 - m_viewX), (float)(y1 - m_viewY), (float)(x2 - m_viewX), (float)(y2 - m_viewY));
+			return rect;
+		}
+
 		void CSpaceGMap::renderGrid()
 		{
 			CGraphics2D* pGraphics = CGraphics2D::getInstance();
@@ -645,7 +844,6 @@ namespace Skylicht
 			long x = -m_viewX % m_gridSize;
 			long y = -m_viewY % m_gridSize;
 
-			wchar_t string[512];
 			SColor black(255, 10, 10, 10);
 			SColor red(255, 255, 0, 0);
 
@@ -671,17 +869,12 @@ namespace Skylicht
 					double lat, lng;
 					getLatLngByPixel((long)realX, (long)realY, m_zoom, &lat, &lng);
 
-					swprintf(string, 512, L"%.3lf, %.3lf", lat, lng);
-
 					float centerX = 5.0f;
 					float centerY = 5.0f;
-
-					pGraphics->drawText(core::position2df(x + centerX, y + centerY), m_fontNormal, black, string, m_materialID);
 
 					ITexture* pImage = searchMapTileset(j, i, m_zoom);
 					if (pImage == NULL)
 					{
-						centerY = 25.0f;
 						int state = getMapState(j, i, m_zoom);
 						if (state == 1)
 							pGraphics->drawText(core::position2df(x + centerX, y + centerY), m_fontNormal, black, L"Wait downloading", m_materialID);
@@ -705,57 +898,18 @@ namespace Skylicht
 #endif
 		}
 
-		void CSpaceGMap::setZoom(int z)
-		{
-			cancelDownload();
-			clear();
-
-			if (z >= 4 && z <= 22)
-			{
-				// clearDownloadOverlayList();
-
-				int ratio = z - m_zoom;
-				bool zoomIn = true;
-
-				if (ratio < 0)
-				{
-					ratio = -ratio;
-					zoomIn = false;
-				}
-
-				while (ratio)
-				{
-					if (zoomIn)
-					{
-						m_viewX *= 2;
-						m_viewY *= 2;
-					}
-					else
-					{
-						m_viewX /= 2;
-						m_viewY /= 2;
-					}
-					ratio--;
-				}
-
-				m_zoom = z;
-
-			}
-		}
-
 		void CSpaceGMap::cancelDownload()
 		{
+			m_lock->lock();
 			m_queueDownload.clear();
+			m_notfound.clear();
+
 			for (int i = 0; i < NUM_HTTPREQUEST; i++)
 			{
 				if (m_httpRequest[i]->isSendRequest())
 					m_httpRequest[i]->cancel();
 			}
-		}
-
-		void CSpaceGMap::zoomIn()
-		{
-			setZoom(m_zoom + 1);
+			m_lock->unlock();
 		}
 
 		void CSpaceGMap::zoomIn(long viewX, long viewY)
@@ -764,7 +918,8 @@ namespace Skylicht
 
 			if (z >= 2 && z <= 22)
 			{
-				// clearDownloadOverlayList();
+				cancelDownload();
+				clear();
 
 				m_viewX += viewX;
 				m_viewY += viewY;
@@ -776,13 +931,9 @@ namespace Skylicht
 				m_viewY -= viewY;
 
 				m_zoom = z;
+
+				updateZoomString();
 			}
-
-		}
-
-		void CSpaceGMap::zoomOut()
-		{
-			setZoom(m_zoom - 1);
 		}
 
 		void CSpaceGMap::zoomOut(long viewX, long viewY)
@@ -791,7 +942,8 @@ namespace Skylicht
 
 			if (z >= 2 && z <= 22)
 			{
-				// clearDownloadOverlayList();
+				cancelDownload();
+				clear();
 
 				m_viewX += viewX;
 				m_viewY += viewY;
@@ -803,7 +955,16 @@ namespace Skylicht
 				m_viewY -= viewY;
 
 				m_zoom = z;
+
+				updateZoomString();
 			}
+		}
+
+		void CSpaceGMap::updateZoomString()
+		{
+			char string[512];
+			sprintf(string, "Zoom: %d", m_zoom);
+			m_zoomLabel->setString(string);
 		}
 	}
 }
