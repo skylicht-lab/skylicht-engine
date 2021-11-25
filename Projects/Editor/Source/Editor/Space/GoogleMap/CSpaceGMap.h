@@ -1,4 +1,5 @@
 /*
+/*
 !@
 MIT License
 
@@ -132,6 +133,8 @@ namespace Skylicht
 
 			void onExport(GUI::CBase* base);
 
+			void exportMap(const char* path);
+
 			virtual void updateThread();
 
 			virtual void onResize(float w, float h);
@@ -153,8 +156,6 @@ namespace Skylicht
 			int getMapState(long x, long y, int z);
 
 			void requestDownloadMap(long x, long y, int z);
-
-			std::string getMapLocalPath(EImageMapType type, long x, long y, int z);
 
 			ITexture* searchMapTileset(long x, long y, int z);
 
