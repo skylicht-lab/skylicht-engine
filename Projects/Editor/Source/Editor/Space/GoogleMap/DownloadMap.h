@@ -51,5 +51,9 @@ namespace Skylicht
 			{
 			}
 		};
+
+		std::string getMapTileURL(EImageMapType type, long x, long y, long z);
+
+		std::string getMapTileLocalCache(EImageMapType type, long x, long y, long z);
 	}
 }

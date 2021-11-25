@@ -80,7 +80,7 @@ namespace Skylicht
 			{
 				CButton* newButton = new CButton(this);
 				newButton->setSize(20.0f, 20.0f);
-				newButton->setPadding(SPadding(5.0f, 0.0f, -5.0f, 0.0f));
+				newButton->setPadding(SPadding(0.0f, 0.0f, -5.0f, 0.0f));
 				newButton->showLabel(false);
 
 				if (icon != ESystemIcon::None)

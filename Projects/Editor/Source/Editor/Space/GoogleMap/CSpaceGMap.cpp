@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Theme/CThemeConfig.h"
 #include "GUI/Input/CInput.h"
 #include "HitTest2D/CHitTest2D.h"
+#include "AssetManager/CAssetManager.h"
+#include "Editor/CEditor.h"
 
 using namespace std::placeholders;
 
@@ -166,7 +168,36 @@ namespace Skylicht
 
 		void CSpaceGMap::onExport(GUI::CBase* base)
 		{
+			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+			GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_window->getCanvas(), GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "png;*");
+			dialog->OnSave = [&](std::string path)
+			{
+				exportMap(path.c_str());
+			};
+		}
 
+		void CSpaceGMap::exportMap(const char* path)
+		{
+			long x1, y1, x2, y2;
+			getPixelByLatLng(m_exportRect.Lat1, m_exportRect.Lng1, m_zoom, &x1, &y1);
+			getPixelByLatLng(m_exportRect.Lat2, m_exportRect.Lng2, m_zoom, &x2, &y2);
+
+			long maxElementX = 4;
+			long maxElementY = 4;
+			int minZoom = 2;
+
+			for (int z = m_zoom; z > minZoom; z--)
+			{
+				maxElementX *= 2;
+				maxElementY *= 2;
+			}
+
+			x1 = core::min_(x1 / m_gridSize, maxElementX);
+			y1 = core::min_(y1 / m_gridSize, maxElementY);
+			x2 = core::min_((x2 / m_gridSize) + 1, maxElementX);
+			y2 = core::min_((y2 / m_gridSize) + 1, maxElementY);
+
+			m_editor->exportGMap(path, x1, y1, x2, y2, m_zoom, (int)m_mapBGType, m_gridSize);
 		}
 
 		void CSpaceGMap::updateThread()
@@ -199,12 +230,11 @@ namespace Skylicht
 					{
 						if (m_httpRequest[r]->getResponseCode() > 0)
 						{
-							std::string path = getMapLocalPath(
+							std::string path = getMapTileLocalCache(
 								m_imgDownloading[r]->Image.Type,
 								m_imgDownloading[r]->Image.X,
 								m_imgDownloading[r]->Image.Y,
 								m_imgDownloading[r]->Image.Z);
-
 
 							const unsigned char* data = m_httpStream[r]->getData();
 
@@ -368,55 +398,15 @@ namespace Skylicht
 
 
 			SImageDownload download;
-
-			char lpUrl[512] = { 0 };
-
-			switch (m_mapBGType)
-			{
-			case EImageMapType::GSatellite:
-				sprintf(lpUrl,
-					"https://khms0.google.com/kh/v=908?x=%ld&y=%ld&z=%d",
-					img.X, img.Y, img.Z
-				);
-				break;
-			case EImageMapType::OSMTerrain:
-				sprintf(lpUrl,
-					"https://api.maptiler.com/maps/outdoor/%d/%ld/%ld.png",
-					img.Z, img.X, img.Y
-				);
-				break;
-			default:
-				break;
-			}
-
 			download.Image.Type = m_mapBGType;
 			download.Image.X = img.X;
 			download.Image.Y = img.Y;
 			download.Image.Z = img.Z;
-			download.Url = lpUrl;
+			download.Url = getMapTileURL(m_mapBGType, img.X, img.Y, img.Z);
 
 			m_queueDownload.push_back(download);
 
 			m_lock->unlock();
-		}
-
-		std::string CSpaceGMap::getMapLocalPath(EImageMapType type, long x, long y, int z)
-		{
-			char fileName[512] = { 0 };
-			switch (type)
-			{
-			case EImageMapType::GSatellite:
-			{
-				sprintf(fileName, "gmap_%d_%ld_%ld.jpg", z, x, y);
-				break;
-			}
-			case EImageMapType::OSMTerrain:
-				sprintf(fileName, "osm_%d_%ld_%ld.png", z, x, y);
-				break;
-			default:
-				break;
-			}
-			return std::string(fileName);
 		}
 
 		ITexture* CSpaceGMap::searchMapTileset(long x, long y, int z)
@@ -439,7 +429,7 @@ namespace Skylicht
 
 		ITexture* CSpaceGMap::searchMapTilesetOnLocal(long x, long y, int z)
 		{
-			std::string path = getMapLocalPath(m_mapBGType, x, y, z);
+			std::string path = getMapTileLocalCache(m_mapBGType, x, y, z);
 
 			m_lockFile->lock();
 
