@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/ProjectSettings/CSpaceProjectSettings.h"
 #include "Space/GUIDesign/CSpaceGUIDesign.h"
 #include "Space/GoogleMap/CSpaceGMap.h"
+#include "Space/GoogleMap/CSpaceExportGMap.h"
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
@@ -58,6 +59,7 @@ namespace Skylicht
 			m_status(NULL),
 			m_importDialog(NULL),
 			m_loadSceneDialog(NULL),
+			m_exportGMapDialog(NULL),
 			m_uiInitiate(false),
 			m_confirmQuit(false)
 		{
@@ -111,6 +113,19 @@ namespace Skylicht
 					if (spaceLoadScene != NULL && spaceLoadScene->isFinish())
 					{
 						closeLoadSceneDialog();
+					}
+				}
+			}
+
+			if (m_exportGMapDialog != NULL)
+			{
+				CSpace* space = getWorkspace(m_exportGMapDialog);
+				if (space != NULL)
+				{
+					CSpaceExportGMap* spaceExportGMap = dynamic_cast<CSpaceExportGMap*>(space);
+					if (spaceExportGMap != NULL && spaceExportGMap->isFinish())
+					{
+						closeExportGMapDialog();
 					}
 				}
 			}
@@ -189,6 +204,12 @@ namespace Skylicht
 			m_loadSceneDialog = NULL;
 
 			refresh();
+		}
+
+		void CEditor::closeExportGMapDialog()
+		{
+			m_exportGMapDialog->remove();
+			m_exportGMapDialog = NULL;
 		}
 
 		void CEditor::initImportGUI(bool fromWatcher)
@@ -504,6 +525,10 @@ namespace Skylicht
 			else if (workspace == L"Google Map")
 			{
 				m_workspaces.push_back(new CSpaceGMap(window, this));
+			}
+			else if (workspace == L"Export GMap")
+			{
+				m_workspaces.push_back(new CSpaceExportGMap(window, this));
 			}
 			else if (workspace == L"Hierarchy")
 			{
@@ -1110,6 +1135,21 @@ namespace Skylicht
 			window->setCenterPosition();
 			window->setResizable(true);
 			initWorkspace(window, window->getCaption());
+		}
+
+		void CEditor::exportGMap(const char* path, long x1, long y1, long x2, long y2, int zoom, int type, int gridSize)
+		{
+			m_exportGMapDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_exportGMapDialog->setCaption(L"Export GMap");
+			m_exportGMapDialog->showCloseButton(false);
+			m_exportGMapDialog->setCenterPosition();
+			m_exportGMapDialog->bringToFront();
+
+			initWorkspace(m_exportGMapDialog, m_exportGMapDialog->getCaption());
+
+			CSpace* space = getWorkspace(m_exportGMapDialog);
+			CSpaceExportGMap* spaceExport = dynamic_cast<CSpaceExportGMap*>(space);
+			spaceExport->exportMap(path, x1, y1, x2, y2, zoom, type, gridSize);
 		}
 
 		void CEditor::OnCommandGameObject(GUI::CBase* item)
