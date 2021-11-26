@@ -28,6 +28,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "DownloadMap.h"
 #include "AssetManager/CAssetManager.h"
 
+#include <filesystem>
+#if defined(__APPLE_CC__)
+namespace fs = std::__fs::filesystem;
+#else
+namespace fs = std::filesystem;
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
@@ -46,7 +53,8 @@ namespace Skylicht
 			m_y(0),
 			m_z(0),
 			m_type(0),
-			m_gridSize(0)
+			m_gridSize(0),
+			m_retryDownload(0)
 		{
 			m_progressBar = new GUI::CProgressBar(window);
 			m_progressBar->dock(GUI::EPosition::Top);
@@ -57,10 +65,13 @@ namespace Skylicht
 			m_statusText->setMargin(GUI::SMargin(14.0f, 5.0, 14.0, 0.0f));
 			m_statusText->setWrapMultiline(true);
 			m_statusText->setString(L"Exporting...");
+
+			m_downloadThread = new CDownloadGMapThread();
 		}
 
 		CSpaceExportGMap::~CSpaceExportGMap()
 		{
+			delete m_downloadThread;
 		}
 
 		void CSpaceExportGMap::update()
@@ -78,18 +89,42 @@ namespace Skylicht
 				float f = m_drawElement / (float)total;
 				m_progressBar->setPercent(f);
 
-				// write image
-				std::string localPath = getMapTileLocalCache((EImageMapType)m_type, m_x, m_y, m_z);
+				EImageMapType type = (EImageMapType)m_type;
 
-				IImage* tile = getVideoDriver()->createImageFromFile(localPath.c_str());
-				if (tile != NULL)
+				// write image
+				std::string localPath = getMapTileLocalCache(type, m_x, m_y, m_z);
+
+				char log[512];
+				sprintf(log, "Wait downloading... (%ld, %ld)", m_x, m_y);
+				m_statusText->setString(log);
+
+				if (fs::exists(localPath))
 				{
-					tile->copyTo(m_image, core::vector2di((m_x - m_x1) * m_gridSize, (m_y - m_y1) * m_gridSize));
-					tile->drop();
+					m_downloadThread->lockReadFile();
+					IImage* tile = getVideoDriver()->createImageFromFile(localPath.c_str());
+					if (tile != NULL)
+					{
+						tile->copyTo(m_image, core::vector2di((m_x - m_x1) * m_gridSize, (m_y - m_y1) * m_gridSize));
+						tile->drop();
+					}
+					m_downloadThread->unlockReadFile();
+					m_retryDownload = 0;
 				}
 				else
 				{
 					// need download
+					if (!m_downloadThread->isNotFound(type, m_x, m_y, m_z))
+					{
+						if (!m_downloadThread->isQueue(type, m_x, m_y, m_z) &&
+							!m_downloadThread->isDownloading(type, m_x, m_y, m_z))
+						{
+							m_downloadThread->requestDownloadMap(type, m_x, m_y, m_z);
+							m_retryDownload++;
+						}
+
+						if (m_retryDownload <= 2)
+							return;
+					}
 				}
 
 				// next element
@@ -101,7 +136,10 @@ namespace Skylicht
 				}
 
 				if (++m_drawElement == total)
+				{
+					m_statusText->setString(L"Writing...");
 					m_state = Write;
+				}
 			}
 			else if (m_state == Write)
 			{
@@ -143,6 +181,8 @@ namespace Skylicht
 			m_type = type;
 
 			m_drawElement = 0;
+			m_retryDownload = 0;
+
 			m_gridSize = gridSize;
 			m_progressBar->setPercent(0.0f);
 			m_state = Init;

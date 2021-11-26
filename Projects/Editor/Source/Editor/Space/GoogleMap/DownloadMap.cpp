@@ -3,6 +3,13 @@
 #include "pch.h"
 #include "DownloadMap.h"
 
+#include <filesystem>
+#if defined(__APPLE_CC__)
+namespace fs = std::__fs::filesystem;
+#else
+namespace fs = std::filesystem;
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
@@ -34,20 +41,25 @@ namespace Skylicht
 
 		std::string getMapTileLocalCache(EImageMapType type, long x, long y, long z)
 		{
+			// create folder cache
+			if (!fs::exists("./Maps"))
+				fs::create_directory("./Maps");
+
 			char fileName[512] = { 0 };
 			switch (type)
 			{
 			case EImageMapType::GSatellite:
 			{
-				sprintf(fileName, "gmap_%d_%ld_%ld.jpg", z, x, y);
+				sprintf(fileName, "./Maps/gmap_%d_%ld_%ld.jpg", z, x, y);
 				break;
 			}
 			case EImageMapType::OSMTerrain:
-				sprintf(fileName, "osm_%d_%ld_%ld.png", z, x, y);
+				sprintf(fileName, "./Maps/osm_%d_%ld_%ld.png", z, x, y);
 				break;
 			default:
 				break;
 			}
+
 			return std::string(fileName);
 		}
 	}
