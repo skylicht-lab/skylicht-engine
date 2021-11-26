@@ -24,66 +24,62 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
+#include "Thread/IThread.h"
+#include "Thread/IMutex.h"
 
-#include "Editor/Space/CSpace.h"
-#include "AssetManager/CAssetImporter.h"
+#include "DownloadMap.h"
 
-#include "CDownloadGMapThread.h"
+#ifdef HAVE_SKYLICHT_NETWORK
+#include "HttpRequest/CHttpRequest.h"
+#endif
+
+#define NUM_HTTPREQUEST	8
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceExportGMap : public CSpace
+		class CDownloadGMapThread : public IThreadCallback
 		{
 		protected:
-			enum EImportState
-			{
-				None = 0,
-				Init,
-				Draw,
-				Write,
-				Finish,
-			};
+			IThread* m_downloadMapThread;
+			IMutex* m_lock;
+			IMutex* m_lockFile;
 
-		protected:
-			GUI::CProgressBar* m_progressBar;
+			std::list<SImageDownload> m_queueDownload;
+			std::list<SImageDownload> m_downloading;
+			std::list<SImageDownload> m_notfound;
 
-			GUI::CLabel* m_statusText;
+			SImageDownload* m_imgDownloading[NUM_HTTPREQUEST];
+			CHttpRequest* m_httpRequest[NUM_HTTPREQUEST];
+			CHttpStream* m_httpStream[NUM_HTTPREQUEST];
 
-			EImportState m_state;
-
-			CDownloadGMapThread* m_downloadThread;
-
-			long m_x;
-			long m_y;
-			int m_z;
-			int m_type;
-
-			long m_x1;
-			long m_y1;
-			long m_x2;
-			long m_y2;
-			int m_gridSize;
-			long m_drawElement;
-			int m_retryDownload;
-
-			std::string m_path;
-
-			IImage* m_image;
 		public:
-			CSpaceExportGMap(GUI::CWindow* window, CEditor* editor);
+			CDownloadGMapThread();
 
-			virtual ~CSpaceExportGMap();
+			virtual ~CDownloadGMapThread();
 
-			virtual void update();
+			virtual void updateThread();
 
-			virtual void onDestroy(GUI::CBase* base);
+			inline void lockReadFile()
+			{
+				m_lockFile->lock();
+			}
 
-			bool isFinish();
+			inline void unlockReadFile()
+			{
+				m_lockFile->unlock();
+			}
 
-			void exportMap(const char* path, long x1, long y1, long x2, long y2, int zoom, int type, int gridSize);
+			void requestDownloadMap(EImageMapType type, long x, long y, int z);
+
+			bool isDownloading(EImageMapType type, long x, long y, int z);
+
+			bool isQueue(EImageMapType type, long x, long y, int z);
+
+			bool isNotFound(EImageMapType type, long x, long y, int z);
+
+			void cancelDownload();
 		};
 	}
 }
