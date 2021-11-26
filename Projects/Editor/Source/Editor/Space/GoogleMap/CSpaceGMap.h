@@ -28,15 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 
-#include "Thread/IThread.h"
-#include "Thread/IMutex.h"
-#include "DownloadMap.h"
-
-#ifdef HAVE_SKYLICHT_NETWORK
-#include "HttpRequest/CHttpRequest.h"
-#endif
-
-#define NUM_HTTPREQUEST	8
+#include "CDownloadGMapThread.h"
 
 namespace Skylicht
 {
@@ -76,7 +68,7 @@ namespace Skylicht
 			}
 		};
 
-		class CSpaceGMap : public CSpace, IThreadCallback
+		class CSpaceGMap : public CSpace
 		{
 		protected:
 			GUI::CBase* m_view;
@@ -96,17 +88,7 @@ namespace Skylicht
 			bool m_rightPress;
 			bool m_leftPress;
 
-			IThread* m_downloadMapThread;
-			IMutex* m_lock;
-			IMutex* m_lockFile;
-
-			std::list<SImageDownload> m_queueDownload;
-			std::list<SImageDownload> m_downloading;
-			std::list<SImageDownload> m_notfound;
-
-			SImageDownload* m_imgDownloading[NUM_HTTPREQUEST];
-			CHttpRequest* m_httpRequest[NUM_HTTPREQUEST];
-			CHttpStream* m_httpStream[NUM_HTTPREQUEST];
+			CDownloadGMapThread* m_downloadThread;
 
 			EImageMapType m_mapBGType;
 
@@ -131,11 +113,11 @@ namespace Skylicht
 
 			void onRemoveExport(GUI::CBase* base);
 
+			void onClearCache(GUI::CBase* base);
+
 			void onExport(GUI::CBase* base);
 
 			void exportMap(const char* path);
-
-			virtual void updateThread();
 
 			virtual void onResize(float w, float h);
 
@@ -178,8 +160,6 @@ namespace Skylicht
 			void zoomIn(long viewX, long viewY);
 
 			void zoomOut(long viewX, long viewY);
-
-			void cancelDownload();
 
 			void updateZoomString();
 		};

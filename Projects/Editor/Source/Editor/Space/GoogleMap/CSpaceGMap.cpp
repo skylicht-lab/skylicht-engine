@@ -31,6 +31,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "Editor/CEditor.h"
 
+#include <filesystem>
+#if defined(__APPLE_CC__)
+namespace fs = std::__fs::filesystem;
+#else
+namespace fs = std::filesystem;
+#endif
+
 using namespace std::placeholders;
 
 namespace Skylicht
@@ -44,8 +51,6 @@ namespace Skylicht
 			m_viewY(0),
 			m_gridSize(256),
 			m_rightPress(false),
-			m_downloadMapThread(NULL),
-			m_lock(NULL),
 			m_mapBGType(EImageMapType::GSatellite)
 		{
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
@@ -69,6 +74,12 @@ namespace Skylicht
 			m_btnRemoveExport->setDisabled(true);
 			m_btnRemoveExport->OnPress = BIND_LISTENER(&CSpaceGMap::onRemoveExport, this);
 
+			GUI::CButton* clearCache = toolbar->addButton(GUI::ESystemIcon::Trash);
+			clearCache->setLabel(L"Clear cache");
+			clearCache->showLabel(true);
+			clearCache->sizeToContents();
+			clearCache->OnPress = BIND_LISTENER(&CSpaceGMap::onClearCache, this);
+
 			m_btnExport = toolbar->addButton(GUI::ESystemIcon::Export);
 			m_btnExport->setLabel(L"Export");
 			m_btnExport->showLabel(true);
@@ -91,40 +102,15 @@ namespace Skylicht
 			m_fontLarge = new CGlyphFont(GUI::CThemeConfig::FontName.c_str(), GUI::CThemeConfig::getFontSizePt(GUI::EFontSize::SizeLarge));
 			m_fontNormal = new CGlyphFont(GUI::CThemeConfig::FontName.c_str(), GUI::CThemeConfig::getFontSizePt(GUI::EFontSize::SizeNormal));
 
-			for (int i = 0; i < NUM_HTTPREQUEST; i++)
-			{
-				m_imgDownloading[i] = NULL;
-				m_httpStream[i] = new CHttpStream();
-				m_httpRequest[i] = new CHttpRequest(m_httpStream[i]);
-			}
 
-			m_lock = IMutex::createMutex();
-			m_lockFile = IMutex::createMutex();
-			m_downloadMapThread = IThread::createThread(this);
+			m_downloadThread = new CDownloadGMapThread();
 		}
 
 		CSpaceGMap::~CSpaceGMap()
 		{
 			delete m_fontLarge;
 			delete m_fontNormal;
-
-			if (m_downloadMapThread != NULL)
-				m_downloadMapThread->stop();
-
-			if (m_lock != NULL)
-				delete m_lock;
-
-			if (m_lockFile != NULL)
-				delete m_lockFile;
-
-			for (int i = 0; i < NUM_HTTPREQUEST; i++)
-			{
-				m_imgDownloading[i] = NULL;
-				m_httpStream[i] = NULL;
-
-				delete m_httpRequest[i];
-				m_httpRequest[i] = NULL;
-			}
+			delete m_downloadThread;
 
 			clear();
 		}
@@ -166,6 +152,23 @@ namespace Skylicht
 			m_btnExport->setDisabled(true);
 		}
 
+		void CSpaceGMap::onClearCache(GUI::CBase* base)
+		{
+			m_downloadThread->cancelDownload();
+			clear();
+
+			for (const auto& file : fs::directory_iterator(".\\"))
+			{
+				std::string path = file.path().generic_u8string();
+
+				std::string ext = CPath::getFileNameExt(path);
+				if (ext == "png" || ext == "jpeg" || ext == "jpg")
+				{
+					fs::remove(path);
+				}
+			}
+		}
+
 		void CSpaceGMap::onExport(GUI::CBase* base)
 		{
 			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
@@ -200,213 +203,31 @@ namespace Skylicht
 			m_editor->exportGMap(path, x1, y1, x2, y2, m_zoom, (int)m_mapBGType, m_gridSize);
 		}
 
-		void CSpaceGMap::updateThread()
-		{
-			m_lock->lock();
-
-			for (int r = 0; r < NUM_HTTPREQUEST; r++)
-			{
-				// need create new request
-				if (m_queueDownload.size() > 0 && m_imgDownloading[r] == NULL)
-				{
-					std::list<SImageDownload>::iterator i = m_queueDownload.begin();
-					SImageDownload& img = (*i);
-
-					SImageMapElement* pImg = &img.Image;
-
-					m_httpRequest[r]->setURL(img.Url.c_str());
-					m_httpRequest[r]->sendRequestByGet();
-
-					// push queue to downloading
-					m_downloading.push_back((*i));
-					m_imgDownloading[r] = &(m_downloading.back());
-
-					m_queueDownload.pop_front();
-				}
-				else
-				{
-					// update request download
-					if (m_imgDownloading[r] && m_httpRequest[r]->updateRequest() == true)
-					{
-						if (m_httpRequest[r]->getResponseCode() > 0)
-						{
-							std::string path = getMapTileLocalCache(
-								m_imgDownloading[r]->Image.Type,
-								m_imgDownloading[r]->Image.X,
-								m_imgDownloading[r]->Image.Y,
-								m_imgDownloading[r]->Image.Z);
-
-							const unsigned char* data = m_httpStream[r]->getData();
-
-							bool isPNG = false;
-							bool isJPEG = false;
-
-							static unsigned char PNGSignature[] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-							if (memcmp(data, PNGSignature, sizeof(PNGSignature)) == 0)
-								isPNG = true;
-
-							static unsigned char JPGSignature[] = { 0xFF, 0xD8, 0xFF };
-							if (memcmp(data, JPGSignature, sizeof(JPGSignature)) == 0)
-								isJPEG = true;
-
-							if (isPNG || isJPEG)
-							{
-								io::IWriteFile* file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(path.c_str());
-								if (file != NULL)
-								{
-									m_lockFile->lock();
-									file->write(m_httpStream[r]->getData(), m_httpStream[r]->getDataSize());
-									file->drop();
-									m_lockFile->unlock();
-
-									m_imgDownloading[r]->Image.Status = EImageMapStatus::Downloaded;
-									m_imgDownloading[r]->Image.Path = path;
-								}
-								else
-								{
-									m_imgDownloading[r]->Image.Status = EImageMapStatus::NotFound;
-									m_notfound.push_back(*m_imgDownloading[r]);
-								}
-							}
-							else
-							{
-								m_imgDownloading[r]->Image.Status = EImageMapStatus::NotFound;
-								m_notfound.push_back(*m_imgDownloading[r]);
-							}
-						}
-
-						std::list<SImageDownload>::iterator iDown = m_downloading.begin(), endDown = m_downloading.end();
-						while (iDown != endDown)
-						{
-							if (iDown->Image.Type == m_imgDownloading[r]->Image.Type &&
-								iDown->Image.X == m_imgDownloading[r]->Image.X &&
-								iDown->Image.Y == m_imgDownloading[r]->Image.Y &&
-								iDown->Image.Z == m_imgDownloading[r]->Image.Z)
-							{
-								// remove on downloading list
-								m_downloading.erase(iDown);
-								break;
-							}
-							++iDown;
-						}
-
-						m_imgDownloading[r] = NULL;
-						m_httpStream[r] = NULL;
-
-						delete m_httpRequest[r];
-
-						m_httpStream[r] = new CHttpStream();
-						m_httpRequest[r] = new CHttpRequest(m_httpStream[r]);
-					}
-				}
-			}
-			m_lock->unlock();
-
-			if (m_queueDownload.size() == 0 && m_downloading.size() == 0)
-				IThread::sleep(200);
-			else
-				IThread::sleep(1);
-		}
-
 		int CSpaceGMap::getMapState(long x, long y, int z)
 		{
 			int ret = 0;
-			m_lock->lock();
-			std::list<SImageDownload>::iterator i = m_queueDownload.begin(), end = m_queueDownload.end();
-			while (i != end)
-			{
-				if (i->Image.X == x &&
-					i->Image.Y == y &&
-					i->Image.Z == z)
-				{
-					// queue
-					ret = 1;
-					break;
-				}
-				++i;
-			}
 
-			i = m_downloading.begin(), end = m_downloading.end();
-			while (i != end)
-			{
-				if (i->Image.X == x &&
-					i->Image.Y == y &&
-					i->Image.Z == z)
-				{
-					// downloading
-					ret = 2;
-					break;
-				}
-				++i;
-			}
-			m_lock->unlock();
+			if (m_downloadThread->isQueue(m_mapBGType, x, y, z))
+				ret = 1;
+
+			if (m_downloadThread->isDownloading(m_mapBGType, x, y, z))
+				ret = 2;
+
 			return ret;
 		}
 
 		void CSpaceGMap::requestDownloadMap(long x, long y, int z)
 		{
-			m_lock->lock();
+			if (m_downloadThread->isNotFound(m_mapBGType, x, y, z))
+				return;
 
-			SImageMapElement img;
+			if (m_downloadThread->isQueue(m_mapBGType, x, y, z))
+				return;
 
-			img.Type = m_mapBGType;
-			img.X = x;
-			img.Y = y;
-			img.Z = z;
+			if (m_downloadThread->isDownloading(m_mapBGType, x, y, z))
+				return;
 
-			std::list<SImageDownload>::iterator i = m_notfound.begin(), end = m_notfound.end();
-			while (i != end)
-			{
-				if (i->Image.Type == img.Type &&
-					i->Image.X == img.X &&
-					i->Image.Y == img.Y &&
-					i->Image.Z == img.Z)
-				{
-					m_lock->unlock();
-					return;
-				}
-				++i;
-			}
-
-			i = m_queueDownload.begin(), end = m_queueDownload.end();
-			while (i != end)
-			{
-				if (i->Image.Type == img.Type &&
-					i->Image.X == img.X &&
-					i->Image.Y == img.Y &&
-					i->Image.Z == img.Z)
-				{
-					m_lock->unlock();
-					return;
-				}
-				++i;
-			}
-
-			i = m_downloading.begin(), end = m_downloading.end();
-			while (i != end)
-			{
-				if (i->Image.Type == img.Type &&
-					i->Image.X == img.X &&
-					i->Image.Y == img.Y &&
-					i->Image.Z == img.Z)
-				{
-					m_lock->unlock();
-					return;
-				}
-				++i;
-			}
-
-
-			SImageDownload download;
-			download.Image.Type = m_mapBGType;
-			download.Image.X = img.X;
-			download.Image.Y = img.Y;
-			download.Image.Z = img.Z;
-			download.Url = getMapTileURL(m_mapBGType, img.X, img.Y, img.Z);
-
-			m_queueDownload.push_back(download);
-
-			m_lock->unlock();
+			m_downloadThread->requestDownloadMap(m_mapBGType, x, y, z);
 		}
 
 		ITexture* CSpaceGMap::searchMapTileset(long x, long y, int z)
@@ -431,17 +252,13 @@ namespace Skylicht
 		{
 			std::string path = getMapTileLocalCache(m_mapBGType, x, y, z);
 
-			m_lockFile->lock();
-
+			m_downloadThread->lockReadFile();
 			io::IReadFile* file = getIrrlichtDevice()->getFileSystem()->createAndOpenFile(path.c_str());
 			if (file == NULL)
 			{
-				m_lockFile->unlock();
+				m_downloadThread->unlockReadFile();
 				return NULL;
 			}
-
-			m_lockFile->unlock();
-
 			ITexture* texture = getVideoDriver()->getTexture(file);
 
 			if (texture != NULL)
@@ -459,6 +276,8 @@ namespace Skylicht
 			}
 
 			file->drop();
+			m_downloadThread->unlockReadFile();
+
 			return texture;
 		}
 
@@ -888,27 +707,13 @@ namespace Skylicht
 #endif
 		}
 
-		void CSpaceGMap::cancelDownload()
-		{
-			m_lock->lock();
-			m_queueDownload.clear();
-			m_notfound.clear();
-
-			for (int i = 0; i < NUM_HTTPREQUEST; i++)
-			{
-				if (m_httpRequest[i]->isSendRequest())
-					m_httpRequest[i]->cancel();
-			}
-			m_lock->unlock();
-		}
-
 		void CSpaceGMap::zoomIn(long viewX, long viewY)
 		{
 			int z = m_zoom + 1;
 
 			if (z >= 2 && z <= 22)
 			{
-				cancelDownload();
+				m_downloadThread->cancelDownload();
 				clear();
 
 				m_viewX += viewX;
@@ -932,7 +737,7 @@ namespace Skylicht
 
 			if (z >= 2 && z <= 22)
 			{
-				cancelDownload();
+				m_downloadThread->cancelDownload();
 				clear();
 
 				m_viewX += viewX;
