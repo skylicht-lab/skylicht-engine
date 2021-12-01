@@ -46,14 +46,14 @@ namespace Skylicht
 
 		void CRenderMeshEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
 		{
+			m_component = target;
 			m_gameObject = target->getGameObject();
 			m_renderMesh = dynamic_cast<CRenderMesh*>(target);
 
 			if (m_gameObject->isEnableEditorChange() && m_renderMesh != NULL)
 			{
 				// setup gui
-				GUI::CCollapsibleGroup* group = ui->addGroup("Render Mesh", this);
-
+				GUI::CCollapsibleGroup* group = ui->addGroup("CRenderMesh", this);
 				GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 
 				group->setExpand(true);
