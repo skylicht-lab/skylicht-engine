@@ -28,6 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	// Warning:
+	// if this code don't run on SkylichtEditor
+	// please register at CEngineEditor.cpp (Projects/Editor/Source/Editor/Components)
 #define CATEGORY_COMPONENT(component, name, path) int component##_category = CComponentCategory::createGetInstance()->addToCategory(#component, name, path);
 
 	class CComponentCategory : public CGameSingleton<CComponentCategory>

@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CContextMenuScene.h"
 #include "CSceneController.h"
+#include "Selection/CSelection.h"
+#include "Editor/SpaceController/CPropertyController.h"
 #include "GUI/Input/CInput.h"
 
 namespace Skylicht
@@ -177,6 +179,9 @@ namespace Skylicht
 				}
 				else if (command == L"Delete")
 				{
+					CSelection::getInstance()->unSelect(contextObject);
+					CPropertyController::getInstance()->setProperty(NULL);
+
 					contextObject->remove();
 					contextNode->remove();
 					sceneController->clearContextNode();

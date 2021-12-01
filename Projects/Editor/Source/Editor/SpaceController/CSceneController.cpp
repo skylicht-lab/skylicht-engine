@@ -387,7 +387,7 @@ namespace Skylicht
 
 			CHierachyNode* node = m_hierachyNode->addChild();
 			node->setName(zone->getName());
-			node->setIcon(GUI::ESystemIcon::Collection);
+			node->setIcon(GUI::ESystemIcon::Folder);
 			node->setTagData(zone, CHierachyNode::Zone);
 
 			setNodeEvent(node);
