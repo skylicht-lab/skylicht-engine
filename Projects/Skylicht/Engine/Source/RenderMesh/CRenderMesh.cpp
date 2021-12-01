@@ -35,6 +35,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CRenderMesh);
+
+	CATEGORY_COMPONENT(CRenderMesh, "Render Mesh", "Renderer");
+
 	CRenderMesh::CRenderMesh()
 	{
 
@@ -48,16 +52,19 @@ namespace Skylicht
 
 	void CRenderMesh::releaseMaterial()
 	{
-		for (CMaterial *m : m_materials)
+		for (CMaterial* m : m_materials)
 			delete m;
 		m_materials.clear();
 	}
 
 	void CRenderMesh::releaseEntities()
 	{
-		CEntityManager *entityManager = m_gameObject->getEntityManager();
-		for (u32 i = 0, n = m_entities.size(); i < n; i++)
-			entityManager->removeEntity(m_entities[i]);
+		if (m_gameObject != NULL)
+		{
+			CEntityManager* entityManager = m_gameObject->getEntityManager();
+			for (u32 i = 0, n = m_entities.size(); i < n; i++)
+				entityManager->removeEntity(m_entities[i]);
+		}
 
 		m_entities.clear();
 		m_renderers.clear();
@@ -73,15 +80,15 @@ namespace Skylicht
 
 	}
 
-	void CRenderMesh::initFromPrefab(CEntityPrefab *prefab)
+	void CRenderMesh::initFromPrefab(CEntityPrefab* prefab)
 	{
 		releaseEntities();
 
-		CEntityManager *entityManager = m_gameObject->getEntityManager();
+		CEntityManager* entityManager = m_gameObject->getEntityManager();
 
 		// root entity of object
 		m_root = m_gameObject->getEntity();
-		CWorldTransformData *rootTransform = m_root->getData<CWorldTransformData>();
+		CWorldTransformData* rootTransform = m_root->getData<CWorldTransformData>();
 
 		// spawn childs entity
 		int numEntities = prefab->getNumEntities();
@@ -103,7 +110,7 @@ namespace Skylicht
 			CWorldTransformData* srcTransform = srcEntity->getData<CWorldTransformData>();
 			if (srcTransform != NULL)
 			{
-				CWorldTransformData *spawnTransform = spawnEntity->addData<CWorldTransformData>();
+				CWorldTransformData* spawnTransform = spawnEntity->addData<CWorldTransformData>();
 				spawnTransform->Name = srcTransform->Name;
 				spawnTransform->Relative = srcTransform->Relative;
 				spawnTransform->HasChanged = true;
@@ -118,10 +125,10 @@ namespace Skylicht
 			}
 
 			// copy render data
-			CRenderMeshData *srcRender = srcEntity->getData<CRenderMeshData>();
+			CRenderMeshData* srcRender = srcEntity->getData<CRenderMeshData>();
 			if (srcRender != NULL)
 			{
-				CRenderMeshData *spawnRender = spawnEntity->addData<CRenderMeshData>();
+				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
 				spawnRender->setMesh(srcRender->getMesh());
 				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
 				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());
@@ -141,19 +148,19 @@ namespace Skylicht
 			}
 
 			// copy culling data
-			CCullingData *srcCulling = srcEntity->getData<CCullingData>();
+			CCullingData* srcCulling = srcEntity->getData<CCullingData>();
 			if (srcCulling != NULL)
 			{
-				CCullingData *spawnCulling = spawnEntity->addData<CCullingData>();
+				CCullingData* spawnCulling = spawnEntity->addData<CCullingData>();
 				spawnCulling->Type = srcCulling->Type;
 				spawnCulling->Visible = srcCulling->Visible;
 			}
 
 			// copy joint data
-			CJointData *srcJointData = srcEntity->getData<CJointData>();
+			CJointData* srcJointData = srcEntity->getData<CJointData>();
 			if (srcJointData != NULL)
 			{
-				CJointData *spawnJoint = spawnEntity->addData<CJointData>();
+				CJointData* spawnJoint = spawnEntity->addData<CJointData>();
 				spawnJoint->BoneRoot = srcJointData->BoneRoot;
 				spawnJoint->SID = srcJointData->SID;
 				spawnJoint->BoneName = srcJointData->BoneName;
@@ -167,11 +174,11 @@ namespace Skylicht
 		bool addInvData = false;
 
 		// re-map joint with new entity in CEntityManager
-		for (CRenderMeshData *&r : m_renderers)
+		for (CRenderMeshData*& r : m_renderers)
 		{
 			if (r->isSkinnedMesh() == true)
 			{
-				CSkinnedMesh *skinMesh = NULL;
+				CSkinnedMesh* skinMesh = NULL;
 
 				if (r->isSoftwareSkinning() == true)
 					skinMesh = dynamic_cast<CSkinnedMesh*>(r->getOriginalMesh());
@@ -209,17 +216,17 @@ namespace Skylicht
 	{
 		releaseMaterial();
 
-		for (CMaterial *m : materials)
+		for (CMaterial* m : materials)
 		{
-			CMaterial *material = m->clone(m_gameObject);
-			for (CRenderMeshData *&renderer : m_renderers)
+			CMaterial* material = m->clone(m_gameObject);
+			for (CRenderMeshData*& renderer : m_renderers)
 			{
 				renderer->setMaterial(material);
 			}
 			m_materials.push_back(material);
 		}
 
-		for (CMaterial *m : m_materials)
+		for (CMaterial* m : m_materials)
 			m->applyMaterial();
 	}
 }

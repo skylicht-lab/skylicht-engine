@@ -55,7 +55,7 @@ namespace Skylicht
 
 	public:
 
-		void initFromPrefab(CEntityPrefab *prefab);
+		void initFromPrefab(CEntityPrefab* prefab);
 
 		void initMaterial(ArrayMaterial& materials);
 
@@ -89,8 +89,10 @@ namespace Skylicht
 			return m_transforms;
 		}
 
+		DECLARE_GETTYPENAME(CRenderMesh);
+
 	protected:
-		
+
 		void releaseMaterial();
 
 		void releaseEntities();
