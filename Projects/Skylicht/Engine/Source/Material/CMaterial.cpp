@@ -74,7 +74,7 @@ namespace Skylicht
 		clearAllAffectMesh();
 	}
 
-	CMaterial* CMaterial::clone(CGameObject *gameObject)
+	CMaterial* CMaterial::clone()
 	{
 		CMaterial *mat = new CMaterial(m_materialName.c_str(), m_shaderPath.c_str());
 		mat->deleteAllParams();

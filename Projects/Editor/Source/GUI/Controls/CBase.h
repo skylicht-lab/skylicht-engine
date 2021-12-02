@@ -580,6 +580,8 @@ namespace Skylicht
 				bool m_renderFillRect;
 				SGUIColor m_fillRectColor;
 
+				bool m_renderDragDrop;
+
 				EPosition m_dock;
 
 				ECursorType m_cursor;

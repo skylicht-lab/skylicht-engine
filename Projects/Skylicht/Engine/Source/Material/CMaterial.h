@@ -49,7 +49,7 @@ namespace Skylicht
 
 			SUniformTexture* clone()
 			{
-				SUniformTexture *c = new SUniformTexture();
+				SUniformTexture* c = new SUniformTexture();
 				c->Name = Name;
 				c->Path = Path;
 				c->Texture = Texture;
@@ -79,7 +79,7 @@ namespace Skylicht
 
 			SUniformValue* clone()
 			{
-				SUniformValue *c = new SUniformValue();
+				SUniformValue* c = new SUniformValue();
 				memcpy(c->FloatValue, FloatValue, sizeof(float) * 4);
 				c->Name = Name;
 				c->FloatSize = FloatSize;
@@ -110,9 +110,9 @@ namespace Skylicht
 
 		std::vector<SExtraParams*> m_extras;
 
-		ITexture *m_resourceTexture[MATERIAL_MAX_TEXTURES];
-		ITexture *m_textures[MATERIAL_MAX_TEXTURES];
-		ITexture *m_overrideTextures[CShader::ResourceCount];
+		ITexture* m_resourceTexture[MATERIAL_MAX_TEXTURES];
+		ITexture* m_textures[MATERIAL_MAX_TEXTURES];
+		ITexture* m_overrideTextures[CShader::ResourceCount];
 
 		video::E_COMPARISON_FUNC m_zBuffer;
 		bool m_zWriteEnable;
@@ -128,7 +128,7 @@ namespace Skylicht
 		CShader* m_shader;
 
 	public:
-		CMaterial(const char *name, const char *shaderPath);
+		CMaterial(const char* name, const char* shaderPath);
 
 		virtual ~CMaterial();
 
@@ -137,7 +137,7 @@ namespace Skylicht
 			return m_shader;
 		}
 
-		inline void setOwner(CGameObject *obj)
+		inline void setOwner(CGameObject* obj)
 		{
 			m_owner = obj;
 		}
@@ -162,24 +162,24 @@ namespace Skylicht
 			m_manualInitMaterial = b;
 		}
 
-		CMaterial* clone(CGameObject *gameObject);
+		CMaterial* clone();
 
 		void deleteAllParams();
 		void deleteExtramParams();
 
-		void setUniform(const char *name, float f);
-		void setUniform2(const char *name, float *f);
-		void setUniform3(const char *name, float *f);
-		void setUniform4(const char *name, float *f);
+		void setUniform(const char* name, float f);
+		void setUniform2(const char* name, float* f);
+		void setUniform3(const char* name, float* f);
+		void setUniform4(const char* name, float* f);
 
-		const char *getUniformTextureName(int slot);
-		void setUniformTexture(const char *name, const char *path, bool loadTexture = true);
-		void setUniformTexture(const char *name, const char *path, std::vector<std::string>& folder, bool loadTexture = true);
-		void setUniformTexture(const char *name, ITexture *texture);
+		const char* getUniformTextureName(int slot);
+		void setUniformTexture(const char* name, const char* path, bool loadTexture = true);
+		void setUniformTexture(const char* name, const char* path, std::vector<std::string>& folder, bool loadTexture = true);
+		void setUniformTexture(const char* name, ITexture* texture);
 
-		SExtraParams *newExtra(const char *shaderPath);
-		void setExtraUniformTexture(SExtraParams *e, const char *name, const char *path);
-		void setExtraUniform(SExtraParams *e, const char *name, float *f, int floatSize);
+		SExtraParams* newExtra(const char* shaderPath);
+		void setExtraUniformTexture(SExtraParams* e, const char* name, const char* path);
+		void setExtraUniform(SExtraParams* e, const char* name, float* f, int floatSize);
 
 		inline std::vector<SUniformValue*>& getUniformParams()
 		{
@@ -216,20 +216,20 @@ namespace Skylicht
 			m_zBuffer = f;
 		}
 
-		SUniformValue* getUniform(const char *name);
+		SUniformValue* getUniform(const char* name);
 
-		SUniformTexture* getUniformTexture(const char *name);
+		SUniformTexture* getUniformTexture(const char* name);
 
-		SUniformValue* getExtraUniform(SExtraParams *e, const char *name);
+		SUniformValue* getExtraUniform(SExtraParams* e, const char* name);
 
-		SUniformTexture* getExtraUniformTexture(SExtraParams *e, const char *name);
+		SUniformTexture* getExtraUniformTexture(SExtraParams* e, const char* name);
 
 		CShaderParams& getShaderParams()
 		{
 			return m_shaderParams;
 		}
 
-		bool haveUniform(const char *name);
+		bool haveUniform(const char* name);
 
 		void initMaterial();
 
@@ -245,22 +245,22 @@ namespace Skylicht
 
 		void buildDoubleSidedMesh();
 
-		void addAffectMesh(IMeshBuffer *mesh);
+		void addAffectMesh(IMeshBuffer* mesh);
 
-		void removeAffectMesh(IMeshBuffer *mesh);
+		void removeAffectMesh(IMeshBuffer* mesh);
 
 		void clearAllAffectMesh();
 
-		void setOverrideResource(ITexture *texture, CShader::EResourceType type)
+		void setOverrideResource(ITexture* texture, CShader::EResourceType type)
 		{
 			m_overrideTextures[type] = texture;
 		}
 
 	public:
 
-		void changeShader(CShader *shader);
+		void changeShader(CShader* shader);
 
-		void changeShader(const char *path);
+		void changeShader(const char* path);
 
 		bool autoDetectLoadTexture();
 
@@ -280,27 +280,27 @@ namespace Skylicht
 
 		void initDefaultValue();
 
-		void setDefaultValue(SUniformValue *v, SUniform* u);
+		void setDefaultValue(SUniformValue* v, SUniform* u);
 
-		SUniformValue *newUniform(const char *name, int floatSize);
+		SUniformValue* newUniform(const char* name, int floatSize);
 
-		SUniformTexture *newUniformTexture(const char *name);
+		SUniformTexture* newUniformTexture(const char* name);
 
-		SUniformTexture *newExtraUniformTexture(SExtraParams *e, const char *name);
+		SUniformTexture* newExtraUniformTexture(SExtraParams* e, const char* name);
 
-		SUniformValue *newExtraUniform(SExtraParams *e, const char *name, int floatSize);
+		SUniformValue* newExtraUniform(SExtraParams* e, const char* name, int floatSize);
 
 		void addShaderUI(CShader::SUniformUI* ui);
 
-		SExtraParams* getExtraParams(const char *shaderPath);
+		SExtraParams* getExtraParams(const char* shaderPath);
 
 		void saveExtraParams();
 
-		void reloadExtraParams(const char *shaderPath);
+		void reloadExtraParams(const char* shaderPath);
 
-		SUniformTexture *findExtraTexture(const char *name);
+		SUniformTexture* findExtraTexture(const char* name);
 
-		SUniformValue *findExtraParam(const char *name, int floatSize);
+		SUniformValue* findExtraParam(const char* name, int floatSize);
 	};
 
 	typedef std::vector<CMaterial*> ArrayMaterial;

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSpaceProperty.h"
 #include "Utils/CStringImp.h"
 #include "Selection/CSelection.h"
+#include "AssetManager/CAssetManager.h"
 #include "Editor/SpaceController/CPropertyController.h"
 #include "Editor/SpaceController/CSceneController.h"
 #include "GUI/Theme/CThemeConfig.h"
@@ -342,7 +343,6 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
-				// when value change
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
@@ -387,7 +387,6 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
-				// when value change
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
@@ -432,7 +431,6 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
-				// when value change
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
@@ -471,7 +469,6 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
-				// when value change
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
@@ -550,7 +547,6 @@ namespace Skylicht
 			GUI::CComboBox* comboBox = new GUI::CComboBox(layout);
 			comboBox->setListValue(listValue);
 
-			// when value change
 			CObserver* onChange = new CObserver();
 			onChange->Notify = [me = onChange, target = comboBox](ISubject* subject, IObserver* from)
 			{
@@ -584,7 +580,6 @@ namespace Skylicht
 			GUI::CSlider* slider = new GUI::CSlider(layout);
 			slider->setValue(value->get(), min, max, false);
 
-			// when value change
 			CObserver* onChange = new CObserver();
 			onChange->Notify = [me = onChange, target = slider](ISubject* subject, IObserver* from)
 			{
@@ -618,7 +613,6 @@ namespace Skylicht
 			GUI::CColorPicker* colorPicker = new GUI::CColorPicker(layout);
 			colorPicker->setColor(GUI::SGUIColor(c.getAlpha(), c.getRed(), c.getGreen(), c.getBlue()));
 
-			// when value change
 			CObserver* onChange = new CObserver();
 			onChange->Notify = [me = onChange, target = colorPicker](ISubject* subject, IObserver* from)
 			{
@@ -638,6 +632,139 @@ namespace Skylicht
 				value->notify(observer);
 			};
 
+			boxLayout->endVertical();
+		}
+
+		void CSpaceProperty::addInputFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value, const std::vector<std::string>& exts)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CTextBox* input = new GUI::CTextBox(layout);
+			input->showIcon(GUI::ESystemIcon::File);
+			input->setEditable(false);
+
+			std::string fileName = CPath::getFileName(value->get());
+			if (fileName.size() > 0)
+				input->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
+			else
+				input->setString(L"None");
+
+			input->OnAcceptDragDrop = [&, x = exts](GUI::SDragDropPackage* data)
+			{
+				if (data->Name == "ListFSItem")
+				{
+					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+					bool isFolder = rowItem->getTagBool();
+					if (isFolder)
+						return false;
+
+					if (x.size() == 0)
+					{
+						// Enable all ext
+						return true;
+					}
+					else
+					{
+						// Check ext
+						std::string path = rowItem->getTagString();
+						std::string fileExt = CPath::getFileNameExt(path);
+						for (const std::string& s : x)
+						{
+							if (s == fileExt)
+								return true;
+						}
+						return false;
+					}
+				}
+				return false;
+			};
+
+			CObserver* onChange = new CObserver();
+			onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+			{
+				CSubject<std::string>* value = (CSubject<std::string>*)subject;
+				std::string fileName = CPath::getFileName(value->get());
+				if (fileName.size() > 0)
+					target->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
+				else
+					target->setString(L"None");
+			};
+
+			IObserver* observer = value->addObserver(onChange);
+			input->OnDrop = [s = value, obs = observer](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			{
+				if (data->Name == "ListFSItem")
+				{
+					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+					std::string path = rowItem->getTagString();
+					path = CAssetManager::getInstance()->getShortPath(path.c_str());
+					s->set(path);
+					s->notify(obs);
+				}
+			};
+			boxLayout->endVertical();
+		}
+
+		void CSpaceProperty::addInputFolder(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CTextBox* input = new GUI::CTextBox(layout);
+			input->showIcon(GUI::ESystemIcon::Folder);
+			input->setEditable(false);
+
+			std::string fileName = CPath::getFileName(value->get());
+			if (fileName.size() > 0)
+				input->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
+			else
+				input->setString(L"None");
+
+			input->OnAcceptDragDrop = [&](GUI::SDragDropPackage* data)
+			{
+				if (data->Name == "ListFSItem")
+				{
+					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+					bool isFolder = rowItem->getTagBool();
+					if (isFolder)
+						return true;
+					return false;
+				}
+				return false;
+			};
+
+			CObserver* onChange = new CObserver();
+			onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+			{
+				CSubject<std::string>* value = (CSubject<std::string>*)subject;
+				std::string fileName = CPath::getFileName(value->get());
+				if (fileName.size() > 0)
+					target->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
+				else
+					target->setString(L"None");
+			};
+
+			IObserver* observer = value->addObserver(onChange);
+			input->OnDrop = [s = value, obs = observer](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			{
+				if (data->Name == "ListFSItem")
+				{
+					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+					std::string path = rowItem->getTagString();
+					path = CAssetManager::getInstance()->getShortPath(path.c_str());
+					s->set(path);
+					s->notify(obs);
+				}
+			};
 			boxLayout->endVertical();
 		}
 

@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/ISubject.h"
 #include "Editor/Components/CComponentEditor.h"
 #include "Activator/CEditorActivator.h"
+#include "GUI/GUI.h"
 
 namespace Skylicht
 {
@@ -52,9 +53,11 @@ namespace Skylicht
 
 			virtual ~CDefaultEditor();
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui);
 
 			virtual void update();
+
+			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
 			void setName(const char* name)
 			{
