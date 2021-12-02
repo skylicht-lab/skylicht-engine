@@ -63,7 +63,8 @@ namespace Skylicht
 				m_tagBool(false),
 				m_tagData(NULL),
 				m_isTabable(false),
-				m_dragDropData(NULL)
+				m_dragDropData(NULL),
+				m_renderDragDrop(false)
 			{
 				if (parent != NULL)
 					setParent(parent->getInnerPanel());
@@ -439,12 +440,14 @@ namespace Skylicht
 
 			void CBase::doRenderDragOverlay()
 			{
+				m_renderDragDrop = true;
 				think();
 
 				SRect bounds = m_bounds;
 				bounds.X = 0.0f;
 				bounds.Y = 0.0f;
 				renderRecursive(bounds);
+				m_renderDragDrop = false;
 			}
 
 			void CBase::doRenderOverlay()

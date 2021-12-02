@@ -253,6 +253,77 @@ namespace Skylicht
 		}
 	};
 
+	class CFolderPathProperty : public CValuePropertyTemplate<std::string>
+	{
+	public:
+		CFolderPathProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, FolderPath, name)
+		{
+		}
+
+		CFolderPathProperty(CObjectSerializable* owner, const char* name, const char* value) :
+			CValuePropertyTemplate(owner, FolderPath, name)
+		{
+			set(value);
+		}
+
+		const char* getString()
+		{
+			return m_value.c_str();
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addString(Name.c_str(), m_value.c_str());
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+		}
+	};
+
+	class CFilePathProperty : public CValuePropertyTemplate<std::string>
+	{
+	public:
+		std::vector<std::string> Exts;
+
+	public:
+		CFilePathProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, FilePath, name)
+		{
+		}
+
+		CFilePathProperty(CObjectSerializable* owner, const char* name, const char* value, const std::vector<std::string>& exts) :
+			CValuePropertyTemplate(owner, FilePath, name)
+		{
+			Exts = exts;
+			set(value);
+		}
+
+		CFilePathProperty(CObjectSerializable* owner, const char* name, const char* value, const char* ext) :
+			CValuePropertyTemplate(owner, FilePath, name)
+		{
+			Exts.push_back(ext);
+			set(value);
+		}
+
+		const char* getString()
+		{
+			return m_value.c_str();
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addString(Name.c_str(), m_value.c_str());
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+		}
+	};
+
 	class CBoolProperty : public CValuePropertyTemplate<bool>
 	{
 	public:

@@ -28,12 +28,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Components/CComponentEditor.h"
 #include "Activator/CEditorActivator.h"
 #include "RenderMesh/CRenderMesh.h"
+#include "Editor/Components/Default/CDefaultEditor.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CRenderMeshEditor : public CComponentEditor
+		class CRenderMeshEditor : public CDefaultEditor
 		{
 		protected:
 			CRenderMesh* m_renderMesh;

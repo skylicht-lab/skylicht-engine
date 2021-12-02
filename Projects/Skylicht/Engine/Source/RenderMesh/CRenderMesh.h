@@ -44,6 +44,15 @@ namespace Skylicht
 		std::vector<CRenderMeshData*> m_renderers;
 
 		ArrayMaterial m_materials;
+
+		std::string m_meshFile;
+		std::string m_textureFolder;
+		std::string m_materialFile;
+
+		bool m_colladaTexcoord2;
+		bool m_colladaLoadNormal;
+		bool m_colladaFixInverseNormal;
+
 	public:
 		CRenderMesh();
 
@@ -53,7 +62,13 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
+
 	public:
+
+		void refreshModelAndMaterial();
 
 		void initFromPrefab(CEntityPrefab* prefab);
 

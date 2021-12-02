@@ -275,10 +275,54 @@ namespace Skylicht
 						ui->addColorPicker(layout, getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
+					else if (valueProperty->getType() == EPropertyDataType::FilePath)
+					{
+						CFilePathProperty* value = dynamic_cast<CFilePathProperty*>(valueProperty);
+						CSubject<std::string>* subject = new CSubject<std::string>(value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+						{
+							if (from != o)
+							{
+								const std::string& path = s->get();
+								value->set(path);
+								m_component->loadSerializable(m_data);
+							}
+						};
+
+						subject->addObserver(observer, true);
+						ui->addInputFile(layout, getPrettyName(value->Name), subject, value->Exts);
+						m_subjects.push_back(subject);
+					}
+					else if (valueProperty->getType() == EPropertyDataType::FolderPath)
+					{
+						CFolderPathProperty* value = dynamic_cast<CFolderPathProperty*>(valueProperty);
+						CSubject<std::string>* subject = new CSubject<std::string>(value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+						{
+							if (from != o)
+							{
+								const std::string& path = s->get();
+								value->set(path);
+								m_component->loadSerializable(m_data);
+							}
+						};
+
+						subject->addObserver(observer, true);
+						ui->addInputFolder(layout, getPrettyName(value->Name), subject);
+						m_subjects.push_back(subject);
+					}
 				}
+
+				initCustomGUI(layout, ui);
 
 				group->setExpand(true);
 			}
+		}
+
+		void CDefaultEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		{
 		}
 
 		void CDefaultEditor::update()

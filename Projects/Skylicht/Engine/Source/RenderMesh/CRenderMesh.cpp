@@ -33,6 +33,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CJointData.h"
 #include "Culling/CCullingData.h"
 
+#include "MeshManager/CMeshManager.h"
+
 namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CRenderMesh);
@@ -78,6 +80,94 @@ namespace Skylicht
 	void CRenderMesh::updateComponent()
 	{
 
+	}
+
+	CObjectSerializable* CRenderMesh::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+
+		object->addAutoRelease(new CBoolProperty(object, "load normal", m_colladaLoadNormal));
+		object->addAutoRelease(new CBoolProperty(object, "inserse normal", m_colladaFixInverseNormal));
+		object->addAutoRelease(new CBoolProperty(object, "load texcoord2", m_colladaTexcoord2));
+
+		std::vector<std::string> meshExts = { "dae","obj","smesh" };
+		object->addAutoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
+		object->addAutoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), "xml"));
+		object->addAutoRelease(new CFolderPathProperty(object, "textures", m_textureFolder.c_str()));
+		return object;
+	}
+
+	void CRenderMesh::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
+
+		m_colladaLoadNormal = object->get<bool>("load normal", true);
+		m_colladaFixInverseNormal = object->get<bool>("inserse normal", true);
+		m_colladaTexcoord2 = object->get<bool>("load texcoord2", false);
+
+		std::string meshFile = object->get<std::string>("mesh", "");
+		std::string materialFile = object->get<std::string>("material", "");
+
+		m_textureFolder = object->get<std::string>("textures", "");
+
+		if (meshFile != m_meshFile)
+		{
+			m_meshFile = meshFile;
+
+			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
+				meshFile.c_str(),
+				m_textureFolder.c_str(),
+				m_colladaLoadNormal,
+				m_colladaFixInverseNormal,
+				m_colladaTexcoord2,
+				false);
+
+			if (prefab != NULL)
+				initFromPrefab(prefab);
+		}
+
+		if (materialFile != m_materialFile)
+		{
+			m_materialFile = materialFile;
+
+			std::vector<std::string> textureFolders;
+			textureFolders.push_back(m_textureFolder);
+
+			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+				m_materialFile.c_str(),
+				true,
+				textureFolders
+			);
+
+			if (materials.size() > 0)
+				initMaterial(materials);
+		}
+	}
+
+	void CRenderMesh::refreshModelAndMaterial()
+	{
+		CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
+			m_meshFile.c_str(),
+			m_textureFolder.c_str(),
+			m_colladaLoadNormal,
+			m_colladaFixInverseNormal,
+			m_colladaTexcoord2,
+			false);
+
+		if (prefab != NULL)
+			initFromPrefab(prefab);
+
+		std::vector<std::string> textureFolders;
+		textureFolders.push_back(m_textureFolder);
+
+		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+			m_materialFile.c_str(),
+			true,
+			textureFolders
+		);
+
+		if (materials.size() > 0)
+			initMaterial(materials);
 	}
 
 	void CRenderMesh::initFromPrefab(CEntityPrefab* prefab)
@@ -218,7 +308,7 @@ namespace Skylicht
 
 		for (CMaterial* m : materials)
 		{
-			CMaterial* material = m->clone(m_gameObject);
+			CMaterial* material = m->clone();
 			for (CRenderMeshData*& renderer : m_renderers)
 			{
 				renderer->setMaterial(material);

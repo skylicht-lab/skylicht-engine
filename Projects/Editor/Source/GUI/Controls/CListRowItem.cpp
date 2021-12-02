@@ -78,6 +78,9 @@ namespace Skylicht
 
 			void CListRowItem::renderUnder()
 			{
+				if (m_renderDragDrop)
+					return;
+
 				if (isHovered() || m_toggleStatus)
 				{
 					renderBackground();
