@@ -227,6 +227,8 @@ namespace Skylicht
 				item->tagString(f.FullPath);
 				item->tagBool(f.IsFolder);
 				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CListFSController::OnFileOpen, this);
+
+				initDragDrop(item);
 			}
 
 			m_listFS->setScrollVertical(0.0f);
@@ -234,6 +236,12 @@ namespace Skylicht
 			m_currentFolder = currentFolder;
 			if (m_currentFolder.empty())
 				m_currentFolder = m_assetManager->getAssetFolder();
+		}
+
+		void CListFSController::initDragDrop(GUI::CListRowItem* item)
+		{
+			GUI::SDragDropPackage* dragDrop = item->setDragDropPackage("ListFSItem", item);
+			dragDrop->DrawControl = item;
 		}
 
 		void CListFSController::OnFileOpen(GUI::CBase* node)

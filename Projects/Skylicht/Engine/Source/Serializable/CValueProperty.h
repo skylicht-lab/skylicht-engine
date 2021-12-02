@@ -43,6 +43,8 @@ namespace Skylicht
 		Color,
 		Matrix4,
 		Object,
+		FilePath,
+		FolderPath
 	};
 
 	class CValueProperty

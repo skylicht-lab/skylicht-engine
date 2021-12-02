@@ -87,6 +87,8 @@ namespace Skylicht
 
 			void rename(GUI::CListRowItem* node);
 
+			void initDragDrop(GUI::CListRowItem* item);
+
 			void OnRename(GUI::CBase* control);
 
 			void OnCancelRename(GUI::CBase* control);
