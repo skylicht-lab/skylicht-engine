@@ -366,6 +366,10 @@ namespace Skylicht
 					importer.importAll();
 				}
 			};
+
+			GUI::SDragDropPackage* dragDrop = row->setDragDropPackage("TreeFSItem", row);
+			dragDrop->UserData = node;
+			dragDrop->DrawControl = node->getTextItem();
 		}
 	}
 }

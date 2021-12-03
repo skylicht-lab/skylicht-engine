@@ -739,6 +739,10 @@ namespace Skylicht
 						return true;
 					return false;
 				}
+				else if (data->Name == "TreeFSItem")
+				{
+					return true;
+				}
 				return false;
 			};
 
@@ -760,6 +764,14 @@ namespace Skylicht
 				{
 					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
 					std::string path = rowItem->getTagString();
+					path = CAssetManager::getInstance()->getShortPath(path.c_str());
+					s->set(path);
+					s->notify(obs);
+				}
+				else if (data->Name == "TreeFSItem")
+				{
+					GUI::CTreeNode* node = (GUI::CTreeNode*)data->UserData;
+					std::string path = node->getTagString();
 					path = CAssetManager::getInstance()->getShortPath(path.c_str());
 					s->set(path);
 					s->notify(obs);
