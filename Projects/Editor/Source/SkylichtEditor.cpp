@@ -69,8 +69,6 @@ void SkylichtEditor::onUpdate()
 	{
 		// import resources
 		CBaseApp* app = getApplication();
-		app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
-		app->getFileSystem()->addFileArchive(app->getBuiltInPath("Editor.zip"), false, false);
 
 		// load gui shader
 		CShaderManager* shaderMgr = CShaderManager::getInstance();

@@ -23,35 +23,67 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CRenderMeshEditor.h"
-#include "Editor/Space/Property/CSpaceProperty.h"
-#include "Editor/SpaceController/CSceneController.h"
+#include "CGRenderMesh.h"
+
+#include "Utils/CActivator.h"
+#include "Components/CDependentComponent.h"
+
+#include "GameObject/CGameObject.h"
+#include "Transform/CWorldInverseTransformData.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		EDITOR_REGISTER(CRenderMeshEditor, CRenderMesh);
+		ACTIVATOR_REGISTER(CGRenderMesh);
 
-		CRenderMeshEditor::CRenderMeshEditor() :
-			m_renderMesh(NULL)
+		DEPENDENT_COMPONENT(CRenderMesh, CGRenderMesh);
+
+		CGRenderMesh::CGRenderMesh() :
+			m_renderMesh(NULL),
+			m_selectObjectData(NULL)
 		{
 
 		}
 
-		CRenderMeshEditor::~CRenderMeshEditor()
+		CGRenderMesh::~CGRenderMesh()
 		{
 
 		}
 
-		void CRenderMeshEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
+		void CGRenderMesh::initComponent()
 		{
-			CDefaultEditor::initGUI(target, ui);
+			m_renderMesh = m_gameObject->getComponent<CRenderMesh>();
+
+			// pick collision
+			CEntity* entity = m_gameObject->getEntity();
+			entity->addData<CWorldInverseTransformData>();
+
+			// select bbox data
+			m_selectObjectData = entity->addData<CSelectObjectData>();
+			m_selectObjectData->GameObject = m_gameObject;
+
+			updateSelectBBox();
 		}
 
-		void CRenderMeshEditor::update()
+		void CGRenderMesh::updateComponent()
 		{
+			updateSelectBBox();
+		}
 
+		void CGRenderMesh::updateSelectBBox()
+		{
+			m_selectObjectData->BBox.reset(0.0f, 0.0f, 0.0f);
+
+			std::vector<CRenderMeshData*>& renderers = m_renderMesh->getRenderers();
+			for (size_t i = 0, n = renderers.size(); i < n; i++)
+			{
+				core::aabbox3df bbox = renderers[i]->getMesh()->getBoundingBox();
+				if (i == 0)
+					m_selectObjectData->BBox = bbox;
+				else
+					m_selectObjectData->BBox.addInternalBox(bbox);
+			}
 		}
 	}
 }
