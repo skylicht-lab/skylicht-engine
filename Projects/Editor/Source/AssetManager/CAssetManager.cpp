@@ -50,7 +50,7 @@ namespace Skylicht
 		{
 			m_workingFolder = getIrrlichtDevice()->getFileSystem()->getWorkingDirectory().c_str();
 
-			m_assetFolder = m_workingFolder + "/../Assets";
+			m_assetFolder = m_workingFolder;
 			m_assetFolder = CPath::normalizePath(m_assetFolder);
 
 			m_projectFolder = m_workingFolder + "/..";

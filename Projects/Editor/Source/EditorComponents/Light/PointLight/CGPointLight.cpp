@@ -76,6 +76,7 @@ namespace Skylicht
 			CEntity* entity = m_gameObject->getEntity();
 			entity->addData<CWorldInverseTransformData>();
 
+			// select bbox data
 			CSelectObjectData* selectObject = entity->addData<CSelectObjectData>();
 			selectObject->GameObject = m_gameObject;
 			selectObject->BBox = m_defaultBBox;

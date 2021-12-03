@@ -41,7 +41,10 @@ namespace Skylicht
 
 	CATEGORY_COMPONENT(CRenderMesh, "Render Mesh", "Renderer");
 
-	CRenderMesh::CRenderMesh()
+	CRenderMesh::CRenderMesh() :
+		m_loadTexcoord2(false),
+		m_loadNormal(true),
+		m_fixInverseNormal(true)
 	{
 
 	}
@@ -86,9 +89,9 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
-		object->addAutoRelease(new CBoolProperty(object, "load normal", m_colladaLoadNormal));
-		object->addAutoRelease(new CBoolProperty(object, "inserse normal", m_colladaFixInverseNormal));
-		object->addAutoRelease(new CBoolProperty(object, "load texcoord2", m_colladaTexcoord2));
+		object->addAutoRelease(new CBoolProperty(object, "load normal", m_loadNormal));
+		object->addAutoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
+		object->addAutoRelease(new CBoolProperty(object, "load texcoord2", m_loadTexcoord2));
 
 		std::vector<std::string> meshExts = { "dae","obj","smesh" };
 		object->addAutoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
@@ -101,9 +104,9 @@ namespace Skylicht
 	{
 		CComponentSystem::loadSerializable(object);
 
-		m_colladaLoadNormal = object->get<bool>("load normal", true);
-		m_colladaFixInverseNormal = object->get<bool>("inserse normal", true);
-		m_colladaTexcoord2 = object->get<bool>("load texcoord2", false);
+		m_loadNormal = object->get<bool>("load normal", true);
+		m_fixInverseNormal = object->get<bool>("inserse normal", true);
+		m_loadTexcoord2 = object->get<bool>("load texcoord2", false);
 
 		std::string meshFile = object->get<std::string>("mesh", "");
 		std::string materialFile = object->get<std::string>("material", "");
@@ -117,9 +120,9 @@ namespace Skylicht
 			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 				meshFile.c_str(),
 				m_textureFolder.c_str(),
-				m_colladaLoadNormal,
-				m_colladaFixInverseNormal,
-				m_colladaTexcoord2,
+				m_loadNormal,
+				m_fixInverseNormal,
+				m_loadTexcoord2,
 				false);
 
 			if (prefab != NULL)
@@ -149,9 +152,9 @@ namespace Skylicht
 		CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 			m_meshFile.c_str(),
 			m_textureFolder.c_str(),
-			m_colladaLoadNormal,
-			m_colladaFixInverseNormal,
-			m_colladaTexcoord2,
+			m_loadNormal,
+			m_fixInverseNormal,
+			m_loadTexcoord2,
 			false);
 
 		if (prefab != NULL)

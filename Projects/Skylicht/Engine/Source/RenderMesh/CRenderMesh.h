@@ -49,9 +49,9 @@ namespace Skylicht
 		std::string m_textureFolder;
 		std::string m_materialFile;
 
-		bool m_colladaTexcoord2;
-		bool m_colladaLoadNormal;
-		bool m_colladaFixInverseNormal;
+		bool m_loadTexcoord2;
+		bool m_loadNormal;
+		bool m_fixInverseNormal;
 
 	public:
 		CRenderMesh();
