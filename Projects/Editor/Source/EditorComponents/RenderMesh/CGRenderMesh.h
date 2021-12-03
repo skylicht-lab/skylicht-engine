@@ -22,36 +22,36 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CRenderMeshEditor.h"
-#include "Editor/Space/Property/CSpaceProperty.h"
-#include "Editor/SpaceController/CSceneController.h"
+#pragma once
+
+#include "EditorComponents/CGizmosComponent.h"
+#include "EditorComponents/SelectObject/CSelectObjectData.h"
+#include "RenderMesh/CRenderMesh.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		EDITOR_REGISTER(CRenderMeshEditor, CRenderMesh);
-
-		CRenderMeshEditor::CRenderMeshEditor() :
-			m_renderMesh(NULL)
+		class CGRenderMesh : public CGizmosComponent
 		{
+		protected:
+			CRenderMesh* m_renderMesh;
 
-		}
+			CSelectObjectData* m_selectObjectData;
 
-		CRenderMeshEditor::~CRenderMeshEditor()
-		{
+		public:
+			CGRenderMesh();
 
-		}
+			virtual ~CGRenderMesh();
 
-		void CRenderMeshEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
-		{
-			CDefaultEditor::initGUI(target, ui);
-		}
+			virtual void initComponent();
 
-		void CRenderMeshEditor::update()
-		{
+			virtual void updateComponent();
 
-		}
+		protected:
+
+			void updateSelectBBox();
+
+		};
 	}
 }
