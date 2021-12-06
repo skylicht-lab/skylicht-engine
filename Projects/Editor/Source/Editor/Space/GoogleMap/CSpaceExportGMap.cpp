@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "DownloadMap.h"
 #include "AssetManager/CAssetManager.h"
 
+#include "GMapUtils.h"
+
 #include <filesystem>
 #if defined(__APPLE_CC__)
 namespace fs = std::__fs::filesystem;
@@ -186,6 +188,25 @@ namespace Skylicht
 			m_gridSize = gridSize;
 			m_progressBar->setPercent(0.0f);
 			m_state = Init;
+
+			std::string mapInfo = path;
+			mapInfo += ".txt";
+
+			double lat1, lng1, lat2, lng2;
+			getLatLngByPixel(m_x1 * gridSize, m_y1 * gridSize, m_z, &lat1, &lng1);
+			getLatLngByPixel(m_x2 * gridSize, m_y2 * gridSize, m_z, &lat2, &lng2);
+
+			double distanceW = measure(lat1, lng1, lat1, lng2);
+			double distanceH = measure(lat1, lng1, lat2, lng1);
+
+			io::IWriteFile* file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(mapInfo.c_str());
+			if (file != NULL)
+			{
+				char buffer[1024];
+				sprintf(buffer, "W: %.3lfkm\nH: %.3lfkm", distanceW, distanceH);
+				file->write(buffer, (u32)strlen(buffer));
+				file->drop();
+			}
 		}
 	}
 }
