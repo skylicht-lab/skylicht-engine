@@ -42,19 +42,19 @@ namespace Skylicht
 		std::string getMapTileLocalCache(EImageMapType type, long x, long y, long z)
 		{
 			// create folder cache
-			if (!fs::exists("./Maps"))
-				fs::create_directory("./Maps");
+			if (!fs::exists("../Maps"))
+				fs::create_directory("../Maps");
 
 			char fileName[512] = { 0 };
 			switch (type)
 			{
 			case EImageMapType::GSatellite:
 			{
-				sprintf(fileName, "./Maps/gmap_%d_%ld_%ld.jpg", z, x, y);
+				sprintf(fileName, "../Maps/gmap_%d_%ld_%ld.jpg", z, x, y);
 				break;
 			}
 			case EImageMapType::OSMTerrain:
-				sprintf(fileName, "./Maps/osm_%d_%ld_%ld.png", z, x, y);
+				sprintf(fileName, "../Maps/osm_%d_%ld_%ld.png", z, x, y);
 				break;
 			default:
 				break;

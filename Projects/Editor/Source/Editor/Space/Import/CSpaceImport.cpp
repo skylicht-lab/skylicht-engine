@@ -88,7 +88,7 @@ namespace Skylicht
 				float percent = 0.0f;
 				std::string last;
 
-				bool finish = m_importer->loadGUID(10);
+				bool finish = m_importer->load(10);
 				m_importer->getImportStatus(percent, last);
 
 				m_progressBar->setPercent(percent);
