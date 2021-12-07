@@ -58,11 +58,9 @@ namespace Skylicht
 
 			virtual ~CAssetImporter();
 
+			bool load(int count);
+
 			void addDeleted(std::list<std::string>& list);
-
-			bool loadGUID(int count);
-
-			void removeUnusedMeta();
 
 			bool deleteAsset(int count);
 

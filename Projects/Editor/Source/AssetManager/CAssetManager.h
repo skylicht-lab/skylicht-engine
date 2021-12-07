@@ -37,16 +37,14 @@ namespace Skylicht
 			std::string Bundle;
 			std::string Path;
 			std::string FullPath;
-			std::string Guid;
 			time_t ModifyTime;
 			time_t CreateTime;
 
-			SFileNode(const char* bundle, const char* path, const char* fullPath, const char* guid, time_t modifyTime, time_t createTime)
+			SFileNode(const char* bundle, const char* path, const char* fullPath, time_t modifyTime, time_t createTime)
 			{
 				Bundle = bundle;
 				Path = path;
 				FullPath = fullPath;
-				Guid = guid;
 				ModifyTime = modifyTime;
 				CreateTime = createTime;
 			}
@@ -98,11 +96,9 @@ namespace Skylicht
 
 			bool m_haveAssetFolder;
 
-			std::map<std::string, SFileNode*> m_guidToFile;
 			std::map<std::string, SFileNode*> m_pathToFile;
 
 			std::list<SFileNode*> m_files;
-			std::list<std::string> m_meta;
 
 			std::map<std::string, IFileLoader*> m_fileLoader;
 
@@ -154,8 +150,6 @@ namespace Skylicht
 
 			SFileNode* getFileNodeByPath(const char* path);
 
-			SFileNode* getFileNodeByGUID(const char* GUID);
-
 		public:
 
 			void deleteChildAsset(const char* folderPath);
@@ -183,12 +177,6 @@ namespace Skylicht
 			SFileNode* addFileNode(const std::string& bundle, const std::string& path);
 
 			void sortFiles(std::vector<SFileInfo>& files);
-
-			void saveGUID(const char* path, SFileNode* node);
-
-			bool readGUID(const char* path, SFileNode* node);
-
-			void readOrGenerateMeta(const char* path, SFileNode* node);
 		};
 	}
 }

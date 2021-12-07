@@ -74,9 +74,7 @@ namespace Skylicht
 		void CAssetManager::discoveryAssetFolder()
 		{
 			m_files.clear();
-			m_guidToFile.clear();
 			m_pathToFile.clear();
-			m_meta.clear();
 
 			if (m_haveAssetFolder)
 			{
@@ -90,12 +88,7 @@ namespace Skylicht
 						discovery(bundle.c_str(), path.c_str());
 					}
 					else
-					{
-						if (CPath::getFileNameExt(path) != "meta")
-							addFileNode(".", path);
-						else
-							m_meta.push_back(path);
-					}
+						addFileNode(".", path);
 				}
 			}
 		}
@@ -111,16 +104,7 @@ namespace Skylicht
 				if (file.is_directory())
 					discovery(bundle, path);
 				else
-				{
-					if (CPath::getFileNameExt(path) != "meta")
-					{
-						addFileNode(bundle, path);
-					}
-					else
-					{
-						m_meta.push_back(path);
-					}
-				}
+					addFileNode(bundle, path);
 			}
 		}
 
@@ -146,7 +130,6 @@ namespace Skylicht
 						bundle.c_str(),
 						sortPath.c_str(),
 						path.c_str(),
-						"",
 						modifyTime,
 						createTime)
 				);
@@ -352,13 +335,6 @@ namespace Skylicht
 				if (node->Path.find(shortPath) == 0)
 				{
 					m_pathToFile.erase(node->Path);
-					m_guidToFile.erase(node->Guid);
-
-					std::string path = node->FullPath;
-					std::string meta = path + ".meta";
-
-					if (fs::exists(meta))
-						fs::remove_all(meta);
 
 					// try fix double node in list
 					deleteList.remove(node);
@@ -383,17 +359,12 @@ namespace Skylicht
 				SFileNode* node = it->second;
 
 				m_pathToFile.erase(node->Path);
-				m_guidToFile.erase(node->Guid);
 				m_files.remove(node);
 
 				std::string path = node->FullPath;
-				std::string meta = path + ".meta";
-
 				fs::remove_all(path);
-				fs::remove_all(meta);
 
 				delete node;
-
 				return true;
 			}
 
@@ -412,10 +383,6 @@ namespace Skylicht
 			newPath += name;
 
 			fs::rename(path, newPath.c_str());
-
-			std::string meta = std::string(path) + ".meta";
-			std::string newMeta = newPath + ".meta";
-			fs::rename(meta, newMeta);
 
 			node->FullPath = newPath;
 			node->Path = getShortPath(newPath.c_str());
@@ -459,7 +426,6 @@ namespace Skylicht
 				SFileNode* fileNode = addFileNode(bundle, path);
 				m_files.push_back(fileNode);
 
-				readOrGenerateMeta(path, fileNode);
 				return true;
 			}
 
@@ -472,139 +438,6 @@ namespace Skylicht
 			if (i == m_pathToFile.end())
 				return NULL;
 			return i->second;
-		}
-
-		SFileNode* CAssetManager::getFileNodeByGUID(const char* GUID)
-		{
-			std::map<std::string, SFileNode*>::iterator i = m_guidToFile.find(GUID);
-			if (i == m_guidToFile.end())
-				return NULL;
-			return i->second;
-		}
-
-		bool CAssetManager::readGUID(const char* path, SFileNode* node)
-		{
-			io::IFileSystem* filesystem = getIrrlichtDevice()->getFileSystem();
-			io::IXMLReader* xmlRead = filesystem->createXMLReader(path);
-			if (xmlRead == NULL)
-				return false;
-
-			while (xmlRead->read())
-			{
-				switch (xmlRead->getNodeType())
-				{
-				case io::EXN_ELEMENT:
-				{
-					std::wstring nodeName = xmlRead->getNodeName();
-					if (nodeName == L"guid")
-					{
-						const wchar_t* value = xmlRead->getAttributeValue(L"id");
-						if (value != NULL)
-						{
-							char text[70];
-							CStringImp::convertUnicodeToUTF8(value, text);
-							node->Guid = text;
-
-							xmlRead->drop();
-							return true;
-						}
-					}
-					break;
-				}
-				default:
-					break;
-				}
-			}
-
-			xmlRead->drop();
-			return false;
-		}
-
-		void CAssetManager::saveGUID(const char* path, SFileNode* node)
-		{
-			io::IFileSystem* filesystem = getIrrlichtDevice()->getFileSystem();
-			io::IWriteFile* file = filesystem->createAndWriteFile(path);
-			if (file == NULL)
-				return;
-
-			std::string data;
-			data += "<meta>\n";
-			data += "    <guid id=\"" + node->Guid += "\"/>\n";
-			data += "</meta>";
-
-			file->write(data.c_str(), (u32)data.size());
-			file->drop();
-		}
-
-		void CAssetManager::readOrGenerateMeta(const char* path, SFileNode* node)
-		{
-			bool regenerate = true;
-
-			std::string meta = std::string(path) + ".meta";
-
-			if (fs::exists(meta))
-			{
-				// load meta
-				if (readGUID(meta.c_str(), node) == true)
-				{
-					// remove meta
-					m_meta.remove(meta);
-
-					// check collision
-					if (node->Guid.empty()
-						|| node->Guid.size() != 64
-						|| m_guidToFile.find(node->Guid) != m_guidToFile.end())
-					{
-						if (m_guidToFile[node->Guid]->Path != getShortPath(path))
-						{
-							regenerate = true;
-
-							char log[1024];
-							sprintf(log, "[CAssetImporter::loadGUID] GUID Collision: %s\n", node->Path.c_str());
-							os::Printer::log(log);
-						}
-						else
-						{
-							// file updated, so no need generate guid
-							m_guidToFile[node->Guid] = node;
-
-							char log[1024];
-							sprintf(log, "[CAssetImporter::loadGUID] GUID Updated: %s\n", node->Path.c_str());
-							os::Printer::log(log);
-						}
-					}
-					else
-					{
-						regenerate = false;
-
-						// map guid
-						m_guidToFile[node->Guid] = node;
-					}
-				}
-				else
-				{
-					regenerate = true;
-				}
-			}
-			else
-			{
-				regenerate = true;
-			}
-
-			if (regenerate)
-			{
-				// current time
-				std::time_t now = std::time(0);
-
-				// generate guid
-				node->Guid = generateHash(node->Bundle.c_str(), node->Path.c_str(), node->CreateTime, now);
-
-				// save meta
-				saveGUID(meta.c_str(), node);
-
-				// map guid
-				m_guidToFile[node->Guid] = node;
-			}
 		}
 
 		void CAssetManager::registerFileLoader(const char* ext, IFileLoader* loader)
