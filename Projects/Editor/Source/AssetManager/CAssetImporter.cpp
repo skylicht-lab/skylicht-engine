@@ -85,7 +85,7 @@ namespace Skylicht
 			m_totalDeleted = (u32)m_fileDeleted.size();
 		}
 
-		bool CAssetImporter::loadGUID(int count)
+		bool CAssetImporter::load(int count)
 		{
 			if (m_fileIterator == m_fileIteratorEnd)
 				return true;
@@ -98,7 +98,9 @@ namespace Skylicht
 
 				if (fs::exists(path))
 				{
-					m_assetManager->readOrGenerateMeta(path.c_str(), node);
+					// todo
+					// import {path}
+
 				}
 
 				m_lastFile = node->Path;
@@ -108,14 +110,13 @@ namespace Skylicht
 
 				if (m_fileIterator == m_fileIteratorEnd)
 				{
-					removeUnusedMeta();
+					// finish import
 					return true;
 				}
 			}
 
 			return false;
 		}
-
 		void CAssetImporter::getImportStatus(float& percent, std::string& last)
 		{
 			percent = m_fileID / (float)(m_total);
@@ -159,16 +160,6 @@ namespace Skylicht
 			return false;
 		}
 
-		void CAssetImporter::removeUnusedMeta()
-		{
-			for (const std::string& path : m_assetManager->m_meta)
-			{
-				fs::remove(path);
-			}
-
-			m_assetManager->m_meta.clear();
-		}
-
 		void CAssetImporter::add(const char* path)
 		{
 			std::string bundle = m_assetManager->getBundleName(path);
@@ -191,20 +182,13 @@ namespace Skylicht
 
 				std::string path = node->FullPath;
 
-				if (fs::exists(path))
-				{
-					m_assetManager->readOrGenerateMeta(path.c_str(), node);
-				}
+				// todo: import {path}
+
 
 				m_lastFile = node->Path;
 
 				++m_fileIterator;
 				++m_fileID;
-
-				if (m_fileIterator == m_fileIteratorEnd)
-				{
-					removeUnusedMeta();
-				}
 			}
 		}
 	}
