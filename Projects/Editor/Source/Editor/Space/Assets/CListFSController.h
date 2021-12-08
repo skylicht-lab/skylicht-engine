@@ -67,6 +67,8 @@ namespace Skylicht
 
 			virtual ~CListFSController();
 
+			void OnPress(GUI::CBase* item);
+
 			void OnSelected(GUI::CBase* item);
 
 			void OnKeyPress(GUI::CBase* control, int key, bool press);
