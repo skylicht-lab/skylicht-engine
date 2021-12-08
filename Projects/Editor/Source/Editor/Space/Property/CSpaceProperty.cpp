@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Selection/CSelection.h"
 #include "AssetManager/CAssetManager.h"
 #include "Editor/SpaceController/CPropertyController.h"
+#include "Editor/SpaceController/CAssetPropertyController.h"
 #include "Editor/SpaceController/CSceneController.h"
 #include "GUI/Theme/CThemeConfig.h"
 
@@ -77,6 +78,7 @@ namespace Skylicht
 			m_addComponentController = new CAddComponentController(editor, m_addComponentMenu);
 
 			CPropertyController::getInstance()->setSpaceProperty(this);
+			CAssetPropertyController::getInstance()->setSpaceProperty(this);
 		}
 
 		CSpaceProperty::~CSpaceProperty()
@@ -183,6 +185,11 @@ namespace Skylicht
 		void CSpaceProperty::addComponent(CComponentEditor* editor, CGameObject* gameobject)
 		{
 			editor->initGUI(gameobject, this);
+		}
+
+		void CSpaceProperty::addAsset(CAssetEditor* editor, const char* path)
+		{
+			editor->initGUI(path, this);
 		}
 
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CComponentEditor* editor)

@@ -50,6 +50,17 @@ namespace Skylicht
 			return true;
 		}
 
+		bool CEditorActivator::registerAssetEditor(const char* ext, ActivatorCreateAssetEditor func)
+		{
+			std::map<std::string, int>::iterator i = m_mapAsset.find(ext);
+			if (i != m_mapAsset.end())
+				return false;
+
+			m_mapAsset[ext] = (int)m_factoryAssetFunc.size();
+			m_factoryAssetFunc.push_back(func);
+			return true;
+		}
+
 		CComponentEditor* CEditorActivator::getEditorInstance(const char* componentType)
 		{
 			// find componentType
@@ -66,6 +77,25 @@ namespace Skylicht
 			int id = (*i).second;
 			CComponentEditor* result = m_factoryFunc[id]();
 			m_mapInstance[componentType] = result;
+			return result;
+		}
+
+		CAssetEditor* CEditorActivator::getAssetEditorInstance(const char* ext)
+		{
+			// find componentType
+			std::map<std::string, int>::iterator i = m_mapAsset.find(ext);
+			if (i == m_mapAsset.end())
+				return NULL;
+
+			// re-used
+			std::map<std::string, CAssetEditor*>::iterator j = m_mapAssetInstance.find(ext);
+			if (j != m_mapAssetInstance.end() && (*j).second != NULL)
+				return (*j).second;
+
+			// create and cache to re-used
+			int id = (*i).second;
+			CAssetEditor* result = m_factoryAssetFunc[id]();
+			m_mapAssetInstance[ext] = result;
 			return result;
 		}
 

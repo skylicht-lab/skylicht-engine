@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 #include "GUI/Theme/CThemeConfig.h"
+#include "Editor/SpaceController/CAssetPropertyController.h"
 
 namespace Skylicht
 {
@@ -96,6 +97,18 @@ namespace Skylicht
 					return;
 				}
 			}
+		}
+
+		void CListFSController::OnPress(GUI::CBase* item)
+		{
+			GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(item);
+			if (rowItem == NULL)
+				return;
+
+			const std::string& fullPath = rowItem->getTagString();
+			bool isFolder = rowItem->getTagBool();
+
+			CAssetPropertyController::getInstance()->onSelectAsset(fullPath.c_str(), isFolder);
 		}
 
 		void CListFSController::OnSelected(GUI::CBase* item)
@@ -210,6 +223,7 @@ namespace Skylicht
 				item->tagBool(true);
 				item->setIconColor(GUI::CThemeConfig::FolderColor);
 				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CListFSController::OnFileOpen, this);
+				item->OnPress = BIND_LISTENER(&CListFSController::OnPress, this);
 			}
 
 			for (SFileInfo& f : files)
@@ -227,6 +241,7 @@ namespace Skylicht
 				item->tagString(f.FullPath);
 				item->tagBool(f.IsFolder);
 				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CListFSController::OnFileOpen, this);
+				item->OnPress = BIND_LISTENER(&CListFSController::OnPress, this);
 
 				initDragDrop(item);
 			}

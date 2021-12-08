@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "Editor/Components/CComponentEditor.h"
+#include "Editor/AssetEditor/CAssetEditor.h"
 
 
 namespace Skylicht
@@ -33,17 +34,27 @@ namespace Skylicht
 	namespace Editor
 	{
 		typedef CComponentEditor* (*ActivatorCreateEditor)();
+		typedef CAssetEditor* (*ActivatorCreateAssetEditor)();
 
 #define EDITOR_REGISTER(type, componentType)  \
 		CComponentEditor* type##componentType##CreateFunc() { return new type(); } \
 		bool type##componentType##Activator = CEditorActivator::createGetInstance()->registerEditor(#componentType, &type##componentType##CreateFunc);
 
+#define ASSET_EDITOR_REGISTER(type, ext)  \
+		CAssetEditor* type##_ext_##CreateFunc() { return new type(); } \
+		bool type##_ext_##Activator = CEditorActivator::createGetInstance()->registerAssetEditor(#ext, &type##_ext_##CreateFunc);
+
 		class CEditorActivator : public CGameSingleton<CEditorActivator>
 		{
 		protected:
 			std::vector<ActivatorCreateEditor> m_factoryFunc;
+			std::vector<ActivatorCreateAssetEditor> m_factoryAssetFunc;
+			
 			std::map<std::string, int> m_mapComponent;
 			std::map<std::string, CComponentEditor*> m_mapInstance;
+
+			std::map<std::string, int> m_mapAsset;
+			std::map<std::string, CAssetEditor*> m_mapAssetInstance;
 
 		public:
 			CEditorActivator();
@@ -52,7 +63,11 @@ namespace Skylicht
 
 			bool registerEditor(const char* componentType, ActivatorCreateEditor func);
 
+			bool registerAssetEditor(const char* ext, ActivatorCreateAssetEditor func);
+
 			CComponentEditor* getEditorInstance(const char* componentType);
+
+			CAssetEditor* getAssetEditorInstance(const char* ext);
 
 			void releaseAllInstance();
 		};

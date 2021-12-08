@@ -24,51 +24,29 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GameObject/CGameObject.h"
-#include "Reactive/ISubject.h"
+#include "Utils/CGameSingleton.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSelectObject : public ISubject
+		class CAssetPropertyController : public CGameSingleton<CAssetPropertyController>
 		{
-		public:
-			enum ESelectType
-			{
-				GameObject,
-				Entity
-			};
-
 		protected:
-
-			ESelectType m_type;
-
-			std::string m_id;
+			CSpaceProperty* m_spaceProperty;
 
 		public:
-			CSelectObject(ESelectType type, const char* id);
+			CAssetPropertyController();
 
-			CSelectObject(ESelectType type, const std::string& id);
+			virtual ~CAssetPropertyController();
 
-			CSelectObject(CGameObject* obj);
-
-			virtual ~CSelectObject();
-
-			inline ESelectType getType()
+			inline void setSpaceProperty(CSpaceProperty* property)
 			{
-				return m_type;
+				m_spaceProperty = property;
 			}
 
-			inline std::string& getID()
-			{
-				return m_id;
-			}
-
-			bool operator==(const CSelectObject& obj)
-			{
-				return m_type == obj.m_type && m_id == obj.m_id;
-			}
+			void onSelectAsset(const char* path, bool isFolder);
 		};
 	}
 }
