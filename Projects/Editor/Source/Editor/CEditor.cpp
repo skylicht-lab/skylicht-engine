@@ -41,6 +41,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
+#include "SpaceController/CAssetPropertyController.h"
 
 #include "AssetManager/CAssetManager.h"
 #include "Selection/CSelection.h"
@@ -78,6 +79,7 @@ namespace Skylicht
 			// init controller
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
 			CPropertyController::createGetInstance();
+			CAssetPropertyController::createGetInstance();
 			CSelection::createGetInstance();
 			CEditorActivator::createGetInstance();
 			CProjectSettings::createGetInstance();
@@ -86,6 +88,7 @@ namespace Skylicht
 		CEditor::~CEditor()
 		{
 			CEditorActivator::releaseInstance();
+			CAssetPropertyController::releaseInstance();
 			CPropertyController::releaseInstance();
 			CSceneController::releaseInstance();
 			CSelection::releaseInstance();

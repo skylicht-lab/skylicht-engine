@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 #include "Editor/Components/CComponentEditor.h"
+#include "Editor/AssetEditor/CAssetEditor.h"
 #include "Reactive/CSubject.h"
 #include "Reactive/CObserver.h"
 
@@ -133,6 +134,8 @@ namespace Skylicht
 			void addComponent(CComponentEditor* editor, CComponentSystem* component, bool autoRelease = false);
 
 			void addComponent(CComponentEditor* editor, CGameObject* gameobject);
+
+			void addAsset(CAssetEditor* editor, const char* path);
 
 			void clearAllGroup();
 

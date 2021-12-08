@@ -22,53 +22,56 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "GameObject/CGameObject.h"
-#include "Reactive/ISubject.h"
+#include "pch.h"
+#include "CAssetPropertyController.h"
+#include "Activator/CEditorActivator.h"
+#include "Reactive/CObserver.h"
+#include "Utils/CPath.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSelectObject : public ISubject
+		CAssetPropertyController::CAssetPropertyController() :
+			m_spaceProperty(NULL)
 		{
-		public:
-			enum ESelectType
+
+		}
+
+		CAssetPropertyController::~CAssetPropertyController()
+		{
+
+		}
+
+		void CAssetPropertyController::onSelectAsset(const char* path, bool isFolder)
+		{
+			if (m_spaceProperty == NULL)
+				return;
+
+			// Name and icon
+			if (isFolder)
+				m_spaceProperty->setIcon(GUI::ESystemIcon::Folder);
+			else
+				m_spaceProperty->setIcon(GUI::ESystemIcon::File);
+
+			std::string fileName = CPath::getFileName(path);
+			std::string ext = CPath::getFileNameExt(path);
+
+			m_spaceProperty->setLabel(CStringImp::convertUTF8ToUnicode(fileName.c_str()).c_str());
+
+			// Clear old ui
+			m_spaceProperty->clearAllGroup();
+
+			// Tabable
+			m_spaceProperty->getWindow()->getCanvas()->TabableGroup.clear();
+
+			// Get file ext editor
+			if (!isFolder)
 			{
-				GameObject,
-				Entity
-			};
-
-		protected:
-
-			ESelectType m_type;
-
-			std::string m_id;
-
-		public:
-			CSelectObject(ESelectType type, const char* id);
-
-			CSelectObject(ESelectType type, const std::string& id);
-
-			CSelectObject(CGameObject* obj);
-
-			virtual ~CSelectObject();
-
-			inline ESelectType getType()
-			{
-				return m_type;
+				CAssetEditor* assetEditor = CEditorActivator::getInstance()->getAssetEditorInstance(ext.c_str());
+				if (assetEditor != NULL)
+					m_spaceProperty->addAsset(assetEditor, path);
 			}
-
-			inline std::string& getID()
-			{
-				return m_id;
-			}
-
-			bool operator==(const CSelectObject& obj)
-			{
-				return m_type == obj.m_type && m_id == obj.m_id;
-			}
-		};
+		}
 	}
 }

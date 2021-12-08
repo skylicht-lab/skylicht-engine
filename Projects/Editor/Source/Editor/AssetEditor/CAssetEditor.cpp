@@ -22,53 +22,21 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "GameObject/CGameObject.h"
-#include "Reactive/ISubject.h"
+#include "pch.h"
+#include "CAssetEditor.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSelectObject : public ISubject
+		CAssetEditor::CAssetEditor()
 		{
-		public:
-			enum ESelectType
-			{
-				GameObject,
-				Entity
-			};
 
-		protected:
+		}
 
-			ESelectType m_type;
+		CAssetEditor::~CAssetEditor()
+		{
 
-			std::string m_id;
-
-		public:
-			CSelectObject(ESelectType type, const char* id);
-
-			CSelectObject(ESelectType type, const std::string& id);
-
-			CSelectObject(CGameObject* obj);
-
-			virtual ~CSelectObject();
-
-			inline ESelectType getType()
-			{
-				return m_type;
-			}
-
-			inline std::string& getID()
-			{
-				return m_id;
-			}
-
-			bool operator==(const CSelectObject& obj)
-			{
-				return m_type == obj.m_type && m_id == obj.m_id;
-			}
-		};
+		}
 	}
 }
