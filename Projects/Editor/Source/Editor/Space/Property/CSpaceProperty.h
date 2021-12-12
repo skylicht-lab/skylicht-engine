@@ -44,12 +44,15 @@ namespace Skylicht
 			struct SGroup
 			{
 				CComponentEditor* Owner;
+				CAssetEditor* AssetOwner;
+
 				GUI::CBase* GroupUI;
 				std::vector<IObserver*> Observer;
 
 				SGroup()
 				{
 					Owner = NULL;
+					AssetOwner = NULL;
 					GroupUI = NULL;
 				}
 
@@ -123,7 +126,11 @@ namespace Skylicht
 
 			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CComponentEditor* editor);
 
+			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CAssetEditor* editor);
+
 			GUI::CCollapsibleGroup* addGroup(const char* label, CComponentEditor* editor);
+
+			GUI::CCollapsibleGroup* addGroup(const char* label, CAssetEditor* editor);
 
 			GUI::CButton* addButton(const wchar_t* label);
 

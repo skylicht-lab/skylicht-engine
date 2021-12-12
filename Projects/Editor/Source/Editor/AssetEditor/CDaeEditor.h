@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CAssetEditor.h"
+#include "ResourceSettings/MeshExportSettings.h"
 
 namespace Skylicht
 {
@@ -32,12 +33,19 @@ namespace Skylicht
 	{
 		class CDaeEditor : public CAssetEditor
 		{
+		protected: 
+			MeshExportSettings* m_settings;
+
 		public:
 			CDaeEditor();
 
 			virtual ~CDaeEditor();
 
+			virtual void clear();
+
 			virtual void initGUI(const char* path, CSpaceProperty* ui);
+
+			MeshExportSettings* createGetMeshExportSetting(const char* path);
 
 			DECLARE_GETTYPENAME(CDaeEditor);
 		};
