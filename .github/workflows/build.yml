@@ -9,108 +9,108 @@ jobs:
   Emscripten:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Install Dependencies
-      shell: cmd
-      run: |
-       git clone https://github.com/emscripten-core/emsdk.git
-       cd emsdk
-       call emsdk.bat install latest-upstream
-       call emsdk.bat activate latest-upstream
-       cd ..
-       echo Choco install
-       dir C:\ProgramData\Chocolatey\bin
-       echo Install WGET
-       choco install wget -y
-       echo Install SDL2LIB
-       wget -O SDL2-version_22.zip -q https://github.com/emscripten-ports/SDL2/archive/version_22.zip
-       mkdir InstallLibs
-       mkdir InstallLibs\SDL2
-       7z x SDL2-version_22.zip -oInstallLibs
-       copy InstallLibs\SDL2-version_22\include\*.* InstallLibs\SDL2
-       echo Install success
-    - name: Build
-      shell: cmd
-      run: |
-       cd Assets
-       python BuildAssetBundles.py
-       cd ..
-       mkdir Bin\BuiltIn
-       copy Bin\BuiltIn.zip Bin\BuiltIn
-       call emsdk\emsdk_env.bat
-       cmake -DCMAKE_TOOLCHAIN_FILE=emsdk\upstream\emscripten\cmake\Modules\Platform\Emscripten.cmake  -S . -B ./PrjEmscripten -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"
-       mingw32-make -C PrjEmscripten
-    - name: Package
-      shell: cmd
-      run: |
-        mkdir Build
-        type Version.txt
-        set /p CONFIG_VERSION=<Version.txt
-        set file_version=%CONFIG_VERSION:.=_%
-        set output=SkylichtDemo_%file_version%_Emscripten.zip
-        cd Bin
-        7z a %output% *.zip
-        7z a %output% *.wasm.*
-        7z a %output% *.html
-        cd..
-        copy Bin\%output% Build
-        dir -l Bin\%output% Build
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        shell: cmd
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          call emsdk.bat install latest-upstream
+          call emsdk.bat activate latest-upstream
+          cd ..
+          echo Choco install
+          dir C:\ProgramData\Chocolatey\bin
+          echo Install WGET
+          choco install wget -y
+          echo Install SDL2LIB
+          wget -O SDL2-version_22.zip -q https://github.com/emscripten-ports/SDL2/archive/version_22.zip
+          mkdir InstallLibs
+          mkdir InstallLibs\SDL2
+          7z x SDL2-version_22.zip -oInstallLibs
+          copy InstallLibs\SDL2-version_22\include\*.* InstallLibs\SDL2
+          echo Install success
+      - name: Build
+        shell: cmd
+        run: |
+          cd Assets
+          python BuildAssetBundles.py
+          cd ..
+          mkdir Bin\BuiltIn
+          copy Bin\BuiltIn.zip Bin\BuiltIn
+          call emsdk\emsdk_env.bat
+          cmake -DCMAKE_TOOLCHAIN_FILE=emsdk\upstream\emscripten\cmake\Modules\Platform\Emscripten.cmake  -S . -B ./PrjEmscripten -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"
+          mingw32-make -C PrjEmscripten
+      - name: Package
+        shell: cmd
+        run: |
+          mkdir Build
+          type Version.txt
+          set /p CONFIG_VERSION=<Version.txt
+          set file_version=%CONFIG_VERSION:.=_%
+          set output=SkylichtDemo_%file_version%_Emscripten.zip
+          cd Bin
+          7z a %output% *.zip
+          7z a %output% *.wasm.*
+          7z a %output% *.html
+          cd..
+          copy Bin\%output% Build
+          dir -l Bin\%output% Build
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
     #    name: SkylichtDemo_Emscripten
     #    path: Build
 
-  Universal_Windows_Platform:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Build
-      shell: cmd
-      run: |
-       cd Assets
-       python BuildAssetBundles.py
-       cd ..
-       mkdir PrjUWP
-       mkdir PrjUWP\Projects
-       cmake -S . -B ./PrjUWP -G "Visual Studio 16 2019" -A x64 -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0
-       cmake --build ./PrjUWP --config "Release"
-    
+  # Universal_Windows_Platform:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Build
+  #       shell: cmd
+  #       run: |
+  #         cd Assets
+  #         python BuildAssetBundles.py
+  #         cd ..
+  #         mkdir PrjUWP
+  #         mkdir PrjUWP\Projects
+  #         cmake -S . -B ./PrjUWP -G "Visual Studio 16 2019" -A x64 -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0
+  #         cmake --build ./PrjUWP --config "Release"
+
   Linux:
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update -y -qq
-        sudo apt-get install -y libglfw3-dev libopenal-dev libx11-dev
-        sudo apt remove --purge --auto-remove cmake
-        wget -q https://github.com/Kitware/CMake/releases/download/v3.15.5/cmake-3.15.5-Linux-x86_64.tar.gz
-        tar -zxvf cmake-3.15.5-Linux-x86_64.tar.gz        
-    - name: Build
-      run: |
-        export PATH="./cmake-3.15.5-Linux-x86_64/bin:$PATH"
-        cmake -S. -BPrjLinux
-        cd Assets
-        python BuildAssetBundles.py
-        cd ..
-        make -C PrjLinux
-    - name: Unit Test
-      run: |
-        cd PrjLinux
-        ctest --verpose
-        cd ..
-    - name: Package
-      run: |
-        mkdir Build
-        ls -l Bin
-        version=$(cat "Version.txt")
-        file_version=${version//./_}
-        output=../Build/SkylichtDemo_${file_version}_Linux.zip
-        cd Bin
-        7z a ${output} ./*
-        cd ..
-        ls -l Build
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get install -y libglfw3-dev libopenal-dev libx11-dev
+          sudo apt remove --purge --auto-remove cmake
+          wget -q https://github.com/Kitware/CMake/releases/download/v3.15.5/cmake-3.15.5-Linux-x86_64.tar.gz
+          tar -zxvf cmake-3.15.5-Linux-x86_64.tar.gz
+      - name: Build
+        run: |
+          export PATH="./cmake-3.15.5-Linux-x86_64/bin:$PATH"
+          cmake -S. -BPrjLinux
+          cd Assets
+          python BuildAssetBundles.py
+          cd ..
+          make -C PrjLinux
+      - name: Unit Test
+        run: |
+          cd PrjLinux
+          ctest --verpose
+          cd ..
+      - name: Package
+        run: |
+          mkdir Build
+          ls -l Bin
+          version=$(cat "Version.txt")
+          file_version=${version//./_}
+          output=../Build/SkylichtDemo_${file_version}_Linux.zip
+          cd Bin
+          7z a ${output} ./*
+          cd ..
+          ls -l Build
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
@@ -120,39 +120,38 @@ jobs:
   MacOS:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Build
-      run: |
-        brew install libomp
-        cd Assets
-        python BuildAssetBundles.py
-        cd ..
-        cmake -S . -B ./PrjMac -G Xcode
-        cd PrjMac
-        xcodebuild -configuration Release
-        cd ..
-    - name: Unit Test
-      run: |
-        cd PrjMac
-        ctest --verpose -C Release
-        cat Testing/Temporary/LastTest.log
-        cd ..
-    - name: Package
-      run: |
-        brew install p7zip
-        mkdir Build
-        ls -l Bin/Release
-        version=$(cat "Version.txt")
-        file_version=${version//./_}
-        output=SkylichtDemo_${file_version}_MacOS.zip
-        cd Bin/Release
-        7z a ${output} *.*
-        cd ../..
-        cp Bin/Release/${output} Build
-        ls -l Build
+      - uses: actions/checkout@v1
+      - name: Build
+        run: |
+          brew install libomp
+          cd Assets
+          python BuildAssetBundles.py
+          cd ..
+          cmake -S . -B ./PrjMac -G Xcode
+          cd PrjMac
+          xcodebuild -configuration Release
+          cd ..
+      - name: Unit Test
+        run: |
+          cd PrjMac
+          ctest --verpose -C Release
+          cat Testing/Temporary/LastTest.log
+          cd ..
+      - name: Package
+        run: |
+          brew install p7zip
+          mkdir Build
+          ls -l Bin/Release
+          version=$(cat "Version.txt")
+          file_version=${version//./_}
+          output=SkylichtDemo_${file_version}_MacOS.zip
+          cd Bin/Release
+          7z a ${output} *.*
+          cd ../..
+          cp Bin/Release/${output} Build
+          ls -l Build
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
     #    name: SkylichtDemo_MacOS
     #    path: Build
-        

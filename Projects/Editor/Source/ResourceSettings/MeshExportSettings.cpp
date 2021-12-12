@@ -23,58 +23,29 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "GUI/GUI.h"
-#include "CDaeEditor.h"
-#include "Activator/CEditorActivator.h"
-#include "Editor/Space/Property/CSpaceProperty.h"
+#include "MeshExportSettings.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		ASSET_EDITOR_REGISTER(CDaeEditor, dae);
-
-		CDaeEditor::CDaeEditor() :
-			m_settings(NULL)
+		MeshExportSettings::MeshExportSettings() :
+			CObjectSerializable("MeshExportSettings"),
+			GenerateLightmapUV2(this, "Generate lightmap UV2", false),
+			LightmapScale(this, "Lightmap scale", 1.0f)
 		{
 
 		}
 
-		CDaeEditor::~CDaeEditor()
+		MeshExportSettings::~MeshExportSettings()
 		{
-			clear();
+
 		}
 
-		void CDaeEditor::clear()
+		void MeshExportSettings::saveToFile()
 		{
-			if (m_settings)
-			{
-				delete m_settings;
-				m_settings = NULL;
-			}
-		}
-
-		void CDaeEditor::initGUI(const char* path, CSpaceProperty* ui)
-		{
-			std::string meta = path;
-			meta += ".meta";
-			m_settings = createGetMeshExportSetting(meta.c_str());
-
-			GUI::CCollapsibleGroup* group = ui->addGroup("Mesh Exporter", this);
-			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
-			group->setExpand(true);
-
-			group = ui->addGroup("Material Exporter", this);
-			layout = ui->createBoxLayout(group);
-			group->setExpand(true);
-		}
-
-		MeshExportSettings* CDaeEditor::createGetMeshExportSetting(const char* path)
-		{
-			MeshExportSettings* setting = new MeshExportSettings();
-			if (!setting->load(path))
-				setting->save(path);
-			return setting;
+			if (!m_savePath.empty())
+				save(m_savePath.c_str());
 		}
 	}
 }
