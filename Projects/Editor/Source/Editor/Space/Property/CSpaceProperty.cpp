@@ -145,6 +145,8 @@ namespace Skylicht
 			{
 				group->releaseObserver();
 				group->GroupUI->remove();
+				if (group->AssetOwner)
+					group->AssetOwner->clear();
 				delete group;
 			}
 
@@ -192,6 +194,20 @@ namespace Skylicht
 			editor->initGUI(path, this);
 		}
 
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CAssetEditor* editor)
+		{
+			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
+			colapsible->dock(GUI::EPosition::Top);
+			colapsible->getHeader()->setLabel(label);
+
+			SGroup* g = new SGroup();
+			g->AssetOwner = editor;
+			g->GroupUI = colapsible;
+
+			m_groups.push_back(g);
+			return colapsible;
+		}
+
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CComponentEditor* editor)
 		{
 			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
@@ -202,7 +218,7 @@ namespace Skylicht
 			g->Owner = editor;
 			g->GroupUI = colapsible;
 
-			if (editor->getComponent() != NULL)
+			if (editor != NULL && editor->getComponent() != NULL)
 			{
 				// add setting button on component group
 				GUI::CButton* btn = new GUI::CButton(colapsible->getHeader());
@@ -252,6 +268,12 @@ namespace Skylicht
 		}
 
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CComponentEditor* editor)
+		{
+			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
+			return addGroup(wlabel.c_str(), editor);
+		}
+
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CAssetEditor* editor)
 		{
 			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
 			return addGroup(wlabel.c_str(), editor);
