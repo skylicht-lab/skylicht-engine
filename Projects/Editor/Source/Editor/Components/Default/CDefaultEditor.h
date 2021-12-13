@@ -46,8 +46,6 @@ namespace Skylicht
 
 			std::vector<ISubject*> m_subjects;
 
-			std::wstring m_tempName;
-
 		public:
 			CDefaultEditor();
 
@@ -63,11 +61,6 @@ namespace Skylicht
 			{
 				m_name = name;
 			}
-
-		protected:
-
-			const wchar_t* getPrettyName(const std::string& paramName);
-
 		};
 	}
 }

@@ -72,6 +72,8 @@ namespace Skylicht
 				if (assetEditor != NULL)
 					m_spaceProperty->addAsset(assetEditor, path);
 			}
+
+			m_spaceProperty->getWindow()->forceUpdateLayout();
 		}
 	}
 }

@@ -81,7 +81,7 @@ namespace Skylicht
 								m_component->loadSerializable(m_data);
 							}), true);
 
-						ui->addCheckBox(layout, getPrettyName(value->Name), subject);
+						ui->addCheckBox(layout, ui->getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
 					else if (valueProperty->getType() == EPropertyDataType::Float)
@@ -103,7 +103,7 @@ namespace Skylicht
 								}
 							};
 							subject->addObserver(observer, true);
-							ui->addSlider(layout, getPrettyName(value->Name), subject, value->Min, value->Max);
+							ui->addSlider(layout, ui->getPrettyName(value->Name), subject, value->Min, value->Max);
 						}
 						else
 						{
@@ -139,7 +139,7 @@ namespace Skylicht
 								}
 							};
 							subject->addObserver(observer, true);
-							ui->addNumberInput(layout, getPrettyName(value->Name), subject, 0.01f);
+							ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject, 0.01f);
 							m_subjects.push_back(subject);
 						}
 					}
@@ -178,7 +178,7 @@ namespace Skylicht
 							}
 						};
 						subject->addObserver(observer, true);
-						ui->addNumberInput(layout, getPrettyName(value->Name), subject);
+						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
 					else if (valueProperty->getType() == EPropertyDataType::UInteger)
@@ -211,7 +211,7 @@ namespace Skylicht
 							}
 						};
 						subject->addObserver(observer, true);
-						ui->addNumberInput(layout, getPrettyName(value->Name), subject);
+						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
 					else if (valueProperty->getType() == EPropertyDataType::String)
@@ -234,7 +234,7 @@ namespace Skylicht
 						};
 
 						subject->addObserver(observer, true);
-						ui->addTextBox(layout, getPrettyName(value->Name), subject);
+						ui->addTextBox(layout, ui->getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
 					else if (valueProperty->getType() == EPropertyDataType::StringW)
@@ -253,7 +253,7 @@ namespace Skylicht
 						};
 
 						subject->addObserver(observer, true);
-						ui->addTextBox(layout, getPrettyName(value->Name), subject);
+						ui->addTextBox(layout, ui->getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
 					else if (valueProperty->getType() == EPropertyDataType::Color)
@@ -272,7 +272,7 @@ namespace Skylicht
 						};
 
 						subject->addObserver(observer, true);
-						ui->addColorPicker(layout, getPrettyName(value->Name), subject);
+						ui->addColorPicker(layout, ui->getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
 					else if (valueProperty->getType() == EPropertyDataType::FilePath)
@@ -291,7 +291,7 @@ namespace Skylicht
 						};
 
 						subject->addObserver(observer, true);
-						ui->addInputFile(layout, getPrettyName(value->Name), subject, value->Exts);
+						ui->addInputFile(layout, ui->getPrettyName(value->Name), subject, value->Exts);
 						m_subjects.push_back(subject);
 					}
 					else if (valueProperty->getType() == EPropertyDataType::FolderPath)
@@ -310,7 +310,7 @@ namespace Skylicht
 						};
 
 						subject->addObserver(observer, true);
-						ui->addInputFolder(layout, getPrettyName(value->Name), subject);
+						ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
 				}
@@ -328,37 +328,6 @@ namespace Skylicht
 		void CDefaultEditor::update()
 		{
 
-		}
-
-		const wchar_t* CDefaultEditor::getPrettyName(const std::string& name)
-		{
-			char prettyName[512] = { 0 };
-			int j = 0;
-			bool lastCharIsUpper = false;
-
-			for (size_t i = 0, j = 0, n = name.length(); i < n; i++, j++)
-			{
-				char c = name[i];
-
-				if (i == 0)
-				{
-					prettyName[j] = toupper(c);
-				}
-				else if (isupper(c) && !lastCharIsUpper)
-				{
-					prettyName[j++] = ' ';
-					prettyName[j] = c;
-				}
-				else
-				{
-					prettyName[j] = c;
-				}
-
-				lastCharIsUpper = isupper(c);
-			}
-
-			m_tempName = CStringImp::convertUTF8ToUnicode(prettyName);
-			return m_tempName.c_str();
 		}
 	}
 }
