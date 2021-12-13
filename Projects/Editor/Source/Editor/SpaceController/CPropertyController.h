@@ -37,8 +37,6 @@ namespace Skylicht
 		protected:
 			CSpaceProperty* m_spaceProperty;
 
-
-
 		public:
 			CPropertyController();
 

@@ -26,6 +26,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CActivator.h"
 
+#include "Reactive/CObserver.h"
+#include "Reactive/CSubject.h"
+
+#include "Serializable/CObjectSerializable.h"
+
+#include "GUI/GUI.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -34,18 +41,26 @@ namespace Skylicht
 
 		class CAssetEditor : public IActivatorObject
 		{
+		protected:
+			std::vector<ISubject*> m_subjects;
+
 		public:
 			CAssetEditor();
 
 			virtual ~CAssetEditor();
 
-			virtual void clear()
+			virtual void clear();
+
+			virtual void initGUI(const char* path, CSpaceProperty* ui)
 			{
 
 			}
 
-			virtual void initGUI(const char* path, CSpaceProperty* ui)
+			virtual void serializableToControl(CObjectSerializable* object, CSpaceProperty* ui, GUI::CBoxLayout* layout);
+
+			virtual void onUpdateValue(CObjectSerializable* object)
 			{
+
 			}
 		};
 	}

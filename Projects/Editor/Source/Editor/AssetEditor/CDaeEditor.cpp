@@ -47,6 +47,7 @@ namespace Skylicht
 
 		void CDaeEditor::clear()
 		{
+			CAssetEditor::clear();
 			if (m_settings)
 			{
 				delete m_settings;
@@ -62,6 +63,7 @@ namespace Skylicht
 
 			GUI::CCollapsibleGroup* group = ui->addGroup("Mesh Exporter", this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+			serializableToControl(m_settings, ui, layout);
 			group->setExpand(true);
 
 			group = ui->addGroup("Material Exporter", this);
@@ -75,6 +77,11 @@ namespace Skylicht
 			if (!setting->load(path))
 				setting->save(path);
 			return setting;
+		}
+
+		void CDaeEditor::onUpdateValue(CObjectSerializable* object)
+		{
+			m_settings->saveToFile();
 		}
 	}
 }
