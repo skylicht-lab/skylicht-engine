@@ -81,6 +81,7 @@ namespace Skylicht
 			std::vector<SGroup*> m_groups;
 			std::vector<CComponentEditor*> m_releaseComponents;
 
+			std::wstring m_tempName;
 		public:
 			CSpaceProperty(GUI::CWindow* window, CEditor* editor);
 
@@ -149,6 +150,8 @@ namespace Skylicht
 			SGroup* getGroupByLayout(GUI::CBoxLayout* layout);
 
 			GUI::CBoxLayout* createBoxLayout(GUI::CCollapsibleGroup* group);
+
+			const wchar_t* getPrettyName(const std::string& paramName);
 		};
 	}
 }

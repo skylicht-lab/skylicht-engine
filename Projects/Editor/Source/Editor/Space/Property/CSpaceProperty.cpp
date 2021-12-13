@@ -825,5 +825,36 @@ namespace Skylicht
 
 			return comboBox;
 		}
+
+		const wchar_t* CSpaceProperty::getPrettyName(const std::string& name)
+		{
+			char prettyName[512] = { 0 };
+			int j = 0;
+			bool lastCharIsUpper = false;
+
+			for (size_t i = 0, j = 0, n = name.length(); i < n; i++, j++)
+			{
+				char c = name[i];
+
+				if (i == 0)
+				{
+					prettyName[j] = toupper(c);
+				}
+				else if (isupper(c) && !lastCharIsUpper)
+				{
+					prettyName[j++] = ' ';
+					prettyName[j] = c;
+				}
+				else
+				{
+					prettyName[j] = c;
+				}
+
+				lastCharIsUpper = isupper(c);
+			}
+
+			m_tempName = CStringImp::convertUTF8ToUnicode(prettyName);
+			return m_tempName.c_str();
+		}
 	}
 }

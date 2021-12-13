@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		class CDaeEditor : public CAssetEditor
 		{
-		protected: 
+		protected:
 			MeshExportSettings* m_settings;
 
 		public:
@@ -44,6 +44,8 @@ namespace Skylicht
 			virtual void clear();
 
 			virtual void initGUI(const char* path, CSpaceProperty* ui);
+
+			virtual void onUpdateValue(CObjectSerializable* object);
 
 			MeshExportSettings* createGetMeshExportSetting(const char* path);
 
