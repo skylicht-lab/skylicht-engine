@@ -46,7 +46,7 @@ namespace Skylicht
 		std::map<std::string, ArrayMaterial>::iterator i = m_materials.begin(), end = m_materials.end();
 		while (i != end)
 		{
-			ArrayMaterial &list = (*i).second;
+			ArrayMaterial& list = (*i).second;
 			for (int j = 0, n = (int)list.size(); j < n; j++)
 			{
 				delete list[j];
@@ -56,12 +56,12 @@ namespace Skylicht
 		}
 		m_materials.clear();
 
-		for (CMaterial *m : m_listGenerateMaterials)
+		for (CMaterial* m : m_listGenerateMaterials)
 			delete m;
 		m_listGenerateMaterials.clear();
 	}
 
-	ArrayMaterial& CMaterialManager::loadMaterial(const char *filename, bool loadTexture, std::vector<std::string>& textureFolders)
+	ArrayMaterial& CMaterialManager::loadMaterial(const char* filename, bool loadTexture, std::vector<std::string>& textureFolders)
 	{
 		// find in cached
 		std::map<std::string, ArrayMaterial>::iterator findCache = m_materials.find(filename);
@@ -78,19 +78,19 @@ namespace Skylicht
 
 		ArrayMaterial& result = m_materials[filename];
 
-		IrrlichtDevice	*device = getIrrlichtDevice();
-		io::IFileSystem *fs = device->getFileSystem();
+		IrrlichtDevice* device = getIrrlichtDevice();
+		io::IFileSystem* fs = device->getFileSystem();
 
-		io::IXMLReader *xmlRead = fs->createXMLReader(filename);
+		io::IXMLReader* xmlRead = fs->createXMLReader(filename);
 		if (xmlRead == NULL)
 			return result;
 
-		const wchar_t *textw;
+		const wchar_t* textw;
 		char text[1024];
 
-		CMaterial *material = NULL;
+		CMaterial* material = NULL;
 
-		CMaterial::SExtraParams *extra = NULL;
+		CMaterial::SExtraParams* extra = NULL;
 
 		while (xmlRead->read())
 		{
@@ -169,7 +169,7 @@ namespace Skylicht
 						{
 							CStringImp::convertUnicodeToUTF8(textw, text);
 							int slot = atoi(text);
-							const char *name = material->getUniformTextureName(slot);
+							const char* name = material->getUniformTextureName(slot);
 							if (name != NULL)
 							{
 								if (extra == NULL)
@@ -230,7 +230,7 @@ namespace Skylicht
 		return result;
 	}
 
-	void CMaterialManager::saveMaterial(ArrayMaterial &materials, const char *filename)
+	void CMaterialManager::saveMaterial(ArrayMaterial& materials, const char* filename)
 	{
 		std::string matFile = filename;
 
@@ -240,10 +240,10 @@ namespace Skylicht
 		std::string materialFolder = CPath::getFolderPath(tempPath);
 		CStringImp::replaceText(relativeTextureFolder, materialFolder.c_str(), "../Assets/", "");
 
-		IrrlichtDevice	*device = getIrrlichtDevice();
-		io::IFileSystem *fs = device->getFileSystem();
+		IrrlichtDevice* device = getIrrlichtDevice();
+		io::IFileSystem* fs = device->getFileSystem();
 
-		io::IWriteFile *writeFile = fs->createAndWriteFile(matFile.c_str());
+		io::IWriteFile* writeFile = fs->createAndWriteFile(matFile.c_str());
 		if (writeFile == NULL)
 			return;
 
@@ -254,7 +254,7 @@ namespace Skylicht
 
 		buffer += "<Materials>\n";
 
-		for (CMaterial *material : materials)
+		for (CMaterial* material : materials)
 		{
 			sprintf(data, "\t<Material name='%s' shader='%s'>\n", material->getName(), material->getShaderPath());
 			buffer += data;
@@ -345,12 +345,12 @@ namespace Skylicht
 		writeFile->drop();
 	}
 
-	void CMaterialManager::exportMaterial(CEntityPrefab *prefab, const char *filename)
+	void CMaterialManager::exportMaterial(CEntityPrefab* prefab, const char* filename)
 	{
 		std::string matFile = filename;
 
-		IrrlichtDevice	*device = getIrrlichtDevice();
-		io::IFileSystem *fs = device->getFileSystem();
+		IrrlichtDevice* device = getIrrlichtDevice();
+		io::IFileSystem* fs = device->getFileSystem();
 
 		char tempPath[512];
 		char relativeTextureFolder[512];
@@ -358,7 +358,7 @@ namespace Skylicht
 		std::string materialFolder = CPath::getFolderPath(tempPath);
 		CStringImp::replaceText(relativeTextureFolder, materialFolder.c_str(), "../Assets/", "");
 
-		io::IWriteFile *writeFile = fs->createAndWriteFile(matFile.c_str());
+		io::IWriteFile* writeFile = fs->createAndWriteFile(matFile.c_str());
 		if (writeFile == NULL)
 			return;
 
@@ -372,10 +372,10 @@ namespace Skylicht
 		CEntity** entities = prefab->getEntities();
 		for (int i = 0, n = prefab->getNumEntities(); i < n; i++)
 		{
-			CRenderMeshData *renderer = entities[i]->getData<CRenderMeshData>();
+			CRenderMeshData* renderer = entities[i]->getData<CRenderMeshData>();
 			if (renderer != NULL)
 			{
-				CMesh *mesh = renderer->getMesh();
+				CMesh* mesh = renderer->getMesh();
 				if (mesh != NULL)
 				{
 					for (int j = 0, m = (int)mesh->getMeshBufferCount(); j < m; j++)
@@ -385,12 +385,12 @@ namespace Skylicht
 
 						if (meshBuffer != NULL && j < (int)mesh->MaterialName.size())
 						{
-							const char *materialName = mesh->MaterialName[j].c_str();
+							const char* materialName = mesh->MaterialName[j].c_str();
 							if (saved[materialName] == false)
 							{
 								SMaterial& material = meshBuffer->getMaterial();
 
-								CShader *shader = CShaderManager::getInstance()->getShaderByID(material.MaterialType);
+								CShader* shader = CShaderManager::getInstance()->getShaderByID(material.MaterialType);
 								if (shader != NULL)
 								{
 									sprintf(data, "\t<Material name='%s' shader='%s'>\n", materialName, shader->getShaderPath().c_str());
@@ -400,11 +400,14 @@ namespace Skylicht
 									buffer += "\t\t<Textures>\n";
 									for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 									{
-										ITexture *texture = material.TextureLayer[i].Texture;
+										ITexture* texture = material.TextureLayer[i].Texture;
 										if (texture != NULL)
 										{
+											std::string texturePath = texture->getName().getPath().c_str();
+											texturePath = CPath::replaceFileExt(texturePath, ".tga");
+
 											sprintf(data, "\t\t\t<Texture slot='%d' path='%s'/>\n", i,
-												CPath::getRelativePath(texture->getName().getPath().c_str(), relativeTextureFolder).c_str());
+												CPath::getRelativePath(texturePath, relativeTextureFolder).c_str());
 											buffer += data;
 										}
 									}
@@ -414,7 +417,7 @@ namespace Skylicht
 									buffer += "\t\t<Params>\n";
 									for (int i = 0, n = shader->getNumUI(); i < n; i++)
 									{
-										CShader::SUniformUI *uniformUI = shader->getUniformUI(i);
+										CShader::SUniformUI* uniformUI = shader->getUniformUI(i);
 										SUniform* info = uniformUI->UniformInfo;
 										if (info != NULL)
 										{
@@ -445,9 +448,9 @@ namespace Skylicht
 		writeFile->drop();
 	}
 
-	ArrayMaterial CMaterialManager::initDefaultMaterial(CEntityPrefab *prefab)
+	ArrayMaterial CMaterialManager::initDefaultMaterial(CEntityPrefab* prefab)
 	{
-		CMaterial *materialObj;
+		CMaterial* materialObj;
 		ArrayMaterial result;
 
 		std::map<std::string, bool> saved;
@@ -455,10 +458,10 @@ namespace Skylicht
 		CEntity** entities = prefab->getEntities();
 		for (int i = 0, n = prefab->getNumEntities(); i < n; i++)
 		{
-			CRenderMeshData *renderer = entities[i]->getData<CRenderMeshData>();
+			CRenderMeshData* renderer = entities[i]->getData<CRenderMeshData>();
 			if (renderer != NULL)
 			{
-				CMesh *mesh = renderer->getMesh();
+				CMesh* mesh = renderer->getMesh();
 				if (mesh != NULL)
 				{
 					for (int j = 0, m = (int)mesh->getMeshBufferCount(); j < m; j++)
@@ -468,18 +471,18 @@ namespace Skylicht
 
 						if (meshBuffer != NULL && j < (int)mesh->MaterialName.size())
 						{
-							const char *materialName = mesh->MaterialName[j].c_str();
+							const char* materialName = mesh->MaterialName[j].c_str();
 							if (saved[materialName] == false)
 							{
 								SMaterial& material = meshBuffer->getMaterial();
 
-								CShader *shader = CShaderManager::getInstance()->getShaderByID(material.MaterialType);
+								CShader* shader = CShaderManager::getInstance()->getShaderByID(material.MaterialType);
 								if (shader != NULL)
 								{
 									materialObj = new CMaterial(materialName, shader->getShaderPath().c_str());
 									materialObj->loadDefaultTexture();
 
-									ITexture *t[MATERIAL_MAX_TEXTURES];
+									ITexture* t[MATERIAL_MAX_TEXTURES];
 									for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 										t[i] = material.TextureLayer[i].Texture;
 
@@ -487,7 +490,7 @@ namespace Skylicht
 
 									for (int i = 0, n = shader->getNumUI(); i < n; i++)
 									{
-										CShader::SUniformUI *uniformUI = shader->getUniformUI(i);
+										CShader::SUniformUI* uniformUI = shader->getUniformUI(i);
 										SUniform* info = uniformUI->UniformInfo;
 										if (info != NULL)
 										{

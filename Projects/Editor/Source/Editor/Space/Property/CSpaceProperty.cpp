@@ -293,6 +293,18 @@ namespace Skylicht
 			}
 		}
 
+		GUI::CButton* CSpaceProperty::addButton(GUI::CBoxLayout* boxLayout, const wchar_t* label)
+		{
+			GUI::CLayoutVertical* layout = boxLayout->beginVertical();
+
+			GUI::CButton* button = new GUI::CButton(layout);
+			button->setLabel(label);
+			button->setTextAlignment(GUI::TextCenter);
+
+			boxLayout->endVertical();
+			return button;
+		}
+
 		GUI::CButton* CSpaceProperty::addButton(const wchar_t* label)
 		{
 			GUI::CBase* content = new GUI::CBase(m_content);
@@ -348,7 +360,7 @@ namespace Skylicht
 		GUI::CBoxLayout* CSpaceProperty::createBoxLayout(GUI::CCollapsibleGroup* group)
 		{
 			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(group);
-			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, -15.0, 5.0));
+			boxLayout->setPadding(GUI::SPadding(15.0, 5.0, -15.0, 5.0));
 			return boxLayout;
 		}
 

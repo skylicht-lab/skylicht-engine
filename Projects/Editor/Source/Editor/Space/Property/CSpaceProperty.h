@@ -113,6 +113,8 @@ namespace Skylicht
 
 			void addInputFolder(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value);
 
+			GUI::CButton* addButton(GUI::CBoxLayout* boxLayout, const wchar_t* label);
+
 			GUI::CDropdownBox* addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value);
 
 			inline void setLabel(const wchar_t* label)
