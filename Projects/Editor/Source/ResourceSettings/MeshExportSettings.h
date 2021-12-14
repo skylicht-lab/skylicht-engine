@@ -33,6 +33,8 @@ namespace Skylicht
 		class MeshExportSettings : public CObjectSerializable
 		{
 		public:
+			CFolderPathProperty TextureFolder;
+			CBoolProperty FlipNormal;
 			CBoolProperty GenerateLightmapUV2;
 			CFloatProperty LightmapScale;
 
