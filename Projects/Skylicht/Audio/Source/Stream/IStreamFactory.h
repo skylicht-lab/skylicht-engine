@@ -37,8 +37,9 @@ namespace SkylichtAudio
 		{
 		}
 
-		virtual IStream* createStreamFromMemory(unsigned char *buffer, int size, bool takeOwnership) = 0;
-		virtual IStream* createStreamFromFile(const char *fileName) = 0;
+		virtual IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnership) = 0;
+		virtual IStream* createStreamFromFile(const char* fileName) = 0;
+		virtual IStream* createOnlineStream() = 0;
 	};
 
 }

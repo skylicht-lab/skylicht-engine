@@ -122,9 +122,13 @@ namespace SkylichtAudio
 
 		IStream* createStreamFromFileAndCache(const char* fileName, bool cache);
 
+		IStream* createOnlineStream();
+
 		CAudioEmitter* createAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType decode);
 
 		CAudioEmitter* createAudioEmitter(const char* fileName, bool cache);
+
+		CAudioEmitter* createRawAudioEmitter(IStream* stream);
 
 		void destroyEmitter(CAudioEmitter* emitter);
 

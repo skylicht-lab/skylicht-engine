@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtAudio
 {
-	CAudioEngine *g_engine = NULL;
+	CAudioEngine* g_engine = NULL;
 
 	void initSkylichtAudio()
 	{
@@ -176,7 +176,7 @@ namespace SkylichtAudio
 
 		while (i != end)
 		{
-			CAudioEmitter *emitter = (*i);
+			CAudioEmitter* emitter = (*i);
 			emitter->update();
 			++i;
 		}
@@ -202,7 +202,7 @@ namespace SkylichtAudio
 		IThread::sleep(sleep);
 	}
 
-	void CAudioEngine::registerStreamFactory(IStreamFactory *streamFactory)
+	void CAudioEngine::registerStreamFactory(IStreamFactory* streamFactory)
 	{
 		std::vector<IStreamFactory*>::iterator i = m_streamFactorys.begin(), end = m_streamFactorys.end();
 		while (i != end)
@@ -214,7 +214,7 @@ namespace SkylichtAudio
 		m_streamFactorys.push_back(streamFactory);
 	}
 
-	void CAudioEngine::unRegisterStreamFactory(IStreamFactory *streamFactory)
+	void CAudioEngine::unRegisterStreamFactory(IStreamFactory* streamFactory)
 	{
 		std::vector<IStreamFactory*>::iterator i = m_streamFactorys.begin(), end = m_streamFactorys.end();
 		while (i != end)
@@ -228,7 +228,7 @@ namespace SkylichtAudio
 		}
 	}
 
-	IStream *CAudioEngine::createStreamFromMemory(unsigned char *buffer, int size, bool takeOwnerShip)
+	IStream* CAudioEngine::createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnerShip)
 	{
 		int numFactory = (int)m_streamFactorys.size();
 		for (int i = numFactory - 1; i >= 0; i--)
@@ -240,7 +240,7 @@ namespace SkylichtAudio
 		return NULL;
 	}
 
-	IStream *CAudioEngine::createStreamFromFile(const char *fileName)
+	IStream* CAudioEngine::createStreamFromFile(const char* fileName)
 	{
 		int numFactory = (int)m_streamFactorys.size();
 		for (int i = numFactory - 1; i >= 0; i--)
@@ -253,9 +253,9 @@ namespace SkylichtAudio
 		return NULL;
 	}
 
-	IStream *CAudioEngine::createStreamFromFileAndCache(const char *fileName, bool cache)
+	IStream* CAudioEngine::createStreamFromFileAndCache(const char* fileName, bool cache)
 	{
-		IStream *stream = NULL;
+		IStream* stream = NULL;
 
 		// search in cache
 		std::map<std::string, IStream*>::iterator it = m_fileToStream.find(fileName);
@@ -267,11 +267,11 @@ namespace SkylichtAudio
 
 			if (stream && cache)
 			{
-				SkylichtAudio::IStream *oldStream = stream;
-				SkylichtAudio::IStreamCursor *streamCursor = stream->createCursor();
+				SkylichtAudio::IStream* oldStream = stream;
+				SkylichtAudio::IStreamCursor* streamCursor = stream->createCursor();
 				int size = streamCursor->size();
 
-				unsigned char *buffer = new unsigned char[size];
+				unsigned char* buffer = new unsigned char[size];
 				streamCursor->read(buffer, size);
 
 				stream = CAudioEngine::getSoundEngine()->createStreamFromMemory(buffer, size);
@@ -297,20 +297,41 @@ namespace SkylichtAudio
 		return stream;
 	}
 
-	CAudioEmitter* CAudioEngine::createAudioEmitter(IStream *stream, IAudioDecoder::EDecoderType decode)
+	IStream* CAudioEngine::createOnlineStream()
+	{
+		int numFactory = (int)m_streamFactorys.size();
+		for (int i = numFactory - 1; i >= 0; i--)
+		{
+			IStream* s = m_streamFactorys[i]->createOnlineStream();
+			if (s)
+				return s;
+		}
+		return NULL;
+	}
+
+	CAudioEmitter* CAudioEngine::createAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType decode)
 	{
 		SScopeMutex lockScope(m_mutex);
 
-		CAudioEmitter *emitter = new CAudioEmitter(stream, decode, m_driver);
+		CAudioEmitter* emitter = new CAudioEmitter(stream, decode, m_driver);
 		m_emitters.push_back(emitter);
 		return emitter;
 	}
 
-	CAudioEmitter* CAudioEngine::createAudioEmitter(const char *fileName, bool cache)
+	CAudioEmitter* CAudioEngine::createAudioEmitter(const char* fileName, bool cache)
 	{
 		SScopeMutex lockScope(m_mutex);
 
-		CAudioEmitter *emitter = new CAudioEmitter(fileName, cache, m_driver);
+		CAudioEmitter* emitter = new CAudioEmitter(fileName, cache, m_driver);
+		m_emitters.push_back(emitter);
+		return emitter;
+	}
+
+	CAudioEmitter* CAudioEngine::createRawAudioEmitter(IStream* stream)
+	{
+		SScopeMutex lockScope(m_mutex);
+
+		CAudioEmitter* emitter = new CAudioEmitter(stream, IAudioDecoder::RawWav, m_driver);
 		m_emitters.push_back(emitter);
 		return emitter;
 	}

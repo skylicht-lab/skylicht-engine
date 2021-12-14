@@ -131,6 +131,7 @@ namespace SkylichtAudio
 		virtual void stop();
 		virtual void pause();
 		virtual void reset();
+		virtual void stopStream();
 
 		virtual void seek(float time);
 

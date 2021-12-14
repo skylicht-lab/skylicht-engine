@@ -65,7 +65,7 @@ namespace SkylichtAudio
 		return m_size;
 	}
 
-	void COnlineMemoryStream::uploadData(unsigned char *buffer, int size)
+	void COnlineMemoryStream::uploadData(unsigned char* buffer, int size)
 	{
 		SScopeMutex lock(m_mutex);
 
@@ -80,7 +80,7 @@ namespace SkylichtAudio
 			renewBuffer = true;
 		}
 
-		unsigned char *newBuffer = m_buffer;
+		unsigned char* newBuffer = m_buffer;
 
 		if (renewBuffer == true)
 		{
@@ -103,11 +103,30 @@ namespace SkylichtAudio
 		m_size = m_size + size;
 	}
 
+	void COnlineMemoryStream::trim(int position)
+	{
+		m_size = m_size - position;
+
+		unsigned char* newBuffer = new unsigned char[m_allocSize];
+		memcpy(newBuffer, m_buffer + position, m_size);
+
+		delete m_buffer;
+		m_buffer = newBuffer;
+	}
+
+	void COnlineMemoryStream::stopStream()
+	{
+		SScopeMutex lock(m_mutex);
+		if (m_buffer)
+			memset(m_buffer, 0, m_size);
+		m_size = 0;
+	}
+
 	///////////////////////////////////////////
 	// COnlineMemoryStreamCursor
 	///////////////////////////////////////////
 
-	COnlineMemoryStreamCursor::COnlineMemoryStreamCursor(COnlineMemoryStream *stream)
+	COnlineMemoryStreamCursor::COnlineMemoryStreamCursor(COnlineMemoryStream* stream)
 	{
 		m_pos = 0;
 		m_stream = stream;
@@ -164,9 +183,9 @@ namespace SkylichtAudio
 		SScopeMutex lock(m_stream->getMutex());
 
 		int size = m_stream->getDataBufferSize();
-		unsigned char *buffer = m_stream->getDataBuffer();
+		unsigned char* buffer = m_stream->getDataBuffer();
 
-		if (buff  && len > 0)
+		if (buff && len > 0)
 		{
 			int remain = size - m_pos;
 
@@ -206,5 +225,12 @@ namespace SkylichtAudio
 			return false;
 
 		return true;
+	}
+
+	void COnlineMemoryStreamCursor::trim()
+	{
+		SScopeMutex lock(m_stream->getMutex());
+		m_stream->trim(m_pos);
+		m_pos = 0;
 	}
 }

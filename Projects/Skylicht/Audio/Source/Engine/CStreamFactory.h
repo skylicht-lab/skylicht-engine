@@ -33,8 +33,9 @@ namespace SkylichtAudio
 	class CStreamFactory : public IStreamFactory
 	{
 	public:
-		virtual IStream* createStreamFromMemory(unsigned char *buffer, int size, bool takeOwnership);
-		virtual IStream* createStreamFromFile(const char *fileName);
+		virtual IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnership);
+		virtual IStream* createStreamFromFile(const char* fileName);
+		virtual IStream* createOnlineStream();
 	};
 
 }
