@@ -26,6 +26,7 @@ namespace SkylichtAudio
 		virtual bool endOfStream();
 		virtual int size();
 		virtual bool readyReadData(int len);
+		virtual void trim();
 	};
 
 	class COnlineMemoryStream : public IStream
@@ -51,7 +52,7 @@ namespace SkylichtAudio
 		// remember lock stream mutex before run this function
 		int getDataBufferSize();
 
-		void uploadData(unsigned char* buffer, int size);
+		virtual void uploadData(unsigned char* buffer, int size);
 
 		IMutex* getMutex()
 		{
@@ -77,6 +78,10 @@ namespace SkylichtAudio
 		{
 			m_stopStream = b;
 		}
+
+		virtual void trim(int position);
+
+		virtual void stopStream();
 	};
 
 }

@@ -47,6 +47,7 @@ namespace SkylichtAudio
 		{
 			Wav,
 			Mp3,
+			RawWav,	// use for micro, video audio
 			Num
 		};
 
@@ -86,6 +87,10 @@ namespace SkylichtAudio
 
 		virtual void getTrackParam(STrackParams* track) = 0;
 
+		virtual void stopStream()
+		{
+
+		}
 	};
 
 }
