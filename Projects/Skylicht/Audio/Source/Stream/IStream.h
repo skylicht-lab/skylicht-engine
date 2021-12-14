@@ -47,6 +47,7 @@ namespace SkylichtAudio
 		virtual bool endOfStream() = 0;
 		virtual int size() = 0;
 		virtual bool readyReadData(int len) = 0;
+		virtual void trim() {}
 	};
 
 
@@ -55,10 +56,16 @@ namespace SkylichtAudio
 	protected:
 		int	m_referenceCount;
 
+		// the sampleRate & channel for stream recoder
+		int m_sampleRate;
+		int m_channels;
+
 	public:
 		IStream()
 		{
 			m_referenceCount = 1;
+			m_channels = 2;
+			m_sampleRate = 0;
 		}
 
 		virtual ~IStream()
@@ -81,6 +88,32 @@ namespace SkylichtAudio
 				return true;
 			}
 			return false;
+		}
+
+		int getSampleRate()
+		{
+			return m_sampleRate;
+		}
+
+		int getChannels()
+		{
+			return m_channels;
+		}
+
+		void setStreamAudio(int sampleRate, int channels)
+		{
+			m_sampleRate = sampleRate;
+			m_channels = channels;
+		}
+
+		virtual void uploadData(unsigned char* buffer, int size)
+		{
+
+		}
+
+		virtual void stopStream()
+		{
+
 		}
 	};
 

@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Decoder/CAudioDecoderWav.h"
 #include "Decoder/CAudioDecoderMp3.h"
+#include "Decoder/CAudioDecoderRawWav.h"
 #include "Engine/CAudioEngine.h"
 
 // todo event
@@ -40,7 +41,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtAudio
 {
-	IAudioDecoder::EDecoderType CAudioEmitter::getDecode(const char *fileName)
+	IAudioDecoder::EDecoderType CAudioEmitter::getDecode(const char* fileName)
 	{
 		char ext[512] = { 0 };
 		int len = (int)strlen(fileName);
@@ -61,7 +62,7 @@ namespace SkylichtAudio
 		return decode;
 	}
 
-	CAudioEmitter::CAudioEmitter(IStream *stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver)
+	CAudioEmitter::CAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver)
 	{
 		initDefaultValue();
 
@@ -72,7 +73,7 @@ namespace SkylichtAudio
 		m_stream->grab();
 	}
 
-	CAudioEmitter::CAudioEmitter(const char *file, bool cache, ISoundDriver* driver)
+	CAudioEmitter::CAudioEmitter(const char* file, bool cache, ISoundDriver* driver)
 	{
 		initDefaultValue();
 
@@ -171,6 +172,9 @@ namespace SkylichtAudio
 			case IAudioDecoder::Mp3:
 				m_decoder = new CAudioDecoderMp3(m_stream);
 				break;
+			case IAudioDecoder::RawWav:
+				m_decoder = new CAudioDecoderRawWav(m_stream);
+				break;
 			default:
 				m_decoder = NULL;
 				break;
@@ -210,7 +214,7 @@ namespace SkylichtAudio
 				// init decode buffer
 				m_numBuffer = sourceParam.NumBuffer;
 				m_bufferSize = m_source->getBufferSize();
-				m_buffer = new unsigned char*[m_numBuffer];
+				m_buffer = new unsigned char* [m_numBuffer];
 
 				// calc buffer length
 				m_bufferLengthTime = (m_bufferSize >> 2) / (float)sourceParam.SamplingRate;
@@ -362,7 +366,7 @@ namespace SkylichtAudio
 				}
 				else
 				{
-					int pitchSize = (int)(m_bufferSize*m_pitch);
+					int pitchSize = (int)(m_bufferSize * m_pitch);
 
 					memset(m_buffer[m_currentBuffer], 0, m_bufferSize);
 
@@ -373,8 +377,8 @@ namespace SkylichtAudio
 
 					int nbSample = (m_bufferSize / (trackParam.BitsPerSample / 8)) / trackParam.NumChannels;
 
-					short *src = (short*)m_decodeBuffer;
-					short *dest = (short*)m_buffer[m_currentBuffer];
+					short* src = (short*)m_decodeBuffer;
+					short* dest = (short*)m_buffer[m_currentBuffer];
 
 					float currentSample = 0;
 
@@ -645,6 +649,15 @@ namespace SkylichtAudio
 		m_state = ISoundSource::StateStopped;
 		if (m_source)
 			m_source->stop();
+	}
+
+	void CAudioEmitter::stopStream()
+	{
+		m_state = ISoundSource::StateStopped;
+		if (m_source)
+			m_source->stop();
+		if (m_decoder)
+			m_decoder->stopStream();
 	}
 
 	void CAudioEmitter::setLoop(bool loop)
