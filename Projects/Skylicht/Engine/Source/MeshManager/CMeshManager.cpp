@@ -24,6 +24,21 @@ namespace Skylicht
 		releaseAllPrefabs();
 	}
 
+	void CMeshManager::releasePrefab(CEntityPrefab* prefab)
+	{
+		std::map<std::string, CEntityPrefab*>::iterator i = m_meshPrefabs.begin(), end = m_meshPrefabs.end();
+		while (i != end)
+		{
+			if ((*i).second == prefab)
+			{
+				delete (*i).second;
+				m_meshPrefabs.erase(i);
+				return;
+			}
+			++i;
+		}
+	}
+
 	void CMeshManager::releaseAllPrefabs()
 	{
 		std::map<std::string, CEntityPrefab*>::iterator i = m_meshPrefabs.begin(), end = m_meshPrefabs.end();
@@ -36,7 +51,7 @@ namespace Skylicht
 		m_meshPrefabs.clear();
 	}
 
-	CEntityPrefab* CMeshManager::loadModel(const char *resource, const char *texturePath, bool loadNormalMap, bool flipNormalMap, bool loadTexcoord2, bool createBatching)
+	CEntityPrefab* CMeshManager::loadModel(const char* resource, const char* texturePath, bool loadNormalMap, bool flipNormalMap, bool loadTexcoord2, bool createBatching)
 	{
 		// find in cached
 		std::map<std::string, CEntityPrefab*>::iterator findCache = m_meshPrefabs.find(resource);
@@ -45,8 +60,8 @@ namespace Skylicht
 			return (*findCache).second;
 		}
 
-		IMeshImporter *importer = NULL;
-		CEntityPrefab *output = NULL;
+		IMeshImporter* importer = NULL;
+		CEntityPrefab* output = NULL;
 
 		// load from file
 		std::string ext = CPath::getFileNameExt(resource);
@@ -85,9 +100,9 @@ namespace Skylicht
 		return output;
 	}
 
-	bool CMeshManager::exportModel(CEntity** entities, u32 count, const char *output)
+	bool CMeshManager::exportModel(CEntity** entities, u32 count, const char* output)
 	{
-		IMeshExporter *exporter = NULL;
+		IMeshExporter* exporter = NULL;
 
 		std::string ext = CPath::getFileNameExt(output);
 		if (ext == "smesh")
