@@ -336,6 +336,24 @@ namespace SkylichtAudio
 		return emitter;
 	}
 
+	CAudioReader* CAudioEngine::createAudioReader(IStream* stream, IAudioDecoder::EDecoderType decode)
+	{
+		SScopeMutex lockScope(m_mutex);
+
+		CAudioReader* reader = new CAudioReader(stream, decode, m_driver);
+		m_readers.push_back(reader);
+		return reader;
+	}
+
+	CAudioReader* CAudioEngine::createAudioReader(const char* fileName)
+	{
+		SScopeMutex lockScope(m_mutex);
+
+		CAudioReader* reader = new CAudioReader(fileName, m_driver);
+		m_readers.push_back(reader);
+		return reader;
+	}
+
 	void CAudioEngine::destroyEmitter(CAudioEmitter* emitter)
 	{
 		SScopeMutex lockScope(m_mutex);
@@ -347,6 +365,23 @@ namespace SkylichtAudio
 			{
 				delete emitter;
 				m_emitters.erase(i);
+				return;
+			}
+			++i;
+		}
+	}
+
+	void CAudioEngine::destroyReader(CAudioReader* reader)
+	{
+		SScopeMutex lockScope(m_mutex);
+		std::vector<CAudioReader*>::iterator i = m_readers.begin(), end = m_readers.end();
+
+		while (i != end)
+		{
+			if ((*i) == reader)
+			{
+				delete reader;
+				m_readers.erase(i);
 				return;
 			}
 			++i;
@@ -378,6 +413,19 @@ namespace SkylichtAudio
 		m_emitters.clear();
 	}
 
+	void CAudioEngine::destroyAllReader()
+	{
+		SScopeMutex lockScope(m_mutex);
+		std::vector<CAudioReader*>::iterator i = m_readers.begin(), end = m_readers.end();
+
+		while (i != end)
+		{
+			delete (*i);
+			++i;
+		}
+
+		m_readers.clear();
+	}
 
 	void CAudioEngine::setListener(float posx, float posy, float posz, float upx, float upy, float upz, float frontx, float fronty, float frontz)
 	{

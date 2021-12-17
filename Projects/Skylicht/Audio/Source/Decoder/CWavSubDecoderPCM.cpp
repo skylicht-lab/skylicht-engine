@@ -7,6 +7,9 @@ namespace SkylichtAudio
 	CWavSubDecoderPCM::CWavSubDecoderPCM(IStreamCursor* streamCursor, SWaveChunk* waveChunks)
 		:IWavSubDecoder(streamCursor, waveChunks)
 	{
+		m_currentDataNode = 0;
+		m_decodedSamples = 0;
+
 		m_trackParams.BitsPerSample = m_waveChunks->FormatHeader.SignificantBitsPerSample;
 		m_trackParams.NumChannels = m_waveChunks->FormatHeader.NumChannels;
 		m_trackParams.SamplingRate = m_waveChunks->FormatHeader.SampleRate;
