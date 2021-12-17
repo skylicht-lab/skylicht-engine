@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Thread/IThread.h"
 
 #include "CAudioEmitter.h"
+#include "CAudioReader.h"
 
 using namespace SkylichtSystem;
 
@@ -61,6 +62,8 @@ namespace SkylichtAudio
 		std::vector<IStreamFactory*> m_streamFactorys;
 
 		std::vector<CAudioEmitter*> m_emitters;
+
+		std::vector<CAudioReader*> m_readers;
 
 		std::map<std::string, IStream*>	m_fileToStream;
 
@@ -130,9 +133,17 @@ namespace SkylichtAudio
 
 		CAudioEmitter* createRawAudioEmitter(IStream* stream);
 
+		CAudioReader* createAudioReader(IStream* stream, IAudioDecoder::EDecoderType decode);
+
+		CAudioReader* createAudioReader(const char* fileName);
+
 		void destroyEmitter(CAudioEmitter* emitter);
 
+		void destroyReader(CAudioReader* reader);
+
 		void destroyAllEmitter();
+
+		void destroyAllReader();
 
 		void releaseAllStream();
 

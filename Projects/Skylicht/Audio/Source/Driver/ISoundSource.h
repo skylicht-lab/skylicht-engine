@@ -106,7 +106,7 @@ namespace SkylichtAudio
 		{
 		}
 
-		virtual void init(const STrackParams& trackParam, const SSourceParam &driverParam) = 0;
+		virtual void init(const STrackParams& trackParam, const SSourceParam& driverParam) = 0;
 		virtual bool needData() = 0;
 
 		virtual void play() = 0;
