@@ -94,8 +94,10 @@ namespace Skylicht
 		object->addAutoRelease(new CBoolProperty(object, "load texcoord2", m_loadTexcoord2));
 
 		std::vector<std::string> meshExts = { "dae","obj","smesh" };
+		std::vector<std::string> materialExts = { "xml","mat" };
+
 		object->addAutoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
-		object->addAutoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), "xml"));
+		object->addAutoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
 		object->addAutoRelease(new CFolderPathProperty(object, "textures", m_textureFolder.c_str()));
 		return object;
 	}

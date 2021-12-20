@@ -178,8 +178,6 @@ namespace Skylicht
 			req.vertResolution = 0;
 			FT_Request_Size(fe->m_face, &req);
 
-			//FT_Set_Pixel_Sizes(fe->m_face, fontSize, fontSize);
-
 			if (FT_Load_Char(fe->m_face, code, FT_LOAD_RENDER))
 				return NULL;
 
@@ -255,8 +253,6 @@ namespace Skylicht
 			req.horiResolution = 0;
 			req.vertResolution = 0;
 			FT_Request_Size(fe->m_face, &req);
-
-			//FT_Set_Pixel_Sizes(fe->m_face, fontSize, fontSize);
 
 			if (FT_Load_Char(fe->m_face, code, FT_LOAD_RENDER))
 				return NULL;

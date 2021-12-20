@@ -27,7 +27,7 @@ namespace SkylichtAudio
 		{
 		}
 
-		STrackParams getTrackParams()
+		const STrackParams& getTrackParams()
 		{
 			return m_trackParams;
 		}

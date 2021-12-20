@@ -287,6 +287,7 @@ namespace Skylicht
 				SModuleOffset* module = &frame->ModuleOffset[0];
 
 				core::rectf r = getRect(rect);
+
 				r.UpperLeftCorner.X = r.UpperLeftCorner.X - left + cornerRadius;
 				r.UpperLeftCorner.Y = r.UpperLeftCorner.Y - top + cornerRadius;
 				r.LowerRightCorner.X = r.LowerRightCorner.X + (module->Module->W - right - cornerRadius);

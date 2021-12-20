@@ -150,17 +150,21 @@ void SkylichtEditor::onResize(int w, int h)
 void SkylichtEditor::onResume()
 {
 	// resume application
-	m_editor->resume();
+	if (m_editor != NULL)
+	{
+		m_editor->resume();
 
-	// change state to import
-	if (m_editor->needReImport())
-		m_editorState = Import;
+		// change state to import
+		if (m_editor->needReImport())
+			m_editorState = Import;
+	}
 }
 
 void SkylichtEditor::onPause()
 {
 	// pause application
-	m_editor->pause();
+	if (m_editor != NULL)
+		m_editor->pause();
 }
 
 bool SkylichtEditor::onClose()
