@@ -285,7 +285,6 @@ namespace SkylichtAudio
 			if (stream != NULL)
 			{
 				m_fileToStream[fileName] = stream;
-				stream->grab();
 			}
 		}
 		else
