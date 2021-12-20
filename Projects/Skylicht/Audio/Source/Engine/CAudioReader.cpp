@@ -58,7 +58,6 @@ namespace SkylichtAudio
 		m_decodeType = CAudioEmitter::getDecode(file);
 		m_driver = driver;
 		m_stream = CAudioEngine::getSoundEngine()->createStreamFromFileAndCache(file, false);
-		m_stream->grab();
 		m_mutex = IMutex::createMutex();
 
 		initReader();

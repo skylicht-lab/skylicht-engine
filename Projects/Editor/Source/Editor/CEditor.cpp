@@ -62,7 +62,8 @@ namespace Skylicht
 			m_loadSceneDialog(NULL),
 			m_exportGMapDialog(NULL),
 			m_uiInitiate(false),
-			m_confirmQuit(false)
+			m_confirmQuit(false),
+			m_assetWatcher(NULL)
 		{
 			// init canvas
 			m_canvas = GUI::CGUIContext::getRoot();
