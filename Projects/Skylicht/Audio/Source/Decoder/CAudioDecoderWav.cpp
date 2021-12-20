@@ -6,7 +6,7 @@
 
 namespace SkylichtAudio
 {
-	CAudioDecoderWav::CAudioDecoderWav(IStream *stream)
+	CAudioDecoderWav::CAudioDecoderWav(IStream* stream)
 		:IAudioDecoder(stream)
 	{
 		m_streamCursor = stream->createCursor();
@@ -101,7 +101,7 @@ namespace SkylichtAudio
 				success = true;
 			}
 			else // skip other chunk
-			{			
+			{
 				m_streamCursor->seek(chunkHeader.ChunkSize, IStreamCursor::OriginCurrent);
 			}
 		}
@@ -148,12 +148,48 @@ namespace SkylichtAudio
 		if (m_subDecoder == NULL)
 			return Failed;
 
+		void* decodeBuffer = NULL;
+		int decodeSize = 0;
+
+		int bitRate = 16;
+		int numChannels = 0;
+		int samplingRate = 0;
+
+		if (m_subDecoder == NULL)
+		{
+			bitRate = m_waveChunk.FormatHeader.SignificantBitsPerSample;
+			numChannels = m_waveChunk.FormatHeader.NumChannels;
+			samplingRate = m_waveChunk.FormatHeader.SampleRate;
+		}
+		else
+		{
+			const STrackParams& params = m_subDecoder->getTrackParams();
+			bitRate = params.BitsPerSample;
+			numChannels = params.NumChannels;
+			samplingRate = params.SamplingRate;
+		}
+
+		if (bitRate == 16)
+		{
+			// no need change on 16bit
+			decodeBuffer = outputBuffer;
+			decodeSize = bufferSize;
+		}
+		else
+		{
+			// need convert to a buffer
+			int numSample = bufferSize / (numChannels * sizeof(short));
+
+			decodeSize = numSample * numChannels * (bitRate / 8);
+			decodeBuffer = new unsigned char[decodeSize];
+		}
+
 		// silent buffer
-		memset(outputBuffer, 0, bufferSize);
+		memset(decodeBuffer, 0, decodeSize);
 
 		// need wait data
 		// check safe data avaiable will be encode
-		if (m_streamCursor->readyReadData(bufferSize) == false)
+		if (m_streamCursor->readyReadData(decodeSize) == false)
 		{
 			// return state wait data
 			return WaitData;
@@ -162,10 +198,47 @@ namespace SkylichtAudio
 		// update loop
 		m_subDecoder->setLoop(m_loop);
 
-		if (m_subDecoder->decode(outputBuffer, bufferSize) > 0)
+		if (m_subDecoder->decode(decodeBuffer, decodeSize) > 0)
+		{
+			if (bitRate == 24)
+			{
+				// need convert to 16bit
+				int totalSample = bufferSize / sizeof(short);
+
+				unsigned char* s24 = (unsigned char*)decodeBuffer;
+				short* s16 = (short*)outputBuffer;
+				float f;
+				int value = 0;
+
+				while (totalSample > 0)
+				{
+					value = (int)((s24[0] | (s24[1] << 8) | (s24[2] << 16)) << 8) >> 8;
+					f = value / 16777216.0f;
+
+					value = (int)(f * 32768);
+					if ((unsigned int)(value + 32768) > 65535)
+						*s16 = (short)(value < 0 ? -32768 : 32767);
+					else
+						*s16 = (short)value;
+
+					s24 += 3;
+					s16++;
+					--totalSample;
+				}
+
+				delete[]decodeBuffer;
+			}
+			else if (bitRate == 32)
+			{
+				printf("[CAudioDecoderWav] Need implement convert 32bit to 16bit");
+			}
+
 			return Success;
+		}
 		else
+		{
 			return EndStream;
+		}
 	}
 
 	int CAudioDecoderWav::seek(int bufferSize)
@@ -188,6 +261,9 @@ namespace SkylichtAudio
 		{
 			*track = m_subDecoder->getTrackParams();
 		}
+
+		// i will convert the data to 16bit (short)
+		track->BitsPerSample = 16;
 	}
 
 	float CAudioDecoderWav::getCurrentTime()

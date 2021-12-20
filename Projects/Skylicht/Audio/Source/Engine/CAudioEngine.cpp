@@ -279,12 +279,13 @@ namespace SkylichtAudio
 				delete streamCursor;
 				delete oldStream;
 				delete[]buffer;
-			}
 
-			// cache
-			if (stream != NULL)
-			{
-				m_fileToStream[fileName] = stream;
+				// cache the memory stream
+				if (stream != NULL)
+				{
+					m_fileToStream[fileName] = stream;
+					stream->grab();
+				}
 			}
 		}
 		else

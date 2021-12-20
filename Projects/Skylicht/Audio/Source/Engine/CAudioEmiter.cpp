@@ -68,8 +68,8 @@ namespace SkylichtAudio
 
 		m_decodeType = type;
 		m_driver = driver;
+		
 		m_stream = stream;
-
 		m_stream->grab();
 	}
 
@@ -157,7 +157,6 @@ namespace SkylichtAudio
 			{
 				printf("[SkylichtAudio] init emitter: %s\n", m_fileName.c_str());
 				m_stream = CAudioEngine::getSoundEngine()->createStreamFromFileAndCache(m_fileName.c_str(), m_cache);
-				m_stream->grab();
 			}
 
 			if (m_stream == NULL)
