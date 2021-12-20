@@ -230,7 +230,20 @@ namespace SkylichtAudio
 			}
 			else if (bitRate == 32)
 			{
-				printf("[CAudioDecoderWav] Need implement convert 32bit to 16bit");
+				// need convert to 32bit
+				int totalSample = bufferSize / sizeof(short);
+
+				int* src = (int*)decodeBuffer;
+				short* dst = (short*)outputBuffer;
+
+				while (totalSample > 0)
+				{
+					*dst = (short)((*src) >> 16);
+					dst++;
+					src++;
+					--totalSample;
+				}
+				delete[]decodeBuffer;
 			}
 
 			return Success;
