@@ -58,6 +58,7 @@ namespace SkylichtAudio
 		m_decodeType = CAudioEmitter::getDecode(file);
 		m_driver = driver;
 		m_stream = CAudioEngine::getSoundEngine()->createStreamFromFileAndCache(file, false);
+		m_stream->grab();
 		m_mutex = IMutex::createMutex();
 
 		initReader();
@@ -94,16 +95,40 @@ namespace SkylichtAudio
 		}
 	}
 
+	EStatus CAudioReader::initDecoder()
+	{
+		SScopeMutex scopelock(m_mutex);
+
+		EStatus status = m_decoder->initDecode();
+		if (status == WaitData)
+			return status;
+		else if (status == Failed)
+		{
+			m_state = ISoundSource::StateError;
+			return Failed;
+		}
+		else if (status == status)
+		{
+			m_initState++;
+			m_state = ISoundSource::StatePlaying;
+			return Success;
+		}
+
+		return status;
+	}
+
 	EStatus CAudioReader::readAudio(unsigned char* data, int size)
 	{
 		SScopeMutex scopelock(m_mutex);
 
-		memset(data, 0, size);
+		if (data != NULL && size > 0)
+			memset(data, 0, size);
+
 		if (m_state == ISoundSource::StateError ||
 			m_state == ISoundSource::StateStopped)
 			return Failed;
 
-		EStatus status;
+		EStatus status = Success;
 		if (m_initState == 0)
 		{
 			status = m_decoder->initDecode();
@@ -121,7 +146,7 @@ namespace SkylichtAudio
 				return Success;
 			}
 		}
-		else
+		else if (data != NULL && size > 0)
 		{
 			status = m_decoder->decode(data, size);
 			if (status == WaitData)

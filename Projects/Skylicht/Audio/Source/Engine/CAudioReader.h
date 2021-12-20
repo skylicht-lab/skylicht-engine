@@ -58,6 +58,8 @@ namespace SkylichtAudio
 
 		void initReader();
 
+		EStatus initDecoder();
+
 		EStatus readAudio(unsigned char* data, int size);
 
 		IAudioDecoder::EDecoderType getDecoderType()
