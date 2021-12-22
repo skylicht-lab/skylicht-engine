@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSpaceAssets.h"
 #include "Utils/CStringImp.h"
 
+#include "Editor/SpaceController/CAssetPropertyController.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -97,6 +99,8 @@ namespace Skylicht
 			{
 				contextMenu->popupMenu((GUI::CButton*)sender);
 			};
+
+			CAssetPropertyController::getInstance()->setSpaceAsset(this);
 		}
 
 		CSpaceAssets::~CSpaceAssets()
@@ -106,6 +110,8 @@ namespace Skylicht
 			delete m_contextMenuFS;
 			delete m_contextMenuAdd;
 			delete m_searchController;
+
+			CAssetPropertyController::getInstance()->setSpaceAsset(NULL);
 		}
 
 		void CSpaceAssets::update()

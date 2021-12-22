@@ -695,6 +695,11 @@ namespace Skylicht
 			else
 				input->setString(L"None");
 
+			input->OnPressed = [&, path = value->get()](GUI::CBase* base)
+			{
+				CAssetPropertyController::getInstance()->browseAsset(path.c_str());
+			};
+
 			input->OnAcceptDragDrop = [&, x = exts](GUI::SDragDropPackage* data)
 			{
 				if (data->Name == "ListFSItem")

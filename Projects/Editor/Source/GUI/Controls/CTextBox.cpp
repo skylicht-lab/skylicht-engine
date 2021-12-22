@@ -544,6 +544,9 @@ namespace Skylicht
 				}
 				else
 				{
+					if (OnPressed != nullptr)
+						OnPressed(this);
+
 					CInput::getInput()->setCapture(NULL);
 				}
 
