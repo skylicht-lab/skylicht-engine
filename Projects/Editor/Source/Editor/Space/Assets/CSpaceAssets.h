@@ -64,6 +64,15 @@ namespace Skylicht
 
 			virtual void refresh();
 
+			CTreeFSController* getTreeController()
+			{
+				return m_treeFSController;
+			}
+
+			CListFSController* getListController()
+			{
+				return m_listFSController;
+			}
 		protected:
 
 		};

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CAssetPropertyController.h"
 #include "Activator/CEditorActivator.h"
 #include "Reactive/CObserver.h"
+#include "AssetManager/CAssetManager.h"
 #include "Utils/CPath.h"
 
 namespace Skylicht
@@ -33,7 +34,8 @@ namespace Skylicht
 	namespace Editor
 	{
 		CAssetPropertyController::CAssetPropertyController() :
-			m_spaceProperty(NULL)
+			m_spaceProperty(NULL),
+			m_spaceAsset(NULL)
 		{
 
 		}
@@ -74,6 +76,25 @@ namespace Skylicht
 			}
 
 			m_spaceProperty->getWindow()->forceUpdateLayout();
+		}
+
+		void CAssetPropertyController::browseAsset(const char* path)
+		{
+			if (m_spaceAsset == NULL)
+				return;
+
+			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+			std::string fullPath = assetFolder + "/" + path;
+
+			std::string folder = CPath::getFolderPath(fullPath);
+
+			GUI::CTreeNode* node = m_spaceAsset->getTreeController()->expand(folder);
+			if (node != NULL)
+			{
+				m_spaceAsset->getTreeController()->selectNode(node);
+				m_spaceAsset->getListController()->scrollAndSelectPath(fullPath.c_str());
+				m_spaceAsset->getWindow()->forceUpdateLayout();
+			}
 		}
 	}
 }

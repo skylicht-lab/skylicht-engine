@@ -147,15 +147,16 @@ namespace Skylicht
 			}
 		}
 
-		void CTreeFSController::expand(const std::string& folder)
+		GUI::CTreeNode* CTreeFSController::expand(const std::string& folder)
 		{
+			GUI::CTreeNode* node = NULL;
 			std::string shortPath = m_assetManager->getShortPath(folder.c_str());
 			if (shortPath.size() > 0)
 			{
 				std::vector<std::string> result;
 				CStringImp::splitString(shortPath.c_str(), "/", result);
 
-				GUI::CTreeNode* node = m_nodeAssets;
+				node = m_nodeAssets;
 
 				wchar_t wname[512];
 
@@ -184,6 +185,16 @@ namespace Skylicht
 					m_treeFS->getScrollControl()->scrollToItem(node);
 				}
 			}
+			return node;
+		}
+
+		void CTreeFSController::selectNode(GUI::CTreeNode* node)
+		{
+			OnSelected(node);
+
+			// fix the listfs will reset because cancel search
+			if (m_searchController != NULL)
+				m_searchController->unchange();
 		}
 
 		void CTreeFSController::OnKeyPress(GUI::CBase* control, int key, bool press)

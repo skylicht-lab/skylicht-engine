@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,47 +24,29 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/GUI.h"
-#include "CListFSController.h"
-#include "AssetManager/CAssetManager.h"
+#include "CAssetEditor.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSearchAssetController
+		class CMatEditor : public CAssetEditor
 		{
 		protected:
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancel;
-			GUI::CBase* m_searchInfo;
-
-			CListFSController* m_listFSController;
-
-			float m_inputTimeout;
-			bool m_changed;
-
-			std::wstring m_searchString;
+			std::vector<ISubject*> m_subjects;
 
 		public:
-			CSearchAssetController(GUI::CTextBox* textbox, GUI::CBase* searchInfo, GUI::CLabel* labelSearch, GUI::CButton* buttonCancel, CListFSController* listController);
+			CMatEditor();
 
-			virtual ~CSearchAssetController();
+			virtual ~CMatEditor();
 
-			void update();
+			virtual void clear();
 
-			void hideSearchUI();
+			virtual void initGUI(const char* path, CSpaceProperty* ui);
 
-			void unchange();
+			virtual void onUpdateValue(CObjectSerializable* object);
 
-			void search(const std::wstring& string);
-
-		protected:
-
-			void OnSearchChanged(GUI::CBase* base);
-
-			void OnCancelSearch(GUI::CBase* base);
+			DECLARE_GETTYPENAME(CMatEditor);
 		};
 	}
 }
