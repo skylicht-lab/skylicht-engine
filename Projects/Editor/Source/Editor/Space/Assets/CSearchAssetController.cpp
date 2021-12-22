@@ -110,6 +110,11 @@ namespace Skylicht
 			m_inputSearch->setString(m_searchString);
 		}
 
+		void CSearchAssetController::unchange()
+		{
+			m_changed = false;
+		}
+
 		void CSearchAssetController::search(const std::wstring& string)
 		{
 			std::vector<SFileInfo> files;

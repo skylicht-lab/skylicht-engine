@@ -193,6 +193,7 @@ namespace Skylicht
 
 				void showCloseButton(bool b);
 
+				Listener OnPressed;
 				Listener OnTextChanged;
 				Listener OnESC;
 				Listener OnEnter;

@@ -89,7 +89,9 @@ namespace Skylicht
 			bool removePath(GUI::CTreeNode* node, const char* path);
 
 		public:
-			void expand(const std::string& folder);
+			GUI::CTreeNode* expand(const std::string& folder);
+
+			void selectNode(GUI::CTreeNode* node);
 
 			void add(GUI::CTreeNode* node, std::vector<SFileInfo>& files);
 

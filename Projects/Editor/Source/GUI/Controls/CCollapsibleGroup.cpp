@@ -78,10 +78,17 @@ namespace Skylicht
 			void CCollapsibleGroup::setExpand(bool b)
 			{
 				m_header->setToggle(b);
+
 				if (b == true)
+				{
+					m_header->setIcon(GUI::ESystemIcon::SmallTriangleDown);
 					m_innerPanel->setHidden(false);
+				}
 				else
+				{
+					m_header->setIcon(GUI::ESystemIcon::SmallTriangleRight);
 					m_innerPanel->setHidden(true);
+				}
 			}
 		}
 	}

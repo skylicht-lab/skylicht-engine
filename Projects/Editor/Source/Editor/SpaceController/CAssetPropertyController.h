@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/Space/Assets/CSpaceAssets.h"
 
 namespace Skylicht
 {
@@ -35,6 +36,8 @@ namespace Skylicht
 		{
 		protected:
 			CSpaceProperty* m_spaceProperty;
+
+			CSpaceAssets* m_spaceAsset;
 
 		public:
 			CAssetPropertyController();
@@ -46,7 +49,14 @@ namespace Skylicht
 				m_spaceProperty = property;
 			}
 
+			inline void setSpaceAsset(CSpaceAssets* asset)
+			{
+				m_spaceAsset = asset;
+			}
+
 			void onSelectAsset(const char* path, bool isFolder);
+
+			void browseAsset(const char* path);
 		};
 	}
 }
