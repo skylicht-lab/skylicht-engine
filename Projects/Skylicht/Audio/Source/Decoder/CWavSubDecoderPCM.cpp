@@ -31,7 +31,7 @@ namespace SkylichtAudio
 		}
 
 		int size = 0;
-		sizeBuffer -= (sizeBuffer%m_waveChunks->FormatHeader.BlockAlign);
+		sizeBuffer -= (sizeBuffer % m_waveChunks->FormatHeader.BlockAlign);
 
 		unsigned int chunkSize = m_waveChunks->DataHeader.ChunkSize;
 
@@ -106,12 +106,11 @@ namespace SkylichtAudio
 				sampleNum = m_trackParams.NumSamples;
 		}
 
-		if (sampleNum)
-			sampleNum = m_trackParams.NumSamples;
-
 		m_currentDataNode = 0;
 		m_decodedSamples = 0;
 
+		// reset to first chunk
+		m_currentDataNode = NULL;
 		goToNextDataChunk();
 
 		while (sampleNum > 0 && m_currentDataNode)

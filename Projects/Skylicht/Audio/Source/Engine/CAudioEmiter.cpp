@@ -68,7 +68,7 @@ namespace SkylichtAudio
 
 		m_decodeType = type;
 		m_driver = driver;
-		
+
 		m_stream = stream;
 		m_stream->grab();
 	}
@@ -248,6 +248,21 @@ namespace SkylichtAudio
 		}
 
 		return Success;
+	}
+
+	bool CAudioEmitter::init()
+	{
+		SScopeMutex scopelock(m_mutex);
+
+		if (m_init == true)
+			return true;
+		
+		EStatus status = initEmitter();
+
+		if (status == Success || status == Failed)
+			m_init = false;
+
+		return status == Success;
 	}
 
 	void CAudioEmitter::update()
