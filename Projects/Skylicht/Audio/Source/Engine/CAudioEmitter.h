@@ -48,18 +48,18 @@ namespace SkylichtAudio
 		std::string m_fileName;
 		bool m_cache;
 
-		IAudioDecoder *m_decoder;
+		IAudioDecoder* m_decoder;
 
-		IMutex *m_mutex;
-		IStream *m_stream;
-		ISoundSource *m_source;
-		ISoundDriver *m_driver;
+		IMutex* m_mutex;
+		IStream* m_stream;
+		ISoundSource* m_source;
+		ISoundDriver* m_driver;
 
 		ISoundSource::ESourceState m_state;
 		IAudioDecoder::EDecoderType m_decodeType;
 
-		unsigned char **m_buffer;
-		unsigned char *m_decodeBuffer;
+		unsigned char** m_buffer;
+		unsigned char* m_decodeBuffer;
 
 		float m_bufferLengthTime;
 		int m_currentBuffer;
@@ -87,21 +87,25 @@ namespace SkylichtAudio
 		float m_currentTime;
 	public:
 
-		static IAudioDecoder::EDecoderType getDecode(const char *fileName);
+		static IAudioDecoder::EDecoderType getDecode(const char* fileName);
+
+	protected:
+
+		EStatus initEmitter();
 
 	public:
-		CAudioEmitter(IStream *stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver);
+		CAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver);
 
-		CAudioEmitter(const char *file, bool cache, ISoundDriver* driver);
+		CAudioEmitter(const char* file, bool cache, ISoundDriver* driver);
 
 		virtual ~CAudioEmitter();
 
-		void setName(const char *name)
+		void setName(const char* name)
 		{
 			m_name = name;
 		}
 
-		const char *getName()
+		const char* getName()
 		{
 			return m_name.c_str();
 		}
@@ -123,7 +127,7 @@ namespace SkylichtAudio
 
 		void initDefaultValue();
 
-		EStatus initEmitter();
+		bool init();
 
 		virtual void update();
 
