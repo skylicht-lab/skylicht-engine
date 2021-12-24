@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace SkylichtAudio
 {
 
-	CAudioDecoderMp3::CAudioDecoderMp3(IStream *stream)
+	CAudioDecoderMp3::CAudioDecoderMp3(IStream* stream)
 		:IAudioDecoder(stream)
 	{
 		m_dataInBuffer = 0;
@@ -94,7 +94,7 @@ namespace SkylichtAudio
 				return Failed;
 			}
 
-			const long *rates = NULL;
+			const long* rates = NULL;
 			size_t nrates = 0;
 			mpg123_rates(&rates, &nrates);
 			for (size_t i = 0; i < nrates; i++)
@@ -122,7 +122,7 @@ namespace SkylichtAudio
 		{
 			// todo seek and read format
 			off_t num;
-			unsigned char *audio;
+			unsigned char* audio;
 			size_t bytes;
 
 			bool readFormatEnd = false;
@@ -158,6 +158,7 @@ namespace SkylichtAudio
 						m_trackParams.NumChannels = channels;
 						m_trackParams.SamplingRate = rate;
 						m_trackParams.BitsPerSample = 16;
+						m_trackParams.NumSamples = mpg123_length(m_mp3Handle);
 
 						if (enc & MPG123_ENC_FLOAT_64)
 						{
@@ -243,13 +244,13 @@ namespace SkylichtAudio
 				m_dataInBufferConsumed = 0;
 			}
 
-			unsigned char *out = (unsigned char*)outputBuffer;
+			unsigned char* out = (unsigned char*)outputBuffer;
 			out += bytesCopyed;
 
 			while (bytesRemaining > 0)
 			{
 				off_t num;
-				unsigned char *audio;
+				unsigned char* audio;
 				size_t bytes;
 				int resultDataSize = 0;
 
@@ -263,7 +264,7 @@ namespace SkylichtAudio
 						{
 							int numSample = (int)(bytes / 4);
 
-							resultDataSize = numSample * 2;
+							resultDataSize = numSample * sizeof(short);
 							resizeData(resultDataSize);
 
 							convertFloat32ToShort((short*)m_sampleDecodeBuffer, (float*)audio, numSample);
@@ -328,7 +329,10 @@ namespace SkylichtAudio
 		int state;
 		off_t inoffset;
 
-		int sample = bufferSize / 4;
+		if (m_trackParams.NumChannels == 0)
+			return 0;
+
+		int sample = bufferSize / (m_trackParams.NumChannels * 2);
 
 		printLog("CAudioDecoderMp3: Begin seek: %d\n", sample);
 
