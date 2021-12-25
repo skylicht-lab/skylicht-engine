@@ -50,16 +50,20 @@ namespace Skylicht
 			if (m_spaceProperty == NULL)
 				return;
 
-			// Name and icon
-			if (isFolder)
-				m_spaceProperty->setIcon(GUI::ESystemIcon::Folder);
-			else
-				m_spaceProperty->setIcon(GUI::ESystemIcon::File);
-
+			// Name and icon			
 			std::string fileName = CPath::getFileName(path);
 			std::string ext = CPath::getFileNameExt(path);
 
-			m_spaceProperty->setLabel(CStringImp::convertUTF8ToUnicode(fileName.c_str()).c_str());
+			GUI::CButton* btn = m_spaceProperty->setButtonLabel(CStringImp::convertUTF8ToUnicode(fileName.c_str()).c_str());
+			if (isFolder)
+				btn->setIcon(GUI::ESystemIcon::Folder);
+			else
+				btn->setIcon(GUI::ESystemIcon::File);
+
+			std::string assetPath = CAssetManager::getInstance()->getShortPath(path);
+			btn->OnPress = [&, p = assetPath](GUI::CBase* base) {
+				browseAsset(p.c_str());
+			};
 
 			// Clear old ui
 			m_spaceProperty->clearAllGroup();

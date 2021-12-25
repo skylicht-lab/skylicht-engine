@@ -60,7 +60,10 @@ namespace Skylicht
 
 		void CMatEditor::initGUI(const char* path, CSpaceProperty* ui)
 		{
+			CShaderManager* shaderManager = CShaderManager::getInstance();
 			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(path, true, std::vector<std::string>());
+
+			std::vector<GUI::CCollapsibleGroup*> groups;
 
 			for (CMaterial* material : materials)
 			{
@@ -78,7 +81,23 @@ namespace Skylicht
 
 				ui->addInputFile(layout, L"Shader", shaderValue, shaderExts);
 
-				group->setExpand(true);
+				CShader* shader = shaderManager->getShaderByPath(material->getShaderPath());
+				if (shader == NULL)
+					shader = shaderManager->loadShader(material->getShaderPath());
+
+				if (shader != NULL)
+				{
+					// show shader UI
+
+				}
+
+				groups.push_back(group);
+			}
+
+			if (groups.size() < 3)
+			{
+				for (GUI::CCollapsibleGroup* group : groups)
+					group->setExpand(true);
 			}
 		}
 

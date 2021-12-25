@@ -43,7 +43,7 @@ namespace Skylicht
 
 		void releaseAllMaterials();
 
-		ArrayMaterial& loadMaterial(const char *filename, bool loadTexture, std::vector<std::string>& textureFolders);
+		ArrayMaterial& loadMaterial(const char *filename, bool loadTexture, const std::vector<std::string>& textureFolders);
 
 		void saveMaterial(ArrayMaterial &materials, const char *filename);
 
