@@ -62,6 +62,14 @@ namespace Skylicht
 			m_label->setMargin(GUI::SMargin(5.0f, 2.0f));
 			m_label->dock(GUI::EPosition::Fill);
 
+			m_labelButton = new GUI::CButton(titleBar);
+			m_labelButton->setPos(2.0f, 2.0f);
+			m_labelButton->setHeight(20.0f);
+			m_labelButton->setHidden(true);
+			m_labelButton->showIcon(true);
+			m_labelButton->enableDrawBackground(false);
+			m_labelButton->getTextContainer()->setMargin(GUI::SMargin(5.0f, 3.0));
+
 			m_componentContextMenu = new GUI::CMenu(window->getCanvas());
 			m_componentContextMenu->addItem(L"Reset");
 			m_componentContextMenu->addSeparator();
@@ -775,6 +783,11 @@ namespace Skylicht
 			else
 				input->setString(L"None");
 
+			input->OnPressed = [&, path = value->get()](GUI::CBase* base)
+			{
+				CAssetPropertyController::getInstance()->browseAsset(path.c_str());
+			};
+
 			input->OnAcceptDragDrop = [&](GUI::SDragDropPackage* data)
 			{
 				if (data->Name == "ListFSItem")
@@ -824,6 +837,21 @@ namespace Skylicht
 				}
 			};
 			boxLayout->endVertical();
+		}
+
+		void CSpaceProperty::addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CRawImage* image = new GUI::CRawImage(layout);
+			image->setSize(128, 128);
+			image->setColor(GUI::SGUIColor(255, 0, 0, 0));
+
 		}
 
 		GUI::CDropdownBox* CSpaceProperty::addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value)

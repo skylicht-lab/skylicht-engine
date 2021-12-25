@@ -80,6 +80,10 @@ namespace Skylicht
 			if (texturePath != NULL)
 				importer->addTextureFolder(texturePath);
 
+			// add base folder path
+			std::string baseFolderPath = CPath::getFolderPath(resource);
+			importer->addTextureFolder(baseFolderPath.c_str());
+
 			// load model
 			if (importer->loadModel(resource, output, loadNormalMap, flipNormalMap, loadTexcoord2, createBatching) == true)
 			{
