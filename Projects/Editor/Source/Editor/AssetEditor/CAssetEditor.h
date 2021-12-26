@@ -49,7 +49,7 @@ namespace Skylicht
 
 			virtual ~CAssetEditor();
 
-			virtual void clear();
+			virtual void closeGUI();
 
 			virtual void initGUI(const char* path, CSpaceProperty* ui)
 			{

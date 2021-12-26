@@ -43,6 +43,10 @@ namespace Skylicht
 
 			virtual ~CComponentEditor();
 
+			virtual void closeGUI()
+			{
+			}
+
 			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui)
 			{
 			}

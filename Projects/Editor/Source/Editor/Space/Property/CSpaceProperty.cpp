@@ -154,7 +154,9 @@ namespace Skylicht
 				group->releaseObserver();
 				group->GroupUI->remove();
 				if (group->AssetOwner)
-					group->AssetOwner->clear();
+					group->AssetOwner->closeGUI();
+				if (group->Owner)
+					group->Owner->closeGUI();
 				delete group;
 			}
 
