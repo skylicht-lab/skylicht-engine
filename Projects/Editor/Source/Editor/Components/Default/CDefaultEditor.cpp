@@ -41,12 +41,21 @@ namespace Skylicht
 
 		CDefaultEditor::~CDefaultEditor()
 		{
+			closeGUI();
+		}
+
+		void CDefaultEditor::closeGUI()
+		{
 			for (size_t i = 0, n = m_subjects.size(); i < n; i++)
 				delete m_subjects[i];
 			m_subjects.clear();
 
 			if (m_data != NULL)
 				delete m_data;
+
+			m_data = NULL;
+			m_component = NULL;
+			m_gameObject = NULL;
 		}
 
 		void CDefaultEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)

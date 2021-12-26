@@ -41,7 +41,7 @@ namespace Skylicht
 
 			virtual ~CMatEditor();
 
-			virtual void clear();
+			virtual void closeGUI();
 
 			virtual void initGUI(const char* path, CSpaceProperty* ui);
 
