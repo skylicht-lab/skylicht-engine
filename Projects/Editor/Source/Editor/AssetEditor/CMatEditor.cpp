@@ -44,12 +44,12 @@ namespace Skylicht
 
 		CMatEditor::~CMatEditor()
 		{
-			clear();
+			closeGUI();
 		}
 
-		void CMatEditor::clear()
+		void CMatEditor::closeGUI()
 		{
-			CAssetEditor::clear();
+			CAssetEditor::closeGUI();
 
 			// clean all subject
 			for (ISubject* subject : m_subjects)

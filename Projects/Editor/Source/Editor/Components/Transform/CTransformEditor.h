@@ -60,6 +60,8 @@ namespace Skylicht
 
 			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
 
+			virtual void closeGUI();
+
 			virtual void update();
 		};
 	}

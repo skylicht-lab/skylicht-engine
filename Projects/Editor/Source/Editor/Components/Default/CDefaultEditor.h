@@ -53,6 +53,8 @@ namespace Skylicht
 
 			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui);
 
+			virtual void closeGUI();
+
 			virtual void update();
 
 			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
