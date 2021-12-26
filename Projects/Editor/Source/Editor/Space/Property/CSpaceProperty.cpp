@@ -301,6 +301,16 @@ namespace Skylicht
 			}
 		}
 
+		void CSpaceProperty::addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label)
+		{
+			GUI::CLayoutVertical* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* labelControl = new GUI::CLabel(layout);
+			labelControl->setString(label);
+			labelControl->setTextAlignment(GUI::TextCenter);
+			boxLayout->endVertical();
+		}
+
 		GUI::CButton* CSpaceProperty::addButton(GUI::CBoxLayout* boxLayout, const wchar_t* label)
 		{
 			GUI::CLayoutVertical* layout = boxLayout->beginVertical();
@@ -839,7 +849,7 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
-		void CSpaceProperty::addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value)
+		GUI::CRawImage* CSpaceProperty::addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -852,6 +862,7 @@ namespace Skylicht
 			image->setSize(128, 128);
 			image->setColor(GUI::SGUIColor(255, 0, 0, 0));
 
+			return image;
 		}
 
 		GUI::CDropdownBox* CSpaceProperty::addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value)
