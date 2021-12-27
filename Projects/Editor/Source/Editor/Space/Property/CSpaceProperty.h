@@ -114,7 +114,7 @@ namespace Skylicht
 
 			void addInputFolder(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value);
 
-			GUI::CRawImage* addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value);
+			GUI::CImageButton* addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value);
 
 			void addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label);
 

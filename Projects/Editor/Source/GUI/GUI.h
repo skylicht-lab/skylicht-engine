@@ -55,5 +55,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/COpenSaveDialog.h"
 #include "GUI/Controls/CRulerBar.h"
 #include "GUI/Controls/CRawImage.h"
+#include "GUI/Controls/CImageButton.h"
 #include "GUI/Controls/CColorPicker.h"
 #include "GUI/Utils/CToggleGroup.h"

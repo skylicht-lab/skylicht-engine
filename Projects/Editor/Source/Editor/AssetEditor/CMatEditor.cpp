@@ -146,16 +146,16 @@ namespace Skylicht
 				CSubject<std::string>* newSubject = new CSubject<std::string>(unifromTexture->Path);
 				subjects.push_back(newSubject);
 
-				GUI::CRawImage* image = ui->addInputTextureFile(layout, text, newSubject);
+				GUI::CImageButton* image = ui->addInputTextureFile(layout, text, newSubject);
 
 				if (unifromTexture->Texture != NULL)
 				{
 					const core::dimension2du& size = unifromTexture->Texture->getSize();
-					image->setImage(
+					image->getImage()->setImage(
 						unifromTexture->Texture,
 						GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
 					);
-					image->setColor(GUI::SGUIColor(255, 255, 255, 255));
+					image->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
 				}
 			}
 		}
