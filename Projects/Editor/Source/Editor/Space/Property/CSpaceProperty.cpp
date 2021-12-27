@@ -851,7 +851,7 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
-		GUI::CRawImage* CSpaceProperty::addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value)
+		GUI::CImageButton* CSpaceProperty::addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -860,9 +860,9 @@ namespace Skylicht
 			label->setString(name);
 			label->setTextAlignment(GUI::TextRight);
 
-			GUI::CRawImage* image = new GUI::CRawImage(layout);
+			GUI::CImageButton* image = new GUI::CImageButton(layout);
 			image->setSize(128, 128);
-			image->setColor(GUI::SGUIColor(255, 50, 50, 50));
+			image->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
 
 			return image;
 		}
