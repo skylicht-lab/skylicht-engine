@@ -68,6 +68,7 @@ namespace Skylicht
 			GUI::CBase* m_content;
 			GUI::CIcon* m_icon;
 			GUI::CLabel* m_label;
+			GUI::CButton* m_labelButton;
 
 			GUI::CMenu* m_addComponentMenu;
 			CAddComponentController* m_addComponentController;
@@ -113,6 +114,10 @@ namespace Skylicht
 
 			void addInputFolder(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value);
 
+			GUI::CRawImage* addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value);
+
+			void addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label);
+
 			GUI::CButton* addButton(GUI::CBoxLayout* boxLayout, const wchar_t* label);
 
 			GUI::CDropdownBox* addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value);
@@ -120,11 +125,24 @@ namespace Skylicht
 			inline void setLabel(const wchar_t* label)
 			{
 				m_label->setString(label);
+				m_label->setHidden(false);
+				m_labelButton->setHidden(true);
+			}
+
+			inline GUI::CButton* setButtonLabel(const wchar_t* label)
+			{
+				m_labelButton->setLabel(label);
+				m_labelButton->setHidden(false);
+				m_labelButton->sizeToContents();
+				m_label->setHidden(true);
+				m_icon->setHidden(true);
+				return m_labelButton;
 			}
 
 			inline void setIcon(GUI::ESystemIcon icon)
 			{
 				m_icon->setIcon(icon);
+				m_icon->setHidden(false);
 			}
 
 			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CComponentEditor* editor);

@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CMaterial::CMaterial(const char *name, const char *shaderPath) :
+	CMaterial::CMaterial(const char* name, const char* shaderPath) :
 		m_owner(NULL),
 		m_zBuffer(video::ECFN_LESSEQUAL),
 		m_zWriteEnable(true),
@@ -76,16 +76,16 @@ namespace Skylicht
 
 	CMaterial* CMaterial::clone()
 	{
-		CMaterial *mat = new CMaterial(m_materialName.c_str(), m_shaderPath.c_str());
+		CMaterial* mat = new CMaterial(m_materialName.c_str(), m_shaderPath.c_str());
 		mat->deleteAllParams();
 
-		for (SUniformValue *&u : m_uniformParams)
+		for (SUniformValue*& u : m_uniformParams)
 		{
 			SUniformValue* v = u->clone();
 			mat->m_uniformParams.push_back(v);
 		}
 
-		for (SUniformTexture *&u : m_uniformTextures)
+		for (SUniformTexture*& u : m_uniformTextures)
 		{
 			SUniformTexture* t = u->clone();
 			mat->m_uniformTextures.push_back(t);
@@ -113,24 +113,24 @@ namespace Skylicht
 
 	void CMaterial::deleteAllParams()
 	{
-		for (SUniformValue *&uniform : m_uniformParams)
+		for (SUniformValue*& uniform : m_uniformParams)
 			delete uniform;
 		m_uniformParams.clear();
 
-		for (SUniformTexture *&uniform : m_uniformTextures)
+		for (SUniformTexture*& uniform : m_uniformTextures)
 			delete uniform;
 		m_uniformTextures.clear();
 	}
 
 	void CMaterial::deleteExtramParams()
 	{
-		for (SExtraParams *&e : m_extras)
+		for (SExtraParams*& e : m_extras)
 		{
-			for (SUniformValue *&uniform : e->UniformParams)
+			for (SUniformValue*& uniform : e->UniformParams)
 				delete uniform;
 			e->UniformParams.clear();
 
-			for (SUniformTexture *&uniform : e->UniformTextures)
+			for (SUniformTexture*& uniform : e->UniformTextures)
 				delete uniform;
 			e->UniformTextures.clear();
 
@@ -140,7 +140,7 @@ namespace Skylicht
 		m_extras.clear();
 	}
 
-	void CMaterial::setUniform(const char *name, float f)
+	void CMaterial::setUniform(const char* name, float f)
 	{
 		SUniformValue* p = getUniform(name);
 		if (p != NULL)
@@ -149,7 +149,7 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::setUniform2(const char *name, float *f)
+	void CMaterial::setUniform2(const char* name, float* f)
 	{
 		SUniformValue* p = getUniform(name);
 		if (p != NULL)
@@ -158,7 +158,7 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::setUniform3(const char *name, float *f)
+	void CMaterial::setUniform3(const char* name, float* f)
 	{
 		SUniformValue* p = getUniform(name);
 		if (p != NULL)
@@ -167,7 +167,7 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::setUniform4(const char *name, float *f)
+	void CMaterial::setUniform4(const char* name, float* f)
 	{
 		SUniformValue* p = getUniform(name);
 		if (p != NULL)
@@ -176,14 +176,14 @@ namespace Skylicht
 		}
 	}
 
-	const char *CMaterial::getUniformTextureName(int slot)
+	const char* CMaterial::getUniformTextureName(int slot)
 	{
 		if (slot >= 0 && slot < (int)m_uniformTextures.size())
 			return m_uniformTextures[slot]->Name.c_str();
 		return NULL;
 	}
 
-	void CMaterial::setUniformTexture(const char *name, ITexture *texture)
+	void CMaterial::setUniformTexture(const char* name, ITexture* texture)
 	{
 		SUniformTexture* p = getUniformTexture(name);
 		if (p != NULL && texture != NULL)
@@ -193,7 +193,7 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::setUniformTexture(const char *name, const char *path, bool loadTexture)
+	void CMaterial::setUniformTexture(const char* name, const char* path, bool loadTexture)
 	{
 		SUniformTexture* p = getUniformTexture(name);
 		if (p != NULL)
@@ -205,12 +205,12 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::setUniformTexture(const char *name, const char *path, std::vector<std::string>& folder, bool loadTexture)
+	void CMaterial::setUniformTexture(const char* name, const char* path, std::vector<std::string>& folder, bool loadTexture)
 	{
 		SUniformTexture* p = getUniformTexture(name);
 		if (p != NULL)
 		{
-			CTextureManager *textureManager = CTextureManager::getInstance();
+			CTextureManager* textureManager = CTextureManager::getInstance();
 			p->Path = path;
 			p->Texture = NULL;
 
@@ -240,23 +240,23 @@ namespace Skylicht
 		}
 	}
 
-	CMaterial::SExtraParams *CMaterial::newExtra(const char *shaderPath)
+	CMaterial::SExtraParams* CMaterial::newExtra(const char* shaderPath)
 	{
-		SExtraParams *e = new SExtraParams();
+		SExtraParams* e = new SExtraParams();
 		e->ShaderPath = shaderPath;
 		m_extras.push_back(e);
 		return e;
 	}
 
-	void CMaterial::setExtraUniformTexture(SExtraParams *e, const char *name, const char *path)
+	void CMaterial::setExtraUniformTexture(SExtraParams* e, const char* name, const char* path)
 	{
-		SUniformTexture *t = getExtraUniformTexture(e, name);
+		SUniformTexture* t = getExtraUniformTexture(e, name);
 		t->Path = path;
 	}
 
-	void CMaterial::setExtraUniform(SExtraParams *e, const char *name, float *f, int floatSize)
+	void CMaterial::setExtraUniform(SExtraParams* e, const char* name, float* f, int floatSize)
 	{
-		SUniformValue *t = getExtraUniform(e, name);
+		SUniformValue* t = getExtraUniform(e, name);
 		t->FloatSize = floatSize;
 		t->FloatValue[0] = f[0];
 		t->FloatValue[1] = f[1];
@@ -264,9 +264,9 @@ namespace Skylicht
 		t->FloatValue[3] = f[3];
 	}
 
-	CMaterial::SUniformValue* CMaterial::getUniform(const char *name)
+	CMaterial::SUniformValue* CMaterial::getUniform(const char* name)
 	{
-		for (SUniformValue *uniform : m_uniformParams)
+		for (SUniformValue* uniform : m_uniformParams)
 		{
 			if (uniform->Name == name)
 				return uniform;
@@ -275,9 +275,9 @@ namespace Skylicht
 		return newUniform(name, 4);
 	}
 
-	bool CMaterial::haveUniform(const char *name)
+	bool CMaterial::haveUniform(const char* name)
 	{
-		for (SUniformValue *uniform : m_uniformParams)
+		for (SUniformValue* uniform : m_uniformParams)
 		{
 			if (uniform->Name == name)
 				return true;
@@ -286,9 +286,9 @@ namespace Skylicht
 		return false;
 	}
 
-	CMaterial::SUniformTexture* CMaterial::getUniformTexture(const char *name)
+	CMaterial::SUniformTexture* CMaterial::getUniformTexture(const char* name)
 	{
-		for (SUniformTexture *uniform : m_uniformTextures)
+		for (SUniformTexture* uniform : m_uniformTextures)
 		{
 			if (uniform->Name == name)
 				return uniform;
@@ -297,9 +297,9 @@ namespace Skylicht
 		return newUniformTexture(name);
 	}
 
-	CMaterial::SUniformValue* CMaterial::getExtraUniform(SExtraParams *e, const char *name)
+	CMaterial::SUniformValue* CMaterial::getExtraUniform(SExtraParams* e, const char* name)
 	{
-		for (SUniformValue *uniform : e->UniformParams)
+		for (SUniformValue* uniform : e->UniformParams)
 		{
 			if (uniform->Name == name)
 				return uniform;
@@ -308,9 +308,9 @@ namespace Skylicht
 		return newExtraUniform(e, name, 4);
 	}
 
-	CMaterial::SUniformTexture* CMaterial::getExtraUniformTexture(SExtraParams *e, const char *name)
+	CMaterial::SUniformTexture* CMaterial::getExtraUniformTexture(SExtraParams* e, const char* name)
 	{
-		for (SUniformTexture *uniform : e->UniformTextures)
+		for (SUniformTexture* uniform : e->UniformTextures)
 		{
 			if (uniform->Name == name)
 				return uniform;
@@ -382,7 +382,7 @@ namespace Skylicht
 		{
 			for (int i = 0, n = (int)m_meshBuffers.size(); i < n; i++)
 			{
-				IMeshBuffer *buffer = m_meshBuffers[i];
+				IMeshBuffer* buffer = m_meshBuffers[i];
 				CMesh::applyDoubleSided(buffer);
 			}
 		}
@@ -393,11 +393,11 @@ namespace Skylicht
 		if (m_shader == NULL)
 			return;
 
-		CTextureManager *textureManager = CTextureManager::getInstance();
+		CTextureManager* textureManager = CTextureManager::getInstance();
 
 		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 		{
-			SUniformTexture *textureUI = m_uniformTextures[i];
+			SUniformTexture* textureUI = m_uniformTextures[i];
 			SUniform* uniform = m_shader->getFSUniform(textureUI->Name.c_str());
 
 			if (uniform != NULL)
@@ -407,7 +407,7 @@ namespace Skylicht
 				{
 					if (textureUI->Path.empty() == false)
 					{
-						ITexture *texture = textureManager->getTexture(textureUI->Path.c_str());
+						ITexture* texture = textureManager->getTexture(textureUI->Path.c_str());
 						m_textures[textureSlot] = texture;
 						textureUI->Texture = texture;
 					}
@@ -418,20 +418,20 @@ namespace Skylicht
 
 	void CMaterial::loadDefaultTexture()
 	{
-		CTextureManager *textureManager = CTextureManager::getInstance();
+		CTextureManager* textureManager = CTextureManager::getInstance();
 
 		if (m_shader != NULL)
 		{
 			for (int i = 0, n = m_shader->getNumResource(); i < n; i++)
 			{
-				CShader::SResource *r = m_shader->getResouceInfo(i);
+				CShader::SResource* r = m_shader->getResouceInfo(i);
 
-				SUniform *uniform = m_shader->getFSUniform(r->Name.c_str());
+				SUniform* uniform = m_shader->getFSUniform(r->Name.c_str());
 				if (uniform != NULL)
 				{
 					int textureSlot = (int)uniform->Value[0];
 
-					ITexture* &texture = m_resourceTexture[textureSlot];
+					ITexture*& texture = m_resourceTexture[textureSlot];
 
 					// drop current holder
 					if (texture != NULL)
@@ -441,7 +441,7 @@ namespace Skylicht
 					}
 
 					// we will custom override texture first
-					ITexture *overrideTexture = m_overrideTextures[r->Type];
+					ITexture* overrideTexture = m_overrideTextures[r->Type];
 					if (overrideTexture != NULL)
 					{
 						texture = overrideTexture;
@@ -470,7 +470,7 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::addAffectMesh(IMeshBuffer *mesh)
+	void CMaterial::addAffectMesh(IMeshBuffer* mesh)
 	{
 		if (mesh == NULL)
 			return;
@@ -487,7 +487,7 @@ namespace Skylicht
 		mesh->getMaterial().MaterialInfo = this;
 	}
 
-	void CMaterial::removeAffectMesh(IMeshBuffer *mesh)
+	void CMaterial::removeAffectMesh(IMeshBuffer* mesh)
 	{
 		for (int i = 0, n = (int)m_meshBuffers.size(); i < n; i++)
 		{
@@ -513,7 +513,7 @@ namespace Skylicht
 	{
 		deleteAllParams();
 
-		CShaderManager *shaderManager = CShaderManager::getInstance();
+		CShaderManager* shaderManager = CShaderManager::getInstance();
 		m_shader = shaderManager->getShaderByPath(m_shaderPath.c_str());
 		if (m_shader == NULL)
 			m_shader = shaderManager->loadShader(m_shaderPath.c_str());
@@ -527,7 +527,7 @@ namespace Skylicht
 			int numUI = m_shader->getNumUI();
 			for (int i = 0; i < numUI; i++)
 			{
-				CShader::SUniformUI *ui = m_shader->getUniformUI(i);
+				CShader::SUniformUI* ui = m_shader->getUniformUI(i);
 				if (ui->ControlType == CShader::UIGroup)
 				{
 					for (int j = 0, n = ui->Childs.size(); j < n; j++)
@@ -570,7 +570,7 @@ namespace Skylicht
 
 		for (int i = 0, n = (int)m_meshBuffers.size(); i < n; i++)
 		{
-			IMeshBuffer *meshBuffer = m_meshBuffers[i];
+			IMeshBuffer* meshBuffer = m_meshBuffers[i];
 			video::SMaterial& material = meshBuffer->getMaterial();
 
 			// apply texture
@@ -578,7 +578,7 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::changeShader(CShader *shader)
+	void CMaterial::changeShader(CShader* shader)
 	{
 		// save current shader params
 		saveExtraParams();
@@ -596,9 +596,9 @@ namespace Skylicht
 		updateShaderParams();
 	}
 
-	void CMaterial::changeShader(const char *path)
+	void CMaterial::changeShader(const char* path)
 	{
-		CShaderManager *shaderManager = CShaderManager::getInstance();
+		CShaderManager* shaderManager = CShaderManager::getInstance();
 		CShader* shader = shaderManager->getShaderByPath(path);
 		if (shader != NULL)
 		{
@@ -607,7 +607,7 @@ namespace Skylicht
 		else
 		{
 			// try load shader
-			CShader *shader = shaderManager->loadShader(path);
+			CShader* shader = shaderManager->loadShader(path);
 			if (shader != NULL)
 			{
 				changeShader(shader);
@@ -619,7 +619,7 @@ namespace Skylicht
 	{
 		bool ret = true;
 
-		CTextureManager *textureManager = CTextureManager::getInstance();
+		CTextureManager* textureManager = CTextureManager::getInstance();
 
 		if (m_shader != NULL)
 		{
@@ -629,15 +629,15 @@ namespace Skylicht
 			std::vector<std::string> paths;
 			std::vector<std::string> exts;
 
-			for (SUniformTexture *texture : m_uniformTextures)
+			for (SUniformTexture* texture : m_uniformTextures)
 			{
 				CShader::SUniformUI* ui = m_shader->getUniformUIByName(texture->Name.c_str());
 
 				if (texture->Texture != NULL)
 				{
 					// add references
-					const char *path = texture->Texture->getName().getPath().c_str();
-					for (std::string &s : ui->AutoReplace)
+					const char* path = texture->Texture->getName().getPath().c_str();
+					for (std::string& s : ui->AutoReplace)
 					{
 						if (strstr(path, s.c_str()) != NULL)
 						{
@@ -661,7 +661,7 @@ namespace Skylicht
 						bool found = false;
 						std::string foundPath;
 
-						for (std::string &s : ui->AutoReplace)
+						for (std::string& s : ui->AutoReplace)
 						{
 							found = false;
 							for (u32 i = 0, n = (u32)paths.size(); i < n; i++)
@@ -691,7 +691,7 @@ namespace Skylicht
 						// try test again
 						if (found == false)
 						{
-							for (std::string &s : ui->AutoReplace)
+							for (std::string& s : ui->AutoReplace)
 							{
 								for (u32 i = 0, n = (u32)texNamePaths.size(); i < n; i++)
 								{
@@ -714,7 +714,7 @@ namespace Skylicht
 
 						if (found == true)
 						{
-							ITexture *texture = textureManager->getTexture(foundPath.c_str());
+							ITexture* texture = textureManager->getTexture(foundPath.c_str());
 							if (texture != NULL)
 							{
 								setUniformTexture(ui->Name.c_str(), texture);
@@ -798,36 +798,36 @@ namespace Skylicht
 		}
 	}
 
-	CMaterial::SUniformValue* CMaterial::newUniform(const char *name, int floatSize)
+	CMaterial::SUniformValue* CMaterial::newUniform(const char* name, int floatSize)
 	{
-		SUniformValue *p = new SUniformValue();
+		SUniformValue* p = new SUniformValue();
 		p->Name = name;
 		p->FloatSize = floatSize;
 		m_uniformParams.push_back(p);
 		return p;
 	}
 
-	CMaterial::SUniformTexture* CMaterial::newUniformTexture(const char *name)
+	CMaterial::SUniformTexture* CMaterial::newUniformTexture(const char* name)
 	{
-		SUniformTexture *p = new SUniformTexture();
+		SUniformTexture* p = new SUniformTexture();
 		p->Name = name;
 		p->Texture = NULL;
 		m_uniformTextures.push_back(p);
 		return p;
 	}
 
-	CMaterial::SUniformTexture *CMaterial::newExtraUniformTexture(SExtraParams *e, const char *name)
+	CMaterial::SUniformTexture* CMaterial::newExtraUniformTexture(SExtraParams* e, const char* name)
 	{
-		SUniformTexture *p = new SUniformTexture();
+		SUniformTexture* p = new SUniformTexture();
 		p->Name = name;
 
 		e->UniformTextures.push_back(p);
 		return p;
 	}
 
-	CMaterial::SUniformValue *CMaterial::newExtraUniform(SExtraParams *e, const char *name, int floatSize)
+	CMaterial::SUniformValue* CMaterial::newExtraUniform(SExtraParams* e, const char* name, int floatSize)
 	{
-		SUniformValue *p = new SUniformValue();
+		SUniformValue* p = new SUniformValue();
 		p->Name = name;
 		p->FloatSize = floatSize;
 
@@ -897,7 +897,7 @@ namespace Skylicht
 			// auto uniform config
 			for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 			{
-				SUniformTexture *uniformTexture = m_uniformTextures[i];
+				SUniformTexture* uniformTexture = m_uniformTextures[i];
 				if (uniformTexture->TextureSlot == -1)
 				{
 					SUniform* uniform = m_shader->getFSUniform(uniformTexture->Name.c_str());
@@ -921,7 +921,7 @@ namespace Skylicht
 	{
 		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 		{
-			SUniformTexture *uniformTexture = m_uniformTextures[i];
+			SUniformTexture* uniformTexture = m_uniformTextures[i];
 			if (uniformTexture->TextureSlot == -1)
 			{
 				SUniform* uniform = m_shader->getFSUniform(uniformTexture->Name.c_str());
@@ -934,7 +934,7 @@ namespace Skylicht
 
 		for (int i = 0, n = (int)m_uniformParams.size(); i < n; i++)
 		{
-			SUniformValue *uniformValue = m_uniformParams[i];
+			SUniformValue* uniformValue = m_uniformParams[i];
 
 			if (uniformValue->Type == NUM_SHADER_TYPE)
 			{
@@ -958,7 +958,7 @@ namespace Skylicht
 
 		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 		{
-			SUniformTexture *uniformTexture = m_uniformTextures[i];
+			SUniformTexture* uniformTexture = m_uniformTextures[i];
 			if (uniformTexture->TextureSlot == -1)
 			{
 				SUniform* uniform = m_shader->getFSUniform(uniformTexture->Name.c_str());
@@ -970,7 +970,7 @@ namespace Skylicht
 
 			if (uniformTexture->TextureSlot >= 0 && uniformTexture->TextureSlot < MATERIAL_MAX_TEXTURES)
 			{
-				ITexture *texture = m_textures[uniformTexture->TextureSlot];
+				ITexture* texture = m_textures[uniformTexture->TextureSlot];
 				if (texture)
 				{
 					uniformTexture->Path = texture->getName().getPath().c_str();
@@ -987,7 +987,7 @@ namespace Skylicht
 
 		for (int i = 0, n = (int)m_uniformParams.size(); i < n; i++)
 		{
-			SUniformValue *uniformValue = m_uniformParams[i];
+			SUniformValue* uniformValue = m_uniformParams[i];
 
 			if (uniformValue->Type == NUM_SHADER_TYPE)
 			{
@@ -1066,14 +1066,14 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::setDefaultValue(SUniformValue *v, SUniform* u)
+	void CMaterial::setDefaultValue(SUniformValue* v, SUniform* u)
 	{
 		memcpy(v->FloatValue, u->Value, sizeof(float) * 4);
 
 		v->ShaderDefaultValue = true;
 	}
 
-	CMaterial::SExtraParams* CMaterial::getExtraParams(const char *shaderPath)
+	CMaterial::SExtraParams* CMaterial::getExtraParams(const char* shaderPath)
 	{
 		for (SExtraParams* e : m_extras)
 		{
@@ -1087,44 +1087,44 @@ namespace Skylicht
 	void CMaterial::saveExtraParams()
 	{
 		// get or create extra
-		SExtraParams *e = getExtraParams(m_shaderPath.c_str());
+		SExtraParams* e = getExtraParams(m_shaderPath.c_str());
 		if (e == NULL)
 			e = newExtra(m_shaderPath.c_str());
 
 		// clear old params
-		for (SUniformValue *&uniform : e->UniformParams)
+		for (SUniformValue*& uniform : e->UniformParams)
 			delete uniform;
 		e->UniformParams.clear();
 
-		for (SUniformTexture *&uniform : e->UniformTextures)
+		for (SUniformTexture*& uniform : e->UniformTextures)
 			delete uniform;
 		e->UniformTextures.clear();
 
 		// add current params
-		for (SUniformTexture *&t : m_uniformTextures)
+		for (SUniformTexture*& t : m_uniformTextures)
 		{
 			e->UniformTextures.push_back(t->clone());
 		}
 
-		for (SUniformValue *&v : m_uniformParams)
+		for (SUniformValue*& v : m_uniformParams)
 		{
 			e->UniformParams.push_back(v->clone());
 		}
 	}
 
-	void CMaterial::reloadExtraParams(const char *shaderPath)
+	void CMaterial::reloadExtraParams(const char* shaderPath)
 	{
-		SExtraParams *e = getExtraParams(m_shaderPath.c_str());
+		SExtraParams* e = getExtraParams(m_shaderPath.c_str());
 		if (e == NULL)
 		{
 			// no extra data
 			// try find in same shader params
-			for (SUniformTexture *&t : m_uniformTextures)
+			for (SUniformTexture*& t : m_uniformTextures)
 			{
 				if (t->Texture != NULL)
 					continue;
 
-				SUniformTexture *uniform = findExtraTexture(t->Name.c_str());
+				SUniformTexture* uniform = findExtraTexture(t->Name.c_str());
 				if (uniform != NULL)
 				{
 					t->Path = uniform->Path;
@@ -1133,9 +1133,9 @@ namespace Skylicht
 				}
 			}
 
-			for (SUniformValue *&v : m_uniformParams)
+			for (SUniformValue*& v : m_uniformParams)
 			{
-				SUniformValue *uniform = findExtraParam(v->Name.c_str(), v->FloatSize);
+				SUniformValue* uniform = findExtraParam(v->Name.c_str(), v->FloatSize);
 				if (uniform != NULL)
 				{
 					v->FloatValue[0] = uniform->FloatValue[0];
@@ -1149,12 +1149,12 @@ namespace Skylicht
 			return;
 		}
 
-		for (SUniformTexture *&t : m_uniformTextures)
+		for (SUniformTexture*& t : m_uniformTextures)
 		{
 			if (t->Texture != NULL)
 				continue;
 
-			for (SUniformTexture *&uniform : e->UniformTextures)
+			for (SUniformTexture*& uniform : e->UniformTextures)
 			{
 				if (t->Name == uniform->Name)
 				{
@@ -1169,9 +1169,9 @@ namespace Skylicht
 			}
 		}
 
-		for (SUniformValue *&v : m_uniformParams)
+		for (SUniformValue*& v : m_uniformParams)
 		{
-			for (SUniformValue *&uniform : e->UniformParams)
+			for (SUniformValue*& uniform : e->UniformParams)
 			{
 				if (v->Name == uniform->Name && v->FloatSize == uniform->FloatSize)
 				{
@@ -1185,11 +1185,11 @@ namespace Skylicht
 		}
 	}
 
-	CMaterial::SUniformTexture *CMaterial::findExtraTexture(const char *name)
+	CMaterial::SUniformTexture* CMaterial::findExtraTexture(const char* name)
 	{
 		for (SExtraParams* e : m_extras)
 		{
-			for (CMaterial::SUniformTexture *t : e->UniformTextures)
+			for (CMaterial::SUniformTexture* t : e->UniformTextures)
 			{
 				if (t->Name == name)
 				{
@@ -1205,11 +1205,11 @@ namespace Skylicht
 		return NULL;
 	}
 
-	CMaterial::SUniformValue *CMaterial::findExtraParam(const char *name, int floatSize)
+	CMaterial::SUniformValue* CMaterial::findExtraParam(const char* name, int floatSize)
 	{
 		for (SExtraParams* e : m_extras)
 		{
-			for (CMaterial::SUniformValue *v : e->UniformParams)
+			for (CMaterial::SUniformValue* v : e->UniformParams)
 			{
 				if (v->Name == name && v->FloatSize == floatSize)
 					return v;

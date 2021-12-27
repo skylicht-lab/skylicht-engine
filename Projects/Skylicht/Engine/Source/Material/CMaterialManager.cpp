@@ -61,7 +61,7 @@ namespace Skylicht
 		m_listGenerateMaterials.clear();
 	}
 
-	ArrayMaterial& CMaterialManager::loadMaterial(const char* filename, bool loadTexture, std::vector<std::string>& textureFolders)
+	ArrayMaterial& CMaterialManager::loadMaterial(const char* filename, bool loadTexture, const std::vector<std::string>& textureFolders)
 	{
 		// find in cached
 		std::map<std::string, ArrayMaterial>::iterator findCache = m_materials.find(filename);
@@ -73,7 +73,7 @@ namespace Skylicht
 		// auto add base folder
 		std::string baseFolder = CPath::getFolderPath(filename);
 
-		std::vector<std::string>& folders = textureFolders;
+		std::vector<std::string> folders = textureFolders;
 		folders.push_back(baseFolder);
 
 		ArrayMaterial& result = m_materials[filename];

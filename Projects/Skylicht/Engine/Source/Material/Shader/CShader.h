@@ -133,7 +133,7 @@ namespace Skylicht
 
 		}
 
-		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader) = 0;
+		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader) = 0;
 	};
 
 	class CShader : public CBaseShaderCallback
@@ -165,16 +165,17 @@ namespace Skylicht
 		{
 			EUIControlType ControlType;
 			std::string Name;
+			std::vector<std::string> ElementName;
 			std::vector<std::string> AutoReplace;
 			int SliderStep;
 
-			SUniform *UniformInfo;
-			CShader *Shader;
+			SUniform* UniformInfo;
+			CShader* Shader;
 
-			SUniformUI *Parent;
+			SUniformUI* Parent;
 			core::array<SUniformUI*> Childs;
 
-			SUniformUI(CShader *shader)
+			SUniformUI(CShader* shader)
 			{
 				UniformInfo = NULL;
 				Shader = shader;
@@ -243,15 +244,15 @@ namespace Skylicht
 
 		virtual ~CShader();
 
-		void initShader(io::IXMLReader *xmlReader, const char *shaderFolder);
+		void initShader(io::IXMLReader* xmlReader, const char* shaderFolder);
 
-		void parseUniform(io::IXMLReader *xmlReader);
+		void parseUniform(io::IXMLReader* xmlReader);
 
-		void parseUniformUI(io::IXMLReader *xmlReader);
+		void parseUniformUI(io::IXMLReader* xmlReader);
 
-		void parseResources(io::IXMLReader *xmlReader);
+		void parseResources(io::IXMLReader* xmlReader);
 
-		void parseUI(io::IXMLReader *xmlReader, SUniformUI *parent);
+		void parseUI(io::IXMLReader* xmlReader, SUniformUI* parent);
 
 		const std::string& getName()
 		{
@@ -278,7 +279,7 @@ namespace Skylicht
 			return m_attributeMapping[id];
 		}
 
-		void setShaderPath(const char *path)
+		void setShaderPath(const char* path)
 		{
 			m_shaderPath = path;
 		}
@@ -323,13 +324,13 @@ namespace Skylicht
 			return m_ui[id];
 		}
 
-		SUniformUI* getUniformUIByName(const char *name);
+		SUniformUI* getUniformUIByName(const char* name);
 
-		SUniformUI* getUniformUIByName(const char *name, SUniformUI *group);
+		SUniformUI* getUniformUIByName(const char* name, SUniformUI* group);
 
-		SUniform* getVSUniform(const char *name);
+		SUniform* getVSUniform(const char* name);
 
-		SUniform* getFSUniform(const char *name);
+		SUniform* getFSUniform(const char* name);
 
 		bool isDeferred()
 		{
@@ -354,8 +355,8 @@ namespace Skylicht
 		template<class T>
 		IShaderCallback* addCallback()
 		{
-			T *newCB = new T();
-			IShaderCallback *shaderCallback = dynamic_cast<IShaderCallback*>(newCB);
+			T* newCB = new T();
+			IShaderCallback* shaderCallback = dynamic_cast<IShaderCallback*>(newCB);
 			if (shaderCallback == NULL)
 			{
 				char exceptionInfo[512];
@@ -373,7 +374,7 @@ namespace Skylicht
 		template<class T>
 		T* getCallback()
 		{
-			for (IShaderCallback *cb : m_callbacks)
+			for (IShaderCallback* cb : m_callbacks)
 			{
 				if (typeid(T) == typeid(*cb))
 				{
@@ -390,19 +391,19 @@ namespace Skylicht
 
 	protected:
 
-		E_MATERIAL_TYPE getBaseShaderByName(const char *name);
+		E_MATERIAL_TYPE getBaseShaderByName(const char* name);
 
-		EUniformType getUniformType(const char *name);
+		EUniformType getUniformType(const char* name);
 
 		std::string getVSShaderFileName();
 
 		std::string getFSShaderFileName();
 
-		void buildUIUniform(SUniformUI *ui);
+		void buildUIUniform(SUniformUI* ui);
 
 		bool isUniformAvaiable(SUniform& uniform);
 
-		bool setUniform(SUniform &uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform);
+		bool setUniform(SUniform& uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform);
 
 		void deleteAllUI();
 

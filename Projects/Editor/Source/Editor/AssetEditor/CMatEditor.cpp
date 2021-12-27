@@ -29,7 +29,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/Property/CSpaceProperty.h"
 
 #include "MeshManager/CMeshManager.h"
-#include "Material/CMaterialManager.h"
 #include "Editor/CEditor.h"
 
 namespace Skylicht
@@ -45,12 +44,12 @@ namespace Skylicht
 
 		CMatEditor::~CMatEditor()
 		{
-			clear();
+			closeGUI();
 		}
 
-		void CMatEditor::clear()
+		void CMatEditor::closeGUI()
 		{
-			CAssetEditor::clear();
+			CAssetEditor::closeGUI();
 
 			// clean all subject
 			for (ISubject* subject : m_subjects)
@@ -60,7 +59,10 @@ namespace Skylicht
 
 		void CMatEditor::initGUI(const char* path, CSpaceProperty* ui)
 		{
+			CShaderManager* shaderManager = CShaderManager::getInstance();
 			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(path, true, std::vector<std::string>());
+
+			std::vector<GUI::CCollapsibleGroup*> groups;
 
 			for (CMaterial* material : materials)
 			{
@@ -78,13 +80,82 @@ namespace Skylicht
 
 				ui->addInputFile(layout, L"Shader", shaderValue, shaderExts);
 
-				group->setExpand(true);
+				layout->addSpace(10.0f);
+
+				CShader* shader = shaderManager->getShaderByPath(material->getShaderPath());
+				if (shader == NULL)
+					shader = shaderManager->loadShader(material->getShaderPath());
+
+				if (shader != NULL)
+				{
+					// show shader UI
+					showShaderGUI(ui, layout, material, shader, m_subjects);
+				}
+
+				groups.push_back(group);
+			}
+
+			if (groups.size() < 3)
+			{
+				for (GUI::CCollapsibleGroup* group : groups)
+					group->setExpand(true);
 			}
 		}
 
 		void CMatEditor::onUpdateValue(CObjectSerializable* object)
 		{
 
+		}
+
+		void CMatEditor::showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects)
+		{
+			int numUI = shader->getNumUI();
+			for (int i = 0; i < numUI; i++)
+			{
+				CShader::SUniformUI* uniformUI = shader->getUniformUI(i);
+
+				if (uniformUI->ControlType == CShader::UIGroup)
+					addUniformUI(ui, layout, material, shader, uniformUI, 0, subjects);
+				else
+				{
+					if (uniformUI->UniformInfo != NULL)
+						addUniformUI(ui, layout, material, shader, uniformUI, 0, subjects);
+				}
+			}
+		}
+
+		void CMatEditor::addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects)
+		{
+			wchar_t text[512];
+			CStringImp::convertUTF8ToUnicode(uniformUI->Name.c_str(), text);
+
+			if (uniformUI->ControlType == CShader::UIGroup)
+			{
+				ui->addLabel(layout, text);
+
+				for (int i = 0, n = (int)uniformUI->Childs.size(); i < n; i++)
+				{
+					if (uniformUI->Childs[i]->UniformInfo != NULL)
+						addUniformUI(ui, layout, material, shader, uniformUI->Childs[i], tab + 1, subjects);
+				}
+			}
+			else if (uniformUI->ControlType == CShader::UITexture)
+			{
+				CMaterial::SUniformTexture* unifromTexture = material->getUniformTexture(uniformUI->Name.c_str());
+				CSubject<std::string>* newSubject = new CSubject(unifromTexture->Path);
+				subjects.push_back(newSubject);
+
+				GUI::CRawImage* image = ui->addInputTextureFile(layout, text, newSubject);
+
+				if (unifromTexture->Texture != NULL)
+				{
+					const core::dimension2du& size = unifromTexture->Texture->getSize();
+					image->setImage(
+						unifromTexture->Texture,
+						GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
+					);
+				}
+			}
 		}
 	}
 }

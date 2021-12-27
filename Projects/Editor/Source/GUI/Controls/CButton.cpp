@@ -211,7 +211,7 @@ namespace Skylicht
 
 				m_label->sizeToContents();
 
-				float w = m_padding.Left - m_padding.Right + m_label->width();
+				float w = m_padding.Left - m_padding.Right + m_label->width() + m_label->getMargin().Right + m_label->getMargin().Left;
 				if (m_icon->isHidden() == false)
 					w = w + m_icon->width();
 

@@ -40,7 +40,7 @@ namespace Skylicht
 
 		}
 
-		void CAssetEditor::clear()
+		void CAssetEditor::closeGUI()
 		{
 			for (size_t i = 0, n = m_subjects.size(); i < n; i++)
 				delete m_subjects[i];
