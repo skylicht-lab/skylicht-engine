@@ -4,7 +4,7 @@
 
 namespace Skylicht
 {
-	const char *CTextureManager::GlobalPackage = "Global";
+	const char* CTextureManager::GlobalPackage = "Global";
 
 	CTextureManager::CTextureManager() :
 		m_nullNormalMap(NULL),
@@ -18,7 +18,7 @@ namespace Skylicht
 	{
 		removeAllTexture();
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		if (m_nullNormalMap)
 		{
 			driver->removeTexture(m_nullNormalMap);
@@ -55,7 +55,7 @@ namespace Skylicht
 
 	void CTextureManager::removeAllTexture()
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		std::vector<STexturePackage*>::iterator i = m_textureList.begin(), end = m_textureList.end();
 		while (i != end)
@@ -71,9 +71,9 @@ namespace Skylicht
 		m_textureList.clear();
 	}
 
-	void CTextureManager::removeTexture(ITexture *tex)
+	void CTextureManager::removeTexture(ITexture* tex)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		std::vector<STexturePackage*>::iterator i = m_textureList.begin(), end = m_textureList.end();
 		while (i != end)
@@ -90,9 +90,9 @@ namespace Skylicht
 		}
 	}
 
-	void CTextureManager::removeTexture(const char *namePackage)
+	void CTextureManager::removeTexture(const char* namePackage)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		bool needContinue = false;
 		do
 		{
@@ -121,11 +121,11 @@ namespace Skylicht
 
 	}
 
-	ITexture* CTextureManager::getTextureFromRealPath(const char *path)
+	ITexture* CTextureManager::getTextureFromRealPath(const char* path)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
-		ITexture *texture = NULL;
+		ITexture* texture = NULL;
 		texture = driver->getTexture(path);
 
 		if (texture)
@@ -140,12 +140,12 @@ namespace Skylicht
 		return texture;
 	}
 
-	bool CTextureManager::existTexture(const char *path)
+	bool CTextureManager::existTexture(const char* path)
 	{
 		char ansiPath[512];
 
-		IVideoDriver *driver = getVideoDriver();
-		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
+		IVideoDriver* driver = getVideoDriver();
+		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 
 		std::string fixPath = CPath::normalizePath(path);
 		strcpy(ansiPath, fixPath.c_str());
@@ -207,9 +207,9 @@ namespace Skylicht
 		return true;
 	}
 
-	ITexture* CTextureManager::getTexture(const char *filename, const std::vector<std::string>& textureFolder)
+	ITexture* CTextureManager::getTexture(const char* filename, const std::vector<std::string>& textureFolder)
 	{
-		ITexture *t = getTexture(filename);
+		ITexture* t = getTexture(filename);
 		if (t != NULL)
 			return t;
 
@@ -217,7 +217,7 @@ namespace Skylicht
 
 		CStringImp::getFileName(realFileName, filename);
 
-		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
+		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 
 		for (u32 i = 0, n = (u32)textureFolder.size(); i < n; i++)
 		{
@@ -225,10 +225,24 @@ namespace Skylicht
 			s += "/";
 			s += realFileName;
 
-			ITexture *texture = CTextureManager::getInstance()->getTexture(s.c_str());
+			ITexture* texture = CTextureManager::getInstance()->getTexture(s.c_str());
 			if (texture != NULL)
 			{
 				return texture;
+			}
+
+			if (realFileName != filename)
+			{
+				// test file name
+				s = textureFolder[i];
+				s += "/";
+				s += filename;
+
+				texture = CTextureManager::getInstance()->getTexture(s.c_str());
+				if (texture != NULL)
+				{
+					return texture;
+				}
 			}
 		}
 
@@ -238,15 +252,15 @@ namespace Skylicht
 		return NULL;
 	}
 
-	ITexture* CTextureManager::getTexture(const char *path)
+	ITexture* CTextureManager::getTexture(const char* path)
 	{
 		char ansiPath[512];
 
 		std::string fixPath = CPath::normalizePath(path);
 		strcpy(ansiPath, fixPath.c_str());
 
-		IVideoDriver *driver = getVideoDriver();
-		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
+		IVideoDriver* driver = getVideoDriver();
+		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 
 		// try to load compress texture
 		if (driver->getDriverType() == video::EDT_OPENGLES)
@@ -305,7 +319,7 @@ namespace Skylicht
 			}
 		}
 
-		ITexture *texture = NULL;
+		ITexture* texture = NULL;
 		texture = driver->getTexture(ansiPath);
 
 		// register the texture
@@ -326,12 +340,12 @@ namespace Skylicht
 			m_nullTexture = driver->getTexture("BuiltIn/Textures/NullTexture.png");
 
 		return texture;
-	}
+}
 
 	ITexture* CTextureManager::getTextureArray(std::vector<std::string>& listTexture)
 	{
-		IVideoDriver *driver = getVideoDriver();
-		io::IFileSystem *fs = getIrrlichtDevice()->getFileSystem();
+		IVideoDriver* driver = getVideoDriver();
+		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 
 		core::array<io::path> paths;
 
@@ -407,7 +421,7 @@ namespace Skylicht
 				}
 			}
 
-			IImage *image = NULL;
+			IImage* image = NULL;
 
 			if (loadImage == true)
 			{
@@ -453,9 +467,9 @@ namespace Skylicht
 			}
 
 			listImage.push_back(image);
-		}
+	}
 
-		ITexture *texture = NULL;
+		ITexture* texture = NULL;
 
 		if (listImage.size() > 0 && listImage[0] == NULL)
 		{
@@ -490,12 +504,12 @@ namespace Skylicht
 
 	// getCubeTexture
 	ITexture* CTextureManager::getCubeTexture(
-		const char *pathX1,
-		const char *pathX2,
-		const char *pathY1,
-		const char *pathY2,
-		const char *pathZ1,
-		const char *pathZ2)
+		const char* pathX1,
+		const char* pathX2,
+		const char* pathY1,
+		const char* pathY2,
+		const char* pathZ1,
+		const char* pathZ2)
 	{
 		std::vector<std::string> paths;
 		paths.push_back(pathX1);
@@ -513,10 +527,10 @@ namespace Skylicht
 			paths[j] = ansiPath;
 		}
 
-		IVideoDriver *driver = getVideoDriver();
-		IrrlichtDevice *device = getIrrlichtDevice();
+		IVideoDriver* driver = getVideoDriver();
+		IrrlichtDevice* device = getIrrlichtDevice();
 
-		ITexture *texture = NULL;
+		ITexture* texture = NULL;
 		texture = driver->getTextureCube
 		(
 			paths[0].c_str(),

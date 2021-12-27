@@ -56,7 +56,7 @@ namespace Skylicht
 
 	CShader::~CShader()
 	{
-		for (IShaderCallback *cb : m_callbacks)
+		for (IShaderCallback* cb : m_callbacks)
 		{
 			delete cb;
 		}
@@ -86,9 +86,9 @@ namespace Skylicht
 		m_resources.clear();
 	}
 
-	EUniformType CShader::getUniformType(const char *name)
+	EUniformType CShader::getUniformType(const char* name)
 	{
-		const char *uniformString[] = {
+		const char* uniformString[] = {
 			"VIEW_PROJECTION",
 			"WORLD_VIEW_PROJECTION",
 			"VIEW",
@@ -145,7 +145,7 @@ namespace Skylicht
 		return NUM_SHADER_TYPE;
 	}
 
-	E_MATERIAL_TYPE CShader::getBaseShaderByName(const char *name)
+	E_MATERIAL_TYPE CShader::getBaseShaderByName(const char* name)
 	{
 		std::string type = name;
 
@@ -159,9 +159,9 @@ namespace Skylicht
 		return EMT_SOLID;
 	}
 
-	void CShader::parseUI(io::IXMLReader *xmlReader, SUniformUI *parent)
+	void CShader::parseUI(io::IXMLReader* xmlReader, SUniformUI* parent)
 	{
-		const wchar_t *wtext;
+		const wchar_t* wtext;
 		char text[1024];
 
 		const char* uiName[] = {
@@ -175,7 +175,7 @@ namespace Skylicht
 			"UIGroup"
 		};
 
-		SUniformUI *uniform = new SUniformUI(this);
+		SUniformUI* uniform = new SUniformUI(this);
 
 		wtext = xmlReader->getAttributeValue(L"control");
 		CStringImp::convertUnicodeToUTF8(wtext, text);
@@ -199,6 +199,13 @@ namespace Skylicht
 		{
 			CStringImp::convertUnicodeToUTF8(wtext, text);
 			CStringImp::splitString(text, ";", uniform->AutoReplace);
+		}
+
+		wtext = xmlReader->getAttributeValue(L"elementName");
+		if (wtext != NULL)
+		{
+			CStringImp::convertUnicodeToUTF8(wtext, text);
+			CStringImp::splitString(text, ";", uniform->ElementName);
 		}
 
 		wtext = xmlReader->getAttributeValue(L"step");
@@ -239,7 +246,7 @@ namespace Skylicht
 		}
 	}
 
-	void CShader::parseUniformUI(io::IXMLReader *xmlReader)
+	void CShader::parseUniformUI(io::IXMLReader* xmlReader)
 	{
 		while (xmlReader->read())
 		{
@@ -258,9 +265,9 @@ namespace Skylicht
 		}
 	}
 
-	void CShader::parseResources(io::IXMLReader *xmlReader)
+	void CShader::parseResources(io::IXMLReader* xmlReader)
 	{
-		const wchar_t *wtext;
+		const wchar_t* wtext;
 		char text[1024];
 
 		while (xmlReader->read())
@@ -270,7 +277,7 @@ namespace Skylicht
 				std::wstring nodeName = xmlReader->getNodeName();
 				if (nodeName == L"resource")
 				{
-					SResource *res = new SResource();
+					SResource* res = new SResource();
 					m_resources.push_back(res);
 
 					wtext = xmlReader->getAttributeValue(L"name");
@@ -279,7 +286,7 @@ namespace Skylicht
 
 					wtext = xmlReader->getAttributeValue(L"type");
 					CStringImp::convertUnicodeToUTF8(wtext, text);
-					const char *type[] =
+					const char* type[] =
 					{
 						"Texture",
 						"CubeTexture",
@@ -312,9 +319,9 @@ namespace Skylicht
 		}
 	}
 
-	void CShader::parseUniform(io::IXMLReader *xmlReader)
+	void CShader::parseUniform(io::IXMLReader* xmlReader)
 	{
-		const wchar_t *wtext;
+		const wchar_t* wtext;
 		char text[1024];
 
 		bool inVS = true;
@@ -332,7 +339,7 @@ namespace Skylicht
 					inVS = false;
 				else if (nodeName == L"uniform")
 				{
-					SUniform *uniform = NULL;
+					SUniform* uniform = NULL;
 					if (inVS == true)
 					{
 						m_vsUniforms.push_back(SUniform());
@@ -463,9 +470,9 @@ namespace Skylicht
 		}
 	}
 
-	void CShader::initShader(io::IXMLReader *xmlReader, const char *shaderFolder)
+	void CShader::initShader(io::IXMLReader* xmlReader, const char* shaderFolder)
 	{
-		const wchar_t *wtext;
+		const wchar_t* wtext;
 		char text[1024];
 
 		while (xmlReader->read())
@@ -579,7 +586,7 @@ namespace Skylicht
 		}
 	}
 
-	void CShader::buildUIUniform(SUniformUI *ui)
+	void CShader::buildUIUniform(SUniformUI* ui)
 	{
 		if (ui->ControlType != UIGroup)
 		{
@@ -595,7 +602,7 @@ namespace Skylicht
 		}
 	}
 
-	CShader::SUniformUI* CShader::getUniformUIByName(const char *name)
+	CShader::SUniformUI* CShader::getUniformUIByName(const char* name)
 	{
 		for (u32 i = 0, n = m_ui.size(); i < n; i++)
 		{
@@ -613,11 +620,11 @@ namespace Skylicht
 		return NULL;
 	}
 
-	CShader::SUniformUI* CShader::getUniformUIByName(const char *name, CShader::SUniformUI *group)
+	CShader::SUniformUI* CShader::getUniformUIByName(const char* name, CShader::SUniformUI* group)
 	{
 		for (u32 i = 0, n = group->Childs.size(); i < n; i++)
 		{
-			SUniformUI *ui = group->Childs[i];
+			SUniformUI* ui = group->Childs[i];
 
 			if (ui->Name == name)
 				return ui;
@@ -633,7 +640,7 @@ namespace Skylicht
 		return NULL;
 	}
 
-	SUniform* CShader::getVSUniform(const char *name)
+	SUniform* CShader::getVSUniform(const char* name)
 	{
 		for (int i = 0; i < m_numVSUniform; i++)
 		{
@@ -644,7 +651,7 @@ namespace Skylicht
 		return NULL;
 	}
 
-	SUniform* CShader::getFSUniform(const char *name)
+	SUniform* CShader::getFSUniform(const char* name)
 	{
 		for (int i = 0; i < m_numFSUniform; i++)
 		{
@@ -659,7 +666,7 @@ namespace Skylicht
 	{
 		std::string ret;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		if (driver->getDriverType() == video::EDT_DIRECT3D11)
 			ret = m_hlsl.VertexShader;
 		else
@@ -672,7 +679,7 @@ namespace Skylicht
 	{
 		std::string ret;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		if (driver->getDriverType() == video::EDT_DIRECT3D11)
 			ret = m_hlsl.FragmentShader;
 		else
@@ -706,7 +713,7 @@ namespace Skylicht
 
 	bool CShader::isUniformAvaiable(SUniform& uniform)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		if (driver->getDriverType() == video::EDT_DIRECT3D11)
 		{
@@ -722,8 +729,8 @@ namespace Skylicht
 
 	void CShader::OnSetConstants(video::IMaterialRendererServices* services, s32 userData, bool updateTransform)
 	{
-		IVideoDriver *driver = services->getVideoDriver();
-		IMaterialRenderer *matRender = driver->getMaterialRenderer(m_materialRenderID);
+		IVideoDriver* driver = services->getVideoDriver();
+		IMaterialRenderer* matRender = driver->getMaterialRenderer(m_materialRenderID);
 
 		// init for first time
 		if (m_initCallback == true)
@@ -792,7 +799,7 @@ namespace Skylicht
 				if (setUniform(uniform, matRender, true, updateTransform) == false)
 				{
 					// plugin callback
-					for (IShaderCallback *cb : m_callbacks)
+					for (IShaderCallback* cb : m_callbacks)
 					{
 						cb->OnSetConstants(this, &uniform, matRender, true);
 					}
@@ -811,7 +818,7 @@ namespace Skylicht
 				if (setUniform(uniform, matRender, false, updateTransform) == false)
 				{
 					// plugin callback
-					for (IShaderCallback *cb : m_callbacks)
+					for (IShaderCallback* cb : m_callbacks)
 					{
 						cb->OnSetConstants(this, &uniform, matRender, false);
 					}
@@ -820,10 +827,10 @@ namespace Skylicht
 		}
 	}
 
-	bool CShader::setUniform(SUniform &uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform)
+	bool CShader::setUniform(SUniform& uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform)
 	{
-		IVideoDriver *driver = getVideoDriver();
-		CShaderManager *shaderManager = CShaderManager::getInstance();
+		IVideoDriver* driver = getVideoDriver();
+		CShaderManager* shaderManager = CShaderManager::getInstance();
 
 		switch (uniform.Type)
 		{
@@ -946,7 +953,7 @@ namespace Skylicht
 		break;
 		case SHADER_VEC2:
 		{
-			CShaderManager *material = shaderManager;
+			CShaderManager* material = shaderManager;
 			int paramID = (int)uniform.Value[0];
 			float v[2];
 			v[0] = material->ShaderVec2[paramID].X;
@@ -960,7 +967,7 @@ namespace Skylicht
 		break;
 		case SHADER_VEC3:
 		{
-			CShaderManager *material = shaderManager;
+			CShaderManager* material = shaderManager;
 			int paramID = (int)uniform.Value[0];
 			float v[3];
 			v[0] = material->ShaderVec3[paramID].X;
@@ -975,7 +982,7 @@ namespace Skylicht
 		break;
 		case SHADER_VEC4:
 		{
-			CShaderManager *material = shaderManager;
+			CShaderManager* material = shaderManager;
 			int paramID = (int)uniform.Value[0];
 			float v[4];
 			v[0] = material->ShaderVec4[paramID].X;
@@ -992,9 +999,9 @@ namespace Skylicht
 		}
 		case TEXTURE_MIPMAP_COUNT:
 		{
-			SMaterial *material = shaderManager->getCurrentMaterial();
+			SMaterial* material = shaderManager->getCurrentMaterial();
 			int textureID = (int)uniform.Value[0];
-			ITexture *texture = material->TextureLayer[textureID].Texture;
+			ITexture* texture = material->TextureLayer[textureID].Texture;
 
 			if (texture != NULL)
 			{

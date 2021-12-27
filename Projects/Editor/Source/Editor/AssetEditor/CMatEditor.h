@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CAssetEditor.h"
+#include "Material/CMaterialManager.h"
 
 namespace Skylicht
 {
@@ -40,11 +41,15 @@ namespace Skylicht
 
 			virtual ~CMatEditor();
 
-			virtual void clear();
+			virtual void closeGUI();
 
 			virtual void initGUI(const char* path, CSpaceProperty* ui);
 
 			virtual void onUpdateValue(CObjectSerializable* object);
+
+			static void showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects);
+
+			static void addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects);
 
 			DECLARE_GETTYPENAME(CMatEditor);
 		};

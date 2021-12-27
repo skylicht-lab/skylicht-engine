@@ -46,12 +46,12 @@ namespace Skylicht
 
 		CDaeEditor::~CDaeEditor()
 		{
-			clear();
+			closeGUI();
 		}
 
-		void CDaeEditor::clear()
+		void CDaeEditor::closeGUI()
 		{
-			CAssetEditor::clear();
+			CAssetEditor::closeGUI();
 			if (m_settings)
 			{
 				delete m_settings;
