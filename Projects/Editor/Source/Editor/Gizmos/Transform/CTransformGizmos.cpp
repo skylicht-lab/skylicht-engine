@@ -135,7 +135,10 @@ namespace Skylicht
 			{
 				core::vector3df newPos = handle->positionHandle(*m_position, m_transform->getRotationQuaternion());
 				if (newPos != *m_position)
+				{
 					m_position.notify(this);
+					m_transform->setPosition(newPos);
+				}
 
 				m_position = newPos;
 				if (handle->endCheck())
@@ -148,7 +151,10 @@ namespace Skylicht
 			{
 				core::quaternion newRot = handle->rotateHandle(*m_rotation, m_transform->getPosition());
 				if (newRot != *m_rotation)
+				{
 					m_rotation.notify(this);
+					m_transform->setRotation(newRot);
+				}
 
 				m_rotation = newRot;
 				if (handle->endCheck())
@@ -161,7 +167,10 @@ namespace Skylicht
 			{
 				core::vector3df newScale = handle->scaleHandle(*m_scale, m_transform->getPosition(), m_transform->getRotationQuaternion());
 				if (newScale != *m_scale)
+				{
 					m_scale.notify(this);
+					m_transform->setScale(newScale);
+				}
 
 				m_scale = newScale;
 				if (handle->endCheck())
