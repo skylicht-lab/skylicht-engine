@@ -142,7 +142,8 @@ namespace Skylicht
 			else if (uniformUI->ControlType == CShader::UITexture)
 			{
 				CMaterial::SUniformTexture* unifromTexture = material->getUniformTexture(uniformUI->Name.c_str());
-				CSubject<std::string>* newSubject = new CSubject(unifromTexture->Path);
+
+				CSubject<std::string>* newSubject = new CSubject<std::string>(unifromTexture->Path);
 				subjects.push_back(newSubject);
 
 				GUI::CRawImage* image = ui->addInputTextureFile(layout, text, newSubject);
@@ -154,6 +155,7 @@ namespace Skylicht
 						unifromTexture->Texture,
 						GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
 					);
+					image->setColor(GUI::SGUIColor(255, 255, 255, 255));
 				}
 			}
 		}
