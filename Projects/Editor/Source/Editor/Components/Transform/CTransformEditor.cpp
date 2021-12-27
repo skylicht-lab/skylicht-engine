@@ -52,8 +52,33 @@ namespace Skylicht
 
 		CTransformEditor::~CTransformEditor()
 		{
+			// remove gizmos
 			CSceneController::getInstance()->removeGizmos(m_gizmos);
 			delete m_gizmos;
+		}
+
+		void CTransformEditor::closeGUI()
+		{
+			m_component = NULL;
+			m_gameObject = NULL;
+			m_transform = NULL;
+
+			// clear all registered observer
+			X.removeAllObserver();
+			Y.removeAllObserver();
+			Z.removeAllObserver();
+
+			ScaleX.removeAllObserver();
+			ScaleY.removeAllObserver();
+			ScaleZ.removeAllObserver();
+
+			RotateX.removeAllObserver();
+			RotateY.removeAllObserver();
+			RotateZ.removeAllObserver();
+
+			m_gizmos->getPosition().removeAllObserver();
+			m_gizmos->getRotation().removeAllObserver();
+			m_gizmos->getScale().removeAllObserver();
 		}
 
 		void CTransformEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
