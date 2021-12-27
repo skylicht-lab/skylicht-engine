@@ -862,7 +862,7 @@ namespace Skylicht
 
 			GUI::CRawImage* image = new GUI::CRawImage(layout);
 			image->setSize(128, 128);
-			image->setColor(GUI::SGUIColor(255, 0, 0, 0));
+			image->setColor(GUI::SGUIColor(255, 50, 50, 50));
 
 			return image;
 		}
