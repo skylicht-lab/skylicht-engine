@@ -36,6 +36,9 @@ namespace Skylicht
 		protected:
 			std::vector<ISubject*> m_subjects;
 
+			ArrayMaterial m_materials;
+			std::string m_path;
+
 		public:
 			CMatEditor();
 
@@ -47,9 +50,9 @@ namespace Skylicht
 
 			virtual void onUpdateValue(CObjectSerializable* object);
 
-			static void showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects);
+			static void showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects, const ArrayMaterial& materials, const std::string& path);
 
-			static void addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects);
+			static void addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects, const ArrayMaterial& materials, const std::string& path);
 
 			DECLARE_GETTYPENAME(CMatEditor);
 		};

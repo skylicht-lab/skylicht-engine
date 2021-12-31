@@ -106,6 +106,11 @@ namespace Skylicht
 				return m_spriteIcon;
 			}
 
+			GUI::CCanvas* getRootCanvas()
+			{
+				return m_canvas;
+			}
+
 		protected:
 
 			void initMenuBar();
