@@ -230,7 +230,7 @@ namespace Skylicht
 		return result;
 	}
 
-	void CMaterialManager::saveMaterial(ArrayMaterial& materials, const char* filename)
+	void CMaterialManager::saveMaterial(const ArrayMaterial& materials, const char* filename)
 	{
 		std::string matFile = filename;
 
@@ -238,6 +238,8 @@ namespace Skylicht
 		char relativeTextureFolder[512];
 		CStringImp::replaceText<char>(tempPath, filename, "\\", "/");
 		std::string materialFolder = CPath::getFolderPath(tempPath);
+
+		// fix if run from Bin folder (SampleApplication)
 		CStringImp::replaceText(relativeTextureFolder, materialFolder.c_str(), "../Assets/", "");
 
 		IrrlichtDevice* device = getIrrlichtDevice();

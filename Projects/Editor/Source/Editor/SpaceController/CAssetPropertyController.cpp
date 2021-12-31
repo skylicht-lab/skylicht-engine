@@ -47,7 +47,7 @@ namespace Skylicht
 
 		void CAssetPropertyController::onSelectAsset(const char* path, bool isFolder)
 		{
-			if (m_spaceProperty == NULL)
+			if (m_spaceProperty == NULL || isFolder)
 				return;
 
 			// Name and icon			
@@ -55,10 +55,7 @@ namespace Skylicht
 			std::string ext = CPath::getFileNameExt(path);
 
 			GUI::CButton* btn = m_spaceProperty->setButtonLabel(CStringImp::convertUTF8ToUnicode(fileName.c_str()).c_str());
-			if (isFolder)
-				btn->setIcon(GUI::ESystemIcon::Folder);
-			else
-				btn->setIcon(GUI::ESystemIcon::File);
+			btn->setIcon(GUI::ESystemIcon::File);
 
 			std::string assetPath = CAssetManager::getInstance()->getShortPath(path);
 			btn->OnPress = [&, p = assetPath](GUI::CBase* base) {

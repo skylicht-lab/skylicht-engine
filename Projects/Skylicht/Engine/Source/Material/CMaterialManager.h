@@ -43,12 +43,12 @@ namespace Skylicht
 
 		void releaseAllMaterials();
 
-		ArrayMaterial& loadMaterial(const char *filename, bool loadTexture, const std::vector<std::string>& textureFolders);
+		ArrayMaterial& loadMaterial(const char* filename, bool loadTexture, const std::vector<std::string>& textureFolders);
 
-		void saveMaterial(ArrayMaterial &materials, const char *filename);
+		void saveMaterial(const ArrayMaterial& materials, const char* filename);
 
-		void exportMaterial(CEntityPrefab *prefab, const char *filename);
+		void exportMaterial(CEntityPrefab* prefab, const char* filename);
 
-		ArrayMaterial initDefaultMaterial(CEntityPrefab *prefab);
+		ArrayMaterial initDefaultMaterial(CEntityPrefab* prefab);
 	};
 }
