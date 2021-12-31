@@ -230,7 +230,6 @@ namespace Skylicht
 
 					if (textureManager->existTexture(s.c_str()) == true)
 					{
-						p->Path = s;
 						if (loadTexture == true)
 							p->Texture = CTextureManager::getInstance()->getTexture(s.c_str());
 						break;
