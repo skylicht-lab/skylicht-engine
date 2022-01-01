@@ -31,12 +31,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "MeshManager/CMeshManager.h"
 #include "Editor/CEditor.h"
+#include "GUI/Input/CInput.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
 		ASSET_EDITOR_REGISTER(CMatEditor, mat);
+
+		GUI::CMenu* CMatEditor::s_pickTextureMenu = NULL;
 
 		CMatEditor::CMatEditor()
 		{
@@ -61,6 +64,13 @@ namespace Skylicht
 		void CMatEditor::initGUI(const char* path, CSpaceProperty* ui)
 		{
 			CShaderManager* shaderManager = CShaderManager::getInstance();
+
+			CEditor* editor = CEditor::getInstance();
+			if (s_pickTextureMenu == NULL)
+			{
+				s_pickTextureMenu = new GUI::CMenu(editor->getRootCanvas());
+				s_pickTextureMenu->addItem(L"Clear Texture", GUI::ESystemIcon::Close);
+			}
 
 			m_path = path;
 			m_materials = CMaterialManager::getInstance()->loadMaterial(path, true, std::vector<std::string>());
@@ -196,7 +206,8 @@ namespace Skylicht
 
 						if (!isFolder)
 						{
-							std::string ext = CStringImp::toLower(CPath::getFileNameExt(fullPath));
+							std::string ext = CPath::getFileNameExt(fullPath);
+							ext = CStringImp::toLower(ext);
 							if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
 							{
 								return true;
@@ -220,14 +231,17 @@ namespace Skylicht
 						ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
 						if (texture != NULL)
 						{
+							// set texture
 							CMaterial::SUniformTexture* uniform = mat->getUniformTexture(uniformName.c_str());
 							uniform->Path = shortPath;
 							uniform->Texture = texture;
 							mat->autoDetectLoadTexture();
 							mat->applyMaterial();
 
+							// save
 							CMaterialManager::getInstance()->saveMaterial(listMaterial, shortMaterialPath.c_str());
 
+							// update gui
 							const core::dimension2du& size = texture->getSize();
 							imgBtn->getImage()->setImage(
 								texture,
@@ -257,9 +271,33 @@ namespace Skylicht
 					}
 				};
 
-				imageButton->OnRightPress = [uniformName = uniformUI->Name, mat = material](GUI::CBase* button)
+				imageButton->OnRightPress = [uniformName = uniformUI->Name,
+					mat = material,
+					mats = materials,
+					imgBtn = imageButton,
+					matPath = path](GUI::CBase* button)
 				{
+					GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+					s_pickTextureMenu->open(mousePos);
+					s_pickTextureMenu->OnCommand = [name = uniformName,
+						m = mat,
+						ms = mats,
+						btn = imgBtn,
+						p = matPath](GUI::CBase* item)
+					{
+						// clear texture
+						CMaterial::SUniformTexture* uniform = m->getUniformTexture(name.c_str());
+						uniform->Path = "";
+						uniform->Texture = NULL;
 
+						// clear gui
+						btn->getImage()->setImage(NULL, GUI::SRect(0.0f, 0.0f, 0.0f, 0.0f));
+						btn->getImage()->setColor(GUI::SGUIColor(255, 0, 0, 0));
+
+						// save
+						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(p.c_str());
+						CMaterialManager::getInstance()->saveMaterial(ms, shortMaterialPath.c_str());
+					};
 				};
 			}
 		}

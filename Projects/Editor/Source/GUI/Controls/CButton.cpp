@@ -178,9 +178,9 @@ namespace Skylicht
 				}
 				else
 				{
-					if (isHovered() && OnPress != nullptr)
+					if (isHovered() && OnRightPress != nullptr)
 					{
-						OnPress(this);
+						OnRightPress(this);
 					}
 
 					m_pressed = false;
