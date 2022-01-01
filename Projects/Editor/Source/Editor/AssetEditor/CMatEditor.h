@@ -39,6 +39,8 @@ namespace Skylicht
 			ArrayMaterial m_materials;
 			std::string m_path;
 
+			static GUI::CMenu* s_pickTextureMenu;
+
 		public:
 			CMatEditor();
 
