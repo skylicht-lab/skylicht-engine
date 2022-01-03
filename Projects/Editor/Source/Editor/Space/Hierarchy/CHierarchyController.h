@@ -71,6 +71,10 @@ namespace Skylicht
 			void move(CHierachyNode* from, CHierachyNode* target, bool behind);
 
 			void moveToChild(CHierachyNode* from, CHierachyNode* target);
+
+			CHierachyNode* createObjectAt(CHierachyNode* position, bool behind);
+
+			CHierachyNode* createChildObject(CHierachyNode* parent);
 		};
 	}
 }

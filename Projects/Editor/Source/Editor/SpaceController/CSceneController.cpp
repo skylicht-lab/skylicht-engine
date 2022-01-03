@@ -396,7 +396,7 @@ namespace Skylicht
 				m_spaceHierarchy->add(node);
 		}
 
-		void CSceneController::createEmptyObject(CContainerObject* parent)
+		CGameObject* CSceneController::createEmptyObject(CContainerObject* parent)
 		{
 			CContainerObject* p = parent == NULL ? m_zone : parent;
 
@@ -418,9 +418,11 @@ namespace Skylicht
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->add(node);
 			}
+
+			return newObject;
 		}
 
-		void CSceneController::createContainerObject(CContainerObject* parent)
+		CGameObject* CSceneController::createContainerObject(CContainerObject* parent)
 		{
 			CContainerObject* p = parent == NULL ? m_zone : parent;
 
@@ -441,6 +443,8 @@ namespace Skylicht
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->add(node);
 			}
+
+			return newObject;
 		}
 
 		void CSceneController::deselectAllOnHierachy()
