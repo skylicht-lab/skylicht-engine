@@ -46,7 +46,6 @@ namespace Skylicht
 		ArrayMaterial m_materials;
 
 		std::string m_meshFile;
-		std::string m_textureFolder;
 		std::string m_materialFile;
 
 		bool m_loadTexcoord2;

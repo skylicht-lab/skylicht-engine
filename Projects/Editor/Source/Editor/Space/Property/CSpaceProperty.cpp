@@ -864,6 +864,7 @@ namespace Skylicht
 			image->setSize(128, 128);
 			image->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
 
+			boxLayout->endVertical();
 			return image;
 		}
 
