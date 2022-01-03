@@ -98,7 +98,6 @@ namespace Skylicht
 
 		object->addAutoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
 		object->addAutoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
-		object->addAutoRelease(new CFolderPathProperty(object, "textures", m_textureFolder.c_str()));
 		return object;
 	}
 
@@ -113,15 +112,13 @@ namespace Skylicht
 		std::string meshFile = object->get<std::string>("mesh", "");
 		std::string materialFile = object->get<std::string>("material", "");
 
-		m_textureFolder = object->get<std::string>("textures", "");
-
 		if (meshFile != m_meshFile)
 		{
 			m_meshFile = meshFile;
 
 			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 				meshFile.c_str(),
-				m_textureFolder.c_str(),
+				"",
 				m_loadNormal,
 				m_fixInverseNormal,
 				m_loadTexcoord2,
@@ -136,8 +133,6 @@ namespace Skylicht
 			m_materialFile = materialFile;
 
 			std::vector<std::string> textureFolders;
-			textureFolders.push_back(m_textureFolder);
-
 			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
 				m_materialFile.c_str(),
 				true,
@@ -153,7 +148,7 @@ namespace Skylicht
 	{
 		CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 			m_meshFile.c_str(),
-			m_textureFolder.c_str(),
+			"",
 			m_loadNormal,
 			m_fixInverseNormal,
 			m_loadTexcoord2,
@@ -163,8 +158,6 @@ namespace Skylicht
 			initFromPrefab(prefab);
 
 		std::vector<std::string> textureFolders;
-		textureFolders.push_back(m_textureFolder);
-
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
 			m_materialFile.c_str(),
 			true,

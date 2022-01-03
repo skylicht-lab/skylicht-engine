@@ -63,8 +63,6 @@ namespace Skylicht
 
 		void CMatEditor::initGUI(const char* path, CSpaceProperty* ui)
 		{
-			CShaderManager* shaderManager = CShaderManager::getInstance();
-
 			CEditor* editor = CEditor::getInstance();
 			if (s_pickTextureMenu == NULL)
 			{
@@ -82,12 +80,29 @@ namespace Skylicht
 				GUI::CCollapsibleGroup* group = ui->addGroup(material->getName(), this);
 				GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 
-				std::vector<std::string> shaderExts = { ".xml" };
+				std::vector<std::string> shaderExts = { "xml" };
 
+				// On change shader
 				CSubject<std::string>* shaderValue = new CSubject<std::string>(material->getShaderPath());
-				shaderValue->addObserver(new CObserver([](ISubject* subject, IObserver* from)
+				shaderValue->addObserver(new CObserver([&, mat = material, g = group](ISubject* subject, IObserver* from)
 					{
+						CSubject<std::string>* value = (CSubject<std::string>*)subject;
 
+						// remove old layout
+						GUI::CBoxLayout* layout = m_materialUI[mat];
+						layout->remove();
+
+						// create new layout
+						layout = ui->createBoxLayout(g);
+						m_materialUI[mat] = layout;
+
+						// change the shader
+						mat->changeShader(value->get().c_str());
+						showMaterialGUI(ui, layout, mat);
+
+						// save material
+						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
+						CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
 					}), true);
 				m_subjects.push_back(shaderValue);
 
@@ -95,15 +110,10 @@ namespace Skylicht
 
 				layout->addSpace(10.0f);
 
-				CShader* shader = shaderManager->getShaderByPath(material->getShaderPath());
-				if (shader == NULL)
-					shader = shaderManager->loadShader(material->getShaderPath());
+				layout = ui->createBoxLayout(group);
 
-				if (shader != NULL)
-				{
-					// show shader UI
-					showShaderGUI(ui, layout, material, shader, m_subjects, m_materials, m_path);
-				}
+				showMaterialGUI(ui, layout, material);
+				m_materialUI[material] = layout;
 
 				groups.push_back(group);
 			}
@@ -118,6 +128,21 @@ namespace Skylicht
 		void CMatEditor::onUpdateValue(CObjectSerializable* object)
 		{
 
+		}
+
+		void CMatEditor::showMaterialGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material)
+		{
+			CShaderManager* shaderManager = CShaderManager::getInstance();
+			CShader* shader = shaderManager->getShaderByPath(material->getShaderPath());
+
+			if (shader == NULL)
+				shader = shaderManager->loadShader(material->getShaderPath());
+
+			if (shader != NULL)
+			{
+				// show shader UI
+				showShaderGUI(ui, layout, material, shader, m_subjects, m_materials, m_path);
+			}
 		}
 
 		void CMatEditor::showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects, const ArrayMaterial& materials, const std::string& path)
