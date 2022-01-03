@@ -84,21 +84,21 @@ namespace Skylicht
 
 				// On change shader
 				CSubject<std::string>* shaderValue = new CSubject<std::string>(material->getShaderPath());
-				shaderValue->addObserver(new CObserver([&, mat = material, g = group](ISubject* subject, IObserver* from)
+				shaderValue->addObserver(new CObserver([&, material, group](ISubject* subject, IObserver* from)
 					{
 						CSubject<std::string>* value = (CSubject<std::string>*)subject;
 
 						// remove old layout
-						GUI::CBoxLayout* layout = m_materialUI[mat];
+						GUI::CBoxLayout* layout = m_materialUI[material];
 						layout->remove();
 
 						// create new layout
-						layout = ui->createBoxLayout(g);
-						m_materialUI[mat] = layout;
+						layout = ui->createBoxLayout(group);
+						m_materialUI[material] = layout;
 
 						// change the shader
-						mat->changeShader(value->get().c_str());
-						showMaterialGUI(ui, layout, mat);
+						material->changeShader(value->get().c_str());
+						showMaterialGUI(ui, layout, material);
 
 						// save material
 						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
@@ -242,7 +242,7 @@ namespace Skylicht
 					return false;
 				};
 
-				imageButton->OnDrop = [imgBtn = imageButton, uniformName = uniformUI->Name, mat = material, listMaterial = materials, p = path](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				imageButton->OnDrop = [imageButton, uniformName = uniformUI->Name, material, materials, path](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 				{
 					if (data->Name == "ListFSItem")
 					{
@@ -250,29 +250,29 @@ namespace Skylicht
 
 						std::string fullPath = item->getTagString();
 						std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
-						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(p.c_str());
+						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(path.c_str());
 						std::string name = CPath::getFileName(shortPath);
 
 						ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
 						if (texture != NULL)
 						{
 							// set texture
-							CMaterial::SUniformTexture* uniform = mat->getUniformTexture(uniformName.c_str());
+							CMaterial::SUniformTexture* uniform = material->getUniformTexture(uniformName.c_str());
 							uniform->Path = shortPath;
 							uniform->Texture = texture;
-							mat->autoDetectLoadTexture();
-							mat->applyMaterial();
+							material->autoDetectLoadTexture();
+							material->applyMaterial();
 
 							// save
-							CMaterialManager::getInstance()->saveMaterial(listMaterial, shortMaterialPath.c_str());
+							CMaterialManager::getInstance()->saveMaterial(materials, shortMaterialPath.c_str());
 
 							// update gui
 							const core::dimension2du& size = texture->getSize();
-							imgBtn->getImage()->setImage(
+							imageButton->getImage()->setImage(
 								texture,
 								GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
 							);
-							imgBtn->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+							imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
 						}
 						else
 						{
@@ -285,9 +285,9 @@ namespace Skylicht
 					}
 				};
 
-				imageButton->OnPress = [uniformName = uniformUI->Name, mat = material](GUI::CBase* button)
+				imageButton->OnPress = [uniformName = uniformUI->Name, material](GUI::CBase* button)
 				{
-					CMaterial::SUniformTexture* uniform = mat->getUniformTexture(uniformName.c_str());
+					CMaterial::SUniformTexture* uniform = material->getUniformTexture(uniformName.c_str());
 					if (uniform->Texture)
 					{
 						std::string assetPath = uniform->Texture->getName().getPath().c_str();
@@ -296,32 +296,24 @@ namespace Skylicht
 					}
 				};
 
-				imageButton->OnRightPress = [uniformName = uniformUI->Name,
-					mat = material,
-					mats = materials,
-					imgBtn = imageButton,
-					matPath = path](GUI::CBase* button)
+				imageButton->OnRightPress = [uniformName = uniformUI->Name, material, materials, imageButton, path](GUI::CBase* button)
 				{
 					GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
 					s_pickTextureMenu->open(mousePos);
-					s_pickTextureMenu->OnCommand = [name = uniformName,
-						m = mat,
-						ms = mats,
-						btn = imgBtn,
-						p = matPath](GUI::CBase* item)
+					s_pickTextureMenu->OnCommand = [name = uniformName, material, materials, imageButton, path](GUI::CBase* item)
 					{
 						// clear texture
-						CMaterial::SUniformTexture* uniform = m->getUniformTexture(name.c_str());
+						CMaterial::SUniformTexture* uniform = material->getUniformTexture(name.c_str());
 						uniform->Path = "";
 						uniform->Texture = NULL;
 
 						// clear gui
-						btn->getImage()->setImage(NULL, GUI::SRect(0.0f, 0.0f, 0.0f, 0.0f));
-						btn->getImage()->setColor(GUI::SGUIColor(255, 0, 0, 0));
+						imageButton->getImage()->setImage(NULL, GUI::SRect(0.0f, 0.0f, 0.0f, 0.0f));
+						imageButton->getImage()->setColor(GUI::SGUIColor(255, 0, 0, 0));
 
 						// save
-						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(p.c_str());
-						CMaterialManager::getInstance()->saveMaterial(ms, shortMaterialPath.c_str());
+						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(path.c_str());
+						CMaterialManager::getInstance()->saveMaterial(materials, shortMaterialPath.c_str());
 					};
 				};
 			}

@@ -25,9 +25,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CHierarchyController.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
 
 #include "GameObject/CZone.h"
 #include "Scene/CScene.h"
+
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
@@ -228,10 +231,21 @@ namespace Skylicht
 						}
 						return true;
 					}
-				}
-				else if (node->getTagDataType() == CHierachyNode::Scene)
-				{
+					else if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						bool isFolder = rowItem->getTagBool();
+						if (isFolder)
+							return false;
 
+						std::string path = rowItem->getTagString();
+						std::string fileExt = CPath::getFileNameExt(path);
+						fileExt = CStringImp::toLower(fileExt);
+						if (fileExt == "dae" || fileExt == "smesh")
+						{
+							return true;
+						}
+					}
 				}
 				return false;
 			};
@@ -240,26 +254,28 @@ namespace Skylicht
 			{
 				if (node->getTagDataType() == CHierachyNode::Zone)
 				{
-					CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
-
-					if (dragNode->getTagDataType() == CHierachyNode::Zone)
+					if (data->Name == "HierarchyNode")
 					{
-						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-						if (local.Y < rowItem->height() * 0.5f)
+						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+						if (dragNode->getTagDataType() == CHierachyNode::Zone)
 						{
-							rowItem->enableDrawLine(true, false);
-						}
-						else
-						{
-							rowItem->enableDrawLine(false, true);
+							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+							if (local.Y < rowItem->height() * 0.5f)
+							{
+								rowItem->enableDrawLine(true, false);
+							}
+							else
+							{
+								rowItem->enableDrawLine(false, true);
+							}
 						}
 					}
-					else
+					else if (data->Name == "ListFSItem")
 					{
-
+						rowItem->enableDrawLine(false, true);
 					}
 				}
-				if (node->getTagDataType() == CHierachyNode::Container)
+				else if (node->getTagDataType() == CHierachyNode::Container)
 				{
 					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 					if (local.Y < rowItem->height() * 0.25f)
@@ -296,48 +312,84 @@ namespace Skylicht
 
 			rowItem->OnDrop = [&, editor = m_editor, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
-				CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
-
-				if (node->getTagDataType() == CHierachyNode::Zone)
+				if (data->Name == "HierarchyNode")
 				{
-					if (dragNode->getTagDataType() == CHierachyNode::Zone)
+					CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+					if (node->getTagDataType() == CHierachyNode::Zone)
+					{
+						if (dragNode->getTagDataType() == CHierachyNode::Zone)
+						{
+							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+							if (local.Y < rowItem->height() * 0.5f)
+							{
+								move(dragNode, node, false);
+							}
+							else
+							{
+								move(dragNode, node, true);
+							}
+						}
+						else
+						{
+							moveToChild(dragNode, node);
+						}
+					}
+					else if (node->getTagDataType() == CHierachyNode::Container)
+					{
+						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+						if (local.Y < rowItem->height() * 0.25f)
+							move(dragNode, node, false);
+						else if (local.Y > rowItem->height() * 0.75f)
+							move(dragNode, node, true);
+						else
+							moveToChild(dragNode, node);
+					}
+					else if (node->getTagDataType() == CHierachyNode::GameObject)
+					{
+						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+						if (local.Y < rowItem->height() * 0.5f)
+							move(dragNode, node, false);
+						else
+							move(dragNode, node, true);
+					}
+				}
+				else if (data->Name == "ListFSItem")
+				{
+					if (node->getTagDataType() == CHierachyNode::Zone)
+					{
+						createChildObject(node);
+					}
+					else if (node->getTagDataType() == CHierachyNode::Container)
+					{
+						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+						if (local.Y < rowItem->height() * 0.25f)
+						{
+							createObjectAt(node, false);
+						}
+						else if (local.Y > rowItem->height() * 0.75f)
+						{
+							createObjectAt(node, true);
+						}
+						else
+						{
+							createChildObject(node);
+						}
+					}
+					else if (node->getTagDataType() == CHierachyNode::GameObject)
 					{
 						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 						if (local.Y < rowItem->height() * 0.5f)
 						{
-							move(dragNode, node, false);
+							createObjectAt(node, false);
 						}
 						else
 						{
-							move(dragNode, node, true);
+							createObjectAt(node, true);
 						}
 					}
-					else
-					{
-						moveToChild(dragNode, node);
-					}
-				}
-				else if (node->getTagDataType() == CHierachyNode::Container)
-				{
-					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-					if (local.Y < rowItem->height() * 0.25f)
-						move(dragNode, node, false);
-					else if (local.Y > rowItem->height() * 0.75f)
-						move(dragNode, node, true);
-					else
-						moveToChild(dragNode, node);
-				}
-				else if (node->getTagDataType() == CHierachyNode::GameObject)
-				{
-					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-					if (local.Y < rowItem->height() * 0.5f)
-						move(dragNode, node, false);
-					else
-						move(dragNode, node, true);
 				}
 
 				rowItem->enableDrawLine(false, false);
-
 				editor->refresh();
 			};
 		}
@@ -410,6 +462,35 @@ namespace Skylicht
 			CGameObject* targetObject = (CGameObject*)target->getTagData();
 			CContainerObject* parent = (CContainerObject*)targetObject;
 			parent->bringToChild(fromObject);
+		}
+
+		CHierachyNode* CHierarchyController::createObjectAt(CHierachyNode* position, bool behind)
+		{
+			CHierachyNode* parentNode = position->getParent();
+
+			CGameObject* targetObject = (CGameObject*)position->getTagData();
+			CContainerObject* parentObject = (CContainerObject*)targetObject->getParent();
+
+			CGameObject* newGameObject = CSceneController::getInstance()->createEmptyObject(parentObject);
+			CHierachyNode* thisNode = parentNode->getNodeByTag(newGameObject);
+			if (thisNode != NULL)
+			{
+				parentObject->bringToNext(newGameObject, targetObject, behind);
+				thisNode->bringNextNode(position, behind);
+				thisNode->getGUINode()->bringNextToControl(position->getGUINode(), behind);
+			}
+
+			return thisNode;
+		}
+
+		CHierachyNode* CHierarchyController::createChildObject(CHierachyNode* parent)
+		{
+			CGameObject* parentGameObject = (CGameObject*)parent->getTagData();
+			CContainerObject* parentContainer = (CContainerObject*)parentGameObject;
+
+			CGameObject* newGameObject = CSceneController::getInstance()->createEmptyObject(parentContainer);
+			CHierachyNode* thisNode = parent->getNodeByTag(newGameObject);
+			return thisNode;
 		}
 	}
 }

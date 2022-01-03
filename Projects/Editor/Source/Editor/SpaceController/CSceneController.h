@@ -179,9 +179,9 @@ namespace Skylicht
 
 			void createZone();
 
-			void createEmptyObject(CContainerObject* parent);
+			CGameObject* createEmptyObject(CContainerObject* parent);
 
-			void createContainerObject(CContainerObject* parent);
+			CGameObject* createContainerObject(CContainerObject* parent);
 
 		protected:
 
