@@ -36,6 +36,8 @@ namespace Skylicht
 		protected:
 			std::vector<ISubject*> m_subjects;
 
+			std::map<CMaterial*, GUI::CBoxLayout*> m_materialUI;
+
 			ArrayMaterial m_materials;
 			std::string m_path;
 
@@ -51,6 +53,8 @@ namespace Skylicht
 			virtual void initGUI(const char* path, CSpaceProperty* ui);
 
 			virtual void onUpdateValue(CObjectSerializable* object);
+
+			void showMaterialGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material);
 
 			static void showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects, const ArrayMaterial& materials, const std::string& path);
 
