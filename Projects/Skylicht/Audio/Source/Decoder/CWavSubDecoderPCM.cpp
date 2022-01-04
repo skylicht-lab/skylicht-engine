@@ -94,10 +94,8 @@ namespace SkylichtAudio
 		return size;
 	}
 
-	int CWavSubDecoderPCM::seek(int size)
-	{
-		int sampleNum = size / (m_trackParams.NumChannels * (m_trackParams.BitsPerSample / 8));
-
+	int CWavSubDecoderPCM::seek(int sampleNum)
+	{		
 		if (sampleNum > m_trackParams.NumSamples)
 		{
 			if (m_loop && m_trackParams.NumSamples != 0)

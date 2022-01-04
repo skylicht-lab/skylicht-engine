@@ -537,7 +537,7 @@ namespace SkylichtAudio
 		STrackParams trackParam;
 		m_decoder->getTrackParam(&trackParam);
 
-		int seekBufferSize = (int)(trackParam.SamplingRate * (time / 1000.0f)) * 4;
+		int seekBufferSize = (int)(trackParam.SamplingRate * (time / 1000.0f)) * 2 * trackParam.NumChannels;
 		m_decoder->seek(seekBufferSize);
 
 		if (m_state != ISoundSource::StatePause && m_source)
