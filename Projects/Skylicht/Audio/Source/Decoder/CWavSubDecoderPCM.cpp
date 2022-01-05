@@ -95,7 +95,7 @@ namespace SkylichtAudio
 	}
 
 	int CWavSubDecoderPCM::seek(int sampleNum)
-	{		
+	{
 		if (sampleNum > m_trackParams.NumSamples)
 		{
 			if (m_loop && m_trackParams.NumSamples != 0)
@@ -116,7 +116,7 @@ namespace SkylichtAudio
 			if ((m_waveChunks->DataHeader.ChunkSize / m_waveChunks->FormatHeader.BlockAlign) > (unsigned int)sampleNum)
 			{
 				m_decodedSamples += sampleNum;
-				m_streamCursor->seek(sampleNum * m_waveChunks->FormatHeader.BlockAlign, IStreamCursor::OriginStart);
+				m_streamCursor->seek(sampleNum * m_waveChunks->FormatHeader.BlockAlign, IStreamCursor::OriginCurrent);
 				m_currentChunkPosition = sampleNum * m_waveChunks->FormatHeader.BlockAlign;
 				sampleNum = 0;
 			}
