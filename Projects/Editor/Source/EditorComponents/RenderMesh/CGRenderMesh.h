@@ -37,8 +37,6 @@ namespace Skylicht
 		protected:
 			CRenderMesh* m_renderMesh;
 
-			CSelectObjectData* m_selectObjectData;
-
 		public:
 			CGRenderMesh();
 
