@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GameObject/CGameObject.h"
 #include "Transform/CWorldInverseTransformData.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
@@ -40,8 +41,7 @@ namespace Skylicht
 		DEPENDENT_COMPONENT(CRenderMesh, CGRenderMesh);
 
 		CGRenderMesh::CGRenderMesh() :
-			m_renderMesh(NULL),
-			m_selectObjectData(NULL)
+			m_renderMesh(NULL)
 		{
 
 		}
@@ -59,10 +59,6 @@ namespace Skylicht
 			CEntity* entity = m_gameObject->getEntity();
 			entity->addData<CWorldInverseTransformData>();
 
-			// select bbox data
-			m_selectObjectData = entity->addData<CSelectObjectData>();
-			m_selectObjectData->GameObject = m_gameObject;
-
 			updateSelectBBox();
 		}
 
@@ -73,16 +69,19 @@ namespace Skylicht
 
 		void CGRenderMesh::updateSelectBBox()
 		{
-			m_selectObjectData->BBox.reset(0.0f, 0.0f, 0.0f);
+			CEntityManager* entityMgr = m_renderMesh->getGameObject()->getEntityManager();
 
 			std::vector<CRenderMeshData*>& renderers = m_renderMesh->getRenderers();
 			for (size_t i = 0, n = renderers.size(); i < n; i++)
 			{
-				core::aabbox3df bbox = renderers[i]->getMesh()->getBoundingBox();
-				if (i == 0)
-					m_selectObjectData->BBox = bbox;
-				else
-					m_selectObjectData->BBox.addInternalBox(bbox);
+				CEntity* entity = entityMgr->getEntity(renderers[i]->EntityIndex);
+				CSelectObjectData* selectObjectData = entity->getData<CSelectObjectData>();
+				if (selectObjectData == NULL)
+					selectObjectData = entity->addData<CSelectObjectData>();
+
+				// select bbox data
+				selectObjectData->GameObject = m_gameObject;
+				selectObjectData->BBox = renderers[i]->getMesh()->getBoundingBox();
 			}
 		}
 	}
