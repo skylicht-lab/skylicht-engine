@@ -990,6 +990,7 @@ namespace Skylicht
 
 			if (uniformValue->Type == NUM_SHADER_TYPE)
 			{
+				// unknow type
 				SUniform* uniform = m_shader->getFSUniform(uniformValue->Name.c_str());
 				if (uniform == NULL)
 					uniform = m_shader->getVSUniform(uniformValue->Name.c_str());
@@ -1019,6 +1020,7 @@ namespace Skylicht
 					break;
 				}
 				case MATERIAL_PARAM:
+				case MATERIAL_COLOR:
 				{
 					SVec4& v = m_shaderParams.getParam(uniformValue->ValueIndex);
 					v.X = uniformValue->FloatValue[0];

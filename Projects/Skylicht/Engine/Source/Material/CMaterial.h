@@ -98,7 +98,8 @@ namespace Skylicht
 		};
 
 	private:
-		CShaderParams m_shaderParams;
+		// this will copy value from m_uniformParams (see function updateShaderParams)
+		CShaderParams m_shaderParams;	
 
 		std::string m_materialName;
 		std::string m_shaderPath;

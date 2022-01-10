@@ -133,7 +133,7 @@ void CViewInit::initScene()
 	if (prefab != NULL)
 	{
 		// load material
-		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Sponza/Sponza.xml", true, textureFolders);
+		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Sponza/Sponza.mat", true, textureFolders);
 
 		// create render mesh object
 		CGameObject* sponza = zone->createEmptyObject();

@@ -44,6 +44,9 @@ namespace Skylicht
 	{
 		m_skyDomeData = m_gameObject->getEntity()->addData<CSkyDomeData>();
 		m_gameObject->getEntityManager()->addRenderSystem<CSkyDomeRender>();
+
+		float constBuffer[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		m_skyDomeData->SkyDomeMaterial->setUniform4("uColor", constBuffer);
 	}
 
 	void CSkyDome::updateComponent()
@@ -51,10 +54,13 @@ namespace Skylicht
 
 	}
 
-	void CSkyDome::setData(ITexture *texture, const SColor& c)
+	void CSkyDome::setData(ITexture* texture, const SColor& c)
 	{
-		m_skyDomeData->SkyDomeTexture = texture;
-		m_skyDomeData->SkyDomeColor = c;
-		m_skyDomeData->Buffer->getMaterial().setTexture(0, texture);
+		SColorf color(c);
+		float constBuffer[] = { color.r, color.g, color.b, color.a };
+
+		m_skyDomeData->SkyDomeMaterial->setTexture(0, texture);
+		m_skyDomeData->SkyDomeMaterial->setUniform4("uColor", constBuffer);
+		m_skyDomeData->SkyDomeMaterial->applyMaterial();
 	}
 }
