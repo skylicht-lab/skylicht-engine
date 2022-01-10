@@ -25,15 +25,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
+#include "Material/CMaterial.h"
 
 namespace Skylicht
 {
 	class CSkyDomeData : public IEntityData
 	{
 	public:
-		ITexture *SkyDomeTexture;
-		SColor SkyDomeColor;
-
 		IMeshBuffer* Buffer;
 
 		u32 HorizontalResolution;
@@ -41,6 +39,8 @@ namespace Skylicht
 		f32 TexturePercentage;
 		f32 SpherePercentage;
 		f32 Radius;
+
+		CMaterial* SkyDomeMaterial;
 
 	public:
 		CSkyDomeData();
