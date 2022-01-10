@@ -35,6 +35,8 @@ namespace Skylicht
 	protected:
 		CSkyDomeData *m_skyDomeData;
 
+		std::string materialPath;
+
 	public:
 		CSkyDome();
 		
@@ -45,5 +47,10 @@ namespace Skylicht
 		virtual void updateComponent();
 
 		void setData(ITexture *texture, const SColor& c);
+
+		inline CMaterial* getMaterial()
+		{
+			return m_skyDomeData->SkyDomeMaterial;
+		}
 	};
 }

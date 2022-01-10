@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSkyDomeRender.h"
 #include "Entity/CEntityManager.h"
 #include "Culling/CVisibleData.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
@@ -96,6 +97,8 @@ namespace Skylicht
 		for (u32 i = 0, n = m_skydomes.size(); i < n; i++)
 		{
 			IMeshBuffer* buffer = skydomes[i]->Buffer;
+
+			CShaderMaterial::setMaterial(skydomes[i]->SkyDomeMaterial);
 
 			driver->setTransform(video::ETS_WORLD, worlds[i]);
 			driver->setMaterial(buffer->getMaterial());

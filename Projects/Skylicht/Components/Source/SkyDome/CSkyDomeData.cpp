@@ -29,8 +29,6 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CSkyDomeData::CSkyDomeData() :
-		SkyDomeTexture(NULL),
-		SkyDomeColor(255, 255, 255, 255),
 		HorizontalResolution(32),
 		VerticalResolution(8),
 		TexturePercentage(1.0f),
@@ -39,16 +37,19 @@ namespace Skylicht
 	{
 		Buffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));
 
+		SkyDomeMaterial = new CMaterial("Skydome", "BuiltIn/Shader/Basic/TextureSRGB.xml");
+		SkyDomeMaterial->addAffectMesh(Buffer);
+		SkyDomeMaterial->applyMaterial();
+
 		SMaterial& mat = Buffer->getMaterial();
-		mat.setTexture(0, SkyDomeTexture);
 		mat.ZWriteEnable = false;
-		mat.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureSRGB");
 
 		generateMesh();
 	}
 
 	CSkyDomeData::~CSkyDomeData()
 	{
+		delete SkyDomeMaterial;
 		Buffer->drop();
 	}
 
@@ -70,8 +71,10 @@ namespace Skylicht
 		Buffer->getVertexBuffer()->reallocate((HorizontalResolution + 1) * (VerticalResolution + 1));
 		Buffer->getIndexBuffer()->reallocate(3 * (2 * VerticalResolution - 1) * HorizontalResolution);
 
+		SColor vertexColor(255, 255, 255, 255);
+
 		video::S3DVertex vtx;
-		vtx.Color = SkyDomeColor;
+		vtx.Color = vertexColor;
 		vtx.Normal.set(0.0f, -1.f, 0.0f);
 
 		const f32 tcV = TexturePercentage / VerticalResolution;
@@ -84,8 +87,8 @@ namespace Skylicht
 			for (u32 j = 0; j <= VerticalResolution; ++j)
 			{
 				const f32 cosEr = Radius * cosf(elevation);
-				vtx.Pos.set(cosEr*sinA, Radius*sinf(elevation), cosEr*cosA);
-				vtx.TCoords.set(tcU, j*tcV);
+				vtx.Pos.set(cosEr * sinA, Radius * sinf(elevation), cosEr * cosA);
+				vtx.TCoords.set(tcU, j * tcV);
 
 				vtx.Normal = -vtx.Pos;
 				vtx.Normal.normalize();
@@ -98,19 +101,19 @@ namespace Skylicht
 
 		for (k = 0; k < HorizontalResolution; ++k)
 		{
-			Buffer->getIndexBuffer()->addIndex(VerticalResolution + 2 + (VerticalResolution + 1)*k);
-			Buffer->getIndexBuffer()->addIndex(1 + (VerticalResolution + 1)*k);
-			Buffer->getIndexBuffer()->addIndex(0 + (VerticalResolution + 1)*k);
+			Buffer->getIndexBuffer()->addIndex(VerticalResolution + 2 + (VerticalResolution + 1) * k);
+			Buffer->getIndexBuffer()->addIndex(1 + (VerticalResolution + 1) * k);
+			Buffer->getIndexBuffer()->addIndex(0 + (VerticalResolution + 1) * k);
 
 			for (u32 j = 1; j < VerticalResolution; ++j)
 			{
-				Buffer->getIndexBuffer()->addIndex(VerticalResolution + 2 + (VerticalResolution + 1)*k + j);
-				Buffer->getIndexBuffer()->addIndex(1 + (VerticalResolution + 1)*k + j);
-				Buffer->getIndexBuffer()->addIndex(0 + (VerticalResolution + 1)*k + j);
+				Buffer->getIndexBuffer()->addIndex(VerticalResolution + 2 + (VerticalResolution + 1) * k + j);
+				Buffer->getIndexBuffer()->addIndex(1 + (VerticalResolution + 1) * k + j);
+				Buffer->getIndexBuffer()->addIndex(0 + (VerticalResolution + 1) * k + j);
 
-				Buffer->getIndexBuffer()->addIndex(VerticalResolution + 1 + (VerticalResolution + 1)*k + j);
-				Buffer->getIndexBuffer()->addIndex(VerticalResolution + 2 + (VerticalResolution + 1)*k + j);
-				Buffer->getIndexBuffer()->addIndex(0 + (VerticalResolution + 1)*k + j);
+				Buffer->getIndexBuffer()->addIndex(VerticalResolution + 1 + (VerticalResolution + 1) * k + j);
+				Buffer->getIndexBuffer()->addIndex(VerticalResolution + 2 + (VerticalResolution + 1) * k + j);
+				Buffer->getIndexBuffer()->addIndex(0 + (VerticalResolution + 1) * k + j);
 			}
 		}
 		Buffer->recalculateBoundingBox();

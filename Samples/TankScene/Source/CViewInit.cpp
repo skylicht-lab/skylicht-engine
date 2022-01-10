@@ -95,7 +95,7 @@ void CViewInit::initScene()
 	if (prefab != NULL)
 	{
 		// load material
-		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("TankScene/TankScene.xml", true, textureFolders);
+		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("TankScene/TankScene.mat", true, textureFolders);
 
 		// create render mesh object
 		CGameObject* tankScene = zone->createEmptyObject();

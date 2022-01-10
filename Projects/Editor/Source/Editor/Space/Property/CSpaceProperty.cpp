@@ -860,8 +860,12 @@ namespace Skylicht
 			label->setString(name);
 			label->setTextAlignment(GUI::TextRight);
 
-			GUI::CImageButton* image = new GUI::CImageButton(layout);
-			image->setSize(128, 128);
+			GUI::CBase* container = new GUI::CBase(layout);
+			container->setSize(64.0f, 64.0f);
+
+			GUI::CImageButton* image = new GUI::CImageButton(container);
+			image->setSize(64, 64);
+			image->dock(GUI::EPosition::Left);
 			image->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
 
 			boxLayout->endVertical();
