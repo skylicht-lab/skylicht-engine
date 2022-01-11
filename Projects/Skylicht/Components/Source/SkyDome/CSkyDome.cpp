@@ -31,7 +31,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CSkyDome::CSkyDome()
+	ACTIVATOR_REGISTER(CSkyDome);
+
+	CATEGORY_COMPONENT(CSkyDome, "SkyDome", "Renderer");
+
+	CSkyDome::CSkyDome() :
+		m_skyDomeData(NULL)
 	{
 
 	}
@@ -54,13 +59,11 @@ namespace Skylicht
 
 	}
 
-	void CSkyDome::setData(ITexture* texture, const SColor& c)
+	void CSkyDome::setData(ITexture* texture, const SColor& c, float intensity)
 	{
-		SColorf color(c);
-		float constBuffer[] = { color.r, color.g, color.b, color.a };
-
 		m_skyDomeData->SkyDomeMaterial->setTexture(0, texture);
-		m_skyDomeData->SkyDomeMaterial->setUniform4("uColor", constBuffer);
+		m_skyDomeData->SkyDomeMaterial->setUniform4("uColor", c);
+		m_skyDomeData->SkyDomeMaterial->setUniform("uIntensity", intensity);
 		m_skyDomeData->SkyDomeMaterial->applyMaterial();
 	}
 }

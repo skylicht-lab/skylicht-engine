@@ -176,6 +176,17 @@ namespace Skylicht
 		}
 	}
 
+	void CMaterial::setUniform4(const char* name, const SColor& color)
+	{
+		SUniformValue* p = getUniform(name);
+		if (p != NULL)
+		{
+			SColorf c(color);
+			float f[] = { c.r, c.g, c.b, c.a };
+			memcpy(p->FloatValue, f, sizeof(float) * 4);
+		}
+	}
+
 	const char* CMaterial::getUniformTextureName(int slot)
 	{
 		if (slot >= 0 && slot < (int)m_uniformTextures.size())
@@ -1020,7 +1031,6 @@ namespace Skylicht
 					break;
 				}
 				case MATERIAL_PARAM:
-				case MATERIAL_COLOR:
 				{
 					SVec4& v = m_shaderParams.getParam(uniformValue->ValueIndex);
 					v.X = uniformValue->FloatValue[0];
@@ -1054,11 +1064,6 @@ namespace Skylicht
 			if (ui->ControlType == CShader::UIColor)
 			{
 				// add color uniform
-				newUniform(ui->Name.c_str(), ui->UniformInfo->FloatSize);
-			}
-			else if (ui->ControlType == CShader::UISlider)
-			{
-				// add float uniform
 				newUniform(ui->Name.c_str(), ui->UniformInfo->FloatSize);
 			}
 

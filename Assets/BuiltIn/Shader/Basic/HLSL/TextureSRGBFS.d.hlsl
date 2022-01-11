@@ -11,6 +11,7 @@ struct PS_INPUT
 cbuffer cbPerFrame
 {
 	float4 uColor;
+	float2 uIntensity;
 };
 
 #include "../../PostProcessing/HLSL/LibToneMapping.hlsl"
@@ -18,5 +19,5 @@ cbuffer cbPerFrame
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 result = input.color * uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0) * uColor;
-	return float4(sRGB(result.rgb), result.a);
+	return float4(sRGB(result.rgb * uIntensity.x), result.a);
 }

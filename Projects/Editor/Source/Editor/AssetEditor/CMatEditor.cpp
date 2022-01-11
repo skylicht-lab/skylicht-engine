@@ -141,11 +141,16 @@ namespace Skylicht
 			if (shader != NULL)
 			{
 				// show shader UI
-				showShaderGUI(ui, layout, material, shader, m_subjects, m_materials, m_path);
+				showShaderGUI(ui, layout, material, shader, m_subjects,
+					[&]() {
+						// on change
+						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
+						CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
+					});
 			}
 		}
 
-		void CMatEditor::showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects, const ArrayMaterial& materials, const std::string& path)
+		void CMatEditor::showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects, std::function<void()> onChange)
 		{
 			int numUI = shader->getNumUI();
 			for (int i = 0; i < numUI; i++)
@@ -153,16 +158,16 @@ namespace Skylicht
 				CShader::SUniformUI* uniformUI = shader->getUniformUI(i);
 
 				if (uniformUI->ControlType == CShader::UIGroup)
-					addUniformUI(ui, layout, material, shader, uniformUI, 0, subjects, materials, path);
+					addUniformUI(ui, layout, material, shader, uniformUI, 0, subjects, onChange);
 				else
 				{
 					if (uniformUI->UniformInfo != NULL)
-						addUniformUI(ui, layout, material, shader, uniformUI, 0, subjects, materials, path);
+						addUniformUI(ui, layout, material, shader, uniformUI, 0, subjects, onChange);
 				}
 			}
 		}
 
-		void CMatEditor::addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects, const ArrayMaterial& materials, const std::string& path)
+		void CMatEditor::addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects, std::function<void()> onChange)
 		{
 			wchar_t text[512];
 			CStringImp::convertUTF8ToUnicode(uniformUI->Name.c_str(), text);
@@ -174,26 +179,14 @@ namespace Skylicht
 				for (int i = 0, n = (int)uniformUI->Childs.size(); i < n; i++)
 				{
 					if (uniformUI->Childs[i]->UniformInfo != NULL)
-						addUniformUI(ui, layout, material, shader, uniformUI->Childs[i], tab + 1, subjects, materials, path);
+						addUniformUI(ui, layout, material, shader, uniformUI->Childs[i], tab + 1, subjects, onChange);
 				}
 			}
 			else if (uniformUI->ControlType == CShader::UIColor)
 			{
 
 			}
-			else if (uniformUI->ControlType == CShader::UISlider)
-			{
-
-			}
-			else if (uniformUI->ControlType == CShader::UIFloat)
-			{
-
-			}
 			else if (uniformUI->ControlType == CShader::UIFloat2)
-			{
-
-			}
-			else if (uniformUI->ControlType == CShader::UIFloat3)
 			{
 
 			}
@@ -242,7 +235,7 @@ namespace Skylicht
 					return false;
 				};
 
-				imageButton->OnDrop = [imageButton, uniformName = uniformUI->Name, material, materials, path](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				imageButton->OnDrop = [imageButton, uniformName = uniformUI->Name, material, onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 				{
 					if (data->Name == "ListFSItem")
 					{
@@ -250,7 +243,6 @@ namespace Skylicht
 
 						std::string fullPath = item->getTagString();
 						std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
-						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(path.c_str());
 						std::string name = CPath::getFileName(shortPath);
 
 						ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
@@ -263,9 +255,6 @@ namespace Skylicht
 							material->autoDetectLoadTexture();
 							material->applyMaterial();
 
-							// save
-							CMaterialManager::getInstance()->saveMaterial(materials, shortMaterialPath.c_str());
-
 							// update gui
 							const core::dimension2du& size = texture->getSize();
 							imageButton->getImage()->setImage(
@@ -273,6 +262,9 @@ namespace Skylicht
 								GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
 							);
 							imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+
+							// save
+							onChange();
 						}
 						else
 						{
@@ -296,11 +288,11 @@ namespace Skylicht
 					}
 				};
 
-				imageButton->OnRightPress = [uniformName = uniformUI->Name, material, materials, imageButton, path](GUI::CBase* button)
+				imageButton->OnRightPress = [uniformName = uniformUI->Name, material, imageButton, onChange](GUI::CBase* button)
 				{
 					GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
 					s_pickTextureMenu->open(mousePos);
-					s_pickTextureMenu->OnCommand = [name = uniformName, material, materials, imageButton, path](GUI::CBase* item)
+					s_pickTextureMenu->OnCommand = [name = uniformName, material, imageButton, onChange](GUI::CBase* item)
 					{
 						// clear texture
 						CMaterial::SUniformTexture* uniform = material->getUniformTexture(name.c_str());
@@ -312,8 +304,7 @@ namespace Skylicht
 						imageButton->getImage()->setColor(GUI::SGUIColor(255, 0, 0, 0));
 
 						// save
-						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(path.c_str());
-						CMaterialManager::getInstance()->saveMaterial(materials, shortMaterialPath.c_str());
+						onChange();
 					};
 				};
 			}
