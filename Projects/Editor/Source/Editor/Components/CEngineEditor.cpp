@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "RenderMesh/CRenderMesh.h"
 
-#include "Skydome/CSkydome.h"
+#include "SkyDome/CSkyDome.h"
 
 #define USE_COMPONENT(component) CComponentSystem *component##_used = addComponent(new component())
 
