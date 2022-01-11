@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,37 +22,36 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
-#include "CSkyDomeData.h"
-#include "CSkyDomeRender.h"
+#include "pch.h"
+#include "CSkydomeEditor.h"
+#include "SkyDome/CSkyDome.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
-	class CSkyDome : public CComponentSystem
+	namespace Editor
 	{
-	protected:
-		CSkyDomeData* m_skyDomeData;
+		EDITOR_REGISTER(CSkydomeEditor, CSkyDome);
 
-		std::string materialPath;
-
-	public:
-		CSkyDome();
-
-		virtual ~CSkyDome();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		void setData(ITexture* texture, const SColor& c, float intensity = 1.0f);
-
-		inline CMaterial* getMaterial()
+		CSkydomeEditor::CSkydomeEditor()
 		{
-			return m_skyDomeData->SkyDomeMaterial;
+
 		}
 
-		DECLARE_GETTYPENAME(CSkyDome)
-	};
+		CSkydomeEditor::~CSkydomeEditor()
+		{
+
+		}
+
+		void CSkydomeEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
+		{
+			CDefaultEditor::initGUI(target, ui);
+		}
+
+		void CSkydomeEditor::update()
+		{
+
+		}
+	}
 }

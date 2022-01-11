@@ -99,7 +99,7 @@ namespace Skylicht
 
 	private:
 		// this will copy value from m_uniformParams (see function updateShaderParams)
-		CShaderParams m_shaderParams;	
+		CShaderParams m_shaderParams;
 
 		std::string m_materialName;
 		std::string m_shaderPath;
@@ -172,6 +172,7 @@ namespace Skylicht
 		void setUniform2(const char* name, float* f);
 		void setUniform3(const char* name, float* f);
 		void setUniform4(const char* name, float* f);
+		void setUniform4(const char* name, const SColor& color);
 
 		const char* getUniformTextureName(int slot);
 		void setUniformTexture(const char* name, const char* path, bool loadTexture = true);

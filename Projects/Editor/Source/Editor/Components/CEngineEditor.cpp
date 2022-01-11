@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "RenderMesh/CRenderMesh.h"
 
+#include "Skydome/CSkydome.h"
+
 #define USE_COMPONENT(component) CComponentSystem *component##_used = addComponent(new component())
 
 namespace Skylicht
@@ -56,6 +58,7 @@ namespace Skylicht
 		USE_COMPONENT(CDirectionalLight);
 		USE_COMPONENT(CPointLight);
 		USE_COMPONENT(CRenderMesh);
+		USE_COMPONENT(CSkyDome);
 		// END DECLARE COMPONENT
 
 		int clean = cleanUp();

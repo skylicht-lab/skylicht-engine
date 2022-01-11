@@ -110,7 +110,6 @@ namespace Skylicht
 			"POINT_LIGHT_ATTENUATION",
 			"SPOT_LIGHT_CUTOFF",
 			"OBJECT_PARAM",
-			"MATERIAL_COLOR",
 			"MATERIAL_PARAM",
 			"DEFAULT_VALUE",
 			"SHADER_VEC2",
@@ -167,10 +166,7 @@ namespace Skylicht
 		const char* uiName[] = {
 			"UITexture",
 			"UIColor",
-			"UISlider",
-			"UIFloat",
 			"UIFloat2",
-			"UIFloat3",
 			"UIFloat4",
 			"UIGroup"
 		};
@@ -208,11 +204,18 @@ namespace Skylicht
 			CStringImp::splitString(text, ";", uniform->ElementName);
 		}
 
-		wtext = xmlReader->getAttributeValue(L"step");
+		wtext = xmlReader->getAttributeValue(L"min");
 		if (wtext != NULL)
 		{
 			CStringImp::convertUnicodeToUTF8(wtext, text);
-			uniform->SliderStep = atoi(text);
+			uniform->Min = (float)atof(text);
+		}
+
+		wtext = xmlReader->getAttributeValue(L"max");
+		if (wtext != NULL)
+		{
+			CStringImp::convertUnicodeToUTF8(wtext, text);
+			uniform->Max = (float)atof(text);
 		}
 
 		if (parent == NULL)
