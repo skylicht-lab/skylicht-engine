@@ -53,7 +53,6 @@ namespace Skylicht
 		POINT_LIGHT_ATTENUATION,
 		SPOT_LIGHT_CUTOFF,
 		OBJECT_PARAM,
-		MATERIAL_COLOR,
 		MATERIAL_PARAM,
 		DEFAULT_VALUE,
 		SHADER_VEC2,
@@ -143,10 +142,7 @@ namespace Skylicht
 		{
 			UITexture = 0,
 			UIColor,
-			UISlider,
-			UIFloat,
 			UIFloat2,
-			UIFloat3,
 			UIFloat4,
 			UIGroup,
 			UINone,
@@ -167,7 +163,8 @@ namespace Skylicht
 			std::string Name;
 			std::vector<std::string> ElementName;
 			std::vector<std::string> AutoReplace;
-			int SliderStep;
+			float Min;
+			float Max;
 
 			SUniform* UniformInfo;
 			CShader* Shader;
@@ -180,7 +177,8 @@ namespace Skylicht
 				UniformInfo = NULL;
 				Shader = shader;
 				Parent = NULL;
-				SliderStep = 10;
+				Min = FLT_MIN;
+				Max = FLT_MAX;
 				ControlType = UINone;
 			}
 

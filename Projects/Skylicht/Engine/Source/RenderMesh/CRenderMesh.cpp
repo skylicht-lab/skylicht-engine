@@ -128,7 +128,7 @@ namespace Skylicht
 				initFromPrefab(prefab);
 		}
 
-		if (materialFile != m_materialFile)
+		// if (materialFile != m_materialFile)
 		{
 			m_materialFile = materialFile;
 
