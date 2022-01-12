@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntity.h"
 #include "Entity/CEntityManager.h"
 
+#include "TextureManager/CTextureManager.h"
+
 namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CSkyDome);
@@ -36,7 +38,9 @@ namespace Skylicht
 	CATEGORY_COMPONENT(CSkyDome, "SkyDome", "Renderer");
 
 	CSkyDome::CSkyDome() :
-		m_skyDomeData(NULL)
+		m_skyDomeData(NULL),
+		m_intensity(1.0f),
+		m_color(255, 255, 255, 255)
 	{
 
 	}
@@ -50,13 +54,45 @@ namespace Skylicht
 		m_skyDomeData = m_gameObject->getEntity()->addData<CSkyDomeData>();
 		m_gameObject->getEntityManager()->addRenderSystem<CSkyDomeRender>();
 
-		float constBuffer[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		m_skyDomeData->SkyDomeMaterial->setUniform4("uColor", constBuffer);
+		// default
+		m_texture = "Common/Textures/Sky/Helipad.png";
+		ITexture* texture = CTextureManager::getInstance()->getTexture(m_texture.c_str());
+		if (texture != NULL)
+			setData(texture, m_color, m_intensity);
 	}
 
 	void CSkyDome::updateComponent()
 	{
 
+	}
+
+	CObjectSerializable* CSkyDome::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+
+		std::vector<std::string> textureExts = { "tga","png" };
+
+		object->addAutoRelease(new CFilePathProperty(object, "texture", m_texture.c_str(), textureExts));
+		object->addAutoRelease(new CColorProperty(object, "color", m_color));
+		object->addAutoRelease(new CFloatProperty(object, "intensity", m_intensity, 0.0f, 1.0f));
+
+		return object;
+	}
+
+	void CSkyDome::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
+
+		m_texture = object->get<std::string>("texture", "");
+		m_color = object->get<SColor>("color", SColor(255, 255, 255, 255));
+		m_intensity = object->get<float>("intensity", 1.0f);
+
+		if (!m_texture.empty())
+		{
+			ITexture* texture = CTextureManager::getInstance()->getTexture(m_texture.c_str());
+			if (texture != NULL)
+				setData(texture, m_color, m_intensity);
+		}
 	}
 
 	void CSkyDome::setData(ITexture* texture, const SColor& c, float intensity)

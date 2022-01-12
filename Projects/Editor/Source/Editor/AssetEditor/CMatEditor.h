@@ -56,7 +56,7 @@ namespace Skylicht
 
 			void showMaterialGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material);
 
-			static void showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects, std::function<void()> onChange);
+			static void showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, std::vector<ISubject*> subjects, std::function<void()> onChange);
 
 			static void addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects, std::function<void()> onChange);
 
