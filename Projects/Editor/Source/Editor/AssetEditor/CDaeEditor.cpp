@@ -32,6 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/CMaterialManager.h"
 #include "Editor/CEditor.h"
 
+#include "AssetManager/CAssetImporter.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -88,6 +90,11 @@ namespace Skylicht
 				{
 					CMeshManager::getInstance()->exportModel(prefab->getEntities(), prefab->getNumEntities(), outout.c_str());
 					CMeshManager::getInstance()->releasePrefab(prefab);
+
+					CAssetImporter importer;
+					importer.add(outout.c_str());
+					importer.importAll();
+
 					CEditor::getInstance()->refresh();
 				}
 			};
@@ -108,6 +115,11 @@ namespace Skylicht
 				{
 					CMaterialManager::getInstance()->exportMaterial(prefab, outout.c_str());
 					CMeshManager::getInstance()->releasePrefab(prefab);
+
+					CAssetImporter importer;
+					importer.add(outout.c_str());
+					importer.importAll();
+
 					CEditor::getInstance()->refresh();
 				}
 			};

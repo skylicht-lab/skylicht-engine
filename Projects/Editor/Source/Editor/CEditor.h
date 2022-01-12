@@ -111,6 +111,12 @@ namespace Skylicht
 				return m_canvas;
 			}
 
+		public:
+
+			CSpace* getWorkspace(GUI::CWindow* window);
+
+			CSpace* getWorkspaceByName(const std::wstring& name);
+
 		protected:
 
 			void initMenuBar();
@@ -122,10 +128,6 @@ namespace Skylicht
 			void initWorkspace(GUI::CWindow* window, const std::wstring& workspace);
 
 			void removeWorkspace(CSpace* space);
-
-			CSpace* getWorkspace(GUI::CWindow* window);
-
-			CSpace* getWorkspaceByName(const std::wstring& name);
 
 		protected:
 
@@ -148,6 +150,8 @@ namespace Skylicht
 			void OnOpenMenuFile(GUI::CBase* item);
 
 			void OnCommandFile(GUI::CBase* item);
+
+			void OnCommandAssetCreate(GUI::CBase* item);
 
 			void OnCommandWindowOpen(GUI::CBase* item);
 
