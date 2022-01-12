@@ -25,25 +25,20 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CGameSingleton.h"
-#include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/Space/Assets/CSpaceAssets.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CAssetPropertyController : public CGameSingleton<CAssetPropertyController>
+		class CAssetCreateController : public CGameSingleton<CAssetCreateController>
 		{
-		protected:
-
 		public:
-			CAssetPropertyController();
+			CAssetCreateController();
 
-			virtual ~CAssetPropertyController();
+			virtual ~CAssetCreateController();
 
-			void onSelectAsset(const char* path, bool isFolder);
-
-			void browseAsset(const char* path);
+			void createEmptyMaterial();
 		};
 	}
 }

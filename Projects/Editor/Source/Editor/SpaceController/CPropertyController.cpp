@@ -36,8 +36,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CPropertyController::CPropertyController() :
-			m_spaceProperty(NULL)
+		CPropertyController::CPropertyController()
 		{
 
 		}
@@ -52,26 +51,30 @@ namespace Skylicht
 			CSceneController* sceneController = CSceneController::getInstance();
 			CScene* scene = sceneController->getScene();
 
+			CSpaceProperty* spaceProperty = (CSpaceProperty*)CEditor::getInstance()->getWorkspaceByName(L"Property");
+			if (spaceProperty == NULL)
+				return;
+
 			if (object != NULL && object->getType() == CSelectObject::GameObject)
 			{
 				CGameObject* obj = scene->searchObjectInChildByID(object->getID().c_str());
 				if (obj != NULL)
 				{
 					// Name and icon
-					m_spaceProperty->setIcon(GUI::ESystemIcon::Res3D);
-					m_spaceProperty->setLabel(obj->getName());
+					spaceProperty->setIcon(GUI::ESystemIcon::Res3D);
+					spaceProperty->setLabel(obj->getName());
 
 					// Clear old ui
-					m_spaceProperty->clearAllGroup();
+					spaceProperty->clearAllGroup();
 
 					// When change the name
-					object->addObserver(new CObserver([space = m_spaceProperty, target = obj](ISubject* subject, IObserver* from)
+					object->addObserver(new CObserver([spaceProperty, obj](ISubject* subject, IObserver* from)
 						{
-							space->setLabel(target->getName());
+							spaceProperty->setLabel(obj->getName());
 						}), true);
 
 					// Tabable
-					m_spaceProperty->getWindow()->getCanvas()->TabableGroup.clear();
+					spaceProperty->getWindow()->getCanvas()->TabableGroup.clear();
 
 					// Activator
 					CEditorActivator* activator = CEditorActivator::getInstance();
@@ -79,7 +82,7 @@ namespace Skylicht
 					// GameObject property
 					CComponentEditor* editor = activator->getEditorInstance(obj->getTypeName().c_str());
 					if (editor != NULL)
-						m_spaceProperty->addComponent(editor, obj);
+						spaceProperty->addComponent(editor, obj);
 
 					// Component property					
 					ArrayComponent& listComponents = obj->getListComponent();
@@ -89,7 +92,7 @@ namespace Skylicht
 						if (editor != NULL)
 						{
 							// custom editor
-							m_spaceProperty->addComponent(editor, component);
+							spaceProperty->addComponent(editor, component);
 						}
 						else if (component->isSerializable())
 						{
@@ -105,7 +108,7 @@ namespace Skylicht
 							}
 
 							// set default editor
-							m_spaceProperty->addComponent(defaultEditor, component, true);
+							spaceProperty->addComponent(defaultEditor, component, true);
 						}
 					}
 
@@ -113,23 +116,23 @@ namespace Skylicht
 					bool isZone = dynamic_cast<CZone*>(obj) != NULL;
 					if (!isZone)
 					{
-						GUI::CButton* button = m_spaceProperty->addButton(L"Add");
-						button->OnPress = [&, obj](GUI::CBase* button)
+						GUI::CButton* button = spaceProperty->addButton(L"Add");
+						button->OnPress = [&, obj, spaceProperty](GUI::CBase* button)
 						{
-							m_spaceProperty->popupComponentMenu(obj, button);
+							spaceProperty->popupComponentMenu(obj, button);
 						};
 					}
 				}
 			}
 			else
 			{
-				m_spaceProperty->setIcon(GUI::ESystemIcon::None);
-				m_spaceProperty->setLabel(L"");
-				m_spaceProperty->clearAllGroup();
+				spaceProperty->setIcon(GUI::ESystemIcon::None);
+				spaceProperty->setLabel(L"");
+				spaceProperty->clearAllGroup();
 			}
 
 			// force update layout
-			m_spaceProperty->getWindow()->forceUpdateLayout();
+			spaceProperty->getWindow()->forceUpdateLayout();
 		}
 	}
 }

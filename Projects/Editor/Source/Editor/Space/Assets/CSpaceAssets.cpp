@@ -99,8 +99,6 @@ namespace Skylicht
 			{
 				contextMenu->popupMenu((GUI::CButton*)sender);
 			};
-
-			CAssetPropertyController::getInstance()->setSpaceAsset(this);
 		}
 
 		CSpaceAssets::~CSpaceAssets()
@@ -110,8 +108,6 @@ namespace Skylicht
 			delete m_contextMenuFS;
 			delete m_contextMenuAdd;
 			delete m_searchController;
-
-			CAssetPropertyController::getInstance()->setSpaceAsset(NULL);
 		}
 
 		void CSpaceAssets::update()

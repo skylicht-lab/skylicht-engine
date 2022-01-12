@@ -34,23 +34,10 @@ namespace Skylicht
 	{
 		class CPropertyController : public CGameSingleton<CPropertyController>
 		{
-		protected:
-			CSpaceProperty* m_spaceProperty;
-
 		public:
 			CPropertyController();
 
 			virtual ~CPropertyController();
-
-			inline void setSpaceProperty(CSpaceProperty* property)
-			{
-				m_spaceProperty = property;
-			}
-
-			inline CSpaceProperty* getSpaceProperty()
-			{
-				return m_spaceProperty;
-			}
 
 			void setProperty(CSelectObject* object);
 		};

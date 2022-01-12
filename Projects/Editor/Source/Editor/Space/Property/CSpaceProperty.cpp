@@ -84,9 +84,6 @@ namespace Skylicht
 
 			m_addComponentMenu = new GUI::CMenu(window->getCanvas());
 			m_addComponentController = new CAddComponentController(editor, m_addComponentMenu);
-
-			CPropertyController::getInstance()->setSpaceProperty(this);
-			CAssetPropertyController::getInstance()->setSpaceProperty(this);
 		}
 
 		CSpaceProperty::~CSpaceProperty()
@@ -109,8 +106,6 @@ namespace Skylicht
 				delete editor;
 			}
 			m_releaseComponents.clear();
-
-			CPropertyController::getInstance()->setSpaceProperty(NULL);
 		}
 
 		void CSpaceProperty::OnComponentCommand(GUI::CBase* base)
