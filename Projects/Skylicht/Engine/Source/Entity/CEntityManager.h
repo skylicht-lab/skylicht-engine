@@ -176,6 +176,8 @@ namespace Skylicht
 		m_systems.push_back(render);
 		m_renders.push_back(render);
 
+		m_systemChanged = true;
+
 		return newSystem;
 	}
 

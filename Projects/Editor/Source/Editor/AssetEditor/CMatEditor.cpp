@@ -133,25 +133,27 @@ namespace Skylicht
 		void CMatEditor::showMaterialGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material)
 		{
 			CShaderManager* shaderManager = CShaderManager::getInstance();
-			CShader* shader = shaderManager->getShaderByPath(material->getShaderPath());
 
-			if (shader == NULL)
-				shader = shaderManager->loadShader(material->getShaderPath());
-
-			if (shader != NULL)
-			{
-				// show shader UI
-				showShaderGUI(ui, layout, material, shader, m_subjects,
-					[&]() {
-						// on change
-						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
-						CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
-					});
-			}
+			// show shader UI
+			showShaderGUI(ui, layout, material, m_subjects,
+				[&]() {
+					// on change
+					std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
+					CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
+				});
 		}
 
-		void CMatEditor::showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, std::vector<ISubject*> subjects, std::function<void()> onChange)
+		void CMatEditor::showShaderGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, std::vector<ISubject*> subjects, std::function<void()> onChange)
 		{
+			CShader* shader = material->getShader();
+			if (shader == NULL)
+			{
+				wchar_t text[512];
+				sprintf("Missing shader: %s\n", CPath::getFileName(material->getShaderPath()).c_str());
+				ui->addLabel(layout, text);
+				return;
+			}
+
 			int numUI = shader->getNumUI();
 			for (int i = 0; i < numUI; i++)
 			{
