@@ -28,14 +28,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/CObserver.h"
 #include "AssetManager/CAssetManager.h"
 #include "Utils/CPath.h"
+#include "Editor/CEditor.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CAssetPropertyController::CAssetPropertyController() :
-			m_spaceProperty(NULL),
-			m_spaceAsset(NULL)
+		CAssetPropertyController::CAssetPropertyController()
 		{
 
 		}
@@ -47,14 +46,16 @@ namespace Skylicht
 
 		void CAssetPropertyController::onSelectAsset(const char* path, bool isFolder)
 		{
-			if (m_spaceProperty == NULL || isFolder)
+			CSpaceProperty* spaceProperty = (CSpaceProperty*)CEditor::getInstance()->getWorkspaceByName(L"Property");
+
+			if (spaceProperty == NULL || isFolder)
 				return;
 
 			// Name and icon			
 			std::string fileName = CPath::getFileName(path);
 			std::string ext = CPath::getFileNameExt(path);
 
-			GUI::CButton* btn = m_spaceProperty->setButtonLabel(CStringImp::convertUTF8ToUnicode(fileName.c_str()).c_str());
+			GUI::CButton* btn = spaceProperty->setButtonLabel(CStringImp::convertUTF8ToUnicode(fileName.c_str()).c_str());
 			btn->setIcon(GUI::ESystemIcon::File);
 
 			std::string assetPath = CAssetManager::getInstance()->getShortPath(path);
@@ -63,25 +64,27 @@ namespace Skylicht
 			};
 
 			// Clear old ui
-			m_spaceProperty->clearAllGroup();
+			spaceProperty->clearAllGroup();
 
 			// Tabable
-			m_spaceProperty->getWindow()->getCanvas()->TabableGroup.clear();
+			spaceProperty->getWindow()->getCanvas()->TabableGroup.clear();
 
 			// Get file ext editor
 			if (!isFolder)
 			{
 				CAssetEditor* assetEditor = CEditorActivator::getInstance()->getAssetEditorInstance(ext.c_str());
 				if (assetEditor != NULL)
-					m_spaceProperty->addAsset(assetEditor, path);
+					spaceProperty->addAsset(assetEditor, path);
 			}
 
-			m_spaceProperty->getWindow()->forceUpdateLayout();
+			spaceProperty->getWindow()->forceUpdateLayout();
 		}
 
 		void CAssetPropertyController::browseAsset(const char* path)
 		{
-			if (m_spaceAsset == NULL)
+			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
+
+			if (spaceAssets == NULL)
 				return;
 
 			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
@@ -89,13 +92,12 @@ namespace Skylicht
 
 			std::string folder = CPath::getFolderPath(fullPath);
 
-			GUI::CTreeNode* node = m_spaceAsset->getTreeController()->expand(folder);
+			GUI::CTreeNode* node = spaceAssets->getTreeController()->expand(folder);
 			if (node != NULL)
-			{
-				m_spaceAsset->getTreeController()->selectNode(node);
-				m_spaceAsset->getListController()->scrollAndSelectPath(fullPath.c_str());
-				m_spaceAsset->getWindow()->forceUpdateLayout();
-			}
+				spaceAssets->getTreeController()->selectNode(node);
+
+			spaceAssets->getListController()->scrollAndSelectPath(fullPath.c_str());
+			spaceAssets->getWindow()->forceUpdateLayout();
 		}
 	}
 }

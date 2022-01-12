@@ -42,6 +42,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
 #include "SpaceController/CAssetPropertyController.h"
+#include "SpaceController/CAssetCreateController.h"
 
 #include "AssetManager/CAssetManager.h"
 #include "Selection/CSelection.h"
@@ -81,6 +82,7 @@ namespace Skylicht
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
 			CPropertyController::createGetInstance();
 			CAssetPropertyController::createGetInstance();
+			CAssetCreateController::createGetInstance();
 			CSelection::createGetInstance();
 			CEditorActivator::createGetInstance();
 			CProjectSettings::createGetInstance();
@@ -90,6 +92,7 @@ namespace Skylicht
 		{
 			CEditorActivator::releaseInstance();
 			CAssetPropertyController::releaseInstance();
+			CAssetCreateController::releaseInstance();
 			CPropertyController::releaseInstance();
 			CSceneController::releaseInstance();
 			CSelection::releaseInstance();
@@ -351,6 +354,7 @@ namespace Skylicht
 			submenu->addItem(L"GUI");
 			submenu->addItem(L"Sprite");
 			submenu->addItem(L"Animation");
+			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandAssetCreate, this);
 
 			submenu = temp;
 			submenu->addSeparator();
@@ -1004,6 +1008,19 @@ namespace Skylicht
 				{
 					controller->save(path.c_str());
 				};
+			}
+		}
+
+		void CEditor::OnCommandAssetCreate(GUI::CBase* item)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
+			const std::wstring& label = menuItem->getLabel();
+
+			CAssetCreateController* assetCreater = CAssetCreateController::getInstance();
+
+			if (label == L"Material")
+			{
+				assetCreater->createEmptyMaterial();
 			}
 		}
 
