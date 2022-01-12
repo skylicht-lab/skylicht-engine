@@ -35,7 +35,9 @@ namespace Skylicht
 	protected:
 		CSkyDomeData* m_skyDomeData;
 
-		std::string materialPath;
+		float m_intensity;
+		SColor m_color;
+		std::string m_texture;
 
 	public:
 		CSkyDome();
@@ -45,6 +47,10 @@ namespace Skylicht
 		virtual void initComponent();
 
 		virtual void updateComponent();
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 
 		void setData(ITexture* texture, const SColor& c, float intensity = 1.0f);
 
