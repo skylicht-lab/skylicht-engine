@@ -232,6 +232,21 @@ namespace Skylicht
 		return result;
 	}
 
+	CMaterial* CMaterialManager::createMaterial(ArrayMaterial& materials)
+	{
+		CMaterial* material = new CMaterial("NewMaterial", "BuiltIn/Shader/Basic/TextureColor.xml");
+		materials.push_back(material);
+
+		if (materials.size() >= 2)
+		{
+			const char* path = materials[0]->getMaterialPath();
+			material->setMaterialPath(path);
+			m_materials[path] = materials;
+		}
+
+		return material;
+	}
+
 	void CMaterialManager::deleteMaterial(ArrayMaterial& materials, CMaterial* material)
 	{
 		std::string cachePath = material->getMaterialPath();
@@ -386,7 +401,10 @@ namespace Skylicht
 		writeFile->drop();
 
 		// save the cache
-		m_materials[cachePath] = materials;
+		if (!cachePath.empty())
+		{
+			m_materials[cachePath] = materials;
+		}
 	}
 
 	void CMaterialManager::exportMaterial(CEntityPrefab* prefab, const char* filename)
