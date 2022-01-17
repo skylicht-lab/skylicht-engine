@@ -35,10 +35,13 @@ namespace Skylicht
 			CResizerLR::CResizerLR(CBase* parent) :
 				CDragger(parent),
 				m_target2(NULL),
-				m_renderBorderPadding(0.0f)
+				m_renderBorderPadding(0.0f),
+				m_enableRenderBorder(true),
+				m_dragMinX(-1.0f),
+				m_dragMaxX(-1.0f)
 			{
 				setSize(3.0f, 3.0f);
-				m_resizeDir = EPosition::Left;
+				setResizeDir(EPosition::Left);
 			}
 
 			CResizerLR::~CResizerLR()
@@ -56,6 +59,9 @@ namespace Skylicht
 
 			void CResizerLR::renderUnder()
 			{
+				if (m_enableRenderBorder == false)
+					return;
+
 				const SRect& r = getRenderBounds();
 				CRenderer* renderer = CRenderer::getRenderer();
 
@@ -80,8 +86,9 @@ namespace Skylicht
 
 				SRect bounds = m_target->getBounds();
 				SPoint pntMin = m_target->getMinimumSize();
-				SPoint cursorPos = m_target->canvasPosToLocal(SPoint(x, y));
+
 				SPoint delta = m_target->localPosToCanvas(m_holdPosition);
+				SPoint cursorPos = m_target->canvasPosToLocal(SPoint(x, y));
 
 				SRect bounds2;
 				SPoint pntMin2;
@@ -91,6 +98,36 @@ namespace Skylicht
 					bounds2 = m_target2->getBounds();
 					pntMin2 = m_target2->getMinimumSize();
 				}
+
+				if (m_callBeginMove)
+				{
+					m_target->onBeginMoved();
+					m_callBeginMove = false;
+				}
+
+				bool hitLimit = false;
+
+				if (m_target->getParent() != NULL)
+				{
+					if (m_dragMinX > 0.0f)
+					{
+						SPoint minX(m_dragMinX, 0.0f);
+						minX = m_target->getParent()->localPosToCanvas(minX);
+						if (x <= minX.X)
+							hitLimit = true;
+					}
+
+					if (m_dragMaxX > 0.0f)
+					{
+						SPoint maxX(m_dragMaxX, 0.0f);
+						maxX = m_target->getParent()->localPosToCanvas(maxX);
+						if (x >= maxX.X)
+							hitLimit = true;
+					}
+				}
+
+				if (hitLimit)
+					return;
 
 				delta.X = delta.X - x;
 				delta.Y = delta.Y - y;
@@ -175,6 +212,9 @@ namespace Skylicht
 					m_target2->setBounds(bounds2);
 					m_target2->onResized();
 				}
+
+				m_isMoved = true;
+				m_target->onMoved();
 			}
 
 			void CResizerLR::onMouseClickLeft(float x, float y, bool down)

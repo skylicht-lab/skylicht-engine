@@ -39,11 +39,21 @@ namespace Skylicht
 
 				CBase* m_target2;
 
+				bool m_enableRenderBorder;
 				float m_renderBorderPadding;
+
+				float m_dragMinX;
+				float m_dragMaxX;
+
 			public:
 				CResizerLR(CBase* parent);
 
 				virtual ~CResizerLR();
+
+				inline void enableRenderBorder(bool b)
+				{
+					m_enableRenderBorder = b;
+				}
 
 				inline void setRenderBorderPadding(float borderPadding)
 				{
@@ -53,6 +63,12 @@ namespace Skylicht
 				inline void setTarget2(CBase* base)
 				{
 					m_target2 = base;
+				}
+
+				inline void setDragMinMaxX(float min, float max)
+				{
+					m_dragMinX = min;
+					m_dragMaxX = max;
 				}
 
 				void setResizeDir(EPosition dir);
