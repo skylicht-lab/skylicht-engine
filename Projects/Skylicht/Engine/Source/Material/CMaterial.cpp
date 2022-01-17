@@ -108,6 +108,8 @@ namespace Skylicht
 		mat->m_doubleSided = m_doubleSided;
 		mat->m_castShadow = m_castShadow;
 
+		mat->m_materialPath = m_materialPath;
+
 		return mat;
 	}
 
