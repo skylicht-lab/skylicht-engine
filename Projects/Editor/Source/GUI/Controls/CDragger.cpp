@@ -96,11 +96,12 @@ namespace Skylicht
 				}
 				else
 				{
-					CInput::getInput()->setCapture(NULL);
 					m_callBeginMove = false;
 
 					if (m_isMoved)
 						m_target->onEndMoved();
+
+					CInput::getInput()->setCapture(NULL);
 				}
 
 				m_isMoved = false;
