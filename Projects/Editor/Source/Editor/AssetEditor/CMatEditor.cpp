@@ -209,18 +209,22 @@ namespace Skylicht
 				groups.push_back(group);
 			}
 
-			GUI::CCollapsibleGroup* group = ui->addGroup("Utils", this);
+			GUI::CCollapsibleGroup* group = ui->addGroup("Functions", this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 			ui->addButton(layout, L"Add new material")->OnPress = [&](GUI::CBase* button)
 			{
+				// Add new material
+				CMaterialManager::getInstance()->createMaterial(m_materials);
 
-			};
-			layout->addSpace(5.0f);
-			ui->addButton(layout, L"Save As")->OnPress = [&](GUI::CBase* button)
-			{
+				// save material
+				std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
+				CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
 
+				// update the gui
+				CAssetPropertyController::getInstance()->onSelectAsset(m_path.c_str(), false);
+				CEditor::getInstance()->refresh();
 			};
-			groups.push_back(group);
+			group->setExpand(true);
 
 			if (groups.size() < 3)
 			{
@@ -290,7 +294,31 @@ namespace Skylicht
 			}
 			else if (uniformUI->ControlType == CShader::UIColor)
 			{
+				CMaterial::SUniformValue* unifrom = material->getUniform(uniformUI->Name.c_str());
+				std::wstring name = CStringImp::convertUTF8ToUnicode(uniformUI->Name.c_str());
 
+				// default color
+				SColorf c(
+					unifrom->FloatValue[0],
+					unifrom->FloatValue[1],
+					unifrom->FloatValue[2],
+					unifrom->FloatValue[3]
+				);
+
+				CSubject<SColor>* newSubject = new CSubject<SColor>(c.toSColor());
+				subjects.push_back(newSubject);
+
+				ui->addColorPicker(layout, name.c_str(), newSubject);
+
+				CObserver* observer = new CObserver();
+				observer->Notify = [&, newSubject, material, uniformUI](ISubject* subject, IObserver* from)
+				{
+					// on change color
+					material->setUniform4(uniformUI->Name.c_str(), newSubject->get());
+					material->applyMaterial();
+				};
+
+				newSubject->addObserver(observer);
 			}
 			else if (uniformUI->ControlType == CShader::UIFloat2)
 			{
