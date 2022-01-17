@@ -103,6 +103,7 @@ namespace Skylicht
 
 		std::string m_materialName;
 		std::string m_shaderPath;
+		std::string m_materialPath;
 
 		std::vector<SUniformValue*> m_uniformParams;
 		std::vector<SUniformTexture*> m_uniformTextures;
@@ -143,6 +144,11 @@ namespace Skylicht
 			m_owner = obj;
 		}
 
+		void rename(const char* name)
+		{
+			m_materialName = name;
+		}
+
 		inline const char* getName()
 		{
 			return m_materialName.c_str();
@@ -151,6 +157,16 @@ namespace Skylicht
 		inline const char* getShaderPath()
 		{
 			return m_shaderPath.c_str();
+		}
+
+		inline const char* getMaterialPath()
+		{
+			return m_materialPath.c_str();
+		}
+
+		inline void setMaterialPath(const char* path)
+		{
+			m_materialPath = path;
 		}
 
 		inline bool isDeferred()

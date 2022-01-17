@@ -111,6 +111,8 @@ namespace Skylicht
 
 					// create material
 					material = new CMaterial(name.c_str(), shader.c_str());
+					material->setMaterialPath(filename);
+
 					extra = NULL;
 
 					if (loadTexture == true)
@@ -230,8 +232,41 @@ namespace Skylicht
 		return result;
 	}
 
+	void CMaterialManager::deleteMaterial(ArrayMaterial& materials, CMaterial* material)
+	{
+		std::string cachePath = material->getMaterialPath();
+
+		// delete on the list
+		ArrayMaterial::iterator i = materials.begin(), e = materials.end();
+		while (i != e)
+		{
+			if ((*i) == material)
+			{
+				materials.erase(i);
+				break;
+			}
+			++i;
+		}
+
+		// also delete on the cache
+		ArrayMaterial& m = m_materials[cachePath];
+		i = m.begin();
+		e = m.end();
+		while (i != e)
+		{
+			if ((*i) == material)
+			{
+				m.erase(i);
+				delete material;
+				break;
+			}
+			++i;
+		}
+	}
+
 	void CMaterialManager::saveMaterial(const ArrayMaterial& materials, const char* filename)
 	{
+		// save data
 		std::string matFile = filename;
 
 		char tempPath[512];
@@ -256,8 +291,12 @@ namespace Skylicht
 
 		buffer += "<Materials>\n";
 
+		std::string cachePath;
+
 		for (CMaterial* material : materials)
 		{
+			cachePath = material->getMaterialPath();
+
 			sprintf(data, "\t<Material name='%s' shader='%s'>\n", material->getName(), material->getShaderPath());
 			buffer += data;
 
@@ -345,6 +384,9 @@ namespace Skylicht
 		buffer += "</Materials>";
 		writeFile->write(buffer.c_str(), (u32)buffer.size());
 		writeFile->drop();
+
+		// save the cache
+		m_materials[cachePath] = materials;
 	}
 
 	void CMaterialManager::exportMaterial(CEntityPrefab* prefab, const char* filename)
