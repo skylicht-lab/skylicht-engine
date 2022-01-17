@@ -40,8 +40,12 @@ namespace Skylicht
 		ASSET_EDITOR_REGISTER(CMatEditor, mat);
 
 		GUI::CMenu* CMatEditor::s_pickTextureMenu = NULL;
+		GUI::CMenu* CMatEditor::s_settingMaterialMenu = NULL;
 
-		CMatEditor::CMatEditor()
+		CMatEditor::CMatEditor() :
+			m_renameContext(NULL),
+			m_materialContext(NULL),
+			m_groupContext(NULL)
 		{
 
 		}
@@ -54,11 +58,63 @@ namespace Skylicht
 		void CMatEditor::closeGUI()
 		{
 			CAssetEditor::closeGUI();
+		}
 
-			// clean all subject
-			for (ISubject* subject : m_subjects)
-				delete subject;
-			m_subjects.clear();
+		void CMatEditor::OnSettingCommand(GUI::CBase* menu)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(menu);
+			if (menuItem == NULL || m_materialContext == NULL)
+				return;
+
+			const std::wstring& command = menuItem->getLabel();
+
+			if (command == L"Rename")
+			{
+				if (m_renameContext != NULL)
+				{
+					m_renameContext->beginEdit([&](GUI::CBase* control)
+						{
+							GUI::CTextBox* textbox = dynamic_cast<GUI::CTextBox*>(control);
+							std::wstring newNameW = textbox->getString();
+							if (!newNameW.empty())
+							{
+								// rename
+								std::string newName = CStringImp::convertUnicodeToUTF8(newNameW.c_str());
+
+								char* trim = new char[newName.size()];
+								CStringImp::copy(trim, newName.c_str());
+								CStringImp::trim(trim);
+								m_materialContext->rename(trim);
+
+								// save material
+								std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
+								CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
+							}
+						},
+						[](GUI::CBase*)
+						{
+							// on cancel
+
+						});
+				}
+			}
+			else if (command == L"Delete")
+			{
+				GUI::CMessageBox* msgBox = new GUI::CMessageBox(GUI::CGUIContext::getRoot(), GUI::CMessageBox::YesNo);
+				msgBox->setMessage("Do you want to delete the material", m_materialContext->getName());
+				msgBox->OnYes = [&](GUI::CBase*)
+				{
+					// hide this group
+					m_groupContext->setHidden(true);
+
+					// delete and save material
+					CMaterialManager::getInstance()->deleteMaterial(m_materials, m_materialContext);
+
+					// save material
+					std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
+					CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
+				};
+			}
 		}
 
 		void CMatEditor::initGUI(const char* path, CSpaceProperty* ui)
@@ -70,6 +126,15 @@ namespace Skylicht
 				s_pickTextureMenu->addItem(L"Clear Texture", GUI::ESystemIcon::Close);
 			}
 
+			if (s_settingMaterialMenu == NULL)
+			{
+				s_settingMaterialMenu = new GUI::CMenu(editor->getRootCanvas());
+				s_settingMaterialMenu->OnCommand = BIND_LISTENER(&CMatEditor::OnSettingCommand, this);
+				s_settingMaterialMenu->addItem(L"Rename");
+				s_settingMaterialMenu->addSeparator();
+				s_settingMaterialMenu->addItem(L"Delete", GUI::ESystemIcon::Trash);
+			}
+
 			m_path = path;
 			m_materials = CMaterialManager::getInstance()->loadMaterial(path, true, std::vector<std::string>());
 
@@ -78,6 +143,32 @@ namespace Skylicht
 			for (CMaterial* material : m_materials)
 			{
 				GUI::CCollapsibleGroup* group = ui->addGroup(material->getName(), this);
+
+				GUI::CCollapsibleButton* header = group->getHeader();
+				GUI::CTextEditHelper* textEditHelper = new GUI::CTextEditHelper(
+					header, new GUI::CTextBox(header), header->getTextContainer()
+				);
+
+				// add setting on material name
+				GUI::CButton* btn = new GUI::CButton(group->getHeader());
+				btn->setWidth(20.0f);
+				btn->setPadding(GUI::SPadding(0.0f, 0.0f, 0.0f, 0.0f));
+				btn->dock(GUI::EPosition::Right);
+				btn->setIcon(GUI::ESystemIcon::Setting);
+				btn->showIcon(true);
+				btn->showLabel(false);
+				btn->enableDrawBackground(false);
+				btn->tagData(editor);
+				btn->OnPress = [&, editor, textEditHelper, btn, material, group](GUI::CBase* button)
+				{
+					m_groupContext = group;
+					m_materialContext = material;
+					m_renameContext = textEditHelper;
+
+					s_settingMaterialMenu->open(btn);
+				};
+
+
 				GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 
 				std::vector<std::string> shaderExts = { "xml" };
@@ -117,6 +208,19 @@ namespace Skylicht
 
 				groups.push_back(group);
 			}
+
+			GUI::CCollapsibleGroup* group = ui->addGroup("Utils", this);
+			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+			ui->addButton(layout, L"Add new material")->OnPress = [&](GUI::CBase* button)
+			{
+
+			};
+			layout->addSpace(5.0f);
+			ui->addButton(layout, L"Save As")->OnPress = [&](GUI::CBase* button)
+			{
+
+			};
+			groups.push_back(group);
 
 			if (groups.size() < 3)
 			{

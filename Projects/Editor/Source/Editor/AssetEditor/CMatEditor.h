@@ -41,7 +41,12 @@ namespace Skylicht
 			ArrayMaterial m_materials;
 			std::string m_path;
 
+			GUI::CCollapsibleGroup* m_groupContext;
+			GUI::CTextEditHelper* m_renameContext;
+			CMaterial* m_materialContext;
+
 			static GUI::CMenu* s_pickTextureMenu;
+			static GUI::CMenu* s_settingMaterialMenu;
 
 		public:
 			CMatEditor();
@@ -53,6 +58,8 @@ namespace Skylicht
 			virtual void initGUI(const char* path, CSpaceProperty* ui);
 
 			virtual void onUpdateValue(CObjectSerializable* object);
+
+			void OnSettingCommand(GUI::CBase* menu);
 
 			void showMaterialGUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material);
 
