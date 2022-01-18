@@ -1018,7 +1018,11 @@ namespace Skylicht
 
 			CAssetCreateController* assetCreater = CAssetCreateController::getInstance();
 
-			if (label == L"Material")
+			if (label == L"Scene")
+			{
+				assetCreater->createEmptyScene();
+			}
+			else if (label == L"Material")
 			{
 				assetCreater->createEmptyMaterial();
 			}
