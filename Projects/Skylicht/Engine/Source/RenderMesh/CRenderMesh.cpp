@@ -58,7 +58,7 @@ namespace Skylicht
 	void CRenderMesh::releaseMaterial()
 	{
 		for (CMaterial* m : m_materials)
-			delete m;
+			m->drop();
 		m_materials.clear();
 	}
 
@@ -128,7 +128,7 @@ namespace Skylicht
 				initFromPrefab(prefab);
 		}
 
-		// if (materialFile != m_materialFile)
+		if (!materialFile.empty())
 		{
 			m_materialFile = materialFile;
 
@@ -300,18 +300,25 @@ namespace Skylicht
 		}
 	}
 
-	void CRenderMesh::initMaterial(ArrayMaterial& materials)
+	void CRenderMesh::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
 	{
 		releaseMaterial();
 
 		for (CMaterial* m : materials)
 		{
-			CMaterial* material = m->clone();
+			CMaterial* mat = m;
+
+			if (cloneMaterial)
+				mat = m->clone();
+			else
+				mat->grab();
+
 			for (CRenderMeshData*& renderer : m_renderers)
 			{
-				renderer->setMaterial(material);
+				renderer->setMaterial(mat);
 			}
-			m_materials.push_back(material);
+
+			m_materials.push_back(mat);
 		}
 
 		for (CMaterial* m : m_materials)

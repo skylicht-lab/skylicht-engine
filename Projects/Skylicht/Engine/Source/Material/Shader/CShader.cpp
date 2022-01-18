@@ -109,7 +109,6 @@ namespace Skylicht
 			"POINT_LIGHT_POSITION",
 			"POINT_LIGHT_ATTENUATION",
 			"SPOT_LIGHT_CUTOFF",
-			"OBJECT_PARAM",
 			"MATERIAL_PARAM",
 			"DEFAULT_VALUE",
 			"SHADER_VEC2",
@@ -1038,10 +1037,6 @@ namespace Skylicht
 		}
 		break;
 		/*
-		case OBJECT_PARAM:
-		{
-		}
-		break;
 		case BPCEM_MIN:
 		case BPCEM_MAX:
 		{
