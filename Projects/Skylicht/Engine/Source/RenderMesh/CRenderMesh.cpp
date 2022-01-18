@@ -58,7 +58,13 @@ namespace Skylicht
 	void CRenderMesh::releaseMaterial()
 	{
 		for (CMaterial* m : m_materials)
+		{
+			for (CRenderMeshData*& renderer : m_renderers)
+			{
+				renderer->unusedMaterial(m);
+			}
 			m->drop();
+		}
 		m_materials.clear();
 	}
 

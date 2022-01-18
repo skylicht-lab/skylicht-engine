@@ -39,6 +39,12 @@ namespace Skylicht
 			virtual ~CAssetCreateController();
 
 			void createEmptyMaterial();
+
+			void createEmptyScene();
+
+		protected:
+
+			void importAndSelect(const char* path);
 		};
 	}
 }

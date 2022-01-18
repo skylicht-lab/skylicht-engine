@@ -148,6 +148,8 @@ namespace Skylicht
 
 			std::string getShortPath(const char* folder);
 
+			std::string genereateAssetPath(const char* pattern, const char* currentFolder);
+
 			SFileNode* getFileNodeByPath(const char* path);
 
 		public:

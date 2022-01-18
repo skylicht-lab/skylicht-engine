@@ -80,6 +80,24 @@ namespace Skylicht
 		}
 	}
 
+	void CRenderMeshData::unusedMaterial(CMaterial* material)
+	{
+		CMesh* mesh = RenderMesh;
+		const char* name = material->getName();
+
+		int bufferID = 0;
+		for (std::string& materialName : mesh->MaterialName)
+		{
+			if (materialName == name)
+			{
+				material->removeAffectMesh(mesh->getMeshBuffer(bufferID));
+				mesh->Material[bufferID] = NULL;
+			}
+
+			bufferID++;
+		}
+	}
+
 	void CRenderMeshData::initSoftwareSkinning()
 	{
 		CSkinnedMesh* mesh = new CSkinnedMesh();
