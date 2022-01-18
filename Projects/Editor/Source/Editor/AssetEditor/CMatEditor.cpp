@@ -57,6 +57,13 @@ namespace Skylicht
 
 		void CMatEditor::closeGUI()
 		{
+			// save material
+			if (!m_path.empty())
+			{
+				CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
+			}
+
+			// close
 			CAssetEditor::closeGUI();
 		}
 
@@ -86,9 +93,8 @@ namespace Skylicht
 								CStringImp::trim(trim);
 								m_materialContext->rename(trim);
 
-								// save material
-								std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
-								CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
+								// save material								
+								CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
 							}
 						},
 						[](GUI::CBase*)
@@ -110,9 +116,8 @@ namespace Skylicht
 					// delete and save material
 					CMaterialManager::getInstance()->deleteMaterial(m_materials, m_materialContext);
 
-					// save material
-					std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
-					CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
+					// save material					
+					CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
 				};
 			}
 		}
@@ -191,9 +196,8 @@ namespace Skylicht
 						material->changeShader(value->get().c_str());
 						showMaterialGUI(ui, layout, material);
 
-						// save material
-						std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
-						CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
+						// save material						
+						CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
 					}), true);
 				m_subjects.push_back(shaderValue);
 
@@ -217,8 +221,7 @@ namespace Skylicht
 				CMaterialManager::getInstance()->createMaterial(m_materials);
 
 				// save material
-				std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
-				CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
+				CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
 
 				// update the gui
 				CAssetPropertyController::getInstance()->onSelectAsset(m_path.c_str(), false);
@@ -245,9 +248,8 @@ namespace Skylicht
 			// show shader UI
 			showShaderGUI(ui, layout, material, m_subjects,
 				[&]() {
-					// on change
-					std::string shortMaterialPath = CAssetManager::getInstance()->getShortPath(m_path.c_str());
-					CMaterialManager::getInstance()->saveMaterial(m_materials, shortMaterialPath.c_str());
+					// on change					
+					CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
 				});
 		}
 
@@ -305,20 +307,20 @@ namespace Skylicht
 					unifrom->FloatValue[3]
 				);
 
-				CSubject<SColor>* newSubject = new CSubject<SColor>(c.toSColor());
-				subjects.push_back(newSubject);
+				CSubject<SColor>* colorSubject = new CSubject<SColor>(c.toSColor());
+				subjects.push_back(colorSubject);
 
-				ui->addColorPicker(layout, name.c_str(), newSubject);
+				ui->addColorPicker(layout, name.c_str(), colorSubject);
 
 				CObserver* observer = new CObserver();
-				observer->Notify = [&, newSubject, material, uniformUI](ISubject* subject, IObserver* from)
+				observer->Notify = [&, colorSubject, material, uniformUI](ISubject* subject, IObserver* from)
 				{
 					// on change color
-					material->setUniform4(uniformUI->Name.c_str(), newSubject->get());
+					material->setUniform4(uniformUI->Name.c_str(), colorSubject->get());
 					material->applyMaterial();
 				};
 
-				newSubject->addObserver(observer);
+				colorSubject->addObserver(observer);
 			}
 			else if (uniformUI->ControlType == CShader::UIFloat2)
 			{

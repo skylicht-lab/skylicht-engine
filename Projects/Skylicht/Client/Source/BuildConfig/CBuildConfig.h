@@ -34,7 +34,6 @@ namespace Skylicht
 	public:
 		static std::string SaveFolder;
 		static std::string ProfileFolder;
-		static std::string MountFolder;
 		static std::string DataFolder;
 
 		static std::string DeviceID;
@@ -43,9 +42,7 @@ namespace Skylicht
 		static std::string Model;
 
 		static std::string APKPath;
-		static std::string BundleID;
-
-		static bool UseZipData;
+		static std::string Version;
 	};
 
 }

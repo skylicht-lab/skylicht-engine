@@ -224,21 +224,4 @@ namespace Skylicht
 		return false;
 #endif
 	}
-
-	void CBaseApp::alertError(wchar_t* lpString)
-	{
-		// implement on Editor
-	}
-
-	bool CBaseApp::yesNoQuestion(wchar_t* lpString)
-	{
-		// implement on Editor
-		return false;
-	}
-
-	void CBaseApp::setStatusText(int part, wchar_t* lpString)
-	{
-		// implement on Editor
-	}
-
 }

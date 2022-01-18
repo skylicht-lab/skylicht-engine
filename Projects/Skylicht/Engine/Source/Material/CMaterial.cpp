@@ -32,7 +32,6 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CMaterial::CMaterial(const char* name, const char* shaderPath) :
-		m_owner(NULL),
 		m_zBuffer(video::ECFN_LESSEQUAL),
 		m_zWriteEnable(true),
 		m_backfaceCulling(true),
@@ -43,7 +42,6 @@ namespace Skylicht
 		m_shadowMapTextureSlot(-1),
 		m_shaderPath(shaderPath),
 		m_materialName(name),
-		m_castShadow(true),
 		m_shader(NULL)
 	{
 		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
@@ -106,11 +104,45 @@ namespace Skylicht
 		mat->m_backfaceCulling = m_backfaceCulling;
 		mat->m_frontfaceCulling = m_frontfaceCulling;
 		mat->m_doubleSided = m_doubleSided;
-		mat->m_castShadow = m_castShadow;
 
 		mat->m_materialPath = m_materialPath;
 
 		return mat;
+	}
+
+	void CMaterial::copyTo(CMaterial* mat)
+	{
+		mat->deleteAllParams();
+
+		for (SUniformValue*& u : m_uniformParams)
+		{
+			SUniformValue* v = u->clone();
+			mat->m_uniformParams.push_back(v);
+		}
+
+		for (SUniformTexture*& u : m_uniformTextures)
+		{
+			SUniformTexture* t = u->clone();
+			mat->m_uniformTextures.push_back(t);
+		}
+
+		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+		{
+			mat->m_resourceTexture[i] = m_resourceTexture[i];
+
+			if (mat->m_resourceTexture[i] != NULL)
+				mat->m_resourceTexture[i]->grab();
+
+			mat->m_textures[i] = m_textures[i];
+		}
+
+		mat->m_zBuffer = m_zBuffer;
+		mat->m_zWriteEnable = m_zWriteEnable;
+		mat->m_backfaceCulling = m_backfaceCulling;
+		mat->m_frontfaceCulling = m_frontfaceCulling;
+		mat->m_doubleSided = m_doubleSided;
+
+		mat->m_materialPath = m_materialPath;
 	}
 
 	void CMaterial::deleteAllParams()
@@ -331,6 +363,37 @@ namespace Skylicht
 		return newExtraUniformTexture(e, name);
 	}
 
+	std::string CMaterial::getProperty(const std::string& name)
+	{
+		if (name == "ZBuffer")
+		{
+			if (m_zBuffer == video::ECFN_ALWAYS)
+				return "Always";
+			else if (m_zBuffer == video::ECFN_DISABLED)
+				return "Disabled";
+			else if (m_zBuffer == video::ECFN_LESSEQUAL)
+				return "LessEqual";
+		}
+		else if (name == "ZWriteEnable")
+		{
+			return m_zWriteEnable ? "true" : "false";
+		}
+		else if (name == "BackfaceCulling")
+		{
+			return m_backfaceCulling ? "true" : "false";
+		}
+		else if (name == "FrontfaceCulling")
+		{
+			return m_frontfaceCulling ? "true" : "false";
+		}
+		else if (name == "DoubleSided")
+		{
+			return m_doubleSided ? "true" : "false";
+		}
+
+		return "";
+	}
+
 	void CMaterial::setProperty(const std::string& name, const std::string& value)
 	{
 		bool booleanValue = false;
@@ -364,10 +427,6 @@ namespace Skylicht
 		else if (name == "DoubleSided")
 		{
 			m_doubleSided = booleanValue;
-		}
-		else if (name == "CastShadow")
-		{
-			m_castShadow = booleanValue;
 		}
 	}
 
@@ -764,7 +823,7 @@ namespace Skylicht
 			for (int i = 0; i < numVS; i++)
 			{
 				SUniform* u = m_shader->getVSUniformID(i);
-				if (u->Type == OBJECT_PARAM || u->Type == MATERIAL_PARAM)
+				if (u->Type == MATERIAL_PARAM)
 				{
 					if (haveUniform(u->Name.c_str()) == false)
 					{
@@ -788,7 +847,7 @@ namespace Skylicht
 			for (int i = 0; i < numFS; i++)
 			{
 				SUniform* u = m_shader->getFSUniformID(i);
-				if (u->Type == OBJECT_PARAM || u->Type == MATERIAL_PARAM)
+				if (u->Type == MATERIAL_PARAM)
 				{
 					if (haveUniform(u->Name.c_str()) == false)
 					{
@@ -1019,19 +1078,6 @@ namespace Skylicht
 			{
 				switch (uniformValue->Type)
 				{
-				case OBJECT_PARAM:
-				{
-					if (m_owner != NULL)
-					{
-						SVec4& v = m_owner->getShaderParams().getParam(uniformValue->ValueIndex);
-						v.X = uniformValue->FloatValue[0];
-						v.Y = uniformValue->FloatValue[1];
-						v.Z = uniformValue->FloatValue[2];
-						v.W = uniformValue->FloatValue[3];
-					}
-					uniformValue->ShaderDefaultValue = false;
-					break;
-				}
 				case MATERIAL_PARAM:
 				{
 					SVec4& v = m_shaderParams.getParam(uniformValue->ValueIndex);
