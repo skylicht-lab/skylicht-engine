@@ -147,12 +147,6 @@ namespace Skylicht
 			m_limitFPS = fps;
 		}
 
-		virtual void alertError(wchar_t* lpString);
-
-		virtual bool yesNoQuestion(wchar_t* lpString);
-
-		virtual void setStatusText(int part, wchar_t* lpString);
-
 		void enableRunWhenPause(bool b)
 		{
 			m_enableRunWhenPause = b;

@@ -320,7 +320,9 @@ namespace Skylicht
 			if (CStringImp::length(folder) < assetPath.size())
 				return std::string("");
 
-			sortPath.replace(sortPath.find(assetPath.c_str()), assetPath.size(), "");
+			if (sortPath.find(assetPath.c_str()) == 0)
+				sortPath.replace(0, assetPath.size(), "");
+
 			return sortPath;
 		}
 

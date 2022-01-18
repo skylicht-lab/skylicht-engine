@@ -49,7 +49,8 @@ namespace Skylicht
 			ArrayMaterial& list = (*i).second;
 			for (int j = 0, n = (int)list.size(); j < n; j++)
 			{
-				delete list[j];
+				CMaterial* m = list[j];
+				m->drop();
 			}
 			list.clear();
 			++i;
@@ -57,7 +58,7 @@ namespace Skylicht
 		m_materials.clear();
 
 		for (CMaterial* m : m_listGenerateMaterials)
-			delete m;
+			m->drop();
 		m_listGenerateMaterials.clear();
 	}
 
@@ -272,7 +273,7 @@ namespace Skylicht
 			if ((*i) == material)
 			{
 				m.erase(i);
-				delete material;
+				material->drop();
 				break;
 			}
 			++i;
@@ -348,6 +349,23 @@ namespace Skylicht
 				}
 				buffer += "\t\t</Params>\n";
 			}
+
+			buffer += "\t\t<Properties>\n";
+			const char* propertyName[] = {
+				"ZBuffer",
+				"ZWriteEnable",
+				"BackfaceCulling",
+				"FrontfaceCulling",
+				"DoubleSided"
+			};
+			for (int i = 0; i < 4; i++)
+			{
+				sprintf(data, "\t\t\t<Property name='%s' value='%s'/>\n",
+					propertyName[i],
+					material->getProperty(propertyName[i]).c_str());
+				buffer += data;
+			}
+			buffer += "\t\t</Properties>\n";
 
 			// write extra data
 			if (extras.size() > 0)

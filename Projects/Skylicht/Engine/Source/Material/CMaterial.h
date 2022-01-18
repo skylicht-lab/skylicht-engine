@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CMaterial
+	class CMaterial : public IReferenceCounted
 	{
 	public:
 		struct SUniformTexture
@@ -126,7 +126,6 @@ namespace Skylicht
 		bool m_manualInitMaterial;
 		int m_shadowMapTextureSlot;
 
-		CGameObject* m_owner;
 		CShader* m_shader;
 
 	public:
@@ -137,11 +136,6 @@ namespace Skylicht
 		inline CShader* getShader()
 		{
 			return m_shader;
-		}
-
-		inline void setOwner(CGameObject* obj)
-		{
-			m_owner = obj;
 		}
 
 		void rename(const char* name)
@@ -180,6 +174,7 @@ namespace Skylicht
 		}
 
 		CMaterial* clone();
+		void copyTo(CMaterial* mat);
 
 		void deleteAllParams();
 		void deleteExtramParams();
@@ -257,6 +252,8 @@ namespace Skylicht
 
 		void setProperty(const std::string& name, const std::string& value);
 
+		std::string getProperty(const std::string& name);
+
 		void loadDefaultTexture();
 
 		void loadUniformTexture();
@@ -319,6 +316,10 @@ namespace Skylicht
 		SUniformTexture* findExtraTexture(const char* name);
 
 		SUniformValue* findExtraParam(const char* name, int floatSize);
+
+	protected:
+
+
 	};
 
 	typedef std::vector<CMaterial*> ArrayMaterial;

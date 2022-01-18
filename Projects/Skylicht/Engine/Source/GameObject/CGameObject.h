@@ -69,8 +69,6 @@ namespace Skylicht
 		int m_tagDataInt;
 		std::string m_tagDataString;
 
-		CShaderParams m_shaderParams;
-
 		std::vector<CComponentSystem*> m_components;
 
 	public:
@@ -140,11 +138,6 @@ namespace Skylicht
 		inline CEntity* getEntity()
 		{
 			return m_entity;
-		}
-
-		inline CShaderParams& getShaderParams()
-		{
-			return m_shaderParams;
 		}
 
 		CEntityManager* getEntityManager();

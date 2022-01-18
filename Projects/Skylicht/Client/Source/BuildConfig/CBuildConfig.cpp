@@ -30,7 +30,6 @@ namespace Skylicht
 
 	std::string	CBuildConfig::SaveFolder = "";
 	std::string	CBuildConfig::ProfileFolder = "";
-	std::string	CBuildConfig::MountFolder = "";
 	std::string	CBuildConfig::DataFolder = "";
 
 	std::string CBuildConfig::DeviceID = "";
@@ -46,11 +45,5 @@ namespace Skylicht
 #endif
 
 	std::string CBuildConfig::APKPath = "";
-	std::string	CBuildConfig::BundleID = "";
-
-#ifdef USE_DATA_IN_ZIP_FILE
-	bool CBuildConfig::UseZipData = true;
-#else
-	bool CBuildConfig::UseZipData = false;
-#endif
+	std::string	CBuildConfig::Version = "";
 }
