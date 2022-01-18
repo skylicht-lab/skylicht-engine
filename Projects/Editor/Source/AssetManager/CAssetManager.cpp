@@ -326,6 +326,25 @@ namespace Skylicht
 			return sortPath;
 		}
 
+		std::string CAssetManager::genereateAssetPath(const char* pattern, const char* currentFolder)
+		{
+			int i = 1;
+			bool exists = false;
+			char name[256];
+
+			std::string fullPath;
+			do
+			{
+				sprintf(name, pattern, i);
+				fullPath = currentFolder;
+				fullPath += name;
+				exists = isExist(fullPath.c_str());
+				i++;
+			} while (exists);
+
+			return fullPath;
+		}
+
 		void CAssetManager::deleteChildAsset(const char* folderPath)
 		{
 			std::string shortPath = getShortPath(folderPath);

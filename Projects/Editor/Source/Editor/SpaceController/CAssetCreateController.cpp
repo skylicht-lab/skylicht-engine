@@ -34,6 +34,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 #include "Editor/CEditor.h"
 
+#include "Scene/CSceneExporter.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -58,34 +60,70 @@ namespace Skylicht
 			if (spaceAssets != NULL)
 				currentFolder = spaceAssets->getListController()->getCurrentFolder();
 
-			int i = 1;
-			bool exists = false;
-			char name[256];
-			std::string fullPath;
-
-			do
-			{
-				sprintf(name, "/Material%02d.mat", i);
-				fullPath = currentFolder + name;
-				exists = assetMgr->isExist(fullPath.c_str());
-				i++;
-			} while (exists);
+			std::string fullPath = assetMgr->genereateAssetPath("/Material%02d.mat", currentFolder.c_str());
 
 			ArrayMaterial materials;
+
 			CMaterial* newMaterial = new CMaterial("NoName", "BuiltIn/Shader/Basic/TextureColor.xml");
 			materials.push_back(newMaterial);
-
 			CMaterialManager::getInstance()->saveMaterial(materials, fullPath.c_str());
 
-			delete newMaterial;
+			importAndSelect(fullPath.c_str());
+		}
 
+		void CAssetCreateController::createEmptyScene()
+		{
+			// create a scene
+			CScene* scene = new CScene();
+
+			// create a zone in scene
+			CZone* zone = scene->createZone();
+
+			// lighting
+			CGameObject* lightObj = zone->createEmptyObject();
+			lightObj->setName(L"DirectionLight");
+
+			CTransformEuler* lightTransform = lightObj->getTransformEuler();
+			lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
+
+			core::vector3df direction = core::vector3df(0.0f, -1.5f, -2.0f);
+			lightTransform->setOrientation(direction, CTransform::s_oy);
+
+			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
+			SColor c(255, 255, 244, 214);
+			directionalLight->setColor(SColorf(c));
+
+			// update search index
+			scene->updateAddRemoveObject();
+			scene->updateIndexSearchObject();
+			scene->update();
+
+			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
+
+			CAssetManager* assetMgr = CAssetManager::getInstance();
+
+			std::string currentFolder = assetMgr->getAssetFolder();
+			if (spaceAssets != NULL)
+				currentFolder = spaceAssets->getListController()->getCurrentFolder();
+
+			std::string fullPath = assetMgr->genereateAssetPath("/Scene%02d.scene", currentFolder.c_str());
+
+			CSceneExporter::exportScene(scene, fullPath.c_str());
+
+			delete scene;
+
+			importAndSelect(fullPath.c_str());
+		}
+
+		void CAssetCreateController::importAndSelect(const char* path)
+		{
 			CAssetImporter importer;
-			importer.add(fullPath.c_str());
+			importer.add(path);
 			importer.importAll();
 
 			CEditor::getInstance()->refresh();
 
-			std::string shortPath = assetMgr->getShortPath(fullPath.c_str());
+			std::string shortPath = CAssetManager::getInstance()->getShortPath(path);
 			CAssetPropertyController::getInstance()->browseAsset(shortPath.c_str());
 		}
 	}
