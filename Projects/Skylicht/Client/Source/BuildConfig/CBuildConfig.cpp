@@ -32,6 +32,7 @@ namespace Skylicht
 	std::string	CBuildConfig::ProfileFolder = "";
 	std::string	CBuildConfig::DataFolder = "";
 
+	std::string CBuildConfig::AppID = "";
 	std::string CBuildConfig::DeviceID = "";
 
 #ifdef WIN32

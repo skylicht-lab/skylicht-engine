@@ -41,7 +41,7 @@ void applicationTouchUp(int touchID, int x, int y);
 void applicationUpdateAccelerometer(float x, float y, float z);
 void applicationSetAccelerometer(int b);
 void applicationSetAPK(const char *path);
-void applicationSetBundleID(const char *id);
+void applicationSetAppID(const char *id);
 void applicationSetSaveFolder(const char *path);
 void applicationSetDownloadFolder(const char *path);
 void applicationSetDeviceID(const char *id);
@@ -201,14 +201,14 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setApkPath)(JNIEnv* env, job
 
 
 // native member function setApkPath
-JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setBundleID)(JNIEnv* env, jobject thiz, jstring bundleID)
+JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setAppID)(JNIEnv* env, jobject thiz, jstring appID)
 {
-	const char *id = getJString(env, bundleID);
+	const char *id = getJString(env, appID);
 
-	// set bundle id
-	applicationSetBundleID(id);
+	// set app id
+	applicationSetAppID(id);
 
-	(*env)->ReleaseStringUTFChars(env, bundleID, id);
+	(*env)->ReleaseStringUTFChars(env, appID, id);
 }
 
 

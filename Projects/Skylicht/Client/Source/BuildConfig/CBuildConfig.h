@@ -36,6 +36,8 @@ namespace Skylicht
 		static std::string ProfileFolder;
 		static std::string DataFolder;
 
+		static std::string AppID;
+
 		static std::string DeviceID;
 		static std::string OSVersion;
 		static std::string Factory;
