@@ -92,6 +92,11 @@ namespace Skylicht
 			m_tree->deselectAll();
 		}
 
+		void CSpaceHierarchy::deleteHierarchyNode()
+		{
+			m_hierarchyController->deleteHierarchyNode();
+		}
+
 		void CSpaceHierarchy::setHierarchyNode(CHierachyNode* node)
 		{
 			m_hierarchyController->setHierarchyNode(node);

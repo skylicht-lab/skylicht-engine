@@ -350,7 +350,6 @@ namespace Skylicht
 			submenu = create->getMenu();
 			submenu->addItem(L"Scene");
 			submenu->addItem(L"Material");
-			submenu->addItem(L"Shader");
 			submenu->addItem(L"GUI");
 			submenu->addItem(L"Sprite");
 			submenu->addItem(L"Animation");
