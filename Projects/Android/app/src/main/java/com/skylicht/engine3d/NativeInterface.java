@@ -33,11 +33,9 @@ public class NativeInterface {
 
     public native void setAccelerometerSupport(int enable);
 
-    public native void updateCurrentLocation(double lat, double lng);
-
     public native void setApkPath(String path);
 
-    public native void setBundleID(String id);
+    public native void setAppID(String id);
 
     public native void setSaveFolder(String path);
 
