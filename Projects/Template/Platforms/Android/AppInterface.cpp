@@ -222,14 +222,9 @@ extern "C" {
 		CBuildConfig::SaveFolder = downloadPath;
 	}
 
-	void applicationSetMountFolder(const char *mountPath)
+	void applicationSetAppID(const char *id)
 	{
-		CBuildConfig::MountFolder = mountPath;
-	}
-
-	void applicationSetBundleID(const char *id)
-	{
-		CBuildConfig::BundleID = id;
+		CBuildConfig::AppID = id;
 	}
 
 	void applicationSetDeviceID(const char *id)
