@@ -62,8 +62,11 @@ namespace Skylicht
 		{
 			delete m_contextMenuScene;
 
-			if (m_hierachyNode != NULL)
-				delete m_hierachyNode;
+			if (m_spaceHierarchy != NULL)
+			{
+				m_spaceHierarchy->deleteHierarchyNode();
+				m_hierachyNode = NULL;
+			}
 
 			CAssetManager::getInstance()->unRegisterFileLoader("scene", this);
 		}
@@ -146,13 +149,13 @@ namespace Skylicht
 			CHandles::getInstance()->end();
 			CHandles::getInstance()->setNullRenderer();
 
-			if (m_hierachyNode != NULL)
+			m_gizmos.clear();
+
+			if (m_spaceHierarchy != NULL)
 			{
-				delete m_hierachyNode;
+				m_spaceHierarchy->deleteHierarchyNode();
 				m_hierachyNode = NULL;
 			}
-
-			m_gizmos.clear();
 
 			// create new scene
 			m_scene = m_spaceScene->initNullScene();
@@ -186,9 +189,9 @@ namespace Skylicht
 
 		void CSceneController::setScene(CScene* scene)
 		{
-			if (m_hierachyNode != NULL)
+			if (m_spaceHierarchy != NULL)
 			{
-				delete m_hierachyNode;
+				m_spaceHierarchy->deleteHierarchyNode();
 				m_hierachyNode = NULL;
 			}
 
