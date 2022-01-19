@@ -48,6 +48,8 @@ namespace Skylicht
 
 			virtual ~CHierarchyController();
 
+			void deleteHierarchyNode();
+
 			void setHierarchyNode(CHierachyNode* node);
 
 			GUI::CTreeNode* add(CHierachyNode* node);

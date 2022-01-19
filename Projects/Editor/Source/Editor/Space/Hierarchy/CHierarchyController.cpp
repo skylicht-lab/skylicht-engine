@@ -54,7 +54,20 @@ namespace Skylicht
 		CHierarchyController::~CHierarchyController()
 		{
 			if (m_node != NULL)
+			{
 				m_node->nullGUI();
+				delete m_node;
+			}
+		}
+
+		void CHierarchyController::deleteHierarchyNode()
+		{
+			if (m_node != NULL)
+			{
+				m_node->nullGUI();
+				delete m_node;
+				m_node = NULL;
+			}
 		}
 
 		void CHierarchyController::setHierarchyNode(CHierachyNode* node)
