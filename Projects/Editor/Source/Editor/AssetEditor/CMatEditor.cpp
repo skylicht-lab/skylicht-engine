@@ -296,15 +296,15 @@ namespace Skylicht
 			}
 			else if (uniformUI->ControlType == CShader::UIColor)
 			{
-				CMaterial::SUniformValue* unifrom = material->getUniform(uniformUI->Name.c_str());
+				CMaterial::SUniformValue* uniform = material->getUniform(uniformUI->Name.c_str());
 				std::wstring name = CStringImp::convertUTF8ToUnicode(uniformUI->Name.c_str());
 
 				// default color
 				SColorf c(
-					unifrom->FloatValue[0],
-					unifrom->FloatValue[1],
-					unifrom->FloatValue[2],
-					unifrom->FloatValue[3]
+					uniform->FloatValue[0],
+					uniform->FloatValue[1],
+					uniform->FloatValue[2],
+					uniform->FloatValue[3]
 				);
 
 				CSubject<SColor>* colorSubject = new CSubject<SColor>(c.toSColor());
@@ -324,26 +324,182 @@ namespace Skylicht
 			}
 			else if (uniformUI->ControlType == CShader::UIFloat2)
 			{
+				CMaterial::SUniformValue* uniform = material->getUniform(uniformUI->Name.c_str());
+				std::wstring name = CStringImp::convertUTF8ToUnicode(uniformUI->Name.c_str());
 
+				CSubject<float>* x = new CSubject<float>(uniform->FloatValue[0]);
+				subjects.push_back(x);
+
+				CSubject<float>* y = new CSubject<float>(uniform->FloatValue[1]);
+				subjects.push_back(y);
+
+				if (uniformUI->ElementName.size() > 0)
+				{
+					// write element name #0
+					name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[0].c_str());
+					if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+						ui->addSlider(layout, name.c_str(), x, uniformUI->Min, uniformUI->Max);
+					else
+						ui->addNumberInput(layout, name.c_str(), x, 0.1f);
+
+					// write element name #1
+					if (uniformUI->ElementName.size() >= 2)
+					{
+						name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[1].c_str());
+
+						if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+							ui->addSlider(layout, name.c_str(), y, uniformUI->Min, uniformUI->Max);
+						else
+							ui->addNumberInput(layout, name.c_str(), y, 0.1f);
+					}
+				}
+				else
+				{
+					// write default X,Y
+					ui->addLabel(layout, name.c_str());
+
+					if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+					{
+						ui->addSlider(layout, L"X", x, uniformUI->Min, uniformUI->Max);
+						ui->addSlider(layout, L"Y", y, uniformUI->Min, uniformUI->Max);
+					}
+					else
+					{
+						ui->addNumberInput(layout, L"X", x, 0.1f);
+						ui->addNumberInput(layout, L"Y", y, 0.1f);
+					}
+				}
+
+				// event change value
+				CObserver* observer = new CObserver();
+				observer->Notify = [&, x, y, material, uniformUI](ISubject* subject, IObserver* from)
+				{
+					float value[2];
+					value[0] = x->get();
+					value[1] = y->get();
+
+					// on change color
+					material->setUniform2(uniformUI->Name.c_str(), value);
+					material->applyMaterial();
+				};
+
+				x->addObserver(observer);
+				y->addObserver(observer);
 			}
 			else if (uniformUI->ControlType == CShader::UIFloat4)
 			{
+				CMaterial::SUniformValue* uniform = material->getUniform(uniformUI->Name.c_str());
+				std::wstring name = CStringImp::convertUTF8ToUnicode(uniformUI->Name.c_str());
 
+				CSubject<float>* x = new CSubject<float>(uniform->FloatValue[0]);
+				subjects.push_back(x);
+
+				CSubject<float>* y = new CSubject<float>(uniform->FloatValue[1]);
+				subjects.push_back(y);
+
+				CSubject<float>* z = new CSubject<float>(uniform->FloatValue[2]);
+				subjects.push_back(z);
+
+				CSubject<float>* w = new CSubject<float>(uniform->FloatValue[3]);
+				subjects.push_back(w);
+
+				if (uniformUI->ElementName.size() > 0)
+				{
+					// write element name #0
+					name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[0].c_str());
+					if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+						ui->addSlider(layout, name.c_str(), x, uniformUI->Min, uniformUI->Max);
+					else
+						ui->addNumberInput(layout, name.c_str(), x, 0.1f);
+
+					// write element name #1
+					if (uniformUI->ElementName.size() >= 2)
+					{
+						name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[1].c_str());
+
+						if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+							ui->addSlider(layout, name.c_str(), y, uniformUI->Min, uniformUI->Max);
+						else
+							ui->addNumberInput(layout, name.c_str(), y, 0.1f);
+					}
+
+					// write element name #2
+					if (uniformUI->ElementName.size() >= 3)
+					{
+						name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[2].c_str());
+
+						if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+							ui->addSlider(layout, name.c_str(), z, uniformUI->Min, uniformUI->Max);
+						else
+							ui->addNumberInput(layout, name.c_str(), z, 0.1f);
+					}
+
+					// write element name #3
+					if (uniformUI->ElementName.size() >= 4)
+					{
+						name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[3].c_str());
+
+						if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+							ui->addSlider(layout, name.c_str(), w, uniformUI->Min, uniformUI->Max);
+						else
+							ui->addNumberInput(layout, name.c_str(), w, 0.1f);
+					}
+				}
+				else
+				{
+					// write default X,Y
+					ui->addLabel(layout, name.c_str());
+
+					if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+					{
+						ui->addSlider(layout, L"X", x, uniformUI->Min, uniformUI->Max);
+						ui->addSlider(layout, L"Y", y, uniformUI->Min, uniformUI->Max);
+						ui->addSlider(layout, L"Z", z, uniformUI->Min, uniformUI->Max);
+						ui->addSlider(layout, L"W", w, uniformUI->Min, uniformUI->Max);
+					}
+					else
+					{
+						ui->addNumberInput(layout, L"X", x, 0.1f);
+						ui->addNumberInput(layout, L"Y", y, 0.1f);
+						ui->addNumberInput(layout, L"Z", z, 0.1f);
+						ui->addNumberInput(layout, L"W", w, 0.1f);
+					}
+				}
+
+				// event change value
+				CObserver* observer = new CObserver();
+				observer->Notify = [&, x, y, z, w, material, uniformUI](ISubject* subject, IObserver* from)
+				{
+					float value[4];
+					value[0] = x->get();
+					value[1] = y->get();
+					value[2] = z->get();
+					value[3] = w->get();
+
+					// on change color
+					material->setUniform2(uniformUI->Name.c_str(), value);
+					material->applyMaterial();
+				};
+
+				x->addObserver(observer);
+				y->addObserver(observer);
+				z->addObserver(observer);
+				w->addObserver(observer);
 			}
 			else if (uniformUI->ControlType == CShader::UITexture)
 			{
-				CMaterial::SUniformTexture* unifromTexture = material->getUniformTexture(uniformUI->Name.c_str());
+				CMaterial::SUniformTexture* uniformTexture = material->getUniformTexture(uniformUI->Name.c_str());
 
-				CSubject<std::string>* newSubject = new CSubject<std::string>(unifromTexture->Path);
+				CSubject<std::string>* newSubject = new CSubject<std::string>(uniformTexture->Path);
 				subjects.push_back(newSubject);
 
 				GUI::CImageButton* imageButton = ui->addInputTextureFile(layout, text, newSubject);
 
-				if (unifromTexture->Texture != NULL)
+				if (uniformTexture->Texture != NULL)
 				{
-					const core::dimension2du& size = unifromTexture->Texture->getSize();
+					const core::dimension2du& size = uniformTexture->Texture->getSize();
 					imageButton->getImage()->setImage(
-						unifromTexture->Texture,
+						uniformTexture->Texture,
 						GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
 					);
 					imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
