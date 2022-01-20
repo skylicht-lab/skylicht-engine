@@ -5,15 +5,15 @@
 		</vs>
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
-			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
-			<uniform name="uIntensity" type="MATERIAL_PARAM" valueIndex="2" value="1.0, 1.0" float="2"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uIntensity" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0" float="2"/>
 		</fs>
 	</uniforms>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>
 			<ui control="UIColor" name="uColor"/>
-			<ui control="UIFloat2" name="uIntensity" elementName="Itensity" min="0.0" max="3.0"/>
+			<ui control="UIFloat2" name="uIntensity" elementName="uIntensity" min="0.0" max="3.0"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/TextureColorVS.glsl" fs="GLSL/TextureSRGBFS.glsl" fs_source="GLSL/TextureSRGBFS.d.glsl"/>
