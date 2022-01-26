@@ -75,6 +75,9 @@ namespace SkylichtAudio
 
 		virtual void update(float dt);
 
+		virtual float getBufferLength();
+		virtual int getSampleRate();
+
 	protected:
 		void update3D();
 		float calcDistanceGain(const SListener& listener);

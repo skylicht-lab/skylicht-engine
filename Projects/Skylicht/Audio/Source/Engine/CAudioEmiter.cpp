@@ -217,7 +217,7 @@ namespace SkylichtAudio
 				m_buffer = new unsigned char* [m_numBuffer];
 
 				// calc buffer length
-				m_bufferLengthTime = (m_bufferSize >> 2) / (float)sourceParam.SamplingRate;
+				m_bufferLengthTime = m_source->getBufferLength();
 
 				// init decode
 				m_decodeBuffer = new unsigned char[(int)(m_bufferSize * SKYLICHTAUDIO_MAX_PITCH)];
