@@ -60,7 +60,7 @@ namespace SkylichtAudio
 		delete m_mutex;
 	}
 
-	void CSoundSource::init(const STrackParams& trackParam, const SSourceParam &driverParam)
+	void CSoundSource::init(const STrackParams& trackParam, const SSourceParam& driverParam)
 	{
 		SScopeMutex scopeLock(m_mutex);
 		m_trackParams = trackParam;
@@ -205,7 +205,7 @@ namespace SkylichtAudio
 	{
 		SScopeMutex scopeLock(m_mutex);
 
-		short *sourceBuffer = (short*)m_buffers[m_driverBuffer].Data;
+		short* sourceBuffer = (short*)m_buffers[m_driverBuffer].Data;
 
 		if (sourceBuffer == NULL || m_trackParams.BitsPerSample != 16)
 			return;
@@ -327,6 +327,16 @@ namespace SkylichtAudio
 	{
 	}
 
+	float CSoundSource::getBufferLength()
+	{
+		return m_bufferDuration;
+	}
+
+	int CSoundSource::getSampleRate()
+	{
+		return m_trackParams.SamplingRate;
+	}
+
 	void CSoundSource::update3D()
 	{
 		// calc distance gain
@@ -360,7 +370,7 @@ namespace SkylichtAudio
 		return gain;
 	}
 
-	void CSoundSource::calcLeftRightGain(const SListener& listener, float &left, float &right)
+	void CSoundSource::calcLeftRightGain(const SListener& listener, float& left, float& right)
 	{
 		float soundX = m_position.X - listener.Position.X;
 		float soundY = m_position.Y - listener.Position.Y;

@@ -136,6 +136,9 @@ namespace SkylichtAudio
 		virtual float getPitch() = 0;
 
 		virtual void update(float dt) = 0;
+
+		virtual float getBufferLength() = 0;
+		virtual int getSampleRate() = 0;
 	};
 }
 
