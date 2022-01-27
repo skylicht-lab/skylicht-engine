@@ -373,6 +373,8 @@ namespace Skylicht
 				return "Disabled";
 			else if (m_zBuffer == video::ECFN_LESSEQUAL)
 				return "LessEqual";
+			else if (m_zBuffer == video::ECFN_GREATER)
+				return "Greater";
 		}
 		else if (name == "ZWriteEnable")
 		{
@@ -411,6 +413,8 @@ namespace Skylicht
 				m_zBuffer = video::ECFN_DISABLED;
 			else if (value == "LessEqual")
 				m_zBuffer = video::ECFN_LESSEQUAL;
+			else if (value == "Greater")
+				m_zBuffer = video::ECFN_GREATER;
 		}
 		else if (name == "ZWriteEnable")
 		{
