@@ -71,6 +71,8 @@ namespace Skylicht
 
 		void initFromPrefab(CEntityPrefab* prefab);
 
+		void initFromMeshFile(const char* path);
+
 		void initMaterial(ArrayMaterial& materials, bool cloneMaterial = false);
 
 		inline int getMaterialCount()

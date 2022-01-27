@@ -163,15 +163,18 @@ namespace Skylicht
 		if (prefab != NULL)
 			initFromPrefab(prefab);
 
-		std::vector<std::string> textureFolders;
-		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
-			m_materialFile.c_str(),
-			true,
-			textureFolders
-		);
+		if (!m_materialFile.empty())
+		{
+			std::vector<std::string> textureFolders;
+			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+				m_materialFile.c_str(),
+				true,
+				textureFolders
+			);
 
-		if (materials.size() > 0)
-			initMaterial(materials);
+			if (materials.size() > 0)
+				initMaterial(materials);
+		}
 	}
 
 	void CRenderMesh::initFromPrefab(CEntityPrefab* prefab)
@@ -304,6 +307,12 @@ namespace Skylicht
 				}
 			}
 		}
+	}
+
+	void CRenderMesh::initFromMeshFile(const char* path)
+	{
+		m_meshFile = path;
+		refreshModelAndMaterial();
 	}
 
 	void CRenderMesh::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
