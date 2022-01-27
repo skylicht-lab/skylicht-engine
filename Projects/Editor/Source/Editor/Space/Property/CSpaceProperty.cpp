@@ -621,6 +621,8 @@ namespace Skylicht
 				value->notify(observer);
 			};
 
+			comboBox->setLabel(value->get());
+
 			boxLayout->endVertical();
 		}
 
