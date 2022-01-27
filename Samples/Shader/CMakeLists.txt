@@ -244,7 +244,7 @@ endif()
 if (BUILD_EMSCRIPTEN)
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(SampleShader PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Shell/shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	set_target_properties(SampleShader PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Shell/shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
 	set(project_name SampleShader)
 	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
