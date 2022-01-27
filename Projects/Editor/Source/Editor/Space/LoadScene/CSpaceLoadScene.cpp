@@ -58,16 +58,26 @@ namespace Skylicht
 		{
 			CSpace::update();
 
+			if (m_startLoading)
+			{
+				if (!CSceneImporter::beginImportScene(CSceneController::getInstance()->getScene(), m_scenePath.c_str()))
+				{
+					// load scene fail
+					m_finished = true;
+				}
+				m_startLoading = false;
+			}
+
 			m_progressBar->setPercent(CSceneImporter::getLoadingPercent());
 
 			if (m_finished == false)
 			{
 				m_finished = CSceneImporter::updateLoadScene();
+			}
 
-				if (m_finished == true)
-				{
-					CSceneController::getInstance()->doFinishLoadScene();
-				}
+			if (m_finished == true)
+			{
+				CSceneController::getInstance()->doFinishLoadScene();
 			}
 		}
 
@@ -83,11 +93,8 @@ namespace Skylicht
 
 		void CSpaceLoadScene::loadScene(const char* path)
 		{
-			if (!CSceneImporter::beginImportScene(CSceneController::getInstance()->getScene(), path))
-			{
-				// load scene fail
-				m_finished = true;
-			}
+			m_startLoading = true;
+			m_scenePath = path;
 		}
 	}
 }

@@ -209,8 +209,6 @@ namespace Skylicht
 		{
 			m_loadSceneDialog->remove();
 			m_loadSceneDialog = NULL;
-
-			refresh();
 		}
 
 		void CEditor::closeExportGMapDialog()
