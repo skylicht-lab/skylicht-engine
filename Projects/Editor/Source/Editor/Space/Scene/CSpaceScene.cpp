@@ -158,6 +158,42 @@ namespace Skylicht
 
 			m_view->OnResize = BIND_LISTENER(&CSpaceScene::onRenderResize, this);
 
+			m_view->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
+			{
+				if (data->Name == "ListFSItem")
+				{
+					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+					bool isFolder = rowItem->getTagBool();
+					if (isFolder)
+						return false;
+
+					std::string path = rowItem->getTagString();
+					std::string fileExt = CPath::getFileNameExt(path);
+					fileExt = CStringImp::toLower(fileExt);
+					if (fileExt == "dae" || fileExt == "smesh")
+					{
+						return true;
+					}
+				}
+				return false;
+			};
+
+			m_view->OnDrop = [](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			{
+				if (data->Name == "ListFSItem")
+				{
+					CHierachyNode* newNode = NULL;
+					if (newNode != NULL)
+					{
+						CGameObject* targetObject = (CGameObject*)newNode->getTagData();
+
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						std::string path = rowItem->getTagString();
+						CSceneController::getInstance()->createResourceComponent(path, targetObject);
+					}
+				}
+			};
+
 			GUI::SDimension size = window->getSize();
 			initRenderPipeline(size.Width, size.Height);
 
