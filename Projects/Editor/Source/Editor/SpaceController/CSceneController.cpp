@@ -450,6 +450,20 @@ namespace Skylicht
 			return newObject;
 		}
 
+		void CSceneController::createResourceComponent(const std::string& path, CGameObject* gameObject)
+		{
+			std::string shortPath = CAssetManager::getInstance()->getShortPath(path.c_str());
+
+			std::string fileExt = CPath::getFileNameExt(path);
+			fileExt = CStringImp::toLower(fileExt);
+
+			if (fileExt == "dae" || fileExt == "smesh")
+			{
+				CRenderMesh* renderMesh = gameObject->addComponent<CRenderMesh>();
+				renderMesh->initFromMeshFile(shortPath.c_str());
+			}
+		}
+
 		void CSceneController::deselectAllOnHierachy()
 		{
 			m_spaceHierarchy->deselectAll();

@@ -368,24 +368,26 @@ namespace Skylicht
 				}
 				else if (data->Name == "ListFSItem")
 				{
+					CHierachyNode* newNode = NULL;
+
 					if (node->getTagDataType() == CHierachyNode::Zone)
 					{
-						createChildObject(node);
+						newNode = createChildObject(node);
 					}
 					else if (node->getTagDataType() == CHierachyNode::Container)
 					{
 						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 						if (local.Y < rowItem->height() * 0.25f)
 						{
-							createObjectAt(node, false);
+							newNode = createObjectAt(node, false);
 						}
 						else if (local.Y > rowItem->height() * 0.75f)
 						{
-							createObjectAt(node, true);
+							newNode = createObjectAt(node, true);
 						}
 						else
 						{
-							createChildObject(node);
+							newNode = createChildObject(node);
 						}
 					}
 					else if (node->getTagDataType() == CHierachyNode::GameObject)
@@ -393,12 +395,21 @@ namespace Skylicht
 						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 						if (local.Y < rowItem->height() * 0.5f)
 						{
-							createObjectAt(node, false);
+							newNode = createObjectAt(node, false);
 						}
 						else
 						{
-							createObjectAt(node, true);
+							newNode = createObjectAt(node, true);
 						}
+					}
+
+					if (newNode != NULL)
+					{
+						CGameObject* targetObject = (CGameObject*)newNode->getTagData();
+
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						std::string path = rowItem->getTagString();
+						CSceneController::getInstance()->createResourceComponent(path, targetObject);
 					}
 				}
 

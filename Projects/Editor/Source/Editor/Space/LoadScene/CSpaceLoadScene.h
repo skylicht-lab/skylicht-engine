@@ -35,6 +35,9 @@ namespace Skylicht
 		{
 		protected:
 			bool m_finished;
+			
+			std::string m_scenePath;
+			bool m_startLoading;
 
 		protected:
 			GUI::CProgressBar* m_progressBar;
