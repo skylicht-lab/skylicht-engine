@@ -214,9 +214,19 @@ namespace Skylicht
 			m_backfaceCulling = b;
 		}
 
+		inline bool isBackfaceCulling()
+		{
+			return m_backfaceCulling;
+		}
+
 		inline void setFrontfaceCulling(bool b)
 		{
 			m_frontfaceCulling = b;
+		}
+
+		inline bool isFrontfaceCulling()
+		{
+			return m_frontfaceCulling;
 		}
 
 		inline void setZWrite(bool b)
@@ -224,9 +234,19 @@ namespace Skylicht
 			m_zWriteEnable = b;
 		}
 
+		inline bool isZWrite()
+		{
+			return m_zWriteEnable;
+		}
+
 		inline void setZTest(video::E_COMPARISON_FUNC f)
 		{
 			m_zBuffer = f;
+		}
+
+		inline video::E_COMPARISON_FUNC getZTest()
+		{
+			return m_zBuffer;
 		}
 
 		SUniformValue* getUniform(const char* name);

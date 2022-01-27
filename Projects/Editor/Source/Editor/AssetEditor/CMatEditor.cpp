@@ -277,6 +277,76 @@ namespace Skylicht
 						addUniformUI(ui, layout, material, shader, uniformUI, 0, subjects, onChange);
 				}
 			}
+
+			layout->addSpace(20.0f);
+			ui->addLabel(layout, L"Material Property");
+
+			CSubject<bool>* backfaceCull = new CSubject<bool>(material->isBackfaceCulling());
+			ui->addCheckBox(layout, L"Backface culling", backfaceCull);
+
+			CSubject<bool>* frontfaceCull = new CSubject<bool>(material->isFrontfaceCulling());
+			ui->addCheckBox(layout, L"Front culling", frontfaceCull);
+
+			CSubject<bool>* zWrite = new CSubject<bool>(material->isZWrite());
+			ui->addCheckBox(layout, L"Z Write", zWrite);
+
+			backfaceCull->addObserver(new CObserver([material](ISubject* subject, IObserver* from) {
+				CSubject<bool>* value = (CSubject<bool>*)subject;
+				material->setBackfaceCulling(value->get());
+				material->applyMaterial();
+				}), true);
+
+			frontfaceCull->addObserver(new CObserver([material](ISubject* subject, IObserver* from) {
+				CSubject<bool>* value = (CSubject<bool>*)subject;
+				material->setFrontfaceCulling(value->get());
+				material->applyMaterial();
+				}), true);
+
+			zWrite->addObserver(new CObserver([material](ISubject* subject, IObserver* from) {
+				CSubject<bool>* value = (CSubject<bool>*)subject;
+				material->setZWrite(value->get());
+				material->applyMaterial();
+				}), true);
+
+			CSubject<std::wstring>* zTestValue = new CSubject<std::wstring>(L"");
+
+			video::E_COMPARISON_FUNC func = material->getZTest();
+			if (func == video::ECFN_ALWAYS)
+				zTestValue->set(L"Always");
+			else if (func == video::ECFN_DISABLED)
+				zTestValue->set(L"Disabled");
+			else if (func == video::ECFN_LESSEQUAL)
+				zTestValue->set(L"LessEqual");
+			else if (func == video::ECFN_GREATER)
+				zTestValue->set(L"Greater");
+
+			std::vector<std::wstring> zFunc;
+			zFunc.push_back(L"Always");
+			zFunc.push_back(L"Disabled");
+			zFunc.push_back(L"LessEqual");
+			zFunc.push_back(L"Greater");
+
+			ui->addComboBox(layout, L"ZTestFunction", zTestValue, zFunc);
+
+			zTestValue->addObserver(new CObserver([material](ISubject* subject, IObserver* from) {
+				CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
+				video::E_COMPARISON_FUNC func;
+				if (value->get() == L"Always")
+					func = video::ECFN_ALWAYS;
+				else if (value->get() == L"Disabled")
+					func = video::ECFN_DISABLED;
+				else if (value->get() == L"LessEqual")
+					func = video::ECFN_LESSEQUAL;
+				else if (value->get() == L"Greater")
+					func = video::ECFN_GREATER;
+				material->setZTest(func);
+				material->applyMaterial();
+				}), true);
+
+			subjects.push_back(backfaceCull);
+			subjects.push_back(frontfaceCull);
+			subjects.push_back(zWrite);
+			subjects.push_back(zTestValue);
 		}
 
 		void CMatEditor::addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects, std::function<void()> onChange)
@@ -320,7 +390,7 @@ namespace Skylicht
 					material->applyMaterial();
 				};
 
-				colorSubject->addObserver(observer);
+				colorSubject->addObserver(observer, true);
 			}
 			else if (uniformUI->ControlType == CShader::UIFloat2)
 			{
@@ -384,7 +454,7 @@ namespace Skylicht
 				};
 
 				x->addObserver(observer);
-				y->addObserver(observer);
+				y->addObserver(observer, true);
 			}
 			else if (uniformUI->ControlType == CShader::UIFloat4)
 			{
@@ -484,7 +554,7 @@ namespace Skylicht
 				x->addObserver(observer);
 				y->addObserver(observer);
 				z->addObserver(observer);
-				w->addObserver(observer);
+				w->addObserver(observer, true);
 			}
 			else if (uniformUI->ControlType == CShader::UITexture)
 			{

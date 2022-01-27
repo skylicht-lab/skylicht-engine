@@ -143,7 +143,7 @@ namespace Skylicht
 	{
 #ifdef __EMSCRIPTEN__
 		// path from ./PrjEmscripten/Projects/MainApp
-		std::string assetPath = std::string("../../../Bin/BuiltIn/") + std::string(name);
+		std::string assetPath = std::string("BuiltIn/") + std::string(name);
 		return io::path(assetPath.c_str());
 #elif defined(WINDOWS_STORE)
 		std::string assetPath = std::string("Assets\\") + std::string(name);
