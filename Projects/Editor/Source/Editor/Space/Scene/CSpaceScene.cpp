@@ -178,18 +178,33 @@ namespace Skylicht
 				return false;
 			};
 
-			m_view->OnDrop = [](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			m_view->OnDrop = [&](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
 				if (data->Name == "ListFSItem")
 				{
-					CHierachyNode* newNode = NULL;
-					if (newNode != NULL)
-					{
-						CGameObject* targetObject = (CGameObject*)newNode->getTagData();
+					GUI::SPoint viewPoint = m_view->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 
-						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-						std::string path = rowItem->getTagString();
-						CSceneController::getInstance()->createResourceComponent(path, targetObject);
+					core::line3df ray = CProjective::getViewRay(
+						m_editorCamera,
+						(float)viewPoint.X, (float)viewPoint.Y,
+						m_sceneRect.getWidth(),
+						m_sceneRect.getHeight()
+					);
+
+					core::vector3df out;
+					core::plane3df p;
+					p.setPlane(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f);
+					if (p.getIntersectionWithLimitedLine(ray.start, ray.end, out))
+					{
+						CGameObject* targetObject = CSceneController::getInstance()->createEmptyObject(NULL);
+						targetObject->getTransformEuler()->setPosition(out);
+
+						if (targetObject != NULL)
+						{
+							GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+							std::string path = rowItem->getTagString();
+							CSceneController::getInstance()->createResourceComponent(path, targetObject);
+						}
 					}
 				}
 			};
