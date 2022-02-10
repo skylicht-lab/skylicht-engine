@@ -47,14 +47,12 @@ namespace Skylicht
 			RotateY(0.0f),
 			RotateZ(0.0f)
 		{
-			m_gizmos = new CTransformGizmos();
+			m_gizmos = CSceneController::getInstance()->getTransformGizmos();
 		}
 
 		CTransformEditor::~CTransformEditor()
 		{
-			// remove gizmos
-			CSceneController::getInstance()->removeGizmos(m_gizmos);
-			delete m_gizmos;
+
 		}
 
 		void CTransformEditor::closeGUI()

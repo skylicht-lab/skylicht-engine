@@ -55,12 +55,18 @@ namespace Skylicht
 			m_contextMenuScene(NULL),
 			m_modify(false)
 		{
+			m_transformGizmos = new CTransformGizmos();
+			addGizmos(m_transformGizmos);
+
 			CAssetManager::getInstance()->registerFileLoader("scene", this);
 		}
 
 		CSceneController::~CSceneController()
 		{
 			delete m_contextMenuScene;
+
+			removeGizmos(m_transformGizmos);
+			delete m_transformGizmos;
 
 			if (m_spaceHierarchy != NULL)
 			{
@@ -200,6 +206,8 @@ namespace Skylicht
 			if (m_scene == NULL)
 				return;
 
+			CHandles::getInstance()->refresh();
+
 			m_scene->update();
 
 			setZone(m_scene->getZone(0));
@@ -217,9 +225,7 @@ namespace Skylicht
 				m_spaceHierarchy->setHierarchyNode(m_hierachyNode);
 
 			m_focusNode = NULL;
-			m_contextNode = NULL;
-
-			CHandles::getInstance()->refresh();
+			m_contextNode = NULL;			
 		}
 
 		void CSceneController::setZone(CZone* zone)
@@ -469,7 +475,7 @@ namespace Skylicht
 			m_spaceHierarchy->deselectAll();
 		}
 
-		void CSceneController::selectOnHierachy(CGameObject* gameObject)
+		CHierachyNode* CSceneController::selectOnHierachy(CGameObject* gameObject)
 		{
 			CHierachyNode* node = m_hierachyNode->getNodeByTag(gameObject);
 			if (node != NULL)
@@ -478,6 +484,7 @@ namespace Skylicht
 				treeNode->setSelected(true);
 				m_spaceHierarchy->scrollToNode(treeNode);
 			}
+			return node;
 		}
 
 		void CSceneController::setNodeEvent(CHierachyNode* node)

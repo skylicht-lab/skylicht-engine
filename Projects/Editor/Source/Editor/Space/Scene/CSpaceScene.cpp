@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Projective/CProjective.h"
 
 #include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CPropertyController.h"
 
 #include "Editor/Gizmos/Transform/CTransformGizmos.h"
 
@@ -196,14 +197,19 @@ namespace Skylicht
 					p.setPlane(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f);
 					if (p.getIntersectionWithLimitedLine(ray.start, ray.end, out))
 					{
-						CGameObject* targetObject = CSceneController::getInstance()->createEmptyObject(NULL);
+						CSceneController* sceneController = CSceneController::getInstance();
+
+						CGameObject* targetObject = sceneController->createEmptyObject(NULL);
 						targetObject->getTransformEuler()->setPosition(out);
 
 						if (targetObject != NULL)
 						{
 							GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
 							std::string path = rowItem->getTagString();
-							CSceneController::getInstance()->createResourceComponent(path, targetObject);
+
+							sceneController->createResourceComponent(path, targetObject);
+							CHierachyNode* node = sceneController->selectOnHierachy(targetObject);
+							sceneController->onSelectNode(node, true);
 						}
 					}
 				}
