@@ -40,6 +40,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/CObserver.h"
 #include "Reactive/CSubject.h"
 
+#include "Editor/Gizmos/Transform/CTransformGizmos.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -72,6 +74,8 @@ namespace Skylicht
 
 			std::vector<CGizmos*> m_gizmos;
 
+			CTransformGizmos* m_transformGizmos;
+
 			std::string m_scenePath;
 
 			bool m_modify;
@@ -84,6 +88,11 @@ namespace Skylicht
 			void update();
 
 			void refresh();
+
+			inline CTransformGizmos* getTransformGizmos()
+			{
+				return m_transformGizmos;
+			}
 
 			void addGizmos(CGizmos* gizmos);
 
@@ -165,7 +174,7 @@ namespace Skylicht
 
 			void deselectAllOnHierachy();
 
-			void selectOnHierachy(CGameObject* gameObject);
+			CHierachyNode* selectOnHierachy(CGameObject* gameObject);
 
 			inline CHierachyNode* getContextNode()
 			{

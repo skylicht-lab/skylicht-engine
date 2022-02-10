@@ -44,6 +44,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SpaceController/CAssetPropertyController.h"
 #include "SpaceController/CAssetCreateController.h"
 
+#include "Handles/CHandles.h"
+
 #include "AssetManager/CAssetManager.h"
 #include "Selection/CSelection.h"
 #include "Activator/CEditorActivator.h"
@@ -1114,6 +1116,8 @@ namespace Skylicht
 				initDefaultLayout();
 
 				m_canvas->invalidate();
+
+				refresh();
 			}
 			else if (label == L"Project Setting")
 			{
