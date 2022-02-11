@@ -52,7 +52,7 @@ namespace Skylicht
 		bool CSelecting::OnEvent(const SEvent& event)
 		{
 			CHandles* handle = CHandles::getInstance();
-			if (handle->isHoverOnAxisOrPlane())
+			if (handle->isHoverOnAxisOrPlane() || handle->isUsing())
 				return false;
 
 			if (event.EventType == EET_MOUSE_INPUT_EVENT)
@@ -92,13 +92,10 @@ namespace Skylicht
 					}
 					else
 					{
-						if (!handle->isUsing())
-						{
-							// clear selection
-							CSelection* selection = CSelection::getInstance();
-							sceneController->deselectAllOnHierachy();
-							selection->clear();
-						}
+						// clear selection
+						CSelection* selection = CSelection::getInstance();
+						sceneController->deselectAllOnHierachy();
+						selection->clear();
 					}
 				}
 

@@ -30,6 +30,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/CEntityManager.h"
 
+#include "Handles/CHandles.h"
+#include "Selection/CSelection.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -153,7 +156,16 @@ namespace Skylicht
 				}
 
 				if (visible)
+				{
 					m_results.push_back(collision);
+
+					// Check game object is sellected
+					if (CSelection::getInstance()->getSelected(collision->GameObject))
+					{
+						// Draw bbox for selected object
+						CHandles::getInstance()->draw3DBox(collision->TransformBBox, SColor(255, 255, 255, 255));
+					}
+				}
 			}
 		}
 	}
