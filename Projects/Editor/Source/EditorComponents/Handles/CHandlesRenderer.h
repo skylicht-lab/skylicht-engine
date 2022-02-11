@@ -46,6 +46,7 @@ namespace Skylicht
 
 			bool m_enable;
 			bool m_using;
+			bool m_usingEvent;
 
 			core::vector3df m_directionUnary[3];
 			video::SColor m_directionColor[3];
@@ -117,6 +118,11 @@ namespace Skylicht
 						return true;
 				}
 				return false;
+			}
+
+			inline bool isUsing()
+			{
+				return m_usingEvent;
 			}
 
 		public:

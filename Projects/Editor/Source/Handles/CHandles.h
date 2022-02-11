@@ -163,6 +163,8 @@ namespace Skylicht
 
 			bool isHoverOnAxisOrPlane();
 
+			bool isUsing();
+
 		public:
 
 			void draw3DBox(const core::aabbox3d<f32>& box, const SColor& color);
