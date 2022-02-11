@@ -163,7 +163,7 @@ namespace Skylicht
 					if (CSelection::getInstance()->getSelected(collision->GameObject))
 					{
 						// Draw bbox for selected object
-						CHandles::getInstance()->draw3DBox(collision->TransformBBox, SColor(255, 255, 255, 255));
+						CHandles::getInstance()->draw3DBox(collision->TransformBBox, SColor(180, 255, 255, 255));
 					}
 				}
 			}

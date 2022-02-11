@@ -213,7 +213,7 @@ namespace Skylicht
 				spawnTransform->HasChanged = true;
 				spawnTransform->Depth = rootTransform->Depth + 1 + srcTransform->Depth;
 
-				if (srcTransform->ParentIndex == -1)
+				if (srcTransform->ParentIndex == -1 || entityIndex.find(srcTransform->ParentIndex) == entityIndex.end())
 					spawnTransform->ParentIndex = m_root->getIndex();
 				else
 					spawnTransform->ParentIndex = entityIndex[srcTransform->ParentIndex];
