@@ -635,6 +635,7 @@ namespace Skylicht
 				if (state == 1)
 				{
 					// mouse down
+					m_usingEvent = false;
 					m_mouseDown = true;
 					m_lastMouse = mouse;
 					m_lastTranslatePosition = handles->getHandlePosition();
@@ -749,6 +750,7 @@ namespace Skylicht
 							}
 
 							m_using = true;
+							m_usingEvent = true;
 
 							core::vector3df vec = m_planNormal;
 							vec.normalize();
@@ -783,6 +785,7 @@ namespace Skylicht
 						if (m_hoverOnPlane[i])
 						{
 							m_using = true;
+							m_usingEvent = true;
 
 							core::vector3df vec = m_translateAxis[i].getVector();
 							vec.normalize();
@@ -836,7 +839,7 @@ namespace Skylicht
 				{
 					// mouse down
 					m_mouseDown = true;
-					m_using = true;
+					m_usingEvent = false;
 					m_lastMouse = mouse;
 
 					m_lastRotation = worldRot * handles->getHandleRotation();
@@ -935,6 +938,7 @@ namespace Skylicht
 						if (m_hoverOnAxis[i])
 						{
 							m_using = true;
+							m_usingEvent = true;
 
 							core::plane3df p(pos, normal[i]);
 
@@ -984,6 +988,7 @@ namespace Skylicht
 					if (s.X != 0 && s.Y != 0 && s.Z != 0)
 					{
 						m_mouseDown = true;
+						m_usingEvent = false;
 						m_lastMouse = mouse;
 						m_lastScale = handles->getHandleScale();
 					}
@@ -1073,6 +1078,8 @@ namespace Skylicht
 						if (d > 0.0f)
 						{
 							m_using = true;
+							m_usingEvent = true;
+
 							float scale = 1.0f + drag / d;
 							resultScale = m_lastScale * scale;
 							handles->setTargetScale(resultScale);
@@ -1100,6 +1107,7 @@ namespace Skylicht
 								}
 
 								m_using = true;
+								m_usingEvent = true;
 
 								core::vector3df vec = m_planNormal;
 								vec.normalize();
