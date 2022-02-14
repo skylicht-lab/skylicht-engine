@@ -56,6 +56,7 @@ namespace Skylicht
 			);
 
 			m_listFS->OnSelected = BIND_LISTENER(&CListFSController::OnSelected, this);
+			m_listFS->setMultiSelected(true);
 
 			std::vector<SFileInfo> files;
 			m_assetManager->getRoot(files);

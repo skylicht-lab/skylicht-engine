@@ -34,7 +34,8 @@ namespace Skylicht
 		namespace GUI
 		{
 			CTreeControl::CTreeControl(CBase* parent) :
-				CTreeNode(parent, this)
+				CTreeNode(parent, this),
+				m_multiSelected(false)
 			{
 				m_title->remove();
 				m_expandButton->remove();
@@ -90,7 +91,7 @@ namespace Skylicht
 						node->deselectAll();
 					}
 				}
-				
+
 				invalidate();
 			}
 
