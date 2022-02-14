@@ -40,6 +40,7 @@ namespace Skylicht
 			m_mouseState(0),
 			m_cancel(false),
 			m_using(false),
+			m_usingEvent(false),
 			m_rotationAngle(0.0f),
 			m_enable(true)
 		{
