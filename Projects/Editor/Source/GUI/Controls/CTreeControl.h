@@ -37,10 +37,12 @@ namespace Skylicht
 			class CTreeControl : public CTreeNode
 			{
 			protected:
-				CScrollControl *m_scrollControl;
+				CScrollControl* m_scrollControl;
+
+				bool m_multiSelected;
 
 			public:
-				CTreeControl(CBase *parent);
+				CTreeControl(CBase* parent);
 
 				~CTreeControl();
 
@@ -53,7 +55,7 @@ namespace Skylicht
 
 				virtual void postLayout();
 
-				virtual void onNodeClick(CBase *base);
+				virtual void onNodeClick(CBase* base);
 
 				virtual void deselectAll();
 
@@ -68,6 +70,16 @@ namespace Skylicht
 				virtual bool onKeyLeft(bool down);
 
 				virtual bool onKeyRight(bool down);
+
+				inline void setMultiSelected(bool b)
+				{
+					m_multiSelected = b;
+				}
+
+				inline bool isMultiSelected()
+				{
+					return m_multiSelected;
+				}
 			};
 		}
 	}

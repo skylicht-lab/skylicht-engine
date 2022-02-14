@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTreeControl.h"
 
 #include "GUI/Theme/CThemeConfig.h"
+#include "GUI//Input/CInput.h"
 
 namespace Skylicht
 {
@@ -271,7 +272,18 @@ namespace Skylicht
 
 			void CTreeNode::onDown(CBase* base)
 			{
-				m_root->onNodeClick(base);
+				CTreeControl* treeControl = (CTreeControl*)(m_root);
+				if (treeControl->isMultiSelected())
+				{
+					if (!CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+						m_root->onNodeClick(base);
+				}
+				else
+				{
+					// deselect all
+					m_root->onNodeClick(base);
+				}
+
 				setSelected(!m_selected);
 			}
 
