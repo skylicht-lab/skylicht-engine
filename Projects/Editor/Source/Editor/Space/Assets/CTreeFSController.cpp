@@ -58,6 +58,8 @@ namespace Skylicht
 				std::placeholders::_3
 			);
 
+			m_treeFS->setMultiSelected(true);
+
 			m_nodeAssets = m_treeFS->addNode(L"Assets", GUI::ESystemIcon::OpenFolder);
 			m_nodeAssets->setIconColor(GUI::CThemeConfig::FolderColor);
 			m_nodeAssets->tagString(m_assetManager->getAssetFolder());

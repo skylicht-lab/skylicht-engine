@@ -68,6 +68,16 @@ namespace Skylicht
 
 				virtual bool onKeyEnd(bool down);
 
+				inline void setMultiSelected(bool b)
+				{
+					m_multiSelected = b;
+				}
+
+				inline bool isMultiSelected()
+				{
+					return m_multiSelected;
+				}
+
 			public:
 
 				Listener OnSelected;
@@ -79,6 +89,7 @@ namespace Skylicht
 
 				virtual void onItemDown(CBase* item);
 
+				bool m_multiSelected;
 			};
 		}
 	}

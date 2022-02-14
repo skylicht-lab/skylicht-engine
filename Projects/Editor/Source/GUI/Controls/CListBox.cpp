@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CListBox.h"
 #include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Input/CInput.h"
 
 namespace Skylicht
 {
@@ -33,7 +34,8 @@ namespace Skylicht
 		namespace GUI
 		{
 			CListBox::CListBox(CBase* parent) :
-				CScrollControl(parent)
+				CScrollControl(parent),
+				m_multiSelected(false)
 			{
 				setKeyboardInputEnabled(true);
 			}
@@ -140,10 +142,25 @@ namespace Skylicht
 						}
 						else
 						{
-							if (item->getToggle() == true && OnUnselected != nullptr)
-								OnUnselected(item);
+							if (m_multiSelected)
+							{
+								if (!CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+								{
+									// deselected
+									if (item->getToggle() == true && OnUnselected != nullptr)
+										OnUnselected(item);
 
-							item->setToggle(false);
+									item->setToggle(false);
+								}
+							}
+							else
+							{
+								// deselected
+								if (item->getToggle() == true && OnUnselected != nullptr)
+									OnUnselected(item);
+
+								item->setToggle(false);
+							}
 						}
 					}
 				}
