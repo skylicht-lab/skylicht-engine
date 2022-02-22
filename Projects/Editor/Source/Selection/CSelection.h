@@ -50,13 +50,18 @@ namespace Skylicht
 
 			void clear();
 
+			std::vector<CSelectObject*>& getAllSelected()
+			{
+				return m_selected;
+			}
+
 			CSelectObject* getLastSelected();
 
 			CSelectObject* getSelected(CGameObject* obj);
 
 			CSelectObject* addSelect(CGameObject* obj);
 
-			void notify(CGameObject* obj, IObserver *from);
+			void notify(CGameObject* obj, IObserver* from);
 
 			void addSelect(const std::vector<CGameObject*>& obj);
 

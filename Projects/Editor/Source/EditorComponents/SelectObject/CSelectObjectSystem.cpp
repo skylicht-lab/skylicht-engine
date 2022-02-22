@@ -109,6 +109,8 @@ namespace Skylicht
 
 			core::matrix4 invTrans;
 
+			std::map<CGameObject*, core::aabbox3df> selectedBox;
+
 			u32 numEntity = m_collision.size();
 			for (u32 i = 0; i < numEntity; i++)
 			{
@@ -162,10 +164,18 @@ namespace Skylicht
 					// Check game object is sellected
 					if (CSelection::getInstance()->getSelected(collision->GameObject))
 					{
-						// Draw bbox for selected object
-						CHandles::getInstance()->draw3DBox(collision->TransformBBox, SColor(180, 255, 255, 255));
+						if (selectedBox.find(collision->GameObject) == selectedBox.end())
+							selectedBox[collision->GameObject] = collision->TransformBBox;
+						else
+							selectedBox[collision->GameObject].addInternalBox(collision->TransformBBox);
 					}
 				}
+			}
+
+			for (const auto& i : selectedBox)
+			{
+				// Draw bbox for selected object
+				CHandles::getInstance()->draw3DBox(i.second, SColor(180, 255, 255, 255));
 			}
 		}
 	}
