@@ -45,6 +45,9 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
     
     # Xcode
     /User/Skylicht/Documents/skylicht-engine$cmake -S . -B ./PrjMac -G Xcode 
+    
+    # Linux
+    $ skylicht-engine$ cmake -S . -B ./PrjLinux -G "Unix Makefiles"
     ```
 -   Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`
 
