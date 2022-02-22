@@ -60,6 +60,8 @@ namespace Skylicht
 
 			ETransformGizmo m_lastType;
 
+			std::map<std::string, CGameObject*> m_cacheSelectedObjects;
+
 		public:
 			CTransformGizmos();
 
@@ -78,6 +80,14 @@ namespace Skylicht
 			void setScale(const core::vector3df& scale);
 
 			void setRotation(const core::vector3df& rotate);
+
+			void getSelectedTransform(std::vector<CTransformEuler*>& transforms);
+
+			void updateSelectedPosition(const core::vector3df& delta);
+
+			void updateSelectedScale(const core::vector3df& delta);
+
+			void updateSelectedRotation(const core::quaternion& delta);
 
 			CSubject<core::vector3df>& getPosition()
 			{
