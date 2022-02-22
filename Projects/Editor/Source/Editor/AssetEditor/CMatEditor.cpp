@@ -259,7 +259,9 @@ namespace Skylicht
 			if (shader == NULL)
 			{
 				wchar_t text[512];
-				sprintf("Missing shader: %s\n", CPath::getFileName(material->getShaderPath()).c_str());
+				std::string filename = CPath::getFileName(material->getShaderPath()).c_str();
+				std::wstring filenameW = CStringImp::convertUTF8ToUnicode(filename.c_str());
+				swprintf(text, L"Missing shader: %s\n", filenameW.c_str());
 				ui->addLabel(layout, text);
 				return;
 			}
