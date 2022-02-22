@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/SpaceController/CSceneController.h"
 #include "Editor/SpaceController/CPropertyController.h"
 #include "Projective/CProjective.h"
+#include "GUI/Input/CInput.h"
 
 namespace Skylicht
 {
@@ -81,14 +82,28 @@ namespace Skylicht
 					{
 						CSelection* selection = CSelection::getInstance();
 
-						// need clear current selection
-						if (selection->getSelected(object) == NULL)
+						if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
 						{
-							sceneController->deselectAllOnHierachy();
-							selection->clear();
+							// need clear current selection
+							if (selection->getSelected(object) == NULL)
+							{
+								sceneController->deselectAllOnHierachy();
+								selection->clear();
+							}
+							sceneController->selectOnHierachy(object);
 						}
-
-						sceneController->selectOnHierachy(object);
+						else
+						{
+							// hold control && re-pick this object
+							if (selection->getSelected(object) != NULL)
+							{
+								sceneController->deselectOnHierachy(object);
+							}
+							else
+							{
+								sceneController->selectOnHierachy(object);
+							}
+						}
 					}
 					else
 					{

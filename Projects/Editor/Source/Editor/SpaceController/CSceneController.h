@@ -174,6 +174,8 @@ namespace Skylicht
 
 			void deselectAllOnHierachy();
 
+			CHierachyNode* deselectOnHierachy(CGameObject* gameObject);
+
 			CHierachyNode* selectOnHierachy(CGameObject* gameObject);
 
 			inline CHierachyNode* getContextNode()
