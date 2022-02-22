@@ -78,6 +78,81 @@ namespace Skylicht
 			m_rotation = core::quaternion(rotate * core::DEGTORAD);
 		}
 
+		void CTransformGizmos::getSelectedTransform(std::vector<CTransformEuler*>& transforms)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
+
+			std::vector<CSelectObject*>& selectObjects = CSelection::getInstance()->getAllSelected();
+			for (CSelectObject* obj : selectObjects)
+			{
+				CGameObject* selecteObject = NULL;
+
+				if (m_cacheSelectedObjects.find(obj->getID()) == m_cacheSelectedObjects.end())
+				{
+					selecteObject = scene->searchObjectInChildByID(obj->getID().c_str());
+					if (selecteObject != NULL)
+						m_cacheSelectedObjects[obj->getID()] = selecteObject;
+				}
+				else
+				{
+					selecteObject = m_cacheSelectedObjects[obj->getID()];
+				}
+
+				if (selecteObject != NULL)
+				{
+					CTransformEuler* t = selecteObject->getComponent<CTransformEuler>();
+					if (t != NULL)
+						transforms.push_back(t);
+				}
+			}
+		}
+
+		void CTransformGizmos::updateSelectedPosition(const core::vector3df& delta)
+		{
+			std::vector<CTransformEuler*> transforms;
+			getSelectedTransform(transforms);
+
+			for (CTransformEuler* t : transforms)
+			{
+				if (t != m_transform)
+				{
+					core::vector3df newPosition = t->getPosition() + delta;
+					t->setPosition(newPosition);
+				}
+			}
+		}
+
+		void CTransformGizmos::updateSelectedScale(const core::vector3df& delta)
+		{
+			std::vector<CTransformEuler*> transforms;
+			getSelectedTransform(transforms);
+
+			for (CTransformEuler* t : transforms)
+			{
+				if (t != m_transform)
+				{
+					core::vector3df newScale = t->getScale() * delta;
+					t->setScale(newScale);
+				}
+			}
+		}
+
+		void CTransformGizmos::updateSelectedRotation(const core::quaternion& delta)
+		{
+			std::vector<CTransformEuler*> transforms;
+			getSelectedTransform(transforms);
+
+			for (CTransformEuler* t : transforms)
+			{
+				if (t != m_transform)
+				{
+					core::quaternion newRotation = t->getRotationQuaternion() * delta;
+					t->setRotation(newRotation);
+				}
+			}
+		}
+
 		void CTransformGizmos::onGizmos()
 		{
 			CHandles* handle = CHandles::getInstance();
@@ -126,6 +201,7 @@ namespace Skylicht
 				m_parentWorld.makeIdentity();
 				handle->setWorld(m_parentWorld);
 				handle->end();
+				m_cacheSelectedObjects.clear();
 				return;
 			}
 
@@ -136,6 +212,9 @@ namespace Skylicht
 				core::vector3df newPos = handle->positionHandle(*m_position, m_transform->getRotationQuaternion());
 				if (newPos != *m_position)
 				{
+					core::vector3df delta = newPos - *m_position;
+					updateSelectedPosition(delta);
+
 					m_position.notify(this);
 					m_transform->setPosition(newPos);
 				}
@@ -145,6 +224,7 @@ namespace Skylicht
 				{
 					m_transform->setPosition(*m_position);
 					handle->end();
+					m_cacheSelectedObjects.clear();
 				}
 			}
 			else if (type == CTransformGizmos::Rotate)
@@ -152,6 +232,15 @@ namespace Skylicht
 				core::quaternion newRot = handle->rotateHandle(*m_rotation, m_transform->getPosition());
 				if (newRot != *m_rotation)
 				{
+					// new = rot * delta
+					// delta = new * inverse(rot)
+
+					core::quaternion inverseR = *m_rotation;
+					inverseR.makeInverse();
+
+					core::quaternion delta = newRot * inverseR;
+					updateSelectedRotation(delta);
+
 					m_rotation.notify(this);
 					m_transform->setRotation(newRot);
 				}
@@ -161,6 +250,7 @@ namespace Skylicht
 				{
 					m_transform->setRotation(*m_rotation);
 					handle->end();
+					m_cacheSelectedObjects.clear();
 				}
 			}
 			else if (type == CTransformGizmos::Scale)
@@ -168,6 +258,9 @@ namespace Skylicht
 				core::vector3df newScale = handle->scaleHandle(*m_scale, m_transform->getPosition(), m_transform->getRotationQuaternion());
 				if (newScale != *m_scale)
 				{
+					core::vector3df delta = newScale / *m_scale;
+					updateSelectedScale(delta);
+
 					m_scale.notify(this);
 					m_transform->setScale(newScale);
 				}
@@ -177,11 +270,13 @@ namespace Skylicht
 				{
 					m_transform->setScale(*m_scale);
 					handle->end();
+					m_cacheSelectedObjects.clear();
 				}
 			}
 			else
 			{
 				handle->end();
+				m_cacheSelectedObjects.clear();
 			}
 
 		}
