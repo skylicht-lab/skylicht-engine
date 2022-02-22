@@ -225,7 +225,7 @@ namespace Skylicht
 				m_spaceHierarchy->setHierarchyNode(m_hierachyNode);
 
 			m_focusNode = NULL;
-			m_contextNode = NULL;			
+			m_contextNode = NULL;
 		}
 
 		void CSceneController::setZone(CZone* zone)
@@ -473,6 +473,18 @@ namespace Skylicht
 		void CSceneController::deselectAllOnHierachy()
 		{
 			m_spaceHierarchy->deselectAll();
+		}
+
+		CHierachyNode* CSceneController::deselectOnHierachy(CGameObject* gameObject)
+		{
+			CHierachyNode* node = m_hierachyNode->getNodeByTag(gameObject);
+			if (node != NULL)
+			{
+				GUI::CTreeNode* treeNode = node->getGUINode();
+				treeNode->setSelected(false);
+				m_spaceHierarchy->scrollToNode(treeNode);
+			}
+			return node;
 		}
 
 		CHierachyNode* CSceneController::selectOnHierachy(CGameObject* gameObject)
