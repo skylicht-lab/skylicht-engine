@@ -72,15 +72,23 @@ namespace Skylicht
 			m_hierarchyController = new CHierarchyController(window->getCanvas(), m_tree, m_editor);
 			m_hierarchyContextMenu = new CHierachyContextMenu(m_tree);
 
-			CSceneController::getInstance()->setSpaceHierarchy(this);
+			CSceneController* sceneController = CSceneController::getInstance();
+			sceneController->setSpaceHierarchy(this);
+
+			if (CSceneController::getInstance()->getScene() != NULL)
+				sceneController->reinitHierachy();
 		}
 
 		CSpaceHierarchy::~CSpaceHierarchy()
 		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			if (sceneController->getSpaceHierarchy() == this)
+				sceneController->removeAllHierarchyNodes();
+
+			sceneController->setSpaceHierarchy(NULL);
+
 			delete m_hierarchyController;
 			delete m_hierarchyContextMenu;
-
-			CSceneController::getInstance()->setSpaceHierarchy(NULL);
 		}
 
 		void CSpaceHierarchy::update()

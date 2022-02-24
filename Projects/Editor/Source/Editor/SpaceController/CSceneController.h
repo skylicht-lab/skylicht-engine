@@ -102,6 +102,8 @@ namespace Skylicht
 
 			void setSpaceScene(CSpaceScene* scene);
 
+			void removeAllHierarchyNodes();
+
 			inline CSpaceScene* getSpaceScene()
 			{
 				return m_spaceScene;
@@ -139,7 +141,11 @@ namespace Skylicht
 				return m_scenePath;
 			}
 
+			void deleteScene();
+
 			void setScene(CScene* scene);
+
+			void reinitHierachy();
 
 			inline CScene* getScene()
 			{

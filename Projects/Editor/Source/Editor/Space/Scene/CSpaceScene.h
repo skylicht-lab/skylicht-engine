@@ -104,6 +104,8 @@ namespace Skylicht
 
 			void initDefaultScene();
 
+			void reinitCurrentScene();
+
 			CScene* initNullScene();
 
 			virtual void onResize(float w, float h);

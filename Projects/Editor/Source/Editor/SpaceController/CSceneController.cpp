@@ -68,13 +68,18 @@ namespace Skylicht
 			removeGizmos(m_transformGizmos);
 			delete m_transformGizmos;
 
+			removeAllHierarchyNodes();
+
+			CAssetManager::getInstance()->unRegisterFileLoader("scene", this);
+		}
+
+		void CSceneController::removeAllHierarchyNodes()
+		{
 			if (m_spaceHierarchy != NULL)
 			{
 				m_spaceHierarchy->deleteHierarchyNode();
 				m_hierachyNode = NULL;
 			}
-
-			CAssetManager::getInstance()->unRegisterFileLoader("scene", this);
 		}
 
 		void CSceneController::initContextMenu(GUI::CCanvas* canvas)
@@ -193,6 +198,14 @@ namespace Skylicht
 			m_spaceScene->enableRender(true);
 		}
 
+		void CSceneController::deleteScene()
+		{
+			if (m_scene)
+				delete m_scene;
+
+			m_scene = NULL;
+		}
+
 		void CSceneController::setScene(CScene* scene)
 		{
 			if (m_spaceHierarchy != NULL)
@@ -212,6 +225,11 @@ namespace Skylicht
 
 			setZone(m_scene->getZone(0));
 
+			reinitHierachy();
+		}
+
+		void CSceneController::reinitHierachy()
+		{
 			m_hierachyNode = new CHierachyNode(NULL);
 			m_hierachyNode->setName(m_scene->getName());
 			m_hierachyNode->setIcon(GUI::ESystemIcon::Collection);
