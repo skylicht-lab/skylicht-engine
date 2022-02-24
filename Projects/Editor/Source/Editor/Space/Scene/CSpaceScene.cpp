@@ -306,6 +306,8 @@ namespace Skylicht
 			// register event
 			m_scene->registerEvent("Handles", CHandles::getInstance());
 			m_scene->registerEvent("Selecting", CSelecting::getInstance());
+
+			m_scene->updateIndexSearchObject();
 		}
 
 		CScene* CSpaceScene::initNullScene()
