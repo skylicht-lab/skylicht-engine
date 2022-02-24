@@ -92,6 +92,8 @@ namespace Skylicht
 
 		CEditor::~CEditor()
 		{
+			CSceneController::getInstance()->deleteScene();
+
 			CEditorActivator::releaseInstance();
 			CAssetPropertyController::releaseInstance();
 			CAssetCreateController::releaseInstance();

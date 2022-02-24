@@ -67,7 +67,14 @@ namespace Skylicht
 			m_selectObjectSystem(NULL),
 			m_enableRender(true)
 		{
-			initDefaultScene();
+			CScene* currentScene = CSceneController::getInstance()->getScene();
+			if (currentScene == NULL)
+				initDefaultScene();
+			else
+			{
+				m_scene = currentScene;
+				reinitCurrentScene();
+			}
 
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 			m_groupEditor = new GUI::CToggleGroup();
@@ -223,9 +230,6 @@ namespace Skylicht
 
 		CSpaceScene::~CSpaceScene()
 		{
-			if (m_scene != NULL)
-				delete m_scene;
-
 			if (m_renderRP != NULL)
 				delete m_renderRP;
 
@@ -242,7 +246,6 @@ namespace Skylicht
 			CTransformGizmos::getGizmosSubject()->removeObserver(this);
 
 			CSceneController* sceneController = CSceneController::getInstance();
-			sceneController->setScene(NULL);
 			sceneController->setSpaceScene(NULL);
 		}
 
@@ -315,6 +318,25 @@ namespace Skylicht
 			m_viewpointController = NULL;
 
 			return m_scene;
+		}
+
+		void CSpaceScene::reinitCurrentScene()
+		{
+			m_editorCamera = m_scene->searchObjectInChild(L"EditorCamera")->getComponent<CCamera>();
+			m_gridPlane = m_scene->searchObjectInChild(L"Grid3D");
+			m_viewpointZone = (CZone*)m_scene->searchObjectInChild(L"ViewpointZone");
+			m_viewpoint = m_scene->searchObjectInChild(L"Viewpoint")->getComponent<CViewpoint>();
+
+			if (m_viewpointController != NULL)
+				delete m_viewpointController;
+
+			m_viewpointController = new CViewpointController();
+			m_viewpointController->setCamera(m_editorCamera, m_viewpointCamera);
+
+			CEntityManager* entityMgr = m_scene->getEntityManager();
+			m_selectObjectSystem = entityMgr->getSystem<CSelectObjectSystem>();
+			m_handlesRenderer = entityMgr->getSystem<CHandlesRenderer>();
+			m_gizmosRenderer = entityMgr->getSystem<CGizmosRenderer>();
 		}
 
 		void CSpaceScene::initDefaultScene()
