@@ -51,11 +51,11 @@ namespace Skylicht
 		m_listShader.clear();
 	}
 
-	std::string CShaderManager::getShaderFileName(const char *fileName)
+	std::string CShaderManager::getShaderFileName(const char* fileName)
 	{
 		std::string ret = fileName;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		if (driver->getDriverType() == video::EDT_DIRECT3D11)
 			ret += std::string(".hlsl");
 		else
@@ -130,6 +130,8 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/Particle/ParticleTrailTurbulenceAdditive.xml");
 		loadShader("BuiltIn/Shader/Particle/ParticleTrailTurbulenceAdditiveAlpha.xml");
+
+		loadShader("BuiltIn/Shader/SkySun/SkySun.xml");
 	}
 
 	void CShaderManager::initSGDeferredShader()
@@ -159,14 +161,14 @@ namespace Skylicht
 		initSkylichtEngineShader();
 	}
 
-	CShader* CShaderManager::loadShader(const char *shaderConfig)
+	CShader* CShaderManager::loadShader(const char* shaderConfig)
 	{
 		std::string shaderFolder = CPath::getFolderPath(std::string(shaderConfig));
 		shaderFolder += "/";
 
 		char log[512];
 
-		io::IXMLReader *xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(shaderConfig);
+		io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(shaderConfig);
 		if (xmlReader == NULL)
 		{
 			sprintf(log, "Load shader: %s - File not found", shaderConfig);
@@ -179,7 +181,7 @@ namespace Skylicht
 		os::Printer::log(log);
 
 		// init shader
-		CShader *shader = new CShader();
+		CShader* shader = new CShader();
 		shader->initShader(xmlReader, shaderFolder.c_str());
 
 		// close xml file reader
@@ -225,7 +227,7 @@ namespace Skylicht
 		return shader;
 	}
 
-	int CShaderManager::getShaderIDByName(const char *name)
+	int CShaderManager::getShaderIDByName(const char* name)
 	{
 		std::map<std::string, int>::iterator it = m_listShaderID.find(name);
 		if (it != m_listShaderID.end())
@@ -237,7 +239,7 @@ namespace Skylicht
 		return 0;
 	}
 
-	CShader* CShaderManager::getShaderByName(const char *name)
+	CShader* CShaderManager::getShaderByName(const char* name)
 	{
 		for (u32 i = 0, n = (u32)m_listShader.size(); i < n; i++)
 		{
@@ -248,7 +250,7 @@ namespace Skylicht
 		return NULL;
 	}
 
-	CShader* CShaderManager::getShaderByPath(const char *path)
+	CShader* CShaderManager::getShaderByPath(const char* path)
 	{
 		for (u32 i = 0, n = (u32)m_listShader.size(); i < n; i++)
 		{

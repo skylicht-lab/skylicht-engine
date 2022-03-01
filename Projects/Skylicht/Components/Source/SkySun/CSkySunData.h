@@ -27,13 +27,27 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Components/CComponentSystem.h"
 #include "Entity/IEntityData.h"
 
+#include "Material/CMaterial.h"
+
 namespace Skylicht
 {
 	class CSkySunData : public IEntityData
 	{
 	public:
+		IMeshBuffer* Buffer;
+
+		u32 HorizontalResolution;
+		u32 VerticalResolution;
+		f32 TexturePercentage;
+		f32 SpherePercentage;
+		f32 Radius;
+
+		CMaterial* SkySunMaterial;
+	public:
 		CSkySunData();
 
 		virtual ~CSkySunData();
+
+		void generateMesh();
 	};
 }
