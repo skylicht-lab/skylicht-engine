@@ -29,9 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CCamera *CShaderCamera::s_camera = NULL;
+	CCamera* CShaderCamera::s_camera = NULL;
 
-	void CShaderCamera::setCamera(CCamera *camera)
+	void CShaderCamera::setCamera(CCamera* camera)
 	{
 		s_camera = camera;
 	}
@@ -46,7 +46,7 @@ namespace Skylicht
 
 	}
 
-	void CShaderCamera::OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader)
+	void CShaderCamera::OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader)
 	{
 		switch (uniform->Type)
 		{
