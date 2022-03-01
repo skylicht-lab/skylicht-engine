@@ -27,13 +27,95 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CSkySunData::CSkySunData()
+	CSkySunData::CSkySunData() :
+		HorizontalResolution(32),
+		VerticalResolution(8),
+		TexturePercentage(1.0f),
+		SpherePercentage(2.0f),
+		Radius(1.0f)
 	{
+		Buffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));
 
+		SkySunMaterial = new CMaterial("Skydome", "BuiltIn/Shader/SkySun/SkySun.xml");
+		SkySunMaterial->addAffectMesh(Buffer);
+		SkySunMaterial->applyMaterial();
+
+		SMaterial& mat = Buffer->getMaterial();
+		mat.ZWriteEnable = false;
+
+		generateMesh();
 	}
 
 	CSkySunData::~CSkySunData()
 	{
+		delete SkySunMaterial;
+		Buffer->drop();
+	}
 
+	void CSkySunData::generateMesh()
+	{
+		f32 azimuth;
+		u32 k;
+
+		Buffer->getVertexBuffer()->clear();
+		Buffer->getIndexBuffer()->clear();
+
+		const f32 azimuth_step = (core::PI * 2.f) / HorizontalResolution;
+		if (SpherePercentage < 0.f)
+			SpherePercentage = -SpherePercentage;
+		if (SpherePercentage > 2.f)
+			SpherePercentage = 2.f;
+		const f32 elevation_step = SpherePercentage * core::HALF_PI / (f32)VerticalResolution;
+
+		Buffer->getVertexBuffer()->reallocate((HorizontalResolution + 1) * (VerticalResolution + 1));
+		Buffer->getIndexBuffer()->reallocate(3 * (2 * VerticalResolution - 1) * HorizontalResolution);
+
+		SColor vertexColor(255, 255, 255, 255);
+
+		video::S3DVertex vtx;
+		vtx.Color = vertexColor;
+		vtx.Normal.set(0.0f, -1.f, 0.0f);
+
+		const f32 tcV = TexturePercentage / VerticalResolution;
+		for (k = 0, azimuth = 0; k <= HorizontalResolution; ++k)
+		{
+			f32 elevation = core::HALF_PI;
+			const f32 tcU = (f32)k / (f32)HorizontalResolution;
+			const f32 sinA = sinf(azimuth);
+			const f32 cosA = cosf(azimuth);
+			for (u32 j = 0; j <= VerticalResolution; ++j)
+			{
+				const f32 cosEr = Radius * cosf(elevation);
+				vtx.Pos.set(cosEr * sinA, Radius * sinf(elevation), cosEr * cosA);
+				vtx.TCoords.set(tcU, j * tcV);
+
+				vtx.Normal = -vtx.Pos;
+				vtx.Normal.normalize();
+
+				Buffer->getVertexBuffer()->addVertex(&vtx);
+				elevation -= elevation_step;
+			}
+			azimuth += azimuth_step;
+		}
+
+		for (k = 0; k < HorizontalResolution; ++k)
+		{
+			Buffer->getIndexBuffer()->addIndex(VerticalResolution + 2 + (VerticalResolution + 1) * k);
+			Buffer->getIndexBuffer()->addIndex(1 + (VerticalResolution + 1) * k);
+			Buffer->getIndexBuffer()->addIndex(0 + (VerticalResolution + 1) * k);
+
+			for (u32 j = 1; j < VerticalResolution; ++j)
+			{
+				Buffer->getIndexBuffer()->addIndex(VerticalResolution + 2 + (VerticalResolution + 1) * k + j);
+				Buffer->getIndexBuffer()->addIndex(1 + (VerticalResolution + 1) * k + j);
+				Buffer->getIndexBuffer()->addIndex(0 + (VerticalResolution + 1) * k + j);
+
+				Buffer->getIndexBuffer()->addIndex(VerticalResolution + 1 + (VerticalResolution + 1) * k + j);
+				Buffer->getIndexBuffer()->addIndex(VerticalResolution + 2 + (VerticalResolution + 1) * k + j);
+				Buffer->getIndexBuffer()->addIndex(0 + (VerticalResolution + 1) * k + j);
+			}
+		}
+		Buffer->recalculateBoundingBox();
+		Buffer->setHardwareMappingHint(scene::EHM_STATIC);
 	}
 }

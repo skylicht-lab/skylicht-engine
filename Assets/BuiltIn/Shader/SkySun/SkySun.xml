@@ -1,0 +1,22 @@
+<shaderConfig name="SkySun" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uIntensity" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0" float="2"/>
+			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uCamPosition" type="WORLD_CAMERA_POSITION" value="0.0, 0.0, 0.0, 1.0" float="4"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat2" name="uIntensity" elementName="uIntensity" min="0.0" max="3.0"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/SkySunVS.glsl" fs="GLSL/SkySunFS.glsl" fs_source="GLSL/SkySunFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/SkySunVS.hlsl" fs="HLSL/SkySunFS.hlsl" fs_source="HLSL/SkySunFS.d.hlsl"/>
+</shaderConfig>

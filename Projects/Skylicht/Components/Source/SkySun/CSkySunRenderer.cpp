@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSkySunRenderer.h"
+#include "Entity/CEntityManager.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
@@ -39,12 +41,27 @@ namespace Skylicht
 
 	void CSkySunRender::beginQuery(CEntityManager* entityManager)
 	{
-
+		m_skySuns.set_used(0);
+		m_transforms.set_used(0);
+		m_worlds.set_used(0);
 	}
 
 	void CSkySunRender::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
+		CSkySunData* skyDomeData = entity->getData<CSkySunData>();
 
+		if (skyDomeData != NULL)
+		{
+			CVisibleData* visible = entity->getData<CVisibleData>();
+			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+
+			if (transformData != NULL && visible->Visible)
+			{
+				m_skySuns.push_back(skyDomeData);
+				m_transforms.push_back(transformData);
+				m_worlds.push_back(core::IdentityMatrix);
+			}
+		}
 	}
 
 	void CSkySunRender::init(CEntityManager* entityManager)
@@ -54,11 +71,37 @@ namespace Skylicht
 
 	void CSkySunRender::update(CEntityManager* entityManager)
 	{
+		CCamera* camera = entityManager->getCamera();
 
+		core::vector3df cameraPosition = camera->getGameObject()->getPosition();
+		float cameraFar = camera->getFarValue();
+
+		core::matrix4* worlds = m_worlds.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
+
+		for (u32 i = 0, n = m_worlds.size(); i < n; i++)
+		{
+			worlds[i].setTranslation(cameraPosition);
+			worlds[i].setScale(cameraFar * 0.9f);
+		}
 	}
 
 	void CSkySunRender::render(CEntityManager* entityManager)
 	{
+		IVideoDriver* driver = getVideoDriver();
 
+		CSkySunData** skydomes = m_skySuns.pointer();
+		core::matrix4* worlds = m_worlds.pointer();
+
+		for (u32 i = 0, n = m_skySuns.size(); i < n; i++)
+		{
+			IMeshBuffer* buffer = skydomes[i]->Buffer;
+
+			CShaderMaterial::setMaterial(skydomes[i]->SkySunMaterial);
+
+			driver->setTransform(video::ETS_WORLD, worlds[i]);
+			driver->setMaterial(buffer->getMaterial());
+			driver->drawMeshBuffer(buffer);
+		}
 	}
 }
