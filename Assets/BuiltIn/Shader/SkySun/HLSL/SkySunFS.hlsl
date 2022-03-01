@@ -23,11 +23,39 @@ float3 linearRGB(float3 color)
 {
 	return pow(color, invGamma);
 }
+float3 GetSkyColor(
+	float3 viewDir,
+	float3 sunDirection,
+	float intensity,
+	float4 atmosphericColor,
+	float4 sunColor,
+	float4 glowColor1,
+	float4 glowColor2,
+	float sunRadius)
+{
+	float y = 1.0 - (max(viewDir.y, 0.0) * 0.8 + 0.2) * 0.8;
+	float3 skyColor = float3(pow(y, 2.0), y, 0.6 + y*0.4) * intensity;
+	float sunAmount = max(dot(sunDirection, viewDir), 0.0);
+	skyColor += atmosphericColor.rgb * sunAmount * sunAmount * atmosphericColor.a;
+	skyColor += sunColor.rgb * pow(sunAmount, sunRadius) * sunColor.a;
+	skyColor += glowColor1.rgb * pow(sunAmount, 8.0) * glowColor1.a;
+	skyColor += glowColor2.rgb * pow(sunAmount, 3.0) * glowColor2.a;
+	return skyColor;
+}
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 viewDir = normalize(input.worldPos.xyz - uCamPosition.xyz);
 	float y = 1.0 - (max(viewDir.y, 0.0) * 0.8 + 0.2) * 0.8;
-	float3 skyColor = float3(pow(y, 2.0), y, 0.6 + y*0.4) * 1.1;
+	float3 skyColor = GetSkyColor(
+		viewDir,
+		uLightDirection.xyz,
+		1.1,
+		float4(1.0, 0.8, 0.7, 0.1),
+		float4(1.0, 0.6, 0.1, 0.5),
+		float4(1.0, 0.6, 0.1, 0.4),
+		float4(1.0, 0.4, 0.2, 0.2),
+		800.0
+	);
 	float3 groundColor = float3(0.4, 0.4, 0.4);
 	float3 result = lerp(skyColor, sRGB(groundColor), pow(smoothstep(0.0,-0.025, viewDir.y), 0.2));
 	float4 blend = input.color * uColor;

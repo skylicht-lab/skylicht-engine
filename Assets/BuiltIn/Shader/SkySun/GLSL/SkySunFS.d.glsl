@@ -13,23 +13,23 @@ in vec4 varWorldPos;
 out vec4 FragColor;
 
 #include "../../PostProcessing/GLSL/LibToneMapping.glsl"
+#include "LibSkySun.glsl"
 
 void main(void)
 {
 	vec3 viewDir = normalize(varWorldPos.xyz - uCamPosition.xyz);
-	float y = 1.0 - (max(viewDir.y, 0.0) * 0.8 + 0.2) * 0.8;
-
-	// SKY
-	vec3 skyColor = vec3(pow(y, 2.0), y, 0.6 + y*0.4) * 1.1;
 	
-	// SUN
-	float sunAmount = max(dot(uLightDirection.xyz, viewDir), 0.0);
-	skyColor = skyColor + vec3(1.0, 0.8, 0.7) * sunAmount * sunAmount * 0.1;
-	skyColor = skyColor + vec3(1.0, 0.6, 0.1) * pow(sunAmount, 800.0) * 0.5;
-	
-	// GLARE
-	skyColor = skyColor + vec3(1.0,0.6,0.1)*pow(sunAmount, 8.0) * 0.4;
-	skyColor = skyColor + vec3(1.0,0.4,0.2)*pow(sunAmount, 3.0) * 0.2;
+	// SKY & SUN
+	vec3 skyColor = GetSkyColor(
+		viewDir,
+		uLightDirection.xyz,
+		1.1,						// intensiy
+		vec4(1.0, 0.8, 0.7, 0.1),	// atmospheric, intensiy
+		vec4(1.0, 0.6, 0.1, 0.5), 	// sun, intensiy
+		vec4(1.0, 0.6, 0.1, 0.4),	// glare1, intensiy
+		vec4(1.0, 0.4, 0.2, 0.2),	// glare2, intensiy
+		800.0						// sun radius
+	);
 	
 	// GROUND
 	vec3 groundColor = vec3(0.4, 0.4, 0.4);
