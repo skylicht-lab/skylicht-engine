@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Input/CInput.h"
 #include "GridPlane/CGridPlane.h"
 #include "SpriteDraw/CSprite.h"
+#include "SkySun/CSkySun.h"
 
 #include "Editor/CEditor.h"
 #include "Handles/CHandles.h"
@@ -364,6 +365,11 @@ namespace Skylicht
 			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 			SColor c(255, 255, 244, 214);
 			directionalLight->setColor(SColorf(c));
+
+			// sky & sun
+			CGameObject* skySunObj = zone->createEmptyObject();
+			skySunObj->setName(L"Sky & Sun");
+			skySunObj->addComponent<CSkySun>();
 
 			// update search index
 			m_scene->updateAddRemoveObject();
