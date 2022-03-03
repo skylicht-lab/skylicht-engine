@@ -80,6 +80,21 @@ namespace Skylicht
 				{
 					CValueProperty* valueProperty = m_data->getPropertyID(i);
 
+					// add ui space
+					if (valueProperty->getUISpace() > 0)
+					{
+						float space = valueProperty->getUISpace();
+						if (space > 100.0f)
+							space = 100.0f;
+						layout->addSpace(space);
+					}
+
+					if (valueProperty->getUIHeader().size() > 0)
+					{
+						std::wstring label = CStringImp::convertUTF8ToUnicode(valueProperty->getUIHeader().c_str());
+						ui->addLabel(layout, label.c_str(), GUI::TextLeft);
+					}
+
 					if (valueProperty->getType() == EPropertyDataType::Bool)
 					{
 						CBoolProperty* value = dynamic_cast<CBoolProperty*>(valueProperty);

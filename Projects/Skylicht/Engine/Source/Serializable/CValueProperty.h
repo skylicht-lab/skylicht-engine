@@ -54,6 +54,10 @@ namespace Skylicht
 
 		CObjectSerializable* m_owner;
 
+		// ui editor interface
+		std::string m_uiHeader;
+		float m_uiSpace;
+
 	public:
 		std::string Name;
 
@@ -74,5 +78,25 @@ namespace Skylicht
 		virtual void serialize(io::IAttributes* io) = 0;
 
 		virtual void deserialize(io::IAttributes* io) = 0;
+
+		inline void setUIHeader(const char* header)
+		{
+			m_uiHeader = header;
+		}
+
+		inline const std::string& getUIHeader()
+		{
+			return m_uiHeader;
+		}
+
+		inline void setUISpace(float space)
+		{
+			m_uiSpace = space;
+		}
+
+		inline float getUISpace()
+		{
+			return m_uiSpace;
+		}
 	};
 }
