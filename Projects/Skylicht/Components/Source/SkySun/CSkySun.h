@@ -35,6 +35,22 @@ namespace Skylicht
 	protected:
 		CSkySunData* m_skySunData;
 
+		float m_skyIntensity;
+
+		SColor m_atmosphericColor;
+		float m_atmosphericIntensity;
+
+		SColor m_sunColor;
+		float m_sunIntensity;
+
+		SColor m_glare1Color;
+		float m_glare1Intensity;
+
+		SColor m_glare2Color;
+		float m_glare2Intensity;
+
+		bool m_changed;
+
 	public:
 		CSkySun();
 
@@ -49,5 +65,10 @@ namespace Skylicht
 		virtual void loadSerializable(CObjectSerializable* object);
 
 		DECLARE_GETTYPENAME(CSkySun)
+
+	protected:
+
+		void getUniformValue(const SColor& c, float intensity, float* value);
+
 	};
 }

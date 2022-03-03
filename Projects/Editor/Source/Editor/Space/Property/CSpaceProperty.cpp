@@ -298,13 +298,13 @@ namespace Skylicht
 			}
 		}
 
-		void CSpaceProperty::addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label)
+		void CSpaceProperty::addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label, GUI::ETextAlign align)
 		{
 			GUI::CLayoutVertical* layout = boxLayout->beginVertical();
 
 			GUI::CLabel* labelControl = new GUI::CLabel(layout);
 			labelControl->setString(label);
-			labelControl->setTextAlignment(GUI::TextCenter);
+			labelControl->setTextAlignment(align);
 			boxLayout->endVertical();
 		}
 

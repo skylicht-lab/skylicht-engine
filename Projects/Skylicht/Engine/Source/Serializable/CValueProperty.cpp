@@ -31,6 +31,7 @@ namespace Skylicht
 	CValueProperty::CValueProperty(CObjectSerializable* owner, EPropertyDataType dataType, const char* name) :
 		m_owner(owner),
 		m_dataType(dataType),
+		m_uiSpace(0.0f),
 		Name(name)
 	{
 		if (owner != NULL)
