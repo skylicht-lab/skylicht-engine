@@ -8,10 +8,13 @@ struct PS_INPUT
 };
 cbuffer cbPerFrame
 {
-	float4 uColor;
-	float2 uIntensity;
 	float4 uLightDirection;
 	float4 uCamPosition;
+	float4 uIntensity;
+	float4 uAtmospheric;
+	float4 uSun;
+	float4 uGlare1;
+	float4 uGlare2;
 };
 static const float gamma = 2.2;
 static const float invGamma = 1.0 / 2.2;
@@ -49,15 +52,14 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 skyColor = GetSkyColor(
 		viewDir,
 		uLightDirection.xyz,
-		1.1,
-		float4(1.0, 0.8, 0.7, 0.1),
-		float4(1.0, 0.6, 0.1, 0.5),
-		float4(1.0, 0.6, 0.1, 0.4),
-		float4(1.0, 0.4, 0.2, 0.2),
+		uIntensity.w,
+		uAtmospheric,
+		uSun,
+		uGlare1,
+		uGlare2,
 		800.0
 	);
 	float3 groundColor = float3(0.4, 0.4, 0.4);
 	float3 result = lerp(skyColor, sRGB(groundColor), pow(smoothstep(0.0,-0.025, viewDir.y), 0.2));
-	float4 blend = input.color * uColor;
-	return float4(result * sRGB(blend.rgb), blend.a);
+	return float4(result, 1.0);
 }
