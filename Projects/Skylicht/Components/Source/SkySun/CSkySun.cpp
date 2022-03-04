@@ -32,6 +32,7 @@ namespace Skylicht
 {
 	CSkySun::CSkySun() :
 		m_skyIntensity(1.1f),
+		m_sunSize(800.0f),
 		m_atmosphericColor(255, 255, 204, 178),
 		m_atmosphericIntensity(0.1f),
 		m_sunColor(255, 255, 153, 25),
@@ -60,9 +61,10 @@ namespace Skylicht
 		if (m_changed)
 		{
 			CMaterial* material = m_skySunData->SkySunMaterial;
-			float value[4];
+			float value[4] = { 0 };
 
-			getUniformValue(SColor(255, 255, 255, 255), m_skyIntensity, value);
+			value[0] = m_skyIntensity;
+			value[1] = m_sunSize;
 			material->setUniform4("uIntensity", value);
 
 			getUniformValue(m_atmosphericColor, m_atmosphericIntensity, value);
@@ -76,7 +78,7 @@ namespace Skylicht
 
 			getUniformValue(m_glare2Color, m_glare2Intensity, value);
 			material->setUniform4("uGlare2", value);
-			
+
 			material->updateShaderParams();
 			m_changed = false;
 		}
@@ -108,6 +110,7 @@ namespace Skylicht
 		sunProperty->setUIHeader("Sun");
 		object->addAutoRelease(sunProperty);
 		object->addAutoRelease(new CFloatProperty(object, "Sun Intensity", m_sunIntensity, 0.0f));
+		object->addAutoRelease(new CFloatProperty(object, "Sun Size", m_sunSize, 1.0f, 5000.0f));
 
 		CColorProperty* glareProperty = new CColorProperty(object, "Glare1 Color", m_glare1Color);
 		glareProperty->setUIHeader("Glare");
@@ -131,6 +134,7 @@ namespace Skylicht
 
 		m_sunColor = object->get<SColor>("Sun Color", SColor(255, 255, 204, 178));
 		m_sunIntensity = object->get<float>("Sun Intensity", 0.1f);
+		m_sunSize = object->get<float>("Sun Size", 800.0f);
 
 		m_glare1Color = object->get<SColor>("Glare1 Color", SColor(255, 255, 153, 25));
 		m_glare1Intensity = object->get<float>("Glare1 Intensity", 0.4f);
