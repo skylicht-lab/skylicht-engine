@@ -26,12 +26,12 @@ void main(void)
 	vec3 skyColor = GetSkyColor(
 		viewDir,
 		uLightDirection.xyz,
-		uIntensity.w,				// intensiy
+		uIntensity.x,				// intensiy
 		uAtmospheric,				// atmospheric, intensiy
 		uSun, 						// sun, intensiy
 		uGlare1,					// glare1, intensiy
 		uGlare2,					// glare2, intensiy
-		800.0						// sun radius
+		uIntensity.y				// sun radius
 	);
 	
 	// GROUND

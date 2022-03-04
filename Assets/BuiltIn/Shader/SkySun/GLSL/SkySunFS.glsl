@@ -46,12 +46,12 @@ void main(void)
 	vec3 skyColor = GetSkyColor(
 		viewDir,
 		uLightDirection.xyz,
-		uIntensity.w,
+		uIntensity.x,
 		uAtmospheric,
 		uSun,
 		uGlare1,
 		uGlare2,
-		800.0
+		uIntensity.y
 	);
 	vec3 groundColor = vec3(0.4, 0.4, 0.4);
 	vec3 result = mix(skyColor, sRGB(groundColor), pow(smoothstep(0.0,-0.025, viewDir.y), 0.2));
