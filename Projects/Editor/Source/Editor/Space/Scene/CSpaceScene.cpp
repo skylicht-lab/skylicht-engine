@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GridPlane/CGridPlane.h"
 #include "SpriteDraw/CSprite.h"
 #include "SkySun/CSkySun.h"
+#include "LightProbes/CLightProbes.h"
 
 #include "Editor/CEditor.h"
 #include "Handles/CHandles.h"
@@ -370,6 +371,11 @@ namespace Skylicht
 			CGameObject* skySunObj = zone->createEmptyObject();
 			skySunObj->setName(L"Sky & Sun");
 			skySunObj->addComponent<CSkySun>();
+
+			// lightprobres
+			CGameObject* lightProbesObj = zone->createEmptyObject();
+			lightProbesObj->setName(L"Light Probes");
+			lightProbesObj->addComponent<CLightProbes>();
 
 			// update search index
 			m_scene->updateAddRemoveObject();

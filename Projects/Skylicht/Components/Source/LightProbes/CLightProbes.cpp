@@ -22,54 +22,42 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
-#include "CSkySunData.h"
-#include "CSkySunRenderer.h"
+#include "pch.h"
+#include "CLightProbes.h"
 
 namespace Skylicht
 {
-	class CSkySun : public CComponentSystem
+	CLightProbes::CLightProbes()
 	{
-	protected:
-		CSkySunData* m_skySunData;
 
-		float m_skyIntensity;
-		float m_sunSize;
+	}
 
-		SColor m_atmosphericColor;
-		float m_atmosphericIntensity;
+	CLightProbes::~CLightProbes()
+	{
 
-		SColor m_sunColor;
-		float m_sunIntensity;
+	}
 
-		SColor m_glare1Color;
-		float m_glare1Intensity;
+	void CLightProbes::initComponent()
+	{
 
-		SColor m_glare2Color;
-		float m_glare2Intensity;
+	}
 
-		bool m_changed;
+	void CLightProbes::updateComponent()
+	{
 
-	public:
-		CSkySun();
+	}
 
-		virtual ~CSkySun();
+	CObjectSerializable* CLightProbes::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
 
-		virtual void initComponent();
+		return object;
+	}
 
-		virtual void updateComponent();
+	void CLightProbes::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
 
-		virtual CObjectSerializable* createSerializable();
 
-		virtual void loadSerializable(CObjectSerializable* object);
-
-		DECLARE_GETTYPENAME(CSkySun)
-
-	protected:
-
-		void getUniformValue(const SColor& c, float intensity, float* value);
-
-	};
+	}
 }

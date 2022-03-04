@@ -29,12 +29,12 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 skyColor = GetSkyColor(
 		viewDir,
 		uLightDirection.xyz,
-		uIntensity.w,				// intensiy
+		uIntensity.x,				// intensiy
 		uAtmospheric,				// atmospheric, intensity
 		uSun, 						// sun, intensiy
 		uGlare1,					// glare1, intensity
 		uGlare2,					// glare2, intensity
-		800.0						// sun radius
+		uIntensity.y				// sun radius
 	);
 	
 	// GROUND
