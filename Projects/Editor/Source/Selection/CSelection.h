@@ -59,7 +59,11 @@ namespace Skylicht
 
 			CSelectObject* getSelected(CGameObject* obj);
 
+			CSelectObject* getSelected(CEntity* entity);
+
 			CSelectObject* addSelect(CGameObject* obj);
+
+			CSelectObject* addSelect(CEntity* entity);
 
 			void notify(CGameObject* obj, IObserver* from);
 
@@ -68,6 +72,12 @@ namespace Skylicht
 			void unSelect(CGameObject* obj);
 
 			void unSelect(const std::vector<CGameObject*>& obj);
+
+			void unSelect(CEntity* entity);
+
+			void unSelect(const std::vector<CEntity*>& entities);
+
+			std::string getEntityID(CEntity* entity);
 		};
 	}
 }

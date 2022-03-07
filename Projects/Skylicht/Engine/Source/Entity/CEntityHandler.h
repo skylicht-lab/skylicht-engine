@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,54 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GameObject/CGameObject.h"
-#include "Entity/CEntity.h"
-#include "Reactive/ISubject.h"
+#include "Components/CComponentSystem.h"
+#include "CEntity.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	class CEntityHandler : public CComponentSystem
 	{
-		class CSelectObject : public ISubject
+	protected:
+		std::vector<CEntity*> m_entities;
+
+	public:
+		CEntityHandler();
+
+		virtual ~CEntityHandler();
+
+		virtual void initComponent();
+
+		virtual void updateComponent();
+
+		CEntity* createEntity();
+
+		CEntity* createEntity(CEntity* parent);
+
+		void removeEntity(CEntity* entity);
+
+		std::vector<CEntity*>& getEntities()
 		{
-		public:
-			enum ESelectType
-			{
-				GameObject,
-				Entity
-			};
-
-		protected:
-
-			ESelectType m_type;
-
-			std::string m_id;
-
-		public:
-			CSelectObject(ESelectType type, const char* id);
-
-			CSelectObject(ESelectType type, const std::string& id);
-
-			CSelectObject(CGameObject* obj);
-
-			CSelectObject(CEntity* obj);
-
-			virtual ~CSelectObject();
-
-			inline ESelectType getType()
-			{
-				return m_type;
-			}
-
-			inline std::string& getID()
-			{
-				return m_id;
-			}
-
-			bool operator==(const CSelectObject& obj)
-			{
-				return m_type == obj.m_type && m_id == obj.m_id;
-			}
-		};
-	}
+			return m_entities;
+		}
+	};
 }

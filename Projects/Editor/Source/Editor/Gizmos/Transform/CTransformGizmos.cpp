@@ -86,24 +86,31 @@ namespace Skylicht
 			std::vector<CSelectObject*>& selectObjects = CSelection::getInstance()->getAllSelected();
 			for (CSelectObject* obj : selectObjects)
 			{
-				CGameObject* selecteObject = NULL;
-
-				if (m_cacheSelectedObjects.find(obj->getID()) == m_cacheSelectedObjects.end())
+				if (obj->getType() == CSelectObject::GameObject)
 				{
-					selecteObject = scene->searchObjectInChildByID(obj->getID().c_str());
+					CGameObject* selecteObject = NULL;
+
+					if (m_cacheSelectedObjects.find(obj->getID()) == m_cacheSelectedObjects.end())
+					{
+						selecteObject = scene->searchObjectInChildByID(obj->getID().c_str());
+						if (selecteObject != NULL)
+							m_cacheSelectedObjects[obj->getID()] = selecteObject;
+					}
+					else
+					{
+						selecteObject = m_cacheSelectedObjects[obj->getID()];
+					}
+
 					if (selecteObject != NULL)
-						m_cacheSelectedObjects[obj->getID()] = selecteObject;
+					{
+						CTransformEuler* t = selecteObject->getComponent<CTransformEuler>();
+						if (t != NULL)
+							transforms.push_back(t);
+					}
 				}
-				else
+				else if (obj->getType() == CSelectObject::Entity)
 				{
-					selecteObject = m_cacheSelectedObjects[obj->getID()];
-				}
 
-				if (selecteObject != NULL)
-				{
-					CTransformEuler* t = selecteObject->getComponent<CTransformEuler>();
-					if (t != NULL)
-						transforms.push_back(t);
 				}
 			}
 		}
