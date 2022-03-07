@@ -92,6 +92,16 @@ namespace Skylicht
 				root1->expand(false);
 		}
 
+		void CHierarchyController::updateNode(CGameObject* object)
+		{
+			if (m_node == NULL)
+				return;
+
+			CHierachyNode* node = m_node->getNodeByTag(object);
+			if (node != NULL && node->OnUpdate != NULL)
+				node->OnUpdate(node);
+		}
+
 		GUI::CTreeNode* CHierarchyController::buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node)
 		{
 			// add node

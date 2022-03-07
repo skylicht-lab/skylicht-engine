@@ -38,6 +38,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Handles/CHandles.h"
 #include "Selection/CSelecting.h"
 
+#include "Entity/CEntityHandler.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -324,12 +326,36 @@ namespace Skylicht
 				node->setName(object->getName());
 				node->setIcon(GUI::ESystemIcon::Res3D);
 				node->setTagData(object, CHierachyNode::GameObject);
+
+				buildEntityNodes(object, node);
 			}
 
 			if (node != NULL)
 				setNodeEvent(node);
 
 			return node;
+		}
+
+		void CSceneController::buildEntityNodes(CGameObject* object, CHierachyNode* parentNode)
+		{
+			parentNode->removeAllChild();
+
+			CEntityHandler* entityHandler = object->getComponent<CEntityHandler>();
+			if (entityHandler == NULL)
+				return;
+
+			std::vector<CEntity*>& entities = entityHandler->getEntities();
+			for (CEntity* entity : entities)
+			{
+				CHierachyNode* node = parentNode->addChild();
+				CWorldTransformData* worldData = entity->getData<CWorldTransformData>();
+
+				node->setName(CStringImp::convertUTF8ToUnicode(worldData->Name.c_str()).c_str());
+				node->setIcon(GUI::ESystemIcon::Poly);
+				node->setTagData(entity, CHierachyNode::Entity);
+
+				setNodeEvent(node);
+			}
 		}
 
 		void CSceneController::update()
@@ -531,6 +557,9 @@ namespace Skylicht
 				CGameObject* obj = (CGameObject*)node->getTagData();
 				obj->setName(node->getName().c_str());
 
+				// update list entity
+				buildEntityNodes(obj, node);
+
 				// notify object changed
 				CSelectObject* selectedObject = CSelection::getInstance()->getSelected(obj);
 				if (selectedObject != NULL)
@@ -547,11 +576,11 @@ namespace Skylicht
 		void CSceneController::onSelectNode(CHierachyNode* node, bool selected)
 		{
 			m_focusNode = node;
+			CSelection* selection = CSelection::getInstance();
 
 			if (node->isTagGameObject())
 			{
 				CGameObject* obj = (CGameObject*)node->getTagData();
-				CSelection* selection = CSelection::getInstance();
 
 				// remove last observer
 				CSelectObject* selectedObject = selection->getLastSelected();
@@ -571,6 +600,31 @@ namespace Skylicht
 				else
 				{
 					selection->unSelect(obj);
+					propertyController->setProperty(NULL);
+				}
+			}
+			else if (node->isTagEntity())
+			{
+				CEntity* entity = (CEntity*)node->getTagData();
+
+				// remove last observer
+				CSelectObject* selectedObject = selection->getLastSelected();
+				if (selectedObject != NULL)
+					selectedObject->removeAllObserver();
+
+				// Set property & event
+				CPropertyController* propertyController = CPropertyController::getInstance();
+				if (selected)
+				{
+					selectedObject = selection->addSelect(entity);
+					propertyController->setProperty(selectedObject);
+
+					// add new observer
+					selectedObject->addObserver(this);
+				}
+				else
+				{
+					selection->unSelect(entity);
 					propertyController->setProperty(NULL);
 				}
 			}

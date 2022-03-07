@@ -42,6 +42,7 @@ namespace Skylicht
 				Zone,
 				Container,
 				GameObject,
+				Entity,
 			};
 
 			std::function<void(CHierachyNode*)> OnUpdate;
@@ -109,6 +110,11 @@ namespace Skylicht
 			inline bool isTagScene()
 			{
 				return m_dataType == Scene;
+			}
+
+			inline bool isTagEntity()
+			{
+				return m_dataType == Entity;
 			}
 
 			inline EDataType getTagDataType()

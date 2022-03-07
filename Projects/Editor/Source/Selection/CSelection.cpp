@@ -91,6 +91,20 @@ namespace Skylicht
 			return NULL;
 		}
 
+		CSelectObject* CSelection::getSelected(CEntity* entity)
+		{
+			std::string id = getEntityID(entity);
+
+			for (CSelectObject* selected : m_selected)
+			{
+				if (selected->getType() == CSelectObject::Entity && selected->getID() == id)
+				{
+					return selected;
+				}
+			}
+			return NULL;
+		}
+
 		CSelectObject* CSelection::addSelect(CGameObject* obj)
 		{
 			CSelectObject* selected = getSelected(obj);
@@ -98,6 +112,17 @@ namespace Skylicht
 				return selected;
 
 			selected = new CSelectObject(obj);
+			m_selected.push_back(selected);
+			return selected;
+		}
+
+		CSelectObject* CSelection::addSelect(CEntity* entity)
+		{
+			CSelectObject* selected = getSelected(entity);
+			if (selected != NULL)
+				return selected;
+
+			selected = new CSelectObject(entity);
 			m_selected.push_back(selected);
 			return selected;
 		}
@@ -133,6 +158,40 @@ namespace Skylicht
 			{
 				unSelect(gameObject);
 			}
+		}
+
+		void CSelection::unSelect(CEntity* entity)
+		{
+			std::string id = getEntityID(entity);
+
+			std::vector<CSelectObject*>::iterator i = m_selected.begin(), end = m_selected.end();
+			while (i != end)
+			{
+				CSelectObject* sel = (*i);
+
+				if (sel->getType() == CSelectObject::Entity && sel->getID() == id)
+				{
+					delete sel;
+					m_selected.erase(i);
+					return;
+				}
+				++i;
+			}
+		}
+
+		void CSelection::unSelect(const std::vector<CEntity*>& entities)
+		{
+			for (CEntity* entity : entities)
+			{
+				unSelect(entity);
+			}
+		}
+
+		std::string CSelection::getEntityID(CEntity* entity)
+		{
+			std::string id = "Entity#";
+			id += entity->getIndex();
+			return id;
 		}
 	}
 }
