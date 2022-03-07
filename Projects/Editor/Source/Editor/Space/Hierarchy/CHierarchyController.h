@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/GUI.h"
 #include "CHierachyNode.h"
 #include "Editor/CEditor.h"
+#include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
@@ -56,6 +57,8 @@ namespace Skylicht
 
 			void rename(GUI::CTreeNode* node);
 
+			void updateNode(CGameObject* object);
+
 		protected:
 
 			void OnKeyPress(GUI::CBase* control, int key, bool press);
@@ -64,9 +67,9 @@ namespace Skylicht
 
 			void OnCancelRename(GUI::CBase* control);
 
-			void OnSelectChange(GUI::CBase* control);
+			void OnSelectChange(GUI::CBase* control);			
 
-			GUI::CTreeNode* buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);
+			GUI::CTreeNode* buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);			
 
 			void initDragDrop(GUI::CTreeNode* guiNode, CHierachyNode* node);
 

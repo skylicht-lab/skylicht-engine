@@ -182,9 +182,11 @@ namespace Skylicht
 		for (CComponentSystem*& comp : m_components)
 			comp->removeAllLink();
 
-		for (CComponentSystem*& comp : m_components)
-			delete comp;
-		m_components.clear();
+		while (m_components.size() > 0)
+		{
+			delete m_components[0];
+			m_components.erase(m_components.begin());
+		}
 	}
 
 	void CGameObject::updateObject()
@@ -374,6 +376,7 @@ namespace Skylicht
 
 	void CGameObject::startComponent()
 	{
+		// run start Component after import scene (seriable is Serializable)
 		size_t numComponents = m_components.size();
 		CComponentSystem** components = m_components.data();
 

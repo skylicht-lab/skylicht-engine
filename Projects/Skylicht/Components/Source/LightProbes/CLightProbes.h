@@ -25,11 +25,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Components/CComponentSystem.h"
+#include "Entity/CEntity.h"
+#include "Entity/CEntityHandler.h"
 
 namespace Skylicht
 {
 	class CLightProbes : public CComponentSystem
 	{
+	protected:
+		std::vector<CEntity*> m_probes;
+
 	public:
 		CLightProbes();
 
@@ -42,6 +47,12 @@ namespace Skylicht
 		virtual CObjectSerializable* createSerializable();
 
 		virtual void loadSerializable(CObjectSerializable* object);
+
+		void clearAll();
+
+		CEntity* addLightProbe();
+
+		CEntityHandler* getEntityHandler();
 
 		DECLARE_GETTYPENAME(CLightProbes)
 	};
