@@ -93,7 +93,9 @@ namespace Skylicht
 
 		CSelectObject* CSelection::getSelected(CEntity* entity)
 		{
-			std::string id = getEntityID(entity);
+			std::string id = entity->getID();
+			if (id.empty())
+				return NULL;
 
 			for (CSelectObject* selected : m_selected)
 			{
@@ -162,7 +164,9 @@ namespace Skylicht
 
 		void CSelection::unSelect(CEntity* entity)
 		{
-			std::string id = getEntityID(entity);
+			std::string id = entity->getID();
+			if (id.empty())
+				return;
 
 			std::vector<CSelectObject*>::iterator i = m_selected.begin(), end = m_selected.end();
 			while (i != end)
@@ -185,13 +189,6 @@ namespace Skylicht
 			{
 				unSelect(entity);
 			}
-		}
-
-		std::string CSelection::getEntityID(CEntity* entity)
-		{
-			std::string id = "Entity#";
-			id += entity->getIndex();
-			return id;
 		}
 	}
 }

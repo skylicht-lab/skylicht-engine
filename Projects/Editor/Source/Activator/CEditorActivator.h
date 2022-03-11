@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "Editor/Components/CComponentEditor.h"
+#include "Editor/EntityData/CEntityDataEditor.h"
 #include "Editor/AssetEditor/CAssetEditor.h"
 
 
@@ -35,6 +36,7 @@ namespace Skylicht
 	{
 		typedef CComponentEditor* (*ActivatorCreateEditor)();
 		typedef CAssetEditor* (*ActivatorCreateAssetEditor)();
+		typedef CEntityDataEditor* (*ActivatorCreateEntityDataEditor)();
 
 #define EDITOR_REGISTER(type, componentType)  \
 		CComponentEditor* type##componentType##CreateFunc() { return new type(); } \
@@ -44,17 +46,25 @@ namespace Skylicht
 		CAssetEditor* type##_ext_##CreateFunc() { return new type(); } \
 		bool type##_ext_##Activator = CEditorActivator::createGetInstance()->registerAssetEditor(#ext, &type##_ext_##CreateFunc);
 
+#define ENTITYDATA_EDITOR_REGISTER(type, ext)  \
+		CEntityDataEditor* type##_ext_##CreateFunc() { return new type(); } \
+		bool type##_ext_##Activator = CEditorActivator::createGetInstance()->registerEntityDataEditor(#ext, &type##_ext_##CreateFunc);
+
 		class CEditorActivator : public CGameSingleton<CEditorActivator>
 		{
 		protected:
 			std::vector<ActivatorCreateEditor> m_factoryFunc;
 			std::vector<ActivatorCreateAssetEditor> m_factoryAssetFunc;
-			
+			std::vector<ActivatorCreateEntityDataEditor> m_factoryEntityDataFunc;
+
 			std::map<std::string, int> m_mapComponent;
 			std::map<std::string, CComponentEditor*> m_mapInstance;
 
 			std::map<std::string, int> m_mapAsset;
 			std::map<std::string, CAssetEditor*> m_mapAssetInstance;
+
+			std::map<std::string, int> m_mapEntityData;
+			std::map<std::string, CEntityDataEditor*> m_mapEntityDataInstance;
 
 		public:
 			CEditorActivator();
@@ -65,9 +75,13 @@ namespace Skylicht
 
 			bool registerAssetEditor(const char* ext, ActivatorCreateAssetEditor func);
 
+			bool registerEntityDataEditor(const char* dataType, ActivatorCreateEntityDataEditor func);
+
 			CComponentEditor* getEditorInstance(const char* componentType);
 
 			CAssetEditor* getAssetEditorInstance(const char* ext);
+
+			CEntityDataEditor* getEntityDataEditorInstance(const char* dataType);
 
 			void releaseAllInstance();
 		};

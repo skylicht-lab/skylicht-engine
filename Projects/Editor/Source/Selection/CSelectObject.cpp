@@ -53,8 +53,7 @@ namespace Skylicht
 		CSelectObject::CSelectObject(CEntity* obj) :
 			m_type(Entity)
 		{
-			m_id = "Entity#";
-			m_id += obj->getIndex();
+			m_id = obj->getID();
 		}
 
 		CSelectObject::~CSelectObject()

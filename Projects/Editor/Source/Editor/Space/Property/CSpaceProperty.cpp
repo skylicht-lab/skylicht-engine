@@ -152,6 +152,8 @@ namespace Skylicht
 					group->AssetOwner->closeGUI();
 				if (group->Owner)
 					group->Owner->closeGUI();
+				if (group->EntityDataOwner)
+					group->EntityDataOwner->closeGUI();
 				delete group;
 			}
 
@@ -197,6 +199,11 @@ namespace Skylicht
 		void CSpaceProperty::addAsset(CAssetEditor* editor, const char* path)
 		{
 			editor->initGUI(path, this);
+		}
+
+		void CSpaceProperty::addEntityData(CEntityDataEditor* editor, IEntityData* entityData)
+		{
+			editor->initGUI(entityData, this);
 		}
 
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CAssetEditor* editor)
@@ -272,6 +279,20 @@ namespace Skylicht
 			return colapsible;
 		}
 
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CEntityDataEditor* editor)
+		{
+			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
+			colapsible->dock(GUI::EPosition::Top);
+			colapsible->getHeader()->setLabel(label);
+
+			SGroup* g = new SGroup();
+			g->EntityDataOwner = editor;
+			g->GroupUI = colapsible;
+
+			m_groups.push_back(g);
+			return colapsible;
+		}
+
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CComponentEditor* editor)
 		{
 			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
@@ -279,6 +300,12 @@ namespace Skylicht
 		}
 
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CAssetEditor* editor)
+		{
+			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
+			return addGroup(wlabel.c_str(), editor);
+		}
+
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CEntityDataEditor* editor)
 		{
 			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
 			return addGroup(wlabel.c_str(), editor);
