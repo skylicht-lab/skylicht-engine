@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLightProbes : public CComponentSystem
+	class CLightProbes : public CEntityHandler
 	{
 	protected:
 		std::vector<CEntity*> m_probes;
@@ -51,8 +51,6 @@ namespace Skylicht
 		void clearAll();
 
 		CEntity* addLightProbe();
-
-		CEntityHandler* getEntityHandler();
 
 		DECLARE_GETTYPENAME(CLightProbes)
 	};

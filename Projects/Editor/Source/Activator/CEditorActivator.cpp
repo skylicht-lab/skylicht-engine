@@ -61,6 +61,17 @@ namespace Skylicht
 			return true;
 		}
 
+		bool CEditorActivator::registerEntityDataEditor(const char* dataType, ActivatorCreateEntityDataEditor func)
+		{
+			std::map<std::string, int>::iterator i = m_mapEntityData.find(dataType);
+			if (i != m_mapEntityData.end())
+				return false;
+
+			m_mapEntityData[dataType] = (int)m_factoryEntityDataFunc.size();
+			m_factoryEntityDataFunc.push_back(func);
+			return true;
+		}
+
 		CComponentEditor* CEditorActivator::getEditorInstance(const char* componentType)
 		{
 			// find componentType
@@ -99,15 +110,50 @@ namespace Skylicht
 			return result;
 		}
 
+		CEntityDataEditor* CEditorActivator::getEntityDataEditorInstance(const char* dataType)
+		{
+			// find dataType
+			std::map<std::string, int>::iterator i = m_mapEntityData.find(dataType);
+			if (i == m_mapEntityData.end())
+				return NULL;
+
+			// re-used
+			std::map<std::string, CEntityDataEditor*>::iterator j = m_mapEntityDataInstance.find(dataType);
+			if (j != m_mapEntityDataInstance.end() && (*j).second != NULL)
+				return (*j).second;
+
+			// create and cache to re-used
+			int id = (*i).second;
+			CEntityDataEditor* result = m_factoryEntityDataFunc[id]();
+			m_mapEntityDataInstance[dataType] = result;
+			return result;
+		}
+
 		void CEditorActivator::releaseAllInstance()
 		{
-			std::map<std::string, CComponentEditor*>::iterator i = m_mapInstance.begin(), end = m_mapInstance.end();
-			while (i != end)
+			// 1
+			for (auto i : m_mapInstance)
 			{
-				delete (*i).second;
-				++i;
+				delete i.second;
 			}
 			m_mapInstance.clear();
+			m_mapComponent.clear();
+
+			// 2
+			for (auto i : m_mapAssetInstance)
+			{
+				delete i.second;
+			}
+			m_mapAssetInstance.clear();
+			m_mapAsset.clear();
+
+			// 3
+			for (auto i : m_mapEntityDataInstance)
+			{
+				delete i.second;
+			}
+			m_mapEntityDataInstance.clear();
+			m_mapEntityData.clear();
 		}
 	}
 }

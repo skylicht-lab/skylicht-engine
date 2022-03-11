@@ -76,8 +76,6 @@ namespace Skylicht
 			void unSelect(CEntity* entity);
 
 			void unSelect(const std::vector<CEntity*>& entities);
-
-			std::string getEntityID(CEntity* entity);
 		};
 	}
 }

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CEntityHandler.h"
 #include "CEntityManager.h"
 #include "GameObject/CGameObject.h"
+#include "GameObject/CZone.h"
 #include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
@@ -57,8 +58,13 @@ namespace Skylicht
 		CEntity* entity = entityManager->createEntity();
 		CWorldTransformData* transformData = entity->addData<CWorldTransformData>();
 
+		// name
 		char name[512];
 		sprintf(name, "#%d", entity->getIndex());
+
+		// id
+		std::string id = m_gameObject->getZone()->generateRandomID();
+		entity->setID(id.c_str());
 
 		// add parent relative
 		CEntity* parent = m_gameObject->getEntity();
@@ -82,6 +88,10 @@ namespace Skylicht
 
 		char name[512];
 		sprintf(name, "#%d", entity->getIndex());
+
+		// id
+		std::string id = m_gameObject->getZone()->generateRandomID();
+		entity->setID(id.c_str());
 
 		// add parent relative
 		if (parent != NULL)
