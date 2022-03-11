@@ -102,6 +102,8 @@ namespace Skylicht
 			return m_entities[index];
 		}
 
+		CEntity* getEntityByID(const char* id);
+
 		void removeEntity(int index);
 
 		void removeEntity(CEntity* entity);

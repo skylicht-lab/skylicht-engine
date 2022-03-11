@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/CSpace.h"
 #include "Editor/Components/CComponentEditor.h"
 #include "Editor/AssetEditor/CAssetEditor.h"
+#include "Editor/EntityData/CEntityDataEditor.h"
 #include "Reactive/CSubject.h"
 #include "Reactive/CObserver.h"
 
@@ -45,6 +46,7 @@ namespace Skylicht
 			{
 				CComponentEditor* Owner;
 				CAssetEditor* AssetOwner;
+				CEntityDataEditor* EntityDataOwner;
 
 				GUI::CBase* GroupUI;
 				std::vector<IObserver*> Observer;
@@ -54,6 +56,7 @@ namespace Skylicht
 					Owner = NULL;
 					AssetOwner = NULL;
 					GroupUI = NULL;
+					EntityDataOwner = NULL;
 				}
 
 				void releaseObserver()
@@ -149,9 +152,14 @@ namespace Skylicht
 
 			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CAssetEditor* editor);
 
+			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CEntityDataEditor* editor);
+
+
 			GUI::CCollapsibleGroup* addGroup(const char* label, CComponentEditor* editor);
 
 			GUI::CCollapsibleGroup* addGroup(const char* label, CAssetEditor* editor);
+
+			GUI::CCollapsibleGroup* addGroup(const char* label, CEntityDataEditor* editor);
 
 			GUI::CButton* addButton(const wchar_t* label);
 
@@ -164,6 +172,8 @@ namespace Skylicht
 			void addComponent(CComponentEditor* editor, CGameObject* gameobject);
 
 			void addAsset(CAssetEditor* editor, const char* path);
+
+			void addEntityData(CEntityDataEditor* editor, IEntityData* entityData);
 
 			void clearAllGroup();
 

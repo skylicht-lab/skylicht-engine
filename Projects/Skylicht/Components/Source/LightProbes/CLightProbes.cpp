@@ -52,41 +52,25 @@ namespace Skylicht
 	CObjectSerializable* CLightProbes::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
-
 		return object;
 	}
 
 	void CLightProbes::loadSerializable(CObjectSerializable* object)
 	{
 		CComponentSystem::loadSerializable(object);
-
 	}
 
 	void CLightProbes::clearAll()
 	{
-		CEntityHandler* entityHandler = getEntityHandler();
-		if (entityHandler == NULL)
-			return;
-
 		for (CEntity* entity : m_probes)
-			entityHandler->removeEntity(entity);
+			removeEntity(entity);
 		m_probes.clear();
 	}
 
 	CEntity* CLightProbes::addLightProbe()
 	{
-		CEntityHandler* entityHandler = getEntityHandler();
-
-		CEntity* entity = entityHandler->createEntity();
+		CEntity* entity = createEntity();
 		m_probes.push_back(entity);
 		return entity;
-	}
-
-	CEntityHandler* CLightProbes::getEntityHandler()
-	{
-		CEntityHandler* entityHandler = m_gameObject->getComponent<CEntityHandler>();
-		if (entityHandler == NULL)
-			entityHandler = m_gameObject->addComponent<CEntityHandler>();
-		return entityHandler;
 	}
 }

@@ -40,19 +40,20 @@ namespace Skylicht
 		bool m_visible;
 		bool m_alive;
 		int m_index;
+		std::string m_id;
 
 		core::array<IEntityData*> m_data;
 
 	public:
-		CEntity(CEntityManager *mgr);
-		CEntity(CEntityPrefab *mgr);
+		CEntity(CEntityManager* mgr);
+		CEntity(CEntityPrefab* mgr);
 
 		virtual ~CEntity();
 
 		template<class T>
 		T* addData();
 
-		IEntityData* addDataByActivator(const char *dataType);
+		IEntityData* addDataByActivator(const char* dataType);
 
 		inline int getDataCount()
 		{
@@ -60,6 +61,16 @@ namespace Skylicht
 		}
 
 		IEntityData* getData(int dataIndex);
+
+		inline void setID(const char* id)
+		{
+			m_id = id;
+		}
+
+		inline std::string& getID()
+		{
+			return m_id;
+		}
 
 		template<class T>
 		T* getData();
@@ -101,8 +112,8 @@ namespace Skylicht
 	template<class T>
 	T* CEntity::addData()
 	{
-		T *newData = new T();
-		IEntityData *data = dynamic_cast<IEntityData*>(newData);
+		T* newData = new T();
+		IEntityData* data = dynamic_cast<IEntityData*>(newData);
 		if (data == NULL)
 		{
 			char exceptionInfo[512];

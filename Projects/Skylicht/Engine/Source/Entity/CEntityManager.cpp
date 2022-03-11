@@ -183,6 +183,25 @@ namespace Skylicht
 		}
 	}
 
+	CEntity* CEntityManager::getEntityByID(const char* id)
+	{
+		CEntity** e = m_entities.pointer();
+		u32 count = m_entities.size();
+
+		for (u32 i = 0; i < count; i++, e++)
+		{
+			CEntity* entity = (*e);
+			if (entity->isAlive() &&
+				!entity->getID().empty() &&
+				entity->getID() == id)
+			{
+				return entity;
+			}
+		}
+
+		return NULL;
+	}
+
 	void CEntityManager::removeEntity(int index)
 	{
 		CEntity* entity = m_entities[index];

@@ -137,6 +137,26 @@ namespace Skylicht
 
 					// Tabable
 					spaceProperty->getWindow()->getCanvas()->TabableGroup.clear();
+
+					CEntity* entity = scene->getEntityManager()->getEntityByID(object->getID().c_str());
+					if (entity != NULL)
+					{
+						// Activator
+						CEditorActivator* activator = CEditorActivator::getInstance();
+
+						int dataCount = entity->getDataCount();
+						for (int i = 0; i < dataCount; i++)
+						{
+							IEntityData* data = entity->getData(i);
+
+							// GameObject property							
+							CEntityDataEditor* editor = activator->getEntityDataEditorInstance(data->getTypeName().c_str());
+							if (editor != NULL)
+							{
+								spaceProperty->addEntityData(editor, data);
+							}
+						}
+					}
 				}
 			}
 			else
