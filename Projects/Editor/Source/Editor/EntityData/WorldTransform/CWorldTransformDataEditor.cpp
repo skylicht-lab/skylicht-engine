@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CWorldTransformDataEditor.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
@@ -32,9 +33,18 @@ namespace Skylicht
 	{
 		ENTITYDATA_EDITOR_REGISTER(CWorldTransformDataEditor, CWorldTransformData);
 
-		CWorldTransformDataEditor::CWorldTransformDataEditor()
+		CWorldTransformDataEditor::CWorldTransformDataEditor() :
+			X(0.0f),
+			Y(0.0f),
+			Z(0.0f),
+			ScaleX(1.0f),
+			ScaleY(1.0f),
+			ScaleZ(1.0f),
+			RotateX(0.0f),
+			RotateY(0.0f),
+			RotateZ(0.0f)
 		{
-
+			m_gizmos = CSceneController::getInstance()->getTransformGizmos();
 		}
 
 		CWorldTransformDataEditor::~CWorldTransformDataEditor()
@@ -50,18 +60,192 @@ namespace Skylicht
 			{
 				GUI::CCollapsibleGroup* group = ui->addGroup("World Transform Data", this);
 
+				GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+
+				m_position = m_worldTransform->Relative.getTranslation();
+				m_rotate = m_worldTransform->Relative.getRotationDegrees();
+				m_scale = m_worldTransform->Relative.getScale();
+
+				// POSITION OBSERVER
+				X = m_position.X;
+				Y = m_position.Y;
+				Z = m_position.Z;
+
+				ui->addNumberInput(layout, L"Position X", &X, 0.01f);
+				ui->addNumberInput(layout, L"Y", &Y, 0.01f);
+				ui->addNumberInput(layout, L"Z", &Z, 0.01f);
+
+				X.addObserver(new CObserver([&, pos = &m_position, g = m_gizmos](ISubject* subject, IObserver* from)
+					{
+						if (from != g)
+						{
+							CSubject<float>* value = (CSubject<float>*) subject;
+							pos->X = value->get();
+							updateMatrix();
+							g->setPosition(*pos);
+						}
+					}), true);
+
+				Y.addObserver(new CObserver([&, pos = &m_position, g = m_gizmos](ISubject* subject, IObserver* from)
+					{
+						if (from != g)
+						{
+							CSubject<float>* value = (CSubject<float>*) subject;
+							pos->Y = value->get();
+							updateMatrix();
+							g->setPosition(*pos);
+						}
+					}), true);
+
+				Z.addObserver(new CObserver([&, pos = &m_position, g = m_gizmos](ISubject* subject, IObserver* from)
+					{
+						if (from != g)
+						{
+							CSubject<float>* value = (CSubject<float>*) subject;
+							pos->Z = value->get();
+							updateMatrix();
+							g->setPosition(*pos);
+						}
+					}), true);
+
+				// ROTATE OBSERVER
+				layout->addSpace(5.0f);
+				RotateX = m_rotate.X;
+				RotateY = m_rotate.Y;
+				RotateZ = m_rotate.Z;
+
+				ui->addNumberInput(layout, L"Rotation(Deg) X", &RotateX, 0.1f);
+				ui->addNumberInput(layout, L"Y", &RotateY, 0.1f);
+				ui->addNumberInput(layout, L"Z", &RotateZ, 0.1f);
+
+				RotateX.addObserver(new CObserver([&, rot = &m_rotate, g = m_gizmos](ISubject* subject, IObserver* from)
+					{
+						if (from != g)
+						{
+							CSubject<float>* value = (CSubject<float>*) subject;
+							rot->X = value->get();
+							updateMatrix();
+							g->setRotation(*rot);
+						}
+					}), true);
+
+				RotateY.addObserver(new CObserver([&, rot = &m_rotate, g = m_gizmos](ISubject* subject, IObserver* from)
+					{
+						if (from != g)
+						{
+							CSubject<float>* value = (CSubject<float>*) subject;
+							rot->Y = value->get();
+							updateMatrix();
+							g->setRotation(*rot);
+						}
+					}), true);
+
+				RotateZ.addObserver(new CObserver([&, rot = &m_rotate, g = m_gizmos](ISubject* subject, IObserver* from)
+					{
+						if (from != g)
+						{
+							CSubject<float>* value = (CSubject<float>*) subject;
+							rot->Z = value->get();
+							updateMatrix();
+							g->setRotation(*rot);
+						}
+					}), true);
+
+				// SCALE OBSERVER
+				layout->addSpace(5.0f);
+
+				ScaleX = m_scale.X;
+				ScaleY = m_scale.Y;
+				ScaleZ = m_scale.Z;
+
+				ui->addNumberInput(layout, L"Scale X", &ScaleX, 0.01f);
+				ui->addNumberInput(layout, L"Y", &ScaleY, 0.01f);
+				ui->addNumberInput(layout, L"Z", &ScaleZ, 0.01f);
+
+				ScaleX.addObserver(new CObserver([&, scale = &m_scale, g = m_gizmos](ISubject* subject, IObserver* from)
+					{
+						if (from != g)
+						{
+							CSubject<float>* value = (CSubject<float>*) subject;
+							scale->X = value->get();
+							updateMatrix();
+							g->setScale(*scale);
+						}
+					}), true);
+
+				ScaleY.addObserver(new CObserver([&, scale = &m_scale, g = m_gizmos](ISubject* subject, IObserver* from)
+					{
+						if (from != g)
+						{
+							CSubject<float>* value = (CSubject<float>*) subject;
+							scale->Y = value->get();
+							updateMatrix();
+							g->setScale(*scale);
+						}
+					}), true);
+
+				ScaleZ.addObserver(new CObserver([&, scale = &m_scale, g = m_gizmos](ISubject* subject, IObserver* from)
+					{
+						if (from != g)
+						{
+							CSubject<float>* value = (CSubject<float>*) subject;
+							scale->Z = value->get();
+							updateMatrix();
+							g->setScale(*scale);
+						}
+					}), true);
+
 				group->setExpand(true);
 			}
 		}
 
 		void CWorldTransformDataEditor::closeGUI()
 		{
+			// clear all registered observer
+			X.removeAllObserver();
+			Y.removeAllObserver();
+			Z.removeAllObserver();
 
+			ScaleX.removeAllObserver();
+			ScaleY.removeAllObserver();
+			ScaleZ.removeAllObserver();
+
+			RotateX.removeAllObserver();
+			RotateY.removeAllObserver();
+			RotateZ.removeAllObserver();
 		}
 
 		void CWorldTransformDataEditor::update()
 		{
 
+		}
+
+		void CWorldTransformDataEditor::updateMatrix()
+		{
+			m_worldTransform->Relative.makeIdentity();
+			m_worldTransform->Relative.setRotationDegrees(m_rotate);
+			m_worldTransform->HasChanged = true;
+
+			f32* m = m_worldTransform->Relative.pointer();
+
+			m[0] *= m_scale.X;
+			m[1] *= m_scale.X;
+			m[2] *= m_scale.X;
+			m[3] *= m_scale.X;
+
+			m[4] *= m_scale.Y;
+			m[5] *= m_scale.Y;
+			m[6] *= m_scale.Y;
+			m[7] *= m_scale.Y;
+
+			m[8] *= m_scale.Z;
+			m[9] *= m_scale.Z;
+			m[10] *= m_scale.Z;
+			m[11] *= m_scale.Z;
+
+			m[12] = m_position.X;
+			m[13] = m_position.Y;
+			m[14] = m_position.Z;
 		}
 	}
 }
