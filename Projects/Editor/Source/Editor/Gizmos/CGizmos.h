@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Reactive/CSubject.h"
+
 namespace Skylicht
 {
 	class CGameObject;
@@ -37,6 +39,8 @@ namespace Skylicht
 			Rotate,
 			Scale
 		};
+
+		CSubject<ETransformGizmo>& getSubjectTransformGizmos();
 
 		class CGizmos
 		{

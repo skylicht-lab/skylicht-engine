@@ -26,7 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Transform/CTransformEuler.h"
 #include "Editor/Gizmos/CGizmos.h"
-#include "Reactive/CSubject.h"
 
 namespace Skylicht
 {
@@ -46,8 +45,6 @@ namespace Skylicht
 			CSubject<core::vector3df> m_position;
 			CSubject<core::quaternion> m_rotation;
 			CSubject<core::vector3df> m_scale;
-
-			static CSubject<ETransformGizmo> s_transformGizmos;
 
 			ETransformGizmo m_lastType;
 
@@ -96,11 +93,6 @@ namespace Skylicht
 			}
 
 			virtual void onNotify(ISubject* subject, IObserver* from);
-
-			static CSubject<ETransformGizmo>* getGizmosSubject()
-			{
-				return &s_transformGizmos;
-			}
 		};
 	}
 }

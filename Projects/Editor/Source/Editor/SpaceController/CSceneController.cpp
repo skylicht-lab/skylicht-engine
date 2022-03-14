@@ -55,10 +55,11 @@ namespace Skylicht
 			m_focusNode(NULL),
 			m_contextNode(NULL),
 			m_contextMenuScene(NULL),
-			m_modify(false)
+			m_modify(false),
+			m_gizmos(NULL)
 		{
 			m_transformGizmos = new CTransformGizmos();
-			addGizmos(m_transformGizmos);
+			m_worldTransformDataGizmos = new CWorldTransformDataGizmos();
 
 			CAssetManager::getInstance()->registerFileLoader("scene", this);
 		}
@@ -67,8 +68,8 @@ namespace Skylicht
 		{
 			delete m_contextMenuScene;
 
-			removeGizmos(m_transformGizmos);
 			delete m_transformGizmos;
+			delete m_worldTransformDataGizmos;
 
 			removeAllHierarchyNodes();
 
@@ -162,7 +163,7 @@ namespace Skylicht
 			CHandles::getInstance()->end();
 			CHandles::getInstance()->setNullRenderer();
 
-			m_gizmos.clear();
+			m_gizmos = NULL;
 
 			if (m_spaceHierarchy != NULL)
 			{
@@ -360,9 +361,9 @@ namespace Skylicht
 
 		void CSceneController::update()
 		{
-			for (CGizmos* g : m_gizmos)
+			if (m_gizmos)
 			{
-				g->onGizmos();
+				m_gizmos->onGizmos();
 			}
 		}
 
@@ -377,8 +378,8 @@ namespace Skylicht
 				return;
 
 			// refresh gizmos
-			for (CGizmos* g : m_gizmos)
-				g->refresh();
+			if (m_gizmos)
+				m_gizmos->refresh();
 
 			// Set property & event
 			CPropertyController* propertyController = CPropertyController::getInstance();
@@ -390,25 +391,17 @@ namespace Skylicht
 			selectedObject->addObserver(this);
 		}
 
-		void CSceneController::addGizmos(CGizmos* gizmos)
+		void CSceneController::setGizmos(CGizmos* gizmos)
 		{
-			if (std::find(m_gizmos.begin(), m_gizmos.end(), gizmos) != m_gizmos.end())
+			if (m_gizmos != gizmos)
 			{
-				gizmos->onEnable();
-				return;
-			}
+				if (m_gizmos)
+					m_gizmos->onRemove();
 
-			gizmos->onEnable();
-			m_gizmos.push_back(gizmos);
-		}
+				if (gizmos)
+					gizmos->onEnable();
 
-		void CSceneController::removeGizmos(CGizmos* gizmos)
-		{
-			std::vector<CGizmos*>::iterator i = std::find(m_gizmos.begin(), m_gizmos.end(), gizmos);
-			if (i != m_gizmos.end())
-			{
-				gizmos->onRemove();
-				m_gizmos.erase(i);
+				m_gizmos = gizmos;
 			}
 		}
 
@@ -594,6 +587,9 @@ namespace Skylicht
 					selectedObject = selection->addSelect(obj);
 					propertyController->setProperty(selectedObject);
 
+					// add gizmos
+					setGizmos(m_transformGizmos);
+
 					// add new observer
 					selectedObject->addObserver(this);
 				}
@@ -618,6 +614,9 @@ namespace Skylicht
 				{
 					selectedObject = selection->addSelect(entity);
 					propertyController->setProperty(selectedObject);
+
+					// add gizmos
+					setGizmos(m_worldTransformDataGizmos);
 
 					// add new observer
 					selectedObject->addObserver(this);
