@@ -126,7 +126,7 @@ namespace Skylicht
 
 			m_toolbarButton[World] = worldSpaceDropDown;
 
-			CTransformGizmos::getGizmosSubject()->addObserver(this);
+			getSubjectTransformGizmos().addObserver(this);
 
 			// camera			
 			button = toolbar->addButton(L"Ortho", GUI::ESystemIcon::Ortho, true);
@@ -245,7 +245,7 @@ namespace Skylicht
 			delete m_groupTransform;
 			delete m_groupCameraView;
 
-			CTransformGizmos::getGizmosSubject()->removeObserver(this);
+			getSubjectTransformGizmos().removeObserver(this);
 
 			CSceneController* sceneController = CSceneController::getInstance();
 			sceneController->setSpaceScene(NULL);
@@ -425,14 +425,14 @@ namespace Skylicht
 				GUI::CButton* button = m_groupTransform->getSelectButton();
 				if (button != NULL)
 				{
-					CSubject<ETransformGizmo>* gizmos = CTransformGizmos::getGizmosSubject();
+					CSubject<ETransformGizmo>& gizmos = getSubjectTransformGizmos();
 					if (button == m_toolbarButton[ESceneToolBar::Move])
-						gizmos->set(ETransformGizmo::Translate);
+						gizmos.set(ETransformGizmo::Translate);
 					else if (button == m_toolbarButton[ESceneToolBar::Rotate])
-						gizmos->set(ETransformGizmo::Rotate);
+						gizmos.set(ETransformGizmo::Rotate);
 					else if (button == m_toolbarButton[ESceneToolBar::Scale])
-						gizmos->set(ETransformGizmo::Scale);
-					gizmos->notify(this);
+						gizmos.set(ETransformGizmo::Scale);
+					gizmos.notify(this);
 				}
 			}
 
@@ -445,9 +445,9 @@ namespace Skylicht
 			m_groupTransform->enable(false);
 			m_toolbarButton[World]->setDisabled(true);
 
-			CSubject<ETransformGizmo>* gizmos = CTransformGizmos::getGizmosSubject();
-			gizmos->set(ETransformGizmo::None);
-			gizmos->notify(this);
+			CSubject<ETransformGizmo>& gizmos = getSubjectTransformGizmos();
+			gizmos.set(ETransformGizmo::None);
+			gizmos.notify(this);
 
 			m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Hand]);
 			m_view->setCursor(GUI::ECursorType::Finger);
@@ -455,23 +455,23 @@ namespace Skylicht
 
 		void CSpaceScene::onToolbarTransform(GUI::CBase* base)
 		{
-			CSubject<ETransformGizmo>* gizmos = CTransformGizmos::getGizmosSubject();
-			ETransformGizmo type = gizmos->get();
+			CSubject<ETransformGizmo>& gizmos = getSubjectTransformGizmos();
+			ETransformGizmo type = gizmos.get();
 
 			if (base == m_toolbarButton[ESceneToolBar::Move] && type != ETransformGizmo::Translate)
 			{
-				gizmos->set(ETransformGizmo::Translate);
-				gizmos->notify(this);
+				gizmos.set(ETransformGizmo::Translate);
+				gizmos.notify(this);
 			}
 			else if (base == m_toolbarButton[ESceneToolBar::Rotate] && type != ETransformGizmo::Rotate)
 			{
-				gizmos->set(ETransformGizmo::Rotate);
-				gizmos->notify(this);
+				gizmos.set(ETransformGizmo::Rotate);
+				gizmos.notify(this);
 			}
 			else if (base == m_toolbarButton[ESceneToolBar::Scale] && type != ETransformGizmo::Scale)
 			{
-				gizmos->set(ETransformGizmo::Scale);
-				gizmos->notify(this);
+				gizmos.set(ETransformGizmo::Scale);
+				gizmos.notify(this);
 			}
 
 			m_groupTransform->selectButton(dynamic_cast<GUI::CButton*>(base));
@@ -493,10 +493,10 @@ namespace Skylicht
 			if (from == this)
 				return;
 
-			CSubject<ETransformGizmo>* gizmos = CTransformGizmos::getGizmosSubject();
-			if (subject == gizmos)
+			CSubject<ETransformGizmo>& gizmos = getSubjectTransformGizmos();
+			if (subject == &gizmos)
 			{
-				ETransformGizmo type = gizmos->get();
+				ETransformGizmo type = gizmos.get();
 				switch (type)
 				{
 				case ETransformGizmo::None:

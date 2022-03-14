@@ -31,9 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	namespace Editor
-	{
-		CSubject<ETransformGizmo> CTransformGizmos::s_transformGizmos(ETransformGizmo::Translate);
-
+	{		
 		CTransformGizmos::CTransformGizmos() :
 			m_transform(NULL),
 			m_selectObject(NULL),
@@ -42,13 +40,14 @@ namespace Skylicht
 			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
 			m_lastType(ETransformGizmo::Translate)
 		{
-			s_transformGizmos.addObserver(this);
-			m_lastType = s_transformGizmos.get();
+			getSubjectTransformGizmos().addObserver(this);
+
+			m_lastType = getSubjectTransformGizmos().get();
 		}
 
 		CTransformGizmos::~CTransformGizmos()
 		{
-			s_transformGizmos.removeObserver(this);
+			getSubjectTransformGizmos().removeObserver(this);
 		}
 
 		void CTransformGizmos::onNotify(ISubject* subject, IObserver* from)
@@ -165,7 +164,7 @@ namespace Skylicht
 			{
 				m_parentWorld.makeIdentity();
 				handle->setWorld(m_parentWorld);
-				handle->end();				
+				handle->end();
 				return;
 			}
 
@@ -210,7 +209,7 @@ namespace Skylicht
 				return;
 			}
 
-			ETransformGizmo type = s_transformGizmos.get();
+			ETransformGizmo type = getSubjectTransformGizmos().get();
 
 			if (type == ETransformGizmo::Translate)
 			{
@@ -288,8 +287,8 @@ namespace Skylicht
 
 		void CTransformGizmos::onEnable()
 		{
-			s_transformGizmos.set(m_lastType);
-			s_transformGizmos.notify(this);
+			getSubjectTransformGizmos().set(m_lastType);
+			getSubjectTransformGizmos().notify(this);
 		}
 
 		void CTransformGizmos::onRemove()
@@ -298,7 +297,7 @@ namespace Skylicht
 			m_transform = NULL;
 			m_selectID = "";
 
-			m_lastType = s_transformGizmos.get();
+			m_lastType = getSubjectTransformGizmos().get();
 
 			CHandles* handles = CHandles::getInstance();
 			if (handles != NULL)

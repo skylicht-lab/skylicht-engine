@@ -29,6 +29,13 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		CSubject<ETransformGizmo> s_transformGizmos(ETransformGizmo::Translate);
+
+		CSubject<ETransformGizmo>& getSubjectTransformGizmos()
+		{
+			return s_transformGizmos;
+		}
+
 		CGizmos::CGizmos()
 		{
 

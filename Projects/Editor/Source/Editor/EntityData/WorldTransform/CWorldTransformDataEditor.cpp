@@ -44,7 +44,7 @@ namespace Skylicht
 			RotateY(0.0f),
 			RotateZ(0.0f)
 		{
-			m_gizmos = CSceneController::getInstance()->getTransformGizmos();
+			m_gizmos = CSceneController::getInstance()->getWorldTransformDataGizmos();
 		}
 
 		CWorldTransformDataEditor::~CWorldTransformDataEditor()
@@ -55,6 +55,23 @@ namespace Skylicht
 		void CWorldTransformDataEditor::initGUI(IEntityData* entityData, CSpaceProperty* ui)
 		{
 			m_worldTransform = dynamic_cast<CWorldTransformData*>(entityData);
+
+			// clear all registered observer
+			X.removeAllObserver();
+			Y.removeAllObserver();
+			Z.removeAllObserver();
+
+			ScaleX.removeAllObserver();
+			ScaleY.removeAllObserver();
+			ScaleZ.removeAllObserver();
+
+			RotateX.removeAllObserver();
+			RotateY.removeAllObserver();
+			RotateZ.removeAllObserver();
+
+			m_gizmos->getPosition().removeAllObserver();
+			m_gizmos->getRotation().removeAllObserver();
+			m_gizmos->getScale().removeAllObserver();
 
 			if (m_worldTransform != NULL)
 			{
@@ -213,6 +230,10 @@ namespace Skylicht
 			RotateX.removeAllObserver();
 			RotateY.removeAllObserver();
 			RotateZ.removeAllObserver();
+
+			m_gizmos->getPosition().removeAllObserver();
+			m_gizmos->getRotation().removeAllObserver();
+			m_gizmos->getScale().removeAllObserver();
 		}
 
 		void CWorldTransformDataEditor::update()

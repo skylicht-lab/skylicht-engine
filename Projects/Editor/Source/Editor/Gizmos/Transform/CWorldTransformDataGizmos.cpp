@@ -40,12 +40,14 @@ namespace Skylicht
 			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
 			m_lastType(ETransformGizmo::Translate)
 		{
+			getSubjectTransformGizmos().addObserver(this);
 
+			m_lastType = getSubjectTransformGizmos().get();
 		}
 
 		CWorldTransformDataGizmos::~CWorldTransformDataGizmos()
 		{
-
+			getSubjectTransformGizmos().removeObserver(this);
 		}
 
 		void CWorldTransformDataGizmos::onNotify(ISubject* subject, IObserver* from)
@@ -155,7 +157,24 @@ namespace Skylicht
 
 				if (selectObject->getType() == CSelectObject::Entity)
 				{
+					m_selectObject = scene->getEntityManager()->getEntityByID(m_selectID.c_str());
+					m_transform = m_selectObject->getData<CWorldTransformData>();
 
+					m_position = m_transform->Relative.getTranslation();
+					m_rotation = m_transform->Relative.getRotationDegrees();
+					m_scale = m_transform->Relative.getScale();
+
+					if (m_transform->ParentIndex > 0)
+					{
+						CEntity* parent = scene->getEntityManager()->getEntity(m_transform->ParentIndex);
+						CWorldTransformData* parentTransform = parent->getData<CWorldTransformData>();
+
+						m_parentWorld = parentTransform->World;
+					}
+					else
+					{
+						m_parentWorld = core::IdentityMatrix;
+					}
 				}
 
 				handle->setWorld(m_parentWorld);
@@ -170,32 +189,32 @@ namespace Skylicht
 				m_cacheSelectedObjects.clear();
 				return;
 			}
-#if 0
-			ETransformGizmo type = s_transformGizmos.get();
+
+			ETransformGizmo type = getSubjectTransformGizmos().get();
 
 			if (type == ETransformGizmo::Translate)
 			{
-				core::vector3df newPos = handle->positionHandle(*m_position, m_transform->getRotationQuaternion());
+				core::vector3df newPos = handle->positionHandle(*m_position, m_rotation.get());
 				if (newPos != *m_position)
 				{
 					core::vector3df delta = newPos - *m_position;
 					updateSelectedPosition(delta);
 
 					m_position.notify(this);
-					m_transform->setPosition(newPos);
+					// m_transform->setPosition(newPos);
 				}
 
 				m_position = newPos;
 				if (handle->endCheck())
 				{
-					m_transform->setPosition(*m_position);
+					// m_transform->setPosition(*m_position);
 					handle->end();
 					m_cacheSelectedObjects.clear();
 				}
 			}
 			else if (type == ETransformGizmo::Rotate)
 			{
-				core::quaternion newRot = handle->rotateHandle(*m_rotation, m_transform->getPosition());
+				core::quaternion newRot = handle->rotateHandle(*m_rotation, m_position.get());
 				if (newRot != *m_rotation)
 				{
 					// new = rot * delta
@@ -208,33 +227,33 @@ namespace Skylicht
 					updateSelectedRotation(delta);
 
 					m_rotation.notify(this);
-					m_transform->setRotation(newRot);
+					// m_transform->setRotation(newRot);
 				}
 
 				m_rotation = newRot;
 				if (handle->endCheck())
 				{
-					m_transform->setRotation(*m_rotation);
+					// m_transform->setRotation(*m_rotation);
 					handle->end();
 					m_cacheSelectedObjects.clear();
 				}
 			}
 			else if (type == ETransformGizmo::Scale)
 			{
-				core::vector3df newScale = handle->scaleHandle(*m_scale, m_transform->getPosition(), m_transform->getRotationQuaternion());
+				core::vector3df newScale = handle->scaleHandle(*m_scale, m_position.get(), m_rotation.get());
 				if (newScale != *m_scale)
 				{
 					core::vector3df delta = newScale / *m_scale;
 					updateSelectedScale(delta);
 
 					m_scale.notify(this);
-					m_transform->setScale(newScale);
+					// m_transform->setScale(newScale);
 				}
 
 				m_scale = newScale;
 				if (handle->endCheck())
 				{
-					m_transform->setScale(*m_scale);
+					// m_transform->setScale(*m_scale);
 					handle->end();
 					m_cacheSelectedObjects.clear();
 				}
@@ -244,7 +263,6 @@ namespace Skylicht
 				handle->end();
 				m_cacheSelectedObjects.clear();
 			}
-#endif
 		}
 
 		void CWorldTransformDataGizmos::onEnable()
