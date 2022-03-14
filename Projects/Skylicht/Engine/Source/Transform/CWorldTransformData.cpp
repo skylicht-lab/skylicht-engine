@@ -31,6 +31,7 @@ namespace Skylicht
 
 	CWorldTransformData::CWorldTransformData() :
 		HasChanged(true),
+		NeedValidate(true),
 		Depth(0),
 		ParentIndex(-1)
 	{

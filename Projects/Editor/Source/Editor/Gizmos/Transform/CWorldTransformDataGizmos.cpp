@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CTransformGizmos.h"
+#include "CWorldTransformDataGizmos.h"
 #include "Selection/CSelection.h"
 #include "Editor/SpaceController/CSceneController.h"
 #include "Handles/CHandles.h"
@@ -32,9 +32,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSubject<ETransformGizmo> CTransformGizmos::s_transformGizmos(ETransformGizmo::Translate);
-
-		CTransformGizmos::CTransformGizmos() :
+		CWorldTransformDataGizmos::CWorldTransformDataGizmos() :
 			m_transform(NULL),
 			m_selectObject(NULL),
 			m_position(core::vector3df()),
@@ -42,16 +40,15 @@ namespace Skylicht
 			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
 			m_lastType(ETransformGizmo::Translate)
 		{
-			s_transformGizmos.addObserver(this);
-			m_lastType = s_transformGizmos.get();
+
 		}
 
-		CTransformGizmos::~CTransformGizmos()
+		CWorldTransformDataGizmos::~CWorldTransformDataGizmos()
 		{
-			s_transformGizmos.removeObserver(this);
+
 		}
 
-		void CTransformGizmos::onNotify(ISubject* subject, IObserver* from)
+		void CWorldTransformDataGizmos::onNotify(ISubject* subject, IObserver* from)
 		{
 			if (from == this)
 				return;
@@ -60,25 +57,25 @@ namespace Skylicht
 			m_lastType = gizmos->get();
 		}
 
-		void CTransformGizmos::setPosition(const core::vector3df& pos)
+		void CWorldTransformDataGizmos::setPosition(const core::vector3df& pos)
 		{
 			CHandles::getInstance()->end();
 			m_position = pos;
 		}
 
-		void CTransformGizmos::setScale(const core::vector3df& scale)
+		void CWorldTransformDataGizmos::setScale(const core::vector3df& scale)
 		{
 			CHandles::getInstance()->end();
 			m_scale = scale;
 		}
 
-		void CTransformGizmos::setRotation(const core::vector3df& rotate)
+		void CWorldTransformDataGizmos::setRotation(const core::vector3df& rotate)
 		{
 			CHandles::getInstance()->end();
 			m_rotation = core::quaternion(rotate * core::DEGTORAD);
 		}
 
-		void CTransformGizmos::getSelectedTransform(std::vector<CTransformEuler*>& transforms)
+		void CWorldTransformDataGizmos::getSelectedTransform(std::vector<CWorldTransformData*>& transforms)
 		{
 			CSceneController* sceneController = CSceneController::getInstance();
 			CScene* scene = sceneController->getScene();
@@ -86,77 +83,56 @@ namespace Skylicht
 			std::vector<CSelectObject*>& selectObjects = CSelection::getInstance()->getAllSelected();
 			for (CSelectObject* obj : selectObjects)
 			{
-				if (obj->getType() == CSelectObject::GameObject)
+				if (obj->getType() == CSelectObject::Entity)
 				{
-					CGameObject* selecteObject = NULL;
 
-					if (m_cacheSelectedObjects.find(obj->getID()) == m_cacheSelectedObjects.end())
-					{
-						selecteObject = scene->searchObjectInChildByID(obj->getID().c_str());
-						if (selecteObject != NULL)
-							m_cacheSelectedObjects[obj->getID()] = selecteObject;
-					}
-					else
-					{
-						selecteObject = m_cacheSelectedObjects[obj->getID()];
-					}
-
-					if (selecteObject != NULL)
-					{
-						CTransformEuler* t = selecteObject->getComponent<CTransformEuler>();
-						if (t != NULL)
-							transforms.push_back(t);
-					}
 				}
 			}
 		}
 
-		void CTransformGizmos::updateSelectedPosition(const core::vector3df& delta)
+		void CWorldTransformDataGizmos::updateSelectedPosition(const core::vector3df& delta)
 		{
-			std::vector<CTransformEuler*> transforms;
+			std::vector<CWorldTransformData*> transforms;
 			getSelectedTransform(transforms);
 
-			for (CTransformEuler* t : transforms)
+			for (CWorldTransformData* t : transforms)
 			{
 				if (t != m_transform)
 				{
-					core::vector3df newPosition = t->getPosition() + delta;
-					t->setPosition(newPosition);
+
 				}
 			}
 		}
 
-		void CTransformGizmos::updateSelectedScale(const core::vector3df& delta)
+		void CWorldTransformDataGizmos::updateSelectedScale(const core::vector3df& delta)
 		{
-			std::vector<CTransformEuler*> transforms;
+			std::vector<CWorldTransformData*> transforms;
 			getSelectedTransform(transforms);
 
-			for (CTransformEuler* t : transforms)
+			for (CWorldTransformData* t : transforms)
 			{
 				if (t != m_transform)
 				{
-					core::vector3df newScale = t->getScale() * delta;
-					t->setScale(newScale);
+
 				}
 			}
 		}
 
-		void CTransformGizmos::updateSelectedRotation(const core::quaternion& delta)
+		void CWorldTransformDataGizmos::updateSelectedRotation(const core::quaternion& delta)
 		{
-			std::vector<CTransformEuler*> transforms;
+			std::vector<CWorldTransformData*> transforms;
 			getSelectedTransform(transforms);
 
-			for (CTransformEuler* t : transforms)
+			for (CWorldTransformData* t : transforms)
 			{
 				if (t != m_transform)
 				{
-					core::quaternion newRotation = t->getRotationQuaternion() * delta;
-					t->setRotation(newRotation);
+
 				}
 			}
 		}
 
-		void CTransformGizmos::onGizmos()
+		void CWorldTransformDataGizmos::onGizmos()
 		{
 			CHandles* handle = CHandles::getInstance();
 
@@ -165,7 +141,7 @@ namespace Skylicht
 			{
 				m_parentWorld.makeIdentity();
 				handle->setWorld(m_parentWorld);
-				handle->end();				
+				handle->end();
 				return;
 			}
 
@@ -177,24 +153,9 @@ namespace Skylicht
 				CSceneController* sceneController = CSceneController::getInstance();
 				CScene* scene = sceneController->getScene();
 
-				if (selectObject->getType() == CSelectObject::GameObject)
+				if (selectObject->getType() == CSelectObject::Entity)
 				{
-					m_selectObject = scene->searchObjectInChildByID(m_selectID.c_str());
-					if (m_selectObject != NULL)
-					{
-						m_transform = m_selectObject->getComponent<CTransformEuler>();
 
-						m_parentWorld.makeIdentity();
-						CTransform* parentTransform = m_transform->getParent();
-						if (parentTransform != NULL)
-							m_parentWorld = parentTransform->calcWorldTransform();
-
-						m_position = m_transform->getPosition();
-						m_rotation = m_transform->getRotationQuaternion();
-						m_scale = m_transform->getScale();
-
-						onEnable();
-					}
 				}
 
 				handle->setWorld(m_parentWorld);
@@ -209,7 +170,7 @@ namespace Skylicht
 				m_cacheSelectedObjects.clear();
 				return;
 			}
-
+#if 0
 			ETransformGizmo type = s_transformGizmos.get();
 
 			if (type == ETransformGizmo::Translate)
@@ -283,29 +244,28 @@ namespace Skylicht
 				handle->end();
 				m_cacheSelectedObjects.clear();
 			}
-
+#endif
 		}
 
-		void CTransformGizmos::onEnable()
+		void CWorldTransformDataGizmos::onEnable()
 		{
-			s_transformGizmos.set(m_lastType);
-			s_transformGizmos.notify(this);
+
 		}
 
-		void CTransformGizmos::onRemove()
+		void CWorldTransformDataGizmos::onRemove()
 		{
 			m_selectObject = NULL;
 			m_transform = NULL;
 			m_selectID = "";
 
-			m_lastType = s_transformGizmos.get();
+			// m_lastType = s_transformGizmos.get();
 
 			CHandles* handles = CHandles::getInstance();
 			if (handles != NULL)
 				handles->end();
 		}
 
-		void CTransformGizmos::refresh()
+		void CWorldTransformDataGizmos::refresh()
 		{
 			onRemove();
 		}

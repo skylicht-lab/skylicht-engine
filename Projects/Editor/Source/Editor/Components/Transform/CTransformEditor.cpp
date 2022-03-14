@@ -105,9 +105,6 @@ namespace Skylicht
 			// init ui event & sync gizmos
 			if (m_gameObject->isEnableEditorChange() && m_transform != NULL)
 			{
-				// setup gizmos
-				CSceneController::getInstance()->addGizmos(m_gizmos);
-
 				// setup gui
 				GUI::CCollapsibleGroup* group = ui->addGroup("Transform", this);
 
@@ -311,8 +308,6 @@ namespace Skylicht
 			}
 			else
 			{
-				// remove current gizmos
-				CSceneController::getInstance()->removeGizmos(m_gizmos);
 				m_skip = true;
 			}
 		}

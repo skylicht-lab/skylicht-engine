@@ -30,6 +30,14 @@ namespace Skylicht
 
 	namespace Editor
 	{
+		enum class ETransformGizmo
+		{
+			None,
+			Translate,
+			Rotate,
+			Scale
+		};
+
 		class CGizmos
 		{
 		public:

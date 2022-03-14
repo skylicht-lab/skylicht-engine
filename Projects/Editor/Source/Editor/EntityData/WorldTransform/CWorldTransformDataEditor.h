@@ -34,7 +34,25 @@ namespace Skylicht
 		class CWorldTransformDataEditor : public CEntityDataEditor
 		{
 		protected:
+			CTransformGizmos* m_gizmos;
+
 			CWorldTransformData* m_worldTransform;
+
+			CSubject<float> X;
+			CSubject<float> Y;
+			CSubject<float> Z;
+
+			CSubject<float> ScaleX;
+			CSubject<float> ScaleY;
+			CSubject<float> ScaleZ;
+
+			CSubject<float> RotateX;
+			CSubject<float> RotateY;
+			CSubject<float> RotateZ;
+
+			core::vector3df m_position;
+			core::vector3df m_rotate;
+			core::vector3df m_scale;
 
 		public:
 			CWorldTransformDataEditor();
@@ -46,6 +64,8 @@ namespace Skylicht
 			virtual void closeGUI();
 
 			virtual void update();
+
+			void updateMatrix();
 		};
 	}
 }

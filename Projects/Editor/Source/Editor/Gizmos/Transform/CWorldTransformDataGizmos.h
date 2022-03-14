@@ -24,7 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Transform/CTransformEuler.h"
+#include "Entity/CEntity.h"
+#include "Transform/CWorldTransformData.h"
 #include "Editor/Gizmos/CGizmos.h"
 #include "Reactive/CSubject.h"
 
@@ -32,7 +33,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CTransformGizmos :
+		class CWorldTransformDataGizmos :
 			public CGizmos,
 			public IObserver
 		{
@@ -40,23 +41,22 @@ namespace Skylicht
 			core::matrix4 m_parentWorld;
 
 			std::string m_selectID;
-			CGameObject* m_selectObject;
-			CTransformEuler* m_transform;
+
+			CEntity* m_selectObject;
+			CWorldTransformData* m_transform;
 
 			CSubject<core::vector3df> m_position;
 			CSubject<core::quaternion> m_rotation;
 			CSubject<core::vector3df> m_scale;
 
-			static CSubject<ETransformGizmo> s_transformGizmos;
-
 			ETransformGizmo m_lastType;
 
-			std::map<std::string, CGameObject*> m_cacheSelectedObjects;
+			std::map<std::string, CEntity*> m_cacheSelectedObjects;
 
 		public:
-			CTransformGizmos();
+			CWorldTransformDataGizmos();
 
-			virtual ~CTransformGizmos();
+			virtual ~CWorldTransformDataGizmos();
 
 			virtual void onGizmos();
 
@@ -72,7 +72,7 @@ namespace Skylicht
 
 			void setRotation(const core::vector3df& rotate);
 
-			void getSelectedTransform(std::vector<CTransformEuler*>& transforms);
+			void getSelectedTransform(std::vector<CWorldTransformData*>& transforms);
 
 			void updateSelectedPosition(const core::vector3df& delta);
 
@@ -96,11 +96,6 @@ namespace Skylicht
 			}
 
 			virtual void onNotify(ISubject* subject, IObserver* from);
-
-			static CSubject<ETransformGizmo>* getGizmosSubject()
-			{
-				return &s_transformGizmos;
-			}
 		};
 	}
 }
