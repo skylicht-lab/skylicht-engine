@@ -41,6 +41,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/CSubject.h"
 
 #include "Editor/Gizmos/Transform/CTransformGizmos.h"
+#include "Editor/Gizmos/Transform/CWorldTransformDataGizmos.h"
 
 namespace Skylicht
 {
@@ -72,9 +73,11 @@ namespace Skylicht
 
 			CContextMenuScene* m_contextMenuScene;
 
-			std::vector<CGizmos*> m_gizmos;
+			CGizmos* m_gizmos;
 
 			CTransformGizmos* m_transformGizmos;
+
+			CWorldTransformDataGizmos* m_worldTransformDataGizmos;
 
 			std::string m_scenePath;
 
@@ -94,9 +97,12 @@ namespace Skylicht
 				return m_transformGizmos;
 			}
 
-			void addGizmos(CGizmos* gizmos);
+			inline CWorldTransformDataGizmos* getWorldTransformDataGizmos()
+			{
+				return m_worldTransformDataGizmos;
+			}
 
-			void removeGizmos(CGizmos* gizmos);
+			void setGizmos(CGizmos* gizmos);
 
 			void initContextMenu(GUI::CCanvas* canvas);
 

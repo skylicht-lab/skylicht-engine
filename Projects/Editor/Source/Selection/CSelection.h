@@ -46,6 +46,11 @@ namespace Skylicht
 				return m_selected;
 			}
 
+			bool isSelected()
+			{
+				return m_selected.size() > 0;
+			}
+
 			std::vector<CSelectObject*> getSelectedByType(CSelectObject::ESelectType type);
 
 			void clear();

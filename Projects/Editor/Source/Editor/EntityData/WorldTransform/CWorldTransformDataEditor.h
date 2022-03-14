@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/EntityData/CEntityDataEditor.h"
 #include "Activator/CEditorActivator.h"
-#include "Editor/Gizmos/Transform/CTransformGizmos.h"
+#include "Editor/Gizmos/Transform/CWorldTransformDataGizmos.h"
 #include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
@@ -34,7 +34,7 @@ namespace Skylicht
 		class CWorldTransformDataEditor : public CEntityDataEditor
 		{
 		protected:
-			CTransformGizmos* m_gizmos;
+			CWorldTransformDataGizmos* m_gizmos;
 
 			CWorldTransformData* m_worldTransform;
 
