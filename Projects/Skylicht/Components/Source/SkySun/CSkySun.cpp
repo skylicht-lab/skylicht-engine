@@ -38,9 +38,9 @@ namespace Skylicht
 		m_sunColor(255, 255, 153, 25),
 		m_sunIntensity(0.5),
 		m_glare1Color(255, 255, 153, 25),
-		m_glare1Intensity(0.4),
+		m_glare1Intensity(0.3),
 		m_glare2Color(255, 255, 51, 25),
-		m_glare2Intensity(0.2),
+		m_glare2Intensity(0.15),
 		m_changed(true)
 	{
 	}
