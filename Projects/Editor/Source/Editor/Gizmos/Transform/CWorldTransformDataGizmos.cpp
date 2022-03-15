@@ -201,13 +201,13 @@ namespace Skylicht
 					updateSelectedPosition(delta);
 
 					m_position.notify(this);
-					// m_transform->setPosition(newPos);
+					setMatrix(m_transform->Relative, newPos, m_rotation.get(), m_scale.get());
 				}
 
 				m_position = newPos;
 				if (handle->endCheck())
 				{
-					// m_transform->setPosition(*m_position);
+					setMatrix(m_transform->Relative, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
 					m_cacheSelectedObjects.clear();
 				}
@@ -227,13 +227,13 @@ namespace Skylicht
 					updateSelectedRotation(delta);
 
 					m_rotation.notify(this);
-					// m_transform->setRotation(newRot);
+					setMatrix(m_transform->Relative, m_position.get(), newRot, m_scale.get());
 				}
 
 				m_rotation = newRot;
 				if (handle->endCheck())
 				{
-					// m_transform->setRotation(*m_rotation);
+					setMatrix(m_transform->Relative, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
 					m_cacheSelectedObjects.clear();
 				}
@@ -247,13 +247,13 @@ namespace Skylicht
 					updateSelectedScale(delta);
 
 					m_scale.notify(this);
-					// m_transform->setScale(newScale);
+					setMatrix(m_transform->Relative, m_position.get(), m_rotation.get(), newScale);
 				}
 
 				m_scale = newScale;
 				if (handle->endCheck())
 				{
-					// m_transform->setScale(*m_scale);
+					setMatrix(m_transform->Relative, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
 					m_cacheSelectedObjects.clear();
 				}
@@ -263,6 +263,33 @@ namespace Skylicht
 				handle->end();
 				m_cacheSelectedObjects.clear();
 			}
+		}
+
+		void CWorldTransformDataGizmos::setMatrix(core::matrix4& mat, const core::vector3df& pos, const core::quaternion& rot, const core::vector3df& scale)
+		{
+			mat.makeIdentity();
+			mat = rot.getMatrix();
+
+			f32* m = mat.pointer();
+
+			m[0] *= scale.X;
+			m[1] *= scale.X;
+			m[2] *= scale.X;
+			m[3] *= scale.X;
+
+			m[4] *= scale.Y;
+			m[5] *= scale.Y;
+			m[6] *= scale.Y;
+			m[7] *= scale.Y;
+
+			m[8] *= scale.Z;
+			m[9] *= scale.Z;
+			m[10] *= scale.Z;
+			m[11] *= scale.Z;
+
+			m[12] = pos.X;
+			m[13] = pos.Y;
+			m[14] = pos.Z;
 		}
 
 		void CWorldTransformDataGizmos::onEnable()
@@ -276,7 +303,7 @@ namespace Skylicht
 			m_transform = NULL;
 			m_selectID = "";
 
-			// m_lastType = s_transformGizmos.get();
+			m_lastType = getSubjectTransformGizmos().get();
 
 			CHandles* handles = CHandles::getInstance();
 			if (handles != NULL)
