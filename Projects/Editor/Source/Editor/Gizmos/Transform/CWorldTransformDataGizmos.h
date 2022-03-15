@@ -96,6 +96,8 @@ namespace Skylicht
 			}
 
 			virtual void onNotify(ISubject* subject, IObserver* from);
+
+			void setMatrix(core::matrix4& mat, const core::vector3df& pos, const core::quaternion& rot, const core::vector3df& scale);
 		};
 	}
 }

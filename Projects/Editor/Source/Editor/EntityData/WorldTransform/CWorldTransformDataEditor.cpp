@@ -88,6 +88,22 @@ namespace Skylicht
 				Y = m_position.Y;
 				Z = m_position.Z;
 
+				m_gizmos->getPosition().addObserver(new CObserver([&, x = &X, y = &Y, z = &Z](ISubject* subject, IObserver* from)
+					{
+						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
+						const core::vector3df& pos = value->get();
+
+						x->set(pos.X);
+						y->set(pos.Y);
+						z->set(pos.Z);
+
+						x->notify(from);
+						y->notify(from);
+						z->notify(from);
+
+						updateMatrix();
+					}), true);
+
 				ui->addNumberInput(layout, L"Position X", &X, 0.01f);
 				ui->addNumberInput(layout, L"Y", &Y, 0.01f);
 				ui->addNumberInput(layout, L"Z", &Z, 0.01f);
@@ -130,6 +146,24 @@ namespace Skylicht
 				RotateX = m_rotate.X;
 				RotateY = m_rotate.Y;
 				RotateZ = m_rotate.Z;
+
+				m_gizmos->getRotation().addObserver(new CObserver([&, x = &RotateX, y = &RotateY, z = &RotateZ](ISubject* subject, IObserver* from)
+					{
+						CSubject<core::quaternion>* value = (CSubject<core::quaternion>*)subject;
+
+						core::vector3df rot;
+						value->get().toEuler(rot);
+
+						x->set(rot.X * core::RADTODEG);
+						y->set(rot.Y * core::RADTODEG);
+						z->set(rot.Z * core::RADTODEG);
+
+						x->notify(from);
+						y->notify(from);
+						z->notify(from);
+
+						updateMatrix();
+					}), true);
 
 				ui->addNumberInput(layout, L"Rotation(Deg) X", &RotateX, 0.1f);
 				ui->addNumberInput(layout, L"Y", &RotateY, 0.1f);
@@ -174,6 +208,22 @@ namespace Skylicht
 				ScaleX = m_scale.X;
 				ScaleY = m_scale.Y;
 				ScaleZ = m_scale.Z;
+
+				m_gizmos->getScale().addObserver(new CObserver([&, x = &ScaleX, y = &ScaleY, z = &ScaleZ](ISubject* subject, IObserver* from)
+					{
+						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
+						const core::vector3df& scale = value->get();
+
+						x->set(scale.X);
+						y->set(scale.Y);
+						z->set(scale.Z);
+
+						x->notify(from);
+						y->notify(from);
+						z->notify(from);
+
+						updateMatrix();
+					}), true);
 
 				ui->addNumberInput(layout, L"Scale X", &ScaleX, 0.01f);
 				ui->addNumberInput(layout, L"Y", &ScaleY, 0.01f);
