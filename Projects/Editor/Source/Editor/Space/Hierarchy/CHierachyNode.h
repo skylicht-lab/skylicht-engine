@@ -176,6 +176,8 @@ namespace Skylicht
 
 			void removeAllChild();
 
+			void removeAll(EDataType dataType);
+
 			bool removeChildNoDelete(CHierachyNode* child);
 
 			void removeGUI();

@@ -99,7 +99,17 @@ namespace Skylicht
 
 			CHierachyNode* node = m_node->getNodeByTag(object);
 			if (node != NULL && node->OnUpdate != NULL)
+			{
 				node->OnUpdate(node);
+
+				// rebuild-gui loop all entities child
+				std::vector<CHierachyNode*>& childs = node->getChilds();
+				for (CHierachyNode* child : childs)
+				{
+					if (child->getTagDataType() == CHierachyNode::Entity)
+						buildHierarchyNode(node->getGUINode(), child);
+				}
+			}
 		}
 
 		GUI::CTreeNode* CHierarchyController::buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node)
