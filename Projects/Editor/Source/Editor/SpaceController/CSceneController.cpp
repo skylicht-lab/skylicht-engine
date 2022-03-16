@@ -337,9 +337,17 @@ namespace Skylicht
 			return node;
 		}
 
+		void CSceneController::updateHierachy(CGameObject* object)
+		{
+			if (m_spaceHierarchy != NULL)
+			{
+				m_spaceHierarchy->getController()->updateNode(object);
+			}
+		}
+
 		void CSceneController::buildEntityNodes(CGameObject* object, CHierachyNode* parentNode)
 		{
-			parentNode->removeAllChild();
+			parentNode->removeAll(CHierachyNode::Entity);
 
 			CEntityHandler* entityHandler = object->getComponent<CEntityHandler>();
 			if (entityHandler == NULL)

@@ -109,7 +109,7 @@ namespace Skylicht
 	{
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
 
-		for (int i = 0, n = (int)m_entities.size(); i < n; i++)
+		for (int i = (int)m_entities.size() - 1; i >= 0; i--)
 		{
 			if (m_entities[i] == entity)
 			{
