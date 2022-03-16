@@ -111,6 +111,18 @@ namespace Skylicht
 			m_childs.clear();
 		}
 
+		void CHierachyNode::removeAll(EDataType dataType)
+		{
+			for (int i = (int)m_childs.size() - 1; i >= 0; i--)
+			{
+				if (m_childs[i]->getTagDataType() == dataType)
+				{
+					delete m_childs[i];
+					m_childs.erase(m_childs.begin() + i);
+				}
+			}
+		}
+
 		bool CHierachyNode::removeChildNoDelete(CHierachyNode* child)
 		{
 			std::vector<CHierachyNode*>::iterator i = m_childs.begin(), end = m_childs.end();

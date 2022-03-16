@@ -28,6 +28,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CLightProbes);
+
+	CATEGORY_COMPONENT(CLightProbes, "Light Probes", "Lighting");
+
 	CLightProbes::CLightProbes()
 	{
 

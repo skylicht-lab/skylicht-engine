@@ -24,52 +24,30 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
+#include "Serializable/CObjectSerializable.h"
+#include "Editor/Components/CComponentEditor.h"
+#include "Activator/CEditorActivator.h"
+#include "Editor/Components/Default/CDefaultEditor.h"
 
-#include "Editor/Space/CSpace.h"
-
-#include "CHierarchyController.h"
-#include "CHierachyContextMenu.h"
+#include "LightProbes/CLightProbes.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		class CLightProbesEditor : public CDefaultEditor
 		{
 		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
+			CLightProbes* m_lightProbes;
 
-			GUI::CTreeControl* m_tree;
-
-			CHierarchyController* m_hierarchyController;
-			CHierachyContextMenu* m_hierarchyContextMenu;
 		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+			CLightProbesEditor();
 
-			virtual ~CSpaceHierarchy();
+			virtual ~CLightProbesEditor();
+
+			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
 			virtual void update();
-
-			void deselectAll();
-
-			void deleteHierarchyNode();
-
-			void setHierarchyNode(CHierachyNode* node);
-
-			void add(CHierachyNode* node);
-
-			void rename(CHierachyNode* node);
-
-			void scrollToNode(GUI::CTreeNode* node);
-
-			inline CHierarchyController* getController()
-			{
-				return m_hierarchyController;
-			}
 		};
 	}
 }

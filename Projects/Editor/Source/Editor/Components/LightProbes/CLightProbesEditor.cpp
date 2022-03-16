@@ -22,54 +22,53 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-
-#include "CHierarchyController.h"
-#include "CHierachyContextMenu.h"
+#include "pch.h"
+#include "CLightProbesEditor.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/Space/Hierarchy/CHierarchyController.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceHierarchy : public CSpace
+		EDITOR_REGISTER(CLightProbesEditor, CLightProbes);
+
+		CLightProbesEditor::CLightProbesEditor() :
+			m_lightProbes(NULL)
 		{
-		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
 
-			GUI::CTreeControl* m_tree;
+		}
 
-			CHierarchyController* m_hierarchyController;
-			CHierachyContextMenu* m_hierarchyContextMenu;
-		public:
-			CSpaceHierarchy(GUI::CWindow* window, CEditor* editor);
+		CLightProbesEditor::~CLightProbesEditor()
+		{
 
-			virtual ~CSpaceHierarchy();
+		}
 
-			virtual void update();
+		void CLightProbesEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		{
+			layout->addSpace(5.0f);
 
-			void deselectAll();
-
-			void deleteHierarchyNode();
-
-			void setHierarchyNode(CHierachyNode* node);
-
-			void add(CHierachyNode* node);
-
-			void rename(CHierachyNode* node);
-
-			void scrollToNode(GUI::CTreeNode* node);
-
-			inline CHierarchyController* getController()
+			ui->addButton(layout, L"Add Probe")->OnPress = [&](GUI::CBase* button)
 			{
-				return m_hierarchyController;
-			}
-		};
+				CLightProbes* probes = (CLightProbes*)m_component;
+				probes->addLightProbe();
+
+				CSceneController::getInstance()->updateHierachy(m_gameObject);
+			};
+
+			layout->addSpace(5.0f);
+
+			ui->addButton(layout, L"Bake Lighting")->OnPress = [&](GUI::CBase* button)
+			{
+				CLightProbes* probes = (CLightProbes*)m_component;
+
+			};
+		}
+
+		void CLightProbesEditor::update()
+		{
+
+		}
 	}
 }

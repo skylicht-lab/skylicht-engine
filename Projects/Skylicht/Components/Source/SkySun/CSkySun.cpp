@@ -30,6 +30,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CSkySun);
+
+	CATEGORY_COMPONENT(CSkySun, "Sky Sun", "Renderer");
+
 	CSkySun::CSkySun() :
 		m_skyIntensity(1.1f),
 		m_sunSize(800.0f),

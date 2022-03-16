@@ -212,6 +212,8 @@ namespace Skylicht
 
 			void buildEntityNodes(CGameObject* object, CHierachyNode* parentNode);
 
+			void updateHierachy(CGameObject* object);
+
 		protected:
 
 			void setNodeEvent(CHierachyNode* node);
