@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CLightProbes.h"
 #include "GameObject/CGameObject.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
@@ -76,5 +77,18 @@ namespace Skylicht
 		CEntity* entity = createEntity();
 		m_probes.push_back(entity);
 		return entity;
+	}
+
+	int CLightProbes::getPositions(std::vector<core::vector3df>& positions)
+	{
+		positions.clear();
+
+		for (CEntity* entity : m_entities)
+		{
+			CWorldTransformData* data = entity->getData<CWorldTransformData>();
+			positions.push_back(data->World.getTranslation());
+		}
+
+		return (int)positions.size();
 	}
 }

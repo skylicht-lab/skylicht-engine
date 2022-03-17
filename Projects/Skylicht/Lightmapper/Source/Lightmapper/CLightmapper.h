@@ -41,9 +41,9 @@ namespace Skylicht
 			static int s_hemisphereBakeSize;
 
 		protected:
-			CBaker *m_singleBaker;
-			CMTBaker *m_multiBaker;
-			CGPUBaker *m_gpuBaker;
+			CBaker* m_singleBaker;
+			CMTBaker* m_multiBaker;
+			CGPUBaker* m_gpuBaker;
 
 			CSH9 m_temp;
 
@@ -55,7 +55,7 @@ namespace Skylicht
 			void initBaker(u32 hemisphereBakeSize = 128);
 
 			const CSH9& bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
+				CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr,
 				const core::vector3df& position,
 				const core::vector3df& normal,
 				const core::vector3df& tangent,
@@ -63,18 +63,20 @@ namespace Skylicht
 				int numFace = NUM_FACES);
 
 			void bakeAtPosition(
-				CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-				const core::vector3df *position,
-				const core::vector3df *normal,
-				const core::vector3df *tangent,
-				const core::vector3df *binormal,
+				CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr,
+				const core::vector3df* position,
+				const core::vector3df* normal,
+				const core::vector3df* tangent,
+				const core::vector3df* binormal,
 				std::vector<CSH9>& out,
 				int count,
 				int numFace = NUM_FACES);
 
-			void bakeProbes(std::vector<CLightProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr);
+			void bakeProbes(std::vector<CLightProbe*>& probes, CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr);
 
-			int bakeMeshBuffer(IMeshBuffer *mb, const core::matrix4& transform, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH);
+			void bakeProbes(std::vector<core::vector3df>& position, std::vector<CSH9>& probes, CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr);
+
+			int bakeMeshBuffer(IMeshBuffer* mb, const core::matrix4& transform, CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH);
 
 			static void setNumThread(u32 num)
 			{
