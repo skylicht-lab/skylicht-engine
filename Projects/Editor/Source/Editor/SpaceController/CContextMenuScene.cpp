@@ -209,7 +209,7 @@ namespace Skylicht
 				}
 				else if (command == L"Set as Current Zone")
 				{
-
+					CSceneController::getInstance()->setZone((CZone*)contextObject);
 				}
 			}
 			else if (contextScene)

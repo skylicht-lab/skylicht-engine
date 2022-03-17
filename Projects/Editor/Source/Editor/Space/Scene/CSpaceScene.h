@@ -158,6 +158,11 @@ namespace Skylicht
 				return m_selectObjectSystem;
 			}
 
+			inline IRenderPipeline* getRenderPipeline()
+			{
+				return m_renderRP;
+			}
+
 		protected:
 
 			void initRenderPipeline(float w, float h);

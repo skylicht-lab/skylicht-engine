@@ -9,6 +9,8 @@
 #include "Handles/CHandles.h"
 #include "Selection/CSelecting.h"
 
+#include "Lightmapper/CLightmapper.h"
+
 #if defined(HAVE_SKYLICHT_NETWORK)
 #include "HttpRequest/CHttpRequest.h"
 #endif
@@ -27,6 +29,8 @@ SkylichtEditor::SkylichtEditor() :
 	CHttpRequest::globalInit();
 #endif
 
+	Lightmapper::CLightmapper::createGetInstance();
+
 	Editor::CAssetManager::createGetInstance();
 	Editor::CHandles::createGetInstance();
 	Editor::CSelecting::createGetInstance();
@@ -37,6 +41,8 @@ SkylichtEditor::~SkylichtEditor()
 #if defined(HAVE_SKYLICHT_NETWORK)
 	CHttpRequest::globalFree();
 #endif
+
+	Lightmapper::CLightmapper::releaseInstance();
 
 	Editor::GUI::CGUIContext::destroyGUI();
 

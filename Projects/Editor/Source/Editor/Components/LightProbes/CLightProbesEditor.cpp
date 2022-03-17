@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/Space/Hierarchy/CHierarchyController.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "Lightmapper/CLightmapper.h"
 
 namespace Skylicht
 {
@@ -61,8 +62,37 @@ namespace Skylicht
 
 			ui->addButton(layout, L"Bake Lighting")->OnPress = [&](GUI::CBase* button)
 			{
-				CLightProbes* probes = (CLightProbes*)m_component;
+				CLightProbes* probesComponent = (CLightProbes*)m_component;
 
+				CSceneController* controller = CSceneController::getInstance();
+
+				CScene* scene = controller->getScene();
+				CZone* zone = controller->getZone();
+
+				IRenderPipeline* renderPipeline = controller->getRenderPipeLine();
+				if (renderPipeline == NULL)
+					return;
+
+				CGameObject* bakeCameraObj = zone->createEmptyObject();
+				CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
+				scene->updateAddRemoveObject();
+
+				std::vector<core::vector3df> positions;
+				std::vector<Lightmapper::CSH9> probes;
+
+				if (probesComponent->getPositions(positions) > 0)
+				{
+					Lightmapper::CLightmapper::getInstance()->initBaker(32);
+					Lightmapper::CLightmapper::getInstance()->bakeProbes(
+						positions,
+						probes,
+						bakeCamera,
+						renderPipeline,
+						scene->getEntityManager()
+					);
+				}
+
+				bakeCameraObj->remove();
 			};
 		}
 

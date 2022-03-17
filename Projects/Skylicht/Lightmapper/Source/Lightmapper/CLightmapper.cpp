@@ -79,7 +79,7 @@ namespace Skylicht
 		}
 
 		const CSH9& CLightmapper::bakeAtPosition(
-			CCamera *camera, IRenderPipeline* rp, CEntityManager *entityMgr,
+			CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr,
 			const core::vector3df& position,
 			const core::vector3df& normal,
 			const core::vector3df& tangent,
@@ -96,11 +96,11 @@ namespace Skylicht
 		}
 
 		void CLightmapper::bakeAtPosition(
-			CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr,
-			const core::vector3df *position,
-			const core::vector3df *normal,
-			const core::vector3df *tangent,
-			const core::vector3df *binormal,
+			CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr,
+			const core::vector3df* position,
+			const core::vector3df* normal,
+			const core::vector3df* tangent,
+			const core::vector3df* binormal,
 			std::vector<CSH9>& out,
 			int count,
 			int numFace)
@@ -114,7 +114,7 @@ namespace Skylicht
 			}
 
 			// default use multi thread bakder
-			CMTBaker *baker = m_multiBaker;
+			CMTBaker* baker = m_multiBaker;
 
 			// switch gpu if supported
 			if (m_gpuBaker->canUseGPUBaker() == true)
@@ -146,7 +146,7 @@ namespace Skylicht
 			}
 		}
 
-		void CLightmapper::bakeProbes(std::vector<CLightProbe*>& probes, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr)
+		void CLightmapper::bakeProbes(std::vector<CLightProbe*>& probes, CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr)
 		{
 			// prepare comput sh
 			core::array<core::vector3df> positions;
@@ -187,7 +187,42 @@ namespace Skylicht
 				probes[i]->setSH(out[i]);
 		}
 
-		int CLightmapper::bakeMeshBuffer(IMeshBuffer *mb, const core::matrix4& transform, CCamera *camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH)
+		void CLightmapper::bakeProbes(std::vector<core::vector3df>& position, std::vector<CSH9>& probes, CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr)
+		{
+			// prepare comput sh
+			core::array<core::vector3df> positions;
+			core::array<core::vector3df> normals;
+			core::array<core::vector3df> tangents;
+			core::array<core::vector3df> binormals;
+
+			for (u32 i = 0, n = (u32)position.size(); i < n; i++)
+			{
+				core::vector3df pos = position[i];
+				core::vector3df normal = CTransform::s_oy;
+				core::vector3df tangent = CTransform::s_ox;
+				core::vector3df binormal = normal.crossProduct(tangent);
+				binormal.normalize();
+
+				positions.push_back(pos);
+				normals.push_back(normal);
+				tangents.push_back(tangent);
+				binormals.push_back(binormal);
+			}
+
+			// bake sh			
+			CLightmapper::getInstance()->bakeAtPosition(
+				camera,
+				rp,
+				entityMgr,
+				positions.pointer(),
+				normals.pointer(),
+				tangents.pointer(),
+				binormals.pointer(),
+				probes,
+				(int)position.size());
+		}
+
+		int CLightmapper::bakeMeshBuffer(IMeshBuffer* mb, const core::matrix4& transform, CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH)
 		{
 			if (mb->getVertexBufferCount() == 0)
 			{
@@ -205,7 +240,7 @@ namespace Skylicht
 				return 0;
 			}
 
-			IVertexBuffer *vb = mb->getVertexBuffer(0);
+			IVertexBuffer* vb = mb->getVertexBuffer(0);
 			u32 vtxCount = vb->getVertexCount();
 
 			int remain = vtxCount - begin;
@@ -214,7 +249,7 @@ namespace Skylicht
 
 			count = core::min_(count, remain);
 
-			video::S3DVertexTangents *vtx = (video::S3DVertexTangents*)vb->getVertices();
+			video::S3DVertexTangents* vtx = (video::S3DVertexTangents*)vb->getVertices();
 
 			core::array<core::vector3df> positions;
 			core::array<core::vector3df> normals;
