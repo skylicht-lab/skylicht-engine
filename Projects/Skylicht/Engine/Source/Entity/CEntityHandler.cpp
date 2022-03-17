@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CEntityHandler.h"
+#include "CEntityHandleData.h"
 #include "CEntityManager.h"
 #include "GameObject/CGameObject.h"
 #include "GameObject/CZone.h"
@@ -74,6 +75,10 @@ namespace Skylicht
 			transformData->ParentIndex = parent->getIndex();
 			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
 		}
+
+		// add handle data
+		CEntityHandleData* handleData = entity->addData<CEntityHandleData>();
+		handleData->Handler = this;
 
 		m_entities.push_back(entity);
 		return entity;

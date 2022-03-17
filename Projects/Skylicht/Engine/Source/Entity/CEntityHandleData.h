@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,40 +22,21 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CHierachyContextMenu.h"
-#include "Editor/SpaceController/CSceneController.h"
+#pragma once
+
+#include "Entity/IEntityData.h"
+#include "CEntityHandler.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	class CEntityHandleData : public IEntityData
 	{
-		CHierachyContextMenu::CHierachyContextMenu(GUI::CTreeControl* tree)
-		{
-			tree->OnItemContextMenu = BIND_LISTENER(&CHierachyContextMenu::OnTreeContextMenu, this);
-		}
+	public:
+		CEntityHandler* Handler;
 
-		CHierachyContextMenu::~CHierachyContextMenu()
-		{
+	public:
+		CEntityHandleData();
 
-		}
-
-		void CHierachyContextMenu::OnTreeContextMenu(GUI::CBase* row)
-		{
-			GUI::CTreeRowItem* rowItem = dynamic_cast<GUI::CTreeRowItem*>(row);
-			if (rowItem != NULL)
-			{
-				CHierachyNode* node = (CHierachyNode*)rowItem->getNode()->getTagData();
-				if (node != NULL)
-				{
-					if (node->isTagScene() ||
-						node->isTagGameObject() ||
-						node->isTagEntity())
-					{
-						CSceneController::getInstance()->onContextMenu(node);
-					}
-				}
-			}
-		}
-	}
+		virtual ~CEntityHandleData();
+	};
 }
