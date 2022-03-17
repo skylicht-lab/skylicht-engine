@@ -3012,6 +3012,8 @@ namespace irr
 				ViewportY = viewportY;
 				ViewportWidth = viewportWidth;
 				ViewportHeight = viewportHeight;
+				
+				Driver->ViewPort = core::recti(viewportX, viewportY, viewportWidth, viewportHeight);
 			}
 		}
 

@@ -115,6 +115,13 @@ namespace Skylicht
 				return m_spaceScene;
 			}
 
+			inline IRenderPipeline* getRenderPipeLine()
+			{
+				if (m_spaceScene)
+					return m_spaceScene->getRenderPipeline();
+				return NULL;
+			}
+
 			CSelectObjectSystem* getSelectObjectSystem()
 			{
 				return m_spaceScene->getSelectObjectSystem();

@@ -532,7 +532,6 @@ namespace Skylicht
 			{
 				if (m_renderRP == NULL)
 				{
-					// rendering pipe line
 					m_renderRP = new CForwardRP();
 					m_renderRP->initRender((int)w, (int)h);
 				}
@@ -544,7 +543,6 @@ namespace Skylicht
 
 				if (m_viewpointRP == NULL)
 				{
-					// rendering pipe line
 					m_viewpointRP = new CForwardRP(false);
 					m_viewpointRP->initRender((int)w, (int)h);
 				}
