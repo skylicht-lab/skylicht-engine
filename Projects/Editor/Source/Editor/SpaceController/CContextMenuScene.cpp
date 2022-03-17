@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Selection/CSelection.h"
 #include "Editor/SpaceController/CPropertyController.h"
 #include "GUI/Input/CInput.h"
+#include "Entity/CEntityHandleData.h"
 
 namespace Skylicht
 {
@@ -68,6 +69,11 @@ namespace Skylicht
 			m_spaceZone = m_contextMenuContainer->addSeparator();
 			m_setCurrentZoneItem->setHidden(true);
 			m_spaceZone->setHidden(true);
+
+			// entity
+			m_contextMenuEntity = new GUI::CMenu(canvas);
+			m_contextMenuEntity->addItem(L"Delete", GUI::ESystemIcon::Trash);
+			m_contextMenuEntity->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
 
 			GUI::CMenuItem* add = m_contextMenuContainer->addItem(L"Add");
 			GUI::CMenu* submenu = add->getMenu();
@@ -138,6 +144,12 @@ namespace Skylicht
 					return true;
 				}
 			}
+			else if (node->isTagEntity())
+			{
+				m_canvas->closeMenu();
+				m_contextMenuEntity->open(mousePos);
+				return true;
+			}
 			return false;
 		}
 
@@ -154,13 +166,18 @@ namespace Skylicht
 			CHierachyNode* contextNode = sceneController->getContextNode();
 			CGameObject* contextObject = NULL;
 			CScene* contextScene = NULL;
+			CEntity* contextEntity = NULL;
 
 			if (contextNode->isTagGameObject())
 				contextObject = (CGameObject*)contextNode->getTagData();
 			else if (contextNode->isTagScene())
 				contextScene = (CScene*)contextNode->getTagData();
+			else if (contextNode->isTagEntity())
+				contextEntity = (CEntity*)contextNode->getTagData();
 
-			if (contextObject == NULL && contextScene == NULL)
+			if (contextObject == NULL &&
+				contextScene == NULL &&
+				contextEntity == NULL)
 				return;
 
 			if (contextObject != NULL)
@@ -200,6 +217,22 @@ namespace Skylicht
 				if (command == L"Add Zone")
 				{
 					CSceneController::getInstance()->createZone();
+				}
+			}
+			else if (contextEntity)
+			{
+				if (command == L"Delete")
+				{
+					CSelection::getInstance()->unSelect(contextEntity);
+					CPropertyController::getInstance()->setProperty(NULL);
+
+					// delete entity
+					CEntityHandleData* data = contextEntity->getData<CEntityHandleData>();
+					data->Handler->removeEntity(contextEntity);
+
+					// remove GUI
+					contextNode->remove();
+					sceneController->clearContextNode();
 				}
 			}
 

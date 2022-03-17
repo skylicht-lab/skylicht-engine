@@ -232,6 +232,9 @@ namespace Skylicht
 			if (node == m_node)
 				allowDrag = false;
 
+			if (node->isTagEntity())
+				allowDrag = false;
+
 			if (allowDrag)
 			{
 				GUI::SDragDropPackage* dragDrop = rowItem->setDragDropPackage("HierarchyNode", node);
