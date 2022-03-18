@@ -35,12 +35,25 @@ namespace Skylicht
 
 		CLightProbeRender::CLightProbeRender()
 		{
+			const IGeometryCreator* geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
+			ProbeMesh = geometryCreator->createSphereMesh(0.3f);
+			ProbeMesh->setHardwareMappingHint(EHM_STATIC);
 
+			int shShader = CShaderManager::getInstance()->getShaderIDByName("SH");
+			if (shShader >= 0)
+			{
+				for (u32 i = 0, n = ProbeMesh->getMeshBufferCount(); i < n; i++)
+				{
+					IMeshBuffer* mb = ProbeMesh->getMeshBuffer(i);
+					mb->getMaterial().MaterialType = shShader;
+				}
+			}
 		}
 
 		CLightProbeRender::~CLightProbeRender()
 		{
-
+			ProbeMesh->drop();
+			ProbeMesh = NULL;
 		}
 
 		void CLightProbeRender::beginQuery(CEntityManager* entityManager)
@@ -49,15 +62,15 @@ namespace Skylicht
 			m_transforms.set_used(0);
 		}
 
-		void CLightProbeRender::onQuery(CEntityManager *entityManager, CEntity *entity)
+		void CLightProbeRender::onQuery(CEntityManager* entityManager, CEntity* entity)
 		{
 			if (s_showProbe == false)
 				return;
 
-			CLightProbeData *probeData = entity->getData<CLightProbeData>();
+			CLightProbeData* probeData = entity->getData<CLightProbeData>();
 			if (probeData != NULL)
 			{
-				CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
+				CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
 				if (transformData != NULL)
 				{
 					m_probes.push_back(probeData);
@@ -66,36 +79,35 @@ namespace Skylicht
 			}
 		}
 
-		void CLightProbeRender::init(CEntityManager *entityManager)
+		void CLightProbeRender::init(CEntityManager* entityManager)
 		{
 
 		}
 
-		void CLightProbeRender::update(CEntityManager *entityManager)
+		void CLightProbeRender::update(CEntityManager* entityManager)
 		{
 
 		}
 
-		void CLightProbeRender::render(CEntityManager *entityManager)
+		void CLightProbeRender::render(CEntityManager* entityManager)
 		{
-			IVideoDriver *driver = getVideoDriver();
+			IVideoDriver* driver = getVideoDriver();
 
 			CLightProbeData** probes = m_probes.pointer();
 			CWorldTransformData** transforms = m_transforms.pointer();
 
 			for (u32 i = 0, n = m_probes.size(); i < n; i++)
 			{
-				IMesh* mesh = probes[i]->ProbeMesh;
 				driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
-				core::vector3df *shValue = probes[i]->SH.getValue();
+				core::vector3df* shValue = probes[i]->SH.getValue();
 
-				for (u32 j = 0; j < mesh->getMeshBufferCount(); j++)
+				for (u32 j = 0; j < ProbeMesh->getMeshBufferCount(); j++)
 				{
 					// Pass current sh const to shader callback
 					CShaderSH::setSH9(shValue);
 
-					IMeshBuffer *buffer = mesh->getMeshBuffer(j);
+					IMeshBuffer* buffer = ProbeMesh->getMeshBuffer(j);
 					driver->setMaterial(buffer->getMaterial());
 					driver->drawMeshBuffer(buffer);
 				}
