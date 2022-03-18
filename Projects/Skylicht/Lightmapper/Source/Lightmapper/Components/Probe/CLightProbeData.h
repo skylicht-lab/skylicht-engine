@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Lightmapper/CSH9.h"
 #include "Entity/IEntityData.h"
 
 namespace Skylicht
@@ -33,8 +32,8 @@ namespace Skylicht
 	{
 		class CLightProbeData : public IEntityData
 		{
-		public:			
-			CSH9 SH;
+		public:
+			core::vector3df SH[9];
 
 		public:
 			CLightProbeData();

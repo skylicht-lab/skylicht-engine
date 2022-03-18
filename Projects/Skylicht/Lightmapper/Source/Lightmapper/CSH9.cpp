@@ -39,7 +39,7 @@ namespace Skylicht
 
 		}
 
-		CSH9::CSH9(const core::vector3df *sh)
+		CSH9::CSH9(const core::vector3df* sh)
 		{
 			for (int i = 0; i < 9; i++)
 				m_sh[i] = sh[i];
@@ -55,6 +55,12 @@ namespace Skylicht
 		{
 			for (int i = 0; i < 9; i++)
 				m_sh[i].set(0.0f, 0.0f, 0.0f);
+		}
+
+		void CSH9::copyTo(core::vector3df* to)
+		{
+			for (int i = 0; i < 9; i++)
+				to[i] = m_sh[i];
 		}
 
 		CSH9 CSH9::operator-() const

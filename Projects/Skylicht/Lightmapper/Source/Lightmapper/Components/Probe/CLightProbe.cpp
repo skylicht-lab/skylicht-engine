@@ -57,7 +57,7 @@ namespace Skylicht
 
 		}
 
-		void CLightProbe::bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr)
+		void CLightProbe::bakeIrradiance(CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr)
 		{
 			core::vector3df position = m_gameObject->getPosition();
 
@@ -66,7 +66,7 @@ namespace Skylicht
 			core::vector3df b = n.crossProduct(t);
 			b.normalize();
 
-			m_probeData->SH = CLightmapper::getInstance()->bakeAtPosition(
+			CSH9 sh = CLightmapper::getInstance()->bakeAtPosition(
 				camera,
 				rp,
 				entityMgr,
@@ -74,6 +74,8 @@ namespace Skylicht
 				n,
 				t,
 				b);
+
+			sh.copyTo(m_probeData->SH);
 		}
 	}
 }

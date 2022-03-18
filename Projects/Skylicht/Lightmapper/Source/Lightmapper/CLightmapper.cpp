@@ -184,7 +184,9 @@ namespace Skylicht
 
 			// apply sh
 			for (u32 i = 0, n = (u32)probes.size(); i < n; i++)
-				probes[i]->setSH(out[i]);
+			{
+				out[i].copyTo(probes[i]->getSH9());
+			}
 		}
 
 		void CLightmapper::bakeProbes(std::vector<core::vector3df>& position, std::vector<CSH9>& probes, CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr)

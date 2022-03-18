@@ -35,7 +35,7 @@ namespace Skylicht
 
 		public:
 			CSH9();
-			CSH9(const core::vector3df *sh);
+			CSH9(const core::vector3df* sh);
 			CSH9(const CSH9& sh);
 			~CSH9();
 
@@ -50,6 +50,8 @@ namespace Skylicht
 			{
 				return m_sh;
 			}
+
+			void copyTo(core::vector3df* to);
 
 			CSH9 operator-() const;
 
