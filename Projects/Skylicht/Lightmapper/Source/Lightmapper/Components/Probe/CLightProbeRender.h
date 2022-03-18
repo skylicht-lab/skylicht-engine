@@ -37,6 +37,8 @@ namespace Skylicht
 		class CLightProbeRender : public IRenderSystem
 		{
 		protected:
+			IMesh* ProbeMesh;
+
 			core::array<CLightProbeData*> m_probes;
 			core::array<CWorldTransformData*> m_transforms;
 
@@ -49,13 +51,13 @@ namespace Skylicht
 
 			virtual void beginQuery(CEntityManager* entityManager);
 
-			virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+			virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
-			virtual void init(CEntityManager *entityManager);
+			virtual void init(CEntityManager* entityManager);
 
-			virtual void update(CEntityManager *entityManager);
+			virtual void update(CEntityManager* entityManager);
 
-			virtual void render(CEntityManager *entityManager);
+			virtual void render(CEntityManager* entityManager);
 
 			static void showProbe(bool b)
 			{

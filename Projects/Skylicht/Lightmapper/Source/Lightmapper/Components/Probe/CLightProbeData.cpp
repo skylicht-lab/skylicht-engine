@@ -33,25 +33,12 @@ namespace Skylicht
 	{
 		CLightProbeData::CLightProbeData()
 		{
-			const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
-			ProbeMesh = geometryCreator->createSphereMesh(0.3f);
-			ProbeMesh->setHardwareMappingHint(EHM_STATIC);
-
-			int shShader = CShaderManager::getInstance()->getShaderIDByName("SH");
-			if (shShader >= 0)
-			{
-				for (u32 i = 0, n = ProbeMesh->getMeshBufferCount(); i < n; i++)
-				{
-					IMeshBuffer* mb = ProbeMesh->getMeshBuffer(i);
-					mb->getMaterial().MaterialType = shShader;
-				}
-			}
+			
 		}
 
 		CLightProbeData::~CLightProbeData()
 		{
-			ProbeMesh->drop();
-			ProbeMesh = NULL;
+			
 		}
 	}
 }
