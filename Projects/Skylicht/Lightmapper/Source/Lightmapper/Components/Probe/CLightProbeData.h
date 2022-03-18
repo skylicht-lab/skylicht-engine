@@ -33,9 +33,7 @@ namespace Skylicht
 	{
 		class CLightProbeData : public IEntityData
 		{
-		public:
-			IMesh *ProbeMesh;
-
+		public:			
 			CSH9 SH;
 
 		public:
