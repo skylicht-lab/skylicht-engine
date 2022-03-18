@@ -36,7 +36,7 @@ namespace Skylicht
 		class CLightProbe : public CComponentSystem
 		{
 		protected:
-			CLightProbeData *m_probeData;
+			CLightProbeData* m_probeData;
 
 		public:
 			CLightProbe();
@@ -47,16 +47,11 @@ namespace Skylicht
 
 			virtual void updateComponent();
 
-			void bakeIrradiance(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr);
+			void bakeIrradiance(CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr);
 
-			inline CSH9& getSH()
+			core::vector3df* getSH9()
 			{
 				return m_probeData->SH;
-			}
-
-			inline void setSH(const CSH9& sh)
-			{
-				m_probeData->SH = sh;
 			}
 		};
 	}

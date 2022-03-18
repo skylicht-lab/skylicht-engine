@@ -100,12 +100,10 @@ namespace Skylicht
 			{
 				driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
-				core::vector3df* shValue = probes[i]->SH.getValue();
-
 				for (u32 j = 0; j < ProbeMesh->getMeshBufferCount(); j++)
 				{
 					// Pass current sh const to shader callback
-					CShaderSH::setSH9(shValue);
+					CShaderSH::setSH9(probes[i]->SH);
 
 					IMeshBuffer* buffer = ProbeMesh->getMeshBuffer(j);
 					driver->setMaterial(buffer->getMaterial());
