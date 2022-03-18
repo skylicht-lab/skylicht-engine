@@ -10,8 +10,8 @@
 #include "SkyDome/CSkyDome.h"
 
 #include "CFireLight.h"
-#include "Lightmapper/Components/Probe/CLightProbe.h"
-#include "Lightmapper/Components/Probe/CLightProbeRender.h"
+#include "LightProbes/CLightProbe.h"
+#include "LightProbes/CLightProbeRender.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),

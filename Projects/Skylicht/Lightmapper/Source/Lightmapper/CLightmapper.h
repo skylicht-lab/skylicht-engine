@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBaker.h"
 #include "CMTBaker.h"
 #include "CGPUBaker.h"
-#include "Components/Probe/CLightProbe.h"
+#include "LightProbes/CLightProbe.h"
 
 namespace Skylicht
 {
