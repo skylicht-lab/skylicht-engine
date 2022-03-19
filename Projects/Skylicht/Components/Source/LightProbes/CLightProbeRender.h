@@ -32,37 +32,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CLightProbeRender : public IRenderSystem
 	{
-		class CLightProbeRender : public IRenderSystem
+	protected:
+		IMesh* ProbeMesh;
+
+		core::array<CLightProbeData*> m_probes;
+		core::array<CWorldTransformData*> m_transforms;
+
+		static bool s_showProbe;
+
+	public:
+		CLightProbeRender();
+
+		virtual ~CLightProbeRender();
+
+		virtual void beginQuery(CEntityManager* entityManager);
+
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
+
+		virtual void init(CEntityManager* entityManager);
+
+		virtual void update(CEntityManager* entityManager);
+
+		virtual void render(CEntityManager* entityManager);
+
+		static void showProbe(bool b)
 		{
-		protected:
-			IMesh* ProbeMesh;
-
-			core::array<CLightProbeData*> m_probes;
-			core::array<CWorldTransformData*> m_transforms;
-
-			static bool s_showProbe;
-
-		public:
-			CLightProbeRender();
-
-			virtual ~CLightProbeRender();
-
-			virtual void beginQuery(CEntityManager* entityManager);
-
-			virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
-
-			virtual void init(CEntityManager* entityManager);
-
-			virtual void update(CEntityManager* entityManager);
-
-			virtual void render(CEntityManager* entityManager);
-
-			static void showProbe(bool b)
-			{
-				s_showProbe = b;
-			}
-		};
-	}
+			s_showProbe = b;
+		}
+	};
 }

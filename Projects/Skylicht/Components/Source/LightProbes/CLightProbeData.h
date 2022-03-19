@@ -28,17 +28,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CLightProbeData : public IEntityData
 	{
-		class CLightProbeData : public IEntityData
-		{
-		public:
-			core::vector3df SH[9];
+	public:
+		core::vector3df SH[9];
 
-		public:
-			CLightProbeData();
+	public:
+		CLightProbeData();
 
-			virtual ~CLightProbeData();
-		};
-	}
+		virtual ~CLightProbeData();
+	};
 }

@@ -527,7 +527,17 @@ namespace Skylicht
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
 				treeNode->setSelected(false);
-				m_spaceHierarchy->scrollToNode(treeNode);
+			}
+			return node;
+		}
+
+		CHierachyNode* CSceneController::deselectOnHierachy(CEntity* entity)
+		{
+			CHierachyNode* node = m_hierachyNode->getNodeByTag(entity);
+			if (node != NULL)
+			{
+				GUI::CTreeNode* treeNode = node->getGUINode();
+				treeNode->setSelected(false);
 			}
 			return node;
 		}
@@ -535,6 +545,18 @@ namespace Skylicht
 		CHierachyNode* CSceneController::selectOnHierachy(CGameObject* gameObject)
 		{
 			CHierachyNode* node = m_hierachyNode->getNodeByTag(gameObject);
+			if (node != NULL)
+			{
+				GUI::CTreeNode* treeNode = node->getGUINode();
+				treeNode->setSelected(true);
+				m_spaceHierarchy->scrollToNode(treeNode);
+			}
+			return node;
+		}
+
+		CHierachyNode* CSceneController::selectOnHierachy(CEntity* entity)
+		{
+			CHierachyNode* node = m_hierachyNode->getNodeByTag(entity);
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();

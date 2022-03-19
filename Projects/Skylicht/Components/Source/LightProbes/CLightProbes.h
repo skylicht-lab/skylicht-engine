@@ -54,6 +54,8 @@ namespace Skylicht
 
 		int getPositions(std::vector<core::vector3df>& positions);
 
+		void setSH(std::vector<core::vector3df>& sh);
+
 		DECLARE_GETTYPENAME(CLightProbes)
 	};
 }

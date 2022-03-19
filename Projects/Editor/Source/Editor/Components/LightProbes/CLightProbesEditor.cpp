@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/Space/Hierarchy/CHierarchyController.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "Selection/CSelection.h"
 #include "Lightmapper/CLightmapper.h"
 
 namespace Skylicht
@@ -53,9 +54,12 @@ namespace Skylicht
 			ui->addButton(layout, L"Add Probe")->OnPress = [&](GUI::CBase* button)
 			{
 				CLightProbes* probes = (CLightProbes*)m_component;
-				probes->addLightProbe();
+				CEntity* newProbe = probes->addLightProbe();
 
-				CSceneController::getInstance()->updateHierachy(m_gameObject);
+				CSceneController* sceneController = CSceneController::getInstance();
+				sceneController->updateHierachy(m_gameObject);
+				sceneController->deselectAllOnHierachy();
+				sceneController->selectOnHierachy(newProbe);
 			};
 
 			layout->addSpace(5.0f);
@@ -79,6 +83,7 @@ namespace Skylicht
 
 				std::vector<core::vector3df> positions;
 				std::vector<Lightmapper::CSH9> probes;
+				std::vector<core::vector3df> results;
 
 				if (probesComponent->getPositions(positions) > 0)
 				{
@@ -90,6 +95,17 @@ namespace Skylicht
 						renderPipeline,
 						scene->getEntityManager()
 					);
+
+					for (Lightmapper::CSH9& sh : probes)
+					{
+						core::vector3df r[9];
+						sh.copyTo(r);
+
+						for (int i = 0; i < 9; i++)
+							results.push_back(r[i]);
+					}
+
+					probesComponent->setSH(results);
 				}
 
 				bakeCameraObj->remove();
