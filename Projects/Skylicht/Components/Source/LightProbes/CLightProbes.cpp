@@ -24,6 +24,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CLightProbes.h"
+#include "CLightProbeData.h"
+#include "CLightProbeRender.h"
+#include "Entity/CEntityManager.h"
 #include "GameObject/CGameObject.h"
 #include "Transform/CWorldTransformData.h"
 
@@ -45,8 +48,22 @@ namespace Skylicht
 
 	void CLightProbes::initComponent()
 	{
+		m_gameObject->getEntityManager()->addRenderSystem<CLightProbeRender>();
+
 		// default 1 lightprobe
-		addLightProbe();
+		CEntity* defaultLight = addLightProbe();
+
+		// config default ambient color
+		CLightProbeData* data = defaultLight->getData<CLightProbeData>();
+		data->SH[0].set(1.826f, 2.073f, 2.362f);
+		data->SH[1].set(0.255f, 0.497f, 0.822f);
+		data->SH[2].set(0.089f, 0.003f, -0.042f);
+		data->SH[3].set(-0.049f, -0.059f, -0.07f);
+		data->SH[4].set(0.015f, 0.013f, 0.007f);
+		data->SH[5].set(0.161f, 0.064f, 0.015f);
+		data->SH[6].set(0.154f, 0.102f, 0.01f);
+		data->SH[7].set(0.0f, -0.0f, 0.0f);
+		data->SH[8].set(0.151f, 0.126f, 0.005f);
 	}
 
 	void CLightProbes::updateComponent()
@@ -75,6 +92,9 @@ namespace Skylicht
 	CEntity* CLightProbes::addLightProbe()
 	{
 		CEntity* entity = createEntity();
+
+		entity->addData<CLightProbeData>();
+
 		m_probes.push_back(entity);
 		return entity;
 	}
@@ -90,5 +110,16 @@ namespace Skylicht
 		}
 
 		return (int)positions.size();
+	}
+
+	void CLightProbes::setSH(std::vector<core::vector3df>& sh)
+	{
+		int i = 0;
+		for (CEntity* entity : m_entities)
+		{
+			CLightProbeData* data = entity->getData<CLightProbeData>();
+			for (int j = 0; j < 9; j++)
+				data->SH[j] = sh[i++];
+		}
 	}
 }

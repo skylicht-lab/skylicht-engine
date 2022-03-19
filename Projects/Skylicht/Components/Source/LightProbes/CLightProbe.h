@@ -31,26 +31,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	class CLightProbe : public CComponentSystem
 	{
-		class CLightProbe : public CComponentSystem
+	protected:
+		CLightProbeData* m_probeData;
+
+	public:
+		CLightProbe();
+
+		virtual ~CLightProbe();
+
+		virtual void initComponent();
+
+		virtual void updateComponent();
+
+		core::vector3df* getSH9()
 		{
-		protected:
-			CLightProbeData* m_probeData;
-
-		public:
-			CLightProbe();
-
-			virtual ~CLightProbe();
-
-			virtual void initComponent();
-
-			virtual void updateComponent();
-
-			core::vector3df* getSH9()
-			{
-				return m_probeData->SH;
-			}
-		};
-	}
+			return m_probeData->SH;
+		}
+	};
 }

@@ -31,28 +31,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	CLightProbe::CLightProbe() :
+		m_probeData(NULL)
 	{
-		CLightProbe::CLightProbe() :
-			m_probeData(NULL)
-		{
 
-		}
+	}
 
-		CLightProbe::~CLightProbe()
-		{
+	CLightProbe::~CLightProbe()
+	{
 
-		}
+	}
 
-		void CLightProbe::initComponent()
-		{
-			m_probeData = m_gameObject->getEntity()->addData<CLightProbeData>();
-			m_gameObject->getEntityManager()->addRenderSystem<CLightProbeRender>();
-		}
+	void CLightProbe::initComponent()
+	{
+		m_probeData = m_gameObject->getEntity()->addData<CLightProbeData>();
+		m_gameObject->getEntityManager()->addRenderSystem<CLightProbeRender>();
+	}
 
-		void CLightProbe::updateComponent()
-		{
+	void CLightProbe::updateComponent()
+	{
 
-		}
 	}
 }
