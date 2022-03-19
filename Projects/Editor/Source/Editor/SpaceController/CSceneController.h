@@ -195,7 +195,11 @@ namespace Skylicht
 
 			CHierachyNode* deselectOnHierachy(CGameObject* gameObject);
 
+			CHierachyNode* deselectOnHierachy(CEntity* entity);
+
 			CHierachyNode* selectOnHierachy(CGameObject* gameObject);
+
+			CHierachyNode* selectOnHierachy(CEntity* entity);
 
 			inline CHierachyNode* getContextNode()
 			{

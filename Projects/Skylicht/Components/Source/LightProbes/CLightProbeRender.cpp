@@ -24,91 +24,91 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CLightProbeRender.h"
+#include "Culling/CVisibleData.h"
 
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	bool CLightProbeRender::s_showProbe = false;
+
+	CLightProbeRender::CLightProbeRender()
 	{
-		bool CLightProbeRender::s_showProbe = false;
+		const IGeometryCreator* geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
+		ProbeMesh = geometryCreator->createSphereMesh(0.3f);
+		ProbeMesh->setHardwareMappingHint(EHM_STATIC);
 
-		CLightProbeRender::CLightProbeRender()
+		int shShader = CShaderManager::getInstance()->getShaderIDByName("SH");
+		if (shShader >= 0)
 		{
-			const IGeometryCreator* geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
-			ProbeMesh = geometryCreator->createSphereMesh(0.3f);
-			ProbeMesh->setHardwareMappingHint(EHM_STATIC);
-
-			int shShader = CShaderManager::getInstance()->getShaderIDByName("SH");
-			if (shShader >= 0)
+			for (u32 i = 0, n = ProbeMesh->getMeshBufferCount(); i < n; i++)
 			{
-				for (u32 i = 0, n = ProbeMesh->getMeshBufferCount(); i < n; i++)
-				{
-					IMeshBuffer* mb = ProbeMesh->getMeshBuffer(i);
-					mb->getMaterial().MaterialType = shShader;
-				}
+				IMeshBuffer* mb = ProbeMesh->getMeshBuffer(i);
+				mb->getMaterial().MaterialType = shShader;
 			}
 		}
+	}
 
-		CLightProbeRender::~CLightProbeRender()
+	CLightProbeRender::~CLightProbeRender()
+	{
+		ProbeMesh->drop();
+		ProbeMesh = NULL;
+	}
+
+	void CLightProbeRender::beginQuery(CEntityManager* entityManager)
+	{
+		m_probes.set_used(0);
+		m_transforms.set_used(0);
+	}
+
+	void CLightProbeRender::onQuery(CEntityManager* entityManager, CEntity* entity)
+	{
+		if (s_showProbe == false)
+			return;
+
+		CLightProbeData* probeData = entity->getData<CLightProbeData>();
+		if (probeData != NULL)
 		{
-			ProbeMesh->drop();
-			ProbeMesh = NULL;
-		}
+			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+			CVisibleData* visible = entity->getData<CVisibleData>();
 
-		void CLightProbeRender::beginQuery(CEntityManager* entityManager)
-		{
-			m_probes.set_used(0);
-			m_transforms.set_used(0);
-		}
-
-		void CLightProbeRender::onQuery(CEntityManager* entityManager, CEntity* entity)
-		{
-			if (s_showProbe == false)
-				return;
-
-			CLightProbeData* probeData = entity->getData<CLightProbeData>();
-			if (probeData != NULL)
+			if (transformData != NULL && visible->Visible)
 			{
-				CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
-				if (transformData != NULL)
-				{
-					m_probes.push_back(probeData);
-					m_transforms.push_back(transformData);
-				}
+				m_probes.push_back(probeData);
+				m_transforms.push_back(transformData);
 			}
 		}
+	}
 
-		void CLightProbeRender::init(CEntityManager* entityManager)
+	void CLightProbeRender::init(CEntityManager* entityManager)
+	{
+
+	}
+
+	void CLightProbeRender::update(CEntityManager* entityManager)
+	{
+
+	}
+
+	void CLightProbeRender::render(CEntityManager* entityManager)
+	{
+		IVideoDriver* driver = getVideoDriver();
+
+		CLightProbeData** probes = m_probes.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
+
+		for (u32 i = 0, n = m_probes.size(); i < n; i++)
 		{
+			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
-		}
-
-		void CLightProbeRender::update(CEntityManager* entityManager)
-		{
-
-		}
-
-		void CLightProbeRender::render(CEntityManager* entityManager)
-		{
-			IVideoDriver* driver = getVideoDriver();
-
-			CLightProbeData** probes = m_probes.pointer();
-			CWorldTransformData** transforms = m_transforms.pointer();
-
-			for (u32 i = 0, n = m_probes.size(); i < n; i++)
+			for (u32 j = 0; j < ProbeMesh->getMeshBufferCount(); j++)
 			{
-				driver->setTransform(video::ETS_WORLD, transforms[i]->World);
+				// Pass current sh const to shader callback
+				CShaderSH::setSH9(probes[i]->SH);
 
-				for (u32 j = 0; j < ProbeMesh->getMeshBufferCount(); j++)
-				{
-					// Pass current sh const to shader callback
-					CShaderSH::setSH9(probes[i]->SH);
-
-					IMeshBuffer* buffer = ProbeMesh->getMeshBuffer(j);
-					driver->setMaterial(buffer->getMaterial());
-					driver->drawMeshBuffer(buffer);
-				}
+				IMeshBuffer* buffer = ProbeMesh->getMeshBuffer(j);
+				driver->setMaterial(buffer->getMaterial());
+				driver->drawMeshBuffer(buffer);
 			}
 		}
 	}

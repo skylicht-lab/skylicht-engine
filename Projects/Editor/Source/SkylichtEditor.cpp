@@ -10,6 +10,7 @@
 #include "Selection/CSelecting.h"
 
 #include "Lightmapper/CLightmapper.h"
+#include "LightProbes/CLightProbeRender.h"
 
 #if defined(HAVE_SKYLICHT_NETWORK)
 #include "HttpRequest/CHttpRequest.h"
@@ -34,6 +35,8 @@ SkylichtEditor::SkylichtEditor() :
 	Editor::CAssetManager::createGetInstance();
 	Editor::CHandles::createGetInstance();
 	Editor::CSelecting::createGetInstance();
+
+	CLightProbeRender::showProbe(true);
 }
 
 SkylichtEditor::~SkylichtEditor()

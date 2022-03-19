@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CGameObject.h"
 #include "GameObject/CZone.h"
 #include "Transform/CWorldTransformData.h"
+#include "Culling/CVisibleData.h"
 
 namespace Skylicht
 {
@@ -79,6 +80,9 @@ namespace Skylicht
 		// add handle data
 		CEntityHandleData* handleData = entity->addData<CEntityHandleData>();
 		handleData->Handler = this;
+
+		// add visible data
+		entity->addData<CVisibleData>();
 
 		m_entities.push_back(entity);
 		return entity;

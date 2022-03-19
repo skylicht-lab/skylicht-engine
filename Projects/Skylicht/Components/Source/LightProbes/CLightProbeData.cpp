@@ -29,16 +29,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	namespace Lightmapper
+	CLightProbeData::CLightProbeData()
 	{
-		CLightProbeData::CLightProbeData()
-		{
-			
-		}
 
-		CLightProbeData::~CLightProbeData()
-		{
-			
-		}
+	}
+
+	CLightProbeData::~CLightProbeData()
+	{
+
 	}
 }
