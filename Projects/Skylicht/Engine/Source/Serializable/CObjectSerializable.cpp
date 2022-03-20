@@ -176,8 +176,10 @@ namespace Skylicht
 		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 		io::IAttributes* attr = fs->createEmptyAttributes();
 
+		bool logError = true;
 		bool done = false;
 
+		std::wstring attributeNode = L"attributes";
 		std::wstring nodeName = L"node";
 		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(Name.c_str());
 
@@ -194,11 +196,24 @@ namespace Skylicht
 				}
 				else
 				{
-					char log[512];
-					sprintf(log, "[CObjectSerializable::load] Skip wrong data: type: %s", Name.c_str());
-					os::Printer::log(log);
+					if (logError)
+					{
+						std::wstring nodeName = reader->getNodeName();
+						std::wstring attribute = reader->getAttributeValue(L"type");
+
+						char log[512];
+						sprintf(log, "[CAttributeSerializable::load] Skip wrong data: type: %s", Name.c_str());
+						os::Printer::log(log);
+						logError = false;
+					}
 				}
 				break;
+			case io::EXN_ELEMENT_END:
+				if (attributeNode == reader->getNodeName())
+				{
+					done = true;
+					break;
+				}
 			default:
 				break;
 			}

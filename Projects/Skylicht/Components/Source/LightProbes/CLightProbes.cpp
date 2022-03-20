@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 #include "GameObject/CGameObject.h"
 #include "Transform/CWorldTransformData.h"
+#include "Serializable/CAttributeSerializable.h"
 
 namespace Skylicht
 {
@@ -38,12 +39,13 @@ namespace Skylicht
 
 	CLightProbes::CLightProbes()
 	{
-
+		m_attributes = getIrrlichtDevice()->getFileSystem()->createEmptyAttributes();
 	}
 
 	CLightProbes::~CLightProbes()
 	{
 		clearAll();
+		m_attributes->drop();
 	}
 
 	void CLightProbes::initComponent()
@@ -73,13 +75,58 @@ namespace Skylicht
 
 	CObjectSerializable* CLightProbes::createSerializable()
 	{
+		m_attributes->clear();
+
+		int numProbes = (int)m_entities.size();
+		m_attributes->addInt("numprobes", numProbes);
+
+		for (int i = 0; i < numProbes; i++)
+		{
+			CWorldTransformData* world = m_entities[i]->getData<CWorldTransformData>();
+			CLightProbeData* light = m_entities[i]->getData<CLightProbeData>();
+
+			m_attributes->addMatrix("transform", world->Relative);
+			for (int j = 0; j < 9; j++)
+				m_attributes->addVector3d("sh", light->SH[j]);
+		}
+
 		CObjectSerializable* object = CComponentSystem::createSerializable();
+
+		CAttributeSerializable* attributeObject = new CAttributeSerializable("ProbeData");
+		attributeObject->deserialize(m_attributes);
+		object->addProperty(attributeObject);
+		object->addAutoRelease(attributeObject);
+
 		return object;
 	}
 
 	void CLightProbes::loadSerializable(CObjectSerializable* object)
 	{
 		CComponentSystem::loadSerializable(object);
+
+		CAttributeSerializable* attributeObject = object->getProperty<CAttributeSerializable>("ProbeData");
+		if (attributeObject == NULL)
+			return;
+
+		attributeObject->serialize(m_attributes);
+		clearAll();
+
+		int id = 1; // first is numprobes
+
+		int numProbe = m_attributes->getAttributeAsInt("numprobes");
+		for (int i = 0; i < numProbe; i++)
+		{
+			CEntity* entity = addLightProbe();
+
+			CWorldTransformData* world = m_entities[i]->getData<CWorldTransformData>();
+			CLightProbeData* light = m_entities[i]->getData<CLightProbeData>();
+
+			world->Relative = m_attributes->getAttributeAsMatrix(id++);
+			for (int j = 0; j < 9; j++)
+			{
+				light->SH[j] = m_attributes->getAttributeAsVector3d(id++);
+			}
+		}
 	}
 
 	void CLightProbes::clearAll()
