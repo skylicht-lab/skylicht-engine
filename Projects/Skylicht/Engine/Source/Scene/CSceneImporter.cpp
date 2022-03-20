@@ -54,7 +54,9 @@ namespace Skylicht
 				if (nodeName == reader->getNodeName())
 				{
 					tree++;
-					if (reader->getAttributeValue(L"type") != NULL)
+
+					// only read node of Component child
+					if (reader->getAttributeValue(L"type") != NULL && tree == 2)
 					{
 						attributeName = reader->getAttributeValue(L"type");
 						std::string componentName = CStringImp::convertUnicodeToUTF8(attributeName.c_str());

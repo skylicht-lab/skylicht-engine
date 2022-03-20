@@ -42,6 +42,9 @@ namespace Skylicht
 
 		static bool s_showProbe;
 
+		u32 m_lastProbeCount;
+		bool m_buildProbe;
+
 	public:
 		CLightProbeRender();
 
