@@ -34,6 +34,7 @@ namespace Skylicht
 	{
 	protected:
 		std::vector<CEntity*> m_probes;
+		io::IAttributes* m_attributes;
 
 	public:
 		CLightProbes();

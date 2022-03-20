@@ -48,16 +48,20 @@ namespace Skylicht
 
 	void CAttributeSerializable::serialize(io::IAttributes* io)
 	{
-		// write to attribute
-		m_attribute->clear();
-		copyAttribute(io, m_attribute);
+		// save data to io
+		io->clear();
 
+		// copy to result
+		copyAttribute(m_attribute, io);
 	}
 
 	void CAttributeSerializable::deserialize(io::IAttributes* io)
 	{
-		// write to io
-		copyAttribute(m_attribute, io);
+		// load data from io
+		m_attribute->clear();
+
+		// copy from io to attribute
+		copyAttribute(io, m_attribute);
 	}
 
 	void CAttributeSerializable::copyAttribute(io::IAttributes* from, io::IAttributes* to)
@@ -171,7 +175,9 @@ namespace Skylicht
 		io::IAttributes* attr = fs->createEmptyAttributes();
 
 		bool done = false;
+		bool logError = true;
 
+		std::wstring attributeNode = L"attributes";
 		std::wstring nodeName = L"node";
 		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(Name.c_str());
 
@@ -189,11 +195,24 @@ namespace Skylicht
 				}
 				else
 				{
-					char log[512];
-					sprintf(log, "[CAttributeSerializable::load] Skip wrong data: type: %s", Name.c_str());
-					os::Printer::log(log);
+					if (logError)
+					{
+						std::wstring nodeName = reader->getNodeName();
+						std::wstring attribute = reader->getAttributeValue(L"type");
+
+						char log[512];
+						sprintf(log, "[CAttributeSerializable::load] Skip wrong data: type: %s", Name.c_str());
+						os::Printer::log(log);
+						logError = false;
+					}
 				}
 				break;
+			case io::EXN_ELEMENT_END:
+				if (attributeNode == reader->getNodeName())
+				{
+					done = true;
+					break;
+				}
 			default:
 				break;
 			}

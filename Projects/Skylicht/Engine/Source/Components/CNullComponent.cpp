@@ -52,13 +52,13 @@ namespace Skylicht
 	CObjectSerializable* CNullComponent::createSerializable()
 	{
 		CAttributeSerializable* object = new CAttributeSerializable(m_name.c_str());
-		object->serialize(m_attributes);
+		object->deserialize(m_attributes);
 		return object;
 	}
 
 	void CNullComponent::loadSerializable(CObjectSerializable* object)
 	{
 		// object must be CAttributeSerializable
-		object->deserialize(m_attributes);
+		object->serialize(m_attributes);
 	}
 }
