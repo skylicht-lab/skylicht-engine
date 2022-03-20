@@ -226,7 +226,7 @@ void CViewInit::initProbes()
 	{
 		// probe
 		CGameObject* probeObj = zone->createEmptyObject();
-		CLightProbe* probe = probeObj->addComponent<Lightmapper::CLightProbe>();
+		CLightProbe* probe = probeObj->addComponent<CLightProbe>();
 
 		CTransformEuler* probeTransform = probeObj->getTransformEuler();
 		probeTransform->setPosition(probesPosition[i]);
