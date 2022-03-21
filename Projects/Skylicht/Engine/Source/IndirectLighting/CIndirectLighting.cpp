@@ -25,14 +25,20 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CIndirectLighting.h"
 
+#include "Entity/CEntityHandler.h"
 #include "GameObject/CGameObject.h"
 #include "RenderMesh/CRenderMesh.h"
 #include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CIndirectLighting);
+
+	CATEGORY_COMPONENT(CIndirectLighting, "Indirect Lighting", "Indirect Lighting");
+
 	CIndirectLighting::CIndirectLighting() :
-		m_type(LightmapArray)
+		m_type(LightmapArray),
+		m_autoSH(false)
 	{
 
 	}
@@ -44,12 +50,14 @@ namespace Skylicht
 
 	void CIndirectLighting::initComponent()
 	{
-		CRenderMesh *renderMesh = m_gameObject->getComponent<CRenderMesh>();
+		m_data.clear();
+
+		CRenderMesh* renderMesh = m_gameObject->getComponent<CRenderMesh>();
 		if (renderMesh != NULL)
 		{
-			CEntityManager *entityMgr = m_gameObject->getEntityManager();
+			CEntityManager* entityMgr = m_gameObject->getEntityManager();
 			std::vector<CRenderMeshData*>& renderData = renderMesh->getRenderers();
-			for (CRenderMeshData *render : renderData)
+			for (CRenderMeshData* render : renderData)
 			{
 				// get entity that have render mesh data
 				CEntity* entity = entityMgr->getEntity(render->EntityIndex);
@@ -58,16 +66,31 @@ namespace Skylicht
 		}
 		else
 		{
-			// get entity that have render mesh data
-			CEntity* entity = m_gameObject->getEntity();
-			addLightingData(entity);
+			CEntityHandler* entityHandler = m_gameObject->getComponent<CEntityHandler>();
+			if (entityHandler != NULL)
+			{
+				std::vector<CEntity*>& entities = entityHandler->getEntities();
+				for (CEntity* entity : entities)
+					addLightingData(entity);
+			}
+			else
+			{
+				// get entity that have render mesh data
+				CEntity* entity = m_gameObject->getEntity();
+				addLightingData(entity);
+			}
 		}
 	}
 
-	void CIndirectLighting::addLightingData(CEntity *entity)
+	void CIndirectLighting::startComponent()
+	{
+		initComponent();
+	}
+
+	void CIndirectLighting::addLightingData(CEntity* entity)
 	{
 		// add indirect data info
-		CIndirectLightingData *data = entity->addData<CIndirectLightingData>();
+		CIndirectLightingData* data = entity->addData<CIndirectLightingData>();
 
 		if (m_type == LightmapArray)
 		{
@@ -79,6 +102,7 @@ namespace Skylicht
 		}
 
 		data->SH = m_sh;
+		data->AutoSH = &m_autoSH;
 
 		m_data.push_back(data);
 	}
@@ -94,9 +118,19 @@ namespace Skylicht
 			m_sh[i] = sh[i];
 	}
 
-	void CIndirectLighting::setLightmap(ITexture *texture)
+	void CIndirectLighting::setLightmap(ITexture* texture)
 	{
 		m_lightmap = texture;
+	}
+
+	void CIndirectLighting::setAutoSH(bool b)
+	{
+		m_autoSH = b;
+
+		for (CIndirectLightingData* data : m_data)
+		{
+			data->AutoSH = &m_autoSH;
+		}
 	}
 
 	void CIndirectLighting::setIndirectLightingType(EIndirectType type)
