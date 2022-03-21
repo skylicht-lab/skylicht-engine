@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,47 +22,44 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
+#pragma once
 
-#include "Lighting/CDirectionalLight.h"
-#include "Lighting/CPointLight.h"
+#include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
 
-#include "RenderMesh/CRenderMesh.h"
-#include "IndirectLighting/CIndirectLighting.h"
-
-#include "SkyDome/CSkyDome.h"
-
-#define USE_COMPONENT(component) CComponentSystem *component##_used = addComponent(new component())
+#include "CLightProbeData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	class CLightProbeRender : public IRenderSystem
 	{
-		std::vector<CComponentSystem*> g_component_used;
+	protected:
+		IMesh* ProbeMesh;
 
-		CComponentSystem* addComponent(CComponentSystem* add)
+		core::array<CLightProbeData*> m_probes;
+		core::array<CWorldTransformData*> m_transforms;
+
+		static bool s_showProbe;
+
+	public:
+		CLightProbeRender();
+
+		virtual ~CLightProbeRender();
+
+		virtual void beginQuery(CEntityManager* entityManager);
+
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
+
+		virtual void init(CEntityManager* entityManager);
+
+		virtual void update(CEntityManager* entityManager);
+
+		virtual void render(CEntityManager* entityManager);
+
+		static void showProbe(bool b)
 		{
-			g_component_used.push_back(add);
-			return add;
+			s_showProbe = b;
 		}
-
-		int cleanUp()
-		{
-			for (CComponentSystem* comp : g_component_used)
-				delete comp;
-
-			g_component_used.clear();
-			return 0;
-		}
-
-		// BEGIN DECLARE COMPONENT THAT WILL COMPILE
-		USE_COMPONENT(CDirectionalLight);
-		USE_COMPONENT(CPointLight);
-		USE_COMPONENT(CRenderMesh);
-		USE_COMPONENT(CSkyDome);
-		USE_COMPONENT(CIndirectLighting);
-		// END DECLARE COMPONENT
-
-		int clean = cleanUp();
-	}
+	};
 }

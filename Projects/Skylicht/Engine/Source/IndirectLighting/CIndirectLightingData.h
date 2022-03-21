@@ -41,10 +41,18 @@ namespace Skylicht
 
 		EType Type;
 
-		core::vector3df *SH;
-		ITexture *LightmapTexture;
-		ITexture *ReflectionTexture;
+		bool* AutoSH;
+
+		core::vector3df LastPosition;
+
+		core::vector3df* SH;
+
+		ITexture* LightmapTexture;
+
+		ITexture* ReflectionTexture;
+
 	public:
+
 		CIndirectLightingData();
 
 		virtual ~CIndirectLightingData();
