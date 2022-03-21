@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,47 +22,46 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Entity/IEntityData.h"
-#include "Entity/IRenderSystem.h"
-
-#include "CLightProbeData.h"
-#include "Transform/CWorldTransformData.h"
+#include "pch.h"
+#include "CIndirectLightingSystem.h"
 
 namespace Skylicht
 {
-	class CLightProbeRender : public IRenderSystem
+	CIndirectLightingSystem::CIndirectLightingSystem()
 	{
-	protected:
-		IMesh* ProbeMesh;
 
-		core::array<CLightProbeData*> m_probes;
-		core::array<CWorldTransformData*> m_transforms;
+	}
 
-		static bool s_showProbe;
+	CIndirectLightingSystem::~CIndirectLightingSystem()
+	{
 
-		u32 m_lastProbeCount;
-		bool m_buildProbe;
+	}
 
-	public:
-		CLightProbeRender();
+	void CIndirectLightingSystem::beginQuery(CEntityManager* entityManager)
+	{
+		m_entities.set_used(0);
+		m_entitiesPositions.set_used(0);
+	}
 
-		virtual ~CLightProbeRender();
+	void CIndirectLightingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	{
+		CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+		CIndirectLightingData* lightData = entity->getData<CIndirectLightingData>();
 
-		virtual void beginQuery(CEntityManager* entityManager);
-
-		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
-
-		virtual void init(CEntityManager* entityManager);
-
-		virtual void update(CEntityManager* entityManager);
-
-		virtual void render(CEntityManager* entityManager);
-
-		static void showProbe(bool b)
+		if (lightData != NULL)
 		{
-			s_showProbe = b;
+			m_entities.push_back(lightData);
+			m_entitiesPositions.push_back(transformData);
 		}
-	};
+	}
+
+	void CIndirectLightingSystem::init(CEntityManager* entityManager)
+	{
+
+	}
+
+	void CIndirectLightingSystem::update(CEntityManager* entityManager)
+	{
+
+	}
 }

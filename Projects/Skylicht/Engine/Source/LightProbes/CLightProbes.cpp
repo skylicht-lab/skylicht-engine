@@ -35,7 +35,7 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CLightProbes);
 
-	CATEGORY_COMPONENT(CLightProbes, "Light Probes", "Lighting");
+	CATEGORY_COMPONENT(CLightProbes, "Light Probes", "Indirect Lighting");
 
 	CLightProbes::CLightProbes()
 	{

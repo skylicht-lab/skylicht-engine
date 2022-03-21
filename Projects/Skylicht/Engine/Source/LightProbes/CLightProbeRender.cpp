@@ -32,9 +32,7 @@ namespace Skylicht
 {
 	bool CLightProbeRender::s_showProbe = false;
 
-	CLightProbeRender::CLightProbeRender() :
-		m_buildProbe(true),
-		m_lastProbeCount(0)
+	CLightProbeRender::CLightProbeRender()
 	{
 		const IGeometryCreator* geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
 		ProbeMesh = geometryCreator->createSphereMesh(0.3f);
@@ -78,13 +76,6 @@ namespace Skylicht
 			{
 				m_probes.push_back(probeData);
 				m_transforms.push_back(transformData);
-
-				if (transformData->NeedValidate)
-				{
-					// todo
-					// need rebuild kdtree
-					m_buildProbe = true;
-				}
 			}
 		}
 	}
@@ -96,13 +87,7 @@ namespace Skylicht
 
 	void CLightProbeRender::update(CEntityManager* entityManager)
 	{
-		if (m_buildProbe || m_lastProbeCount != m_transforms.size())
-		{
 
-
-			m_lastProbeCount = m_transforms.size();
-			m_buildProbe = false;
-		}
 	}
 
 	void CLightProbeRender::render(CEntityManager* entityManager)

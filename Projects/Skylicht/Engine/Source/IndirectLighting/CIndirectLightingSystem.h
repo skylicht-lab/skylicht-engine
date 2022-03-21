@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,75 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "CIndirectLightingData.h"
+#include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
+
+
+#include "Transform/CWorldTransformData.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 namespace Skylicht
 {
-	class CEntity;
-
-	class CIndirectLighting : public CComponentSystem
+	class CIndirectLightingSystem : public IEntitySystem
 	{
-	public:
-		enum EIndirectType
-		{
-			LightmapArray,
-			VertexColor,
-			SH4,
-			SH9,
-		};
-
 	protected:
-		EIndirectType m_type;
-
-		bool m_autoSH;
-
-		std::vector<CIndirectLightingData*> m_data;
-
-		core::vector3df m_sh[9];
-
-		ITexture* m_lightmap;
+		core::array<CIndirectLightingData*> m_entities;
+		core::array<CWorldTransformData*> m_entitiesPositions;
 
 	public:
-		CIndirectLighting();
+		CIndirectLightingSystem();
 
-		virtual ~CIndirectLighting();
+		virtual ~CIndirectLightingSystem();
 
-		virtual void initComponent();
+		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void startComponent();
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
-		virtual void updateComponent();
+		virtual void init(CEntityManager* entityManager);
 
-	protected:
-
-		void addLightingData(CEntity* entity);
-
-	public:
-
-		void setAutoSH(bool b);
-
-		void setIndirectLightingType(EIndirectType type);
-
-		void setLightmap(ITexture* texture);
-
-		ITexture* getLightmap()
-		{
-			return m_lightmap;
-		}
-
-		void setSH(core::vector3df* sh);
-
-		EIndirectType getIndirectLightingType()
-		{
-			return m_type;
-		}
-
-		std::vector<CIndirectLightingData*>& getData()
-		{
-			return m_data;
-		}
-
-		DECLARE_GETTYPENAME(CIndirectLighting)
+		virtual void update(CEntityManager* entityManager);
 	};
 }
