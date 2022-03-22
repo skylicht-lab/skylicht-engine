@@ -201,13 +201,13 @@ namespace Skylicht
 					updateSelectedPosition(delta);
 
 					m_position.notify(this);
-					setMatrix(m_transform->Relative, newPos, m_rotation.get(), m_scale.get());
+					setMatrix(m_transform, newPos, m_rotation.get(), m_scale.get());
 				}
 
 				m_position = newPos;
 				if (handle->endCheck())
 				{
-					setMatrix(m_transform->Relative, m_position.get(), m_rotation.get(), m_scale.get());
+					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
 					m_cacheSelectedObjects.clear();
 				}
@@ -227,13 +227,13 @@ namespace Skylicht
 					updateSelectedRotation(delta);
 
 					m_rotation.notify(this);
-					setMatrix(m_transform->Relative, m_position.get(), newRot, m_scale.get());
+					setMatrix(m_transform, m_position.get(), newRot, m_scale.get());
 				}
 
 				m_rotation = newRot;
 				if (handle->endCheck())
 				{
-					setMatrix(m_transform->Relative, m_position.get(), m_rotation.get(), m_scale.get());
+					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
 					m_cacheSelectedObjects.clear();
 				}
@@ -247,13 +247,13 @@ namespace Skylicht
 					updateSelectedScale(delta);
 
 					m_scale.notify(this);
-					setMatrix(m_transform->Relative, m_position.get(), m_rotation.get(), newScale);
+					setMatrix(m_transform, m_position.get(), m_rotation.get(), newScale);
 				}
 
 				m_scale = newScale;
 				if (handle->endCheck())
 				{
-					setMatrix(m_transform->Relative, m_position.get(), m_rotation.get(), m_scale.get());
+					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
 					m_cacheSelectedObjects.clear();
 				}
@@ -265,8 +265,11 @@ namespace Skylicht
 			}
 		}
 
-		void CWorldTransformDataGizmos::setMatrix(core::matrix4& mat, const core::vector3df& pos, const core::quaternion& rot, const core::vector3df& scale)
+		void CWorldTransformDataGizmos::setMatrix(CWorldTransformData* transform, const core::vector3df& pos, const core::quaternion& rot, const core::vector3df& scale)
 		{
+			core::matrix4& mat = transform->Relative;
+			transform->HasChanged = true;
+
 			mat.makeIdentity();
 			mat = rot.getMatrix();
 

@@ -5,6 +5,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/kdtree
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 )
 
