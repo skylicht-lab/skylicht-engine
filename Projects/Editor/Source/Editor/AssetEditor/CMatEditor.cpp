@@ -180,7 +180,7 @@ namespace Skylicht
 
 				// On change shader
 				CSubject<std::string>* shaderValue = new CSubject<std::string>(material->getShaderPath());
-				shaderValue->addObserver(new CObserver([&, material, group](ISubject* subject, IObserver* from)
+				shaderValue->addObserver(new CObserver([&, ui, material, group](ISubject* subject, IObserver* from)
 					{
 						CSubject<std::string>* value = (CSubject<std::string>*)subject;
 
