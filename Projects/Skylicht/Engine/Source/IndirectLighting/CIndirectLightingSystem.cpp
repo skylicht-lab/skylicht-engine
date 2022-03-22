@@ -50,14 +50,13 @@ namespace Skylicht
 	void CIndirectLightingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
 		CIndirectLightingData* lightData = entity->getData<CIndirectLightingData>();
-		if (lightData != NULL)
+		if (lightData != NULL &&
+			lightData->AutoSH && (lightData->Type == CIndirectLightingData::SH4 || lightData->Type == CIndirectLightingData::SH9))
 		{
-			CVisibleData* visible = entity->getData<CVisibleData>();
-			if (visible->Visible)
+			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+			if (transformData->NeedValidate || lightData->Init)
 			{
 				m_entities.push_back(lightData);
-
-				CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
 				m_entitiesPositions.push_back(transformData);
 			}
 		}
@@ -94,10 +93,51 @@ namespace Skylicht
 			for (u32 i = 0; i < n; i++)
 			{
 				f32* m = worlds[i]->World.pointer();
-				kd_insert3(m_kdtree, (double)m[12], (double)m[13], (double)m[14], data[i]);
+				kd_insert3f(m_kdtree, m[12], m[13], m[14], data[i]);
 			}
 
 			m_probeChange = false;
+		}
+
+		u32 n = m_entitiesPositions.size();
+		CWorldTransformData** worlds = m_entitiesPositions.pointer();
+		CIndirectLightingData** data = m_entities.pointer();
+
+		for (u32 i = 0; i < n; i++)
+		{
+			core::vector3df position = worlds[i]->World.getTranslation();
+
+			// query nearst probe
+			kdres* res = kd_nearest3f(m_kdtree, position.X, position.Y, position.Z);
+			if (res != NULL)
+			{
+				while (!kd_res_end(res))
+				{
+					// float pos[3];
+					// kd_res_itemf(res, pos);
+
+					// get probe data
+					CLightProbeData* probe = (CLightProbeData*)kd_res_item_data(res);
+					if (probe != NULL)
+					{
+						// get indirectData
+						CIndirectLightingData* indirectData = data[i];
+
+						// copy sh data
+						// need interpolate here, todo later
+						for (int j = 0; j < 9; j++)
+						{
+							indirectData->SH[j].set(probe->SH[j]);
+						}
+
+						indirectData->Init = false;
+					}
+
+					// kd_res_next(res);
+					break;
+				}
+				kd_res_free(res);
+			}
 		}
 	}
 }

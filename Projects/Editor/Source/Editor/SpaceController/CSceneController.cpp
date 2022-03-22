@@ -512,6 +512,10 @@ namespace Skylicht
 			{
 				CRenderMesh* renderMesh = gameObject->addComponent<CRenderMesh>();
 				renderMesh->initFromMeshFile(shortPath.c_str());
+
+				CIndirectLighting* indirectLighting = gameObject->addComponent<CIndirectLighting>();
+				indirectLighting->setAutoSH(true);
+				indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 			}
 		}
 
