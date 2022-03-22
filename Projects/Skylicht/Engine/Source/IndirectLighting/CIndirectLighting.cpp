@@ -130,6 +130,7 @@ namespace Skylicht
 		for (CIndirectLightingData* data : m_data)
 		{
 			data->AutoSH = &m_autoSH;
+			data->Init = true;
 		}
 	}
 

@@ -32,7 +32,8 @@ namespace Skylicht
 		LightmapTexture(NULL),
 		ReflectionTexture(NULL),
 		SH(NULL),
-		AutoSH(NULL)
+		AutoSH(NULL),
+		Init(true)
 	{
 
 	}
