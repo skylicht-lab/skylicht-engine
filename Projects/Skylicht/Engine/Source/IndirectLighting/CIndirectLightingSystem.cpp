@@ -27,31 +27,51 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CIndirectLightingSystem::CIndirectLightingSystem()
+	CIndirectLightingSystem::CIndirectLightingSystem() :
+		m_probeChange(false)
 	{
-
+		m_kdtree = kd_create(3);
 	}
 
 	CIndirectLightingSystem::~CIndirectLightingSystem()
 	{
-
+		kd_free(m_kdtree);
 	}
 
 	void CIndirectLightingSystem::beginQuery(CEntityManager* entityManager)
 	{
 		m_entities.set_used(0);
 		m_entitiesPositions.set_used(0);
+
+		m_probes.set_used(0);
+		m_probePositions.set_used(0);
 	}
 
 	void CIndirectLightingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
 		CIndirectLightingData* lightData = entity->getData<CIndirectLightingData>();
-
 		if (lightData != NULL)
 		{
-			m_entities.push_back(lightData);
-			m_entitiesPositions.push_back(transformData);
+			CVisibleData* visible = entity->getData<CVisibleData>();
+			if (visible->Visible)
+			{
+				m_entities.push_back(lightData);
+
+				CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+				m_entitiesPositions.push_back(transformData);
+			}
+		}
+
+		CLightProbeData* probeData = entity->getData<CLightProbeData>();
+		if (probeData != NULL)
+		{
+			m_probes.push_back(probeData);
+
+			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+			m_probePositions.push_back(transformData);
+
+			if (transformData->NeedValidate)
+				m_probeChange = true;
 		}
 	}
 
@@ -62,6 +82,22 @@ namespace Skylicht
 
 	void CIndirectLightingSystem::update(CEntityManager* entityManager)
 	{
+		if (m_probeChange)
+		{
+			kd_clear(m_kdtree);
 
+			u32 n = m_probePositions.size();
+
+			CWorldTransformData** worlds = m_probePositions.pointer();
+			CLightProbeData** data = m_probes.pointer();
+
+			for (u32 i = 0; i < n; i++)
+			{
+				f32* m = worlds[i]->World.pointer();
+				kd_insert3(m_kdtree, (double)m[12], (double)m[13], (double)m[14], data[i]);
+			}
+
+			m_probeChange = false;
+		}
 	}
 }

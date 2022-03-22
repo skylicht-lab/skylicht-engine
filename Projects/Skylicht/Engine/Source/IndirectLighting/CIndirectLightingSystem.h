@@ -30,6 +30,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Transform/CWorldTransformData.h"
 #include "IndirectLighting/CIndirectLightingData.h"
+#include "LightProbes/CLightProbeData.h"
+#include "Culling/CVisibleData.h"
+
+#include "kdtree.h"
 
 namespace Skylicht
 {
@@ -38,6 +42,12 @@ namespace Skylicht
 	protected:
 		core::array<CIndirectLightingData*> m_entities;
 		core::array<CWorldTransformData*> m_entitiesPositions;
+		core::array<CLightProbeData*> m_probes;
+		core::array<CWorldTransformData*> m_probePositions;
+
+		kdtree* m_kdtree;
+
+		bool m_probeChange;
 
 	public:
 		CIndirectLightingSystem();
