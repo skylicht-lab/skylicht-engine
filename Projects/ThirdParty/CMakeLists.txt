@@ -5,6 +5,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/src
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/libmpg123
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/kdtree
 )
 
 if (BUILD_OPENSSL)
@@ -120,6 +121,14 @@ file(GLOB_RECURSE libmpg123_source
 	./source/libmpg123/**.S)
 setup_project_group("${libmpg123_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
+#kdtree
+file(GLOB_RECURSE kdtree_source 
+	./source/kdtree/**.cpp 
+	./source/kdtree/**.hpp 
+	./source/kdtree/**.c 
+	./source/kdtree/**.h)
+setup_project_group("${kdtree_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_library(ThirdParty STATIC
 	${aes_gladman_source} 
 	${bzip2_source}
@@ -132,6 +141,7 @@ add_library(ThirdParty STATIC
 	${zlib_source}
 	${freetype_source}
 	${libmpg123_source}
+	${kdtree_source}
 )
 
 set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})
