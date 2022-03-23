@@ -29,7 +29,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSelectObjectData::CSelectObjectData()
+		CSelectObjectData::CSelectObjectData() :
+			GameObject(NULL),
+			Entity(NULL)
 		{
 
 		}

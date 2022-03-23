@@ -32,14 +32,11 @@ namespace Skylicht
 	CReflectionProbeData::CReflectionProbeData() :
 		ReflectionTexture(NULL)
 	{
-		const IGeometryCreator *geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
-		ProbeMesh = geometryCreator->createSphereMesh(0.5f);
-		ProbeMesh->setHardwareMappingHint(EHM_STATIC);
+		
 	}
 
 	CReflectionProbeData::~CReflectionProbeData()
 	{
-		ProbeMesh->drop();
-		ProbeMesh = NULL;
+
 	}
 }

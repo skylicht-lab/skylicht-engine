@@ -11,6 +11,7 @@
 
 #include "Lightmapper/CLightmapper.h"
 #include "LightProbes/CLightProbeRender.h"
+#include "ReflectionProbe/CReflectionProbeRender.h"
 
 #if defined(HAVE_SKYLICHT_NETWORK)
 #include "HttpRequest/CHttpRequest.h"
@@ -37,6 +38,7 @@ SkylichtEditor::SkylichtEditor() :
 	Editor::CSelecting::createGetInstance();
 
 	CLightProbeRender::showProbe(true);
+	CReflectionProbeRender::showProbe(true);
 }
 
 SkylichtEditor::~SkylichtEditor()

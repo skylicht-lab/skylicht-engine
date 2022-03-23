@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,30 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "Scene/CScene.h"
+#include "EditorComponents/CGizmosComponent.h"
+#include "EditorComponents/SelectObject/CSelectObjectData.h"
+
+#include "LightProbes/CLightProbes.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSelecting :
-			public CGameSingleton<CSelecting>,
-			public IEventReceiver
+		class CGLightProbes : public CGizmosComponent
 		{
 		protected:
-			core::triangle3df m_triangles[12];
+			CLightProbes* m_lightProbes;
 
 		public:
-			CSelecting();
+			CGLightProbes();
 
-			virtual ~CSelecting();
+			virtual ~CGLightProbes();
 
-			void end();
+			virtual void initComponent();
 
-			virtual bool OnEvent(const SEvent& event);
+			virtual void updateComponent();
 
-			void getObjectWithRay(const core::line3d<f32>& ray, f32& outBestDistanceSquared, CGameObject* &object, CEntity* &entity);
+		protected:
+
+			void updateSelectBBox();
+
 		};
 	}
 }

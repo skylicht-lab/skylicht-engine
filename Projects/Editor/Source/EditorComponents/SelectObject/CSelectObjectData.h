@@ -35,6 +35,7 @@ namespace Skylicht
 		{
 		public:
 			CGameObject* GameObject;
+			CEntity* Entity;
 
 			core::aabbox3df BBox;
 			core::aabbox3df TransformBBox;

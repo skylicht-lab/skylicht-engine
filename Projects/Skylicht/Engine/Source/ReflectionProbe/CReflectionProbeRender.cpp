@@ -33,12 +33,22 @@ namespace Skylicht
 
 	CReflectionProbeRender::CReflectionProbeRender()
 	{
-		m_material.MaterialType = CShaderManager::getInstance()->getShaderIDByName("ReflectionProbe");
+		const IGeometryCreator* geometryCreator = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
+		ProbeMesh = geometryCreator->createSphereMesh(0.3f);
+		ProbeMesh->setHardwareMappingHint(EHM_STATIC);
+
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
+
+		shaderVertexColor = shaderMgr->getShaderIDByName("VertexColor");
+		shaderReflectionProbe = shaderMgr->getShaderIDByName("ReflectionProbe");
+
+		m_material.MaterialType = shaderReflectionProbe;
 	}
 
 	CReflectionProbeRender::~CReflectionProbeRender()
 	{
-
+		ProbeMesh->drop();
+		ProbeMesh = NULL;
 	}
 
 	void CReflectionProbeRender::beginQuery(CEntityManager* entityManager)
@@ -47,15 +57,15 @@ namespace Skylicht
 		m_transforms.set_used(0);
 	}
 
-	void CReflectionProbeRender::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CReflectionProbeRender::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
 		if (s_showProbe == false)
 			return;
 
-		CReflectionProbeData *probeData = entity->getData<CReflectionProbeData>();
-		if (probeData != NULL && probeData->ReflectionTexture != NULL)
+		CReflectionProbeData* probeData = entity->getData<CReflectionProbeData>();
+		if (probeData != NULL)
 		{
-			CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
+			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
 			if (transformData != NULL)
 			{
 				m_probes.push_back(probeData);
@@ -64,33 +74,40 @@ namespace Skylicht
 		}
 	}
 
-	void CReflectionProbeRender::init(CEntityManager *entityManager)
+	void CReflectionProbeRender::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CReflectionProbeRender::update(CEntityManager *entityManager)
+	void CReflectionProbeRender::update(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CReflectionProbeRender::render(CEntityManager *entityManager)
+	void CReflectionProbeRender::render(CEntityManager* entityManager)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		CReflectionProbeData** probes = m_probes.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();
 
 		for (u32 i = 0, n = m_probes.size(); i < n; i++)
 		{
-			IMesh* mesh = probes[i]->ProbeMesh;
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
-			m_material.setTexture(0, probes[i]->ReflectionTexture);
-
-			for (u32 j = 0; j < mesh->getMeshBufferCount(); j++)
+			if (probes[i]->ReflectionTexture != NULL)
 			{
-				IMeshBuffer *buffer = mesh->getMeshBuffer(j);
+				m_material.setTexture(0, probes[i]->ReflectionTexture);
+				m_material.MaterialType = shaderReflectionProbe;
+			}
+			else
+			{
+				m_material.MaterialType = shaderVertexColor;
+			}
+
+			for (u32 j = 0; j < ProbeMesh->getMeshBufferCount(); j++)
+			{
+				IMeshBuffer* buffer = ProbeMesh->getMeshBuffer(j);
 				driver->setMaterial(m_material);
 				driver->drawMeshBuffer(buffer);
 			}

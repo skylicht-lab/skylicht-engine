@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SpriteDraw/CSprite.h"
 #include "SkySun/CSkySun.h"
 #include "LightProbes/CLightProbes.h"
+#include "ReflectionProbe/CReflectionProbe.h"
 
 #include "Editor/CEditor.h"
 #include "Handles/CHandles.h"
@@ -376,6 +377,12 @@ namespace Skylicht
 			CGameObject* lightProbesObj = zone->createEmptyObject();
 			lightProbesObj->setName(L"Light Probes");
 			lightProbesObj->addComponent<CLightProbes>();
+
+			// reflection probe
+			CGameObject* reflectionProbesObj = zone->createEmptyObject();
+			reflectionProbesObj->setName(L"Reflection Probe");
+			reflectionProbesObj->addComponent<CReflectionProbe>();
+			reflectionProbesObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
 
 			// update search index
 			m_scene->updateAddRemoveObject();
