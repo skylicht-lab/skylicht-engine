@@ -38,6 +38,11 @@ namespace Skylicht
 		core::array<CReflectionProbeData*> m_probes;
 		core::array<CWorldTransformData*> m_transforms;
 
+		IMesh* ProbeMesh;
+		
+		int shaderVertexColor;
+		int shaderReflectionProbe;
+
 		SMaterial m_material;
 
 		static bool s_showProbe;
@@ -49,13 +54,13 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 
-		virtual void render(CEntityManager *entityManager);
+		virtual void render(CEntityManager* entityManager);
 
 		static void showProbe(bool b)
 		{

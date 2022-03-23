@@ -39,6 +39,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CReflectionProbe);
+
+	CATEGORY_COMPONENT(CReflectionProbe, "Reflection Probe", "Indirect Lighting");
+
 	CReflectionProbe::CReflectionProbe() :
 		m_staticTexture(NULL),
 		m_dynamicTexture(NULL),
@@ -87,13 +91,13 @@ namespace Skylicht
 
 	}
 
-	void CReflectionProbe::bakeProbe(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr)
+	void CReflectionProbe::bakeProbe(CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr)
 	{
 		if (m_dynamicTexture == NULL)
 			m_dynamicTexture = getVideoDriver()->addRenderTargetCubeTexture(m_bakeSize, "bake_cube_reflection", video::ECF_A8R8G8B8);
 
 		core::vector3df position = m_gameObject->getPosition();
-		CBaseRP *baseRP = dynamic_cast<CBaseRP*>(rp);
+		CBaseRP* baseRP = dynamic_cast<CBaseRP*>(rp);
 		if (baseRP != NULL)
 		{
 			baseRP->renderCubeEnvironment(camera, entityMgr, position, m_dynamicTexture, NULL, 0);
@@ -104,7 +108,7 @@ namespace Skylicht
 		}
 	}
 
-	void CReflectionProbe::bakeProbeToFile(CCamera *camera, IRenderPipeline *rp, CEntityManager *entityMgr, const char *outfolder, const char *outname)
+	void CReflectionProbe::bakeProbeToFile(CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr, const char* outfolder, const char* outname)
 	{
 		for (int i = 0; i < 6; i++)
 		{
@@ -113,12 +117,12 @@ namespace Skylicht
 		}
 
 		core::vector3df position = m_gameObject->getPosition();
-		CBaseRP *baseRP = dynamic_cast<CBaseRP*>(rp);
+		CBaseRP* baseRP = dynamic_cast<CBaseRP*>(rp);
 		if (baseRP != NULL)
 		{
 			baseRP->renderEnvironment(camera, entityMgr, position, m_bakeTexture, NULL, 0);
 
-			const char *cubeText[] =
+			const char* cubeText[] =
 			{
 				"X1",
 				"X2",
@@ -132,7 +136,7 @@ namespace Skylicht
 			for (int i = 0; i < 6; i++)
 			{
 				sprintf(name, "%s/%s_%s.png", outfolder, outname, cubeText[i]);
-				void *imageData = m_bakeTexture[i]->lock(video::ETLM_READ_ONLY);
+				void* imageData = m_bakeTexture[i]->lock(video::ETLM_READ_ONLY);
 
 				IImage* im = getVideoDriver()->createImageFromData(
 					m_bakeTexture[i]->getColorFormat(),
@@ -152,20 +156,10 @@ namespace Skylicht
 
 	video::ITexture* CReflectionProbe::getReflectionTexture()
 	{
-		/*
-		if (m_dynamicTexture != NULL)
-			return m_dynamicTexture;
-
-		if (m_staticTexture != NULL)
-			return m_staticTexture;
-
-		return NULL;
-		*/
-
 		return m_probeData->ReflectionTexture;
 	}
 
-	bool CReflectionProbe::loadStaticTexture(const char *path)
+	bool CReflectionProbe::loadStaticTexture(const char* path)
 	{
 		std::string x1 = std::string(path) + "_X1.png";
 		std::string x2 = std::string(path) + "_X2.png";

@@ -31,8 +31,7 @@ namespace Skylicht
 	class CReflectionProbeData : public IEntityData
 	{
 	public:
-		IMesh *ProbeMesh;
-		ITexture *ReflectionTexture;
+		ITexture* ReflectionTexture;
 
 	public:
 		CReflectionProbeData();
