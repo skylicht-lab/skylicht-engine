@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -22,62 +22,64 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
+#pragma once
+
 #include "pch.h"
-#include "CGRenderMesh.h"
-
-#include "Utils/CActivator.h"
-#include "Components/CDependentComponent.h"
-
-#include "GameObject/CGameObject.h"
+#include "CGLightProbes.h"
 #include "Transform/CWorldInverseTransformData.h"
-#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		ACTIVATOR_REGISTER(CGRenderMesh);
+		ACTIVATOR_REGISTER(CGLightProbes);
 
-		DEPENDENT_COMPONENT(CRenderMesh, CGRenderMesh);
+		DEPENDENT_COMPONENT(CLightProbes, CGLightProbes);
 
-		CGRenderMesh::CGRenderMesh() :
-			m_renderMesh(NULL)
+		CGLightProbes::CGLightProbes() :
+			m_lightProbes(NULL)
 		{
 
 		}
 
-		CGRenderMesh::~CGRenderMesh()
+		CGLightProbes::~CGLightProbes()
 		{
 
 		}
 
-		void CGRenderMesh::initComponent()
+		void CGLightProbes::initComponent()
 		{
-			m_renderMesh = m_gameObject->getComponent<CRenderMesh>();
-
-			updateSelectBBox();
+			m_lightProbes = m_gameObject->getComponent<CLightProbes>();
 		}
 
-		void CGRenderMesh::updateComponent()
+		void CGLightProbes::updateComponent()
 		{
 			updateSelectBBox();
 		}
 
-		void CGRenderMesh::updateSelectBBox()
+		void CGLightProbes::updateSelectBBox()
 		{
 			CEntityManager* entityMgr = m_gameObject->getEntityManager();
 
-			std::vector<CRenderMeshData*>& renderers = m_renderMesh->getRenderers();
-			for (size_t i = 0, n = renderers.size(); i < n; i++)
+			std::vector<CEntity*>& entities = m_lightProbes->getEntities();
+			for (size_t i = 0, n = entities.size(); i < n; i++)
 			{
-				CEntity* entity = entityMgr->getEntity(renderers[i]->EntityIndex);
+				CEntity* entity = entities[i];
+
 				CSelectObjectData* selectObjectData = entity->getData<CSelectObjectData>();
 				if (selectObjectData == NULL)
 					selectObjectData = entity->addData<CSelectObjectData>();
 
+				CWorldInverseTransformData* worldInv = entity->getData<CWorldInverseTransformData>();
+				if (worldInv == NULL)
+					worldInv = entity->addData<CWorldInverseTransformData>();
+
 				// select bbox data
 				selectObjectData->GameObject = m_gameObject;
-				selectObjectData->BBox = renderers[i]->getMesh()->getBoundingBox();
+				selectObjectData->Entity = entity;
+
+				selectObjectData->BBox.MinEdge = core::vector3df(-0.3f, -0.3f, -0.3f);
+				selectObjectData->BBox.MaxEdge = core::vector3df(0.3f, 0.3f, 0.3f);
 			}
 		}
 	}

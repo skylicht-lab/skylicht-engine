@@ -41,7 +41,7 @@ namespace Skylicht
 
 		core::array<CIndirectLightingData*> m_entities;
 		core::array<CWorldTransformData*> m_entitiesPositions;
-		core::array<float> m_minDistance;
+		core::array<float> m_minDistance;		
 
 	public:
 		CReflectionProbeSystem();

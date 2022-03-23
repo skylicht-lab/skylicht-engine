@@ -77,11 +77,40 @@ namespace Skylicht
 					core::line3df ray = CProjective::getViewRay(selectSystem->getCamera(), (float)mouseX, (float)mouseY, selectSystem->getViewportWidth(), selectSystem->getViewportHeight());
 
 					float maxDistanceSQ = 500.0f * 500.0f;
-					CGameObject* object = getObjectWithRay(ray, maxDistanceSQ);
-					if (object != NULL)
-					{
-						CSelection* selection = CSelection::getInstance();
 
+					CGameObject* object = NULL;
+					CEntity* entity = NULL;
+					getObjectWithRay(ray, maxDistanceSQ, object, entity);
+
+					CSelection* selection = CSelection::getInstance();
+
+					if (entity != NULL)
+					{
+						if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+						{
+							// need clear current selection
+							if (selection->getSelected(entity) == NULL)
+							{
+								sceneController->deselectAllOnHierachy();
+								selection->clear();
+							}
+							sceneController->selectOnHierachy(entity);
+						}
+						else
+						{
+							// hold control && re-pick this object
+							if (selection->getSelected(object) != NULL)
+							{
+								sceneController->deselectOnHierachy(object);
+							}
+							else
+							{
+								sceneController->selectOnHierachy(object);
+							}
+						}
+					}
+					else if (object != NULL)
+					{
 						if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
 						{
 							// need clear current selection
@@ -120,16 +149,17 @@ namespace Skylicht
 			return false;
 		}
 
-		CGameObject* CSelecting::getObjectWithRay(const core::line3d<f32>& ray, f32& outBestDistanceSquared)
+		void CSelecting::getObjectWithRay(const core::line3d<f32>& ray, f32& outBestDistanceSquared, CGameObject*& object, CEntity*& entity)
 		{
+			object = NULL;
+			entity = NULL;
+
 			CSelectObjectSystem* selectSystem = CSceneController::getInstance()->getSelectObjectSystem();
 			core::array<CSelectObjectData*>& selectObjectData = selectSystem->getCulledCollision();
 
 			core::vector3df point;
 			core::vector3df vec = ray.getVector().normalize();
 			const f32 lineLength = ray.getLengthSQ();
-
-			CGameObject* result = NULL;
 
 			for (u32 i = 0, n = selectObjectData.size(); i < n; i++)
 			{
@@ -171,14 +201,13 @@ namespace Skylicht
 							if (dis1 < lineLength && dis2 < lineLength && dis1 < outBestDistanceSquared)
 							{
 								outBestDistanceSquared = dis1;
-								result = data->GameObject;
+								object = data->GameObject;
+								entity = data->Entity;
 							}
 						}
 					}
 				}
 			}
-
-			return result;
 		}
 	}
 }

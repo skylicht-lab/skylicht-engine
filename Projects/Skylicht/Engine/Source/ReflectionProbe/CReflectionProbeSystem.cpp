@@ -47,12 +47,12 @@ namespace Skylicht
 		m_minDistance.set_used(0);
 	}
 
-	void CReflectionProbeSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CReflectionProbeSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CWorldTransformData *transformData = entity->getData<CWorldTransformData>();
-		CIndirectLightingData *lightData = entity->getData<CIndirectLightingData>();
+		CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+		CIndirectLightingData* lightData = entity->getData<CIndirectLightingData>();
 
-		CReflectionProbeData *probeData = entity->getData<CReflectionProbeData>();
+		CReflectionProbeData* probeData = entity->getData<CReflectionProbeData>();
 		if (probeData != NULL && probeData->ReflectionTexture != NULL)
 		{
 			if (transformData != NULL)
@@ -69,12 +69,12 @@ namespace Skylicht
 		}
 	}
 
-	void CReflectionProbeSystem::init(CEntityManager *entityManager)
+	void CReflectionProbeSystem::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CReflectionProbeSystem::update(CEntityManager *entityManager)
+	void CReflectionProbeSystem::update(CEntityManager* entityManager)
 	{
 		for (u32 i = 0, n = m_probes.size(); i < n; i++)
 		{
