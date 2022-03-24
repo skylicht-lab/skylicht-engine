@@ -29,14 +29,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CDirectionalLight *CShaderLighting::s_directionalLight = NULL;
+	CDirectionalLight* CShaderLighting::s_directionalLight = NULL;
 
-	CPointLight	*CShaderLighting::s_pointLight = NULL;
+	CPointLight* CShaderLighting::s_pointLight = NULL;
 
 	SColorf CShaderLighting::s_lightAmbient = SColorf(0.4f, 0.4f, 0.4f, 1.0f);
 
 
-	void CShaderLighting::setDirectionalLight(CDirectionalLight *light)
+	void CShaderLighting::setDirectionalLight(CDirectionalLight* light)
 	{
 		s_directionalLight = light;
 	}
@@ -47,7 +47,7 @@ namespace Skylicht
 	}
 
 
-	void CShaderLighting::setPointLight(CPointLight *light)
+	void CShaderLighting::setPointLight(CPointLight* light)
 	{
 		s_pointLight = light;
 	}
@@ -75,7 +75,7 @@ namespace Skylicht
 
 	}
 
-	void CShaderLighting::OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader)
+	void CShaderLighting::OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader)
 	{
 		switch (uniform->Type)
 		{
@@ -83,7 +83,11 @@ namespace Skylicht
 		{
 			if (s_directionalLight != NULL)
 			{
-				const video::SColorf& color = s_directionalLight->getColor();
+				video::SColorf color = s_directionalLight->getColor();
+				color.r = color.r * s_directionalLight->getIntensity();
+				color.g = color.g * s_directionalLight->getIntensity();
+				color.b = color.b * s_directionalLight->getIntensity();
+
 				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, s_directionalLight->getIntensity());
 			}
 		}
@@ -92,7 +96,11 @@ namespace Skylicht
 		{
 			if (s_pointLight != NULL)
 			{
-				const video::SColorf& color = s_pointLight->getColor();
+				video::SColorf color = s_pointLight->getColor();
+				color.r = color.r * s_pointLight->getIntensity();
+				color.g = color.g * s_pointLight->getIntensity();
+				color.b = color.b * s_pointLight->getIntensity();
+
 				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, s_pointLight->getIntensity());
 			}
 		}

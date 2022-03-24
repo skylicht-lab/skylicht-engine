@@ -28,9 +28,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntity.h"
 #include "Entity/CEntityManager.h"
 
-#include "RenderPipeline/IRenderPipeline.h"
-#include "RenderPipeline/CBaseRP.h"
-
 #include "CReflectionProbeData.h"
 #include "CReflectionProbeRender.h"
 #include "CReflectionProbe.h"

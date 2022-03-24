@@ -26,11 +26,54 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGReflectionProbe.h"
+#include "Transform/CWorldInverseTransformData.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
+		ACTIVATOR_REGISTER(CGReflectionProbe);
 
+		DEPENDENT_COMPONENT(CReflectionProbe, CGReflectionProbe);
+
+		CGReflectionProbe::CGReflectionProbe() :
+			m_reflectionProbe(NULL)
+		{
+
+		}
+
+		CGReflectionProbe::~CGReflectionProbe()
+		{
+
+		}
+
+		void CGReflectionProbe::initComponent()
+		{
+			m_reflectionProbe = m_gameObject->getComponent<CReflectionProbe>();
+		}
+
+		void CGReflectionProbe::updateComponent()
+		{
+			updateSelectBBox();
+		}
+
+		void CGReflectionProbe::updateSelectBBox()
+		{
+			CEntityManager* entityMgr = m_gameObject->getEntityManager();
+			CEntity* entity = m_gameObject->getEntity();
+
+			CSelectObjectData* selectObjectData = entity->getData<CSelectObjectData>();
+			if (selectObjectData == NULL)
+				selectObjectData = entity->addData<CSelectObjectData>();
+
+			CWorldInverseTransformData* worldInv = entity->getData<CWorldInverseTransformData>();
+			if (worldInv == NULL)
+				worldInv = entity->addData<CWorldInverseTransformData>();
+
+			// select bbox data
+			selectObjectData->GameObject = m_gameObject;
+			selectObjectData->BBox.MinEdge = core::vector3df(-0.3f, -0.3f, -0.3f);
+			selectObjectData->BBox.MaxEdge = core::vector3df(0.3f, 0.3f, 0.3f);
+		}
 	}
 }

@@ -25,7 +25,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Components/CComponentSystem.h"
+
 #include "Camera/CCamera.h"
+#include "RenderPipeline/IRenderPipeline.h"
+#include "RenderPipeline/CBaseRP.h"
+
 #include "CReflectionProbeData.h"
 
 namespace Skylicht
