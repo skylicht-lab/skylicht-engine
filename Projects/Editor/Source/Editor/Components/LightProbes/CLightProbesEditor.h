@@ -37,9 +37,6 @@ namespace Skylicht
 	{
 		class CLightProbesEditor : public CDefaultEditor
 		{
-		protected:
-			CLightProbes* m_lightProbes;
-
 		public:
 			CLightProbesEditor();
 
