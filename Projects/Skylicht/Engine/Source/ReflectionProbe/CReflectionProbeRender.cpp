@@ -38,6 +38,7 @@ namespace Skylicht
 		ProbeMesh->setHardwareMappingHint(EHM_STATIC);
 
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
+		shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
 
 		shaderVertexColor = shaderMgr->getShaderIDByName("VertexColor");
 		shaderReflectionProbe = shaderMgr->getShaderIDByName("ReflectionProbe");
