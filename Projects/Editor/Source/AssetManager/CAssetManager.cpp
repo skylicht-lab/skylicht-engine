@@ -122,7 +122,10 @@ namespace Skylicht
 			{
 				// get short path
 				std::string sortPath = path;
-				sortPath.replace(sortPath.find(assetPath.c_str()), assetPath.size(), "");
+
+				size_t pos = sortPath.find(assetPath.c_str());
+				if (pos == 0)
+					sortPath.replace(pos, assetPath.size(), "");
 
 				// add db
 				m_files.push_back(
