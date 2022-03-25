@@ -508,4 +508,85 @@ namespace Skylicht
 			m_value = io->getAttributeAsMatrix(Name.c_str());
 		}
 	};
+
+	class CEnumPropertyData
+	{
+	public:
+		struct SEnumString
+		{
+			std::string Name;
+			int Value;
+
+			SEnumString(const char* name, int value)
+			{
+				Name = name;
+				Value = value;
+			}
+		};
+
+	protected:
+		std::vector<SEnumString> m_enums;
+
+	public:
+
+		void addEnumStringInt(const char* name, int value)
+		{
+			m_enums.push_back(SEnumString(name, (int)value));
+		}
+
+		int getEnumCount()
+		{
+			return (int)m_enums.size();
+		}
+
+		const SEnumString& getEnum(int i)
+		{
+			return m_enums[i];
+		}
+
+		virtual void setIntValue(int value) = 0;
+
+		virtual int getIntValue() = 0;
+	};
+
+	template<class T>
+	class CEnumProperty :
+		public CValuePropertyTemplate<T>,
+		public CEnumPropertyData
+	{
+	public:
+
+
+	public:
+		CEnumProperty(CObjectSerializable* owner, const char* name, T value) :
+			CValuePropertyTemplate(owner, Enum, name)
+		{
+			set(value);
+		}
+
+		void addEnumString(const char* name, T value)
+		{
+			m_enums.push_back(SEnumString(name, (int)value));
+		}
+
+		virtual void setIntValue(int value)
+		{
+			set((T)value);
+		}
+
+		virtual int getIntValue()
+		{
+			return (int)m_value;
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addInt(Name.c_str(), (int)m_value);
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = (T)io->getAttributeAsInt(Name.c_str());
+		}
+	};
 }
