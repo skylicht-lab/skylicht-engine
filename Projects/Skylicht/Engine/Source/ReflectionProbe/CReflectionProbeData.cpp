@@ -30,9 +30,10 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CReflectionProbeData::CReflectionProbeData() :
-		ReflectionTexture(NULL)
+		ReflectionTexture(NULL),
+		Invalidate(true)
 	{
-		
+
 	}
 
 	CReflectionProbeData::~CReflectionProbeData()

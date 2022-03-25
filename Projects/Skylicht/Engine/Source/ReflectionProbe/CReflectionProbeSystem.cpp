@@ -29,12 +29,12 @@ namespace Skylicht
 {
 	CReflectionProbeSystem::CReflectionProbeSystem()
 	{
-
+		m_kdtree = kd_create(3);
 	}
 
 	CReflectionProbeSystem::~CReflectionProbeSystem()
 	{
-
+		kd_free(m_kdtree);
 	}
 
 	void CReflectionProbeSystem::beginQuery(CEntityManager* entityManager)
@@ -44,7 +44,6 @@ namespace Skylicht
 
 		m_entities.set_used(0);
 		m_entitiesPositions.set_used(0);
-		m_minDistance.set_used(0);
 	}
 
 	void CReflectionProbeSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
@@ -59,13 +58,21 @@ namespace Skylicht
 			{
 				m_probes.push_back(probeData);
 				m_probePositions.push_back(transformData);
+
+				if (transformData->NeedValidate || probeData->Invalidate)
+				{
+					m_probeChange = true;
+					probeData->Invalidate = false;
+				}
 			}
 		}
 		else if (lightData != NULL)
 		{
-			m_entities.push_back(lightData);
-			m_entitiesPositions.push_back(transformData);
-			m_minDistance.push_back(999999999.9f);
+			if (transformData->NeedValidate || lightData->Init || m_probeChange)
+			{
+				m_entities.push_back(lightData);
+				m_entitiesPositions.push_back(transformData);
+			}
 		}
 	}
 
@@ -76,23 +83,48 @@ namespace Skylicht
 
 	void CReflectionProbeSystem::update(CEntityManager* entityManager)
 	{
-		for (u32 i = 0, n = m_probes.size(); i < n; i++)
+		if (m_probeChange)
 		{
-			core::vector3df probePosition = m_probePositions[i]->World.getTranslation();
+			kd_clear(m_kdtree);
 
-			for (u32 j = 0, m = m_entities.size(); j < m; j++)
+			u32 n = m_probePositions.size();
+
+			CWorldTransformData** worlds = m_probePositions.pointer();
+			CReflectionProbeData** data = m_probes.pointer();
+
+			for (u32 i = 0; i < n; i++)
 			{
-				core::vector3df entityPosition = m_entitiesPositions[j]->World.getTranslation();
+				f32* m = worlds[i]->World.pointer();
+				kd_insert3f(m_kdtree, m[12], m[13], m[14], data[i]);
+			}
 
-				// find nearest probe
-				float d = probePosition.getDistanceFromSQ(entityPosition);
-				if (d < m_minDistance[j])
+			m_probeChange = false;
+		}
+
+		for (u32 i = 0, n = m_entities.size(); i < n; i++)
+		{
+			core::vector3df position = m_entitiesPositions[i]->World.getTranslation();
+
+			// query nearst probe
+			kdres* res = kd_nearest3f(m_kdtree, position.X, position.Y, position.Z);
+			if (res != NULL)
+			{
+				while (!kd_res_end(res))
 				{
-					m_minDistance[j] = d;
+					// get probe data
+					CReflectionProbeData* probe = (CReflectionProbeData*)kd_res_item_data(res);
+					if (probe != NULL)
+					{
+						// get indirectData
+						CIndirectLightingData* indirectData = m_entities[i];
+						indirectData->ReflectionTexture = probe->ReflectionTexture;
+						indirectData->Init = false;
+					}
 
-					// set reflection texture
-					m_entities[j]->ReflectionTexture = m_probes[i]->ReflectionTexture;
+					// kd_res_next(res);
+					break;
 				}
+				kd_res_free(res);
 			}
 		}
 	}
