@@ -51,7 +51,7 @@ namespace Skylicht
 	{
 		CIndirectLightingData* lightData = entity->getData<CIndirectLightingData>();
 		if (lightData != NULL &&
-			lightData->AutoSH && (lightData->Type == CIndirectLightingData::SH4 || lightData->Type == CIndirectLightingData::SH9))
+			*lightData->AutoSH && (lightData->Type == CIndirectLightingData::SH4 || lightData->Type == CIndirectLightingData::SH9))
 		{
 			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
 			if (transformData->NeedValidate || lightData->Init)

@@ -38,7 +38,7 @@ namespace Skylicht
 
 	CIndirectLighting::CIndirectLighting() :
 		m_type(LightmapArray),
-		m_autoSH(false)
+		m_autoSH(true)
 	{
 
 	}
@@ -114,6 +114,7 @@ namespace Skylicht
 
 	void CIndirectLighting::setSH(core::vector3df* sh)
 	{
+		m_autoSH = false;
 		for (int i = 0; i < 9; i++)
 			m_sh[i] = sh[i];
 	}
