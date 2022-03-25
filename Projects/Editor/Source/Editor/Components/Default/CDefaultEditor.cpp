@@ -337,6 +337,37 @@ namespace Skylicht
 						ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
 						m_subjects.push_back(subject);
 					}
+					else if (valueProperty->getType() == EPropertyDataType::Enum)
+					{
+						CEnumPropertyData* enumValue = dynamic_cast<CEnumPropertyData*>(valueProperty);
+
+						GUI::CDropdownBox* dropBox = ui->addDropBox(layout, ui->getPrettyName(valueProperty->Name), L"");
+						GUI::CMenu* menu = dropBox->getMenu();
+
+						int currentValue = enumValue->getIntValue();
+
+						int enumCount = enumValue->getEnumCount();
+						for (int i = 0; i < enumCount; i++)
+						{
+							const CEnumPropertyData::SEnumString& enumData = enumValue->getEnum(i);
+
+							std::wstring enumName = CStringImp::convertUTF8ToUnicode(enumData.Name.c_str());
+
+							GUI::CMenuItem* item = menu->addItem(enumName);
+							item->tagInt(enumData.Value);
+
+							if (enumData.Value == currentValue)
+								dropBox->setLabel(enumName);
+
+							item->OnPress = [&, item, enumValue, dropBox, ui](GUI::CBase* base)
+							{
+								enumValue->setIntValue(item->getTagInt());
+								m_component->loadSerializable(m_data);
+								dropBox->setLabel(item->getLabel());
+								ui->getWindow()->getCanvas()->closeMenu();
+							};
+						}
+					}
 				}
 
 				initCustomGUI(layout, ui);
