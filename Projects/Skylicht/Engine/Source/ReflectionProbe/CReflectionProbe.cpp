@@ -86,10 +86,15 @@ namespace Skylicht
 
 	void CReflectionProbe::updateComponent()
 	{
+		ITexture* oldTexture = m_probeData->ReflectionTexture;
+
 		if (m_type == EReflectionTexture::Static)
 			m_probeData->ReflectionTexture = m_staticTexture;
 		else
 			m_probeData->ReflectionTexture = m_bakedTexture;
+
+		if (m_probeData->ReflectionTexture != oldTexture)
+			m_probeData->Invalidate = true;
 	}
 
 	CObjectSerializable* CReflectionProbe::createSerializable()

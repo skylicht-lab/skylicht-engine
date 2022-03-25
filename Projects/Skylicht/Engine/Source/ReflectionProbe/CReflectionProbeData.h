@@ -33,6 +33,8 @@ namespace Skylicht
 	public:
 		ITexture* ReflectionTexture;
 
+		bool Invalidate;
+
 	public:
 		CReflectionProbeData();
 

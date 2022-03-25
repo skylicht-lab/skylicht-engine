@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CWorldTransformData.h"
 #include "IndirectLighting/CIndirectLightingData.h"
 
+#include "kdtree.h"
+
 namespace Skylicht
 {
 	class CReflectionProbeSystem : public IEntitySystem
@@ -41,7 +43,9 @@ namespace Skylicht
 
 		core::array<CIndirectLightingData*> m_entities;
 		core::array<CWorldTransformData*> m_entitiesPositions;
-		core::array<float> m_minDistance;		
+
+		kdtree* m_kdtree;
+		bool m_probeChange;
 
 	public:
 		CReflectionProbeSystem();

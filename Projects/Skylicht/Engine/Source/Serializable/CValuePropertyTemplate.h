@@ -561,7 +561,8 @@ namespace Skylicht
 		CEnumProperty(CObjectSerializable* owner, const char* name, T value) :
 			CValuePropertyTemplate<T>(owner, Enum, name)
 		{
-			set(value);
+			CValuePropertyTemplate<T>* obj = dynamic_cast<CValuePropertyTemplate<T>*>(this);
+			obj->set(value);
 		}
 
 		void addEnumString(const char* name, T value)
@@ -571,7 +572,8 @@ namespace Skylicht
 
 		virtual void setIntValue(int value)
 		{
-			set(static_cast<T>(value));
+			CValuePropertyTemplate<T>* obj = dynamic_cast<CValuePropertyTemplate<T>*>(this);
+			obj->set(static_cast<T>(value));
 		}
 
 		virtual int getIntValue()
