@@ -42,9 +42,10 @@ namespace Skylicht
 
 	CReflectionProbe::CReflectionProbe() :
 		m_staticTexture(NULL),
-		m_dynamicTexture(NULL),
+		m_bakedTexture(NULL),
 		m_bakeSize(512, 512),
-		m_probeData(NULL)
+		m_probeData(NULL),
+		m_type(CReflectionProbe::Baked)
 	{
 		for (int i = 0; i < 6; i++)
 			m_bakeTexture[i] = NULL;
@@ -53,7 +54,7 @@ namespace Skylicht
 	CReflectionProbe::~CReflectionProbe()
 	{
 		removeBakeTexture();
-		removeDynamicTexture();
+		removeStaticTexture();
 	}
 
 	void CReflectionProbe::removeBakeTexture()
@@ -68,12 +69,12 @@ namespace Skylicht
 		}
 	}
 
-	void CReflectionProbe::removeDynamicTexture()
+	void CReflectionProbe::removeStaticTexture()
 	{
-		if (m_dynamicTexture == NULL)
+		if (m_staticTexture != NULL)
 		{
-			getVideoDriver()->removeTexture(m_dynamicTexture);
-			m_dynamicTexture = NULL;
+			CTextureManager::getInstance()->removeTexture(m_staticTexture);
+			m_staticTexture = NULL;
 		}
 	}
 
@@ -85,23 +86,47 @@ namespace Skylicht
 
 	void CReflectionProbe::updateComponent()
 	{
+		if (m_type == CReflectionProbe::Static)
+			m_probeData->ReflectionTexture = m_staticTexture;
+		else
+			m_probeData->ReflectionTexture = m_bakedTexture;
+	}
 
+	CObjectSerializable* CReflectionProbe::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+
+		CEnumProperty<CReflectionProbe::EReflectionTexture>* enumType = new CEnumProperty(object, "type", m_type);
+		enumType->addEnumString("Static", CReflectionProbe::Static);
+		enumType->addEnumString("Bake", CReflectionProbe::Baked);
+		object->addAutoRelease(enumType);
+
+		return object;
+	}
+
+	void CReflectionProbe::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
+
+		m_type = object->get<CReflectionProbe::EReflectionTexture>("type", CReflectionProbe::Baked);
 	}
 
 	void CReflectionProbe::bakeProbe(CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr)
 	{
-		if (m_dynamicTexture == NULL)
-			m_dynamicTexture = getVideoDriver()->addRenderTargetCubeTexture(m_bakeSize, "bake_cube_reflection", video::ECF_A8R8G8B8);
+		if (m_bakedTexture == NULL)
+			m_bakedTexture = getVideoDriver()->addRenderTargetCubeTexture(m_bakeSize, "bake_cube_reflection", video::ECF_A8R8G8B8);
 
 		core::vector3df position = m_gameObject->getPosition();
 		CBaseRP* baseRP = dynamic_cast<CBaseRP*>(rp);
 		if (baseRP != NULL)
 		{
-			baseRP->renderCubeEnvironment(camera, entityMgr, position, m_dynamicTexture, NULL, 0);
+			baseRP->renderCubeEnvironment(camera, entityMgr, position, m_bakedTexture, NULL, 0);
 
-			m_dynamicTexture->regenerateMipMapLevels();
+			m_bakedTexture->regenerateMipMapLevels();
 
-			m_probeData->ReflectionTexture = m_dynamicTexture;
+			m_probeData->ReflectionTexture = m_bakedTexture;
+
+			m_type = CReflectionProbe::Baked;
 		}
 	}
 
@@ -176,6 +201,8 @@ namespace Skylicht
 			m_staticTexture->regenerateMipMapLevels();
 
 			m_probeData->ReflectionTexture = m_staticTexture;
+
+			m_type = CReflectionProbe::Static;
 		}
 
 		return (m_staticTexture != NULL);

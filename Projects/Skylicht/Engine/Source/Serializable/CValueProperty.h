@@ -44,7 +44,8 @@ namespace Skylicht
 		Matrix4,
 		Object,
 		FilePath,
-		FolderPath
+		FolderPath,
+		Enum
 	};
 
 	class CValueProperty

@@ -36,21 +36,31 @@ namespace Skylicht
 {
 	class CReflectionProbe : public CComponentSystem
 	{
+	public:
+		enum EReflectionTexture
+		{
+			Static,
+			Baked,
+		};
+
 	protected:
 		video::ITexture* m_staticTexture;
 
-		video::ITexture* m_dynamicTexture;
+		video::ITexture* m_bakedTexture;
 
 		core::dimension2du m_bakeSize;
+
 		video::ITexture* m_bakeTexture[6];
 
 		CReflectionProbeData* m_probeData;
+
+		EReflectionTexture m_type;
 
 	protected:
 
 		void removeBakeTexture();
 
-		void removeDynamicTexture();
+		void removeStaticTexture();
 
 	public:
 		CReflectionProbe();
@@ -60,6 +70,10 @@ namespace Skylicht
 		virtual void initComponent();
 
 		virtual void updateComponent();
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 
 		bool loadStaticTexture(const char* path);
 
