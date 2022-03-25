@@ -576,17 +576,20 @@ namespace Skylicht
 
 		virtual int getIntValue()
 		{
-			return static_cast<int>(m_value);
+			CValuePropertyTemplate<T>* obj = dynamic_cast<CValuePropertyTemplate<T>*>(this);
+			return static_cast<int>(obj->get());
 		}
 
 		virtual void serialize(io::IAttributes* io)
 		{
-			io->addInt(Name.c_str(), static_cast<int>(m_value));
+			CValuePropertyTemplate<T>* obj = dynamic_cast<CValuePropertyTemplate<T>*>(this);
+			io->addInt(obj->Name.c_str(), static_cast<int>(obj->get()));
 		}
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = static_cast<T>(io->getAttributeAsInt(Name.c_str()));
+			CValuePropertyTemplate<T>* obj = dynamic_cast<CValuePropertyTemplate<T>*>(this);
+			obj->set(static_cast<T>(io->getAttributeAsInt(obj->Name.c_str())));
 		}
 	};
 }
