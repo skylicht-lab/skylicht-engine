@@ -739,9 +739,11 @@ namespace Skylicht
 			else
 				input->setString(L"None");
 
-			input->OnPressed = [&, path = value->get()](GUI::CBase* base)
+			input->OnPressed = [value](GUI::CBase* base)
 			{
-				CAssetPropertyController::getInstance()->browseAsset(path.c_str());
+				std::string path = value->get();
+				if (!path.empty())
+					CAssetPropertyController::getInstance()->browseAsset(path.c_str());
 			};
 
 			input->OnAcceptDragDrop = [&, x = exts](GUI::SDragDropPackage* data)
@@ -819,9 +821,11 @@ namespace Skylicht
 			else
 				input->setString(L"None");
 
-			input->OnPressed = [&, path = value->get()](GUI::CBase* base)
+			input->OnPressed = [value](GUI::CBase* base)
 			{
-				CAssetPropertyController::getInstance()->browseAsset(path.c_str());
+				std::string path = value->get();
+				if (!path.empty())
+					CAssetPropertyController::getInstance()->browseAsset(path.c_str());
 			};
 
 			input->OnAcceptDragDrop = [&](GUI::SDragDropPackage* data)
