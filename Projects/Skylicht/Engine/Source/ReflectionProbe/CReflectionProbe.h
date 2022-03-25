@@ -34,15 +34,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	enum class EReflectionTexture
+	{
+		Static,
+		Baked,
+	};
+
 	class CReflectionProbe : public CComponentSystem
 	{
-	public:
-		enum EReflectionTexture
-		{
-			Static,
-			Baked,
-		};
-
 	protected:
 		video::ITexture* m_staticTexture;
 

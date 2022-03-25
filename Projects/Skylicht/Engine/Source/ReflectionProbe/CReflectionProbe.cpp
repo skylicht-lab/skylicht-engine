@@ -45,7 +45,7 @@ namespace Skylicht
 		m_bakedTexture(NULL),
 		m_bakeSize(512, 512),
 		m_probeData(NULL),
-		m_type(CReflectionProbe::Baked)
+		m_type(EReflectionTexture::Baked)
 	{
 		for (int i = 0; i < 6; i++)
 			m_bakeTexture[i] = NULL;
@@ -86,7 +86,7 @@ namespace Skylicht
 
 	void CReflectionProbe::updateComponent()
 	{
-		if (m_type == CReflectionProbe::Static)
+		if (m_type == EReflectionTexture::Static)
 			m_probeData->ReflectionTexture = m_staticTexture;
 		else
 			m_probeData->ReflectionTexture = m_bakedTexture;
@@ -96,9 +96,9 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
-		CEnumProperty<CReflectionProbe::EReflectionTexture>* enumType = new CEnumProperty(object, "type", m_type);
-		enumType->addEnumString("Static", CReflectionProbe::Static);
-		enumType->addEnumString("Bake", CReflectionProbe::Baked);
+		CEnumProperty<EReflectionTexture>* enumType = new CEnumProperty<EReflectionTexture>(object, "type", m_type);
+		enumType->addEnumString("Static", EReflectionTexture::Static);
+		enumType->addEnumString("Bake", EReflectionTexture::Baked);
 		object->addAutoRelease(enumType);
 
 		return object;
@@ -108,7 +108,7 @@ namespace Skylicht
 	{
 		CComponentSystem::loadSerializable(object);
 
-		m_type = object->get<CReflectionProbe::EReflectionTexture>("type", CReflectionProbe::Baked);
+		m_type = object->get<EReflectionTexture>("type", EReflectionTexture::Baked);
 	}
 
 	void CReflectionProbe::bakeProbe(CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr)
@@ -126,7 +126,7 @@ namespace Skylicht
 
 			m_probeData->ReflectionTexture = m_bakedTexture;
 
-			m_type = CReflectionProbe::Baked;
+			m_type = EReflectionTexture::Baked;
 		}
 	}
 
@@ -202,7 +202,7 @@ namespace Skylicht
 
 			m_probeData->ReflectionTexture = m_staticTexture;
 
-			m_type = CReflectionProbe::Static;
+			m_type = EReflectionTexture::Static;
 		}
 
 		return (m_staticTexture != NULL);
