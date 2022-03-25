@@ -566,27 +566,27 @@ namespace Skylicht
 
 		void addEnumString(const char* name, T value)
 		{
-			m_enums.push_back(SEnumString(name, (int)value));
+			m_enums.push_back(SEnumString(name, static_cast<int>(value)));
 		}
 
 		virtual void setIntValue(int value)
 		{
-			set((T)value);
+			set(static_cast<T>(value));
 		}
 
 		virtual int getIntValue()
 		{
-			return (int)m_value;
+			return static_cast<int>(m_value);
 		}
 
 		virtual void serialize(io::IAttributes* io)
 		{
-			io->addInt(Name.c_str(), (int)m_value);
+			io->addInt(Name.c_str(), static_cast<int>(m_value));
 		}
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = (T)io->getAttributeAsInt(Name.c_str());
+			m_value = static_cast<T>(io->getAttributeAsInt(Name.c_str()));
 		}
 	};
 }
