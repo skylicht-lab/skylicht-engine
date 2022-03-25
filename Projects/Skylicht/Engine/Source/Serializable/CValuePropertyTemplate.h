@@ -559,7 +559,7 @@ namespace Skylicht
 
 	public:
 		CEnumProperty(CObjectSerializable* owner, const char* name, T value) :
-			CValuePropertyTemplate(owner, Enum, name)
+			CValuePropertyTemplate<T>(owner, Enum, name)
 		{
 			set(value);
 		}
