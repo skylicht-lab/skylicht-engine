@@ -44,7 +44,7 @@ namespace Skylicht
 		m_next(NULL),
 		m_updateEntity(true)
 	{
-		const core::dimension2du &size = getVideoDriver()->getCurrentRenderTargetSize();
+		const core::dimension2du& size = getVideoDriver()->getCurrentRenderTargetSize();
 		m_viewport2DW = (float)size.Width;
 		m_viewport2DH = (float)size.Height;
 
@@ -56,7 +56,7 @@ namespace Skylicht
 
 		// init indices buffer
 		m_indicesImage->set_used(6);
-		u16 *index = (u16*)m_indicesImage->getIndices();
+		u16* index = (u16*)m_indicesImage->getIndices();
 		index[0] = 0;
 		index[1] = 1;
 		index[2] = 2;
@@ -70,7 +70,7 @@ namespace Skylicht
 		m_unbindMaterial.ZBuffer = video::ECFN_DISABLED;
 		m_unbindMaterial.ZWriteEnable = false;
 		m_unbindMaterial.MaterialType = m_textureColorShaderID;
-		ITexture *nullTexture = CTextureManager::getInstance()->getNullTexture();
+		ITexture* nullTexture = CTextureManager::getInstance()->getNullTexture();
 		for (u32 i = 0; i < MATERIAL_MAX_TEXTURES; ++i)
 			m_unbindMaterial.setTexture(i, nullTexture);
 	}
@@ -82,7 +82,7 @@ namespace Skylicht
 		m_indicesImage = NULL;
 	}
 
-	bool CBaseRP::canRenderMaterial(CMaterial *m)
+	bool CBaseRP::canRenderMaterial(CMaterial* m)
 	{
 		// default: we don't render deferred material
 		if (m->isDeferred() == true)
@@ -91,7 +91,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CBaseRP::setCamera(CCamera *camera)
+	void CBaseRP::setCamera(CCamera* camera)
 	{
 		const SViewFrustum& viewArea = camera->getViewFrustum();
 		video::IVideoDriver* driver = getVideoDriver();
@@ -101,45 +101,45 @@ namespace Skylicht
 		CShaderCamera::setCamera(camera);
 	}
 
-	void CBaseRP::setNextPipeLine(IRenderPipeline *next)
+	void CBaseRP::setNextPipeLine(IRenderPipeline* next)
 	{
 		m_next = next;
 	}
 
-	void CBaseRP::onNext(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& viewport)
+	void CBaseRP::onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& viewport)
 	{
 		if (m_next != NULL)
 			m_next->render(target, camera, entity, viewport);
 	}
 
-	void CBaseRP::updateTextureResource(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
+	void CBaseRP::updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID)
 	{
-		IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
+		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		video::SMaterial& irrMaterial = mb->getMaterial();
 
 		// set shader (uniform) material
 		if (mesh->Material.size() > (u32)bufferID)
 		{
-			CMaterial *material = mesh->Material[bufferID];
+			CMaterial* material = mesh->Material[bufferID];
 			if (material == NULL)
 				return;
 
 			// apply shader & material to irrlicht material
 			material->updateTexture(irrMaterial);
 
-			CShader *shader = material->getShader();
+			CShader* shader = material->getShader();
 			if (shader != NULL)
 			{
 				for (int i = 0, n = shader->getNumResource(); i < n; i++)
 				{
-					CShader::SResource *res = shader->getResouceInfo(i);
+					CShader::SResource* res = shader->getResouceInfo(i);
 
 					if (res->Type == CShader::ReflectionProbe)
 					{
-						SUniform *uniform = shader->getFSUniform(res->Name.c_str());
+						SUniform* uniform = shader->getFSUniform(res->Name.c_str());
 						if (uniform != NULL)
 						{
-							CIndirectLightingData *lightData = entity->getEntity(entityID)->getData<CIndirectLightingData>();
+							CIndirectLightingData* lightData = entity->getEntity(entityID)->getData<CIndirectLightingData>();
 							u32 textureID = (u32)uniform->Value[0];
 
 							if (lightData != NULL && lightData->ReflectionTexture != NULL && textureID < MATERIAL_MAX_TEXTURES)
@@ -160,13 +160,13 @@ namespace Skylicht
 		}
 	}
 
-	void CBaseRP::drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
+	void CBaseRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID)
 	{
 		// update texture resource
 		updateTextureResource(mesh, bufferID, entity, entityID);
 
-		IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
-		IVideoDriver *driver = getVideoDriver();
+		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
+		IVideoDriver* driver = getVideoDriver();
 
 		video::SMaterial& irrMaterial = mb->getMaterial();
 
@@ -184,7 +184,7 @@ namespace Skylicht
 		orthoMatrix.buildProjectionMatrixOrthoLH(w, -h, -1.0f, 1.0f);
 		orthoMatrix.setTranslation(core::vector3df(-1, 1, 0));
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		driver->setTransform(video::ETS_PROJECTION, orthoMatrix);
 		driver->setTransform(video::ETS_VIEW, core::IdentityMatrix);
@@ -196,11 +196,11 @@ namespace Skylicht
 
 	void CBaseRP::unbindRTT()
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		int numVerticesUse = 4;
 		m_verticesImage->set_used(numVerticesUse);
-		S3DVertex2TCoords *vertices = (S3DVertex2TCoords*)m_verticesImage->getVertices();
+		S3DVertex2TCoords* vertices = (S3DVertex2TCoords*)m_verticesImage->getVertices();
 		SColor color(255, 255, 255, 255);
 
 		float x = -1.0f;
@@ -224,16 +224,16 @@ namespace Skylicht
 
 	void CBaseRP::renderBufferToTarget(float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, SMaterial& material, bool flipY, bool flipX)
 	{
-		ITexture *tex = material.getTexture(0);
+		ITexture* tex = material.getTexture(0);
 		if (tex == NULL)
 			return;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		int numVerticesUse = 4;
 
 		m_verticesImage->set_used(numVerticesUse);
-		S3DVertex2TCoords *vertices = (S3DVertex2TCoords*)m_verticesImage->getVertices();
+		S3DVertex2TCoords* vertices = (S3DVertex2TCoords*)m_verticesImage->getVertices();
 		SColor color(255, 255, 255, 255);
 
 		float x = dx;
@@ -298,16 +298,16 @@ namespace Skylicht
 
 	void CBaseRP::renderBufferToTarget(float sx, float sy, float sw, float sh, SMaterial& material, bool flipY, bool flipX)
 	{
-		ITexture *tex = material.getTexture(0);
+		ITexture* tex = material.getTexture(0);
 		if (tex == NULL)
 			return;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		int numVerticesUse = 4;
 
 		m_verticesImage->set_used(numVerticesUse);
-		S3DVertex2TCoords *vertices = (S3DVertex2TCoords*)m_verticesImage->getVertices();
+		S3DVertex2TCoords* vertices = (S3DVertex2TCoords*)m_verticesImage->getVertices();
 		SColor color(255, 255, 255, 255);
 
 		float x = 0;
@@ -370,12 +370,12 @@ namespace Skylicht
 		driver->drawMeshBuffer(m_drawBuffer);
 	}
 
-	void CBaseRP::renderEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture[], int* face, int numFace)
+	void CBaseRP::renderEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture[], int* face, int numFace)
 	{
 		if (texture == NULL)
 			return;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		core::matrix4 projection;
 		projection.buildProjectionMatrixPerspectiveFovLH(90.0f * core::DEGTORAD, 1.0f, camera->getNearValue(), camera->getFarValue());
@@ -414,7 +414,7 @@ namespace Skylicht
 			core::vector3df(0.0f, 1.0f, 0.0f),
 		};
 
-		core::vector3df *target = targetDirectX;
+		core::vector3df* target = targetDirectX;
 
 		if (driver->getDriverType() != video::EDT_DIRECT3D11)
 			target = targetOpenGL;
@@ -423,7 +423,7 @@ namespace Skylicht
 
 		// OpenGL have flipY buffer
 		// So we fix inverse Y by render to a buffer
-		ITexture *tempFBO = NULL;
+		ITexture* tempFBO = NULL;
 		E_DRIVER_TYPE driverType = driver->getDriverType();
 
 		SMaterial material;
@@ -458,13 +458,13 @@ namespace Skylicht
 					// todo: Dont flip TOP & BOTTOM
 					drawSceneToTexture(tempFBO, entityMgr);
 
-					driver->setRenderTargetCube(texture[i], cubemapFace, true, true);
+					driver->setRenderTarget(texture[i], true, true);
 					beginRender2D(sizeW, sizeH);
 					renderBufferToTarget(0, 0, sizeW, sizeH, material, false);
 				}
 				else
 				{
-					drawSceneToCubeTexture(texture[i], cubemapFace, entityMgr);
+					drawSceneToTexture(texture[i], entityMgr);
 				}
 			}
 		}
@@ -488,13 +488,13 @@ namespace Skylicht
 					// todo: Dont flip TOP & BOTTOM
 					drawSceneToTexture(tempFBO, entityMgr);
 
-					driver->setRenderTarget(texture[i], cubemapFace, true, true);
+					driver->setRenderTarget(texture[i], true, true);
 					beginRender2D(sizeW, sizeH);
 					renderBufferToTarget(0, 0, sizeW, sizeH, material, false);
 				}
 				else
 				{
-					drawSceneToCubeTexture(texture[i], cubemapFace, entityMgr);
+					drawSceneToTexture(texture[i], entityMgr);
 				}
 			}
 		}
@@ -506,12 +506,12 @@ namespace Skylicht
 		}
 	}
 
-	void CBaseRP::renderCubeEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture, int* face, int numFace)
+	void CBaseRP::renderCubeEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture, int* face, int numFace)
 	{
 		if (texture == NULL)
 			return;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		core::matrix4 projection;
 		projection.buildProjectionMatrixPerspectiveFovLH(90.0f * core::DEGTORAD, 1.0f, camera->getNearValue(), camera->getFarValue());
@@ -550,7 +550,7 @@ namespace Skylicht
 			core::vector3df(0.0f, 1.0f, 0.0f),
 		};
 
-		core::vector3df *target = targetDirectX;
+		core::vector3df* target = targetDirectX;
 
 		if (driver->getDriverType() != video::EDT_DIRECT3D11)
 			target = targetOpenGL;
@@ -559,7 +559,7 @@ namespace Skylicht
 
 		// OpenGL have flipY buffer
 		// So we fix inverse Y by render to a buffer
-		ITexture *tempFBO = NULL;
+		ITexture* tempFBO = NULL;
 		E_DRIVER_TYPE driverType = driver->getDriverType();
 
 		core::dimension2du size = texture->getSize();
@@ -638,14 +638,14 @@ namespace Skylicht
 		}
 	}
 
-	void CBaseRP::saveFBOToFile(ITexture *texture, const char *output)
+	void CBaseRP::saveFBOToFile(ITexture* texture, const char* output)
 	{
 		video::ECOLOR_FORMAT format = texture->getColorFormat();
 		if (format != ECF_R8G8B8 && format != ECF_A8R8G8B8)
 			return;
 
-		IVideoDriver *driver = getVideoDriver();
-		void *imageData = texture->lock(video::ETLM_READ_ONLY);
+		IVideoDriver* driver = getVideoDriver();
+		void* imageData = texture->lock(video::ETLM_READ_ONLY);
 
 		IImage* im = driver->createImageFromData(
 			format,
@@ -681,15 +681,15 @@ namespace Skylicht
 		s_clearColor = c;
 	}
 
-	void CBaseRP::drawSceneToTexture(ITexture *target, CEntityManager *entityMgr)
+	void CBaseRP::drawSceneToTexture(ITexture* target, CEntityManager* entityMgr)
 	{
 		SColor whiteColor(255, 255, 255, 255);
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		driver->setRenderTarget(target, true, true, whiteColor);
 		entityMgr->render();
 	}
 
-	void CBaseRP::drawSceneToCubeTexture(ITexture *target, video::E_CUBEMAP_FACE faceID, CEntityManager *entityMgr)
+	void CBaseRP::drawSceneToCubeTexture(ITexture* target, video::E_CUBEMAP_FACE faceID, CEntityManager* entityMgr)
 	{
 		SColor testColor[] = {
 			{255, 255, 255, 255},
@@ -700,7 +700,7 @@ namespace Skylicht
 			{255, 0, 0, 0},
 		};
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		driver->setRenderTargetCube(target, faceID, true, true, testColor[faceID]);
 		entityMgr->render();
 	}
