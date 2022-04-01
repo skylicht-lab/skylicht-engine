@@ -96,15 +96,12 @@ namespace Skylicht
 		{
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
+			m_material.setTexture(0, probes[i]->ReflectionTexture);
+
 			if (probes[i]->ReflectionTexture != NULL)
-			{
-				m_material.setTexture(0, probes[i]->ReflectionTexture);
 				m_material.MaterialType = shaderReflectionProbe;
-			}
 			else
-			{
 				m_material.MaterialType = shaderVertexColor;
-			}
 
 			for (u32 j = 0; j < ProbeMesh->getMeshBufferCount(); j++)
 			{
