@@ -43,9 +43,10 @@ namespace Skylicht
 	CReflectionProbe::CReflectionProbe() :
 		m_staticTexture(NULL),
 		m_bakedTexture(NULL),
+		m_size(EReflectionSize::X512),
 		m_bakeSize(512, 512),
 		m_probeData(NULL),
-		m_type(EReflectionTexture::Baked)
+		m_type(EReflectionType::Baked)
 	{
 		for (int i = 0; i < 6; i++)
 			m_bakeTexture[i] = NULL;
@@ -59,6 +60,9 @@ namespace Skylicht
 
 	void CReflectionProbe::removeBakeTexture()
 	{
+		if (m_bakedTexture != NULL)
+			getVideoDriver()->removeTexture(m_bakedTexture);
+
 		for (int i = 0; i < 6; i++)
 		{
 			if (m_bakeTexture[i] != NULL)
@@ -88,7 +92,7 @@ namespace Skylicht
 	{
 		ITexture* oldTexture = m_probeData->ReflectionTexture;
 
-		if (m_type == EReflectionTexture::Static)
+		if (m_type == EReflectionType::Static)
 			m_probeData->ReflectionTexture = m_staticTexture;
 		else
 			m_probeData->ReflectionTexture = m_bakedTexture;
@@ -101,10 +105,25 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
-		CEnumProperty<EReflectionTexture>* enumType = new CEnumProperty<EReflectionTexture>(object, "type", m_type);
-		enumType->addEnumString("Static", EReflectionTexture::Static);
-		enumType->addEnumString("Bake", EReflectionTexture::Baked);
+		CEnumProperty<EReflectionType>* enumType = new CEnumProperty<EReflectionType>(object, "type", m_type);
+		enumType->addEnumString("Static", EReflectionType::Static);
+		enumType->addEnumString("Bake", EReflectionType::Baked);
 		object->addAutoRelease(enumType);
+
+		CEnumProperty<EReflectionSize>* bakeSizeType = new CEnumProperty<EReflectionSize>(object, "size", m_size);
+		bakeSizeType->setUIHeader("Bake Probe");
+		bakeSizeType->addEnumString("256", EReflectionSize::X256);
+		bakeSizeType->addEnumString("512", EReflectionSize::X512);
+		bakeSizeType->addEnumString("1024", EReflectionSize::X1024);
+		bakeSizeType->addEnumString("2048", EReflectionSize::X2048);
+		object->addAutoRelease(bakeSizeType);
+
+		std::vector<std::string> exts;
+		exts.push_back("tga");
+		exts.push_back("png");
+		CFilePathProperty* staticReflection = new CFilePathProperty(object, "static", m_staticPath.c_str(), exts);
+		staticReflection->setUIHeader("Static Probe");
+		object->addAutoRelease(staticReflection);
 
 		return object;
 	}
@@ -113,11 +132,59 @@ namespace Skylicht
 	{
 		CComponentSystem::loadSerializable(object);
 
-		m_type = object->get<EReflectionTexture>("type", EReflectionTexture::Baked);
+		m_type = object->get<EReflectionType>("type", EReflectionType::Baked);
+		m_size = object->get<EReflectionSize>("size", EReflectionSize::X512);
+
+		std::string staticPath = object->get<std::string>("static", "");
+		if (!staticPath.empty() && m_staticPath != staticPath)
+		{
+			m_staticPath = staticPath;
+			std::string path = staticPath;
+
+			path = CStringImp::replaceAll(path, "_X1.png", "");
+			path = CStringImp::replaceAll(path, "_X2.png", "");
+			path = CStringImp::replaceAll(path, "_Y1.png", "");
+			path = CStringImp::replaceAll(path, "_Y2.png", "");
+			path = CStringImp::replaceAll(path, "_Z1.png", "");
+			path = CStringImp::replaceAll(path, "_Z2.png", "");
+			path = CStringImp::replaceAll(path, ".png", "");
+
+			loadStaticTexture(path.c_str());
+		}
 	}
 
 	void CReflectionProbe::bakeProbe(CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr)
 	{
+		core::dimension2du targetSize;
+		switch (m_size)
+		{
+		case EReflectionSize::X256:
+			targetSize.set(256, 256);
+			break;
+		case EReflectionSize::X512:
+			targetSize.set(512, 512);
+			break;
+		case EReflectionSize::X1024:
+			targetSize.set(1024, 1024);
+			break;
+		case EReflectionSize::X2048:
+			targetSize.set(2048, 2048);
+			break;
+		}
+
+		if (targetSize != m_bakeSize)
+		{
+			m_bakeSize = targetSize;
+			if (m_bakedTexture)
+			{
+				if (m_probeData->ReflectionTexture == m_bakedTexture)
+					m_probeData->ReflectionTexture = NULL;
+
+				getVideoDriver()->removeTexture(m_bakedTexture);
+				m_bakedTexture = NULL;
+			}
+		}
+
 		if (m_bakedTexture == NULL)
 			m_bakedTexture = getVideoDriver()->addRenderTargetCubeTexture(m_bakeSize, "bake_cube_reflection", video::ECF_A8R8G8B8);
 
@@ -126,20 +193,47 @@ namespace Skylicht
 		if (baseRP != NULL)
 		{
 			baseRP->renderCubeEnvironment(camera, entityMgr, position, m_bakedTexture, NULL, 0);
-
 			m_bakedTexture->regenerateMipMapLevels();
-
 			m_probeData->ReflectionTexture = m_bakedTexture;
-
-			m_type = EReflectionTexture::Baked;
+			m_type = EReflectionType::Baked;
 		}
 	}
 
 	void CReflectionProbe::bakeProbeToFile(CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr, const char* outfolder, const char* outname)
 	{
+		core::dimension2du targetSize;
+		switch (m_size)
+		{
+		case EReflectionSize::X256:
+			targetSize.set(256, 256);
+			break;
+		case EReflectionSize::X512:
+			targetSize.set(512, 512);
+			break;
+		case EReflectionSize::X1024:
+			targetSize.set(1024, 1024);
+			break;
+		case EReflectionSize::X2048:
+			targetSize.set(2048, 2048);
+			break;
+		}
+
+		if (targetSize != m_bakeSize)
+		{
+			m_bakeSize = targetSize;
+			for (int i = 0; i < 6; i++)
+			{
+				if (m_bakeTexture[i] != NULL)
+				{
+					getVideoDriver()->removeTexture(m_bakeTexture[i]);
+					m_bakeTexture[i] = NULL;
+				}
+			}
+		}
+
 		for (int i = 0; i < 6; i++)
 		{
-			if (m_bakeTexture[i] != NULL)
+			if (m_bakeTexture[i] == NULL)
 				m_bakeTexture[i] = getVideoDriver()->addRenderTargetTexture(m_bakeSize, "bake_reflection", video::ECF_A8R8G8B8);
 		}
 
@@ -195,6 +289,12 @@ namespace Skylicht
 		std::string z1 = std::string(path) + "_Z1.png";
 		std::string z2 = std::string(path) + "_Z2.png";
 
+		if (m_staticTexture != NULL)
+		{
+			CTextureManager::getInstance()->removeTexture(m_staticTexture);
+			m_staticTexture = NULL;
+		}
+
 		m_staticTexture = CTextureManager::getInstance()->getCubeTexture(
 			x1.c_str(), x2.c_str(),
 			y1.c_str(), y2.c_str(),
@@ -204,10 +304,7 @@ namespace Skylicht
 		if (m_staticTexture != NULL)
 		{
 			m_staticTexture->regenerateMipMapLevels();
-
 			m_probeData->ReflectionTexture = m_staticTexture;
-
-			m_type = EReflectionTexture::Static;
 		}
 
 		return (m_staticTexture != NULL);

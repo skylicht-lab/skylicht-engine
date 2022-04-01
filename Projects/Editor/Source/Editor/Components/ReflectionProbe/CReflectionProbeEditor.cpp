@@ -50,12 +50,12 @@ namespace Skylicht
 		{
 			layout->addSpace(5.0f);
 
+			ui->addLabel(layout, L"Bake Function", GUI::TextLeft);
+
 			ui->addButton(layout, L"Bake Reflection")->OnPress = [&](GUI::CBase* button)
 			{
 				CReflectionProbe* reflectionProbe = (CReflectionProbe*)m_component;
-
 				CSceneController* controller = CSceneController::getInstance();
-
 				CScene* scene = controller->getScene();
 				CZone* zone = controller->getZone();
 
@@ -70,9 +70,57 @@ namespace Skylicht
 				CEntityManager* entityMgr = scene->getEntityManager();
 				entityMgr->update();
 
-				reflectionProbe->bakeProbe(bakeCamera, renderPipeline, entityMgr);
+				reflectionProbe->bakeProbe(
+					bakeCamera,
+					renderPipeline,
+					entityMgr);
 
 				bakeCameraObj->remove();
+			};
+
+			ui->addButton(layout, L"Export to file")->OnPress = [&](GUI::CBase* button)
+			{
+				CReflectionProbe* reflectionProbe = (CReflectionProbe*)m_component;
+				CSceneController* controller = CSceneController::getInstance();
+				std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(
+					GUI::CGUIContext::getRoot(),
+					GUI::COpenSaveDialog::Save,
+					assetFolder.c_str(),
+					assetFolder.c_str(),
+					"png;*"
+				);
+
+				dialog->OnSave = [reflectionProbe, controller](std::string path)
+				{
+					CScene* scene = controller->getScene();
+					CZone* zone = controller->getZone();
+
+					IRenderPipeline* renderPipeline = controller->getRenderPipeLine();
+					if (renderPipeline == NULL)
+						return;
+
+					CGameObject* bakeCameraObj = zone->createEmptyObject();
+					CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
+					scene->updateAddRemoveObject();
+
+					CEntityManager* entityMgr = scene->getEntityManager();
+					entityMgr->update();
+
+					std::string folder = CPath::getFolderPath(path);
+					std::string name = CPath::getFileNameNoExt(path);
+
+					reflectionProbe->bakeProbeToFile(
+						bakeCamera,
+						renderPipeline,
+						entityMgr,
+						folder.c_str(),
+						name.c_str()
+					);
+
+					bakeCameraObj->remove();
+				};
 			};
 		}
 
