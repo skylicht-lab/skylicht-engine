@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "IndirectLighting/CIndirectLighting.h"
 
 #include "SkyDome/CSkyDome.h"
+#include "SkyBox/CSkyBox.h"
 
 #define USE_COMPONENT(component) CComponentSystem *component##_used = addComponent(new component())
 
@@ -60,6 +61,7 @@ namespace Skylicht
 		USE_COMPONENT(CPointLight);
 		USE_COMPONENT(CRenderMesh);
 		USE_COMPONENT(CSkyDome);
+		USE_COMPONENT(CSkyBox);
 		USE_COMPONENT(CIndirectLighting);
 		// END DECLARE COMPONENT
 
