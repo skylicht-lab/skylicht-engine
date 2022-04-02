@@ -39,10 +39,8 @@ namespace Skylicht
 
 		SkyDomeMaterial = new CMaterial("Skydome", "BuiltIn/Shader/Basic/TextureSRGB.xml");
 		SkyDomeMaterial->addAffectMesh(Buffer);
+		SkyDomeMaterial->setZWrite(false);
 		SkyDomeMaterial->applyMaterial();
-
-		SMaterial& mat = Buffer->getMaterial();
-		mat.ZWriteEnable = false;
 
 		generateMesh();
 	}
