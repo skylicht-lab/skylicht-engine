@@ -73,6 +73,8 @@ namespace Skylicht
 
 		void initFromMeshFile(const char* path);
 
+		void initMaterialFromFile(const char* material);
+
 		void initMaterial(ArrayMaterial& materials, bool cloneMaterial = false);
 
 		inline int getMaterialCount()

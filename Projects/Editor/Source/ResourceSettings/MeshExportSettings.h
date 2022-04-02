@@ -37,6 +37,7 @@ namespace Skylicht
 			CBoolProperty FlipNormal;
 			CBoolProperty GenerateLightmapUV2;
 			CFloatProperty LightmapScale;
+			CFilePathProperty DefaultMaterial;
 
 		public:
 			MeshExportSettings();

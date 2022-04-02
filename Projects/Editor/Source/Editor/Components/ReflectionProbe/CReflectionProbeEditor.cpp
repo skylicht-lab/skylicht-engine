@@ -78,7 +78,7 @@ namespace Skylicht
 				bakeCameraObj->remove();
 			};
 
-			ui->addButton(layout, L"Export to file")->OnPress = [&](GUI::CBase* button)
+			ui->addButton(layout, L"Bake to file")->OnPress = [&](GUI::CBase* button)
 			{
 				CReflectionProbe* reflectionProbe = (CReflectionProbe*)m_component;
 				CSceneController* controller = CSceneController::getInstance();
@@ -120,6 +120,8 @@ namespace Skylicht
 					);
 
 					bakeCameraObj->remove();
+
+					CEditor::getInstance()->refresh();
 				};
 			};
 		}
