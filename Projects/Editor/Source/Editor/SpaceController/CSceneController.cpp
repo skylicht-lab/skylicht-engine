@@ -40,6 +40,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/CEntityHandler.h"
 
+#include "ResourceSettings/MeshExportSettings.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -510,8 +512,22 @@ namespace Skylicht
 
 			if (fileExt == "dae" || fileExt == "smesh")
 			{
+				std::string defaultMaterial;
+				std::string meta = path + ".meta";
+
+				if (fileExt == "dae")
+				{
+					MeshExportSettings* setting = new MeshExportSettings();
+					if (setting->load(meta.c_str()))
+						defaultMaterial = setting->DefaultMaterial.get();
+					delete setting;
+				}
+
 				CRenderMesh* renderMesh = gameObject->addComponent<CRenderMesh>();
 				renderMesh->initFromMeshFile(shortPath.c_str());
+
+				if (!defaultMaterial.empty())
+					renderMesh->initMaterialFromFile(defaultMaterial.c_str());
 
 				CIndirectLighting* indirectLighting = gameObject->addComponent<CIndirectLighting>();
 				indirectLighting->setAutoSH(true);

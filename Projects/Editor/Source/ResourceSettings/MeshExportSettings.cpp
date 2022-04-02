@@ -34,7 +34,8 @@ namespace Skylicht
 			TextureFolder(this, "Texture folder"),
 			FlipNormal(this, "Flip normal", true),
 			GenerateLightmapUV2(this, "Generate lightmap UV2", false),
-			LightmapScale(this, "Lightmap scale", 1.0f, 0.0f)
+			LightmapScale(this, "Lightmap scale", 1.0f, 0.0f),
+			DefaultMaterial(this, "Default material")
 		{
 
 		}
