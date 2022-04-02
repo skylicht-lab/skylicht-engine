@@ -315,6 +315,12 @@ namespace Skylicht
 		refreshModelAndMaterial();
 	}
 
+	void CRenderMesh::initMaterialFromFile(const char* material)
+	{
+		m_materialFile = material;
+		refreshModelAndMaterial();
+	}
+
 	void CRenderMesh::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
 	{
 		releaseMaterial();
