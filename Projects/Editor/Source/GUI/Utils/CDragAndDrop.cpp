@@ -53,6 +53,11 @@ namespace Skylicht
 				}
 			}
 
+			GUI::CBase* CDragAndDrop::getPressedControl()
+			{
+				return s_lastPressedControl;
+			}
+
 			bool CDragAndDrop::onMouseButton(GUI::CBase* hoveredControl, float x, float y, bool down)
 			{
 				if (!down)

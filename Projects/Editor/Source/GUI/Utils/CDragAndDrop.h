@@ -45,6 +45,8 @@ namespace Skylicht
 
 				static void onRenderOverlay(GUI::CCanvas* canvas, CRenderer* renderer);
 
+				static GUI::CBase* getPressedControl();
+
 			};
 		}
 	}

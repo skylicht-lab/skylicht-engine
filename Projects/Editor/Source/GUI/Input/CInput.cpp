@@ -203,6 +203,9 @@ namespace Skylicht
 				{
 					if (mouseButton == 0)
 					{
+						if (CDragAndDrop::onMouseButton(m_capture, m_mousePositionX, m_mousePositionY, down))
+							return true;
+
 						if (isTripleClick)
 							m_capture->onMouseTripleClickLeft(m_mousePositionX, m_mousePositionY);
 						else if (isDoubleClick)
@@ -246,7 +249,16 @@ namespace Skylicht
 				{
 					if (!dialog->isChild(CGUIContext::HoveredControl, true) && !isControlInTopmostMenu(CGUIContext::HoveredControl))
 					{
-						dialog->blinkCaption();
+						bool dragActivate = CDragAndDrop::getPressedControl() != NULL;
+
+						// todo
+						// fix sometime double click on item and open dialog
+						// the drag/drop still activated
+						CDragAndDrop::onMouseButton(CGUIContext::HoveredControl, m_mousePositionX, m_mousePositionY, down);
+
+						if (!dragActivate)
+							dialog->blinkCaption();
+
 						return false;
 					}
 				}

@@ -54,7 +54,8 @@ namespace Skylicht
 		m_skyboxData = m_gameObject->getEntity()->addData<CSkyBoxData>();
 		m_gameObject->getEntityManager()->addRenderSystem<CSkyBoxRender>();
 
-		// default		
+		// default
+		setColorIntensity(m_color, m_intensity);
 		setTexture6("Common/Textures/Sky/PaperMill.png");
 	}
 
