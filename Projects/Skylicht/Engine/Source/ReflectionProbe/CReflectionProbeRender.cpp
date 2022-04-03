@@ -56,6 +56,7 @@ namespace Skylicht
 	{
 		m_probes.set_used(0);
 		m_transforms.set_used(0);
+		m_visibles.set_used(0);
 	}
 
 	void CReflectionProbeRender::onQuery(CEntityManager* entityManager, CEntity* entity)
@@ -67,10 +68,13 @@ namespace Skylicht
 		if (probeData != NULL)
 		{
 			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+			CVisibleData* visible = entity->getData<CVisibleData>();
+
 			if (transformData != NULL)
 			{
 				m_probes.push_back(probeData);
 				m_transforms.push_back(transformData);
+				m_visibles.push_back(visible);
 			}
 		}
 	}
@@ -94,6 +98,9 @@ namespace Skylicht
 
 		for (u32 i = 0, n = m_probes.size(); i < n; i++)
 		{
+			if (!m_visibles[i]->Visible)
+				continue;
+
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
 			m_material.setTexture(0, probes[i]->ReflectionTexture);

@@ -81,8 +81,6 @@ namespace Skylicht
 
 			std::string m_scenePath;
 
-			bool m_modify;
-
 		public:
 			CSceneController();
 
@@ -132,11 +130,6 @@ namespace Skylicht
 			inline CSpaceHierarchy* getSpaceHierarchy()
 			{
 				return m_spaceHierarchy;
-			}
-
-			inline void modify()
-			{
-				m_modify = true;
 			}
 
 			bool needSave();

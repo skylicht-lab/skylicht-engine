@@ -176,31 +176,31 @@ namespace Skylicht
 		// create top side		
 		VertexBuffer = MeshBuffer[4]->getVertexBuffer(0);
 
-		Vertex = video::S3DVertex(1, 1, -1, 0, -1, 0, video::SColor(255, 255, 255, 255), t, t);
+		Vertex = video::S3DVertex(1, 1, 1, 0, -1, 0, video::SColor(255, 255, 255, 255), t, t);
 		VertexBuffer->addVertex(&Vertex);
 
-		Vertex = video::S3DVertex(1, 1, 1, 0, -1, 0, video::SColor(255, 255, 255, 255), o, t);
+		Vertex = video::S3DVertex(-1, 1, 1, 0, -1, 0, video::SColor(255, 255, 255, 255), o, t);
 		VertexBuffer->addVertex(&Vertex);
 
-		Vertex = video::S3DVertex(-1, 1, -1, 0, -1, 0, video::SColor(255, 255, 255, 255), t, o);
+		Vertex = video::S3DVertex(1, 1, -1, 0, -1, 0, video::SColor(255, 255, 255, 255), t, o);
 		VertexBuffer->addVertex(&Vertex);
 
-		Vertex = video::S3DVertex(-1, 1, 1, 0, -1, 0, video::SColor(255, 255, 255, 255), o, o);
+		Vertex = video::S3DVertex(-1, 1, -1, 0, -1, 0, video::SColor(255, 255, 255, 255), o, o);
 		VertexBuffer->addVertex(&Vertex);
 
 		// create bottom side		
 		VertexBuffer = MeshBuffer[5]->getVertexBuffer(0);
 
-		Vertex = video::S3DVertex(1, -1, 1, 0, 1, 0, video::SColor(255, 255, 255, 255), o, o);
+		Vertex = video::S3DVertex(-1, -1, 1, 0, 1, 0, video::SColor(255, 255, 255, 255), o, o);
 		VertexBuffer->addVertex(&Vertex);
 
-		Vertex = video::S3DVertex(1, -1, -1, 0, 1, 0, video::SColor(255, 255, 255, 255), t, o);
+		Vertex = video::S3DVertex(1, -1, 1, 0, 1, 0, video::SColor(255, 255, 255, 255), t, o);
 		VertexBuffer->addVertex(&Vertex);
 
-		Vertex = video::S3DVertex(-1, -1, 1, 0, 1, 0, video::SColor(255, 255, 255, 255), o, t);
+		Vertex = video::S3DVertex(-1, -1, -1, 0, 1, 0, video::SColor(255, 255, 255, 255), o, t);
 		VertexBuffer->addVertex(&Vertex);
 
-		Vertex = video::S3DVertex(-1, -1, -1, 0, 1, 0, video::SColor(255, 255, 255, 255), t, t);
+		Vertex = video::S3DVertex(1, -1, -1, 0, 1, 0, video::SColor(255, 255, 255, 255), t, t);
 		VertexBuffer->addVertex(&Vertex);
 	}
 }
