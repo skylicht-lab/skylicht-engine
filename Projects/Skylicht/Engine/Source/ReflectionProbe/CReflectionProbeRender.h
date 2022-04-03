@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CReflectionProbeData.h"
 #include "Transform/CWorldTransformData.h"
+#include "Culling/CVisibleData.h"
 
 namespace Skylicht
 {
@@ -37,6 +38,7 @@ namespace Skylicht
 	protected:
 		core::array<CReflectionProbeData*> m_probes;
 		core::array<CWorldTransformData*> m_transforms;
+		core::array<CVisibleData*> m_visibles;
 
 		IMesh* ProbeMesh;
 		

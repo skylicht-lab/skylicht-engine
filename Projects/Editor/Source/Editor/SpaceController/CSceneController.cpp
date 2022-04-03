@@ -57,7 +57,6 @@ namespace Skylicht
 			m_focusNode(NULL),
 			m_contextNode(NULL),
 			m_contextMenuScene(NULL),
-			m_modify(false),
 			m_gizmos(NULL)
 		{
 			m_transformGizmos = new CTransformGizmos();
@@ -95,15 +94,11 @@ namespace Skylicht
 
 		bool CSceneController::needSave()
 		{
-			if (m_scenePath.empty())
-				return true;
-
-			return m_modify;
+			return true;
 		}
 
 		void CSceneController::save(const char* path)
 		{
-			m_modify = false;
 			m_scenePath = path;
 
 			CSceneExporter::exportScene(m_scene, path);
@@ -121,7 +116,8 @@ namespace Skylicht
 
 		void CSceneController::loadFile(const std::string& path)
 		{
-			if (m_modify)
+			bool modify = true;
+			if (modify)
 			{
 				GUI::CMessageBox* msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNoCancel);
 				msgBox->setMessage(L"Do you want to save current scene?", m_scene->getName());
@@ -153,7 +149,6 @@ namespace Skylicht
 
 		void CSceneController::doLoadScene(const std::string& path)
 		{
-			m_modify = false;
 			m_scenePath = path;
 
 			// clear current scene gui
