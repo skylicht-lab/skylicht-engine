@@ -122,7 +122,7 @@ namespace Skylicht
 
 			virtual void onMouseWheeled(GUI::CBase* base, int wheel);
 
-			virtual void onChar(GUI::CBase* base, u32 c);
+			virtual void onHotkey(GUI::CBase* base, const std::string& hotkey);
 
 			virtual void onKeyPressed(GUI::CBase* base, int key, bool down);
 

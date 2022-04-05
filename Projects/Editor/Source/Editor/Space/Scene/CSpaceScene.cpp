@@ -163,9 +163,20 @@ namespace Skylicht
 			m_view->OnMiddleMouseClick = std::bind(&CSpaceScene::onMiddleMouseClick, this, _1, _2, _3, _4);
 			m_view->OnMouseWheeled = std::bind(&CSpaceScene::onMouseWheeled, this, _1, _2);
 
+			// KEYBOARD
 			m_view->setKeyboardInputEnabled(true);
+
 			m_view->OnKeyPress = std::bind(&CSpaceScene::onKeyPressed, this, _1, _2, _3);
-			m_view->OnChar = std::bind(&CSpaceScene::onChar, this, _1, _2);
+
+			m_view->addAccelerator("G", [&](GUI::CBase* base) {
+				this->onHotkey(base, "G");
+				});
+			m_view->addAccelerator("R", [&](GUI::CBase* base) {
+				this->onHotkey(base, "R");
+				});
+			m_view->addAccelerator("S", [&](GUI::CBase* base) {
+				this->onHotkey(base, "S");
+				});
 
 			m_view->OnResize = BIND_LISTENER(&CSpaceScene::onRenderResize, this);
 
@@ -800,9 +811,23 @@ namespace Skylicht
 			m_scene->OnEvent(event);
 		}
 
-		void CSpaceScene::onChar(GUI::CBase* base, u32 c)
+		void CSpaceScene::onHotkey(GUI::CBase* base, const std::string& hotkey)
 		{
-
+			if (hotkey == "G")
+			{
+				onToolbarTransform(m_toolbarButton[ESceneToolBar::Move]);
+				onEditorSelect(m_toolbarButton[ESceneToolBar::Scale]);
+			}
+			else if (hotkey == "R")
+			{
+				onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
+				onEditorSelect(m_toolbarButton[ESceneToolBar::Scale]);
+			}
+			else if (hotkey == "S")
+			{
+				onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
+				onEditorSelect(m_toolbarButton[ESceneToolBar::Scale]);
+			}
 		}
 
 		void CSpaceScene::onKeyPressed(GUI::CBase* base, int key, bool down)

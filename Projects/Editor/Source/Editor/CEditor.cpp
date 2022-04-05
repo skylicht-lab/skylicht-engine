@@ -357,10 +357,6 @@ namespace Skylicht
 			submenu->addItem(L"Animation");
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandAssetCreate, this);
 
-			submenu = temp;
-			submenu->addSeparator();
-			submenu->addItem(L"Refresh", L"Ctrl + R");
-
 			GUI::CMenuItem* gameObject = m_menuBar->addItem(L"GameObject");
 			submenu = gameObject->getMenu();
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
@@ -441,6 +437,7 @@ namespace Skylicht
 			submenu->addSeparator();
 			submenu->addItem(L"Development funding", GUI::ESystemIcon::Web);
 
+			// add hot key
 			m_canvas->addAccelerator("Ctrl + Q", BIND_LISTENER(&CEditor::OnMenuQuit, this));
 			m_canvas->addAccelerator("Ctrl + S", BIND_LISTENER(&CEditor::OnMenuSave, this));
 		}
