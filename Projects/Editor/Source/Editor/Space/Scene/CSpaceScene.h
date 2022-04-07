@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "EditorComponents/SelectObject/CSelectObjectSystem.h"
 
 #include "CViewpointController.h"
+#include "CCameraSettingController.h"
 
 #include "Reactive/ISubject.h"
 #include "Reactive/IObserver.h"
@@ -81,6 +82,9 @@ namespace Skylicht
 			CZone* m_viewpointZone;
 			CCamera* m_viewpointCamera;
 			CViewpointController* m_viewpointController;
+
+			GUI::CMenu* m_cameraSettingMenu;
+			CCameraSettingController* m_cameraSettingController;
 
 			CHandlesRenderer* m_handlesRenderer;
 			CGizmosRenderer* m_gizmosRenderer;
@@ -134,6 +138,8 @@ namespace Skylicht
 
 			void onToolbarWorldSpace(GUI::CBase* base);
 
+			void onCameraSetting(GUI::CBase* base);
+
 			void onCameraPerspective(GUI::CBase* base);
 
 			void onCameraOrtho(GUI::CBase* base);
@@ -161,6 +167,11 @@ namespace Skylicht
 			inline IRenderPipeline* getRenderPipeline()
 			{
 				return m_renderRP;
+			}
+
+			CCamera* getEditorCamera()
+			{
+				return m_editorCamera;
 			}
 
 		protected:
