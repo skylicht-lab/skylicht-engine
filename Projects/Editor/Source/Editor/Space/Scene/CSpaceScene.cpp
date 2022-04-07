@@ -141,6 +141,9 @@ namespace Skylicht
 			m_groupCameraView->addButton(button);
 
 			button = toolbar->addButton(L"Camera", GUI::ESystemIcon::Camera, true);
+			m_cameraSettingMenu = new GUI::CMenu(window->getCanvas());
+			m_cameraSettingController = new CCameraSettingController(editor, m_cameraSettingMenu);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onCameraSetting, this);
 
 			// init group
 			m_groupEditor->enable(true);
@@ -414,6 +417,12 @@ namespace Skylicht
 		}
 
 		// tool bar
+		void CSpaceScene::onCameraSetting(GUI::CBase* base)
+		{
+			m_cameraSettingMenu->open(base);
+			m_cameraSettingController->onShow();
+		}
+
 		void CSpaceScene::onCameraPerspective(GUI::CBase* base)
 		{
 			m_groupCameraView->selectButton(m_toolbarButton[ESceneToolBar::Perspective]);
@@ -583,6 +592,10 @@ namespace Skylicht
 			if (m_viewpointController != NULL)
 				m_viewpointController->update();
 
+			// update camera setting
+			if (!m_cameraSettingMenu->isHidden())
+				m_cameraSettingController->update();
+
 			// update scene
 			m_scene->update();
 		}
@@ -615,13 +628,17 @@ namespace Skylicht
 					m_scene->setVisibleAllZone(true);
 					m_viewpointZone->setVisible(false);
 
+					// render handles
 					m_handlesRenderer->setEnable(true);
 					m_handlesRenderer->setCameraAndViewport(m_editorCamera, viewport);
 
+					// update select object system
 					m_selectObjectSystem->setCameraAndViewport(m_editorCamera, viewport);
 
+					// render gizmos
 					m_gizmosRenderer->setEnable(true);
 
+					// render scene
 					m_renderRP->render(NULL, m_editorCamera, m_scene->getEntityManager(), viewport);
 
 					// setup viewpoint viewport
