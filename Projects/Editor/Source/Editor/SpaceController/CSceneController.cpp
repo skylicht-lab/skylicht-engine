@@ -39,6 +39,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Selection/CSelecting.h"
 
 #include "Entity/CEntityHandler.h"
+#include "Entity/CEntityHandleData.h"
 
 #include "ResourceSettings/MeshExportSettings.h"
 
@@ -685,6 +686,55 @@ namespace Skylicht
 
 			if (node != NULL)
 				node->getGUINode()->setText(object->getName());
+		}
+
+		void CSceneController::onDelete()
+		{
+			CSelection* selection = CSelection::getInstance();
+			std::vector<CSelectObject*>& selected = selection->getAllSelected();
+
+			// loop and delete all selected
+			for (CSelectObject* selectObject : selected)
+			{
+				CSelectObject::ESelectType type = selectObject->getType();
+
+				if (type == CSelectObject::GameObject)
+				{
+					CGameObject* gameObject = m_scene->searchObjectInChildByID(selectObject->getID().c_str());
+					if (gameObject != NULL)
+					{
+						// remove gameobject
+						gameObject->remove();
+
+						// remove gui hierachy
+						if (m_hierachyNode != NULL)
+						{
+							CHierachyNode* node = m_hierachyNode->getNodeByTag(gameObject);
+							if (node != NULL)
+								node->remove();
+						}
+					}
+				}
+				else if (type == CSelectObject::Entity)
+				{
+					CEntity* entity = m_scene->getEntityManager()->getEntityByID(selectObject->getID().c_str());
+					if (entity != NULL)
+					{
+						// delete entity
+						CEntityHandleData* data = entity->getData<CEntityHandleData>();
+
+						CEntityHandler* handler = data->Handler;
+						handler->removeEntity(entity);
+
+						// remove gui hierachy
+						if (m_spaceHierarchy != NULL)
+							m_spaceHierarchy->getController()->updateNode(handler->getGameObject());
+					}
+				}
+			}
+
+			selection->clear();
+			CPropertyController::getInstance()->setProperty(NULL);
 		}
 
 		void CSceneController::onNotify(ISubject* subject, IObserver* from)

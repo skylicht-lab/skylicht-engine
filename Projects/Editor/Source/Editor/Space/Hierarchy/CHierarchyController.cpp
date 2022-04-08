@@ -172,9 +172,16 @@ namespace Skylicht
 			if (tree == NULL)
 				return;
 
-			if (key == GUI::KEY_F2)
+			if (press = true)
 			{
-				rename(tree->getChildSelected());
+				if (key == GUI::KEY_F2)
+				{
+					rename(tree->getChildSelected());
+				}
+				else if (key == GUI::KEY_DELETE)
+				{
+					CSceneController::getInstance()->onDelete();
+				}
 			}
 		}
 

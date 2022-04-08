@@ -182,6 +182,8 @@ namespace Skylicht
 
 			void onObjectChange(CGameObject* object);
 
+			void onDelete();
+
 			virtual void onNotify(ISubject* subject, IObserver* from);
 
 			void deselectAllOnHierachy();

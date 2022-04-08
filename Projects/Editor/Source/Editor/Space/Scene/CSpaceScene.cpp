@@ -273,7 +273,7 @@ namespace Skylicht
 			camObj->setName(L"EditorCamera");
 			camObj->setEditorObject(true);
 			camObj->addComponent<CCamera>();
-			camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
+			camObj->addComponent<CEditorCamera>()->setMoveSpeed(1.0f);
 
 			m_editorCamera = camObj->getComponent<CCamera>();
 			m_editorCamera->setPosition(core::vector3df(-2.0f, 1.5f, -2.0f));
@@ -861,6 +861,14 @@ namespace Skylicht
 			event.GameEvent.Sender = m_scene;
 
 			m_scene->OnEvent(event);
+
+			if (down == true)
+			{
+				if (key == GUI::KEY_DELETE)
+				{
+					CSceneController::getInstance()->onDelete();
+				}
+			}
 		}
 
 		bool CSpaceScene::isEditorObject(CGameObject* object)

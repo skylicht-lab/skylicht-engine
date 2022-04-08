@@ -28,14 +28,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CEditorCamera : 
+	class CEditorCamera :
 		public CComponentSystem,
 		public IEventReceiver
 	{
 	protected:
 		f32 m_moveSpeed;
 		f32 m_rotateSpeed;
-		gui::ICursorControl *m_cursorControl;
+		gui::ICursorControl* m_cursorControl;
 
 		core::position2df m_centerCursor;
 		core::position2df m_cursorPos;
@@ -71,9 +71,19 @@ namespace Skylicht
 			m_moveSpeed = speed;
 		}
 
-		void updateInputRotate(core::vector3df &relativeRotation, f32 timeDiff);
+		inline float getMoveSpeed()
+		{
+			return m_moveSpeed;
+		}
 
-		void updateInputOffset(core::vector3df &offsetPosition, f32 timeDiff);
+		inline float getRotateSpeed()
+		{
+			return m_rotateSpeed;
+		}
+
+		void updateInputRotate(core::vector3df& relativeRotation, f32 timeDiff);
+
+		void updateInputOffset(core::vector3df& offsetPosition, f32 timeDiff);
 
 
 	};
