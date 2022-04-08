@@ -50,21 +50,23 @@ namespace Skylicht
 			layout = boxLayout->beginVertical();
 			label = new GUI::CLabel(layout);
 			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
-			label->setString("Speed");
+			label->setString("Move speed");
 			label->setTextAlignment(GUI::TextRight);
 
 			m_moveSpeed = new GUI::CSlider(layout);
-			m_moveSpeed->setValue(2.0f, 0.1f, 5.0f, false);
+			m_moveSpeed->setValue(1.0f, 0.1f, 5.0f, false);
+			m_moveSpeed->OnTextChanged = BIND_LISTENER(&CCameraSettingController::onChanged, this);
 			boxLayout->endVertical();
 
 			layout = boxLayout->beginVertical();
 			label = new GUI::CLabel(layout);
 			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
-			label->setString("Speed multiply");
+			label->setString("Rotate speed");
 			label->setTextAlignment(GUI::TextRight);
 
-			m_speedMultiply = new GUI::CSlider(layout);
-			m_speedMultiply->setValue(1.0f, 0.1f, 2.0f, false);
+			m_rotSpeed = new GUI::CSlider(layout);
+			m_rotSpeed->setValue(16.0f, 1.0f, 30.0f, false);
+			m_rotSpeed->OnTextChanged = BIND_LISTENER(&CCameraSettingController::onChanged, this);
 			boxLayout->endVertical();
 
 			layout = boxLayout->beginVertical();
@@ -75,6 +77,7 @@ namespace Skylicht
 
 			m_fov = new GUI::CSlider(layout);
 			m_fov->setValue(60.0f, 1.0f, 90.0f, false);
+			m_fov->OnTextChanged = BIND_LISTENER(&CCameraSettingController::onChanged, this);
 			boxLayout->endVertical();
 
 			layout = boxLayout->beginVertical();
@@ -85,6 +88,7 @@ namespace Skylicht
 
 			m_near = new GUI::CSlider(layout);
 			m_near->setValue(0.05f, 0.01f, 10.0f, false);
+			m_near->OnTextChanged = BIND_LISTENER(&CCameraSettingController::onChanged, this);
 			boxLayout->endVertical();
 
 			layout = boxLayout->beginVertical();
@@ -95,6 +99,7 @@ namespace Skylicht
 
 			m_far = new GUI::CSlider(layout);
 			m_far->setValue(1500.0f, 20.0f, 5000.0f, false);
+			m_far->OnTextChanged = BIND_LISTENER(&CCameraSettingController::onChanged, this);
 			boxLayout->endVertical();
 
 			boxLayout->addSpace(20.0f);
@@ -125,17 +130,57 @@ namespace Skylicht
 		void CCameraSettingController::onShow()
 		{
 			CSpaceScene* spaceScene = CSceneController::getInstance()->getSpaceScene();
-			CCamera* editorCamera = spaceScene->getEditorCamera();
+			CCamera* camera = spaceScene->getEditorCamera();
+			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
+
+			// setup value
+			m_moveSpeed->setValue(editorCamera->getMoveSpeed(), false);
+			m_rotSpeed->setValue(editorCamera->getRotateSpeed(), false);
+			m_fov->setValue(camera->getFOV(), false);
+			m_near->setValue(camera->getNearValue(), false);
+			m_far->setValue(camera->getFarValue(), false);
 		}
 
 		void CCameraSettingController::onDefault(GUI::CBase* base)
 		{
+			CSpaceScene* spaceScene = CSceneController::getInstance()->getSpaceScene();
+			CCamera* camera = spaceScene->getEditorCamera();
+			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
+
+			// default value
+			editorCamera->setMoveSpeed(1.0f);
+			editorCamera->setRotateSpeed(16.0f);
+			camera->setFOV(60.0f);
+			camera->setNearValue(0.05f);
+			camera->setFarValue(1500.0f);
+
+			// ui value
+			m_moveSpeed->setValue(editorCamera->getMoveSpeed(), false);
+			m_rotSpeed->setValue(editorCamera->getRotateSpeed(), false);
+			m_fov->setValue(camera->getFOV(), false);
+			m_near->setValue(camera->getNearValue(), false);
+			m_far->setValue(camera->getFarValue(), false);
+
 			m_menu->close();
 		}
 
 		void CCameraSettingController::onOK(GUI::CBase* base)
 		{
 			m_menu->close();
+		}
+
+		void CCameraSettingController::onChanged(GUI::CBase* base)
+		{
+			CSpaceScene* spaceScene = CSceneController::getInstance()->getSpaceScene();
+			CCamera* camera = spaceScene->getEditorCamera();
+			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
+
+			// default value
+			editorCamera->setMoveSpeed(m_moveSpeed->getValue());
+			editorCamera->setRotateSpeed(m_rotSpeed->getValue());
+			camera->setFOV(m_fov->getValue());
+			camera->setNearValue(m_near->getValue());
+			camera->setFarValue(m_far->getValue());
 		}
 	}
 }

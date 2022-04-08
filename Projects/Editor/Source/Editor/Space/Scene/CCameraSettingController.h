@@ -38,7 +38,7 @@ namespace Skylicht
 			CEditor* m_editor;
 
 			GUI::CSlider* m_moveSpeed;
-			GUI::CSlider* m_speedMultiply;
+			GUI::CSlider* m_rotSpeed;
 			GUI::CSlider* m_fov;
 			GUI::CSlider* m_near;
 			GUI::CSlider* m_far;
@@ -52,9 +52,11 @@ namespace Skylicht
 
 			void onShow();
 
-			void onDefault(GUI::CBase *base);
+			void onDefault(GUI::CBase* base);
 
 			void onOK(GUI::CBase* base);
+
+			void onChanged(GUI::CBase* base);
 		};
 	}
 }
