@@ -218,4 +218,24 @@ namespace Skylicht
 			}
 		}
 	}
+
+	CObjectSerializable* CAttributeSerializable::clone()
+	{
+		CAttributeSerializable* object = new CAttributeSerializable(Name.c_str());
+		copyAttribute(m_attribute, object->m_attribute);
+
+		object->m_savePath = m_savePath;
+		for (CValueProperty* value : m_value)
+		{
+			CValueProperty* newValue = value->clone();
+			newValue->setOwner(this);
+			newValue->setUIHeader(value->getUIHeader().c_str());
+			newValue->setUISpace(value->getUISpace());
+
+			object->m_value.push_back(newValue);
+			object->m_autoRelease.push_back(newValue);
+		}
+
+		return object;
+	}
 }

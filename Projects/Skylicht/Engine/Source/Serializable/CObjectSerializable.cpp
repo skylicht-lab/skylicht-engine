@@ -230,4 +230,23 @@ namespace Skylicht
 
 		attr->drop();
 	}
+
+	CObjectSerializable* CObjectSerializable::clone()
+	{
+		CObjectSerializable* object = new CObjectSerializable(Name.c_str(), NULL);
+		object->m_savePath = m_savePath;
+
+		for (CValueProperty* value : m_value)
+		{
+			CValueProperty* newValue = value->clone();
+			newValue->setOwner(this);
+			newValue->setUIHeader(value->getUIHeader().c_str());
+			newValue->setUISpace(value->getUISpace());
+
+			object->m_value.push_back(newValue);
+			object->m_autoRelease.push_back(newValue);
+		}
+
+		return object;
+	}
 }

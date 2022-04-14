@@ -119,6 +119,17 @@ namespace Skylicht
 		{
 			m_value = io->getAttributeAsInt(Name.c_str());
 		}
+
+		virtual CValueProperty* clone()
+		{
+			CIntProperty* value = new CIntProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			value->Min = Min;
+			value->Max = Max;
+			value->ClampMin = ClampMin;
+			value->ClampMax = ClampMax;
+			return value;
+		}
 	};
 
 	class CUIntProperty : public CValuePropertyTemplate<u32>
@@ -160,6 +171,15 @@ namespace Skylicht
 		virtual void deserialize(io::IAttributes* io)
 		{
 			m_value = io->getAttributeAsInt(Name.c_str());
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CUIntProperty* value = new CUIntProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			value->Max = Max;
+			value->ClampMax = ClampMax;
+			return value;
 		}
 	};
 
@@ -221,6 +241,17 @@ namespace Skylicht
 		{
 			m_value = io->getAttributeAsFloat(Name.c_str());
 		}
+
+		virtual CValueProperty* clone()
+		{
+			CFloatProperty* value = new CFloatProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			value->Min = Min;
+			value->Max = Max;
+			value->ClampMin = ClampMin;
+			value->ClampMax = ClampMax;
+			return value;
+		}
 	};
 
 	class CStringProperty : public CValuePropertyTemplate<std::string>
@@ -251,6 +282,13 @@ namespace Skylicht
 		{
 			m_value = io->getAttributeAsString(Name.c_str()).c_str();
 		}
+
+		virtual CValueProperty* clone()
+		{
+			CStringProperty* value = new CStringProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
+		}
 	};
 
 	class CFolderPathProperty : public CValuePropertyTemplate<std::string>
@@ -280,6 +318,13 @@ namespace Skylicht
 		virtual void deserialize(io::IAttributes* io)
 		{
 			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CFolderPathProperty* value = new CFolderPathProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
 		}
 	};
 
@@ -322,6 +367,14 @@ namespace Skylicht
 		{
 			m_value = io->getAttributeAsString(Name.c_str()).c_str();
 		}
+
+		virtual CValueProperty* clone()
+		{
+			CFilePathProperty* value = new CFilePathProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			value->Exts = Exts;
+			return value;
+		}
 	};
 
 	class CBoolProperty : public CValuePropertyTemplate<bool>
@@ -346,6 +399,13 @@ namespace Skylicht
 		virtual void deserialize(io::IAttributes* io)
 		{
 			m_value = io->getAttributeAsBool(Name.c_str());
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CBoolProperty* value = new CBoolProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
 		}
 	};
 
@@ -377,6 +437,13 @@ namespace Skylicht
 		{
 			m_value = io->getAttributeAsStringW(Name.c_str()).c_str();
 		}
+
+		virtual CValueProperty* clone()
+		{
+			CStringWProperty* value = new CStringWProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
+		}
 	};
 
 	class CDateTimeProperty : public CValuePropertyTemplate<long>
@@ -402,6 +469,13 @@ namespace Skylicht
 		virtual void deserialize(io::IAttributes* io)
 		{
 			m_value = (long)io->getAttributeAsFloat(Name.c_str());
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CDateTimeProperty* value = new CDateTimeProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
 		}
 	};
 
@@ -429,6 +503,13 @@ namespace Skylicht
 		{
 			m_value = io->getAttributeAsVector3d(Name.c_str());
 		}
+
+		virtual CValueProperty* clone()
+		{
+			CVector3Property* value = new CVector3Property(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
+		}
 	};
 
 	class CQuaternionProperty : public CValuePropertyTemplate<core::quaternion>
@@ -454,6 +535,13 @@ namespace Skylicht
 		virtual void deserialize(io::IAttributes* io)
 		{
 			m_value = io->getAttributeAsQuaternion(Name.c_str());
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CQuaternionProperty* value = new CQuaternionProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
 		}
 	};
 
@@ -481,6 +569,13 @@ namespace Skylicht
 		{
 			m_value = io->getAttributeAsColor(Name.c_str());
 		}
+
+		virtual CValueProperty* clone()
+		{
+			CColorProperty* value = new CColorProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
+		}
 	};
 
 	class CMatrixProperty : public CValuePropertyTemplate<core::matrix4>
@@ -506,6 +601,13 @@ namespace Skylicht
 		virtual void deserialize(io::IAttributes* io)
 		{
 			m_value = io->getAttributeAsMatrix(Name.c_str());
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CMatrixProperty* value = new CMatrixProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
 		}
 	};
 
@@ -592,6 +694,13 @@ namespace Skylicht
 		{
 			CValuePropertyTemplate<T>* obj = dynamic_cast<CValuePropertyTemplate<T>*>(this);
 			obj->set(static_cast<T>(io->getAttributeAsInt(obj->Name.c_str())));
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CEnumProperty<T>* value = new CEnumProperty<T>(NULL, Name.c_str(), m_value);
+			value->m_enums = m_enums;
+			return value;
 		}
 	};
 }
