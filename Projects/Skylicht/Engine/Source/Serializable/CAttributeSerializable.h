@@ -54,6 +54,8 @@ namespace Skylicht
 
 		virtual void parseSerializable(io::IXMLReader* reader);
 
+		virtual CObjectSerializable* clone();
+
 	protected:
 
 		void copyAttribute(io::IAttributes* from, io::IAttributes* to);

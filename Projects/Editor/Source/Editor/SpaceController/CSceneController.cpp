@@ -737,6 +737,38 @@ namespace Skylicht
 			CPropertyController::getInstance()->setProperty(NULL);
 		}
 
+		void CSceneController::onCopy()
+		{
+			CSelection* selection = CSelection::getInstance();
+			std::vector<CSelectObject*>& selected = selection->getAllSelected();
+
+			// loop and delete all selected
+			for (CSelectObject* selectObject : selected)
+			{
+				CSelectObject::ESelectType type = selectObject->getType();
+
+				if (type == CSelectObject::GameObject)
+				{
+					CGameObject* gameObject = m_scene->searchObjectInChildByID(selectObject->getID().c_str());
+					if (gameObject != NULL)
+					{
+						CObjectSerializable* obj = gameObject->createSerializable();
+
+					}
+				}
+			}
+		}
+
+		void CSceneController::onPaste()
+		{
+
+		}
+
+		void CSceneController::onDuplicate()
+		{
+
+		}
+
 		void CSceneController::onNotify(ISubject* subject, IObserver* from)
 		{
 			CSelectObject* selected = dynamic_cast<CSelectObject*>(subject);

@@ -36,7 +36,7 @@ namespace Skylicht
 		m_fromMemory = false;
 	}
 
-	CMemoryStream::CMemoryStream(unsigned char *fromMem, unsigned int size)
+	CMemoryStream::CMemoryStream(unsigned char* fromMem, unsigned int size)
 	{
 		m_memory = fromMem;
 		m_size = size;
@@ -74,7 +74,7 @@ namespace Skylicht
 
 		unsigned int newSize = expectedSize * 2;
 
-		unsigned char *newMemory = new unsigned char[newSize];
+		unsigned char* newMemory = new unsigned char[newSize];
 		memcpy(newMemory, m_memory, m_size);
 		delete m_memory;
 
@@ -91,7 +91,7 @@ namespace Skylicht
 		m_size += size;
 	}
 
-	void CMemoryStream::writeStream(CMemoryStream *stream)
+	void CMemoryStream::writeStream(CMemoryStream* stream)
 	{
 		writeData(stream->getData(), stream->getSize());
 	}
@@ -144,7 +144,7 @@ namespace Skylicht
 		m_size += size;
 	}
 
-	void CMemoryStream::writeFloatArray(const float *f, int count)
+	void CMemoryStream::writeFloatArray(const float* f, int count)
 	{
 		int size = sizeof(float) * count;
 		autoGrow(size);
@@ -174,6 +174,23 @@ namespace Skylicht
 		{
 			memcpy(&m_memory[m_size], s.c_str(), size);
 			m_size += size;
+		}
+	}
+
+	void CMemoryStream::writeString(const std::wstring& s)
+	{
+		int size = (int)s.size() + 1;
+		autoGrow(size * sizeof(wchar_t));	// unicode
+
+		// write num char
+		memcpy(&m_memory[m_size], &size, sizeof(int));
+		m_size += sizeof(int);
+
+		// write string data
+		if (size > 0)
+		{
+			memcpy(&m_memory[m_size], s.c_str(), size * sizeof(wchar_t));
+			m_size += size * sizeof(wchar_t);
 		}
 	}
 
@@ -261,7 +278,7 @@ namespace Skylicht
 		return ret;
 	}
 
-	void CMemoryStream::readFloatArray(float *f, int count)
+	void CMemoryStream::readFloatArray(float* f, int count)
 	{
 		int size = sizeof(float) * count;
 		memcpy(f, &m_memory[m_pos], size);
@@ -278,9 +295,29 @@ namespace Skylicht
 		std::string ret = "";
 		if (numchar > 0)
 		{
-			char *data = new char[numchar];
+			char* data = new char[numchar];
 			memcpy(data, &m_memory[m_pos], numchar);
 			m_pos += numchar;
+
+			ret = data;
+			delete[]data;
+		}
+		return ret;
+	}
+
+	std::wstring CMemoryStream::readWString()
+	{
+		int numchar = 0;
+
+		memcpy(&numchar, &m_memory[m_pos], sizeof(int));
+		m_pos += sizeof(int);
+
+		std::wstring ret = L"";
+		if (numchar > 0)
+		{
+			wchar_t* data = new wchar_t[numchar];
+			memcpy(data, &m_memory[m_pos], numchar * sizeof(wchar_t));
+			m_pos += numchar * sizeof(wchar_t);
 
 			ret = data;
 			delete[]data;

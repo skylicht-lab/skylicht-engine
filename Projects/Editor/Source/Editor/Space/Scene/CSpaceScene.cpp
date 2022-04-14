@@ -171,15 +171,12 @@ namespace Skylicht
 
 			m_view->OnKeyPress = std::bind(&CSpaceScene::onKeyPressed, this, _1, _2, _3);
 
-			m_view->addAccelerator("G", [&](GUI::CBase* base) {
-				this->onHotkey(base, "G");
-				});
-			m_view->addAccelerator("R", [&](GUI::CBase* base) {
-				this->onHotkey(base, "R");
-				});
-			m_view->addAccelerator("S", [&](GUI::CBase* base) {
-				this->onHotkey(base, "S");
-				});
+			m_view->addAccelerator("G", [&](GUI::CBase* base) {this->onHotkey(base, "G"); });
+			m_view->addAccelerator("R", [&](GUI::CBase* base) {this->onHotkey(base, "R"); });
+			m_view->addAccelerator("S", [&](GUI::CBase* base) {this->onHotkey(base, "S"); });
+			m_view->addAccelerator("Ctrl + C", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + C"); });
+			m_view->addAccelerator("Ctrl + V", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + V"); });
+			m_view->addAccelerator("Ctrl + D", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + D"); });
 
 			m_view->OnResize = BIND_LISTENER(&CSpaceScene::onRenderResize, this);
 
@@ -844,6 +841,18 @@ namespace Skylicht
 			{
 				onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
 				onEditorSelect(m_toolbarButton[ESceneToolBar::Scale]);
+			}
+			else if (hotkey == "Ctrl + C")
+			{
+				CSceneController::getInstance()->onCopy();
+			}
+			else if (hotkey == "Ctrl + V")
+			{
+				CSceneController::getInstance()->onPaste();
+			}
+			else if (hotkey == "Ctrl + D")
+			{
+				CSceneController::getInstance()->onDuplicate();
 			}
 		}
 
