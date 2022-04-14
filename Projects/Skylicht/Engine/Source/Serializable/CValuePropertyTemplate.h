@@ -646,6 +646,16 @@ namespace Skylicht
 			return m_enums[i];
 		}
 
+		const std::vector<SEnumString>& getEnum()
+		{
+			return m_enums;
+		}
+
+		void setEnums(const std::vector<SEnumString>& e)
+		{
+			m_enums = e;
+		}
+
 		virtual void setIntValue(int value) = 0;
 
 		virtual int getIntValue() = 0;
@@ -698,8 +708,13 @@ namespace Skylicht
 
 		virtual CValueProperty* clone()
 		{
-			CEnumProperty<T>* value = new CEnumProperty<T>(NULL, Name.c_str(), m_value);
-			value->m_enums = m_enums;
+			CValuePropertyTemplate<T>* obj = dynamic_cast<CValuePropertyTemplate<T>*>(this);
+			CEnumPropertyData* enumObj = dynamic_cast<CEnumPropertyData*>(this);
+
+			CEnumProperty<T>* value = new CEnumProperty<T>(NULL, obj->Name.c_str(), obj->get());
+			CEnumPropertyData* valueEnum = dynamic_cast<CEnumPropertyData*>(value);
+			valueEnum->setEnums(enumObj->getEnum());
+
 			return value;
 		}
 	};
