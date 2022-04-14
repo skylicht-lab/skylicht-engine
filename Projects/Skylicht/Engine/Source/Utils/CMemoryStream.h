@@ -29,7 +29,7 @@ namespace Skylicht
 	class CMemoryStream
 	{
 	protected:
-		unsigned char *m_memory;
+		unsigned char* m_memory;
 		unsigned int m_size;
 		unsigned int m_totalSize;
 		unsigned int m_pos;
@@ -37,7 +37,7 @@ namespace Skylicht
 	public:
 		CMemoryStream(unsigned int initMem = 512);
 
-		CMemoryStream(unsigned char *fromMem, unsigned int size);
+		CMemoryStream(unsigned char* fromMem, unsigned int size);
 
 		CMemoryStream(const CMemoryStream& stream);
 
@@ -46,7 +46,7 @@ namespace Skylicht
 		bool autoGrow(unsigned int writeSize);
 
 		void writeData(const void* data, unsigned int size);
-		void writeStream(CMemoryStream *stream);
+		void writeStream(CMemoryStream* stream);
 
 		void writeChar(char data);
 		void writeShort(short data);
@@ -56,7 +56,8 @@ namespace Skylicht
 		void writeFloat(float data);
 		void writeDouble(double data);
 		void writeString(const std::string& s);
-		void writeFloatArray(const float *f, int count);
+		void writeString(const std::wstring& s);
+		void writeFloatArray(const float* f, int count);
 
 		unsigned int readData(void* data, unsigned int size);
 
@@ -64,13 +65,14 @@ namespace Skylicht
 		short readShort();
 		unsigned short readUShort();
 		int readInt();
-		unsigned int readUInt();		
+		unsigned int readUInt();
 		float readFloat();
 		double readDouble();
 		std::string readString();
-		void readFloatArray(float *f, int count);
+		std::wstring readWString();
+		void readFloatArray(float* f, int count);
 
-		unsigned char *getData()
+		unsigned char* getData()
 		{
 			return m_memory;
 		}

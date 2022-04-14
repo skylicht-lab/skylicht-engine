@@ -80,6 +80,8 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io) = 0;
 
+		virtual CValueProperty* clone() = 0;
+
 		inline void setUIHeader(const char* header)
 		{
 			m_uiHeader = header;

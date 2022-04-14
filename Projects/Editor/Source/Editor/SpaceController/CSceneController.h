@@ -184,6 +184,12 @@ namespace Skylicht
 
 			void onDelete();
 
+			void onCopy();
+
+			void onPaste();
+
+			void onDuplicate();
+
 			virtual void onNotify(ISubject* subject, IObserver* from);
 
 			void deselectAllOnHierachy();
