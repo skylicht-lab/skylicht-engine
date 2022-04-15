@@ -175,6 +175,11 @@ namespace Skylicht
 		s_current = s_listObject.begin();
 	}
 
+	void CSceneImporter::exportGameObject(CObjectSerializable* data, CContainerObject* target)
+	{
+
+	}
+
 	bool CSceneImporter::beginImportScene(CScene* scene, const char* file)
 	{
 		// step 1

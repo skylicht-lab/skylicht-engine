@@ -61,6 +61,8 @@ namespace Skylicht
 
 		protected:
 
+			void OnHotkey(GUI::CBase* base, const std::string& hotkey);
+
 			void OnKeyPress(GUI::CBase* control, int key, bool press);
 
 			void OnRename(GUI::CBase* control);

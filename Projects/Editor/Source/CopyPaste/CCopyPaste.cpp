@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,24 +22,46 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "GameObject/CZone.h"
-#include "CScene.h"
-#include "Serializable/CObjectSerializable.h"
+#include "pch.h"
+#include "CCopyPaste.h"
 
 namespace Skylicht
 {
-	class CSceneExporter
+	namespace Editor
 	{
-	protected:
-		static void loadChildObjectSerializable(CContainerObject* container, CObjectSerializable* data);
+		CCopyPaste::CCopyPaste()
+		{
 
-	public:
-		static CObjectSerializable* exportGameObject(CGameObject* object);
+		}
 
-		static void exportGameObject(CGameObject* object, const char* path);
+		CCopyPaste::~CCopyPaste()
+		{
+			clear();
+		}
 
-		static void exportScene(CScene* scene, const char* path);
-	};
+		void CCopyPaste::clear()
+		{
+			for (CObjectSerializable* gameObject : m_gameObjects)
+				delete gameObject;
+			m_gameObjects.clear();
+		}
+
+		bool CCopyPaste::checkInsideParent(CGameObject* gameObject, std::vector<CContainerObject*> list)
+		{
+			for (CContainerObject* container : list)
+			{
+				if (container->haveChild(gameObject))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		void CCopyPaste::addCopy(CGameObject* gameObject)
+		{
+			m_gameObjects.push_back(CSceneExporter::exportGameObject(gameObject));
+		}
+	}
 }

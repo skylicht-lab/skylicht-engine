@@ -97,6 +97,8 @@ namespace Skylicht
 
 		core::array<CGameObject*>& getArrayChilds(bool addThis);
 
+		bool haveChild(CGameObject* gameObject);
+
 		DECLARE_GETTYPENAME(CContainerObject)
 	};
 

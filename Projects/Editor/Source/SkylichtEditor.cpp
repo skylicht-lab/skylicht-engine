@@ -8,6 +8,7 @@
 
 #include "Handles/CHandles.h"
 #include "Selection/CSelecting.h"
+#include "CopyPaste/CCopyPaste.h"
 
 #include "Lightmapper/CLightmapper.h"
 #include "LightProbes/CLightProbeRender.h"
@@ -36,6 +37,7 @@ SkylichtEditor::SkylichtEditor() :
 	Editor::CAssetManager::createGetInstance();
 	Editor::CHandles::createGetInstance();
 	Editor::CSelecting::createGetInstance();
+	Editor::CCopyPaste::createGetInstance();
 
 	CLightProbeRender::showProbe(true);
 	CReflectionProbeRender::showProbe(true);
@@ -52,6 +54,7 @@ SkylichtEditor::~SkylichtEditor()
 	Editor::GUI::CGUIContext::destroyGUI();
 
 	Editor::CEditor::releaseInstance();
+	Editor::CCopyPaste::releaseInstance();
 	Editor::CSelecting::releaseInstance();
 	Editor::CHandles::releaseInstance();
 	Editor::CAssetManager::releaseInstance();

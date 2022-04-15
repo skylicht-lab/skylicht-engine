@@ -53,6 +53,8 @@ namespace Skylicht
 		static bool loadStep(CScene* scene, io::IXMLReader* reader);
 
 	public:
+		static void exportGameObject(CObjectSerializable* data, CContainerObject* target);
+
 		static bool beginImportScene(CScene* scene, const char* path);
 
 		static bool updateLoadScene();
