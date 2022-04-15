@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Handles/CHandles.h"
 #include "Selection/CSelecting.h"
+#include "CopyPaste/CCopyPaste.h"
 
 #include "Entity/CEntityHandler.h"
 #include "Entity/CEntityHandleData.h"
@@ -742,20 +743,35 @@ namespace Skylicht
 			CSelection* selection = CSelection::getInstance();
 			std::vector<CSelectObject*>& selected = selection->getAllSelected();
 
-			// loop and delete all selected
+			// clear all copy/paste
+			CCopyPaste* copyPaste = CCopyPaste::getInstance();
+			copyPaste->clear();
+
+			std::vector<CContainerObject*> listContainer;
+			std::vector<CGameObject*> listGameObject;
+
 			for (CSelectObject* selectObject : selected)
 			{
 				CSelectObject::ESelectType type = selectObject->getType();
-
 				if (type == CSelectObject::GameObject)
 				{
 					CGameObject* gameObject = m_scene->searchObjectInChildByID(selectObject->getID().c_str());
 					if (gameObject != NULL)
 					{
-						CObjectSerializable* obj = gameObject->createSerializable();
+						listGameObject.push_back(gameObject);
 
+						CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
+						if (container != NULL)
+							listContainer.push_back(container);
 					}
 				}
+			}
+
+			// loop all and add copy
+			for (CGameObject* gameObject : listGameObject)
+			{
+				if (!copyPaste->checkInsideParent(gameObject, listContainer))
+					copyPaste->addCopy(gameObject);
 			}
 		}
 
