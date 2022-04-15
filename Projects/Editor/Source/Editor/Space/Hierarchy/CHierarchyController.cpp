@@ -49,6 +49,10 @@ namespace Skylicht
 				std::placeholders::_2,
 				std::placeholders::_3
 			);
+
+			m_tree->addAccelerator("Ctrl + C", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + C"); });
+			m_tree->addAccelerator("Ctrl + V", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + V"); });
+			m_tree->addAccelerator("Ctrl + D", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + D"); });
 		}
 
 		CHierarchyController::~CHierarchyController()
@@ -164,6 +168,22 @@ namespace Skylicht
 
 			ret->setSelected(true);
 			return ret;
+		}
+
+		void CHierarchyController::OnHotkey(GUI::CBase* base, const std::string& hotkey)
+		{
+			if (hotkey == "Ctrl + C")
+			{
+				CSceneController::getInstance()->onCopy();
+			}
+			else if (hotkey == "Ctrl + V")
+			{
+				CSceneController::getInstance()->onPaste();
+			}
+			else if (hotkey == "Ctrl + D")
+			{
+				CSceneController::getInstance()->onDuplicate();
+			}
 		}
 
 		void CHierarchyController::OnKeyPress(GUI::CBase* control, int key, bool press)

@@ -51,6 +51,17 @@ namespace Skylicht
 		}
 	}
 
+	CObjectSerializable* CSceneExporter::exportGameObject(CGameObject* object)
+	{
+		CObjectSerializable* data = object->createSerializable();
+
+		CContainerObject* container = dynamic_cast<CContainerObject*>(object);
+		if (container != NULL)
+			loadChildObjectSerializable(container, data);
+
+		return data;
+	}
+
 	void CSceneExporter::exportGameObject(CGameObject* object, const char* path)
 	{
 		CObjectSerializable* data = object->createSerializable();

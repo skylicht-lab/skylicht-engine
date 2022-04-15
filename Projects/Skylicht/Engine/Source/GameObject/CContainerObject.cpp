@@ -105,6 +105,32 @@ namespace Skylicht
 		return m_arrayChildObjects;
 	}
 
+	bool CContainerObject::haveChild(CGameObject* gameObject)
+	{
+		std::queue<CGameObject*> queueObjs;
+
+		for (CGameObject*& obj : m_childs)
+			queueObjs.push(obj);
+
+		while (queueObjs.size() != 0)
+		{
+			CGameObject* obj = queueObjs.front();
+			queueObjs.pop();
+
+			if (gameObject == obj)
+				return true;
+
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+			if (container != NULL)
+			{
+				for (CGameObject*& child : container->m_childs)
+					queueObjs.push(child);
+			}
+		}
+
+		return false;
+	}
+
 	template<typename T>
 	void CContainerObject::getListObjectType(ArrayGameObject& listObjs, T type)
 	{
