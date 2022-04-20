@@ -58,9 +58,9 @@ namespace Skylicht
 
 			void deleteHierarchyNode();
 
-			void setHierarchyNode(CHierachyNode* node);
+			void setTreeNode(CHierachyNode* node);
 
-			void add(CHierachyNode* node);
+			void addToTreeNode(CHierachyNode* node);
 
 			void rename(CHierachyNode* node);
 

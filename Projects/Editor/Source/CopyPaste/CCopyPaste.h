@@ -44,9 +44,11 @@ namespace Skylicht
 
 			void clear();
 
-			bool checkInsideParent(CGameObject* gameObject, std::vector<CContainerObject*> list);
+			void copy(std::vector<CGameObject*>& objects);
 
-			void addCopy(CGameObject* gameObject);
+			void paste(CContainerObject* target);
+
+			bool checkInsideParent(CGameObject* gameObject, std::vector<CContainerObject*> list);
 		};
 	}
 }

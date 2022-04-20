@@ -50,6 +50,8 @@ namespace Skylicht
 
 		CContainerObject* createContainerObject();
 
+		CGameObject* createObject(CObjectSerializable* data, bool generateNewID);
+
 		void updateAddRemoveObject(bool force = false);
 
 		int getNumberObjects();
