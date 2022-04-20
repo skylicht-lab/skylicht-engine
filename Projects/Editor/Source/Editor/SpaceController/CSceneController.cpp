@@ -227,10 +227,10 @@ namespace Skylicht
 
 			setZone(m_scene->getZone(0));
 
-			reinitHierachy();
+			reinitHierachyData();
 		}
 
-		void CSceneController::reinitHierachy()
+		void CSceneController::reinitHierachyData()
 		{
 			m_hierachyNode = new CHierachyNode(NULL);
 			m_hierachyNode->setName(m_scene->getName());
@@ -239,10 +239,10 @@ namespace Skylicht
 
 			setNodeEvent(m_hierachyNode);
 
-			buildHierarchyNodes();
+			buildHierarchyData();
 
 			if (m_spaceHierarchy != NULL)
-				m_spaceHierarchy->setHierarchyNode(m_hierachyNode);
+				m_spaceHierarchy->setTreeNode(m_hierachyNode);
 
 			m_focusNode = NULL;
 			m_contextNode = NULL;
@@ -270,19 +270,19 @@ namespace Skylicht
 		{
 			m_spaceHierarchy = hierarchy;
 			if (m_spaceHierarchy != NULL && m_hierachyNode != NULL)
-				m_spaceHierarchy->setHierarchyNode(m_hierachyNode);
+				m_spaceHierarchy->setTreeNode(m_hierachyNode);
 		}
 
-		void CSceneController::buildHierarchyNodes()
+		void CSceneController::buildHierarchyData()
 		{
 			ArrayZone* zones = m_scene->getAllZone();
 			for (CZone* zone : *zones)
 			{
-				CHierachyNode* node = buildHierarchyNodes(zone, m_hierachyNode);
+				CHierachyNode* node = buildHierarchyData(zone, m_hierachyNode);
 			}
 		}
 
-		CHierachyNode* CSceneController::buildHierarchyNodes(CGameObject* object, CHierachyNode* parentNode)
+		CHierachyNode* CSceneController::buildHierarchyData(CGameObject* object, CHierachyNode* parentNode)
 		{
 			if (object->isEditorObject())
 				return NULL;
@@ -316,7 +316,7 @@ namespace Skylicht
 				ArrayGameObject* childs = container->getChilds();
 				for (CGameObject* childObject : *childs)
 				{
-					buildHierarchyNodes(childObject, node);
+					buildHierarchyData(childObject, node);
 				}
 			}
 			else
@@ -327,7 +327,7 @@ namespace Skylicht
 				node->setIcon(GUI::ESystemIcon::Res3D);
 				node->setTagData(object, CHierachyNode::GameObject);
 
-				buildEntityNodes(object, node);
+				rebuildHierarchyEntityData(object, node);
 			}
 
 			if (node != NULL)
@@ -336,15 +336,15 @@ namespace Skylicht
 			return node;
 		}
 
-		void CSceneController::updateHierachy(CGameObject* object)
+		void CSceneController::updateTreeNode(CGameObject* object)
 		{
 			if (m_spaceHierarchy != NULL)
 			{
-				m_spaceHierarchy->getController()->updateNode(object);
+				m_spaceHierarchy->getController()->updateTreeNode(object);
 			}
 		}
 
-		void CSceneController::buildEntityNodes(CGameObject* object, CHierachyNode* parentNode)
+		void CSceneController::rebuildHierarchyEntityData(CGameObject* object, CHierachyNode* parentNode)
 		{
 			parentNode->removeAll(CHierachyNode::Entity);
 
@@ -446,7 +446,7 @@ namespace Skylicht
 			setNodeEvent(node);
 
 			if (m_spaceHierarchy != NULL)
-				m_spaceHierarchy->add(node);
+				m_spaceHierarchy->addToTreeNode(node);
 		}
 
 		CGameObject* CSceneController::createEmptyObject(CContainerObject* parent)
@@ -469,7 +469,7 @@ namespace Skylicht
 				setNodeEvent(node);
 
 				if (m_spaceHierarchy != NULL)
-					m_spaceHierarchy->add(node);
+					m_spaceHierarchy->addToTreeNode(node);
 			}
 
 			return newObject;
@@ -494,7 +494,7 @@ namespace Skylicht
 				setNodeEvent(node);
 
 				if (m_spaceHierarchy != NULL)
-					m_spaceHierarchy->add(node);
+					m_spaceHierarchy->addToTreeNode(node);
 			}
 
 			return newObject;
@@ -598,7 +598,7 @@ namespace Skylicht
 				obj->setName(node->getName().c_str());
 
 				// update list entity
-				buildEntityNodes(obj, node);
+				rebuildHierarchyEntityData(obj, node);
 
 				// notify object changed
 				CSelectObject* selectedObject = CSelection::getInstance()->getSelected(obj);
@@ -729,7 +729,7 @@ namespace Skylicht
 
 						// remove gui hierachy
 						if (m_spaceHierarchy != NULL)
-							m_spaceHierarchy->getController()->updateNode(handler->getGameObject());
+							m_spaceHierarchy->getController()->updateTreeNode(handler->getGameObject());
 					}
 				}
 			}
@@ -743,11 +743,6 @@ namespace Skylicht
 			CSelection* selection = CSelection::getInstance();
 			std::vector<CSelectObject*>& selected = selection->getAllSelected();
 
-			// clear all copy/paste
-			CCopyPaste* copyPaste = CCopyPaste::getInstance();
-			copyPaste->clear();
-
-			std::vector<CContainerObject*> listContainer;
 			std::vector<CGameObject*> listGameObject;
 
 			for (CSelectObject* selectObject : selected)
@@ -759,30 +754,66 @@ namespace Skylicht
 					if (gameObject != NULL)
 					{
 						listGameObject.push_back(gameObject);
-
-						CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
-						if (container != NULL)
-							listContainer.push_back(container);
 					}
 				}
 			}
 
-			// loop all and add copy
-			for (CGameObject* gameObject : listGameObject)
-			{
-				if (!copyPaste->checkInsideParent(gameObject, listContainer))
-					copyPaste->addCopy(gameObject);
-			}
+			CCopyPaste::getInstance()->copy(listGameObject);
 		}
 
 		void CSceneController::onPaste()
 		{
+			CSelection* selection = CSelection::getInstance();
+			CCopyPaste* copyPaste = CCopyPaste::getInstance();
 
+			CSelectObject* lastSelected = selection->getLastSelected();
+			if (lastSelected == NULL)
+				return;
+
+			if (lastSelected->getType() == CSelectObject::GameObject)
+			{
+				CGameObject* gameObject = m_scene->searchObjectInChildByID(lastSelected->getID().c_str());
+				if (gameObject != NULL)
+				{
+					CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
+					if (container != NULL)
+						CCopyPaste::getInstance()->paste(container);
+					else
+					{
+						container = dynamic_cast<CContainerObject*>(gameObject->getParent());
+						CCopyPaste::getInstance()->paste(container);
+					}
+				}
+			}
+			else if (lastSelected->getType() == CSelectObject::Entity)
+			{
+				CEntity* entity = m_scene->getEntityManager()->getEntityByID(lastSelected->getID().c_str());
+				if (entity != NULL)
+				{
+					CEntityHandleData* data = entity->getData<CEntityHandleData>();
+
+					CGameObject* gameObject = data->Handler->getGameObject();
+					if (gameObject != NULL)
+					{
+						CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
+						if (container != NULL)
+							CCopyPaste::getInstance()->paste(container);
+						else
+						{
+							container = dynamic_cast<CContainerObject*>(gameObject->getParent());
+							CCopyPaste::getInstance()->paste(container);
+						}
+
+						m_spaceHierarchy->getController()->updateTreeNode(container);
+					}
+				}
+			}
 		}
 
 		void CSceneController::onDuplicate()
 		{
-
+			onCopy();
+			onPaste();
 		}
 
 		void CSceneController::onNotify(ISubject* subject, IObserver* from)

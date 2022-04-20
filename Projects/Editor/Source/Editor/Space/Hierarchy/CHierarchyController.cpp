@@ -64,7 +64,7 @@ namespace Skylicht
 			}
 		}
 
-		void CHierarchyController::deleteHierarchyNode()
+		void CHierarchyController::deleteHierarchyData()
 		{
 			if (m_node != NULL)
 			{
@@ -74,7 +74,7 @@ namespace Skylicht
 			}
 		}
 
-		void CHierarchyController::setHierarchyNode(CHierachyNode* node)
+		void CHierarchyController::setTreeNode(CHierachyNode* node)
 		{
 			if (m_node != node)
 			{
@@ -88,7 +88,7 @@ namespace Skylicht
 			m_tree->removeAllTreeNode();
 
 			// add child nodes
-			GUI::CTreeNode* root0 = buildHierarchyNode(m_tree, m_node);
+			GUI::CTreeNode* root0 = buildTreeNode(m_tree, m_node);
 
 			// expand tree
 			root0->expand(false);
@@ -96,7 +96,15 @@ namespace Skylicht
 				root1->expand(false);
 		}
 
-		void CHierarchyController::updateNode(CGameObject* object)
+		CHierachyNode* CHierarchyController::getNodeByObject(CGameObject* object)
+		{
+			if (m_node == NULL)
+				return NULL;
+
+			return m_node->getNodeByTag(object);
+		}
+
+		void CHierarchyController::updateTreeNode(CGameObject* object)
 		{
 			if (m_node == NULL)
 				return;
@@ -106,17 +114,17 @@ namespace Skylicht
 			{
 				node->OnUpdate(node);
 
-				// rebuild-gui loop all entities child
+				// rebuild-gui child of entity
 				std::vector<CHierachyNode*>& childs = node->getChilds();
 				for (CHierachyNode* child : childs)
 				{
 					if (child->getTagDataType() == CHierachyNode::Entity)
-						buildHierarchyNode(node->getGUINode(), child);
+						buildTreeNode(node->getGUINode(), child);
 				}
 			}
 		}
 
-		GUI::CTreeNode* CHierarchyController::buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node)
+		GUI::CTreeNode* CHierarchyController::buildTreeNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node)
 		{
 			// add node
 			GUI::CTreeNode* guiNode = parentGuiNode->addNode(node->getName(), node->getIcon());
@@ -148,7 +156,7 @@ namespace Skylicht
 			std::vector<CHierachyNode*>& childs = node->getChilds();
 			for (CHierachyNode* child : childs)
 			{
-				buildHierarchyNode(guiNode, child);
+				buildTreeNode(guiNode, child);
 			}
 
 			// expand
@@ -157,12 +165,12 @@ namespace Skylicht
 			return guiNode;
 		}
 
-		GUI::CTreeNode* CHierarchyController::add(CHierachyNode* node)
+		GUI::CTreeNode* CHierarchyController::addToTreeNode(CHierachyNode* node)
 		{
 			CHierachyNode* parent = node->getParent();
 			GUI::CTreeNode* parentGuiNode = parent->getGUINode();
 
-			GUI::CTreeNode* ret = buildHierarchyNode(parentGuiNode, node);
+			GUI::CTreeNode* ret = buildTreeNode(parentGuiNode, node);
 			m_tree->deselectAll();
 			m_tree->getScrollControl()->scrollToItem(ret);
 
@@ -483,7 +491,7 @@ namespace Skylicht
 			from->bringNextNode(target, behind);
 
 			// add new tree gui at new position
-			GUI::CTreeNode* gui = buildHierarchyNode(target->getParent()->getGUINode(), from);
+			GUI::CTreeNode* gui = buildTreeNode(target->getParent()->getGUINode(), from);
 
 			// move gui to near target
 			gui->bringNextToControl(target->getGUINode(), behind);
@@ -524,7 +532,7 @@ namespace Skylicht
 			target->bringToChild(from);
 
 			// add new tree item
-			GUI::CTreeNode* gui = buildHierarchyNode(target->getGUINode(), from);
+			GUI::CTreeNode* gui = buildTreeNode(target->getGUINode(), from);
 
 			if (isExpand)
 				gui->expand(false);

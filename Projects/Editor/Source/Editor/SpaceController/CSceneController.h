@@ -151,7 +151,7 @@ namespace Skylicht
 
 			void setScene(CScene* scene);
 
-			void reinitHierachy();
+			void reinitHierachyData();
 
 			inline CScene* getScene()
 			{
@@ -170,7 +170,7 @@ namespace Skylicht
 				return m_history;
 			}
 
-			void buildHierarchyNodes();
+			void buildHierarchyData();
 
 			void onCommand(const std::wstring& objectType);
 
@@ -220,11 +220,11 @@ namespace Skylicht
 
 			void createResourceComponent(const std::string& path, CGameObject* gameObject);
 
-			CHierachyNode* buildHierarchyNodes(CGameObject* object, CHierachyNode* parentNode);
+			CHierachyNode* buildHierarchyData(CGameObject* object, CHierachyNode* parentNode);
 
-			void buildEntityNodes(CGameObject* object, CHierachyNode* parentNode);
+			void rebuildHierarchyEntityData(CGameObject* object, CHierachyNode* parentNode);
 
-			void updateHierachy(CGameObject* object);
+			void updateTreeNode(CGameObject* object);
 
 		protected:
 

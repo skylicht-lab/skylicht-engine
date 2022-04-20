@@ -56,7 +56,7 @@ namespace Skylicht
 				CEntity* newProbe = probes->addLightProbe();
 
 				CSceneController* sceneController = CSceneController::getInstance();
-				sceneController->updateHierachy(m_gameObject);
+				sceneController->updateTreeNode(m_gameObject);
 				sceneController->deselectAllOnHierachy();
 				sceneController->selectOnHierachy(newProbe);
 			};

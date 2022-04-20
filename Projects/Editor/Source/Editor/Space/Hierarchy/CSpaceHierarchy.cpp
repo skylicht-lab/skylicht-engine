@@ -76,7 +76,7 @@ namespace Skylicht
 			sceneController->setSpaceHierarchy(this);
 
 			if (CSceneController::getInstance()->getScene() != NULL)
-				sceneController->reinitHierachy();
+				sceneController->reinitHierachyData();
 		}
 
 		CSpaceHierarchy::~CSpaceHierarchy()
@@ -103,17 +103,17 @@ namespace Skylicht
 
 		void CSpaceHierarchy::deleteHierarchyNode()
 		{
-			m_hierarchyController->deleteHierarchyNode();
+			m_hierarchyController->deleteHierarchyData();
 		}
 
-		void CSpaceHierarchy::setHierarchyNode(CHierachyNode* node)
+		void CSpaceHierarchy::setTreeNode(CHierachyNode* node)
 		{
-			m_hierarchyController->setHierarchyNode(node);
+			m_hierarchyController->setTreeNode(node);
 		}
 
-		void CSpaceHierarchy::add(CHierachyNode* node)
+		void CSpaceHierarchy::addToTreeNode(CHierachyNode* node)
 		{
-			m_hierarchyController->add(node);
+			m_hierarchyController->addToTreeNode(node);
 		}
 
 		void CSpaceHierarchy::rename(CHierachyNode* node)
