@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CCopyPaste.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
@@ -46,6 +47,29 @@ namespace Skylicht
 			m_gameObjects.clear();
 		}
 
+		void CCopyPaste::copy(std::vector<CGameObject*>& objects)
+		{
+			clear();
+
+			// find container
+			std::vector<CContainerObject*> listContainer;
+			for (CGameObject* gameObject : objects)
+			{
+				CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
+				if (container != NULL)
+					listContainer.push_back(container);
+			}
+
+			// loop all and add copy
+			for (CGameObject* gameObject : objects)
+			{
+				if (!checkInsideParent(gameObject, listContainer))
+				{
+					m_gameObjects.push_back(CSceneExporter::exportGameObject(gameObject));
+				}
+			}
+		}
+
 		bool CCopyPaste::checkInsideParent(CGameObject* gameObject, std::vector<CContainerObject*> list)
 		{
 			for (CContainerObject* container : list)
@@ -59,9 +83,29 @@ namespace Skylicht
 			return false;
 		}
 
-		void CCopyPaste::addCopy(CGameObject* gameObject)
+		void CCopyPaste::paste(CContainerObject* target)
 		{
-			m_gameObjects.push_back(CSceneExporter::exportGameObject(gameObject));
+			CSceneController* sceneController = CSceneController::getInstance();
+			CHierachyNode* parentNode = NULL;
+			CHierarchyController* hierarchyController = NULL;
+
+			if (sceneController->getSpaceHierarchy() != NULL)
+			{
+				hierarchyController = sceneController->getSpaceHierarchy()->getController();
+				parentNode = hierarchyController->getNodeByObject(target);
+			}
+
+			for (CObjectSerializable* objectData : m_gameObjects)
+			{
+				// paste object data
+				CGameObject* gameObject = target->createObject(objectData, true);
+
+				// update on GUI editor
+				if (hierarchyController != NULL && gameObject != NULL && parentNode != NULL)
+				{
+					hierarchyController->addToTreeNode(sceneController->buildHierarchyData(gameObject, parentNode));
+				}
+			}
 		}
 	}
 }

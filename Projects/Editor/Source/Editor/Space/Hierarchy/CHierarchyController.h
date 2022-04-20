@@ -49,15 +49,17 @@ namespace Skylicht
 
 			virtual ~CHierarchyController();
 
-			void deleteHierarchyNode();
+			void deleteHierarchyData();
 
-			void setHierarchyNode(CHierachyNode* node);
+			void setTreeNode(CHierachyNode* node);
 
-			GUI::CTreeNode* add(CHierachyNode* node);
+			GUI::CTreeNode* addToTreeNode(CHierachyNode* node);
 
 			void rename(GUI::CTreeNode* node);
 
-			void updateNode(CGameObject* object);
+			void updateTreeNode(CGameObject* object);
+
+			CHierachyNode* getNodeByObject(CGameObject* object);
 
 		protected:
 
@@ -71,7 +73,7 @@ namespace Skylicht
 
 			void OnSelectChange(GUI::CBase* control);
 
-			GUI::CTreeNode* buildHierarchyNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);
+			GUI::CTreeNode* buildTreeNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);
 
 			void initDragDrop(GUI::CTreeNode* guiNode, CHierachyNode* node);
 

@@ -145,6 +145,37 @@ namespace Skylicht
 		}
 	}
 
+	CGameObject* CContainerObject::createObject(CObjectSerializable* data, bool generateNewID)
+	{
+		CGameObject* ret = NULL;
+
+		if (data->Name == "CZone")
+		{
+
+		}
+		else if (data->Name == "CContainerObject")
+		{
+
+		}
+		else if (data->Name == "CGameObject")
+		{
+			if (generateNewID)
+			{
+				CStringProperty* id = (CStringProperty*)data->getProperty("id");
+				id->set(generateRandomID());
+			}
+
+			ret = createEmptyObject();
+			ret->loadSerializable(data);
+			ret->startComponent();
+		}
+
+		if (ret != NULL)
+			updateIndexSearchObject();
+
+		return ret;
+	}
+
 	CGameObject* CContainerObject::createEmptyObject()
 	{
 		CGameObject* p = new CGameObject(this, m_zone);
