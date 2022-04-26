@@ -149,13 +149,27 @@ namespace Skylicht
 	{
 		CGameObject* ret = NULL;
 
-		if (data->Name == "CZone")
+		if (data->Name == "CZone" || data->Name == "CContainerObject")
 		{
+			if (generateNewID)
+			{
+				CStringProperty* id = (CStringProperty*)data->getProperty("id");
+				id->set(generateRandomID());
+			}
 
-		}
-		else if (data->Name == "CContainerObject")
-		{
+			CContainerObject* container = createContainerObject();
+			container->loadSerializable(data);
+			container->startComponent();
 
+			CObjectSerializable* childs = data->getProperty<CObjectSerializable>("Childs");
+			for (int i = 0, n = childs->getNumProperty(); i < n; i++)
+			{
+				CObjectSerializable* childData = (CObjectSerializable*)childs->getPropertyID(i);
+				container->createObject(childData, generateNewID);
+			}
+
+			container->updateAddRemoveObject();
+			ret = container;
 		}
 		else if (data->Name == "CGameObject")
 		{
