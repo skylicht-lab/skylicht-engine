@@ -24,15 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Reactive/ISubject.h"
+#include "Serializable/CObjectSerializable.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
+		enum EHistory
+		{
+			Create,
+			Modify,
+			Delete
+		};
+
+		struct SHistoryData
+		{
+			EHistory History;
+			std::string ContainerID;
+			std::vector<CObjectSerializable*> DataModified;
+			std::vector<CObjectSerializable*> Data;
+		};
+
 		class CHistory
 		{
 		protected:
+			std::vector<SHistoryData*> m_history;
 
 		public:
 			CHistory();
@@ -40,6 +56,14 @@ namespace Skylicht
 			virtual ~CHistory();
 
 			void clearHistory();
+
+			void addHistory(EHistory history, const std::string& containerID, std::vector<CObjectSerializable*>& dataModified, std::vector<CObjectSerializable*>& data);
+
+			void addHistory(EHistory history, const std::string& containerID, CObjectSerializable* dataModified, CObjectSerializable* data);
+
+			virtual void undo() = 0;
+
+			virtual void redo() = 0;
 		};
 	}
 }
