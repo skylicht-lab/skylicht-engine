@@ -190,6 +190,10 @@ namespace Skylicht
 
 			void onDuplicate();
 
+			void onUndo();
+
+			void onRedo();
+
 			virtual void onNotify(ISubject* subject, IObserver* from);
 
 			void deselectAllOnHierachy();

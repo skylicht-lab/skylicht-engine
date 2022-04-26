@@ -53,6 +53,8 @@ namespace Skylicht
 			m_tree->addAccelerator("Ctrl + C", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + C"); });
 			m_tree->addAccelerator("Ctrl + V", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + V"); });
 			m_tree->addAccelerator("Ctrl + D", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + D"); });
+			m_tree->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
+			m_tree->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
 		}
 
 		CHierarchyController::~CHierarchyController()
@@ -191,6 +193,14 @@ namespace Skylicht
 			else if (hotkey == "Ctrl + D")
 			{
 				CSceneController::getInstance()->onDuplicate();
+			}
+			else if (hotkey == "Ctrl + Z")
+			{
+				CSceneController::getInstance()->onUndo();
+			}
+			else if (hotkey == "Ctrl + Y")
+			{
+				CSceneController::getInstance()->onRedo();
 			}
 		}
 

@@ -41,6 +41,10 @@ namespace Skylicht
 			CSceneHistory(CScene* scene);
 
 			virtual ~CSceneHistory();
+
+			virtual void undo();
+
+			virtual void redo();
 		};
 	}
 }
