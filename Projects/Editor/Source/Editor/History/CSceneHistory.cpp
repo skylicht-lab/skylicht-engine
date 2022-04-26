@@ -39,5 +39,15 @@ namespace Skylicht
 		{
 
 		}
+
+		void CSceneHistory::undo()
+		{
+
+		}
+
+		void CSceneHistory::redo()
+		{
+
+		}
 	}
 }

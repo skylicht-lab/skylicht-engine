@@ -177,6 +177,8 @@ namespace Skylicht
 			m_view->addAccelerator("Ctrl + C", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + C"); });
 			m_view->addAccelerator("Ctrl + V", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + V"); });
 			m_view->addAccelerator("Ctrl + D", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + D"); });
+			m_view->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + Z"); });
+			m_view->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + Y"); });
 
 			m_view->OnResize = BIND_LISTENER(&CSpaceScene::onRenderResize, this);
 
@@ -853,6 +855,14 @@ namespace Skylicht
 			else if (hotkey == "Ctrl + D")
 			{
 				CSceneController::getInstance()->onDuplicate();
+			}
+			else if (hotkey == "Ctrl + Z")
+			{
+				CSceneController::getInstance()->onUndo();
+			}
+			else if (hotkey == "Ctrl + Y")
+			{
+				CSceneController::getInstance()->onRedo();
 			}
 		}
 

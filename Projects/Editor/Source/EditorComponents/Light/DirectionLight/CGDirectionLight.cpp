@@ -87,7 +87,8 @@ namespace Skylicht
 			m_sprite->setColor(lightColor);
 
 			// draw light direction arrow
-			CHandles::getInstance()->drawArrowInViewSpace(m_gameObject->getPosition(), m_directionLight->getDirection(), 0.5f, 0.05f, lightColor);
+			core::matrix4 world = m_gameObject->getTransformEuler()->calcWorldTransform();
+			CHandles::getInstance()->drawArrowInViewSpace(world.getTranslation(), m_directionLight->getDirection(), 0.5f, 0.05f, lightColor);
 
 			// update collision bbox
 			float boxScale = m_sprite->getViewScale() * 10.0f;

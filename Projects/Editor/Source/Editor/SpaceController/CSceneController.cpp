@@ -74,6 +74,8 @@ namespace Skylicht
 			delete m_transformGizmos;
 			delete m_worldTransformDataGizmos;
 
+			delete m_history;
+
 			removeAllHierarchyNodes();
 
 			CAssetManager::getInstance()->unRegisterFileLoader("scene", this);
@@ -164,6 +166,9 @@ namespace Skylicht
 
 			m_gizmos = NULL;
 
+			delete m_history;
+			m_history = NULL;
+
 			if (m_spaceHierarchy != NULL)
 			{
 				m_spaceHierarchy->deleteHierarchyNode();
@@ -180,6 +185,9 @@ namespace Skylicht
 			// init load scene space
 			m_spaceScene->enableRender(false);
 			m_spaceScene->getEditor()->initLoadSceneGUI(path.c_str());
+
+			// init history
+			m_history = new CSceneHistory(m_scene);
 		}
 
 		void CSceneController::doFinishLoadScene()
@@ -228,6 +236,14 @@ namespace Skylicht
 			setZone(m_scene->getZone(0));
 
 			reinitHierachyData();
+
+			// reinit history
+			if (m_history)
+			{
+				delete m_history;
+				m_history = NULL;
+			}
+			m_history = new CSceneHistory(m_scene);
 		}
 
 		void CSceneController::reinitHierachyData()
@@ -814,6 +830,16 @@ namespace Skylicht
 		{
 			onCopy();
 			onPaste();
+		}
+
+		void CSceneController::onUndo()
+		{
+			m_history->undo();
+		}
+
+		void CSceneController::onRedo()
+		{
+			m_history->redo();
 		}
 
 		void CSceneController::onNotify(ISubject* subject, IObserver* from)
