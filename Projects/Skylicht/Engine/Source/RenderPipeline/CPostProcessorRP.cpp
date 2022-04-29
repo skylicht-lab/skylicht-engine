@@ -44,7 +44,7 @@ namespace Skylicht
 		m_fxaaFilter(NULL),
 		m_numTarget(0),
 		m_bloomThreshold(0.9f),
-		m_bloomIntensity(1.5f),
+		m_bloomIntensity(1.0f),
 		m_lastFrameBuffer(NULL)
 	{
 		m_luminance[0] = NULL;
@@ -56,7 +56,7 @@ namespace Skylicht
 
 	CPostProcessorRP::~CPostProcessorRP()
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		if (m_luminance[0] != NULL)
 			driver->removeTexture(m_luminance[0]);
@@ -84,7 +84,7 @@ namespace Skylicht
 
 	void CPostProcessorRP::initMainRTT(int w, int h)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		m_size = core::dimension2du((u32)w, (u32)h);
 
@@ -118,7 +118,7 @@ namespace Skylicht
 
 	void CPostProcessorRP::releaseMainRTT()
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -132,8 +132,8 @@ namespace Skylicht
 
 	void CPostProcessorRP::initRender(int w, int h)
 	{
-		IVideoDriver *driver = getVideoDriver();
-		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		IVideoDriver* driver = getVideoDriver();
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
 		// init size of framebuffer		
 		m_lumSize = core::dimension2du(1024, 1024);
@@ -170,7 +170,7 @@ namespace Skylicht
 		initMainRTT(w, h);
 	}
 
-	void CPostProcessorRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
+	void CPostProcessorRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
 			return;
@@ -178,13 +178,13 @@ namespace Skylicht
 		onNext(target, camera, entityManager, viewport);
 	}
 
-	void CPostProcessorRP::luminanceMapGeneration(ITexture *color)
+	void CPostProcessorRP::luminanceMapGeneration(ITexture* color)
 	{
 		float w = (float)m_lumSize.Width;
 		float h = (float)m_lumSize.Height;
 
 		// Step 1: Generate target luminance from color to lum[0]
-		IVideoDriver * driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		driver->setRenderTarget(m_adaptLum, true, true);
 
 		m_lumPass.setTexture(0, color);
@@ -202,7 +202,7 @@ namespace Skylicht
 		renderBufferToTarget(0.0f, 0.0f, w, h, m_adaptLumPass);
 	}
 
-	void CPostProcessorRP::brightFilter(ITexture* from, ITexture* to, ITexture *emission)
+	void CPostProcessorRP::brightFilter(ITexture* from, ITexture* to, ITexture* emission)
 	{
 		video::SVec4 curve;
 
@@ -241,9 +241,9 @@ namespace Skylicht
 		renderEffect(from, to, m_blurUpFilter);
 	}
 
-	void CPostProcessorRP::postProcessing(ITexture *finalTarget, ITexture *color, ITexture *emission, ITexture *normal, ITexture *position, const core::recti& viewport)
+	void CPostProcessorRP::postProcessing(ITexture* finalTarget, ITexture* color, ITexture* emission, ITexture* normal, ITexture* position, const core::recti& viewport)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		float renderW = (float)m_size.Width;
 		float renderH = (float)m_size.Height;
@@ -256,7 +256,7 @@ namespace Skylicht
 		}
 
 		int colorID = -1;
-		ITexture *colorBuffer = color;
+		ITexture* colorBuffer = color;
 
 		// BLOOM
 		if (m_bloomEffect)
@@ -376,14 +376,14 @@ namespace Skylicht
 		*/
 	}
 
-	void CPostProcessorRP::renderEffect(int fromTarget, int toTarget, CMaterial *material)
+	void CPostProcessorRP::renderEffect(int fromTarget, int toTarget, CMaterial* material)
 	{
 		renderEffect(m_rtt[fromTarget], m_rtt[toTarget], material);
 	}
 
-	void CPostProcessorRP::renderEffect(ITexture *fromTarget, ITexture *toTarget, CMaterial *material)
+	void CPostProcessorRP::renderEffect(ITexture* fromTarget, ITexture* toTarget, CMaterial* material)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		driver->setRenderTarget(toTarget);
 
@@ -398,8 +398,8 @@ namespace Skylicht
 
 		CShaderMaterial::setMaterial(material);
 
-		const core::dimension2du &toSize = toTarget->getSize();
-		const core::dimension2du &fromSize = fromTarget->getSize();
+		const core::dimension2du& toSize = toTarget->getSize();
+		const core::dimension2du& fromSize = fromTarget->getSize();
 
 		beginRender2D((float)toSize.Width, (float)toSize.Height);
 		renderBufferToTarget(0, 0, (float)fromSize.Width, (float)fromSize.Height, m_effectPass);

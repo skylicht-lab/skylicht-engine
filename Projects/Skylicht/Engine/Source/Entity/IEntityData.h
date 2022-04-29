@@ -49,12 +49,12 @@ namespace Skylicht
 
 		}
 
-		virtual bool serializable(CMemoryStream *stream, IMeshExporter *exporter)
+		virtual bool serializable(CMemoryStream *stream)
 		{
 			return false;
 		}
 
-		virtual bool deserializable(CMemoryStream *stream, IMeshImporter *importer)
+		virtual bool deserializable(CMemoryStream *stream)
 		{
 			return false;
 		}

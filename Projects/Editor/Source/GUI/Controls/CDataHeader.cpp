@@ -123,7 +123,7 @@ namespace Skylicht
 				{
 					if (m_label[i] == label)
 					{
-						m_gridView->setColumnWidth(this, i, label->width());
+						m_gridView->setColumnWidth(i, label->width());
 						return;
 					}
 				}

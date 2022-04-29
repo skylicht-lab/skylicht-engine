@@ -84,6 +84,9 @@ namespace Skylicht
 			std::string baseFolderPath = CPath::getFolderPath(resource);
 			importer->addTextureFolder(baseFolderPath.c_str());
 
+			// hard code list folder
+			CRenderMeshData::ImportTextureFolder = importer->getTextureFolder();
+
 			// load model
 			if (importer->loadModel(resource, output, loadNormalMap, flipNormalMap, loadTexcoord2, createBatching) == true)
 			{

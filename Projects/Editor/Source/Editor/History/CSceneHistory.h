@@ -37,6 +37,9 @@ namespace Skylicht
 		protected:
 			CScene* m_scene;
 
+			std::string m_objectID;
+			CObjectSerializable* m_objectData;
+
 		public:
 			CSceneHistory(CScene* scene);
 
@@ -45,6 +48,12 @@ namespace Skylicht
 			virtual void undo();
 
 			virtual void redo();
+
+			void beginSaveHistory(CGameObject* gameObject);
+
+			void saveHistory(CGameObject* gameObject);
+
+			void endSaveHistory();
 		};
 	}
 }

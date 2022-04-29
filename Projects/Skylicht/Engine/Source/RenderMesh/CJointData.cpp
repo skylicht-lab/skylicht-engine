@@ -41,7 +41,7 @@ namespace Skylicht
 
 	}
 
-	bool CJointData::serializable(CMemoryStream* stream, IMeshExporter* exporter)
+	bool CJointData::serializable(CMemoryStream* stream)
 	{
 		stream->writeChar(BoneRoot == true ? 1 : 0);
 
@@ -55,7 +55,7 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CJointData::deserializable(CMemoryStream* stream, IMeshImporter* importer)
+	bool CJointData::deserializable(CMemoryStream* stream)
 	{
 		BoneRoot = stream->readChar() == 1 ? true : false;
 

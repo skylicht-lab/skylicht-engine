@@ -78,7 +78,7 @@ namespace Skylicht
 					return m_numColumn;
 				}
 
-				void setColumnWidth(CBase* control, int c, float w);
+				void setColumnWidth(int c, float w);
 
 				inline float getColumnWidth(int c)
 				{

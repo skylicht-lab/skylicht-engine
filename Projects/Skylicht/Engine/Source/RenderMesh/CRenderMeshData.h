@@ -33,9 +33,12 @@ namespace Skylicht
 {
 	class CRenderMeshData : public IEntityData
 	{
+	public:
+		static std::vector<std::string> ImportTextureFolder;
+
 	protected:
-		CMesh *RenderMesh;
-		CMesh *OriginalMesh;
+		CMesh* RenderMesh;
+		CMesh* OriginalMesh;
 
 		bool IsSkinnedMesh;
 		bool SoftwareSkinning;
@@ -46,17 +49,17 @@ namespace Skylicht
 
 		virtual ~CRenderMeshData();
 
-		inline CMesh *getMesh()
+		inline CMesh* getMesh()
 		{
 			return RenderMesh;
 		}
 
-		inline CMesh *getOriginalMesh()
+		inline CMesh* getOriginalMesh()
 		{
 			return OriginalMesh;
 		}
 
-		void setMesh(CMesh *mesh);
+		void setMesh(CMesh* mesh);
 
 		void initSoftwareSkinning();
 
@@ -80,13 +83,13 @@ namespace Skylicht
 			IsSkinnedMesh = b;
 		}
 
-		void setMaterial(CMaterial *material);
+		void setMaterial(CMaterial* material);
 
 		void unusedMaterial(CMaterial* material);
 
-		virtual bool serializable(CMemoryStream *stream, IMeshExporter *exporter);
+		virtual bool serializable(CMemoryStream* stream);
 
-		virtual bool deserializable(CMemoryStream *stream, IMeshImporter *importer);
+		virtual bool deserializable(CMemoryStream* stream);
 
 		DECLARE_GETTYPENAME(CRenderMeshData)
 	};

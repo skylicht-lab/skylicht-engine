@@ -64,9 +64,11 @@ namespace Skylicht
 
 				CDataGridView* getDataGridView();
 
+				CBase* getControl(int col);
+
 				CBase* setControl(int col, CBase* control);
 
-				CLabel* setLabel(int col, wchar_t* text);
+				CLabel* setLabel(int col, const wchar_t* text);
 
 			protected:
 
