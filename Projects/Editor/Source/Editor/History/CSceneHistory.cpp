@@ -24,20 +24,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSceneHistory.h"
+#include "Scene/CSceneExporter.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
 		CSceneHistory::CSceneHistory(CScene* scene) :
-			m_scene(scene)
+			m_scene(scene),
+			m_objectData(NULL)
 		{
 
 		}
 
 		CSceneHistory::~CSceneHistory()
 		{
-
+			if (m_objectData)
+				delete m_objectData;
 		}
 
 		void CSceneHistory::undo()
@@ -48,6 +51,36 @@ namespace Skylicht
 		void CSceneHistory::redo()
 		{
 
+		}
+
+		void CSceneHistory::beginSaveHistory(CGameObject* gameObject)
+		{
+			if (m_objectData)
+				delete m_objectData;
+
+			m_objectID = gameObject->getID();
+			m_objectData = gameObject->createSerializable();
+		}
+
+		void CSceneHistory::saveHistory(CGameObject* gameObject)
+		{
+			if (m_objectID != gameObject->getID() || m_objectData == NULL)
+			{
+				os::Printer::log("[CSceneHistory::saveHistory] CSceneHistory::beginSaveHistory first!");
+				return;
+			}
+
+			CObjectSerializable* modifyData = gameObject->createSerializable();
+			addHistory(EHistory::Modify, gameObject->getParent()->getID(), modifyData, m_objectData);
+
+			delete m_objectData;
+			m_objectData = modifyData->clone();
+		}
+
+		void CSceneHistory::endSaveHistory()
+		{
+			delete m_objectData;
+			m_objectData = NULL;
 		}
 	}
 }

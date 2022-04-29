@@ -41,13 +41,13 @@ namespace Skylicht
 
 	}
 
-	bool CCullingData::serializable(CMemoryStream* stream, IMeshExporter* exporter)
+	bool CCullingData::serializable(CMemoryStream* stream)
 	{
 		stream->writeChar((char)Type);
 		return true;
 	}
 
-	bool CCullingData::deserializable(CMemoryStream* stream, IMeshImporter* importer)
+	bool CCullingData::deserializable(CMemoryStream* stream)
 	{
 		Type = (ECulling)stream->readChar();
 		return true;

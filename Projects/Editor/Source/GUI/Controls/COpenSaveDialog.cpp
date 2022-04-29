@@ -21,6 +21,7 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
+
 #include "pch.h"
 #include "CToolbar.h"
 #include "COpenSaveDialog.h"
@@ -227,7 +228,7 @@ namespace Skylicht
 				m_files->getHeader()->setLabel(1, L"Date Modified");
 				m_files->getHeader()->setLabel(2, L"Size");
 
-				m_files->setColumnWidth(this, 0, 400.0f);
+				m_files->setColumnWidth(0, 400.0f);
 
 				browseFolder(m_folder.c_str(), false);
 
