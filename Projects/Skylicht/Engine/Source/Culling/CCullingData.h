@@ -51,9 +51,9 @@ namespace Skylicht
 
 		virtual ~CCullingData();
 
-		virtual bool serializable(CMemoryStream *stream, IMeshExporter *exporter);
+		virtual bool serializable(CMemoryStream *stream);
 
-		virtual bool deserializable(CMemoryStream *stream, IMeshImporter *importer);
+		virtual bool deserializable(CMemoryStream *stream);
 
 		DECLARE_GETTYPENAME(CCullingData);
 	};

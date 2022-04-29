@@ -133,7 +133,7 @@ namespace Skylicht
 				m_items.clear();
 			}
 
-			void CDataGridView::setColumnWidth(CBase* control, int c, float w)
+			void CDataGridView::setColumnWidth(int c, float w)
 			{
 				m_width[c] = w;
 				invalidate();

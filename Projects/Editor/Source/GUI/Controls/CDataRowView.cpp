@@ -141,13 +141,18 @@ namespace Skylicht
 				return m_owner;
 			}
 
+			CBase* CDataRowView::getControl(int col)
+			{
+				return m_childs[col];
+			}
+
 			CBase* CDataRowView::setControl(int col, CBase* control)
 			{
 				m_childs[col] = control;
 				return control;
 			}
 
-			CLabel* CDataRowView::setLabel(int col, wchar_t* text)
+			CLabel* CDataRowView::setLabel(int col, const wchar_t* text)
 			{
 				CLabel* label = dynamic_cast<CLabel*>(m_childs[col]);
 				if (label == NULL)

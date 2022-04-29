@@ -33,6 +33,8 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CRenderMeshData);
 
+	std::vector<std::string> CRenderMeshData::ImportTextureFolder;
+
 	CRenderMeshData::CRenderMeshData() :
 		RenderMesh(NULL),
 		OriginalMesh(NULL),
@@ -187,7 +189,7 @@ namespace Skylicht
 		RenderMesh = mesh;
 	}
 
-	bool CRenderMeshData::serializable(CMemoryStream* stream, IMeshExporter* exporter)
+	bool CRenderMeshData::serializable(CMemoryStream* stream)
 	{
 		stream->writeChar(IsSkinnedMesh ? 1 : 0);
 
@@ -285,7 +287,7 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CRenderMeshData::deserializable(CMemoryStream* stream, IMeshImporter* importer)
+	bool CRenderMeshData::deserializable(CMemoryStream* stream)
 	{
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
@@ -411,7 +413,7 @@ namespace Skylicht
 				{
 					if (textures[t].empty() == false)
 					{
-						ITexture* texture = CTextureManager::getInstance()->getTexture(textures[t].c_str(), importer->getTextureFolder());
+						ITexture* texture = CTextureManager::getInstance()->getTexture(textures[t].c_str(), ImportTextureFolder);
 						if (texture != NULL)
 							irrMaterial.setTexture(t, texture);
 

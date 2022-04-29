@@ -46,18 +46,18 @@ namespace Skylicht
 
 	}
 
-	bool CSkylichtMeshLoader::loadModel(const char *resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching)
+	bool CSkylichtMeshLoader::loadModel(const char* resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching)
 	{
-		IrrlichtDevice *device = getIrrlichtDevice();
-		io::IFileSystem *fs = device->getFileSystem();
+		IrrlichtDevice* device = getIrrlichtDevice();
+		io::IFileSystem* fs = device->getFileSystem();
 
-		io::IReadFile *readFile = fs->createAndOpenFile(resource);
+		io::IReadFile* readFile = fs->createAndOpenFile(resource);
 		if (readFile == NULL)
 			return false;
 
 		u32 size = readFile->getSize();
 
-		unsigned char *data = new unsigned char[size];
+		unsigned char* data = new unsigned char[size];
 		readFile->read(data, size);
 
 		CMemoryStream stream(data, size);
@@ -98,7 +98,7 @@ namespace Skylicht
 		u32 numEntity = stream->readUInt();
 		for (u32 i = 0; i < numEntity; i++)
 		{
-			CEntity *entity = output->createEntity();
+			CEntity* entity = output->createEntity();
 
 			int entityIndex = stream->readInt();
 			entityID[entityIndex] = entity->getIndex();
@@ -112,15 +112,15 @@ namespace Skylicht
 				std::string entityDataName = stream->readString();
 				u32 seek = stream->getPos();
 
-				IEntityData *data = entity->addDataByActivator(entityDataName.c_str());
+				IEntityData* data = entity->addDataByActivator(entityDataName.c_str());
 				if (data != NULL)
 				{
-					data->deserializable(stream, this);
+					data->deserializable(stream);
 
 					// hardcode to fix transform
 					if (entityDataName == "CWorldTransformData")
 					{
-						CWorldTransformData *worldTransform = dynamic_cast<CWorldTransformData*>(data);
+						CWorldTransformData* worldTransform = dynamic_cast<CWorldTransformData*>(data);
 						if (worldTransform != NULL)
 						{
 							if (i == 0)
