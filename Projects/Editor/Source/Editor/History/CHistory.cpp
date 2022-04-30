@@ -52,23 +52,13 @@ namespace Skylicht
 			m_history.clear();
 		}
 
-		void CHistory::addHistory(EHistory history, const std::string& containerID, std::vector<CObjectSerializable*>& dataModified, std::vector<CObjectSerializable*>& data)
+		void CHistory::addHistory(EHistory history, std::vector<std::string>& container, std::vector<CObjectSerializable*>& dataModified, std::vector<CObjectSerializable*>& data)
 		{
 			SHistoryData* historyData = new SHistoryData();
 			historyData->History = history;
-			historyData->ContainerID = containerID;
+			historyData->Container = container;
 			historyData->DataModified = dataModified;
 			historyData->Data = data;
-			m_history.push_back(historyData);
-		}
-
-		void CHistory::addHistory(EHistory history, const std::string& containerID, CObjectSerializable* dataModified, CObjectSerializable* data)
-		{
-			SHistoryData* historyData = new SHistoryData();
-			historyData->History = history;
-			historyData->ContainerID = containerID;
-			historyData->DataModified.push_back(dataModified);
-			historyData->Data.push_back(data);
 			m_history.push_back(historyData);
 		}
 	}

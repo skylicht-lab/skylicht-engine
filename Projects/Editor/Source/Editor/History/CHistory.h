@@ -40,7 +40,7 @@ namespace Skylicht
 		struct SHistoryData
 		{
 			EHistory History;
-			std::string ContainerID;
+			std::vector<std::string> Container;
 			std::vector<CObjectSerializable*> DataModified;
 			std::vector<CObjectSerializable*> Data;
 		};
@@ -57,9 +57,7 @@ namespace Skylicht
 
 			void clearHistory();
 
-			void addHistory(EHistory history, const std::string& containerID, std::vector<CObjectSerializable*>& dataModified, std::vector<CObjectSerializable*>& data);
-
-			void addHistory(EHistory history, const std::string& containerID, CObjectSerializable* dataModified, CObjectSerializable* data);
+			void addHistory(EHistory history, std::vector<std::string>& container, std::vector<CObjectSerializable*>& dataModified, std::vector<CObjectSerializable*>& data);
 
 			virtual void undo() = 0;
 
