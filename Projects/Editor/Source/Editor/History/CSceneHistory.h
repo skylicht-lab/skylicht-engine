@@ -32,13 +32,24 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		struct SGameObjectHistory
+		{
+			std::string ObjectID;
+			CObjectSerializable* ObjectData;
+
+			void changeData(CObjectSerializable* data)
+			{
+				delete ObjectData;
+				ObjectData = data->clone();
+			}
+		};
+
 		class CSceneHistory : public CHistory
 		{
 		protected:
 			CScene* m_scene;
 
-			std::string m_objectID;
-			CObjectSerializable* m_objectData;
+			std::vector<SGameObjectHistory*> m_objects;
 
 		public:
 			CSceneHistory(CScene* scene);
@@ -49,11 +60,17 @@ namespace Skylicht
 
 			virtual void redo();
 
-			void beginSaveHistory(CGameObject* gameObject);
+			void beginSaveHistory(std::vector<CGameObject*> gameObjects);
 
-			void saveHistory(CGameObject* gameObject);
+			bool saveHistory(std::vector<CGameObject*> gameObject);
 
 			void endSaveHistory();
+
+		protected:
+
+			void freeCurrentObjectData();
+
+			SGameObjectHistory* getObjectHistory(const std::string& id);
 		};
 	}
 }

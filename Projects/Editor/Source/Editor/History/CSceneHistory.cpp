@@ -31,16 +31,14 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSceneHistory::CSceneHistory(CScene* scene) :
-			m_scene(scene),
-			m_objectData(NULL)
+			m_scene(scene)
 		{
 
 		}
 
 		CSceneHistory::~CSceneHistory()
 		{
-			if (m_objectData)
-				delete m_objectData;
+			freeCurrentObjectData();
 		}
 
 		void CSceneHistory::undo()
@@ -53,34 +51,88 @@ namespace Skylicht
 
 		}
 
-		void CSceneHistory::beginSaveHistory(CGameObject* gameObject)
+		void CSceneHistory::freeCurrentObjectData()
 		{
-			if (m_objectData)
-				delete m_objectData;
-
-			m_objectID = gameObject->getID();
-			m_objectData = gameObject->createSerializable();
+			for (SGameObjectHistory* history : m_objects)
+			{
+				delete history->ObjectData;
+				delete history;
+			}
+			m_objects.clear();
 		}
 
-		void CSceneHistory::saveHistory(CGameObject* gameObject)
+		SGameObjectHistory* CSceneHistory::getObjectHistory(const std::string& id)
 		{
-			if (m_objectID != gameObject->getID() || m_objectData == NULL)
+			for (SGameObjectHistory* history : m_objects)
 			{
-				os::Printer::log("[CSceneHistory::saveHistory] CSceneHistory::beginSaveHistory first!");
-				return;
+				if (history->ObjectID == id)
+					return history;
+			}
+			return NULL;
+		}
+
+		void CSceneHistory::beginSaveHistory(std::vector<CGameObject*> gameObjects)
+		{
+			freeCurrentObjectData();
+
+			for (CGameObject* gameObject : gameObjects)
+			{
+				SGameObjectHistory* objectData = new SGameObjectHistory();
+				objectData->ObjectID = gameObject->getID();
+				objectData->ObjectData = gameObject->createSerializable();
+				m_objects.push_back(objectData);
+			}
+		}
+
+		bool CSceneHistory::saveHistory(std::vector<CGameObject*> gameObjects)
+		{
+			bool success = true;
+
+			std::vector<std::string> container;
+			std::vector<CObjectSerializable*> modifyData;
+			std::vector<CObjectSerializable*> objectData;
+
+			for (CGameObject* gameObject : gameObjects)
+			{
+				SGameObjectHistory* historyData = getObjectHistory(gameObject->getID());
+				if (historyData == NULL)
+				{
+					os::Printer::log("[CSceneHistory::saveHistory] failed, call CSceneHistory::beginSaveHistory first!");
+					success = false;
+					break;
+				}
+
+				CObjectSerializable* currentData = gameObject->createSerializable();
+
+				// parent container id
+				container.push_back(gameObject->getParent()->getID());
+
+				// last data object
+				objectData.push_back(historyData->ObjectData);
+
+				// current data object
+				modifyData.push_back(currentData);
+
+				// change save point
+				historyData->changeData(currentData);
 			}
 
-			CObjectSerializable* modifyData = gameObject->createSerializable();
-			addHistory(EHistory::Modify, gameObject->getParent()->getID(), modifyData, m_objectData);
+			if (success)
+			{
+				addHistory(EHistory::Modify, container, modifyData, modifyData);
+			}
+			else
+			{
+				for (CObjectSerializable* objData : modifyData)
+					delete objData;
+			}
 
-			delete m_objectData;
-			m_objectData = modifyData->clone();
+			return success;
 		}
 
 		void CSceneHistory::endSaveHistory()
 		{
-			delete m_objectData;
-			m_objectData = NULL;
+			freeCurrentObjectData();
 		}
 	}
 }
