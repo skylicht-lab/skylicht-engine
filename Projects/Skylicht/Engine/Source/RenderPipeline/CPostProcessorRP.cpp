@@ -101,7 +101,7 @@ namespace Skylicht
 				{
 					s = s / 2;
 					m_rtt[m_numTarget++] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
-				} while (s.Height > 50 && m_numTarget < 8);
+				} while (s.Height > 128 && m_numTarget < 8);
 			}
 		}
 
