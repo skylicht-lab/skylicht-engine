@@ -71,16 +71,39 @@ namespace Skylicht
 			return NULL;
 		}
 
-		void CSceneHistory::beginSaveHistory(std::vector<CGameObject*> gameObjects)
+		void CSceneHistory::beginSaveHistory(CGameObject* gameObject)
 		{
-			freeCurrentObjectData();
+			std::string objectID = gameObject->getID();
 
-			for (CGameObject* gameObject : gameObjects)
+			for (SGameObjectHistory* history : m_objects)
 			{
-				SGameObjectHistory* objectData = new SGameObjectHistory();
-				objectData->ObjectID = gameObject->getID();
-				objectData->ObjectData = gameObject->createSerializable();
-				m_objects.push_back(objectData);
+				// no need
+				if (history->ObjectID == objectID)
+					return;
+			}
+
+			SGameObjectHistory* objectData = new SGameObjectHistory();
+			objectData->ObjectID = objectID;
+			objectData->ObjectData = gameObject->createSerializable();
+			m_objects.push_back(objectData);
+		}
+
+		void CSceneHistory::removeSaveHistory(CGameObject* gameObject)
+		{
+			std::string objectID = gameObject->getID();
+
+			std::vector<SGameObjectHistory*>::iterator i = m_objects.begin(), end = m_objects.end();
+			while (i != end)
+			{
+				SGameObjectHistory* history = (*i);
+				if (history->ObjectID == objectID)
+				{
+					delete history->ObjectData;
+					delete history;
+					m_objects.erase(i);
+					return;
+				}
+				++i;
 			}
 		}
 
