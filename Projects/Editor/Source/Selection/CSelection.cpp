@@ -24,6 +24,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSelection.h"
+#include "Entity/CEntityHandleData.h"
+
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
@@ -115,6 +118,11 @@ namespace Skylicht
 
 			selected = new CSelectObject(obj);
 			m_selected.push_back(selected);
+
+			// notify history
+			CSceneHistory* history = CSceneController::getInstance()->getHistory();
+			history->beginSaveHistory(obj);
+
 			return selected;
 		}
 
@@ -126,6 +134,15 @@ namespace Skylicht
 
 			selected = new CSelectObject(entity);
 			m_selected.push_back(selected);
+
+			// notify history
+			CEntityHandleData* hander = entity->getData<CEntityHandleData>();
+			if (hander && hander->Handler)
+			{
+				CSceneHistory* history = CSceneController::getInstance()->getHistory();
+				history->beginSaveHistory(hander->Handler->getGameObject());
+			}
+
 			return selected;
 		}
 
@@ -146,6 +163,10 @@ namespace Skylicht
 
 				if (sel->getType() == CSelectObject::GameObject && sel->getID() == obj->getID())
 				{
+					// notify history
+					CSceneHistory* history = CSceneController::getInstance()->getHistory();
+					history->removeSaveHistory(obj);
+
 					delete sel;
 					m_selected.erase(i);
 					return;
@@ -175,6 +196,14 @@ namespace Skylicht
 
 				if (sel->getType() == CSelectObject::Entity && sel->getID() == id)
 				{
+					// notify history
+					CEntityHandleData* hander = entity->getData<CEntityHandleData>();
+					if (hander && hander->Handler)
+					{
+						CSceneHistory* history = CSceneController::getInstance()->getHistory();
+						history->removeSaveHistory(hander->Handler->getGameObject());
+					}
+
 					delete sel;
 					m_selected.erase(i);
 					return;

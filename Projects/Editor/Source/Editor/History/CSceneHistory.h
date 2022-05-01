@@ -60,7 +60,9 @@ namespace Skylicht
 
 			virtual void redo();
 
-			void beginSaveHistory(std::vector<CGameObject*> gameObjects);
+			void beginSaveHistory(CGameObject* gameObject);
+
+			void removeSaveHistory(CGameObject* gameObject);
 
 			bool saveHistory(std::vector<CGameObject*> gameObject);
 
