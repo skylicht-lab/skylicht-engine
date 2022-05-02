@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	namespace Editor
-	{		
+	{
 		CTransformGizmos::CTransformGizmos() :
 			m_transform(NULL),
 			m_selectObject(NULL),
@@ -108,6 +108,23 @@ namespace Skylicht
 					}
 				}
 			}
+		}
+
+		void CTransformGizmos::saveHistorySelectedObject()
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CSceneHistory* history = sceneController->getHistory();
+
+			std::vector<CGameObject*> selectedObject;
+			std::vector<CTransformEuler*> transforms;
+			getSelectedTransform(transforms);
+
+			for (CTransformEuler* t : transforms)
+			{
+				selectedObject.push_back(t->getGameObject());
+			}
+
+			history->saveModifyHistory(selectedObject);
 		}
 
 		void CTransformGizmos::updateSelectedPosition(const core::vector3df& delta)
@@ -228,6 +245,10 @@ namespace Skylicht
 				{
 					m_transform->setPosition(*m_position);
 					handle->end();
+
+					// save undo/redo
+					saveHistorySelectedObject();
+
 					m_cacheSelectedObjects.clear();
 				}
 			}
@@ -254,6 +275,10 @@ namespace Skylicht
 				{
 					m_transform->setRotation(*m_rotation);
 					handle->end();
+
+					// save undo/redo
+					saveHistorySelectedObject();
+
 					m_cacheSelectedObjects.clear();
 				}
 			}
@@ -274,6 +299,10 @@ namespace Skylicht
 				{
 					m_transform->setScale(*m_scale);
 					handle->end();
+
+					// save undo/redo
+					saveHistorySelectedObject();
+
 					m_cacheSelectedObjects.clear();
 				}
 			}

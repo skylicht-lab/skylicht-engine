@@ -77,6 +77,8 @@ namespace Skylicht
 
 			void updateSelectedRotation(const core::quaternion& delta);
 
+			void saveHistorySelectedObject();
+
 			CSubject<core::vector3df>& getPosition()
 			{
 				return m_position;
