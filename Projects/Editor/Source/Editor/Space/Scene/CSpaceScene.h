@@ -26,7 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
-#include "Editor/History/CSceneHistory.h"
 #include "EditorComponents/Handles/CHandlesRenderer.h"
 #include "EditorComponents/Gizmos/CGizmosRenderer.h"
 #include "EditorComponents/SelectObject/CSelectObjectSystem.h"
@@ -36,6 +35,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Reactive/ISubject.h"
 #include "Reactive/IObserver.h"
+
+#include "History/CSceneHistory.h"
 
 namespace Skylicht
 {

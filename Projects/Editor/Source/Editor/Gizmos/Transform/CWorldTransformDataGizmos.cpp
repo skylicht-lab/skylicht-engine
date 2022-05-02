@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Selection/CSelection.h"
 #include "Editor/SpaceController/CSceneController.h"
 #include "Handles/CHandles.h"
+#include "Entity/CEntityHandleData.h"
 
 namespace Skylicht
 {
@@ -34,7 +35,7 @@ namespace Skylicht
 	{
 		CWorldTransformDataGizmos::CWorldTransformDataGizmos() :
 			m_transform(NULL),
-			m_selectObject(NULL),
+			m_selectEntity(NULL),
 			m_position(core::vector3df()),
 			m_rotation(core::quaternion()),
 			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
@@ -120,6 +121,25 @@ namespace Skylicht
 			}
 		}
 
+		void CWorldTransformDataGizmos::saveHistorySelectedObject()
+		{
+			if (m_selectEntity)
+			{
+				CEntityHandleData* handler = m_selectEntity->getData<CEntityHandleData>();
+				if (handler != NULL)
+				{
+					// get owner of entity
+					CGameObject* gameObject = handler->Handler->getGameObject();
+
+					std::vector<CGameObject*> listGameObject;
+					listGameObject.push_back(gameObject);
+
+					// save modify
+					CSceneController::getInstance()->getHistory()->saveModifyHistory(listGameObject);
+				}
+			}
+		}
+
 		void CWorldTransformDataGizmos::updateSelectedRotation(const core::quaternion& delta)
 		{
 			std::vector<CWorldTransformData*> transforms;
@@ -150,15 +170,15 @@ namespace Skylicht
 			if (selectObject->getID() != m_selectID)
 			{
 				m_selectID = selectObject->getID();
-				m_selectObject = NULL;
+				m_selectEntity = NULL;
 
 				CSceneController* sceneController = CSceneController::getInstance();
 				CScene* scene = sceneController->getScene();
 
 				if (selectObject->getType() == CSelectObject::Entity)
 				{
-					m_selectObject = scene->getEntityManager()->getEntityByID(m_selectID.c_str());
-					m_transform = m_selectObject->getData<CWorldTransformData>();
+					m_selectEntity = scene->getEntityManager()->getEntityByID(m_selectID.c_str());
+					m_transform = m_selectEntity->getData<CWorldTransformData>();
 
 					m_position = m_transform->Relative.getTranslation();
 					m_rotation = m_transform->Relative.getRotationDegrees();
@@ -181,7 +201,7 @@ namespace Skylicht
 				handle->end();
 			}
 
-			if (m_selectObject == NULL)
+			if (m_selectEntity == NULL)
 			{
 				m_parentWorld.makeIdentity();
 				handle->setWorld(m_parentWorld);
@@ -209,6 +229,7 @@ namespace Skylicht
 				{
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
+					saveHistorySelectedObject();
 					m_cacheSelectedObjects.clear();
 				}
 			}
@@ -235,6 +256,7 @@ namespace Skylicht
 				{
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
+					saveHistorySelectedObject();
 					m_cacheSelectedObjects.clear();
 				}
 			}
@@ -255,6 +277,7 @@ namespace Skylicht
 				{
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
+					saveHistorySelectedObject();
 					m_cacheSelectedObjects.clear();
 				}
 			}
@@ -302,7 +325,7 @@ namespace Skylicht
 
 		void CWorldTransformDataGizmos::onRemove()
 		{
-			m_selectObject = NULL;
+			m_selectEntity = NULL;
 			m_transform = NULL;
 			m_selectID = "";
 
