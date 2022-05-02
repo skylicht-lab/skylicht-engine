@@ -77,9 +77,9 @@ namespace Skylicht
 
 		virtual CGameObject* searchObjectInChild(const wchar_t* name);
 
-		virtual CGameObject* searchObjectByID(const char* name);
+		virtual CGameObject* searchObjectByID(const char* id);
 
-		virtual CGameObject* searchObjectInChildByID(const char* name);
+		virtual CGameObject* searchObjectInChildByID(const char* id);
 
 		virtual CZone* createZone();
 

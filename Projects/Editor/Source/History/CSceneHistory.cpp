@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSceneHistory.h"
 #include "Scene/CSceneExporter.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
@@ -43,12 +44,110 @@ namespace Skylicht
 
 		void CSceneHistory::undo()
 		{
+			size_t historySize = m_history.size();
+			if (historySize == 0)
+				return;
 
+			CScene* scene = CSceneController::getInstance()->getScene();
+
+			// last history save
+			SHistoryData* historyData = m_history[historySize - 1];
+
+			switch (historyData->History)
+			{
+			case EHistory::Create:
+			{
+			}
+			break;
+			case EHistory::Modify:
+			{
+				size_t numObject = historyData->DataModified.size();
+				for (size_t i = 0; i < numObject; i++)
+				{
+					// object id
+					std::string& id = historyData->ObjectID[i];
+
+					// old data
+					CObjectSerializable* data = historyData->Data[i];
+
+					// get object and undo data
+					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
+					if (gameObject != NULL)
+						gameObject->loadSerializable(data);
+
+					// set current data for next action
+					SGameObjectHistory* objHistory = getObjectHistory(id);
+					if (objHistory != NULL)
+						objHistory->changeData(data);
+				}
+			}
+			break;
+			case EHistory::Delete:
+			{
+			}
+			break;
+			}
+
+			// move history to redo action
+			m_redo.push_back(historyData);
+			m_history.erase(m_history.begin() + (historySize - 1));
+
+			// refresh ui on editor
+			CEditor::getInstance()->refresh();
 		}
 
 		void CSceneHistory::redo()
 		{
+			size_t historySize = m_redo.size();
+			if (historySize == 0)
+				return;
 
+			CScene* scene = CSceneController::getInstance()->getScene();
+
+			// last history save
+			SHistoryData* historyData = m_redo[historySize - 1];
+
+			switch (historyData->History)
+			{
+			case EHistory::Create:
+			{
+			}
+			break;
+			case EHistory::Modify:
+			{
+				size_t numObject = historyData->DataModified.size();
+				for (size_t i = 0; i < numObject; i++)
+				{
+					// object id
+					std::string& id = historyData->ObjectID[i];
+
+					// old data
+					CObjectSerializable* data = historyData->DataModified[i];
+
+					// get object and redo data
+					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
+					if (gameObject != NULL)
+						gameObject->loadSerializable(data);
+
+					// set current data for next action
+					SGameObjectHistory* objHistory = getObjectHistory(id);
+					if (objHistory != NULL)
+						objHistory->changeData(data);
+				}
+			}
+			break;
+			case EHistory::Delete:
+			{
+			}
+			break;
+			}
+
+			// move history to redo action
+			m_history.push_back(historyData);
+			m_redo.erase(m_redo.begin() + (historySize - 1));
+
+			// refresh ui on editor
+			CEditor::getInstance()->refresh();
 		}
 
 		void CSceneHistory::freeCurrentObjectData()
@@ -107,11 +206,22 @@ namespace Skylicht
 			}
 		}
 
-		bool CSceneHistory::saveHistory(std::vector<CGameObject*> gameObjects)
+		void CSceneHistory::saveCreateHistory(CGameObject* gameObject)
+		{
+
+		}
+
+		void CSceneHistory::saveDeleteHistory(std::vector<CGameObject*> gameObject)
+		{
+
+		}
+
+		bool CSceneHistory::saveModifyHistory(std::vector<CGameObject*> gameObjects)
 		{
 			bool success = true;
 
 			std::vector<std::string> container;
+			std::vector<std::string> id;
 			std::vector<CObjectSerializable*> modifyData;
 			std::vector<CObjectSerializable*> objectData;
 
@@ -130,8 +240,11 @@ namespace Skylicht
 				// parent container id
 				container.push_back(gameObject->getParent()->getID());
 
+				// game object id
+				id.push_back(gameObject->getID());
+
 				// last data object
-				objectData.push_back(historyData->ObjectData);
+				objectData.push_back(historyData->ObjectData->clone());
 
 				// current data object
 				modifyData.push_back(currentData);
@@ -142,7 +255,7 @@ namespace Skylicht
 
 			if (success)
 			{
-				addHistory(EHistory::Modify, container, modifyData, modifyData);
+				addHistory(EHistory::Modify, container, id, modifyData, objectData);
 			}
 			else
 			{

@@ -42,7 +42,7 @@ namespace Skylicht
 
 			std::string m_selectID;
 
-			CEntity* m_selectObject;
+			CEntity* m_selectEntity;
 			CWorldTransformData* m_transform;
 
 			CSubject<core::vector3df> m_position;
@@ -79,6 +79,8 @@ namespace Skylicht
 			void updateSelectedScale(const core::vector3df& delta);
 
 			void updateSelectedRotation(const core::quaternion& delta);
+
+			void saveHistorySelectedObject();
 
 			CSubject<core::vector3df>& getPosition()
 			{

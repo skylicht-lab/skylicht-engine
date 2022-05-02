@@ -85,6 +85,7 @@ namespace Skylicht
 			CWorldTransformData* world = m_entities[i]->getData<CWorldTransformData>();
 			CLightProbeData* light = m_entities[i]->getData<CLightProbeData>();
 
+			m_attributes->addString("entityID", m_entities[i]->getID().c_str());
 			m_attributes->addMatrix("transform", world->Relative);
 			for (int j = 0; j < 9; j++)
 				m_attributes->addVector3d("sh", light->SH[j]);
@@ -120,6 +121,9 @@ namespace Skylicht
 
 			CWorldTransformData* world = m_entities[i]->getData<CWorldTransformData>();
 			CLightProbeData* light = m_entities[i]->getData<CLightProbeData>();
+
+			core::stringc entityID = m_attributes->getAttributeAsString(id++);
+			m_entities[i]->setID(entityID.c_str());
 
 			world->Relative = m_attributes->getAttributeAsMatrix(id++);
 			for (int j = 0; j < 9; j++)

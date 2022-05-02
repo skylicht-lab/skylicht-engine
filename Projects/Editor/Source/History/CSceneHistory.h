@@ -22,44 +22,61 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
+#pragma once
+
 #include "CHistory.h"
+#include "GameObject/CGameObject.h"
+#include "Scene/CScene.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CHistory::CHistory()
+		struct SGameObjectHistory
 		{
+			std::string ObjectID;
+			CObjectSerializable* ObjectData;
 
-		}
-
-		CHistory::~CHistory()
-		{
-			clearHistory();
-		}
-
-		void CHistory::clearHistory()
-		{
-			for (SHistoryData* history : m_history)
+			void changeData(CObjectSerializable* data)
 			{
-				for (CObjectSerializable* data : history->Data)
-					delete data;
-				for (CObjectSerializable* data : history->DataModified)
-					delete data;
-				delete history;
+				delete ObjectData;
+				ObjectData = data->clone();
 			}
-			m_history.clear();
-		}
+		};
 
-		void CHistory::addHistory(EHistory history, std::vector<std::string>& container, std::vector<CObjectSerializable*>& dataModified, std::vector<CObjectSerializable*>& data)
+		class CSceneHistory : public CHistory
 		{
-			SHistoryData* historyData = new SHistoryData();
-			historyData->History = history;
-			historyData->Container = container;
-			historyData->DataModified = dataModified;
-			historyData->Data = data;
-			m_history.push_back(historyData);
-		}
+		protected:
+			CScene* m_scene;
+
+			std::vector<SGameObjectHistory*> m_objects;
+
+		public:
+			CSceneHistory(CScene* scene);
+
+			virtual ~CSceneHistory();
+
+			virtual void undo();
+
+			virtual void redo();
+
+			void beginSaveHistory(CGameObject* gameObject);
+
+			void removeSaveHistory(CGameObject* gameObject);
+
+			void saveCreateHistory(CGameObject* gameObject);
+
+			void saveDeleteHistory(std::vector<CGameObject*> gameObject);
+
+			bool saveModifyHistory(std::vector<CGameObject*> gameObject);
+
+			void endSaveHistory();
+
+		protected:
+
+			void freeCurrentObjectData();
+
+			SGameObjectHistory* getObjectHistory(const std::string& id);
+		};
 	}
 }

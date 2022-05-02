@@ -22,46 +22,65 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Serializable/CObjectSerializable.h"
+#include "pch.h"
+#include "CHistory.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		enum EHistory
+		CHistory::CHistory()
 		{
-			Create,
-			Modify,
-			Delete
-		};
 
-		struct SHistoryData
+		}
+
+		CHistory::~CHistory()
 		{
-			EHistory History;
-			std::vector<std::string> Container;
-			std::vector<CObjectSerializable*> DataModified;
-			std::vector<CObjectSerializable*> Data;
-		};
+			clearHistory();
+			clearRedo();
+		}
 
-		class CHistory
+		void CHistory::clearHistory()
 		{
-		protected:
-			std::vector<SHistoryData*> m_history;
+			for (SHistoryData* history : m_history)
+			{
+				for (CObjectSerializable* data : history->Data)
+					delete data;
+				for (CObjectSerializable* data : history->DataModified)
+					delete data;
+				delete history;
+			}
+			m_history.clear();
+		}
 
-		public:
-			CHistory();
+		void CHistory::clearRedo()
+		{
+			for (SHistoryData* history : m_redo)
+			{
+				for (CObjectSerializable* data : history->Data)
+					delete data;
+				for (CObjectSerializable* data : history->DataModified)
+					delete data;
+				delete history;
+			}
+			m_redo.clear();
+		}
 
-			virtual ~CHistory();
+		void CHistory::addHistory(EHistory history,
+			std::vector<std::string>& container,
+			std::vector<std::string>& id,
+			std::vector<CObjectSerializable*>& dataModified,
+			std::vector<CObjectSerializable*>& data)
+		{
+			SHistoryData* historyData = new SHistoryData();
+			historyData->History = history;
+			historyData->Container = container;
+			historyData->ObjectID = id;
+			historyData->DataModified = dataModified;
+			historyData->Data = data;
+			m_history.push_back(historyData);
 
-			void clearHistory();
-
-			void addHistory(EHistory history, std::vector<std::string>& container, std::vector<CObjectSerializable*>& dataModified, std::vector<CObjectSerializable*>& data);
-
-			virtual void undo() = 0;
-
-			virtual void redo() = 0;
-		};
+			clearRedo();
+		}
 	}
 }
