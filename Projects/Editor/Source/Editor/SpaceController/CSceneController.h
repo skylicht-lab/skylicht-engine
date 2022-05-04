@@ -218,11 +218,15 @@ namespace Skylicht
 				m_contextNode = NULL;
 			}
 
-			void createZone();
+			void createZone(bool saveHistory = true);
 
-			CGameObject* createEmptyObject(CContainerObject* parent);
+			void removeObject(CGameObject* gameObject);
 
-			CGameObject* createContainerObject(CContainerObject* parent);
+			CGameObject* createGameObject(CContainerObject* parent, CObjectSerializable* data, bool saveHistory = true);
+
+			CGameObject* createEmptyObject(CContainerObject* parent, bool saveHistory = true);
+
+			CGameObject* createContainerObject(CContainerObject* parent, bool saveHistory = true);
 
 			void createResourceComponent(const std::string& path, CGameObject* gameObject);
 
