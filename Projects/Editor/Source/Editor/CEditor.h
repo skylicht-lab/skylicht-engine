@@ -152,6 +152,8 @@ namespace Skylicht
 
 			void OnCommandFile(GUI::CBase* item);
 
+			void OnCommandEdit(GUI::CBase* item);
+
 			void OnCommandAssetCreate(GUI::CBase* item);
 
 			void OnCommandWindowOpen(GUI::CBase* item);

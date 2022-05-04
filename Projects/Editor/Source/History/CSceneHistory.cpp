@@ -238,7 +238,15 @@ namespace Skylicht
 				CObjectSerializable* currentData = gameObject->createSerializable();
 
 				// parent container id
-				container.push_back(gameObject->getParent()->getID());
+				if (gameObject->getParent() != NULL)
+				{
+					container.push_back(gameObject->getParent()->getID());
+				}
+				else
+				{
+					// this is zone (no parent)
+					container.push_back("_");
+				}
 
 				// game object id
 				id.push_back(gameObject->getID());

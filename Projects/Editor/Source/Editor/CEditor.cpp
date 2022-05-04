@@ -332,8 +332,6 @@ namespace Skylicht
 
 			GUI::CMenuItem* edit = m_menuBar->addItem(L"Edit");
 			submenu = edit->getMenu();
-			submenu->addItem(L"Search", GUI::ESystemIcon::Search, L"Ctrl + F");
-			submenu->addSeparator();
 			submenu->addItem(L"Undo", L"Ctrl + Z");
 			submenu->addItem(L"Redo", L"Ctrl + Y");
 			submenu->addSeparator();
@@ -343,6 +341,7 @@ namespace Skylicht
 			submenu->addItem(L"Cut", GUI::ESystemIcon::None, L"Ctrl + X");
 			submenu->addSeparator();
 			submenu->addItem(L"Delete");
+			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandEdit, this);
 
 			GUI::CMenuItem* asset = m_menuBar->addItem(L"Assets");
 			submenu = asset->getMenu();
@@ -366,6 +365,7 @@ namespace Skylicht
 			submenu->addSeparator();
 			temp = submenu;
 
+			/*
 			GUI::CMenuItem* object = submenu->addItem(L"Object");
 			submenu = object->getMenu();
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
@@ -410,6 +410,7 @@ namespace Skylicht
 			submenu->addItem(L"Camera");
 			submenu->addSeparator();
 			submenu->addItem(L"Trigger");
+			*/
 
 			GUI::CMenuItem* window = m_menuBar->addItem(L"Window");
 			submenu = window->getMenu();
@@ -1007,6 +1008,29 @@ namespace Skylicht
 					controller->save(path.c_str());
 				};
 			}
+		}
+
+		void CEditor::OnCommandEdit(GUI::CBase* item)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
+			const std::wstring& label = menuItem->getLabel();
+
+			CSceneController* sceneController = CSceneController::getInstance();
+
+			if (label == L"Undo")
+				sceneController->onUndo();
+			else if (label == L"Redo")
+				sceneController->onRedo();
+			else if (label == L"Copy")
+				sceneController->onCopy();
+			else if (label == L"Paste")
+				sceneController->onPaste();
+			else if (label == L"Duplicate")
+				sceneController->onDuplicate();
+			else if (label == L"Cut")
+				sceneController->onCut();
+			else if (label == L"Delete")
+				sceneController->onDelete();
 		}
 
 		void CEditor::OnCommandAssetCreate(GUI::CBase* item)

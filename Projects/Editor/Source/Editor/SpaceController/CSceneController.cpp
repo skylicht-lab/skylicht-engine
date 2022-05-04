@@ -784,31 +784,19 @@ namespace Skylicht
 
 			CSelectObject* lastSelected = selection->getLastSelected();
 			if (lastSelected == NULL)
-				return;
-
-			if (lastSelected->getType() == CSelectObject::GameObject)
 			{
-				CGameObject* gameObject = m_scene->searchObjectInChildByID(lastSelected->getID().c_str());
-				if (gameObject != NULL)
-				{
-					CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
-					if (container != NULL)
-						CCopyPaste::getInstance()->paste(container);
-					else
-					{
-						container = dynamic_cast<CContainerObject*>(gameObject->getParent());
-						CCopyPaste::getInstance()->paste(container);
-					}
-				}
+				CZone* zone = getZone();
+				if (zone == NULL)
+					return;
+
+				CCopyPaste::getInstance()->paste(zone);
+				m_spaceHierarchy->getController()->updateTreeNode(zone);
 			}
-			else if (lastSelected->getType() == CSelectObject::Entity)
+			else
 			{
-				CEntity* entity = m_scene->getEntityManager()->getEntityByID(lastSelected->getID().c_str());
-				if (entity != NULL)
+				if (lastSelected->getType() == CSelectObject::GameObject)
 				{
-					CEntityHandleData* data = entity->getData<CEntityHandleData>();
-
-					CGameObject* gameObject = data->Handler->getGameObject();
+					CGameObject* gameObject = m_scene->searchObjectInChildByID(lastSelected->getID().c_str());
 					if (gameObject != NULL)
 					{
 						CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
@@ -819,8 +807,29 @@ namespace Skylicht
 							container = dynamic_cast<CContainerObject*>(gameObject->getParent());
 							CCopyPaste::getInstance()->paste(container);
 						}
-
 						m_spaceHierarchy->getController()->updateTreeNode(container);
+					}
+				}
+				else if (lastSelected->getType() == CSelectObject::Entity)
+				{
+					CEntity* entity = m_scene->getEntityManager()->getEntityByID(lastSelected->getID().c_str());
+					if (entity != NULL)
+					{
+						CEntityHandleData* data = entity->getData<CEntityHandleData>();
+
+						CGameObject* gameObject = data->Handler->getGameObject();
+						if (gameObject != NULL)
+						{
+							CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
+							if (container != NULL)
+								CCopyPaste::getInstance()->paste(container);
+							else
+							{
+								container = dynamic_cast<CContainerObject*>(gameObject->getParent());
+								CCopyPaste::getInstance()->paste(container);
+							}
+							m_spaceHierarchy->getController()->updateTreeNode(container);
+						}
 					}
 				}
 			}
@@ -830,6 +839,12 @@ namespace Skylicht
 		{
 			onCopy();
 			onPaste();
+		}
+
+		void CSceneController::onCut()
+		{
+			onCopy();
+			onDelete();
 		}
 
 		void CSceneController::onUndo()
