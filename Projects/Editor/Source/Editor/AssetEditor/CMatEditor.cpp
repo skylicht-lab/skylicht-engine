@@ -225,7 +225,6 @@ namespace Skylicht
 
 				// update the gui
 				CAssetPropertyController::getInstance()->onSelectAsset(m_path.c_str(), false);
-				CEditor::getInstance()->refresh();
 			};
 			group->setExpand(true);
 
