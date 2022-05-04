@@ -190,6 +190,8 @@ namespace Skylicht
 
 			void onDuplicate();
 
+			void onCut();
+
 			void onUndo();
 
 			void onRedo();
