@@ -162,13 +162,15 @@ namespace Skylicht
 			container->startComponent();
 
 			CObjectSerializable* childs = data->getProperty<CObjectSerializable>("Childs");
-			for (int i = 0, n = childs->getNumProperty(); i < n; i++)
+			if (childs != NULL)
 			{
-				CObjectSerializable* childData = (CObjectSerializable*)childs->getPropertyID(i);
-				container->createObject(childData, generateNewID);
+				for (int i = 0, n = childs->getNumProperty(); i < n; i++)
+				{
+					CObjectSerializable* childData = (CObjectSerializable*)childs->getPropertyID(i);
+					container->createObject(childData, generateNewID);
+				}
+				container->updateAddRemoveObject();
 			}
-
-			container->updateAddRemoveObject();
 			ret = container;
 		}
 		else if (data->Name == "CGameObject")

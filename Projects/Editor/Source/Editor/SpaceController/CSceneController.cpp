@@ -450,7 +450,7 @@ namespace Skylicht
 				m_contextNode = node;
 		}
 
-		void CSceneController::createZone()
+		void CSceneController::createZone(bool saveHistory)
 		{
 			CZone* zone = m_scene->createZone();
 
@@ -463,9 +463,64 @@ namespace Skylicht
 
 			if (m_spaceHierarchy != NULL)
 				m_spaceHierarchy->addToTreeNode(node);
+
+			if (saveHistory)
+				m_history->saveCreateHistory(zone);
 		}
 
-		CGameObject* CSceneController::createEmptyObject(CContainerObject* parent)
+		void CSceneController::removeObject(CGameObject* gameObject)
+		{
+			// remove gameobject
+			gameObject->remove();
+
+			// remove gui hierachy
+			if (m_hierachyNode != NULL)
+			{
+				CHierachyNode* node = m_hierachyNode->getNodeByTag(gameObject);
+				if (node != NULL)
+					node->remove();
+			}
+		}
+
+		CGameObject* CSceneController::createGameObject(CContainerObject* parent, CObjectSerializable* data, bool saveHistory)
+		{
+			CContainerObject* p = parent == NULL ? m_zone : parent;
+
+			CGameObject* newObject = p->createObject(data, false);
+
+			p->getZone()->updateAddRemoveObject();
+			p->getZone()->updateIndexSearchObject();
+
+			CHierachyNode* parentNode = m_hierachyNode->getNodeByTag(p);
+			if (parentNode != NULL)
+			{
+				CHierachyNode* node = parentNode->addChild();
+				node->setName(newObject->getName());
+
+				if (data->Name == "CZone" || data->Name == "CContainerObject")
+				{
+					node->setIcon(GUI::ESystemIcon::Folder);
+					node->setTagData(newObject, CHierachyNode::Container);
+				}
+				else
+				{
+					node->setIcon(GUI::ESystemIcon::Res3D);
+					node->setTagData(newObject, CHierachyNode::GameObject);
+				}
+
+				setNodeEvent(node);
+
+				if (m_spaceHierarchy != NULL)
+					m_spaceHierarchy->addToTreeNode(node);
+			}
+
+			if (saveHistory)
+				m_history->saveCreateHistory(newObject);
+
+			return newObject;
+		}
+
+		CGameObject* CSceneController::createEmptyObject(CContainerObject* parent, bool saveHistory)
 		{
 			CContainerObject* p = parent == NULL ? m_zone : parent;
 
@@ -488,10 +543,13 @@ namespace Skylicht
 					m_spaceHierarchy->addToTreeNode(node);
 			}
 
+			if (saveHistory)
+				m_history->saveCreateHistory(newObject);
+
 			return newObject;
 		}
 
-		CGameObject* CSceneController::createContainerObject(CContainerObject* parent)
+		CGameObject* CSceneController::createContainerObject(CContainerObject* parent, bool saveHistory)
 		{
 			CContainerObject* p = parent == NULL ? m_zone : parent;
 
@@ -512,6 +570,9 @@ namespace Skylicht
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
 			}
+
+			if (saveHistory)
+				m_history->saveCreateHistory(newObject);
 
 			return newObject;
 		}

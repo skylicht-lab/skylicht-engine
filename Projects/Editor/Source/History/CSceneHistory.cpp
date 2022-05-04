@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSceneHistory.h"
 #include "Scene/CSceneExporter.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "Selection/CSelection.h"
 
 namespace Skylicht
 {
@@ -48,7 +49,8 @@ namespace Skylicht
 			if (historySize == 0)
 				return;
 
-			CScene* scene = CSceneController::getInstance()->getScene();
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
 
 			// last history save
 			SHistoryData* historyData = m_history[historySize - 1];
@@ -57,6 +59,17 @@ namespace Skylicht
 			{
 			case EHistory::Create:
 			{
+				size_t numObject = historyData->ObjectID.size();
+				for (size_t i = 0; i < numObject; i++)
+				{
+					// object id
+					std::string& id = historyData->ObjectID[i];
+
+					// remove this object
+					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
+					if (gameObject != NULL)
+						sceneController->removeObject(gameObject);
+				}
 			}
 			break;
 			case EHistory::Modify:
@@ -84,6 +97,7 @@ namespace Skylicht
 			break;
 			case EHistory::Delete:
 			{
+
 			}
 			break;
 			}
@@ -102,7 +116,8 @@ namespace Skylicht
 			if (historySize == 0)
 				return;
 
-			CScene* scene = CSceneController::getInstance()->getScene();
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
 
 			// last history save
 			SHistoryData* historyData = m_redo[historySize - 1];
@@ -111,6 +126,14 @@ namespace Skylicht
 			{
 			case EHistory::Create:
 			{
+				size_t numObject = historyData->ObjectID.size();
+				for (size_t i = 0; i < numObject; i++)
+				{
+					std::string& id = historyData->Container[i];
+					CContainerObject* containerObject = (CContainerObject*)scene->searchObjectInChildByID(id.c_str());
+					if (containerObject != NULL)
+						sceneController->createGameObject(containerObject, historyData->Data[i], false);
+				}
 			}
 			break;
 			case EHistory::Modify:
@@ -208,7 +231,35 @@ namespace Skylicht
 
 		void CSceneHistory::saveCreateHistory(CGameObject* gameObject)
 		{
+			CObjectSerializable* currentData = gameObject->createSerializable();
 
+			std::vector<std::string> container;
+			std::vector<std::string> id;
+			std::vector<CObjectSerializable*> modifyData;
+			std::vector<CObjectSerializable*> objectData;
+
+			// parent container id
+			if (gameObject->getParent() != NULL)
+			{
+				container.push_back(gameObject->getParent()->getID());
+			}
+			else
+			{
+				// this is zone (no parent)
+				container.push_back("_");
+			}
+
+			// game object id
+			id.push_back(gameObject->getID());
+
+			// last data object
+			objectData.push_back(currentData);
+
+			// current data object
+			modifyData.push_back(NULL);
+
+			// save history
+			addHistory(EHistory::Create, container, id, modifyData, objectData);
 		}
 
 		void CSceneHistory::saveDeleteHistory(std::vector<CGameObject*> gameObject)
