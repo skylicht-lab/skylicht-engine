@@ -92,9 +92,9 @@ float3 SSR(const float3 baseColor, const float3 position, const float3 reflectio
 	float3 endPosition;
 	float3 rayPosition = position;
 	float4 viewPosition;
-	float3 dir = reflection * 8.0;
+	float3 dir = reflection * 32.0;
 	float mipLevel = roughness * 5.0;
-	for (int i = 8; i >= 0; --i)
+	for (int i = 32; i > 0; --i)
 	{
 		beginPosition = rayPosition;
 		endPosition = rayPosition + dir;
