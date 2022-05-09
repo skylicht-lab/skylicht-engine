@@ -1,4 +1,4 @@
-#define RAY_LENGTH 8.0
+#define RAY_LENGTH 32.0
 
 float3 SSR(const float3 baseColor, const float3 position, const float3 reflection, const float roughness)
 {	
@@ -15,7 +15,7 @@ float3 SSR(const float3 baseColor, const float3 position, const float3 reflectio
 	float mipLevel = roughness * 5.0;
 
 	// ray test
-	for (int i = 8; i >= 0; --i)
+	for (int i = 32; i > 0; --i)
 	{
 		// begin ray
 		beginPosition = rayPosition;
