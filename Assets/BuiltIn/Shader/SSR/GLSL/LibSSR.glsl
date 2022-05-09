@@ -1,4 +1,4 @@
-#define RAY_LENGTH 8.0
+#define RAY_LENGTH 32.0
 
 vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const float roughness)
 {	
@@ -15,7 +15,7 @@ vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const
 	float mipLevel = roughness * 5.0;
 	
 	// ray test
-	for (int i = 8; i >= 0; --i)
+	for (int i = 32; i > 0; --i)
 	{
 		// begin ray
 		beginPosition = rayPosition;
@@ -53,7 +53,7 @@ vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const
 	float z = (uView * vec4(reflection, 0.0)).z;
 	z = clamp(z, 0.0, 1.0);
 	
-	// convert 3d position to 2d texture coord	
+	// convert 3d position to 2d texture coord
 	vec3 color = textureLod(uTexLastFrame, projectedCoord.xy, mipLevel).rgb;
 	
 	// edge factor

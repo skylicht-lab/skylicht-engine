@@ -80,9 +80,9 @@ vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const
 	vec3 endPosition;
 	vec3 rayPosition = position;
 	vec4 viewPosition;
-	vec3 dir = reflection * 8.0;
+	vec3 dir = reflection * 32.0;
 	float mipLevel = roughness * 5.0;
-	for (int i = 8; i >= 0; --i)
+	for (int i = 32; i > 0; --i)
 	{
 		beginPosition = rayPosition;
 		endPosition = rayPosition + dir;
