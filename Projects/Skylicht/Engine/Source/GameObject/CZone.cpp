@@ -44,6 +44,11 @@ namespace Skylicht
 	{
 	}
 
+	void CZone::remove()
+	{
+		m_scene->removeZone(this);
+	}
+
 	void CZone::updateObject()
 	{
 		updateAddRemoveObject();

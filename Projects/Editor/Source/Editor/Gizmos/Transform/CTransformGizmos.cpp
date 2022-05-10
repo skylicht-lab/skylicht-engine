@@ -38,7 +38,8 @@ namespace Skylicht
 			m_position(core::vector3df()),
 			m_rotation(core::quaternion()),
 			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
-			m_lastType(ETransformGizmo::Translate)
+			m_lastType(ETransformGizmo::Translate),
+			changed(false)
 		{
 			getSubjectTransformGizmos().addObserver(this);
 
@@ -182,6 +183,7 @@ namespace Skylicht
 				m_parentWorld.makeIdentity();
 				handle->setWorld(m_parentWorld);
 				handle->end();
+				changed = false;
 				return;
 			}
 
@@ -208,6 +210,7 @@ namespace Skylicht
 						m_position = m_transform->getPosition();
 						m_rotation = m_transform->getRotationQuaternion();
 						m_scale = m_transform->getScale();
+						changed = false;
 
 						onEnable();
 					}
@@ -238,6 +241,8 @@ namespace Skylicht
 
 					m_position.notify(this);
 					m_transform->setPosition(newPos);
+
+					changed = true;
 				}
 
 				m_position = newPos;
@@ -247,7 +252,8 @@ namespace Skylicht
 					handle->end();
 
 					// save undo/redo
-					saveHistorySelectedObject();
+					if (changed)
+						saveHistorySelectedObject();
 
 					m_cacheSelectedObjects.clear();
 				}
@@ -268,6 +274,8 @@ namespace Skylicht
 
 					m_rotation.notify(this);
 					m_transform->setRotation(newRot);
+
+					changed = true;
 				}
 
 				m_rotation = newRot;
@@ -277,7 +285,8 @@ namespace Skylicht
 					handle->end();
 
 					// save undo/redo
-					saveHistorySelectedObject();
+					if (changed)
+						saveHistorySelectedObject();
 
 					m_cacheSelectedObjects.clear();
 				}
@@ -292,6 +301,8 @@ namespace Skylicht
 
 					m_scale.notify(this);
 					m_transform->setScale(newScale);
+
+					changed = true;
 				}
 
 				m_scale = newScale;
@@ -301,7 +312,8 @@ namespace Skylicht
 					handle->end();
 
 					// save undo/redo
-					saveHistorySelectedObject();
+					if (changed)
+						saveHistorySelectedObject();
 
 					m_cacheSelectedObjects.clear();
 				}
@@ -310,6 +322,7 @@ namespace Skylicht
 			{
 				handle->end();
 				m_cacheSelectedObjects.clear();
+				changed = false;
 			}
 
 		}

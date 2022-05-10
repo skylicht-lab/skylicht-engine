@@ -74,9 +74,9 @@ namespace Skylicht
 
 			void addSelect(const std::vector<CGameObject*>& obj);
 
-			void unSelect(CGameObject* obj);
+			bool unSelect(CGameObject* obj);
 
-			void unSelect(const std::vector<CGameObject*>& obj);
+			bool unSelect(const std::vector<CGameObject*>& obj);
 
 			void unSelect(CEntity* entity);
 

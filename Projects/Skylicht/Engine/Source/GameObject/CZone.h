@@ -39,7 +39,7 @@ namespace Skylicht
 	public:
 		CZone(CScene* scene);
 		virtual ~CZone();
-
+		virtual void remove();
 		virtual void updateObject();
 		virtual void postUpdateObject();
 		virtual void endUpdate();

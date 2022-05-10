@@ -66,6 +66,10 @@ namespace Skylicht
 
 			void saveCreateHistory(CGameObject* gameObject);
 
+			void saveCreateHistory(std::vector<CGameObject*> gameObject);
+
+			void saveDeleteHistory(CGameObject* gameObject);
+
 			void saveDeleteHistory(std::vector<CGameObject*> gameObject);
 
 			bool saveModifyHistory(std::vector<CGameObject*> gameObject);
