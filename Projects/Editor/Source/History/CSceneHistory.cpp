@@ -80,13 +80,15 @@ namespace Skylicht
 					// object id
 					std::string& id = historyData->ObjectID[i];
 
-					// old data
+					// revert to old data
 					CObjectSerializable* data = historyData->Data[i];
 
 					// get object and undo data
 					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
 					if (gameObject != NULL)
 						gameObject->loadSerializable(data);
+
+					sceneController->onHistoryModifyObject(gameObject);
 
 					// set current data for next action
 					SGameObjectHistory* objHistory = getObjectHistory(id);
@@ -97,7 +99,21 @@ namespace Skylicht
 			break;
 			case EHistory::Delete:
 			{
-
+				size_t numObject = historyData->ObjectID.size();
+				for (size_t i = 0; i < numObject; i++)
+				{
+					std::string& id = historyData->Container[i];
+					if (id != "_")
+					{
+						CContainerObject* containerObject = (CContainerObject*)scene->searchObjectInChildByID(id.c_str());
+						if (containerObject != NULL)
+							sceneController->createGameObject(containerObject, historyData->Data[i], false);
+					}
+					else
+					{
+						sceneController->createZoneObject(historyData->Data[i], false);
+					}
+				}
 			}
 			break;
 			}
@@ -130,9 +146,16 @@ namespace Skylicht
 				for (size_t i = 0; i < numObject; i++)
 				{
 					std::string& id = historyData->Container[i];
-					CContainerObject* containerObject = (CContainerObject*)scene->searchObjectInChildByID(id.c_str());
-					if (containerObject != NULL)
-						sceneController->createGameObject(containerObject, historyData->Data[i], false);
+					if (id != "_")
+					{
+						CContainerObject* containerObject = (CContainerObject*)scene->searchObjectInChildByID(id.c_str());
+						if (containerObject != NULL)
+							sceneController->createGameObject(containerObject, historyData->Data[i], false);
+					}
+					else
+					{
+						sceneController->createZoneObject(historyData->Data[i], false);
+					}
 				}
 			}
 			break;
@@ -144,13 +167,14 @@ namespace Skylicht
 					// object id
 					std::string& id = historyData->ObjectID[i];
 
-					// old data
 					CObjectSerializable* data = historyData->DataModified[i];
 
 					// get object and redo data
 					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
 					if (gameObject != NULL)
 						gameObject->loadSerializable(data);
+
+					sceneController->onHistoryModifyObject(gameObject);
 
 					// set current data for next action
 					SGameObjectHistory* objHistory = getObjectHistory(id);
@@ -161,6 +185,17 @@ namespace Skylicht
 			break;
 			case EHistory::Delete:
 			{
+				size_t numObject = historyData->ObjectID.size();
+				for (size_t i = 0; i < numObject; i++)
+				{
+					// object id
+					std::string& id = historyData->ObjectID[i];
+
+					// remove this object
+					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
+					if (gameObject != NULL)
+						sceneController->removeObject(gameObject);
+				}
 			}
 			break;
 			}
@@ -231,40 +266,88 @@ namespace Skylicht
 
 		void CSceneHistory::saveCreateHistory(CGameObject* gameObject)
 		{
-			CObjectSerializable* currentData = gameObject->createSerializable();
+			std::vector<CGameObject*> gameObjects;
+			gameObjects.push_back(gameObject);
+			saveCreateHistory(gameObjects);
+		}
 
+		void CSceneHistory::saveCreateHistory(std::vector<CGameObject*> gameObjects)
+		{
 			std::vector<std::string> container;
 			std::vector<std::string> id;
 			std::vector<CObjectSerializable*> modifyData;
 			std::vector<CObjectSerializable*> objectData;
 
-			// parent container id
-			if (gameObject->getParent() != NULL)
+			for (CGameObject* gameObject : gameObjects)
 			{
-				container.push_back(gameObject->getParent()->getID());
+				CObjectSerializable* currentData = gameObject->createSerializable();
+
+				// parent container id
+				if (gameObject->getParent() != NULL)
+				{
+					container.push_back(gameObject->getParent()->getID());
+				}
+				else
+				{
+					// this is zone (no parent)
+					container.push_back("_");
+				}
+
+				// game object id
+				id.push_back(gameObject->getID());
+
+				// last data object
+				objectData.push_back(currentData);
+
+				// current data object
+				modifyData.push_back(NULL);
 			}
-			else
-			{
-				// this is zone (no parent)
-				container.push_back("_");
-			}
-
-			// game object id
-			id.push_back(gameObject->getID());
-
-			// last data object
-			objectData.push_back(currentData);
-
-			// current data object
-			modifyData.push_back(NULL);
 
 			// save history
 			addHistory(EHistory::Create, container, id, modifyData, objectData);
 		}
 
-		void CSceneHistory::saveDeleteHistory(std::vector<CGameObject*> gameObject)
+		void CSceneHistory::saveDeleteHistory(CGameObject* gameObject)
 		{
+			std::vector<CGameObject*> gameObjects;
+			gameObjects.push_back(gameObject);
+			saveDeleteHistory(gameObjects);
+		}
 
+		void CSceneHistory::saveDeleteHistory(std::vector<CGameObject*> gameObjects)
+		{
+			std::vector<std::string> container;
+			std::vector<std::string> id;
+			std::vector<CObjectSerializable*> modifyData;
+			std::vector<CObjectSerializable*> objectData;
+
+			for (CGameObject* gameObject : gameObjects)
+			{
+				CObjectSerializable* currentData = gameObject->createSerializable();
+
+				// parent container id
+				if (gameObject->getParent() != NULL)
+				{
+					container.push_back(gameObject->getParent()->getID());
+				}
+				else
+				{
+					// this is zone (no parent)
+					container.push_back("_");
+				}
+
+				// game object id
+				id.push_back(gameObject->getID());
+
+				// last data object
+				objectData.push_back(currentData);
+
+				// current data object
+				modifyData.push_back(NULL);
+			}
+
+			// save history
+			addHistory(EHistory::Delete, container, id, modifyData, objectData);
 		}
 
 		bool CSceneHistory::saveModifyHistory(std::vector<CGameObject*> gameObjects)

@@ -39,7 +39,8 @@ namespace Skylicht
 			m_position(core::vector3df()),
 			m_rotation(core::quaternion()),
 			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
-			m_lastType(ETransformGizmo::Translate)
+			m_lastType(ETransformGizmo::Translate),
+			changed(false)
 		{
 			getSubjectTransformGizmos().addObserver(this);
 
@@ -164,6 +165,7 @@ namespace Skylicht
 				m_parentWorld.makeIdentity();
 				handle->setWorld(m_parentWorld);
 				handle->end();
+				changed = false;
 				return;
 			}
 
@@ -183,6 +185,8 @@ namespace Skylicht
 					m_position = m_transform->Relative.getTranslation();
 					m_rotation = m_transform->Relative.getRotationDegrees();
 					m_scale = m_transform->Relative.getScale();
+
+					changed = false;
 
 					if (m_transform->ParentIndex > 0)
 					{
@@ -207,6 +211,7 @@ namespace Skylicht
 				handle->setWorld(m_parentWorld);
 				handle->end();
 				m_cacheSelectedObjects.clear();
+				changed = false;
 				return;
 			}
 
@@ -222,6 +227,8 @@ namespace Skylicht
 
 					m_position.notify(this);
 					setMatrix(m_transform, newPos, m_rotation.get(), m_scale.get());
+
+					changed = true;
 				}
 
 				m_position = newPos;
@@ -229,7 +236,10 @@ namespace Skylicht
 				{
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
-					saveHistorySelectedObject();
+
+					if (changed)
+						saveHistorySelectedObject();
+
 					m_cacheSelectedObjects.clear();
 				}
 			}
@@ -249,6 +259,8 @@ namespace Skylicht
 
 					m_rotation.notify(this);
 					setMatrix(m_transform, m_position.get(), newRot, m_scale.get());
+
+					changed = true;
 				}
 
 				m_rotation = newRot;
@@ -256,7 +268,10 @@ namespace Skylicht
 				{
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
-					saveHistorySelectedObject();
+
+					if (changed)
+						saveHistorySelectedObject();
+
 					m_cacheSelectedObjects.clear();
 				}
 			}
@@ -270,6 +285,8 @@ namespace Skylicht
 
 					m_scale.notify(this);
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), newScale);
+
+					changed = true;
 				}
 
 				m_scale = newScale;
@@ -277,7 +294,10 @@ namespace Skylicht
 				{
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
 					handle->end();
-					saveHistorySelectedObject();
+
+					if (changed)
+						saveHistorySelectedObject();
+
 					m_cacheSelectedObjects.clear();
 				}
 			}
@@ -285,6 +305,7 @@ namespace Skylicht
 			{
 				handle->end();
 				m_cacheSelectedObjects.clear();
+				changed = false;
 			}
 		}
 

@@ -182,6 +182,10 @@ namespace Skylicht
 
 			void onObjectChange(CGameObject* object);
 
+			void onHistoryModifyObject(CGameObject* object);
+
+			void onDeleteObject(CGameObject* object);
+
 			void onDelete();
 
 			void onCopy();
@@ -221,6 +225,8 @@ namespace Skylicht
 			void createZone(bool saveHistory = true);
 
 			void removeObject(CGameObject* gameObject);
+
+			CZone* createZoneObject(CObjectSerializable* data, bool saveHistory = true);
 
 			CGameObject* createGameObject(CContainerObject* parent, CObjectSerializable* data, bool saveHistory = true);
 

@@ -154,7 +154,7 @@ namespace Skylicht
 			}
 		}
 
-		void CSelection::unSelect(CGameObject* obj)
+		bool CSelection::unSelect(CGameObject* obj)
 		{
 			std::vector<CSelectObject*>::iterator i = m_selected.begin(), end = m_selected.end();
 			while (i != end)
@@ -169,18 +169,23 @@ namespace Skylicht
 
 					delete sel;
 					m_selected.erase(i);
-					return;
+					return true;
 				}
 				++i;
 			}
+
+			return false;
 		}
 
-		void CSelection::unSelect(const std::vector<CGameObject*>& obj)
+		bool CSelection::unSelect(const std::vector<CGameObject*>& obj)
 		{
+			bool ret = false;
 			for (CGameObject* gameObject : obj)
 			{
-				unSelect(gameObject);
+				if (unSelect(gameObject))
+					ret = true;
 			}
+			return ret;
 		}
 
 		void CSelection::unSelect(CEntity* entity)

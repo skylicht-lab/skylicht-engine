@@ -466,13 +466,13 @@ namespace Skylicht
 
 			if (saveHistory)
 				m_history->saveCreateHistory(zone);
+
+			if (m_zone == NULL)
+				setZone(zone);
 		}
 
 		void CSceneController::removeObject(CGameObject* gameObject)
 		{
-			// remove gameobject
-			gameObject->remove();
-
 			// remove gui hierachy
 			if (m_hierachyNode != NULL)
 			{
@@ -480,11 +480,61 @@ namespace Skylicht
 				if (node != NULL)
 					node->remove();
 			}
+
+			// remove gameobject
+			onDeleteObject(gameObject);
+
+			gameObject->remove();
+		}
+
+		CZone* CSceneController::createZoneObject(CObjectSerializable* data, bool saveHistory)
+		{
+			CZone* newObject = m_scene->createZone();
+
+			// create zone data
+			newObject->loadSerializable(data);
+			newObject->startComponent();
+
+			// create child data
+			CObjectSerializable* childs = data->getProperty<CObjectSerializable>("Childs");
+			if (childs != NULL)
+			{
+				for (int i = 0, n = childs->getNumProperty(); i < n; i++)
+				{
+					CObjectSerializable* childData = (CObjectSerializable*)childs->getPropertyID(i);
+					newObject->createObject(childData, false);
+				}
+				newObject->updateAddRemoveObject();
+			}
+
+			CHierachyNode* parentNode = m_hierachyNode;
+			if (parentNode != NULL)
+			{
+				CHierachyNode* node = parentNode->addChild();
+				node->setName(newObject->getName());
+				node->setIcon(GUI::ESystemIcon::Folder);
+				node->setTagData(newObject, CHierachyNode::Container);
+
+				setNodeEvent(node);
+
+				if (m_spaceHierarchy != NULL)
+					m_spaceHierarchy->addToTreeNode(node);
+			}
+
+			if (saveHistory)
+				m_history->saveCreateHistory(newObject);
+
+			m_scene->updateAddRemoveObject();
+			m_scene->updateIndexSearchObject();
+
+			return newObject;
 		}
 
 		CGameObject* CSceneController::createGameObject(CContainerObject* parent, CObjectSerializable* data, bool saveHistory)
 		{
 			CContainerObject* p = parent == NULL ? m_zone : parent;
+			if (p == NULL)
+				return NULL;
 
 			CGameObject* newObject = p->createObject(data, false);
 
@@ -523,6 +573,8 @@ namespace Skylicht
 		CGameObject* CSceneController::createEmptyObject(CContainerObject* parent, bool saveHistory)
 		{
 			CContainerObject* p = parent == NULL ? m_zone : parent;
+			if (p == NULL)
+				return NULL;
 
 			CGameObject* newObject = p->createEmptyObject();
 
@@ -552,6 +604,8 @@ namespace Skylicht
 		CGameObject* CSceneController::createContainerObject(CContainerObject* parent, bool saveHistory)
 		{
 			CContainerObject* p = parent == NULL ? m_zone : parent;
+			if (p == NULL)
+				return NULL;
 
 			CGameObject* newObject = p->createContainerObject();
 			p->getZone()->updateAddRemoveObject();
@@ -766,10 +820,54 @@ namespace Skylicht
 				node->getGUINode()->setText(object->getName());
 		}
 
+		void CSceneController::onHistoryModifyObject(CGameObject* object)
+		{
+			if (m_spaceHierarchy != NULL)
+				m_spaceHierarchy->getController()->updateTreeNode(object);
+		}
+
+		void CSceneController::onDeleteObject(CGameObject* object)
+		{
+			if (CSelection::getInstance()->unSelect(object))
+			{
+				// clear property this object
+				CPropertyController::getInstance()->setProperty(NULL);
+			}
+
+			if (m_zone == object)
+			{
+				CZone* defaultZone = m_scene->getZone(0);
+				if (defaultZone == object)
+					setZone(NULL);
+				else
+					setZone(defaultZone);
+			}
+		}
+
 		void CSceneController::onDelete()
 		{
 			CSelection* selection = CSelection::getInstance();
 			std::vector<CSelectObject*>& selected = selection->getAllSelected();
+
+			// need save delete history first
+			{
+				std::vector<CGameObject*> deleteObjects;
+				for (CSelectObject* selectObject : selected)
+				{
+					CSelectObject::ESelectType type = selectObject->getType();
+					if (type == CSelectObject::GameObject)
+					{
+						CGameObject* gameObject = m_scene->searchObjectInChildByID(selectObject->getID().c_str());
+						if (gameObject != NULL)
+							deleteObjects.push_back(gameObject);
+					}
+				}
+
+				if (deleteObjects.size() > 0)
+					m_history->saveDeleteHistory(deleteObjects);
+			}
+
+			std::vector<CGameObject*> modifyGameObjects;
 
 			// loop and delete all selected
 			for (CSelectObject* selectObject : selected)
@@ -781,9 +879,6 @@ namespace Skylicht
 					CGameObject* gameObject = m_scene->searchObjectInChildByID(selectObject->getID().c_str());
 					if (gameObject != NULL)
 					{
-						// remove gameobject
-						gameObject->remove();
-
 						// remove gui hierachy
 						if (m_hierachyNode != NULL)
 						{
@@ -791,6 +886,11 @@ namespace Skylicht
 							if (node != NULL)
 								node->remove();
 						}
+
+						onDeleteObject(gameObject);
+
+						// remove gameobject
+						gameObject->remove();
 					}
 				}
 				else if (type == CSelectObject::Entity)
@@ -807,12 +907,17 @@ namespace Skylicht
 						// remove gui hierachy
 						if (m_spaceHierarchy != NULL)
 							m_spaceHierarchy->getController()->updateTreeNode(handler->getGameObject());
+
+						modifyGameObjects.push_back(handler->getGameObject());
 					}
 				}
 			}
 
+			// save modify entity
+			if (modifyGameObjects.size() > 0)
+				m_history->saveModifyHistory(modifyGameObjects);
+
 			selection->clear();
-			CPropertyController::getInstance()->setProperty(NULL);
 		}
 
 		void CSceneController::onCopy()
