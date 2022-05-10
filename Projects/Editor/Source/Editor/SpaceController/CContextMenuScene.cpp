@@ -199,6 +199,9 @@ namespace Skylicht
 					CSelection::getInstance()->unSelect(contextObject);
 					CPropertyController::getInstance()->setProperty(NULL);
 
+					sceneController->getHistory()->saveDeleteHistory(contextObject);
+					sceneController->onDeleteObject(contextObject);
+
 					contextObject->remove();
 					contextNode->remove();
 					sceneController->clearContextNode();

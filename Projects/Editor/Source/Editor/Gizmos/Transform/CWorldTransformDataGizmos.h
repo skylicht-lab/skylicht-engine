@@ -45,6 +45,8 @@ namespace Skylicht
 			CEntity* m_selectEntity;
 			CWorldTransformData* m_transform;
 
+			bool changed;
+
 			CSubject<core::vector3df> m_position;
 			CSubject<core::quaternion> m_rotation;
 			CSubject<core::vector3df> m_scale;
