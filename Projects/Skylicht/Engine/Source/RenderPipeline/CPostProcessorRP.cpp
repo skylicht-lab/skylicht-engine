@@ -250,7 +250,6 @@ namespace Skylicht
 
 		if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
 		{
-			driver->setViewPort(viewport);
 			renderW = (float)viewport.getWidth();
 			renderH = (float)viewport.getHeight();
 		}
@@ -302,6 +301,8 @@ namespace Skylicht
 			m_lastFrameBuffer->regenerateMipMapLevels();
 
 			driver->setRenderTarget(finalTarget, false, false);
+			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+				driver->setViewPort(viewport);
 		}
 		// END SCREEN SPACE REFLECTION
 
@@ -316,7 +317,11 @@ namespace Skylicht
 			driver->setRenderTarget(m_rtt[colorID]);
 		}
 		else
-			driver->setRenderTarget(finalTarget);
+		{
+			driver->setRenderTarget(finalTarget, false, false);
+			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+				driver->setViewPort(viewport);
+		}
 
 		if (m_autoExposure == true)
 		{
@@ -354,6 +359,8 @@ namespace Skylicht
 			CShaderMaterial::setMaterial(m_fxaaFilter);
 
 			driver->setRenderTarget(finalTarget, false, false);
+			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+				driver->setViewPort(viewport);
 
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
