@@ -80,6 +80,9 @@ namespace Skylicht
 
 			CTreeNode::~CTreeNode()
 			{
+				if (m_parentNode)
+					m_parentNode->invalidate();
+
 				delete m_textEditHelper;
 			}
 

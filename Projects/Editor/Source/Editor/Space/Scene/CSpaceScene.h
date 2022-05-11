@@ -64,8 +64,14 @@ namespace Skylicht
 
 			CScene* m_scene;
 			CCamera* m_editorCamera;
+
 			IRenderPipeline* m_renderRP;
 			IRenderPipeline* m_viewpointRP;
+
+			CDeferredRP* m_rendering;
+			CShadowMapRP* m_shadowMapRendering;
+			CForwardRP* m_forwardRP;
+			CPostProcessorRP* m_postProcessor;
 
 			CGameObject* m_gridPlane;
 
