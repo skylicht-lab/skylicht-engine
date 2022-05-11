@@ -52,6 +52,9 @@ namespace Skylicht
 			CSpace(window, editor),
 			m_scene(NULL),
 			m_renderRP(NULL),
+			m_shadowMapRendering(NULL),
+			m_forwardRP(NULL),
+			m_postProcessor(NULL),
 			m_viewpointRP(NULL),
 			m_editorCamera(NULL),
 			m_gridPlane(NULL),
@@ -246,11 +249,35 @@ namespace Skylicht
 
 		CSpaceScene::~CSpaceScene()
 		{
-			if (m_renderRP != NULL)
-				delete m_renderRP;
-
 			if (m_viewpointRP != NULL)
+			{
 				delete m_viewpointRP;
+				m_viewpointRP = NULL;
+			}
+
+			if (m_rendering != NULL)
+			{
+				delete m_rendering;
+				m_rendering = NULL;
+			}
+
+			if (m_shadowMapRendering != NULL)
+			{
+				delete m_shadowMapRendering;
+				m_shadowMapRendering = NULL;
+			}
+
+			if (m_forwardRP != NULL)
+			{
+				delete m_forwardRP;
+				m_forwardRP = NULL;
+			}
+
+			if (m_postProcessor != NULL)
+			{
+				delete m_postProcessor;
+				m_postProcessor = NULL;
+			}
 
 			if (m_viewpointController != NULL)
 				delete m_viewpointController;
@@ -558,13 +585,51 @@ namespace Skylicht
 			{
 				if (m_renderRP == NULL)
 				{
-					m_renderRP = new CForwardRP();
-					m_renderRP->initRender((int)w, (int)h);
+					// 1st
+					m_shadowMapRendering = new CShadowMapRP();
+					m_shadowMapRendering->initRender(w, h);
+
+					// 2nd
+					m_rendering = new CDeferredRP();
+					m_rendering->initRender(w, h);
+					m_rendering->enableUpdateEntity(false);
+
+					// 3rd
+					m_forwardRP = new CForwardRP(false);
+					m_forwardRP->initRender(w, h);
+					m_forwardRP->enableUpdateEntity(false);
+
+					// link rp
+					m_shadowMapRendering->setNextPipeLine(m_rendering);
+					m_rendering->setNextPipeLine(m_forwardRP);
+
+					// post processor
+					m_postProcessor = new CPostProcessorRP();
+					m_postProcessor->enableAutoExposure(false);
+					m_postProcessor->enableBloomEffect(true);
+					m_postProcessor->enableFXAA(true);
+					m_postProcessor->enableScreenSpaceReflection(true);
+					m_postProcessor->initRender(w, h);
+
+					// apply post processor
+					m_rendering->setPostProcessor(m_postProcessor);
+
+					m_renderRP = m_shadowMapRendering;
 				}
 				else
 				{
 					// resize
-					m_renderRP->resize((int)w, (int)h);
+					if (m_shadowMapRendering != NULL)
+						m_shadowMapRendering->resize(w, h);
+
+					if (m_rendering != NULL)
+						m_rendering->resize(w, h);
+
+					if (m_forwardRP != NULL)
+						m_forwardRP->resize(w, h);
+
+					if (m_postProcessor != NULL)
+						m_postProcessor->resize(w, h);
 				}
 
 				if (m_viewpointRP == NULL)
