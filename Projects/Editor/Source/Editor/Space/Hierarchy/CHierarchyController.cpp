@@ -477,7 +477,10 @@ namespace Skylicht
 
 						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
 						std::string path = rowItem->getTagString();
-						CSceneController::getInstance()->createResourceComponent(path, targetObject);
+
+						CSceneController* sceneController = CSceneController::getInstance();
+						sceneController->createResourceComponent(path, targetObject);
+						sceneController->updateTreeNode(targetObject);
 					}
 				}
 

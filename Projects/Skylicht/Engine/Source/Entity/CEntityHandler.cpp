@@ -127,4 +127,29 @@ namespace Skylicht
 			}
 		}
 	}
+
+	void CEntityHandler::setEntities(CEntity** entities, int count)
+	{
+		m_entities.clear();
+		for (int i = 0; i < count; i++)
+		{
+			CEntity* entity = entities[i];
+			CWorldTransformData* transformData = entity->addData<CWorldTransformData>();
+
+			// assign name
+			if (transformData != NULL && transformData->Name.empty())
+			{
+				char name[512];
+				sprintf(name, "#%d", entity->getIndex());
+				transformData->Name = name;
+			}
+
+			// generate id for entity
+			std::string id = m_gameObject->getZone()->generateRandomID();
+			entity->setID(id.c_str());
+
+			// add to handler
+			m_entities.push_back(entity);
+		}
+	}
 }

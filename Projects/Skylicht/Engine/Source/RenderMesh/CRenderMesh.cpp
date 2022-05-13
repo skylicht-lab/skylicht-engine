@@ -73,12 +73,13 @@ namespace Skylicht
 		if (m_gameObject != NULL)
 		{
 			CEntityManager* entityManager = m_gameObject->getEntityManager();
-			for (u32 i = 0, n = m_entities.size(); i < n; i++)
-				entityManager->removeEntity(m_entities[i]);
+			for (u32 i = 0, n = m_allEntities.size(); i < n; i++)
+				entityManager->removeEntity(m_allEntities[i]);
 		}
 
-		m_entities.clear();
+		m_allEntities.clear();
 		m_renderers.clear();
+		m_entities.clear();
 	}
 
 	void CRenderMesh::initComponent()
@@ -189,7 +190,7 @@ namespace Skylicht
 
 		// spawn childs entity
 		int numEntities = prefab->getNumEntities();
-		CEntity** entities = entityManager->createEntity(numEntities, m_entities);
+		CEntity** entities = entityManager->createEntity(numEntities, m_allEntities);
 
 		// map new entity index from src prefab
 		std::map<int, int> entityIndex;
@@ -269,6 +270,9 @@ namespace Skylicht
 		}
 
 		bool addInvData = false;
+
+		// for handler on Editor UI
+		setEntities(entities, numEntities);
 
 		// re-map joint with new entity in CEntityManager
 		for (CRenderMeshData*& r : m_renderers)
