@@ -360,23 +360,32 @@ namespace Skylicht
 			}
 		}
 
-		void CSceneController::rebuildHierarchyEntityData(CGameObject* object, CHierachyNode* parentNode)
+		void CSceneController::rebuildHierarchyEntityData(CGameObject* object, CHierachyNode* rootNode)
 		{
-			parentNode->removeAll(CHierachyNode::Entity);
+			rootNode->removeAll(CHierachyNode::Entity);
 
 			CEntityHandler* entityHandler = object->getComponent<CEntityHandler>();
 			if (entityHandler == NULL)
 				return;
 
+			CEntity* root = object->getEntity();
+
+			std::map<int, CHierachyNode*> treeNodes;
+			treeNodes[root->getIndex()] = rootNode;
+
 			std::vector<CEntity*>& entities = entityHandler->getEntities();
 			for (CEntity* entity : entities)
 			{
-				CHierachyNode* node = parentNode->addChild();
 				CWorldTransformData* worldData = entity->getData<CWorldTransformData>();
 
+				CHierachyNode* parentNode = treeNodes[worldData->ParentIndex];
+
+				CHierachyNode* node = parentNode->addChild();
 				node->setName(CStringImp::convertUTF8ToUnicode(worldData->Name.c_str()).c_str());
 				node->setIcon(GUI::ESystemIcon::Poly);
 				node->setTagData(entity, CHierachyNode::Entity);
+
+				treeNodes[entity->getIndex()] = node;
 
 				setNodeEvent(node);
 			}

@@ -53,5 +53,10 @@ namespace Skylicht
 		{
 			return m_entities;
 		}
+
+	protected:
+
+		void setEntities(CEntity** entities, int count);
+
 	};
 }
