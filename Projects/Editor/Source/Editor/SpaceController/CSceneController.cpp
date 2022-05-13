@@ -909,15 +909,17 @@ namespace Skylicht
 					{
 						// delete entity
 						CEntityHandleData* data = entity->getData<CEntityHandleData>();
+						if (data != NULL)
+						{
+							CEntityHandler* handler = data->Handler;
+							handler->removeEntity(entity);
 
-						CEntityHandler* handler = data->Handler;
-						handler->removeEntity(entity);
+							// remove gui hierachy
+							if (m_spaceHierarchy != NULL)
+								m_spaceHierarchy->getController()->updateTreeNode(handler->getGameObject());
 
-						// remove gui hierachy
-						if (m_spaceHierarchy != NULL)
-							m_spaceHierarchy->getController()->updateTreeNode(handler->getGameObject());
-
-						modifyGameObjects.push_back(handler->getGameObject());
+							modifyGameObjects.push_back(handler->getGameObject());
+						}
 					}
 				}
 			}
