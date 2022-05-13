@@ -236,6 +236,7 @@ namespace Skylicht
 							sceneController->createResourceComponent(path, targetObject);
 							CHierachyNode* node = sceneController->selectOnHierachy(targetObject);
 							sceneController->onSelectNode(node, true);
+							sceneController->updateTreeNode(targetObject);
 						}
 					}
 				}
@@ -579,8 +580,11 @@ namespace Skylicht
 
 		// end toolbar
 
-		void CSpaceScene::initRenderPipeline(float w, float h)
+		void CSpaceScene::initRenderPipeline(float fw, float fh)
 		{
+			int w = (int)fw;
+			int h = (int)fh;
+
 			if (w >= 32.0f && h >= 32.0f)
 			{
 				if (m_renderRP == NULL)
@@ -620,7 +624,7 @@ namespace Skylicht
 				{
 					// resize
 					if (m_shadowMapRendering != NULL)
-						m_shadowMapRendering->resize(w, h);
+						m_shadowMapRendering->resize((int)w, h);
 
 					if (m_rendering != NULL)
 						m_rendering->resize(w, h);
@@ -635,15 +639,15 @@ namespace Skylicht
 				if (m_viewpointRP == NULL)
 				{
 					m_viewpointRP = new CForwardRP(false);
-					m_viewpointRP->initRender((int)w, (int)h);
+					m_viewpointRP->initRender(w, h);
 				}
 				else
 				{
-					m_viewpointRP->resize((int)w, (int)h);
+					m_viewpointRP->resize(w, h);
 				}
 
 				// update camera aspect
-				m_editorCamera->setAspect(w / h);
+				m_editorCamera->setAspect(fw / fh);
 			}
 		}
 

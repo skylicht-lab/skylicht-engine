@@ -130,7 +130,9 @@ namespace Skylicht
 				{
 					// Name and icon
 					spaceProperty->setIcon(GUI::ESystemIcon::Poly);
-					spaceProperty->setLabel(L"Entity");
+
+					// Label on Propety
+					std::wstring label = L"Entity: ";
 
 					// Clear old ui
 					spaceProperty->clearAllGroup();
@@ -141,6 +143,9 @@ namespace Skylicht
 					CEntity* entity = scene->getEntityManager()->getEntityByID(object->getID().c_str());
 					if (entity != NULL)
 					{
+						CWorldTransformData* worldTransform = entity->getData<CWorldTransformData>();
+						label += CStringImp::convertUTF8ToUnicode(worldTransform->Name.c_str());
+
 						// Activator
 						CEditorActivator* activator = CEditorActivator::getInstance();
 
@@ -157,6 +162,8 @@ namespace Skylicht
 							}
 						}
 					}
+
+					spaceProperty->setLabel(label.c_str());
 				}
 			}
 			else

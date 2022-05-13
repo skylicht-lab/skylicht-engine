@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/CEntityPrefab.h"
-#include "Components/CComponentSystem.h"
+#include "Entity/CEntityHandler.h"
 #include "Material/CMaterial.h"
 #include "Material/CMaterialManager.h"
 #include "RenderMesh/CRenderMeshData.h"
@@ -33,11 +33,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CRenderMesh : public CComponentSystem
+	class CRenderMesh : public CEntityHandler
 	{
 	protected:
 		CEntity* m_root;
-		core::array<CEntity*> m_entities;
+		core::array<CEntity*> m_allEntities;
 
 		std::vector<CWorldTransformData*> m_renderTransforms;
 		std::vector<CWorldTransformData*> m_transforms;
@@ -89,7 +89,7 @@ namespace Skylicht
 
 		core::array<CEntity*>& getEntities()
 		{
-			return m_entities;
+			return m_allEntities;
 		}
 
 		std::vector<CRenderMeshData*>& getRenderers()
