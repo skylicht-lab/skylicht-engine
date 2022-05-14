@@ -146,7 +146,7 @@ namespace Skylicht
 		m_cullingLayer = layer;
 		if (m_entity != NULL)
 		{
-			CVisibleData* visible = m_entity->getData<CVisibleData>();
+			CVisibleData* visible = (CVisibleData*)m_entity->getDataByIndex(CVisibleData::DataTypeIndex);
 			visible->CullingLayer = layer;
 		}
 	}

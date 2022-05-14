@@ -48,10 +48,10 @@ namespace Skylicht
 
 	void CReflectionProbeSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
-		CIndirectLightingData* lightData = entity->getData<CIndirectLightingData>();
+		CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		CIndirectLightingData* lightData = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
+		CReflectionProbeData* probeData = (CReflectionProbeData*)entity->getDataByIndex(CReflectionProbeData::DataTypeIndex);
 
-		CReflectionProbeData* probeData = entity->getData<CReflectionProbeData>();
 		if (probeData != NULL && probeData->ReflectionTexture != NULL)
 		{
 			if (transformData != NULL)

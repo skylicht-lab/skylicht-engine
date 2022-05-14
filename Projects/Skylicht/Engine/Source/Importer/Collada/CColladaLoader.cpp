@@ -1537,7 +1537,7 @@ namespace Skylicht
 			// get parent
 			CWorldTransformData* parentTransform = NULL;
 			if (parent != NULL)
-				parentTransform = parent->getData<CWorldTransformData>();
+				parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
 
 			// create entity
 			CEntity* entity = output->createEntity();
@@ -1585,7 +1585,7 @@ namespace Skylicht
 			}
 
 			// calc world transform
-			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			if (parentTransform != NULL)
 				transformData->World.setbyproduct_nocheck(parentTransform->World, transformData->Relative);
 			else
@@ -1641,7 +1641,7 @@ namespace Skylicht
 	{
 		for (SNodeParam*& node : nodes)
 		{
-			CRenderMeshData* renderMesh = node->Entity->getData<CRenderMeshData>();
+			CRenderMeshData* renderMesh = (CRenderMeshData*)node->Entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
 			if (renderMesh != NULL)
 			{
 				CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderMesh->getMesh());

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CActivator.h"
 #include "Utils/CMemoryStream.h"
+#include "Entity/CEntityDataTypeManager.h"
 
 namespace Skylicht
 {
@@ -49,12 +50,12 @@ namespace Skylicht
 
 		}
 
-		virtual bool serializable(CMemoryStream *stream)
+		virtual bool serializable(CMemoryStream* stream)
 		{
 			return false;
 		}
 
-		virtual bool deserializable(CMemoryStream *stream)
+		virtual bool deserializable(CMemoryStream* stream)
 		{
 			return false;
 		}

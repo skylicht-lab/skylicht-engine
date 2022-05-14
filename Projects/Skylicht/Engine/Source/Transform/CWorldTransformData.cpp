@@ -29,6 +29,8 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CWorldTransformData);
 
+	IMPLEMENT_DATA_TYPE_INDEX(CWorldTransformData);
+
 	CWorldTransformData::CWorldTransformData() :
 		HasChanged(true),
 		NeedValidate(true),

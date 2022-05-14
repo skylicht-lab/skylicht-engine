@@ -55,6 +55,8 @@ namespace Skylicht
 		// current animation track
 		CAnimationTrack AnimationTrack;
 
+		DECLARE_DATA_TYPE_INDEX;
+
 	public:
 		CAnimationTransformData();
 

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,35 +22,41 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
-#include "Entity/IEntityData.h"
-
-#include "Material/CMaterial.h"
+#include "pch.h"
+#include "CEntityDataTypeManager.h"
 
 namespace Skylicht
 {
-	class CSkySunData : public IEntityData
+	u32 CEntityDataTypeManager::getDataIndex(const std::type_index& ti)
 	{
-	public:
-		IMeshBuffer* Buffer;
+		static u32 dataTypeIndexInc = 0;
+		static core::array<size_t> dataHash;
+		static core::array<u32> dataIndex;
+		static u32 dataSize = 0;
+		static size_t* hashes = dataHash.pointer();
+		static u32* indices = dataIndex.pointer();
 
-		u32 HorizontalResolution;
-		u32 VerticalResolution;
-		f32 TexturePercentage;
-		f32 SpherePercentage;
-		f32 Radius;
+		size_t hash = ti.hash_code();
 
-		CMaterial* SkySunMaterial;
+		for (u32 i = 0; i < dataSize; i++)
+		{
+			// found this hash
+			if (hashes[i] == hash)
+			{
+				return indices[i];
+			}
+		}
 
-		DECLARE_DATA_TYPE_INDEX;
+		// register this data
+		dataHash.push_back(hash);
+		dataIndex.push_back(dataTypeIndexInc++);
 
-	public:
-		CSkySunData();
+		// update cache
+		hashes = dataHash.pointer();
+		indices = dataIndex.pointer();
+		dataSize++;
 
-		virtual ~CSkySunData();
-
-		void generateMesh();
-	};
+		// get result
+		return dataTypeIndexInc - 1;
+	}
 }

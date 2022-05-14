@@ -34,6 +34,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_DATA_TYPE_INDEX(CViewpointData);
+
 		CViewpointData::CViewpointData()
 		{
 			Buffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));

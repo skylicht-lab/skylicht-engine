@@ -15,12 +15,13 @@ CSphereComponent::~CSphereComponent()
 
 void CSphereComponent::initComponent()
 {
-	CEntity *entity = m_gameObject->getEntity();
+	CEntity* entity = m_gameObject->getEntity();
 
-	CSphereData *sphereData = entity->addData<CSphereData>();
+	// Add CSphereData (that inherit CRenderMeshData)
+	CSphereData* sphereData = entity->addData<CSphereData>(CRenderMeshData::DataTypeIndex);
 	sphereData->initSphere(1.0f, m_material);
 
-	CCullingData *culling = entity->addData<CCullingData>();
+	CCullingData* culling = entity->addData<CCullingData>();
 	culling->Type = CCullingData::BoundingBox;
 }
 

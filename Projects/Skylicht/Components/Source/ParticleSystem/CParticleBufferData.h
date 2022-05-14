@@ -37,6 +37,8 @@ namespace Skylicht
 		public:
 			core::array<CGroup*> Groups;
 
+			DECLARE_DATA_TYPE_INDEX;
+
 		public:
 			CParticleBufferData();
 

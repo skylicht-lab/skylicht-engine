@@ -51,11 +51,11 @@ namespace Skylicht
 	void CWorldTransformSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
 		// transform data
-		CWorldTransformData* t = entity->getData<CWorldTransformData>();
+		CWorldTransformData* t = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 		if (t == NULL)
 			return;
 
-		CWorldInverseTransformData* tInverse = entity->getData<CWorldInverseTransformData>();
+		CWorldInverseTransformData* tInverse = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 
 		if (t->Depth > m_maxDepth)
 			m_maxDepth = t->Depth;
@@ -76,7 +76,7 @@ namespace Skylicht
 		else if (t->ParentIndex != -1)
 		{
 			CEntity* p = entityManager->getEntity(t->ParentIndex);
-			CWorldTransformData* parent = p->getData<CWorldTransformData>();
+			CWorldTransformData* parent = (CWorldTransformData*)p->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			if (parent->HasChanged == true)
 			{
 				// this transform changed because parent is changed
@@ -123,7 +123,7 @@ namespace Skylicht
 
 				// parent entity
 				CEntity* parent = entityManager->getEntity(t->ParentIndex);
-				CWorldTransformData* p = parent->getData<CWorldTransformData>();
+				CWorldTransformData* p = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
 
 				// calc world = parent * relative
 				// - relative is copied from CTransformComponentSystem

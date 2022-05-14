@@ -108,7 +108,7 @@ namespace Skylicht
 
 			// update collision bbox
 			float boxScale = m_sprite->getViewScale() * 10.0f;
-			CSelectObjectData* selectObject = m_gameObject->getEntity()->getData<CSelectObjectData>();
+			CSelectObjectData* selectObject = (CSelectObjectData*)m_gameObject->getEntity()->getDataByIndex(CSelectObjectData::DataTypeIndex);
 			selectObject->BBox.MinEdge = m_defaultBBox.MinEdge * boxScale;
 			selectObject->BBox.MaxEdge = m_defaultBBox.MaxEdge * boxScale;
 		}

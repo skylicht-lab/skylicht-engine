@@ -33,6 +33,8 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CRenderMeshData);
 
+	IMPLEMENT_DATA_TYPE_INDEX(CRenderMeshData);
+
 	std::vector<std::string> CRenderMeshData::ImportTextureFolder;
 
 	CRenderMeshData::CRenderMeshData() :

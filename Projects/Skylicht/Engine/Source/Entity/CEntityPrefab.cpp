@@ -16,7 +16,7 @@ namespace Skylicht
 
 	CEntity* CEntityPrefab::createEntity()
 	{
-		CEntity *entity = new CEntity(this);
+		CEntity* entity = new CEntity(this);
 		m_entities.push_back(entity);
 		return entity;
 	}
@@ -33,9 +33,9 @@ namespace Skylicht
 		m_entities.set_used(0);
 	}
 
-	void CEntityPrefab::addTransformData(CEntity* entity, CEntity* parent, const core::matrix4& transform, const char *name)
+	void CEntityPrefab::addTransformData(CEntity* entity, CEntity* parent, const core::matrix4& transform, const char* name)
 	{
-		CWorldTransformData *transformData = entity->addData<CWorldTransformData>();
+		CWorldTransformData* transformData = entity->addData<CWorldTransformData>();
 		transformData->Relative = transform;
 		transformData->Name = name;
 
@@ -43,7 +43,7 @@ namespace Skylicht
 		if (parent != NULL)
 		{
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
+			transformData->Depth = ((CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex))->Depth + 1;
 		}
 	}
 }

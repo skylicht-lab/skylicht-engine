@@ -64,11 +64,11 @@ namespace Skylicht
 		if (s_showProbe == false)
 			return;
 
-		CReflectionProbeData* probeData = entity->getData<CReflectionProbeData>();
+		CReflectionProbeData* probeData = (CReflectionProbeData*)entity->getDataByIndex(CReflectionProbeData::DataTypeIndex);
 		if (probeData != NULL)
 		{
-			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
-			CVisibleData* visible = entity->getData<CVisibleData>();
+			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
 
 			if (transformData != NULL)
 			{

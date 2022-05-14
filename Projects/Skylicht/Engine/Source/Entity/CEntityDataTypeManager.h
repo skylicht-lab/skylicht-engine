@@ -24,33 +24,21 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "Entity/IEntityData.h"
-
-#include "Material/CMaterial.h"
+#include <typeindex>
+#include <unordered_map>
 
 namespace Skylicht
 {
-	class CSkySunData : public IEntityData
+#define IMPLEMENT_DATA_TYPE_INDEX(type) \
+	u32 type##::DataTypeIndex = CEntityDataTypeManager::getDataIndex(typeid(type##));
+
+#define DECLARE_DATA_TYPE_INDEX static u32 DataTypeIndex
+
+	class CEntityDataTypeManager
 	{
 	public:
-		IMeshBuffer* Buffer;
 
-		u32 HorizontalResolution;
-		u32 VerticalResolution;
-		f32 TexturePercentage;
-		f32 SpherePercentage;
-		f32 Radius;
+		static u32 getDataIndex(const std::type_index& ti);
 
-		CMaterial* SkySunMaterial;
-
-		DECLARE_DATA_TYPE_INDEX;
-
-	public:
-		CSkySunData();
-
-		virtual ~CSkySunData();
-
-		void generateMesh();
 	};
 }

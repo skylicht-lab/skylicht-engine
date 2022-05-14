@@ -50,11 +50,11 @@ namespace Skylicht
 
 	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CVisibleData* visible = entity->getData<CVisibleData>();
+		CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
 		if (visible == NULL)
 			return;
 
-		CWorldTransformData* transform = entity->getData<CWorldTransformData>();
+		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 		if (transform == NULL)
 			return;
 
@@ -92,7 +92,7 @@ namespace Skylicht
 				{
 					// link parent visible
 					CEntity* parentEntity = entityManager->getEntity(data.Transform->ParentIndex);
-					CVisibleData* parentVisible = parentEntity->getData<CVisibleData>();
+					CVisibleData* parentVisible = (CVisibleData*)parentEntity->getDataByIndex(CVisibleData::DataTypeIndex);
 					data.Visible->Visible = parentVisible->Visible;
 				}
 			}
