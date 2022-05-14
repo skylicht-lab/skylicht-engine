@@ -10,6 +10,8 @@ class CTestEntityData : public Skylicht::IEntityData
 public:
 	IMesh *TestMesh;
 
+	DECLARE_DATA_TYPE_INDEX;
+
 public:
 	CTestEntityData();
 
