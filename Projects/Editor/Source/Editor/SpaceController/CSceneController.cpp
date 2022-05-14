@@ -377,12 +377,18 @@ namespace Skylicht
 			for (CEntity* entity : entities)
 			{
 				CWorldTransformData* worldData = entity->getData<CWorldTransformData>();
+				CRenderMeshData* renderData = entity->getData<CRenderMeshData>();
 
 				CHierachyNode* parentNode = treeNodes[worldData->ParentIndex];
 
 				CHierachyNode* node = parentNode->addChild();
 				node->setName(CStringImp::convertUTF8ToUnicode(worldData->Name.c_str()).c_str());
-				node->setIcon(GUI::ESystemIcon::Poly);
+
+				if (renderData != NULL)
+					node->setIcon(GUI::ESystemIcon::Poly);
+				else
+					node->setIcon(GUI::ESystemIcon::Axis);
+
 				node->setTagData(entity, CHierachyNode::Entity);
 
 				treeNodes[entity->getIndex()] = node;

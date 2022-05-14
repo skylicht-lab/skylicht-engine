@@ -501,6 +501,8 @@ namespace Skylicht
 				ObjectRect,
 				ObjectSphere,
 				ObjectTorus,
+				Axis,
+				OriginXYZ,
 				Move,
 				Rotate,
 				Scale,

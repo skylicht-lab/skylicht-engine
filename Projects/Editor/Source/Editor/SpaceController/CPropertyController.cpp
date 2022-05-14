@@ -128,9 +128,6 @@ namespace Skylicht
 				}
 				else if (object->getType() == CSelectObject::Entity)
 				{
-					// Name and icon
-					spaceProperty->setIcon(GUI::ESystemIcon::Poly);
-
 					// Label on Propety
 					std::wstring label = L"Entity: ";
 
@@ -145,6 +142,12 @@ namespace Skylicht
 					{
 						CWorldTransformData* worldTransform = entity->getData<CWorldTransformData>();
 						label += CStringImp::convertUTF8ToUnicode(worldTransform->Name.c_str());
+
+						CRenderMeshData* renderData = entity->getData<CRenderMeshData>();
+						if (renderData != NULL)
+							spaceProperty->setIcon(GUI::ESystemIcon::Poly);
+						else
+							spaceProperty->setIcon(GUI::ESystemIcon::Axis);
 
 						// Activator
 						CEditorActivator* activator = CEditorActivator::getInstance();

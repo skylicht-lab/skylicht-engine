@@ -134,7 +134,7 @@ namespace Skylicht
 		for (int i = 0; i < count; i++)
 		{
 			CEntity* entity = entities[i];
-			CWorldTransformData* transformData = entity->addData<CWorldTransformData>();
+			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
 
 			// assign name
 			if (transformData != NULL && transformData->Name.empty())
