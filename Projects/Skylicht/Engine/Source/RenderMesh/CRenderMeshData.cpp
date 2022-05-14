@@ -175,9 +175,11 @@ namespace Skylicht
 
 			meshBuffer->setHardwareMappingHint(EHM_STREAM);
 
+			// copy bbox (that fixed unitScale for culling)
+			meshBuffer->getBoundingBox() = originalMeshBuffer->getBoundingBox();
+
 			// add to mesh
 			mesh->addMeshBuffer(meshBuffer);
-			meshBuffer->recalculateBoundingBox();
 			meshBuffer->drop();
 		}
 

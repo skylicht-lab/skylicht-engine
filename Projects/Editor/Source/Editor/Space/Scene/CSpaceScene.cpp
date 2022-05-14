@@ -610,8 +610,8 @@ namespace Skylicht
 					// post processor
 					m_postProcessor = new CPostProcessorRP();
 					m_postProcessor->enableAutoExposure(false);
-					m_postProcessor->enableBloomEffect(true);
-					m_postProcessor->enableFXAA(true);
+					m_postProcessor->enableBloomEffect(false);
+					m_postProcessor->enableFXAA(false);
 					m_postProcessor->enableScreenSpaceReflection(true);
 					m_postProcessor->initRender(w, h);
 

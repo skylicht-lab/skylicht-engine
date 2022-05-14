@@ -120,6 +120,7 @@ namespace Skylicht
 		up.normalize();
 
 		core::vector3df right = up.crossProduct(front);
+		right.normalize();
 
 		core::matrix4 rotationMatrix;
 		f32* matData = rotationMatrix.pointer();
@@ -143,7 +144,9 @@ namespace Skylicht
 		matData[14] = 0.0f;
 		matData[15] = 1.0f;
 
-		m_rotation = rotationMatrix.getRotationDegrees();
+		core::quaternion q(rotationMatrix);
+		q.toEuler(m_rotation);
+
 		m_position = mat.getTranslation();
 		m_scale = mat.getScale();
 
