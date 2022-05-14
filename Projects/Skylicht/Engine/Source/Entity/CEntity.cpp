@@ -31,14 +31,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CEntity::CEntity(CEntityManager *mgr) :
+	CEntity::CEntity(CEntityManager* mgr) :
 		m_alive(true),
 		m_visible(true)
 	{
 		m_index = mgr->getNumEntities();
 	}
 
-	CEntity::CEntity(CEntityPrefab *mgr) :
+	CEntity::CEntity(CEntityPrefab* mgr) :
 		m_alive(true),
 		m_visible(true)
 	{
@@ -50,11 +50,11 @@ namespace Skylicht
 		removeAllData();
 	}
 
-	IEntityData* CEntity::addDataByActivator(const char *dataType)
+	IEntityData* CEntity::addDataByActivator(const char* dataType)
 	{
-		IActivatorObject *obj = CActivator::getInstance()->createInstance(dataType);
+		IActivatorObject* obj = CActivator::getInstance()->createInstance(dataType);
 
-		IEntityData *data = dynamic_cast<IEntityData*>(obj);
+		IEntityData* data = dynamic_cast<IEntityData*>(obj);
 		if (data == NULL)
 		{
 			char exceptionInfo[512];
@@ -75,16 +75,14 @@ namespace Skylicht
 		return data;
 	}
 
-	IEntityData* CEntity::getData(int dataIndex)
-	{
-		return m_data[dataIndex];
-	}
-
 	void CEntity::removeAllData()
 	{
-		IEntityData **data = m_data.pointer();
+		IEntityData** data = m_data.pointer();
 		for (u32 i = 0, n = m_data.size(); i < n; i++)
-			delete data[i];
+		{
+			if (data[i])
+				delete data[i];
+		}
 		m_data.clear();
 	}
 }

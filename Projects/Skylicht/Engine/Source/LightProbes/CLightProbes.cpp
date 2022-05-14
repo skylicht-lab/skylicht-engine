@@ -56,7 +56,7 @@ namespace Skylicht
 		CEntity* defaultLight = addLightProbe();
 
 		// config default ambient color
-		CLightProbeData* data = defaultLight->getData<CLightProbeData>();
+		CLightProbeData* data = (CLightProbeData*)defaultLight->getDataByIndex(CLightProbeData::DataTypeIndex);
 		data->SH[0].set(1.826f, 2.073f, 2.362f);
 		data->SH[1].set(0.255f, 0.497f, 0.822f);
 		data->SH[2].set(0.089f, 0.003f, -0.042f);
@@ -82,8 +82,8 @@ namespace Skylicht
 
 		for (int i = 0; i < numProbes; i++)
 		{
-			CWorldTransformData* world = m_entities[i]->getData<CWorldTransformData>();
-			CLightProbeData* light = m_entities[i]->getData<CLightProbeData>();
+			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CLightProbeData* light = (CLightProbeData*)m_entities[i]->getDataByIndex(CLightProbeData::DataTypeIndex);
 
 			m_attributes->addString("entityID", m_entities[i]->getID().c_str());
 			m_attributes->addMatrix("transform", world->Relative);
@@ -119,8 +119,8 @@ namespace Skylicht
 		{
 			CEntity* entity = addLightProbe();
 
-			CWorldTransformData* world = m_entities[i]->getData<CWorldTransformData>();
-			CLightProbeData* light = m_entities[i]->getData<CLightProbeData>();
+			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CLightProbeData* light = (CLightProbeData*)m_entities[i]->getDataByIndex(CLightProbeData::DataTypeIndex);
 
 			core::stringc entityID = m_attributes->getAttributeAsString(id++);
 			m_entities[i]->setID(entityID.c_str());
@@ -156,7 +156,7 @@ namespace Skylicht
 
 		for (CEntity* entity : m_entities)
 		{
-			CWorldTransformData* data = entity->getData<CWorldTransformData>();
+			CWorldTransformData* data = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			positions.push_back(data->World.getTranslation());
 		}
 
@@ -168,7 +168,7 @@ namespace Skylicht
 		int i = 0;
 		for (CEntity* entity : m_entities)
 		{
-			CLightProbeData* data = entity->getData<CLightProbeData>();
+			CLightProbeData* data = (CLightProbeData*)entity->getDataByIndex(CLightProbeData::DataTypeIndex);
 			for (int j = 0; j < 9; j++)
 				data->SH[j] = sh[i++];
 		}

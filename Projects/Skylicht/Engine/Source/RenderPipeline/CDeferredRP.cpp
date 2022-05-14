@@ -247,7 +247,7 @@ namespace Skylicht
 		if (m_isIndirectPass == true)
 		{
 			// read indirect lighting data
-			CIndirectLightingData *indirectData = (CIndirectLightingData*)entity->getEntity(entityID)->getData<CIndirectLightingData>();
+			CIndirectLightingData *indirectData = (CIndirectLightingData*)entity->getEntity(entityID)->getDataByIndex(CIndirectLightingData::DataTypeIndex);
 			if (indirectData == NULL)
 				return;
 

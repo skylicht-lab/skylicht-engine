@@ -186,7 +186,7 @@ namespace Skylicht
 
 		// root entity of object
 		m_root = m_gameObject->getEntity();
-		CWorldTransformData* rootTransform = m_root->getData<CWorldTransformData>();
+		CWorldTransformData* rootTransform = (CWorldTransformData*)m_root->getDataByIndex(CWorldTransformData::DataTypeIndex);
 
 		// spawn childs entity
 		int numEntities = prefab->getNumEntities();
@@ -239,7 +239,7 @@ namespace Skylicht
 				m_renderers.push_back(spawnRender);
 
 				// also add transform
-				m_renderTransforms.push_back(spawnEntity->getData<CWorldTransformData>());
+				m_renderTransforms.push_back((CWorldTransformData*)spawnEntity->getDataByIndex(CWorldTransformData::DataTypeIndex));
 
 				// add world inv transform for culling system
 				spawnEntity->addData<CWorldInverseTransformData>();
@@ -255,7 +255,7 @@ namespace Skylicht
 			}
 
 			// copy joint data
-			CJointData* srcJointData = srcEntity->getData<CJointData>();
+			CJointData* srcJointData = (CJointData*)srcEntity->getData<CJointData>();
 			if (srcJointData != NULL)
 			{
 				CJointData* spawnJoint = spawnEntity->addData<CJointData>();
@@ -296,7 +296,7 @@ namespace Skylicht
 						// map entity data to joint
 						CSkinnedMesh::SJoint& joint = skinMesh->Joints[i];
 						joint.EntityIndex = entityIndex[joint.EntityIndex];
-						joint.JointData = entityManager->getEntity(joint.EntityIndex)->getData<CJointData>();
+						joint.JointData = (CJointData*)entityManager->getEntity(joint.EntityIndex)->getDataByIndex(CJointData::DataTypeIndex);
 
 						// pointer to skin mesh animation matrix
 						joint.SkinningMatrix = skinMesh->SkinningMatrix + i * 16;
@@ -305,7 +305,7 @@ namespace Skylicht
 
 				if (addInvData == false)
 				{
-					if (m_root->getData<CWorldInverseTransformData>() == NULL)
+					if (m_root->getDataByIndex(CWorldInverseTransformData::DataTypeIndex) == NULL)
 						m_root->addData<CWorldInverseTransformData>();
 					addInvData = true;
 				}

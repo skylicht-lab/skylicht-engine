@@ -70,20 +70,20 @@ namespace Skylicht
 				return;
 
 			// check this entity is culled from camera?
-			CCullingData* cullingData = entity->getData<CCullingData>();
+			CCullingData* cullingData = (CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex);
 			if (cullingData != NULL && !cullingData->Visible)
 				return;
 
 			// check this entity is visible?
-			CVisibleData* visibleData = entity->getData<CVisibleData>();
+			CVisibleData* visibleData = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
 			if (visibleData != NULL && !visibleData->Visible)
 				return;
 
-			CSelectObjectData* collisionData = entity->getData<CSelectObjectData>();
+			CSelectObjectData* collisionData = (CSelectObjectData*)entity->getDataByIndex(CSelectObjectData::DataTypeIndex);
 			if (collisionData != NULL)
 			{
-				CWorldTransformData* transform = entity->getData<CWorldTransformData>();
-				CWorldInverseTransformData* invTransform = entity->getData<CWorldInverseTransformData>();
+				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CWorldInverseTransformData* invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 
 				m_collision.push_back(collisionData);
 				m_transform.push_back(transform);

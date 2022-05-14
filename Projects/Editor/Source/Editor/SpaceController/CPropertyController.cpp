@@ -140,10 +140,10 @@ namespace Skylicht
 					CEntity* entity = scene->getEntityManager()->getEntityByID(object->getID().c_str());
 					if (entity != NULL)
 					{
-						CWorldTransformData* worldTransform = entity->getData<CWorldTransformData>();
+						CWorldTransformData* worldTransform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 						label += CStringImp::convertUTF8ToUnicode(worldTransform->Name.c_str());
 
-						CRenderMeshData* renderData = entity->getData<CRenderMeshData>();
+						CRenderMeshData* renderData = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
 						if (renderData != NULL)
 							spaceProperty->setIcon(GUI::ESystemIcon::Poly);
 						else
@@ -155,7 +155,9 @@ namespace Skylicht
 						int dataCount = entity->getDataCount();
 						for (int i = 0; i < dataCount; i++)
 						{
-							IEntityData* data = entity->getData(i);
+							IEntityData* data = entity->getDataByIndex(i);
+							if (data == NULL)
+								continue;
 
 							// GameObject property							
 							CEntityDataEditor* editor = activator->getEntityDataEditorInstance(data->getTypeName().c_str());

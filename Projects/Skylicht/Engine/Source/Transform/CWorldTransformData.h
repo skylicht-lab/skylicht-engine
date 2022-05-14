@@ -38,6 +38,7 @@ namespace Skylicht
 		int Depth;
 		int ParentIndex;
 		std::string Name;
+		DECLARE_DATA_TYPE_INDEX;
 
 	public:
 		CWorldTransformData();

@@ -29,6 +29,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		IMPLEMENT_DATA_TYPE_INDEX(CParticleBufferData);
+
 		CParticleBufferData::CParticleBufferData()
 		{
 
@@ -43,19 +45,19 @@ namespace Skylicht
 
 		CGroup* CParticleBufferData::createGroup()
 		{
-			CGroup *g = new CGroup();
+			CGroup* g = new CGroup();
 			Groups.push_back(g);
 			return g;
 		}
 
-		CSubGroup* CParticleBufferData::createSubGroup(CGroup *group)
+		CSubGroup* CParticleBufferData::createSubGroup(CGroup* group)
 		{
-			CSubGroup *g = new CSubGroup(group);
+			CSubGroup* g = new CSubGroup(group);
 			Groups.push_back(g);
 			return g;
 		}
 
-		void CParticleBufferData::removeGroup(CGroup *group)
+		void CParticleBufferData::removeGroup(CGroup* group)
 		{
 			int index = Groups.linear_search(group);
 			if (index > 0)

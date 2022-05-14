@@ -53,6 +53,8 @@ namespace Skylicht
 
 			core::vector3df Position[6];
 
+			DECLARE_DATA_TYPE_INDEX;
+
 		protected:
 			std::vector<std::pair<int, float>> m_sortPosition;
 

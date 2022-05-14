@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "IEntityData.h"
+#include "CEntityDataTypeManager.h"
 
 namespace Skylicht
 {
@@ -53,6 +54,9 @@ namespace Skylicht
 		template<class T>
 		T* addData();
 
+		template<class T>
+		T* addData(int index);
+
 		IEntityData* addDataByActivator(const char* dataType);
 
 		inline int getDataCount()
@@ -60,7 +64,13 @@ namespace Skylicht
 			return (int)m_data.size();
 		}
 
-		IEntityData* getData(int dataIndex);
+		inline IEntityData* getDataByIndex(u32 dataIndex)
+		{
+			if (dataIndex >= m_data.size())
+				return NULL;
+
+			return m_data[dataIndex];
+		}
 
 		inline void setID(const char* id)
 		{
@@ -73,7 +83,7 @@ namespace Skylicht
 		}
 
 		template<class T>
-		T* getData();
+		T* getData(); // "Replaced by getDataByIndex, which has an improved performance"
 
 		template<class T>
 		bool removeData();
@@ -124,14 +134,69 @@ namespace Skylicht
 			return NULL;
 		}
 
+		// get index of type
+		u32 index = CEntityDataTypeManager::getDataIndex(typeid(T));
+
 		// also save this entity index
 		data->EntityIndex = m_index;
 
 		// add to list data
-		m_data.push_back(newData);
+		u32 reallocSize = index + 1;
+		u32 dataSize = m_data.size();
+
+		if (dataSize < reallocSize)
+		{
+			m_data.reallocate(reallocSize);
+			m_data.set_used(reallocSize);
+
+			for (u32 i = dataSize; i < reallocSize; i++)
+				m_data[i] = NULL;
+		}
+
+		// save at index
+		m_data[index] = newData;
+
 		return newData;
 	}
 
+	template<class T>
+	T* CEntity::addData(int index)
+	{
+		T* newData = new T();
+		IEntityData* data = dynamic_cast<IEntityData*>(newData);
+		if (data == NULL)
+		{
+			char exceptionInfo[512];
+			sprintf(exceptionInfo, "CEntity::addData %s must inherit IEntityData", typeid(T).name());
+			os::Printer::log(exceptionInfo);
+
+			delete newData;
+			return NULL;
+		}
+		
+		// also save this entity index
+		data->EntityIndex = m_index;
+
+		// add to list data
+		u32 reallocSize = index + 1;
+		u32 dataSize = m_data.size();
+
+		if (dataSize < reallocSize)
+		{
+			m_data.reallocate(reallocSize);
+			m_data.set_used(reallocSize);
+
+			for (u32 i = dataSize; i < reallocSize; i++)
+				m_data[i] = NULL;
+		}
+
+		// save at index
+		m_data[index] = newData;
+
+		return newData;
+	}
+
+	// "Replaced by getDataByIndex, which has an improved performance"
 	template<class T>
 	T* CEntity::getData()
 	{
@@ -140,10 +205,13 @@ namespace Skylicht
 
 		for (u32 i = 0; i < numData; i++)
 		{
-			T* t = dynamic_cast<T*>(data[i]);
-			if (t)
+			if (data[i])
 			{
-				return t;
+				T* t = dynamic_cast<T*>(data[i]);
+				if (t)
+				{
+					return t;
+				}
 			}
 		}
 
@@ -153,17 +221,15 @@ namespace Skylicht
 	template<class T>
 	bool CEntity::removeData()
 	{
-		IEntityData** data = m_data.pointer();
-		u32 numData = m_data.size();
+		u32 index = CEntityDataTypeManager::getDataIndex(typeid(T));
+		if (index >= m_data.size())
+			return false;
 
-		for (u32 i = 0; i < numData; i++)
+		if (data[i])
 		{
-			if (typeid(T) == typeid(*data[i]))
-			{
-				delete data[i];
-				m_data.erase(i);
-				return true;
-			}
+			delete data[i];
+			m_data[i] = NULL;
+			return true;
 		}
 
 		return false;

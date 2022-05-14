@@ -33,6 +33,8 @@ namespace Skylicht
 	public:
 		core::vector3df SH[9];
 
+		DECLARE_DATA_TYPE_INDEX;
+
 	public:
 		CLightProbeData();
 

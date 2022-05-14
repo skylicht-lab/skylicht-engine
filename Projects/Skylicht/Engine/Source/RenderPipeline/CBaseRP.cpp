@@ -139,7 +139,7 @@ namespace Skylicht
 						SUniform* uniform = shader->getFSUniform(res->Name.c_str());
 						if (uniform != NULL)
 						{
-							CIndirectLightingData* lightData = entity->getEntity(entityID)->getData<CIndirectLightingData>();
+							CIndirectLightingData* lightData = (CIndirectLightingData*)entity->getEntity(entityID)->getDataByIndex(CIndirectLightingData::DataTypeIndex);
 							u32 textureID = (u32)uniform->Value[0];
 
 							if (lightData != NULL && lightData->ReflectionTexture != NULL && textureID < MATERIAL_MAX_TEXTURES)

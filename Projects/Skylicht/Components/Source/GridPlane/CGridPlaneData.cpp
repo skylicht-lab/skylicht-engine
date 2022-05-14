@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_DATA_TYPE_INDEX(CGridPlaneData);
+
 	CGridPlaneData::CGridPlaneData() :
 		NumGrid(50),
 		GridSize(1.0f)

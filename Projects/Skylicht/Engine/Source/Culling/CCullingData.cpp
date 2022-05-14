@@ -29,6 +29,8 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CCullingData);
 
+	IMPLEMENT_DATA_TYPE_INDEX(CCullingData);
+
 	CCullingData::CCullingData() :
 		Type(CCullingData::FrustumBox),
 		Visible(true)

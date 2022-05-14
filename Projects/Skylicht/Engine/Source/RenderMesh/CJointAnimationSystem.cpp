@@ -45,13 +45,13 @@ namespace Skylicht
 		m_rootInvTransform.set_used(0);
 	}
 
-	void CJointAnimationSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CJointAnimationSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CJointData *joint = entity->getData<CJointData>();
+		CJointData* joint = (CJointData*)entity->getDataByIndex(CJointData::DataTypeIndex);
 		if (joint != NULL && joint->RootIndex != 0)
 		{
-			CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-			CWorldInverseTransformData *rootInvTransform = entityManager->getEntity(joint->RootIndex)->getData<CWorldInverseTransformData>();
+			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldInverseTransformData* rootInvTransform = (CWorldInverseTransformData*)entityManager->getEntity(joint->RootIndex)->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 
 			if (transform != NULL && rootInvTransform != NULL)
 			{
@@ -62,16 +62,16 @@ namespace Skylicht
 		}
 	}
 
-	void CJointAnimationSystem::init(CEntityManager *entityManager)
+	void CJointAnimationSystem::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CJointAnimationSystem::update(CEntityManager *entityManager)
+	void CJointAnimationSystem::update(CEntityManager* entityManager)
 	{
-		CJointData **joints = m_joints.pointer();
-		CWorldTransformData **transforms = m_transforms.pointer();
-		CWorldInverseTransformData **rootInvTransform = m_rootInvTransform.pointer();
+		CJointData** joints = m_joints.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
+		CWorldInverseTransformData** rootInvTransform = m_rootInvTransform.pointer();
 
 		// calc animation matrix for CSkinnedMeshSystem
 		for (u32 i = 0, n = m_joints.size(); i < n; i++)

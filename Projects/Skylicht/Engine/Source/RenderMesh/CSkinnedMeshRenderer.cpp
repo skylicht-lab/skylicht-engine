@@ -52,9 +52,9 @@ namespace Skylicht
 		m_transparents.set_used(0);
 	}
 
-	void CSkinnedMeshRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CSkinnedMeshRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CRenderMeshData *meshData = entity->getData<CRenderMeshData>();
+		CRenderMeshData* meshData = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
 		if (meshData != NULL)
 		{
 			if (meshData->isSkinnedMesh() == true && meshData->isSoftwareSkinning() == false)
@@ -62,15 +62,15 @@ namespace Skylicht
 				bool cullingVisible = true;
 
 				// get culling result from CCullingSystem
-				CCullingData *cullingData = entity->getData<CCullingData>();
+				CCullingData* cullingData = (CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex);
 				if (cullingData != NULL)
 					cullingVisible = cullingData->Visible;
 
 				// only render visible culling mesh
 				if (cullingVisible == true)
 				{
-					CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-					CIndirectLightingData *indirect = entity->getData<CIndirectLightingData>();
+					CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+					CIndirectLightingData* indirect = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
 
 					if (transform != NULL)
 					{
@@ -83,32 +83,32 @@ namespace Skylicht
 		}
 	}
 
-	void CSkinnedMeshRenderer::init(CEntityManager *entityManager)
+	void CSkinnedMeshRenderer::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CSkinnedMeshRenderer::update(CEntityManager *entityManager)
+	void CSkinnedMeshRenderer::update(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CSkinnedMeshRenderer::render(CEntityManager *entityManager)
+	void CSkinnedMeshRenderer::render(CEntityManager* entityManager)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		CRenderMeshData** meshs = m_meshs.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();
 		CIndirectLightingData** indirectLighting = m_indirectLightings.pointer();
 
-		CShaderManager *shaderManager = CShaderManager::getInstance();
-		IRenderPipeline *rp = entityManager->getRenderPipeline();
+		CShaderManager* shaderManager = CShaderManager::getInstance();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
-			CRenderMeshData *renderMeshData = m_meshs[i];
+			CRenderMeshData* renderMeshData = m_meshs[i];
 
-			CIndirectLightingData *lightingData = indirectLighting[i];
+			CIndirectLightingData* lightingData = indirectLighting[i];
 			if (lightingData != NULL)
 			{
 				if (lightingData->Type == CIndirectLightingData::SH9)
@@ -117,7 +117,7 @@ namespace Skylicht
 					CShaderSH::setSH4(lightingData->SH);
 			}
 
-			CSkinnedMesh *mesh = (CSkinnedMesh*)renderMeshData->getMesh();
+			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();
 
 			// set bone matrix to shader callback
 			shaderManager->BoneMatrix = mesh->SkinningMatrix;
@@ -130,7 +130,7 @@ namespace Skylicht
 			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
-				CMaterial *material = mesh->Material[j];
+				CMaterial* material = mesh->Material[j];
 				if (material == NULL)
 				{
 					// draw opaque mesh because unknown material
@@ -156,26 +156,26 @@ namespace Skylicht
 		}
 	}
 
-	void CSkinnedMeshRenderer::renderTransparent(CEntityManager *entityManager)
+	void CSkinnedMeshRenderer::renderTransparent(CEntityManager* entityManager)
 	{
 		u32 numTransparent = m_transparents.size();
 		if (numTransparent == 0)
 			return;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		CRenderMeshData** meshs = m_meshs.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();
 
-		CShaderManager *shaderManager = CShaderManager::getInstance();
-		IRenderPipeline *rp = entityManager->getRenderPipeline();
+		CShaderManager* shaderManager = CShaderManager::getInstance();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
 		for (u32 i = 0; i < numTransparent; i++)
 		{
 			u32 meshID = m_transparents[i];
 
-			CRenderMeshData *renderMeshData = m_meshs[meshID];
-			CSkinnedMesh *mesh = (CSkinnedMesh*)renderMeshData->getMesh();
+			CRenderMeshData* renderMeshData = m_meshs[meshID];
+			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();
 
 			// set bone matrix to shader callback
 			shaderManager->BoneMatrix = mesh->SkinningMatrix;
@@ -186,7 +186,7 @@ namespace Skylicht
 			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
-				CMaterial *material = mesh->Material[j];
+				CMaterial* material = mesh->Material[j];
 
 				if (material != NULL &&
 					material->getShader() != NULL &&

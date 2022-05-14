@@ -29,6 +29,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		IMPLEMENT_DATA_TYPE_INDEX(CParticleTrailData);
+
 		CParticleTrailData::CParticleTrailData()
 		{
 
@@ -44,7 +46,7 @@ namespace Skylicht
 			Trails.clear();
 		}
 
-		CParticleTrail* CParticleTrailData::addTrail(CGroup *group)
+		CParticleTrail* CParticleTrailData::addTrail(CGroup* group)
 		{
 			CParticleTrail* trail = new CParticleTrail(group);
 			Trails.push_back(trail);

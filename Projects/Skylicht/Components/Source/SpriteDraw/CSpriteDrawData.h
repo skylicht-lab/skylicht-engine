@@ -49,5 +49,7 @@ namespace Skylicht
 		bool Billboard;
 
 		bool AutoScaleInViewSpace;
+
+		DECLARE_DATA_TYPE_INDEX;
 	};
 }

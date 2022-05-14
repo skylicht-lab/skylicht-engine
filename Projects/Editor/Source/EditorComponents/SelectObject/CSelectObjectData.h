@@ -40,6 +40,8 @@ namespace Skylicht
 			core::aabbox3df BBox;
 			core::aabbox3df TransformBBox;
 
+			DECLARE_DATA_TYPE_INDEX;
+
 		public:
 			CSelectObjectData();
 

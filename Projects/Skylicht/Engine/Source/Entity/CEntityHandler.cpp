@@ -74,7 +74,7 @@ namespace Skylicht
 		{
 			transformData->Name = name;
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
+			transformData->Depth = ((CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex))->Depth + 1;
 		}
 
 		// add handle data
@@ -107,7 +107,7 @@ namespace Skylicht
 		{
 			transformData->Name = name;
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
+			transformData->Depth = ((CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex))->Depth + 1;
 		}
 
 		m_entities.push_back(entity);
@@ -134,7 +134,7 @@ namespace Skylicht
 		for (int i = 0; i < count; i++)
 		{
 			CEntity* entity = entities[i];
-			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 
 			// assign name
 			if (transformData != NULL && transformData->Name.empty())

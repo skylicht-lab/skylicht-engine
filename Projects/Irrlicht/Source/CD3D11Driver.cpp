@@ -24,8 +24,8 @@
 #include "CD3D11RWBuffer.h"
 #include "CD3D11GPUCompute.h"
 
-inline void unpack_texureBlendFunc(irr::video::E_BLEND_FACTOR &srcFact, irr::video::E_BLEND_FACTOR &dstFact,
-	irr::video::E_MODULATE_FUNC &modulo, irr::u32& alphaSource, const irr::f32 param)
+inline void unpack_texureBlendFunc(irr::video::E_BLEND_FACTOR& srcFact, irr::video::E_BLEND_FACTOR& dstFact,
+	irr::video::E_MODULATE_FUNC& modulo, irr::u32& alphaSource, const irr::f32 param)
 {
 	const irr::u32 state = IR(param);
 	alphaSource = (state & 0x0000F000) >> 12;
@@ -184,7 +184,7 @@ namespace irr
 				// a specific video card?
 				if (Params.DisplayAdapter)
 				{
-					IDXGIFactory * pFactory;
+					IDXGIFactory* pFactory;
 					hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory));
 					if (FAILED(hr))
 					{
@@ -207,7 +207,7 @@ namespace irr
 				}
 #else				
 
-				IDXGIFactory4 *pFactory;
+				IDXGIFactory4* pFactory;
 				hr = CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)(&pFactory));
 				if (FAILED(hr))
 				{
@@ -759,7 +759,7 @@ namespace irr
 			default:
 				return false;
 			}
-			}
+		}
 
 		bool CD3D11Driver::setActiveTexture(u32 stage, video::ITexture* texture)
 		{
@@ -1028,7 +1028,7 @@ namespace irr
 				os::Printer::log("Fatal Error: This is not texture 2D.", ELL_ERROR);
 				return false;
 			}
-
+			
 			CD3D11Texture* tex = static_cast<CD3D11Texture*>(texture);
 
 			// check if we should set the previous RT back
@@ -1041,6 +1041,14 @@ namespace irr
 			}
 			else
 			{
+				// clear shader resources after change render target
+				ID3D11ShaderResourceView* views[1] = { NULL };
+				for (u32 i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+				{
+					Context->VSSetShaderResources(i, 1, views);
+					Context->PSSetShaderResources(i, 1, views);
+				}
+
 				CurrentBackBuffer = tex->getRenderTargetView();
 				CurrentDepthBuffer = tex->DepthSurface->Surface;
 				Context->OMSetRenderTargets(1, &CurrentBackBuffer, CurrentDepthBuffer);
@@ -1300,7 +1308,7 @@ namespace irr
 
 			ID3D11RenderTargetView* RTViews[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
 
-			ZeroMemory(&RTViews, sizeof(ID3D11RenderTargetView*)*D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
+			ZeroMemory(&RTViews, sizeof(ID3D11RenderTargetView*) * D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
 			// parse clear color
 			SColorf fCol(color);
 			// swizzle clear color is texture is passed
@@ -1403,18 +1411,18 @@ namespace irr
 		}
 
 		ITexture* CD3D11Driver::getTextureCube(
-			IImage *imageX1,
-			IImage *imageX2,
-			IImage *imageY1,
-			IImage *imageY2,
-			IImage *imageZ1,
-			IImage *imageZ2)
+			IImage* imageX1,
+			IImage* imageX2,
+			IImage* imageY1,
+			IImage* imageY2,
+			IImage* imageZ1,
+			IImage* imageZ2)
 		{
 			return new CD3D11TextureCube(this, "TextureCube", imageX1, imageX2, imageY1, imageY2, imageZ1, imageZ2);
 		}
 
 		//! creates a buffer stored on gpu
-		IRWBuffer* CD3D11Driver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData)
+		IRWBuffer* CD3D11Driver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void* initialData)
 		{
 			return new CD3D11RWBuffer(this, format, numElements);
 		}
@@ -1807,7 +1815,7 @@ namespace irr
 		}
 
 		ITexture* CD3D11Driver::addRenderTargetTexture(const core::dimension2d<u32>& size,
-			const io::path&name, const ECOLOR_FORMAT format)
+			const io::path& name, const ECOLOR_FORMAT format)
 		{
 			return addRenderTargetTexture(size, name, format, 1, 0, 1);
 		}
@@ -1829,7 +1837,7 @@ namespace irr
 		ITexture* CD3D11Driver::addRenderTargetTextureArray(const core::dimension2d<u32>& size, u32 arraySize,
 			const io::path& name, const ECOLOR_FORMAT format)
 		{
-			ITexture * tex = new CD3D11TextureArray(size, arraySize, this, name, format);
+			ITexture* tex = new CD3D11TextureArray(size, arraySize, this, name, format);
 			if (tex)
 			{
 				checkDepthBuffer(tex, 1, 0);
@@ -2410,7 +2418,7 @@ namespace irr
 		{
 			return (D3D11_COLOR_WRITE_ENABLE)
 				(
-				((plane & ECP_RED) ? D3D11_COLOR_WRITE_ENABLE_RED : 0) |
+					((plane & ECP_RED) ? D3D11_COLOR_WRITE_ENABLE_RED : 0) |
 					((plane & ECP_GREEN) ? D3D11_COLOR_WRITE_ENABLE_GREEN : 0) |
 					((plane & ECP_BLUE) ? D3D11_COLOR_WRITE_ENABLE_BLUE : 0) |
 					((plane & ECP_ALPHA) ? D3D11_COLOR_WRITE_ENABLE_ALPHA : 0)
@@ -2812,7 +2820,7 @@ namespace irr
 			const c8* computeShaderEntryPointName,
 			E_COMPUTE_SHADER_TYPE csCompileTarget)
 		{
-			CD3D11GPUCompute *compute = new CD3D11GPUCompute(this);
+			CD3D11GPUCompute* compute = new CD3D11GPUCompute(this);
 
 			if (compute->compile(computeShaderProgram, computeShaderEntryPointName, csCompileTarget) == true)
 			{
@@ -2898,9 +2906,9 @@ namespace irr
 			return vertexDescriptor;
 		}
 
-		IVideoRenderTarget* CD3D11Driver::addVideoRenderTarget(void *hwnd, u32 w, u32 h)
+		IVideoRenderTarget* CD3D11Driver::addVideoRenderTarget(void* hwnd, u32 w, u32 h)
 		{
-			IVideoRenderTarget *vrt = new CD3D11VideoRT(hwnd, w, h,
+			IVideoRenderTarget* vrt = new CD3D11VideoRT(hwnd, w, h,
 				this,
 				Device,
 				Context,
@@ -2930,7 +2938,7 @@ namespace irr
 			}
 			else
 			{
-				CD3D11VideoRT *dx11RT = dynamic_cast<CD3D11VideoRT*>(vrt);
+				CD3D11VideoRT* dx11RT = dynamic_cast<CD3D11VideoRT*>(vrt);
 				if (dx11RT != NULL)
 				{
 					BackBuffer = dx11RT->DefaultBackBuffer;
@@ -2946,8 +2954,8 @@ namespace irr
 			setViewPort(core::rect<s32>(0, 0, size.Width, size.Height));
 		}
 
-		} // end namespace video
-	} // end namespace irr
+	} // end namespace video
+} // end namespace irr
 
 #endif
 
