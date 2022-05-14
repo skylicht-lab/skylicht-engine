@@ -88,6 +88,8 @@ namespace Skylicht
 		template<class T>
 		bool removeData();
 
+		bool removeData(u32 index);
+
 		void removeAllData();
 
 		inline int getIndex()
@@ -225,10 +227,25 @@ namespace Skylicht
 		if (index >= m_data.size())
 			return false;
 
-		if (m_data[i])
+		if (m_data[index])
 		{
-			delete m_data[i];
-			m_data[i] = NULL;
+			delete m_data[index];
+			m_data[index] = NULL;
+			return true;
+		}
+
+		return false;
+	}
+
+	bool CEntity::removeData(u32 index)
+	{
+		if (index >= m_data.size())
+			return false;
+
+		if (m_data[index])
+		{
+			delete m_data[index];
+			m_data[index] = NULL;
 			return true;
 		}
 
