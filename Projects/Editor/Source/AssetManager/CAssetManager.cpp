@@ -386,7 +386,11 @@ namespace Skylicht
 				m_files.remove(node);
 
 				std::string path = node->FullPath;
-				fs::remove_all(path);
+
+				if (fs::is_directory(path))
+					fs::remove_all(path);
+				else
+					fs::remove(path);
 
 				delete node;
 				return true;

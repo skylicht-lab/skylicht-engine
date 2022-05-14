@@ -41,7 +41,7 @@ namespace Skylicht
 
 		std::string m_unit;
 		float m_unitScale;
-		bool m_rootScaleByUnit;
+		core::matrix4 m_unitScaleMatrix;
 
 		std::vector<CAnimationClip*> m_clips;
 		std::map<std::string, SEntityAnim*> m_nodeAnim;
@@ -54,26 +54,26 @@ namespace Skylicht
 
 		virtual ~CColladaAnimLoader();
 
-		bool loadAnimation(const char *resource, CAnimationClip* output);
+		bool loadAnimation(const char* resource, CAnimationClip* output);
 
 	protected:
-		void constructAnimation(const char *fileName, CAnimationClip* output);
+		void constructAnimation(const char* fileName, CAnimationClip* output);
 
 		void clearData();
 
-		void parseUnit(io::IXMLReader *xmlRead);
+		void parseUnit(io::IXMLReader* xmlRead);
 
-		void parseAnimationNode(io::IXMLReader *xmlRead);
+		void parseAnimationNode(io::IXMLReader* xmlRead);
 
-		void parseAnimationSourceNode(io::IXMLReader *xmlRead);
+		void parseAnimationSourceNode(io::IXMLReader* xmlRead);
 
-		void parseDefaultValuePosition(io::IXMLReader *xmlRead, float *x, float *y, float *z);
+		void parseDefaultValuePosition(io::IXMLReader* xmlRead, float* x, float* y, float* z);
 
-		void parseDefaultValueRotate(io::IXMLReader *xmlRead, float *x, float *y, float *z, float *angle);
+		void parseDefaultValueRotate(io::IXMLReader* xmlRead, float* x, float* y, float* z, float* angle);
 
-		void parseSceneNode(io::IXMLReader *xmlRead);
+		void parseSceneNode(io::IXMLReader* xmlRead);
 
-		SNodeParam* parseNode(io::IXMLReader *xmlRead, SNodeParam* parent);
+		SNodeParam* parseNode(io::IXMLReader* xmlRead, SNodeParam* parent);
 
 		SNodeParam* getNode(const std::string& nodeName);
 	};

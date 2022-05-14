@@ -182,9 +182,12 @@ namespace Skylicht
 					m_selectEntity = scene->getEntityManager()->getEntityByID(m_selectID.c_str());
 					m_transform = m_selectEntity->getData<CWorldTransformData>();
 
-					m_position = m_transform->Relative.getTranslation();
-					m_rotation = m_transform->Relative.getRotationDegrees();
-					m_scale = m_transform->Relative.getScale();
+					core::vector3df pos, rot, scale;
+					splitMatrixData(m_transform->Relative, pos, rot, scale);
+
+					m_position = pos;
+					m_rotation = rot;
+					m_scale = scale;
 
 					changed = false;
 
@@ -307,6 +310,49 @@ namespace Skylicht
 				m_cacheSelectedObjects.clear();
 				changed = false;
 			}
+		}
+
+		void CWorldTransformDataGizmos::splitMatrixData(const core::matrix4& matrix, core::vector3df& pos, core::vector3df& rot, core::vector3df& scale)
+		{
+			core::vector3df front(0.0f, 0.0f, 1.0f);
+			core::vector3df up(0.0f, 1.0f, 0.0f);
+
+			matrix.rotateVect(front);
+			matrix.rotateVect(up);
+
+			front.normalize();
+			up.normalize();
+
+			core::vector3df right = up.crossProduct(front);
+			right.normalize();
+
+			core::matrix4 rotationMatrix;
+			f32* matData = rotationMatrix.pointer();
+			matData[0] = right.X;
+			matData[1] = right.Y;
+			matData[2] = right.Z;
+			matData[3] = 0.0f;
+
+			matData[4] = up.X;
+			matData[5] = up.Y;
+			matData[6] = up.Z;
+			matData[7] = 0.0f;
+
+			matData[8] = front.X;
+			matData[9] = front.Y;
+			matData[10] = front.Z;
+			matData[11] = 0.0f;
+
+			matData[12] = 0.0f;
+			matData[13] = 0.0f;
+			matData[14] = 0.0f;
+			matData[15] = 1.0f;
+
+			core::quaternion q(rotationMatrix);
+			q.toEuler(rot);
+
+			pos = matrix.getTranslation();
+			scale = matrix.getScale();
 		}
 
 		void CWorldTransformDataGizmos::setMatrix(CWorldTransformData* transform, const core::vector3df& pos, const core::quaternion& rot, const core::vector3df& scale)

@@ -77,7 +77,7 @@ namespace Skylicht
 
 		ArrayEffectParams EffectParams;
 
-		inline bool operator< (const SEffect & other) const
+		inline bool operator< (const SEffect& other) const
 		{
 			return Id < other.Id;
 		}
@@ -97,7 +97,7 @@ namespace Skylicht
 	struct SBufferParam
 	{
 		std::wstring Name;
-		float *FloatArray;
+		float* FloatArray;
 		int ArrayCount;
 		int Type;
 		int Strike;
@@ -131,8 +131,8 @@ namespace Skylicht
 		int EffectIndex;
 		std::wstring Material;
 		int NumPolygon;
-		s32 *VCount;
-		s32 *IndexBuffer;
+		s32* VCount;
+		s32* IndexBuffer;
 		int NumElementPerVertex;
 		int OffsetVertex;
 		int OffsetNormal;
@@ -203,7 +203,7 @@ namespace Skylicht
 		std::vector<SNodeParam*> Childs;
 		SNodeParam* Parent;
 
-		CEntity *Entity;
+		CEntity* Entity;
 		int ChildLevel;
 
 		SNodeParam()
@@ -217,7 +217,7 @@ namespace Skylicht
 	// Add to support read DAE from FBX Converter
 	struct SColladaMeshVertexMap
 	{
-		SMeshParam *meshId;
+		SMeshParam* meshId;
 		s32 bufferId;
 		s32 vertexId;
 
@@ -275,7 +275,7 @@ namespace Skylicht
 		}
 	};
 
-	class CColladaLoader: public CBaseMeshImporter
+	class CColladaLoader : public CBaseMeshImporter
 	{
 	public:
 		static bool s_fixUV;
@@ -287,7 +287,7 @@ namespace Skylicht
 
 		std::string m_unit;
 		float m_unitScale;
-		bool m_rootScaleByUnit;
+		core::matrix4 m_unitScaleMatrix;
 
 	protected:
 
@@ -301,7 +301,7 @@ namespace Skylicht
 
 		bool m_loadNormalMap;
 
-		float m_maxUVTile;		
+		float m_maxUVTile;
 
 		std::map<std::string, CJointData*> m_nameToJointData;
 		std::map<std::string, CJointData*> m_sidToJointData;
@@ -314,7 +314,7 @@ namespace Skylicht
 		ArrayMeshParams m_listMesh;
 		ArrayNodeParams m_listNode;
 
-		SNodeParam *m_colladaRoot;
+		SNodeParam* m_colladaRoot;
 
 		// Add to support read DAE from FBX Converter
 		typedef std::vector<s32> ArrayShort;
@@ -347,55 +347,55 @@ namespace Skylicht
 			m_textureFolder = folder;
 		}
 
-		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool flipNormalMap = true, bool texcoord2 = true, bool batching = false);
-		
-	protected:
-
-		bool loadDae(const char *fileName, CEntityPrefab* output);
-
-		void parseImageNode(io::IXMLReader *xmlRead, SColladaImage* image = NULL);
-
-		void parseMaterialNode(io::IXMLReader *xmlRead, SColladaMaterial* material = NULL);
-
-		void parseEffectNode(io::IXMLReader *xmlRead, SEffect* effect = NULL);
-
-		void parseGeometryNode(io::IXMLReader *xmlRead);
-
-		void parseControllerNode(io::IXMLReader *xmlRead);
-
-		void parseSceneNode(io::IXMLReader *xmlRead);
-
-		void parseUnit(io::IXMLReader *xmlRead);
+		virtual bool loadModel(const char* resource, CEntityPrefab* output, bool normalMap = true, bool flipNormalMap = true, bool texcoord2 = true, bool batching = false);
 
 	protected:
 
-		SMeshParam* parseSkinNode(io::IXMLReader *xmlRead);
+		bool loadDae(const char* fileName, CEntityPrefab* output);
 
-		SNodeParam* parseNode(io::IXMLReader *xmlRead, SNodeParam* parent);
+		void parseImageNode(io::IXMLReader* xmlRead, SColladaImage* image = NULL);
+
+		void parseMaterialNode(io::IXMLReader* xmlRead, SColladaMaterial* material = NULL);
+
+		void parseEffectNode(io::IXMLReader* xmlRead, SEffect* effect = NULL);
+
+		void parseGeometryNode(io::IXMLReader* xmlRead);
+
+		void parseControllerNode(io::IXMLReader* xmlRead);
+
+		void parseSceneNode(io::IXMLReader* xmlRead);
+
+		void parseUnit(io::IXMLReader* xmlRead);
+
+	protected:
+
+		SMeshParam* parseSkinNode(io::IXMLReader* xmlRead);
+
+		SNodeParam* parseNode(io::IXMLReader* xmlRead, SNodeParam* parent);
 
 		void updateEffectMaterial(SEffect* effect);
 
-		void updateJointToMesh(SMeshParam *mesh, int numJoints, float *arrayWeight, float *arrayTransform, std::vector<s32>& vCountArray, std::vector<s32>& vArray);
+		void updateJointToMesh(SMeshParam* mesh, int numJoints, float* arrayWeight, float* arrayTransform, std::vector<s32>& vCountArray, std::vector<s32>& vArray);
 
 	protected:
 
-		CJointData* findJointData(const char *name);
+		CJointData* findJointData(const char* name);
 
 		void loadEffectTexture();
 
-		ITexture *getTextureResource(std::wstring& refName, ArrayEffectParams& params);
+		ITexture* getTextureResource(std::wstring& refName, ArrayEffectParams& params);
 
-		void constructEntityPrefab(CEntityPrefab *output);
-		
-		CMesh* constructMesh(SMeshParam *mesh, SNodeParam* node);
+		void constructEntityPrefab(CEntityPrefab* output);
+
+		CMesh* constructMesh(SMeshParam* mesh, SNodeParam* node);
 
 		void constructSkinMesh(std::list<SNodeParam*>& nodes);
 
-		void constructSkinMesh(SMeshParam *meshParam, CSkinnedMesh *mesh);
+		void constructSkinMesh(SMeshParam* meshParam, CSkinnedMesh* mesh);
 
-		IMeshBuffer* constructMeshBuffer(SMeshParam *mesh, STrianglesParam* tri, int bufferID, bool &needFixUVTile);	
+		IMeshBuffer* constructMeshBuffer(SMeshParam* mesh, STrianglesParam* tri, int bufferID, bool& needFixUVTile);
 
-		void convertToLightMapVertices(IMeshBuffer* buffer, SMeshParam *mesh, STrianglesParam* tri);		
+		void convertToLightMapVertices(IMeshBuffer* buffer, SMeshParam* mesh, STrianglesParam* tri);
 
 		void cleanData();
 	};
