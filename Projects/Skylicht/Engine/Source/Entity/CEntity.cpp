@@ -85,8 +85,24 @@ namespace Skylicht
 		// also save this entity index
 		data->EntityIndex = m_index;
 
+		int index = CEntityDataTypeManager::getDataIndex(typeid(*data));
+
 		// add to list data
-		m_data.push_back(data);
+		u32 reallocSize = index + 1;
+		u32 dataSize = m_data.size();
+
+		if (dataSize < reallocSize)
+		{
+			m_data.reallocate(reallocSize);
+			m_data.set_used(reallocSize);
+
+			for (u32 i = dataSize; i < reallocSize; i++)
+				m_data[i] = NULL;
+		}
+
+		// save at index
+		m_data[index] = data;
+
 		return data;
 	}
 

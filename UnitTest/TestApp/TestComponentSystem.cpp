@@ -1,6 +1,7 @@
 #include "Base.hh"
 #include "TestComponentSystem.h"
 #include "TestRenderSystem.h"
+#include "RenderMesh/CRenderMeshData.h"
 
 bool g_initComponentPass = false;
 bool g_updateComponentPass = false;
@@ -28,17 +29,22 @@ TestComponent::~TestComponent()
 void TestComponent::initComponent()
 {
 	g_initComponentPass = true;
-	
+
 	TEST_CASE("Add entity data");
 	TEST_ASSERT_THROW(m_gameObject->getEntity()->addData<CTestEntityData>() != NULL);
 
 	TEST_CASE("Add entity data by activator");
 	TEST_ASSERT_THROW(m_gameObject->getEntity()->addDataByActivator("CRenderMeshData") != NULL);
+	TEST_ASSERT_THROW(m_gameObject->getEntity()->getDataByIndex(CRenderMeshData::DataTypeIndex) != NULL);
+
 
 	TEST_CASE("Get entity data");
-	CTestEntityData *entityData = m_gameObject->getEntity()->getData<CTestEntityData>();
+	CTestEntityData* entityData = m_gameObject->getEntity()->getData<CTestEntityData>();
 	TEST_ASSERT_THROW(entityData != NULL);
 	entityData->initCubeMesh(1.0f);
+
+	entityData = dynamic_cast<CTestEntityData*>(m_gameObject->getEntity()->getDataByIndex(CTestEntityData::DataTypeIndex));
+	TEST_ASSERT_THROW(entityData != NULL);
 
 	TEST_CASE("Add render system");
 	TEST_ASSERT_THROW(m_gameObject->getEntityManager()->addRenderSystem<CTestRenderSystem>() != NULL);
@@ -59,15 +65,15 @@ void TestComponent::endUpdate()
 	g_endUpdateComponentPass = true;
 }
 
-void testComponent(CGameObject *obj)
+void testComponent(CGameObject* obj)
 {
 	TEST_CASE("Add component system");
-	TestComponent *comp = obj->addComponent<TestComponent>();
+	TestComponent* comp = obj->addComponent<TestComponent>();
 	TEST_ASSERT_THROW(comp != NULL);
 	TEST_ASSERT_THROW(comp->getGameObject() == obj);
 
 	TEST_CASE("Get component system");
-	TestComponent *getComp = obj->getComponent<TestComponent>();
+	TestComponent* getComp = obj->getComponent<TestComponent>();
 	TEST_ASSERT_THROW(getComp != NULL);
 	TEST_ASSERT_THROW(getComp == comp);
 
