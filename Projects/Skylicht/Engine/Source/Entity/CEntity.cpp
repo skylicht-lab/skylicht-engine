@@ -50,6 +50,21 @@ namespace Skylicht
 		removeAllData();
 	}
 
+	bool CEntity::removeData(u32 index)
+	{
+		if (index >= m_data.size())
+			return false;
+
+		if (m_data[index])
+		{
+			delete m_data[index];
+			m_data[index] = NULL;
+			return true;
+		}
+
+		return false;
+	}
+
 	IEntityData* CEntity::addDataByActivator(const char* dataType)
 	{
 		IActivatorObject* obj = CActivator::getInstance()->createInstance(dataType);
