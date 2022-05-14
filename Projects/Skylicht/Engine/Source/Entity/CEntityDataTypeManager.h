@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 #define IMPLEMENT_DATA_TYPE_INDEX(type) \
-	u32 type##::DataTypeIndex = CEntityDataTypeManager::getDataIndex(typeid(type##));
+	u32 type::DataTypeIndex = CEntityDataTypeManager::getDataIndex(typeid(type));
 
 #define DECLARE_DATA_TYPE_INDEX static u32 DataTypeIndex
 
