@@ -37,8 +37,7 @@ namespace Skylicht
 {
 	CColladaAnimLoader::CColladaAnimLoader() :
 		m_unit(""),
-		m_unitScale(1.0f),
-		m_rootScaleByUnit(false)
+		m_unitScale(1.0f)
 	{
 	}
 
@@ -47,12 +46,12 @@ namespace Skylicht
 
 	}
 
-	bool CColladaAnimLoader::loadAnimation(const char *resource, CAnimationClip* output)
+	bool CColladaAnimLoader::loadAnimation(const char* resource, CAnimationClip* output)
 	{
-		IrrlichtDevice *device = getIrrlichtDevice();
-		io::IFileSystem *fs = device->getFileSystem();
+		IrrlichtDevice* device = getIrrlichtDevice();
+		io::IFileSystem* fs = device->getFileSystem();
 
-		io::IXMLReader *xmlRead = fs->createXMLReader(resource);
+		io::IXMLReader* xmlRead = fs->createXMLReader(resource);
 
 		if (xmlRead == NULL)
 		{
@@ -135,7 +134,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CColladaAnimLoader::constructAnimation(const char *fileName, CAnimationClip* clip)
+	void CColladaAnimLoader::constructAnimation(const char* fileName, CAnimationClip* clip)
 	{
 		char name[512];
 		CStringImp::getFileNameNoExt(name, fileName);
@@ -158,7 +157,7 @@ namespace Skylicht
 				// found node
 				CStringImp::copy(name, pNode->Name.c_str());
 
-				SEntityAnim *nodeAnim = m_nodeAnim[name];
+				SEntityAnim* nodeAnim = m_nodeAnim[name];
 				if (nodeAnim == NULL)
 				{
 					nodeAnim = new SEntityAnim();
@@ -195,7 +194,7 @@ namespace Skylicht
 			*newNodeAnim = *nodeAnim;
 
 			// get default matrix
-			SNodeParam *n = getNode(newNodeAnim->Name);
+			SNodeParam* n = getNode(newNodeAnim->Name);
 			if (n)
 			{
 				newNodeAnim->Data.DefaultRot = core::quaternion(n->Transform);
@@ -259,19 +258,19 @@ namespace Skylicht
 		m_nodeAnim.clear();
 	}
 
-	void CColladaAnimLoader::parseUnit(io::IXMLReader *xmlRead)
+	void CColladaAnimLoader::parseUnit(io::IXMLReader* xmlRead)
 	{
 		char unitName[64] = { 0 };
 		char unitValue[64] = { 0 };
 
-		const wchar_t *unitNameW = xmlRead->getAttributeValue(L"name");
+		const wchar_t* unitNameW = xmlRead->getAttributeValue(L"name");
 		if (unitNameW != NULL)
 		{
 			CStringImp::copy(unitName, unitNameW);
 			m_unit = unitName;
 		}
 
-		const wchar_t *meterW = xmlRead->getAttributeValue(L"meter");
+		const wchar_t* meterW = xmlRead->getAttributeValue(L"meter");
 		if (meterW != NULL)
 		{
 			CStringImp::copy(unitValue, meterW);
@@ -279,7 +278,7 @@ namespace Skylicht
 		}
 	}
 
-	void CColladaAnimLoader::parseAnimationNode(io::IXMLReader *xmlRead)
+	void CColladaAnimLoader::parseAnimationNode(io::IXMLReader* xmlRead)
 	{
 		std::wstring idNodeName = xmlRead->getAttributeValue(L"id");
 
@@ -333,7 +332,7 @@ namespace Skylicht
 		CStringImp::copy(stringBuffer, jointName.c_str());
 
 		// create anim node
-		SEntityAnim *nodeAnim = m_nodeAnim[stringBuffer];
+		SEntityAnim* nodeAnim = m_nodeAnim[stringBuffer];
 		if (nodeAnim == NULL)
 		{
 			nodeAnim = new SEntityAnim();
@@ -351,8 +350,8 @@ namespace Skylicht
 
 		int readState = 0;
 
-		float *arrayTime = NULL;
-		float *arrayFloat = NULL;
+		float* arrayTime = NULL;
+		float* arrayFloat = NULL;
 
 		bool needReadDefaultRotValue = false;
 		bool needReadDefaultPosValue = false;
@@ -681,7 +680,7 @@ namespace Skylicht
 			{
 				if (readState == 1 || readState == 2)
 				{
-					const wchar_t *data = xmlRead->getNodeData();
+					const wchar_t* data = xmlRead->getNodeData();
 
 					wchar_t* p = (wchar_t*)data;
 					wchar_t* begin = (wchar_t*)data;
@@ -730,7 +729,7 @@ namespace Skylicht
 		}
 	}
 
-	void CColladaAnimLoader::parseAnimationSourceNode(io::IXMLReader *xmlRead)
+	void CColladaAnimLoader::parseAnimationSourceNode(io::IXMLReader* xmlRead)
 	{
 		std::wstring jointName;
 
@@ -744,8 +743,8 @@ namespace Skylicht
 
 		int readState = 0;
 
-		float *arrayTime = NULL;
-		float *arrayFloat = NULL;
+		float* arrayTime = NULL;
+		float* arrayFloat = NULL;
 
 		bool needReadDefaultRotValue = false;
 		bool needReadDefaultPosValue = false;
@@ -756,7 +755,7 @@ namespace Skylicht
 
 		int nAnimationTags = 1;
 
-		SEntityAnim *nodeAnim = NULL;
+		SEntityAnim* nodeAnim = NULL;
 
 		while (xmlRead->read())
 		{
@@ -1152,7 +1151,7 @@ namespace Skylicht
 								}
 								else
 								{
-									CFrameData::SPositionKey &key = nodeAnim->Data.PositionKeys[i];
+									CFrameData::SPositionKey& key = nodeAnim->Data.PositionKeys[i];
 									key.position += core::vector3df(fvector[0], fvector[1], fvector[2]);
 								}
 							}
@@ -1385,7 +1384,7 @@ namespace Skylicht
 			{
 				if (readState == 1 || readState == 2)
 				{
-					const wchar_t *data = xmlRead->getNodeData();
+					const wchar_t* data = xmlRead->getNodeData();
 
 					wchar_t* p = (wchar_t*)data;
 					wchar_t* begin = (wchar_t*)data;
@@ -1434,7 +1433,7 @@ namespace Skylicht
 		}
 	}
 
-	void CColladaAnimLoader::parseDefaultValuePosition(io::IXMLReader *xmlRead, float *x, float *y, float *z)
+	void CColladaAnimLoader::parseDefaultValuePosition(io::IXMLReader* xmlRead, float* x, float* y, float* z)
 	{
 		int readState = 0;
 		*x = 0.0f;
@@ -1465,7 +1464,7 @@ namespace Skylicht
 			break;
 			case io::EXN_TEXT:
 			{
-				const wchar_t *data = xmlRead->getNodeData();
+				const wchar_t* data = xmlRead->getNodeData();
 
 				if (readState == 1)
 					swscanf(data, L"%f", x);
@@ -1488,7 +1487,7 @@ namespace Skylicht
 		};
 	}
 
-	void CColladaAnimLoader::parseDefaultValueRotate(io::IXMLReader *xmlRead, float *x, float *y, float *z, float *angle)
+	void CColladaAnimLoader::parseDefaultValueRotate(io::IXMLReader* xmlRead, float* x, float* y, float* z, float* angle)
 	{
 		int readState = 0;
 
@@ -1505,7 +1504,7 @@ namespace Skylicht
 			break;
 			case io::EXN_TEXT:
 			{
-				const wchar_t *data = xmlRead->getNodeData();
+				const wchar_t* data = xmlRead->getNodeData();
 
 				if (readState == 1)
 					swscanf(data, L"%f", x);
@@ -1528,7 +1527,7 @@ namespace Skylicht
 		};
 	}
 
-	void CColladaAnimLoader::parseSceneNode(io::IXMLReader *xmlRead)
+	void CColladaAnimLoader::parseSceneNode(io::IXMLReader* xmlRead)
 	{
 		const std::wstring sceneSectionName(L"visual_scene");
 		const std::wstring nodeSectionName(L"node");
@@ -1554,7 +1553,7 @@ namespace Skylicht
 		}
 	}
 
-	SNodeParam* CColladaAnimLoader::parseNode(io::IXMLReader *xmlRead, SNodeParam* parent)
+	SNodeParam* CColladaAnimLoader::parseNode(io::IXMLReader* xmlRead, SNodeParam* parent)
 	{
 		const std::wstring nodeSectionName(L"node");
 		const std::wstring translateSectionName(L"translate");
@@ -1565,7 +1564,7 @@ namespace Skylicht
 		const std::wstring instanceGeometrySectionName(L"instance_geometry");
 		const std::wstring instanceControllerSectionName(L"instance_controller");
 
-		SNodeParam *pNode = new SNodeParam();
+		SNodeParam* pNode = new SNodeParam();
 
 		pNode->Name = L"";
 		if (xmlRead->getAttributeValue(L"id"))
@@ -1609,7 +1608,6 @@ namespace Skylicht
 				core::matrix4 scale;
 				scale.setScale(m_unitScale);
 				m_colladaRoot->Transform *= scale;
-				m_rootScaleByUnit = true;
 			}
 
 			m_listNode.push_back(m_colladaRoot);
@@ -1679,23 +1677,6 @@ namespace Skylicht
 
 						pNode->ChildLevel = 0;
 						pNode->Parent = NULL;
-
-						if (m_unit != "meter")
-						{
-							// set unit scale this node
-							core::matrix4 scale;
-							scale.setScale(m_unitScale);
-							pNode->Transform *= scale;
-
-							// revert scale root transform
-							if (m_rootScaleByUnit == true)
-							{
-								scale.makeIdentity();
-								scale.setScale(1.0f / m_unitScale);
-								m_colladaRoot->Transform *= scale;
-								m_rootScaleByUnit = false;
-							}
-						}
 					}
 
 					// get skin mesh url
