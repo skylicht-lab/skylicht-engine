@@ -66,11 +66,11 @@ namespace Skylicht
 			{
 				CEntity* entity = entities[i];
 
-				CSelectObjectData* selectObjectData = entity->getData<CSelectObjectData>();
+				CSelectObjectData* selectObjectData = (CSelectObjectData*)entity->getDataByIndex(CSelectObjectData::DataTypeIndex);
 				if (selectObjectData == NULL)
 					selectObjectData = entity->addData<CSelectObjectData>();
 
-				CWorldInverseTransformData* worldInv = entity->getData<CWorldInverseTransformData>();
+				CWorldInverseTransformData* worldInv = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 				if (worldInv == NULL)
 					worldInv = entity->addData<CWorldInverseTransformData>();
 

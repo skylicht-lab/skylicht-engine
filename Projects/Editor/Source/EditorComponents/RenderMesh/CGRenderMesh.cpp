@@ -71,7 +71,7 @@ namespace Skylicht
 			for (size_t i = 0, n = renderers.size(); i < n; i++)
 			{
 				CEntity* entity = entityMgr->getEntity(renderers[i]->EntityIndex);
-				CSelectObjectData* selectObjectData = entity->getData<CSelectObjectData>();
+				CSelectObjectData* selectObjectData = (CSelectObjectData*)entity->getDataByIndex(CSelectObjectData::DataTypeIndex);
 				if (selectObjectData == NULL)
 					selectObjectData = entity->addData<CSelectObjectData>();
 

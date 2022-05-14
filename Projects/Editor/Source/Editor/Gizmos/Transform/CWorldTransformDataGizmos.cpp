@@ -126,7 +126,7 @@ namespace Skylicht
 		{
 			if (m_selectEntity)
 			{
-				CEntityHandleData* handler = m_selectEntity->getData<CEntityHandleData>();
+				CEntityHandleData* handler = (CEntityHandleData*)m_selectEntity->getDataByIndex(CEntityHandleData::DataTypeIndex);
 				if (handler != NULL)
 				{
 					// get owner of entity
@@ -180,7 +180,7 @@ namespace Skylicht
 				if (selectObject->getType() == CSelectObject::Entity)
 				{
 					m_selectEntity = scene->getEntityManager()->getEntityByID(m_selectID.c_str());
-					m_transform = m_selectEntity->getData<CWorldTransformData>();
+					m_transform = (CWorldTransformData*)m_selectEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 
 					core::vector3df pos, rot, scale;
 					splitMatrixData(m_transform->Relative, pos, rot, scale);
@@ -194,7 +194,7 @@ namespace Skylicht
 					if (m_transform->ParentIndex > 0)
 					{
 						CEntity* parent = scene->getEntityManager()->getEntity(m_transform->ParentIndex);
-						CWorldTransformData* parentTransform = parent->getData<CWorldTransformData>();
+						CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
 
 						m_parentWorld = parentTransform->World;
 					}

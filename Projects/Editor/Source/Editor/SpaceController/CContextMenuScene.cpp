@@ -230,7 +230,7 @@ namespace Skylicht
 					CPropertyController::getInstance()->setProperty(NULL);
 
 					// delete entity
-					CEntityHandleData* data = contextEntity->getData<CEntityHandleData>();
+					CEntityHandleData* data = (CEntityHandleData*)contextEntity->getDataByIndex(CEntityHandleData::DataTypeIndex);
 					data->Handler->removeEntity(contextEntity);
 
 					// remove GUI

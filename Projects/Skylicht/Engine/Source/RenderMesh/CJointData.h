@@ -45,14 +45,16 @@ namespace Skylicht
 		core::matrix4 DefaultAnimationMatrix;
 		core::matrix4 DefaultRelativeMatrix;
 
+		DECLARE_DATA_TYPE_INDEX;
+
 	public:
 		CJointData();
 
 		virtual ~CJointData();
 
-		virtual bool serializable(CMemoryStream *stream);
+		virtual bool serializable(CMemoryStream* stream);
 
-		virtual bool deserializable(CMemoryStream *stream);
+		virtual bool deserializable(CMemoryStream* stream);
 
 		DECLARE_GETTYPENAME(CJointData)
 	};

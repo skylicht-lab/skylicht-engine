@@ -29,6 +29,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_DATA_TYPE_INDEX(CSelectObjectData);
+
 		CSelectObjectData::CSelectObjectData() :
 			GameObject(NULL),
 			Entity(NULL)

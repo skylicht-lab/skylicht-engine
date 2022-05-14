@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_DATA_TYPE_INDEX(CEntityHandleData);
+
 	CEntityHandleData::CEntityHandleData() :
 		Handler(NULL)
 	{

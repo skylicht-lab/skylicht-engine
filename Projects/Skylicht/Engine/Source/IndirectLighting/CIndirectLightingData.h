@@ -51,6 +51,8 @@ namespace Skylicht
 
 		bool Init;
 
+		DECLARE_DATA_TYPE_INDEX;
+
 	public:
 
 		CIndirectLightingData();

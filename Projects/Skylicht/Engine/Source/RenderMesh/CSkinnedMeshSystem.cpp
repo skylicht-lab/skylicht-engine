@@ -42,12 +42,12 @@ namespace Skylicht
 		m_meshs.set_used(0);
 	}
 
-	void CSkinnedMeshSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CSkinnedMeshSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CRenderMeshData *renderer = entity->getData<CRenderMeshData>();
+		CRenderMeshData* renderer = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
 		if (renderer != NULL && renderer->isSkinnedMesh())
 		{
-			CSkinnedMesh *mesh = NULL;
+			CSkinnedMesh* mesh = NULL;
 
 			if (renderer->isSoftwareSkinning() == true)
 				mesh = dynamic_cast<CSkinnedMesh*>(renderer->getOriginalMesh());
@@ -59,18 +59,18 @@ namespace Skylicht
 		}
 	}
 
-	void CSkinnedMeshSystem::init(CEntityManager *entityManager)
+	void CSkinnedMeshSystem::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CSkinnedMeshSystem::update(CEntityManager *entityManager)
+	void CSkinnedMeshSystem::update(CEntityManager* entityManager)
 	{
 		CSkinnedMesh** meshs = m_meshs.pointer();
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
-			CSkinnedMesh *skinnedMesh = meshs[i];
+			CSkinnedMesh* skinnedMesh = meshs[i];
 
 			for (u32 j = 0, numJoint = skinnedMesh->Joints.size(); j < numJoint; j++)
 			{
@@ -79,10 +79,10 @@ namespace Skylicht
 				// gpuSkinMat = animMat * bindPoseMatrix
 				// bindPoseMatrix = invMat * bindShapMat (see collada loader)
 				// animMat = transform of joint at pos (0,0,0)
-				f32 *M = joint.SkinningMatrix;
+				f32* M = joint.SkinningMatrix;
 
-				const f32 *m1 = joint.JointData->AnimationMatrix.pointer();
-				const f32 *m2 = joint.BindPoseMatrix.pointer();
+				const f32* m1 = joint.JointData->AnimationMatrix.pointer();
+				const f32* m2 = joint.BindPoseMatrix.pointer();
 
 				// inline mul matrix
 				M[0] = m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2] + m1[12] * m2[3];

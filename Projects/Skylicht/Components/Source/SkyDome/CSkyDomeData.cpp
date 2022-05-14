@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_DATA_TYPE_INDEX(CSkyDomeData);
+
 	CSkyDomeData::CSkyDomeData() :
 		HorizontalResolution(32),
 		VerticalResolution(8),

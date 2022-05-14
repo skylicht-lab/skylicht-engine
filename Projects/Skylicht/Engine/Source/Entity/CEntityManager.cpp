@@ -155,14 +155,14 @@ namespace Skylicht
 		{
 			transformData->Name = transform->getName();
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
+			transformData->Depth = ((CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex))->Depth + 1;
 		}
 	}
 
 	void CEntityManager::updateEntityParent(CEntity* entity)
 	{
-		CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
-		CTransformComponentData* componentData = entity->getData<CTransformComponentData>();
+		CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		CTransformComponentData* componentData = (CTransformComponentData*)entity->getDataByIndex(CTransformComponentData::DataTypeIndex);
 
 		// no component
 		if (componentData->TransformComponent == NULL)
@@ -176,7 +176,7 @@ namespace Skylicht
 		if (parent != NULL)
 		{
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = parent->getData<CWorldTransformData>()->Depth + 1;
+			transformData->Depth = ((CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex))->Depth + 1;
 		}
 		else
 		{

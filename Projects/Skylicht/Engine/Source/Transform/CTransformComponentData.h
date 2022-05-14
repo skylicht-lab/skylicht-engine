@@ -33,7 +33,8 @@ namespace Skylicht
 	class CTransformComponentData : public IEntityData
 	{
 	public:
-		CTransform *TransformComponent;
+		CTransform* TransformComponent;
+		DECLARE_DATA_TYPE_INDEX;
 
 	public:
 		CTransformComponentData();

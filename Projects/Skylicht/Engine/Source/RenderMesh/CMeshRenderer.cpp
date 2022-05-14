@@ -49,9 +49,9 @@ namespace Skylicht
 		m_indirectLightings.set_used(0);
 	}
 
-	void CMeshRenderer::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CMeshRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CRenderMeshData *meshData = entity->getData<CRenderMeshData>();
+		CRenderMeshData* meshData = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
 		if (meshData != NULL)
 		{
 			if (meshData->getMesh() == NULL)
@@ -64,15 +64,15 @@ namespace Skylicht
 			bool cullingVisible = true;
 
 			// get culling result from CCullingSystem
-			CCullingData *cullingData = entity->getData<CCullingData>();
+			CCullingData* cullingData = (CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex);
 			if (cullingData != NULL)
 				cullingVisible = cullingData->Visible;
 
 			// only render visible culling mesh
 			if (cullingVisible == true)
 			{
-				CWorldTransformData *transform = entity->getData<CWorldTransformData>();
-				CIndirectLightingData *indirect = entity->getData<CIndirectLightingData>();
+				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CIndirectLightingData* indirect = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
 
 				if (transform != NULL)
 				{
@@ -84,32 +84,32 @@ namespace Skylicht
 		}
 	}
 
-	void CMeshRenderer::init(CEntityManager *entityManager)
+	void CMeshRenderer::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CMeshRenderer::update(CEntityManager *entityManager)
+	void CMeshRenderer::update(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CMeshRenderer::render(CEntityManager *entityManager)
+	void CMeshRenderer::render(CEntityManager* entityManager)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		CRenderMeshData** meshs = m_meshs.pointer();
 		CWorldTransformData** transforms = m_transforms.pointer();
 		CIndirectLightingData** indirectLighting = m_indirectLightings.pointer();
 
-		IRenderPipeline *rp = entityManager->getRenderPipeline();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
-			CRenderMeshData *meshData = m_meshs[i];
-			CMesh *mesh = meshData->getMesh();
+			CRenderMeshData* meshData = m_meshs[i];
+			CMesh* mesh = meshData->getMesh();
 
-			CIndirectLightingData *lightingData = indirectLighting[i];
+			CIndirectLightingData* lightingData = indirectLighting[i];
 			if (lightingData != NULL)
 			{
 				if (lightingData->Type == CIndirectLightingData::SH9)

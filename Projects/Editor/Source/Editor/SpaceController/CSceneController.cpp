@@ -376,8 +376,8 @@ namespace Skylicht
 			std::vector<CEntity*>& entities = entityHandler->getEntities();
 			for (CEntity* entity : entities)
 			{
-				CWorldTransformData* worldData = entity->getData<CWorldTransformData>();
-				CRenderMeshData* renderData = entity->getData<CRenderMeshData>();
+				CWorldTransformData* worldData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CRenderMeshData* renderData = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
 
 				CHierachyNode* parentNode = treeNodes[worldData->ParentIndex];
 
@@ -914,7 +914,7 @@ namespace Skylicht
 					if (entity != NULL)
 					{
 						// delete entity
-						CEntityHandleData* data = entity->getData<CEntityHandleData>();
+						CEntityHandleData* data = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
 						if (data != NULL)
 						{
 							CEntityHandler* handler = data->Handler;
@@ -998,7 +998,7 @@ namespace Skylicht
 					CEntity* entity = m_scene->getEntityManager()->getEntityByID(lastSelected->getID().c_str());
 					if (entity != NULL)
 					{
-						CEntityHandleData* data = entity->getData<CEntityHandleData>();
+						CEntityHandleData* data = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
 
 						CGameObject* gameObject = data->Handler->getGameObject();
 						if (gameObject != NULL)

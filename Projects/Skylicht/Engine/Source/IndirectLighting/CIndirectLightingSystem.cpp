@@ -49,11 +49,11 @@ namespace Skylicht
 
 	void CIndirectLightingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CIndirectLightingData* lightData = entity->getData<CIndirectLightingData>();
+		CIndirectLightingData* lightData = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
 		if (lightData != NULL &&
 			*lightData->AutoSH && (lightData->Type == CIndirectLightingData::SH4 || lightData->Type == CIndirectLightingData::SH9))
 		{
-			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			if (transformData->NeedValidate || lightData->Init)
 			{
 				m_entities.push_back(lightData);
@@ -61,12 +61,12 @@ namespace Skylicht
 			}
 		}
 
-		CLightProbeData* probeData = entity->getData<CLightProbeData>();
+		CLightProbeData* probeData = (CLightProbeData*)entity->getDataByIndex(CLightProbeData::DataTypeIndex);
 		if (probeData != NULL)
 		{
 			m_probes.push_back(probeData);
 
-			CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			m_probePositions.push_back(transformData);
 
 			if (transformData->NeedValidate)

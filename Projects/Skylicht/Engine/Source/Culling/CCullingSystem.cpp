@@ -53,11 +53,11 @@ namespace Skylicht
 
 	void CCullingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CCullingData* culling = entity->getData<CCullingData>();
+		CCullingData* culling = (CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex);
 		if (culling == NULL)
 			return;
 
-		CVisibleData* visible = entity->getData<CVisibleData>();
+		CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
 		if (visible != NULL)
 			culling->CullingLayer = visible->CullingLayer;
 		else
@@ -69,11 +69,11 @@ namespace Skylicht
 		}
 		else if (culling != NULL)
 		{
-			CRenderMeshData* mesh = entity->getData<CRenderMeshData>();
+			CRenderMeshData* mesh = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
 			if (mesh != NULL)
 			{
-				CWorldTransformData* transform = entity->getData<CWorldTransformData>();
-				CWorldInverseTransformData* invTransform = entity->getData<CWorldInverseTransformData>();
+				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CWorldInverseTransformData* invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 
 				if (transform != NULL)
 				{
@@ -94,11 +94,11 @@ namespace Skylicht
 			}
 			else
 			{
-				CCullingBBoxData* bbox = entity->getData<CCullingBBoxData>();
+				CCullingBBoxData* bbox = (CCullingBBoxData*)entity->getDataByIndex(CCullingBBoxData::DataTypeIndex);
 				if (bbox != NULL)
 				{
-					CWorldTransformData* transform = entity->getData<CWorldTransformData>();
-					CWorldInverseTransformData* invTransform = entity->getData<CWorldInverseTransformData>();
+					CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+					CWorldInverseTransformData* invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 
 					m_cullings.push_back(culling);
 

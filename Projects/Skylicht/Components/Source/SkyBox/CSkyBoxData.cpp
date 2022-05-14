@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_DATA_TYPE_INDEX(CSkyBoxData);
+
 	CSkyBoxData::CSkyBoxData() :
 		Front(NULL),
 		Left(NULL),

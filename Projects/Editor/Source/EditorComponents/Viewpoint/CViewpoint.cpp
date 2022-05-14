@@ -57,7 +57,7 @@ namespace Skylicht
 
 		CViewpointData* CViewpoint::getViewpointData()
 		{
-			return m_gameObject->getEntity()->getData<CViewpointData>();
+			return (CViewpointData*)m_gameObject->getEntity()->getDataByIndex(CViewpointData::DataTypeIndex);
 		}
 	}
 }

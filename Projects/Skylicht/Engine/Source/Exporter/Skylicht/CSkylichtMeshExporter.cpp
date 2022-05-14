@@ -41,12 +41,12 @@ namespace Skylicht
 
 	}
 
-	bool CSkylichtMeshExporter::exportModel(CEntity** entities, u32 count, const char *output)
+	bool CSkylichtMeshExporter::exportModel(CEntity** entities, u32 count, const char* output)
 	{
-		IrrlichtDevice *device = getIrrlichtDevice();
-		io::IFileSystem *fs = device->getFileSystem();
+		IrrlichtDevice* device = getIrrlichtDevice();
+		io::IFileSystem* fs = device->getFileSystem();
 
-		io::IWriteFile *writeFile = fs->createAndWriteFile(output);
+		io::IWriteFile* writeFile = fs->createAndWriteFile(output);
 		if (writeFile == NULL)
 			return false;
 
@@ -80,14 +80,17 @@ namespace Skylicht
 			{
 				memoryData.resetWrite();
 
-				IEntityData* data = entity->getData(j);
+				IEntityData* data = entity->getDataByIndex(j);
+				if (data == NULL)
+					continue;
+
 				std::string typeName = data->getTypeName();
 
 				if (typeName == "IEntityData")
 				{
 #if _DEBUG
 					char log[512];
-                    sprintf(log, "[CSkylichtMeshExporter::exportModel] entity: %d - dont declare getTypeName in: %s", i, typeid(*data).name());
+					sprintf(log, "[CSkylichtMeshExporter::exportModel] entity: %d - dont declare getTypeName in: %s", i, typeid(*data).name());
 					os::Printer::log(log);
 #endif
 					continue;

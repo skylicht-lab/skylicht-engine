@@ -29,6 +29,8 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CJointData);
 
+	IMPLEMENT_DATA_TYPE_INDEX(CJointData);
+
 	CJointData::CJointData() :
 		BoneRoot(false),
 		RootIndex(-1)

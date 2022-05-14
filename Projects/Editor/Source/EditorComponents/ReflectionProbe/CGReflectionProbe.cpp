@@ -62,11 +62,11 @@ namespace Skylicht
 			CEntityManager* entityMgr = m_gameObject->getEntityManager();
 			CEntity* entity = m_gameObject->getEntity();
 
-			CSelectObjectData* selectObjectData = entity->getData<CSelectObjectData>();
+			CSelectObjectData* selectObjectData = (CSelectObjectData*)entity->getDataByIndex(CSelectObjectData::DataTypeIndex);
 			if (selectObjectData == NULL)
 				selectObjectData = entity->addData<CSelectObjectData>();
 
-			CWorldInverseTransformData* worldInv = entity->getData<CWorldInverseTransformData>();
+			CWorldInverseTransformData* worldInv = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 			if (worldInv == NULL)
 				worldInv = entity->addData<CWorldInverseTransformData>();
 

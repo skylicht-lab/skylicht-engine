@@ -46,14 +46,16 @@ namespace Skylicht
 
 		u32 CullingLayer;
 
+		DECLARE_DATA_TYPE_INDEX;
+
 	public:
 		CCullingData();
 
 		virtual ~CCullingData();
 
-		virtual bool serializable(CMemoryStream *stream);
+		virtual bool serializable(CMemoryStream* stream);
 
-		virtual bool deserializable(CMemoryStream *stream);
+		virtual bool deserializable(CMemoryStream* stream);
 
 		DECLARE_GETTYPENAME(CCullingData);
 	};

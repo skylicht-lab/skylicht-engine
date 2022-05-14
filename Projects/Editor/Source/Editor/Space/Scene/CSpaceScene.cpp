@@ -638,8 +638,10 @@ namespace Skylicht
 
 				if (m_viewpointRP == NULL)
 				{
-					m_viewpointRP = new CForwardRP(false);
-					m_viewpointRP->initRender(w, h);
+					CForwardRP* vpRP = new CForwardRP(false);
+					vpRP->enableUpdateEntity(false);
+					vpRP->initRender(w, h);
+					m_viewpointRP = vpRP;
 				}
 				else
 				{
