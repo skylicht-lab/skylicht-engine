@@ -1028,7 +1028,7 @@ namespace irr
 				os::Printer::log("Fatal Error: This is not texture 2D.", ELL_ERROR);
 				return false;
 			}
-			
+
 			CD3D11Texture* tex = static_cast<CD3D11Texture*>(texture);
 
 			// check if we should set the previous RT back
@@ -1048,6 +1048,8 @@ namespace irr
 					Context->VSSetShaderResources(i, 1, views);
 					Context->PSSetShaderResources(i, 1, views);
 				}
+				ResetRenderStates = true;
+				RendererTransformChanged = true;
 
 				CurrentBackBuffer = tex->getRenderTargetView();
 				CurrentDepthBuffer = tex->DepthSurface->Surface;
@@ -1593,7 +1595,6 @@ namespace irr
 				return false;
 
 			DepthStencilDesc.StencilEnable = false;
-			ResetRenderStates = true;
 
 			bool shaderChanged = Material.MaterialType != LastMaterial.MaterialType;
 			s32 numMaterialRenderers = (s32)MaterialRenderers.size();
@@ -1607,12 +1608,12 @@ namespace irr
 
 				// set new material.
 				if (Material.MaterialType >= 0 && Material.MaterialType < numMaterialRenderers)
-					MaterialRenderers[Material.MaterialType].Renderer->OnSetMaterial(Material, LastMaterial, ResetRenderStates, this);
+					MaterialRenderers[Material.MaterialType].Renderer->OnSetMaterial(Material, LastMaterial, true, this);
+
+				BridgeCalls->setShaderResources(SamplerDesc, CurrentTexture);
 
 				LastMaterial = Material;
 			}
-
-			BridgeCalls->setShaderResources(SamplerDesc, CurrentTexture);
 
 			bool shaderOK = true;
 			if (Material.MaterialType >= 0 &&
