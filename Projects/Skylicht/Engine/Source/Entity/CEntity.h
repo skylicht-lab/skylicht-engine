@@ -225,9 +225,9 @@ namespace Skylicht
 		if (index >= m_data.size())
 			return false;
 
-		if (data[i])
+		if (m_data[i])
 		{
-			delete data[i];
+			delete m_data[i];
 			m_data[i] = NULL;
 			return true;
 		}
