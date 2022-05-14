@@ -147,6 +147,7 @@ namespace Skylicht
 		core::quaternion q(rotationMatrix);
 		q.toEuler(m_rotation);
 
+		m_rotation = m_rotation * core::RADTODEG;
 		m_position = mat.getTranslation();
 		m_scale = mat.getScale();
 

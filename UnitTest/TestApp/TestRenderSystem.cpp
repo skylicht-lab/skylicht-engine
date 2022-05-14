@@ -4,6 +4,8 @@
 
 bool g_passEntityDataDestructor = false;
 
+IMPLEMENT_DATA_TYPE_INDEX(CTestEntityData)
+
 CTestEntityData::CTestEntityData()
 	:TestMesh(NULL)
 {
@@ -22,7 +24,7 @@ CTestEntityData::~CTestEntityData()
 
 void CTestEntityData::initCubeMesh(float size)
 {
-	ISceneManager *sceneManager = getIrrlichtDevice()->getSceneManager();
+	ISceneManager* sceneManager = getIrrlichtDevice()->getSceneManager();
 	TestMesh = sceneManager->getGeometryCreator()->createCubeMesh(core::vector3df(size));
 }
 
@@ -52,12 +54,13 @@ void CTestRenderSystem::beginQuery(CEntityManager* entityManager)
 	g_passSystemBeginQuery = true;
 }
 
-void CTestRenderSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+void CTestRenderSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 {
-	CTestEntityData *testEntity = entity->getData<CTestEntityData>();
+	CTestEntityData* testEntity = entity->getData<CTestEntityData>();
 	if (testEntity != NULL)
 	{
-		CWorldTransformData *testTransform = entity->getData<CWorldTransformData>();
+		CWorldTransformData* testTransform = dynamic_cast<CWorldTransformData*>(entity->getDataByIndex(CWorldTransformData::DataTypeIndex));
+
 		if (testEntity != NULL && testTransform != NULL)
 		{
 			m_testEntities.push_back(testEntity);
@@ -68,25 +71,25 @@ void CTestRenderSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
 	}
 }
 
-void CTestRenderSystem::init(CEntityManager *entityManager)
+void CTestRenderSystem::init(CEntityManager* entityManager)
 {
 	g_passSystemInit = true;
 }
 
-void CTestRenderSystem::update(CEntityManager *entityManager)
+void CTestRenderSystem::update(CEntityManager* entityManager)
 {
 	g_passSystemUpdate = true;
 }
 
-void CTestRenderSystem::render(CEntityManager *entityManager)
+void CTestRenderSystem::render(CEntityManager* entityManager)
 {
-	IVideoDriver *driver = getVideoDriver();
+	IVideoDriver* driver = getVideoDriver();
 
 	for (int i = 0, n = (int)m_testEntities.size(); i < n; i++)
 	{
 		driver->setTransform(video::ETS_WORLD, m_testTransforms[i]->World);
 
-		IMesh *mesh = m_testEntities[i]->TestMesh;
+		IMesh* mesh = m_testEntities[i]->TestMesh;
 		if (mesh == NULL)
 			continue;
 
