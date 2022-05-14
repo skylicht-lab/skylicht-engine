@@ -227,6 +227,8 @@ namespace Skylicht
 				addEditorIcon(ESystemIcon::Scale, "tool_scale.png");
 				addEditorIcon(ESystemIcon::ViewSelect, "view_select.png");
 				addEditorIcon(ESystemIcon::ViewHand, "view_hand.png");
+				addEditorIcon(ESystemIcon::Axis, "axis.png");
+				addEditorIcon(ESystemIcon::OriginXYZ, "origin_xyz.png");
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char* name)
