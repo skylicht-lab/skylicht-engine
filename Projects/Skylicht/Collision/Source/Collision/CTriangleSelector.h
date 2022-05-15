@@ -42,7 +42,9 @@ namespace Skylicht
 
 		virtual ~CTriangleSelector();
 
-		virtual void getTriangles(core::triangle3df* triangles, const core::matrix4* transform);
+		virtual void init() = 0;
+
+		virtual void getTriangles(core::triangle3df* triangles);
 
 		virtual const core::aabbox3df& getBBox();
 

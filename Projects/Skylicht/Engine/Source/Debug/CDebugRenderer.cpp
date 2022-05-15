@@ -68,6 +68,8 @@ namespace Skylicht
 		IVideoDriver* videoDriver = getVideoDriver();
 		CSceneDebug* debug = CSceneDebug::getInstance();
 
+		m_drawData->clearBuffer();
+
 		for (int i = 0, n = debug->getLinesCount(); i < n; i++)
 		{
 			const CSceneDebug::SLineDebug& line = debug->getLine(i);
@@ -84,7 +86,7 @@ namespace Skylicht
 		{
 			core::vector3df normal = debug->getTri(i).tri.getNormal();
 			normal.normalize();
-			normal *= 2.0f;
+			normal *= 0.02f; // move 2cm to fix the depth
 
 			core::vector3df a = debug->getTri(i).tri.pointA + normal;
 			core::vector3df b = debug->getTri(i).tri.pointB + normal;
@@ -104,6 +106,9 @@ namespace Skylicht
 
 		m_drawData->updateBuffer();
 
+		// reset world transform
+		videoDriver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
+
 		IMeshBuffer* buffer = m_drawData->LineBuffer;
 		if (buffer->getPrimitiveCount() > 0)
 		{
@@ -112,6 +117,5 @@ namespace Skylicht
 		}
 
 		debug->clear();
-		m_drawData->clearBuffer();
 	}
 }

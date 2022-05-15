@@ -24,53 +24,21 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CCollisionBuilder.h"
+#include "CTriangleSelector.h"
 
 namespace Skylicht
 {
-	class COctreeBuilder : public CCollisionBuilder
+	class CMeshTriangleSelector : public CTriangleSelector
 	{
-	protected:
-		COctreeNode* m_root;
-
-		u32 m_minimalPolysPerNode;
-
-		core::array<core::triangle3df*> m_triangles;
-		core::array<CCollisionNode*> m_collisions;
-
 	public:
-		COctreeBuilder();
+		CMeshTriangleSelector(CEntity* entity);
 
-		virtual ~COctreeBuilder();
+		virtual ~CMeshTriangleSelector();
 
-		virtual void build();
+		virtual void init();
 
-		virtual void clear();
+		virtual const core::aabbox3df& getBBox();
 
-		void drawDebug();
-
-	public:
-
-		virtual bool getCollisionPoint(
-			const core::line3d<f32>& ray,
-			f32& outBestDistanceSquared,
-			core::vector3df& outIntersection,
-			core::triangle3df& outTriangle,
-			CCollisionNode*& outNode);
-
-
-
-	protected:
-
-		void constructOctree(COctreeNode* node);
-
-		void getTrianglesFromOctree(
-			core::array<core::triangle3df*>& listTriangle,
-			core::array<CCollisionNode*>& listCollisions,
-			COctreeNode* node,
-			const core::vector3df& midLine,
-			const core::vector3df& lineVect,
-			float halfLength,
-			const core::aabbox3df& box);
+		void updateFromMeshBuffer(const IMeshBuffer* meshBuffer, u32& triangleCount);
 	};
 }
