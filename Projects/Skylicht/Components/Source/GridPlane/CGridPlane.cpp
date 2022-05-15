@@ -38,7 +38,8 @@ namespace Skylicht
 
 	CGridPlane::~CGridPlane()
 	{
-
+		if (m_gameObject)
+			m_gameObject->getEntity()->removeData<CGridPlaneData>();
 	}
 
 	void CGridPlane::initComponent()

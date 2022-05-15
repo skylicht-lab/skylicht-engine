@@ -63,6 +63,11 @@ namespace Skylicht
 			{
 				m_name = name;
 			}
+
+		protected:
+
+			void updateData();
+
 		};
 	}
 }

@@ -39,7 +39,8 @@ namespace Skylicht
 
 	CSprite::~CSprite()
 	{
-
+		if (m_gameObject)
+			m_gameObject->getEntity()->removeData<CSpriteDrawData>();
 	}
 
 	void CSprite::initComponent()

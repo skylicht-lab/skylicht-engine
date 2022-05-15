@@ -46,6 +46,9 @@ namespace Skylicht
 	{
 		if (m_depth != NULL)
 			getVideoDriver()->removeTexture(m_depth);
+
+		if (m_gameObject)
+			m_gameObject->getEntity()->removeData<CLightCullingData>();
 	}
 
 	void CPointLight::initComponent()

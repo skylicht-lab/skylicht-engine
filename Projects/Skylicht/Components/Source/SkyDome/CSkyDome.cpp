@@ -47,6 +47,8 @@ namespace Skylicht
 
 	CSkyDome::~CSkyDome()
 	{
+		if (m_gameObject)
+			m_gameObject->getEntity()->removeData<CSkyDomeData>();
 	}
 
 	void CSkyDome::initComponent()

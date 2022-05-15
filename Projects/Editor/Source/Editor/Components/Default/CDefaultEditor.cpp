@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDefaultEditor.h"
 
 #include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/SpaceController/CSceneController.h"
+
 #include "GameObject/CGameObject.h"
 #include "Utils/CStringImp.h"
 
@@ -102,7 +104,7 @@ namespace Skylicht
 						subject->addObserver(new CObserver([&, value, s = subject](ISubject* subject, IObserver* from)
 							{
 								value->set(s->get());
-								m_component->loadSerializable(m_data);
+								updateData();
 							}), true);
 
 						ui->addCheckBox(layout, ui->getPrettyName(value->Name), subject);
@@ -123,7 +125,7 @@ namespace Skylicht
 									float v = s->get();
 									value->set(v);
 									s->set(v);
-									m_component->loadSerializable(m_data);
+									updateData();
 								}
 							};
 							subject->addObserver(observer, true);
@@ -159,7 +161,7 @@ namespace Skylicht
 										s->notify(o);
 									}
 
-									m_component->loadSerializable(m_data);
+									updateData();
 								}
 							};
 							subject->addObserver(observer, true);
@@ -198,7 +200,7 @@ namespace Skylicht
 									s->notify(o);
 								}
 
-								m_component->loadSerializable(m_data);
+								updateData();
 							}
 						};
 						subject->addObserver(observer, true);
@@ -231,7 +233,7 @@ namespace Skylicht
 									s->notify(o);
 								}
 
-								m_component->loadSerializable(m_data);
+								updateData();
 							}
 						};
 						subject->addObserver(observer, true);
@@ -253,7 +255,7 @@ namespace Skylicht
 								const std::wstring& stringValue = s->get();
 								std::string stringValueA = CStringImp::convertUnicodeToUTF8(stringValue.c_str());
 								value->set(stringValueA);
-								m_component->loadSerializable(m_data);
+								updateData();
 							}
 						};
 
@@ -272,7 +274,7 @@ namespace Skylicht
 							{
 								const std::wstring& stringValue = s->get();
 								value->set(stringValue);
-								m_component->loadSerializable(m_data);
+								updateData();
 							}
 						};
 
@@ -291,7 +293,7 @@ namespace Skylicht
 							{
 								const SColor& color = s->get();
 								value->set(color);
-								m_component->loadSerializable(m_data);
+								updateData();
 							}
 						};
 
@@ -310,7 +312,7 @@ namespace Skylicht
 							{
 								const std::string& path = s->get();
 								value->set(path);
-								m_component->loadSerializable(m_data);
+								updateData();
 							}
 						};
 
@@ -329,7 +331,7 @@ namespace Skylicht
 							{
 								const std::string& path = s->get();
 								value->set(path);
-								m_component->loadSerializable(m_data);
+								updateData();
 							}
 						};
 
@@ -362,7 +364,7 @@ namespace Skylicht
 							item->OnPress = [&, item, enumValue, dropBox, ui](GUI::CBase* base)
 							{
 								enumValue->setIntValue(item->getTagInt());
-								m_component->loadSerializable(m_data);
+								updateData();
 								dropBox->setLabel(item->getLabel());
 								ui->getWindow()->getCanvas()->closeMenu();
 							};
@@ -374,6 +376,12 @@ namespace Skylicht
 
 				group->setExpand(true);
 			}
+		}
+
+		void CDefaultEditor::updateData()
+		{
+			m_component->loadSerializable(m_data);
+			CSceneController::getInstance()->updateTreeNode(m_component->getGameObject());
 		}
 
 		void CDefaultEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
