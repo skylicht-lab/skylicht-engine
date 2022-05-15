@@ -5,26 +5,29 @@
 #include "LightProbes/CLightProbe.h"
 #include "Lightmapper/CLightmapper.h"
 
+#include "Collision/CCollisionManager.h"
+
 using namespace Lightmapper;
 
 class CContext : public CGameSingleton<CContext>
 {
 protected:
-	CScene *m_scene;
+	CScene* m_scene;
 
-	CZone *m_zone;
-	CCamera *m_camera;
-	CCamera *m_guiCamera;
+	CZone* m_zone;
+	CCamera* m_camera;
+	CCamera* m_guiCamera;
+	CCollisionManager* m_collisionMgr;
 
-	CDirectionalLight *m_directionalLight;
+	CDirectionalLight* m_directionalLight;
 	std::vector<CPointLight*> m_pointLights;
 	std::vector<CLightProbe*> m_probes;
 
-	CBaseRP *m_beginRP;
-	CDeferredRP	*m_rendering;
-	CShadowMapRP *m_shadowMapRendering;
-	CForwardRP *m_forwardRP;
-	CPostProcessorRP *m_postProcessor;
+	CBaseRP* m_beginRP;
+	CDeferredRP* m_rendering;
+	CShadowMapRP* m_shadowMapRendering;
+	CForwardRP* m_forwardRP;
+	CPostProcessorRP* m_postProcessor;
 
 public:
 	CContext();
@@ -37,12 +40,17 @@ public:
 
 	void resize(int w, int h);
 
+	CCollisionManager* getCollisionManager()
+	{
+		return m_collisionMgr;
+	}
+
 	inline CScene* getScene()
 	{
 		return m_scene;
 	}
 
-	inline void setCustomRP(CBaseRP *rp)
+	inline void setCustomRP(CBaseRP* rp)
 	{
 		m_beginRP = rp;
 	}
@@ -72,7 +80,7 @@ public:
 		return m_forwardRP;
 	}
 
-	inline void setActiveZone(CZone *zone)
+	inline void setActiveZone(CZone* zone)
 	{
 		m_zone = zone;
 	}
@@ -84,7 +92,7 @@ public:
 
 	void updateDirectionLight();
 
-	void setDirectionalLight(CDirectionalLight *light);
+	void setDirectionalLight(CDirectionalLight* light);
 
 	void setPointLight(std::vector<CPointLight*> pointLight);
 
@@ -98,7 +106,7 @@ public:
 		return m_directionalLight;
 	}
 
-	inline void setActiveCamera(CCamera *camera)
+	inline void setActiveCamera(CCamera* camera)
 	{
 		m_camera = camera;
 	}
@@ -118,7 +126,7 @@ public:
 		return m_camera;
 	}
 
-	inline void setGUICamera(CCamera *camera)
+	inline void setGUICamera(CCamera* camera)
 	{
 		m_guiCamera = camera;
 	}

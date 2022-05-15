@@ -24,19 +24,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CTriangleSelector.h"
+#include "Utils/CGameSingleton.h"
+#include "CCollisionNode.h"
+#include "COctreeNode.h"
+#include "COctreeBuilder.h"
 
 namespace Skylicht
 {
-	class CTriangleBB : public CTriangleSelector
+	class CCollisionManager : public COctreeBuilder
 	{
 	public:
-		CTriangleBB(CEntity* entity, const core::aabbox3df& bbox);
+		CCollisionManager();
 
-		virtual ~CTriangleBB();
+		virtual ~CCollisionManager();
 
-		virtual void getTriangles(core::triangle3df* triangles, const core::matrix4* transform);
-
-		virtual const core::aabbox3df& getBBox();
+		bool addOctreeCollision(CGameObject* gameobject);
 	};
 }

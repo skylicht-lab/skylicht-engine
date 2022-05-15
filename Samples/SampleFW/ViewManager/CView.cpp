@@ -46,11 +46,6 @@ void CView::onPostRender()
 
 }
 
-void CView::onEvent(const SEvent& event)
-{
-
-}
-
 void CView::onResume()
 {
 
