@@ -139,6 +139,8 @@ namespace Skylicht
 				gameObject->removeComponent(component);
 			}
 
+			CSceneController::getInstance()->updateTreeNode(gameObject);
+
 			getEditor()->refresh();
 		}
 

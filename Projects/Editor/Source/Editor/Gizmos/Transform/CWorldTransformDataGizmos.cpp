@@ -180,27 +180,30 @@ namespace Skylicht
 				if (selectObject->getType() == CSelectObject::Entity)
 				{
 					m_selectEntity = scene->getEntityManager()->getEntityByID(m_selectID.c_str());
-					m_transform = (CWorldTransformData*)m_selectEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-
-					core::vector3df pos, rot, scale;
-					splitMatrixData(m_transform->Relative, pos, rot, scale);
-
-					m_position = pos;
-					m_rotation = rot;
-					m_scale = scale;
-
-					changed = false;
-
-					if (m_transform->ParentIndex > 0)
+					if (m_selectEntity != NULL)
 					{
-						CEntity* parent = scene->getEntityManager()->getEntity(m_transform->ParentIndex);
-						CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+						m_transform = (CWorldTransformData*)m_selectEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 
-						m_parentWorld = parentTransform->World;
-					}
-					else
-					{
-						m_parentWorld = core::IdentityMatrix;
+						core::vector3df pos, rot, scale;
+						splitMatrixData(m_transform->Relative, pos, rot, scale);
+
+						m_position = pos;
+						m_rotation = rot;
+						m_scale = scale;
+
+						changed = false;
+
+						if (m_transform->ParentIndex > 0)
+						{
+							CEntity* parent = scene->getEntityManager()->getEntity(m_transform->ParentIndex);
+							CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+
+							m_parentWorld = parentTransform->World;
+						}
+						else
+						{
+							m_parentWorld = core::IdentityMatrix;
+						}
 					}
 				}
 
