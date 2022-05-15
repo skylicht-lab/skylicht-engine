@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "COctreeBuilder.h"
 
+#include "Debug/CSceneDebug.h"
+
 namespace Skylicht
 {
 	COctreeBuilder::COctreeBuilder() :
@@ -105,13 +107,35 @@ namespace Skylicht
 		os::Printer::log(tmp, ELL_INFORMATION);
 	}
 
+	void COctreeBuilder::drawDebug()
+	{
+		std::queue<COctreeNode*> nodes;
+		nodes.push(m_root);
+
+		while (nodes.size() > 0)
+		{
+			COctreeNode* node = nodes.front();
+			nodes.pop();
+
+			CSceneDebug::getInstance()->addBoudingBox(node->Box, SColor(255, 255, 0, 0));
+
+			for (u32 i = 0; i != 8; ++i)
+			{
+				if (node->Childs[i])
+				{
+					nodes.push(node->Childs[i]);
+				}
+			}
+		}
+	}
+
 	void COctreeBuilder::constructOctree(COctreeNode* node)
 	{
 		const core::vector3df& middle = node->Box.getCenter();
 		core::vector3df edges[8];
 		node->Box.getEdges(edges);
 
-		core::aabbox3d<f32> box;
+		core::aabbox3d<f32> childOctreeBox;
 		core::array<int> keepTriangles;
 		core::array<CCollisionNode*> keepCollisions;
 
@@ -120,20 +144,22 @@ namespace Skylicht
 		{
 			for (s32 ch = 0; ch < 8; ++ch)
 			{
-				box.reset(middle);
-				box.addInternalPoint(edges[ch]);
+				childOctreeBox.reset(middle);
+				childOctreeBox.addInternalPoint(edges[ch]);
 
 				node->Childs[ch] = new COctreeNode();
 
 				// step 1 new child octree
-				COctreeNode* currentNode = node->Childs[ch];
-				currentNode->Parent = node;
-				currentNode->OctreeBox = box;
-				currentNode->Level = node->Level + 1;
+				COctreeNode* childNode = node->Childs[ch];
+				childNode->Parent = node;
+				childNode->OctreeBox = childOctreeBox;
+				childNode->Level = node->Level + 1;
 
 				s32 numTri = (s32)node->Triangles.size();
 
-				// step 2 collect triangle in side the child
+				bool first = true;
+
+				// step 2 collect triangle inside the child
 				for (s32 i = 0; i < numTri; ++i)
 				{
 					int triID = node->Triangles[i];
@@ -142,23 +168,24 @@ namespace Skylicht
 					core::triangle3df* triangles = collision->Triangles.pointer();
 					core::triangle3df* tri = &triangles[triID];
 
-					if (tri->isTotalOutsideBox(box) == false && tri->isTotalInsideBox(node->OctreeBox) == true)
+					if (tri->isTotalInsideBox(childNode->OctreeBox))
 					{
 						// move triangles to child
-						currentNode->Triangles.push_back(triID);
-						currentNode->Collisions.push_back(collision);
+						childNode->Triangles.push_back(triID);
+						childNode->Collisions.push_back(collision);
 
-						if (i == 0)
+						if (first)
 						{
-							currentNode->Box.reset(tri->pointA);
-							currentNode->Box.addInternalPoint(tri->pointB);
-							currentNode->Box.addInternalPoint(tri->pointC);
+							childNode->Box.reset(tri->pointA);
+							childNode->Box.addInternalPoint(tri->pointB);
+							childNode->Box.addInternalPoint(tri->pointC);
+							first = false;
 						}
 						else
 						{
-							currentNode->Box.addInternalPoint(tri->pointA);
-							currentNode->Box.addInternalPoint(tri->pointB);
-							currentNode->Box.addInternalPoint(tri->pointC);
+							childNode->Box.addInternalPoint(tri->pointA);
+							childNode->Box.addInternalPoint(tri->pointB);
+							childNode->Box.addInternalPoint(tri->pointC);
 						}
 					}
 					else
@@ -185,7 +212,7 @@ namespace Skylicht
 				keepTriangles.clear();
 				keepCollisions.clear();
 
-				if (currentNode->Triangles.empty())
+				if (childNode->Triangles.empty())
 				{
 					// if no triangle
 					delete node->Childs[ch];

@@ -73,6 +73,8 @@ namespace Skylicht
 	void CSkyBoxRender::update(CEntityManager* entityManager)
 	{
 		CCamera* camera = entityManager->getCamera();
+		if (camera == NULL)
+			return;
 
 		core::vector3df cameraPosition = camera->getGameObject()->getPosition();
 		float cameraFar = camera->getFarValue();

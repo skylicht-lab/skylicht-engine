@@ -23,8 +23,6 @@ public:
 
 	virtual void onPostRender();
 
-	virtual void onEvent(const SEvent& event);
-
 	virtual void onResume();
 
 	virtual void onPause();

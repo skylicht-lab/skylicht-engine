@@ -23,50 +23,55 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CTriangleSelector.h"
+#include "CBBTriangleSelector.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	CTriangleSelector::CTriangleSelector(CEntity* entity) :
-		m_entity(entity)
+	CBBTriangleSelector::CBBTriangleSelector(CEntity* entity) :
+		CTriangleSelector(entity)
+	{
+		init();
+	}
+
+	CBBTriangleSelector::~CBBTriangleSelector()
 	{
 
 	}
 
-	CTriangleSelector::~CTriangleSelector()
+	void CBBTriangleSelector::init()
 	{
+		CRenderMeshData* renderMeshData = (CRenderMeshData*)m_entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
+		CMesh* mesh = renderMeshData->getMesh();
 
+		m_triangles.set_used(12);
+		m_bbox = mesh->getBoundingBox();
+
+		core::vector3df edges[8];
+		m_bbox.getEdges(edges);
+
+		m_triangles[0].set(edges[3], edges[0], edges[2]);
+		m_triangles[1].set(edges[3], edges[1], edges[0]);
+
+		m_triangles[2].set(edges[3], edges[2], edges[7]);
+		m_triangles[3].set(edges[7], edges[2], edges[6]);
+
+		m_triangles[4].set(edges[7], edges[6], edges[4]);
+		m_triangles[5].set(edges[5], edges[7], edges[4]);
+
+		m_triangles[6].set(edges[5], edges[4], edges[0]);
+		m_triangles[7].set(edges[5], edges[0], edges[1]);
+
+		m_triangles[8].set(edges[1], edges[3], edges[7]);
+		m_triangles[9].set(edges[1], edges[7], edges[5]);
+
+		m_triangles[10].set(edges[0], edges[6], edges[2]);
+		m_triangles[11].set(edges[0], edges[4], edges[6]);
 	}
 
-	void CTriangleSelector::getTriangles(core::triangle3df* triangles)
+	const core::aabbox3df& CBBTriangleSelector::getBBox()
 	{
-		u32 cnt = m_triangles.size();
-
-		CWorldTransformData* transformData = (CWorldTransformData*)m_entity->getDataByIndex(CWorldTransformData::DataTypeIndex);;
-		const core::matrix4& mat = transformData->World;
-
-		for (u32 i = 0; i < cnt; ++i)
-		{
-			mat.transformVect(triangles[i].pointA, m_triangles[i].pointA);
-			mat.transformVect(triangles[i].pointB, m_triangles[i].pointB);
-			mat.transformVect(triangles[i].pointC, m_triangles[i].pointC);
-		}
-	}
-
-	const core::aabbox3df& CTriangleSelector::getBBox()
-	{
-		m_bbox.reset(m_triangles[0].pointA);
-
-		u32 cnt = m_triangles.size();
-		for (u32 i = 0; i < cnt; ++i)
-		{
-			m_bbox.addInternalPoint(m_triangles[i].pointA);
-			m_bbox.addInternalPoint(m_triangles[i].pointB);
-			m_bbox.addInternalPoint(m_triangles[i].pointC);
-		}
-
 		return m_bbox;
 	}
 }
