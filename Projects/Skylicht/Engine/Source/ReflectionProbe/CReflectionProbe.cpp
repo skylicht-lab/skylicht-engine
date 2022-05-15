@@ -56,6 +56,9 @@ namespace Skylicht
 	{
 		removeBakeTexture();
 		removeStaticTexture();
+
+		if (m_gameObject)
+			m_gameObject->getEntity()->removeData<CReflectionProbeData>();
 	}
 
 	void CReflectionProbe::removeBakeTexture()

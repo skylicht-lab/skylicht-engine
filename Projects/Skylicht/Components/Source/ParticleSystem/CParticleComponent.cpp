@@ -46,12 +46,13 @@ namespace Skylicht
 
 		CParticleComponent::~CParticleComponent()
 		{
-
+			if (m_gameObject)
+				m_gameObject->getEntity()->removeData<CParticleBufferData>();
 		}
 
 		void CParticleComponent::initComponent()
 		{
-			CEntity *entity = m_gameObject->getEntity();
+			CEntity* entity = m_gameObject->getEntity();
 
 			// add particle buffer data
 			m_data = entity->addData<CParticleBufferData>();
@@ -82,7 +83,7 @@ namespace Skylicht
 			return m_data->createGroup();
 		}
 
-		CSubGroup* CParticleComponent::createParticleSubGroup(CGroup *group)
+		CSubGroup* CParticleComponent::createParticleSubGroup(CGroup* group)
 		{
 			return m_data->createSubGroup(group);
 		}
@@ -98,7 +99,7 @@ namespace Skylicht
 			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
 			{
 				std::vector<CEmitter*>& emitter = groups[i]->getEmitters();
-				for (CEmitter *e : emitter)
+				for (CEmitter* e : emitter)
 				{
 					e->resetTank();
 				}
@@ -111,7 +112,7 @@ namespace Skylicht
 			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
 			{
 				std::vector<CEmitter*>& emitter = groups[i]->getEmitters();
-				for (CEmitter *e : emitter)
+				for (CEmitter* e : emitter)
 				{
 					e->stop();
 				}

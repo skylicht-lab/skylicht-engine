@@ -39,7 +39,8 @@ namespace Skylicht
 
 	CLightProbe::~CLightProbe()
 	{
-
+		if (m_gameObject)
+			m_gameObject->getEntity()->removeData<CLightProbeData>();
 	}
 
 	void CLightProbe::initComponent()

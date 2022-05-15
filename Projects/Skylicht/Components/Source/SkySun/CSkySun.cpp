@@ -51,7 +51,8 @@ namespace Skylicht
 
 	CSkySun::~CSkySun()
 	{
-
+		if (m_gameObject)
+			m_gameObject->getEntity()->removeData<CSkySunData>();
 	}
 
 	void CSkySun::initComponent()
