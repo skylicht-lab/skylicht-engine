@@ -11,10 +11,17 @@
 CViewDemo::CViewDemo() :
 	m_mouseX(0.0f),
 	m_mouseY(0.0f),
+	m_decals(NULL),
+	m_addDecal(false),
 	m_currentTest(0),
+	m_decalSizeX(1.0f),
+	m_decalSizeY(1.0f),
+	m_decalSizeZ(1.0f),
 	m_bboxSizeX(5.0f),
 	m_bboxSizeY(5.0f),
-	m_bboxSizeZ(5.0f)
+	m_bboxSizeZ(5.0f),
+	m_decalLifeTime(0.0f),
+	m_decalRotation(0.0f)
 {
 
 }
@@ -48,6 +55,15 @@ bool CViewDemo::OnEvent(const SEvent& event)
 	{
 		m_mouseX = (float)event.MouseInput.X;
 		m_mouseY = (float)event.MouseInput.Y;
+
+		if (event.MouseInput.isLeftPressed())
+		{
+			// press
+			if (m_currentTest == 2)
+			{
+				m_addDecal = true;
+			}
+		}
 	}
 	return true;
 }
@@ -85,7 +101,7 @@ void CViewDemo::onUpdate()
 			// draw intersection point
 			core::line3df line;
 			line.start = intersection;
-			line.end = intersection + triangle.getNormal().normalize() * 1.0f;
+			line.end = intersection + triangle.getNormal().normalize();
 			sceneDebug->addLine(line, SColor(255, 255, 0, 255));
 		}
 		else if (m_currentTest == 1)
@@ -107,6 +123,39 @@ void CViewDemo::onUpdate()
 			for (u32 i = 0; i < count; i++)
 			{
 				sceneDebug->addTri(*listTris[i], SColor(255, 255, 0, 255));
+			}
+		}
+		else if (m_currentTest == 2)
+		{
+			// draw bbox query
+			core::aabbox3df box;
+			core::vector3df halfBox = core::vector3df(m_decalSizeX * 0.5f, m_decalSizeY * 0.5f, m_decalSizeZ * 0.5f);
+			box.MinEdge = intersection - halfBox;
+			box.MaxEdge = intersection + halfBox;
+			sceneDebug->addBoudingBox(box, SColor(255, 0, 255, 0));
+
+			// draw intersection point
+			core::vector3df normal = triangle.getNormal().normalize();
+
+			core::line3df line;
+			line.start = intersection;
+			line.end = intersection + normal;
+			sceneDebug->addLine(line, SColor(255, 255, 0, 255));
+
+			// add decal when mouse pressed
+			if (m_addDecal && m_decals)
+			{
+				m_decals->addDecal(
+					intersection,
+					core::vector3df(m_bboxSizeX, m_bboxSizeY, m_bboxSizeZ),
+					normal,
+					m_decalRotation,
+					m_decalLifeTime,
+					0.0f);
+
+				m_decals->bake();
+
+				m_addDecal = false;
 			}
 		}
 	}
@@ -151,7 +200,7 @@ void CViewDemo::onGUI()
 
 	// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
 	ImGui::SetNextWindowPos(ImVec2(935, 15), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(340, 150), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(320, 200), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin("Collision Test", &open, window_flags))
 	{
@@ -179,9 +228,28 @@ void CViewDemo::onGUI()
 			ImGui::SliderFloat("BBox Y", &m_bboxSizeY, minSize, maxSize, "%.3f m");
 			ImGui::SliderFloat("BBox Z", &m_bboxSizeZ, minSize, maxSize, "%.3f m");
 		}
-	}
+		else if (m_currentTest == 2)
+		{
+			float minSize = 0.5f;
+			float maxSize = 5.0f;
 
-	ImGui::End();
+			ImGui::SliderFloat("Decal Size X", &m_decalSizeX, minSize, maxSize, "%.3f m");
+			ImGui::SliderFloat("Decal Size Y", &m_decalSizeY, minSize, maxSize, "%.3f m");
+			ImGui::SliderFloat("Decal Size Z", &m_decalSizeZ, minSize, maxSize, "%.3f m");
+
+			ImGui::Spacing();
+
+			ImGui::SliderFloat("Lifetime", &m_decalLifeTime, 0.0f, 10.0f, "%.3f sec");
+			ImGui::SliderFloat("Rotate", &m_decalRotation, 0.0f, 360.0f, "%.3f deg");
+
+			if (ImGui::Button("Clear all decals"))
+			{
+				m_decals->removeAllEntities();
+			}
+		}
+
+		ImGui::End();
+	}
 }
 
 void CViewDemo::onPostRender()

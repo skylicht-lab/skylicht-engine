@@ -286,8 +286,10 @@ This is a demo to use **CollisionManager** to get collision point, and how to us
 
 <img src="Documents/Media/Samples/sample_collision.jpg"/>
 
-And you can query all triangles on a Box
+This feature help you query all triangles inside a Box
 <img src="Documents/Media/Samples/sample_collision_box.jpg"/>
+
+And decal projector feature
 
 ### Samples\Particles
 Skylicht Particle Component is a cleanup version of [SPARK](https://github.com/Synxis/SPARK). We have optimized by GPU Billboard Instancing.
@@ -317,6 +319,7 @@ Welcome if you want to contribute your code to **Skylicht Engine** (Ex: add feat
 # Thanks
 - Julien Fryer ([SPARK](https://github.com/Synxis/SPARK)) about references and source code demo of particle system.
 - [Inigo Quilez](https://www.shadertoy.com/view/4sfGzS) about perlin noise reference.
+- Irrlicht Community, who have shared [some demo](https://github.com/netpipe/IrrlichtDemos/tree/master/SceneNodes)
 
 # License
 Skylicht Engine is licensed under [MIT License](LICENSE.md)

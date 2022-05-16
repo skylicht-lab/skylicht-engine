@@ -27,9 +27,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_DATA_TYPE_INDEX(CDecalRenderData);
+
+	CDecalRenderData::CDecalRenderData() :
+		Texture(NULL)
+	{
+	}
+
+	CDecalRenderData::~CDecalRenderData()
+	{
+
+	}
+
 	IMPLEMENT_DATA_TYPE_INDEX(CDecalData);
 
-	CDecalData::CDecalData()
+	CDecalData::CDecalData() :
+		TextureRotation(0.0f),
+		LifeTime(0.0f),
+		Distance(0.0f),
+		RenderData(NULL)
 	{
 
 	}

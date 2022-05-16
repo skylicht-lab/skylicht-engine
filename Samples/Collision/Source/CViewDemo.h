@@ -12,9 +12,18 @@ protected:
 	float m_mouseY;
 
 	int m_currentTest;
+
 	float m_bboxSizeX;
 	float m_bboxSizeY;
 	float m_bboxSizeZ;
+
+	float m_decalSizeX;
+	float m_decalSizeY;
+	float m_decalSizeZ;
+	float m_decalLifeTime;
+	float m_decalRotation;
+
+	bool m_addDecal;
 
 	CDecals* m_decals;
 
