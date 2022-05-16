@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDecalsRenderer.h"
+#include "Culling/CVisibleData.h"
 
 namespace Skylicht
 {
@@ -39,12 +40,39 @@ namespace Skylicht
 
 	void CDecalsRenderer::beginQuery(CEntityManager* entityManager)
 	{
+		m_decalRenders.set_used(0);
+		m_transforms.set_used(0);
 
+		m_decalData.set_used(0);
+		m_decalTransforms.set_used(0);
 	}
 
 	void CDecalsRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
+		CDecalRenderData* renderData = (CDecalRenderData*)entity->getDataByIndex(CDecalRenderData::DataTypeIndex);
+		if (renderData != NULL)
+		{
+			CVisibleData* visibleData = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
 
+			if (visibleData->Visible)
+			{
+				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				m_transforms.push_back(transform);
+				m_decalRenders.push_back(renderData);
+			}
+		}
+		else
+		{
+			CDecalData* decalData = (CDecalData*)entity->getDataByIndex(CDecalData::DataTypeIndex);
+			CVisibleData* visibleData = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
+
+			if (visibleData->Visible)
+			{
+				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				m_decalTransforms.push_back(transform);
+				m_decalData.push_back(decalData);
+			}
+		}
 	}
 
 	void CDecalsRenderer::init(CEntityManager* entityManager)

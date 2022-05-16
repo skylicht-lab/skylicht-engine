@@ -24,8 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDecals.h"
-#include "CDecalsRenderer.h"
-#include "CDecalData.h"
 #include "GameObject/CGameObject.h"
 #include "Entity/CEntityManager.h"
 #include "Transform/CWorldTransformData.h"
@@ -36,7 +34,8 @@ namespace Skylicht
 
 	CATEGORY_COMPONENT(CDecals, "Renderer", "Decals");
 
-	CDecals::CDecals()
+	CDecals::CDecals() :
+		m_renderData(NULL)
 	{
 
 	}
@@ -48,6 +47,7 @@ namespace Skylicht
 
 	void CDecals::initComponent()
 	{
+		m_renderData = m_gameObject->getEntity()->addData<CDecalRenderData>();
 		m_gameObject->getEntityManager()->addRenderSystem<CDecalsRenderer>();
 	}
 
@@ -85,6 +85,7 @@ namespace Skylicht
 		decalData->TextureRotation = textureRotation;
 		decalData->LifeTime = lifeTime;
 		decalData->Distance = distance;
+		decalData->RenderData = m_renderData;
 
 		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 		transform->Relative.setTranslation(position);
