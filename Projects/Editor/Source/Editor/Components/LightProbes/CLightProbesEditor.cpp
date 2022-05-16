@@ -53,7 +53,7 @@ namespace Skylicht
 			ui->addButton(layout, L"Add Probe")->OnPress = [&](GUI::CBase* button)
 			{
 				CLightProbes* probes = (CLightProbes*)m_component;
-				CEntity* newProbe = probes->addLightProbe();
+				CEntity* newProbe = probes->addLightProbe(core::vector3df());
 
 				CSceneController* sceneController = CSceneController::getInstance();
 				sceneController->updateTreeNode(m_gameObject);

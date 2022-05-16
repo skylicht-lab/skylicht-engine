@@ -24,41 +24,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "CEntity.h"
+#include "Entity/IRenderSystem.h"
 
 namespace Skylicht
 {
-	class CEntityHandler : public CComponentSystem
+	class CDecalsRenderer : public IRenderSystem
 	{
 	protected:
-		std::vector<CEntity*> m_entities;
 
 	public:
-		CEntityHandler();
+		CDecalsRenderer();
 
-		virtual ~CEntityHandler();
+		virtual ~CDecalsRenderer();
 
-		virtual void initComponent();
+		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void updateComponent();
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
-		CEntity* createEntity();
+		virtual void init(CEntityManager* entityManager);
 
-		CEntity* createEntity(CEntity* parent);
+		virtual void update(CEntityManager* entityManager);
 
-		void removeEntity(CEntity* entity);
-
-		void removeAllEntities();
-
-		std::vector<CEntity*>& getEntities()
-		{
-			return m_entities;
-		}
-
-	protected:
-
-		void setEntities(CEntity** entities, int count);
-
+		virtual void render(CEntityManager* entityManager);
 	};
 }
