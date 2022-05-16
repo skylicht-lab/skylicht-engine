@@ -117,7 +117,7 @@ void CViewInit::initScene()
 		tankScene->getTransformEuler()->setPosition(core::vector3df(5.0f, -5.0f, 5.0f));
 
 		// init collision		
-		context->getCollisionManager()->addOctreeCollision(tankScene);
+		context->getCollisionManager()->addMeshCollision(tankScene);
 	}
 
 	// save to context	

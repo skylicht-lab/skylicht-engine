@@ -38,8 +38,10 @@ namespace Skylicht
 
 		virtual ~CCollisionBuilder();
 
+		// remember build() after the remove
 		void removeCollision(CGameObject* object);
 
+		// remember build() after the remove
 		void removeCollision(CCollisionNode** nodes, int count);
 
 		virtual void clear();
@@ -70,5 +72,9 @@ namespace Skylicht
 			core::vector3df& outIntersection,
 			core::triangle3df& outTriangle,
 			CCollisionNode*& outNode) = 0;
+
+		virtual void getTriangles(const core::aabbox3df& box,
+			core::array<core::triangle3df*>& result,
+			core::array<CCollisionNode*>& nodes) = 0;
 	};
 }
