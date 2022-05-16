@@ -58,7 +58,9 @@ namespace Skylicht
 			core::triangle3df& outTriangle,
 			CCollisionNode*& outNode);
 
-
+		virtual void getTriangles(const core::aabbox3df& box,
+			core::array<core::triangle3df*>& result,
+			core::array<CCollisionNode*>& nodes);
 
 	protected:
 
@@ -70,7 +72,12 @@ namespace Skylicht
 			COctreeNode* node,
 			const core::vector3df& midLine,
 			const core::vector3df& lineVect,
-			float halfLength,
+			float halfLength);
+
+		void getTrianglesFromOctree(
+			core::array<core::triangle3df*>& listTriangle,
+			core::array<CCollisionNode*>& listCollisions,
+			COctreeNode* node,
 			const core::aabbox3df& box);
 	};
 }

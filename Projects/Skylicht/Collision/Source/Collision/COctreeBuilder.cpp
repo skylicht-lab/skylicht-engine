@@ -240,15 +240,12 @@ namespace Skylicht
 		core::vector3df	vec = ray.getVector().normalize();
 
 		float halfLength = ray.getLength() * 0.5f;
-		core::aabbox3df box;
-		box.reset(ray.start);
-		box.addInternalPoint(ray.end);
 
 		m_triangles.set_used(0);
 		m_collisions.set_used(0);
 
 		// step 1: get list triangle collide with ray
-		getTrianglesFromOctree(m_triangles, m_collisions, m_root, mid, vec, halfLength, box);
+		getTrianglesFromOctree(m_triangles, m_collisions, m_root, mid, vec, halfLength);
 
 		// step 2: find nearest triangle
 		s32 cnt = (s32)m_triangles.size();
@@ -311,8 +308,7 @@ namespace Skylicht
 		COctreeNode* node,
 		const core::vector3df& midLine,
 		const core::vector3df& lineVect,
-		float halfLength,
-		const core::aabbox3df& box)
+		float halfLength)
 	{
 		u32 cnt = node->Triangles.size();
 		u32 i = 0;
@@ -339,7 +335,62 @@ namespace Skylicht
 		for (i = 0; i < 8; ++i)
 		{
 			if (node->Childs[i] && node->Childs[i]->Box.intersectsWithLine(midLine, lineVect, halfLength) == true)
-				getTrianglesFromOctree(listTriangle, listCollisions, node->Childs[i], midLine, lineVect, halfLength, box);
+				getTrianglesFromOctree(listTriangle, listCollisions, node->Childs[i], midLine, lineVect, halfLength);
+		}
+	}
+
+	void COctreeBuilder::getTriangles(const core::aabbox3df& box,
+		core::array<core::triangle3df*>& result,
+		core::array<CCollisionNode*>& nodes)
+	{
+		getTrianglesFromOctree(result, nodes, m_root, box);
+	}
+
+	void COctreeBuilder::getTrianglesFromOctree(
+		core::array<core::triangle3df*>& listTriangle,
+		core::array<CCollisionNode*>& listCollisions,
+		COctreeNode* node,
+		const core::aabbox3df& box)
+	{
+		u32 cnt = node->Triangles.size();
+		u32 i = 0;
+
+		int* listTriID = node->Triangles.pointer();
+
+		// optimize function core::array::insert
+		int n = listTriangle.size();
+		listTriangle.set_used(n + cnt);
+		listCollisions.set_used(n + cnt);
+		int used = 0;
+
+		core::triangle3df** p = listTriangle.pointer();
+		CCollisionNode** c = listCollisions.pointer();
+
+		// list triangles
+		for (i = 0; i < cnt; ++i)
+		{
+			CCollisionNode* collision = node->Collisions[i];
+			core::triangle3df& triangle = collision->Triangles[listTriID[i]];
+
+			// if triangle collide the bbox
+			if (box.isPointInside(triangle.pointA) ||
+				box.isPointInside(triangle.pointB) ||
+				box.isPointInside(triangle.pointC))
+			{
+				p[n + used] = &triangle;
+				c[n + used] = collision;
+				used++;
+			}
+		}
+
+		// update the used
+		listTriangle.set_used(n + used);
+		listCollisions.set_used(n + used);
+
+		for (i = 0; i < 8; ++i)
+		{
+			if (node->Childs[i] && node->Childs[i]->Box.intersectsWithBox(box))
+				getTrianglesFromOctree(listTriangle, listCollisions, node->Childs[i], box);
 		}
 	}
 }

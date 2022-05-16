@@ -10,6 +10,11 @@ protected:
 	float m_mouseX;
 	float m_mouseY;
 
+	int m_currentTest;
+	float m_bboxSizeX;
+	float m_bboxSizeY;
+	float m_bboxSizeZ;
+
 public:
 	CViewDemo();
 
@@ -26,4 +31,8 @@ public:
 	virtual void onRender();
 
 	virtual void onPostRender();
+
+protected:
+
+	void onGUI();
 };

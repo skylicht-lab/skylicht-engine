@@ -29,14 +29,22 @@ namespace Skylicht
 {
 	CSceneDebug::CSceneDebug() :
 		m_nLine(0),
+		m_nLineStrip(0),
 		m_nBox(0),
 		m_nTri(0)
 	{
-
+		m_lines = new SLineDebug[MAX_DEBUGGEOMETRY];
+		m_linestrip = new SLineStripDebug[MAX_DEBUGGEOMETRY];
+		m_boxs = new SBoxDebug[MAX_DEBUGGEOMETRY];
+		m_tri = new STriDebug[MAX_DEBUGGEOMETRY];
 	}
 
 	CSceneDebug::~CSceneDebug()
 	{
+		delete[] m_lines;
+		delete[] m_linestrip;
+		delete[] m_boxs;
+		delete[] m_tri;
 	}
 
 	void CSceneDebug::addCircle(const core::vector3df& pos, float radius, const core::vector3df& normal, const SColor& color)
@@ -50,9 +58,9 @@ namespace Skylicht
 		n.normalize();
 		q.rotationFromTo(up, n);
 
-		int		step = 30;
-		float	rad = 0;
-		float	radInc = core::PI * 2 / step;
+		int step = 30;
+		float rad = 0;
+		float radInc = core::PI * 2 / step;
 
 		core::vector3df	point;
 

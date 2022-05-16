@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CCollisionManager.h"
 #include "COctreeNode.h"
 #include "CMeshTriangleSelector.h"
-
+#include "CBBTriangleSelector.h"
 #include "RenderMesh/CRenderMesh.h"
 #include "Entity/CEntityManager.h"
 
@@ -42,7 +42,7 @@ namespace Skylicht
 
 	}
 
-	bool CCollisionManager::addOctreeCollision(CGameObject* gameObject)
+	bool CCollisionManager::addMeshCollision(CGameObject* gameObject)
 	{
 		CRenderMesh* renderMesh = gameObject->getComponent<CRenderMesh>();
 		if (renderMesh == NULL)
@@ -56,6 +56,26 @@ namespace Skylicht
 			CEntity* entity = entityMgr->getEntity(renderMesh->EntityIndex);
 			m_nodes.push_back(
 				new CCollisionNode(gameObject, entity, new CMeshTriangleSelector(entity))
+			);
+		}
+
+		return renderers.size() > 0;
+	}
+
+	bool CCollisionManager::addBBoxCollision(CGameObject* gameObject)
+	{
+		CRenderMesh* renderMesh = gameObject->getComponent<CRenderMesh>();
+		if (renderMesh == NULL)
+			return false;
+
+		CEntityManager* entityMgr = gameObject->getEntityManager();
+
+		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
+		for (CRenderMeshData* renderMesh : renderers)
+		{
+			CEntity* entity = entityMgr->getEntity(renderMesh->EntityIndex);
+			m_nodes.push_back(
+				new CCollisionNode(gameObject, entity, new CBBTriangleSelector(entity))
 			);
 		}
 

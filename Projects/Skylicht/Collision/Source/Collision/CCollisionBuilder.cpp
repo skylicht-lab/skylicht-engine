@@ -63,8 +63,6 @@ namespace Skylicht
 				}
 			}
 		}
-
-		build();
 	}
 
 	void CCollisionBuilder::removeCollision(CCollisionNode** nodes, int count)
