@@ -30,6 +30,11 @@ void CViewDemo::onInit()
 	CCamera* camera = context->getActiveCamera();
 
 	CEventManager::getInstance()->registerEvent("ViewDemo", this);
+
+	// create decals object
+	CZone* zone = context->getActiveZone();
+	CGameObject* obj = zone->createEmptyObject();
+	m_decals = obj->addComponent<CDecals>();
 }
 
 void CViewDemo::onDestroy()

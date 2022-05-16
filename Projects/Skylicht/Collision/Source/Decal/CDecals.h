@@ -25,40 +25,43 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Components/CComponentSystem.h"
-#include "CEntity.h"
+#include "Entity/CEntityHandler.h"
 
 namespace Skylicht
 {
-	class CEntityHandler : public CComponentSystem
+	class CDecals : public CEntityHandler
 	{
 	protected:
-		std::vector<CEntity*> m_entities;
+		ITexture* m_texture;
 
 	public:
-		CEntityHandler();
+		CDecals();
 
-		virtual ~CEntityHandler();
+		virtual ~CDecals();
 
 		virtual void initComponent();
 
 		virtual void updateComponent();
 
-		CEntity* createEntity();
+		virtual CObjectSerializable* createSerializable();
 
-		CEntity* createEntity(CEntity* parent);
+		virtual void loadSerializable(CObjectSerializable* object);
 
-		void removeEntity(CEntity* entity);
-
-		void removeAllEntities();
-
-		std::vector<CEntity*>& getEntities()
+		inline void setTexture(ITexture* texture)
 		{
-			return m_entities;
+			m_texture = texture;
 		}
 
-	protected:
+		CEntity* addDecal(
+			const core::vector3df& position,
+			const core::vector3df& dimension,
+			const core::vector3df& normal,
+			float textureRotation,
+			float lifeTime,
+			float distance);
 
-		void setEntities(CEntity** entities, int count);
+		void bake();
 
+		DECLARE_GETTYPENAME(CDecals);
 	};
 }

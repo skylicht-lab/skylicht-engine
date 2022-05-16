@@ -53,7 +53,7 @@ namespace Skylicht
 		m_gameObject->getEntityManager()->addRenderSystem<CLightProbeRender>();
 
 		// default 1 lightprobe
-		CEntity* defaultLight = addLightProbe();
+		CEntity* defaultLight = addLightProbe(core::vector3df());
 
 		// config default ambient color
 		CLightProbeData* data = (CLightProbeData*)defaultLight->getDataByIndex(CLightProbeData::DataTypeIndex);
@@ -117,7 +117,7 @@ namespace Skylicht
 		int numProbe = m_attributes->getAttributeAsInt("numprobes");
 		for (int i = 0; i < numProbe; i++)
 		{
-			CEntity* entity = addLightProbe();
+			CEntity* entity = addLightProbe(core::vector3df());
 
 			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			CLightProbeData* light = (CLightProbeData*)m_entities[i]->getDataByIndex(CLightProbeData::DataTypeIndex);
@@ -135,18 +135,17 @@ namespace Skylicht
 
 	void CLightProbes::clearAll()
 	{
-		for (CEntity* entity : m_probes)
-			removeEntity(entity);
-		m_probes.clear();
+		removeAllEntities();
 	}
 
-	CEntity* CLightProbes::addLightProbe()
+	CEntity* CLightProbes::addLightProbe(const core::vector3df& position)
 	{
 		CEntity* entity = createEntity();
-
 		entity->addData<CLightProbeData>();
 
-		m_probes.push_back(entity);
+		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		transform->Relative.setTranslation(position);
+
 		return entity;
 	}
 

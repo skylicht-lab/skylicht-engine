@@ -128,6 +128,14 @@ namespace Skylicht
 		}
 	}
 
+	void CEntityHandler::removeAllEntities()
+	{
+		CEntityManager* entityManager = m_gameObject->getEntityManager();
+		for (int i = (int)m_entities.size() - 1; i >= 0; i--)
+			entityManager->removeEntity(m_entities[i]);
+		m_entities.clear();
+	}
+
 	void CEntityHandler::setEntities(CEntity** entities, int count)
 	{
 		m_entities.clear();

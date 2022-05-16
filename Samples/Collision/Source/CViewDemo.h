@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ViewManager/CView.h"
+#include "Decal/CDecals.h"
 
 class CViewDemo :
 	public CView,
@@ -14,6 +15,8 @@ protected:
 	float m_bboxSizeX;
 	float m_bboxSizeY;
 	float m_bboxSizeZ;
+
+	CDecals* m_decals;
 
 public:
 	CViewDemo();
