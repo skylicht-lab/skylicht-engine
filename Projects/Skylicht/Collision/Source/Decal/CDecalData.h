@@ -24,41 +24,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "CEntity.h"
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	class CEntityHandler : public CComponentSystem
+	class CDecalData : public IEntityData
 	{
-	protected:
-		std::vector<CEntity*> m_entities;
+	public:
+		core::vector3df Dimension;
+		core::vector3df Normal;
+		float TextureRotation;
+		float LifeTime;
+		float Distance;
+
+		DECLARE_DATA_TYPE_INDEX;
 
 	public:
-		CEntityHandler();
+		CDecalData();
 
-		virtual ~CEntityHandler();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		CEntity* createEntity();
-
-		CEntity* createEntity(CEntity* parent);
-
-		void removeEntity(CEntity* entity);
-
-		void removeAllEntities();
-
-		std::vector<CEntity*>& getEntities()
-		{
-			return m_entities;
-		}
-
-	protected:
-
-		void setEntities(CEntity** entities, int count);
-
+		virtual ~CDecalData();
 	};
 }

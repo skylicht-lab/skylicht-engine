@@ -33,7 +33,6 @@ namespace Skylicht
 	class CLightProbes : public CEntityHandler
 	{
 	protected:
-		std::vector<CEntity*> m_probes;
 		io::IAttributes* m_attributes;
 
 	public:
@@ -51,7 +50,7 @@ namespace Skylicht
 
 		void clearAll();
 
-		CEntity* addLightProbe();
+		CEntity* addLightProbe(const core::vector3df& position);
 
 		int getPositions(std::vector<core::vector3df>& positions);
 

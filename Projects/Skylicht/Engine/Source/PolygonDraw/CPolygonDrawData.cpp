@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	CPolygonDrawData::CPolygonDrawData()
 	{
-		PolygonBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));
+		PolygonBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD), video::EIT_32BIT);
 		PolygonBuffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
 		PolygonBuffer->getMaterial().BackfaceCulling = false;
 		PolygonBuffer->setHardwareMappingHint(EHM_STREAM);
