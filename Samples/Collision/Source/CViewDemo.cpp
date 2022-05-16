@@ -5,9 +5,16 @@
 #include "Projective/CProjective.h"
 #include "Debug/CSceneDebug.h"
 
+#include "imgui.h"
+#include "CImguiManager.h"
+
 CViewDemo::CViewDemo() :
 	m_mouseX(0.0f),
-	m_mouseY(0.0f)
+	m_mouseY(0.0f),
+	m_currentTest(0),
+	m_bboxSizeX(5.0f),
+	m_bboxSizeY(5.0f),
+	m_bboxSizeZ(5.0f)
 {
 
 }
@@ -59,19 +66,48 @@ void CViewDemo::onUpdate()
 	core::vector3df intersection;
 	core::triangle3df triangle;
 	CCollisionNode* node = NULL;
+	CCollisionManager* collisionMgr = context->getCollisionManager();
 
-	if (context->getCollisionManager()->getCollisionPoint(ray, outBestDistanceSquared, intersection, triangle, node))
+	if (collisionMgr->getCollisionPoint(ray, outBestDistanceSquared, intersection, triangle, node))
 	{
-		// draw the hit triangle
 		CSceneDebug* sceneDebug = CSceneDebug::getInstance();
-		sceneDebug->addTri(triangle, SColor(255, 255, 0, 0));
 
-		// draw intersection point
-		core::line3df line;
-		line.start = intersection;
-		line.end = intersection + triangle.getNormal().normalize() * 1.0f;
-		sceneDebug->addLine(line, SColor(255, 255, 0, 255));
+		if (m_currentTest == 0)
+		{
+			// draw the hit triangle			
+			sceneDebug->addTri(triangle, SColor(255, 255, 0, 0));
+
+			// draw intersection point
+			core::line3df line;
+			line.start = intersection;
+			line.end = intersection + triangle.getNormal().normalize() * 1.0f;
+			sceneDebug->addLine(line, SColor(255, 255, 0, 255));
+		}
+		else if (m_currentTest == 1)
+		{
+			// draw bbox query
+			core::aabbox3df box;
+			core::vector3df halfBox = core::vector3df(m_bboxSizeX * 0.5f, m_bboxSizeY * 0.5f, m_bboxSizeZ * 0.5f);
+			box.MinEdge = intersection - halfBox;
+			box.MaxEdge = intersection + halfBox;
+			sceneDebug->addBoudingBox(box, SColor(255, 0, 255, 0));
+
+			// query
+			core::array<core::triangle3df*> listTris;
+			core::array<CCollisionNode*> listNodes;
+
+			collisionMgr->getTriangles(box, listTris, listNodes);
+
+			u32 count = listTris.size();
+			for (u32 i = 0; i < count; i++)
+			{
+				sceneDebug->addTri(*listTris[i], SColor(255, 255, 0, 255));
+			}
+		}
 	}
+
+	// imgui update
+	CImguiManager::getInstance()->onNewFrame();
 }
 
 void CViewDemo::onRender()
@@ -96,6 +132,51 @@ void CViewDemo::onRender()
 	{
 		CGraphics2D::getInstance()->render(guiCamera);
 	}
+
+	// imgui render
+	onGUI();
+	CImguiManager::getInstance()->onRender();
+}
+
+void CViewDemo::onGUI()
+{
+	bool open = true;
+
+	ImGuiWindowFlags window_flags = 0;
+
+	// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
+	ImGui::SetNextWindowPos(ImVec2(935, 15), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(340, 150), ImGuiCond_FirstUseEver);
+
+	if (!ImGui::Begin("Collision Test", &open, window_flags))
+	{
+		// Early out if the window is collapsed, as an optimization.
+		ImGui::End();
+		return;
+	}
+
+	// BEGIN WINDOW
+	{
+		const char* testCase[] = {
+			"Point Collision",
+			"BBox Collect",
+			"Decal"
+		};
+
+		ImGui::Combo("Test case", &m_currentTest, testCase, IM_ARRAYSIZE(testCase));
+
+		if (m_currentTest == 1)
+		{
+			float minSize = 2.0f;
+			float maxSize = 10.0f;
+
+			ImGui::SliderFloat("BBox X", &m_bboxSizeX, minSize, maxSize, "%.3f m");
+			ImGui::SliderFloat("BBox Y", &m_bboxSizeY, minSize, maxSize, "%.3f m");
+			ImGui::SliderFloat("BBox Z", &m_bboxSizeZ, minSize, maxSize, "%.3f m");
+		}
+	}
+
+	ImGui::End();
 }
 
 void CViewDemo::onPostRender()

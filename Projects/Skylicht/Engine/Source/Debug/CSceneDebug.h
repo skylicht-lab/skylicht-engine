@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 
-#define MAX_DEBUGGEOMETRY	2000
+#define MAX_DEBUGGEOMETRY 20000
 
 namespace Skylicht
 {
@@ -66,16 +66,16 @@ namespace Skylicht
 
 
 	protected:
-		SLineDebug		m_lines[MAX_DEBUGGEOMETRY];
-		SLineStripDebug	m_linestrip[MAX_DEBUGGEOMETRY];
+		SLineDebug* m_lines;
+		SLineStripDebug* m_linestrip;
 
-		SBoxDebug		m_boxs[MAX_DEBUGGEOMETRY];
-		STriDebug		m_tri[MAX_DEBUGGEOMETRY];
+		SBoxDebug* m_boxs;
+		STriDebug* m_tri;
 
-		int			m_nLine;
-		int			m_nLineStrip;
-		int			m_nBox;
-		int			m_nTri;
+		int m_nLine;
+		int m_nLineStrip;
+		int m_nBox;
+		int m_nTri;
 
 	public:
 

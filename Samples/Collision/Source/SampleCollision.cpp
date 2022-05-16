@@ -6,6 +6,7 @@
 #include "ViewManager/CViewManager.h"
 
 #include "CViewInit.h"
+#include "CImguiManager.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -18,10 +19,14 @@ SampleCollision::SampleCollision()
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
+
+	CImguiManager::createGetInstance();
 }
 
 SampleCollision::~SampleCollision()
 {
+	CImguiManager::releaseInstance();
+
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();
