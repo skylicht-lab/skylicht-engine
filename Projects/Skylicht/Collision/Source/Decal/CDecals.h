@@ -27,12 +27,15 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Components/CComponentSystem.h"
 #include "Entity/CEntityHandler.h"
 
+#include "CDecalsRenderer.h"
+#include "CDecalData.h"
+
 namespace Skylicht
 {
 	class CDecals : public CEntityHandler
 	{
 	protected:
-		ITexture* m_texture;
+		CDecalRenderData* m_renderData;
 
 	public:
 		CDecals();
@@ -49,7 +52,7 @@ namespace Skylicht
 
 		inline void setTexture(ITexture* texture)
 		{
-			m_texture = texture;
+			m_renderData->Texture = texture;
 		}
 
 		CEntity* addDecal(

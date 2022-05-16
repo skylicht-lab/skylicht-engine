@@ -28,6 +28,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CDecalRenderData : public IEntityData
+	{
+	public:
+		ITexture* Texture;
+
+		DECLARE_DATA_TYPE_INDEX;
+
+	public:
+		CDecalRenderData();
+
+		virtual ~CDecalRenderData();
+	};
+
 	class CDecalData : public IEntityData
 	{
 	public:
@@ -36,6 +49,7 @@ namespace Skylicht
 		float TextureRotation;
 		float LifeTime;
 		float Distance;
+		CDecalRenderData* RenderData;
 
 		DECLARE_DATA_TYPE_INDEX;
 

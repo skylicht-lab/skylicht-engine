@@ -25,12 +25,19 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IRenderSystem.h"
+#include "CDecalData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
 	class CDecalsRenderer : public IRenderSystem
 	{
 	protected:
+		core::array<CDecalRenderData*> m_decalRenders;
+		core::array<CWorldTransformData*> m_transforms;
+
+		core::array<CDecalData*> m_decalData;
+		core::array<CWorldTransformData*> m_decalTransforms;
 
 	public:
 		CDecalsRenderer();
