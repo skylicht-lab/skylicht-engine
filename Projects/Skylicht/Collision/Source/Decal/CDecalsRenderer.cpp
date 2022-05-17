@@ -221,12 +221,14 @@ namespace Skylicht
 
 						pos += triangleNormal * decal->Distance;
 
+						core::vector2df uv(uvPos.X, 1.0f - uvPos.Z);
+
 						vertices->addVertex(
 							&video::S3DVertex(
 								pos,
 								triangleNormal,
 								video::SColor(255, 255, 255, 255),
-								core::vector2df(uvPos.X, 1 - uvPos.Z))
+								uv)
 						);
 						vertexIndex++;
 					}
