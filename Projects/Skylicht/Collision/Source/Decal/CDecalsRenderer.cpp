@@ -132,19 +132,6 @@ namespace Skylicht
 			position + decal->Dimension * 0.5f
 		);
 
-		// Calculate uv rotation
-		core::quaternion quatDirection;
-		quatDirection.rotationFromTo(irr::core::vector3df(0, 1, 0), decal->Normal);
-
-		core::vector3df rotation;
-		quatDirection.toEuler(rotation);
-		rotation.Y += (decal->TextureRotation * core::DEGTORAD);
-
-		// Create uv rotation matrix
-		core::matrix4 rotationMatrix;
-		rotationMatrix.setRotationRadians(rotation);
-		rotationMatrix.setRotationCenter(core::vector3df(0.5f, 0.5f, 0.5f), core::vector3df(0, 0, 0));
-
 		// Query tris collision
 		core::array<core::triangle3df*> triangles;
 		core::array<CCollisionNode*> nodes;
@@ -152,15 +139,22 @@ namespace Skylicht
 		u32 triangleCount = triangles.size();
 
 		// Scale to 0.0f - 1.0f (UV space)
-		core::vector3df scale = core::vector3df(1, 1, 1) / box.getExtent();
+		core::vector3df uvScale = core::vector3df(1, 1, 1) / decal->Dimension;
+		core::vector3df uvOffset(0.5f, 0.0f, 0.5f);
 
-		// Create scale matrix
-		irr::core::matrix4 scaleMatrix;
-		scaleMatrix.setScale(scale);
+		// UV Rotation matrix
+		core::quaternion r1;
+		r1.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), decal->Normal);
 
-		irr::core::matrix4 m;
-		m.setTranslation(-(box.MinEdge * scale));
-		m *= scaleMatrix;
+		core::quaternion r2;
+		r2.fromAngleAxis(-decal->TextureRotation * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
+
+		core::quaternion q = r2 * r1;
+
+		core::matrix4 uvMatrix = q.getMatrix();
+		uvMatrix.setTranslation(position);
+
+		uvMatrix.makeInverse();
 
 		// Clip all triangles and fill vertex and indices
 		u32 vertexIndex = 0;
@@ -179,15 +173,11 @@ namespace Skylicht
 			core::vector3df triangleNormal = triangle.getNormal();
 			triangleNormal.normalize();
 
-			// Scale & Translate positions
-			m.transformVect(uvTriangle.pointA);
-			m.transformVect(uvTriangle.pointB);
-			m.transformVect(uvTriangle.pointC);
-
 			// Rotate positions
-			rotationMatrix.transformVect(uvTriangle.pointA);
-			rotationMatrix.transformVect(uvTriangle.pointB);
-			rotationMatrix.transformVect(uvTriangle.pointC);
+			uvMatrix.transformVect(uvTriangle.pointA);
+			uvMatrix.transformVect(uvTriangle.pointB);
+			uvMatrix.transformVect(uvTriangle.pointC);
+
 
 			// Fill vertices and indices
 			{
@@ -195,17 +185,17 @@ namespace Skylicht
 
 				for (u32 p = 0; p < 3; p++)
 				{
-					core::vector3df uvPos = uvTriangle.pointA;
+					core::vector3df uvPos = uvTriangle.pointA * uvScale + uvOffset;
 					core::vector3df pos = triangle.pointA;
 
 					if (p == 1)
 					{
-						uvPos = uvTriangle.pointB;
+						uvPos = uvTriangle.pointB * uvScale + uvOffset;
 						pos = triangle.pointB;
 					}
 					else if (p == 2)
 					{
-						uvPos = uvTriangle.pointC;
+						uvPos = uvTriangle.pointC * uvScale + uvOffset;
 						pos = triangle.pointC;
 					}
 
