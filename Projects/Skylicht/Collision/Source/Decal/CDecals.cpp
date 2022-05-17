@@ -66,35 +66,52 @@ namespace Skylicht
 		return CComponentSystem::loadSerializable(object);
 	}
 
+	void CDecals::setTexture(ITexture* texture)
+	{
+		m_renderData->Texture = texture;
+		m_renderData->Material->setTexture(0, texture);
+
+		std::vector<CEntity*>& entities = getEntities();
+		for (CEntity* entity : entities)
+		{
+			CDecalData* decal = (CDecalData*)entity->getDataByIndex(CDecalData::DataTypeIndex);
+			if (decal != NULL)
+			{
+				m_renderData->Material->applyMaterial(decal->MeshBuffer->getMaterial());
+			}
+		}
+	}
+
 	CEntity* CDecals::addDecal(
 		const core::vector3df& position,
 		const core::vector3df& dimension,
 		const core::vector3df& normal,
 		float textureRotation,
 		float lifeTime,
-		float distance)
+		float distance,
+		CCollisionBuilder* collision)
 	{
 		// References
 		// https://sourceforge.net/p/irrext/code/HEAD/tree/trunk/extensions/scene/ISceneNode/DecalSystem
-
 		CEntity* entity = createEntity();
 
 		CDecalData* decalData = entity->addData<CDecalData>();
 		decalData->Dimension = dimension;
 		decalData->Normal = normal;
+		decalData->Normal.normalize();
 		decalData->TextureRotation = textureRotation;
 		decalData->LifeTime = lifeTime;
 		decalData->Distance = distance;
 		decalData->RenderData = m_renderData;
+		decalData->Collision = collision;
 
+		// add transform
 		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 		transform->Relative.setTranslation(position);
 
+		// apply material
+		m_renderData->Material->applyMaterial(decalData->MeshBuffer->getMaterial());
+
 		return entity;
-	}
-
-	void CDecals::bake()
-	{
-
 	}
 }

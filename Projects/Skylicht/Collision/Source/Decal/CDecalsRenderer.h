@@ -53,5 +53,7 @@ namespace Skylicht
 		virtual void update(CEntityManager* entityManager);
 
 		virtual void render(CEntityManager* entityManager);
+
+		void initDecal(CDecalData* decal, const core::vector3df& position);
 	};
 }
