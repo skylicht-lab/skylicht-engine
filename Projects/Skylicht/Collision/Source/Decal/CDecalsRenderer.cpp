@@ -191,6 +191,8 @@ namespace Skylicht
 
 			// Fill vertices and indices
 			{
+				video::SColor color(255, 255, 255, 255);
+
 				for (u32 p = 0; p < 3; p++)
 				{
 					core::vector3df uvPos = uvTriangle.pointA;
@@ -223,13 +225,13 @@ namespace Skylicht
 
 						core::vector2df uv(uvPos.X, 1.0f - uvPos.Z);
 
-						vertices->addVertex(
-							&video::S3DVertex(
-								pos,
-								triangleNormal,
-								video::SColor(255, 255, 255, 255),
-								uv)
-						);
+						video::S3DVertex vtx(
+							pos,
+							triangleNormal,
+							color,
+							uv);
+
+						vertices->addVertex(&vtx);
 						vertexIndex++;
 					}
 
