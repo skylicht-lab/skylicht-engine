@@ -373,9 +373,7 @@ namespace Skylicht
 			core::triangle3df& triangle = collision->Triangles[listTriID[i]];
 
 			// if triangle collide the bbox
-			if (box.isPointInside(triangle.pointA) ||
-				box.isPointInside(triangle.pointB) ||
-				box.isPointInside(triangle.pointC))
+			if (!triangle.isTotalOutsideBox(box))
 			{
 				p[n + used] = &triangle;
 				c[n + used] = collision;

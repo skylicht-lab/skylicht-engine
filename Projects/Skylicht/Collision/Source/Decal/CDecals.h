@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDecalsRenderer.h"
 #include "CDecalData.h"
 
+#include "Collision/CCollisionBuilder.h"
+
 namespace Skylicht
 {
 	class CDecals : public CEntityHandler
@@ -50,10 +52,7 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		inline void setTexture(ITexture* texture)
-		{
-			m_renderData->Texture = texture;
-		}
+		void setTexture(ITexture* texture);
 
 		CEntity* addDecal(
 			const core::vector3df& position,
@@ -61,9 +60,8 @@ namespace Skylicht
 			const core::vector3df& normal,
 			float textureRotation,
 			float lifeTime,
-			float distance);
-
-		void bake();
+			float distance,
+			CCollisionBuilder* collision);
 
 		DECLARE_GETTYPENAME(CDecals);
 	};
