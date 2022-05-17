@@ -59,7 +59,7 @@ bool CViewDemo::OnEvent(const SEvent& event)
 		m_mouseX = (float)event.MouseInput.X;
 		m_mouseY = (float)event.MouseInput.Y;
 
-		if (event.MouseInput.isLeftPressed())
+		if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 		{
 			// press
 			if (m_currentTest == 2)
@@ -116,7 +116,7 @@ void CViewDemo::onUpdate()
 			box.MaxEdge = intersection + halfBox;
 			sceneDebug->addBoudingBox(box, SColor(255, 0, 255, 0));
 
-			// query
+			// query triangles
 			core::array<core::triangle3df*> listTris;
 			core::array<CCollisionNode*> listNodes;
 
@@ -133,7 +133,7 @@ void CViewDemo::onUpdate()
 			core::vector3df normal = triangle.getNormal();
 			normal.normalize();
 
-			// draw bbox query
+			// draw decal projection box
 			core::aabbox3df box;
 			core::vector3df halfBox = core::vector3df(m_decalSizeX * 0.5f, m_decalSizeY * 0.5f, m_decalSizeZ * 0.5f);
 			box.MinEdge = -halfBox;
@@ -143,7 +143,7 @@ void CViewDemo::onUpdate()
 			r1.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), normal);
 
 			core::quaternion r2;
-			r2.fromAngleAxis(-m_decalRotation * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
+			r2.fromAngleAxis(m_decalRotation * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
 
 			core::quaternion q = r2 * r1;
 

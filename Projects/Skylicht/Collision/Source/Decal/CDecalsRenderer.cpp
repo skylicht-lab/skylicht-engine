@@ -147,7 +147,7 @@ namespace Skylicht
 		r1.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), decal->Normal);
 
 		core::quaternion r2;
-		r2.fromAngleAxis(-decal->TextureRotation * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
+		r2.fromAngleAxis(decal->TextureRotation * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
 
 		core::quaternion q = r2 * r1;
 
@@ -178,17 +178,21 @@ namespace Skylicht
 			uvMatrix.transformVect(uvTriangle.pointB);
 			uvMatrix.transformVect(uvTriangle.pointC);
 
-
 			// Fill vertices and indices
 			{
 				video::SColor color(255, 255, 255, 255);
 
 				for (u32 p = 0; p < 3; p++)
 				{
-					core::vector3df uvPos = uvTriangle.pointA * uvScale + uvOffset;
-					core::vector3df pos = triangle.pointA;
+					core::vector3df uvPos;
+					core::vector3df pos;
 
-					if (p == 1)
+					if (p == 0)
+					{
+						uvPos = uvTriangle.pointA * uvScale + uvOffset;
+						pos = triangle.pointA;
+					}
+					else if (p == 1)
 					{
 						uvPos = uvTriangle.pointB * uvScale + uvOffset;
 						pos = triangle.pointB;
