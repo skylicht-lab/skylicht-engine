@@ -42,6 +42,9 @@ void CViewDemo::onInit()
 	CZone* zone = context->getActiveZone();
 	CGameObject* obj = zone->createEmptyObject();
 	m_decals = obj->addComponent<CDecals>();
+
+	ITexture* texture = CTextureManager::getInstance()->getTexture("BuiltIn/Textures/UVTest.png");
+	m_decals->setTexture(texture);
 }
 
 void CViewDemo::onDestroy()
@@ -127,16 +130,30 @@ void CViewDemo::onUpdate()
 		}
 		else if (m_currentTest == 2)
 		{
+			core::vector3df normal = triangle.getNormal();
+			normal.normalize();
+
 			// draw bbox query
 			core::aabbox3df box;
 			core::vector3df halfBox = core::vector3df(m_decalSizeX * 0.5f, m_decalSizeY * 0.5f, m_decalSizeZ * 0.5f);
-			box.MinEdge = intersection - halfBox;
-			box.MaxEdge = intersection + halfBox;
-			sceneDebug->addBoudingBox(box, SColor(255, 0, 255, 0));
+			box.MinEdge = -halfBox;
+			box.MaxEdge = halfBox;
 
-			// draw intersection point
-			core::vector3df normal = triangle.getNormal().normalize();
+			core::quaternion r1;
+			r1.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), normal);
 
+			core::quaternion r2;
+			r2.fromAngleAxis(-m_decalRotation * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
+
+			core::quaternion q = r2 * r1;
+
+			core::matrix4 bbMatrix = q.getMatrix();
+			bbMatrix.setTranslation(intersection);
+
+			sceneDebug->addTransformBBox(box, SColor(255, 0, 255, 0), bbMatrix);
+
+
+			// draw center & projection vector
 			core::line3df line;
 			line.start = intersection;
 			line.end = intersection + normal;
@@ -147,13 +164,12 @@ void CViewDemo::onUpdate()
 			{
 				m_decals->addDecal(
 					intersection,
-					core::vector3df(m_bboxSizeX, m_bboxSizeY, m_bboxSizeZ),
+					core::vector3df(m_decalSizeX, m_decalSizeX, m_decalSizeX),
 					normal,
 					m_decalRotation,
 					m_decalLifeTime,
-					0.0f);
-
-				m_decals->bake();
+					0.01f,
+					collisionMgr);
 
 				m_addDecal = false;
 			}

@@ -32,11 +32,12 @@ namespace Skylicht
 	CDecalRenderData::CDecalRenderData() :
 		Texture(NULL)
 	{
+		Material = new CMaterial("DecalRenderer", "BuiltIn/Shader/Basic/TextureColorAlpha.xml");
 	}
 
 	CDecalRenderData::~CDecalRenderData()
 	{
-
+		delete Material;
 	}
 
 	IMPLEMENT_DATA_TYPE_INDEX(CDecalData);
@@ -45,13 +46,20 @@ namespace Skylicht
 		TextureRotation(0.0f),
 		LifeTime(0.0f),
 		Distance(0.0f),
-		RenderData(NULL)
+		RenderData(NULL),
+		Collision(NULL),
+		Change(true)
 	{
+		MeshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));
+		MeshBuffer->setHardwareMappingHint(scene::EHM_STREAM);
 
+		SMaterial& mat = MeshBuffer->getMaterial();
+		mat.TextureLayer[0].TextureWrapU = E_TEXTURE_CLAMP::ETC_CLAMP_TO_EDGE;
+		mat.TextureLayer[0].TextureWrapV = E_TEXTURE_CLAMP::ETC_CLAMP_TO_EDGE;
 	}
 
 	CDecalData::~CDecalData()
 	{
-
+		MeshBuffer->drop();
 	}
 }

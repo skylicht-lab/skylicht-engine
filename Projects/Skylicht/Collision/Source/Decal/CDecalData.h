@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
+#include "Material/CMaterial.h"
+#include "Collision/CCollisionBuilder.h"
 
 namespace Skylicht
 {
@@ -32,6 +34,7 @@ namespace Skylicht
 	{
 	public:
 		ITexture* Texture;
+		CMaterial* Material;
 
 		DECLARE_DATA_TYPE_INDEX;
 
@@ -50,6 +53,10 @@ namespace Skylicht
 		float LifeTime;
 		float Distance;
 		CDecalRenderData* RenderData;
+		bool Change;
+
+		IMeshBuffer* MeshBuffer;
+		CCollisionBuilder* Collision;
 
 		DECLARE_DATA_TYPE_INDEX;
 
