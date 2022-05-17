@@ -164,7 +164,7 @@ void CViewDemo::onUpdate()
 			{
 				m_decals->addDecal(
 					intersection,
-					core::vector3df(m_decalSizeX, m_decalSizeX, m_decalSizeX),
+					core::vector3df(m_decalSizeX, m_decalSizeY, m_decalSizeZ),
 					normal,
 					m_decalRotation,
 					m_decalLifeTime,
