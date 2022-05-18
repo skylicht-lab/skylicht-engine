@@ -60,8 +60,9 @@ namespace Skylicht
 			const core::vector3df& normal,
 			float textureRotation,
 			float lifeTime,
-			float distance,
-			CCollisionBuilder* collision);
+			float distance);
+
+		void bake(CCollisionBuilder* collisionMgr);
 
 		DECLARE_GETTYPENAME(CDecals);
 	};
