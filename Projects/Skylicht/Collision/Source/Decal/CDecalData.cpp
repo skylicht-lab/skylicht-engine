@@ -30,8 +30,7 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CDecalRenderData);
 
 	CDecalRenderData::CDecalRenderData() :
-		Texture(NULL),
-		Collision(NULL)
+		Texture(NULL)
 	{
 		Material = new CMaterial("DecalRenderer", "BuiltIn/Shader/Basic/TextureColorAlpha.xml");
 	}
