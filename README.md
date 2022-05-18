@@ -282,14 +282,14 @@ Irradiance baked on Vertex Color:
 <img src="Documents/Media/Samples/tank-scene/tank-scene-3-bounce-a.jpg"/>
 
 ### Samples\Collision
-This is a demo to use **CollisionManager** to get collision point, and how to use Scene Debugger to draw the triangles, lines...
-
+This is a demo to use **CollisionManager** to get collision point from the ray.
 <img src="Documents/Media/Samples/sample_collision.jpg"/>
 
-This feature help you query all triangles inside a Box
+And how to query all triangles inside a Box
 <img src="Documents/Media/Samples/sample_collision_box.jpg"/>
 
-And decal projector feature
+And how to use the decal projector feature
+<img src="Documents/Media/Samples/sample_collision_decal.jpg"/>
 
 ### Samples\Particles
 Skylicht Particle Component is a cleanup version of [SPARK](https://github.com/Synxis/SPARK). We have optimized by GPU Billboard Instancing.
