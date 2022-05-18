@@ -35,6 +35,7 @@ namespace Skylicht
 	public:
 		ITexture* Texture;
 		CMaterial* Material;
+		CCollisionBuilder* Collision;
 
 		DECLARE_DATA_TYPE_INDEX;
 
@@ -56,7 +57,6 @@ namespace Skylicht
 		bool Change;
 
 		IMeshBuffer* MeshBuffer;
-		CCollisionBuilder* Collision;
 
 		DECLARE_DATA_TYPE_INDEX;
 

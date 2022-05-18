@@ -88,8 +88,7 @@ namespace Skylicht
 		const core::vector3df& normal,
 		float textureRotation,
 		float lifeTime,
-		float distance,
-		CCollisionBuilder* collision)
+		float distance)
 	{
 		// References
 		// https://sourceforge.net/p/irrext/code/HEAD/tree/trunk/extensions/scene/ISceneNode/DecalSystem
@@ -103,7 +102,6 @@ namespace Skylicht
 		decalData->LifeTime = lifeTime;
 		decalData->Distance = distance;
 		decalData->RenderData = m_renderData;
-		decalData->Collision = collision;
 
 		// add transform
 		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
@@ -113,5 +111,11 @@ namespace Skylicht
 		m_renderData->Material->applyMaterial(decalData->MeshBuffer->getMaterial());
 
 		return entity;
+	}
+
+	void CDecals::bake(CCollisionBuilder* collisionMgr)
+	{
+		CDecalRenderData* renderData = (CDecalRenderData*)m_gameObject->getEntity()->getDataByIndex(CDecalRenderData::DataTypeIndex);
+		renderData->Collision = collisionMgr;
 	}
 }

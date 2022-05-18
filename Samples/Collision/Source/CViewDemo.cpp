@@ -151,13 +151,8 @@ void CViewDemo::onUpdate()
 			bbMatrix.setTranslation(intersection);
 
 			sceneDebug->addTransformBBox(box, SColor(255, 0, 255, 0), bbMatrix);
+			sceneDebug->addTransform(bbMatrix, 2.0f);
 
-
-			// draw center & projection vector
-			core::line3df line;
-			line.start = intersection;
-			line.end = intersection + normal;
-			sceneDebug->addLine(line, SColor(255, 255, 0, 255));
 
 			// add decal when mouse pressed
 			if (m_addDecal && m_decals)
@@ -168,9 +163,9 @@ void CViewDemo::onUpdate()
 					normal,
 					m_decalRotation,
 					m_decalLifeTime,
-					0.01f,
-					collisionMgr);
+					0.01f);
 
+				m_decals->bake(collisionMgr);
 				m_addDecal = false;
 			}
 		}
