@@ -27,6 +27,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CGameObject.h"
 #include "Entity/CEntityManager.h"
 #include "Transform/CWorldTransformData.h"
+#include "Transform/CWorldInverseTransformData.h"
+#include "Culling/CCullingData.h"
+#include "Culling/CCullingBBoxData.h"
 
 namespace Skylicht
 {
@@ -107,6 +110,11 @@ namespace Skylicht
 		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 		transform->Relative.setTranslation(position);
 
+		// Culling
+		entity->addData<CWorldInverseTransformData>();
+		entity->addData<CCullingData>();
+		entity->addData<CCullingBBoxData>();
+
 		// apply material
 		m_renderData->Material->applyMaterial(decalData->MeshBuffer->getMaterial());
 
@@ -115,7 +123,143 @@ namespace Skylicht
 
 	void CDecals::bake(CCollisionBuilder* collisionMgr)
 	{
-		CDecalRenderData* renderData = (CDecalRenderData*)m_gameObject->getEntity()->getDataByIndex(CDecalRenderData::DataTypeIndex);
-		renderData->Collision = collisionMgr;
+		std::vector<CEntity*>& entities = getEntities();
+		for (CEntity* entity : entities)
+		{
+			CDecalData* decalData = (CDecalData*)entity->getDataByIndex(CDecalData::DataTypeIndex);
+			CWorldTransformData* decalTransform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+
+			if (decalData && decalData->Change)
+			{
+				initDecal(entity, decalData, decalTransform->Relative.getTranslation(), collisionMgr);
+				decalData->Change = false;
+			}
+		}
+	}
+
+	void CDecals::initDecal(CEntity* entity, CDecalData* decal, const core::vector3df& position, CCollisionBuilder* collision)
+	{
+		// Create boxes
+		irr::core::aabbox3df box = irr::core::aabbox3df(
+			position - decal->Dimension * 0.5f,
+			position + decal->Dimension * 0.5f
+		);
+
+		// Query tris collision
+		core::array<core::triangle3df*> triangles;
+		core::array<CCollisionNode*> nodes;
+		collision->getTriangles(box, triangles, nodes);
+		u32 triangleCount = triangles.size();
+
+		// Scale to 0.0f - 1.0f (UV space)
+		core::vector3df uvScale = core::vector3df(1, 1, 1) / decal->Dimension;
+		core::vector3df uvOffset(0.5f, 0.0f, 0.5f);
+
+		// UV Rotation matrix
+		core::quaternion r1;
+		r1.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), decal->Normal);
+
+		core::quaternion r2;
+		r2.fromAngleAxis(decal->TextureRotation * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
+
+		core::quaternion q = r2 * r1;
+
+		// Inverse vertex to local position
+		core::matrix4 uvMatrix = q.getMatrix();
+		uvMatrix.setTranslation(position);
+		uvMatrix.makeInverse();
+
+		// Position matrix
+		core::matrix4 worldInverse;
+		worldInverse.setTranslation(position);
+		worldInverse.makeInverse();
+
+		// Clip all triangles and fill vertex and indices
+		u32 vertexIndex = 0;
+		std::map<core::vector3df, u32> positions;
+
+		IIndexBuffer* indices = decal->MeshBuffer->getIndexBuffer();
+		IVertexBuffer* vertices = decal->MeshBuffer->getVertexBuffer();
+
+		for (u32 i = 0; i < triangleCount; i++)
+		{
+			u32 index = 0;
+
+			core::triangle3df uvTriangle = *triangles[i];
+			core::triangle3df& triangle = *triangles[i];
+
+			core::vector3df triangleNormal = triangle.getNormal();
+			triangleNormal.normalize();
+
+			// Rotate positions
+			uvMatrix.transformVect(uvTriangle.pointA);
+			uvMatrix.transformVect(uvTriangle.pointB);
+			uvMatrix.transformVect(uvTriangle.pointC);
+
+			// Fill vertices and indices
+			{
+				video::SColor color(255, 255, 255, 255);
+
+				for (u32 p = 0; p < 3; p++)
+				{
+					core::vector3df uvPos;
+					core::vector3df pos;
+
+					if (p == 0)
+					{
+						uvPos = uvTriangle.pointA * uvScale + uvOffset;
+						pos = triangle.pointA;
+					}
+					else if (p == 1)
+					{
+						uvPos = uvTriangle.pointB * uvScale + uvOffset;
+						pos = triangle.pointB;
+					}
+					else if (p == 2)
+					{
+						uvPos = uvTriangle.pointC * uvScale + uvOffset;
+						pos = triangle.pointC;
+					}
+
+					worldInverse.transformVect(pos);
+
+					// Search if vertex already exists in the vertices list
+					std::map<core::vector3df, u32>::iterator iter = positions.find(uvPos);
+					if (iter != positions.end())
+					{
+						index = iter->second;
+					}
+					// Add vertex to list
+					else
+					{
+						index = vertexIndex;
+						positions.insert(std::pair<core::vector3df, u32>(uvPos, vertexIndex));
+
+						pos += triangleNormal * decal->Distance;
+
+						core::vector2df uv(uvPos.X, 1.0f - uvPos.Z);
+
+						video::S3DVertex vtx(
+							pos,
+							triangleNormal,
+							color,
+							uv);
+
+						vertices->addVertex(&vtx);
+						vertexIndex++;
+					}
+
+					indices->addIndex(index);
+				}
+			}
+		}
+
+		decal->MeshBuffer->recalculateBoundingBox();
+		decal->MeshBuffer->setDirty();
+
+		CCullingBBoxData* cullingBox = (CCullingBBoxData*)entity->getDataByIndex(CCullingBBoxData::DataTypeIndex);
+		cullingBox->BBox = decal->MeshBuffer->getBoundingBox();
+		cullingBox->Materials.clear();
+		cullingBox->Materials.push_back(m_renderData->Material);
 	}
 }

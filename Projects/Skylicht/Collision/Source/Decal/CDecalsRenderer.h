@@ -33,9 +33,6 @@ namespace Skylicht
 	class CDecalsRenderer : public IRenderSystem
 	{
 	protected:
-		core::array<CDecalRenderData*> m_decalRenders;
-		core::array<CWorldTransformData*> m_transforms;
-
 		core::array<CDecalData*> m_decalData;
 		core::array<CWorldTransformData*> m_decalTransforms;
 
@@ -52,8 +49,6 @@ namespace Skylicht
 
 		virtual void update(CEntityManager* entityManager);
 
-		virtual void render(CEntityManager* entityManager);
-
-		void initDecal(CDecalData* decal, const core::vector3df& position);
+		virtual void render(CEntityManager* entityManager);		
 	};
 }

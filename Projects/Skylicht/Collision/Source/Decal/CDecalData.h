@@ -35,7 +35,6 @@ namespace Skylicht
 	public:
 		ITexture* Texture;
 		CMaterial* Material;
-		CCollisionBuilder* Collision;
 
 		DECLARE_DATA_TYPE_INDEX;
 
