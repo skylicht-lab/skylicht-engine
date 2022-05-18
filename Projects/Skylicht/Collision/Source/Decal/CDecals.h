@@ -65,5 +65,9 @@ namespace Skylicht
 		void bake(CCollisionBuilder* collisionMgr);
 
 		DECLARE_GETTYPENAME(CDecals);
+
+	protected:
+
+		void initDecal(CEntity* entity, CDecalData* decal, const core::vector3df& position, CCollisionBuilder* collision);
 	};
 }
