@@ -30,7 +30,8 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CDecalRenderData);
 
 	CDecalRenderData::CDecalRenderData() :
-		Texture(NULL)
+		Texture(NULL),
+		Collision(NULL)
 	{
 		Material = new CMaterial("DecalRenderer", "BuiltIn/Shader/Basic/TextureColorAlpha.xml");
 	}
@@ -47,7 +48,6 @@ namespace Skylicht
 		LifeTime(0.0f),
 		Distance(0.0f),
 		RenderData(NULL),
-		Collision(NULL),
 		Change(true)
 	{
 		MeshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));

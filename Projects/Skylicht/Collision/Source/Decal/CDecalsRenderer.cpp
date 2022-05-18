@@ -92,7 +92,9 @@ namespace Skylicht
 		for (u32 i = 0; i < numDecal; i++)
 		{
 			CDecalData* decalData = decalDatas[i];
-			if (decalData->Change == true && decalData->Collision)
+			if (decalData->Change == true &&
+				decalData->RenderData &&
+				decalData->RenderData->Collision)
 			{
 				initDecal(decalData, decalTransform[i]->World.getTranslation());
 				decalData->Change = false;
@@ -135,7 +137,7 @@ namespace Skylicht
 		// Query tris collision
 		core::array<core::triangle3df*> triangles;
 		core::array<CCollisionNode*> nodes;
-		decal->Collision->getTriangles(box, triangles, nodes);
+		decal->RenderData->Collision->getTriangles(box, triangles, nodes);
 		u32 triangleCount = triangles.size();
 
 		// Scale to 0.0f - 1.0f (UV space)
