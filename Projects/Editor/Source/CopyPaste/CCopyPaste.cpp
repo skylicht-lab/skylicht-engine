@@ -103,7 +103,8 @@ namespace Skylicht
 				// update on GUI editor
 				if (hierarchyController != NULL && gameObject != NULL && parentNode != NULL)
 				{
-					hierarchyController->addToTreeNode(sceneController->buildHierarchyData(gameObject, parentNode));
+					GUI::CTreeNode* node = hierarchyController->addToTreeNode(sceneController->buildHierarchyData(gameObject, parentNode));
+					node->collapse(false);
 				}
 			}
 		}

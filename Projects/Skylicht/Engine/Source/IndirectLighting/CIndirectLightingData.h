@@ -35,7 +35,6 @@ namespace Skylicht
 		{
 			LightmapArray,
 			VertexColor,
-			SH4,
 			SH9
 		};
 

@@ -57,6 +57,7 @@ namespace Skylicht
 
 		void CTransformEditor::closeGUI()
 		{
+			m_changed = false;
 			m_component = NULL;
 			m_gameObject = NULL;
 			m_transform = NULL;
@@ -81,6 +82,7 @@ namespace Skylicht
 
 		void CTransformEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
 		{
+			m_changed = false;
 			m_component = target;
 			m_gameObject = target->getGameObject();
 			m_transform = dynamic_cast<CTransformEuler*>(target);
@@ -139,7 +141,7 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Y", &Y, 0.01f);
 				ui->addNumberInput(layout, L"Z", &Z, 0.01f);
 
-				X.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
+				X.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -148,10 +150,11 @@ namespace Skylicht
 							pos.X = value->get();
 							t->setPosition(pos);
 							g->setPosition(pos);
+							*changed = true;
 						}
 					}), true);
 
-				Y.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
+				Y.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -160,10 +163,11 @@ namespace Skylicht
 							pos.Y = value->get();
 							t->setPosition(pos);
 							g->setPosition(pos);
+							*changed = true;
 						}
 					}), true);
 
-				Z.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
+				Z.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -172,6 +176,7 @@ namespace Skylicht
 							pos.Z = value->get();
 							t->setPosition(pos);
 							g->setPosition(pos);
+							*changed = true;
 						}
 					}), true);
 
@@ -203,7 +208,7 @@ namespace Skylicht
 						t->setRotation(rot * core::RADTODEG);
 					}), true);
 
-				RotateX.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
+				RotateX.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -212,10 +217,11 @@ namespace Skylicht
 							rot.X = value->get();
 							t->setRotation(rot);
 							g->setRotation(rot);
+							*changed = true;
 						}
 					}), true);
 
-				RotateY.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
+				RotateY.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -224,10 +230,11 @@ namespace Skylicht
 							rot.Y = value->get();
 							t->setRotation(rot);
 							g->setRotation(rot);
+							*changed = true;
 						}
 					}), true);
 
-				RotateZ.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
+				RotateZ.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -236,6 +243,7 @@ namespace Skylicht
 							rot.Z = value->get();
 							t->setRotation(rot);
 							g->setRotation(rot);
+							*changed = true;
 						}
 					}), true);
 
@@ -267,7 +275,7 @@ namespace Skylicht
 						t->setScale(scale);
 					}), true);
 
-				ScaleX.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
+				ScaleX.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -276,10 +284,11 @@ namespace Skylicht
 							scale.X = value->get();
 							t->setScale(scale);
 							g->setScale(scale);
+							*changed = true;
 						}
 					}), true);
 
-				ScaleY.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
+				ScaleY.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -288,10 +297,11 @@ namespace Skylicht
 							scale.Y = value->get();
 							t->setScale(scale);
 							g->setScale(scale);
+							*changed = true;
 						}
 					}), true);
 
-				ScaleZ.addObserver(new CObserver([t = m_transform, g = m_gizmos](ISubject* subject, IObserver* from)
+				ScaleZ.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
@@ -300,6 +310,7 @@ namespace Skylicht
 							scale.Z = value->get();
 							t->setScale(scale);
 							g->setScale(scale);
+							*changed = true;
 						}
 					}), true);
 

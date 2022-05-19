@@ -52,7 +52,8 @@ namespace Skylicht
 
 			CTransformEuler* m_transform;
 
-			bool m_skip;
+			bool m_skip;			
+
 		public:
 			CTransformEditor();
 

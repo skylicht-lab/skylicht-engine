@@ -38,7 +38,6 @@ namespace Skylicht
 		{
 			LightmapArray,
 			VertexColor,
-			SH4,
 			SH9,
 		};
 
@@ -63,6 +62,10 @@ namespace Skylicht
 		virtual void startComponent();
 
 		virtual void updateComponent();
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 
 	protected:
 

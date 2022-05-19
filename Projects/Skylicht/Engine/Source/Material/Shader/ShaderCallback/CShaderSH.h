@@ -38,11 +38,9 @@ namespace Skylicht
 
 		virtual ~CShaderSH();
 
-		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
-		static void setSH9(core::vector3df *sh);
-
-		static void setSH4(core::vector3df *sh);
+		static void setSH9(core::vector3df* sh);
 	};
 }
