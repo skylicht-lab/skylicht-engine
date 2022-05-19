@@ -935,6 +935,25 @@ namespace Skylicht
 			return comboBox;
 		}
 
+		void CSpaceProperty::addArrayString(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::vector<std::string>>* value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
+			input->setNumberType(GUI::UInteger);
+			input->setValue(value->get().size(), false);
+			input->setStep((float)1.0f);
+
+			m_window->getCanvas()->TabableGroup.add(input);
+
+			boxLayout->endVertical();
+		}
+
 		const wchar_t* CSpaceProperty::getPrettyName(const std::string& name)
 		{
 			char prettyName[512] = { 0 };

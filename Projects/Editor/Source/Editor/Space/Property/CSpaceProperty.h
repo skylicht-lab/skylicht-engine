@@ -125,6 +125,8 @@ namespace Skylicht
 
 			GUI::CDropdownBox* addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value);
 
+			void addArrayString(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::vector<std::string>>* value);
+
 			inline void setLabel(const wchar_t* label)
 			{
 				m_label->setString(label);
