@@ -52,9 +52,7 @@ namespace Skylicht
 
 	const char* CScene::getNameA()
 	{
-		char name[1024];
-		CStringImp::convertUnicodeToUTF8(m_name.c_str(), name);
-		m_namec = name;
+		m_namec = CStringImp::convertUnicodeToUTF8(m_name.c_str());
 		return m_namec.c_str();
 	}
 
@@ -296,7 +294,7 @@ namespace Skylicht
 	CObjectSerializable* CScene::createSerializable()
 	{
 		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
-		object->addAutoRelease(new CStringWProperty(object, "name", getName()));
+		object->addAutoRelease(new CStringProperty(object, "name", getNameA()));
 		return object;
 	}
 

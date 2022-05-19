@@ -140,7 +140,7 @@ namespace Skylicht
 
 			for (int i = 0; i < 16; i++)
 			{
-				std::wstring name = objectLayer->getName(i);
+				std::wstring name = CStringImp::convertUTF8ToUnicode(objectLayer->getName(i).c_str());
 				CStringImp::copy(labelw, name.c_str());
 				CStringImp::trim(labelw);
 

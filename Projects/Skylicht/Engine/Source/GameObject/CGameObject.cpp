@@ -91,9 +91,7 @@ namespace Skylicht
 
 	const char* CGameObject::getNameA()
 	{
-		char name[1024];
-		CStringImp::convertUnicodeToUTF8(m_name.c_str(), name);
-		m_namec = name;
+		m_namec = CStringImp::convertUnicodeToUTF8(m_name.c_str());
 		return m_namec.c_str();
 	}
 
@@ -390,7 +388,7 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
 		object->addAutoRelease(new CStringProperty(object, "id", getID().c_str()));
-		object->addAutoRelease(new CStringWProperty(object, "name", getName()));
+		object->addAutoRelease(new CStringProperty(object, "name", getNameA()));
 		object->addAutoRelease(new CBoolProperty(object, "enable", isEnable()));
 		object->addAutoRelease(new CBoolProperty(object, "visible", isVisible()));
 		object->addAutoRelease(new CBoolProperty(object, "static", isStatic()));
@@ -429,7 +427,7 @@ namespace Skylicht
 	void CGameObject::loadSerializable(CObjectSerializable* object)
 	{
 		setID(object->get("id", std::string("")).c_str());
-		setName(object->get("name", std::wstring(L"")).c_str());
+		setName(object->get("name", std::string("")).c_str());
 		setEnable(object->get("enable", true));
 		setVisible(object->get("visible", true));
 		setStatic(object->get("static", true));

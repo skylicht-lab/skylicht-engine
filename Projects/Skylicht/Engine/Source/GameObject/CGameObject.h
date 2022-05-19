@@ -101,6 +101,8 @@ namespace Skylicht
 			return m_name.c_str();
 		}
 
+		const char* getNameA();
+
 		inline const wchar_t* getDefaultName()
 		{
 			return m_defaultName.c_str();
@@ -115,8 +117,6 @@ namespace Skylicht
 		}
 
 		void setName(const char* lpName);
-
-		const char* getNameA();
 
 		inline CGameObject* getParent()
 		{

@@ -82,6 +82,7 @@ namespace Skylicht
 			float m_mouseX;
 			float m_mouseY;
 
+			core::dimension2df m_renderSize;
 			core::recti m_sceneRect;
 
 			CViewpoint* m_viewpoint;

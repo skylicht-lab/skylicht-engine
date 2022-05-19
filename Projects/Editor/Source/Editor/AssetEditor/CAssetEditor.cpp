@@ -220,25 +220,6 @@ namespace Skylicht
 					ui->addTextBox(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
 				}
-				else if (valueProperty->getType() == EPropertyDataType::StringW)
-				{
-					CStringWProperty* value = dynamic_cast<CStringWProperty*>(valueProperty);
-					CSubject<std::wstring>* subject = new CSubject<std::wstring>(value->get());
-					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
-						{
-							const std::wstring& stringValue = s->get();
-							value->set(stringValue);
-							onUpdateValue(object);
-						}
-					};
-
-					subject->addObserver(observer, true);
-					ui->addTextBox(layout, ui->getPrettyName(value->Name), subject);
-					m_subjects.push_back(subject);
-				}
 				else if (valueProperty->getType() == EPropertyDataType::Color)
 				{
 					CColorProperty* value = dynamic_cast<CColorProperty*>(valueProperty);

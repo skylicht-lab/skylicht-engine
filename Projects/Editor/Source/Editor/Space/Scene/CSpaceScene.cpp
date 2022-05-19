@@ -306,6 +306,9 @@ namespace Skylicht
 			m_editorCamera->setPosition(core::vector3df(-2.0f, 1.5f, -2.0f));
 			m_editorCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
+			if (m_renderSize.Height > 0)
+				m_editorCamera->setAspect(m_renderSize.Width / m_renderSize.Height);
+
 			// grid
 			m_gridPlane = zone->createEmptyObject();
 			m_gridPlane->setName(L"Grid3D");
@@ -650,6 +653,9 @@ namespace Skylicht
 
 				// update camera aspect
 				m_editorCamera->setAspect(fw / fh);
+
+				m_renderSize.Width = fw;
+				m_renderSize.Height = fh;
 			}
 		}
 
