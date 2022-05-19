@@ -409,43 +409,6 @@ namespace Skylicht
 		}
 	};
 
-	class CStringWProperty : public CValuePropertyTemplate<std::wstring>
-	{
-	public:
-		CStringWProperty(CObjectSerializable* owner, const char* name) :
-			CValuePropertyTemplate(owner, StringW, name)
-		{
-		}
-
-		CStringWProperty(CObjectSerializable* owner, const char* name, const wchar_t* value) :
-			CValuePropertyTemplate(owner, StringW, name)
-		{
-			set(value);
-		}
-
-		const wchar_t* getString()
-		{
-			return m_value.c_str();
-		}
-
-		virtual void serialize(io::IAttributes* io)
-		{
-			io->addString(Name.c_str(), m_value.c_str());
-		}
-
-		virtual void deserialize(io::IAttributes* io)
-		{
-			m_value = io->getAttributeAsStringW(Name.c_str()).c_str();
-		}
-
-		virtual CValueProperty* clone()
-		{
-			CStringWProperty* value = new CStringWProperty(NULL, Name.c_str());
-			value->m_value = m_value;
-			return value;
-		}
-	};
-
 	class CDateTimeProperty : public CValuePropertyTemplate<long>
 	{
 	public:

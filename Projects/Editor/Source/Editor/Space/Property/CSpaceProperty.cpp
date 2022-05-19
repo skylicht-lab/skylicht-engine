@@ -946,7 +946,7 @@ namespace Skylicht
 
 			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
 			input->setNumberType(GUI::UInteger);
-			input->setValue(value->get().size(), false);
+			input->setValue((int)value->get().size(), false);
 			input->setStep((float)1.0f);
 
 			m_window->getCanvas()->TabableGroup.add(input);

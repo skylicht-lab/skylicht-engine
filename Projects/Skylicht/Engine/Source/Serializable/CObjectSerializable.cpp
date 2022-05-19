@@ -137,64 +137,6 @@ namespace Skylicht
 		attr->drop();
 	}
 
-	void CObjectSerializable::build(io::IXMLReader* reader)
-	{
-		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
-		io::IAttributes* attr = fs->createEmptyAttributes();
-
-		std::wstring nodeName = L"node";
-		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(Name.c_str());
-
-		if (nodeName == reader->getNodeName() && attributeName == reader->getAttributeValue(L"type"))
-		{
-			attr->read(reader);
-			deserialize(attr);
-		}
-		else
-		{
-			char log[512];
-			sprintf(log, "[CObjectSerializable::load] Skip wrong data: type: %s", Name.c_str());
-			os::Printer::log(log);
-			attr->drop();
-			return;
-		}
-		attr->drop();
-
-		// continue read
-		while (reader->read())
-		{
-			switch (reader->getNodeType())
-			{
-			case io::EXN_ELEMENT:
-			{
-				if (nodeName == reader->getNodeName())
-				{
-					std::wstring type = reader->getAttributeValue(L"type");
-					if (type == L"Components")
-					{
-
-					}
-					else if (type == L"Childs")
-					{
-
-					}
-				}
-			}
-			break;
-			case io::EXN_ELEMENT_END:
-			{
-				if (nodeName == reader->getNodeName())
-				{
-
-				}
-			}
-			break;
-			default:
-				break;
-			}
-		}
-	}
-
 	void CObjectSerializable::parseSerializable(io::IXMLReader* reader)
 	{
 		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
