@@ -33,7 +33,6 @@ namespace Skylicht
 	class CLightProbes : public CEntityHandler
 	{
 	protected:
-		io::IAttributes* m_attributes;
 
 	public:
 		CLightProbes();

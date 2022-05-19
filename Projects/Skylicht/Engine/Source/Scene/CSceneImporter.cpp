@@ -236,10 +236,12 @@ namespace Skylicht
 							++s_loading;
 							++step;
 
-							CObjectSerializable* data = gameobject->createSerializable();
-							data->parseSerializable(reader);
-							gameobject->loadSerializable(data);
-							gameobject->startComponent();
+							std::string name = CStringImp::convertUnicodeToUTF8(attributeName.c_str());
+
+							CObjectSerializable* data = new CObjectSerializable(name.c_str());
+							data->build(reader);
+							// gameobject->loadSerializable(data);
+							// gameobject->startComponent();
 							delete data;
 						}
 					}
