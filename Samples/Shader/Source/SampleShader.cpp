@@ -158,7 +158,7 @@ void SampleShader::initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial&
 
 	// set indirect lighting by baked SH
 	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
-	indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
+	indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 
 	// rotate
 	CRotateComponent *rotate = object->addComponent<CRotateComponent>();
@@ -187,7 +187,7 @@ void SampleShader::initTestReflectionShader(CEntityPrefab *prefab, ArrayMaterial
 
 	// set indirect lighting by baked SH
 	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
-	indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
+	indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 
 	// rotate
 	CRotateComponent *rotate = object->addComponent<CRotateComponent>();
@@ -275,7 +275,7 @@ void SampleShader::initTestDissoveShader(CEntityPrefab *prefab, ArrayMaterial& m
 
 	// set indirect lighting by baked SH
 	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
-	indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
+	indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 
 	// rotate
 	CRotateComponent *rotate = object->addComponent<CRotateComponent>();

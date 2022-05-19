@@ -98,7 +98,7 @@ void SampleMaterials::onInitApp()
 
 	// SH ambient lighting
 	CIndirectLighting *indirect = sphereObj->addComponent<CIndirectLighting>();
-	indirect->setIndirectLightingType(CIndirectLighting::SH4);
+	indirect->setIndirectLightingType(CIndirectLighting::SH9);
 
 	// Reflection probe
 	CGameObject *reflectionProbeObj = zone->createEmptyObject();
