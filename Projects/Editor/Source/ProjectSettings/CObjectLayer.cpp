@@ -38,15 +38,15 @@ namespace Skylicht
 			for (int i = 0; i < 16; i++)
 			{
 				sprintf(name, "%d", i);
-				addAutoRelease(new CStringWProperty(this, name, L""));
+				addAutoRelease(new CStringProperty(this, name, ""));
 			}
 
-			setName(0, L"Default");
-			setName(1, L"UI");
-			setName(2, L"Transparent FX");
-			setName(3, L"Sky");
-			setName(4, L"Enviroment");
-			setName(5, L"Collision");
+			setName(0, "Default");
+			setName(1, "UI");
+			setName(2, "Transparent FX");
+			setName(3, "Sky");
+			setName(4, "Enviroment");
+			setName(5, "Collision");
 		}
 
 		CObjectLayer::~CObjectLayer()
@@ -54,15 +54,15 @@ namespace Skylicht
 
 		}
 
-		const std::wstring& CObjectLayer::getName(int i)
+		const std::string& CObjectLayer::getName(int i)
 		{
-			CStringWProperty* value = dynamic_cast<CStringWProperty*>(getPropertyID(i));
+			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
 			return value->get();
 		}
 
-		void CObjectLayer::setName(int i, const wchar_t* name)
+		void CObjectLayer::setName(int i, const char* name)
 		{
-			CStringWProperty* value = dynamic_cast<CStringWProperty*>(getPropertyID(i));
+			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
 			value->set(name);
 		}
 

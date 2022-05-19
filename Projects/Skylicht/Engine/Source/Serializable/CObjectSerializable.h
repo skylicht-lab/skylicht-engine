@@ -106,8 +106,6 @@ namespace Skylicht
 
 		virtual void load(io::IXMLReader* reader);
 
-		virtual void build(io::IXMLReader* reader);
-
 		virtual void parseSerializable(io::IXMLReader* reader);
 
 		virtual CObjectSerializable* clone();

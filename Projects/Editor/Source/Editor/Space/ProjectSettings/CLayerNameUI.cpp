@@ -63,15 +63,15 @@ namespace Skylicht
 
 				if (i <= 5)
 				{
-					input->setString(objectLayer->getName(i).c_str());
+					input->setString(CStringImp::convertUTF8ToUnicode(objectLayer->getName(i).c_str()).c_str());
 					input->setEditable(false);
 				}
 				else
 				{
-					input->setString(objectLayer->getName(i).c_str());
+					input->setString(CStringImp::convertUTF8ToUnicode(objectLayer->getName(i).c_str()).c_str());
 					input->OnTextChanged = [i, objectLayer, input, settings = m_settings](GUI::CBase* base)
 					{
-						objectLayer->setName(i, input->getString().c_str());
+						objectLayer->setName(i, CStringImp::convertUnicodeToUTF8(input->getString().c_str()).c_str());
 						settings->enableApply();
 					};
 				}

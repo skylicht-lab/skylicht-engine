@@ -82,7 +82,7 @@ namespace Skylicht
 				to->addBool(name, from->getAttributeAsBool(i));
 				break;
 			case io::EAT_STRING:
-				to->addString(name, from->getAttributeAsStringW(i).c_str());
+				to->addString(name, from->getAttributeAsString(i).c_str());
 				break;
 			case io::EAT_VECTOR3D:
 				to->addVector3d(name, from->getAttributeAsVector3d(i));

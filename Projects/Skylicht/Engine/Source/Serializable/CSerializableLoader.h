@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,42 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GameObject/CZone.h"
-#include "CScene.h"
-#include "Serializable/CObjectSerializable.h"
-#include "Serializable/CSerializableLoader.h"
+#include "CValuePropertyTemplate.h"
+#include "CObjectSerializable.h"
 
 namespace Skylicht
 {
-	class CSceneImporter
+	class CSerializableLoader
 	{
-		static io::IXMLReader* s_reader;
-
-		static std::string s_scenePath;
-
-		static CScene* s_scene;
-
-		static int s_loadStep;
-
-		static int s_loading;
-
-		static std::list<CGameObject*> s_listObject;
-
-		static std::list<CGameObject*>::iterator s_current;
-
-		static void buildComponent(CGameObject* object, io::IXMLReader* xmlReader);
-
-		static void buildScene(CScene* scene, io::IXMLReader* xmlReader);
-
-		static bool loadStep(CScene* scene, io::IXMLReader* reader);
-
 	public:
-		static void exportGameObject(CObjectSerializable* data, CContainerObject* target);
+		static void load(io::IXMLReader* reader, CObjectSerializable* object, const char *exitNode);
 
-		static bool beginImportScene(CScene* scene, const char* path);
+	protected:
 
-		static bool updateLoadScene();
-
-		static float getLoadingPercent();
+		static void initProperty(CObjectSerializable* object, io::IAttributes* attributes);
 	};
 }
