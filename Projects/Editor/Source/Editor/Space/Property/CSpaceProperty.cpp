@@ -146,6 +146,9 @@ namespace Skylicht
 
 		void CSpaceProperty::clearAllGroup()
 		{
+			bool changed = false;
+			std::vector<CGameObject*> objs;
+
 			for (SGroup* group : m_groups)
 			{
 				group->releaseObserver();
@@ -153,19 +156,32 @@ namespace Skylicht
 				if (group->AssetOwner)
 					group->AssetOwner->closeGUI();
 				if (group->Owner)
+				{
+					if (group->Owner->isChanged())
+					{
+						// need save history
+						CGameObject* obj = group->Owner->getGameObject();
+						if (std::find(objs.begin(), objs.end(), obj) == objs.end())
+							objs.push_back(obj);
+						changed = true;
+					}
+
 					group->Owner->closeGUI();
+				}
 				if (group->EntityDataOwner)
 					group->EntityDataOwner->closeGUI();
 				delete group;
 			}
 
-			m_groups.clear();
+			// save modify history
+			if (changed && objs.size() > 0)
+				CSceneController::getInstance()->getHistory()->saveModifyHistory(objs);
 
+			// delete editor components
 			for (CComponentEditor* editor : m_releaseComponents)
-			{
 				delete editor;
-			}
 			m_releaseComponents.clear();
+			m_groups.clear();
 		}
 
 		void CSpaceProperty::update()

@@ -31,7 +31,8 @@ namespace Skylicht
 	{
 		CComponentEditor::CComponentEditor() :
 			m_component(NULL),
-			m_gameObject(NULL)
+			m_gameObject(NULL),
+			m_changed(false)
 		{
 
 		}

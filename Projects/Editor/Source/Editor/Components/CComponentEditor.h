@@ -37,6 +37,7 @@ namespace Skylicht
 		protected:
 			CComponentSystem* m_component;
 			CGameObject* m_gameObject;
+			bool m_changed;
 
 		public:
 			CComponentEditor();
@@ -56,6 +57,11 @@ namespace Skylicht
 			}
 
 			virtual void update() = 0;
+
+			bool isChanged()
+			{
+				return m_changed;
+			}
 
 			CComponentSystem* getComponent()
 			{

@@ -37,7 +37,7 @@ namespace Skylicht
 	CATEGORY_COMPONENT(CIndirectLighting, "Indirect Lighting", "Indirect Lighting");
 
 	CIndirectLighting::CIndirectLighting() :
-		m_type(LightmapArray),
+		m_type(SH9),
 		m_autoSH(true)
 	{
 
@@ -112,6 +112,27 @@ namespace Skylicht
 
 	}
 
+	CObjectSerializable* CIndirectLighting::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+
+		CEnumProperty<EIndirectType>* enumType = new CEnumProperty<EIndirectType>(object, "type", m_type);
+		enumType->addEnumString("Lightmap", EIndirectType::LightmapArray);
+		enumType->addEnumString("Vertex Color", EIndirectType::VertexColor);
+		enumType->addEnumString("SH9", EIndirectType::SH9);
+		object->addAutoRelease(enumType);
+
+		return object;
+	}
+
+	void CIndirectLighting::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
+
+		EIndirectType type = object->get<EIndirectType>("type", EIndirectType::SH9);
+		setIndirectLightingType(type);
+	}
+
 	void CIndirectLighting::setSH(core::vector3df* sh)
 	{
 		m_autoSH = false;
@@ -145,11 +166,6 @@ namespace Skylicht
 			{
 				data->Type = CIndirectLightingData::LightmapArray;
 				data->LightmapTexture = m_lightmap;
-			}
-			else if (m_type == SH4)
-			{
-				data->Type = CIndirectLightingData::SH4;
-				data->SH = m_sh;
 			}
 			else if (m_type == SH9)
 			{

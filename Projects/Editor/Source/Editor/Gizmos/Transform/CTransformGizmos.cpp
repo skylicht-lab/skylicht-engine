@@ -184,6 +184,7 @@ namespace Skylicht
 				handle->setWorld(m_parentWorld);
 				handle->end();
 				changed = false;
+				m_selectID = "";
 				return;
 			}
 
@@ -226,6 +227,7 @@ namespace Skylicht
 				handle->setWorld(m_parentWorld);
 				handle->end();
 				m_cacheSelectedObjects.clear();
+				m_selectID = "";
 				return;
 			}
 
