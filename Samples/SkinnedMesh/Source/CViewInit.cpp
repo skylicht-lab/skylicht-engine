@@ -150,7 +150,7 @@ void CViewInit::initScene()
 
 		// set sh lighting
 		CIndirectLighting* indirectLighting = m_character01->addComponent<CIndirectLighting>();
-		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
+		indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 
 
 		// CHARACTER 02
@@ -174,7 +174,7 @@ void CViewInit::initScene()
 
 		// set sh lighting
 		indirectLighting = m_character02->addComponent<CIndirectLighting>();
-		indirectLighting->setIndirectLightingType(CIndirectLighting::SH4);
+		indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 	}
 
 	// Rendering
