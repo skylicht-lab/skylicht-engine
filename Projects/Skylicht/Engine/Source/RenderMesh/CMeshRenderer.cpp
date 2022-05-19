@@ -114,8 +114,6 @@ namespace Skylicht
 			{
 				if (lightingData->Type == CIndirectLightingData::SH9)
 					CShaderSH::setSH9(lightingData->SH);
-				else if (lightingData->Type == CIndirectLightingData::SH4)
-					CShaderSH::setSH4(lightingData->SH);
 			}
 
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);

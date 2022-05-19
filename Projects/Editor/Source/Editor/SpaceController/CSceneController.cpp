@@ -788,8 +788,8 @@ namespace Skylicht
 				}
 				else
 				{
-					selection->unSelect(obj);
 					propertyController->setProperty(NULL);
+					selection->unSelect(obj);
 				}
 			}
 			else if (node->isTagEntity())
@@ -990,7 +990,6 @@ namespace Skylicht
 							container = dynamic_cast<CContainerObject*>(gameObject->getParent());
 							CCopyPaste::getInstance()->paste(container);
 						}
-						m_spaceHierarchy->getController()->updateTreeNode(container);
 					}
 				}
 				else if (lastSelected->getType() == CSelectObject::Entity)
@@ -1011,7 +1010,6 @@ namespace Skylicht
 								container = dynamic_cast<CContainerObject*>(gameObject->getParent());
 								CCopyPaste::getInstance()->paste(container);
 							}
-							m_spaceHierarchy->getController()->updateTreeNode(container);
 						}
 					}
 				}
