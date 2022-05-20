@@ -88,9 +88,9 @@ namespace Skylicht
 		void CDefaultEditor::initDataGUI(CObjectSerializable* data, GUI::CBoxLayout* layout, CSpaceProperty* ui)
 		{
 			// add serializable data control
-			for (u32 i = 0, n = m_data->getNumProperty(); i < n; i++)
+			for (u32 i = 0, n = data->getNumProperty(); i < n; i++)
 			{
-				CValueProperty* valueProperty = m_data->getPropertyID(i);
+				CValueProperty* valueProperty = data->getPropertyID(i);
 
 				// add ui space
 				if (valueProperty->getUISpace() > 0)
@@ -360,6 +360,20 @@ namespace Skylicht
 							ui->getWindow()->getCanvas()->closeMenu();
 						};
 					}
+				}
+				else if (valueProperty->getType() == EPropertyDataType::Object)
+				{
+					// sub objects
+					CObjectSerializable* arrayObject = (CObjectSerializable*)valueProperty;
+					CSubject<CObjectSerializable*>* subject = new CSubject<CObjectSerializable*>(arrayObject);
+
+					GUI::CCollapsibleGroup* group = ui->addSubGroup(layout);
+					group->getHeader()->setLabel(ui->getPrettyName(valueProperty->Name));
+
+					GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+					initDataGUI(arrayObject, layout, ui);
+
+					m_subjects.push_back(subject);
 				}
 			}
 		}
