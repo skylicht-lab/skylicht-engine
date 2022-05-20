@@ -34,7 +34,7 @@ namespace Skylicht
 	{
 	protected:
 		std::string m_name;
-		io::IAttributes* m_attributes;
+		CObjectSerializable* m_data;
 
 	public:
 		CNullComponent();

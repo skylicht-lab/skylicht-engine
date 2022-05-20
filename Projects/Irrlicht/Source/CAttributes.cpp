@@ -288,6 +288,17 @@ void CAttributes::setAttribute(const c8* attributeName, s32 value)
 	}
 }
 
+void CAttributes::setAttribute(const c8* attributeName, u32 value)
+{
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		att->setInt((s32)value);
+	else
+	{
+		Attributes.push_back(new CUIntAttribute(attributeName, value));
+	}
+}
+
 //! Gets a attribute as integer value
 //! \param attributeName: Name of the attribute to get.
 //! \return Returns value of the attribute previously set by setAttribute() as integer
@@ -297,6 +308,15 @@ s32 CAttributes::getAttributeAsInt(const c8* attributeName, irr::s32 defaultNotF
 	IAttribute* att = getAttributeP(attributeName);
 	if (att)
 		return att->getInt();
+	else
+		return defaultNotFound;
+}
+
+u32 CAttributes::getAttributeAsUInt(const c8* attributeName, irr::u32 defaultNotFound) const
+{
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		return att->getUInt();
 	else
 		return defaultNotFound;
 }
@@ -660,6 +680,14 @@ s32 CAttributes::getAttributeAsInt(s32 index) const
 		return 0;
 }
 
+u32 CAttributes::getAttributeAsUInt(s32 index) const
+{
+	if ((u32)index < Attributes.size())
+		return Attributes[index]->getUInt();
+	else
+		return 0;
+}
+
 //! Gets an attribute as float value
 //! \param index: Index value, must be between 0 and getAttributeCount()-1.
 f32 CAttributes::getAttributeAsFloat(s32 index)
@@ -799,6 +827,11 @@ void CAttributes::getAttributeEnumerationLiteralsOfEnumeration(s32 index, core::
 void CAttributes::addInt(const c8* attributeName, s32 value)
 {
 	Attributes.push_back(new CIntAttribute(attributeName, value));
+}
+
+void CAttributes::addUInt(const c8* attributeName, u32 value)
+{
+	Attributes.push_back(new CUIntAttribute(attributeName, value));
 }
 
 //! Adds an attribute as float

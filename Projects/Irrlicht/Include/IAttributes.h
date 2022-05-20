@@ -99,19 +99,23 @@ public:
 
 	//! Adds an attribute as integer
 	virtual void addInt(const c8* attributeName, s32 value) = 0;
+	virtual void addUInt(const c8* attributeName, u32 value) = 0;
 
 	//! Sets an attribute as integer value
 	virtual void setAttribute(const c8* attributeName, s32 value) = 0;
+	virtual void setAttribute(const c8* attributeName, u32 value) = 0;
 
 	//! Gets an attribute as integer value
 	//! \param attributeName: Name of the attribute to get.
 	//! \param defaultNotFound Value returned when attributeName was not found
 	//! \return Returns value of the attribute previously set by setAttribute()
 	virtual s32 getAttributeAsInt(const c8* attributeName, irr::s32 defaultNotFound=0) const =0;
+	virtual u32 getAttributeAsUInt(const c8* attributeName, irr::u32 defaultNotFound = 0) const = 0;
 
 	//! Gets an attribute as integer value
 	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
 	virtual s32 getAttributeAsInt(s32 index) const =0;
+	virtual u32 getAttributeAsUInt(s32 index) const = 0;
 
 	//! Sets an attribute as integer value
 	virtual void setAttribute(s32 index, s32 value) = 0;

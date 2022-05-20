@@ -29,7 +29,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 #include "GameObject/CGameObject.h"
 #include "Transform/CWorldTransformData.h"
-#include "Serializable/CAttributeSerializable.h"
 
 namespace Skylicht
 {
@@ -119,6 +118,9 @@ namespace Skylicht
 		clearAll();
 
 		if (probes == NULL)
+			return;
+
+		if (probes->getNumProperty() < numProbes)
 			return;
 
 		for (int i = 0; i < numProbes; i++)

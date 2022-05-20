@@ -96,6 +96,11 @@ public:
 		return Value;
 	}
 
+	virtual u32 getUInt() _IRR_OVERRIDE_
+	{
+		return (u32)Value;
+	}
+
 	virtual f32 getFloat() _IRR_OVERRIDE_
 	{
 		return (f32)Value;
@@ -116,6 +121,11 @@ public:
 		Value = intValue;
 	}
 
+	virtual void setUInt(u32 intValue) _IRR_OVERRIDE_
+	{
+		Value = (s32)intValue;
+	}
+
 	virtual void setFloat(f32 floatValue) _IRR_OVERRIDE_
 	{
 		Value = (s32)floatValue;
@@ -131,13 +141,81 @@ public:
 		return EAT_INT;
 	}
 
-
 	virtual const wchar_t* getTypeString() const _IRR_OVERRIDE_
 	{
 		return L"int";
 	}
 
 	s32 Value;
+};
+
+class CUIntAttribute : public IAttribute
+{
+public:
+
+	CUIntAttribute(const char* name, u32 value)
+	{
+		Name = name;
+		setInt(value);
+	}
+
+	virtual s32 getInt() _IRR_OVERRIDE_
+	{
+		return (s32)Value;
+	}
+
+	virtual u32 getUInt() _IRR_OVERRIDE_
+	{
+		return Value;
+	}
+
+	virtual f32 getFloat() _IRR_OVERRIDE_
+	{
+		return (f32)Value;
+	}
+
+	virtual bool getBool() _IRR_OVERRIDE_
+	{
+		return (Value != 0);
+	}
+
+	virtual core::stringw getStringW() _IRR_OVERRIDE_
+	{
+		return core::stringw(Value);
+	}
+
+	virtual void setInt(s32 intValue) _IRR_OVERRIDE_
+	{
+		Value = (u32)intValue;
+	}
+
+	virtual void setUInt(u32 intValue) _IRR_OVERRIDE_
+	{
+		Value = intValue;
+	}
+
+	virtual void setFloat(f32 floatValue) _IRR_OVERRIDE_
+	{
+		Value = (s32)floatValue;
+	};
+
+	virtual void setString(const char* text) _IRR_OVERRIDE_
+	{
+		Value = (u32)atoi(text);
+	}
+
+	virtual E_ATTRIBUTE_TYPE getType() const _IRR_OVERRIDE_
+	{
+		return EAT_INT;
+	}
+
+
+	virtual const wchar_t* getTypeString() const _IRR_OVERRIDE_
+	{
+		return L"uint";
+	}
+
+	u32 Value;
 };
 
 // Attribute implemented for floats
@@ -156,6 +234,11 @@ public:
 		return (s32)Value;
 	}
 
+	virtual u32 getUInt() _IRR_OVERRIDE_
+	{
+		return (u32)Value;
+	}
+
 	virtual f32 getFloat() _IRR_OVERRIDE_
 	{
 		return Value;
@@ -172,6 +255,11 @@ public:
 	}
 
 	virtual void setInt(s32 intValue) _IRR_OVERRIDE_
+	{
+		Value = (f32)intValue;
+	}
+
+	virtual void setUInt(u32 intValue) _IRR_OVERRIDE_
 	{
 		Value = (f32)intValue;
 	}

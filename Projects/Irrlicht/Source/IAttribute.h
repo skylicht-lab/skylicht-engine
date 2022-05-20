@@ -38,6 +38,7 @@ public:
 	virtual ~IAttribute() {};
 
 	virtual s32 getInt()				{ return 0; }
+	virtual u32 getUInt()				{ return 0; }
 	virtual f32 getFloat()				{ return 0; }
 	virtual video::SColorf getColorf()		{ return video::SColorf(1.0f,1.0f,1.0f,1.0f); }
 	virtual video::SColor getColor()		{ return video::SColor(255,255,255,255); }
@@ -66,7 +67,8 @@ public:
 	virtual const char* getEnum()			{ return 0; }
 	virtual void* getUserPointer()			{ return 0; }
 
-	virtual void setInt(s32 intValue)		{};
+	virtual void setInt(s32 intValue)			{};
+	virtual void setUInt(u32 intValue)			{};
 	virtual void setFloat(f32 floatValue)		{};
 	virtual void setString(const char* text)	{};
 	virtual void setString(const wchar_t* text){ setString(core::stringc(text).c_str()); };
