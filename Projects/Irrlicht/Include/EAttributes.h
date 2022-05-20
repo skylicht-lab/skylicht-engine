@@ -16,6 +16,9 @@ enum E_ATTRIBUTE_TYPE
 	// integer attribute
 	EAT_INT = 0,
 
+	// unsigned integer attribute
+	EAT_UINT,
+
 	// float attribute
 	EAT_FLOAT,
 

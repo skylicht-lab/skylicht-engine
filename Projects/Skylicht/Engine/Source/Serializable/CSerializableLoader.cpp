@@ -107,6 +107,9 @@ namespace Skylicht
 			case io::EAT_INT:
 				valueProperty = new CIntProperty(object, name, attributes->getAttributeAsInt(i));
 				break;
+			case io::EAT_UINT:
+				valueProperty = new CUIntProperty(object, name, attributes->getAttributeAsUInt(i));
+				break;
 			case io::EAT_FLOAT:
 				valueProperty = new CFloatProperty(object, name, attributes->getAttributeAsFloat(i));
 				break;

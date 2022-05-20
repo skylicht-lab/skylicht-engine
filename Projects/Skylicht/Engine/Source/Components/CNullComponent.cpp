@@ -24,19 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CNullComponent.h"
-#include "Serializable/CAttributeSerializable.h"
 
 namespace Skylicht
 {
 	CNullComponent::CNullComponent()
 	{
-		// this component only save the attribute data
-		m_attributes = getIrrlichtDevice()->getFileSystem()->createEmptyAttributes();
+		m_data = new CObjectSerializable(m_name.c_str());
 	}
 
 	CNullComponent::~CNullComponent()
 	{
-		m_attributes->drop();
+		if (m_data)
+			delete m_data;
 	}
 
 	void CNullComponent::initComponent()
@@ -51,14 +50,14 @@ namespace Skylicht
 
 	CObjectSerializable* CNullComponent::createSerializable()
 	{
-		CAttributeSerializable* object = new CAttributeSerializable(m_name.c_str());
-		object->deserialize(m_attributes);
-		return object;
+		return m_data->clone();
 	}
 
 	void CNullComponent::loadSerializable(CObjectSerializable* object)
 	{
-		// object must be CAttributeSerializable
-		object->serialize(m_attributes);
+		if (m_data)
+			delete m_data;
+
+		m_data = object->clone();
 	}
 }
