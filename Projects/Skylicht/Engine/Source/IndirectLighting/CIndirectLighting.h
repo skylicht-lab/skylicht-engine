@@ -50,6 +50,8 @@ namespace Skylicht
 
 		core::vector3df m_sh[9];
 
+		std::vector<std::string> m_lightmapPaths;
+
 		ITexture* m_lightmap;
 
 	public:

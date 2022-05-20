@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CIndirectLighting.h"
+#include "TextureManager/CTextureManager.h"
 
 #include "Entity/CEntityHandler.h"
 #include "GameObject/CGameObject.h"
@@ -122,6 +123,24 @@ namespace Skylicht
 		enumType->addEnumString("SH9", EIndirectType::SH9);
 		object->addAutoRelease(enumType);
 
+		CObjectSerializable* textureArray = new CObjectSerializable("LMTextures", object);
+		object->addAutoRelease(textureArray);
+
+		std::vector<std::string> textureExts = { "tga","png" };
+		for (u32 i = 0, n = (u32)m_lightmapPaths.size(); i < n; i++)
+		{
+			char name[43];
+			sprintf(name, "%d", i);
+
+			textureArray->addAutoRelease(
+				new CFilePathProperty(
+					textureArray,
+					name,
+					m_lightmapPaths[i].c_str(),
+					textureExts)
+			);
+		}
+
 		return object;
 	}
 
@@ -130,6 +149,23 @@ namespace Skylicht
 		CComponentSystem::loadSerializable(object);
 
 		EIndirectType type = object->get<EIndirectType>("type", EIndirectType::SH9);
+
+		CObjectSerializable* textureArray = (CObjectSerializable*)object->getProperty("LMTextures");
+		if (textureArray != NULL)
+		{
+			m_lightmapPaths.clear();
+
+			int count = (int)textureArray->getNumProperty();
+			for (int i = 0; i < count; i++)
+			{
+				char name[43];
+				sprintf(name, "%d", i);
+
+				std::string path = textureArray->get<std::string>(name, std::string());
+				m_lightmapPaths.push_back(path);
+			}
+		}
+
 		setIndirectLightingType(type);
 	}
 
@@ -164,6 +200,10 @@ namespace Skylicht
 		{
 			if (m_type == LightmapArray)
 			{
+				// Load lightmap texture array
+				if (m_lightmapPaths.size() > 0 && m_lightmap == NULL)
+					m_lightmap = CTextureManager::getInstance()->getTextureArray(m_lightmapPaths);
+
 				data->Type = CIndirectLightingData::LightmapArray;
 				data->LightmapTexture = m_lightmap;
 			}
