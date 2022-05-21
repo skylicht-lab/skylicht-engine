@@ -41,7 +41,11 @@ namespace Skylicht
 		if (nodeName == reader->getNodeName() && attributeName == reader->getAttributeValue(L"type"))
 		{
 			attr->read(reader);
-			initProperty(object, attr);
+
+			if (object->getNumProperty() > 0)
+				object->deserialize(attr);	// for SerializableActivator
+			else
+				initProperty(object, attr);
 		}
 		else
 		{
@@ -64,10 +68,25 @@ namespace Skylicht
 				if (nodeName == reader->getNodeName())
 				{
 					std::wstring type = reader->getAttributeValue(L"type");
-
 					std::string name = CStringImp::convertUnicodeToUTF8(type.c_str());
-					CObjectSerializable* data = new CObjectSerializable(name.c_str());
+
+					const wchar_t* isArray = reader->getAttributeValue(L"array");
+
+					CObjectSerializable* data;
+
+					// activator
+					data = CSerializableActivator::getInstance()->createInstance(name.c_str());
+					if (data == NULL)
+					{
+						// default serializable
+						if (isArray)
+							data = new CArraySerializable(name.c_str());
+						else
+							data = new CObjectSerializable(name.c_str());
+					}
+
 					load(reader, data, exitNode);
+
 					object->addProperty(data);
 					object->addAutoRelease(data);
 

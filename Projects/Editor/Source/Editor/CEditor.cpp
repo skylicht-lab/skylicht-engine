@@ -98,8 +98,8 @@ namespace Skylicht
 			CAssetPropertyController::releaseInstance();
 			CAssetCreateController::releaseInstance();
 			CPropertyController::releaseInstance();
-			CSceneController::releaseInstance();
 			CSelection::releaseInstance();
+			CSceneController::releaseInstance();
 			CProjectSettings::releaseInstance();
 
 			delete m_spriteIcon;

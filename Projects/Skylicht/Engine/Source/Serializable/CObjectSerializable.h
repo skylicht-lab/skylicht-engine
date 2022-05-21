@@ -27,6 +27,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CValueProperty.h"
 #include "CValuePropertyTemplate.h"
 
+#include "Utils/CGameSingleton.h"
+#include "Utils/CActivator.h"
+
 namespace Skylicht
 {
 	class CObjectSerializable : public CValueProperty
@@ -109,5 +112,26 @@ namespace Skylicht
 		virtual void parseSerializable(io::IXMLReader* reader);
 
 		virtual CObjectSerializable* clone();
+	};
+
+
+
+#define SERIALIZABLE_REGISTER(type)  \
+	CObjectSerializable* type##CreateFunc() { return new type(); } \
+	bool type##_activator = CSerializableActivator::createGetInstance()->registerType(#type, &type##CreateFunc);
+
+	typedef CObjectSerializable* (*SerializableCreateInstance)();
+
+	class CSerializableActivator : public CGameSingleton<CSerializableActivator>
+	{
+	protected:
+		std::map<std::string, int> m_factoryName;
+
+		std::vector<SerializableCreateInstance> m_factoryFunc;
+
+	public:
+		bool registerType(const char* type, SerializableCreateInstance func);
+
+		CObjectSerializable* createInstance(const char* type);
 	};
 }
