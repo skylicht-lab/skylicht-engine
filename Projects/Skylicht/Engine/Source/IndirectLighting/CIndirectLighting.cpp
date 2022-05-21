@@ -123,7 +123,7 @@ namespace Skylicht
 		enumType->addEnumString("SH9", EIndirectType::SH9);
 		object->addAutoRelease(enumType);
 
-		CObjectSerializable* textureArray = new CObjectSerializable("LMTextures", object);
+		CArraySerializable* textureArray = new CArraySerializable("LMTextures", object);
 		object->addAutoRelease(textureArray);
 
 		std::vector<std::string> textureExts = { "tga","png" };
@@ -150,12 +150,12 @@ namespace Skylicht
 
 		EIndirectType type = object->get<EIndirectType>("type", EIndirectType::SH9);
 
-		CObjectSerializable* textureArray = (CObjectSerializable*)object->getProperty("LMTextures");
+		CArraySerializable* textureArray = (CArraySerializable*)object->getProperty("LMTextures");
 		if (textureArray != NULL)
 		{
 			m_lightmapPaths.clear();
 
-			int count = (int)textureArray->getNumProperty();
+			int count = textureArray->getElementCount();
 			for (int i = 0; i < count; i++)
 			{
 				char name[43];
