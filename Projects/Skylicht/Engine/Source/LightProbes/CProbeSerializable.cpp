@@ -39,7 +39,7 @@ namespace Skylicht
 		{
 			sprintf(name, "sh%d", i);
 			SH[i] = new CVector3Property(this, name);
-			addAutoRelease(SH[i]);
+			autoRelease(SH[i]);
 		}
 	}
 
@@ -53,7 +53,7 @@ namespace Skylicht
 		{
 			sprintf(name, "sh%d", i);
 			SH[i] = new CVector3Property(this, name);
-			addAutoRelease(SH[i]);
+			autoRelease(SH[i]);
 		}
 	}
 

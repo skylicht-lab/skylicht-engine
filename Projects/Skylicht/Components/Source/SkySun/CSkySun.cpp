@@ -104,26 +104,26 @@ namespace Skylicht
 		CFloatProperty* skyProperty = new CFloatProperty(object, "Intensity", m_skyIntensity, 0.0f);
 		skyProperty->setUIHeader("Sky");
 		skyProperty->setUISpace(10.0f);
-		object->addAutoRelease(skyProperty);
+		object->autoRelease(skyProperty);
 
 		CColorProperty* atmosphericProperty = new CColorProperty(object, "Atmospheric Color", m_atmosphericColor);
 		atmosphericProperty->setUIHeader("Atmospheric");
-		object->addAutoRelease(atmosphericProperty);
-		object->addAutoRelease(new CFloatProperty(object, "Atmospheric Intensity", m_atmosphericIntensity, 0.0f));
+		object->autoRelease(atmosphericProperty);
+		object->autoRelease(new CFloatProperty(object, "Atmospheric Intensity", m_atmosphericIntensity, 0.0f));
 
 		CColorProperty* sunProperty = new CColorProperty(object, "Sun Color", m_sunColor);
 		sunProperty->setUIHeader("Sun");
-		object->addAutoRelease(sunProperty);
-		object->addAutoRelease(new CFloatProperty(object, "Sun Intensity", m_sunIntensity, 0.0f));
-		object->addAutoRelease(new CFloatProperty(object, "Sun Size", m_sunSize, 1.0f, 5000.0f));
+		object->autoRelease(sunProperty);
+		object->autoRelease(new CFloatProperty(object, "Sun Intensity", m_sunIntensity, 0.0f));
+		object->autoRelease(new CFloatProperty(object, "Sun Size", m_sunSize, 1.0f, 5000.0f));
 
 		CColorProperty* glareProperty = new CColorProperty(object, "Glare1 Color", m_glare1Color);
 		glareProperty->setUIHeader("Glare");
-		object->addAutoRelease(glareProperty);
-		object->addAutoRelease(new CFloatProperty(object, "Glare1 Intensity", m_glare1Intensity, 0.0f));
+		object->autoRelease(glareProperty);
+		object->autoRelease(new CFloatProperty(object, "Glare1 Intensity", m_glare1Intensity, 0.0f));
 
-		object->addAutoRelease(new CColorProperty(object, "Glare2 Color", m_glare2Color));
-		object->addAutoRelease(new CFloatProperty(object, "Glare2 Intensity", m_glare2Intensity, 0.0f));
+		object->autoRelease(new CColorProperty(object, "Glare2 Color", m_glare2Color));
+		object->autoRelease(new CFloatProperty(object, "Glare2 Intensity", m_glare2Intensity, 0.0f));
 
 		return object;
 	}

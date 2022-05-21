@@ -363,15 +363,40 @@ namespace Skylicht
 				}
 				else if (valueProperty->getType() == EPropertyDataType::Object)
 				{
-					// sub objects
-					CObjectSerializable* arrayObject = (CObjectSerializable*)valueProperty;
-					CSubject<CObjectSerializable*>* subject = new CSubject<CObjectSerializable*>(arrayObject);
+					CObjectSerializable* object = (CObjectSerializable*)valueProperty;
+					CSubject<CObjectSerializable*>* subject = new CSubject<CObjectSerializable*>(object);
 
+					// header
 					GUI::CCollapsibleGroup* group = ui->addSubGroup(layout);
 					group->getHeader()->setLabel(ui->getPrettyName(valueProperty->Name));
-
 					GUI::CBoxLayout* layout = ui->createBoxLayout(group);
-					initDataGUI(arrayObject, layout, ui);
+
+					if (object->isArray())
+					{
+						CArraySerializable* arrayObject = (CArraySerializable*)object;
+
+						if (arrayObject->OnCreateElement != nullptr)
+						{
+							// add input to add elements
+							CSubject<int>* count = new CSubject<int>(arrayObject->getElementCount());
+							m_subjects.push_back(count);
+
+							ui->addNumberTextBox(layout, L"Count", count);
+
+							CObserver* observer = new CObserver();
+							observer->Notify = [&, arrayObject, count, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									// updateData();
+								}
+							};
+							count->addObserver(observer, true);
+						}
+					}
+
+					// Show child data
+					initDataGUI(object, layout, ui);
 
 					m_subjects.push_back(subject);
 				}

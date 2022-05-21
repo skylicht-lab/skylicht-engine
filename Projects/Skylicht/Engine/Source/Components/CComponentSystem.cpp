@@ -85,7 +85,7 @@ namespace Skylicht
 	CObjectSerializable* CComponentSystem::createSerializable()
 	{
 		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
-		object->addAutoRelease(new CBoolProperty(object, "enable", isEnable()));
+		object->autoRelease(new CBoolProperty(object, "enable", isEnable()));
 		return object;
 	}
 

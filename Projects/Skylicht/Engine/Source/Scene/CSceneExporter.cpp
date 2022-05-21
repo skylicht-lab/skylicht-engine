@@ -31,7 +31,7 @@ namespace Skylicht
 	{
 		CObjectSerializable* childs = new CObjectSerializable("Childs");
 		data->addProperty(childs);
-		data->addAutoRelease(childs);
+		data->autoRelease(childs);
 
 		ArrayGameObject* go = container->getChilds();
 		for (size_t i = 0, n = go->size(); i < n; i++)
@@ -43,7 +43,7 @@ namespace Skylicht
 
 			CObjectSerializable* childData = childObject->createSerializable();
 			childs->addProperty(childData);
-			childs->addAutoRelease(childData);
+			childs->autoRelease(childData);
 
 			CContainerObject* childContainer = dynamic_cast<CContainerObject*>(childObject);
 			if (childContainer != NULL)
@@ -95,7 +95,7 @@ namespace Skylicht
 			loadChildObjectSerializable(zone, zoneData);
 
 			data->addProperty(zoneData);
-			data->addAutoRelease(zoneData);
+			data->autoRelease(zoneData);
 			++i;
 		}
 

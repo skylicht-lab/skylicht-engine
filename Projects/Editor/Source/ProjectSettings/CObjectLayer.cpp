@@ -38,7 +38,7 @@ namespace Skylicht
 			for (int i = 0; i < 16; i++)
 			{
 				sprintf(name, "%d", i);
-				addAutoRelease(new CStringProperty(this, name, ""));
+				autoRelease(new CStringProperty(this, name, ""));
 			}
 
 			setName(0, "Default");
