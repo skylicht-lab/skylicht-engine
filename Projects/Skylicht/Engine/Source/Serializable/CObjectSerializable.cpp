@@ -110,7 +110,11 @@ namespace Skylicht
 	void CObjectSerializable::save(io::IXMLWriter* writer)
 	{
 		char elementName[512];
-		sprintf(elementName, "node type=\"%s\"", Name.c_str());
+
+		if (!isArray())
+			sprintf(elementName, "node type=\"%s\"", Name.c_str());
+		else
+			sprintf(elementName, "node type=\"%s\" array=\"true\"", Name.c_str());
 
 		writer->writeElement(CStringImp::convertUTF8ToUnicode(elementName).c_str(), false);
 		writer->writeLineBreak();
@@ -248,5 +252,29 @@ namespace Skylicht
 		}
 
 		return object;
+	}
+
+
+
+
+	bool CSerializableActivator::registerType(const char* type, SerializableCreateInstance func)
+	{
+		std::map<std::string, int>::iterator i = m_factoryName.find(type);
+		if (i != m_factoryName.end())
+			return false;
+
+		m_factoryName[type] = (int)m_factoryFunc.size();
+		m_factoryFunc.push_back(func);
+		return true;
+	}
+
+	CObjectSerializable* CSerializableActivator::createInstance(const char* type)
+	{
+		std::map<std::string, int>::iterator i = m_factoryName.find(type);
+		if (i == m_factoryName.end())
+			return NULL;
+
+		int id = (*i).second;
+		return m_factoryFunc[id]();
 	}
 }

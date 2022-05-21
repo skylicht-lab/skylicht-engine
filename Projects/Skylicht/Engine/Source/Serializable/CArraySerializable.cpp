@@ -22,21 +22,52 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CValuePropertyTemplate.h"
-#include "CObjectSerializable.h"
+#include "pch.h"
 #include "CArraySerializable.h"
+#include "CValuePropertyTemplate.h"
 
 namespace Skylicht
 {
-	class CSerializableLoader
+	CArraySerializable::CArraySerializable(const char* name) :
+		CObjectSerializable(name)
 	{
-	public:
-		static void load(io::IXMLReader* reader, CObjectSerializable* object, const char* exitNode);
+	}
 
-	protected:
+	CArraySerializable::CArraySerializable(const char* name, CObjectSerializable* parent) :
+		CObjectSerializable(name, parent)
+	{
+	}
 
-		static void initProperty(CObjectSerializable* object, io::IAttributes* attributes);
-	};
+	CArraySerializable::~CArraySerializable()
+	{
+
+	}
+
+	void CArraySerializable::removeElement(CValueProperty* element)
+	{
+		std::vector<CValueProperty*>::iterator i = m_value.begin(), e = m_value.end();
+		while (i != e)
+		{
+			if ((*i) == element)
+			{
+				m_value.erase(i);
+				break;
+			}
+			++i;
+		}
+
+		i = m_autoRelease.begin();
+		e = m_autoRelease.end();
+
+		while (i != e)
+		{
+			if ((*i) == element)
+			{
+				m_autoRelease.erase(i);
+				delete (*i);
+				break;
+			}
+			++i;
+		}
+	}
 }

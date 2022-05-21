@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,88 +24,39 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CObjectSerializable.h"
+#include <functional>
+
 namespace Skylicht
 {
-	class CObjectSerializable;
-
-	enum EPropertyDataType
+	class CArraySerializable : public CObjectSerializable
 	{
-		String,
-		StringW,
-		Integer,
-		UInteger,
-		Float,
-		Decimal,
-		DateTime,
-		Bool,
-		Vector3,
-		Quaternion,
-		Color,
-		Matrix4,
-		Object,
-		FilePath,
-		FolderPath,
-		Enum
-	};
+	public:
 
-	class CValueProperty
-	{
-	protected:
-		EPropertyDataType m_dataType;
-
-		CObjectSerializable* m_owner;
-
-		// ui editor interface
-		std::string m_uiHeader;
-
-		float m_uiSpace;
+		std::function<CValueProperty* ()> OnCreateElement;
 
 	public:
-		std::string Name;
+		CArraySerializable(const char* name);
 
-		CValueProperty(CObjectSerializable* owner, EPropertyDataType dataType, const char* name);
+		CArraySerializable(const char* name, CObjectSerializable* parent);
 
-		virtual ~CValueProperty();
+		virtual ~CArraySerializable();
 
-		void setOwner(CObjectSerializable* owner)
+		int getElementCount()
 		{
-			m_owner = owner;
+			return getNumProperty();
 		}
 
-		EPropertyDataType getType()
+		CValueProperty* getElement(int i)
 		{
-			return m_dataType;
+			return getPropertyID(i);
 		}
 
-		virtual void serialize(io::IAttributes* io) = 0;
-
-		virtual void deserialize(io::IAttributes* io) = 0;
-
-		virtual CValueProperty* clone() = 0;
+		virtual void removeElement(CValueProperty* element);
 
 		virtual bool isArray()
 		{
-			return false;
-		}
-
-		inline void setUIHeader(const char* header)
-		{
-			m_uiHeader = header;
-		}
-
-		inline const std::string& getUIHeader()
-		{
-			return m_uiHeader;
-		}
-
-		inline void setUISpace(float space)
-		{
-			m_uiSpace = space;
-		}
-
-		inline float getUISpace()
-		{
-			return m_uiSpace;
+			return true;
 		}
 	};
 }
