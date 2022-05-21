@@ -49,6 +49,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Tween/CTweenManager.h"
 
 // Activator
+#include "Serializable/CObjectSerializable.h"
 #include "Utils/CActivator.h"
 #include "Components/CDependentComponent.h"
 #include "Components/CComponentCategory.h"
@@ -86,6 +87,7 @@ namespace Skylicht
 
 		CTweenManager::createGetInstance();
 		CActivator::createGetInstance();
+		CSerializableActivator::createGetInstance();
 		CDependentComponent::createGetInstance();
 		CComponentCategory::createGetInstance();
 
@@ -115,6 +117,7 @@ namespace Skylicht
 		CComponentCategory::releaseInstance();
 		CDependentComponent::releaseInstance();
 		CActivator::releaseInstance();
+		CSerializableActivator::releaseInstance();
 		CTweenManager::releaseInstance();
 
 		CMaterialManager::releaseInstance();

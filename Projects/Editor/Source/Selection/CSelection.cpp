@@ -48,6 +48,9 @@ namespace Skylicht
 				delete selectObject;
 
 			m_selected.clear();
+
+			CSceneHistory* history = CSceneController::getInstance()->getHistory();
+			history->endSaveHistory();
 		}
 
 		std::vector<CSelectObject*> CSelection::getSelectedByType(CSelectObject::ESelectType type)

@@ -24,19 +24,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CValuePropertyTemplate.h"
-#include "CObjectSerializable.h"
-#include "CArraySerializable.h"
+#include "Serializable/CArraySerializable.h"
 
 namespace Skylicht
 {
-	class CSerializableLoader
+	class CProbeSerializable : public CObjectSerializable
 	{
 	public:
-		static void load(io::IXMLReader* reader, CObjectSerializable* object, const char* exitNode);
+		CStringProperty EntityID;
+		CMatrixProperty Transform;
+		CVector3Property* SH[9];
 
-	protected:
+	public:
+		CProbeSerializable();
 
-		static void initProperty(CObjectSerializable* object, io::IAttributes* attributes);
+		CProbeSerializable(CObjectSerializable* parent);
+
+		virtual ~CProbeSerializable();
+
+		DECLARE_GETTYPENAME(CProbeSerializable);
 	};
 }

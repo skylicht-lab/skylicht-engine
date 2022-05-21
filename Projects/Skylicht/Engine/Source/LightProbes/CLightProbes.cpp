@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CLightProbes.h"
 #include "CLightProbeData.h"
 #include "CLightProbeRender.h"
+#include "CProbeSerializable.h"
+
 #include "Entity/CEntityManager.h"
 #include "GameObject/CGameObject.h"
 #include "Transform/CWorldTransformData.h"
@@ -74,34 +76,28 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
-		// num probes
-		int numProbes = (int)m_entities.size();
-		object->addAutoRelease(new CIntProperty(object, "numprobes", numProbes));
-
-		// probes container
-		CObjectSerializable* probes = new CObjectSerializable("probes");
+		CArraySerializable* probes = new CArraySerializable("Probes");
 		object->addProperty(probes);
 		object->addAutoRelease(probes);
 
-		// entity data
+		int numProbes = (int)m_entities.size();
 		for (int i = 0; i < numProbes; i++)
 		{
-			CObjectSerializable* shData = new CObjectSerializable("data");
-			probes->addProperty(shData);
-			probes->addAutoRelease(shData);
+			CProbeSerializable* probeData = new CProbeSerializable(probes);
+			probes->addAutoRelease(probeData);
 
 			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			CLightProbeData* light = (CLightProbeData*)m_entities[i]->getDataByIndex(CLightProbeData::DataTypeIndex);
 
-			shData->addAutoRelease(new CStringProperty(shData, "entityID", m_entities[i]->getID().c_str()));
-			shData->addAutoRelease(new CMatrixProperty(shData, "transform", world->Relative));
+			// save id
+			probeData->EntityID.set(m_entities[i]->getID());
 
+			// save transform
+			probeData->Transform.set(world->Relative);
+
+			// save sh data
 			for (int j = 0; j < 9; j++)
-			{
-				char name[64];
-				sprintf(name, "sh%d", j);
-				shData->addAutoRelease(new CVector3Property(shData, name, light->SH[j]));
-			}
+				probeData->SH[j]->set(light->SH[j]);
 		}
 
 		return object;
@@ -111,39 +107,36 @@ namespace Skylicht
 	{
 		CComponentSystem::loadSerializable(object);
 
-		int numProbes = object->get<int>("numprobes", 0);
-
-		CObjectSerializable* probes = (CObjectSerializable*)object->getProperty("probes");
+		CArraySerializable* probes = (CArraySerializable*)object->getProperty("Probes");
+		int numProbes = probes->getElementCount();
 
 		clearAll();
 
 		if (probes == NULL)
 			return;
 
-		if (probes->getNumProperty() < numProbes)
+		if (probes->getElementCount() < numProbes)
 			return;
 
 		for (int i = 0; i < numProbes; i++)
 		{
-			CObjectSerializable* shData = (CObjectSerializable*)probes->getPropertyID(i);
+			CProbeSerializable* shData = (CProbeSerializable*)probes->getElement(i);
 			if (shData == NULL)
 				return;
 
 			CEntity* entity = addLightProbe(core::vector3df());
+			CWorldTransformData* world = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CLightProbeData* light = (CLightProbeData*)entity->getDataByIndex(CLightProbeData::DataTypeIndex);
 
-			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			CLightProbeData* light = (CLightProbeData*)m_entities[i]->getDataByIndex(CLightProbeData::DataTypeIndex);
+			// set id
+			entity->setID(shData->EntityID.getString());
 
-			std::string entityID = shData->get<std::string>("entityID", std::string());
-			m_entities[i]->setID(entityID.c_str());
+			// set transform
+			world->Relative = shData->Transform.get();
 
-			world->Relative = shData->get<core::matrix4>("transform", core::IdentityMatrix);
+			// set sh data
 			for (int j = 0; j < 9; j++)
-			{
-				char name[64];
-				sprintf(name, "sh%d", j);
-				light->SH[j] = shData->get<core::vector3df>(name, core::vector3df());
-			}
+				light->SH[j] = shData->SH[j]->get();
 		}
 	}
 
