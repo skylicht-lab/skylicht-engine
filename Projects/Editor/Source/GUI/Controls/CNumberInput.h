@@ -40,6 +40,7 @@ namespace Skylicht
 				float m_cursorX;
 				float m_cursorY;
 
+				bool m_alwayFocusTextbox;
 				bool m_focusTextbox;
 
 				float m_stepValue;
@@ -99,6 +100,8 @@ namespace Skylicht
 				{
 					m_numberType = type;
 				}
+
+				void alwayFocusTextbox(bool b);
 
 			protected:
 

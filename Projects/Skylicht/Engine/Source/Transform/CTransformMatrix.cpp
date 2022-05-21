@@ -74,7 +74,7 @@ namespace Skylicht
 	CObjectSerializable* CTransformMatrix::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
-		object->addAutoRelease(new CMatrixProperty(object, "matrix", m_transform));
+		object->autoRelease(new CMatrixProperty(object, "matrix", m_transform));
 		return object;
 	}
 }

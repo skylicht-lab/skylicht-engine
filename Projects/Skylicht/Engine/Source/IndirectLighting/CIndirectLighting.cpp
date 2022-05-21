@@ -121,10 +121,10 @@ namespace Skylicht
 		enumType->addEnumString("Lightmap", EIndirectType::LightmapArray);
 		enumType->addEnumString("Vertex Color", EIndirectType::VertexColor);
 		enumType->addEnumString("SH9", EIndirectType::SH9);
-		object->addAutoRelease(enumType);
+		object->autoRelease(enumType);
 
 		CArraySerializable* textureArray = new CArraySerializable("LMTextures", object);
-		object->addAutoRelease(textureArray);
+		object->autoRelease(textureArray);
 
 		std::vector<std::string> textureExts = { "tga","png" };
 		for (u32 i = 0, n = (u32)m_lightmapPaths.size(); i < n; i++)
@@ -132,7 +132,7 @@ namespace Skylicht
 			char name[43];
 			sprintf(name, "%d", i);
 
-			textureArray->addAutoRelease(
+			textureArray->autoRelease(
 				new CFilePathProperty(
 					textureArray,
 					name,

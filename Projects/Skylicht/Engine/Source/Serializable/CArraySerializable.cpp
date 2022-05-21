@@ -43,6 +43,25 @@ namespace Skylicht
 
 	}
 
+	bool CArraySerializable::resize(int count)
+	{
+		if (OnCreateElement == nullptr)
+			return false;
+
+		if (getElementCount() < count)
+		{
+			// need delete
+
+		}
+		else
+		{
+			// need grow
+
+		}
+
+		return true;
+	}
+
 	void CArraySerializable::removeElement(CValueProperty* element)
 	{
 		std::vector<CValueProperty*>::iterator i = m_value.begin(), e = m_value.end();

@@ -387,16 +387,16 @@ namespace Skylicht
 	CObjectSerializable* CGameObject::createSerializable()
 	{
 		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
-		object->addAutoRelease(new CStringProperty(object, "id", getID().c_str()));
-		object->addAutoRelease(new CStringProperty(object, "name", getNameA()));
-		object->addAutoRelease(new CBoolProperty(object, "enable", isEnable()));
-		object->addAutoRelease(new CBoolProperty(object, "visible", isVisible()));
-		object->addAutoRelease(new CBoolProperty(object, "static", isStatic()));
-		object->addAutoRelease(new CUIntProperty(object, "culling", getCullingLayer()));
+		object->autoRelease(new CStringProperty(object, "id", getID().c_str()));
+		object->autoRelease(new CStringProperty(object, "name", getNameA()));
+		object->autoRelease(new CBoolProperty(object, "enable", isEnable()));
+		object->autoRelease(new CBoolProperty(object, "visible", isVisible()));
+		object->autoRelease(new CBoolProperty(object, "static", isStatic()));
+		object->autoRelease(new CUIntProperty(object, "culling", getCullingLayer()));
 
 		CObjectSerializable* coms = new CObjectSerializable("Components");
 		object->addProperty(coms);
-		object->addAutoRelease(coms);
+		object->autoRelease(coms);
 
 		size_t numComponents = m_components.size();
 		CComponentSystem** components = m_components.data();
@@ -412,7 +412,7 @@ namespace Skylicht
 				if (data->Name != "CComponentSystem")
 				{
 					coms->addProperty(data);
-					coms->addAutoRelease(data);
+					coms->autoRelease(data);
 				}
 				else
 				{

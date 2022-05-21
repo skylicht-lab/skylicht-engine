@@ -78,13 +78,13 @@ namespace Skylicht
 
 		CArraySerializable* probes = new CArraySerializable("Probes");
 		object->addProperty(probes);
-		object->addAutoRelease(probes);
+		object->autoRelease(probes);
 
 		int numProbes = (int)m_entities.size();
 		for (int i = 0; i < numProbes; i++)
 		{
 			CProbeSerializable* probeData = new CProbeSerializable(probes);
-			probes->addAutoRelease(probeData);
+			probes->autoRelease(probeData);
 
 			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			CLightProbeData* light = (CLightProbeData*)m_entities[i]->getDataByIndex(CLightProbeData::DataTypeIndex);

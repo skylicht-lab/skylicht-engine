@@ -96,15 +96,15 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
-		object->addAutoRelease(new CBoolProperty(object, "load normal", m_loadNormal));
-		object->addAutoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
-		object->addAutoRelease(new CBoolProperty(object, "load texcoord2", m_loadTexcoord2));
+		object->autoRelease(new CBoolProperty(object, "load normal", m_loadNormal));
+		object->autoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
+		object->autoRelease(new CBoolProperty(object, "load texcoord2", m_loadTexcoord2));
 
 		std::vector<std::string> meshExts = { "dae","obj","smesh" };
 		std::vector<std::string> materialExts = { "xml","mat" };
 
-		object->addAutoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
-		object->addAutoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
+		object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
+		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
 		return object;
 	}
 

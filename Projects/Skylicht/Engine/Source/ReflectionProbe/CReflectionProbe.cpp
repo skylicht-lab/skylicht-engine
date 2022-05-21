@@ -111,7 +111,7 @@ namespace Skylicht
 		CEnumProperty<EReflectionType>* enumType = new CEnumProperty<EReflectionType>(object, "type", m_type);
 		enumType->addEnumString("Static", EReflectionType::Static);
 		enumType->addEnumString("Bake", EReflectionType::Baked);
-		object->addAutoRelease(enumType);
+		object->autoRelease(enumType);
 
 		CEnumProperty<EReflectionSize>* bakeSizeType = new CEnumProperty<EReflectionSize>(object, "size", m_size);
 		bakeSizeType->setUIHeader("Bake Probe");
@@ -119,14 +119,14 @@ namespace Skylicht
 		bakeSizeType->addEnumString("512", EReflectionSize::X512);
 		bakeSizeType->addEnumString("1024", EReflectionSize::X1024);
 		bakeSizeType->addEnumString("2048", EReflectionSize::X2048);
-		object->addAutoRelease(bakeSizeType);
+		object->autoRelease(bakeSizeType);
 
 		std::vector<std::string> exts;
 		exts.push_back("tga");
 		exts.push_back("png");
 		CFilePathProperty* staticReflection = new CFilePathProperty(object, "static", m_staticPath.c_str(), exts);
 		staticReflection->setUIHeader("Static Probe");
-		object->addAutoRelease(staticReflection);
+		object->autoRelease(staticReflection);
 
 		return object;
 	}

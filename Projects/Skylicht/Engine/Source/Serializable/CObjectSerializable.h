@@ -49,7 +49,7 @@ namespace Skylicht
 			m_value.push_back(p);
 		}
 
-		void addAutoRelease(CValueProperty* p)
+		void autoRelease(CValueProperty* p)
 		{
 			m_autoRelease.push_back(p);
 		}
