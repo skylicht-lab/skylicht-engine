@@ -265,9 +265,9 @@ namespace Skylicht
 	CObjectSerializable* CTransformEuler::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
-		object->addAutoRelease(new CVector3Property(object, "position", getPosition()));
-		object->addAutoRelease(new CVector3Property(object, "rotation", getRotation()));
-		object->addAutoRelease(new CVector3Property(object, "scale", getScale()));
+		object->autoRelease(new CVector3Property(object, "position", getPosition()));
+		object->autoRelease(new CVector3Property(object, "rotation", getRotation()));
+		object->autoRelease(new CVector3Property(object, "scale", getScale()));
 		return object;
 	}
 

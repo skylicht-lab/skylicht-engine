@@ -41,6 +41,7 @@ namespace Skylicht
 				m_mouseDownX(0.0f),
 				m_mouseDownY(0.0f),
 				m_focusTextbox(false),
+				m_alwayFocusTextbox(false),
 				m_value(0.0f),
 				m_stepValue(1.0f),
 				m_mousePress(false),
@@ -58,7 +59,7 @@ namespace Skylicht
 
 			void CNumberInput::think()
 			{
-				if (m_focusTextbox)
+				if (m_focusTextbox || m_alwayFocusTextbox)
 					CTextBox::think();
 				else
 				{
@@ -84,6 +85,9 @@ namespace Skylicht
 			{
 				CTextBox::renderUnder();
 
+				if (m_alwayFocusTextbox)
+					return;
+
 				if (m_drawTextbox && isHovered() && !m_focusTextbox)
 				{
 					CTheme* theme = CTheme::getTheme();
@@ -96,6 +100,15 @@ namespace Skylicht
 			void CNumberInput::onKeyboardFocus()
 			{
 				// disable default textbox focus
+			}
+
+			void CNumberInput::alwayFocusTextbox(bool b)
+			{
+				m_alwayFocusTextbox = b;
+				if (b)
+					setCursor(ECursorType::Beam);
+				else
+					setCursor(ECursorType::SizeWE);
 			}
 
 			void CNumberInput::onTabableFocus()
@@ -124,7 +137,22 @@ namespace Skylicht
 			{
 				m_mousePress = down;
 
-				if (m_focusTextbox == true)
+				if (m_alwayFocusTextbox)
+				{
+					if (down)
+						CTextBox::onKeyboardFocus();
+
+					CTextBox::onMouseClickLeft(x, y, down);
+
+					if (down)
+					{
+						onSelectAll(this);
+						setCursor(ECursorType::Beam);
+					}
+					return;
+				}
+
+				if (m_focusTextbox)
 				{
 					// default textbox function
 					CTextBox::onMouseClickLeft(x, y, down);
@@ -220,6 +248,8 @@ namespace Skylicht
 				}
 				else if (c == '\r')
 				{
+					if (OnEnter != nullptr)
+						OnEnter(this);
 					onLostKeyboardFocus();
 					return true;
 				}

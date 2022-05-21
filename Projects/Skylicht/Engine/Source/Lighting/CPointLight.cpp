@@ -74,7 +74,7 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CLight::createSerializable();
 
-		object->addAutoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
+		object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
 		return object;
 	}
 

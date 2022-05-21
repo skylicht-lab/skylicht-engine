@@ -45,10 +45,10 @@ namespace Skylicht
 	CObjectSerializable* CLight::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
-		object->addAutoRelease(new CUIntProperty(object, "bakeBounce", m_bakeBounce, 4));
-		object->addAutoRelease(new CBoolProperty(object, "castShadow", m_castShadow));
-		object->addAutoRelease(new CColorProperty(object, "color", m_color.toSColor()));
-		object->addAutoRelease(new CFloatProperty(object, "intensity", m_intensity, 0.0f, 10.0f));
+		object->autoRelease(new CUIntProperty(object, "bakeBounce", m_bakeBounce, 4));
+		object->autoRelease(new CBoolProperty(object, "castShadow", m_castShadow));
+		object->autoRelease(new CColorProperty(object, "color", m_color.toSColor()));
+		object->autoRelease(new CFloatProperty(object, "intensity", m_intensity, 0.0f, 10.0f));
 		return object;
 	}
 

@@ -594,6 +594,50 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
+		void CSpaceProperty::addNumberTextBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<int>* value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CNumberInput* input = new GUI::CNumberInput(layout);
+			input->setNumberType(GUI::ENumberInputType::Integer);
+			input->alwayFocusTextbox(true);
+
+			wchar_t text[32];
+			swprintf(text, 32, L"%d", value->get());
+			input->setString(text);
+
+			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
+			if (group != NULL)
+			{
+				CObserver* onChange = new CObserver();
+				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+				{
+					if (from != me)
+					{
+						CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
+						target->setString(value->get());
+					}
+				};
+
+				// when input text change
+				IObserver* observer = value->addObserver(onChange);
+				input->OnEnter = [value, input, observer](GUI::CBase* base) {
+					value->set(input->getValueInt());
+					value->notify(observer);
+				};
+
+				// hold observer to release later			
+				group->Observer.push_back(observer);
+			}
+
+			boxLayout->endVertical();
+		}
+
 		void CSpaceProperty::addCheckBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<bool>* value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();

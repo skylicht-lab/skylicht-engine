@@ -294,7 +294,7 @@ namespace Skylicht
 	CObjectSerializable* CScene::createSerializable()
 	{
 		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
-		object->addAutoRelease(new CStringProperty(object, "name", getNameA()));
+		object->autoRelease(new CStringProperty(object, "name", getNameA()));
 		return object;
 	}
 

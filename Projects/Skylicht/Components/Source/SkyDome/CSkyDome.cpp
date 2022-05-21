@@ -74,9 +74,9 @@ namespace Skylicht
 
 		std::vector<std::string> textureExts = { "tga","png" };
 
-		object->addAutoRelease(new CFilePathProperty(object, "texture", m_texture.c_str(), textureExts));
-		object->addAutoRelease(new CColorProperty(object, "color", m_color));
-		object->addAutoRelease(new CFloatProperty(object, "intensity", m_intensity, 0.0f, 3.0f));
+		object->autoRelease(new CFilePathProperty(object, "texture", m_texture.c_str(), textureExts));
+		object->autoRelease(new CColorProperty(object, "color", m_color));
+		object->autoRelease(new CFloatProperty(object, "intensity", m_intensity, 0.0f, 3.0f));
 
 		return object;
 	}

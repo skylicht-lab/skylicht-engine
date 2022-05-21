@@ -88,7 +88,7 @@ namespace Skylicht
 					load(reader, data, exitNode);
 
 					object->addProperty(data);
-					object->addAutoRelease(data);
+					object->autoRelease(data);
 
 					// if end the node
 					// </node> // <node type="Components">
@@ -153,7 +153,7 @@ namespace Skylicht
 			};
 
 			if (valueProperty)
-				object->addAutoRelease(valueProperty);
+				object->autoRelease(valueProperty);
 		}
 	}
 }
