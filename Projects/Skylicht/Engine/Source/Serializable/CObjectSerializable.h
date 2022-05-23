@@ -61,6 +61,8 @@ namespace Skylicht
 
 		virtual ~CObjectSerializable();
 
+		void remove(CValueProperty* value);
+
 		inline u32 getNumProperty()
 		{
 			return (u32)m_value.size();

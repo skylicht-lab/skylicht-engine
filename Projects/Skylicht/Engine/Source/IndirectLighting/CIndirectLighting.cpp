@@ -124,8 +124,15 @@ namespace Skylicht
 		object->autoRelease(enumType);
 
 		CArraySerializable* textureArray = new CArraySerializable("LMTextures", object);
+		textureArray->OnCreateElement = [textureArray]()
+		{
+			CFilePathProperty* element = new CFilePathProperty(textureArray, "Element");
+			textureArray->autoRelease(element);
+			return element;
+		};
 		object->autoRelease(textureArray);
 
+		// Sync lightmap path
 		std::vector<std::string> textureExts = { "tga","png" };
 		for (u32 i = 0, n = (u32)m_lightmapPaths.size(); i < n; i++)
 		{
