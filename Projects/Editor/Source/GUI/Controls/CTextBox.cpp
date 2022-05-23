@@ -240,6 +240,9 @@ namespace Skylicht
 					m_textHint->setHidden(false);
 
 				CScrollControl::onLostKeyboardFocus();
+
+				if (OnLostKeyboardFocus != nullptr)
+					OnLostKeyboardFocus(this);
 			}
 
 			bool CTextBox::onKeyPress(EKey key, bool press)

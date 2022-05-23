@@ -128,8 +128,13 @@ namespace Skylicht
 				applyTextValue();
 
 				CInput::getInput()->hideCursor(false);
+
 				m_focusTextbox = false;
-				setCursor(ECursorType::SizeWE);
+				if (m_alwayFocusTextbox)
+					setCursor(ECursorType::Beam);
+				else
+					setCursor(ECursorType::SizeWE);
+
 				setCaretToEnd();
 			}
 
