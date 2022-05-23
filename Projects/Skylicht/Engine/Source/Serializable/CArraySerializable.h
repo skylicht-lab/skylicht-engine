@@ -54,8 +54,6 @@ namespace Skylicht
 
 		bool resize(int count);
 
-		virtual void removeElement(CValueProperty* element);
-
 		virtual bool isArray()
 		{
 			return true;

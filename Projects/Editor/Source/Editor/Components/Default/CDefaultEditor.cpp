@@ -369,7 +369,7 @@ namespace Skylicht
 					// header
 					GUI::CCollapsibleGroup* group = ui->addSubGroup(layout);
 					group->getHeader()->setLabel(ui->getPrettyName(valueProperty->Name));
-					GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+					GUI::CBoxLayout* objectLayout = ui->createBoxLayout(group);
 
 					if (object->isArray())
 					{
@@ -381,22 +381,35 @@ namespace Skylicht
 							CSubject<int>* count = new CSubject<int>(arrayObject->getElementCount());
 							m_subjects.push_back(count);
 
-							ui->addNumberTextBox(layout, L"Count", count);
+							ui->addNumberTextBox(objectLayout, L"Count", count);
+
+							objectLayout = ui->createBoxLayout(group);
 
 							CObserver* observer = new CObserver();
-							observer->Notify = [&, arrayObject, count, o = observer](ISubject* subject, IObserver* from)
+							observer->Notify = [&, arrayObject, count, o = observer, objectLayout, group, ui](ISubject* subject, IObserver* from)
 							{
 								if (from != o)
 								{
-									// updateData();
+									int numElement = count->get();
+									if (arrayObject->resize(numElement))
+									{
+										// remove old ui
+										objectLayout->getChild(0)->removeAllChildren();
+
+										// re-init ui									
+										initDataGUI(arrayObject, objectLayout, ui);
+
+										// update object data
+										m_component->loadSerializable(m_data);
+									}
 								}
 							};
 							count->addObserver(observer, true);
 						}
 					}
 
-					// Show child data
-					initDataGUI(object, layout, ui);
+					// show child data
+					initDataGUI(object, objectLayout, ui);
 
 					m_subjects.push_back(subject);
 				}

@@ -49,6 +49,34 @@ namespace Skylicht
 		}
 	}
 
+	void CObjectSerializable::remove(CValueProperty* value)
+	{
+		std::vector<CValueProperty*>::iterator i = m_value.begin(), e = m_value.end();
+		while (i != e)
+		{
+			if ((*i) == value)
+			{
+				m_value.erase(i);
+				break;
+			}
+			++i;
+		}
+
+		i = m_autoRelease.begin();
+		e = m_autoRelease.end();
+
+		while (i != e)
+		{
+			if ((*i) == value)
+			{
+				delete (*i);
+				m_autoRelease.erase(i);
+				break;
+			}
+			++i;
+		}
+	}
+
 	CValueProperty* CObjectSerializable::getProperty(const char* name)
 	{
 		for (CValueProperty* p : m_value)

@@ -408,8 +408,7 @@ namespace Skylicht
 		{
 			for (SGroup* group : m_groups)
 			{
-				// inner of parent -> parent
-				if (layout->getParent()->getParent() == group->GroupUI)
+				if (group->GroupUI->isChild(layout, true))
 				{
 					return group;
 				}
@@ -626,7 +625,7 @@ namespace Skylicht
 
 				// when input text change
 				IObserver* observer = value->addObserver(onChange);
-				input->OnEnter = [value, input, observer](GUI::CBase* base) {
+				input->OnLostKeyboardFocus = [value, input, observer](GUI::CBase* base) {
 					value->set(input->getValueInt());
 					value->notify(observer);
 				};
