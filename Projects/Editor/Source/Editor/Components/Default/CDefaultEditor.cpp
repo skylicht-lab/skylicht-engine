@@ -375,7 +375,7 @@ namespace Skylicht
 					{
 						CArraySerializable* arrayObject = (CArraySerializable*)object;
 
-						if (arrayObject->OnCreateElement != nullptr)
+						if (arrayObject->haveCreateElementFunction())
 						{
 							// add input to add elements
 							CSubject<int>* count = new CSubject<int>(arrayObject->getElementCount());
