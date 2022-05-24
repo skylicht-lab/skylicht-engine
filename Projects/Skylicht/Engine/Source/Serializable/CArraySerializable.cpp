@@ -45,7 +45,7 @@ namespace Skylicht
 
 	bool CArraySerializable::resize(int count)
 	{
-		if (OnCreateElement == nullptr || count < 0)
+		if (count < 0)
 			return false;
 
 		int numElement = getElementCount();
@@ -65,10 +65,19 @@ namespace Skylicht
 			// need grow
 			for (int i = numElement; i < count; i++)
 			{
-				CValueProperty* value = OnCreateElement();
+				CValueProperty* value = createElement();
 				if (!value)
 					return false;
 			}
+		}
+
+		// rename
+		char name[32];
+		numElement = getElementCount();
+		for (int i = 0; i < numElement; i++)
+		{
+			sprintf(name, "[%d]", i);
+			getElement(i)->Name = name;
 		}
 
 		return true;

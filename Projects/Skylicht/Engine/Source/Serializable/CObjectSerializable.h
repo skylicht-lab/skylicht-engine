@@ -99,6 +99,16 @@ namespace Skylicht
 			return t->get();
 		}
 
+		template<class T>
+		T get(CValueProperty* p, T defaultValue)
+		{
+			CValuePropertyTemplate<T>* t = dynamic_cast<CValuePropertyTemplate<T>*>(p);
+			if (t == NULL)
+				return defaultValue;
+
+			return t->get();
+		}
+
 		virtual void serialize(io::IAttributes* io);
 
 		virtual void deserialize(io::IAttributes* io);
