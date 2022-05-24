@@ -53,6 +53,7 @@ namespace Skylicht
 		std::vector<std::string> m_lightmapPaths;
 
 		ITexture* m_lightmap;
+		bool m_internalLM;
 
 	public:
 		CIndirectLighting();
@@ -77,7 +78,7 @@ namespace Skylicht
 
 		void setAutoSH(bool b);
 
-		void setIndirectLightingType(EIndirectType type);
+		void setIndirectLightingType(EIndirectType type, bool loadLightmap = true);
 
 		void setLightmap(ITexture* texture);
 
@@ -97,6 +98,9 @@ namespace Skylicht
 		{
 			return m_data;
 		}
+
+		bool isLightmapEmpty();
+		bool isLightmapChanged(const std::vector<std::string>& paths);
 
 		DECLARE_GETTYPENAME(CIndirectLighting)
 	};

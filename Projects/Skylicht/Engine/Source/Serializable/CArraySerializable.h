@@ -32,15 +32,17 @@ namespace Skylicht
 	class CArraySerializable : public CObjectSerializable
 	{
 	public:
-
-		std::function<CValueProperty* ()> OnCreateElement;
-
-	public:
 		CArraySerializable(const char* name);
 
 		CArraySerializable(const char* name, CObjectSerializable* parent);
 
 		virtual ~CArraySerializable();
+
+		template<class T>
+		T getElementValue(int i, T defaultValue)
+		{
+			return get<T>(getElement(i), defaultValue);
+		}
 
 		int getElementCount()
 		{
@@ -52,11 +54,67 @@ namespace Skylicht
 			return getPropertyID(i);
 		}
 
+		virtual bool haveCreateElementFunction()
+		{
+			return false;
+		}
+
+		virtual CValueProperty* createElement()
+		{
+			return NULL;
+		}
+
 		bool resize(int count);
 
 		virtual bool isArray()
 		{
 			return true;
+		}
+	};
+
+	template <class T>
+	class CArrayTypeSerializable : public CArraySerializable
+	{
+	public:
+		std::function<void(CValueProperty*)> OnCreateElement;
+
+	public:
+		CArrayTypeSerializable(const char* name) :
+			CArraySerializable(name)
+		{
+
+		}
+
+		CArrayTypeSerializable(const char* name, CObjectSerializable* parent) :
+			CArraySerializable(name, parent)
+		{
+
+		}
+
+		virtual bool haveCreateElementFunction()
+		{
+			return true;
+		}
+
+		virtual CValueProperty* createElement()
+		{
+			T* t = new T();
+			CValueProperty* element = dynamic_cast<CValueProperty*>(t);
+			if (element == NULL)
+			{
+				delete t;
+				return NULL;
+			}
+
+			addProperty(element);
+			autoRelease(element);
+
+			if (OnCreateElement != nullptr)
+			{
+				OnCreateElement(element);
+			}
+
+			return element;
 		}
 	};
 }

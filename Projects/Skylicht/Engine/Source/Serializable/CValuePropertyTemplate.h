@@ -70,6 +70,11 @@ namespace Skylicht
 		bool ClampMax;
 
 	public:
+		CIntProperty() :
+			CIntProperty(NULL, "CIntProperty")
+		{
+		}
+
 		CIntProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, Integer, name),
 			Min(INT_MIN),
@@ -139,6 +144,11 @@ namespace Skylicht
 		bool ClampMax;
 
 	public:
+		CUIntProperty() :
+			CUIntProperty(NULL, "CUIntProperty")
+		{
+		}
+
 		CUIntProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, UInteger, name),
 			Max(UINT_MAX),
@@ -192,6 +202,11 @@ namespace Skylicht
 		bool ClampMax;
 
 	public:
+		CFloatProperty() :
+			CFloatProperty(NULL, "CFloatProperty")
+		{
+		}
+
 		CFloatProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, Float, name),
 			ClampMin(false),
@@ -257,6 +272,11 @@ namespace Skylicht
 	class CStringProperty : public CValuePropertyTemplate<std::string>
 	{
 	public:
+		CStringProperty() :
+			CStringProperty(NULL, "CStringProperty")
+		{
+		}
+
 		CStringProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, String, name)
 		{
@@ -294,6 +314,11 @@ namespace Skylicht
 	class CFolderPathProperty : public CValuePropertyTemplate<std::string>
 	{
 	public:
+		CFolderPathProperty() :
+			CFolderPathProperty(NULL, "CFolderPathProperty")
+		{
+		}
+
 		CFolderPathProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, FolderPath, name)
 		{
@@ -334,6 +359,11 @@ namespace Skylicht
 		std::vector<std::string> Exts;
 
 	public:
+		CFilePathProperty() :
+			CFilePathProperty(NULL, "CFilePathProperty")
+		{
+		}
+
 		CFilePathProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, FilePath, name)
 		{
@@ -380,6 +410,11 @@ namespace Skylicht
 	class CBoolProperty : public CValuePropertyTemplate<bool>
 	{
 	public:
+		CBoolProperty() :
+			CBoolProperty(NULL, "CBoolProperty")
+		{
+		}
+
 		CBoolProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, Bool, name)
 		{
@@ -412,6 +447,11 @@ namespace Skylicht
 	class CDateTimeProperty : public CValuePropertyTemplate<long>
 	{
 	public:
+		CDateTimeProperty() :
+			CDateTimeProperty(NULL, "CDateTimeProperty")
+		{
+		}
+
 		CDateTimeProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, DateTime, name)
 		{
@@ -445,6 +485,11 @@ namespace Skylicht
 	class CVector3Property : public CValuePropertyTemplate<core::vector3df>
 	{
 	public:
+		CVector3Property() :
+			CVector3Property(NULL, "CVector3Property")
+		{
+		}
+
 		CVector3Property(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, Vector3, name)
 		{
@@ -478,6 +523,11 @@ namespace Skylicht
 	class CQuaternionProperty : public CValuePropertyTemplate<core::quaternion>
 	{
 	public:
+		CQuaternionProperty() :
+			CQuaternionProperty(NULL, "CVector3Property")
+		{
+		}
+
 		CQuaternionProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, Quaternion, name)
 		{
@@ -511,6 +561,11 @@ namespace Skylicht
 	class CColorProperty : public CValuePropertyTemplate<video::SColor>
 	{
 	public:
+		CColorProperty() :
+			CColorProperty(NULL, "CColorProperty")
+		{
+		}
+
 		CColorProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, Color, name)
 		{
@@ -544,6 +599,11 @@ namespace Skylicht
 	class CMatrixProperty : public CValuePropertyTemplate<core::matrix4>
 	{
 	public:
+		CMatrixProperty() :
+			CMatrixProperty(NULL, "CMatrixProperty")
+		{
+		}
+
 		CMatrixProperty(CObjectSerializable* owner, const char* name) :
 			CValuePropertyTemplate(owner, Matrix4, name)
 		{
