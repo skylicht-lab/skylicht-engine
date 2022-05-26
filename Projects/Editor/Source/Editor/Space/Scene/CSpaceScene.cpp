@@ -400,7 +400,7 @@ namespace Skylicht
 
 			// lighting
 			CGameObject* lightObj = zone->createEmptyObject();
-			lightObj->setName(L"DirectionLight");
+			lightObj->setName(L"Direction Light");
 
 			CTransformEuler* lightTransform = lightObj->getTransformEuler();
 			lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
@@ -414,7 +414,7 @@ namespace Skylicht
 
 			// sky & sun
 			CGameObject* skySunObj = zone->createEmptyObject();
-			skySunObj->setName(L"Sky & Sun");
+			skySunObj->setName(L"Sky");
 			skySunObj->addComponent<CSkySun>();
 
 			// lightprobres

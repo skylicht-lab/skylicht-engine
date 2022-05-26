@@ -449,11 +449,62 @@ namespace Skylicht
 				return;
 
 			if (objectType == L"Zone")
+			{
 				createZone();
+			}
 			if (objectType == L"Empty Object")
+			{
 				createEmptyObject(NULL);
+			}
 			else if (objectType == L"Container Object")
+			{
 				createContainerObject(NULL);
+			}
+			else if (objectType == L"Skydome")
+			{
+				std::vector<std::string> components = { "CSkyDome" };
+				createComponentObject("Skydome", components, NULL);
+			}
+			else if (objectType == L"Skybox")
+			{
+				std::vector<std::string> components = { "CSkyBox" };
+				createComponentObject("Skybox", components, NULL);
+			}
+			else if (objectType == L"Sky")
+			{
+				std::vector<std::string> components = { "CSkySun" };
+				createComponentObject("Sky", components, NULL);
+			}
+			else if (objectType == L"Mesh")
+			{
+				std::vector<std::string> components = { "CRenderMesh", "CIndirectLighting" };
+				createComponentObject("Mesh", components, NULL);
+			}
+			else if (objectType == L"Direction Light")
+			{
+				std::vector<std::string> components = { "CDirectionalLight" };
+				createComponentObject("Direction Light", components, NULL);
+			}
+			else if (objectType == L"Point Light")
+			{
+				std::vector<std::string> components = { "CPointLight" };
+				createComponentObject("Point Light", components, NULL);
+			}
+			else if (objectType == L"Spot Light")
+			{
+
+			}
+			else if (objectType == L"Reflection Probe")
+			{
+				std::vector<std::string> components = { "CReflectionProbe" };
+				createComponentObject("Reflection Probe", components, NULL);
+			}
+			else if (objectType == L"Light Probes")
+			{
+				std::vector<std::string> components = { "CLightProbes" };
+				createComponentObject("Light Probes", components, NULL);
+			}
+
 		}
 
 		void CSceneController::onContextMenu(CHierachyNode* node)
@@ -633,6 +684,44 @@ namespace Skylicht
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Folder);
 				node->setTagData(newObject, CHierachyNode::Container);
+
+				setNodeEvent(node);
+
+				if (m_spaceHierarchy != NULL)
+					m_spaceHierarchy->addToTreeNode(node);
+			}
+
+			if (saveHistory)
+				m_history->saveCreateHistory(newObject);
+
+			return newObject;
+		}
+
+		CGameObject* CSceneController::createComponentObject(const char* name, std::vector<std::string>& components, CContainerObject* parent, bool saveHistory)
+		{
+			CContainerObject* p = parent == NULL ? m_zone : parent;
+			if (p == NULL)
+				return NULL;
+
+			CGameObject* newObject = p->createEmptyObject();
+
+			std::string generateName = p->generateObjectName(name);
+			newObject->setName(generateName.c_str());
+
+			p->getZone()->updateAddRemoveObject();
+			p->getZone()->updateIndexSearchObject();
+
+			// add components
+			for (std::string& comp : components)
+				newObject->addComponentByTypeName(comp.c_str());
+
+			CHierachyNode* parentNode = m_hierachyNode->getNodeByTag(p);
+			if (parentNode != NULL)
+			{
+				CHierachyNode* node = parentNode->addChild();
+				node->setName(newObject->getName());
+				node->setIcon(GUI::ESystemIcon::Res3D);
+				node->setTagData(newObject, CHierachyNode::GameObject);
 
 				setNodeEvent(node);
 
