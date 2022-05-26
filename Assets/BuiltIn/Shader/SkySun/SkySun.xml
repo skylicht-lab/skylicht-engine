@@ -5,14 +5,13 @@
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
 		</vs>
 		<fs>
-			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uLightDirection" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 			<uniform name="uCamPosition" type="WORLD_CAMERA_POSITION" value="0.0, 0.0, 0.0, 1.0" float="4"/>
-			
-			<uniform name="uIntensity" type="MATERIAL_PARAM" valueIndex="0" value="1.1, 800.0, 0.0, 0.0" float="4"/>
-			<uniform name="uAtmospheric" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 0.8, 0.7, 0.1" float="4"/>
-			<uniform name="uSun" type="MATERIAL_PARAM" valueIndex="2" value="1.0, 0.6, 0.1, 0.5" float="4"/>
-			<uniform name="uGlare1" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 0.6, 0.1, 0.4" float="4"/>
-			<uniform name="uGlare2" type="MATERIAL_PARAM" valueIndex="4" value="1.0, 0.4, 0.2, 0.2" float="4"/>
+			<uniform name="uIntensity" type="MATERIAL_PARAM" valueIndex="1" value="1.1, 800.0, 0.0, 0.0" float="4"/>
+			<uniform name="uAtmospheric" type="MATERIAL_PARAM" valueIndex="2" value="1.0, 0.8, 0.7, 0.1" float="4"/>
+			<uniform name="uSun" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 0.6, 0.1, 0.5" float="4"/>
+			<uniform name="uGlare1" type="MATERIAL_PARAM" valueIndex="4" value="1.0, 0.6, 0.1, 0.4" float="4"/>
+			<uniform name="uGlare2" type="MATERIAL_PARAM" valueIndex="5" value="1.0, 0.4, 0.2, 0.2" float="4"/>
 		</fs>
 	</uniforms>
 	<customUI>

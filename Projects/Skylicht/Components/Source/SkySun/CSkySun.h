@@ -35,6 +35,8 @@ namespace Skylicht
 	protected:
 		CSkySunData* m_skySunData;
 
+		bool m_useDirectionLight;
+
 		float m_skyIntensity;
 		float m_sunSize;
 
@@ -51,6 +53,8 @@ namespace Skylicht
 		float m_glare2Intensity;
 
 		bool m_changed;
+
+		CMaterial::SUniformValue* m_uniformDirection;
 
 	public:
 		CSkySun();

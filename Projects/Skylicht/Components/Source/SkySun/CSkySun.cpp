@@ -28,6 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CGameObject.h"
 #include "Entity/CEntityManager.h"
 
+#include "Lighting/CDirectionalLight.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+
 namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CSkySun);
@@ -45,7 +48,9 @@ namespace Skylicht
 		m_glare1Intensity(0.3),
 		m_glare2Color(255, 255, 51, 25),
 		m_glare2Intensity(0.15),
-		m_changed(true)
+		m_changed(true),
+		m_useDirectionLight(true),
+		m_uniformDirection(NULL)
 	{
 	}
 
@@ -59,15 +64,51 @@ namespace Skylicht
 	{
 		m_skySunData = m_gameObject->getEntity()->addData<CSkySunData>();
 		m_gameObject->getEntityManager()->addRenderSystem<CSkySunRender>();
+
+		CMaterial* material = m_skySunData->SkySunMaterial;
+		m_uniformDirection = material->getUniform("uLightDirection");
 	}
 
 	void CSkySun::updateComponent()
 	{
+		CMaterial* material = m_skySunData->SkySunMaterial;
+
+		if (m_uniformDirection != NULL)
+		{
+			if (m_useDirectionLight)
+			{
+				// use direction light
+				CDirectionalLight* light = CShaderLighting::getDirectionalLight();
+				if (light != NULL)
+				{
+					const core::vector3df& d = -light->getDirection();
+					m_uniformDirection->FloatValue[0] = d.X;
+					m_uniformDirection->FloatValue[1] = d.Y;
+					m_uniformDirection->FloatValue[2] = d.Z;
+					m_uniformDirection->FloatValue[3] = 0.0f;
+				}
+				else
+				{
+					m_uniformDirection->FloatValue[0] = 0.0f;
+					m_uniformDirection->FloatValue[1] = -1.0f;
+					m_uniformDirection->FloatValue[2] = 0.0f;
+					m_uniformDirection->FloatValue[3] = 0.0f;
+				}
+			}
+			else
+			{
+				// use orientation
+				core::vector3df front = m_gameObject->getTransformEuler()->getFront();
+				m_uniformDirection->FloatValue[0] = front.X;
+				m_uniformDirection->FloatValue[1] = front.Y;
+				m_uniformDirection->FloatValue[2] = front.Z;
+				m_uniformDirection->FloatValue[3] = 0.0f;
+			}
+		}
+
 		if (m_changed)
 		{
-			CMaterial* material = m_skySunData->SkySunMaterial;
 			float value[4] = { 0 };
-
 			value[0] = m_skyIntensity;
 			value[1] = m_sunSize;
 			material->setUniform4("uIntensity", value);
@@ -84,9 +125,10 @@ namespace Skylicht
 			getUniformValue(m_glare2Color, m_glare2Intensity, value);
 			material->setUniform4("uGlare2", value);
 
-			material->updateShaderParams();
 			m_changed = false;
 		}
+
+		material->updateShaderParams();
 	}
 
 	void CSkySun::getUniformValue(const SColor& c, float intensity, float* value)
@@ -116,6 +158,7 @@ namespace Skylicht
 		object->autoRelease(sunProperty);
 		object->autoRelease(new CFloatProperty(object, "Sun Intensity", m_sunIntensity, 0.0f));
 		object->autoRelease(new CFloatProperty(object, "Sun Size", m_sunSize, 1.0f, 5000.0f));
+		object->autoRelease(new CBoolProperty(object, "Direction Light", m_useDirectionLight));
 
 		CColorProperty* glareProperty = new CColorProperty(object, "Glare1 Color", m_glare1Color);
 		glareProperty->setUIHeader("Glare");
@@ -131,6 +174,8 @@ namespace Skylicht
 	void CSkySun::loadSerializable(CObjectSerializable* object)
 	{
 		CComponentSystem::loadSerializable(object);
+
+		m_useDirectionLight = object->get<bool>("Direction Light", true);
 
 		m_skyIntensity = object->get<float>("Intensity", 1.1f);
 
