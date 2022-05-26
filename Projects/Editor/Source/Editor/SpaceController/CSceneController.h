@@ -234,6 +234,8 @@ namespace Skylicht
 
 			CGameObject* createContainerObject(CContainerObject* parent, bool saveHistory = true);
 
+			CGameObject* createComponentObject(const char* name, std::vector<std::string>& components, CContainerObject* parent, bool saveHistory = true);
+
 			void createResourceComponent(const std::string& path, CGameObject* gameObject);
 
 			CHierachyNode* buildHierarchyData(CGameObject* object, CHierachyNode* parentNode);

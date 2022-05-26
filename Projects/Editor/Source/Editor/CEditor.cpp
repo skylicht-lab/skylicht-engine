@@ -365,24 +365,29 @@ namespace Skylicht
 			submenu->addSeparator();
 			temp = submenu;
 
-			/*
 			GUI::CMenuItem* object = submenu->addItem(L"Object");
 			submenu = object->getMenu();
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
 
+			/*
 			submenu->addItem(L"Cube");
 			submenu->addItem(L"Sphere");
 			submenu->addItem(L"Capsule");
 			submenu->addItem(L"Cylinder");
 			submenu->addItem(L"Plane");
 			submenu->addSeparator();
-			submenu->addItem(L"Mesh");
-			submenu->addSeparator();
-			submenu->addItem(L"Terrain");
-			submenu->addSeparator();
+			*/
+
 			submenu->addItem(L"Skydome");
 			submenu->addItem(L"Skybox");
 			submenu->addItem(L"Sky");
+			submenu->addSeparator();
+
+			submenu->addItem(L"Mesh");
+			/*
+			submenu->addSeparator();
+
+			submenu->addItem(L"Terrain");
 
 			submenu = temp;
 			GUI::CMenuItem* effect = submenu->addItem(L"Effect");
@@ -392,6 +397,7 @@ namespace Skylicht
 			submenu->addItem(L"Particle System");
 			submenu->addItem(L"Line");
 			submenu->addItem(L"Trail");
+			*/
 
 			submenu = temp;
 			GUI::CMenuItem* lighting = submenu->addItem(L"Lighting");
@@ -403,11 +409,13 @@ namespace Skylicht
 			submenu->addItem(L"Spot Light");
 			submenu->addSeparator();
 			submenu->addItem(L"Reflection Probe");
-			submenu->addItem(L"Light Probe");
+			submenu->addItem(L"Light Probes");
 
+			/*
 			submenu = temp;
 			submenu->addSeparator();
 			submenu->addItem(L"Camera");
+
 			submenu->addSeparator();
 			submenu->addItem(L"Trigger");
 			*/
