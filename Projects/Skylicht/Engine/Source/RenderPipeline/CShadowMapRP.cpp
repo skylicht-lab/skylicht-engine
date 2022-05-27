@@ -140,10 +140,13 @@ namespace Skylicht
 			return;
 
 		// use direction light
+		bool castShadow = true;
+
 		CDirectionalLight* light = CShaderLighting::getDirectionalLight();
 		if (light != NULL)
 		{
 			m_lightDirection = light->getDirection();
+			castShadow = light->isCastShadow();
 		}
 
 		m_csm->update(camera, m_lightDirection);
@@ -170,7 +173,8 @@ namespace Skylicht
 
 			m_currentCSM = i;
 
-			entityManager->cullingAndRender();
+			if (castShadow)
+				entityManager->cullingAndRender();
 		}
 
 		// todo

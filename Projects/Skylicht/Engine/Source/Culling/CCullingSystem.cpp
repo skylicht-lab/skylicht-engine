@@ -74,7 +74,7 @@ namespace Skylicht
 			{
 				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 				CWorldInverseTransformData* invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
-				
+
 				{
 					m_cullings.push_back(culling);
 

@@ -35,7 +35,10 @@ namespace Skylicht
 {
 	struct SBBoxAndMaterial
 	{
+		// Local BBox to check culling
 		core::aabbox3df BBox;
+
+		// Material to check render pipeline cull
 		ArrayMaterial* Materials;
 
 		SBBoxAndMaterial(const core::aabbox3df& box, ArrayMaterial* m)
@@ -60,14 +63,14 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 
-		virtual void render(CEntityManager *entityManager);
+		virtual void render(CEntityManager* entityManager);
 
-		virtual void postRender(CEntityManager *entityManager);
+		virtual void postRender(CEntityManager* entityManager);
 	};
 }
