@@ -66,8 +66,6 @@ void CViewDemo::onRender()
 	// render scene
 	if (camera != NULL && scene != NULL)
 	{
-		context->updateDirectionLight();
-
 		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager(), core::recti());
 	}
 

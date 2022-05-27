@@ -25,9 +25,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CShaderShadow.h"
 
+#include "Lighting/CDirectionalLight.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+
 namespace Skylicht
 {
-	CShadowMapRP *CShaderShadow::s_shadowMapRP = NULL;
+	CShadowMapRP* CShaderShadow::s_shadowMapRP = NULL;
 
 	CShaderShadow::CShaderShadow()
 	{
@@ -39,7 +42,7 @@ namespace Skylicht
 
 	}
 
-	void CShaderShadow::OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader)
+	void CShaderShadow::OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader)
 	{
 		switch (uniform->Type)
 		{
@@ -47,7 +50,7 @@ namespace Skylicht
 		{
 			if (s_shadowMapRP != NULL)
 			{
-				const float *shadowMatrix = s_shadowMapRP->getCSM()->getShadowMatrices();
+				const float* shadowMatrix = s_shadowMapRP->getCSM()->getShadowMatrices();
 				if (vertexShader == true)
 					matRender->setShaderVariable(uniform->UniformShaderID, shadowMatrix, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 				else
@@ -59,7 +62,7 @@ namespace Skylicht
 		{
 			if (s_shadowMapRP != NULL)
 			{
-				const float *shadowDistance = s_shadowMapRP->getCSM()->getShadowDistance();
+				const float* shadowDistance = s_shadowMapRP->getCSM()->getShadowDistance();
 				if (vertexShader == true)
 					matRender->setShaderVariable(uniform->UniformShaderID, shadowDistance, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 				else

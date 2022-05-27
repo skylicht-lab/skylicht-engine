@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/CShaderManager.h"
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
+#include "Lighting/CDirectionalLight.h"
 
 #include "EventManager/CEventManager.h"
 
@@ -48,7 +49,7 @@ namespace Skylicht
 		m_lightDirection.set(-1.0f, -1.0f, -1.0f);
 
 		// write depth material
-		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
 		m_depthWriteShader = shaderMgr->getShaderIDByName("ShadowDepthWrite");
 		m_cubeDepthWriteShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWrite");
 
@@ -83,13 +84,13 @@ namespace Skylicht
 
 	}
 
-	bool CShadowMapRP::canRenderMaterial(CMaterial *m)
+	bool CShadowMapRP::canRenderMaterial(CMaterial* m)
 	{
 		// render all object
 		return true;
 	}
 
-	void CShadowMapRP::drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
+	void CShadowMapRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID)
 	{
 		if (mesh->Material.size() > (u32)bufferID)
 		{
@@ -97,8 +98,8 @@ namespace Skylicht
 			CShaderMaterial::setMaterial(mesh->Material[bufferID]);
 		}
 
-		IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
-		IVideoDriver *driver = getVideoDriver();
+		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
+		IVideoDriver* driver = getVideoDriver();
 
 		// override write depth material
 		if (m_saveDebug == true)
@@ -133,10 +134,17 @@ namespace Skylicht
 		return m_csm->getFrustumBox(m_currentCSM);
 	}
 
-	void CShadowMapRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
+	void CShadowMapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
 			return;
+
+		// use direction light
+		CDirectionalLight* light = CShaderLighting::getDirectionalLight();
+		if (light != NULL)
+		{
+			m_lightDirection = light->getDirection();
+		}
 
 		m_csm->update(camera, m_lightDirection);
 
@@ -153,7 +161,7 @@ namespace Skylicht
 		// render directional light shadow
 		m_writeDepthMaterial.MaterialType = m_depthWriteShader;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		for (int i = 0; i < m_numCascade; i++)
 		{
 			driver->setRenderTargetArray(m_depthTexture, i, true, true);
@@ -170,7 +178,7 @@ namespace Skylicht
 		if (m_saveDebug == true)
 		{
 			core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
-			ITexture *rtt = getVideoDriver()->addRenderTargetTexture(size, "rt", video::ECF_A8R8G8B8);
+			ITexture* rtt = getVideoDriver()->addRenderTargetTexture(size, "rt", video::ECF_A8R8G8B8);
 
 			for (int i = 0; i < m_numCascade; i++)
 			{
@@ -200,14 +208,14 @@ namespace Skylicht
 
 		std::vector<ITexture*> listDepthTexture;
 
-		CLightCullingSystem *lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
+		CLightCullingSystem* lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
 		{
 			core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
 			for (u32 i = 0, n = listLight.size(); i < n; i++)
 			{
-				CLight *light = listLight[i]->Light;
-				CPointLight *pointLight = dynamic_cast<CPointLight*>(light);
+				CLight* light = listLight[i]->Light;
+				CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
 
 				if (pointLight != NULL &&
 					pointLight->isCastShadow() == true &&
@@ -217,7 +225,7 @@ namespace Skylicht
 					pointLight->beginRenderShadowDepth();
 
 					core::vector3df lightPosition = pointLight->getGameObject()->getPosition();
-					ITexture *depth = pointLight->createGetDepthTexture();
+					ITexture* depth = pointLight->createGetDepthTexture();
 					if (depth != NULL)
 					{
 						renderCubeEnvironment(camera, entityManager, lightPosition, depth, NULL, 0);
@@ -234,7 +242,7 @@ namespace Skylicht
 			driver->setRenderTarget(target, false, false);
 
 			// Generate all depth texture
-			for (ITexture *d : listDepthTexture)
+			for (ITexture* d : listDepthTexture)
 				d->regenerateMipMapLevels();
 		}
 

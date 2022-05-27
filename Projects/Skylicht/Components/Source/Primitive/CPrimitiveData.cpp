@@ -23,8 +23,9 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "CPrimiviteData.h"
 
 namespace Skylicht
 {
-
+	IMPLEMENT_DATA_TYPE_INDEX(CPrimiviteData);
 }

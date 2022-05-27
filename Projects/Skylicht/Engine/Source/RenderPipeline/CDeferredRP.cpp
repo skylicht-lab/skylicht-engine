@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
 #include "Material/Shader/ShaderCallback/CShaderDeferred.h"
+#include "Material/Shader/ShaderCallback/CShaderSH.h"
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
 #include "IndirectLighting/CIndirectLightingData.h"
@@ -68,7 +69,7 @@ namespace Skylicht
 
 	void CDeferredRP::initRTT(int w, int h)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		// init render target
 		m_size = core::dimension2du((u32)w, (u32)h);
@@ -92,7 +93,7 @@ namespace Skylicht
 
 	void CDeferredRP::releaseRTT()
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		if (m_albedo != NULL)
 			driver->removeTexture(m_albedo);
@@ -120,18 +121,19 @@ namespace Skylicht
 
 	void CDeferredRP::initRender(int w, int h)
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		// init render target
 		initRTT(w, h);
 
 		// get basic shader
-		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
 		m_textureColorShader = shaderMgr->getShaderIDByName("TextureColor");
 		m_textureLinearRGBShader = shaderMgr->getShaderIDByName("TextureLinearRGB");
 		m_vertexColorShader = shaderMgr->getShaderIDByName("VertexColor");
 		m_lightmapArrayShader = shaderMgr->getShaderIDByName("Lightmap");
 		m_lightmapVertexShader = shaderMgr->getShaderIDByName("LightmapVertex");
+		m_lightmapSHShader = shaderMgr->getShaderIDByName("LightmapSH");
 		m_lightmapIndirectTestShader = shaderMgr->getShaderIDByName("IndirectTest");
 
 		m_lightDirection = shaderMgr->getShaderIDByName("SGDirectionalLight");
@@ -186,7 +188,7 @@ namespace Skylicht
 
 	void CDeferredRP::initPointLightMaterial()
 	{
-		CShaderManager *shaderMgr = CShaderManager::getInstance();
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
 		m_pointLightShader = shaderMgr->getShaderIDByName("SGPointLight");
 		m_pointLightShadowShader = shaderMgr->getShaderIDByName("SGPointLightShadow");
@@ -234,7 +236,7 @@ namespace Skylicht
 		return s_enableRenderIndirect;
 	}
 
-	bool CDeferredRP::canRenderMaterial(CMaterial *material)
+	bool CDeferredRP::canRenderMaterial(CMaterial* material)
 	{
 		if (material->isDeferred() == true)
 			return true;
@@ -242,12 +244,12 @@ namespace Skylicht
 		return false;
 	}
 
-	void CDeferredRP::drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID)
+	void CDeferredRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID)
 	{
 		if (m_isIndirectPass == true)
 		{
 			// read indirect lighting data
-			CIndirectLightingData *indirectData = (CIndirectLightingData*)entity->getEntity(entityID)->getDataByIndex(CIndirectLightingData::DataTypeIndex);
+			CIndirectLightingData* indirectData = (CIndirectLightingData*)entity->getEntity(entityID)->getDataByIndex(CIndirectLightingData::DataTypeIndex);
 			if (indirectData == NULL)
 				return;
 
@@ -255,8 +257,8 @@ namespace Skylicht
 			if (mesh->Material.size() > (u32)bufferID)
 				CShaderMaterial::setMaterial(mesh->Material[bufferID]);
 
-			IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
-			IVideoDriver *driver = getVideoDriver();
+			IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
+			IVideoDriver* driver = getVideoDriver();
 
 			video::SMaterial& material = mb->getMaterial();
 
@@ -274,14 +276,31 @@ namespace Skylicht
 			}
 			else if (indirectData->Type == CIndirectLightingData::LightmapArray)
 			{
-				// change shader to vertex color
-				SMaterial textureColor;
+				if (indirectData->LightmapTexture)
+				{
+					// change shader to vertex color
+					SMaterial textureColor;
 
-				textureColor.MaterialType = m_lightmapArrayShader;
-				textureColor.setTexture(0, indirectData->LightmapTexture);
+					textureColor.MaterialType = m_lightmapArrayShader;
+					textureColor.setTexture(0, indirectData->LightmapTexture);
+
+					// set irrlicht material
+					driver->setMaterial(textureColor);
+
+					// draw mesh buffer
+					driver->drawMeshBuffer(mb);
+				}
+			}
+			else if (indirectData->Type == CIndirectLightingData::SH9)
+			{
+				CShaderSH::setSH9(indirectData->SH);
+
+				// change shader to vertex color
+				SMaterial shMaterial;
+				shMaterial.MaterialType = m_lightmapSHShader;
 
 				// set irrlicht material
-				driver->setMaterial(textureColor);
+				driver->setMaterial(shMaterial);
 
 				// draw mesh buffer
 				driver->drawMeshBuffer(mb);
@@ -294,8 +313,8 @@ namespace Skylicht
 				// update texture resource
 				updateTextureResource(mesh, bufferID, entity, entityID);
 
-				IMeshBuffer *mb = mesh->getMeshBuffer(bufferID);
-				IVideoDriver *driver = getVideoDriver();
+				IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
+				IVideoDriver* driver = getVideoDriver();
 
 				video::SMaterial irrMaterial = mb->getMaterial();
 				irrMaterial.BackfaceCulling = false;
@@ -314,12 +333,12 @@ namespace Skylicht
 		}
 	}
 
-	void CDeferredRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
+	void CDeferredRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
 			return;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		// custom viewport
 		bool useCustomViewport = false;
@@ -413,13 +432,13 @@ namespace Skylicht
 		if (CDirectionalLight::getCurrentDirectionLight() != NULL)
 			totalBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
 
-		CLightCullingSystem *lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
+		CLightCullingSystem* lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
 		{
 			core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
 			for (u32 i = 0, n = listLight.size(); i < n; i++)
 			{
-				CLight *light = listLight[i]->Light;
+				CLight* light = listLight[i]->Light;
 
 				bool renderLight = true;
 
@@ -432,7 +451,7 @@ namespace Skylicht
 
 				if (renderLight == true)
 				{
-					CPointLight *pointLight = dynamic_cast<CPointLight*>(light);
+					CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
 					if (pointLight != NULL)
 					{
 						CShaderLighting::setPointLight(pointLight);
@@ -464,7 +483,7 @@ namespace Skylicht
 			driver->setViewPort(customViewport);
 
 		// shadow
-		CShadowMapRP *shadowRP = CShaderShadow::getShadowMapRP();
+		CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
 		if (shadowRP != NULL)
 			m_directionalLightPass.TextureLayer[6].Texture = shadowRP->getDepthTexture();
 
@@ -495,7 +514,7 @@ namespace Skylicht
 		// final pass to screen
 		if (m_postProcessor != NULL && s_bakeMode == false)
 		{
-			ITexture *emission = NULL;
+			ITexture* emission = NULL;
 			if (m_next->getType() == IRenderPipeline::Forwarder)
 				emission = ((CForwardRP*)m_next)->getEmissionTexture();
 

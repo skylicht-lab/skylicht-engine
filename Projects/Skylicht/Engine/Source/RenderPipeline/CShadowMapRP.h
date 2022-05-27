@@ -29,12 +29,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CShadowMapRP : 
+	class CShadowMapRP :
 		public CBaseRP,
 		public IEventReceiver
 	{
 	protected:
-		ITexture *m_depthTexture;
+		ITexture* m_depthTexture;
 
 		int m_shadowMapSize;
 		int m_numCascade;
@@ -42,7 +42,7 @@ namespace Skylicht
 		SMaterial m_writeDepthMaterial;
 		core::vector3df m_lightDirection;
 
-		CCascadedShadowMaps *m_csm;
+		CCascadedShadowMaps* m_csm;
 		int m_currentCSM;
 
 		int m_depthWriteShader;
@@ -58,11 +58,11 @@ namespace Skylicht
 
 		virtual void resize(int w, int h);
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport);
 
-		virtual bool canRenderMaterial(CMaterial *m);
+		virtual bool canRenderMaterial(CMaterial* m);
 
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
+		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID);
 
 		virtual bool OnEvent(const SEvent& event);
 
@@ -79,11 +79,5 @@ namespace Skylicht
 		{
 			return m_csm;
 		}
-
-		inline void setLightDirection(const core::vector3df& v)
-		{
-			m_lightDirection = v;
-		}
-
 	};
 }

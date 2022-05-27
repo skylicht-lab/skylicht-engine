@@ -90,8 +90,6 @@ public:
 		return m_zone;
 	}
 
-	void updateDirectionLight();
-
 	void setDirectionalLight(CDirectionalLight* light);
 
 	void setPointLight(std::vector<CPointLight*> pointLight);

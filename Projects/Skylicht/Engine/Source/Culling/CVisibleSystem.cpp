@@ -51,12 +51,7 @@ namespace Skylicht
 	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
 		CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
-		if (visible == NULL)
-			return;
-
 		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-		if (transform == NULL)
-			return;
 
 		if (transform->Depth > m_maxDepth)
 			m_maxDepth = transform->Depth;

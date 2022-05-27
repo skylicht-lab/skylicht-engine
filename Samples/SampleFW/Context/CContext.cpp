@@ -139,11 +139,3 @@ void CContext::setPointLight(std::vector<CPointLight*> pointLight)
 {
 	m_pointLights = pointLight;
 }
-
-void CContext::updateDirectionLight()
-{
-	if (m_shadowMapRendering != NULL && m_directionalLight != NULL)
-	{
-		m_shadowMapRendering->setLightDirection(m_directionalLight->getDirection());
-	}
-}

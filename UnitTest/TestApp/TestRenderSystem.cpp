@@ -61,13 +61,10 @@ void CTestRenderSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
 		CWorldTransformData* testTransform = dynamic_cast<CWorldTransformData*>(entity->getDataByIndex(CWorldTransformData::DataTypeIndex));
 
-		if (testEntity != NULL && testTransform != NULL)
-		{
-			m_testEntities.push_back(testEntity);
-			m_testTransforms.push_back(testTransform);
+		m_testEntities.push_back(testEntity);
+		m_testTransforms.push_back(testTransform);
 
-			g_passSystemOnQuery = true;
-		}
+		g_passSystemOnQuery = true;
 	}
 }
 

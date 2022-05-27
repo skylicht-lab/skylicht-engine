@@ -40,7 +40,8 @@ namespace Skylicht
 	CIndirectLighting::CIndirectLighting() :
 		m_type(SH9),
 		m_autoSH(true),
-		m_internalLM(false)
+		m_internalLM(false),
+		m_lightmap(NULL)
 	{
 
 	}
@@ -97,15 +98,7 @@ namespace Skylicht
 		// add indirect data info
 		CIndirectLightingData* data = entity->addData<CIndirectLightingData>();
 
-		if (m_type == LightmapArray)
-		{
-			data->Type = CIndirectLightingData::LightmapArray;
-		}
-		else
-		{
-			data->Type = CIndirectLightingData::VertexColor;
-		}
-
+		data->Type = (CIndirectLightingData::EType)m_type;
 		data->SH = m_sh;
 		data->AutoSH = &m_autoSH;
 

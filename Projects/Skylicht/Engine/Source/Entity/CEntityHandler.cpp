@@ -40,7 +40,7 @@ namespace Skylicht
 
 	CEntityHandler::~CEntityHandler()
 	{
-
+		removeAllEntities();
 	}
 
 	void CEntityHandler::initComponent()
@@ -134,7 +134,7 @@ namespace Skylicht
 			return;
 
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
-		if (entityManager)
+		if (entityManager == NULL)
 			return;
 
 		for (int i = (int)m_entities.size() - 1; i >= 0; i--)
@@ -151,7 +151,7 @@ namespace Skylicht
 			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 
 			// assign name
-			if (transformData != NULL && transformData->Name.empty())
+			if (transformData->Name.empty())
 			{
 				char name[512];
 				sprintf(name, "#%d", entity->getIndex());
