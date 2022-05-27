@@ -98,7 +98,7 @@ namespace Skylicht
 			else
 			{
 				// use orientation
-				core::vector3df front = m_gameObject->getTransformEuler()->getFront();
+				const core::vector3df& front = m_gameObject->getTransformEuler()->getFront();
 				m_uniformDirection->FloatValue[0] = front.X;
 				m_uniformDirection->FloatValue[1] = front.Y;
 				m_uniformDirection->FloatValue[2] = front.Z;

@@ -504,6 +504,16 @@ namespace Skylicht
 				std::vector<std::string> components = { "CLightProbes" };
 				createComponentObject("Light Probes", components, NULL);
 			}
+			else if (objectType == L"Cube")
+			{
+				std::vector<std::string> components = { "CCube" };
+				createComponentObject("Cube", components, NULL);
+			}
+			else if (objectType == L"Sphere")
+			{
+				std::vector<std::string> components = { "CSphere" };
+				createComponentObject("Sphere", components, NULL);
+			}
 
 		}
 
