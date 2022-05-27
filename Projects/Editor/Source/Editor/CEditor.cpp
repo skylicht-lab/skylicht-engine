@@ -369,14 +369,14 @@ namespace Skylicht
 			submenu = object->getMenu();
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandGameObject, this);
 
-			/*
 			submenu->addItem(L"Cube");
 			submenu->addItem(L"Sphere");
+			/*
 			submenu->addItem(L"Capsule");
 			submenu->addItem(L"Cylinder");
 			submenu->addItem(L"Plane");
-			submenu->addSeparator();
 			*/
+			submenu->addSeparator();
 
 			submenu->addItem(L"Skydome");
 			submenu->addItem(L"Skybox");
