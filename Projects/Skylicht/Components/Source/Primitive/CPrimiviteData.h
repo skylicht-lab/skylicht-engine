@@ -33,11 +33,14 @@ namespace Skylicht
 	public:
 		enum EPrimitive
 		{
-			Unknown,
+			Unknown = 0,
 			Cube,
-			Sphere
+			Sphere,
+			Count
 		};
 
+		DECLARE_DATA_TYPE_INDEX;
 
+		EPrimitive Type;
 	};
 }

@@ -44,7 +44,6 @@ namespace Skylicht
 
 	CLightProbes::~CLightProbes()
 	{
-		clearAll();
 	}
 
 	void CLightProbes::initComponent()
@@ -110,7 +109,7 @@ namespace Skylicht
 		CArraySerializable* probes = (CArraySerializable*)object->getProperty("Probes");
 		int numProbes = probes->getElementCount();
 
-		clearAll();
+		removeAllEntities();
 
 		if (probes == NULL)
 			return;
@@ -138,11 +137,6 @@ namespace Skylicht
 			for (int j = 0; j < 9; j++)
 				light->SH[j] = shData->SH[j]->get();
 		}
-	}
-
-	void CLightProbes::clearAll()
-	{
-		removeAllEntities();
 	}
 
 	CEntity* CLightProbes::addLightProbe(const core::vector3df& position)

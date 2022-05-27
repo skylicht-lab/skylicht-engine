@@ -52,8 +52,6 @@ namespace Skylicht
 	{
 		// transform data
 		CWorldTransformData* t = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-		if (t == NULL)
-			return;
 
 		CWorldInverseTransformData* tInverse = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 

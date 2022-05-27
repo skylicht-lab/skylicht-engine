@@ -14,9 +14,6 @@
 	<resources>
 	</resources>
 	<customUI>
-		<ui control="UIGroup" name="Texture">
-			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_dif."/>
-		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/DiffuseSpecularGlossinessVS.glsl" fs="GLSL/ColorFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/DiffuseSpecularGlossinessVS.hlsl" fs="HLSL/ColorFS.hlsl"/>

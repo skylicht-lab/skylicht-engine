@@ -36,7 +36,7 @@ namespace Skylicht
 	public:
 		enum EIndirectType
 		{
-			LightmapArray,
+			LightmapArray = 0,
 			VertexColor,
 			SH9,
 		};

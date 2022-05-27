@@ -51,11 +51,9 @@ namespace Skylicht
 		if (worldInv != NULL && worldInv->HasChanged == true)
 		{
 			CWorldTransformData* world = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			if (world != NULL)
-			{
-				m_world.push_back(world);
-				m_worldInv.push_back(worldInv);
-			}
+
+			m_world.push_back(world);
+			m_worldInv.push_back(worldInv);
 		}
 	}
 

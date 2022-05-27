@@ -54,14 +54,12 @@ namespace Skylicht
 			&& component->TransformComponent->hasChanged())
 		{
 			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			if (transform != NULL)
-			{
-				// notify changed for CWorldTransformSystem, sync in TransformComponent->hasChanged()
-				transform->HasChanged = true;
 
-				m_transforms.push_back(transform);
-				m_components.push_back(component);
-			}
+			// notify changed for CWorldTransformSystem, sync in TransformComponent->hasChanged()
+			transform->HasChanged = true;
+
+			m_transforms.push_back(transform);
+			m_components.push_back(component);
 		}
 	}
 

@@ -33,7 +33,7 @@ namespace Skylicht
 	public:
 		enum EType
 		{
-			LightmapArray,
+			LightmapArray = 0,
 			VertexColor,
 			SH9
 		};

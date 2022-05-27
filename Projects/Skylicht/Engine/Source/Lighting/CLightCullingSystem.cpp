@@ -47,34 +47,31 @@ namespace Skylicht
 		m_invTransforms.set_used(0);
 	}
 
-	void CLightCullingSystem::onQuery(CEntityManager *entityManager, CEntity *entity)
+	void CLightCullingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CLightCullingData *culling = (CLightCullingData*)entity->getDataByIndex(CLightCullingData::DataTypeIndex);
+		CLightCullingData* culling = (CLightCullingData*)entity->getDataByIndex(CLightCullingData::DataTypeIndex);
 
 		if (culling != NULL)
 		{
-			CWorldTransformData *transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			CWorldInverseTransformData *invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
+			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldInverseTransformData* invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 
-			if (transform != NULL)
-			{
-				m_cullings.push_back(culling);
-				m_transforms.push_back(transform);
-				m_invTransforms.push_back(invTransform);
-			}
+			m_cullings.push_back(culling);
+			m_transforms.push_back(transform);
+			m_invTransforms.push_back(invTransform);
 		}
 	}
 
-	void CLightCullingSystem::init(CEntityManager *entityManager)
+	void CLightCullingSystem::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CLightCullingSystem::update(CEntityManager *entityManager)
+	void CLightCullingSystem::update(CEntityManager* entityManager)
 	{
-		CLightCullingData **cullings = m_cullings.pointer();
-		CWorldTransformData **transforms = m_transforms.pointer();
-		CWorldInverseTransformData **invTransforms = m_invTransforms.pointer();
+		CLightCullingData** cullings = m_cullings.pointer();
+		CWorldTransformData** transforms = m_transforms.pointer();
+		CWorldInverseTransformData** invTransforms = m_invTransforms.pointer();
 
 		core::matrix4 invTrans;
 
@@ -82,9 +79,9 @@ namespace Skylicht
 		for (u32 i = 0; i < numEntity; i++)
 		{
 			// get mesh bbox
-			CLightCullingData *culling = cullings[i];
-			CWorldTransformData *transform = transforms[i];
-			CWorldInverseTransformData *invTransform = invTransforms[i];
+			CLightCullingData* culling = cullings[i];
+			CWorldTransformData* transform = transforms[i];
+			CWorldInverseTransformData* invTransform = invTransforms[i];
 
 			culling->Visible = true;
 
@@ -93,7 +90,7 @@ namespace Skylicht
 			transform->World.transformBoxEx(lightBox);
 
 			// 1. Detect by bounding box
-			CCamera *camera = entityManager->getCamera();
+			CCamera* camera = entityManager->getCamera();
 			culling->Visible = lightBox.intersectsWithBox(camera->getViewFrustum().getBoundingBox());
 
 			// 2. Detect algorithm
@@ -134,12 +131,12 @@ namespace Skylicht
 		}
 	}
 
-	void CLightCullingSystem::render(CEntityManager *entityManager)
+	void CLightCullingSystem::render(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CLightCullingSystem::postRender(CEntityManager *entityManager)
+	void CLightCullingSystem::postRender(CEntityManager* entityManager)
 	{
 
 	}

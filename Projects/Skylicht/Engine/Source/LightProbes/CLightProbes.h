@@ -47,8 +47,6 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		void clearAll();
-
 		CEntity* addLightProbe(const core::vector3df& position);
 
 		int getPositions(std::vector<core::vector3df>& positions);
