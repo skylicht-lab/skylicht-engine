@@ -29,9 +29,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "RenderMesh/CRenderMesh.h"
 #include "IndirectLighting/CIndirectLighting.h"
+#include "LightProbes/CLightProbes.h"
 
 #include "SkyDome/CSkyDome.h"
 #include "SkyBox/CSkyBox.h"
+
+#include "Primitive/CCube.h"
+#include "Primitive/CSphere.h"
 
 #define USE_COMPONENT(component) CComponentSystem *component##_used = addComponent(new component())
 
@@ -63,6 +67,9 @@ namespace Skylicht
 		USE_COMPONENT(CSkyDome);
 		USE_COMPONENT(CSkyBox);
 		USE_COMPONENT(CIndirectLighting);
+		USE_COMPONENT(CLightProbes);
+		USE_COMPONENT(CCube);
+		USE_COMPONENT(CSphere);
 		// END DECLARE COMPONENT
 
 		int clean = cleanUp();
