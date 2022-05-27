@@ -53,7 +53,7 @@ namespace Skylicht
 			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			CWorldInverseTransformData* rootInvTransform = (CWorldInverseTransformData*)entityManager->getEntity(joint->RootIndex)->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 
-			if (transform != NULL && rootInvTransform != NULL)
+			if (rootInvTransform != NULL)
 			{
 				m_joints.push_back(joint);
 				m_transforms.push_back(transform);

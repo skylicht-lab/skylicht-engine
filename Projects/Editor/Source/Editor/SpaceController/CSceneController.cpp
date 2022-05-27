@@ -506,12 +506,12 @@ namespace Skylicht
 			}
 			else if (objectType == L"Cube")
 			{
-				std::vector<std::string> components = { "CCube" };
+				std::vector<std::string> components = { "CCube", "CIndirectLighting" };
 				createComponentObject("Cube", components, NULL);
 			}
 			else if (objectType == L"Sphere")
 			{
-				std::vector<std::string> components = { "CSphere" };
+				std::vector<std::string> components = { "CSphere", "CIndirectLighting" };
 				createComponentObject("Sphere", components, NULL);
 			}
 
@@ -734,6 +734,8 @@ namespace Skylicht
 				node->setTagData(newObject, CHierachyNode::GameObject);
 
 				setNodeEvent(node);
+
+				rebuildHierarchyEntityData(newObject, node);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);

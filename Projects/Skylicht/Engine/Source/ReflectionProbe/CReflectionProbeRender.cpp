@@ -70,12 +70,9 @@ namespace Skylicht
 			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
 
-			if (transformData != NULL)
-			{
-				m_probes.push_back(probeData);
-				m_transforms.push_back(transformData);
-				m_visibles.push_back(visible);
-			}
+			m_probes.push_back(probeData);
+			m_transforms.push_back(transformData);
+			m_visibles.push_back(visible);
 		}
 	}
 

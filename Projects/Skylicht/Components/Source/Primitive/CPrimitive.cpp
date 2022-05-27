@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CPrimitiveRenderer.h"
 #include "GameObject/CGameObject.h"
 #include "Entity/CEntityManager.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
@@ -44,5 +45,30 @@ namespace Skylicht
 	void CPrimitive::initComponent()
 	{
 		m_gameObject->getEntityManager()->addRenderSystem<CPrimitiveRenderer>();
+
+		// add default primitive
+		if (m_type != Unknown)
+		{
+			addPrimitive(
+				core::vector3df(),
+				core::vector3df(),
+				core::vector3df(1.0f, 1.0f, 1.0f)
+			);
+		}
+	}
+
+	CEntity* CPrimitive::addPrimitive(const core::vector3df& pos, const core::vector3df& rotDeg, const core::vector3df& scale)
+	{
+		CEntity* entity = createEntity();
+
+		CPrimiviteData* primitiveData = entity->addData<CPrimiviteData>();
+		primitiveData->Type = m_type;
+
+		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		transform->Relative.setTranslation(pos);
+		transform->Relative.setRotationDegrees(rotDeg);
+		transform->Relative.setScale(scale);
+
+		return entity;
 	}
 }

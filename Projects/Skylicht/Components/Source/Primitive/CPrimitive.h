@@ -25,11 +25,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CPrimiviteData.h"
-#include "Components/CComponentSystem.h"
+#include "Entity/CEntityHandler.h"
 
 namespace Skylicht
 {
-	class CPrimitive : public CComponentSystem
+	class CPrimitive : public CEntityHandler
 	{
 	protected:
 		CPrimiviteData::EPrimitive m_type;
@@ -41,6 +41,8 @@ namespace Skylicht
 		virtual ~CPrimitive();
 
 		virtual void initComponent();
+
+		CEntity* addPrimitive(const core::vector3df& pos, const core::vector3df& rotDeg, const core::vector3df& scale);
 
 		inline CPrimiviteData::EPrimitive getType()
 		{

@@ -74,12 +74,9 @@ namespace Skylicht
 				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 				CIndirectLightingData* indirect = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
 
-				if (transform != NULL)
-				{
-					m_meshs.push_back(meshData);
-					m_transforms.push_back(transform);
-					m_indirectLightings.push_back(indirect);
-				}
+				m_meshs.push_back(meshData);
+				m_transforms.push_back(transform);
+				m_indirectLightings.push_back(indirect);
 			}
 		}
 	}

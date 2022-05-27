@@ -70,12 +70,7 @@ namespace Skylicht
 
 	void CRenderMesh::releaseEntities()
 	{
-		if (m_gameObject != NULL)
-		{
-			CEntityManager* entityManager = m_gameObject->getEntityManager();
-			for (u32 i = 0, n = m_allEntities.size(); i < n; i++)
-				entityManager->removeEntity(m_allEntities[i]);
-		}
+		removeAllEntities();
 
 		m_allEntities.clear();
 		m_renderers.clear();

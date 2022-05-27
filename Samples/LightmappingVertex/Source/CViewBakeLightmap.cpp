@@ -120,9 +120,6 @@ void CViewBakeLightmap::onUpdate()
 {
 	CContext *context = CContext::getInstance();
 
-	// update direction light
-	context->updateDirectionLight();
-
 	// update scene
 	CScene *scene = context->getScene();
 	if (scene != NULL)

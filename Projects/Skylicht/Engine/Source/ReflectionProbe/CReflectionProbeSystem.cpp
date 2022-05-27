@@ -54,16 +54,13 @@ namespace Skylicht
 
 		if (probeData != NULL && probeData->ReflectionTexture != NULL)
 		{
-			if (transformData != NULL)
-			{
-				m_probes.push_back(probeData);
-				m_probePositions.push_back(transformData);
+			m_probes.push_back(probeData);
+			m_probePositions.push_back(transformData);
 
-				if (transformData->NeedValidate || probeData->Invalidate)
-				{
-					m_probeChange = true;
-					probeData->Invalidate = false;
-				}
+			if (transformData->NeedValidate || probeData->Invalidate)
+			{
+				m_probeChange = true;
+				probeData->Invalidate = false;
 			}
 		}
 		else if (lightData != NULL)
