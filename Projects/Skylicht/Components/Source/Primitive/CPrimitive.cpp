@@ -28,6 +28,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CGameObject.h"
 #include "Entity/CEntityManager.h"
 #include "Transform/CWorldTransformData.h"
+#include "Transform/CWorldInverseTransformData.h"
+#include "Culling/CCullingData.h"
+#include "Culling/CCullingBBoxData.h"
+
 
 namespace Skylicht
 {
@@ -64,6 +68,15 @@ namespace Skylicht
 		CPrimiviteData* primitiveData = entity->addData<CPrimiviteData>();
 		primitiveData->Type = m_type;
 
+		// Culling
+		entity->addData<CWorldInverseTransformData>();
+		entity->addData<CCullingData>();
+
+		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
+		cullingBBox->BBox.MinEdge.set(-1.0f, -1.0f, -1.0f);
+		cullingBBox->BBox.MaxEdge.set(1.0f, 1.0f, 1.0f);
+
+		// Position
 		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 		transform->Relative.setTranslation(pos);
 		transform->Relative.setRotationDegrees(rotDeg);

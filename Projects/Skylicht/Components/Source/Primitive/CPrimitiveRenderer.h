@@ -47,6 +47,8 @@ namespace Skylicht
 
 		void initMesh(IMesh* primitiveMesh, CPrimiviteData::EPrimitive primitive);
 
+		void initCube();
+
 		virtual void beginQuery(CEntityManager* entityManager);
 
 		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
