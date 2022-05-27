@@ -47,7 +47,7 @@ namespace Skylicht
 		m_gameObject->getEntityManager()->addRenderSystem<CPrimitiveRenderer>();
 
 		// add default primitive
-		if (m_type != Unknown)
+		if (m_type != CPrimiviteData::Unknown)
 		{
 			addPrimitive(
 				core::vector3df(),
