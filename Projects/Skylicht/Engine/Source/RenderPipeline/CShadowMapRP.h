@@ -34,6 +34,14 @@ namespace Skylicht
 		public IEventReceiver
 	{
 	protected:
+		enum ERenderShadowState
+		{
+			DirectionLight = 0,
+			PointLight,
+		};
+
+		ERenderShadowState m_renderShadowState;
+
 		ITexture* m_depthTexture;
 
 		int m_shadowMapSize;
@@ -45,8 +53,13 @@ namespace Skylicht
 		CCascadedShadowMaps* m_csm;
 		int m_currentCSM;
 
+		int m_texColorShader;
+		int m_skinShader;
+
 		int m_depthWriteShader;
+		int m_depthWriteSkinMeshShader;
 		int m_cubeDepthWriteShader;
+		int m_cubeDepthWriteSkinMeshShader;
 
 		bool m_saveDebug;
 	public:
@@ -62,7 +75,7 @@ namespace Skylicht
 
 		virtual bool canRenderMaterial(CMaterial* m);
 
-		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID);
+		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
 
 		virtual bool OnEvent(const SEvent& event);
 

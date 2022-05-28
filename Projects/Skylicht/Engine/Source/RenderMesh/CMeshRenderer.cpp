@@ -116,7 +116,7 @@ namespace Skylicht
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
-				rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex);
+				rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);
 		}
 	}
 }

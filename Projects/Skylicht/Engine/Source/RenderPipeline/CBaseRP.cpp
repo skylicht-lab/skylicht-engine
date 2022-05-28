@@ -160,7 +160,7 @@ namespace Skylicht
 		}
 	}
 
-	void CBaseRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID)
+	void CBaseRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
 		// update texture resource
 		updateTextureResource(mesh, bufferID, entity, entityID);

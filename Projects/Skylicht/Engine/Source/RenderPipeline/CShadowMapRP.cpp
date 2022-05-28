@@ -50,8 +50,14 @@ namespace Skylicht
 
 		// write depth material
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
+
+		m_texColorShader = shaderMgr->getShaderIDByName("TextureColor");
+		m_skinShader = shaderMgr->getShaderIDByName("Skin");
+
 		m_depthWriteShader = shaderMgr->getShaderIDByName("ShadowDepthWrite");
+		m_depthWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowDepthWriteSkinMesh");
 		m_cubeDepthWriteShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWrite");
+		m_cubeDepthWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWriteSkinMesh");
 
 		m_writeDepthMaterial.BackfaceCulling = false;
 		m_writeDepthMaterial.FrontfaceCulling = false;
@@ -90,7 +96,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CShadowMapRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID)
+	void CShadowMapRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
 		if (mesh->Material.size() > (u32)bufferID)
 		{
@@ -105,11 +111,32 @@ namespace Skylicht
 		if (m_saveDebug == true)
 		{
 			SMaterial m = mb->getMaterial();
-			m.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureColor");
+
+			if (skinnedMesh)
+				m.MaterialType = m_skinShader;
+			else
+				m.MaterialType = m_texColorShader;
+
 			driver->setMaterial(m);
 		}
 		else
 		{
+			switch (m_renderShadowState)
+			{
+			case DirectionLight:
+				if (skinnedMesh)
+					m_writeDepthMaterial.MaterialType = m_depthWriteSkinMeshShader;
+				else
+					m_writeDepthMaterial.MaterialType = m_depthWriteShader;
+				break;
+			case PointLight:
+				if (skinnedMesh)
+					m_writeDepthMaterial.MaterialType = m_cubeDepthWriteSkinMeshShader;
+				else
+					m_writeDepthMaterial.MaterialType = m_cubeDepthWriteShader;
+				break;
+			}
+
 			driver->setMaterial(m_writeDepthMaterial);
 		}
 
@@ -162,7 +189,7 @@ namespace Skylicht
 		CShaderShadow::setShadowMapRP(this);
 
 		// render directional light shadow
-		m_writeDepthMaterial.MaterialType = m_depthWriteShader;
+		m_renderShadowState = CShadowMapRP::DirectionLight;
 
 		IVideoDriver* driver = getVideoDriver();
 		for (int i = 0; i < m_numCascade; i++)
@@ -209,7 +236,7 @@ namespace Skylicht
 		}
 
 		// render point light shadow
-		m_writeDepthMaterial.MaterialType = m_cubeDepthWriteShader;
+		m_renderShadowState = CShadowMapRP::PointLight;
 
 		std::vector<ITexture*> listDepthTexture;
 
