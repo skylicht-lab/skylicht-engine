@@ -129,7 +129,7 @@ namespace Skylicht
 				if (material == NULL)
 				{
 					// draw opaque mesh because unknown material
-					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex);
+					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex, true);
 				}
 				else if (material->getShader() != NULL && material->getShader()->isOpaque() == false)
 				{
@@ -139,7 +139,7 @@ namespace Skylicht
 				else
 				{
 					// draw opaque mesh
-					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex);
+					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex, true);
 				}
 			}
 
@@ -187,7 +187,7 @@ namespace Skylicht
 					material->getShader() != NULL &&
 					material->getShader()->isOpaque() == false)
 				{
-					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex);
+					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex, true);
 				}
 			}
 		}

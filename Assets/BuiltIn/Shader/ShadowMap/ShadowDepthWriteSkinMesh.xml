@@ -1,0 +1,10 @@
+<shaderConfig name="ShadowDepthWriteSkinMesh" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
+		</vs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/ShadowDepthWriteSkinMeshVS.glsl" fs="GLSL/ShadowDepthWriteFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ShadowDepthWriteSkinMeshVS.hlsl" fs="HLSL/ShadowDepthWriteFS.hlsl"/>
+</shaderConfig>
