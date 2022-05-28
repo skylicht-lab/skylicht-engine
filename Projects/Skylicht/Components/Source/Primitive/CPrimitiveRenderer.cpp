@@ -72,59 +72,51 @@ namespace Skylicht
 	{
 		IVideoDriver* driver = getVideoDriver();
 
-		// Irrlicht Engine Mesh Buffer instance
-		// http://irrlicht.sourceforge.net/docu/classirr_1_1scene_1_1_c_mesh_buffer.html
 		IMeshBuffer* meshBuffer = new CMeshBuffer<S3DVertex>(driver->getVertexDescriptor(EVT_STANDARD), EIT_16BIT);
 		IIndexBuffer* ib = meshBuffer->getIndexBuffer();
 		IVertexBuffer* vb = meshBuffer->getVertexBuffer();
 
 		// Create vertices
-		video::SColor clr1(255, 255, 0, 0);
-		video::SColor clr2(255, 0, 255, 0);
-		video::SColor clr3(255, 0, 0, 255);
-		video::SColor clr4(255, 255, 255, 255);
-		video::SColor clr5(255, 255, 0, 255);
-		video::SColor clr6(255, 255, 255, 0);
-
+		video::SColor clr(255, 255, 255, 255);
 
 		vb->reallocate(12);
 
 		video::S3DVertex Vertices[] = {
 			// back
-			video::S3DVertex(0, 0, 0, 0, 0, -1, clr1, 0, 1),
-			video::S3DVertex(1, 0, 0, 0, 0, -1, clr1, 1, 1),
-			video::S3DVertex(1, 1, 0, 0, 0, -1, clr1, 1, 0),
-			video::S3DVertex(0, 1, 0, 0, 0, -1, clr1, 1, 0),
+			video::S3DVertex(0, 0, 0, 0, 0, -1, clr, 0, 1),
+			video::S3DVertex(1, 0, 0, 0, 0, -1, clr, 1, 1),
+			video::S3DVertex(1, 1, 0, 0, 0, -1, clr, 1, 0),
+			video::S3DVertex(0, 1, 0, 0, 0, -1, clr, 1, 0),
 
 			// front
-			video::S3DVertex(0, 0, 1, 0, 0, 1, clr2, 0, 1),
-			video::S3DVertex(1, 0, 1, 0, 0, 1, clr2, 1, 1),
-			video::S3DVertex(1, 1, 1, 0, 0, 1, clr2, 1, 0),
-			video::S3DVertex(0, 1, 1, 0, 0, 1, clr2, 1, 0),
+			video::S3DVertex(0, 0, 1, 0, 0, 1, clr, 0, 1),
+			video::S3DVertex(1, 0, 1, 0, 0, 1, clr, 1, 1),
+			video::S3DVertex(1, 1, 1, 0, 0, 1, clr, 1, 0),
+			video::S3DVertex(0, 1, 1, 0, 0, 1, clr, 1, 0),
 
 			// bottom
-			video::S3DVertex(0, 0, 0, 0, -1, 0, clr3, 0, 1),
-			video::S3DVertex(0, 0, 1, 0, -1, 0, clr3, 1, 1),
-			video::S3DVertex(1, 0, 1, 0, -1, 0, clr3, 1, 0),
-			video::S3DVertex(1, 0, 0, 0, -1, 0, clr3, 1, 0),
+			video::S3DVertex(0, 0, 0, 0, -1, 0, clr, 0, 1),
+			video::S3DVertex(0, 0, 1, 0, -1, 0, clr, 1, 1),
+			video::S3DVertex(1, 0, 1, 0, -1, 0, clr, 1, 0),
+			video::S3DVertex(1, 0, 0, 0, -1, 0, clr, 1, 0),
 
 			// top
-			video::S3DVertex(0, 1, 0, 0, 1, 0, clr4, 0, 1),
-			video::S3DVertex(0, 1, 1, 0, 1, 0, clr4, 1, 1),
-			video::S3DVertex(1, 1, 1, 0, 1, 0, clr4, 1, 0),
-			video::S3DVertex(1, 1, 0, 0, 1, 0, clr4, 1, 0),
+			video::S3DVertex(0, 1, 0, 0, 1, 0, clr, 0, 1),
+			video::S3DVertex(0, 1, 1, 0, 1, 0, clr, 1, 1),
+			video::S3DVertex(1, 1, 1, 0, 1, 0, clr, 1, 0),
+			video::S3DVertex(1, 1, 0, 0, 1, 0, clr, 1, 0),
 
 			// left
-			video::S3DVertex(1, 0, 0, -1, 0, 0, clr5, 0, 1),
-			video::S3DVertex(1, 0, 1, -1, 0, 0, clr5, 1, 1),
-			video::S3DVertex(1, 1, 1, -1, 0, 0, clr5, 1, 0),
-			video::S3DVertex(1, 1, 0, -1, 0, 0, clr5, 1, 0),
+			video::S3DVertex(1, 0, 0, -1, 0, 0, clr, 0, 1),
+			video::S3DVertex(1, 0, 1, -1, 0, 0, clr, 1, 1),
+			video::S3DVertex(1, 1, 1, -1, 0, 0, clr, 1, 0),
+			video::S3DVertex(1, 1, 0, -1, 0, 0, clr, 1, 0),
 
 			// right
-			video::S3DVertex(0, 0, 0, 1, 0, 0, clr5, 0, 1),
-			video::S3DVertex(0, 0, 1, 1, 0, 0, clr5, 1, 1),
-			video::S3DVertex(0, 1, 1, 1, 0, 0, clr5, 1, 0),
-			video::S3DVertex(0, 1, 0, 1, 0, 0, clr5, 1, 0),
+			video::S3DVertex(0, 0, 0, 1, 0, 0, clr, 0, 1),
+			video::S3DVertex(0, 0, 1, 1, 0, 0, clr, 1, 1),
+			video::S3DVertex(0, 1, 1, 1, 0, 0, clr, 1, 0),
+			video::S3DVertex(0, 1, 0, 1, 0, 0, clr, 1, 0),
 		};
 
 		for (u32 i = 0; i < 24; ++i)
