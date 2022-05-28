@@ -62,6 +62,9 @@ namespace Skylicht
 
 		for (std::string componentName : list)
 		{
+			if (gameObject->getComponentByTypeName(componentName.c_str()))
+				continue;
+
 			IActivatorObject* object = CActivator::getInstance()->createInstance(componentName.c_str());
 			CComponentSystem* dependentComp = dynamic_cast<CComponentSystem*>(object);
 			if (dependentComp != NULL)

@@ -244,7 +244,7 @@ namespace Skylicht
 		return false;
 	}
 
-	void CDeferredRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID)
+	void CDeferredRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
 		if (m_isIndirectPass == true)
 		{
@@ -328,7 +328,7 @@ namespace Skylicht
 			else
 			{
 				// default render
-				CBaseRP::drawMeshBuffer(mesh, bufferID, entity, entityID);
+				CBaseRP::drawMeshBuffer(mesh, bufferID, entity, entityID, skinnedMesh);
 			}
 		}
 	}

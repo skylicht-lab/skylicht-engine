@@ -96,7 +96,7 @@ namespace Skylicht
 
 		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
 
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
+		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
 
 		inline void setPostProcessor(IPostProcessor *pp)
 		{
