@@ -167,7 +167,8 @@ namespace Skylicht
 		IVideoDriver* driver = getVideoDriver();
 		for (int i = 0; i < m_numCascade; i++)
 		{
-			driver->setRenderTargetArray(m_depthTexture, i, true, true);
+			// note: clear while 0xFFFFFFFF for max depth value
+			driver->setRenderTargetArray(m_depthTexture, i, true, true, SColor(255, 255, 255, 255));
 			driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(i));
 			driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
 
