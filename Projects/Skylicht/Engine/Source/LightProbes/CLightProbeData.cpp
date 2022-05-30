@@ -31,7 +31,8 @@ namespace Skylicht
 {
 	IMPLEMENT_DATA_TYPE_INDEX(CLightProbeData);
 
-	CLightProbeData::CLightProbeData()
+	CLightProbeData::CLightProbeData() :
+		NeedValidate(true)
 	{
 
 	}
