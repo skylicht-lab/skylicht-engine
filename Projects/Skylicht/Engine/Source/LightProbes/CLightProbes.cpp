@@ -169,6 +169,7 @@ namespace Skylicht
 		for (CEntity* entity : m_entities)
 		{
 			CLightProbeData* data = (CLightProbeData*)entity->getDataByIndex(CLightProbeData::DataTypeIndex);
+			data->NeedValidate = true;
 			for (int j = 0; j < 9; j++)
 				data->SH[j] = sh[i++];
 		}
