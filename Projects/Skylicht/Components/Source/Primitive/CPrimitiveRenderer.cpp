@@ -107,16 +107,16 @@ namespace Skylicht
 			video::S3DVertex(1, 1, 0, 0, 1, 0, clr, 1, 0),
 
 			// left
-			video::S3DVertex(1, 0, 0, -1, 0, 0, clr, 0, 1),
-			video::S3DVertex(1, 0, 1, -1, 0, 0, clr, 1, 1),
-			video::S3DVertex(1, 1, 1, -1, 0, 0, clr, 1, 0),
-			video::S3DVertex(1, 1, 0, -1, 0, 0, clr, 1, 0),
+			video::S3DVertex(1, 0, 0, 1, 0, 0, clr, 0, 1),
+			video::S3DVertex(1, 0, 1, 1, 0, 0, clr, 1, 1),
+			video::S3DVertex(1, 1, 1, 1, 0, 0, clr, 1, 0),
+			video::S3DVertex(1, 1, 0, 1, 0, 0, clr, 1, 0),
 
 			// right
-			video::S3DVertex(0, 0, 0, 1, 0, 0, clr, 0, 1),
-			video::S3DVertex(0, 0, 1, 1, 0, 0, clr, 1, 1),
-			video::S3DVertex(0, 1, 1, 1, 0, 0, clr, 1, 0),
-			video::S3DVertex(0, 1, 0, 1, 0, 0, clr, 1, 0),
+			video::S3DVertex(0, 0, 0, -1, 0, 0, clr, 0, 1),
+			video::S3DVertex(0, 0, 1, -1, 0, 0, clr, 1, 1),
+			video::S3DVertex(0, 1, 1, -1, 0, 0, clr, 1, 0),
+			video::S3DVertex(0, 1, 0, -1, 0, 0, clr, 1, 0),
 		};
 
 		for (u32 i = 0; i < 24; ++i)
