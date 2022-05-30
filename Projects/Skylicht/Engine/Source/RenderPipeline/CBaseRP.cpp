@@ -499,7 +499,7 @@ namespace Skylicht
 			}
 		}
 
-		driver->setRenderTarget(NULL);
+		driver->setRenderTarget(NULL, false, false);
 		if (tempFBO != NULL)
 		{
 			driver->removeTexture(tempFBO);
@@ -631,7 +631,7 @@ namespace Skylicht
 			}
 		}
 
-		driver->setRenderTarget(NULL);
+		driver->setRenderTarget(NULL, false, false);
 		if (tempFBO != NULL)
 		{
 			driver->removeTexture(tempFBO);
@@ -691,17 +691,17 @@ namespace Skylicht
 
 	void CBaseRP::drawSceneToCubeTexture(ITexture* target, video::E_CUBEMAP_FACE faceID, CEntityManager* entityMgr)
 	{
-		SColor testColor[] = {
-			{255, 255, 255, 255},
-			{255, 0, 255, 0},
-			{255, 0, 0, 255},
-			{255, 0, 255, 255},
-			{255, 255, 255, 0},
-			{255, 0, 0, 0},
-		};
+		SColor clear(255, 0, 0, 0);
+		if (target->getColorFormat() == ECF_R32F ||
+			target->getColorFormat() == ECF_R16F ||
+			target->getColorFormat() == ECF_R16G16)
+		{
+			// float buffer
+			clear.set(255, 255, 255, 255);
+		}
 
 		IVideoDriver* driver = getVideoDriver();
-		driver->setRenderTargetCube(target, faceID, true, true, testColor[faceID]);
+		driver->setRenderTargetCube(target, faceID, true, true, clear);
 		entityMgr->render();
 	}
 }
