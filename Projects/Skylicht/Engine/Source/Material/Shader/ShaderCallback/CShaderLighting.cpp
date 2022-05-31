@@ -26,12 +26,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CShaderLighting.h"
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
+#include "Lighting/CSpotLight.h"
 
 namespace Skylicht
 {
 	CDirectionalLight* CShaderLighting::s_directionalLight = NULL;
-
 	CPointLight* CShaderLighting::s_pointLight = NULL;
+	CSpotLight* CShaderLighting::s_spotLight = NULL;
 
 	SColorf CShaderLighting::s_lightAmbient = SColorf(0.4f, 0.4f, 0.4f, 1.0f);
 
@@ -58,11 +59,21 @@ namespace Skylicht
 	}
 
 
+	void CShaderLighting::setSpotLight(CSpotLight* light)
+	{
+		s_spotLight = light;
+	}
+
+	CSpotLight* CShaderLighting::getSpotLight()
+	{
+		return s_spotLight;
+	}
+
+
 	void CShaderLighting::setLightAmbient(const SColorf& c)
 	{
 		s_lightAmbient = c;
 	}
-
 
 
 	CShaderLighting::CShaderLighting()
@@ -105,11 +116,6 @@ namespace Skylicht
 			}
 		}
 		break;
-		case LIGHT_AMBIENT:
-		{
-			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, s_lightAmbient, 1.0f);
-		}
-		break;
 		case LIGHT_DIRECTION:
 		{
 			if (s_directionalLight != NULL)
@@ -142,11 +148,10 @@ namespace Skylicht
 			if (s_pointLight != NULL)
 			{
 				float attenuation[4] = { 0 };
-				float a = s_pointLight->getAttenuation();
 
 				// set attenuation			
 				attenuation[0] = 0.0f;
-				attenuation[1] = a;
+				attenuation[1] = s_pointLight->getAttenuation();
 				attenuation[2] = 0.0f;
 
 				// shader variable
@@ -157,8 +162,59 @@ namespace Skylicht
 			}
 		}
 		break;
-		case SPOT_LIGHT_CUTOFF:
+		case SPOT_LIGHT_COLOR:
 		{
+			if (s_spotLight != NULL)
+			{
+				video::SColorf color = s_spotLight->getColor();
+				color.r = color.r * s_spotLight->getIntensity();
+				color.g = color.g * s_spotLight->getIntensity();
+				color.b = color.b * s_spotLight->getIntensity();
+
+				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, s_spotLight->getIntensity());
+			}
+		}
+		break;
+		case SPOT_LIGHT_DIRECTION:
+		{
+			if (s_spotLight != NULL)
+			{
+				core::vector3df dir = -s_spotLight->getDirection();
+				shader->setDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4, true);
+			}
+		}
+		break;
+		case SPOT_LIGHT_POSITION:
+		{
+			if (s_spotLight != NULL)
+			{
+				core::vector3df position = s_spotLight->getPosition();
+				shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
+			}
+		}
+		break;
+		case SPOT_LIGHT_ATTENUATION:
+		{
+			if (s_spotLight != NULL)
+			{
+				float attenuation[4] = { 0 };
+
+				// set attenuation			
+				attenuation[0] = s_spotLight->getSplotCutoff();
+				attenuation[1] = s_spotLight->getSpotInnerCutof();
+				attenuation[2] = s_spotLight->getAttenuation();
+
+				// shader variable
+				if (vertexShader == true)
+					matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_VERTEX_SHADER);
+				else
+					matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_PIXEL_SHADER);
+			}
+		}
+		break;
+		case LIGHT_AMBIENT:
+		{
+			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, s_lightAmbient, 1.0f);
 		}
 		break;
 		default:
