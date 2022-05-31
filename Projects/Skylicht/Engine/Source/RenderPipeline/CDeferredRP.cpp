@@ -200,26 +200,40 @@ namespace Skylicht
 		m_pointLightPass.setTexture(1, m_normal);
 		m_pointLightPass.setTexture(2, m_data);
 
+		m_spotLightShader = shaderMgr->getShaderIDByName("SGSpotLight");
+
+		m_spotLightPass.MaterialType = m_spotLightShader;
+
+		m_spotLightPass.setTexture(0, m_position);
+		m_spotLightPass.setTexture(1, m_normal);
+		m_spotLightPass.setTexture(2, m_data);
+
+		disableFloatTextureFilter(m_pointLightPass);
+		disableFloatTextureFilter(m_spotLightPass);
+	}
+
+	void CDeferredRP::disableFloatTextureFilter(SMaterial& m)
+	{
 		// turn off mipmap on float texture	
-		m_pointLightPass.TextureLayer[0].BilinearFilter = false;
-		m_pointLightPass.TextureLayer[0].TrilinearFilter = false;
-		m_pointLightPass.TextureLayer[0].AnisotropicFilter = 0;
+		m.TextureLayer[0].BilinearFilter = false;
+		m.TextureLayer[0].TrilinearFilter = false;
+		m.TextureLayer[0].AnisotropicFilter = 0;
 
-		m_pointLightPass.TextureLayer[1].BilinearFilter = false;
-		m_pointLightPass.TextureLayer[1].TrilinearFilter = false;
-		m_pointLightPass.TextureLayer[1].AnisotropicFilter = 0;
+		m.TextureLayer[1].BilinearFilter = false;
+		m.TextureLayer[1].TrilinearFilter = false;
+		m.TextureLayer[1].AnisotropicFilter = 0;
 
-		m_pointLightPass.TextureLayer[2].BilinearFilter = false;
-		m_pointLightPass.TextureLayer[2].TrilinearFilter = false;
-		m_pointLightPass.TextureLayer[2].AnisotropicFilter = 0;
+		m.TextureLayer[2].BilinearFilter = false;
+		m.TextureLayer[2].TrilinearFilter = false;
+		m.TextureLayer[2].AnisotropicFilter = 0;
 
-		m_pointLightPass.TextureLayer[3].BilinearFilter = false;
-		m_pointLightPass.TextureLayer[3].TrilinearFilter = false;
-		m_pointLightPass.TextureLayer[3].AnisotropicFilter = 0;
+		m.TextureLayer[3].BilinearFilter = false;
+		m.TextureLayer[3].TrilinearFilter = false;
+		m.TextureLayer[3].AnisotropicFilter = 0;
 
 		// disable Z
-		m_pointLightPass.ZBuffer = video::ECFN_DISABLED;
-		m_pointLightPass.ZWriteEnable = false;
+		m.ZBuffer = video::ECFN_DISABLED;
+		m.ZWriteEnable = false;
 	}
 
 	void CDeferredRP::enableTestIndirect(bool b)
@@ -476,7 +490,13 @@ namespace Skylicht
 						CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
 						if (spotLight)
 						{
+							CShaderLighting::setSpotLight(spotLight);
 
+							m_spotLightPass.MaterialType = m_spotLightShader;
+							m_spotLightPass.setTexture(3, NULL);
+
+							beginRender2D(renderW, renderH);
+							renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_spotLightPass);
 						}
 					}
 				}

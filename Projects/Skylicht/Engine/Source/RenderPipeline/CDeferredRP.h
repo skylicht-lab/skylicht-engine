@@ -36,15 +36,15 @@ namespace Skylicht
 		static bool s_enableRenderTestIndirect;
 
 	protected:
-		ITexture *m_target;
+		ITexture* m_target;
 
-		ITexture *m_albedo;
-		ITexture *m_position;
-		ITexture *m_normal;
-		ITexture *m_data;
-		ITexture *m_indirect;
+		ITexture* m_albedo;
+		ITexture* m_position;
+		ITexture* m_normal;
+		ITexture* m_data;
+		ITexture* m_indirect;
 
-		ITexture *m_lightBuffer;
+		ITexture* m_lightBuffer;
 
 		core::dimension2du m_size;
 
@@ -66,39 +66,43 @@ namespace Skylicht
 		int m_lightDirectionBake;
 
 		SMaterial m_pointLightPass;
+		SMaterial m_spotLightPass;
 		SMaterial m_directionalLightPass;
 		SMaterial m_finalPass;
 
 		int m_pointLightShader;
 		int m_pointLightShadowShader;
 
+		int m_spotLightShader;
+
 		float m_indirectMultipler;
 		float m_directMultipler;
 		float m_lightMultipler;
 
-		IPostProcessor *m_postProcessor;
+		IPostProcessor* m_postProcessor;
 
 	protected:
 
 		void initDefferredMaterial();
 		void initPointLightMaterial();
+		void disableFloatTextureFilter(SMaterial& m);
 
 	public:
 		CDeferredRP();
 
 		virtual ~CDeferredRP();
 
-		virtual bool canRenderMaterial(CMaterial *material);
+		virtual bool canRenderMaterial(CMaterial* material);
 
 		virtual void initRender(int w, int h);
 
 		virtual void resize(int w, int h);
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport);
 
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
+		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
 
-		inline void setPostProcessor(IPostProcessor *pp)
+		inline void setPostProcessor(IPostProcessor* pp)
 		{
 			m_postProcessor = pp;
 		}

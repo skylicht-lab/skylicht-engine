@@ -30,12 +30,14 @@ namespace Skylicht
 {
 	class CDirectionalLight;
 	class CPointLight;
+	class CSpotLight;
 
 	class CShaderLighting : public IShaderCallback
 	{
 	protected:
-		static CDirectionalLight *s_directionalLight;
-		static CPointLight *s_pointLight;
+		static CDirectionalLight* s_directionalLight;
+		static CPointLight* s_pointLight;
+		static CSpotLight* s_spotLight;
 
 		static SColorf s_lightAmbient;
 
@@ -44,18 +46,23 @@ namespace Skylicht
 
 		virtual ~CShaderLighting();
 
-		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
 
-		static void setDirectionalLight(CDirectionalLight *light);
+		static void setDirectionalLight(CDirectionalLight* light);
 
 		static CDirectionalLight* getDirectionalLight();
 
 
-		static void setPointLight(CPointLight *light);
+		static void setPointLight(CPointLight* light);
 
 		static CPointLight* getPointLight();
+
+
+		static void setSpotLight(CSpotLight* light);
+
+		static CSpotLight* getSpotLight();
 
 
 		static void setLightAmbient(const SColorf& c);
