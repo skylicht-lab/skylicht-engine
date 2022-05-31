@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
+#include "Lighting/CSpotLight.h"
 
 #include "RenderMesh/CRenderMesh.h"
 #include "IndirectLighting/CIndirectLighting.h"
@@ -63,6 +64,7 @@ namespace Skylicht
 		// BEGIN DECLARE COMPONENT THAT WILL COMPILE
 		USE_COMPONENT(CDirectionalLight);
 		USE_COMPONENT(CPointLight);
+		USE_COMPONENT(CSpotLight);
 		USE_COMPONENT(CRenderMesh);
 		USE_COMPONENT(CSkyDome);
 		USE_COMPONENT(CSkyBox);

@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,48 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CLight.h"
-#include "CLightCullingData.h"
+#include "EditorComponents/CGizmosComponent.h"
+#include "Lighting/CSpotLight.h"
+#include "SpriteDraw/CSprite.h"
+#include "Collision/CCollisionNode.h"
 
 namespace Skylicht
 {
-	class CPointLight : public CLight
+	namespace Editor
 	{
-	protected:
-		CLightCullingData* m_cullingData;
+		class CGSpotLight : public CGizmosComponent
+		{
+		protected:
+			core::aabbox3df m_defaultBBox;
 
-		ITexture* m_depth;
+			CSpotLight* m_directionLight;
+			CSprite* m_sprite;
+			CCollisionNode* m_collisionNode;
 
-		bool m_alwayRenderShadowDepth;
-		bool m_needRenderShadowDepth;
+		public:
+			CGSpotLight();
 
-	public:
-		CPointLight();
+			virtual ~CGSpotLight();
 
-		virtual ~CPointLight();
+			virtual void initComponent();
 
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		virtual CObjectSerializable* createSerializable();
-
-		virtual void loadSerializable(CObjectSerializable* object);
-
-		DECLARE_GETTYPENAME(CPointLight);
-
-	public:
-
-		bool alwayRenderShadowDepth();
-
-		bool needRenderShadowDepth();
-
-		void beginRenderShadowDepth();
-
-		void endRenderShadowDepth();
-
-		core::vector3df getPosition();
-
-		ITexture* createGetDepthTexture();
-	};
+			virtual void updateComponent();
+		};
+	}
 }

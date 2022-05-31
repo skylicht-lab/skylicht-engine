@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/CShaderManager.h"
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
+#include "Lighting/CSpotLight.h"
 #include "Lighting/CDirectionalLight.h"
 
 #include "EventManager/CEventManager.h"
@@ -251,7 +252,7 @@ namespace Skylicht
 
 				if (pointLight != NULL &&
 					pointLight->isCastShadow() == true &&
-					pointLight->needRenderShadowDepth() == true)
+					(pointLight->needRenderShadowDepth() || pointLight->alwayRenderShadowDepth()))
 				{
 					CShaderLighting::setPointLight(pointLight);
 					pointLight->beginRenderShadowDepth();
@@ -265,6 +266,20 @@ namespace Skylicht
 					}
 
 					pointLight->endRenderShadowDepth();
+				}
+				else
+				{
+					CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
+					if (spotLight != NULL &&
+						spotLight->isCastShadow() == true &&
+						(spotLight->needRenderShadowDepth() || spotLight->alwayRenderShadowDepth()))
+					{
+						spotLight->beginRenderShadowDepth();
+
+
+
+						spotLight->endRenderShadowDepth();
+					}
 				}
 			}
 		}
