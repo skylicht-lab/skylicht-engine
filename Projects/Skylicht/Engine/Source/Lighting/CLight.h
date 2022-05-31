@@ -107,7 +107,7 @@ namespace Skylicht
 
 		inline void setSpotAngle(float angle)
 		{
-			m_spotCutoff = core::DEGTORAD * angle;
+			m_spotCutoff = angle;
 		}
 
 		inline float getSplotCutoff()
@@ -117,7 +117,7 @@ namespace Skylicht
 
 		inline void setSpotInnerAngle(float angle)
 		{
-			m_spotInnerCutoff = core::DEGTORAD * angle;
+			m_spotInnerCutoff = angle;
 		}
 
 		inline float getSpotInnerCutof()

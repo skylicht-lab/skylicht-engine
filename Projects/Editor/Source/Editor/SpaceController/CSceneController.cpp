@@ -483,7 +483,8 @@ namespace Skylicht
 			else if (objectType == L"Direction Light")
 			{
 				std::vector<std::string> components = { "CDirectionalLight" };
-				createComponentObject("Direction Light", components, NULL);
+				CGameObject* go = createComponentObject("Direction Light", components, NULL);
+				go->getTransformEuler()->setRotation(core::vector3df(90.0f, 0.0f, 0.0f));
 			}
 			else if (objectType == L"Point Light")
 			{
@@ -493,7 +494,8 @@ namespace Skylicht
 			else if (objectType == L"Spot Light")
 			{
 				std::vector<std::string> components = { "CSpotLight" };
-				createComponentObject("Spotlight", components, NULL);
+				CGameObject* go = createComponentObject("Spotlight", components, NULL);
+				go->getTransformEuler()->setRotation(core::vector3df(90.0f, 0.0f, 0.0f));
 			}
 			else if (objectType == L"Reflection Probe")
 			{
