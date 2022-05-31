@@ -149,6 +149,7 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightBake.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLight.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGPointLightShadow.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGSpotLight.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
 	}
 
