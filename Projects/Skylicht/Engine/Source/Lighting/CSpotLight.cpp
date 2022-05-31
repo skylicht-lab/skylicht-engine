@@ -23,27 +23,26 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CPointLight.h"
+#include "CSpotLight.h"
 #include "GameObject/CGameObject.h"
 #include "Entity/CEntity.h"
 #include "Transform/CWorldInverseTransformData.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CPointLight);
+	ACTIVATOR_REGISTER(CSpotLight);
 
-	CATEGORY_COMPONENT(CPointLight, "Point Light", "Lighting");
+	CATEGORY_COMPONENT(CSpotLight, "Spotlight", "Lighting");
 
-	CPointLight::CPointLight() :
+	CSpotLight::CSpotLight() :
 		m_depth(NULL),
-		m_alwayRenderShadowDepth(false),
 		m_needRenderShadowDepth(true),
 		m_cullingData(NULL)
 	{
 
 	}
 
-	CPointLight::~CPointLight()
+	CSpotLight::~CSpotLight()
 	{
 		if (m_depth != NULL)
 			getVideoDriver()->removeTexture(m_depth);
@@ -52,7 +51,7 @@ namespace Skylicht
 			m_gameObject->getEntity()->removeData<CLightCullingData>();
 	}
 
-	void CPointLight::initComponent()
+	void CSpotLight::initComponent()
 	{
 		CEntity* entity = m_gameObject->getEntity();
 		m_cullingData = entity->addData<CLightCullingData>();
@@ -61,8 +60,13 @@ namespace Skylicht
 		entity->addData<CWorldInverseTransformData>();
 	}
 
-	void CPointLight::updateComponent()
+	void CSpotLight::updateComponent()
 	{
+		m_direction.set(0.0f, 0.0f, 1.0f);
+		const core::matrix4& transform = m_gameObject->getTransform()->getRelativeTransform();
+		transform.rotateVect(m_direction);
+		m_direction.normalize();
+
 		float r = m_radius * m_radius * 0.5f;
 		m_cullingData->BBox.MaxEdge.set(r, r, r);
 		m_cullingData->BBox.MinEdge.set(-r, -r, -r);
@@ -71,56 +75,64 @@ namespace Skylicht
 			m_needRenderShadowDepth = true;
 	}
 
-	CObjectSerializable* CPointLight::createSerializable()
+	CObjectSerializable* CSpotLight::createSerializable()
 	{
 		CObjectSerializable* object = CLight::createSerializable();
 
 		object->autoRelease(new CBoolProperty(object, "alway render shadow", m_alwayRenderShadowDepth));
 		object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
+		object->autoRelease(new CFloatProperty(object, "cutoff", m_spotCutoff, 0.0f));
+		object->autoRelease(new CFloatProperty(object, "inner_cutoff", m_spotInnerCutoff, 0.0f));
+
 		return object;
 	}
 
-	void CPointLight::loadSerializable(CObjectSerializable* object)
+	void CSpotLight::loadSerializable(CObjectSerializable* object)
 	{
 		CLight::loadSerializable(object);
 
 		m_alwayRenderShadowDepth = object->get<bool>("alway render shadow", false);
 		float radius = object->get<float>("radius", 3.0f);
+		m_spotCutoff = object->get<float>("cutoff", 180.0f / 4.0f);
+		m_spotInnerCutoff = object->get<float>("inner_cutoff", 180.0f / 5.0f);
+
 		setRadius(radius);
+		setSpotAngle(m_spotCutoff);
+		setSpotInnerAngle(m_spotInnerCutoff);
 	}
 
-	core::vector3df CPointLight::getPosition()
+	core::vector3df CSpotLight::getPosition()
 	{
 		return m_gameObject->getPosition();
 	}
 
-	ITexture* CPointLight::createGetDepthTexture()
+	ITexture* CSpotLight::createGetDepthTexture()
 	{
 		if (m_depth == NULL)
 		{
 			int size = 512;
-			m_depth = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
+			m_depth = getVideoDriver()->addRenderTargetTexture(core::dimension2du(size, size), "SpotlightDepthMap", video::ECF_R32F);
 		}
 
 		return m_depth;
 	}
 
-	bool CPointLight::alwayRenderShadowDepth()
+	bool CSpotLight::alwayRenderShadowDepth()
 	{
 		return m_alwayRenderShadowDepth;
 	}
 
-	bool CPointLight::needRenderShadowDepth()
+	bool CSpotLight::needRenderShadowDepth()
 	{
 		return m_needRenderShadowDepth;
 	}
 
-	void CPointLight::beginRenderShadowDepth()
+	void CSpotLight::beginRenderShadowDepth()
 	{
 
 	}
 
-	void CPointLight::endRenderShadowDepth()
+	void CSpotLight::endRenderShadowDepth()
 	{
 		m_needRenderShadowDepth = false;
 	}

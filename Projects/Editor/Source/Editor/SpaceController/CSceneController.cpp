@@ -492,7 +492,8 @@ namespace Skylicht
 			}
 			else if (objectType == L"Spot Light")
 			{
-
+				std::vector<std::string> components = { "CSpotLight" };
+				createComponentObject("Spotlight", components, NULL);
 			}
 			else if (objectType == L"Reflection Probe")
 			{
