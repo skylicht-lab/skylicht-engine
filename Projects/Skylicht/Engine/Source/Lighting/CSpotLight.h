@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPointLight : public CLight
+	class CSpotLight : public CLight
 	{
 	protected:
 		CLightCullingData* m_cullingData;
@@ -40,9 +40,9 @@ namespace Skylicht
 		bool m_needRenderShadowDepth;
 
 	public:
-		CPointLight();
+		CSpotLight();
 
-		virtual ~CPointLight();
+		virtual ~CSpotLight();
 
 		virtual void initComponent();
 
@@ -52,7 +52,7 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		DECLARE_GETTYPENAME(CPointLight);
+		DECLARE_GETTYPENAME(CSpotLight);
 
 	public:
 

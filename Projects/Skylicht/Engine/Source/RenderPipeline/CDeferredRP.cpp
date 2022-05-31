@@ -34,6 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
+#include "Lighting/CSpotLight.h"
 #include "IndirectLighting/CIndirectLightingData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 #include "Lighting/CDirectionalLight.h"
@@ -452,7 +453,7 @@ namespace Skylicht
 				if (renderLight == true)
 				{
 					CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
-					if (pointLight != NULL)
+					if (pointLight)
 					{
 						CShaderLighting::setPointLight(pointLight);
 
@@ -469,6 +470,14 @@ namespace Skylicht
 
 						beginRender2D(renderW, renderH);
 						renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
+					}
+					else
+					{
+						CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
+						if (spotLight)
+						{
+
+						}
 					}
 				}
 			}
