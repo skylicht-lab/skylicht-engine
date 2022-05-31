@@ -44,23 +44,25 @@ namespace Skylicht
 
 		DEPENDENT_COMPONENT(CSpotLight, CGSpotLight);
 
-		CGSpotLight::CGSpotLight() :
-			m_directionLight(NULL)
-		{
+		int CircleSegmentCount = 64;
 
+		CGSpotLight::CGSpotLight() :
+			m_spotLight(NULL)
+		{
+			m_circlePos = new core::vector3df[CircleSegmentCount + 1];
 		}
 
 		CGSpotLight::~CGSpotLight()
 		{
-
+			delete[]m_circlePos;
 		}
 
 		void CGSpotLight::initComponent()
 		{
-			m_directionLight = m_gameObject->getComponent<CSpotLight>();
+			m_spotLight = m_gameObject->getComponent<CSpotLight>();
 
 			m_sprite = m_gameObject->addComponent<CSprite>();
-			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrame("light"), 1.0f, m_directionLight->getColor().toSColor());
+			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrame("light"), 1.0f, m_spotLight->getColor().toSColor());
 			m_sprite->setCenter(true);
 			m_sprite->setBillboard(true);
 			m_sprite->setAutoScaleInViewSpace(true);
@@ -82,13 +84,83 @@ namespace Skylicht
 
 		void CGSpotLight::updateComponent()
 		{
+			CCamera* camera = m_gameObject->getEntityManager()->getCamera();
+			if (camera == NULL)
+				return;
+
+			core::vector3df cameraPosition = camera->getGameObject()->getPosition();
+
 			// update color of light
-			SColor lightColor = m_directionLight->getColor().toSColor();
+			SColor lightColor = m_spotLight->getColor().toSColor();
 			m_sprite->setColor(lightColor);
 
 			// draw light direction arrow
 			core::matrix4 world = m_gameObject->getTransformEuler()->calcWorldTransform();
-			CHandles::getInstance()->drawArrowInViewSpace(world.getTranslation(), m_directionLight->getDirection(), 0.5f, 0.05f, lightColor);
+
+			float radius = m_spotLight->getRadius();
+			float outner = m_spotLight->getSplotCutoff() * 0.5f;
+			float maxOuterEdge = tanf(outner * core::DEGTORAD) * radius;
+
+			const core::vector3df& position = world.getTranslation();
+			const core::vector3df& direction = m_spotLight->getDirection();
+			core::vector3df end = position + direction * radius;
+
+			CHandles::getInstance()->drawLine(position, end, lightColor);
+
+			core::quaternion q;
+			q.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), direction);
+
+			core::vector3df viewVector = position - cameraPosition;
+			viewVector.normalize();
+
+			bool isBackFace = true;
+			core::vector3df r1, r2;
+
+			for (int i = 0; i < CircleSegmentCount; i++)
+			{
+				float ng = 2 * core::PI * ((float)i / (float)CircleSegmentCount);
+
+				core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
+				float* p = &axisPos.X;
+
+				int axis = 1;
+				core::vector3df r = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]);
+
+				core::vector3df worldR = q * r;
+				worldR.normalize();
+
+				if (viewVector.dotProduct(worldR) > FLT_EPSILON)
+				{
+					// back face
+					if (i == 0)
+						isBackFace = true;
+					else if (!isBackFace)
+					{
+						r2 = worldR;
+						isBackFace = true;
+					}
+				}
+				else
+				{
+					// front face
+					if (i == 0)
+						isBackFace = false;
+					else if (isBackFace)
+					{
+						r1 = worldR;
+						isBackFace = false;
+					}
+				}
+
+				m_circlePos[i] = end + worldR * maxOuterEdge;
+			}
+
+			// draw circle
+			CHandles::getInstance()->drawPolyline(m_circlePos, CircleSegmentCount, true, lightColor);
+
+			// draw border edge
+			CHandles::getInstance()->drawLine(position, end + r1 * maxOuterEdge, lightColor);
+			CHandles::getInstance()->drawLine(position, end + r2 * maxOuterEdge, lightColor);
 
 			// update collision bbox
 			float boxScale = m_sprite->getViewScale() * 10.0f;

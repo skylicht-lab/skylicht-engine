@@ -38,9 +38,11 @@ namespace Skylicht
 		protected:
 			core::aabbox3df m_defaultBBox;
 
-			CSpotLight* m_directionLight;
+			CSpotLight* m_spotLight;
 			CSprite* m_sprite;
 			CCollisionNode* m_collisionNode;
+
+			core::vector3df* m_circlePos;
 
 		public:
 			CGSpotLight();
