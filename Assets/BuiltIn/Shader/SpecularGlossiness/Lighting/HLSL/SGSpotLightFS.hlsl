@@ -17,6 +17,7 @@ cbuffer cbPerFrame
 {
 	float4 uCameraPosition;
 	float4 uLightPosition;
+	float4 uLightDirection;
 	float4 uLightAttenuation;
 	float4 uLightColor;
 };
@@ -37,8 +38,20 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 direction = uLightPosition.xyz - position;
 	float distance = length(direction);
 	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.z)) * uLightColor.a;
-
+	
 	float3 lightDir = normalize(direction);
+	
+	float spotDot = dot(lightDir, uLightDirection.xyz);
+	if (spotDot < uLightAttenuation.x)
+	{
+		attenuation = 0.f;
+	}
+	else
+	{
+		float spotValue = smoothstep(uLightAttenuation.x, uLightAttenuation.y, spotDot);
+		attenuation = pow(spotValue, uLightAttenuation.w);
+	}
+	
 	float NdotL = max(0.0, dot(lightDir, normal));
 
 	// Specular

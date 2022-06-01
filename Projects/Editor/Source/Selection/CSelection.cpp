@@ -50,7 +50,8 @@ namespace Skylicht
 			m_selected.clear();
 
 			CSceneHistory* history = CSceneController::getInstance()->getHistory();
-			history->endSaveHistory();
+			if (history)
+				history->endSaveHistory();
 		}
 
 		std::vector<CSelectObject*> CSelection::getSelectedByType(CSelectObject::ESelectType type)
