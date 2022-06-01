@@ -135,6 +135,8 @@ namespace Skylicht
 
 		// camera
 		CCamera* camera = entityManager->getCamera();
+		u32 cameraCullingMask = camera->getCullingMask();
+		const core::aabbox3df& cameraBox = camera->getViewFrustum().getBoundingBox();
 
 		u32 numEntity = m_cullings.size();
 		for (u32 i = 0; i < numEntity; i++)
@@ -148,7 +150,7 @@ namespace Skylicht
 			culling->Visible = true;
 
 			// check camera mask culling
-			u32 test = camera->getCullingMask() & culling->CullingLayer;
+			u32 test = cameraCullingMask & culling->CullingLayer;
 			if (test == 0)
 			{
 				culling->Visible = false;
@@ -176,9 +178,7 @@ namespace Skylicht
 
 			transform->World.transformBoxEx(culling->BBox);
 
-			// 1. Detect by bounding box			
-			SViewFrustum frust;
-
+			// 1. Detect by bounding box
 			if (rp->getType() == IRenderPipeline::ShadowMap)
 			{
 				CShadowMapRP* shadowMapRP = (CShadowMapRP*)rp;
@@ -189,8 +189,7 @@ namespace Skylicht
 			}
 			else
 			{
-				frust = camera->getViewFrustum();
-				culling->Visible = culling->BBox.intersectsWithBox(frust.getBoundingBox());
+				culling->Visible = culling->BBox.intersectsWithBox(cameraBox);
 			}
 
 			// 2. Detect algorithm
@@ -200,6 +199,8 @@ namespace Skylicht
 				{
 					// transform the frustum to the node's current absolute transformation
 					invTrans = invTransform->WorldInverse;
+
+					SViewFrustum frust = camera->getViewFrustum();
 					frust.transform(invTrans);
 
 					core::vector3df edges[8];

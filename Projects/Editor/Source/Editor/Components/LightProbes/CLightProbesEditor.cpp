@@ -84,9 +84,10 @@ namespace Skylicht
 				std::vector<Lightmapper::CSH9> probes;
 				std::vector<core::vector3df> results;
 
+				CEntityManager* entityMgr = scene->getEntityManager();
+
 				if (probesComponent->getPositions(positions) > 0)
 				{
-					CEntityManager* entityMgr = scene->getEntityManager();
 					entityMgr->update();
 
 					Lightmapper::CLightmapper::getInstance()->initBaker(32);
@@ -108,6 +109,8 @@ namespace Skylicht
 					}
 
 					probesComponent->setSH(results);
+
+					entityMgr->setCamera(NULL);
 				}
 
 				bakeCameraObj->remove();

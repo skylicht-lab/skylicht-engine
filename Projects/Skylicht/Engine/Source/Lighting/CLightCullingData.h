@@ -39,6 +39,8 @@ namespace Skylicht
 
 		CLight *Light;
 
+		float CameraDistance;
+
 		DECLARE_DATA_TYPE_INDEX;
 
 	public:

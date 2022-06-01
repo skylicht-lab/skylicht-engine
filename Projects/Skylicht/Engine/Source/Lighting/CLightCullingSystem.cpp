@@ -75,6 +75,10 @@ namespace Skylicht
 
 		core::matrix4 invTrans;
 
+		CCamera* camera = entityManager->getCamera();
+		core::aabbox3df camBox = camera->getViewFrustum().getBoundingBox();
+		core::vector3df camPos = camera->getGameObject()->getPosition();
+
 		u32 numEntity = m_cullings.size();
 		for (u32 i = 0; i < numEntity; i++)
 		{
@@ -90,8 +94,8 @@ namespace Skylicht
 			transform->World.transformBoxEx(lightBox);
 
 			// 1. Detect by bounding box
-			CCamera* camera = entityManager->getCamera();
-			culling->Visible = lightBox.intersectsWithBox(camera->getViewFrustum().getBoundingBox());
+			culling->Visible = lightBox.intersectsWithBox(camBox);
+			culling->CameraDistance = transform->World.getTranslation().getDistanceFromSQ(camPos);
 
 			// 2. Detect algorithm
 			if (culling->Visible == true)
@@ -127,7 +131,26 @@ namespace Skylicht
 
 			// add list visible light
 			if (culling->Visible == true)
-				m_visible.push_back(culling);
+			{
+				int n = (int)m_visible.size();
+				if (n == 0 || culling->CameraDistance > m_visible[n - 1]->CameraDistance)
+				{
+					// add end
+					m_visible.push_back(culling);
+				}
+				else
+				{
+					// insert sort
+					for (int i = 0; i < n; i++)
+					{
+						if (culling->CameraDistance < m_visible[i]->CameraDistance)
+						{
+							m_visible.insert(culling, i);
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 
