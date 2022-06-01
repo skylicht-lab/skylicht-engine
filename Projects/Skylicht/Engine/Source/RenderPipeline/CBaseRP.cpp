@@ -38,6 +38,9 @@ namespace Skylicht
 	bool CBaseRP::s_bakeMode = false;
 	bool CBaseRP::s_bakeLMMode = false;
 	int CBaseRP::s_bakeBounce = 0;
+
+	int CBaseRP::s_maxLight = 8;
+
 	SColor CBaseRP::s_clearColor;
 
 	CBaseRP::CBaseRP() :

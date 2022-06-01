@@ -245,7 +245,7 @@ namespace Skylicht
 		if (lightCullingSystem != NULL)
 		{
 			core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
-			for (u32 i = 0, n = listLight.size(); i < n; i++)
+			for (u32 i = 0, n = listLight.size(); i < n && i < s_maxLight; i++)
 			{
 				CLight* light = listLight[i]->Light;
 				CPointLight* pointLight = dynamic_cast<CPointLight*>(light);

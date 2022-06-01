@@ -32,9 +32,9 @@ namespace Skylicht
 	class CBaseRP : public IRenderPipeline
 	{
 	protected:
-		IRenderPipeline *m_next;
+		IRenderPipeline* m_next;
 
-		CMeshBuffer<video::S3DVertex2TCoords> *m_drawBuffer;
+		CMeshBuffer<video::S3DVertex2TCoords>* m_drawBuffer;
 		IVertexBuffer* m_verticesImage;
 		IIndexBuffer* m_indicesImage;
 
@@ -52,26 +52,28 @@ namespace Skylicht
 
 		static SColor s_clearColor;
 
+		static int s_maxLight;
+
 	public:
 		CBaseRP();
 
 		virtual ~CBaseRP();
 
-		virtual bool canRenderMaterial(CMaterial *m);
+		virtual bool canRenderMaterial(CMaterial* m);
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& vp) = 0;
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& vp) = 0;
 
-		virtual void setCamera(CCamera *camera);
+		virtual void setCamera(CCamera* camera);
 
-		virtual void setNextPipeLine(IRenderPipeline *next);
+		virtual void setNextPipeLine(IRenderPipeline* next);
 
-		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& vp);
+		virtual void onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& vp);
 
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
+		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
 
 	public:
 
-		void updateTextureResource(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID);
+		void updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID);
 
 		void beginRender2D(float w, float h);
 
@@ -79,11 +81,11 @@ namespace Skylicht
 
 		void renderBufferToTarget(float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);
 
-		void renderEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture[], int* face, int numFace);
+		void renderEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture[], int* face, int numFace);
 
-		void renderCubeEnvironment(CCamera *camera, CEntityManager *entityMgr, const core::vector3df& position, ITexture *texture, int* face, int numFace);
+		void renderCubeEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture, int* face, int numFace);
 
-		static void saveFBOToFile(ITexture *texture, const char *output);
+		static void saveFBOToFile(ITexture* texture, const char* output);
 
 		static void setBakeMode(bool b);
 
@@ -102,8 +104,8 @@ namespace Skylicht
 
 	protected:
 
-		void drawSceneToTexture(ITexture *target, CEntityManager *entityMgr);
+		void drawSceneToTexture(ITexture* target, CEntityManager* entityMgr);
 
-		void drawSceneToCubeTexture(ITexture *target, video::E_CUBEMAP_FACE faceID, CEntityManager *entityMgr);
+		void drawSceneToCubeTexture(ITexture* target, video::E_CUBEMAP_FACE faceID, CEntityManager* entityMgr);
 	};
 }
