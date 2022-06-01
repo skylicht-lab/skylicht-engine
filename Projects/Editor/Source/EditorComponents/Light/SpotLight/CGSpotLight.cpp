@@ -84,12 +84,6 @@ namespace Skylicht
 
 		void CGSpotLight::updateComponent()
 		{
-			CCamera* camera = m_gameObject->getEntityManager()->getCamera();
-			if (camera == NULL)
-				return;
-
-			core::vector3df cameraPosition = camera->getGameObject()->getPosition();
-
 			// update color of light
 			SColor lightColor = m_spotLight->getColor().toSColor();
 			m_sprite->setColor(lightColor);
@@ -110,11 +104,9 @@ namespace Skylicht
 			core::quaternion q;
 			q.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), direction);
 
-			core::vector3df viewVector = position - cameraPosition;
-			viewVector.normalize();
+			std::vector<core::vector3df> bounds;
 
-			bool isBackFace = true;
-			core::vector3df r1, r2;
+			int count = CircleSegmentCount / 5;
 
 			for (int i = 0; i < CircleSegmentCount; i++)
 			{
@@ -129,28 +121,8 @@ namespace Skylicht
 				core::vector3df worldR = q * r;
 				worldR.normalize();
 
-				if (viewVector.dotProduct(worldR) > FLT_EPSILON)
-				{
-					// back face
-					if (i == 0)
-						isBackFace = true;
-					else if (!isBackFace)
-					{
-						r2 = worldR;
-						isBackFace = true;
-					}
-				}
-				else
-				{
-					// front face
-					if (i == 0)
-						isBackFace = false;
-					else if (isBackFace)
-					{
-						r1 = worldR;
-						isBackFace = false;
-					}
-				}
+				if (i % count == 0)
+					bounds.push_back(worldR);
 
 				m_circlePos[i] = end + worldR * maxOuterEdge;
 			}
@@ -159,8 +131,8 @@ namespace Skylicht
 			CHandles::getInstance()->drawPolyline(m_circlePos, CircleSegmentCount, true, lightColor);
 
 			// draw border edge
-			CHandles::getInstance()->drawLine(position, end + r1 * maxOuterEdge, lightColor);
-			CHandles::getInstance()->drawLine(position, end + r2 * maxOuterEdge, lightColor);
+			for (int i = 0, n = (int)bounds.size(); i < n; i++)
+				CHandles::getInstance()->drawLine(position, end + bounds[i] * maxOuterEdge, lightColor);
 
 			// update collision bbox
 			float boxScale = m_sprite->getViewScale() * 10.0f;

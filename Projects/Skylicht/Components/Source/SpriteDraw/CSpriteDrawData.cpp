@@ -32,7 +32,7 @@ namespace Skylicht
 	CSpriteDrawData::CSpriteDrawData() :
 		Frame(NULL),
 		Scale(1.0f),
-		ViewScale(1.0f),
+		ViewScale(0.0f),
 		Color(255, 255, 255, 255),
 		Center(false),
 		Billboard(false),
