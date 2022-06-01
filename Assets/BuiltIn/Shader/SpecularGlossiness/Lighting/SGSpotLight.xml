@@ -10,6 +10,7 @@
 
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uLightPosition" type="SPOT_LIGHT_POSITION" value="0" float="4"/>
+			<uniform name="uLightDirection" type="SPOT_LIGHT_DIRECTION" value="0" float="4"/>
 			<uniform name="uLightAttenuation" type="SPOT_LIGHT_ATTENUATION" value="0" float="4"/>
 			<uniform name="uLightColor" type="SPOT_LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 		</fs>

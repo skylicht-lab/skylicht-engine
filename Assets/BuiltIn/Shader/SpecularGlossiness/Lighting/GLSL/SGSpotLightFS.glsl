@@ -8,6 +8,7 @@ uniform sampler2D uTexData;
 
 uniform vec4 uCameraPosition;
 uniform vec4 uLightPosition;
+uniform vec4 uLightDirection;
 uniform vec4 uLightAttenuation;
 uniform vec4 uLightColor;
 
@@ -33,6 +34,18 @@ void main(void)
 	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.z)) * uLightColor.a;
 
 	vec3 lightDir = normalize(direction);
+	
+	float spotDot = dot(lightDir, uLightDirection.xyz);
+	if (spotDot < uLightAttenuation.x)
+	{
+		attenuation = 0.f;
+	}
+	else
+	{
+		float spotValue = smoothstep(uLightAttenuation.x, uLightAttenuation.y, spotDot);
+		attenuation = pow(spotValue, uLightAttenuation.w);
+	}
+	
 	float NdotL = max(0.0, dot(lightDir, normal));
 
 	// Specular
