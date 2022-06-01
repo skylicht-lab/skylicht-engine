@@ -45,6 +45,7 @@ namespace Skylicht
 		//! The angle of the spot's outer cone. Ignored for other lights.
 		float m_spotCutoff;
 		float m_spotInnerCutoff;
+		float m_spotExponent;
 
 		//! Direction of the light.
 		/** If Type is ELT_POINT, it is ignored. Changed via light scene node's rotation. */
@@ -123,6 +124,16 @@ namespace Skylicht
 		inline float getSpotInnerCutof()
 		{
 			return m_spotInnerCutoff;
+		}
+
+		inline void setSpotExponent(float e)
+		{
+			m_spotExponent = e;
+		}
+
+		inline float getSpotExponent()
+		{
+			return m_spotExponent;
 		}
 
 		inline core::vector3df& getDirection()

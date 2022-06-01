@@ -83,6 +83,7 @@ namespace Skylicht
 		object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
 		object->autoRelease(new CFloatProperty(object, "outer cutoff", m_spotCutoff, 0.0f, 180.0f));
 		object->autoRelease(new CFloatProperty(object, "inner cutoff", m_spotInnerCutoff, 0.0f, 180.0f));
+		object->autoRelease(new CFloatProperty(object, "spot exponent", m_spotExponent, 0.0f, 128.0f));
 
 		return object;
 	}
@@ -95,10 +96,9 @@ namespace Skylicht
 		float radius = object->get<float>("radius", 3.0f);
 		m_spotCutoff = object->get<float>("outer cutoff", 180.0f / 4.0f);
 		m_spotInnerCutoff = object->get<float>("inner cutoff", 180.0f / 5.0f);
+		m_spotExponent = object->get<float>("spot exponent", 10.0f);
 
 		setRadius(radius);
-		setSpotAngle(m_spotCutoff);
-		setSpotInnerAngle(m_spotInnerCutoff);
 	}
 
 	core::vector3df CSpotLight::getPosition()

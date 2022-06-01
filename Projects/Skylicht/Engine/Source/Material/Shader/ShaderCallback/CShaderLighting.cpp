@@ -200,9 +200,10 @@ namespace Skylicht
 				float attenuation[4] = { 0 };
 
 				// set attenuation			
-				attenuation[0] = s_spotLight->getSplotCutoff();
-				attenuation[1] = s_spotLight->getSpotInnerCutof();
+				attenuation[0] = cosf(s_spotLight->getSplotCutoff() * core::DEGTORAD * 0.5f);
+				attenuation[1] = cosf(s_spotLight->getSpotInnerCutof() * core::DEGTORAD * 0.5f);
 				attenuation[2] = s_spotLight->getAttenuation();
+				attenuation[3] = s_spotLight->getSpotExponent();
 
 				// shader variable
 				if (vertexShader == true)
