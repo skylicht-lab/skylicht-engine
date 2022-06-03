@@ -35,7 +35,6 @@ namespace Skylicht
 	CATEGORY_COMPONENT(CSpotLight, "Spotlight", "Lighting");
 
 	CSpotLight::CSpotLight() :
-		m_depth(NULL),
 		m_needRenderShadowDepth(true),
 		m_cullingData(NULL)
 	{
@@ -44,9 +43,6 @@ namespace Skylicht
 
 	CSpotLight::~CSpotLight()
 	{
-		if (m_depth != NULL)
-			getVideoDriver()->removeTexture(m_depth);
-
 		if (m_gameObject)
 			m_gameObject->getEntity()->removeData<CLightCullingData>();
 	}
@@ -79,7 +75,7 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CLight::createSerializable();
 
-		object->autoRelease(new CBoolProperty(object, "alway render shadow", m_alwayRenderShadowDepth));
+		object->autoRelease(new CBoolProperty(object, "dynamic shadow", m_dynamicShadow));
 		object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
 		object->autoRelease(new CFloatProperty(object, "outer cutoff", m_spotCutoff, 0.0f, 180.0f));
 		object->autoRelease(new CFloatProperty(object, "inner cutoff", m_spotInnerCutoff, 0.0f, 180.0f));
@@ -92,7 +88,7 @@ namespace Skylicht
 	{
 		CLight::loadSerializable(object);
 
-		m_alwayRenderShadowDepth = object->get<bool>("alway render shadow", false);
+		m_dynamicShadow = object->get<bool>("dynamic shadow", false);
 		float radius = object->get<float>("radius", 3.0f);
 		m_spotCutoff = object->get<float>("outer cutoff", 180.0f / 4.0f);
 		m_spotInnerCutoff = object->get<float>("inner cutoff", 180.0f / 5.0f);
@@ -104,22 +100,6 @@ namespace Skylicht
 	core::vector3df CSpotLight::getPosition()
 	{
 		return m_gameObject->getPosition();
-	}
-
-	ITexture* CSpotLight::createGetDepthTexture()
-	{
-		if (m_depth == NULL)
-		{
-			int size = 512;
-			m_depth = getVideoDriver()->addRenderTargetTexture(core::dimension2du(size, size), "SpotlightDepthMap", video::ECF_R32F);
-		}
-
-		return m_depth;
-	}
-
-	bool CSpotLight::alwayRenderShadowDepth()
-	{
-		return m_alwayRenderShadowDepth;
 	}
 
 	bool CSpotLight::needRenderShadowDepth()

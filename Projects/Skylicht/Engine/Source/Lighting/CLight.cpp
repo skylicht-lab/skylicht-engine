@@ -29,6 +29,7 @@ namespace Skylicht
 {
 	CLight::CLight() :
 		m_castShadow(false),
+		m_dynamicShadow(false),
 		m_color(1.0f, 1.0f, 1.0f, 1.0f),
 		m_spotCutoff(180.0f / 4.0f),
 		m_spotInnerCutoff(180.0f / 5.0f),

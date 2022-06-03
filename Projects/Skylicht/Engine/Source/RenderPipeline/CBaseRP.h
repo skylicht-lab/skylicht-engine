@@ -48,11 +48,10 @@ namespace Skylicht
 
 		static bool s_bakeMode;
 		static bool s_bakeLMMode;
-		static int s_bakeBounce;
+		static u32 s_bakeBounce;
+		static u32 s_maxLight;
 
 		static SColor s_clearColor;
-
-		static int s_maxLight;
 
 	public:
 		CBaseRP();
@@ -91,7 +90,7 @@ namespace Skylicht
 
 		static void setBakeLightmapMode(bool b);
 
-		static void setBakeLightingMapBounce(int i);
+		static void setBakeLightingMapBounce(u32 i);
 
 		static void setClearColor(const SColor& c);
 

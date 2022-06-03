@@ -35,9 +35,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
+#include "Lighting/CDirectionalLight.h"
 #include "IndirectLighting/CIndirectLightingData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
-#include "Lighting/CDirectionalLight.h"
+#include "Shadow/CShadowRTTManager.h"
 
 namespace Skylicht
 {
@@ -450,8 +451,10 @@ namespace Skylicht
 		CLightCullingSystem* lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
 		{
+			CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
+
 			core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
-			for (u32 i = 0, n = listLight.size(); i < n && i < s_maxLight; i++)
+			for (u32 i = 0, n = (u32)listLight.size(); i < n && i < s_maxLight; i++)
 			{
 				CLight* light = listLight[i]->Light;
 
@@ -460,7 +463,7 @@ namespace Skylicht
 				if (s_bakeMode == true && s_bakeLMMode == true)
 				{
 					u32 lightBounce = light->getBounce();
-					if ((u32)s_bakeBounce < totalBounce - lightBounce)
+					if (s_bakeBounce < totalBounce - lightBounce)
 						renderLight = false;
 				}
 
@@ -473,8 +476,10 @@ namespace Skylicht
 
 						if (pointLight->isCastShadow() == true)
 						{
+							ITexture* depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
+
 							m_pointLightPass.MaterialType = m_pointLightShadowShader;
-							m_pointLightPass.setTexture(3, pointLight->createGetDepthTexture());
+							m_pointLightPass.setTexture(3, depthTexture);
 						}
 						else
 						{
