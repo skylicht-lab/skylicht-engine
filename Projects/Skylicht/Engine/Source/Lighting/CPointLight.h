@@ -34,9 +34,6 @@ namespace Skylicht
 	protected:
 		CLightCullingData* m_cullingData;
 
-		ITexture* m_depth;
-
-		bool m_alwayRenderShadowDepth;
 		bool m_needRenderShadowDepth;
 
 	public:
@@ -56,8 +53,6 @@ namespace Skylicht
 
 	public:
 
-		bool alwayRenderShadowDepth();
-
 		bool needRenderShadowDepth();
 
 		void beginRenderShadowDepth();
@@ -65,7 +60,5 @@ namespace Skylicht
 		void endRenderShadowDepth();
 
 		core::vector3df getPosition();
-
-		ITexture* createGetDepthTexture();
 	};
 }

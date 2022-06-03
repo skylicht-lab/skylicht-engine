@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
 #include "Lighting/CDirectionalLight.h"
-
+#include "Shadow/CShadowRTTManager.h"
 #include "EventManager/CEventManager.h"
 
 namespace Skylicht
@@ -244,6 +244,9 @@ namespace Skylicht
 		CLightCullingSystem* lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
 		{
+			CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
+			shadowRTT->clearLightData();
+
 			core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
 			for (u32 i = 0, n = listLight.size(); i < n && i < s_maxLight; i++)
 			{
@@ -252,13 +255,14 @@ namespace Skylicht
 
 				if (pointLight != NULL &&
 					pointLight->isCastShadow() == true &&
-					(pointLight->needRenderShadowDepth() || pointLight->alwayRenderShadowDepth()))
+					(pointLight->needRenderShadowDepth() || pointLight->isDynamicShadow()))
 				{
 					CShaderLighting::setPointLight(pointLight);
 					pointLight->beginRenderShadowDepth();
 
 					core::vector3df lightPosition = pointLight->getGameObject()->getPosition();
-					ITexture* depth = pointLight->createGetDepthTexture();
+
+					ITexture* depth = shadowRTT->createGetPointLightDepth(pointLight);
 					if (depth != NULL)
 					{
 						renderCubeEnvironment(camera, entityManager, lightPosition, depth, NULL, 0);
@@ -272,7 +276,7 @@ namespace Skylicht
 					CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
 					if (spotLight != NULL &&
 						spotLight->isCastShadow() == true &&
-						(spotLight->needRenderShadowDepth() || spotLight->alwayRenderShadowDepth()))
+						(spotLight->needRenderShadowDepth() || spotLight->isDynamicShadow()))
 					{
 						spotLight->beginRenderShadowDepth();
 
