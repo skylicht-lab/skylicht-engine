@@ -3,6 +3,7 @@
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uView" type="DEFERRED_VIEW" value="0" float="16" matrix="true"/>
 			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0,1.0,0.0,0.0" float="4"/>
 		</vs>
 		<fs>

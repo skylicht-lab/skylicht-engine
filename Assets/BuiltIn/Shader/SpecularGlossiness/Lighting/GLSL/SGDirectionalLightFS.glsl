@@ -103,7 +103,7 @@ vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const
 	}
 	float z = (uView * vec4(reflection, 0.0)).z;
 	z = clamp(z, 0.0, 1.0);
-	vec3 color = textureLod(uTexLastFrame, projectedCoord.xy, mipLevel).rgb;
+	vec3 color = textureLod(uTexLastFrame, projectedCoord.xy, 0).rgb;
 	vec2 dCoords = smoothstep(vec2(0.0, 0.0), vec2(0.5, 0.5), abs(vec2(0.5, 0.5) - projectedCoord.xy));
 	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
 	return mix(baseColor * 0.8, color, screenEdgefactor * z);
@@ -163,7 +163,8 @@ vec3 SG(
 void main(void)
 {
 	vec3 albedo = texture(uTexAlbedo, varTexCoord0.xy).rgb;
-	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
+	vec4 posdepth = texture(uTexPosition, varTexCoord0.xy);
+	vec3 position = posdepth.xyz;
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
 	vec4 light = texture(uTexLight, varTexCoord0.xy);

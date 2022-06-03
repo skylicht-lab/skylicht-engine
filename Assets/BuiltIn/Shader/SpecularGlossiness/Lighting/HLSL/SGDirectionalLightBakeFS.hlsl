@@ -134,7 +134,8 @@ float3 SG(
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 albedo = uTexAlbedo.Sample(uTexAlbedoSampler, input.tex0).rgb;
-	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
+	float4 posdepth = uTexPosition.Sample(uTexPositionSampler, input.tex0);
+	float3 position = posdepth.xyz;
 	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
 	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
 	float4 light = uTexLight.Sample(uTexLightSampler, input.tex0);

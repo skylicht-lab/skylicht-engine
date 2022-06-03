@@ -54,7 +54,7 @@ vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const
 	z = clamp(z, 0.0, 1.0);
 	
 	// convert 3d position to 2d texture coord
-	vec3 color = textureLod(uTexLastFrame, projectedCoord.xy, mipLevel).rgb;
+	vec3 color = textureLod(uTexLastFrame, projectedCoord.xy, 0).rgb;
 	
 	// edge factor
 	vec2 dCoords = smoothstep(vec2(0.0, 0.0), vec2(0.5, 0.5), abs(vec2(0.5, 0.5) - projectedCoord.xy));
