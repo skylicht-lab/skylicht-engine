@@ -35,8 +35,6 @@ namespace Skylicht
 	CATEGORY_COMPONENT(CPointLight, "Point Light", "Lighting");
 
 	CPointLight::CPointLight() :
-		m_depth(NULL),
-		m_alwayRenderShadowDepth(false),
 		m_needRenderShadowDepth(true),
 		m_cullingData(NULL)
 	{
@@ -45,9 +43,6 @@ namespace Skylicht
 
 	CPointLight::~CPointLight()
 	{
-		if (m_depth != NULL)
-			getVideoDriver()->removeTexture(m_depth);
-
 		if (m_gameObject)
 			m_gameObject->getEntity()->removeData<CLightCullingData>();
 	}
@@ -75,7 +70,7 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CLight::createSerializable();
 
-		object->autoRelease(new CBoolProperty(object, "alway render shadow", m_alwayRenderShadowDepth));
+		object->autoRelease(new CBoolProperty(object, "dynamic shadow", m_dynamicShadow));
 		object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
 		return object;
 	}
@@ -84,30 +79,16 @@ namespace Skylicht
 	{
 		CLight::loadSerializable(object);
 
-		m_alwayRenderShadowDepth = object->get<bool>("alway render shadow", false);
+		m_dynamicShadow = object->get<bool>("dynamic shadow", false);
 		float radius = object->get<float>("radius", 3.0f);
 		setRadius(radius);
+
+		m_needRenderShadowDepth = true;
 	}
 
 	core::vector3df CPointLight::getPosition()
 	{
 		return m_gameObject->getPosition();
-	}
-
-	ITexture* CPointLight::createGetDepthTexture()
-	{
-		if (m_depth == NULL)
-		{
-			int size = 512;
-			m_depth = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
-		}
-
-		return m_depth;
-	}
-
-	bool CPointLight::alwayRenderShadowDepth()
-	{
-		return m_alwayRenderShadowDepth;
 	}
 
 	bool CPointLight::needRenderShadowDepth()

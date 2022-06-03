@@ -37,9 +37,9 @@ namespace Skylicht
 {
 	bool CBaseRP::s_bakeMode = false;
 	bool CBaseRP::s_bakeLMMode = false;
-	int CBaseRP::s_bakeBounce = 0;
-
-	int CBaseRP::s_maxLight = 8;
+	
+	u32 CBaseRP::s_bakeBounce = 0;
+	u32 CBaseRP::s_maxLight = 16;
 
 	SColor CBaseRP::s_clearColor;
 
@@ -674,7 +674,7 @@ namespace Skylicht
 		s_bakeLMMode = b;
 	}
 
-	void CBaseRP::setBakeLightingMapBounce(int i)
+	void CBaseRP::setBakeLightingMapBounce(u32 i)
 	{
 		s_bakeBounce = i;
 	}

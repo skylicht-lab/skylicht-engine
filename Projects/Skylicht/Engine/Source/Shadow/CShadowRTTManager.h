@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,43 +22,45 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CLight.h"
-#include "CLightCullingData.h"
+#include "Lighting/CDirectionalLight.h"
+#include "Lighting/CPointLight.h"
+#include "Lighting/CSpotLight.h"
+#include "TextureManager/CTextureManager.h"
+#include "Utils/CGameSingleton.h"
 
 namespace Skylicht
 {
-	class CSpotLight : public CLight
+	struct SDepthShadowRTT
+	{
+		CLight* Light;
+		ITexture* Texture;
+	};
+
+	class CShadowRTTManager : public CGameSingleton<CShadowRTTManager>
 	{
 	protected:
-		CLightCullingData* m_cullingData;
+		std::vector<SDepthShadowRTT*> m_pointLightDepthStatic;
+		std::vector<SDepthShadowRTT*> m_pointLightDepthDynamic;
 
-		bool m_needRenderShadowDepth;
-
-	public:
-		CSpotLight();
-
-		virtual ~CSpotLight();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		virtual CObjectSerializable* createSerializable();
-
-		virtual void loadSerializable(CObjectSerializable* object);
-
-		DECLARE_GETTYPENAME(CSpotLight);
+		std::vector<SDepthShadowRTT*> m_spotLightDepthStatic;
+		std::vector<SDepthShadowRTT*> m_spotLightDepthDynamic;
 
 	public:
+		CShadowRTTManager();
 
-		bool needRenderShadowDepth();
+		virtual ~CShadowRTTManager();
 
-		void beginRenderShadowDepth();
+		void clearTextures();
 
-		void endRenderShadowDepth();
+		void clearLightData();
 
-		core::vector3df getPosition();
+		ITexture* createGetPointLightDepth(CLight* light);
+
+	protected:
+
+		ITexture* createGetPointLightDepthStatic(CLight* light);
+
+		ITexture* createGetPointLightDepthDynamic(CLight* light);
+
 	};
 }

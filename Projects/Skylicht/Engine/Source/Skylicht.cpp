@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/CMaterialManager.h"
 #include "Material/Shader/CShaderManager.h"
 #include "Graphics2D/CGraphics2D.h"
+#include "Shadow/CShadowRTTManager.h"
 
 // Mesh & Texture
 #include "MeshManager/CMeshManager.h"
@@ -85,6 +86,8 @@ namespace Skylicht
 		CAnimationManager::createGetInstance();
 		CMaterialManager::createGetInstance();
 
+		CShadowRTTManager::createGetInstance();
+
 		CTweenManager::createGetInstance();
 		CActivator::createGetInstance();
 		CSerializableActivator::createGetInstance();
@@ -119,6 +122,8 @@ namespace Skylicht
 		CActivator::releaseInstance();
 		CSerializableActivator::releaseInstance();
 		CTweenManager::releaseInstance();
+
+		CShadowRTTManager::releaseInstance();
 
 		CMaterialManager::releaseInstance();
 		CAnimationManager::releaseInstance();

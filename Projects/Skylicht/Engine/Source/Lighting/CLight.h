@@ -54,6 +54,9 @@ namespace Skylicht
 		//! Does the light cast shadows?
 		bool m_castShadow;
 
+		//! Does this shadow alway updates
+		bool m_dynamicShadow;
+
 		//! Intensity of light
 		float m_intensity;
 
@@ -149,6 +152,16 @@ namespace Skylicht
 		inline void setShadow(bool shadow)
 		{
 			m_castShadow = shadow;
+		}
+
+		inline bool isDynamicShadow()
+		{
+			return m_dynamicShadow;
+		}
+
+		inline void setDynamicShadow(bool shadow)
+		{
+			m_dynamicShadow = shadow;
 		}
 
 		inline void setIntensity(float f)
