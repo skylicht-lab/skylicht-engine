@@ -35,7 +35,10 @@ out vec4 FragColor;
 void main(void)
 {
 	vec3 albedo = texture(uTexAlbedo, varTexCoord0.xy).rgb;
-	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
+	
+	vec4 posdepth = texture(uTexPosition, varTexCoord0.xy);
+	vec3 position = posdepth.xyz;
+	
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
 	vec4 light = texture(uTexLight, varTexCoord0.xy);

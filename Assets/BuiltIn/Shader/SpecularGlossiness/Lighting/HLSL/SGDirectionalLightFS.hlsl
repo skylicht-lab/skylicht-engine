@@ -115,7 +115,7 @@ float3 SSR(const float3 baseColor, const float3 position, const float3 reflectio
 	}
 	float z = mul(float4(reflection, 0.0), uView).z;
 	z = clamp(z, 0.0, 1.0);
-	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, projectedCoord.xy, mipLevel).rgb;
+	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, projectedCoord.xy, 0).rgb;
 	float2 dCoords = smoothstep(float2(0.0, 0.0), float2(0.5, 0.5), abs(float2(0.5, 0.5) - projectedCoord.xy));
 	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
 	return lerp(baseColor * 0.8, color, screenEdgefactor * z);
@@ -175,7 +175,8 @@ float3 SG(
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 albedo = uTexAlbedo.Sample(uTexAlbedoSampler, input.tex0).rgb;
-	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
+	float4 posdepth = uTexPosition.Sample(uTexPositionSampler, input.tex0);
+	float3 position = posdepth.xyz;
 	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
 	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
 	float4 light = uTexLight.Sample(uTexLightSampler, input.tex0);
