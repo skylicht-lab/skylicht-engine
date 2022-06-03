@@ -54,7 +54,7 @@ float3 SSR(const float3 baseColor, const float3 position, const float3 reflectio
 	z = clamp(z, 0.0, 1.0);
 	
 	// convert 3d position to 2d texture coord	
-	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, projectedCoord.xy, mipLevel).rgb;
+	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, projectedCoord.xy, 0).rgb;
 	
 	// edge factor
 	float2 dCoords = smoothstep(float2(0.0, 0.0), float2(0.5, 0.5), abs(float2(0.5, 0.5) - projectedCoord.xy));

@@ -7,7 +7,7 @@ uniform float uSpec;
 uniform float uGloss;
 
 in vec2 vTexCoord0;
-in vec3 vWorldPosition;
+in vec4 vWorldPosition;
 in vec3 vWorldNormal;
 in vec3 vWorldTangent;
 in vec3 vWorldBinormal;
@@ -30,7 +30,7 @@ void main(void)
 	n = normalize(n);
 
 	Diffuse = vec4(baseMap, 1.0);
-	Position = vec4(vWorldPosition, 1.0);
+	Position = vWorldPosition;
 	Normal = vec4(n, 1.0);
 	SG = vec4(uSpec, uGloss, 1.0, 1.0);
 }

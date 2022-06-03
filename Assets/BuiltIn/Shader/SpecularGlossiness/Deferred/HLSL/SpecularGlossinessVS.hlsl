@@ -13,7 +13,7 @@ struct VS_OUTPUT
 {
 	float4 pos : SV_POSITION;
 	float2 tex0 : TEXCOORD0;
-	float3 worldPosition: WORLDPOSITION;
+	float4 worldPosition: WORLDPOSITION;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldTangent: WORLDTANGENT;
 	float3 worldBinormal: WORLDBINORMAL;
@@ -24,6 +24,7 @@ cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
 	float4x4 uWorldMatrix;
+	float4x4 uView;
 	float4 uUVScale;
 };
 
@@ -38,7 +39,10 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 worldNormal = mul(float4(input.norm, 0.0), uWorldMatrix);
 	float4 worldTangent = mul(float4(input.tangent, 0.0), uWorldMatrix);
 
-	output.worldPosition = worldPos.xyz;
+	float4 sampleFragPos = mul(worldPos, uView);
+	float sampleDepth = sampleFragPos.z;
+
+	output.worldPosition = float4(worldPos.xyz, sampleDepth);
 	output.worldNormal = normalize(worldNormal.xyz);
 	output.worldTangent = normalize(worldTangent.xyz);
 	output.worldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));

@@ -8,7 +8,7 @@ struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
 	float2 tex0 : TEXCOORD0;
-	float3 worldPosition: WORLDPOSITION;
+	float4 worldPosition: WORLDPOSITION;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldTangent: WORLDTANGENT;
 	float3 worldBinormal: WORLDBINORMAL;
@@ -44,7 +44,7 @@ PS_OUTPUT main(PS_INPUT input)
 	n = normalize(n);
 
 	output.Diffuse = float4(baseMap, 1.0);
-	output.Position = float4(input.worldPosition, 1.0);
+	output.Position = input.worldPosition;
 	output.Normal = float4(n, 1.0);
 	output.SG = float4(uSpec, uGloss, 0.0, 1.0);
 
