@@ -24,7 +24,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float4 color = uTexColor.Sample(uTexColorSampler, input.tex0);
 	float avgLuminance = uTexLuminance.SampleLevel(uTexLuminanceSampler, input.tex0, 10.0).x;
 	float target = 0.2;
-	float threshold = 2.5;
+	float threshold = 2.0;
 	float linearExposure = max((target / avgLuminance), 0.0001);
 	float exposure = min(exp2(log2(linearExposure)), threshold);
 	return float4(linearRGB(exposure * color.rgb), color.a);

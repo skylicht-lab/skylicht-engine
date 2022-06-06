@@ -376,7 +376,9 @@ namespace Skylicht
 
 		// save projection/view for advance shader SSR
 		CShaderDeferred::setProjection(driver->getTransform(video::ETS_PROJECTION));
-		CShaderDeferred::setView(m_viewMatrix = driver->getTransform(video::ETS_VIEW));
+
+		m_viewMatrix = driver->getTransform(video::ETS_VIEW);
+		CShaderDeferred::setView(m_viewMatrix);
 
 		// STEP 01:
 		// draw baked indirect lighting

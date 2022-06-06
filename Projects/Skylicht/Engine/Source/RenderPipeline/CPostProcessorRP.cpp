@@ -298,11 +298,11 @@ namespace Skylicht
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_linearPass);
 
-			m_lastFrameBuffer->regenerateMipMapLevels();
-
 			driver->setRenderTarget(finalTarget, false, false);
 			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
 				driver->setViewPort(viewport);
+
+			m_lastFrameBuffer->regenerateMipMapLevels();
 		}
 		// END SCREEN SPACE REFLECTION
 
