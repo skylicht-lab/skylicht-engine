@@ -21,6 +21,7 @@
 			<uniform name="uShadowMatrix" type="SHADOW_MAP_MATRIX" value="0" float="16" array="3" matrix="true"/>
 			<uniform name="uViewProjection" type="DEFERRED_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uView" type="DEFERRED_VIEW" value="0" float="16" matrix="true"/>
+			<uniform name="uProjection" type="DEFERRED_PROJECTION" value="0" float="16" matrix="true"/>
 		</fs>
 	</uniforms>
 	<resources>

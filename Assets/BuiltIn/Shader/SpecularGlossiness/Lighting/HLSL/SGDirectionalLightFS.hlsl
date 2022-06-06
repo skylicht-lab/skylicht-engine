@@ -30,6 +30,7 @@ cbuffer cbPerFrame
 	float4x4 uShadowMatrix[3];
 	float4x4 uViewProjection;
 	float4x4 uView;
+	float4x4 uProjection;
 };
 float2 rand(float2 co){
     return float2(frac(sin(dot(co.xy ,float2(12.9898,78.233))) * 43758.5453), frac(sin(dot(co.yx ,float2(12.9898,78.233))) * 43758.5453)) * 0.00047;
@@ -85,38 +86,52 @@ float solveMetallic(float3 diffuse, float3 specular, float oneMinusSpecularStren
 	float D = b * b - 4.0 * a * c;
 	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
 }
-float3 SSR(const float3 baseColor, const float3 position, const float3 reflection, const float roughness)
+float2 binarySearch(float3 dir, float3 rayPosition)
 {
 	float4 projectedCoord;
-	float3 beginPosition;
-	float3 endPosition;
-	float3 rayPosition = position;
-	float4 viewPosition;
-	float3 dir = reflection * 32.0;
-	float mipLevel = roughness * 5.0;
-	for (int i = 32; i > 0; --i)
+	[unroll]
+	for(int i = 16; i > 0; --i)
 	{
-		beginPosition = rayPosition;
-		endPosition = rayPosition + dir;
-		rayPosition += dir * 0.5;
-		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uViewProjection);
+		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);
 		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
 		projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
-		float3 testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy).xyz;
-		float3 d1 = testPosition - beginPosition;
-		float lengthSQ1 = d1.x*d1.x + d1.y*d1.y + d1.z*d1.z;
-		float3 d2 = testPosition - endPosition;
-		float lengthSQ2 = d2.x*d2.x + d2.y*d2.y + d2.z*d2.z;
-		if (lengthSQ1 < lengthSQ2)
-		{
-			rayPosition = beginPosition;
-		}
+		float4 testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);
+		float dDepth = rayPosition.z - testPosition.w;
 		dir *= 0.5;
+		if(dDepth > 0.0)
+			rayPosition -= dir;
+		else
+			rayPosition += dir;
+	}
+	return projectedCoord.xy;
+}
+float3 SSR(const float3 baseColor, const float4 position, const float3 reflection, const float roughness)
+{
+	float4 projectedCoord;
+	float3 rayPosition = mul(float4(position.xyz, 1.0), uView).xyz;
+	float3 viewReflection = normalize(mul(float4(reflection, 0.0), uView).xyz);
+	float3 dir = viewReflection * 0.5;
+	float mipLevel = roughness * 5.0;
+	float2 ssrUV;
+	[unroll]
+	for (int i = 32; i > 0; --i)
+	{
+		rayPosition += dir;
+		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);
+		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
+		ssrUV = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
+		float4 testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);
+		float depthDiff = rayPosition.z - testPosition.w;
+		if(depthDiff >= 0.0)
+		{
+			ssrUV = binarySearch(dir, rayPosition);
+			break;
+		}
 	}
 	float z = mul(float4(reflection, 0.0), uView).z;
 	z = clamp(z, 0.0, 1.0);
-	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, projectedCoord.xy, 0).rgb;
-	float2 dCoords = smoothstep(float2(0.0, 0.0), float2(0.5, 0.5), abs(float2(0.5, 0.5) - projectedCoord.xy));
+	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, ssrUV, mipLevel).rgb;
+	float2 dCoords = smoothstep(float2(0.0, 0.0), float2(0.5, 0.5), abs(float2(0.5, 0.5) - ssrUV));
 	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
 	return lerp(baseColor * 0.8, color, screenEdgefactor * z);
 }
@@ -134,7 +149,7 @@ float3 SG(
 	const float3 baseColor,
 	const float spec,
 	const float gloss,
-	const float3 position,
+	const float4 position,
 	const float3 worldViewDir,
 	const float3 worldLightDir,
 	const float3 worldNormal,
@@ -200,7 +215,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		albedo,
 		data.r,
 		data.g,
-		position,
+		posdepth,
 		viewDir,
 		uLightDirection.xyz,
 		normal,

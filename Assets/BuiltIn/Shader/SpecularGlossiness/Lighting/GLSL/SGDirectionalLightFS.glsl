@@ -18,6 +18,7 @@ uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
 uniform mat4 uViewProjection;
 uniform mat4 uView;
+uniform mat4 uProjection;
 in vec2 varTexCoord0;
 out vec4 FragColor;
 vec2 rand(vec2 co){
@@ -73,38 +74,50 @@ float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
 	float D = b * b - 4.0 * a * c;
 	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
 }
-vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const float roughness)
+vec2 binarySearch(vec3 dir, vec3 rayPosition)
 {
 	vec4 projectedCoord;
-	vec3 beginPosition;
-	vec3 endPosition;
-	vec3 rayPosition = position;
-	vec4 viewPosition;
-	vec3 dir = reflection * 32.0;
-	float mipLevel = roughness * 5.0;
-	for (int i = 32; i > 0; --i)
+	for(int i = 16; i > 0; --i)
 	{
-		beginPosition = rayPosition;
-		endPosition = rayPosition + dir;
-		rayPosition += dir * 0.5;
-		projectedCoord = uViewProjection * vec4(rayPosition.xyz, 1.0);
+		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
 		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
 		projectedCoord.xy = 0.5 * projectedCoord.xy + vec2(0.5, 0.5);
-		vec3 testPosition = texture(uTexPosition, projectedCoord.xy).xyz;
-		vec3 d1 = testPosition - beginPosition;
-		float lengthSQ1 = d1.x*d1.x + d1.y*d1.y + d1.z*d1.z;
-		vec3 d2 = testPosition - endPosition;
-		float lengthSQ2 = d2.x*d2.x + d2.y*d2.y + d2.z*d2.z;
-		if (lengthSQ1 < lengthSQ2)
-		{
-			rayPosition = beginPosition;
-		}
+		vec4 testPosition = texture(uTexPosition, projectedCoord.xy);
+		float dDepth = rayPosition.z - testPosition.w;
 		dir *= 0.5;
+		if(dDepth > 0.0)
+			rayPosition -= dir;
+		else
+			rayPosition += dir;
+	}
+	return projectedCoord.xy;
+}
+vec3 SSR(const vec3 baseColor, const vec4 position, const vec3 reflection, const float roughness)
+{
+	vec4 projectedCoord;
+	vec3 rayPosition = (uView * vec4(position.xyz, 1.0)).xyz;
+	vec3 viewReflection = normalize((uView * vec4(reflection, 0.0)).xyz);
+	vec3 dir = viewReflection * 0.5;
+	float mipLevel = roughness * 5.0;
+	vec2 ssrUV;
+	for (int i = 32; i > 0; --i)
+	{
+		rayPosition += dir;
+		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
+		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
+		ssrUV = 0.5 * projectedCoord.xy + vec2(0.5, 0.5);
+		vec4 testPosition = texture(uTexPosition, ssrUV);
+		float depthDiff = rayPosition.z - testPosition.w;
+		if(depthDiff >= 0.0)
+		{
+			ssrUV = binarySearch(dir, rayPosition);
+			break;
+		}
 	}
 	float z = (uView * vec4(reflection, 0.0)).z;
 	z = clamp(z, 0.0, 1.0);
-	vec3 color = textureLod(uTexLastFrame, projectedCoord.xy, 0).rgb;
-	vec2 dCoords = smoothstep(vec2(0.0, 0.0), vec2(0.5, 0.5), abs(vec2(0.5, 0.5) - projectedCoord.xy));
+	vec3 color = textureLod(uTexLastFrame, ssrUV, mipLevel).rgb;
+	vec2 dCoords = smoothstep(vec2(0.0, 0.0), vec2(0.5, 0.5), abs(vec2(0.5, 0.5) - ssrUV));
 	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
 	return mix(baseColor * 0.8, color, screenEdgefactor * z);
 }
@@ -122,7 +135,7 @@ vec3 SG(
 	const vec3 baseColor,
 	const float spec,
 	const float gloss,
-	const vec3 position,
+	const vec4 position,
 	const vec3 worldViewDir,
 	const vec3 worldLightDir,
 	const vec3 worldNormal,
@@ -188,7 +201,7 @@ void main(void)
 		albedo,
 		data.r,
 		data.g,
-		position,
+		posdepth,
 		viewDir,
 		uLightDirection.xyz,
 		normal,
