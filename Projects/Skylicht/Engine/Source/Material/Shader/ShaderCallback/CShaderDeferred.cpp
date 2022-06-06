@@ -41,7 +41,7 @@ namespace Skylicht
 
 	}
 
-	void CShaderDeferred::OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader)
+	void CShaderDeferred::OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader)
 	{
 		switch (uniform->Type)
 		{

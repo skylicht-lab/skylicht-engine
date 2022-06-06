@@ -21,10 +21,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 #if defined(TONE_MAPPING)
 	float target = 0.2;
-	float threshold = 2.5;	
+	float threshold = 2.0;
 #else
 	float target = 0.3;
-	float threshold = 2.5;
+	float threshold = 2.0;
 #endif
 
 	float linearExposure = max((target / avgLuminance), 0.0001);

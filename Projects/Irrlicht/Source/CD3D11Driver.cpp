@@ -1080,6 +1080,8 @@ namespace irr
 			// set blend
 			BlendDesc.IndependentBlendEnable = FALSE;
 
+			BridgeCalls->resetState();
+
 			core::dimension2du size = getCurrentRenderTargetSize();
 			// don't forget to set viewport
 			setViewPort(core::rect<s32>(0, 0, size.Width, size.Height));
@@ -1165,6 +1167,8 @@ namespace irr
 
 			// set blend
 			BlendDesc.IndependentBlendEnable = FALSE;
+
+			BridgeCalls->resetState();
 
 			core::dimension2du size = getCurrentRenderTargetSize();
 
