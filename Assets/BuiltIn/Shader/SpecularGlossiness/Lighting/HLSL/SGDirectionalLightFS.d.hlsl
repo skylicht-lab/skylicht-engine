@@ -41,6 +41,7 @@ cbuffer cbPerFrame
 #if defined(ENABLE_SSR)
 	float4x4 uViewProjection;
 	float4x4 uView;
+	float4x4 uProjection;
 #endif
 };
 
@@ -96,7 +97,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		albedo,
 		data.r,
 		data.g,
-		position,
+		posdepth,
 		viewDir,
 		uLightDirection.xyz,
 		normal,

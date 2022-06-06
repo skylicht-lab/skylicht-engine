@@ -10,7 +10,7 @@ vec3 SG(
 	const vec3 baseColor,
 	const float spec,
 	const float gloss,
-	const vec3 position,
+	const vec4 position,
 	const vec3 worldViewDir,
 	const vec3 worldLightDir,
 	const vec3 worldNormal,
