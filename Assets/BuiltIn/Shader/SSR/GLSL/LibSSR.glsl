@@ -1,52 +1,60 @@
-#define RAY_LENGTH 32.0
-
-vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const float roughness)
-{	
+// References
+// https://github.com/MonkeyFirst/Urho3D_SSR_Shader/blob/master/bin/CoreData/Shaders/GLSL/SSR.glsl
+vec2 binarySearch(vec3 dir, vec3 rayPosition)
+{
 	vec4 projectedCoord;
 	
-	vec3 beginPosition;
-	vec3 endPosition;
-	
-	vec3 rayPosition = position;
-	vec4 viewPosition;
+	for(int i = 16; i > 0; --i)
+	{
+		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
+		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
+		projectedCoord.xy = 0.5 * projectedCoord.xy + vec2(0.5, 0.5);
 		
-	vec3 dir = reflection * RAY_LENGTH;
+		vec4 testPosition = texture(uTexPosition, projectedCoord.xy);
+		float dDepth = rayPosition.z - testPosition.w;
+
+		dir *= 0.5;
+		if(dDepth > 0.0)
+			rayPosition -= dir;
+		else
+			rayPosition += dir;
+	}
+	
+	return projectedCoord.xy;
+}
+
+vec3 SSR(const vec3 baseColor, const vec4 position, const vec3 reflection, const float roughness)
+{
+	vec4 projectedCoord;
+	
+	// convert to view space
+	vec3 rayPosition = (uView * vec4(position.xyz, 1.0)).xyz;
+	vec3 viewReflection = normalize((uView * vec4(reflection, 0.0)).xyz);
+	
+	// step 0.5m
+	vec3 dir = viewReflection * 0.5;
 	
 	float mipLevel = roughness * 5.0;
+	vec2 ssrUV;
 	
 	// ray test
 	for (int i = 32; i > 0; --i)
 	{
-		// begin ray
-		beginPosition = rayPosition;
-		
-		// end ray
-		endPosition = rayPosition + dir;
-		
-		// mid ray
-		rayPosition += dir * 0.5;
+		rayPosition += dir;
 		
 		// convert 3d position to 2d texture coord
-		projectedCoord = uViewProjection * vec4(rayPosition.xyz, 1.0);
+		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
 		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		projectedCoord.xy = 0.5 * projectedCoord.xy + vec2(0.5, 0.5);
+		ssrUV = 0.5 * projectedCoord.xy + vec2(0.5, 0.5);
 		
-		vec3 testPosition = texture(uTexPosition, projectedCoord.xy).xyz;
+		vec4 testPosition = texture(uTexPosition, ssrUV);
 		
-		vec3 d1 = testPosition - beginPosition;
-		float lengthSQ1 = d1.x*d1.x + d1.y*d1.y + d1.z*d1.z;
-		
-		vec3 d2 = testPosition - endPosition;
-		float lengthSQ2 = d2.x*d2.x + d2.y*d2.y + d2.z*d2.z;
-		
-		// beginPosition is nearer
-		if (lengthSQ1 < lengthSQ2)
+		float depthDiff = rayPosition.z - testPosition.w;
+		if(depthDiff >= 0.0)
 		{
-			rayPosition = beginPosition;
+			ssrUV = binarySearch(dir, rayPosition);
+			break;
 		}
-		
-		// binary search test
-		dir *= 0.5;
 	}
 	
 	// z clip when camera look down
@@ -54,10 +62,10 @@ vec3 SSR(const vec3 baseColor, const vec3 position, const vec3 reflection, const
 	z = clamp(z, 0.0, 1.0);
 	
 	// convert 3d position to 2d texture coord
-	vec3 color = textureLod(uTexLastFrame, projectedCoord.xy, 0).rgb;
+	vec3 color = textureLod(uTexLastFrame, ssrUV, mipLevel).rgb;
 	
 	// edge factor
-	vec2 dCoords = smoothstep(vec2(0.0, 0.0), vec2(0.5, 0.5), abs(vec2(0.5, 0.5) - projectedCoord.xy));
+	vec2 dCoords = smoothstep(vec2(0.0, 0.0), vec2(0.5, 0.5), abs(vec2(0.5, 0.5) - ssrUV));
 	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
 	
 	return mix(baseColor * 0.8, color, screenEdgefactor * z);

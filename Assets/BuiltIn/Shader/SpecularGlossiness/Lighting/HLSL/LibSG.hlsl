@@ -10,7 +10,7 @@ float3 SG(
 	const float3 baseColor,
 	const float spec,
 	const float gloss,
-	const float3 position,
+	const float4 position,
 	const float3 worldViewDir,
 	const float3 worldLightDir,
 	const float3 worldNormal,
