@@ -1,4 +1,5 @@
 /*
+/*
 !@
 MIT License
 
@@ -31,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CWorldInverseTransformData.h"
 #include "Culling/CCullingData.h"
 #include "Culling/CCullingBBoxData.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 
 namespace Skylicht
@@ -61,6 +63,11 @@ namespace Skylicht
 		}
 	}
 
+	CEntity* CPrimitive::spawn()
+	{
+		return addPrimitive(core::vector3df(), core::vector3df(), core::vector3df(1.0f, 1.0f, 1.0f));
+	}
+
 	CEntity* CPrimitive::addPrimitive(const core::vector3df& pos, const core::vector3df& rotDeg, const core::vector3df& scale)
 	{
 		CEntity* entity = createEntity();
@@ -71,6 +78,7 @@ namespace Skylicht
 		// Culling
 		entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
+		entity->addData<CIndirectLightingData>();
 
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
 		cullingBBox->BBox.MinEdge.set(-1.0f, -1.0f, -1.0f);
@@ -82,6 +90,14 @@ namespace Skylicht
 		transform->Relative.setRotationDegrees(rotDeg);
 		transform->Relative.setScale(scale);
 
+		// Indirect lighting
+		CIndirectLightingData* indirect = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
+		indirect->Type = CIndirectLightingData::SH9;
+		indirect->AutoSH = new bool();
+		indirect->SH = new core::vector3df[9];
+		indirect->ReleaseSH = true;
+
+		*indirect->AutoSH = true;
 		return entity;
 	}
 }

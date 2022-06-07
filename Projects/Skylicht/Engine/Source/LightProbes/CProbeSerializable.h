@@ -42,6 +42,8 @@ namespace Skylicht
 
 		virtual ~CProbeSerializable();
 
+		virtual CObjectSerializable* clone();
+
 		DECLARE_GETTYPENAME(CProbeSerializable);
 	};
 }

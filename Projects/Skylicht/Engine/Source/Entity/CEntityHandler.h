@@ -47,6 +47,11 @@ namespace Skylicht
 
 		CEntity* createEntity(CEntity* parent);
 
+		virtual CEntity* spawn()
+		{
+			return NULL;
+		}
+
 		void removeEntity(CEntity* entity);
 
 		void removeAllEntities();

@@ -50,6 +50,8 @@ namespace Skylicht
 
 		bool Init;
 
+		bool ReleaseSH;
+
 		DECLARE_DATA_TYPE_INDEX;
 
 	public:

@@ -124,6 +124,8 @@ namespace Skylicht
 		virtual void parseSerializable(io::IXMLReader* reader);
 
 		virtual CObjectSerializable* clone();
+
+		virtual void copyTo(CObjectSerializable* object);
 	};
 
 
