@@ -307,7 +307,7 @@ namespace Skylicht
 					driver->drawMeshBuffer(mb);
 				}
 			}
-			else if (indirectData->Type == CIndirectLightingData::SH9)
+			else if (indirectData->Type == CIndirectLightingData::SH9 && indirectData->SH)
 			{
 				CShaderSH::setSH9(indirectData->SH);
 

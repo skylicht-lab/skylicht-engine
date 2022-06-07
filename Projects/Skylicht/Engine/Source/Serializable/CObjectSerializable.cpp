@@ -271,7 +271,7 @@ namespace Skylicht
 		for (CValueProperty* value : m_value)
 		{
 			CValueProperty* newValue = value->clone();
-			newValue->setOwner(this);
+			newValue->setOwner(object);
 			newValue->setUIHeader(value->getUIHeader().c_str());
 			newValue->setUISpace(value->getUISpace());
 
@@ -282,7 +282,24 @@ namespace Skylicht
 		return object;
 	}
 
+	void CObjectSerializable::copyTo(CObjectSerializable* object)
+	{
+		object->m_savePath = m_savePath;
 
+		io::IAttributes* io = getIrrlichtDevice()->getFileSystem()->createEmptyAttributes();
+
+		for (CValueProperty* value : m_value)
+		{
+			io->clear();
+			value->serialize(io);
+
+			CValueProperty* dst = object->getProperty(value->Name.c_str());
+			if (dst)
+				dst->deserialize(io);
+		}
+
+		io->drop();
+	}
 
 
 	bool CSerializableActivator::registerType(const char* type, SerializableCreateInstance func)

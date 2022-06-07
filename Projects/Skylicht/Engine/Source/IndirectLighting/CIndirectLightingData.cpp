@@ -35,13 +35,18 @@ namespace Skylicht
 		ReflectionTexture(NULL),
 		SH(NULL),
 		AutoSH(NULL),
-		Init(true)
+		Init(true),
+		ReleaseSH(false)
 	{
 
 	}
 
 	CIndirectLightingData::~CIndirectLightingData()
 	{
-
+		if (ReleaseSH)
+		{
+			delete[]SH;
+			delete AutoSH;
+		}
 	}
 }

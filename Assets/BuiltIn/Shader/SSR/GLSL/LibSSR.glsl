@@ -37,7 +37,7 @@ vec3 SSR(const vec3 baseColor, const vec4 position, const vec3 reflection, const
 	float mipLevel = roughness * 5.0;
 	vec2 ssrUV;
 	
-	// ray test
+	// RayMarch test
 	for (int i = 32; i > 0; --i)
 	{
 		rayPosition += dir;
@@ -69,5 +69,4 @@ vec3 SSR(const vec3 baseColor, const vec4 position, const vec3 reflection, const
 	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
 	
 	return mix(baseColor * 0.8, color, screenEdgefactor * z);
-	// return vec3(screenEdgefactor * z, screenEdgefactor * z, screenEdgefactor * z);
 }

@@ -42,6 +42,8 @@ namespace Skylicht
 
 		virtual void initComponent();
 
+		virtual CEntity* spawn();
+
 		CEntity* addPrimitive(const core::vector3df& pos, const core::vector3df& rotDeg, const core::vector3df& scale);
 
 		inline CPrimiviteData::EPrimitive getType()
