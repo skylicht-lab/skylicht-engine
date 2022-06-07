@@ -66,6 +66,7 @@ namespace Skylicht
 
 		CIndirectLightingData* lightData = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
 		if (lightData != NULL &&
+			lightData->AutoSH &&
 			*lightData->AutoSH &&
 			lightData->Type == CIndirectLightingData::SH9)
 		{

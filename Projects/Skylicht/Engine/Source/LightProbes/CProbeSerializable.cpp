@@ -61,4 +61,11 @@ namespace Skylicht
 	{
 
 	}
+
+	CObjectSerializable* CProbeSerializable::clone()
+	{
+		CProbeSerializable* object = new CProbeSerializable();
+		copyTo(object);
+		return object;
+	}
 }

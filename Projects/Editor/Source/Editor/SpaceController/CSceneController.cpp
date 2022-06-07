@@ -509,12 +509,12 @@ namespace Skylicht
 			}
 			else if (objectType == L"Cube")
 			{
-				std::vector<std::string> components = { "CCube", "CIndirectLighting" };
+				std::vector<std::string> components = { "CCube" };
 				createComponentObject("Cube", components, NULL);
 			}
 			else if (objectType == L"Sphere")
 			{
-				std::vector<std::string> components = { "CSphere", "CIndirectLighting" };
+				std::vector<std::string> components = { "CSphere" };
 				createComponentObject("Sphere", components, NULL);
 			}
 
@@ -1122,6 +1122,50 @@ namespace Skylicht
 
 		void CSceneController::onDuplicate()
 		{
+			// Check duplicate entity
+			CSelection* selection = CSelection::getInstance();
+			std::vector<CSelectObject*>& selected = selection->getAllSelected();
+			if (selected.size() == 1)
+			{
+				CSelectObject* selectObject = selected[0];
+				CSelectObject::ESelectType type = selectObject->getType();
+				if (type == CSelectObject::Entity)
+				{
+					CEntity* entity = m_scene->getEntityManager()->getEntityByID(selectObject->getID().c_str());
+					if (entity != NULL)
+					{
+						CEntityHandleData* data = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+						CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+
+						if (data != NULL)
+						{
+							CEntityHandler* handler = data->Handler;
+
+							// spawn new entity
+							CEntity* spawnNewEntity = handler->spawn();
+							if (spawnNewEntity != NULL)
+							{
+								CWorldTransformData* spawnTransform = (CWorldTransformData*)spawnNewEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+								spawnTransform->Relative = transform->Relative;
+
+								// change selection
+								selection->clear();
+								selection->addSelect(spawnNewEntity);
+
+								// remove gui hierachy
+								if (m_spaceHierarchy != NULL)
+									m_spaceHierarchy->getController()->updateTreeNode(handler->getGameObject());
+
+								// select on GUI
+								selectOnHierachy(spawnNewEntity);
+							}
+						}
+					}
+					return;
+				}
+			}
+
+			// Duplicate game object
 			onCopy();
 			onPaste();
 		}

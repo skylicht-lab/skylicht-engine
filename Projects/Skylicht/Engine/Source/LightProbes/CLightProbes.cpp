@@ -139,6 +139,11 @@ namespace Skylicht
 		}
 	}
 
+	CEntity* CLightProbes::spawn()
+	{
+		return addLightProbe(core::vector3df());
+	}
+
 	CEntity* CLightProbes::addLightProbe(const core::vector3df& position)
 	{
 		CEntity* entity = createEntity();
