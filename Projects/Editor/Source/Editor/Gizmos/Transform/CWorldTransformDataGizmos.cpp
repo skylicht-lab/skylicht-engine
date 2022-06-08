@@ -84,12 +84,26 @@ namespace Skylicht
 			CSceneController* sceneController = CSceneController::getInstance();
 			CScene* scene = sceneController->getScene();
 
+			CEntityHandleData* selectEntityHander = (CEntityHandleData*)m_selectEntity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+
 			std::vector<CSelectObject*>& selectObjects = CSelection::getInstance()->getAllSelected();
 			for (CSelectObject* obj : selectObjects)
 			{
 				if (obj->getType() == CSelectObject::Entity)
 				{
+					CEntity* entity = scene->getEntityManager()->getEntityByID(obj->getID().c_str());
+					if (entity != NULL)
+					{
+						if (entity == m_selectEntity)
+							continue;
 
+						CEntityHandleData* h = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+						if (h->Handler != selectEntityHander->Handler)
+							continue;
+
+						CWorldTransformData* t = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+						transforms.push_back(t);
+					}
 				}
 			}
 		}
@@ -103,7 +117,10 @@ namespace Skylicht
 			{
 				if (t != m_transform)
 				{
-
+					core::vector3df pos = t->Relative.getTranslation();
+					pos += delta;
+					t->Relative.setTranslation(pos);
+					t->HasChanged = true;
 				}
 			}
 		}
@@ -117,7 +134,10 @@ namespace Skylicht
 			{
 				if (t != m_transform)
 				{
-
+					core::vector3df scale = t->Relative.getScale();
+					scale *= delta;
+					t->Relative.setScale(scale);
+					t->HasChanged = true;
 				}
 			}
 		}
@@ -150,7 +170,9 @@ namespace Skylicht
 			{
 				if (t != m_transform)
 				{
-
+					core::matrix4 m = delta.getMatrix();
+					t->Relative *= m;
+					t->HasChanged = true;
 				}
 			}
 		}
