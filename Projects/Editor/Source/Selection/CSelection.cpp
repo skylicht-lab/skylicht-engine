@@ -90,7 +90,8 @@ namespace Skylicht
 		{
 			for (CSelectObject* selected : m_selected)
 			{
-				if (selected->getType() == CSelectObject::GameObject && selected->getID() == obj->getID())
+				if (selected->getType() == CSelectObject::GameObject &&
+					selected->getID() == obj->getID())
 				{
 					return selected;
 				}
@@ -106,7 +107,8 @@ namespace Skylicht
 
 			for (CSelectObject* selected : m_selected)
 			{
-				if (selected->getType() == CSelectObject::Entity && selected->getID() == id)
+				if (selected->getType() == CSelectObject::Entity &&
+					selected->getID() == id)
 				{
 					return selected;
 				}

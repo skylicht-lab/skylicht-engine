@@ -34,6 +34,10 @@ namespace Skylicht
 	protected:
 		CPrimiviteData::EPrimitive m_type;
 
+		SColor m_color;
+
+		bool m_instancing;
+
 	protected:
 
 		CPrimitive();
@@ -41,6 +45,10 @@ namespace Skylicht
 		virtual ~CPrimitive();
 
 		virtual void initComponent();
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 
 		virtual CEntity* spawn();
 

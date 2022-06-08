@@ -38,7 +38,9 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CPrimitive::CPrimitive() :
-		m_type(CPrimiviteData::Unknown)
+		m_type(CPrimiviteData::Unknown),
+		m_instancing(false),
+		m_color(255, 180, 180, 180)
 	{
 
 	}
@@ -61,6 +63,24 @@ namespace Skylicht
 				core::vector3df(1.0f, 1.0f, 1.0f)
 			);
 		}
+	}
+
+	CObjectSerializable* CPrimitive::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+
+		object->autoRelease(new CBoolProperty(object, "instancing", m_instancing));
+		object->autoRelease(new CColorProperty(object, "color", m_color));
+
+		return object;
+	}
+
+	void CPrimitive::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
+
+		m_instancing = object->get<bool>("instancing", false);
+		m_color = object->get<SColor>("instancing", SColor(255, 180, 180, 180));
 	}
 
 	CEntity* CPrimitive::spawn()
