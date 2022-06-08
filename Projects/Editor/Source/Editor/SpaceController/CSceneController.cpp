@@ -1125,9 +1125,11 @@ namespace Skylicht
 			// Check duplicate entity
 			CSelection* selection = CSelection::getInstance();
 			std::vector<CSelectObject*>& selected = selection->getAllSelected();
-			if (selected.size() == 1)
+			std::vector<CEntity*> newEntities;
+
+			// Duplicate entities
+			for (CSelectObject* selectObject : selected)
 			{
-				CSelectObject* selectObject = selected[0];
 				CSelectObject::ESelectType type = selectObject->getType();
 				if (type == CSelectObject::Entity)
 				{
@@ -1148,21 +1150,27 @@ namespace Skylicht
 								CWorldTransformData* spawnTransform = (CWorldTransformData*)spawnNewEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 								spawnTransform->Relative = transform->Relative;
 
-								// change selection
-								selection->clear();
-								selection->addSelect(spawnNewEntity);
+								newEntities.push_back(spawnNewEntity);
 
 								// remove gui hierachy
 								if (m_spaceHierarchy != NULL)
 									m_spaceHierarchy->getController()->updateTreeNode(handler->getGameObject());
-
-								// select on GUI
-								selectOnHierachy(spawnNewEntity);
 							}
 						}
 					}
-					return;
 				}
+			}
+
+			if (newEntities.size() > 0)
+			{
+				// change selection
+				selection->clear();
+				for (CEntity* e : newEntities)
+				{
+					selection->addSelect(e);
+					selectOnHierachy(e);
+				}
+				return;
 			}
 
 			// Duplicate game object
