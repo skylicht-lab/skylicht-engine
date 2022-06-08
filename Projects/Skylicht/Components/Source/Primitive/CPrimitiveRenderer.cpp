@@ -170,6 +170,7 @@ namespace Skylicht
 
 		meshBuffer->recalculateBoundingBox();
 		mesh->recalculateBoundingBox();
+		mesh->setHardwareMappingHint(EHM_STATIC);
 
 		m_mesh[CPrimiviteData::Cube] = mesh;
 		m_materials[CPrimiviteData::Cube] = mat;
@@ -191,6 +192,7 @@ namespace Skylicht
 
 		mb->recalculateBoundingBox();
 		mesh->recalculateBoundingBox();
+		mesh->setHardwareMappingHint(EHM_STATIC);
 
 		m_mesh[primitive] = mesh;
 		m_materials[primitive] = mat;
