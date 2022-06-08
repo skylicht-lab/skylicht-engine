@@ -50,14 +50,4 @@ namespace Skylicht
 	{
 
 	}
-
-	CObjectSerializable* CCube::createSerializable()
-	{
-		return CPrimitive::createSerializable();
-	}
-
-	void CCube::loadSerializable(CObjectSerializable* object)
-	{
-		CPrimitive::loadSerializable(object);
-	}
 }

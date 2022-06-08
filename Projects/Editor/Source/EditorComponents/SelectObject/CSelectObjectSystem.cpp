@@ -161,7 +161,7 @@ namespace Skylicht
 				{
 					m_results.push_back(collision);
 
-					// Check game object is sellected
+					// select on game object
 					if (CSelection::getInstance()->getSelected(collision->GameObject))
 					{
 						if (selectedBox.find(collision->GameObject) == selectedBox.end())
@@ -169,13 +169,24 @@ namespace Skylicht
 						else
 							selectedBox[collision->GameObject].addInternalBox(collision->TransformBBox);
 					}
+					else if (collision->Entity)
+					{
+						// select on entity
+						if (CSelection::getInstance()->getSelected(collision->Entity))
+						{
+							if (selectedBox.find(collision->GameObject) == selectedBox.end())
+								selectedBox[collision->GameObject] = collision->TransformBBox;
+							else
+								selectedBox[collision->GameObject].addInternalBox(collision->TransformBBox);
+						}
+					}
 				}
 			}
 
 			for (const auto& i : selectedBox)
 			{
 				// Draw bbox for selected object
-				CHandles::getInstance()->draw3DBox(i.second, SColor(180, 255, 255, 255));
+				CHandles::getInstance()->draw3DBox(i.second, SColor(200, 0, 255, 0));
 			}
 		}
 	}
