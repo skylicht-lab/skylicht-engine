@@ -164,6 +164,8 @@ namespace Skylicht
 
 				CTreeNode* selectPrevChild();
 
+				void selectFromTo(CTreeNode* from, CTreeNode* to);
+
 				void setSelected(bool b, bool callEvent = true);
 
 				virtual void deselectAll(bool callEvent = true);

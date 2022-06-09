@@ -80,6 +80,10 @@ namespace Skylicht
 
 			CTreeNode::~CTreeNode()
 			{
+				CTreeControl* treeControl = (CTreeControl*)(m_root);
+				if (treeControl->getLastSelected() == this)
+					treeControl->setLastSelected(NULL);
+
 				if (m_parentNode)
 					m_parentNode->invalidate();
 
@@ -276,10 +280,19 @@ namespace Skylicht
 			void CTreeNode::onDown(CBase* base)
 			{
 				CTreeControl* treeControl = (CTreeControl*)(m_root);
+				CInput* input = CInput::getInput();
+
 				if (treeControl->isMultiSelected())
 				{
-					if (!CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+					if (input->isKeyDown(GUI::EKey::KEY_CONTROL) || input->isKeyDown(GUI::EKey::KEY_SHIFT))
+					{
+						// hold shift or control
+					}
+					else
+					{
+						// deselect all
 						m_root->onNodeClick(base);
+					}
 				}
 				else
 				{
@@ -287,7 +300,33 @@ namespace Skylicht
 					m_root->onNodeClick(base);
 				}
 
-				setSelected(!m_selected);
+				if (input->isKeyDown(GUI::EKey::KEY_SHIFT) && treeControl->getLastSelected())
+				{
+					CTreeNode* from = treeControl->getLastSelected();
+					CTreeNode* to = this;
+
+					SPoint fromPos = from->localPosToCanvas();
+					SPoint toPos = to->localPosToCanvas();
+
+					CTreeNode* lastHit = from;
+
+					if (fromPos.Y > toPos.Y)
+					{
+						CTreeNode* t = to;
+						to = from;
+						from = t;
+
+						lastHit = to;
+					}
+
+					treeControl->deselectAll();
+					treeControl->selectFromTo(from, to);
+					treeControl->setLastSelected(lastHit);
+				}
+				else
+				{
+					setSelected(!m_selected);
+				}
 			}
 
 			void CTreeNode::onNodeClick(CBase* base)
@@ -416,6 +455,46 @@ namespace Skylicht
 				return NULL;
 			}
 
+			void CTreeNode::selectFromTo(CTreeNode* from, CTreeNode* to)
+			{
+				std::list<CTreeNode*> priorityQueue;
+
+				// add the root first
+				priorityQueue.push_back(this);
+
+				bool willSelected = false;
+
+				while (priorityQueue.size() > 0)
+				{
+					CTreeNode* visit = priorityQueue.front();
+					priorityQueue.pop_front();
+
+					if (visit == from || willSelected)
+					{
+						visit->setSelected(true);
+						willSelected = true;
+					}
+
+					if (visit == to)
+						break;
+
+					if (visit->m_expand && visit->m_innerPanel->Children.size() > 0)
+					{
+						std::list<CTreeNode*>::iterator i = priorityQueue.begin();
+
+						for (CBase* c : visit->m_innerPanel->Children)
+						{
+							CTreeNode* node = dynamic_cast<CTreeNode*>(c);
+							if (node && !node->isDisabled())
+							{
+								i = priorityQueue.insert(i, node);
+								++i;
+							}
+						}
+					}
+				}
+			}
+
 			CTreeNode* CTreeNode::selectNextChild()
 			{
 				std::list<CTreeNode*> priorityQueue;
@@ -468,6 +547,12 @@ namespace Skylicht
 
 				if (m_row != NULL)
 					m_row->setToggle(b);
+
+				if (b == true)
+				{
+					CTreeControl* treeControl = (CTreeControl*)(m_root);
+					treeControl->setLastSelected(this);
+				}
 
 				if (callEvent == true)
 				{
