@@ -35,7 +35,8 @@ namespace Skylicht
 		{
 			CTreeControl::CTreeControl(CBase* parent) :
 				CTreeNode(parent, this),
-				m_multiSelected(false)
+				m_multiSelected(false),
+				m_lastSelected(NULL)
 			{
 				m_title->remove();
 				m_expandButton->remove();

@@ -38,6 +38,7 @@ namespace Skylicht
 			{
 			protected:
 				CScrollControl* m_scrollControl;
+				CTreeNode* m_lastSelected;
 
 				bool m_multiSelected;
 
@@ -79,6 +80,16 @@ namespace Skylicht
 				inline bool isMultiSelected()
 				{
 					return m_multiSelected;
+				}
+
+				inline void setLastSelected(CTreeNode* node)
+				{
+					m_lastSelected = node;
+				}
+
+				inline CTreeNode* getLastSelected()
+				{
+					return m_lastSelected;
 				}
 			};
 		}
