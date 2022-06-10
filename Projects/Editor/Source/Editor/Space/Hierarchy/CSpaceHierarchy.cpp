@@ -123,6 +123,15 @@ namespace Skylicht
 
 		void CSpaceHierarchy::scrollToNode(GUI::CTreeNode* node)
 		{
+			// expand on tree control
+			GUI::CTreeNode* parent = node->getParentNode();
+			while (parent != m_tree)
+			{
+				parent->expand(true);
+				parent = parent->getParentNode();
+			}
+
+			// scroll to this item
 			m_tree->getScrollControl()->scrollToItem(node);
 		}
 	}

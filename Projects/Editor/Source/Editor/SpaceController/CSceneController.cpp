@@ -1069,6 +1069,8 @@ namespace Skylicht
 			CSelection* selection = CSelection::getInstance();
 			CCopyPaste* copyPaste = CCopyPaste::getInstance();
 
+			std::vector<CGameObject*> newObjects;
+
 			CSelectObject* lastSelected = selection->getLastSelected();
 			if (lastSelected == NULL)
 			{
@@ -1088,11 +1090,11 @@ namespace Skylicht
 					{
 						CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
 						if (container != NULL)
-							CCopyPaste::getInstance()->paste(container);
+							newObjects = CCopyPaste::getInstance()->paste(container);
 						else
 						{
 							container = dynamic_cast<CContainerObject*>(gameObject->getParent());
-							CCopyPaste::getInstance()->paste(container);
+							newObjects = CCopyPaste::getInstance()->paste(container);
 						}
 					}
 				}
@@ -1108,16 +1110,19 @@ namespace Skylicht
 						{
 							CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
 							if (container != NULL)
-								CCopyPaste::getInstance()->paste(container);
+								newObjects = CCopyPaste::getInstance()->paste(container);
 							else
 							{
 								container = dynamic_cast<CContainerObject*>(gameObject->getParent());
-								CCopyPaste::getInstance()->paste(container);
+								newObjects = CCopyPaste::getInstance()->paste(container);
 							}
 						}
 					}
 				}
 			}
+
+			selection->clear();
+			selection->addSelect(newObjects);
 		}
 
 		void CSceneController::onDuplicate()
