@@ -83,8 +83,10 @@ namespace Skylicht
 			return false;
 		}
 
-		void CCopyPaste::paste(CContainerObject* target)
+		std::vector<CGameObject*> CCopyPaste::paste(CContainerObject* target)
 		{
+			std::vector<CGameObject*> results;
+
 			CSceneController* sceneController = CSceneController::getInstance();
 			CHierachyNode* parentNode = NULL;
 			CHierarchyController* hierarchyController = NULL;
@@ -100,13 +102,19 @@ namespace Skylicht
 				// paste object data
 				CGameObject* gameObject = target->createObject(objectData, true);
 
+				if (gameObject)
+					results.push_back(gameObject);
+
 				// update on GUI editor
 				if (hierarchyController != NULL && gameObject != NULL && parentNode != NULL)
 				{
 					GUI::CTreeNode* node = hierarchyController->addToTreeNode(sceneController->buildHierarchyData(gameObject, parentNode));
 					node->collapse(false);
+					node->setSelected(true);
 				}
 			}
+
+			return results;
 		}
 	}
 }
