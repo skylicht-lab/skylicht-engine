@@ -1,4 +1,5 @@
 /*
+/*
 !@
 MIT License
 
@@ -46,7 +47,7 @@ namespace Skylicht
 
 			void copy(std::vector<CGameObject*>& objects);
 
-			void paste(CContainerObject* target);
+			std::vector<CGameObject*> paste(CContainerObject* target);
 
 			bool checkInsideParent(CGameObject* gameObject, std::vector<CContainerObject*> list);
 		};
