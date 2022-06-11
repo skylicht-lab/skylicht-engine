@@ -88,9 +88,6 @@ namespace Skylicht
 			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			CLightProbeData* light = (CLightProbeData*)m_entities[i]->getDataByIndex(CLightProbeData::DataTypeIndex);
 
-			// save id
-			probeData->EntityID.set(m_entities[i]->getID());
-
 			// save transform
 			probeData->Transform.set(world->Relative);
 
@@ -107,15 +104,12 @@ namespace Skylicht
 		CComponentSystem::loadSerializable(object);
 
 		CArraySerializable* probes = (CArraySerializable*)object->getProperty("Probes");
-		int numProbes = probes->getElementCount();
-
-		removeAllEntities();
-
 		if (probes == NULL)
 			return;
 
-		if (probes->getElementCount() < numProbes)
-			return;
+		int numProbes = probes->getElementCount();
+
+		removeAllEntities();
 
 		for (int i = 0; i < numProbes; i++)
 		{
@@ -126,9 +120,6 @@ namespace Skylicht
 			CEntity* entity = addLightProbe(core::vector3df());
 			CWorldTransformData* world = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			CLightProbeData* light = (CLightProbeData*)entity->getDataByIndex(CLightProbeData::DataTypeIndex);
-
-			// set id
-			entity->setID(shData->EntityID.getString());
 
 			// set transform
 			world->Relative = shData->Transform.get();

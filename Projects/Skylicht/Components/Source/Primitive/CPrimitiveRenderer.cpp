@@ -36,10 +36,7 @@ namespace Skylicht
 		m_pipelineType = IRenderPipeline::Mix;
 
 		for (int i = 0; i < (int)CPrimiviteData::Count; i++)
-		{
 			m_mesh[i] = NULL;
-			m_materials[i] = NULL;
-		}
 
 		const IGeometryCreator* geometry = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
 
@@ -62,9 +59,6 @@ namespace Skylicht
 		{
 			if (m_mesh[i])
 				m_mesh[i]->drop();
-
-			if (m_materials[i])
-				m_materials[i]->drop();
 		}
 	}
 
@@ -160,20 +154,13 @@ namespace Skylicht
 			ib->setIndex(i, u[i]);
 
 		CMesh* mesh = new CMesh();
-		CMaterial* mat = new CMaterial("Primitive", "BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
-
-		mesh->addMeshBuffer(meshBuffer, "", mat);
-
-		mat->setUniform4("uColor", SColor(255, 180, 180, 180));
-		mat->addAffectMesh(meshBuffer);
-		mat->applyMaterial();
+		mesh->addMeshBuffer(meshBuffer);
 
 		meshBuffer->recalculateBoundingBox();
 		mesh->recalculateBoundingBox();
 		mesh->setHardwareMappingHint(EHM_STATIC);
 
 		m_mesh[CPrimiviteData::Cube] = mesh;
-		m_materials[CPrimiviteData::Cube] = mat;
 
 		meshBuffer->drop();
 	}
@@ -181,29 +168,23 @@ namespace Skylicht
 	void CPrimitiveRenderer::initMesh(IMesh* primitiveMesh, CPrimiviteData::EPrimitive primitive)
 	{
 		CMesh* mesh = new CMesh();
-		CMaterial* mat = new CMaterial("Primitive", "BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 
 		IMeshBuffer* mb = primitiveMesh->getMeshBuffer(0);
-		mesh->addMeshBuffer(mb, "", mat);
-
-		mat->setUniform4("uColor", SColor(255, 180, 180, 180));
-		mat->addAffectMesh(mb);
-		mat->applyMaterial();
+		mesh->addMeshBuffer(mb);
 
 		mb->recalculateBoundingBox();
 		mesh->recalculateBoundingBox();
 		mesh->setHardwareMappingHint(EHM_STATIC);
 
 		m_mesh[primitive] = mesh;
-		m_materials[primitive] = mat;
 	}
 
 	void CPrimitiveRenderer::beginQuery(CEntityManager* entityManager)
 	{
 		for (int i = 0; i < CPrimiviteData::Count; i++)
 		{
-			m_transforms[i].set_used(0);
 			m_primitives[i].set_used(0);
+			m_transforms[i].set_used(0);
 		}
 	}
 
@@ -213,11 +194,8 @@ namespace Skylicht
 		if (p != NULL)
 		{
 			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
-			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-
 			if (visible->Visible)
 			{
-				m_transforms[p->Type].push_back(transformData->World);
 				m_primitives[p->Type].push_back(p);
 			}
 		}
@@ -228,24 +206,50 @@ namespace Skylicht
 
 	}
 
+	int cmpfunc(const void* a, const void* b)
+	{
+		CPrimiviteData* pa = *((CPrimiviteData**)a);
+		CPrimiviteData* pb = *((CPrimiviteData**)b);
+
+		return pa->Material > pb->Material;
+	}
+
 	void CPrimitiveRenderer::update(CEntityManager* entityManager)
 	{
+		for (int type = 0; type < CPrimiviteData::Count; type++)
+		{
+			if (m_mesh[type] == NULL)
+				continue;
 
+			core::array<CPrimiviteData*>& primitives = m_primitives[type];
+			u32 count = primitives.size();
+
+			// need sort by material
+			qsort(primitives.pointer(), count, sizeof(CPrimiviteData*), cmpfunc);
+
+			// get world transform			
+			for (u32 i = 0; i < count; i++)
+			{
+				CEntity* entity = entityManager->getEntity(primitives[i]->EntityIndex);
+
+				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				m_transforms[type].push_back(transform->World);
+			}
+		}
 	}
 
 	void CPrimitiveRenderer::render(CEntityManager* entityManager)
 	{
 		for (int type = 0; type < CPrimiviteData::Count; type++)
 		{
-			if (m_mesh[type] == NULL || m_materials[type] == NULL)
+			if (m_mesh[type] == NULL)
 				continue;
 
 			renderPrimitive(
 				entityManager,
 				m_primitives[type],
 				m_transforms[type],
-				m_mesh[type],
-				m_materials[type]
+				m_mesh[type]
 			);
 		}
 	}
@@ -254,20 +258,34 @@ namespace Skylicht
 		CEntityManager* entityManager,
 		core::array<CPrimiviteData*>& primitives,
 		core::array<core::matrix4>& transforms,
-		CMesh* mesh,
-		CMaterial* material)
+		CMesh* mesh)
 	{
 		IVideoDriver* driver = getVideoDriver();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
-		if (!rp->canRenderMaterial(material))
-			return;
+		CMaterial* mat = NULL;
 
 		u32 count = transforms.size();
 		for (u32 i = 0; i < count; i++)
 		{
-			core::matrix4& world = transforms[i];
 			CPrimiviteData* data = primitives[i];
+
+			if (data->Material == NULL || !rp->canRenderMaterial(data->Material))
+				continue;
+
+			if (mat != data->Material)
+			{
+				mat = data->Material;
+				CShaderMaterial::setMaterial(data->Material);
+
+				for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
+				{
+					IMeshBuffer* mb = mesh->MeshBuffers[i];
+					mat->applyMaterial(mb->getMaterial());
+				}
+			}
+
+			core::matrix4& world = transforms[i];
 			driver->setTransform(video::ETS_WORLD, world);
 
 			for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)

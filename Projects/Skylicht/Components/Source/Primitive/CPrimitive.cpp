@@ -40,19 +40,25 @@ namespace Skylicht
 	CPrimitive::CPrimitive() :
 		m_type(CPrimiviteData::Unknown),
 		m_instancing(false),
-		m_color(255, 180, 180, 180)
+		m_color(255, 180, 180, 180),
+		m_material(NULL)
 	{
 
 	}
 
 	CPrimitive::~CPrimitive()
 	{
-
+		if (m_material)
+			delete m_material;
 	}
 
 	void CPrimitive::initComponent()
 	{
 		m_gameObject->getEntityManager()->addRenderSystem<CPrimitiveRenderer>();
+
+		// init material
+		m_material = new CMaterial("Primitive", "BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+		m_material->setUniform4("uColor", m_color);
 
 		// add default primitive
 		if (m_type != CPrimiviteData::Unknown)
@@ -72,6 +78,21 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "instancing", m_instancing));
 		object->autoRelease(new CColorProperty(object, "color", m_color));
 
+		CArraySerializable* primitives = new CArraySerializable("Primitives");
+		object->addProperty(primitives);
+		object->autoRelease(primitives);
+
+		int numPrimities = (int)m_entities.size();
+		for (int i = 0; i < numPrimities; i++)
+		{
+			CMatrixProperty* transformData = new CMatrixProperty(primitives, "transform");
+			primitives->autoRelease(transformData);
+
+			// get world transform data
+			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			transformData->set(world->Relative);
+		}
+
 		return object;
 	}
 
@@ -80,7 +101,34 @@ namespace Skylicht
 		CComponentSystem::loadSerializable(object);
 
 		m_instancing = object->get<bool>("instancing", false);
-		m_color = object->get<SColor>("instancing", SColor(255, 180, 180, 180));
+		m_color = object->get<SColor>("color", SColor(255, 180, 180, 180));
+
+		m_material->setUniform4("uColor", m_color);
+
+		CArraySerializable* primitives = (CArraySerializable*)object->getProperty("Primitives");
+		if (primitives == NULL)
+			return;
+
+		int numPrimities = primitives->getElementCount();
+
+		removeAllEntities();
+
+		for (int i = 0; i < numPrimities; i++)
+		{
+			CMatrixProperty* transformData = (CMatrixProperty*)primitives->getElement(i);
+			if (transformData == NULL)
+				return;
+
+			CEntity* entity = addPrimitive(
+				core::vector3df(),
+				core::vector3df(),
+				core::vector3df(1.0f, 1.0f, 1.0f)
+			);
+
+			// set transform
+			CWorldTransformData* world = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			world->Relative = transformData->get();
+		}
 	}
 
 	CEntity* CPrimitive::spawn()
@@ -94,6 +142,7 @@ namespace Skylicht
 
 		CPrimiviteData* primitiveData = entity->addData<CPrimiviteData>();
 		primitiveData->Type = m_type;
+		primitiveData->Material = m_material;
 
 		// Culling
 		entity->addData<CWorldInverseTransformData>();

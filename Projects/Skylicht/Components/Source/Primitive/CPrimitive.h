@@ -38,6 +38,8 @@ namespace Skylicht
 
 		bool m_instancing;
 
+		CMaterial* m_material;
+
 	protected:
 
 		CPrimitive();
