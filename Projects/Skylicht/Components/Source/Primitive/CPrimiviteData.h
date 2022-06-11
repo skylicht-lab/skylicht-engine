@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
+#include "Material/CMaterial.h"
 
 namespace Skylicht
 {
@@ -39,8 +40,14 @@ namespace Skylicht
 			Count
 		};
 
+		CPrimiviteData();
+
+		virtual ~CPrimiviteData();
+
 		DECLARE_DATA_TYPE_INDEX;
 
 		EPrimitive Type;
+
+		CMaterial* Material;
 	};
 }

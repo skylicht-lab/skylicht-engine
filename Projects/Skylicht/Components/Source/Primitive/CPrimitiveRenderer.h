@@ -35,7 +35,6 @@ namespace Skylicht
 	{
 	protected:
 		CMesh* m_mesh[CPrimiviteData::Count];
-		CMaterial* m_materials[CPrimiviteData::Count];
 
 		core::array<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
 		core::array<core::matrix4> m_transforms[CPrimiviteData::Count];
@@ -62,8 +61,7 @@ namespace Skylicht
 		void renderPrimitive(CEntityManager* entityManager,
 			core::array<CPrimiviteData*>& primitives,
 			core::array<core::matrix4>& transforms,
-			CMesh* mesh,
-			CMaterial* material
+			CMesh* mesh
 		);
 	};
 }

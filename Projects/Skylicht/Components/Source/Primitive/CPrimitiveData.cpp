@@ -28,4 +28,16 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	IMPLEMENT_DATA_TYPE_INDEX(CPrimiviteData);
+
+	CPrimiviteData::CPrimiviteData() :
+		Type(CPrimiviteData::Unknown),
+		Material(NULL)
+	{
+
+	}
+
+	CPrimiviteData::~CPrimiviteData()
+	{
+
+	}
 }

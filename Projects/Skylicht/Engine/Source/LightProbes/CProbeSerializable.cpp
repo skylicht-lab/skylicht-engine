@@ -31,7 +31,6 @@ namespace Skylicht
 
 	CProbeSerializable::CProbeSerializable() :
 		CObjectSerializable(getTypeName().c_str()),
-		EntityID(this, "entity_id"),
 		Transform(this, "transform")
 	{
 		char name[64];
@@ -45,7 +44,6 @@ namespace Skylicht
 
 	CProbeSerializable::CProbeSerializable(CObjectSerializable* parent) :
 		CObjectSerializable(getTypeName().c_str(), parent),
-		EntityID(this, "entity_id"),
 		Transform(this, "transform")
 	{
 		char name[64];

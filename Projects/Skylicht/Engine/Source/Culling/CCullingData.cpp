@@ -32,7 +32,7 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CCullingData);
 
 	CCullingData::CCullingData() :
-		Type(CCullingData::FrustumBox),
+		Type(CCullingData::BoundingBox),
 		Visible(true)
 	{
 
