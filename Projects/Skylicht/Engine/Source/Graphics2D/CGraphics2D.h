@@ -46,6 +46,9 @@ namespace Skylicht
 
 		IVideoDriver* m_driver;
 
+		std::vector<IMeshBuffer*> m_allBuffers;
+		int m_bufferID;
+
 		std::vector<CCanvas*> m_canvas;
 
 	protected:
@@ -90,6 +93,10 @@ namespace Skylicht
 		void beginRenderGUI(const core::matrix4& projection, const core::matrix4& view);
 
 		void endRenderGUI();
+
+		void prepareBuffer();
+
+		void nextBuffer();
 
 	public:
 
