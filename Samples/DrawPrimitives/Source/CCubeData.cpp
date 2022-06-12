@@ -25,13 +25,13 @@ void CCubeData::initCube(float size)
 	// that will render from RenderMesh/CMeshRenderer.cpp
 	RenderMesh = new CMesh();
 
-	IVideoDriver *driver = getVideoDriver();
+	IVideoDriver* driver = getVideoDriver();
 
 	// Irrlicht Engine Mesh Buffer instance
 	// http://irrlicht.sourceforge.net/docu/classirr_1_1scene_1_1_c_mesh_buffer.html
 	CubeMeshBuffer = new CMeshBuffer<S3DVertex>(driver->getVertexDescriptor(EVT_STANDARD), EIT_16BIT);
-	IIndexBuffer *ib = CubeMeshBuffer->getIndexBuffer();
-	IVertexBuffer *vb = CubeMeshBuffer->getVertexBuffer();
+	IIndexBuffer* ib = CubeMeshBuffer->getIndexBuffer();
+	IVertexBuffer* vb = CubeMeshBuffer->getVertexBuffer();
 
 	// Create vertices
 	video::SColor clr1(255, 255, 0, 0);
@@ -49,37 +49,37 @@ void CCubeData::initCube(float size)
 		video::S3DVertex(0, 0, 0, 0, 0, -1, clr1, 0, 1),
 		video::S3DVertex(1, 0, 0, 0, 0, -1, clr1, 1, 1),
 		video::S3DVertex(1, 1, 0, 0, 0, -1, clr1, 1, 0),
-		video::S3DVertex(0, 1, 0, 0, 0, -1, clr1, 1, 0),
+		video::S3DVertex(0, 1, 0, 0, 0, -1, clr1, 0, 0),
 
 		// front
 		video::S3DVertex(0, 0, 1, 0, 0, 1, clr2, 0, 1),
 		video::S3DVertex(1, 0, 1, 0, 0, 1, clr2, 1, 1),
 		video::S3DVertex(1, 1, 1, 0, 0, 1, clr2, 1, 0),
-		video::S3DVertex(0, 1, 1, 0, 0, 1, clr2, 1, 0),
+		video::S3DVertex(0, 1, 1, 0, 0, 1, clr2, 0, 0),
 
 		// bottom
 		video::S3DVertex(0, 0, 0, 0, -1, 0, clr3, 0, 1),
 		video::S3DVertex(0, 0, 1, 0, -1, 0, clr3, 1, 1),
 		video::S3DVertex(1, 0, 1, 0, -1, 0, clr3, 1, 0),
-		video::S3DVertex(1, 0, 0, 0, -1, 0, clr3, 1, 0),
+		video::S3DVertex(1, 0, 0, 0, -1, 0, clr3, 0, 0),
 
 		// top
 		video::S3DVertex(0, 1, 0, 0, 1, 0, clr4, 0, 1),
 		video::S3DVertex(0, 1, 1, 0, 1, 0, clr4, 1, 1),
 		video::S3DVertex(1, 1, 1, 0, 1, 0, clr4, 1, 0),
-		video::S3DVertex(1, 1, 0, 0, 1, 0, clr4, 1, 0),
+		video::S3DVertex(1, 1, 0, 0, 1, 0, clr4, 0, 0),
 
 		// left
 		video::S3DVertex(1, 0, 0, 1, 0, 0, clr5, 0, 1),
 		video::S3DVertex(1, 0, 1, 1, 0, 0, clr5, 1, 1),
 		video::S3DVertex(1, 1, 1, 1, 0, 0, clr5, 1, 0),
-		video::S3DVertex(1, 1, 0, 1, 0, 0, clr5, 1, 0),
+		video::S3DVertex(1, 1, 0, 1, 0, 0, clr5, 0, 0),
 
 		// right
 		video::S3DVertex(0, 0, 0, -1, 0, 0, clr5, 0, 1),
 		video::S3DVertex(0, 0, 1, -1, 0, 0, clr5, 1, 1),
 		video::S3DVertex(0, 1, 1, -1, 0, 0, clr5, 1, 0),
-		video::S3DVertex(0, 1, 0, -1, 0, 0, clr5, 1, 0),
+		video::S3DVertex(0, 1, 0, -1, 0, 0, clr5, 0, 0),
 	};
 
 	for (u32 i = 0; i < 24; ++i)
