@@ -38,7 +38,12 @@ namespace Skylicht
 
 		bool m_instancing;
 
+		bool m_useCustomMaterial;
+
 		CMaterial* m_material;
+		CMaterial* m_customMaterial;
+
+		std::string m_materialPath;
 
 	protected:
 

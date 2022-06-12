@@ -33,15 +33,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CCullingData.h"
 #include "Culling/CCullingBBoxData.h"
 #include "IndirectLighting/CIndirectLightingData.h"
-
+#include "Material/CMaterialManager.h"
 
 namespace Skylicht
 {
 	CPrimitive::CPrimitive() :
 		m_type(CPrimiviteData::Unknown),
 		m_instancing(false),
+		m_useCustomMaterial(false),
 		m_color(255, 180, 180, 180),
-		m_material(NULL)
+		m_material(NULL),
+		m_customMaterial(NULL)
 	{
 
 	}
@@ -76,7 +78,18 @@ namespace Skylicht
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
 		object->autoRelease(new CBoolProperty(object, "instancing", m_instancing));
-		object->autoRelease(new CColorProperty(object, "color", m_color));
+
+		CBoolProperty* useCustom = new CBoolProperty(object, "custom material", m_useCustomMaterial);
+		object->autoRelease(useCustom);
+
+		CColorProperty* color = new CColorProperty(object, "color", m_color);
+		color->setUIHeader("Default Material");
+		object->autoRelease(color);
+
+		std::vector<std::string> exts = { "mat" };
+		CFilePathProperty* material = new CFilePathProperty(object, "material", m_materialPath.c_str(), exts);
+		material->setUIHeader("Custom Material");
+		object->autoRelease(material);
 
 		CArraySerializable* primitives = new CArraySerializable("Primitives");
 		object->addProperty(primitives);
@@ -101,9 +114,27 @@ namespace Skylicht
 		CComponentSystem::loadSerializable(object);
 
 		m_instancing = object->get<bool>("instancing", false);
+		bool useCustom = object->get<bool>("custom material", false);
 		m_color = object->get<SColor>("color", SColor(255, 180, 180, 180));
+		m_materialPath = object->get<std::string>("material", std::string());
+
+		if (m_useCustomMaterial != useCustom)
+		{
+			if (useCustom == true && !m_materialPath.empty())
+			{
+				m_customMaterial = NULL;
+
+				ArrayMaterial& loadMaterials = CMaterialManager::getInstance()->loadMaterial(m_materialPath.c_str(), true, std::vector<std::string>());
+				if (loadMaterials.size() > 0)
+					m_customMaterial = loadMaterials[0];
+			}
+
+			m_useCustomMaterial = useCustom;
+		}
 
 		m_material->setUniform4("uColor", m_color);
+		if (m_customMaterial)
+			m_customMaterial->setUniform4("uColor", m_color);
 
 		CArraySerializable* primitives = (CArraySerializable*)object->getProperty("Primitives");
 		if (primitives == NULL)
@@ -142,7 +173,7 @@ namespace Skylicht
 
 		CPrimiviteData* primitiveData = entity->addData<CPrimiviteData>();
 		primitiveData->Type = m_type;
-		primitiveData->Material = m_material;
+		primitiveData->Material = m_useCustomMaterial && m_customMaterial ? m_customMaterial : m_material;
 
 		// Culling
 		entity->addData<CWorldInverseTransformData>();
