@@ -59,6 +59,13 @@ namespace Skylicht
 			bool m_endCheck;
 			bool m_useLocalSpace;
 
+			bool m_snapXZ;
+			bool m_snapY;
+			bool m_snapRotate;
+			float m_snapDistanceXZ;
+			float m_snapDistanceY;
+			float m_snapRotateDeg;
+
 			CHandlesRenderer* m_handlesRenderer;
 			CGizmosRenderer* m_gizmosRenderer;
 
@@ -89,6 +96,66 @@ namespace Skylicht
 			inline bool useLocalSpace()
 			{
 				return m_useLocalSpace;
+			}
+
+			inline void snapXZ(bool b)
+			{
+				m_snapXZ = b;
+			}
+
+			inline bool isSnapXZ()
+			{
+				return m_snapXZ;
+			}
+
+			inline void snapY(bool b)
+			{
+				m_snapY = b;
+			}
+
+			inline bool isSnapY()
+			{
+				return m_snapY;
+			}
+
+			inline void snapRotate(bool b)
+			{
+				m_snapRotate = b;
+			}
+
+			inline bool isSnapRotate()
+			{
+				return m_snapRotate;
+			}
+
+			inline void setSnapDistanceXZ(float d)
+			{
+				m_snapDistanceXZ = d;
+			}
+
+			inline float getSnapDistanceXZ()
+			{
+				return m_snapDistanceXZ;
+			}
+
+			inline void setSnapDistanceY(float d)
+			{
+				m_snapDistanceY = d;
+			}
+
+			inline float getSnapDistanceY()
+			{
+				return m_snapDistanceY;
+			}
+
+			inline void setSnapRotateDeg(float d)
+			{
+				m_snapRotateDeg = d;
+			}
+
+			inline float getSnapRotateDeg()
+			{
+				return m_snapRotateDeg;
 			}
 
 			virtual bool OnEvent(const SEvent& event);

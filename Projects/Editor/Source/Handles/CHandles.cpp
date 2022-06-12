@@ -41,7 +41,13 @@ namespace Skylicht
 			m_endCheck(false),
 			m_useLocalSpace(true),
 			m_handlesRenderer(NULL),
-			m_gizmosRenderer(NULL)
+			m_gizmosRenderer(NULL),
+			m_snapXZ(false),
+			m_snapY(false),
+			m_snapRotate(false),
+			m_snapDistanceXZ(1.0f),
+			m_snapDistanceY(1.0f),
+			m_snapRotateDeg(10.0f)
 		{
 
 		}

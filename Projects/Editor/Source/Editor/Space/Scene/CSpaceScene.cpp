@@ -127,8 +127,28 @@ namespace Skylicht
 			worldSpaceDropDown->setSelectIndex(0, false);
 			worldSpaceDropDown->setDisabled(true);
 			worldSpaceDropDown->OnChanged = BIND_LISTENER(&CSpaceScene::onToolbarWorldSpace, this);
-
 			m_toolbarButton[World] = worldSpaceDropDown;
+
+			toolbar->addSpace();
+
+			button = toolbar->addButton(L"Snap", GUI::ESystemIcon::Snap);
+			m_snapSettingMenu = new GUI::CMenu(window->getCanvas());
+			m_snapSettingController = new CSnapSettingController(editor, m_snapSettingMenu);
+			button->setToggle(true);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onSnapSetting, this);
+			m_toolbarButton[Snap] = button;
+
+			CHandles* handles = CHandles::getInstance();
+			if (handles->isSnapRotate() ||
+				handles->isSnapXZ() ||
+				handles->isSnapY())
+			{
+				button->setIsToggle(true);
+			}
+			else
+			{
+				button->setIsToggle(false);
+			}
 
 			getSubjectTransformGizmos().addObserver(this);
 
@@ -446,7 +466,28 @@ namespace Skylicht
 			initRenderPipeline(base->getSize().Width, base->getSize().Height);
 		}
 
-		// tool bar
+		// toolbar
+		void CSpaceScene::onSnapSetting(GUI::CBase* base)
+		{
+			m_snapSettingMenu->open(base);
+			m_snapSettingController->onShow();
+		}
+
+		void CSpaceScene::updateSnapButton()
+		{
+			CHandles* handles = CHandles::getInstance();
+			if (handles->isSnapRotate() ||
+				handles->isSnapXZ() ||
+				handles->isSnapY())
+			{
+				m_toolbarButton[Snap]->setIsToggle(true);
+			}
+			else
+			{
+				m_toolbarButton[Snap]->setIsToggle(false);
+			}
+		}
+
 		void CSpaceScene::onCameraSetting(GUI::CBase* base)
 		{
 			m_cameraSettingMenu->open(base);
