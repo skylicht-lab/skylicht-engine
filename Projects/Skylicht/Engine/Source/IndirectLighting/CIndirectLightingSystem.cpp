@@ -71,11 +71,8 @@ namespace Skylicht
 			lightData->Type == CIndirectLightingData::SH9)
 		{
 			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			if (transformData->NeedValidate || lightData->Init || m_probeChange)
-			{
-				m_entities.push_back(lightData);
-				m_entitiesPositions.push_back(transformData);
-			}
+			m_entities.push_back(lightData);
+			m_entitiesPositions.push_back(transformData);
 		}
 	}
 
@@ -100,8 +97,6 @@ namespace Skylicht
 				f32* m = worlds[i]->World.pointer();
 				kd_insert3f(m_kdtree, m[12], m[13], m[14], data[i]);
 			}
-
-			m_probeChange = false;
 		}
 
 		u32 n = m_entitiesPositions.size();
@@ -110,6 +105,13 @@ namespace Skylicht
 
 		for (u32 i = 0; i < n; i++)
 		{
+			if (!worlds[i]->NeedValidate &&
+				!data[i]->Init &&
+				!m_probeChange)
+			{
+				continue;
+			}
+
 			core::vector3df position = worlds[i]->World.getTranslation();
 
 			// query nearst probe
@@ -144,5 +146,7 @@ namespace Skylicht
 				kd_res_free(res);
 			}
 		}
+
+		m_probeChange = false;
 	}
 }

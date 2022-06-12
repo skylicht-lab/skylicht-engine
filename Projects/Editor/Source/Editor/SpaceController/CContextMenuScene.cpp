@@ -231,11 +231,14 @@ namespace Skylicht
 
 					// delete entity
 					CEntityHandleData* data = (CEntityHandleData*)contextEntity->getDataByIndex(CEntityHandleData::DataTypeIndex);
-					data->Handler->removeEntity(contextEntity);
+					if (data)
+					{
+						data->Handler->removeEntity(contextEntity);
 
-					// remove GUI
-					contextNode->remove();
-					sceneController->clearContextNode();
+						// remove GUI
+						contextNode->remove();
+						sceneController->clearContextNode();
+					}
 				}
 			}
 

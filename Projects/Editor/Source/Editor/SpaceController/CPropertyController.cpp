@@ -159,7 +159,7 @@ namespace Skylicht
 							if (data == NULL)
 								continue;
 
-							// GameObject property							
+							// GameObject property
 							CEntityDataEditor* editor = activator->getEntityDataEditorInstance(data->getTypeName().c_str());
 							if (editor != NULL)
 							{
