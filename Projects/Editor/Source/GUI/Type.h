@@ -508,6 +508,9 @@ namespace Skylicht
 				Scale,
 				ViewSelect,
 				ViewHand,
+				Snap,
+				MagnetOff,
+				MagnetOn,
 				// End
 				NumSystemIcon
 			};
