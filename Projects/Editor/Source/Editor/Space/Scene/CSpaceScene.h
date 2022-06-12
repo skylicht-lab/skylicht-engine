@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CViewpointController.h"
 #include "CCameraSettingController.h"
+#include "CSnapSettingController.h"
 
 #include "Reactive/ISubject.h"
 #include "Reactive/IObserver.h"
@@ -50,6 +51,7 @@ namespace Skylicht
 			Rotate,
 			Scale,
 			World,
+			Snap,
 			Perspective,
 			Ortho,
 			ToolbarCount
@@ -90,6 +92,9 @@ namespace Skylicht
 			CZone* m_viewpointZone;
 			CCamera* m_viewpointCamera;
 			CViewpointController* m_viewpointController;
+
+			GUI::CMenu* m_snapSettingMenu;
+			CSnapSettingController* m_snapSettingController;
 
 			GUI::CMenu* m_cameraSettingMenu;
 			CCameraSettingController* m_cameraSettingController;
@@ -146,6 +151,8 @@ namespace Skylicht
 
 			void onToolbarWorldSpace(GUI::CBase* base);
 
+			void onSnapSetting(GUI::CBase* base);
+
 			void onCameraSetting(GUI::CBase* base);
 
 			void onCameraPerspective(GUI::CBase* base);
@@ -181,6 +188,8 @@ namespace Skylicht
 			{
 				return m_editorCamera;
 			}
+
+			void updateSnapButton();
 
 		protected:
 

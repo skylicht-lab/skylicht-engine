@@ -229,6 +229,10 @@ namespace Skylicht
 				addEditorIcon(ESystemIcon::ViewHand, "view_hand.png");
 				addEditorIcon(ESystemIcon::Axis, "axis.png");
 				addEditorIcon(ESystemIcon::OriginXYZ, "origin_xyz.png");
+				addEditorIcon(ESystemIcon::Snap, "snap.png");
+				addEditorIcon(ESystemIcon::MagnetOff, "magnet_off.png");
+				addEditorIcon(ESystemIcon::MagnetOn, "magnet_on.png");
+
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char* name)
