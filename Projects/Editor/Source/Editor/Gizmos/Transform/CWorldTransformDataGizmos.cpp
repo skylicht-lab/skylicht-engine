@@ -255,13 +255,13 @@ namespace Skylicht
 					core::vector3df delta = newPos - *m_position;
 					updateSelectedPosition(delta);
 
+					m_position = newPos;
 					m_position.notify(this);
 					setMatrix(m_transform, newPos, m_rotation.get(), m_scale.get());
 
 					changed = true;
 				}
 
-				m_position = newPos;
 				if (handle->endCheck())
 				{
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
@@ -287,13 +287,14 @@ namespace Skylicht
 					core::quaternion delta = newRot * inverseR;
 					updateSelectedRotation(delta);
 
+					m_rotation = newRot;
 					m_rotation.notify(this);
+
 					setMatrix(m_transform, m_position.get(), newRot, m_scale.get());
 
 					changed = true;
 				}
 
-				m_rotation = newRot;
 				if (handle->endCheck())
 				{
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());
@@ -313,13 +314,14 @@ namespace Skylicht
 					core::vector3df delta = newScale / *m_scale;
 					updateSelectedScale(delta);
 
+					m_scale = newScale;
 					m_scale.notify(this);
+
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), newScale);
 
 					changed = true;
 				}
 
-				m_scale = newScale;
 				if (handle->endCheck())
 				{
 					setMatrix(m_transform, m_position.get(), m_rotation.get(), m_scale.get());

@@ -608,6 +608,38 @@ namespace Skylicht
 			driver->drawMeshBuffer(buffer);
 		}
 
+		float CHandlesRenderer::snap(float value, float d)
+		{
+			if (d == 0.0f)
+				return value;
+
+			float f = value / d;
+
+			float f1 = floorf(f);
+			float f2 = ceilf(f);
+
+			if (fabsf(f1 - f) < fabsf(f2 - f))
+				return f1 * d;
+
+			return f2 * d;
+		}
+
+		void CHandlesRenderer::snapVec3(core::vector3df& v)
+		{
+			CHandles* handles = CHandles::getInstance();
+			if (handles->isSnapXZ())
+			{
+				float snapDistance = handles->getSnapDistanceXZ();
+				v.X = snap(v.X, snapDistance);
+				v.Z = snap(v.Z, snapDistance);
+			}
+			if (handles->isSnapY())
+			{
+				float snapDistance = handles->getSnapDistanceY();
+				v.Y = snap(v.Y, snapDistance);
+			}
+		}
+
 		void CHandlesRenderer::onMouseEvent(int x, int y, int state)
 		{
 			if (m_enable == false || m_camera == NULL)
@@ -776,8 +808,8 @@ namespace Skylicht
 									resultPosition = m_lastTranslatePosition + offset;
 
 									handles->getWorldInv().transformVect(resultPosition);
+									snapVec3(resultPosition);
 									handles->setTargetPosition(resultPosition);
-
 									break;
 								}
 							}
@@ -805,6 +837,7 @@ namespace Skylicht
 									resultPosition = m_lastTranslatePosition + offset;
 
 									handles->getWorldInv().transformVect(resultPosition);
+									snapVec3(resultPosition);
 									handles->setTargetPosition(resultPosition);
 
 									break;
@@ -952,6 +985,11 @@ namespace Skylicht
 								hitVector.normalize();
 
 								m_rotationAngle = computeAngleOnPlan(hitVector, normal[i]);
+
+								if (handles->isSnapRotate())
+								{
+									m_rotationAngle = snap(m_rotationAngle, handles->getSnapRotateDeg() * core::DEGTORAD);
+								}
 
 								core::quaternion q;
 								q.fromAngleAxis(m_rotationAngle, normal[i]);
