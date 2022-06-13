@@ -158,6 +158,10 @@ namespace Skylicht
 			void handleRotation(int x, int y, int state);
 
 			void handleScale(int x, int y, int state);
+
+			float snap(float value, float d);
+
+			void snapVec3(core::vector3df& v);
 		};
 	}
 }
