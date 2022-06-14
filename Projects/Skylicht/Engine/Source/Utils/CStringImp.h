@@ -633,7 +633,7 @@ namespace Skylicht
 			}
 
 			if (i == 0 || !haveExt)
-				CStringImp::copy<T1, T2>(dstString, "");
+				CStringImp::copy<T1, const char>(dstString, "");
 			else
 				CStringImp::copy<T1, T2>(dstString, lpString + i + 1);
 		}

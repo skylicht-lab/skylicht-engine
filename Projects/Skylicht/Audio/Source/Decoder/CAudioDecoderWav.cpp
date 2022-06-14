@@ -226,7 +226,7 @@ namespace SkylichtAudio
 					--totalSample;
 				}
 
-				delete[]decodeBuffer;
+				delete decodeBuffer;
 			}
 			else if (bitRate == 32)
 			{
@@ -243,7 +243,7 @@ namespace SkylichtAudio
 					src++;
 					--totalSample;
 				}
-				delete[]decodeBuffer;
+				delete decodeBuffer;
 			}
 
 			return Success;
