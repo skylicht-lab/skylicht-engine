@@ -2,17 +2,17 @@
 ## Git flow
 ### Feature
 -   If you commit code for feature, open an issue ex: #282. Create your branch name: **`feature/#282-your-branch-name`** (All characters is lowercase and character '-' instead space ' ')
--   Commit message: **`feat: #282 To do some thing`**
+-   Commit message: **`#282 To do some thing`**
 -   If your commit message too long
 ```
-feat: #282 To do some thing
+#282 To do some thing
 Do some thing 1
 Do some thing 2
 ...
 ```
 ### Bug
 -   Open an issue ex: #283. Create your branch name: **`bug/#283-your-bug-name`**
--   Commit message: **`fix: #283 To do fix some thing`**
+-   Commit message: **`#283 To do fix some thing`**
 
 Remember tag your issues id ex: #282 on your commit message, and branch name
 ## Code style

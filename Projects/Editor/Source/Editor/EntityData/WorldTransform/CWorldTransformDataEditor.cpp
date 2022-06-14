@@ -93,6 +93,8 @@ namespace Skylicht
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& pos = value->get();
 
+						m_position = pos;
+
 						x->set(pos.X);
 						y->set(pos.Y);
 						z->set(pos.Z);
@@ -108,36 +110,36 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Y", &Y, 0.01f);
 				ui->addNumberInput(layout, L"Z", &Z, 0.01f);
 
-				X.addObserver(new CObserver([&, pos = &m_position, g = m_gizmos](ISubject* subject, IObserver* from)
+				X.addObserver(new CObserver([&, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
 							CSubject<float>* value = (CSubject<float>*) subject;
-							pos->X = value->get();
+							m_position.X = value->get();
 							updateMatrix();
-							g->setPosition(*pos);
+							g->setPosition(m_position);
 						}
 					}), true);
 
-				Y.addObserver(new CObserver([&, pos = &m_position, g = m_gizmos](ISubject* subject, IObserver* from)
+				Y.addObserver(new CObserver([&, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
 							CSubject<float>* value = (CSubject<float>*) subject;
-							pos->Y = value->get();
+							m_position.Y = value->get();
 							updateMatrix();
-							g->setPosition(*pos);
+							g->setPosition(m_position);
 						}
 					}), true);
 
-				Z.addObserver(new CObserver([&, pos = &m_position, g = m_gizmos](ISubject* subject, IObserver* from)
+				Z.addObserver(new CObserver([&, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
 							CSubject<float>* value = (CSubject<float>*) subject;
-							pos->Z = value->get();
+							m_position.Z = value->get();
 							updateMatrix();
-							g->setPosition(*pos);
+							g->setPosition(m_position);
 						}
 					}), true);
 
@@ -154,6 +156,8 @@ namespace Skylicht
 						core::vector3df rot;
 						value->get().toEuler(rot);
 
+						m_rotate = rot;
+
 						x->set(rot.X * core::RADTODEG);
 						y->set(rot.Y * core::RADTODEG);
 						z->set(rot.Z * core::RADTODEG);
@@ -169,36 +173,36 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Y", &RotateY, 0.1f);
 				ui->addNumberInput(layout, L"Z", &RotateZ, 0.1f);
 
-				RotateX.addObserver(new CObserver([&, rot = &m_rotate, g = m_gizmos](ISubject* subject, IObserver* from)
+				RotateX.addObserver(new CObserver([&, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
 							CSubject<float>* value = (CSubject<float>*) subject;
-							rot->X = value->get();
+							m_rotate.X = value->get();
 							updateMatrix();
-							g->setRotation(*rot);
+							g->setRotation(m_rotate);
 						}
 					}), true);
 
-				RotateY.addObserver(new CObserver([&, rot = &m_rotate, g = m_gizmos](ISubject* subject, IObserver* from)
+				RotateY.addObserver(new CObserver([&, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
 							CSubject<float>* value = (CSubject<float>*) subject;
-							rot->Y = value->get();
+							m_rotate.Y = value->get();
 							updateMatrix();
-							g->setRotation(*rot);
+							g->setRotation(m_rotate);
 						}
 					}), true);
 
-				RotateZ.addObserver(new CObserver([&, rot = &m_rotate, g = m_gizmos](ISubject* subject, IObserver* from)
+				RotateZ.addObserver(new CObserver([&, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
 							CSubject<float>* value = (CSubject<float>*) subject;
-							rot->Z = value->get();
+							m_rotate.Z = value->get();
 							updateMatrix();
-							g->setRotation(*rot);
+							g->setRotation(m_rotate);
 						}
 					}), true);
 
@@ -213,6 +217,8 @@ namespace Skylicht
 					{
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& scale = value->get();
+
+						m_scale = scale;
 
 						x->set(scale.X);
 						y->set(scale.Y);
@@ -229,36 +235,36 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Y", &ScaleY, 0.01f);
 				ui->addNumberInput(layout, L"Z", &ScaleZ, 0.01f);
 
-				ScaleX.addObserver(new CObserver([&, scale = &m_scale, g = m_gizmos](ISubject* subject, IObserver* from)
+				ScaleX.addObserver(new CObserver([&, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
 							CSubject<float>* value = (CSubject<float>*) subject;
-							scale->X = value->get();
+							m_scale.X = value->get();
 							updateMatrix();
-							g->setScale(*scale);
+							g->setScale(m_scale);
 						}
 					}), true);
 
-				ScaleY.addObserver(new CObserver([&, scale = &m_scale, g = m_gizmos](ISubject* subject, IObserver* from)
+				ScaleY.addObserver(new CObserver([&, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
 							CSubject<float>* value = (CSubject<float>*) subject;
-							scale->Y = value->get();
+							m_scale.Y = value->get();
 							updateMatrix();
-							g->setScale(*scale);
+							g->setScale(m_scale);
 						}
 					}), true);
 
-				ScaleZ.addObserver(new CObserver([&, scale = &m_scale, g = m_gizmos](ISubject* subject, IObserver* from)
+				ScaleZ.addObserver(new CObserver([&, g = m_gizmos](ISubject* subject, IObserver* from)
 					{
 						if (from != g)
 						{
 							CSubject<float>* value = (CSubject<float>*) subject;
-							scale->Z = value->get();
+							m_scale.Z = value->get();
 							updateMatrix();
-							g->setScale(*scale);
+							g->setScale(m_scale);
 						}
 					}), true);
 

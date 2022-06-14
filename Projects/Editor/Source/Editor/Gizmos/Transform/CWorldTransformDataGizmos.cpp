@@ -416,7 +416,8 @@ namespace Skylicht
 
 		void CWorldTransformDataGizmos::onEnable()
 		{
-
+			getSubjectTransformGizmos().set(m_lastType);
+			getSubjectTransformGizmos().notify(this);
 		}
 
 		void CWorldTransformDataGizmos::onRemove()
