@@ -727,7 +727,7 @@ namespace Skylicht
 		// add the end buffer...
 		if (m_sizeBuffer > 0)
 		{
-			m_downloadBuffer[m_sizeBuffer] = NULL;
+			m_downloadBuffer[m_sizeBuffer] = 0;
 
 			// update hash
 			md5_update((MD5_CTX*)m_md5Context, m_downloadBuffer, m_sizeBuffer);
@@ -761,7 +761,7 @@ namespace Skylicht
 			if (0 <= hex2 && hex2 <= 9) hex2 += '0';
 			if (10 <= hex2 && hex2 <= 15) hex2 += 'A' - 10;
 		}
-		m_hashString[32] = NULL;
+		m_hashString[32] = 0;
 
 		for (int i = 0; i < HASHSTRING_SIZE; i++)
 			m_hashString[i] = tolower(m_hashString[i]);

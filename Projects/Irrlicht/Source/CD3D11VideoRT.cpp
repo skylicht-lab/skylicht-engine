@@ -45,7 +45,7 @@ namespace irr
 			Present.Windowed = true;
 
 			// check anti alias, ONLY if driver is pure hardware (just for performance reasons)
-			if (params.AntiAlias > 0 && DriverType != D3D_DRIVER_TYPE_WARP)
+			if (params.AntiAlias > 0 && Driver->DriverType != D3D_DRIVER_TYPE_WARP)
 			{
 				int antiAlias = params.AntiAlias;
 
