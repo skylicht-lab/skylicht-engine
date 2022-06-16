@@ -24,6 +24,14 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGDirectionalLightVS.glsl" fs="GLSL/SGDirectionalLightBakeFS.glsl" fs_source="GLSL/SGDirectionalLightFS.d.glsl" define="LIGHTMAP_BAKE"/>
-	<shader type="HLSL" vs="HLSL/SGDirectionalLightVS.hlsl" fs="HLSL/SGDirectionalLightBakeFS.hlsl" fs_source="HLSL/SGDirectionalLightFS.d.hlsl" define="LIGHTMAP_BAKE"/>
+	<shader type="GLSL" 
+		vs="GLSL/SGDirectionalLightVS.glsl" 
+		fs="GLSL/SGDirectionalLightBakeFS.glsl" 
+		fs_source="GLSL/SGDirectionalLightFS.d.glsl" 
+		define="LIGHTMAP_BAKE"/>
+	<shader type="HLSL" 
+		vs="HLSL/SGDirectionalLightVS.hlsl" 
+		fs="HLSL/SGDirectionalLightBakeFS.hlsl" 
+		fs_source="HLSL/SGDirectionalLightFS.d.hlsl" 
+		define="LIGHTMAP_BAKE"/>
 </shaderConfig>
