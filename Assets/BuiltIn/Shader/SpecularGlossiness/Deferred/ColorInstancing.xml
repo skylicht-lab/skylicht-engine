@@ -1,0 +1,28 @@
+<shaderConfig name="ColorInstancing" baseShader="SOLID" deferred="true" instancing="Color">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uView" type="DEFERRED_VIEW" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+	</customUI>
+	<shader 
+		type="GLSL" 
+		vs="GLSL/DiffuseSpecularGlossinessVSInstancing.glsl" 
+		fs="GLSL/ColorFSInstancing.glsl" 
+		vs_source="GLSL/DiffuseSpecularGlossinessVS.glsl" 
+		fs_source="GLSL/ColorFS.glsl"
+		define="INSTANCING"/>
+	<shader 
+		type="HLSL" 
+		vs="HLSL/DiffuseSpecularGlossinessVSInstancing.hlsl" 
+		fs="HLSL/ColorFSInstancing.hlsl" 
+		vs_source="HLSL/DiffuseSpecularGlossinessVS.hlsl" 
+		fs_source="HLSL/ColorFS.hlsl"
+		define="INSTANCING"/>
+</shaderConfig>

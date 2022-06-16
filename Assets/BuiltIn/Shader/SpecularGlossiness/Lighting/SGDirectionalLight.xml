@@ -28,6 +28,14 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGDirectionalLightVS.glsl" fs="GLSL/SGDirectionalLightFS.glsl" fs_source="GLSL/SGDirectionalLightFS.d.glsl" define="ENABLE_SSR"/>
-	<shader type="HLSL" vs="HLSL/SGDirectionalLightVS.hlsl" fs="HLSL/SGDirectionalLightFS.hlsl" fs_source="HLSL/SGDirectionalLightFS.d.hlsl" define="ENABLE_SSR"/>
+	<shader type="GLSL" 
+		vs="GLSL/SGDirectionalLightVS.glsl" 
+		fs="GLSL/SGDirectionalLightFS.glsl" 
+		fs_source="GLSL/SGDirectionalLightFS.d.glsl" 
+		define="ENABLE_SSR"/>
+	<shader type="HLSL" 
+		vs="HLSL/SGDirectionalLightVS.hlsl" 
+		fs="HLSL/SGDirectionalLightFS.hlsl" 
+		fs_source="HLSL/SGDirectionalLightFS.d.hlsl" 
+		define="ENABLE_SSR"/>
 </shaderConfig>
