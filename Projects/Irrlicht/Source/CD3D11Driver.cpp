@@ -1145,6 +1145,9 @@ namespace irr
 					5	// back
 				};
 
+				ResetRenderStates = true;
+				RendererTransformChanged = true;
+
 				CurrentBackBuffer = tex->getTargetView(mapFace[(int)face]);
 				CurrentDepthBuffer = tex->DepthSurface->Surface;
 				Context->OMSetRenderTargets(1, &CurrentBackBuffer, CurrentDepthBuffer);

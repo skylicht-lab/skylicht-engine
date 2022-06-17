@@ -164,7 +164,7 @@ void SampleMaterials::onRender()
 			pos,
 			normal, tangent, binormal);
 
-		// apply indirect lighting
+		// apply indirect lighting for ambient color
 		std::vector<CIndirectLighting*> lightings = m_scene->getZone(0)->getComponentsInChild<CIndirectLighting>(false);
 		for (CIndirectLighting *indirect : lightings)
 			indirect->setSH(sh.getValue());
@@ -173,6 +173,7 @@ void SampleMaterials::onRender()
 			sphere->setVisible(true);
 
 		// bake environment
+		// see CBaseRP::updateTextureResource
 		m_reflectionProbe->bakeProbe(bakeCamera, m_forwardRP, m_scene->getEntityManager());
 	}
 

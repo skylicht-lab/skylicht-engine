@@ -10,7 +10,7 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleShader *app = new SampleShader();
+	SampleShader* app = new SampleShader();
 	getApplication()->registerAppEvent("SampleShader", app);
 }
 
@@ -30,8 +30,21 @@ SampleShader::SampleShader() :
 
 SampleShader::~SampleShader()
 {
+	// delete scene & gameobjects...
 	delete m_scene;
 	delete m_font;
+
+	// delete clone material
+	for (CMaterial* m : m_normalMapMats)
+		delete m;
+	for (CMaterial* m : m_reflectionMats)
+		delete m;
+	for (CMaterial* m : m_dissolveMats)
+		delete m;
+
+	m_normalMapMats.clear();
+	m_reflectionMats.clear();
+	m_dissolveMats.clear();
 
 	Lightmapper::CLightmapper::releaseInstance();
 
@@ -52,29 +65,29 @@ void SampleShader::onInitApp()
 	fs->addFileArchive(app->getBuiltInPath("SampleModelsResource.zip"), false, false);
 	fs->addFileArchive(app->getBuiltInPath(app->getTexturePackageName("SampleModels").c_str()), false, false);
 
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 
 	m_font = new CGlyphFont();
 	m_font->setFont("Segoe UI Light", 100);
 
 	// Load basic shader
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
 	// Create a Scene
 	m_scene = new CScene();
 
 	// Create a Zone in Scene
-	CZone *zone = m_scene->createZone();
+	CZone* zone = m_scene->createZone();
 
 	// Create 2D camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
+	CGameObject* guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// Create 3d camera
-	CGameObject *camObj = zone->createEmptyObject();
+	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
@@ -83,21 +96,21 @@ void SampleShader::onInitApp()
 	m_camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
-	// sky
-	ITexture *skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/MonValley.png");
+	// Sky
+	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/MonValley.png");
 	if (skyDomeTexture != NULL)
 	{
-		CSkyDome *skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
+		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
 		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
 	}
 
 	// lighting
-	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CGameObject* lightObj = zone->createEmptyObject();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 	SColor c(255, 255, 244, 214);
 	directionalLight->setColor(SColorf(c));
 
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
@@ -107,14 +120,14 @@ void SampleShader::onInitApp()
 	// CGameObject *grid = zone->createEmptyObject();
 	// grid->addComponent<CGridPlane>();
 
-	CMeshManager *meshManager = CMeshManager::getInstance();
-	CEntityPrefab *prefab = NULL;
+	CMeshManager* meshManager = CMeshManager::getInstance();
+	CEntityPrefab* prefab = NULL;
 
 	std::vector<std::string> textureFolders;
 	textureFolders.push_back("Sponza/Textures");
 
 	// reflection probe
-	CGameObject *reflectionProbeObj = zone->createEmptyObject();
+	CGameObject* reflectionProbeObj = zone->createEmptyObject();
 	m_reflectionProbe = reflectionProbeObj->addComponent<CReflectionProbe>();
 
 	// load object model
@@ -140,28 +153,30 @@ void SampleShader::onInitApp()
 	m_forwardRP->initRender(w, h);
 }
 
-void SampleShader::initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial& materials)
+void SampleShader::initTestNormalMapShader(CEntityPrefab* prefab, ArrayMaterial& materials)
 {
-	for (CMaterial *material : materials)
+	for (CMaterial* material : materials)
 	{
-		material->changeShader("SampleShader/Shader/Normal.xml");
-		material->setUniformTexture("uTexNormal", m_normalMap);
+		CMaterial* newMaterial = material->clone();
+		newMaterial->changeShader("SampleShader/Shader/Normal.xml");
+		newMaterial->setUniformTexture("uTexNormal", m_normalMap);
+		m_normalMapMats.push_back(newMaterial);
 	}
 
 	// create render mesh object
-	CGameObject *object = m_scene->getZone(0)->createEmptyObject();
+	CGameObject* object = m_scene->getZone(0)->createEmptyObject();
 
 	// render mesh & init material
-	CRenderMesh *renderer = object->addComponent<CRenderMesh>();
+	CRenderMesh* renderer = object->addComponent<CRenderMesh>();
 	renderer->initFromPrefab(prefab);
-	renderer->initMaterial(materials);
+	renderer->initMaterial(m_normalMapMats);
 
 	// set indirect lighting by baked SH
-	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
+	CIndirectLighting* indirectLighting = object->addComponent<CIndirectLighting>();
 	indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 
 	// rotate
-	CRotateComponent *rotate = object->addComponent<CRotateComponent>();
+	CRotateComponent* rotate = object->addComponent<CRotateComponent>();
 	rotate->setRotate(0.0f, 0.05f, 0.0f);
 
 	m_objects.push_back(object);
@@ -169,28 +184,30 @@ void SampleShader::initTestNormalMapShader(CEntityPrefab *prefab, ArrayMaterial&
 	createCanvasText("Normal Map", core::vector3df(0.0f, 1.5f, 0.0f));
 }
 
-void SampleShader::initTestReflectionShader(CEntityPrefab *prefab, ArrayMaterial& materials)
+void SampleShader::initTestReflectionShader(CEntityPrefab* prefab, ArrayMaterial& materials)
 {
-	for (CMaterial *material : materials)
+	for (CMaterial* material : materials)
 	{
-		material->changeShader("SampleShader/Shader/Reflection.xml");
-		material->setUniformTexture("uTexNormal", m_normalMap);
+		CMaterial* newMaterial = material->clone();
+		newMaterial->changeShader("SampleShader/Shader/Reflection.xml");
+		newMaterial->setUniformTexture("uTexNormal", m_normalMap);
+		m_reflectionMats.push_back(newMaterial);
 	}
 
 	// create render mesh object
-	CGameObject *object = m_scene->getZone(0)->createEmptyObject();
+	CGameObject* object = m_scene->getZone(0)->createEmptyObject();
 
 	// render mesh & init material
-	CRenderMesh *renderer = object->addComponent<CRenderMesh>();
+	CRenderMesh* renderer = object->addComponent<CRenderMesh>();
 	renderer->initFromPrefab(prefab);
-	renderer->initMaterial(materials);
+	renderer->initMaterial(m_reflectionMats);
 
 	// set indirect lighting by baked SH
-	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
+	CIndirectLighting* indirectLighting = object->addComponent<CIndirectLighting>();
 	indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 
 	// rotate
-	CRotateComponent *rotate = object->addComponent<CRotateComponent>();
+	CRotateComponent* rotate = object->addComponent<CRotateComponent>();
 	rotate->setRotate(0.0f, 0.05f, 0.0f);
 
 	// set position
@@ -201,22 +218,22 @@ void SampleShader::initTestReflectionShader(CEntityPrefab *prefab, ArrayMaterial
 	createCanvasText("Reflection", core::vector3df(3.0f, 1.5f, 0.0f));
 }
 
-void SampleShader::initTestDissoveShader(CEntityPrefab *prefab, ArrayMaterial& materials)
+void SampleShader::initTestDissoveShader(CEntityPrefab* prefab, ArrayMaterial& materials)
 {
 	// create render mesh object
-	CGameObject *object = m_scene->getZone(0)->createEmptyObject();
+	CGameObject* object = m_scene->getZone(0)->createEmptyObject();
 
 	// render mesh & init material
-	CRenderMesh *renderer = object->addComponent<CRenderMesh>();
+	CRenderMesh* renderer = object->addComponent<CRenderMesh>();
 	renderer->initFromPrefab(prefab);
 
 	// we need copy current mesh buffer and recompute color for dissolve shader
 	std::vector<CRenderMeshData*>& renderers = renderer->getRenderers();
-	for (CRenderMeshData *r : renderers)
+	for (CRenderMeshData* r : renderers)
 	{
-		CMesh *mesh = r->getMesh();
+		CMesh* mesh = r->getMesh();
 
-		const core::aabbox3df &bbox = mesh->getBoundingBox();
+		const core::aabbox3df& bbox = mesh->getBoundingBox();
 
 		// z up mesh
 		float minY = bbox.MinEdge.Z;
@@ -227,13 +244,13 @@ void SampleShader::initTestDissoveShader(CEntityPrefab *prefab, ArrayMaterial& m
 		{
 			for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
 			{
-				IMeshBuffer *mb = mesh->getMeshBuffer(i);
+				IMeshBuffer* mb = mesh->getMeshBuffer(i);
 
-				IVertexBuffer *buffer = mb->getVertexBuffer();
-				S3DVertexTangents *vtxBuffer = (S3DVertexTangents*)buffer->getVertices();
+				IVertexBuffer* buffer = mb->getVertexBuffer();
+				S3DVertexTangents* vtxBuffer = (S3DVertexTangents*)buffer->getVertices();
 
-				CMeshBuffer<S3DVertexTangents> *newBuffer = new CMeshBuffer<S3DVertexTangents>(getVideoDriver()->getVertexDescriptor(EVT_TANGENTS));
-				IVertexBuffer *newVtxBuffer = newBuffer->getVertexBuffer();
+				CMeshBuffer<S3DVertexTangents>* newBuffer = new CMeshBuffer<S3DVertexTangents>(getVideoDriver()->getVertexDescriptor(EVT_TANGENTS));
+				IVertexBuffer* newVtxBuffer = newBuffer->getVertexBuffer();
 
 				for (int j = 0, m = buffer->getVertexCount(); j < m; j++)
 				{
@@ -262,23 +279,22 @@ void SampleShader::initTestDissoveShader(CEntityPrefab *prefab, ArrayMaterial& m
 		}
 	}
 
-	for (CMaterial *material : materials)
+	for (CMaterial* material : materials)
 	{
-		material->changeShader("SampleShader/Shader/Dissolved.xml");
-		material->setUniformTexture("uTexNormal", m_normalMap);
-
-		// test dissolved direction
-		// material->changeShader("BuiltIn/Shader/Basic/VertexColor.xml");
+		CMaterial* newMaterial = material->clone();
+		newMaterial->changeShader("SampleShader/Shader/Dissolved.xml");
+		newMaterial->setUniformTexture("uTexNormal", m_normalMap);
+		m_dissolveMats.push_back(newMaterial);
 	}
 
-	renderer->initMaterial(materials);
+	renderer->initMaterial(m_dissolveMats);
 
 	// set indirect lighting by baked SH
-	CIndirectLighting *indirectLighting = object->addComponent<CIndirectLighting>();
+	CIndirectLighting* indirectLighting = object->addComponent<CIndirectLighting>();
 	indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 
 	// rotate
-	CRotateComponent *rotate = object->addComponent<CRotateComponent>();
+	CRotateComponent* rotate = object->addComponent<CRotateComponent>();
 	rotate->setRotate(0.0f, 0.05f, 0.0f);
 
 	// set position
@@ -302,7 +318,7 @@ void SampleShader::updateDissoveShader()
 	// Update uniform uCutoff
 	for (int i = 0, n = m_dissolveRenderer->getMaterialCount(); i < n; i++)
 	{
-		CMaterial *material = m_dissolveRenderer->getMaterial(i);
+		CMaterial* material = m_dissolveRenderer->getMaterial(i);
 		CMaterial::SUniformValue* v = material->getUniform("uCutoff");
 
 		// border color
@@ -318,16 +334,16 @@ void SampleShader::updateDissoveShader()
 }
 
 
-void SampleShader::createCanvasText(const char *text, const core::vector3df& position)
+void SampleShader::createCanvasText(const char* text, const core::vector3df& position)
 {
-	CGameObject *canvasObject = m_scene->getZone(0)->createEmptyObject();
-	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
-	CGUIText *guiText = canvas->createText(core::rectf(0.0f, 0.0f, 700.0f, 100.0f), m_font);
+	CGameObject* canvasObject = m_scene->getZone(0)->createEmptyObject();
+	CCanvas* canvas = canvasObject->addComponent<CCanvas>();
+	CGUIText* guiText = canvas->createText(core::rectf(0.0f, 0.0f, 700.0f, 100.0f), m_font);
 	guiText->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
 	guiText->setText(text);
 	guiText->setPosition(core::vector3df(-350.0f, 0.0f, 0.0f));
 
-	CGUIElement *rootGUI = canvas->getRootElement();
+	CGUIElement* rootGUI = canvas->getRootElement();
 	rootGUI->setScale(core::vector3df(-0.004f, -0.004f, 0.004f));
 	rootGUI->setPosition(position);
 
@@ -349,11 +365,11 @@ void SampleShader::onRender()
 	{
 		m_bakeSHLighting = false;
 
-		for (CGameObject *obj : m_objects)
+		for (CGameObject* obj : m_objects)
 			obj->setVisible(false);
 
-		CGameObject *bakeCameraObj = m_scene->getZone(0)->createEmptyObject();
-		CCamera *bakeCamera = bakeCameraObj->addComponent<CCamera>();
+		CGameObject* bakeCameraObj = m_scene->getZone(0)->createEmptyObject();
+		CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
 		m_scene->updateAddRemoveObject();
 
 		core::vector3df pos(0.0f, 0.0f, 0.0f);
@@ -363,7 +379,7 @@ void SampleShader::onRender()
 		core::vector3df binormal = normal.crossProduct(tangent);
 		binormal.normalize();
 
-		Lightmapper::CLightmapper *lm = Lightmapper::CLightmapper::getInstance();
+		Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
 		lm->initBaker(64);
 
 		// compute sh
@@ -379,10 +395,10 @@ void SampleShader::onRender()
 
 		// apply indirect lighting
 		std::vector<CIndirectLighting*> lightings = m_scene->getZone(0)->getComponentsInChild<CIndirectLighting>(false);
-		for (CIndirectLighting *indirect : lightings)
+		for (CIndirectLighting* indirect : lightings)
 			indirect->setSH(sh.getValue());
 
-		for (CGameObject *obj : m_objects)
+		for (CGameObject* obj : m_objects)
 			obj->setVisible(true);
 	}
 
