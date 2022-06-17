@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 // Shader Manager
 #include "Material/CMaterialManager.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/Instancing/CVertexDescriptorInstancing.h"
 #include "Graphics2D/CGraphics2D.h"
 #include "Shadow/CShadowRTTManager.h"
 
@@ -80,6 +81,7 @@ namespace Skylicht
 		CJoystick::createGetInstance();
 
 		CShaderManager::createGetInstance();
+		CVertexDescriptorInstancing::createGetInstance();
 		CGraphics2D::createGetInstance();
 		CTextureManager::createGetInstance();
 		CMeshManager::createGetInstance();
@@ -130,6 +132,7 @@ namespace Skylicht
 		CMeshManager::releaseInstance();
 		CTextureManager::releaseInstance();
 		CGraphics2D::releaseInstance();
+		CVertexDescriptorInstancing::releaseInstance();
 		CShaderManager::releaseInstance();
 
 		CTouchManager::releaseInstance();

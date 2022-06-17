@@ -1,13 +1,5 @@
 <shaderConfig name="ColorInstancing" baseShader="SOLID" deferred="true">
-	<vertex base="standard"> <!-- base in list: standard;2tcoords;tangents;skinskintangents;2tcoordstangents;skin2tcoordtangents -->
-		<attribute name="uvScale" semantic ="TEXCOORD1" float="4" material="0"/>
-		<attribute name="uColor" semantic ="TEXCOORD2" float="4" material="1"/>
-		<attribute name="uSpecGloss" semantic ="TEXCOORD3" float="2" material="2,3"/>
-		<attribute name="inWorldMatrix1" semantic ="TEXCOORD4" float="4" world="1"/>
-		<attribute name="inWorldMatrix2" semantic ="TEXCOORD5" float="4" world="2"/>
-		<attribute name="inWorldMatrix3" semantic ="TEXCOORD6" float="4" world="3"/>
-		<attribute name="inWorldMatrix4" semantic ="TEXCOORD7" float="4" world="4"/>
-	</vertex>
+	<vertex base="standard"/> <!-- base in list: standard;2tcoords;tangents;skinskintangents;2tcoordstangents;skin2tcoordtangents -->
 	<uniforms>
 		<vs>
 			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
