@@ -6,7 +6,7 @@ layout(location = 3) in vec2 inTexCoord0;
 
 layout(location = 4) in vec4 uUVScale;
 layout(location = 5) in vec4 uColor;
-layout(location = 6) in vec4 uSpecGloss;
+layout(location = 6) in vec2 uSpecGloss;
 layout(location = 7) in mat4 uWorldMatrix;
 #else
 in vec4 inPosition;
@@ -31,7 +31,7 @@ out vec2 vTexCoord0;
 
 #ifdef INSTANCING
 out vec4 vColor;
-out vec4 vSpecGloss;
+out vec2 vSpecGloss;
 #endif
 
 void main(void)

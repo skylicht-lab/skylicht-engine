@@ -37,7 +37,7 @@ namespace Skylicht
 {
 	bool CBaseRP::s_bakeMode = false;
 	bool CBaseRP::s_bakeLMMode = false;
-	
+
 	u32 CBaseRP::s_bakeBounce = 0;
 	u32 CBaseRP::s_maxLight = 16;
 

@@ -62,7 +62,6 @@ namespace Skylicht
 		SHADER_VEC4,
 		SH_CONST,
 		CUSTOM_VALUE,
-		CONFIG_VALUE,
 		BPCEM_MIN,
 		BPCEM_MAX,
 		BPCEM_POS,
