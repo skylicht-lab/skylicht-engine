@@ -25,7 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "pch.h"
-#include "Material/Shader/CShaderParams.h"
 #include "Components/CComponentSystem.h"
 #include "Components/CNullComponent.h"
 #include "Components/CDependentComponent.h"

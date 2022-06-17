@@ -119,7 +119,6 @@ namespace Skylicht
 			"SHADER_VEC4",
 			"SH_CONST",
 			"CUSTOM_VALUE",
-			"CONFIG_VALUE",
 			"BPCEM_MIN",
 			"BPCEM_MAX",
 			"BPCEM_POS",
@@ -942,7 +941,6 @@ namespace Skylicht
 		}
 		break;
 		case DEFAULT_VALUE:
-		case CONFIG_VALUE:
 		{
 			if (vertexShader == true)
 				matRender->setShaderVariable(uniform.UniformShaderID, uniform.Value, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);

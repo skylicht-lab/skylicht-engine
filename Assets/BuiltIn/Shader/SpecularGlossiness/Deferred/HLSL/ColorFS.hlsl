@@ -6,7 +6,7 @@ struct PS_INPUT
 	float3 worldNormal: WORLDNORMAL;
 #ifdef INSTANCING
 	float4 color: COLOR;
-	float4 specGloss: SPECGLOSS;
+	float2 specGloss: SPECGLOSS;
 #endif
 };
 
@@ -33,7 +33,7 @@ PS_OUTPUT main(PS_INPUT input)
 
 #ifdef INSTANCING
 	output.Diffuse = input.color;
-	output.SG = input.specGloss;
+	output.SG = float4(input.specGloss.x, input.specGloss.y, 0.0, 1.0);
 #else
 	output.Diffuse = uColor;
 	output.SG = float4(uSpec, uGloss, 0.0, 1.0);

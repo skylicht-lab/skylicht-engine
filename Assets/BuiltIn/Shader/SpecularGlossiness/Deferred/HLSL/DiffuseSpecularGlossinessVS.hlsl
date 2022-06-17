@@ -7,7 +7,7 @@ struct VS_INPUT
 #ifdef INSTANCING
 	float4 uvScale: TEXCOORD1;
 	float4 uColor: TEXCOORD2;
-	float4 specGloss: TEXCOORD3;
+	float2 uSpecGloss: TEXCOORD3;
 	float4x4 worldMatrix: TEXCOORD4;
 #endif
 };
@@ -20,7 +20,7 @@ struct VS_OUTPUT
 	float3 worldNormal: WORLDNORMAL;
 #ifdef INSTANCING
 	float4 color: COLOR;
-	float4 specGloss: SPECGLOSS;
+	float2 specGloss: SPECGLOSS;
 #endif
 };
 
@@ -46,7 +46,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 #ifdef INSTANCING
 	output.color = input.uColor;
-	output.specGloss = input.specGloss;
+	output.specGloss = input.uSpecGloss;
 	float4x4 uWorldMatrix = transpose(input.worldMatrix);
 	float4 uUVScale = input.uvScale;
 	float4x4 uMvpMatrix = mul(uWorldMatrix, uVPMatrix);
