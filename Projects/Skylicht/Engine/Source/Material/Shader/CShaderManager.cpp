@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CShader.h"
 #include "Utils/CPath.h"
 
+#include "Instancing/CStandardSGInstancing.h"
+
 namespace Skylicht
 {
 
@@ -146,7 +148,9 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
 
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml");
+		CShader* instancingShader = NULL;
+		instancingShader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml");
+		if (instancingShader) { instancingShader->setInstancing(new CStandardSGInstancing()); }
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightBake.xml");

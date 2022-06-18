@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBaseShaderCallback.h"
+#include "Instancing/IShaderInstancing.h"
 
 namespace Skylicht
 {
@@ -237,6 +238,8 @@ namespace Skylicht
 
 		bool m_deferred;
 
+		IShaderInstancing* m_instancing;
+
 	public:
 
 		CShader();
@@ -387,6 +390,19 @@ namespace Skylicht
 		void buildShader();
 
 		void buildUIUniform();
+
+		void setInstancing(IShaderInstancing* instancing)
+		{
+			if (m_instancing)
+				delete m_instancing;
+
+			m_instancing = instancing;
+		}
+
+		inline IShaderInstancing* getInstancing()
+		{
+			return m_instancing;
+		}
 
 	protected:
 

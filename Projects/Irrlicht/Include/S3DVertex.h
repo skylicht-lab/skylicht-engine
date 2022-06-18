@@ -336,6 +336,11 @@ struct SVec4
 		Z = z;
 		W = w;
 	}
+
+	bool operator==(const SVec4& other) const
+	{
+		return X == other.X && Y == other.Y && Z == other.Z && W == other.W;
+	}
 };
 
 struct S3DVertexSkin : public S3DVertex

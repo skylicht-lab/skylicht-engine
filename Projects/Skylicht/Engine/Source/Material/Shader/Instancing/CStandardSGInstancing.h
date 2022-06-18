@@ -24,37 +24,43 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "IShaderInstancing.h"
 
 namespace Skylicht
 {
-	class CMaterial;
-
-	class IMaterialInstancing
+	struct SVtxSGInstancing
 	{
-	public:
-		virtual IMeshBuffer* createMeshBuffer() = 0;
+		SVec4 UVScale;
+		SVec4 Color;
+		SVec4 SpecGloss;
+		core::matrix4 World;
 
-		virtual void batchIntancing(IMeshBuffer* meshBuffer, CMaterial* material, const core::matrix4& world) = 0;
+		bool operator==(const SVtxSGInstancing& other) const
+		{
+			return UVScale == other.UVScale &&
+				Color == other.Color &&
+				SpecGloss == other.SpecGloss &&
+				World == other.World;
+		}
 	};
 
-	class CVertexDescriptorInstancing : public CGameSingleton<CVertexDescriptorInstancing>
+	class CStandardSGInstancing : public IShaderInstancing
 	{
 	protected:
-		std::map<int, IMaterialInstancing*> m_callbacks;
+		video::IVertexDescriptor* m_baseVtxDescriptor;
+		video::IVertexDescriptor* m_vtxDescriptor;
 
 	public:
-		CVertexDescriptorInstancing();
+		CStandardSGInstancing();
 
-		virtual ~CVertexDescriptorInstancing();
+		virtual ~CStandardSGInstancing();
 
-		void registerCallback(int materialRenderID, IMaterialInstancing* cb);
+		virtual bool isSupport(IMeshBuffer* mb);
 
-		void unRegister(int materialRenderID);
+		virtual IVertexBuffer* createInstancingMeshBuffer(IMeshBuffer* sourceMeshBuffer);
 
-		inline IMaterialInstancing* getMaterialInstancing(int materialRenderID)
-		{
-			return m_callbacks[materialRenderID];
-		}
+		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
+			core::array<CMaterial*>& materials,
+			core::array<core::matrix4>& worlds);
 	};
 }
