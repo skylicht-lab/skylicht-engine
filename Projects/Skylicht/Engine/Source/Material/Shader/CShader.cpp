@@ -42,7 +42,8 @@ namespace Skylicht
 		m_listFSUniforms(NULL),
 		m_numVSUniform(0),
 		m_numFSUniform(0),
-		m_deferred(false)
+		m_deferred(false),
+		m_instancing(NULL)
 	{
 		// builtin callback
 		addCallback<CShaderLighting>();
@@ -64,6 +65,9 @@ namespace Skylicht
 
 		deleteAllUI();
 		deleteAllResource();
+
+		if (m_instancing)
+			delete m_instancing;
 	}
 
 	void CShader::deleteAllUI()

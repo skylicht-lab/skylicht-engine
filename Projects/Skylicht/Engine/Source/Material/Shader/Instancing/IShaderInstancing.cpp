@@ -23,36 +23,9 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CVertexDescriptorInstancing.h"
+#include "IShaderInstancing.h"
 
 namespace Skylicht
 {
-	CVertexDescriptorInstancing::CVertexDescriptorInstancing()
-	{
 
-	}
-
-	CVertexDescriptorInstancing::~CVertexDescriptorInstancing()
-	{
-		for (auto i : m_callbacks)
-		{
-			if (i.second)
-				delete i.second;
-		}
-		m_callbacks.clear();
-	}
-
-	void CVertexDescriptorInstancing::registerCallback(int materialRenderID, IMaterialInstancing* cb)
-	{
-		m_callbacks[materialRenderID] = cb;
-	}
-
-	void CVertexDescriptorInstancing::unRegister(int materialRenderID)
-	{
-		if (m_callbacks[materialRenderID])
-		{
-			delete m_callbacks[materialRenderID];
-			m_callbacks[materialRenderID] = NULL;
-		}
-	}
 }
