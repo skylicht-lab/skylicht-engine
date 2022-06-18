@@ -1,5 +1,4 @@
 <shaderConfig name="ColorInstancing" baseShader="SOLID" deferred="true">
-	<vertex base="standard"/> <!-- base in list: standard;2tcoords;tangents;skinskintangents;2tcoordstangents;skin2tcoordtangents -->
 	<uniforms>
 		<vs>
 			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
