@@ -239,6 +239,7 @@ namespace Skylicht
 		bool m_deferred;
 
 		IShaderInstancing* m_instancing;
+		CShader* m_instancingShader;
 
 	public:
 
@@ -402,6 +403,11 @@ namespace Skylicht
 		inline IShaderInstancing* getInstancing()
 		{
 			return m_instancing;
+		}
+
+		inline CShader* getInstancingShader()
+		{
+			return m_instancingShader;
 		}
 
 	protected:

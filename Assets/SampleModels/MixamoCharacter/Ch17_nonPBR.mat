@@ -1,9 +1,9 @@
 <Materials>
 	<Material name='Ch17_hair-fx' shader='BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='C:/Projects/skylicht-engine/Assets/SampleModels/MixamoCharacter/textures/Ch17_1002_Diffuse.tga'/>
+			<Texture name='uTexDiffuse' path='textures/Ch17_1002_Diffuse.tga'/>
 			<Texture name='uTexNormal' path='textures/Ch17_1002_Diffuse.tga'/>
-			<Texture name='uTexSpecular' path='C:/Projects/skylicht-engine/Assets/BuiltIn/Textures/NullTexture.png'/>
+			<Texture name='uTexSpecular' path='BuiltIn/Textures/NullTexture.png'/>
 		</Textures>
 		<Properties>
 			<Property name='ZBuffer' value='LessEqual'/>
@@ -21,7 +21,7 @@
 	</Material>
 	<Material name='Ch17_body-fx' shader='BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='C:/Projects/skylicht-engine/Assets/SampleModels/MixamoCharacter/textures/Ch17_1001_Diffuse.tga'/>
+			<Texture name='uTexDiffuse' path='textures/Ch17_1001_Diffuse.tga'/>
 			<Texture name='uTexNormal' path='textures/Ch17_1001_Normal.tga'/>
 			<Texture name='uTexSpecular' path='textures/Ch17_1001_Specular.tga'/>
 		</Textures>
@@ -34,7 +34,7 @@
 		<Extras>
 			<Extra name='BuiltIn/Shader/Basic/Skin.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='C:/Projects/skylicht-engine/Assets/SampleModels/MixamoCharacter/textures/Ch17_1001_Diffuse.tga'/>
+					<Texture name='uTexDiffuse' path='textures/Ch17_1001_Diffuse.tga'/>
 				</Textures>
 			</Extra>
 		</Extras>

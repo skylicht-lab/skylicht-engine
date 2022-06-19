@@ -24,32 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include "Entity/IRenderSystem.h"
+#include "RenderMesh/CMesh.h"
 #include "Material/CMaterial.h"
+#include "CPrimiviteData.h"
+#include "CPrimitiveBaseRenderer.h"
 
 namespace Skylicht
 {
-	class CPrimiviteData : public IEntityData
+	class CPrimitiveRendererInstancing : public CPrimitiveBaseRenderer
 	{
+	protected:
+
+		core::array<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
+		core::array<core::matrix4> m_transforms[CPrimiviteData::Count];
+
 	public:
-		enum EPrimitive
-		{
-			Unknown = 0,
-			Cube,
-			Sphere,
-			Count
-		};
+		CPrimitiveRendererInstancing();
 
-		CPrimiviteData();
+		virtual ~CPrimitiveRendererInstancing();
 
-		virtual ~CPrimiviteData();
+		virtual void beginQuery(CEntityManager* entityManager);
 
-		DECLARE_DATA_TYPE_INDEX;
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
-		EPrimitive Type;
+		virtual void init(CEntityManager* entityManager);
 
-		CMaterial* Material;
+		virtual void update(CEntityManager* entityManager);
 
-		bool Instancing;
+		virtual void render(CEntityManager* entityManager);
 	};
 }

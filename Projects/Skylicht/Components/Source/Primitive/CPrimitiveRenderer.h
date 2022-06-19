@@ -28,13 +28,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CMesh.h"
 #include "Material/CMaterial.h"
 #include "CPrimiviteData.h"
+#include "CPrimitiveBaseRenderer.h"
 
 namespace Skylicht
 {
-	class CPrimitiveRenderer : public IRenderSystem
+	class CPrimitiveRenderer : public CPrimitiveBaseRenderer
 	{
 	protected:
-		CMesh* m_mesh[CPrimiviteData::Count];
 
 		core::array<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
 		core::array<core::matrix4> m_transforms[CPrimiviteData::Count];
@@ -43,10 +43,6 @@ namespace Skylicht
 		CPrimitiveRenderer();
 
 		virtual ~CPrimitiveRenderer();
-
-		void initMesh(IMesh* primitiveMesh, CPrimiviteData::EPrimitive primitive);
-
-		void initCube();
 
 		virtual void beginQuery(CEntityManager* entityManager);
 

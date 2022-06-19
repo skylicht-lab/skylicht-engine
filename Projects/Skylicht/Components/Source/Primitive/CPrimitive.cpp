@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CPrimitive.h"
 #include "CPrimitiveRenderer.h"
+#include "CPrimitiveRendererInstancing.h"
 #include "GameObject/CGameObject.h"
 #include "Entity/CEntityManager.h"
 #include "Transform/CWorldTransformData.h"
@@ -56,7 +57,9 @@ namespace Skylicht
 
 	void CPrimitive::initComponent()
 	{
-		m_gameObject->getEntityManager()->addRenderSystem<CPrimitiveRenderer>();
+		CEntityManager* entityMgr = m_gameObject->getEntityManager();
+		entityMgr->addRenderSystem<CPrimitiveRenderer>();
+		entityMgr->addRenderSystem<CPrimitiveRendererInstancing>();
 
 		// init material
 		m_material = new CMaterial("Primitive", "BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
@@ -174,6 +177,7 @@ namespace Skylicht
 		CPrimiviteData* primitiveData = entity->addData<CPrimiviteData>();
 		primitiveData->Type = m_type;
 		primitiveData->Material = m_useCustomMaterial && m_customMaterial ? m_customMaterial : m_material;
+		primitiveData->Instancing = m_instancing;
 
 		// Culling
 		entity->addData<CWorldInverseTransformData>();
