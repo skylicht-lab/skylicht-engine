@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CPrimitiveRenderer.h"
+#include "CPrimitiveRendererInstancing.h"
 #include "Entity/CEntityManager.h"
 #include "Culling/CVisibleData.h"
 #include "Transform/CWorldTransformData.h"
@@ -31,17 +31,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CPrimitiveRenderer::CPrimitiveRenderer()
+	CPrimitiveRendererInstancing::CPrimitiveRendererInstancing()
 	{
 
 	}
 
-	CPrimitiveRenderer::~CPrimitiveRenderer()
+	CPrimitiveRendererInstancing::~CPrimitiveRendererInstancing()
 	{
 
 	}
 
-	void CPrimitiveRenderer::beginQuery(CEntityManager* entityManager)
+	void CPrimitiveRendererInstancing::beginQuery(CEntityManager* entityManager)
 	{
 		for (int i = 0; i < CPrimiviteData::Count; i++)
 		{
@@ -50,47 +50,31 @@ namespace Skylicht
 		}
 	}
 
-	void CPrimitiveRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CPrimitiveRendererInstancing::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
 		CPrimiviteData* p = (CPrimiviteData*)entity->getDataByIndex(CPrimiviteData::DataTypeIndex);
 		if (p != NULL)
 		{
 			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
-			if (visible->Visible && !p->Instancing)
+			if (visible->Visible &&
+				p->Instancing &&
+				p->Material &&
+				p->Material->getShader() &&
+				p->Material->getShader()->getInstancingShader())
 			{
 				m_primitives[p->Type].push_back(p);
 			}
 		}
 	}
 
-	void CPrimitiveRenderer::init(CEntityManager* entityManager)
+	void CPrimitiveRendererInstancing::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	int cmpPrimitiveFunc(const void* a, const void* b)
-	{
-		CPrimiviteData* pa = *((CPrimiviteData**)a);
-		CPrimiviteData* pb = *((CPrimiviteData**)b);
+	extern int cmpPrimitiveFunc(const void* a, const void* b);
 
-		ITexture* textureA = pa->Material->getTexture(0);
-		ITexture* textureB = pb->Material->getTexture(0);
-
-		// if no texture
-		if (textureA == NULL || textureB == NULL)
-		{
-			if (pa->Material == pb->Material)
-				return 0;
-			return pa->Material < pb->Material ? -1 : 1;
-		}
-
-		// sort by texture 0
-		if (textureA == textureB)
-			return 0;
-		return textureA < textureB ? -1 : 1;
-	}
-
-	void CPrimitiveRenderer::update(CEntityManager* entityManager)
+	void CPrimitiveRendererInstancing::update(CEntityManager* entityManager)
 	{
 		for (int type = 0; type < CPrimiviteData::Count; type++)
 		{
@@ -114,58 +98,13 @@ namespace Skylicht
 		}
 	}
 
-	void CPrimitiveRenderer::render(CEntityManager* entityManager)
+	void CPrimitiveRendererInstancing::render(CEntityManager* entityManager)
 	{
 		for (int type = 0; type < CPrimiviteData::Count; type++)
 		{
 			if (m_mesh[type] == NULL)
 				continue;
 
-			renderPrimitive(
-				entityManager,
-				m_primitives[type],
-				m_transforms[type],
-				m_mesh[type]
-			);
-		}
-	}
-
-	void CPrimitiveRenderer::renderPrimitive(
-		CEntityManager* entityManager,
-		core::array<CPrimiviteData*>& primitives,
-		core::array<core::matrix4>& transforms,
-		CMesh* mesh)
-	{
-		IVideoDriver* driver = getVideoDriver();
-		IRenderPipeline* rp = entityManager->getRenderPipeline();
-
-		CMaterial* mat = NULL;
-
-		u32 count = transforms.size();
-		for (u32 i = 0; i < count; i++)
-		{
-			CPrimiviteData* data = primitives[i];
-
-			if (data->Material == NULL || !rp->canRenderMaterial(data->Material))
-				continue;
-
-			if (mat != data->Material)
-			{
-				mat = data->Material;
-				CShaderMaterial::setMaterial(data->Material);
-
-				for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
-				{
-					IMeshBuffer* mb = mesh->MeshBuffers[i];
-					mat->applyMaterial(mb->getMaterial());
-				}
-			}
-
-			core::matrix4& world = transforms[i];
-			driver->setTransform(video::ETS_WORLD, world);
-
-			for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
-				rp->drawMeshBuffer(mesh, i, entityManager, data->EntityIndex, false);
 		}
 	}
 }

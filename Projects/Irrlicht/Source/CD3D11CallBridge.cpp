@@ -243,7 +243,9 @@ void CD3D11CallBridge::setPixelShader(SShader* shader)
 			}
 
 			Context->PSSetSamplers(0, maxViewUsed, SamplerStates);
-			Context->PSSetShaderResources(0, maxViewUsed, views);			
+			Context->PSSetShaderResources(0, maxViewUsed, views);	
+			
+			Driver->incTextureChange();
 		}
 	}
 }

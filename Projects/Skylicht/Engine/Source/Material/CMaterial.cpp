@@ -451,6 +451,11 @@ namespace Skylicht
 		readTexturePath();
 	}
 
+	ITexture* CMaterial::getTexture(int slot)
+	{
+		return m_textures[slot];
+	}
+
 	void CMaterial::buildDoubleSidedMesh()
 	{
 		if (m_doubleSided == true)
@@ -812,6 +817,24 @@ namespace Skylicht
 					}
 				}
 			}
+		}
+
+		// apply to texture slot
+		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
+		{
+			SUniformTexture* uniformTexture = m_uniformTextures[i];
+			if (uniformTexture->TextureSlot == -1)
+			{
+				SUniform* uniform = m_shader->getFSUniform(uniformTexture->Name.c_str());
+				if (uniform != NULL)
+					uniformTexture->TextureSlot = (int)uniform->Value[0];
+				else
+					uniformTexture->TextureSlot = -2;
+			}
+
+			int textureSlot = uniformTexture->TextureSlot;
+			if (textureSlot >= 0 && textureSlot < MATERIAL_MAX_TEXTURES)
+				m_textures[textureSlot] = m_uniformTextures[i]->Texture;
 		}
 
 		return ret;

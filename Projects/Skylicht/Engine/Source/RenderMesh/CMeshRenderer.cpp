@@ -71,12 +71,7 @@ namespace Skylicht
 			// only render visible culling mesh
 			if (cullingVisible == true)
 			{
-				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-				CIndirectLightingData* indirect = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
-
 				m_meshs.push_back(meshData);
-				m_transforms.push_back(transform);
-				m_indirectLightings.push_back(indirect);
 			}
 		}
 	}
@@ -86,9 +81,76 @@ namespace Skylicht
 
 	}
 
+	int cmpRenderMeshFunc(const void* a, const void* b)
+	{
+		CRenderMeshData* pa = *((CRenderMeshData**)a);
+		CRenderMeshData* pb = *((CRenderMeshData**)b);
+
+		CMesh* meshA = pa->getMesh();
+		CMesh* meshB = pb->getMesh();
+
+		std::vector<CMaterial*>& materialsA = meshA->Material;
+		std::vector<CMaterial*>& materialsB = meshB->Material;
+
+		// no material, compare by mesh
+		if (materialsA.size() == 0 || materialsA.size() == 0)
+		{
+			if (meshA == meshB)
+				return 0;
+
+			return meshA < meshB ? -1 : 1;
+		}
+
+		CMaterial* materialA = materialsA[0];
+		CMaterial* materialB = materialsB[0];
+
+		// compare by mesh
+		if (materialA == NULL || materialB == NULL)
+		{
+			if (meshA == meshB)
+				return 0;
+
+			return meshA < meshB ? -1 : 1;
+		}
+
+		// comprate by texture
+		ITexture* textureA = materialA->getTexture(0);
+		ITexture* textureB = materialB->getTexture(0);
+
+		// if no texture
+		if (textureA == NULL || textureB == NULL)
+		{
+			if (materialA == materialB)
+				return 0;
+			return materialA < materialB ? -1 : 1;
+		}
+
+		// sort by texture 0
+		if (textureA == textureB)
+			return 0;
+
+		return textureA < textureB ? -1 : 1;
+	}
+
 	void CMeshRenderer::update(CEntityManager* entityManager)
 	{
+		// need sort render by material, texture, mesh		
+		u32 count = m_meshs.size();
 
+		// need sort by material
+		qsort(m_meshs.pointer(), count, sizeof(CRenderMeshData*), cmpRenderMeshFunc);
+
+		// get world transform			
+		for (u32 i = 0; i < count; i++)
+		{
+			CEntity* entity = entityManager->getEntity(m_meshs[i]->EntityIndex);
+
+			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CIndirectLightingData* indirect = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
+
+			m_transforms.push_back(transform);
+			m_indirectLightings.push_back(indirect);
+		}
 	}
 
 	void CMeshRenderer::render(CEntityManager* entityManager)

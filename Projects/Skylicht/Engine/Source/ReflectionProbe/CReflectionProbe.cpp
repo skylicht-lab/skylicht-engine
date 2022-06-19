@@ -308,6 +308,7 @@ namespace Skylicht
 		{
 			m_staticTexture->regenerateMipMapLevels();
 			m_probeData->ReflectionTexture = m_staticTexture;
+			m_type = EReflectionType::Static;
 		}
 
 		return (m_staticTexture != NULL);
