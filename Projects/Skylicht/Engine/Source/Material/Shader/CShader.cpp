@@ -43,7 +43,8 @@ namespace Skylicht
 		m_numVSUniform(0),
 		m_numFSUniform(0),
 		m_deferred(false),
-		m_instancing(NULL)
+		m_instancing(NULL),
+		m_instancingShader(NULL)
 	{
 		// builtin callback
 		addCallback<CShaderLighting>();
@@ -513,6 +514,21 @@ namespace Skylicht
 						CStringImp::convertUnicodeToUTF8(wtext, text);
 						if (CStringImp::comp<const char>(text, "true") == 0)
 							m_deferred = true;
+					}
+
+					wtext = xmlReader->getAttributeValue(L"instancing");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+
+						CShaderManager* shaderManager = CShaderManager::getInstance();
+						m_instancingShader = shaderManager->getShaderByName(text);
+						if (m_instancingShader == NULL)
+						{
+							char log[512];
+							sprintf(log, "Warning: Need load shader instancing: %s first", text);
+							os::Printer::log(log);
+						}
 					}
 				}
 				else if (nodeName == L"uniforms")
