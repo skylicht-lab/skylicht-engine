@@ -32,12 +32,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	struct SShaderMesh
+	{
+		CShader* Shader;
+		CMesh* Mesh;
+
+		bool operator==(const SShaderMesh& other) const
+		{
+			return Shader == other.Shader && Mesh == other.Mesh;
+		}
+
+		bool operator<(const SShaderMesh& other) const
+		{
+			if (Shader == other.Shader)
+				return Mesh < other.Mesh;
+			return Shader < other.Shader;
+		}
+	};
+
+	typedef core::array<CPrimiviteData*> ArrayPrimitives;
+
 	class CPrimitiveRendererInstancing : public CPrimitiveBaseRenderer
 	{
 	protected:
+		std::map<SShaderMesh, ArrayPrimitives> m_groups;
+		std::map<SShaderMesh, IVertexBuffer*> m_buffers;
 
-		core::array<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
-		core::array<core::matrix4> m_transforms[CPrimiviteData::Count];
+		core::array<CMaterial*> m_materials;
+		core::array<CWorldTransformData*> m_transforms;
 
 	public:
 		CPrimitiveRendererInstancing();

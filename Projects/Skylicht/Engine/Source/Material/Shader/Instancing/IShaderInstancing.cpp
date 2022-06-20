@@ -27,5 +27,79 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IShaderInstancing::IShaderInstancing() :
+		m_baseVtxDescriptor(NULL),
+		m_vtxDescriptor(NULL)
+	{
 
+	}
+
+	IShaderInstancing::~IShaderInstancing()
+	{
+
+	}
+
+	bool IShaderInstancing::isSupport(IMeshBuffer* mb)
+	{
+		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
+			return false;
+
+		video::IVertexDescriptor* vtxDes = mb->getVertexDescriptor();
+
+		if (vtxDes != m_baseVtxDescriptor &&
+			vtxDes != m_vtxDescriptor)
+			return false;
+
+		return true;
+	}
+
+	bool IShaderInstancing::isSupport(IMesh* mesh)
+	{
+		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
+			return false;
+
+		u32 count = mesh->getMeshBufferCount();
+		for (u32 i = 0; i < count; i++)
+		{
+			video::IVertexDescriptor* vtxDesriptor = mesh->getMeshBuffer(i)->getVertexDescriptor();
+
+			if (vtxDesriptor != m_baseVtxDescriptor &&
+				vtxDesriptor != m_vtxDescriptor)
+				return false;
+		}
+
+		return true;
+	}
+
+	bool IShaderInstancing::applyInstancing(IMesh* mesh, IVertexBuffer* instancingBuffer)
+	{
+		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
+			return false;
+
+		u32 count = mesh->getMeshBufferCount();
+		for (u32 i = 0; i < count; i++)
+		{
+			IMeshBuffer* mb = mesh->getMeshBuffer(i);
+			mb->setVertexDescriptor(m_vtxDescriptor);
+			mb->addVertexBuffer(instancingBuffer);
+		}
+
+		return true;
+	}
+
+	bool IShaderInstancing::removeInstancing(IMesh* mesh)
+	{
+		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
+			return false;
+
+		u32 count = mesh->getMeshBufferCount();
+		for (u32 i = 0; i < count; i++)
+		{
+			IMeshBuffer* mb = mesh->getMeshBuffer(i);
+			mb->setVertexDescriptor(m_baseVtxDescriptor);
+			mb->removeVertexBuffer(1);
+		}
+
+		return true;
+	}
 }

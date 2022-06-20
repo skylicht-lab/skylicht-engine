@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CGameSingleton.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
@@ -32,13 +33,37 @@ namespace Skylicht
 
 	class IShaderInstancing
 	{
-	public:
-		virtual bool isSupport(IMeshBuffer* mb) = 0;
+	protected:
+		video::IVertexDescriptor* m_baseVtxDescriptor;
+		video::IVertexDescriptor* m_vtxDescriptor;
 
-		virtual IVertexBuffer* createInstancingMeshBuffer(IMeshBuffer* sourceMeshBuffer) = 0;
+	public:
+		IShaderInstancing();
+
+		virtual ~IShaderInstancing();
+
+		virtual bool isSupport(IMeshBuffer* mb);
+
+		virtual bool isSupport(IMesh* mesh);
+
+		virtual IVertexBuffer* createInstancingMeshBuffer() = 0;
+
+		virtual bool applyInstancing(IMesh* mesh, IVertexBuffer* instancingBuffer);
+
+		virtual bool removeInstancing(IMesh* mesh);
 
 		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
 			core::array<CMaterial*>& materials,
-			core::array<core::matrix4>& worlds) = 0;
+			core::array<CWorldTransformData*>& worlds) = 0;
+
+		video::IVertexDescriptor* getBaseVertexDescriptor()
+		{
+			return m_baseVtxDescriptor;
+		}
+
+		video::IVertexDescriptor* getInstancingVertexDescriptor()
+		{
+			return m_vtxDescriptor;
+		}
 	};
 }

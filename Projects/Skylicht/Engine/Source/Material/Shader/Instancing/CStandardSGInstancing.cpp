@@ -70,31 +70,14 @@ namespace Skylicht
 
 	}
 
-	bool CStandardSGInstancing::isSupport(IMeshBuffer* mb)
+	IVertexBuffer* CStandardSGInstancing::createInstancingMeshBuffer()
 	{
-		if (mb->getVertexDescriptor() == m_baseVtxDescriptor ||
-			mb->getVertexDescriptor() == m_vtxDescriptor)
-			return true;
-		return false;
-	}
-
-	IVertexBuffer* CStandardSGInstancing::createInstancingMeshBuffer(IMeshBuffer* sourceMeshBuffer)
-	{
-		// new instancing vertex buffer
-		CVertexBuffer<SVtxSGInstancing>* instanceBuffer = new CVertexBuffer<SVtxSGInstancing>();
-
-		// change new desriptor
-		sourceMeshBuffer->setVertexDescriptor(m_vtxDescriptor);
-
-		// add instances buffer
-		sourceMeshBuffer->addVertexBuffer(instanceBuffer);
-
-		return instanceBuffer;
+		return new CVertexBuffer<SVtxSGInstancing>();
 	}
 
 	void CStandardSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer,
 		core::array<CMaterial*>& materials,
-		core::array<core::matrix4>& worlds)
+		core::array<CWorldTransformData*>& worlds)
 	{
 		CVertexBuffer<SVtxSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSGInstancing>*>(vtxBuffer);
 		if (instanceBuffer == NULL)
@@ -103,7 +86,7 @@ namespace Skylicht
 		u32 count = worlds.size();
 		instanceBuffer->set_used(count);
 
-		core::matrix4* worldData = worlds.pointer();
+		CWorldTransformData** worldData = worlds.pointer();
 		CMaterial** matData = materials.pointer();
 
 		for (u32 i = 0; i < count; i++)
@@ -119,7 +102,7 @@ namespace Skylicht
 			vtx.SpecGloss.Y = params.getParam(3).X;
 
 			// world transform
-			vtx.World = worlds[i];
+			vtx.World = worldData[i]->World;
 		}
 	}
 }
