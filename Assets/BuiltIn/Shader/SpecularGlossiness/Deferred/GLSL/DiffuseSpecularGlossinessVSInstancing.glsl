@@ -5,15 +5,19 @@ layout(location = 2) in vec3 inNormal;
 layout(location = 3) in vec2 inTexCoord0;
 layout(location = 4) in vec4 uUVScale;
 layout(location = 5) in vec4 uColor;
-layout(location = 6) in vec4 uSpecGloss;
-layout(location = 7) in mat4 uWorldMatrix;
+layout(location = 6) in vec2 uSpecGloss;
+layout(location = 7) in vec3 sh0;
+layout(location = 8) in vec3 sh1;
+layout(location = 9) in vec3 sh2;
+layout(location = 10) in vec3 sh3;
+layout(location = 11) in mat4 uWorldMatrix;
 uniform mat4 uVPMatrix;
 uniform mat4 uView;
 out vec3 vWorldNormal;
 out vec4 vWorldPosition;
 out vec2 vTexCoord0;
 out vec4 vColor;
-out vec4 vSpecGloss;
+out vec2 vSpecGloss;
 void main(void)
 {
 	vColor = uColor;

@@ -81,7 +81,11 @@ namespace Skylicht
 		{
 			IMeshBuffer* mb = mesh->getMeshBuffer(i);
 			mb->setVertexDescriptor(m_vtxDescriptor);
-			mb->addVertexBuffer(instancingBuffer);
+
+			if (mb->getVertexBufferCount() == 1)
+				mb->addVertexBuffer(instancingBuffer);
+			else
+				mb->setVertexBuffer(instancingBuffer, 1);
 		}
 
 		return true;

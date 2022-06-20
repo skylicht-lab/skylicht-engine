@@ -6,7 +6,7 @@ struct PS_INPUT
 	float4 worldPosition: WORLDPOSITION;
 	float3 worldNormal: WORLDNORMAL;
 	float4 color: COLOR;
-	float4 specGloss: SPECGLOSS;
+	float2 specGloss: SPECGLOSS;
 };
 struct PS_OUTPUT
 {
@@ -19,7 +19,7 @@ PS_OUTPUT main(PS_INPUT input)
 {
 	PS_OUTPUT output;
 	output.Diffuse = input.color;
-	output.SG = input.specGloss;
+	output.SG = float4(input.specGloss.x, input.specGloss.y, 0.0, 1.0);
 	output.Position = input.worldPosition;
 	output.Normal = float4(input.worldNormal, 1.0);
 	return output;

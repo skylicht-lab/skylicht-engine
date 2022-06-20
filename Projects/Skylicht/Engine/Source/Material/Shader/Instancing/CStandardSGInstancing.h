@@ -34,14 +34,12 @@ namespace Skylicht
 		SVec4 UVScale;
 		SVec4 Color;
 		SVec4 SpecGloss;
+		core::vector3df SH[4];
 		core::matrix4 World;
 
 		bool operator==(const SVtxSGInstancing& other) const
 		{
-			return UVScale == other.UVScale &&
-				Color == other.Color &&
-				SpecGloss == other.SpecGloss &&
-				World == other.World;
+			return false;
 		}
 	};
 
@@ -56,6 +54,7 @@ namespace Skylicht
 
 		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
 			core::array<CMaterial*>& materials,
-			core::array<CWorldTransformData*>& worlds);
+			core::array<CWorldTransformData*>& worlds,
+			core::array<CIndirectLightingData*> lightings);
 	};
 }

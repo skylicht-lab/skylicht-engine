@@ -8,7 +8,11 @@ struct VS_INPUT
 	float4 uvScale: TEXCOORD1;
 	float4 uColor: TEXCOORD2;
 	float2 uSpecGloss: TEXCOORD3;
-	float4x4 worldMatrix: TEXCOORD4;
+	float3 sh0: TEXCOORD4;
+	float3 sh1: TEXCOORD5;
+	float3 sh2: TEXCOORD6;
+	float3 sh3: TEXCOORD7;
+	float4x4 worldMatrix: TEXCOORD8;
 #endif
 };
 
