@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/CMaterial.h"
 #include "CPrimiviteData.h"
 #include "CPrimitiveBaseRenderer.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 namespace Skylicht
 {
@@ -36,16 +37,38 @@ namespace Skylicht
 	{
 		CShader* Shader;
 		CMesh* Mesh;
+		ITexture* Textures[MATERIAL_MAX_TEXTURES];
+		ITexture* Lightmap;
 
-		bool operator==(const SShaderMesh& other) const
+		SShaderMesh()
 		{
-			return Shader == other.Shader && Mesh == other.Mesh;
+			Shader = NULL;
+			Mesh = NULL;
+			Lightmap = NULL;
+			for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+				Textures[i] = NULL;
 		}
 
 		bool operator<(const SShaderMesh& other) const
 		{
 			if (Shader == other.Shader)
+			{
+				if (Mesh == other.Mesh)
+				{
+					if (Lightmap == other.Lightmap)
+					{
+						for (int i = 0; i < _IRR_MATERIAL_MAX_TEXTURES_; i++)
+						{
+							if (Textures[i] != other.Textures[i])
+								return Textures[i] < other.Textures[i];
+						}
+						// all same
+						return false;
+					}
+					return Lightmap < other.Lightmap;
+				}
 				return Mesh < other.Mesh;
+			}
 			return Shader < other.Shader;
 		}
 	};
@@ -60,6 +83,7 @@ namespace Skylicht
 
 		core::array<CMaterial*> m_materials;
 		core::array<CWorldTransformData*> m_transforms;
+		core::array<CIndirectLightingData*> m_indirectLightings;
 
 	public:
 		CPrimitiveRendererInstancing();

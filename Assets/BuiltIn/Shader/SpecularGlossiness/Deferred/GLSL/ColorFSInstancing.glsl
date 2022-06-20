@@ -5,7 +5,7 @@ in vec4 vWorldPosition;
 in vec3 vWorldNormal;
 in float vTangentW;
 in vec4 vColor;
-in vec4 vSpecGloss;
+in vec2 vSpecGloss;
 layout(location = 0) out vec4 Diffuse;
 layout(location = 1) out vec4 Position;
 layout(location = 2) out vec4 Normal;
@@ -13,7 +13,7 @@ layout(location = 3) out vec4 SG;
 void main(void)
 {
 	Diffuse = vColor;
-	SG = vSpecGloss;
+	SG = vec4(vSpecGloss.x, vSpecGloss.y, 0.0, 1.0);
 	Position = vWorldPosition;
 	Normal = vec4(vWorldNormal, 1.0);
 }

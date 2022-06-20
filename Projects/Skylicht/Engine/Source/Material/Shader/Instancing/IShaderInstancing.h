@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "Transform/CWorldTransformData.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 namespace Skylicht
 {
@@ -54,7 +55,8 @@ namespace Skylicht
 
 		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
 			core::array<CMaterial*>& materials,
-			core::array<CWorldTransformData*>& worlds) = 0;
+			core::array<CWorldTransformData*>& worlds,
+			core::array<CIndirectLightingData*> lightings) = 0;
 
 		video::IVertexDescriptor* getBaseVertexDescriptor()
 		{

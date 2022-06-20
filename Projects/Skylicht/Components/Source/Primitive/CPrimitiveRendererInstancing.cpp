@@ -73,9 +73,15 @@ namespace Skylicht
 
 				if (instancing->isSupport(mesh))
 				{
+					CIndirectLightingData* lighting = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
+
 					SShaderMesh shaderMesh;
 					shaderMesh.Shader = shader;
 					shaderMesh.Mesh = mesh;
+					shaderMesh.Lightmap = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightmapTexture;
+
+					for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+						shaderMesh.Textures[i] = p->Material->getTexture(i);
 
 					ArrayPrimitives& list = m_groups[shaderMesh];
 					list.push_back(p);
@@ -86,6 +92,7 @@ namespace Skylicht
 
 						IVertexBuffer* buffer = instancing->createInstancingMeshBuffer();
 						buffer->setHardwareMappingHint(EHM_STREAM);
+
 						instancing->applyInstancing(mesh, buffer);
 
 						m_buffers[shaderMesh] = buffer;
@@ -113,12 +120,13 @@ namespace Skylicht
 
 			m_materials.set_used(0);
 			m_transforms.set_used(0);
+			m_indirectLightings.set_used(0);
 
 			CPrimiviteData** primitives = list.pointer();
 
 			for (u32 i = 0, n = list.size(); i < n; i++)
 			{
-				CPrimiviteData* primitive = primitives[i];				
+				CPrimiviteData* primitive = primitives[i];
 
 				// add materials
 				m_materials.push_back(primitive->Material);
@@ -126,12 +134,14 @@ namespace Skylicht
 				// add transform
 				CEntity* entity = entityManager->getEntity(primitive->EntityIndex);
 				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CIndirectLightingData* lighting = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
 
 				m_transforms.push_back(transform);
+				m_indirectLightings.push_back(lighting);
 			}
 
 			// batching transform & material data to buffer
-			instancing->batchIntancing(buffer, m_materials, m_transforms);
+			instancing->batchIntancing(buffer, m_materials, m_transforms, m_indirectLightings);
 
 			buffer->setDirty();
 		}

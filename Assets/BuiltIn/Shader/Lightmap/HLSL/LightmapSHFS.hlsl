@@ -115,12 +115,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// SH9
 	float3 ambient = EvalSH9Irradiance(input.worldNormal);
 
-	// Test boost indirect
-	// float3 shBrightness  = uSHConst[0];	
-	// float l = shBrightness.r * 0.21 + shBrightness.g * 0.72 + shBrightness.b * 0.07;
-	// float interplateMultipler = 1.0 + 1.5 * (1.0 - l);
-	// ambient *= interplateMultipler;
-
 	float4 result = float4(ambient, 1.0) / 3.14;
 	return result * 3.0;
 }

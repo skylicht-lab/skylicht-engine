@@ -55,11 +55,17 @@ namespace Skylicht
 			m_vtxDescriptor->addAttribute("uColor", 4, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
 			m_vtxDescriptor->addAttribute("uSpecGloss", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
 
+			// add sh color
+			m_vtxDescriptor->addAttribute("sh0", 3, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("sh1", 3, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("sh2", 3, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("sh3", 3, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 1);
+
 			// add instance matrix
-			m_vtxDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD8, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD9, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD10, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD11, video::EVAT_FLOAT, 1);
 
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
 		}
@@ -77,7 +83,8 @@ namespace Skylicht
 
 	void CStandardSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer,
 		core::array<CMaterial*>& materials,
-		core::array<CWorldTransformData*>& worlds)
+		core::array<CWorldTransformData*>& worlds,
+		core::array<CIndirectLightingData*> lightings)
 	{
 		CVertexBuffer<SVtxSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSGInstancing>*>(vtxBuffer);
 		if (instanceBuffer == NULL)
@@ -88,6 +95,7 @@ namespace Skylicht
 
 		CWorldTransformData** worldData = worlds.pointer();
 		CMaterial** matData = materials.pointer();
+		CIndirectLightingData** lightingData = lightings.pointer();
 
 		for (u32 i = 0; i < count; i++)
 		{
@@ -100,6 +108,16 @@ namespace Skylicht
 			vtx.Color = params.getParam(1);
 			vtx.SpecGloss.X = params.getParam(2).X;
 			vtx.SpecGloss.Y = params.getParam(3).X;
+
+			// sh lighting
+			CIndirectLightingData* light = lightingData[i];
+			for (int j = 0; j < 4; j++)
+			{
+				if (light->SH)
+					vtx.SH[j].set(light->SH[j]);
+				else
+					vtx.SH[j].set(0.0f, 0.0f, 0.0f);
+			}
 
 			// world transform
 			vtx.World = worldData[i]->World;
