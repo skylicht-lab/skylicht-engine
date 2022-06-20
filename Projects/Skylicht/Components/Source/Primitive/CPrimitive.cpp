@@ -136,8 +136,14 @@ namespace Skylicht
 		}
 
 		m_material->setUniform4("uColor", m_color);
+		m_material->updateShaderParams();
+
 		if (m_customMaterial)
+		{
 			m_customMaterial->setUniform4("uColor", m_color);
+			m_customMaterial->updateShaderParams();
+		}
+
 
 		CArraySerializable* primitives = (CArraySerializable*)object->getProperty("Primitives");
 		if (primitives == NULL)

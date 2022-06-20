@@ -1,4 +1,5 @@
 /*
+/*
 !@
 MIT License
 
@@ -46,21 +47,15 @@ namespace Skylicht
 
 	class CStandardSGInstancing : public IShaderInstancing
 	{
-	protected:
-		video::IVertexDescriptor* m_baseVtxDescriptor;
-		video::IVertexDescriptor* m_vtxDescriptor;
-
 	public:
 		CStandardSGInstancing();
 
 		virtual ~CStandardSGInstancing();
 
-		virtual bool isSupport(IMeshBuffer* mb);
-
-		virtual IVertexBuffer* createInstancingMeshBuffer(IMeshBuffer* sourceMeshBuffer);
+		virtual IVertexBuffer* createInstancingMeshBuffer();
 
 		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
 			core::array<CMaterial*>& materials,
-			core::array<core::matrix4>& worlds);
+			core::array<CWorldTransformData*>& worlds);
 	};
 }
