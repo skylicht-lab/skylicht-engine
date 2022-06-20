@@ -27,7 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CMesh::CMesh()
+	CMesh::CMesh() :
+		UseInstancing(false)
 	{
 	}
 
@@ -39,7 +40,7 @@ namespace Skylicht
 
 	CMesh* CMesh::clone()
 	{
-		CMesh *newMesh = new CMesh();
+		CMesh* newMesh = new CMesh();
 		newMesh->BoundingBox = BoundingBox;
 
 		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
@@ -64,7 +65,7 @@ namespace Skylicht
 		return MeshBuffers[nr];
 	}
 
-	IMeshBuffer* CMesh::getMeshBuffer(const video::SMaterial &material) const
+	IMeshBuffer* CMesh::getMeshBuffer(const video::SMaterial& material) const
 	{
 		for (s32 i = (s32)MeshBuffers.size() - 1; i >= 0; --i)
 		{
@@ -115,7 +116,7 @@ namespace Skylicht
 			BoundingBox.reset(0.0f, 0.0f, 0.0f);
 	}
 
-	void CMesh::addMeshBuffer(IMeshBuffer* buf, const char* materialName, CMaterial *m)
+	void CMesh::addMeshBuffer(IMeshBuffer* buf, const char* materialName, CMaterial* m)
 	{
 		if (buf)
 		{
@@ -144,9 +145,9 @@ namespace Skylicht
 		}
 	}
 
-	void CMesh::replaceMeshBuffer(int i, IMeshBuffer *buf)
+	void CMesh::replaceMeshBuffer(int i, IMeshBuffer* buf)
 	{
-		MeshBuffers[i]->drop();		
+		MeshBuffers[i]->drop();
 		MeshBuffers[i] = buf;
 		buf->grab();
 	}
@@ -155,7 +156,7 @@ namespace Skylicht
 	{
 		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
 		{
-			IMeshBuffer *mb = MeshBuffers[i];
+			IMeshBuffer* mb = MeshBuffers[i];
 			if (mb->getMaterial().MaterialType == materialID)
 				return mb;
 		}
@@ -167,7 +168,7 @@ namespace Skylicht
 	{
 		CMesh* alphaMesh = NULL;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 		u32 numMeshBuffer = MeshBuffers.size();
 
 		for (u32 i = 0; i < numMeshBuffer; i++)
@@ -203,15 +204,15 @@ namespace Skylicht
 		return alphaMesh;
 	}
 
-	void CMesh::applyDoubleSided(IMeshBuffer *meshBuffer)
+	void CMesh::applyDoubleSided(IMeshBuffer* meshBuffer)
 	{
 		video::E_VERTEX_TYPE vtxType = meshBuffer->getVertexType();
 
 		if (vtxType == EVT_TANGENTS)
 		{
-			CVertexBuffer<video::S3DVertexTangents> *tangentMeshBuffer = (CVertexBuffer<video::S3DVertexTangents>*)(meshBuffer->getVertexBuffer());
+			CVertexBuffer<video::S3DVertexTangents>* tangentMeshBuffer = (CVertexBuffer<video::S3DVertexTangents>*)(meshBuffer->getVertexBuffer());
 
-			IIndexBuffer *indexBuffer = meshBuffer->getIndexBuffer();
+			IIndexBuffer* indexBuffer = meshBuffer->getIndexBuffer();
 
 			u32 indexCount = indexBuffer->getIndexCount();
 			u32 newIndexCount = indexCount * 2;
@@ -295,7 +296,7 @@ namespace Skylicht
 		}
 	}
 
-	int CMesh::getMeshBufferID(IMeshBuffer *buffer)
+	int CMesh::getMeshBufferID(IMeshBuffer* buffer)
 	{
 		u32 numMeshBuffer = MeshBuffers.size();
 		for (u32 i = 0; i < numMeshBuffer; i++)

@@ -33,20 +33,23 @@ namespace Skylicht
 {
 	CPrimitiveRendererInstancing::CPrimitiveRendererInstancing()
 	{
-
+		m_pipelineType = IRenderPipeline::Forwarder;
 	}
 
 	CPrimitiveRendererInstancing::~CPrimitiveRendererInstancing()
 	{
-
+		for (auto& i : m_buffers)
+		{
+			if (i.second)
+				i.second->drop();
+		}
 	}
 
 	void CPrimitiveRendererInstancing::beginQuery(CEntityManager* entityManager)
 	{
-		for (int i = 0; i < CPrimiviteData::Count; i++)
+		for (auto& i : m_groups)
 		{
-			m_primitives[i].set_used(0);
-			m_transforms[i].set_used(0);
+			i.second.set_used(0);
 		}
 	}
 
@@ -60,9 +63,34 @@ namespace Skylicht
 				p->Instancing &&
 				p->Material &&
 				p->Material->getShader() &&
+				p->Material->getShader()->getInstancing() &&
 				p->Material->getShader()->getInstancingShader())
 			{
-				m_primitives[p->Type].push_back(p);
+				CShader* shader = p->Material->getShader();
+				IShaderInstancing* instancing = shader->getInstancing();
+
+				CMesh* mesh = m_mesh[p->Type];
+
+				if (instancing->isSupport(mesh))
+				{
+					SShaderMesh shaderMesh;
+					shaderMesh.Shader = shader;
+					shaderMesh.Mesh = mesh;
+
+					ArrayPrimitives& list = m_groups[shaderMesh];
+					list.push_back(p);
+
+					if (!mesh->UseInstancing)
+					{
+						mesh->UseInstancing = true;
+
+						IVertexBuffer* buffer = instancing->createInstancingMeshBuffer();
+						buffer->setHardwareMappingHint(EHM_STREAM);
+						instancing->applyInstancing(mesh, buffer);
+
+						m_buffers[shaderMesh] = buffer;
+					}
+				}
 			}
 		}
 	}
@@ -72,39 +100,72 @@ namespace Skylicht
 
 	}
 
-	extern int cmpPrimitiveFunc(const void* a, const void* b);
-
 	void CPrimitiveRendererInstancing::update(CEntityManager* entityManager)
 	{
-		for (int type = 0; type < CPrimiviteData::Count; type++)
+		for (auto& it : m_groups)
 		{
-			if (m_mesh[type] == NULL)
+			ArrayPrimitives& list = it.second;
+			if (list.size() == 0)
 				continue;
 
-			core::array<CPrimiviteData*>& primitives = m_primitives[type];
-			u32 count = primitives.size();
+			IShaderInstancing* instancing = it.first.Shader->getInstancing();
+			IVertexBuffer* buffer = m_buffers[it.first];
 
-			// need sort by material
-			qsort(primitives.pointer(), count, sizeof(CPrimiviteData*), cmpPrimitiveFunc);
+			m_materials.set_used(0);
+			m_transforms.set_used(0);
 
-			// get world transform			
-			for (u32 i = 0; i < count; i++)
+			CPrimiviteData** primitives = list.pointer();
+
+			for (u32 i = 0, n = list.size(); i < n; i++)
 			{
-				CEntity* entity = entityManager->getEntity(primitives[i]->EntityIndex);
+				CPrimiviteData* primitive = primitives[i];				
 
+				// add materials
+				m_materials.push_back(primitive->Material);
+
+				// add transform
+				CEntity* entity = entityManager->getEntity(primitive->EntityIndex);
 				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-				m_transforms[type].push_back(transform->World);
+
+				m_transforms.push_back(transform);
 			}
+
+			// batching transform & material data to buffer
+			instancing->batchIntancing(buffer, m_materials, m_transforms);
+
+			buffer->setDirty();
 		}
 	}
 
 	void CPrimitiveRendererInstancing::render(CEntityManager* entityManager)
 	{
-		for (int type = 0; type < CPrimiviteData::Count; type++)
+		IVideoDriver* driver = getVideoDriver();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
+
+		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
+
+		for (auto& it : m_groups)
 		{
-			if (m_mesh[type] == NULL)
+			ArrayPrimitives& list = it.second;
+			if (list.size() == 0)
 				continue;
 
+			CMesh* mesh = it.first.Mesh;
+			CShader* shader = it.first.Shader;
+			int materialType = shader->getInstancingShader()->getMaterialRenderID();
+
+			CShaderMaterial::setMaterial(NULL);
+
+			for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
+			{
+				IMeshBuffer* mb = mesh->MeshBuffers[i];
+
+				video::SMaterial& irrMaterial = mb->getMaterial();
+				irrMaterial.MaterialType = materialType;
+
+				driver->setMaterial(irrMaterial);
+				driver->drawMeshBuffer(mb);
+			}
 		}
 	}
 }

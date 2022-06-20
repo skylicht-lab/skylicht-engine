@@ -43,7 +43,7 @@ namespace Skylicht
 
 		virtual IMeshBuffer* getMeshBuffer(u32 nr) const;
 
-		virtual IMeshBuffer* getMeshBuffer(const video::SMaterial &material) const;
+		virtual IMeshBuffer* getMeshBuffer(const video::SMaterial& material) const;
 
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
@@ -58,19 +58,19 @@ namespace Skylicht
 	public:
 		void recalculateBoundingBox();
 
-		void addMeshBuffer(IMeshBuffer* buf, const char* materialName = "", CMaterial *m = NULL);
+		void addMeshBuffer(IMeshBuffer* buf, const char* materialName = "", CMaterial* m = NULL);
 
 		void removeMeshBuffer(IMeshBuffer* buf);
 
-		void replaceMeshBuffer(int i, IMeshBuffer *buf);
+		void replaceMeshBuffer(int i, IMeshBuffer* buf);
 
 		IMeshBuffer* getBufferByMaterialID(int materialID);
 
 		CMesh* detachAlphaMeshBuffer();
 
-		int getMeshBufferID(IMeshBuffer *buffer);
+		int getMeshBufferID(IMeshBuffer* buffer);
 
-		static void applyDoubleSided(IMeshBuffer *buffer);
+		static void applyDoubleSided(IMeshBuffer* buffer);
 
 		core::array<IMeshBuffer*> MeshBuffers;
 
@@ -79,5 +79,7 @@ namespace Skylicht
 		std::vector<std::string> MaterialName;
 
 		std::vector<CMaterial*> Material;
+
+		bool UseInstancing;
 	};
 }
