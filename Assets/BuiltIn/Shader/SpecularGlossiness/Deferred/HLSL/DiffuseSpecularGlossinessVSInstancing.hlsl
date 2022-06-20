@@ -7,8 +7,12 @@ struct VS_INPUT
 	float2 tex0: TEXCOORD0;
 	float4 uvScale: TEXCOORD1;
 	float4 uColor: TEXCOORD2;
-	float4 specGloss: TEXCOORD3;
-	float4x4 worldMatrix: TEXCOORD4;
+	float2 uSpecGloss: TEXCOORD3;
+	float3 sh0: TEXCOORD4;
+	float3 sh1: TEXCOORD5;
+	float3 sh2: TEXCOORD6;
+	float3 sh3: TEXCOORD7;
+	float4x4 worldMatrix: TEXCOORD8;
 };
 struct VS_OUTPUT
 {
@@ -17,7 +21,7 @@ struct VS_OUTPUT
 	float4 worldPosition: WORLDPOSITION;
 	float3 worldNormal: WORLDNORMAL;
 	float4 color: COLOR;
-	float4 specGloss: SPECGLOSS;
+	float2 specGloss: SPECGLOSS;
 };
 cbuffer cbPerObject
 {
@@ -28,7 +32,7 @@ VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
 	output.color = input.uColor;
-	output.specGloss = input.specGloss;
+	output.specGloss = input.uSpecGloss;
 	float4x4 uWorldMatrix = transpose(input.worldMatrix);
 	float4 uUVScale = input.uvScale;
 	float4x4 uMvpMatrix = mul(uWorldMatrix, uVPMatrix);
