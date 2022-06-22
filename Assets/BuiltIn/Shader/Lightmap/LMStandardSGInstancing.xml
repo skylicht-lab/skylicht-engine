@@ -1,0 +1,11 @@
+<shaderConfig name="LMStandardSGInstancing" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+		</fs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/LMStandardSGVS.glsl" fs="GLSL/LMInstancingSHFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/LMStandardSGVS.hlsl" fs="HLSL/LMInstancingSHFS.hlsl"/>
+</shaderConfig>
