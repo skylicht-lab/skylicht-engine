@@ -1,6 +1,6 @@
 in vec4 inPosition;
-in vec4 inColor;
 in vec3 inNormal;
+in vec4 inColor;
 in vec2 inTexCoord0;
 
 uniform mat4 uMvpMatrix;

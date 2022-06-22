@@ -60,6 +60,8 @@ namespace Skylicht
 
 		virtual bool canRenderMaterial(CMaterial* m);
 
+		virtual bool canRenderShader(CShader* s);
+
 		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& vp) = 0;
 
 		virtual void setCamera(CCamera* camera);
@@ -69,6 +71,8 @@ namespace Skylicht
 		virtual void onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& vp);
 
 		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
+
+		virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh);
 
 	public:
 
