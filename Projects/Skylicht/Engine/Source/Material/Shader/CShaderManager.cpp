@@ -143,6 +143,8 @@ namespace Skylicht
 	{
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml");
 
+		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
+
 		CShader* shader = NULL;
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 		if (shader) shader->setInstancing(new CStandardSGInstancing());
