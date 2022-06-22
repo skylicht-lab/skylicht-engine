@@ -75,7 +75,11 @@ namespace Skylicht
 
 		virtual bool canRenderMaterial(CMaterial* m);
 
+		virtual bool canRenderShader(CShader* s);
+
 		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
+
+		virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh);
 
 		virtual bool OnEvent(const SEvent& event);
 

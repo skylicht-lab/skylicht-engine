@@ -33,7 +33,6 @@ namespace Skylicht
 {
 	CPrimitiveRendererInstancing::CPrimitiveRendererInstancing()
 	{
-		m_pipelineType = IRenderPipeline::Forwarder;
 	}
 
 	CPrimitiveRendererInstancing::~CPrimitiveRendererInstancing()
@@ -164,17 +163,14 @@ namespace Skylicht
 			CShader* shader = it.first.Shader;
 			int materialType = shader->getInstancingShader()->getMaterialRenderID();
 
+			if (!rp->canRenderShader(shader))
+				continue;
+
 			CShaderMaterial::setMaterial(NULL);
 
 			for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
 			{
-				IMeshBuffer* mb = mesh->MeshBuffers[i];
-
-				video::SMaterial& irrMaterial = mb->getMaterial();
-				irrMaterial.MaterialType = materialType;
-
-				driver->setMaterial(irrMaterial);
-				driver->drawMeshBuffer(mb);
+				rp->drawInstancingMeshBuffer(mesh, i, materialType, entityManager, false);
 			}
 		}
 	}

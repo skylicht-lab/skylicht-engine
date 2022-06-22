@@ -94,6 +94,14 @@ namespace Skylicht
 		return true;
 	}
 
+	bool CBaseRP::canRenderShader(CShader* s)
+	{
+		if (s->isDeferred() == true)
+			return false;
+
+		return true;
+	}
+
 	void CBaseRP::setCamera(CCamera* camera)
 	{
 		const SViewFrustum& viewArea = camera->getViewFrustum();
@@ -177,6 +185,18 @@ namespace Skylicht
 		driver->setMaterial(irrMaterial);
 
 		// draw mesh buffer
+		driver->drawMeshBuffer(mb);
+	}
+
+	void CBaseRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entity, bool skinnedMesh)
+	{
+		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
+		IVideoDriver* driver = getVideoDriver();
+
+		video::SMaterial& irrMaterial = mb->getMaterial();
+		irrMaterial.MaterialType = materialRenderID;
+
+		driver->setMaterial(irrMaterial);
 		driver->drawMeshBuffer(mb);
 	}
 

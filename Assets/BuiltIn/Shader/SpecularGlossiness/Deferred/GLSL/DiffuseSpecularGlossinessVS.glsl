@@ -1,7 +1,7 @@
 #ifdef INSTANCING
 layout(location = 0) in vec4 inPosition;
-layout(location = 1) in vec4 inColor;
-layout(location = 2) in vec3 inNormal;
+layout(location = 1) in vec3 inNormal;
+layout(location = 2) in vec4 inColor;
 layout(location = 3) in vec2 inTexCoord0;
 
 layout(location = 4) in vec4 uUVScale;
@@ -17,8 +17,8 @@ layout(location = 11) in mat4 uWorldMatrix;
 
 #else
 in vec4 inPosition;
-in vec4 inColor;
 in vec3 inNormal;
+in vec4 inColor;
 in vec2 inTexCoord0;
 #endif
 
