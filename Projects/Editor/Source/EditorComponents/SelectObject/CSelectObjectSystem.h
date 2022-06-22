@@ -44,7 +44,6 @@ namespace Skylicht
 
 			core::array<CSelectObjectData*> m_collision;
 			core::array<CWorldTransformData*> m_transform;
-			core::array<CWorldInverseTransformData*> m_invTransform;
 
 			CCamera* m_camera;
 			core::recti m_viewport;

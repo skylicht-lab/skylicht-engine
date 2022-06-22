@@ -63,20 +63,24 @@ namespace Skylicht
 			return m_type;
 		}
 
-		virtual bool canRenderMaterial(CMaterial *m) = 0;
+		virtual bool canRenderMaterial(CMaterial* m) = 0;
+
+		virtual bool canRenderShader(CShader* s) = 0;
 
 		virtual void initRender(int w, int h) = 0;
 
 		virtual void resize(int w, int h) = 0;
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& viewport) = 0;
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& viewport) = 0;
 
-		virtual void setCamera(CCamera *camera) = 0;
+		virtual void setCamera(CCamera* camera) = 0;
 
-		virtual void setNextPipeLine(IRenderPipeline *next) = 0;
+		virtual void setNextPipeLine(IRenderPipeline* next) = 0;
 
-		virtual void onNext(ITexture *target, CCamera *camera, CEntityManager* entity, const core::recti& viewport) = 0;
+		virtual void onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& viewport) = 0;
 
-		virtual void drawMeshBuffer(CMesh *mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh) = 0;
+		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entityMgr, int entityID, bool skinnedMesh) = 0;
+
+		virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh) = 0;
 	};
 }

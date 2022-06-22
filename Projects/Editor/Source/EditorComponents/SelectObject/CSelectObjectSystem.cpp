@@ -59,7 +59,6 @@ namespace Skylicht
 			m_results.set_used(0);
 			m_collision.set_used(0);
 			m_transform.set_used(0);
-			m_invTransform.set_used(0);
 
 			m_skipUpdate = false;
 		}
@@ -83,11 +82,9 @@ namespace Skylicht
 			if (collisionData != NULL)
 			{
 				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-				CWorldInverseTransformData* invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
 
 				m_collision.push_back(collisionData);
 				m_transform.push_back(transform);
-				m_invTransform.push_back(invTransform);
 			}
 		}
 
@@ -103,11 +100,10 @@ namespace Skylicht
 
 			CSelectObjectData** collisions = m_collision.pointer();
 			CWorldTransformData** transforms = m_transform.pointer();
-			CWorldInverseTransformData** invTransforms = m_invTransform.pointer();
 
 			CCamera* camera = entityManager->getCamera();
 
-			core::matrix4 invTrans;
+			// core::matrix4 invTrans;
 
 			std::map<CGameObject*, core::aabbox3df> selectedBox;
 
@@ -115,47 +111,14 @@ namespace Skylicht
 			for (u32 i = 0; i < numEntity; i++)
 			{
 				CWorldTransformData* transform = transforms[i];
-				CWorldInverseTransformData* invTransform = invTransforms[i];
 				CSelectObjectData* collision = collisions[i];
 
 				collision->TransformBBox = collision->BBox;
 				transform->World.transformBoxEx(collision->TransformBBox);
 
 				// 1. Detect by bounding box
-				SViewFrustum frust;
-
-				frust = camera->getViewFrustum();
+				const SViewFrustum& frust = camera->getViewFrustum();
 				bool visible = collision->TransformBBox.intersectsWithBox(frust.getBoundingBox());
-
-				// 2. Detect algorithm
-				if (visible == true && invTransform != NULL)
-				{
-					// transform the frustum to the node's current absolute transformation
-					invTrans = invTransform->WorldInverse;
-					frust.transform(invTrans);
-
-					core::vector3df edges[8];
-					collision->BBox.getEdges(edges);
-
-					for (s32 i = 0; i < scene::SViewFrustum::VF_PLANE_COUNT; ++i)
-					{
-						bool boxInFrustum = false;
-						for (u32 j = 0; j < 8; ++j)
-						{
-							if (frust.planes[i].classifyPointRelation(edges[j]) != core::ISREL3D_FRONT)
-							{
-								boxInFrustum = true;
-								break;
-							}
-						}
-
-						if (!boxInFrustum)
-						{
-							visible = false;
-							break;
-						}
-					}
-				}
 
 				if (visible)
 				{

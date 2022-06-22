@@ -97,6 +97,11 @@ namespace Skylicht
 		return true;
 	}
 
+	bool CShadowMapRP::canRenderShader(CShader* s)
+	{
+		return true;
+	}
+
 	void CShadowMapRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
 		if (mesh->Material.size() > (u32)bufferID)
@@ -143,6 +148,11 @@ namespace Skylicht
 
 		// draw mesh buffer
 		driver->drawMeshBuffer(mb);
+	}
+
+	void CShadowMapRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh)
+	{
+
 	}
 
 	bool CShadowMapRP::OnEvent(const SEvent& event)
