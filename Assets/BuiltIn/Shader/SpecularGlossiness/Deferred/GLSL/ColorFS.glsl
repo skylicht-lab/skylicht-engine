@@ -10,8 +10,7 @@ in vec4 vColor;
 in vec2 vSpecGloss;
 #else
 uniform vec4 uColor;
-uniform float uSpec;
-uniform float uGloss;
+uniform vec2 uSpecGloss;
 #endif
 
 layout(location = 0) out vec4 Diffuse;
@@ -26,7 +25,7 @@ void main(void)
 	SG = vec4(vSpecGloss.x, vSpecGloss.y, 0.0, 1.0);
 #else
 	Diffuse = uColor;
-	SG = vec4(uSpec, uGloss, 0.0, 1.0);
+	SG = vec4(uSpecGloss.x, uSpecGloss.y, 0.0, 1.0);
 #endif
 	Position = vWorldPosition;
 	Normal = vec4(vWorldNormal, 1.0);

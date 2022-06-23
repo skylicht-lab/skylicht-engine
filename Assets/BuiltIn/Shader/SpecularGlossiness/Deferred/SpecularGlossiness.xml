@@ -10,6 +10,7 @@
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false" normal="true"/>
 			<uniform name="uTexSpecGloss" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 		</fs>
 	</uniforms>
 	<resources>

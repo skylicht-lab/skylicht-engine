@@ -9,8 +9,8 @@
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false" normal="true"/>
-			<uniform name="uSpec" type="MATERIAL_PARAM" valueIndex="1" value="0.4" float="1"/>
-			<uniform name="uGloss" type="MATERIAL_PARAM" valueIndex="2" value="0.3" float="1"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uSpecGloss" type="MATERIAL_PARAM" valueIndex="2" value="0.4, 0.3, 0.0, 1.0" float="2"/>
 		</fs>
 	</uniforms>
 	<resources>
