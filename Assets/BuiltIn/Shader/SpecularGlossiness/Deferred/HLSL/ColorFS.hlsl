@@ -22,8 +22,7 @@ struct PS_OUTPUT
 cbuffer cbPerFrame
 {
 	float4 uColor;
-	float uSpec;
-	float uGloss;
+	float2 uSpecGloss;
 };
 #endif
 
@@ -36,7 +35,7 @@ PS_OUTPUT main(PS_INPUT input)
 	output.SG = float4(input.specGloss.x, input.specGloss.y, 0.0, 1.0);
 #else
 	output.Diffuse = uColor;
-	output.SG = float4(uSpec, uGloss, 0.0, 1.0);
+	output.SG = float4(uSpecGloss.x, uSpecGloss.y, 0.0, 1.0);
 #endif
 	
 	output.Position = input.worldPosition;
