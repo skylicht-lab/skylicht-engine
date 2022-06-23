@@ -106,8 +106,7 @@ namespace Skylicht
 			// convert material data from BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml
 			vtx.UVScale = params.getParam(0);
 			vtx.Color = params.getParam(1);
-			vtx.SpecGloss.X = params.getParam(2).X;
-			vtx.SpecGloss.Y = params.getParam(3).X;
+			vtx.SpecGloss = params.getParam(2);
 
 			// sh lighting
 			CIndirectLightingData* light = lightingData[i];

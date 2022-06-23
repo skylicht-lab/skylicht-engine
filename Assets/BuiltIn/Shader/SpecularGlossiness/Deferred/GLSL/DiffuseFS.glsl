@@ -2,8 +2,8 @@ precision highp float;
 
 uniform sampler2D uTexDiffuse;
 
-uniform float uSpec;
-uniform float uGloss;
+uniform vec4 uColor;
+uniform vec2 uSpecGloss;
 
 in vec2 vTexCoord0;
 in vec4 vWorldPosition;
@@ -17,10 +17,10 @@ layout(location = 3) out vec4 SG;
 
 void main(void)
 {
-	vec3 baseMap = texture(uTexDiffuse, vTexCoord0.xy).xyz;
+	vec3 baseMap = texture(uTexDiffuse, vTexCoord0.xy).rgb ;
 
-	Diffuse = vec4(baseMap, 1.0);
+	Diffuse = vec4(baseMap * uColor.rgb, 1.0);
 	Position = vWorldPosition;
 	Normal = vec4(vWorldNormal, 1.0);
-	SG = vec4(uSpec, uGloss, 1.0, 1.0);
+	SG = vec4(uSpecGloss.x, uSpecGloss.y, 1.0, 1.0);
 }

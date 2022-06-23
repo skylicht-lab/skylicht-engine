@@ -28,16 +28,17 @@ struct PS_OUTPUT
 
 cbuffer cbPerFrame
 {
-	float uGloss;
+	float4 uColor;
+	float2 uGloss;
 };
 
 PS_OUTPUT main(PS_INPUT input)
 {
 	PS_OUTPUT output;
 
-	float3 baseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0).xyz;
+	float3 baseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0).rgb;
 	float3 normalMap = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
-	float3 specMap = uTexSpec.Sample(uTexSpecSampler, input.tex0).xyz;
+	float3 specMap = uTexSpec.Sample(uTexSpecSampler, input.tex0).rgb;
 
 	float3x3 rotation = float3x3(input.worldTangent, input.worldBinormal, input.worldNormal);
 
@@ -46,10 +47,10 @@ PS_OUTPUT main(PS_INPUT input)
 	float3 n = mul(localCoords, rotation);
 	n = normalize(n);
 
-	output.Diffuse = float4(baseMap, 1.0);
+	output.Diffuse = float4(baseMap * uColor.rgb, 1.0);
 	output.Position = input.worldPosition;
 	output.Normal = float4(n, 1.0);
-	output.SG = float4(specMap.r, uGloss, 0.0, 1.0);
+	output.SG = float4(specMap.r, uGloss.y, 0.0, 1.0);
 
 	return output;
 }

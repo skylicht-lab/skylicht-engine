@@ -11,7 +11,8 @@
 			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false" normal="true"/>
 			<uniform name="uTexSpecGloss" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uTexMask" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
-			<uniform name="uCutoff" type="MATERIAL_PARAM" valueIndex="1" value="0.4" float="1"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uCutoff" type="MATERIAL_PARAM" valueIndex="3" value="0.4" float="1"/>
 		</fs>
 	</uniforms>
 	<resources>

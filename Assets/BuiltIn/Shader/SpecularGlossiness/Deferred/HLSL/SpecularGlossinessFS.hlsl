@@ -26,6 +26,11 @@ struct PS_OUTPUT
 	float4 SG: SV_TARGET3;
 };
 
+cbuffer cbPerFrame
+{
+	float4 uColor;
+};
+
 PS_OUTPUT main(PS_INPUT input)
 {
 	PS_OUTPUT output;
@@ -41,7 +46,7 @@ PS_OUTPUT main(PS_INPUT input)
 	float3 n = mul(localCoords, rotation);
 	n = normalize(n);
 
-	output.Diffuse = float4(baseMap, 1.0);
+	output.Diffuse = float4(baseMap * uColor.rgb, 1.0);
 	output.Position = input.worldPosition;
 	output.Normal = float4(n, 1.0);
 	output.SG = float4(sgMap, 1.0);
