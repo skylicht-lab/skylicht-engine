@@ -28,7 +28,6 @@ cbuffer cbPerFrame
 	float3 uLightMultiplier;
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
-	float4x4 uViewProjection;
 	float4x4 uView;
 	float4x4 uProjection;
 };

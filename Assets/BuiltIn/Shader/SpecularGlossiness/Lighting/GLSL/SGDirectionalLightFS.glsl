@@ -16,7 +16,6 @@ uniform vec4 uLightColor;
 uniform vec3 uLightMultiplier;
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
-uniform mat4 uViewProjection;
 uniform mat4 uView;
 uniform mat4 uProjection;
 in vec2 varTexCoord0;

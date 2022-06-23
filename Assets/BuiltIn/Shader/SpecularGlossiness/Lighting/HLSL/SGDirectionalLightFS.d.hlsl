@@ -39,7 +39,6 @@ cbuffer cbPerFrame
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
 #if defined(ENABLE_SSR)
-	float4x4 uViewProjection;
 	float4x4 uView;
 	float4x4 uProjection;
 #endif
