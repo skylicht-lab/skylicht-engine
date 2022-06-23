@@ -76,14 +76,14 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 diffuseColor = diffuseMap.rgb * (float3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
 	specularColor = lerp(f0, diffuseMap.rgb, metallic);
 
-	// SH Ambient
+	// SH4 Ambient
 	float3 ambientLighting = uSHConst[0].xyz +
 		uSHConst[1].xyz * n.y +
 		uSHConst[2].xyz * n.z +
 		uSHConst[3].xyz * n.x;
 
 	// Tone Mapping
-	ambientLighting = sRGB(ambientLighting);
+	ambientLighting = sRGB(ambientLighting * 0.9); // fix for SH4
 	diffuseColor = sRGB(diffuseColor);
 	specularColor = sRGB(specularColor);
 	float3 lightColor = sRGB(uLightColor.rgb);

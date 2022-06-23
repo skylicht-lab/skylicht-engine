@@ -72,7 +72,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		uSHConst[1].xyz * n.y +
 		uSHConst[2].xyz * n.z +
 		uSHConst[3].xyz * n.x;
-	ambientLighting = sRGB(ambientLighting);
+	ambientLighting = sRGB(ambientLighting * 0.9);
 	diffuseColor = sRGB(diffuseColor);
 	specularColor = sRGB(specularColor);
 	float3 lightColor = sRGB(uLightColor.rgb);

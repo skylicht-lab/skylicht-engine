@@ -75,7 +75,7 @@ void main(void)
 		uSHConst[3].xyz * n.x;
 
 	// Tone Mapping
-	ambientLighting = sRGB(ambientLighting);
+	ambientLighting = sRGB(ambientLighting * 0.9);	// fix for SH4
 	diffuseColor = sRGB(diffuseColor);
 	specularColor = sRGB(specularColor);
 	vec3 lightColor = sRGB(uLightColor.rgb);

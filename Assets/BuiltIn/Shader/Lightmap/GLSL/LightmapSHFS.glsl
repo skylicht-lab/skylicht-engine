@@ -64,6 +64,6 @@ vec3 EvalSH9Irradiance(in vec3 dir)
 
 void main(void)
 {
-	vec3 ambient = EvalSH9Irradiance(vWorldNormal) / 3.14;
-	FragColor = vec4(ambient * 3.0, 1.0);
+	vec3 ambient = EvalSH9Irradiance(vWorldNormal);
+	FragColor = vec4(ambient, 1.0);
 }
