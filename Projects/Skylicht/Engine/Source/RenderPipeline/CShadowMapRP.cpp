@@ -60,6 +60,10 @@ namespace Skylicht
 		m_cubeDepthWriteShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWrite");
 		m_cubeDepthWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWriteSkinMesh");
 
+		m_colorInstancing = shaderMgr->getShaderIDByName("ColorInstancing");
+		m_depthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWStandardSGInstancing");
+		m_cubeDepthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWCubeStandardSGInstancing");
+
 		m_writeDepthMaterial.BackfaceCulling = false;
 		m_writeDepthMaterial.FrontfaceCulling = false;
 
@@ -152,7 +156,26 @@ namespace Skylicht
 
 	void CShadowMapRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh)
 	{
+		if (m_saveDebug == true)
+			return;
 
+		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
+		IVideoDriver* driver = getVideoDriver();
+
+		switch (m_renderShadowState)
+		{
+		case DirectionLight:
+			if (materialRenderID == m_colorInstancing)
+				m_writeDepthMaterial.MaterialType = m_depthWriteStandardSGInstancing;
+			break;
+		case PointLight:
+			if (materialRenderID == m_colorInstancing)
+				m_writeDepthMaterial.MaterialType = m_cubeDepthWriteStandardSGInstancing;
+			break;
+		}
+
+		driver->setMaterial(m_writeDepthMaterial);
+		driver->drawMeshBuffer(mb);
 	}
 
 	bool CShadowMapRP::OnEvent(const SEvent& event)
