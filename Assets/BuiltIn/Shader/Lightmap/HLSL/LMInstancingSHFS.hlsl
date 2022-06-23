@@ -11,11 +11,11 @@ struct PS_INPUT
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	// quick SH4
+	// fast SH4
 	float3 ambient = input.sh0 +
 		input.sh1 * input.worldNormal.y +
 		input.sh2 * input.worldNormal.z +
 		input.sh3 * input.worldNormal.x;
 	
-	return float4(ambient * 3.0, 1.0);
+	return float4(ambient * 0.9, 1.0);	// fix 0.9 for SH4
 }

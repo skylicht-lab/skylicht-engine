@@ -10,11 +10,11 @@ out vec4 FragColor;
 
 void main(void)
 {
-	// quick SH4
+	// fast SH4
 	vec3 ambient = vSH0 +
 		vSH1 * vWorldNormal.y +
 		vSH2 * vWorldNormal.z +
 		vSH3 * vWorldNormal.x;
-		
-	FragColor = vec4(ambient * 3.0, 1.0);
+	
+	FragColor = vec4(ambient * 0.9, 1.0);	// fix 0.9 for SH4
 }

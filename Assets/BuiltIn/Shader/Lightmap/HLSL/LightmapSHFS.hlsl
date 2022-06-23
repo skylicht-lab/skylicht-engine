@@ -115,6 +115,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// SH9
 	float3 ambient = EvalSH9Irradiance(input.worldNormal);
 
-	float4 result = float4(ambient, 1.0) / 3.14;
-	return result * 3.0;
+	return float4(ambient, 1.0);
 }

@@ -53,9 +53,15 @@ namespace Skylicht
 		m_isIndirectPass(false),
 		m_vertexColorShader(0),
 		m_textureColorShader(0),
+		m_textureLinearRGBShader(0),
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
-		m_textureLinearRGBShader(0),
+		m_lightmapArrayShader(0),
+		m_lightmapVertexShader(0),
+		m_lightmapSHShader(0),
+		m_lightmapIndirectTestShader(0),
+		m_colorInstancing(0),
+		m_lmInstancingSH(0),
 		m_indirectMultipler(1.0f),
 		m_directMultipler(1.0f),
 		m_lightMultipler(1.0f),
@@ -133,9 +139,14 @@ namespace Skylicht
 		m_textureColorShader = shaderMgr->getShaderIDByName("TextureColor");
 		m_textureLinearRGBShader = shaderMgr->getShaderIDByName("TextureLinearRGB");
 		m_vertexColorShader = shaderMgr->getShaderIDByName("VertexColor");
+
 		m_lightmapArrayShader = shaderMgr->getShaderIDByName("Lightmap");
 		m_lightmapVertexShader = shaderMgr->getShaderIDByName("LightmapVertex");
 		m_lightmapSHShader = shaderMgr->getShaderIDByName("LightmapSH");
+
+		m_colorInstancing = shaderMgr->getShaderIDByName("ColorInstancing");
+		m_lmInstancingSH = shaderMgr->getShaderIDByName("LMStandardSGInstancing");
+
 		m_lightmapIndirectTestShader = shaderMgr->getShaderIDByName("IndirectTest");
 
 		m_lightDirection = shaderMgr->getShaderIDByName("SGDirectionalLight");
@@ -361,7 +372,10 @@ namespace Skylicht
 	{
 		if (m_isIndirectPass == true)
 		{
-
+			if (materialRenderID == m_colorInstancing)
+			{
+				CBaseRP::drawInstancingMeshBuffer(mesh, bufferID, m_lmInstancingSH, entityMgr, skinnedMesh);
+			}
 		}
 		else
 		{
