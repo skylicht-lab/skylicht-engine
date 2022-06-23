@@ -61,6 +61,10 @@ namespace Skylicht
 		int m_cubeDepthWriteShader;
 		int m_cubeDepthWriteSkinMeshShader;
 
+		int m_colorInstancing;
+		int m_depthWriteStandardSGInstancing;
+		int m_cubeDepthWriteStandardSGInstancing;
+
 		bool m_saveDebug;
 	public:
 		CShadowMapRP();

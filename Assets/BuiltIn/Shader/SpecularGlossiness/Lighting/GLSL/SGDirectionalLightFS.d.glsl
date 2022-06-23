@@ -21,7 +21,6 @@ uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
 
 #if defined(ENABLE_SSR)
-uniform mat4 uViewProjection;
 uniform mat4 uView;
 uniform mat4 uProjection;
 #endif
