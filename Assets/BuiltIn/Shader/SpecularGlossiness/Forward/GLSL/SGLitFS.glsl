@@ -64,7 +64,7 @@ void main(void)
 		uSHConst[1].xyz * n.y +
 		uSHConst[2].xyz * n.z +
 		uSHConst[3].xyz * n.x;
-	ambientLighting = sRGB(ambientLighting);
+	ambientLighting = sRGB(ambientLighting * 0.9);
 	diffuseColor = sRGB(diffuseColor);
 	specularColor = sRGB(specularColor);
 	vec3 lightColor = sRGB(uLightColor.rgb);
