@@ -156,6 +156,7 @@ namespace Skylicht
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
+		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml");
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightBake.xml");
