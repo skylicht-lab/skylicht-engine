@@ -144,6 +144,7 @@ namespace Skylicht
 		{
 			UITexture = 0,
 			UIColor,
+			UIFloat,
 			UIFloat2,
 			UIFloat4,
 			UIGroup,

@@ -18,6 +18,10 @@
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_dif."/>
 		</ui>
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat2" name="uSpecGloss" elementName="Specular;Glossiness" min="0" max="1"/>
+		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/DiffuseSpecularGlossinessVS.glsl" fs="GLSL/DiffuseFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/DiffuseSpecularGlossinessVS.hlsl" fs="HLSL/DiffuseFS.hlsl"/>

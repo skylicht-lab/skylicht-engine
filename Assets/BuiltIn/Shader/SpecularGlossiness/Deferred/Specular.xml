@@ -22,6 +22,10 @@
 			<ui control="UITexture" name="uTexNormal" autoReplace="_norm.;_ddn.;_n."/>
 			<ui control="UITexture" name="uTexSpec" autoReplace="_spec.;_s."/>
 		</ui>
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat2" name="uGloss" elementName=";Glossiness" min="0" max="1"/>
+		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/SpecularGlossinessVS.glsl" fs="GLSL/SpecularFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/SpecularGlossinessVS.hlsl" fs="HLSL/SpecularFS.hlsl"/>
