@@ -5,6 +5,7 @@
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
 			<uniform name="uCameraPosition" type="CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
 			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
 		</vs>
 		<fs>
@@ -14,6 +15,7 @@
 			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
 
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
@@ -25,6 +27,10 @@
 			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_Diffuse.;_D."/>
 			<ui control="UITexture" name="uTexNormal" autoReplace="_norm.;_Normal.;_N."/>
 			<ui control="UITexture" name="uTexSpecular" autoReplace="_spec.;_Specular.;_S."/>
+		</ui>
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/SGSkinVS.glsl" fs="GLSL/SGLitFS.glsl"/>

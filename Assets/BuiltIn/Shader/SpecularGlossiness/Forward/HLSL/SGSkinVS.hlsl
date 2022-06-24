@@ -31,6 +31,7 @@ cbuffer cbPerObject
 	float4x4 uWorldMatrix;
 	float4 uCameraPosition;
 	float4 uLightDirection;
+	float4 uUVScale;
 	float4x4 uBoneMatrix[64];
 };
 
@@ -66,7 +67,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 	output.pos = mul(skinPosition, uMvpMatrix);
 
-	output.tex0 = input.tex0;
+	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
 	output.tangentw = input.tangentw.x;
 
 	float4 worldPos = mul(skinPosition, uWorldMatrix);

@@ -6,6 +6,7 @@ uniform sampler2D uTexSpecular;
 uniform samplerCube uTexReflect;
 
 uniform vec4 uLightColor;
+unfform vec4 uColor;
 uniform vec4 uSHConst[4];
 
 in vec2 vTexCoord0;
@@ -46,7 +47,7 @@ float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
 
 void main(void)
 {
-	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy);
+	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy) * uColor;
 	vec3 normalMap = texture(uTexNormal, vTexCoord0.xy).xyz;
 	vec3 specMap = texture(uTexSpecular, vTexCoord0.xy).xyz;
 
