@@ -172,6 +172,7 @@ namespace Skylicht
 		const char* uiName[] = {
 			"UITexture",
 			"UIColor",
+			"UIFloat",
 			"UIFloat2",
 			"UIFloat4",
 			"UIGroup"
