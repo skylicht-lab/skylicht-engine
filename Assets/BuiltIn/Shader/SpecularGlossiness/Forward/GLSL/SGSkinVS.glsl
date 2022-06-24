@@ -12,6 +12,7 @@ uniform mat4 uMvpMatrix;
 uniform mat4 uWorldMatrix;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
+uniform vec4 uUVScale;
 uniform mat4 uBoneMatrix[64];
 
 out vec2 vTexCoord0;
@@ -47,7 +48,7 @@ void main(void)
 	skinNormal = (skinMatrix * vec4(inNormal, 0.0)).xyz;
 	skinTangent = (skinMatrix * vec4(inTangent, 0.0)).xyz;
 
-	vTexCoord0 = inTexCoord0;
+	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
 	vTangentW = inTangentW.x;
 
 	vec4 worldPos = uWorldMatrix * skinPosition;
