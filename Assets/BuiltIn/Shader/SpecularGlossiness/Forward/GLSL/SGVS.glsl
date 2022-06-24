@@ -10,6 +10,7 @@ uniform mat4 uMvpMatrix;
 uniform mat4 uWorldMatrix;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
+uniform vec4 uUVScale;
 
 out vec2 vTexCoord0;
 out vec3 vWorldNormal;
@@ -23,7 +24,7 @@ out vec3 vWorldPosition;
 
 void main(void)
 {
-	vTexCoord0 = inTexCoord0;
+	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
 	vTangentW = inTangentW.x;
 
 	vec4 worldPos = uWorldMatrix * inPosition;

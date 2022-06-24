@@ -483,7 +483,6 @@ namespace Skylicht
 					value[0] = x->get();
 					value[1] = y->get();
 
-					// on change color
 					material->setUniform2(uniformUI->Name.c_str(), value);
 					material->applyMaterial();
 				};
@@ -593,8 +592,7 @@ namespace Skylicht
 					value[2] = z->get();
 					value[3] = w->get();
 
-					// on change color
-					material->setUniform2(uniformUI->Name.c_str(), value);
+					material->setUniform4(uniformUI->Name.c_str(), value);
 					material->applyMaterial();
 				};
 

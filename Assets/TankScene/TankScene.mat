@@ -6,8 +6,8 @@
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
-			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 			<Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
+			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 		</Params>
 		<Properties>
 			<Property name='ZBuffer' value='LessEqual'/>
@@ -22,8 +22,8 @@
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
-			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 			<Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
+			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 		</Params>
 		<Properties>
 			<Property name='ZBuffer' value='LessEqual'/>
@@ -38,8 +38,8 @@
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
-			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 			<Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
+			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 		</Params>
 		<Properties>
 			<Property name='ZBuffer' value='LessEqual'/>
@@ -54,8 +54,8 @@
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
-			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 			<Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
+			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 		</Params>
 		<Properties>
 			<Property name='ZBuffer' value='LessEqual'/>
@@ -70,8 +70,8 @@
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
-			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 			<Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
+			<Param name='uSpecGloss' floatSize='4' floatValue='0.400000,0.300000,0.000000,0.000000'/>
 		</Params>
 		<Properties>
 			<Property name='ZBuffer' value='LessEqual'/>
