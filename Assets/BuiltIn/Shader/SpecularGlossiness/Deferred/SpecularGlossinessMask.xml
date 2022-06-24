@@ -24,6 +24,10 @@
 			<ui control="UITexture" name="uTexSpecGloss" autoReplace="_spec.;_s."/>
 			<ui control="UITexture" name="uTexMask" autoReplace="_mask.;_alpha.;_a."/>
 		</ui>
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat" name="uCutoff" elementName="Cutoff" min="0" max="1"/>
+		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/SpecularGlossinessVS.glsl" fs="GLSL/SpecularGlossinessMaskFS.glsl"/>
 	<shader type="HLSL" vs="HLSL/SpecularGlossinessVS.hlsl" fs="HLSL/SpecularGlossinessMaskFS.hlsl"/>
