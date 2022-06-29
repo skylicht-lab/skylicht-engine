@@ -9,4 +9,6 @@ namespace Skylicht
 	core::vector3df convertFBXVec3(ufbx_vec3& v);
 
 	core::vector2df convertFBXVec2(ufbx_vec2& v);
+
+	core::vector2df convertFBXUVVec2(ufbx_vec2& v);
 }

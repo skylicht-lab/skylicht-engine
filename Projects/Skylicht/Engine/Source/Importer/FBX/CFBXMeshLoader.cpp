@@ -23,21 +23,20 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "ufbx.h"
+
 #include "CFBXMeshLoader.h"
 #include "CFBXLoaderFunc.h"
 
 #include "Entity/CEntity.h"
 #include "Entity/CEntityPrefab.h"
-#include "Exporter/ExportResources.h"
 
-#include "Utils/CMemoryStream.h"
-#include "Utils/CActivator.h"
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
-#include "Transform/CWorldTransformData.h"
-#include "ufbx.h"
+#include "TextureManager/CTextureManager.h"
 
+#include "Transform/CWorldTransformData.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Culling/CCullingData.h"
 
@@ -78,11 +77,13 @@ namespace Skylicht
 		ufbx_load_opts opts;
 		memset(&opts, 0, sizeof(ufbx_load_opts));
 
-		opts.load_external_files = true;
+		opts.load_external_files = false;
 		opts.allow_null_material = true;
+		opts.ignore_embedded = true;
+		opts.ignore_animation = true;
 		opts.evaluate_skinning = true;
 
-		opts.target_axes.right = UFBX_COORDINATE_AXIS_POSITIVE_X;
+		opts.target_axes.right = UFBX_COORDINATE_AXIS_NEGATIVE_X;
 		opts.target_axes.up = UFBX_COORDINATE_AXIS_POSITIVE_Y;
 		opts.target_axes.front = UFBX_COORDINATE_AXIS_POSITIVE_Z;
 
@@ -155,7 +156,7 @@ namespace Skylicht
 				IMeshBuffer* mb = NULL;
 				video::E_INDEX_TYPE indexType = video::EIT_16BIT;
 
-				u32 numVertex = mesh_mat->num_triangles * 3;
+				size_t numVertex = mesh_mat->num_triangles * 3;
 				if (numVertex >= USHRT_MAX - 1)
 					indexType = video::EIT_32BIT;
 
@@ -201,6 +202,9 @@ namespace Skylicht
 
 					size_t num_tris = ufbx_triangulate_face(tri_indices, num_tri_indices, mesh, face);
 
+					u32 trisIndices[3];
+					int indexCount = 0;
+
 					for (size_t vi = 0; vi < num_tris * 3; vi++)
 					{
 						uint32_t ix = tri_indices[vi];
@@ -216,7 +220,7 @@ namespace Skylicht
 						v.Pos = convertFBXVec3(pos);
 						v.Normal = convertFBXVec3(normal);
 						v.Normal.normalize();
-						v.TCoords = convertFBXVec2(uv);
+						v.TCoords = convertFBXUVVec2(uv);
 						v.Tangent = convertFBXVec3(tangent);
 						v.Binormal = convertFBXVec3(binormal);
 						v.TangentW.set(1.f, 1.f);
@@ -232,7 +236,25 @@ namespace Skylicht
 							vertMap.insert(ix, vertLocation);
 						}
 
-						indexBuffer->addIndex(vertLocation);
+						trisIndices[indexCount++] = vertLocation;
+
+						if (indexCount >= 3)
+						{
+							if (opts.target_axes.right == UFBX_COORDINATE_AXIS_NEGATIVE_X)
+							{
+								indexBuffer->addIndex(trisIndices[2]);
+								indexBuffer->addIndex(trisIndices[1]);
+								indexBuffer->addIndex(trisIndices[0]);
+							}
+							else
+							{
+								indexBuffer->addIndex(trisIndices[0]);
+								indexBuffer->addIndex(trisIndices[1]);
+								indexBuffer->addIndex(trisIndices[2]);
+							}
+
+							indexCount = 0;
+						}
 					}
 				}
 
@@ -256,12 +278,25 @@ namespace Skylicht
 					{
 						bool foundTexture = false;
 
-						for (int i = 0; i < mesh_mat->material->textures.count && i < MATERIAL_MAX_TEXTURES; i++)
+						if (mesh_mat->material->textures.count > 0)
 						{
-							ufbx_material_texture* materialTexture = &mesh_mat->material->textures.data[i];
+							ufbx_material_texture* materialTexture = &mesh_mat->material->textures.data[0];
 							if (materialTexture->texture)
 							{
 								std::string fileName = CPath::getFileName(std::string(materialTexture->texture->filename.data));
+								ITexture* texture = CTextureManager::getInstance()->getTexture(fileName.c_str(), m_textureFolder);
+								if (texture == NULL)
+									texture = CTextureManager::getInstance()->getTexture(materialTexture->texture->relative_filename.data, m_textureFolder);
+
+								if (texture)
+								{
+									foundTexture = true;
+									mat.UseMipMaps = true;
+									mat.setTexture(0, texture);
+									mat.setFlag(video::EMF_BILINEAR_FILTER, false);
+									mat.setFlag(video::EMF_TRILINEAR_FILTER, false);
+									mat.setFlag(video::EMF_ANISOTROPIC_FILTER, true, 2);
+								}
 							}
 						}
 
