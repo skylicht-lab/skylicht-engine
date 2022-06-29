@@ -84,23 +84,40 @@ void CViewInit::initScene()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	CMeshManager* meshManager = CMeshManager::getInstance();
-	CEntityPrefab* prefab = NULL;
+	CEntityPrefab* prefabWindTurbine;
+	CEntityPrefab* prefabBlades;
+	CGameObject* windTurbind;
+	CGameObject* windTurbindBlades;
 
 	std::vector<std::string> textureFolders;
-	textureFolders.push_back("Sponza/Textures");
 
-	prefab = meshManager->loadModel("SampleModels/R8/Audi R8.fbx", NULL, true);
-	if (prefab != NULL)
+	prefabWindTurbine = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine.fbx", NULL, true);
+	if (prefabWindTurbine != NULL)
 	{
-		ArrayMaterial listMaterials = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
+		ArrayMaterial listMaterials = CMaterialManager::getInstance()->initDefaultMaterial(prefabWindTurbine);
 
 		// create render mesh object
-		CGameObject* car = zone->createEmptyObject();
-		car->setStatic(true);
+		windTurbind = zone->createEmptyObject();
+		windTurbind->setStatic(true);
 
 		// render mesh & init material
-		CRenderMesh* renderer = car->addComponent<CRenderMesh>();
-		renderer->initFromPrefab(prefab);
+		CRenderMesh* renderer = windTurbind->addComponent<CRenderMesh>();
+		renderer->initFromPrefab(prefabWindTurbine);
+		renderer->initMaterial(listMaterials);
+	}
+
+	prefabBlades = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine_Blades.fbx", NULL, true);
+	if (prefabBlades != NULL)
+	{
+		ArrayMaterial listMaterials = CMaterialManager::getInstance()->initDefaultMaterial(prefabBlades);
+
+		// create render mesh object
+		windTurbindBlades = zone->createEmptyObject();
+		windTurbindBlades->setStatic(true);
+
+		// render mesh & init material
+		CRenderMesh* renderer = windTurbindBlades->addComponent<CRenderMesh>();
+		renderer->initFromPrefab(prefabBlades);
 		renderer->initMaterial(listMaterials);
 	}
 
