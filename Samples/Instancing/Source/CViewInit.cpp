@@ -54,7 +54,7 @@ void CViewInit::initScene()
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
 	CCamera* camera = camObj->getComponent<CCamera>();
-	camera->setPosition(core::vector3df(-10.0f, 5.0f, 10.0f));
+	camera->setPosition(core::vector3df(10.0f, 5.0f, 10.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
@@ -92,7 +92,7 @@ void CViewInit::initScene()
 	prefab = meshManager->loadModel("SampleModels/R8/Audi R8.fbx", NULL, true);
 	if (prefab != NULL)
 	{
-		ArrayMaterial& listMaterials = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
+		ArrayMaterial listMaterials = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
 
 		// create render mesh object
 		CGameObject* car = zone->createEmptyObject();
@@ -166,7 +166,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -207,7 +207,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()
