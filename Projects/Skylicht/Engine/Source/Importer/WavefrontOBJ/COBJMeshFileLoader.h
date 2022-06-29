@@ -58,8 +58,8 @@ namespace Skylicht
 			Meshbuffer->getMaterial() = o.Meshbuffer->getMaterial();
 		}
 
-		core::map<video::S3DVertex, int> VertMap;
-		scene::CMeshBuffer<video::S3DVertex> *Meshbuffer;
+		core::map<video::S3DVertex, u32> VertMap;
+		scene::CMeshBuffer<video::S3DVertex>* Meshbuffer;
 		core::stringc Name;
 		core::stringc Group;
 		f32 Bumpiness;
@@ -81,7 +81,7 @@ namespace Skylicht
 
 		virtual ~COBJMeshFileLoader();
 
-		virtual bool loadModel(const char *resource, CEntityPrefab* output, bool normalMap = true, bool flipNormalMap = true, bool texcoord2 = true, bool batching = false);
+		virtual bool loadModel(const char* resource, CEntityPrefab* output, bool normalMap = true, bool flipNormalMap = true, bool texcoord2 = true, bool batching = false);
 
 		void readMTL(const c8* fileName, const io::path& relPath);
 
