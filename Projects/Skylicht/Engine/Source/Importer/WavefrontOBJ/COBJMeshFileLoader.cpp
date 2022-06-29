@@ -236,7 +236,7 @@ namespace Skylicht
 					}
 
 					int vertLocation;
-					core::map<video::S3DVertex, int>::Node* n = currMtl->VertMap.find(v);
+					core::map<video::S3DVertex, u32>::Node* n = currMtl->VertMap.find(v);
 					if (n)
 					{
 						vertLocation = n->getValue();
