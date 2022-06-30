@@ -60,6 +60,8 @@ namespace Skylicht
 
 		t->NeedValidate = false;
 
+		int parentID = t->AttachParentIndex >= 0 ? t->AttachParentIndex : t->ParentIndex;
+
 		if (t->HasChanged == true)
 		{
 			t->NeedValidate = true;
@@ -71,9 +73,9 @@ namespace Skylicht
 			if (tInverse != NULL)
 				tInverse->HasChanged = true;
 		}
-		else if (t->ParentIndex != -1)
+		else if (parentID != -1)
 		{
-			CEntity* p = entityManager->getEntity(t->ParentIndex);
+			CEntity* p = entityManager->getEntity(parentID);
 			CWorldTransformData* parent = (CWorldTransformData*)p->getDataByIndex(CWorldTransformData::DataTypeIndex);
 			if (parent->HasChanged == true)
 			{
@@ -119,8 +121,10 @@ namespace Skylicht
 				// this entity
 				CWorldTransformData* t = entities[i];
 
+				int parentID = t->AttachParentIndex >= 0 ? t->AttachParentIndex : t->ParentIndex;
+
 				// parent entity
-				CEntity* parent = entityManager->getEntity(t->ParentIndex);
+				CEntity* parent = entityManager->getEntity(parentID);
 				CWorldTransformData* p = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
 
 				// calc world = parent * relative

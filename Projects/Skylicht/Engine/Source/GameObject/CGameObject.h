@@ -145,6 +145,12 @@ namespace Skylicht
 
 		CTransformEuler* getTransformEuler();
 
+		CTransformMatrix* getTransformMatrix();
+
+		void setupMatrixTransform();
+
+		void setupEulerTransform();
+
 		core::vector3df getPosition();
 
 		core::quaternion getRotation();

@@ -37,6 +37,7 @@ namespace Skylicht
 		core::matrix4 Relative;
 		int Depth;
 		int ParentIndex;
+		int AttachParentIndex;
 		std::string Name;
 		DECLARE_DATA_TYPE_INDEX;
 

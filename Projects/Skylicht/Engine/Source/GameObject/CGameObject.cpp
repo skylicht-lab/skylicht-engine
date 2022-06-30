@@ -33,6 +33,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CActivator.h"
 
+#include "Transform/CTransformComponentData.h"
+
 namespace Skylicht
 {
 
@@ -162,6 +164,43 @@ namespace Skylicht
 	CTransformEuler* CGameObject::getTransformEuler()
 	{
 		return getComponent<CTransformEuler>();
+	}
+
+	CTransformMatrix* CGameObject::getTransformMatrix()
+	{
+		return getComponent<CTransformMatrix>();
+	}
+
+	void CGameObject::setupMatrixTransform()
+	{
+		if (getComponent<CTransformMatrix>() == NULL)
+		{
+			core::matrix4 relative = getTransform()->getRelativeTransform();
+
+			removeComponent<CTransformEuler>();
+			CTransform* t = addComponent<CTransformMatrix>();
+			t->setRelativeTransform(relative);
+
+			CTransformComponentData* componentData = (CTransformComponentData*)m_entity->getDataByIndex(CTransformComponentData::DataTypeIndex);
+			componentData->TransformComponent = t;
+			componentData->TransformComponent->setChanged(true);
+		}
+	}
+
+	void CGameObject::setupEulerTransform()
+	{
+		if (getComponent<CTransformEuler>() == NULL)
+		{
+			core::matrix4 relative = getTransform()->getRelativeTransform();
+
+			removeComponent<CTransformMatrix>();
+			CTransform* t = addComponent<CTransformMatrix>();
+			t->setRelativeTransform(relative);
+
+			CTransformComponentData* componentData = (CTransformComponentData*)m_entity->getDataByIndex(CTransformComponentData::DataTypeIndex);
+			componentData->TransformComponent = addComponent<CTransformEuler>();
+			componentData->TransformComponent->setChanged(true);
+		}
 	}
 
 	core::vector3df CGameObject::getPosition()
