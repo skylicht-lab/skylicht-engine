@@ -217,7 +217,10 @@ namespace Skylicht
 					std::string path = rowItem->getTagString();
 					std::string fileExt = CPath::getFileNameExt(path);
 					fileExt = CStringImp::toLower(fileExt);
-					if (fileExt == "dae" || fileExt == "smesh")
+					if (fileExt == "dae" ||
+						fileExt == "obj" ||
+						fileExt == "fbx" ||
+						fileExt == "smesh")
 					{
 						return true;
 					}

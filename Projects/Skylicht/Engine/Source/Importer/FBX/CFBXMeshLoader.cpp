@@ -99,26 +99,24 @@ namespace Skylicht
 			return false;
 		}
 
+		std::string modelName = CPath::getFileName(std::string(resource));
 		std::map<ufbx_node*, CEntity*> mapNodes;
 
-		CEntity* root = output->createEntity();
-		std::string modelName = CPath::getFileName(std::string(resource));
-
-		output->addTransformData(root, NULL, core::IdentityMatrix, modelName.c_str());
-
-		// import scene
+		// import scene node
 		for (int i = 0; i < scene->nodes.count; i++)
 		{
 			ufbx_node* node = scene->nodes[i];
 
-			CEntity* parent = root;
+			CEntity* parent = NULL;
 			if (node->parent)
 				parent = mapNodes[node->parent];
 
+			const char* name = node->name.data;
+			if (parent == NULL)
+				name = modelName.c_str();
+
 			CEntity* entity = output->createEntity();
-
-			output->addTransformData(entity, parent, convertFBXMatrix(node->node_to_parent), node->name.data);
-
+			output->addTransformData(entity, parent, convertFBXMatrix(node->node_to_parent), name);
 			mapNodes[node] = entity;
 		}
 
@@ -127,6 +125,7 @@ namespace Skylicht
 
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
+		// import mesh data
 		for (int i = 0; i < scene->meshes.count; i++)
 		{
 			CMesh* resultMesh = new CMesh();
@@ -164,15 +163,13 @@ namespace Skylicht
 				{
 					mb = new CMeshBuffer<video::S3DVertexTangents>(
 						getVideoDriver()->getVertexDescriptor(EVT_TANGENTS),
-						indexType
-						);
+						indexType);
 				}
 				else
 				{
 					mb = new CMeshBuffer<video::S3DVertex>(
 						getVideoDriver()->getVertexDescriptor(EVT_STANDARD),
-						indexType
-						);
+						indexType);
 				}
 
 				// add mesh buffer
@@ -341,7 +338,6 @@ namespace Skylicht
 		file->drop();
 
 		ufbx_free_scene(scene);
-
 		return true;
 	}
 }

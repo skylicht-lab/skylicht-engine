@@ -19,7 +19,7 @@
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexAlbedo" autoReplace="_a."/>
 			<ui control="UITexture" name="uTexNormal" autoReplace="_norm.;_ddn.;_n."/>
-			<ui control="UITexture" name="uTexMetalRough" autoReplace="_rma.;_rm.;_c."/>
+			<ui control="UITexture" name="uTexRoughMetal" autoReplace="_rma.;_rm.;_c."/>
 		</ui>
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
