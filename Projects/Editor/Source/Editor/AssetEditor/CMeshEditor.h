@@ -31,15 +31,15 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CDaeEditor : public CAssetEditor
+		class CMeshEditor : public CAssetEditor
 		{
 		protected:
 			MeshExportSettings* m_settings;
 
 		public:
-			CDaeEditor();
+			CMeshEditor();
 
-			virtual ~CDaeEditor();
+			virtual ~CMeshEditor();
 
 			virtual void closeGUI();
 
@@ -48,8 +48,30 @@ namespace Skylicht
 			virtual void onUpdateValue(CObjectSerializable* object);
 
 			MeshExportSettings* createGetMeshExportSetting(const char* path);
+		};
 
-			DECLARE_GETTYPENAME(CDaeEditor);
+		class CDaeMeshEditor : public CMeshEditor
+		{
+		public:
+			CDaeMeshEditor();
+
+			DECLARE_GETTYPENAME(CDaeMeshEditor);
+		};
+
+		class CObjMeshEditor : public CMeshEditor
+		{
+		public:
+			CObjMeshEditor();
+
+			DECLARE_GETTYPENAME(CObjMeshEditor);
+		};
+
+		class CFbxMeshEditor : public CMeshEditor
+		{
+		public:
+			CFbxMeshEditor();
+
+			DECLARE_GETTYPENAME(CFbxMeshEditor);
 		};
 	}
 }

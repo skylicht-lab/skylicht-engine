@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "GUI/GUI.h"
-#include "CDaeEditor.h"
+#include "CMeshEditor.h"
 #include "Activator/CEditorActivator.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
 
@@ -38,20 +38,18 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		ASSET_EDITOR_REGISTER(CDaeEditor, dae);
-
-		CDaeEditor::CDaeEditor() :
+		CMeshEditor::CMeshEditor() :
 			m_settings(NULL)
 		{
 
 		}
 
-		CDaeEditor::~CDaeEditor()
+		CMeshEditor::~CMeshEditor()
 		{
 			closeGUI();
 		}
 
-		void CDaeEditor::closeGUI()
+		void CMeshEditor::closeGUI()
 		{
 			CAssetEditor::closeGUI();
 			if (m_settings)
@@ -61,7 +59,7 @@ namespace Skylicht
 			}
 		}
 
-		void CDaeEditor::initGUI(const char* path, CSpaceProperty* ui)
+		void CMeshEditor::initGUI(const char* path, CSpaceProperty* ui)
 		{
 			std::string meta = path;
 			meta += ".meta";
@@ -127,7 +125,7 @@ namespace Skylicht
 			group->setExpand(true);
 		}
 
-		MeshExportSettings* CDaeEditor::createGetMeshExportSetting(const char* path)
+		MeshExportSettings* CMeshEditor::createGetMeshExportSetting(const char* path)
 		{
 			MeshExportSettings* setting = new MeshExportSettings();
 			if (!setting->load(path))
@@ -135,9 +133,31 @@ namespace Skylicht
 			return setting;
 		}
 
-		void CDaeEditor::onUpdateValue(CObjectSerializable* object)
+		void CMeshEditor::onUpdateValue(CObjectSerializable* object)
 		{
 			m_settings->saveToFile();
 		}
+
+		ASSET_EDITOR_REGISTER(CDaeMeshEditor, dae);
+
+		CDaeMeshEditor::CDaeMeshEditor()
+		{
+
+		}
+
+		ASSET_EDITOR_REGISTER(CObjMeshEditor, obj);
+
+		CObjMeshEditor::CObjMeshEditor()
+		{
+
+		}
+
+		ASSET_EDITOR_REGISTER(CFbxMeshEditor, fbx);
+
+		CFbxMeshEditor::CFbxMeshEditor()
+		{
+
+		}
+
 	}
 }
