@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
+#include "Importer/Utils/CMeshUtils.h"
 
 #include "TextureManager/CTextureManager.h"
 
@@ -94,7 +95,7 @@ namespace Skylicht
 		if (!scene)
 		{
 			os::Printer::log("Failed to load scene");
-			delete buf;
+			delete[]buf;
 			file->drop();
 			return false;
 		}
@@ -118,6 +119,18 @@ namespace Skylicht
 			CEntity* entity = output->createEntity();
 			output->addTransformData(entity, parent, convertFBXMatrix(node->node_to_parent), name);
 			mapNodes[node] = entity;
+
+			// Update world transform
+			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			if (parent)
+			{
+				CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				transform->World.setbyproduct_nocheck(parentTransform->World, transform->Relative);
+			}
+			else
+			{
+				transform->World = transform->Relative;
+			}
 		}
 
 		ufbx_vec2 default_uv = { 0 };
@@ -128,8 +141,6 @@ namespace Skylicht
 		// import mesh data
 		for (int i = 0; i < scene->meshes.count; i++)
 		{
-			CMesh* resultMesh = new CMesh();
-
 			ufbx_mesh* mesh = scene->meshes[i];
 
 			bool haveTangent = mesh->vertex_tangent.num_values > 0;
@@ -137,14 +148,59 @@ namespace Skylicht
 			bool haveUV = mesh->vertex_uv.num_values > 0;
 
 			std::string meshName = mesh->name.data;
-			bool isSkinnedMesh = false;
-
-			if (mesh->skin_deformers.count > 0)
-				isSkinnedMesh = true;
 
 			// temp buffer
 			size_t num_tri_indices = mesh->max_face_triangles * 3;
 			uint32_t* tri_indices = new uint32_t[num_tri_indices];
+
+			std::vector<IMeshBuffer*> meshBuffers;
+			std::vector<std::string> materials;
+
+			CMesh* resultMesh = NULL;
+			bool isSkinnedMesh = false;
+			S3DVertexSkin* mesh_skin_vertices = NULL;
+
+			if (mesh->skin_deformers.count > 0)
+			{
+				isSkinnedMesh = true;
+				ufbx_skin_deformer* skin = mesh->skin_deformers.data[0];
+
+				mesh_skin_vertices = new S3DVertexSkin[mesh->num_vertices];
+
+				for (size_t vi = 0; vi < mesh->num_vertices; vi++)
+				{
+					size_t num_weights = 0;
+					float total_weight = 0.0f;
+					float weights[4] = { 0.0f };
+					uint8_t clusters[4] = { 0 };
+
+					ufbx_skin_vertex vertex_weights = skin->vertices.data[vi];
+					for (size_t wi = 0; wi < vertex_weights.num_weights && wi < 4; wi++)
+					{
+						ufbx_skin_weight weight = skin->weights.data[vertex_weights.weight_begin + wi];
+
+						total_weight += (float)weight.weight;
+						clusters[num_weights] = (uint8_t)weight.cluster_index;
+						weights[num_weights] = (float)weight.weight;
+						num_weights++;
+					}
+
+					if (total_weight > 0.0f)
+					{
+						S3DVertexSkin* skin_vert = &mesh_skin_vertices[vi];
+
+						float* w = &skin_vert->BoneWeight.X;
+						float* b = &skin_vert->BoneIndex.X;
+
+						uint32_t quantized_sum = 0;
+						for (size_t i = 0; i < 4; i++)
+						{
+							w[i] = weights[i] / total_weight;
+							b[i] = (float)clusters[i];
+						}
+					}
+				}
+			}
 
 			for (int j = 0; j < mesh->materials.count; j++)
 			{
@@ -159,17 +215,35 @@ namespace Skylicht
 				if (numVertex >= USHRT_MAX - 1)
 					indexType = video::EIT_32BIT;
 
-				if (normalMap)
+				if (isSkinnedMesh)
 				{
-					mb = new CMeshBuffer<video::S3DVertexTangents>(
-						getVideoDriver()->getVertexDescriptor(EVT_TANGENTS),
-						indexType);
+					if (normalMap)
+					{
+						mb = new CMeshBuffer<video::S3DVertexSkinTangents>(
+							getVideoDriver()->getVertexDescriptor(EVT_SKIN_TANGENTS),
+							indexType);
+					}
+					else
+					{
+						mb = new CMeshBuffer<video::S3DVertexSkin>(
+							getVideoDriver()->getVertexDescriptor(EVT_SKIN),
+							indexType);
+					}
 				}
 				else
 				{
-					mb = new CMeshBuffer<video::S3DVertex>(
-						getVideoDriver()->getVertexDescriptor(EVT_STANDARD),
-						indexType);
+					if (normalMap)
+					{
+						mb = new CMeshBuffer<video::S3DVertexTangents>(
+							getVideoDriver()->getVertexDescriptor(EVT_TANGENTS),
+							indexType);
+					}
+					else
+					{
+						mb = new CMeshBuffer<video::S3DVertex>(
+							getVideoDriver()->getVertexDescriptor(EVT_STANDARD),
+							indexType);
+					}
 				}
 
 				// add mesh buffer
@@ -185,7 +259,8 @@ namespace Skylicht
 					sprintf(materialName, "material_%d", j);
 				}
 
-				resultMesh->addMeshBuffer(mb, materialName);
+				meshBuffers.push_back(mb);
+				materials.push_back(materialName);
 
 				IVertexBuffer* vertexBuffer = mb->getVertexBuffer();
 				IIndexBuffer* indexBuffer = mb->getIndexBuffer();
@@ -212,23 +287,58 @@ namespace Skylicht
 						ufbx_vec3 tangent = haveTangent ? ufbx_get_vertex_vec3(&mesh->vertex_tangent, ix) : default_vec;
 						ufbx_vec3 binormal = haveBitangent ? ufbx_get_vertex_vec3(&mesh->vertex_bitangent, ix) : default_vec;
 
-						// create mesh buffer here
-						S3DVertexTangents v;
-						v.Pos = convertFBXVec3(pos);
-						v.Normal = convertFBXVec3(normal);
-						v.Normal.normalize();
-						v.TCoords = convertFBXUVVec2(uv);
-						v.Tangent = convertFBXVec3(tangent);
-						v.Binormal = convertFBXVec3(binormal);
-						v.TangentW.set(1.f, 1.f);
-
 						u32 vertLocation;
 						core::map<uint32_t, u32>::Node* node = vertMap.find(ix);
 						if (node)
 							vertLocation = node->getValue();
 						else
 						{
-							vertexBuffer->addVertex(&v);
+							if (isSkinnedMesh)
+							{
+								int vid = mesh->vertex_indices[ix];
+
+								if (normalMap)
+								{
+									S3DVertexSkinTangents v;
+									v.Pos = convertFBXVec3(pos);
+									v.Normal = convertFBXVec3(normal);
+									v.Normal.normalize();
+									v.TCoords = convertFBXUVVec2(uv);
+									v.Tangent = convertFBXVec3(tangent);
+									v.Binormal = convertFBXVec3(binormal);
+									v.TangentW.set(1.f, 1.f);
+									v.BoneIndex = mesh_skin_vertices[vid].BoneIndex;
+									v.BoneWeight = mesh_skin_vertices[vid].BoneWeight;
+
+									vertexBuffer->addVertex(&v);
+								}
+								else
+								{
+									S3DVertexSkin v;
+									v.Pos = convertFBXVec3(pos);
+									v.Normal = convertFBXVec3(normal);
+									v.Normal.normalize();
+									v.TCoords = convertFBXUVVec2(uv);
+									v.BoneIndex = mesh_skin_vertices[vid].BoneIndex;
+									v.BoneWeight = mesh_skin_vertices[vid].BoneWeight;
+
+									vertexBuffer->addVertex(&v);
+								}
+							}
+							else
+							{
+								S3DVertexTangents v;
+								v.Pos = convertFBXVec3(pos);
+								v.Normal = convertFBXVec3(normal);
+								v.Normal.normalize();
+								v.TCoords = convertFBXUVVec2(uv);
+								v.Tangent = convertFBXVec3(tangent);
+								v.Binormal = convertFBXVec3(binormal);
+								v.TangentW.set(1.f, 1.f);
+
+								vertexBuffer->addVertex(&v);
+							}
+
 							vertLocation = vertexBuffer->getVertexCount() - 1;
 							vertMap.insert(ix, vertLocation);
 						}
@@ -255,13 +365,6 @@ namespace Skylicht
 					}
 				}
 
-				// need calculate tangent & binormal
-				if (!haveTangent && normalMap)
-				{
-					IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
-					mh->recalculateTangents(mb);
-				}
-
 				// need load texture
 				if (mesh_mat->material)
 				{
@@ -269,7 +372,10 @@ namespace Skylicht
 					if (mesh_mat->material->textures.count == 0)
 					{
 						// no texture
-						mat.MaterialType = shaderMgr->getShaderIDByName("VertexColor");
+						if (isSkinnedMesh)
+							mat.MaterialType = shaderMgr->getShaderIDByName("Skin");
+						else
+							mat.MaterialType = shaderMgr->getShaderIDByName("VertexColor");
 					}
 					else
 					{
@@ -297,15 +403,90 @@ namespace Skylicht
 							}
 						}
 
-						if (foundTexture)
-							mat.MaterialType = shaderMgr->getShaderIDByName("TextureColor");
+						if (isSkinnedMesh)
+						{
+							mat.MaterialType = shaderMgr->getShaderIDByName("Skin");
+						}
 						else
-							mat.MaterialType = shaderMgr->getShaderIDByName("VertexColor");
+						{
+							if (foundTexture)
+								mat.MaterialType = shaderMgr->getShaderIDByName("TextureColor");
+							else
+								mat.MaterialType = shaderMgr->getShaderIDByName("VertexColor");
+						}
 					}
 				}
 
+				// need calculate tangent & binormal
+				if (!haveTangent && normalMap)
+				{
+					IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
+					mh->recalculateTangents(mb);
+				}
+
 				mb->recalculateBoundingBox();
-				mb->drop();
+			}
+
+			if (isSkinnedMesh)
+			{
+				// init skinned mesh
+				CSkinnedMesh* skinnedMesh = new CSkinnedMesh();
+
+				ufbx_skin_deformer* skin = mesh->skin_deformers.data[0];
+
+				// init joint
+				for (size_t ci = 0; ci < skin->clusters.count; ci++)
+				{
+					ufbx_skin_cluster* cluster = skin->clusters.data[ci];
+					ufbx_node* bone_node = cluster->bone_node;
+
+					CEntity* boneEntity = mapNodes[bone_node];
+
+					CJointData* jointData = boneEntity->addData<CJointData>();
+					jointData->DefaultRelativeMatrix = convertFBXMatrix(bone_node->node_to_parent);
+					jointData->SID = bone_node->name.data;
+
+					if (bone_node->parent)
+					{
+						CEntity* boneParentEntity = mapNodes[bone_node->parent];
+						if (boneParentEntity)
+						{
+							CWorldTransformData* parentTransform = (CWorldTransformData*)boneParentEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+							jointData->DefaultAnimationMatrix.setbyproduct_nocheck(parentTransform->World, jointData->DefaultRelativeMatrix);
+						}
+					}
+					else
+					{
+						jointData->DefaultAnimationMatrix = jointData->DefaultRelativeMatrix;
+					}
+
+					skinnedMesh->Joints.push_back(CSkinnedMesh::SJoint());
+					CSkinnedMesh::SJoint& joint = skinnedMesh->Joints.getLast();
+					joint.Name = jointData->SID;
+					joint.JointData = jointData;
+					joint.BindPoseMatrix = convertFBXMatrix(cluster->geometry_to_bone);
+					joint.EntityIndex = boneEntity->getIndex();
+				}
+
+				resultMesh = skinnedMesh;
+
+				// convert skinmesh
+				for (int i = 0, n = (int)meshBuffers.size(); i < n; i++)
+				{
+					resultMesh->addMeshBuffer(meshBuffers[i], materials[i].c_str());
+					meshBuffers[i]->drop();
+				}				
+			}
+			else
+			{
+				// init static mesh
+				resultMesh = new CMesh();
+
+				for (int i = 0, n = (int)meshBuffers.size(); i < n; i++)
+				{
+					resultMesh->addMeshBuffer(meshBuffers[i], materials[i].c_str());
+					meshBuffers[i]->drop();
+				}
 			}
 
 			for (int j = 0; j < mesh->instances.count; j++)
@@ -322,6 +503,15 @@ namespace Skylicht
 					CRenderMeshData* meshData = entity->addData<CRenderMeshData>();
 					meshData->setMesh(resultMesh);
 
+					if (isSkinnedMesh)
+					{
+						CSkinnedMesh* skinnedMesh = (CSkinnedMesh*)resultMesh;
+						if (skinnedMesh->Joints.size() >= GPU_BONES_COUNT)
+							meshData->setSoftwareSkinning(true);
+
+						meshData->setSkinnedMesh(true);
+					}
+
 					// drop this mesh
 					resultMesh->drop();
 
@@ -331,6 +521,9 @@ namespace Skylicht
 			}
 
 			delete[]tri_indices;
+
+			if (mesh_skin_vertices)
+				delete[]mesh_skin_vertices;
 		}
 
 		// free data

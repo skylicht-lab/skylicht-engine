@@ -488,6 +488,14 @@ namespace Skylicht
 											std::string texturePath = texture->getName().getPath().c_str();
 											texturePath = CPath::replaceFileExt(texturePath, ".tga");
 
+											int pos = CStringImp::find(texturePath.c_str(), "Assets");
+											if (pos > 0)
+											{
+												char tempPath[1024];
+												CStringImp::mid(tempPath, texturePath.c_str(), pos + 7, texturePath.length());
+												texturePath = tempPath;
+											}
+
 											sprintf(data, "\t\t\t<Texture slot='%d' path='%s'/>\n", i,
 												CPath::getRelativePath(texturePath, relativeTextureFolder).c_str());
 											buffer += data;
