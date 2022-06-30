@@ -28,6 +28,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/CEntityManager.h"
 
+#include "CWorldTransformData.h"
+#include "Entity/CEntity.h"
+#include "Entity/CEntityManager.h"
+#include "GameObject/CGameObject.h"
+
 namespace Skylicht
 {
 	core::vector3df CTransform::s_ox = core::vector3df(1.0f, 0.0f, 0.0f);
@@ -35,7 +40,8 @@ namespace Skylicht
 	core::vector3df CTransform::s_oz = core::vector3df(0.0f, 0.0f, 1.0f);
 
 	CTransform::CTransform() :
-		m_hasChanged(true)
+		m_hasChanged(true),
+		m_attached(false)
 	{
 
 	}
@@ -53,6 +59,28 @@ namespace Skylicht
 	void CTransform::updateComponent()
 	{
 
+	}
+
+	void CTransform::attachTransform(CEntity* entity)
+	{
+		CWorldTransformData* transform = (CWorldTransformData*)m_gameObject->getEntity()->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		CWorldTransformData* parent = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+
+		if (entity)
+		{
+			transform->AttachParentIndex = entity->getIndex();
+			transform->Depth = parent->Depth + 1;
+			m_attached = true;
+		}
+		else
+		{
+			CEntity* defaultParent = m_gameObject->getEntityManager()->getEntity(transform->ParentIndex);
+			parent = (CWorldTransformData*)defaultParent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+
+			transform->Depth = parent->Depth + 1;
+			transform->AttachParentIndex = -1;
+			m_attached = false;
+		}
 	}
 
 	CTransform* CTransform::getParent()
@@ -80,11 +108,22 @@ namespace Skylicht
 	{
 		core::matrix4 result = getRelativeTransform();
 
-		CTransform* parent = getParent();
-		while (parent != NULL)
+		if (!isAttached())
 		{
-			result = parent->getRelativeTransform() * result;
-			parent = parent->getParent();
+			CTransform* parent = getParent();
+			while (parent != NULL)
+			{
+				result = parent->getRelativeTransform() * result;
+				parent = parent->getParent();
+			}
+		}
+		else
+		{
+			CWorldTransformData* transform = (CWorldTransformData*)m_gameObject->getEntity()->getDataByIndex(CWorldTransformData::DataTypeIndex);
+
+			CEntity* parent = m_gameObject->getEntityManager()->getEntity(transform->AttachParentIndex);
+			CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			result = parentTransform->World * result;
 		}
 
 		return result;
@@ -94,10 +133,22 @@ namespace Skylicht
 	{
 		core::matrix4 parentInv;
 
-		CTransform* parent = getParent();
-		if (parent != NULL)
+		if (!isAttached())
 		{
-			parentInv = parent->calcWorldTransform();
+			CTransform* parent = getParent();
+			if (parent != NULL)
+			{
+				parentInv = parent->calcWorldTransform();
+				parentInv.makeInverse();
+			}
+		}
+		else
+		{
+			CWorldTransformData* transform = (CWorldTransformData*)m_gameObject->getEntity()->getDataByIndex(CWorldTransformData::DataTypeIndex);
+
+			CEntity* parent = m_gameObject->getEntityManager()->getEntity(transform->AttachParentIndex);
+			CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			parentInv = parentTransform->World;
 			parentInv.makeInverse();
 		}
 

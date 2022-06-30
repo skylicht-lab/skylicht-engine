@@ -155,6 +155,9 @@ namespace Skylicht
 				m_data[i] = NULL;
 		}
 
+		if (m_data[index])
+			delete m_data[index];
+
 		// save at index
 		m_data[index] = newData;
 
@@ -175,7 +178,7 @@ namespace Skylicht
 			delete newData;
 			return NULL;
 		}
-		
+
 		// also save this entity index
 		data->EntityIndex = m_index;
 
@@ -191,6 +194,9 @@ namespace Skylicht
 			for (u32 i = dataSize; i < reallocSize; i++)
 				m_data[i] = NULL;
 		}
+
+		if (m_data[index])
+			delete m_data[index];
 
 		// save at index
 		m_data[index] = newData;
@@ -235,5 +241,5 @@ namespace Skylicht
 		}
 
 		return false;
-	}	
+	}
 }

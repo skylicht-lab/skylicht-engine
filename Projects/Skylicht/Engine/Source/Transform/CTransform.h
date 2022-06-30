@@ -39,6 +39,7 @@ namespace Skylicht
 
 	protected:
 		bool m_hasChanged;
+		bool m_attached;
 
 	public:
 		CTransform();
@@ -49,6 +50,8 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
+		void attachTransform(CEntity* entity);
+
 		void setChanged(bool b)
 		{
 			m_hasChanged = b;
@@ -57,6 +60,11 @@ namespace Skylicht
 		bool hasChanged()
 		{
 			return m_hasChanged;
+		}
+
+		bool isAttached()
+		{
+			return m_attached;
 		}
 
 		CTransform* getParent();

@@ -15,8 +15,8 @@ CViewDemo::~CViewDemo()
 
 void CViewDemo::onInit()
 {
-	CContext *context = CContext::getInstance();
-	CCamera *camera = context->getActiveCamera();
+	CContext* context = CContext::getInstance();
+	CCamera* camera = context->getActiveCamera();
 }
 
 void CViewDemo::onDestroy()
@@ -26,20 +26,20 @@ void CViewDemo::onDestroy()
 
 void CViewDemo::onUpdate()
 {
-	CContext *context = CContext::getInstance();
-	CScene *scene = context->getScene();
+	CContext* context = CContext::getInstance();
+	CScene* scene = context->getScene();
 	if (scene != NULL)
 		scene->update();
 }
 
 void CViewDemo::onRender()
 {
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 
-	CCamera *camera = context->getActiveCamera();
-	CCamera *guiCamera = context->getGUICamera();
+	CCamera* camera = context->getActiveCamera();
+	CCamera* guiCamera = context->getGUICamera();
 
-	CScene *scene = context->getScene();
+	CScene* scene = context->getScene();
 
 	// render scene
 	if (camera != NULL && scene != NULL)
