@@ -86,39 +86,46 @@ void CViewInit::initScene()
 	CMeshManager* meshManager = CMeshManager::getInstance();
 	CEntityPrefab* prefabWindTurbine;
 	CEntityPrefab* prefabBlades;
-	CGameObject* windTurbind;
-	CGameObject* windTurbindBlades;
+	CGameObject* windTurbine = NULL;
+	CGameObject* windTurbineBlades = NULL;
 
 	std::vector<std::string> textureFolders;
 
 	prefabWindTurbine = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine.fbx", NULL, true);
-	if (prefabWindTurbine != NULL)
+	if (prefabWindTurbine)
 	{
 		ArrayMaterial listMaterials = CMaterialManager::getInstance()->initDefaultMaterial(prefabWindTurbine);
 
 		// create render mesh object
-		windTurbind = zone->createEmptyObject();
-		windTurbind->setStatic(true);
+		windTurbine = zone->createEmptyObject();
+		windTurbine->setStatic(true);
 
 		// render mesh & init material
-		CRenderMesh* renderer = windTurbind->addComponent<CRenderMesh>();
+		CRenderMesh* renderer = windTurbine->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefabWindTurbine);
 		renderer->initMaterial(listMaterials);
 	}
 
 	prefabBlades = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine_Blades.fbx", NULL, true);
-	if (prefabBlades != NULL)
+	if (windTurbine && prefabBlades)
 	{
 		ArrayMaterial listMaterials = CMaterialManager::getInstance()->initDefaultMaterial(prefabBlades);
 
 		// create render mesh object
-		windTurbindBlades = zone->createEmptyObject();
-		windTurbindBlades->setStatic(true);
+		windTurbineBlades = zone->createEmptyObject();
+
+		// attach blade to turbine position
+		CTransformEuler* transform = windTurbineBlades->getTransformEuler();
+		transform->attachTransform(windTurbine->getEntity());
+		transform->setPosition(core::vector3df(-1.59f, 38.0f, 0.0f));
 
 		// render mesh & init material
-		CRenderMesh* renderer = windTurbindBlades->addComponent<CRenderMesh>();
+		CRenderMesh* renderer = windTurbineBlades->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefabBlades);
 		renderer->initMaterial(listMaterials);
+
+		// test change position turbine
+		windTurbine->getTransformEuler()->setPosition(core::vector3df(1.0f, 0.0f, 1.0f));
 	}
 
 	// save to context
