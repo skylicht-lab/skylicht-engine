@@ -194,11 +194,11 @@ namespace Skylicht
 			core::matrix4 relative = getTransform()->getRelativeTransform();
 
 			removeComponent<CTransformMatrix>();
-			CTransform* t = addComponent<CTransformMatrix>();
+			CTransform* t = addComponent<CTransformEuler>();
 			t->setRelativeTransform(relative);
 
 			CTransformComponentData* componentData = (CTransformComponentData*)m_entity->getDataByIndex(CTransformComponentData::DataTypeIndex);
-			componentData->TransformComponent = addComponent<CTransformEuler>();
+			componentData->TransformComponent = t;
 			componentData->TransformComponent->setChanged(true);
 		}
 	}

@@ -757,12 +757,17 @@ namespace Skylicht
 			std::string fileExt = CPath::getFileNameExt(path);
 			fileExt = CStringImp::toLower(fileExt);
 
-			if (fileExt == "dae" || fileExt == "smesh")
+			if (fileExt == "dae" ||
+				fileExt == "obj" ||
+				fileExt == "fbx" ||
+				fileExt == "smesh")
 			{
 				std::string defaultMaterial;
 				std::string meta = path + ".meta";
 
-				if (fileExt == "dae")
+				if (fileExt == "dae" ||
+					fileExt == "obj" ||
+					fileExt == "fbx")
 				{
 					MeshExportSettings* setting = new MeshExportSettings();
 					if (setting->load(meta.c_str()))

@@ -805,13 +805,14 @@ namespace Skylicht
 							char log[512];
 							sprintf(log, "[CMaterial::autoDetectLoadTexture] %s: not found texture uniform %s", m_materialName.c_str(), texture->Name.c_str());
 							os::Printer::log(log);
-
-							// todo replace empty texture
-							if (ui->UniformInfo->IsNormal == true)
-								setUniformTexture(ui->Name.c_str(), textureManager->getNullNormalMap());
-							else
-								setUniformTexture(ui->Name.c_str(), textureManager->getNullTexture());
-
+							if (ui->UniformInfo)
+							{
+								// todo replace empty texture
+								if (ui->UniformInfo->IsNormal == true)
+									setUniformTexture(ui->Name.c_str(), textureManager->getNullNormalMap());
+								else
+									setUniformTexture(ui->Name.c_str(), textureManager->getNullTexture());
+							}
 							ret = false;
 						}
 					}
