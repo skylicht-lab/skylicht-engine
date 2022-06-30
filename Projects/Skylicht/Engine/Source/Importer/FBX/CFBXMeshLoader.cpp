@@ -445,19 +445,25 @@ namespace Skylicht
 					CJointData* jointData = boneEntity->addData<CJointData>();
 					jointData->DefaultRelativeMatrix = convertFBXMatrix(bone_node->node_to_parent);
 					jointData->SID = bone_node->name.data;
+					jointData->BoneName = bone_node->name.data;
 
 					if (bone_node->parent)
 					{
 						CEntity* boneParentEntity = mapNodes[bone_node->parent];
 						if (boneParentEntity)
 						{
-							CWorldTransformData* parentTransform = (CWorldTransformData*)boneParentEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-							jointData->DefaultAnimationMatrix.setbyproduct_nocheck(parentTransform->World, jointData->DefaultRelativeMatrix);
+							CJointData* parentJoint = (CJointData*)boneParentEntity->getDataByIndex(CJointData::DataTypeIndex);
+							if (parentJoint == NULL)
+							{
+								jointData->DefaultAnimationMatrix = jointData->DefaultRelativeMatrix;
+								jointData->BoneRoot = true;
+							}
+							else
+							{
+								CWorldTransformData* parentTransform = (CWorldTransformData*)boneParentEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+								jointData->DefaultAnimationMatrix.setbyproduct_nocheck(parentTransform->World, jointData->DefaultRelativeMatrix);
+							}
 						}
-					}
-					else
-					{
-						jointData->DefaultAnimationMatrix = jointData->DefaultRelativeMatrix;
 					}
 
 					skinnedMesh->Joints.push_back(CSkinnedMesh::SJoint());
@@ -475,7 +481,7 @@ namespace Skylicht
 				{
 					resultMesh->addMeshBuffer(meshBuffers[i], materials[i].c_str());
 					meshBuffers[i]->drop();
-				}				
+				}
 			}
 			else
 			{
