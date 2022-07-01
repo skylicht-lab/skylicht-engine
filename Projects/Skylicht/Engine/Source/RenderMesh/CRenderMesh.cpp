@@ -258,8 +258,6 @@ namespace Skylicht
 				spawnJoint->SID = srcJointData->SID;
 				spawnJoint->BoneName = srcJointData->BoneName;
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
-				spawnJoint->DefaultAnimationMatrix = srcJointData->DefaultAnimationMatrix;
-				spawnJoint->DefaultRelativeMatrix = srcJointData->DefaultRelativeMatrix;
 				spawnJoint->RootIndex = m_root->getIndex();
 			}
 		}

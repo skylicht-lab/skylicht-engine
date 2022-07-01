@@ -46,4 +46,22 @@ namespace Skylicht
 			transformData->Depth = ((CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex))->Depth + 1;
 		}
 	}
+
+	void CEntityPrefab::changeParent(CEntity* entity, CEntity* parent)
+	{
+		CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		if (!transformData)
+			return;
+
+		if (parent != NULL)
+		{
+			transformData->ParentIndex = parent->getIndex();
+			transformData->Depth = ((CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex))->Depth + 1;
+		}
+		else
+		{
+			transformData->ParentIndex = -1;
+			transformData->Depth = 0;
+		}
+	}
 }

@@ -1567,18 +1567,6 @@ namespace Skylicht
 					jointData->SID = name;
 				}
 
-				// default relative matrix
-				jointData->DefaultRelativeMatrix = relativeTransform;
-
-				// calc animation matrix
-				if (jointData->BoneRoot == true)
-					jointData->DefaultAnimationMatrix = relativeTransform;
-				else
-					jointData->DefaultAnimationMatrix.setbyproduct_nocheck(parentTransform->World, jointData->DefaultRelativeMatrix);
-
-				// animation is default matrix
-				jointData->AnimationMatrix = jointData->DefaultAnimationMatrix;
-
 				// store for next construct skinned mesh
 				m_nameToJointData[jointData->BoneName] = jointData;
 				m_sidToJointData[jointData->SID] = jointData;
