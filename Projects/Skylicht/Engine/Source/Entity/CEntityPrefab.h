@@ -57,6 +57,8 @@ namespace Skylicht
 			return m_entities[index];
 		}
 
-		void addTransformData(CEntity* entity, CEntity* parent, const core::matrix4& transform, const char *name);
+		void addTransformData(CEntity* entity, CEntity* parent, const core::matrix4& transform, const char* name);
+
+		void changeParent(CEntity* entity, CEntity* parent);
 	};
 }

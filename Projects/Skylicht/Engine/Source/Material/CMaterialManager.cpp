@@ -492,7 +492,7 @@ namespace Skylicht
 											if (pos > 0)
 											{
 												char tempPath[1024];
-												CStringImp::mid(tempPath, texturePath.c_str(), pos + 7, texturePath.length());
+												CStringImp::mid(tempPath, texturePath.c_str(), pos + 7, (int)texturePath.length());
 												texturePath = tempPath;
 											}
 

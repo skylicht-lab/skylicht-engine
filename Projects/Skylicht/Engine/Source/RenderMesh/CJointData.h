@@ -41,10 +41,6 @@ namespace Skylicht
 		// absolute joint transform at (0,0,0)
 		core::matrix4 AnimationMatrix;
 
-		// default transform
-		core::matrix4 DefaultAnimationMatrix;
-		core::matrix4 DefaultRelativeMatrix;
-
 		DECLARE_DATA_TYPE_INDEX;
 
 	public:

@@ -103,18 +103,27 @@ namespace Skylicht
 		std::string modelName = CPath::getFileName(std::string(resource));
 		std::map<ufbx_node*, CEntity*> mapNodes;
 
+		// root node
+		CEntity* root = output->createEntity();
+		output->addTransformData(root, NULL, core::IdentityMatrix, "root");
+
+		core::matrix4 unitScaleMatrix;
+
 		// import scene node
 		for (int i = 0; i < scene->nodes.count; i++)
 		{
 			ufbx_node* node = scene->nodes[i];
 
-			CEntity* parent = NULL;
+			CEntity* parent = root;
 			if (node->parent)
 				parent = mapNodes[node->parent];
 
 			const char* name = node->name.data;
-			if (parent == NULL)
+			if (parent == root)
+			{
 				name = modelName.c_str();
+				unitScaleMatrix = convertFBXMatrix(node->node_to_parent);
+			}
 
 			CEntity* entity = output->createEntity();
 			output->addTransformData(entity, parent, convertFBXMatrix(node->node_to_parent), name);
@@ -425,6 +434,11 @@ namespace Skylicht
 				}
 
 				mb->recalculateBoundingBox();
+
+				// apply unit scale for culling
+				core::aabbox3df box = mb->getBoundingBox();
+				unitScaleMatrix.transformBox(box);
+				mb->getBoundingBox() = box;
 			}
 
 			if (isSkinnedMesh)
@@ -438,35 +452,32 @@ namespace Skylicht
 				for (size_t ci = 0; ci < skin->clusters.count; ci++)
 				{
 					ufbx_skin_cluster* cluster = skin->clusters.data[ci];
-					ufbx_node* bone_node = cluster->bone_node;
 
+					ufbx_node* bone_node = cluster->bone_node;
 					CEntity* boneEntity = mapNodes[bone_node];
 
-					CJointData* jointData = boneEntity->addData<CJointData>();
-					jointData->DefaultRelativeMatrix = convertFBXMatrix(bone_node->node_to_parent);
-					jointData->SID = bone_node->name.data;
-					jointData->BoneName = bone_node->name.data;
-
-					if (bone_node->parent)
+					CJointData* jointData = (CJointData*)boneEntity->getDataByIndex(CJointData::DataTypeIndex);
+					if (!jointData)
 					{
-						CEntity* boneParentEntity = mapNodes[bone_node->parent];
-						if (boneParentEntity)
+						jointData = boneEntity->addData<CJointData>();
+
+						jointData->SID = bone_node->name.data;
+						jointData->BoneName = bone_node->name.data;
+
+						if (bone_node->parent)
 						{
-							CJointData* parentJoint = (CJointData*)boneParentEntity->getDataByIndex(CJointData::DataTypeIndex);
-							if (parentJoint == NULL)
+							CEntity* boneParentEntity = mapNodes[bone_node->parent];
+							if (boneParentEntity)
 							{
-								jointData->DefaultAnimationMatrix = jointData->DefaultRelativeMatrix;
-								jointData->BoneRoot = true;
-							}
-							else
-							{
-								CWorldTransformData* parentTransform = (CWorldTransformData*)boneParentEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-								jointData->DefaultAnimationMatrix.setbyproduct_nocheck(parentTransform->World, jointData->DefaultRelativeMatrix);
+								CJointData* parentJoint = (CJointData*)boneParentEntity->getDataByIndex(CJointData::DataTypeIndex);
+								if (parentJoint == NULL)
+									jointData->BoneRoot = true;
 							}
 						}
 					}
 
 					skinnedMesh->Joints.push_back(CSkinnedMesh::SJoint());
+
 					CSkinnedMesh::SJoint& joint = skinnedMesh->Joints.getLast();
 					joint.Name = jointData->SID;
 					joint.JointData = jointData;
@@ -475,24 +486,18 @@ namespace Skylicht
 				}
 
 				resultMesh = skinnedMesh;
-
-				// convert skinmesh
-				for (int i = 0, n = (int)meshBuffers.size(); i < n; i++)
-				{
-					resultMesh->addMeshBuffer(meshBuffers[i], materials[i].c_str());
-					meshBuffers[i]->drop();
-				}
 			}
 			else
 			{
 				// init static mesh
 				resultMesh = new CMesh();
+			}
 
-				for (int i = 0, n = (int)meshBuffers.size(); i < n; i++)
-				{
-					resultMesh->addMeshBuffer(meshBuffers[i], materials[i].c_str());
-					meshBuffers[i]->drop();
-				}
+			// add meshbuffer to mesh
+			for (int i = 0, n = (int)meshBuffers.size(); i < n; i++)
+			{
+				resultMesh->addMeshBuffer(meshBuffers[i], materials[i].c_str());
+				meshBuffers[i]->drop();
 			}
 
 			for (int j = 0; j < mesh->instances.count; j++)
@@ -516,6 +521,9 @@ namespace Skylicht
 							meshData->setSoftwareSkinning(true);
 
 						meshData->setSkinnedMesh(true);
+
+						// need mode this mesh to to root
+						output->changeParent(entity, root);
 					}
 
 					// drop this mesh
