@@ -90,11 +90,12 @@ void CViewInit::initScene()
 	CGameObject* windTurbineBlades = NULL;
 
 	std::vector<std::string> textureFolders;
+	CMaterialManager* materialMgr = CMaterialManager::getInstance();
 
 	prefabWindTurbine = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine.fbx", NULL, true);
 	if (prefabWindTurbine)
 	{
-		ArrayMaterial listMaterials = CMaterialManager::getInstance()->initDefaultMaterial(prefabWindTurbine);
+		ArrayMaterial& listMaterials = materialMgr->loadMaterial("SampleModels/WindTurbine/WindTurbine.mat", true, textureFolders);
 
 		// create render mesh object
 		windTurbine = zone->createEmptyObject();
@@ -109,7 +110,7 @@ void CViewInit::initScene()
 	prefabBlades = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine_Blades.fbx", NULL, true);
 	if (windTurbine && prefabBlades)
 	{
-		ArrayMaterial listMaterials = CMaterialManager::getInstance()->initDefaultMaterial(prefabBlades);
+		ArrayMaterial& listMaterials = materialMgr->loadMaterial("SampleModels/WindTurbine/WindTurbine_Blades.mat", true, textureFolders);
 
 		// create render mesh object
 		windTurbineBlades = zone->createEmptyObject();
@@ -131,9 +132,7 @@ void CViewInit::initScene()
 
 	// Test cat & animation
 	CEntityPrefab* catPrefab = meshManager->loadModel("SampleModels/BlendShape/Cat.fbx", NULL, true);
-
-	std::vector<std::string> folders;
-	ArrayMaterial& listMaterials = CMaterialManager::getInstance()->loadMaterial("SampleModels/BlendShape/Cat.mat", true, folders);
+	ArrayMaterial& listMaterials = materialMgr->loadMaterial("SampleModels/BlendShape/Cat.mat", true, textureFolders);
 
 	// create render mesh object
 	CGameObject* cat = zone->createEmptyObject();
