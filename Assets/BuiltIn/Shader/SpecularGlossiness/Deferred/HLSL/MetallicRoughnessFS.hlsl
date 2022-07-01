@@ -54,7 +54,7 @@ PS_OUTPUT main(PS_INPUT input)
 	float3 f0 = float3(0.04, 0.04, 0.04);
     float3 diffuseColor = baseMap.rgb * (float3(1.0, 1.0, 1.0) - f0);
     diffuseColor *= (1.0 - metallic);
-    float3 specularColor = lerp(f0, baseMap.rgb, metallic);
+    float3 specularColor = lerp(f0, baseMap.rgb, max(roughness, metallic));
 
 	output.Diffuse = float4(diffuseColor, 1.0);
 	output.Position = input.worldPosition;
