@@ -125,8 +125,30 @@ void CViewInit::initScene()
 		renderer->initMaterial(listMaterials);
 
 		// test change position turbine
-		windTurbine->getTransformEuler()->setPosition(core::vector3df(1.0f, 0.0f, 1.0f));
+		windTurbine->getTransformEuler()->setPosition(core::vector3df(10.0f, 0.0f, 10.0f));
 	}
+
+
+	// Test cat & animation
+	CEntityPrefab* catPrefab = meshManager->loadModel("SampleModels/BlendShape/Cat.fbx", NULL, true);
+
+	std::vector<std::string> folders;
+	ArrayMaterial& listMaterials = CMaterialManager::getInstance()->loadMaterial("SampleModels/BlendShape/Cat.mat", true, folders);
+
+	// create render mesh object
+	CGameObject* cat = zone->createEmptyObject();
+
+	// render mesh & init material
+	CRenderMesh* renderer = cat->addComponent<CRenderMesh>();
+	renderer->initFromPrefab(catPrefab);
+	renderer->initMaterial(listMaterials);
+
+	// init animation
+	CAnimationController* animController = cat->addComponent<CAnimationController>();
+	CSkeleton* skeleton = animController->createSkeleton();
+
+	CAnimationClip* catAnimation = CAnimationManager::getInstance()->loadAnimation("SampleModels/BlendShape/Cat.fbx");
+	skeleton->setAnimation(catAnimation, true);
 
 	// save to context
 	CContext* context = CContext::getInstance();
@@ -154,6 +176,7 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
+		listBundles.push_back("SampleModels.zip");
 		listBundles.push_back("SampleModelsResource.zip");
 		listBundles.push_back(getApplication()->getTexturePackageName("SampleModels"));
 

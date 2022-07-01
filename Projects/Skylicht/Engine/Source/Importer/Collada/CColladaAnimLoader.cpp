@@ -139,7 +139,6 @@ namespace Skylicht
 		char name[512];
 		CStringImp::getFileNameNoExt(name, fileName);
 		clip->AnimName = name;
-		clip->Time = 0;
 
 		float frames = 0.0f;
 

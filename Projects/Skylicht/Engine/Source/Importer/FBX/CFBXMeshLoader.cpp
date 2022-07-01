@@ -211,6 +211,38 @@ namespace Skylicht
 				}
 			}
 
+			// blendshape
+			if (mesh->blend_deformers.count > 0)
+			{
+				for (size_t di = 0; di < mesh->blend_deformers.count; di++)
+				{
+					ufbx_blend_deformer* deformer = mesh->blend_deformers.data[di];
+
+					for (size_t ci = 0; ci < deformer->channels.count; ci++)
+					{
+						ufbx_blend_channel* chan = deformer->channels.data[ci];
+						if (chan->keyframes.count == 0)
+							continue;
+
+						/*
+						std::string blendShapeName = chan->name.data;
+
+						ufbx_blend_shape* shape = chan->keyframes.data[chan->keyframes.count - 1].shape;
+						for (size_t oi = 0; oi < shape->num_offsets; oi++)
+						{
+							uint32_t ix = (uint32_t)shape->offset_vertices[oi];
+							if (ix < mesh->num_vertices)
+							{
+								// We don't need to do any indexing to X/Y here as the memory layout of
+								// `slice_data` pixels is the same as the linear buffer would be.
+								core::vector3df offset = convertFBXVec3(shape->position_offsets[oi]);
+							}
+						}
+						*/
+					}
+				}
+			}
+
 			for (int j = 0; j < mesh->materials.count; j++)
 			{
 				ufbx_mesh_material* mesh_mat = &mesh->materials.data[j];

@@ -39,7 +39,6 @@ namespace Skylicht
 	{
 	public:
 		std::string AnimName;
-		float Time;
 		float Duration;
 		bool Loop;
 
@@ -49,7 +48,6 @@ namespace Skylicht
 		CAnimationClip()
 		{
 			AnimName = "";
-			Time = 0.0f;
 			Duration = 0.0f;
 			Loop = true;
 		}
