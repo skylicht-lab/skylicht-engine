@@ -2,6 +2,7 @@
 #include "Utils/CPath.h"
 #include "Importer/IAnimationImporter.h"
 #include "Importer/Collada/CColladaAnimLoader.h"
+#include "Importer/FBX/CFBXAnimLoader.h"
 #include "CAnimationManager.h"
 
 namespace Skylicht
@@ -17,7 +18,7 @@ namespace Skylicht
 		releaseAllAnimations();
 	}
 
-	CAnimation* CAnimationManager::createAnimation(const char *name)
+	CAnimation* CAnimationManager::createAnimation(const char* name)
 	{
 		std::map<std::string, CAnimation*>::iterator findCache = m_animations.find(name);
 		if (findCache != m_animations.end())
@@ -25,12 +26,12 @@ namespace Skylicht
 			return (*findCache).second;
 		}
 
-		CAnimation *anim = new CAnimation();
+		CAnimation* anim = new CAnimation();
 		m_animations[name] = anim;
 		return anim;
 	}
 
-	CAnimationClip* CAnimationManager::loadAnimation(const char *resource)
+	CAnimationClip* CAnimationManager::loadAnimation(const char* resource)
 	{
 		// find in cached
 		std::map<std::string, CAnimationClip*>::iterator findCache = m_clips.find(resource);
@@ -39,15 +40,15 @@ namespace Skylicht
 			return (*findCache).second;
 		}
 
-		IAnimationImporter *importer = NULL;
-		CAnimationClip *output = NULL;
+		IAnimationImporter* importer = NULL;
+		CAnimationClip* output = NULL;
 
 		// load from file
 		std::string ext = CPath::getFileNameExt(resource);
 		if (ext == "dae")
-		{
 			importer = new CColladaAnimLoader();
-		}
+		else if (ext == "fbx")
+			importer = new CFBXAnimLoader();
 
 		if (importer != NULL)
 		{

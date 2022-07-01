@@ -330,6 +330,7 @@ Skylicht Engine is based in part on the work of:
 -   [Google Angle](https://github.com/google/angle)
 -   [Ocornut Imgui](https://github.com/ocornut/imgui)
 -   [Xatlas](https://github.com/jpcy/xatlas)
+-   [ufbx](https://github.com/bqqbarbhg/ufbx)
 -   [Spark Particle](https://github.com/Synxis/SPARK)
 -   [Freetype2](http://git.savannah.gnu.org/cgit/freetype/freetype2.git)
 -   Independent JPEG Group, libPng, zlib, curl...
