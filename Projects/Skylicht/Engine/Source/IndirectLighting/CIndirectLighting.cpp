@@ -118,6 +118,7 @@ namespace Skylicht
 		enumType->addEnumString("Lightmap", EIndirectType::LightmapArray);
 		enumType->addEnumString("Vertex Color", EIndirectType::VertexColor);
 		enumType->addEnumString("SH9", EIndirectType::SH9);
+		enumType->addEnumString("Ambient Color", EIndirectType::AmbientColor);
 		object->autoRelease(enumType);
 
 		CArrayTypeSerializable<CFilePathProperty>* textureArray = new CArrayTypeSerializable<CFilePathProperty>("LMTextures", object);
@@ -136,6 +137,9 @@ namespace Skylicht
 			CFilePathProperty* fileProperty = dynamic_cast<CFilePathProperty*>(textureArray->getElement(i));
 			fileProperty->set(m_lightmapPaths[i]);
 		}
+
+		// ambient color
+		object->autoRelease(new CColorProperty(object, "Ambient Color", m_ambientColor));
 
 		return object;
 	}
@@ -164,6 +168,8 @@ namespace Skylicht
 			if (!isLightmapEmpty())
 				lightmapChanged = isLightmapChanged(old);
 		}
+
+		m_ambientColor = object->get<SColor>("Ambient Color", SColor(255, 60, 60, 60));
 
 		setIndirectLightingType(type, lightmapChanged);
 	}
@@ -199,6 +205,15 @@ namespace Skylicht
 		m_autoSH = false;
 		for (int i = 0; i < 9; i++)
 			m_sh[i] = sh[i];
+	}
+
+	void CIndirectLighting::setAmbientColor(const SColor& color)
+	{
+		m_ambientColor = color;
+		for (CIndirectLightingData* data : m_data)
+		{
+			data->Color = color;
+		}
 	}
 
 	void CIndirectLighting::setLightmap(ITexture* texture)
@@ -246,6 +261,11 @@ namespace Skylicht
 			{
 				data->Type = CIndirectLightingData::SH9;
 				data->SH = m_sh;
+			}
+			else if (m_type == AmbientColor)
+			{
+				data->Type = CIndirectLightingData::AmbientColor;
+				data->Color = m_ambientColor;
 			}
 			else
 			{

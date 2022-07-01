@@ -111,6 +111,7 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Lightmap/IndirectTest.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapVertex.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapSH.xml");
+		loadShader("BuiltIn/Shader/Lightmap/LightmapColor.xml");
 
 		loadShader("BuiltIn/Shader/PostProcessing/AdaptLuminance.xml");
 		loadShader("BuiltIn/Shader/PostProcessing/PostEffect.xml");

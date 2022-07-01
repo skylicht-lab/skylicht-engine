@@ -92,6 +92,8 @@ void CViewInit::initScene()
 	std::vector<std::string> textureFolders;
 	CMaterialManager* materialMgr = CMaterialManager::getInstance();
 
+	SColor ambientColor(255, 190, 220, 250);
+
 	prefabWindTurbine = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine.fbx", NULL, true);
 	if (prefabWindTurbine)
 	{
@@ -105,6 +107,10 @@ void CViewInit::initScene()
 		CRenderMesh* renderer = windTurbine->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefabWindTurbine);
 		renderer->initMaterial(listMaterials);
+
+		CIndirectLighting* indirect = windTurbine->addComponent<CIndirectLighting>();
+		indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
+		indirect->setAmbientColor(ambientColor);
 	}
 
 	prefabBlades = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine_Blades.fbx", NULL, true);
@@ -124,6 +130,10 @@ void CViewInit::initScene()
 		CRenderMesh* renderer = windTurbineBlades->addComponent<CRenderMesh>();
 		renderer->initFromPrefab(prefabBlades);
 		renderer->initMaterial(listMaterials);
+
+		CIndirectLighting* indirect = windTurbineBlades->addComponent<CIndirectLighting>();
+		indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
+		indirect->setAmbientColor(ambientColor);
 
 		// test change position turbine
 		windTurbine->getTransformEuler()->setPosition(core::vector3df(10.0f, 0.0f, 10.0f));
