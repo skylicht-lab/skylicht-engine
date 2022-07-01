@@ -39,6 +39,7 @@ namespace Skylicht
 			LightmapArray = 0,
 			VertexColor,
 			SH9,
+			AmbientColor
 		};
 
 	protected:
@@ -54,6 +55,8 @@ namespace Skylicht
 
 		ITexture* m_lightmap;
 		bool m_internalLM;
+
+		SColor m_ambientColor;
 
 	public:
 		CIndirectLighting();
@@ -88,6 +91,8 @@ namespace Skylicht
 		}
 
 		void setSH(core::vector3df* sh);
+
+		void setAmbientColor(const SColor& color);
 
 		EIndirectType getIndirectLightingType()
 		{
