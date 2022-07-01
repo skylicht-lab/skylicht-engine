@@ -38,7 +38,7 @@ void main(void)
 	vec3 f0 = vec3(0.04);
     vec3 diffuseColor = baseMap.rgb * (vec3(1.0) - f0);
     diffuseColor *= 1.0 - metallic;
-    vec3 specularColor = mix(f0, baseMap.rgb, metallic);
+    vec3 specularColor = mix(f0, baseMap.rgb, max(roughness, metallic));
 
 	Diffuse = vec4(diffuseColor, 1.0);
 	Position = vWorldPosition;

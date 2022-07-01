@@ -468,9 +468,12 @@ namespace Skylicht
 				mb->recalculateBoundingBox();
 
 				// apply unit scale for culling
-				core::aabbox3df box = mb->getBoundingBox();
-				unitScaleMatrix.transformBox(box);
-				mb->getBoundingBox() = box;
+				if (isSkinnedMesh)
+				{
+					core::aabbox3df box = mb->getBoundingBox();
+					unitScaleMatrix.transformBox(box);
+					mb->getBoundingBox() = box;
+				}
 			}
 
 			if (isSkinnedMesh)
