@@ -1,0 +1,14 @@
+<shaderConfig name="LightmapColor" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uAmbientColor" type="LIGHT_AMBIENT" value="0.1, 0.1, 0.1, 1.0" float="4"/>
+		</fs>
+	</uniforms>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/ColorVS.glsl" fs="GLSL/LightmapColorFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ColorVS.hlsl" fs="HLSL/LightmapColorFS.hlsl"/>
+</shaderConfig>

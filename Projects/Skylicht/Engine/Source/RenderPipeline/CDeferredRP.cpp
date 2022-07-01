@@ -59,6 +59,7 @@ namespace Skylicht
 		m_lightmapArrayShader(0),
 		m_lightmapVertexShader(0),
 		m_lightmapSHShader(0),
+		m_lightmapColorShader(0),
 		m_lightmapIndirectTestShader(0),
 		m_colorInstancing(0),
 		m_lmInstancingSH(0),
@@ -143,6 +144,7 @@ namespace Skylicht
 		m_lightmapArrayShader = shaderMgr->getShaderIDByName("Lightmap");
 		m_lightmapVertexShader = shaderMgr->getShaderIDByName("LightmapVertex");
 		m_lightmapSHShader = shaderMgr->getShaderIDByName("LightmapSH");
+		m_lightmapColorShader = shaderMgr->getShaderIDByName("LightmapColor");
 
 		m_colorInstancing = shaderMgr->getShaderIDByName("ColorInstancing");
 		m_lmInstancingSH = shaderMgr->getShaderIDByName("LMStandardSGInstancing");
@@ -333,6 +335,20 @@ namespace Skylicht
 				// change shader to vertex color
 				SMaterial shMaterial;
 				shMaterial.MaterialType = m_lightmapSHShader;
+
+				// set irrlicht material
+				driver->setMaterial(shMaterial);
+
+				// draw mesh buffer
+				driver->drawMeshBuffer(mb);
+			}
+			else if (indirectData->Type == CIndirectLightingData::AmbientColor)
+			{
+				CShaderLighting::setLightAmbient(indirectData->Color);
+
+				// change shader to color
+				SMaterial shMaterial;
+				shMaterial.MaterialType = m_lightmapColorShader;
 
 				// set irrlicht material
 				driver->setMaterial(shMaterial);

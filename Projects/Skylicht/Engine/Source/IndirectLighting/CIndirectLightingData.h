@@ -35,7 +35,8 @@ namespace Skylicht
 		{
 			LightmapArray = 0,
 			VertexColor,
-			SH9
+			SH9,
+			AmbientColor
 		};
 
 		EType Type;
@@ -43,6 +44,8 @@ namespace Skylicht
 		bool* AutoSH;
 
 		core::vector3df* SH;
+
+		SColor Color;
 
 		ITexture* LightmapTexture;
 
