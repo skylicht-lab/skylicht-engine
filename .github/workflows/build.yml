@@ -134,7 +134,7 @@ jobs:
       - name: Unit Test
         run: |
           cd PrjMac
-          ctest --verpose -C Release
+          ctest --verpose --output-on-failure -C Release
           cat Testing/Temporary/LastTest.log
           cd ..
       - name: Package
