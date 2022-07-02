@@ -23,7 +23,8 @@ float3 SG(
 	const float lightMultiplier)
 {
 	// Roughness
-	float roughness = 1.0 - gloss;
+	float glossiness = max(gloss, 0.01);
+	float roughness = 1.0 - glossiness;
 
 	// Metallic
 	float3 f0 = spec;
@@ -50,7 +51,7 @@ float3 SG(
 	// Specular
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
-	float specular = pow(NdotE, 100.0f * gloss) * spec;
+	float specular = pow(NdotE, 100.0f * glossiness) * spec;
 
 	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
 	float3 directionalLight = NdotL * directionLightColor * visibility;

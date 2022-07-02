@@ -59,7 +59,7 @@ PS_OUTPUT main(PS_INPUT input)
 	output.Diffuse = float4(diffuseColor, 1.0);
 	output.Position = input.worldPosition;
 	output.Normal = float4(n, 1.0);
-	output.SG = float4(specularColor.g, 1.0 - roughness, 1.0, 1.0);
+	output.SG = float4(max(specularColor.r, specularColor.g), 1.0 - roughness, 1.0, 1.0);
 
 	return output;
 }
