@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CSoftwareSkinningSystem.h"
 #include "Culling/CVisibleSystem.h"
 #include "Culling/CCullingSystem.h"
+#include "LOD/CLODSystem.h"
 #include "Lighting/CLightCullingSystem.h"
 #include "ReflectionProbe/CReflectionProbeSystem.h"
 #include "IndirectLighting/CIndirectLightingSystem.h"
@@ -59,6 +60,7 @@ namespace Skylicht
 
 		// culling system
 		addRenderSystem<CVisibleSystem>();
+		addRenderSystem<CLODSystem>();
 		addRenderSystem<CCullingSystem>();
 		addRenderSystem<CLightCullingSystem>();
 

@@ -6,6 +6,7 @@
 #include "Context/CContext.h"
 
 #include "GridPlane/CGridPlane.h"
+#include "LOD/CLOD.h"
 #include "SkyDome/CSkyDome.h"
 
 CViewInit::CViewInit() :
@@ -111,6 +112,8 @@ void CViewInit::initScene()
 		CIndirectLighting* indirect = windTurbine->addComponent<CIndirectLighting>();
 		indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
 		indirect->setAmbientColor(ambientColor);
+
+		windTurbine->addComponent<CLOD>();
 	}
 
 	prefabBlades = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine_Blades.fbx", NULL, true);
@@ -134,6 +137,8 @@ void CViewInit::initScene()
 		CIndirectLighting* indirect = windTurbineBlades->addComponent<CIndirectLighting>();
 		indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
 		indirect->setAmbientColor(ambientColor);
+
+		windTurbineBlades->addComponent<CLOD>();
 
 		// test change position turbine
 		windTurbine->getTransformEuler()->setPosition(core::vector3df(10.0f, 0.0f, 10.0f));

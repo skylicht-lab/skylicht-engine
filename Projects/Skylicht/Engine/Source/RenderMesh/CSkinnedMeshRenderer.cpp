@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CCullingData.h"
 #include "Material/Shader/CShaderManager.h"
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
 
 #include "Entity/CEntityManager.h"
 
@@ -172,6 +173,8 @@ namespace Skylicht
 			{
 				if (lightingData->Type == CIndirectLightingData::SH9)
 					CShaderSH::setSH9(lightingData->SH);
+				else if (lightingData->Type == CIndirectLightingData::AmbientColor)
+					CShaderLighting::setLightAmbient(lightingData->Color);
 			}
 
 			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();
