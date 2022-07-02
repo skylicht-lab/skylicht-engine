@@ -43,5 +43,5 @@ void main(void)
 	Diffuse = vec4(diffuseColor, 1.0);
 	Position = vWorldPosition;
 	Normal = vec4(n, 1.0);
-	SG = vec4(specularColor.g, 1.0 - roughness, 1.0, 1.0);
+	SG = vec4(max(specularColor.r, specularColor.g), 1.0 - roughness, 1.0, 1.0);
 }

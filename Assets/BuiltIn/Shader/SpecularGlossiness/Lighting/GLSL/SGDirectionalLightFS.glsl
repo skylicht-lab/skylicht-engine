@@ -146,7 +146,8 @@ vec3 SG(
 	const float indirectMultiplier,
 	const float lightMultiplier)
 {
-	float roughness = 1.0 - gloss;
+	float glossiness = max(gloss, 0.01);
+	float roughness = 1.0 - glossiness;
 	vec3 f0 = vec3(spec, spec, spec);
 	vec3 specularColor = f0;
 	float oneMinusSpecularStrength = 1.0 - spec;
@@ -163,7 +164,7 @@ vec3 SG(
 	NdotL = min(NdotL, 1.0);
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
-	float specular = pow(NdotE, 100.0f * gloss) * spec;
+	float specular = pow(NdotE, 100.0f * glossiness) * spec;
 	vec3 envSpecColor = mix(indirectColor, vec3(1.0, 1.0, 1.0), visibility);
 	vec3 directionalLight = NdotL * directionLightColor * visibility;
 	vec3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * envSpecColor + light.a * specularColor;
