@@ -226,6 +226,9 @@ namespace Skylicht
 				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
 				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());
 
+				if (srcRender->getMesh()->BlendShape.size() > 0)
+					spawnRender->initSoftwareBlendShape();
+
 				// init software skinning
 				if (spawnRender->isSkinnedMesh() && spawnRender->isSoftwareSkinning() == true)
 					spawnRender->initSoftwareSkinning();

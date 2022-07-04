@@ -22,22 +22,30 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CLODData.h"
+#pragma once
+
+#include "Entity/IEntitySystem.h"
+#include "CRenderMeshData.h"
 
 namespace Skylicht
 {
-	IMPLEMENT_DATA_TYPE_INDEX(CLODData);
-
-	CLODData::CLODData() :
-		From(0.0f),
-		To(1000.0f)
+	class CSoftwareBlendShapeSystem : public IEntitySystem
 	{
+	protected:
+		core::array<CRenderMeshData*> m_renderers;
 
-	}
+	public:
+		CSoftwareBlendShapeSystem();
 
-	CLODData::~CLODData()
-	{
+		virtual ~CSoftwareBlendShapeSystem();
 
-	}
+		virtual void beginQuery(CEntityManager* entityManager);
+
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
+
+		virtual void init(CEntityManager* entityManager);
+
+		virtual void update(CEntityManager* entityManager);
+
+	};
 }
