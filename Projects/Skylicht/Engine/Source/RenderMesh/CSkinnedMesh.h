@@ -41,13 +41,13 @@ namespace Skylicht
 			core::matrix4 BindPoseMatrix;
 
 			// pointer to gpu skinning matrix
-			f32 *SkinningMatrix;
+			f32* SkinningMatrix;
 
 			// Entity index, that have JointData
 			int EntityIndex;
 
 			// Link to joint transform
-			CJointData *JointData;
+			CJointData* JointData;
 
 			std::string Name;
 
@@ -62,7 +62,7 @@ namespace Skylicht
 		core::array<SJoint> Joints;
 
 		// this matrix will push to GPU
-		f32 *SkinningMatrix;
+		f32* SkinningMatrix;
 
 	public:
 		CSkinnedMesh();

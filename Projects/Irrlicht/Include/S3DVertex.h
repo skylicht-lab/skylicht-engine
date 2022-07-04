@@ -213,7 +213,7 @@ struct S3DVertexTangents : public S3DVertex
 	//! default constructor
 	S3DVertexTangents() : S3DVertex() 
 	{ 
-		TangentW.set(1.0f, 1.0f);
+		VertexData.set(1.0f, 0.0f);
 	}
 
 	//! constructor
@@ -223,7 +223,7 @@ struct S3DVertexTangents : public S3DVertex
 			f32 bx=0.0f, f32 by=0.0f, f32 bz=0.0f)
 		: S3DVertex(x,y,z, nx,ny,nz, c, tu,tv), Tangent(tanx,tany,tanz), Binormal(bx,by,bz) 
 	{ 
-		TangentW.set(1.0f, 1.0f);
+		VertexData.set(1.0f, 0.0f);
 	}
 
 	//! constructor
@@ -231,7 +231,7 @@ struct S3DVertexTangents : public S3DVertex
 		const core::vector2df& tcoords)
 		: S3DVertex(pos, core::vector3df(), c, tcoords)
 	{ 
-		TangentW.set(1.0f, 1.0f);
+		VertexData.set(1.0f, 0.0f);
 	}
 
 	//! constructor
@@ -242,7 +242,7 @@ struct S3DVertexTangents : public S3DVertex
 		const core::vector3df& binormal=core::vector3df())
 		: S3DVertex(pos, normal, c, tcoords), Tangent(tangent), Binormal(binormal)
 	{ 
-		TangentW.set(1.0f, 1.0f);
+		VertexData.set(1.0f, 0.0f);
 	}
 
 	//! Tangent vector along the x-axis of the texture
@@ -251,8 +251,10 @@ struct S3DVertexTangents : public S3DVertex
 	//! Binormal vector (tangent x normal)
 	core::vector3df Binormal;
 
-	//! TangentW to fix flip normal
-	core::vector2df	TangentW;
+	//! VertexData
+	//! x: flip normal vector
+	//! y: blendshape vertex id
+	core::vector2df	VertexData;
 
 	bool operator==(const S3DVertexTangents& other) const
 	{
@@ -362,7 +364,7 @@ struct S3DVertexSkinTangents: public S3DVertexTangents
 {
 	S3DVertexSkinTangents(): S3DVertexTangents()
 	{
-		TangentW.set(1.0f, 1.0f);
+		VertexData.set(1.0f, 0.0f);
 	}
 
 	SVec4	BoneIndex;
@@ -382,7 +384,7 @@ struct S3DVertex2TCoordsTangents : public  S3DVertex2TCoords
 
 	S3DVertex2TCoordsTangents(S3DVertex2TCoords& v) : S3DVertex2TCoords(v)
 	{
-		TangentW.set(1.0f, 1.0f);
+		VertexData.set(1.0f, 0.0f);
 	}
 	
 	//! Tangent vector along the x-axis of the texture
@@ -391,8 +393,10 @@ struct S3DVertex2TCoordsTangents : public  S3DVertex2TCoords
 	//! Binormal vector (tangent x normal)
 	core::vector3df Binormal;
 
-	//! TangentW to fix flip normal
-	core::vector2df	TangentW;
+	//! VertexData
+	//! x: flip normal vector
+	//! y: blendshape vertex id
+	core::vector2df	VertexData;
 
 	E_VERTEX_TYPE getType() const
 	{

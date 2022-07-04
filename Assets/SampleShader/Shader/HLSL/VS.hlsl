@@ -6,7 +6,7 @@ struct VS_INPUT
 	float2 tex0: TEXCOORD0;
 	float3 tangent : TANGENT;
 	float3 binormal : BINORMAL;
-	float2 tangentw : TANGENTW;
+	float2 data : DATA;
 };
 
 struct VS_OUTPUT
@@ -40,7 +40,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 	output.color = input.color;
 	output.tex0 = input.tex0;
-	output.tangentw = input.tangentw.x;
+	output.tangentw = input.data.x;
 
 	float4 worldPos = mul(input.pos, uWorldMatrix);
 	float4 camPos = mul(uCameraPosition, uWorldMatrix);

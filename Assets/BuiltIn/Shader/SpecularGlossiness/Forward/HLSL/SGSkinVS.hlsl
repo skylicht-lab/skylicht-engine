@@ -6,7 +6,7 @@ struct VS_INPUT
 	float2 tex0: TEXCOORD0;
 	float3 tangent : TANGENT;
 	float3 binormal : BINORMAL;
-	float2 tangentw : TANGENTW;
+	float2 data : DATA;
 	float4 blendIndex : BLENDINDICES;
 	float4 blendWeight : BLENDWEIGHT;
 };
@@ -68,7 +68,7 @@ VS_OUTPUT main(VS_INPUT input)
 	output.pos = mul(skinPosition, uMvpMatrix);
 
 	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
-	output.tangentw = input.tangentw.x;
+	output.tangentw = input.data.x;
 
 	float4 worldPos = mul(skinPosition, uWorldMatrix);
 	float4 camPos = mul(uCameraPosition, uWorldMatrix);
