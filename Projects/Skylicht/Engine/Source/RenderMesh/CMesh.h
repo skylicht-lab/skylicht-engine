@@ -30,6 +30,13 @@ namespace Skylicht
 {
 	class CMaterial;
 
+	class CBlendShape : public IReferenceCounted
+	{
+	public:
+		std::string Name;
+		core::array<core::vector3df> Offset;
+	};
+
 	class CMesh : public IMesh
 	{
 	public:
@@ -60,6 +67,8 @@ namespace Skylicht
 
 		void addMeshBuffer(IMeshBuffer* buf, const char* materialName = "", CMaterial* m = NULL);
 
+		void addBlendShape(CBlendShape* blendShape);
+
 		void removeMeshBuffer(IMeshBuffer* buf);
 
 		void replaceMeshBuffer(int i, IMeshBuffer* buf);
@@ -79,6 +88,8 @@ namespace Skylicht
 		std::vector<std::string> MaterialName;
 
 		std::vector<CMaterial*> Material;
+
+		core::array<CBlendShape*> BlendShape;
 
 		bool UseInstancing;
 	};

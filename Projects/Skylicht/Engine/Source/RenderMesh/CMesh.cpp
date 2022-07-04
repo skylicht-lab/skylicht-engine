@@ -36,6 +36,9 @@ namespace Skylicht
 	{
 		for (u32 i = 0; i < MeshBuffers.size(); ++i)
 			MeshBuffers[i]->drop();
+
+		for (u32 i = 0, n = BlendShape.size(); i < n; i++)
+			BlendShape[i]->drop();
 	}
 
 	CMesh* CMesh::clone()
@@ -50,6 +53,11 @@ namespace Skylicht
 				MaterialName[i].c_str(),
 				Material[i]
 			);
+		}
+
+		for (u32 i = 0, n = BlendShape.size(); i < n; i++)
+		{
+			newMesh->addBlendShape(BlendShape[i]);
 		}
 
 		return newMesh;
@@ -124,6 +132,16 @@ namespace Skylicht
 			MeshBuffers.push_back(buf);
 			MaterialName.push_back(materialName);
 			Material.push_back(m);
+		}
+	}
+
+
+	void CMesh::addBlendShape(CBlendShape* blendShape)
+	{
+		if (blendShape)
+		{
+			blendShape->grab();
+			BlendShape.push_back(blendShape);
 		}
 	}
 

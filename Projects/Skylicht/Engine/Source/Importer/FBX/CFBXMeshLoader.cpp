@@ -144,6 +144,7 @@ namespace Skylicht
 
 		ufbx_vec2 default_uv = { 0 };
 		ufbx_vec3 default_vec = { 0 };
+		ufbx_vec4 default_color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
@@ -155,6 +156,7 @@ namespace Skylicht
 			bool haveTangent = mesh->vertex_tangent.num_values > 0;
 			bool haveBitangent = mesh->vertex_bitangent.num_values > 0;
 			bool haveUV = mesh->vertex_uv.num_values > 0;
+			bool haveColor = mesh->vertex_color.num_values > 0;
 
 			std::string meshName = mesh->name.data;
 
@@ -167,7 +169,11 @@ namespace Skylicht
 
 			CMesh* resultMesh = NULL;
 			bool isSkinnedMesh = false;
+			bool haveBlendShape = false;
 			S3DVertexSkin* mesh_skin_vertices = NULL;
+
+			if (mesh->blend_deformers.count > 0)
+				haveBlendShape = true;
 
 			if (mesh->skin_deformers.count > 0)
 			{
@@ -211,38 +217,7 @@ namespace Skylicht
 				}
 			}
 
-			// blendshape
-			if (mesh->blend_deformers.count > 0)
-			{
-				for (size_t di = 0; di < mesh->blend_deformers.count; di++)
-				{
-					ufbx_blend_deformer* deformer = mesh->blend_deformers.data[di];
-
-					for (size_t ci = 0; ci < deformer->channels.count; ci++)
-					{
-						ufbx_blend_channel* chan = deformer->channels.data[ci];
-						if (chan->keyframes.count == 0)
-							continue;
-
-						/*
-						std::string blendShapeName = chan->name.data;
-
-						ufbx_blend_shape* shape = chan->keyframes.data[chan->keyframes.count - 1].shape;
-						for (size_t oi = 0; oi < shape->num_offsets; oi++)
-						{
-							uint32_t ix = (uint32_t)shape->offset_vertices[oi];
-							if (ix < mesh->num_vertices)
-							{
-								// We don't need to do any indexing to X/Y here as the memory layout of
-								// `slice_data` pixels is the same as the linear buffer would be.
-								core::vector3df offset = convertFBXVec3(shape->position_offsets[oi]);
-							}
-						}
-						*/
-					}
-				}
-			}
-
+			// init mesh
 			for (int j = 0; j < mesh->materials.count; j++)
 			{
 				ufbx_mesh_material* mesh_mat = &mesh->materials.data[j];
@@ -258,7 +233,7 @@ namespace Skylicht
 
 				if (isSkinnedMesh)
 				{
-					if (normalMap)
+					if (normalMap || haveBlendShape)
 					{
 						mb = new CMeshBuffer<video::S3DVertexSkinTangents>(
 							getVideoDriver()->getVertexDescriptor(EVT_SKIN_TANGENTS),
@@ -273,7 +248,7 @@ namespace Skylicht
 				}
 				else
 				{
-					if (normalMap)
+					if (normalMap || haveBlendShape)
 					{
 						mb = new CMeshBuffer<video::S3DVertexTangents>(
 							getVideoDriver()->getVertexDescriptor(EVT_TANGENTS),
@@ -324,30 +299,36 @@ namespace Skylicht
 
 						ufbx_vec3 pos = ufbx_get_vertex_vec3(&mesh->vertex_position, ix);
 						ufbx_vec3 normal = ufbx_get_vertex_vec3(&mesh->vertex_normal, ix);
+						ufbx_vec4 color = haveColor ? ufbx_get_vertex_vec4(&mesh->vertex_color, ix) : default_color;
 						ufbx_vec2 uv = haveUV ? ufbx_get_vertex_vec2(&mesh->vertex_uv, ix) : default_uv;
 						ufbx_vec3 tangent = haveTangent ? ufbx_get_vertex_vec3(&mesh->vertex_tangent, ix) : default_vec;
 						ufbx_vec3 binormal = haveBitangent ? ufbx_get_vertex_vec3(&mesh->vertex_bitangent, ix) : default_vec;
 
+						SColor c(255, (u32)(color.x * 255), (u32)(color.y * 255), (u32)(color.z * 255));
+
+						// [vid] for morph, blendshape data as vertex index
+						int vid = mesh->vertex_indices[ix];
+
 						u32 vertLocation;
 						core::map<uint32_t, u32>::Node* node = vertMap.find(ix);
+
 						if (node)
 							vertLocation = node->getValue();
 						else
 						{
 							if (isSkinnedMesh)
 							{
-								int vid = mesh->vertex_indices[ix];
-
-								if (normalMap)
+								if (normalMap || haveBlendShape)
 								{
 									S3DVertexSkinTangents v;
 									v.Pos = convertFBXVec3(pos);
 									v.Normal = convertFBXVec3(normal);
 									v.Normal.normalize();
+									v.Color = c;
 									v.TCoords = convertFBXUVVec2(uv);
 									v.Tangent = convertFBXVec3(tangent);
 									v.Binormal = convertFBXVec3(binormal);
-									v.TangentW.set(1.f, 1.f);
+									v.VertexData.set(1.f, (float)vid);
 									v.BoneIndex = mesh_skin_vertices[vid].BoneIndex;
 									v.BoneWeight = mesh_skin_vertices[vid].BoneWeight;
 
@@ -359,6 +340,7 @@ namespace Skylicht
 									v.Pos = convertFBXVec3(pos);
 									v.Normal = convertFBXVec3(normal);
 									v.Normal.normalize();
+									v.Color = c;
 									v.TCoords = convertFBXUVVec2(uv);
 									v.BoneIndex = mesh_skin_vertices[vid].BoneIndex;
 									v.BoneWeight = mesh_skin_vertices[vid].BoneWeight;
@@ -372,10 +354,11 @@ namespace Skylicht
 								v.Pos = convertFBXVec3(pos);
 								v.Normal = convertFBXVec3(normal);
 								v.Normal.normalize();
+								v.Color = c;
 								v.TCoords = convertFBXUVVec2(uv);
 								v.Tangent = convertFBXVec3(tangent);
 								v.Binormal = convertFBXVec3(binormal);
-								v.TangentW.set(1.f, 1.f);
+								v.VertexData.set(1.f, (float)vid);
 
 								vertexBuffer->addVertex(&v);
 							}
@@ -526,6 +509,42 @@ namespace Skylicht
 			{
 				// init static mesh
 				resultMesh = new CMesh();
+			}
+
+			if (haveBlendShape)
+			{
+				CSkinnedMesh* skinnedMesh = (CSkinnedMesh*)resultMesh;
+
+				for (size_t di = 0; di < mesh->blend_deformers.count; di++)
+				{
+					ufbx_blend_deformer* deformer = mesh->blend_deformers.data[di];
+
+					for (size_t ci = 0; ci < deformer->channels.count; ci++)
+					{
+						ufbx_blend_channel* chan = deformer->channels.data[ci];
+						if (chan->keyframes.count == 0)
+							continue;
+
+						// alloc blendshape data
+						CBlendShape* blendShape = new CBlendShape();
+						blendShape->Name = chan->name.data;
+						blendShape->Offset.set_used((u32)mesh->num_vertices);
+						for (size_t i = 0; i < mesh->num_vertices; i++)
+							blendShape->Offset[(u32)i].set(0.0f, 0.0f, 0.0f);
+
+						// read blend shape data
+						ufbx_blend_shape* shape = chan->keyframes.data[chan->keyframes.count - 1].shape;
+						for (size_t oi = 0; oi < shape->num_offsets; oi++)
+						{
+							uint32_t ix = (uint32_t)shape->offset_vertices[oi];
+							if (ix < mesh->num_vertices)
+								blendShape->Offset[ix] = convertFBXVec3(shape->position_offsets[oi]);
+						}
+
+						skinnedMesh->addBlendShape(blendShape);
+						blendShape->drop();
+					}
+				}
 			}
 
 			// add meshbuffer to mesh

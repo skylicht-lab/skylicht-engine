@@ -256,7 +256,7 @@ bool CNullDriver::createVertexDescriptors()
 	VertexDescriptor[2]->addAttribute("inTexCoord0", 2, EVAS_TEXCOORD0, EVAT_FLOAT, 0);
 	VertexDescriptor[2]->addAttribute("inTangent", 3, EVAS_TANGENT, EVAT_FLOAT, 0);
 	VertexDescriptor[2]->addAttribute("inBinormal", 3, EVAS_BINORMAL, EVAT_FLOAT, 0);
-	VertexDescriptor[2]->addAttribute("inTangentW", 2, EVAS_TANGENTW, EVAT_FLOAT, 0);
+	VertexDescriptor[2]->addAttribute("inData", 2, EVAS_VERTEXDATA, EVAT_FLOAT, 0);
 
 	addVertexDescriptor("skin");
 	VertexDescriptor[3]->addAttribute("inPosition", 3, EVAS_POSITION, EVAT_FLOAT, 0);
@@ -273,7 +273,7 @@ bool CNullDriver::createVertexDescriptors()
 	VertexDescriptor[4]->addAttribute("inTexCoord0", 2, EVAS_TEXCOORD0, EVAT_FLOAT, 0);
 	VertexDescriptor[4]->addAttribute("inTangent", 3, EVAS_TANGENT, EVAT_FLOAT, 0);
 	VertexDescriptor[4]->addAttribute("inBinormal", 3, EVAS_BINORMAL, EVAT_FLOAT, 0);
-	VertexDescriptor[4]->addAttribute("inTangentW", 2, EVAS_TANGENTW, EVAT_FLOAT, 0);
+	VertexDescriptor[4]->addAttribute("inData", 2, EVAS_VERTEXDATA, EVAT_FLOAT, 0);
 	VertexDescriptor[4]->addAttribute("inBlendIndex", 4, EVAS_BLEND_INDICES, EVAT_FLOAT, 0);
 	VertexDescriptor[4]->addAttribute("inBlendWeight", 4, EVAS_BLEND_WEIGHTS, EVAT_FLOAT, 0);	
 
@@ -286,7 +286,7 @@ bool CNullDriver::createVertexDescriptors()
 	VertexDescriptor[5]->addAttribute("inLightmap", 3, EVAS_LIGHTMAP, EVAT_FLOAT, 0);
 	VertexDescriptor[5]->addAttribute("inTangent", 3, EVAS_TANGENT, EVAT_FLOAT, 0);
 	VertexDescriptor[5]->addAttribute("inBinormal", 3, EVAS_BINORMAL, EVAT_FLOAT, 0);
-	VertexDescriptor[5]->addAttribute("inTangentW", 2, EVAS_TANGENTW, EVAT_FLOAT, 0);
+	VertexDescriptor[5]->addAttribute("inData", 2, EVAS_VERTEXDATA, EVAT_FLOAT, 0);
 
 	addVertexDescriptor("skin2tcoordtangents");
 	VertexDescriptor[6]->addAttribute("inPosition", 3, EVAS_POSITION, EVAT_FLOAT, 0);
@@ -297,7 +297,7 @@ bool CNullDriver::createVertexDescriptors()
 	VertexDescriptor[6]->addAttribute("inLightmap", 3, EVAS_LIGHTMAP, EVAT_FLOAT, 0);
 	VertexDescriptor[6]->addAttribute("inTangent", 3, EVAS_TANGENT, EVAT_FLOAT, 0);
 	VertexDescriptor[6]->addAttribute("inBinormal", 3, EVAS_BINORMAL, EVAT_FLOAT, 0);
-	VertexDescriptor[6]->addAttribute("inTangentW", 2, EVAS_TANGENTW, EVAT_FLOAT, 0);
+	VertexDescriptor[6]->addAttribute("inData", 2, EVAS_VERTEXDATA, EVAT_FLOAT, 0);
 	VertexDescriptor[6]->addAttribute("inBlendIndex", 4, EVAS_BLEND_INDICES, EVAT_FLOAT, 0);
 	VertexDescriptor[6]->addAttribute("inBlendWeight", 4, EVAS_BLEND_WEIGHTS, EVAT_FLOAT, 0);
 	return true;
