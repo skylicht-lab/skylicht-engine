@@ -4,7 +4,7 @@ in vec4 inColor;
 in vec2 inTexCoord0;
 in vec3 inTangent;
 in vec3 inBinormal;
-in vec2 inTangentW;
+in vec2 inData;
 in vec4 inBlendIndex;
 in vec4 inBlendWeight;
 
@@ -49,7 +49,7 @@ void main(void)
 	skinTangent = (skinMatrix * vec4(inTangent, 0.0)).xyz;
 
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
-	vTangentW = inTangentW.x;
+	vTangentW = inData.x;
 
 	vec4 worldPos = uWorldMatrix * skinPosition;
 	vec4 camPos = uWorldMatrix * uCameraPosition;

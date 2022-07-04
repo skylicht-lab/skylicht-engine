@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CSkinnedMesh::CSkinnedMesh():
+	CSkinnedMesh::CSkinnedMesh() :
 		SkinningMatrix(NULL)
 	{
 	}
@@ -40,7 +40,7 @@ namespace Skylicht
 
 	CMesh* CSkinnedMesh::clone()
 	{
-		CSkinnedMesh *newMesh = new CSkinnedMesh();
+		CSkinnedMesh* newMesh = new CSkinnedMesh();
 		newMesh->BoundingBox = BoundingBox;
 		newMesh->MaterialName = MaterialName;
 		newMesh->Material = Material;
@@ -49,6 +49,12 @@ namespace Skylicht
 		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
 		{
 			newMesh->addMeshBuffer(MeshBuffers[i]);
+		}
+
+		for (u32 i = 0, n = BlendShape.size(); i < n; i++)
+		{
+			newMesh->BlendShape.push_back(BlendShape[i]);
+			BlendShape[i]->grab();
 		}
 
 		return newMesh;

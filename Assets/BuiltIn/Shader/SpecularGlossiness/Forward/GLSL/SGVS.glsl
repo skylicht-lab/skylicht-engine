@@ -4,7 +4,7 @@ in vec4 inColor;
 in vec2 inTexCoord0;
 in vec3 inTangent;
 in vec3 inBinormal;
-in vec2 inTangentW;
+in vec2 inData;
 
 uniform mat4 uMvpMatrix;
 uniform mat4 uWorldMatrix;
@@ -25,7 +25,7 @@ out vec3 vWorldPosition;
 void main(void)
 {
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
-	vTangentW = inTangentW.x;
+	vTangentW = inData.x;
 
 	vec4 worldPos = uWorldMatrix * inPosition;
 	vec4 camPos = uWorldMatrix * uCameraPosition;
