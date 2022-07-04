@@ -95,7 +95,7 @@ namespace Skylicht
 
 			// distance vector
 			float x = cameraPosition.X - m[12];
-			float y = cameraPosition.Y - m[13];
+			float y = 0.0f; // cameraPosition.Y - m[13];
 			float z = cameraPosition.Z - m[14];
 
 			// length vector

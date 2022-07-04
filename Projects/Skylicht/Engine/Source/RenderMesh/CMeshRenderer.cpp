@@ -141,7 +141,7 @@ namespace Skylicht
 		// need sort by material
 		qsort(m_meshs.pointer(), count, sizeof(CRenderMeshData*), cmpRenderMeshFunc);
 
-		// get world transform			
+		// get world transform
 		for (u32 i = 0; i < count; i++)
 		{
 			CEntity* entity = entityManager->getEntity(m_meshs[i]->EntityIndex);
@@ -167,7 +167,8 @@ namespace Skylicht
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
 			CRenderMeshData* meshData = m_meshs[i];
-			CMesh* mesh = meshData->getMesh();
+
+			CMesh* mesh = meshData->isSoftwareBlendShape() ? meshData->getBlendShapeMesh() : meshData->getMesh();
 
 			CIndirectLightingData* lightingData = indirectLighting[i];
 			if (lightingData != NULL)
