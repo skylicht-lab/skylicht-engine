@@ -513,8 +513,6 @@ namespace Skylicht
 
 			if (haveBlendShape)
 			{
-				CSkinnedMesh* skinnedMesh = (CSkinnedMesh*)resultMesh;
-
 				for (size_t di = 0; di < mesh->blend_deformers.count; di++)
 				{
 					ufbx_blend_deformer* deformer = mesh->blend_deformers.data[di];
@@ -541,7 +539,7 @@ namespace Skylicht
 								blendShape->Offset[ix] = convertFBXVec3(shape->position_offsets[oi]);
 						}
 
-						skinnedMesh->addBlendShape(blendShape);
+						resultMesh->addBlendShape(blendShape);
 						blendShape->drop();
 					}
 				}
@@ -571,6 +569,7 @@ namespace Skylicht
 					if (isSkinnedMesh)
 					{
 						CSkinnedMesh* skinnedMesh = (CSkinnedMesh*)resultMesh;
+
 						if (skinnedMesh->Joints.size() >= GPU_BONES_COUNT)
 							meshData->setSoftwareSkinning(true);
 

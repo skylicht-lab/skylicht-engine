@@ -41,9 +41,11 @@ namespace Skylicht
 	protected:
 		CMesh* RenderMesh;
 		CMesh* OriginalMesh;
+		CMesh* BlendShapeMesh;
 
 		bool IsSkinnedMesh;
 		bool SoftwareSkinning;
+		bool SoftwareBlendShape;
 
 	public:
 
@@ -61,7 +63,14 @@ namespace Skylicht
 			return OriginalMesh;
 		}
 
+		inline CMesh* getBlendShapeMesh()
+		{
+			return BlendShapeMesh;
+		}
+
 		void setMesh(CMesh* mesh);
+
+		void initSoftwareBlendShape();
 
 		void initSoftwareSkinning();
 
@@ -73,6 +82,11 @@ namespace Skylicht
 		void setSoftwareSkinning(bool b)
 		{
 			SoftwareSkinning = b;
+		}
+
+		inline bool isSoftwareBlendShape()
+		{
+			return SoftwareBlendShape;
 		}
 
 		inline bool isSkinnedMesh()
