@@ -5,7 +5,7 @@ uniform sampler2D uTexNormal;
 uniform sampler2D uTexSpecular;
 uniform samplerCube uTexReflect;
 uniform vec4 uLightColor;
-unfform vec4 uColor;
+uniform vec4 uColor;
 uniform vec4 uSHConst[4];
 in vec2 vTexCoord0;
 in vec3 vWorldNormal;
