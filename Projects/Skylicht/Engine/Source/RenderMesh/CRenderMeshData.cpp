@@ -39,10 +39,10 @@ namespace Skylicht
 
 	CRenderMeshData::CRenderMeshData() :
 		RenderMesh(NULL),
-		OriginalMesh(NULL),
-		BlendShapeMesh(NULL),
-		SoftwareSkinning(false),
-		SoftwareBlendShape(false),
+		SoftwareSkinnedMesh(NULL),
+		SoftwareBlendShapeMesh(NULL),
+		IsSoftwareSkinning(false),
+		IsSoftwareBlendShape(false),
 		IsSkinnedMesh(false)
 	{
 
@@ -53,11 +53,11 @@ namespace Skylicht
 		if (RenderMesh != NULL)
 			RenderMesh->drop();
 
-		if (OriginalMesh != NULL)
-			OriginalMesh->drop();
+		if (SoftwareSkinnedMesh != NULL)
+			SoftwareSkinnedMesh->drop();
 
-		if (BlendShapeMesh != NULL)
-			BlendShapeMesh->drop();
+		if (SoftwareBlendShapeMesh != NULL)
+			SoftwareBlendShapeMesh->drop();
 	}
 
 	void CRenderMeshData::setMesh(CMesh* mesh)
@@ -74,6 +74,11 @@ namespace Skylicht
 	void CRenderMeshData::setMaterial(CMaterial* material)
 	{
 		CMesh* mesh = RenderMesh;
+		if (SoftwareBlendShapeMesh)
+			mesh = SoftwareBlendShapeMesh;
+		if (SoftwareSkinnedMesh)
+			mesh = SoftwareSkinnedMesh;
+
 		const char* name = material->getName();
 
 		int bufferID = 0;
@@ -109,9 +114,7 @@ namespace Skylicht
 
 	void CRenderMeshData::initSoftwareBlendShape()
 	{
-		/*
 		IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
-
 		CMesh* mesh = RenderMesh->clone();
 
 		for (int i = 0, n = RenderMesh->getMeshBufferCount(); i < n; i++)
@@ -133,19 +136,27 @@ namespace Skylicht
 			mh->copyVertices(originalMeshBuffer->getVertexBuffer(), 0, vtxDes, meshBuffer->getVertexBuffer(), 0, vtxDes, true);
 			mh->copyIndices(originalMeshBuffer->getIndexBuffer(), meshBuffer->getIndexBuffer());
 
+			// copy material
+			meshBuffer->getMaterial() = originalMeshBuffer->getMaterial();
+
+			// apply static material
+			CShaderManager* shaderMgr = CShaderManager::getInstance();
+			if (meshBuffer->getMaterial().getTexture(0) != NULL)
+				meshBuffer->getMaterial().MaterialType = shaderMgr->getShaderIDByName("TextureColor");
+			else
+				meshBuffer->getMaterial().MaterialType = shaderMgr->getShaderIDByName("VertexColor");
+
+			// copy bbox (that fixed unitScale for culling)
+			meshBuffer->getBoundingBox() = originalMeshBuffer->getBoundingBox();
+
 			mesh->replaceMeshBuffer(i, meshBuffer);
 		}
 
 		mesh->setHardwareMappingHint(EHM_STREAM, EBT_VERTEX);
 		mesh->setHardwareMappingHint(EHM_STATIC, EBT_INDEX);
 
-		BlendShapeMesh = mesh;
-
-		OriginalMesh = RenderMesh;
-		OriginalMesh->grab();
-
-		SoftwareBlendShape = true;
-		*/
+		SoftwareBlendShapeMesh = mesh;
+		IsSoftwareBlendShape = true;
 	}
 
 	void CRenderMeshData::initSoftwareSkinning()
@@ -222,22 +233,22 @@ namespace Skylicht
 			else
 				meshBuffer->getMaterial().MaterialType = shaderMgr->getShaderIDByName("VertexColor");
 
-			meshBuffer->setHardwareMappingHint(EHM_STREAM);
-
 			// copy bbox (that fixed unitScale for culling)
 			meshBuffer->getBoundingBox() = originalMeshBuffer->getBoundingBox();
 
 			// add to mesh
-			mesh->addMeshBuffer(meshBuffer);
+			mesh->addMeshBuffer(meshBuffer, RenderMesh->MaterialName[i].c_str());
 			meshBuffer->drop();
 		}
 
 		mesh->recalculateBoundingBox();
 
+		mesh->setHardwareMappingHint(EHM_STREAM, EBT_VERTEX);
+		mesh->setHardwareMappingHint(EHM_STATIC, EBT_INDEX);
+
 		// swap default render mesh to dynamic stream mesh
-		// see CSoftwareSkinningSystem todo next
-		OriginalMesh = RenderMesh;
-		RenderMesh = mesh;
+		// see CSoftwareSkinningSystem todo next		
+		SoftwareSkinnedMesh = mesh;
 	}
 
 	bool CRenderMeshData::serializable(CMemoryStream* stream)
@@ -245,8 +256,6 @@ namespace Skylicht
 		stream->writeChar(IsSkinnedMesh ? 1 : 0);
 
 		CMesh* mesh = RenderMesh;
-		if (SoftwareSkinning == true)
-			mesh = OriginalMesh;
 
 		if (IsSkinnedMesh == true)
 		{

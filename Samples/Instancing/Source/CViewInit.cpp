@@ -144,7 +144,6 @@ void CViewInit::initScene()
 		windTurbine->getTransformEuler()->setPosition(core::vector3df(10.0f, 0.0f, 10.0f));
 	}
 
-
 	// Test cat & animation
 	CEntityPrefab* catPrefab = meshManager->loadModel("SampleModels/BlendShape/Cat.fbx", NULL, true);
 	ArrayMaterial& listMaterials = materialMgr->loadMaterial("SampleModels/BlendShape/Cat.mat", true, textureFolders);

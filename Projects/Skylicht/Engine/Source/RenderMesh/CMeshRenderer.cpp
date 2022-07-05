@@ -168,7 +168,11 @@ namespace Skylicht
 		{
 			CRenderMeshData* meshData = m_meshs[i];
 
-			CMesh* mesh = meshData->isSoftwareBlendShape() ? meshData->getBlendShapeMesh() : meshData->getMesh();
+			CMesh* mesh = meshData->getMesh();
+			if (meshData->isSoftwareBlendShape())
+				mesh = meshData->getSoftwareBlendShapeMesh();
+			if (meshData->isSoftwareSkinning())
+				mesh = meshData->getSoftwareSkinnedMesh();
 
 			CIndirectLightingData* lightingData = indirectLighting[i];
 			if (lightingData != NULL)

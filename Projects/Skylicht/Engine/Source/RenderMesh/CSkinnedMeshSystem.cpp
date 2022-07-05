@@ -47,13 +47,7 @@ namespace Skylicht
 		CRenderMeshData* renderer = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
 		if (renderer != NULL && renderer->isSkinnedMesh())
 		{
-			CSkinnedMesh* mesh = NULL;
-
-			if (renderer->isSoftwareSkinning() == true)
-				mesh = dynamic_cast<CSkinnedMesh*>(renderer->getOriginalMesh());
-			else
-				mesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
-
+			CSkinnedMesh* mesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
 			if (mesh != NULL)
 				m_meshs.push_back(mesh);
 		}

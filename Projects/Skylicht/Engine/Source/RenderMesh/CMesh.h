@@ -34,7 +34,15 @@ namespace Skylicht
 	{
 	public:
 		std::string Name;
+
+		float Weight;
+
 		core::array<core::vector3df> Offset;
+
+		CBlendShape()
+		{
+			Weight = 1.0f;
+		}
 	};
 
 	class CMesh : public IMesh
