@@ -70,11 +70,43 @@ namespace Skylicht
 		for (u32 i = 0, n = m_renderers.size(); i < n; i++)
 		{
 			CRenderMeshData* renderer = renderers[i];
-
-			CSkinnedMesh* renderMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
-			CSkinnedMesh* originalMesh = dynamic_cast<CSkinnedMesh*>(renderer->getOriginalMesh());
-
-
+			blendShape(renderer->getSoftwareBlendShapeMesh(), renderer->getMesh());
 		}
+	}
+
+	void CSoftwareBlendShapeSystem::blendShape(CMesh* blendShape, CMesh* originalMesh)
+	{
+		CBlendShape** blendShapeData = originalMesh->BlendShape.pointer();
+		u32 numBlendShape = originalMesh->BlendShape.size();
+
+		for (u32 i = 0, n = originalMesh->getMeshBufferCount(); i < n; i++)
+		{
+			IMeshBuffer* originalMeshBuffer = originalMesh->getMeshBuffer(i);
+			CVertexBuffer<video::S3DVertexSkinTangents>* originalVertexbuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)originalMeshBuffer->getVertexBuffer(0);
+			video::S3DVertexSkinTangents* vertex = (video::S3DVertexSkinTangents*)originalVertexbuffer->getVertices();
+
+			int numVertex = originalVertexbuffer->getVertexCount();
+
+			IMeshBuffer* skinnedMeshBuffer = blendShape->getMeshBuffer(i);
+			CVertexBuffer<video::S3DVertexSkinTangents>* vertexbuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)skinnedMeshBuffer->getVertexBuffer(0);
+			video::S3DVertexSkinTangents* resultVertex = (video::S3DVertexSkinTangents*)vertexbuffer->getVertices();
+
+			// morphing
+			for (int i = 0; i < numVertex; i++)
+			{
+				*resultVertex = *vertex;
+
+				int vertexID = (int)vertex->VertexData.Y;
+				for (u32 j = 0; j < numBlendShape; j++)
+				{
+					resultVertex->Pos += blendShapeData[j]->Weight * blendShapeData[j]->Offset[vertexID];
+				}
+
+				++resultVertex;
+				++vertex;
+			}
+		}
+
+		blendShape->setDirty(EBT_VERTEX);
 	}
 }

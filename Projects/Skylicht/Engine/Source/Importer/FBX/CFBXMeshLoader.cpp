@@ -526,7 +526,9 @@ namespace Skylicht
 						// alloc blendshape data
 						CBlendShape* blendShape = new CBlendShape();
 						blendShape->Name = chan->name.data;
+						blendShape->Weight = ci == 0 ? 1.0f : 0.0f;
 						blendShape->Offset.set_used((u32)mesh->num_vertices);
+
 						for (size_t i = 0; i < mesh->num_vertices; i++)
 							blendShape->Offset[(u32)i].set(0.0f, 0.0f, 0.0f);
 

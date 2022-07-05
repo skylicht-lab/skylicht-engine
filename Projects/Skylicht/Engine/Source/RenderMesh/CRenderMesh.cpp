@@ -226,6 +226,7 @@ namespace Skylicht
 				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
 				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());
 
+				// init software blendshape
 				if (srcRender->getMesh()->BlendShape.size() > 0)
 					spawnRender->initSoftwareBlendShape();
 
@@ -275,13 +276,7 @@ namespace Skylicht
 		{
 			if (r->isSkinnedMesh() == true)
 			{
-				CSkinnedMesh* skinMesh = NULL;
-
-				if (r->isSoftwareSkinning() == true)
-					skinMesh = dynamic_cast<CSkinnedMesh*>(r->getOriginalMesh());
-				else
-					skinMesh = dynamic_cast<CSkinnedMesh*>(r->getMesh());
-
+				CSkinnedMesh* skinMesh = dynamic_cast<CSkinnedMesh*>(r->getMesh());
 				if (skinMesh != NULL)
 				{
 					// alloc animation matrix (Max: 64 bone)

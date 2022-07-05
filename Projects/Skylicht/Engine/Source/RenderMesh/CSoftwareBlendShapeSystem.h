@@ -47,5 +47,9 @@ namespace Skylicht
 
 		virtual void update(CEntityManager* entityManager);
 
+	protected:
+
+		void blendShape(CMesh* blendShape, CMesh* originalMesh);
+
 	};
 }
