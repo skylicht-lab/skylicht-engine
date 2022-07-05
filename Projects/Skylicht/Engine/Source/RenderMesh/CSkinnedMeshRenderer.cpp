@@ -182,6 +182,10 @@ namespace Skylicht
 			// set bone matrix to shader callback
 			shaderManager->BoneMatrix = mesh->SkinningMatrix;
 
+			// software blendshape
+			if (renderMeshData->isSoftwareBlendShape())
+				mesh = (CSkinnedMesh*)renderMeshData->getSoftwareBlendShapeMesh();
+
 			// set transform
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
@@ -242,6 +246,10 @@ namespace Skylicht
 
 			// set transform
 			driver->setTransform(video::ETS_WORLD, transforms[meshID]->World);
+
+			// software blendshape
+			if (renderMeshData->isSoftwareBlendShape())
+				mesh = (CSkinnedMesh*)renderMeshData->getSoftwareBlendShapeMesh();
 
 			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)

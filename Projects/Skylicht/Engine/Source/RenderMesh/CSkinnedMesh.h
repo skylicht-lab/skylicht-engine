@@ -55,6 +55,7 @@ namespace Skylicht
 			{
 				EntityIndex = -1;
 				JointData = NULL;
+				SkinningMatrix = NULL;
 			}
 		};
 

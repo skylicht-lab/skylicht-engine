@@ -41,19 +41,19 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity* entity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
-	
+		virtual void update(CEntityManager* entityManager);
+
 	protected:
-		void softwareSkinning(CSkinnedMesh *renderMesh, CSkinnedMesh *originalMesh);
+		void softwareSkinning(CSkinnedMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
 
-		void softwareSkinningTangent(CSkinnedMesh *renderMesh, CSkinnedMesh *originalMesh);
+		void softwareSkinningTangent(CSkinnedMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
 
-		void skinVertex(CSkinnedMesh::SJoint *arrayJoint, core::vector3df &vertex, core::vector3df &normal, video::S3DVertexSkinTangents* src, int boneIndex);
-		
-		void skinVertex(CSkinnedMesh::SJoint *arrayJoint, core::vector3df &vertex, core::vector3df &normal, video::S3DVertexSkin* src, int boneIndex);
+		void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkinTangents* src, int boneIndex);
+
+		void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkin* src, int boneIndex);
 	};
 }
