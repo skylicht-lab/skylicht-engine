@@ -53,11 +53,11 @@ namespace Skylicht
 
 		EAnimationType m_animationType;
 
-		CAnimationClip *m_clip;
+		CAnimationClip* m_clip;
 
 	protected:
 
-		CSkeleton *m_target;
+		CSkeleton* m_target;
 
 		std::vector<CSkeleton*> m_blending;
 
@@ -76,7 +76,9 @@ namespace Skylicht
 
 		void syncAnimationByTimeScale();
 
-		void setAnimation(CAnimationClip *clip, bool loop, bool pause = false);
+		void setAnimation(CAnimationClip* clip, bool loop, bool pause = false);
+
+		void setAnimation(CAnimationClip* clip, bool loop, float from, float duration, bool pause = false);
 
 		inline CAnimationClip* getCurrentAnimation()
 		{
@@ -113,18 +115,18 @@ namespace Skylicht
 			return m_animationType;
 		}
 
-		void setTarget(CSkeleton *skeleton);
+		void setTarget(CSkeleton* skeleton);
 
 	protected:
+
+		void setFrameData();
 
 		void updateTrackKeyFrame();
 
 		void updateBlending();
 
-		float offsetFrame(float frame);
+		void addBlending(CSkeleton* skeleton);
 
-		void addBlending(CSkeleton *skeleton);
-
-		void removeBlending(CSkeleton *skeleton);
+		void removeBlending(CSkeleton* skeleton);
 	};
 }

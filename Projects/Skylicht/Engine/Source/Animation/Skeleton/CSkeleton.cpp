@@ -106,25 +106,61 @@ namespace Skylicht
 		m_entitiesData.clear();
 	}
 
+	void CSkeleton::setAnimation(CAnimationClip* clip, bool loop, float from, float duration, bool pause)
+	{
+		if (duration < 0.0f)
+			duration = 0.0f;
+
+		bool updateFrameData = false;
+		if (m_clip != clip)
+		{
+			m_clip = clip;
+			updateFrameData = true;
+		}
+
+		m_timeline.From = from;
+		m_timeline.To = from + duration;
+		m_timeline.Frame = from;
+		m_timeline.Loop = loop;
+		m_timeline.Pause = pause;
+
+		if (updateFrameData)
+			setFrameData();
+	}
+
 	void CSkeleton::setAnimation(CAnimationClip* clip, bool loop, bool pause)
 	{
-		m_clip = clip;
+		bool updateFrameData = false;
+		if (m_clip != clip)
+		{
+			m_clip = clip;
+			updateFrameData = true;
+		}
 
+		m_timeline.From = 0.0f;
 		m_timeline.Duration = 0.0f;
 		m_timeline.Frame = 0.0f;
 		m_timeline.Loop = loop;
 		m_timeline.Pause = pause;
 
+		if (updateFrameData)
+			setFrameData();
+
+		m_timeline.To = m_timeline.Duration;
+	}
+
+	void CSkeleton::setFrameData()
+	{
 		for (CAnimationTransformData*& entity : m_entitiesData)
 		{
 			CAnimationTrack& track = entity->AnimationTrack;
 			track.clearAllKeyFrame();
 
-			SEntityAnim* anim = clip->getAnimOfEntity(entity->Name);
+			SEntityAnim* anim = m_clip->getAnimOfEntity(entity->Name);
 			if (anim != NULL)
 			{
 				// apply new frame data
-				track.Name = clip->AnimName;
+				track.Name = m_clip->AnimName;
 				track.setFrameData(&anim->Data);
 
 				// get anim duration
@@ -201,7 +237,6 @@ namespace Skylicht
 			if (track.HaveAnimation == true)
 			{
 				float frame = m_timeline.Frame;
-				frame = offsetFrame(frame);
 				track.getFrameData(frame, entity->AnimPosition, entity->AnimScale, entity->AnimRotation);
 			}
 			else
@@ -211,18 +246,6 @@ namespace Skylicht
 				COPY_QUATERNION(entity->AnimRotation, entity->DefaultRotation);
 			}
 		}
-	}
-
-	float CSkeleton::offsetFrame(float frame)
-	{
-		// need offset the timeline
-		float offset = m_timeline.Duration * m_timeline.SyncSeekRatio;
-		frame = frame + offset;
-
-		if (frame > m_timeline.Duration)
-			frame = frame - m_timeline.Duration;
-
-		return frame;
 	}
 
 	void CSkeleton::setTarget(CSkeleton* skeleton)
@@ -333,7 +356,7 @@ namespace Skylicht
 				float targetBlend = 1.0f;
 
 				float animWeight = trackInfo.Weight * targetBlend;
-				float animDuration = trackInfo.Duration;
+				float animDuration = trackInfo.To - trackInfo.From;
 
 				// find frame ratio
 				if (maxWeight < animWeight)
@@ -353,7 +376,7 @@ namespace Skylicht
 		{
 			CAnimationTimeline& trackInfo = skeleton->getTimeline();
 			frameRatio = core::clamp<float>(frameRatio, 0.0f, 1.0f);
-			trackInfo.Frame = frameRatio * trackInfo.Duration;
+			trackInfo.Frame = trackInfo.From + frameRatio * (trackInfo.To - trackInfo.From);
 		}
 	}
 }
