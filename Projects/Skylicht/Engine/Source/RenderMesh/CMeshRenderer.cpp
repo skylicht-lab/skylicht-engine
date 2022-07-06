@@ -108,10 +108,13 @@ namespace Skylicht
 		// compare by mesh
 		if (materialA == NULL || materialB == NULL)
 		{
-			if (meshA == meshB)
+			IMeshBuffer* mbA = meshA->getMeshBuffer(0);
+			IMeshBuffer* mbB = meshB->getMeshBuffer(0);
+
+			if (mbA == mbB)
 				return 0;
 
-			return meshA < meshB ? -1 : 1;
+			return mbA < mbB ? -1 : 1;
 		}
 
 		// comprate by texture
@@ -122,13 +125,30 @@ namespace Skylicht
 		if (textureA == NULL || textureB == NULL)
 		{
 			if (materialA == materialB)
-				return 0;
+			{
+				// compare mesh
+				IMeshBuffer* mbA = meshA->getMeshBuffer(0);
+				IMeshBuffer* mbB = meshB->getMeshBuffer(0);
+
+				if (mbA == mbB)
+					return 0;
+			}
+
 			return materialA < materialB ? -1 : 1;
 		}
 
 		// sort by texture 0
 		if (textureA == textureB)
-			return 0;
+		{
+			// compare mesh
+			IMeshBuffer* mbA = meshA->getMeshBuffer(0);
+			IMeshBuffer* mbB = meshB->getMeshBuffer(0);
+
+			if (mbA == mbB)
+				return 0;
+
+			return mbA < mbB ? -1 : 1;
+		}
 
 		return textureA < textureB ? -1 : 1;
 	}
