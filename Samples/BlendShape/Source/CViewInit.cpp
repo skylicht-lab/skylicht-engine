@@ -117,7 +117,12 @@ void CViewInit::initScene()
 	CSkeleton* skeleton = animController->createSkeleton();
 
 	CAnimationClip* catAnimation = CAnimationManager::getInstance()->loadAnimation("SampleModels/BlendShape/Cat.fbx");
-	skeleton->setAnimation(catAnimation, true, 0.0f, 2.0f);
+
+	// Idle: 0 - 60
+	// Hit: 80 - 120
+	// Fall: 140 - 180
+	float fps = 30.0f;
+	skeleton->setAnimation(catAnimation, true, 0.0f / fps, 60.0f / fps);
 
 	// apply tree position for cat at (0.0, 0.0, 0.0)
 	tree->getTransformEuler()->setPosition(core::vector3df(0.0f, -17.6f, 0.0f));
