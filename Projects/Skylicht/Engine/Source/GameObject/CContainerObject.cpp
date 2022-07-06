@@ -341,7 +341,7 @@ namespace Skylicht
 			// try search in list add
 			for (CGameObject* addObject : m_add)
 			{
-				if (std::wstring(addObject->getName()) == objectName)
+				if (CStringImp::comp(addObject->getName(), objectName) == 0)
 				{
 					return addObject;
 				}

@@ -99,48 +99,60 @@ void CViewInit::initScene()
 	ArrayMaterial& bladeTurbineMaterials = materialMgr->loadMaterial("SampleModels/WindTurbine/WindTurbine_Blades.mat", true, textureFolders);
 
 	SColor ambientColor(255, 190, 220, 250);
+	float space = 50.0f;
+	int numObjectInRow = 20;
 
-	if (prefabWindTurbine)
+	int n = numObjectInRow / 2;
+	for (int x = -n; x < n; x++)
 	{
-		windTurbine = zone->createEmptyObject();
-		windTurbine->setStatic(true);
+		for (int z = -n; z < n; z++)
+		{
+			if (prefabWindTurbine)
+			{
+				windTurbine = zone->createEmptyObject();
+				windTurbine->setStatic(true);
 
-		CRenderMesh* renderer = windTurbine->addComponent<CRenderMesh>();
-		renderer->initFromPrefab(prefabWindTurbine);
-		renderer->initMaterial(winTurbineMaterials);
+				CRenderMesh* renderer = windTurbine->addComponent<CRenderMesh>();
+				renderer->initFromPrefab(prefabWindTurbine);
+				renderer->initMaterial(winTurbineMaterials);
 
-		CIndirectLighting* indirect = windTurbine->addComponent<CIndirectLighting>();
-		indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
-		indirect->setAmbientColor(ambientColor);
+				CIndirectLighting* indirect = windTurbine->addComponent<CIndirectLighting>();
+				indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
+				indirect->setAmbientColor(ambientColor);
 
-		windTurbine->addComponent<CLOD>();
+				windTurbine->addComponent<CLOD>();
+			}
+
+
+			if (windTurbine && prefabBlades)
+			{
+				windTurbineBlades = zone->createEmptyObject();
+
+				// attach blade to turbine position
+				CTransformEuler* transform = windTurbineBlades->getTransformEuler();
+				transform->attachTransform(windTurbine->getEntity());
+				transform->setPosition(core::vector3df(-1.59f, 38.0f, 0.0f));
+
+				CRenderMesh* renderer = windTurbineBlades->addComponent<CRenderMesh>();
+				renderer->initFromPrefab(prefabBlades);
+				renderer->initMaterial(bladeTurbineMaterials);
+
+				CIndirectLighting* indirect = windTurbineBlades->addComponent<CIndirectLighting>();
+				indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
+				indirect->setAmbientColor(ambientColor);
+
+				windTurbineBlades->addComponent<CLOD>();
+
+				core::vector3df randomRot(os::Randomizer::frand() * 360.0f, 0.0f, 0.0f);
+				windTurbineBlades->getTransformEuler()->setRotation(randomRot);
+
+				CRotateComponent* rotate = windTurbineBlades->addComponent<CRotateComponent>();
+				rotate->setRotate(0.1f, 0.0f, 0.0f);
+			}
+
+			windTurbine->getTransformEuler()->setPosition(core::vector3df(x * space, 0.0f, z * space));
+		}
 	}
-
-
-	if (windTurbine && prefabBlades)
-	{
-		windTurbineBlades = zone->createEmptyObject();
-
-		// attach blade to turbine position
-		CTransformEuler* transform = windTurbineBlades->getTransformEuler();
-		transform->attachTransform(windTurbine->getEntity());
-		transform->setPosition(core::vector3df(-1.59f, 38.0f, 0.0f));
-
-		CRenderMesh* renderer = windTurbineBlades->addComponent<CRenderMesh>();
-		renderer->initFromPrefab(prefabBlades);
-		renderer->initMaterial(bladeTurbineMaterials);
-
-		CIndirectLighting* indirect = windTurbineBlades->addComponent<CIndirectLighting>();
-		indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
-		indirect->setAmbientColor(ambientColor);
-
-		CRotateComponent* rotate = windTurbineBlades->addComponent<CRotateComponent>();
-		rotate->setRotate(0.1f, 0.0f, 0.0f);
-
-		windTurbineBlades->addComponent<CLOD>();
-	}
-
-	windTurbine->getTransformEuler()->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
 
 	// save to context
 	CContext* context = CContext::getInstance();
@@ -222,7 +234,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-		}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -241,13 +253,11 @@ void CViewInit::onUpdate()
 		if (scene != NULL)
 			scene->update();
 
-		// CDeferredRP::enableTestIndirect(true);
-
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {
