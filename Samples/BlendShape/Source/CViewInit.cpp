@@ -8,7 +8,6 @@
 #include "GridPlane/CGridPlane.h"
 #include "LOD/CLOD.h"
 #include "SkyDome/CSkyDome.h"
-#include "CRotateComponent.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -86,61 +85,28 @@ void CViewInit::initScene()
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	CMeshManager* meshManager = CMeshManager::getInstance();
-	CMaterialManager* materialMgr = CMaterialManager::getInstance();
-
-	CGameObject* windTurbine = NULL;
-	CGameObject* windTurbineBlades = NULL;
-
-	CEntityPrefab* prefabWindTurbine = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine.fbx", NULL, true);
-	CEntityPrefab* prefabBlades = meshManager->loadModel("SampleModels/WindTurbine/WindTurbine_Blades.fbx", NULL, true);
 
 	std::vector<std::string> textureFolders;
-	ArrayMaterial& winTurbineMaterials = materialMgr->loadMaterial("SampleModels/WindTurbine/WindTurbine.mat", true, textureFolders);
-	ArrayMaterial& bladeTurbineMaterials = materialMgr->loadMaterial("SampleModels/WindTurbine/WindTurbine_Blades.mat", true, textureFolders);
+	CMaterialManager* materialMgr = CMaterialManager::getInstance();
 
-	SColor ambientColor(255, 190, 220, 250);
+	// cat & animation
+	CEntityPrefab* catPrefab = meshManager->loadModel("SampleModels/BlendShape/Cat.fbx", NULL, true);
+	ArrayMaterial& catMaterials = materialMgr->loadMaterial("SampleModels/BlendShape/Cat.mat", true, textureFolders);
 
-	if (prefabWindTurbine)
-	{
-		windTurbine = zone->createEmptyObject();
-		windTurbine->setStatic(true);
+	// create render mesh object
+	CGameObject* cat = zone->createEmptyObject();
 
-		CRenderMesh* renderer = windTurbine->addComponent<CRenderMesh>();
-		renderer->initFromPrefab(prefabWindTurbine);
-		renderer->initMaterial(winTurbineMaterials);
+	// render mesh & init material
+	CRenderMesh* renderer = cat->addComponent<CRenderMesh>();
+	renderer->initFromPrefab(catPrefab);
+	renderer->initMaterial(catMaterials);
 
-		CIndirectLighting* indirect = windTurbine->addComponent<CIndirectLighting>();
-		indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
-		indirect->setAmbientColor(ambientColor);
+	// init animation
+	CAnimationController* animController = cat->addComponent<CAnimationController>();
+	CSkeleton* skeleton = animController->createSkeleton();
 
-		windTurbine->addComponent<CLOD>();
-	}
-
-
-	if (windTurbine && prefabBlades)
-	{
-		windTurbineBlades = zone->createEmptyObject();
-
-		// attach blade to turbine position
-		CTransformEuler* transform = windTurbineBlades->getTransformEuler();
-		transform->attachTransform(windTurbine->getEntity());
-		transform->setPosition(core::vector3df(-1.59f, 38.0f, 0.0f));
-
-		CRenderMesh* renderer = windTurbineBlades->addComponent<CRenderMesh>();
-		renderer->initFromPrefab(prefabBlades);
-		renderer->initMaterial(bladeTurbineMaterials);
-
-		CIndirectLighting* indirect = windTurbineBlades->addComponent<CIndirectLighting>();
-		indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
-		indirect->setAmbientColor(ambientColor);
-
-		CRotateComponent* rotate = windTurbineBlades->addComponent<CRotateComponent>();
-		rotate->setRotate(0.1f, 0.0f, 0.0f);
-
-		windTurbineBlades->addComponent<CLOD>();
-	}
-
-	windTurbine->getTransformEuler()->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
+	CAnimationClip* catAnimation = CAnimationManager::getInstance()->loadAnimation("SampleModels/BlendShape/Cat.fbx");
+	skeleton->setAnimation(catAnimation, true);
 
 	// save to context
 	CContext* context = CContext::getInstance();
@@ -222,7 +188,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-		}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -247,7 +213,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {
