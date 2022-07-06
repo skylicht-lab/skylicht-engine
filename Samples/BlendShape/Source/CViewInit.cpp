@@ -105,6 +105,7 @@ void CViewInit::initScene()
 
 	// create cat
 	CGameObject* cat = zone->createEmptyObject();
+	cat->setName("Cat");
 
 	// render mesh & init material
 	CRenderMesh* catRenderer = cat->addComponent<CRenderMesh>();
@@ -219,8 +220,6 @@ void CViewInit::onUpdate()
 		CScene* scene = context->getScene();
 		if (scene != NULL)
 			scene->update();
-
-		// CDeferredRP::enableTestIndirect(true);
 
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
