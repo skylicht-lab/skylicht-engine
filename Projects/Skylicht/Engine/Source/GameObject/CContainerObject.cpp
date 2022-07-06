@@ -31,10 +31,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-
 	CContainerObject::CContainerObject(CGameObject* parent, CZone* zone) :
 		CGameObject(parent, zone),
-		m_updateRemoveAdd(true)
+		m_updateRemoveAdd(true),
+		m_lastGenerateID(-1)
 	{
 	}
 
@@ -298,6 +298,7 @@ namespace Skylicht
 		updateIndexSearchObject();
 
 		object->getTransform()->setWorldMatrix(world);
+		m_lastGenerateID = -1;
 	}
 
 	void CContainerObject::bringToChild(CGameObject* object)
@@ -331,6 +332,7 @@ namespace Skylicht
 		updateIndexSearchObject();
 
 		object->getTransform()->setWorldMatrix(world);
+		m_lastGenerateID = -1;
 	}
 
 	CGameObject* CContainerObject::searchObject(const wchar_t* objectName)
@@ -427,12 +429,17 @@ namespace Skylicht
 		char lpName[1024];
 
 		int objectID = 0;
+		if (m_lastGenerateID >= 0)
+			objectID = m_lastGenerateID + 1;
+
 		do
 		{
 			objectID++;
 			sprintf(lpName, "%s_%d", objTemplate, objectID);
 			CStringImp::convertUTF8ToUnicode(lpName, name);
 		} while (testConflictName(name));
+
+		m_lastGenerateID = objectID;
 
 		return std::string(lpName);
 	}
@@ -463,6 +470,7 @@ namespace Skylicht
 		if (m_updateRemoveAdd == true || force == true)
 		{
 			m_updateRemoveAdd = false;
+			m_lastGenerateID = -1;
 
 			if (m_add.size() > 0)
 			{
