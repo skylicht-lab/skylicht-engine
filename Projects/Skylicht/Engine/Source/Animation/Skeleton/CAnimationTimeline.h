@@ -29,11 +29,12 @@ namespace Skylicht
 	class CAnimationTimeline
 	{
 	public:
+		float From;
+		float To;
 		float Duration; // second
 		float Frame; // second
 		float Speed;
 		float Weight;
-		float SyncSeekRatio;
 		bool Loop;
 		bool Pause;
 

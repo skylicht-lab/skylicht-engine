@@ -93,20 +93,33 @@ void CViewInit::initScene()
 	CEntityPrefab* catPrefab = meshManager->loadModel("SampleModels/BlendShape/Cat.fbx", NULL, true);
 	ArrayMaterial& catMaterials = materialMgr->loadMaterial("SampleModels/BlendShape/Cat.mat", true, textureFolders);
 
-	// create render mesh object
+	CEntityPrefab* treePrefab = meshManager->loadModel("SampleModels/BlendShape/Tree01.fbx", NULL, true);
+	ArrayMaterial& treeMaterials = materialMgr->loadMaterial("SampleModels/BlendShape/Tree.mat", true, textureFolders);
+
+	// create tree
+	CGameObject* tree = zone->createEmptyObject();
+
+	CRenderMesh* treeRenderer = tree->addComponent<CRenderMesh>();
+	treeRenderer->initFromPrefab(treePrefab);
+	treeRenderer->initMaterial(treeMaterials);
+
+	// create cat
 	CGameObject* cat = zone->createEmptyObject();
 
 	// render mesh & init material
-	CRenderMesh* renderer = cat->addComponent<CRenderMesh>();
-	renderer->initFromPrefab(catPrefab);
-	renderer->initMaterial(catMaterials);
+	CRenderMesh* catRenderer = cat->addComponent<CRenderMesh>();
+	catRenderer->initFromPrefab(catPrefab);
+	catRenderer->initMaterial(catMaterials);
 
 	// init animation
 	CAnimationController* animController = cat->addComponent<CAnimationController>();
 	CSkeleton* skeleton = animController->createSkeleton();
 
 	CAnimationClip* catAnimation = CAnimationManager::getInstance()->loadAnimation("SampleModels/BlendShape/Cat.fbx");
-	skeleton->setAnimation(catAnimation, true);
+	skeleton->setAnimation(catAnimation, true, 0.0f, 2.0f);
+
+	// apply tree position for cat at (0.0, 0.0, 0.0)
+	tree->getTransformEuler()->setPosition(core::vector3df(0.0f, -17.6f, 0.0f));
 
 	// save to context
 	CContext* context = CContext::getInstance();
