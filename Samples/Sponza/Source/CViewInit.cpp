@@ -90,11 +90,6 @@ void CViewInit::initScene()
 		{-11.2f, 2.4f, -4.5f},
 		{12.03f, 2.4f, 4.04f},
 		{12.01f, 2.4f, -4.47f},
-
-		{6.18f, 1.6f, -2.2f},
-		{6.18f, 1.6f, 1.43f},
-		{-4.89f, 1.6f, -2.17f},
-		{-4.89f, 1.6f, 1.42f},
 	};
 
 	std::vector<CPointLight*> pointLights;
@@ -106,11 +101,7 @@ void CViewInit::initScene()
 		CPointLight* pointLight = pointLightObj->addComponent<CPointLight>();
 		pointLight->setShadow(true);
 		pointLight->setColor(SColor(255, 221, 123, 34));
-
-		if (i >= 4)
-			pointLight->setRadius(1.0f);
-		else
-			pointLight->setRadius(4.0f);
+		pointLight->setRadius(4.0f);
 
 		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
