@@ -41,6 +41,8 @@ namespace Skylicht
 		core::map<std::string, CGameObject*> m_objectByID;
 
 		bool m_updateRemoveAdd;
+		int m_lastGenerateID;
+
 	public:
 		CContainerObject(CGameObject* parent, CZone* zone);
 
