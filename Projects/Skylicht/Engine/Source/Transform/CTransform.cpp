@@ -63,8 +63,8 @@ namespace Skylicht
 
 	void CTransform::attachTransform(CEntity* entity)
 	{
-		CWorldTransformData* transform = (CWorldTransformData*)m_gameObject->getEntity()->getDataByIndex(CWorldTransformData::DataTypeIndex);
-		CWorldTransformData* parent = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		CWorldTransformData* transform = GET_ENTITY_DATA(m_gameObject->getEntity(), CWorldTransformData);
+		CWorldTransformData* parent = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 		if (entity)
 		{
@@ -75,7 +75,7 @@ namespace Skylicht
 		else
 		{
 			CEntity* defaultParent = m_gameObject->getEntityManager()->getEntity(transform->ParentIndex);
-			parent = (CWorldTransformData*)defaultParent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			parent = GET_ENTITY_DATA(defaultParent, CWorldTransformData);
 
 			transform->Depth = parent->Depth + 1;
 			transform->AttachParentIndex = -1;
@@ -119,10 +119,11 @@ namespace Skylicht
 		}
 		else
 		{
-			CWorldTransformData* transform = (CWorldTransformData*)m_gameObject->getEntity()->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* transform = GET_ENTITY_DATA(m_gameObject->getEntity(), CWorldTransformData);
 
 			CEntity* parent = m_gameObject->getEntityManager()->getEntity(transform->AttachParentIndex);
-			CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* parentTransform = GET_ENTITY_DATA(parent, CWorldTransformData);
+			
 			result = parentTransform->World * result;
 		}
 
@@ -144,10 +145,10 @@ namespace Skylicht
 		}
 		else
 		{
-			CWorldTransformData* transform = (CWorldTransformData*)m_gameObject->getEntity()->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* transform = GET_ENTITY_DATA(m_gameObject->getEntity(), CWorldTransformData);
 
 			CEntity* parent = m_gameObject->getEntityManager()->getEntity(transform->AttachParentIndex);
-			CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* parentTransform = GET_ENTITY_DATA(parent, CWorldTransformData);
 			parentInv = parentTransform->World;
 			parentInv.makeInverse();
 		}

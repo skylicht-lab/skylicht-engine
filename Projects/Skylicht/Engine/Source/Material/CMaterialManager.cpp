@@ -454,7 +454,7 @@ namespace Skylicht
 		CEntity** entities = prefab->getEntities();
 		for (int i = 0, n = prefab->getNumEntities(); i < n; i++)
 		{
-			CRenderMeshData* renderer = (CRenderMeshData*)entities[i]->getDataByIndex(CRenderMeshData::DataTypeIndex);
+			CRenderMeshData* renderer = GET_ENTITY_DATA(entities[i], CRenderMeshData);
 			if (renderer != NULL)
 			{
 				CMesh* mesh = renderer->getMesh();
@@ -548,7 +548,7 @@ namespace Skylicht
 		CEntity** entities = prefab->getEntities();
 		for (int i = 0, n = prefab->getNumEntities(); i < n; i++)
 		{
-			CRenderMeshData* renderer = (CRenderMeshData*)entities[i]->getDataByIndex(CRenderMeshData::DataTypeIndex);
+			CRenderMeshData* renderer = GET_ENTITY_DATA(entities[i], CRenderMeshData);
 			if (renderer != NULL)
 			{
 				CMesh* mesh = renderer->getMesh();

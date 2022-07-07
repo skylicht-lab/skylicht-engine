@@ -77,7 +77,7 @@ namespace Skylicht
 		std::vector<CEntity*>& entities = getEntities();
 		for (CEntity* entity : entities)
 		{
-			CDecalData* decal = (CDecalData*)entity->getDataByIndex(CDecalData::DataTypeIndex);
+			CDecalData* decal = GET_ENTITY_DATA(entity, CDecalData);
 			if (decal != NULL)
 			{
 				m_renderData->Material->applyMaterial(decal->MeshBuffer->getMaterial());
@@ -107,7 +107,7 @@ namespace Skylicht
 		decalData->RenderData = m_renderData;
 
 		// add transform
-		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 		transform->Relative.setTranslation(position);
 
 		// Culling
@@ -126,8 +126,8 @@ namespace Skylicht
 		std::vector<CEntity*>& entities = getEntities();
 		for (CEntity* entity : entities)
 		{
-			CDecalData* decalData = (CDecalData*)entity->getDataByIndex(CDecalData::DataTypeIndex);
-			CWorldTransformData* decalTransform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CDecalData* decalData = GET_ENTITY_DATA(entity, CDecalData);
+			CWorldTransformData* decalTransform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 			if (decalData && decalData->Change)
 			{
@@ -257,7 +257,7 @@ namespace Skylicht
 		decal->MeshBuffer->recalculateBoundingBox();
 		decal->MeshBuffer->setDirty();
 
-		CCullingBBoxData* cullingBox = (CCullingBBoxData*)entity->getDataByIndex(CCullingBBoxData::DataTypeIndex);
+		CCullingBBoxData* cullingBox = GET_ENTITY_DATA(entity, CCullingBBoxData);
 		cullingBox->BBox = decal->MeshBuffer->getBoundingBox();
 		cullingBox->Materials.clear();
 		cullingBox->Materials.push_back(m_renderData->Material);

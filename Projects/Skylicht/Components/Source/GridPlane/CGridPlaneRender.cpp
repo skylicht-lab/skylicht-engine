@@ -36,12 +36,12 @@ namespace Skylicht
 
 	void CGridPlaneRender::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CGridPlaneData* gridPlane = (CGridPlaneData*)entity->getDataByIndex(CGridPlaneData::DataTypeIndex);
+		CGridPlaneData* gridPlane = GET_ENTITY_DATA(entity, CGridPlaneData);
 
 		if (gridPlane != NULL)
 		{
-			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
-			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 			if (visible->Visible)
 			{

@@ -47,12 +47,12 @@ namespace Skylicht
 
 		void CViewpointRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 		{
-			CViewpointData* viewPointData = (CViewpointData*)entity->getDataByIndex(CViewpointData::DataTypeIndex);
+			CViewpointData* viewPointData = GET_ENTITY_DATA(entity, CViewpointData);
 
 			if (viewPointData != NULL)
 			{
-				CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
-				CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 				if (visible->Visible)
 				{

@@ -142,7 +142,7 @@ namespace Skylicht
 			m_selected.push_back(selected);
 
 			// notify history
-			CEntityHandleData* hander = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+			CEntityHandleData* hander = GET_ENTITY_DATA(entity, CEntityHandleData);
 			if (hander && hander->Handler)
 			{
 				CSceneHistory* history = CSceneController::getInstance()->getHistory();
@@ -208,7 +208,7 @@ namespace Skylicht
 				if (sel->getType() == CSelectObject::Entity && sel->getID() == id)
 				{
 					// notify history
-					CEntityHandleData* hander = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+					CEntityHandleData* hander = GET_ENTITY_DATA(entity, CEntityHandleData);
 					if (hander && hander->Handler)
 					{
 						CSceneHistory* history = CSceneController::getInstance()->getHistory();

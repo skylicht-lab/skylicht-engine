@@ -66,11 +66,11 @@ namespace Skylicht
 		if (s_showProbe == false)
 			return;
 
-		CLightProbeData* probeData = (CLightProbeData*)entity->getDataByIndex(CLightProbeData::DataTypeIndex);
+		CLightProbeData* probeData = GET_ENTITY_DATA(entity, CLightProbeData);
 		if (probeData != NULL)
 		{
-			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
+			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 
 			if (visible->Visible)
 			{

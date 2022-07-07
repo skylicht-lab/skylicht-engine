@@ -146,7 +146,7 @@ namespace Skylicht
 		m_cullingLayer = layer;
 		if (m_entity != NULL)
 		{
-			CVisibleData* visible = (CVisibleData*)m_entity->getDataByIndex(CVisibleData::DataTypeIndex);
+			CVisibleData* visible = GET_ENTITY_DATA(m_entity, CVisibleData);
 			visible->CullingLayer = layer;
 		}
 	}
@@ -181,7 +181,7 @@ namespace Skylicht
 			CTransform* t = addComponent<CTransformMatrix>();
 			t->setRelativeTransform(relative);
 
-			CTransformComponentData* componentData = (CTransformComponentData*)m_entity->getDataByIndex(CTransformComponentData::DataTypeIndex);
+			CTransformComponentData* componentData = GET_ENTITY_DATA(m_entity, CTransformComponentData);
 			componentData->TransformComponent = t;
 			componentData->TransformComponent->setChanged(true);
 		}
@@ -197,7 +197,7 @@ namespace Skylicht
 			CTransform* t = addComponent<CTransformEuler>();
 			t->setRelativeTransform(relative);
 
-			CTransformComponentData* componentData = (CTransformComponentData*)m_entity->getDataByIndex(CTransformComponentData::DataTypeIndex);
+			CTransformComponentData* componentData = GET_ENTITY_DATA(m_entity, CTransformComponentData);
 			componentData->TransformComponent = t;
 			componentData->TransformComponent->setChanged(true);
 		}

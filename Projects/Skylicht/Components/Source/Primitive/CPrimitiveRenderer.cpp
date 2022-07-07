@@ -52,10 +52,10 @@ namespace Skylicht
 
 	void CPrimitiveRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CPrimiviteData* p = (CPrimiviteData*)entity->getDataByIndex(CPrimiviteData::DataTypeIndex);
+		CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
 		if (p != NULL)
 		{
-			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 			if (visible->Visible && !p->Instancing)
 			{
 				m_primitives[p->Type].push_back(p);
@@ -108,7 +108,7 @@ namespace Skylicht
 			{
 				CEntity* entity = entityManager->getEntity(primitives[i]->EntityIndex);
 
-				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 				m_transforms[type].push_back(transform->World);
 			}
 		}

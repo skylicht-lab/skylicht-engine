@@ -50,11 +50,11 @@ namespace Skylicht
 
 		void CParticleRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 		{
-			CParticleBufferData* particleData = (CParticleBufferData*)entity->getDataByIndex(CParticleBufferData::DataTypeIndex);
+			CParticleBufferData* particleData = GET_ENTITY_DATA(entity, CParticleBufferData);
 			if (particleData != NULL)
 			{
-				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-				CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 
 				if (visible->Visible)
 				{
@@ -63,7 +63,7 @@ namespace Skylicht
 
 					// update bbox for culling
 					// use last frame data
-					CCullingBBoxData* box = (CCullingBBoxData*)entity->getDataByIndex(CCullingBBoxData::DataTypeIndex);
+					CCullingBBoxData* box = GET_ENTITY_DATA(entity, CCullingBBoxData);
 
 					CGroup** groups = particleData->Groups.pointer();
 					for (u32 i = 0, n = particleData->Groups.size(); i < n; i++)
@@ -75,7 +75,7 @@ namespace Skylicht
 							box->BBox.addInternalBox(g->getBBox());
 					}
 
-					m_cullings.push_back((CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex));
+					m_cullings.push_back(GET_ENTITY_DATA(entity, CCullingData));
 				}
 			}
 		}

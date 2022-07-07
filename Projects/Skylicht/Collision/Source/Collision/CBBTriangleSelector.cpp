@@ -42,7 +42,7 @@ namespace Skylicht
 
 	void CBBTriangleSelector::init()
 	{
-		CRenderMeshData* renderMeshData = (CRenderMeshData*)m_entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
+		CRenderMeshData* renderMeshData = GET_ENTITY_DATA(m_entity, CRenderMeshData);
 		CMesh* mesh = renderMeshData->getMesh();
 
 		m_triangles.set_used(12);

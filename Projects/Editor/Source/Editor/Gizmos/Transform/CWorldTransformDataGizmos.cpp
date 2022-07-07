@@ -84,7 +84,7 @@ namespace Skylicht
 			CSceneController* sceneController = CSceneController::getInstance();
 			CScene* scene = sceneController->getScene();
 
-			CEntityHandleData* selectEntityHander = (CEntityHandleData*)m_selectEntity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+			CEntityHandleData* selectEntityHander = GET_ENTITY_DATA(m_selectEntity, CEntityHandleData);
 
 			std::vector<CSelectObject*>& selectObjects = CSelection::getInstance()->getAllSelected();
 			for (CSelectObject* obj : selectObjects)
@@ -97,11 +97,11 @@ namespace Skylicht
 						if (entity == m_selectEntity)
 							continue;
 
-						CEntityHandleData* h = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+						CEntityHandleData* h = GET_ENTITY_DATA(entity, CEntityHandleData);
 						if (h->Handler != selectEntityHander->Handler)
 							continue;
 
-						CWorldTransformData* t = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+						CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
 						transforms.push_back(t);
 					}
 				}
@@ -146,7 +146,7 @@ namespace Skylicht
 		{
 			if (m_selectEntity)
 			{
-				CEntityHandleData* handler = (CEntityHandleData*)m_selectEntity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+				CEntityHandleData* handler = GET_ENTITY_DATA(m_selectEntity, CEntityHandleData);
 				if (handler != NULL)
 				{
 					// get owner of entity
@@ -205,7 +205,7 @@ namespace Skylicht
 					m_selectEntity = scene->getEntityManager()->getEntityByID(m_selectID.c_str());
 					if (m_selectEntity != NULL)
 					{
-						m_transform = (CWorldTransformData*)m_selectEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+						m_transform = GET_ENTITY_DATA(m_selectEntity, CWorldTransformData);
 
 						core::vector3df pos, rot, scale;
 						splitMatrixData(m_transform->Relative, pos, rot, scale);
@@ -219,7 +219,7 @@ namespace Skylicht
 						if (m_transform->ParentIndex > 0)
 						{
 							CEntity* parent = scene->getEntityManager()->getEntity(m_transform->ParentIndex);
-							CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+							CWorldTransformData* parentTransform = GET_ENTITY_DATA(parent, CWorldTransformData);
 
 							m_parentWorld = parentTransform->World;
 						}

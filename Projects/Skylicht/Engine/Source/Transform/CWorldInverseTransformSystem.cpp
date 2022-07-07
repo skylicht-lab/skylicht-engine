@@ -45,12 +45,12 @@ namespace Skylicht
 
 	void CWorldInverseTransformSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CWorldInverseTransformData* worldInv = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
+		CWorldInverseTransformData* worldInv = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
 		// worldInv->HasChanged is trigged at CWorldTransformSystem
 		if (worldInv != NULL && worldInv->HasChanged == true)
 		{
-			CWorldTransformData* world = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 			m_world.push_back(world);
 			m_worldInv.push_back(worldInv);

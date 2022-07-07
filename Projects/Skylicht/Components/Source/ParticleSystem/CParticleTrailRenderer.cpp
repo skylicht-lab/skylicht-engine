@@ -52,14 +52,14 @@ namespace Skylicht
 
 		void CParticleTrailRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 		{
-			CParticleTrailData* trail = (CParticleTrailData*)entity->getDataByIndex(CParticleTrailData::DataTypeIndex);
+			CParticleTrailData* trail = GET_ENTITY_DATA(entity, CParticleTrailData);
 			if (trail != NULL)
 			{
-				CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
+				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 				if (visible->Visible == true)
 					m_trails.push_back(trail);
 
-				CCullingData* culling = (CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex);
+				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
 				m_cullings.push_back(culling);
 			}
 		}

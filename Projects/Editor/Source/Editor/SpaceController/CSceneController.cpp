@@ -376,8 +376,8 @@ namespace Skylicht
 			std::vector<CEntity*>& entities = entityHandler->getEntities();
 			for (CEntity* entity : entities)
 			{
-				CWorldTransformData* worldData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-				CRenderMeshData* renderData = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
+				CWorldTransformData* worldData = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CRenderMeshData* renderData = GET_ENTITY_DATA(entity, CRenderMeshData);
 
 				CHierachyNode* parentNode = treeNodes[worldData->ParentIndex];
 
@@ -1023,7 +1023,7 @@ namespace Skylicht
 					if (entity != NULL)
 					{
 						// delete entity
-						CEntityHandleData* data = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+						CEntityHandleData* data = GET_ENTITY_DATA(entity, CEntityHandleData);
 						if (data != NULL)
 						{
 							CEntityHandler* handler = data->Handler;
@@ -1108,7 +1108,7 @@ namespace Skylicht
 					CEntity* entity = m_scene->getEntityManager()->getEntityByID(lastSelected->getID().c_str());
 					if (entity != NULL)
 					{
-						CEntityHandleData* data = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
+						CEntityHandleData* data = GET_ENTITY_DATA(entity, CEntityHandleData);
 
 						CGameObject* gameObject = data->Handler->getGameObject();
 						if (gameObject != NULL)
@@ -1146,8 +1146,8 @@ namespace Skylicht
 					CEntity* entity = m_scene->getEntityManager()->getEntityByID(selectObject->getID().c_str());
 					if (entity != NULL)
 					{
-						CEntityHandleData* data = (CEntityHandleData*)entity->getDataByIndex(CEntityHandleData::DataTypeIndex);
-						CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+						CEntityHandleData* data = GET_ENTITY_DATA(entity, CEntityHandleData);
+						CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 						if (data != NULL)
 						{
@@ -1157,7 +1157,7 @@ namespace Skylicht
 							CEntity* spawnNewEntity = handler->spawn();
 							if (spawnNewEntity != NULL)
 							{
-								CWorldTransformData* spawnTransform = (CWorldTransformData*)spawnNewEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+								CWorldTransformData* spawnTransform = GET_ENTITY_DATA(spawnNewEntity, CWorldTransformData);
 								spawnTransform->Relative = transform->Relative;
 
 								newEntities.push_back(spawnNewEntity);

@@ -54,10 +54,10 @@ namespace Skylicht
 
 	void CPrimitiveRendererInstancing::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CPrimiviteData* p = (CPrimiviteData*)entity->getDataByIndex(CPrimiviteData::DataTypeIndex);
+		CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
 		if (p != NULL)
 		{
-			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 			if (visible->Visible &&
 				p->Instancing &&
 				p->Material &&
@@ -72,7 +72,7 @@ namespace Skylicht
 
 				if (instancing->isSupport(mesh))
 				{
-					CIndirectLightingData* lighting = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
+					CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
 					SShaderMesh shaderMesh;
 					shaderMesh.Shader = shader;
@@ -132,8 +132,8 @@ namespace Skylicht
 
 				// add transform
 				CEntity* entity = entityManager->getEntity(primitive->EntityIndex);
-				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-				CIndirectLightingData* lighting = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
 				m_transforms.push_back(transform);
 				m_indirectLightings.push_back(lighting);

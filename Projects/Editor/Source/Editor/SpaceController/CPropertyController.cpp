@@ -140,10 +140,10 @@ namespace Skylicht
 					CEntity* entity = scene->getEntityManager()->getEntityByID(object->getID().c_str());
 					if (entity != NULL)
 					{
-						CWorldTransformData* worldTransform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+						CWorldTransformData* worldTransform = GET_ENTITY_DATA(entity, CWorldTransformData);
 						label += CStringImp::convertUTF8ToUnicode(worldTransform->Name.c_str());
 
-						CRenderMeshData* renderData = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
+						CRenderMeshData* renderData = GET_ENTITY_DATA(entity, CRenderMeshData);
 						if (renderData != NULL)
 							spaceProperty->setIcon(GUI::ESystemIcon::Poly);
 						else

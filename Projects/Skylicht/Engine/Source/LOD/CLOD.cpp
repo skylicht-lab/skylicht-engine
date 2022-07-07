@@ -63,13 +63,13 @@ namespace Skylicht
 		for (u32 i = 0, n = allEntities.size(); i < n; i++)
 		{
 			CEntity* e = allEntities[i];
-			if (e->getDataByIndex(CRenderMeshData::DataTypeIndex))
+			if (GET_ENTITY_DATA(e, CRenderMeshData))
 			{
-				CLODData* lodData = (CLODData*)e->getDataByIndex(CLODData::DataTypeIndex);
+				CLODData* lodData = GET_ENTITY_DATA(e, CLODData);
 				if (!lodData)
 					lodData = e->addData<CLODData>();
 
-				CWorldTransformData* t = (CWorldTransformData*)e->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CWorldTransformData* t = GET_ENTITY_DATA(e, CWorldTransformData);
 
 				char lodName[32];
 
