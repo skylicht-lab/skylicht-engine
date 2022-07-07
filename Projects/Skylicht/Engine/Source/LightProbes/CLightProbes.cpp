@@ -54,7 +54,7 @@ namespace Skylicht
 		CEntity* defaultLight = addLightProbe(core::vector3df());
 
 		// config default ambient color
-		CLightProbeData* data = (CLightProbeData*)defaultLight->getDataByIndex(CLightProbeData::DataTypeIndex);
+		CLightProbeData* data = GET_ENTITY_DATA(defaultLight, CLightProbeData);
 		data->SH[0].set(1.826f, 2.073f, 2.362f);
 		data->SH[1].set(0.255f, 0.497f, 0.822f);
 		data->SH[2].set(0.089f, 0.003f, -0.042f);
@@ -85,8 +85,8 @@ namespace Skylicht
 			CProbeSerializable* probeData = new CProbeSerializable(probes);
 			probes->autoRelease(probeData);
 
-			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			CLightProbeData* light = (CLightProbeData*)m_entities[i]->getDataByIndex(CLightProbeData::DataTypeIndex);
+			CWorldTransformData* world = GET_ENTITY_DATA(m_entities[i], CWorldTransformData);
+			CLightProbeData* light = GET_ENTITY_DATA(m_entities[i], CLightProbeData);
 
 			// save transform
 			probeData->Transform.set(world->Relative);
@@ -118,8 +118,8 @@ namespace Skylicht
 				return;
 
 			CEntity* entity = addLightProbe(core::vector3df());
-			CWorldTransformData* world = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			CLightProbeData* light = (CLightProbeData*)entity->getDataByIndex(CLightProbeData::DataTypeIndex);
+			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CLightProbeData* light = GET_ENTITY_DATA(entity, CLightProbeData);
 
 			// set transform
 			world->Relative = shData->Transform.get();
@@ -140,7 +140,7 @@ namespace Skylicht
 		CEntity* entity = createEntity();
 		entity->addData<CLightProbeData>();
 
-		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 		transform->Relative.setTranslation(position);
 
 		return entity;
@@ -152,7 +152,7 @@ namespace Skylicht
 
 		for (CEntity* entity : m_entities)
 		{
-			CWorldTransformData* data = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* data = GET_ENTITY_DATA(entity, CWorldTransformData);
 			positions.push_back(data->World.getTranslation());
 		}
 
@@ -164,7 +164,7 @@ namespace Skylicht
 		int i = 0;
 		for (CEntity* entity : m_entities)
 		{
-			CLightProbeData* data = (CLightProbeData*)entity->getDataByIndex(CLightProbeData::DataTypeIndex);
+			CLightProbeData* data = GET_ENTITY_DATA(entity, CLightProbeData);
 			data->NeedValidate = true;
 			for (int j = 0; j < 9; j++)
 				data->SH[j] = sh[i++];

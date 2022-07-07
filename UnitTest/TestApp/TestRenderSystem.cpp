@@ -59,7 +59,7 @@ void CTestRenderSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	CTestEntityData* testEntity = entity->getData<CTestEntityData>();
 	if (testEntity != NULL)
 	{
-		CWorldTransformData* testTransform = dynamic_cast<CWorldTransformData*>(entity->getDataByIndex(CWorldTransformData::DataTypeIndex));
+		CWorldTransformData* testTransform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 		m_testEntities.push_back(testEntity);
 		m_testTransforms.push_back(testTransform);

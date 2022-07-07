@@ -45,8 +45,8 @@ namespace Skylicht
 
 	void CSoftwareSkinningSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CRenderMeshData* renderer = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
-		CCullingData* culling = (CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex);
+		CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
+		CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
 
 		if (renderer != NULL && renderer->isSoftwareSkinning())
 		{

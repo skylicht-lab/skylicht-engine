@@ -49,12 +49,12 @@ namespace Skylicht
 
 	void CLightCullingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CLightCullingData* culling = (CLightCullingData*)entity->getDataByIndex(CLightCullingData::DataTypeIndex);
+		CLightCullingData* culling = GET_ENTITY_DATA(entity, CLightCullingData);
 
 		if (culling != NULL)
 		{
-			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			CWorldInverseTransformData* invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
 			m_cullings.push_back(culling);
 			m_transforms.push_back(transform);

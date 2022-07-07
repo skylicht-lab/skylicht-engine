@@ -130,10 +130,10 @@ namespace Skylicht
 			mapNodes[node] = entity;
 
 			// Update world transform
-			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			if (parent)
 			{
-				CWorldTransformData* parentTransform = (CWorldTransformData*)parent->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CWorldTransformData* parentTransform = GET_ENTITY_DATA(parent, CWorldTransformData);
 				transform->World.setbyproduct_nocheck(parentTransform->World, transform->Relative);
 			}
 			else
@@ -474,7 +474,7 @@ namespace Skylicht
 					ufbx_node* bone_node = cluster->bone_node;
 					CEntity* boneEntity = mapNodes[bone_node];
 
-					CJointData* jointData = (CJointData*)boneEntity->getDataByIndex(CJointData::DataTypeIndex);
+					CJointData* jointData = GET_ENTITY_DATA(boneEntity, CJointData);
 					if (!jointData)
 					{
 						jointData = boneEntity->addData<CJointData>();
@@ -487,7 +487,7 @@ namespace Skylicht
 							CEntity* boneParentEntity = mapNodes[bone_node->parent];
 							if (boneParentEntity)
 							{
-								CJointData* parentJoint = (CJointData*)boneParentEntity->getDataByIndex(CJointData::DataTypeIndex);
+								CJointData* parentJoint = GET_ENTITY_DATA(boneParentEntity, CJointData);
 								if (parentJoint == NULL)
 									jointData->BoneRoot = true;
 							}

@@ -49,12 +49,12 @@ namespace Skylicht
 
 	void CSkyBoxRender::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CSkyBoxData* skyDomeData = (CSkyBoxData*)entity->getDataByIndex(CSkyBoxData::DataTypeIndex);
+		CSkyBoxData* skyDomeData = GET_ENTITY_DATA(entity, CSkyBoxData);
 
 		if (skyDomeData != NULL)
 		{
-			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
-			CWorldTransformData* transformData = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 			if (visible->Visible)
 			{

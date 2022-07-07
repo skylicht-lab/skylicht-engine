@@ -46,13 +46,13 @@ namespace Skylicht
 
 	void CDecalsRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CDecalData* decalData = (CDecalData*)entity->getDataByIndex(CDecalData::DataTypeIndex);
+		CDecalData* decalData = GET_ENTITY_DATA(entity, CDecalData);
 		if (decalData != NULL)
 		{
-			CCullingData* cullingData = (CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex);
+			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
 			if (cullingData && cullingData->Visible)
 			{
-				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 				m_decalTransforms.push_back(transform);
 				m_decalData.push_back(decalData);
 			}

@@ -44,7 +44,7 @@ namespace Skylicht
 	{
 		u32 cnt = m_triangles.size();
 
-		CWorldTransformData* transformData = (CWorldTransformData*)m_entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		CWorldTransformData* transformData = GET_ENTITY_DATA(m_entity, CWorldTransformData);
 		const core::matrix4& mat = transformData->World;
 
 		for (u32 i = 0; i < cnt; ++i)

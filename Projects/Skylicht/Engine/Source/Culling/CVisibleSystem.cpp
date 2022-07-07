@@ -50,8 +50,8 @@ namespace Skylicht
 
 	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
-		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+		CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 		if (transform->Depth > m_maxDepth)
 			m_maxDepth = transform->Depth;
@@ -87,7 +87,7 @@ namespace Skylicht
 				{
 					// link parent visible
 					CEntity* parentEntity = entityManager->getEntity(data.Transform->ParentIndex);
-					CVisibleData* parentVisible = (CVisibleData*)parentEntity->getDataByIndex(CVisibleData::DataTypeIndex);
+					CVisibleData* parentVisible = GET_ENTITY_DATA(parentEntity, CVisibleData);
 					data.Visible->Visible = parentVisible->Visible;
 				}
 			}

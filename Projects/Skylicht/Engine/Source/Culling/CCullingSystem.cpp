@@ -53,11 +53,11 @@ namespace Skylicht
 
 	void CCullingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CCullingData* culling = (CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex);
+		CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
 		if (culling == NULL)
 			return;
 
-		CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
+		CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 		if (visible != NULL)
 			culling->CullingLayer = visible->CullingLayer;
 		else
@@ -69,11 +69,11 @@ namespace Skylicht
 		}
 		else if (culling != NULL)
 		{
-			CRenderMeshData* mesh = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
+			CRenderMeshData* mesh = GET_ENTITY_DATA(entity, CRenderMeshData);
 			if (mesh != NULL)
 			{
-				CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-				CWorldInverseTransformData* invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
 				{
 					m_cullings.push_back(culling);
@@ -93,11 +93,11 @@ namespace Skylicht
 			}
 			else
 			{
-				CCullingBBoxData* bbox = (CCullingBBoxData*)entity->getDataByIndex(CCullingBBoxData::DataTypeIndex);
+				CCullingBBoxData* bbox = GET_ENTITY_DATA(entity, CCullingBBoxData);
 				if (bbox != NULL)
 				{
-					CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-					CWorldInverseTransformData* invTransform = (CWorldInverseTransformData*)entity->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
+					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
 					m_cullings.push_back(culling);
 
