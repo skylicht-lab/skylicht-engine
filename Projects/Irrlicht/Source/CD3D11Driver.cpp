@@ -1445,6 +1445,8 @@ namespace irr
 			BridgeCalls->setViewPort(vp);
 
 			this->ViewPort = vp;
+
+			ResetRenderStates = true;
 		}
 
 		void CD3D11Driver::setScissor(const core::rect<s32>& area)
@@ -1458,6 +1460,8 @@ namespace irr
 			BridgeCalls->setScissor(vp);
 
 			this->ScissorRect = vp;
+
+			ResetRenderStates = true;
 		}
 
 		void CD3D11Driver::enableScissor(bool b)

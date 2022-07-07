@@ -192,8 +192,7 @@ void CD3D11CallBridge::setPixelShader(SShader* shader)
 		u32 texturesToSet = shader->texturesUsed & texturesChanged;
 
 		if (samplersToSet || texturesToSet)
-		{			
-			/*
+		{
 			for (u32 i = 0; i < MATERIAL_MAX_TEXTURES; ++i)
 			{
 				if (samplersToSet & (1 << i))
@@ -217,9 +216,9 @@ void CD3D11CallBridge::setPixelShader(SShader* shader)
 
 					Context->PSSetShaderResources(i, 1, &views);
 				}
-			}			
-			*/
+			}
 			
+			/*
 			ID3D11ShaderResourceView* views[MATERIAL_MAX_TEXTURES];
 			int maxViewUsed = 0;
 
@@ -244,7 +243,8 @@ void CD3D11CallBridge::setPixelShader(SShader* shader)
 
 			Context->PSSetSamplers(0, maxViewUsed, SamplerStates);
 			Context->PSSetShaderResources(0, maxViewUsed, views);	
-			
+			*/
+
 			Driver->incTextureChange();
 		}
 	}
