@@ -32,6 +32,8 @@ namespace Skylicht
 	class CEntityManager;
 	class CEntityPrefab;
 
+	#define GET_ENTITY_DATA(entity, DataType) (DataType*)(entity->getDataByIndex(DataType::DataTypeIndex))
+
 	class CEntity
 	{
 		friend class CEntityManager;
