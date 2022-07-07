@@ -4,12 +4,24 @@ in vec4 inColor;
 in vec2 inTexCoord0;
 
 uniform mat4 uMvpMatrix;
+uniform mat4 uWorldMatrix;
+uniform vec4 uCameraPosition;
 uniform vec4 uUVScale;
 
 out vec2 vTexCoord0;
+out vec3 vWorldNormal;
+out vec3 vWorldViewDir;
 
 void main(void)
 {
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
+	
+	vec4 worldPos = uWorldMatrix * inPosition;
+	vec4 worldViewDir = normalize(uCameraPosition - worldPos);
+	vec4 worldNormal = uWorldMatrix * vec4(inNormal.xyz, 0.0);
+	
+	vWorldNormal = normalize(worldNormal.xyz);
+	vWorldViewDir = worldViewDir.xyz;
+	
 	gl_Position = uMvpMatrix * inPosition;
 }

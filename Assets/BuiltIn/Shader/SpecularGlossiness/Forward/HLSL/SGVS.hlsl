@@ -42,9 +42,7 @@ VS_OUTPUT main(VS_INPUT input)
 	output.tangentw = input.data.x;
 
 	float4 worldPos = mul(input.pos, uWorldMatrix);
-	float4 camPos = mul(uCameraPosition, uWorldMatrix);
-
-	float4 worldViewDir = normalize(camPos - worldPos);
+	float4 worldViewDir = normalize(uCameraPosition - worldPos);
 
 	float4 worldNormal = mul(float4(input.norm.xyz, 0.0), uWorldMatrix);
 	float4 worldTangent = mul(float4(input.tangent.xyz, 0.0), uWorldMatrix);
