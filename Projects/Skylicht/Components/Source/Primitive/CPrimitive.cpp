@@ -105,7 +105,7 @@ namespace Skylicht
 			primitives->autoRelease(transformData);
 
 			// get world transform data
-			CWorldTransformData* world = (CWorldTransformData*)m_entities[i]->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* world = GET_ENTITY_DATA(m_entities[i], CWorldTransformData);
 			transformData->set(world->Relative);
 		}
 
@@ -166,7 +166,7 @@ namespace Skylicht
 			);
 
 			// set transform
-			CWorldTransformData* world = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
 			world->Relative = transformData->get();
 		}
 	}
@@ -195,13 +195,13 @@ namespace Skylicht
 		cullingBBox->BBox.MaxEdge.set(1.0f, 1.0f, 1.0f);
 
 		// Position
-		CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+		CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 		transform->Relative.setTranslation(pos);
 		transform->Relative.setRotationDegrees(rotDeg);
 		transform->Relative.setScale(scale);
 
 		// Indirect lighting
-		CIndirectLightingData* indirect = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
+		CIndirectLightingData* indirect = GET_ENTITY_DATA(entity, CIndirectLightingData);
 		indirect->Type = CIndirectLightingData::SH9;
 		indirect->AutoSH = new bool();
 		indirect->SH = new core::vector3df[9];

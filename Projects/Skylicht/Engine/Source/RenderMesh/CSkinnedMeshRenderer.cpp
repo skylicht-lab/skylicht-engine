@@ -55,7 +55,7 @@ namespace Skylicht
 
 	void CSkinnedMeshRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CRenderMeshData* meshData = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
+		CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
 		if (meshData != NULL)
 		{
 			if (meshData->isSkinnedMesh() == true && meshData->isSoftwareSkinning() == false)
@@ -63,7 +63,7 @@ namespace Skylicht
 				bool cullingVisible = true;
 
 				// get culling result from CCullingSystem
-				CCullingData* cullingData = (CCullingData*)entity->getDataByIndex(CCullingData::DataTypeIndex);
+				CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
 				if (cullingData != NULL)
 					cullingVisible = cullingData->Visible;
 
@@ -156,8 +156,8 @@ namespace Skylicht
 		{
 			CEntity* entity = entityManager->getEntity(m_meshs[i]->EntityIndex);
 
-			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			CIndirectLightingData* indirect = (CIndirectLightingData*)entity->getDataByIndex(CIndirectLightingData::DataTypeIndex);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CIndirectLightingData* indirect = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
 			m_transforms.push_back(transform);
 			m_indirectLightings.push_back(indirect);

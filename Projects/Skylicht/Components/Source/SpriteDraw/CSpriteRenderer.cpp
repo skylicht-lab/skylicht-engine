@@ -56,11 +56,11 @@ namespace Skylicht
 
 	void CSpriteRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CSpriteDrawData* spriteData = (CSpriteDrawData*)entity->getDataByIndex(CSpriteDrawData::DataTypeIndex);
+		CSpriteDrawData* spriteData = GET_ENTITY_DATA(entity, CSpriteDrawData);
 		if (spriteData != NULL && spriteData->Frame != NULL)
 		{
-			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			CVisibleData* visible = (CVisibleData*)entity->getDataByIndex(CVisibleData::DataTypeIndex);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 
 			if (visible->Visible)
 			{

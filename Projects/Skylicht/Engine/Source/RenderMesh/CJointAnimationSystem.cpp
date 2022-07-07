@@ -47,11 +47,11 @@ namespace Skylicht
 
 	void CJointAnimationSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CJointData* joint = (CJointData*)entity->getDataByIndex(CJointData::DataTypeIndex);
+		CJointData* joint = GET_ENTITY_DATA(entity, CJointData);
 		if (joint != NULL && joint->RootIndex != 0)
 		{
-			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
-			CWorldInverseTransformData* rootInvTransform = (CWorldInverseTransformData*)entityManager->getEntity(joint->RootIndex)->getDataByIndex(CWorldInverseTransformData::DataTypeIndex);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CWorldInverseTransformData* rootInvTransform = GET_ENTITY_DATA(entityManager->getEntity(joint->RootIndex), CWorldInverseTransformData);
 
 			if (rootInvTransform != NULL)
 			{

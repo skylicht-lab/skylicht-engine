@@ -48,12 +48,12 @@ namespace Skylicht
 
 	void CComponentTransformSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CTransformComponentData* component = (CTransformComponentData*)entity->getDataByIndex(CTransformComponentData::DataTypeIndex);
+		CTransformComponentData* component = GET_ENTITY_DATA(entity, CTransformComponentData);
 		if (component != NULL
 			&& component->TransformComponent != NULL
 			&& component->TransformComponent->hasChanged())
 		{
-			CWorldTransformData* transform = (CWorldTransformData*)entity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 			// notify changed for CWorldTransformSystem, sync in TransformComponent->hasChanged()
 			transform->HasChanged = true;

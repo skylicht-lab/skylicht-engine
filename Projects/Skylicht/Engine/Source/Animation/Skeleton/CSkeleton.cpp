@@ -58,7 +58,7 @@ namespace Skylicht
 		for (u32 i = 0, n = entities.size(); i < n; i++)
 		{
 			CEntity* worldEntity = worldEntities[i];
-			CWorldTransformData* worldTransform = (CWorldTransformData*)worldEntity->getDataByIndex(CWorldTransformData::DataTypeIndex);
+			CWorldTransformData* worldTransform = GET_ENTITY_DATA(worldEntity, CWorldTransformData);
 
 			CEntity* newEntity = m_entities.createEntity();
 
@@ -79,7 +79,7 @@ namespace Skylicht
 			{
 				animationData->ParentID = entityIDMap[worldTransform->ParentIndex];
 
-				CAnimationTransformData* parentTransform = (CAnimationTransformData*)m_entities.getEntity(animationData->ParentID)->getDataByIndex(CAnimationTransformData::DataTypeIndex);
+				CAnimationTransformData* parentTransform = GET_ENTITY_DATA(m_entities.getEntity(animationData->ParentID), CAnimationTransformData);
 				animationData->Depth = parentTransform->Depth + 1;
 			}
 			else

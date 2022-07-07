@@ -35,7 +35,7 @@ void TestComponent::initComponent()
 
 	TEST_CASE("Add entity data by activator");
 	TEST_ASSERT_THROW(m_gameObject->getEntity()->addDataByActivator("CRenderMeshData") != NULL);
-	TEST_ASSERT_THROW(m_gameObject->getEntity()->getDataByIndex(CRenderMeshData::DataTypeIndex) != NULL);
+	TEST_ASSERT_THROW(GET_ENTITY_DATA(m_gameObject->getEntity(), CRenderMeshData) != NULL);
 
 
 	TEST_CASE("Get entity data");
@@ -43,7 +43,7 @@ void TestComponent::initComponent()
 	TEST_ASSERT_THROW(entityData != NULL);
 	entityData->initCubeMesh(1.0f);
 
-	entityData = dynamic_cast<CTestEntityData*>(m_gameObject->getEntity()->getDataByIndex(CTestEntityData::DataTypeIndex));
+	entityData = dynamic_cast<CTestEntityData*>(GET_ENTITY_DATA(m_gameObject->getEntity(), CTestEntityData));
 	TEST_ASSERT_THROW(entityData != NULL);
 
 	TEST_CASE("Add render system");

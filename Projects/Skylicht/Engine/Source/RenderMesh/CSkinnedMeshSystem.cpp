@@ -44,7 +44,7 @@ namespace Skylicht
 
 	void CSkinnedMeshSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CRenderMeshData* renderer = (CRenderMeshData*)entity->getDataByIndex(CRenderMeshData::DataTypeIndex);
+		CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
 		if (renderer != NULL && renderer->isSkinnedMesh())
 		{
 			CSkinnedMesh* mesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
