@@ -52,9 +52,7 @@ void main(void)
 	vTangentW = inData.x;
 
 	vec4 worldPos = uWorldMatrix * skinPosition;
-	vec4 camPos = uWorldMatrix * uCameraPosition;
-
-	vec4 worldViewDir = normalize(camPos - worldPos);
+	vec4 worldViewDir = normalize(uCameraPosition - worldPos);
 
 	vec4 worldNormal = uWorldMatrix * vec4(skinNormal.xyz, 0.0);
 	vec4 worldTangent = uWorldMatrix * vec4(skinTangent.xyz, 0.0);
