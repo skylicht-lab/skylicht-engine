@@ -38,6 +38,7 @@ namespace SkylichtSystem
 	{
 	protected:
 		pthread_t m_pthread;
+		pthread_mutex_t m_loopMutex;
 
 		bool m_run;
 	public:
