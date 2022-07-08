@@ -33,6 +33,8 @@ namespace SkylichtSystem
 		IThread(callback),
 		m_run(false)
 	{
+		pthread_mutex_init(&m_loopMutex, 0);
+
 		int result = pthread_create(&m_pthread, 0, CPThread::run, this);
 		if (result != 0)
 		{
@@ -43,6 +45,8 @@ namespace SkylichtSystem
 	CPThread::~CPThread()
 	{
 		stop();
+
+		pthread_mutex_destroy(&m_loopMutex);
 	}
 
 	void* CPThread::run(void *param)
@@ -60,12 +64,26 @@ namespace SkylichtSystem
 		// todo run thread
 		m_run = m_callback->enableThreadLoop();
 
+		bool needUnlock = false;
+		if (m_run)
+		{
+			pthread_mutex_lock(&m_loopMutex);
+			needUnlock = true;
+		}
+
 		m_callback->runThread();
 
 		// callback
 		while (m_run)
 		{
+			pthread_mutex_unlock(&m_loopMutex);
 			m_callback->updateThread();
+			pthread_mutex_lock(&m_loopMutex);
+		}
+
+		if (needUnlock)
+		{
+			pthread_mutex_unlock(&m_loopMutex);
 		}
 
 		// IThread::sleep(1);
@@ -76,7 +94,9 @@ namespace SkylichtSystem
 		if (m_run)
 		{
 			printf("CPThread::stop\n");
+			pthread_mutex_lock(&m_loopMutex);
 			m_run = false;
+			pthread_mutex_unlock(&m_loopMutex);
 
 			pthread_join(m_pthread, 0);
 			printf("CPThread::stop Thread is stop!\n");
