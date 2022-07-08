@@ -49,12 +49,26 @@ namespace SkylichtSystem
 		// run thread
 		m_run = m_callback->enableThreadLoop();
 
+		bool needUnlock = false;
+		if (m_run)
+		{
+			m_loopMutex.lock();
+			needUnlock = true;
+		}
+
 		m_callback->runThread();
 
 		// callback
 		while (m_run)
 		{
+			m_loopMutex.unlock();
 			m_callback->updateThread();
+			m_loopMutex.lock();
+		}
+
+		if (needUnlock)
+		{
+			m_loopMutex.unlock();
 		}
 
 		// IThread::sleep(1);
@@ -64,7 +78,10 @@ namespace SkylichtSystem
 	{
 		if (m_run)
 		{
+			m_loopMutex.lock();
 			m_run = false;
+			m_loopMutex.unlock();
+			
 			m_thread->join();
 			printf("CSTDThread::stop Thread is stop!\n");
 		}

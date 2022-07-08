@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifdef USE_STDTHREAD
 
 #include <thread>
+#include <mutex>
 
 namespace SkylichtSystem
 {
@@ -38,6 +39,7 @@ namespace SkylichtSystem
 	{
 	protected:
 		std::thread *m_thread;
+		std::mutex m_loopMutex;
 		bool m_run;
 		
 	public:
