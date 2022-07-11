@@ -43,30 +43,32 @@ void main(void)
 
 	// Shadow
 	float bias = 0.2;
+	
 	/*
 	float sampledDistance = texture(uShadowMap, -lightDir).r;
 	float shadow = 1.0;
 	if (distance - bias > sampledDistance)
 		shadow = 0.0f; // Inside the shadow
 	*/
+	
 	float shadow = 0.0;
-	float samples = 3.0;
+	float samples = 2.0;
 	float offset = 0.01;
-
-	for (float x = -offset; x < offset; x += offset / (samples * 0.5))
+	float delta = offset / (samples * 0.5);
+	float d = distance - bias;
+	
+	for (float x = -offset; x < offset; x += delta)
 	{
-		for (float y = -offset; y < offset; y += offset / (samples * 0.5))
+		for (float y = -offset; y < offset; y += delta)
 		{
-			for (float z = -offset; z < offset; z += offset / (samples * 0.5))
+			for (float z = -offset; z < offset; z += delta)
 			{
 				vec3 fragToLight = -lightDir + vec3(x, y, z);
-				float closestDepth = texture(uShadowMap, fragToLight).r;
-
-				if (distance - bias > closestDepth)
-					shadow += 1.0;
+				shadow += step(texture(uShadowMap, fragToLight).r, d);
 			}
 		}
 	}
+	
 	shadow /= (samples * samples * samples);
 	shadow = max(0.0, 1.0 - shadow);
 
