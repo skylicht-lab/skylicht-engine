@@ -9,6 +9,8 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
+	float3 worldPos: WORLDPOSITION;
+	float3 depth: DEPTH;
 };
 cbuffer cbPerFrame
 {
@@ -32,16 +34,17 @@ float3 linearRGB(float3 color)
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 diffuseMap = sRGB(uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0).rgb);
-	float NdotL = max((dot(input.worldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x), 0.0);
-	float3 rampMap = uTexRamp.Sample(uTexRampSampler, float2(NdotL, NdotL)).rgb;
 	float3 color = sRGB(uColor.rgb);
 	float3 shadowColor = sRGB(uShadowColor.rgb);
 	float3 lightColor = sRGB(uLightColor.rgb);
-	float3 ramp = lerp(color, shadowColor, uColor.a);
+	float visibility = 1.0;
+	float NdotL = max((dot(input.worldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x), 0.0);
+	float3 rampMap = uTexRamp.Sample(uTexRampSampler, float2(NdotL, NdotL)).rgb;
+	float3 ramp = lerp(color, shadowColor, uColor.a * (1.0 - visibility));
 	ramp = lerp(ramp, color, rampMap);
 	float3 h = normalize(uLightDirection.xyz + input.worldViewDir);
 	float NdotH = max(0, dot(input.worldNormal, h));
 	float spec = pow(NdotH, uSpecular.x*128.0) * uSpecular.y;
 	spec = smoothstep(0.5-uSpecular.z*0.5, 0.5+uSpecular.z*0.5, spec);
-	return float4(diffuseMap * lightColor * ramp + lightColor * spec, 1.0);
+	return float4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, 1.0);
 }

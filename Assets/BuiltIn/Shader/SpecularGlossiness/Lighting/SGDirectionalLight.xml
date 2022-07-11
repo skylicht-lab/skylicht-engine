@@ -9,7 +9,7 @@
 			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uTexData" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
 			<uniform name="uTexLight" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
-			<uniform name="uTexIndirect" type="DEFAULT_VALUE" value="5" float="1" directX="false"/>			
+			<uniform name="uTexIndirect" type="DEFAULT_VALUE" value="5" float="1" directX="false"/>
 			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="6" float="1" directX="false"/>
 			<uniform name="uTexLastFrame" type="DEFAULT_VALUE" value="7" float="1" directX="false"/>
 
