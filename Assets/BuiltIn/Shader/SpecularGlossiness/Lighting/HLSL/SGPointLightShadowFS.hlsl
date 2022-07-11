@@ -60,23 +60,22 @@ float4 main(PS_INPUT input) : SV_TARGET
 	*/
 
 	float shadow = 0.0;
-	float samples = 3.0;
+	float samples = 2.0;
 	float offset = 0.01;
-
+	float delta = offset / (samples * 0.5);
+	float d = distance - bias;
+	
 	[unroll]
-	for (float x = -offset; x < offset; x += offset / (samples * 0.5))
+	for (float x = -offset; x < offset; x += delta)
 	{
 		[unroll]
-		for (float y = -offset; y < offset; y += offset / (samples * 0.5))
+		for (float y = -offset; y < offset; y += delta)
 		{
 			[unroll]
-			for (float z = -offset; z < offset; z += offset / (samples * 0.5))
+			for (float z = -offset; z < offset; z += delta)
 			{
 				float3 fragToLight = -lightDir + float3(x, y, z);
-				float closestDepth = uShadowMap.SampleLevel(uShadowMapSampler, fragToLight, 0).r;
-
-				if (distance - bias > closestDepth)
-					shadow += 1.0;
+				shadow += step(uShadowMap.SampleLevel(uShadowMapSampler, fragToLight, 0).r, d);
 			}
 		}
 	}
