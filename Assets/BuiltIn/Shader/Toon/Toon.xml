@@ -32,6 +32,6 @@
 			<ui control="UIFloat3" name="uSpecular" elementName="Glossiness;Specular;SpecSmooth" min="0.0" max="10.0"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/ToonVS.glsl" fs="GLSL/ToonFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/ToonVS.hlsl" fs="HLSL/ToonFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/ToonVS.glsl" fs="GLSL/ToonFS.glsl" fs_source="GLSL/ToonFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/ToonVS.hlsl" fs="HLSL/ToonFS.hlsl" fs_source="HLSL/ToonFS.d.hlsl"/>
 </shaderConfig>
