@@ -29,7 +29,7 @@ in vec2 varTexCoord0;
 
 out vec4 FragColor;
 
-#include "LibShadow.glsl"
+#include "../../../Shadow/GLSL/LibShadow.glsl"
 #include "LibSG.glsl"
 
 void main(void)

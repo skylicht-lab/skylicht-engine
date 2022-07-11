@@ -36,7 +36,7 @@ cbuffer cbPerFrame
 #include "../../PostProcessing/HLSL/LibToneMapping.hlsl"
 
 #if defined(SHADOW)
-#include "../../SpecularGlossiness/Lighting/HLSL/LibShadow.hlsl"
+#include "../../Shadow/HLSL/LibShadow.hlsl"
 #endif
 
 float4 main(PS_INPUT input) : SV_TARGET
