@@ -405,7 +405,7 @@ namespace Skylicht
 				{
 					// write element name #0
 					name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[0].c_str());
-					if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+					if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
 						ui->addSlider(layout, name.c_str(), x, uniformUI->Min, uniformUI->Max);
 					else
 						ui->addNumberInput(layout, name.c_str(), x, 0.1f);
@@ -438,7 +438,7 @@ namespace Skylicht
 					if (!uniformUI->ElementName[0].empty())
 					{
 						name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[0].c_str());
-						if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+						if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
 							ui->addSlider(layout, name.c_str(), x, uniformUI->Min, uniformUI->Max);
 						else
 							ui->addNumberInput(layout, name.c_str(), x, 0.1f);
@@ -451,7 +451,7 @@ namespace Skylicht
 						{
 							name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[1].c_str());
 
-							if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+							if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
 								ui->addSlider(layout, name.c_str(), y, uniformUI->Min, uniformUI->Max);
 							else
 								ui->addNumberInput(layout, name.c_str(), y, 0.1f);
@@ -463,7 +463,7 @@ namespace Skylicht
 					// write default X,Y
 					ui->addLabel(layout, name.c_str());
 
-					if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+					if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
 					{
 						ui->addSlider(layout, L"X", x, uniformUI->Min, uniformUI->Max);
 						ui->addSlider(layout, L"Y", y, uniformUI->Min, uniformUI->Max);
@@ -490,6 +490,96 @@ namespace Skylicht
 				x->addObserver(observer);
 				y->addObserver(observer, true); // x use same observer
 			}
+			else if (uniformUI->ControlType == CShader::UIFloat3)
+			{
+				CMaterial::SUniformValue* uniform = material->getUniform(uniformUI->Name.c_str());
+				std::wstring name = CStringImp::convertUTF8ToUnicode(uniformUI->Name.c_str());
+
+				CSubject<float>* x = new CSubject<float>(uniform->FloatValue[0]);
+				subjects.push_back(x);
+
+				CSubject<float>* y = new CSubject<float>(uniform->FloatValue[1]);
+				subjects.push_back(y);
+
+				CSubject<float>* z = new CSubject<float>(uniform->FloatValue[3]);
+				subjects.push_back(z);
+
+				if (uniformUI->ElementName.size() > 0)
+				{
+					// write element name #0
+					if (!uniformUI->ElementName[0].empty())
+					{
+						name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[0].c_str());
+						if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
+							ui->addSlider(layout, name.c_str(), x, uniformUI->Min, uniformUI->Max);
+						else
+							ui->addNumberInput(layout, name.c_str(), x, 0.1f);
+					}
+
+					// write element name #1
+					if (uniformUI->ElementName.size() >= 2)
+					{
+						if (!uniformUI->ElementName[1].empty())
+						{
+							name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[1].c_str());
+
+							if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
+								ui->addSlider(layout, name.c_str(), y, uniformUI->Min, uniformUI->Max);
+							else
+								ui->addNumberInput(layout, name.c_str(), y, 0.1f);
+						}
+					}
+
+					// write element name #2
+					if (uniformUI->ElementName.size() >= 2)
+					{
+						if (!uniformUI->ElementName[2].empty())
+						{
+							name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[2].c_str());
+
+							if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
+								ui->addSlider(layout, name.c_str(), z, uniformUI->Min, uniformUI->Max);
+							else
+								ui->addNumberInput(layout, name.c_str(), z, 0.1f);
+						}
+					}
+				}
+				else
+				{
+					// write default X,Y
+					ui->addLabel(layout, name.c_str());
+
+					if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
+					{
+						ui->addSlider(layout, L"X", x, uniformUI->Min, uniformUI->Max);
+						ui->addSlider(layout, L"Y", y, uniformUI->Min, uniformUI->Max);
+						ui->addSlider(layout, L"Z", z, uniformUI->Min, uniformUI->Max);
+					}
+					else
+					{
+						ui->addNumberInput(layout, L"X", x, 0.1f);
+						ui->addNumberInput(layout, L"Y", y, 0.1f);
+						ui->addNumberInput(layout, L"Z", z, 0.1f);
+					}
+				}
+
+				// event change value
+				CObserver* observer = new CObserver();
+				observer->Notify = [&, x, y, z, material, uniformUI](ISubject* subject, IObserver* from)
+				{
+					float value[3];
+					value[0] = x->get();
+					value[1] = y->get();
+					value[2] = z->get();
+
+					material->setUniform3(uniformUI->Name.c_str(), value);
+					material->applyMaterial();
+				};
+
+				x->addObserver(observer);
+				y->addObserver(observer);
+				z->addObserver(observer, true);
+			}
 			else if (uniformUI->ControlType == CShader::UIFloat4)
 			{
 				CMaterial::SUniformValue* uniform = material->getUniform(uniformUI->Name.c_str());
@@ -513,7 +603,7 @@ namespace Skylicht
 					if (!uniformUI->ElementName[0].empty())
 					{
 						name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[0].c_str());
-						if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+						if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
 							ui->addSlider(layout, name.c_str(), x, uniformUI->Min, uniformUI->Max);
 						else
 							ui->addNumberInput(layout, name.c_str(), x, 0.1f);
@@ -526,7 +616,7 @@ namespace Skylicht
 						{
 							name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[1].c_str());
 
-							if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+							if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
 								ui->addSlider(layout, name.c_str(), y, uniformUI->Min, uniformUI->Max);
 							else
 								ui->addNumberInput(layout, name.c_str(), y, 0.1f);
@@ -540,7 +630,7 @@ namespace Skylicht
 						{
 							name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[2].c_str());
 
-							if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+							if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
 								ui->addSlider(layout, name.c_str(), z, uniformUI->Min, uniformUI->Max);
 							else
 								ui->addNumberInput(layout, name.c_str(), z, 0.1f);
@@ -554,7 +644,7 @@ namespace Skylicht
 						{
 							name = CStringImp::convertUTF8ToUnicode(uniformUI->ElementName[3].c_str());
 
-							if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+							if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
 								ui->addSlider(layout, name.c_str(), w, uniformUI->Min, uniformUI->Max);
 							else
 								ui->addNumberInput(layout, name.c_str(), w, 0.1f);
@@ -566,7 +656,7 @@ namespace Skylicht
 					// write default X,Y
 					ui->addLabel(layout, name.c_str());
 
-					if (uniformUI->Min > FLT_MIN || uniformUI->Max < FLT_MAX)
+					if (uniformUI->Min > -FLT_MAX || uniformUI->Max < FLT_MAX)
 					{
 						ui->addSlider(layout, L"X", x, uniformUI->Min, uniformUI->Max);
 						ui->addSlider(layout, L"Y", y, uniformUI->Min, uniformUI->Max);

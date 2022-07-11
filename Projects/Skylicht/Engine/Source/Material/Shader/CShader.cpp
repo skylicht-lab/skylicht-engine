@@ -174,6 +174,7 @@ namespace Skylicht
 			"UIColor",
 			"UIFloat",
 			"UIFloat2",
+			"UIFloat3",
 			"UIFloat4",
 			"UIGroup"
 		};
