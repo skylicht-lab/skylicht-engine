@@ -1,11 +1,12 @@
 // thanks savegame (https://github.com/skylicht-lab/skylicht-engine/issues/130)
-float2 rand(float2 co){
-    return float2(frac(sin(dot(co.xy ,float2(12.9898,78.233))) * 43758.5453), frac(sin(dot(co.yx ,float2(12.9898,78.233))) * 43758.5453)) * 0.00047;
-}
+#define RAND(co) (float2(frac(sin(dot(co.xy, kRandom1)) * kRandom2), frac(sin(dot(co.yx, kRandom1)) * kRandom2)) * kRandom3)
+#define COMPARE(uv, compare) (step(compare, uShadowMap.SampleLevel(uShadowMapSampler, uv, 0).r))
 
-float texture2DCompare(float3 uv, float compare) {
-	float depth = uShadowMap.SampleLevel(uShadowMapSampler, uv, 0).r;
-	return step(compare, depth);
+#define SHADOW_SAMPLE(x, y) {\
+off = float2(x, y) / size;\
+rand = uv + off;\
+rand += RAND(rand);\
+result += COMPARE(float3(rand, id), depth);\
 }
 
 float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
@@ -30,18 +31,27 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	float3 shadowUV = shadowCoord[id].xyz / shadowCoord[id].w;
 
 	depth = shadowUV.z;
+	depth -= bias;
+	
 	float2 uv = shadowUV.xy;
-
-	[unroll]
-	for (int x = -1; x <= 1; x++)
-	{
-		[unroll]
-		for (int y = -1; y <= 1; y++)
-		{
-			float2 off = float2(x, y) / size;
-			result += texture2DCompare(float3(uv + off + rand(uv + off), id), depth - bias);
-		}
-	}
+	float2 off;
+	float2 rand;
+	
+	const float2 kRandom1 = float2(12.9898,78.233);
+	const float kRandom2 = 43758.5453;
+	const float kRandom3 = 0.00047;
+	
+	SHADOW_SAMPLE(-1, -1)
+	SHADOW_SAMPLE( 0, -1)
+	SHADOW_SAMPLE( 1, -1)
+	
+	SHADOW_SAMPLE(-1, 0)
+	SHADOW_SAMPLE( 0, 0)
+	SHADOW_SAMPLE( 1, 0)
+	
+	SHADOW_SAMPLE(-1, 1)
+	SHADOW_SAMPLE( 0, 1)
+	SHADOW_SAMPLE( 1, 1)
 
 	return result / 9.0;
 

@@ -97,10 +97,10 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/Basic/Skin.xml");
 
-		loadShader("BuiltIn/Shader/ShadowMap/ShadowDepthWrite.xml");
-		loadShader("BuiltIn/Shader/ShadowMap/ShadowDepthWriteSkinMesh.xml");
-		loadShader("BuiltIn/Shader/ShadowMap/ShadowCubeDepthWrite.xml");
-		loadShader("BuiltIn/Shader/ShadowMap/ShadowCubeDepthWriteSkinMesh.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowDepthWrite.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowDepthWriteSkinMesh.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowCubeDepthWrite.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowCubeDepthWriteSkinMesh.xml");
 
 		loadShader("BuiltIn/Shader/Basic/TextureSRGB.xml");
 		loadShader("BuiltIn/Shader/Basic/TextureLinearRGB.xml");
@@ -145,8 +145,9 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml");
 
 		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowMap/SDWStandardSGInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowMap/SDWCubeStandardSGInstancing.xml");
+
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWStandardSGInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeStandardSGInstancing.xml");
 
 		CShader* shader = NULL;
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");

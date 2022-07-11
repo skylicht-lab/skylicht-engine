@@ -27,13 +27,6 @@ cbuffer cbPerFrame
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
 };
-float2 rand(float2 co){
-    return float2(frac(sin(dot(co.xy ,float2(12.9898,78.233))) * 43758.5453), frac(sin(dot(co.yx ,float2(12.9898,78.233))) * 43758.5453)) * 0.00047;
-}
-float texture2DCompare(float3 uv, float compare) {
-	float depth = uShadowMap.SampleLevel(uShadowMapSampler, uv, 0).r;
-	return step(compare, depth);
-}
 float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
 {
 	int id = 0;
@@ -52,17 +45,22 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 		return 1.0;
 	float3 shadowUV = shadowCoord[id].xyz / shadowCoord[id].w;
 	depth = shadowUV.z;
+	depth -= bias;
 	float2 uv = shadowUV.xy;
-	[unroll]
-	for (int x = -1; x <= 1; x++)
-	{
-		[unroll]
-		for (int y = -1; y <= 1; y++)
-		{
-			float2 off = float2(x, y) / size;
-			result += texture2DCompare(float3(uv + off + rand(uv + off), id), depth - bias);
-		}
-	}
+	float2 off;
+	float2 rand;
+	const float2 kRandom1 = float2(12.9898,78.233);
+	const float kRandom2 = 43758.5453;
+	const float kRandom3 = 0.00047;
+	{off = float2(-1, -1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(0, -1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(1, -1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(-1, 0) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(0, 0) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(1, 0) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(-1, 1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(0, 1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(1, 1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
 	return result / 9.0;
 }
 static const float PI = 3.1415926;
