@@ -30,7 +30,7 @@ out vec4 FragColor;
 #include "../../PostProcessing/GLSL/LibToneMapping.glsl"
 
 #if defined(SHADOW)
-#include "../../SpecularGlossiness/Lighting/GLSL/LibShadow.glsl"
+#include "../../Shadow/GLSL/LibShadow.glsl"
 #endif
 
 void main(void)
