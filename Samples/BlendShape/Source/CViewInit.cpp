@@ -129,6 +129,9 @@ void CViewInit::initScene()
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
+
+	// disable auto exposure
+	context->getPostProcessorPipeline()->enableAutoExposure(false);
 }
 
 void CViewInit::onDestroy()
@@ -185,7 +188,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -224,7 +227,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
