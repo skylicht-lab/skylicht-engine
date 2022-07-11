@@ -7,7 +7,7 @@
 
 #include "GridPlane/CGridPlane.h"
 #include "LOD/CLOD.h"
-#include "SkyDome/CSkyDome.h"
+#include "SkySun/CSkySun.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -65,12 +65,7 @@ void CViewInit::initScene()
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/MonValley.png");
-	if (skyDomeTexture != NULL)
-	{
-		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
-		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
-	}
+	CSkySun* sky = zone->createEmptyObject()->addComponent<CSkySun>();
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -81,7 +76,7 @@ void CViewInit::initScene()
 	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
+	core::vector3df direction = core::vector3df(0.0f, -1.5f, -2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	CMeshManager* meshManager = CMeshManager::getInstance();

@@ -116,7 +116,7 @@ namespace Skylicht
 			UniformShaderID = -1;
 			SizeOfUniform = 0;
 
-			Min = FLT_MIN;
+			Min = -FLT_MAX;
 			Max = FLT_MAX;
 		}
 	};
@@ -146,6 +146,7 @@ namespace Skylicht
 			UIColor,
 			UIFloat,
 			UIFloat2,
+			UIFloat3,
 			UIFloat4,
 			UIGroup,
 			UINone,
@@ -180,7 +181,7 @@ namespace Skylicht
 				UniformInfo = NULL;
 				Shader = shader;
 				Parent = NULL;
-				Min = FLT_MIN;
+				Min = -FLT_MAX;
 				Max = FLT_MAX;
 				ControlType = UINone;
 			}

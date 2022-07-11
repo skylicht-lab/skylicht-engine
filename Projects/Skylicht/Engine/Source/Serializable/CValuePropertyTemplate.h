@@ -211,7 +211,7 @@ namespace Skylicht
 			CValuePropertyTemplate(owner, Float, name),
 			ClampMin(false),
 			ClampMax(false),
-			Min(FLT_MIN),
+			Min(-FLT_MAX),
 			Max(FLT_MAX)
 		{
 			set(0.0f);
@@ -221,7 +221,7 @@ namespace Skylicht
 			CValuePropertyTemplate(owner, Float, name),
 			ClampMin(false),
 			ClampMax(false),
-			Min(FLT_MIN),
+			Min(-FLT_MAX),
 			Max(FLT_MAX)
 		{
 			set(value);
