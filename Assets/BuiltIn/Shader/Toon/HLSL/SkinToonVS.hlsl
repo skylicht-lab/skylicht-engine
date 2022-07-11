@@ -14,6 +14,8 @@ struct VS_OUTPUT
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
+	float3 worldPos: WORLDPOSITION;
+	float3 depth: DEPTH;
 };
 
 cbuffer cbPerObject
@@ -54,14 +56,15 @@ VS_OUTPUT main(VS_INPUT input)
 	skinNormal 	= mul(float4(input.norm, 0.0), skinMatrix);
 
 	float4 worldPos = mul(skinPosition, uWorldMatrix);
-
 	float4 worldNormal = mul(float4(skinNormal.xyz, 0.0), uWorldMatrix);
-	float4 worldViewDir = normalize(uCameraPosition - worldPos);
+	
+	output.worldPos = worldPos.xyz;
+	output.depth = uCameraPosition.xyz - worldPos.xyz;
+	output.worldViewDir = normalize(output.depth);
 
 	output.pos = mul(skinPosition, uMvpMatrix);
 	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
 	output.worldNormal = normalize(worldNormal.xyz);
-	output.worldViewDir = worldViewDir.xyz;
 
 	return output;
 }

@@ -158,6 +158,7 @@ namespace Skylicht
 			Texture = 0,
 			CubeTexture,
 			ReflectionProbe,
+			ShadowMap,
 			ResourceCount
 		};
 

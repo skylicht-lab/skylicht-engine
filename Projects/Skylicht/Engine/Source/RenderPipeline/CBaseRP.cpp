@@ -30,8 +30,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "TextureManager/CTextureManager.h"
 #include "Material/Shader/ShaderCallback/CShaderCamera.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
+#include "Material/Shader/ShaderCallback/CShaderShadow.h"
 
 #include "IndirectLighting/CIndirectLightingData.h"
+#include "RenderPipeline/CShadowMapRP.h"
+
 
 namespace Skylicht
 {
@@ -155,6 +158,16 @@ namespace Skylicht
 
 							if (lightData != NULL && lightData->ReflectionTexture != NULL && textureID < MATERIAL_MAX_TEXTURES)
 								irrMaterial.setTexture(textureID, lightData->ReflectionTexture);
+						}
+					}
+					else if (res->Type == CShader::ShadowMap)
+					{
+						CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
+						if (shadowRP != NULL)
+						{
+							SUniform* uniform = shader->getFSUniform(res->Name.c_str());
+							u32 textureID = (u32)uniform->Value[0];
+							irrMaterial.setTexture(textureID, shadowRP->getDepthTexture());
 						}
 					}
 				}
