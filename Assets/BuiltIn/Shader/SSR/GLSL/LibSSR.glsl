@@ -1,5 +1,30 @@
 // References
 // https://github.com/MonkeyFirst/Urho3D_SSR_Shader/blob/master/bin/CoreData/Shaders/GLSL/SSR.glsl
+
+#define BINARY_SEARCH() {\
+	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);\
+	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;\
+	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;\
+	testPosition = texture(uTexPosition, projectedCoord.xy);\
+	dDepth = rayPosition.z - testPosition.w;\
+	dir *= 0.5;\
+	if(dDepth > 0.0) rayPosition -= dir;\
+	else rayPosition += dir;\
+}
+
+#define SSR_RAY_MARCH() {\
+	rayPosition += dir;\
+	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);\
+	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;\
+	ssrUV = uvScale * projectedCoord.xy + uvOffset;\
+	testPosition = texture(uTexPosition, ssrUV);\
+	if(rayPosition.z - testPosition.w >= 0.0)\
+	{\
+		ssrUV = binarySearch(dir, rayPosition);\
+		return ssrUV;\
+	}\
+}
+
 vec2 binarySearch(vec3 dir, vec3 rayPosition)
 {
 	vec4 projectedCoord;
@@ -10,21 +35,26 @@ vec2 binarySearch(vec3 dir, vec3 rayPosition)
 	vec4 testPosition;
 	float dDepth;
 	
-	for(int i = 16; i > 0; --i)
-	{
-		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
-		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;
-		
-		testPosition = texture(uTexPosition, projectedCoord.xy);
-		dDepth = rayPosition.z - testPosition.w;
-
-		dir *= 0.5;
-		if(dDepth > 0.0)
-			rayPosition -= dir;
-		else
-			rayPosition += dir;
-	}
+	// 16 Step
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
 	
 	return projectedCoord.xy;
 }
@@ -46,27 +76,47 @@ vec2 ssrRayMarch(const vec4 position, const vec3 reflection)
 	const vec2 uvScale = vec2(0.5, 0.5);
 	
 	vec4 testPosition;
-	float depthDiff;
 	
-	// rayMarch test
-	for (int i = 32; i > 0; --i)
-	{
-		rayPosition += dir;
-		
-		// convert 3d position to 2d texture coord
-		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
-		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		ssrUV = uvScale * projectedCoord.xy + uvOffset;
-		
-		testPosition = texture(uTexPosition, ssrUV);
-		
-		depthDiff = rayPosition.z - testPosition.w;
-		if(depthDiff >= 0.0)
-		{
-			ssrUV = binarySearch(dir, rayPosition);
-			return ssrUV;
-		}
-	}
+	// rayMarch 32 step
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
 	
 	return ssrUV;
 }
