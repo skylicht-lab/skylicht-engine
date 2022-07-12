@@ -2,12 +2,19 @@
 #define RAND(co) (float2(frac(sin(dot(co.xy, kRandom1)) * kRandom2), frac(sin(dot(co.yx, kRandom1)) * kRandom2)) * kRandom3)
 #define COMPARE(uv, compare) (step(compare, uShadowMap.SampleLevel(uShadowMapSampler, uv, 0).r))
 
+// #define HARD_SHADOW
+#define PCF_NOISE
+
+#if defined(PCF_NOISE)
 #define SHADOW_SAMPLE(x, y) {\
-off = float2(x, y) / size;\
+off = float2(x, y) * size;\
 rand = uv + off;\
 rand += RAND(rand);\
 result += COMPARE(float3(rand, id), depth);\
 }
+#else
+#define SHADOW_SAMPLE(x, y) result += COMPARE(float3(uv + float2(x, y) * size, id), depth);
+#endif
 
 float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
 {
@@ -17,7 +24,6 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	float depth = 0.0;
 
 	float result = 0.0;
-	float size = 2048;
 
 	if (farDistance < shadowDistance[0])
 		id = 0;
@@ -34,13 +40,22 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	depth -= bias;
 	
 	float2 uv = shadowUV.xy;
+	
+#if defined(HARD_SHADOW)
+	return COMPARE(float3(uv, id), depth);
+#else
+	
+	float size = 1.0/2048;
+	
+#if defined(PCF_NOISE)
 	float2 off;
 	float2 rand;
 	
 	const float2 kRandom1 = float2(12.9898,78.233);
 	const float kRandom2 = 43758.5453;
 	const float kRandom3 = 0.00047;
-	
+#endif
+
 	SHADOW_SAMPLE(-1, -1)
 	SHADOW_SAMPLE( 0, -1)
 	SHADOW_SAMPLE( 1, -1)
@@ -54,6 +69,5 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	SHADOW_SAMPLE( 1, 1)
 
 	return result / 9.0;
-
-	// return texture2DCompare(float3(uv, id), depth - bias);
+#endif
 }

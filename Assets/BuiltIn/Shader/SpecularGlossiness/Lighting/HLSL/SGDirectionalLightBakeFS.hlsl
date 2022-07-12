@@ -34,7 +34,6 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	float bias = 0.0001;
 	float depth = 0.0;
 	float result = 0.0;
-	float size = 2048;
 	if (farDistance < shadowDistance[0])
 		id = 0;
 	else if (farDistance < shadowDistance[1])
@@ -47,20 +46,21 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	depth = shadowUV.z;
 	depth -= bias;
 	float2 uv = shadowUV.xy;
+	float size = 1.0/2048;
 	float2 off;
 	float2 rand;
 	const float2 kRandom1 = float2(12.9898,78.233);
 	const float kRandom2 = 43758.5453;
 	const float kRandom3 = 0.00047;
-	{off = float2(-1, -1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
-	{off = float2(0, -1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
-	{off = float2(1, -1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
-	{off = float2(-1, 0) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
-	{off = float2(0, 0) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
-	{off = float2(1, 0) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
-	{off = float2(-1, 1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
-	{off = float2(0, 1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
-	{off = float2(1, 1) / size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(-1, -1) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(0, -1) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(1, -1) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(-1, 0) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(0, 0) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(1, 0) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(-1, 1) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(0, 1) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
+	{off = float2(1, 1) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
 	return result / 9.0;
 }
 static const float PI = 3.1415926;

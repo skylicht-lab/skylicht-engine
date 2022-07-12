@@ -10,6 +10,8 @@ SamplerState uTexDataSampler : register(s2);
 TextureCube uShadowMap : register(t3);
 SamplerState uShadowMapSampler : register(s3);
 
+// #define HARD_SHADOW
+
 #define SHADOW_SAMPLE(x, y, z) {\
 fragToLight = -lightDir + float3(x, y, z);\
 shadow += step(uShadowMap.SampleLevel(uShadowMapSampler, fragToLight, 0).r, d);\
@@ -56,19 +58,16 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	// Shadow
 	float bias = 0.2;
+	float d = distance - bias;
 
-	/*
+#if defined(HARD_SHADOW)
 	float sampledDistance = uShadowMap.SampleLevel(uShadowMapSampler, -lightDir, 0).r;
-	float shadow = 1.0;
-	if (distance - bias > sampledDistance)
-		shadow = 0.0f; // Inside the shadow
-	*/
-
+	float shadow = step(sampledDistance, d);
+#else
 	float shadow = 0.0;
 	float samples = 2.0;
 	float offset = 0.01;
 	float delta = offset / (samples * 0.5);
-	float d = distance - bias;
 	float3 fragToLight;	
 	
 	/*
@@ -116,6 +115,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 	SHADOW_SAMPLE(x, y, z);
 	
 	shadow /= (samples * samples * samples);
+#endif
+
 	shadow = max(1.0 - shadow, 0.0);
 
 	float3 lightColor = uLightColor.rgb * (NdotL * attenuation) * shadow;
