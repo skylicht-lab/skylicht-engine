@@ -46,7 +46,7 @@ namespace Skylicht
 	{
 		m_size.set(w, h);
 
-		if (m_useLinearRGB == true)
+		if (m_useLinearRGB == true || m_postProcessor)
 			m_target = getVideoDriver()->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
 
 		m_emission = getVideoDriver()->addRenderTargetTexture(m_size, "emission", ECF_A16B16G16R16F);
@@ -86,7 +86,7 @@ namespace Skylicht
 
 		ITexture *currentTarget = NULL;
 
-		if (m_useLinearRGB == true)
+		if (m_useLinearRGB == true || m_postProcessor)
 		{
 			driver->setRenderTarget(m_target, true, true, s_clearColor);
 

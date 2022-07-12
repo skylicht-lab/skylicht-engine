@@ -247,27 +247,31 @@ namespace Skylicht
 		}
 	}
 
+	void CEntityManager::updateSortRenderer()
+	{
+		m_sortRender = m_renders;
+
+		struct {
+			bool operator()(IRenderSystem* a, IRenderSystem* b) const
+			{
+				int priorityA = (int)a->getRenderPass();
+				int priorityB = (int)b->getRenderPass();
+
+				if (priorityA == priorityB)
+					return a->getSortingPriority() < b->getSortingPriority();
+
+				return priorityA < priorityB;
+			}
+		} customLess;
+
+		std::sort(m_sortRender.begin(), m_sortRender.end(), customLess);
+	}
+
 	void CEntityManager::render()
 	{
 		if (m_systemChanged == true)
 		{
-			m_sortRender = m_renders;
-
-			struct {
-				bool operator()(IRenderSystem* a, IRenderSystem* b) const
-				{
-					int priorityA = (int)a->getRenderPass();
-					int priorityB = (int)b->getRenderPass();
-
-					if (priorityA == priorityB)
-						return a->getSortingPriority() < b->getSortingPriority();
-
-					return priorityA < priorityB;
-				}
-			} customLess;
-
-			std::sort(m_sortRender.begin(), m_sortRender.end(), customLess);
-
+			updateSortRenderer();
 			m_systemChanged = false;
 		}
 
@@ -303,6 +307,12 @@ namespace Skylicht
 
 	void CEntityManager::cullingAndRender()
 	{
+		if (m_systemChanged == true)
+		{
+			updateSortRenderer();
+			m_systemChanged = false;
+		}
+
 		for (IRenderSystem*& s : m_renders)
 		{
 			s->beginQuery(this);

@@ -38,6 +38,8 @@ public:
 
 	CBaseRP* initRenderPipeline(int w, int h, bool postEffect = true);
 
+	CBaseRP* initShadowForwarderPipeline(int w, int h, bool postEffect = true);
+
 	void resize(int w, int h);
 
 	CCollisionManager* getCollisionManager()
