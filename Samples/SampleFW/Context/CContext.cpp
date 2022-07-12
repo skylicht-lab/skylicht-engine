@@ -82,6 +82,39 @@ CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect)
 	return m_beginRP;
 }
 
+CBaseRP* CContext::initShadowForwarderPipeline(int w, int h, bool postEffect)
+{
+	// 1st
+	m_shadowMapRendering = new CShadowMapRP();
+	m_shadowMapRendering->initRender(w, h);
+
+	// 2rd
+	m_forwardRP = new CForwardRP(false);
+	m_forwardRP->enableUpdateEntity(false);
+
+	// link rp
+	m_shadowMapRendering->setNextPipeLine(m_forwardRP);
+
+	if (postEffect == true)
+	{
+		// post processor
+		m_postProcessor = new CPostProcessorRP();
+		m_postProcessor->enableAutoExposure(false);
+		m_postProcessor->enableBloomEffect(true);
+		m_postProcessor->enableFXAA(true);
+		m_postProcessor->enableScreenSpaceReflection(false);
+		m_postProcessor->initRender(w, h);
+
+		// apply post processor
+		m_forwardRP->setPostProcessor(m_postProcessor);
+	}
+
+	m_forwardRP->initRender(w, h);
+
+	m_beginRP = m_shadowMapRendering;
+	return m_beginRP;
+}
+
 void CContext::resize(int w, int h)
 {
 	if (m_beginRP != NULL)
