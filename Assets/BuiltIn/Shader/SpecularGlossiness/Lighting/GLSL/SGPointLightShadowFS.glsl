@@ -30,11 +30,11 @@ void main(void)
 	float NdotE = max(0.0, dot(normal, H));
 	float specular = pow(NdotE, 100.0f * gloss) * spec;
 	float bias = 0.2;
+	float d = distance - bias;
 	float shadow = 0.0;
 	float samples = 2.0;
 	float offset = 0.01;
 	float delta = offset / (samples * 0.5);
-	float d = distance - bias;
 	vec3 fragToLight;
 	float x = -offset;
 	float y = -offset;
