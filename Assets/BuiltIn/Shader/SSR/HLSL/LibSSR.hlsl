@@ -1,6 +1,30 @@
 // References
 // https://github.com/MonkeyFirst/Urho3D_SSR_Shader/blob/master/bin/CoreData/Shaders/GLSL/SSR.glsl
 
+#define BINARY_SEARCH() {\
+	projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);\
+	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;\
+	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;\
+	testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);\
+	dDepth = rayPosition.z - testPosition.w;\
+	dir *= 0.5;\
+	if(dDepth > 0.0) rayPosition -= dir;\
+	else rayPosition += dir;\
+}
+
+#define SSR_RAY_MARCH() {\
+	rayPosition += dir;\
+	projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);\
+	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;\
+	ssrUV = uvScale * projectedCoord.xy + uvOffset;\
+	testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);\
+	if(rayPosition.z - testPosition.w >= 0.0)\
+	{\
+		ssrUV = binarySearch(dir, rayPosition);\
+		return ssrUV;\
+	}\
+}
+
 float2 binarySearch(float3 dir, float3 rayPosition)
 {
 	float4 projectedCoord;
@@ -10,22 +34,26 @@ float2 binarySearch(float3 dir, float3 rayPosition)
 	const float2 uvOffset = float2(0.5, 0.5);
 	const float2 uvScale = float2(0.5, -0.5);
 	
-	[unroll]
-	for(int i = 16; i > 0; --i)
-	{
-		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);
-		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;
-		
-		testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);
-		dDepth = rayPosition.z - testPosition.w;
-
-		dir *= 0.5;
-		if(dDepth > 0.0)
-			rayPosition -= dir;
-		else
-			rayPosition += dir;
-	}
+	// 16 Step
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
+	BINARY_SEARCH();
 	
 	return projectedCoord.xy;
 }
@@ -43,31 +71,50 @@ float2 ssrRayMarch(const float4 position, const float3 reflection)
 
 	float2 ssrUV;
 	float4 testPosition;
-	float depthDiff;
 	
 	const float2 uvOffset = float2(0.5, 0.5);
 	const float2 uvScale = float2(0.5, -0.5);
 	
-	// RayMarch test
-	[unroll]
-	for (int i = 32; i > 0; --i)
-	{
-		rayPosition += dir;
-		
-		// convert 3d position to 2d texture coord
-		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);
-		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		
-		ssrUV = uvScale * projectedCoord.xy + uvOffset;
-		testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);
-		
-		depthDiff = rayPosition.z - testPosition.w;
-		if(depthDiff >= 0.0)
-		{
-			ssrUV = binarySearch(dir, rayPosition);
-			return ssrUV;
-		}
-	}
+	// rayMarch test 32 step
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
+	SSR_RAY_MARCH();
 	
 	return ssrUV;
 }

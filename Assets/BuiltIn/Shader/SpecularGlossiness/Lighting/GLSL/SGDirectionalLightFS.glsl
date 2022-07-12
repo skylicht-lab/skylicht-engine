@@ -79,19 +79,22 @@ vec2 binarySearch(vec3 dir, vec3 rayPosition)
 	const vec2 uvScale = vec2(0.5, 0.5);
 	vec4 testPosition;
 	float dDepth;
-	for(int i = 16; i > 0; --i)
-	{
-		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
-		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;
-		testPosition = texture(uTexPosition, projectedCoord.xy);
-		dDepth = rayPosition.z - testPosition.w;
-		dir *= 0.5;
-		if(dDepth > 0.0)
-			rayPosition -= dir;
-		else
-			rayPosition += dir;
-	}
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
+	{	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, projectedCoord.xy);	dDepth = rayPosition.z - testPosition.w;	dir *= 0.5;	if(dDepth > 0.0) rayPosition -= dir;	else rayPosition += dir;};
 	return projectedCoord.xy;
 }
 vec2 ssrRayMarch(const vec4 position, const vec3 reflection)
@@ -104,21 +107,38 @@ vec2 ssrRayMarch(const vec4 position, const vec3 reflection)
 	const vec2 uvOffset = vec2(0.5, 0.5);
 	const vec2 uvScale = vec2(0.5, 0.5);
 	vec4 testPosition;
-	float depthDiff;
-	for (int i = 32; i > 0; --i)
-	{
-		rayPosition += dir;
-		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
-		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		ssrUV = uvScale * projectedCoord.xy + uvOffset;
-		testPosition = texture(uTexPosition, ssrUV);
-		depthDiff = rayPosition.z - testPosition.w;
-		if(depthDiff >= 0.0)
-		{
-			ssrUV = binarySearch(dir, rayPosition);
-			return ssrUV;
-		}
-	}
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
+	{	rayPosition += dir;	projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);	projectedCoord.xy = projectedCoord.xy / projectedCoord.w;	ssrUV = uvScale * projectedCoord.xy + uvOffset;	testPosition = texture(uTexPosition, ssrUV);	if(rayPosition.z - testPosition.w >= 0.0)	{		ssrUV = binarySearch(dir, rayPosition);		return ssrUV;	}};
 	return ssrUV;
 }
 vec3 SSR(const vec3 baseColor, const vec4 position, const vec3 reflection, const float roughness)
