@@ -75,13 +75,17 @@ float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
 vec2 binarySearch(vec3 dir, vec3 rayPosition)
 {
 	vec4 projectedCoord;
+	const vec2 uvOffset = vec2(0.5, 0.5);
+	const vec2 uvScale = vec2(0.5, 0.5);
+	vec4 testPosition;
+	float dDepth;
 	for(int i = 16; i > 0; --i)
 	{
 		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
 		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		projectedCoord.xy = 0.5 * projectedCoord.xy + vec2(0.5, 0.5);
-		vec4 testPosition = texture(uTexPosition, projectedCoord.xy);
-		float dDepth = rayPosition.z - testPosition.w;
+		projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;
+		testPosition = texture(uTexPosition, projectedCoord.xy);
+		dDepth = rayPosition.z - testPosition.w;
 		dir *= 0.5;
 		if(dDepth > 0.0)
 			rayPosition -= dir;
@@ -90,28 +94,37 @@ vec2 binarySearch(vec3 dir, vec3 rayPosition)
 	}
 	return projectedCoord.xy;
 }
-vec3 SSR(const vec3 baseColor, const vec4 position, const vec3 reflection, const float roughness)
+vec2 ssrRayMarch(const vec4 position, const vec3 reflection)
 {
 	vec4 projectedCoord;
 	vec3 rayPosition = (uView * vec4(position.xyz, 1.0)).xyz;
 	vec3 viewReflection = normalize((uView * vec4(reflection, 0.0)).xyz);
 	vec3 dir = viewReflection * 0.5;
-	float mipLevel = roughness * 5.0;
 	vec2 ssrUV;
+	const vec2 uvOffset = vec2(0.5, 0.5);
+	const vec2 uvScale = vec2(0.5, 0.5);
+	vec4 testPosition;
+	float depthDiff;
 	for (int i = 32; i > 0; --i)
 	{
 		rayPosition += dir;
 		projectedCoord = uProjection * vec4(rayPosition.xyz, 1.0);
 		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		ssrUV = 0.5 * projectedCoord.xy + vec2(0.5, 0.5);
-		vec4 testPosition = texture(uTexPosition, ssrUV);
-		float depthDiff = rayPosition.z - testPosition.w;
+		ssrUV = uvScale * projectedCoord.xy + uvOffset;
+		testPosition = texture(uTexPosition, ssrUV);
+		depthDiff = rayPosition.z - testPosition.w;
 		if(depthDiff >= 0.0)
 		{
 			ssrUV = binarySearch(dir, rayPosition);
-			break;
+			return ssrUV;
 		}
 	}
+	return ssrUV;
+}
+vec3 SSR(const vec3 baseColor, const vec4 position, const vec3 reflection, const float roughness)
+{
+	vec2 ssrUV = ssrRayMarch(position, reflection);
+	float mipLevel = roughness * 5.0;
 	float z = (uView * vec4(reflection, 0.0)).z;
 	z = clamp(z, 0.0, 1.0);
 	vec3 color = textureLod(uTexLastFrame, ssrUV, mipLevel).rgb;

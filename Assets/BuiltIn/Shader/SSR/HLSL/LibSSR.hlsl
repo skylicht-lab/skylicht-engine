@@ -4,16 +4,21 @@
 float2 binarySearch(float3 dir, float3 rayPosition)
 {
 	float4 projectedCoord;
+	float4 testPosition;
+	float dDepth;
+	
+	const float2 uvOffset = float2(0.5, 0.5);
+	const float2 uvScale = float2(0.5, -0.5);
 	
 	[unroll]
 	for(int i = 16; i > 0; --i)
 	{
 		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);
 		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
+		projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;
 		
-		float4 testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);
-		float dDepth = rayPosition.z - testPosition.w;
+		testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);
+		dDepth = rayPosition.z - testPosition.w;
 
 		dir *= 0.5;
 		if(dDepth > 0.0)
@@ -25,8 +30,8 @@ float2 binarySearch(float3 dir, float3 rayPosition)
 	return projectedCoord.xy;
 }
 
-float3 SSR(const float3 baseColor, const float4 position, const float3 reflection, const float roughness)
-{	
+float2 ssrRayMarch(const float4 position, const float3 reflection)
+{
 	float4 projectedCoord;
 	
 	// convert to view space
@@ -35,9 +40,13 @@ float3 SSR(const float3 baseColor, const float4 position, const float3 reflectio
 	
 	// step 0.5m
 	float3 dir = viewReflection * 0.5;
-	
-	float mipLevel = roughness * 5.0;
+
 	float2 ssrUV;
+	float4 testPosition;
+	float depthDiff;
+	
+	const float2 uvOffset = float2(0.5, 0.5);
+	const float2 uvScale = float2(0.5, -0.5);
 	
 	// RayMarch test
 	[unroll]
@@ -49,22 +58,30 @@ float3 SSR(const float3 baseColor, const float4 position, const float3 reflectio
 		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);
 		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
 		
-		ssrUV = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
-		float4 testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);
+		ssrUV = uvScale * projectedCoord.xy + uvOffset;
+		testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);
 		
-		float depthDiff = rayPosition.z - testPosition.w;
+		depthDiff = rayPosition.z - testPosition.w;
 		if(depthDiff >= 0.0)
 		{
 			ssrUV = binarySearch(dir, rayPosition);
-			break;
+			return ssrUV;
 		}
 	}
+	
+	return ssrUV;
+}
+
+float3 SSR(const float3 baseColor, const float4 position, const float3 reflection, const float roughness)
+{
+	float2 ssrUV = ssrRayMarch(position, reflection);
 	
 	// z clip when camera look down
 	float z = mul(float4(reflection, 0.0), uView).z;
 	z = clamp(z, 0.0, 1.0);
 	
-	// convert 3d position to 2d texture coord	
+	// convert 3d position to 2d texture coord
+	float mipLevel = roughness * 5.0;
 	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, ssrUV, mipLevel).rgb;
 	
 	// edge factor
