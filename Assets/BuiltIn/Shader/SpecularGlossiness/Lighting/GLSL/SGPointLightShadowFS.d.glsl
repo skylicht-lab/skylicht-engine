@@ -16,6 +16,8 @@ in vec2 varTexCoord0;
 
 out vec4 FragColor;
 
+// #define HARD_SHADOW
+
 #define SHADOW_SAMPLE(x, y, z) {\
 fragToLight = -lightDir + vec3(x, y, z);\
 shadow += step(texture(uShadowMap, fragToLight).r, d);\
@@ -48,19 +50,17 @@ void main(void)
 
 	// Shadow
 	float bias = 0.2;
+	float d = distance - bias;
 	
-	/*
+#if defined(HARD_SHADOW)
 	float sampledDistance = texture(uShadowMap, -lightDir).r;
-	float shadow = 1.0;
-	if (distance - bias > sampledDistance)
-		shadow = 0.0f; // Inside the shadow
-	*/
+	float shadow = step(sampledDistance, d);
+#else
 	
 	float shadow = 0.0;
 	float samples = 2.0;
 	float offset = 0.01;
 	float delta = offset / (samples * 0.5);
-	float d = distance - bias;
 	vec3 fragToLight;
 		
 	/*
@@ -105,6 +105,8 @@ void main(void)
 	SHADOW_SAMPLE(x, y, z);
 	
 	shadow /= (samples * samples * samples);
+#endif
+
 	shadow = max(0.0, 1.0 - shadow);
 
 	vec3 lightColor = uLightColor.rgb * (NdotL * attenuation) * shadow;
