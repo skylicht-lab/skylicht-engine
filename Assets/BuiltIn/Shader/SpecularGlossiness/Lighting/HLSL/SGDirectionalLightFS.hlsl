@@ -86,14 +86,18 @@ float solveMetallic(float3 diffuse, float3 specular, float oneMinusSpecularStren
 float2 binarySearch(float3 dir, float3 rayPosition)
 {
 	float4 projectedCoord;
+	float4 testPosition;
+	float dDepth;
+	const float2 uvOffset = float2(0.5, 0.5);
+	const float2 uvScale = float2(0.5, -0.5);
 	[unroll]
 	for(int i = 16; i > 0; --i)
 	{
 		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);
 		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		projectedCoord.xy = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
-		float4 testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);
-		float dDepth = rayPosition.z - testPosition.w;
+		projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;
+		testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);
+		dDepth = rayPosition.z - testPosition.w;
 		dir *= 0.5;
 		if(dDepth > 0.0)
 			rayPosition -= dir;
@@ -102,31 +106,40 @@ float2 binarySearch(float3 dir, float3 rayPosition)
 	}
 	return projectedCoord.xy;
 }
-float3 SSR(const float3 baseColor, const float4 position, const float3 reflection, const float roughness)
+float2 ssrRayMarch(const float4 position, const float3 reflection)
 {
 	float4 projectedCoord;
 	float3 rayPosition = mul(float4(position.xyz, 1.0), uView).xyz;
 	float3 viewReflection = normalize(mul(float4(reflection, 0.0), uView).xyz);
 	float3 dir = viewReflection * 0.5;
-	float mipLevel = roughness * 5.0;
 	float2 ssrUV;
+	float4 testPosition;
+	float depthDiff;
+	const float2 uvOffset = float2(0.5, 0.5);
+	const float2 uvScale = float2(0.5, -0.5);
 	[unroll]
 	for (int i = 32; i > 0; --i)
 	{
 		rayPosition += dir;
 		projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);
 		projectedCoord.xy = projectedCoord.xy / projectedCoord.w;
-		ssrUV = float2(0.5, -0.5) * projectedCoord.xy + float2(0.5, 0.5);
-		float4 testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);
-		float depthDiff = rayPosition.z - testPosition.w;
+		ssrUV = uvScale * projectedCoord.xy + uvOffset;
+		testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);
+		depthDiff = rayPosition.z - testPosition.w;
 		if(depthDiff >= 0.0)
 		{
 			ssrUV = binarySearch(dir, rayPosition);
-			break;
+			return ssrUV;
 		}
 	}
+	return ssrUV;
+}
+float3 SSR(const float3 baseColor, const float4 position, const float3 reflection, const float roughness)
+{
+	float2 ssrUV = ssrRayMarch(position, reflection);
 	float z = mul(float4(reflection, 0.0), uView).z;
 	z = clamp(z, 0.0, 1.0);
+	float mipLevel = roughness * 5.0;
 	float3 color = uTexLastFrame.SampleLevel(uTexLastFrameSampler, ssrUV, mipLevel).rgb;
 	float2 dCoords = smoothstep(float2(0.0, 0.0), float2(0.5, 0.5), abs(float2(0.5, 0.5) - ssrUV));
 	float screenEdgefactor = clamp(1.0 - (dCoords.x + dCoords.y), 0.0, 1.0);
