@@ -35,7 +35,6 @@ void CViewInit::onInit()
 
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
-	shaderMgr->initSGDeferredShader();
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -124,14 +123,11 @@ void CViewInit::initScene()
 
 	// save to context
 	CContext* context = CContext::getInstance();
-	context->initRenderPipeline(app->getWidth(), app->getHeight());
+	context->initShadowForwarderPipeline(app->getWidth(), app->getHeight());
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
-
-	// disable auto exposure
-	context->getPostProcessorPipeline()->enableAutoExposure(false);
 }
 
 void CViewInit::onDestroy()

@@ -127,6 +127,8 @@ namespace Skylicht
 
 		void initDefaultData(CEntity* entity);
 
+		void updateSortRenderer();
+
 	};
 
 	template<class T>
