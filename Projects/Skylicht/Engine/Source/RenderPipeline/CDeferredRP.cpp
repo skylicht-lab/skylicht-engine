@@ -152,6 +152,7 @@ namespace Skylicht
 		m_lightmapIndirectTestShader = shaderMgr->getShaderIDByName("IndirectTest");
 
 		m_lightDirection = shaderMgr->getShaderIDByName("SGDirectionalLight");
+		m_lightDirectionSSR = shaderMgr->getShaderIDByName("SGDirectionalLightSSR");
 		m_lightDirectionBake = shaderMgr->getShaderIDByName("SGDirectionalLightBake");
 
 		// setup material
@@ -589,8 +590,12 @@ namespace Skylicht
 			m_directionalLightPass.TextureLayer[6].Texture = shadowRP->getDepthTexture();
 
 		// ssr (last frame)
-		if (m_postProcessor != NULL)
+		bool enableSSR = false;
+		if (m_postProcessor != NULL &&
+			m_postProcessor->getLastFrameBuffer() &&
+			m_postProcessor->isEnableScreenSpaceReflection())
 		{
+			enableSSR = true;
 			m_directionalLightPass.TextureLayer[7].Texture = m_postProcessor->getLastFrameBuffer();
 			m_directionalLightPass.TextureLayer[7].TextureWrapU = ETC_CLAMP_TO_BORDER;
 			m_directionalLightPass.TextureLayer[7].TextureWrapV = ETC_CLAMP_TO_BORDER;
@@ -602,7 +607,12 @@ namespace Skylicht
 		if (s_bakeMode == true)
 			m_directionalLightPass.MaterialType = m_lightDirectionBake;
 		else
-			m_directionalLightPass.MaterialType = m_lightDirection;
+		{
+			if (enableSSR)
+				m_directionalLightPass.MaterialType = m_lightDirectionSSR;
+			else
+				m_directionalLightPass.MaterialType = m_lightDirection;
+		}
 
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 

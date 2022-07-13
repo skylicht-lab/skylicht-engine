@@ -36,7 +36,7 @@ public:
 
 	CScene* initScene();
 
-	CBaseRP* initRenderPipeline(int w, int h, bool postEffect = true);
+	CBaseRP* initRenderPipeline(int w, int h, bool postEffect = true, bool enableSSR = false);
 
 	CBaseRP* initShadowForwarderPipeline(int w, int h, bool postEffect = true);
 

@@ -44,7 +44,7 @@ void CContext::releaseScene()
 	}
 }
 
-CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect)
+CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect, bool enableSSR)
 {
 	// 1st
 	m_shadowMapRendering = new CShadowMapRP();
@@ -71,7 +71,7 @@ CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect)
 		m_postProcessor->enableAutoExposure(true);
 		m_postProcessor->enableBloomEffect(true);
 		m_postProcessor->enableFXAA(true);
-		m_postProcessor->enableScreenSpaceReflection(true);
+		m_postProcessor->enableScreenSpaceReflection(enableSSR);
 		m_postProcessor->initRender(w, h);
 
 		// apply post processor

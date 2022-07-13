@@ -1,4 +1,4 @@
-<shaderConfig name="SGDirectionalLight" baseShader="SOLID">
+<shaderConfig name="SGDirectionalLightSSR" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -11,6 +11,7 @@
 			<uniform name="uTexLight" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
 			<uniform name="uTexIndirect" type="DEFAULT_VALUE" value="5" float="1" directX="false"/>
 			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="6" float="1" directX="false"/>
+			<uniform name="uTexLastFrame" type="DEFAULT_VALUE" value="7" float="1" directX="false"/>
 
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
@@ -18,6 +19,8 @@
 			<uniform name="uLightMultiplier" type="SHADER_VEC3" value="0.0" float="3"/>
 			<uniform name="uShadowDistance" type="SHADOW_MAP_DISTANCE" value="0" float="3"/>
 			<uniform name="uShadowMatrix" type="SHADOW_MAP_MATRIX" value="0" float="16" array="3" matrix="true"/>
+			<uniform name="uView" type="DEFERRED_VIEW" value="0" float="16" matrix="true"/>
+			<uniform name="uProjection" type="DEFERRED_PROJECTION" value="0" float="16" matrix="true"/>
 		</fs>
 	</uniforms>
 	<resources>
@@ -26,10 +29,12 @@
 	</customUI>
 	<shader type="GLSL" 
 		vs="GLSL/SGDirectionalLightVS.glsl" 
-		fs="GLSL/SGDirectionalLightFS.glsl" 
-		fs_source="GLSL/SGDirectionalLightFS.d.glsl"/>
+		fs="GLSL/SGDirectionalLightSSRFS.glsl" 
+		fs_source="GLSL/SGDirectionalLightFS.d.glsl" 
+		define="ENABLE_SSR"/>
 	<shader type="HLSL" 
 		vs="HLSL/SGDirectionalLightVS.hlsl" 
-		fs="HLSL/SGDirectionalLightFS.hlsl" 
-		fs_source="HLSL/SGDirectionalLightFS.d.hlsl"/>
+		fs="HLSL/SGDirectionalLightSSRFS.hlsl" 
+		fs_source="HLSL/SGDirectionalLightFS.d.hlsl" 
+		define="ENABLE_SSR"/>
 </shaderConfig>
