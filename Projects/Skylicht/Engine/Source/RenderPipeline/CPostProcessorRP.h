@@ -39,12 +39,12 @@ namespace Skylicht
 		core::dimension2du m_size;
 		core::dimension2du m_lumSize;
 
-		ITexture *m_luminance[2];
-		ITexture *m_adaptLum;
+		ITexture* m_luminance[2];
+		ITexture* m_adaptLum;
 		int m_lumTarget;
 
-		ITexture *m_lastFrameBuffer;
-		ITexture *m_rtt[10];
+		ITexture* m_lastFrameBuffer;
+		ITexture* m_rtt[10];
 
 		int m_numTarget;
 
@@ -62,11 +62,11 @@ namespace Skylicht
 		bool m_fxaa;
 		bool m_screenSpaceReflection;
 
-		CMaterial *m_brightFilter;
-		CMaterial *m_blurFilter;
-		CMaterial *m_blurUpFilter;
-		CMaterial *m_bloomFilter;
-		CMaterial *m_fxaaFilter;
+		CMaterial* m_brightFilter;
+		CMaterial* m_blurFilter;
+		CMaterial* m_blurUpFilter;
+		CMaterial* m_bloomFilter;
+		CMaterial* m_fxaaFilter;
 
 	public:
 		CPostProcessorRP();
@@ -77,13 +77,13 @@ namespace Skylicht
 
 		virtual void resize(int w, int h);
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& vp);
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& vp);
 
-		virtual void postProcessing(ITexture *finalTarget, ITexture *color, ITexture *emission, ITexture *normal, ITexture *position, const core::recti& viewport);
+		virtual void postProcessing(ITexture* finalTarget, ITexture* color, ITexture* emission, ITexture* normal, ITexture* position, const core::recti& viewport);
 
-		void luminanceMapGeneration(ITexture *color);
+		void luminanceMapGeneration(ITexture* color);
 
-		void brightFilter(ITexture* from, ITexture* to, ITexture *emission);
+		void brightFilter(ITexture* from, ITexture* to, ITexture* emission);
 
 		void blurDown(int from, int to);
 
@@ -124,14 +124,19 @@ namespace Skylicht
 			return m_lastFrameBuffer;
 		}
 
+		virtual bool isEnableScreenSpaceReflection()
+		{
+			return m_screenSpaceReflection;
+		}
+
 	protected:
 
 		void initMainRTT(int w, int h);
 
 		void releaseMainRTT();
 
-		void renderEffect(int fromTarget, int toTarget, CMaterial *material);
+		void renderEffect(int fromTarget, int toTarget, CMaterial* material);
 
-		void renderEffect(ITexture *fromTarget, ITexture *toTarget, CMaterial *material);
+		void renderEffect(ITexture* fromTarget, ITexture* toTarget, CMaterial* material);
 	};
 }
