@@ -8,7 +8,7 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleNoise3D *app = new SampleNoise3D();
+	SampleNoise3D* app = new SampleNoise3D();
 	getApplication()->registerAppEvent("SampleNoise3D", app);
 }
 
@@ -44,27 +44,27 @@ void SampleNoise3D::onInitApp()
 
 #if defined(USE_FREETYPE)
 	// init segoeuil.ttf inside BuiltIn.zip
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 #endif
 
 	// load basic shader
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
 	// create a Scene
 	m_scene = new CScene();
 
 	// create a Zone in Scene
-	CZone *zone = m_scene->createZone();
+	CZone* zone = m_scene->createZone();
 
 	// create 2D camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
+	CGameObject* guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// create 3D camera
-	CGameObject *camObj = zone->createEmptyObject();
+	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
@@ -78,20 +78,20 @@ void SampleNoise3D::onInitApp()
 	// grid->addComponent<CGridPlane>();
 
 	// lighting
-	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CGameObject* lightObj = zone->createEmptyObject();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 	SColor c(255, 255, 244, 214);
 	directionalLight->setColor(SColorf(c));
 
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	// add sphere
-	CGameObject *sphereObj;
-	CSphereComponent *sphere;
+	CGameObject* sphereObj;
+	CSphereComponent* sphere;
 
 	sphereObj = zone->createEmptyObject();
 	sphere = sphereObj->addComponent<CSphereComponent>();
@@ -116,11 +116,11 @@ void SampleNoise3D::onInitApp()
 	m_largeFont->setFont("Segoe UI Light", 50);
 
 	// create 2D Canvas
-	CGameObject *canvasObject = zone->createEmptyObject();
-	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
+	CGameObject* canvasObject = zone->createEmptyObject();
+	CCanvas* canvas = canvasObject->addComponent<CCanvas>();
 
 	// create UI Text in Canvas
-	CGUIText *textLarge = canvas->createText(m_largeFont);
+	CGUIText* textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleNoise3D");
 	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
 #endif
@@ -133,7 +133,6 @@ void SampleNoise3D::onInitApp()
 	m_forwardRP->initRender(w, h);
 
 	m_postProcessorRP = new CPostProcessorRP();
-	m_postProcessorRP->enableAutoExposure(false);
 	m_postProcessorRP->enableBloomEffect(true);
 	m_postProcessorRP->enableFXAA(true);
 	m_postProcessorRP->initRender(w, h);
@@ -151,7 +150,7 @@ void SampleNoise3D::onUpdate()
 	params[2] = m_noiseOffset.Z;
 	params[3] = 8.0f;
 
-	for (CMaterial *m : m_materials)
+	for (CMaterial* m : m_materials)
 	{
 		m->setUniform4("uNoiseOffset", params);
 		m->updateShaderParams();

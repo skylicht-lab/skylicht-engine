@@ -68,6 +68,7 @@ namespace Skylicht
 		int m_lmInstancingSH;
 
 		int m_lightDirection;
+		int m_lightDirectionSSR;
 		int m_lightDirectionBake;
 
 		SMaterial m_pointLightPass;
