@@ -59,8 +59,13 @@ namespace Skylicht
 				return;
 
 			// do not render gpu skinning, pass for CSkinMeshRenderer
-			if (meshData->isSkinnedMesh() == true && meshData->isSoftwareSkinning() == false)
+			if (meshData->isSkinnedMesh() == true &&
+				meshData->isSoftwareSkinning() == false)
 				return;
+
+			// pass for CInstancingMeshRenderer
+			// if (meshData->isInstancing())
+			//	return;
 
 			bool cullingVisible = true;
 

@@ -42,10 +42,12 @@ namespace Skylicht
 		CMesh* RenderMesh;
 		CMesh* SoftwareSkinnedMesh;
 		CMesh* SoftwareBlendShapeMesh;
+		CMesh* InstancingMesh;
 
 		bool IsSkinnedMesh;
 		bool IsSoftwareSkinning;
 		bool IsSoftwareBlendShape;
+		bool IsInstancing;
 
 	public:
 
@@ -79,6 +81,11 @@ namespace Skylicht
 			return IsSoftwareSkinning;
 		}
 
+		inline bool isInstancing()
+		{
+			return IsInstancing;
+		}
+
 		void setSoftwareSkinning(bool b)
 		{
 			IsSoftwareSkinning = b;
@@ -98,6 +105,8 @@ namespace Skylicht
 		{
 			IsSkinnedMesh = b;
 		}
+
+		void setInstancing(bool b);
 
 		void setMaterial(CMaterial* material);
 

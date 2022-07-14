@@ -47,6 +47,9 @@ namespace Skylicht
 
 		core::array<IEntityData*> m_data;
 
+		IEntityData** m_dataPtr;
+		u32 m_dataCount;
+
 	public:
 		CEntity(CEntityManager* mgr);
 		CEntity(CEntityPrefab* mgr);
@@ -68,10 +71,7 @@ namespace Skylicht
 
 		inline IEntityData* getDataByIndex(u32 dataIndex)
 		{
-			if (dataIndex >= m_data.size())
-				return NULL;
-
-			return m_data[dataIndex];
+			return dataIndex >= m_dataCount ? NULL : m_dataPtr[dataIndex];
 		}
 
 		inline void setID(const char* id)
@@ -163,6 +163,9 @@ namespace Skylicht
 		// save at index
 		m_data[index] = newData;
 
+		m_dataPtr = m_data.pointer();
+		m_dataCount = m_data.size();
+
 		return newData;
 	}
 
@@ -202,6 +205,9 @@ namespace Skylicht
 
 		// save at index
 		m_data[index] = newData;
+
+		m_dataPtr = m_data.pointer();
+		m_dataCount = m_data.size();
 
 		return newData;
 	}
