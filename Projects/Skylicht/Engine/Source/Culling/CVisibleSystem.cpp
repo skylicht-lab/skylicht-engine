@@ -43,7 +43,11 @@ namespace Skylicht
 	void CVisibleSystem::beginQuery(CEntityManager* entityManager)
 	{
 		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
-			m_entities[depth].set_used(0);
+		{
+			m_entities[depth].Visibles.set_used(0);
+			m_entities[depth].Transforms.set_used(0);
+			m_entities[depth].Entities.set_used(0);
+		}
 
 		m_maxDepth = 0;
 	}
@@ -60,12 +64,11 @@ namespace Skylicht
 			if (transform->Depth > m_maxDepth)
 				m_maxDepth = transform->Depth;
 
-			m_entities[transform->Depth].push_back(SVisibleData());
+			SVisibleData& data = m_entities[transform->Depth];
 
-			SVisibleData& data = m_entities[transform->Depth].getLast();
-			data.Transform = transform;
-			data.Visible = visible;
-			data.Entity = entity;
+			data.Transforms.push_back(transform);
+			data.Visibles.push_back(visible);
+			data.Entities.push_back(entity);
 		}
 	}
 
@@ -78,22 +81,27 @@ namespace Skylicht
 	{
 		for (int depth = 0; depth <= m_maxDepth; depth++)
 		{
-			SVisibleData* entities = m_entities[depth].pointer();
-			u32 numEntity = m_entities[depth].size();
+			SVisibleData& data = m_entities[depth];
+
+			u32 numEntity = data.Entities.size();
+
+			CVisibleData** visibles = data.Visibles.pointer();
+			CWorldTransformData** transforms = data.Transforms.pointer();
+			CEntity** entities = data.Entities.pointer();
 
 			for (u32 i = 0; i < numEntity; i++)
 			{
-				SVisibleData& data = entities[i];
+				CVisibleData *visible = visibles[i];
 
-				data.Visible->SelfVisible = data.Entity->isVisible();
-				data.Visible->Visible = data.Visible->SelfVisible;
+				visible->SelfVisible = entities[i]->isVisible();
+				visible->Visible = visible->SelfVisible;
 
-				if (data.Visible->Visible == true && data.Transform->ParentIndex >= 0)
+				if (visible->Visible == true && transforms[i]->ParentIndex >= 0)
 				{
 					// link parent visible
-					CEntity* parentEntity = entityManager->getEntity(data.Transform->ParentIndex);
+					CEntity* parentEntity = entityManager->getEntity(transforms[i]->ParentIndex);
 					CVisibleData* parentVisible = GET_ENTITY_DATA(parentEntity, CVisibleData);
-					data.Visible->Visible = parentVisible->Visible;
+					visible->Visible = parentVisible->Visible;
 				}
 			}
 		}

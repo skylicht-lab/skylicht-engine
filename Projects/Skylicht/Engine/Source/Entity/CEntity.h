@@ -32,7 +32,9 @@ namespace Skylicht
 	class CEntityManager;
 	class CEntityPrefab;
 
-#define GET_ENTITY_DATA(entity, DataType) ((DataType*)(entity->getDataByIndex(DataType::DataTypeIndex)))
+#define GET_ENTITY_DATA(entity, DataType) ((DataType*)(entity->Data[DataType::DataTypeIndex]))
+
+#define MAX_ENTITY_DATA 64
 
 	class CEntity
 	{
@@ -45,10 +47,9 @@ namespace Skylicht
 		int m_index;
 		std::string m_id;
 
-		core::array<IEntityData*> m_data;
+	public:
 
-		IEntityData** m_dataPtr;
-		u32 m_dataCount;
+		IEntityData* Data[MAX_ENTITY_DATA];
 
 	public:
 		CEntity(CEntityManager* mgr);
@@ -66,12 +67,12 @@ namespace Skylicht
 
 		inline int getDataCount()
 		{
-			return (int)m_data.size();
+			return MAX_ENTITY_DATA;
 		}
 
 		inline IEntityData* getDataByIndex(u32 dataIndex)
 		{
-			return dataIndex >= m_dataCount ? NULL : m_dataPtr[dataIndex];
+			return Data[dataIndex];
 		}
 
 		inline void setID(const char* id)
@@ -144,28 +145,11 @@ namespace Skylicht
 		// also save this entity index
 		data->EntityIndex = m_index;
 
-		// add to list data
-		u32 reallocSize = index + 1;
-		u32 dataSize = m_data.size();
-
-		if (dataSize < reallocSize)
-		{
-			m_data.reallocate(reallocSize);
-			m_data.set_used(reallocSize);
-
-			for (u32 i = dataSize; i < reallocSize; i++)
-				m_data[i] = NULL;
-		}
-
-		if (m_data[index])
-			delete m_data[index];
+		if (Data[index])
+			delete Data[index];
 
 		// save at index
-		m_data[index] = newData;
-
-		m_dataPtr = m_data.pointer();
-		m_dataCount = m_data.size();
-
+		Data[index] = newData;
 		return newData;
 	}
 
@@ -187,27 +171,11 @@ namespace Skylicht
 		// also save this entity index
 		data->EntityIndex = m_index;
 
-		// add to list data
-		u32 reallocSize = index + 1;
-		u32 dataSize = m_data.size();
-
-		if (dataSize < reallocSize)
-		{
-			m_data.reallocate(reallocSize);
-			m_data.set_used(reallocSize);
-
-			for (u32 i = dataSize; i < reallocSize; i++)
-				m_data[i] = NULL;
-		}
-
-		if (m_data[index])
-			delete m_data[index];
+		if (Data[index])
+			delete Data[index];
 
 		// save at index
-		m_data[index] = newData;
-
-		m_dataPtr = m_data.pointer();
-		m_dataCount = m_data.size();
+		Data[index] = newData;
 
 		return newData;
 	}
@@ -216,14 +184,11 @@ namespace Skylicht
 	template<class T>
 	T* CEntity::getData()
 	{
-		IEntityData** data = m_data.pointer();
-		u32 numData = m_data.size();
-
-		for (u32 i = 0; i < numData; i++)
+		for (u32 i = 0; i < MAX_ENTITY_DATA; i++)
 		{
-			if (data[i])
+			if (Data[i])
 			{
-				T* t = dynamic_cast<T*>(data[i]);
+				T* t = dynamic_cast<T*>(Data[i]);
 				if (t)
 				{
 					return t;
@@ -238,13 +203,11 @@ namespace Skylicht
 	bool CEntity::removeData()
 	{
 		u32 index = CEntityDataTypeManager::getDataIndex(typeid(T));
-		if (index >= m_data.size())
-			return false;
 
-		if (m_data[index])
+		if (Data[index])
 		{
-			delete m_data[index];
-			m_data[index] = NULL;
+			delete Data[index];
+			Data[index] = NULL;
 			return true;
 		}
 

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,38 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CVisibleData.h"
+#include "CRenderMeshData.h"
 #include "Entity/IRenderSystem.h"
 #include "Transform/CWorldTransformData.h"
-
-#define MAX_CHILD_DEPTH 512
+#include "IndirectLighting/CIndirectLightingData.h"
 
 namespace Skylicht
 {
-	class CVisibleSystem : public IEntitySystem
+	class CMeshRendererInstancing : public IRenderSystem
 	{
 	protected:
-		struct SVisibleData
-		{
-			core::array<CVisibleData*> Visibles;
-			core::array<CWorldTransformData*> Transforms;
-			core::array<CEntity*> Entities;
-		};
-
-		int m_maxDepth;
-		SVisibleData m_entities[MAX_CHILD_DEPTH];
+		core::array<CRenderMeshData*> m_meshs;
+		core::array<CWorldTransformData*> m_transforms;
+		core::array<CIndirectLightingData*> m_indirectLightings;
 
 	public:
-		CVisibleSystem();
+		CMeshRendererInstancing();
 
-		virtual ~CVisibleSystem();
+		virtual ~CMeshRendererInstancing();
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		virtual void onQuery(CEntityManager *entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager* entityManager);
+		virtual void init(CEntityManager *entityManager);
 
-		virtual void update(CEntityManager* entityManager);
+		virtual void update(CEntityManager *entityManager);
+
+		virtual void render(CEntityManager *entityManager);
 	};
 }
