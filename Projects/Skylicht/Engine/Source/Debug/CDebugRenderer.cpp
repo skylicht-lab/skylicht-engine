@@ -43,7 +43,7 @@ namespace Skylicht
 
 	}
 
-	void CDebugRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CDebugRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
 
 	}

@@ -48,21 +48,26 @@ namespace Skylicht
 		m_transforms.set_used(0);
 	}
 
-	void CLODSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CLODSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-		if (!visible->Visible)
-			return;
+		for (int i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
 
-		CLODData* lod = GET_ENTITY_DATA(entity, CLODData);
-		if (lod == NULL)
-			return;
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+			if (!visible->Visible)
+				continue;
 
-		CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CLODData* lod = GET_ENTITY_DATA(entity, CLODData);
+			if (lod == NULL)
+				continue;
 
-		m_lods.push_back(lod);
-		m_visibles.push_back(visible);
-		m_transforms.push_back(transform);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+
+			m_lods.push_back(lod);
+			m_visibles.push_back(visible);
+			m_transforms.push_back(transform);
+		}
 	}
 
 	void CLODSystem::init(CEntityManager* entityManager)

@@ -34,19 +34,24 @@ namespace Skylicht
 		m_transforms.set_used(0);
 	}
 
-	void CGridPlaneRender::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CGridPlaneRender::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CGridPlaneData* gridPlane = GET_ENTITY_DATA(entity, CGridPlaneData);
-
-		if (gridPlane != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CEntity* entity = entities[i];
 
-			if (visible->Visible)
+			CGridPlaneData* gridPlane = GET_ENTITY_DATA(entity, CGridPlaneData);
+
+			if (gridPlane != NULL)
 			{
-				m_gridPlanes.push_back(gridPlane);
-				m_transforms.push_back(transform);
+				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+
+				if (visible->Visible)
+				{
+					m_gridPlanes.push_back(gridPlane);
+					m_transforms.push_back(transform);
+				}
 			}
 		}
 	}

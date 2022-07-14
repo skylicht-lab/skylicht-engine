@@ -47,18 +47,23 @@ namespace Skylicht
 		m_invTransforms.set_used(0);
 	}
 
-	void CLightCullingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CLightCullingSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CLightCullingData* culling = GET_ENTITY_DATA(entity, CLightCullingData);
-
-		if (culling != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
+			CEntity* entity = entities[i];
 
-			m_cullings.push_back(culling);
-			m_transforms.push_back(transform);
-			m_invTransforms.push_back(invTransform);
+			CLightCullingData* culling = GET_ENTITY_DATA(entity, CLightCullingData);
+
+			if (culling != NULL)
+			{
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
+
+				m_cullings.push_back(culling);
+				m_transforms.push_back(transform);
+				m_invTransforms.push_back(invTransform);
+			}
 		}
 	}
 
