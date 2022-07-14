@@ -54,18 +54,23 @@ namespace Skylicht
 		m_transforms.set_used(0);
 	}
 
-	void CSpriteRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CSpriteRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CSpriteDrawData* spriteData = GET_ENTITY_DATA(entity, CSpriteDrawData);
-		if (spriteData != NULL && spriteData->Frame != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+			CEntity* entity = entities[i];
 
-			if (visible->Visible)
+			CSpriteDrawData* spriteData = GET_ENTITY_DATA(entity, CSpriteDrawData);
+			if (spriteData != NULL && spriteData->Frame != NULL)
 			{
-				m_sprites.push_back(spriteData);
-				m_transforms.push_back(transform);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+
+				if (visible->Visible)
+				{
+					m_sprites.push_back(spriteData);
+					m_transforms.push_back(transform);
+				}
 			}
 		}
 	}

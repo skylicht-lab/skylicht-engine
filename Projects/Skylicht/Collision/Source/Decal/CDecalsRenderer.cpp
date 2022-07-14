@@ -44,20 +44,24 @@ namespace Skylicht
 		m_decalTransforms.set_used(0);
 	}
 
-	void CDecalsRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CDecalsRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CDecalData* decalData = GET_ENTITY_DATA(entity, CDecalData);
-		if (decalData != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
-			if (cullingData && cullingData->Visible)
+			CEntity* entity = entities[i];
+
+			CDecalData* decalData = GET_ENTITY_DATA(entity, CDecalData);
+			if (decalData != NULL)
 			{
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				m_decalTransforms.push_back(transform);
-				m_decalData.push_back(decalData);
+				CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+				if (cullingData && cullingData->Visible)
+				{
+					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					m_decalTransforms.push_back(transform);
+					m_decalData.push_back(decalData);
+				}
 			}
 		}
-
 	}
 
 	void CDecalsRenderer::init(CEntityManager* entityManager)

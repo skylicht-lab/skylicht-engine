@@ -51,65 +51,70 @@ namespace Skylicht
 		m_bboxAndMaterials.set_used(0);
 	}
 
-	void CCullingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CCullingSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-		if (culling == NULL)
-			return;
-
-		CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-		if (visible != NULL)
-			culling->CullingLayer = visible->CullingLayer;
-		else
-			culling->CullingLayer = 1;
-
-		if (culling != NULL && visible != NULL && visible->Visible == false)
+		for (int i = 0; i < numEntity; i++)
 		{
-			culling->Visible = false;
-		}
-		else if (culling != NULL)
-		{
-			CRenderMeshData* mesh = GET_ENTITY_DATA(entity, CRenderMeshData);
-			if (mesh != NULL)
-			{
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
+			CEntity* entity = entities[i];
 
-				{
-					m_cullings.push_back(culling);
+			CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
+			if (culling == NULL)
+				continue;
 
-					CMesh* meshObj = mesh->getMesh();
-
-					m_bboxAndMaterials.push_back(
-						SBBoxAndMaterial(
-							meshObj->getBoundingBox(),
-							&meshObj->Material
-						)
-					);
-
-					m_transforms.push_back(transform);
-					m_invTransforms.push_back(invTransform);
-				}
-			}
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+			if (visible != NULL)
+				culling->CullingLayer = visible->CullingLayer;
 			else
+				culling->CullingLayer = 1;
+
+			if (culling != NULL && visible != NULL && visible->Visible == false)
 			{
-				CCullingBBoxData* bbox = GET_ENTITY_DATA(entity, CCullingBBoxData);
-				if (bbox != NULL)
+				culling->Visible = false;
+			}
+			else if (culling != NULL)
+			{
+				CRenderMeshData* mesh = GET_ENTITY_DATA(entity, CRenderMeshData);
+				if (mesh != NULL)
 				{
 					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 					CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
-					m_cullings.push_back(culling);
+					{
+						m_cullings.push_back(culling);
 
-					m_bboxAndMaterials.push_back(
-						SBBoxAndMaterial(
-							bbox->BBox,
-							&bbox->Materials
-						)
-					);
+						CMesh* meshObj = mesh->getMesh();
 
-					m_transforms.push_back(transform);
-					m_invTransforms.push_back(invTransform);
+						m_bboxAndMaterials.push_back(
+							SBBoxAndMaterial(
+								meshObj->getBoundingBox(),
+								&meshObj->Material
+							)
+						);
+
+						m_transforms.push_back(transform);
+						m_invTransforms.push_back(invTransform);
+					}
+				}
+				else
+				{
+					CCullingBBoxData* bbox = GET_ENTITY_DATA(entity, CCullingBBoxData);
+					if (bbox != NULL)
+					{
+						CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+						CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
+
+						m_cullings.push_back(culling);
+
+						m_bboxAndMaterials.push_back(
+							SBBoxAndMaterial(
+								bbox->BBox,
+								&bbox->Materials
+							)
+						);
+
+						m_transforms.push_back(transform);
+						m_invTransforms.push_back(invTransform);
+					}
 				}
 			}
 		}
