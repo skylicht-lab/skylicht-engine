@@ -43,19 +43,24 @@ namespace Skylicht
 		m_renderers.set_used(0);
 	}
 
-	void CSoftwareBlendShapeSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CSoftwareBlendShapeSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
-		CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-
-		if (renderer != NULL && renderer->isSoftwareBlendShape())
+		for (int i = 0; i < numEntity; i++)
 		{
-			bool render = true;
-			if (culling != NULL && culling->Visible == false)
-				render = false;
+			CEntity* entity = entities[i];
 
-			if (render == true)
-				m_renderers.push_back(renderer);
+			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
+			CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
+
+			if (renderer != NULL && renderer->isSoftwareBlendShape())
+			{
+				bool render = true;
+				if (culling != NULL && culling->Visible == false)
+					render = false;
+
+				if (render == true)
+					m_renderers.push_back(renderer);
+			}
 		}
 	}
 

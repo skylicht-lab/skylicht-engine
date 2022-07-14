@@ -50,34 +50,39 @@ namespace Skylicht
 		m_indirectLightings.set_used(0);
 	}
 
-	void CMeshRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CMeshRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
-		if (meshData != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			if (meshData->getMesh() == NULL)
-				return;
+			CEntity* entity = entities[i];
 
-			// do not render gpu skinning, pass for CSkinMeshRenderer
-			if (meshData->isSkinnedMesh() == true &&
-				meshData->isSoftwareSkinning() == false)
-				return;
-
-			// pass for CInstancingMeshRenderer
-			// if (meshData->isInstancing())
-			//	return;
-
-			bool cullingVisible = true;
-
-			// get culling result from CCullingSystem
-			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
-			if (cullingData != NULL)
-				cullingVisible = cullingData->Visible;
-
-			// only render visible culling mesh
-			if (cullingVisible == true)
+			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
+			if (meshData != NULL)
 			{
-				m_meshs.push_back(meshData);
+				if (meshData->getMesh() == NULL)
+					continue;
+
+				// do not render gpu skinning, pass for CSkinMeshRenderer
+				if (meshData->isSkinnedMesh() == true &&
+					meshData->isSoftwareSkinning() == false)
+					continue;
+
+				// pass for CInstancingMeshRenderer
+				if (meshData->isInstancing())
+					continue;
+
+				bool cullingVisible = true;
+
+				// get culling result from CCullingSystem
+				CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+				if (cullingData != NULL)
+					cullingVisible = cullingData->Visible;
+
+				// only render visible culling mesh
+				if (cullingVisible == true)
+				{
+					m_meshs.push_back(meshData);
+				}
 			}
 		}
 	}

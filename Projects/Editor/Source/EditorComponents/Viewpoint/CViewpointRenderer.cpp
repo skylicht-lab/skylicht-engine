@@ -45,19 +45,23 @@ namespace Skylicht
 			m_transforms.set_used(0);
 		}
 
-		void CViewpointRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+		void CViewpointRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
-			CViewpointData* viewPointData = GET_ENTITY_DATA(entity, CViewpointData);
-
-			if (viewPointData != NULL)
+			for (int i = 0; i < numEntity; i++)
 			{
-				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CEntity* entity = entities[i];
+				CViewpointData* viewPointData = GET_ENTITY_DATA(entity, CViewpointData);
 
-				if (visible->Visible)
+				if (viewPointData != NULL)
 				{
-					m_viewpoints.push_back(viewPointData);
-					m_transforms.push_back(transformData);
+					CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+					CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+
+					if (visible->Visible)
+					{
+						m_viewpoints.push_back(viewPointData);
+						m_transforms.push_back(transformData);
+					}
 				}
 			}
 		}

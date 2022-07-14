@@ -81,7 +81,7 @@ namespace Skylicht
 
 		}
 
-		void CHandlesRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+		void CHandlesRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
 
 		}

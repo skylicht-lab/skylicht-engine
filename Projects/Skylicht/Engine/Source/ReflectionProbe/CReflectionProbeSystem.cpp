@@ -46,29 +46,34 @@ namespace Skylicht
 		m_entitiesPositions.set_used(0);
 	}
 
-	void CReflectionProbeSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CReflectionProbeSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
-		CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
-		CReflectionProbeData* probeData = GET_ENTITY_DATA(entity, CReflectionProbeData);
-
-		if (probeData != NULL && probeData->ReflectionTexture != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			m_probes.push_back(probeData);
-			m_probePositions.push_back(transformData);
+			CEntity* entity = entities[i];
 
-			if (transformData->NeedValidate || probeData->Invalidate)
+			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
+			CReflectionProbeData* probeData = GET_ENTITY_DATA(entity, CReflectionProbeData);
+
+			if (probeData != NULL && probeData->ReflectionTexture != NULL)
 			{
-				m_probeChange = true;
-				probeData->Invalidate = false;
+				m_probes.push_back(probeData);
+				m_probePositions.push_back(transformData);
+
+				if (transformData->NeedValidate || probeData->Invalidate)
+				{
+					m_probeChange = true;
+					probeData->Invalidate = false;
+				}
 			}
-		}
-		else if (lightData != NULL)
-		{
-			if (transformData->NeedValidate || lightData->Init || m_probeChange)
+			else if (lightData != NULL)
 			{
-				m_entities.push_back(lightData);
-				m_entitiesPositions.push_back(transformData);
+				if (transformData->NeedValidate || lightData->Init || m_probeChange)
+				{
+					m_entities.push_back(lightData);
+					m_entitiesPositions.push_back(transformData);
+				}
 			}
 		}
 	}

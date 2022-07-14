@@ -46,20 +46,25 @@ namespace Skylicht
 		m_components.set_used(0);
 	}
 
-	void CComponentTransformSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CComponentTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CTransformComponentData* component = GET_ENTITY_DATA(entity, CTransformComponentData);
-		if (component != NULL
-			&& component->TransformComponent != NULL
-			&& component->TransformComponent->hasChanged())
+		for (int i = 0; i < numEntity; i++)
 		{
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CEntity* entity = entities[i];
 
-			// notify changed for CWorldTransformSystem, sync in TransformComponent->hasChanged()
-			transform->HasChanged = true;
+			CTransformComponentData* component = GET_ENTITY_DATA(entity, CTransformComponentData);
+			if (component != NULL
+				&& component->TransformComponent != NULL
+				&& component->TransformComponent->hasChanged())
+			{
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-			m_transforms.push_back(transform);
-			m_components.push_back(component);
+				// notify changed for CWorldTransformSystem, sync in TransformComponent->hasChanged()
+				transform->HasChanged = true;
+
+				m_transforms.push_back(transform);
+				m_components.push_back(component);
+			}
 		}
 	}
 

@@ -48,20 +48,25 @@ namespace Skylicht
 		m_maxDepth = 0;
 	}
 
-	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-		CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+		for (int i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
 
-		if (transform->Depth > m_maxDepth)
-			m_maxDepth = transform->Depth;
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-		m_entities[transform->Depth].push_back(SVisibleData());
+			if (transform->Depth > m_maxDepth)
+				m_maxDepth = transform->Depth;
 
-		SVisibleData& data = m_entities[transform->Depth].getLast();
-		data.Transform = transform;
-		data.Visible = visible;
-		data.Entity = entity;
+			m_entities[transform->Depth].push_back(SVisibleData());
+
+			SVisibleData& data = m_entities[transform->Depth].getLast();
+			data.Transform = transform;
+			data.Visible = visible;
+			data.Entity = entity;
+		}
 	}
 
 	void CVisibleSystem::init(CEntityManager* entityManager)

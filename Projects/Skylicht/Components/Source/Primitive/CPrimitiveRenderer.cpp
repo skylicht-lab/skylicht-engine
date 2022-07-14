@@ -50,15 +50,20 @@ namespace Skylicht
 		}
 	}
 
-	void CPrimitiveRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CPrimitiveRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
-		if (p != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-			if (visible->Visible && !p->Instancing)
+			CEntity* entity = entities[i];
+
+			CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
+			if (p != NULL)
 			{
-				m_primitives[p->Type].push_back(p);
+				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+				if (visible->Visible && !p->Instancing)
+				{
+					m_primitives[p->Type].push_back(p);
+				}
 			}
 		}
 	}
