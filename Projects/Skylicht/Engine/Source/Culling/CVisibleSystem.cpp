@@ -93,14 +93,4 @@ namespace Skylicht
 			}
 		}
 	}
-
-	void CVisibleSystem::render(CEntityManager* entityManager)
-	{
-
-	}
-
-	void CVisibleSystem::postRender(CEntityManager* entityManager)
-	{
-
-	}
 }

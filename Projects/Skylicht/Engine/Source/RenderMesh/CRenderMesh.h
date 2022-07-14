@@ -51,6 +51,7 @@ namespace Skylicht
 		bool m_loadTexcoord2;
 		bool m_loadNormal;
 		bool m_fixInverseNormal;
+		bool m_enableInstancing;
 
 	public:
 		CRenderMesh();
@@ -76,6 +77,8 @@ namespace Skylicht
 		void initMaterialFromFile(const char* material);
 
 		void initMaterial(ArrayMaterial& materials, bool cloneMaterial = false);
+
+		void enableInstancing(bool b);
 
 		inline int getMaterialCount()
 		{

@@ -50,12 +50,12 @@ namespace Skylicht
 
 	void CLODSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
 	{
-		CLODData* lod = GET_ENTITY_DATA(entity, CLODData);
-		if (lod == NULL)
-			return;
-
 		CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 		if (!visible->Visible)
+			return;
+
+		CLODData* lod = GET_ENTITY_DATA(entity, CLODData);
+		if (lod == NULL)
 			return;
 
 		CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);

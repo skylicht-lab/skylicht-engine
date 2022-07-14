@@ -41,9 +41,11 @@ namespace Skylicht
 		RenderMesh(NULL),
 		SoftwareSkinnedMesh(NULL),
 		SoftwareBlendShapeMesh(NULL),
+		InstancingMesh(NULL),
 		IsSoftwareSkinning(false),
 		IsSoftwareBlendShape(false),
-		IsSkinnedMesh(false)
+		IsSkinnedMesh(false),
+		IsInstancing(false)
 	{
 
 	}
@@ -58,6 +60,9 @@ namespace Skylicht
 
 		if (SoftwareBlendShapeMesh != NULL)
 			SoftwareBlendShapeMesh->drop();
+
+		if (InstancingMesh != NULL)
+			InstancingMesh->drop();
 	}
 
 	void CRenderMeshData::setMesh(CMesh* mesh)
@@ -69,6 +74,18 @@ namespace Skylicht
 		}
 
 		RenderMesh = mesh->clone();
+	}
+
+	void CRenderMeshData::setInstancing(bool b)
+	{
+		IsInstancing = b;
+		if (IsInstancing)
+		{
+			if (!InstancingMesh)
+			{
+
+			}
+		}
 	}
 
 	void CRenderMeshData::setMaterial(CMaterial* material)
