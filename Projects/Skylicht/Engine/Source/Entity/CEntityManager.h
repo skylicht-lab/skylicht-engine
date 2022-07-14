@@ -36,6 +36,7 @@ namespace Skylicht
 	class CEntityManager
 	{
 	protected:
+		core::array<CEntity*> m_alives;
 		core::array<CEntity*> m_entities;
 		core::array<CEntity*> m_unused;
 

@@ -47,32 +47,37 @@ namespace Skylicht
 		m_probePositions.set_used(0);
 	}
 
-	void CIndirectLightingSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CIndirectLightingSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CLightProbeData* probeData = GET_ENTITY_DATA(entity, CLightProbeData);
-		if (probeData != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			m_probes.push_back(probeData);
+			CEntity* entity = entities[i];
 
-			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
-			m_probePositions.push_back(transformData);
-
-			if (transformData->NeedValidate || probeData->NeedValidate)
+			CLightProbeData* probeData = GET_ENTITY_DATA(entity, CLightProbeData);
+			if (probeData != NULL)
 			{
-				m_probeChange = true;
-				probeData->NeedValidate = false;
-			}
-		}
+				m_probes.push_back(probeData);
 
-		CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
-		if (lightData != NULL &&
-			lightData->AutoSH &&
-			*lightData->AutoSH &&
-			lightData->Type == CIndirectLightingData::SH9)
-		{
-			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
-			m_entities.push_back(lightData);
-			m_entitiesPositions.push_back(transformData);
+				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+				m_probePositions.push_back(transformData);
+
+				if (transformData->NeedValidate || probeData->NeedValidate)
+				{
+					m_probeChange = true;
+					probeData->NeedValidate = false;
+				}
+			}
+
+			CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
+			if (lightData != NULL &&
+				lightData->AutoSH &&
+				*lightData->AutoSH &&
+				lightData->Type == CIndirectLightingData::SH9)
+			{
+				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+				m_entities.push_back(lightData);
+				m_entitiesPositions.push_back(transformData);
+			}
 		}
 	}
 

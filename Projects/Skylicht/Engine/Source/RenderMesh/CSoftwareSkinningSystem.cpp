@@ -43,19 +43,24 @@ namespace Skylicht
 		m_renderers.set_used(0);
 	}
 
-	void CSoftwareSkinningSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CSoftwareSkinningSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
-		CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-
-		if (renderer != NULL && renderer->isSoftwareSkinning())
+		for (int i = 0; i < numEntity; i++)
 		{
-			bool render = true;
-			if (culling != NULL && culling->Visible == false)
-				render = false;
+			CEntity* entity = entities[i];
 
-			if (render == true)
-				m_renderers.push_back(renderer);
+			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
+			CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
+
+			if (renderer != NULL && renderer->isSoftwareSkinning())
+			{
+				bool render = true;
+				if (culling != NULL && culling->Visible == false)
+					render = false;
+
+				if (render == true)
+					m_renderers.push_back(renderer);
+			}
 		}
 	}
 
@@ -202,7 +207,7 @@ namespace Skylicht
 
 				++resultVertex;
 				++vertex;
-			}			
+			}
 		}
 
 		skinnedMesh->setDirty(EBT_VERTEX);

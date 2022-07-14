@@ -47,14 +47,14 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 
-		virtual void render(CEntityManager *entityManager);
+		virtual void render(CEntityManager* entityManager);
 
-		virtual void renderTransparent(CEntityManager *entityManager);
+		virtual void renderTransparent(CEntityManager* entityManager);
 	};
 }
