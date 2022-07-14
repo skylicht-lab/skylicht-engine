@@ -53,24 +53,29 @@ namespace Skylicht
 		m_transparents.set_used(0);
 	}
 
-	void CSkinnedMeshRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CSkinnedMeshRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
-		if (meshData != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			if (meshData->isSkinnedMesh() == true && meshData->isSoftwareSkinning() == false)
+			CEntity* entity = entities[i];
+
+			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
+			if (meshData != NULL)
 			{
-				bool cullingVisible = true;
-
-				// get culling result from CCullingSystem
-				CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
-				if (cullingData != NULL)
-					cullingVisible = cullingData->Visible;
-
-				// only render visible culling mesh
-				if (cullingVisible == true)
+				if (meshData->isSkinnedMesh() == true && meshData->isSoftwareSkinning() == false)
 				{
-					m_meshs.push_back(meshData);
+					bool cullingVisible = true;
+
+					// get culling result from CCullingSystem
+					CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+					if (cullingData != NULL)
+						cullingVisible = cullingData->Visible;
+
+					// only render visible culling mesh
+					if (cullingVisible == true)
+					{
+						m_meshs.push_back(meshData);
+					}
 				}
 			}
 		}

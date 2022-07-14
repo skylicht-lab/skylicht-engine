@@ -54,17 +54,22 @@ void CTestRenderSystem::beginQuery(CEntityManager* entityManager)
 	g_passSystemBeginQuery = true;
 }
 
-void CTestRenderSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+void CTestRenderSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 {
-	CTestEntityData* testEntity = entity->getData<CTestEntityData>();
-	if (testEntity != NULL)
+	for (int i = 0; i < numEntity; i++)
 	{
-		CWorldTransformData* testTransform = GET_ENTITY_DATA(entity, CWorldTransformData);
+		CEntity* entity = entities[i];
 
-		m_testEntities.push_back(testEntity);
-		m_testTransforms.push_back(testTransform);
+		CTestEntityData* testEntity = entity->getData<CTestEntityData>();
+		if (testEntity != NULL)
+		{
+			CWorldTransformData* testTransform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-		g_passSystemOnQuery = true;
+			m_testEntities.push_back(testEntity);
+			m_testTransforms.push_back(testTransform);
+
+			g_passSystemOnQuery = true;
+		}
 	}
 }
 

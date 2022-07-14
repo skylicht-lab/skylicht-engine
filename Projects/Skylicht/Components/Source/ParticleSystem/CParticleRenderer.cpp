@@ -48,34 +48,39 @@ namespace Skylicht
 			m_cullings.set_used(0);
 		}
 
-		void CParticleRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+		void CParticleRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
-			CParticleBufferData* particleData = GET_ENTITY_DATA(entity, CParticleBufferData);
-			if (particleData != NULL)
+			for (int i = 0; i < numEntity; i++)
 			{
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+				CEntity* entity = entities[i];
 
-				if (visible->Visible)
+				CParticleBufferData* particleData = GET_ENTITY_DATA(entity, CParticleBufferData);
+				if (particleData != NULL)
 				{
-					m_particles.push_back(particleData);
-					m_transforms.push_back(transform);
+					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 
-					// update bbox for culling
-					// use last frame data
-					CCullingBBoxData* box = GET_ENTITY_DATA(entity, CCullingBBoxData);
-
-					CGroup** groups = particleData->Groups.pointer();
-					for (u32 i = 0, n = particleData->Groups.size(); i < n; i++)
+					if (visible->Visible)
 					{
-						CGroup* g = groups[i];
-						if (i == 0)
-							box->BBox = g->getBBox();
-						else
-							box->BBox.addInternalBox(g->getBBox());
-					}
+						m_particles.push_back(particleData);
+						m_transforms.push_back(transform);
 
-					m_cullings.push_back(GET_ENTITY_DATA(entity, CCullingData));
+						// update bbox for culling
+						// use last frame data
+						CCullingBBoxData* box = GET_ENTITY_DATA(entity, CCullingBBoxData);
+
+						CGroup** groups = particleData->Groups.pointer();
+						for (u32 i = 0, n = particleData->Groups.size(); i < n; i++)
+						{
+							CGroup* g = groups[i];
+							if (i == 0)
+								box->BBox = g->getBBox();
+							else
+								box->BBox.addInternalBox(g->getBBox());
+						}
+
+						m_cullings.push_back(GET_ENTITY_DATA(entity, CCullingData));
+					}
 				}
 			}
 		}

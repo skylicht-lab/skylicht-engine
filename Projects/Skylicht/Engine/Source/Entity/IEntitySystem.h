@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CEntity.h"
 
 namespace Skylicht
-{	
+{
 	class CEntityManager;
 
 	class IEntitySystem
@@ -44,10 +44,10 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager) = 0;
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity) = 0;
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int count) = 0;
 
-		virtual void init(CEntityManager *entityManager) = 0;
+		virtual void init(CEntityManager* entityManager) = 0;
 
-		virtual void update(CEntityManager *entityManager) = 0;
+		virtual void update(CEntityManager* entityManager) = 0;
 	};
 }

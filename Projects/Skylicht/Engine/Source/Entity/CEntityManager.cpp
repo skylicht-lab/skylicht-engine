@@ -230,19 +230,22 @@ namespace Skylicht
 			s->beginQuery(this);
 		}
 
-		CEntity** entity = m_entities.pointer();
+		CEntity** entities = m_entities.pointer();
 		int numEntity = m_entities.size();
+
+		m_alives.set_used(0);
+		for (int i = 0; i < numEntity; i++)
+		{
+			if (entities[i]->isAlive())
+				m_alives.push_back(entities[i]);
+		}
+
+		entities = m_alives.pointer();
+		numEntity = m_alives.size();
 
 		for (IEntitySystem*& s : m_systems)
 		{
-			for (int i = 0; i < numEntity; i++)
-			{
-				if (entity[i]->isAlive())
-				{
-					s->onQuery(this, entity[i]);
-				}
-			}
-
+			s->onQuery(this, entities, numEntity);
 			s->update(this);
 		}
 	}
@@ -318,19 +321,12 @@ namespace Skylicht
 			s->beginQuery(this);
 		}
 
-		CEntity** entity = m_entities.pointer();
-		int numEntity = m_entities.size();
+		CEntity** entities = m_alives.pointer();
+		int numEntity = m_alives.size();
 
 		for (IRenderSystem*& s : m_renders)
 		{
-			for (int i = 0; i < numEntity; i++)
-			{
-				if (entity[i]->isAlive())
-				{
-					s->onQuery(this, entity[i]);
-				}
-			}
-
+			s->onQuery(this, entities, numEntity);
 			s->update(this);
 		}
 

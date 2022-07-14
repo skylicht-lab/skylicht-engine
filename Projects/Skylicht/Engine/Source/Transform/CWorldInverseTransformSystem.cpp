@@ -43,17 +43,22 @@ namespace Skylicht
 		m_worldInv.set_used(0);
 	}
 
-	void CWorldInverseTransformSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CWorldInverseTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CWorldInverseTransformData* worldInv = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
-
-		// worldInv->HasChanged is trigged at CWorldTransformSystem
-		if (worldInv != NULL && worldInv->HasChanged == true)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CEntity* entity = entities[i];
 
-			m_world.push_back(world);
-			m_worldInv.push_back(worldInv);
+			CWorldInverseTransformData* worldInv = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
+
+			// worldInv->HasChanged is trigged at CWorldTransformSystem
+			if (worldInv != NULL && worldInv->HasChanged == true)
+			{
+				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+
+				m_world.push_back(world);
+				m_worldInv.push_back(worldInv);
+			}
 		}
 	}
 

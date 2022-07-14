@@ -42,14 +42,19 @@ namespace Skylicht
 		m_meshs.set_used(0);
 	}
 
-	void CSkinnedMeshSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CSkinnedMeshSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
-		if (renderer != NULL && renderer->isSkinnedMesh())
+		for (int i = 0; i < numEntity; i++)
 		{
-			CSkinnedMesh* mesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
-			if (mesh != NULL)
-				m_meshs.push_back(mesh);
+			CEntity* entity = entities[i];
+
+			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
+			if (renderer != NULL && renderer->isSkinnedMesh())
+			{
+				CSkinnedMesh* mesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
+				if (mesh != NULL)
+					m_meshs.push_back(mesh);
+			}
 		}
 	}
 
