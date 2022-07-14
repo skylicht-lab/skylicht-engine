@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CWorldTransformSystem.h"
 #include "Transform/CWorldInverseTransformSystem.h"
 #include "RenderMesh/CMeshRenderer.h"
+#include "RenderMesh/CMeshRendererInstancing.h"
 #include "RenderMesh/CSkinnedMeshRenderer.h"
 #include "RenderMesh/CJointAnimationSystem.h"
 #include "RenderMesh/CSkinnedMeshSystem.h"
@@ -69,6 +70,7 @@ namespace Skylicht
 		// systems run after culling
 		addRenderSystem<CMeshRenderer>();
 		addRenderSystem<CSkinnedMeshRenderer>();
+		addRenderSystem<CMeshRendererInstancing>();
 		addRenderSystem<CDebugRenderer>();
 	}
 

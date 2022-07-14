@@ -33,24 +33,22 @@ namespace Skylicht
 {
 	CEntity::CEntity(CEntityManager* mgr) :
 		m_alive(true),
-		m_visible(true),
-		m_dataPtr(NULL),
-		m_dataCount(0)
+		m_visible(true)
 	{
 		m_index = mgr->getNumEntities();
 
-		m_dataPtr = m_data.pointer();
+		for (int i = 0; i < MAX_ENTITY_DATA; i++)
+			Data[i] = NULL;
 	}
 
 	CEntity::CEntity(CEntityPrefab* mgr) :
 		m_alive(true),
-		m_visible(true),
-		m_dataPtr(NULL),
-		m_dataCount(0)
+		m_visible(true)
 	{
 		m_index = mgr->getNumEntities();
 
-		m_dataPtr = m_data.pointer();
+		for (int i = 0; i < MAX_ENTITY_DATA; i++)
+			Data[i] = NULL;
 	}
 
 	CEntity::~CEntity()
@@ -60,13 +58,10 @@ namespace Skylicht
 
 	bool CEntity::removeData(u32 index)
 	{
-		if (index >= m_data.size())
-			return false;
-
-		if (m_data[index])
+		if (Data[index])
 		{
-			delete m_data[index];
-			m_data[index] = NULL;
+			delete Data[index];
+			Data[index] = NULL;
 			return true;
 		}
 
@@ -95,39 +90,24 @@ namespace Skylicht
 
 		int index = CEntityDataTypeManager::getDataIndex(typeid(*data));
 
-		// add to list data
-		u32 reallocSize = index + 1;
-		u32 dataSize = m_data.size();
-
-		if (dataSize < reallocSize)
-		{
-			m_data.reallocate(reallocSize);
-			m_data.set_used(reallocSize);
-
-			for (u32 i = dataSize; i < reallocSize; i++)
-				m_data[i] = NULL;
-		}
+		if (Data[index])
+			delete Data[index];
 
 		// save at index
-		m_data[index] = data;
-
-		m_dataPtr = m_data.pointer();
-		m_dataCount = m_data.size();
+		Data[index] = data;
 
 		return data;
 	}
 
 	void CEntity::removeAllData()
 	{
-		IEntityData** data = m_data.pointer();
-		for (u32 i = 0, n = m_data.size(); i < n; i++)
+		for (u32 i = 0; i < MAX_ENTITY_DATA; i++)
 		{
-			if (data[i])
-				delete data[i];
+			if (Data[i])
+			{
+				delete Data[i];
+				Data[i] = NULL;
+			}
 		}
-		m_data.clear();
-
-		m_dataPtr = m_data.pointer();
-		m_dataCount = m_data.size();
 	}
 }
