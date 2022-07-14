@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CVisibleSystem : public IRenderSystem
+	class CVisibleSystem : public IEntitySystem
 	{
 	protected:
 		struct SVisibleData
@@ -40,13 +40,6 @@ namespace Skylicht
 			CVisibleData* Visible;
 			CWorldTransformData* Transform;
 			CEntity* Entity;
-
-			SVisibleData()
-			{
-				Visible = NULL;
-				Transform = NULL;
-				Entity = NULL;
-			}
 		};
 
 		int m_maxDepth;
@@ -64,9 +57,5 @@ namespace Skylicht
 		virtual void init(CEntityManager* entityManager);
 
 		virtual void update(CEntityManager* entityManager);
-
-		virtual void render(CEntityManager* entityManager);
-
-		virtual void postRender(CEntityManager* entityManager);
 	};
 }

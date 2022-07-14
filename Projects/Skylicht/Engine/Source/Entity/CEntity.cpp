@@ -33,16 +33,24 @@ namespace Skylicht
 {
 	CEntity::CEntity(CEntityManager* mgr) :
 		m_alive(true),
-		m_visible(true)
+		m_visible(true),
+		m_dataPtr(NULL),
+		m_dataCount(0)
 	{
 		m_index = mgr->getNumEntities();
+
+		m_dataPtr = m_data.pointer();
 	}
 
 	CEntity::CEntity(CEntityPrefab* mgr) :
 		m_alive(true),
-		m_visible(true)
+		m_visible(true),
+		m_dataPtr(NULL),
+		m_dataCount(0)
 	{
 		m_index = mgr->getNumEntities();
+
+		m_dataPtr = m_data.pointer();
 	}
 
 	CEntity::~CEntity()
@@ -103,6 +111,9 @@ namespace Skylicht
 		// save at index
 		m_data[index] = data;
 
+		m_dataPtr = m_data.pointer();
+		m_dataCount = m_data.size();
+
 		return data;
 	}
 
@@ -115,5 +126,8 @@ namespace Skylicht
 				delete data[i];
 		}
 		m_data.clear();
+
+		m_dataPtr = m_data.pointer();
+		m_dataCount = m_data.size();
 	}
 }

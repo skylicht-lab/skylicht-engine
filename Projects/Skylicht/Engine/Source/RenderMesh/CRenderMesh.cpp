@@ -340,4 +340,14 @@ namespace Skylicht
 		for (CMaterial* m : m_materials)
 			m->applyMaterial();
 	}
+
+	void CRenderMesh::enableInstancing(bool b)
+	{
+		m_enable = b;
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			if (!renderer->isSkinnedMesh())
+				renderer->setInstancing(b);
+		}
+	}
 }
