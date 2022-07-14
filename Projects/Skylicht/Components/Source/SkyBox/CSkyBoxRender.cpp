@@ -47,20 +47,25 @@ namespace Skylicht
 		m_worlds.set_used(0);
 	}
 
-	void CSkyBoxRender::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CSkyBoxRender::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CSkyBoxData* skyDomeData = GET_ENTITY_DATA(entity, CSkyBoxData);
-
-		if (skyDomeData != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CEntity* entity = entities[i];
 
-			if (visible->Visible)
+			CSkyBoxData* skyDomeData = GET_ENTITY_DATA(entity, CSkyBoxData);
+
+			if (skyDomeData != NULL)
 			{
-				m_skyboxs.push_back(skyDomeData);
-				m_transforms.push_back(transformData);
-				m_worlds.push_back(core::IdentityMatrix);
+				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+
+				if (visible->Visible)
+				{
+					m_skyboxs.push_back(skyDomeData);
+					m_transforms.push_back(transformData);
+					m_worlds.push_back(core::IdentityMatrix);
+				}
 			}
 		}
 	}

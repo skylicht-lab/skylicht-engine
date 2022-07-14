@@ -50,17 +50,22 @@ namespace Skylicht
 			m_cullings.set_used(0);
 		}
 
-		void CParticleTrailRenderer::onQuery(CEntityManager* entityManager, CEntity* entity)
+		void CParticleTrailRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
-			CParticleTrailData* trail = GET_ENTITY_DATA(entity, CParticleTrailData);
-			if (trail != NULL)
+			for (int i = 0; i < numEntity; i++)
 			{
-				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-				if (visible->Visible == true)
-					m_trails.push_back(trail);
+				CEntity* entity = entities[i];
 
-				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-				m_cullings.push_back(culling);
+				CParticleTrailData* trail = GET_ENTITY_DATA(entity, CParticleTrailData);
+				if (trail != NULL)
+				{
+					CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+					if (visible->Visible == true)
+						m_trails.push_back(trail);
+
+					CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
+					m_cullings.push_back(culling);
+				}
 			}
 		}
 

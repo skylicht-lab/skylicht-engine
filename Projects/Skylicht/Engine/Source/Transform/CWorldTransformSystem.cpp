@@ -48,47 +48,51 @@ namespace Skylicht
 		m_maxDepth = 0;
 	}
 
-	void CWorldTransformSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CWorldTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		// transform data
-		CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
-
-		CWorldInverseTransformData* tInverse = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
-
-		if (t->Depth > m_maxDepth)
-			m_maxDepth = t->Depth;
-
-		t->NeedValidate = false;
-
-		int parentID = t->AttachParentIndex >= 0 ? t->AttachParentIndex : t->ParentIndex;
-
-		if (t->HasChanged == true)
+		for (int i = 0; i < numEntity; i++)
 		{
-			t->NeedValidate = true;
+			CEntity* entity = entities[i];
+			
+			CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-			// my transform changed
-			m_entities[t->Depth].push_back(t);
+			CWorldInverseTransformData* tInverse = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
-			// notify recalc inverse matrix
-			if (tInverse != NULL)
-				tInverse->HasChanged = true;
-		}
-		else if (parentID != -1)
-		{
-			CEntity* p = entityManager->getEntity(parentID);
-			CWorldTransformData* parent = GET_ENTITY_DATA(p, CWorldTransformData);
-			if (parent->HasChanged == true)
+			if (t->Depth > m_maxDepth)
+				m_maxDepth = t->Depth;
+
+			t->NeedValidate = false;
+
+			int parentID = t->AttachParentIndex >= 0 ? t->AttachParentIndex : t->ParentIndex;
+
+			if (t->HasChanged == true)
 			{
-				// this transform changed because parent is changed
-				t->HasChanged = true;
 				t->NeedValidate = true;
+
+				// my transform changed
+				m_entities[t->Depth].push_back(t);
 
 				// notify recalc inverse matrix
 				if (tInverse != NULL)
 					tInverse->HasChanged = true;
+			}
+			else if (parentID != -1)
+			{
+				CEntity* p = entityManager->getEntity(parentID);
+				CWorldTransformData* parent = GET_ENTITY_DATA(p, CWorldTransformData);
+				if (parent->HasChanged == true)
+				{
+					// this transform changed because parent is changed
+					t->HasChanged = true;
+					t->NeedValidate = true;
 
-				// parent transform changed
-				m_entities[t->Depth].push_back(t);
+					// notify recalc inverse matrix
+					if (tInverse != NULL)
+						tInverse->HasChanged = true;
+
+					// parent transform changed
+					m_entities[t->Depth].push_back(t);
+				}
 			}
 		}
 	}

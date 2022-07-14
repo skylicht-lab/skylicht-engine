@@ -61,21 +61,26 @@ namespace Skylicht
 		m_transforms.set_used(0);
 	}
 
-	void CLightProbeRender::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CLightProbeRender::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
 		if (s_showProbe == false)
 			return;
 
-		CLightProbeData* probeData = GET_ENTITY_DATA(entity, CLightProbeData);
-		if (probeData != NULL)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+			CEntity* entity = entities[i];
 
-			if (visible->Visible)
+			CLightProbeData* probeData = GET_ENTITY_DATA(entity, CLightProbeData);
+			if (probeData != NULL)
 			{
-				m_probes.push_back(probeData);
-				m_transforms.push_back(transformData);
+				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+
+				if (visible->Visible)
+				{
+					m_probes.push_back(probeData);
+					m_transforms.push_back(transformData);
+				}
 			}
 		}
 	}

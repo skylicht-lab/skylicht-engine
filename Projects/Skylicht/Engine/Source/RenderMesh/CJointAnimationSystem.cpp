@@ -45,19 +45,24 @@ namespace Skylicht
 		m_rootInvTransform.set_used(0);
 	}
 
-	void CJointAnimationSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+	void CJointAnimationSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CJointData* joint = GET_ENTITY_DATA(entity, CJointData);
-		if (joint != NULL && joint->RootIndex != 0)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CWorldInverseTransformData* rootInvTransform = GET_ENTITY_DATA(entityManager->getEntity(joint->RootIndex), CWorldInverseTransformData);
+			CEntity* entity = entities[i];
 
-			if (rootInvTransform != NULL)
+			CJointData* joint = GET_ENTITY_DATA(entity, CJointData);
+			if (joint != NULL && joint->RootIndex != 0)
 			{
-				m_joints.push_back(joint);
-				m_transforms.push_back(transform);
-				m_rootInvTransform.push_back(rootInvTransform);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CWorldInverseTransformData* rootInvTransform = GET_ENTITY_DATA(entityManager->getEntity(joint->RootIndex), CWorldInverseTransformData);
+
+				if (rootInvTransform != NULL)
+				{
+					m_joints.push_back(joint);
+					m_transforms.push_back(transform);
+					m_rootInvTransform.push_back(rootInvTransform);
+				}
 			}
 		}
 	}

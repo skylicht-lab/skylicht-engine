@@ -34,7 +34,7 @@ namespace Skylicht
 	{
 	protected:
 		core::array<CWorldTransformData*> m_world;
-		core::array<CWorldInverseTransformData*> m_worldInv;		
+		core::array<CWorldInverseTransformData*> m_worldInv;
 
 	public:
 		CWorldInverseTransformSystem();
@@ -43,10 +43,10 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity *entity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 	};
 }

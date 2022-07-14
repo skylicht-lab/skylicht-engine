@@ -63,28 +63,33 @@ namespace Skylicht
 			m_skipUpdate = false;
 		}
 
-		void CSelectObjectSystem::onQuery(CEntityManager* entityManager, CEntity* entity)
+		void CSelectObjectSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
 			if (m_skipUpdate)
 				return;
 
-			// check this entity is culled from camera?
-			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
-			if (cullingData != NULL && !cullingData->Visible)
-				return;
-
-			// check this entity is visible?
-			CVisibleData* visibleData = GET_ENTITY_DATA(entity, CVisibleData);
-			if (visibleData != NULL && !visibleData->Visible)
-				return;
-
-			CSelectObjectData* collisionData = GET_ENTITY_DATA(entity, CSelectObjectData);
-			if (collisionData != NULL)
+			for (int i = 0; i < numEntity; i++)
 			{
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CEntity* entity = entities[i];
 
-				m_collision.push_back(collisionData);
-				m_transform.push_back(transform);
+				// check this entity is culled from camera?
+				CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+				if (cullingData != NULL && !cullingData->Visible)
+					continue;
+
+				// check this entity is visible?
+				CVisibleData* visibleData = GET_ENTITY_DATA(entity, CVisibleData);
+				if (visibleData != NULL && !visibleData->Visible)
+					continue;
+
+				CSelectObjectData* collisionData = GET_ENTITY_DATA(entity, CSelectObjectData);
+				if (collisionData != NULL)
+				{
+					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+
+					m_collision.push_back(collisionData);
+					m_transform.push_back(transform);
+				}
 			}
 		}
 
