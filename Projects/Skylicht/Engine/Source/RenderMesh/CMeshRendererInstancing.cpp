@@ -92,15 +92,10 @@ namespace Skylicht
 
 	}
 
-	extern int cmpRenderMeshFunc(const void* a, const void* b);
-
 	void CMeshRendererInstancing::update(CEntityManager* entityManager)
 	{
 		// need sort render by material, texture, mesh		
 		u32 count = m_meshs.size();
-
-		// need sort by material
-		qsort(m_meshs.pointer(), count, sizeof(CRenderMeshData*), cmpRenderMeshFunc);
 
 		CRenderMeshData** renderData = m_meshs.pointer();
 
@@ -116,12 +111,15 @@ namespace Skylicht
 			m_indirectLightings.push_back(indirect);
 		}
 
+		/*
+		std::map<SMeshInstancingData*, int> instances;
 		// update instancing
 		for (u32 i = 0; i < count; i++)
 		{
 			SMeshInstancingData* data = renderData[i]->getInstancingData();
-
+			instances[data]++;
 		}
+		*/
 	}
 
 	void CMeshRendererInstancing::render(CEntityManager* entityManager)

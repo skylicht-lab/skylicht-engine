@@ -26,30 +26,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "IShaderInstancing.h"
+#include "CTBNSGInstancing.h"
+#include "CStandardSGInstancing.h"
 
 namespace Skylicht
 {
-	struct SVtxSGInstancing
-	{
-		SVec4 UVScale;
-		SVec4 Color;
-		SVec4 SpecGloss;
-		SVec4 AmbientColor;
-		core::vector3df SH[4];
-		core::matrix4 World;
-
-		bool operator==(const SVtxSGInstancing& other) const
-		{
-			return false;
-		}
-	};
-
-	class CStandardSGInstancing : public IShaderInstancing
+	class CTBNSGInstancing : public IShaderInstancing
 	{
 	public:
-		CStandardSGInstancing();
+		CTBNSGInstancing();
 
-		virtual ~CStandardSGInstancing();
+		virtual ~CTBNSGInstancing();
 
 		virtual IVertexBuffer* createInstancingMeshBuffer();
 
