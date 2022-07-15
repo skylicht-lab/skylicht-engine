@@ -110,7 +110,7 @@ namespace Skylicht
 
 			CShaderParams& params = matData[i]->getShaderParams();
 
-			// convert material data from BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml
+			// convert material data from BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml
 			vtx.UVScale = params.getParam(0);
 			vtx.Color = params.getParam(1);
 			vtx.SpecGloss = params.getParam(2);
@@ -142,5 +142,7 @@ namespace Skylicht
 			// world transform
 			vtx.World = worldData[i]->World;
 		}
+
+		vtxBuffer->setDirty();
 	}
 }

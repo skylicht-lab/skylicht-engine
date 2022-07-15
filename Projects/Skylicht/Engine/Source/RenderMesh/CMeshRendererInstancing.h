@@ -31,12 +31,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	struct SMeshInstancingGroup
+	{
+		core::array<CMaterial*> Materials;
+		core::array<CWorldTransformData*> Transforms;
+		core::array<CIndirectLightingData*> IndirectLightings;
+	};
+
 	class CMeshRendererInstancing : public IRenderSystem
 	{
 	protected:
 		core::array<CRenderMeshData*> m_meshs;
-		core::array<CWorldTransformData*> m_transforms;
-		core::array<CIndirectLightingData*> m_indirectLightings;
+
+		std::map<SMeshInstancingData*, SMeshInstancingGroup*> m_groups;
 
 	public:
 		CMeshRendererInstancing();
@@ -45,12 +52,12 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity** entities, int numEntity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 
-		virtual void render(CEntityManager *entityManager);
+		virtual void render(CEntityManager* entityManager);
 	};
 }

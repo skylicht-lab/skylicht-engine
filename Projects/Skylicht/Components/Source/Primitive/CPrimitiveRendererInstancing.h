@@ -78,9 +78,11 @@ namespace Skylicht
 	class CPrimitiveRendererInstancing : public CPrimitiveBaseRenderer
 	{
 	protected:
+		// group instancing
 		std::map<SShaderMesh, ArrayPrimitives> m_groups;
 		std::map<SShaderMesh, IVertexBuffer*> m_buffers;
 
+		// bake instancing
 		core::array<CMaterial*> m_materials;
 		core::array<CWorldTransformData*> m_transforms;
 		core::array<CIndirectLightingData*> m_indirectLightings;
