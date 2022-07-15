@@ -108,10 +108,10 @@ namespace Skylicht
 
 	void CShadowMapRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
-		if (mesh->Material.size() > (u32)bufferID)
+		if (mesh->Materials.size() > (u32)bufferID)
 		{
 			// set shader material
-			CShaderMaterial::setMaterial(mesh->Material[bufferID]);
+			CShaderMaterial::setMaterial(mesh->Materials[bufferID]);
 		}
 
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CRenderMeshData.h"
 #include "Material/Shader/CShaderManager.h"
 #include "TextureManager/CTextureManager.h"
+#include "MeshManager/CMeshManager.h"
 #include "Utils/CPath.h"
 #include "Importer/IMeshImporter.h"
 
@@ -41,11 +42,11 @@ namespace Skylicht
 		RenderMesh(NULL),
 		SoftwareSkinnedMesh(NULL),
 		SoftwareBlendShapeMesh(NULL),
-		InstancingMesh(NULL),
 		IsSoftwareSkinning(false),
 		IsSoftwareBlendShape(false),
 		IsSkinnedMesh(false),
-		IsInstancing(false)
+		IsInstancing(false),
+		InstancingData(NULL)
 	{
 
 	}
@@ -60,9 +61,6 @@ namespace Skylicht
 
 		if (SoftwareBlendShapeMesh != NULL)
 			SoftwareBlendShapeMesh->drop();
-
-		if (InstancingMesh != NULL)
-			InstancingMesh->drop();
 	}
 
 	void CRenderMeshData::setMesh(CMesh* mesh)
@@ -78,14 +76,12 @@ namespace Skylicht
 
 	void CRenderMeshData::setInstancing(bool b)
 	{
-		IsInstancing = b;
-		if (IsInstancing)
-		{
-			if (!InstancingMesh)
-			{
+		if (b)
+			InstancingData = CMeshManager::getInstance()->createGetInstancingMesh(RenderMesh);
+		else
+			InstancingData = NULL;
 
-			}
-		}
+		IsInstancing = b;
 	}
 
 	void CRenderMeshData::setMaterial(CMaterial* material)
@@ -104,7 +100,7 @@ namespace Skylicht
 			if (materialName == name)
 			{
 				material->addAffectMesh(mesh->getMeshBuffer(bufferID));
-				mesh->Material[bufferID] = material;
+				mesh->Materials[bufferID] = material;
 			}
 
 			bufferID++;
@@ -122,7 +118,7 @@ namespace Skylicht
 			if (materialName == name)
 			{
 				material->removeAffectMesh(mesh->getMeshBuffer(bufferID));
-				mesh->Material[bufferID] = NULL;
+				mesh->Materials[bufferID] = NULL;
 			}
 
 			bufferID++;

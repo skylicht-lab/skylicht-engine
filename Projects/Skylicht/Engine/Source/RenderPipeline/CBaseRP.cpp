@@ -132,9 +132,9 @@ namespace Skylicht
 		video::SMaterial& irrMaterial = mb->getMaterial();
 
 		// set shader (uniform) material
-		if (mesh->Material.size() > (u32)bufferID)
+		if (mesh->Materials.size() > (u32)bufferID)
 		{
-			CMaterial* material = mesh->Material[bufferID];
+			CMaterial* material = mesh->Materials[bufferID];
 			if (material == NULL)
 				return;
 

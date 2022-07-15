@@ -292,8 +292,8 @@ namespace Skylicht
 				return;
 
 			// set shader (uniform) material
-			if (mesh->Material.size() > (u32)bufferID)
-				CShaderMaterial::setMaterial(mesh->Material[bufferID]);
+			if (mesh->Materials.size() > (u32)bufferID)
+				CShaderMaterial::setMaterial(mesh->Materials[bufferID]);
 
 			IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 			IVideoDriver* driver = getVideoDriver();

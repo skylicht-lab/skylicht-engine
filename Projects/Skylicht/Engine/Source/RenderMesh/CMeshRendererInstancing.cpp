@@ -59,7 +59,8 @@ namespace Skylicht
 			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
 			if (meshData != NULL)
 			{
-				if (meshData->getMesh() == NULL)
+				if (meshData->getMesh() == NULL ||
+					meshData->getInstancingData() == NULL)
 					continue;
 
 				// do not render gpu skinning, pass for CSkinMeshRenderer
@@ -101,16 +102,25 @@ namespace Skylicht
 		// need sort by material
 		qsort(m_meshs.pointer(), count, sizeof(CRenderMeshData*), cmpRenderMeshFunc);
 
+		CRenderMeshData** renderData = m_meshs.pointer();
+
 		// get world transform
 		for (u32 i = 0; i < count; i++)
 		{
-			CEntity* entity = entityManager->getEntity(m_meshs[i]->EntityIndex);
+			CEntity* entity = entityManager->getEntity(renderData[i]->EntityIndex);
 
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			CIndirectLightingData* indirect = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
 			m_transforms.push_back(transform);
 			m_indirectLightings.push_back(indirect);
+		}
+
+		// update instancing
+		for (u32 i = 0; i < count; i++)
+		{
+			SMeshInstancingData* data = renderData[i]->getInstancingData();
+
 		}
 	}
 

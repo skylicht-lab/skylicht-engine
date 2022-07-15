@@ -100,8 +100,8 @@ namespace Skylicht
 		CMesh* meshA = pa->getMesh();
 		CMesh* meshB = pb->getMesh();
 
-		std::vector<CMaterial*>& materialsA = meshA->Material;
-		std::vector<CMaterial*>& materialsB = meshB->Material;
+		std::vector<CMaterial*>& materialsA = meshA->Materials;
+		std::vector<CMaterial*>& materialsB = meshB->Materials;
 
 		// no material, compare by mesh
 		if (materialsA.size() == 0 || materialsA.size() == 0)
