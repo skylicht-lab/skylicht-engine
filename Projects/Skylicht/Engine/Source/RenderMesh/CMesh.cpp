@@ -150,15 +150,18 @@ namespace Skylicht
 	{
 		for (u32 i = 0; i < MeshBuffers.size(); ++i)
 			MeshBuffers[i]->drop();
+		MeshBuffers.clear();
 
 		for (u32 i = 0; i < Materials.size(); ++i)
 		{
 			if (Materials[i])
 				Materials[i]->drop();
 		}
+		Materials.clear();
 
 		for (u32 i = 0, n = BlendShape.size(); i < n; i++)
 			BlendShape[i]->drop();
+		BlendShape.clear();
 	}
 
 	void CMesh::removeMeshBuffer(IMeshBuffer* buf)

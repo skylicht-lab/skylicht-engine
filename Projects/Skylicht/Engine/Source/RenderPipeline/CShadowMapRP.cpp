@@ -162,20 +162,31 @@ namespace Skylicht
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver* driver = getVideoDriver();
 
+		bool setMaterial = false;
+
 		switch (m_renderShadowState)
 		{
 		case DirectionLight:
 			if (materialRenderID == m_colorInstancing)
+			{
 				m_writeDepthMaterial.MaterialType = m_depthWriteStandardSGInstancing;
+				setMaterial = true;
+			}
 			break;
 		case PointLight:
 			if (materialRenderID == m_colorInstancing)
+			{
 				m_writeDepthMaterial.MaterialType = m_cubeDepthWriteStandardSGInstancing;
+				setMaterial = true;
+			}
 			break;
 		}
 
-		driver->setMaterial(m_writeDepthMaterial);
-		driver->drawMeshBuffer(mb);
+		if (setMaterial)
+		{
+			driver->setMaterial(m_writeDepthMaterial);
+			driver->drawMeshBuffer(mb);
+		}
 	}
 
 	bool CShadowMapRP::OnEvent(const SEvent& event)

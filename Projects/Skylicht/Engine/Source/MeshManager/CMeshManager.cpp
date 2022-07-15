@@ -65,10 +65,11 @@ namespace Skylicht
 			for (u32 i = 0; i < n; i++)
 				data->InstancingBuffer[i]->drop();
 
-			n = data->InstancingMeshBuffers.size();
+			n = data->RenderMeshBuffers.size();
 			for (u32 i = 0; i < n; i++)
-				data->InstancingMeshBuffers[i]->drop();
+				data->RenderMeshBuffers[i]->drop();
 
+			data->InstancingMesh->drop();
 			delete data;
 		}
 		m_instancingData.clear();
@@ -172,6 +173,11 @@ namespace Skylicht
 
 		u32 mbCount = mesh->getMeshBufferCount();
 
+		CMesh* instancingMesh = mesh->clone();
+		instancingMesh->UseInstancing = true;
+		instancingMesh->removeAllMeshBuffer();
+		data->InstancingMesh = instancingMesh;
+
 		for (u32 i = 0; i < mbCount; i++)
 		{
 			CMaterial* material = mesh->Materials[i];
@@ -193,27 +199,14 @@ namespace Skylicht
 			data->Materials.push_back(material);
 
 			mb->grab();
+
 			IShaderInstancing* instancing = material->getShader()->getInstancing();
 
-			IVertexBuffer* instancingBuffer = NULL;
+			IVertexBuffer* instancingBuffer = instancing->createInstancingMeshBuffer();
+			instancingBuffer->setHardwareMappingHint(EHM_STREAM);
 
-			for (u32 j = 0; j < data->Instancing.size(); j++)
-			{
-				if (instancing == data->Instancing[j])
-				{
-					instancingBuffer = data->InstancingBuffer[j];
-					break;
-				}
-			}
-
-			if (instancingBuffer == NULL)
-			{
-				instancingBuffer = instancing->createInstancingMeshBuffer();
-				instancingBuffer->setHardwareMappingHint(EHM_STREAM);
-
-				data->Instancing.push_back(instancing);
-				data->InstancingBuffer.push_back(instancingBuffer);
-			}
+			data->Instancing.push_back(instancing);
+			data->InstancingBuffer.push_back(instancingBuffer);
 
 			IMeshBuffer* newMeshBuffer = instancing->copyConvertMeshBuffer(mb);
 			if (newMeshBuffer)
@@ -225,7 +218,17 @@ namespace Skylicht
 				newMeshBuffer->setHardwareMappingHint(EHM_STATIC);
 
 				// save to render this meshbuffer
-				data->InstancingMeshBuffers.push_back(newMeshBuffer);
+				data->RenderMeshBuffers.push_back(newMeshBuffer);
+
+				// add mb to mesh for rendering
+				instancingMesh->addMeshBuffer(
+					newMeshBuffer,
+					mesh->MaterialName[i].c_str(),
+					mesh->Materials[i]
+				);
+
+				// apply material
+				mesh->Materials[i]->applyMaterial(newMeshBuffer->getMaterial());
 			}
 		}
 

@@ -142,5 +142,7 @@ namespace Skylicht
 			// world transform
 			vtx.World = worldData[i]->World;
 		}
+
+		vtxBuffer->setDirty();
 	}
 }

@@ -53,7 +53,9 @@ namespace Skylicht
 
 		core::array<IShaderInstancing*> Instancing;
 		core::array<IVertexBuffer*> InstancingBuffer;
-		core::array<IMeshBuffer*> InstancingMeshBuffers;
+		core::array<IMeshBuffer*> RenderMeshBuffers;
+
+		IMesh* InstancingMesh;
 	};
 
 	class CMesh : public IMesh

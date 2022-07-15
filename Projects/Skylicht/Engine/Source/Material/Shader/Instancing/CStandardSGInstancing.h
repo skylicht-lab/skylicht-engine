@@ -34,7 +34,6 @@ namespace Skylicht
 		SVec4 UVScale;
 		SVec4 Color;
 		SVec4 SpecGloss;
-		SVec4 AmbientColor;
 		core::vector3df SH[4];
 		core::matrix4 World;
 
