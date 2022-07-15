@@ -47,7 +47,15 @@ namespace Skylicht
 
 		virtual bool isSupport(IMesh* mesh);
 
+		virtual IMeshBuffer* copyConvertMeshBuffer(IMeshBuffer* mb);
+
 		virtual IVertexBuffer* createInstancingMeshBuffer() = 0;
+
+		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type) = 0;
+
+		virtual bool applyInstancing(IMeshBuffer* meshbuffer, IVertexBuffer* instancingBuffer);
+
+		virtual bool removeInstancing(IMeshBuffer* meshbuffer);
 
 		virtual bool applyInstancing(IMesh* mesh, IVertexBuffer* instancingBuffer);
 

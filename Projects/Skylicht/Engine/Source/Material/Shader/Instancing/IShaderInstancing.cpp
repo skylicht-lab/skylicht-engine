@@ -71,6 +71,32 @@ namespace Skylicht
 		return true;
 	}
 
+	bool IShaderInstancing::applyInstancing(IMeshBuffer* mb, IVertexBuffer* instancingBuffer)
+	{
+		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
+			return false;
+
+		mb->setVertexDescriptor(m_vtxDescriptor);
+
+		if (mb->getVertexBufferCount() == 1)
+			mb->addVertexBuffer(instancingBuffer);
+		else
+			mb->setVertexBuffer(instancingBuffer, 1);
+
+		return true;
+	}
+
+	bool IShaderInstancing::removeInstancing(IMeshBuffer* mb)
+	{
+		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
+			return false;
+
+		mb->setVertexDescriptor(m_baseVtxDescriptor);
+		mb->removeVertexBuffer(1);
+
+		return true;
+	}
+
 	bool IShaderInstancing::applyInstancing(IMesh* mesh, IVertexBuffer* instancingBuffer)
 	{
 		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
@@ -105,5 +131,23 @@ namespace Skylicht
 		}
 
 		return true;
+	}
+
+	IMeshBuffer* IShaderInstancing::copyConvertMeshBuffer(IMeshBuffer* smb)
+	{
+		IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
+
+		video::E_INDEX_TYPE vtt = smb->getIndexBuffer()->getType();
+
+		IMeshBuffer* dmb = createMeshBuffer(vtt);
+
+		mh->copyVertices(
+			smb->getVertexBuffer(0), 0, m_baseVtxDescriptor,
+			dmb->getVertexBuffer(0), 0, m_baseVtxDescriptor,
+			false);
+
+		mh->copyIndices(smb->getIndexBuffer(), dmb->getIndexBuffer());
+
+		return dmb;
 	}
 }

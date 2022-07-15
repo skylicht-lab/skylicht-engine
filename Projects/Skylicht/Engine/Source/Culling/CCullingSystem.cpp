@@ -87,7 +87,7 @@ namespace Skylicht
 						m_bboxAndMaterials.push_back(
 							SBBoxAndMaterial(
 								meshObj->getBoundingBox(),
-								&meshObj->Material
+								&meshObj->Materials
 							)
 						);
 

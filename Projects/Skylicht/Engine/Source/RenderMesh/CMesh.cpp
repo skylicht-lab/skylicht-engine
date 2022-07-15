@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CMesh.h"
+#include "Material/CMaterial.h"
 
 namespace Skylicht
 {
@@ -34,11 +35,7 @@ namespace Skylicht
 
 	CMesh::~CMesh()
 	{
-		for (u32 i = 0; i < MeshBuffers.size(); ++i)
-			MeshBuffers[i]->drop();
-
-		for (u32 i = 0, n = BlendShape.size(); i < n; i++)
-			BlendShape[i]->drop();
+		removeAllMeshBuffer();
 	}
 
 	CMesh* CMesh::clone()
@@ -51,7 +48,7 @@ namespace Skylicht
 			newMesh->addMeshBuffer(
 				MeshBuffers[i],
 				MaterialName[i].c_str(),
-				Material[i]
+				Materials[i]
 			);
 		}
 
@@ -129,9 +126,13 @@ namespace Skylicht
 		if (buf)
 		{
 			buf->grab();
+
+			if (m)
+				m->grab();
+
 			MeshBuffers.push_back(buf);
 			MaterialName.push_back(materialName);
-			Material.push_back(m);
+			Materials.push_back(m);
 		}
 	}
 
@@ -145,6 +146,21 @@ namespace Skylicht
 		}
 	}
 
+	void CMesh::removeAllMeshBuffer()
+	{
+		for (u32 i = 0; i < MeshBuffers.size(); ++i)
+			MeshBuffers[i]->drop();
+
+		for (u32 i = 0; i < Materials.size(); ++i)
+		{
+			if (Materials[i])
+				Materials[i]->drop();
+		}
+
+		for (u32 i = 0, n = BlendShape.size(); i < n; i++)
+			BlendShape[i]->drop();
+	}
+
 	void CMesh::removeMeshBuffer(IMeshBuffer* buf)
 	{
 		if (buf)
@@ -154,9 +170,13 @@ namespace Skylicht
 				if (MeshBuffers[i] == buf)
 				{
 					buf->drop();
+
+					if (Materials[i])
+						Materials[i]->drop();
+
 					MeshBuffers.erase(i);
 					MaterialName.erase(MaterialName.begin() + i);
-					Material.erase(Material.begin() + i);
+					Materials.erase(Materials.begin() + i);
 					return;
 				}
 			}
@@ -203,13 +223,17 @@ namespace Skylicht
 				// add buffer and material to new alpha mesh
 				alphaMesh->addMeshBuffer(MeshBuffers[i]);
 				alphaMesh->MaterialName.push_back(MaterialName[i]);
-				alphaMesh->Material.push_back(Material[i]);
+				alphaMesh->Materials.push_back(Materials[i]);
 
 				// remove buffer and material
 				MeshBuffers[i]->drop();
+
+				if (Materials[i])
+					Materials[i]->drop();
+
 				MeshBuffers.erase(i);
 				MaterialName.erase(MaterialName.begin() + i);
-				Material.erase(Material.begin() + i);
+				Materials.erase(Materials.begin() + i);
 
 				i--;
 				numMeshBuffer--;

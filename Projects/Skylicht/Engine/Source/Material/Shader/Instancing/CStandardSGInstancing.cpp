@@ -81,6 +81,11 @@ namespace Skylicht
 		return new CVertexBuffer<SVtxSGInstancing>();
 	}
 
+	IMeshBuffer* CStandardSGInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
+	{
+		return new CMeshBuffer<S3DVertex>(m_baseVtxDescriptor, type);
+	}	
+
 	void CStandardSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer,
 		core::array<CMaterial*>& materials,
 		core::array<CWorldTransformData*>& worlds,
