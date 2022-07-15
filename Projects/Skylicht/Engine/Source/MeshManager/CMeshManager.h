@@ -11,6 +11,8 @@ namespace Skylicht
 	protected:
 		std::map<std::string, CEntityPrefab*> m_meshPrefabs;
 
+		std::vector<SMeshInstancingData*> m_instancingData;
+
 	public:
 		CMeshManager();
 
@@ -23,5 +25,17 @@ namespace Skylicht
 		void releasePrefab(CEntityPrefab* prefab);
 
 		void releaseAllPrefabs();
+
+		void releaseAllInstancingMesh();
+
+		SMeshInstancingData* createGetInstancingMesh(CMesh* mesh);
+
+	protected:
+
+		bool canCreateInstancingMesh(CMesh* mesh);
+
+		bool compareMeshBuffer(CMesh* mesh, SMeshInstancingData* data);
+
+		SMeshInstancingData* createInstancingData(CMesh* mesh);
 	};
 }

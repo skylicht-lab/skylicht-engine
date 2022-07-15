@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
+#include "Material/Shader/Instancing/IShaderInstancing.h"
 
 namespace Skylicht
 {
@@ -43,6 +44,16 @@ namespace Skylicht
 		{
 			Weight = 1.0f;
 		}
+	};
+
+	struct SMeshInstancingData
+	{
+		core::array<IMeshBuffer*> MeshBuffers;
+		core::array<CMaterial*> Materials;
+
+		core::array<IShaderInstancing*> Instancing;
+		core::array<IVertexBuffer*> InstancingBuffer;
+		core::array<IMeshBuffer*> InstancingMeshBuffers;
 	};
 
 	class CMesh : public IMesh
@@ -77,6 +88,8 @@ namespace Skylicht
 
 		void addBlendShape(CBlendShape* blendShape);
 
+		void removeAllMeshBuffer();
+
 		void removeMeshBuffer(IMeshBuffer* buf);
 
 		void replaceMeshBuffer(int i, IMeshBuffer* buf);
@@ -95,7 +108,7 @@ namespace Skylicht
 
 		std::vector<std::string> MaterialName;
 
-		std::vector<CMaterial*> Material;
+		std::vector<CMaterial*> Materials;
 
 		core::array<CBlendShape*> BlendShape;
 

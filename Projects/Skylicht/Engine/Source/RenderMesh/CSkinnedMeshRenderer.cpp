@@ -94,8 +94,8 @@ namespace Skylicht
 		CMesh* meshA = pa->getMesh();
 		CMesh* meshB = pb->getMesh();
 
-		std::vector<CMaterial*>& materialsA = meshA->Material;
-		std::vector<CMaterial*>& materialsB = meshB->Material;
+		std::vector<CMaterial*>& materialsA = meshA->Materials;
+		std::vector<CMaterial*>& materialsB = meshB->Materials;
 
 		// no material, compare by mesh
 		if (materialsA.size() == 0 || materialsA.size() == 0)
@@ -210,7 +210,7 @@ namespace Skylicht
 			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
-				CMaterial* material = mesh->Material[j];
+				CMaterial* material = mesh->Materials[j];
 				if (material == NULL)
 				{
 					// draw opaque mesh because unknown material
@@ -270,7 +270,7 @@ namespace Skylicht
 			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
-				CMaterial* material = mesh->Material[j];
+				CMaterial* material = mesh->Materials[j];
 
 				if (material != NULL &&
 					material->getShader() != NULL &&

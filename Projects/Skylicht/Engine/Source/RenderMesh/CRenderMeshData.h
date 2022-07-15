@@ -42,12 +42,13 @@ namespace Skylicht
 		CMesh* RenderMesh;
 		CMesh* SoftwareSkinnedMesh;
 		CMesh* SoftwareBlendShapeMesh;
-		CMesh* InstancingMesh;
 
 		bool IsSkinnedMesh;
 		bool IsSoftwareSkinning;
 		bool IsSoftwareBlendShape;
 		bool IsInstancing;
+
+		SMeshInstancingData* InstancingData;
 
 	public:
 
@@ -68,6 +69,11 @@ namespace Skylicht
 		inline CMesh* getSoftwareBlendShapeMesh()
 		{
 			return SoftwareBlendShapeMesh;
+		}
+
+		inline SMeshInstancingData* getInstancingData()
+		{
+			return InstancingData;
 		}
 
 		void setMesh(CMesh* mesh);

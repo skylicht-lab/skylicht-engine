@@ -23,6 +23,7 @@ namespace Skylicht
 	CMeshManager::~CMeshManager()
 	{
 		releaseAllPrefabs();
+		releaseAllInstancingMesh();
 	}
 
 	void CMeshManager::releasePrefab(CEntityPrefab* prefab)
@@ -50,6 +51,27 @@ namespace Skylicht
 		}
 
 		m_meshPrefabs.clear();
+	}
+
+	void CMeshManager::releaseAllInstancingMesh()
+	{
+		for (SMeshInstancingData* data : m_instancingData)
+		{
+			u32 n = data->MeshBuffers.size();
+			for (u32 i = 0; i < n; i++)
+				data->MeshBuffers[i]->drop();
+
+			n = data->InstancingBuffer.size();
+			for (u32 i = 0; i < n; i++)
+				data->InstancingBuffer[i]->drop();
+
+			n = data->InstancingMeshBuffers.size();
+			for (u32 i = 0; i < n; i++)
+				data->InstancingMeshBuffers[i]->drop();
+
+			delete data;
+		}
+		m_instancingData.clear();
 	}
 
 	CEntityPrefab* CMeshManager::loadModel(const char* resource, const char* texturePath, bool loadNormalMap, bool flipNormalMap, bool loadTexcoord2, bool createBatching)
@@ -126,5 +148,143 @@ namespace Skylicht
 		}
 
 		return false;
+	}
+
+	SMeshInstancingData* CMeshManager::createGetInstancingMesh(CMesh* mesh)
+	{
+		if (!canCreateInstancingMesh(mesh))
+			return NULL;
+
+		for (SMeshInstancingData* instancingData : m_instancingData)
+		{
+			if (compareMeshBuffer(mesh, instancingData))
+			{
+				return instancingData;
+			}
+		}
+
+		return createInstancingData(mesh);
+	}
+
+	SMeshInstancingData* CMeshManager::createInstancingData(CMesh* mesh)
+	{
+		SMeshInstancingData* data = new SMeshInstancingData();
+
+		u32 mbCount = mesh->getMeshBufferCount();
+
+		for (u32 i = 0; i < mbCount; i++)
+		{
+			CMaterial* material = mesh->Materials[i];
+			if (material == NULL)
+				continue;
+
+			if (material->getShader() == NULL)
+				continue;
+
+			if (material->getShader()->getInstancing() == NULL)
+				continue;
+
+			if (material->getShader()->getInstancingShader() == NULL)
+				continue;
+
+			IMeshBuffer* mb = mesh->getMeshBuffer(i);
+
+			data->MeshBuffers.push_back(mb);
+			data->Materials.push_back(material);
+
+			IShaderInstancing* instancing = material->getShader()->getInstancing();
+
+			IVertexBuffer* instancingBuffer = NULL;
+
+			for (u32 j = 0; j < data->Instancing.size(); j++)
+			{
+				if (instancing == data->Instancing[j])
+				{
+					instancingBuffer = data->InstancingBuffer[j];
+					break;
+				}
+			}
+
+			if (instancingBuffer == NULL)
+			{
+				instancingBuffer = instancing->createInstancingMeshBuffer();
+
+				data->Instancing.push_back(instancing);
+				data->InstancingBuffer.push_back(instancingBuffer);
+			}
+
+			IMeshBuffer* newMeshBuffer = instancing->copyConvertMeshBuffer(mb);
+			if (newMeshBuffer)
+			{
+				// change vertex descriptor & add instancing buffer
+				instancing->applyInstancing(newMeshBuffer, instancingBuffer);
+
+				// save to render this meshbuffer
+				data->InstancingMeshBuffers.push_back(newMeshBuffer);
+			}
+		}
+
+		return data;
+	}
+
+	bool CMeshManager::canCreateInstancingMesh(CMesh* mesh)
+	{
+		u32 mbCount = mesh->getMeshBufferCount();
+
+		for (u32 i = 0; i < mbCount; i++)
+		{
+			CMaterial* material = mesh->Materials[i];
+			if (material == NULL)
+				continue;
+
+			if (material->getShader() == NULL)
+				continue;
+
+			if (material->getShader()->getInstancing() == NULL)
+				continue;
+
+			if (material->getShader()->getInstancingShader() == NULL)
+				continue;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	bool CMeshManager::compareMeshBuffer(CMesh* mesh, SMeshInstancingData* data)
+	{
+		u32 mbCount = mesh->getMeshBufferCount();
+		u32 mbID = 0;
+
+		for (u32 i = 0; i < mbCount; i++)
+		{
+			if (mbID >= data->MeshBuffers.size())
+				return false;
+
+			CMaterial* material = mesh->Materials[i];
+			if (material == NULL)
+				continue;
+
+			if (material->getShader() == NULL)
+				continue;
+
+			if (material->getShader()->getInstancing() == NULL)
+				continue;
+
+			if (material->getShader()->getInstancingShader() == NULL)
+				continue;
+
+			IMeshBuffer* mb = mesh->getMeshBuffer(i);
+			if (data->MeshBuffers[mbID] != mb)
+				return false;
+
+			if (data->Materials[mbID] != material)
+				return false;
+
+			mbID++;
+		}
+
+		return true;
 	}
 }
