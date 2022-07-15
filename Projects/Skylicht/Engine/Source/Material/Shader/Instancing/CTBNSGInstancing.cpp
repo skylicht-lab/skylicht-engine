@@ -23,16 +23,16 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CStandardSGInstancing.h"
+#include "CTBNSGInstancing.h"
 #include "Material/CMaterial.h"
 
 namespace Skylicht
 {
-	CStandardSGInstancing::CStandardSGInstancing()
+	CTBNSGInstancing::CTBNSGInstancing()
 	{
-		m_baseVtxDescriptor = getVideoDriver()->getVertexDescriptor(EVT_STANDARD);
+		m_baseVtxDescriptor = getVideoDriver()->getVertexDescriptor(EVT_TANGENTS);
 
-		core::stringc name = "standard_sg_instance";
+		core::stringc name = "tangentbinormal_sg_instance";
 		m_vtxDescriptor = getVideoDriver()->getVertexDescriptor(name);
 
 		if (m_vtxDescriptor == NULL)
@@ -71,22 +71,22 @@ namespace Skylicht
 		}
 	}
 
-	CStandardSGInstancing::~CStandardSGInstancing()
+	CTBNSGInstancing::~CTBNSGInstancing()
 	{
 
 	}
 
-	IVertexBuffer* CStandardSGInstancing::createInstancingMeshBuffer()
+	IVertexBuffer* CTBNSGInstancing::createInstancingMeshBuffer()
 	{
 		return new CVertexBuffer<SVtxSGInstancing>();
 	}
 
-	IMeshBuffer* CStandardSGInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
+	IMeshBuffer* CTBNSGInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
 	{
-		return new CMeshBuffer<S3DVertex>(m_baseVtxDescriptor, type);
+		return new CMeshBuffer<S3DVertexTangents>(m_baseVtxDescriptor, type);
 	}
 
-	void CStandardSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer,
+	void CTBNSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer,
 		core::array<CMaterial*>& materials,
 		core::array<CWorldTransformData*>& worlds,
 		core::array<CIndirectLightingData*> lightings)

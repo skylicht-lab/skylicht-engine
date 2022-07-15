@@ -728,8 +728,8 @@ namespace Skylicht
 		{
 			int matID = getVideoDriver()->getGPUProgrammingServices()->addHighLevelShaderMaterialFromFiles
 			(
-				vs.c_str(), "main", video::EVST_VS_4_0,
-				fs.c_str(), "main", video::EPST_PS_4_0,
+				vs.c_str(), "main", video::EVST_VS_5_0,
+				fs.c_str(), "main", video::EPST_PS_5_0,
 				this,
 				m_baseShader
 			);

@@ -192,6 +192,7 @@ namespace Skylicht
 			data->MeshBuffers.push_back(mb);
 			data->Materials.push_back(material);
 
+			mb->grab();
 			IShaderInstancing* instancing = material->getShader()->getInstancing();
 
 			IVertexBuffer* instancingBuffer = NULL;
@@ -208,6 +209,7 @@ namespace Skylicht
 			if (instancingBuffer == NULL)
 			{
 				instancingBuffer = instancing->createInstancingMeshBuffer();
+				instancingBuffer->setHardwareMappingHint(EHM_STREAM);
 
 				data->Instancing.push_back(instancing);
 				data->InstancingBuffer.push_back(instancingBuffer);
@@ -219,11 +221,15 @@ namespace Skylicht
 				// change vertex descriptor & add instancing buffer
 				instancing->applyInstancing(newMeshBuffer, instancingBuffer);
 
+				// set hardware static buffer
+				newMeshBuffer->setHardwareMappingHint(EHM_STATIC);
+
 				// save to render this meshbuffer
 				data->InstancingMeshBuffers.push_back(newMeshBuffer);
 			}
 		}
 
+		m_instancingData.push_back(data);
 		return data;
 	}
 
