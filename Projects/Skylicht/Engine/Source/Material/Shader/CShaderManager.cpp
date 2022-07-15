@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 
 #include "Instancing/CStandardSGInstancing.h"
+#include "Instancing/CTBNSGInstancing.h"
 
 namespace Skylicht
 {
@@ -143,6 +144,7 @@ namespace Skylicht
 	void CShaderManager::initSGDeferredShader()
 	{
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughnessInstancing.xml");
 
 		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
 
@@ -158,7 +160,9 @@ namespace Skylicht
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
+
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml");
+		if (shader) shader->setInstancing(new CTBNSGInstancing());
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightSSR.xml");
