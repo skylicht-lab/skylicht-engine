@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
@@ -40,14 +41,23 @@ namespace Skylicht
 
 	CMeshRendererInstancing::~CMeshRendererInstancing()
 	{
-
+		for (auto it : m_groups)
+		{
+			delete it.second;
+		}
 	}
 
 	void CMeshRendererInstancing::beginQuery(CEntityManager* entityManager)
 	{
 		m_meshs.set_used(0);
-		m_transforms.set_used(0);
-		m_indirectLightings.set_used(0);
+
+		for (auto it : m_groups)
+		{
+			SMeshInstancingGroup* group = it.second;
+			group->IndirectLightings.set_used(0);
+			group->Materials.set_used(0);
+			group->Transforms.set_used(0);
+		}
 	}
 
 	void CMeshRendererInstancing::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
@@ -95,35 +105,94 @@ namespace Skylicht
 	void CMeshRendererInstancing::update(CEntityManager* entityManager)
 	{
 		// need sort render by material, texture, mesh		
-		u32 count = m_meshs.size();
-
+		u32 numEntity = m_meshs.size();
 		CRenderMeshData** renderData = m_meshs.pointer();
 
-		// get world transform
-		for (u32 i = 0; i < count; i++)
+		// update instancing
+		for (u32 i = 0; i < numEntity; i++)
 		{
+			SMeshInstancingData* data = renderData[i]->getInstancingData();
+
+			SMeshInstancingGroup* group = m_groups[data];
+			if (group == NULL)
+			{
+				group = new SMeshInstancingGroup();
+				m_groups[data] = group;
+			}
+
 			CEntity* entity = entityManager->getEntity(renderData[i]->EntityIndex);
 
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			CIndirectLightingData* indirect = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
-			m_transforms.push_back(transform);
-			m_indirectLightings.push_back(indirect);
+			group->Transforms.push_back(transform);
+			group->IndirectLightings.push_back(indirect);
 		}
 
-		/*
-		std::map<SMeshInstancingData*, int> instances;
-		// update instancing
-		for (u32 i = 0; i < count; i++)
+		// bake instancing in group
+		for (auto it : m_groups)
 		{
-			SMeshInstancingData* data = renderData[i]->getInstancingData();
-			instances[data]++;
+			SMeshInstancingData* data = it.first;
+			SMeshInstancingGroup* group = it.second;
+
+			u32 count = group->Transforms.size();
+			if (count == 0)
+				continue;
+
+			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
+			{
+				group->Materials.set_used(0);
+
+				for (u32 j = 0; j < count; j++)
+					group->Materials.push_back(data->Materials[i]);
+
+				// batching transform & material data to buffer
+				data->Instancing[i]->batchIntancing(
+					data->InstancingBuffer[i],
+					group->Materials,
+					group->Transforms,
+					group->IndirectLightings
+				);
+			}
 		}
-		*/
 	}
 
 	void CMeshRendererInstancing::render(CEntityManager* entityManager)
 	{
+		IVideoDriver* driver = getVideoDriver();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
+		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
+
+		for (auto& it : m_groups)
+		{
+			SMeshInstancingData* data = it.first;
+			SMeshInstancingGroup* group = it.second;
+
+			u32 count = group->Transforms.size();
+			if (count == 0)
+				continue;
+
+			u32 numMeshBuffer = data->RenderMeshBuffers.size();
+			for (u32 i = 0; i < numMeshBuffer; i++)
+			{
+				CShader* shader = data->Materials[i]->getShader();
+
+				if (!rp->canRenderShader(shader))
+					continue;
+
+				CShaderMaterial::setMaterial(NULL);
+
+				int materialType = shader->getInstancingShader()->getMaterialRenderID();
+
+				rp->drawInstancingMeshBuffer(
+					(CMesh*)data->InstancingMesh,
+					i,
+					materialType,
+					entityManager,
+					false
+				);
+			}
+		}
 	}
 }

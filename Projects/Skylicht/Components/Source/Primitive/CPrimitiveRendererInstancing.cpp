@@ -146,8 +146,6 @@ namespace Skylicht
 
 			// batching transform & material data to buffer
 			instancing->batchIntancing(buffer, m_materials, m_transforms, m_indirectLightings);
-
-			buffer->setDirty();
 		}
 	}
 
