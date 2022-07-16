@@ -54,13 +54,11 @@ namespace Skylicht
 		{
 			CEntity* entity = entities[i];
 
-			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-			if (!visible->Visible)
-				continue;
-
 			CLODData* lod = GET_ENTITY_DATA(entity, CLODData);
 			if (lod == NULL)
 				continue;
+
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
@@ -96,6 +94,9 @@ namespace Skylicht
 		u32 numEntity = m_lods.size();
 		for (u32 i = 0; i < numEntity; i++)
 		{
+			if (!visibles[i]->Visible)
+				continue;
+
 			const f32* m = transforms[i]->World.pointer();
 
 			// distance vector
