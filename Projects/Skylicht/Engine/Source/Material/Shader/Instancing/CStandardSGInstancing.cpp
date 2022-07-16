@@ -55,17 +55,11 @@ namespace Skylicht
 			m_vtxDescriptor->addAttribute("uColor", 4, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
 			m_vtxDescriptor->addAttribute("uSpecGloss", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
 
-			// add sh color
-			m_vtxDescriptor->addAttribute("sh0", 3, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("sh1", 3, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("sh2", 3, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("sh3", 3, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 1);
-
 			// add instance matrix
-			m_vtxDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD8, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD9, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD10, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD11, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 1);
 
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
 		}
@@ -114,30 +108,6 @@ namespace Skylicht
 			vtx.UVScale = params.getParam(0);
 			vtx.Color = params.getParam(1);
 			vtx.SpecGloss = params.getParam(2);
-
-			// sh lighting
-			CIndirectLightingData* light = lightingData[i];
-			if (light->Type == CIndirectLightingData::SH9)
-			{
-				for (int j = 0; j < 4; j++)
-				{
-					if (light->SH)
-						vtx.SH[j].set(light->SH[j]);
-					else
-						vtx.SH[j].set(0.0f, 0.0f, 0.0f);
-				}
-			}
-			else
-			{
-				for (int j = 0; j < 4; j++)
-					vtx.SH[j].set(0.0f, 0.0f, 0.0f);
-
-				if (light->Type == CIndirectLightingData::AmbientColor)
-				{
-					// save ambient to SH0
-					vtx.SH[0].set(light->Color.getRed() * invColor, light->Color.getGreen() * invColor, light->Color.getBlue() * invColor);
-				}
-			}
 
 			// world transform
 			vtx.World = worldData[i]->World;

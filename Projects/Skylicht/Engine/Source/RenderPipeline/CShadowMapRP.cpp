@@ -60,9 +60,10 @@ namespace Skylicht
 		m_cubeDepthWriteShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWrite");
 		m_cubeDepthWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWriteSkinMesh");
 
-		m_colorInstancing = shaderMgr->getShaderIDByName("ColorInstancing");
 		m_depthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWStandardSGInstancing");
 		m_cubeDepthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWCubeStandardSGInstancing");
+		m_depthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWTBNSGInstancing");
+		m_cubeDepthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWCubeTBNSGInstancing");
 
 		m_writeDepthMaterial.BackfaceCulling = false;
 		m_writeDepthMaterial.FrontfaceCulling = false;
@@ -162,21 +163,33 @@ namespace Skylicht
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver* driver = getVideoDriver();
 
+		u32 vertexSize = mb->getVertexBuffer()->getVertexSize();
+
 		bool setMaterial = false;
 
 		switch (m_renderShadowState)
 		{
 		case DirectionLight:
-			if (materialRenderID == m_colorInstancing)
+			if (vertexSize == sizeof(S3DVertex))
 			{
 				m_writeDepthMaterial.MaterialType = m_depthWriteStandardSGInstancing;
 				setMaterial = true;
 			}
+			else if (vertexSize == sizeof(S3DVertexTangents))
+			{
+				m_writeDepthMaterial.MaterialType = m_depthWriteTBNSGInstancing;
+				setMaterial = true;
+			}
 			break;
 		case PointLight:
-			if (materialRenderID == m_colorInstancing)
+			if (vertexSize == sizeof(S3DVertex))
 			{
 				m_writeDepthMaterial.MaterialType = m_cubeDepthWriteStandardSGInstancing;
+				setMaterial = true;
+			}
+			else if (vertexSize == sizeof(S3DVertexTangents))
+			{
+				m_writeDepthMaterial.MaterialType = m_cubeDepthWriteTBNSGInstancing;
 				setMaterial = true;
 			}
 			break;

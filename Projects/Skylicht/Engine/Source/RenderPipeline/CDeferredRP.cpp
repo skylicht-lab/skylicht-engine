@@ -389,10 +389,7 @@ namespace Skylicht
 	{
 		if (m_isIndirectPass == true)
 		{
-			if (materialRenderID == m_colorInstancing)
-			{
-				CBaseRP::drawInstancingMeshBuffer(mesh, bufferID, m_lmInstancingSH, entityMgr, skinnedMesh);
-			}
+
 		}
 		else
 		{

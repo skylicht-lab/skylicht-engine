@@ -1,0 +1,9 @@
+<shaderConfig name="SDWTBNSGInstancing" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/SDWTBNSGVS.glsl" fs="GLSL/ShadowDepthWriteFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SDWTBNSGVS.hlsl" fs="HLSL/ShadowDepthWriteFS.hlsl"/>
+</shaderConfig>
