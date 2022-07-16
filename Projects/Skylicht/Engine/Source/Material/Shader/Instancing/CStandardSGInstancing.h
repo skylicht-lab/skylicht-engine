@@ -34,7 +34,7 @@ namespace Skylicht
 		SVec4 UVScale;
 		SVec4 Color;
 		SVec4 SpecGloss;
-		core::vector3df SH[4];
+
 		core::matrix4 World;
 
 		bool operator==(const SVtxSGInstancing& other) const

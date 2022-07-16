@@ -9,14 +9,16 @@ in vec3 vWorldNormal;
 in vec3 vWorldTangent;
 in vec3 vWorldBinormal;
 in float vTangentW;
-uniform vec4 uColor;
+in vec4 vColor;
+in vec2 vSpecGloss;
 layout(location = 0) out vec4 Diffuse;
 layout(location = 1) out vec4 Position;
 layout(location = 2) out vec4 Normal;
 layout(location = 3) out vec4 SG;
 void main(void)
 {
-	vec3 baseMap = texture(uTexAlbedo, vTexCoord0.xy).rgb * uColor.rgb;
+	vec3 baseMap = texture(uTexAlbedo, vTexCoord0.xy).rgb;
+	baseMap *= vColor.rgb;
 	vec3 normalMap = texture(uTexNormal, vTexCoord0.xy).xyz;
 	vec3 rmMap = texture(uTexRoughMetal, vTexCoord0.xy).rgb;
 	mat3 rotation = mat3(vWorldTangent, vWorldBinormal, vWorldNormal);

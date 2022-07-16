@@ -11,7 +11,12 @@ in vec3 vWorldTangent;
 in vec3 vWorldBinormal;
 in float vTangentW;
 
+#ifdef INSTANCING
+in vec4 vColor;
+in vec2 vSpecGloss;
+#else
 uniform vec4 uColor;
+#endif
 
 layout(location = 0) out vec4 Diffuse;
 layout(location = 1) out vec4 Position;
@@ -20,7 +25,14 @@ layout(location = 3) out vec4 SG;
 
 void main(void)
 {
-	vec3 baseMap = texture(uTexAlbedo, vTexCoord0.xy).rgb * uColor.rgb;
+	vec3 baseMap = texture(uTexAlbedo, vTexCoord0.xy).rgb;
+	
+#ifdef INSTANCING
+	baseMap *= vColor.rgb;
+#else
+	baseMap *= uColor.rgb;
+#endif	
+	
 	vec3 normalMap = texture(uTexNormal, vTexCoord0.xy).xyz;
 	vec3 rmMap = texture(uTexRoughMetal, vTexCoord0.xy).rgb;
 
