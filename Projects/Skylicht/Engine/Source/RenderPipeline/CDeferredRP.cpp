@@ -39,6 +39,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "IndirectLighting/CIndirectLightingData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 #include "Shadow/CShadowRTTManager.h"
+#include "Culling/CCullingSystem.h"
 
 namespace Skylicht
 {
@@ -462,6 +463,7 @@ namespace Skylicht
 			if (s_enableRenderIndirect == true)
 				entityManager->cullingAndRender();
 		}
+
 		m_isIndirectPass = false;
 
 		// STEP 02:
@@ -613,10 +615,14 @@ namespace Skylicht
 
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 
+		CCullingSystem::useCacheCulling(true);
+
 		// STEP 05
 		// call forwarder rp?
 		core::recti fwvp(0, 0, (int)renderW, (int)renderH);
 		onNext(m_target, camera, entityManager, fwvp);
+
+		CCullingSystem::useCacheCulling(false);
 
 		// STEP 06
 		// final pass to screen

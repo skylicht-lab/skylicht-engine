@@ -44,6 +44,8 @@ namespace Skylicht
 
 		bool Visible;
 
+		bool CameraCulled;
+
 		u32 CullingLayer;
 
 		DECLARE_DATA_TYPE_INDEX;
