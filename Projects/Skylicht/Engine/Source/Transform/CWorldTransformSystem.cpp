@@ -42,17 +42,17 @@ namespace Skylicht
 
 	void CWorldTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_maxDepth = 0;
-	}
-
-	void CWorldTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
-	{
 		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
 		{
 			SWorldTransformQuery& query = m_entities[depth];
 			query.Count = 0;
 		}
 
+		m_maxDepth = 0;
+	}
+
+	void CWorldTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	{
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];

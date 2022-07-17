@@ -33,6 +33,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	bool CCullingSystem::s_useCacheCulling = false;
+
 	CCullingSystem::CCullingSystem()
 	{
 		m_pipelineType = IRenderPipeline::Mix;
@@ -45,6 +47,9 @@ namespace Skylicht
 
 	void CCullingSystem::beginQuery(CEntityManager* entityManager)
 	{
+		if (s_useCacheCulling)
+			return;
+
 		m_cullings.set_used(0);
 		m_transforms.set_used(0);
 		m_invTransforms.set_used(0);
@@ -53,6 +58,9 @@ namespace Skylicht
 
 	void CCullingSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		if (s_useCacheCulling)
+			return;
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
@@ -62,12 +70,9 @@ namespace Skylicht
 				continue;
 
 			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-			if (visible != NULL)
-				culling->CullingLayer = visible->CullingLayer;
-			else
-				culling->CullingLayer = 1;
+			culling->CullingLayer = visible->CullingLayer;
 
-			if (culling != NULL && visible != NULL && visible->Visible == false)
+			if (culling != NULL && visible->Visible == false)
 			{
 				culling->Visible = false;
 			}
@@ -152,6 +157,17 @@ namespace Skylicht
 			CWorldInverseTransformData* invTransform = invTransforms[i];
 			SBBoxAndMaterial& bbBoxMat = bboxAndMaterials[i];
 
+			if (s_useCacheCulling)
+			{
+				// if we have the last test result
+				if (culling->CameraCulled == true)
+					continue;
+			}
+			else
+			{
+				culling->CameraCulled = false;
+			}
+
 			culling->Visible = true;
 
 			// check camera mask culling
@@ -178,6 +194,9 @@ namespace Skylicht
 			if (culling->Visible == false)
 				continue;
 
+			if (s_useCacheCulling)
+				continue;
+
 			// transform world bbox
 			culling->BBox = bbBoxMat.BBox;
 
@@ -189,12 +208,14 @@ namespace Skylicht
 				CShadowMapRP* shadowMapRP = (CShadowMapRP*)rp;
 
 				const core::aabbox3df& box = shadowMapRP->getFrustumBox();
-				culling->Visible = culling->BBox.intersectsWithBox(box);
+				culling->CameraCulled = !culling->BBox.intersectsWithBox(box);
+				culling->Visible = !culling->CameraCulled;
 				continue;
 			}
 			else
 			{
-				culling->Visible = culling->BBox.intersectsWithBox(cameraBox);
+				culling->CameraCulled = !culling->BBox.intersectsWithBox(cameraBox);
+				culling->Visible = !culling->CameraCulled;
 			}
 
 			// 2. Detect algorithm
@@ -225,6 +246,7 @@ namespace Skylicht
 
 						if (!boxInFrustum)
 						{
+							culling->CameraCulled = true;
 							culling->Visible = false;
 							break;
 						}
