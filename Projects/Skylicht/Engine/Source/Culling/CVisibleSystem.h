@@ -40,6 +40,19 @@ namespace Skylicht
 			core::array<CVisibleData*> Visibles;
 			core::array<CWorldTransformData*> Transforms;
 			core::array<CEntity*> Entities;
+
+			CVisibleData** VisiblesPtr;
+			CWorldTransformData** TransformsPtr;
+			CEntity** EntitiesPtr;
+
+			int Count;
+			int Alloc;
+
+			SVisibleData()
+			{
+				Alloc = 0;
+				Count = 0;
+			}
 		};
 
 		int m_maxDepth;

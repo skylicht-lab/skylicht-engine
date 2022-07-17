@@ -42,18 +42,21 @@ namespace Skylicht
 
 	void CWorldTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
-		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
-			m_entities[depth].set_used(0);
-
 		m_maxDepth = 0;
 	}
 
 	void CWorldTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
+		{
+			SWorldTransformQuery& query = m_entities[depth];
+			query.Count = 0;
+		}
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
-			
+
 			CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 			CWorldInverseTransformData* tInverse = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
@@ -70,7 +73,18 @@ namespace Skylicht
 				t->NeedValidate = true;
 
 				// my transform changed
-				m_entities[t->Depth].push_back(t);
+				SWorldTransformQuery& query = m_entities[t->Depth];
+
+				// hardcode dynamic array to optimize performance
+				if (query.Count + 1 >= query.Alloc)
+				{
+					int alloc = (query.Count + 1) * 2;
+					query.Entities.set_used(alloc);
+					query.EntitiesPtr = query.Entities.pointer();
+					query.Alloc = alloc;
+				}
+
+				query.EntitiesPtr[query.Count++] = t;
 
 				// notify recalc inverse matrix
 				if (tInverse != NULL)
@@ -91,7 +105,18 @@ namespace Skylicht
 						tInverse->HasChanged = true;
 
 					// parent transform changed
-					m_entities[t->Depth].push_back(t);
+					SWorldTransformQuery& query = m_entities[t->Depth];
+
+					// hardcode dynamic array to optimize performance
+					if (query.Count + 1 >= query.Alloc)
+					{
+						int alloc = (query.Count + 1) * 2;
+						query.Entities.set_used(alloc);
+						query.EntitiesPtr = query.Entities.pointer();
+						query.Alloc = alloc;
+					}
+
+					query.EntitiesPtr[query.Count++] = t;
 				}
 			}
 		}
@@ -103,8 +128,8 @@ namespace Skylicht
 
 	void CWorldTransformSystem::update(CEntityManager* entityManager)
 	{
-		CWorldTransformData** entities = m_entities[0].pointer();
-		u32 numEntity = m_entities[0].size();
+		CWorldTransformData** entities = m_entities[0].EntitiesPtr;
+		u32 numEntity = m_entities[0].Count;
 
 		// root transform
 		for (u32 i = 0; i < numEntity; i++)
@@ -117,8 +142,8 @@ namespace Skylicht
 		// child transform
 		for (int depth = 1; depth <= m_maxDepth; depth++)
 		{
-			entities = m_entities[depth].pointer();
-			numEntity = m_entities[depth].size();
+			entities = m_entities[depth].EntitiesPtr;
+			numEntity = m_entities[depth].Count;
 
 			for (u32 i = 0; i < numEntity; i++)
 			{
