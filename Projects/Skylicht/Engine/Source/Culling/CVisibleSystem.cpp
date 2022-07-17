@@ -42,18 +42,17 @@ namespace Skylicht
 
 	void CVisibleSystem::beginQuery(CEntityManager* entityManager)
 	{
-		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
-		{
-			m_entities[depth].Visibles.set_used(0);
-			m_entities[depth].Transforms.set_used(0);
-			m_entities[depth].Entities.set_used(0);
-		}
-
 		m_maxDepth = 0;
 	}
 
 	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
+		{
+			SVisibleData& data = m_entities[depth];
+			data.Count = 0;
+		}
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
@@ -66,9 +65,26 @@ namespace Skylicht
 
 			SVisibleData& data = m_entities[transform->Depth];
 
-			data.Transforms.push_back(transform);
-			data.Visibles.push_back(visible);
-			data.Entities.push_back(entity);
+			// hardcode dynamic array to optimize performance
+			if ((data.Count + 1) >= data.Alloc)
+			{
+				int alloc = (data.Count + 1) * 2;
+
+				data.Visibles.set_used(alloc);
+				data.Transforms.set_used(alloc);
+				data.Entities.set_used(alloc);
+
+				data.VisiblesPtr = data.Visibles.pointer();
+				data.TransformsPtr = data.Transforms.pointer();
+				data.EntitiesPtr = data.Entities.pointer();
+
+				data.Alloc = alloc;
+			}
+
+			data.TransformsPtr[data.Count] = transform;
+			data.VisiblesPtr[data.Count] = visible;
+			data.EntitiesPtr[data.Count] = entity;
+			data.Count++;
 		}
 	}
 
@@ -83,15 +99,14 @@ namespace Skylicht
 		{
 			SVisibleData& data = m_entities[depth];
 
-			u32 numEntity = data.Entities.size();
-
-			CVisibleData** visibles = data.Visibles.pointer();
-			CWorldTransformData** transforms = data.Transforms.pointer();
-			CEntity** entities = data.Entities.pointer();
+			u32 numEntity = data.Count;
+			CVisibleData** visibles = data.VisiblesPtr;
+			CWorldTransformData** transforms = data.TransformsPtr;
+			CEntity** entities = data.EntitiesPtr;
 
 			for (u32 i = 0; i < numEntity; i++)
 			{
-				CVisibleData *visible = visibles[i];
+				CVisibleData* visible = visibles[i];
 
 				visible->SelfVisible = entities[i]->isVisible();
 				visible->Visible = visible->SelfVisible;
