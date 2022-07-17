@@ -54,7 +54,7 @@ namespace Skylicht
 
 	void CForwardRP::releaseRTT()
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		if (m_target != NULL)
 			driver->removeTexture(m_target);
@@ -77,14 +77,14 @@ namespace Skylicht
 		initRTT(w, h);
 	}
 
-	void CForwardRP::render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport)
+	void CForwardRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
 			return;
 
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
-		ITexture *currentTarget = NULL;
+		ITexture* currentTarget = NULL;
 
 		if (m_useLinearRGB == true || m_postProcessor)
 		{

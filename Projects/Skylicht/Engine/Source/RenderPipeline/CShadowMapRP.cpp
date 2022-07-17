@@ -250,7 +250,7 @@ namespace Skylicht
 		m_renderShadowState = CShadowMapRP::DirectionLight;
 
 		IVideoDriver* driver = getVideoDriver();
-		for (int i = 0; i < m_numCascade; i++)
+		for (int i = m_numCascade - 1; i >= 0; i--)
 		{
 			// note: clear while 0xFFFFFFFF for max depth value
 			driver->setRenderTargetArray(m_depthTexture, i, true, true, SColor(255, 255, 255, 255));
@@ -260,7 +260,12 @@ namespace Skylicht
 			m_currentCSM = i;
 
 			if (castShadow)
-				entityManager->cullingAndRender();
+			{
+				if (i == m_numCascade - 1)
+					entityManager->cullingAndRender();
+				else
+					entityManager->render();
+			}
 		}
 
 		// todo

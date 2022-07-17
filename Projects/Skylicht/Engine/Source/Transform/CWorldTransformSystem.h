@@ -31,11 +31,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	struct SWorldTransformQuery
+	{
+		core::array<CWorldTransformData*> Entities;
+		int Count;
+		int Alloc;
+		CWorldTransformData** EntitiesPtr;
+
+		SWorldTransformQuery()
+		{
+			Count = 0;
+			Alloc = 0;
+		}
+	};
+
 	class CWorldTransformSystem : public IEntitySystem
 	{
 	protected:
 		int m_maxDepth;
-		core::array<CWorldTransformData*> m_entities[MAX_CHILD_DEPTH];
+		SWorldTransformQuery m_entities[MAX_CHILD_DEPTH];
 
 	public:
 		CWorldTransformSystem();
@@ -44,10 +58,10 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity** entities, int numEntity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 	};
 }
