@@ -56,6 +56,8 @@ namespace Skylicht
 		core::array<CWorldInverseTransformData*> m_invTransforms;
 		core::array<SBBoxAndMaterial> m_bboxAndMaterials;
 
+		static bool s_useCacheCulling;
+
 	public:
 		CCullingSystem();
 
@@ -72,5 +74,10 @@ namespace Skylicht
 		virtual void render(CEntityManager* entityManager);
 
 		virtual void postRender(CEntityManager* entityManager);
+
+		static void useCacheCulling(bool b)
+		{
+			s_useCacheCulling = b;
+		}
 	};
 }

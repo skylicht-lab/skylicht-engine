@@ -42,17 +42,17 @@ namespace Skylicht
 
 	void CVisibleSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_maxDepth = 0;
-	}
-
-	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
-	{
 		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
 		{
 			SVisibleData& data = m_entities[depth];
 			data.Count = 0;
 		}
 
+		m_maxDepth = 0;
+	}
+
+	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	{
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
