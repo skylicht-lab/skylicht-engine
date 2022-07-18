@@ -60,10 +60,10 @@ namespace Skylicht
 		m_cubeDepthWriteShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWrite");
 		m_cubeDepthWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWriteSkinMesh");
 
-		m_depthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWStandardSGInstancing");
-		m_cubeDepthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWCubeStandardSGInstancing");
-		m_depthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWTBNSGInstancing");
-		m_cubeDepthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWCubeTBNSGInstancing");
+		m_depthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWStandardInstancing");
+		m_cubeDepthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWCubeStandardInstancing");
+		m_depthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWTBNInstancing");
+		m_cubeDepthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWCubeTBNInstancing");
 
 		m_writeDepthMaterial.BackfaceCulling = false;
 		m_writeDepthMaterial.FrontfaceCulling = false;
