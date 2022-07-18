@@ -148,10 +148,10 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
 
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWStandardSGInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeStandardSGInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWTBNSGInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeTBNSGInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWStandardInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeStandardInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWTBNInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeTBNInstancing.xml");
 
 		CShader* shader = NULL;
 		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");

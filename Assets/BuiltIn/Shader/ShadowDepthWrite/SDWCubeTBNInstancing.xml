@@ -1,0 +1,12 @@
+<shaderConfig name="SDWCubeTBNInstancing" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
+		</fs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/SDWCubeTBNVS.glsl" fs="GLSL/ShadowCubeDepthWriteFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SDWCubeTBNVS.hlsl" fs="HLSL/ShadowCubeDepthWriteFS.hlsl"/>
+</shaderConfig>
