@@ -100,7 +100,7 @@ void CViewInit::initScene()
 
 	SColor ambientColor(255, 190, 220, 250);
 	float space = 50.0f;
-	int numObjectInRow = 20;
+	int numObjectInRow = 40;
 
 	int n = numObjectInRow / 2;
 	for (int x = -n; x < n; x++)

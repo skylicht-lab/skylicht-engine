@@ -28,14 +28,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/IRenderSystem.h"
 #include "Transform/CWorldTransformData.h"
 
-#define MAX_CHILD_DEPTH 512
-
 namespace Skylicht
 {
 	class CVisibleSystem : public IEntitySystem
 	{
 	protected:
-		struct SVisibleData
+		struct SVisibleQuery
 		{
 			core::array<CVisibleData*> Visibles;
 			core::array<CWorldTransformData*> Transforms;
@@ -48,15 +46,17 @@ namespace Skylicht
 			int Count;
 			int Alloc;
 
-			SVisibleData()
+			SVisibleQuery()
 			{
 				Alloc = 0;
 				Count = 0;
+				VisiblesPtr = NULL;
+				TransformsPtr = NULL;
+				EntitiesPtr = NULL;
 			}
 		};
 
-		int m_maxDepth;
-		SVisibleData m_entities[MAX_CHILD_DEPTH];
+		SVisibleQuery m_queries;
 
 	public:
 		CVisibleSystem();

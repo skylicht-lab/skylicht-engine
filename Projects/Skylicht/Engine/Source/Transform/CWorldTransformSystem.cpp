@@ -30,8 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CWorldTransformSystem::CWorldTransformSystem() :
-		m_maxDepth(0)
+	CWorldTransformSystem::CWorldTransformSystem()
 	{
 	}
 
@@ -42,27 +41,20 @@ namespace Skylicht
 
 	void CWorldTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
-		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
-		{
-			SWorldTransformQuery& query = m_entities[depth];
-			query.Count = 0;
-		}
-
-		m_maxDepth = 0;
+		SWorldTransformQuery* query = &m_queries;
+		query->Count = 0;
 	}
 
 	void CWorldTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		SWorldTransformQuery* query = &m_queries;
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
-
 			CWorldInverseTransformData* tInverse = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
-
-			if (t->Depth > m_maxDepth)
-				m_maxDepth = t->Depth;
 
 			t->NeedValidate = false;
 
@@ -72,19 +64,19 @@ namespace Skylicht
 			{
 				t->NeedValidate = true;
 
-				// my transform changed
-				SWorldTransformQuery& query = m_entities[t->Depth];
-
 				// hardcode dynamic array to optimize performance
-				if (query.Count + 1 >= query.Alloc)
+				if (query->Count + 1 >= query->Alloc)
 				{
-					int alloc = (query.Count + 1) * 2;
-					query.Entities.set_used(alloc);
-					query.EntitiesPtr = query.Entities.pointer();
-					query.Alloc = alloc;
+					int alloc = (query->Count + 1) * 2;
+					if (alloc < 32)
+						alloc = 32;
+
+					query->Entities.set_used(alloc);
+					query->EntitiesPtr = query->Entities.pointer();
+					query->Alloc = alloc;
 				}
 
-				query.EntitiesPtr[query.Count++] = t;
+				query->EntitiesPtr[query->Count++] = t;
 
 				// notify recalc inverse matrix
 				if (tInverse != NULL)
@@ -104,19 +96,19 @@ namespace Skylicht
 					if (tInverse != NULL)
 						tInverse->HasChanged = true;
 
-					// parent transform changed
-					SWorldTransformQuery& query = m_entities[t->Depth];
-
 					// hardcode dynamic array to optimize performance
-					if (query.Count + 1 >= query.Alloc)
+					if (query->Count + 1 >= query->Alloc)
 					{
-						int alloc = (query.Count + 1) * 2;
-						query.Entities.set_used(alloc);
-						query.EntitiesPtr = query.Entities.pointer();
-						query.Alloc = alloc;
+						int alloc = (query->Count + 1) * 2;
+						if (alloc < 32)
+							alloc = 32;
+
+						query->Entities.set_used(alloc);
+						query->EntitiesPtr = query->Entities.pointer();
+						query->Alloc = alloc;
 					}
 
-					query.EntitiesPtr[query.Count++] = t;
+					query->EntitiesPtr[query->Count++] = t;
 				}
 			}
 		}
@@ -128,38 +120,34 @@ namespace Skylicht
 
 	void CWorldTransformSystem::update(CEntityManager* entityManager)
 	{
-		CWorldTransformData** entities = m_entities[0].EntitiesPtr;
-		u32 numEntity = m_entities[0].Count;
+		SWorldTransformQuery* query = &m_queries;
 
-		// root transform
+		CWorldTransformData** entities = query->EntitiesPtr;
+		u32 numEntity = query->Count;
+
+		CEntity** allEntities = entityManager->getEntities();
+
 		for (u32 i = 0; i < numEntity; i++)
 		{
 			CWorldTransformData* t = entities[i];
-			t->World = t->Relative;
 			t->HasChanged = false;
-		}
 
-		// child transform
-		for (int depth = 1; depth <= m_maxDepth; depth++)
-		{
-			entities = m_entities[depth].EntitiesPtr;
-			numEntity = m_entities[depth].Count;
-
-			for (u32 i = 0; i < numEntity; i++)
+			if (t->Depth == 0)
 			{
-				// this entity
-				CWorldTransformData* t = entities[i];
+				t->World = t->Relative;
+			}
+			else
+			{
 				int parentID = t->AttachParentIndex >= 0 ? t->AttachParentIndex : t->ParentIndex;
 
 				// parent entity
-				CEntity* parent = entityManager->getEntity(parentID);
+				CEntity* parent = allEntities[parentID];
 				CWorldTransformData* p = GET_ENTITY_DATA(parent, CWorldTransformData);
 
 				// calc world = parent * relative
 				// - relative is copied from CTransformComponentSystem
 				// - relative is also defined in CEntityPrefab
 				t->World.setbyproduct_nocheck(p->World, t->Relative);
-				t->HasChanged = false;
 			}
 		}
 	}
