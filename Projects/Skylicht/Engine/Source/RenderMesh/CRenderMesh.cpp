@@ -63,6 +63,7 @@ namespace Skylicht
 			{
 				renderer->unusedMaterial(m);
 			}
+
 			m->drop();
 		}
 		m_materials.clear();

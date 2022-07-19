@@ -100,7 +100,12 @@ namespace Skylicht
 			if (materialName == name)
 			{
 				material->addAffectMesh(mesh->getMeshBuffer(bufferID));
+
+				if (mesh->Materials[bufferID])
+					mesh->Materials[bufferID]->drop();
+
 				mesh->Materials[bufferID] = material;
+				mesh->Materials[bufferID]->grab();
 			}
 
 			bufferID++;
@@ -118,7 +123,12 @@ namespace Skylicht
 			if (materialName == name)
 			{
 				material->removeAffectMesh(mesh->getMeshBuffer(bufferID));
-				mesh->Materials[bufferID] = NULL;
+
+				if (mesh->Materials[bufferID])
+				{
+					mesh->Materials[bufferID]->drop();
+					mesh->Materials[bufferID] = NULL;
+				}
 			}
 
 			bufferID++;
@@ -163,6 +173,8 @@ namespace Skylicht
 			meshBuffer->getBoundingBox() = originalMeshBuffer->getBoundingBox();
 
 			mesh->replaceMeshBuffer(i, meshBuffer);
+
+			meshBuffer->drop();
 		}
 
 		mesh->setHardwareMappingHint(EHM_STREAM, EBT_VERTEX);
