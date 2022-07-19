@@ -42,13 +42,14 @@ namespace Skylicht
 	{
 		CSkinnedMesh* newMesh = new CSkinnedMesh();
 		newMesh->BoundingBox = BoundingBox;
-		newMesh->MaterialName = MaterialName;
-		newMesh->Materials = Materials;
 		newMesh->Joints = Joints;
 
 		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)
 		{
-			newMesh->addMeshBuffer(MeshBuffers[i]);
+			newMesh->addMeshBuffer(
+				MeshBuffers[i],
+				MaterialName[i].c_str(),
+				Materials[i]);
 		}
 
 		for (u32 i = 0, n = BlendShape.size(); i < n; i++)
