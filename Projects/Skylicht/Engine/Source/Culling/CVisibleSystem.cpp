@@ -29,8 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CVisibleSystem::CVisibleSystem() :
-		m_maxDepth(0)
+	CVisibleSystem::CVisibleSystem()
 	{
 
 	}
@@ -42,17 +41,13 @@ namespace Skylicht
 
 	void CVisibleSystem::beginQuery(CEntityManager* entityManager)
 	{
-		for (int depth = 0; depth < MAX_CHILD_DEPTH; depth++)
-		{
-			SVisibleData& data = m_entities[depth];
-			data.Count = 0;
-		}
-
-		m_maxDepth = 0;
+		m_queries.Count = 0;
 	}
 
 	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		SVisibleQuery* data = &m_queries;
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
@@ -60,31 +55,28 @@ namespace Skylicht
 			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-			if (transform->Depth > m_maxDepth)
-				m_maxDepth = transform->Depth;
-
-			SVisibleData& data = m_entities[transform->Depth];
-
 			// hardcode dynamic array to optimize performance
-			if ((data.Count + 1) >= data.Alloc)
+			if ((data->Count + 1) >= data->Alloc)
 			{
-				int alloc = (data.Count + 1) * 2;
+				int alloc = (data->Count + 1) * 2;
+				if (alloc < 32)
+					alloc = 32;
 
-				data.Visibles.set_used(alloc);
-				data.Transforms.set_used(alloc);
-				data.Entities.set_used(alloc);
+				data->Visibles.set_used(alloc);
+				data->Transforms.set_used(alloc);
+				data->Entities.set_used(alloc);
 
-				data.VisiblesPtr = data.Visibles.pointer();
-				data.TransformsPtr = data.Transforms.pointer();
-				data.EntitiesPtr = data.Entities.pointer();
+				data->VisiblesPtr = data->Visibles.pointer();
+				data->TransformsPtr = data->Transforms.pointer();
+				data->EntitiesPtr = data->Entities.pointer();
 
-				data.Alloc = alloc;
+				data->Alloc = alloc;
 			}
 
-			data.TransformsPtr[data.Count] = transform;
-			data.VisiblesPtr[data.Count] = visible;
-			data.EntitiesPtr[data.Count] = entity;
-			data.Count++;
+			data->TransformsPtr[data->Count] = transform;
+			data->VisiblesPtr[data->Count] = visible;
+			data->EntitiesPtr[data->Count] = entity;
+			data->Count++;
 		}
 	}
 
@@ -95,29 +87,29 @@ namespace Skylicht
 
 	void CVisibleSystem::update(CEntityManager* entityManager)
 	{
-		for (int depth = 0; depth <= m_maxDepth; depth++)
+		SVisibleQuery* data = &m_queries;
+
+		CVisibleData** visibles = data->VisiblesPtr;
+		CWorldTransformData** transforms = data->TransformsPtr;
+		CEntity** entities = data->EntitiesPtr;
+
+		CEntity** allEntities = entityManager->getEntities();
+
+		u32 numEntity = data->Count;
+
+		for (u32 i = 0; i < numEntity; i++)
 		{
-			SVisibleData& data = m_entities[depth];
+			CVisibleData* visible = visibles[i];
 
-			u32 numEntity = data.Count;
-			CVisibleData** visibles = data.VisiblesPtr;
-			CWorldTransformData** transforms = data.TransformsPtr;
-			CEntity** entities = data.EntitiesPtr;
+			visible->SelfVisible = entities[i]->isVisible();
+			visible->Visible = visible->SelfVisible;
 
-			for (u32 i = 0; i < numEntity; i++)
+			if (visible->Visible == true && transforms[i]->ParentIndex >= 0)
 			{
-				CVisibleData* visible = visibles[i];
-
-				visible->SelfVisible = entities[i]->isVisible();
-				visible->Visible = visible->SelfVisible;
-
-				if (visible->Visible == true && transforms[i]->ParentIndex >= 0)
-				{
-					// link parent visible
-					CEntity* parentEntity = entityManager->getEntity(transforms[i]->ParentIndex);
-					CVisibleData* parentVisible = GET_ENTITY_DATA(parentEntity, CVisibleData);
-					visible->Visible = parentVisible->Visible;
-				}
+				// link parent visible
+				CEntity* parentEntity = allEntities[transforms[i]->ParentIndex];
+				CVisibleData* parentVisible = GET_ENTITY_DATA(parentEntity, CVisibleData);
+				visible->Visible = parentVisible->Visible;
 			}
 		}
 	}

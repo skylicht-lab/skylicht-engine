@@ -27,8 +27,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CWorldTransformData.h"
 #include "Entity/IEntitySystem.h"
 
-#define MAX_CHILD_DEPTH 512
-
 namespace Skylicht
 {
 	struct SWorldTransformQuery
@@ -42,14 +40,14 @@ namespace Skylicht
 		{
 			Count = 0;
 			Alloc = 0;
+			EntitiesPtr = NULL;
 		}
 	};
 
 	class CWorldTransformSystem : public IEntitySystem
 	{
 	protected:
-		int m_maxDepth;
-		SWorldTransformQuery m_entities[MAX_CHILD_DEPTH];
+		SWorldTransformQuery m_queries;
 
 	public:
 		CWorldTransformSystem();

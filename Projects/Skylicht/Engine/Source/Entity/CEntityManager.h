@@ -31,14 +31,34 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CGameObject.h"
 #include "Camera/CCamera.h"
 
+#define MAX_ENTITY_DEPTH 256
+
 namespace Skylicht
 {
+	struct SEntityDepth
+	{
+		core::array<CEntity*> Entities;
+		int Count;
+		int Alloc;
+
+		CEntity** EntitiesPtr;
+
+		SEntityDepth()
+		{
+			Count = 0;
+			Alloc = 0;
+			EntitiesPtr = NULL;
+		}
+	};
+
 	class CEntityManager
 	{
 	protected:
 		core::array<CEntity*> m_alives;
 		core::array<CEntity*> m_entities;
 		core::array<CEntity*> m_unused;
+
+		SEntityDepth m_sortDepth[MAX_ENTITY_DEPTH];
 
 		std::vector<IEntitySystem*> m_systems;
 		std::vector<IRenderSystem*> m_renders;
@@ -62,6 +82,10 @@ namespace Skylicht
 		void renderEmission();
 
 		void cullingAndRender();
+
+	protected:
+
+		void sortAliveEntities();
 
 	public:
 
@@ -101,6 +125,11 @@ namespace Skylicht
 		inline CEntity* getEntity(int index)
 		{
 			return m_entities[index];
+		}
+
+		inline CEntity** getEntities()
+		{
+			return m_entities.pointer();
 		}
 
 		CEntity* getEntityByID(const char* id);

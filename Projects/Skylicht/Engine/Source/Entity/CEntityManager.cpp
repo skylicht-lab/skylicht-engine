@@ -225,6 +225,65 @@ namespace Skylicht
 		m_unused.push_back(entity);
 	}
 
+	void CEntityManager::sortAliveEntities()
+	{
+		CEntity** entities = m_entities.pointer();
+		u32 numEntity = m_entities.size();
+
+		int maxDepth = 0;
+
+		for (u32 i = 0; i < MAX_ENTITY_DEPTH; i++)
+		{
+			SEntityDepth* depth = &m_sortDepth[i];
+			depth->Count = 0;
+		}
+
+		for (u32 i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
+
+			if (entity->isAlive())
+			{
+				// sync the depth
+				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+				entity->Depth = world->Depth;
+
+				SEntityDepth* depth = &m_sortDepth[world->Depth];
+
+				if (depth->Count + 1 >= depth->Alloc)
+				{
+					int alloc = (depth->Count + 1) * 2;
+					if (alloc < 32)
+						alloc = 32;
+
+					depth->Entities.set_used(alloc);
+					depth->EntitiesPtr = depth->Entities.pointer();
+					depth->Alloc = alloc;
+				}
+
+				// save the alive
+				depth->EntitiesPtr[depth->Count] = entity;
+				depth->Count++;
+
+				if (maxDepth < world->Depth)
+					maxDepth = world->Depth;
+			}
+		}
+
+		m_alives.set_used(numEntity);
+		CEntity** alives = m_alives.pointer();
+
+		// copy and sort the alives by depth
+		int count = 0;
+		for (int i = 0; i <= maxDepth; i++)
+		{
+			SEntityDepth* depth = &m_sortDepth[i];
+			for (int j = 0; j < depth->Count; j++)
+				alives[count++] = depth->EntitiesPtr[j];
+		}
+		m_alives.set_used(count);
+	}
+
 	void CEntityManager::update()
 	{
 		for (IEntitySystem*& s : m_systems)
@@ -232,18 +291,10 @@ namespace Skylicht
 			s->beginQuery(this);
 		}
 
-		CEntity** entities = m_entities.pointer();
-		int numEntity = m_entities.size();
+		sortAliveEntities();
 
-		m_alives.set_used(0);
-		for (int i = 0; i < numEntity; i++)
-		{
-			if (entities[i]->isAlive())
-				m_alives.push_back(entities[i]);
-		}
-
-		entities = m_alives.pointer();
-		numEntity = m_alives.size();
+		CEntity** entities = m_alives.pointer();
+		int numEntity = (int)m_alives.size();
 
 		for (IEntitySystem*& s : m_systems)
 		{
