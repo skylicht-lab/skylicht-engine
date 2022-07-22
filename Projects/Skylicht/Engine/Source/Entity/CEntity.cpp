@@ -29,11 +29,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CActivator.h"
 
+#include "Culling/CVisibleData.h"
+
 namespace Skylicht
 {
 	CEntity::CEntity(CEntityManager* mgr) :
 		m_alive(true),
-		m_visible(true)
+		m_visible(true),
+		m_mgr(mgr)
 	{
 		m_index = mgr->getNumEntities();
 
@@ -43,7 +46,8 @@ namespace Skylicht
 
 	CEntity::CEntity(CEntityPrefab* mgr) :
 		m_alive(true),
-		m_visible(true)
+		m_visible(true),
+		m_mgr(NULL)
 	{
 		m_index = mgr->getNumEntities();
 
@@ -60,6 +64,8 @@ namespace Skylicht
 	{
 		if (Data[index])
 		{
+			notifyUpdateGroup(index);
+
 			delete Data[index];
 			Data[index] = NULL;
 			return true;
@@ -96,6 +102,8 @@ namespace Skylicht
 		// save at index
 		Data[index] = data;
 
+		notifyUpdateGroup(index);
+
 		return data;
 	}
 
@@ -107,7 +115,24 @@ namespace Skylicht
 			{
 				delete Data[i];
 				Data[i] = NULL;
+
+				notifyUpdateGroup(i);
 			}
 		}
+	}
+
+	void CEntity::setVisible(bool b)
+	{
+		if (m_visible != b)
+		{
+			notifyUpdateGroup(CVisibleData::DataTypeIndex);
+			m_visible = b;
+		}
+	}
+
+	void CEntity::notifyUpdateGroup(int type)
+	{
+		if (m_mgr)
+			m_mgr->notifyUpdateGroup(type);
 	}
 }

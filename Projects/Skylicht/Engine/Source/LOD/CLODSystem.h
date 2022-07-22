@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
 #include "Transform/CWorldTransformData.h"
 #include "Culling/CVisibleData.h"
 #include "LOD/CLODData.h"
@@ -34,9 +35,7 @@ namespace Skylicht
 	class CLODSystem : public IRenderSystem
 	{
 	protected:
-		core::array<CLODData*> m_lods;
-		core::array<CVisibleData*> m_visibles;
-		core::array<CWorldTransformData*> m_transforms;
+		CEntityGroup* m_group;
 
 	public:
 		CLODSystem();

@@ -35,7 +35,8 @@ namespace Skylicht
 {
 	bool CCullingSystem::s_useCacheCulling = false;
 
-	CCullingSystem::CCullingSystem()
+	CCullingSystem::CCullingSystem() :
+		m_group(NULL)
 	{
 		m_pipelineType = IRenderPipeline::Mix;
 	}
@@ -47,6 +48,15 @@ namespace Skylicht
 
 	void CCullingSystem::beginQuery(CEntityManager* entityManager)
 	{
+		if (m_group == NULL)
+		{
+			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = { CCullingData::DataTypeIndex };
+			m_group = entityManager->createGroup(type, 1, visibleGroup);
+		}
+
 		if (s_useCacheCulling)
 			return;
 
@@ -61,18 +71,19 @@ namespace Skylicht
 		if (s_useCacheCulling)
 			return;
 
+		entities = m_group->getEntities();
+		numEntity = m_group->getEntityCount();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-			if (culling == NULL)
-				continue;
-
 			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+
 			culling->CullingLayer = visible->CullingLayer;
 
-			if (culling != NULL && visible->Visible == false)
+			if (culling != NULL && visible->Culled)
 			{
 				culling->Visible = false;
 			}

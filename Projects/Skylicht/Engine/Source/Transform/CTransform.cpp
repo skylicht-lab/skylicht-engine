@@ -83,7 +83,7 @@ namespace Skylicht
 		}
 
 		// notify sort update
-		m_gameObject->getEntityManager()->notifySortEntitiesUpdate();
+		m_gameObject->getEntityManager()->notifyUpdateSortEntities();
 	}
 
 	CTransform* CTransform::getParent()

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CCullingData.h"
 #include "CVisibleData.h"
+#include "Entity/CEntityGroup.h"
 #include "Entity/IRenderSystem.h"
 #include "Transform/CWorldTransformData.h"
 #include "Transform/CWorldInverseTransformData.h"
@@ -57,6 +58,8 @@ namespace Skylicht
 		core::array<SBBoxAndMaterial> m_bboxAndMaterials;
 
 		static bool s_useCacheCulling;
+
+		CEntityGroup* m_group;
 
 	public:
 		CCullingSystem();

@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CVisibleData.h"
+#include "CGroupVisible.h"
+
 #include "Entity/IRenderSystem.h"
 #include "Transform/CWorldTransformData.h"
 
@@ -33,30 +35,7 @@ namespace Skylicht
 	class CVisibleSystem : public IEntitySystem
 	{
 	protected:
-		struct SVisibleQuery
-		{
-			core::array<CVisibleData*> Visibles;
-			core::array<CWorldTransformData*> Transforms;
-			core::array<CEntity*> Entities;
-
-			CVisibleData** VisiblesPtr;
-			CWorldTransformData** TransformsPtr;
-			CEntity** EntitiesPtr;
-
-			int Count;
-			int Alloc;
-
-			SVisibleQuery()
-			{
-				Alloc = 0;
-				Count = 0;
-				VisiblesPtr = NULL;
-				TransformsPtr = NULL;
-				EntitiesPtr = NULL;
-			}
-		};
-
-		SVisibleQuery m_queries;
+		CEntityGroup* m_group;
 
 	public:
 		CVisibleSystem();
