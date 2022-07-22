@@ -48,7 +48,8 @@ namespace Skylicht
 	CEntityManager::CEntityManager() :
 		m_camera(NULL),
 		m_renderPipeline(NULL),
-		m_systemChanged(true)
+		m_systemChanged(true),
+		m_needSortEntities(true)
 	{
 		// core engine systems
 		addSystem<CVisibleSystem>();
@@ -91,6 +92,8 @@ namespace Skylicht
 
 		m_entities.set_used(0);
 		m_unused.set_used(0);
+
+		m_needSortEntities = true;
 	}
 
 	void CEntityManager::releaseAllSystems()
@@ -121,6 +124,8 @@ namespace Skylicht
 		CEntity* entity = new CEntity(this);
 		initDefaultData(entity);
 		m_entities.push_back(entity);
+
+		m_needSortEntities = true;
 		return entity;
 	}
 
@@ -138,6 +143,7 @@ namespace Skylicht
 			entities.push_back(entity);
 		}
 
+		m_needSortEntities = true;
 		return entities.pointer();
 	}
 
@@ -163,6 +169,8 @@ namespace Skylicht
 			transformData->ParentIndex = parent->getIndex();
 			transformData->Depth = GET_ENTITY_DATA(parent, CWorldTransformData)->Depth + 1;
 		}
+
+		m_needSortEntities = true;
 	}
 
 	void CEntityManager::updateEntityParent(CEntity* entity)
@@ -189,6 +197,8 @@ namespace Skylicht
 			transformData->ParentIndex = -1;
 			transformData->Depth = 0;
 		}
+
+		m_needSortEntities = true;
 	}
 
 	CEntity* CEntityManager::getEntityByID(const char* id)
@@ -216,6 +226,8 @@ namespace Skylicht
 		entity->setAlive(false);
 		entity->removeAllData();
 		m_unused.push_back(entity);
+
+		m_needSortEntities = true;
 	}
 
 	void CEntityManager::removeEntity(CEntity* entity)
@@ -223,6 +235,8 @@ namespace Skylicht
 		entity->setAlive(false);
 		entity->removeAllData();
 		m_unused.push_back(entity);
+
+		m_needSortEntities = true;
 	}
 
 	void CEntityManager::sortAliveEntities()
@@ -244,10 +258,7 @@ namespace Skylicht
 
 			if (entity->isAlive())
 			{
-				// sync the depth
 				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
-				entity->Depth = world->Depth;
-
 				SEntityDepth* depth = &m_sortDepth[world->Depth];
 
 				if (depth->Count + 1 >= depth->Alloc)
@@ -261,7 +272,6 @@ namespace Skylicht
 					depth->Alloc = alloc;
 				}
 
-				// save the alive
 				depth->EntitiesPtr[depth->Count] = entity;
 				depth->Count++;
 
@@ -282,6 +292,8 @@ namespace Skylicht
 				alives[count++] = depth->EntitiesPtr[j];
 		}
 		m_alives.set_used(count);
+
+		m_needSortEntities = false;
 	}
 
 	void CEntityManager::update()
@@ -291,7 +303,8 @@ namespace Skylicht
 			s->beginQuery(this);
 		}
 
-		sortAliveEntities();
+		if (m_needSortEntities)
+			sortAliveEntities();
 
 		CEntity** entities = m_alives.pointer();
 		int numEntity = (int)m_alives.size();
