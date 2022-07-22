@@ -31,7 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CLODSystem::CLODSystem()
+	CLODSystem::CLODSystem() :
+		m_group(NULL)
 	{
 		m_pipelineType = IRenderPipeline::Mix;
 	}
@@ -43,29 +44,19 @@ namespace Skylicht
 
 	void CLODSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_lods.set_used(0);
-		m_visibles.set_used(0);
-		m_transforms.set_used(0);
+		if (m_group == NULL)
+		{
+			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = { CLODData::DataTypeIndex };
+			m_group = entityManager->createGroup(type, 1, visibleGroup);
+		}
 	}
 
 	void CLODSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
 
-			CLODData* lod = GET_ENTITY_DATA(entity, CLODData);
-			if (lod == NULL)
-				continue;
-
-			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-
-			m_lods.push_back(lod);
-			m_visibles.push_back(visible);
-			m_transforms.push_back(transform);
-		}
 	}
 
 	void CLODSystem::init(CEntityManager* entityManager)
@@ -79,39 +70,38 @@ namespace Skylicht
 		if (rp == NULL)
 			return;
 
-		// camera
 		CCamera* camera = entityManager->getCamera();
 		if (camera == NULL)
 			return;
 
-		CWorldTransformData** transforms = m_transforms.pointer();
-		CLODData** lods = m_lods.pointer();
-		CVisibleData** visibles = m_visibles.pointer();
-
 		core::vector3df cameraPosition = camera->getGameObject()->getPosition();
 		core::vector3df distance;
 
-		u32 numEntity = m_lods.size();
+		CEntity** entities = m_group->getEntities();
+		u32 numEntity = m_group->getEntityCount();
+
 		for (u32 i = 0; i < numEntity; i++)
 		{
-			if (!visibles[i]->Visible)
-				continue;
+			CEntity* entity = entities[i];
 
-			const f32* m = transforms[i]->World.pointer();
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+			CLODData* lod = GET_ENTITY_DATA(entity, CLODData);
+
+			const f32* m = transform->World.pointer();
 
 			// distance vector
 			float x = cameraPosition.X - m[12];
-			float y = 0.0f; // cameraPosition.Y - m[13];
 			float z = cameraPosition.Z - m[14];
 
 			// length vector
-			float d = x * x + y * y + z * z;
+			float d = x * x + z * z;
 
 			// culling
-			if (d < lods[i]->From || d >= lods[i]->To)
-			{
-				visibles[i]->Visible = false;
-			}
+			if (d < lod->From || d >= lod->To)
+				visible->Culled = true;
+			else
+				visible->Culled = false;
 		}
 	}
 

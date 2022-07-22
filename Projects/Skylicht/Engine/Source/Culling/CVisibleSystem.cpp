@@ -29,7 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CVisibleSystem::CVisibleSystem()
+	CVisibleSystem::CVisibleSystem() :
+		m_group(NULL)
 	{
 
 	}
@@ -41,43 +42,16 @@ namespace Skylicht
 
 	void CVisibleSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_queries.Count = 0;
+		if (!m_group)
+		{
+			// add group & manage the query visible entity
+			m_group = entityManager->addCustomGroup(new CGroupVisible());
+		}
 	}
 
 	void CVisibleSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		SVisibleQuery* data = &m_queries;
 
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
-
-			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-
-			// hardcode dynamic array to optimize performance
-			if ((data->Count + 1) >= data->Alloc)
-			{
-				int alloc = (data->Count + 1) * 2;
-				if (alloc < 32)
-					alloc = 32;
-
-				data->Visibles.set_used(alloc);
-				data->Transforms.set_used(alloc);
-				data->Entities.set_used(alloc);
-
-				data->VisiblesPtr = data->Visibles.pointer();
-				data->TransformsPtr = data->Transforms.pointer();
-				data->EntitiesPtr = data->Entities.pointer();
-
-				data->Alloc = alloc;
-			}
-
-			data->TransformsPtr[data->Count] = transform;
-			data->VisiblesPtr[data->Count] = visible;
-			data->EntitiesPtr[data->Count] = entity;
-			data->Count++;
-		}
 	}
 
 	void CVisibleSystem::init(CEntityManager* entityManager)
@@ -87,30 +61,6 @@ namespace Skylicht
 
 	void CVisibleSystem::update(CEntityManager* entityManager)
 	{
-		SVisibleQuery* data = &m_queries;
 
-		CVisibleData** visibles = data->VisiblesPtr;
-		CWorldTransformData** transforms = data->TransformsPtr;
-		CEntity** entities = data->EntitiesPtr;
-
-		CEntity** allEntities = entityManager->getEntities();
-
-		u32 numEntity = data->Count;
-
-		for (u32 i = 0; i < numEntity; i++)
-		{
-			CVisibleData* visible = visibles[i];
-
-			visible->SelfVisible = entities[i]->isVisible();
-			visible->Visible = visible->SelfVisible;
-
-			if (visible->Visible == true && transforms[i]->ParentIndex >= 0)
-			{
-				// link parent visible
-				CEntity* parentEntity = allEntities[transforms[i]->ParentIndex];
-				CVisibleData* parentVisible = GET_ENTITY_DATA(parentEntity, CVisibleData);
-				visible->Visible = parentVisible->Visible;
-			}
-		}
 	}
 }

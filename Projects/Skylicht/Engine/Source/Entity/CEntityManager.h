@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "IEntitySystem.h"
 #include "IRenderSystem.h"
 #include "CEntity.h"
+#include "CEntityGroup.h"
 
 #include "GameObject/CGameObject.h"
 #include "Camera/CCamera.h"
@@ -57,6 +58,8 @@ namespace Skylicht
 		core::array<CEntity*> m_alives;
 		core::array<CEntity*> m_entities;
 		core::array<CEntity*> m_unused;
+
+		core::array<CEntityGroup*> m_groups;
 
 		SEntityDepth m_sortDepth[MAX_ENTITY_DEPTH];
 
@@ -154,10 +157,22 @@ namespace Skylicht
 
 		void updateEntityParent(CEntity* entity);
 
-		inline void notifySortEntitiesUpdate()
-		{
-			m_needSortEntities = true;
-		}
+		CEntityGroup* addCustomGroup(CEntityGroup* group);
+
+		CEntityGroup* createGroup(const u32* types, int count);
+
+		CEntityGroup* createGroup(const u32* types, int count, CEntityGroup* parent);
+
+		CEntityGroup* findGroup(const u32* types, int count);
+
+		void removeGroup(CEntityGroup* group);
+
+		void removeAllGroup();
+
+		void notifyUpdateSortEntities();
+
+		void notifyUpdateGroup(u32 dataType);
+
 	protected:
 
 		void initDefaultData(CEntity* entity);
