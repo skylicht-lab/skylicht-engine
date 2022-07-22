@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CLightCullingData.h"
 #include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
 #include "Transform/CWorldTransformData.h"
 #include "Transform/CWorldInverseTransformData.h"
 
@@ -39,6 +40,8 @@ namespace Skylicht
 		core::array<CWorldTransformData*> m_transforms;
 		core::array<CWorldInverseTransformData*> m_invTransforms;
 
+		CEntityGroup* m_group;
+
 	public:
 		CLightCullingSystem();
 
@@ -46,15 +49,15 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity** entities, int numEntity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 
-		virtual void render(CEntityManager *entityManager);
+		virtual void render(CEntityManager* entityManager);
 
-		virtual void postRender(CEntityManager *entityManager);
+		virtual void postRender(CEntityManager* entityManager);
 
 	public:
 

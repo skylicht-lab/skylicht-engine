@@ -169,8 +169,6 @@ namespace Skylicht
 			transformData->ParentIndex = parent->getIndex();
 			transformData->Depth = GET_ENTITY_DATA(parent, CWorldTransformData)->Depth + 1;
 		}
-
-		notifyUpdateSortEntities();
 	}
 
 	void CEntityManager::updateEntityParent(CEntity* entity)

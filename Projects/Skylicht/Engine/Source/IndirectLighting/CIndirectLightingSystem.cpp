@@ -90,6 +90,9 @@ namespace Skylicht
 			}
 		}
 
+		entities = m_groupLighting->getEntities();
+		numEntity = m_groupLighting->getEntityCount();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];

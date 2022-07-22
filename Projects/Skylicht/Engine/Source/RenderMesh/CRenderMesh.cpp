@@ -241,8 +241,8 @@ namespace Skylicht
 				// also add transform
 				m_renderTransforms.push_back(GET_ENTITY_DATA(spawnEntity, CWorldTransformData));
 
-				// add world inv transform for culling system
-				spawnEntity->addData<CWorldInverseTransformData>();
+				// add world inv transform for culling system (disable to optimize)
+				// spawnEntity->addData<CWorldInverseTransformData>();
 			}
 
 			// copy culling data

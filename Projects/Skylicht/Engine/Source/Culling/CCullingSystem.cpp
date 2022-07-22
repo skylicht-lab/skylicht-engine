@@ -50,11 +50,8 @@ namespace Skylicht
 	{
 		if (m_group == NULL)
 		{
-			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
-			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
-
 			const u32 type[] = { CCullingData::DataTypeIndex };
-			m_group = entityManager->createGroup(type, 1, visibleGroup);
+			m_group = entityManager->createGroup(type, 1);
 		}
 
 		if (s_useCacheCulling)
@@ -83,7 +80,7 @@ namespace Skylicht
 
 			culling->CullingLayer = visible->CullingLayer;
 
-			if (culling != NULL && visible->Culled)
+			if (culling != NULL && (visible->Culled || !visible->Visible))
 			{
 				culling->Visible = false;
 			}
