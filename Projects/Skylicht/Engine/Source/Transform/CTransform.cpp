@@ -81,6 +81,9 @@ namespace Skylicht
 			transform->AttachParentIndex = -1;
 			m_attached = false;
 		}
+
+		// notify sort update
+		m_gameObject->getEntityManager()->notifySortEntitiesUpdate();
 	}
 
 	CTransform* CTransform::getParent()
@@ -123,7 +126,7 @@ namespace Skylicht
 
 			CEntity* parent = m_gameObject->getEntityManager()->getEntity(transform->AttachParentIndex);
 			CWorldTransformData* parentTransform = GET_ENTITY_DATA(parent, CWorldTransformData);
-			
+
 			result = parentTransform->World * result;
 		}
 
