@@ -29,8 +29,7 @@ namespace Skylicht
 {
 	IMPLEMENT_DATA_TYPE_INDEX(CWorldInverseTransformData);
 
-	CWorldInverseTransformData::CWorldInverseTransformData() :
-		HasChanged(true)
+	CWorldInverseTransformData::CWorldInverseTransformData()
 	{
 	}
 

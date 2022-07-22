@@ -23,12 +23,15 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "Entity/CEntityManager.h"
 #include "CIndirectLightingSystem.h"
 
 namespace Skylicht
 {
 	CIndirectLightingSystem::CIndirectLightingSystem() :
-		m_probeChange(false)
+		m_probeChange(false),
+		m_groupLighting(NULL),
+		m_groupProbes(NULL)
 	{
 		m_kdtree = kd_create(3);
 	}
@@ -40,6 +43,24 @@ namespace Skylicht
 
 	void CIndirectLightingSystem::beginQuery(CEntityManager* entityManager)
 	{
+		if (m_groupLighting == NULL)
+		{
+			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = { CIndirectLightingData::DataTypeIndex };
+			m_groupLighting = entityManager->createGroup(type, 1, visibleGroup);
+		}
+
+		if (m_groupProbes == NULL)
+		{
+			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = { CLightProbeData::DataTypeIndex };
+			m_groupProbes = entityManager->createGroup(type, 1, visibleGroup);
+		}
+
 		m_entities.set_used(0);
 		m_entitiesPositions.set_used(0);
 
@@ -49,28 +70,32 @@ namespace Skylicht
 
 	void CIndirectLightingSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		entities = m_groupProbes->getEntities();
+		numEntity = m_groupProbes->getEntityCount();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CLightProbeData* probeData = GET_ENTITY_DATA(entity, CLightProbeData);
-			if (probeData != NULL)
+			m_probes.push_back(probeData);
+
+			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+			m_probePositions.push_back(transformData);
+
+			if (transformData->NeedValidate || probeData->NeedValidate)
 			{
-				m_probes.push_back(probeData);
-
-				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
-				m_probePositions.push_back(transformData);
-
-				if (transformData->NeedValidate || probeData->NeedValidate)
-				{
-					m_probeChange = true;
-					probeData->NeedValidate = false;
-				}
+				m_probeChange = true;
+				probeData->NeedValidate = false;
 			}
+		}
+
+		for (int i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
 
 			CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
-			if (lightData != NULL &&
-				lightData->AutoSH &&
+			if (lightData->AutoSH &&
 				*lightData->AutoSH &&
 				lightData->Type == CIndirectLightingData::SH9)
 			{
