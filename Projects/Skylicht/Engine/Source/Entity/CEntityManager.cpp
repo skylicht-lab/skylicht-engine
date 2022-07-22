@@ -562,7 +562,11 @@ namespace Skylicht
 		for (u32 i = 0; i < count; i++)
 		{
 			CEntityGroup* g = m_groups[i];
+
 			if (g->haveDataType(dataType))
+				g->notifyNeedQuery();
+
+			if (g->getParent() && g->getParent()->needQuery())
 				g->notifyNeedQuery();
 		}
 	}

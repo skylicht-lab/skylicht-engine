@@ -23,11 +23,15 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "Culling/CVisibleData.h"
+#include "Entity/CEntityManager.h"
 #include "CReflectionProbeSystem.h"
 
 namespace Skylicht
 {
-	CReflectionProbeSystem::CReflectionProbeSystem()
+	CReflectionProbeSystem::CReflectionProbeSystem() :
+		m_groupLighting(NULL),
+		m_groupProbes(NULL)
 	{
 		m_kdtree = kd_create(3);
 	}
@@ -39,6 +43,24 @@ namespace Skylicht
 
 	void CReflectionProbeSystem::beginQuery(CEntityManager* entityManager)
 	{
+		if (m_groupLighting == NULL)
+		{
+			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = { CIndirectLightingData::DataTypeIndex };
+			m_groupLighting = entityManager->createGroup(type, 1, visibleGroup);
+		}
+
+		if (m_groupProbes == NULL)
+		{
+			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = { CReflectionProbeData::DataTypeIndex };
+			m_groupProbes = entityManager->createGroup(type, 1, visibleGroup);
+		}
+
 		m_probes.set_used(0);
 		m_probePositions.set_used(0);
 
@@ -48,15 +70,17 @@ namespace Skylicht
 
 	void CReflectionProbeSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		entities = m_groupProbes->getEntities();
+		numEntity = m_groupProbes->getEntityCount();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
-			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
 			CReflectionProbeData* probeData = GET_ENTITY_DATA(entity, CReflectionProbeData);
+			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-			if (probeData != NULL && probeData->ReflectionTexture != NULL)
+			if (probeData->ReflectionTexture != NULL)
 			{
 				m_probes.push_back(probeData);
 				m_probePositions.push_back(transformData);
@@ -67,13 +91,22 @@ namespace Skylicht
 					probeData->Invalidate = false;
 				}
 			}
-			else if (lightData != NULL)
+		}
+
+		entities = m_groupLighting->getEntities();
+		numEntity = m_groupLighting->getEntityCount();
+
+		for (int i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
+
+			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
+
+			if (transformData->NeedValidate || lightData->Init || m_probeChange)
 			{
-				if (transformData->NeedValidate || lightData->Init || m_probeChange)
-				{
-					m_entities.push_back(lightData);
-					m_entitiesPositions.push_back(transformData);
-				}
+				m_entities.push_back(lightData);
+				m_entitiesPositions.push_back(transformData);
 			}
 		}
 	}

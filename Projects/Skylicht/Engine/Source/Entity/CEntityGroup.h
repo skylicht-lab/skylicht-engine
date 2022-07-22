@@ -75,5 +75,10 @@ namespace Skylicht
 		}
 
 		bool haveDataType(u32 type);
+
+		inline CEntityGroup* getParent()
+		{
+			return m_parentGroup;
+		}
 	};
 }

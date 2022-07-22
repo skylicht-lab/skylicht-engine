@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
-
+#include "Entity/CEntityGroup.h"
 
 #include "Transform/CWorldTransformData.h"
 #include "IndirectLighting/CIndirectLightingData.h"
@@ -49,6 +49,8 @@ namespace Skylicht
 
 		bool m_probeChange;
 
+		CEntityGroup* m_groupLighting;
+		CEntityGroup* m_groupProbes;
 	public:
 		CIndirectLightingSystem();
 

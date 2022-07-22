@@ -32,7 +32,7 @@ namespace Skylicht
 	{
 	public:
 		core::matrix4 WorldInverse;
-		bool HasChanged;
+
 		DECLARE_DATA_TYPE_INDEX;
 
 	public:

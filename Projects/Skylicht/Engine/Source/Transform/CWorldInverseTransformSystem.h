@@ -27,14 +27,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CWorldTransformData.h"
 #include "CWorldInverseTransformData.h"
 #include "Entity/IEntitySystem.h"
+#include "Entity/CEntityGroup.h"
 
 namespace Skylicht
 {
 	class CWorldInverseTransformSystem : public IEntitySystem
 	{
 	protected:
-		core::array<CWorldTransformData*> m_world;
-		core::array<CWorldInverseTransformData*> m_worldInv;
+		CEntityGroup* m_group;
 
 	public:
 		CWorldInverseTransformSystem();

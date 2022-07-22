@@ -25,11 +25,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CWorldInverseTransformSystem.h"
 #include "Entity/CEntityManager.h"
+#include "Culling/CVisibleData.h"
 #include "Transform/CTransform.h"
 
 namespace Skylicht
 {
-	CWorldInverseTransformSystem::CWorldInverseTransformSystem()
+	CWorldInverseTransformSystem::CWorldInverseTransformSystem() :
+		m_group(NULL)
 	{
 	}
 
@@ -39,27 +41,19 @@ namespace Skylicht
 
 	void CWorldInverseTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_world.set_used(0);
-		m_worldInv.set_used(0);
+		if (m_group == NULL)
+		{
+			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = { CWorldInverseTransformData::DataTypeIndex };
+			m_group = entityManager->createGroup(type, 1, visibleGroup);
+		}
 	}
 
 	void CWorldInverseTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
 
-			CWorldInverseTransformData* worldInv = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
-
-			// worldInv->HasChanged is trigged at CWorldTransformSystem
-			if (worldInv != NULL && worldInv->HasChanged == true)
-			{
-				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
-
-				m_world.push_back(world);
-				m_worldInv.push_back(worldInv);
-			}
-		}
 	}
 
 	void CWorldInverseTransformSystem::init(CEntityManager* entityManager)
@@ -69,14 +63,21 @@ namespace Skylicht
 
 	void CWorldInverseTransformSystem::update(CEntityManager* entityManager)
 	{
-		CWorldTransformData** worlds = m_world.pointer();
-		CWorldInverseTransformData** worldInvs = m_worldInv.pointer();
+		CEntity** entities = m_group->getEntities();
+		int numEntity = m_group->getEntityCount();
 
-		for (u32 i = 0, n = m_world.size(); i < n; i++)
+		for (int i = 0; i < numEntity; i++)
 		{
-			// Get inverse matrix of world
-			worlds[i]->World.getInverse(worldInvs[i]->WorldInverse);
-			worldInvs[i]->HasChanged = false;
+			CEntity* entity = entities[i];
+
+			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CWorldInverseTransformData* worldInv = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
+
+			if (world->NeedValidate)
+			{
+				// Get inverse matrix of world
+				world->World.getInverse(worldInv->WorldInverse);
+			}
 		}
 	}
 }
