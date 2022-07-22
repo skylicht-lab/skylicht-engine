@@ -93,7 +93,7 @@ namespace Skylicht
 		m_entities.set_used(0);
 		m_unused.set_used(0);
 
-		m_needSortEntities = true;
+		notifyUpdateSortEntities();
 	}
 
 	void CEntityManager::releaseAllSystems()
@@ -125,7 +125,7 @@ namespace Skylicht
 		initDefaultData(entity);
 		m_entities.push_back(entity);
 
-		m_needSortEntities = true;
+		notifyUpdateSortEntities();
 		return entity;
 	}
 
@@ -143,7 +143,7 @@ namespace Skylicht
 			entities.push_back(entity);
 		}
 
-		m_needSortEntities = true;
+		notifyUpdateSortEntities();
 		return entities.pointer();
 	}
 
@@ -170,7 +170,7 @@ namespace Skylicht
 			transformData->Depth = GET_ENTITY_DATA(parent, CWorldTransformData)->Depth + 1;
 		}
 
-		m_needSortEntities = true;
+		notifyUpdateSortEntities();
 	}
 
 	void CEntityManager::updateEntityParent(CEntity* entity)
@@ -198,7 +198,7 @@ namespace Skylicht
 			transformData->Depth = 0;
 		}
 
-		m_needSortEntities = true;
+		notifyUpdateSortEntities();
 	}
 
 	CEntity* CEntityManager::getEntityByID(const char* id)
@@ -227,7 +227,7 @@ namespace Skylicht
 		entity->removeAllData();
 		m_unused.push_back(entity);
 
-		m_needSortEntities = true;
+		notifyUpdateSortEntities();
 	}
 
 	void CEntityManager::removeEntity(CEntity* entity)
@@ -236,7 +236,7 @@ namespace Skylicht
 		entity->removeAllData();
 		m_unused.push_back(entity);
 
-		m_needSortEntities = true;
+		notifyUpdateSortEntities();
 	}
 
 	void CEntityManager::sortAliveEntities()
@@ -309,6 +309,13 @@ namespace Skylicht
 		CEntity** entities = m_alives.pointer();
 		int numEntity = (int)m_alives.size();
 
+		for (u32 i = 0, n = m_groups.size(); i < n; i++)
+		{
+			CEntityGroup* g = m_groups[i];
+			if (g->needQuery())
+				g->onQuery(this, entities, numEntity);
+		}
+
 		for (IEntitySystem*& s : m_systems)
 		{
 			s->onQuery(this, entities, numEntity);
@@ -376,15 +383,15 @@ namespace Skylicht
 
 	void CEntityManager::cullingAndRender()
 	{
+		for (IRenderSystem*& s : m_renders)
+		{
+			s->beginQuery(this);
+		}
+
 		if (m_systemChanged == true)
 		{
 			updateSortRenderer();
 			m_systemChanged = false;
-		}
-
-		for (IRenderSystem*& s : m_renders)
-		{
-			s->beginQuery(this);
 		}
 
 		CEntity** entities = m_alives.pointer();
@@ -467,5 +474,96 @@ namespace Skylicht
 		}
 
 		return false;
+	}
+
+	CEntityGroup* CEntityManager::addCustomGroup(CEntityGroup* group)
+	{
+		m_groups.push_back(group);
+		return group;
+	}
+
+	CEntityGroup* CEntityManager::createGroup(const u32* types, int count)
+	{
+		CEntityGroup* group = new CEntityGroup(types, count);
+		m_groups.push_back(group);
+		return group;
+	}
+
+	CEntityGroup* CEntityManager::createGroup(const u32* types, int count, CEntityGroup* parent)
+	{
+		CEntityGroup* group = new CEntityGroup(types, count, parent);
+		m_groups.push_back(group);
+		return group;
+	}
+
+	CEntityGroup* CEntityManager::findGroup(const u32* types, int count)
+	{
+		u32 groupCount = m_groups.size();
+
+		CEntityGroup* result = NULL;
+
+		for (u32 i = 0; i < groupCount; i++)
+		{
+			result = m_groups[i];
+
+			for (int j = 0; j < count; j++)
+			{
+				if (!result->haveDataType(types[j]))
+				{
+					result = NULL;
+					break;
+				}
+			}
+
+			if (result)
+				break;
+		}
+
+		return result;
+	}
+
+	void CEntityManager::removeGroup(CEntityGroup* group)
+	{
+		u32 count = m_groups.size();
+		for (u32 i = 0; i < count; i++)
+		{
+			if (m_groups[i] == group)
+			{
+				delete group;
+				m_groups.erase(i);
+			}
+		}
+	}
+
+	void CEntityManager::removeAllGroup()
+	{
+		u32 count = m_groups.size();
+		for (u32 i = 0; i < count; i++)
+		{
+			delete m_groups[i];
+		}
+		m_groups.clear();
+	}
+
+	void CEntityManager::notifyUpdateSortEntities()
+	{
+		m_needSortEntities = true;
+
+		u32 count = m_groups.size();
+		for (u32 i = 0; i < count; i++)
+		{
+			m_groups[i]->notifyNeedQuery();
+		}
+	}
+
+	void CEntityManager::notifyUpdateGroup(u32 dataType)
+	{
+		u32 count = m_groups.size();
+		for (u32 i = 0; i < count; i++)
+		{
+			CEntityGroup* g = m_groups[i];
+			if (g->haveDataType(dataType))
+				g->notifyNeedQuery();
+		}
 	}
 }

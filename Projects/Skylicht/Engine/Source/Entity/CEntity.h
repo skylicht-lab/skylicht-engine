@@ -47,6 +47,7 @@ namespace Skylicht
 		int m_index;
 		std::string m_id;
 
+		CEntityManager* m_mgr;
 	public:
 
 		IEntityData* Data[MAX_ENTITY_DATA];
@@ -110,10 +111,9 @@ namespace Skylicht
 			return m_visible;
 		}
 
-		inline void setVisible(bool b)
-		{
-			m_visible = b;
-		}
+		void setVisible(bool b);
+
+		void notifyUpdateGroup(int type);
 
 	protected:
 
@@ -150,6 +150,9 @@ namespace Skylicht
 
 		// save at index
 		Data[index] = newData;
+
+		notifyUpdateGroup(index);
+
 		return newData;
 	}
 
@@ -176,6 +179,8 @@ namespace Skylicht
 
 		// save at index
 		Data[index] = newData;
+
+		notifyUpdateGroup(index);
 
 		return newData;
 	}
@@ -208,6 +213,9 @@ namespace Skylicht
 		{
 			delete Data[index];
 			Data[index] = NULL;
+
+			notifyUpdateGroup(index);
+
 			return true;
 		}
 
