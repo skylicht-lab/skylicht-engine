@@ -31,12 +31,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	const u32 k_visibleGroupData[] = { CVisibleData::DataTypeIndex };
-
 	CGroupVisible::CGroupVisible() :
-		CEntityGroup(k_visibleGroupData, 1)
+		CEntityGroup(NULL, 0)
 	{
-
+		m_dataTypes.push_back(CVisibleData::DataTypeIndex);
 	}
 
 	CGroupVisible::~CGroupVisible()
@@ -47,6 +45,8 @@ namespace Skylicht
 	void CGroupVisible::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
 		CEntity** allEntities = entityManager->getEntities();
+
+		m_count = 0;
 
 		for (int i = 0; i < numEntity; i++)
 		{

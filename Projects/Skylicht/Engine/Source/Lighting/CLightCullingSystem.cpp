@@ -24,19 +24,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CLightCullingSystem.h"
+#include "Culling/CVisibleData.h"
 #include "Entity/CEntityManager.h"
 #include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {
-	CLightCullingSystem::CLightCullingSystem()
+	CLightCullingSystem::CLightCullingSystem() :
+		m_group(NULL)
 	{
 		m_pipelineType = IRenderPipeline::Mix;
 	}
 
 	CLightCullingSystem::~CLightCullingSystem()
 	{
-
 	}
 
 	void CLightCullingSystem::beginQuery(CEntityManager* entityManager)
@@ -45,25 +46,33 @@ namespace Skylicht
 		m_visible.set_used(0);
 		m_transforms.set_used(0);
 		m_invTransforms.set_used(0);
+
+		if (!m_group)
+		{
+			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = { CLightCullingData::DataTypeIndex };
+			m_group = entityManager->createGroup(type, 1, visibleGroup);
+		}
 	}
 
 	void CLightCullingSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		entities = m_group->getEntities();
+		numEntity = m_group->getEntityCount();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CLightCullingData* culling = GET_ENTITY_DATA(entity, CLightCullingData);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
-			if (culling != NULL)
-			{
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
-
-				m_cullings.push_back(culling);
-				m_transforms.push_back(transform);
-				m_invTransforms.push_back(invTransform);
-			}
+			m_cullings.push_back(culling);
+			m_transforms.push_back(transform);
+			m_invTransforms.push_back(invTransform);
 		}
 	}
 
