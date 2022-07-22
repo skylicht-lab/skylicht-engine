@@ -65,6 +65,7 @@ namespace Skylicht
 
 		std::vector<IRenderSystem*> m_sortRender;
 		bool m_systemChanged;
+		bool m_needSortEntities;
 
 		CCamera* m_camera;
 
@@ -153,6 +154,10 @@ namespace Skylicht
 
 		void updateEntityParent(CEntity* entity);
 
+		inline void notifySortEntitiesUpdate()
+		{
+			m_needSortEntities = true;
+		}
 	protected:
 
 		void initDefaultData(CEntity* entity);

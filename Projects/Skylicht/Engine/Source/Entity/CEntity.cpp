@@ -33,8 +33,7 @@ namespace Skylicht
 {
 	CEntity::CEntity(CEntityManager* mgr) :
 		m_alive(true),
-		m_visible(true),
-		Depth(0)
+		m_visible(true)
 	{
 		m_index = mgr->getNumEntities();
 
@@ -44,8 +43,7 @@ namespace Skylicht
 
 	CEntity::CEntity(CEntityPrefab* mgr) :
 		m_alive(true),
-		m_visible(true),
-		Depth(0)
+		m_visible(true)
 	{
 		m_index = mgr->getNumEntities();
 

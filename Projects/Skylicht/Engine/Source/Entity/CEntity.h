@@ -51,8 +51,6 @@ namespace Skylicht
 
 		IEntityData* Data[MAX_ENTITY_DATA];
 
-		int Depth;
-
 	public:
 		CEntity(CEntityManager* mgr);
 		CEntity(CEntityPrefab* mgr);

@@ -49,12 +49,13 @@ namespace Skylicht
 	{
 		SWorldTransformQuery* query = &m_queries;
 
+		CEntity** allEntities = entityManager->getEntities();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CWorldInverseTransformData* tInverse = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
 			t->NeedValidate = false;
 
@@ -79,13 +80,13 @@ namespace Skylicht
 				query->EntitiesPtr[query->Count++] = t;
 
 				// notify recalc inverse matrix
+				CWorldInverseTransformData* tInverse = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 				if (tInverse != NULL)
 					tInverse->HasChanged = true;
 			}
 			else if (parentID != -1)
 			{
-				CEntity* p = entityManager->getEntity(parentID);
-				CWorldTransformData* parent = GET_ENTITY_DATA(p, CWorldTransformData);
+				CWorldTransformData* parent = GET_ENTITY_DATA(allEntities[parentID], CWorldTransformData);
 				if (parent->HasChanged == true)
 				{
 					// this transform changed because parent is changed
@@ -93,6 +94,7 @@ namespace Skylicht
 					t->NeedValidate = true;
 
 					// notify recalc inverse matrix
+					CWorldInverseTransformData* tInverse = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 					if (tInverse != NULL)
 						tInverse->HasChanged = true;
 
