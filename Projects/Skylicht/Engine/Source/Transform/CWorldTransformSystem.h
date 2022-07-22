@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CWorldTransformData.h"
 #include "Entity/IEntitySystem.h"
+#include "Entity/CEntityGroup.h"
 
 namespace Skylicht
 {
@@ -47,7 +48,7 @@ namespace Skylicht
 	class CWorldTransformSystem : public IEntitySystem
 	{
 	protected:
-		SWorldTransformQuery m_queries;
+		CEntityGroup* m_visibleGroup;
 
 	public:
 		CWorldTransformSystem();

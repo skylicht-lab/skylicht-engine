@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
-
+#include "Entity/CEntityGroup.h"
 #include "CReflectionProbeData.h"
 #include "Transform/CWorldTransformData.h"
 #include "IndirectLighting/CIndirectLightingData.h"
@@ -47,6 +47,9 @@ namespace Skylicht
 		kdtree* m_kdtree;
 		bool m_probeChange;
 
+		CEntityGroup* m_groupLighting;
+		CEntityGroup* m_groupProbes;
+
 	public:
 		CReflectionProbeSystem();
 
@@ -54,10 +57,10 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void onQuery(CEntityManager *entityManager, CEntity** entities, int numEntity);
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 	};
 }

@@ -27,10 +27,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CWorldInverseTransformData.h"
 #include "Entity/CEntityManager.h"
 #include "Transform/CTransform.h"
+#include "Culling/CVisibleData.h"
 
 namespace Skylicht
 {
-	CWorldTransformSystem::CWorldTransformSystem()
+	CWorldTransformSystem::CWorldTransformSystem() :
+		m_visibleGroup(NULL)
 	{
 	}
 
@@ -41,79 +43,15 @@ namespace Skylicht
 
 	void CWorldTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
-		SWorldTransformQuery* query = &m_queries;
-		query->Count = 0;
+		if (m_visibleGroup == NULL)
+		{
+			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			m_visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+		}
 	}
 
 	void CWorldTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		SWorldTransformQuery* query = &m_queries;
-
-		CEntity** allEntities = entityManager->getEntities();
-
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
-
-			CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
-
-			t->NeedValidate = false;
-
-			int parentID = t->AttachParentIndex >= 0 ? t->AttachParentIndex : t->ParentIndex;
-
-			if (t->HasChanged == true)
-			{
-				t->NeedValidate = true;
-
-				// hardcode dynamic array to optimize performance
-				if (query->Count + 1 >= query->Alloc)
-				{
-					int alloc = (query->Count + 1) * 2;
-					if (alloc < 32)
-						alloc = 32;
-
-					query->Entities.set_used(alloc);
-					query->EntitiesPtr = query->Entities.pointer();
-					query->Alloc = alloc;
-				}
-
-				query->EntitiesPtr[query->Count++] = t;
-
-				// notify recalc inverse matrix
-				CWorldInverseTransformData* tInverse = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
-				if (tInverse != NULL)
-					tInverse->HasChanged = true;
-			}
-			else if (parentID != -1)
-			{
-				CWorldTransformData* parent = GET_ENTITY_DATA(allEntities[parentID], CWorldTransformData);
-				if (parent->HasChanged == true)
-				{
-					// this transform changed because parent is changed
-					t->HasChanged = true;
-					t->NeedValidate = true;
-
-					// notify recalc inverse matrix
-					CWorldInverseTransformData* tInverse = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
-					if (tInverse != NULL)
-						tInverse->HasChanged = true;
-
-					// hardcode dynamic array to optimize performance
-					if (query->Count + 1 >= query->Alloc)
-					{
-						int alloc = (query->Count + 1) * 2;
-						if (alloc < 32)
-							alloc = 32;
-
-						query->Entities.set_used(alloc);
-						query->EntitiesPtr = query->Entities.pointer();
-						query->Alloc = alloc;
-					}
-
-					query->EntitiesPtr[query->Count++] = t;
-				}
-			}
-		}
 	}
 
 	void CWorldTransformSystem::init(CEntityManager* entityManager)
@@ -122,34 +60,55 @@ namespace Skylicht
 
 	void CWorldTransformSystem::update(CEntityManager* entityManager)
 	{
-		SWorldTransformQuery* query = &m_queries;
-
-		CWorldTransformData** entities = query->EntitiesPtr;
-		u32 numEntity = query->Count;
+		CEntity** entities = m_visibleGroup->getEntities();
+		u32 numEntity = m_visibleGroup->getEntityCount();
 
 		CEntity** allEntities = entityManager->getEntities();
 
 		for (u32 i = 0; i < numEntity; i++)
 		{
-			CWorldTransformData* t = entities[i];
-			t->HasChanged = false;
+			CEntity* entity = entities[i];
 
-			if (t->Depth == 0)
+			CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
+			t->NeedValidate = false;
+
+			// check the parent
+			int parentID = t->AttachParentIndex >= 0 ? t->AttachParentIndex : t->ParentIndex;
+
+			// parent entity
+			CEntity* parent = NULL;
+			CWorldTransformData* parentTransform = NULL;
+
+			if (parentID != -1)
 			{
-				t->World = t->Relative;
+				parent = allEntities[parentID];
+				parentTransform = GET_ENTITY_DATA(parent, CWorldTransformData);
+
+				if (parentTransform->NeedValidate)
+				{
+					// this transform changed because parent is changed
+					t->HasChanged = true;
+					t->NeedValidate = true;
+				}
 			}
-			else
+
+			if (t->HasChanged)
 			{
-				int parentID = t->AttachParentIndex >= 0 ? t->AttachParentIndex : t->ParentIndex;
+				// update
+				t->HasChanged = false;
+				t->NeedValidate = true;
 
-				// parent entity
-				CEntity* parent = allEntities[parentID];
-				CWorldTransformData* p = GET_ENTITY_DATA(parent, CWorldTransformData);
-
-				// calc world = parent * relative
-				// - relative is copied from CTransformComponentSystem
-				// - relative is also defined in CEntityPrefab
-				t->World.setbyproduct_nocheck(p->World, t->Relative);
+				if (t->Depth == 0)
+				{
+					t->World = t->Relative;
+				}
+				else
+				{
+					// calc world = parent * relative
+					// - relative is copied from CTransformComponentSystem
+					// - relative is also defined in CEntityPrefab
+					t->World.setbyproduct_nocheck(parentTransform->World, t->Relative);
+				}
 			}
 		}
 	}
