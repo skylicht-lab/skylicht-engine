@@ -102,6 +102,8 @@ void CViewInit::initScene()
 	float space = 50.0f;
 	int numObjectInRow = 40;
 
+	// total object = numObjectInRow * numObjectInRow * (turbine + blade) * numLOD
+
 	int n = numObjectInRow / 2;
 	for (int x = -n; x < n; x++)
 	{
@@ -219,7 +221,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -258,7 +260,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()
