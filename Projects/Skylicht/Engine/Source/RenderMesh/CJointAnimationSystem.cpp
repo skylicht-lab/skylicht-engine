@@ -25,10 +25,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CJointAnimationSystem.h"
 #include "Entity/CEntityManager.h"
+#include "Culling/CVisibleData.h"
 
 namespace Skylicht
 {
-	CJointAnimationSystem::CJointAnimationSystem()
+	CJointAnimationSystem::CJointAnimationSystem() :
+		m_group(NULL)
 	{
 
 	}
@@ -40,31 +42,19 @@ namespace Skylicht
 
 	void CJointAnimationSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_joints.set_used(0);
-		m_transforms.set_used(0);
-		m_rootInvTransform.set_used(0);
+		if (m_group == NULL)
+		{
+			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = GET_LIST_ENTITY_DATA(CJointData);
+			m_group = entityManager->createGroup(type, 1, visibleGroup);
+		}
 	}
 
 	void CJointAnimationSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
 
-			CJointData* joint = GET_ENTITY_DATA(entity, CJointData);
-			if (joint != NULL && joint->RootIndex != 0)
-			{
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				CWorldInverseTransformData* rootInvTransform = GET_ENTITY_DATA(entityManager->getEntity(joint->RootIndex), CWorldInverseTransformData);
-
-				if (rootInvTransform != NULL)
-				{
-					m_joints.push_back(joint);
-					m_transforms.push_back(transform);
-					m_rootInvTransform.push_back(rootInvTransform);
-				}
-			}
-		}
 	}
 
 	void CJointAnimationSystem::init(CEntityManager* entityManager)
@@ -74,14 +64,26 @@ namespace Skylicht
 
 	void CJointAnimationSystem::update(CEntityManager* entityManager)
 	{
-		CJointData** joints = m_joints.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
-		CWorldInverseTransformData** rootInvTransform = m_rootInvTransform.pointer();
+		CEntity** entities = m_group->getEntities();
+		int numEntity = m_group->getEntityCount();
 
-		// calc animation matrix for CSkinnedMeshSystem
-		for (u32 i = 0, n = m_joints.size(); i < n; i++)
+		CEntity** allEntities = entityManager->getEntities();
+
+		for (int i = 0; i < numEntity; i++)
 		{
-			joints[i]->AnimationMatrix.setbyproduct_nocheck(rootInvTransform[i]->WorldInverse, transforms[i]->World);
+			CEntity* entity = entities[i];
+
+			CJointData* joint = GET_ENTITY_DATA(entity, CJointData);
+			if (joint->RootIndex != 0)
+			{
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CWorldInverseTransformData* rootInvTransform = GET_ENTITY_DATA(allEntities[joint->RootIndex], CWorldInverseTransformData);
+
+				if (rootInvTransform != NULL)
+				{
+					joint->AnimationMatrix.setbyproduct_nocheck(rootInvTransform->WorldInverse, transform->World);
+				}
+			}
 		}
 	}
 }

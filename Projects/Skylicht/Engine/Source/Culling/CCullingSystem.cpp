@@ -80,11 +80,11 @@ namespace Skylicht
 
 			culling->CullingLayer = visible->CullingLayer;
 
-			if (culling != NULL && (visible->Culled || !visible->Visible))
+			if (visible->Culled || !visible->Visible)
 			{
 				culling->Visible = false;
 			}
-			else if (culling != NULL)
+			else
 			{
 				CRenderMeshData* mesh = GET_ENTITY_DATA(entity, CRenderMeshData);
 				if (mesh != NULL)
