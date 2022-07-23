@@ -115,6 +115,7 @@ void CViewInit::initScene()
 				windTurbine->setStatic(true);
 
 				CRenderMesh* renderer = windTurbine->addComponent<CRenderMesh>();
+				renderer->enableOptimizeForRender(true);
 				renderer->initFromPrefab(prefabWindTurbine);
 				renderer->initMaterial(winTurbineMaterials);
 				renderer->enableInstancing(true);
@@ -137,6 +138,7 @@ void CViewInit::initScene()
 				transform->setPosition(core::vector3df(-1.59f, 38.0f, 0.0f));
 
 				CRenderMesh* renderer = windTurbineBlades->addComponent<CRenderMesh>();
+				renderer->enableOptimizeForRender(true);
 				renderer->initFromPrefab(prefabBlades);
 				renderer->initMaterial(bladeTurbineMaterials);
 				renderer->enableInstancing(true);

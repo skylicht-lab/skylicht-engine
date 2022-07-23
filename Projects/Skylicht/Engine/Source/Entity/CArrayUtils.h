@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	template <class T>
-	class CArrayUtils
+	class CFastArray
 	{
 	protected:
 		core::array<T> m_array;
@@ -35,7 +35,7 @@ namespace Skylicht
 		int m_alloc;
 		int m_count;
 	public:
-		CArrayUtils() :
+		CFastArray() :
 			m_alloc(0),
 			m_count(0),
 			m_ptr(NULL)

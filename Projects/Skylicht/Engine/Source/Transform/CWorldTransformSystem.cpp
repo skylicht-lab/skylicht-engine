@@ -60,10 +60,11 @@ namespace Skylicht
 
 	void CWorldTransformSystem::update(CEntityManager* entityManager)
 	{
+		CEntity** allEntities = entityManager->getEntities();
 		CEntity** entities = m_visibleGroup->getEntities();
 		u32 numEntity = m_visibleGroup->getEntityCount();
 
-		CEntity** allEntities = entityManager->getEntities();
+		// int mulCount = 0;
 
 		for (u32 i = 0; i < numEntity; i++)
 		{
@@ -94,7 +95,6 @@ namespace Skylicht
 
 			if (t->HasChanged)
 			{
-				// update
 				t->HasChanged = false;
 				t->NeedValidate = true;
 
@@ -109,6 +109,8 @@ namespace Skylicht
 					// - relative is also defined in CEntityPrefab
 					t->World.setbyproduct_nocheck(parentTransform->World, t->Relative);
 				}
+
+				// mulCount++;
 			}
 		}
 	}

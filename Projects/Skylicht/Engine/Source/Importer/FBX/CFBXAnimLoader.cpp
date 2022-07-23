@@ -80,6 +80,7 @@ namespace Skylicht
 		opts.target_axes.front = UFBX_COORDINATE_AXIS_POSITIVE_Z;
 
 		opts.target_unit_meters = 1.0f;
+		opts.allow_nodes_out_of_root = true;
 
 		ufbx_error error;
 		ufbx_scene* scene = ufbx_load_memory(buf, filesize, &opts, &error);
@@ -126,7 +127,7 @@ namespace Skylicht
 			output->AnimName = CPath::getFileNameNoExt(modelName);
 
 			int targetFPS = 60;
-			int totalFrame = output->Duration * targetFPS;
+			int totalFrame = (int)(output->Duration * targetFPS);
 
 			for (auto i : m_nodeAnim)
 			{
