@@ -34,8 +34,7 @@ namespace Skylicht
 		enum ECulling
 		{
 			BoundingBox,
-			FrustumBox,
-			Occlusion,
+			FrustumBox
 		};
 
 		core::aabbox3df BBox;
@@ -47,6 +46,8 @@ namespace Skylicht
 		bool CameraCulled;
 
 		u32 CullingLayer;
+
+		bool Occlusion;
 
 		DECLARE_DATA_TYPE_INDEX;
 

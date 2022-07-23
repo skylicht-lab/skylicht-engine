@@ -79,6 +79,7 @@ namespace Skylicht
 	{
 		releaseAllEntities();
 		releaseAllSystems();
+		releaseAllGroups();
 	}
 
 	void CEntityManager::releaseAllEntities()
@@ -105,6 +106,13 @@ namespace Skylicht
 
 		m_systems.clear();
 		m_renders.clear();
+	}
+
+	void CEntityManager::releaseAllGroups()
+	{
+		for (u32 i = 0, n = m_groups.size(); i < n; i++)
+			delete m_groups[i];
+		m_groups.clear();
 	}
 
 	CEntity* CEntityManager::createEntity()
@@ -246,8 +254,7 @@ namespace Skylicht
 
 		for (u32 i = 0; i < MAX_ENTITY_DEPTH; i++)
 		{
-			SEntityDepth* depth = &m_sortDepth[i];
-			depth->Count = 0;
+			m_sortDepth[i].reset();
 		}
 
 		for (u32 i = 0; i < numEntity; i++)
@@ -257,21 +264,8 @@ namespace Skylicht
 			if (entity->isAlive())
 			{
 				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
-				SEntityDepth* depth = &m_sortDepth[world->Depth];
 
-				if (depth->Count + 1 >= depth->Alloc)
-				{
-					int alloc = (depth->Count + 1) * 2;
-					if (alloc < 32)
-						alloc = 32;
-
-					depth->Entities.set_used(alloc);
-					depth->EntitiesPtr = depth->Entities.pointer();
-					depth->Alloc = alloc;
-				}
-
-				depth->EntitiesPtr[depth->Count] = entity;
-				depth->Count++;
+				m_sortDepth[world->Depth].push(entity);
 
 				if (maxDepth < world->Depth)
 					maxDepth = world->Depth;
@@ -285,9 +279,10 @@ namespace Skylicht
 		int count = 0;
 		for (int i = 0; i <= maxDepth; i++)
 		{
-			SEntityDepth* depth = &m_sortDepth[i];
-			for (int j = 0; j < depth->Count; j++)
-				alives[count++] = depth->EntitiesPtr[j];
+			CEntity** entitiesPtr = m_sortDepth[i].pointer();
+
+			for (int j = 0, n = m_sortDepth[i].count(); j < n; j++)
+				alives[count++] = entitiesPtr[j];
 		}
 		m_alives.set_used(count);
 

@@ -61,11 +61,11 @@ namespace Skylicht
 			m_groupProbes = entityManager->createGroup(type, 1, visibleGroup);
 		}
 
-		m_probes.set_used(0);
-		m_probePositions.set_used(0);
+		m_probes.reset();
+		m_probePositions.reset();
 
-		m_entities.set_used(0);
-		m_entitiesPositions.set_used(0);
+		m_entities.reset();
+		m_entitiesPositions.reset();
 	}
 
 	void CReflectionProbeSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
@@ -82,8 +82,8 @@ namespace Skylicht
 
 			if (probeData->ReflectionTexture != NULL)
 			{
-				m_probes.push_back(probeData);
-				m_probePositions.push_back(transformData);
+				m_probes.push(probeData);
+				m_probePositions.push(transformData);
 
 				if (transformData->NeedValidate || probeData->Invalidate)
 				{
@@ -105,8 +105,8 @@ namespace Skylicht
 
 			if (transformData->NeedValidate || lightData->Init || m_probeChange)
 			{
-				m_entities.push_back(lightData);
-				m_entitiesPositions.push_back(transformData);
+				m_entities.push(lightData);
+				m_entitiesPositions.push(transformData);
 			}
 		}
 	}
@@ -122,7 +122,7 @@ namespace Skylicht
 		{
 			kd_clear(m_kdtree);
 
-			u32 n = m_probePositions.size();
+			u32 n = m_probePositions.count();
 
 			CWorldTransformData** worlds = m_probePositions.pointer();
 			CReflectionProbeData** data = m_probes.pointer();
@@ -136,9 +136,12 @@ namespace Skylicht
 			m_probeChange = false;
 		}
 
-		for (u32 i = 0, n = m_entities.size(); i < n; i++)
+		CWorldTransformData** positions = m_entitiesPositions.pointer();
+		CIndirectLightingData** lightings = m_entities.pointer();
+
+		for (u32 i = 0, n = m_entities.count(); i < n; i++)
 		{
-			core::vector3df position = m_entitiesPositions[i]->World.getTranslation();
+			core::vector3df position = positions[i]->World.getTranslation();
 
 			// query nearst probe
 			kdres* res = kd_nearest3f(m_kdtree, position.X, position.Y, position.Z);
@@ -151,7 +154,7 @@ namespace Skylicht
 					if (probe != NULL)
 					{
 						// get indirectData
-						CIndirectLightingData* indirectData = m_entities[i];
+						CIndirectLightingData* indirectData = lightings[i];
 						indirectData->ReflectionTexture = probe->ReflectionTexture;
 						indirectData->Init = false;
 					}

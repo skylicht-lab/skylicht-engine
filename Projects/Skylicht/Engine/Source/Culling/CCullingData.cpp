@@ -33,7 +33,8 @@ namespace Skylicht
 
 	CCullingData::CCullingData() :
 		Type(CCullingData::BoundingBox),
-		Visible(true)
+		Visible(true),
+		Occlusion(false)
 	{
 
 	}

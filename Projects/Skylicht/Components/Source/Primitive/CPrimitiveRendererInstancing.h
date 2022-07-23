@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Entity/CArrayUtils.h"
 #include "Entity/IRenderSystem.h"
 #include "RenderMesh/CMesh.h"
 #include "Material/CMaterial.h"
@@ -83,9 +84,9 @@ namespace Skylicht
 		std::map<SShaderMesh, IVertexBuffer*> m_buffers;
 
 		// bake instancing
-		core::array<CMaterial*> m_materials;
-		core::array<CWorldTransformData*> m_transforms;
-		core::array<CIndirectLightingData*> m_indirectLightings;
+		CArrayUtils<CMaterial*> m_materials;
+		CArrayUtils<CWorldTransformData*> m_transforms;
+		CArrayUtils<CIndirectLightingData*> m_indirectLightings;
 
 	public:
 		CPrimitiveRendererInstancing();

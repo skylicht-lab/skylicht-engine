@@ -38,11 +38,11 @@ namespace Skylicht
 	class CReflectionProbeSystem : public IEntitySystem
 	{
 	protected:
-		core::array<CReflectionProbeData*> m_probes;
-		core::array<CWorldTransformData*> m_probePositions;
+		CArrayUtils<CReflectionProbeData*> m_probes;
+		CArrayUtils<CWorldTransformData*> m_probePositions;
 
-		core::array<CIndirectLightingData*> m_entities;
-		core::array<CWorldTransformData*> m_entitiesPositions;
+		CArrayUtils<CIndirectLightingData*> m_entities;
+		CArrayUtils<CWorldTransformData*> m_entitiesPositions;
 
 		kdtree* m_kdtree;
 		bool m_probeChange;

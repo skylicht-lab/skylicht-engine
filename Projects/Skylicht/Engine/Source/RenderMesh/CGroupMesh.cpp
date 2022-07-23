@@ -23,37 +23,29 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CEntityGroup.h"
+#include "CGroupMesh.h"
+#include "CRenderMeshData.h"
+
+#include "Entity/CEntityManager.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	CEntityGroup::CEntityGroup(const u32* dataTypes, int count) :
-		m_needQuery(true),
-		m_parentGroup(NULL)
+	CGroupMesh::CGroupMesh(CEntityGroup* parent) :
+		CEntityGroup(NULL, 0)
 	{
-		for (int i = 0; i < count; i++)
-			m_dataTypes.push_back(dataTypes[i]);
+		m_parentGroup = parent;
+		m_dataTypes.push_back(CRenderMeshData::DataTypeIndex);
 	}
 
-	CEntityGroup::CEntityGroup(const u32* dataTypes, int count, CEntityGroup* parentGroup) :
-		m_needQuery(true),
-		m_parentGroup(parentGroup)
-	{
-		for (int i = 0; i < count; i++)
-			m_dataTypes.push_back(dataTypes[i]);
-	}
-
-	CEntityGroup::~CEntityGroup()
+	CGroupMesh::~CGroupMesh()
 	{
 
 	}
 
-	void CEntityGroup::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	void CGroupMesh::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		u32* types = m_dataTypes.pointer();
-		int count = m_dataTypes.size();
-
-		m_entities.reset();
+		CEntity** allEntities = entityManager->getEntities();
 
 		if (m_parentGroup)
 		{
@@ -61,40 +53,51 @@ namespace Skylicht
 			entities = m_parentGroup->getEntities();
 		}
 
+		m_entities.reset();
+		m_staticMesh.reset();
+		m_skinnedMesh.reset();
+		m_blendShapeMesh.reset();
+		m_softwareSkinnedMesh.reset();
+		m_hardwareSkinnedMesh.reset();
+		m_instancingMesh.reset();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
-			bool selectEntity = true;
 
-			for (int j = 0; j < count; j++)
+			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
+
+			if (meshData == NULL)
+				continue;
+
+			if (meshData->getMesh() == NULL)
+				continue;
+
+			m_entities.push(entity);
+
+			if (meshData->isSkinnedMesh())
 			{
-				if (entity->Data[types[j]] == NULL)
-				{
-					selectEntity = false;
-					break;
-				}
+				m_skinnedMesh.push(entity);
+
+				if (meshData->isSoftwareSkinning())
+					m_softwareSkinnedMesh.push(entity);
+				else
+					m_hardwareSkinnedMesh.push(entity);
+			}
+			else
+			{
+				if (meshData->isInstancing())
+					m_instancingMesh.push(entity);
+				else
+					m_staticMesh.push(entity);
 			}
 
-			if (selectEntity)
+			if (meshData->isSoftwareBlendShape())
 			{
-				m_entities.push(entity);
+				m_blendShapeMesh.push(entity);
 			}
 		}
 
 		m_needQuery = false;
-	}
-
-	bool CEntityGroup::haveDataType(u32 type)
-	{
-		u32* types = m_dataTypes.pointer();
-		int count = m_dataTypes.size();
-
-		for (int j = 0; j < count; j++)
-		{
-			if (types[j] == type)
-				return true;
-		}
-
-		return false;
 	}
 }

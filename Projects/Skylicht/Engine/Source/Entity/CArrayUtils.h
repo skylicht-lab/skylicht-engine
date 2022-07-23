@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,31 +24,57 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CRenderMeshData.h"
-#include "CMeshRenderSystem.h"
-#include "Transform/CWorldTransformData.h"
-#include "IndirectLighting/CIndirectLightingData.h"
-
 namespace Skylicht
 {
-	class CMeshRenderer : public CMeshRenderSystem
+	template <class T>
+	class CArrayUtils
 	{
 	protected:
-		core::array<CRenderMeshData*> m_meshs;
-
+		core::array<T> m_array;
+		T* m_ptr;
+		int m_alloc;
+		int m_count;
 	public:
-		CMeshRenderer();
+		CArrayUtils::CArrayUtils() :
+			m_alloc(0),
+			m_count(0),
+			m_ptr(NULL)
+		{
 
-		virtual ~CMeshRenderer();
+		}
 
-		virtual void beginQuery(CEntityManager* entityManager);
+		inline void reset()
+		{
+			m_count = 0;
+		}
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		inline T* pointer()
+		{
+			return m_ptr;
+		}
 
-		virtual void init(CEntityManager* entityManager);
+		inline core::array<T>& getArray()
+		{
+			return m_array;
+		}
 
-		virtual void update(CEntityManager* entityManager);
+		inline int count()
+		{
+			return m_count;
+		}
 
-		virtual void render(CEntityManager* entityManager);
+		void push(T element)
+		{
+			if (m_count + 1 >= m_alloc)
+			{
+				m_alloc = (m_count + 1) * 2;
+				if (m_alloc < 32)
+					m_alloc = 32;
+				m_array.set_used(m_alloc);
+				m_ptr = m_array.pointer();
+			}
+
+			m_ptr[m_count++] = element;
+		}
 	};
 }

@@ -26,33 +26,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntitySystem.h"
 #include "CRenderMeshData.h"
+#include "Culling/CVisibleData.h"
+#include "Entity/CEntityManager.h"
 #include "CGroupMesh.h"
-#include "CMeshSystem.h"
 
 namespace Skylicht
 {
-	class CSoftwareSkinningSystem : public CMeshSystem
+	class CMeshSystem : public IEntitySystem
 	{
-	public:
-		CSoftwareSkinningSystem();
+	protected:
+		CGroupMesh* m_groupMesh;
 
-		virtual ~CSoftwareSkinningSystem();
+	public:
+		CMeshSystem();
+
+		virtual ~CMeshSystem();
 
 		virtual void beginQuery(CEntityManager* entityManager);
-
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
-
-		virtual void init(CEntityManager* entityManager);
-
-		virtual void update(CEntityManager* entityManager);
-
-	protected:
-		void softwareSkinning(CSkinnedMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
-
-		void softwareSkinningTangent(CSkinnedMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
-
-		void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkinTangents* src, int boneIndex);
-
-		void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkin* src, int boneIndex);
 	};
 }

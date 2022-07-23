@@ -26,14 +26,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntitySystem.h"
 #include "CRenderMeshData.h"
+#include "CMeshSystem.h"
 
 namespace Skylicht
 {
-	class CSkinnedMeshSystem : public IEntitySystem
+	class CSkinnedMeshSystem : public CMeshSystem
 	{
-	protected:
-		core::array<CSkinnedMesh*> m_meshs;
-
 	public:
 		CSkinnedMeshSystem();
 
@@ -43,8 +41,8 @@ namespace Skylicht
 
 		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);		
+		virtual void update(CEntityManager* entityManager);
 	};
 }
