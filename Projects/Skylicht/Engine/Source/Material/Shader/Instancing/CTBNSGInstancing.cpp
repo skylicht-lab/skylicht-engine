@@ -81,28 +81,24 @@ namespace Skylicht
 	}
 
 	void CTBNSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer,
-		core::array<CMaterial*>& materials,
-		core::array<CWorldTransformData*>& worlds,
-		core::array<CIndirectLightingData*> lightings)
+		CMaterial** materials,
+		CWorldTransformData** worlds,
+		CIndirectLightingData** lightings,
+		int count)
 	{
 		CVertexBuffer<SVtxSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSGInstancing>*>(vtxBuffer);
 		if (instanceBuffer == NULL)
 			return;
 
-		u32 count = worlds.size();
 		instanceBuffer->set_used(count);
-
-		CWorldTransformData** worldData = worlds.pointer();
-		CMaterial** matData = materials.pointer();
-		CIndirectLightingData** lightingData = lightings.pointer();
 
 		float invColor = 1.111f / 255.0f;
 
-		for (u32 i = 0; i < count; i++)
+		for (int i = 0; i < count; i++)
 		{
 			SVtxSGInstancing& vtx = instanceBuffer->getVertex(i);
 
-			CShaderParams& params = matData[i]->getShaderParams();
+			CShaderParams& params = materials[i]->getShaderParams();
 
 			// convert material data from BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml
 			vtx.UVScale = params.getParam(0);
@@ -110,7 +106,7 @@ namespace Skylicht
 			vtx.SpecGloss = params.getParam(2);
 
 			// world transform
-			vtx.World = worldData[i]->World;
+			vtx.World = worlds[i]->World;
 		}
 
 		vtxBuffer->setDirty();

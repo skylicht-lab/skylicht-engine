@@ -62,9 +62,10 @@ namespace Skylicht
 		virtual bool removeInstancing(IMesh* mesh);
 
 		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
-			core::array<CMaterial*>& materials,
-			core::array<CWorldTransformData*>& worlds,
-			core::array<CIndirectLightingData*> lightings) = 0;
+			CMaterial** materials,
+			CWorldTransformData** worlds,
+			CIndirectLightingData** lightings,
+			int count) = 0;
 
 		video::IVertexDescriptor* getBaseVertexDescriptor()
 		{

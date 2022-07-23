@@ -23,6 +23,8 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "Culling/CVisibleData.h"
+#include "Entity/CEntityManager.h"
 #include "CSkinnedMeshSystem.h"
 
 namespace Skylicht
@@ -39,23 +41,12 @@ namespace Skylicht
 
 	void CSkinnedMeshSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_meshs.set_used(0);
+		CMeshSystem::beginQuery(entityManager);
 	}
 
 	void CSkinnedMeshSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
 
-			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
-			if (renderer != NULL && renderer->isSkinnedMesh())
-			{
-				CSkinnedMesh* mesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
-				if (mesh != NULL)
-					m_meshs.push_back(mesh);
-			}
-		}
 	}
 
 	void CSkinnedMeshSystem::init(CEntityManager* entityManager)
@@ -65,11 +56,14 @@ namespace Skylicht
 
 	void CSkinnedMeshSystem::update(CEntityManager* entityManager)
 	{
-		CSkinnedMesh** meshs = m_meshs.pointer();
+		int numEntity = m_groupMesh->getNumSkinnedMesh();
+		CEntity** entities = m_groupMesh->getSkinnedMeshes();
 
-		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CSkinnedMesh* skinnedMesh = meshs[i];
+			CEntity* entity = entities[i];
+			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
+			CSkinnedMesh* skinnedMesh = (CSkinnedMesh*)renderer->getMesh();
 
 			for (u32 j = 0, numJoint = skinnedMesh->Joints.size(); j < numJoint; j++)
 			{

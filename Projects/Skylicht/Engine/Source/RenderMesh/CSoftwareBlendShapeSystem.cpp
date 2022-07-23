@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSoftwareBlendShapeSystem.h"
 #include "Culling/CCullingData.h"
+#include "Culling/CVisibleData.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
@@ -40,28 +42,12 @@ namespace Skylicht
 
 	void CSoftwareBlendShapeSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_renderers.set_used(0);
+		CMeshSystem::beginQuery(entityManager);
 	}
 
 	void CSoftwareBlendShapeSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
 
-			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
-			CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-
-			if (renderer != NULL && renderer->isSoftwareBlendShape())
-			{
-				bool render = true;
-				if (culling != NULL && culling->Visible == false)
-					render = false;
-
-				if (render == true)
-					m_renderers.push_back(renderer);
-			}
-		}
 	}
 
 	void CSoftwareBlendShapeSystem::init(CEntityManager* entityManager)
@@ -71,11 +57,22 @@ namespace Skylicht
 
 	void CSoftwareBlendShapeSystem::update(CEntityManager* entityManager)
 	{
-		CRenderMeshData** renderers = m_renderers.pointer();
-		for (u32 i = 0, n = m_renderers.size(); i < n; i++)
+		int numEntity = m_groupMesh->getNumBlendShape();
+		CEntity** entities = m_groupMesh->getBlendShapeMeshes();
+
+		for (int i = 0; i < numEntity; i++)
 		{
-			CRenderMeshData* renderer = renderers[i];
-			blendShape(renderer->getSoftwareBlendShapeMesh(), renderer->getMesh());
+			CEntity* entity = entities[i];
+
+			CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
+			if (culling != NULL && culling->Visible == false)
+				continue;
+
+			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
+			if (renderer != NULL && renderer->isSoftwareBlendShape())
+			{
+				blendShape(renderer->getSoftwareBlendShapeMesh(), renderer->getMesh());
+			}
 		}
 	}
 

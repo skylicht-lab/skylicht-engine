@@ -46,44 +46,33 @@ namespace Skylicht
 	void CMeshRenderer::beginQuery(CEntityManager* entityManager)
 	{
 		m_meshs.set_used(0);
-		m_transforms.set_used(0);
-		m_indirectLightings.set_used(0);
+
+		CMeshRenderSystem::beginQuery(entityManager);
 	}
 
 	void CMeshRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		// do not render gpu skinning, pass for CSkinMeshRenderer
+		// do not render instancing mesh, pass for CInstancingMeshRenderer
+		entities = m_groupMesh->getStaticMeshes();
+		numEntity = m_groupMesh->getNumStaticMesh();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
-			if (meshData != NULL)
-			{
-				if (meshData->getMesh() == NULL)
-					continue;
 
-				// do not render gpu skinning, pass for CSkinMeshRenderer
-				if (meshData->isSkinnedMesh() == true &&
-					meshData->isSoftwareSkinning() == false)
-					continue;
+			bool cullingVisible = true;
 
-				// pass for CInstancingMeshRenderer
-				if (meshData->isInstancing())
-					continue;
+			// get culling result from CCullingSystem
+			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+			if (cullingData != NULL)
+				cullingVisible = cullingData->Visible;
 
-				bool cullingVisible = true;
-
-				// get culling result from CCullingSystem
-				CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
-				if (cullingData != NULL)
-					cullingVisible = cullingData->Visible;
-
-				// only render visible culling mesh
-				if (cullingVisible == true)
-				{
-					m_meshs.push_back(meshData);
-				}
-			}
+			// only render visible culling mesh
+			if (cullingVisible == true)
+				m_meshs.push_back(meshData);
 		}
 	}
 
@@ -167,36 +156,24 @@ namespace Skylicht
 	{
 		// need sort render by material, texture, mesh		
 		u32 count = m_meshs.size();
-
-		// need sort by material
-		qsort(m_meshs.pointer(), count, sizeof(CRenderMeshData*), cmpRenderMeshFunc);
-
-		// get world transform
-		for (u32 i = 0; i < count; i++)
+		if (count > 0)
 		{
-			CEntity* entity = entityManager->getEntity(m_meshs[i]->EntityIndex);
-
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CIndirectLightingData* indirect = GET_ENTITY_DATA(entity, CIndirectLightingData);
-
-			m_transforms.push_back(transform);
-			m_indirectLightings.push_back(indirect);
+			// need sort by material
+			qsort(m_meshs.pointer(), count, sizeof(CRenderMeshData*), cmpRenderMeshFunc);
 		}
 	}
 
 	void CMeshRenderer::render(CEntityManager* entityManager)
 	{
 		IVideoDriver* driver = getVideoDriver();
-
-		CRenderMeshData** meshs = m_meshs.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
-		CIndirectLightingData** indirectLighting = m_indirectLightings.pointer();
-
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
+		CRenderMeshData** meshs = m_meshs.pointer();
+		CEntity** allEntities = entityManager->getEntities();
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
 			CRenderMeshData* meshData = m_meshs[i];
+			CEntity* entity = allEntities[meshData->EntityIndex];
 
 			CMesh* mesh = meshData->getMesh();
 			if (meshData->isSoftwareBlendShape())
@@ -204,7 +181,7 @@ namespace Skylicht
 			if (meshData->isSoftwareSkinning())
 				mesh = meshData->getSoftwareSkinnedMesh();
 
-			CIndirectLightingData* lightingData = indirectLighting[i];
+			CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
 			if (lightingData != NULL)
 			{
 				if (lightingData->Type == CIndirectLightingData::SH9)
@@ -213,7 +190,8 @@ namespace Skylicht
 					CShaderLighting::setLightAmbient(lightingData->Color);
 			}
 
-			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			driver->setTransform(video::ETS_WORLD, transform->World);
 
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 				rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);

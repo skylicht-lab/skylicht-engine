@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CEntity.h"
+#include "CArrayUtils.h"
 
 namespace Skylicht
 {
@@ -35,15 +36,11 @@ namespace Skylicht
 	protected:
 		core::array<u32> m_dataTypes;
 
-		core::array<CEntity*> m_entities;
-		CEntity** m_entitiesPtr;
-
 		CEntityGroup* m_parentGroup;
 
-		int m_count;
-		int m_alloc;
-
 		bool m_needQuery;
+
+		CArrayUtils<CEntity*> m_entities;
 
 	public:
 		CEntityGroup(const u32* dataTypes, int count);
@@ -56,12 +53,12 @@ namespace Skylicht
 
 		inline CEntity** getEntities()
 		{
-			return m_entitiesPtr;
+			return m_entities.pointer();
 		}
 
 		inline int getEntityCount()
 		{
-			return m_count;
+			return m_entities.count();
 		}
 
 		inline void notifyNeedQuery()

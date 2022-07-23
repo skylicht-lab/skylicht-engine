@@ -40,28 +40,12 @@ namespace Skylicht
 
 	void CSoftwareSkinningSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_renderers.set_used(0);
+		CMeshSystem::beginQuery(entityManager);
 	}
 
 	void CSoftwareSkinningSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
 
-			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
-			CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-
-			if (renderer != NULL && renderer->isSoftwareSkinning())
-			{
-				bool render = true;
-				if (culling != NULL && culling->Visible == false)
-					render = false;
-
-				if (render == true)
-					m_renderers.push_back(renderer);
-			}
-		}
 	}
 
 	void CSoftwareSkinningSystem::init(CEntityManager* entityManager)
@@ -71,10 +55,18 @@ namespace Skylicht
 
 	void CSoftwareSkinningSystem::update(CEntityManager* entityManager)
 	{
-		CRenderMeshData** renderers = m_renderers.pointer();
-		for (u32 i = 0, n = m_renderers.size(); i < n; i++)
+		int numEntity = m_groupMesh->getNumSoftwareSkinnedMesh();
+		CEntity** entities = m_groupMesh->getSoftwareSkinnedMeshes();
+
+		for (int i = 0; i < numEntity; i++)
 		{
-			CRenderMeshData* renderer = renderers[i];
+			CEntity* entity = entities[i];
+
+			CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
+			if (culling != NULL && culling->Visible == false)
+				continue;
+
+			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);
 
 			CSkinnedMesh* renderMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
 			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderer->getSoftwareSkinnedMesh());

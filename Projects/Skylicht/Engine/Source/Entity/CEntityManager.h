@@ -36,22 +36,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	struct SEntityDepth
-	{
-		core::array<CEntity*> Entities;
-		int Count;
-		int Alloc;
-
-		CEntity** EntitiesPtr;
-
-		SEntityDepth()
-		{
-			Count = 0;
-			Alloc = 0;
-			EntitiesPtr = NULL;
-		}
-	};
-
 	class CEntityManager
 	{
 	protected:
@@ -61,7 +45,7 @@ namespace Skylicht
 
 		core::array<CEntityGroup*> m_groups;
 
-		SEntityDepth m_sortDepth[MAX_ENTITY_DEPTH];
+		CArrayUtils<CEntity*> m_sortDepth[MAX_ENTITY_DEPTH];
 
 		std::vector<IEntitySystem*> m_systems;
 		std::vector<IRenderSystem*> m_renders;
@@ -120,6 +104,8 @@ namespace Skylicht
 		void releaseAllEntities();
 
 		void releaseAllSystems();
+
+		void releaseAllGroups();
 
 		inline int getNumEntities()
 		{

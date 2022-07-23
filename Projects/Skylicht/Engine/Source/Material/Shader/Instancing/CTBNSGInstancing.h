@@ -43,8 +43,9 @@ namespace Skylicht
 		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type);
 
 		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
-			core::array<CMaterial*>& materials,
-			core::array<CWorldTransformData*>& worlds,
-			core::array<CIndirectLightingData*> lightings);
+			CMaterial** materials,
+			CWorldTransformData** worlds,
+			CIndirectLightingData** lightings,
+			int count);
 	};
 }

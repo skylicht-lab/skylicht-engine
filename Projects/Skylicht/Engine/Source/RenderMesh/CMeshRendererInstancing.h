@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CRenderMeshData.h"
-#include "Entity/IRenderSystem.h"
+#include "CMeshRenderSystem.h"
 #include "Transform/CWorldTransformData.h"
 #include "IndirectLighting/CIndirectLightingData.h"
 
@@ -33,12 +33,12 @@ namespace Skylicht
 {
 	struct SMeshInstancingGroup
 	{
-		core::array<CMaterial*> Materials;
-		core::array<CWorldTransformData*> Transforms;
-		core::array<CIndirectLightingData*> IndirectLightings;
+		CArrayUtils<CMaterial*> Materials;
+		CArrayUtils<CWorldTransformData*> Transforms;
+		CArrayUtils<CIndirectLightingData*> IndirectLightings;
 	};
 
-	class CMeshRendererInstancing : public IRenderSystem
+	class CMeshRendererInstancing : public CMeshRenderSystem
 	{
 	protected:
 		core::array<CRenderMeshData*> m_meshs;

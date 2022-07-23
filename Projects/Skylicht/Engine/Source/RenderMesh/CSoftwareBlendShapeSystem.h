@@ -26,14 +26,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntitySystem.h"
 #include "CRenderMeshData.h"
+#include "CGroupMesh.h"
+#include "CMeshSystem.h"
 
 namespace Skylicht
 {
-	class CSoftwareBlendShapeSystem : public IEntitySystem
+	class CSoftwareBlendShapeSystem : public CMeshSystem
 	{
-	protected:
-		core::array<CRenderMeshData*> m_renderers;
-
 	public:
 		CSoftwareBlendShapeSystem();
 
