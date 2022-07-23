@@ -35,7 +35,7 @@ namespace Skylicht
 		int m_alloc;
 		int m_count;
 	public:
-		CArrayUtils::CArrayUtils() :
+		CArrayUtils() :
 			m_alloc(0),
 			m_count(0),
 			m_ptr(NULL)
