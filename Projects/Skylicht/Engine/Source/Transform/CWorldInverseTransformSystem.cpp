@@ -43,10 +43,10 @@ namespace Skylicht
 	{
 		if (m_group == NULL)
 		{
-			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
 			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
 
-			const u32 type[] = { CWorldInverseTransformData::DataTypeIndex };
+			const u32 type[] = GET_LIST_ENTITY_DATA(CWorldInverseTransformData);
 			m_group = entityManager->createGroup(type, 1, visibleGroup);
 		}
 	}

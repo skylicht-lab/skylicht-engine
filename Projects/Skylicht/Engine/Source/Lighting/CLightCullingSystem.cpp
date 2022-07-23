@@ -49,10 +49,10 @@ namespace Skylicht
 
 		if (!m_group)
 		{
-			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
 			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
 
-			const u32 type[] = { CLightCullingData::DataTypeIndex };
+			const u32 type[] = GET_LIST_ENTITY_DATA(CLightCullingData);
 			m_group = entityManager->createGroup(type, 1, visibleGroup);
 		}
 	}

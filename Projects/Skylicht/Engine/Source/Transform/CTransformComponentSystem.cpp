@@ -23,6 +23,8 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "Culling/CVisibleData.h"
+#include "Entity/CEntityManager.h"
 #include "CTransform.h"
 #include "CWorldTransformData.h"
 #include "CTransformComponentData.h"
@@ -30,7 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CComponentTransformSystem::CComponentTransformSystem()
+	CComponentTransformSystem::CComponentTransformSystem() :
+		m_group(NULL)
 	{
 
 	}
@@ -42,30 +45,19 @@ namespace Skylicht
 
 	void CComponentTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
-		m_transforms.set_used(0);
-		m_components.set_used(0);
+		if (m_group == NULL)
+		{
+			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			const u32 type[] = GET_LIST_ENTITY_DATA(CTransformComponentData);
+			m_group = entityManager->createGroup(type, 1, visibleGroup);
+		}
 	}
 
 	void CComponentTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
 
-			CTransformComponentData* component = GET_ENTITY_DATA(entity, CTransformComponentData);
-			if (component != NULL
-				&& component->TransformComponent != NULL
-				&& component->TransformComponent->hasChanged())
-			{
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-
-				// notify changed for CWorldTransformSystem, sync in TransformComponent->hasChanged()
-				transform->HasChanged = true;
-
-				m_transforms.push_back(transform);
-				m_components.push_back(component);
-			}
-		}
 	}
 
 	void CComponentTransformSystem::init(CEntityManager* entityManager)
@@ -75,15 +67,27 @@ namespace Skylicht
 
 	void CComponentTransformSystem::update(CEntityManager* entityManager)
 	{
-		CWorldTransformData** transforms = m_transforms.pointer();
-		CTransformComponentData** components = m_components.pointer();
-		u32 numEntity = m_components.size();
+		CEntity** entities = m_group->getEntities();
+		u32 numEntity = m_group->getEntityCount();
 
 		for (u32 i = 0; i < numEntity; i++)
 		{
-			// copy transform to relative matrix
-			components[i]->TransformComponent->getRelativeTransform(transforms[i]->Relative);
-			components[i]->TransformComponent->setChanged(false);
+			CEntity* entity = entities[i];
+
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CTransformComponentData* component = GET_ENTITY_DATA(entity, CTransformComponentData);
+
+			if (component != NULL
+				&& component->TransformComponent != NULL
+				&& component->TransformComponent->hasChanged())
+			{
+				// copy transform to relative matrix
+				component->TransformComponent->getRelativeTransform(transform->Relative);
+				component->TransformComponent->setChanged(false);
+
+				// notify changed for CWorldTransformSystem, sync in TransformComponent->hasChanged()
+				transform->HasChanged = true;
+			}
 		}
 	}
 }

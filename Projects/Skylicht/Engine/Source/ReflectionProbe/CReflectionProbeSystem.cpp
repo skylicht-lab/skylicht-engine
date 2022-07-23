@@ -45,19 +45,19 @@ namespace Skylicht
 	{
 		if (m_groupLighting == NULL)
 		{
-			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
 			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
 
-			const u32 type[] = { CIndirectLightingData::DataTypeIndex };
+			const u32 type[] = GET_LIST_ENTITY_DATA(CIndirectLightingData);
 			m_groupLighting = entityManager->createGroup(type, 1, visibleGroup);
 		}
 
 		if (m_groupProbes == NULL)
 		{
-			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
 			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
 
-			const u32 type[] = { CReflectionProbeData::DataTypeIndex };
+			const u32 type[] = GET_LIST_ENTITY_DATA(CReflectionProbeData);
 			m_groupProbes = entityManager->createGroup(type, 1, visibleGroup);
 		}
 

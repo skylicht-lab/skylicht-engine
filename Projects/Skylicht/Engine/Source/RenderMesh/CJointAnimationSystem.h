@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntitySystem.h"
+#include "Entity/CEntityGroup.h"
 #include "Transform/CWorldTransformData.h"
 #include "Transform/CWorldInverseTransformData.h"
 #include "CJointData.h"
@@ -34,9 +35,7 @@ namespace Skylicht
 	class CJointAnimationSystem : public IEntitySystem
 	{
 	protected:
-		core::array<CJointData*> m_joints;
-		core::array<CWorldTransformData*> m_transforms;
-		core::array<CWorldInverseTransformData*> m_rootInvTransform;
+		CEntityGroup* m_group;
 
 	public:
 		CJointAnimationSystem();
@@ -47,8 +46,8 @@ namespace Skylicht
 
 		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);		
+		virtual void update(CEntityManager* entityManager);
 	};
 }
