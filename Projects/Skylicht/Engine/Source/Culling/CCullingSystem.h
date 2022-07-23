@@ -36,26 +36,30 @@ namespace Skylicht
 {
 	struct SBBoxAndMaterial
 	{
+		CEntity* Entity;
+
+		CCullingData* Culling;
+
 		// Local BBox to check culling
 		core::aabbox3df BBox;
 
 		// Material to check render pipeline cull
 		ArrayMaterial* Materials;
 
-		SBBoxAndMaterial(const core::aabbox3df& box, ArrayMaterial* m)
+		SBBoxAndMaterial()
 		{
-			BBox = box;
-			Materials = m;
+			Culling = NULL;
+			Materials = NULL;
 		}
 	};
 
 	class CCullingSystem : public IRenderSystem
 	{
 	protected:
-		core::array<CCullingData*> m_cullings;
-		core::array<CWorldTransformData*> m_transforms;
-		core::array<CWorldInverseTransformData*> m_invTransforms;
 		core::array<SBBoxAndMaterial> m_bboxAndMaterials;
+
+		int m_alloc;
+		int m_count;
 
 		static bool s_useCacheCulling;
 

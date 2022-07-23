@@ -36,7 +36,9 @@ namespace Skylicht
 	bool CCullingSystem::s_useCacheCulling = false;
 
 	CCullingSystem::CCullingSystem() :
-		m_group(NULL)
+		m_group(NULL),
+		m_alloc(0),
+		m_count(0)
 	{
 		m_pipelineType = IRenderPipeline::Mix;
 	}
@@ -56,11 +58,6 @@ namespace Skylicht
 
 		if (s_useCacheCulling)
 			return;
-
-		m_cullings.set_used(0);
-		m_transforms.set_used(0);
-		m_invTransforms.set_used(0);
-		m_bboxAndMaterials.set_used(0);
 	}
 
 	void CCullingSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
@@ -70,6 +67,8 @@ namespace Skylicht
 
 		entities = m_group->getEntities();
 		numEntity = m_group->getEntityCount();
+
+		m_count = 0;
 
 		for (int i = 0; i < numEntity; i++)
 		{
@@ -89,44 +88,42 @@ namespace Skylicht
 				CRenderMeshData* mesh = GET_ENTITY_DATA(entity, CRenderMeshData);
 				if (mesh != NULL)
 				{
-					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-					CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
-
+					if ((m_count + 1) >= m_alloc)
 					{
-						m_cullings.push_back(culling);
+						m_alloc = (m_count + 1) * 2;
+						if (m_alloc < 32)
+							m_alloc = 32;
 
-						CMesh* meshObj = mesh->getMesh();
-
-						m_bboxAndMaterials.push_back(
-							SBBoxAndMaterial(
-								meshObj->getBoundingBox(),
-								&meshObj->Materials
-							)
-						);
-
-						m_transforms.push_back(transform);
-						m_invTransforms.push_back(invTransform);
+						m_bboxAndMaterials.set_used(m_alloc);
 					}
+
+					CMesh* meshObj = mesh->getMesh();
+
+					SBBoxAndMaterial* m = &m_bboxAndMaterials[m_count++];
+					m->Entity = entity;
+					m->Culling = culling;
+					m->BBox = meshObj->getBoundingBox();
+					m->Materials = &meshObj->Materials;
 				}
 				else
 				{
 					CCullingBBoxData* bbox = GET_ENTITY_DATA(entity, CCullingBBoxData);
 					if (bbox != NULL)
 					{
-						CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-						CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
+						if ((m_count + 1) >= m_alloc)
+						{
+							m_alloc = (m_count + 1) * 2;
+							if (m_alloc < 32)
+								m_alloc = 32;
 
-						m_cullings.push_back(culling);
+							m_bboxAndMaterials.set_used(m_alloc);
+						}
 
-						m_bboxAndMaterials.push_back(
-							SBBoxAndMaterial(
-								bbox->BBox,
-								&bbox->Materials
-							)
-						);
-
-						m_transforms.push_back(transform);
-						m_invTransforms.push_back(invTransform);
+						SBBoxAndMaterial* m = &m_bboxAndMaterials[m_count++];
+						m->Entity = entity;
+						m->Culling = culling;
+						m->BBox = bbox->BBox;
+						m->Materials = &bbox->Materials;
 					}
 				}
 			}
@@ -140,11 +137,6 @@ namespace Skylicht
 
 	void CCullingSystem::update(CEntityManager* entityManager)
 	{
-		CCullingData** cullings = m_cullings.pointer();
-		SBBoxAndMaterial* bboxAndMaterials = m_bboxAndMaterials.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
-		CWorldInverseTransformData** invTransforms = m_invTransforms.pointer();
-
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 		if (rp == NULL)
 			return;
@@ -156,14 +148,13 @@ namespace Skylicht
 		u32 cameraCullingMask = camera->getCullingMask();
 		const core::aabbox3df& cameraBox = camera->getViewFrustum().getBoundingBox();
 
-		u32 numEntity = m_cullings.size();
-		for (u32 i = 0; i < numEntity; i++)
+		for (int i = 0; i < m_count; i++)
 		{
-			// get mesh bbox
-			CCullingData* culling = cullings[i];
-			CWorldTransformData* transform = transforms[i];
-			CWorldInverseTransformData* invTransform = invTransforms[i];
-			SBBoxAndMaterial& bbBoxMat = bboxAndMaterials[i];
+			SBBoxAndMaterial* bbBoxMat = &m_bboxAndMaterials[i];
+
+			CEntity* entity = bbBoxMat->Entity;
+			CCullingData* culling = bbBoxMat->Culling;
+
 
 			if (s_useCacheCulling)
 			{
@@ -187,9 +178,9 @@ namespace Skylicht
 			}
 
 			// check material first
-			if (bbBoxMat.Materials != NULL)
+			if (bbBoxMat->Materials != NULL)
 			{
-				for (CMaterial* material : *bbBoxMat.Materials)
+				for (CMaterial* material : *bbBoxMat->Materials)
 				{
 					if (material != NULL && rp->canRenderMaterial(material) == false)
 					{
@@ -206,8 +197,9 @@ namespace Skylicht
 				continue;
 
 			// transform world bbox
-			culling->BBox = bbBoxMat.BBox;
+			culling->BBox = bbBoxMat->BBox;
 
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			transform->World.transformBoxEx(culling->BBox);
 
 			// 1. Detect by bounding box
@@ -229,41 +221,40 @@ namespace Skylicht
 			// 2. Detect algorithm
 			if (culling->Visible == true)
 			{
-				if (culling->Type == CCullingData::FrustumBox && invTransform != NULL)
+				if (culling->Type == CCullingData::FrustumBox)
 				{
-					// transform the frustum to the node's current absolute transformation
-					invTrans = invTransform->WorldInverse;
-
-					SViewFrustum frust = camera->getViewFrustum();
-					frust.transform(invTrans);
-
-					core::vector3df edges[8];
-					bbBoxMat.BBox.getEdges(edges);
-
-					for (s32 i = 0; i < scene::SViewFrustum::VF_PLANE_COUNT; ++i)
+					CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
+					if (invTransform)
 					{
-						bool boxInFrustum = false;
-						for (u32 j = 0; j < 8; ++j)
+						// transform the frustum to the node's current absolute transformation
+						invTrans = invTransform->WorldInverse;
+
+						SViewFrustum frust = camera->getViewFrustum();
+						frust.transform(invTrans);
+
+						core::vector3df edges[8];
+						bbBoxMat->BBox.getEdges(edges);
+
+						for (s32 i = 0; i < scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 						{
-							if (frust.planes[i].classifyPointRelation(edges[j]) != core::ISREL3D_FRONT)
+							bool boxInFrustum = false;
+							for (u32 j = 0; j < 8; ++j)
 							{
-								boxInFrustum = true;
+								if (frust.planes[i].classifyPointRelation(edges[j]) != core::ISREL3D_FRONT)
+								{
+									boxInFrustum = true;
+									break;
+								}
+							}
+
+							if (!boxInFrustum)
+							{
+								culling->CameraCulled = true;
+								culling->Visible = false;
 								break;
 							}
 						}
-
-						if (!boxInFrustum)
-						{
-							culling->CameraCulled = true;
-							culling->Visible = false;
-							break;
-						}
-					}
-				}
-				else if (culling->Type == CCullingData::Occlusion)
-				{
-					// todo
-					// later
+					} // if invTransform
 				}
 			}
 		}

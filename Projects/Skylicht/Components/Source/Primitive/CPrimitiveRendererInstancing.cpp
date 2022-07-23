@@ -122,9 +122,9 @@ namespace Skylicht
 			IShaderInstancing* instancing = it.first.Shader->getInstancing();
 			IVertexBuffer* buffer = m_buffers[it.first];
 
-			m_materials.set_used(0);
-			m_transforms.set_used(0);
-			m_indirectLightings.set_used(0);
+			m_materials.reset();
+			m_transforms.reset();
+			m_indirectLightings.reset();
 
 			CPrimiviteData** primitives = list.pointer();
 
@@ -133,19 +133,23 @@ namespace Skylicht
 				CPrimiviteData* primitive = primitives[i];
 
 				// add materials
-				m_materials.push_back(primitive->Material);
+				m_materials.push(primitive->Material);
 
 				// add transform
 				CEntity* entity = entityManager->getEntity(primitive->EntityIndex);
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 				CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
-				m_transforms.push_back(transform);
-				m_indirectLightings.push_back(lighting);
+				m_transforms.push(transform);
+				m_indirectLightings.push(lighting);
 			}
 
 			// batching transform & material data to buffer
-			instancing->batchIntancing(buffer, m_materials, m_transforms, m_indirectLightings);
+			instancing->batchIntancing(buffer,
+				m_materials.pointer(),
+				m_transforms.pointer(),
+				m_indirectLightings.pointer(),
+				m_transforms.count());
 		}
 	}
 

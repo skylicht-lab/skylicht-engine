@@ -46,7 +46,7 @@ namespace Skylicht
 	{
 		CEntity** allEntities = entityManager->getEntities();
 
-		m_count = 0;
+		m_entities.reset();
 
 		for (int i = 0; i < numEntity; i++)
 		{
@@ -69,21 +69,7 @@ namespace Skylicht
 
 			// only select visible
 			if (visible->Visible)
-			{
-				if ((m_count + 1) >= m_alloc)
-				{
-					int alloc = (m_count + 1) * 2;
-					if (alloc < 32)
-						alloc = 32;
-
-					m_entities.set_used(alloc);
-					m_entitiesPtr = m_entities.pointer();
-
-					m_alloc = alloc;
-				}
-
-				m_entitiesPtr[m_count++] = entity;
-			}
+				m_entities.push(entity);
 		}
 
 		m_needQuery = false;

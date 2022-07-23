@@ -22,37 +22,36 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Entity/IEntitySystem.h"
-#include "CRenderMeshData.h"
-#include "CGroupMesh.h"
-#include "CMeshSystem.h"
+#include "pch.h"
+#include "CMeshRenderSystem.h"
 
 namespace Skylicht
 {
-	class CSoftwareSkinningSystem : public CMeshSystem
+	CMeshRenderSystem::CMeshRenderSystem() :
+		m_groupMesh(NULL)
 	{
-	public:
-		CSoftwareSkinningSystem();
 
-		virtual ~CSoftwareSkinningSystem();
+	}
 
-		virtual void beginQuery(CEntityManager* entityManager);
+	CMeshRenderSystem::~CMeshRenderSystem()
+	{
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+	}
 
-		virtual void init(CEntityManager* entityManager);
+	void CMeshRenderSystem::beginQuery(CEntityManager* entityManager)
+	{
+		if (m_groupMesh == NULL)
+		{
+			const u32 type[] = GET_LIST_ENTITY_DATA(CRenderMeshData);
+			m_groupMesh = (CGroupMesh*)entityManager->findGroup(type, 1);
 
-		virtual void update(CEntityManager* entityManager);
+			if (m_groupMesh == NULL)
+			{
+				const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
+				CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
 
-	protected:
-		void softwareSkinning(CSkinnedMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
-
-		void softwareSkinningTangent(CSkinnedMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
-
-		void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkinTangents* src, int boneIndex);
-
-		void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkin* src, int boneIndex);
-	};
+				m_groupMesh = (CGroupMesh*)entityManager->addCustomGroup(new CGroupMesh(visibleGroup));
+			}
+		}
+	}
 }

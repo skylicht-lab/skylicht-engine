@@ -44,46 +44,40 @@ namespace Skylicht
 
 	}
 
+	void CSkinnedMeshRenderer::init(CEntityManager* entityManager)
+	{
+
+	}
+
 	void CSkinnedMeshRenderer::beginQuery(CEntityManager* entityManager)
 	{
 		m_meshs.set_used(0);
-		m_transforms.set_used(0);
-		m_indirectLightings.set_used(0);
-
 		m_transparents.set_used(0);
+
+		CMeshRenderSystem::beginQuery(entityManager);
 	}
 
 	void CSkinnedMeshRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		numEntity = m_groupMesh->getNumHardwareSkinnedMesh();
+		entities = m_groupMesh->getHardwareSkinnedMeshes();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
-
 			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
-			if (meshData != NULL)
-			{
-				if (meshData->isSkinnedMesh() == true && meshData->isSoftwareSkinning() == false)
-				{
-					bool cullingVisible = true;
 
-					// get culling result from CCullingSystem
-					CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
-					if (cullingData != NULL)
-						cullingVisible = cullingData->Visible;
+			bool cullingVisible = true;
 
-					// only render visible culling mesh
-					if (cullingVisible == true)
-					{
-						m_meshs.push_back(meshData);
-					}
-				}
-			}
+			// get culling result from CCullingSystem
+			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+			if (cullingData != NULL)
+				cullingVisible = cullingData->Visible;
+
+			// only render visible culling mesh
+			if (cullingVisible == true)
+				m_meshs.push_back(meshData);
 		}
-	}
-
-	void CSkinnedMeshRenderer::init(CEntityManager* entityManager)
-	{
-
 	}
 
 	int cmpRenderSkinMeshFunc(const void* a, const void* b)
@@ -152,20 +146,10 @@ namespace Skylicht
 	{
 		// need sort render by material, texture, mesh		
 		u32 count = m_meshs.size();
-
-		// need sort by material
-		qsort(m_meshs.pointer(), count, sizeof(CRenderMeshData*), cmpRenderSkinMeshFunc);
-
-		// get world transform			
-		for (u32 i = 0; i < count; i++)
+		if (count > 0)
 		{
-			CEntity* entity = entityManager->getEntity(m_meshs[i]->EntityIndex);
-
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CIndirectLightingData* indirect = GET_ENTITY_DATA(entity, CIndirectLightingData);
-
-			m_transforms.push_back(transform);
-			m_indirectLightings.push_back(indirect);
+			// need sort by material
+			qsort(m_meshs.pointer(), count, sizeof(CRenderMeshData*), cmpRenderSkinMeshFunc);
 		}
 	}
 
@@ -174,17 +158,16 @@ namespace Skylicht
 		IVideoDriver* driver = getVideoDriver();
 
 		CRenderMeshData** meshs = m_meshs.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
-		CIndirectLightingData** indirectLighting = m_indirectLightings.pointer();
-
 		CShaderManager* shaderManager = CShaderManager::getInstance();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
+		CEntity** allEntities = entityManager->getEntities();
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
 			CRenderMeshData* renderMeshData = m_meshs[i];
+			CEntity* entity = allEntities[renderMeshData->EntityIndex];
 
-			CIndirectLightingData* lightingData = indirectLighting[i];
+			CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
 			if (lightingData != NULL)
 			{
 				if (lightingData->Type == CIndirectLightingData::SH9)
@@ -193,9 +176,8 @@ namespace Skylicht
 					CShaderLighting::setLightAmbient(lightingData->Color);
 			}
 
-			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();
-
 			// set bone matrix to shader callback
+			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();
 			shaderManager->BoneMatrix = mesh->SkinningMatrix;
 
 			// software blendshape
@@ -203,7 +185,8 @@ namespace Skylicht
 				mesh = (CSkinnedMesh*)renderMeshData->getSoftwareBlendShapeMesh();
 
 			// set transform
-			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			driver->setTransform(video::ETS_WORLD, transform->World);
 
 			bool haveTransparent = false;
 
@@ -243,25 +226,25 @@ namespace Skylicht
 			return;
 
 		IVideoDriver* driver = getVideoDriver();
-
-		CRenderMeshData** meshs = m_meshs.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
-
 		CShaderManager* shaderManager = CShaderManager::getInstance();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
+		CRenderMeshData** meshs = m_meshs.pointer();
+		CEntity** allEntities = entityManager->getEntities();
 
 		for (u32 i = 0; i < numTransparent; i++)
 		{
 			u32 meshID = m_transparents[i];
 
 			CRenderMeshData* renderMeshData = m_meshs[meshID];
-			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();
+			CEntity* entity = allEntities[renderMeshData->EntityIndex];
 
 			// set bone matrix to shader callback
+			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();
 			shaderManager->BoneMatrix = mesh->SkinningMatrix;
 
 			// set transform
-			driver->setTransform(video::ETS_WORLD, transforms[meshID]->World);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			driver->setTransform(video::ETS_WORLD, transform->World);
 
 			// software blendshape
 			if (renderMeshData->isSoftwareBlendShape())

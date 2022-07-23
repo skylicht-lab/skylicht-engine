@@ -54,46 +54,35 @@ namespace Skylicht
 		for (auto it : m_groups)
 		{
 			SMeshInstancingGroup* group = it.second;
-			group->IndirectLightings.set_used(0);
-			group->Materials.set_used(0);
-			group->Transforms.set_used(0);
+			group->IndirectLightings.reset();
+			group->Materials.reset();
+			group->Transforms.reset();
 		}
+
+		CMeshRenderSystem::beginQuery(entityManager);
 	}
 
 	void CMeshRendererInstancing::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		numEntity = m_groupMesh->getNumInstancingMesh();
+		entities = m_groupMesh->getInstancingMeshes();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
-			if (meshData != NULL)
-			{
-				if (meshData->getMesh() == NULL ||
-					meshData->getInstancingData() == NULL)
-					continue;
 
-				// do not render gpu skinning, pass for CSkinMeshRenderer
-				if (meshData->isSkinnedMesh() == true &&
-					meshData->isSoftwareSkinning() == false)
-					continue;
+			bool cullingVisible = true;
 
-				if (meshData->isInstancing())
-				{
-					bool cullingVisible = true;
+			// get culling result from CCullingSystem
+			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+			if (cullingData != NULL)
+				cullingVisible = cullingData->Visible;
 
-					// get culling result from CCullingSystem
-					CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
-					if (cullingData != NULL)
-						cullingVisible = cullingData->Visible;
-
-					// only render visible culling mesh
-					if (cullingVisible == true)
-					{
-						m_meshs.push_back(meshData);
-					}
-				}
-			}
+			// only render visible culling mesh
+			if (cullingVisible == true)
+				m_meshs.push_back(meshData);
 		}
 	}
 
@@ -108,6 +97,8 @@ namespace Skylicht
 		u32 numEntity = m_meshs.size();
 		CRenderMeshData** renderData = m_meshs.pointer();
 
+		CEntity** allEntities = entityManager->getEntities();
+
 		// update instancing
 		for (u32 i = 0; i < numEntity; i++)
 		{
@@ -120,13 +111,13 @@ namespace Skylicht
 				m_groups[data] = group;
 			}
 
-			CEntity* entity = entityManager->getEntity(renderData[i]->EntityIndex);
+			CEntity* entity = allEntities[renderData[i]->EntityIndex];
 
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			CIndirectLightingData* indirect = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
-			group->Transforms.push_back(transform);
-			group->IndirectLightings.push_back(indirect);
+			group->Transforms.push(transform);
+			group->IndirectLightings.push(indirect);
 		}
 
 		// bake instancing in group
@@ -135,23 +126,24 @@ namespace Skylicht
 			SMeshInstancingData* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
-			u32 count = group->Transforms.size();
+			u32 count = group->Transforms.count();
 			if (count == 0)
 				continue;
 
 			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
 			{
-				group->Materials.set_used(0);
+				group->Materials.reset();
 
 				for (u32 j = 0; j < count; j++)
-					group->Materials.push_back(data->Materials[i]);
+					group->Materials.push(data->Materials[i]);
 
 				// batching transform & material data to buffer
 				data->Instancing[i]->batchIntancing(
 					data->InstancingBuffer[i],
-					group->Materials,
-					group->Transforms,
-					group->IndirectLightings
+					group->Materials.pointer(),
+					group->Transforms.pointer(),
+					group->IndirectLightings.pointer(),
+					count
 				);
 			}
 		}
@@ -169,7 +161,7 @@ namespace Skylicht
 			SMeshInstancingData* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
-			u32 count = group->Transforms.size();
+			int count = group->Transforms.count();
 			if (count == 0)
 				continue;
 
