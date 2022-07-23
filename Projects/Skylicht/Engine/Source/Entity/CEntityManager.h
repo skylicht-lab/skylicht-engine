@@ -45,7 +45,7 @@ namespace Skylicht
 
 		core::array<CEntityGroup*> m_groups;
 
-		CArrayUtils<CEntity*> m_sortDepth[MAX_ENTITY_DEPTH];
+		CFastArray<CEntity*> m_sortDepth[MAX_ENTITY_DEPTH];
 
 		std::vector<IEntitySystem*> m_systems;
 		std::vector<IRenderSystem*> m_renders;

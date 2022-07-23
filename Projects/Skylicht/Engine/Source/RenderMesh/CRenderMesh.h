@@ -48,6 +48,7 @@ namespace Skylicht
 		std::string m_meshFile;
 		std::string m_materialFile;
 
+		bool m_optimizeForRender;
 		bool m_loadTexcoord2;
 		bool m_loadNormal;
 		bool m_fixInverseNormal;
@@ -77,6 +78,11 @@ namespace Skylicht
 		void initMaterialFromFile(const char* material);
 
 		void initMaterial(ArrayMaterial& materials, bool cloneMaterial = false);
+
+		void enableOptimizeForRender(bool b)
+		{
+			m_optimizeForRender = b;
+		}
 
 		void enableInstancing(bool b);
 
@@ -113,6 +119,10 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CRenderMesh);
 
 	protected:
+
+		void initNoOptimizeFromPrefab(CEntityPrefab* prefab);
+
+		void initOptimizeFromPrefab(CEntityPrefab* prefab);
 
 		void releaseMaterial();
 
