@@ -89,6 +89,7 @@ namespace Skylicht
 		opts.target_axes.front = UFBX_COORDINATE_AXIS_POSITIVE_Z;
 
 		opts.target_unit_meters = 1.0f;
+		opts.allow_nodes_out_of_root = true;
 
 		ufbx_error error;
 		ufbx_scene* scene = ufbx_load_memory(buf, filesize, &opts, &error);
@@ -104,8 +105,7 @@ namespace Skylicht
 		std::map<ufbx_node*, CEntity*> mapNodes;
 
 		// root node
-		CEntity* root = output->createEntity();
-		output->addTransformData(root, NULL, core::IdentityMatrix, "root");
+		CEntity* root = NULL;
 
 		core::matrix4 unitScaleMatrix;
 
@@ -114,12 +114,12 @@ namespace Skylicht
 		{
 			ufbx_node* node = scene->nodes[i];
 
-			CEntity* parent = root;
+			CEntity* parent = NULL;
 			if (node->parent)
 				parent = mapNodes[node->parent];
 
 			const char* name = node->name.data;
-			if (parent == root)
+			if (node->is_root)
 			{
 				name = modelName.c_str();
 				unitScaleMatrix = convertFBXMatrix(node->node_to_parent);
@@ -128,6 +128,9 @@ namespace Skylicht
 			CEntity* entity = output->createEntity();
 			output->addTransformData(entity, parent, convertFBXMatrix(node->node_to_parent), name);
 			mapNodes[node] = entity;
+
+			if (node->is_root)
+				root = entity;
 
 			// Update world transform
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
@@ -578,7 +581,7 @@ namespace Skylicht
 						meshData->setSkinnedMesh(true);
 
 						// need mode this mesh to to root
-						output->changeParent(entity, root);
+						output->changeParent(entity, NULL);
 					}
 
 					// drop this mesh

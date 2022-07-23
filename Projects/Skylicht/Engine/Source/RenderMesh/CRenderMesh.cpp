@@ -42,6 +42,7 @@ namespace Skylicht
 	CATEGORY_COMPONENT(CRenderMesh, "Render Mesh", "Renderer");
 
 	CRenderMesh::CRenderMesh() :
+		m_optimizeForRender(false),
 		m_loadTexcoord2(false),
 		m_loadNormal(true),
 		m_fixInverseNormal(true)
@@ -95,6 +96,8 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "load normal", m_loadNormal));
 		object->autoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
 		object->autoRelease(new CBoolProperty(object, "load texcoord2", m_loadTexcoord2));
+		object->autoRelease(new CBoolProperty(object, "optimize", m_optimizeForRender));
+		object->autoRelease(new CBoolProperty(object, "instancing", m_enableInstancing));
 
 		std::vector<std::string> meshExts = { "dae","obj","smesh" };
 		std::vector<std::string> materialExts = { "xml","mat" };
@@ -112,12 +115,16 @@ namespace Skylicht
 		m_fixInverseNormal = object->get<bool>("inserse normal", true);
 		m_loadTexcoord2 = object->get<bool>("load texcoord2", false);
 
+		bool optimize = object->get<bool>("optimize", false);
+		bool instancing = object->get<bool>("instancing", false);
+
 		std::string meshFile = object->get<std::string>("mesh", "");
 		std::string materialFile = object->get<std::string>("material", "");
 
-		if (meshFile != m_meshFile)
+		if (meshFile != m_meshFile || optimize != m_optimizeForRender)
 		{
 			m_meshFile = meshFile;
+			m_optimizeForRender = optimize;
 
 			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 				meshFile.c_str(),
@@ -145,6 +152,10 @@ namespace Skylicht
 			if (materials.size() > 0)
 				initMaterial(materials);
 		}
+
+		// enable instancing
+		if (instancing)
+			enableInstancing(true);
 	}
 
 	void CRenderMesh::refreshModelAndMaterial()
@@ -178,6 +189,14 @@ namespace Skylicht
 	{
 		releaseEntities();
 
+		if (m_optimizeForRender)
+			initOptimizeFromPrefab(prefab);
+		else
+			initNoOptimizeFromPrefab(prefab);
+	}
+
+	void CRenderMesh::initNoOptimizeFromPrefab(CEntityPrefab* prefab)
+	{
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
 
 		// root entity of object
@@ -303,6 +322,106 @@ namespace Skylicht
 				}
 			}
 		}
+	}
+
+	void CRenderMesh::initOptimizeFromPrefab(CEntityPrefab* prefab)
+	{
+		CEntityManager* entityManager = m_gameObject->getEntityManager();
+
+		// root entity of object
+		m_root = m_gameObject->getEntity();
+		CWorldTransformData* rootTransform = GET_ENTITY_DATA(m_root, CWorldTransformData);
+
+		// spawn childs entity
+		int numEntities = prefab->getNumEntities();
+
+		core::array<CEntity*> renderEntities;
+
+		// we just add the renderer prefab
+		for (int i = 0; i < numEntities; i++)
+		{
+			CEntity* srcEntity = prefab->getEntity(i);
+			CRenderMeshData* srcRender = srcEntity->getData<CRenderMeshData>();
+			if (srcRender != NULL)
+			{
+				if (!srcRender->isSkinnedMesh())
+				{
+					// just add static mesh
+					renderEntities.push_back(srcEntity);
+				}
+			}
+		}
+
+		numEntities = renderEntities.size();
+
+		CEntity** entities = entityManager->createEntity(numEntities, m_allEntities);
+
+		// copy entity data
+		for (int i = 0; i < numEntities; i++)
+		{
+			CEntity* spawnEntity = entities[i];
+			CEntity* srcEntity = renderEntities[i];
+
+			// copy transform data
+			CWorldTransformData* srcTransform = srcEntity->getData<CWorldTransformData>();
+			if (srcTransform != NULL)
+			{
+				CWorldTransformData* spawnTransform = spawnEntity->addData<CWorldTransformData>();
+				spawnTransform->Name = srcTransform->Name;
+
+				// get the world matrix
+				core::matrix4 m = srcTransform->Relative;
+				int parentID = srcTransform->ParentIndex;
+				while (parentID != -1)
+				{
+					CEntity* parent = prefab->getEntity(parentID);
+					CWorldTransformData* parentTransform = parent->getData<CWorldTransformData>();
+
+					m = parentTransform->Relative * m;
+					parentID = parentTransform->ParentIndex;
+				}
+
+				spawnTransform->Relative = m;
+				spawnTransform->HasChanged = true;
+				spawnTransform->Depth = rootTransform->Depth + 1;
+				spawnTransform->ParentIndex = m_root->getIndex();
+
+				m_transforms.push_back(spawnTransform);
+			}
+
+			// copy render data
+			CRenderMeshData* srcRender = srcEntity->getData<CRenderMeshData>();
+			if (srcRender != NULL)
+			{
+				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
+				spawnRender->setMesh(srcRender->getMesh());
+
+				// init software blendshape
+				if (srcRender->getMesh()->BlendShape.size() > 0)
+					spawnRender->initSoftwareBlendShape();
+
+				// add to list renderer
+				m_renderers.push_back(spawnRender);
+
+				// also add transform
+				m_renderTransforms.push_back(GET_ENTITY_DATA(spawnEntity, CWorldTransformData));
+
+				// add world inv transform for culling system (disable to optimize)
+				// spawnEntity->addData<CWorldInverseTransformData>();
+			}
+
+			// copy culling data
+			CCullingData* srcCulling = srcEntity->getData<CCullingData>();
+			if (srcCulling != NULL)
+			{
+				CCullingData* spawnCulling = spawnEntity->addData<CCullingData>();
+				spawnCulling->Type = srcCulling->Type;
+				spawnCulling->Visible = srcCulling->Visible;
+			}
+		}
+
+		// for handler on Editor UI
+		setEntities(entities, numEntities);
 	}
 
 	void CRenderMesh::initFromMeshFile(const char* path)

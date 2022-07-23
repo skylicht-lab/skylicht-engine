@@ -40,7 +40,7 @@ namespace Skylicht
 
 		bool m_needQuery;
 
-		CArrayUtils<CEntity*> m_entities;
+		CFastArray<CEntity*> m_entities;
 
 	public:
 		CEntityGroup(const u32* dataTypes, int count);

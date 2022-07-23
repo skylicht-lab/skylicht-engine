@@ -84,9 +84,9 @@ namespace Skylicht
 		std::map<SShaderMesh, IVertexBuffer*> m_buffers;
 
 		// bake instancing
-		CArrayUtils<CMaterial*> m_materials;
-		CArrayUtils<CWorldTransformData*> m_transforms;
-		CArrayUtils<CIndirectLightingData*> m_indirectLightings;
+		CFastArray<CMaterial*> m_materials;
+		CFastArray<CWorldTransformData*> m_transforms;
+		CFastArray<CIndirectLightingData*> m_indirectLightings;
 
 	public:
 		CPrimitiveRendererInstancing();

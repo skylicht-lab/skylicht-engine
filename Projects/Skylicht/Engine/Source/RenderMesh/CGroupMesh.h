@@ -30,12 +30,12 @@ namespace Skylicht
 	class CGroupMesh : public CEntityGroup
 	{
 	protected:
-		CArrayUtils<CEntity*> m_staticMesh;
-		CArrayUtils<CEntity*> m_skinnedMesh;
-		CArrayUtils<CEntity*> m_blendShapeMesh;
-		CArrayUtils<CEntity*> m_softwareSkinnedMesh;
-		CArrayUtils<CEntity*> m_hardwareSkinnedMesh;
-		CArrayUtils<CEntity*> m_instancingMesh;
+		CFastArray<CEntity*> m_staticMesh;
+		CFastArray<CEntity*> m_skinnedMesh;
+		CFastArray<CEntity*> m_blendShapeMesh;
+		CFastArray<CEntity*> m_softwareSkinnedMesh;
+		CFastArray<CEntity*> m_hardwareSkinnedMesh;
+		CFastArray<CEntity*> m_instancingMesh;
 
 	public:
 		CGroupMesh(CEntityGroup* parent);
