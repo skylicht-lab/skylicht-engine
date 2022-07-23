@@ -27,15 +27,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTransformComponentData.h"
 #include "CWorldTransformData.h"
 #include "Entity/IEntitySystem.h"
+#include "Entity/CEntityGroup.h"
 
 namespace Skylicht
 {
 	class CComponentTransformSystem : public IEntitySystem
 	{
 	protected:
-		core::array<CTransformComponentData*> m_components;
-
-		core::array<CWorldTransformData*> m_transforms;
+		CEntityGroup* m_group;
 
 	public:
 		CComponentTransformSystem();
@@ -46,8 +45,8 @@ namespace Skylicht
 
 		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void init(CEntityManager *entityManager);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void update(CEntityManager *entityManager);
+		virtual void update(CEntityManager* entityManager);
 	};
 }

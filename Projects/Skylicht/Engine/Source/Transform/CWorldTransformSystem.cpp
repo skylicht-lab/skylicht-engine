@@ -45,7 +45,7 @@ namespace Skylicht
 	{
 		if (m_visibleGroup == NULL)
 		{
-			const u32 visibleGroupType[] = { CVisibleData::DataTypeIndex };
+			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
 			m_visibleGroup = entityManager->findGroup(visibleGroupType, 1);
 		}
 	}
