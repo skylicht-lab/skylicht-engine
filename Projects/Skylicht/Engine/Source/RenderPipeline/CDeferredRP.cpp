@@ -390,7 +390,10 @@ namespace Skylicht
 	{
 		if (m_isIndirectPass == true)
 		{
+			if (mesh->InstancingLightingMesh)
+			{
 
+			}
 		}
 		else
 		{

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
 
 #include "CSpriteDrawData.h"
 #include "Transform/CWorldTransformData.h"
@@ -37,8 +38,9 @@ namespace Skylicht
 	protected:
 		IMeshBuffer* m_meshBuffer;
 
-		core::array<CSpriteDrawData*> m_sprites;
-		core::array<CWorldTransformData*> m_transforms;
+		CEntityGroup* m_group;
+
+		CFastArray<CSpriteDrawData*> m_sprites;
 
 	public:
 		CSpriteRenderer();

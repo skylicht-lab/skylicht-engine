@@ -23,6 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "Entity/CEntityManager.h"
 #include "CParticleRenderer.h"
 #include "Material/Shader/ShaderCallback/CShaderParticle.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
@@ -31,7 +32,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticleRenderer::CParticleRenderer()
+		CParticleRenderer::CParticleRenderer() :
+			m_group(NULL)
 		{
 			m_renderPass = Transparent;
 		}
@@ -43,44 +45,36 @@ namespace Skylicht
 
 		void CParticleRenderer::beginQuery(CEntityManager* entityManager)
 		{
-			m_particles.set_used(0);
-			m_transforms.set_used(0);
-			m_cullings.set_used(0);
+			if (m_group == NULL)
+			{
+				const u32 particle[] = GET_LIST_ENTITY_DATA(CParticleBufferData);
+				m_group = entityManager->createGroupFromVisible(particle, 1);
+			}
 		}
 
 		void CParticleRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
+			entities = m_group->getEntities();
+			numEntity = m_group->getEntityCount();
+
 			for (int i = 0; i < numEntity; i++)
 			{
 				CEntity* entity = entities[i];
 
 				CParticleBufferData* particleData = GET_ENTITY_DATA(entity, CParticleBufferData);
-				if (particleData != NULL)
+
+				// update bbox for culling
+				// use last frame data
+				CCullingBBoxData* box = GET_ENTITY_DATA(entity, CCullingBBoxData);
+
+				CGroup** groups = particleData->Groups.pointer();
+				for (u32 i = 0, n = particleData->Groups.size(); i < n; i++)
 				{
-					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-					CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-
-					if (visible->Visible)
-					{
-						m_particles.push_back(particleData);
-						m_transforms.push_back(transform);
-
-						// update bbox for culling
-						// use last frame data
-						CCullingBBoxData* box = GET_ENTITY_DATA(entity, CCullingBBoxData);
-
-						CGroup** groups = particleData->Groups.pointer();
-						for (u32 i = 0, n = particleData->Groups.size(); i < n; i++)
-						{
-							CGroup* g = groups[i];
-							if (i == 0)
-								box->BBox = g->getBBox();
-							else
-								box->BBox.addInternalBox(g->getBBox());
-						}
-
-						m_cullings.push_back(GET_ENTITY_DATA(entity, CCullingData));
-					}
+					CGroup* g = groups[i];
+					if (i == 0)
+						box->BBox = g->getBBox();
+					else
+						box->BBox.addInternalBox(g->getBBox());
 				}
 			}
 		}
@@ -92,7 +86,7 @@ namespace Skylicht
 
 		void CParticleRenderer::update(CEntityManager* entityManager)
 		{
-			if (m_particles.size() == 0)
+			if (m_group->getEntityCount() == 0)
 				return;
 
 			IVideoDriver* driver = getVideoDriver();
@@ -120,45 +114,51 @@ namespace Skylicht
 
 		void CParticleRenderer::renderTransparent(CEntityManager* entityManager)
 		{
-			if (m_particles.size() == 0)
+			if (m_group->getEntityCount() == 0)
 				return;
 
-			CParticleBufferData** particles = m_particles.pointer();
-			CWorldTransformData** transforms = m_transforms.pointer();
-			CCullingData** cullings = m_cullings.pointer();
+			CEntity** entities = m_group->getEntities();
+			int numEntity = m_group->getEntityCount();
 
-			for (u32 i = 0, n = m_particles.size(); i < n; i++)
+			for (int i = 0; i < numEntity; i++)
 			{
-				CParticleBufferData* data = particles[i];
+				CEntity* entity = entities[i];
+
+				CParticleBufferData* data = GET_ENTITY_DATA(entity, CParticleBufferData);
+				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 				// update group before render
 				for (u32 j = 0, m = data->Groups.size(); j < m; j++)
 				{
-					data->Groups[j]->update(cullings[i]->Visible);
+					data->Groups[j]->update(culling->Visible);
 				}
 
 				// render
-				if (cullings[i]->Visible == true)
-					renderParticleGroup(data, transforms[i]->World);
+				if (culling->Visible == true)
+					renderParticleGroup(data, transform->World);
 			}
 		}
 
 		void CParticleRenderer::renderEmission(CEntityManager* entityManager)
 		{
-			if (m_particles.size() == 0)
+			if (m_group->getEntityCount() == 0)
 				return;
 
-			CParticleBufferData** particles = m_particles.pointer();
-			CWorldTransformData** transforms = m_transforms.pointer();
-			CCullingData** cullings = m_cullings.pointer();
+			CEntity** entities = m_group->getEntities();
+			int numEntity = m_group->getEntityCount();
 
-			for (u32 i = 0, n = m_particles.size(); i < n; i++)
+			for (int i = 0; i < numEntity; i++)
 			{
-				CParticleBufferData* data = particles[i];
+				CEntity* entity = entities[i];
+
+				CParticleBufferData* data = GET_ENTITY_DATA(entity, CParticleBufferData);
+				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 				// render
-				if (cullings[i]->Visible == true)
-					renderParticleGroupEmission(data, transforms[i]->World);
+				if (culling->Visible == true)
+					renderParticleGroupEmission(data, transform->World);
 			}
 		}
 

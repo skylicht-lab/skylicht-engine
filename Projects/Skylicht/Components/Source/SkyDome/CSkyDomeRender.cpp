@@ -30,7 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CSkyDomeRender::CSkyDomeRender()
+	CSkyDomeRender::CSkyDomeRender() :
+		m_group(NULL)
 	{
 		m_renderPass = IRenderSystem::Sky;
 	}
@@ -42,32 +43,16 @@ namespace Skylicht
 
 	void CSkyDomeRender::beginQuery(CEntityManager* entityManager)
 	{
-		m_skydomes.set_used(0);
-		m_transforms.set_used(0);
-		m_worlds.set_used(0);
+		if (m_group == NULL)
+		{
+			const u32 skyGroup[] = GET_LIST_ENTITY_DATA(CSkyDomeData);
+			m_group = entityManager->createGroupFromVisible(skyGroup, 1);
+		}
 	}
 
 	void CSkyDomeRender::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
 
-			CSkyDomeData* skyDomeData = GET_ENTITY_DATA(entity, CSkyDomeData);
-
-			if (skyDomeData != NULL)
-			{
-				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
-
-				if (visible->Visible)
-				{
-					m_skydomes.push_back(skyDomeData);
-					m_transforms.push_back(transformData);
-					m_worlds.push_back(core::IdentityMatrix);
-				}
-			}
-		}
 	}
 
 	void CSkyDomeRender::init(CEntityManager* entityManager)
@@ -77,6 +62,11 @@ namespace Skylicht
 
 	void CSkyDomeRender::update(CEntityManager* entityManager)
 	{
+
+	}
+
+	void CSkyDomeRender::render(CEntityManager* entityManager)
+	{
 		CCamera* camera = entityManager->getCamera();
 		if (camera == NULL)
 			return;
@@ -84,30 +74,27 @@ namespace Skylicht
 		core::vector3df cameraPosition = camera->getGameObject()->getPosition();
 		float cameraFar = camera->getFarValue();
 
-		core::matrix4* worlds = m_worlds.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
-
-		for (u32 i = 0, n = m_worlds.size(); i < n; i++)
-		{
-			worlds[i].setTranslation(cameraPosition);
-			worlds[i].setScale(cameraFar * 0.9f);
-		}
-	}
-
-	void CSkyDomeRender::render(CEntityManager* entityManager)
-	{
 		IVideoDriver* driver = getVideoDriver();
 
-		CSkyDomeData** skydomes = m_skydomes.pointer();
-		core::matrix4* worlds = m_worlds.pointer();
+		CEntity** entities = m_group->getEntities();
+		int numEntity = m_group->getEntityCount();
 
-		for (u32 i = 0, n = m_skydomes.size(); i < n; i++)
+		core::matrix4 world;
+
+		for (int i = 0; i < numEntity; i++)
 		{
-			IMeshBuffer* buffer = skydomes[i]->Buffer;
+			CSkyDomeData* skydome = GET_ENTITY_DATA(entities[i], CSkyDomeData);
 
-			CShaderMaterial::setMaterial(skydomes[i]->SkyDomeMaterial);
+			CShaderMaterial::setMaterial(skydome->SkyDomeMaterial);
 
-			driver->setTransform(video::ETS_WORLD, worlds[i]);
+			world.makeIdentity();
+			world.setTranslation(cameraPosition);
+			world.setScale(cameraFar * 0.9f);
+
+			driver->setTransform(video::ETS_WORLD, world);
+
+			IMeshBuffer* buffer = skydome->Buffer;
+
 			driver->setMaterial(buffer->getMaterial());
 			driver->drawMeshBuffer(buffer);
 		}

@@ -145,6 +145,8 @@ namespace Skylicht
 
 		CEntityGroup* addCustomGroup(CEntityGroup* group);
 
+		CEntityGroup* createGroupFromVisible(const u32* types, int count);
+
 		CEntityGroup* createGroup(const u32* types, int count);
 
 		CEntityGroup* createGroup(const u32* types, int count, CEntityGroup* parent);

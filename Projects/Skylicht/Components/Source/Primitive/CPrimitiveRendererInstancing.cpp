@@ -31,7 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CPrimitiveRendererInstancing::CPrimitiveRendererInstancing()
+	CPrimitiveRendererInstancing::CPrimitiveRendererInstancing() :
+		m_group(NULL)
 	{
 	}
 
@@ -50,56 +51,61 @@ namespace Skylicht
 		{
 			i.second.set_used(0);
 		}
+
+		if (m_group == NULL)
+		{
+			const u32 primitive[] = GET_LIST_ENTITY_DATA(CPrimiviteData);
+			m_group = entityManager->createGroupFromVisible(primitive, 1);
+		}
 	}
 
 	void CPrimitiveRendererInstancing::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		entities = m_group->getEntities();
+		numEntity = m_group->getEntityCount();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
-			if (p != NULL)
+
+			if (p->Instancing &&
+				p->Material &&
+				p->Material->getShader() &&
+				p->Material->getShader()->getInstancing() &&
+				p->Material->getShader()->getInstancingShader())
 			{
-				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-				if (visible->Visible &&
-					p->Instancing &&
-					p->Material &&
-					p->Material->getShader() &&
-					p->Material->getShader()->getInstancing() &&
-					p->Material->getShader()->getInstancingShader())
+				CShader* shader = p->Material->getShader();
+				IShaderInstancing* instancing = shader->getInstancing();
+
+				CMesh* mesh = m_mesh[p->Type];
+
+				if (instancing->isSupport(mesh))
 				{
-					CShader* shader = p->Material->getShader();
-					IShaderInstancing* instancing = shader->getInstancing();
+					CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
-					CMesh* mesh = m_mesh[p->Type];
+					SShaderMesh shaderMesh;
+					shaderMesh.Shader = shader;
+					shaderMesh.Mesh = mesh;
+					shaderMesh.Lightmap = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightmapTexture;
 
-					if (instancing->isSupport(mesh))
+					for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+						shaderMesh.Textures[i] = p->Material->getTexture(i);
+
+					ArrayPrimitives& list = m_groups[shaderMesh];
+					list.push_back(p);
+
+					if (!mesh->UseInstancing)
 					{
-						CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
+						mesh->UseInstancing = true;
 
-						SShaderMesh shaderMesh;
-						shaderMesh.Shader = shader;
-						shaderMesh.Mesh = mesh;
-						shaderMesh.Lightmap = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightmapTexture;
+						IVertexBuffer* buffer = instancing->createInstancingMeshBuffer();
+						buffer->setHardwareMappingHint(EHM_STREAM);
 
-						for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
-							shaderMesh.Textures[i] = p->Material->getTexture(i);
+						instancing->applyInstancing(mesh, buffer);
 
-						ArrayPrimitives& list = m_groups[shaderMesh];
-						list.push_back(p);
-
-						if (!mesh->UseInstancing)
-						{
-							mesh->UseInstancing = true;
-
-							IVertexBuffer* buffer = instancing->createInstancingMeshBuffer();
-							buffer->setHardwareMappingHint(EHM_STREAM);
-
-							instancing->applyInstancing(mesh, buffer);
-
-							m_buffers[shaderMesh] = buffer;
-						}
+						m_buffers[shaderMesh] = buffer;
 					}
 				}
 			}

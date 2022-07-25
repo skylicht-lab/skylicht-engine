@@ -29,6 +29,7 @@ namespace Skylicht
 {
 	CEntityGroup::CEntityGroup(const u32* dataTypes, int count) :
 		m_needQuery(true),
+		m_needValidate(true),
 		m_parentGroup(NULL)
 	{
 		for (int i = 0; i < count; i++)
@@ -82,6 +83,7 @@ namespace Skylicht
 		}
 
 		m_needQuery = false;
+		m_needValidate = true;
 	}
 
 	bool CEntityGroup::haveDataType(u32 type)

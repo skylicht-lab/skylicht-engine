@@ -31,7 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CPrimitiveRenderer::CPrimitiveRenderer()
+	CPrimitiveRenderer::CPrimitiveRenderer() :
+		m_group(NULL)
 	{
 
 	}
@@ -45,26 +46,31 @@ namespace Skylicht
 	{
 		for (int i = 0; i < CPrimiviteData::Count; i++)
 		{
-			m_primitives[i].set_used(0);
-			m_transforms[i].set_used(0);
+			m_primitives[i].reset();
+		}
+
+		if (m_group == NULL)
+		{
+			const u32 primitive[] = GET_LIST_ENTITY_DATA(CPrimiviteData);
+			m_group = entityManager->createGroupFromVisible(primitive, 1);
 		}
 	}
 
 	void CPrimitiveRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		entities = m_group->getEntities();
+		numEntity = m_group->getEntityCount();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
-			if (p != NULL)
+			if (!p->Instancing)
 			{
-				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-				if (visible->Visible && !p->Instancing)
-				{
-					m_primitives[p->Type].push_back(p);
-				}
+				m_primitives[p->Type].push(p);
 			}
+
 		}
 	}
 
@@ -102,20 +108,11 @@ namespace Skylicht
 			if (m_mesh[type] == NULL)
 				continue;
 
-			core::array<CPrimiviteData*>& primitives = m_primitives[type];
-			u32 count = primitives.size();
+			CFastArray<CPrimiviteData*>& primitives = m_primitives[type];
+			u32 count = primitives.count();
 
 			// need sort by material
 			qsort(primitives.pointer(), count, sizeof(CPrimiviteData*), cmpPrimitiveFunc);
-
-			// get world transform			
-			for (u32 i = 0; i < count; i++)
-			{
-				CEntity* entity = entityManager->getEntity(primitives[i]->EntityIndex);
-
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				m_transforms[type].push_back(transform->World);
-			}
 		}
 	}
 
@@ -128,28 +125,29 @@ namespace Skylicht
 
 			renderPrimitive(
 				entityManager,
-				m_primitives[type],
-				m_transforms[type],
-				m_mesh[type]
+				m_primitives[type].pointer(),
+				m_mesh[type],
+				m_primitives[type].count()
 			);
 		}
 	}
 
-	void CPrimitiveRenderer::renderPrimitive(
-		CEntityManager* entityManager,
-		core::array<CPrimiviteData*>& primitives,
-		core::array<core::matrix4>& transforms,
-		CMesh* mesh)
+	void CPrimitiveRenderer::renderPrimitive(CEntityManager* entityManager,
+		CPrimiviteData** primitives,
+		CMesh* mesh,
+		int numEntity)
 	{
 		IVideoDriver* driver = getVideoDriver();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
 		CMaterial* mat = NULL;
+		CEntity** allEntities = entityManager->getEntities();
 
-		u32 count = transforms.size();
-		for (u32 i = 0; i < count; i++)
+		for (int i = 0; i < numEntity; i++)
 		{
 			CPrimiviteData* data = primitives[i];
+
+			CWorldTransformData* transform = GET_ENTITY_DATA(allEntities[data->EntityIndex], CWorldTransformData);
 
 			if (data->Material == NULL || !rp->canRenderMaterial(data->Material))
 				continue;
@@ -166,8 +164,7 @@ namespace Skylicht
 				}
 			}
 
-			core::matrix4& world = transforms[i];
-			driver->setTransform(video::ETS_WORLD, world);
+			driver->setTransform(video::ETS_WORLD, transform->World);
 
 			for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
 				rp->drawMeshBuffer(mesh, i, entityManager, data->EntityIndex, false);

@@ -305,6 +305,8 @@ namespace Skylicht
 		for (u32 i = 0, n = m_groups.size(); i < n; i++)
 		{
 			CEntityGroup* g = m_groups[i];
+			g->finishValidate();
+
 			if (g->needQuery())
 				g->onQuery(this, entities, numEntity);
 		}
@@ -473,6 +475,14 @@ namespace Skylicht
 	{
 		m_groups.push_back(group);
 		return group;
+	}
+
+	CEntityGroup* CEntityManager::createGroupFromVisible(const u32* types, int count)
+	{
+		const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
+		CEntityGroup* visibleGroup = findGroup(visibleGroupType, 1);
+
+		return createGroup(types, count, visibleGroup);
 	}
 
 	CEntityGroup* CEntityManager::createGroup(const u32* types, int count)
