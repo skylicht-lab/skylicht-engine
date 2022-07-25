@@ -54,6 +54,7 @@ namespace Skylicht
 		m_enable = true;
 		m_visible = true;
 		m_static = false;
+		m_isContainer = false;
 
 		m_editorObject = false;
 		m_enableEditorChange = true;
@@ -62,6 +63,10 @@ namespace Skylicht
 		m_parent = NULL;
 		m_zone = NULL;
 		m_entity = NULL;
+
+		m_transform = NULL;
+		m_transformEuler = NULL;
+		m_transformMatrix = NULL;
 
 		m_tagData = NULL;
 		m_tagDataInt = 0;
@@ -156,34 +161,25 @@ namespace Skylicht
 		return m_zone->getEntityManager();
 	}
 
-	CTransform* CGameObject::getTransform()
-	{
-		return getComponent<CTransform>();
-	}
-
-	CTransformEuler* CGameObject::getTransformEuler()
-	{
-		return getComponent<CTransformEuler>();
-	}
-
-	CTransformMatrix* CGameObject::getTransformMatrix()
-	{
-		return getComponent<CTransformMatrix>();
-	}
-
 	void CGameObject::setupMatrixTransform()
 	{
 		if (getComponent<CTransformMatrix>() == NULL)
 		{
-			core::matrix4 relative = getTransform()->getRelativeTransform();
+			core::matrix4 relative;
+			if (getTransform())
+				relative = getTransform()->getRelativeTransform();
 
 			removeComponent<CTransformEuler>();
-			CTransform* t = addComponent<CTransformMatrix>();
+			CTransformMatrix* t = addComponent<CTransformMatrix>();
 			t->setRelativeTransform(relative);
 
 			CTransformComponentData* componentData = GET_ENTITY_DATA(m_entity, CTransformComponentData);
 			componentData->TransformComponent = t;
 			componentData->TransformComponent->setChanged(true);
+
+			m_transformEuler = NULL;
+			m_transformMatrix = t;
+			m_transform = t;
 		}
 	}
 
@@ -191,15 +187,21 @@ namespace Skylicht
 	{
 		if (getComponent<CTransformEuler>() == NULL)
 		{
-			core::matrix4 relative = getTransform()->getRelativeTransform();
+			core::matrix4 relative;
+			if (getTransform())
+				relative = getTransform()->getRelativeTransform();
 
 			removeComponent<CTransformMatrix>();
-			CTransform* t = addComponent<CTransformEuler>();
+			CTransformEuler* t = addComponent<CTransformEuler>();
 			t->setRelativeTransform(relative);
 
 			CTransformComponentData* componentData = GET_ENTITY_DATA(m_entity, CTransformComponentData);
 			componentData->TransformComponent = t;
 			componentData->TransformComponent->setChanged(true);
+
+			m_transformMatrix = NULL;
+			m_transformEuler = t;
+			m_transform = t;
 		}
 	}
 

@@ -41,6 +41,8 @@ namespace Skylicht
 		core::map<std::string, CGameObject*> m_objectByID;
 
 		bool m_updateRemoveAdd;
+		bool m_updateListChild;
+
 		int m_lastGenerateID;
 
 	public:
@@ -55,6 +57,11 @@ namespace Skylicht
 		CGameObject* createObject(CObjectSerializable* data, bool generateNewID);
 
 		void updateAddRemoveObject(bool force = false);
+
+		inline void notifyUpdateListChild()
+		{
+			m_updateListChild = true;
+		}
 
 		int getNumberObjects();
 

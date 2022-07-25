@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CWorldTransformSystem::CWorldTransformSystem() :
-		m_visibleGroup(NULL)
+		m_groupTransform(NULL)
 	{
 	}
 
@@ -43,10 +43,12 @@ namespace Skylicht
 
 	void CWorldTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
-		if (m_visibleGroup == NULL)
+		if (m_groupTransform == NULL)
 		{
 			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
-			m_visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+			m_groupTransform = (CGroupTransform*)entityManager->addCustomGroup(new CGroupTransform(visibleGroup));
 		}
 	}
 
@@ -61,57 +63,27 @@ namespace Skylicht
 	void CWorldTransformSystem::update(CEntityManager* entityManager)
 	{
 		CEntity** allEntities = entityManager->getEntities();
-		CEntity** entities = m_visibleGroup->getEntities();
-		u32 numEntity = m_visibleGroup->getEntityCount();
 
-		// int mulCount = 0;
+		CWorldTransformData** transforms = m_groupTransform->getRoots();
+		int numEntity = m_groupTransform->getNumRoot();
 
-		for (u32 i = 0; i < numEntity; i++)
+		for (int i = 0; i < numEntity; i++)
 		{
-			CEntity* entity = entities[i];
+			CWorldTransformData* t = transforms[i];
+			t->World = t->Relative;
+		}
 
-			CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
-			t->NeedValidate = false;
+		transforms = m_groupTransform->getChilds();
+		numEntity = m_groupTransform->getNumChilds();
 
-			// check the parent
-			int parentID = t->AttachParentIndex >= 0 ? t->AttachParentIndex : t->ParentIndex;
+		for (int i = 0; i < numEntity; i++)
+		{
+			CWorldTransformData* t = transforms[i];
 
-			// parent entity
-			CEntity* parent = NULL;
-			CWorldTransformData* parentTransform = NULL;
-
-			if (parentID != -1)
-			{
-				parent = allEntities[parentID];
-				parentTransform = GET_ENTITY_DATA(parent, CWorldTransformData);
-
-				if (parentTransform->NeedValidate)
-				{
-					// this transform changed because parent is changed
-					t->HasChanged = true;
-					t->NeedValidate = true;
-				}
-			}
-
-			if (t->HasChanged)
-			{
-				t->HasChanged = false;
-				t->NeedValidate = true;
-
-				if (t->Depth == 0)
-				{
-					t->World = t->Relative;
-				}
-				else
-				{
-					// calc world = parent * relative
-					// - relative is copied from CTransformComponentSystem
-					// - relative is also defined in CEntityPrefab
-					t->World.setbyproduct_nocheck(parentTransform->World, t->Relative);
-				}
-
-				// mulCount++;
-			}
+			// calc world = parent * relative
+			// - relative is copied from CTransformComponentSystem
+			// - relative is also defined in CEntityPrefab
+			t->World.setbyproduct_nocheck(t->Parent->World, t->Relative);
 		}
 	}
 }

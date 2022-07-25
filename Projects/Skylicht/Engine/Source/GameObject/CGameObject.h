@@ -53,6 +53,7 @@ namespace Skylicht
 		bool m_static;
 		bool m_enable;
 		bool m_visible;
+		bool m_isContainer;
 
 		bool m_editorObject;
 		bool m_enableEditorChange;
@@ -69,6 +70,10 @@ namespace Skylicht
 		std::string m_tagDataString;
 
 		std::vector<CComponentSystem*> m_components;
+
+		CTransform* m_transform;
+		CTransformEuler* m_transformEuler;
+		CTransformMatrix* m_transformMatrix;
 
 	public:
 		CGameObject(CGameObject* parent, CZone* zone);
@@ -141,11 +146,20 @@ namespace Skylicht
 
 		CEntityManager* getEntityManager();
 
-		CTransform* getTransform();
+		inline CTransform* getTransform()
+		{
+			return m_transform;
+		}
 
-		CTransformEuler* getTransformEuler();
+		inline CTransformEuler* getTransformEuler()
+		{
+			return m_transformEuler;
+		}
 
-		CTransformMatrix* getTransformMatrix();
+		inline CTransformMatrix* getTransformMatrix()
+		{
+			return m_transformMatrix;
+		}
 
 		void setupMatrixTransform();
 
@@ -181,6 +195,11 @@ namespace Skylicht
 		}
 
 		virtual void setVisible(bool b);
+
+		inline bool isContainer()
+		{
+			return m_isContainer;
+		}
 
 		void setCullingLayer(u32 layer);
 

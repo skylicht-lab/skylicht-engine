@@ -34,8 +34,10 @@ namespace Skylicht
 	CContainerObject::CContainerObject(CGameObject* parent, CZone* zone) :
 		CGameObject(parent, zone),
 		m_updateRemoveAdd(true),
+		m_updateListChild(true),
 		m_lastGenerateID(-1)
 	{
+		m_isContainer = true;
 	}
 
 	CContainerObject::~CContainerObject()
@@ -76,32 +78,37 @@ namespace Skylicht
 
 	core::array<CGameObject*>& CContainerObject::getArrayChilds(bool addThis)
 	{
-		m_arrayChildObjects.set_used(0);
-		std::queue<CGameObject*> queueObjs;
-
-		if (addThis == true)
-			queueObjs.push(this);
-		else
+		if (m_updateListChild)
 		{
-			for (CGameObject*& obj : m_childs)
-				queueObjs.push(obj);
-		}
+			m_arrayChildObjects.set_used(0);
 
-		while (queueObjs.size() != 0)
-		{
-			CGameObject* obj = queueObjs.front();
-			queueObjs.pop();
+			std::queue<CGameObject*> queueObjs;
 
-			m_arrayChildObjects.push_back(obj);
-
-			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
-			if (container != NULL)
+			if (addThis == true)
+				queueObjs.push(this);
+			else
 			{
-				for (CGameObject*& child : container->m_childs)
-					queueObjs.push(child);
+				for (CGameObject*& obj : m_childs)
+					queueObjs.push(obj);
 			}
-		}
 
+			while (queueObjs.size() != 0)
+			{
+				CGameObject* obj = queueObjs.front();
+				queueObjs.pop();
+
+				m_arrayChildObjects.push_back(obj);
+
+				CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+				if (container != NULL)
+				{
+					for (CGameObject*& child : container->m_childs)
+						queueObjs.push(child);
+				}
+			}
+
+			m_updateListChild = false;
+		}
 		return m_arrayChildObjects;
 	}
 
@@ -206,7 +213,8 @@ namespace Skylicht
 		addChild(p);
 
 		p->createEntity();
-		p->addComponent<CTransformEuler>();
+		p->setupEulerTransform();
+
 		return p;
 	}
 
@@ -223,7 +231,8 @@ namespace Skylicht
 		addChild(container);
 
 		container->createEntity();
-		container->addComponent<CTransformEuler>();
+		container->setupEulerTransform();
+
 		return container;
 	}
 
@@ -509,10 +518,13 @@ namespace Skylicht
 		// update in children
 		for (CGameObject*& obj : m_childs)
 		{
-			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
-			if (container != NULL)
+			if (obj->isContainer())
 			{
-				container->updateAddRemoveObject(force);
+				CContainerObject* container = (CContainerObject*)obj;
+				if (container != NULL)
+				{
+					container->updateAddRemoveObject(force);
+				}
 			}
 		}
 	}
@@ -522,11 +534,15 @@ namespace Skylicht
 		p->setParent(this);
 		m_add.push_back(p);
 		m_updateRemoveAdd = true;
+
+		getZone()->notifyUpdateListChild();
 	}
 
 	void CContainerObject::removeObject(CGameObject* pObj)
 	{
 		m_remove.push_back(pObj);
 		m_updateRemoveAdd = true;
+
+		getZone()->notifyUpdateListChild();
 	}
 }
