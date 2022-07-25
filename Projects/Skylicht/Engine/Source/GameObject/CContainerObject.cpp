@@ -534,7 +534,7 @@ namespace Skylicht
 		p->setParent(this);
 		m_add.push_back(p);
 		m_updateRemoveAdd = true;
-
+		m_updateListChild = true;
 		getZone()->notifyUpdateListChild();
 	}
 
@@ -542,7 +542,7 @@ namespace Skylicht
 	{
 		m_remove.push_back(pObj);
 		m_updateRemoveAdd = true;
-
+		m_updateListChild = true;
 		getZone()->notifyUpdateListChild();
 	}
 }

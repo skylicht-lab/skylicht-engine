@@ -51,7 +51,6 @@ namespace Skylicht
 		}
 
 		m_entities.reset();
-		m_transforms.reset();
 		m_roots.reset();
 		m_childs.reset();
 
@@ -85,8 +84,6 @@ namespace Skylicht
 			{
 				// set enable flag for another system
 				transform->NeedValidate = true;
-
-				m_entities.push(entity);
 
 				if (transform->Depth == 0)
 					m_roots.push(transform);

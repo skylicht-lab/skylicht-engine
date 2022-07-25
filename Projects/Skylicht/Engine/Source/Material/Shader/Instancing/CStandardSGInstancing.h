@@ -56,8 +56,7 @@ namespace Skylicht
 
 		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
 			CMaterial** materials,
-			CWorldTransformData** worlds,
-			CIndirectLightingData** lightings,
+			CEntity** entities,
 			int count);
 	};
 }

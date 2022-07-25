@@ -82,8 +82,7 @@ namespace Skylicht
 
 	void CTBNSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer,
 		CMaterial** materials,
-		CWorldTransformData** worlds,
-		CIndirectLightingData** lightings,
+		CEntity** entities,
 		int count)
 	{
 		CVertexBuffer<SVtxSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSGInstancing>*>(vtxBuffer);
@@ -106,7 +105,8 @@ namespace Skylicht
 			vtx.SpecGloss = params.getParam(2);
 
 			// world transform
-			vtx.World = worlds[i]->World;
+			CWorldTransformData* world = GET_ENTITY_DATA(entities[i], CWorldTransformData);
+			vtx.World = world->World;
 		}
 
 		vtxBuffer->setDirty();

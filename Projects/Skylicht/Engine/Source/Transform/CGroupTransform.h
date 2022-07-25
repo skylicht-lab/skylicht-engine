@@ -31,7 +31,6 @@ namespace Skylicht
 	class CGroupTransform : public CEntityGroup
 	{
 	protected:
-		CFastArray<CWorldTransformData*> m_transforms;
 		CFastArray<CWorldTransformData*> m_roots;
 		CFastArray<CWorldTransformData*> m_childs;
 

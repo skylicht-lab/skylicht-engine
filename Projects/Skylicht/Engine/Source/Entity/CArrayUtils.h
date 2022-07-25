@@ -76,5 +76,19 @@ namespace Skylicht
 
 			m_ptr[m_count++] = element;
 		}
+
+		T* getPush()
+		{
+			if (m_count + 1 >= m_alloc)
+			{
+				m_alloc = (m_count + 1) * 2;
+				if (m_alloc < 32)
+					m_alloc = 32;
+				m_array.set_used(m_alloc);
+				m_ptr = m_array.pointer();
+			}
+
+			return &(m_ptr[m_count++]);
+		}
 	};
 }

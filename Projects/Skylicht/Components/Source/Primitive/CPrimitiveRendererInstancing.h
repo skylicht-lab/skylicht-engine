@@ -85,8 +85,7 @@ namespace Skylicht
 
 		// bake instancing
 		CFastArray<CMaterial*> m_materials;
-		CFastArray<CWorldTransformData*> m_transforms;
-		CFastArray<CIndirectLightingData*> m_indirectLightings;
+		CFastArray<CEntity*> m_entities;
 
 	public:
 		CPrimitiveRendererInstancing();
