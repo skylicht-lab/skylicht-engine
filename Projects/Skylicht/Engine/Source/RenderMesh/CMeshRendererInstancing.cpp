@@ -54,9 +54,8 @@ namespace Skylicht
 		for (auto it : m_groups)
 		{
 			SMeshInstancingGroup* group = it.second;
-			group->IndirectLightings.reset();
 			group->Materials.reset();
-			group->Transforms.reset();
+			group->Entities.reset();
 		}
 
 		CMeshRenderSystem::beginQuery(entityManager);
@@ -112,12 +111,7 @@ namespace Skylicht
 			}
 
 			CEntity* entity = allEntities[renderData[i]->EntityIndex];
-
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CIndirectLightingData* indirect = GET_ENTITY_DATA(entity, CIndirectLightingData);
-
-			group->Transforms.push(transform);
-			group->IndirectLightings.push(indirect);
+			group->Entities.push(entity);
 		}
 
 		// bake instancing in group
@@ -126,7 +120,7 @@ namespace Skylicht
 			SMeshInstancingData* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
-			u32 count = group->Transforms.count();
+			u32 count = group->Entities.count();
 			if (count == 0)
 				continue;
 
@@ -141,8 +135,7 @@ namespace Skylicht
 				data->Instancing[i]->batchIntancing(
 					data->InstancingBuffer[i],
 					group->Materials.pointer(),
-					group->Transforms.pointer(),
-					group->IndirectLightings.pointer(),
+					group->Entities.pointer(),
 					count
 				);
 			}
@@ -161,7 +154,7 @@ namespace Skylicht
 			SMeshInstancingData* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
-			int count = group->Transforms.count();
+			int count = group->Entities.count();
 			if (count == 0)
 				continue;
 

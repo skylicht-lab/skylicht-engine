@@ -75,6 +75,8 @@ namespace Skylicht
 
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
+		core::aabbox3d<f32>* getBoundingBoxPtr();
+
 		virtual void setBoundingBox(const core::aabbox3df& box);
 
 		virtual void setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue);

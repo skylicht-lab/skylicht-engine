@@ -36,9 +36,7 @@ namespace Skylicht
 	bool CCullingSystem::s_useCacheCulling = false;
 
 	CCullingSystem::CCullingSystem() :
-		m_group(NULL),
-		m_alloc(0),
-		m_count(0)
+		m_group(NULL)
 	{
 		m_pipelineType = IRenderPipeline::Mix;
 	}
@@ -68,7 +66,7 @@ namespace Skylicht
 		entities = m_group->getEntities();
 		numEntity = m_group->getEntityCount();
 
-		m_count = 0;
+		m_bboxAndMaterials.reset();
 
 		for (int i = 0; i < numEntity; i++)
 		{
@@ -88,21 +86,12 @@ namespace Skylicht
 				CRenderMeshData* mesh = GET_ENTITY_DATA(entity, CRenderMeshData);
 				if (mesh != NULL)
 				{
-					if ((m_count + 1) >= m_alloc)
-					{
-						m_alloc = (m_count + 1) * 2;
-						if (m_alloc < 32)
-							m_alloc = 32;
-
-						m_bboxAndMaterials.set_used(m_alloc);
-					}
-
 					CMesh* meshObj = mesh->getMesh();
 
-					SBBoxAndMaterial* m = &m_bboxAndMaterials[m_count++];
+					SBBoxAndMaterial* m = m_bboxAndMaterials.getPush();
 					m->Entity = entity;
 					m->Culling = culling;
-					m->BBox = meshObj->getBoundingBox();
+					m->BBox = meshObj->getBoundingBoxPtr();
 					m->Materials = &meshObj->Materials;
 				}
 				else
@@ -110,19 +99,10 @@ namespace Skylicht
 					CCullingBBoxData* bbox = GET_ENTITY_DATA(entity, CCullingBBoxData);
 					if (bbox != NULL)
 					{
-						if ((m_count + 1) >= m_alloc)
-						{
-							m_alloc = (m_count + 1) * 2;
-							if (m_alloc < 32)
-								m_alloc = 32;
-
-							m_bboxAndMaterials.set_used(m_alloc);
-						}
-
-						SBBoxAndMaterial* m = &m_bboxAndMaterials[m_count++];
+						SBBoxAndMaterial* m = m_bboxAndMaterials.getPush();
 						m->Entity = entity;
 						m->Culling = culling;
-						m->BBox = bbox->BBox;
+						m->BBox = &bbox->BBox;
 						m->Materials = &bbox->Materials;
 					}
 				}
@@ -148,13 +128,15 @@ namespace Skylicht
 		u32 cameraCullingMask = camera->getCullingMask();
 		const core::aabbox3df& cameraBox = camera->getViewFrustum().getBoundingBox();
 
-		for (int i = 0; i < m_count; i++)
+		int count = m_bboxAndMaterials.count();
+		SBBoxAndMaterial* bboxMats = m_bboxAndMaterials.pointer();
+
+		for (int i = 0; i < count; i++)
 		{
-			SBBoxAndMaterial* bbBoxMat = &m_bboxAndMaterials[i];
+			SBBoxAndMaterial* bbBoxMat = &bboxMats[i];
 
 			CEntity* entity = bbBoxMat->Entity;
 			CCullingData* culling = bbBoxMat->Culling;
-
 
 			if (s_useCacheCulling)
 			{
@@ -180,9 +162,13 @@ namespace Skylicht
 			// check material first
 			if (bbBoxMat->Materials != NULL)
 			{
-				for (CMaterial* material : *bbBoxMat->Materials)
+				CMaterial** materials = bbBoxMat->Materials->data();
+				int materialCount = (int)bbBoxMat->Materials->size();
+
+				for (int j = 0; j < materialCount; j++)
 				{
-					if (material != NULL && rp->canRenderMaterial(material) == false)
+					CMaterial* m = materials[j];
+					if (m != NULL && rp->canRenderMaterial(m) == false)
 					{
 						culling->Visible = false;
 						break;
@@ -197,7 +183,7 @@ namespace Skylicht
 				continue;
 
 			// transform world bbox
-			culling->BBox = bbBoxMat->BBox;
+			culling->BBox = *bbBoxMat->BBox;
 
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			transform->World.transformBoxEx(culling->BBox);
@@ -233,7 +219,7 @@ namespace Skylicht
 						frust.transform(invTrans);
 
 						core::vector3df edges[8];
-						bbBoxMat->BBox.getEdges(edges);
+						bbBoxMat->BBox->getEdges(edges);
 
 						for (s32 i = 0; i < scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 						{

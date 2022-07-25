@@ -34,8 +34,7 @@ namespace Skylicht
 	struct SMeshInstancingGroup
 	{
 		CFastArray<CMaterial*> Materials;
-		CFastArray<CWorldTransformData*> Transforms;
-		CFastArray<CIndirectLightingData*> IndirectLightings;
+		CFastArray<CEntity*> Entities;
 	};
 
 	class CMeshRendererInstancing : public CMeshRenderSystem

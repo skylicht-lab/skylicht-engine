@@ -86,6 +86,11 @@ namespace Skylicht
 		return BoundingBox;
 	}
 
+	core::aabbox3d<f32>* CMesh::getBoundingBoxPtr()
+	{
+		return &BoundingBox;
+	}
+
 	void CMesh::setBoundingBox(const core::aabbox3df& box)
 	{
 		BoundingBox = box;
