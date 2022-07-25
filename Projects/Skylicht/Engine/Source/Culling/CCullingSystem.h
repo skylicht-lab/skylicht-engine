@@ -41,7 +41,7 @@ namespace Skylicht
 		CCullingData* Culling;
 
 		// Local BBox to check culling
-		core::aabbox3df BBox;
+		core::aabbox3df* BBox;
 
 		// Material to check render pipeline cull
 		ArrayMaterial* Materials;
@@ -56,10 +56,7 @@ namespace Skylicht
 	class CCullingSystem : public IRenderSystem
 	{
 	protected:
-		core::array<SBBoxAndMaterial> m_bboxAndMaterials;
-
-		int m_alloc;
-		int m_count;
+		CFastArray<SBBoxAndMaterial> m_bboxAndMaterials;
 
 		static bool s_useCacheCulling;
 
@@ -85,6 +82,11 @@ namespace Skylicht
 		static void useCacheCulling(bool b)
 		{
 			s_useCacheCulling = b;
+		}
+		
+		static bool useCacheCulling()
+		{
+			return s_useCacheCulling;
 		}
 	};
 }

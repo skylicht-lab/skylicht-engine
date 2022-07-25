@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderPipeline/IRenderPipeline.h"
 #include "Camera/CCamera.h"
 #include "RenderPipeline/CShadowMapRP.h"
+#include "Culling/CCullingSystem.h"
 
 namespace Skylicht
 {
@@ -66,6 +67,9 @@ namespace Skylicht
 
 	void CLODSystem::update(CEntityManager* entityManager)
 	{
+		if (CCullingSystem::useCacheCulling())
+			return;
+
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 		if (rp == NULL)
 			return;
