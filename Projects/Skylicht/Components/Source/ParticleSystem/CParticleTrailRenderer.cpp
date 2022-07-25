@@ -34,7 +34,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticleTrailRenderer::CParticleTrailRenderer()
+		CParticleTrailRenderer::CParticleTrailRenderer() :
+			m_group(NULL)
 		{
 
 		}
@@ -46,27 +47,16 @@ namespace Skylicht
 
 		void CParticleTrailRenderer::beginQuery(CEntityManager* entityManager)
 		{
-			m_trails.set_used(0);
-			m_cullings.set_used(0);
+			if (m_group == NULL)
+			{
+				const u32 particle[] = GET_LIST_ENTITY_DATA(CParticleTrailData);
+				m_group = entityManager->createGroupFromVisible(particle, 1);
+			}
 		}
 
 		void CParticleTrailRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
-			for (int i = 0; i < numEntity; i++)
-			{
-				CEntity* entity = entities[i];
 
-				CParticleTrailData* trail = GET_ENTITY_DATA(entity, CParticleTrailData);
-				if (trail != NULL)
-				{
-					CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-					if (visible->Visible == true)
-						m_trails.push_back(trail);
-
-					CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-					m_cullings.push_back(culling);
-				}
-			}
 		}
 
 		void CParticleTrailRenderer::init(CEntityManager* entityManager)
@@ -78,11 +68,12 @@ namespace Skylicht
 		{
 			CCamera* camera = entityManager->getCamera();
 
-			CParticleTrailData** trails = m_trails.pointer();
+			CEntity** entities = m_group->getEntities();
+			int numEntity = m_group->getEntityCount();
 
-			for (u32 i = 0, n = m_trails.size(); i < n; i++)
+			for (int i = 0; i < numEntity; i++)
 			{
-				CParticleTrailData* trailData = trails[i];
+				CParticleTrailData* trailData = GET_ENTITY_DATA(entities[i], CParticleTrailData);
 
 				// update particle trail
 				u32 m = trailData->Trails.size();
@@ -95,18 +86,22 @@ namespace Skylicht
 
 		void CParticleTrailRenderer::render(CEntityManager* entityManager)
 		{
-			CParticleTrailData** trails = m_trails.pointer();
+
+		}
+
+		void CParticleTrailRenderer::renderTransparent(CEntityManager* entityManager)
+		{
+			CEntity** entities = m_group->getEntities();
+			int numEntity = m_group->getEntityCount();
 
 			IVideoDriver* driver = getVideoDriver();
 			driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
-			for (u32 i = 0, n = m_trails.size(); i < n; i++)
+			for (int i = 0; i < numEntity; i++)
 			{
-				CParticleTrailData* trailData = trails[i];
+				CParticleTrailData* trailData = GET_ENTITY_DATA(entities[i], CParticleTrailData);
 
-				// update particle trail
 				u32 m = trailData->Trails.size();
-
 				for (u32 j = 0; j < m; j++)
 				{
 					CParticleTrail* p = trailData->Trails[j];
@@ -121,14 +116,31 @@ namespace Skylicht
 			}
 		}
 
-		void CParticleTrailRenderer::renderTransparent(CEntityManager* entityManager)
+		void CParticleTrailRenderer::renderEmission(CEntityManager* entityManager)
 		{
+			CEntity** entities = m_group->getEntities();
+			int numEntity = m_group->getEntityCount();
 
-		}
+			IVideoDriver* driver = getVideoDriver();
+			driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
-		void CParticleTrailRenderer::renderMB(IMeshBuffer* mb)
-		{
+			for (int i = 0; i < numEntity; i++)
+			{
+				CParticleTrailData* trailData = GET_ENTITY_DATA(entities[i], CParticleTrailData);
 
+				u32 m = trailData->Trails.size();
+				for (u32 j = 0; j < m; j++)
+				{
+					CParticleTrail* p = trailData->Trails[j];
+
+					IMeshBuffer* mb = p->getMeshBuffer();
+
+					CShaderMaterial::setMaterial(p->getMaterial());
+
+					driver->setMaterial(mb->getMaterial());
+					driver->drawMeshBuffer(mb);
+				}
+			}
 		}
 	}
 }

@@ -32,7 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CSpriteRenderer::CSpriteRenderer()
+	CSpriteRenderer::CSpriteRenderer() :
+		m_group(NULL)
 	{
 		m_meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(video::EVT_STANDARD), video::EIT_16BIT);
 		m_meshBuffer->setHardwareMappingHint(EHM_STREAM);
@@ -50,28 +51,27 @@ namespace Skylicht
 
 	void CSpriteRenderer::beginQuery(CEntityManager* entityManager)
 	{
-		m_sprites.set_used(0);
-		m_transforms.set_used(0);
+		m_sprites.reset();
+
+		if (m_group == NULL)
+		{
+			const u32 sprite[] = GET_LIST_ENTITY_DATA(CSpriteDrawData);
+			m_group = entityManager->createGroupFromVisible(sprite, 1);
+		}
 	}
 
 	void CSpriteRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		entities = m_group->getEntities();
+		numEntity = m_group->getEntityCount();
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
 			CSpriteDrawData* spriteData = GET_ENTITY_DATA(entity, CSpriteDrawData);
 			if (spriteData != NULL && spriteData->Frame != NULL)
-			{
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-
-				if (visible->Visible)
-				{
-					m_sprites.push_back(spriteData);
-					m_transforms.push_back(transform);
-				}
-			}
+				m_sprites.push(spriteData);
 		}
 	}
 
@@ -90,48 +90,42 @@ namespace Skylicht
 
 	}
 
+	int cmpSpriteFunc(const void* ca, const void* cb)
+	{
+		CSpriteDrawData* a = *((CSpriteDrawData**)ca);
+		CSpriteDrawData* b = *((CSpriteDrawData**)cb);
+
+		if (a->Frame->Image->Texture == b->Frame->Image->Texture)
+		{
+			return 0;
+		}
+		else if (a->Frame->Image->Texture > b->Frame->Image->Texture)
+		{
+			return 1;
+		}
+		else
+		{
+			return -1;
+		}
+
+		return 0;
+	}
+
 	void CSpriteRenderer::renderTransparent(CEntityManager* entityManager)
 	{
-		if (m_sprites.size() == 0)
+		if (m_group->getEntityCount() == 0)
 			return;
+
+		CEntity** allEntities = entityManager->getEntities();
 
 		IVertexBuffer* vb = m_meshBuffer->getVertexBuffer();
 		IIndexBuffer* ib = m_meshBuffer->getIndexBuffer();
 
-		// insertion sort sprite by texture
-		for (u32 i = 1, n = m_sprites.size(); i < n; i++)
-		{
-			CSpriteDrawData* sprite = m_sprites[i];
-			CWorldTransformData* transform = m_transforms[i];
+		CSpriteDrawData** sprites = m_sprites.pointer();
+		int numEntity = m_sprites.count();
 
-			u32 j = i - 1;
-
-			std::function<int(CSpriteDrawData*, CSpriteDrawData*)> compare = [](CSpriteDrawData* a, CSpriteDrawData* b) {
-				if (a->Frame->Image->Texture == b->Frame->Image->Texture)
-				{
-					return 0;
-				}
-				else if (a->Frame->Image->Texture > b->Frame->Image->Texture)
-				{
-					return 1;
-				}
-				else
-				{
-					return -1;
-				}
-				return 0;
-			};
-
-			while (j >= 0 && compare(sprite, m_sprites[j]) > 0)
-			{
-				m_sprites[j + 1] = m_sprites[j];
-				m_transforms[j + 1] = m_transforms[j];
-				--j;
-			}
-
-			m_sprites[j + 1] = sprite;
-			m_transforms[j + 1] = transform;
-		}
+		// sort by textures
+		qsort(sprites, numEntity, sizeof(CSpriteDrawData*), cmpSpriteFunc);
 
 		ITexture* currentTexture = NULL;
 		vb->set_used(0);
@@ -175,20 +169,23 @@ namespace Skylicht
 
 		CCamera* camera = entityManager->getCamera();
 
-		for (u32 i = 0, n = m_sprites.size(); i < n; i++)
+		for (u32 i = 0, n = numEntity; i < n; i++)
 		{
-			SFrame* frame = m_sprites[i]->Frame;
+			CSpriteDrawData* sprite = sprites[i];
+
+			SFrame* frame = sprite->Frame;
 
 			// position
-			core::vector3df pos = m_transforms[i]->World.getTranslation();
+			CWorldTransformData* transformData = GET_ENTITY_DATA(allEntities[sprite->EntityIndex], CWorldTransformData);
+			core::vector3df pos = transformData->World.getTranslation();
 
 			// scale
-			float scale = m_sprites[i]->Scale;
-			m_sprites[i]->ViewScale = scale;
-			if (m_sprites[i]->AutoScaleInViewSpace)
+			float scale = sprite->Scale;
+			sprite->ViewScale = scale;
+			if (sprite->AutoScaleInViewSpace)
 			{
 				scale = scale * 0.0015f / CProjective::getSegmentLengthClipSpace(camera, pos, pos + right);
-				m_sprites[i]->ViewScale = scale;
+				sprite->ViewScale = scale;
 			}
 
 			// render buffer
@@ -217,13 +214,13 @@ namespace Skylicht
 				float offsetX = 0.0f;
 				float offsetY = 0.0f;
 
-				if (m_sprites[i]->Center)
+				if (sprite->Center)
 				{
 					offsetX = module.Module->W * 0.5f * scale;
 					offsetY = module.Module->H * 0.5f * scale;
 				}
 
-				if (m_sprites[i]->Billboard)
+				if (sprite->Billboard)
 				{
 					matData[12] = pos.X;
 					matData[13] = pos.Y;
@@ -234,11 +231,11 @@ namespace Skylicht
 				}
 				else
 				{
-					module.getPositionBuffer(vertices, indices, numVertex, -offsetX, offsetY, m_transforms[i]->World, scale, -scale);
+					module.getPositionBuffer(vertices, indices, numVertex, -offsetX, offsetY, transformData->World, scale, -scale);
 				}
 
 				module.getTexCoordBuffer(vertices, texWidth, texHeight);
-				module.getColorBuffer(vertices, m_sprites[i]->Color);
+				module.getColorBuffer(vertices, sprite->Color);
 
 				numVertex += 4;
 				numIndex += 6;
@@ -247,7 +244,7 @@ namespace Skylicht
 			}
 
 			// if change texture or last sprite
-			if (i == n - 1 || currentTexture != m_sprites[i + 1]->Frame->Image->Texture)
+			if (i == n - 1 || currentTexture != sprites[i + 1]->Frame->Image->Texture)
 			{
 				// flush render
 				m_meshBuffer->getMaterial().setTexture(0, currentTexture);

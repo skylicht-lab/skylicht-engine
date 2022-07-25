@@ -29,7 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CMesh::CMesh() :
-		UseInstancing(false)
+		UseInstancing(false),
+		InstancingLightingMesh(NULL)
 	{
 	}
 

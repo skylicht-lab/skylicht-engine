@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
 
 #include "Culling/CCullingBBoxData.h"
 #include "Culling/CCullingData.h"
@@ -41,9 +42,7 @@ namespace Skylicht
 		class CParticleRenderer : public IRenderSystem
 		{
 		protected:
-			core::array<CParticleBufferData*> m_particles;
-			core::array<CWorldTransformData*> m_transforms;
-			core::array<CCullingData*> m_cullings;
+			CEntityGroup* m_group;
 
 		public:
 			CParticleRenderer();
@@ -52,25 +51,25 @@ namespace Skylicht
 
 			virtual void beginQuery(CEntityManager* entityManager);
 
-			virtual void onQuery(CEntityManager *entityManager, CEntity** entities, int numEntity);
+			virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-			virtual void init(CEntityManager *entityManager);
+			virtual void init(CEntityManager* entityManager);
 
-			virtual void update(CEntityManager *entityManager);
+			virtual void update(CEntityManager* entityManager);
 
-			virtual void render(CEntityManager *entityManager);
+			virtual void render(CEntityManager* entityManager);
 
-			virtual void renderTransparent(CEntityManager *entityManager);
+			virtual void renderTransparent(CEntityManager* entityManager);
 
-			virtual void renderEmission(CEntityManager *entityManager);
+			virtual void renderEmission(CEntityManager* entityManager);
 
 		protected:
 
-			void renderParticleGroup(CParticleBufferData *data, const core::matrix4& world);
+			void renderParticleGroup(CParticleBufferData* data, const core::matrix4& world);
 
-			void renderParticleGroupEmission(CParticleBufferData *data, const core::matrix4& world);
+			void renderParticleGroupEmission(CParticleBufferData* data, const core::matrix4& world);
 
-			void renderGroup(IVideoDriver *driver, Particle::CGroup *group);
+			void renderGroup(IVideoDriver* driver, Particle::CGroup* group);
 		};
 	}
 }

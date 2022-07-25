@@ -45,20 +45,14 @@ namespace Skylicht
 	{
 		if (m_groupLighting == NULL)
 		{
-			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
-			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
-
 			const u32 type[] = GET_LIST_ENTITY_DATA(CIndirectLightingData);
-			m_groupLighting = entityManager->createGroup(type, 1, visibleGroup);
+			m_groupLighting = entityManager->createGroupFromVisible(type, 1);
 		}
 
 		if (m_groupProbes == NULL)
 		{
-			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
-			CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
-
 			const u32 type[] = GET_LIST_ENTITY_DATA(CLightProbeData);
-			m_groupProbes = entityManager->createGroup(type, 1, visibleGroup);
+			m_groupProbes = entityManager->createGroupFromVisible(type, 1);
 		}
 
 		m_entities.set_used(0);
@@ -145,10 +139,10 @@ namespace Skylicht
 				continue;
 			}
 
-			core::vector3df position = worlds[i]->World.getTranslation();
+			float* m = worlds[i]->World.pointer();
 
 			// query nearst probe
-			kdres* res = kd_nearest3f(m_kdtree, position.X, position.Y, position.Z);
+			kdres* res = kd_nearest3f(m_kdtree, m[12], m[13], m[14]);
 			if (res != NULL)
 			{
 				while (!kd_res_end(res))

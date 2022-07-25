@@ -25,35 +25,28 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGridPlaneRender.h"
 #include "Culling/CVisibleData.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
+	CGridPlaneRender::CGridPlaneRender() :
+		m_group(NULL)
+	{
+
+	}
+
 	void CGridPlaneRender::beginQuery(CEntityManager* entityManager)
 	{
-		m_gridPlanes.set_used(0);
-		m_transforms.set_used(0);
+		if (m_group == NULL)
+		{
+			const u32 gridPlane[] = GET_LIST_ENTITY_DATA(CGridPlaneData);
+			m_group = entityManager->createGroupFromVisible(gridPlane, 1);
+		}
 	}
 
 	void CGridPlaneRender::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
 
-			CGridPlaneData* gridPlane = GET_ENTITY_DATA(entity, CGridPlaneData);
-
-			if (gridPlane != NULL)
-			{
-				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-
-				if (visible->Visible)
-				{
-					m_gridPlanes.push_back(gridPlane);
-					m_transforms.push_back(transform);
-				}
-			}
-		}
 	}
 
 	void CGridPlaneRender::init(CEntityManager* entityManager)
@@ -70,14 +63,17 @@ namespace Skylicht
 	{
 		IVideoDriver* driver = getVideoDriver();
 
-		CGridPlaneData** gridPlane = m_gridPlanes.pointer();
-		CWorldTransformData** transforms = m_transforms.pointer();
+		CEntity** entities = m_group->getEntities();
+		int numEntity = m_group->getEntityCount();
 
-		for (u32 i = 0, n = m_gridPlanes.size(); i < n; i++)
+		for (int i = 0; i < numEntity; i++)
 		{
-			IMeshBuffer* buffer = gridPlane[i]->LineBuffer;
+			CGridPlaneData* gridPlane = GET_ENTITY_DATA(entities[i], CGridPlaneData);
+			CWorldTransformData* transform = GET_ENTITY_DATA(entities[i], CWorldTransformData);
 
-			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
+			IMeshBuffer* buffer = gridPlane->LineBuffer;
+
+			driver->setTransform(video::ETS_WORLD, transform->World);
 			driver->setMaterial(buffer->getMaterial());
 			driver->drawMeshBuffer(buffer);
 		}

@@ -85,6 +85,8 @@ namespace Skylicht
 				// set enable flag for another system
 				transform->NeedValidate = true;
 
+				m_entities.push(entity);
+
 				if (transform->Depth == 0)
 					m_roots.push(transform);
 				else
@@ -96,5 +98,6 @@ namespace Skylicht
 
 		// notify alway update this group
 		m_needQuery = true;
+		m_needValidate = true;
 	}
 }

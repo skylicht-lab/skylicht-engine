@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
 
 #include "CParticleTrailData.h"
 
@@ -39,8 +40,7 @@ namespace Skylicht
 		class CParticleTrailRenderer : public IRenderSystem
 		{
 		protected:
-			core::array<CParticleTrailData*> m_trails;
-			core::array<CCullingData*> m_cullings;
+			CEntityGroup* m_group;
 
 		public:
 			CParticleTrailRenderer();
@@ -49,19 +49,18 @@ namespace Skylicht
 
 			virtual void beginQuery(CEntityManager* entityManager);
 
-			virtual void onQuery(CEntityManager *entityManager, CEntity** entities, int numEntity);
+			virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-			virtual void init(CEntityManager *entityManager);
+			virtual void init(CEntityManager* entityManager);
 
-			virtual void update(CEntityManager *entityManager);
+			virtual void update(CEntityManager* entityManager);
 
-			virtual void render(CEntityManager *entityManager);
+			virtual void render(CEntityManager* entityManager);
 
-			virtual void renderTransparent(CEntityManager *entityManager);
+			virtual void renderTransparent(CEntityManager* entityManager);
 
-		protected:
+			virtual void renderEmission(CEntityManager* entityManager);
 
-			void renderMB(IMeshBuffer *mb);
 		};
 	}
 }
