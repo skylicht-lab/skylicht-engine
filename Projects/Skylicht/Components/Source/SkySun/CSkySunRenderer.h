@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 #include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
 
 #include "CSkySunData.h"
 #include "Transform/CWorldTransformData.h"
@@ -38,9 +39,7 @@ namespace Skylicht
 	class CSkySunRender : public IRenderSystem
 	{
 	protected:
-		core::array<CSkySunData*> m_skySuns;
-		core::array<CWorldTransformData*> m_transforms;
-		core::array<core::matrix4> m_worlds;
+		CEntityGroup* m_group;
 
 	public:
 		CSkySunRender();

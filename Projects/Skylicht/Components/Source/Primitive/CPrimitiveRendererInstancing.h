@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/CArrayUtils.h"
 #include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
+
 #include "RenderMesh/CMesh.h"
 #include "Material/CMaterial.h"
 #include "CPrimiviteData.h"
@@ -79,6 +81,8 @@ namespace Skylicht
 	class CPrimitiveRendererInstancing : public CPrimitiveBaseRenderer
 	{
 	protected:
+		CEntityGroup* m_group;
+
 		// group instancing
 		std::map<SShaderMesh, ArrayPrimitives> m_groups;
 		std::map<SShaderMesh, IVertexBuffer*> m_buffers;

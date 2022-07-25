@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
 #include "RenderMesh/CMesh.h"
 #include "Material/CMaterial.h"
 #include "CPrimiviteData.h"
@@ -35,9 +36,9 @@ namespace Skylicht
 	class CPrimitiveRenderer : public CPrimitiveBaseRenderer
 	{
 	protected:
+		CEntityGroup* m_group;
 
-		core::array<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
-		core::array<core::matrix4> m_transforms[CPrimiviteData::Count];
+		CFastArray<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
 
 	public:
 		CPrimitiveRenderer();
@@ -55,9 +56,9 @@ namespace Skylicht
 		virtual void render(CEntityManager* entityManager);
 
 		void renderPrimitive(CEntityManager* entityManager,
-			core::array<CPrimiviteData*>& primitives,
-			core::array<core::matrix4>& transforms,
-			CMesh* mesh
+			CPrimiviteData** primitives,
+			CMesh* mesh,
+			int numEntity
 		);
 	};
 }

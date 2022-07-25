@@ -40,6 +40,8 @@ namespace Skylicht
 
 		bool m_needQuery;
 
+		bool m_needValidate;
+
 		CFastArray<CEntity*> m_entities;
 
 	public:
@@ -69,6 +71,16 @@ namespace Skylicht
 		inline bool needQuery()
 		{
 			return m_needQuery;
+		}
+
+		inline bool needValidate()
+		{
+			return m_needValidate;
+		}
+
+		inline void finishValidate()
+		{
+			m_needValidate = false;
 		}
 
 		bool haveDataType(u32 type);

@@ -117,5 +117,7 @@ namespace Skylicht
 		core::array<CBlendShape*> BlendShape;
 
 		bool UseInstancing;
+
+		CMesh* InstancingLightingMesh;
 	};
 }

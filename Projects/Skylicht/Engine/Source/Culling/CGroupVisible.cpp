@@ -73,5 +73,6 @@ namespace Skylicht
 		}
 
 		m_needQuery = false;
+		m_needValidate = true;
 	}
 }
