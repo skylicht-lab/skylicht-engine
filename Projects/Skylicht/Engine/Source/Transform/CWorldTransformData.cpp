@@ -36,7 +36,8 @@ namespace Skylicht
 		NeedValidate(true),
 		Depth(0),
 		ParentIndex(-1),
-		AttachParentIndex(-1)
+		AttachParentIndex(-1),
+		Parent(NULL)
 	{
 	}
 
