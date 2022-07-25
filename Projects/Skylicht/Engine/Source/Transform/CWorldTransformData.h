@@ -39,6 +39,8 @@ namespace Skylicht
 		int ParentIndex;
 		int AttachParentIndex;
 		std::string Name;
+		CWorldTransformData* Parent;
+
 		DECLARE_DATA_TYPE_INDEX;
 
 	public:

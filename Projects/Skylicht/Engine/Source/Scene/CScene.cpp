@@ -154,7 +154,7 @@ namespace Skylicht
 		zone->setName(name.c_str());
 		zone->setID(zone->generateRandomID().c_str());
 		zone->createEntity();
-		zone->addComponent<CTransformEuler>();
+		zone->setupEulerTransform();
 
 		m_zones.push_back(zone);
 		return zone;
