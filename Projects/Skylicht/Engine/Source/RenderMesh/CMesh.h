@@ -53,6 +53,7 @@ namespace Skylicht
 
 		core::array<IShaderInstancing*> Instancing;
 		core::array<IVertexBuffer*> InstancingBuffer;
+		core::array<IVertexBuffer*> TransformBuffer;
 		core::array<IMeshBuffer*> RenderMeshBuffers;
 
 		IMesh* InstancingMesh;

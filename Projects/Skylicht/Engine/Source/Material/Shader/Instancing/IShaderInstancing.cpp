@@ -71,7 +71,12 @@ namespace Skylicht
 		return true;
 	}
 
-	bool IShaderInstancing::applyInstancing(IMeshBuffer* mb, IVertexBuffer* instancingBuffer)
+	IVertexBuffer* IShaderInstancing::createTransformMeshBuffer()
+	{
+		return new CVertexBuffer<SVtxTransform>();
+	}
+
+	bool IShaderInstancing::applyInstancing(IMeshBuffer* mb, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer)
 	{
 		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
 			return false;
@@ -79,9 +84,15 @@ namespace Skylicht
 		mb->setVertexDescriptor(m_vtxDescriptor);
 
 		if (mb->getVertexBufferCount() == 1)
+		{
 			mb->addVertexBuffer(instancingBuffer);
+			mb->addVertexBuffer(transformBuffer);
+		}
 		else
+		{
 			mb->setVertexBuffer(instancingBuffer, 1);
+			mb->setVertexBuffer(transformBuffer, 2);
+		}
 
 		return true;
 	}
@@ -93,11 +104,12 @@ namespace Skylicht
 
 		mb->setVertexDescriptor(m_baseVtxDescriptor);
 		mb->removeVertexBuffer(1);
+		mb->removeVertexBuffer(2);
 
 		return true;
 	}
 
-	bool IShaderInstancing::applyInstancing(IMesh* mesh, IVertexBuffer* instancingBuffer)
+	bool IShaderInstancing::applyInstancing(IMesh* mesh, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer)
 	{
 		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
 			return false;
@@ -109,9 +121,15 @@ namespace Skylicht
 			mb->setVertexDescriptor(m_vtxDescriptor);
 
 			if (mb->getVertexBufferCount() == 1)
+			{
 				mb->addVertexBuffer(instancingBuffer);
+				mb->addVertexBuffer(transformBuffer);
+			}
 			else
+			{
 				mb->setVertexBuffer(instancingBuffer, 1);
+				mb->setVertexBuffer(transformBuffer, 2);
+			}
 		}
 
 		return true;
@@ -128,6 +146,7 @@ namespace Skylicht
 			IMeshBuffer* mb = mesh->getMeshBuffer(i);
 			mb->setVertexDescriptor(m_baseVtxDescriptor);
 			mb->removeVertexBuffer(1);
+			mb->removeVertexBuffer(2);
 		}
 
 		return true;
