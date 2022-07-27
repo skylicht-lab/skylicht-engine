@@ -117,6 +117,13 @@ namespace Skylicht
 						instancing->applyInstancing(mesh, buffer->Instancing, buffer->Transform);
 
 						m_buffers[shaderMesh] = buffer;
+
+						/*
+						CMesh* indirectMesh = mesh->clone();
+						indirectMesh->UseInstancing = true;
+						indirectMesh->removeAllMeshBuffer();
+						mesh->InstancingLightingMesh = indirectMesh;
+						*/
 					}
 				}
 			}

@@ -71,8 +71,6 @@ namespace Skylicht
 
 		virtual bool isSupport(IMesh* mesh);
 
-		virtual IMeshBuffer* copyConvertMeshBuffer(IMeshBuffer* mb);
-
 		virtual IMeshBuffer* createLinkMeshBuffer(IMeshBuffer* mb);
 
 		virtual IVertexBuffer* createInstancingMeshBuffer() = 0;
