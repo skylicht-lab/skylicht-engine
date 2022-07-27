@@ -29,7 +29,8 @@ namespace Skylicht
 {
 	IShaderInstancing::IShaderInstancing() :
 		m_baseVtxDescriptor(NULL),
-		m_vtxDescriptor(NULL)
+		m_vtxDescriptor(NULL),
+		m_vtxIndirectDescriptor(NULL)
 	{
 
 	}
@@ -76,12 +77,38 @@ namespace Skylicht
 		return new CVertexBuffer<SVtxTransform>();
 	}
 
+	IVertexBuffer* IShaderInstancing::createIndirectMeshBuffer()
+	{
+		return new CVertexBuffer<SVtxIndirect>();
+	}
+
 	bool IShaderInstancing::applyInstancing(IMeshBuffer* mb, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer)
 	{
 		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
 			return false;
 
 		mb->setVertexDescriptor(m_vtxDescriptor);
+
+		if (mb->getVertexBufferCount() == 1)
+		{
+			mb->addVertexBuffer(instancingBuffer);
+			mb->addVertexBuffer(transformBuffer);
+		}
+		else
+		{
+			mb->setVertexBuffer(instancingBuffer, 1);
+			mb->setVertexBuffer(transformBuffer, 2);
+		}
+
+		return true;
+	}
+
+	bool IShaderInstancing::applyIndirectMeshInstancing(IMeshBuffer* mb, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer)
+	{
+		if (!m_baseVtxDescriptor || !m_vtxIndirectDescriptor)
+			return false;
+
+		mb->setVertexDescriptor(m_vtxIndirectDescriptor);
 
 		if (mb->getVertexBufferCount() == 1)
 		{
@@ -166,6 +193,20 @@ namespace Skylicht
 			false);
 
 		mh->copyIndices(smb->getIndexBuffer(), dmb->getIndexBuffer());
+
+		return dmb;
+	}
+
+	IMeshBuffer* IShaderInstancing::createLinkMeshBuffer(IMeshBuffer* smb)
+	{
+		video::E_INDEX_TYPE vtt = smb->getIndexBuffer()->getType();
+
+		// remove buffer
+		IMeshBuffer* dmb = createMeshBuffer(vtt);
+
+		// link the buffer
+		dmb->setVertexBuffer(smb->getVertexBuffer(0));
+		dmb->setIndexBuffer(smb->getIndexBuffer());
 
 		return dmb;
 	}

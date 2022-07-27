@@ -37,6 +37,9 @@ namespace Skylicht
 	CMesh::~CMesh()
 	{
 		removeAllMeshBuffer();
+
+		if (InstancingLightingMesh)
+			InstancingLightingMesh->drop();
 	}
 
 	CMesh* CMesh::clone()

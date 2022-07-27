@@ -176,10 +176,17 @@ namespace Skylicht
 
 		u32 mbCount = mesh->getMeshBufferCount();
 
+		// create instancing mesh render the texture albedo, normal
 		CMesh* instancingMesh = mesh->clone();
 		instancingMesh->UseInstancing = true;
 		instancingMesh->removeAllMeshBuffer();
 		data->InstancingMesh = instancingMesh;
+
+		// create instancing mesh, that render the indirect lighting
+		CMesh* instancingLightingMesh = instancingMesh->clone();
+		instancingLightingMesh->UseInstancing = true;
+		instancingLightingMesh->removeAllMeshBuffer();
+		instancingMesh->InstancingLightingMesh = instancingLightingMesh;
 
 		for (u32 i = 0; i < mbCount; i++)
 		{
@@ -211,18 +218,34 @@ namespace Skylicht
 			IVertexBuffer* transformBuffer = instancing->createTransformMeshBuffer();
 			transformBuffer->setHardwareMappingHint(EHM_STREAM);
 
+			IVertexBuffer* lightingBuffer = instancing->createIndirectMeshBuffer();
+			lightingBuffer->setHardwareMappingHint(EHM_STREAM);
+
 			data->Instancing.push_back(instancing);
 			data->InstancingBuffer.push_back(instancingBuffer);
 			data->TransformBuffer.push_back(transformBuffer);
+			data->IndirectLightingBuffer.push_back(lightingBuffer);
 
 			IMeshBuffer* newMeshBuffer = instancing->copyConvertMeshBuffer(mb);
 			if (newMeshBuffer)
 			{
-				// change vertex descriptor & add instancing buffer
-				instancing->applyInstancing(newMeshBuffer, instancingBuffer, transformBuffer);
+				// INDIRECT LIGHTING MESH
+				IMeshBuffer* lightingMeshBuffer = instancing->createLinkMeshBuffer(newMeshBuffer);
+				lightingMeshBuffer->setHardwareMappingHint(EHM_STATIC);
 
+				instancingLightingMesh->addMeshBuffer(
+					lightingMeshBuffer,
+					mesh->MaterialName[i].c_str(),
+					NULL
+				);
+
+				instancing->applyIndirectMeshInstancing(lightingMeshBuffer, lightingBuffer, transformBuffer);
+
+				// INSTANCING MESH
 				// set hardware static buffer
 				newMeshBuffer->setHardwareMappingHint(EHM_STATIC);
+
+				instancing->applyInstancing(newMeshBuffer, instancingBuffer, transformBuffer);
 
 				// save to render this meshbuffer
 				data->RenderMeshBuffers.push_back(newMeshBuffer);
