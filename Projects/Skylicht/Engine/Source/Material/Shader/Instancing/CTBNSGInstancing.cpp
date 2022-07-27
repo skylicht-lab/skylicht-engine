@@ -32,7 +32,7 @@ namespace Skylicht
 	{
 		m_baseVtxDescriptor = getVideoDriver()->getVertexDescriptor(EVT_TANGENTS);
 
-		core::stringc name = "tangentbinormal_sg_instance";
+		core::stringc name = "tbn_sg_instance";
 		m_vtxDescriptor = getVideoDriver()->getVertexDescriptor(name);
 
 		if (m_vtxDescriptor == NULL)
@@ -63,6 +63,39 @@ namespace Skylicht
 
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 2);
+		}
+
+		name = "tbn_indirect_instance";
+		m_vtxIndirectDescriptor = getVideoDriver()->getVertexDescriptor(name);
+		if (m_vtxIndirectDescriptor == NULL)
+		{
+			// copy new vertex descriptor
+			m_vtxIndirectDescriptor = getVideoDriver()->addVertexDescriptor(name);
+			for (u32 i = 0; i < m_baseVtxDescriptor->getAttributeCount(); ++i)
+			{
+				m_vtxIndirectDescriptor->addAttribute(
+					m_baseVtxDescriptor->getAttribute(i)->getName(),
+					m_baseVtxDescriptor->getAttribute(i)->getElementCount(),
+					m_baseVtxDescriptor->getAttribute(i)->getSemantic(),
+					m_baseVtxDescriptor->getAttribute(i)->getType(),
+					m_baseVtxDescriptor->getAttribute(i)->getBufferID()
+				);
+			}
+
+			// add color & uv scale
+			m_vtxIndirectDescriptor->addAttribute("D1", 4, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
+			m_vtxIndirectDescriptor->addAttribute("D2", 4, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
+			m_vtxIndirectDescriptor->addAttribute("D3", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
+			m_vtxIndirectDescriptor->addAttribute("D4", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
+
+			// add instance matrix
+			m_vtxIndirectDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 2);
+			m_vtxIndirectDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 2);
+			m_vtxIndirectDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 2);
+			m_vtxIndirectDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 2);
+
+			m_vtxIndirectDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
+			m_vtxIndirectDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 2);
 		}
 	}
 
