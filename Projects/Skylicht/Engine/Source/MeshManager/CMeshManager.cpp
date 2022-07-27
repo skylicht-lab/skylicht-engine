@@ -226,11 +226,12 @@ namespace Skylicht
 			data->TransformBuffer.push_back(transformBuffer);
 			data->IndirectLightingBuffer.push_back(lightingBuffer);
 
-			IMeshBuffer* newMeshBuffer = instancing->copyConvertMeshBuffer(mb);
-			if (newMeshBuffer)
+			IMeshBuffer* newMeshBuffer = instancing->createLinkMeshBuffer(mb);
+			IMeshBuffer* lightingMeshBuffer = instancing->createLinkMeshBuffer(mb);
+
+			if (newMeshBuffer && lightingMeshBuffer)
 			{
-				// INDIRECT LIGHTING MESH
-				IMeshBuffer* lightingMeshBuffer = instancing->createLinkMeshBuffer(newMeshBuffer);
+				// INDIRECT LIGHTING MESH				
 				lightingMeshBuffer->setHardwareMappingHint(EHM_STATIC);
 
 				instancingLightingMesh->addMeshBuffer(
@@ -245,17 +246,17 @@ namespace Skylicht
 				// set hardware static buffer
 				newMeshBuffer->setHardwareMappingHint(EHM_STATIC);
 
-				instancing->applyInstancing(newMeshBuffer, instancingBuffer, transformBuffer);
-
-				// save to render this meshbuffer
-				data->RenderMeshBuffers.push_back(newMeshBuffer);
-
 				// add mb to mesh for rendering
 				instancingMesh->addMeshBuffer(
 					newMeshBuffer,
 					mesh->MaterialName[i].c_str(),
 					mesh->Materials[i]
 				);
+
+				instancing->applyInstancing(newMeshBuffer, instancingBuffer, transformBuffer);
+
+				// save to render this meshbuffer
+				data->RenderMeshBuffers.push_back(newMeshBuffer);
 
 				// apply material
 				mesh->Materials[i]->applyMaterial(newMeshBuffer->getMaterial());

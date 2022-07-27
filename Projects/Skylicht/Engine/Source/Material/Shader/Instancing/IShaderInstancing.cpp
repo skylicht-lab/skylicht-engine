@@ -179,24 +179,6 @@ namespace Skylicht
 		return true;
 	}
 
-	IMeshBuffer* IShaderInstancing::copyConvertMeshBuffer(IMeshBuffer* smb)
-	{
-		IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
-
-		video::E_INDEX_TYPE vtt = smb->getIndexBuffer()->getType();
-
-		IMeshBuffer* dmb = createMeshBuffer(vtt);
-
-		mh->copyVertices(
-			smb->getVertexBuffer(0), 0, m_baseVtxDescriptor,
-			dmb->getVertexBuffer(0), 0, m_baseVtxDescriptor,
-			false);
-
-		mh->copyIndices(smb->getIndexBuffer(), dmb->getIndexBuffer());
-
-		return dmb;
-	}
-
 	IMeshBuffer* IShaderInstancing::createLinkMeshBuffer(IMeshBuffer* smb)
 	{
 		video::E_INDEX_TYPE vtt = smb->getIndexBuffer()->getType();
