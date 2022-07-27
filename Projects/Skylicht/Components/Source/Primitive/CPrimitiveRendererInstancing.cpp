@@ -41,8 +41,14 @@ namespace Skylicht
 		for (auto& i : m_buffers)
 		{
 			if (i.second)
-				i.second->drop();
+			{
+				i.second->Instancing->drop();
+				i.second->Transform->drop();
+				delete i.second;
+			}
 		}
+
+		m_buffers.clear();
 	}
 
 	void CPrimitiveRendererInstancing::beginQuery(CEntityManager* entityManager)
@@ -100,10 +106,15 @@ namespace Skylicht
 					{
 						mesh->UseInstancing = true;
 
-						IVertexBuffer* buffer = instancing->createInstancingMeshBuffer();
-						buffer->setHardwareMappingHint(EHM_STREAM);
+						SInstancingVertexBuffer* buffer = new SInstancingVertexBuffer();
 
-						instancing->applyInstancing(mesh, buffer);
+						buffer->Instancing = instancing->createInstancingMeshBuffer();
+						buffer->Instancing->setHardwareMappingHint(EHM_STREAM);
+
+						buffer->Transform = instancing->createTransformMeshBuffer();
+						buffer->Transform->setHardwareMappingHint(EHM_STREAM);
+
+						instancing->applyInstancing(mesh, buffer->Instancing, buffer->Transform);
 
 						m_buffers[shaderMesh] = buffer;
 					}
@@ -126,7 +137,6 @@ namespace Skylicht
 				continue;
 
 			IShaderInstancing* instancing = it.first.Shader->getInstancing();
-			IVertexBuffer* buffer = m_buffers[it.first];
 
 			m_materials.reset();
 			m_entities.reset();
@@ -145,8 +155,10 @@ namespace Skylicht
 				m_entities.push(entity);
 			}
 
+			SInstancingVertexBuffer* buffer = m_buffers[it.first];
+
 			// batching transform & material data to buffer
-			instancing->batchIntancing(buffer,
+			instancing->batchIntancing(buffer->Instancing, buffer->Transform,
 				m_materials.pointer(),
 				m_entities.pointer(),
 				m_entities.count());

@@ -63,7 +63,10 @@ namespace Skylicht
 
 			n = data->InstancingBuffer.size();
 			for (u32 i = 0; i < n; i++)
+			{
 				data->InstancingBuffer[i]->drop();
+				data->TransformBuffer[i]->drop();
+			}
 
 			n = data->RenderMeshBuffers.size();
 			for (u32 i = 0; i < n; i++)
@@ -205,14 +208,18 @@ namespace Skylicht
 			IVertexBuffer* instancingBuffer = instancing->createInstancingMeshBuffer();
 			instancingBuffer->setHardwareMappingHint(EHM_STREAM);
 
+			IVertexBuffer* transformBuffer = instancing->createTransformMeshBuffer();
+			transformBuffer->setHardwareMappingHint(EHM_STREAM);
+
 			data->Instancing.push_back(instancing);
 			data->InstancingBuffer.push_back(instancingBuffer);
+			data->TransformBuffer.push_back(transformBuffer);
 
 			IMeshBuffer* newMeshBuffer = instancing->copyConvertMeshBuffer(mb);
 			if (newMeshBuffer)
 			{
 				// change vertex descriptor & add instancing buffer
-				instancing->applyInstancing(newMeshBuffer, instancingBuffer);
+				instancing->applyInstancing(newMeshBuffer, instancingBuffer, transformBuffer);
 
 				// set hardware static buffer
 				newMeshBuffer->setHardwareMappingHint(EHM_STATIC);

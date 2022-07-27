@@ -32,6 +32,16 @@ namespace Skylicht
 {
 	class CMaterial;
 
+	struct SVtxTransform
+	{
+		core::matrix4 World;
+
+		bool operator==(const SVtxTransform& other) const
+		{
+			return false;
+		}
+	};
+
 	class IShaderInstancing
 	{
 	protected:
@@ -51,17 +61,19 @@ namespace Skylicht
 
 		virtual IVertexBuffer* createInstancingMeshBuffer() = 0;
 
+		virtual IVertexBuffer* createTransformMeshBuffer();
+
 		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type) = 0;
 
-		virtual bool applyInstancing(IMeshBuffer* meshbuffer, IVertexBuffer* instancingBuffer);
+		virtual bool applyInstancing(IMeshBuffer* meshbuffer, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer);
 
 		virtual bool removeInstancing(IMeshBuffer* meshbuffer);
 
-		virtual bool applyInstancing(IMesh* mesh, IVertexBuffer* instancingBuffer);
+		virtual bool applyInstancing(IMesh* mesh, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer);
 
 		virtual bool removeInstancing(IMesh* mesh);
 
-		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
+		virtual void batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer,
 			CMaterial** materials,
 			CEntity** entities,
 			int count) = 0;
