@@ -42,11 +42,25 @@ namespace Skylicht
 		}
 	};
 
+	struct SVtxIndirect
+	{
+		SVec4 D0;
+		SVec4 D1;
+		SVec4 D2;
+		SVec4 D3;
+
+		bool operator==(const SVtxIndirect& other) const
+		{
+			return false;
+		}
+	};
+
 	class IShaderInstancing
 	{
 	protected:
 		video::IVertexDescriptor* m_baseVtxDescriptor;
 		video::IVertexDescriptor* m_vtxDescriptor;
+		video::IVertexDescriptor* m_vtxIndirectDescriptor;
 
 	public:
 		IShaderInstancing();
@@ -59,13 +73,18 @@ namespace Skylicht
 
 		virtual IMeshBuffer* copyConvertMeshBuffer(IMeshBuffer* mb);
 
+		virtual IMeshBuffer* createLinkMeshBuffer(IMeshBuffer* mb);
+
 		virtual IVertexBuffer* createInstancingMeshBuffer() = 0;
 
 		virtual IVertexBuffer* createTransformMeshBuffer();
+		virtual IVertexBuffer* createIndirectMeshBuffer();
 
 		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type) = 0;
 
 		virtual bool applyInstancing(IMeshBuffer* meshbuffer, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer);
+
+		virtual bool applyIndirectMeshInstancing(IMeshBuffer* meshbuffer, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer);
 
 		virtual bool removeInstancing(IMeshBuffer* meshbuffer);
 
