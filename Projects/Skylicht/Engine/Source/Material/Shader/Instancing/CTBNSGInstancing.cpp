@@ -56,12 +56,13 @@ namespace Skylicht
 			m_vtxDescriptor->addAttribute("uSpecGloss", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
 
 			// add instance matrix
-			m_vtxDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 2);
+			m_vtxDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 2);
+			m_vtxDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 2);
+			m_vtxDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 2);
 
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
+			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 2);
 		}
 	}
 
@@ -80,7 +81,7 @@ namespace Skylicht
 		return new CMeshBuffer<S3DVertexTangents>(m_baseVtxDescriptor, type);
 	}
 
-	void CTBNSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer,
+	void CTBNSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer,
 		CMaterial** materials,
 		CEntity** entities,
 		int count)
@@ -89,13 +90,19 @@ namespace Skylicht
 		if (instanceBuffer == NULL)
 			return;
 
+		CVertexBuffer<SVtxTransform>* transformBuffer = dynamic_cast<CVertexBuffer<SVtxTransform>*>(tBuffer);
+		if (transformBuffer == NULL)
+			return;
+
 		instanceBuffer->set_used(count);
+		transformBuffer->set_used(count);
 
 		float invColor = 1.111f / 255.0f;
 
 		for (int i = 0; i < count; i++)
 		{
 			SVtxSGInstancing& vtx = instanceBuffer->getVertex(i);
+			SVtxTransform& transform = transformBuffer->getVertex(i);
 
 			CShaderParams& params = materials[i]->getShaderParams();
 
@@ -106,9 +113,10 @@ namespace Skylicht
 
 			// world transform
 			CWorldTransformData* world = GET_ENTITY_DATA(entities[i], CWorldTransformData);
-			vtx.World = world->World;
+			transform.World = world->World;
 		}
 
 		vtxBuffer->setDirty();
+		tBuffer->setDirty();
 	}
 }

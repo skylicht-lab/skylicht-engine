@@ -78,6 +78,12 @@ namespace Skylicht
 
 	typedef core::array<CPrimiviteData*> ArrayPrimitives;
 
+	struct SInstancingVertexBuffer
+	{
+		IVertexBuffer* Instancing;
+		IVertexBuffer* Transform;
+	};
+
 	class CPrimitiveRendererInstancing : public CPrimitiveBaseRenderer
 	{
 	protected:
@@ -85,7 +91,7 @@ namespace Skylicht
 
 		// group instancing
 		std::map<SShaderMesh, ArrayPrimitives> m_groups;
-		std::map<SShaderMesh, IVertexBuffer*> m_buffers;
+		std::map<SShaderMesh, SInstancingVertexBuffer*> m_buffers;
 
 		// bake instancing
 		CFastArray<CMaterial*> m_materials;
