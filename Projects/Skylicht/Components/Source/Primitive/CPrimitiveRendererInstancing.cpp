@@ -114,16 +114,35 @@ namespace Skylicht
 						buffer->Transform = instancing->createTransformMeshBuffer();
 						buffer->Transform->setHardwareMappingHint(EHM_STREAM);
 
-						instancing->applyInstancing(mesh, buffer->Instancing, buffer->Transform);
+						buffer->IndirectLighting = instancing->createIndirectLightingMeshBuffer();
+						buffer->IndirectLighting->setHardwareMappingHint(EHM_STREAM);
+
+						instancing->applyInstancing(
+							mesh,
+							buffer->Instancing,
+							buffer->Transform
+						);
 
 						m_buffers[shaderMesh] = buffer;
 
-						/*
-						CMesh* indirectMesh = mesh->clone();
-						indirectMesh->UseInstancing = true;
-						indirectMesh->removeAllMeshBuffer();
-						mesh->InstancingLightingMesh = indirectMesh;
-						*/
+
+						CMesh* indirectLightingMesh = mesh->clone();
+						indirectLightingMesh->UseInstancing = true;
+						indirectLightingMesh->removeAllMeshBuffer();
+
+						u32 count = mesh->getMeshBufferCount();
+						for (u32 i = 0; i < count; i++)
+						{
+							IMeshBuffer* lightingMeshBuffer = instancing->createLinkMeshBuffer(mesh->getMeshBuffer(i));
+							indirectLightingMesh->addMeshBuffer(lightingMeshBuffer, "", NULL);
+						}
+
+						mesh->IndirectLightingMesh = indirectLightingMesh;
+
+						instancing->applyInstancingForRenderLighting(
+							indirectLightingMesh,
+							buffer->IndirectLighting,
+							buffer->Transform);
 					}
 				}
 			}

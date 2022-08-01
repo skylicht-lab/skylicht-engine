@@ -186,7 +186,7 @@ namespace Skylicht
 		CMesh* instancingLightingMesh = instancingMesh->clone();
 		instancingLightingMesh->UseInstancing = true;
 		instancingLightingMesh->removeAllMeshBuffer();
-		instancingMesh->InstancingLightingMesh = instancingLightingMesh;
+		instancingMesh->IndirectLightingMesh = instancingLightingMesh;
 
 		for (u32 i = 0; i < mbCount; i++)
 		{
@@ -218,7 +218,7 @@ namespace Skylicht
 			IVertexBuffer* transformBuffer = instancing->createTransformMeshBuffer();
 			transformBuffer->setHardwareMappingHint(EHM_STREAM);
 
-			IVertexBuffer* lightingBuffer = instancing->createIndirectMeshBuffer();
+			IVertexBuffer* lightingBuffer = instancing->createIndirectLightingMeshBuffer();
 			lightingBuffer->setHardwareMappingHint(EHM_STREAM);
 
 			data->Instancing.push_back(instancing);
@@ -226,10 +226,10 @@ namespace Skylicht
 			data->TransformBuffer.push_back(transformBuffer);
 			data->IndirectLightingBuffer.push_back(lightingBuffer);
 
-			IMeshBuffer* newMeshBuffer = instancing->createLinkMeshBuffer(mb);
+			IMeshBuffer* renderMeshBuffer = instancing->createLinkMeshBuffer(mb);
 			IMeshBuffer* lightingMeshBuffer = instancing->createLinkMeshBuffer(mb);
 
-			if (newMeshBuffer && lightingMeshBuffer)
+			if (renderMeshBuffer && lightingMeshBuffer)
 			{
 				// INDIRECT LIGHTING MESH				
 				lightingMeshBuffer->setHardwareMappingHint(EHM_STATIC);
@@ -240,26 +240,26 @@ namespace Skylicht
 					NULL
 				);
 
-				instancing->applyIndirectMeshInstancing(lightingMeshBuffer, lightingBuffer, transformBuffer);
+				instancing->applyInstancingForRenderLighting(lightingMeshBuffer, lightingBuffer, transformBuffer);
 
 				// INSTANCING MESH
 				// set hardware static buffer
-				newMeshBuffer->setHardwareMappingHint(EHM_STATIC);
+				renderMeshBuffer->setHardwareMappingHint(EHM_STATIC);
 
 				// add mb to mesh for rendering
 				instancingMesh->addMeshBuffer(
-					newMeshBuffer,
+					renderMeshBuffer,
 					mesh->MaterialName[i].c_str(),
 					mesh->Materials[i]
 				);
 
-				instancing->applyInstancing(newMeshBuffer, instancingBuffer, transformBuffer);
+				instancing->applyInstancing(renderMeshBuffer, instancingBuffer, transformBuffer);
 
 				// save to render this meshbuffer
-				data->RenderMeshBuffers.push_back(newMeshBuffer);
+				data->RenderMeshBuffers.push_back(renderMeshBuffer);
 
 				// apply material
-				mesh->Materials[i]->applyMaterial(newMeshBuffer->getMaterial());
+				mesh->Materials[i]->applyMaterial(renderMeshBuffer->getMaterial());
 			}
 		}
 

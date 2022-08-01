@@ -120,6 +120,6 @@ namespace Skylicht
 
 		bool UseInstancing;
 
-		CMesh* InstancingLightingMesh;
+		CMesh* IndirectLightingMesh;
 	};
 }
