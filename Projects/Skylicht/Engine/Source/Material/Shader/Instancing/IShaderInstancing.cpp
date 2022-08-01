@@ -30,7 +30,7 @@ namespace Skylicht
 	IShaderInstancing::IShaderInstancing() :
 		m_baseVtxDescriptor(NULL),
 		m_vtxDescriptor(NULL),
-		m_vtxIndirectDescriptor(NULL)
+		m_vtxDescriptorForRenderLighting(NULL)
 	{
 
 	}
@@ -77,9 +77,9 @@ namespace Skylicht
 		return new CVertexBuffer<SVtxTransform>();
 	}
 
-	IVertexBuffer* IShaderInstancing::createIndirectMeshBuffer()
+	IVertexBuffer* IShaderInstancing::createIndirectLightingMeshBuffer()
 	{
-		return new CVertexBuffer<SVtxIndirect>();
+		return new CVertexBuffer<SVtxIndirectLighting>();
 	}
 
 	bool IShaderInstancing::applyInstancing(IMeshBuffer* mb, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer)
@@ -103,12 +103,12 @@ namespace Skylicht
 		return true;
 	}
 
-	bool IShaderInstancing::applyIndirectMeshInstancing(IMeshBuffer* mb, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer)
+	bool IShaderInstancing::applyInstancingForRenderLighting(IMeshBuffer* mb, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer)
 	{
-		if (!m_baseVtxDescriptor || !m_vtxIndirectDescriptor)
+		if (!m_baseVtxDescriptor || !m_vtxDescriptorForRenderLighting)
 			return false;
 
-		mb->setVertexDescriptor(m_vtxIndirectDescriptor);
+		mb->setVertexDescriptor(m_vtxDescriptorForRenderLighting);
 
 		if (mb->getVertexBufferCount() == 1)
 		{
@@ -146,6 +146,32 @@ namespace Skylicht
 		{
 			IMeshBuffer* mb = mesh->getMeshBuffer(i);
 			mb->setVertexDescriptor(m_vtxDescriptor);
+
+			if (mb->getVertexBufferCount() == 1)
+			{
+				mb->addVertexBuffer(instancingBuffer);
+				mb->addVertexBuffer(transformBuffer);
+			}
+			else
+			{
+				mb->setVertexBuffer(instancingBuffer, 1);
+				mb->setVertexBuffer(transformBuffer, 2);
+			}
+		}
+
+		return true;
+	}
+
+	bool IShaderInstancing::applyInstancingForRenderLighting(IMesh* mesh, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer)
+	{
+		if (!m_baseVtxDescriptor || !m_vtxDescriptorForRenderLighting)
+			return false;
+
+		u32 count = mesh->getMeshBufferCount();
+		for (u32 i = 0; i < count; i++)
+		{
+			IMeshBuffer* mb = mesh->getMeshBuffer(i);
+			mb->setVertexDescriptor(m_vtxDescriptorForRenderLighting);
 
 			if (mb->getVertexBufferCount() == 1)
 			{
