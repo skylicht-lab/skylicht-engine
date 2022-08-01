@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	CMesh::CMesh() :
 		UseInstancing(false),
-		InstancingLightingMesh(NULL)
+		IndirectLightingMesh(NULL)
 	{
 	}
 
@@ -38,8 +38,8 @@ namespace Skylicht
 	{
 		removeAllMeshBuffer();
 
-		if (InstancingLightingMesh)
-			InstancingLightingMesh->drop();
+		if (IndirectLightingMesh)
+			IndirectLightingMesh->drop();
 	}
 
 	CMesh* CMesh::clone()

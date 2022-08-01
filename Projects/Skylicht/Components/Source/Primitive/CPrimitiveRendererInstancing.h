@@ -82,6 +82,7 @@ namespace Skylicht
 	{
 		IVertexBuffer* Instancing;
 		IVertexBuffer* Transform;
+		IVertexBuffer* IndirectLighting;
 	};
 
 	class CPrimitiveRendererInstancing : public CPrimitiveBaseRenderer
