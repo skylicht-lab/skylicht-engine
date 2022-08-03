@@ -114,7 +114,7 @@ namespace Skylicht
 		return new CMeshBuffer<S3DVertexTangents>(m_baseVtxDescriptor, type);
 	}
 
-	void CTBNSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer,
+	void CTBNSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer, IVertexBuffer* lBuffer,
 		CMaterial** materials,
 		CEntity** entities,
 		int count)
@@ -127,8 +127,13 @@ namespace Skylicht
 		if (transformBuffer == NULL)
 			return;
 
+		CVertexBuffer<SVtxIndirectLighting>* indirectLightBuffer = dynamic_cast<CVertexBuffer<SVtxIndirectLighting>*>(lBuffer);
+		if (indirectLightBuffer == NULL)
+			return;
+
 		instanceBuffer->set_used(count);
 		transformBuffer->set_used(count);
+		indirectLightBuffer->set_used(count);
 
 		float invColor = 1.111f / 255.0f;
 
@@ -136,6 +141,7 @@ namespace Skylicht
 		{
 			SVtxSGInstancing& vtx = instanceBuffer->getVertex(i);
 			SVtxTransform& transform = transformBuffer->getVertex(i);
+			SVtxIndirectLighting& indirectLight = indirectLightBuffer->getVertex(i);
 
 			CShaderParams& params = materials[i]->getShaderParams();
 
@@ -147,9 +153,40 @@ namespace Skylicht
 			// world transform
 			CWorldTransformData* world = GET_ENTITY_DATA(entities[i], CWorldTransformData);
 			transform.World = world->World;
+
+			// indirect lighting
+			CIndirectLightingData* indirectLighting = GET_ENTITY_DATA(entities[i], CIndirectLightingData);
+			switch (indirectLighting->Type)
+			{
+			case CIndirectLightingData::SH9:
+			{
+				if (indirectLighting->SH)
+				{
+					indirectLight.D0 = indirectLighting->SH[0];
+					indirectLight.D1 = indirectLighting->SH[1];
+					indirectLight.D2 = indirectLighting->SH[2];
+					indirectLight.D3 = indirectLighting->SH[3];
+				}
+			}
+			break;
+			case CIndirectLightingData::AmbientColor:
+			{
+				indirectLight.D0.set(
+					indirectLighting->Color.getRed() / 255.0f,
+					indirectLighting->Color.getGreen() / 255.0f,
+					indirectLighting->Color.getBlue() / 255.0f
+				);
+			}
+			break;
+			default:
+			{
+			}
+			break;
+			}
 		}
 
 		vtxBuffer->setDirty();
 		tBuffer->setDirty();
+		lBuffer->setDirty();
 	}
 }

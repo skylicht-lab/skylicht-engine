@@ -135,6 +135,7 @@ namespace Skylicht
 				data->Instancing[i]->batchIntancing(
 					data->InstancingBuffer[i],
 					data->TransformBuffer[i],
+					data->IndirectLightingBuffer[i],
 					group->Materials.pointer(),
 					group->Entities.pointer(),
 					count

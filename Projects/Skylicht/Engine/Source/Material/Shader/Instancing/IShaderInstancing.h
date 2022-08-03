@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CGameSingleton.h"
 #include "Entity/CEntity.h"
 #include "Transform/CWorldTransformData.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 namespace Skylicht
 {
@@ -44,10 +45,10 @@ namespace Skylicht
 
 	struct SVtxIndirectLighting
 	{
-		SVec4 D0;
-		SVec4 D1;
-		SVec4 D2;
-		SVec4 D3;
+		core::vector3df D0;
+		core::vector3df D1;
+		core::vector3df D2;
+		core::vector3df D3;
 
 		bool operator==(const SVtxIndirectLighting& other) const
 		{
@@ -92,7 +93,7 @@ namespace Skylicht
 
 		virtual bool removeInstancing(IMesh* mesh);
 
-		virtual void batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer,
+		virtual void batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer, IVertexBuffer* lBuffer,
 			CMaterial** materials,
 			CEntity** entities,
 			int count) = 0;
