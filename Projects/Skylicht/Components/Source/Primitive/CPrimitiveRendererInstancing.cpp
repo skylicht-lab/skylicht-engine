@@ -184,7 +184,10 @@ namespace Skylicht
 			SInstancingVertexBuffer* buffer = m_buffers[it.first];
 
 			// batching transform & material data to buffer
-			instancing->batchIntancing(buffer->Instancing, buffer->Transform,
+			instancing->batchIntancing(
+				buffer->Instancing,
+				buffer->Transform,
+				buffer->IndirectLighting,
 				m_materials.pointer(),
 				m_entities.pointer(),
 				m_entities.count());
