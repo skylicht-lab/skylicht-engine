@@ -1,5 +1,6 @@
 /*
 /*
+/*
 !@
 MIT License
 
@@ -52,7 +53,7 @@ namespace Skylicht
 
 		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type);
 
-		virtual void batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer,
+		virtual void batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer, IVertexBuffer* lBuffer,
 			CMaterial** materials,
 			CEntity** entities,
 			int count);
