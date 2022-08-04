@@ -83,10 +83,10 @@ namespace Skylicht
 			}
 
 			// add color & uv scale
-			m_vtxDescriptorForRenderLighting->addAttribute("D1", 4, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
-			m_vtxDescriptorForRenderLighting->addAttribute("D2", 4, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
-			m_vtxDescriptorForRenderLighting->addAttribute("D3", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
-			m_vtxDescriptorForRenderLighting->addAttribute("D4", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
+			m_vtxDescriptorForRenderLighting->addAttribute("D0", 3, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
+			m_vtxDescriptorForRenderLighting->addAttribute("D1", 3, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
+			m_vtxDescriptorForRenderLighting->addAttribute("D2", 3, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
+			m_vtxDescriptorForRenderLighting->addAttribute("D3", 3, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
 
 			// add instance matrix
 			m_vtxDescriptorForRenderLighting->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 2);
@@ -175,10 +175,14 @@ namespace Skylicht
 			case CIndirectLightingData::AmbientColor:
 			{
 				indirectLight.D0.set(
-					indirectLighting->Color.getRed() / 255.0f,
-					indirectLighting->Color.getGreen() / 255.0f,
-					indirectLighting->Color.getBlue() / 255.0f
+					indirectLighting->Color.getRed() * invColor,
+					indirectLighting->Color.getGreen() * invColor,
+					indirectLighting->Color.getBlue() * invColor
 				);
+
+				indirectLight.D1.set(0.0f, 0.0f, 0.0f);
+				indirectLight.D2.set(0.0f, 0.0f, 0.0f);
+				indirectLight.D3.set(0.0f, 0.0f, 0.0f);
 			}
 			break;
 			default:
