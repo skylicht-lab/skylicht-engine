@@ -4,6 +4,9 @@ struct VS_INPUT
 	float3 norm: NORMAL;
 	float4 color: COLOR;
 	float2 tex0: TEXCOORD0;
+	float3 tangent: TANGENT;
+	float3 binormal: BINORMAL;
+	float2 data: DATA;
 	float3 D0: TEXCOORD1;
 	float3 D1: TEXCOORD2;
 	float3 D2: TEXCOORD3;

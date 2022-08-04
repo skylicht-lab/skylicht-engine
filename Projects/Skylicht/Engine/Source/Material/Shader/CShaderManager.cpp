@@ -147,6 +147,7 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughnessInstancing.xml");
 
 		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
+		loadShader("BuiltIn/Shader/Lightmap/LMTBNSGInstancing.xml");
 
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWStandardInstancing.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeStandardInstancing.xml");
