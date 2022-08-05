@@ -154,18 +154,14 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWTBNInstancing.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeTBNInstancing.xml");
 
-		CShader* shader = NULL;
-		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
-		if (shader) shader->setInstancing(new CStandardSGInstancing());
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml", new CStandardSGInstancing());
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
 
-		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
-		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
-		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
-		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
-		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
-
-		shader = loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml");
-		if (shader) shader->setInstancing(new CTBNSGInstancing());
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml", new CTBNSGInstancing());
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightSSR.xml");
@@ -188,7 +184,7 @@ namespace Skylicht
 		initSkylichtEngineShader();
 	}
 
-	CShader* CShaderManager::loadShader(const char* shaderConfig)
+	CShader* CShaderManager::loadShader(const char* shaderConfig, IShaderInstancing* instancing)
 	{
 		std::string shaderFolder = CPath::getFolderPath(std::string(shaderConfig));
 		shaderFolder += "/";
@@ -201,6 +197,9 @@ namespace Skylicht
 			sprintf(log, "Load shader: %s - File not found", shaderConfig);
 			os::Printer::log(log);
 
+			if (instancing)
+				delete instancing;
+
 			return NULL;
 		}
 
@@ -210,6 +209,7 @@ namespace Skylicht
 		// init shader
 		CShader* shader = new CShader();
 		shader->initShader(xmlReader, shaderFolder.c_str());
+		shader->setInstancing(instancing);
 
 		// close xml file reader
 		xmlReader->drop();
@@ -225,6 +225,7 @@ namespace Skylicht
 
 			delete shader;
 			shader = NULL;
+
 			return NULL;
 		}
 
@@ -233,7 +234,7 @@ namespace Skylicht
 		shader->buildUIUniform();
 		shader->setShaderPath(shaderConfig);
 
-		// if shader load success		
+		// if shader load success
 		int materialID = shader->getMaterialRenderID();
 
 		if (shaderName.empty() == false && materialID >= 0)

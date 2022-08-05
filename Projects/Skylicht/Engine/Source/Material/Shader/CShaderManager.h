@@ -32,12 +32,13 @@ namespace Skylicht
 
 	class CShader;
 	class IShaderCallback;
+	class IShaderInstancing;
 
 	class CShaderManager : public CGameSingleton<CShaderManager>
 	{
 	protected:
-		IMeshBuffer *m_currentMeshBuffer;
-		SMaterial *m_currentMatRendering;
+		IMeshBuffer* m_currentMeshBuffer;
+		SMaterial* m_currentMatRendering;
 
 		int m_currentRenderID;
 
@@ -61,7 +62,7 @@ namespace Skylicht
 
 		void releaseAll();
 
-		inline void setCurrentMeshBuffer(IMeshBuffer *buffer)
+		inline void setCurrentMeshBuffer(IMeshBuffer* buffer)
 		{
 			m_currentMeshBuffer = buffer;
 		}
@@ -103,17 +104,17 @@ namespace Skylicht
 
 		// loadShader
 		// load game shader from file config
-		CShader* loadShader(const char *shaderConfig);
+		CShader* loadShader(const char* shaderConfig, IShaderInstancing* instancing = NULL);
 
-		int getShaderIDByName(const char *name);
+		int getShaderIDByName(const char* name);
 
-		CShader* getShaderByName(const char *name);
+		CShader* getShaderByName(const char* name);
 
-		CShader* getShaderByPath(const char *path);
+		CShader* getShaderByPath(const char* path);
 
 		CShader* getShaderByID(int id);
 
-		std::string getShaderFileName(const char *fileName);
+		std::string getShaderFileName(const char* fileName);
 
 		int getNumMaterial()
 		{
