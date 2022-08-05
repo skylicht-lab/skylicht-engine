@@ -126,25 +126,11 @@ namespace Skylicht
 		if (instanceBuffer == NULL)
 			return;
 
-		CVertexBuffer<SVtxTransform>* transformBuffer = dynamic_cast<CVertexBuffer<SVtxTransform>*>(tBuffer);
-		if (transformBuffer == NULL)
-			return;
-
-		CVertexBuffer<SVtxIndirectLighting>* indirectLightBuffer = dynamic_cast<CVertexBuffer<SVtxIndirectLighting>*>(lBuffer);
-		if (indirectLightBuffer == NULL)
-			return;
-
 		instanceBuffer->set_used(count);
-		transformBuffer->set_used(count);
-		indirectLightBuffer->set_used(count);
-
-		float invColor = 1.111f / 255.0f;
 
 		for (int i = 0; i < count; i++)
 		{
 			SVtxSGInstancing& vtx = instanceBuffer->getVertex(i);
-			SVtxTransform& transform = transformBuffer->getVertex(i);
-			SVtxIndirectLighting& indirectLight = indirectLightBuffer->getVertex(i);
 
 			CShaderParams& params = materials[i]->getShaderParams();
 
@@ -152,48 +138,10 @@ namespace Skylicht
 			vtx.UVScale = params.getParam(0);
 			vtx.Color = params.getParam(1);
 			vtx.SpecGloss = params.getParam(2);
-
-			// world transform
-			CWorldTransformData* world = GET_ENTITY_DATA(entities[i], CWorldTransformData);
-			transform.World = world->World;
-
-			// indirect lighting
-			CIndirectLightingData* indirectLighting = GET_ENTITY_DATA(entities[i], CIndirectLightingData);
-			switch (indirectLighting->Type)
-			{
-			case CIndirectLightingData::SH9:
-			{
-				if (indirectLighting->SH)
-				{
-					indirectLight.D0 = indirectLighting->SH[0];
-					indirectLight.D1 = indirectLighting->SH[1];
-					indirectLight.D2 = indirectLighting->SH[2];
-					indirectLight.D3 = indirectLighting->SH[3];
-				}
-			}
-			break;
-			case CIndirectLightingData::AmbientColor:
-			{
-				indirectLight.D0.set(
-					indirectLighting->Color.getRed() * invColor,
-					indirectLighting->Color.getGreen() * invColor,
-					indirectLighting->Color.getBlue() * invColor
-				);
-
-				indirectLight.D1.set(0.0f, 0.0f, 0.0f);
-				indirectLight.D2.set(0.0f, 0.0f, 0.0f);
-				indirectLight.D3.set(0.0f, 0.0f, 0.0f);
-			}
-			break;
-			default:
-			{
-			}
-			break;
-			}
 		}
 
 		vtxBuffer->setDirty();
-		tBuffer->setDirty();
-		lBuffer->setDirty();
+
+		batchTransformAndLighting(tBuffer, lBuffer, entities, count);
 	}
 }

@@ -77,6 +77,7 @@ namespace Skylicht
 		virtual IVertexBuffer* createInstancingMeshBuffer() = 0;
 
 		virtual IVertexBuffer* createTransformMeshBuffer();
+
 		virtual IVertexBuffer* createIndirectLightingMeshBuffer();
 
 		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type) = 0;
@@ -97,6 +98,12 @@ namespace Skylicht
 			CMaterial** materials,
 			CEntity** entities,
 			int count) = 0;
+
+		virtual void batchTransformAndLighting(
+			IVertexBuffer* tBuffer,
+			IVertexBuffer* lBuffer,
+			CEntity** entities,
+			int count);
 
 		video::IVertexDescriptor* getBaseVertexDescriptor()
 		{
