@@ -92,7 +92,6 @@ namespace Skylicht
 
 	void CMeshRendererInstancing::update(CEntityManager* entityManager)
 	{
-		// need sort render by material, texture, mesh		
 		u32 numEntity = m_meshs.size();
 		CRenderMeshData** renderData = m_meshs.pointer();
 

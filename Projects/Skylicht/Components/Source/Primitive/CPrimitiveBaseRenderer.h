@@ -44,5 +44,7 @@ namespace Skylicht
 		void initMesh(IMesh* primitiveMesh, CPrimiviteData::EPrimitive primitive);
 
 		void initCube();
+
+		void initPlane();
 	};
 }
