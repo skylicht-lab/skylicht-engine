@@ -19,8 +19,8 @@ result += COMPARE(float3(rand, id), depth);\
 float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
 {
 	int id = 0;
-	float visible = 1.0;
-	float bias = 0.0001;
+	float visible = 1.0;	
+	const float bias[3] = {0.0001, 0.0001, 0.0004};
 	float depth = 0.0;
 
 	float result = 0.0;
@@ -37,7 +37,7 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	float3 shadowUV = shadowCoord[id].xyz / shadowCoord[id].w;
 
 	depth = shadowUV.z;
-	depth -= bias;
+	depth -= bias[id];
 	
 	float2 uv = shadowUV.xy;
 	

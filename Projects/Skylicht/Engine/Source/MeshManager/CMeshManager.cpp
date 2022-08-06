@@ -243,10 +243,8 @@ namespace Skylicht
 				instancing->applyInstancingForRenderLighting(lightingMeshBuffer, lightingBuffer, transformBuffer);
 
 				// INSTANCING MESH
-				// set hardware static buffer
 				renderMeshBuffer->setHardwareMappingHint(EHM_STATIC);
 
-				// add mb to mesh for rendering
 				instancingMesh->addMeshBuffer(
 					renderMeshBuffer,
 					mesh->MaterialName[i].c_str(),
@@ -255,7 +253,7 @@ namespace Skylicht
 
 				instancing->applyInstancing(renderMeshBuffer, instancingBuffer, transformBuffer);
 
-				// save to render this meshbuffer
+				// save to render this mesh buffer
 				data->RenderMeshBuffers.push_back(renderMeshBuffer);
 
 				// apply material

@@ -51,6 +51,11 @@ namespace Skylicht
 			initMesh(m, CPrimiviteData::Sphere);
 			m->drop();
 		}
+
+		// plane
+		{
+			initPlane();
+		}
 	}
 
 	CPrimitiveBaseRenderer::~CPrimitiveBaseRenderer()
@@ -161,6 +166,55 @@ namespace Skylicht
 		mesh->setHardwareMappingHint(EHM_STATIC);
 
 		m_mesh[CPrimiviteData::Cube] = mesh;
+
+		meshBuffer->drop();
+	}
+
+	void CPrimitiveBaseRenderer::initPlane()
+	{
+		IVideoDriver* driver = getVideoDriver();
+
+		IMeshBuffer* meshBuffer = new CMeshBuffer<S3DVertex>(driver->getVertexDescriptor(EVT_STANDARD), EIT_16BIT);
+		IIndexBuffer* ib = meshBuffer->getIndexBuffer();
+		IVertexBuffer* vb = meshBuffer->getVertexBuffer();
+
+		video::SColor clr(255, 255, 255, 255);
+
+		vb->reallocate(4);
+
+		video::S3DVertex Vertices[] = {
+			video::S3DVertex(0, 0, 0, 0, 1, 0, clr, 0, 1),
+			video::S3DVertex(0, 0, 1, 0, 1, 0, clr, 1, 1),
+			video::S3DVertex(1, 0, 1, 0, 1, 0, clr, 1, 0),
+			video::S3DVertex(1, 0, 0, 0, 1, 0, clr, 0, 0),
+		};
+
+		for (u32 i = 0; i < 4; ++i)
+		{
+			Vertices[i].Pos -= core::vector3df(0.5f, 0.0f, 0.5f);
+			vb->addVertex(&Vertices[i]);
+		}
+
+		// Create indices
+		const u16 u[6] =
+		{
+			0, 1, 2,
+			0, 2, 3,
+		};
+
+		ib->set_used(6);
+
+		for (u32 i = 0; i < 6; ++i)
+			ib->setIndex(i, u[i]);
+
+		CMesh* mesh = new CMesh();
+		mesh->addMeshBuffer(meshBuffer);
+
+		meshBuffer->recalculateBoundingBox();
+		mesh->recalculateBoundingBox();
+		mesh->setHardwareMappingHint(EHM_STATIC);
+
+		m_mesh[CPrimiviteData::Plane] = mesh;
 
 		meshBuffer->drop();
 	}

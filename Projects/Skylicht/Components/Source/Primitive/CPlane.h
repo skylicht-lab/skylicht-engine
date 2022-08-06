@@ -24,56 +24,21 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CPrimiviteData.h"
-#include "Entity/CEntityHandler.h"
+#include "CPrimitive.h"
 
 namespace Skylicht
 {
-	class CPrimitive : public CEntityHandler
+	class CPlane : public CPrimitive
 	{
-	protected:
-		CPrimiviteData::EPrimitive m_type;
+	public:
+		CPlane();
 
-		SColor m_color;
-
-		bool m_instancing;
-
-		bool m_useCustomMaterial;
-
-		CMaterial* m_material;
-
-		CMaterial* m_customMaterial;
-
-		std::string m_materialPath;
-
-	protected:
-
-		CPrimitive();
-
-		virtual ~CPrimitive();
+		virtual ~CPlane();
 
 		virtual void initComponent();
 
-		virtual CObjectSerializable* createSerializable();
+		virtual void updateComponent();
 
-		virtual void loadSerializable(CObjectSerializable* object);
-
-		virtual CEntity* spawn();
-
-	public:
-
-		CEntity* addPrimitive(const core::vector3df& pos, const core::vector3df& rotDeg, const core::vector3df& scale);
-
-		inline void setInstancing(bool b)
-		{
-			m_instancing = b;
-		}
-
-		inline CPrimiviteData::EPrimitive getType()
-		{
-			return m_type;
-		}
-
-		DECLARE_GETTYPENAME(CPrimitive)
+		DECLARE_GETTYPENAME(CPlane)
 	};
 }

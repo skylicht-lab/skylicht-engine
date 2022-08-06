@@ -20,7 +20,7 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 {
 	int id = 0;
 	float visible = 1.0;
-	float bias = 0.0001;
+	const float bias[3] = float[3](0.0001, 0.0001, 0.0003);
 	float depth = 0.0;
 
 	float result = 0.0;
@@ -37,7 +37,7 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 	vec3 shadowUV = shadowCoord[id].xyz / shadowCoord[id].w;
 
 	depth = shadowUV.z;
-	depth -= bias;
+	depth -= bias[id];
 	
 	vec2 uv = shadowUV.xy;
 	

@@ -39,7 +39,7 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 {
 	int id = 0;
 	float visible = 1.0;
-	float bias = 0.0001;
+	const float bias[3] = {0.0001, 0.0001, 0.0004};
 	float depth = 0.0;
 	float result = 0.0;
 	if (farDistance < shadowDistance[0])
@@ -52,7 +52,7 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 		return 1.0;
 	float3 shadowUV = shadowCoord[id].xyz / shadowCoord[id].w;
 	depth = shadowUV.z;
-	depth -= bias;
+	depth -= bias[id];
 	float2 uv = shadowUV.xy;
 	float size = 1.0/2048;
 	float2 off;

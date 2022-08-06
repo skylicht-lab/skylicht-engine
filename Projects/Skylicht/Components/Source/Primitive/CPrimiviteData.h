@@ -37,6 +37,7 @@ namespace Skylicht
 			Unknown = 0,
 			Cube,
 			Sphere,
+			Plane,
 			Count
 		};
 
