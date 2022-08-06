@@ -87,6 +87,9 @@ namespace Skylicht
 		core::matrix4 invTrans;
 
 		CCamera* camera = entityManager->getCamera();
+		if (!camera)
+			return;
+
 		core::aabbox3df camBox = camera->getViewFrustum().getBoundingBox();
 		core::vector3df camPos = camera->getGameObject()->getPosition();
 
