@@ -83,7 +83,7 @@ void CViewInit::initScene()
 	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
-	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
+	core::vector3df direction = core::vector3df(1.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
 	CMeshManager* meshManager = CMeshManager::getInstance();
@@ -107,7 +107,12 @@ void CViewInit::initScene()
 
 	CGameObject* ground = zone->createEmptyObject();
 	CPlane* plane = ground->addComponent<CPlane>();
+	plane->removeAllEntities();
 	plane->setInstancing(true);
+
+	CMaterial* material = plane->getMaterial();
+	material->setUniform4("uColor", SColor(255, 200, 200, 200));
+	material->updateShaderParams();
 
 	int n = numObjectInRow / 2;
 	for (int x = -n; x < n; x++)
@@ -134,7 +139,6 @@ void CViewInit::initScene()
 				// rotate the turbine
 				windTurbine->getTransformEuler()->setRotation(core::vector3df(0.0f, -90.0f, 0.0f));
 			}
-
 
 			if (windTurbine && prefabBlades)
 			{
@@ -167,8 +171,11 @@ void CViewInit::initScene()
 			// wind
 			windTurbine->getTransformEuler()->setPosition(core::vector3df(x * space, 0.0f, z * space));
 
-			// ground
-			plane->addPrimitive(core::vector3df(x * space, 0.0f, z * space), core::vector3df(), core::vector3df(50.0f, 1.0f, 50.0f));
+			// ground & set static ambient color
+			CEntity* entity = plane->addPrimitive(core::vector3df(x * space, 0.0f, z * space), core::vector3df(), core::vector3df(50.0f, 1.0f, 50.0f));
+			CIndirectLightingData* indirectLighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
+			indirectLighting->Type = CIndirectLightingData::AmbientColor;
+			indirectLighting->Color = ambientColor;
 		}
 	}
 
@@ -234,8 +241,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -248,7 +255,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif

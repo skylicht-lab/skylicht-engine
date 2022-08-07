@@ -249,36 +249,39 @@ namespace Skylicht
 
 			// indirect lighting
 			CIndirectLightingData* indirectLighting = GET_ENTITY_DATA(entities[i], CIndirectLightingData);
-			switch (indirectLighting->Type)
+			if (indirectLighting)
 			{
-			case CIndirectLightingData::SH9:
-			{
-				if (indirectLighting->SH)
+				switch (indirectLighting->Type)
 				{
-					indirectLight.D0 = indirectLighting->SH[0];
-					indirectLight.D1 = indirectLighting->SH[1];
-					indirectLight.D2 = indirectLighting->SH[2];
-					indirectLight.D3 = indirectLighting->SH[3];
+				case CIndirectLightingData::SH9:
+				{
+					if (indirectLighting->SH)
+					{
+						indirectLight.D0 = indirectLighting->SH[0];
+						indirectLight.D1 = indirectLighting->SH[1];
+						indirectLight.D2 = indirectLighting->SH[2];
+						indirectLight.D3 = indirectLighting->SH[3];
+					}
 				}
-			}
-			break;
-			case CIndirectLightingData::AmbientColor:
-			{
-				indirectLight.D0.set(
-					indirectLighting->Color.getRed() * invColor,
-					indirectLighting->Color.getGreen() * invColor,
-					indirectLighting->Color.getBlue() * invColor
-				);
+				break;
+				case CIndirectLightingData::AmbientColor:
+				{
+					indirectLight.D0.set(
+						indirectLighting->Color.getRed() * invColor,
+						indirectLighting->Color.getGreen() * invColor,
+						indirectLighting->Color.getBlue() * invColor
+					);
 
-				indirectLight.D1.set(0.0f, 0.0f, 0.0f);
-				indirectLight.D2.set(0.0f, 0.0f, 0.0f);
-				indirectLight.D3.set(0.0f, 0.0f, 0.0f);
-			}
-			break;
-			default:
-			{
-			}
-			break;
+					indirectLight.D1.set(0.0f, 0.0f, 0.0f);
+					indirectLight.D2.set(0.0f, 0.0f, 0.0f);
+					indirectLight.D3.set(0.0f, 0.0f, 0.0f);
+				}
+				break;
+				default:
+				{
+				}
+				break;
+				}
 			}
 		}
 

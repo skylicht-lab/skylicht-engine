@@ -70,7 +70,6 @@ namespace Skylicht
 			{
 				m_primitives[p->Type].push(p);
 			}
-
 		}
 	}
 
