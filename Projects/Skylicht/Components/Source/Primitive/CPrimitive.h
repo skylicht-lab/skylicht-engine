@@ -64,6 +64,8 @@ namespace Skylicht
 
 		CEntity* addPrimitive(const core::vector3df& pos, const core::vector3df& rotDeg, const core::vector3df& scale);
 
+		CMaterial* getMaterial();
+
 		inline void setInstancing(bool b)
 		{
 			m_instancing = b;

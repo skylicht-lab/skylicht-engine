@@ -102,6 +102,7 @@ namespace Skylicht
 					ArrayPrimitives& list = m_groups[shaderMesh];
 					list.push_back(p);
 
+					// need create instancing mesh
 					if (!mesh->UseInstancing)
 					{
 						mesh->UseInstancing = true;

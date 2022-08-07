@@ -210,4 +210,14 @@ namespace Skylicht
 		*indirect->AutoSH = true;
 		return entity;
 	}
+
+	CMaterial* CPrimitive::getMaterial()
+	{
+		if (m_useCustomMaterial && m_customMaterial)
+		{
+			return m_customMaterial;
+		}
+
+		return m_material;
+	}
 }
