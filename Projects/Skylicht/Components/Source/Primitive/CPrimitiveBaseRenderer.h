@@ -35,6 +35,7 @@ namespace Skylicht
 	{
 	protected:
 		CMesh* m_mesh[CPrimiviteData::Count];
+		CMesh* m_meshTangent[CPrimiviteData::Count];
 
 	public:
 		CPrimitiveBaseRenderer();
