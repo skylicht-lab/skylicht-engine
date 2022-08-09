@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #define HASHSTRING_SIZE	35
 
 namespace Skylicht
-{	
+{
 	class CHttpRequest
 	{
 	public:
@@ -114,6 +114,7 @@ namespace Skylicht
 		bool m_signSecondParams;
 
 		bool m_checkTimeout;
+
 	public:
 		CHttpRequest(IHttpStream* stream);
 		virtual ~CHttpRequest();

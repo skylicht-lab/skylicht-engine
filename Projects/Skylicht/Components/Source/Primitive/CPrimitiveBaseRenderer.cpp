@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CVisibleData.h"
 #include "Transform/CWorldTransformData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
+#include "Importer/Utils/CMeshUtils.h"
 
 namespace Skylicht
 {
