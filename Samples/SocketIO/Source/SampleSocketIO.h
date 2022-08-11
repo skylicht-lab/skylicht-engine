@@ -2,11 +2,10 @@
 
 #include "IApplicationEventReceiver.h"
 
-#include "Websocket/CWebsocket.h"
+#include "SocketIO/CSocketIO.h"
 
-class SampleWebsocket :
-	public IApplicationEventReceiver,
-	public IWebsocketCallback
+class SampleSocketIO :
+	public IApplicationEventReceiver
 {
 private:
 	CScene* m_scene;
@@ -19,11 +18,11 @@ private:
 
 	CForwardRP* m_forwardRP;
 
-	CWebsocket* m_websocket;
+	CSocketIO* m_io;
 
 public:
-	SampleWebsocket();
-	virtual ~SampleWebsocket();
+	SampleSocketIO();
+	virtual ~SampleSocketIO();
 
 	virtual void onUpdate();
 
@@ -42,6 +41,4 @@ public:
 	virtual void onInitApp();
 
 	virtual void onQuitApp();
-
-	virtual void onWebSocketMessage(const std::string& data);
 };
