@@ -1,16 +1,16 @@
 #include "pch.h"
 #include "SkylichtEngine.h"
-#include "SampleWebsocket.h"
+#include "SampleSocketIO.h"
 
 #include "GridPlane/CGridPlane.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleWebsocket* app = new SampleWebsocket();
-	getApplication()->registerAppEvent("SampleWebsocket", app);
+	SampleSocketIO* app = new SampleSocketIO();
+	getApplication()->registerAppEvent("SampleSocketIO", app);
 }
 
-SampleWebsocket::SampleWebsocket() :
+SampleSocketIO::SampleSocketIO() :
 	m_scene(NULL),
 	m_forwardRP(NULL)
 #if defined(USE_FREETYPE)	
@@ -20,7 +20,7 @@ SampleWebsocket::SampleWebsocket() :
 
 }
 
-SampleWebsocket::~SampleWebsocket()
+SampleSocketIO::~SampleSocketIO()
 {
 	delete m_scene;
 #if defined(USE_FREETYPE)	
@@ -28,10 +28,10 @@ SampleWebsocket::~SampleWebsocket()
 #endif
 	delete m_forwardRP;
 
-	delete m_websocket;
+	delete m_io;
 }
 
-void SampleWebsocket::onInitApp()
+void SampleSocketIO::onInitApp()
 {
 	// init application
 	CBaseApp* app = getApplication();
@@ -97,7 +97,7 @@ void SampleWebsocket::onInitApp()
 
 	// create UI Text in Canvas
 	CGUIText* textLarge = canvas->createText(m_largeFont);
-	textLarge->setText("SampleWebsocket");
+	textLarge->setText("SampleSocketIO");
 	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
 #endif
 
@@ -108,24 +108,19 @@ void SampleWebsocket::onInitApp()
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
 
-	m_websocket = new CWebsocket("localhost:8080", this);
-	m_websocket->init();
+	m_io = new CSocketIO("localhost:8080");
+	m_io->init();
 }
 
-void SampleWebsocket::onWebSocketMessage(const std::string& data)
-{
-	os::Printer::log(data.c_str());
-}
-
-void SampleWebsocket::onUpdate()
+void SampleSocketIO::onUpdate()
 {
 	// update application
 	m_scene->update();
 
-	m_websocket->update();
+	m_io->update();
 }
 
-void SampleWebsocket::onRender()
+void SampleSocketIO::onRender()
 {
 	// render 3d scene
 	m_forwardRP->render(NULL, m_camera, m_scene->getEntityManager(), core::recti());
@@ -134,12 +129,12 @@ void SampleWebsocket::onRender()
 	CGraphics2D::getInstance()->render(m_guiCamera);
 }
 
-void SampleWebsocket::onPostRender()
+void SampleSocketIO::onPostRender()
 {
 	// post render application
 }
 
-bool SampleWebsocket::onBack()
+bool SampleSocketIO::onBack()
 {
 	// on back key press
 	// return TRUE will run default by OS (Mobile)
@@ -147,24 +142,24 @@ bool SampleWebsocket::onBack()
 	return true;
 }
 
-void SampleWebsocket::onResize(int w, int h)
+void SampleSocketIO::onResize(int w, int h)
 {
 	// on window size changed
 	if (m_forwardRP != NULL)
 		m_forwardRP->resize(w, h);
 }
 
-void SampleWebsocket::onResume()
+void SampleSocketIO::onResume()
 {
 	// resume application
 }
 
-void SampleWebsocket::onPause()
+void SampleSocketIO::onPause()
 {
 	// pause application
 }
 
-void SampleWebsocket::onQuitApp()
+void SampleSocketIO::onQuitApp()
 {
 	// end application
 	delete this;
