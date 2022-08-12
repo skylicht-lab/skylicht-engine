@@ -3,6 +3,8 @@
 #include "SampleSocketIO.h"
 
 #include "GridPlane/CGridPlane.h"
+#include "imgui.h"
+#include "CImguiManager.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -17,7 +19,11 @@ SampleSocketIO::SampleSocketIO() :
 	, m_largeFont(NULL)
 #endif
 {
+	CImguiManager::createGetInstance();
 
+	m_scrollToBottom = true;
+	m_autoScroll = true;
+	m_inputBuffer[0] = 0;
 }
 
 SampleSocketIO::~SampleSocketIO()
@@ -29,6 +35,8 @@ SampleSocketIO::~SampleSocketIO()
 	delete m_forwardRP;
 
 	delete m_io;
+
+	CImguiManager::releaseInstance();
 }
 
 void SampleSocketIO::onInitApp()
@@ -108,9 +116,20 @@ void SampleSocketIO::onInitApp()
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
 
-	// see Readme.MD on Samples\SocketIOServer
+	// see Readme.md on Samples\SocketIOServer
 	// that how to start the server
 	m_io = new CSocketIO("localhost:8080");
+
+	m_io->OnConnected = [&]()
+	{
+		m_logs.push_back("[success] Connected");
+	};
+
+	m_io->OnConnectFailed = [&]()
+	{
+		m_logs.push_back("[error] Could not open connection to the localhost:8080");
+	};
+
 	m_io->init();
 }
 
@@ -123,25 +142,99 @@ void SampleSocketIO::onUpdate()
 
 	if (m_io->isConnected())
 	{
-		static float testEmit = 0.0f;
-		testEmit = testEmit - getTimeStep();
-		if (testEmit < 0.0f)
+		// on receive message
+		m_io->OnMessage = [&](const std::string& msg)
 		{
-			testEmit = 10000.0f;
+			m_logs.push_back(msg);
+		};
 
-			// send event without param
-			m_io->emit("hello", true, 1);
+		m_io->OnMessageAsk = [&](const std::string& msg, int id)
+		{
+			m_logs.push_back(msg);
+		};
+	}
 
-			// send event with 1 param
-			m_io->emit("helloParam", "param", "\"testParam\"", true, 2);
+	CImguiManager::getInstance()->onNewFrame();
 
-			// send event with many params
-			std::map<std::string, std::string> params;
-			params["param0"] = "0";
-			params["param1"] = "1";
-			params["param2"] = "\"string\"";
-			m_io->emit("helloParam", params, true, 3);
+	// on gui
+	{
+		bool open = true;
+
+		ImGuiWindowFlags window_flags = 0;
+
+		// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
+		ImGui::SetNextWindowPos(ImVec2(935, 15), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(340, 760), ImGuiCond_FirstUseEver);
+
+		if (!ImGui::Begin("Socket.io Chat", &open, window_flags))
+		{
+			// Early out if the window is collapsed, as an optimization.
+			ImGui::End();
+			return;
 		}
+
+		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing(); // 1 separator, 1 input text
+		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar); // Leave room for 1 separator + 1 InputText
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
+		for (int i = 0; i < (int)m_logs.size(); i++)
+		{
+			const char* item = m_logs[i].c_str();
+
+			// Normally you would store more information in your item (e.g. make Items[] an array of structure, store color/type etc.)
+			bool pop_color = false;
+			if (strstr(item, "[error]"))
+			{
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.4f, 0.4f, 1.0f));
+				pop_color = true;
+			}
+			else if (strstr(item, "[success]"))
+			{
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.4f, 1.0f, 0.4f, 1.0f));
+				pop_color = true;
+			}
+			else if (strstr(item, "[me]"))
+			{
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.4f, 1.0f));
+				pop_color = true;
+			}
+			else if (strncmp(item, "# ", 2) == 0)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.6f, 1.0f));
+				pop_color = true;
+			}
+
+			ImGui::TextUnformatted(item);
+			if (pop_color)
+				ImGui::PopStyleColor();
+		}
+
+		if (m_scrollToBottom || (m_autoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
+			ImGui::SetScrollHereY(1.0f);
+		m_scrollToBottom = false;
+
+		ImGui::PopStyleVar();
+		ImGui::EndChild();
+		ImGui::Separator();
+
+		// Chat command-line
+		bool reclaimFocus = false;
+		if (ImGui::InputText("Input", m_inputBuffer, IM_ARRAYSIZE(m_inputBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			m_io->emit("chat", "message", m_io->toStringParam(m_inputBuffer), false);
+			m_inputBuffer[0] = 0;
+			reclaimFocus = true;
+		}
+
+		// Auto-focus on window apparition
+		ImGui::SetItemDefaultFocus();
+		if (reclaimFocus)
+			ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
+
+		ImGui::End();
+
+		// DEMO HOW TO USE IMGUI (SEE THIS FUNCTION)
+		// ImGui::ShowDemoWindow(&open);
 	}
 }
 
@@ -152,6 +245,9 @@ void SampleSocketIO::onRender()
 
 	// render text in gui camera
 	CGraphics2D::getInstance()->render(m_guiCamera);
+
+	// render imgui
+	CImguiManager::getInstance()->onRender();
 }
 
 void SampleSocketIO::onPostRender()
