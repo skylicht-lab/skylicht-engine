@@ -20,6 +20,11 @@ private:
 
 	CSocketIO* m_io;
 
+	std::vector<std::string> m_logs;
+	bool m_scrollToBottom;
+	bool m_autoScroll;
+	char m_inputBuffer[256];
+
 public:
 	SampleSocketIO();
 	virtual ~SampleSocketIO();
