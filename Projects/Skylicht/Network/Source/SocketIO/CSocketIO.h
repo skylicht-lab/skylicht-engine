@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HttpRequest/CHttpRequest.h"
+#include "easywsclient.hpp"
 
 namespace Skylicht
 {
@@ -10,8 +11,9 @@ namespace Skylicht
 		enum EConnectState
 		{
 			None,
-			Request1,
+			RequestSocketIO,
 			UpdateSocket,
+			Closed
 		};
 
 	protected:
@@ -27,6 +29,12 @@ namespace Skylicht
 		EConnectState m_state;
 
 		char* m_bufferData;
+
+		easywsclient::WebSocket* m_ws;
+
+		bool m_connected;
+
+	public:
 
 	public:
 		CSocketIO(const char* url);
@@ -53,13 +61,25 @@ namespace Skylicht
 
 		void sendMessage(const char* message);
 
-		void emit(const char* type);
-		void emit(const char* type, const char* params, const char* value);
-		void emit(const char* type, std::map<std::string, std::string>& params);
+		void emit(const char* type, bool ack, int askID = 1);
+		void emit(const char* type, const char* param, const char* value, bool ack, int askID = 1);
+		void emit(const char* type, std::map<std::string, std::string>& params, bool ack, int askID = 1);
 
 		bool isConnected();
 
-		void updateRequest1();
+		void onConnected();
+		void onDisconnected();
+		void onMessage(const std::string& msg);
+		void onMessageAsk(const std::string& msg, int id);
+
+		void updateRequest();
+
+		void close();
+
+		inline easywsclient::WebSocket* getWebSocket()
+		{
+			return m_ws;
+		}
 	};
 
 };
