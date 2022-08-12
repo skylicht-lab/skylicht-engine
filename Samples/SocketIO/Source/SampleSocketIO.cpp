@@ -108,6 +108,8 @@ void SampleSocketIO::onInitApp()
 	m_forwardRP = new CForwardRP();
 	m_forwardRP->initRender(w, h);
 
+	// see Readme.MD on Samples\SocketIOServer
+	// that how to start the server
 	m_io = new CSocketIO("localhost:8080");
 	m_io->init();
 }
@@ -118,6 +120,29 @@ void SampleSocketIO::onUpdate()
 	m_scene->update();
 
 	m_io->update();
+
+	if (m_io->isConnected())
+	{
+		static float testEmit = 0.0f;
+		testEmit = testEmit - getTimeStep();
+		if (testEmit < 0.0f)
+		{
+			testEmit = 10000.0f;
+
+			// send event without param
+			m_io->emit("hello", true, 1);
+
+			// send event with 1 param
+			m_io->emit("helloParam", "param", "\"testParam\"", true, 2);
+
+			// send event with many params
+			std::map<std::string, std::string> params;
+			params["param0"] = "0";
+			params["param1"] = "1";
+			params["param2"] = "\"string\"";
+			m_io->emit("helloParam", params, true, 3);
+		}
+	}
 }
 
 void SampleSocketIO::onRender()
