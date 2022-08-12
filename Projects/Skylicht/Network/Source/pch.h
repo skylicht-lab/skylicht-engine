@@ -17,6 +17,13 @@
 
 // Windows Header Files:
 #include <windows.h>
+
+#if defined(CYGWIN) || defined(MINGW)
+#define SOCKET  int
+#define INVALID_SOCKET  -1
+#define SOCKET_ERROR -1
+#endif
+
 #else
 #include <memory.h>
 #include <unistd.h>
