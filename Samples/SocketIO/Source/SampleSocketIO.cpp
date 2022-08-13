@@ -6,6 +6,8 @@
 #include "imgui.h"
 #include "CImguiManager.h"
 
+#include "json/json.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SampleSocketIO* app = new SampleSocketIO();
@@ -143,9 +145,45 @@ void SampleSocketIO::onUpdate()
 	if (m_io->isConnected())
 	{
 		// on receive message
+		// see Samples/SocketIOServer/index.js
 		m_io->OnMessage = [&](const std::string& msg)
 		{
-			m_logs.push_back(msg);
+			Json::Reader reader;
+			Json::Value obj;
+
+			reader.parse(msg, obj);
+
+			const Json::Value& message = obj[(Json::UInt)0];
+			const Json::Value& data = obj[(Json::UInt)1];
+
+			if (message.asString() == "message")
+			{
+				std::string user = data["user"].asCString();
+				std::string chatMsg = data["message"].asCString();
+
+				std::string log;
+
+				if (user == m_io->getSocketID())
+					log = user + "[me]:" + chatMsg;
+				else
+					log = user + "# :" + chatMsg;
+
+				m_logs.push_back(log);
+			}
+			else if (message.asString() == "join")
+			{
+				std::string user = data["user"].asCString();
+				std::string log;
+				log = user + "join the chat room";
+				m_logs.push_back(log);
+			}
+			else if (message.asString() == "left")
+			{
+				std::string user = data["user"].asCString();
+				std::string log;
+				log = user + "has left the chat room";
+				m_logs.push_back(log);
+			}
 		};
 
 		m_io->OnMessageAsk = [&](const std::string& msg, int id)
@@ -163,8 +201,8 @@ void SampleSocketIO::onUpdate()
 		ImGuiWindowFlags window_flags = 0;
 
 		// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
-		ImGui::SetNextWindowPos(ImVec2(935, 15), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(340, 760), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowPos(ImVec2(130, 50), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(870, 550), ImGuiCond_FirstUseEver);
 
 		if (!ImGui::Begin("Socket.io Chat", &open, window_flags))
 		{
@@ -198,7 +236,7 @@ void SampleSocketIO::onUpdate()
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.4f, 1.0f));
 				pop_color = true;
 			}
-			else if (strncmp(item, "# ", 2) == 0)
+			else if (strstr(item, "# "))
 			{
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.6f, 1.0f));
 				pop_color = true;
