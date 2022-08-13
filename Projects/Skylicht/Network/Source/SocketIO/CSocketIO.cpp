@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CSocketIO.h"
+#include "HttpRequest/CHttpRequest.h"
 
 #include "Utils/CStringImp.h"
 #include "Utils/CDateTimeUtils.h"

@@ -1,13 +1,14 @@
 #pragma once
 
 #include "pch.h"
-#include "HttpRequest/CHttpRequest.h"
 #include "easywsclient.hpp"
 
 #include <functional>
 
 namespace Skylicht
 {
+	class CHttpRequest;
+
 	class CSocketIO
 	{
 	public:

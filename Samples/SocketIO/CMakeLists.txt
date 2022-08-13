@@ -13,6 +13,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Crypto/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
 )
 
 if (BUILD_FREETYPE)
