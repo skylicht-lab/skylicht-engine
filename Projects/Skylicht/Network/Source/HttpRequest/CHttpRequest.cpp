@@ -102,7 +102,7 @@ namespace Skylicht
 		//curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1);
 #endif
 
-	// https
+		// https
 		curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, 0);
 		curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYHOST, 0);
 
@@ -194,11 +194,6 @@ namespace Skylicht
 
 	void CHttpRequest::sendRequest()
 	{
-#ifdef WIN32
-		printf("-------------------------------------\n");
-		printf("Send request: %s\n", m_url.c_str());
-#endif
-
 		if (m_requestType == Post)
 			sendRequestByPost();
 		else if (m_requestType == PostJson)
