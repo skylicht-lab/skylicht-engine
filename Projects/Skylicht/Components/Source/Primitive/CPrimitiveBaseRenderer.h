@@ -42,10 +42,10 @@ namespace Skylicht
 
 		virtual ~CPrimitiveBaseRenderer();
 
-		void initMesh(IMesh* primitiveMesh, CPrimiviteData::EPrimitive primitive);
+		void initMesh(IMesh* primitiveMesh, CPrimiviteData::EPrimitive primitive, bool tangent);
 
-		void initCube();
+		void initCube(CPrimiviteData::EPrimitive primitive, bool tangent);
 
-		void initPlane();
+		void initPlane(CPrimiviteData::EPrimitive primitive, bool tangent);
 	};
 }

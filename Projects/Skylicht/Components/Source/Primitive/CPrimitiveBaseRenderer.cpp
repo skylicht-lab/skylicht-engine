@@ -37,25 +37,34 @@ namespace Skylicht
 		m_pipelineType = IRenderPipeline::Mix;
 
 		for (int i = 0; i < (int)CPrimiviteData::Count; i++)
+		{
 			m_mesh[i] = NULL;
+			m_meshTangent[i] = NULL;
+		}
 
 		const IGeometryCreator* geometry = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
 
 		// cube mesh
 		{
-			initCube();
+			initCube(CPrimiviteData::Cube, false);
+			initCube(CPrimiviteData::Cube, true);
 		}
 
 		// sphere mesh
 		{
 			IMesh* m = geometry->createSphereMesh(0.5f);
-			initMesh(m, CPrimiviteData::Sphere);
+			initMesh(m, CPrimiviteData::Sphere, false);
+			m->drop();
+
+			m = geometry->createSphereMesh(0.5f);
+			initMesh(m, CPrimiviteData::Sphere, true);
 			m->drop();
 		}
 
 		// plane
 		{
-			initPlane();
+			initPlane(CPrimiviteData::Plane, false);
+			initPlane(CPrimiviteData::Plane, true);
 		}
 	}
 
@@ -65,10 +74,13 @@ namespace Skylicht
 		{
 			if (m_mesh[i])
 				m_mesh[i]->drop();
+
+			if (m_meshTangent[i])
+				m_meshTangent[i]->drop();
 		}
 	}
 
-	void CPrimitiveBaseRenderer::initCube()
+	void CPrimitiveBaseRenderer::initCube(CPrimiviteData::EPrimitive primitive, bool tangent)
 	{
 		IVideoDriver* driver = getVideoDriver();
 
@@ -160,18 +172,25 @@ namespace Skylicht
 			ib->setIndex(i, u[i]);
 
 		CMesh* mesh = new CMesh();
+
+		if (tangent)
+			CMeshUtils::convertToTangentVertices(meshBuffer);
+
 		mesh->addMeshBuffer(meshBuffer);
 
 		meshBuffer->recalculateBoundingBox();
 		mesh->recalculateBoundingBox();
 		mesh->setHardwareMappingHint(EHM_STATIC);
 
-		m_mesh[CPrimiviteData::Cube] = mesh;
+		if (tangent)
+			m_meshTangent[primitive] = mesh;
+		else
+			m_mesh[primitive] = mesh;
 
 		meshBuffer->drop();
 	}
 
-	void CPrimitiveBaseRenderer::initPlane()
+	void CPrimitiveBaseRenderer::initPlane(CPrimiviteData::EPrimitive primitive, bool tangent)
 	{
 		IVideoDriver* driver = getVideoDriver();
 
@@ -209,28 +228,42 @@ namespace Skylicht
 			ib->setIndex(i, u[i]);
 
 		CMesh* mesh = new CMesh();
+
+		if (tangent)
+			CMeshUtils::convertToTangentVertices(meshBuffer);
+
 		mesh->addMeshBuffer(meshBuffer);
 
 		meshBuffer->recalculateBoundingBox();
 		mesh->recalculateBoundingBox();
 		mesh->setHardwareMappingHint(EHM_STATIC);
 
-		m_mesh[CPrimiviteData::Plane] = mesh;
+		if (tangent)
+			m_meshTangent[primitive] = mesh;
+		else
+			m_mesh[primitive] = mesh;
 
 		meshBuffer->drop();
 	}
 
-	void CPrimitiveBaseRenderer::initMesh(IMesh* primitiveMesh, CPrimiviteData::EPrimitive primitive)
+	void CPrimitiveBaseRenderer::initMesh(IMesh* primitiveMesh, CPrimiviteData::EPrimitive primitive, bool tangent)
 	{
 		CMesh* mesh = new CMesh();
 
 		IMeshBuffer* mb = primitiveMesh->getMeshBuffer(0);
+
+		if (tangent)
+			CMeshUtils::convertToTangentVertices(mb);
+
 		mesh->addMeshBuffer(mb);
 
 		mb->recalculateBoundingBox();
 		mesh->recalculateBoundingBox();
 		mesh->setHardwareMappingHint(EHM_STATIC);
 
-		m_mesh[primitive] = mesh;
+		if (tangent)
+			m_meshTangent[primitive] = mesh;
+		else
+			m_mesh[primitive] = mesh;
 	}
 }

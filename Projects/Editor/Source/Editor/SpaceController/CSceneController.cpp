@@ -517,7 +517,11 @@ namespace Skylicht
 				std::vector<std::string> components = { "CSphere" };
 				createComponentObject("Sphere", components, NULL);
 			}
-
+			else if (objectType == L"Plane")
+			{
+				std::vector<std::string> components = { "CPlane" };
+				createComponentObject("CPlane", components, NULL);
+			}
 		}
 
 		void CSceneController::onContextMenu(CHierachyNode* node)

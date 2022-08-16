@@ -35,8 +35,8 @@ namespace Skylicht
 		ACTIVATOR_REGISTER(CGPrimitives);
 
 		DEPENDENT_COMPONENT(CCube, CGPrimitives);
-
 		DEPENDENT_COMPONENT(CSphere, CGPrimitives);
+		DEPENDENT_COMPONENT(CPlane, CGPrimitives);
 
 		CGPrimitives::CGPrimitives() :
 			m_primitive(NULL)
@@ -80,8 +80,17 @@ namespace Skylicht
 				selectObjectData->GameObject = m_gameObject;
 				selectObjectData->Entity = entity;
 
-				selectObjectData->BBox.MinEdge = core::vector3df(-0.5f, -0.5f, -0.5f);
-				selectObjectData->BBox.MaxEdge = core::vector3df(0.5f, 0.5f, 0.5f);
+				CPrimiviteData* primitiveData = GET_ENTITY_DATA(entity, CPrimiviteData);
+				if (primitiveData->Type == CPrimiviteData::Plane)
+				{
+					selectObjectData->BBox.MinEdge = core::vector3df(-0.5f, -0.01f, -0.5f);
+					selectObjectData->BBox.MaxEdge = core::vector3df(0.5f, 0.01f, 0.5f);
+				}
+				else
+				{
+					selectObjectData->BBox.MinEdge = core::vector3df(-0.5f, -0.5f, -0.5f);
+					selectObjectData->BBox.MaxEdge = core::vector3df(0.5f, 0.5f, 0.5f);
+				}
 			}
 		}
 	}

@@ -42,6 +42,7 @@ namespace Skylicht
 		m_type(CPrimiviteData::Unknown),
 		m_instancing(false),
 		m_useCustomMaterial(false),
+		m_useNormalMap(false),
 		m_color(255, 180, 180, 180),
 		m_material(NULL),
 		m_customMaterial(NULL)
@@ -85,6 +86,9 @@ namespace Skylicht
 		CBoolProperty* useCustom = new CBoolProperty(object, "custom material", m_useCustomMaterial);
 		object->autoRelease(useCustom);
 
+		CBoolProperty* useNormalMap = new CBoolProperty(object, "normal map", m_useNormalMap);
+		object->autoRelease(useNormalMap);
+
 		CColorProperty* color = new CColorProperty(object, "color", m_color);
 		color->setUIHeader("Default Material");
 		object->autoRelease(color);
@@ -118,6 +122,7 @@ namespace Skylicht
 
 		m_instancing = object->get<bool>("instancing", false);
 		bool useCustom = object->get<bool>("custom material", false);
+		m_useNormalMap = object->get<bool>("normal map", false);
 		m_color = object->get<SColor>("color", SColor(255, 180, 180, 180));
 		m_materialPath = object->get<std::string>("material", std::string());
 
@@ -184,6 +189,7 @@ namespace Skylicht
 		primitiveData->Type = m_type;
 		primitiveData->Material = m_useCustomMaterial && m_customMaterial ? m_customMaterial : m_material;
 		primitiveData->Instancing = m_instancing;
+		primitiveData->NormalMap = m_useNormalMap;
 
 		// Culling
 		entity->addData<CWorldInverseTransformData>();
@@ -191,8 +197,17 @@ namespace Skylicht
 		entity->addData<CIndirectLightingData>();
 
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
-		cullingBBox->BBox.MinEdge.set(-1.0f, -1.0f, -1.0f);
-		cullingBBox->BBox.MaxEdge.set(1.0f, 1.0f, 1.0f);
+
+		if (m_type == CPrimiviteData::Plane)
+		{
+			cullingBBox->BBox.MinEdge.set(-0.5f, -0.01f, -0.5f);
+			cullingBBox->BBox.MaxEdge.set(0.5f, 0.01f, 0.5f);
+		}
+		else
+		{
+			cullingBBox->BBox.MinEdge.set(-0.5f, -0.5f, -0.5f);
+			cullingBBox->BBox.MaxEdge.set(0.5f, 0.5f, 0.5f);
+		}
 
 		// Position
 		CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
