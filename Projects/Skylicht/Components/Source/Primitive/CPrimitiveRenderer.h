@@ -39,6 +39,7 @@ namespace Skylicht
 		CEntityGroup* m_group;
 
 		CFastArray<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
+		CFastArray<CPrimiviteData*> m_primitivesTangent[CPrimiviteData::Count];
 
 	public:
 		CPrimitiveRenderer();

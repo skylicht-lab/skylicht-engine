@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "EditorComponents/SelectObject/CSelectObjectData.h"
 #include "Primitive/CCube.h"
 #include "Primitive/CSphere.h"
+#include "Primitive/CPlane.h"
 
 namespace Skylicht
 {

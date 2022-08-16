@@ -52,5 +52,7 @@ namespace Skylicht
 		CMaterial* Material;
 
 		bool Instancing;
+
+		bool NormalMap;
 	};
 }

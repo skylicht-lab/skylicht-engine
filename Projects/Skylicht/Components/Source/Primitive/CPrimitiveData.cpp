@@ -32,7 +32,8 @@ namespace Skylicht
 	CPrimiviteData::CPrimiviteData() :
 		Type(CPrimiviteData::Unknown),
 		Material(NULL),
-		Instancing(false)
+		Instancing(false),
+		NormalMap(false)
 	{
 
 	}
