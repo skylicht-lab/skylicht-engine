@@ -40,6 +40,8 @@ namespace Skylicht
 
 		bool m_useCustomMaterial;
 
+		bool m_useNormalMap;
+
 		CMaterial* m_material;
 
 		CMaterial* m_customMaterial;

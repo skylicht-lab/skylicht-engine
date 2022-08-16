@@ -85,7 +85,7 @@ namespace Skylicht
 				CShader* shader = p->Material->getShader();
 				IShaderInstancing* instancing = shader->getInstancing();
 
-				CMesh* mesh = m_mesh[p->Type];
+				CMesh* mesh = p->NormalMap ? m_meshTangent[p->Type] : m_mesh[p->Type];
 
 				if (instancing->isSupport(mesh))
 				{

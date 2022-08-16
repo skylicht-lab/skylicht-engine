@@ -47,6 +47,7 @@ namespace Skylicht
 		for (int i = 0; i < CPrimiviteData::Count; i++)
 		{
 			m_primitives[i].reset();
+			m_primitivesTangent[i].reset();
 		}
 
 		if (m_group == NULL)
@@ -68,7 +69,10 @@ namespace Skylicht
 			CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
 			if (!p->Instancing)
 			{
-				m_primitives[p->Type].push(p);
+				if (p->NormalMap)
+					m_primitivesTangent[p->Type].push(p);
+				else
+					m_primitives[p->Type].push(p);
 			}
 		}
 	}
@@ -113,10 +117,23 @@ namespace Skylicht
 			// need sort by material
 			qsort(primitives.pointer(), count, sizeof(CPrimiviteData*), cmpPrimitiveFunc);
 		}
+
+		for (int type = 0; type < CPrimiviteData::Count; type++)
+		{
+			if (m_meshTangent[type] == NULL)
+				continue;
+
+			CFastArray<CPrimiviteData*>& primitives = m_primitivesTangent[type];
+			u32 count = primitives.count();
+
+			// need sort by material
+			qsort(primitives.pointer(), count, sizeof(CPrimiviteData*), cmpPrimitiveFunc);
+		}
 	}
 
 	void CPrimitiveRenderer::render(CEntityManager* entityManager)
 	{
+		// render no-tangent
 		for (int type = 0; type < CPrimiviteData::Count; type++)
 		{
 			if (m_mesh[type] == NULL)
@@ -127,6 +144,20 @@ namespace Skylicht
 				m_primitives[type].pointer(),
 				m_mesh[type],
 				m_primitives[type].count()
+			);
+		}
+
+		// render tangent
+		for (int type = 0; type < CPrimiviteData::Count; type++)
+		{
+			if (m_meshTangent[type] == NULL)
+				continue;
+
+			renderPrimitive(
+				entityManager,
+				m_primitivesTangent[type].pointer(),
+				m_meshTangent[type],
+				m_primitivesTangent[type].count()
 			);
 		}
 	}
