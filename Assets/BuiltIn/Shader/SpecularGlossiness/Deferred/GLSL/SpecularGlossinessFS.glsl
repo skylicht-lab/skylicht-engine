@@ -11,7 +11,13 @@ in vec3 vWorldTangent;
 in vec3 vWorldBinormal;
 in float vTangentW;
 
+#ifdef INSTANCING
+in vec4 vColor;
+in vec2 vSpecGloss;
+#else
 uniform vec4 uColor;
+#endif
+
 
 layout(location = 0) out vec4 Diffuse;
 layout(location = 1) out vec4 Position;
@@ -30,7 +36,12 @@ void main(void)
 	vec3 n = rotation * localCoords;
 	n = normalize(n);
 
+#ifdef INSTANCING
+	Diffuse = vec4(baseMap * vColor.rgb, 1.0);
+#else
 	Diffuse = vec4(baseMap * uColor.rgb, 1.0);
+#endif
+
 	Position = vWorldPosition;
 	Normal = vec4(n, 1.0);
 	SG = vec4(sgMap, 1.0);

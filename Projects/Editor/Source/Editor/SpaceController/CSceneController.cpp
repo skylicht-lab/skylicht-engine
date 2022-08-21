@@ -520,7 +520,7 @@ namespace Skylicht
 			else if (objectType == L"Plane")
 			{
 				std::vector<std::string> components = { "CPlane" };
-				createComponentObject("CPlane", components, NULL);
+				createComponentObject("Plane", components, NULL);
 			}
 		}
 

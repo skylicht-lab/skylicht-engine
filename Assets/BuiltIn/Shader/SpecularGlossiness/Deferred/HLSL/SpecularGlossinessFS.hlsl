@@ -16,6 +16,10 @@ struct PS_INPUT
 	float3 worldTangent: WORLDTANGENT;
 	float3 worldBinormal: WORLDBINORMAL;
 	float tangentw : TANGENTW;
+#ifdef INSTANCING
+	float4 color: COLOR;
+	float2 specGloss: SPECGLOSS;
+#endif	
 };
 
 struct PS_OUTPUT
@@ -26,10 +30,12 @@ struct PS_OUTPUT
 	float4 SG: SV_TARGET3;
 };
 
+#ifndef INSTANCING
 cbuffer cbPerFrame
 {
 	float4 uColor;
 };
+#endif
 
 PS_OUTPUT main(PS_INPUT input)
 {
@@ -46,7 +52,12 @@ PS_OUTPUT main(PS_INPUT input)
 	float3 n = mul(localCoords, rotation);
 	n = normalize(n);
 
+#ifdef INSTANCING
+	output.Diffuse = float4(baseMap * input.color.rgb, 1.0);
+#else
 	output.Diffuse = float4(baseMap * uColor.rgb, 1.0);
+#endif
+
 	output.Position = input.worldPosition;
 	output.Normal = float4(n, 1.0);
 	output.SG = float4(sgMap, 1.0);
