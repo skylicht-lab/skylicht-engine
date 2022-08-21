@@ -145,6 +145,8 @@ namespace Skylicht
 	{
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughnessInstancing.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessInstancing.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormalInstancing.xml");
 
 		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LMTBNSGInstancing.xml");
@@ -155,10 +157,10 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeTBNInstancing.xml");
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml", new CStandardSGInstancing());
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml", new CTBNSGInstancing());
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml", new CTBNSGInstancing());
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml", new CTBNSGInstancing());
