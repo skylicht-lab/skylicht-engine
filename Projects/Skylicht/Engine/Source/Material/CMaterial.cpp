@@ -281,6 +281,8 @@ namespace Skylicht
 					}
 				}
 			}
+
+			m_textures[p->TextureSlot] = p->Texture;
 		}
 	}
 

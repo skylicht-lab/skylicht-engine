@@ -1,0 +1,30 @@
+<shaderConfig name="DiffuseNormalInstancing" baseShader="SOLID" deferred="true">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uView" type="DEFERRED_VIEW" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false" normal="true"/>			
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+	</customUI>
+	<shader 
+		type="GLSL" 
+		vs="GLSL/SpecularGlossinessVSInstancing.glsl" 
+		fs="GLSL/DiffuseNormalFSInstancing.glsl"
+		vs_source="GLSL/SpecularGlossinessVS.glsl" 
+		fs_source="GLSL/DiffuseNormalFS.glsl"
+		define="INSTANCING"/>
+	<shader 
+		type="HLSL" 
+		vs="HLSL/SpecularGlossinessVSInstancing.hlsl" 
+		fs="HLSL/DiffuseNormalFSInstancing.hlsl"
+		vs_source="HLSL/SpecularGlossinessVS.hlsl" 
+		fs_source="HLSL/DiffuseNormalFS.hlsl"
+		define="INSTANCING"/>
+</shaderConfig>
