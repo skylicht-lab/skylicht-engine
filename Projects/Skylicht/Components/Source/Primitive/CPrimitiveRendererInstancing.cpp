@@ -210,6 +210,8 @@ namespace Skylicht
 
 			CMesh* mesh = it.first.Mesh;
 			CShader* shader = it.first.Shader;
+			ITexture* const* textures = it.first.Textures;
+
 			int materialType = shader->getInstancingShader()->getMaterialRenderID();
 
 			if (!rp->canRenderShader(shader))
@@ -219,6 +221,11 @@ namespace Skylicht
 
 			for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
 			{
+				video::SMaterial& irrMat = mesh->getMeshBuffer(i)->getMaterial();
+
+				for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+					irrMat.setTexture(i, textures[i]);
+
 				rp->drawInstancingMeshBuffer(mesh, i, materialType, entityManager, false);
 			}
 		}
