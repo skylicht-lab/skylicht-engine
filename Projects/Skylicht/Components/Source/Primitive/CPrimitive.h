@@ -68,9 +68,26 @@ namespace Skylicht
 
 		CMaterial* getMaterial();
 
+		void setCustomMaterial(CMaterial* material);
+
 		inline void setInstancing(bool b)
 		{
 			m_instancing = b;
+		}
+
+		inline bool isInstancing()
+		{
+			return m_instancing;
+		}
+
+		inline void setEnableNormalMap(bool b)
+		{
+			m_useNormalMap = b;
+		}
+
+		inline bool isUseNormalMap()
+		{
+			return m_useNormalMap;
 		}
 
 		inline CPrimiviteData::EPrimitive getType()

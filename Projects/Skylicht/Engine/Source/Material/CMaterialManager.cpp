@@ -230,6 +230,10 @@ namespace Skylicht
 
 		xmlRead->drop();
 
+		// need update shader params
+		for (CMaterial* m : result)
+			m->updateShaderParams();
+
 		return result;
 	}
 

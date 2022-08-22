@@ -235,4 +235,17 @@ namespace Skylicht
 
 		return m_material;
 	}
+
+	void CPrimitive::setCustomMaterial(CMaterial* material)
+	{
+		if (material)
+		{
+			m_useCustomMaterial = true;
+			m_customMaterial = material;
+		}
+		else
+		{
+			m_useCustomMaterial = false;
+		}
+	}
 }
