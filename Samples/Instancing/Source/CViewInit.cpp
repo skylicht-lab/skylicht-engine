@@ -98,6 +98,7 @@ void CViewInit::initScene()
 	std::vector<std::string> textureFolders;
 	ArrayMaterial& winTurbineMaterials = materialMgr->loadMaterial("SampleModels/WindTurbine/WindTurbine.mat", true, textureFolders);
 	ArrayMaterial& bladeTurbineMaterials = materialMgr->loadMaterial("SampleModels/WindTurbine/WindTurbine_Blades.mat", true, textureFolders);
+	ArrayMaterial& sandMaterials = materialMgr->loadMaterial("SampleModels/WindTurbine/Sand.mat", true, textureFolders);
 
 	SColor ambientColor(255, 190, 220, 250);
 	float space = 50.0f;
@@ -109,10 +110,8 @@ void CViewInit::initScene()
 	CPlane* plane = ground->addComponent<CPlane>();
 	plane->removeAllEntities();
 	plane->setInstancing(true);
-
-	CMaterial* material = plane->getMaterial();
-	material->setUniform4("uColor", SColor(255, 200, 200, 200));
-	material->updateShaderParams();
+	plane->setEnableNormalMap(true);
+	plane->setCustomMaterial(sandMaterials[0]);
 
 	int n = numObjectInRow / 2;
 	for (int x = -n; x < n; x++)
