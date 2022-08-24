@@ -126,6 +126,8 @@ namespace Skylicht
 			entity->setAlive(true);
 
 			m_unused.erase(last);
+
+			notifyUpdateSortEntities();
 			return entity;
 		}
 
