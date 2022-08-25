@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/CEditor.h"
 
 #include "Scene/CSceneExporter.h"
+#include "ResourceSettings/SpriteExportSettings.h"
 
 namespace Skylicht
 {
@@ -111,6 +112,24 @@ namespace Skylicht
 			CSceneExporter::exportScene(scene, fullPath.c_str());
 
 			delete scene;
+
+			importAndSelect(fullPath.c_str());
+		}
+
+		void CAssetCreateController::createEmptySprite()
+		{
+			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
+
+			CAssetManager* assetMgr = CAssetManager::getInstance();
+
+			std::string currentFolder = assetMgr->getAssetFolder();
+			if (spaceAssets != NULL)
+				currentFolder = spaceAssets->getListController()->getCurrentFolder();
+
+			std::string fullPath = assetMgr->genereateAssetPath("/Sprite%02d.sprite", currentFolder.c_str());
+
+			SpriteExportSettings nullSprite;
+			nullSprite.save(fullPath.c_str());
 
 			importAndSelect(fullPath.c_str());
 		}

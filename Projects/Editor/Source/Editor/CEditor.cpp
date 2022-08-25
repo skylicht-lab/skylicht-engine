@@ -1056,6 +1056,10 @@ namespace Skylicht
 			{
 				assetCreater->createEmptyMaterial();
 			}
+			else if (label == L"Sprite")
+			{
+				assetCreater->createEmptySprite();
+			}
 		}
 
 		void CEditor::OnCommandWindowOpen(GUI::CBase* item)

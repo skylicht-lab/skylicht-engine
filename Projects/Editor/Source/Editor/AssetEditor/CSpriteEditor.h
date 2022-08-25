@@ -24,29 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "Editor/Space/Assets/CSpaceAssets.h"
+#include "CAssetEditor.h"
+#include "ResourceSettings/SpriteExportSettings.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CAssetCreateController : public CGameSingleton<CAssetCreateController>
+		class CSpriteEditor : public CAssetEditor
 		{
-		public:
-			CAssetCreateController();
-
-			virtual ~CAssetCreateController();
-
-			void createEmptyMaterial();
-
-			void createEmptyScene();
-
-			void createEmptySprite();
-
 		protected:
+			SpriteExportSettings* m_settings;
 
-			void importAndSelect(const char* path);
+		public:
+			CSpriteEditor();
+
+			virtual ~CSpriteEditor();
+
+			virtual void closeGUI();
+
+			virtual void initGUI(const char* path, CSpaceProperty* ui);
+
+			virtual void onUpdateValue(CObjectSerializable* object);
+
+			SpriteExportSettings* createGetMeshExportSetting(const char* path);
+
+			DECLARE_GETTYPENAME(CSpriteEditor);
 		};
 	}
 }
