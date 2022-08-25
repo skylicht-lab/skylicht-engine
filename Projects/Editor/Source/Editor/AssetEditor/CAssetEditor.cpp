@@ -277,6 +277,91 @@ namespace Skylicht
 					ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
 				}
+				else if (valueProperty->getType() == EPropertyDataType::Enum)
+				{
+					CEnumPropertyData* enumValue = dynamic_cast<CEnumPropertyData*>(valueProperty);
+
+					GUI::CDropdownBox* dropBox = ui->addDropBox(layout, ui->getPrettyName(valueProperty->Name), L"");
+					GUI::CMenu* menu = dropBox->getMenu();
+
+					int currentValue = enumValue->getIntValue();
+
+					int enumCount = enumValue->getEnumCount();
+					for (int i = 0; i < enumCount; i++)
+					{
+						const CEnumPropertyData::SEnumString& enumData = enumValue->getEnum(i);
+
+						std::wstring enumName = CStringImp::convertUTF8ToUnicode(enumData.Name.c_str());
+
+						GUI::CMenuItem* item = menu->addItem(enumName);
+						item->tagInt(enumData.Value);
+
+						if (enumData.Value == currentValue)
+							dropBox->setLabel(enumName);
+
+						item->OnPress = [&, item, enumValue, dropBox, ui](GUI::CBase* base)
+						{
+							enumValue->setIntValue(item->getTagInt());
+
+							onUpdateValue(object);
+
+							dropBox->setLabel(item->getLabel());
+							ui->getWindow()->getCanvas()->closeMenu();
+						};
+					}
+				}
+				else if (valueProperty->getType() == EPropertyDataType::Object)
+				{
+					CObjectSerializable* object = (CObjectSerializable*)valueProperty;
+					CSubject<CObjectSerializable*>* subject = new CSubject<CObjectSerializable*>(object);
+
+					// header
+					GUI::CCollapsibleGroup* group = ui->addSubGroup(layout);
+					group->getHeader()->setLabel(ui->getPrettyName(valueProperty->Name));
+					GUI::CBoxLayout* objectLayout = ui->createBoxLayout(group);
+
+					if (object->isArray())
+					{
+						CArraySerializable* arrayObject = (CArraySerializable*)object;
+
+						if (arrayObject->haveCreateElementFunction())
+						{
+							// add input to add elements
+							CSubject<int>* count = new CSubject<int>(arrayObject->getElementCount());
+							m_subjects.push_back(count);
+
+							ui->addNumberTextBox(objectLayout, L"Count", count);
+
+							objectLayout = ui->createBoxLayout(group);
+
+							CObserver* observer = new CObserver();
+							observer->Notify = [&, arrayObject, count, o = observer, objectLayout, group, ui](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									int numElement = count->get();
+									if (arrayObject->resize(numElement))
+									{
+										// remove old ui
+										objectLayout->getChild(0)->removeAllChildren();
+
+										// re-init ui
+										serializableToControl(arrayObject, ui, objectLayout);
+
+										// update object data
+										onUpdateValue(object);
+									}
+								}
+							};
+							count->addObserver(observer, true);
+						}
+					}
+
+					// show child data
+					serializableToControl(object, ui, objectLayout);
+
+					m_subjects.push_back(subject);
+				}
 			}
 		}
 	}

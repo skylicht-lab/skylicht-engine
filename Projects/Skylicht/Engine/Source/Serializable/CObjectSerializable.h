@@ -126,6 +126,11 @@ namespace Skylicht
 		virtual CObjectSerializable* clone();
 
 		virtual void copyTo(CObjectSerializable* object);
+
+		inline void setSavePath(const char* path)
+		{
+			m_savePath = path;
+		}
 	};
 
 
