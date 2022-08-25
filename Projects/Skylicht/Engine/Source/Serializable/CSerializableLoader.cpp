@@ -72,23 +72,39 @@ namespace Skylicht
 
 					const wchar_t* isArray = reader->getAttributeValue(L"array");
 
+					bool newObject = true;
 					CObjectSerializable* data;
 
 					// activator
 					data = CSerializableActivator::getInstance()->createInstance(name.c_str());
 					if (data == NULL)
 					{
-						// default serializable
-						if (isArray)
-							data = new CArraySerializable(name.c_str());
+						// try find the current object with the name
+						data = dynamic_cast<CObjectSerializable*>(object->getProperty(name.c_str()));
+						if (data != NULL)
+						{
+							// use exist property
+							newObject = false;
+						}
 						else
-							data = new CObjectSerializable(name.c_str());
+						{
+							// we will add new object serializable
+							if (isArray)
+								data = new CArraySerializable(name.c_str());
+							else
+								data = new CObjectSerializable(name.c_str());
+
+							newObject = true;
+						}
 					}
 
 					load(reader, data, exitNode);
 
-					object->addProperty(data);
-					object->autoRelease(data);
+					if (newObject)
+					{
+						object->addProperty(data);
+						object->autoRelease(data);
+					}
 
 					// if end the node
 					// </node> // <node type="Components">
@@ -110,6 +126,37 @@ namespace Skylicht
 				break;
 			}
 		}
+	}
+
+	void CSerializableLoader::loadSerializable(const char* file, CObjectSerializable* object)
+	{
+		io::IXMLReader* reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
+		if (reader == NULL)
+			return;
+
+		object->setSavePath(file);
+
+		std::wstring nodeName = L"node";
+
+		while (reader->read())
+		{
+			switch (reader->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+			{
+				// <node>
+				if (nodeName == reader->getNodeName())
+				{
+					load(reader, object, "~");	// todo load to end the file
+				}
+			}
+			break;
+			default:
+				break;
+			}
+		}
+
+		reader->drop();
 	}
 
 	void CSerializableLoader::initProperty(CObjectSerializable* object, io::IAttributes* attributes)
