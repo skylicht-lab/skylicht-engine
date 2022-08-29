@@ -49,6 +49,10 @@ namespace Skylicht
 
 			SpriteExportSettings* createGetMeshExportSetting(const char* path);
 
+			void exportSprite(const char* path);
+
+			void findAllPNG(const char* path, std::vector<std::string>& pngs);
+
 			DECLARE_GETTYPENAME(CSpriteEditor);
 		};
 	}
