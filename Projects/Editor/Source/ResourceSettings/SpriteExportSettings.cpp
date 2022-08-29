@@ -31,6 +31,9 @@ namespace Skylicht
 	{
 		SpriteExportSettings::SpriteExportSettings() :
 			CObjectSerializable("SpriteExportSettings"),
+			Width(this, "Width", 2048),
+			Height(this, "Height", 2048),
+			Alpha(this, "Alpha", true),
 			ImagesFolder("Images folder", this)
 		{
 

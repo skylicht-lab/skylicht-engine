@@ -106,8 +106,13 @@ namespace Skylicht
 				return NULL;
 			}
 
+			char name[32];
+			sprintf(name, "[%d]", (int)m_value.size());
+
 			addProperty(element);
 			autoRelease(element);
+
+			element->Name = name;
 
 			if (OnCreateElement != nullptr)
 			{

@@ -49,13 +49,23 @@ namespace Skylicht
 
 		virtual ~CSpriteAtlas();
 
-		SFrame* addFrame(const char *name, const char *path);
+		SFrame* addFrame(const char* name, const char* path);
 
-		SFrame* getFrame(const char *name);
+		SFrame* getFrame(const char* name);
 
 		SImage* createAtlasRect(int w, int h, core::recti& outRegion);
 
 		void updateTexture();
+
+		inline std::vector<SFrame*>& getFrames()
+		{
+			return m_frames;
+		}
+
+		inline std::vector<SImage*>& getImages()
+		{
+			return m_images;
+		}
 
 		inline int getWidth()
 		{
