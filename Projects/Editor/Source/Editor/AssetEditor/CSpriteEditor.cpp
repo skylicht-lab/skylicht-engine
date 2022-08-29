@@ -32,6 +32,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/CEditor.h"
 
 #include "AssetManager/CAssetImporter.h"
+#include "AssetManager/CAssetManager.h"
+
+#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
+
+#include <filesystem>
+
+#if defined(__APPLE_CC__)
+namespace fs = std::__fs::filesystem;
+#else
+namespace fs = std::filesystem;
+#endif
 
 namespace Skylicht
 {
@@ -75,16 +86,97 @@ namespace Skylicht
 			std::string exportPath = path;
 			ui->addButton(layout, L"Export Sprite")->OnPress = [&, p = exportPath](GUI::CBase* button)
 			{
-
+				exportSprite(p.c_str());
 			};
 
 			group->setExpand(true);
 		}
 
+		void CSpriteEditor::exportSprite(const char* path)
+		{
+			if (m_settings == NULL)
+				return;
+
+			std::vector<std::string> folders;
+			std::vector<std::string> pngs;
+
+			CArrayTypeSerializable<CFolderPathProperty>& listFolders = m_settings->ImagesFolder;
+			for (int i = 0, n = listFolders.getElementCount(); i < n; i++)
+			{
+				CFolderPathProperty* value = dynamic_cast<CFolderPathProperty*>(listFolders.getPropertyID(i));
+				folders.push_back(value->getString());
+			}
+
+			CAssetManager* assetManager = CAssetManager::getInstance();
+			for (std::string& folder : folders)
+			{
+				std::string discovery = assetManager->getAssetFolder() + "/" + folder;
+				findAllPNG(discovery.c_str(), pngs);
+			}
+
+			CSpriteAtlas* sprite = new CSpriteAtlas(
+				m_settings->Alpha.get() ? ECF_A8R8G8B8 : ECF_R8G8B8,
+				m_settings->Width.get(),
+				m_settings->Height.get());
+
+			for (std::string& png : pngs)
+			{
+				os::Printer::log(png.c_str());
+				std::string name = CPath::getFileNameNoExt(png);
+				sprite->addFrame(name.c_str(), png.c_str());
+			}
+
+			sprite->updateTexture();
+
+			int id = 0;
+			std::string folderPath = assetManager->getAssetFolder() + "/" + CPath::getFolderPath(path);
+			std::string exportName = CPath::getFileNameNoExt(path);
+
+			std::vector<SImage*>& allImages = sprite->getImages();
+			for (SImage* img : allImages)
+			{
+				char name[64];
+				sprintf(name, "%s/%s_%d.png",
+					folderPath.c_str(),
+					exportName.c_str(),
+					id++);
+
+				IImage* i = img->Atlas->getImage();
+				if (getVideoDriver()->getDriverType() == EDT_DIRECT3D11)
+					i->swapBG();
+
+				getVideoDriver()->writeImageToFile(i, name);
+
+				if (getVideoDriver()->getDriverType() == EDT_DIRECT3D11)
+					i->swapBG();
+			}
+
+			delete sprite;
+		}
+
+		void CSpriteEditor::findAllPNG(const char* path, std::vector<std::string>& pngs)
+		{
+			for (const auto& file : fs::directory_iterator(path))
+			{
+				std::string path = file.path().generic_u8string();
+
+				if (file.is_directory())
+				{
+					findAllPNG(path.c_str(), pngs);
+				}
+				else
+				{
+					std::string ext = CStringImp::toLower(CPath::getFileNameExt(path));
+					if (ext == "png")
+						pngs.push_back(path);
+				}
+			}
+		}
+
 		SpriteExportSettings* CSpriteEditor::createGetMeshExportSetting(const char* path)
 		{
 			SpriteExportSettings* setting = new SpriteExportSettings();
-			CSerializableLoader::loadSerializable(path, setting);			
+			CSerializableLoader::loadSerializable(path, setting);
 			return setting;
 		}
 

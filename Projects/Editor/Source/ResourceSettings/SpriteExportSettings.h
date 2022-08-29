@@ -34,6 +34,10 @@ namespace Skylicht
 		class SpriteExportSettings : public CObjectSerializable
 		{
 		public:
+			CIntProperty Width;
+			CIntProperty Height;
+			CBoolProperty Alpha;
+
 			CArrayTypeSerializable<CFolderPathProperty> ImagesFolder;
 
 		public:

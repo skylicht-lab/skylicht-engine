@@ -45,7 +45,28 @@ namespace Skylicht
 			if (object->getNumProperty() > 0)
 				object->deserialize(attr);	// for SerializableActivator
 			else
-				initProperty(object, attr);
+			{
+				if (object->isArray())
+				{
+					CArraySerializable* arrayObject = dynamic_cast<CArraySerializable*>(object);
+					if (arrayObject->haveCreateElementFunction())
+					{
+						// create element and deserialize
+						int numElement = attr->getAttributeCount();
+						arrayObject->resize(numElement);
+						arrayObject->deserialize(attr);
+					}
+					else
+					{
+						// this is array but no create element function
+						initProperty(object, attr);
+					}
+				}
+				else
+				{
+					initProperty(object, attr);
+				}
+			}
 		}
 		else
 		{
