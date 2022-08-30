@@ -57,6 +57,11 @@ namespace Skylicht
 
 		void updateTexture();
 
+		inline std::vector<SModuleRect*>& getModules()
+		{
+			return m_modules;
+		}
+
 		inline std::vector<SFrame*>& getFrames()
 		{
 			return m_frames;

@@ -35,7 +35,6 @@ namespace Skylicht
 		FlipY = false;
 
 		XAdvance = 0.0f;
-
 		Character = 0;
 
 		Frame = NULL;
