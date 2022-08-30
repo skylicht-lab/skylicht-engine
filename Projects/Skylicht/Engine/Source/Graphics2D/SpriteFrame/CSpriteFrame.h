@@ -93,16 +93,14 @@ namespace Skylicht
 	{
 		int ID;
 		std::string Name;
-
 		std::vector<SModuleOffset> ModuleOffset;
-
 		SImage* Image;
-
 		core::rectf BoudingRect;
 
 		SFrame()
 		{
 			ID = -1;
+			Image = NULL;
 		}
 
 		inline float getWidth()

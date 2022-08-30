@@ -926,34 +926,34 @@ namespace Skylicht
 			return ret;
 		}
 
-		static std::string toLower(std::string& s)
+		static std::string toLower(const std::string& s)
 		{
 			std::string ret;
-			for (char& c : s)
+			for (const char& c : s)
 				ret += tolower(c);
 			return ret;
 		}
 
-		static std::wstring toLower(std::wstring& s)
+		static std::wstring toLower(const std::wstring& s)
 		{
 			std::wstring ret;
-			for (wchar_t& c : s)
+			for (const wchar_t& c : s)
 				ret += towlower(c);
 			return ret;
 		}
 
-		static std::string toUpper(std::string& s)
+		static std::string toUpper(const std::string& s)
 		{
 			std::string ret;
-			for (char& c : s)
+			for (const char& c : s)
 				ret += toupper(c);
 			return ret;
 		}
 
-		static std::wstring toUpper(std::wstring& s)
+		static std::wstring toUpper(const std::wstring& s)
 		{
 			std::wstring ret;
-			for (wchar_t& c : s)
+			for (const wchar_t& c : s)
 				ret += towupper(c);
 			return ret;
 		}

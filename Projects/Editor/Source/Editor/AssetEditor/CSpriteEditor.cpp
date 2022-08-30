@@ -114,44 +114,15 @@ namespace Skylicht
 				findAllPNG(discovery.c_str(), pngs);
 			}
 
-			CSpriteAtlas* sprite = new CSpriteAtlas(
-				m_settings->Alpha.get() ? ECF_A8R8G8B8 : ECF_R8G8B8,
+			// show dialog export sprite
+			// see CSpaceExportSprite
+			CEditor::getInstance()->exportSprite(
+				path,
+				pngs,
 				m_settings->Width.get(),
-				m_settings->Height.get());
-
-			for (std::string& png : pngs)
-			{
-				os::Printer::log(png.c_str());
-				std::string name = CPath::getFileNameNoExt(png);
-				sprite->addFrame(name.c_str(), png.c_str());
-			}
-
-			sprite->updateTexture();
-
-			int id = 0;
-			std::string folderPath = assetManager->getAssetFolder() + "/" + CPath::getFolderPath(path);
-			std::string exportName = CPath::getFileNameNoExt(path);
-
-			std::vector<SImage*>& allImages = sprite->getImages();
-			for (SImage* img : allImages)
-			{
-				char name[64];
-				sprintf(name, "%s/%s_%d.png",
-					folderPath.c_str(),
-					exportName.c_str(),
-					id++);
-
-				IImage* i = img->Atlas->getImage();
-				if (getVideoDriver()->getDriverType() == EDT_DIRECT3D11)
-					i->swapBG();
-
-				getVideoDriver()->writeImageToFile(i, name);
-
-				if (getVideoDriver()->getDriverType() == EDT_DIRECT3D11)
-					i->swapBG();
-			}
-
-			delete sprite;
+				m_settings->Height.get(),
+				m_settings->Alpha.get()
+			);
 		}
 
 		void CSpriteEditor::findAllPNG(const char* path, std::vector<std::string>& pngs)
