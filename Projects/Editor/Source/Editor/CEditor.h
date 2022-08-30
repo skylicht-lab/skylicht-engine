@@ -1,5 +1,6 @@
 /*
 /*
+/*
 !@
 MIT License
 
@@ -50,6 +51,7 @@ namespace Skylicht
 			GUI::CDialogWindow* m_importDialog;
 			GUI::CDialogWindow* m_loadSceneDialog;
 			GUI::CDialogWindow* m_exportGMapDialog;
+			GUI::CDialogWindow* m_exportSpriteDialog;
 
 			std::list<CSpace*> m_workspaces;
 
@@ -87,6 +89,8 @@ namespace Skylicht
 			void closeLoadSceneDialog();
 
 			void closeExportGMapDialog();
+
+			void closeExportSpriteDialog();
 
 			void saveLayout(const std::string& data);
 
@@ -173,6 +177,8 @@ namespace Skylicht
 			void showGoogleMap();
 
 			void exportGMap(const char* path, long x1, long y1, long x2, long y2, int zoom, int type, int gridSize);
+
+			void exportSprite(const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha);
 		};
 	}
 }

@@ -38,6 +38,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/GUIDesign/CSpaceGUIDesign.h"
 #include "Space/GoogleMap/CSpaceGMap.h"
 #include "Space/GoogleMap/CSpaceExportGMap.h"
+#include "Space/Sprite/CSpaceExportSprite.h"
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
@@ -64,6 +65,7 @@ namespace Skylicht
 			m_importDialog(NULL),
 			m_loadSceneDialog(NULL),
 			m_exportGMapDialog(NULL),
+			m_exportSpriteDialog(NULL),
 			m_uiInitiate(false),
 			m_confirmQuit(false),
 			m_assetWatcher(NULL)
@@ -137,6 +139,19 @@ namespace Skylicht
 					if (spaceExportGMap != NULL && spaceExportGMap->isFinish())
 					{
 						closeExportGMapDialog();
+					}
+				}
+			}
+
+			if (m_exportSpriteDialog != NULL)
+			{
+				CSpace* space = getWorkspace(m_exportSpriteDialog);
+				if (space != NULL)
+				{
+					CSpaceExportSprite* spaceExportSprite = dynamic_cast<CSpaceExportSprite*>(space);
+					if (spaceExportSprite != NULL && spaceExportSprite->isFinish())
+					{
+						closeExportSpriteDialog();
 					}
 				}
 			}
@@ -219,6 +234,12 @@ namespace Skylicht
 		{
 			m_exportGMapDialog->remove();
 			m_exportGMapDialog = NULL;
+		}
+
+		void CEditor::closeExportSpriteDialog()
+		{
+			m_exportSpriteDialog->remove();
+			m_exportSpriteDialog = NULL;
 		}
 
 		void CEditor::initImportGUI(bool fromWatcher)
@@ -544,6 +565,10 @@ namespace Skylicht
 			else if (workspace == L"Export GMap")
 			{
 				m_workspaces.push_back(new CSpaceExportGMap(window, this));
+			}
+			else if (workspace == L"Export Sprite")
+			{
+				m_workspaces.push_back(new CSpaceExportSprite(window, this));
 			}
 			else if (workspace == L"Hierarchy")
 			{
@@ -1211,6 +1236,21 @@ namespace Skylicht
 			CSpace* space = getWorkspace(m_exportGMapDialog);
 			CSpaceExportGMap* spaceExport = dynamic_cast<CSpaceExportGMap*>(space);
 			spaceExport->exportMap(path, x1, y1, x2, y2, zoom, type, gridSize);
+		}
+
+		void CEditor::exportSprite(const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha)
+		{
+			m_exportSpriteDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_exportSpriteDialog->setCaption(L"Export Sprite");
+			m_exportSpriteDialog->showCloseButton(false);
+			m_exportSpriteDialog->setCenterPosition();
+			m_exportSpriteDialog->bringToFront();
+
+			initWorkspace(m_exportSpriteDialog, m_exportSpriteDialog->getCaption());
+
+			CSpace* space = getWorkspace(m_exportSpriteDialog);
+			CSpaceExportSprite* spaceExport = dynamic_cast<CSpaceExportSprite*>(space);
+			spaceExport->exportSprite(path, pngs, width, height, alpha);
 		}
 
 		void CEditor::OnCommandGameObject(GUI::CBase* item)
