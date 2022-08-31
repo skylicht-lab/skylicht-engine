@@ -10,7 +10,7 @@ CSphereComponent::CSphereComponent()
 
 CSphereComponent::~CSphereComponent()
 {
-	delete m_material;
+	m_material->drop();
 }
 
 void CSphereComponent::initComponent()

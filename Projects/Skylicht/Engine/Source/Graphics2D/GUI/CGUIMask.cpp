@@ -29,13 +29,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUIMask::CGUIMask(CCanvas* canvas, const core::rectf& rect) :
-		CGUIElement(canvas, rect),
-		m_drawMask(false)
-	{
-
-	}
-
 	CGUIMask::CGUIMask(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		CGUIElement(canvas, parent, rect),
 		m_drawMask(false)

@@ -39,7 +39,6 @@ namespace Skylicht
 		core::position2df m_pivot;
 
 	protected:
-		CGUIImage(CCanvas *canvas, const core::rectf& rect);
 		CGUIImage(CCanvas *canvas, CGUIElement *parent);
 		CGUIImage(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect);
 

@@ -36,11 +36,11 @@ SampleShader::~SampleShader()
 
 	// delete clone material
 	for (CMaterial* m : m_normalMapMats)
-		delete m;
+		m->drop();
 	for (CMaterial* m : m_reflectionMats)
-		delete m;
+		m->drop();
 	for (CMaterial* m : m_dissolveMats)
-		delete m;
+		m->drop();
 
 	m_normalMapMats.clear();
 	m_reflectionMats.clear();
