@@ -28,21 +28,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUIImage::CGUIImage(CCanvas *canvas, const core::rectf& rect) :
-		CGUIElement(canvas, rect),
-		m_image(NULL)
-	{
-
-	}
-
-	CGUIImage::CGUIImage(CCanvas *canvas, CGUIElement *parent) :
+	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent) :
 		CGUIElement(canvas, parent),
 		m_image(NULL)
 	{
 
 	}
 
-	CGUIImage::CGUIImage(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect) :
+	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		CGUIElement(canvas, parent, rect),
 		m_image(NULL)
 	{
@@ -54,7 +47,7 @@ namespace Skylicht
 
 	}
 
-	void CGUIImage::render(CCamera *camera)
+	void CGUIImage::render(CCamera* camera)
 	{
 		if (m_image != NULL)
 		{
@@ -62,7 +55,7 @@ namespace Skylicht
 		}
 	}
 
-	void CGUIImage::setImage(ITexture *texture)
+	void CGUIImage::setImage(ITexture* texture)
 	{
 		m_image = texture;
 

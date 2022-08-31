@@ -28,17 +28,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUISprite::CGUISprite(CCanvas* canvas, const core::rectf& rect, SFrame* frame) :
-		CGUIElement(canvas, rect),
-		m_frame(frame),
-		m_animationTime(0),
-		m_autoRotate(false),
-		m_frameSpeed(0.0f),
-		m_frameRotate(0.0f)
-	{
-
-	}
-
 	CGUISprite::CGUISprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame) :
 		CGUIElement(canvas, parent),
 		m_frame(frame),

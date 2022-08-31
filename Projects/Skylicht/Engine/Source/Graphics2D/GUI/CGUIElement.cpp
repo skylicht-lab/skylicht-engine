@@ -31,42 +31,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUIElement::CGUIElement(CCanvas* canvas, const core::rectf& rect) :
+	CGUIElement::CGUIElement(CCanvas* canvas, CGUIElement* parent) :
 		m_canvas(canvas),
-		m_level(0),
 		m_vertical(Top),
 		m_horizontal(Left),
 		m_dock(NoDock),
-		m_transformChanged(true),
-		m_rect(rect),
 		m_visible(true),
 		m_parent(NULL),
 		m_scale(1.0f, 1.0f, 1.0f),
 		m_cullingVisible(true),
 		m_color(255, 255, 255, 255),
 		m_mask(NULL),
-		m_applyParentMask(NULL),
+		m_applyCurrentMask(NULL),
 		m_material(NULL)
 	{
-		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
-	}
+		setParent(parent);
 
-	CGUIElement::CGUIElement(CCanvas* canvas, CGUIElement* parent) :
-		m_canvas(canvas),
-		m_vertical(Top),
-		m_horizontal(Left),
-		m_dock(NoDock),
-		m_transformChanged(true),
-		m_visible(true),
-		m_parent(parent),
-		m_scale(1.0f, 1.0f, 1.0f),
-		m_cullingVisible(true),
-		m_color(255, 255, 255, 255),
-		m_mask(NULL),
-		m_applyParentMask(NULL),
-		m_material(NULL)
-	{
-		m_level = parent->getLevel() + 1;
+		if (parent)
+			m_level = parent->getLevel() + 1;
+		else
+			m_level = 0;
+
 		m_rect = parent->getRect();
 		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
@@ -77,28 +62,68 @@ namespace Skylicht
 		m_vertical(Top),
 		m_horizontal(Left),
 		m_dock(NoDock),
-		m_transformChanged(true),
 		m_visible(true),
-		m_parent(parent),
+		m_parent(NULL),
 		m_scale(1.0f, 1.0f, 1.0f),
 		m_cullingVisible(true),
 		m_color(255, 255, 255, 255),
 		m_mask(NULL),
-		m_applyParentMask(NULL),
+		m_applyCurrentMask(NULL),
 		m_material(NULL)
 	{
-		m_level = parent->getLevel() + 1;
+		setParent(parent);
+
+		if (parent)
+			m_level = parent->getLevel() + 1;
+		else
+			m_level = 0;
+
 		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
 
 	CGUIElement::~CGUIElement()
 	{
+		removeAllChilds();
+	}
 
+	void CGUIElement::setParent(CGUIElement* parent)
+	{
+		if (m_parent)
+			m_parent->removeChild(this);
+
+		m_parent = parent;
+
+		if (m_parent)
+			m_parent->m_childs.push_back(this);
+	}
+
+	bool CGUIElement::removeChild(CGUIElement* child)
+	{
+		for (int i = 0, n = (int)m_childs.size(); i < n; i++)
+		{
+			if (m_childs[i] == child)
+			{
+				m_childs.erase(m_childs.begin() + i);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void CGUIElement::remove()
 	{
-		m_canvas->remove(this);
+		if (m_parent)
+			m_parent->removeChild(this);
+
+		delete this;
+	}
+
+	void CGUIElement::removeAllChilds()
+	{
+		for (CGUIElement* child : m_childs)
+			delete child;
+
+		m_childs.clear();
 	}
 
 	void CGUIElement::render(CCamera* camera)
@@ -108,11 +133,8 @@ namespace Skylicht
 
 	void CGUIElement::update(CCamera* camera)
 	{
-		if (m_transformChanged)
-		{
-			if (m_parent != NULL)
-				layout(m_parent->getRect());
-		}
+		if (m_parent != NULL)
+			layout(m_parent->getRect());
 	}
 
 	void CGUIElement::layout(const core::rectf& parentRect)
@@ -132,10 +154,9 @@ namespace Skylicht
 			break;
 		}
 
-		m_transformChanged = true;
 		calcAbsoluteTransform();
 
-		for (u32 i = 0, n = m_childs.size(); i < n; i++)
+		for (int i = 0, n = (int)m_childs.size(); i < n; i++)
 		{
 			m_childs[i]->layout(m_rect);
 		}
@@ -225,7 +246,7 @@ namespace Skylicht
 
 	const core::matrix4& CGUIElement::getRelativeTransform(bool forceRecalc)
 	{
-		if (m_transformChanged == true || forceRecalc == true)
+		if (forceRecalc == true)
 		{
 			m_relativeTransform.makeIdentity();
 			m_relativeTransform.setRotationDegrees(m_rotation);
@@ -250,8 +271,6 @@ namespace Skylicht
 			m[12] = m_transformPosition.X;
 			m[13] = m_transformPosition.Y;
 			m[14] = m_transformPosition.Z;
-
-			m_transformChanged = false;
 		}
 
 		return m_relativeTransform;

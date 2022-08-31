@@ -39,7 +39,7 @@ namespace Skylicht
 		typedef std::vector<SModuleOffset*> ArrayModuleOffset;
 
 	protected:
-		IFont *m_font;
+		IFont* m_font;
 
 		int m_charPadding;
 		int m_charSpacePadding;
@@ -67,18 +67,17 @@ namespace Skylicht
 		std::vector<ArrayInt> m_arrayCharFormat;
 
 	protected:
-		CGUIText(CCanvas *canvas, const core::rectf& rect, IFont *font);
-		CGUIText(CCanvas *canvas, CGUIElement *parent, IFont *font);
-		CGUIText(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect, IFont *font);
+		CGUIText(CCanvas* canvas, CGUIElement* parent, IFont* font);
+		CGUIText(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, IFont* font);
 
-		virtual void renderText(ArrayModuleOffset &string, ArrayInt& format, int posY);
+		virtual void renderText(ArrayModuleOffset& string, ArrayInt& format, int posY);
 
 		void init();
 
 	public:
 		virtual ~CGUIText();
 
-		virtual void render(CCamera *camera);
+		virtual void render(CCamera* camera);
 
 		void splitText(std::vector<ArrayModuleOffset>& split, std::vector<ArrayInt>& format, int width);
 
@@ -96,7 +95,7 @@ namespace Skylicht
 		* <0> -> WHITE
 		* <2> -> YELLOW
 		*/
-		void setFormatText(const char *formatText);
+		void setFormatText(const char* formatText);
 
 		// setColorFormat
 		// set color for function setFormatText
@@ -106,12 +105,12 @@ namespace Skylicht
 				m_colorFormat[id] = c;
 		}
 
-		void setText(const char *text);
-		void setTextStrim(const char *text);
-		void setText(const wchar_t *text);
-		void setTextStrim(const wchar_t *text);
+		void setText(const char* text);
+		void setTextStrim(const char* text);
+		void setText(const wchar_t* text);
+		void setTextStrim(const wchar_t* text);
 
-		int getStringWidth(const char *text);
+		int getStringWidth(const char* text);
 		int getCharWidth(wchar_t c);
 
 		const char* getText()
