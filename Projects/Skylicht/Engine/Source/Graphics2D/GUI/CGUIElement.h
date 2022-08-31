@@ -81,12 +81,12 @@ namespace Skylicht
 		int m_level;
 
 		CGUIElement* m_parent;
-		core::array<CGUIElement*> m_childs;
+		std::vector<CGUIElement*> m_childs;
 
 		CCanvas* m_canvas;
 
 		CGUIMask* m_mask;
-		CGUIMask* m_applyParentMask;
+		CGUIMask* m_applyCurrentMask;
 
 		core::rectf m_rect;
 
@@ -94,7 +94,6 @@ namespace Skylicht
 		SRect m_margin;
 
 		bool m_visible;
-		bool m_transformChanged;
 
 		core::vector3df m_transformPosition;
 
@@ -115,24 +114,25 @@ namespace Skylicht
 		CMaterial* m_material;
 
 	protected:
-		CGUIElement(CCanvas* canvas, const core::rectf& rect);
 		CGUIElement(CCanvas* canvas, CGUIElement* parent);
 		CGUIElement(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
 
-		inline void applyParentMask(CGUIMask* mask)
+		inline void applyCurrentMask(CGUIMask* mask)
 		{
-			m_applyParentMask = mask;
+			m_applyCurrentMask = mask;
 		}
 
 		inline CGUIMask* getCurrentMask()
 		{
-			return m_applyParentMask;
+			return m_applyCurrentMask;
 		}
 
 	public:
 		virtual ~CGUIElement();
 
 		void remove();
+
+		void removeAllChilds();
 
 	public:
 
@@ -144,6 +144,13 @@ namespace Skylicht
 		inline CGUIElement* getParent()
 		{
 			return m_parent;
+		}
+
+		void setParent(CGUIElement* parent);
+
+		inline std::vector<CGUIElement*>& getChilds()
+		{
+			return m_childs;
 		}
 
 		inline int getLevel()
@@ -209,16 +216,6 @@ namespace Skylicht
 			m_rect = r;
 		}
 
-		inline bool isTransformChanged()
-		{
-			return m_transformChanged;
-		}
-
-		inline void setTransformChanged(bool b)
-		{
-			m_transformChanged = b;
-		}
-
 		inline const core::vector3df& getPosition()
 		{
 			return m_position;
@@ -227,7 +224,6 @@ namespace Skylicht
 		inline void setPosition(const core::vector3df& v)
 		{
 			m_position = v;
-			m_transformChanged = true;
 		}
 
 		inline const core::vector3df& getScale()
@@ -238,7 +234,6 @@ namespace Skylicht
 		inline void setScale(const core::vector3df& v)
 		{
 			m_scale = v;
-			m_transformChanged = true;
 		}
 
 		inline const core::vector3df& getRotation()
@@ -249,7 +244,6 @@ namespace Skylicht
 		inline void setRotation(const core::vector3df& v)
 		{
 			m_rotation = v;
-			m_transformChanged = true;
 		}
 
 		inline EGUIVerticalAlign getVerticalAlign()
@@ -265,20 +259,17 @@ namespace Skylicht
 		inline void setVerticalAlign(EGUIVerticalAlign a)
 		{
 			m_vertical = a;
-			m_transformChanged = true;
 		}
 
 		inline void setHorizontalAlign(EGUIHorizontalAlign a)
 		{
 			m_horizontal = a;
-			m_transformChanged = true;
 		}
 
 		inline void setAlign(EGUIHorizontalAlign h, EGUIVerticalAlign v)
 		{
 			m_vertical = v;
 			m_horizontal = h;
-			m_transformChanged = true;
 		}
 
 		inline void setCullingVisisble(bool b)
@@ -352,5 +343,6 @@ namespace Skylicht
 
 		void layoutDock(const core::rectf& parentRect);
 
+		bool removeChild(CGUIElement* child);
 	};
 }

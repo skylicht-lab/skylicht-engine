@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		friend class CCanvas;
 	protected:
-		SFrame *m_frame;
+		SFrame* m_frame;
 
 		bool m_autoRotate;
 
@@ -42,18 +42,17 @@ namespace Skylicht
 		float m_animationTime;
 
 	protected:
-		CGUISprite(CCanvas *canvas, const core::rectf& rect, SFrame *frame);
-		CGUISprite(CCanvas *canvas, CGUIElement *parent, SFrame *frame);
-		CGUISprite(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect, SFrame *frame);
+		CGUISprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame);
+		CGUISprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame);
 
 	public:
 		virtual ~CGUISprite();
 
-		virtual void update(CCamera *camera);
+		virtual void update(CCamera* camera);
 
-		virtual void render(CCamera *camera);
+		virtual void render(CCamera* camera);
 
-		void setFrame(SFrame *frame);
+		void setFrame(SFrame* frame);
 
 		void setAutoRotate(bool rotate, float rotateAngle, float framePerSec);
 

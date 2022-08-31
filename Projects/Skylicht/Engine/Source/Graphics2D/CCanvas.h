@@ -36,6 +36,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/CGUIRoundedRect.h"
 #include "GUI/CGUIMask.h"
 
+#include "Entity/CEntityPrefab.h"
+
 #define MAX_CHILD_DEPTH 512
 
 namespace Skylicht
@@ -43,20 +45,19 @@ namespace Skylicht
 	class CCanvas : public CComponentSystem
 	{
 	protected:
-		std::list<CGUIElement*> m_entities;
-		core::array<CGUIElement*> m_entitiesTree[MAX_CHILD_DEPTH];
+		CEntityPrefab* m_entityMgr;
 
 		core::rectf m_rect;
 
-		CGUIElement *m_root;
-		int m_maxChildLevel;
+		CGUIElement* m_root;
 
 		int m_sortDepth;
 
 		bool m_enable3DBillboard;
-		
+
 		core::matrix4 m_renderWorldTransform;
-		CCamera *m_renderCamera;
+
+		CCamera* m_renderCamera;
 
 	public:
 		CCanvas();
@@ -69,7 +70,12 @@ namespace Skylicht
 
 		virtual void layout();
 
-		void render(CCamera *camera);
+		void render(CCamera* camera);
+
+		inline CEntityPrefab* getEntityManager()
+		{
+			return m_entityMgr;
+		}
 
 	public:
 
@@ -86,11 +92,6 @@ namespace Skylicht
 		inline void setRect(const core::rectf& r)
 		{
 			m_rect = r;
-		}
-
-		inline int generateID()
-		{
-			return (int)m_entities.size();
 		}
 
 		inline CGUIElement* getRootElement()
@@ -112,47 +113,45 @@ namespace Skylicht
 
 		CGUIElement* createElement(const core::rectf& r);
 
-		CGUIElement* createElement(CGUIElement *e, const core::rectf& r);
+		CGUIElement* createElement(CGUIElement* e, const core::rectf& r);
 
 		CGUIImage* createImage();
 
 		CGUIImage* createImage(const core::rectf& r);
 
-		CGUIImage* createImage(CGUIElement *e, const core::rectf& r);
+		CGUIImage* createImage(CGUIElement* e, const core::rectf& r);
 
-		CGUIText* createText(IFont *font);
+		CGUIText* createText(IFont* font);
 
-		CGUIText* createText(const core::rectf& r, IFont *font);
+		CGUIText* createText(const core::rectf& r, IFont* font);
 
-		CGUIText* createText(CGUIElement *e, IFont *font);
+		CGUIText* createText(CGUIElement* e, IFont* font);
 
-		CGUIText* createText(CGUIElement *e, const core::rectf& r, IFont *font);
+		CGUIText* createText(CGUIElement* e, const core::rectf& r, IFont* font);
 
-		CGUISprite* createSprite(SFrame *frame);
+		CGUISprite* createSprite(SFrame* frame);
 
-		CGUISprite* createSprite(const core::rectf& r, SFrame *frame);
+		CGUISprite* createSprite(const core::rectf& r, SFrame* frame);
 
-		CGUISprite* createSprite(CGUIElement *e, SFrame *frame);
+		CGUISprite* createSprite(CGUIElement* e, SFrame* frame);
 
-		CGUISprite* createSprite(CGUIElement *e, const core::rectf& r, SFrame *frame);		
+		CGUISprite* createSprite(CGUIElement* e, const core::rectf& r, SFrame* frame);
 
 		CGUIMask* createMask(const core::rectf& r);
 
-		CGUIMask* createMask(CGUIElement *e, const core::rectf& r);
+		CGUIMask* createMask(CGUIElement* e, const core::rectf& r);
 
-		CGUIRect* createRect(const video::SColor &c);
+		CGUIRect* createRect(const video::SColor& c);
 
-		CGUIRect* createRect(const core::rectf& r, const video::SColor &c);
+		CGUIRect* createRect(const core::rectf& r, const video::SColor& c);
 
-		CGUIRect* createRect(CGUIElement *e, const core::rectf& r, const video::SColor &c);
+		CGUIRect* createRect(CGUIElement* e, const core::rectf& r, const video::SColor& c);
 
-		CGUIRoundedRect* createRoundedRect(float radius, const video::SColor &c);
+		CGUIRoundedRect* createRoundedRect(float radius, const video::SColor& c);
 
-		CGUIRoundedRect* createRoundedRect(const core::rectf& r, float radius, const video::SColor &c);
+		CGUIRoundedRect* createRoundedRect(const core::rectf& r, float radius, const video::SColor& c);
 
-		CGUIRoundedRect* createRoundedRect(CGUIElement *e, const core::rectf& r, float radius, const video::SColor &c);
-
-		void remove(CGUIElement *element);
+		CGUIRoundedRect* createRoundedRect(CGUIElement* e, const core::rectf& r, float radius, const video::SColor& c);
 
 		const core::matrix4& getRenderWorldTransform()
 		{
@@ -168,9 +167,5 @@ namespace Skylicht
 		{
 			return m_renderCamera;
 		}
-
-	protected:
-
-		void removeChildOfParent(CGUIElement *parent);
 	};
 }

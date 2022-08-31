@@ -29,21 +29,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUIText::CGUIText(CCanvas* canvas, const core::rectf& rect, IFont* font) :
-		CGUIElement(canvas, rect),
-		TextVertical(Top),
-		TextHorizontal(Left),
-		m_multiLine(true),
-		m_centerRotate(false),
-		m_charPadding(0),
-		m_charSpacePadding(0),
-		m_linePadding(0),
-		m_updateTextRender(true),
-		m_font(font)
-	{
-
-	}
-
 	CGUIText::CGUIText(CCanvas* canvas, CGUIElement* parent, IFont* font) :
 		CGUIElement(canvas, parent),
 		TextVertical(Top),

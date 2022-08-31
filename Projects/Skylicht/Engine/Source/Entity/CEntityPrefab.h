@@ -24,7 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include <Entity/CEntity.h>
+#include "CEntity.h"
+#include "IEntitySystem.h"
 
 namespace Skylicht
 {
@@ -32,6 +33,7 @@ namespace Skylicht
 	{
 	protected:
 		core::array<CEntity*> m_entities;
+		core::array<CEntity*> m_unused;
 
 	public:
 		CEntityPrefab();
@@ -40,7 +42,13 @@ namespace Skylicht
 
 		CEntity* createEntity();
 
+		CEntity** createEntity(int num, core::array<CEntity*>& entities);
+
 		void releaseAllEntities();
+
+		void removeEntity(int index);
+
+		void removeEntity(CEntity* entity);
 
 		inline int getNumEntities()
 		{
