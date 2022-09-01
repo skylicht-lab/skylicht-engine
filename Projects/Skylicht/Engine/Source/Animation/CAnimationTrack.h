@@ -26,43 +26,38 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CFrameData
+	enum EAnimationType
+	{
+		Position = 0,
+		Rotation,
+		Scale,
+		NumAnimation
+	};
+
+	template<class T>
+	class CKeyData
 	{
 	public:
-		struct SPositionKey
-		{
-			f32 frame;
-			core::vector3df position;
-		};
+		f32 Frame;
+		T Value;
+	};
 
-		struct SScaleKey
-		{
-			f32 frame;
-			core::vector3df scale;
-		};
+	typedef CKeyData<core::vector3df> CPositionKey;
+	typedef CKeyData<core::quaternion> CRotationKey;
+	typedef CKeyData<core::vector3df> CScaleKey;
 
-		struct SRotationKey
-		{
-			f32 frame;
-			core::quaternion rotation;
-		};
-
-		struct SEventKey
-		{
-			f32 frame;
-			core::stringc event;
-		};
-
-		core::array<CFrameData::SPositionKey> PositionKeys;
-		core::array<CFrameData::SScaleKey> ScaleKeys;
-		core::array<CFrameData::SRotationKey> RotationKeys;
-		core::array<CFrameData::SEventKey> EventKeys;
+	class CAnimationData
+	{
+	public:
+		core::array<CPositionKey> PositionKeys;
+		core::array<CScaleKey> ScaleKeys;
+		core::array<CRotationKey> RotationKeys;
 
 		core::quaternion DefaultRot;
 		core::vector3df DefaultPos;
 		core::vector3df DefaultScale;
 
-		CFrameData()
+		CAnimationData()
 		{
 		}
 	};
@@ -74,7 +69,7 @@ namespace Skylicht
 		s32 m_scaleHint;
 		s32 m_rotHint;
 
-		CFrameData *m_data;
+		CAnimationData* m_data;
 
 	public:
 		std::string Name;
@@ -87,11 +82,11 @@ namespace Skylicht
 		static void quaternionSlerp(core::quaternion& result, core::quaternion q1, core::quaternion q2, float t);
 
 		void getFrameData(f32 frame,
-			core::vector3df &position,
-			core::vector3df &scale,
-			core::quaternion &rotation);
+			core::vector3df& position,
+			core::vector3df& scale,
+			core::quaternion& rotation);
 
-		CFrameData* getAnimData();
+		CAnimationData* getAnimData();
 
 		void clearAllKeyFrame()
 		{
@@ -105,12 +100,12 @@ namespace Skylicht
 			HaveAnimation = false;
 		}
 
-		void setFrameData(CFrameData *data)
+		void setFrameData(CAnimationData* data)
 		{
 			m_data = data;
 		}
 
-		CFrameData* getFrameData()
+		CAnimationData* getFrameData()
 		{
 			return m_data;
 		}
