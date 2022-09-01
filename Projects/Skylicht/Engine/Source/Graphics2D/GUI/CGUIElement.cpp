@@ -246,7 +246,7 @@ namespace Skylicht
 
 	const core::matrix4& CGUIElement::getRelativeTransform(bool forceRecalc)
 	{
-		if (forceRecalc == true)
+		// if (forceRecalc == true)
 		{
 			m_relativeTransform.makeIdentity();
 			m_relativeTransform.setRotationDegrees(m_rotation);
