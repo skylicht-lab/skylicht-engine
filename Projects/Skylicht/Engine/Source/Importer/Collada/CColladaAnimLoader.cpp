@@ -164,18 +164,18 @@ namespace Skylicht
 
 					// default value
 					core::matrix4 mat;
-					nodeAnim->Data.DefaultRot = core::quaternion(pNode->Transform);
-					nodeAnim->Data.DefaultPos = pNode->Transform.getTranslation();
-					nodeAnim->Data.DefaultScale = pNode->Transform.getScale();
+					nodeAnim->Data.Rotations.Default = core::quaternion(pNode->Transform);
+					nodeAnim->Data.Positions.Default = pNode->Transform.getTranslation();
+					nodeAnim->Data.Scales.Default = pNode->Transform.getScale();
 
 					// add node anim
 					m_nodeAnim[name] = nodeAnim;
 				}
 				else
 				{
-					nodeAnim->Data.DefaultRot = core::quaternion(pNode->Transform);
-					nodeAnim->Data.DefaultPos = pNode->Transform.getTranslation();
-					nodeAnim->Data.DefaultScale = pNode->Transform.getScale();
+					nodeAnim->Data.Rotations.Default = core::quaternion(pNode->Transform);
+					nodeAnim->Data.Positions.Default = pNode->Transform.getTranslation();
+					nodeAnim->Data.Scales.Default = pNode->Transform.getScale();
 				}
 
 
@@ -196,26 +196,14 @@ namespace Skylicht
 			SNodeParam* n = getNode(newNodeAnim->Name);
 			if (n)
 			{
-				newNodeAnim->Data.DefaultRot = core::quaternion(n->Transform);
-				newNodeAnim->Data.DefaultPos = n->Transform.getTranslation();
-				newNodeAnim->Data.DefaultScale = n->Transform.getScale();
+				newNodeAnim->Data.Rotations.Default = core::quaternion(n->Transform);
+				newNodeAnim->Data.Positions.Default = n->Transform.getTranslation();
+				newNodeAnim->Data.Scales.Default = n->Transform.getScale();
 			}
 
-			if (nodeAnim->Data.PositionKeys.size())
-			{
-				if (frames < nodeAnim->Data.PositionKeys.getLast().Frame)
-					frames = nodeAnim->Data.PositionKeys.getLast().Frame;
-			}
-			if (nodeAnim->Data.RotationKeys.size())
-			{
-				if (frames < nodeAnim->Data.RotationKeys.getLast().Frame)
-					frames = nodeAnim->Data.RotationKeys.getLast().Frame;
-			}
-			if (nodeAnim->Data.ScaleKeys.size())
-			{
-				if (frames < nodeAnim->Data.ScaleKeys.getLast().Frame)
-					frames = nodeAnim->Data.ScaleKeys.getLast().Frame;
-			}
+			frames = core::max_(frames, nodeAnim->Data.Positions.getLastFrame());
+			frames = core::max_(frames, nodeAnim->Data.Rotations.getLastFrame());
+			frames = core::max_(frames, nodeAnim->Data.Scales.getLastFrame());
 
 			clip->addAnim(newNodeAnim);
 			iNodeAnim++;
@@ -339,9 +327,9 @@ namespace Skylicht
 
 			// default value
 			core::matrix4 mat;
-			nodeAnim->Data.DefaultRot = core::quaternion(mat);
-			nodeAnim->Data.DefaultPos = mat.getTranslation();
-			nodeAnim->Data.DefaultScale = mat.getScale();
+			nodeAnim->Data.Rotations.Default = core::quaternion(mat);
+			nodeAnim->Data.Positions.Default = mat.getTranslation();
+			nodeAnim->Data.Scales.Default = mat.getScale();
 
 			// add node anim
 			m_nodeAnim[stringBuffer] = nodeAnim;
@@ -426,7 +414,7 @@ namespace Skylicht
 									fvector[3] * core::DEGTORAD,
 									core::vector3df(fvector[0], fvector[1], fvector[2])
 								);
-								nodeAnim->Data.RotationKeys.push_back(key);
+								nodeAnim->Data.Rotations.Data.push_back(key);
 							}
 							else if (stride == 1)
 							{
@@ -458,7 +446,7 @@ namespace Skylicht
 								CPositionKey key;
 								key.Frame = arrayTime[i];
 								key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
-								nodeAnim->Data.PositionKeys.push_back(key);
+								nodeAnim->Data.Positions.Data.push_back(key);
 							}
 							else if (stride == 1)
 							{
@@ -488,7 +476,7 @@ namespace Skylicht
 								CScaleKey key;
 								key.Frame = arrayTime[i];
 								key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
-								nodeAnim->Data.ScaleKeys.push_back(key);
+								nodeAnim->Data.Scales.Data.push_back(key);
 							}
 							else
 								printf("Warning: May be not support stride: %d on scale!\n", stride);
@@ -520,19 +508,19 @@ namespace Skylicht
 							CRotationKey key;
 							key.Frame = arrayTime[i];
 							key.Value = core::quaternion(mat);
-							nodeAnim->Data.RotationKeys.push_back(key);
+							nodeAnim->Data.Rotations.Data.push_back(key);
 
 
 							CPositionKey keyPos;
 							keyPos.Frame = arrayTime[i];
 							keyPos.Value = mat.getTranslation();
-							nodeAnim->Data.PositionKeys.push_back(keyPos);
+							nodeAnim->Data.Positions.Data.push_back(keyPos);
 
 
 							CScaleKey keyScale;
 							keyScale.Frame = arrayTime[i];
 							keyScale.Value = mat.getScale();
-							nodeAnim->Data.ScaleKeys.push_back(keyScale);
+							nodeAnim->Data.Scales.Data.push_back(keyScale);
 						}
 						else
 						{
@@ -579,7 +567,7 @@ namespace Skylicht
 								f * core::DEGTORAD,
 								core::vector3df(fvector[0], fvector[1], fvector[2])
 							);
-							nodeAnim->Data.RotationKeys.push_back(key);
+							nodeAnim->Data.Rotations.Data.push_back(key);
 						}
 
 						delete arrayTime;
@@ -620,7 +608,7 @@ namespace Skylicht
 							key.Value.Z = t;
 						}
 
-						nodeAnim->Data.PositionKeys.push_back(key);
+						nodeAnim->Data.Positions.Data.push_back(key);
 					}
 
 					delete arrayTime;
@@ -634,7 +622,7 @@ namespace Skylicht
 				}
 				else if (core::stringw(L"default_values") == nodeName && isTranslate)
 				{
-					float	fvector[4] = { 0 };
+					float fvector[4] = { 0 };
 					parseDefaultValuePosition(xmlRead, &fvector[0], &fvector[1], &fvector[2]);
 
 					if (m_zUp == true)
@@ -647,16 +635,16 @@ namespace Skylicht
 					if (applyDefaultPos)
 					{
 						// apply position
-						for (int i = 0, n = nodeAnim->Data.PositionKeys.size(); i < n; i++)
+						for (u32 i = 0, n = nodeAnim->Data.Positions.size(); i < n; i++)
 						{
-							if (nodeAnim->Data.PositionKeys[i].Value.X == 0.0f)
-								nodeAnim->Data.PositionKeys[i].Value.X += fvector[0];
+							if (nodeAnim->Data.Positions.Data[i].Value.X == 0.0f)
+								nodeAnim->Data.Positions.Data[i].Value.X += fvector[0];
 
-							if (nodeAnim->Data.PositionKeys[i].Value.Y == 0.0f)
-								nodeAnim->Data.PositionKeys[i].Value.Y += fvector[1];
+							if (nodeAnim->Data.Positions.Data[i].Value.Y == 0.0f)
+								nodeAnim->Data.Positions.Data[i].Value.Y += fvector[1];
 
-							if (nodeAnim->Data.PositionKeys[i].Value.Z == 0.0f)
-								nodeAnim->Data.PositionKeys[i].Value.Z += fvector[2];
+							if (nodeAnim->Data.Positions.Data[i].Value.Z == 0.0f)
+								nodeAnim->Data.Positions.Data[i].Value.Z += fvector[2];
 						}
 						applyDefaultPos = false;
 					}
@@ -938,9 +926,9 @@ namespace Skylicht
 
 								// default value
 								core::matrix4 mat;
-								nodeAnim->Data.DefaultRot = core::quaternion(mat);
-								nodeAnim->Data.DefaultPos = mat.getTranslation();
-								nodeAnim->Data.DefaultScale = mat.getScale();
+								nodeAnim->Data.Rotations.Default = core::quaternion(mat);
+								nodeAnim->Data.Positions.Default = mat.getTranslation();
+								nodeAnim->Data.Scales.Default = mat.getScale();
 
 								// add node anim
 								m_nodeAnim[stringBuffer] = nodeAnim;
@@ -968,11 +956,11 @@ namespace Skylicht
 				else if (core::stringw(L"accessor") == nodeName && arrayFloat != NULL)
 				{
 					int stride = xmlRead->getAttributeValueAsInt(L"stride");
-					int nFrame = count / stride;
+					u32 nFrame = (u32)(count / stride);
 
 					float fvector[4] = { 0.0f };
 
-					for (int i = 0; i < nFrame; i++)
+					for (u32 i = 0; i < nFrame; i++)
 					{
 						if (isRotation)
 						{
@@ -1001,7 +989,7 @@ namespace Skylicht
 								);
 
 								if (nodeAnim)
-									nodeAnim->Data.RotationKeys.push_back(key);
+									nodeAnim->Data.Rotations.Data.push_back(key);
 							}
 							else if (stride == 1)
 							{
@@ -1035,7 +1023,7 @@ namespace Skylicht
 								key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
 
 								if (nodeAnim)
-									nodeAnim->Data.PositionKeys.push_back(key);
+									nodeAnim->Data.Positions.Data.push_back(key);
 							}
 							else if (stride == 1)
 							{
@@ -1067,7 +1055,7 @@ namespace Skylicht
 								key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
 
 								if (nodeAnim)
-									nodeAnim->Data.ScaleKeys.push_back(key);
+									nodeAnim->Data.Scales.Data.push_back(key);
 							}
 							else
 								printf("Warning: May be not support stride: %d on scale!\n", stride);
@@ -1101,22 +1089,21 @@ namespace Skylicht
 							key.Value = core::quaternion(mat);
 
 							if (nodeAnim)
-								nodeAnim->Data.RotationKeys.push_back(key);
-
+								nodeAnim->Data.Rotations.Data.push_back(key);
 
 							CPositionKey keyPos;
 							keyPos.Frame = arrayTime[i];
 							keyPos.Value = mat.getTranslation();
 
 							if (nodeAnim)
-								nodeAnim->Data.PositionKeys.push_back(keyPos);
+								nodeAnim->Data.Positions.Data.push_back(keyPos);
 
 							CScaleKey keyScale;
 							keyScale.Frame = arrayTime[i];
 							keyScale.Value = mat.getScale();
 
 							if (nodeAnim)
-								nodeAnim->Data.ScaleKeys.push_back(keyScale);
+								nodeAnim->Data.Scales.Data.push_back(keyScale);
 						}
 						else if (isTranslateXYZ > 0 && stride == 1)
 						{
@@ -1141,16 +1128,16 @@ namespace Skylicht
 
 							if (nodeAnim)
 							{
-								if ((int)nodeAnim->Data.PositionKeys.size() <= i)
+								if (nodeAnim->Data.Positions.size() <= i)
 								{
 									CPositionKey key;
 									key.Frame = arrayTime[i];
 									key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
-									nodeAnim->Data.PositionKeys.push_back(key);
+									nodeAnim->Data.Positions.Data.push_back(key);
 								}
 								else
 								{
-									CPositionKey& key = nodeAnim->Data.PositionKeys[i];
+									CPositionKey& key = nodeAnim->Data.Positions.Data[i];
 									key.Value += core::vector3df(fvector[0], fvector[1], fvector[2]);
 								}
 							}
@@ -1204,7 +1191,7 @@ namespace Skylicht
 
 							if (nodeAnim)
 							{
-								if ((int)nodeAnim->Data.RotationKeys.size() <= i)
+								if ((int)nodeAnim->Data.Rotations.size() <= i)
 								{
 									CRotationKey key;
 									key.Frame = arrayTime[i];
@@ -1212,7 +1199,7 @@ namespace Skylicht
 										fvector[3] * core::DEGTORAD,
 										core::vector3df(fvector[0], fvector[1], fvector[2])
 									);
-									nodeAnim->Data.RotationKeys.push_back(key);
+									nodeAnim->Data.Rotations.Data.push_back(key);
 								}
 								else
 								{
@@ -1221,7 +1208,7 @@ namespace Skylicht
 										fvector[3] * core::DEGTORAD,
 										core::vector3df(fvector[0], fvector[1], fvector[2])
 									);
-									nodeAnim->Data.RotationKeys[i].Value *= rotation;
+									nodeAnim->Data.Rotations.Data[i].Value *= rotation;
 								}
 							}
 						}
@@ -1271,7 +1258,7 @@ namespace Skylicht
 							);
 
 							if (nodeAnim)
-								nodeAnim->Data.RotationKeys.push_back(key);
+								nodeAnim->Data.Rotations.Data.push_back(key);
 						}
 
 						delete arrayTime;
@@ -1313,7 +1300,7 @@ namespace Skylicht
 						}
 
 						if (nodeAnim)
-							nodeAnim->Data.PositionKeys.push_back(key);
+							nodeAnim->Data.Positions.Data.push_back(key);
 					}
 
 					delete arrayTime;
@@ -1340,16 +1327,16 @@ namespace Skylicht
 					if (applyDefaultPos && nodeAnim)
 					{
 						// apply position
-						for (int i = 0, n = nodeAnim->Data.PositionKeys.size(); i < n; i++)
+						for (int i = 0, n = nodeAnim->Data.Positions.size(); i < n; i++)
 						{
-							if (nodeAnim->Data.PositionKeys[i].Value.X == 0.0f)
-								nodeAnim->Data.PositionKeys[i].Value.X += fvector[0];
+							if (nodeAnim->Data.Positions.Data[i].Value.X == 0.0f)
+								nodeAnim->Data.Positions.Data[i].Value.X += fvector[0];
 
-							if (nodeAnim->Data.PositionKeys[i].Value.Y == 0.0f)
-								nodeAnim->Data.PositionKeys[i].Value.Y += fvector[1];
+							if (nodeAnim->Data.Positions.Data[i].Value.Y == 0.0f)
+								nodeAnim->Data.Positions.Data[i].Value.Y += fvector[1];
 
-							if (nodeAnim->Data.PositionKeys[i].Value.Z == 0.0f)
-								nodeAnim->Data.PositionKeys[i].Value.Z += fvector[2];
+							if (nodeAnim->Data.Positions.Data[i].Value.Z == 0.0f)
+								nodeAnim->Data.Positions.Data[i].Value.Z += fvector[2];
 						}
 						applyDefaultPos = false;
 					}
