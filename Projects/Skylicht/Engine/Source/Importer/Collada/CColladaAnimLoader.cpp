@@ -203,18 +203,18 @@ namespace Skylicht
 
 			if (nodeAnim->Data.PositionKeys.size())
 			{
-				if (frames < nodeAnim->Data.PositionKeys.getLast().frame)
-					frames = nodeAnim->Data.PositionKeys.getLast().frame;
+				if (frames < nodeAnim->Data.PositionKeys.getLast().Frame)
+					frames = nodeAnim->Data.PositionKeys.getLast().Frame;
 			}
 			if (nodeAnim->Data.RotationKeys.size())
 			{
-				if (frames < nodeAnim->Data.RotationKeys.getLast().frame)
-					frames = nodeAnim->Data.RotationKeys.getLast().frame;
+				if (frames < nodeAnim->Data.RotationKeys.getLast().Frame)
+					frames = nodeAnim->Data.RotationKeys.getLast().Frame;
 			}
 			if (nodeAnim->Data.ScaleKeys.size())
 			{
-				if (frames < nodeAnim->Data.ScaleKeys.getLast().frame)
-					frames = nodeAnim->Data.ScaleKeys.getLast().frame;
+				if (frames < nodeAnim->Data.ScaleKeys.getLast().Frame)
+					frames = nodeAnim->Data.ScaleKeys.getLast().Frame;
 			}
 
 			clip->addAnim(newNodeAnim);
@@ -420,9 +420,9 @@ namespace Skylicht
 									fvector[3] = arrayFloat[i * 4 + 3];
 								}
 
-								CFrameData::SRotationKey key;
-								key.frame = arrayTime[i];
-								key.rotation.fromAngleAxis(
+								CRotationKey key;
+								key.Frame = arrayTime[i];
+								key.Value.fromAngleAxis(
 									fvector[3] * core::DEGTORAD,
 									core::vector3df(fvector[0], fvector[1], fvector[2])
 								);
@@ -455,9 +455,9 @@ namespace Skylicht
 									fvector[2] = arrayFloat[i * 3 + 2];
 								}
 
-								CFrameData::SPositionKey key;
-								key.frame = arrayTime[i];
-								key.position = core::vector3df(fvector[0], fvector[1], fvector[2]);
+								CPositionKey key;
+								key.Frame = arrayTime[i];
+								key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
 								nodeAnim->Data.PositionKeys.push_back(key);
 							}
 							else if (stride == 1)
@@ -485,9 +485,9 @@ namespace Skylicht
 									fvector[2] = arrayFloat[i * 3 + 2];
 								}
 
-								CFrameData::SScaleKey key;
-								key.frame = arrayTime[i];
-								key.scale = core::vector3df(fvector[0], fvector[1], fvector[2]);
+								CScaleKey key;
+								key.Frame = arrayTime[i];
+								key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
 								nodeAnim->Data.ScaleKeys.push_back(key);
 							}
 							else
@@ -517,21 +517,21 @@ namespace Skylicht
 							else
 								mat = core::matrix4(mat, core::matrix4::EM4CONST_TRANSPOSED);
 
-							CFrameData::SRotationKey key;
-							key.frame = arrayTime[i];
-							key.rotation = core::quaternion(mat);
+							CRotationKey key;
+							key.Frame = arrayTime[i];
+							key.Value = core::quaternion(mat);
 							nodeAnim->Data.RotationKeys.push_back(key);
 
 
-							CFrameData::SPositionKey keyPos;
-							keyPos.frame = arrayTime[i];
-							keyPos.position = mat.getTranslation();
+							CPositionKey keyPos;
+							keyPos.Frame = arrayTime[i];
+							keyPos.Value = mat.getTranslation();
 							nodeAnim->Data.PositionKeys.push_back(keyPos);
 
 
-							CFrameData::SScaleKey keyScale;
-							keyScale.frame = arrayTime[i];
-							keyScale.scale = mat.getScale();
+							CScaleKey keyScale;
+							keyScale.Frame = arrayTime[i];
+							keyScale.Value = mat.getScale();
 							nodeAnim->Data.ScaleKeys.push_back(keyScale);
 						}
 						else
@@ -568,14 +568,14 @@ namespace Skylicht
 					{
 						for (int i = 0; i < count; i++)
 						{
-							CFrameData::SRotationKey key;
-							key.frame = arrayTime[i];
+							CRotationKey key;
+							key.Frame = arrayTime[i];
 
 							float f = arrayFloat[i];
 							if (m_zUp == true)
 								f = -f;
 
-							key.rotation.fromAngleAxis(
+							key.Value.fromAngleAxis(
 								f * core::DEGTORAD,
 								core::vector3df(fvector[0], fvector[1], fvector[2])
 							);
@@ -603,21 +603,21 @@ namespace Skylicht
 
 					for (int i = 0; i < count; i++)
 					{
-						CFrameData::SPositionKey key;
-						key.frame = arrayTime[i];
+						CPositionKey key;
+						key.Frame = arrayTime[i];
 
 						if (state == 0)
-							key.position = core::vector3df(arrayFloat[i], 0, 0);
+							key.Value = core::vector3df(arrayFloat[i], 0, 0);
 						else if (state == 1)
-							key.position = core::vector3df(0, arrayFloat[i], 0);
+							key.Value = core::vector3df(0, arrayFloat[i], 0);
 						else
-							key.position = core::vector3df(0, 0, arrayFloat[i]);
+							key.Value = core::vector3df(0, 0, arrayFloat[i]);
 
 						if (m_zUp == true)
 						{
-							float t = key.position.Y;
-							key.position.Y = key.position.Z;
-							key.position.Z = t;
+							float t = key.Value.Y;
+							key.Value.Y = key.Value.Z;
+							key.Value.Z = t;
 						}
 
 						nodeAnim->Data.PositionKeys.push_back(key);
@@ -649,14 +649,14 @@ namespace Skylicht
 						// apply position
 						for (int i = 0, n = nodeAnim->Data.PositionKeys.size(); i < n; i++)
 						{
-							if (nodeAnim->Data.PositionKeys[i].position.X == 0.0f)
-								nodeAnim->Data.PositionKeys[i].position.X += fvector[0];
+							if (nodeAnim->Data.PositionKeys[i].Value.X == 0.0f)
+								nodeAnim->Data.PositionKeys[i].Value.X += fvector[0];
 
-							if (nodeAnim->Data.PositionKeys[i].position.Y == 0.0f)
-								nodeAnim->Data.PositionKeys[i].position.Y += fvector[1];
+							if (nodeAnim->Data.PositionKeys[i].Value.Y == 0.0f)
+								nodeAnim->Data.PositionKeys[i].Value.Y += fvector[1];
 
-							if (nodeAnim->Data.PositionKeys[i].position.Z == 0.0f)
-								nodeAnim->Data.PositionKeys[i].position.Z += fvector[2];
+							if (nodeAnim->Data.PositionKeys[i].Value.Z == 0.0f)
+								nodeAnim->Data.PositionKeys[i].Value.Z += fvector[2];
 						}
 						applyDefaultPos = false;
 					}
@@ -993,9 +993,9 @@ namespace Skylicht
 									fvector[3] = arrayFloat[i * 4 + 3];
 								}
 
-								CFrameData::SRotationKey key;
-								key.frame = arrayTime[i];
-								key.rotation.fromAngleAxis(
+								CRotationKey key;
+								key.Frame = arrayTime[i];
+								key.Value.fromAngleAxis(
 									fvector[3] * core::DEGTORAD,
 									core::vector3df(fvector[0], fvector[1], fvector[2])
 								);
@@ -1030,9 +1030,9 @@ namespace Skylicht
 									fvector[2] = arrayFloat[i * 3 + 2];
 								}
 
-								CFrameData::SPositionKey key;
-								key.frame = arrayTime[i];
-								key.position = core::vector3df(fvector[0], fvector[1], fvector[2]);
+								CPositionKey key;
+								key.Frame = arrayTime[i];
+								key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
 
 								if (nodeAnim)
 									nodeAnim->Data.PositionKeys.push_back(key);
@@ -1062,9 +1062,9 @@ namespace Skylicht
 									fvector[2] = arrayFloat[i * 3 + 2];
 								}
 
-								CFrameData::SScaleKey key;
-								key.frame = arrayTime[i];
-								key.scale = core::vector3df(fvector[0], fvector[1], fvector[2]);
+								CScaleKey key;
+								key.Frame = arrayTime[i];
+								key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
 
 								if (nodeAnim)
 									nodeAnim->Data.ScaleKeys.push_back(key);
@@ -1096,24 +1096,24 @@ namespace Skylicht
 							else
 								mat = core::matrix4(mat, core::matrix4::EM4CONST_TRANSPOSED);
 
-							CFrameData::SRotationKey key;
-							key.frame = arrayTime[i];
-							key.rotation = core::quaternion(mat);
+							CRotationKey key;
+							key.Frame = arrayTime[i];
+							key.Value = core::quaternion(mat);
 
 							if (nodeAnim)
 								nodeAnim->Data.RotationKeys.push_back(key);
 
 
-							CFrameData::SPositionKey keyPos;
-							keyPos.frame = arrayTime[i];
-							keyPos.position = mat.getTranslation();
+							CPositionKey keyPos;
+							keyPos.Frame = arrayTime[i];
+							keyPos.Value = mat.getTranslation();
 
 							if (nodeAnim)
 								nodeAnim->Data.PositionKeys.push_back(keyPos);
 
-							CFrameData::SScaleKey keyScale;
-							keyScale.frame = arrayTime[i];
-							keyScale.scale = mat.getScale();
+							CScaleKey keyScale;
+							keyScale.Frame = arrayTime[i];
+							keyScale.Value = mat.getScale();
 
 							if (nodeAnim)
 								nodeAnim->Data.ScaleKeys.push_back(keyScale);
@@ -1143,15 +1143,15 @@ namespace Skylicht
 							{
 								if ((int)nodeAnim->Data.PositionKeys.size() <= i)
 								{
-									CFrameData::SPositionKey key;
-									key.frame = arrayTime[i];
-									key.position = core::vector3df(fvector[0], fvector[1], fvector[2]);
+									CPositionKey key;
+									key.Frame = arrayTime[i];
+									key.Value = core::vector3df(fvector[0], fvector[1], fvector[2]);
 									nodeAnim->Data.PositionKeys.push_back(key);
 								}
 								else
 								{
-									CFrameData::SPositionKey& key = nodeAnim->Data.PositionKeys[i];
-									key.position += core::vector3df(fvector[0], fvector[1], fvector[2]);
+									CPositionKey& key = nodeAnim->Data.PositionKeys[i];
+									key.Value += core::vector3df(fvector[0], fvector[1], fvector[2]);
 								}
 							}
 						}
@@ -1206,9 +1206,9 @@ namespace Skylicht
 							{
 								if ((int)nodeAnim->Data.RotationKeys.size() <= i)
 								{
-									CFrameData::SRotationKey key;
-									key.frame = arrayTime[i];
-									key.rotation.fromAngleAxis(
+									CRotationKey key;
+									key.Frame = arrayTime[i];
+									key.Value.fromAngleAxis(
 										fvector[3] * core::DEGTORAD,
 										core::vector3df(fvector[0], fvector[1], fvector[2])
 									);
@@ -1221,7 +1221,7 @@ namespace Skylicht
 										fvector[3] * core::DEGTORAD,
 										core::vector3df(fvector[0], fvector[1], fvector[2])
 									);
-									nodeAnim->Data.RotationKeys[i].rotation *= rotation;
+									nodeAnim->Data.RotationKeys[i].Value *= rotation;
 								}
 							}
 						}
@@ -1258,28 +1258,17 @@ namespace Skylicht
 					{
 						for (int i = 0; i < count; i++)
 						{
-							CFrameData::SRotationKey key;
-							key.frame = arrayTime[i];
+							CRotationKey key;
+							key.Frame = arrayTime[i];
 
 							float f = arrayFloat[i];
 							if (m_zUp == true)
 								f = -f;
 
-							/*
-							if (fvector[0] == 0.0f &&
-								fvector[1] == 0.0f &&
-								fvector[2] == 0.0f)
-							{
-								key.rotation.makeIdentity();
-							}
-							else
-							*/
-							{
-								key.rotation.fromAngleAxis(
-									f * core::DEGTORAD,
-									core::vector3df(fvector[0], fvector[1], fvector[2])
-								);
-							}
+							key.Value.fromAngleAxis(
+								f * core::DEGTORAD,
+								core::vector3df(fvector[0], fvector[1], fvector[2])
+							);
 
 							if (nodeAnim)
 								nodeAnim->Data.RotationKeys.push_back(key);
@@ -1306,21 +1295,21 @@ namespace Skylicht
 
 					for (int i = 0; i < count; i++)
 					{
-						CFrameData::SPositionKey key;
-						key.frame = arrayTime[i];
+						CPositionKey key;
+						key.Frame = arrayTime[i];
 
 						if (state == 0)
-							key.position = core::vector3df(arrayFloat[i], 0, 0);
+							key.Value = core::vector3df(arrayFloat[i], 0, 0);
 						else if (state == 1)
-							key.position = core::vector3df(0, arrayFloat[i], 0);
+							key.Value = core::vector3df(0, arrayFloat[i], 0);
 						else
-							key.position = core::vector3df(0, 0, arrayFloat[i]);
+							key.Value = core::vector3df(0, 0, arrayFloat[i]);
 
 						if (m_zUp == true)
 						{
-							float t = key.position.Y;
-							key.position.Y = key.position.Z;
-							key.position.Z = t;
+							float t = key.Value.Y;
+							key.Value.Y = key.Value.Z;
+							key.Value.Z = t;
 						}
 
 						if (nodeAnim)
@@ -1353,14 +1342,14 @@ namespace Skylicht
 						// apply position
 						for (int i = 0, n = nodeAnim->Data.PositionKeys.size(); i < n; i++)
 						{
-							if (nodeAnim->Data.PositionKeys[i].position.X == 0.0f)
-								nodeAnim->Data.PositionKeys[i].position.X += fvector[0];
+							if (nodeAnim->Data.PositionKeys[i].Value.X == 0.0f)
+								nodeAnim->Data.PositionKeys[i].Value.X += fvector[0];
 
-							if (nodeAnim->Data.PositionKeys[i].position.Y == 0.0f)
-								nodeAnim->Data.PositionKeys[i].position.Y += fvector[1];
+							if (nodeAnim->Data.PositionKeys[i].Value.Y == 0.0f)
+								nodeAnim->Data.PositionKeys[i].Value.Y += fvector[1];
 
-							if (nodeAnim->Data.PositionKeys[i].position.Z == 0.0f)
-								nodeAnim->Data.PositionKeys[i].position.Z += fvector[2];
+							if (nodeAnim->Data.PositionKeys[i].Value.Z == 0.0f)
+								nodeAnim->Data.PositionKeys[i].Value.Z += fvector[2];
 						}
 						applyDefaultPos = false;
 					}
