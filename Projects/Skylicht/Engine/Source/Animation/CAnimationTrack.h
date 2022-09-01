@@ -26,36 +26,105 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	enum EAnimationType
-	{
-		Position = 0,
-		Rotation,
-		Scale,
-		NumAnimation
-	};
-
 	template<class T>
-	class CKeyData
+	class CKeyFrameData
 	{
 	public:
 		f32 Frame;
 		T Value;
 	};
 
-	typedef CKeyData<core::vector3df> CPositionKey;
-	typedef CKeyData<core::quaternion> CRotationKey;
-	typedef CKeyData<core::vector3df> CScaleKey;
+	typedef CKeyFrameData<core::vector3df> CPositionKey;
+	typedef CKeyFrameData<core::quaternion> CRotationKey;
+	typedef CKeyFrameData<core::vector3df> CScaleKey;
+
+	template<class T>
+	class CArrayKeyFrame
+	{
+	public:
+		core::array<CKeyFrameData<T>> Data;
+
+		T Default;
+
+		int Hint;
+
+		CArrayKeyFrame() :
+			Hint(0)
+		{
+		}
+
+		inline void clearHint()
+		{
+			Hint = 0;
+		}
+
+		int getIndex(f32 frame);
+
+		inline u32 size()
+		{
+			return Data.size();
+		}
+
+		inline CKeyFrameData<T>* pointer()
+		{
+			return Data.pointer();
+		}
+
+		inline f32 getLastFrame()
+		{
+			if (Data.size() == 0)
+				return 0.0f;
+
+			return Data.getLast().Frame;
+		}
+	};
+
+	template<class T>
+	int CArrayKeyFrame<T>::getIndex(f32 frame)
+	{
+		int foundPositionIndex = -1;
+
+		int numKey = (int)Data.size();
+		CKeyFrameData<T>* pData = Data.pointer();
+
+		// Test the Hints...
+		if (Hint >= 0 && Hint < numKey)
+		{
+			if (Hint > 0 && pData[Hint].Frame >= frame && pData[Hint - 1].Frame < frame)
+				foundPositionIndex = Hint;
+			else if (Hint + 1 < numKey)
+			{
+				if (pData[Hint + 1].Frame >= frame && pData[Hint + 0].Frame < frame)
+				{
+					Hint++;
+					foundPositionIndex = Hint;
+				}
+			}
+		}
+
+		// The Hint test failed, do a full scan...
+		if (foundPositionIndex == -1)
+		{
+			for (s32 i = 0; i < numKey; ++i)
+			{
+				if (pData[i].Frame >= frame) // Keys should to be sorted by frame
+				{
+					foundPositionIndex = i;
+					Hint = i;
+					break;
+				}
+			}
+		}
+
+		return foundPositionIndex;
+	}
 
 	class CAnimationData
 	{
 	public:
-		core::array<CPositionKey> PositionKeys;
-		core::array<CScaleKey> ScaleKeys;
-		core::array<CRotationKey> RotationKeys;
-
-		core::quaternion DefaultRot;
-		core::vector3df DefaultPos;
-		core::vector3df DefaultScale;
+		CArrayKeyFrame<core::vector3df> Positions;
+		CArrayKeyFrame<core::quaternion> Rotations;
+		CArrayKeyFrame<core::vector3df> Scales;
 
 		CAnimationData()
 		{
@@ -65,18 +134,17 @@ namespace Skylicht
 	class CAnimationTrack
 	{
 	protected:
-		s32 m_posHint;
-		s32 m_scaleHint;
-		s32 m_rotHint;
 
 		CAnimationData* m_data;
 
 	public:
 		std::string Name;
+
 		bool HaveAnimation;
 
 	public:
 		CAnimationTrack();
+
 		virtual ~CAnimationTrack();
 
 		static void quaternionSlerp(core::quaternion& result, core::quaternion q1, core::quaternion q2, float t);
@@ -90,17 +158,20 @@ namespace Skylicht
 
 		void clearAllKeyFrame()
 		{
-			m_data = NULL;
+			if (m_data)
+			{
+				m_data->Positions.clearHint();
+				m_data->Rotations.clearHint();
+				m_data->Scales.clearHint();
+			}
 
-			m_posHint = 0;
-			m_scaleHint = 0;
-			m_rotHint = 0;
+			m_data = NULL;
 
 			Name = "";
 			HaveAnimation = false;
 		}
 
-		void setFrameData(CAnimationData* data)
+		void setAnimationData(CAnimationData* data)
 		{
 			m_data = data;
 		}

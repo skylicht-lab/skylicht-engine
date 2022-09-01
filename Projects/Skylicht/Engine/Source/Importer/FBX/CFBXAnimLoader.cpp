@@ -111,9 +111,9 @@ namespace Skylicht
 
 			// default value
 			core::matrix4 mat;
-			nodeAnim->Data.DefaultRot = core::quaternion(relativeTransform);
-			nodeAnim->Data.DefaultPos = relativeTransform.getTranslation();
-			nodeAnim->Data.DefaultScale = relativeTransform.getScale();
+			nodeAnim->Data.Rotations.Default = core::quaternion(relativeTransform);
+			nodeAnim->Data.Positions.Default = relativeTransform.getTranslation();
+			nodeAnim->Data.Scales.Default = relativeTransform.getScale();
 
 			m_nodeAnim[node] = nodeAnim;
 		}
@@ -170,9 +170,9 @@ namespace Skylicht
 						(f32)transform.rotation.z,
 						(f32)transform.rotation.w);
 
-					entityAnim->Data.PositionKeys.push_back(pos);
-					entityAnim->Data.ScaleKeys.push_back(scale);
-					entityAnim->Data.RotationKeys.push_back(rot);
+					entityAnim->Data.Positions.Data.push_back(pos);
+					entityAnim->Data.Scales.Data.push_back(scale);
+					entityAnim->Data.Rotations.Data.push_back(rot);
 				}
 			}
 		}

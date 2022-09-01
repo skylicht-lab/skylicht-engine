@@ -29,9 +29,6 @@ namespace Skylicht
 {
 	CAnimationTrack::CAnimationTrack() :
 		m_data(NULL),
-		m_posHint(0),
-		m_scaleHint(0),
-		m_rotHint(0),
 		HaveAnimation(false)
 	{
 	}
@@ -61,61 +58,26 @@ namespace Skylicht
 		s32 foundScaleIndex = -1;
 		s32 foundRotationIndex = -1;
 
-		// get last hint
-		s32 positionHint = m_posHint;
-		s32 scaleHint = m_scaleHint;
-		s32 rotationHint = m_rotHint;
 
 #pragma region QueryPosition
-		s32 numPositionKey = data->PositionKeys.size();
-		CPositionKey* pPositionKey = data->PositionKeys.pointer();
+		u32 numPositionKey = data->Positions.size();
 
 		if (numPositionKey)
 		{
-			foundPositionIndex = -1;
-
-			// Test the Hints...
-			if (positionHint >= 0 && positionHint < numPositionKey)
-			{
-				// check this hint
-				if (positionHint > 0 && pPositionKey[positionHint].Frame >= frame && pPositionKey[positionHint - 1].Frame < frame)
-					foundPositionIndex = positionHint;
-				else if (positionHint + 1 < numPositionKey)
-				{
-					// check the next index
-					if (pPositionKey[positionHint + 1].Frame >= frame && pPositionKey[positionHint + 0].Frame < frame)
-					{
-						positionHint++;
-						foundPositionIndex = positionHint;
-					}
-				}
-			}
-
-			// The hint test failed, do a full scan...
-			if (foundPositionIndex == -1)
-			{
-				for (s32 i = 0; i < numPositionKey; ++i)
-				{
-					if (pPositionKey[i].Frame >= frame) // Keys should to be sorted by frame
-					{
-						foundPositionIndex = i;
-						positionHint = i;
-						break;
-					}
-				}
-			}
+			foundPositionIndex = data->Positions.getIndex(frame);
+			CPositionKey* pPositions = data->Positions.pointer();
 
 			// Do interpolation...
 			if (foundPositionIndex == 0)
 			{
-				position.X = pPositionKey[0].Value.X;
-				position.Y = pPositionKey[0].Value.Y;
-				position.Z = pPositionKey[0].Value.Z;
+				position.X = pPositions[0].Value.X;
+				position.Y = pPositions[0].Value.Y;
+				position.Z = pPositions[0].Value.Z;
 			}
 			else if (foundPositionIndex != -1)
 			{
-				const CPositionKey& KeyA = pPositionKey[foundPositionIndex];
-				const CPositionKey& KeyB = pPositionKey[foundPositionIndex - 1];
+				const CPositionKey& KeyA = pPositions[foundPositionIndex];
+				const CPositionKey& KeyB = pPositions[foundPositionIndex - 1];
 
 				const f32 fd1 = frame - KeyA.Frame;
 				const f32 fd2 = KeyB.Frame - frame;
@@ -129,79 +91,46 @@ namespace Skylicht
 			else if (foundPositionIndex == -1)
 			{
 				int key = numPositionKey - 1;
-				position.X = pPositionKey[key].Value.X;
-				position.Y = pPositionKey[key].Value.Y;
-				position.Z = pPositionKey[key].Value.Z;
+				position.X = pPositions[key].Value.X;
+				position.Y = pPositions[key].Value.Y;
+				position.Z = pPositions[key].Value.Z;
 			}
 		}
 		else
 		{
-			position.X = data->DefaultPos.X;
-			position.Y = data->DefaultPos.Y;
-			position.Z = data->DefaultPos.Z;
+			position.X = data->Positions.Default.X;
+			position.Y = data->Positions.Default.Y;
+			position.Z = data->Positions.Default.Z;
 		}
 
 #pragma endregion	
 
 
 #pragma region QueryScale
-		s32 numScaleKey = data->ScaleKeys.size();
-		CScaleKey* pScaleKey = data->ScaleKeys.pointer();
-
+		u32 numScaleKey = data->Scales.size();
 		if (numScaleKey)
 		{
-			foundScaleIndex = -1;
-
-			// Test the Hints...
-			if (scaleHint >= 0 && scaleHint < numScaleKey)
-			{
-				// check this hint
-				if (scaleHint > 0 && pScaleKey[scaleHint].Frame >= frame && pScaleKey[scaleHint - 1].Frame < frame)
-					foundScaleIndex = scaleHint;
-				else if (scaleHint + 1 < numScaleKey)
-				{
-					// check the next index
-					if (pScaleKey[scaleHint + 1].Frame >= frame && pScaleKey[scaleHint].Frame < frame)
-					{
-						scaleHint++;
-						foundScaleIndex = scaleHint;
-					}
-				}
-			}
-
-
-			// The hint test failed, do a full scan...
-			if (foundScaleIndex == -1)
-			{
-				for (s32 i = 0; i < numScaleKey; ++i)
-				{
-					if (pScaleKey[i].Frame >= frame) // Keys should to be sorted by frame
-					{
-						foundScaleIndex = i;
-						scaleHint = i;
-						break;
-					}
-				}
-			}
+			foundScaleIndex = data->Scales.getIndex(frame);
+			CScaleKey* pScale = data->Scales.pointer();
 
 			// Do interpolation...
 			if (foundScaleIndex == 0)
 			{
-				scale.X = pScaleKey[0].Value.X;
-				scale.Y = pScaleKey[0].Value.Y;
-				scale.Z = pScaleKey[0].Value.Z;
+				scale.X = pScale[0].Value.X;
+				scale.Y = pScale[0].Value.Y;
+				scale.Z = pScale[0].Value.Z;
 			}
 			else if (foundScaleIndex == -1)
 			{
 				int key = numScaleKey - 1;
-				scale.X = pScaleKey[key].Value.X;
-				scale.Y = pScaleKey[key].Value.Y;
-				scale.Z = pScaleKey[key].Value.Z;
+				scale.X = pScale[key].Value.X;
+				scale.Y = pScale[key].Value.Y;
+				scale.Z = pScale[key].Value.Z;
 			}
 			else
 			{
-				const CScaleKey& KeyA = pScaleKey[foundScaleIndex];
-				const CScaleKey& KeyB = pScaleKey[foundScaleIndex - 1];
+				const CScaleKey& KeyA = pScale[foundScaleIndex];
+				const CScaleKey& KeyB = pScale[foundScaleIndex - 1];
 
 				const f32 fd1 = frame - KeyA.Frame;
 				const f32 fd2 = KeyB.Frame - frame;
@@ -215,73 +144,41 @@ namespace Skylicht
 		}
 		else
 		{
-			scale.X = data->DefaultScale.X;
-			scale.Y = data->DefaultScale.Y;
-			scale.Z = data->DefaultScale.Z;
+			scale.X = data->Scales.Default.X;
+			scale.Y = data->Scales.Default.Y;
+			scale.Z = data->Scales.Default.Z;
 		}
 #pragma endregion
 
 
 #pragma region QueryRotation
-		s32 numRotKey = data->RotationKeys.size();
-		CRotationKey* pRotKey = data->RotationKeys.pointer();
+		s32 numRotKey = data->Rotations.size();
 
 		if (numRotKey)
 		{
-			foundRotationIndex = -1;
-
-			// Test the Hints...
-			if (rotationHint >= 0 && rotationHint < numRotKey)
-			{
-				// check this hint
-				if (rotationHint > 0 && pRotKey[rotationHint].Frame >= frame && pRotKey[rotationHint - 1].Frame < frame)
-					foundRotationIndex = rotationHint;
-				else if (rotationHint + 1 < numRotKey)
-				{
-					// check the next index
-					if (pRotKey[rotationHint + 1].Frame >= frame && pRotKey[rotationHint].Frame < frame)
-					{
-						rotationHint++;
-						foundRotationIndex = rotationHint;
-					}
-				}
-			}
-
-
-			// The hint test failed, do a full scan...
-			if (foundRotationIndex == -1)
-			{
-				for (s32 i = 0; i < numRotKey; ++i)
-				{
-					if (pRotKey[i].Frame >= frame) // Keys should be sorted by frame
-					{
-						foundRotationIndex = i;
-						rotationHint = i;
-						break;
-					}
-				}
-			}
+			foundRotationIndex = data->Rotations.getIndex(frame);
+			CRotationKey* pRotation = data->Rotations.pointer();
 
 			// Do interpolation...
 			if (foundRotationIndex == 0)
 			{
-				rotation.X = pRotKey[0].Value.X;
-				rotation.Y = pRotKey[0].Value.Y;
-				rotation.Z = pRotKey[0].Value.Z;
-				rotation.W = pRotKey[0].Value.W;
+				rotation.X = pRotation[0].Value.X;
+				rotation.Y = pRotation[0].Value.Y;
+				rotation.Z = pRotation[0].Value.Z;
+				rotation.W = pRotation[0].Value.W;
 			}
 			else if (foundRotationIndex == -1)
 			{
 				int key = numRotKey - 1;
-				rotation.X = pRotKey[key].Value.X;
-				rotation.Y = pRotKey[key].Value.Y;
-				rotation.Z = pRotKey[key].Value.Z;
-				rotation.W = pRotKey[key].Value.W;
+				rotation.X = pRotation[key].Value.X;
+				rotation.Y = pRotation[key].Value.Y;
+				rotation.Z = pRotation[key].Value.Z;
+				rotation.W = pRotation[key].Value.W;
 			}
 			else
 			{
-				const CRotationKey& KeyA = pRotKey[foundRotationIndex];
-				const CRotationKey& KeyB = pRotKey[foundRotationIndex - 1];
+				const CRotationKey& KeyA = pRotation[foundRotationIndex];
+				const CRotationKey& KeyB = pRotation[foundRotationIndex - 1];
 
 				const f32 fd1 = frame - KeyA.Frame;
 				const f32 fd2 = KeyB.Frame - frame;
@@ -292,17 +189,12 @@ namespace Skylicht
 		}
 		else
 		{
-			rotation.X = data->DefaultRot.X;
-			rotation.Y = data->DefaultRot.Y;
-			rotation.Z = data->DefaultRot.Z;
-			rotation.W = data->DefaultRot.W;
+			rotation.X = data->Rotations.Default.X;
+			rotation.Y = data->Rotations.Default.Y;
+			rotation.Z = data->Rotations.Default.Z;
+			rotation.W = data->Rotations.Default.W;
 		}
 #pragma endregion
-
-		// save hint
-		m_posHint = positionHint;
-		m_scaleHint = scaleHint;
-		m_rotHint = rotationHint;
 	}
 
 	void CAnimationTrack::quaternionSlerp(core::quaternion& result, core::quaternion q1, core::quaternion q2, float time)
