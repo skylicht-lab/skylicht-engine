@@ -148,23 +148,23 @@ namespace Skylicht
 
 					ufbx_transform transform = ufbx_evaluate_transform(&stack->anim, node, time);
 
-					CFrameData::SPositionKey pos;
-					CFrameData::SScaleKey scale;
-					CFrameData::SRotationKey rot;
+					CPositionKey pos;
+					CScaleKey scale;
+					CRotationKey rot;
 
-					pos.frame = scale.frame = rot.frame = (float)time;
+					pos.Frame = scale.Frame = rot.Frame = (float)time;
 
-					pos.position.set(
+					pos.Value.set(
 						(f32)transform.translation.x,
 						(f32)transform.translation.y,
 						(f32)transform.translation.z);
 
-					scale.scale.set(
+					scale.Value.set(
 						(f32)transform.scale.x,
 						(f32)transform.scale.y,
 						(f32)transform.scale.z);
 
-					rot.rotation.set(
+					rot.Value.set(
 						(f32)transform.rotation.x,
 						(f32)transform.rotation.y,
 						(f32)transform.rotation.z,

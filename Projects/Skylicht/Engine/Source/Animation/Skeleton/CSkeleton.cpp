@@ -166,11 +166,11 @@ namespace Skylicht
 				// get anim duration
 				float totalFrame = 0;
 				if (anim->Data.RotationKeys.size() > 0)
-					totalFrame = anim->Data.RotationKeys.getLast().frame;
+					totalFrame = anim->Data.RotationKeys.getLast().Frame;
 				else if (anim->Data.PositionKeys.size() > 0)
-					totalFrame = anim->Data.PositionKeys.getLast().frame;
+					totalFrame = anim->Data.PositionKeys.getLast().Frame;
 				else if (anim->Data.ScaleKeys.size() > 0)
-					totalFrame = anim->Data.ScaleKeys.getLast().frame;
+					totalFrame = anim->Data.ScaleKeys.getLast().Frame;
 
 				if (m_timeline.Duration < totalFrame)
 					m_timeline.Duration = totalFrame;

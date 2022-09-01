@@ -32,7 +32,7 @@ namespace Skylicht
 	struct SEntityAnim
 	{
 		std::string Name;
-		CFrameData Data;
+		CAnimationData Data;
 	};
 
 	class CAnimationClip

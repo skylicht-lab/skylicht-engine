@@ -40,17 +40,17 @@ namespace Skylicht
 	{
 	}
 
-	CFrameData* CAnimationTrack::getAnimData()
+	CAnimationData* CAnimationTrack::getAnimData()
 	{
 		return m_data;
 	}
 
 	void CAnimationTrack::getFrameData(f32 frame,
-		core::vector3df &position,
-		core::vector3df &scale,
-		core::quaternion &rotation)
+		core::vector3df& position,
+		core::vector3df& scale,
+		core::quaternion& rotation)
 	{
-		CFrameData *data = getAnimData();
+		CAnimationData* data = getAnimData();
 
 		if (data == NULL)
 		{
@@ -68,7 +68,7 @@ namespace Skylicht
 
 #pragma region QueryPosition
 		s32 numPositionKey = data->PositionKeys.size();
-		CFrameData::SPositionKey *pPositionKey = data->PositionKeys.pointer();
+		CPositionKey* pPositionKey = data->PositionKeys.pointer();
 
 		if (numPositionKey)
 		{
@@ -78,12 +78,12 @@ namespace Skylicht
 			if (positionHint >= 0 && positionHint < numPositionKey)
 			{
 				// check this hint
-				if (positionHint > 0 && pPositionKey[positionHint].frame >= frame && pPositionKey[positionHint - 1].frame < frame)
+				if (positionHint > 0 && pPositionKey[positionHint].Frame >= frame && pPositionKey[positionHint - 1].Frame < frame)
 					foundPositionIndex = positionHint;
 				else if (positionHint + 1 < numPositionKey)
 				{
 					// check the next index
-					if (pPositionKey[positionHint + 1].frame >= frame && pPositionKey[positionHint + 0].frame < frame)
+					if (pPositionKey[positionHint + 1].Frame >= frame && pPositionKey[positionHint + 0].Frame < frame)
 					{
 						positionHint++;
 						foundPositionIndex = positionHint;
@@ -96,7 +96,7 @@ namespace Skylicht
 			{
 				for (s32 i = 0; i < numPositionKey; ++i)
 				{
-					if (pPositionKey[i].frame >= frame) // Keys should to be sorted by frame
+					if (pPositionKey[i].Frame >= frame) // Keys should to be sorted by frame
 					{
 						foundPositionIndex = i;
 						positionHint = i;
@@ -108,30 +108,30 @@ namespace Skylicht
 			// Do interpolation...
 			if (foundPositionIndex == 0)
 			{
-				position.X = pPositionKey[0].position.X;
-				position.Y = pPositionKey[0].position.Y;
-				position.Z = pPositionKey[0].position.Z;
+				position.X = pPositionKey[0].Value.X;
+				position.Y = pPositionKey[0].Value.Y;
+				position.Z = pPositionKey[0].Value.Z;
 			}
 			else if (foundPositionIndex != -1)
 			{
-				const CFrameData::SPositionKey& KeyA = pPositionKey[foundPositionIndex];
-				const CFrameData::SPositionKey& KeyB = pPositionKey[foundPositionIndex - 1];
+				const CPositionKey& KeyA = pPositionKey[foundPositionIndex];
+				const CPositionKey& KeyB = pPositionKey[foundPositionIndex - 1];
 
-				const f32 fd1 = frame - KeyA.frame;
-				const f32 fd2 = KeyB.frame - frame;
+				const f32 fd1 = frame - KeyA.Frame;
+				const f32 fd2 = KeyB.Frame - frame;
 				const f32 fd = fd1 + fd2;
 
 				// inline func
-				position.X = ((KeyB.position.X - KeyA.position.X) / fd)*fd1 + KeyA.position.X;
-				position.Y = ((KeyB.position.Y - KeyA.position.Y) / fd)*fd1 + KeyA.position.Y;
-				position.Z = ((KeyB.position.Z - KeyA.position.Z) / fd)*fd1 + KeyA.position.Z;
+				position.X = ((KeyB.Value.X - KeyA.Value.X) / fd) * fd1 + KeyA.Value.X;
+				position.Y = ((KeyB.Value.Y - KeyA.Value.Y) / fd) * fd1 + KeyA.Value.Y;
+				position.Z = ((KeyB.Value.Z - KeyA.Value.Z) / fd) * fd1 + KeyA.Value.Z;
 			}
 			else if (foundPositionIndex == -1)
 			{
 				int key = numPositionKey - 1;
-				position.X = pPositionKey[key].position.X;
-				position.Y = pPositionKey[key].position.Y;
-				position.Z = pPositionKey[key].position.Z;
+				position.X = pPositionKey[key].Value.X;
+				position.Y = pPositionKey[key].Value.Y;
+				position.Z = pPositionKey[key].Value.Z;
 			}
 		}
 		else
@@ -146,7 +146,7 @@ namespace Skylicht
 
 #pragma region QueryScale
 		s32 numScaleKey = data->ScaleKeys.size();
-		CFrameData::SScaleKey *pScaleKey = data->ScaleKeys.pointer();
+		CScaleKey* pScaleKey = data->ScaleKeys.pointer();
 
 		if (numScaleKey)
 		{
@@ -156,12 +156,12 @@ namespace Skylicht
 			if (scaleHint >= 0 && scaleHint < numScaleKey)
 			{
 				// check this hint
-				if (scaleHint > 0 && pScaleKey[scaleHint].frame >= frame && pScaleKey[scaleHint - 1].frame < frame)
+				if (scaleHint > 0 && pScaleKey[scaleHint].Frame >= frame && pScaleKey[scaleHint - 1].Frame < frame)
 					foundScaleIndex = scaleHint;
 				else if (scaleHint + 1 < numScaleKey)
 				{
 					// check the next index
-					if (pScaleKey[scaleHint + 1].frame >= frame && pScaleKey[scaleHint].frame < frame)
+					if (pScaleKey[scaleHint + 1].Frame >= frame && pScaleKey[scaleHint].Frame < frame)
 					{
 						scaleHint++;
 						foundScaleIndex = scaleHint;
@@ -175,7 +175,7 @@ namespace Skylicht
 			{
 				for (s32 i = 0; i < numScaleKey; ++i)
 				{
-					if (pScaleKey[i].frame >= frame) // Keys should to be sorted by frame
+					if (pScaleKey[i].Frame >= frame) // Keys should to be sorted by frame
 					{
 						foundScaleIndex = i;
 						scaleHint = i;
@@ -187,30 +187,30 @@ namespace Skylicht
 			// Do interpolation...
 			if (foundScaleIndex == 0)
 			{
-				scale.X = pScaleKey[0].scale.X;
-				scale.Y = pScaleKey[0].scale.Y;
-				scale.Z = pScaleKey[0].scale.Z;
+				scale.X = pScaleKey[0].Value.X;
+				scale.Y = pScaleKey[0].Value.Y;
+				scale.Z = pScaleKey[0].Value.Z;
 			}
 			else if (foundScaleIndex == -1)
 			{
 				int key = numScaleKey - 1;
-				scale.X = pScaleKey[key].scale.X;
-				scale.Y = pScaleKey[key].scale.Y;
-				scale.Z = pScaleKey[key].scale.Z;
+				scale.X = pScaleKey[key].Value.X;
+				scale.Y = pScaleKey[key].Value.Y;
+				scale.Z = pScaleKey[key].Value.Z;
 			}
 			else
 			{
-				const CFrameData::SScaleKey& KeyA = pScaleKey[foundScaleIndex];
-				const CFrameData::SScaleKey& KeyB = pScaleKey[foundScaleIndex - 1];
+				const CScaleKey& KeyA = pScaleKey[foundScaleIndex];
+				const CScaleKey& KeyB = pScaleKey[foundScaleIndex - 1];
 
-				const f32 fd1 = frame - KeyA.frame;
-				const f32 fd2 = KeyB.frame - frame;
+				const f32 fd1 = frame - KeyA.Frame;
+				const f32 fd2 = KeyB.Frame - frame;
 				const f32 fd = fd1 + fd2;
 
 				// inline func
-				scale.X = ((KeyB.scale.X - KeyA.scale.X) / fd)*fd1 + KeyA.scale.X;
-				scale.Y = ((KeyB.scale.Y - KeyA.scale.Y) / fd)*fd1 + KeyA.scale.Y;
-				scale.Z = ((KeyB.scale.Z - KeyA.scale.Z) / fd)*fd1 + KeyA.scale.Z;
+				scale.X = ((KeyB.Value.X - KeyA.Value.X) / fd) * fd1 + KeyA.Value.X;
+				scale.Y = ((KeyB.Value.Y - KeyA.Value.Y) / fd) * fd1 + KeyA.Value.Y;
+				scale.Z = ((KeyB.Value.Z - KeyA.Value.Z) / fd) * fd1 + KeyA.Value.Z;
 			}
 		}
 		else
@@ -224,7 +224,7 @@ namespace Skylicht
 
 #pragma region QueryRotation
 		s32 numRotKey = data->RotationKeys.size();
-		CFrameData::SRotationKey *pRotKey = data->RotationKeys.pointer();
+		CRotationKey* pRotKey = data->RotationKeys.pointer();
 
 		if (numRotKey)
 		{
@@ -234,12 +234,12 @@ namespace Skylicht
 			if (rotationHint >= 0 && rotationHint < numRotKey)
 			{
 				// check this hint
-				if (rotationHint > 0 && pRotKey[rotationHint].frame >= frame && pRotKey[rotationHint - 1].frame < frame)
+				if (rotationHint > 0 && pRotKey[rotationHint].Frame >= frame && pRotKey[rotationHint - 1].Frame < frame)
 					foundRotationIndex = rotationHint;
 				else if (rotationHint + 1 < numRotKey)
 				{
 					// check the next index
-					if (pRotKey[rotationHint + 1].frame >= frame && pRotKey[rotationHint].frame < frame)
+					if (pRotKey[rotationHint + 1].Frame >= frame && pRotKey[rotationHint].Frame < frame)
 					{
 						rotationHint++;
 						foundRotationIndex = rotationHint;
@@ -253,7 +253,7 @@ namespace Skylicht
 			{
 				for (s32 i = 0; i < numRotKey; ++i)
 				{
-					if (pRotKey[i].frame >= frame) // Keys should be sorted by frame
+					if (pRotKey[i].Frame >= frame) // Keys should be sorted by frame
 					{
 						foundRotationIndex = i;
 						rotationHint = i;
@@ -265,29 +265,29 @@ namespace Skylicht
 			// Do interpolation...
 			if (foundRotationIndex == 0)
 			{
-				rotation.X = pRotKey[0].rotation.X;
-				rotation.Y = pRotKey[0].rotation.Y;
-				rotation.Z = pRotKey[0].rotation.Z;
-				rotation.W = pRotKey[0].rotation.W;
+				rotation.X = pRotKey[0].Value.X;
+				rotation.Y = pRotKey[0].Value.Y;
+				rotation.Z = pRotKey[0].Value.Z;
+				rotation.W = pRotKey[0].Value.W;
 			}
 			else if (foundRotationIndex == -1)
 			{
 				int key = numRotKey - 1;
-				rotation.X = pRotKey[key].rotation.X;
-				rotation.Y = pRotKey[key].rotation.Y;
-				rotation.Z = pRotKey[key].rotation.Z;
-				rotation.W = pRotKey[key].rotation.W;
+				rotation.X = pRotKey[key].Value.X;
+				rotation.Y = pRotKey[key].Value.Y;
+				rotation.Z = pRotKey[key].Value.Z;
+				rotation.W = pRotKey[key].Value.W;
 			}
 			else
 			{
-				const CFrameData::SRotationKey& KeyA = pRotKey[foundRotationIndex];
-				const CFrameData::SRotationKey& KeyB = pRotKey[foundRotationIndex - 1];
+				const CRotationKey& KeyA = pRotKey[foundRotationIndex];
+				const CRotationKey& KeyB = pRotKey[foundRotationIndex - 1];
 
-				const f32 fd1 = frame - KeyA.frame;
-				const f32 fd2 = KeyB.frame - frame;
+				const f32 fd1 = frame - KeyA.Frame;
+				const f32 fd2 = KeyB.Frame - frame;
 				const f32 t = fd1 / (fd1 + fd2);
 
-				quaternionSlerp(rotation, KeyA.rotation, KeyB.rotation, t);
+				quaternionSlerp(rotation, KeyA.Value, KeyB.Value, t);
 			}
 		}
 		else
@@ -350,9 +350,9 @@ namespace Skylicht
 		}
 
 		// inline func
-		result.X = q1.X*scale + q2.X*invscale;
-		result.Y = q1.Y*scale + q2.Y*invscale;
-		result.Z = q1.Z*scale + q2.Z*invscale;
-		result.W = q1.W*scale + q2.W*invscale;
+		result.X = q1.X * scale + q2.X * invscale;
+		result.Y = q1.Y * scale + q2.Y * invscale;
+		result.Z = q1.Z * scale + q2.Z * invscale;
+		result.W = q1.W * scale + q2.W * invscale;
 	}
 }
