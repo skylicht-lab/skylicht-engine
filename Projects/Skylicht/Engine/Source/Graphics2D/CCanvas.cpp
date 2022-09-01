@@ -97,8 +97,8 @@ namespace Skylicht
 			if (entity->isVisible() == false)
 				continue;
 
+			// update position layout
 			entity->update(camera);
-			entity->calcAbsoluteTransform();
 
 			// apply mask
 			entity->applyCurrentMask(entity->getMask());
