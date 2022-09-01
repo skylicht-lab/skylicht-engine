@@ -111,11 +111,11 @@ namespace Skylicht
 		if (duration < 0.0f)
 			duration = 0.0f;
 
-		bool updateFrameData = false;
+		bool updateAnimationData = false;
 		if (m_clip != clip)
 		{
 			m_clip = clip;
-			updateFrameData = true;
+			updateAnimationData = true;
 		}
 
 		m_timeline.From = from;
@@ -124,8 +124,8 @@ namespace Skylicht
 		m_timeline.Loop = loop;
 		m_timeline.Pause = pause;
 
-		if (updateFrameData)
-			setFrameData();
+		if (updateAnimationData)
+			setAnimationData();
 	}
 
 	void CSkeleton::setAnimation(CAnimationClip* clip, bool loop, bool pause)
@@ -144,12 +144,12 @@ namespace Skylicht
 		m_timeline.Pause = pause;
 
 		if (updateFrameData)
-			setFrameData();
+			setAnimationData();
 
 		m_timeline.To = m_timeline.Duration;
 	}
 
-	void CSkeleton::setFrameData()
+	void CSkeleton::setAnimationData()
 	{
 		for (CAnimationTransformData*& entity : m_entitiesData)
 		{
@@ -161,16 +161,12 @@ namespace Skylicht
 			{
 				// apply new frame data
 				track.Name = m_clip->AnimName;
-				track.setFrameData(&anim->Data);
+				track.setAnimationData(&anim->Data);
 
 				// get anim duration
-				float totalFrame = 0;
-				if (anim->Data.RotationKeys.size() > 0)
-					totalFrame = anim->Data.RotationKeys.getLast().Frame;
-				else if (anim->Data.PositionKeys.size() > 0)
-					totalFrame = anim->Data.PositionKeys.getLast().Frame;
-				else if (anim->Data.ScaleKeys.size() > 0)
-					totalFrame = anim->Data.ScaleKeys.getLast().Frame;
+				float totalFrame = anim->Data.Positions.getLastFrame();
+				totalFrame = core::max_(totalFrame, anim->Data.Rotations.getLastFrame());
+				totalFrame = core::max_(totalFrame, anim->Data.Scales.getLastFrame());
 
 				if (m_timeline.Duration < totalFrame)
 					m_timeline.Duration = totalFrame;

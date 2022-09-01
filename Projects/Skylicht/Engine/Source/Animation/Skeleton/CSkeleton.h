@@ -119,7 +119,7 @@ namespace Skylicht
 
 	protected:
 
-		void setFrameData();
+		void setAnimationData();
 
 		void updateTrackKeyFrame();
 
