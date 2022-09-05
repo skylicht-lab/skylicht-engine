@@ -78,8 +78,6 @@ namespace Skylicht
 		};
 
 	protected:
-		int m_level;
-
 		CGUIElement* m_parent;
 		std::vector<CGUIElement*> m_childs;
 
@@ -101,8 +99,8 @@ namespace Skylicht
 		core::vector3df	m_scale;
 		core::vector3df	m_rotation;
 
-		core::matrix4 m_relativeTransform;
-		core::matrix4 m_absoluteTransform;
+		CEntity* m_entity;
+		CWorldTransformData* m_transform;
 
 		EGUIVerticalAlign m_vertical;
 		EGUIHorizontalAlign m_horizontal;
@@ -151,11 +149,6 @@ namespace Skylicht
 		inline std::vector<CGUIElement*>& getChilds()
 		{
 			return m_childs;
-		}
-
-		inline int getLevel()
-		{
-			return m_level;
 		}
 
 		inline void setColor(const SColor& c)
@@ -318,11 +311,11 @@ namespace Skylicht
 
 		virtual void layout(const core::rectf& parentRect);
 
-		const core::matrix4& getRelativeTransform(bool forceRecalc = false);
+		const core::matrix4& getRelativeTransform();
 
 		const core::matrix4& getAbsoluteTransform()
 		{
-			return m_absoluteTransform;
+			return m_transform->World;
 		}
 
 		void calcAbsoluteTransform();
