@@ -40,6 +40,8 @@ namespace Skylicht
 		// default rect is fullscreen
 		m_rect = core::rectf(0.0f, 0.0f, w, h);
 
+		m_entityMgr = new CEntityPrefab();
+
 		// add root
 		m_root = new CGUIElement(this, NULL, m_rect);
 		m_root->setDock(CGUIElement::DockFill);
@@ -52,6 +54,8 @@ namespace Skylicht
 	{
 		// remove all entity gui
 		delete m_root;
+
+		delete m_entityMgr;
 
 		// remove this canvas
 		CGraphics2D::getInstance()->removeCanvas(this);

@@ -184,6 +184,6 @@ namespace Skylicht
 	void CGUIRoundedRect::render(CCamera *camera)
 	{
 		CGraphics2D *g = CGraphics2D::getInstance();
-		g->addExternalBuffer(m_buffer, m_absoluteTransform, m_shaderID);
+		g->addExternalBuffer(m_buffer, m_transform->World, m_shaderID);
 	}
 }
