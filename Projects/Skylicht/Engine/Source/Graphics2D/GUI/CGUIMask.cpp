@@ -60,8 +60,8 @@ namespace Skylicht
 			core::vector3df topLeft(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);
 			core::vector3df bottomRight(r.LowerRightCorner.X, r.LowerRightCorner.Y, z);
 
-			m_absoluteTransform.transformVect(topLeft);
-			m_absoluteTransform.transformVect(bottomRight);
+			m_transform->World.transformVect(topLeft);
+			m_transform->World.transformVect(bottomRight);
 
 			CGraphics2D* g = CGraphics2D::getInstance();
 

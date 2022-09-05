@@ -486,9 +486,9 @@ namespace Skylicht
 
 			// render text with base color if format = 0
 			if (format == 0)
-				g->addModuleBatch(moduleOffset, m_color, m_absoluteTransform, (float)x, (float)y, m_shaderID, m_material);
+				g->addModuleBatch(moduleOffset, m_color, m_transform->World, (float)x, (float)y, m_shaderID, m_material);
 			else
-				g->addModuleBatch(moduleOffset, m_colorFormat[format], m_absoluteTransform, (float)x, (float)y, m_shaderID, m_material);
+				g->addModuleBatch(moduleOffset, m_colorFormat[format], m_transform->World, (float)x, (float)y, m_shaderID, m_material);
 
 			if (moduleOffset->Character == ' ')
 				x += ((int)moduleOffset->XAdvance + m_charSpacePadding);

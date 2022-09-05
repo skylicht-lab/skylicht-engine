@@ -51,7 +51,7 @@ namespace Skylicht
 	{
 		if (m_image != NULL)
 		{
-			CGraphics2D::getInstance()->addImageBatch(m_image, m_rect, m_sourceRect, m_color, m_absoluteTransform, m_shaderID, m_material, m_pivot.X, m_pivot.Y);
+			CGraphics2D::getInstance()->addImageBatch(m_image, m_rect, m_sourceRect, m_color, m_transform->World, m_shaderID, m_material, m_pivot.X, m_pivot.Y);
 		}
 	}
 

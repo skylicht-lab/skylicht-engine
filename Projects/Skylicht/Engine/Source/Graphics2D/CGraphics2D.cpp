@@ -235,7 +235,7 @@ namespace Skylicht
 			else
 			{
 				// world is real transform
-				world = root->getRelativeTransform(true);
+				world = root->getRelativeTransform();
 				driver->setTransform(video::ETS_WORLD, world);
 			}
 

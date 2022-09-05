@@ -45,12 +45,12 @@ namespace Skylicht
 		m_applyCurrentMask(NULL),
 		m_material(NULL)
 	{
-		setParent(parent);
+		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
+		m_entity = entityPrefab->createEntity();
+		entityPrefab->addTransformData(m_entity, NULL, core::IdentityMatrix, "");
+		m_transform = GET_ENTITY_DATA(m_entity, CWorldTransformData);
 
-		if (parent)
-			m_level = parent->getLevel() + 1;
-		else
-			m_level = 0;
+		setParent(parent);
 
 		m_rect = parent->getRect();
 		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
@@ -71,12 +71,12 @@ namespace Skylicht
 		m_applyCurrentMask(NULL),
 		m_material(NULL)
 	{
-		setParent(parent);
+		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
+		m_entity = entityPrefab->createEntity();
+		entityPrefab->addTransformData(m_entity, NULL, core::IdentityMatrix, "");
+		m_transform = GET_ENTITY_DATA(m_entity, CWorldTransformData);
 
-		if (parent)
-			m_level = parent->getLevel() + 1;
-		else
-			m_level = 0;
+		setParent(parent);
 
 		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
@@ -84,6 +84,9 @@ namespace Skylicht
 	CGUIElement::~CGUIElement()
 	{
 		removeAllChilds();
+
+		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
+		entityPrefab->removeEntity(m_entity);
 	}
 
 	void CGUIElement::setParent(CGUIElement* parent)
@@ -93,8 +96,17 @@ namespace Skylicht
 
 		m_parent = parent;
 
+		CEntityPrefab* entityMgr = m_canvas->getEntityManager();
+
 		if (m_parent)
+		{
 			m_parent->m_childs.push_back(this);
+			entityMgr->changeParent(m_entity, m_parent->m_entity);
+		}
+		else
+		{
+			entityMgr->changeParent(m_entity, NULL);
+		}
 	}
 
 	bool CGUIElement::removeChild(CGUIElement* child)
@@ -244,36 +256,34 @@ namespace Skylicht
 		m_position = m_transformPosition;
 	}
 
-	const core::matrix4& CGUIElement::getRelativeTransform(bool forceRecalc)
+	const core::matrix4& CGUIElement::getRelativeTransform()
 	{
-		// if (forceRecalc == true)
-		{
-			m_relativeTransform.makeIdentity();
-			m_relativeTransform.setRotationDegrees(m_rotation);
+		m_transform->Relative.makeIdentity();
+		m_transform->Relative.setRotationDegrees(m_rotation);
 
-			f32* m = m_relativeTransform.pointer();
+		f32* m = m_transform->Relative.pointer();
 
-			m[0] *= m_scale.X;
-			m[1] *= m_scale.X;
-			m[2] *= m_scale.X;
-			m[3] *= m_scale.X;
+		m[0] *= m_scale.X;
+		m[1] *= m_scale.X;
+		m[2] *= m_scale.X;
+		m[3] *= m_scale.X;
 
-			m[4] *= m_scale.Y;
-			m[5] *= m_scale.Y;
-			m[6] *= m_scale.Y;
-			m[7] *= m_scale.Y;
+		m[4] *= m_scale.Y;
+		m[5] *= m_scale.Y;
+		m[6] *= m_scale.Y;
+		m[7] *= m_scale.Y;
 
-			m[8] *= m_scale.Z;
-			m[9] *= m_scale.Z;
-			m[10] *= m_scale.Z;
-			m[11] *= m_scale.Z;
+		m[8] *= m_scale.Z;
+		m[9] *= m_scale.Z;
+		m[10] *= m_scale.Z;
+		m[11] *= m_scale.Z;
 
-			m[12] = m_transformPosition.X;
-			m[13] = m_transformPosition.Y;
-			m[14] = m_transformPosition.Z;
-		}
+		m[12] = m_transformPosition.X;
+		m[13] = m_transformPosition.Y;
+		m[14] = m_transformPosition.Z;
 
-		return m_relativeTransform;
+
+		return m_transform->Relative;
 	}
 
 	void CGUIElement::calcAbsoluteTransform()
@@ -282,11 +292,11 @@ namespace Skylicht
 		{
 			// alway identity at root transform
 			// that fix for canvas billboard
-			m_absoluteTransform = core::IdentityMatrix;
+			m_transform->World = core::IdentityMatrix;
 		}
 		else
 		{
-			m_absoluteTransform.setbyproduct_nocheck(m_parent->getAbsoluteTransform(), getRelativeTransform());
+			m_transform->World.setbyproduct_nocheck(m_parent->getAbsoluteTransform(), getRelativeTransform());
 		}
 	}
 }
