@@ -53,6 +53,12 @@ namespace Skylicht
 
 	protected:
 
+		void updateLayout();
+
+		void layoutNoDock(CGUITransformData* t, CGUIAlignData* a, const core::rectf& parentRect);
+
+		void layoutDock(CGUITransformData* t, CGUIAlignData* a, const core::rectf& parentRect);
+
 		void updateTransform();
 
 	};

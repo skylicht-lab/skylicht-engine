@@ -2,32 +2,32 @@
 #include "SkylichtEngine.h"
 #include "CButton.h"
 
-CButton::CButton(CGUIElement *element, SFrame* frame, const char *label, CGlyphFont *font, const SColor& textColor) :
+CButton::CButton(CGUIElement* element, SFrame* frame, const char* label, CGlyphFont* font, const SColor& textColor) :
 	m_frame(frame),
 	m_label(label),
 	m_textColor(textColor),
 	m_element(element),
 	m_mouseHold(false)
 {
-	CCanvas *canvas = element->getCanvas();
+	CCanvas* canvas = element->getCanvas();
 	m_backround = canvas->createSprite(element, frame);
 
 	m_text = canvas->createText(element, font);
 	m_text->setText(m_label.c_str());
-	m_text->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+	m_text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	m_text->setColor(m_textColor);
 
 	CEventManager::getInstance()->registerEvent("CButton", this);
 }
 
-CButton::CButton(CGUIElement *element, SFrame* frame) :
+CButton::CButton(CGUIElement* element, SFrame* frame) :
 	m_frame(frame),
 	m_text(NULL),
 	m_textColor(255, 255, 255, 255),
 	m_element(element),
 	m_mouseHold(false)
 {
-	CCanvas *canvas = element->getCanvas();
+	CCanvas* canvas = element->getCanvas();
 	m_backround = canvas->createSprite(element, frame);
 
 	CEventManager::getInstance()->registerEvent("CButton", this);
@@ -46,10 +46,10 @@ bool CButton::OnEvent(const SEvent& event)
 	if (event.EventType == EET_MOUSE_INPUT_EVENT)
 	{
 		// get current canvas
-		CCanvas *canvas = m_element->getCanvas();
+		CCanvas* canvas = m_element->getCanvas();
 
 		// get last camera, that render this button
-		CCamera *camera = canvas->getRenderCamera();
+		CCamera* camera = canvas->getRenderCamera();
 		if (camera == NULL)
 			return false;
 
@@ -74,7 +74,7 @@ bool CButton::OnEvent(const SEvent& event)
 		for (int i = 0; i < 4; i++)
 		{
 			// get real 3d position
-			worldElementTransform.transformVect(p[i]);			
+			worldElementTransform.transformVect(p[i]);
 
 			// project to 2d screen
 			CProjective::getScreenCoordinatesFrom3DPosition(camera, p[i], p2d[i].X, p2d[i].Y, vp.getWidth(), vp.getHeight());

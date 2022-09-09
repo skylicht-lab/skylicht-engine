@@ -31,8 +31,8 @@ namespace Skylicht
 {
 	CGUIText::CGUIText(CCanvas* canvas, CGUIElement* parent, IFont* font) :
 		CGUIElement(canvas, parent),
-		TextVertical(Top),
-		TextHorizontal(Left),
+		TextVertical(EGUIVerticalAlign::Top),
+		TextHorizontal(EGUIHorizontalAlign::Left),
 		m_multiLine(true),
 		m_centerRotate(false),
 		m_charPadding(0),
@@ -46,8 +46,8 @@ namespace Skylicht
 
 	CGUIText::CGUIText(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, IFont* font) :
 		CGUIElement(canvas, parent, rect),
-		TextVertical(Top),
-		TextHorizontal(Left),
+		TextVertical(EGUIVerticalAlign::Top),
+		TextHorizontal(EGUIHorizontalAlign::Left),
 		m_multiLine(true),
 		m_centerRotate(false),
 		m_charPadding(0),
@@ -425,9 +425,9 @@ namespace Skylicht
 		int y = 0;
 
 		// calc text algin vertial
-		if (TextVertical == CGUIElement::Middle)
+		if (TextVertical == EGUIVerticalAlign::Middle)
 			y = ((int)getRect().getHeight() - textHeight - m_textOffsetY) / 2;
-		else if (TextVertical == CGUIElement::Bottom)
+		else if (TextVertical == EGUIVerticalAlign::Bottom)
 			y = (int)getRect().getHeight() - textHeight;
 
 		if (m_centerRotate == true)
@@ -463,9 +463,9 @@ namespace Skylicht
 		}
 
 		// text align
-		if (TextHorizontal == CGUIElement::Center)
+		if (TextHorizontal == EGUIHorizontalAlign::Center)
 			x = ((int)getRect().getWidth() - stringWidth) / 2;
-		else if (TextHorizontal == CGUIElement::Right)
+		else if (TextHorizontal == EGUIHorizontalAlign::Right)
 			x = (int)getRect().getWidth() - stringWidth;
 
 		if (m_centerRotate == true)

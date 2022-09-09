@@ -28,12 +28,60 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	enum class EGUIVerticalAlign
+	{
+		Top,
+		Middle,
+		Bottom
+	};
+
+	enum class EGUIHorizontalAlign
+	{
+		Left,
+		Center,
+		Right
+	};
+
+	enum class EGUIDock
+	{
+		NoDock,
+		DockLeft,
+		DockRight,
+		DockTop,
+		DockBottom,
+		DockFill
+	};
+
+	struct SMargin
+	{
+		float Left;
+		float Top;
+		float Right;
+		float Bottom;
+
+		SMargin()
+		{
+			Left = 0.0f;
+			Top = 0.0f;
+			Right = 0.0f;
+			Bottom = 0.0f;
+		}
+	};
+
 	class CGUIAlignData : public IEntityData
 	{
 		friend class CGUILayoutSystem;
 
 	public:
 		DECLARE_DATA_TYPE_INDEX;
+
+		EGUIDock Dock;
+
+		SMargin Margin;
+
+		EGUIVerticalAlign Vertical;
+
+		EGUIHorizontalAlign Horizontal;
 
 	public:
 		CGUIAlignData();

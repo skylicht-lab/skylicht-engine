@@ -29,7 +29,10 @@ namespace Skylicht
 {
 	IMPLEMENT_DATA_TYPE_INDEX(CGUIAlignData);
 
-	CGUIAlignData::CGUIAlignData()
+	CGUIAlignData::CGUIAlignData() :
+		Vertical(EGUIVerticalAlign::Top),
+		Horizontal(EGUIHorizontalAlign::Left),
+		Dock(EGUIDock::NoDock)
 	{
 
 	}
