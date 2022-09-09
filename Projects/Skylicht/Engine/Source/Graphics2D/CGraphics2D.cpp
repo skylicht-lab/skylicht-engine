@@ -214,6 +214,15 @@ namespace Skylicht
 
 			CGUIElement* root = canvas->getRootElement();
 
+			// set screensize for root
+			core::dimension2du s = getScreenSize();
+			float w = (float)s.Width;
+			float h = (float)s.Height;
+			root->setRect(core::rectf(0.0f, 0.0f, w, h));
+
+			// update canvas layout, position...
+			canvas->updateEntities();
+
 			core::matrix4 world;
 
 			if (canvas->isEnable3DBillboard() == true && camera->getProjectionType() != CCamera::OrthoUI)
