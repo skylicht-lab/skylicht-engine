@@ -80,7 +80,7 @@ namespace Skylicht
 	{
 		for (CCanvas* c : m_canvas)
 		{
-			c->layout();
+			c->onResize();
 		}
 	}
 

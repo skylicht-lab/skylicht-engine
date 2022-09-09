@@ -27,6 +27,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Camera/CCamera.h"
 #include "Material/CMaterial.h"
 
+#include "Graphics2D/EntityData/CGUITransformData.h"
+#include "Graphics2D/EntityData/CGUIAlignData.h"
+
 namespace Skylicht
 {
 	class CCanvas;
@@ -61,14 +64,14 @@ namespace Skylicht
 			DockFill
 		};
 
-		struct SRect
+		struct SMargin
 		{
 			float Left;
 			float Top;
 			float Right;
 			float Bottom;
 
-			SRect()
+			SMargin()
 			{
 				Left = 0.0f;
 				Top = 0.0f;
@@ -86,21 +89,17 @@ namespace Skylicht
 		CGUIMask* m_mask;
 		CGUIMask* m_applyCurrentMask;
 
-		core::rectf m_rect;
-
 		EGUIDock m_dock;
-		SRect m_margin;
+
+		SMargin m_margin;
 
 		bool m_visible;
 
-		core::vector3df m_transformPosition;
-
-		core::vector3df	m_position;
-		core::vector3df	m_scale;
-		core::vector3df	m_rotation;
-
 		CEntity* m_entity;
+
 		CWorldTransformData* m_transform;
+		CGUITransformData* m_guiTransform;
+		CGUIAlignData* m_guiAlign;
 
 		EGUIVerticalAlign m_vertical;
 		EGUIHorizontalAlign m_horizontal;
@@ -163,12 +162,17 @@ namespace Skylicht
 
 		inline float getHeight()
 		{
-			return m_rect.getHeight();
+			return m_guiTransform->getHeight();
 		}
 
 		inline float getWidth()
 		{
-			return m_rect.getWidth();
+			return m_guiTransform->getWidth();
+		}
+
+		inline const core::rectf& getRect()
+		{
+			return m_guiTransform->getRect();
 		}
 
 		inline void setDock(EGUIDock dock)
@@ -181,17 +185,12 @@ namespace Skylicht
 			return m_dock;
 		}
 
-		inline core::rectf& getRect()
-		{
-			return m_rect;
-		}
-
-		inline const SRect& getMargin()
+		inline const SMargin& getMargin()
 		{
 			return m_margin;
 		}
 
-		inline void setMargin(const SRect& m)
+		inline void setMargin(const SMargin& m)
 		{
 			m_margin = m;
 		}
@@ -206,37 +205,37 @@ namespace Skylicht
 
 		inline void setRect(const core::rectf& r)
 		{
-			m_rect = r;
+			m_guiTransform->setRect(r);
 		}
 
 		inline const core::vector3df& getPosition()
 		{
-			return m_position;
+			return m_guiTransform->getPosition();
 		}
 
 		inline void setPosition(const core::vector3df& v)
 		{
-			m_position = v;
+			m_guiTransform->setPosition(v);
 		}
 
 		inline const core::vector3df& getScale()
 		{
-			return m_scale;
+			return m_guiTransform->getScale();
 		}
 
 		inline void setScale(const core::vector3df& v)
 		{
-			m_scale = v;
+			m_guiTransform->setScale(v);
 		}
 
 		inline const core::vector3df& getRotation()
 		{
-			return m_rotation;
+			return m_guiTransform->getRotation();
 		}
 
 		inline void setRotation(const core::vector3df& v)
 		{
-			m_rotation = v;
+			m_guiTransform->setRotation(v);
 		}
 
 		inline EGUIVerticalAlign getVerticalAlign()
@@ -308,8 +307,6 @@ namespace Skylicht
 		virtual void update(CCamera* camera);
 
 		virtual void render(CCamera* camera);
-
-		virtual void layout(const core::rectf& parentRect);
 
 		const core::matrix4& getRelativeTransform();
 
