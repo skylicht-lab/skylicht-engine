@@ -386,7 +386,7 @@ namespace Skylicht
 			if (m_multiLine == true)
 			{
 				// split to multi line
-				splitText(m_arrayCharRender, m_arrayCharFormat, (int)m_rect.getWidth());
+				splitText(m_arrayCharRender, m_arrayCharFormat, (int)getRect().getWidth());
 			}
 			else
 			{
@@ -426,9 +426,9 @@ namespace Skylicht
 
 		// calc text algin vertial
 		if (TextVertical == CGUIElement::Middle)
-			y = ((int)m_rect.getHeight() - textHeight - m_textOffsetY) / 2;
+			y = ((int)getRect().getHeight() - textHeight - m_textOffsetY) / 2;
 		else if (TextVertical == CGUIElement::Bottom)
-			y = (int)m_rect.getHeight() - textHeight;
+			y = (int)getRect().getHeight() - textHeight;
 
 		if (m_centerRotate == true)
 			y = -textHeight / 2;
@@ -464,9 +464,9 @@ namespace Skylicht
 
 		// text align
 		if (TextHorizontal == CGUIElement::Center)
-			x = ((int)m_rect.getWidth() - stringWidth) / 2;
+			x = ((int)getRect().getWidth() - stringWidth) / 2;
 		else if (TextHorizontal == CGUIElement::Right)
-			x = (int)m_rect.getWidth() - stringWidth;
+			x = (int)getRect().getWidth() - stringWidth;
 
 		if (m_centerRotate == true)
 			x = -stringWidth / 2;

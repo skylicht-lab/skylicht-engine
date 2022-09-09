@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,43 +23,66 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGUIImage.h"
-#include "Graphics2D/CGraphics2D.h"
+#include "CGUILayoutSystem.h"
 
 namespace Skylicht
 {
-	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent) :
-		CGUIElement(canvas, parent),
-		m_image(NULL)
+	CGUILayoutSystem::CGUILayoutSystem()
 	{
 
 	}
 
-	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
-		CGUIElement(canvas, parent, rect),
-		m_image(NULL)
+	CGUILayoutSystem::~CGUILayoutSystem()
 	{
 
 	}
 
-	CGUIImage::~CGUIImage()
+	void CGUILayoutSystem::beginQuery(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CGUIImage::render(CCamera* camera)
+	void CGUILayoutSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int count)
 	{
-		if (m_image != NULL)
+		for (int i = 0; i < count; i++)
 		{
-			CGraphics2D::getInstance()->addImageBatch(m_image, getRect(), m_sourceRect, m_color, m_transform->World, m_shaderID, m_material, m_pivot.X, m_pivot.Y);
+			CEntity* e = entities[i];
+
+			CWorldTransformData* w = GET_ENTITY_DATA(e, CWorldTransformData);
+			CGUITransformData* t = GET_ENTITY_DATA(e, CGUITransformData);
+
+			m_worldTransforms.push(w);
+			m_guiTransform.push(t);
+			m_guiAlign.push(GET_ENTITY_DATA(e, CGUIAlignData));
 		}
 	}
 
-	void CGUIImage::setImage(ITexture* texture)
+	void CGUILayoutSystem::init(CEntityManager* entityManager)
 	{
-		m_image = texture;
 
-		if (m_image)
-			setSourceRect(0, 0, (float)m_image->getSize().Width, (float)m_image->getSize().Height);
+	}
+
+	void CGUILayoutSystem::update(CEntityManager* entityManager)
+	{
+		updateTransform();
+	}
+
+	void CGUILayoutSystem::updateTransform()
+	{
+		int numEntity = m_worldTransforms.count();
+
+		CWorldTransformData** transforms = m_worldTransforms.pointer();
+		CGUITransformData** guiTransforms = m_guiTransform.pointer();
+
+		for (int i = 0; i < numEntity; i++)
+		{
+			CWorldTransformData* w = transforms[i];
+			CGUITransformData* t = guiTransforms[i];
+
+			if (w->Parent != NULL && t->isChanged())
+			{
+				t->setChanged(false);
+			}
+		}
 	}
 }

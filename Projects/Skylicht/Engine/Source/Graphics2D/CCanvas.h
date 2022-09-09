@@ -37,16 +37,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/CGUIMask.h"
 
 #include "Entity/CEntityPrefab.h"
-
-#define MAX_CHILD_DEPTH 512
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
 	class CCanvas : public CComponentSystem
 	{
 	protected:
-		CEntityPrefab* m_entityMgr;
-
 		core::rectf m_rect;
 
 		CGUIElement* m_root;
@@ -59,6 +56,14 @@ namespace Skylicht
 
 		CCamera* m_renderCamera;
 
+		// ECS System
+		CEntityPrefab* m_entityMgr;
+
+		std::vector<IEntitySystem*> m_systems;
+
+		CFastArray<CEntity*> m_depth[MAX_ENTITY_DEPTH];
+		CFastArray<CEntity*> m_alives;
+
 	public:
 		CCanvas();
 
@@ -68,7 +73,9 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
-		virtual void layout();
+		virtual void onResize();
+
+		void updateEntities();
 
 		void render(CCamera* camera);
 
