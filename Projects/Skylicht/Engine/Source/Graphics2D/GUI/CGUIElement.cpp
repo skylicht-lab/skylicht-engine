@@ -38,7 +38,6 @@ namespace Skylicht
 		m_dock(NoDock),
 		m_visible(true),
 		m_parent(NULL),
-		m_scale(1.0f, 1.0f, 1.0f),
 		m_cullingVisible(true),
 		m_color(255, 255, 255, 255),
 		m_mask(NULL),
@@ -48,23 +47,24 @@ namespace Skylicht
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		m_entity = entityPrefab->createEntity();
 		entityPrefab->addTransformData(m_entity, NULL, core::IdentityMatrix, "");
+		m_guiTransform = m_entity->addData<CGUITransformData>();
+		m_guiAlign = m_entity->addData<CGUIAlignData>();
+
 		m_transform = GET_ENTITY_DATA(m_entity, CWorldTransformData);
 
 		setParent(parent);
+		setRect(parent->getRect());
 
-		m_rect = parent->getRect();
 		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
 
 	CGUIElement::CGUIElement(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		m_canvas(canvas),
-		m_rect(rect),
 		m_vertical(Top),
 		m_horizontal(Left),
 		m_dock(NoDock),
 		m_visible(true),
 		m_parent(NULL),
-		m_scale(1.0f, 1.0f, 1.0f),
 		m_cullingVisible(true),
 		m_color(255, 255, 255, 255),
 		m_mask(NULL),
@@ -74,9 +74,13 @@ namespace Skylicht
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		m_entity = entityPrefab->createEntity();
 		entityPrefab->addTransformData(m_entity, NULL, core::IdentityMatrix, "");
+		m_guiTransform = m_entity->addData<CGUITransformData>();
+		m_guiAlign = m_entity->addData<CGUIAlignData>();
+
 		m_transform = GET_ENTITY_DATA(m_entity, CWorldTransformData);
 
 		setParent(parent);
+		setRect(rect);
 
 		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
@@ -138,17 +142,17 @@ namespace Skylicht
 		m_childs.clear();
 	}
 
+	void CGUIElement::update(CCamera* camera)
+	{
+
+	}
+
 	void CGUIElement::render(CCamera* camera)
 	{
 
 	}
 
-	void CGUIElement::update(CCamera* camera)
-	{
-		if (m_parent != NULL)
-			layout(m_parent->getRect());
-	}
-
+	/*
 	void CGUIElement::layout(const core::rectf& parentRect)
 	{
 		switch (m_dock)
@@ -170,7 +174,7 @@ namespace Skylicht
 
 		for (int i = 0, n = (int)m_childs.size(); i < n; i++)
 		{
-			m_childs[i]->layout(m_rect);
+			m_childs[i]->layout(getRect());
 		}
 	}
 
@@ -255,10 +259,12 @@ namespace Skylicht
 
 		m_position = m_transformPosition;
 	}
+	*/
 
 	const core::matrix4& CGUIElement::getRelativeTransform()
 	{
 		m_transform->Relative.makeIdentity();
+		/*
 		m_transform->Relative.setRotationDegrees(m_rotation);
 
 		f32* m = m_transform->Relative.pointer();
@@ -282,7 +288,7 @@ namespace Skylicht
 		m[13] = m_transformPosition.Y;
 		m[14] = m_transformPosition.Z;
 
-
+		*/
 		return m_transform->Relative;
 	}
 

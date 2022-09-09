@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CCanvas.h"
 #include "Graphics2D/CGraphics2D.h"
 
+#include "GUISystem/CGUILayoutSystem.h"
+
 namespace Skylicht
 {
 	CCanvas::CCanvas() :
@@ -45,6 +47,12 @@ namespace Skylicht
 		// add root
 		m_root = new CGUIElement(this, NULL, m_rect);
 		m_root->setDock(CGUIElement::DockFill);
+
+		m_systems.push_back(new CGUILayoutSystem());
+		for (IEntitySystem* system : m_systems)
+		{
+			system->init(NULL);
+		}
 
 		// add this canvas
 		CGraphics2D::getInstance()->addCanvas(this);
@@ -69,25 +77,75 @@ namespace Skylicht
 	{
 	}
 
-	void CCanvas::layout()
+	void CCanvas::onResize()
 	{
 		// layout on 2d ui
 		if (m_renderCamera->getProjectionType() == CCamera::OrthoUI)
 		{
 			// get current screen size
 			CGraphics2D* g = CGraphics2D::getInstance();
-			float w = (float)g->getScreenSize().Width;
-			float h = (float)g->getScreenSize().Height;
+			core::dimension2du s = g->getScreenSize();
 
+			float w = (float)s.Width;
+			float h = (float)s.Height;
+
+			// update the root rect
 			m_rect = core::rectf(0.0f, 0.0f, w, h);
+		}
+	}
 
-			m_root->layout(m_rect);
+	void CCanvas::updateEntities()
+	{
+		for (u32 i = 0; i < MAX_ENTITY_DEPTH; i++)
+		{
+			m_depth[i].reset();
+		}
+
+		CEntity** entities = m_entityMgr->getEntities();
+		int numEntity = m_entityMgr->getNumEntities();
+
+		int maxDepth = 0;
+
+		for (int i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
+			if (entity->isAlive())
+			{
+				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+
+				m_depth[world->Depth].push(entity);
+
+				if (maxDepth < world->Depth)
+					maxDepth = world->Depth;
+			}
+		}
+
+		m_alives.reset();
+
+		// copy and sort the alives by depth
+		int count = 0;
+		for (int i = 0; i <= maxDepth; i++)
+		{
+			CEntity** entitiesPtr = m_depth[i].pointer();
+
+			for (int j = 0, n = m_depth[i].count(); j < n; j++)
+				m_alives.push(entitiesPtr[j]);
 		}
 	}
 
 	void CCanvas::render(CCamera* camera)
 	{
 		m_renderCamera = camera;
+
+		// update system
+		updateEntities();
+
+		for (IEntitySystem* system : m_systems)
+		{
+			system->beginQuery(NULL);
+			system->onQuery(NULL, m_alives.pointer(), m_alives.count());
+			system->update(NULL);
+		}
 
 		// render
 		std::stack<CGUIElement*> renderEntity;
@@ -98,10 +156,11 @@ namespace Skylicht
 			CGUIElement* entity = renderEntity.top();
 			renderEntity.pop();
 
+			// skip the invisible
 			if (entity->isVisible() == false)
 				continue;
 
-			// update position layout
+			// update the entity
 			entity->update(camera);
 
 			// apply mask
@@ -128,7 +187,6 @@ namespace Skylicht
 			if (mask != NULL)
 				mask->endMaskTest();
 
-			// note
 			// we use stack to render parent -> child
 			// so we must inverse render position because stack = Last-In First-Out (LIFO)
 			for (int i = (int)entity->m_childs.size() - 1; i >= 0; i--)
