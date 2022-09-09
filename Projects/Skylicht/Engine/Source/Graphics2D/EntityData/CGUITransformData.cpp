@@ -30,7 +30,8 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CGUITransformData);
 
 	CGUITransformData::CGUITransformData() :
-		m_dirty(true),
+		HasChanged(true),
+		Parent(NULL),
 		m_scale(1.0f, 1.0f, 1.0f)
 	{
 

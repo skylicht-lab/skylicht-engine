@@ -46,7 +46,7 @@ namespace Skylicht
 
 		// add root
 		m_root = new CGUIElement(this, NULL, m_rect);
-		m_root->setDock(CGUIElement::DockFill);
+		m_root->setDock(EGUIDock::DockFill);
 
 		m_systems.push_back(new CGUILayoutSystem());
 		for (IEntitySystem* system : m_systems)
@@ -117,6 +117,11 @@ namespace Skylicht
 
 				if (maxDepth < world->Depth)
 					maxDepth = world->Depth;
+
+				if (world->ParentIndex != -1)
+					world->Parent = GET_ENTITY_DATA(entities[world->ParentIndex], CWorldTransformData);
+				else
+					world->Parent = NULL;
 			}
 		}
 
@@ -131,21 +136,19 @@ namespace Skylicht
 			for (int j = 0, n = m_depth[i].count(); j < n; j++)
 				m_alives.push(entitiesPtr[j]);
 		}
-	}
 
-	void CCanvas::render(CCamera* camera)
-	{
-		m_renderCamera = camera;
-
-		// update system
-		updateEntities();
-
+		// update systems
 		for (IEntitySystem* system : m_systems)
 		{
 			system->beginQuery(NULL);
 			system->onQuery(NULL, m_alives.pointer(), m_alives.count());
 			system->update(NULL);
 		}
+	}
+
+	void CCanvas::render(CCamera* camera)
+	{
+		m_renderCamera = camera;
 
 		// render
 		std::stack<CGUIElement*> renderEntity;

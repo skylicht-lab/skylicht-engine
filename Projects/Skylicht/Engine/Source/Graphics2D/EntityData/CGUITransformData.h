@@ -33,9 +33,7 @@ namespace Skylicht
 		friend class CGUILayoutSystem;
 
 	protected:
-		core::rectf m_rect;
 		core::vector3df m_transformPosition;
-		bool m_dirty;
 
 		core::vector3df	m_position;
 		core::vector3df	m_scale;
@@ -43,6 +41,12 @@ namespace Skylicht
 
 	public:
 		DECLARE_DATA_TYPE_INDEX;
+
+		bool HasChanged;
+
+		core::rectf Rect;
+
+		CGUITransformData* Parent;
 
 	public:
 		CGUITransformData();
@@ -57,7 +61,7 @@ namespace Skylicht
 		inline void setPosition(const core::vector3df& v)
 		{
 			m_position = v;
-			m_dirty = true;
+			HasChanged = true;
 		}
 
 		inline const core::vector3df& getScale()
@@ -68,7 +72,7 @@ namespace Skylicht
 		inline void setScale(const core::vector3df& v)
 		{
 			m_scale = v;
-			m_dirty = true;
+			HasChanged = true;
 		}
 
 		inline const core::vector3df& getRotation()
@@ -79,37 +83,27 @@ namespace Skylicht
 		inline void setRotation(const core::vector3df& v)
 		{
 			m_rotation = v;
-			m_dirty = true;
+			HasChanged = true;
 		}
 
 		inline float getHeight()
 		{
-			return m_rect.getHeight();
+			return Rect.getHeight();
 		}
 
 		inline float getWidth()
 		{
-			return m_rect.getWidth();
+			return Rect.getWidth();
 		}
 
 		inline const core::rectf& getRect()
 		{
-			return m_rect;
+			return Rect;
 		}
 
 		inline void setRect(const core::rectf& r)
 		{
-			m_rect = r;
-		}
-
-		inline bool isChanged()
-		{
-			return m_dirty;
-		}
-
-		inline void setChanged(bool b)
-		{
-			m_dirty = b;
+			Rect = r;
 		}
 
 		DECLARE_GETTYPENAME(CGUITransformData);

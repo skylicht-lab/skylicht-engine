@@ -136,12 +136,12 @@ void CViewDemo::onInit()
 
 	// create background
 	m_backgroundImage = m_canvas->createImage();
-	m_backgroundImage->setDock(CGUIElement::DockFill);
+	m_backgroundImage->setDock(EGUIDock::DockFill);
 
 	// create icon
 	core::rectf iconSize = core::rectf(0.0f, 0.0f, 260.0f, 260.0f);
 	m_iconSprite = m_canvas->createSprite(iconSize, NULL);
-	m_iconSprite->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	m_iconSprite->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	m_iconSprite->setPosition(core::vector3df(130.0f, 130.0f - 300.0f, 0.0f));
 	m_iconSprite->setScale(core::vector3df(0.5f, 0.5f, 1.0f));
 
@@ -165,7 +165,7 @@ void CViewDemo::onInit()
 	{
 		// create scoller background
 		CGUIRect* scrollerGUI = m_canvas->createRect(scrollerSize, SColor(150, 0, 0, 0));
-		scrollerGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+		scrollerGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 		scrollerGUI->setPosition(core::vector3df(scrollerPosX, scrollerPosY, 0.0f));
 
 		// create scroller control
@@ -186,7 +186,7 @@ void CViewDemo::onInit()
 	core::rectf listSize(0.0f, 0.0f, listWidth, listHeight);
 
 	CGUIRect* listGUI = m_canvas->createRect(listSize, SColor(150, 0, 0, 0));
-	listGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	listGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	listGUI->setPosition(core::vector3df(0.0f, listY, 0.0f));
 	m_list = new CList(listGUI);
 	m_list->setVisible(false);
@@ -196,9 +196,9 @@ void CViewDemo::onInit()
 	float textHeight = 60.0f;
 	m_title = m_canvas->createText(m_textMediumFont);
 	m_title->setRect(core::rectf(0.0, 0.0, textWidth, textHeight));
-	m_title->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	m_title->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	m_title->setPosition(core::vector3df(0.0f, -190.0f, 0.0f));
-	m_title->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+	m_title->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	m_title->setColor(SColor(200, 255, 255, 255));
 
 	// create spin/stop/accept/inorge button
@@ -209,27 +209,27 @@ void CViewDemo::onInit()
 	core::rectf buttonSize(0.0f, 0.0f, buttonW, buttonH);
 
 	CGUIElement* buttonSpinGUI = m_canvas->createElement(buttonSize);
-	buttonSpinGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	buttonSpinGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	buttonSpinGUI->setPosition(core::vector3df(0.0f, buttonY, 0.0f));
 	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, CLocalize::get("TXT_SPIN"), m_textMedium2Font, SColor(255, 107, 76, 8));
 	m_spin->OnClick = std::bind(&CViewDemo::onSpinClick, this);
 
 	CGUIElement* buttonStopGUI = m_canvas->createElement(buttonSize);
-	buttonStopGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	buttonStopGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	buttonStopGUI->setPosition(core::vector3df(0.0f, buttonY, 0.0f));
 	m_stop = new CButton(buttonStopGUI, btnYellowBackground, CLocalize::get("TXT_STOP"), m_textMedium2Font, SColor(255, 107, 76, 8));
 	m_stop->OnClick = std::bind(&CViewDemo::onStopClick, this);
 	m_stop->setVisible(false);
 
 	CGUIElement* buttonAcceptGUI = m_canvas->createElement(buttonSize);
-	buttonAcceptGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	buttonAcceptGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	buttonAcceptGUI->setPosition(core::vector3df(-buttonAcceptPaddingX, buttonY, 0.0f));
 	m_accept = new CButton(buttonAcceptGUI, btnYellowBackground, CLocalize::get("TXT_ACCEPT"), m_textMedium2Font, SColor(255, 107, 76, 8));
 	m_accept->OnClick = std::bind(&CViewDemo::onAcceptClick, this);
 	m_accept->setVisible(false);
 
 	CGUIElement* buttonQuitGUI = m_canvas->createElement(buttonSize);
-	buttonQuitGUI->setAlign(CGUIElement::Center, CGUIElement::Middle);
+	buttonQuitGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	buttonQuitGUI->setPosition(core::vector3df(buttonAcceptPaddingX, buttonY, 0.0f));
 	m_ignore = new CButton(buttonQuitGUI, btnVioletBackground, CLocalize::get("TXT_IGNORE"), m_textMedium2Font, SColor(255, 187, 179, 234));
 	m_ignore->OnClick = std::bind(&CViewDemo::onIgnoreClick, this);
@@ -242,13 +242,13 @@ void CViewDemo::onInit()
 	buttonY = 20.0f;
 
 	CGUIElement* buttonLeftGUI = m_canvas->createElement(leftBtnSize);
-	buttonLeftGUI->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	buttonLeftGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 	buttonLeftGUI->setPosition(core::vector3df(-150.0f, buttonY, 0.0f));
 	m_left = new CButton(buttonLeftGUI, btnLeft);
 	m_left->setVisible(false);
 
 	CGUIElement* buttonRightGUI = m_canvas->createElement(leftBtnSize);
-	buttonRightGUI->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	buttonRightGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 	buttonRightGUI->setPosition(core::vector3df(150.0f, buttonY, 0.0f));
 	m_right = new CButton(buttonRightGUI, btnRight);
 
@@ -278,23 +278,23 @@ void CViewDemo::onInit()
 
 	m_switchPrize = m_canvas->createText(m_textSmallFont);
 	m_switchPrize->setRect(core::rectf(0.0f, 0.0f, 200.0f, leftH));
-	m_switchPrize->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	m_switchPrize->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 	m_switchPrize->setPosition(core::vector3df(-80.0f, buttonY, 0.0f));
-	m_switchPrize->setTextAlign(CGUIElement::Right, CGUIElement::Middle);
+	m_switchPrize->setTextAlign(EGUIHorizontalAlign::Right, EGUIVerticalAlign::Middle);
 
 	m_iconPeople = m_canvas->createSprite(
 		core::rectf(0.0f, 0.0f, people->getWidth() * 0.5f, people->getHeight() * 0.5f),
 		people
 	);
 	m_iconPeople->setScale(core::vector3df(0.5f, 0.5f, 1.0f));
-	m_iconPeople->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	m_iconPeople->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 	m_iconPeople->setPosition(core::vector3df(60.0f, buttonY, 0.0f));
 
 	m_peopleText = m_canvas->createText(m_textSmallFont);
 	m_peopleText->setRect(core::rectf(0.0f, 0.0f, 100.0f, leftH));
-	m_peopleText->setAlign(CGUIElement::Center, CGUIElement::Bottom);
+	m_peopleText->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 	m_peopleText->setPosition(core::vector3df(125.0f, buttonY, 0.0f));
-	m_peopleText->setTextAlign(CGUIElement::Left, CGUIElement::Middle);
+	m_peopleText->setTextAlign(EGUIHorizontalAlign::Left, EGUIVerticalAlign::Middle);
 
 	setState(getNumState() - 1);
 }
@@ -374,7 +374,7 @@ void CViewDemo::checkToShowListLuckyPeople()
 				itemRect = core::rectf(0.0f, 0.0f, 120, 50.0f);
 				CGUIText* numText = m_canvas->createText(element, itemRect, m_textMedium2Font);
 				numText->setPosition(core::vector3df(50.0f, 0.0f, 0.0f));
-				numText->setTextAlign(CGUIElement::Right, CGUIElement::Top);
+				numText->setTextAlign(EGUIHorizontalAlign::Right, EGUIVerticalAlign::Top);
 
 				char text[512];
 				sprintf(text, CLocalize::get("TXT_LUCKY_PEOPLE_ID"), p.ID);
@@ -571,7 +571,7 @@ CGUIElement* CViewDemo::createScrollElement(CScroller* scroller, CGUIElement* pa
 {
 	CGUIText* textLarge = m_canvas->createText(parent, itemRect, m_largeFont);
 	textLarge->setText("");
-	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Top);
+	textLarge->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Top);
 	textLarge->setColor(SColor(255, 255, 255, 255));
 
 	return textLarge;
