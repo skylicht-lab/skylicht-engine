@@ -94,7 +94,7 @@ void @project_name@::onInitApp()
 	// create UI Text in Canvas
 	CGUIText *textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("@project_name@");
-	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
+	textLarge->setTextAlign(EGUIHorizontalAlign::Left, EGUIVerticalAlign::Top);
 #endif
 
 	// rendering pipe line

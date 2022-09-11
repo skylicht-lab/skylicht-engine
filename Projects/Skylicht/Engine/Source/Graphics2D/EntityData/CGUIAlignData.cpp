@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,43 +23,22 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGUIImage.h"
-#include "Graphics2D/CGraphics2D.h"
+#include "CGUIAlignData.h"
 
 namespace Skylicht
 {
-	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent) :
-		CGUIElement(canvas, parent),
-		m_image(NULL)
+	IMPLEMENT_DATA_TYPE_INDEX(CGUIAlignData);
+
+	CGUIAlignData::CGUIAlignData() :
+		Vertical(EGUIVerticalAlign::Top),
+		Horizontal(EGUIHorizontalAlign::Left),
+		Dock(EGUIDock::NoDock)
 	{
 
 	}
 
-	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
-		CGUIElement(canvas, parent, rect),
-		m_image(NULL)
+	CGUIAlignData::~CGUIAlignData()
 	{
 
-	}
-
-	CGUIImage::~CGUIImage()
-	{
-
-	}
-
-	void CGUIImage::render(CCamera* camera)
-	{
-		if (m_image != NULL)
-		{
-			CGraphics2D::getInstance()->addImageBatch(m_image, getRect(), m_sourceRect, m_color, m_transform->World, m_shaderID, m_material, m_pivot.X, m_pivot.Y);
-		}
-	}
-
-	void CGUIImage::setImage(ITexture* texture)
-	{
-		m_image = texture;
-
-		if (m_image)
-			setSourceRect(0, 0, (float)m_image->getSize().Width, (float)m_image->getSize().Height);
 	}
 }

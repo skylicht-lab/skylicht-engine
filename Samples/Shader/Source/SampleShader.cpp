@@ -339,7 +339,7 @@ void SampleShader::createCanvasText(const char* text, const core::vector3df& pos
 	CGameObject* canvasObject = m_scene->getZone(0)->createEmptyObject();
 	CCanvas* canvas = canvasObject->addComponent<CCanvas>();
 	CGUIText* guiText = canvas->createText(core::rectf(0.0f, 0.0f, 700.0f, 100.0f), m_font);
-	guiText->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+	guiText->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	guiText->setText(text);
 	guiText->setPosition(core::vector3df(-350.0f, 0.0f, 0.0f));
 

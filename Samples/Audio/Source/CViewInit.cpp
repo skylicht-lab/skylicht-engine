@@ -100,7 +100,7 @@ void CViewInit::initScene()
 	m_guiText = canvas->createText(m_largeFont);
 	m_guiText->setPosition(core::vector3df(0.0f, -40.0f, 0.0f));
 	m_guiText->setText("Click to continue...");
-	m_guiText->setTextAlign(CGUIElement::Center, CGUIElement::Bottom);
+	m_guiText->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 
 	// rendering pipe line
 	u32 w = app->getWidth();

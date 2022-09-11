@@ -31,8 +31,8 @@ namespace Skylicht
 {
 	CGUIText::CGUIText(CCanvas* canvas, CGUIElement* parent, IFont* font) :
 		CGUIElement(canvas, parent),
-		TextVertical(Top),
-		TextHorizontal(Left),
+		TextVertical(EGUIVerticalAlign::Top),
+		TextHorizontal(EGUIHorizontalAlign::Left),
 		m_multiLine(true),
 		m_centerRotate(false),
 		m_charPadding(0),
@@ -46,8 +46,8 @@ namespace Skylicht
 
 	CGUIText::CGUIText(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, IFont* font) :
 		CGUIElement(canvas, parent, rect),
-		TextVertical(Top),
-		TextHorizontal(Left),
+		TextVertical(EGUIVerticalAlign::Top),
+		TextHorizontal(EGUIHorizontalAlign::Left),
 		m_multiLine(true),
 		m_centerRotate(false),
 		m_charPadding(0),
@@ -386,7 +386,7 @@ namespace Skylicht
 			if (m_multiLine == true)
 			{
 				// split to multi line
-				splitText(m_arrayCharRender, m_arrayCharFormat, (int)m_rect.getWidth());
+				splitText(m_arrayCharRender, m_arrayCharFormat, (int)getRect().getWidth());
 			}
 			else
 			{
@@ -425,10 +425,10 @@ namespace Skylicht
 		int y = 0;
 
 		// calc text algin vertial
-		if (TextVertical == CGUIElement::Middle)
-			y = ((int)m_rect.getHeight() - textHeight - m_textOffsetY) / 2;
-		else if (TextVertical == CGUIElement::Bottom)
-			y = (int)m_rect.getHeight() - textHeight;
+		if (TextVertical == EGUIVerticalAlign::Middle)
+			y = ((int)getRect().getHeight() - textHeight - m_textOffsetY) / 2;
+		else if (TextVertical == EGUIVerticalAlign::Bottom)
+			y = (int)getRect().getHeight() - textHeight;
 
 		if (m_centerRotate == true)
 			y = -textHeight / 2;
@@ -463,10 +463,10 @@ namespace Skylicht
 		}
 
 		// text align
-		if (TextHorizontal == CGUIElement::Center)
-			x = ((int)m_rect.getWidth() - stringWidth) / 2;
-		else if (TextHorizontal == CGUIElement::Right)
-			x = (int)m_rect.getWidth() - stringWidth;
+		if (TextHorizontal == EGUIHorizontalAlign::Center)
+			x = ((int)getRect().getWidth() - stringWidth) / 2;
+		else if (TextHorizontal == EGUIHorizontalAlign::Right)
+			x = (int)getRect().getWidth() - stringWidth;
 
 		if (m_centerRotate == true)
 			x = -stringWidth / 2;

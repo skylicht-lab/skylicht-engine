@@ -27,6 +27,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Camera/CCamera.h"
 #include "Material/CMaterial.h"
 
+#include "Graphics2D/EntityData/CGUITransformData.h"
+#include "Graphics2D/EntityData/CGUIAlignData.h"
+
 namespace Skylicht
 {
 	class CCanvas;
@@ -35,47 +38,6 @@ namespace Skylicht
 	class CGUIElement
 	{
 		friend class CCanvas;
-
-	public:
-		enum EGUIVerticalAlign
-		{
-			Top,
-			Middle,
-			Bottom
-		};
-
-		enum EGUIHorizontalAlign
-		{
-			Left,
-			Center,
-			Right
-		};
-
-		enum EGUIDock
-		{
-			NoDock,
-			DockLeft,
-			DockRight,
-			DockTop,
-			DockBottom,
-			DockFill
-		};
-
-		struct SRect
-		{
-			float Left;
-			float Top;
-			float Right;
-			float Bottom;
-
-			SRect()
-			{
-				Left = 0.0f;
-				Top = 0.0f;
-				Right = 0.0f;
-				Bottom = 0.0f;
-			}
-		};
 
 	protected:
 		CGUIElement* m_parent;
@@ -86,26 +48,13 @@ namespace Skylicht
 		CGUIMask* m_mask;
 		CGUIMask* m_applyCurrentMask;
 
-		core::rectf m_rect;
-
-		EGUIDock m_dock;
-		SRect m_margin;
-
 		bool m_visible;
 
-		core::vector3df m_transformPosition;
-
-		core::vector3df	m_position;
-		core::vector3df	m_scale;
-		core::vector3df	m_rotation;
-
 		CEntity* m_entity;
+
 		CWorldTransformData* m_transform;
-
-		EGUIVerticalAlign m_vertical;
-		EGUIHorizontalAlign m_horizontal;
-
-		bool m_cullingVisible;
+		CGUITransformData* m_guiTransform;
+		CGUIAlignData* m_guiAlign;
 
 		SColor m_color;
 		int m_shaderID;
@@ -163,116 +112,106 @@ namespace Skylicht
 
 		inline float getHeight()
 		{
-			return m_rect.getHeight();
+			return m_guiTransform->getHeight();
 		}
 
 		inline float getWidth()
 		{
-			return m_rect.getWidth();
+			return m_guiTransform->getWidth();
+		}
+
+		inline const core::rectf& getRect()
+		{
+			return m_guiTransform->getRect();
 		}
 
 		inline void setDock(EGUIDock dock)
 		{
-			m_dock = dock;
+			m_guiAlign->Dock = dock;
 		}
 
 		inline EGUIDock getDock()
 		{
-			return m_dock;
+			return m_guiAlign->Dock;
 		}
 
-		inline core::rectf& getRect()
+		inline const SMargin& getMargin()
 		{
-			return m_rect;
+			return m_guiAlign->Margin;
 		}
 
-		inline const SRect& getMargin()
+		inline void setMargin(const SMargin& m)
 		{
-			return m_margin;
-		}
-
-		inline void setMargin(const SRect& m)
-		{
-			m_margin = m;
+			m_guiAlign->Margin = m;
 		}
 
 		inline void setMargin(float l, float t, float r, float b)
 		{
-			m_margin.Left = l;
-			m_margin.Top = t;
-			m_margin.Right = r;
-			m_margin.Bottom = b;
+			m_guiAlign->Margin.Left = l;
+			m_guiAlign->Margin.Top = t;
+			m_guiAlign->Margin.Right = r;
+			m_guiAlign->Margin.Bottom = b;
 		}
 
 		inline void setRect(const core::rectf& r)
 		{
-			m_rect = r;
+			m_guiTransform->setRect(r);
 		}
 
 		inline const core::vector3df& getPosition()
 		{
-			return m_position;
+			return m_guiTransform->getPosition();
 		}
 
 		inline void setPosition(const core::vector3df& v)
 		{
-			m_position = v;
+			m_guiTransform->setPosition(v);
 		}
 
 		inline const core::vector3df& getScale()
 		{
-			return m_scale;
+			return m_guiTransform->getScale();
 		}
 
 		inline void setScale(const core::vector3df& v)
 		{
-			m_scale = v;
+			m_guiTransform->setScale(v);
 		}
 
 		inline const core::vector3df& getRotation()
 		{
-			return m_rotation;
+			return m_guiTransform->getRotation();
 		}
 
 		inline void setRotation(const core::vector3df& v)
 		{
-			m_rotation = v;
+			m_guiTransform->setRotation(v);
 		}
 
 		inline EGUIVerticalAlign getVerticalAlign()
 		{
-			return m_vertical;
+			return m_guiAlign->Vertical;
 		}
 
 		inline EGUIHorizontalAlign getHorizontalAlign()
 		{
-			return m_horizontal;
+			return m_guiAlign->Horizontal;
 		}
 
 		inline void setVerticalAlign(EGUIVerticalAlign a)
 		{
-			m_vertical = a;
+			m_guiAlign->Vertical = a;
 		}
 
 		inline void setHorizontalAlign(EGUIHorizontalAlign a)
 		{
-			m_horizontal = a;
+			m_guiAlign->Horizontal = a;
 		}
 
 		inline void setAlign(EGUIHorizontalAlign h, EGUIVerticalAlign v)
 		{
-			m_vertical = v;
-			m_horizontal = h;
-		}
-
-		inline void setCullingVisisble(bool b)
-		{
-			m_cullingVisible = b;
-		}
-
-		inline bool isCullingVisisble()
-		{
-			return m_cullingVisible;
+			m_guiAlign->Vertical = v;
+			m_guiAlign->Horizontal = h;
 		}
 
 		inline void setShaderID(int id)
@@ -309,17 +248,15 @@ namespace Skylicht
 
 		virtual void render(CCamera* camera);
 
-		virtual void layout(const core::rectf& parentRect);
-
-		const core::matrix4& getRelativeTransform();
+		const core::matrix4& getRelativeTransform()
+		{
+			return m_transform->Relative;
+		}
 
 		const core::matrix4& getAbsoluteTransform()
 		{
 			return m_transform->World;
 		}
-
-		void calcAbsoluteTransform();
-
 		inline void setVisible(bool b)
 		{
 			m_visible = b;
@@ -331,10 +268,6 @@ namespace Skylicht
 		}
 
 	protected:
-
-		void layoutNoDock(const core::rectf& parentRect);
-
-		void layoutDock(const core::rectf& parentRect);
 
 		bool removeChild(CGUIElement* child);
 	};

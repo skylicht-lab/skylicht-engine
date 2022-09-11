@@ -43,7 +43,6 @@ namespace Skylicht
 
 	void CGUIMask::update(CCamera* camera)
 	{
-		CGUIElement::update(camera);
 		m_drawMask = false;
 	}
 
@@ -51,7 +50,7 @@ namespace Skylicht
 	{
 		if (m_drawMask == false)
 		{
-			core::rectf r = m_rect;
+			core::rectf r = getRect();
 
 			float z = 0.0f;
 			if (camera->getProjectionType() != CCamera::OrthoUI)
