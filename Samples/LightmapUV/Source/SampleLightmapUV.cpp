@@ -173,7 +173,7 @@ void SampleLightmapUV::onInitApp()
 
 	// create text
 	m_textInfo = canvas->createText(m_font);
-	m_textInfo->setTextAlign(CGUIElement::Center, CGUIElement::Middle);
+	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 }
 
 void SampleLightmapUV::runThread()

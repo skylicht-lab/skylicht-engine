@@ -106,7 +106,7 @@ void SampleNoise2D::onInitApp()
 	// create UI Text in Canvas
 	CGUIText *textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleNoise2D");
-	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
+	textLarge->setTextAlign(EGUIHorizontalAlign::Left, EGUIVerticalAlign::Top);
 #endif
 
 	m_noiseMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Noise2D.xml");
