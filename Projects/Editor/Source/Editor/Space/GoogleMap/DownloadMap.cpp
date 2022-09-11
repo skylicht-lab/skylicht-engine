@@ -1,5 +1,3 @@
-#pragma once
-
 #include "pch.h"
 #include "DownloadMap.h"
 
@@ -22,13 +20,13 @@ namespace Skylicht
 			{
 			case EImageMapType::GSatellite:
 				sprintf(lpUrl,
-					"https://khms0.google.com/kh/v=908?x=%ld&y=%ld&z=%d",
+					"https://khms0.google.com/kh/v=908?x=%ld&y=%ld&z=%ld",
 					x, y, z
 				);
 				break;
 			case EImageMapType::OSMTerrain:
 				sprintf(lpUrl,
-					"https://api.maptiler.com/maps/outdoor/%d/%ld/%ld.png",
+					"https://api.maptiler.com/maps/outdoor/%ld/%ld/%ld.png",
 					z, x, y
 				);
 				break;
@@ -50,11 +48,11 @@ namespace Skylicht
 			{
 			case EImageMapType::GSatellite:
 			{
-				sprintf(fileName, "../Maps/gmap_%d_%ld_%ld.jpg", z, x, y);
+				sprintf(fileName, "../Maps/gmap_%ld_%ld_%ld.jpg", z, x, y);
 				break;
 			}
 			case EImageMapType::OSMTerrain:
-				sprintf(fileName, "../Maps/osm_%d_%ld_%ld.png", z, x, y);
+				sprintf(fileName, "../Maps/osm_%ld_%ld_%ld.png", z, x, y);
 				break;
 			default:
 				break;
