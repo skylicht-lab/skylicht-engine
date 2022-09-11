@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,44 +22,72 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CGUIImage.h"
-#include "Graphics2D/CGraphics2D.h"
+#pragma once
+
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent) :
-		CGUIElement(canvas, parent),
-		m_image(NULL)
+	enum class EGUIVerticalAlign
 	{
+		Top,
+		Middle,
+		Bottom
+	};
 
-	}
-
-	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
-		CGUIElement(canvas, parent, rect),
-		m_image(NULL)
+	enum class EGUIHorizontalAlign
 	{
+		Left,
+		Center,
+		Right
+	};
 
-	}
-
-	CGUIImage::~CGUIImage()
+	enum class EGUIDock
 	{
+		NoDock,
+		DockLeft,
+		DockRight,
+		DockTop,
+		DockBottom,
+		DockFill
+	};
 
-	}
-
-	void CGUIImage::render(CCamera* camera)
+	struct SMargin
 	{
-		if (m_image != NULL)
+		float Left;
+		float Top;
+		float Right;
+		float Bottom;
+
+		SMargin()
 		{
-			CGraphics2D::getInstance()->addImageBatch(m_image, getRect(), m_sourceRect, m_color, m_transform->World, m_shaderID, m_material, m_pivot.X, m_pivot.Y);
+			Left = 0.0f;
+			Top = 0.0f;
+			Right = 0.0f;
+			Bottom = 0.0f;
 		}
-	}
+	};
 
-	void CGUIImage::setImage(ITexture* texture)
+	class CGUIAlignData : public IEntityData
 	{
-		m_image = texture;
+		friend class CGUILayoutSystem;
 
-		if (m_image)
-			setSourceRect(0, 0, (float)m_image->getSize().Width, (float)m_image->getSize().Height);
-	}
+	public:
+		DECLARE_DATA_TYPE_INDEX;
+
+		EGUIDock Dock;
+
+		SMargin Margin;
+
+		EGUIVerticalAlign Vertical;
+
+		EGUIHorizontalAlign Horizontal;
+
+	public:
+		CGUIAlignData();
+
+		virtual ~CGUIAlignData();
+
+		DECLARE_GETTYPENAME(CGUIAlignData);
+	};
 }

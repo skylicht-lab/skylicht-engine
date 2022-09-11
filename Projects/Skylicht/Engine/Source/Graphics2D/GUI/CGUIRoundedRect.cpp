@@ -81,8 +81,8 @@ namespace Skylicht
 		core::vector3df bottom_right[roundPointCount];
 
 		int i = 0;
-		float width = m_rect.getWidth();
-		float height = m_rect.getHeight();
+		float width = getRect().getWidth();
+		float height = getRect().getHeight();
 		float x = 0.0f;
 		float y = height;
 

@@ -122,7 +122,7 @@ void SampleNoise3D::onInitApp()
 	// create UI Text in Canvas
 	CGUIText* textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleNoise3D");
-	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
+	textLarge->setTextAlign(EGUIHorizontalAlign::Left, EGUIVerticalAlign::Top);
 #endif
 
 	// rendering pipe line
