@@ -110,7 +110,7 @@ void SampleParticlesMagicSkill::onInitApp()
 	CGUIText* textLarge = canvas->createText(m_font);
 	textLarge->setPosition(core::vector3df(0.0f, -10.0f, 0.0f));
 	textLarge->setText("Press LEFT MOUSE to simulate projectile");
-	textLarge->setTextAlign(CGUIElement::Center, CGUIElement::Bottom);
+	textLarge->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 
 	// rendering pipe line
 	u32 w = app->getWidth();
