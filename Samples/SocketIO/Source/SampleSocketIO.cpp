@@ -108,7 +108,7 @@ void SampleSocketIO::onInitApp()
 	// create UI Text in Canvas
 	CGUIText* textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleSocketIO");
-	textLarge->setTextAlign(CGUIElement::Left, CGUIElement::Top);
+	textLarge->setTextAlign(EGUIHorizontalAlign::Left, EGUIVerticalAlign::Top);
 #endif
 
 	// rendering pipe line
