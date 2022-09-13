@@ -81,7 +81,7 @@ namespace Skylicht
 	{
 		if (m_frame != NULL)
 		{
-			CGraphics2D::getInstance()->addFrameBatch(m_frame, m_color, m_transform->World, m_shaderID, m_material);
+			CGraphics2D::getInstance()->addFrameBatch(m_frame, getColor(), m_transform->World, getShaderID(), getMaterial());
 			CGUIElement::render(camera);
 		}
 	}

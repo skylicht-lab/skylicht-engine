@@ -29,25 +29,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUIRoundedRect::CGUIRoundedRect(CCanvas *canvas, CGUIElement *parent, float radius) :
+	CGUIRoundedRect::CGUIRoundedRect(CCanvas* canvas, CGUIElement* parent, float radius) :
 		CGUIElement(canvas, parent),
 		m_radius(radius),
 		m_buffer(NULL),
 		m_vertices(NULL),
 		m_indices(NULL)
 	{
-		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
+		m_renderData->ShaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
 		init();
 	}
 
-	CGUIRoundedRect::CGUIRoundedRect(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect, float radius) :
+	CGUIRoundedRect::CGUIRoundedRect(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, float radius) :
 		CGUIElement(canvas, parent, rect),
 		m_radius(radius),
 		m_buffer(NULL),
 		m_vertices(NULL),
 		m_indices(NULL)
 	{
-		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
+		m_renderData->ShaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
 		init();
 	}
 
@@ -123,20 +123,22 @@ namespace Skylicht
 
 		int idx = 0;
 
+		SColor color = getColor();
+
 		// top
 		for (i = roundPointCount - 1; i >= 1; i -= 1)
 		{
-			m_vertices->addVertex(S3DVertex(top_right[i], n, m_color, t));
-			m_vertices->addVertex(S3DVertex(top_left[i], n, m_color, t));
-			m_vertices->addVertex(S3DVertex(top_left[i - 1], n, m_color, t));
+			m_vertices->addVertex(S3DVertex(top_right[i], n, color, t));
+			m_vertices->addVertex(S3DVertex(top_left[i], n, color, t));
+			m_vertices->addVertex(S3DVertex(top_left[i - 1], n, color, t));
 
 			m_indices->addIndex(idx++);
 			m_indices->addIndex(idx++);
 			m_indices->addIndex(idx++);
 
-			m_vertices->addVertex(S3DVertex(top_right[i], n, m_color, t));
-			m_vertices->addVertex(S3DVertex(top_left[i - 1], n, m_color, t));
-			m_vertices->addVertex(S3DVertex(top_right[i - 1], n, m_color, t));
+			m_vertices->addVertex(S3DVertex(top_right[i], n, color, t));
+			m_vertices->addVertex(S3DVertex(top_left[i - 1], n, color, t));
+			m_vertices->addVertex(S3DVertex(top_right[i - 1], n, color, t));
 
 			m_indices->addIndex(idx++);
 			m_indices->addIndex(idx++);
@@ -144,17 +146,17 @@ namespace Skylicht
 		}
 
 		// center
-		m_vertices->addVertex(S3DVertex(top_right[0], n, m_color, t));
-		m_vertices->addVertex(S3DVertex(top_left[0], n, m_color, t));
-		m_vertices->addVertex(S3DVertex(bottom_left[0], n, m_color, t));
+		m_vertices->addVertex(S3DVertex(top_right[0], n, color, t));
+		m_vertices->addVertex(S3DVertex(top_left[0], n, color, t));
+		m_vertices->addVertex(S3DVertex(bottom_left[0], n, color, t));
 
 		m_indices->addIndex(idx++);
 		m_indices->addIndex(idx++);
 		m_indices->addIndex(idx++);
 
-		m_vertices->addVertex(S3DVertex(top_right[0], n, m_color, t));
-		m_vertices->addVertex(S3DVertex(bottom_left[0], n, m_color, t));
-		m_vertices->addVertex(S3DVertex(bottom_right[0], n, m_color, t));
+		m_vertices->addVertex(S3DVertex(top_right[0], n, color, t));
+		m_vertices->addVertex(S3DVertex(bottom_left[0], n, color, t));
+		m_vertices->addVertex(S3DVertex(bottom_right[0], n, color, t));
 
 		m_indices->addIndex(idx++);
 		m_indices->addIndex(idx++);
@@ -163,17 +165,17 @@ namespace Skylicht
 		// bottom
 		for (i = 0; i < roundPointCount - 1; i++)
 		{
-			m_vertices->addVertex(S3DVertex(bottom_right[i], n, m_color, t));
-			m_vertices->addVertex(S3DVertex(bottom_left[i], n, m_color, t));
-			m_vertices->addVertex(S3DVertex(bottom_left[i + 1], n, m_color, t));
+			m_vertices->addVertex(S3DVertex(bottom_right[i], n, color, t));
+			m_vertices->addVertex(S3DVertex(bottom_left[i], n, color, t));
+			m_vertices->addVertex(S3DVertex(bottom_left[i + 1], n, color, t));
 
 			m_indices->addIndex(idx++);
 			m_indices->addIndex(idx++);
 			m_indices->addIndex(idx++);
 
-			m_vertices->addVertex(S3DVertex(bottom_right[i], n, m_color, t));
-			m_vertices->addVertex(S3DVertex(bottom_left[i + 1], n, m_color, t));
-			m_vertices->addVertex(S3DVertex(bottom_right[i + 1], n, m_color, t));
+			m_vertices->addVertex(S3DVertex(bottom_right[i], n, color, t));
+			m_vertices->addVertex(S3DVertex(bottom_left[i + 1], n, color, t));
+			m_vertices->addVertex(S3DVertex(bottom_right[i + 1], n, color, t));
 
 			m_indices->addIndex(idx++);
 			m_indices->addIndex(idx++);
@@ -181,9 +183,9 @@ namespace Skylicht
 		}
 	}
 
-	void CGUIRoundedRect::render(CCamera *camera)
+	void CGUIRoundedRect::render(CCamera* camera)
 	{
-		CGraphics2D *g = CGraphics2D::getInstance();
-		g->addExternalBuffer(m_buffer, m_transform->World, m_shaderID);
+		CGraphics2D* g = CGraphics2D::getInstance();
+		g->addExternalBuffer(m_buffer, m_transform->World, getShaderID());
 	}
 }

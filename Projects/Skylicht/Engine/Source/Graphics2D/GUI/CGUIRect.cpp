@@ -29,16 +29,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CGUIRect::CGUIRect(CCanvas *canvas, CGUIElement *parent) :
+	CGUIRect::CGUIRect(CCanvas* canvas, CGUIElement* parent) :
 		CGUIElement(canvas, parent)
 	{
-		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
+		m_renderData->ShaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
 	}
 
-	CGUIRect::CGUIRect(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect) :
+	CGUIRect::CGUIRect(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		CGUIElement(canvas, parent, rect)
 	{
-		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
+		m_renderData->ShaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
 	}
 
 	CGUIRect::~CGUIRect()
@@ -46,9 +46,9 @@ namespace Skylicht
 
 	}
 
-	void CGUIRect::render(CCamera *camera)
+	void CGUIRect::render(CCamera* camera)
 	{
 		core::rectf uv(0.0f, 0.0f, 1.0f, 1.0f);
-		CGraphics2D::getInstance()->addRectangleBatch(getRect(), uv, m_color, m_transform->World, m_shaderID, m_material);
+		CGraphics2D::getInstance()->addRectangleBatch(getRect(), uv, getColor(), m_transform->World, getShaderID(), getMaterial());
 	}
 }
