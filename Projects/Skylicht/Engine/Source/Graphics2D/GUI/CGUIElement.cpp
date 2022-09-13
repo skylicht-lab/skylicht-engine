@@ -35,10 +35,8 @@ namespace Skylicht
 		m_canvas(canvas),
 		m_visible(true),
 		m_parent(NULL),
-		m_color(255, 255, 255, 255),
 		m_mask(NULL),
-		m_applyCurrentMask(NULL),
-		m_material(NULL)
+		m_applyCurrentMask(NULL)
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		m_entity = entityPrefab->createEntity();
@@ -46,22 +44,19 @@ namespace Skylicht
 
 		m_guiTransform = m_entity->addData<CGUITransformData>();
 		m_guiAlign = m_entity->addData<CGUIAlignData>();
+		m_renderData = m_entity->addData<CGUIRenderData>();
 		m_transform = GET_ENTITY_DATA(m_entity, CWorldTransformData);
 
 		setParent(parent);
 		setRect(parent->getRect());
-
-		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
 
 	CGUIElement::CGUIElement(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		m_canvas(canvas),
 		m_visible(true),
 		m_parent(NULL),
-		m_color(255, 255, 255, 255),
 		m_mask(NULL),
-		m_applyCurrentMask(NULL),
-		m_material(NULL)
+		m_applyCurrentMask(NULL)
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		m_entity = entityPrefab->createEntity();
@@ -69,12 +64,11 @@ namespace Skylicht
 
 		m_guiTransform = m_entity->addData<CGUITransformData>();
 		m_guiAlign = m_entity->addData<CGUIAlignData>();
+		m_renderData = m_entity->addData<CGUIRenderData>();
 		m_transform = GET_ENTITY_DATA(m_entity, CWorldTransformData);
 
 		setParent(parent);
 		setRect(rect);
-
-		m_shaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 	}
 
 	CGUIElement::~CGUIElement()

@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Graphics2D/EntityData/CGUITransformData.h"
 #include "Graphics2D/EntityData/CGUIAlignData.h"
+#include "Graphics2D/EntityData/CGUIRenderData.h"
 
 namespace Skylicht
 {
@@ -55,10 +56,7 @@ namespace Skylicht
 		CWorldTransformData* m_transform;
 		CGUITransformData* m_guiTransform;
 		CGUIAlignData* m_guiAlign;
-
-		SColor m_color;
-		int m_shaderID;
-		CMaterial* m_material;
+		CGUIRenderData* m_renderData;
 
 	protected:
 		CGUIElement(CCanvas* canvas, CGUIElement* parent);
@@ -102,12 +100,12 @@ namespace Skylicht
 
 		inline void setColor(const SColor& c)
 		{
-			m_color = c;
+			m_renderData->Color = c;
 		}
 
 		const SColor& getColor()
 		{
-			return m_color;
+			return m_renderData->Color;
 		}
 
 		inline float getHeight()
@@ -216,22 +214,22 @@ namespace Skylicht
 
 		inline void setShaderID(int id)
 		{
-			m_shaderID = id;
+			m_renderData->ShaderID = id;
 		}
 
 		inline int getShaderID()
 		{
-			return m_shaderID;
+			return m_renderData->ShaderID;
 		}
 
 		inline void setMaterial(CMaterial* material)
 		{
-			m_material = material;
+			m_renderData->Material = material;
 		}
 
 		inline CMaterial* getMaterial()
 		{
-			return m_material;
+			return m_renderData->Material;
 		}
 
 		inline CGUIMask* getMask()
