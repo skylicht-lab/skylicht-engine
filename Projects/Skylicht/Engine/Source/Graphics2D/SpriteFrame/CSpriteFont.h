@@ -25,19 +25,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "IFont.h"
+#include "CSpriteFrame.h"
 
 namespace Skylicht
 {
-	class CSpriteFont: public IFont
+	class CSpriteFont :
+		public CSpriteFrame,
+		public IFont
 	{
 	protected:
-		std::list<SImage> m_images;
-		std::list<SModuleRect> m_moduleRect;
-		std::list<SFrame> m_frames;
-
-		std::map<std::string, SFrame*>	m_frameName;
-
-		int *m_moduleMap;
+		int* m_moduleMap;
 		int m_numModuleMap;
 
 		float m_charPadding;
@@ -48,7 +45,7 @@ namespace Skylicht
 
 		virtual ~CSpriteFont();
 
-		bool loadFont(const char *fileName);
+		bool loadFont(const char* fileName);
 
 		virtual float getCharPadding()
 		{

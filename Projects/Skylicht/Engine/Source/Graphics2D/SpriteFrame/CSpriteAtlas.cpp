@@ -38,29 +38,15 @@ namespace Skylicht
 
 	CSpriteAtlas::~CSpriteAtlas()
 	{
-		for (SFrame *&f : m_frames)
-			delete f;
-		m_frames.clear();
 
-		for (SModuleRect *&m : m_modules)
-			delete m;
-		m_modules.clear();
-
-		for (SImage *&a : m_images)
-		{
-			delete a->Atlas;
-			delete a;
-		}
-		m_images.clear();
-		m_names.clear();
 	}
 
 	SImage* CSpriteAtlas::createAtlasRect(int w, int h, core::recti& outRegion)
 	{
-		SImage *image = NULL;
+		SImage* image = NULL;
 		core::recti r;
 
-		for (SImage *&a : m_images)
+		for (SImage*& a : m_images)
 		{
 			r = a->Atlas->createRect(w, h);
 			if (r.getWidth() != 0 && r.getHeight() != 0)
@@ -84,10 +70,10 @@ namespace Skylicht
 		return image;
 	}
 
-	SFrame* CSpriteAtlas::addFrame(const char *name, const char *path)
+	SFrame* CSpriteAtlas::addFrame(const char* name, const char* path)
 	{
-		IImage *img = getVideoDriver()->createImageFromFile(path);
-		SFrame *frame = NULL;
+		IImage* img = getVideoDriver()->createImageFromFile(path);
+		SFrame* frame = NULL;
 
 		if (img != NULL)
 		{
@@ -107,10 +93,10 @@ namespace Skylicht
 			int atlasH = h + 2;
 
 			int imageID = 0;
-			SImage *image = NULL;
+			SImage* image = NULL;
 			core::recti r;
 
-			for (SImage *&a : m_images)
+			for (SImage*& a : m_images)
 			{
 				r = a->Atlas->createRect(atlasW, atlasH);
 				if (r.getWidth() != 0 && r.getHeight() != 0)
@@ -145,7 +131,7 @@ namespace Skylicht
 			frame->ID = (int)m_frames.size();
 
 			// create module
-			SModuleRect *module = new SModuleRect();
+			SModuleRect* module = new SModuleRect();
 			module->X = (f32)r.UpperLeftCorner.X;
 			module->Y = (f32)r.UpperLeftCorner.Y;
 			module->W = (f32)w;
@@ -174,7 +160,7 @@ namespace Skylicht
 		return frame;
 	}
 
-	SFrame* CSpriteAtlas::getFrame(const char *name)
+	SFrame* CSpriteAtlas::getFrame(const char* name)
 	{
 		std::map<std::string, SFrame*>::iterator it = m_names.find(name);
 
@@ -186,7 +172,7 @@ namespace Skylicht
 
 	void CSpriteAtlas::updateTexture()
 	{
-		for (SImage *&a : m_images)
+		for (SImage*& a : m_images)
 		{
 			a->Atlas->updateTexture();
 			/*
@@ -200,7 +186,7 @@ namespace Skylicht
 
 	SImage* CSpriteAtlas::addEmptyAtlas()
 	{
-		SImage *image = new SImage();
+		SImage* image = new SImage();
 		image->Atlas = new CAtlas(m_fmt, m_width, m_height);
 		image->Texture = image->Atlas->getTexture();
 

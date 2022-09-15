@@ -113,4 +113,23 @@ namespace Skylicht
 			return BoudingRect.getHeight();
 		}
 	};
+
+	class CSpriteFrame
+	{
+	protected:
+		std::vector<SImage*> m_images;
+		std::vector<SFrame*> m_frames;
+		std::vector<SModuleRect*> m_modules;
+
+		std::map<std::string, SFrame*> m_names;
+
+		bool m_deleteAtlas;
+
+	public:
+		CSpriteFrame();
+
+		virtual ~CSpriteFrame();
+
+		bool load(const char* fileName);
+	};
 }

@@ -24,6 +24,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSpriteFrame.h"
+#include "Graphics2D/Atlas/CAtlas.h"
+#include "TextureManager/CTextureManager.h"
+
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -142,5 +146,167 @@ namespace Skylicht
 		vertices[1].Color = c;
 		vertices[2].Color = c;
 		vertices[3].Color = c;
+	}
+
+	CSpriteFrame::CSpriteFrame() :
+		m_deleteAtlas(false)
+	{
+
+	}
+
+	CSpriteFrame::~CSpriteFrame()
+	{
+		CTextureManager* textureMgr = CTextureManager::getInstance();
+		if (textureMgr != NULL)
+		{
+			for (SImage* img : m_images)
+			{
+				if (img->Atlas == NULL)
+				{
+					if (img->Texture != NULL)
+						textureMgr->removeTexture(img->Texture);
+				}
+				else
+				{
+					if (m_deleteAtlas)
+					{
+						delete img->Atlas;
+					}
+				}
+
+				delete img;
+			}
+		}
+
+		for (SFrame* f : m_frames)
+			delete f;
+
+		for (SModuleRect* m : m_modules)
+			delete m;
+
+		m_frames.clear();
+		m_modules.clear();
+		m_images.clear();
+		m_names.clear();
+	}
+
+	bool CSpriteFrame::load(const char* fileName)
+	{
+		io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(fileName);
+		if (xmlReader == NULL)
+			return false;
+
+		char text[512];
+
+		int readState = -1;
+
+		int moduleID = 0;
+		int frameID = 0;
+
+		while (xmlReader->read())
+		{
+			switch (xmlReader->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+			{
+				std::wstring nodeName = xmlReader->getNodeName();
+				if (nodeName == L"page")
+				{
+					m_images.push_back(new SImage());
+					SImage* img = m_images.back();
+
+					const wchar_t* id = xmlReader->getAttributeValue(L"id");
+					CStringImp::convertUnicodeToUTF8(id, text);
+					img->ID = atoi(text);
+
+					const wchar_t* file = xmlReader->getAttributeValue(L"file");
+					CStringImp::convertUnicodeToUTF8(file, text);
+
+					char folderPath[128];
+					CStringImp::getFolderPath(folderPath, fileName);
+					img->Path = folderPath;
+					img->Path += "/";
+					img->Path += text;
+					img->Texture = CTextureManager::getInstance()->getTexture(img->Path.c_str());
+				}
+				else if (nodeName == L"module")
+				{
+					// add module
+					m_modules.push_back(new SModuleRect());
+					SModuleRect* module = m_modules.back();
+
+					module->ID = moduleID;
+
+					// read module rect
+					const wchar_t* x = xmlReader->getAttributeValue(L"x");
+					CStringImp::convertUnicodeToUTF8(x, text);
+					module->X = core::fast_atof(text);
+
+					const wchar_t* y = xmlReader->getAttributeValue(L"y");
+					CStringImp::convertUnicodeToUTF8(y, text);
+					module->Y = core::fast_atof(text);
+
+					const wchar_t* w = xmlReader->getAttributeValue(L"w");
+					CStringImp::convertUnicodeToUTF8(w, text);
+					module->W = core::fast_atof(text);
+
+					const wchar_t* h = xmlReader->getAttributeValue(L"h");
+					CStringImp::convertUnicodeToUTF8(h, text);
+					module->H = core::fast_atof(text);
+
+					moduleID++;
+				}
+				else if (nodeName == L"frame")
+				{
+					// add frame
+					m_frames.push_back(new SFrame());
+					SFrame* frame = m_frames.back();
+					frame->ID = frameID;
+
+					// frame name
+					const wchar_t* id = xmlReader->getAttributeValue(L"id");
+					CStringImp::convertUnicodeToUTF8(id, text);
+					frame->Name = text;
+
+					/*
+					// bounding rect
+					frame->BoudingRect.UpperLeftCorner.set(module->X, module->Y);
+					frame->BoudingRect.LowerRightCorner.set(module->X + module->W, module->Y + module->H);
+
+					// read img
+					const wchar_t* page = xmlReader->getAttributeValue(L"page");
+					CStringImp::convertUnicodeToUTF8(page, text);
+					int imageID = atoi(text);
+					frame->Image = m_images[imageID];
+
+					// module offset
+					frame->ModuleOffset.push_back(SModuleOffset());
+					SModuleOffset& moduleOffset = frame->ModuleOffset.back();
+
+					// map frame to module
+					moduleOffset.Frame = frame;
+					moduleOffset.Module = module;
+					*/
+
+					frameID++;
+				}
+			}
+			break;
+			case io::EXN_TEXT:
+			{
+				readState = -1;
+			}
+			break;
+			default:
+				break;
+			}
+		};
+
+		xmlReader->drop();
+
+		for (SFrame* frame : m_frames)
+			m_names[frame->Name] = frame;
+
+		return true;
 	}
 }

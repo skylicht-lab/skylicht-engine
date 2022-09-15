@@ -40,7 +40,7 @@ namespace Skylicht
 
 	}
 
-	CGlyphFont::CGlyphFont(const char *fontName, float sizePt) :
+	CGlyphFont::CGlyphFont(const char* fontName, float sizePt) :
 		m_charPadding(0.0f),
 		m_spacePadding(0.0f),
 		m_fontName(fontName), // default font
@@ -54,21 +54,21 @@ namespace Skylicht
 
 	}
 
-	SImage* CGlyphFont::getImage(CAtlas *atlas)
+	SImage* CGlyphFont::getImage(CAtlas* atlas)
 	{
 		// find atlas image
-		for (SImage& img : m_images)
+		for (SImage* img : m_images)
 		{
-			if (img.Texture == atlas->getTexture())
+			if (img->Texture == atlas->getTexture())
 			{
-				return &img;
+				return img;
 			}
 		}
 
 		// add new image
-		m_images.push_back(SImage());
+		m_images.push_back(new SImage());
 
-		SImage* img = &m_images.back();
+		SImage* img = m_images.back();
 		img->Texture = atlas->getTexture();
 		img->Atlas = atlas;
 
@@ -86,8 +86,8 @@ namespace Skylicht
 
 		float advance = 0.0f, x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f, offsetX = 0, offsetY = 0;
 
-		CGlyphFreetype *glyphFreetype = CGlyphFreetype::getInstance();
-		CAtlas *atlas = glyphFreetype->getCharImage(
+		CGlyphFreetype* glyphFreetype = CGlyphFreetype::getInstance();
+		CAtlas* atlas = glyphFreetype->getCharImage(
 			(u16)character,
 			m_fontName.c_str(),
 			fontSize,
@@ -99,14 +99,14 @@ namespace Skylicht
 		{
 			SImage* img = getImage(atlas);
 
-			m_frames.push_back(SFrame());
-			SFrame &frame = m_frames.back();
+			m_frames.push_back(new SFrame());
+			SFrame* frame = m_frames.back();
 
-			frame.Image = img;
-			frame.ID = character;
-			frame.ModuleOffset.push_back(SModuleOffset());
+			frame->Image = img;
+			frame->ID = character;
+			frame->ModuleOffset.push_back(SModuleOffset());
 
-			c = &frame.ModuleOffset.back();
+			c = &frame->ModuleOffset.back();
 			c->Character = character;
 			c->XAdvance = advance;
 			c->OffsetX = offsetX;
@@ -114,44 +114,43 @@ namespace Skylicht
 
 			core::dimension2du size = atlas->getImage()->getDimension();
 
-			m_moduleRect.push_back(SModuleRect());
-			SModuleRect &module = m_moduleRect.back();
-			module.X = x * size.Width;
-			module.Y = y * size.Height;
-			module.W = w * size.Width;
-			module.H = h * size.Height;
+			m_modules.push_back(new SModuleRect());
+			SModuleRect* module = m_modules.back();
+			module->X = x * size.Width;
+			module->Y = y * size.Height;
+			module->W = w * size.Width;
+			module->H = h * size.Height;
 
-			c->Module = &module;
-			c->Frame = &frame;
+			c->Module = module;
+			c->Frame = frame;
 
 			// bounding rect
-			frame.BoudingRect.UpperLeftCorner.set(module.X, module.Y);
-			frame.BoudingRect.LowerRightCorner.set(module.X + module.W, module.Y + module.H);
+			frame->BoudingRect.UpperLeftCorner.set(module->X, module->Y);
+			frame->BoudingRect.LowerRightCorner.set(module->X + module->W, module->Y + module->H);
 
 			m_moduleOffset[key] = c;
-			m_frames.push_back(frame);
 		}
 
 		return c;
 	}
 
-	void CGlyphFont::getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat)
+	void CGlyphFont::getListModule(const wchar_t* string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat)
 	{
 		IFont::getListModule(string, format, output, outputFormat);
 
-		for (SImage& img : m_images)
+		for (SImage* img : m_images)
 		{
-			if (img.Atlas != NULL)
-				img.Atlas->updateTexture();
+			if (img->Atlas != NULL)
+				img->Atlas->updateTexture();
 		}
 	}
 
 	void CGlyphFont::updateFontTexture()
 	{
-		for (SImage& img : m_images)
+		for (SImage* img : m_images)
 		{
-			if (img.Atlas != NULL)
-				img.Atlas->updateTexture();
+			if (img->Atlas != NULL)
+				img->Atlas->updateTexture();
 		}
 	}
 }
