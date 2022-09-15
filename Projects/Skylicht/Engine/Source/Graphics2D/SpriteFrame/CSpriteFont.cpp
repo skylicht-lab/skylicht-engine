@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CStringImp.h"
 #include "TextureManager/CTextureManager.h"
+#include "Graphics2D/Atlas/CAtlas.h"
 
 namespace Skylicht
 {
@@ -36,22 +37,11 @@ namespace Skylicht
 		m_charPadding(0.0f),
 		m_spacePadding(0.0f)
 	{
-
+		m_deleteAtlas = true;
 	}
 
 	CSpriteFont::~CSpriteFont()
 	{
-		CTextureManager *textureMgr = CTextureManager::getInstance();
-
-		if (textureMgr != NULL)
-		{
-			for (SImage& img : m_images)
-			{
-				if (img.Texture != NULL)
-					textureMgr->removeTexture(img.Texture);
-			}
-		}
-
 		if (m_moduleMap != NULL)
 		{
 			delete m_moduleMap;
@@ -60,9 +50,9 @@ namespace Skylicht
 		}
 	}
 
-	bool CSpriteFont::loadFont(const char *fileName)
+	bool CSpriteFont::loadFont(const char* fileName)
 	{
-		io::IXMLReader *xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(fileName);
+		io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(fileName);
 		if (xmlReader == NULL)
 			return false;
 
@@ -81,23 +71,23 @@ namespace Skylicht
 				std::wstring nodeName = xmlReader->getNodeName();
 				if (nodeName == L"page")
 				{
-					m_images.push_back(SImage());
-					SImage &img = m_images.back();
+					m_images.push_back(new SImage());
+					SImage* img = m_images.back();
 
 					const wchar_t* id = xmlReader->getAttributeValue(L"id");
 					CStringImp::convertUnicodeToUTF8(id, text);
-					img.ID = atoi(text);
+					img->ID = atoi(text);
 
 					const wchar_t* file = xmlReader->getAttributeValue(L"file");
 					CStringImp::convertUnicodeToUTF8(file, text);
 
 					char folderPath[128];
 					CStringImp::getFolderPath(folderPath, fileName);
-					img.Path = folderPath;
-					img.Path += "/";
-					img.Path += text;
+					img->Path = folderPath;
+					img->Path += "/";
+					img->Path += text;
 
-					img.Texture = CTextureManager::getInstance()->getTexture(img.Path.c_str());
+					img->Texture = CTextureManager::getInstance()->getTexture(img->Path.c_str());
 				}
 				else if (nodeName == L"chars")
 				{
@@ -110,52 +100,52 @@ namespace Skylicht
 				else if (nodeName == L"char")
 				{
 					// add module
-					m_moduleRect.push_back(SModuleRect());
-					SModuleRect &module = m_moduleRect.back();
+					m_modules.push_back(new SModuleRect());
+					SModuleRect* module = m_modules.back();
 
 					// add frame
-					m_frames.push_back(SFrame());
-					SFrame &frame = m_frames.back();
+					m_frames.push_back(new SFrame());
+					SFrame* frame = m_frames.back();
 
-					module.ID = moduleID;
-					frame.ID = moduleID;
+					module->ID = moduleID;
+					frame->ID = moduleID;
 
 					// frame is a character
 					const wchar_t* id = xmlReader->getAttributeValue(L"id");
 					CStringImp::convertUnicodeToUTF8(id, text);
 					int charID = atoi(text);
-					frame.Name = text;
+					frame->Name = text;
 
 					// read module rect
 					const wchar_t* x = xmlReader->getAttributeValue(L"x");
 					CStringImp::convertUnicodeToUTF8(x, text);
-					module.X = core::fast_atof(text);
+					module->X = core::fast_atof(text);
 
 					const wchar_t* y = xmlReader->getAttributeValue(L"y");
 					CStringImp::convertUnicodeToUTF8(y, text);
-					module.Y = core::fast_atof(text);
+					module->Y = core::fast_atof(text);
 
 					const wchar_t* w = xmlReader->getAttributeValue(L"width");
 					CStringImp::convertUnicodeToUTF8(w, text);
-					module.W = core::fast_atof(text);
+					module->W = core::fast_atof(text);
 
 					const wchar_t* h = xmlReader->getAttributeValue(L"height");
 					CStringImp::convertUnicodeToUTF8(h, text);
-					module.H = core::fast_atof(text);
+					module->H = core::fast_atof(text);
 
 					// bounding rect
-					frame.BoudingRect.UpperLeftCorner.set(module.X, module.Y);
-					frame.BoudingRect.LowerRightCorner.set(module.X + module.W, module.Y + module.H);
+					frame->BoudingRect.UpperLeftCorner.set(module->X, module->Y);
+					frame->BoudingRect.LowerRightCorner.set(module->X + module->W, module->Y + module->H);
 
 					// read img
 					const wchar_t* page = xmlReader->getAttributeValue(L"page");
 					CStringImp::convertUnicodeToUTF8(page, text);
 					int imageID = atoi(text);
-					frame.Image = &(*std::next(m_images.begin(), imageID));
+					frame->Image = m_images[imageID];
 
 					// module offset
-					frame.ModuleOffset.push_back(SModuleOffset());
-					SModuleOffset& moduleOffset = frame.ModuleOffset.back();
+					frame->ModuleOffset.push_back(SModuleOffset());
+					SModuleOffset& moduleOffset = frame->ModuleOffset.back();
 
 					// xoffset
 					const wchar_t* xoffset = xmlReader->getAttributeValue(L"xoffset");
@@ -173,8 +163,8 @@ namespace Skylicht
 					moduleOffset.XAdvance = core::fast_atof(text);
 
 					// map frame to module
-					moduleOffset.Frame = &frame;
-					moduleOffset.Module = &module;
+					moduleOffset.Frame = frame;
+					moduleOffset.Module = module;
 
 					// make module map
 					m_moduleMap[moduleID] = charID;
@@ -194,8 +184,8 @@ namespace Skylicht
 
 		xmlReader->drop();
 
-		for (SFrame &frame : m_frames)
-			m_frameName[frame.Name] = &frame;
+		for (SFrame* frame : m_frames)
+			m_names[frame->Name] = frame;
 
 		return true;
 	}
@@ -234,7 +224,7 @@ namespace Skylicht
 		if ((u32)m_frames.size() < index)
 			return NULL;
 
-		SFrame& frame = *std::next(m_frames.begin(), index);
-		return &frame.ModuleOffset[0];
+		SFrame* frame = m_frames[index];
+		return &frame->ModuleOffset[0];
 	}
 }

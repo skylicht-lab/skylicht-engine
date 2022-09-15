@@ -29,42 +29,41 @@ https://github.com/skylicht-lab/skylicht-engine
 #if defined(USE_FREETYPE)
 
 #include "Graphics2D/Atlas/CAtlas.h"
+#include "CSpriteFrame.h"
 
 namespace Skylicht
 {
-	class CGlyphFont : public IFont
+	class CGlyphFont :
+		public CSpriteFrame,
+		public IFont
 	{
 	protected:
 		float m_charPadding;
 		float m_spacePadding;
+		float m_fontSizePt;
 
 		std::map<int, SModuleOffset*> m_moduleOffset;
 
-		std::list<SImage> m_images;
-		std::list<SModuleRect> m_moduleRect;
-		std::list<SFrame> m_frames;
-
 		std::string m_fontName;
-		float m_fontSizePt;
 
 	protected:
 
-		SImage* getImage(CAtlas *atlas);
+		SImage* getImage(CAtlas* atlas);
 
 	public:
 		CGlyphFont();
 
-		CGlyphFont(const char *fontName, float sizePt);
+		CGlyphFont(const char* fontName, float sizePt);
 
 		virtual ~CGlyphFont();
 
-		inline void setFont(const char *fontName, float sizePt)
+		inline void setFont(const char* fontName, float sizePt)
 		{
 			m_fontName = fontName;
 			m_fontSizePt = sizePt;
 		}
 
-		inline const char *getFontName()
+		inline const char* getFontName()
 		{
 			return m_fontName.c_str();
 		}
@@ -92,11 +91,11 @@ namespace Skylicht
 
 		virtual SModuleOffset* getCharacterModule(int character);
 
-		virtual void getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
+		virtual void getListModule(const wchar_t* string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
 
 		virtual void updateFontTexture();
 
-		std::list<SImage>& getImages()
+		std::vector<SImage*>& getImages()
 		{
 			return m_images;
 		}

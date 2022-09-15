@@ -28,15 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSpriteAtlas
+	class CSpriteAtlas : public CSpriteFrame
 	{
-	protected:
-		std::vector<SImage*> m_images;
-		std::vector<SFrame*> m_frames;
-		std::vector<SModuleRect*> m_modules;
-
-		std::map<std::string, SFrame*> m_names;
-
+	protected:		
 		int m_width;
 		int m_height;
 		ECOLOR_FORMAT m_fmt;
