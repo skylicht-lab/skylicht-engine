@@ -72,6 +72,13 @@ namespace Skylicht
 
 			CBase::~CBase()
 			{
+				CInput* input = CInput::getInput();
+				if (input)
+				{
+					if (input->getCapture() == this)
+						input->setCapture(NULL);
+				}
+
 				if (OnDestroy != nullptr)
 					OnDestroy(this);
 

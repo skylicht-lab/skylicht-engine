@@ -125,8 +125,8 @@ namespace Skylicht
 			c->Frame = frame;
 
 			// bounding rect
-			frame->BoudingRect.UpperLeftCorner.set(module->X, module->Y);
-			frame->BoudingRect.LowerRightCorner.set(module->X + module->W, module->Y + module->H);
+			frame->BoudingRect.UpperLeftCorner.set(c->OffsetX, c->OffsetY);
+			frame->BoudingRect.LowerRightCorner.set(c->OffsetX + module->W, c->OffsetY + module->H);
 
 			m_moduleOffset[key] = c;
 		}

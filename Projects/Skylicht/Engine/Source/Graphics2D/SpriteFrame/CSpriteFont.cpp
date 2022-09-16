@@ -133,10 +133,6 @@ namespace Skylicht
 					CStringImp::convertUnicodeToUTF8(h, text);
 					module->H = core::fast_atof(text);
 
-					// bounding rect
-					frame->BoudingRect.UpperLeftCorner.set(module->X, module->Y);
-					frame->BoudingRect.LowerRightCorner.set(module->X + module->W, module->Y + module->H);
-
 					// read img
 					const wchar_t* page = xmlReader->getAttributeValue(L"page");
 					CStringImp::convertUnicodeToUTF8(page, text);
@@ -161,6 +157,10 @@ namespace Skylicht
 					const wchar_t* xadvance = xmlReader->getAttributeValue(L"xadvance");
 					CStringImp::convertUnicodeToUTF8(xadvance, text);
 					moduleOffset.XAdvance = core::fast_atof(text);
+
+					// bounding rect
+					frame->BoudingRect.UpperLeftCorner.set(moduleOffset.OffsetX, moduleOffset.OffsetY);
+					frame->BoudingRect.LowerRightCorner.set(moduleOffset.OffsetX + module->W, moduleOffset.OffsetY + module->H);
 
 					// map frame to module
 					moduleOffset.Frame = frame;

@@ -200,8 +200,7 @@ namespace Skylicht
 
 		int readState = -1;
 
-		int moduleID = 0;
-		int frameID = 0;
+		SFrame* currentFrame;
 
 		while (xmlReader->read())
 		{
@@ -235,7 +234,10 @@ namespace Skylicht
 					m_modules.push_back(new SModuleRect());
 					SModuleRect* module = m_modules.back();
 
-					module->ID = moduleID;
+					// parse id
+					const wchar_t* id = xmlReader->getAttributeValue(L"id");
+					CStringImp::convertUnicodeToUTF8(id, text);
+					module->ID = atoi(text);
 
 					// read module rect
 					const wchar_t* x = xmlReader->getAttributeValue(L"x");
@@ -253,25 +255,22 @@ namespace Skylicht
 					const wchar_t* h = xmlReader->getAttributeValue(L"h");
 					CStringImp::convertUnicodeToUTF8(h, text);
 					module->H = core::fast_atof(text);
-
-					moduleID++;
 				}
 				else if (nodeName == L"frame")
 				{
 					// add frame
 					m_frames.push_back(new SFrame());
 					SFrame* frame = m_frames.back();
-					frame->ID = frameID;
 
-					// frame name
+					// parse id
 					const wchar_t* id = xmlReader->getAttributeValue(L"id");
 					CStringImp::convertUnicodeToUTF8(id, text);
-					frame->Name = text;
+					frame->ID = atoi(text);
 
-					/*
-					// bounding rect
-					frame->BoudingRect.UpperLeftCorner.set(module->X, module->Y);
-					frame->BoudingRect.LowerRightCorner.set(module->X + module->W, module->Y + module->H);
+					// frame name
+					const wchar_t* name = xmlReader->getAttributeValue(L"name");
+					CStringImp::convertUnicodeToUTF8(name, text);
+					frame->Name = text;
 
 					// read img
 					const wchar_t* page = xmlReader->getAttributeValue(L"page");
@@ -279,22 +278,78 @@ namespace Skylicht
 					int imageID = atoi(text);
 					frame->Image = m_images[imageID];
 
-					// module offset
-					frame->ModuleOffset.push_back(SModuleOffset());
-					SModuleOffset& moduleOffset = frame->ModuleOffset.back();
+					currentFrame = frame;
+				}
+				else if (nodeName == L"module")
+				{
+					if (currentFrame)
+					{
+						// module offset
+						currentFrame->ModuleOffset.push_back(SModuleOffset());
+						SModuleOffset& moduleOffset = currentFrame->ModuleOffset.back();
 
-					// map frame to module
-					moduleOffset.Frame = frame;
-					moduleOffset.Module = module;
-					*/
+						// map frame to module
+						moduleOffset.Frame = currentFrame;
 
-					frameID++;
+						// parse id
+						const wchar_t* id = xmlReader->getAttributeValue(L"id");
+						CStringImp::convertUnicodeToUTF8(id, text);
+						int moduleID = atoi(text);
+						moduleOffset.Module = m_modules[moduleID];
+
+						// module offset x
+						const wchar_t* x = xmlReader->getAttributeValue(L"x");
+						CStringImp::convertUnicodeToUTF8(x, text);
+						moduleOffset.OffsetX = core::fast_atof(text);
+
+						// module offset y
+						const wchar_t* y = xmlReader->getAttributeValue(L"y");
+						CStringImp::convertUnicodeToUTF8(y, text);
+						moduleOffset.OffsetY = core::fast_atof(text);
+
+						// module flip x
+						const wchar_t* flipX = xmlReader->getAttributeValue(L"flipX");
+						CStringImp::convertUnicodeToUTF8(flipX, text);
+						moduleOffset.FlipX = atoi(text) == 0 ? false : true;
+
+						// module flip y
+						const wchar_t* flipY = xmlReader->getAttributeValue(L"flipY");
+						CStringImp::convertUnicodeToUTF8(flipY, text);
+						moduleOffset.FlipX = atoi(text) == 0 ? false : true;
+
+						// bounding rect
+						core::rectf& r = currentFrame->BoudingRect;
+						if (currentFrame->ModuleOffset.size() == 1)
+						{
+							r.UpperLeftCorner.X = moduleOffset.OffsetX;
+							r.UpperLeftCorner.Y = moduleOffset.OffsetY;
+							r.LowerRightCorner.X = moduleOffset.OffsetX + moduleOffset.Module->W;
+							r.LowerRightCorner.Y = moduleOffset.OffsetY + moduleOffset.Module->H;
+						}
+						else
+						{
+							r.UpperLeftCorner.X = core::min_(r.UpperLeftCorner.X, moduleOffset.OffsetX);
+							r.UpperLeftCorner.Y = core::min_(r.UpperLeftCorner.Y, moduleOffset.OffsetY);
+							r.LowerRightCorner.X = core::max_(r.LowerRightCorner.X, moduleOffset.OffsetX + moduleOffset.Module->W);
+							r.LowerRightCorner.Y = core::max_(r.LowerRightCorner.Y, moduleOffset.OffsetY + moduleOffset.Module->H);
+						}
+					}
 				}
 			}
 			break;
 			case io::EXN_TEXT:
 			{
 				readState = -1;
+			}
+			break;
+			case io::EXN_ELEMENT_END:
+			{
+				std::wstring nodeName = xmlReader->getNodeName();
+				if (nodeName == L"frame")
+				{
+					currentFrame = NULL;
+				}
+				break;
 			}
 			break;
 			default:

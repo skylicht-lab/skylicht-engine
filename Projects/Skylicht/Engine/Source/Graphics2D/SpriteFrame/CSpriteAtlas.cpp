@@ -122,11 +122,11 @@ namespace Skylicht
 			// atlas image
 			image->Atlas->bitBltImage(img, r.UpperLeftCorner.X, r.UpperLeftCorner.Y);
 
-			// create frame			
+			// create frame
 			frame = new SFrame();
 			frame->Image = image;
-			frame->BoudingRect.UpperLeftCorner.set((f32)r.UpperLeftCorner.X, (f32)r.UpperLeftCorner.Y);
-			frame->BoudingRect.LowerRightCorner.set((f32)r.LowerRightCorner.X, (f32)r.LowerRightCorner.Y);
+			frame->BoudingRect.UpperLeftCorner.set(0.0f, 0.0f);
+			frame->BoudingRect.LowerRightCorner.set((f32)r.getWidth(), (f32)r.getHeight());
 			frame->Name = name;
 			frame->ID = (int)m_frames.size();
 
