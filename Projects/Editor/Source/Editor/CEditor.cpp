@@ -39,11 +39,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/GoogleMap/CSpaceGMap.h"
 #include "Space/GoogleMap/CSpaceExportGMap.h"
 #include "Space/Sprite/CSpaceExportSprite.h"
+#include "Space/Sprite/CSpaceSprite.h"
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
 #include "SpaceController/CAssetPropertyController.h"
 #include "SpaceController/CAssetCreateController.h"
+#include "SpaceController/CSpriteController.h"
+#include "SpaceController/CGUIDesignController.h"
 
 #include "Handles/CHandles.h"
 
@@ -84,6 +87,9 @@ namespace Skylicht
 
 			// init controller
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
+			CSpriteController::createGetInstance()->initContextMenu(m_canvas);
+			CGUIDesignController::createGetInstance()->initContextMenu(m_canvas);
+
 			CPropertyController::createGetInstance();
 			CAssetPropertyController::createGetInstance();
 			CAssetCreateController::createGetInstance();
@@ -101,7 +107,11 @@ namespace Skylicht
 			CAssetCreateController::releaseInstance();
 			CPropertyController::releaseInstance();
 			CSelection::releaseInstance();
+
 			CSceneController::releaseInstance();
+			CSpriteController::releaseInstance();
+			CGUIDesignController::releaseInstance();
+
 			CProjectSettings::releaseInstance();
 
 			delete m_spriteIcon;
@@ -450,7 +460,6 @@ namespace Skylicht
 			m_menuWindowItems.push_back(submenu->addItem(L"Property"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Scene"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Hierarchy"));
-			m_menuWindowItems.push_back(submenu->addItem(L"GUI Design"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Animation"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Console"));
 			submenu->addSeparator();
@@ -525,63 +534,73 @@ namespace Skylicht
 			initWorkspace(hierarchy, hierarchy->getCaption());
 		}
 
-		void CEditor::initWorkspace(GUI::CWindow* window, const std::wstring& workspace)
+		CSpace* CEditor::initWorkspace(GUI::CWindow* window, const std::wstring& workspace)
 		{
 			// note:
 			// Space will delete when window closed see CSpace::onDestroy
+			CSpace* ret = NULL;
 
 			if (workspace == L"Scene")
 			{
-				m_workspaces.push_back(new CSpaceScene(window, this));
+				ret = new CSpaceScene(window, this);
 			}
 			else if (workspace == L"Import Assets")
 			{
-				m_workspaces.push_back(new CSpaceImport(window, this));
+				ret = new CSpaceImport(window, this);
 			}
 			else if (workspace == L"GUI Design")
 			{
-				m_workspaces.push_back(new CSpaceGUIDesign(window, this));
+				ret = new CSpaceGUIDesign(window, this);
 			}
 			else if (workspace == L"Animation")
 			{
 
 			}
+			else if (workspace == L"Sprite")
+			{
+				ret = new CSpaceSprite(window, this);
+			}
 			else if (workspace == L"Assets")
 			{
-				m_workspaces.push_back(new CSpaceAssets(window, this));
+				ret = new CSpaceAssets(window, this);
 			}
 			else if (workspace == L"Console")
 			{
-				m_workspaces.push_back(new CSpaceConsole(window, this));
+				ret = new CSpaceConsole(window, this);
 			}
 			else if (workspace == L"Property")
 			{
-				m_workspaces.push_back(new CSpaceProperty(window, this));
+				ret = new CSpaceProperty(window, this);
 			}
 			else if (workspace == L"Google Map")
 			{
-				m_workspaces.push_back(new CSpaceGMap(window, this));
+				ret = new CSpaceGMap(window, this);
 			}
 			else if (workspace == L"Export GMap")
 			{
-				m_workspaces.push_back(new CSpaceExportGMap(window, this));
+				ret = new CSpaceExportGMap(window, this);
 			}
 			else if (workspace == L"Export Sprite")
 			{
-				m_workspaces.push_back(new CSpaceExportSprite(window, this));
+				ret = new CSpaceExportSprite(window, this);
 			}
 			else if (workspace == L"Hierarchy")
 			{
-				m_workspaces.push_back(new CSpaceHierarchy(window, this));
+				ret = new CSpaceHierarchy(window, this);
 			}
 			else if (workspace == L"Project Setting")
 			{
-				m_workspaces.push_back(new CSpaceProjectSettings(window, this));
+				ret = new CSpaceProjectSettings(window, this);
 			}
 			else if (workspace == L"Load Scene")
 			{
-				m_workspaces.push_back(new CSpaceLoadScene(window, this));
+				ret = new CSpaceLoadScene(window, this);
 			}
+
+			if (ret)
+				m_workspaces.push_back(ret);
+
+			return ret;
 		}
 
 		void CEditor::removeWorkspace(CSpace* space)
@@ -1152,6 +1171,23 @@ namespace Skylicht
 				window->setCenterPosition();
 				initWorkspace(window, window->getCaption());
 			}
+		}
+
+		CSpace* CEditor::openWorkspace(const std::wstring& name)
+		{
+			// Space is hide -> open
+			float w = 680.0f;
+			float h = 480.0f;
+
+			GUI::CDockableWindow* window = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			window->setCaption(name);
+			window->setCenterPosition();
+
+			CSpace* ret = initWorkspace(window, window->getCaption());
+			if (!ret)
+				window->onCloseWindow();
+
+			return ret;
 		}
 
 		void CEditor::OnCommandWindow(GUI::CBase* item)
