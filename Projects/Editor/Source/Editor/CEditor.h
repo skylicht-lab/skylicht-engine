@@ -122,6 +122,8 @@ namespace Skylicht
 
 			CSpace* getWorkspaceByName(const std::wstring& name);
 
+			CSpace* openWorkspace(const std::wstring& name);
+
 		protected:
 
 			void initMenuBar();
@@ -130,7 +132,7 @@ namespace Skylicht
 
 			void initSessionLayout(const std::string& data);
 
-			void initWorkspace(GUI::CWindow* window, const std::wstring& workspace);
+			CSpace* initWorkspace(GUI::CWindow* window, const std::wstring& workspace);
 
 			void removeWorkspace(CSpace* space);
 
