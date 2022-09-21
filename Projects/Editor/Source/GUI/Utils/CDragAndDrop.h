@@ -37,6 +37,8 @@ namespace Skylicht
 
 			public:
 
+				static void cancel();
+
 				static void onControlDeleted(GUI::CBase* control);
 
 				static bool onMouseButton(GUI::CBase* hoveredControl, float x, float y, bool down);

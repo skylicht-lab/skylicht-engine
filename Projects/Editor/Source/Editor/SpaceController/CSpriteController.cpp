@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "Editor/CEditor.h"
+#include "GUI/Utils/CDragAndDrop.h"
 #include "CSpriteController.h"
 
 namespace Skylicht
@@ -52,6 +53,20 @@ namespace Skylicht
 			CSpace* space = editor->getWorkspaceByName(std::wstring(L"Sprite"));
 			if (!space)
 				space = editor->openWorkspace(std::wstring(L"Sprite"));
+			else
+			{
+				GUI::CDockableWindow* dockWindow = dynamic_cast<GUI::CDockableWindow*>(space->getWindow());
+				if (dockWindow != NULL)
+				{
+					GUI::CDockTabControl* dockTab = dockWindow->getCurrentDockTab();
+					if (dockTab != NULL)
+					{
+						// activate
+						dockTab->setCurrentWindow(dockWindow);
+						GUI::CDragAndDrop::cancel();
+					}
+				}
+			}
 		}
 	}
 }
