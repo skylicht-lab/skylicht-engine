@@ -41,6 +41,13 @@ namespace Skylicht
 			static GUI::CBase* s_lastHoverControl = NULL;
 			static bool s_dragging = false;
 
+			void CDragAndDrop::cancel()
+			{
+				s_lastPressedControl = NULL;
+				s_lastHoverControl = NULL;
+				s_dragging = false;
+			}
+
 			void CDragAndDrop::onControlDeleted(GUI::CBase* control)
 			{
 				if (control == s_lastHoverControl)
