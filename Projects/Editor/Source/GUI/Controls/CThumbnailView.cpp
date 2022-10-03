@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,39 +22,67 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-#include "AssetManager/CAssetImporter.h"
-#include "AssetManager/CAssetManager.h"
-
-#include "Graphics2D/SpriteFrame/CSpriteFrame.h"
+#include "pch.h"
+#include "CThumbnailView.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceSprite : public CSpace
+		namespace GUI
 		{
-		protected:
-			GUI::CThumbnailView* m_view;
-			GUI::CLabel* m_label;
+			CThumbnailView::CThumbnailView(CBase* parent, float itemWidth) :
+				CBase(parent),
+				m_itemWidth(itemWidth)
+			{
+				m_view = new CScrollControl(this);
+				m_view->dock(EPosition::Fill);
+			}
 
-		protected:
-			CSpriteFrame* m_sprite;
+			CThumbnailView::~CThumbnailView()
+			{
 
-		public:
-			CSpaceSprite(GUI::CWindow* window, CEditor* editor);
+			}
 
-			virtual ~CSpaceSprite();
+			void CThumbnailView::layout()
+			{
+				CBase::layout();
+			}
 
-			void openSprite(const std::string& path);
+			void CThumbnailView::postLayout()
+			{
+				CBase::postLayout();
+			}
 
-			virtual void update();
+			void CThumbnailView::unSelectAll()
+			{
 
-			virtual void onDestroy(GUI::CBase* base);
-		};
+			}
+
+			bool CThumbnailView::onKeyUp(bool down)
+			{
+				return true;
+			}
+
+			bool CThumbnailView::onKeyDown(bool down)
+			{
+				return true;
+			}
+
+			bool CThumbnailView::onKeyHome(bool down)
+			{
+				return true;
+			}
+
+			bool CThumbnailView::onKeyEnd(bool down)
+			{
+				return true;
+			}
+
+			void CThumbnailView::onItemDown(CBase* base)
+			{
+
+			}
+		}
 	}
 }

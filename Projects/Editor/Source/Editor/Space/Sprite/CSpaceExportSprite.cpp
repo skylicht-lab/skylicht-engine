@@ -235,7 +235,7 @@ namespace Skylicht
 
 				for (SModuleOffset& module : frame->ModuleOffset)
 				{
-					sprintf(data, "\t\t\t<module id=\"%d\" x=\"%f\" y=\"%f\" flipX=\"%d\" flipY=\"%d\"/>\n",
+					sprintf(data, "\t\t\t<fmodule id=\"%d\" x=\"%f\" y=\"%f\" flipX=\"%d\" flipY=\"%d\"/>\n",
 						module.Module->ID,
 						module.OffsetX,
 						module.OffsetY,

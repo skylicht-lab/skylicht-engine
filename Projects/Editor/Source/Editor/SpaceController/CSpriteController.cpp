@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "Editor/CEditor.h"
+#include "Editor/Space/Sprite/CSpaceSprite.h"
 #include "GUI/Utils/CDragAndDrop.h"
 #include "CSpriteController.h"
 
@@ -66,6 +67,12 @@ namespace Skylicht
 						GUI::CDragAndDrop::cancel();
 					}
 				}
+			}
+
+			if (space)
+			{
+				CSpaceSprite* spaceSprite = dynamic_cast<CSpaceSprite*>(space);
+				spaceSprite->openSprite(path);
 			}
 		}
 	}

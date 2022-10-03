@@ -200,7 +200,7 @@ namespace Skylicht
 
 		int readState = -1;
 
-		SFrame* currentFrame;
+		SFrame* currentFrame = NULL;
 
 		while (xmlReader->read())
 		{
@@ -280,7 +280,7 @@ namespace Skylicht
 
 					currentFrame = frame;
 				}
-				else if (nodeName == L"module")
+				else if (nodeName == L"fmodule")
 				{
 					if (currentFrame)
 					{
