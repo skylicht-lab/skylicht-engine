@@ -57,4 +57,5 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CRawImage.h"
 #include "GUI/Controls/CImageButton.h"
 #include "GUI/Controls/CColorPicker.h"
+#include "GUI/Controls/CThumbnailView.h"
 #include "GUI/Utils/CToggleGroup.h"

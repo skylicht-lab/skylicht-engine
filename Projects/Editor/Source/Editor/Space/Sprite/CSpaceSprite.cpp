@@ -40,12 +40,38 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSpaceSprite::CSpaceSprite(GUI::CWindow* window, CEditor* editor) :
-			CSpace(window, editor)
+			CSpace(window, editor),
+			m_sprite(NULL)
 		{
+			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
+
+			m_label = new GUI::CLabel(toolbar);
+			m_label->setPadding(GUI::SPadding(10.0f, 2.0f, 0.0f, 0.0f));
+			m_label->setString(L"");
+			m_label->sizeToContents();
+			toolbar->addControl(m_label);
+
+			m_view = new GUI::CThumbnailView(window, 256.0f);
+			m_view->dock(GUI::EPosition::Fill);
 		}
 
 		CSpaceSprite::~CSpaceSprite()
 		{
+			if (m_sprite)
+				delete m_sprite;
+		}
+
+		void CSpaceSprite::openSprite(const std::string& path)
+		{
+			if (m_sprite)
+				delete m_sprite;
+
+			m_sprite = new CSpriteFrame();
+			m_sprite->load(path.c_str());
+
+			std::string shortPath = CAssetManager::getInstance()->getShortPath(path.c_str());
+			m_label->setString(CStringImp::convertUTF8ToUnicode(shortPath.c_str()));
+			m_label->sizeToContents();
 		}
 
 		void CSpaceSprite::update()
