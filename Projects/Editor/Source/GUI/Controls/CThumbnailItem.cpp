@@ -22,11 +22,9 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CBase.h"
-#include "CScrollControl.h"
+#include "pch.h"
 #include "CThumbnailItem.h"
+#include "GUI/Theme/CThemeConfig.h"
 
 namespace Skylicht
 {
@@ -34,48 +32,62 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThumbnailView : public CBase
+			CThumbnailItem::CThumbnailItem(CBase* parent, CBase* owner, float itemWidth, float itemHeight) :
+				CButton(parent),
+				m_owner(owner)
 			{
-			protected:
-				float m_itemWidth;
-				float m_itemHeight;
+				setIsToggle(true);
 
-				CScrollControl* m_view;
+				m_label->dock(EPosition::Bottom);
+				m_label->setTextAlignment(GUI::TextCenter);
 
-				std::vector<CThumbnailItem*> m_items;
+				m_render = new CBase(this);
+				m_render->setTransparentMouseInput(true);
+				m_render->setMargin(SMargin(5.0f, 5.0f, 5.0f, 5.0f));
+				m_render->dock(EPosition::Fill);
 
-			public:
-				CThumbnailView(CBase* parent, float itemWidth, float itemHeight);
+				setSize(itemWidth, itemHeight);
+			}
 
-				virtual ~CThumbnailView();
+			CThumbnailItem::~CThumbnailItem()
+			{
 
-				virtual void layout();
+			}
 
-				virtual void postLayout();
+			void CThumbnailItem::renderUnder()
+			{
+				if (isHovered() || m_toggleStatus)
+					renderBackground();
+			}
 
-				void unSelectAll();
+			void CThumbnailItem::renderBackground()
+			{
+				SGUIColor c = m_color;
 
-				virtual bool onKeyUp(bool down);
+				if (m_pressed == true)
+					c = m_pressColor;
+				else
+					c = m_hoverColor;
 
-				virtual bool onKeyDown(bool down);
+				if (isToggle())
+				{
+					if (m_toggleStatus)
+					{
+						if (m_owner->isKeyboardFocus() == true)
+							c = m_pressColor;
+						else
+							c = CThemeConfig::ListItemBackgroundUnfocusColor;
+					}
+				}
 
-				virtual bool onKeyHome(bool down);
+				SRect r = getRenderBounds();
+				r.X = r.X + 1.0f;
+				r.Y = r.Y + 1.0f;
+				r.Width = r.Width - 2.0f;
+				r.Height = r.Height - 1.0f;
 
-				virtual bool onKeyEnd(bool down);
-
-				CThumbnailItem* addItem();
-
-			public:
-
-				Listener OnSelected;
-				Listener OnUnselected;
-				Listener OnSelectChange;
-				Listener OnItemContextMenu;
-
-			protected:
-
-				virtual void onItemDown(CBase* base);
-			};
+				CTheme::getTheme()->drawButton(r, c);
+			}
 		}
 	}
 }

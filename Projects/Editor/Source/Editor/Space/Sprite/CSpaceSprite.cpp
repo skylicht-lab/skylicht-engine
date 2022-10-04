@@ -51,8 +51,16 @@ namespace Skylicht
 			m_label->sizeToContents();
 			toolbar->addControl(m_label);
 
-			m_view = new GUI::CThumbnailView(window, 256.0f);
+			m_inputSearch = new GUI::CTextBox(toolbar);
+			m_inputSearch->setWidth(200.0f);
+			m_inputSearch->showIcon();
+			m_inputSearch->setStringHint(L"Search");
+			toolbar->addControl(m_inputSearch, true);
+
+			m_view = new GUI::CThumbnailView(window, 115.0f, 100.0f);
 			m_view->dock(GUI::EPosition::Fill);
+
+			m_materialID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 		}
 
 		CSpaceSprite::~CSpaceSprite()
@@ -69,9 +77,19 @@ namespace Skylicht
 			m_sprite = new CSpriteFrame();
 			m_sprite->load(path.c_str());
 
-			std::string shortPath = CAssetManager::getInstance()->getShortPath(path.c_str());
+			std::string shortPath = CPath::getFileName(path.c_str());
 			m_label->setString(CStringImp::convertUTF8ToUnicode(shortPath.c_str()));
 			m_label->sizeToContents();
+
+			std::vector<SFrame*>& allFrames = m_sprite->getFrames();
+			for (SFrame* frame : allFrames)
+			{
+				GUI::CThumbnailItem* item = m_view->addItem();
+				item->setLabel(CStringImp::convertUTF8ToUnicode(frame->Name.c_str()));
+				item->getRenderControl()->OnRender = [&, frame](GUI::CBase* base) {
+					onRenderFrame(base, frame);
+				};
+			}
 		}
 
 		void CSpaceSprite::update()
@@ -82,6 +100,38 @@ namespace Skylicht
 		void CSpaceSprite::onDestroy(GUI::CBase* base)
 		{
 			CSpace::onDestroy(base);
+		}
+
+		void CSpaceSprite::onRenderFrame(GUI::CBase* base, SFrame* frame)
+		{
+			// flush the current gui
+			GUI::CGUIContext::getRenderer()->flush();
+			core::recti vp = getVideoDriver()->getViewPort();
+
+			// get base rect for renderer
+			GUI::SPoint position = base->localPosToCanvas();
+			core::rectf viewport;
+			viewport.UpperLeftCorner.set(position.X, position.Y);
+			viewport.LowerRightCorner.set(position.X + base->width(), position.Y + base->height());
+
+			// scale the frame
+			float sourceSize = core::max_(frame->getWidth(), frame->getHeight());
+			float renderSize = core::max_(base->width(), base->height());
+			float scale = sourceSize < renderSize ? 1.0f : renderSize / sourceSize;
+			
+			// draw the frame
+			core::matrix4 transform;
+			transform.setTranslation(core::vector3df(position.X, position.Y, 0.0f));
+			transform.setScale(scale);
+
+			CGraphics2D* graphics = CGraphics2D::getInstance();
+			graphics->addFrameBatch(frame, SColor(255, 255, 255, 255), transform, m_materialID);
+			graphics->flush();
+
+			// resume gui render
+			getVideoDriver()->enableScissor(true);
+			getVideoDriver()->setViewPort(vp);
+			GUI::CGUIContext::getRenderer()->setProjection();
 		}
 	}
 }

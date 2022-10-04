@@ -31,9 +31,10 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CThumbnailView::CThumbnailView(CBase* parent, float itemWidth) :
+			CThumbnailView::CThumbnailView(CBase* parent, float itemWidth, float itemHeight) :
 				CBase(parent),
-				m_itemWidth(itemWidth)
+				m_itemWidth(itemWidth),
+				m_itemHeight(itemHeight)
 			{
 				m_view = new CScrollControl(this);
 				m_view->dock(EPosition::Fill);
@@ -47,6 +48,31 @@ namespace Skylicht
 			void CThumbnailView::layout()
 			{
 				CBase::layout();
+
+				float totalWidth = width() - 5.0f;
+
+				int numItemInRow = (int)(totalWidth / m_itemWidth);
+				int numItems = (int)m_items.size();
+
+				float itemWidth = totalWidth / numItemInRow;
+
+				float offsetX = (int)((itemWidth - m_itemWidth) * 0.5f);
+				float x = 0.0f;
+				float y = 0.0f;
+
+				for (int i = 0; i < numItems; i++)
+				{
+					if (i > 0 && i % numItemInRow == 0)
+					{
+						x = 0.0f;
+						y = y + m_itemHeight;
+					}
+
+					CThumbnailItem* item = m_items[i];
+					item->setPos(x + offsetX, y);
+
+					x = x + itemWidth;
+				}
 			}
 
 			void CThumbnailView::postLayout()
@@ -79,9 +105,43 @@ namespace Skylicht
 				return true;
 			}
 
+			CThumbnailItem* CThumbnailView::addItem()
+			{
+				CThumbnailItem* item = new CThumbnailItem(m_view, this, m_itemWidth, m_itemHeight);
+				item->OnDown = BIND_LISTENER(&CThumbnailView::onItemDown, this);
+				m_items.push_back(item);
+				invalidate();
+				return item;
+			}
+
 			void CThumbnailView::onItemDown(CBase* base)
 			{
+				for (CThumbnailItem* item : m_items)
+				{
+					if (item != NULL)
+					{
+						if (item == base)
+						{
+							if (item->getToggle() == false)
+							{
+								if (OnSelected != nullptr)
+									OnSelected(item);
 
+								if (OnSelectChange != nullptr)
+									OnSelectChange(item);
+							}
+
+							item->setToggle(true);
+						}
+						else
+						{
+							if (item->getToggle() == true && OnUnselected != nullptr)
+								OnUnselected(item);
+
+							item->setToggle(false);
+						}
+					}
+				}
 			}
 		}
 	}
