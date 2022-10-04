@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,42 +24,38 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpace.h"
-#include "AssetManager/CAssetImporter.h"
-#include "AssetManager/CAssetManager.h"
-
-#include "Graphics2D/SpriteFrame/CSpriteFrame.h"
+#include "CBase.h"
+#include "CButton.h"
+#include "CRawImage.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceSprite : public CSpace
+		namespace GUI
 		{
-		protected:
-			GUI::CThumbnailView* m_view;
-			GUI::CLabel* m_label;
-			GUI::CTextBox* m_inputSearch;
+			class CThumbnailItem : public CButton
+			{
+			protected:
+				CBase* m_render;
+				CBase* m_owner;
 
-		protected:
-			CSpriteFrame* m_sprite;
-			
-			int m_materialID;
+			public:
+				CThumbnailItem(CBase* parent, CBase* owner, float itemHeight, float itemWidth);
 
-		public:
-			CSpaceSprite(GUI::CWindow* window, CEditor* editor);
+				virtual ~CThumbnailItem();
 
-			virtual ~CSpaceSprite();
+				CBase* getRenderControl()
+				{
+					return m_render;
+				}
 
-			void openSprite(const std::string& path);
+			protected:
 
-			virtual void update();
+				virtual void renderUnder();
 
-			virtual void onDestroy(GUI::CBase* base);
-
-			void onRenderFrame(GUI::CBase* base, SFrame* frame);
-		};
+				void renderBackground();
+			};
+		}
 	}
 }

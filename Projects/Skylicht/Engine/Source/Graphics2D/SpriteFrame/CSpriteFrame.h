@@ -131,5 +131,15 @@ namespace Skylicht
 		virtual ~CSpriteFrame();
 
 		bool load(const char* fileName);
+
+		inline std::vector<SFrame*>& getFrames()
+		{
+			return m_frames;
+		}
+
+		inline SFrame* getFrameByName(const char* name)
+		{
+			return m_names[name];
+		}
 	};
 }
