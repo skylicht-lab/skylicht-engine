@@ -110,18 +110,21 @@ namespace Skylicht
 
 			// get base rect for renderer
 			GUI::SPoint position = base->localPosToCanvas();
-			core::rectf viewport;
-			viewport.UpperLeftCorner.set(position.X, position.Y);
-			viewport.LowerRightCorner.set(position.X + base->width(), position.Y + base->height());
 
 			// scale the frame
 			float sourceSize = core::max_(frame->getWidth(), frame->getHeight());
 			float renderSize = core::max_(base->width(), base->height());
 			float scale = sourceSize < renderSize ? 1.0f : renderSize / sourceSize;
-			
+
+			// align center of the render control
+			float sw = frame->getWidth() * scale;
+			float sh = frame->getHeight() * scale;
+			float cx = (base->width() - sw) * 0.5f;
+			float cy = (base->height() - sh) * 0.5f;
+
 			// draw the frame
 			core::matrix4 transform;
-			transform.setTranslation(core::vector3df(position.X, position.Y, 0.0f));
+			transform.setTranslation(core::vector3df(position.X + cx, position.Y + cy, 0.0f));
 			transform.setScale(scale);
 
 			CGraphics2D* graphics = CGraphics2D::getInstance();
