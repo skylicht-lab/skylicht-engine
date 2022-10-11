@@ -59,5 +59,7 @@ namespace Skylicht
 		void setAlignCenterModule();
 
 		void setOffsetModule(float x, float y);
+
+		DECLARE_GETTYPENAME(CGUISprite);
 	};
 }
