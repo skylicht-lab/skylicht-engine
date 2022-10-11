@@ -144,4 +144,11 @@ namespace Skylicht
 	{
 
 	}
+
+	CObjectSerializable* CGUIElement::createSerializable()
+	{
+		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
+		object->autoRelease(new CBoolProperty(object, "visible", m_visible));
+		return object;
+	}
 }

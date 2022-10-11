@@ -173,7 +173,7 @@ namespace Skylicht
 
 		void CAssetImporter::importAll()
 		{
-			if (m_fileIterator == m_fileIteratorEnd)
+			if (*m_fileIterator == NULL || m_fileIterator == m_fileIteratorEnd)
 				return;
 
 			while (m_fileIterator != m_fileIteratorEnd)

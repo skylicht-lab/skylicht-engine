@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CAssetCreateController.h"
 #include "CAssetPropertyController.h"
+#include "CSceneController.h"
 
 #include "Reactive/CObserver.h"
 #include "AssetManager/CAssetManager.h"
@@ -36,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Scene/CSceneExporter.h"
 #include "ResourceSettings/SpriteExportSettings.h"
+#include "Graphics2D/CGUIExporter.h"
 
 namespace Skylicht
 {
@@ -132,6 +134,29 @@ namespace Skylicht
 			nullSprite.save(fullPath.c_str());
 
 			importAndSelect(fullPath.c_str());
+		}
+
+		void CAssetCreateController::createEmptyGUI()
+		{
+			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
+
+			CAssetManager* assetMgr = CAssetManager::getInstance();
+
+			std::string currentFolder = assetMgr->getAssetFolder();
+			if (spaceAssets != NULL)
+				currentFolder = spaceAssets->getListController()->getCurrentFolder();
+
+			std::string fullPath = assetMgr->genereateAssetPath("/GUI%02d.gui", currentFolder.c_str());
+
+			CZone* zone = CSceneController::getInstance()->getScene()->getZone(0);
+			CGameObject* canvas = zone->createEmptyObject();
+			CCanvas* nullCanvas = canvas->addComponent<CCanvas>();
+
+			CGUIExporter::save(fullPath.c_str(), nullCanvas);
+
+			importAndSelect(fullPath.c_str());
+
+			canvas->remove();
 		}
 
 		void CAssetCreateController::importAndSelect(const char* path)

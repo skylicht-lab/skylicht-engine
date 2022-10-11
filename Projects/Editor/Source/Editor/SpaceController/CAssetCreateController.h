@@ -44,6 +44,8 @@ namespace Skylicht
 
 			void createEmptySprite();
 
+			void createEmptyGUI();
+
 		protected:
 
 			void importAndSelect(const char* path);

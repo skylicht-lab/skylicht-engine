@@ -71,5 +71,7 @@ namespace Skylicht
 		{
 			return m_pivot;
 		}
+
+		DECLARE_GETTYPENAME(CGUIImage);
 	};
 }
