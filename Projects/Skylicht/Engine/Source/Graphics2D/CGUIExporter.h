@@ -32,5 +32,9 @@ namespace Skylicht
 	{
 	public:
 		static bool save(const char* file, CCanvas* canvas);
+
+	private:
+
+		static void addChild(CGUIElement* parent, CObjectSerializable* parents);
 	};
 }

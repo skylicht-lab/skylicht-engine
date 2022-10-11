@@ -46,5 +46,7 @@ namespace Skylicht
 		void beginMaskTest(CCamera* camera);
 
 		void endMaskTest();
+
+		DECLARE_GETTYPENAME(CGUIMask);
 	};
 }

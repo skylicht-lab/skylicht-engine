@@ -143,5 +143,7 @@ namespace Skylicht
 		{
 			m_centerRotate = b;
 		}
+
+		DECLARE_GETTYPENAME(CGUIText);
 	};
 }

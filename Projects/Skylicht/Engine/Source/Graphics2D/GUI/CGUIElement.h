@@ -265,6 +265,10 @@ namespace Skylicht
 			return m_visible;
 		}
 
+		DECLARE_GETTYPENAME(CGUIElement);
+
+		virtual CObjectSerializable* createSerializable();
+
 	protected:
 
 		bool removeChild(CGUIElement* child);

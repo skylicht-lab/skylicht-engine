@@ -54,5 +54,7 @@ namespace Skylicht
 			m_radius = r;
 			init();
 		}
+
+		DECLARE_GETTYPENAME(CGUIRoundedRect);
 	};
 }
