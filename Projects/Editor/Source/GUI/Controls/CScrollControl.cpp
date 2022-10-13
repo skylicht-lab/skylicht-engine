@@ -266,6 +266,9 @@ namespace Skylicht
 				}
 
 				m_innerPanel->setPos(round(newInnerPanelPosX), round(newInnerPanelPosY));
+
+				if (OnLayout != nullptr)
+					OnLayout(this);
 			}
 		}
 	}

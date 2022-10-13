@@ -91,6 +91,16 @@ namespace Skylicht
 			return m_parent;
 		}
 
+		inline void setName(const char* name)
+		{
+			m_transform->Name = name;
+		}
+
+		inline const char* getName()
+		{
+			return m_transform->Name.c_str();
+		}
+
 		void setParent(CGUIElement* parent);
 
 		inline std::vector<CGUIElement*>& getChilds()
@@ -268,6 +278,8 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CGUIElement);
 
 		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 
 	protected:
 

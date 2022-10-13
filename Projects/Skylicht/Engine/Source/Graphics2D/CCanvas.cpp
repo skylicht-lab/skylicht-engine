@@ -47,6 +47,7 @@ namespace Skylicht
 		// add root
 		m_root = new CGUIElement(this, NULL, m_rect);
 		m_root->setDock(EGUIDock::DockFill);
+		m_root->setName("Root GUI");
 
 		m_systems.push_back(new CGUILayoutSystem());
 		for (IEntitySystem* system : m_systems)
