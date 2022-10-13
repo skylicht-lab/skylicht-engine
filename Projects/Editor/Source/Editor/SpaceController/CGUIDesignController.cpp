@@ -23,6 +23,9 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "Editor/CEditor.h"
+#include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
+#include "GUI/Utils/CDragAndDrop.h"
 #include "CGUIDesignController.h"
 
 namespace Skylicht
@@ -46,7 +49,31 @@ namespace Skylicht
 
 		void CGUIDesignController::loadFile(const std::string& path)
 		{
+			CEditor* editor = CEditor::getInstance();
 
+			CSpace* space = editor->getWorkspaceByName(std::wstring(L"GUI Design"));
+			if (!space)
+				space = editor->openWorkspace(std::wstring(L"GUI Design"));
+			else
+			{
+				GUI::CDockableWindow* dockWindow = dynamic_cast<GUI::CDockableWindow*>(space->getWindow());
+				if (dockWindow != NULL)
+				{
+					GUI::CDockTabControl* dockTab = dockWindow->getCurrentDockTab();
+					if (dockTab != NULL)
+					{
+						// activate
+						dockTab->setCurrentWindow(dockWindow);
+						GUI::CDragAndDrop::cancel();
+					}
+				}
+			}
+
+			if (space)
+			{
+				CSpaceGUIDesign* spaceGUI = dynamic_cast<CSpaceGUIDesign*>(space);
+				spaceGUI->openGUI(path.c_str());
+			}
 		}
 	}
 }
