@@ -98,6 +98,8 @@ namespace Skylicht
 
 				void scrollHorizontalOffset(float offset);
 
+				Listener OnLayout;
+
 			protected:
 
 				void updateScrollBar();

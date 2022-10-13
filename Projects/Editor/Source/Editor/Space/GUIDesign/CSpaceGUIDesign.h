@@ -36,11 +36,20 @@ namespace Skylicht
 		protected:
 			GUI::CRulerBar* m_topRuler;
 			GUI::CRulerBar* m_leftRuler;
+			GUI::CScrollControl* m_scrollPanel;
+			GUI::CBase* m_guiRender;
 
 		public:
 			CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceGUIDesign();
+
+			void openGUI(const char* path);
+
+		protected:
+
+			void onScrollLayout(GUI::CBase* scroll);
+
 		};
 	}
 }
