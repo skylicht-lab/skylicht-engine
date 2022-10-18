@@ -34,11 +34,17 @@ namespace Skylicht
 		class CSpaceGUIDesign : public CSpace
 		{
 		protected:
+			GUI::CToolbar* m_toolBar;
 			GUI::CRulerBar* m_topRuler;
 			GUI::CRulerBar* m_leftRuler;
 			GUI::CScrollControl* m_scrollPanel;
 			GUI::CBase* m_guiRender;
 
+			GUI::CLabel* m_textZoom;
+
+			float m_guiWidth;
+			float m_guiHeight;
+			float m_guiScale;
 		public:
 			CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor);
 
@@ -50,6 +56,9 @@ namespace Skylicht
 
 			void onScrollLayout(GUI::CBase* scroll);
 
+			void onZoomIn(GUI::CBase* base);
+
+			void onZoomOut(GUI::CBase* base);
 		};
 	}
 }

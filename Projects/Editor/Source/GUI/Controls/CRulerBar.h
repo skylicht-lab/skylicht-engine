@@ -39,6 +39,7 @@ namespace Skylicht
 				float m_beginOffset;
 				float m_position;
 				float m_pixelPerUnit;
+				float m_unitScale;
 				int m_textPerUnit;
 
 			public:
@@ -74,6 +75,16 @@ namespace Skylicht
 				inline float getPosition()
 				{
 					return m_position;
+				}
+
+				inline void setUnitScale(float s)
+				{
+					m_unitScale = s;
+				}
+
+				inline float getUnitScale()
+				{
+					return m_unitScale;
 				}
 
 				inline void setTextPerUnit(int value)
