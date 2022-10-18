@@ -38,6 +38,7 @@ namespace Skylicht
 				m_beginOffset(0.0f),
 				m_position(0.0f),
 				m_pixelPerUnit(5.0f),
+				m_unitScale(1.0f),
 				m_textPerUnit(10)
 			{
 				if (m_isHorizontal)
@@ -114,7 +115,7 @@ namespace Skylicht
 							r.Y = 15.0f;
 							r.Width = 9.0f * m_pixelPerUnit;
 							r.Height = 20.0f;
-							swprintf(textValue, 64, L"%d", unit);
+							swprintf(textValue, 64, L"%d", (int)(unit * m_unitScale));
 							renderer->renderText(r, SizeNormal, CThemeConfig::DefaultTextColor, std::wstring(textValue));
 						}
 
