@@ -38,7 +38,8 @@ namespace Skylicht
 				m_canScrollH(true),
 				m_modifyChildWidth(false),
 				m_widthScrollExpand(0.0f),
-				m_heightScrollExpand(0.0f)
+				m_heightScrollExpand(0.0f),
+				m_enableMouseWheelScroll(true)
 			{
 				setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 				m_vertical = new CScrollBar(this, false);
@@ -71,18 +72,20 @@ namespace Skylicht
 
 			bool CScrollControl::onMouseWheeled(int delta)
 			{
-				if (m_canScrollV || !m_vertical->isHidden())
+				if (m_enableMouseWheelScroll)
 				{
-					m_vertical->setScroll(m_vertical->getScroll() + m_vertical->getNudgeAmount() * delta);
-					return true;
-				}
+					if (m_canScrollV || !m_vertical->isHidden())
+					{
+						m_vertical->setScroll(m_vertical->getScroll() + m_vertical->getNudgeAmount() * delta);
+						return true;
+					}
 
-				if (m_canScrollH || !m_horizontal->isHidden())
-				{
-					m_horizontal->setScroll(m_horizontal->getScroll() + m_horizontal->getNudgeAmount() * delta);
-					return true;
+					if (m_canScrollH || !m_horizontal->isHidden())
+					{
+						m_horizontal->setScroll(m_horizontal->getScroll() + m_horizontal->getNudgeAmount() * delta);
+						return true;
+					}
 				}
-
 				return false;
 			}
 

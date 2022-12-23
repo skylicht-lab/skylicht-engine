@@ -37,7 +37,10 @@ namespace Skylicht
 		m_aspect(-1.0f),
 		m_up(CTransform::s_oy),
 		m_cullingMask(1),
-		m_orthoScale(10.0f)
+		m_orthoScale(10.0f),
+		m_customOrthoSize(false),
+		m_orthoUIH(0.0f),
+		m_orthoUIW(0.0f)
 	{
 	}
 
@@ -192,6 +195,13 @@ namespace Skylicht
 	void CCamera::recalculateProjectionMatrix()
 	{
 		core::dimension2du screenSize = getVideoDriver()->getCurrentRenderTargetSize();
+
+		if (m_customOrthoSize)
+		{
+			screenSize.Width = (u32)m_orthoUIW;
+			screenSize.Height = (u32)m_orthoUIH;
+		}
+
 		float aspect = (float)screenSize.Width / (float)screenSize.Height;
 
 		m_viewportAspect = aspect;

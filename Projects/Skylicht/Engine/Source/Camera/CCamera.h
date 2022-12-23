@@ -49,6 +49,10 @@ namespace Skylicht
 		float m_aspect;
 		float m_viewportAspect;
 
+		bool m_customOrthoSize;
+		float m_orthoUIW;
+		float m_orthoUIH;
+
 		float m_orthoScale;
 
 		core::vector3df m_up;
@@ -145,6 +149,17 @@ namespace Skylicht
 		inline float getOrthoScale()
 		{
 			return m_orthoScale;
+		}
+
+		inline void setOrthoUISize(float w, float h)
+		{
+			m_orthoUIH = h;
+			m_orthoUIW = w;
+		}
+
+		inline void enableCustomOrthoUISize(bool b)
+		{
+			m_customOrthoSize = b;
 		}
 
 		inline void setAspect(float f)

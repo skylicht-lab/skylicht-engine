@@ -38,6 +38,7 @@ namespace Skylicht
 				CScrollBar* m_vertical;
 				CScrollBar* m_horizontal;
 
+				bool m_enableMouseWheelScroll;
 				bool m_canScrollV;
 				bool m_canScrollH;
 
@@ -99,6 +100,11 @@ namespace Skylicht
 				void scrollHorizontalOffset(float offset);
 
 				Listener OnLayout;
+
+				inline void enableMouseWheelScroll(bool b)
+				{
+					m_enableMouseWheelScroll = b;
+				}
 
 			protected:
 
