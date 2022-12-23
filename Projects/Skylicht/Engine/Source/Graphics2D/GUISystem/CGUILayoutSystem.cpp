@@ -183,6 +183,10 @@ namespace Skylicht
 			t->Rect.UpperLeftCorner.X = parentRect.UpperLeftCorner.X;
 			t->Rect.LowerRightCorner.X = parentRect.LowerRightCorner.X - a->Margin.Right - a->Margin.Left;
 		}
+		else
+		{
+			t->m_transformPosition = t->m_position;
+		}
 
 		t->m_position = t->m_transformPosition;
 	}
