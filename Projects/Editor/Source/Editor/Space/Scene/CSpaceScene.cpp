@@ -344,7 +344,25 @@ namespace Skylicht
 			m_viewpointZone->setName(L"ViewpointZone");
 			m_viewpointZone->setEditorObject(true);
 
-			// camera
+			// gui canvas
+			CGameObject* guiCanvas = zone->createEmptyObject();
+			guiCanvas->setName(L"GUICanvas");
+			guiCanvas->setEditorObject(true);
+
+			CCanvas* canvas = guiCanvas->addComponent<CCanvas>();
+			CGUIRect* rect = canvas->createRect(SColor(255, 0, 0, 0));
+			rect->setDock(EGUIDock::DockFill);
+
+			CGUIElement* root = canvas->getRootElement();
+			root->setDock(EGUIDock::NoDock);
+			root->setRect(core::rectf(0.0f, 0.0f, 1920.0f, 1080.0f));
+
+			// camera			
+			camObj = zone->createEmptyObject();
+			camObj->setName(L"GUICamera");
+			camObj->setEditorObject(true);
+			camObj->addComponent<CCamera>()->setProjectionType(CCamera::OrthoUI);
+
 			camObj = m_viewpointZone->createEmptyObject();
 			camObj->setName(L"ViewpointCamera");
 			camObj->setEditorObject(true);

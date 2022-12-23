@@ -37,14 +37,24 @@ namespace Skylicht
 			GUI::CToolbar* m_toolBar;
 			GUI::CRulerBar* m_topRuler;
 			GUI::CRulerBar* m_leftRuler;
-			GUI::CScrollControl* m_scrollPanel;
-			GUI::CBase* m_guiRender;
+			GUI::CBase* m_view;
 
 			GUI::CLabel* m_textZoom;
 
 			float m_guiWidth;
 			float m_guiHeight;
 			float m_guiScale;
+
+			float m_pressX;
+			float m_pressY;
+			float m_viewX;
+			float m_viewY;
+
+			bool m_middleDrag;
+
+			CScene* m_scene;
+			CCamera* m_guiCamera;
+
 		public:
 			CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor);
 
@@ -54,11 +64,17 @@ namespace Skylicht
 
 		protected:
 
-			void onScrollLayout(GUI::CBase* scroll);
+			void onMiddleMouseClick(GUI::CBase* view, float x, float y, bool down);
+
+			void onMouseMoved(GUI::CBase* view, float x, float y, float deltaX, float deltaY);
+
+			void onMouseWheel(GUI::CBase* view, int delta);
 
 			void onZoomIn(GUI::CBase* base);
 
 			void onZoomOut(GUI::CBase* base);
+
+			void onRender(GUI::CBase* base);
 		};
 	}
 }

@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSpaceGUIDesign.h"
+#include "GUI/Input/CInput.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
@@ -35,7 +37,14 @@ namespace Skylicht
 			CSpace(window, editor),
 			m_guiWidth(1920.0f),
 			m_guiHeight(1080.0f),
-			m_guiScale(1.0f)
+			m_guiScale(1.0f),
+			m_viewX(0.0f),
+			m_viewY(0.0f),
+			m_pressX(0.0f),
+			m_pressY(0.0f),
+			m_middleDrag(false),
+			m_scene(NULL),
+			m_guiCamera(NULL)
 		{
 			GUI::CButton* btn = NULL;
 			m_toolBar = new GUI::CToolbar(window);
@@ -74,18 +83,28 @@ namespace Skylicht
 			m_leftRuler->setPosition(0.0f);
 			m_topRuler->setPosition(0.0f);
 
-			m_scrollPanel = new GUI::CScrollControl(window);
-			m_scrollPanel->dock(GUI::EPosition::Fill);
-			m_scrollPanel->enableRenderFillRect(true);
-			m_scrollPanel->enableScroll(true, true);
-			m_scrollPanel->showScrollBar(true, true);
-			m_scrollPanel->OnLayout = BIND_LISTENER(&CSpaceGUIDesign::onScrollLayout, this);
+			m_topRuler->setBeginOffset(0.0f);
+			m_leftRuler->setBeginOffset(LeftOffset);
 
-			m_guiRender = new GUI::CBase(m_scrollPanel);
-			m_guiRender->setWidth(m_guiWidth * m_guiScale);
-			m_guiRender->setHeight(m_guiHeight * m_guiScale);
-			m_guiRender->enableRenderFillRect(true);
-			m_guiRender->setFillRectColor(GUI::CThemeConfig::Black);
+			m_view = new GUI::CBase(window);
+			m_view->dock(GUI::EPosition::Fill);
+			m_view->enableRenderFillRect(true);
+			m_view->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
+			m_view->OnMouseWheeled = std::bind(&CSpaceGUIDesign::onMouseWheel, this,
+				std::placeholders::_1,
+				std::placeholders::_2);
+			m_view->OnMouseMoved = std::bind(&CSpaceGUIDesign::onMouseMoved, this,
+				std::placeholders::_1,
+				std::placeholders::_2,
+				std::placeholders::_3,
+				std::placeholders::_4,
+				std::placeholders::_5);
+			m_view->OnMiddleMouseClick = std::bind(&CSpaceGUIDesign::onMiddleMouseClick, this,
+				std::placeholders::_1,
+				std::placeholders::_2,
+				std::placeholders::_3,
+				std::placeholders::_4);
+			m_view->OnRender = BIND_LISTENER(&CSpaceGUIDesign::onRender, this);
 		}
 
 		CSpaceGUIDesign::~CSpaceGUIDesign()
@@ -95,16 +114,82 @@ namespace Skylicht
 
 		void CSpaceGUIDesign::openGUI(const char* path)
 		{
-
+			if (m_scene)
+			{
+				CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
+			}
 		}
 
-		void CSpaceGUIDesign::onScrollLayout(GUI::CBase* scroll)
+		void CSpaceGUIDesign::onMiddleMouseClick(GUI::CBase* view, float x, float y, bool down)
 		{
-			float x = m_scrollPanel->getScrollHorizontal();
-			float y = m_scrollPanel->getScrollVertical();
+			m_middleDrag = down;
 
-			m_topRuler->setBeginOffset(x);
-			m_leftRuler->setBeginOffset(LeftOffset + y);
+			if (down)
+			{
+				GUI::CInput::getInput()->setCapture(view);
+				m_pressX = x;
+				m_pressY = y;
+			}
+			else
+			{
+				GUI::CInput::getInput()->setCapture(NULL);
+
+				float dx = x - m_pressX;
+				float dy = y - m_pressY;
+
+				m_viewX = m_viewX + dx;
+				m_viewY = m_viewY + dy;
+			}
+		}
+
+		void CSpaceGUIDesign::onMouseMoved(GUI::CBase* view, float x, float y, float deltaX, float deltaY)
+		{
+			if (m_middleDrag)
+			{
+				float dx = x - m_pressX;
+				float dy = y - m_pressY;
+
+				float viewX = m_viewX + dx;
+				float viewY = m_viewY + dy;
+
+				m_topRuler->setBeginOffset(0.0f + viewX);
+				m_leftRuler->setBeginOffset(LeftOffset + viewY);
+
+				if (m_scene)
+				{
+					CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
+					CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+					canvas->getRootElement()->setPosition(
+						core::vector3df(
+							viewX / m_guiScale,
+							viewY / m_guiScale,
+							0.0f)
+					);
+				}
+			}
+		}
+
+		void CSpaceGUIDesign::onMouseWheel(GUI::CBase* scroll, int delta)
+		{
+			//GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+			//GUI::SPoint localPos = scroll->canvasPosToLocal(mousePos);
+
+			if (delta < 0)
+			{
+				// zoom in
+				if (m_guiScale < 4.0f)
+				{
+					onZoomIn(scroll);
+				}
+			}
+			else
+			{
+				// zoom out
+				if (m_guiScale > 0.25f)
+				{
+					onZoomOut(scroll);
+				}
+			}
 		}
 
 		void CSpaceGUIDesign::onZoomIn(GUI::CBase* base)
@@ -118,14 +203,23 @@ namespace Skylicht
 				swprintf(text, 128, L"Zoom: %2d%%", z);
 				m_textZoom->setString(text);
 
-				m_guiRender->setWidth(m_guiWidth * m_guiScale);
-				m_guiRender->setHeight(m_guiHeight * m_guiScale);
-
 				m_leftRuler->setPixelPerUnit(10.0f * m_guiScale);
 				m_topRuler->setPixelPerUnit(10.0f * m_guiScale);
 
 				m_leftRuler->setTextPerUnit((int)(10.0f / m_guiScale));
 				m_topRuler->setTextPerUnit((int)(10.0f / m_guiScale));
+			}
+
+			if (m_scene)
+			{
+				CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
+				CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+				canvas->getRootElement()->setPosition(
+					core::vector3df(
+						m_viewX / m_guiScale,
+						m_viewY / m_guiScale,
+						0.0f)
+				);
 			}
 		}
 
@@ -140,15 +234,66 @@ namespace Skylicht
 				swprintf(text, 128, L"Zoom: %2d%%", z);
 				m_textZoom->setString(text);
 
-				m_guiRender->setWidth(m_guiWidth * m_guiScale);
-				m_guiRender->setHeight(m_guiHeight * m_guiScale);
-
 				m_leftRuler->setPixelPerUnit(10.0f * m_guiScale);
 				m_topRuler->setPixelPerUnit(10.0f * m_guiScale);
 
 				m_leftRuler->setTextPerUnit((int)(10.0f / m_guiScale));
 				m_topRuler->setTextPerUnit((int)(10.0f / m_guiScale));
 			}
+
+			if (m_scene)
+			{
+				CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
+				CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+				canvas->getRootElement()->setPosition(
+					core::vector3df(
+						m_viewX / m_guiScale,
+						m_viewY / m_guiScale,
+						0.0f)
+				);
+			}
+		}
+
+		void CSpaceGUIDesign::onRender(GUI::CBase* base)
+		{
+			// flush 2d gui
+			GUI::CGUIContext::getRenderer()->flush();
+			core::recti vp = getVideoDriver()->getViewPort();
+			getVideoDriver()->enableScissor(false);
+			getVideoDriver()->clearZBuffer();
+
+			{
+				// setup scene viewport
+				GUI::SPoint position = m_view->localPosToCanvas();
+				core::recti viewport;
+				viewport.UpperLeftCorner.set((int)position.X, (int)position.Y);
+				viewport.LowerRightCorner.set((int)(position.X + m_view->width()), (int)(position.Y + base->height()));
+
+				// setup new viewport
+				getVideoDriver()->setViewPort(viewport);
+
+				if (!m_scene)
+					m_scene = CSceneController::getInstance()->getScene();
+
+				if (!m_guiCamera)
+					m_guiCamera = m_scene->searchObjectInChild(L"GUICamera")->getComponent<CCamera>();
+
+				// update viewport size
+				m_guiCamera->setOrthoUISize(
+					m_view->width() / m_guiScale,
+					m_view->height() / m_guiScale
+				);
+				m_guiCamera->enableCustomOrthoUISize(true);
+				m_guiCamera->recalculateProjectionMatrix();
+
+				// render GUI
+				CGraphics2D::getInstance()->render(m_guiCamera);
+			}
+
+			// resume gui render
+			getVideoDriver()->enableScissor(true);
+			getVideoDriver()->setViewPort(vp);
+			GUI::CGUIContext::getRenderer()->setProjection();
 		}
 	}
 }
