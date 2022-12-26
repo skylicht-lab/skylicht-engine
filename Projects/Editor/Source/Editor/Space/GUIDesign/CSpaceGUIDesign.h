@@ -74,6 +74,10 @@ namespace Skylicht
 
 			void onZoomOut(GUI::CBase* base);
 
+			void doZoomIn(float dx, float dy);
+
+			void doZoomOut(float dx, float dy);
+
 			void onRender(GUI::CBase* base);
 		};
 	}
