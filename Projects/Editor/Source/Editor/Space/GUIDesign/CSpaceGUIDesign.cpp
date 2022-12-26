@@ -137,8 +137,8 @@ namespace Skylicht
 				float dx = x - m_pressX;
 				float dy = y - m_pressY;
 
-				m_viewX = m_viewX + dx;
-				m_viewY = m_viewY + dy;
+				m_viewX = m_viewX + dx / m_guiScale;
+				m_viewY = m_viewY + dy / m_guiScale;
 			}
 		}
 
@@ -149,11 +149,8 @@ namespace Skylicht
 				float dx = x - m_pressX;
 				float dy = y - m_pressY;
 
-				float viewX = m_viewX + dx;
-				float viewY = m_viewY + dy;
-
-				m_topRuler->setBeginOffset(0.0f + viewX);
-				m_leftRuler->setBeginOffset(LeftOffset + viewY);
+				m_topRuler->setBeginOffset(0.0f + m_viewX * m_guiScale + dx);
+				m_leftRuler->setBeginOffset(LeftOffset + m_viewY * m_guiScale + dy);
 
 				if (m_scene)
 				{
@@ -161,8 +158,8 @@ namespace Skylicht
 					CCanvas* canvas = canvasObj->getComponent<CCanvas>();
 					canvas->getRootElement()->setPosition(
 						core::vector3df(
-							viewX / m_guiScale,
-							viewY / m_guiScale,
+							m_viewX + dx / m_guiScale,
+							m_viewY + dy / m_guiScale,
 							0.0f)
 					);
 				}
@@ -171,15 +168,18 @@ namespace Skylicht
 
 		void CSpaceGUIDesign::onMouseWheel(GUI::CBase* scroll, int delta)
 		{
-			//GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
-			//GUI::SPoint localPos = scroll->canvasPosToLocal(mousePos);
+			GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+			GUI::SPoint localPos = scroll->canvasPosToLocal(mousePos);
+
+			float dx = localPos.X / m_guiScale - m_viewX;
+			float dy = localPos.Y / m_guiScale - m_viewY;
 
 			if (delta < 0)
 			{
 				// zoom in
 				if (m_guiScale < 4.0f)
 				{
-					onZoomIn(scroll);
+					doZoomIn(dx, dy);
 				}
 			}
 			else
@@ -187,12 +187,22 @@ namespace Skylicht
 				// zoom out
 				if (m_guiScale > 0.25f)
 				{
-					onZoomOut(scroll);
+					doZoomOut(dx, dy);
 				}
 			}
 		}
 
 		void CSpaceGUIDesign::onZoomIn(GUI::CBase* base)
+		{
+			doZoomIn(0.0f, 0.0f);
+		}
+
+		void CSpaceGUIDesign::onZoomOut(GUI::CBase* base)
+		{
+			doZoomOut(0.0f, 0.0f);
+		}
+
+		void CSpaceGUIDesign::doZoomIn(float dx, float dy)
 		{
 			if (m_guiScale < 4.0f)
 			{
@@ -208,22 +218,29 @@ namespace Skylicht
 
 				m_leftRuler->setTextPerUnit((int)(10.0f / m_guiScale));
 				m_topRuler->setTextPerUnit((int)(10.0f / m_guiScale));
+
+				m_viewX = m_viewX + dx;
+				m_viewY = m_viewY + dy;
+
+				m_viewX = m_viewX / 2.0f;
+				m_viewY = m_viewY / 2.0f;
+
+				m_viewX = m_viewX - dx;
+				m_viewY = m_viewY - dy;
+
+				m_topRuler->setBeginOffset(0.0f + m_viewX * m_guiScale);
+				m_leftRuler->setBeginOffset(LeftOffset + m_viewY * m_guiScale);
 			}
 
 			if (m_scene)
 			{
 				CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
 				CCanvas* canvas = canvasObj->getComponent<CCanvas>();
-				canvas->getRootElement()->setPosition(
-					core::vector3df(
-						m_viewX / m_guiScale,
-						m_viewY / m_guiScale,
-						0.0f)
-				);
+				canvas->getRootElement()->setPosition(core::vector3df(m_viewX, m_viewY, 0.0f));
 			}
 		}
 
-		void CSpaceGUIDesign::onZoomOut(GUI::CBase* base)
+		void CSpaceGUIDesign::doZoomOut(float dx, float dy)
 		{
 			if (m_guiScale > 0.25f)
 			{
@@ -239,18 +256,25 @@ namespace Skylicht
 
 				m_leftRuler->setTextPerUnit((int)(10.0f / m_guiScale));
 				m_topRuler->setTextPerUnit((int)(10.0f / m_guiScale));
+
+				m_viewX = m_viewX + dx;
+				m_viewY = m_viewY + dy;
+
+				m_viewX = m_viewX * 2.0f;
+				m_viewY = m_viewY * 2.0f;
+
+				m_viewX = m_viewX - dx;
+				m_viewY = m_viewY - dy;
+
+				m_topRuler->setBeginOffset(0.0f + m_viewX * m_guiScale);
+				m_leftRuler->setBeginOffset(LeftOffset + m_viewY * m_guiScale);
 			}
 
 			if (m_scene)
 			{
 				CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
 				CCanvas* canvas = canvasObj->getComponent<CCanvas>();
-				canvas->getRootElement()->setPosition(
-					core::vector3df(
-						m_viewX / m_guiScale,
-						m_viewY / m_guiScale,
-						0.0f)
-				);
+				canvas->getRootElement()->setPosition(core::vector3df(m_viewX, m_viewY, 0.0f));
 			}
 		}
 
