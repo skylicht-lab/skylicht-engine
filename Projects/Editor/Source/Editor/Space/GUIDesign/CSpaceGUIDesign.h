@@ -40,6 +40,7 @@ namespace Skylicht
 			GUI::CBase* m_view;
 
 			GUI::CLabel* m_textZoom;
+			GUI::CLabel* m_textMousePos;
 
 			float m_guiWidth;
 			float m_guiHeight;
@@ -49,6 +50,9 @@ namespace Skylicht
 			float m_pressY;
 			float m_viewX;
 			float m_viewY;
+
+			float m_mouseGUIX;
+			float m_mouseGUIY;
 
 			bool m_middleDrag;
 

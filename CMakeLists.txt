@@ -76,6 +76,8 @@ endif()
 if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
 	set(BUILD_MACOS ON)
 	set(XCODE ON)
+	set(USE_OPENMP OFF)
+
 	add_definitions(-DMACOS)
 
 	set(CMAKE_CXX_STANDARD 14)

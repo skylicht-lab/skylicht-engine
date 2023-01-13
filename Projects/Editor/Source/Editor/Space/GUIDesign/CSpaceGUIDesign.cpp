@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		const float LeftOffset = 40.0f;
+		const float LeftOffset = 40.0f;// == size the height TOP Ruler
 
 		CSpaceGUIDesign::CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
@@ -42,6 +42,8 @@ namespace Skylicht
 			m_viewY(0.0f),
 			m_pressX(0.0f),
 			m_pressY(0.0f),
+			m_mouseGUIX(0.0f),
+			m_mouseGUIY(0.0f),
 			m_middleDrag(false),
 			m_scene(NULL),
 			m_guiCamera(NULL)
@@ -62,6 +64,13 @@ namespace Skylicht
 			m_toolBar->addButton(GUI::ESystemIcon::Copy);
 			m_toolBar->addButton(GUI::ESystemIcon::Paste);
 
+			m_textMousePos = new GUI::CLabel(m_toolBar);
+			m_toolBar->addControl(m_textMousePos, true);
+			m_textMousePos->setPadding(GUI::SPadding(0.0f, 3.0f, 0.0f, 0.0f));
+			m_textMousePos->setString(L"(0, 0)");
+			m_textMousePos->setTextAlignment(GUI::TextCenter);
+			m_textMousePos->setWidth(90.0f);
+
 			m_textZoom = new GUI::CLabel(m_toolBar);
 			m_toolBar->addControl(m_textZoom, true);
 			m_textZoom->setPadding(GUI::SPadding(0.0f, 3.0f, 0.0f, 0.0f));
@@ -69,22 +78,20 @@ namespace Skylicht
 			m_textZoom->sizeToContents();
 
 			m_leftRuler = new GUI::CRulerBar(window, false);
-			m_leftRuler->setHeight(100.0f);
-			m_leftRuler->setBeginOffset(LeftOffset);
+			m_leftRuler->setWidth(60.0f);
 			m_leftRuler->setPixelPerUnit(10.0f);
 
 			m_topRuler = new GUI::CRulerBar(window, true);
-			m_topRuler->setWidth(200.0f);
 			m_topRuler->setPixelPerUnit(10.0f);
 
 			m_leftRuler->setUnitScale(10.0f);
 			m_topRuler->setUnitScale(10.0f);
 
-			m_leftRuler->setPosition(0.0f);
-			m_topRuler->setPosition(0.0f);
-
 			m_topRuler->setBeginOffset(0.0f);
 			m_leftRuler->setBeginOffset(LeftOffset);
+
+			m_topRuler->enableDrawCursorline(true);
+			m_leftRuler->enableDrawCursorline(true);
 
 			m_view = new GUI::CBase(window);
 			m_view->dock(GUI::EPosition::Fill);
@@ -149,8 +156,8 @@ namespace Skylicht
 				float dx = x - m_pressX;
 				float dy = y - m_pressY;
 
-				m_topRuler->setBeginOffset(0.0f + m_viewX * m_guiScale + dx);
-				m_leftRuler->setBeginOffset(LeftOffset + m_viewY * m_guiScale + dy);
+				m_topRuler->setPosition(-(m_viewX * m_guiScale + dx));
+				m_leftRuler->setPosition(-(m_viewY * m_guiScale + dy));
 
 				if (m_scene)
 				{
@@ -164,6 +171,26 @@ namespace Skylicht
 					);
 				}
 			}
+
+			// check the mouse position
+			GUI::SPoint localPos = view->canvasPosToLocal(GUI::SPoint(x, y));
+			wchar_t mouseText[512];
+
+			float mx = localPos.X - m_viewX * m_guiScale;
+			float my = localPos.Y - m_viewY * m_guiScale;
+			m_mouseGUIX = mx / m_guiScale;
+			m_mouseGUIY = my / m_guiScale;
+
+			swprintf(
+				mouseText, 512,
+				L"(%d, %d)",
+				(int)m_mouseGUIX,
+				(int)m_mouseGUIY
+			);
+			m_textMousePos->setString(std::wstring(mouseText));
+
+			m_topRuler->setCursorPosition(mx);
+			m_leftRuler->setCursorPosition(my);
 		}
 
 		void CSpaceGUIDesign::onMouseWheel(GUI::CBase* scroll, int delta)
@@ -228,8 +255,8 @@ namespace Skylicht
 				m_viewX = m_viewX - dx;
 				m_viewY = m_viewY - dy;
 
-				m_topRuler->setBeginOffset(0.0f + m_viewX * m_guiScale);
-				m_leftRuler->setBeginOffset(LeftOffset + m_viewY * m_guiScale);
+				m_topRuler->setPosition(-m_viewX * m_guiScale);
+				m_leftRuler->setPosition(-m_viewY * m_guiScale);
 			}
 
 			if (m_scene)
@@ -266,8 +293,8 @@ namespace Skylicht
 				m_viewX = m_viewX - dx;
 				m_viewY = m_viewY - dy;
 
-				m_topRuler->setBeginOffset(0.0f + m_viewX * m_guiScale);
-				m_leftRuler->setBeginOffset(LeftOffset + m_viewY * m_guiScale);
+				m_topRuler->setPosition(-m_viewX * m_guiScale);
+				m_leftRuler->setPosition(-m_viewY * m_guiScale);
 			}
 
 			if (m_scene)

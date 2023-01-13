@@ -39,7 +39,9 @@ namespace Skylicht
 				m_position(0.0f),
 				m_pixelPerUnit(5.0f),
 				m_unitScale(1.0f),
-				m_textPerUnit(10)
+				m_textPerUnit(10),
+				m_cursorPosition(0.0f),
+				m_drawCursorLine(false)
 			{
 				if (m_isHorizontal)
 				{
@@ -74,7 +76,10 @@ namespace Skylicht
 				float size3 = 15.0f;	// 5
 				float size4 = 30.0f;	// 10
 
+				// convert the position to unity
 				int unit = (int)(m_position / m_pixelPerUnit);
+
+				// begin unit from m_position (round)
 				float offset = m_position - unit * m_pixelPerUnit;
 
 				SGUIColor& lineColor = CThemeConfig::RulerLine1;
@@ -122,6 +127,12 @@ namespace Skylicht
 						x = x + m_pixelPerUnit;
 						unit++;
 					}
+
+					if (m_drawCursorLine)
+					{
+						float x = m_beginOffset - m_position + m_cursorPosition;
+						renderer->drawLineY(x, 0.0f, size4, CThemeConfig::RulerCursor);
+					}
 				}
 				else
 				{
@@ -158,12 +169,18 @@ namespace Skylicht
 							r.Y = y;
 							r.Width = 20.0f;
 							r.Height = 20.0f;
-							swprintf(textValue, 64, L"%d", unit);
+							swprintf(textValue, 64, L"%d", (int)(unit * m_unitScale));
 							renderer->renderText(r, SizeNormal, CThemeConfig::DefaultTextColor, std::wstring(textValue));
 						}
 
 						y = y + m_pixelPerUnit;
 						unit++;
+					}
+
+					if (m_drawCursorLine)
+					{
+						float y = m_beginOffset - m_position + m_cursorPosition;
+						renderer->drawLineX(0.0f, y, size4, CThemeConfig::RulerCursor);
 					}
 				}
 			}
