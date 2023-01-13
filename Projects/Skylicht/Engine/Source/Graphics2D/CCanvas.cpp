@@ -81,7 +81,7 @@ namespace Skylicht
 	void CCanvas::onResize()
 	{
 		// layout on 2d ui
-		if (m_renderCamera->getProjectionType() == CCamera::OrthoUI)
+		if (m_renderCamera && m_renderCamera->getProjectionType() == CCamera::OrthoUI)
 		{
 			// get current screen size
 			CGraphics2D* g = CGraphics2D::getInstance();

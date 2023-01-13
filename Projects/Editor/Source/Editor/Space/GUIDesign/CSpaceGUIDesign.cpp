@@ -326,19 +326,22 @@ namespace Skylicht
 				if (!m_scene)
 					m_scene = CSceneController::getInstance()->getScene();
 
-				if (!m_guiCamera)
-					m_guiCamera = m_scene->searchObjectInChild(L"GUICamera")->getComponent<CCamera>();
+				if (m_scene)
+				{
+					if (!m_guiCamera)
+						m_guiCamera = m_scene->searchObjectInChild(L"GUICamera")->getComponent<CCamera>();
 
-				// update viewport size
-				m_guiCamera->setOrthoUISize(
-					m_view->width() / m_guiScale,
-					m_view->height() / m_guiScale
-				);
-				m_guiCamera->enableCustomOrthoUISize(true);
-				m_guiCamera->recalculateProjectionMatrix();
+					// update viewport size
+					m_guiCamera->setOrthoUISize(
+						m_view->width() / m_guiScale,
+						m_view->height() / m_guiScale
+					);
+					m_guiCamera->enableCustomOrthoUISize(true);
+					m_guiCamera->recalculateProjectionMatrix();
 
-				// render GUI
-				CGraphics2D::getInstance()->render(m_guiCamera);
+					// render GUI
+					CGraphics2D::getInstance()->render(m_guiCamera);
+				}
 			}
 
 			// resume gui render
