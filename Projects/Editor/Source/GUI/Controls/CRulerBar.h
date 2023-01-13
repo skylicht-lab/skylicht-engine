@@ -42,6 +42,9 @@ namespace Skylicht
 				float m_unitScale;
 				int m_textPerUnit;
 
+				float m_cursorPosition;
+				bool m_drawCursorLine;
+
 			public:
 				std::function<void(float x, float y, bool down, float value)> OnMouseClickLeftValue;
 				std::function<void(float x, float y, bool down, float value)> OnMouseClickRightValue;
@@ -100,6 +103,16 @@ namespace Skylicht
 				inline float getPixelPerUnit()
 				{
 					return m_pixelPerUnit;
+				}
+
+				inline void enableDrawCursorline(bool b)
+				{
+					m_drawCursorLine = b;
+				}
+
+				inline void setCursorPosition(float p)
+				{
+					m_cursorPosition = p;
 				}
 			};
 		}
