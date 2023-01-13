@@ -51,6 +51,7 @@ namespace Skylicht
 		{
 			CEditor* editor = CEditor::getInstance();
 
+			// Show GUI Design window
 			CSpace* space = editor->getWorkspaceByName(std::wstring(L"GUI Design"));
 			if (!space)
 				space = editor->openWorkspace(std::wstring(L"GUI Design"));
@@ -73,6 +74,21 @@ namespace Skylicht
 			{
 				CSpaceGUIDesign* spaceGUI = dynamic_cast<CSpaceGUIDesign*>(space);
 				spaceGUI->openGUI(path.c_str());
+			}
+
+			// Show GUI Hierarchy window
+			space = editor->getWorkspaceByName(std::wstring(L"GUI Hierarchy"));
+			if (!space)
+				space = editor->openWorkspace(std::wstring(L"GUI Hierarchy"));
+			else
+			{
+				GUI::CDockableWindow* dockWindow = dynamic_cast<GUI::CDockableWindow*>(space->getWindow());
+				if (dockWindow != NULL)
+				{
+					GUI::CDockTabControl* dockTab = dockWindow->getCurrentDockTab();
+					if (dockTab != NULL)
+						dockTab->setCurrentWindow(dockWindow);
+				}
 			}
 		}
 	}

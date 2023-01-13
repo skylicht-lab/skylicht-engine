@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/LoadScene/CSpaceLoadScene.h"
 #include "Space/ProjectSettings/CSpaceProjectSettings.h"
 #include "Space/GUIDesign/CSpaceGUIDesign.h"
+#include "Space/GUIHierarchy/CSpaceGUIHierarchy.h"
 #include "Space/GoogleMap/CSpaceGMap.h"
 #include "Space/GoogleMap/CSpaceExportGMap.h"
 #include "Space/Sprite/CSpaceExportSprite.h"
@@ -462,6 +463,8 @@ namespace Skylicht
 			m_menuWindowItems.push_back(submenu->addItem(L"Hierarchy"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Animation"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Console"));
+			m_menuWindowItems.push_back(submenu->addItem(L"GUI Design"));
+			m_menuWindowItems.push_back(submenu->addItem(L"GUI Hierarchy"));
 			submenu->addSeparator();
 			m_menuWindowItems.push_back(submenu->addItem(L"Google Map"));
 			submenu->addSeparator();
@@ -499,11 +502,23 @@ namespace Skylicht
 			m_dockPanel->dockChildWindow(hierarchy, NULL, GUI::CDockPanel::DockLeft);
 			m_dockPanel->recurseLayout();
 
+			GUI::CDockableWindow* guiHierarchy = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			guiHierarchy->setCaption(L"GUI Hierarchy");
+			hierarchy->getCurrentDockTab()->dockWindow(guiHierarchy);
+			hierarchy->getCurrentDockTab()->setCurrentWindow(hierarchy);
+			m_dockPanel->recurseLayout();
+
 			w = width;
 			h = round(height * 0.8f);
 			GUI::CDockableWindow* scene = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
 			scene->setCaption(L"Scene");
 			m_dockPanel->dockChildWindow(scene, NULL, GUI::CDockPanel::DockCenter);
+			m_dockPanel->recurseLayout();
+
+			GUI::CDockableWindow* guiDesign = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
+			guiDesign->setCaption(L"GUI Design");
+			scene->getCurrentDockTab()->dockWindow(guiDesign);
+			scene->getCurrentDockTab()->setCurrentWindow(scene);
 			m_dockPanel->recurseLayout();
 
 			w = round(width * 0.7f);
@@ -551,6 +566,10 @@ namespace Skylicht
 			else if (workspace == L"GUI Design")
 			{
 				ret = new CSpaceGUIDesign(window, this);
+			}
+			else if (workspace == L"GUI Hierarchy")
+			{
+				ret = new CSpaceGUIHierarchy(window, this);
 			}
 			else if (workspace == L"Animation")
 			{
