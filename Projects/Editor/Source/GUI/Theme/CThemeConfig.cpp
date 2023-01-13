@@ -103,6 +103,7 @@ namespace Skylicht
 			SGUIColor CThemeConfig::RulerLine1 = SGUIColor(255, 70, 70, 70);
 			SGUIColor CThemeConfig::RulerLine2 = SGUIColor(255, 100, 100, 100);
 			SGUIColor CThemeConfig::RulerLine3 = SGUIColor(255, 140, 140, 140);
+			SGUIColor CThemeConfig::RulerCursor = SGUIColor(255, 80, 120, 180);
 
 			SGUIColor CThemeConfig::Timeline = SGUIColor(255, 60, 60, 60);
 			SGUIColor CThemeConfig::TimelineItemBG = SGUIColor(255, 35, 35, 35);
