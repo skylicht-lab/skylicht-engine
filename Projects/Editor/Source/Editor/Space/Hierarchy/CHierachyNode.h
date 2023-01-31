@@ -148,12 +148,12 @@ namespace Skylicht
 				return m_icon;
 			}
 
-			inline bool HaveColor()
+			inline bool haveColor()
 			{
 				return m_color;
 			}
 
-			inline void EnableColor(bool b)
+			inline void enableColor(bool b)
 			{
 				m_color = b;
 			}

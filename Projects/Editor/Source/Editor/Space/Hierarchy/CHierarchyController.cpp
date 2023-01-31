@@ -144,7 +144,7 @@ namespace Skylicht
 			node->setGUINode(guiNode);
 
 			// apply active color
-			if (node->HaveColor())
+			if (node->haveColor())
 			{
 				guiNode->getRowItem()->setColor(node->getBGColor());
 				guiNode->getRowItem()->enableDrawBackground(true);
