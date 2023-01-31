@@ -68,11 +68,13 @@ namespace Skylicht
 			m_tree = new GUI::CTreeControl(treeContainer);
 			m_tree->dock(GUI::EPosition::Fill);
 			m_tree->setMultiSelected(true);
+
+			m_hierarchyController = new CGUIHierarchyController(window->getCanvas(), m_tree, m_editor);
 		}
 
 		CSpaceGUIHierarchy::~CSpaceGUIHierarchy()
 		{
-
+			delete m_hierarchyController;
 		}
 
 		void CSpaceGUIHierarchy::update()

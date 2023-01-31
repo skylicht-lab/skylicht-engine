@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2023 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -128,12 +128,12 @@ namespace Skylicht
 				return m_icon;
 			}
 
-			inline bool HaveColor()
+			inline bool haveColor()
 			{
 				return m_color;
 			}
 
-			inline void EnableColor(bool b)
+			inline void enableColor(bool b)
 			{
 				m_color = b;
 			}
