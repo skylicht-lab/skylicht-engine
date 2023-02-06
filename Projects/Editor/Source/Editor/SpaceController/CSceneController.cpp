@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CSceneController.h"
 #include "CPropertyController.h"
+#include "CGUIDesignController.h"
 
 #include "Selection/CSelection.h"
 
@@ -244,6 +245,9 @@ namespace Skylicht
 				m_history = NULL;
 			}
 			m_history = new CSceneHistory(m_scene);
+
+			// update gui
+			CGUIDesignController::getInstance()->rebuildGUIHierachy();
 		}
 
 		void CSceneController::reinitHierachyData()

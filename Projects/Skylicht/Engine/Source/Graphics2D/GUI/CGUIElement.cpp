@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGUIElement.h"
+#include "Utils/CStringImp.h"
 
 #include "Graphics2D/CCanvas.h"
 #include "Graphics2D/CGraphics2D.h"
@@ -78,6 +79,16 @@ namespace Skylicht
 
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		entityPrefab->removeEntity(m_entity);
+	}
+
+	void CGUIElement::setName(const wchar_t* name)
+	{
+		m_transform->Name = CStringImp::convertUnicodeToUTF8(name);
+	}
+
+	std::wstring CGUIElement::getNameW()
+	{
+		return CStringImp::convertUTF8ToUnicode(m_transform->Name.c_str());
 	}
 
 	void CGUIElement::setParent(CGUIElement* parent)

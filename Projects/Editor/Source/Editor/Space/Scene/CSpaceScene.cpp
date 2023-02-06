@@ -352,6 +352,7 @@ namespace Skylicht
 			CCanvas* canvas = guiCanvas->addComponent<CCanvas>();
 			CGUIRect* rect = canvas->createRect(SColor(255, 0, 0, 0));
 			rect->setDock(EGUIDock::DockFill);
+			rect->setName("Rectangle");
 
 			CGUIElement* root = canvas->getRootElement();
 			root->setDock(EGUIDock::NoDock);

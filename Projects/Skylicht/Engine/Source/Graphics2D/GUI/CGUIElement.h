@@ -101,6 +101,10 @@ namespace Skylicht
 			return m_transform->Name.c_str();
 		}
 
+		void setName(const wchar_t* name);
+
+		std::wstring getNameW();
+
 		void setParent(CGUIElement* parent);
 
 		inline std::vector<CGUIElement*>& getChilds()
