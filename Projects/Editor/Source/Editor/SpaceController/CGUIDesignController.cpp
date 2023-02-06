@@ -27,12 +27,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
 #include "GUI/Utils/CDragAndDrop.h"
 #include "CGUIDesignController.h"
+#include "CSceneController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CGUIDesignController::CGUIDesignController()
+		CGUIDesignController::CGUIDesignController() :
+			m_rootNode(NULL),
+			m_spaceHierarchy(NULL),
+			m_spaceDesign(NULL)
 		{
 			CAssetManager::getInstance()->registerFileLoader("gui", this);
 		}
@@ -40,11 +44,50 @@ namespace Skylicht
 		CGUIDesignController::~CGUIDesignController()
 		{
 			CAssetManager::getInstance()->unRegisterFileLoader("gui", this);
+
+			if (m_rootNode)
+				delete m_rootNode;
 		}
 
 		void CGUIDesignController::initContextMenu(GUI::CCanvas* canvas)
 		{
 			m_canvas = canvas;
+		}
+
+		void CGUIDesignController::rebuildGUIHierachy()
+		{
+			CScene* scene = CSceneController::getInstance()->getScene();
+			if (!scene)
+				return;
+
+			if (m_rootNode)
+				delete m_rootNode;
+
+			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
+			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
+
+			CGUIElement* root = canvas->getRootElement();
+			m_rootNode = new CGUIHierachyNode(NULL);
+			m_rootNode->setTagData(root, CGUIHierachyNode::Canvas);
+			m_rootNode->setName(root->getNameW().c_str());
+
+			rebuildGUIHierachy(root, m_rootNode);
+
+			if (m_spaceHierarchy)
+				m_spaceHierarchy->setTreeNode(m_rootNode);
+		}
+
+		void CGUIDesignController::rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode)
+		{
+			std::vector<CGUIElement*>& childs = parent->getChilds();
+			for (CGUIElement* element : childs)
+			{
+				CGUIHierachyNode* node = parentNode->addChild();
+				node->setTagData(element, CGUIHierachyNode::GUIElement);
+				node->setName(element->getNameW().c_str());
+
+				rebuildGUIHierachy(element, node);
+			}
 		}
 
 		void CGUIDesignController::loadFile(const std::string& path)
