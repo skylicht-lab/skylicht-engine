@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpaceGUIHierarchy.h"
 
-#include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 
 namespace Skylicht
 {
@@ -70,10 +70,17 @@ namespace Skylicht
 			m_tree->setMultiSelected(true);
 
 			m_hierarchyController = new CGUIHierarchyController(window->getCanvas(), m_tree, m_editor);
+
+			CGUIDesignController::getInstance()->setSpaceHierarchy(this);
+			CGUIDesignController::getInstance()->rebuildGUIHierachy();
 		}
 
 		CSpaceGUIHierarchy::~CSpaceGUIHierarchy()
 		{
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			if (controller->getSpaceHierarchy() == this)
+				controller->setSpaceHierarchy(NULL);
+
 			delete m_hierarchyController;
 		}
 
@@ -89,6 +96,7 @@ namespace Skylicht
 
 		void CSpaceGUIHierarchy::setTreeNode(CGUIHierachyNode* node)
 		{
+			m_hierarchyController->setTreeNode(node);
 		}
 
 		void CSpaceGUIHierarchy::addToTreeNode(CGUIHierachyNode* node)

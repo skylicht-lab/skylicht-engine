@@ -59,10 +59,7 @@ namespace Skylicht
 		CGUIHierarchyController::~CGUIHierarchyController()
 		{
 			if (m_node != NULL)
-			{
 				m_node->nullGUI();
-				delete m_node;
-			}
 		}
 
 		void CGUIHierarchyController::deleteHierarchyData()

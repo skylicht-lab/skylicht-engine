@@ -25,7 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpaceGUIDesign.h"
 #include "GUI/Input/CInput.h"
+
 #include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 
 namespace Skylicht
 {
@@ -112,11 +114,15 @@ namespace Skylicht
 				std::placeholders::_3,
 				std::placeholders::_4);
 			m_view->OnRender = BIND_LISTENER(&CSpaceGUIDesign::onRender, this);
+
+			CGUIDesignController::getInstance()->setSpaceDesign(this);
 		}
 
 		CSpaceGUIDesign::~CSpaceGUIDesign()
 		{
-
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			if (controller->getSpaceDesign() == this)
+				controller->setSpaceDesign(NULL);
 		}
 
 		void CSpaceGUIDesign::openGUI(const char* path)

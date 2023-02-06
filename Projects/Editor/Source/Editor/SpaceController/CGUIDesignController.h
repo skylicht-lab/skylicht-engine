@@ -29,6 +29,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CGameSingleton.h"
 #include "AssetManager/CAssetManager.h"
 
+#include "Editor/Space/GUIHierarchy/CGUIHierachyNode.h"
+#include "Editor/Space/GUIHierarchy/CSpaceGUIHierarchy.h"
+#include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -40,14 +44,46 @@ namespace Skylicht
 		protected:
 			GUI::CCanvas* m_canvas;
 
+			CGUIHierachyNode* m_rootNode;
+
+			CSpaceGUIHierarchy* m_spaceHierarchy;
+
+			CSpaceGUIDesign* m_spaceDesign;
+
 		public:
 			CGUIDesignController();
 
 			virtual ~CGUIDesignController();
 
+			inline void setSpaceHierarchy(CSpaceGUIHierarchy* space)
+			{
+				m_spaceHierarchy = space;
+			}
+
+			inline CSpaceGUIHierarchy* getSpaceHierarchy()
+			{
+				return m_spaceHierarchy;
+			}
+
+			inline void setSpaceDesign(CSpaceGUIDesign* space)
+			{
+				m_spaceDesign = space;
+			}
+
+			inline CSpaceGUIDesign* getSpaceDesign()
+			{
+				return m_spaceDesign;
+			}
+
 			void initContextMenu(GUI::CCanvas* canvas);
 
 			virtual void loadFile(const std::string& path);
+
+			void rebuildGUIHierachy();
+
+		protected:
+
+			void rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode);
 		};
 	}
 }
