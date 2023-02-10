@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/CGraphics2D.h"
 
 #include "GUISystem/CGUILayoutSystem.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -363,5 +364,30 @@ namespace Skylicht
 		CGUIRoundedRect* element = new CGUIRoundedRect(this, e, r, radius);
 		element->setColor(c);
 		return element;
+	}
+
+	CGUIElement* CCanvas::getGUIByID(const char* id)
+	{
+		std::queue<CGUIElement*> queue;
+		queue.push(m_root);
+
+		while (queue.size() > 0)
+		{
+			CGUIElement* gui = queue.front();
+			queue.pop();
+
+			if (CStringImp::comp(gui->getID(), id) == 0)
+			{
+				return gui;
+			}
+
+			std::vector<CGUIElement*>& childs = gui->getChilds();
+			for (CGUIElement* e : childs)
+			{
+				queue.push(e);
+			}
+		}
+
+		return NULL;
 	}
 }

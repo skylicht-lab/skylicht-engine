@@ -152,7 +152,7 @@ namespace Skylicht
 		std::string name = zone->generateObjectName("Zone");
 
 		zone->setName(name.c_str());
-		zone->setID(zone->generateRandomID().c_str());
+		zone->setID(CGameObject::generateRandomID().c_str());
 		zone->createEntity();
 		zone->setupEulerTransform();
 

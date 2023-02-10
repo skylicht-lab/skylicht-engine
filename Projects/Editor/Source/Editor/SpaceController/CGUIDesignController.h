@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "AssetManager/CAssetManager.h"
-
+#include "Reactive/IObserver.h"
 #include "Editor/Space/GUIHierarchy/CGUIHierachyNode.h"
 #include "Editor/Space/GUIHierarchy/CSpaceGUIHierarchy.h"
 #include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
@@ -39,7 +39,8 @@ namespace Skylicht
 	{
 		class CGUIDesignController :
 			public CGameSingleton<CGUIDesignController>,
-			public IFileLoader
+			public IFileLoader,
+			public IObserver
 		{
 		protected:
 			GUI::CCanvas* m_canvas;
@@ -84,6 +85,14 @@ namespace Skylicht
 		protected:
 
 			void rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode);
+
+			void setNodeEvent(CGUIHierachyNode* node);
+
+			void onUpdateNode(CGUIHierachyNode* node);
+
+			void onSelectNode(CGUIHierachyNode* node, bool selected);
+
+			virtual void onNotify(ISubject* subject, IObserver* from);
 		};
 	}
 }

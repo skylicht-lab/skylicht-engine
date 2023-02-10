@@ -65,7 +65,7 @@ namespace Skylicht
 		sprintf(name, "#%d", entity->getIndex());
 
 		// id
-		std::string id = m_gameObject->getZone()->generateRandomID();
+		std::string id = CGameObject::generateRandomID();
 		entity->setID(id.c_str());
 
 		// add parent relative
@@ -99,7 +99,7 @@ namespace Skylicht
 		sprintf(name, "#%d", entity->getIndex());
 
 		// id
-		std::string id = m_gameObject->getZone()->generateRandomID();
+		std::string id = CGameObject::generateRandomID();
 		entity->setID(id.c_str());
 
 		// add parent relative
@@ -159,7 +159,7 @@ namespace Skylicht
 			}
 
 			// generate id for entity
-			std::string id = m_gameObject->getZone()->generateRandomID();
+			std::string id = CGameObject::generateRandomID();
 			entity->setID(id.c_str());
 
 			// add to handler

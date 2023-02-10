@@ -101,6 +101,11 @@ namespace Skylicht
 			return m_transform->Name.c_str();
 		}
 
+		inline const char* getID()
+		{
+			return m_entity->getID().c_str();
+		}
+
 		void setName(const wchar_t* name);
 
 		std::wstring getNameW();
