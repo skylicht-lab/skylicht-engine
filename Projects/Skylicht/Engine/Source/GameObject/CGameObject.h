@@ -321,6 +321,8 @@ namespace Skylicht
 
 		void loadSerializable(CObjectSerializable* object);
 
+		static std::string generateRandomID();
+
 		DECLARE_GETTYPENAME(CGameObject)
 	};
 

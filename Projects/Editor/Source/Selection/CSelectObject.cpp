@@ -51,9 +51,16 @@ namespace Skylicht
 		}
 
 		CSelectObject::CSelectObject(CEntity* obj) :
-			m_type(Entity)
+			m_type(Entity),
+			m_id(obj->getID())
 		{
-			m_id = obj->getID();
+		}
+
+		CSelectObject::CSelectObject(CGUIElement* obj) :
+			m_type(GUIElement),
+			m_id(obj->getID())
+		{
+
 		}
 
 		CSelectObject::~CSelectObject()

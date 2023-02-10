@@ -83,9 +83,7 @@ namespace Skylicht
 
 		virtual bool testConflictName(const wchar_t* objectName);
 
-		std::string generateObjectName(const char* objTemplate);
-
-		std::string generateRandomID();
+		std::string generateObjectName(const char* objTemplate);		
 
 		void registerObjectInSearchList(CGameObject* obj);
 

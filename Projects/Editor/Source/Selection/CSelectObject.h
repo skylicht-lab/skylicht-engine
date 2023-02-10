@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GameObject/CGameObject.h"
+#include "Graphics2D/GUI/CGUIElement.h"
 #include "Entity/CEntity.h"
 #include "Reactive/ISubject.h"
 
@@ -38,7 +39,8 @@ namespace Skylicht
 			enum ESelectType
 			{
 				GameObject,
-				Entity
+				Entity,
+				GUIElement
 			};
 
 		protected:
@@ -55,6 +57,8 @@ namespace Skylicht
 			CSelectObject(CGameObject* obj);
 
 			CSelectObject(CEntity* obj);
+
+			CSelectObject(CGUIElement* obj);
 
 			virtual ~CSelectObject();
 

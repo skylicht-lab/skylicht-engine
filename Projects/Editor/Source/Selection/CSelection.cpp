@@ -69,6 +69,19 @@ namespace Skylicht
 			return result;
 		}
 
+		CSelectObject* CSelection::getSelectedById(CSelectObject::ESelectType type, const char* id)
+		{
+			for (CSelectObject* selected : m_selected)
+			{
+				if (selected->getType() == type &&
+					selected->getID() == id)
+				{
+					return selected;
+				}
+			}
+			return NULL;
+		}
+
 		CSelectObject* CSelection::getLastSelected()
 		{
 			CSelectObject* ret = NULL;
@@ -88,15 +101,7 @@ namespace Skylicht
 
 		CSelectObject* CSelection::getSelected(CGameObject* obj)
 		{
-			for (CSelectObject* selected : m_selected)
-			{
-				if (selected->getType() == CSelectObject::GameObject &&
-					selected->getID() == obj->getID())
-				{
-					return selected;
-				}
-			}
-			return NULL;
+			return getSelectedById(CSelectObject::GameObject, obj->getID().c_str());
 		}
 
 		CSelectObject* CSelection::getSelected(CEntity* entity)
@@ -105,15 +110,16 @@ namespace Skylicht
 			if (id.empty())
 				return NULL;
 
-			for (CSelectObject* selected : m_selected)
-			{
-				if (selected->getType() == CSelectObject::Entity &&
-					selected->getID() == id)
-				{
-					return selected;
-				}
-			}
-			return NULL;
+			return getSelectedById(CSelectObject::Entity, id.c_str());
+		}
+
+		CSelectObject* CSelection::getSelected(CGUIElement* gui)
+		{
+			std::string id = gui->getID();
+			if (id.empty())
+				return NULL;
+
+			return getSelectedById(CSelectObject::GUIElement, id.c_str());
 		}
 
 		CSelectObject* CSelection::addSelect(CGameObject* obj)
@@ -148,6 +154,18 @@ namespace Skylicht
 				CSceneHistory* history = CSceneController::getInstance()->getHistory();
 				history->beginSaveHistory(hander->Handler->getGameObject());
 			}
+
+			return selected;
+		}
+
+		CSelectObject* CSelection::addSelect(CGUIElement* gui)
+		{
+			CSelectObject* selected = getSelected(gui);
+			if (selected != NULL)
+				return selected;
+
+			selected = new CSelectObject(gui);
+			m_selected.push_back(selected);
 
 			return selected;
 		}
@@ -228,6 +246,26 @@ namespace Skylicht
 			for (CEntity* entity : entities)
 			{
 				unSelect(entity);
+			}
+		}
+
+		void CSelection::unSelect(CGUIElement* gui)
+		{
+			std::string id = gui->getID();
+			if (id.empty())
+				return;
+
+			std::vector<CSelectObject*>::iterator i = m_selected.begin(), end = m_selected.end();
+			while (i != end)
+			{
+				CSelectObject* sel = (*i);
+				if (sel->getType() == CSelectObject::GUIElement && sel->getID() == id)
+				{
+					delete sel;
+					m_selected.erase(i);
+					return;
+				}
+				++i;
 			}
 		}
 	}
