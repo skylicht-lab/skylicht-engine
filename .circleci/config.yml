@@ -9,8 +9,6 @@ commands:
           command: >
             [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
 
-            $SUDO apt-get update
-
             $SUDO apt-get install cmake
           name: Install CMake
   install-ndk:
