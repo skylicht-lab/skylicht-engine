@@ -40,6 +40,16 @@ namespace Skylicht
 			virtual ~CPropertyController();
 
 			void setProperty(CSelectObject* object);
+
+		protected:
+
+			void clearProperty();
+
+			void setGameObjectProperty(CSpaceProperty* space, CGameObject* obj);
+
+			void setEntityProperty(CSpaceProperty* space, CEntity* entity);
+
+			void setGUIProperty(CSpaceProperty* space, CGUIElement* gui);
 		};
 	}
 }

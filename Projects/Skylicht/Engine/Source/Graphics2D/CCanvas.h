@@ -174,5 +174,7 @@ namespace Skylicht
 		{
 			return m_renderCamera;
 		}
+
+		CGUIElement* getGUIByID(const char* id);
 	};
 }

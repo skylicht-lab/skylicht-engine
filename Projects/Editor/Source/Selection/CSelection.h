@@ -53,6 +53,8 @@ namespace Skylicht
 
 			std::vector<CSelectObject*> getSelectedByType(CSelectObject::ESelectType type);
 
+			CSelectObject* getSelectedById(CSelectObject::ESelectType type, const char* id);
+
 			void clear();
 
 			std::vector<CSelectObject*>& getAllSelected()
@@ -66,9 +68,13 @@ namespace Skylicht
 
 			CSelectObject* getSelected(CEntity* entity);
 
+			CSelectObject* getSelected(CGUIElement* gui);
+
 			CSelectObject* addSelect(CGameObject* obj);
 
 			CSelectObject* addSelect(CEntity* entity);
+
+			CSelectObject* addSelect(CGUIElement* gui);
 
 			void notify(CGameObject* obj, IObserver* from);
 
@@ -81,6 +87,8 @@ namespace Skylicht
 			void unSelect(CEntity* entity);
 
 			void unSelect(const std::vector<CEntity*>& entities);
+
+			void unSelect(CGUIElement* gui);
 		};
 	}
 }

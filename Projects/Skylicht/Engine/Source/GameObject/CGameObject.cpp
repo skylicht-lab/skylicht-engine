@@ -491,4 +491,19 @@ namespace Skylicht
 			}
 		}
 	}
+
+	std::string CGameObject::generateRandomID()
+	{
+		std::string randomString;
+		static const char alphanum[] = "0123456789";
+
+		int len = 16;
+		randomString.reserve(len);
+
+		for (int i = 0; i < len; ++i)
+			randomString += alphanum[rand() % (sizeof(alphanum) - 1)];
+
+		// os::Printer::log(randomString.c_str());
+		return randomString;
+	}
 }

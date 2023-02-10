@@ -25,9 +25,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "Editor/CEditor.h"
 #include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
+#include "Editor/SpaceController/CPropertyController.h"
 #include "GUI/Utils/CDragAndDrop.h"
 #include "CGUIDesignController.h"
 #include "CSceneController.h"
+#include "Selection/CSelection.h"
 
 namespace Skylicht
 {
@@ -67,11 +69,15 @@ namespace Skylicht
 			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
 
 			CGUIElement* root = canvas->getRootElement();
-			m_rootNode = new CGUIHierachyNode(NULL);
-			m_rootNode->setTagData(root, CGUIHierachyNode::Canvas);
-			m_rootNode->setName(root->getNameW().c_str());
+			CGUIElement* fullRect = root->getChilds()[0];
 
-			rebuildGUIHierachy(root, m_rootNode);
+			m_rootNode = new CGUIHierachyNode(NULL);
+			m_rootNode->setTagData(fullRect, CGUIHierachyNode::Canvas);
+			m_rootNode->setName(fullRect->getNameW().c_str());
+
+			setNodeEvent(m_rootNode);
+
+			rebuildGUIHierachy(fullRect, m_rootNode);
 
 			if (m_spaceHierarchy)
 				m_spaceHierarchy->setTreeNode(m_rootNode);
@@ -86,7 +92,58 @@ namespace Skylicht
 				node->setTagData(element, CGUIHierachyNode::GUIElement);
 				node->setName(element->getNameW().c_str());
 
+				setNodeEvent(node);
+
 				rebuildGUIHierachy(element, node);
+			}
+		}
+
+		void CGUIDesignController::setNodeEvent(CGUIHierachyNode* node)
+		{
+			node->OnUpdate = std::bind(&CGUIDesignController::onUpdateNode, this, std::placeholders::_1);
+			node->OnSelected = std::bind(&CGUIDesignController::onSelectNode, this, std::placeholders::_1, std::placeholders::_2);
+		}
+
+		void CGUIDesignController::onUpdateNode(CGUIHierachyNode* node)
+		{
+
+		}
+
+		void CGUIDesignController::onSelectNode(CGUIHierachyNode* node, bool selected)
+		{
+			CSelection* selection = CSelection::getInstance();
+
+			// remove last observer
+			CSelectObject* selectedObject = selection->getLastSelected();
+			if (selectedObject != NULL)
+				selectedObject->removeAllObserver();
+
+			CGUIElement* obj = (CGUIElement*)node->getTagData();
+
+			// Set property & event
+			CPropertyController* propertyController = CPropertyController::getInstance();
+			if (selected)
+			{
+				selectedObject = selection->addSelect(obj);
+				propertyController->setProperty(selectedObject);
+
+				// add new observer
+				selectedObject->addObserver(this);
+
+			}
+			else
+			{
+				propertyController->setProperty(NULL);
+				selection->unSelect(obj);
+			}
+		}
+
+		void CGUIDesignController::onNotify(ISubject* subject, IObserver* from)
+		{
+			CSelectObject* selected = dynamic_cast<CSelectObject*>(subject);
+			if (selected != NULL && from != this)
+			{
+
 			}
 		}
 
