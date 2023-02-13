@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2023 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -22,32 +22,50 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Utils/CActivator.h"
-
-#include "Reactive/CObserver.h"
-#include "Reactive/CSubject.h"
-
-#include "Serializable/CObjectSerializable.h"
-#include "Editor/Serializable/CSerializableEditor.h"
-
-#include "GUI/GUI.h"
+#include "pch.h"
+#include "CGUIElementEditor.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceProperty;
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIElement);
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIRect);
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIRoundedRect);
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIMask);
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIImage);
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUISprite);
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIText);
 
-		class CAssetEditor : public CSerializableEditor
+		CGUIElementEditor::CGUIElementEditor()
 		{
-		protected:
 
-		public:
-			CAssetEditor();
+		}
 
-			virtual ~CAssetEditor();
-		};
+		CGUIElementEditor::~CGUIElementEditor()
+		{
+		}
+
+		void CGUIElementEditor::closeGUI()
+		{
+			CGUIEditor::closeGUI();
+		}
+
+		void CGUIElementEditor::initGUI(CGUIElement* gui, CSpaceProperty* ui)
+		{
+			CGUIEditor::initGUI(gui, ui);
+
+			GUI::CCollapsibleGroup* group = ui->addGroup("GUI Basic", this);
+			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+			serializableToControl(m_guiData, ui, layout);
+			group->setExpand(true);
+		}
+
+		void CGUIElementEditor::update()
+		{
+
+		}
+
 	}
 }

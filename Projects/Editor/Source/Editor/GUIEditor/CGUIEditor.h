@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2023 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,15 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CActivator.h"
-
-#include "Reactive/CObserver.h"
-#include "Reactive/CSubject.h"
-
-#include "Serializable/CObjectSerializable.h"
+#include "Graphics2D/GUI/CGUIElement.h"
 #include "Editor/Serializable/CSerializableEditor.h"
-
-#include "GUI/GUI.h"
 
 namespace Skylicht
 {
@@ -40,14 +33,29 @@ namespace Skylicht
 	{
 		class CSpaceProperty;
 
-		class CAssetEditor : public CSerializableEditor
+		class CGUIEditor :public CSerializableEditor
 		{
 		protected:
+			CGUIElement* m_gui;
+			CObjectSerializable* m_guiData;
 
 		public:
-			CAssetEditor();
+			CGUIEditor();
 
-			virtual ~CAssetEditor();
+			virtual ~CGUIEditor();
+
+			virtual void closeGUI();
+
+			virtual void initGUI(CGUIElement* gui, CSpaceProperty* ui);
+
+			virtual void onUpdateValue(CObjectSerializable* object);
+
+			virtual void update() = 0;
+
+			CGUIElement* getGUIElement()
+			{
+				return m_gui;
+			}
 		};
 	}
 }

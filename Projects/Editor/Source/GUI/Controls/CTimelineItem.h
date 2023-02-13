@@ -60,6 +60,11 @@ namespace Skylicht
 				float m_contentSize;
 				CTimelineValue* m_value;
 				CTimeline* m_timeline;
+
+				std::vector<float> m_split;
+
+			public:
+
 			public:
 				CTimelineItem(CBase* base, CTimeline* timeline);
 
@@ -73,6 +78,16 @@ namespace Skylicht
 				}
 
 				void setContentSize(float size);
+
+				inline void addSplitLine(float y)
+				{
+					m_split.push_back(y);
+				}
+
+				inline void clearSplitLine()
+				{
+					m_split.clear();
+				}
 			};
 		}
 	}
