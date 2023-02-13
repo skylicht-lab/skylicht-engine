@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2023 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -30,7 +30,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/CSubject.h"
 
 #include "Serializable/CObjectSerializable.h"
-#include "Editor/Serializable/CSerializableEditor.h"
 
 #include "GUI/GUI.h"
 
@@ -40,14 +39,29 @@ namespace Skylicht
 	{
 		class CSpaceProperty;
 
-		class CAssetEditor : public CSerializableEditor
+		class CSerializableEditor : public IActivatorObject
 		{
 		protected:
+			std::vector<ISubject*> m_subjects;
 
 		public:
-			CAssetEditor();
+			CSerializableEditor();
 
-			virtual ~CAssetEditor();
+			virtual ~CSerializableEditor();
+
+			virtual void closeGUI();
+
+			virtual void initGUI(const char* path, CSpaceProperty* ui)
+			{
+
+			}
+
+			virtual void serializableToControl(CObjectSerializable* object, CSpaceProperty* ui, GUI::CBoxLayout* layout);
+
+			virtual void onUpdateValue(CObjectSerializable* object)
+			{
+
+			}
 		};
 	}
 }

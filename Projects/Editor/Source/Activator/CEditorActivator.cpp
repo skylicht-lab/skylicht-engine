@@ -72,6 +72,17 @@ namespace Skylicht
 			return true;
 		}
 
+		bool CEditorActivator::registerGUIEditor(const char* dataType, ActivatorCreateGUIEditor func)
+		{
+			std::map<std::string, int>::iterator i = m_mapGUI.find(dataType);
+			if (i != m_mapGUI.end())
+				return false;
+
+			m_mapGUI[dataType] = (int)m_factoryGUIFunc.size();
+			m_factoryGUIFunc.push_back(func);
+			return true;
+		}
+
 		CComponentEditor* CEditorActivator::getEditorInstance(const char* componentType)
 		{
 			// find componentType
@@ -129,6 +140,25 @@ namespace Skylicht
 			return result;
 		}
 
+		CGUIEditor* CEditorActivator::getGUIEditorInstance(const char* dataType)
+		{
+			// find dataType
+			std::map<std::string, int>::iterator i = m_mapGUI.find(dataType);
+			if (i == m_mapGUI.end())
+				return NULL;
+
+			// re-used
+			std::map<std::string, CGUIEditor*>::iterator j = m_mapGUIInstance.find(dataType);
+			if (j != m_mapGUIInstance.end() && (*j).second != NULL)
+				return (*j).second;
+
+			// create and cache to re-used
+			int id = (*i).second;
+			CGUIEditor* result = m_factoryGUIFunc[id]();
+			m_mapGUIInstance[dataType] = result;
+			return result;
+		}
+
 		void CEditorActivator::releaseAllInstance()
 		{
 			// 1
@@ -154,6 +184,14 @@ namespace Skylicht
 			}
 			m_mapEntityDataInstance.clear();
 			m_mapEntityData.clear();
+
+			// 4
+			for (auto i : m_mapGUIInstance)
+			{
+				delete i.second;
+			}
+			m_mapGUIInstance.clear();
+			m_mapGUI.clear();
 		}
 	}
 }

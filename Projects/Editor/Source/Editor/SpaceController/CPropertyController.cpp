@@ -99,6 +99,7 @@ namespace Skylicht
 				{
 					clearProperty();
 
+					spaceProperty->setIcon(GUI::ESystemIcon::ObjectRect);
 					std::wstring label = L"GUI: ";
 
 					// Show GUI Property
@@ -218,7 +219,15 @@ namespace Skylicht
 
 		void CPropertyController::setGUIProperty(CSpaceProperty* space, CGUIElement* gui)
 		{
+			// Activator
+			CEditorActivator* activator = CEditorActivator::getInstance();
 
+			// GUI property
+			CGUIEditor* editor = activator->getGUIEditorInstance(gui->getTypeName().c_str());
+			if (editor != NULL)
+			{
+				space->addGUIEditor(editor, gui);
+			}
 		}
 	}
 }

@@ -168,8 +168,13 @@ namespace Skylicht
 
 					group->Owner->closeGUI();
 				}
+
 				if (group->EntityDataOwner)
 					group->EntityDataOwner->closeGUI();
+
+				if (group->GUIEditorOwner)
+					group->GUIEditorOwner->closeGUI();
+
 				delete group;
 			}
 
@@ -222,6 +227,11 @@ namespace Skylicht
 		void CSpaceProperty::addEntityData(CEntityDataEditor* editor, IEntityData* entityData)
 		{
 			editor->initGUI(entityData, this);
+		}
+
+		void CSpaceProperty::addGUIEditor(CGUIEditor* editor, CGUIElement* gui)
+		{
+			editor->initGUI(gui, this);
 		}
 
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CAssetEditor* editor)
@@ -311,6 +321,20 @@ namespace Skylicht
 			return colapsible;
 		}
 
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CGUIEditor* editor)
+		{
+			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
+			colapsible->dock(GUI::EPosition::Top);
+			colapsible->getHeader()->setLabel(label);
+
+			SGroup* g = new SGroup();
+			g->GUIEditorOwner = editor;
+			g->GroupUI = colapsible;
+
+			m_groups.push_back(g);
+			return colapsible;
+		}
+
 		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CComponentEditor* editor)
 		{
 			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
@@ -329,18 +353,10 @@ namespace Skylicht
 			return addGroup(wlabel.c_str(), editor);
 		}
 
-		void CSpaceProperty::removeGroupByOwner(CComponentEditor* editor)
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CGUIEditor* editor)
 		{
-			for (size_t i = 0, n = m_groups.size(); i < n; i++)
-			{
-				if (m_groups[i]->Owner == editor)
-				{
-					m_groups[i]->releaseObserver();
-					m_groups[i]->GroupUI->remove();
-					m_groups.erase(m_groups.begin() + i);
-					return;
-				}
-			}
+			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
+			return addGroup(wlabel.c_str(), editor);
 		}
 
 		void CSpaceProperty::addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label, GUI::ETextAlign align)

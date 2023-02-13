@@ -91,6 +91,11 @@ namespace Skylicht
 				bound.Width = m_contentSize;
 				renderer->drawFillRect(bound, CThemeConfig::TimelineItemBG);
 				renderer->drawBorderRect(bound, CThemeConfig::TimelineItemBorder, true, true, true, true);
+
+				for (float y : m_split)
+				{
+					renderer->drawLineX(0.0f, y, m_contentSize, CThemeConfig::TimelineItemBorder);
+				}
 			}
 		}
 	}
