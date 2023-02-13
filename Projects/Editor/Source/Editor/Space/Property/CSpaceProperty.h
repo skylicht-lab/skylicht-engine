@@ -27,9 +27,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
+
 #include "Editor/Components/CComponentEditor.h"
 #include "Editor/AssetEditor/CAssetEditor.h"
 #include "Editor/EntityData/CEntityDataEditor.h"
+#include "Editor/GUIEditor/CGUIEditor.h"
+
 #include "Reactive/CSubject.h"
 #include "Reactive/CObserver.h"
 
@@ -47,6 +50,7 @@ namespace Skylicht
 				CComponentEditor* Owner;
 				CAssetEditor* AssetOwner;
 				CEntityDataEditor* EntityDataOwner;
+				CGUIEditor* GUIEditorOwner;
 
 				GUI::CBase* GroupUI;
 				std::vector<IObserver*> Observer;
@@ -57,6 +61,7 @@ namespace Skylicht
 					AssetOwner = NULL;
 					GroupUI = NULL;
 					EntityDataOwner = NULL;
+					GUIEditorOwner = NULL;
 				}
 
 				void releaseObserver()
@@ -158,6 +163,8 @@ namespace Skylicht
 
 			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CEntityDataEditor* editor);
 
+			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CGUIEditor* editor);
+
 
 			GUI::CCollapsibleGroup* addGroup(const char* label, CComponentEditor* editor);
 
@@ -165,11 +172,11 @@ namespace Skylicht
 
 			GUI::CCollapsibleGroup* addGroup(const char* label, CEntityDataEditor* editor);
 
+			GUI::CCollapsibleGroup* addGroup(const char* label, CGUIEditor* editor);
+
 			GUI::CButton* addButton(const wchar_t* label);
 
 			void popupComponentMenu(CGameObject* gameObject, GUI::CBase* position);
-
-			void removeGroupByOwner(CComponentEditor* editor);
 
 			void addComponent(CComponentEditor* editor, CComponentSystem* component, bool autoRelease = false);
 
@@ -178,6 +185,8 @@ namespace Skylicht
 			void addAsset(CAssetEditor* editor, const char* path);
 
 			void addEntityData(CEntityDataEditor* editor, IEntityData* entityData);
+
+			void addGUIEditor(CGUIEditor* editor, CGUIElement* gui);
 
 			void clearAllGroup();
 

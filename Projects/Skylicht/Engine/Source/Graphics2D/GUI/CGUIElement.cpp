@@ -62,6 +62,7 @@ namespace Skylicht
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		m_entity = entityPrefab->createEntity();
+		m_entity->setID(CGameObject::generateRandomID().c_str());
 		entityPrefab->addTransformData(m_entity, NULL, core::IdentityMatrix, "");
 
 		m_guiTransform = m_entity->addData<CGUITransformData>();
