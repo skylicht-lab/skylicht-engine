@@ -91,6 +91,8 @@ namespace Skylicht
 			for (u32 i = 0, n = data->getNumProperty(); i < n; i++)
 			{
 				CValueProperty* valueProperty = data->getPropertyID(i);
+				if (valueProperty->isHidden())
+					continue;
 
 				// add ui space
 				if (valueProperty->getUISpace() > 0)

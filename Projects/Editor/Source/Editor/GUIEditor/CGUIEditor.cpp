@@ -45,12 +45,14 @@ namespace Skylicht
 		{
 			if (m_guiData)
 				delete m_guiData;
+
+			CSerializableEditor::closeGUI();
 		}
 
 		void CGUIEditor::initGUI(CGUIElement* gui, CSpaceProperty* ui)
 		{
 			m_gui = gui;
-			m_guiData = m_gui->createSerializable();			
+			m_guiData = m_gui->createSerializable();
 		}
 
 		void CGUIEditor::onUpdateValue(CObjectSerializable* object)
