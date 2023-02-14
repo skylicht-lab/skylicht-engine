@@ -92,11 +92,6 @@ namespace Skylicht
 
 			for (SGroup* group : m_groups)
 			{
-				for (IObserver* o : group->Observer)
-				{
-					delete o;
-				}
-
 				delete group;
 			}
 			m_groups.clear();
@@ -151,7 +146,6 @@ namespace Skylicht
 
 			for (SGroup* group : m_groups)
 			{
-				group->releaseObserver();
 				group->GroupUI->remove();
 				if (group->AssetOwner)
 					group->AssetOwner->closeGUI();
@@ -459,6 +453,7 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
+				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
@@ -469,16 +464,13 @@ namespace Skylicht
 					}
 				};
 
-				IObserver* observer = value->addObserver(onChange);
+				value->addObserver(onChange, true);
 
 				// when input text change
-				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+				input->OnTextChanged = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set(input->getValue());
 					value->notify(observer);
 				};
-
-				// hold observer to release later
-				group->Observer.push_back(observer);
 			}
 		}
 
@@ -503,6 +495,7 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
+				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
@@ -513,16 +506,13 @@ namespace Skylicht
 					}
 				};
 
-				IObserver* observer = value->addObserver(onChange);
+				value->addObserver(onChange, true);
 
 				// when input text change
-				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+				input->OnTextChanged = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set((int)input->getValue());
 					value->notify(observer);
 				};
-
-				// hold observer to release later
-				group->Observer.push_back(observer);
 			}
 		}
 
@@ -547,6 +537,7 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
+				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
@@ -557,16 +548,13 @@ namespace Skylicht
 					}
 				};
 
-				IObserver* observer = value->addObserver(onChange);
+				value->addObserver(onChange, true);
 
 				// when input text change
-				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+				input->OnTextChanged = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set((u32)input->getValue());
 					value->notify(observer);
 				};
-
-				// hold observer to release later
-				group->Observer.push_back(observer);
 			}
 		}
 
@@ -585,6 +573,7 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
+				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
@@ -596,14 +585,11 @@ namespace Skylicht
 				};
 
 				// when input text change
-				IObserver* observer = value->addObserver(onChange);
-				input->OnTextChanged = [value, input, observer](GUI::CBase* base) {
+				value->addObserver(onChange, true);
+				input->OnTextChanged = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set(input->getString());
 					value->notify(observer);
 				};
-
-				// hold observer to release later			
-				group->Observer.push_back(observer);
 			}
 
 			boxLayout->endVertical();
@@ -629,6 +615,7 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
+				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 				{
@@ -640,14 +627,11 @@ namespace Skylicht
 				};
 
 				// when input text change
-				IObserver* observer = value->addObserver(onChange);
-				input->OnLostKeyboardFocus = [value, input, observer](GUI::CBase* base) {
+				value->addObserver(onChange, true);
+				input->OnLostKeyboardFocus = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set(input->getValueInt());
 					value->notify(observer);
 				};
-
-				// hold observer to release later			
-				group->Observer.push_back(observer);
 			}
 
 			boxLayout->endVertical();
@@ -670,7 +654,7 @@ namespace Skylicht
 			CSpaceProperty::SGroup* group = getGroupByLayout(boxLayout);
 			if (group != NULL)
 			{
-				// when check value c hange
+				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = check](ISubject* subject, IObserver* from)
 				{
@@ -681,15 +665,12 @@ namespace Skylicht
 					}
 				};
 
-				// when check control change
-				IObserver* observer = value->addObserver(onChange);
-				check->OnChanged = [value, check, observer](GUI::CBase* base) {
+				// when check control change => update value
+				value->addObserver(onChange, true);
+				check->OnChanged = [value, check, observer = onChange](GUI::CBase* base) {
 					value->set(check->getToggle());
 					value->notify(observer);
 				};
-
-				// hold observer to release later			
-				group->Observer.push_back(observer);
 			}
 
 			boxLayout->endVertical();
@@ -708,6 +689,8 @@ namespace Skylicht
 			comboBox->setListValue(listValue);
 
 			CObserver* onChange = new CObserver();
+
+			// when check value change => update ui
 			onChange->Notify = [me = onChange, target = comboBox](ISubject* subject, IObserver* from)
 			{
 				if (from != me)
@@ -717,9 +700,9 @@ namespace Skylicht
 				}
 			};
 
-			// when combobox change
-			IObserver* observer = value->addObserver(onChange);
-			comboBox->OnChanged = [value, comboBox, observer](GUI::CBase* base)
+			// when combobox change => update value
+			value->addObserver(onChange, true);
+			comboBox->OnChanged = [value, comboBox, observer = onChange](GUI::CBase* base)
 			{
 				value->set(comboBox->getLabel());
 				value->notify(observer);
@@ -743,6 +726,8 @@ namespace Skylicht
 			slider->setValue(value->get(), min, max, false);
 
 			CObserver* onChange = new CObserver();
+
+			// when check value change => update ui
 			onChange->Notify = [me = onChange, target = slider](ISubject* subject, IObserver* from)
 			{
 				if (from != me)
@@ -752,9 +737,9 @@ namespace Skylicht
 				}
 			};
 
-			// when slider change
-			IObserver* observer = value->addObserver(onChange);
-			slider->OnTextChanged = [value, slider, observer](GUI::CBase* base) {
+			// when slider change => update value
+			value->addObserver(onChange, true);
+			slider->OnTextChanged = [value, slider, observer = onChange](GUI::CBase* base) {
 				value->set(slider->getValue());
 				value->notify(observer);
 			};
@@ -775,6 +760,7 @@ namespace Skylicht
 			GUI::CColorPicker* colorPicker = new GUI::CColorPicker(layout);
 			colorPicker->setColor(GUI::SGUIColor(c.getAlpha(), c.getRed(), c.getGreen(), c.getBlue()));
 
+			// when check value change => update ui
 			CObserver* onChange = new CObserver();
 			onChange->Notify = [me = onChange, target = colorPicker](ISubject* subject, IObserver* from)
 			{
@@ -786,9 +772,9 @@ namespace Skylicht
 				}
 			};
 
-			// when color pick change
-			IObserver* observer = value->addObserver(onChange);
-			colorPicker->OnChanged = [value, colorPicker, observer](GUI::CBase* base) {
+			// when color pick change => update value
+			value->addObserver(onChange, true);
+			colorPicker->OnChanged = [value, colorPicker, observer = onChange](GUI::CBase* base) {
 				const GUI::SGUIColor& guiColor = colorPicker->getColor();
 				value->set(SColor(guiColor.A, guiColor.R, guiColor.G, guiColor.B));
 				value->notify(observer);
@@ -853,6 +839,7 @@ namespace Skylicht
 				return false;
 			};
 
+			// when check value change => update ui
 			CObserver* onChange = new CObserver();
 			onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 			{
@@ -864,8 +851,9 @@ namespace Skylicht
 					target->setString(L"None");
 			};
 
-			IObserver* observer = value->addObserver(onChange);
-			input->OnDrop = [s = value, obs = observer](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			// when ui update => change value
+			value->addObserver(onChange, true);
+			input->OnDrop = [s = value, observer = onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
 				if (data->Name == "ListFSItem")
 				{
@@ -873,7 +861,7 @@ namespace Skylicht
 					std::string path = rowItem->getTagString();
 					path = CAssetManager::getInstance()->getShortPath(path.c_str());
 					s->set(path);
-					s->notify(obs);
+					s->notify(observer);
 				}
 			};
 			boxLayout->endVertical();
@@ -922,6 +910,7 @@ namespace Skylicht
 				return false;
 			};
 
+			// when check value change => update ui
 			CObserver* onChange = new CObserver();
 			onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
 			{
@@ -933,8 +922,8 @@ namespace Skylicht
 					target->setString(L"None");
 			};
 
-			IObserver* observer = value->addObserver(onChange);
-			input->OnDrop = [s = value, obs = observer](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			value->addObserver(onChange, true);
+			input->OnDrop = [s = value, observer = onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
 				if (data->Name == "ListFSItem")
 				{
@@ -942,7 +931,7 @@ namespace Skylicht
 					std::string path = rowItem->getTagString();
 					path = CAssetManager::getInstance()->getShortPath(path.c_str());
 					s->set(path);
-					s->notify(obs);
+					s->notify(observer);
 				}
 				else if (data->Name == "TreeFSItem")
 				{
@@ -950,7 +939,7 @@ namespace Skylicht
 					std::string path = node->getTagString();
 					path = CAssetManager::getInstance()->getShortPath(path.c_str());
 					s->set(path);
-					s->notify(obs);
+					s->notify(observer);
 				}
 			};
 			boxLayout->endVertical();

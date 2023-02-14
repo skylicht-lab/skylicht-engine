@@ -53,7 +53,6 @@ namespace Skylicht
 				CGUIEditor* GUIEditorOwner;
 
 				GUI::CBase* GroupUI;
-				std::vector<IObserver*> Observer;
 
 				SGroup()
 				{
@@ -62,13 +61,6 @@ namespace Skylicht
 					GroupUI = NULL;
 					EntityDataOwner = NULL;
 					GUIEditorOwner = NULL;
-				}
-
-				void releaseObserver()
-				{
-					for (IObserver* o : Observer)
-						delete o;
-					Observer.clear();
 				}
 			};
 

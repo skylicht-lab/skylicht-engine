@@ -34,8 +34,6 @@ namespace Skylicht
 		class CMatEditor : public CAssetEditor
 		{
 		protected:
-			std::vector<ISubject*> m_subjects;
-
 			std::map<CMaterial*, GUI::CBoxLayout*> m_materialUI;
 
 			ArrayMaterial m_materials;
