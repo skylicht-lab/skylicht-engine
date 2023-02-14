@@ -53,6 +53,8 @@ namespace Skylicht
 			for (u32 i = 0, n = object->getNumProperty(); i < n; i++)
 			{
 				CValueProperty* valueProperty = object->getPropertyID(i);
+				if (valueProperty->isHidden())
+					continue;
 
 				if (valueProperty->getType() == EPropertyDataType::Bool)
 				{

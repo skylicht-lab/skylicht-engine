@@ -32,6 +32,8 @@ namespace Skylicht
 		m_owner(owner),
 		m_dataType(dataType),
 		m_uiSpace(0.0f),
+		m_hidden(false),
+		m_tagData(NULL),
 		Name(name)
 	{
 		if (owner != NULL)

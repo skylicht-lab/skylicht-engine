@@ -55,10 +55,14 @@ namespace Skylicht
 
 		CObjectSerializable* m_owner;
 
+		void* m_tagData;
+
 		// ui editor interface
 		std::string m_uiHeader;
 
 		float m_uiSpace;
+
+		bool m_hidden;
 
 	public:
 		std::string Name;
@@ -106,6 +110,26 @@ namespace Skylicht
 		inline float getUISpace()
 		{
 			return m_uiSpace;
+		}
+
+		inline void setHidden(bool b)
+		{
+			m_hidden = b;
+		}
+
+		inline bool isHidden()
+		{
+			return m_hidden;
+		}
+
+		inline void tagData(void* data)
+		{
+			m_tagData = data;
+		}
+
+		inline void* getTagData()
+		{
+			return m_tagData;
 		}
 	};
 }
