@@ -56,6 +56,11 @@ namespace Skylicht
 			{
 				return m_gui;
 			}
+
+			void showEditorRect(bool b);
+			void showEditorTransform(bool b);
+			void showEditorAlign(bool b);
+			void showEditorMargin(EGUIDock dock);
 		};
 	}
 }

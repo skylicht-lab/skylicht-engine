@@ -163,7 +163,7 @@ namespace Skylicht
 		else if (a->Dock == EGUIDock::DockRight)
 		{
 			t->m_transformPosition.set(0.0f, a->Margin.Top, 0.0f);
-			t->m_transformPosition.X = parentRect.getWidth() - t->Rect.getWidth() - a->Margin.Left;
+			t->m_transformPosition.X = parentRect.getWidth() - t->Rect.getWidth() - a->Margin.Right;
 
 			t->Rect.UpperLeftCorner.Y = parentRect.UpperLeftCorner.Y;
 			t->Rect.LowerRightCorner.Y = parentRect.LowerRightCorner.Y - a->Margin.Bottom - a->Margin.Top;

@@ -33,6 +33,9 @@ namespace Skylicht
 	{
 		class CGUIElementEditor : public CGUIEditor
 		{
+		protected:
+			EGUIDock m_lastDock;
+
 		public:
 			CGUIElementEditor();
 
@@ -43,6 +46,8 @@ namespace Skylicht
 			virtual void initGUI(CGUIElement* gui, CSpaceProperty* ui);
 
 			virtual void update();
+
+			virtual void onUpdateValue(CObjectSerializable* object);
 		};
 	}
 }

@@ -59,5 +59,74 @@ namespace Skylicht
 		{
 			m_gui->loadSerializable(m_guiData);
 		}
+
+		void CGUIEditor::showEditorRect(bool b)
+		{
+			m_guiData->getProperty("rectX1")->setHidden(!b);
+			m_guiData->getProperty("rectY1")->setHidden(!b);
+			m_guiData->getProperty("rectX2")->setHidden(!b);
+			m_guiData->getProperty("rectY2")->setHidden(!b);
+		}
+
+		void CGUIEditor::showEditorTransform(bool b)
+		{
+			m_guiData->getProperty("position")->setHidden(!b);
+			m_guiData->getProperty("scale")->setHidden(!b);
+			m_guiData->getProperty("rotation")->setHidden(!b);
+		}
+
+		void CGUIEditor::showEditorAlign(bool b)
+		{
+			m_guiData->getProperty("alignVertical")->setHidden(!b);
+			m_guiData->getProperty("alignHorizontal")->setHidden(!b);
+		}
+
+		void CGUIEditor::showEditorMargin(EGUIDock dock)
+		{
+			CValueProperty* pLeft = m_guiData->getProperty("marginLeft");
+			CValueProperty* pTop = m_guiData->getProperty("marginTop");
+			CValueProperty* pRight = m_guiData->getProperty("marginRight");
+			CValueProperty* pBottom = m_guiData->getProperty("marginBottom");
+
+			switch (dock)
+			{
+			case EGUIDock::DockFill:
+				pLeft->setHidden(false);
+				pTop->setHidden(false);
+				pRight->setHidden(false);
+				pBottom->setHidden(false);
+				break;
+			case EGUIDock::DockLeft:
+				pLeft->setHidden(false);
+				pTop->setHidden(false);
+				pRight->setHidden(true);
+				pBottom->setHidden(false);
+				break;
+			case EGUIDock::DockRight:
+				pLeft->setHidden(true);
+				pTop->setHidden(false);
+				pRight->setHidden(false);
+				pBottom->setHidden(false);
+				break;
+			case EGUIDock::DockTop:
+				pLeft->setHidden(false);
+				pTop->setHidden(false);
+				pRight->setHidden(false);
+				pBottom->setHidden(true);
+				break;
+			case EGUIDock::DockBottom:
+				pLeft->setHidden(false);
+				pTop->setHidden(true);
+				pRight->setHidden(false);
+				pBottom->setHidden(false);
+				break;
+			default:
+				// hide all
+				pLeft->setHidden(true);
+				pTop->setHidden(true);
+				pRight->setHidden(true);
+				pBottom->setHidden(true);
+			}
+		}
 	}
 }

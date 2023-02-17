@@ -60,11 +60,18 @@ namespace Skylicht
 				{
 					CBoolProperty* value = dynamic_cast<CBoolProperty*>(valueProperty);
 					CSubject<bool>* subject = new CSubject<bool>(value->get());
-					subject->addObserver(new CObserver([&, value, s = subject](ISubject* subject, IObserver* from)
+					CObserver* observer = new CObserver([&, value, s = subject](ISubject* subject, IObserver* from)
 						{
 							value->set(s->get());
 							onUpdateValue(object);
-						}), true);
+						});
+					subject->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+					{
+						s->setEnable(!hide);
+						s->notify(o);
+					};
 
 					ui->addCheckBox(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
@@ -88,7 +95,15 @@ namespace Skylicht
 							}
 						};
 						subject->addObserver(observer, true);
+
+						valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
+
 						ui->addSlider(layout, ui->getPrettyName(value->Name), subject, value->Min, value->Max);
+						m_subjects.push_back(subject);
 					}
 					else
 					{
@@ -124,6 +139,13 @@ namespace Skylicht
 							}
 						};
 						subject->addObserver(observer, true);
+
+						valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
+
 						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject, 0.01f);
 						m_subjects.push_back(subject);
 					}
@@ -163,6 +185,13 @@ namespace Skylicht
 						}
 					};
 					subject->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+					{
+						s->setEnable(!hide);
+						s->notify(o);
+					};
+
 					ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
 				}
@@ -196,6 +225,13 @@ namespace Skylicht
 						}
 					};
 					subject->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+					{
+						s->setEnable(!hide);
+						s->notify(o);
+					};
+
 					ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
 				}
@@ -217,8 +253,14 @@ namespace Skylicht
 							onUpdateValue(object);
 						}
 					};
-
 					subject->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+					{
+						s->setEnable(!hide);
+						s->notify(o);
+					};
+
 					ui->addTextBox(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
 				}
@@ -236,8 +278,14 @@ namespace Skylicht
 							onUpdateValue(object);
 						}
 					};
-
 					subject->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+					{
+						s->setEnable(!hide);
+						s->notify(o);
+					};
+
 					ui->addColorPicker(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
 				}
@@ -257,6 +305,13 @@ namespace Skylicht
 					};
 
 					subject->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+					{
+						s->setEnable(!hide);
+						s->notify(o);
+					};
+
 					ui->addInputFile(layout, ui->getPrettyName(value->Name), subject, value->Exts);
 					m_subjects.push_back(subject);
 				}
@@ -276,6 +331,13 @@ namespace Skylicht
 					};
 
 					subject->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+					{
+						s->setEnable(!hide);
+						s->notify(o);
+					};
+
 					ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
 				}
@@ -287,8 +349,13 @@ namespace Skylicht
 					GUI::CMenu* menu = dropBox->getMenu();
 
 					int currentValue = enumValue->getIntValue();
-
 					int enumCount = enumValue->getEnumCount();
+
+					valueProperty->OnSetHidden = [dropBox](bool hide)
+					{
+						dropBox->getParent()->setHidden(hide);
+					};
+
 					for (int i = 0; i < enumCount; i++)
 					{
 						const CEnumPropertyData::SEnumString& enumData = enumValue->getEnum(i);
@@ -321,6 +388,11 @@ namespace Skylicht
 					GUI::CCollapsibleGroup* group = ui->addSubGroup(layout);
 					group->getHeader()->setLabel(ui->getPrettyName(valueProperty->Name));
 					GUI::CBoxLayout* objectLayout = ui->createBoxLayout(group);
+
+					valueProperty->OnSetHidden = [group](bool hide)
+					{
+						group->setHidden(hide);
+					};
 
 					if (object->isArray())
 					{

@@ -35,6 +35,7 @@ namespace Skylicht
 		protected:
 			std::vector<IObserver*> m_observers;
 			std::vector<bool> m_autoRelease;
+			bool m_enable;
 
 		public:
 			ISubject();
@@ -48,6 +49,16 @@ namespace Skylicht
 			void removeAllObserver();
 
 			void notify(IObserver* from);
+
+			inline bool isEnable()
+			{
+				return m_enable;
+			}
+
+			inline void setEnable(bool b)
+			{
+				m_enable = b;
+			}
 		};
 	}
 }
