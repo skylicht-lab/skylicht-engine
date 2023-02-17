@@ -60,6 +60,8 @@ namespace Skylicht
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 			serializableToControl(m_guiData, ui, layout);
 			group->setExpand(true);
+
+			onUpdateValue(NULL);
 		}
 
 		void CGUIElementEditor::update()
@@ -67,5 +69,37 @@ namespace Skylicht
 
 		}
 
+		void CGUIElementEditor::onUpdateValue(CObjectSerializable* object)
+		{
+			CGUIEditor::onUpdateValue(object);
+
+			EGUIDock dock = m_gui->getDock();
+			if (m_lastDock != dock || object == NULL)
+			{
+				m_lastDock = dock;
+				switch (dock)
+				{
+				case EGUIDock::NoDock:
+					showEditorTransform(true);
+					showEditorRect(true);
+					showEditorAlign(true);
+					break;
+				case EGUIDock::DockLeft:
+				case EGUIDock::DockRight:
+				case EGUIDock::DockTop:
+				case EGUIDock::DockBottom:
+					showEditorTransform(false);
+					showEditorAlign(false);
+					showEditorRect(true);
+					break;
+				case EGUIDock::DockFill:
+					showEditorTransform(false);
+					showEditorRect(false);
+					showEditorAlign(false);
+					break;
+				}
+				showEditorMargin(dock);
+			}
+		}
 	}
 }

@@ -201,10 +201,10 @@ namespace Skylicht
 		object->autoRelease(alignHorizontal);
 
 		// padding
-		object->autoRelease(new CFloatProperty(object, "paddingLeft", m_guiAlign->Margin.Left));
-		object->autoRelease(new CFloatProperty(object, "paddingTop", m_guiAlign->Margin.Top));
-		object->autoRelease(new CFloatProperty(object, "paddingRight", m_guiAlign->Margin.Right));
-		object->autoRelease(new CFloatProperty(object, "paddingBottom", m_guiAlign->Margin.Bottom));
+		object->autoRelease(new CFloatProperty(object, "marginLeft", m_guiAlign->Margin.Left));
+		object->autoRelease(new CFloatProperty(object, "marginTop", m_guiAlign->Margin.Top));
+		object->autoRelease(new CFloatProperty(object, "marginRight", m_guiAlign->Margin.Right));
+		object->autoRelease(new CFloatProperty(object, "marginBottom", m_guiAlign->Margin.Bottom));
 
 		// material
 		object->autoRelease(new CColorProperty(object, "color", m_renderData->Color));
@@ -235,10 +235,10 @@ namespace Skylicht
 		m_guiAlign->Horizontal = object->get<EGUIHorizontalAlign>("alignHorizontal", EGUIHorizontalAlign::Left);
 
 		// padding
-		m_guiAlign->Margin.Left = object->get("paddingLeft", 0.0f);
-		m_guiAlign->Margin.Top = object->get("paddingTop", 0.0f);
-		m_guiAlign->Margin.Right = object->get("paddingRight", 0.0f);
-		m_guiAlign->Margin.Bottom = object->get("paddingBottom", 0.0f);
+		m_guiAlign->Margin.Left = object->get("marginLeft", 0.0f);
+		m_guiAlign->Margin.Top = object->get("marginTop", 0.0f);
+		m_guiAlign->Margin.Right = object->get("marginRight", 0.0f);
+		m_guiAlign->Margin.Bottom = object->get("marginBottom", 0.0f);
 
 		// color
 		m_renderData->Color = object->get("color", SColor(255, 255, 255, 255));
