@@ -29,7 +29,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		ISubject::ISubject()
+		ISubject::ISubject() :
+			m_enable(true)
 		{
 
 		}

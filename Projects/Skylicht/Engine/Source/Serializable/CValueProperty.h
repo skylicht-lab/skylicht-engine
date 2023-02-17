@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include <functional>
+
 namespace Skylicht
 {
 	class CObjectSerializable;
@@ -55,14 +57,15 @@ namespace Skylicht
 
 		CObjectSerializable* m_owner;
 
-		void* m_tagData;
-
 		// ui editor interface
 		std::string m_uiHeader;
 
 		float m_uiSpace;
 
 		bool m_hidden;
+
+	public:
+		std::function<void(bool)> OnSetHidden;
 
 	public:
 		std::string Name;
@@ -115,21 +118,13 @@ namespace Skylicht
 		inline void setHidden(bool b)
 		{
 			m_hidden = b;
+			if (OnSetHidden != nullptr)
+				OnSetHidden(b);
 		}
 
 		inline bool isHidden()
 		{
 			return m_hidden;
-		}
-
-		inline void tagData(void* data)
-		{
-			m_tagData = data;
-		}
-
-		inline void* getTagData()
-		{
-			return m_tagData;
 		}
 	};
 }

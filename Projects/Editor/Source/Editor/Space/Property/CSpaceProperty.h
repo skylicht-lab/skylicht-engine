@@ -94,6 +94,7 @@ namespace Skylicht
 
 			virtual void refresh();
 
+
 			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<float>* value, float step);
 
 			void addNumberInput(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<int>* value, int step = 1);
@@ -116,9 +117,10 @@ namespace Skylicht
 
 			void addInputFolder(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value);
 
+
 			GUI::CImageButton* addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value);
 
-			void addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label, GUI::ETextAlign align = GUI::TextCenter);
+			GUI::CLabel* addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label, GUI::ETextAlign align = GUI::TextCenter);
 
 			GUI::CButton* addButton(GUI::CBoxLayout* boxLayout, const wchar_t* label);
 

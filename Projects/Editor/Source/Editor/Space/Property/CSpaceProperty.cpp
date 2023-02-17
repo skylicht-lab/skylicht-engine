@@ -353,7 +353,7 @@ namespace Skylicht
 			return addGroup(wlabel.c_str(), editor);
 		}
 
-		void CSpaceProperty::addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label, GUI::ETextAlign align)
+		GUI::CLabel* CSpaceProperty::addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label, GUI::ETextAlign align)
 		{
 			GUI::CLayoutVertical* layout = boxLayout->beginVertical();
 
@@ -361,6 +361,8 @@ namespace Skylicht
 			labelControl->setString(label);
 			labelControl->setTextAlignment(align);
 			boxLayout->endVertical();
+
+			return labelControl;
 		}
 
 		GUI::CButton* CSpaceProperty::addButton(GUI::CBoxLayout* boxLayout, const wchar_t* label)
@@ -455,12 +457,13 @@ namespace Skylicht
 			{
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
-				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
 				{
 					if (from != me)
 					{
-						CSubject<float>* floatValue = (CSubject<float>*)subject;
-						target->setValue(floatValue->get(), false);
+						CSubject<float>* value = (CSubject<float>*)subject;
+						target->setValue(value->get(), false);
+						ui->setHidden(!value->isEnable());
 					}
 				};
 
@@ -497,12 +500,13 @@ namespace Skylicht
 			{
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
-				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
 				{
 					if (from != me)
 					{
-						CSubject<int>* intValue = (CSubject<int>*)subject;
-						target->setValue((float)intValue->get(), false);
+						CSubject<int>* value = (CSubject<int>*)subject;
+						target->setValue((float)value->get(), false);
+						ui->setHidden(!value->isEnable());
 					}
 				};
 
@@ -539,12 +543,13 @@ namespace Skylicht
 			{
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
-				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
 				{
 					if (from != me)
 					{
-						CSubject<u32>* intValue = (CSubject<u32>*)subject;
-						target->setValue((float)intValue->get(), false);
+						CSubject<u32>* value = (CSubject<u32>*)subject;
+						target->setValue((float)value->get(), false);
+						ui->setHidden(!value->isEnable());
 					}
 				};
 
@@ -575,12 +580,13 @@ namespace Skylicht
 			{
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
-				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
 				{
 					if (from != me)
 					{
 						CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
 						target->setString(value->get());
+						ui->setHidden(!value->isEnable());
 					}
 				};
 
@@ -617,12 +623,13 @@ namespace Skylicht
 			{
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
-				onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
 				{
 					if (from != me)
 					{
 						CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
 						target->setString(value->get());
+						ui->setHidden(!value->isEnable());
 					}
 				};
 
@@ -656,12 +663,13 @@ namespace Skylicht
 			{
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
-				onChange->Notify = [me = onChange, target = check](ISubject* subject, IObserver* from)
+				onChange->Notify = [me = onChange, target = check, ui = layout](ISubject* subject, IObserver* from)
 				{
 					if (from != me)
 					{
 						CSubject<bool>* value = (CSubject<bool>*)subject;
 						target->setToggle(value->get());
+						ui->setHidden(!value->isEnable());
 					}
 				};
 
@@ -691,12 +699,13 @@ namespace Skylicht
 			CObserver* onChange = new CObserver();
 
 			// when check value change => update ui
-			onChange->Notify = [me = onChange, target = comboBox](ISubject* subject, IObserver* from)
+			onChange->Notify = [me = onChange, target = comboBox, ui = layout](ISubject* subject, IObserver* from)
 			{
 				if (from != me)
 				{
 					CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
 					target->setLabel(value->get());
+					ui->setHidden(!value->isEnable());
 				}
 			};
 
@@ -728,12 +737,13 @@ namespace Skylicht
 			CObserver* onChange = new CObserver();
 
 			// when check value change => update ui
-			onChange->Notify = [me = onChange, target = slider](ISubject* subject, IObserver* from)
+			onChange->Notify = [me = onChange, target = slider, ui = layout](ISubject* subject, IObserver* from)
 			{
 				if (from != me)
 				{
 					CSubject<float>* value = (CSubject<float>*)subject;
 					target->setValue(value->get(), false);
+					ui->setHidden(!value->isEnable());
 				}
 			};
 
@@ -762,13 +772,14 @@ namespace Skylicht
 
 			// when check value change => update ui
 			CObserver* onChange = new CObserver();
-			onChange->Notify = [me = onChange, target = colorPicker](ISubject* subject, IObserver* from)
+			onChange->Notify = [me = onChange, target = colorPicker, ui = layout](ISubject* subject, IObserver* from)
 			{
 				if (from != me)
 				{
 					CSubject<SColor>* value = (CSubject<SColor>*)subject;
 					const SColor& c = value->get();
 					target->setColor(GUI::SGUIColor(c.getAlpha(), c.getRed(), c.getGreen(), c.getBlue()));
+					ui->setHidden(!value->isEnable());
 				}
 			};
 
@@ -841,7 +852,7 @@ namespace Skylicht
 
 			// when check value change => update ui
 			CObserver* onChange = new CObserver();
-			onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+			onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
 			{
 				CSubject<std::string>* value = (CSubject<std::string>*)subject;
 				std::string fileName = CPath::getFileName(value->get());
@@ -849,6 +860,8 @@ namespace Skylicht
 					target->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
 				else
 					target->setString(L"None");
+
+				ui->setHidden(!value->isEnable());
 			};
 
 			// when ui update => change value
@@ -912,7 +925,7 @@ namespace Skylicht
 
 			// when check value change => update ui
 			CObserver* onChange = new CObserver();
-			onChange->Notify = [me = onChange, target = input](ISubject* subject, IObserver* from)
+			onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
 			{
 				CSubject<std::string>* value = (CSubject<std::string>*)subject;
 				std::string fileName = CPath::getFileName(value->get());
@@ -920,6 +933,8 @@ namespace Skylicht
 					target->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
 				else
 					target->setString(L"None");
+
+				ui->setHidden(!value->isEnable());
 			};
 
 			value->addObserver(onChange, true);
