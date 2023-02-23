@@ -50,5 +50,7 @@ namespace Skylicht
 	{
 		core::rectf uv(0.0f, 0.0f, 1.0f, 1.0f);
 		CGraphics2D::getInstance()->addRectangleBatch(getRect(), uv, getColor(), m_transform->World, getShaderID(), getMaterial());
+
+		CGUIElement::render(camera);
 	}
 }

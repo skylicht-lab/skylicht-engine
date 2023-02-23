@@ -37,6 +37,7 @@ namespace Skylicht
 		m_visible(true),
 		m_parent(NULL),
 		m_mask(NULL),
+		m_drawBorder(false),
 		m_applyCurrentMask(NULL)
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
@@ -58,6 +59,7 @@ namespace Skylicht
 		m_visible(true),
 		m_parent(NULL),
 		m_mask(NULL),
+		m_drawBorder(false),
 		m_applyCurrentMask(NULL)
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
@@ -156,7 +158,29 @@ namespace Skylicht
 
 	void CGUIElement::render(CCamera* camera)
 	{
+		bool drawBorder = m_drawBorder;
+		SColor borderColor(100, 255, 255, 255);
 
+		if (m_canvas->IsInEditor)
+		{
+			drawBorder = true;
+			if (m_drawBorder)
+				borderColor.set(255, 0, 255, 0);
+		}
+
+		if (drawBorder)
+		{
+			core::rectf r = getRect();
+
+			float z = 0.0f;
+			core::vector3df topLeft(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);
+			core::vector3df bottomRight(r.LowerRightCorner.X, r.LowerRightCorner.Y, z);
+
+			m_transform->World.transformVect(topLeft);
+			m_transform->World.transformVect(bottomRight);
+
+			CGraphics2D::getInstance()->draw2DRectangleOutline(topLeft, bottomRight, borderColor);
+		}
 	}
 
 	CObjectSerializable* CGUIElement::createSerializable()
@@ -173,10 +197,10 @@ namespace Skylicht
 		object->autoRelease(new CVector3Property(object, "rotation", m_guiTransform->getRotation()));
 
 		// rect
-		object->autoRelease(new CFloatProperty(object, "rectX1", m_guiTransform->Rect.UpperLeftCorner.X));
-		object->autoRelease(new CFloatProperty(object, "rectY1", m_guiTransform->Rect.UpperLeftCorner.Y));
-		object->autoRelease(new CFloatProperty(object, "rectX2", m_guiTransform->Rect.LowerRightCorner.X));
-		object->autoRelease(new CFloatProperty(object, "rectY2", m_guiTransform->Rect.LowerRightCorner.Y));
+		object->autoRelease(new CFloatProperty(object, "rectX", m_guiTransform->Rect.UpperLeftCorner.X));
+		object->autoRelease(new CFloatProperty(object, "rectY", m_guiTransform->Rect.UpperLeftCorner.Y));
+		object->autoRelease(new CFloatProperty(object, "rectW", m_guiTransform->Rect.getWidth()));
+		object->autoRelease(new CFloatProperty(object, "rectH", m_guiTransform->Rect.getHeight()));
 
 		// align
 		CEnumProperty<EGUIDock>* dock = new CEnumProperty<EGUIDock>(object, "dock", m_guiAlign->Dock);
@@ -224,10 +248,12 @@ namespace Skylicht
 		setRotation(object->get<core::vector3df>("rotation", core::vector3df()));
 
 		// rect
-		m_guiTransform->Rect.UpperLeftCorner.X = object->get("rectX1", 0.0f);
-		m_guiTransform->Rect.UpperLeftCorner.Y = object->get("rectY1", 0.0f);
-		m_guiTransform->Rect.LowerRightCorner.X = object->get("rectX2", 0.0f);
-		m_guiTransform->Rect.LowerRightCorner.Y = object->get("rectY2", 0.0f);
+		m_guiTransform->Rect.UpperLeftCorner.X = object->get("rectX", 0.0f);
+		m_guiTransform->Rect.UpperLeftCorner.Y = object->get("rectY", 0.0f);
+
+		float w = object->get("rectW", 0.0f);
+		float h = object->get("rectH", 0.0f);
+		m_guiTransform->Rect.LowerRightCorner = m_guiTransform->Rect.UpperLeftCorner + core::vector2df(w, h);
 
 		// align
 		m_guiAlign->Dock = object->get<EGUIDock>("dock", EGUIDock::NoDock);
@@ -242,5 +268,13 @@ namespace Skylicht
 
 		// color
 		m_renderData->Color = object->get("color", SColor(255, 255, 255, 255));
+
+		notifyChanged();
+	}
+
+	void CGUIElement::notifyChanged()
+	{
+		m_guiTransform->HasChanged = true;
+		m_transform->HasChanged = true;
 	}
 }

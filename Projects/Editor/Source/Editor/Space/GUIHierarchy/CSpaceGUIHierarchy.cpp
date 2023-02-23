@@ -70,6 +70,7 @@ namespace Skylicht
 			m_tree->setMultiSelected(true);
 
 			m_hierarchyController = new CGUIHierarchyController(window->getCanvas(), m_tree, m_editor);
+			m_hierarchyContextMenu = new CGUIHierachyContextMenu(m_tree);
 
 			CGUIDesignController::getInstance()->setSpaceHierarchy(this);
 			CGUIDesignController::getInstance()->rebuildGUIHierachy();
@@ -82,6 +83,7 @@ namespace Skylicht
 				controller->setSpaceHierarchy(NULL);
 
 			delete m_hierarchyController;
+			delete m_hierarchyContextMenu;
 		}
 
 		void CSpaceGUIHierarchy::update()
@@ -101,6 +103,7 @@ namespace Skylicht
 
 		void CSpaceGUIHierarchy::addToTreeNode(CGUIHierachyNode* node)
 		{
+			m_hierarchyController->addToTreeNode(node);
 		}
 
 		void CSpaceGUIHierarchy::rename(CGUIHierachyNode* node)

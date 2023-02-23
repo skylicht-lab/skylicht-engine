@@ -34,7 +34,8 @@ namespace Skylicht
 	CCanvas::CCanvas() :
 		m_sortDepth(0),
 		m_enable3DBillboard(false),
-		m_renderCamera(NULL)
+		m_renderCamera(NULL),
+		IsInEditor(false)
 	{
 		CGraphics2D* g = CGraphics2D::getInstance();
 		float w = (float)g->getScreenSize().Width;

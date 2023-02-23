@@ -62,10 +62,10 @@ namespace Skylicht
 
 		void CGUIEditor::showEditorRect(bool b)
 		{
-			m_guiData->getProperty("rectX1")->setHidden(!b);
-			m_guiData->getProperty("rectY1")->setHidden(!b);
-			m_guiData->getProperty("rectX2")->setHidden(!b);
-			m_guiData->getProperty("rectY2")->setHidden(!b);
+			m_guiData->getProperty("rectX")->setHidden(!b);
+			m_guiData->getProperty("rectY")->setHidden(!b);
+			m_guiData->getProperty("rectW")->setHidden(!b);
+			m_guiData->getProperty("rectH")->setHidden(!b);
 		}
 
 		void CGUIEditor::showEditorTransform(bool b)

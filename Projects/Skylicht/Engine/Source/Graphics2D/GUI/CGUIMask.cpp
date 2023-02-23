@@ -48,6 +48,8 @@ namespace Skylicht
 
 	void CGUIMask::render(CCamera* camera)
 	{
+		CGUIElement::render(camera);
+
 		if (m_drawMask == false)
 		{
 			core::rectf r = getRect();
