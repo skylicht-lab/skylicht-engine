@@ -65,6 +65,10 @@ namespace Skylicht
 		CFastArray<CEntity*> m_alives;
 
 	public:
+
+		bool IsInEditor;
+
+	public:
 		CCanvas();
 
 		virtual ~CCanvas();

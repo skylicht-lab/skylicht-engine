@@ -350,6 +350,8 @@ namespace Skylicht
 			guiCanvas->setEditorObject(true);
 
 			CCanvas* canvas = guiCanvas->addComponent<CCanvas>();
+			canvas->IsInEditor = true;
+
 			CGUIRect* rect = canvas->createRect(SColor(255, 0, 0, 0));
 			rect->setDock(EGUIDock::DockFill);
 			rect->setName("Canvas");

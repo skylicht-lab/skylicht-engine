@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -25,44 +25,40 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
 
-#include "CGUIHierachyNode.h"
-#include "CGUIHierarchyController.h"
-#include "CGUIHierachyContextMenu.h"
+#include "Scene/CScene.h"
+#include "GameObject/CZone.h"
+
+#include "Editor/Space/CSpace.h"
+#include "Editor/Space/GUIHierarchy/CGUIHierachyNode.h"
+#include "Editor/Space/GUIHierarchy/CSpaceGUIHierarchy.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceGUIHierarchy : public CSpace
+		class CContextMenuGUIElement
 		{
 		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
+			GUI::CCanvas* m_canvas;
 
-			GUI::CTreeControl* m_tree;
+			CSpaceGUIHierarchy* m_spaceHierarchy;
+			CGUIHierachyNode* m_contextNode;
 
-			CGUIHierarchyController* m_hierarchyController;
-			CGUIHierachyContextMenu* m_hierarchyContextMenu;
+			GUI::CMenu* m_contextMenu;
+
 		public:
-			CSpaceGUIHierarchy(GUI::CWindow* window, CEditor* editor);
+			CContextMenuGUIElement(GUI::CCanvas* canvas);
 
-			virtual ~CSpaceGUIHierarchy();
+			~CContextMenuGUIElement();
 
-			virtual void update();
+			bool onContextMenu(CSpaceGUIHierarchy* spaceHierachy, CGUIHierachyNode* node);
 
-			void deselectAll();
+		protected:
 
-			void setTreeNode(CGUIHierachyNode* node);
+			void OnContextMenuCommand(GUI::CBase* sender);
 
-			void addToTreeNode(CGUIHierachyNode* node);
-
-			void rename(CGUIHierachyNode* node);
-
-			void scrollToNode(GUI::CTreeNode* node);
+			void OnContextMenuAddCommand(GUI::CBase* sender);
 		};
 	}
 }

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -22,47 +22,35 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
-
-#include "CGUIHierachyNode.h"
-#include "CGUIHierarchyController.h"
+#include "pch.h"
 #include "CGUIHierachyContextMenu.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceGUIHierarchy : public CSpace
+		CGUIHierachyContextMenu::CGUIHierachyContextMenu(GUI::CTreeControl* tree)
 		{
-		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
+			tree->OnItemContextMenu = BIND_LISTENER(&CGUIHierachyContextMenu::OnTreeContextMenu, this);
+		}
 
-			GUI::CTreeControl* m_tree;
+		CGUIHierachyContextMenu::~CGUIHierachyContextMenu()
+		{
 
-			CGUIHierarchyController* m_hierarchyController;
-			CGUIHierachyContextMenu* m_hierarchyContextMenu;
-		public:
-			CSpaceGUIHierarchy(GUI::CWindow* window, CEditor* editor);
+		}
 
-			virtual ~CSpaceGUIHierarchy();
-
-			virtual void update();
-
-			void deselectAll();
-
-			void setTreeNode(CGUIHierachyNode* node);
-
-			void addToTreeNode(CGUIHierachyNode* node);
-
-			void rename(CGUIHierachyNode* node);
-
-			void scrollToNode(GUI::CTreeNode* node);
-		};
+		void CGUIHierachyContextMenu::OnTreeContextMenu(GUI::CBase* row)
+		{
+			GUI::CTreeRowItem* rowItem = dynamic_cast<GUI::CTreeRowItem*>(row);
+			if (rowItem != NULL)
+			{
+				CGUIHierachyNode* node = (CGUIHierachyNode*)rowItem->getNode()->getTagData();
+				if (node != NULL)
+				{
+					CGUIDesignController::getInstance()->onContextMenu(node);
+				}
+			}
+		}
 	}
 }

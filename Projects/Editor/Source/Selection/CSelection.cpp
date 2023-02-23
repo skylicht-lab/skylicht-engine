@@ -164,6 +164,8 @@ namespace Skylicht
 			if (selected != NULL)
 				return selected;
 
+			gui->setDrawBorder(true);
+
 			selected = new CSelectObject(gui);
 			m_selected.push_back(selected);
 
@@ -254,6 +256,8 @@ namespace Skylicht
 			std::string id = gui->getID();
 			if (id.empty())
 				return;
+
+			gui->setDrawBorder(false);
 
 			std::vector<CSelectObject*>::iterator i = m_selected.begin(), end = m_selected.end();
 			while (i != end)

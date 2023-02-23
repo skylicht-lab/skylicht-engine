@@ -442,6 +442,8 @@ namespace Skylicht
 			// new line
 			y += (m_textHeight + m_linePadding);
 		}
+
+		CGUIElement::render(camera);
 	}
 
 	void CGUIText::renderText(ArrayModuleOffset& string, ArrayInt& stringFormat, int posY)

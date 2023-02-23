@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -25,44 +25,24 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
 
-#include "CGUIHierachyNode.h"
+#include "Editor/Space/CSpace.h"
 #include "CGUIHierarchyController.h"
-#include "CGUIHierachyContextMenu.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceGUIHierarchy : public CSpace
+		class CGUIHierachyContextMenu
 		{
-		protected:
-			GUI::CButton* m_btnAdd;
-			GUI::CTextBox* m_inputSearch;
-			GUI::CLabel* m_labelSearch;
-			GUI::CButton* m_buttonCancelSearch;
-
-			GUI::CTreeControl* m_tree;
-
-			CGUIHierarchyController* m_hierarchyController;
-			CGUIHierachyContextMenu* m_hierarchyContextMenu;
 		public:
-			CSpaceGUIHierarchy(GUI::CWindow* window, CEditor* editor);
+			CGUIHierachyContextMenu(GUI::CTreeControl* tree);
 
-			virtual ~CSpaceGUIHierarchy();
+			virtual ~CGUIHierachyContextMenu();
 
-			virtual void update();
+		public:
 
-			void deselectAll();
-
-			void setTreeNode(CGUIHierachyNode* node);
-
-			void addToTreeNode(CGUIHierachyNode* node);
-
-			void rename(CGUIHierachyNode* node);
-
-			void scrollToNode(GUI::CTreeNode* node);
+			void OnTreeContextMenu(GUI::CBase* row);
 		};
 	}
 }
