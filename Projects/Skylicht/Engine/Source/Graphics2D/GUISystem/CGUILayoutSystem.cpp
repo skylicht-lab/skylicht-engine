@@ -113,10 +113,10 @@ namespace Skylicht
 		switch (a->Vertical)
 		{
 		case EGUIVerticalAlign::Top:
-			t->m_transformPosition.Y = t->m_position.Y;
+			t->m_transformPosition.Y = parentRect.UpperLeftCorner.Y + t->m_position.Y;
 			break;
 		case EGUIVerticalAlign::Middle:
-			t->m_transformPosition.Y = (parentRect.getHeight() - t->Rect.getHeight()) * 0.5f + t->m_position.Y;
+			t->m_transformPosition.Y = parentRect.UpperLeftCorner.Y + (parentRect.getHeight() - t->Rect.getHeight()) * 0.5f + t->m_position.Y;
 			break;
 		case EGUIVerticalAlign::Bottom:
 			t->m_transformPosition.Y = parentRect.LowerRightCorner.Y - t->Rect.getHeight() - t->m_position.Y;
@@ -128,10 +128,10 @@ namespace Skylicht
 		switch (a->Horizontal)
 		{
 		case EGUIHorizontalAlign::Left:
-			t->m_transformPosition.X = t->m_position.X;
+			t->m_transformPosition.X = parentRect.UpperLeftCorner.X + t->m_position.X;
 			break;
 		case EGUIHorizontalAlign::Center:
-			t->m_transformPosition.X = (parentRect.getWidth() - t->Rect.getWidth()) * 0.5f + t->m_position.X;
+			t->m_transformPosition.X = parentRect.UpperLeftCorner.X + (parentRect.getWidth() - t->Rect.getWidth()) * 0.5f + t->m_position.X;
 			break;
 		case EGUIHorizontalAlign::Right:
 			t->m_transformPosition.X = parentRect.LowerRightCorner.X - t->Rect.getWidth() - t->m_position.Y;
@@ -155,7 +155,7 @@ namespace Skylicht
 		}
 		else if (a->Dock == EGUIDock::DockLeft)
 		{
-			t->m_transformPosition.set(a->Margin.Left, a->Margin.Top, 0.0f);
+			t->m_transformPosition.set(parentRect.UpperLeftCorner.X + a->Margin.Left, a->Margin.Top, 0.0f);
 
 			t->Rect.UpperLeftCorner.Y = parentRect.UpperLeftCorner.Y;
 			t->Rect.LowerRightCorner.Y = parentRect.LowerRightCorner.Y - a->Margin.Bottom - a->Margin.Top;
@@ -163,14 +163,17 @@ namespace Skylicht
 		else if (a->Dock == EGUIDock::DockRight)
 		{
 			t->m_transformPosition.set(0.0f, a->Margin.Top, 0.0f);
-			t->m_transformPosition.X = parentRect.getWidth() - t->Rect.getWidth() - a->Margin.Right;
+			t->m_transformPosition.X = parentRect.UpperLeftCorner.X + parentRect.getWidth() - t->Rect.getWidth() - a->Margin.Right;
 
 			t->Rect.UpperLeftCorner.Y = parentRect.UpperLeftCorner.Y;
 			t->Rect.LowerRightCorner.Y = parentRect.LowerRightCorner.Y - a->Margin.Bottom - a->Margin.Top;
 		}
 		else if (a->Dock == EGUIDock::DockTop)
 		{
-			t->m_transformPosition.set(a->Margin.Left, a->Margin.Top, 0.0f);
+			t->m_transformPosition.set(
+				a->Margin.Left,
+				parentRect.UpperLeftCorner.Y + a->Margin.Top,
+				0.0f);
 
 			t->Rect.UpperLeftCorner.X = parentRect.UpperLeftCorner.X;
 			t->Rect.LowerRightCorner.X = parentRect.LowerRightCorner.X - a->Margin.Right - a->Margin.Left;
@@ -178,7 +181,7 @@ namespace Skylicht
 		else if (a->Dock == EGUIDock::DockBottom)
 		{
 			t->m_transformPosition.set(a->Margin.Left, 0.0f, 0.0f);
-			t->m_transformPosition.Y = parentRect.getHeight() - t->Rect.getHeight() - a->Margin.Bottom;
+			t->m_transformPosition.Y = parentRect.UpperLeftCorner.Y + parentRect.getHeight() - t->Rect.getHeight() - a->Margin.Bottom;
 
 			t->Rect.UpperLeftCorner.X = parentRect.UpperLeftCorner.X;
 			t->Rect.LowerRightCorner.X = parentRect.LowerRightCorner.X - a->Margin.Right - a->Margin.Left;

@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/GUIHierarchy/CGUIHierachyNode.h"
 #include "Editor/Space/GUIHierarchy/CSpaceGUIHierarchy.h"
 #include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
+#include "CContextMenuGUIElement.h"
 
 namespace Skylicht
 {
@@ -50,6 +51,8 @@ namespace Skylicht
 			CSpaceGUIHierarchy* m_spaceHierarchy;
 
 			CSpaceGUIDesign* m_spaceDesign;
+
+			CContextMenuGUIElement* m_contextMenu;
 
 		public:
 			CGUIDesignController();
@@ -81,6 +84,10 @@ namespace Skylicht
 			virtual void loadFile(const std::string& path);
 
 			void rebuildGUIHierachy();
+
+			void onContextMenu(CGUIHierachyNode* node);
+
+			void createGUINode(CGUIHierachyNode* parent, const std::wstring& command);
 
 		protected:
 

@@ -187,5 +187,7 @@ namespace Skylicht
 	{
 		CGraphics2D* g = CGraphics2D::getInstance();
 		g->addExternalBuffer(m_buffer, m_transform->World, getShaderID());
+
+		CGUIElement::render(camera);
 	}
 }

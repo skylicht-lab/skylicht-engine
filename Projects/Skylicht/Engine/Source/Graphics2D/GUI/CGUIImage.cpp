@@ -61,6 +61,8 @@ namespace Skylicht
 				getMaterial(),
 				m_pivot.X, m_pivot.Y);
 		}
+
+		CGUIElement::render(camera);
 	}
 
 	void CGUIImage::setImage(ITexture* texture)

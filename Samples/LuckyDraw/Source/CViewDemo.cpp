@@ -134,6 +134,9 @@ void CViewDemo::onInit()
 	CGameObject* canvasObject = zone->createEmptyObject();
 	m_canvas = canvasObject->addComponent<CCanvas>();
 
+	// show debug rectangle
+	// m_canvas->IsInEditor = true;
+
 	// create background
 	m_backgroundImage = m_canvas->createImage();
 	m_backgroundImage->setDock(EGUIDock::DockFill);

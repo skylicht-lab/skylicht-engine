@@ -49,6 +49,7 @@ namespace Skylicht
 		CGUIMask* m_mask;
 		CGUIMask* m_applyCurrentMask;
 
+		bool m_drawBorder;
 		bool m_visible;
 
 		CEntity* m_entity;
@@ -261,6 +262,11 @@ namespace Skylicht
 			m_mask = mask;
 		}
 
+		inline void setDrawBorder(bool b)
+		{
+			m_drawBorder = b;
+		}
+
 		virtual void update(CCamera* camera);
 
 		virtual void render(CCamera* camera);
@@ -283,6 +289,8 @@ namespace Skylicht
 		{
 			return m_visible;
 		}
+
+		void notifyChanged();
 
 		DECLARE_GETTYPENAME(CGUIElement);
 

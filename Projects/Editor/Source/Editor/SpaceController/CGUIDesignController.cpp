@@ -38,7 +38,8 @@ namespace Skylicht
 		CGUIDesignController::CGUIDesignController() :
 			m_rootNode(NULL),
 			m_spaceHierarchy(NULL),
-			m_spaceDesign(NULL)
+			m_spaceDesign(NULL),
+			m_contextMenu(NULL)
 		{
 			CAssetManager::getInstance()->registerFileLoader("gui", this);
 		}
@@ -49,11 +50,15 @@ namespace Skylicht
 
 			if (m_rootNode)
 				delete m_rootNode;
+
+			if (m_contextMenu)
+				delete m_contextMenu;
 		}
 
 		void CGUIDesignController::initContextMenu(GUI::CCanvas* canvas)
 		{
 			m_canvas = canvas;
+			m_contextMenu = new CContextMenuGUIElement(canvas);
 		}
 
 		void CGUIDesignController::rebuildGUIHierachy()
@@ -98,6 +103,47 @@ namespace Skylicht
 			}
 		}
 
+		void CGUIDesignController::createGUINode(CGUIHierachyNode* parent, const std::wstring& command)
+		{
+			CGUIElement* parentNode = (CGUIElement*)parent->getTagData();
+			CGUIElement* newNode = NULL;
+
+			core::rectf r = parentNode->getRect();
+			SColor c(255, 255, 255, 255);
+
+			if (command == L"GUI Element")
+			{
+				newNode = parentNode->getCanvas()->createElement(parentNode, r);
+			}
+			else if (command == L"GUI Rect")
+			{
+				newNode = parentNode->getCanvas()->createRect(parentNode, r, c);
+			}
+			else if (command == L"GUI Image")
+			{
+				newNode = parentNode->getCanvas()->createImage(parentNode, r);
+			}
+			else if (command == L"GUI Text")
+			{
+			}
+			else if (command == L"GUI Mask")
+			{
+				newNode = parentNode->getCanvas()->createMask(parentNode, r);
+			}
+
+			if (newNode)
+			{
+				CGUIHierachyNode* node = parent->addChild();
+				node->setName(newNode->getNameW().c_str());
+				node->setTagData(newNode, CGUIHierachyNode::GUIElement);
+
+				setNodeEvent(node);
+
+				if (m_spaceHierarchy != NULL)
+					m_spaceHierarchy->addToTreeNode(node);
+			}
+		}
+
 		void CGUIDesignController::setNodeEvent(CGUIHierachyNode* node)
 		{
 			node->OnUpdate = std::bind(&CGUIDesignController::onUpdateNode, this, std::placeholders::_1);
@@ -136,6 +182,11 @@ namespace Skylicht
 				propertyController->setProperty(NULL);
 				selection->unSelect(obj);
 			}
+		}
+
+		void CGUIDesignController::onContextMenu(CGUIHierachyNode* node)
+		{
+			m_contextMenu->onContextMenu(m_spaceHierarchy, node);
 		}
 
 		void CGUIDesignController::onNotify(ISubject* subject, IObserver* from)

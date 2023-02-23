@@ -1561,6 +1561,39 @@ namespace Skylicht
 		m_vertices->set_used(0);
 	}
 
+	void CGraphics2D::draw2DRectangleOutline(const core::vector3df& upleft, const core::vector3df& lowerright, const SColor& color)
+	{
+		flush();
+
+		m_indices->set_used(5);
+		u16* index = (u16*)m_indices->getIndices();
+		index[0] = 0;
+		index[1] = 1;
+		index[2] = 2;
+		index[3] = 3;
+		index[4] = 0;
+
+		m_vertices->set_used(4);
+		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
+		vertices[0] = S3DVertex(upleft.X, upleft.Y, upleft.Z, 0, 0, 1, color, 0, 0);
+		vertices[1] = S3DVertex(lowerright.X, upleft.Y, upleft.Z, 0, 0, 1, color, 0, 0);
+		vertices[2] = S3DVertex(lowerright.X, lowerright.Y, lowerright.Z, 0, 0, 1, color, 0, 0);
+		vertices[3] = S3DVertex(upleft.X, lowerright.Y, upleft.Z, 0, 0, 1, color, 0, 0);
+
+		m_2dMaterial.setTexture(0, NULL);
+		m_2dMaterial.setTexture(1, NULL);
+		m_2dMaterial.MaterialType = m_vertexColorShader;
+		m_driver->setMaterial(m_2dMaterial);
+
+		m_buffer->setPrimitiveType(scene::EPT_LINE_STRIP);
+		m_buffer->setDirty();
+
+		m_driver->drawMeshBuffer(m_buffer);
+
+		m_indices->set_used(0);
+		m_vertices->set_used(0);
+	}
+
 	void CGraphics2D::draw2DRectangleOutline(const core::rectf& pos, const SColor& color)
 	{
 		flush();
