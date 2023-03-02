@@ -56,7 +56,58 @@ namespace Skylicht
 				if (valueProperty->isHidden())
 					continue;
 
-				if (valueProperty->getType() == EPropertyDataType::Bool)
+				if (valueProperty->getType() == EPropertyDataType::Vector3)
+				{
+					CVector3Property* value = dynamic_cast<CVector3Property*>(valueProperty);
+					const core::vector3df& v = value->get();
+
+					CSubject<float>* X = new CSubject<float>(v.X);
+					CSubject<float>* Y = new CSubject<float>(v.Y);
+					CSubject<float>* Z = new CSubject<float>(v.Z);
+
+					CObserver* observer = new CObserver();
+					observer->Notify = [&, value, X, Y, Z, observer](ISubject* subject, IObserver* from)
+					{
+						if (from != observer)
+						{
+							core::vector3df v = value->get();
+							v.X = X->get();
+							v.Y = Y->get();
+							v.Z = Z->get();
+							value->set(v);
+							onUpdateValue(object);
+						}
+					};
+
+					X->addObserver(observer);
+					Y->addObserver(observer);
+					Z->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [X, Y, Z, o = observer](bool hide)
+					{
+						X->setEnable(!hide);
+						X->notify(o);
+
+						Y->setEnable(!hide);
+						Y->notify(o);
+
+						Z->setEnable(!hide);
+						Z->notify(o);
+					};
+
+					std::wstring name = ui->getPrettyName(value->Name);
+					name += L" X";
+
+					ui->addNumberInput(layout, name.c_str(), X, 0.1f);
+					ui->addNumberInput(layout, L"Y", Y, 0.1f);
+					ui->addNumberInput(layout, L"Z", Z, 0.1f);
+					layout->addSpace(5.0f);
+
+					m_subjects.push_back(X);
+					m_subjects.push_back(Y);
+					m_subjects.push_back(Z);
+				}
+				else if (valueProperty->getType() == EPropertyDataType::Bool)
 				{
 					CBoolProperty* value = dynamic_cast<CBoolProperty*>(valueProperty);
 					CSubject<bool>* subject = new CSubject<bool>(value->get());
