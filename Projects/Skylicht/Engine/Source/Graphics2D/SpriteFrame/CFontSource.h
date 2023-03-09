@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2023 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,33 +24,29 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "Editor/Space/Assets/CSpaceAssets.h"
+#include "Serializable/CObjectSerializable.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	class CFontSource : public CObjectSerializable
 	{
-		class CAssetCreateController : public CGameSingleton<CAssetCreateController>
+	public:
+		enum EFontType
 		{
-		public:
-			CAssetCreateController();
-
-			virtual ~CAssetCreateController();
-
-			void createEmptyMaterial();			
-
-			void createEmptyScene();
-
-			void createEmptyFont();
-
-			void createEmptySprite();
-
-			void createEmptyGUI();
-
-		protected:
-
-			void importAndSelect(const char* path);
+			GlyphFreeType = 0,
+			SpriteFont
 		};
-	}
+
+	public:
+		CEnumProperty<EFontType> FontType;
+		CFilePathProperty Source;
+		CFloatProperty FontSizePt;
+		CFloatProperty CharPadding;
+		CFloatProperty SpacePadding;
+
+	public:
+		CFontSource();
+
+		virtual ~CFontSource();
+	};
 }

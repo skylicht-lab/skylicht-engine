@@ -22,35 +22,66 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "GUI/GUI.h"
+#include "CFontEditor.h"
+#include "Activator/CEditorActivator.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/SpaceController/CAssetPropertyController.h"
 
-#include "Utils/CGameSingleton.h"
-#include "Editor/Space/Assets/CSpaceAssets.h"
+#include "Editor/CEditor.h"
+#include "GUI/Input/CInput.h"
+#include "Serializable/CSerializableLoader.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CAssetCreateController : public CGameSingleton<CAssetCreateController>
+		ASSET_EDITOR_REGISTER(CFontEditor, font);
+
+		CFontEditor::CFontEditor() :
+			m_fontSource(NULL)
 		{
-		public:
-			CAssetCreateController();
 
-			virtual ~CAssetCreateController();
+		}
 
-			void createEmptyMaterial();			
+		CFontEditor::~CFontEditor()
+		{
+			closeGUI();
+		}
 
-			void createEmptyScene();
+		void CFontEditor::closeGUI()
+		{
+			// save font
+			if (!m_path.empty())
+			{
+				if (m_fontSource)
+					m_fontSource->save(m_path.c_str());
+			}
 
-			void createEmptyFont();
+			if (m_fontSource)
+			{
+				delete m_fontSource;
+				m_fontSource = NULL;
+			}
 
-			void createEmptySprite();
+			// close
+			CAssetEditor::closeGUI();
+		}
 
-			void createEmptyGUI();
+		void CFontEditor::initGUI(const char* path, CSpaceProperty* ui)
+		{
+			CEditor* editor = CEditor::getInstance();
 
-		protected:
+			m_fontSource = new CFontSource();
+			CSerializableLoader::loadSerializable(path, m_fontSource);
 
-			void importAndSelect(const char* path);
-		};
+			m_path = path;
+		}
+
+		void CFontEditor::onUpdateValue(CObjectSerializable* object)
+		{
+
+		}
 	}
 }
