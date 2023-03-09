@@ -383,6 +383,7 @@ namespace Skylicht
 			submenu = create->getMenu();
 			submenu->addItem(L"Scene");
 			submenu->addItem(L"Material");
+			submenu->addItem(L"Font");
 			submenu->addItem(L"GUI");
 			submenu->addItem(L"Sprite");
 			submenu->addItem(L"Animation");
@@ -1118,6 +1119,10 @@ namespace Skylicht
 			else if (label == L"Material")
 			{
 				assetCreater->createEmptyMaterial();
+			}
+			else if (label == L"Font")
+			{
+				assetCreater->createEmptyFont();
 			}
 			else if (label == L"Sprite")
 			{

@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2023 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,35 +22,25 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Utils/CGameSingleton.h"
-#include "Editor/Space/Assets/CSpaceAssets.h"
+#include "pch.h"
+#include "CFontSource.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	CFontSource::CFontSource() :
+		CObjectSerializable("CFontSource"),
+		FontType(this, "fontType", CFontSource::GlyphFreeType),
+		Source(this, "source"),
+		FontSizePt(this, "fontSizePt", 20.0f),
+		CharPadding(this, "charPadding"),
+		SpacePadding(this, "spacePadding")
 	{
-		class CAssetCreateController : public CGameSingleton<CAssetCreateController>
-		{
-		public:
-			CAssetCreateController();
+		FontType.addEnumString("GlyphFreeType", CFontSource::GlyphFreeType);
+		FontType.addEnumString("SpriteFont", CFontSource::SpriteFont);
+	}
 
-			virtual ~CAssetCreateController();
+	CFontSource::~CFontSource()
+	{
 
-			void createEmptyMaterial();			
-
-			void createEmptyScene();
-
-			void createEmptyFont();
-
-			void createEmptySprite();
-
-			void createEmptyGUI();
-
-		protected:
-
-			void importAndSelect(const char* path);
-		};
 	}
 }
