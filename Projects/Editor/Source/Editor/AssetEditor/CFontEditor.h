@@ -24,33 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "Editor/Space/Assets/CSpaceAssets.h"
+#include "CAssetEditor.h"
+#include "Graphics2D/SpriteFrame/CFontSource.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CAssetCreateController : public CGameSingleton<CAssetCreateController>
+		class CFontEditor : public CAssetEditor
 		{
-		public:
-			CAssetCreateController();
-
-			virtual ~CAssetCreateController();
-
-			void createEmptyMaterial();			
-
-			void createEmptyScene();
-
-			void createEmptyFont();
-
-			void createEmptySprite();
-
-			void createEmptyGUI();
-
 		protected:
+			std::string m_path;
 
-			void importAndSelect(const char* path);
+			CFontSource* m_fontSource;
+
+		public:
+			CFontEditor();
+
+			virtual ~CFontEditor();
+
+			virtual void closeGUI();
+
+			virtual void initGUI(const char* path, CSpaceProperty* ui);
+
+			virtual void onUpdateValue(CObjectSerializable* object);
+
+			DECLARE_GETTYPENAME(CFontEditor);
 		};
 	}
 }
