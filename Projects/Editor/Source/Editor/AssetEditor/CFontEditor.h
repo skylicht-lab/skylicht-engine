@@ -36,6 +36,7 @@ namespace Skylicht
 		protected:
 			std::string m_path;
 
+			IFont* m_font;
 			CFontSource* m_fontSource;
 
 		public:
@@ -48,6 +49,12 @@ namespace Skylicht
 			virtual void initGUI(const char* path, CSpaceProperty* ui);
 
 			virtual void onUpdateValue(CObjectSerializable* object);
+
+			void initFont();
+
+			void onRenderPreview(GUI::CBase* base);
+
+			void renderString(const wchar_t* text, float& px, float& py, float x, float w);
 
 			DECLARE_GETTYPENAME(CFontEditor);
 		};

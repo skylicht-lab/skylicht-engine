@@ -38,8 +38,6 @@ namespace Skylicht
 		public IFont
 	{
 	protected:
-		float m_charPadding;
-		float m_spacePadding;
 		float m_fontSizePt;
 
 		std::map<int, SModuleOffset*> m_moduleOffset;
@@ -66,27 +64,6 @@ namespace Skylicht
 		inline const char* getFontName()
 		{
 			return m_fontName.c_str();
-		}
-
-		virtual float getCharPadding()
-		{
-			return m_charPadding;
-		}
-
-		virtual void setCharPadding(float padding)
-		{
-			m_charPadding = padding;
-			m_spacePadding = padding;
-		}
-
-		virtual float getSpacePadding()
-		{
-			return m_spacePadding;
-		}
-
-		virtual void setSpacePadding(float padding)
-		{
-			m_spacePadding = padding;
 		}
 
 		virtual SModuleOffset* getCharacterModule(int character);

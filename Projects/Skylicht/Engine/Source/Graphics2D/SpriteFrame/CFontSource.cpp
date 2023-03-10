@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CFontSource.h"
+#include "Utils/CPath.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -32,15 +34,82 @@ namespace Skylicht
 		FontType(this, "fontType", CFontSource::GlyphFreeType),
 		Source(this, "source"),
 		FontSizePt(this, "fontSizePt", 20.0f),
-		CharPadding(this, "charPadding"),
-		SpacePadding(this, "spacePadding")
+		m_font(NULL),
+		m_sizePt(0.0f)
 	{
+		// font source
+		Source.Exts.push_back("ttf");
+		Source.Exts.push_back("otf");
+		Source.Exts.push_back("xml");
+
+		FontSizePt.ClampMin = true;
+		FontSizePt.Min = 1.0f;
+		FontSizePt.ClampMax = true;
+		FontSizePt.Max = 200.0f;
+
 		FontType.addEnumString("GlyphFreeType", CFontSource::GlyphFreeType);
 		FontType.addEnumString("SpriteFont", CFontSource::SpriteFont);
 	}
 
 	CFontSource::~CFontSource()
 	{
+		if (m_font)
+			delete m_font;
+	}
 
+	IFont* CFontSource::initFont()
+	{
+		const std::string& fontPath = Source.get();
+		if (fontPath.empty())
+		{
+			if (m_font)
+			{
+				delete m_font;
+				m_font = NULL;
+			}
+
+			m_source.clear();
+			m_sizePt = 0.0f;
+
+			return m_font;
+		}
+
+		std::string fontName = CPath::getFileName(fontPath);
+		std::string fontExt = CPath::getFileNameExt(fontPath);
+		fontExt = CStringImp::toLower(fontExt);
+
+		// re-init font
+		if (FontType.get() == CFontSource::GlyphFreeType)
+		{
+			if (m_source == fontPath && m_sizePt == FontSizePt.get())
+			{
+				// no changed
+				return m_font;
+			}
+
+			if (fontExt == "ttf" || fontExt == "otf")
+			{
+				if (CGlyphFreetype::getInstance()->initFont(fontName.c_str(), fontPath.c_str()))
+				{
+					if (m_font)
+						delete m_font;
+
+					m_font = new CGlyphFont(fontName.c_str(), FontSizePt.get());
+
+					m_source = fontPath;
+					m_sizePt = FontSizePt.get();
+				}
+			}
+		}
+		else
+		{
+			if (m_source == fontPath)
+			{
+				// no changed
+				return m_font;
+			}
+		}
+
+		return m_font;
 	}
 }

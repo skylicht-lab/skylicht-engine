@@ -32,8 +32,6 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CGlyphFont::CGlyphFont() :
-		m_charPadding(0.0f),
-		m_spacePadding(0.0f),
 		m_fontName("Segoe UI Light"), // default font
 		m_fontSizePt(24.0f)
 	{
@@ -41,8 +39,6 @@ namespace Skylicht
 	}
 
 	CGlyphFont::CGlyphFont(const char* fontName, float sizePt) :
-		m_charPadding(0.0f),
-		m_spacePadding(0.0f),
 		m_fontName(fontName), // default font
 		m_fontSizePt(sizePt)
 	{
