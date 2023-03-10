@@ -26,6 +26,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Serializable/CObjectSerializable.h"
 
+#include "Graphics2D/Glyph/CGlyphFreetype.h"
+#include "Graphics2D/SpriteFrame/CSpriteFont.h"
+#include "Graphics2D/SpriteFrame/CGlyphFont.h"
+
 namespace Skylicht
 {
 	class CFontSource : public CObjectSerializable
@@ -41,12 +45,23 @@ namespace Skylicht
 		CEnumProperty<EFontType> FontType;
 		CFilePathProperty Source;
 		CFloatProperty FontSizePt;
-		CFloatProperty CharPadding;
-		CFloatProperty SpacePadding;
+
+	protected:
+		IFont* m_font;
+
+		std::string m_source;
+		float m_sizePt;
 
 	public:
 		CFontSource();
 
 		virtual ~CFontSource();
+
+		IFont* initFont();
+
+		inline IFont* getFont()
+		{
+			return m_font;
+		}
 	};
 }

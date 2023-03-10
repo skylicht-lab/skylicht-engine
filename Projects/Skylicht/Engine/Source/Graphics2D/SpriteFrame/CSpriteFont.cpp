@@ -33,9 +33,7 @@ namespace Skylicht
 {
 	CSpriteFont::CSpriteFont() :
 		m_moduleMap(NULL),
-		m_numModuleMap(0),
-		m_charPadding(0.0f),
-		m_spacePadding(0.0f)
+		m_numModuleMap(0)
 	{
 		m_deleteAtlas = true;
 	}
