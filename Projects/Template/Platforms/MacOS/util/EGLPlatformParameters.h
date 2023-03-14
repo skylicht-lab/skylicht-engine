@@ -10,7 +10,11 @@
 
 #include "util/util_gl.h"
 
+#include "angle_features_autogen.h"
+
+#include <string>
 #include <tuple>
+#include <vector>
 
 namespace angle
 {
@@ -19,13 +23,23 @@ struct PlatformMethods;
 // The GLES driver type determines what shared object we use to load the GLES entry points.
 // AngleEGL loads from ANGLE's version of libEGL, libGLESv2, and libGLESv1_CM.
 // SystemEGL uses the system copies of libEGL, libGLESv2, and libGLESv1_CM.
-// SystemWGL loads Windows GL with the GLES compatiblity extensions. See util/WGLWindow.h.
+// SystemWGL loads Windows GL with the GLES compatibility extensions. See util/WGLWindow.h.
 enum class GLESDriverType
 {
     AngleEGL,
+    AngleVulkanSecondariesEGL,
     SystemEGL,
     SystemWGL,
+    ZinkEGL,
 };
+
+inline bool IsANGLE(angle::GLESDriverType driverType)
+{
+    return driverType == angle::GLESDriverType::AngleEGL ||
+           driverType == angle::GLESDriverType::AngleVulkanSecondariesEGL;
+}
+
+GLESDriverType GetDriverTypeFromString(const char *driverName, GLESDriverType defaultDriverType);
 }  // namespace angle
 
 struct EGLPlatformParameters
@@ -59,33 +73,36 @@ struct EGLPlatformParameters
     auto tie() const
     {
         return std::tie(renderer, majorVersion, minorVersion, deviceType, presentPath,
-                        debugLayersEnabled, contextVirtualization, transformFeedbackFeature,
-                        allocateNonZeroMemoryFeature, emulateCopyTexImage2DFromRenderbuffers,
-                        shaderStencilOutputFeature, genMultipleMipsPerPassFeature, platformMethods,
-                        robustness, emulatedPrerotation, asyncCommandQueueFeatureVulkan,
-                        hasExplicitMemBarrierFeatureMtl, hasCheapRenderPassFeatureMtl,
-                        forceBufferGPUStorageFeatureMtl);
+                        debugLayersEnabled, robustness, displayPowerPreference,
+                        disabledFeatureOverrides, enabledFeatureOverrides, platformMethods);
     }
 
-    EGLint renderer                               = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
-    EGLint majorVersion                           = EGL_DONT_CARE;
-    EGLint minorVersion                           = EGL_DONT_CARE;
-    EGLint deviceType                             = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
-    EGLint presentPath                            = EGL_DONT_CARE;
-    EGLint debugLayersEnabled                     = EGL_DONT_CARE;
-    EGLint contextVirtualization                  = EGL_DONT_CARE;
-    EGLint robustness                             = EGL_DONT_CARE;
-    EGLint transformFeedbackFeature               = EGL_DONT_CARE;
-    EGLint allocateNonZeroMemoryFeature           = EGL_DONT_CARE;
-    EGLint emulateCopyTexImage2DFromRenderbuffers = EGL_DONT_CARE;
-    EGLint shaderStencilOutputFeature             = EGL_DONT_CARE;
-    EGLint genMultipleMipsPerPassFeature          = EGL_DONT_CARE;
-    uint32_t emulatedPrerotation                  = 0;  // Can be 0, 90, 180 or 270
-    EGLint asyncCommandQueueFeatureVulkan         = EGL_DONT_CARE;
-    EGLint hasExplicitMemBarrierFeatureMtl        = EGL_DONT_CARE;
-    EGLint hasCheapRenderPassFeatureMtl           = EGL_DONT_CARE;
-    EGLint forceBufferGPUStorageFeatureMtl        = EGL_DONT_CARE;
-    angle::PlatformMethods *platformMethods       = nullptr;
+    // Helpers to enable and disable ANGLE features.  Expects a kFeature* value from
+    // angle_features_autogen.h.
+    EGLPlatformParameters &enable(angle::Feature feature)
+    {
+        enabledFeatureOverrides.push_back(feature);
+        return *this;
+    }
+    EGLPlatformParameters &disable(angle::Feature feature)
+    {
+        disabledFeatureOverrides.push_back(feature);
+        return *this;
+    }
+
+    EGLint renderer               = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
+    EGLint majorVersion           = EGL_DONT_CARE;
+    EGLint minorVersion           = EGL_DONT_CARE;
+    EGLint deviceType             = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
+    EGLint presentPath            = EGL_DONT_CARE;
+    EGLint debugLayersEnabled     = EGL_DONT_CARE;
+    EGLint robustness             = EGL_DONT_CARE;
+    EGLint displayPowerPreference = EGL_DONT_CARE;
+
+    std::vector<angle::Feature> enabledFeatureOverrides;
+    std::vector<angle::Feature> disabledFeatureOverrides;
+
+    angle::PlatformMethods *platformMethods = nullptr;
 };
 
 inline bool operator<(const EGLPlatformParameters &a, const EGLPlatformParameters &b)

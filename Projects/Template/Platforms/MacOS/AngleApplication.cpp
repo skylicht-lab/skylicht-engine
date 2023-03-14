@@ -59,7 +59,7 @@ EGLint GetDeviceTypeFromArg(const char *displayTypeArg)
     }
 }
 
-ANGLE_MAYBE_UNUSED bool IsGLExtensionEnabled(const std::string &extName)
+bool IsGLExtensionEnabled(const std::string &extName)
 {
     return angle::CheckExtensionExists(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)),
                                        extName);
@@ -104,7 +104,7 @@ AngleApplication::AngleApplication(std::string name,
     mOSWindow = OSWindow::New();
 
     // Load EGL library so we can initialize the display.
-    mGLWindow = mEGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
+    mGLWindow = mEGLWindow = EGLWindow::New(EGL_OPENGL_ES_API, glesMajorVersion, glesMinorVersion, 0);
     mEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::SystemDir));
 }
 
@@ -201,7 +201,7 @@ int AngleApplication::run()
 #if defined(ANGLE_ENABLE_ASSERTS)
     if (IsGLExtensionEnabled("GL_KHR_debug"))
     {
-        EnableDebugCallback(this);
+        //EnableDebugCallback(this);
     }
 #endif
 
@@ -216,7 +216,7 @@ int AngleApplication::run()
 
     while (mRunning)
     {
-        double elapsedTime = mTimer.getElapsedTime();
+        double elapsedTime = mTimer.getElapsedCpuTime();
         double deltaTime   = elapsedTime - prevTime;
 
         step(static_cast<float>(deltaTime), elapsedTime);
@@ -272,7 +272,7 @@ int AngleApplication::run()
         if (mFrameCount % 100 == 0)
         {
             printf("Rate: %0.2lf frames / second\n",
-                   static_cast<double>(mFrameCount) / mTimer.getElapsedTime());
+                   static_cast<double>(mFrameCount) / mTimer.getElapsedCpuTime());
         }
     }
 
