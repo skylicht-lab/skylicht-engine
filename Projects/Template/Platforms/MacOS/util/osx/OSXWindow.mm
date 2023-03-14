@@ -12,6 +12,9 @@
 // Include Carbon to use the keycode names in Carbon's Event.h
 #include <Carbon/Carbon.h>
 
+#include "anglebase/no_destructor.h"
+#include "common/debug.h"
+
 // On OSX 10.12 a number of AppKit interfaces have been renamed for consistency, and the previous
 // symbols tagged as deprecated. However we can't simply use the new symbols as it would break
 // compilation on our automated testing that doesn't use OSX 10.12 yet. So we just ignore the
@@ -23,11 +26,9 @@
 // in ApplicationDelegate is inherently unsafe in a multithreaded environment.
 static std::set<OSXWindow *> &AllWindows()
 {
-    static std::set<OSXWindow *> allWindows;
-    return allWindows;
+    static angle::base::NoDestructor<std::set<OSXWindow *>> allWindows;
+    return *allWindows;
 }
-
-using namespace Angle;
 
 @interface Application : NSApplication
 @end
@@ -48,6 +49,18 @@ using namespace Angle;
         }
     }
     [super sendEvent:nsEvent];
+}
+
+// Override internal method to try to diagnose unexpected crashes in Core Animation.
+// anglebug.com/6570
+// See also:
+//   https://github.com/microsoft/appcenter-sdk-apple/issues/1944
+//   https://stackoverflow.com/questions/220159/how-do-you-print-out-a-stack-trace-to-the-console-log-in-cocoa
+- (void)_crashOnException:(NSException *)exception
+{
+    NSLog(@"*** OSXWindow aborting on exception:  <%@> %@", [exception name], [exception reason]);
+    NSLog(@"%@", [exception callStackSymbols]);
+    abort();
 }
 @end
 
@@ -168,219 +181,219 @@ static float YCoordToFromCG(float y)
 }
 @end
 
-static Key NSCodeToKey(int keyCode)
+static Angle::Key NSCodeToKey(int keyCode)
 {
-    // Missing KEY_PAUSE
+    // Missing Angle::KEY_PAUSE
     switch (keyCode)
     {
         case kVK_Shift:
-            return KEY_LSHIFT;
+            return Angle::KEY_LSHIFT;
         case kVK_RightShift:
-            return KEY_RSHIFT;
+            return Angle::KEY_RSHIFT;
         case kVK_Option:
-            return KEY_LALT;
+            return Angle::KEY_LALT;
         case kVK_RightOption:
-            return KEY_RALT;
+            return Angle::KEY_RALT;
         case kVK_Control:
-            return KEY_LCONTROL;
+            return Angle::KEY_LCONTROL;
         case kVK_RightControl:
-            return KEY_RCONTROL;
+            return Angle::KEY_RCONTROL;
         case kVK_Command:
-            return KEY_LSYSTEM;
+            return Angle::KEY_LSYSTEM;
         // Right System doesn't have a name, but shows up as 0x36.
         case 0x36:
-            return KEY_RSYSTEM;
+            return Angle::KEY_RSYSTEM;
         case kVK_Function:
-            return KEY_MENU;
+            return Angle::KEY_MENU;
 
         case kVK_ANSI_Semicolon:
-            return KEY_SEMICOLON;
+            return Angle::KEY_SEMICOLON;
         case kVK_ANSI_Slash:
-            return KEY_SLASH;
+            return Angle::KEY_SLASH;
         case kVK_ANSI_Equal:
-            return KEY_EQUAL;
+            return Angle::KEY_EQUAL;
         case kVK_ANSI_Minus:
-            return KEY_DASH;
+            return Angle::KEY_DASH;
         case kVK_ANSI_LeftBracket:
-            return KEY_LBRACKET;
+            return Angle::KEY_LBRACKET;
         case kVK_ANSI_RightBracket:
-            return KEY_RBRACKET;
+            return Angle::KEY_RBRACKET;
         case kVK_ANSI_Comma:
-            return KEY_COMMA;
+            return Angle::KEY_COMMA;
         case kVK_ANSI_Period:
-            return KEY_PERIOD;
+            return Angle::KEY_PERIOD;
         case kVK_ANSI_Backslash:
-            return KEY_BACKSLASH;
+            return Angle::KEY_BACKSLASH;
         case kVK_ANSI_Grave:
-            return KEY_TILDE;
+            return Angle::KEY_TILDE;
         case kVK_Escape:
-            return KEY_ESCAPE;
+            return Angle::KEY_ESCAPE;
         case kVK_Space:
-            return KEY_SPACE;
+            return Angle::KEY_SPACE;
         case kVK_Return:
-            return KEY_RETURN;
+            return Angle::KEY_RETURN;
         case kVK_Delete:
-            return KEY_BACK;
+            return Angle::KEY_BACK;
         case kVK_Tab:
-            return KEY_TAB;
+            return Angle::KEY_TAB;
         case kVK_PageUp:
-            return KEY_PAGEUP;
+            return Angle::KEY_PAGEUP;
         case kVK_PageDown:
-            return KEY_PAGEDOWN;
+            return Angle::KEY_PAGEDOWN;
         case kVK_End:
-            return KEY_END;
+            return Angle::KEY_END;
         case kVK_Home:
-            return KEY_HOME;
+            return Angle::KEY_HOME;
         case kVK_Help:
-            return KEY_INSERT;
+            return Angle::KEY_INSERT;
         case kVK_ForwardDelete:
-            return KEY_DELETE;
+            return Angle::KEY_DELETE;
         case kVK_ANSI_KeypadPlus:
-            return KEY_ADD;
+            return Angle::KEY_ADD;
         case kVK_ANSI_KeypadMinus:
-            return KEY_SUBTRACT;
+            return Angle::KEY_SUBTRACT;
         case kVK_ANSI_KeypadMultiply:
-            return KEY_MULTIPLY;
+            return Angle::KEY_MULTIPLY;
         case kVK_ANSI_KeypadDivide:
-            return KEY_DIVIDE;
+            return Angle::KEY_DIVIDE;
 
         case kVK_F1:
-            return KEY_F1;
+            return Angle::KEY_F1;
         case kVK_F2:
-            return KEY_F2;
+            return Angle::KEY_F2;
         case kVK_F3:
-            return KEY_F3;
+            return Angle::KEY_F3;
         case kVK_F4:
-            return KEY_F4;
+            return Angle::KEY_F4;
         case kVK_F5:
-            return KEY_F5;
+            return Angle::KEY_F5;
         case kVK_F6:
-            return KEY_F6;
+            return Angle::KEY_F6;
         case kVK_F7:
-            return KEY_F7;
+            return Angle::KEY_F7;
         case kVK_F8:
-            return KEY_F8;
+            return Angle::KEY_F8;
         case kVK_F9:
-            return KEY_F9;
+            return Angle::KEY_F9;
         case kVK_F10:
-            return KEY_F10;
+            return Angle::KEY_F10;
         case kVK_F11:
-            return KEY_F11;
+            return Angle::KEY_F11;
         case kVK_F12:
-            return KEY_F12;
+            return Angle::KEY_F12;
         case kVK_F13:
-            return KEY_F13;
+            return Angle::KEY_F13;
         case kVK_F14:
-            return KEY_F14;
+            return Angle::KEY_F14;
         case kVK_F15:
-            return KEY_F15;
+            return Angle::KEY_F15;
 
         case kVK_LeftArrow:
-            return KEY_LEFT;
+            return Angle::KEY_LEFT;
         case kVK_RightArrow:
-            return KEY_RIGHT;
+            return Angle::KEY_RIGHT;
         case kVK_DownArrow:
-            return KEY_DOWN;
+            return Angle::KEY_DOWN;
         case kVK_UpArrow:
-            return KEY_UP;
+            return Angle::KEY_UP;
 
         case kVK_ANSI_Keypad0:
-            return KEY_NUMPAD0;
+            return Angle::KEY_NUMPAD0;
         case kVK_ANSI_Keypad1:
-            return KEY_NUMPAD1;
+            return Angle::KEY_NUMPAD1;
         case kVK_ANSI_Keypad2:
-            return KEY_NUMPAD2;
+            return Angle::KEY_NUMPAD2;
         case kVK_ANSI_Keypad3:
-            return KEY_NUMPAD3;
+            return Angle::KEY_NUMPAD3;
         case kVK_ANSI_Keypad4:
-            return KEY_NUMPAD4;
+            return Angle::KEY_NUMPAD4;
         case kVK_ANSI_Keypad5:
-            return KEY_NUMPAD5;
+            return Angle::KEY_NUMPAD5;
         case kVK_ANSI_Keypad6:
-            return KEY_NUMPAD6;
+            return Angle::KEY_NUMPAD6;
         case kVK_ANSI_Keypad7:
-            return KEY_NUMPAD7;
+            return Angle::KEY_NUMPAD7;
         case kVK_ANSI_Keypad8:
-            return KEY_NUMPAD8;
+            return Angle::KEY_NUMPAD8;
         case kVK_ANSI_Keypad9:
-            return KEY_NUMPAD9;
+            return Angle::KEY_NUMPAD9;
 
         case kVK_ANSI_A:
-            return KEY_A;
+            return Angle::KEY_A;
         case kVK_ANSI_B:
-            return KEY_B;
+            return Angle::KEY_B;
         case kVK_ANSI_C:
-            return KEY_C;
+            return Angle::KEY_C;
         case kVK_ANSI_D:
-            return KEY_D;
+            return Angle::KEY_D;
         case kVK_ANSI_E:
-            return KEY_E;
+            return Angle::KEY_E;
         case kVK_ANSI_F:
-            return KEY_F;
+            return Angle::KEY_F;
         case kVK_ANSI_G:
-            return KEY_G;
+            return Angle::KEY_G;
         case kVK_ANSI_H:
-            return KEY_H;
+            return Angle::KEY_H;
         case kVK_ANSI_I:
-            return KEY_I;
+            return Angle::KEY_I;
         case kVK_ANSI_J:
-            return KEY_J;
+            return Angle::KEY_J;
         case kVK_ANSI_K:
-            return KEY_K;
+            return Angle::KEY_K;
         case kVK_ANSI_L:
-            return KEY_L;
+            return Angle::KEY_L;
         case kVK_ANSI_M:
-            return KEY_M;
+            return Angle::KEY_M;
         case kVK_ANSI_N:
-            return KEY_N;
+            return Angle::KEY_N;
         case kVK_ANSI_O:
-            return KEY_O;
+            return Angle::KEY_O;
         case kVK_ANSI_P:
-            return KEY_P;
+            return Angle::KEY_P;
         case kVK_ANSI_Q:
-            return KEY_Q;
+            return Angle::KEY_Q;
         case kVK_ANSI_R:
-            return KEY_R;
+            return Angle::KEY_R;
         case kVK_ANSI_S:
-            return KEY_S;
+            return Angle::KEY_S;
         case kVK_ANSI_T:
-            return KEY_T;
+            return Angle::KEY_T;
         case kVK_ANSI_U:
-            return KEY_U;
+            return Angle::KEY_U;
         case kVK_ANSI_V:
-            return KEY_V;
+            return Angle::KEY_V;
         case kVK_ANSI_W:
-            return KEY_W;
+            return Angle::KEY_W;
         case kVK_ANSI_X:
-            return KEY_X;
+            return Angle::KEY_X;
         case kVK_ANSI_Y:
-            return KEY_Y;
+            return Angle::KEY_Y;
         case kVK_ANSI_Z:
-            return KEY_Z;
+            return Angle::KEY_Z;
 
         case kVK_ANSI_1:
-            return KEY_NUM1;
+            return Angle::KEY_NUM1;
         case kVK_ANSI_2:
-            return KEY_NUM2;
+            return Angle::KEY_NUM2;
         case kVK_ANSI_3:
-            return KEY_NUM3;
+            return Angle::KEY_NUM3;
         case kVK_ANSI_4:
-            return KEY_NUM4;
+            return Angle::KEY_NUM4;
         case kVK_ANSI_5:
-            return KEY_NUM5;
+            return Angle::KEY_NUM5;
         case kVK_ANSI_6:
-            return KEY_NUM6;
+            return Angle::KEY_NUM6;
         case kVK_ANSI_7:
-            return KEY_NUM7;
+            return Angle::KEY_NUM7;
         case kVK_ANSI_8:
-            return KEY_NUM8;
+            return Angle::KEY_NUM8;
         case kVK_ANSI_9:
-            return KEY_NUM9;
+            return Angle::KEY_NUM9;
         case kVK_ANSI_0:
-            return KEY_NUM0;
+            return Angle::KEY_NUM0;
     }
 
-    return Key(0);
+    return Angle::Key(0);
 }
 
 static void AddNSKeyStateToEvent(Event *event, NSEventModifierFlags state)
@@ -711,20 +724,31 @@ void OSXWindow::messageLoop()
     {
         while (true)
         {
-            NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
-                                                untilDate:[NSDate distantPast]
-                                                   inMode:NSDefaultRunLoopMode
-                                                  dequeue:YES];
-            if (event == nil)
+            // TODO(http://anglebug.com/6570): @try/@catch is a workaround for
+            // exceptions being thrown from Cocoa-internal function
+            // NS_setFlushesWithDisplayLink starting in macOS 11.
+            @try
             {
-                break;
-            }
+                NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
+                                                    untilDate:[NSDate distantPast]
+                                                       inMode:NSDefaultRunLoopMode
+                                                      dequeue:YES];
+                if (event == nil)
+                {
+                    break;
+                }
 
-            if ([event type] == NSAppKitDefined)
-            {
-                continue;
+                if ([event type] == NSAppKitDefined)
+                {
+                    continue;
+                }
+                [NSApp sendEvent:event];
             }
-            [NSApp sendEvent:event];
+            @catch (NSException *localException)
+            {
+                NSLog(@"*** OSXWindow discarding exception: <%@> %@", [localException name],
+                      [localException reason]);
+            }
         }
     }
 }
@@ -744,6 +768,7 @@ void OSXWindow::setMousePosition(int x, int y)
 
 bool OSXWindow::setOrientation(int width, int height)
 {
+    UNIMPLEMENTED();
     return false;
 }
 

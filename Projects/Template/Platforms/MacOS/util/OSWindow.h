@@ -46,7 +46,12 @@ class ANGLE_UTIL_EXPORT OSWindow
     // multiple EGLSurfaces.
     virtual void resetNativeWindow() = 0;
 
-    virtual EGLNativeWindowType getNativeWindow() const   = 0;
+    virtual EGLNativeWindowType getNativeWindow() const = 0;
+
+    // Returns a native pointer that can be used for eglCreatePlatformWindowSurfaceEXT().
+    virtual void *getPlatformExtension();
+
+    virtual void setNativeDisplay(EGLNativeDisplayType display) {}
     virtual EGLNativeDisplayType getNativeDisplay() const = 0;
 
     virtual void messageLoop() = 0;
@@ -86,5 +91,13 @@ class ANGLE_UTIL_EXPORT OSWindow
     bool mValid;
     bool mIgnoreSizeEvents;
 };
+
+namespace angle
+{
+// Find a test data file or directory.
+ANGLE_UTIL_EXPORT bool FindTestDataPath(const char *searchPath,
+                                        char *dataPathOut,
+                                        size_t maxDataPathOutLen);
+}  // namespace angle
 
 #endif  // UTIL_OSWINDOW_H_
