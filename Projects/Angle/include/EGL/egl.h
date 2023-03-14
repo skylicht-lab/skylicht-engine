@@ -6,34 +6,15 @@ extern "C" {
 #endif
 
 /*
-** Copyright (c) 2013-2017 The Khronos Group Inc.
+** Copyright 2013-2020 The Khronos Group Inc.
+** SPDX-License-Identifier: Apache-2.0
 **
-** Permission is hereby granted, free of charge, to any person obtaining a
-** copy of this software and/or associated documentation files (the
-** "Materials"), to deal in the Materials without restriction, including
-** without limitation the rights to use, copy, modify, merge, publish,
-** distribute, sublicense, and/or sell copies of the Materials, and to
-** permit persons to whom the Materials are furnished to do so, subject to
-** the following conditions:
-**
-** The above copyright notice and this permission notice shall be included
-** in all copies or substantial portions of the Materials.
-**
-** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
-*/
-/*
 ** This header is generated from the Khronos EGL XML API Registry.
 ** The current version of the Registry, generator scripts
 ** used to make the header, and the header can be found at
 **   http://www.khronos.org/registry/egl
 **
-** Khronos $Git commit SHA1: cb927ca98d $ on $Git commit date: 2019-08-08 01:05:38 -0700 $
+** Khronos $Git commit SHA1: 6fb1daea15 $ on $Git commit date: 2022-05-25 09:41:13 -0600 $
 */
 
 #include <EGL/eglplatform.h>
@@ -42,7 +23,7 @@ extern "C" {
 #define EGL_EGL_PROTOTYPES 1
 #endif
 
-/* Generated on date 20190808 */
+/* Generated on date 20220525 */
 
 /* Generated C header for:
  * API: egl
@@ -57,8 +38,8 @@ extern "C" {
 #define EGL_VERSION_1_0 1
 typedef unsigned int EGLBoolean;
 typedef void *EGLDisplay;
-#include <EGL/eglplatform.h>
 #include <KHR/khrplatform.h>
+#include <EGL/eglplatform.h>
 typedef void *EGLConfig;
 typedef void *EGLSurface;
 typedef void *EGLContext;
