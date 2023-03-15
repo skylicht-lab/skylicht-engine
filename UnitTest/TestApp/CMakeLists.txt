@@ -60,7 +60,7 @@ else()
 endif()
 
 if (BUILD_MACOS)
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release")
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
 
 	find_library(
 		LIBEGL 
