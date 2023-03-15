@@ -29,6 +29,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/SpaceController/CSceneController.h"
 #include "Editor/SpaceController/CGUIDesignController.h"
 
+#include "Handles/CGUIHandles.h"
+
+using namespace std::placeholders;
+
 namespace Skylicht
 {
 	namespace Editor
@@ -46,6 +50,8 @@ namespace Skylicht
 			m_pressY(0.0f),
 			m_mouseGUIX(0.0f),
 			m_mouseGUIY(0.0f),
+			m_leftMouseDown(false),
+			m_rightMouseDown(false),
 			m_middleDrag(false),
 			m_scene(NULL),
 			m_guiCamera(NULL)
@@ -99,30 +105,36 @@ namespace Skylicht
 			m_view->dock(GUI::EPosition::Fill);
 			m_view->enableRenderFillRect(true);
 			m_view->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
-			m_view->OnMouseWheeled = std::bind(&CSpaceGUIDesign::onMouseWheel, this,
-				std::placeholders::_1,
-				std::placeholders::_2);
-			m_view->OnMouseMoved = std::bind(&CSpaceGUIDesign::onMouseMoved, this,
-				std::placeholders::_1,
-				std::placeholders::_2,
-				std::placeholders::_3,
-				std::placeholders::_4,
-				std::placeholders::_5);
-			m_view->OnMiddleMouseClick = std::bind(&CSpaceGUIDesign::onMiddleMouseClick, this,
-				std::placeholders::_1,
-				std::placeholders::_2,
-				std::placeholders::_3,
-				std::placeholders::_4);
+
+			m_view->OnMouseWheeled = std::bind(&CSpaceGUIDesign::onMouseWheel, this, _1, _2);
+			m_view->OnMouseMoved = std::bind(&CSpaceGUIDesign::onMouseMoved, this, _1, _2, _3, _4, _5);
+			m_view->OnMiddleMouseClick = std::bind(&CSpaceGUIDesign::onMiddleMouseClick, this, _1, _2, _3, _4);
+			m_view->OnLeftMouseClick = std::bind(&CSpaceGUIDesign::onLeftMouseClick, this, _1, _2, _3, _4);
+			m_view->OnRightMouseClick = std::bind(&CSpaceGUIDesign::onRightMouseClick, this, _1, _2, _3, _4);
+			m_view->OnKeyPress = std::bind(&CSpaceGUIDesign::onKeyPressed, this, _1, _2, _3);
+
 			m_view->OnRender = BIND_LISTENER(&CSpaceGUIDesign::onRender, this);
+
+			m_gizmos = new CGUIGizmos();
+			m_handlesRenderer = new CGUIHandlesRenderer();
 
 			CGUIDesignController::getInstance()->setSpaceDesign(this);
 		}
 
 		CSpaceGUIDesign::~CSpaceGUIDesign()
 		{
+			delete m_handlesRenderer;
+			delete m_gizmos;
+
 			CGUIDesignController* controller = CGUIDesignController::getInstance();
 			if (controller->getSpaceDesign() == this)
 				controller->setSpaceDesign(NULL);
+		}
+
+		void CSpaceGUIDesign::update()
+		{
+			CSpace::update();
+			m_gizmos->onGizmos();
 		}
 
 		void CSpaceGUIDesign::openGUI(const char* path)
@@ -130,7 +142,24 @@ namespace Skylicht
 			if (m_scene)
 			{
 				CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
+				m_gizmos->onRemove();
 			}
+		}
+
+		void CSpaceGUIDesign::onKeyPressed(GUI::CBase* base, int key, bool down)
+		{
+			GUI::CInput* input = GUI::CInput::getInput();
+
+			SEvent event;
+			event.EventType = EET_KEY_INPUT_EVENT;
+			event.KeyInput.Key = (irr::EKEY_CODE)key;
+			event.KeyInput.PressedDown = down;
+			event.KeyInput.Control = input->IsControlDown();
+			event.KeyInput.Shift = input->IsShiftDown();
+
+			event.GameEvent.Sender = m_scene;
+
+			CGUIHandles::getInstance()->OnEvent(event);
 		}
 
 		void CSpaceGUIDesign::onMiddleMouseClick(GUI::CBase* view, float x, float y, bool down)
@@ -197,6 +226,8 @@ namespace Skylicht
 
 			m_topRuler->setCursorPosition(mx);
 			m_leftRuler->setCursorPosition(my);
+
+			postMouseEventToHandles(EMIE_MOUSE_MOVED);
 		}
 
 		void CSpaceGUIDesign::onMouseWheel(GUI::CBase* scroll, int delta)
@@ -223,6 +254,45 @@ namespace Skylicht
 					doZoomOut(dx, dy);
 				}
 			}
+		}
+
+		void CSpaceGUIDesign::onLeftMouseClick(GUI::CBase* base, float x, float y, bool down)
+		{
+			m_leftMouseDown = down;
+			if (down)
+				postMouseEventToHandles(EMIE_LMOUSE_PRESSED_DOWN);
+			else
+				postMouseEventToHandles(EMIE_LMOUSE_LEFT_UP);
+		}
+
+		void CSpaceGUIDesign::onRightMouseClick(GUI::CBase* base, float x, float y, bool down)
+		{
+			m_rightMouseDown = down;
+			if (down)
+				postMouseEventToHandles(EMIE_RMOUSE_PRESSED_DOWN);
+			else
+				postMouseEventToHandles(EMIE_RMOUSE_LEFT_UP);
+		}
+
+		void CSpaceGUIDesign::postMouseEventToHandles(EMOUSE_INPUT_EVENT eventType)
+		{
+			SEvent event;
+			event.EventType = EET_MOUSE_INPUT_EVENT;
+			event.MouseInput.Event = eventType;
+			event.MouseInput.X = (int)m_mouseGUIX;
+			event.MouseInput.Y = (int)m_mouseGUIY;
+			event.MouseInput.Wheel = 0.0f;
+			event.MouseInput.ButtonStates = 0;
+
+			if (m_leftMouseDown)
+				event.MouseInput.ButtonStates |= EMBSM_LEFT;
+
+			if (m_rightMouseDown)
+				event.MouseInput.ButtonStates |= EMBSM_RIGHT;
+
+			event.GameEvent.Sender = m_scene;
+
+			CGUIHandles::getInstance()->OnEvent(event);
 		}
 
 		void CSpaceGUIDesign::onZoomIn(GUI::CBase* base)
@@ -347,6 +417,9 @@ namespace Skylicht
 
 					// render GUI
 					CGraphics2D::getInstance()->render(m_guiCamera);
+
+					// render Gizmos
+					m_handlesRenderer->render(m_guiCamera, m_guiScale);
 				}
 			}
 
