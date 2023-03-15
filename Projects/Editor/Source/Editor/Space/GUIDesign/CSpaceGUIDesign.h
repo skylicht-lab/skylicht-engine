@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
+#include "EditorComponents/Handles/CGUIHandlesRenderer.h"
+#include "Editor/Gizmos/CGUIGizmos.h"
 
 namespace Skylicht
 {
@@ -53,20 +55,29 @@ namespace Skylicht
 
 			float m_mouseGUIX;
 			float m_mouseGUIY;
+			bool m_leftMouseDown;
+			bool m_rightMouseDown;
 
 			bool m_middleDrag;
 
 			CScene* m_scene;
 			CCamera* m_guiCamera;
 
+			CGUIHandlesRenderer* m_handlesRenderer;
+			CGUIGizmos* m_gizmos;
+
 		public:
 			CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor);
 
 			virtual ~CSpaceGUIDesign();
 
+			virtual void update();
+
 			void openGUI(const char* path);
 
 		protected:
+
+			void onKeyPressed(GUI::CBase* base, int key, bool down);
 
 			void onMiddleMouseClick(GUI::CBase* view, float x, float y, bool down);
 
@@ -74,15 +85,21 @@ namespace Skylicht
 
 			void onMouseWheel(GUI::CBase* view, int delta);
 
+			void onLeftMouseClick(GUI::CBase* base, float x, float y, bool down);
+
+			void onRightMouseClick(GUI::CBase* base, float x, float y, bool down);
+
 			void onZoomIn(GUI::CBase* base);
 
 			void onZoomOut(GUI::CBase* base);
 
 			void doZoomIn(float dx, float dy);
 
-			void doZoomOut(float dx, float dy);
+			void doZoomOut(float dx, float dy);			
 
 			void onRender(GUI::CBase* base);
+
+			void postMouseEventToHandles(EMOUSE_INPUT_EVENT eventType);
 		};
 	}
 }

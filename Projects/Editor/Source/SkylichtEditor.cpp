@@ -7,6 +7,7 @@
 #include "AssetManager/CAssetManager.h"
 
 #include "Handles/CHandles.h"
+#include "Handles/CGUIHandles.h"
 #include "Selection/CSelecting.h"
 #include "CopyPaste/CCopyPaste.h"
 
@@ -36,6 +37,7 @@ SkylichtEditor::SkylichtEditor() :
 
 	Editor::CAssetManager::createGetInstance();
 	Editor::CHandles::createGetInstance();
+	Editor::CGUIHandles::createGetInstance();
 	Editor::CSelecting::createGetInstance();
 	Editor::CCopyPaste::createGetInstance();
 
@@ -56,6 +58,7 @@ SkylichtEditor::~SkylichtEditor()
 	Editor::CEditor::releaseInstance();
 	Editor::CCopyPaste::releaseInstance();
 	Editor::CSelecting::releaseInstance();
+	Editor::CGUIHandles::releaseInstance();
 	Editor::CHandles::releaseInstance();
 	Editor::CAssetManager::releaseInstance();
 }
