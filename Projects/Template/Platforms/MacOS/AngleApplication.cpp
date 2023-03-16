@@ -83,7 +83,7 @@ AngleApplication::AngleApplication(std::string name,
       mOSWindow(nullptr),
       mDriverType(angle::GLESDriverType::AngleEGL)
 {
-    mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
+    mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE; // EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE
     bool useNativeGL         = false;
 
     for (int argIndex = 1; argIndex < argc; argIndex++)
@@ -269,7 +269,7 @@ int AngleApplication::run()
 
         mFrameCount++;
 
-        if (mFrameCount % 100 == 0)
+        if (mFrameCount % 1000 == 0)
         {
             printf("Rate: %0.2lf frames / second\n",
                    static_cast<double>(mFrameCount) / mTimer.getElapsedCpuTime());
