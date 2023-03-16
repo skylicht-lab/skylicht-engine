@@ -316,7 +316,13 @@ namespace Skylicht
 		if (m_autoExposure == true)
 			luminanceMapGeneration(colorBuffer);
 
-		if (m_fxaa)
+        bool disableFXAA = false;
+
+#ifdef USE_ANGLE_GLES
+        disableFXAA = true;
+#endif
+        
+		if (m_fxaa && !disableFXAA)
 		{
 			colorID = !colorID;
 			driver->setRenderTarget(m_rtt[colorID]);
@@ -348,7 +354,7 @@ namespace Skylicht
 		// END AUTO EXPOSURE
 
 		// BEGIN FXAA
-		if (m_fxaa)
+		if (m_fxaa && !disableFXAA)
 		{
 			if (colorID >= 0)
 				colorBuffer = m_rtt[colorID];

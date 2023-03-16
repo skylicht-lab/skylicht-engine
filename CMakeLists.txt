@@ -79,6 +79,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
 	set(USE_OPENMP OFF)
 
 	add_definitions(-DMACOS)
+	add_definitions(-DUSE_ANGLE_GLES)
 
 	set(CMAKE_CXX_STANDARD 14)
 	# set(CMAKE_OSX_ARCHITECTURES "x86_64")
