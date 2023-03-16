@@ -29,7 +29,8 @@ vec3 linearRGB(vec3 color)
 void main(void)
 {
 	vec3 diffuseMap = sRGB(texture(uTexDiffuse, vTexCoord0.xy).rgb);
-	float NdotL = max((dot(vWorldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x), 0.0);
+	float NdotL = (dot(vWorldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x);
+	NdotL = max(NdotL, 0.0);
 	vec3 rampMap = texture(uTexRamp, vec2(NdotL, NdotL)).rgb;
 	vec3 color = sRGB(uColor.rgb);
 	vec3 shadowColor = sRGB(uShadowColor.rgb);
@@ -38,7 +39,8 @@ void main(void)
 	vec3 ramp = mix(color, shadowColor, uColor.a * (1.0 - visibility));
 	ramp = mix(ramp, color, rampMap);
 	vec3 h = normalize(uLightDirection.xyz + vWorldViewDir);
-	float NdotH = max(0, dot(vWorldNormal, h));
+	float NdotH = dot(vWorldNormal, h);
+	NdotH = max(NdotH, 0.0);
 	float spec = pow(NdotH, uSpecular.x*128.0) * uSpecular.y;
 	spec = smoothstep(0.5-uSpecular.z*0.5, 0.5+uSpecular.z*0.5, spec);
 	FragColor = vec4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, 1.0);
