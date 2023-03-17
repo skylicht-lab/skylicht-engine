@@ -29,7 +29,12 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CGUIHandles::CGUIHandles()
+		CGUIHandles::CGUIHandles() :
+			m_handlePosition(false),
+			m_handleRotation(false),
+			m_handleScale(false),
+			m_mouseState(0),
+			m_endCheck(false)
 		{
 
 		}
@@ -39,26 +44,108 @@ namespace Skylicht
 
 		}
 
-		core::vector3df CGUIHandles::positionHandle(const core::vector3df& position, const core::vector3df& localRotation)
+		void CGUIHandles::end()
 		{
-			m_targetPosition = position;
+			m_handlePosition = false;
+			m_handleRotation = false;
+			m_handleScale = false;
+		}
+
+		bool CGUIHandles::endCheck()
+		{
+			bool ret = m_endCheck;
+			if (m_endCheck == true)
+				m_endCheck = false;
+			return ret;
+		}
+
+		core::vector3df CGUIHandles::positionHandle(const core::vector3df& position, const core::quaternion& localRotation)
+		{
+			if (!m_handlePosition)
+				m_targetPosition = position;
+
+			m_handlePosition = true;
+			m_handleRotation = false;
+			m_handleScale = false;
+
+			m_position = position;
+			m_rotation = localRotation;
+
 			return m_targetPosition;
 		}
 
-		void CGUIHandles::end()
+		core::vector3df CGUIHandles::scaleHandle(const core::vector3df& scale, const core::vector3df& origin, const core::quaternion& localRotation)
 		{
+			if (!m_handleScale)
+				m_targetScale = scale;
 
+			m_handleRotation = false;
+			m_handlePosition = false;
+			m_handleScale = true;
+
+			m_rotation = localRotation;
+			m_position = origin;
+			m_scale = scale;
+			return m_targetScale;
+		}
+
+		core::quaternion CGUIHandles::rotateHandle(const core::quaternion& rotate, const core::vector3df& origin)
+		{
+			if (!m_handleRotation)
+				m_targetRotation = rotate;
+
+			m_handleRotation = true;
+			m_handlePosition = false;
+			m_handleScale = false;
+
+			m_position = origin;
+			m_rotation = rotate;
+			return m_targetRotation;
 		}
 
 		bool CGUIHandles::OnEvent(const SEvent& event)
 		{
 			if (event.EventType == EET_MOUSE_INPUT_EVENT)
 			{
+				int mouseX = event.MouseInput.X;
+				int mouseY = event.MouseInput.Y;
 
+				/*
+				if (m_handlesRenderer != NULL)
+				{
+					if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
+					{
+						if (m_mouseState == 2)
+							m_mouseState = 0;
+						m_handlesRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
+					}
+					else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
+					{
+						m_mouseState = 1;
+						m_handlesRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
+					}
+					else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
+					{
+						m_mouseState = 2;
+						m_handlesRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
+					}
+
+					return true;
+				}
+				*/
 			}
 			else if (event.EventType == EET_KEY_INPUT_EVENT)
 			{
-
+				if (event.KeyInput.PressedDown && event.KeyInput.Key == irr::KEY_ESCAPE)
+				{
+					/*
+					if (m_mouseState == 1)
+					{
+						m_handlesRenderer->cancel();
+					}
+					*/
+					return true;
+				}
 			}
 
 			return false;

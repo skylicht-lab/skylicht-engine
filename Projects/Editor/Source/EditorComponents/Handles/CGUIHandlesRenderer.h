@@ -39,6 +39,12 @@ namespace Skylicht
 			virtual ~CGUIHandlesRenderer();
 
 			virtual void render(CCamera* camera, float scale);
+
+			void drawRotationGizmo(const core::vector3df& pos, const core::quaternion& rot);
+
+			void drawScaleGizmo(const core::vector3df& pos, const core::quaternion& rot);
+
+			void drawTranslateGizmo(const core::vector3df& pos, const core::quaternion& rot);
 		};
 	}
 }

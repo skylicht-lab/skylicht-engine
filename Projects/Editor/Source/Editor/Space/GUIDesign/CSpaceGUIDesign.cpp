@@ -115,7 +115,7 @@ namespace Skylicht
 
 			m_view->OnRender = BIND_LISTENER(&CSpaceGUIDesign::onRender, this);
 
-			m_gizmos = new CGUIGizmos();
+			m_gizmos = new CGUITransformGizmos();
 			m_handlesRenderer = new CGUIHandlesRenderer();
 
 			CGUIDesignController::getInstance()->setSpaceDesign(this);
