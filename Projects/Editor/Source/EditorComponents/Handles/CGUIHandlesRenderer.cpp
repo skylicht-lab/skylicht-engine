@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGUIHandlesRenderer.h"
+#include "Handles/CGUIHandles.h"
 
 namespace Skylicht
 {
@@ -42,7 +43,41 @@ namespace Skylicht
 		void CGUIHandlesRenderer::render(CCamera* camera, float scale)
 		{
 			CGraphics2D* g = CGraphics2D::getInstance();
+			CGUIHandles* handles = CGUIHandles::getInstance();
 
+			core::vector3df pos = handles->getHandlePosition();
+			handles->getWorld().transformVect(pos);
+
+			core::quaternion worldRot(handles->getWorld());
+			worldRot.normalize();
+
+			core::quaternion rot = worldRot * handles->getHandleRotation();
+			rot.normalize();
+
+			if (handles->isHandlePosition())
+			{
+				drawTranslateGizmo(pos, rot);
+			}
+			else if (handles->isHandleRotation())
+			{
+				drawRotationGizmo(pos, rot);
+			}
+			else if (handles->isHandleScale())
+			{
+				drawScaleGizmo(pos, rot);
+			}
+		}
+
+		void CGUIHandlesRenderer::drawRotationGizmo(const core::vector3df& pos, const core::quaternion& rot)
+		{
+		}
+
+		void CGUIHandlesRenderer::drawScaleGizmo(const core::vector3df& pos, const core::quaternion& rot)
+		{
+		}
+
+		void CGUIHandlesRenderer::drawTranslateGizmo(const core::vector3df& pos, const core::quaternion& rot)
+		{
 		}
 	}
 }
