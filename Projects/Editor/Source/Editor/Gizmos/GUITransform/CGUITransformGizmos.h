@@ -22,74 +22,61 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CGUIGizmos.h"
-#include "Handles/CGUIHandles.h"
-#include "Editor/SpaceController/CSceneController.h"
-#include "Selection/CSelection.h"
+#pragma once
+
+#include "Reactive/CSubject.h"
+#include "Editor/Gizmos/CGizmos.h"
+#include "Graphics2D/GUI/CGUIElement.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CGUIGizmos::CGUIGizmos()
+		class CGUITransformGizmos :
+			public CGizmos,
+			public IObserver
 		{
+		protected:
+			std::string m_selectID;
 
-		}
+			CGUIElement* m_gui;
+			core::matrix4 m_parentWorld;
 
-		CGUIGizmos::~CGUIGizmos()
-		{
+			CSubject<core::vector3df> m_position;
+			CSubject<core::quaternion> m_rotation;
+			CSubject<core::vector3df> m_scale;
 
-		}
+			bool m_changed;
 
-		void CGUIGizmos::onGizmos()
-		{
-			CGUIHandles* handle = CGUIHandles::getInstance();
+		public:
+			CGUITransformGizmos();
 
-			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
-			if (selectObject == NULL)
+			virtual ~CGUITransformGizmos();
+
+			virtual void onGizmos();
+
+			virtual void onEnable();
+
+			virtual void onRemove();
+
+			virtual void refresh();
+
+			virtual void onNotify(ISubject* subject, IObserver* from);
+
+			CSubject<core::vector3df>& getPosition()
 			{
-				handle->end();
-				return;
+				return m_position;
 			}
 
-			if (selectObject->getID() != m_selectID)
+			CSubject<core::quaternion>& getRotation()
 			{
-				m_selectID = selectObject->getID();
-
-				CSceneController* sceneController = CSceneController::getInstance();
-				CScene* scene = sceneController->getScene();
-
-				if (selectObject->getType() == CSelectObject::GUIElement)
-				{
-					// Show GUI Property
-					CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-					CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
-					CGUIElement* gui = canvas->getGUIByID(selectObject->getID().c_str());
-					if (gui)
-					{
-						onEnable();
-					}
-				}
-
-				// handle->setWorld(m_parentWorld);
-				handle->end();
+				return m_rotation;
 			}
-		}
 
-		void CGUIGizmos::onEnable()
-		{
-
-		}
-
-		void CGUIGizmos::onRemove()
-		{
-
-		}
-
-		void CGUIGizmos::refresh()
-		{
-
-		}
+			CSubject<core::vector3df>& getScale()
+			{
+				return m_scale;
+			}
+		};
 	}
 }

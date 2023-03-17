@@ -206,6 +206,11 @@ namespace Skylicht
 			m_guiTransform->setRotation(v);
 		}
 
+		inline core::quaternion getRotationQuaternion()
+		{
+			return core::quaternion(getRotation() * core::DEGTORAD);
+		}
+
 		inline EGUIVerticalAlign getVerticalAlign()
 		{
 			return m_guiAlign->Vertical;

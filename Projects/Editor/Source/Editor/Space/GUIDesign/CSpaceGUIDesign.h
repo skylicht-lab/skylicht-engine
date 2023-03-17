@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 #include "EditorComponents/Handles/CGUIHandlesRenderer.h"
-#include "Editor/Gizmos/CGUIGizmos.h"
+#include "Editor/Gizmos/GUITransform/CGUITransformGizmos.h"
 
 namespace Skylicht
 {
@@ -64,7 +64,7 @@ namespace Skylicht
 			CCamera* m_guiCamera;
 
 			CGUIHandlesRenderer* m_handlesRenderer;
-			CGUIGizmos* m_gizmos;
+			CGUITransformGizmos* m_gizmos;
 
 		public:
 			CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor);
