@@ -94,6 +94,9 @@ namespace Skylicht
 				handle->end();
 			}
 
+			if (m_gui == NULL)
+				return;
+
 			// position
 			{
 				core::vector3df newPos = CGUIHandles::getInstance()->positionHandle(*m_position, m_gui->getRotationQuaternion());

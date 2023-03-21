@@ -32,7 +32,12 @@ namespace Skylicht
 	{
 		CGUIHandlesRenderer::CGUIHandlesRenderer()
 		{
+			m_directionColor[0].set(0xFF0000AA);
+			m_directionColor[1].set(0xFFAA0000);
+			m_directionColor[2].set(0xFF00AA00);
 
+			m_selectionColor.set(0xFF1080FF);
+			m_scale = 1.0f;
 		}
 
 		CGUIHandlesRenderer::~CGUIHandlesRenderer()
@@ -42,8 +47,8 @@ namespace Skylicht
 
 		void CGUIHandlesRenderer::render(CCamera* camera, float scale)
 		{
-			CGraphics2D* g = CGraphics2D::getInstance();
 			CGUIHandles* handles = CGUIHandles::getInstance();
+			m_scale = scale;
 
 			core::vector3df pos = handles->getHandlePosition();
 			handles->getWorld().transformVect(pos);
@@ -78,6 +83,71 @@ namespace Skylicht
 
 		void CGUIHandlesRenderer::drawTranslateGizmo(const core::vector3df& pos, const core::quaternion& rot)
 		{
+			CGraphics2D* g = CGraphics2D::getInstance();
+			float length = 100.0f / m_scale;
+			float arrowSize1 = 10.0f / m_scale;
+			float arrowSize2 = 5.0f / m_scale;
+			float rs = 20.0f / m_scale;
+
+			core::vector3df x(1.0f, 0.0f, 0.0f);
+			core::vector3df sx(0.0f, 1.0f, 0.0f);
+			x = rot * x;
+			x.normalize();
+			sx = rot * sx;
+			sx.normalize();
+
+			core::position2df dirAxisX(x.X, x.Y);
+			core::position2df side(sx.X, sx.Y);
+
+			// x			
+			core::position2df p(pos.X, pos.Y);
+
+			core::position2df a = p + dirAxisX * length;
+			core::position2df m = a - dirAxisX * arrowSize1;
+			core::position2df b = m + side * arrowSize2;
+			core::position2df c = m - side * arrowSize2;
+
+			g->draw2DLine(
+				p,
+				p + dirAxisX * length,
+				m_directionColor[0]);
+			g->draw2DTriangle(a, b, c, m_directionColor[0]);
+
+			// y
+			core::vector3df y(0.0f, 1.0f, 0.0f);
+			core::vector3df sy(1.0f, 0.0f, 0.0f);
+			y = rot * y;
+			y.normalize();
+			sy = rot * sy;
+			sy.normalize();
+
+			core::position2df dirAxisY(y.X, y.Y);
+			side.set(sy.X, sy.Y);
+
+			a = p + dirAxisY * length;
+			m = a - dirAxisY * arrowSize1;
+			b = m + side * arrowSize2;
+			c = m - side * arrowSize2;
+
+			g->draw2DLine(
+				p,
+				p + dirAxisY * length,
+				m_directionColor[1]);
+			g->draw2DTriangle(a, b, c, m_directionColor[1]);
+
+
+			// draw square
+			SColor fillColor = m_directionColor[2];
+			fillColor.setAlpha(50);
+			core::vector3df r(rs, rs, 0.0f);
+			r = rot * r;
+			a = p;
+			b = p + dirAxisX * rs;
+			c.set(p.X + r.X, p.Y + r.Y);
+			core::position2df d = p + dirAxisY * rs;
+
+			g->draw2DTriangle(a, b, c, fillColor);
+			g->draw2DTriangle(a, c, d, fillColor);
 		}
 	}
 }

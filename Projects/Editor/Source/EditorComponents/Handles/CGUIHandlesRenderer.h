@@ -33,6 +33,11 @@ namespace Skylicht
 	{
 		class CGUIHandlesRenderer
 		{
+		protected:
+			SColor m_directionColor[3];
+			SColor m_selectionColor;
+			float m_scale;
+
 		public:
 			CGUIHandlesRenderer();
 

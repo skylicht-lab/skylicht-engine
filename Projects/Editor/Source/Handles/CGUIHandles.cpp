@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGUIHandles.h"
+#include "EditorComponents/Handles/CGUIHandlesRenderer.h"
 
 namespace Skylicht
 {
