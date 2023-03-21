@@ -346,6 +346,9 @@ namespace Skylicht
 
 	void CGraphics2D::flush()
 	{
+		if (m_vertexColorShader == 0)
+			m_vertexColorShader = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
+
 		flushBuffer(m_buffer, m_2dMaterial);
 	}
 
@@ -1454,6 +1457,53 @@ namespace Skylicht
 		mat.ZBuffer = video::ECFN_ALWAYS;
 		mat.ZWriteEnable = false;
 		mat.ColorMask = ECP_ALL;
+	}
+
+	void CGraphics2D::draw2DTriangle(
+		const core::position2df& a,
+		const core::position2df& b,
+		const core::position2df& c,
+		const SColor& color)
+	{
+		flush();
+
+		m_indices->set_used(0);
+		m_indices->addIndex(0);
+		m_indices->addIndex(1);
+		m_indices->addIndex(2);
+
+		video::S3DVertex vert;
+		vert.Color = color;
+
+		vert.Pos.X = a.X;
+		vert.Pos.Y = a.Y;
+		vert.Pos.Z = 0;
+
+		m_vertices->set_used(0);
+		m_vertices->addVertex(vert);
+
+		vert.Pos.X = b.X;
+		vert.Pos.Y = b.Y;
+		vert.Pos.Z = 0;
+		m_vertices->addVertex(vert);
+
+		vert.Pos.X = c.X;
+		vert.Pos.Y = c.Y;
+		vert.Pos.Z = 0;
+		m_vertices->addVertex(vert);
+
+		m_2dMaterial.setTexture(0, NULL);
+		m_2dMaterial.setTexture(1, NULL);
+		m_2dMaterial.MaterialType = m_vertexColorShader;
+		m_driver->setMaterial(m_2dMaterial);
+
+		m_buffer->setPrimitiveType(scene::EPT_TRIANGLES);
+		m_buffer->setDirty();
+
+		m_driver->drawMeshBuffer(m_buffer);
+
+		m_indices->set_used(0);
+		m_vertices->set_used(0);
 	}
 
 	void CGraphics2D::draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color)

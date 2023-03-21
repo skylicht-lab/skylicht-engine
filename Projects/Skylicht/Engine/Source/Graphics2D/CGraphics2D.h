@@ -168,6 +168,12 @@ namespace Skylicht
 
 		void setNoDepthTest(video::SMaterial& mat);
 
+		void draw2DTriangle(
+			const core::position2df& a,
+			const core::position2df& b,
+			const core::position2df& c,
+			const SColor& color);
+
 		void draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color);
 
 		void draw2DRectangle(const core::rectf& pos, const SColor& color);
