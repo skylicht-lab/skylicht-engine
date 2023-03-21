@@ -609,7 +609,15 @@ namespace Skylicht
 
 		// ssr (last frame)
 		bool enableSSR = false;
+		bool forceDisableSSR = false;
+
+#ifdef USE_ANGLE_GLES
+		// default off SSR on AngleGLES
+		forceDisableSSR = true;
+#endif
+
 		if (m_postProcessor != NULL &&
+			!forceDisableSSR &&
 			m_postProcessor->getLastFrameBuffer() &&
 			m_postProcessor->isEnableScreenSpaceReflection())
 		{

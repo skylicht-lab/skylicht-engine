@@ -106,12 +106,7 @@ namespace Skylicht
 
 		inline void enableScreenSpaceReflection(bool b)
 		{
-#ifdef USE_ANGLE_GLES
-            // default off SSR on AngleGLES
-            m_screenSpaceReflection = false;
-#else
-            m_screenSpaceReflection = b;
-#endif
+			m_screenSpaceReflection = b;
 		}
 
 		inline void setBloomThreshold(float f)
