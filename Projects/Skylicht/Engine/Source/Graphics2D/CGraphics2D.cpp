@@ -1506,6 +1506,48 @@ namespace Skylicht
 		m_vertices->set_used(0);
 	}
 
+	void CGraphics2D::draw2DLines(const std::vector<core::position2df>& points, const SColor& color)
+	{
+		flush();
+
+		m_indices->set_used(0);
+		m_vertices->set_used(0);
+
+		video::S3DVertex vert;
+		int idx = 0;
+
+		for (int i = 0, n = (int)points.size() - 1; i < n; i++)
+		{
+			vert.Color = color;
+
+			vert.Pos.X = points[i].X;
+			vert.Pos.Y = points[i].Y;
+			vert.Pos.Z = 0;
+			m_vertices->addVertex(vert);
+
+			vert.Pos.X = points[i + 1].X;
+			vert.Pos.Y = points[i + 1].Y;
+			vert.Pos.Z = 0;
+			m_vertices->addVertex(vert);
+
+			m_indices->addIndex(idx++);
+			m_indices->addIndex(idx++);
+		}
+
+		m_2dMaterial.setTexture(0, NULL);
+		m_2dMaterial.setTexture(1, NULL);
+		m_2dMaterial.MaterialType = m_vertexColorShader;
+		m_driver->setMaterial(m_2dMaterial);
+
+		m_buffer->setPrimitiveType(scene::EPT_LINES);
+		m_buffer->setDirty();
+
+		m_driver->drawMeshBuffer(m_buffer);
+
+		m_indices->set_used(0);
+		m_vertices->set_used(0);
+	}
+
 	void CGraphics2D::draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color)
 	{
 		flush();

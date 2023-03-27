@@ -30,6 +30,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		class CGUIHandlesRenderer;
+
 		class CGUIHandles :
 			public CGameSingleton<CGUIHandles>,
 			public IEventReceiver
@@ -53,6 +55,8 @@ namespace Skylicht
 			int m_mouseState;
 
 			bool m_endCheck;
+
+			CGUIHandlesRenderer* m_handlesRenderer;
 
 		public:
 			CGUIHandles();
@@ -135,6 +139,11 @@ namespace Skylicht
 			inline core::matrix4& getWorldInv()
 			{
 				return m_worldInv;
+			}
+
+			inline void setHandleRenderer(CGUIHandlesRenderer* handles)
+			{
+				m_handlesRenderer = handles;
 			}
 
 			virtual bool OnEvent(const SEvent& event);

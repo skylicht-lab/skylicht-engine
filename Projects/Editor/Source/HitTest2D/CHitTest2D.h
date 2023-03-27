@@ -1,4 +1,5 @@
 /*
+/*
 !@
 MIT License
 
@@ -42,7 +43,16 @@ namespace Skylicht
 		public:
 			static bool isLineHit(const core::vector2df& p1, const core::vector2df& p2, const core::vector2df& point);
 
-			static int isRectBorderHit(const core::rectf& rect, const core::vector2df& point);
+			static int isRectBorderHit(const core::rectf& rect, const core::matrix4& transform, const core::vector2df& point);
+
+			static bool isInsideRect(const core::rectf& rect, const core::matrix4& transform, const core::vector2df& point);
+
+			static bool isInsidePoly(
+				const core::vector2df& p1,
+				const core::vector2df& p2,
+				const core::vector2df& p3,
+				const core::vector2df& p4,
+				const core::vector2df& point);
 		};
 	}
 }

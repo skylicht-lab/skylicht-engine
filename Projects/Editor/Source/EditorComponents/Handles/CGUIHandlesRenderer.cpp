@@ -25,16 +25,26 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGUIHandlesRenderer.h"
 #include "Handles/CGUIHandles.h"
+#include "HitTest2D/CHitTest2D.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
+		const float DefaultLength = 100.0f;
+		const float DefaultArrowSize1 = 10.0f;
+		const float DefaultArrowSize2 = 5.0f;
+		const float DefaultRectSize = 20.0f;
+
 		CGUIHandlesRenderer::CGUIHandlesRenderer()
 		{
 			m_directionColor[0].set(0xFF0000AA);
 			m_directionColor[1].set(0xFFAA0000);
 			m_directionColor[2].set(0xFF00AA00);
+
+			m_hoverOnAxis[0] = false;
+			m_hoverOnAxis[1] = false;
+			m_hoverOnAxis[2] = false;
 
 			m_selectionColor.set(0xFF1080FF);
 			m_scale = 1.0f;
@@ -84,10 +94,10 @@ namespace Skylicht
 		void CGUIHandlesRenderer::drawTranslateGizmo(const core::vector3df& pos, const core::quaternion& rot)
 		{
 			CGraphics2D* g = CGraphics2D::getInstance();
-			float length = 100.0f / m_scale;
-			float arrowSize1 = 10.0f / m_scale;
-			float arrowSize2 = 5.0f / m_scale;
-			float rs = 20.0f / m_scale;
+			float length = DefaultLength / m_scale;
+			float arrowSize1 = DefaultArrowSize1 / m_scale;
+			float arrowSize2 = DefaultArrowSize2 / m_scale;
+			float rs = DefaultRectSize / m_scale;
 
 			core::vector3df x(1.0f, 0.0f, 0.0f);
 			core::vector3df sx(0.0f, 1.0f, 0.0f);
@@ -110,8 +120,9 @@ namespace Skylicht
 			g->draw2DLine(
 				p,
 				p + dirAxisX * length,
-				m_directionColor[0]);
-			g->draw2DTriangle(a, b, c, m_directionColor[0]);
+				m_hoverOnAxis[0] ? m_selectionColor : m_directionColor[0]);
+			g->draw2DTriangle(a, b, c,
+				m_hoverOnAxis[0] ? m_selectionColor : m_directionColor[0]);
 
 			// y
 			core::vector3df y(0.0f, 1.0f, 0.0f);
@@ -132,12 +143,13 @@ namespace Skylicht
 			g->draw2DLine(
 				p,
 				p + dirAxisY * length,
-				m_directionColor[1]);
-			g->draw2DTriangle(a, b, c, m_directionColor[1]);
+				m_hoverOnAxis[1] ? m_selectionColor : m_directionColor[1]);
+			g->draw2DTriangle(a, b, c,
+				m_hoverOnAxis[1] ? m_selectionColor : m_directionColor[1]);
 
 
 			// draw square
-			SColor fillColor = m_directionColor[2];
+			SColor fillColor = m_hoverOnAxis[2] ? m_selectionColor : m_directionColor[2];
 			fillColor.setAlpha(50);
 			core::vector3df r(rs, rs, 0.0f);
 			r = rot * r;
@@ -148,6 +160,88 @@ namespace Skylicht
 
 			g->draw2DTriangle(a, b, c, fillColor);
 			g->draw2DTriangle(a, c, d, fillColor);
+
+			std::vector<core::position2df> points;
+			points.push_back(a);
+			points.push_back(b);
+			points.push_back(c);
+			points.push_back(d);
+			points.push_back(a);
+			g->draw2DLines(points, m_hoverOnAxis[2] ? m_selectionColor : m_directionColor[2]);
+		}
+
+		void CGUIHandlesRenderer::onMouseEvent(float x, float y, int state)
+		{
+			CGUIHandles* handles = CGUIHandles::getInstance();
+			if (handles->isHandlePosition())
+				handleTranslate(x, y, state);
+			else if (handles->isHandleRotation())
+				handleRotation(x, y, state);
+			else if (handles->isHandleScale())
+				handleScale(x, y, state);
+		}
+
+		void CGUIHandlesRenderer::cancel()
+		{
+
+		}
+
+		void CGUIHandlesRenderer::handleTranslate(float mouseX, float mouseY, int state)
+		{
+			float length = DefaultLength / m_scale;
+			float rs = DefaultRectSize / m_scale;
+
+			CGUIHandles* handles = CGUIHandles::getInstance();
+
+			core::vector3df pos = handles->getHandlePosition();
+			handles->getWorld().transformVect(pos);
+
+			core::quaternion worldRot(handles->getWorld());
+			worldRot.normalize();
+
+			core::quaternion rot = worldRot * handles->getHandleRotation();
+			rot.normalize();
+
+			core::vector3df x(1.0f, 0.0f, 0.0f);
+			core::vector3df y(0.0f, 1.0f, 0.0f);
+			core::vector3df xy(1.0f, 1.0f, 0.0f);
+			x = rot * x;
+			y = rot * y;
+			xy = rot * xy;
+
+			core::position2df dirAxisX(x.X, x.Y);
+			core::position2df dirAxisY(y.X, y.Y);
+			core::position2df dirAxisXY(xy.X, xy.Y);
+			core::position2df p(pos.X, pos.Y);
+
+			core::position2df p1 = p + dirAxisX * length;
+			core::position2df p2 = p + dirAxisY * length;
+
+			core::position2df mousePoint(mouseX, mouseY);
+
+			m_hoverOnAxis[0] = CHitTest2D::isLineHit(p, p1, mousePoint);
+			m_hoverOnAxis[1] = CHitTest2D::isLineHit(p, p2, mousePoint);
+
+			p1 = p + dirAxisX * rs;
+			p2 = p + dirAxisXY * rs;
+			core::position2df p3 = p + dirAxisY * rs;
+
+			m_hoverOnAxis[2] = CHitTest2D::isInsidePoly(p, p1, p2, p3, mousePoint);
+			if (m_hoverOnAxis[2])
+			{
+				m_hoverOnAxis[0] = false;
+				m_hoverOnAxis[1] = false;
+			}
+		}
+
+		void CGUIHandlesRenderer::handleRotation(float mouseX, float mouseY, int state)
+		{
+
+		}
+
+		void CGUIHandlesRenderer::handleScale(float mouseX, float mouseY, int state)
+		{
+
 		}
 	}
 }
