@@ -325,7 +325,7 @@ namespace Skylicht
 					GUI::SPoint local = m_view->canvasPosToLocal(GUI::SPoint(x, y));
 					core::rectf rect = getExportRectInVP();
 
-					int hit = CHitTest2D::isRectBorderHit(rect, core::vector2df(local.X, local.Y));
+					int hit = CHitTest2D::isRectBorderHit(rect, core::IdentityMatrix, core::vector2df(local.X, local.Y));
 					if (hit & CHitTest2D::Left)
 					{
 						m_view->setCursor(GUI::ECursorType::SizeWE);
@@ -366,7 +366,7 @@ namespace Skylicht
 					GUI::SPoint local = m_view->canvasPosToLocal(GUI::SPoint(x, y));
 					core::rectf rect = getExportRectInVP();
 
-					m_exportRect.MouseHit = CHitTest2D::isRectBorderHit(rect, core::vector2df(local.X, local.Y));
+					m_exportRect.MouseHit = CHitTest2D::isRectBorderHit(rect, core::IdentityMatrix, core::vector2df(local.X, local.Y));
 				}
 			}
 			else

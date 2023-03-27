@@ -35,7 +35,8 @@ namespace Skylicht
 			m_handleRotation(false),
 			m_handleScale(false),
 			m_mouseState(0),
-			m_endCheck(false)
+			m_endCheck(false),
+			m_handlesRenderer(NULL)
 		{
 
 		}
@@ -108,10 +109,9 @@ namespace Skylicht
 		{
 			if (event.EventType == EET_MOUSE_INPUT_EVENT)
 			{
-				int mouseX = event.MouseInput.X;
-				int mouseY = event.MouseInput.Y;
+				float mouseX = (float)event.MouseInput.X;
+				float mouseY = (float)event.MouseInput.Y;
 
-				/*
 				if (m_handlesRenderer != NULL)
 				{
 					if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
@@ -133,18 +133,15 @@ namespace Skylicht
 
 					return true;
 				}
-				*/
 			}
 			else if (event.EventType == EET_KEY_INPUT_EVENT)
 			{
 				if (event.KeyInput.PressedDown && event.KeyInput.Key == irr::KEY_ESCAPE)
 				{
-					/*
 					if (m_mouseState == 1)
 					{
 						m_handlesRenderer->cancel();
 					}
-					*/
 					return true;
 				}
 			}

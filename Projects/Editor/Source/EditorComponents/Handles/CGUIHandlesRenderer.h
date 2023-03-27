@@ -37,6 +37,7 @@ namespace Skylicht
 			SColor m_directionColor[3];
 			SColor m_selectionColor;
 			float m_scale;
+			bool m_hoverOnAxis[3];
 
 		public:
 			CGUIHandlesRenderer();
@@ -50,6 +51,16 @@ namespace Skylicht
 			void drawScaleGizmo(const core::vector3df& pos, const core::quaternion& rot);
 
 			void drawTranslateGizmo(const core::vector3df& pos, const core::quaternion& rot);
+
+			void onMouseEvent(float mouseX, float mouseY, int mouseState);
+
+			void handleTranslate(float x, float y, int state);
+
+			void handleRotation(float x, float y, int state);
+
+			void handleScale(float x, float y, int state);
+
+			void cancel();
 		};
 	}
 }

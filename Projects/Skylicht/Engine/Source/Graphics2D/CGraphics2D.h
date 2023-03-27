@@ -176,6 +176,8 @@ namespace Skylicht
 
 		void draw2DLine(const core::position2df& start, const core::position2df& end, const SColor& color);
 
+		void draw2DLines(const std::vector<core::position2df>& points, const SColor& color);
+
 		void draw2DRectangle(const core::rectf& pos, const SColor& color);
 
 		void draw2DRectangle(const core::vector3df& upleft, const core::vector3df& lowerright, const SColor& color);
