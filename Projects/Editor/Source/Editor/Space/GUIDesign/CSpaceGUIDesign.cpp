@@ -105,6 +105,7 @@ namespace Skylicht
 			m_view->dock(GUI::EPosition::Fill);
 			m_view->enableRenderFillRect(true);
 			m_view->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
+			m_view->setKeyboardInputEnabled(true);
 
 			m_view->OnMouseWheeled = std::bind(&CSpaceGUIDesign::onMouseWheel, this, _1, _2);
 			m_view->OnMouseMoved = std::bind(&CSpaceGUIDesign::onMouseMoved, this, _1, _2, _3, _4, _5);

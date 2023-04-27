@@ -95,11 +95,18 @@ namespace Skylicht
 
 			void doZoomIn(float dx, float dy);
 
-			void doZoomOut(float dx, float dy);			
+			void doZoomOut(float dx, float dy);
 
 			void onRender(GUI::CBase* base);
 
 			void postMouseEventToHandles(EMOUSE_INPUT_EVENT eventType);
+
+		public:
+
+			inline CGUITransformGizmos* getGizmos()
+			{
+				return m_gizmos;
+			}
 		};
 	}
 }

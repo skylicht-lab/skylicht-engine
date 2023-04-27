@@ -36,7 +36,11 @@ namespace Skylicht
 		const float DefaultArrowSize2 = 5.0f;
 		const float DefaultRectSize = 20.0f;
 
-		CGUIHandlesRenderer::CGUIHandlesRenderer()
+		CGUIHandlesRenderer::CGUIHandlesRenderer() :
+			m_mouseState(-1),
+			m_scale(1.0f),
+			m_cancel(false),
+			m_mouseDown(false)
 		{
 			m_directionColor[0].set(0xFF0000AA);
 			m_directionColor[1].set(0xFFAA0000);
@@ -47,7 +51,6 @@ namespace Skylicht
 			m_hoverOnAxis[2] = false;
 
 			m_selectionColor.set(0xFF1080FF);
-			m_scale = 1.0f;
 		}
 
 		CGUIHandlesRenderer::~CGUIHandlesRenderer()
@@ -183,54 +186,131 @@ namespace Skylicht
 
 		void CGUIHandlesRenderer::cancel()
 		{
+			m_cancel = true;
+			m_mouseDown = false;
 
+			CGUIHandles* handles = CGUIHandles::getInstance();
+			if (handles->isHandlePosition())
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					m_hoverOnAxis[i] = false;
+				}
+				handles->setTargetPosition(m_lastPosition);
+			}
+			else if (handles->isHandleRotation())
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					m_hoverOnAxis[i] = false;
+				}
+				handles->setTargetRotation(m_lastRotate);
+			}
+			else if (handles->isHandleScale())
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					m_hoverOnAxis[i] = false;
+				}
+				handles->setTargetRotation(m_lastScale);
+			}
 		}
 
 		void CGUIHandlesRenderer::handleTranslate(float mouseX, float mouseY, int state)
 		{
-			float length = DefaultLength / m_scale;
-			float rs = DefaultRectSize / m_scale;
-
 			CGUIHandles* handles = CGUIHandles::getInstance();
+			core::vector3df mouse((float)mouseX, (float)mouseY, 0.0f);
 
-			core::vector3df pos = handles->getHandlePosition();
-			handles->getWorld().transformVect(pos);
-
-			core::quaternion worldRot(handles->getWorld());
-			worldRot.normalize();
-
-			core::quaternion rot = worldRot * handles->getHandleRotation();
-			rot.normalize();
-
-			core::vector3df x(1.0f, 0.0f, 0.0f);
-			core::vector3df y(0.0f, 1.0f, 0.0f);
-			core::vector3df xy(1.0f, 1.0f, 0.0f);
-			x = rot * x;
-			y = rot * y;
-			xy = rot * xy;
-
-			core::position2df dirAxisX(x.X, x.Y);
-			core::position2df dirAxisY(y.X, y.Y);
-			core::position2df dirAxisXY(xy.X, xy.Y);
-			core::position2df p(pos.X, pos.Y);
-
-			core::position2df p1 = p + dirAxisX * length;
-			core::position2df p2 = p + dirAxisY * length;
-
-			core::position2df mousePoint(mouseX, mouseY);
-
-			m_hoverOnAxis[0] = CHitTest2D::isLineHit(p, p1, mousePoint);
-			m_hoverOnAxis[1] = CHitTest2D::isLineHit(p, p2, mousePoint);
-
-			p1 = p + dirAxisX * rs;
-			p2 = p + dirAxisXY * rs;
-			core::position2df p3 = p + dirAxisY * rs;
-
-			m_hoverOnAxis[2] = CHitTest2D::isInsidePoly(p, p1, p2, p3, mousePoint);
-			if (m_hoverOnAxis[2])
+			if (m_mouseState != state)
 			{
-				m_hoverOnAxis[0] = false;
-				m_hoverOnAxis[1] = false;
+				if (state == 1)
+				{
+					// mouse down
+					m_mouseDown = true;
+					m_lastMouse = mouse;
+					m_lastPosition = handles->getHandlePosition();
+				}
+				else if (state == 2)
+				{
+					// mouse up
+					if (!m_cancel)
+					{
+						m_mouseDown = false;
+						handles->setEndCheck(true);
+					}
+					m_cancel = false;
+				}
+			}
+			m_mouseState = state;
+
+			if (!m_cancel)
+			{
+				if (m_mouseDown == false)
+				{
+					// check hover
+					float length = DefaultLength / m_scale;
+					float rs = DefaultRectSize / m_scale;
+
+					core::vector3df pos = handles->getHandlePosition();
+					handles->getWorld().transformVect(pos);
+
+					core::quaternion worldRot(handles->getWorld());
+					worldRot.normalize();
+
+					core::quaternion rot = worldRot * handles->getHandleRotation();
+					rot.normalize();
+
+					core::vector3df x(1.0f, 0.0f, 0.0f);
+					core::vector3df y(0.0f, 1.0f, 0.0f);
+					core::vector3df xy(1.0f, 1.0f, 0.0f);
+					x = rot * x;
+					y = rot * y;
+					xy = rot * xy;
+
+					core::position2df dirAxisX(x.X, x.Y);
+					core::position2df dirAxisY(y.X, y.Y);
+					core::position2df dirAxisXY(xy.X, xy.Y);
+					core::position2df p(pos.X, pos.Y);
+
+					core::position2df p1 = p + dirAxisX * length;
+					core::position2df p2 = p + dirAxisY * length;
+
+					core::position2df mousePoint(mouseX, mouseY);
+
+					m_hoverOnAxis[0] = CHitTest2D::isLineHit(p, p1, mousePoint);
+					m_hoverOnAxis[1] = CHitTest2D::isLineHit(p, p2, mousePoint);
+
+					p1 = p + dirAxisX * rs;
+					p2 = p + dirAxisXY * rs;
+					core::position2df p3 = p + dirAxisY * rs;
+
+					m_hoverOnAxis[2] = CHitTest2D::isInsidePoly(p, p1, p2, p3, mousePoint);
+					if (m_hoverOnAxis[2])
+					{
+						m_hoverOnAxis[0] = false;
+						m_hoverOnAxis[1] = false;
+					}
+				}
+				else
+				{
+					if (m_hoverOnAxis[0] || m_hoverOnAxis[1] || m_hoverOnAxis[2])
+					{
+						// dragging
+						core::vector3df offset = mouse - m_lastMouse;
+						core::vector3df resultPosition;
+
+						if (m_hoverOnAxis[2])
+							resultPosition = m_lastPosition + offset;
+						else if (m_hoverOnAxis[0])
+							resultPosition = m_lastPosition + core::vector3df(offset.X, 0.0f, 0.0f);
+						else if (m_hoverOnAxis[1])
+							resultPosition = m_lastPosition + core::vector3df(0.0f, offset.Y, 0.0f);
+
+						handles->getWorldInv().transformVect(resultPosition);
+						// snapVec3(resultPosition);
+						handles->setTargetPosition(resultPosition);
+					}
+				}
 			}
 		}
 
