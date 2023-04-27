@@ -24,6 +24,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGUIEditor.h"
+#include "Editor/CEditor.h"
+#include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
+#include "Selection/CSelection.h"
 
 namespace Skylicht
 {
@@ -58,6 +61,27 @@ namespace Skylicht
 		void CGUIEditor::onUpdateValue(CObjectSerializable* object)
 		{
 			m_gui->loadSerializable(m_guiData);
+
+			// also update on current select gizmos
+			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+			if (selectObject != NULL)
+			{
+				if (selectObject->getID() == m_gui->getID())
+				{
+					CSpace* space = CEditor::getInstance()->getWorkspaceByName(std::wstring(L"GUI Design"));
+					if (space)
+					{
+						CSpaceGUIDesign* guiDesign = dynamic_cast<CSpaceGUIDesign*>(space);
+						CGUITransformGizmos* gizmos = guiDesign->getGizmos();
+
+						gizmos->setTransform(
+							m_gui->getPosition(),
+							m_gui->getRotation(),
+							m_gui->getScale()
+						);
+					}
+				}
+			}
 		}
 
 		void CGUIEditor::showEditorRect(bool b)

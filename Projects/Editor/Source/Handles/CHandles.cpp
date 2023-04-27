@@ -108,7 +108,7 @@ namespace Skylicht
 			m_handleRotation = false;
 			m_handleScale = false;
 
-			m_position = position;
+			m_position = m_targetPosition;
 			m_rotation = localRotation;
 
 			return m_targetPosition;
@@ -125,7 +125,7 @@ namespace Skylicht
 
 			m_rotation = localRotation;
 			m_position = origin;
-			m_scale = scale;
+			m_scale = m_targetScale;
 			return m_targetScale;
 		}
 
@@ -139,7 +139,7 @@ namespace Skylicht
 			m_handleScale = false;
 
 			m_position = origin;
-			m_rotation = rotate;
+			m_rotation = m_targetRotation;
 			return m_targetRotation;
 		}
 

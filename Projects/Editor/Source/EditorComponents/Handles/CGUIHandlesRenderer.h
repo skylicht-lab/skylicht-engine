@@ -38,6 +38,14 @@ namespace Skylicht
 			SColor m_selectionColor;
 			float m_scale;
 			bool m_hoverOnAxis[3];
+			int m_mouseState;
+			bool m_cancel;
+			bool m_mouseDown;
+
+			core::vector3df m_lastMouse;
+			core::vector3df m_lastPosition;
+			core::vector3df m_lastRotate;
+			core::vector3df m_lastScale;
 
 		public:
 			CGUIHandlesRenderer();

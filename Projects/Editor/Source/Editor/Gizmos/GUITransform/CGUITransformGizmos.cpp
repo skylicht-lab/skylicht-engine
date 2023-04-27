@@ -146,5 +146,18 @@ namespace Skylicht
 		{
 
 		}
+
+		void CGUITransformGizmos::setTransform(const core::vector3df& pos, const core::vector3df& rot, const core::vector3df& scale)
+		{
+			m_position = pos;
+			m_rotation = rot;
+			m_scale = scale;
+
+			CGUIHandles::getInstance()->end();
+
+			m_position.notify(this);
+			m_rotation.notify(this);
+			m_scale.notify(this);
+		}
 	}
 }
