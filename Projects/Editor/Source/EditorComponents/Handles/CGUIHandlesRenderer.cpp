@@ -245,27 +245,31 @@ namespace Skylicht
 
 			if (!m_cancel)
 			{
+				core::vector3df pos = handles->getHandlePosition();
+				handles->getWorld().transformVect(pos);
+
+				core::quaternion worldRot(handles->getWorld());
+				worldRot.normalize();
+
+				core::quaternion rot = worldRot * handles->getHandleRotation();
+				rot.normalize();
+
+				core::vector3df x(1.0f, 0.0f, 0.0f);
+				core::vector3df y(0.0f, 1.0f, 0.0f);
+				core::vector3df xy(1.0f, 1.0f, 0.0f);
+				x = rot * x;
+				x.normalize();
+
+				y = rot * y;
+				y.normalize();
+
+				xy = rot * xy;
+
 				if (m_mouseDown == false)
 				{
 					// check hover
 					float length = DefaultLength / m_scale;
 					float rs = DefaultRectSize / m_scale;
-
-					core::vector3df pos = handles->getHandlePosition();
-					handles->getWorld().transformVect(pos);
-
-					core::quaternion worldRot(handles->getWorld());
-					worldRot.normalize();
-
-					core::quaternion rot = worldRot * handles->getHandleRotation();
-					rot.normalize();
-
-					core::vector3df x(1.0f, 0.0f, 0.0f);
-					core::vector3df y(0.0f, 1.0f, 0.0f);
-					core::vector3df xy(1.0f, 1.0f, 0.0f);
-					x = rot * x;
-					y = rot * y;
-					xy = rot * xy;
 
 					core::position2df dirAxisX(x.X, x.Y);
 					core::position2df dirAxisY(y.X, y.Y);
@@ -302,9 +306,15 @@ namespace Skylicht
 						if (m_hoverOnAxis[2])
 							resultPosition = m_lastPosition + offset;
 						else if (m_hoverOnAxis[0])
-							resultPosition = m_lastPosition + core::vector3df(offset.X, 0.0f, 0.0f);
+						{
+							float d = offset.dotProduct(x);
+							resultPosition = m_lastPosition + x * d;
+						}
 						else if (m_hoverOnAxis[1])
-							resultPosition = m_lastPosition + core::vector3df(0.0f, offset.Y, 0.0f);
+						{
+							float d = offset.dotProduct(y);
+							resultPosition = m_lastPosition + y * d;
+						}
 
 						handles->getWorldInv().transformVect(resultPosition);
 						// snapVec3(resultPosition);

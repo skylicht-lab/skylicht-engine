@@ -173,13 +173,24 @@ namespace Skylicht
 			core::rectf r = getRect();
 
 			float z = 0.0f;
+
 			core::vector3df topLeft(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);
+			core::vector3df topRight(r.LowerRightCorner.X, r.UpperLeftCorner.Y, z);
+			core::vector3df bottomLeft(r.UpperLeftCorner.X, r.LowerRightCorner.Y, z);
 			core::vector3df bottomRight(r.LowerRightCorner.X, r.LowerRightCorner.Y, z);
 
 			m_transform->World.transformVect(topLeft);
+			m_transform->World.transformVect(topRight);
+			m_transform->World.transformVect(bottomLeft);
 			m_transform->World.transformVect(bottomRight);
 
-			CGraphics2D::getInstance()->draw2DRectangleOutline(topLeft, bottomRight, borderColor);
+			std::vector<core::vector2df> lines;
+			lines.push_back(core::vector2df(topLeft.X, topLeft.Y));
+			lines.push_back(core::vector2df(topRight.X, topRight.Y));
+			lines.push_back(core::vector2df(bottomRight.X, bottomRight.Y));
+			lines.push_back(core::vector2df(bottomLeft.X, bottomLeft.Y));
+
+			CGraphics2D::getInstance()->draw2DLines(lines, borderColor);
 		}
 	}
 
