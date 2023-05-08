@@ -66,6 +66,7 @@ namespace Skylicht
 
 	public:
 		std::function<void(bool)> OnSetHidden;
+		std::function<void()> OnChanged;
 
 	public:
 		std::string Name;
