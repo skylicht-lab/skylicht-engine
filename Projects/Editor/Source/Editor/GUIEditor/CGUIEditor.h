@@ -57,6 +57,11 @@ namespace Skylicht
 				return m_gui;
 			}
 
+			CObjectSerializable* getData()
+			{
+				return m_guiData;
+			}
+
 			void showEditorRect(bool b);
 			void showEditorTransform(bool b);
 			void showEditorAlign(bool b);

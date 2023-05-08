@@ -79,6 +79,10 @@ namespace Skylicht
 			}
 
 			void setTransform(const core::vector3df& pos, const core::vector3df& rot, const core::vector3df& scale);
+
+		protected:
+
+			void updateProperty();
 		};
 	}
 }

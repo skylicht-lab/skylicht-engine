@@ -95,6 +95,18 @@ namespace Skylicht
 						Z->notify(o);
 					};
 
+					valueProperty->OnChanged = [value, X, Y, Z, observer]()
+					{
+						X->set(value->get().X);
+						X->notify(observer);
+
+						Y->set(value->get().Y);
+						Y->notify(observer);
+
+						Z->set(value->get().Z);
+						Z->notify(observer);
+					};
+
 					std::wstring name = ui->getPrettyName(value->Name);
 					name += L" X";
 
@@ -153,6 +165,12 @@ namespace Skylicht
 							s->notify(o);
 						};
 
+						valueProperty->OnChanged = [value, subject, observer]()
+						{
+							subject->set(value->get());
+							subject->notify(observer);
+						};
+
 						ui->addSlider(layout, ui->getPrettyName(value->Name), subject, value->Min, value->Max);
 						m_subjects.push_back(subject);
 					}
@@ -195,6 +213,12 @@ namespace Skylicht
 						{
 							s->setEnable(!hide);
 							s->notify(o);
+						};
+
+						valueProperty->OnChanged = [value, subject, observer]()
+						{
+							subject->set(value->get());
+							subject->notify(observer);
 						};
 
 						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject, 0.01f);
@@ -243,6 +267,12 @@ namespace Skylicht
 						s->notify(o);
 					};
 
+					valueProperty->OnChanged = [value, subject, observer]()
+					{
+						subject->set(value->get());
+						subject->notify(observer);
+					};
+
 					ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
 				}
@@ -281,6 +311,12 @@ namespace Skylicht
 					{
 						s->setEnable(!hide);
 						s->notify(o);
+					};
+
+					valueProperty->OnChanged = [value, subject, observer]()
+					{
+						subject->set(value->get());
+						subject->notify(observer);
 					};
 
 					ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
