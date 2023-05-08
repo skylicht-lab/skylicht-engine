@@ -26,6 +26,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGUITransformGizmos.h"
 #include "Handles/CGUIHandles.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "Editor/CEditor.h"
+#include "Activator/CEditorActivator.h"
+#include "Editor/GUIEditor/CGUIEditor.h"
 #include "Selection/CSelection.h"
 
 namespace Skylicht
@@ -113,6 +116,7 @@ namespace Skylicht
 					m_gui->setPosition(newPos);
 
 					m_changed = true;
+					updateProperty();
 				}
 
 				if (handle->endCheck())
@@ -126,6 +130,29 @@ namespace Skylicht
 				}
 			}
 		}
+
+		void CGUITransformGizmos::updateProperty()
+		{
+			// Activator
+			CEditorActivator* activator = CEditorActivator::getInstance();
+
+			// GUI property
+			CGUIEditor* editor = activator->getGUIEditorInstance(m_gui->getTypeName().c_str());
+			if (editor != NULL)
+			{
+				CObjectSerializable* data = editor->getData();
+				CVector3Property* p = dynamic_cast<CVector3Property*>(data->getProperty("position"));
+				p->set(m_gui->getPosition());
+				p->OnChanged();
+				CVector3Property* s = dynamic_cast<CVector3Property*>(data->getProperty("scale"));
+				s->set(m_gui->getScale());
+				s->OnChanged();
+				CVector3Property* r = dynamic_cast<CVector3Property*>(data->getProperty("rotation"));
+				r->set(m_gui->getRotation());
+				r->OnChanged();
+			}
+		}
+
 
 		void CGUITransformGizmos::onEnable()
 		{

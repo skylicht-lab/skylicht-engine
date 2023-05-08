@@ -189,6 +189,7 @@ namespace Skylicht
 			lines.push_back(core::vector2df(topRight.X, topRight.Y));
 			lines.push_back(core::vector2df(bottomRight.X, bottomRight.Y));
 			lines.push_back(core::vector2df(bottomLeft.X, bottomLeft.Y));
+			lines.push_back(core::vector2df(topLeft.X, topLeft.Y));
 
 			CGraphics2D::getInstance()->draw2DLines(lines, borderColor);
 		}
