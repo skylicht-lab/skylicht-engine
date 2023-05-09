@@ -45,6 +45,7 @@ namespace Skylicht
 			CSubject<core::vector3df> m_position;
 			CSubject<core::quaternion> m_rotation;
 			CSubject<core::vector3df> m_scale;
+			CSubject<core::rectf> m_rect;
 
 			bool m_changed;
 

@@ -51,6 +51,7 @@ namespace Skylicht
 			m_handlePosition = false;
 			m_handleRotation = false;
 			m_handleScale = false;
+			m_handleRect = false;
 		}
 
 		bool CGUIHandles::endCheck()
@@ -105,6 +106,20 @@ namespace Skylicht
 			m_rotation = m_targetRotation;
 
 			return m_targetRotation;
+		}
+
+		core::rectf CGUIHandles::rectHandle(const core::rectf& rect, const core::vector3df& position, const core::vector3df& scale, const core::quaternion& rotation)
+		{
+			if (!m_handleRect)
+				m_targetRect = rect;
+
+			m_handleRect = true;
+
+			m_position = position;
+			m_rotation = rotation;
+			m_scale = scale;
+
+			return m_targetRect;
 		}
 
 		bool CGUIHandles::OnEvent(const SEvent& event)

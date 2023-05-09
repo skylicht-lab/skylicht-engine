@@ -45,12 +45,12 @@ namespace Skylicht
 
 			m_contextMenu->addItem(L"Rename", L"F2");
 			m_contextMenu->addSeparator();
-			m_contextMenu->addItem(L"Copy", GUI::ESystemIcon::Copy, L"Ctrl + C");
-			m_contextMenu->addItem(L"Paste", GUI::ESystemIcon::Paste, L"Ctrl + V");
-			m_contextMenu->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"Ctrl + D");
-			m_contextMenu->addItem(L"Cut", L"Ctrl + X");
+			m_items[0] = m_contextMenu->addItem(L"Copy", GUI::ESystemIcon::Copy, L"Ctrl + C");
+			m_items[1] = m_contextMenu->addItem(L"Paste", GUI::ESystemIcon::Paste, L"Ctrl + V");
+			m_items[2] = m_contextMenu->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"Ctrl + D");
+			m_items[3] = m_contextMenu->addItem(L"Cut", L"Ctrl + X");
 			m_contextMenu->addSeparator();
-			m_contextMenu->addItem(L"Delete", GUI::ESystemIcon::Trash);
+			m_items[4] = m_contextMenu->addItem(L"Delete", GUI::ESystemIcon::Trash);
 			m_contextMenu->addSeparator();
 
 			GUI::CMenu* addMenu = m_contextMenu->addItem(L"Add")->getMenu();
@@ -74,9 +74,18 @@ namespace Skylicht
 
 			m_contextNode = node;
 			m_spaceHierarchy = spaceHierachy;
-
 			m_canvas->closeMenu();
+
+			for (int i = 0; i < 5; i++)
+			{
+				if (m_contextNode->getTagDataType() == CGUIHierachyNode::Canvas)
+					m_items[i]->setDisabled(true);
+				else
+					m_items[i]->setDisabled(false);
+			}
+
 			m_contextMenu->open(mousePos);
+
 			return true;
 		}
 
@@ -89,6 +98,16 @@ namespace Skylicht
 			CGUIElement* node = (CGUIElement*)m_contextNode->getTagData();
 
 			const std::wstring& command = menuItem->getLabel();
+
+			if (command == L"Delete")
+			{
+				CSelection::getInstance()->unSelect(node);
+				CPropertyController::getInstance()->setProperty(NULL);
+
+				node->remove();
+				m_contextNode->remove();
+				m_contextNode = NULL;
+			}
 		}
 
 		void CContextMenuGUIElement::OnContextMenuAddCommand(GUI::CBase* sender)
@@ -98,7 +117,7 @@ namespace Skylicht
 				return;
 
 			const std::wstring& command = menuItem->getLabel();
-			CGUIDesignController::getInstance()->createGUINode(m_contextNode, command);			
+			CGUIDesignController::getInstance()->createGUINode(m_contextNode, command);
 		}
 	}
 }

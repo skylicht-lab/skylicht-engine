@@ -43,14 +43,17 @@ namespace Skylicht
 			core::vector3df m_position;
 			core::quaternion m_rotation;
 			core::vector3df m_scale;
+			core::rectf m_rect;
 
 			bool m_handlePosition;
 			bool m_handleRotation;
 			bool m_handleScale;
+			bool m_handleRect;
 
 			core::vector3df m_targetPosition;
 			core::quaternion m_targetRotation;
 			core::vector3df m_targetScale;
+			core::rectf m_targetRect;
 
 			int m_mouseState;
 
@@ -72,6 +75,8 @@ namespace Skylicht
 			core::vector3df scaleHandle(const core::vector3df& scale, const core::vector3df& origin, const core::quaternion& localRotation);
 
 			core::quaternion rotateHandle(const core::quaternion& rotate, const core::vector3df& origin);
+
+			core::rectf rectHandle(const core::rectf& rect, const core::vector3df& position, const core::vector3df& scale, const core::quaternion& rotation);
 
 		public:
 
