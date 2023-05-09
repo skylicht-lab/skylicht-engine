@@ -48,7 +48,8 @@ namespace Skylicht
 		{
 			if (m_guiData)
 				delete m_guiData;
-
+			m_gui = NULL;
+			m_guiData = NULL;
 			CSerializableEditor::closeGUI();
 		}
 
