@@ -40,6 +40,7 @@ namespace Skylicht
 			m_position(core::vector3df()),
 			m_rotation(core::quaternion()),
 			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
+			m_rect(core::rectf()),
 			m_changed(false)
 		{
 
@@ -88,6 +89,7 @@ namespace Skylicht
 						m_position = gui->getPosition();
 						m_rotation = gui->getRotationQuaternion();
 						m_scale = gui->getScale();
+						m_rect = gui->getRect();
 
 						m_changed = false;
 					}
@@ -107,7 +109,6 @@ namespace Skylicht
 				if (newPos != *m_position)
 				{
 					core::vector3df delta = newPos - *m_position;
-
 					// updateSelectedPosition(delta);
 
 					m_position = newPos;
@@ -129,6 +130,30 @@ namespace Skylicht
 					//	saveHistorySelectedObject();
 				}
 			}
+
+			// rect
+			{
+				core::rectf newRect = CGUIHandles::getInstance()->rectHandle(
+					*m_rect,
+					m_gui->getPosition(),
+					m_gui->getScale(),
+					m_gui->getRotationQuaternion());
+
+				if (newRect != *m_rect)
+				{
+
+				}
+
+				if (handle->endCheck())
+				{
+					m_gui->setRect(*m_rect);
+					handle->end();
+
+					// save undo/redo
+					// if (m_changed)
+					//	saveHistorySelectedObject();
+				}
+			}
 		}
 
 		void CGUITransformGizmos::updateProperty()
@@ -141,15 +166,18 @@ namespace Skylicht
 			if (editor != NULL)
 			{
 				CObjectSerializable* data = editor->getData();
-				CVector3Property* p = dynamic_cast<CVector3Property*>(data->getProperty("position"));
-				p->set(m_gui->getPosition());
-				p->OnChanged();
-				CVector3Property* s = dynamic_cast<CVector3Property*>(data->getProperty("scale"));
-				s->set(m_gui->getScale());
-				s->OnChanged();
-				CVector3Property* r = dynamic_cast<CVector3Property*>(data->getProperty("rotation"));
-				r->set(m_gui->getRotation());
-				r->OnChanged();
+				if (data)
+				{
+					CVector3Property* p = dynamic_cast<CVector3Property*>(data->getProperty("position"));
+					p->set(m_gui->getPosition());
+					p->OnChanged();
+					CVector3Property* s = dynamic_cast<CVector3Property*>(data->getProperty("scale"));
+					s->set(m_gui->getScale());
+					s->OnChanged();
+					CVector3Property* r = dynamic_cast<CVector3Property*>(data->getProperty("rotation"));
+					r->set(m_gui->getRotation());
+					r->OnChanged();
+				}
 			}
 		}
 

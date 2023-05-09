@@ -46,6 +46,7 @@ namespace Skylicht
 			CGUIHierachyNode* m_contextNode;
 
 			GUI::CMenu* m_contextMenu;
+			GUI::CMenuItem* m_items[5];
 
 		public:
 			CContextMenuGUIElement(GUI::CCanvas* canvas);
