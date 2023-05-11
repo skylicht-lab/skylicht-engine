@@ -202,11 +202,12 @@ namespace Skylicht
 
 		}
 
-		void CGUITransformGizmos::setTransform(const core::vector3df& pos, const core::vector3df& rot, const core::vector3df& scale)
+		void CGUITransformGizmos::setTransform(const core::vector3df& pos, const core::vector3df& rot, const core::vector3df& scale, const core::rectf& rect)
 		{
 			m_position = pos;
 			m_rotation = rot;
 			m_scale = scale;
+			m_rect = rect;
 
 			CGUIHandles::getInstance()->end();
 

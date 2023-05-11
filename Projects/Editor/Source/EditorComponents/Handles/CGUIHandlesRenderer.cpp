@@ -84,6 +84,12 @@ namespace Skylicht
 			{
 				drawScaleGizmo(pos, rot);
 			}
+
+			if (handles->isHandleRect())
+			{
+				core::matrix4 world = getHandleWorldTransform();
+				drawRectGizmo(world);
+			}
 		}
 
 		void CGUIHandlesRenderer::drawRotationGizmo(const core::vector3df& pos, const core::quaternion& rot)
@@ -173,6 +179,46 @@ namespace Skylicht
 			g->draw2DLines(points, m_hoverOnAxis[2] ? m_selectionColor : m_directionColor[2]);
 		}
 
+		void CGUIHandlesRenderer::drawRectGizmo(const core::matrix4& world)
+		{
+			CGraphics2D* g = CGraphics2D::getInstance();
+			if (m_hoverOnRect[0] ||
+				m_hoverOnRect[1] ||
+				m_hoverOnRect[2] ||
+				m_hoverOnRect[3])
+			{
+				float z = 0.0f;
+				const core::rectf& r = CGUIHandles::getInstance()->getHandleRect();
+
+				core::vector3df topLeft(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);
+				core::vector3df topRight(r.LowerRightCorner.X, r.UpperLeftCorner.Y, z);
+				core::vector3df bottomLeft(r.UpperLeftCorner.X, r.LowerRightCorner.Y, z);
+				core::vector3df bottomRight(r.LowerRightCorner.X, r.LowerRightCorner.Y, z);
+
+				world.transformVect(topLeft);
+				world.transformVect(topRight);
+				world.transformVect(bottomLeft);
+				world.transformVect(bottomRight);
+
+				core::vector2df tl(topLeft.X, topLeft.Y);
+				core::vector2df tr(topRight.X, topRight.Y);
+				core::vector2df br(bottomRight.X, bottomRight.Y);
+				core::vector2df bl(bottomLeft.X, bottomLeft.Y);
+
+				if (m_hoverOnRect[0])
+					g->draw2DLine(tl, tr, m_selectionColor);
+
+				if (m_hoverOnRect[1])
+					g->draw2DLine(tr, br, m_selectionColor);
+
+				if (m_hoverOnRect[2])
+					g->draw2DLine(br, bl, m_selectionColor);
+
+				if (m_hoverOnRect[3])
+					g->draw2DLine(bl, tl, m_selectionColor);
+			}
+		}
+
 		void CGUIHandlesRenderer::onMouseEvent(float x, float y, int state)
 		{
 			CGUIHandles* handles = CGUIHandles::getInstance();
@@ -182,6 +228,9 @@ namespace Skylicht
 				handleRotation(x, y, state);
 			else if (handles->isHandleScale())
 				handleScale(x, y, state);
+
+			if (handles->isHandleRect())
+				handleRect(x, y, state);
 		}
 
 		void CGUIHandlesRenderer::cancel()
@@ -229,6 +278,7 @@ namespace Skylicht
 					m_mouseDown = true;
 					m_lastMouse = mouse;
 					m_lastPosition = handles->getHandlePosition();
+					m_lastRect = handles->getHandleRect();
 				}
 				else if (state == 2)
 				{
@@ -301,22 +351,27 @@ namespace Skylicht
 					{
 						// dragging
 						core::vector3df offset = mouse - m_lastMouse;
-						core::vector3df resultPosition;
+
+						// convert to world
+						core::vector3df resultPosition = m_lastPosition;
+						handles->getWorld().transformVect(resultPosition);
 
 						if (m_hoverOnAxis[2])
-							resultPosition = m_lastPosition + offset;
+							resultPosition = resultPosition + offset;
 						else if (m_hoverOnAxis[0])
 						{
 							float d = offset.dotProduct(x);
-							resultPosition = m_lastPosition + x * d;
+							resultPosition = resultPosition + x * d;
 						}
 						else if (m_hoverOnAxis[1])
 						{
 							float d = offset.dotProduct(y);
-							resultPosition = m_lastPosition + y * d;
+							resultPosition = resultPosition + y * d;
 						}
 
+						// convert to local
 						handles->getWorldInv().transformVect(resultPosition);
+
 						// snapVec3(resultPosition);
 						handles->setTargetPosition(resultPosition);
 					}
@@ -332,6 +387,90 @@ namespace Skylicht
 		void CGUIHandlesRenderer::handleScale(float mouseX, float mouseY, int state)
 		{
 
+		}
+
+		void CGUIHandlesRenderer::handleRect(float mouseX, float mouseY, int state)
+		{
+			CGUIHandles* handles = CGUIHandles::getInstance();
+			core::vector2df mouse((float)mouseX, (float)mouseY);
+
+			if (!m_cancel)
+			{
+				core::matrix4 world = getHandleWorldTransform();
+
+				const core::rectf& r = handles->getHandleRect();
+				float z = 0.0f;
+
+				core::vector3df topLeft(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);
+				core::vector3df topRight(r.LowerRightCorner.X, r.UpperLeftCorner.Y, z);
+				core::vector3df bottomLeft(r.UpperLeftCorner.X, r.LowerRightCorner.Y, z);
+				core::vector3df bottomRight(r.LowerRightCorner.X, r.LowerRightCorner.Y, z);
+
+				world.transformVect(topLeft);
+				world.transformVect(topRight);
+				world.transformVect(bottomLeft);
+				world.transformVect(bottomRight);
+
+				core::vector2df tl(topLeft.X, topLeft.Y);
+				core::vector2df tr(topRight.X, topRight.Y);
+				core::vector2df br(bottomRight.X, bottomRight.Y);
+				core::vector2df bl(bottomLeft.X, bottomLeft.Y);
+
+				if (m_mouseDown == false)
+				{
+					if (m_hoverOnAxis[0] || m_hoverOnAxis[1] || m_hoverOnAxis[2])
+					{
+						m_hoverOnRect[0] = false;
+						m_hoverOnRect[1] = false;
+						m_hoverOnRect[2] = false;
+						m_hoverOnRect[3] = false;
+					}
+					else
+					{
+						m_hoverOnRect[0] = CHitTest2D::isLineHit(tl, tr, mouse);
+						m_hoverOnRect[1] = CHitTest2D::isLineHit(tr, br, mouse);
+						m_hoverOnRect[2] = CHitTest2D::isLineHit(br, bl, mouse);
+						m_hoverOnRect[3] = CHitTest2D::isLineHit(bl, tl, mouse);
+					}
+				}
+				else
+				{
+					// drag
+
+				}
+			}
+		}
+
+		core::matrix4 CGUIHandlesRenderer::getHandleWorldTransform()
+		{
+			CGUIHandles* handles = CGUIHandles::getInstance();
+			const core::vector3df& pos = handles->getHandlePosition();
+			const core::quaternion& rot = handles->getHandleRotation();
+			const core::vector3df& scale = handles->getHandleScale();
+
+			core::matrix4 mat = rot.getMatrix();
+			f32* m = mat.pointer();
+
+			m[0] *= scale.X;
+			m[1] *= scale.X;
+			m[2] *= scale.X;
+			m[3] *= scale.X;
+
+			m[4] *= scale.Y;
+			m[5] *= scale.Y;
+			m[6] *= scale.Y;
+			m[7] *= scale.Y;
+
+			m[8] *= scale.Z;
+			m[9] *= scale.Z;
+			m[10] *= scale.Z;
+			m[11] *= scale.Z;
+
+			m[12] = pos.X;
+			m[13] = pos.Y;
+			m[14] = pos.Z;
+
+			return handles->getWorld() * mat;
 		}
 	}
 }
