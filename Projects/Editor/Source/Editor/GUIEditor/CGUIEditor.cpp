@@ -78,7 +78,8 @@ namespace Skylicht
 						gizmos->setTransform(
 							m_gui->getPosition(),
 							m_gui->getRotation(),
-							m_gui->getScale()
+							m_gui->getScale(),
+							m_gui->getRect()
 						);
 					}
 				}

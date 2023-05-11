@@ -118,6 +118,7 @@ namespace Skylicht
 			m_position = position;
 			m_rotation = rotation;
 			m_scale = scale;
+			m_rect = m_targetRect;
 
 			return m_targetRect;
 		}
