@@ -95,9 +95,19 @@ namespace Skylicht
 				return m_handleScale;
 			}
 
+			inline bool isHandleRect()
+			{
+				return m_handleRect;
+			}
+
 			inline const core::vector3df& getHandlePosition()
 			{
 				return m_position;
+			}
+
+			inline const core::rectf& getHandleRect()
+			{
+				return m_rect;
 			}
 
 			inline void setTargetPosition(const core::vector3df& target)

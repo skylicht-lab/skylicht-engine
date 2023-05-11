@@ -38,6 +38,7 @@ namespace Skylicht
 			SColor m_selectionColor;
 			float m_scale;
 			bool m_hoverOnAxis[3];
+			bool m_hoverOnRect[4];
 			int m_mouseState;
 			bool m_cancel;
 			bool m_mouseDown;
@@ -46,6 +47,7 @@ namespace Skylicht
 			core::vector3df m_lastPosition;
 			core::vector3df m_lastRotate;
 			core::vector3df m_lastScale;
+			core::rectf m_lastRect;
 
 		public:
 			CGUIHandlesRenderer();
@@ -60,6 +62,8 @@ namespace Skylicht
 
 			void drawTranslateGizmo(const core::vector3df& pos, const core::quaternion& rot);
 
+			void drawRectGizmo(const core::matrix4& world);
+
 			void onMouseEvent(float mouseX, float mouseY, int mouseState);
 
 			void handleTranslate(float x, float y, int state);
@@ -68,7 +72,11 @@ namespace Skylicht
 
 			void handleScale(float x, float y, int state);
 
+			void handleRect(float x, float y, int state);
+
 			void cancel();
+
+			core::matrix4 getHandleWorldTransform();
 		};
 	}
 }

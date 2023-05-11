@@ -109,6 +109,11 @@ namespace Skylicht
 			CGUIElement* newNode = NULL;
 
 			core::rectf r = parentNode->getRect();
+			if (r.getWidth() > 200.0f)
+				r.LowerRightCorner.X = 200.0f;
+			if (r.getHeight() > 200.0f)
+				r.LowerRightCorner.Y = 200.0f;
+
 			SColor c(255, 255, 255, 255);
 
 			if (command == L"GUI Element")
