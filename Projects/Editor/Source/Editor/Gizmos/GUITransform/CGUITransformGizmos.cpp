@@ -141,7 +141,13 @@ namespace Skylicht
 
 				if (newRect != *m_rect)
 				{
+					*m_rect = newRect;
+					m_rect.notify(this);
 
+					m_gui->setRect(newRect);
+
+					m_changed = true;
+					updateProperty();
 				}
 
 				if (handle->endCheck())
@@ -177,6 +183,22 @@ namespace Skylicht
 					CVector3Property* r = dynamic_cast<CVector3Property*>(data->getProperty("rotation"));
 					r->set(m_gui->getRotation());
 					r->OnChanged();
+
+					core::rectf rect = m_gui->getRect();
+
+					CFloatProperty* rx = dynamic_cast<CFloatProperty*>(data->getProperty("rectX"));
+					rx->set(rect.UpperLeftCorner.X);
+					CFloatProperty* ry = dynamic_cast<CFloatProperty*>(data->getProperty("rectY"));
+					ry->set(rect.UpperLeftCorner.Y);
+					CFloatProperty* rw = dynamic_cast<CFloatProperty*>(data->getProperty("rectW"));
+					rw->set(rect.getWidth());
+					CFloatProperty* rh = dynamic_cast<CFloatProperty*>(data->getProperty("rectH"));
+					rh->set(rect.getHeight());
+
+					rx->OnChanged();
+					ry->OnChanged();
+					rw->OnChanged();
+					rh->OnChanged();
 				}
 			}
 		}

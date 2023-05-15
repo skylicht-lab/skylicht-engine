@@ -669,6 +669,16 @@ namespace Skylicht
 			return m_enums[i];
 		}
 
+		SEnumString* getEnumByValue(int value)
+		{
+			for (int i = 0, n = (int)m_enums.size(); i < n; i++)
+			{
+				if (m_enums[i].Value == value)
+					return &m_enums[i];
+			}
+			return NULL;
+		}
+
 		const std::vector<SEnumString>& getEnum()
 		{
 			return m_enums;
