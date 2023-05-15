@@ -135,6 +135,11 @@ namespace Skylicht
 				m_targetScale = scale;
 			}
 
+			inline void setTargetRect(const core::rectf& rect)
+			{
+				m_targetRect = rect;
+			}
+
 			inline void setEndCheck(bool b)
 			{
 				m_endCheck = b;

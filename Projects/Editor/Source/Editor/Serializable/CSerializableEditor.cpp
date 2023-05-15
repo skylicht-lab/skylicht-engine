@@ -137,6 +137,13 @@ namespace Skylicht
 					};
 
 					ui->addCheckBox(layout, ui->getPrettyName(value->Name), subject);
+
+					valueProperty->OnChanged = [value, subject, observer]()
+					{
+						subject->set(value->get());
+						subject->notify(observer);
+					};
+
 					m_subjects.push_back(subject);
 				}
 				else if (valueProperty->getType() == EPropertyDataType::Float)
@@ -349,6 +356,14 @@ namespace Skylicht
 					};
 
 					ui->addTextBox(layout, ui->getPrettyName(value->Name), subject);
+
+					valueProperty->OnChanged = [value, subject, observer]()
+					{
+						std::wstring stringValue = CStringImp::convertUTF8ToUnicode(value->get().c_str());
+						subject->set(stringValue);
+						subject->notify(observer);
+					};
+
 					m_subjects.push_back(subject);
 				}
 				else if (valueProperty->getType() == EPropertyDataType::Color)
@@ -374,6 +389,13 @@ namespace Skylicht
 					};
 
 					ui->addColorPicker(layout, ui->getPrettyName(value->Name), subject);
+
+					valueProperty->OnChanged = [value, subject, observer]()
+					{
+						subject->set(value->get());
+						subject->notify(observer);
+					};
+
 					m_subjects.push_back(subject);
 				}
 				else if (valueProperty->getType() == EPropertyDataType::FilePath)
@@ -400,6 +422,13 @@ namespace Skylicht
 					};
 
 					ui->addInputFile(layout, ui->getPrettyName(value->Name), subject, value->Exts);
+
+					valueProperty->OnChanged = [value, subject, observer]()
+					{
+						subject->set(value->get());
+						subject->notify(observer);
+					};
+
 					m_subjects.push_back(subject);
 				}
 				else if (valueProperty->getType() == EPropertyDataType::FolderPath)
@@ -426,6 +455,13 @@ namespace Skylicht
 					};
 
 					ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
+
+					valueProperty->OnChanged = [value, subject, observer]()
+					{
+						subject->set(value->get());
+						subject->notify(observer);
+					};
+
 					m_subjects.push_back(subject);
 				}
 				else if (valueProperty->getType() == EPropertyDataType::Enum)
@@ -465,6 +501,17 @@ namespace Skylicht
 							ui->getWindow()->getCanvas()->closeMenu();
 						};
 					}
+
+					valueProperty->OnChanged = [dropBox, enumValue]()
+					{
+						int currentValue = enumValue->getIntValue();
+						CEnumPropertyData::SEnumString* enumData = enumValue->getEnumByValue(currentValue);
+						if (enumData)
+						{
+							std::wstring enumName = CStringImp::convertUTF8ToUnicode(enumData->Name.c_str());
+							dropBox->setLabel(enumName);
+						}
+					};
 				}
 				else if (valueProperty->getType() == EPropertyDataType::Object)
 				{

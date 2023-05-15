@@ -263,6 +263,15 @@ namespace Skylicht
 				}
 				handles->setTargetRotation(m_lastScale);
 			}
+
+			if (handles->isHandleRect())
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					m_hoverOnRect[i] = false;
+				}
+				handles->setTargetRect(m_lastRect);
+			}
 		}
 
 		void CGUIHandlesRenderer::handleTranslate(float mouseX, float mouseY, int state)
@@ -436,7 +445,64 @@ namespace Skylicht
 				else
 				{
 					// drag
+					if (m_hoverOnRect[0] ||
+						m_hoverOnRect[1] ||
+						m_hoverOnRect[2] ||
+						m_hoverOnRect[3])
+					{
+						// dragging
+						core::vector3df offset = core::vector3df(mouse.X, mouse.Y, 0.0f) - m_lastMouse;
 
+						core::quaternion worldRot(handles->getWorld());
+						worldRot.normalize();
+
+						core::quaternion rot = worldRot * handles->getHandleRotation();
+						rot.normalize();
+
+						core::vector3df x(1.0f, 0.0f, 0.0f);
+						core::vector3df y(0.0f, 1.0f, 0.0f);
+
+						x = rot * x;
+						x.normalize();
+
+						y = rot * y;
+						y.normalize();
+
+						float fx = offset.dotProduct(x);
+						float fy = offset.dotProduct(y);
+
+						core::rectf target = m_lastRect;
+
+						if (m_hoverOnRect[0])
+						{
+							target.UpperLeftCorner.Y = target.UpperLeftCorner.Y + fy;	// top
+							if (target.UpperLeftCorner.Y > target.LowerRightCorner.Y)
+								target.UpperLeftCorner.Y = target.LowerRightCorner.Y;
+						}
+
+						if (m_hoverOnRect[1])
+						{
+							target.LowerRightCorner.X = target.LowerRightCorner.X + fx;	// right
+							if (target.LowerRightCorner.X < target.UpperLeftCorner.X)
+								target.LowerRightCorner.X = target.UpperLeftCorner.X;
+						}
+
+						if (m_hoverOnRect[2])
+						{
+							target.LowerRightCorner.Y = target.LowerRightCorner.Y + fy;	// bottom
+							if (target.LowerRightCorner.Y < target.UpperLeftCorner.Y)
+								target.LowerRightCorner.Y = target.UpperLeftCorner.Y;
+						}
+
+						if (m_hoverOnRect[3])
+						{
+							target.UpperLeftCorner.X = target.UpperLeftCorner.X + fx;	// left
+							if (target.UpperLeftCorner.X > target.LowerRightCorner.X)
+								target.UpperLeftCorner.X = target.LowerRightCorner.X;
+						}
+
+						handles->setTargetRect(target);
+					}
 				}
 			}
 		}
