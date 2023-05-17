@@ -91,11 +91,8 @@ float2 binarySearch(float3 dir, float3 rayPosition)
 	const float2 uvOffset = float2(0.5, 0.5);
 	const float2 uvScale = float2(0.5, -0.5);
 	[unroll]
-	for(int i = 4; i > 0; --i)
+	for(int i = 16; i > 0; --i)
 	{
-		{projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);projectedCoord.xy = projectedCoord.xy / projectedCoord.w;projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);dDepth = rayPosition.z - testPosition.w;dir *= 0.5;if(dDepth > 0.0)	rayPosition -= dir;else	rayPosition += dir;};
-		{projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);projectedCoord.xy = projectedCoord.xy / projectedCoord.w;projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);dDepth = rayPosition.z - testPosition.w;dir *= 0.5;if(dDepth > 0.0)	rayPosition -= dir;else	rayPosition += dir;};
-		{projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);projectedCoord.xy = projectedCoord.xy / projectedCoord.w;projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);dDepth = rayPosition.z - testPosition.w;dir *= 0.5;if(dDepth > 0.0)	rayPosition -= dir;else	rayPosition += dir;};
 		{projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);projectedCoord.xy = projectedCoord.xy / projectedCoord.w;projectedCoord.xy = uvScale * projectedCoord.xy + uvOffset;testPosition = uTexPosition.Sample(uTexPositionSampler, projectedCoord.xy);dDepth = rayPosition.z - testPosition.w;dir *= 0.5;if(dDepth > 0.0)	rayPosition -= dir;else	rayPosition += dir;};
 	}
 	return projectedCoord.xy;
@@ -111,11 +108,8 @@ float2 ssrRayMarch(const float4 position, const float3 reflection)
 	const float2 uvOffset = float2(0.5, 0.5);
 	const float2 uvScale = float2(0.5, -0.5);
 	[unroll]
-	for(int i = 8; i > 0; --i)
+	for(int i = 32; i > 0; --i)
 	{
-		{rayPosition += dir;projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);projectedCoord.xy = projectedCoord.xy / projectedCoord.w;ssrUV = uvScale * projectedCoord.xy + uvOffset;testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);if(rayPosition.z - testPosition.w >= 0.0){	return binarySearch(dir, rayPosition);}};
-		{rayPosition += dir;projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);projectedCoord.xy = projectedCoord.xy / projectedCoord.w;ssrUV = uvScale * projectedCoord.xy + uvOffset;testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);if(rayPosition.z - testPosition.w >= 0.0){	return binarySearch(dir, rayPosition);}};
-		{rayPosition += dir;projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);projectedCoord.xy = projectedCoord.xy / projectedCoord.w;ssrUV = uvScale * projectedCoord.xy + uvOffset;testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);if(rayPosition.z - testPosition.w >= 0.0){	return binarySearch(dir, rayPosition);}};
 		{rayPosition += dir;projectedCoord = mul(float4(rayPosition.xyz, 1.0), uProjection);projectedCoord.xy = projectedCoord.xy / projectedCoord.w;ssrUV = uvScale * projectedCoord.xy + uvOffset;testPosition = uTexPosition.Sample(uTexPositionSampler, ssrUV);if(rayPosition.z - testPosition.w >= 0.0){	return binarySearch(dir, rayPosition);}};
 	}
 	return ssrUV;
