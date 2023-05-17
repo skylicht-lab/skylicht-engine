@@ -237,7 +237,10 @@ namespace Skylicht
 				if (w->Parent)
 					w->World.setbyproduct_nocheck(w->Parent->World, w->Relative);
 				else
-					w->World.makeIdentity();
+				{
+					// The relative will set on render (driver->setTransform)
+					w->World = core::IdentityMatrix;
+				}
 
 				// notify transform updated
 				t->HasChanged = false;

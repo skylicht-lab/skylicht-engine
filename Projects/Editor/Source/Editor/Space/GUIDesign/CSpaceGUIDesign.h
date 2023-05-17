@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/CSpace.h"
 #include "EditorComponents/Handles/CGUIHandlesRenderer.h"
 #include "Editor/Gizmos/GUITransform/CGUITransformGizmos.h"
+#include "Selection/CGUISelecting.h"
 
 namespace Skylicht
 {
@@ -53,6 +54,8 @@ namespace Skylicht
 			float m_viewX;
 			float m_viewY;
 
+			float m_mouseX;
+			float m_mouseY;
 			float m_mouseGUIX;
 			float m_mouseGUIY;
 			bool m_leftMouseDown;
@@ -65,6 +68,7 @@ namespace Skylicht
 
 			CGUIHandlesRenderer* m_handlesRenderer;
 			CGUITransformGizmos* m_gizmos;
+			CGUISelecting* m_selecting;
 
 		public:
 			CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor);

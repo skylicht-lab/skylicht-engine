@@ -102,6 +102,9 @@ namespace Skylicht
 			if (m_gui == NULL)
 				return;
 
+			if (m_gui->getDock() != EGUIDock::NoDock)
+				return;
+
 			// position
 			{
 				core::vector3df newPos = CGUIHandles::getInstance()->positionHandle(*m_position, m_gui->getRotationQuaternion());
