@@ -37,11 +37,8 @@ float2 binarySearch(float3 dir, float3 rayPosition)
 	
 	// 16 Step
 	[unroll]
-	for(int i = 4; i > 0; --i)
+	for(int i = 16; i > 0; --i)
 	{
-		BINARY_SEARCH();
-		BINARY_SEARCH();
-		BINARY_SEARCH();
 		BINARY_SEARCH();
 	}
 	
@@ -67,11 +64,8 @@ float2 ssrRayMarch(const float4 position, const float3 reflection)
 	
 	// rayMarch test 32 step
 	[unroll]
-	for(int i = 8; i > 0; --i)
+	for(int i = 32; i > 0; --i)
 	{
-		SSR_RAY_MARCH();
-		SSR_RAY_MARCH();
-		SSR_RAY_MARCH();
 		SSR_RAY_MARCH();
 	}
 	

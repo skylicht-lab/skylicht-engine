@@ -37,11 +37,8 @@ vec2 binarySearch(vec3 dir, vec3 rayPosition)
 	float dDepth;
 	
 	// 16 Step
-	for(int i = 4; i > 0; --i)
+	for(int i = 16; i > 0; --i)
 	{
-		BINARY_SEARCH();
-		BINARY_SEARCH();
-		BINARY_SEARCH();
 		BINARY_SEARCH();
 	}
 	
@@ -67,11 +64,8 @@ vec2 ssrRayMarch(const vec4 position, const vec3 reflection)
 	vec4 testPosition;
 	
 	// rayMarch 32 step
-	for(int i = 8; i > 0; --i)
+	for(int i = 32; i > 0; --i)
 	{
-		SSR_RAY_MARCH();
-		SSR_RAY_MARCH();
-		SSR_RAY_MARCH();
 		SSR_RAY_MARCH();
 	}
 	
