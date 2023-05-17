@@ -121,6 +121,8 @@ namespace Skylicht
 			m_handlesRenderer = new CGUIHandlesRenderer();
 			CGUIHandles::getInstance()->setHandleRenderer(m_handlesRenderer);
 
+			m_selecting = new CGUISelecting();
+
 			CGUIDesignController::getInstance()->setSpaceDesign(this);
 		}
 
@@ -128,6 +130,7 @@ namespace Skylicht
 		{
 			CGUIHandles::getInstance()->setHandleRenderer(NULL);
 
+			delete m_selecting;
 			delete m_handlesRenderer;
 			delete m_gizmos;
 
@@ -220,6 +223,8 @@ namespace Skylicht
 			float my = localPos.Y - m_viewY * m_guiScale;
 			m_mouseGUIX = mx / m_guiScale;
 			m_mouseGUIY = my / m_guiScale;
+			m_mouseX = localPos.X;
+			m_mouseY = localPos.Y;
 
 			swprintf(
 				mouseText, 512,
@@ -297,7 +302,13 @@ namespace Skylicht
 
 			event.GameEvent.Sender = m_scene;
 
+			// drag change position, rect
 			CGUIHandles::getInstance()->OnEvent(event);
+
+			// pick select object
+			event.MouseInput.X = (int)m_mouseX;
+			event.MouseInput.Y = (int)m_mouseY;
+			m_selecting->OnEvent(event);
 		}
 
 		void CSpaceGUIDesign::onZoomIn(GUI::CBase* base)
@@ -400,6 +411,9 @@ namespace Skylicht
 				core::recti viewport;
 				viewport.UpperLeftCorner.set((int)position.X, (int)position.Y);
 				viewport.LowerRightCorner.set((int)(position.X + m_view->width()), (int)(position.Y + base->height()));
+
+				// also apply viewport for pick selection
+				m_selecting->setViewport((int)m_view->width(), (int)m_view->height());
 
 				// setup new viewport
 				getVideoDriver()->setViewPort(viewport);

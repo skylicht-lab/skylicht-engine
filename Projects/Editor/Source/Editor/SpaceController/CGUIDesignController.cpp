@@ -149,6 +149,52 @@ namespace Skylicht
 			}
 		}
 
+		void CGUIDesignController::deselectAllOnHierachy()
+		{
+			CScene* scene = CSceneController::getInstance()->getScene();
+			if (scene)
+			{
+				CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
+				CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
+
+				std::vector<CSelectObject*>& listSelected = CSelection::getInstance()->getSelected();
+				for (CSelectObject* obj : listSelected)
+				{
+					if (obj->getType() == CSelectObject::GUIElement)
+					{
+						CGUIElement* gui = canvas->getGUIByID(obj->getID().c_str());
+						gui->setDrawBorder(false);
+					}
+				}
+			}
+
+			if (m_spaceHierarchy)
+				m_spaceHierarchy->deselectAll();
+		}
+
+		CGUIHierachyNode* CGUIDesignController::deselectOnHierachy(CGUIElement* element)
+		{
+			CGUIHierachyNode* node = m_rootNode->getNodeByTag(element);
+			if (node != NULL)
+			{
+				GUI::CTreeNode* treeNode = node->getGUINode();
+				treeNode->setSelected(false);
+			}
+			return node;
+		}
+
+		CGUIHierachyNode* CGUIDesignController::selectOnHierachy(CGUIElement* element)
+		{
+			CGUIHierachyNode* node = m_rootNode->getNodeByTag(element);
+			if (node != NULL)
+			{
+				GUI::CTreeNode* treeNode = node->getGUINode();
+				treeNode->setSelected(true);
+				m_spaceHierarchy->scrollToNode(treeNode);
+			}
+			return node;
+		}
+
 		void CGUIDesignController::setNodeEvent(CGUIHierachyNode* node)
 		{
 			node->OnUpdate = std::bind(&CGUIDesignController::onUpdateNode, this, std::placeholders::_1);

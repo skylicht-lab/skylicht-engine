@@ -83,6 +83,8 @@ namespace Skylicht
 
 		void render(CCamera* camera);
 
+		CGUIElement* getHitTest(CCamera* camera, float x, float y, const core::recti& viewport);
+
 		inline CEntityPrefab* getEntityManager()
 		{
 			return m_entityMgr;

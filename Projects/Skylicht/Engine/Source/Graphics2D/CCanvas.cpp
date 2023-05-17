@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CCanvas.h"
 #include "Graphics2D/CGraphics2D.h"
+#include "Projective/CProjective.h"
 
 #include "GUISystem/CGUILayoutSystem.h"
 #include "Utils/CStringImp.h"
@@ -198,6 +199,136 @@ namespace Skylicht
 			for (int i = (int)entity->m_childs.size() - 1; i >= 0; i--)
 				renderEntity.push(entity->m_childs[i]);
 		}
+	}
+
+	CGUIElement* CCanvas::getHitTest(CCamera* camera, float x, float y, const core::recti& viewport)
+	{
+		core::matrix4 billboardMatrix;
+		core::matrix4 world;
+
+		if (camera->getProjectionType() != CCamera::OrthoUI)
+		{
+			// Calculate billboard matrix
+			// this is invert view camera
+			const core::matrix4& cameraTransform = camera->getGameObject()->getTransform()->getRelativeTransform();
+
+			// look vector
+			core::vector3df cameraPosition = cameraTransform.getTranslation();
+			core::vector3df look(0.0f, 0.0f, -1.0f);
+			cameraTransform.rotateVect(look);
+			look.normalize();
+
+			// up vector
+			core::vector3df up(0.0f, 1.0f, 0.0f);
+			cameraTransform.rotateVect(up);
+			up.normalize();
+
+			// right vector
+			core::vector3df right = up.crossProduct(look);
+			up = look.crossProduct(right);
+			up.normalize();
+
+			// billboard matrix		
+			f32* matData = billboardMatrix.pointer();
+
+			matData[0] = right.X;
+			matData[1] = right.Y;
+			matData[2] = right.Z;
+			matData[3] = 0.0f;
+
+			matData[4] = up.X;
+			matData[5] = up.Y;
+			matData[6] = up.Z;
+			matData[7] = 0.0f;
+
+			matData[8] = look.X;
+			matData[9] = look.Y;
+			matData[10] = look.Z;
+			matData[11] = 0.0f;
+
+			matData[12] = 0.0f;
+			matData[13] = 0.0f;
+			matData[14] = 0.0f;
+			matData[15] = 1.0f;
+		}
+
+		if (m_enable3DBillboard == true && camera->getProjectionType() != CCamera::OrthoUI)
+		{
+			// rotation canvas to billboard
+			world = billboardMatrix;
+
+			// scale canvas
+			core::matrix4 scale;
+			scale.setScale(m_root->getScale());
+			world *= scale;
+
+			// move to canvas position
+			world.setTranslation(m_root->getPosition());
+		}
+		else
+		{
+			// world is relative of root
+			world = m_root->getRelativeTransform();
+		}
+
+		core::array<CGUIElement*> visits;
+		visits.push_back(m_root);
+
+		CGUIElement* result = NULL;
+
+		while (visits.size() > 0)
+		{
+			CGUIElement* gui = visits.getLast();
+			visits.erase(visits.size() - 1);
+
+			core::matrix4 worldElementTransform;
+			if (gui == m_root)
+				worldElementTransform = world;
+			else
+				worldElementTransform = world * gui->getAbsoluteTransform();
+
+			const core::rectf& r = gui->getRect();
+
+			core::vector3df p[4];
+			core::vector3df p2d[4];
+
+			p[0].set(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, 0.0f);
+			p[1].set(r.LowerRightCorner.X, r.UpperLeftCorner.Y, 0.0f);
+			p[2].set(r.UpperLeftCorner.X, r.LowerRightCorner.Y, 0.0f);
+			p[3].set(r.LowerRightCorner.X, r.LowerRightCorner.Y, 0.0f);
+
+			for (int i = 0; i < 4; i++)
+			{
+				// get real 3d position
+				worldElementTransform.transformVect(p[i]);
+
+				// project to 2d screen
+				CProjective::getScreenCoordinatesFrom3DPosition(camera, p[i], p2d[i].X, p2d[i].Y, viewport.getWidth(), viewport.getHeight());
+				p2d[i].Z = 0.0f;
+			}
+
+			// hit test
+			core::triangle3df t1(p2d[0], p2d[1], p2d[2]);
+			core::triangle3df t2(p2d[2], p2d[1], p2d[3]);
+			core::vector3df mousePos(x, y, 0.0f);
+
+			bool hit = false;
+			if (t1.isPointInside(mousePos) == true || t2.isPointInside(mousePos) == true)
+				hit = true;
+
+			if (hit)
+			{
+				result = gui;
+
+				// add child to test child
+				visits.clear();
+				std::vector<CGUIElement*>& childs = gui->getChilds();
+				for (CGUIElement* e : childs)
+					visits.push_back(e);
+			}
+		}
+
+		return result;
 	}
 
 	/*
