@@ -797,7 +797,8 @@ namespace Skylicht
 
 		void CSceneController::deselectAllOnHierachy()
 		{
-			m_spaceHierarchy->deselectAll();
+			if (m_spaceHierarchy)
+				m_spaceHierarchy->deselectAll();
 		}
 
 		CHierachyNode* CSceneController::deselectOnHierachy(CGameObject* gameObject)

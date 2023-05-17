@@ -137,7 +137,6 @@ namespace Skylicht
 					else
 					{
 						// clear selection
-						CSelection* selection = CSelection::getInstance();
 						sceneController->deselectAllOnHierachy();
 						selection->clear();
 					}

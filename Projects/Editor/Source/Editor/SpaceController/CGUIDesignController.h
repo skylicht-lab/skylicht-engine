@@ -89,6 +89,12 @@ namespace Skylicht
 
 			void createGUINode(CGUIHierachyNode* parent, const std::wstring& command);
 
+			void deselectAllOnHierachy();
+
+			CGUIHierachyNode* deselectOnHierachy(CGUIElement* element);
+
+			CGUIHierachyNode* selectOnHierachy(CGUIElement* element);
+
 		protected:
 
 			void rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode);
