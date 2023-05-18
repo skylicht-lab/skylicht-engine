@@ -152,7 +152,10 @@ void SkylichtApplication::onMouseMoved(const Event::MouseMoveEvent &mouseEvent)
     
     IrrlichtDevice *dev  = getIrrlichtDevice();
     if (dev)
+    {
+        dev->getCursorControl()->setPosition(core::vector2di(m_mouseX, m_mouseY));
         dev->postEventFromUser(event);
+    }
 }
 
 void SkylichtApplication::onMouseButtonPressed(const Event::MouseButtonEvent &mouseEvent)
