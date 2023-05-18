@@ -81,6 +81,10 @@ namespace Skylicht
 
 			void setTransform(const core::vector3df& pos, const core::vector3df& rot, const core::vector3df& scale, const core::rectf& rect);
 
+			void updateSelectedPosition(const core::vector3df& delta);
+
+			void getSelectedGUI(std::vector<CGUIElement*>& guis);
+
 		protected:
 
 			void updateProperty();

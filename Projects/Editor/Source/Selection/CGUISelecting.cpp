@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSelection.h"
 #include "CSelection.h"
 #include "GUI/Input/CInput.h"
+#include "Handles/CGUIHandles.h"
 #include "Editor/SpaceController/CSceneController.h"
 #include "Editor/SpaceController/CGUIDesignController.h"
 
@@ -66,50 +67,53 @@ namespace Skylicht
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
-					CScene* scene = CSceneController::getInstance()->getScene();
-					CGUIDesignController* controller = CGUIDesignController::getInstance();
-					CSelection* selection = CSelection::getInstance();
-
-					if (scene)
+					if (CGUIHandles::getInstance()->isMouseDragging() == false)
 					{
-						CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
-						CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+						CScene* scene = CSceneController::getInstance()->getScene();
+						CGUIDesignController* controller = CGUIDesignController::getInstance();
+						CSelection* selection = CSelection::getInstance();
 
-						CGameObject* cameraObj = scene->searchObjectInChild(L"GUICamera");
-						CCamera* camera = cameraObj->getComponent<CCamera>();
-
-						CGUIElement* gui = canvas->getHitTest(camera, (float)mouseX, (float)mouseY, m_viewport);
-						if (gui)
+						if (scene)
 						{
-							// select a gui
-							if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+							CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
+							CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+
+							CGameObject* cameraObj = scene->searchObjectInChild(L"GUICamera");
+							CCamera* camera = cameraObj->getComponent<CCamera>();
+
+							CGUIElement* gui = canvas->getHitTest(camera, (float)mouseX, (float)mouseY, m_viewport);
+							if (gui)
 							{
-								// need clear current selection
-								if (selection->getSelected(gui) == NULL)
+								// select a gui
+								if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
 								{
-									controller->deselectAllOnHierachy();
-									selection->clear();
-								}
-								controller->selectOnHierachy(gui);
-							}
-							else
-							{
-								// hold control && re-pick this object
-								if (selection->getSelected(gui) != NULL)
-								{
-									controller->deselectOnHierachy(gui);
+									// need clear current selection
+									if (selection->getSelected(gui) == NULL)
+									{
+										controller->deselectAllOnHierachy();
+										selection->clear();
+									}
+									controller->selectOnHierachy(gui);
 								}
 								else
 								{
-									controller->selectOnHierachy(gui);
+									// hold control && re-pick this object
+									if (selection->getSelected(gui) != NULL)
+									{
+										controller->deselectOnHierachy(gui);
+									}
+									else
+									{
+										controller->selectOnHierachy(gui);
+									}
 								}
 							}
-						}
-						else
-						{
-							// no select gui							
-							controller->deselectAllOnHierachy();
-							selection->clear();
+							else
+							{
+								// no select gui							
+								controller->deselectAllOnHierachy();
+								selection->clear();
+							}
 						}
 					}
 				}

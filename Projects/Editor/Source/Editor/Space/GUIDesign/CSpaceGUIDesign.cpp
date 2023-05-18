@@ -266,22 +266,34 @@ namespace Skylicht
 			}
 		}
 
-		void CSpaceGUIDesign::onLeftMouseClick(GUI::CBase* base, float x, float y, bool down)
+		void CSpaceGUIDesign::onLeftMouseClick(GUI::CBase* view, float x, float y, bool down)
 		{
 			m_leftMouseDown = down;
 			if (down)
+			{
+				GUI::CInput::getInput()->setCapture(view);
 				postMouseEventToHandles(EMIE_LMOUSE_PRESSED_DOWN);
+			}
 			else
+			{
+				GUI::CInput::getInput()->setCapture(NULL);
 				postMouseEventToHandles(EMIE_LMOUSE_LEFT_UP);
+			}
 		}
 
-		void CSpaceGUIDesign::onRightMouseClick(GUI::CBase* base, float x, float y, bool down)
+		void CSpaceGUIDesign::onRightMouseClick(GUI::CBase* view, float x, float y, bool down)
 		{
 			m_rightMouseDown = down;
 			if (down)
+			{
+				GUI::CInput::getInput()->setCapture(view);
 				postMouseEventToHandles(EMIE_RMOUSE_PRESSED_DOWN);
+			}
 			else
+			{
+				GUI::CInput::getInput()->setCapture(NULL);
 				postMouseEventToHandles(EMIE_RMOUSE_LEFT_UP);
+			}
 		}
 
 		void CSpaceGUIDesign::postMouseEventToHandles(EMOUSE_INPUT_EVENT eventType)
@@ -289,8 +301,6 @@ namespace Skylicht
 			SEvent event;
 			event.EventType = EET_MOUSE_INPUT_EVENT;
 			event.MouseInput.Event = eventType;
-			event.MouseInput.X = (int)m_mouseGUIX;
-			event.MouseInput.Y = (int)m_mouseGUIY;
 			event.MouseInput.Wheel = 0.0f;
 			event.MouseInput.ButtonStates = 0;
 
@@ -302,13 +312,15 @@ namespace Skylicht
 
 			event.GameEvent.Sender = m_scene;
 
-			// drag change position, rect
-			CGUIHandles::getInstance()->OnEvent(event);
-
-			// pick select object
+			// pick select gui object
 			event.MouseInput.X = (int)m_mouseX;
 			event.MouseInput.Y = (int)m_mouseY;
 			m_selecting->OnEvent(event);
+
+			// drag change position, rect
+			event.MouseInput.X = (int)m_mouseGUIX;
+			event.MouseInput.Y = (int)m_mouseGUIY;
+			CGUIHandles::getInstance()->OnEvent(event);
 		}
 
 		void CSpaceGUIDesign::onZoomIn(GUI::CBase* base)
