@@ -42,6 +42,7 @@ namespace Skylicht
 			int m_mouseState;
 			bool m_cancel;
 			bool m_mouseDown;
+			bool m_mouseDragging;
 
 			core::vector3df m_lastMouse;
 			core::vector3df m_lastPosition;
@@ -75,6 +76,13 @@ namespace Skylicht
 			void handleRect(float x, float y, int state);
 
 			void cancel();
+
+			void reset();
+
+			inline bool isMouseDragging()
+			{
+				return m_mouseDragging;
+			}
 
 			core::matrix4 getHandleWorldTransform();
 		};

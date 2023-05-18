@@ -40,7 +40,8 @@ namespace Skylicht
 			m_mouseState(-1),
 			m_scale(1.0f),
 			m_cancel(false),
-			m_mouseDown(false)
+			m_mouseDown(false),
+			m_mouseDragging(false)
 		{
 			m_directionColor[0].set(0xFF0000AA);
 			m_directionColor[1].set(0xFFAA0000);
@@ -233,10 +234,18 @@ namespace Skylicht
 				handleRect(x, y, state);
 		}
 
+		void CGUIHandlesRenderer::reset()
+		{
+			m_mouseState = 0;
+			m_mouseDown = false;
+			m_mouseDragging = false;
+		}
+
 		void CGUIHandlesRenderer::cancel()
 		{
 			m_cancel = true;
 			m_mouseDown = false;
+			m_mouseDragging = false;
 
 			CGUIHandles* handles = CGUIHandles::getInstance();
 			if (handles->isHandlePosition())
@@ -295,6 +304,7 @@ namespace Skylicht
 					if (!m_cancel)
 					{
 						m_mouseDown = false;
+						m_mouseDragging = false;
 						handles->setEndCheck(true);
 					}
 					m_cancel = false;
@@ -359,6 +369,7 @@ namespace Skylicht
 					if (m_hoverOnAxis[0] || m_hoverOnAxis[1] || m_hoverOnAxis[2])
 					{
 						// dragging
+						m_mouseDragging = true;
 						core::vector3df offset = mouse - m_lastMouse;
 
 						// convert to world
@@ -451,6 +462,7 @@ namespace Skylicht
 						m_hoverOnRect[3])
 					{
 						// dragging
+						m_mouseDragging = true;
 						core::vector3df offset = core::vector3df(mouse.X, mouse.Y, 0.0f) - m_lastMouse;
 
 						core::quaternion worldRot(handles->getWorld());

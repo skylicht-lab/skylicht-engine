@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/CSubject.h"
 
 #include "Serializable/CObjectSerializable.h"
-#include "Editor/Serializable/CSerializableEditor.h"
+#include "Editor/SerializableEditor/CSerializableEditor.h"
 
 #include "GUI/GUI.h"
 

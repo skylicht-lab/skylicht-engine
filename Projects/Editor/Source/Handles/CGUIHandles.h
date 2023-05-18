@@ -167,6 +167,10 @@ namespace Skylicht
 			}
 
 			virtual bool OnEvent(const SEvent& event);
+
+			bool isMouseDragging();
+
+			void reset();
 		};
 	}
 }
