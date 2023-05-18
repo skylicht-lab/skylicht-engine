@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Graphics2D/GUI/CGUIElement.h"
-#include "Editor/Serializable/CSerializableEditor.h"
+#include "Editor/SerializableEditor/CSerializableEditor.h"
 
 namespace Skylicht
 {

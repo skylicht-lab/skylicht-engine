@@ -166,5 +166,15 @@ namespace Skylicht
 
 			return false;
 		}
+
+		bool CGUIHandles::isMouseDragging()
+		{
+			return m_handlesRenderer->isMouseDragging();
+		}
+
+		void CGUIHandles::reset()
+		{
+			m_handlesRenderer->reset();
+		}
 	}
 }

@@ -97,6 +97,7 @@ namespace Skylicht
 
 				handle->setWorld(m_parentWorld);
 				handle->end();
+				handle->reset();
 			}
 
 			if (m_gui == NULL)
@@ -112,7 +113,7 @@ namespace Skylicht
 				if (newPos != *m_position)
 				{
 					core::vector3df delta = newPos - *m_position;
-					// updateSelectedPosition(delta);
+					updateSelectedPosition(delta);
 
 					m_position = newPos;
 					m_position.notify(this);
@@ -239,6 +240,39 @@ namespace Skylicht
 			m_position.notify(this);
 			m_rotation.notify(this);
 			m_scale.notify(this);
+		}
+
+		void CGUITransformGizmos::updateSelectedPosition(const core::vector3df& delta)
+		{
+			std::vector<CGUIElement*> guis;
+			getSelectedGUI(guis);
+			for (CGUIElement* gui : guis)
+			{
+				if (gui != m_gui)
+				{
+					core::vector3df newPosition = gui->getPosition() + delta;
+					gui->setPosition(newPosition);
+				}
+			}
+		}
+
+		void CGUITransformGizmos::getSelectedGUI(std::vector<CGUIElement*>& guis)
+		{
+			// Show GUI Property
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
+			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
+			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
+
+			guis.clear();
+
+			std::vector<CSelectObject*>& selectList = CSelection::getInstance()->getAllSelected();
+			for (CSelectObject* sel : selectList)
+			{
+				CGUIElement* gui = canvas->getGUIByID(sel->getID().c_str());
+				if (gui)
+					guis.push_back(gui);
+			}
 		}
 	}
 }
