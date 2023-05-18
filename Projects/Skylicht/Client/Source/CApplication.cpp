@@ -132,6 +132,10 @@ namespace Skylicht
 		m_width = viewport.getWidth();
 		m_height = viewport.getHeight();
 
+        // setup for cursor on MacOS
+        core::rect<s32> winRect(0, 0, m_width, m_height);
+        m_device->getCursorControl()->setReferenceRect(&winRect);
+        
 		// init skylicht component
 		Skylicht::initSkylicht(m_device);
 
