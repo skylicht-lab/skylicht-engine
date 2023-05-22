@@ -34,7 +34,7 @@ namespace Skylicht
 	protected:
 		std::vector<CSkeleton*> m_skeletons;
 
-		CSkeleton *m_output;
+		CSkeleton* m_output;
 
 	public:
 		CAnimationController();
@@ -49,9 +49,19 @@ namespace Skylicht
 
 		CSkeleton* createSkeleton();
 
+		int getNumSkeleton()
+		{
+			return (int)m_skeletons.size();
+		}
+
+		CSkeleton* getSkeleton(int id)
+		{
+			return m_skeletons[id];
+		}
+
 		void releaseAllSkeleton();
 
-		inline void setOutput(CSkeleton *skeleton)
+		inline void setOutput(CSkeleton* skeleton)
 		{
 			m_output = skeleton;
 		}
