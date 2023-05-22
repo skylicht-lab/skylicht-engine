@@ -191,7 +191,8 @@ namespace Skylicht
 			t->m_transformPosition = t->m_position;
 		}
 
-		t->m_position = t->m_transformPosition;
+		if (t->Parent != NULL)
+			t->m_position = t->m_transformPosition;
 	}
 
 	void CGUILayoutSystem::updateTransform()

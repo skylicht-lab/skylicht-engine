@@ -34,6 +34,8 @@ namespace Skylicht
 		m_adaptLum(NULL),
 		m_lumTarget(0),
 		m_autoExposure(false),
+		m_manualExposure(false),
+		m_exposure(1.0f),
 		m_bloomEffect(true),
 		m_fxaa(false),
 		m_screenSpaceReflection(false),
@@ -156,6 +158,7 @@ namespace Skylicht
 		// init final pass shader
 		m_finalPass.MaterialType = shaderMgr->getShaderIDByName("PostEffect");
 		m_linearPass.MaterialType = shaderMgr->getShaderIDByName("TextureLinearRGB");
+		m_finalManualExposurePass.MaterialType = shaderMgr->getShaderIDByName("PostEffectManualExposure");
 
 		// init lum pass shader
 		m_lumPass.MaterialType = shaderMgr->getShaderIDByName("Luminance");
@@ -316,12 +319,12 @@ namespace Skylicht
 		if (m_autoExposure == true)
 			luminanceMapGeneration(colorBuffer);
 
-        bool disableFXAA = false;
+		bool disableFXAA = false;
 
 #ifdef USE_ANGLE_GLES
-        disableFXAA = true;
+		disableFXAA = true;
 #endif
-        
+
 		if (m_fxaa && !disableFXAA)
 		{
 			colorID = !colorID;
@@ -342,6 +345,13 @@ namespace Skylicht
 			m_finalPass.setTexture(1, m_luminance[m_lumTarget]);
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
+		}
+		else if (m_manualExposure == true)
+		{
+			m_finalManualExposurePass.setTexture(0, colorBuffer);
+			CShaderManager::getInstance()->ShaderVec2[0].set(m_exposure, m_exposure);
+			beginRender2D(renderW, renderH);
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalManualExposurePass);
 		}
 		else
 		{
