@@ -97,9 +97,19 @@ namespace Skylicht
 			m_autoExposure = b;
 		}
 
+		inline bool isEnableAutoExposure()
+		{
+			return m_autoExposure;
+		}
+
 		inline void enableManualExposure(bool b)
 		{
 			m_manualExposure = b;
+		}
+
+		inline bool isEnableManualExpose()
+		{
+			return m_manualExposure;
 		}
 
 		inline void setManualExposure(float f)
@@ -107,9 +117,19 @@ namespace Skylicht
 			m_exposure = f;
 		}
 
+		inline float getManualExposure()
+		{
+			return m_exposure;
+		}
+
 		inline void enableBloomEffect(bool b)
 		{
 			m_bloomEffect = b;
+		}
+
+		inline bool isEnableBloomEffect()
+		{
+			return m_bloomEffect;
 		}
 
 		inline void enableFXAA(bool b)
@@ -117,9 +137,19 @@ namespace Skylicht
 			m_fxaa = b;
 		}
 
+		inline bool isEnableFXAA()
+		{
+			return m_fxaa;
+		}
+
 		inline void enableScreenSpaceReflection(bool b)
 		{
 			m_screenSpaceReflection = b;
+		}
+
+		virtual bool isEnableScreenSpaceReflection()
+		{
+			return m_screenSpaceReflection;
 		}
 
 		inline void setBloomThreshold(float f)
@@ -132,14 +162,19 @@ namespace Skylicht
 			m_bloomIntensity = f;
 		}
 
+		inline float getBloomThreshold()
+		{
+			return m_bloomThreshold;
+		}
+
+		inline float getBloomIntensity()
+		{
+			return m_bloomIntensity;
+		}
+
 		virtual ITexture* getLastFrameBuffer()
 		{
 			return m_lastFrameBuffer;
-		}
-
-		virtual bool isEnableScreenSpaceReflection()
-		{
-			return m_screenSpaceReflection;
 		}
 
 	protected:

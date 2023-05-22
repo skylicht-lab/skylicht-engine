@@ -16,7 +16,8 @@
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
-	m_downloaded(0)
+	m_downloaded(0),
+	m_guiObject(NULL)
 {
 
 }
@@ -40,14 +41,37 @@ void CViewInit::onInit()
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->initSGDeferredShader();
+
+	// init basic gui
+	CZone* zone = CContext::getInstance()->initScene()->createZone();
+	m_guiObject = zone->createEmptyObject();
+	CCanvas* canvas = m_guiObject->addComponent<CCanvas>();
+
+	// load font
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
+	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+
+	m_font = new CGlyphFont();
+	m_font->setFont("Segoe UI Light", 25);
+
+	// create text
+	m_textInfo = canvas->createText(m_font);
+	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+	m_textInfo->setText(L"Init assets");
+
+	// crate gui camera
+	CGameObject* guiCameraObject = zone->createEmptyObject();
+	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
+	guiCamera->setProjectionType(CCamera::OrthoUI);
+	CContext::getInstance()->setGUICamera(guiCamera);
 }
 
 void CViewInit::initScene()
 {
 	CBaseApp* app = getApplication();
 
-	CScene* scene = CContext::getInstance()->initScene();
-	CZone* zone = scene->createZone();
+	CScene* scene = CContext::getInstance()->getScene();
+	CZone* zone = scene->getZone(0);
 
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
@@ -193,21 +217,15 @@ void CViewInit::initProbes()
 
 		// row 0
 		probesPosition.push_back(core::vector3df(x, 2.0f, -0.4f));
-
 		probesPosition.push_back(core::vector3df(x, 2.0f, 4.0f));
-
 		probesPosition.push_back(core::vector3df(x, 2.0f, -4.6f));
 
 		// row 1
-
 		probesPosition.push_back(core::vector3df(x, 7.0f, -0.4f));
-
 		probesPosition.push_back(core::vector3df(x, 7.0f, 4.0f));
-
 		probesPosition.push_back(core::vector3df(x, 7.0f, -4.36));
 
 		// row 2
-
 		probesPosition.push_back(core::vector3df(x, 16.0f, -0.4f));
 	}
 
@@ -405,7 +423,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 
 void CViewInit::onDestroy()
 {
-
+	m_guiObject->remove();
 }
 
 void CViewInit::onUpdate()
@@ -436,8 +454,10 @@ void CViewInit::onUpdate()
 			m_getFile->download(CGetFileURL::Get);
 
 			char log[512];
-			sprintf(log, "Download asset: %s", filename);
+			sprintf(log, "Download asset: %s - %d%%", filename, m_getFile->getPercent());
 			os::Printer::log(log);
+
+			m_textInfo->setText(log);
 		}
 		else
 		{
@@ -476,6 +496,7 @@ void CViewInit::onUpdate()
 		}
 
 		m_initState = CViewInit::InitScene;
+		m_textInfo->setText("Init scene");
 #endif
 	}
 	break;
@@ -504,5 +525,6 @@ void CViewInit::onUpdate()
 
 void CViewInit::onRender()
 {
-
+	CCamera* guiCamera = CContext::getInstance()->getGUICamera();
+	CGraphics2D::getInstance()->render(guiCamera);
 }

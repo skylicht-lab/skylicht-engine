@@ -55,7 +55,8 @@ namespace Skylicht
 		m_url(url),
 		m_fileName(fileName),
 		m_state(None),
-		m_errorCode(0)
+		m_errorCode(0),
+		m_percent(0)
 	{
 
 	}
@@ -110,6 +111,8 @@ namespace Skylicht
 
 	void CGetFileURL::onProcess(unsigned int size, int percent)
 	{
+		m_percent = percent;
+
 		char log[512];
 		sprintf(log, "%s - process: %d - %d", m_fileName.c_str(), percent, size);
 		os::Printer::log(log);

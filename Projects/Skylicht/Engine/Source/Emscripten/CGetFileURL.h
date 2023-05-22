@@ -50,6 +50,7 @@ namespace Skylicht
 
 		EState m_state;
 		int m_errorCode;
+		int m_percent;
 
 	public:
 		CGetFileURL(const char *url, const char *fileName);
@@ -68,6 +69,11 @@ namespace Skylicht
 		void onStatus(unsigned int size, int status);
 
 		void onProcess(unsigned int size, int percent);
+
+		inline int getPercent()
+		{
+			return m_percent;
+		}
 
 		inline EState getState()
 		{

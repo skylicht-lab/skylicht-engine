@@ -5,7 +5,7 @@
 		</vs>
 		<fs>
 			<uniform name="uTexColor" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
-			<uniform name="uExposure" type="SHADER_VEC2" value="0" float="1.0, 1.0"/>
+			<uniform name="uExposure" type="SHADER_VEC2" value="0" float="2"/>
 		</fs>
 	</uniforms>
 	<customUI>
