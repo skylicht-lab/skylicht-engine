@@ -4,6 +4,7 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 #include "Lightmapper/CLightmapper.h"
+#include "CImguiManager.h"
 
 using namespace Lightmapper;
 
@@ -11,7 +12,7 @@ using namespace Lightmapper;
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleSponza *app = new SampleSponza();
+	SampleSponza* app = new SampleSponza();
 	getApplication()->registerAppEvent("SampleSponza", app);
 }
 
@@ -20,6 +21,7 @@ SampleSponza::SampleSponza()
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
+	CImguiManager::createGetInstance();
 }
 
 SampleSponza::~SampleSponza()
@@ -27,6 +29,7 @@ SampleSponza::~SampleSponza()
 	CLightmapper::releaseInstance();
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
+	CImguiManager::releaseInstance();
 }
 
 void SampleSponza::onInitApp()
@@ -72,7 +75,7 @@ void SampleSponza::onPause()
 
 void SampleSponza::onResize(int w, int h)
 {
-	CContext *ctx = CContext::getInstance();
+	CContext* ctx = CContext::getInstance();
 	if (ctx != NULL)
 		ctx->resize(w, h);
 }

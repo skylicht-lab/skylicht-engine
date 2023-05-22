@@ -85,6 +85,7 @@ CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect, bool enable
 #ifdef __EMSCRIPTEN__
 		highQuality = false;
 #endif
+		highQuality = false;
 
 		if (!highQuality)
 		{
