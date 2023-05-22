@@ -160,6 +160,8 @@ namespace video
 		"GL_SUN_multi_draw_arrays",
 		"GL_VIV_shader_binary",
 		"GL_WEBGL_compressed_texture_s3tc",
+		"GL_WEBGL_compressed_texture_pvrtc",
+		"GL_WEBGL_compressed_texture_etc ",
 	};
 
 

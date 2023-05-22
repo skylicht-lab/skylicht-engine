@@ -31,6 +31,9 @@ void CViewDemo::onInit()
 	{
 		CRenderMesh* renderMesh = m_cat->getComponent<CRenderMesh>();
 
+		CAnimationController* animController = m_cat->getComponent<CAnimationController>();
+		m_catSkeleton = animController->getSkeleton(0);
+
 		// get all render nodes and get blendshape data in mesh file
 		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
 		for (CRenderMeshData* renderer : renderers)
@@ -135,7 +138,42 @@ void CViewDemo::onGUI()
 
 		if (ImGui::CollapsingHeader("Animations", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			const char* items[] = { "Idle", "Hit", "Fall" };
+			static int animation = 0;
+			static int currentAnimation = animation;
+			ImGui::Combo("Anim", &animation, items, IM_ARRAYSIZE(items));
 
+			if (currentAnimation != animation)
+			{
+				currentAnimation = animation;
+
+				CAnimationClip* catAnimation = CAnimationManager::getInstance()->loadAnimation("SampleModels/BlendShape/Cat.fbx");
+
+				// Idle: 0 - 60
+				// Hit: 80 - 120
+				// Fall: 140 - 180
+				float from = 0;
+				float duration = 0;
+				float fps = 30.0f;
+
+				if (currentAnimation == 0)
+				{
+					from = 0.0f;
+					duration = 60.0f;
+				}
+				else if (currentAnimation == 1)
+				{
+					from = 80.0f;
+					duration = 40.0f;
+				}
+				else
+				{
+					from = 140.0f;
+					duration = 40.0f;
+				}
+
+				m_catSkeleton->setAnimation(catAnimation, true, from / fps, duration / fps);
+			}
 		}
 
 		ImGui::End();
