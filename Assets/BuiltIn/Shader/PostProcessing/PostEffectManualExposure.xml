@@ -1,0 +1,15 @@
+<shaderConfig name="PostEffectManualExposure" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexColor" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uExposure" type="SHADER_VEC2" value="0" float="1.0, 1.0"/>
+		</fs>
+	</uniforms>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/PostEffectVS.glsl" fs="GLSL/PostEffectManualExposureFS.glsl" fs_source="GLSL/PostEffectFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/PostEffectVS.hlsl" fs="HLSL/PostEffectManualExposureFS.hlsl" fs_source="HLSL/PostEffectFS.d.hlsl"/>
+</shaderConfig>

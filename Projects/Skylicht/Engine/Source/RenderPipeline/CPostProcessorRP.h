@@ -49,6 +49,7 @@ namespace Skylicht
 		int m_numTarget;
 
 		SMaterial m_finalPass;
+		SMaterial m_finalManualExposurePass;
 		SMaterial m_linearPass;
 		SMaterial m_lumPass;
 		SMaterial m_adaptLumPass;
@@ -56,8 +57,10 @@ namespace Skylicht
 
 		float m_bloomThreshold;
 		float m_bloomIntensity;
+		float m_exposure;
 
 		bool m_autoExposure;
+		bool m_manualExposure;
 		bool m_bloomEffect;
 		bool m_fxaa;
 		bool m_screenSpaceReflection;
@@ -92,6 +95,16 @@ namespace Skylicht
 		inline void enableAutoExposure(bool b)
 		{
 			m_autoExposure = b;
+		}
+
+		inline void enableManualExposure(bool b)
+		{
+			m_manualExposure = b;
+		}
+
+		inline void setManualExposure(float f)
+		{
+			m_exposure = f;
 		}
 
 		inline void enableBloomEffect(bool b)
