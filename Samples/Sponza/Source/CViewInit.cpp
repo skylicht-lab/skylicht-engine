@@ -424,6 +424,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 void CViewInit::onDestroy()
 {
 	m_guiObject->remove();
+	delete m_font;
 }
 
 void CViewInit::onUpdate()
@@ -454,10 +455,8 @@ void CViewInit::onUpdate()
 			m_getFile->download(CGetFileURL::Get);
 
 			char log[512];
-			sprintf(log, "Download asset: %s - %d%%", filename, m_getFile->getPercent());
+			sprintf(log, "Download asset: %s", filename);
 			os::Printer::log(log);
-
-			m_textInfo->setText(log);
 		}
 		else
 		{
