@@ -18,4 +18,6 @@ public:
 	virtual void onRender();
 
 	virtual void onPostRender();
+
+	void onGUI();
 };

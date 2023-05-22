@@ -17,13 +17,17 @@ public:
 	};
 
 protected:
-	CGetFileURL *m_getFile;	
+	CGetFileURL* m_getFile;
 
 	EInitState m_initState;
 	unsigned int m_downloaded;
 
+	CGameObject* m_guiObject;
+	CGlyphFont* m_font;
+	CGUIText* m_textInfo;
+
 protected:
-	io::path getBuiltInPath(const char *name);
+	io::path getBuiltInPath(const char* name);
 
 public:
 	CViewInit();
@@ -44,5 +48,5 @@ protected:
 
 	void initProbes();
 
-	void initFireParticle(Particle::CParticleComponent *ps);
+	void initFireParticle(Particle::CParticleComponent* ps);
 };
