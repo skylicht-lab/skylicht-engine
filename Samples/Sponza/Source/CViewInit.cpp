@@ -461,6 +461,10 @@ void CViewInit::onUpdate()
 		}
 		else
 		{
+			char log[512];
+			sprintf(log, "Download asset: %s - %d%%", filename, m_getFile->getPercent());
+			m_textInfo->setText(log);
+
 			if (m_getFile->getState() == CGetFileURL::Finish)
 			{
 				// [bundles].zip

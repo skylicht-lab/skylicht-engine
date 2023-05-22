@@ -173,6 +173,8 @@ namespace irr
 				IRR_SUN_multi_draw_arrays, // 69
 				IRR_VIV_shader_binary, // 85
 				GL_WEBGL_compressed_texture_s3tc,
+				GL_WEBGL_compressed_texture_pvrtc,
+				GL_WEBGL_compressed_texture_etc,
 				IRR_OGLES3_Feature_Count
 			};
 
@@ -226,17 +228,13 @@ namespace irr
 				case EVDF_TEXTURE_COMPRESSED_DXT:
 					return FeatureAvailable[GL_WEBGL_compressed_texture_s3tc]; // WebGL Support
 				case EVDF_TEXTURE_COMPRESSED_PVRTC:
-					return FeatureAvailable[IRR_IMG_texture_compression_pvrtc];
+					return FeatureAvailable[GL_WEBGL_compressed_texture_pvrtc];
 				case EVDF_TEXTURE_COMPRESSED_PVRTC2:
-					return FeatureAvailable[IRR_IMG_texture_compression_pvrtc2];
+					return FeatureAvailable[GL_WEBGL_compressed_texture_pvrtc];
 				case EVDF_TEXTURE_COMPRESSED_ETC1:
-					return FeatureAvailable[IRR_OES_compressed_ETC1_RGB8_texture];
+					return FeatureAvailable[GL_WEBGL_compressed_texture_etc];
 				case EVDF_TEXTURE_COMPRESSED_ETC2:
-#ifdef GL_ES_VERSION_3_0
-					return true;
-#else
-					return false;
-#endif
+					return FeatureAvailable[GL_WEBGL_compressed_texture_etc];
 				case EVDF_STENCIL_BUFFER:
 					return StencilBuffer;
 				default:

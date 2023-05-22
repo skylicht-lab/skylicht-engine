@@ -3,12 +3,13 @@
 #include "ViewManager/CView.h"
 #include "GameObject/CGameObject.h"
 #include "RenderMesh/CMesh.h"
-
+#include "Animation/CAnimationController.h"
 
 class CViewDemo : public CView
 {
 protected:
 	CGameObject* m_cat;
+	CSkeleton* m_catSkeleton;
 
 	struct SBlendShapeData
 	{

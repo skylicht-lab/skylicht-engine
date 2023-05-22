@@ -57,6 +57,16 @@ namespace Skylicht
 
 		~CGetFileURL();
 
+		const char* getFileName()
+		{
+			return m_fileName.c_str();
+		}
+
+		const char* getURL()
+		{
+			return m_url.c_str();
+		}
+
 		void setParams(const char *params)
 		{
 			m_params = params;
