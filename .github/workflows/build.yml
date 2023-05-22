@@ -127,16 +127,16 @@ jobs:
           cd Assets
           python BuildAssetBundles.py
           cd ..
-          cmake -S . -B ./PrjMac -G Xcode
+          cmake -S . -B ./PrjMac -G Xcode -DCMAKE_OSX_ARCHITECTURES=x86_64
           cd PrjMac
           xcodebuild -configuration Release
           cd ..
-      #- name: Unit Test
-      #  run: |
-      #    cd PrjMac
-      #    ctest --verpose --output-on-failure -C Release
-      #    cat Testing/Temporary/LastTest.log
-      #    cd ..
+      - name: Unit Test
+        run: |
+          cd PrjMac
+          ctest --verpose --output-on-failure -C Release
+          cat Testing/Temporary/LastTest.log
+          cd ..
       - name: Package
         run: |
           brew install p7zip
