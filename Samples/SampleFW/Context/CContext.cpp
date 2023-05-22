@@ -68,14 +68,32 @@ CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect, bool enable
 	{
 		// post processor
 		m_postProcessor = new CPostProcessorRP();
-		m_postProcessor->enableAutoExposure(true);
+
+		// turn on for init
 		m_postProcessor->enableBloomEffect(true);
+		m_postProcessor->enableAutoExposure(true);
 		m_postProcessor->enableFXAA(true);
 		m_postProcessor->enableScreenSpaceReflection(enableSSR);
+
 		m_postProcessor->initRender(w, h);
 
 		// apply post processor
 		m_rendering->setPostProcessor(m_postProcessor);
+
+		bool highQuality = true;
+
+#ifdef __EMSCRIPTEN__
+		highQuality = false;
+#endif
+
+		if (!highQuality)
+		{
+			m_postProcessor->enableAutoExposure(false);
+			m_postProcessor->enableManualExposure(true);
+			m_postProcessor->setManualExposure(2.0f);
+			m_postProcessor->enableFXAA(false);
+			m_postProcessor->enableScreenSpaceReflection(false);
+		}
 	}
 
 	m_beginRP = m_shadowMapRendering;
