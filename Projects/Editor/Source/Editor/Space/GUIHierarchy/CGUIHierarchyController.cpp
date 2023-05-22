@@ -270,7 +270,7 @@ namespace Skylicht
 
 			if (allowDrag)
 			{
-				GUI::SDragDropPackage* dragDrop = rowItem->setDragDropPackage("HierarchyNode", node);
+				GUI::SDragDropPackage* dragDrop = rowItem->setDragDropPackage("GUIHierarchyNode", node);
 				dragDrop->DrawControl = guiNode->getTextItem();
 			}
 

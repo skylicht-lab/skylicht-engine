@@ -176,6 +176,10 @@ namespace Skylicht
 			m_guiTransform->setRect(r);
 		}
 
+		void setWorldTransform(const core::matrix4& world);
+
+		void setRelativeTransform(const core::matrix4& relative);
+
 		inline const core::vector3df& getPosition()
 		{
 			return m_guiTransform->getPosition();
@@ -296,6 +300,10 @@ namespace Skylicht
 		}
 
 		void notifyChanged();
+
+		void bringToNext(CGUIElement* object, CGUIElement* target, bool behind);
+
+		void bringToChild(CGUIElement* object);
 
 		DECLARE_GETTYPENAME(CGUIElement);
 

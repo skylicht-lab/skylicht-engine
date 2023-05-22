@@ -9,6 +9,8 @@
 #include "LOD/CLOD.h"
 #include "SkySun/CSkySun.h"
 
+#include "Graphics2D/CCanvas.h"
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -38,14 +40,34 @@ void CViewInit::onInit()
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+
+	// init basic gui
+	CZone* zone = CContext::getInstance()->initScene()->createZone();
+	m_guiObject = zone->createEmptyObject();
+	CCanvas* canvas = m_guiObject->addComponent<CCanvas>();
+
+	// load font
+	m_font = new CGlyphFont();
+	m_font->setFont("Segoe UI Light", 25);
+
+	// create text
+	m_textInfo = canvas->createText(m_font);
+	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+	m_textInfo->setText(L"Init assets");
+
+	// crate gui camera
+	CGameObject* guiCameraObject = zone->createEmptyObject();
+	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
+	guiCamera->setProjectionType(CCamera::OrthoUI);
+	CContext::getInstance()->setGUICamera(guiCamera);
 }
 
 void CViewInit::initScene()
 {
 	CBaseApp* app = getApplication();
 
-	CScene* scene = CContext::getInstance()->initScene();
-	CZone* zone = scene->createZone();
+	CScene* scene = CContext::getInstance()->getScene();
+	CZone* zone = scene->getZone(0);
 
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
@@ -132,7 +154,8 @@ void CViewInit::initScene()
 
 void CViewInit::onDestroy()
 {
-
+	m_guiObject->remove();
+	delete m_font;
 }
 
 void CViewInit::onUpdate()
@@ -165,6 +188,10 @@ void CViewInit::onUpdate()
 		}
 		else
 		{
+			char log[512];
+			sprintf(log, "Download asset: %s - %d%%", filename, m_getFile->getPercent());
+			m_textInfo->setText(log);
+
 			if (m_getFile->getState() == CGetFileURL::Finish)
 			{
 				// [bundles].zip
@@ -183,7 +210,7 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
+	}
 	}
 #else
 
@@ -197,7 +224,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::InitScene;
 #endif
@@ -223,7 +250,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()

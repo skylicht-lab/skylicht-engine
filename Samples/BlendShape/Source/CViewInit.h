@@ -16,13 +16,17 @@ public:
 	};
 
 protected:
-	CGetFileURL *m_getFile;
+	CGetFileURL* m_getFile;
 
 	EInitState m_initState;
 	unsigned int m_downloaded;
 
+	CGameObject* m_guiObject;
+	CGUIText* m_textInfo;
+	CGlyphFont* m_font;
+
 protected:
-	io::path getBuiltInPath(const char *name);
+	io::path getBuiltInPath(const char* name);
 
 public:
 	CViewInit();

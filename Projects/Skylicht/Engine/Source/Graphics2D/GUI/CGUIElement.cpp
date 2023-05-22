@@ -98,9 +98,16 @@ namespace Skylicht
 	void CGUIElement::setParent(CGUIElement* parent)
 	{
 		if (m_parent)
+		{
 			m_parent->removeChild(this);
+			m_parent->notifyChanged();
+		}
 
 		m_parent = parent;
+		if (m_parent)
+			m_parent->notifyChanged();
+
+		notifyChanged();
 
 		CEntityPrefab* entityMgr = m_canvas->getEntityManager();
 
@@ -288,5 +295,137 @@ namespace Skylicht
 	{
 		m_guiTransform->HasChanged = true;
 		m_transform->HasChanged = true;
+	}
+
+	void CGUIElement::bringToNext(CGUIElement* object, CGUIElement* target, bool behind)
+	{
+		if (target->getParent() != this)
+			return;
+
+		core::matrix4 world = object->getAbsoluteTransform();
+
+		if (object->getParent() == this)
+		{
+			// remove old position
+			std::vector<CGUIElement*>::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
+			m_childs.erase(i);
+		}
+		else
+		{
+			// remove old parent
+			CGUIElement* oldParent = (CGUIElement*)object->getParent();
+			std::vector<CGUIElement*>::iterator i = std::find(oldParent->m_childs.begin(), oldParent->m_childs.end(), object);
+			if (i != oldParent->m_childs.end())
+			{
+				oldParent->m_childs.erase(i);
+			}
+
+			// set new parent
+			object->setParent(this);
+		}
+
+		// insert new position
+		std::vector<CGUIElement*>::iterator pos = std::find(m_childs.begin(), m_childs.end(), target);
+		if (behind)
+			++pos;
+
+		m_childs.insert(pos, object);
+
+		object->setWorldTransform(world);
+	}
+
+	void CGUIElement::bringToChild(CGUIElement* object)
+	{
+		core::matrix4 world = object->getAbsoluteTransform();
+
+		if (object->getParent() == this)
+		{
+			// remove old position
+			std::vector<CGUIElement*>::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
+			m_childs.erase(i);
+		}
+		else
+		{
+			// remove old parent
+			CGUIElement* oldParent = object->getParent();
+			std::vector<CGUIElement*>::iterator i = std::find(oldParent->m_childs.begin(), oldParent->m_childs.end(), object);
+			if (i != oldParent->m_childs.end())
+			{
+				oldParent->m_childs.erase(i);
+			}
+
+			// set new parent
+			object->setParent(this);
+		}
+
+		// insert new position
+		m_childs.push_back(object);
+
+		object->setWorldTransform(world);
+	}
+
+	void CGUIElement::setWorldTransform(const core::matrix4& world)
+	{
+		core::matrix4 parentInv;
+		if (m_transform->Parent)
+		{
+			parentInv = m_transform->Parent->World;
+			parentInv.makeInverse();
+		}
+
+		core::matrix4 relative = parentInv * world;
+		setRelativeTransform(relative);
+	}
+
+	void CGUIElement::setRelativeTransform(const core::matrix4& mat)
+	{
+		core::vector3df front(0.0f, 0.0f, 1.0f);
+		core::vector3df up(0.0f, 1.0f, 0.0f);
+
+		mat.rotateVect(front);
+		mat.rotateVect(up);
+
+		front.normalize();
+		up.normalize();
+
+		core::vector3df right = up.crossProduct(front);
+		right.normalize();
+
+		core::matrix4 rotationMatrix;
+		f32* matData = rotationMatrix.pointer();
+		matData[0] = right.X;
+		matData[1] = right.Y;
+		matData[2] = right.Z;
+		matData[3] = 0.0f;
+
+		matData[4] = up.X;
+		matData[5] = up.Y;
+		matData[6] = up.Z;
+		matData[7] = 0.0f;
+
+		matData[8] = front.X;
+		matData[9] = front.Y;
+		matData[10] = front.Z;
+		matData[11] = 0.0f;
+
+		matData[12] = 0.0f;
+		matData[13] = 0.0f;
+		matData[14] = 0.0f;
+		matData[15] = 1.0f;
+
+		core::vector3df rotation;
+		core::vector3df position;
+		core::vector3df scale;
+
+		core::quaternion q(rotationMatrix);
+		q.toEuler(rotation);
+
+		rotation = rotation * core::RADTODEG;
+		position = mat.getTranslation();
+		scale = mat.getScale();
+
+		setPosition(position);
+		setScale(scale);
+		setRotation(rotation);
 	}
 }

@@ -47,7 +47,7 @@ namespace Skylicht
 
 			virtual void onUpdateValue(CObjectSerializable* object);
 
-			SpriteExportSettings* createGetMeshExportSetting(const char* path);
+			SpriteExportSettings* createGetSpriteExportSetting(const char* path);
 
 			void exportSprite(const char* path);
 

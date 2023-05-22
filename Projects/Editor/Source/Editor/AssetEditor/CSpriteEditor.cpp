@@ -73,7 +73,7 @@ namespace Skylicht
 
 		void CSpriteEditor::initGUI(const char* path, CSpaceProperty* ui)
 		{
-			m_settings = createGetMeshExportSetting(path);
+			m_settings = createGetSpriteExportSetting(path);
 
 			GUI::CCollapsibleGroup* group = ui->addGroup("Sprite Exporter", this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
@@ -144,7 +144,7 @@ namespace Skylicht
 			}
 		}
 
-		SpriteExportSettings* CSpriteEditor::createGetMeshExportSetting(const char* path)
+		SpriteExportSettings* CSpriteEditor::createGetSpriteExportSetting(const char* path)
 		{
 			SpriteExportSettings* setting = new SpriteExportSettings();
 			CSerializableLoader::loadSerializable(path, setting);
