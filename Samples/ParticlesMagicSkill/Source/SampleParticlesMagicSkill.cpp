@@ -391,7 +391,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	glowGroup->LifeMin = 0.5f;
 	glowGroup->LifeMax = 0.6f;
 	glowGroup->Gravity.set(0.0f, 0.0f, 0.0f);
-	glowGroup->createModel(Particle::Scale)->setStart(1.0f)->setEnd(0.0f);
+	glowGroup->createModel(Particle::Scale)->setStart(1.0f)->setEnd(0.2f);
 	glowGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 
 	Particle::CQuadRenderer* glow = factory->createQuadRenderer();
@@ -461,18 +461,20 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 
 	sphereGroup->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
 	sphereGroup->createModel(Particle::Scale)->setStart(0.8f, 1.0f)->setEnd(0.0f);
-	sphereGroup->LifeMin = 0.1f;
-	sphereGroup->LifeMax = 0.2f;
-	sphereGroup->Friction = 0.1f;
+	sphereGroup->LifeMin = 0.2f;
+	sphereGroup->LifeMax = 0.5f;
+	sphereGroup->Friction = 0.5f;
+	sphereGroup->Gravity.set(0.0f, -10.0f, 0.0f);
 
 	Particle::CEmitter* sphereEmitter = factory->createSphericEmitter(CTransform::s_oy, 0.0f, core::PI);
 	sphereEmitter->setFlow(-1);
 	sphereEmitter->setTank(5);
-	sphereEmitter->setForce(4.0f, 7.0f);
+	sphereEmitter->setForce(3.0f, 5.0f);
 	sphereEmitter->setZone(sphereZone);
 	sphereGroup->addEmitter(sphereEmitter);
 
 	// SUBGROUP: LINGER
+	/*
 	Particle::CSubGroup* lingerGroup = ps->createParticleSubGroup(sphereGroup);
 
 	Particle::CQuadRenderer* linger = factory->createQuadRenderer();
@@ -498,8 +500,9 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	lingerEmitter->setForce(0.0f, 0.0f);
 	lingerEmitter->setZone(factory->createPointZone());
 	lingerGroup->addEmitter(lingerEmitter);
+	*/
 
-	// SUBGROUP: POINT
+	// SUBGROUP: POINT	
 	Particle::CSubGroup* pointGroup = ps->createParticleSubGroup(impactGroup);
 
 	Particle::CQuadRenderer* point = factory->createQuadRenderer();
@@ -523,7 +526,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	Particle::CEmitter* randomEmitter = factory->createSphericEmitter(CTransform::s_oy, 0.0f, core::PI);
 	randomEmitter->setFlow(-1);
 	randomEmitter->setTank(10);
-	randomEmitter->setForce(0.1f, 0.3f);
+	randomEmitter->setForce(0.1f, 0.6f);
 	randomEmitter->setZone(largeSphereZone);
 	pointGroup->addEmitter(randomEmitter);
 }
