@@ -255,5 +255,6 @@ void CViewInit::onUpdate()
 
 void CViewInit::onRender()
 {
-
+	CCamera* guiCamera = CContext::getInstance()->getGUICamera();
+	CGraphics2D::getInstance()->render(guiCamera);
 }
