@@ -44,11 +44,11 @@ public:
 
 	void popAllView();
 
-	void popAllViewBefore(CView *s);
+	void popAllViewBefore(CView* s);
 
-	void popAllViewTo(CView *s);
+	void popAllViewTo(CView* s);
 
-	void removeView(CView *s);
+	void removeView(CView* s);
 
 	inline int getViewCount()
 	{
@@ -72,7 +72,7 @@ T* CViewLayer::createNewView()
 {
 	T* newView = new T();
 
-	CView *view = dynamic_cast<CView*>(newView);
+	CView* view = dynamic_cast<CView*>(newView);
 	if (view == NULL)
 	{
 		char exceptionInfo[512];
@@ -107,7 +107,6 @@ T* CViewLayer::changeView()
 	if (m_views.size() > 0)
 	{
 		m_willDeleteView.push_back(m_views[0]);
-		m_views[0]->onDestroy();
 		m_views.erase(m_views.begin());
 
 		T* newView = createNewView<T>();
@@ -130,7 +129,6 @@ T* CViewLayer::replaceView(CView* oldView)
 		if (m_views[i] == oldView)
 		{
 			m_willDeleteView.push_back(m_views[i]);
-			m_views[i]->onDestroy();
 
 			m_views.erase(m_views.begin() + i);
 

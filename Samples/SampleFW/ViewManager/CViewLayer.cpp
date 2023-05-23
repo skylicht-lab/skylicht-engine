@@ -18,7 +18,10 @@ void CViewLayer::update()
 	if (numView > 0)
 	{
 		for (int i = 0; i < numView; i++)
+		{
+			m_willDeleteView[i]->onDestroy();
 			delete m_willDeleteView[i];
+		}
 
 		m_willDeleteView.clear();
 	}
@@ -91,7 +94,6 @@ void CViewLayer::popView()
 	if (m_views.size() > 0)
 	{
 		m_willDeleteView.push_back(m_views[0]);
-		m_views[0]->onDestroy();
 
 		m_views.erase(m_views.begin());
 		if (m_views.size() > 0)
@@ -104,7 +106,6 @@ void CViewLayer::popAllView()
 	if (m_views.size() > 0)
 	{
 		m_willDeleteView.push_back(m_views[0]);
-		m_views[0]->onDestroy();
 
 		m_views.erase(m_views.begin());
 		if (m_views.size() > 0)
@@ -112,18 +113,17 @@ void CViewLayer::popAllView()
 	}
 }
 
-void CViewLayer::popAllViewBefore(CView *s)
+void CViewLayer::popAllViewBefore(CView* s)
 {
 	while (m_views.size() > 0)
 	{
 		m_willDeleteView.push_back(m_views[0]);
-		m_views[0]->onDestroy();
 
 		m_views.erase(m_views.begin());
 	}
 }
 
-void CViewLayer::popAllViewTo(CView *s)
+void CViewLayer::popAllViewTo(CView* s)
 {
 	while (m_views.size() > 0)
 	{
@@ -131,20 +131,18 @@ void CViewLayer::popAllViewTo(CView *s)
 			return;
 
 		m_willDeleteView.push_back(m_views[0]);
-		m_views[0]->onDestroy();
 
 		m_views.erase(m_views.begin());
 	}
 }
 
-void CViewLayer::removeView(CView *s)
+void CViewLayer::removeView(CView* s)
 {
 	for (int i = 0, n = (int)m_views.size(); i < n; i++)
 	{
 		if (m_views[i] == s)
 		{
 			m_willDeleteView.push_back(m_views[i]);
-			m_views[i]->onDestroy();
 
 			m_views.erase(m_views.begin() + i);
 			return;

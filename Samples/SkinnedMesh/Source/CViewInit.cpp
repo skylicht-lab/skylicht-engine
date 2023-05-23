@@ -356,4 +356,9 @@ void CViewInit::onRender()
 			m_character02->setVisible(true);
 		}
 	}
+	else
+	{
+		CCamera* guiCamera = CContext::getInstance()->getGUICamera();
+		CGraphics2D::getInstance()->render(guiCamera);
+	}
 }
