@@ -3,7 +3,6 @@
 #include "CViewBakeLightmap.h"
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
-
 #include "SkyDome/CSkyDome.h"
 
 CViewInit::CViewInit()
