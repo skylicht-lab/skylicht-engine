@@ -15,7 +15,10 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_guiObject(NULL),
 	m_font(NULL)
 {
+	CBaseApp* app = getApplication();
 
+	m_shadowRP = new CShadowMapBakeRP();
+	m_shadowRP->initRender(app->getWidth(), app->getHeight());
 }
 
 CViewBakeLightmap::~CViewBakeLightmap()
@@ -29,15 +32,9 @@ CViewBakeLightmap::~CViewBakeLightmap()
 
 void CViewBakeLightmap::onInit()
 {
-	gotoDemoView();
-
-	/*
 	CContext* context = CContext::getInstance();
 	CZone* zone = context->getActiveZone();
 	CEntityManager* entityMgr = zone->getEntityManager();
-
-	// set default 128px for quality
-	CLightmapper::getInstance()->initBaker(128);
 
 	// force update and render to compute transform (1 frame)
 	{
@@ -101,7 +98,6 @@ void CViewBakeLightmap::onInit()
 	// create text
 	m_textInfo = canvas->createText(m_font);
 	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
-	*/
 }
 
 void CViewBakeLightmap::onDestroy()
@@ -117,7 +113,14 @@ void CViewBakeLightmap::onUpdate()
 void CViewBakeLightmap::onRender()
 {
 	CContext* context = CContext::getInstance();
+	CZone* zone = context->getActiveZone();
+	CEntityManager* entityMgr = zone->getEntityManager();
+
 	CCamera* guiCamera = context->getGUICamera();
+	CCamera* bakeCamera = m_bakeCameraObject->getComponent<CCamera>();
+
+	// render shadow map
+	m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
 
 	// render GUI
 	if (guiCamera != NULL)
