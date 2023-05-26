@@ -5,6 +5,8 @@
 
 #include "Lightmapper/CLightmapper.h"
 #include "Lightmapper/CSH9.h"
+#include "BakeDirectionalRP/CShadowMapBakeRP.h"
+
 #include "Rasterisation/CRasterisation.h"
 
 #define MAX_LIGHTMAP_ATLAS 10
@@ -26,6 +28,8 @@ protected:
 
 	int m_lightmapSize;
 	int m_numRenderers;
+
+	CShadowMapBakeRP* m_shadowRP;
 
 public:
 
