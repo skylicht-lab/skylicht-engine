@@ -90,7 +90,7 @@ namespace Skylicht
 
 	public:
 
-		const core::aabbox3df& getFrustumBox();
+		virtual const core::aabbox3df& getFrustumBox();
 
 		inline ITexture* getDepthTexture()
 		{
