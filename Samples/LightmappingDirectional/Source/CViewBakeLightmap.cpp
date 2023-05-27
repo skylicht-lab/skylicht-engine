@@ -12,6 +12,7 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_lightmapSize(512),
 #endif
 	m_numRenderers(0),
+	m_currentMesh(0),
 	m_guiObject(NULL),
 	m_font(NULL)
 {
@@ -19,6 +20,16 @@ CViewBakeLightmap::CViewBakeLightmap() :
 
 	m_shadowRP = new CShadowMapBakeRP();
 	m_shadowRP->initRender(app->getWidth(), app->getHeight());
+
+	m_bakeLightRP = new CDirectionalLightBakeRP();
+	m_bakeLightRP->initRender(app->getWidth(), app->getHeight());
+
+	m_shadowRP->setNextPipeLine(m_bakeLightRP);
+
+	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
+	{
+		m_bakeTexture[i] = NULL;
+	}
 }
 
 CViewBakeLightmap::~CViewBakeLightmap()
@@ -28,6 +39,15 @@ CViewBakeLightmap::~CViewBakeLightmap()
 
 	if (m_font != NULL)
 		delete m_font;
+
+	delete m_shadowRP;
+	delete m_bakeLightRP;
+
+	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
+	{
+		if (m_bakeTexture[i])
+			getVideoDriver()->removeTexture(m_bakeTexture[i]);
+	}
 }
 
 void CViewBakeLightmap::onInit()
@@ -112,6 +132,13 @@ void CViewBakeLightmap::onUpdate()
 
 void CViewBakeLightmap::onRender()
 {
+	if (m_currentMesh >= m_meshBuffers.size())
+	{
+		// finish
+		gotoDemoView();
+		return;
+	}
+
 	CContext* context = CContext::getInstance();
 	CZone* zone = context->getActiveZone();
 	CEntityManager* entityMgr = zone->getEntityManager();
@@ -119,8 +146,42 @@ void CViewBakeLightmap::onRender()
 	CCamera* guiCamera = context->getGUICamera();
 	CCamera* bakeCamera = m_bakeCameraObject->getComponent<CCamera>();
 
-	// render shadow map
-	m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
+	// lightmap texture
+	IMeshBuffer* mb = m_meshBuffers[m_currentMesh];
+	S3DVertex2TCoordsTangents* vertices = (S3DVertex2TCoordsTangents*)mb->getVertexBuffer()->getVertices();
+	int lightmapIndex = (int)vertices[0].Lightmap.Z;
+
+	if (m_bakeTexture[lightmapIndex] == NULL)
+	{
+		core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
+		m_bakeTexture[lightmapIndex] = getVideoDriver()->addRenderTargetTexture(size, "bakeLM", video::ECF_A16B16G16R16F);
+	}
+
+	// calc bbox of mesh
+	const core::matrix4& transform = m_meshTransforms[m_currentMesh];
+	core::aabbox3df box = mb->getBoundingBox();
+	transform.transformBoxEx(box);
+
+	// set box & mesh that render light
+	m_shadowRP->setBound(box);
+	m_bakeLightRP->setRenderMesh(mb);
+
+	// set camera view
+	core::vector3df center = box.getCenter();
+	core::vector3df v = box.MaxEdge - center;
+
+	// set camera, that make sure the meshbuffer always render, that is view
+	bakeCamera->setPosition(center + v * 1.5f);
+	bakeCamera->lookAt(center, core::vector3df(0.0f, 1.0f, 0.0f));
+
+	// update scene first
+	context->getScene()->update();
+
+	// render uv
+	m_shadowRP->render(m_bakeTexture[lightmapIndex], bakeCamera, entityMgr, core::recti());
+
+	// next mesh
+	m_currentMesh++;
 
 	// render GUI
 	if (guiCamera != NULL)
