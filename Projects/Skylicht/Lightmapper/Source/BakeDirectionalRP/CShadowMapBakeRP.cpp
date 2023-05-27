@@ -138,5 +138,8 @@ namespace Skylicht
 			getVideoDriver()->removeTexture(rtt);
 			m_saveDebug = false;
 		}
+		
+		// todo on next render pipeline
+		onNext(target, camera, entityManager, viewport);
 	}
 }

@@ -34,7 +34,7 @@ namespace Skylicht
 		m_farValue(500.0f),
 		m_nearOffset(300.0f)
 	{
-		
+
 	}
 
 	CBoundShadowMaps::~CBoundShadowMaps()
@@ -84,11 +84,6 @@ namespace Skylicht
 		const core::matrix4& mat = cameraTransform->getRelativeTransform();
 		core::vector3df cameraPosition = mat.getTranslation();
 
-		// camera forward
-		core::vector3df cameraForward(0.0f, 0.0f, 1.0f);
-		mat.rotateVect(cameraForward);
-		cameraForward.normalize();
-
 		// calc shadow volume
 		updateMatrix(cameraPosition, bound);
 	}
@@ -122,43 +117,19 @@ namespace Skylicht
 		m_frustumBox.MinEdge = center - radius3;
 		m_frustumBox.MaxEdge = center + radius3;
 
-		m_frustumBox.addInternalPoint(camPos);
-
 		// Fix: object shadow culling above camera
 		core::vector3df highCameraPos = center - m_lightDirection * radius * 2.0f;
 		m_frustumBox.addInternalPoint(highCameraPos);
 
 		// Add the near offset to the Z value of the cascade extents to make sure the orthographic frustum captures the entire frustum split (else it will exhibit cut-off issues).
 		core::matrix4 ortho;
-		ortho.buildProjectionMatrixOrthoLH(max.X - min.X, max.Y - min.Y, -m_nearOffset, m_nearOffset + cascadeExtents.Z);
+		ortho.buildProjectionMatrixOrthoLH(max.X - min.X, max.Y - min.Y, -m_nearOffset, m_nearOffset + cascadeExtents.Z + m_farValue);
 
 		core::matrix4 view;
 		view.buildCameraLookAtMatrixLH(shadowCameraPos, center, CTransform::s_oy);
 
 		m_projMatrices = ortho;
 		m_viewMatrices = view;
-
-		core::matrix4 cropMatrix = ortho * view;
-
-		core::vector3df shadowOrigin(0.0f, 0.0f, 0.0f);
-		cropMatrix.transformVect(shadowOrigin);
-		shadowOrigin = shadowOrigin * (m_shadowMapSize / 2.0f);
-
-		core::vector3df roundedOrigin;
-		roundedOrigin.X = round(shadowOrigin.X);
-		roundedOrigin.Y = round(shadowOrigin.Y);
-		roundedOrigin.Z = round(shadowOrigin.Z);
-
-		core::vector3df roundOffset = roundedOrigin - shadowOrigin;
-
-		roundOffset = roundOffset * (2.0f / m_shadowMapSize);
-		roundOffset.Z = 0.0f;
-
-		core::matrix4& shadowProj = m_projMatrices;
-
-		shadowProj(3, 0) += roundOffset.X;
-		shadowProj(3, 1) += roundOffset.Y;
-		shadowProj(3, 2) += roundOffset.Z;
 
 		core::matrix4 mvp = m_projMatrices * m_viewMatrices;
 		core::matrix4 shadowMatrix = m_bias * mvp;
