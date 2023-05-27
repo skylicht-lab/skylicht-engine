@@ -6,6 +6,7 @@
 #include "Lightmapper/CLightmapper.h"
 #include "Lightmapper/CSH9.h"
 #include "BakeDirectionalRP/CShadowMapBakeRP.h"
+#include "BakeDirectionalRP/CDirectionalLightBakeRP.h"
 
 #include "Rasterisation/CRasterisation.h"
 
@@ -19,7 +20,11 @@ protected:
 	std::vector<CRenderMesh*> m_renderMesh;
 
 	std::vector<IMeshBuffer*> m_meshBuffers;
-	core::array<core::matrix4> m_meshTransforms;
+	std::vector<core::matrix4> m_meshTransforms;
+
+	ITexture* m_bakeTexture[MAX_LIGHTMAP_ATLAS];
+
+	int m_currentMesh;
 
 	CGameObject* m_bakeCameraObject;
 	CGameObject* m_guiObject;
@@ -30,6 +35,7 @@ protected:
 	int m_numRenderers;
 
 	CShadowMapBakeRP* m_shadowRP;
+	CDirectionalLightBakeRP* m_bakeLightRP;
 
 public:
 
