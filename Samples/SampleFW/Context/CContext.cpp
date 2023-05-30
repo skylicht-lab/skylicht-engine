@@ -85,13 +85,12 @@ CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect, bool enable
 #ifdef __EMSCRIPTEN__
 		highQuality = false;
 #endif
-		highQuality = false;
 
 		if (!highQuality)
 		{
 			m_postProcessor->enableAutoExposure(false);
 			m_postProcessor->enableManualExposure(true);
-			m_postProcessor->setManualExposure(2.0f);
+			m_postProcessor->setManualExposure(1.2f);
 			m_postProcessor->enableFXAA(false);
 			m_postProcessor->enableScreenSpaceReflection(false);
 		}
