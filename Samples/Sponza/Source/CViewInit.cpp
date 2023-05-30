@@ -199,6 +199,7 @@ void CViewInit::initScene()
 	context->setPointLight(pointLights);
 
 	// context->getDefferredRP()->enableTestIndirect(true);
+	context->getPostProcessorPipeline()->setManualExposure(2.0f);
 
 	initProbes();
 }
