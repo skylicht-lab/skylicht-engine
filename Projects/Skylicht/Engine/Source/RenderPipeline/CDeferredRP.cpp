@@ -397,13 +397,14 @@ namespace Skylicht
 			{
 				IMeshBuffer* mb = mesh->IndirectLightingMesh->getMeshBuffer(bufferID);
 
-				E_VERTEX_TYPE vtxType = mb->getVertexType();
+				// Note: mesh type is change to Instancing Mesh, so compare size of vertex
+				u32 size = mb->getVertexBuffer(0)->getVertexSize();
 
 				video::SMaterial& irrMaterial = mb->getMaterial();
 
-				if (vtxType == video::EVT_STANDARD)
+				if (size == sizeof(video::S3DVertex))
 					irrMaterial.MaterialType = m_lmInstancingStandard;
-				else if (vtxType == video::EVT_TANGENTS)
+				else if (size == sizeof(video::S3DVertexTangents))
 					irrMaterial.MaterialType = m_lmInstancingTBN;
 
 				IVideoDriver* driver = getVideoDriver();
