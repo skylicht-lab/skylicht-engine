@@ -1,3 +1,6 @@
+Texture2D uShadowMap : register(t0);
+SamplerState uShadowMapSampler : register(s0);
+
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
@@ -10,11 +13,17 @@ cbuffer cbPerFrame
 {
 	float4 uLightColor;
 	float4 uLightDirection;
+	float4x4 uShadowMatrix;
 };
+
+#include "../../Shadow/HLSL/LibShadowSimple.hlsl"
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
+	float4 shadowCoord = mul(float4(input.worldPosition, 1.0), uShadowMatrix);
+	float visibility = shadowSimple(shadowCoord);
+
 	float NdotL = max(dot(input.worldNormal, uLightDirection.xyz), 0.0);
 	float4 directionalLightColor = NdotL * uLightColor;
-	return float4(directionalLightColor.rgb, 1.0);
+	return float4(directionalLightColor.rgb * visibility, 1.0);
 }

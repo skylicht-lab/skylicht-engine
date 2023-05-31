@@ -50,5 +50,9 @@ namespace Skylicht
 		}
 
 		virtual const core::aabbox3df& getFrustumBox();
+
+		virtual float* getShadowDistance();
+
+		virtual float* getShadowMatrices();
 	};
 }
