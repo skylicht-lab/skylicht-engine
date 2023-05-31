@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "RenderMesh/CMesh.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/ShaderCallback/CShaderShadow.h"
 
 namespace Skylicht
 {
@@ -113,10 +114,13 @@ namespace Skylicht
 		// render mesh with light bake shader
 		video::SMaterial irrMaterial;
 		irrMaterial.MaterialType = m_bakeDirectionMaterialID;
-		irrMaterial.ZBuffer = video::ECFN_ALWAYS;
+		irrMaterial.ZBuffer = video::ECFN_DISABLED;
 		irrMaterial.ZWriteEnable = false;
-		irrMaterial.BackfaceCulling = false;
-		irrMaterial.FrontfaceCulling = false;
+
+		// shadow
+		CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
+		if (shadowRP != NULL)
+			irrMaterial.TextureLayer[0].Texture = shadowRP->getDepthTexture();
 
 		// set irrlicht material
 		driver->setMaterial(irrMaterial);

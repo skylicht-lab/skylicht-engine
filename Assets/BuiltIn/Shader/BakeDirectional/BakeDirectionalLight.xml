@@ -4,8 +4,10 @@
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
 		</vs>
 		<fs>
+			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
+			<uniform name="uShadowMatrix" type="SHADOW_MAP_MATRIX" value="0" float="16" array="1" matrix="true"/>
 		</fs>
 	</uniforms>
 	<resources>
