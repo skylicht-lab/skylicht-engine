@@ -272,8 +272,6 @@ namespace Skylicht
 #elif defined(__EMSCRIPTEN__)
 			if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
 				CStringImp::replacePathExt(ansiPath, ".dds");
-			else if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC) || driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC2))
-				CStringImp::replacePathExt(ansiPath, ".pvr");
 			else
 				CStringImp::replacePathExt(ansiPath, ".etc2");
 #else
@@ -373,8 +371,6 @@ namespace Skylicht
 #elif defined(__EMSCRIPTEN__)
 				if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
 					CStringImp::replacePathExt(ansiPath, ".dds");
-				else if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC) || driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC2))
-					CStringImp::replacePathExt(ansiPath, ".pvr");
 				else
 					CStringImp::replacePathExt(ansiPath, ".etc2");
 #else
