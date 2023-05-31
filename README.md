@@ -265,7 +265,7 @@ This scene uses basic diffuse bump specular shader.
 Run on Ubuntu 20.04
 <img src="Documents/Media/Samples/sponza/sponza_ubuntu.jpg"/>
 
-Live demo: (Web PC Only) [Emscripten](http://34.149.122.230/SampleSkinnedMesh.html)
+Live demo: (Web PC Only) [Emscripten](http://34.149.122.230/SampleSponza.html)
 
 ### Samples\LightmappingVertex
 This is a demo to use lightmapper to set indirect lighting color on vertex color.
