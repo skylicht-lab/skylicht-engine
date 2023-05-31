@@ -97,7 +97,12 @@ namespace Skylicht
 			return m_depthTexture;
 		}
 
-		inline CCascadedShadowMaps* getCSM()
+		virtual float* getShadowDistance();
+
+		virtual float* getShadowMatrices();
+
+	protected:
+		CCascadedShadowMaps* getCSM()
 		{
 			return m_csm;
 		}

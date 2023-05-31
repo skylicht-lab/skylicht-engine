@@ -50,7 +50,7 @@ namespace Skylicht
 		{
 			if (s_shadowMapRP != NULL)
 			{
-				const float* shadowMatrix = s_shadowMapRP->getCSM()->getShadowMatrices();
+				const float* shadowMatrix = s_shadowMapRP->getShadowMatrices();
 				if (vertexShader == true)
 					matRender->setShaderVariable(uniform->UniformShaderID, shadowMatrix, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 				else
@@ -62,7 +62,7 @@ namespace Skylicht
 		{
 			if (s_shadowMapRP != NULL)
 			{
-				const float* shadowDistance = s_shadowMapRP->getCSM()->getShadowDistance();
+				const float* shadowDistance = s_shadowMapRP->getShadowDistance();
 				if (vertexShader == true)
 					matRender->setShaderVariable(uniform->UniformShaderID, shadowDistance, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 				else

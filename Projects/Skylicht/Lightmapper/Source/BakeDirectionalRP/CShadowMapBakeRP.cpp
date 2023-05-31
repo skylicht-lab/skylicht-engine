@@ -68,6 +68,16 @@ namespace Skylicht
 		return m_sm->getFrustumBox();
 	}
 
+	float* CShadowMapBakeRP::getShadowDistance()
+	{
+		return NULL;
+	}
+
+	float* CShadowMapBakeRP::getShadowMatrices()
+	{
+		return m_sm->getShadowMatrices();
+	}
+
 	void CShadowMapBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
 	{
 		if (camera == NULL)
