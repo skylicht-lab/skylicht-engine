@@ -163,8 +163,6 @@ namespace Skylicht
 		IVideoDriver* driver = getVideoDriver();
 		if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
 			result += "DDS.zip";
-		// else if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC) || driver->queryFeature(EVDF_TEXTURE_COMPRESSED_PVRTC2))
-		// 	result += "PVR.zip"; // safari is not support pvr so we switch all to etc
 		else
 			result += "ETC.zip";
 #elif defined(WINDOWS_STORE)
