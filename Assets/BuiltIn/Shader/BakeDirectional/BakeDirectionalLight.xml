@@ -1,12 +1,11 @@
 <shaderConfig name="BakeDirectionalLight" baseShader="SOLID">
 	<uniforms>
 		<vs>
-			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
-			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 		</vs>
 		<fs>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 		</fs>
 	</uniforms>
 	<resources>

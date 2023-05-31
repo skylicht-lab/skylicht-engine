@@ -154,7 +154,7 @@ void CViewBakeLightmap::onRender()
 	if (m_bakeTexture[lightmapIndex] == NULL)
 	{
 		core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
-		m_bakeTexture[lightmapIndex] = getVideoDriver()->addRenderTargetTexture(size, "bakeLM", video::ECF_A16B16G16R16F);
+		m_bakeTexture[lightmapIndex] = getVideoDriver()->addRenderTargetTexture(size, "bakeLM", video::ECF_A8R8G8B8);
 	}
 
 	// calc bbox of mesh
@@ -197,6 +197,10 @@ void CViewBakeLightmap::onPostRender()
 
 void CViewBakeLightmap::gotoDemoView()
 {
+	char outFileName[512];
+	sprintf(outFileName, "LightMapDirectional.png", 0);
+	CBaseRP::saveFBOToFile(m_bakeTexture[0], outFileName);
+
 	// enable render indirect
 	CDeferredRP::enableRenderIndirect(true);
 

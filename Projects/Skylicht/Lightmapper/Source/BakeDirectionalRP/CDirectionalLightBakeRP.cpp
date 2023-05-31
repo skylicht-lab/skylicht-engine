@@ -31,11 +31,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "EventManager/CEventManager.h"
 
 #include "RenderMesh/CMesh.h"
+#include "Material/Shader/CShaderManager.h"
 
 namespace Skylicht
 {
 	CDirectionalLightBakeRP::CDirectionalLightBakeRP() :
-		m_renderMesh(NULL)
+		m_renderMesh(NULL),
+		m_bakeDirectionMaterialID(0)
 	{
 
 	}
@@ -47,7 +49,10 @@ namespace Skylicht
 
 	void CDirectionalLightBakeRP::initRender(int w, int h)
 	{
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLight.xml");
 
+		m_bakeDirectionMaterialID = shaderMgr->getShaderIDByName("BakeDirectionalLight");
 	}
 
 	void CDirectionalLightBakeRP::resize(int w, int h)
@@ -103,8 +108,21 @@ namespace Skylicht
 		if (mb != m_renderMesh)
 			return;
 
-		// render mesh with light bake shader
+		IVideoDriver* driver = getVideoDriver();
 
+		// render mesh with light bake shader
+		video::SMaterial irrMaterial;
+		irrMaterial.MaterialType = m_bakeDirectionMaterialID;
+		irrMaterial.ZBuffer = video::ECFN_ALWAYS;
+		irrMaterial.ZWriteEnable = false;
+		irrMaterial.BackfaceCulling = false;
+		irrMaterial.FrontfaceCulling = false;
+
+		// set irrlicht material
+		driver->setMaterial(irrMaterial);
+
+		// draw mesh buffer
+		driver->drawMeshBuffer(mb);
 	}
 
 	void CDirectionalLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh)

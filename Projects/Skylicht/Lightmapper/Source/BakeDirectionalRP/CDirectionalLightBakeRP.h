@@ -34,6 +34,7 @@ namespace Skylicht
 	protected:
 		IMeshBuffer* m_renderMesh;
 
+		int m_bakeDirectionMaterialID;
 	public:
 		CDirectionalLightBakeRP();
 
