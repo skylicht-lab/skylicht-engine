@@ -9,6 +9,6 @@
 	</uniforms>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/VS.glsl" fs="GLSL/IndirectTestFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/VS.hlsl" fs="HLSL/IndirectTestFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/IndirectTestVS.glsl" fs="GLSL/IndirectTestFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/IndirectTestVS.hlsl" fs="HLSL/IndirectTestFS.hlsl"/>
 </shaderConfig>

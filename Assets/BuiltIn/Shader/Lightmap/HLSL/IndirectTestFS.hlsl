@@ -1,15 +1,16 @@
-Texture2DArray uTexLightmap : register(t0);
-SamplerState uTexLightmapSampler : register(s0);
+Texture2D uTexDiffuse : register(t0);
+SamplerState uTexDiffuseSampler : register(s0);
 
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
-	float3 tex0 : LIGHTMAP;
+	float4 color : COLOR0;
+	float2 tex0 : TEXCOORD0;
 };
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float4 result = uTexLightmap.Sample(uTexLightmapSampler, input.tex0);
+	float4 result = input.color * uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
 	result.xyz = result.xyz / 3.0;
 	return result;
 }

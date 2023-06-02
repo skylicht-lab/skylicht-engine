@@ -392,7 +392,7 @@ void CViewBakeLightmap::onUpdate()
 							if (indirect == NULL)
 								indirect = renderMesh->getGameObject()->addComponent<CIndirectLighting>();
 
-							indirect->setLightmap(lightmapTexture);
+							indirect->setIndirectLightmap(lightmapTexture);
 							indirect->setIndirectLightingType(CIndirectLighting::LightmapArray);
 						}
 					}
@@ -605,7 +605,7 @@ void CViewBakeLightmap::loadProgress()
 						if (indirect == NULL)
 							indirect = renderMesh->getGameObject()->addComponent<CIndirectLighting>();
 
-						indirect->setLightmap(lightmapTexture);
+						indirect->setIndirectLightmap(lightmapTexture);
 						indirect->setIndirectLightingType(CIndirectLighting::LightmapArray);
 					}
 				}
