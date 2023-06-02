@@ -30,6 +30,13 @@ namespace Skylicht
 {
 	class CLight : public CComponentSystem
 	{
+	public:
+		enum ELightType
+		{
+			Realtime = 0,
+			Baked
+		};
+
 	protected:
 		//! Diffuse color emitted by the light.
 		SColorf m_color;
@@ -63,6 +70,9 @@ namespace Skylicht
 		//! Number bounce of light on bake lighting
 		u32 m_bakeBounce;
 
+		//! Light type
+		ELightType m_type;
+
 	public:
 		CLight();
 
@@ -90,6 +100,16 @@ namespace Skylicht
 		inline float getRadius()
 		{
 			return m_radius;
+		}
+
+		inline ELightType getLightType()
+		{
+			return m_type;
+		}
+
+		inline void setLightType(ELightType type)
+		{
+			m_type = type;
 		}
 
 		void setBounce(u32 b)

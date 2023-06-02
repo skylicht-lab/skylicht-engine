@@ -31,7 +31,8 @@ namespace Skylicht
 
 	CIndirectLightingData::CIndirectLightingData() :
 		Type(LightmapArray),
-		LightmapTexture(NULL),
+		IndirectTexture(NULL),
+		LightTexture(NULL),
 		ReflectionTexture(NULL),
 		SH(NULL),
 		AutoSH(NULL),

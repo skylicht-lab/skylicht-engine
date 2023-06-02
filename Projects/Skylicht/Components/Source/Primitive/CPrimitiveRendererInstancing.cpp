@@ -94,7 +94,8 @@ namespace Skylicht
 					SShaderMesh shaderMesh;
 					shaderMesh.Shader = shader;
 					shaderMesh.Mesh = mesh;
-					shaderMesh.Lightmap = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightmapTexture;
+					shaderMesh.IndirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->IndirectTexture;
+					shaderMesh.DirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightTexture;
 
 					for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 						shaderMesh.Textures[i] = p->Material->getTexture(i);

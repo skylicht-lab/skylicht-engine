@@ -34,7 +34,6 @@ namespace Skylicht
 		m_adaptLum(NULL),
 		m_lumTarget(0),
 		m_autoExposure(false),
-		m_manualExposure(false),
 		m_exposure(1.0f),
 		m_bloomEffect(true),
 		m_fxaa(false),
@@ -346,18 +345,12 @@ namespace Skylicht
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalPass);
 		}
-		else if (m_manualExposure == true)
+		else
 		{
 			m_finalManualExposurePass.setTexture(0, colorBuffer);
 			CShaderManager::getInstance()->ShaderVec2[0].set(m_exposure, m_exposure);
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_finalManualExposurePass);
-		}
-		else
-		{
-			m_linearPass.setTexture(0, colorBuffer);
-			beginRender2D(renderW, renderH);
-			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_linearPass);
 		}
 
 		m_lumTarget = !m_lumTarget;

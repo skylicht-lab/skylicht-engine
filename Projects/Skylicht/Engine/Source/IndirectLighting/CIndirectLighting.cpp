@@ -40,17 +40,17 @@ namespace Skylicht
 	CIndirectLighting::CIndirectLighting() :
 		m_type(SH9),
 		m_autoSH(true),
-		m_internalLM(false),
-		m_lightmap(NULL)
+		m_internalIndirectLM(false),
+		m_indirectLM(NULL)
 	{
 
 	}
 
 	CIndirectLighting::~CIndirectLighting()
 	{
-		if (m_internalLM && m_lightmap)
+		if (m_internalIndirectLM && m_indirectLM)
 		{
-			CTextureManager::getInstance()->removeTexture(m_lightmap);
+			CTextureManager::getInstance()->removeTexture(m_indirectLM);
 		}
 	}
 
@@ -121,21 +121,21 @@ namespace Skylicht
 		enumType->addEnumString("Ambient Color", EIndirectType::AmbientColor);
 		object->autoRelease(enumType);
 
-		CArrayTypeSerializable<CFilePathProperty>* textureArray = new CArrayTypeSerializable<CFilePathProperty>("LMTextures", object);
-		textureArray->OnCreateElement = [](CValueProperty* element)
+		CArrayTypeSerializable<CFilePathProperty>* indirectTextureArray = new CArrayTypeSerializable<CFilePathProperty>("IndirectLM", object);
+		indirectTextureArray->OnCreateElement = [](CValueProperty* element)
 		{
 			CFilePathProperty* fileProperty = dynamic_cast<CFilePathProperty*>(element);
 			fileProperty->Exts.push_back("tga");
 			fileProperty->Exts.push_back("png");
 		};
-		object->autoRelease(textureArray);
+		object->autoRelease(indirectTextureArray);
 
 		// lightmap path
-		textureArray->resize((int)m_lightmapPaths.size());
-		for (u32 i = 0, n = (u32)m_lightmapPaths.size(); i < n; i++)
+		indirectTextureArray->resize((int)m_indirectLMPaths.size());
+		for (u32 i = 0, n = (u32)m_indirectLMPaths.size(); i < n; i++)
 		{
-			CFilePathProperty* fileProperty = dynamic_cast<CFilePathProperty*>(textureArray->getElement(i));
-			fileProperty->set(m_lightmapPaths[i]);
+			CFilePathProperty* fileProperty = dynamic_cast<CFilePathProperty*>(indirectTextureArray->getElement(i));
+			fileProperty->set(m_indirectLMPaths[i]);
 		}
 
 		// ambient color
@@ -152,17 +152,17 @@ namespace Skylicht
 
 		EIndirectType type = object->get<EIndirectType>("type", EIndirectType::SH9);
 
-		CArraySerializable* textureArray = (CArraySerializable*)object->getProperty("LMTextures");
+		CArraySerializable* textureArray = (CArraySerializable*)object->getProperty("IndirectLM");
 		if (textureArray != NULL)
 		{
-			std::vector<std::string> old = m_lightmapPaths;
-			m_lightmapPaths.clear();
+			std::vector<std::string> old = m_indirectLMPaths;
+			m_indirectLMPaths.clear();
 
 			int count = textureArray->getElementCount();
 			for (int i = 0; i < count; i++)
 			{
 				std::string path = textureArray->getElementValue<std::string>(i, std::string());
-				m_lightmapPaths.push_back(path);
+				m_indirectLMPaths.push_back(path);
 			}
 
 			if (!isLightmapEmpty())
@@ -176,7 +176,7 @@ namespace Skylicht
 
 	bool CIndirectLighting::isLightmapEmpty()
 	{
-		for (std::string& s : m_lightmapPaths)
+		for (std::string& s : m_indirectLMPaths)
 		{
 			if (s.empty())
 				return true;
@@ -186,12 +186,12 @@ namespace Skylicht
 
 	bool CIndirectLighting::isLightmapChanged(const std::vector<std::string>& paths)
 	{
-		if (paths.size() != m_lightmapPaths.size())
+		if (paths.size() != m_indirectLMPaths.size())
 			return true;
 
 		for (int i = 0, n = (int)paths.size(); i < n; i++)
 		{
-			if (paths[i] != m_lightmapPaths[i])
+			if (paths[i] != m_indirectLMPaths[i])
 			{
 				return true;
 			}
@@ -216,13 +216,13 @@ namespace Skylicht
 		}
 	}
 
-	void CIndirectLighting::setLightmap(ITexture* texture)
+	void CIndirectLighting::setIndirectLightmap(ITexture* texture)
 	{
-		if (m_internalLM && m_lightmap)
-			CTextureManager::getInstance()->removeTexture(m_lightmap);
+		if (m_internalIndirectLM && m_indirectLM)
+			CTextureManager::getInstance()->removeTexture(m_indirectLM);
 
-		m_lightmap = texture;
-		m_internalLM = false;
+		m_indirectLM = texture;
+		m_internalIndirectLM = false;
 	}
 
 	void CIndirectLighting::setAutoSH(bool b)
@@ -245,17 +245,17 @@ namespace Skylicht
 			if (m_type == LightmapArray)
 			{
 				// Load lightmap texture array
-				if (m_lightmapPaths.size() > 0 && loadLightmap)
+				if (m_indirectLMPaths.size() > 0 && loadLightmap)
 				{
-					if (m_internalLM && m_lightmap)
-						CTextureManager::getInstance()->removeTexture(m_lightmap);
+					if (m_internalIndirectLM && m_indirectLM)
+						CTextureManager::getInstance()->removeTexture(m_indirectLM);
 
-					m_lightmap = CTextureManager::getInstance()->getTextureArray(m_lightmapPaths);
-					m_internalLM = true;
+					m_indirectLM = CTextureManager::getInstance()->getTextureArray(m_indirectLMPaths);
+					m_internalIndirectLM = true;
 				}
 
 				data->Type = CIndirectLightingData::LightmapArray;
-				data->LightmapTexture = m_lightmap;
+				data->IndirectTexture = m_indirectLM;
 			}
 			else if (m_type == SH9)
 			{
