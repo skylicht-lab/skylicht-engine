@@ -47,8 +47,8 @@ namespace Skylicht
 
 		SColor Color;
 
-		ITexture* LightmapTexture;
-
+		ITexture* IndirectTexture;
+		ITexture* LightTexture;
 		ITexture* ReflectionTexture;
 
 		bool Init;

@@ -41,13 +41,14 @@ namespace Skylicht
 		CShader* Shader;
 		CMesh* Mesh;
 		ITexture* Textures[MATERIAL_MAX_TEXTURES];
-		ITexture* Lightmap;
+		ITexture* IndirectLM;
+		ITexture* DirectLM;
 
 		SShaderMesh()
 		{
 			Shader = NULL;
 			Mesh = NULL;
-			Lightmap = NULL;
+			IndirectLM = NULL;
 			for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 				Textures[i] = NULL;
 		}
@@ -58,17 +59,21 @@ namespace Skylicht
 			{
 				if (Mesh == other.Mesh)
 				{
-					if (Lightmap == other.Lightmap)
+					if (IndirectLM == other.IndirectLM)
 					{
-						for (int i = 0; i < _IRR_MATERIAL_MAX_TEXTURES_; i++)
+						if (DirectLM == other.DirectLM)
 						{
-							if (Textures[i] != other.Textures[i])
-								return Textures[i] < other.Textures[i];
+							for (int i = 0; i < _IRR_MATERIAL_MAX_TEXTURES_; i++)
+							{
+								if (Textures[i] != other.Textures[i])
+									return Textures[i] < other.Textures[i];
+							}
+							// all same
+							return false;
 						}
-						// all same
-						return false;
+						return DirectLM < other.DirectLM;
 					}
-					return Lightmap < other.Lightmap;
+					return IndirectLM < other.IndirectLM;
 				}
 				return Mesh < other.Mesh;
 			}

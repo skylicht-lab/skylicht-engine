@@ -136,13 +136,11 @@ void CViewDemo::onGUI()
 			ImGui::SliderFloat("Exposure", &exposure, 0.0f, 5.0f);
 
 			rp->enableAutoExposure(false);
-			rp->enableManualExposure(true);
 			rp->setManualExposure(exposure);
 		}
 		else
 		{
 			rp->enableAutoExposure(true);
-			rp->enableManualExposure(false);
 		}
 
 		ImGui::Separator();

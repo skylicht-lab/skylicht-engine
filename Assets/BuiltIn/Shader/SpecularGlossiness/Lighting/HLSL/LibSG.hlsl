@@ -55,7 +55,15 @@ float3 SG(
 
 	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
 	float3 directionalLight = NdotL * directionLightColor * visibility;
-	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor + specular * specularColor * envSpecColor + light.a * specularColor;
+	
+	// Direction lighting
+	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor;
+	
+	// Direction specular
+	color = color + specular * specularColor * envSpecColor;
+	
+	// Point light specular
+	color = color + light.a * specularColor;
 
 	// IBL Ambient
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;

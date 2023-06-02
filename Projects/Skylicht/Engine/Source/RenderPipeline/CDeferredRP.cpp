@@ -318,13 +318,13 @@ namespace Skylicht
 			}
 			else if (indirectData->Type == CIndirectLightingData::LightmapArray)
 			{
-				if (indirectData->LightmapTexture)
+				if (indirectData->IndirectTexture)
 				{
 					// change shader to vertex color
 					SMaterial textureColor;
 
 					textureColor.MaterialType = m_lightmapArrayShader;
-					textureColor.setTexture(0, indirectData->LightmapTexture);
+					textureColor.setTexture(0, indirectData->IndirectTexture);
 
 					// set irrlicht material
 					driver->setMaterial(textureColor);
@@ -465,7 +465,7 @@ namespace Skylicht
 		CShaderDeferred::setView(m_viewMatrix);
 
 		// STEP 01:
-		// draw baked indirect lighting
+		// draw baked indirect & direction lighting
 		m_isIndirectPass = true;
 		driver->setRenderTarget(m_indirect, true, true, SColor(255, 0, 0, 0));
 		if (useCustomViewport)
@@ -553,6 +553,10 @@ namespace Skylicht
 					if (s_bakeBounce < totalBounce - lightBounce)
 						renderLight = false;
 				}
+
+				// no render shadow on bake light
+				if (s_bakeMode == false && light->getLightType() == CLight::Baked)
+					renderLight = false;
 
 				if (renderLight == true)
 				{
