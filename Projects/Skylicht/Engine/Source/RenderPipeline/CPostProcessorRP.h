@@ -60,7 +60,6 @@ namespace Skylicht
 		float m_exposure;
 
 		bool m_autoExposure;
-		bool m_manualExposure;
 		bool m_bloomEffect;
 		bool m_fxaa;
 		bool m_screenSpaceReflection;
@@ -100,16 +99,6 @@ namespace Skylicht
 		inline bool isEnableAutoExposure()
 		{
 			return m_autoExposure;
-		}
-
-		inline void enableManualExposure(bool b)
-		{
-			m_manualExposure = b;
-		}
-
-		inline bool isEnableManualExpose()
-		{
-			return m_manualExposure;
 		}
 
 		inline void setManualExposure(float f)

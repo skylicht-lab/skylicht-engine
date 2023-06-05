@@ -22,45 +22,21 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Entity/IEntityData.h"
+#include "pch.h"
+#include "CLightmapData.h"
 
 namespace Skylicht
 {
-	class CIndirectLightingData : public IEntityData
+	IMPLEMENT_DATA_TYPE_INDEX(CLightmapData);
+
+	CLightmapData::CLightmapData() :
+		LightmapTexture(NULL)
 	{
-	public:
-		enum EType
-		{
-			LightmapArray = 0,
-			VertexColor,
-			SH9,
-			AmbientColor
-		};
 
-		EType Type;
+	}
 
-		bool* AutoSH;
+	CLightmapData::~CLightmapData()
+	{
 
-		core::vector3df* SH;
-
-		SColor Color;
-
-		ITexture* IndirectTexture;
-		ITexture* LightTexture;
-		ITexture* ReflectionTexture;
-
-		bool Init;
-
-		bool ReleaseSH;
-
-		DECLARE_DATA_TYPE_INDEX;
-
-	public:
-
-		CIndirectLightingData();
-
-		virtual ~CIndirectLightingData();
-	};
+	}
 }

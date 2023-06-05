@@ -181,6 +181,8 @@ void CViewInit::initScene()
 	// save to context
 	CContext* context = CContext::getInstance();
 	context->initRenderPipeline(app->getWidth(), app->getHeight());
+	context->getPostProcessorPipeline()->enableAutoExposure(false);
+	context->getPostProcessorPipeline()->setManualExposure(1.0f);
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
