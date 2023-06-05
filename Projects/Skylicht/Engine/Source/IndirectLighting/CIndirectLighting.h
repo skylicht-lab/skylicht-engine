@@ -51,10 +51,9 @@ namespace Skylicht
 
 		core::vector3df m_sh[9];
 
-		std::vector<std::string> m_lightmapPaths;
-
-		ITexture* m_lightmap;
-		bool m_internalLM;
+		std::vector<std::string> m_indirectLMPaths;
+		ITexture* m_indirectLM;
+		bool m_internalIndirectLM;
 
 		SColor m_ambientColor;
 
@@ -83,11 +82,11 @@ namespace Skylicht
 
 		void setIndirectLightingType(EIndirectType type, bool loadLightmap = true);
 
-		void setLightmap(ITexture* texture);
+		void setIndirectLightmap(ITexture* texture);
 
-		ITexture* getLightmap()
+		ITexture* getIndirectLightmap()
 		{
-			return m_lightmap;
+			return m_indirectLM;
 		}
 
 		void setSH(core::vector3df* sh);

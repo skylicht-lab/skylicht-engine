@@ -1,15 +1,13 @@
 precision mediump float;
-precision highp sampler2D;
-precision highp sampler2DArray;
 
-uniform sampler2DArray uTexLightmap;
+uniform sampler2D uTexDiffuse;
 
-in vec3 varTexCoord0;
-
+in vec2 varTexCoord0;
+in vec4 varColor;
 out vec4 FragColor;
 
 void main(void)
 {
-	FragColor = texture(uTexLightmap, varTexCoord0);
+	FragColor = texture(uTexDiffuse, varTexCoord0.xy) * varColor;
 	FragColor.xyz = FragColor.xyz / 3.0;
 }

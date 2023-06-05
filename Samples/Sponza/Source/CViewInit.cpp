@@ -172,7 +172,7 @@ void CViewInit::initScene()
 		ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(textures);
 		if (lightmapTexture != NULL)
 		{
-			indirectLighting->setLightmap(lightmapTexture);
+			indirectLighting->setIndirectLightmap(lightmapTexture);
 			indirectLighting->setIndirectLightingType(CIndirectLighting::LightmapArray);
 		}
 	}

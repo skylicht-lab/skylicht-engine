@@ -35,7 +35,8 @@ namespace Skylicht
 		m_spotInnerCutoff(180.0f / 5.0f),
 		m_spotExponent(10.0f),
 		m_intensity(1.0f),
-		m_bakeBounce(1)
+		m_bakeBounce(1),
+		m_type(CLight::Realtime)
 	{
 		setRadius(3.0f);
 	}
@@ -52,6 +53,12 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "castShadow", m_castShadow));
 		object->autoRelease(new CColorProperty(object, "color", m_color.toSColor()));
 		object->autoRelease(new CFloatProperty(object, "intensity", m_intensity, 0.0f, 10.0f));
+
+		CEnumProperty<ELightType>* lighType = new CEnumProperty<ELightType>(object, "type", m_type);
+		lighType->addEnumString("Realtime", ELightType::Realtime);
+		lighType->addEnumString("Baked", ELightType::Baked);
+		object->autoRelease(lighType);
+
 		return object;
 	}
 
@@ -62,5 +69,6 @@ namespace Skylicht
 		m_castShadow = object->get<bool>("castShadow", false);
 		m_color = object->get<SColor>("color", SColor(255, 255, 255, 255));
 		m_intensity = object->get<float>("intensity", 1.0f);
+		m_type = object->get<ELightType>("type", ELightType::Realtime);
 	}
 }
