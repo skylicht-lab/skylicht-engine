@@ -24,43 +24,64 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include "Components/CComponentSystem.h"
+#include "CLightmapData.h"
 
 namespace Skylicht
 {
-	class CIndirectLightingData : public IEntityData
+	class CEntity;
+
+	class CLightmap : public CComponentSystem
 	{
 	public:
-		enum EType
-		{
-			LightmapArray = 0,
-			VertexColor,
-			SH9,
-			AmbientColor
-		};
 
-		EType Type;
+	protected:
+		std::vector<std::string> m_lightmapPaths;
 
-		bool* AutoSH;
+		ITexture* m_lightmap;
 
-		core::vector3df* SH;
+		bool m_internalLightmap;
 
-		SColor Color;
+		std::vector<CLightmapData*> m_data;
 
-		ITexture* IndirectTexture;
-		ITexture* LightTexture;
-		ITexture* ReflectionTexture;
+	public:
+		CLightmap();
 
-		bool Init;
+		virtual ~CLightmap();
 
-		bool ReleaseSH;
+		virtual void initComponent();
 
-		DECLARE_DATA_TYPE_INDEX;
+		virtual void startComponent();
+
+		virtual void updateComponent();
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
+
+	protected:
+
+		void addLightingData(CEntity* entity);
 
 	public:
 
-		CIndirectLightingData();
+		void updateLightmap(bool loadLightmap = true);
 
-		virtual ~CIndirectLightingData();
+		void setIndirectLightmap(ITexture* texture);
+
+		ITexture* getIndirectLightmap()
+		{
+			return m_lightmap;
+		}
+
+		std::vector<CLightmapData*>& getData()
+		{
+			return m_data;
+		}
+
+		bool isLightmapEmpty();
+		bool isLightmapChanged(const std::vector<std::string>& paths);
+
+		DECLARE_GETTYPENAME(CLightmap)
 	};
 }
