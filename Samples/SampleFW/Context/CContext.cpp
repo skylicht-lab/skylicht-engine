@@ -5,6 +5,7 @@ CContext::CContext() :
 	m_scene(NULL),
 	m_beginRP(NULL),
 	m_rendering(NULL),
+	m_lightmapRP(NULL),
 	m_shadowMapRendering(NULL),
 	m_forwardRP(NULL),
 	m_postProcessor(NULL),
@@ -132,16 +133,66 @@ CBaseRP* CContext::initShadowForwarderPipeline(int w, int h, bool postEffect)
 	return m_beginRP;
 }
 
+CBaseRP* CContext::initLightmapRenderPipeline(int w, int h, bool postEffect)
+{
+	// 1nd
+	m_lightmapRP = new CDeferredLightmapRP();
+	m_lightmapRP->initRender(w, h);
+	m_lightmapRP->enableUpdateEntity(false);
+
+	// 3rd
+	m_forwardRP = new CForwardRP(false);
+	m_forwardRP->initRender(w, h);
+	m_forwardRP->enableUpdateEntity(false);
+
+	// link rp
+	m_lightmapRP->setNextPipeLine(m_forwardRP);
+
+	if (postEffect == true)
+	{
+		// post processor
+		m_postProcessor = new CPostProcessorRP();
+
+		// turn on for init
+		m_postProcessor->enableBloomEffect(true);
+		m_postProcessor->enableAutoExposure(true);
+		m_postProcessor->enableFXAA(true);
+		m_postProcessor->enableScreenSpaceReflection(false);
+
+		m_postProcessor->initRender(w, h);
+
+		// apply post processor
+		m_lightmapRP->setPostProcessor(m_postProcessor);
+
+		bool highQuality = true;
+
+#ifdef __EMSCRIPTEN__
+		highQuality = false;
+#endif
+
+		if (!highQuality)
+		{
+			m_postProcessor->enableAutoExposure(false);
+			m_postProcessor->setManualExposure(1.2f);
+			m_postProcessor->enableFXAA(false);
+			m_postProcessor->enableScreenSpaceReflection(false);
+		}
+	}
+
+	m_beginRP = m_lightmapRP;
+	return m_beginRP;
+}
+
 void CContext::resize(int w, int h)
 {
-	if (m_beginRP != NULL)
-		m_beginRP->resize(w, h);
-
 	if (m_shadowMapRendering != NULL)
 		m_shadowMapRendering->resize(w, h);
 
 	if (m_rendering != NULL)
 		m_rendering->resize(w, h);
+
+	if (m_lightmapRP != NULL)
+		m_lightmapRP->resize(w, h);
 
 	if (m_forwardRP != NULL)
 		m_forwardRP->resize(w, h);
@@ -159,6 +210,12 @@ void CContext::releaseRenderPipeline()
 	{
 		delete m_rendering;
 		m_rendering = NULL;
+	}
+
+	if (m_lightmapRP != NULL)
+	{
+		delete m_lightmapRP;
+		m_lightmapRP = NULL;
 	}
 
 	if (m_shadowMapRendering != NULL)

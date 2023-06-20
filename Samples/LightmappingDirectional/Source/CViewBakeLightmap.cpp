@@ -4,6 +4,7 @@
 #include "CViewDemo.h"
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
+#include "Lightmap/CLightmapData.h"
 
 CViewBakeLightmap::CViewBakeLightmap() :
 #ifdef LIGHTMAP_SPONZA
@@ -12,6 +13,7 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	m_lightmapSize(512),
 #endif
 	m_numRenderers(0),
+	m_numBakeTexture(0),
 	m_currentMesh(0),
 	m_guiObject(NULL),
 	m_font(NULL)
@@ -151,6 +153,10 @@ void CViewBakeLightmap::onRender()
 	S3DVertex2TCoordsTangents* vertices = (S3DVertex2TCoordsTangents*)mb->getVertexBuffer()->getVertices();
 	int lightmapIndex = (int)vertices[0].Lightmap.Z;
 
+	// calc max textures
+	if (lightmapIndex + 1 > m_numBakeTexture)
+		m_numBakeTexture = lightmapIndex + 1;
+
 	if (m_bakeTexture[lightmapIndex] == NULL)
 	{
 		core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
@@ -197,12 +203,37 @@ void CViewBakeLightmap::onPostRender()
 
 void CViewBakeLightmap::gotoDemoView()
 {
-	char outFileName[512];
-	sprintf(outFileName, "LightMapDirectional.png", 0);
-	CBaseRP::saveFBOToFile(m_bakeTexture[0], outFileName);
+	for (int i = 0; i < m_numBakeTexture; i++)
+	{
+		char outFileName[512];
+		sprintf(outFileName, "LightMapDirectional_%d.png", i);
+		CBaseRP::saveFBOToFile(m_bakeTexture[i], outFileName);
+	}
 
 	// enable render indirect
 	CDeferredRP::enableRenderIndirect(true);
+
+	std::vector<std::string> listTextures;
+
+	for (int i = 0; i < m_numBakeTexture; i++)
+	{
+		char lightmapName[512];
+		sprintf(lightmapName, "LightMapDirectional_%d.png", i);
+		listTextures.push_back(lightmapName);
+	}
+
+	ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
+	if (lightmapTexture != NULL)
+	{
+		// bind lightmap texture as indirect lighting
+		for (CRenderMesh* renderMesh : m_renderMesh)
+		{
+			if (renderMesh->getGameObject()->isStatic() == true)
+			{
+				
+			}
+		}
+	}
 
 	// switch to demo view
 	CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();

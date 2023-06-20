@@ -321,13 +321,13 @@ namespace Skylicht
 				if (indirectData->IndirectTexture)
 				{
 					// change shader to vertex color
-					SMaterial textureColor;
+					SMaterial indirectColor;
 
-					textureColor.MaterialType = m_lightmapArrayShader;
-					textureColor.setTexture(0, indirectData->IndirectTexture);
+					indirectColor.MaterialType = m_lightmapArrayShader;
+					indirectColor.setTexture(0, indirectData->IndirectTexture);
 
 					// set irrlicht material
-					driver->setMaterial(textureColor);
+					driver->setMaterial(indirectColor);
 
 					// draw mesh buffer
 					driver->drawMeshBuffer(mb);

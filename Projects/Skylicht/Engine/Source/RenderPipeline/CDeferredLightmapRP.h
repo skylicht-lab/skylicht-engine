@@ -41,13 +41,14 @@ namespace Skylicht
 		ITexture* m_position;
 		ITexture* m_normal;
 		ITexture* m_data;
-		ITexture* m_indirect;
 
+		ITexture* m_indirect;
 		ITexture* m_lightBuffer;
 
 		core::dimension2du m_size;
 
 		core::array<irr::video::IRenderTarget> m_multiRenderTarget;
+		core::array<irr::video::IRenderTarget> m_multiLightTarget;
 
 		core::matrix4 m_viewMatrix;
 		core::matrix4 m_projectionMatrix;
@@ -57,12 +58,10 @@ namespace Skylicht
 		int m_textureColorShader;
 		int m_textureLinearRGBShader;
 
-		int m_lightmapArrayShader;
+		int m_lightmapDeferredShader;
 		int m_lightmapIndirectTestShader;
 
 		int m_lightDirection;
-		int m_lightDirectionSSR;
-		int m_lightDirectionBake;
 
 		SMaterial m_directionalLightPass;
 		SMaterial m_finalPass;

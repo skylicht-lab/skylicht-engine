@@ -109,6 +109,7 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/Lightmap/Lightmap.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapUV.xml");
+		loadShader("BuiltIn/Shader/Lightmap/LightmapDeferred.xml");
 		loadShader("BuiltIn/Shader/Lightmap/IndirectTest.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapVertex.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapSH.xml");
@@ -166,6 +167,7 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml", new CTBNSGInstancing());
 
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGLightmap.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightSSR.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightBake.xml");
