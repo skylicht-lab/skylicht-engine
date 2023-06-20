@@ -2,9 +2,12 @@
 
 #include "SkylichtEngine.h"
 #include "ViewManager/CView.h"
+#include "RenderPipeline/CDeferredLightmapRP.h"
 
 class CViewDemo : public CView
 {
+protected:
+
 public:
 	CViewDemo();
 
