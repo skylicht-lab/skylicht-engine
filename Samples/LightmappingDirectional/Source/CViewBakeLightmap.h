@@ -24,6 +24,7 @@ protected:
 
 	ITexture* m_bakeTexture[MAX_LIGHTMAP_ATLAS];
 
+	int m_numBakeTexture;
 	int m_currentMesh;
 
 	CGameObject* m_bakeCameraObject;

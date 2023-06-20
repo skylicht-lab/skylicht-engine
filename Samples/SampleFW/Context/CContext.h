@@ -7,6 +7,8 @@
 
 #include "Collision/CCollisionManager.h"
 
+#include "RenderPipeline/CDeferredLightmapRP.h"
+
 using namespace Lightmapper;
 
 class CContext : public CGameSingleton<CContext>
@@ -27,6 +29,7 @@ protected:
 	CDeferredRP* m_rendering;
 	CShadowMapRP* m_shadowMapRendering;
 	CForwardRP* m_forwardRP;
+	CDeferredLightmapRP* m_lightmapRP;
 	CPostProcessorRP* m_postProcessor;
 
 public:
@@ -39,6 +42,8 @@ public:
 	CBaseRP* initRenderPipeline(int w, int h, bool postEffect = true, bool enableSSR = false);
 
 	CBaseRP* initShadowForwarderPipeline(int w, int h, bool postEffect = true);
+
+	CBaseRP* initLightmapRenderPipeline(int w, int h, bool postEffect = true);
 
 	void resize(int w, int h);
 

@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CSpotLight.h"
 #include "Lighting/CDirectionalLight.h"
 #include "IndirectLighting/CIndirectLightingData.h"
+#include "Lightmap/CLightmapData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 #include "Shadow/CShadowRTTManager.h"
 #include "Culling/CCullingSystem.h"
@@ -56,7 +57,7 @@ namespace Skylicht
 		m_textureLinearRGBShader(0),
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
-		m_lightmapArrayShader(0),
+		m_lightmapDeferredShader(0),
 		m_lightmapIndirectTestShader(0),
 		m_indirectMultipler(1.0f),
 		m_directMultipler(1.0f),
@@ -93,6 +94,10 @@ namespace Skylicht
 		m_multiRenderTarget.push_back(m_position);
 		m_multiRenderTarget.push_back(m_normal);
 		m_multiRenderTarget.push_back(m_data);
+
+		// static lightmap buffer
+		m_multiLightTarget.push_back(m_indirect);
+		m_multiLightTarget.push_back(m_lightBuffer);
 	}
 
 	void CDeferredLightmapRP::releaseRTT()
@@ -121,6 +126,7 @@ namespace Skylicht
 			driver->removeTexture(m_target);
 
 		m_multiRenderTarget.clear();
+		m_multiLightTarget.clear();
 	}
 
 	void CDeferredLightmapRP::initRender(int w, int h)
@@ -136,13 +142,10 @@ namespace Skylicht
 		m_textureLinearRGBShader = shaderMgr->getShaderIDByName("TextureLinearRGB");
 		m_vertexColorShader = shaderMgr->getShaderIDByName("VertexColor");
 
-		m_lightmapArrayShader = shaderMgr->getShaderIDByName("Lightmap");
-
+		m_lightmapDeferredShader = shaderMgr->getShaderIDByName("LightmapDeferred");
 		m_lightmapIndirectTestShader = shaderMgr->getShaderIDByName("IndirectTest");
 
-		m_lightDirection = shaderMgr->getShaderIDByName("SGDirectionalLight");
-		m_lightDirectionSSR = shaderMgr->getShaderIDByName("SGDirectionalLightSSR");
-		m_lightDirectionBake = shaderMgr->getShaderIDByName("SGDirectionalLightBake");
+		m_lightDirection = shaderMgr->getShaderIDByName("SGLightmap");
 
 		// setup material
 		initDefferredMaterial();
@@ -243,6 +246,10 @@ namespace Skylicht
 			if (indirectData == NULL)
 				return;
 
+			CLightmapData* lightmapData = GET_ENTITY_DATA(entity->getEntity(entityID), CLightmapData);
+			if (lightmapData == NULL)
+				return;
+
 			// set shader (uniform) material
 			if (mesh->Materials.size() > (u32)bufferID)
 				CShaderMaterial::setMaterial(mesh->Materials[bufferID]);
@@ -254,16 +261,17 @@ namespace Skylicht
 
 			if (indirectData->Type == CIndirectLightingData::LightmapArray)
 			{
-				if (indirectData->IndirectTexture)
+				if (indirectData->IndirectTexture && lightmapData->LightmapTexture)
 				{
 					// change shader to vertex color
-					SMaterial textureColor;
+					SMaterial lightmapDeferredMat;
 
-					textureColor.MaterialType = m_lightmapArrayShader;
-					textureColor.setTexture(0, indirectData->IndirectTexture);
+					lightmapDeferredMat.MaterialType = m_lightmapDeferredShader;
+					lightmapDeferredMat.setTexture(0, indirectData->IndirectTexture);
+					lightmapDeferredMat.setTexture(1, lightmapData->LightmapTexture);
 
 					// set irrlicht material
-					driver->setMaterial(textureColor);
+					driver->setMaterial(lightmapDeferredMat);
 
 					// draw mesh buffer
 					driver->drawMeshBuffer(mb);
@@ -361,7 +369,7 @@ namespace Skylicht
 		// STEP 01:
 		// draw baked indirect & direction lighting
 		m_isIndirectPass = true;
-		driver->setRenderTarget(m_indirect, true, true, SColor(255, 0, 0, 0));
+		driver->setRenderTarget(m_multiLightTarget, true, true, SColor(255, 0, 0, 0));
 		if (useCustomViewport)
 			driver->setViewPort(customViewport);
 
@@ -419,11 +427,6 @@ namespace Skylicht
 		if (useCustomViewport)
 			driver->setViewPort(customViewport);
 
-		// shadow
-		CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
-		if (shadowRP != NULL)
-			m_directionalLightPass.TextureLayer[6].Texture = shadowRP->getDepthTexture();
-
 		// ssr (last frame)
 		bool enableSSR = false;
 
@@ -440,15 +443,7 @@ namespace Skylicht
 		beginRender2D(renderW, renderH);
 
 		// enable backface shader if bake lightmap mode
-		if (s_bakeMode == true)
-			m_directionalLightPass.MaterialType = m_lightDirectionBake;
-		else
-		{
-			if (enableSSR)
-				m_directionalLightPass.MaterialType = m_lightDirectionSSR;
-			else
-				m_directionalLightPass.MaterialType = m_lightDirection;
-		}
+		m_directionalLightPass.MaterialType = m_lightDirection;
 
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 

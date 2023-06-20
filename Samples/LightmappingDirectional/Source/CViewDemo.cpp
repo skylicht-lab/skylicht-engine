@@ -10,11 +10,15 @@ CViewDemo::CViewDemo()
 
 CViewDemo::~CViewDemo()
 {
+
 }
 
 void CViewDemo::onInit()
 {
+	CBaseApp* app = getApplication();
 
+	CContext::getInstance()->releaseRenderPipeline();
+	CContext::getInstance()->initLightmapRenderPipeline(app->getWidth(), app->getHeight());
 }
 
 void CViewDemo::onDestroy()
@@ -24,7 +28,7 @@ void CViewDemo::onDestroy()
 
 void CViewDemo::onUpdate()
 {
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 
 	// update application
 	context->getScene()->update();
@@ -32,17 +36,17 @@ void CViewDemo::onUpdate()
 
 void CViewDemo::onRender()
 {
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 
-	CCamera *camera = context->getActiveCamera();
-	CCamera *guiCamera = context->getGUICamera();
+	CCamera* camera = context->getActiveCamera();
+	CCamera* guiCamera = context->getGUICamera();
 
-	CScene *scene = context->getScene();
+	CScene* scene = context->getScene();
 
 	// render scene
 	if (camera != NULL && scene != NULL)
 	{
-		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager(), core::recti());
+		CContext::getInstance()->getRenderPipeline()->render(NULL, camera, scene->getEntityManager(), core::recti());
 	}
 
 	// render GUI

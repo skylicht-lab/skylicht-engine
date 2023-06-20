@@ -6,7 +6,7 @@ static const float PI = 3.1415926;
 #endif
 #include "../../../PostProcessing/HLSL/LibToneMapping.hlsl"
 
-float3 SG(
+float3 SGLM(
 	const float3 baseColor,
 	const float spec,
 	const float gloss,
@@ -15,7 +15,6 @@ float3 SG(
 	const float3 worldLightDir,
 	const float3 worldNormal,
 	const float3 lightColor,
-	const float visibility,
 	const float4 light,
 	const float3 indirect,
 	const float directMultiplier,
@@ -40,30 +39,20 @@ float3 SG(
 	// Tone mapping
 	specularColor = sRGB(specularColor);
 	diffuseColor = sRGB(diffuseColor);
-	float3 directionLightColor = sRGB(lightColor);
-	float3 pointLightColor = sRGB(light.rgb);
+	float3 directionColor = sRGB(light.rgb);
 	float3 indirectColor = sRGB(indirect.rgb);
-
-	// Lighting
-	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
-	NdotL = min(NdotL, 1.0);
 
 	// Specular
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * glossiness) * spec;
-
-	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
-	float3 directionalLight = NdotL * directionLightColor * visibility;
 	
 	// Direction lighting
-	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor;
+	float3 color = (directionColor * lightMultiplier) * diffuseColor;
 	
 	// Direction specular
-	color += specular * specularColor * envSpecColor;
-	
-	// Point light specular
-	color += light.a * specularColor;
+	float3 envSpecColor = float3(1.0, 1.0, 1.0);
+	color = color + specular * specularColor * envSpecColor;
 
 	// IBL Ambient
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
