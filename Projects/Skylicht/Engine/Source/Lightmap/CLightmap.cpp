@@ -179,7 +179,7 @@ namespace Skylicht
 		return false;
 	}
 
-	void CLightmap::setIndirectLightmap(ITexture* texture)
+	void CLightmap::setLightmap(ITexture* texture)
 	{
 		if (m_internalLightmap && m_lightmap)
 			CTextureManager::getInstance()->removeTexture(m_lightmap);
