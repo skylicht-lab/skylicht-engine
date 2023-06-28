@@ -67,9 +67,9 @@ namespace Skylicht
 
 		void updateLightmap(bool loadLightmap = true);
 
-		void setIndirectLightmap(ITexture* texture);
+		void setLightmap(ITexture* texture);
 
-		ITexture* getIndirectLightmap()
+		ITexture* getLightmap()
 		{
 			return m_lightmap;
 		}

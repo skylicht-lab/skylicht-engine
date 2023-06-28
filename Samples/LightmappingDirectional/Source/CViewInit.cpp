@@ -5,6 +5,8 @@
 #include "ViewManager/CViewManager.h"
 #include "SkyDome/CSkyDome.h"
 
+// #define LIGHTMAP_SPONZA
+
 CViewInit::CViewInit()
 {
 
@@ -148,7 +150,7 @@ void CViewInit::onInit()
 		textureFolders.push_back("Sponza/Textures");
 
 		// load material
-		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Sponza/Sponza.xml", true, textureFolders);
+		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Sponza/Sponza.mat", true, textureFolders);
 #else
 		// init default material
 		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(model);
