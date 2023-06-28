@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "CViewInit.h"
-#include "CViewBakeLightmap.h"
+#include "CViewDemo.h"
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
-
 #include "SkyDome/CSkyDome.h"
+#include "Lightmap/CLightmap.h"
+
+// #define LIGHTMAP_SPONZA
 
 CViewInit::CViewInit()
 {
@@ -78,6 +80,7 @@ void CViewInit::onInit()
 #else
 	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
 #endif
+
 	if (skyDomeTexture != NULL)
 	{
 		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
@@ -160,13 +163,30 @@ void CViewInit::onInit()
 			float c[] = { 165.0f / 255.0f, 161.0f / 255.0f, 147 / 255.0f, 1.0f };
 			material->setUniform4("uColor", c);
 		}
+
+		// indirect lighting
+		CIndirectLighting* indirect = gazeboObj->addComponent<CIndirectLighting>();
+		std::vector<std::string> listTextures;
+		listTextures.push_back("SampleModels/Gazebo/LightMapRasterize_bounce_2_0.png");
+
+		ITexture* indirectTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
+		indirect->setIndirectLightmap(indirectTexture);
+		indirect->setIndirectLightingType(CIndirectLighting::LightmapArray);
+
+		// direction lightmap
+		listTextures.clear();
+		listTextures.push_back("SampleModels/Gazebo/LightMapDirectional_0.png");
+		CLightmap* lightmap = gazeboObj->addComponent<CLightmap>();
+
+		ITexture* directionTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
+		lightmap->setLightmap(directionTexture);
 #endif
 
 		renderMesh->initMaterial(materials);
 	}
 
 	// save to context	
-	context->initRenderPipeline(app->getWidth(), app->getHeight(), false);
+	context->initLightmapRenderPipeline(app->getWidth(), app->getHeight(), false);
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
@@ -190,7 +210,7 @@ void CViewInit::onUpdate()
 	if (scene != NULL)
 		scene->update();
 
-	CViewManager::getInstance()->getLayer(0)->changeView<CViewBakeLightmap>();
+	CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 }
 
 void CViewInit::onRender()

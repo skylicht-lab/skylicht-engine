@@ -138,7 +138,7 @@ CBaseRP* CContext::initLightmapRenderPipeline(int w, int h, bool postEffect)
 	// 1nd
 	m_lightmapRP = new CDeferredLightmapRP();
 	m_lightmapRP->initRender(w, h);
-	m_lightmapRP->enableUpdateEntity(false);
+	m_lightmapRP->enableUpdateEntity(true);
 
 	// 3rd
 	m_forwardRP = new CForwardRP(false);
