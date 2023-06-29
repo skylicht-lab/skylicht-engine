@@ -32,6 +32,7 @@ namespace Skylicht
 	{
 	public:
 		ITexture* LightmapTexture;
+		int LightmapIndex;
 
 		DECLARE_DATA_TYPE_INDEX;
 

@@ -30,7 +30,8 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CLightmapData);
 
 	CLightmapData::CLightmapData() :
-		LightmapTexture(NULL)
+		LightmapTexture(NULL),
+		LightmapIndex(0)
 	{
 
 	}
