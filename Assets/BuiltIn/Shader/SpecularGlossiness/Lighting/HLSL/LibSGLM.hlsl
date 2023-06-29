@@ -52,7 +52,7 @@ float3 SGLM(
 	
 	// Direction specular
 	float3 envSpecColor = float3(1.0, 1.0, 1.0);
-	color = color + specular * specularColor * envSpecColor;
+	color += specular * specularColor * envSpecColor;
 
 	// IBL Ambient
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
