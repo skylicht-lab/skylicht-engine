@@ -121,23 +121,6 @@ namespace Skylicht
 		enumType->addEnumString("Ambient Color", EIndirectType::AmbientColor);
 		object->autoRelease(enumType);
 
-		CArrayTypeSerializable<CFilePathProperty>* indirectTextureArray = new CArrayTypeSerializable<CFilePathProperty>("IndirectLM", object);
-		indirectTextureArray->OnCreateElement = [](CValueProperty* element)
-		{
-			CFilePathProperty* fileProperty = dynamic_cast<CFilePathProperty*>(element);
-			fileProperty->Exts.push_back("tga");
-			fileProperty->Exts.push_back("png");
-		};
-		object->autoRelease(indirectTextureArray);
-
-		// lightmap path
-		indirectTextureArray->resize((int)m_indirectLMPaths.size());
-		for (u32 i = 0, n = (u32)m_indirectLMPaths.size(); i < n; i++)
-		{
-			CFilePathProperty* fileProperty = dynamic_cast<CFilePathProperty*>(indirectTextureArray->getElement(i));
-			fileProperty->set(m_indirectLMPaths[i]);
-		}
-
 		// ambient color
 		object->autoRelease(new CColorProperty(object, "Ambient Color", m_ambientColor));
 
@@ -148,30 +131,11 @@ namespace Skylicht
 	{
 		CComponentSystem::loadSerializable(object);
 
-		bool lightmapChanged = false;
-
 		EIndirectType type = object->get<EIndirectType>("type", EIndirectType::SH9);
-
-		CArraySerializable* textureArray = (CArraySerializable*)object->getProperty("IndirectLM");
-		if (textureArray != NULL)
-		{
-			std::vector<std::string> old = m_indirectLMPaths;
-			m_indirectLMPaths.clear();
-
-			int count = textureArray->getElementCount();
-			for (int i = 0; i < count; i++)
-			{
-				std::string path = textureArray->getElementValue<std::string>(i, std::string());
-				m_indirectLMPaths.push_back(path);
-			}
-
-			if (!isLightmapEmpty())
-				lightmapChanged = isLightmapChanged(old);
-		}
 
 		m_ambientColor = object->get<SColor>("Ambient Color", SColor(255, 60, 60, 60));
 
-		setIndirectLightingType(type, lightmapChanged);
+		setIndirectLightingType(type, false);
 	}
 
 	bool CIndirectLighting::isLightmapEmpty()

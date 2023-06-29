@@ -37,7 +37,8 @@ namespace Skylicht
 		m_currentRenderID(-1),
 		m_currentMeshBuffer(NULL),
 		m_currentMatRendering(NULL),
-		BoneMatrix(NULL)
+		BoneMatrix(NULL),
+		LightmapIndex(0)
 	{
 	}
 

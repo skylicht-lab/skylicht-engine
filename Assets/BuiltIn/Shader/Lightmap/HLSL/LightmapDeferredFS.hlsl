@@ -1,8 +1,5 @@
-Texture2DArray uTexIndirect : register(t0);
-SamplerState uTexIndirectSampler : register(s0);
-
-Texture2DArray uTexDirectional : register(t1);
-SamplerState uTexDirectionalSampler : register(s1);
+Texture2DArray uTexLightmap : register(t0);
+SamplerState uTexLightmapSampler : register(s0);
 
 struct PS_INPUT
 {
@@ -16,12 +13,20 @@ struct PS_OUTPUT
 	float4 Directional: SV_TARGET1;
 };
 
+cbuffer cbPerFrame
+{
+	float uLightmapIndex;
+}
+
 PS_OUTPUT main(PS_INPUT input)
 {
 	PS_OUTPUT output;
 	
-	output.Indirect = uTexIndirect.Sample(uTexIndirectSampler, input.tex0) * 3.0;
-	output.Directional = uTexDirectional.Sample(uTexDirectionalSampler, input.tex0) * 3.0;
+	output.Indirect = uTexLightmap.Sample(uTexLightmapSampler, input.tex0) * 3.0;
+	
+	float3 uv = input.tex0;
+	uv.z += uLightmapIndex;	
+	output.Directional = uTexLightmap.Sample(uTexLightmapSampler, uv) * 3.0;
 	
 	return output;
 }

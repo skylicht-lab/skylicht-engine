@@ -42,6 +42,8 @@ namespace Skylicht
 
 		bool m_internalLightmap;
 
+		int m_lightmapBeginIndex;
+
 		std::vector<CLightmapData*> m_data;
 
 	public:
@@ -67,7 +69,7 @@ namespace Skylicht
 
 		void updateLightmap(bool loadLightmap = true);
 
-		void setLightmap(ITexture* texture);
+		void setLightmap(ITexture* texture, int beginIndex);
 
 		ITexture* getLightmap()
 		{
