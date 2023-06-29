@@ -19,6 +19,6 @@ void main(void)
 	float visibility = shadowSimple(shadowCoord);
 	
 	float NdotL = max(dot(varWorldNormal, uLightDirection.xyz), 0.0);
-	vec4 directionalLightColor = NdotL * uLightColor;
+	vec4 directionalLightColor = NdotL * uLightColor / 3.0;
 	FragColor = vec4(directionalLightColor.rgb * visibility, 1.0);
 }

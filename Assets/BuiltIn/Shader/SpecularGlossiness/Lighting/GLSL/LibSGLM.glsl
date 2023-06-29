@@ -46,13 +46,12 @@ vec3 SGLM(
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
 	float specular = pow(NdotE, 100.0f * glossiness) * spec;
-
-	vec3 envSpecColor = vec3(1.0, 1.0, 1.0);
 	
 	// Direction lighting
 	vec3 color = (directionColor * lightMultiplier) * diffuseColor;
 	
 	// Direction specular
+	vec3 envSpecColor = vec3(1.0, 1.0, 1.0);
 	color += specular * specularColor * envSpecColor;
 
 	// IBL Ambient

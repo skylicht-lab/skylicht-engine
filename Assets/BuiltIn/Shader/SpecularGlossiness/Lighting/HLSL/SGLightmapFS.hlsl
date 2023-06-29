@@ -82,7 +82,7 @@ float3 SGLM(
 	float specular = pow(NdotE, 100.0f * glossiness) * spec;
 	float3 color = (directionColor * lightMultiplier) * diffuseColor;
 	float3 envSpecColor = float3(1.0, 1.0, 1.0);
-	color = color + specular * specularColor * envSpecColor;
+	color += specular * specularColor * envSpecColor;
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 	return color;
 }
