@@ -2,8 +2,9 @@ precision mediump float;
 precision highp sampler2D;
 precision highp sampler2DArray;
 
-uniform sampler2DArray uTexIndirect;
-uniform sampler2DArray uTexDirectional;
+uniform sampler2DArray uTexLightmap;
+
+uniform float uLightmapIndex;
 
 in vec3 varTexCoord0;
 
@@ -12,6 +13,9 @@ layout(location = 1) out vec4 Directional;
 
 void main(void)
 {
-	Indirect = texture(uTexIndirect, varTexCoord0) * 3.0;
-	Directional = texture(uTexDirectional, varTexCoord0) * 3.0;
+	Indirect = texture(uTexLightmap, varTexCoord0) * 3.0;
+	
+	vec3 uv = varTexCoord0;
+	uv.z += uLightmapIndex;
+	Directional = texture(uTexLightmap, uv) * 3.0;
 }

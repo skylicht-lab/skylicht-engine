@@ -39,7 +39,8 @@ namespace Skylicht
 
 	CLightmap::CLightmap() :
 		m_internalLightmap(false),
-		m_lightmap(NULL)
+		m_lightmap(NULL),
+		m_lightmapBeginIndex(0)
 	{
 
 	}
@@ -106,51 +107,12 @@ namespace Skylicht
 	CObjectSerializable* CLightmap::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
-
-		CArrayTypeSerializable<CFilePathProperty>* lightmapTextureArray = new CArrayTypeSerializable<CFilePathProperty>("Lightmap", object);
-		lightmapTextureArray->OnCreateElement = [](CValueProperty* element)
-		{
-			CFilePathProperty* fileProperty = dynamic_cast<CFilePathProperty*>(element);
-			fileProperty->Exts.push_back("tga");
-			fileProperty->Exts.push_back("png");
-		};
-		object->autoRelease(lightmapTextureArray);
-
-		// lightmap path
-		lightmapTextureArray->resize((int)m_lightmapPaths.size());
-		for (u32 i = 0, n = (u32)m_lightmapPaths.size(); i < n; i++)
-		{
-			CFilePathProperty* fileProperty = dynamic_cast<CFilePathProperty*>(lightmapTextureArray->getElement(i));
-			fileProperty->set(m_lightmapPaths[i]);
-		}
-
 		return object;
 	}
 
 	void CLightmap::loadSerializable(CObjectSerializable* object)
 	{
 		CComponentSystem::loadSerializable(object);
-
-		bool lightmapChanged = false;
-
-		CArraySerializable* textureArray = (CArraySerializable*)object->getProperty("Lightmap");
-		if (textureArray != NULL)
-		{
-			std::vector<std::string> old = m_lightmapPaths;
-			m_lightmapPaths.clear();
-
-			int count = textureArray->getElementCount();
-			for (int i = 0; i < count; i++)
-			{
-				std::string path = textureArray->getElementValue<std::string>(i, std::string());
-				m_lightmapPaths.push_back(path);
-			}
-
-			if (!isLightmapEmpty())
-				lightmapChanged = isLightmapChanged(old);
-		}
-
-		updateLightmap(true);
 	}
 
 	bool CLightmap::isLightmapEmpty()
@@ -179,12 +141,13 @@ namespace Skylicht
 		return false;
 	}
 
-	void CLightmap::setLightmap(ITexture* texture)
+	void CLightmap::setLightmap(ITexture* texture, int beginIndex)
 	{
 		if (m_internalLightmap && m_lightmap)
 			CTextureManager::getInstance()->removeTexture(m_lightmap);
 
 		m_lightmap = texture;
+		m_lightmapBeginIndex = beginIndex;
 		m_internalLightmap = false;
 
 		updateLightmap(false);
@@ -205,6 +168,7 @@ namespace Skylicht
 		for (CLightmapData* data : m_data)
 		{
 			data->LightmapTexture = m_lightmap;
+			data->LightmapIndex = m_lightmapBeginIndex;
 		}
 	}
 }

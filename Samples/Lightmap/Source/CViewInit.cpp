@@ -168,18 +168,15 @@ void CViewInit::onInit()
 		CIndirectLighting* indirect = gazeboObj->addComponent<CIndirectLighting>();
 		std::vector<std::string> listTextures;
 		listTextures.push_back("SampleModels/Gazebo/LightMapRasterize_bounce_2_0.png");
+		listTextures.push_back("SampleModels/Gazebo/LightMapDirectional_0.png");
 
-		ITexture* indirectTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
-		indirect->setIndirectLightmap(indirectTexture);
+		ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
+		indirect->setIndirectLightmap(lightmapTexture);
 		indirect->setIndirectLightingType(CIndirectLighting::LightmapArray);
 
 		// direction lightmap
-		listTextures.clear();
-		listTextures.push_back("SampleModels/Gazebo/LightMapDirectional_0.png");
 		CLightmap* lightmap = gazeboObj->addComponent<CLightmap>();
-
-		ITexture* directionTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
-		lightmap->setLightmap(directionTexture);
+		lightmap->setLightmap(lightmapTexture, 1);
 #endif
 
 		renderMesh->initMaterial(materials);

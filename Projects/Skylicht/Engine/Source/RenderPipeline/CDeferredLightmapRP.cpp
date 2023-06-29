@@ -250,6 +250,10 @@ namespace Skylicht
 			if (lightmapData == NULL)
 				return;
 
+			if (indirectData->IndirectTexture == NULL ||
+				indirectData->IndirectTexture != lightmapData->LightmapTexture)
+				return;
+
 			// set shader (uniform) material
 			if (mesh->Materials.size() > (u32)bufferID)
 				CShaderMaterial::setMaterial(mesh->Materials[bufferID]);
@@ -261,21 +265,19 @@ namespace Skylicht
 
 			if (indirectData->Type == CIndirectLightingData::LightmapArray)
 			{
-				if (indirectData->IndirectTexture && lightmapData->LightmapTexture)
-				{
-					// change shader to vertex color
-					SMaterial lightmapDeferredMat;
+				// change shader to vertex color
+				SMaterial lightmapDeferredMat;
 
-					lightmapDeferredMat.MaterialType = m_lightmapDeferredShader;
-					lightmapDeferredMat.setTexture(0, indirectData->IndirectTexture);
-					lightmapDeferredMat.setTexture(1, lightmapData->LightmapTexture);
+				lightmapDeferredMat.MaterialType = m_lightmapDeferredShader;
+				lightmapDeferredMat.setTexture(0, indirectData->IndirectTexture);
 
-					// set irrlicht material
-					driver->setMaterial(lightmapDeferredMat);
+				CShaderManager::getInstance()->LightmapIndex = lightmapData->LightmapIndex;
 
-					// draw mesh buffer
-					driver->drawMeshBuffer(mb);
-				}
+				// set irrlicht material
+				driver->setMaterial(lightmapDeferredMat);
+
+				// draw mesh buffer
+				driver->drawMeshBuffer(mb);
 			}
 		}
 		else

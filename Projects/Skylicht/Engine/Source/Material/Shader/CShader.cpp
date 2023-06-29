@@ -138,6 +138,7 @@ namespace Skylicht
 			"PARTICLE_VIEW_LOOK",
 			"PARTICLE_ORIENTATION_UP",
 			"PARTICLE_ORIENTATION_NORMAL",
+			"LIGHTMAP_INDEX",
 			"NULL"
 		};
 
@@ -1058,6 +1059,14 @@ namespace Skylicht
 				else
 					matRender->setShaderVariable(uniform.UniformShaderID, &count, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 			}
+		}
+		break;
+		case LIGHTMAP_INDEX:
+		{
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform.UniformShaderID, &shaderManager->LightmapIndex, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform.UniformShaderID, &shaderManager->LightmapIndex, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		/*
