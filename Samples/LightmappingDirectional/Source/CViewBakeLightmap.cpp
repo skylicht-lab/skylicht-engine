@@ -5,6 +5,7 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 #include "Lightmap/CLightmapData.h"
+#include "Importer/Utils/CMeshUtils.h"
 
 CViewBakeLightmap::CViewBakeLightmap() :
 #ifdef LIGHTMAP_SPONZA
@@ -31,6 +32,7 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
 	{
 		m_bakeTexture[i] = NULL;
+		m_subMesh[i] = NULL;
 	}
 }
 
@@ -134,6 +136,16 @@ void CViewBakeLightmap::onUpdate()
 
 void CViewBakeLightmap::onRender()
 {
+	// remove submesh
+	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
+	{
+		if (m_subMesh[i])
+		{
+			m_subMesh[i]->drop();
+			m_subMesh[i] = NULL;
+		}
+	}
+
 	if (m_currentMesh >= m_meshBuffers.size())
 	{
 		// finish
@@ -150,20 +162,67 @@ void CViewBakeLightmap::onRender()
 
 	// lightmap texture
 	IMeshBuffer* mb = m_meshBuffers[m_currentMesh];
-	S3DVertex2TCoordsTangents* vertices = (S3DVertex2TCoordsTangents*)mb->getVertexBuffer()->getVertices();
-	int lightmapIndex = (int)vertices[0].Lightmap.Z;
 
-	// calc max textures
-	if (lightmapIndex + 1 > m_numBakeTexture)
-		m_numBakeTexture = lightmapIndex + 1;
+	IVertexBuffer* srcVtx = mb->getVertexBuffer();
+	IIndexBuffer* srcIdx = mb->getIndexBuffer();
 
-	if (m_bakeTexture[lightmapIndex] == NULL)
+	S3DVertex2TCoordsTangents* vertices = (S3DVertex2TCoordsTangents*)srcVtx->getVertices();
+	void* indices = srcIdx->getIndices();
+
+	E_INDEX_TYPE type = srcIdx->getType();
+
+	// Collect the lightmap index to many submesh
+	int count = srcIdx->getIndexCount();
+	for (int i = 0; i < count; i += 3)
 	{
-		core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
-		m_bakeTexture[lightmapIndex] = getVideoDriver()->addRenderTargetTexture(size, "bakeLM", video::ECF_A8R8G8B8);
+		u32 vertexId0 = 0;
+		u32 vertexId1 = 0;
+		u32 vertexId2 = 0;
 
-		// clear black
-		getVideoDriver()->setRenderTarget(m_bakeTexture[lightmapIndex], true, true, SColor(0, 0, 0, 0));
+		if (type == EIT_16BIT)
+		{
+			u16* data = (u16*)indices;
+			vertexId0 = (u32)data[i];
+			vertexId1 = (u32)data[i + 1];
+			vertexId2 = (u32)data[i + 2];
+		}
+		else
+		{
+			u32* data = (u32*)indices;
+			vertexId0 = data[i];
+			vertexId1 = data[i + 1];
+			vertexId2 = data[i + 2];
+		}
+
+		// query triangle lightmap index
+		int lightmapIndex = (int)vertices[vertexId0].Lightmap.Z;
+		if (m_subMesh[lightmapIndex] == NULL)
+		{
+			m_subMesh[lightmapIndex] = new CMeshBuffer<S3DVertex2TCoordsTangents>(getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS), type);
+			CMeshUtils::copyVertices(srcVtx, m_subMesh[lightmapIndex]->getVertexBuffer());
+		}
+
+		IIndexBuffer* idx = m_subMesh[lightmapIndex]->getIndexBuffer();
+		idx->addIndex(vertexId0);
+		idx->addIndex(vertexId1);
+		idx->addIndex(vertexId2);
+
+		// calc max textures
+		if (lightmapIndex + 1 > m_numBakeTexture)
+			m_numBakeTexture = lightmapIndex + 1;
+	}
+
+	// init render target
+	for (int i = 0; i < m_numBakeTexture; i++)
+	{
+		if (m_bakeTexture[i] == NULL)
+		{
+			core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
+			m_bakeTexture[i] = getVideoDriver()->addRenderTargetTexture(size, "bakeLM", video::ECF_A8R8G8B8);
+
+			// clear black
+			getVideoDriver()->setRenderTarget(m_bakeTexture[i], true, true, SColor(0, 0, 0, 0));
+		}
 	}
 
 	// calc bbox of mesh
@@ -173,7 +232,9 @@ void CViewBakeLightmap::onRender()
 
 	// set box & mesh that render light
 	m_shadowRP->setBound(box);
-	m_bakeLightRP->setRenderMesh(mb);
+
+	// setup target for pipeline
+	m_bakeLightRP->setRenderMesh(mb, m_subMesh, m_bakeTexture, m_numBakeTexture);
 
 	// set camera view
 	core::vector3df center = box.getCenter();
@@ -187,7 +248,7 @@ void CViewBakeLightmap::onRender()
 	context->getScene()->update();
 
 	// render uv
-	m_shadowRP->render(m_bakeTexture[lightmapIndex], bakeCamera, entityMgr, core::recti());
+	m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
 
 	// next mesh
 	m_currentMesh++;

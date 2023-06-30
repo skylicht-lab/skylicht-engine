@@ -34,15 +34,23 @@ namespace Skylicht
 	protected:
 		IMeshBuffer* m_renderMesh;
 
+		IMeshBuffer** m_renderSubmesh;
+		ITexture** m_renderTarget;
+		int m_numTarget;
+		int m_currentTarget;
+
 		int m_bakeDirectionMaterialID;
 	public:
 		CDirectionalLightBakeRP();
 
 		virtual ~CDirectionalLightBakeRP();
 
-		inline void setRenderMesh(IMeshBuffer* mb)
+		inline void setRenderMesh(IMeshBuffer* mb, IMeshBuffer** submesh, ITexture** targets, int numTarget)
 		{
 			m_renderMesh = mb;
+			m_renderSubmesh = submesh;
+			m_renderTarget = targets;
+			m_numTarget = numTarget;
 		}
 
 		virtual void initRender(int w, int h);
