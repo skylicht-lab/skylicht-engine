@@ -5,7 +5,7 @@
 #include "ViewManager/CViewManager.h"
 #include "SkyDome/CSkyDome.h"
 
-// #define LIGHTMAP_SPONZA
+#define LIGHTMAP_SPONZA
 
 CViewInit::CViewInit()
 {
@@ -90,7 +90,7 @@ void CViewInit::onInit()
 	CGameObject* lightObj = zone->createEmptyObject();
 
 	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
-	directionalLight->setIntensity(1.0f);
+	directionalLight->setIntensity(1.3f);
 	directionalLight->setBounce(3);
 
 	CTransformEuler* lightTransform = lightObj->getTransformEuler();

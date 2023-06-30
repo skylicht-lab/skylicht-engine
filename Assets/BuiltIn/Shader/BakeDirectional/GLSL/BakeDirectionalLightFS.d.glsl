@@ -5,6 +5,7 @@ uniform sampler2D uShadowMap;
 in vec3 varWorldPosition;
 in vec3 varWorldNormal;
 
+uniform vec4 uLightColor;
 uniform vec4 uLightDirection;
 uniform mat4 uShadowMatrix;
 
@@ -18,6 +19,6 @@ void main(void)
 	float visibility = shadowSimple(shadowCoord);
 	
 	float NdotL = max(dot(varWorldNormal, uLightDirection.xyz), 0.0);
-	float light = NdotL * visibility / 3;
-	FragColor = vec4(light, light, light, visibility);
+	vec3 directionalLightColor = NdotL * uLightColor.rgb / 3.0;
+	FragColor = vec4(directionalLightColor * visibility, visibility);
 }
