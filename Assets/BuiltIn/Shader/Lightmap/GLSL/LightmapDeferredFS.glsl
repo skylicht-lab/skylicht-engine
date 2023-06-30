@@ -17,5 +17,6 @@ void main(void)
 	
 	vec3 uv = varTexCoord0;
 	uv.z += uLightmapIndex;
-	Directional = texture(uTexLightmap, uv) * 3.0;
+	vec4 lightColor = texture(uTexLightmap, uv);
+	Directional = vec4(lightColor.rgb * 3.0, lightColor.a);
 }
