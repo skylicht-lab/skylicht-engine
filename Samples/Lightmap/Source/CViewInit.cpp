@@ -101,27 +101,6 @@ void CViewInit::onInit()
 	core::vector3df direction = core::vector3df(2.0f, -5.0f, 1.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-	core::vector3df pointLightPosition[] = {
-		{-11.19f, 2.4f, 4.01f},
-		{-11.2f, 2.4f, -4.5f},
-		{12.03f, 2.4f, 4.04f},
-		{12.01f, 2.4f, -4.47f}
-	};
-
-	for (int i = 0; i < 4; i++)
-	{
-		CGameObject* pointLightObj = zone->createEmptyObject();
-
-		CPointLight* pointLight = pointLightObj->addComponent<CPointLight>();
-		pointLight->setShadow(true);
-		pointLight->setColor(SColor(255, 221, 123, 34));
-		pointLight->setBounce(1);
-		pointLight->setRadius(4.0f);
-
-		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
-		pointLightTransform->setPosition(pointLightPosition[i]);
-	}
-
 	// Load model from Sponza.smesh
 	// How to export "Sponza.smesh" see SampleLightmapUV
 	CEntityPrefab* model = CMeshManager::getInstance()->loadModel("Sponza/Sponza.smesh", NULL, true);
@@ -141,10 +120,10 @@ void CViewInit::onInit()
 
 	if (model != NULL)
 	{
-		CGameObject* gazeboObj = zone->createEmptyObject();
-		gazeboObj->setStatic(true);
+		CGameObject* modelObject = zone->createEmptyObject();
+		modelObject->setStatic(true);
 
-		CRenderMesh* renderMesh = gazeboObj->addComponent<CRenderMesh>();
+		CRenderMesh* renderMesh = modelObject->addComponent<CRenderMesh>();
 		renderMesh->initFromPrefab(model);
 
 #ifdef LIGHTMAP_SPONZA
@@ -153,6 +132,26 @@ void CViewInit::onInit()
 
 		// load material
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("Sponza/Sponza.mat", true, textureFolders);
+
+		// indirect lighting
+		CIndirectLighting* indirect = modelObject->addComponent<CIndirectLighting>();
+
+		std::vector<std::string> listTextures;
+		listTextures.push_back("Sponza/LightMapRasterize_bounce_3_0.png");
+		listTextures.push_back("Sponza/LightMapRasterize_bounce_3_1.png");
+		listTextures.push_back("Sponza/LightMapRasterize_bounce_3_2.png");
+
+		listTextures.push_back("Sponza/LightMapDirectional_0.png");
+		listTextures.push_back("Sponza/LightMapDirectional_1.png");
+		listTextures.push_back("Sponza/LightMapDirectional_2.png");
+
+		ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
+		indirect->setIndirectLightmap(lightmapTexture);
+		indirect->setIndirectLightingType(CIndirectLighting::LightmapArray);
+
+		// direction lightmap
+		CLightmap* lightmap = modelObject->addComponent<CLightmap>();
+		lightmap->setLightmap(lightmapTexture, 3);
 #else
 		// init default material
 		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(model);
@@ -165,7 +164,7 @@ void CViewInit::onInit()
 		}
 
 		// indirect lighting
-		CIndirectLighting* indirect = gazeboObj->addComponent<CIndirectLighting>();
+		CIndirectLighting* indirect = modelObject->addComponent<CIndirectLighting>();
 		std::vector<std::string> listTextures;
 		listTextures.push_back("SampleModels/Gazebo/LightMapRasterize_bounce_2_0.png");
 		listTextures.push_back("SampleModels/Gazebo/LightMapDirectional_0.png");
@@ -175,7 +174,7 @@ void CViewInit::onInit()
 		indirect->setIndirectLightingType(CIndirectLighting::LightmapArray);
 
 		// direction lightmap
-		CLightmap* lightmap = gazeboObj->addComponent<CLightmap>();
+		CLightmap* lightmap = modelObject->addComponent<CLightmap>();
 		lightmap->setLightmap(lightmapTexture, 1);
 #endif
 
