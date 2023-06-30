@@ -25,8 +25,9 @@ PS_OUTPUT main(PS_INPUT input)
 	output.Indirect = uTexLightmap.Sample(uTexLightmapSampler, input.tex0) * 3.0;
 	
 	float3 uv = input.tex0;
-	uv.z += uLightmapIndex;	
-	output.Directional = uTexLightmap.Sample(uTexLightmapSampler, uv) * 3.0;
+	uv.z += uLightmapIndex;
+	float4 lightColor = uTexLightmap.Sample(uTexLightmapSampler, uv);
+	output.Directional = float4(lightColor.rgb * 3.0, lightColor.a);
 	
 	return output;
 }
