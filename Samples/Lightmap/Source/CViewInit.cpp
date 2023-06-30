@@ -6,7 +6,7 @@
 #include "SkyDome/CSkyDome.h"
 #include "Lightmap/CLightmap.h"
 
-// #define LIGHTMAP_SPONZA
+#define LIGHTMAP_SPONZA
 
 CViewInit::CViewInit()
 {
@@ -92,7 +92,7 @@ void CViewInit::onInit()
 	CGameObject* lightObj = zone->createEmptyObject();
 
 	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
-	directionalLight->setIntensity(1.0f);
+	directionalLight->setIntensity(1.3f);
 	directionalLight->setBounce(3);
 
 	CTransformEuler* lightTransform = lightObj->getTransformEuler();
@@ -137,10 +137,13 @@ void CViewInit::onInit()
 		CIndirectLighting* indirect = modelObject->addComponent<CIndirectLighting>();
 
 		std::vector<std::string> listTextures;
+
+		// see SampleLightmapping
 		listTextures.push_back("Sponza/LightMapRasterize_bounce_3_0.png");
 		listTextures.push_back("Sponza/LightMapRasterize_bounce_3_1.png");
 		listTextures.push_back("Sponza/LightMapRasterize_bounce_3_2.png");
 
+		// see SampleLightmappingDirectional
 		listTextures.push_back("Sponza/LightMapDirectional_0.png");
 		listTextures.push_back("Sponza/LightMapDirectional_1.png");
 		listTextures.push_back("Sponza/LightMapDirectional_2.png");
@@ -166,7 +169,11 @@ void CViewInit::onInit()
 		// indirect lighting
 		CIndirectLighting* indirect = modelObject->addComponent<CIndirectLighting>();
 		std::vector<std::string> listTextures;
+
+		// see SampleLightmapping
 		listTextures.push_back("SampleModels/Gazebo/LightMapRasterize_bounce_2_0.png");
+
+		// see SampleLightmappingDirectional
 		listTextures.push_back("SampleModels/Gazebo/LightMapDirectional_0.png");
 
 		ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
@@ -182,7 +189,7 @@ void CViewInit::onInit()
 	}
 
 	// save to context	
-	context->initLightmapRenderPipeline(app->getWidth(), app->getHeight(), false);
+	context->initLightmapRenderPipeline(app->getWidth(), app->getHeight(), true);
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
