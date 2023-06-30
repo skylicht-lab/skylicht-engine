@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CMesh.h"
 #include "Material/Shader/CShaderManager.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
+#include "Material/CMaterial.h"
 
 namespace Skylicht
 {
@@ -40,7 +41,7 @@ namespace Skylicht
 		m_renderMesh(NULL),
 		m_bakeDirectionMaterialID(0)
 	{
-
+		m_type = Deferred;
 	}
 
 	CDirectionalLightBakeRP::~CDirectionalLightBakeRP()
@@ -116,11 +117,21 @@ namespace Skylicht
 		irrMaterial.MaterialType = m_bakeDirectionMaterialID;
 		irrMaterial.ZBuffer = video::ECFN_DISABLED;
 		irrMaterial.ZWriteEnable = false;
+		irrMaterial.BackfaceCulling = false;
+		irrMaterial.FrontfaceCulling = false;
 
 		// shadow
 		CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
 		if (shadowRP != NULL)
-			irrMaterial.TextureLayer[0].Texture = shadowRP->getDepthTexture();
+		{
+			ITexture* depthTexture = shadowRP->getDepthTexture();
+			depthTexture->regenerateMipMapLevels();
+
+			irrMaterial.TextureLayer[0].Texture = depthTexture;
+			irrMaterial.TextureLayer[0].BilinearFilter = false;
+			irrMaterial.TextureLayer[0].TrilinearFilter = false;
+			irrMaterial.TextureLayer[0].AnisotropicFilter = 0;
+		}
 
 		// set irrlicht material
 		driver->setMaterial(irrMaterial);
@@ -136,11 +147,17 @@ namespace Skylicht
 
 	bool CDirectionalLightBakeRP::canRenderMaterial(CMaterial* material)
 	{
-		return true;
+		if (material->isDeferred() == true)
+			return true;
+
+		return false;
 	}
 
 	bool CDirectionalLightBakeRP::canRenderShader(CShader* shader)
 	{
-		return true;
+		if (shader->isDeferred() == true)
+			return true;
+
+		return false;
 	}
 }

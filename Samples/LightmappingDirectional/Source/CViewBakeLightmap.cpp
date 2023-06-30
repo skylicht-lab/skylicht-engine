@@ -161,6 +161,9 @@ void CViewBakeLightmap::onRender()
 	{
 		core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
 		m_bakeTexture[lightmapIndex] = getVideoDriver()->addRenderTargetTexture(size, "bakeLM", video::ECF_A8R8G8B8);
+
+		// clear black
+		getVideoDriver()->setRenderTarget(m_bakeTexture[lightmapIndex], true, true, SColor(0, 0, 0, 0));
 	}
 
 	// calc bbox of mesh
@@ -205,9 +208,12 @@ void CViewBakeLightmap::gotoDemoView()
 {
 	for (int i = 0; i < m_numBakeTexture; i++)
 	{
-		char outFileName[512];
-		sprintf(outFileName, "LightMapDirectional_%d.png", i);
-		CBaseRP::saveFBOToFile(m_bakeTexture[i], outFileName);
+		if (m_bakeTexture[i])
+		{
+			char outFileName[512];
+			sprintf(outFileName, "LightMapDirectional_%d.png", i);
+			CBaseRP::saveFBOToFile(m_bakeTexture[i], outFileName);
+		}
 	}
 
 	// enable render indirect
@@ -230,7 +236,7 @@ void CViewBakeLightmap::gotoDemoView()
 		{
 			if (renderMesh->getGameObject()->isStatic() == true)
 			{
-				
+
 			}
 		}
 	}

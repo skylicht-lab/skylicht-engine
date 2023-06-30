@@ -1,4 +1,4 @@
-<shaderConfig name="BakeDirectionalLight" baseShader="SOLID">
+<shaderConfig name="BakeDirectionalLight" baseShader="TRANSPARENT_ADD_COLOR">
 	<uniforms>
 		<vs>
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
