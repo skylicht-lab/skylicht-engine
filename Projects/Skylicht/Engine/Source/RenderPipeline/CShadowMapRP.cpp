@@ -359,9 +359,6 @@ namespace Skylicht
 						(spotLight->needRenderShadowDepth() || spotLight->isDynamicShadow()))
 					{
 						spotLight->beginRenderShadowDepth();
-
-
-
 						spotLight->endRenderShadowDepth();
 					}
 				}

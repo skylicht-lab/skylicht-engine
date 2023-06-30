@@ -23,6 +23,7 @@ protected:
 	std::vector<core::matrix4> m_meshTransforms;
 
 	ITexture* m_bakeTexture[MAX_LIGHTMAP_ATLAS];
+	IMeshBuffer* m_subMesh[MAX_LIGHTMAP_ATLAS];
 
 	int m_numBakeTexture;
 	int m_currentMesh;

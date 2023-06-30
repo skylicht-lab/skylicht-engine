@@ -39,6 +39,10 @@ namespace Skylicht
 {
 	CDirectionalLightBakeRP::CDirectionalLightBakeRP() :
 		m_renderMesh(NULL),
+		m_renderSubmesh(NULL),
+		m_renderTarget(NULL),
+		m_numTarget(0),
+		m_currentTarget(0),
 		m_bakeDirectionMaterialID(0)
 	{
 		m_type = Deferred;
@@ -87,13 +91,21 @@ namespace Skylicht
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
 
-		driver->setRenderTarget(target, false, false);
+		for (int i = 0; i < m_numTarget; i++)
+		{
+			if (m_renderTarget[i] == NULL || m_renderSubmesh[i] == NULL)
+				continue;
 
-		if (useCustomViewport)
-			driver->setViewPort(viewport);
+			driver->setRenderTarget(m_renderTarget[i], false, false);
 
-		// render scene (see function drawMeshBuffer)
-		entityManager->cullingAndRender();
+			m_currentTarget = i;
+
+			if (useCustomViewport)
+				driver->setViewPort(viewport);
+
+			// render scene (see function drawMeshBuffer)
+			entityManager->cullingAndRender();
+		}
 
 		// custom viewport
 		if (useCustomViewport)
@@ -137,7 +149,7 @@ namespace Skylicht
 		driver->setMaterial(irrMaterial);
 
 		// draw mesh buffer
-		driver->drawMeshBuffer(mb);
+		driver->drawMeshBuffer(m_renderSubmesh[m_currentTarget]);
 	}
 
 	void CDirectionalLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh)
