@@ -11,7 +11,6 @@ struct PS_INPUT
 
 cbuffer cbPerFrame
 {
-	float4 uLightColor;
 	float4 uLightDirection;
 	float4x4 uShadowMatrix;
 };
@@ -24,6 +23,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float visibility = shadowSimple(shadowCoord);
 
 	float NdotL = max(dot(input.worldNormal, uLightDirection.xyz), 0.0);
-	float4 directionalLightColor = NdotL * uLightColor / 3.0;
-	return float4(directionalLightColor.rgb * visibility, 1.0);
+	float light = NdotL * visibility / 3;
+	return float4(light, light, light, visibility);
 }

@@ -39,6 +39,7 @@ float3 SGLM(
 	// Tone mapping
 	specularColor = sRGB(specularColor);
 	diffuseColor = sRGB(diffuseColor);
+	float3 directionLightColor = sRGB(lightColor);
 	float3 directionColor = sRGB(light.rgb);
 	float3 indirectColor = sRGB(indirect.rgb);
 
@@ -48,10 +49,11 @@ float3 SGLM(
 	float specular = pow(NdotE, 100.0f * glossiness) * spec;
 	
 	// Direction lighting
-	float3 color = (directionColor * lightMultiplier) * diffuseColor;
+	float3 color = (directionLightColor * directionColor * lightMultiplier) * diffuseColor;
 	
 	// Direction specular
-	float3 envSpecColor = float3(1.0, 1.0, 1.0);
+	float visibility = light.a;
+	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
 	color += specular * specularColor * envSpecColor;
 
 	// IBL Ambient
