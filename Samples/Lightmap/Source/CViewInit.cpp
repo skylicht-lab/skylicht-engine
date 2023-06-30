@@ -92,9 +92,8 @@ void CViewInit::onInit()
 	CGameObject* lightObj = zone->createEmptyObject();
 
 	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
-	directionalLight->setIntensity(1.3f);
-	directionalLight->setBounce(3);
 
+	// use direction light for specular
 	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 

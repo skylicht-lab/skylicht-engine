@@ -39,7 +39,6 @@ vec3 SGLM(
 	// Tone mapping
 	specularColor = sRGB(specularColor);
 	diffuseColor = sRGB(diffuseColor);
-	vec3 directionLightColor = sRGB(lightColor);
 	vec3 directionColor = sRGB(light.rgb);
 	vec3 indirectColor = sRGB(indirect.rgb);
 
@@ -49,7 +48,7 @@ vec3 SGLM(
 	float specular = pow(NdotE, 100.0f * glossiness) * spec;
 	
 	// Direction lighting
-	vec3 color = (directionLightColor * directionColor * lightMultiplier) * diffuseColor;
+	vec3 color = (directionColor * lightMultiplier) * diffuseColor;
 	
 	// Direction specular
 	float visibility = light.a;
