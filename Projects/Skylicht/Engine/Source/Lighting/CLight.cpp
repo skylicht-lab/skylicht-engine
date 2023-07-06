@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CLight.h"
+#include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
@@ -70,5 +71,17 @@ namespace Skylicht
 		m_color = object->get<SColor>("color", SColor(255, 255, 255, 255));
 		m_intensity = object->get<float>("intensity", 1.0f);
 		m_type = object->get<ELightType>("type", ELightType::Realtime);
+	}
+
+	core::aabbox3df CLight::getBBBox()
+	{
+		core::aabbox3df box;
+		core::vector3df p = m_gameObject->getPosition();
+		box.reset(p);
+
+		box.addInternalPoint(p + core::vector3df(m_radius, m_radius, m_radius));
+		box.addInternalPoint(p + core::vector3df(-m_radius, -m_radius, -m_radius));
+
+		return box;
 	}
 }

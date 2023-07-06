@@ -102,6 +102,8 @@ namespace Skylicht
 			return m_radius;
 		}
 
+		core::aabbox3df getBBBox();
+
 		inline ELightType getLightType()
 		{
 			return m_type;
