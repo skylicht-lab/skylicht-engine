@@ -271,7 +271,7 @@ namespace Skylicht
 				lightmapDeferredMat.MaterialType = m_lightmapDeferredShader;
 				lightmapDeferredMat.setTexture(0, indirectData->IndirectTexture);
 
-				CShaderManager::getInstance()->LightmapIndex = lightmapData->LightmapIndex;
+				CShaderManager::getInstance()->LightmapIndex = (float)lightmapData->LightmapIndex;
 
 				// set irrlicht material
 				driver->setMaterial(lightmapDeferredMat);

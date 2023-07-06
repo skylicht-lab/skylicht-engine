@@ -5,8 +5,12 @@
 
 #include "Lightmapper/CLightmapper.h"
 #include "Lightmapper/CSH9.h"
+
 #include "BakeDirectionalRP/CShadowMapBakeRP.h"
 #include "BakeDirectionalRP/CDirectionalLightBakeRP.h"
+
+#include "BakePointLightRP/CPointLightShadowBakeRP.h"
+#include "BakePointLightRP/CPointLightBakeRP.h"
 
 #include "Rasterisation/CRasterisation.h"
 
@@ -18,6 +22,7 @@ class CViewBakeLightmap : public CView
 {
 protected:
 	std::vector<CRenderMesh*> m_renderMesh;
+	std::vector<CLight*> m_lights;
 
 	std::vector<IMeshBuffer*> m_meshBuffers;
 	std::vector<core::matrix4> m_meshTransforms;
@@ -39,6 +44,8 @@ protected:
 	CShadowMapBakeRP* m_shadowRP;
 	CDirectionalLightBakeRP* m_bakeLightRP;
 
+	CPointLightShadowBakeRP* m_shadowPLRP;
+	CPointLightBakeRP* m_bakePointLightRP;
 public:
 
 	CViewBakeLightmap();

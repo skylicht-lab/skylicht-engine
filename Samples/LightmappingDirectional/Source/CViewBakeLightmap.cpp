@@ -21,14 +21,23 @@ CViewBakeLightmap::CViewBakeLightmap() :
 {
 	CBaseApp* app = getApplication();
 
+	// direction
 	m_shadowRP = new CShadowMapBakeRP();
 	m_shadowRP->initRender(app->getWidth(), app->getHeight());
 
 	m_bakeLightRP = new CDirectionalLightBakeRP();
 	m_bakeLightRP->initRender(app->getWidth(), app->getHeight());
-
 	m_shadowRP->setNextPipeLine(m_bakeLightRP);
 
+	// point light
+	m_shadowPLRP = new CPointLightShadowBakeRP();
+	m_shadowPLRP->initRender(app->getWidth(), app->getHeight());
+
+	m_bakePointLightRP = new CPointLightBakeRP();
+	m_bakePointLightRP->initRender(app->getWidth(), app->getHeight());
+	m_shadowPLRP->setNextPipeLine(m_bakePointLightRP);
+
+	// texture
 	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
 	{
 		m_bakeTexture[i] = NULL;
@@ -46,6 +55,8 @@ CViewBakeLightmap::~CViewBakeLightmap()
 
 	delete m_shadowRP;
 	delete m_bakeLightRP;
+	delete m_shadowPLRP;
+	delete m_bakePointLightRP;
 
 	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
 	{
@@ -69,6 +80,9 @@ void CViewBakeLightmap::onInit()
 			context->getScene()->getEntityManager(),
 			core::recti(0, 0, 0, 0));
 	}
+
+	// get all light
+	m_lights = zone->getComponentsInChild<CLight>(false);
 
 	// get all render mesh in zone
 	m_renderMesh = zone->getComponentsInChild<CRenderMesh>(false);
@@ -235,6 +249,7 @@ void CViewBakeLightmap::onRender()
 
 	// setup target for pipeline
 	m_bakeLightRP->setRenderMesh(mb, m_subMesh, m_bakeTexture, m_numBakeTexture);
+	m_bakePointLightRP->setRenderMesh(mb, m_subMesh, m_bakeTexture, m_numBakeTexture);
 
 	// set camera view
 	core::vector3df center = box.getCenter();
@@ -247,8 +262,15 @@ void CViewBakeLightmap::onRender()
 	// update scene first
 	context->getScene()->update();
 
-	// render uv
+	// bake direction light
 	m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
+
+	// bake all point light
+	for (CLight* light : m_lights)
+	{
+		m_shadowPLRP->setCurrentLight(light);
+		m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
+	}
 
 	// next mesh
 	m_currentMesh++;

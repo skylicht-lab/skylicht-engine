@@ -109,6 +109,6 @@ void main(void)
 
 	shadow = max(0.0, 1.0 - shadow);
 
-	vec3 lightColor = uLightColor.rgb * (NdotL * attenuation) * shadow;
+	vec3 lightColor = NdotL * attenuation * uLightColor.rgb * shadow;
 	FragColor = vec4(lightColor, specular * attenuation * shadow);
 }
