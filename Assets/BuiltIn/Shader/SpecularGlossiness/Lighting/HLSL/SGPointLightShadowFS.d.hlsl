@@ -68,7 +68,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float samples = 2.0;
 	float offset = 0.01;
 	float delta = offset / (samples * 0.5);
-	float3 fragToLight;	
+	float3 fragToLight;
 	
 	/*
 	[unroll]

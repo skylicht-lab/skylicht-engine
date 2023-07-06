@@ -115,6 +115,7 @@ void CViewInit::onInit()
 		pointLight->setColor(SColor(255, 221, 123, 34));
 		pointLight->setBounce(1);
 		pointLight->setRadius(4.0f);
+		pointLight->setLightType(CLight::Baked);
 
 		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
@@ -160,11 +161,11 @@ void CViewInit::onInit()
 
 			float c[] = { 165.0f / 255.0f, 161.0f / 255.0f, 147 / 255.0f, 1.0f };
 			material->setUniform4("uColor", c);
-		}
+	}
 #endif
 
 		renderMesh->initMaterial(materials);
-	}
+}
 
 	// save to context	
 	context->initRenderPipeline(app->getWidth(), app->getHeight(), false);
