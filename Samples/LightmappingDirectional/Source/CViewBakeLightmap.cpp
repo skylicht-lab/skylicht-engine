@@ -40,7 +40,8 @@ CViewBakeLightmap::CViewBakeLightmap() :
 	// texture
 	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
 	{
-		m_bakeTexture[i] = NULL;
+		m_directionLightBake[i] = NULL;
+		m_pointLightBake[i] = NULL;
 		m_subMesh[i] = NULL;
 	}
 }
@@ -60,8 +61,11 @@ CViewBakeLightmap::~CViewBakeLightmap()
 
 	for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
 	{
-		if (m_bakeTexture[i])
-			getVideoDriver()->removeTexture(m_bakeTexture[i]);
+		if (m_directionLightBake[i])
+			getVideoDriver()->removeTexture(m_directionLightBake[i]);
+
+		if (m_pointLightBake[i])
+			getVideoDriver()->removeTexture(m_pointLightBake[i]);
 	}
 }
 
@@ -229,13 +233,15 @@ void CViewBakeLightmap::onRender()
 	// init render target
 	for (int i = 0; i < m_numBakeTexture; i++)
 	{
-		if (m_bakeTexture[i] == NULL)
+		if (m_directionLightBake[i] == NULL)
 		{
 			core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
-			m_bakeTexture[i] = getVideoDriver()->addRenderTargetTexture(size, "bakeLM", video::ECF_A8R8G8B8);
 
-			// clear black
-			getVideoDriver()->setRenderTarget(m_bakeTexture[i], true, true, SColor(0, 0, 0, 0));
+			m_directionLightBake[i] = getVideoDriver()->addRenderTargetTexture(size, "bakeLM", video::ECF_A8R8G8B8);
+			getVideoDriver()->setRenderTarget(m_directionLightBake[i], true, true, SColor(0, 0, 0, 0));
+
+			m_pointLightBake[i] = getVideoDriver()->addRenderTargetTexture(size, "bakeLM", video::ECF_A8R8G8B8);
+			getVideoDriver()->setRenderTarget(m_pointLightBake[i], true, true, SColor(0, 0, 0, 0));
 		}
 	}
 
@@ -248,8 +254,8 @@ void CViewBakeLightmap::onRender()
 	m_shadowRP->setBound(box);
 
 	// setup target for pipeline
-	m_bakeLightRP->setRenderMesh(mb, m_subMesh, m_bakeTexture, m_numBakeTexture);
-	m_bakePointLightRP->setRenderMesh(mb, m_subMesh, m_bakeTexture, m_numBakeTexture);
+	m_bakeLightRP->setRenderMesh(mb, m_subMesh, m_directionLightBake, m_numBakeTexture);
+	m_bakePointLightRP->setRenderMesh(mb, m_subMesh, m_pointLightBake, m_numBakeTexture);
 
 	// set camera view
 	core::vector3df center = box.getCenter();
@@ -291,11 +297,18 @@ void CViewBakeLightmap::gotoDemoView()
 {
 	for (int i = 0; i < m_numBakeTexture; i++)
 	{
-		if (m_bakeTexture[i])
+		if (m_directionLightBake[i])
 		{
 			char outFileName[512];
 			sprintf(outFileName, "LightMapDirectional_%d.png", i);
-			CBaseRP::saveFBOToFile(m_bakeTexture[i], outFileName);
+			CBaseRP::saveFBOToFile(m_directionLightBake[i], outFileName);
+		}
+
+		if (m_pointLightBake[i])
+		{
+			char outFileName[512];
+			sprintf(outFileName, "LightMapPLight_%d.png", i);
+			CBaseRP::saveFBOToFile(m_pointLightBake[i], outFileName);
 		}
 	}
 

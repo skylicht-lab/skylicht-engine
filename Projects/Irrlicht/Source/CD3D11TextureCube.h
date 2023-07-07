@@ -23,9 +23,6 @@ class CD3D11TextureCube : public ITexture
 private:
 	friend class CD3D11Driver;
 
-	ECOLOR_FORMAT ColorFormat;
-	s32 Pitch;
-
 	bool HardwareMipMaps;
 
 	ID3D11Texture2D* TextureBuffer;		// staging texture used for lock/unlock

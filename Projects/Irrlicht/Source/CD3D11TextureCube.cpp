@@ -23,7 +23,7 @@ namespace video
 
 //! rendertarget constructor
 CD3D11TextureCube::CD3D11TextureCube(CD3D11Driver* driver, const core::dimension2d<u32>& size, const io::path& name, const ECOLOR_FORMAT format)
-	: ITexture(name), ColorFormat(format), Driver(driver), Pitch(0), DepthSurface(NULL), Texture(NULL)
+	: ITexture(name), Driver(driver), DepthSurface(NULL), Texture(NULL)
 {
 	TextureType = ETT_TEXTURE_CUBE;
 	DriverType = EDT_DIRECT3D11;	
@@ -58,7 +58,7 @@ CD3D11TextureCube::CD3D11TextureCube(CD3D11Driver* driver, const io::path& name,
 	IImage* posXImage, IImage* negXImage, 
 	IImage* posYImage, IImage* negYImage, 
 	IImage* posZImage, IImage* negZImage)
-	: ITexture(name), ColorFormat(ECF_UNKNOWN), Driver(driver), Pitch(0), DepthSurface(NULL), Texture(NULL)
+	: ITexture(name), Driver(driver), DepthSurface(NULL), Texture(NULL)
 {
 	TextureType = ETT_TEXTURE_CUBE;
 	DriverType = EDT_DIRECT3D11;
