@@ -79,6 +79,8 @@ namespace Skylicht
 		CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
 		shadowRTT->clearLightData();
 
+		// set state point light
+		m_renderShadowState = ERenderShadowState::PointLight;
 
 		CPointLight* pointLight = dynamic_cast<CPointLight*>(m_currentLight);
 		if (pointLight != NULL && pointLight->isCastShadow() == true)
