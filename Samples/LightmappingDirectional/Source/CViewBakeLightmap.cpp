@@ -66,6 +66,9 @@ CViewBakeLightmap::~CViewBakeLightmap()
 
 		if (m_pointLightBake[i])
 			getVideoDriver()->removeTexture(m_pointLightBake[i]);
+
+		if (m_result[i])
+			getVideoDriver()->removeTexture(m_result[i]);
 	}
 }
 
@@ -214,6 +217,9 @@ void CViewBakeLightmap::onRender()
 
 		// query triangle lightmap index
 		int lightmapIndex = (int)vertices[vertexId0].Lightmap.Z;
+		if (lightmapIndex < 0 || lightmapIndex > 32)
+			continue;
+
 		if (m_subMesh[lightmapIndex] == NULL)
 		{
 			m_subMesh[lightmapIndex] = new CMeshBuffer<S3DVertex2TCoordsTangents>(getVideoDriver()->getVertexDescriptor(EVT_2TCOORDS_TANGENTS), type);
@@ -295,8 +301,23 @@ void CViewBakeLightmap::onPostRender()
 
 void CViewBakeLightmap::gotoDemoView()
 {
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
+	shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeFinal.xml");
+
 	for (int i = 0; i < m_numBakeTexture; i++)
 	{
+		// bake final, that merge direction light & point light & shadow mask in alpha channel
+		core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
+		m_result[i] = getVideoDriver()->addRenderTargetTexture(size, "resultLM", video::ECF_A8R8G8B8);
+
+		getVideoDriver()->setRenderTarget(m_result[i]);
+		m_bakeLightRP->beginRender2D(m_lightmapSize, m_lightmapSize);
+		SMaterial material;
+		material.setTexture(0, m_directionLightBake[i]);
+		material.setTexture(1, m_pointLightBake[i]);
+		material.MaterialType = shaderMgr->getShaderIDByName("BakeFinal");
+		m_bakeLightRP->renderBufferToTarget(0, 0, m_lightmapSize, m_lightmapSize, material, false);
+
 		if (m_directionLightBake[i])
 		{
 			char outFileName[512];
@@ -310,11 +331,21 @@ void CViewBakeLightmap::gotoDemoView()
 			sprintf(outFileName, "LightMapPLight_%d.png", i);
 			CBaseRP::saveFBOToFile(m_pointLightBake[i], outFileName);
 		}
+
+		getVideoDriver()->setRenderTarget(NULL);
+
+		// final texture
+		{
+			char outFileName[512];
+			sprintf(outFileName, "LightMap_%d.png", i);
+			CBaseRP::saveFBOToFile(m_result[i], outFileName);
+		}
 	}
 
 	// enable render indirect
 	CDeferredRP::enableRenderIndirect(true);
 
+	/*
 	std::vector<std::string> listTextures;
 
 	for (int i = 0; i < m_numBakeTexture; i++)
@@ -336,6 +367,7 @@ void CViewBakeLightmap::gotoDemoView()
 			}
 		}
 	}
+	*/
 
 	// switch to demo view
 	CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();

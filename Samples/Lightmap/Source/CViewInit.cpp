@@ -143,9 +143,9 @@ void CViewInit::onInit()
 		listTextures.push_back("Sponza/LightMapRasterize_bounce_3_2.png");
 
 		// see SampleLightmappingDirectional
-		listTextures.push_back("Sponza/LightMapDirectional_0.png");
-		listTextures.push_back("Sponza/LightMapDirectional_1.png");
-		listTextures.push_back("Sponza/LightMapDirectional_2.png");
+		listTextures.push_back("Sponza/LightMap_0.png");
+		listTextures.push_back("Sponza/LightMap_1.png");
+		listTextures.push_back("Sponza/LightMap_2.png");
 
 		ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
 		indirect->setIndirectLightmap(lightmapTexture);

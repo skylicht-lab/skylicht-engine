@@ -18,6 +18,7 @@ void main(void)
 	float d = distance - bias;
 	float sampledDistance = texture(uShadowMap, -lightDir).r;
 	float shadow = step(sampledDistance, d);
+	shadow = max(1.0 - shadow, 0.0);
 	vec3 directionalLightColor = NdotL * attenuation * uLightColor.rgb * shadow;
 	FragColor = vec4(directionalLightColor/ 3.0, 1.0);
 }

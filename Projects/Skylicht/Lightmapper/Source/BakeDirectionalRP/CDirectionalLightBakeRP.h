@@ -66,5 +66,6 @@ namespace Skylicht
 		virtual bool canRenderMaterial(CMaterial* material);
 
 		virtual bool canRenderShader(CShader* shader);
+
 	};
 }
