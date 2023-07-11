@@ -297,7 +297,7 @@ namespace Skylicht
 		// END BLOOM
 
 		// SCREEN SPACE REFLECTION (save buffer for deferred rendering)
-		if (m_screenSpaceReflection == true)
+		if (m_screenSpaceReflection == true && m_lastFrameBuffer)
 		{
 			driver->setRenderTarget(m_lastFrameBuffer, true, false);
 
