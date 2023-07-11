@@ -42,6 +42,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 		}
 	}
 	shadow /= (samples * samples * samples);
+	shadow = max(1.0 - shadow, 0.0);
 	float3 directionalLightColor = NdotL * attenuation * uLightColor.rgb * shadow;
 	return float4(directionalLightColor / 3.0, 1.0);
 }

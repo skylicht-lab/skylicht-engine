@@ -29,6 +29,7 @@ protected:
 
 	ITexture* m_directionLightBake[MAX_LIGHTMAP_ATLAS];
 	ITexture* m_pointLightBake[MAX_LIGHTMAP_ATLAS];
+	ITexture* m_result[MAX_LIGHTMAP_ATLAS];
 
 	IMeshBuffer* m_subMesh[MAX_LIGHTMAP_ATLAS];
 
