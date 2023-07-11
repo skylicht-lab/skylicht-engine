@@ -13,6 +13,10 @@
 #include "LightProbes/CLightProbe.h"
 #include "LightProbes/CLightProbeRender.h"
 
+#include "Lightmap/CLightmap.h"
+
+#define USE_DYNAMIC_LIGHTING
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -116,6 +120,7 @@ void CViewInit::initScene()
 		{12.01f, 2.4f, -4.47f},
 	};
 
+#ifdef USE_DYNAMIC_LIGHTING
 	std::vector<CPointLight*> pointLights;
 
 	for (int i = 0; i < 4; i++)
@@ -134,6 +139,7 @@ void CViewInit::initScene()
 
 		pointLights.push_back(pointLight);
 	}
+#endif
 
 	// sponza
 	CMeshManager* meshManager = CMeshManager::getInstance();
@@ -169,15 +175,28 @@ void CViewInit::initScene()
 		textures.push_back("Sponza/LightMapRasterize_bounce_3_1.png");
 		textures.push_back("Sponza/LightMapRasterize_bounce_3_2.png");
 
+#ifndef USE_DYNAMIC_LIGHTING
+		CLightmap* lightmap = sponza->addComponent<CLightmap>();
+
+		// see SampleLightmappingDirectional
+		textures.push_back("Sponza/LightMap_0.png");
+		textures.push_back("Sponza/LightMap_1.png");
+		textures.push_back("Sponza/LightMap_2.png");
+#endif
+
 		ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(textures);
 		if (lightmapTexture != NULL)
 		{
 			indirectLighting->setIndirectLightmap(lightmapTexture);
 			indirectLighting->setIndirectLightingType(CIndirectLighting::LightmapArray);
+
+#ifndef USE_DYNAMIC_LIGHTING
+			lightmap->setLightmap(lightmapTexture, 3); // start from index: 3
+#endif
 		}
 	}
 
-	// init fire
+	// init particle 
 	for (int i = 0; i < 4; i++)
 	{
 		CGameObject* fire = zone->createEmptyObject();
@@ -190,13 +209,22 @@ void CViewInit::initScene()
 
 	// save to context
 	CContext* context = CContext::getInstance();
+
+#ifdef USE_DYNAMIC_LIGHTING
 	context->initRenderPipeline(app->getWidth(), app->getHeight(), true, true);
+#else
+	context->initLightmapRenderPipeline(app->getWidth(), app->getHeight(), true);
+#endif
+
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
+
+#ifdef USE_DYNAMIC_LIGHTING
 	context->setPointLight(pointLights);
+#endif
 
 	// context->getDefferredRP()->enableTestIndirect(true);
 	context->getPostProcessorPipeline()->setManualExposure(2.0f);
