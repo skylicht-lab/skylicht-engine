@@ -46,6 +46,8 @@ namespace Skylicht
 		protected:
 			GUI::CCanvas* m_canvas;
 
+			Skylicht::CCanvas* m_guiCanvas;
+
 			CGUIHierachyNode* m_rootNode;
 
 			CSpaceGUIHierarchy* m_spaceHierarchy;
@@ -90,6 +92,8 @@ namespace Skylicht
 			void createGUINode(CGUIHierachyNode* parent, const std::wstring& command);
 
 			void deselectAllOnHierachy();
+
+			void onDelete();
 
 			CGUIHierachyNode* deselectOnHierachy(CGUIElement* element);
 

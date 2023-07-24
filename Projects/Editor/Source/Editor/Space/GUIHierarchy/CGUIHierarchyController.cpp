@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CZone.h"
 #include "Scene/CScene.h"
 
-#include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 
 namespace Skylicht
 {
@@ -209,7 +209,7 @@ namespace Skylicht
 				}
 				else if (key == GUI::KEY_DELETE)
 				{
-					CSceneController::getInstance()->onDelete();
+					CGUIDesignController::getInstance()->onDelete();
 				}
 			}
 		}
