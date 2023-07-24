@@ -143,6 +143,11 @@ namespace Skylicht
 			return m_guiTransform->getRect();
 		}
 
+		inline int getDepth()
+		{
+			return m_transform->Depth;
+		}
+
 		inline void setDock(EGUIDock dock)
 		{
 			m_guiAlign->Dock = dock;
@@ -304,6 +309,8 @@ namespace Skylicht
 		void bringToNext(CGUIElement* object, CGUIElement* target, bool behind);
 
 		void bringToChild(CGUIElement* object);
+
+		bool isChild(CGUIElement* e);
 
 		DECLARE_GETTYPENAME(CGUIElement);
 
