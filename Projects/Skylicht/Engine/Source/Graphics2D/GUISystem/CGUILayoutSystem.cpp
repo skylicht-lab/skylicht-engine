@@ -230,9 +230,9 @@ namespace Skylicht
 				m[10] *= t->m_scale.Z;
 				m[11] *= t->m_scale.Z;
 
-				m[12] = t->m_transformPosition.X;
-				m[13] = t->m_transformPosition.Y;
-				m[14] = t->m_transformPosition.Z;
+				m[12] = t->m_position.X;
+				m[13] = t->m_position.Y;
+				m[14] = t->m_position.Z;
 
 				// update world matrix
 				if (w->Parent)

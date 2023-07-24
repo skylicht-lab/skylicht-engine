@@ -168,6 +168,14 @@ namespace Skylicht
 			event.GameEvent.Sender = m_scene;
 
 			CGUIHandles::getInstance()->OnEvent(event);
+
+			if (down == true)
+			{
+				if (key == GUI::KEY_DELETE)
+				{
+					CGUIDesignController::getInstance()->onDelete();
+				}
+			}
 		}
 
 		void CSpaceGUIDesign::onMiddleMouseClick(GUI::CBase* view, float x, float y, bool down)

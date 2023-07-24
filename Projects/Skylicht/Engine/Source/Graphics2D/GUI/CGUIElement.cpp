@@ -428,4 +428,18 @@ namespace Skylicht
 		setScale(scale);
 		setRotation(rotation);
 	}
+
+	bool CGUIElement::isChild(CGUIElement* e)
+	{
+		CGUIElement* p = m_parent;
+		while (p != NULL)
+		{
+			if (p == e)
+			{
+				return true;
+			}
+			p = p->m_parent;
+		}
+		return false;
+	}
 }

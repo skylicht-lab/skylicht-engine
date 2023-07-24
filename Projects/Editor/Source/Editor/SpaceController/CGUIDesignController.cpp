@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGUIDesignController.h"
 #include "CSceneController.h"
 #include "Selection/CSelection.h"
+#include "Graphics2D/CCanvas.h"
 
 namespace Skylicht
 {
@@ -71,9 +72,9 @@ namespace Skylicht
 				delete m_rootNode;
 
 			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
+			m_guiCanvas = guiCanvas->getComponent<CCanvas>();
 
-			CGUIElement* root = canvas->getRootElement();
+			CGUIElement* root = m_guiCanvas->getRootElement();
 			CGUIElement* fullRect = root->getChilds()[0];
 
 			m_rootNode = new CGUIHierachyNode(NULL);
@@ -193,6 +194,66 @@ namespace Skylicht
 				m_spaceHierarchy->scrollToNode(treeNode);
 			}
 			return node;
+		}
+
+		void CGUIDesignController::onDelete()
+		{
+			std::vector<CGUIElement*> selelectList;
+			std::vector<CGUIElement*> deleteList;
+
+			std::vector<CSelectObject*>& selected = CSelection::getInstance()->getAllSelected();
+			CPropertyController::getInstance()->setProperty(NULL);
+			for (CSelectObject* sel : selected)
+			{
+				if (sel->getType() == CSelectObject::GUIElement)
+				{
+					CGUIElement* gui = m_guiCanvas->getGUIByID(sel->getID().c_str());
+					if (gui)
+					{
+						selelectList.push_back(gui);
+					}
+				}
+			}
+
+			std::sort(selelectList.begin(), selelectList.end(), [](CGUIElement*& a, CGUIElement*& b)
+				{
+					return a->getDepth() < b->getDepth();
+				});
+
+			CGUIElement* root = m_guiCanvas->getRootElement();
+			CGUIElement* fullRect = root->getChilds()[0];
+
+			for (CGUIElement* sel : selelectList)
+			{
+				if (sel == fullRect)
+					continue;
+
+				bool addToDeleteList = true;
+				for (CGUIElement* del : deleteList)
+				{
+					if (sel->isChild(del))
+					{
+						addToDeleteList = false;
+						break;
+					}
+				}
+
+				if (addToDeleteList)
+				{
+					deleteList.push_back(sel);
+				}
+			}
+
+			for (CGUIElement* del : deleteList)
+			{
+				del->remove();
+			}
+
+			if (deleteList.size() > 0)
+			{
+				CSelection::getInstance()->clear();
+				rebuildGUIHierachy();
+			}
 		}
 
 		void CGUIDesignController::setNodeEvent(CGUIHierachyNode* node)
