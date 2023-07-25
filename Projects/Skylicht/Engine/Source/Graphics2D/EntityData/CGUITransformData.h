@@ -58,6 +58,11 @@ namespace Skylicht
 			return m_position;
 		}
 
+		inline const core::vector3df& getAlignPosition()
+		{
+			return m_transformPosition;
+		}
+
 		inline void setPosition(const core::vector3df& v)
 		{
 			m_position = v;

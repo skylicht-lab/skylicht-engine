@@ -185,6 +185,11 @@ namespace Skylicht
 
 		void setRelativeTransform(const core::matrix4& relative);
 
+		inline const core::vector3df getAlignPosition()
+		{
+			return m_guiTransform->getAlignPosition();
+		}
+
 		inline const core::vector3df& getPosition()
 		{
 			return m_guiTransform->getPosition();
