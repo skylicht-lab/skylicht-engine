@@ -75,8 +75,12 @@ namespace Skylicht
 						CSpaceGUIDesign* guiDesign = dynamic_cast<CSpaceGUIDesign*>(space);
 						CGUITransformGizmos* gizmos = guiDesign->getGizmos();
 
+						// update transform first
+						m_gui->getCanvas()->updateEntities();
+
+						// apply for Gizmos
 						gizmos->setTransform(
-							m_gui->getPosition(),
+							m_gui->getAlignPosition(),
 							m_gui->getRotation(),
 							m_gui->getScale(),
 							m_gui->getRect()

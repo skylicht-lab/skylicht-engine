@@ -59,6 +59,7 @@ namespace Skylicht
 			if (selectObject == NULL)
 			{
 				handle->end();
+				m_selectID = "";
 				return;
 			}
 
@@ -86,7 +87,7 @@ namespace Skylicht
 						if (parentGUI)
 							m_parentWorld = parentGUI->getAbsoluteTransform();
 
-						m_position = gui->getPosition();
+						m_position = gui->getAlignPosition();
 						m_rotation = gui->getRotationQuaternion();
 						m_scale = gui->getScale();
 						m_rect = gui->getRect();
@@ -109,16 +110,18 @@ namespace Skylicht
 			// position
 			{
 				core::vector3df newPos = CGUIHandles::getInstance()->positionHandle(*m_position, m_gui->getRotationQuaternion());
+				core::vector3df delta;
 
 				if (newPos != *m_position)
 				{
-					core::vector3df delta = newPos - *m_position;
+					delta = newPos - *m_position;
 					updateSelectedPosition(delta);
 
 					m_position = newPos;
 					m_position.notify(this);
 
-					m_gui->setPosition(newPos);
+					core::vector3df p = m_gui->getPosition() + delta;
+					m_gui->setPosition(p);
 
 					m_changed = true;
 					updateProperty();
@@ -126,7 +129,8 @@ namespace Skylicht
 
 				if (handle->endCheck())
 				{
-					m_gui->setPosition(*m_position);
+					core::vector3df p = m_gui->getPosition() + delta;
+					m_gui->setPosition(p);
 					handle->end();
 
 					// save undo/redo
@@ -139,7 +143,7 @@ namespace Skylicht
 			{
 				core::rectf newRect = CGUIHandles::getInstance()->rectHandle(
 					*m_rect,
-					m_gui->getPosition(),
+					m_gui->getAlignPosition(),
 					m_gui->getScale(),
 					m_gui->getRotationQuaternion());
 
@@ -158,6 +162,8 @@ namespace Skylicht
 				{
 					m_gui->setRect(*m_rect);
 					handle->end();
+
+					m_selectID = "";
 
 					// save undo/redo
 					// if (m_changed)
@@ -264,14 +270,39 @@ namespace Skylicht
 			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
 			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
 
-			guis.clear();
+			std::vector<CGUIElement*> selects;
 
 			std::vector<CSelectObject*>& selectList = CSelection::getInstance()->getAllSelected();
 			for (CSelectObject* sel : selectList)
 			{
 				CGUIElement* gui = canvas->getGUIByID(sel->getID().c_str());
 				if (gui)
-					guis.push_back(gui);
+					selects.push_back(gui);
+			}
+
+			std::sort(selects.begin(), selects.end(), [](CGUIElement*& a, CGUIElement*& b)
+				{
+					return a->getDepth() < b->getDepth();
+				});
+
+			guis.clear();
+
+			for (CGUIElement* sel : selects)
+			{
+				bool add = true;
+				for (CGUIElement* del : guis)
+				{
+					if (sel->isChild(del))
+					{
+						add = false;
+						break;
+					}
+				}
+
+				if (add)
+				{
+					guis.push_back(sel);
+				}
 			}
 		}
 	}
