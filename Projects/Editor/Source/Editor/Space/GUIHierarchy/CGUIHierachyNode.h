@@ -175,8 +175,6 @@ namespace Skylicht
 
 			CGUIHierachyNode* getNodeByTag(void* tag);
 
-		protected:
-
 			void bringNextNode(CGUIHierachyNode* position, bool behind);
 
 			void bringToChild(CGUIHierachyNode* node);

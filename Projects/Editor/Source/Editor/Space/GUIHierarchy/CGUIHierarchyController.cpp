@@ -276,12 +276,43 @@ namespace Skylicht
 
 			rowItem->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
 			{
+				if (data->Name == "GUIHierarchyNode")
+				{
+					return true;
+				}
+				else if (data->Name == "ListFSItem")
+				{
+					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+					bool isFolder = rowItem->getTagBool();
+					if (isFolder)
+						return false;
+
+					std::string path = rowItem->getTagString();
+					std::string fileExt = CPath::getFileNameExt(path);
+					fileExt = CStringImp::toLower(fileExt);
+					if (fileExt == "png" || fileExt == "tga")
+					{
+						return true;
+					}
+				}
 				return false;
 			};
 
 			rowItem->OnDragDropHover = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
-
+				GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+				if (local.Y < rowItem->height() * 0.25f)
+				{
+					rowItem->enableDrawLine(true, false);
+				}
+				else if (local.Y > rowItem->height() * 0.75f)
+				{
+					rowItem->enableDrawLine(false, true);
+				}
+				else
+				{
+					rowItem->enableDrawLine(false, false);
+				}
 			};
 
 			rowItem->OnDragDropOut = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
@@ -293,6 +324,21 @@ namespace Skylicht
 			{
 				if (data->Name == "GUIHierarchyNode")
 				{
+					CGUIHierachyNode* dragNode = (CGUIHierachyNode*)data->UserData;
+
+					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+					if (local.Y < rowItem->height() * 0.25f)
+					{
+						move(dragNode, node, false);
+					}
+					else if (local.Y > rowItem->height() * 0.75f)
+					{
+						move(dragNode, node, true);
+					}
+					else
+					{
+						// moveToChild(dragNode, node);
+					}
 				}
 
 				rowItem->enableDrawLine(false, false);
@@ -302,12 +348,57 @@ namespace Skylicht
 
 		void CGUIHierarchyController::move(CGUIHierachyNode* from, CGUIHierachyNode* target, bool behind)
 		{
+			// remove parent gui
+			bool isExpand = from->getGUINode()->isExpand();
 
+			from->removeGUI();
+			from->nullGUI();
+
+			// update position
+			from->bringNextNode(target, behind);
+
+			// add new tree gui at new position
+			GUI::CTreeNode* gui = buildTreeNode(target->getParent()->getGUINode(), from);
+
+			// move gui to near target
+			gui->bringNextToControl(target->getGUINode(), behind);
+
+			if (isExpand)
+				gui->expand(false);
+			else
+				gui->collapse(false);
+
+			// move game object
+			CGUIElement* fromObject = (CGUIElement*)from->getTagData();
+			CGUIElement* targetObject = (CGUIElement*)target->getTagData();
+
+			CGUIElement* parent = targetObject->getParent();
+			parent->bringToNext(fromObject, targetObject, behind);
 		}
 
 		void CGUIHierarchyController::moveToChild(CGUIHierachyNode* from, CGUIHierachyNode* target)
 		{
+			// remove parent gui
+			bool isExpand = from->getGUINode()->isExpand();
 
+			from->removeGUI();
+			from->nullGUI();
+
+			target->bringToChild(from);
+
+			// add new tree item
+			GUI::CTreeNode* gui = buildTreeNode(target->getGUINode(), from);
+
+			if (isExpand)
+				gui->expand(false);
+			else
+				gui->collapse(false);
+
+			// move game object
+			CGUIElement* fromObject = (CGUIElement*)from->getTagData();
+			CGUIElement* targetObject = (CGUIElement*)target->getTagData();
+
+			targetObject->bringToChild(fromObject);
 		}
 	}
 }
