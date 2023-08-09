@@ -119,6 +119,9 @@ namespace Skylicht
 
 			CGUITransformData* t = GET_ENTITY_DATA(m_entity, CGUITransformData);
 			t->Parent = GET_ENTITY_DATA(m_parent->m_entity, CGUITransformData);
+
+			CWorldTransformData* w = GET_ENTITY_DATA(m_entity, CWorldTransformData);
+			w->Parent = GET_ENTITY_DATA(m_parent->m_entity, CWorldTransformData);
 		}
 		else
 		{
@@ -126,6 +129,9 @@ namespace Skylicht
 
 			CGUITransformData* t = GET_ENTITY_DATA(m_entity, CGUITransformData);
 			t->Parent = NULL;
+
+			CWorldTransformData* w = GET_ENTITY_DATA(m_entity, CWorldTransformData);
+			w->Parent = NULL;
 		}
 	}
 
@@ -304,24 +310,16 @@ namespace Skylicht
 
 		core::matrix4 world = object->getAbsoluteTransform();
 
-		if (object->getParent() == this)
+		if (object->getParent() != this)
 		{
-			// remove old position
-			std::vector<CGUIElement*>::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
-			m_childs.erase(i);
-		}
-		else
-		{
-			// remove old parent
-			CGUIElement* oldParent = (CGUIElement*)object->getParent();
-			std::vector<CGUIElement*>::iterator i = std::find(oldParent->m_childs.begin(), oldParent->m_childs.end(), object);
-			if (i != oldParent->m_childs.end())
-			{
-				oldParent->m_childs.erase(i);
-			}
-
 			// set new parent
 			object->setParent(this);
+		}
+
+		// remove the current position
+		{
+			std::vector<CGUIElement*>::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
+			m_childs.erase(i);
 		}
 
 		// insert new position
@@ -338,24 +336,16 @@ namespace Skylicht
 	{
 		core::matrix4 world = object->getAbsoluteTransform();
 
-		if (object->getParent() == this)
+		if (object->getParent() != this)
 		{
-			// remove old position
-			std::vector<CGUIElement*>::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
-			m_childs.erase(i);
-		}
-		else
-		{
-			// remove old parent
-			CGUIElement* oldParent = object->getParent();
-			std::vector<CGUIElement*>::iterator i = std::find(oldParent->m_childs.begin(), oldParent->m_childs.end(), object);
-			if (i != oldParent->m_childs.end())
-			{
-				oldParent->m_childs.erase(i);
-			}
-
 			// set new parent
 			object->setParent(this);
+		}
+
+		// remove the current position
+		{
+			std::vector<CGUIElement*>::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
+			m_childs.erase(i);
 		}
 
 		// insert new position
