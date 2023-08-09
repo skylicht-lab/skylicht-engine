@@ -337,7 +337,7 @@ namespace Skylicht
 					}
 					else
 					{
-						// moveToChild(dragNode, node);
+						moveToChild(dragNode, node);
 					}
 				}
 
