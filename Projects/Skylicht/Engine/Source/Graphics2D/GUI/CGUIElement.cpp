@@ -74,7 +74,7 @@ namespace Skylicht
 
 		setParent(parent);
 		setRect(rect);
-		setName("No Name");
+		setName("No name");
 	}
 
 	CGUIElement::~CGUIElement()
@@ -264,7 +264,7 @@ namespace Skylicht
 	void CGUIElement::loadSerializable(CObjectSerializable* object)
 	{
 		// gui data
-		setName(object->get("name", "No name"));
+		setName(object->get("name", std::string("No name")).c_str());
 		m_visible = object->get("visible", false);
 
 		// transform
