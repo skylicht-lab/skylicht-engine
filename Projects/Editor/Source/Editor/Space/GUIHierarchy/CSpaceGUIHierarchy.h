@@ -63,6 +63,11 @@ namespace Skylicht
 			void rename(CGUIHierachyNode* node);
 
 			void scrollToNode(GUI::CTreeNode* node);
+
+			CGUIHierarchyController* getController()
+			{
+				return m_hierarchyController;
+			}
 		};
 	}
 }

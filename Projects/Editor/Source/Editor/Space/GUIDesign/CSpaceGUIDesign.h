@@ -77,6 +77,8 @@ namespace Skylicht
 
 			virtual void update();
 
+			virtual void refresh();
+
 			void openGUI(const char* path);
 
 		protected:

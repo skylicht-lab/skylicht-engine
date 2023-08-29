@@ -63,8 +63,12 @@ namespace Skylicht
 		{
 			m_gui->loadSerializable(m_guiData);
 
+			// notify to update on GUI
+			CSelection* selection = CSelection::getInstance();
+			selection->notify(m_gui, this);
+
 			// also update on current select gizmos
-			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+			CSelectObject* selectObject = selection->getLastSelected();
 			if (selectObject != NULL)
 			{
 				if (selectObject->getID() == m_gui->getID())

@@ -33,7 +33,9 @@ namespace Skylicht
 	{
 		class CSpaceProperty;
 
-		class CGUIEditor :public CSerializableEditor
+		class CGUIEditor :
+			public CSerializableEditor,
+			public IObserver
 		{
 		protected:
 			CGUIElement* m_gui;
@@ -51,6 +53,10 @@ namespace Skylicht
 			virtual void onUpdateValue(CObjectSerializable* object);
 
 			virtual void update() = 0;
+
+			virtual void onNotify(ISubject* subject, IObserver* from)
+			{
+			}
 
 			CGUIElement* getGUIElement()
 			{

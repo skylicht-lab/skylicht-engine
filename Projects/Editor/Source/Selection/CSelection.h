@@ -78,6 +78,8 @@ namespace Skylicht
 
 			void notify(CGameObject* obj, IObserver* from);
 
+			void notify(CGUIElement* gui, IObserver* from);
+
 			void addSelect(const std::vector<CGameObject*>& obj);
 
 			bool unSelect(CGameObject* obj);
