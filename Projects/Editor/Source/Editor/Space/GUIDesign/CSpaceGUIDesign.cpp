@@ -145,6 +145,11 @@ namespace Skylicht
 			m_gizmos->onGizmos();
 		}
 
+		void CSpaceGUIDesign::refresh()
+		{
+			CGUIDesignController::getInstance()->refresh();
+		}
+
 		void CSpaceGUIDesign::openGUI(const char* path)
 		{
 			if (m_scene)

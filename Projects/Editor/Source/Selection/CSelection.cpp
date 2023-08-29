@@ -99,6 +99,13 @@ namespace Skylicht
 				select->notify(from);
 		}
 
+		void CSelection::notify(CGUIElement* gui, IObserver* from)
+		{
+			CSelectObject* select = getSelected(gui);
+			if (select != NULL)
+				select->notify(from);
+		}
+
 		CSelectObject* CSelection::getSelected(CGameObject* obj)
 		{
 			return getSelectedById(CSelectObject::GameObject, obj->getID().c_str());

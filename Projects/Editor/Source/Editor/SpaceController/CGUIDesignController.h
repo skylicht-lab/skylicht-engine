@@ -95,6 +95,8 @@ namespace Skylicht
 
 			void onDelete();
 
+			void refresh();
+
 			CGUIHierachyNode* deselectOnHierachy(CGUIElement* element);
 
 			CGUIHierachyNode* selectOnHierachy(CGUIElement* element);
