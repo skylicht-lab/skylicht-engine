@@ -262,9 +262,25 @@ namespace Skylicht
 			node->OnSelected = std::bind(&CGUIDesignController::onSelectNode, this, std::placeholders::_1, std::placeholders::_2);
 		}
 
-		void CGUIDesignController::onUpdateNode(CGUIHierachyNode* node)
+		void CGUIDesignController::refresh()
 		{
 
+		}
+
+		void CGUIDesignController::onUpdateNode(CGUIHierachyNode* node)
+		{
+			// Update name
+			CGUIElement* obj = (CGUIElement*)node->getTagData();
+			obj->setName(node->getName().c_str());
+
+			// Update property
+			CSelection* selection = CSelection::getInstance();
+			CSelectObject* selectedObject = selection->getLastSelected();
+			if (selectedObject != NULL)
+			{
+				CPropertyController* propertyController = CPropertyController::getInstance();
+				propertyController->setProperty(selectedObject);
+			}
 		}
 
 		void CGUIDesignController::onSelectNode(CGUIHierachyNode* node, bool selected)
@@ -287,7 +303,6 @@ namespace Skylicht
 
 				// add new observer
 				selectedObject->addObserver(this);
-
 			}
 			else
 			{
@@ -304,9 +319,26 @@ namespace Skylicht
 		void CGUIDesignController::onNotify(ISubject* subject, IObserver* from)
 		{
 			CSelectObject* selected = dynamic_cast<CSelectObject*>(subject);
-			if (selected != NULL && from != this)
+			if (selected != NULL && from != this && selected->getType() == CSelectObject::GUIElement)
 			{
+				const std::string& id = selected->getID();
 
+				CScene* scene = CSceneController::getInstance()->getScene();
+				if (!scene)
+					return;
+
+				CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
+				CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
+				CGUIElement* gui = canvas->getGUIByID(id.c_str());
+				if (gui)
+				{
+					CGUIHierachyNode* guiNode = m_spaceHierarchy->getController()->getNodeByObject(gui);
+					if (guiNode != NULL)
+					{
+						// Update new name on Hierarchy
+						guiNode->setName(gui->getNameW().c_str());
+					}
+				}
 			}
 		}
 
