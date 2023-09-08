@@ -301,17 +301,26 @@ namespace Skylicht
 			rowItem->OnDragDropHover = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 			{
 				GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-				if (local.Y < rowItem->height() * 0.25f)
+
+				if (node->getParent() == NULL)
 				{
-					rowItem->enableDrawLine(true, false);
-				}
-				else if (local.Y > rowItem->height() * 0.75f)
-				{
-					rowItem->enableDrawLine(false, true);
+					// this is canvas node
+					rowItem->enableDrawLine(false, false);
 				}
 				else
 				{
-					rowItem->enableDrawLine(false, false);
+					if (local.Y < rowItem->height() * 0.25f)
+					{
+						rowItem->enableDrawLine(true, false);
+					}
+					else if (local.Y > rowItem->height() * 0.75f)
+					{
+						rowItem->enableDrawLine(false, true);
+					}
+					else
+					{
+						rowItem->enableDrawLine(false, false);
+					}
 				}
 			};
 
@@ -326,18 +335,27 @@ namespace Skylicht
 				{
 					CGUIHierachyNode* dragNode = (CGUIHierachyNode*)data->UserData;
 
-					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-					if (local.Y < rowItem->height() * 0.25f)
+					if (node->getParent() == NULL)
 					{
-						move(dragNode, node, false);
-					}
-					else if (local.Y > rowItem->height() * 0.75f)
-					{
-						move(dragNode, node, true);
+						// this is canvas node
+						moveToChild(dragNode, node);
 					}
 					else
 					{
-						moveToChild(dragNode, node);
+						// this is child node
+						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+						if (local.Y < rowItem->height() * 0.25f)
+						{
+							move(dragNode, node, false);
+						}
+						else if (local.Y > rowItem->height() * 0.75f)
+						{
+							move(dragNode, node, true);
+						}
+						else
+						{
+							moveToChild(dragNode, node);
+						}
 					}
 				}
 
