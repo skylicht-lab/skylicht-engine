@@ -407,6 +407,94 @@ namespace Skylicht
 		}
 	};
 
+	class CImageProperty : public CValuePropertyTemplate<std::string>
+	{
+	public:
+
+	public:
+		CImageProperty() :
+			CImageProperty(NULL, "CImageProperty")
+		{
+		}
+
+		CImageProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, Image, name)
+		{
+		}
+
+		CImageProperty(CObjectSerializable* owner, const char* name, const char* value) :
+			CValuePropertyTemplate(owner, Image, name)
+		{
+			set(value);
+		}
+
+		const char* getString()
+		{
+			return m_value.c_str();
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addString(Name.c_str(), m_value.c_str());
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CImageProperty* value = new CImageProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
+		}
+	};
+
+	class CSpriteProperty : public CValuePropertyTemplate<std::string>
+	{
+	public:
+
+	public:
+		CSpriteProperty() :
+			CSpriteProperty(NULL, "CSpriteProperty")
+		{
+		}
+
+		CSpriteProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, Sprite, name)
+		{
+		}
+
+		CSpriteProperty(CObjectSerializable* owner, const char* name, const char* value) :
+			CValuePropertyTemplate(owner, Sprite, name)
+		{
+			set(value);
+		}
+
+		const char* getString()
+		{
+			return m_value.c_str();
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addString(Name.c_str(), m_value.c_str());
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CSpriteProperty* value = new CSpriteProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
+		}
+	};
+
 	class CBoolProperty : public CValuePropertyTemplate<bool>
 	{
 	public:

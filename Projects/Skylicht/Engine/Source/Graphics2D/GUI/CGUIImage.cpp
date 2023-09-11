@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGUIImage.h"
 #include "Graphics2D/CGraphics2D.h"
 
+#include "TextureManager/CTextureManager.h"
+
 namespace Skylicht
 {
 	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent) :
@@ -71,5 +73,26 @@ namespace Skylicht
 
 		if (m_image)
 			setSourceRect(0, 0, (float)m_image->getSize().Width, (float)m_image->getSize().Height);
+	}
+
+	CObjectSerializable* CGUIImage::createSerializable()
+	{
+		CObjectSerializable* object = CGUIElement::createSerializable();
+		object->autoRelease(new CImageProperty(object, "imageSrc", m_resource.c_str()));
+		return object;
+	}
+
+
+	void CGUIImage::loadSerializable(CObjectSerializable* object)
+	{
+		std::string src = object->get("imageSrc", std::string(""));
+		CGUIElement::loadSerializable(object);
+
+		if (src != m_resource)
+		{
+			m_resource = src;
+			ITexture* t = CTextureManager::getInstance()->getTexture(m_resource.c_str());
+			setImage(t);
+		}
 	}
 }
