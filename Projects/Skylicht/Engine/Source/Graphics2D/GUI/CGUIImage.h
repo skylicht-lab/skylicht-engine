@@ -33,21 +33,23 @@ namespace Skylicht
 		friend class CCanvas;
 
 	protected:
-		ITexture *m_image;
+		ITexture* m_image;
+
+		std::string m_resource;
 
 		core::rectf m_sourceRect;
 		core::position2df m_pivot;
 
 	protected:
-		CGUIImage(CCanvas *canvas, CGUIElement *parent);
-		CGUIImage(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect);
+		CGUIImage(CCanvas* canvas, CGUIElement* parent);
+		CGUIImage(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
 
 	public:
 		virtual ~CGUIImage();
 
-		virtual void render(CCamera *camera);
+		virtual void render(CCamera* camera);
 
-		void setImage(ITexture *texture);
+		void setImage(ITexture* texture);
 
 		inline ITexture* getImage()
 		{
@@ -71,6 +73,10 @@ namespace Skylicht
 		{
 			return m_pivot;
 		}
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 
 		DECLARE_GETTYPENAME(CGUIImage);
 	};
