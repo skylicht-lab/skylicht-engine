@@ -47,6 +47,8 @@ namespace Skylicht
 		Object,
 		FilePath,
 		FolderPath,
+		Image,
+		Sprite,
 		Enum
 	};
 

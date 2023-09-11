@@ -25,6 +25,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSerializableEditor.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/SpaceController/CAssetPropertyController.h"
+#include "Editor/CEditor.h"
+#include "GUI/Input/CInput.h"
+#include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
 {
@@ -47,8 +51,17 @@ namespace Skylicht
 			m_subjects.clear();
 		}
 
+		GUI::CMenu* s_pickTextureMenu = NULL;
+
 		void CSerializableEditor::serializableToControl(CObjectSerializable* object, CSpaceProperty* ui, GUI::CBoxLayout* layout)
 		{
+			CEditor* editor = CEditor::getInstance();
+			if (s_pickTextureMenu == NULL)
+			{
+				s_pickTextureMenu = new GUI::CMenu(editor->getRootCanvas());
+				s_pickTextureMenu->addItem(L"Clear Texture", GUI::ESystemIcon::Close);
+			}
+
 			// add serializable data control
 			for (u32 i = 0, n = object->getNumProperty(); i < n; i++)
 			{
@@ -569,6 +582,135 @@ namespace Skylicht
 					serializableToControl(object, ui, objectLayout);
 
 					m_subjects.push_back(subject);
+				}
+				else if (valueProperty->getType() == EPropertyDataType::Image)
+				{
+					CImageProperty* value = dynamic_cast<CImageProperty*>(valueProperty);
+					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
+					CObserver* observer = new CObserver();
+					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					{
+						if (from != o)
+						{
+							const std::string& path = s->get();
+							value->set(path);
+
+							// apply image texture
+							onUpdateValue(object);
+						}
+					};
+
+					subject->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+					{
+						s->setEnable(!hide);
+						s->notify(o);
+					};
+
+					GUI::CImageButton* imageButton = ui->addInputTextureFile(layout, ui->getPrettyName(value->Name), subject);
+
+					// load texture and show on GUI
+					ITexture* texture = CTextureManager::getInstance()->getTexture(value->get().c_str());
+					if (texture != NULL)
+					{
+						const core::dimension2du& size = texture->getSize();
+						imageButton->getImage()->setImage(
+							texture,
+							GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
+						);
+						imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+					}
+
+					// apply event drag/drop...
+					valueProperty->OnChanged = [value, subject, observer]()
+					{
+						subject->set(value->get());
+						subject->notify(observer);
+					};
+
+					m_subjects.push_back(subject);
+
+					imageButton->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
+					{
+						if (data->Name == "ListFSItem")
+						{
+							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
+
+							std::string fullPath = item->getTagString();
+							bool isFolder = item->getTagBool();
+
+							if (!isFolder)
+							{
+								std::string ext = CPath::getFileNameExt(fullPath);
+								ext = CStringImp::toLower(ext);
+								if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
+								{
+									return true;
+								}
+							}
+						}
+						return false;
+					};
+
+					imageButton->OnDrop = [&, imageButton, value, object](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+					{
+						if (data->Name == "ListFSItem")
+						{
+							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
+
+							std::string fullPath = item->getTagString();
+							std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
+							std::string name = CPath::getFileName(shortPath);
+
+							ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
+							if (texture != NULL)
+							{
+								// update gui
+								const core::dimension2du& size = texture->getSize();
+								imageButton->getImage()->setImage(
+									texture,
+									GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
+								);
+								imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+
+								// update value
+								value->set(shortPath.c_str());
+								onUpdateValue(object);
+							}
+							else
+							{
+								CEditor* editor = CEditor::getInstance();
+
+								GUI::CMessageBox* msgBox = new GUI::CMessageBox(editor->getRootCanvas(), GUI::CMessageBox::OK);
+								msgBox->setMessage("Can't load texture!", name.c_str());
+								msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+							}
+						}
+					};
+
+					imageButton->OnPress = [value](GUI::CBase* button)
+					{
+						std::string assetPath = value->get();
+						assetPath = CAssetManager::getInstance()->getShortPath(assetPath.c_str());
+						CAssetPropertyController::getInstance()->browseAsset(assetPath.c_str());
+					};
+
+					imageButton->OnRightPress = [&, imageButton, value, object](GUI::CBase* button)
+					{
+						GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+						s_pickTextureMenu->open(mousePos);
+						s_pickTextureMenu->OnCommand = [&, imageButton, value, object](GUI::CBase* item)
+						{
+							// clear
+							imageButton->getImage()->setImage(NULL, GUI::SRect(0, 0, 0, 0));
+							imageButton->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
+
+							// update value
+							value->set("");
+							onUpdateValue(object);
+						};
+					};
 				}
 			}
 		}
