@@ -265,7 +265,7 @@ namespace Skylicht
 					// parse id
 					const wchar_t* id = xmlReader->getAttributeValue(L"id");
 					CStringImp::convertUnicodeToUTF8(id, text);
-					frame->ID = atoi(text);
+					frame->ID = text;
 
 					// frame name
 					const wchar_t* name = xmlReader->getAttributeValue(L"name");
@@ -360,7 +360,10 @@ namespace Skylicht
 		xmlReader->drop();
 
 		for (SFrame* frame : m_frames)
+		{
 			m_names[frame->Name] = frame;
+			m_ids[frame->ID] = frame;
+		}
 
 		return true;
 	}

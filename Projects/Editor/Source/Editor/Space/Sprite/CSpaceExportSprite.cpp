@@ -227,8 +227,8 @@ namespace Skylicht
 			buffer += "\t<frames>\n";
 			for (SFrame* frame : frames)
 			{
-				sprintf(data, "\t\t<frame id=\"%d\" name=\"%s\" page=\"%d\">\n",
-					frame->ID,
+				sprintf(data, "\t\t<frame id=\"%s\" name=\"%s\" page=\"%d\">\n",
+					frame->ID.c_str(),
 					frame->Name.c_str(),
 					frame->Image->ID);
 				buffer += data;

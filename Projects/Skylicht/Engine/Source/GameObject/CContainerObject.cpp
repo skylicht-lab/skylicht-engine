@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CContainerObject.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CRandomID.h"
 
 #include "Scene/CScene.h"
 
@@ -161,7 +162,7 @@ namespace Skylicht
 			if (generateNewID)
 			{
 				CStringProperty* id = (CStringProperty*)data->getProperty("id");
-				id->set(generateRandomID());
+				id->set(CRandomID::generate());
 			}
 
 			CContainerObject* container = createContainerObject();
@@ -185,7 +186,7 @@ namespace Skylicht
 			if (generateNewID)
 			{
 				CStringProperty* id = (CStringProperty*)data->getProperty("id");
-				id->set(generateRandomID());
+				id->set(CRandomID::generate());
 			}
 
 			ret = createEmptyObject();
@@ -207,7 +208,7 @@ namespace Skylicht
 
 		std::string name = generateObjectName("GameObject");
 
-		p->setID(generateRandomID().c_str());
+		p->setID(CRandomID::generate().c_str());
 		p->setName(name.c_str());
 
 		addChild(p);
@@ -224,7 +225,7 @@ namespace Skylicht
 
 		std::string name = generateObjectName("Container");
 
-		container->setID(generateRandomID().c_str());
+		container->setID(CRandomID::generate().c_str());
 		container->setParent(this);
 
 		container->setName(name.c_str());

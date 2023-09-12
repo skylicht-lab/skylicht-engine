@@ -106,7 +106,7 @@ namespace Skylicht
 					SFrame* frame = m_frames.back();
 
 					module->ID = moduleID;
-					frame->ID = moduleID;
+					frame->ID = std::to_string(moduleID);
 
 					// frame is a character
 					const wchar_t* id = xmlReader->getAttributeValue(L"id");

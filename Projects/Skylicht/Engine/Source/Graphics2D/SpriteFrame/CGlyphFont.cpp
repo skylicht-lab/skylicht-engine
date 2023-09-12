@@ -99,7 +99,7 @@ namespace Skylicht
 			SFrame* frame = m_frames.back();
 
 			frame->Image = img;
-			frame->ID = character;
+			frame->ID = std::to_string(character);
 			frame->ModuleOffset.push_back(SModuleOffset());
 
 			c = &frame->ModuleOffset.back();
