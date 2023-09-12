@@ -19,17 +19,31 @@ namespace Skylicht
 			switch (type)
 			{
 			case EImageMapType::GSatellite:
+			{
+				const char* domain = "google.com";
+				const char* host = "khms2";
+				const int version = 955;
 				sprintf(lpUrl,
-					"https://khms0.google.com/kh/v=908?x=%ld&y=%ld&z=%ld",
+					"https://%s.%s/kh/v=%d?x=%ld&y=%ld&z=%ld",
+					host,
+					domain,
+					version,
 					x, y, z
 				);
-				break;
+			}
+			break;
 			case EImageMapType::OSMTerrain:
+			{
+				const char* domain = "openstreetmap.org";
+				const char* host = "tile";
 				sprintf(lpUrl,
-					"https://api.maptiler.com/maps/outdoor/%ld/%ld/%ld.png",
+					"https://%s.%s/%ld/%ld/%ld.png",
+					host,
+					domain,
 					z, x, y
 				);
 				break;
+			}
 			default:
 				break;
 			}

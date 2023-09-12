@@ -51,7 +51,7 @@ namespace Skylicht
 			m_viewY(0),
 			m_gridSize(256),
 			m_rightPress(false),
-			m_mapBGType(EImageMapType::GSatellite)
+			m_mapBGType(EImageMapType::OSMTerrain)
 		{
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 

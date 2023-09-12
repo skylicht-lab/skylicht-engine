@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CScene.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CRandomID.h"
 #include "EventManager/CEventManager.h"
 
 namespace Skylicht
@@ -152,7 +153,7 @@ namespace Skylicht
 		std::string name = zone->generateObjectName("Zone");
 
 		zone->setName(name.c_str());
-		zone->setID(CGameObject::generateRandomID().c_str());
+		zone->setID(CRandomID::generate().c_str());
 		zone->createEntity();
 		zone->setupEulerTransform();
 
