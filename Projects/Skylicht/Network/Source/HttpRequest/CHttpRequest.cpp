@@ -107,7 +107,7 @@ namespace Skylicht
 		curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYHOST, 0);
 
 		// firefox agent
-		curl_easy_setopt(m_curl, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
+		curl_easy_setopt(m_curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
 
 		m_dataStream = stream;
 

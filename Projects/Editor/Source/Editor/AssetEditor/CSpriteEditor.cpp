@@ -127,6 +127,8 @@ namespace Skylicht
 
 		void CSpriteEditor::findAllPNG(const char* path, std::vector<std::string>& pngs)
 		{
+			CAssetManager* mgr = CAssetManager::getInstance();
+
 			for (const auto& file : fs::directory_iterator(path))
 			{
 				std::string path = file.path().generic_u8string();
@@ -139,7 +141,9 @@ namespace Skylicht
 				{
 					std::string ext = CStringImp::toLower(CPath::getFileNameExt(path));
 					if (ext == "png")
-						pngs.push_back(path);
+					{
+						pngs.push_back(mgr->getShortPath(path.c_str()));
+					}
 				}
 			}
 		}

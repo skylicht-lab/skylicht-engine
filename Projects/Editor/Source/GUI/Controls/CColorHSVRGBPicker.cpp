@@ -454,6 +454,9 @@ namespace Skylicht
 				setupHSVBitmap(h, s, v);
 
 				updateColorText();
+
+				if (OnModify != nullptr)
+					OnModify(this);
 			}
 
 			void CColorHSVRGBPicker::onSVChange(CBase* base)

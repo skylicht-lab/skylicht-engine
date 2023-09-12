@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGUIElement.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CRandomID.h"
 
 #include "Graphics2D/CCanvas.h"
 #include "Graphics2D/CGraphics2D.h"
@@ -42,7 +43,7 @@ namespace Skylicht
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		m_entity = entityPrefab->createEntity();
-		m_entity->setID(CGameObject::generateRandomID().c_str());
+		m_entity->setID(CRandomID::generate().c_str());
 		entityPrefab->addTransformData(m_entity, NULL, core::IdentityMatrix, "");
 
 		m_guiTransform = m_entity->addData<CGUITransformData>();
@@ -64,7 +65,7 @@ namespace Skylicht
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		m_entity = entityPrefab->createEntity();
-		m_entity->setID(CGameObject::generateRandomID().c_str());
+		m_entity->setID(CRandomID::generate().c_str());
 		entityPrefab->addTransformData(m_entity, NULL, core::IdentityMatrix, "");
 
 		m_guiTransform = m_entity->addData<CGUITransformData>();

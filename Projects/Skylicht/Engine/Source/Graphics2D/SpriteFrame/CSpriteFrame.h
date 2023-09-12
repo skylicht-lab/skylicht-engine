@@ -91,7 +91,7 @@ namespace Skylicht
 
 	struct SFrame
 	{
-		int ID;
+		std::string ID;
 		std::string Name;
 		std::vector<SModuleOffset> ModuleOffset;
 		SImage* Image;
@@ -122,6 +122,7 @@ namespace Skylicht
 		std::vector<SModuleRect*> m_modules;
 
 		std::map<std::string, SFrame*> m_names;
+		std::map<std::string, SFrame*> m_ids;
 
 		bool m_deleteAtlas;
 
@@ -140,6 +141,11 @@ namespace Skylicht
 		inline SFrame* getFrameByName(const char* name)
 		{
 			return m_names[name];
+		}
+
+		inline SFrame* getFrameByID(const char* id)
+		{
+			return m_names[id];
 		}
 	};
 }

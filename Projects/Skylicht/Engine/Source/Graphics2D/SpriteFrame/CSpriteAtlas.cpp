@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpriteAtlas.h"
 #include "Graphics2D/Atlas/CAtlas.h"
+#include "Utils/CRandomID.h"
+#include "Utils/CPath.h"
 
 namespace Skylicht
 {
@@ -128,7 +130,13 @@ namespace Skylicht
 			frame->BoudingRect.UpperLeftCorner.set(0.0f, 0.0f);
 			frame->BoudingRect.LowerRightCorner.set((f32)r.getWidth(), (f32)r.getHeight());
 			frame->Name = name;
-			frame->ID = (int)m_frames.size();
+
+			std::string nameHash = CPath::getFileName(std::string(path));
+			nameHash += "_";
+			nameHash += std::to_string(r.getWidth());
+			nameHash += "_";
+			nameHash += std::to_string(r.getHeight());
+			frame->ID = CRandomID::hashID(nameHash.c_str());
 
 			// create module
 			SModuleRect* module = new SModuleRect();

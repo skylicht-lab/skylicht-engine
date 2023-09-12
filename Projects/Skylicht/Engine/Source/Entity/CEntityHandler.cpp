@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GameObject/CZone.h"
 #include "Transform/CWorldTransformData.h"
 #include "Culling/CVisibleData.h"
+#include "Utils/CRandomID.h"
 
 namespace Skylicht
 {
@@ -65,7 +66,7 @@ namespace Skylicht
 		sprintf(name, "#%d", entity->getIndex());
 
 		// id
-		std::string id = CGameObject::generateRandomID();
+		std::string id = CRandomID::generate();
 		entity->setID(id.c_str());
 
 		// add parent relative
@@ -99,7 +100,7 @@ namespace Skylicht
 		sprintf(name, "#%d", entity->getIndex());
 
 		// id
-		std::string id = CGameObject::generateRandomID();
+		std::string id = CRandomID::generate();
 		entity->setID(id.c_str());
 
 		// add parent relative
@@ -159,7 +160,7 @@ namespace Skylicht
 			}
 
 			// generate id for entity
-			std::string id = CGameObject::generateRandomID();
+			std::string id = CRandomID::generate();
 			entity->setID(id.c_str());
 
 			// add to handler
