@@ -32,4 +32,6 @@
 /PrjVisualStudio/
 /PrjUWP/
 /PrjEmscripten/
+/InstallLibs/
+/Maps/
 node_modules/
