@@ -72,7 +72,7 @@ namespace Skylicht
 		return image;
 	}
 
-	SFrame* CSpriteAtlas::addFrame(const char* name, const char* path)
+	SFrame* CSpriteAtlas::addFrame(const char* name, const char* path, const char* frameId)
 	{
 		IImage* img = getVideoDriver()->createImageFromFile(path);
 		SFrame* frame = NULL;
@@ -131,12 +131,10 @@ namespace Skylicht
 			frame->BoudingRect.LowerRightCorner.set((f32)r.getWidth(), (f32)r.getHeight());
 			frame->Name = name;
 
-			std::string nameHash = CPath::getFileName(std::string(path));
-			nameHash += "_";
-			nameHash += std::to_string(r.getWidth());
-			nameHash += "_";
-			nameHash += std::to_string(r.getHeight());
-			frame->ID = CRandomID::hashID(nameHash.c_str());
+			if (frameId != NULL)
+				frame->ID = frameId;
+			else
+				frame->ID = CRandomID::generate();
 
 			// create module
 			SModuleRect* module = new SModuleRect();
@@ -166,16 +164,6 @@ namespace Skylicht
 		}
 
 		return frame;
-	}
-
-	SFrame* CSpriteAtlas::getFrame(const char* name)
-	{
-		std::map<std::string, SFrame*>::iterator it = m_names.find(name);
-
-		if (it == m_names.end())
-			return NULL;
-
-		return it->second;
 	}
 
 	void CSpriteAtlas::updateTexture()

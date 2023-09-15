@@ -60,7 +60,7 @@ namespace Skylicht
 			m_directionLight = m_gameObject->getComponent<CDirectionalLight>();
 
 			m_sprite = m_gameObject->addComponent<CSprite>();
-			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrame("light"), 1.0f, m_directionLight->getColor().toSColor());
+			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrameByName("light"), 1.0f, m_directionLight->getColor().toSColor());
 			m_sprite->setCenter(true);
 			m_sprite->setBillboard(true);
 			m_sprite->setAutoScaleInViewSpace(true);

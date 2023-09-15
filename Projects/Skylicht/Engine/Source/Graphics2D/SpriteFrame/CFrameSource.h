@@ -32,36 +32,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CFontSource : public CAssetResource
+	class CFrameSource : public CAssetResource
 	{
 	public:
-		enum EFontType
-		{
-			GlyphFreeType = 0,
-			SpriteFont
-		};
+		CStringProperty SpritePath;
 
 	public:
-		CEnumProperty<EFontType> FontType;
-		CFilePathProperty Source;
-		CFloatProperty FontSizePt;
+		CFrameSource();
 
-	protected:
-		IFont* m_font;
-
-		std::string m_source;
-		float m_sizePt;
-
-	public:
-		CFontSource();
-
-		virtual ~CFontSource();
-
-		IFont* initFont();
-
-		inline IFont* getFont()
-		{
-			return m_font;
-		}
+		virtual ~CFrameSource();
 	};
 }

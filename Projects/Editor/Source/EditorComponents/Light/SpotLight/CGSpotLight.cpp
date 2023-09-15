@@ -62,7 +62,7 @@ namespace Skylicht
 			m_spotLight = m_gameObject->getComponent<CSpotLight>();
 
 			m_sprite = m_gameObject->addComponent<CSprite>();
-			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrame("light"), 1.0f, m_spotLight->getColor().toSColor());
+			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrameByName("light"), 1.0f, m_spotLight->getColor().toSColor());
 			m_sprite->setCenter(true);
 			m_sprite->setBillboard(true);
 			m_sprite->setAutoScaleInViewSpace(true);

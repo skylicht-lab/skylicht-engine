@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CFontSource::CFontSource() :
-		CObjectSerializable("CFontSource"),
+		CAssetResource("CFontSource"),
 		FontType(this, "fontType", CFontSource::GlyphFreeType),
 		Source(this, "source"),
 		FontSizePt(this, "fontSizePt", 20.0f),
