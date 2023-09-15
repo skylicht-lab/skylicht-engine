@@ -22,46 +22,30 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Serializable/CAssetResource.h"
-
-#include "Graphics2D/Glyph/CGlyphFreetype.h"
-#include "Graphics2D/SpriteFrame/CSpriteFont.h"
-#include "Graphics2D/SpriteFrame/CGlyphFont.h"
+#include "pch.h"
+#include "CAssetResource.h"
+#include "Utils/CRandomID.h"
 
 namespace Skylicht
 {
-	class CFontSource : public CAssetResource
+	CAssetResource::CAssetResource(const char* name) :
+		CObjectSerializable(name),
+		GUID(this, "guid", CRandomID::generate().c_str())
 	{
-	public:
-		enum EFontType
+		GUID.setHidden(true);
+	}
+
+	CAssetResource::~CAssetResource()
+	{
+
+	}
+
+	void CAssetResource::deserialize(io::IAttributes* io)
+	{
+		CObjectSerializable::deserialize(io);
+		if (GUID.get().empty())
 		{
-			GlyphFreeType = 0,
-			SpriteFont
-		};
-
-	public:
-		CEnumProperty<EFontType> FontType;
-		CFilePathProperty Source;
-		CFloatProperty FontSizePt;
-
-	protected:
-		IFont* m_font;
-
-		std::string m_source;
-		float m_sizePt;
-
-	public:
-		CFontSource();
-
-		virtual ~CFontSource();
-
-		IFont* initFont();
-
-		inline IFont* getFont()
-		{
-			return m_font;
+			GUID.set(CRandomID::generate());
 		}
-	};
+	}
 }

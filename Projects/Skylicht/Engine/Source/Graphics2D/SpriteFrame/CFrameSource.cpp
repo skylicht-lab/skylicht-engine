@@ -22,46 +22,22 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Serializable/CAssetResource.h"
-
-#include "Graphics2D/Glyph/CGlyphFreetype.h"
-#include "Graphics2D/SpriteFrame/CSpriteFont.h"
-#include "Graphics2D/SpriteFrame/CGlyphFont.h"
+#include "pch.h"
+#include "CFrameSource.h"
+#include "Utils/CPath.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
-	class CFontSource : public CAssetResource
+	CFrameSource::CFrameSource() :
+		CAssetResource("CFrameSource"),
+		SpritePath(this, "spritePath")
 	{
-	public:
-		enum EFontType
-		{
-			GlyphFreeType = 0,
-			SpriteFont
-		};
 
-	public:
-		CEnumProperty<EFontType> FontType;
-		CFilePathProperty Source;
-		CFloatProperty FontSizePt;
+	}
 
-	protected:
-		IFont* m_font;
+	CFrameSource::~CFrameSource()
+	{
 
-		std::string m_source;
-		float m_sizePt;
-
-	public:
-		CFontSource();
-
-		virtual ~CFontSource();
-
-		IFont* initFont();
-
-		inline IFont* getFont()
-		{
-			return m_font;
-		}
-	};
+	}
 }
