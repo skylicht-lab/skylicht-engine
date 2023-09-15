@@ -28,6 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "Editor/CEditor.h"
 
+#include "Graphics2D/SpriteFrame/CFrameSource.h"
+#include "Serializable/CSerializableLoader.h"
+
 #include <filesystem>
 #if defined(__APPLE_CC__)
 namespace fs = std::__fs::filesystem;
@@ -90,7 +93,17 @@ namespace Skylicht
 
 				std::string png = m_pngs[m_position++];
 				std::string name = CPath::getFileNameNoExt(png);
-				m_atlas->addFrame(name.c_str(), png.c_str());
+
+				std::string meta = png + ".meta";
+
+				CFrameSource* frameSource = new CFrameSource();
+				CSerializableLoader::loadSerializable(meta.c_str(), frameSource);
+
+				m_atlas->addFrame(name.c_str(), png.c_str(), frameSource->GUID.getString());
+
+				frameSource->SpritePath.set(m_path);
+				frameSource->save(meta.c_str());
+				delete frameSource;
 
 				float percent = m_position / (float)m_total;
 				m_progressBar->setPercent(percent);

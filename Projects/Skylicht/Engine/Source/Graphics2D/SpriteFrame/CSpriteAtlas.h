@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	class CSpriteAtlas : public CSpriteFrame
 	{
-	protected:		
+	protected:
 		int m_width;
 		int m_height;
 		ECOLOR_FORMAT m_fmt;
@@ -43,9 +43,7 @@ namespace Skylicht
 
 		virtual ~CSpriteAtlas();
 
-		SFrame* addFrame(const char* name, const char* path);
-
-		SFrame* getFrame(const char* name);
+		SFrame* addFrame(const char* name, const char* path, const char* frameId = NULL);
 
 		SImage* createAtlasRect(int w, int h, core::recti& outRegion);
 
