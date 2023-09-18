@@ -35,7 +35,7 @@ namespace Skylicht
 	public:
 		static void load(io::IXMLReader* reader, CObjectSerializable* object, const char* exitNode);
 		
-		static void loadSerializable(const char* file, CObjectSerializable* object);
+		static bool loadSerializable(const char* file, CObjectSerializable* object);
 
 	protected:
 

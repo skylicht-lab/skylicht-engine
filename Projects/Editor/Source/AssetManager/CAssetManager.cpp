@@ -33,7 +33,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
-#include "Crypto/sha256.h"
+#include "Utils/CRandomID.h"
+
+#include "Serializable/CAssetResource.h"
+#include "Serializable/CSerializableLoader.h"
 
 #if defined(__APPLE_CC__)
 namespace fs = std::__fs::filesystem;
@@ -158,28 +161,6 @@ namespace Skylicht
 			}
 
 			return false;
-		}
-
-		std::string CAssetManager::generateHash(const char* bundle, const char* path, time_t createTime, time_t now)
-		{
-			std::string hashString = std::string(bundle) + std::string(":") + path;
-			hashString += ":";
-			hashString += std::to_string(createTime);
-			hashString += ":";
-			hashString += std::to_string(now);
-
-			BYTE8 buf[SHA256_BLOCK_SIZE];
-			SHA256_CTX ctx;
-
-			sha256_init(&ctx);
-			sha256_update(&ctx, (const BYTE8*)hashString.c_str(), hashString.length());
-			sha256_final(&ctx, buf);
-
-			std::stringstream result;
-			for (int i = 0; i < SHA256_BLOCK_SIZE; i++)
-				result << std::setfill('0') << std::setw(2) << std::hex << (int)buf[i];
-
-			return result.str();
 		}
 
 		void CAssetManager::getRoot(std::vector<SFileInfo>& files)
@@ -329,7 +310,7 @@ namespace Skylicht
 			return sortPath;
 		}
 
-		std::string CAssetManager::genereateAssetPath(const char* pattern, const char* currentFolder)
+		std::string CAssetManager::generateAssetPath(const char* pattern, const char* currentFolder)
 		{
 			int i = 1;
 			bool exists = false;
@@ -443,6 +424,24 @@ namespace Skylicht
 			if (splits.size() > 1)
 				bundle = splits[0];
 			return bundle;
+		}
+
+		std::string CAssetManager::getGenerateMetaGUID(const char* path)
+		{
+			std::string meta = path;
+			meta += ".meta";
+
+			CAssetResource* asset = new CAssetResource("CAssetResource");
+			if (!CSerializableLoader::loadSerializable(meta.c_str(), asset))
+			{
+				// save the meta file
+				asset->save(meta.c_str());
+			}
+
+			std::string result = asset->GUID.get();
+			delete asset;
+
+			return result;
 		}
 
 		bool CAssetManager::newFolderAsset(const char* path)

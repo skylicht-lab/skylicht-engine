@@ -132,8 +132,6 @@ namespace Skylicht
 
 			bool getFileDate(const char* path, time_t& modifyTime, time_t& createTime);
 
-			std::string generateHash(const char* bundle, const char* path, time_t createTime, time_t now);
-
 			void getRoot(std::vector<SFileInfo>& files);
 
 			void getFolder(const char* folder, std::vector<SFileInfo>& files);
@@ -148,7 +146,7 @@ namespace Skylicht
 
 			std::string getShortPath(const char* folder);
 
-			std::string genereateAssetPath(const char* pattern, const char* currentFolder);
+			std::string generateAssetPath(const char* pattern, const char* currentFolder);
 
 			SFileNode* getFileNodeByPath(const char* path);
 
@@ -163,6 +161,8 @@ namespace Skylicht
 			bool newFolderAsset(const char* path);
 
 			std::string getBundleName(const char* path);
+
+			std::string getGenerateMetaGUID(const char* path);
 
 		public:
 

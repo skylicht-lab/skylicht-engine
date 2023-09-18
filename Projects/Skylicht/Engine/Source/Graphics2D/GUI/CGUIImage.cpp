@@ -78,7 +78,7 @@ namespace Skylicht
 	CObjectSerializable* CGUIImage::createSerializable()
 	{
 		CObjectSerializable* object = CGUIElement::createSerializable();
-		object->autoRelease(new CImageProperty(object, "imageSrc", m_resource.c_str()));
+		object->autoRelease(new CImageSourceProperty(object, "imageSrc", m_resource.c_str()));
 		return object;
 	}
 

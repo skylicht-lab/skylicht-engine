@@ -407,25 +407,16 @@ namespace Skylicht
 		}
 	};
 
-	class CImageProperty : public CValuePropertyTemplate<std::string>
+	class CGUIDResourceProperty : public CValuePropertyTemplate<std::string>
 	{
-	public:
+	protected:
+		std::string m_guid;
 
 	public:
-		CImageProperty() :
-			CImageProperty(NULL, "CImageProperty")
+		CGUIDResourceProperty(CObjectSerializable* owner, EPropertyDataType dataType, const char* name) :
+			CValuePropertyTemplate(owner, dataType, name)
 		{
-		}
 
-		CImageProperty(CObjectSerializable* owner, const char* name) :
-			CValuePropertyTemplate(owner, Image, name)
-		{
-		}
-
-		CImageProperty(CObjectSerializable* owner, const char* name, const char* value) :
-			CValuePropertyTemplate(owner, Image, name)
-		{
-			set(value);
 		}
 
 		const char* getString()
@@ -436,60 +427,84 @@ namespace Skylicht
 		virtual void serialize(io::IAttributes* io)
 		{
 			io->addString(Name.c_str(), m_value.c_str());
+
+			std::string GUID = Name;
+			GUID += ".guid";
+			io->addString(GUID.c_str(), m_guid.c_str());
 		}
 
 		virtual void deserialize(io::IAttributes* io)
 		{
 			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+
+			std::string GUID = Name;
+			GUID += ".guid";
+			m_guid = io->getAttributeAsString(GUID.c_str()).c_str();
+		}
+
+		inline void setGUID(const char* guid)
+		{
+			m_guid = guid;
+		}
+
+		inline const char* getGUID()
+		{
+			return m_guid.c_str();
+		}
+	};
+
+	class CImageSourceProperty : public CGUIDResourceProperty
+	{
+	public:
+		CImageSourceProperty() :
+			CImageSourceProperty(NULL, "CImageSourceProperty")
+		{
+		}
+
+		CImageSourceProperty(CObjectSerializable* owner, const char* name) :
+			CGUIDResourceProperty(owner, ImageSource, name)
+		{
+		}
+
+		CImageSourceProperty(CObjectSerializable* owner, const char* name, const char* value) :
+			CGUIDResourceProperty(owner, ImageSource, name)
+		{
+			set(value);
 		}
 
 		virtual CValueProperty* clone()
 		{
-			CImageProperty* value = new CImageProperty(NULL, Name.c_str());
+			CImageSourceProperty* value = new CImageSourceProperty(NULL, Name.c_str());
 			value->m_value = m_value;
+			value->m_guid = m_guid;
 			return value;
 		}
 	};
 
-	class CSpriteProperty : public CValuePropertyTemplate<std::string>
+	class CFrameSourceProperty : public CGUIDResourceProperty
 	{
 	public:
 
 	public:
-		CSpriteProperty() :
-			CSpriteProperty(NULL, "CSpriteProperty")
+		CFrameSourceProperty() :
+			CFrameSourceProperty(NULL, "CFrameSourceProperty")
 		{
 		}
 
-		CSpriteProperty(CObjectSerializable* owner, const char* name) :
-			CValuePropertyTemplate(owner, Sprite, name)
+		CFrameSourceProperty(CObjectSerializable* owner, const char* name) :
+			CGUIDResourceProperty(owner, FrameSource, name)
 		{
 		}
 
-		CSpriteProperty(CObjectSerializable* owner, const char* name, const char* value) :
-			CValuePropertyTemplate(owner, Sprite, name)
+		CFrameSourceProperty(CObjectSerializable* owner, const char* name, const char* value) :
+			CGUIDResourceProperty(owner, FrameSource, name)
 		{
 			set(value);
 		}
 
-		const char* getString()
-		{
-			return m_value.c_str();
-		}
-
-		virtual void serialize(io::IAttributes* io)
-		{
-			io->addString(Name.c_str(), m_value.c_str());
-		}
-
-		virtual void deserialize(io::IAttributes* io)
-		{
-			m_value = io->getAttributeAsString(Name.c_str()).c_str();
-		}
-
 		virtual CValueProperty* clone()
 		{
-			CSpriteProperty* value = new CSpriteProperty(NULL, Name.c_str());
+			CFrameSourceProperty* value = new CFrameSourceProperty(NULL, Name.c_str());
 			value->m_value = m_value;
 			return value;
 		}
