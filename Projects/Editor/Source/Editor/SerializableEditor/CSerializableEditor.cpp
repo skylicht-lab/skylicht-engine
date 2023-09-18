@@ -583,9 +583,9 @@ namespace Skylicht
 
 					m_subjects.push_back(subject);
 				}
-				else if (valueProperty->getType() == EPropertyDataType::Image)
+				else if (valueProperty->getType() == EPropertyDataType::ImageSource)
 				{
-					CImageProperty* value = dynamic_cast<CImageProperty*>(valueProperty);
+					CImageSourceProperty* value = dynamic_cast<CImageSourceProperty*>(valueProperty);
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
@@ -593,7 +593,12 @@ namespace Skylicht
 						if (from != o)
 						{
 							const std::string& path = s->get();
+
+							// read guid
+							std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(path.c_str());
+
 							value->set(path);
+							value->setGUID(guid.c_str());
 
 							// apply image texture
 							onUpdateValue(object);
@@ -663,6 +668,9 @@ namespace Skylicht
 							std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
 							std::string name = CPath::getFileName(shortPath);
 
+							// read guid
+							std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(shortPath.c_str());
+
 							ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
 							if (texture != NULL)
 							{
@@ -676,6 +684,8 @@ namespace Skylicht
 
 								// update value
 								value->set(shortPath.c_str());
+								value->setGUID(guid.c_str());
+
 								onUpdateValue(object);
 							}
 							else

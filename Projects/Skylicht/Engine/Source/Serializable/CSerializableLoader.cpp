@@ -149,11 +149,11 @@ namespace Skylicht
 		}
 	}
 
-	void CSerializableLoader::loadSerializable(const char* file, CObjectSerializable* object)
+	bool CSerializableLoader::loadSerializable(const char* file, CObjectSerializable* object)
 	{
 		io::IXMLReader* reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
 		if (reader == NULL)
-			return;
+			return false;
 
 		object->setSavePath(file);
 
@@ -178,6 +178,7 @@ namespace Skylicht
 		}
 
 		reader->drop();
+		return true;
 	}
 
 	void CSerializableLoader::initProperty(CObjectSerializable* object, io::IAttributes* attributes)

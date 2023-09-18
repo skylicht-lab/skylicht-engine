@@ -64,7 +64,7 @@ namespace Skylicht
 			if (spaceAssets != NULL)
 				currentFolder = spaceAssets->getListController()->getCurrentFolder();
 
-			std::string fullPath = assetMgr->genereateAssetPath("/Material%02d.mat", currentFolder.c_str());
+			std::string fullPath = assetMgr->generateAssetPath("/Material%02d.mat", currentFolder.c_str());
 
 			ArrayMaterial materials;
 
@@ -110,7 +110,7 @@ namespace Skylicht
 			if (spaceAssets != NULL)
 				currentFolder = spaceAssets->getListController()->getCurrentFolder();
 
-			std::string fullPath = assetMgr->genereateAssetPath("/Scene%02d.scene", currentFolder.c_str());
+			std::string fullPath = assetMgr->generateAssetPath("/Scene%02d.scene", currentFolder.c_str());
 
 			CSceneExporter::exportScene(scene, fullPath.c_str());
 
@@ -129,7 +129,7 @@ namespace Skylicht
 			if (spaceAssets != NULL)
 				currentFolder = spaceAssets->getListController()->getCurrentFolder();
 
-			std::string fullPath = assetMgr->genereateAssetPath("/Sprite%02d.sprite", currentFolder.c_str());
+			std::string fullPath = assetMgr->generateAssetPath("/Sprite%02d.sprite", currentFolder.c_str());
 
 			SpriteExportSettings nullSprite;
 			nullSprite.save(fullPath.c_str());
@@ -147,7 +147,7 @@ namespace Skylicht
 			if (spaceAssets != NULL)
 				currentFolder = spaceAssets->getListController()->getCurrentFolder();
 
-			std::string fullPath = assetMgr->genereateAssetPath("/Font%02d.font", currentFolder.c_str());
+			std::string fullPath = assetMgr->generateAssetPath("/Font%02d.font", currentFolder.c_str());
 
 			CFontSource nullFont;
 			nullFont.save(fullPath.c_str());
@@ -165,7 +165,7 @@ namespace Skylicht
 			if (spaceAssets != NULL)
 				currentFolder = spaceAssets->getListController()->getCurrentFolder();
 
-			std::string fullPath = assetMgr->genereateAssetPath("/GUI%02d.gui", currentFolder.c_str());
+			std::string fullPath = assetMgr->generateAssetPath("/GUI%02d.gui", currentFolder.c_str());
 
 			CZone* zone = CSceneController::getInstance()->getScene()->getZone(0);
 			CGameObject* canvas = zone->createEmptyObject();
