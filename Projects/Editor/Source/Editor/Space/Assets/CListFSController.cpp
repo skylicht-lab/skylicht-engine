@@ -292,10 +292,11 @@ namespace Skylicht
 					std::string ext = CPath::getFileNameExt(fullPath);
 					ext = CStringImp::toLower(ext);
 
+					std::string shortPath = m_assetManager->getShortPath(fullPath.c_str());
 
 					IFileLoader* fileLoader = m_assetManager->getFileLoader(ext.c_str());
 					if (fileLoader != NULL)
-						fileLoader->loadFile(fullPath);
+						fileLoader->loadFile(shortPath.c_str());
 #if WIN32
 					else
 					{

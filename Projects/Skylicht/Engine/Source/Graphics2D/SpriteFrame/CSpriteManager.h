@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2023 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,48 +24,35 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CGUIElement.h"
-#include "Graphics2D/SpriteFrame/CSpriteFrame.h"
+#include "Utils/CGameSingleton.h"
+#include "CSpriteFrame.h"
 
 namespace Skylicht
 {
-	class CGUISprite : public CGUIElement
+	class CSpriteManager : public CGameSingleton<CSpriteManager>
 	{
-		friend class CCanvas;
 	protected:
-		SFrame* m_frame;
+		struct SSpritePackage
+		{
+			std::string Package;
+			CSpriteFrame* Sprite;
+		};
 
-		bool m_autoRotate;
-
-		float m_frameRotate;
-		float m_frameSpeed;
-		float m_animationTime;
-
-		std::string m_resource;
-
-	protected:
-		CGUISprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame);
-		CGUISprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame);
+		std::map<std::string, CSpriteFrame*> m_idToSprite;
+		std::map<std::string, CSpriteFrame*> m_pathToSprite;
+		std::vector<SSpritePackage*> m_spriteList;
 
 	public:
-		virtual ~CGUISprite();
+		CSpriteManager();
 
-		virtual void update(CCamera* camera);
+		virtual ~CSpriteManager();
 
-		virtual void render(CCamera* camera);
+		CSpriteFrame* loadSprite(const char* path, const char* category = "global");
 
-		void setFrame(SFrame* frame);
+		CSpriteFrame* getSpriteById(const char* id);
 
-		void setAutoRotate(bool rotate, float rotateAngle, float framePerSec);
+		void releaseSprite(const char* category);
 
-		void setAlignCenterModule();
-
-		void setOffsetModule(float x, float y);
-
-		virtual CObjectSerializable* createSerializable();
-
-		virtual void loadSerializable(CObjectSerializable* object);
-
-		DECLARE_GETTYPENAME(CGUISprite);
+		void releaseSprite(CSpriteFrame* sprite);
 	};
 }

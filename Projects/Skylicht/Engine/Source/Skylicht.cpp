@@ -43,7 +43,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "MeshManager/CMeshManager.h"
 #include "Animation/CAnimationManager.h"
 #include "TextureManager/CTextureManager.h"
-
+#include "Graphics2D/SpriteFrame/CSpriteManager.h"
 #include "Debug/CSceneDebug.h"
 
 // Tween
@@ -85,6 +85,7 @@ namespace Skylicht
 		CMeshManager::createGetInstance();
 		CAnimationManager::createGetInstance();
 		CMaterialManager::createGetInstance();
+		CSpriteManager::createGetInstance();
 
 		CShadowRTTManager::createGetInstance();
 
@@ -125,6 +126,7 @@ namespace Skylicht
 
 		CShadowRTTManager::releaseInstance();
 
+		CSpriteManager::releaseInstance();
 		CMaterialManager::releaseInstance();
 		CAnimationManager::releaseInstance();
 		CMeshManager::releaseInstance();

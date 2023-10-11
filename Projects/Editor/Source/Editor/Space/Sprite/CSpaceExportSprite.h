@@ -57,6 +57,8 @@ namespace Skylicht
 
 			EImportState m_state;
 
+			std::string m_id;
+
 			std::string m_path;
 
 			std::vector<std::string> m_pngs;
@@ -86,7 +88,7 @@ namespace Skylicht
 
 			bool isFinish();
 
-			void exportSprite(const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha);
+			void exportSprite(const char* id, const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha);
 
 		protected:
 
