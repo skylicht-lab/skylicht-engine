@@ -483,7 +483,9 @@ namespace Skylicht
 
 	class CFrameSourceProperty : public CGUIDResourceProperty
 	{
-	public:
+	protected:
+		std::string m_sprite;
+		std::string m_spriteId;
 
 	public:
 		CFrameSourceProperty() :
@@ -506,7 +508,54 @@ namespace Skylicht
 		{
 			CFrameSourceProperty* value = new CFrameSourceProperty(NULL, Name.c_str());
 			value->m_value = m_value;
+			value->m_sprite = m_sprite;
 			return value;
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			CGUIDResourceProperty::serialize(io);
+
+			std::string spriteName = Name;
+			spriteName += ".sprite";
+			io->addString(spriteName.c_str(), m_sprite.c_str());
+
+			spriteName = Name;
+			spriteName += ".spriteGUID";
+			io->addString(spriteName.c_str(), m_spriteId.c_str());
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			CGUIDResourceProperty::deserialize(io);
+
+			std::string spriteName = Name;
+			spriteName += ".sprite";
+			m_sprite = io->getAttributeAsString(spriteName.c_str()).c_str();
+
+			spriteName = Name;
+			spriteName += ".spriteGUID";
+			m_spriteId = io->getAttributeAsString(spriteName.c_str()).c_str();
+		}
+
+		void setSprite(const char* sprite)
+		{
+			m_sprite = sprite;
+		}
+
+		const char* getSprite()
+		{
+			return m_sprite.c_str();
+		}
+
+		void setSpriteGUID(const char* id)
+		{
+			m_spriteId = id;
+		}
+
+		const char* getSpriteGUID()
+		{
+			return m_spriteId.c_str();
 		}
 	};
 

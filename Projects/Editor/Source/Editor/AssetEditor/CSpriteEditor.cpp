@@ -117,6 +117,7 @@ namespace Skylicht
 			// show dialog export sprite
 			// see CSpaceExportSprite
 			CEditor::getInstance()->exportSprite(
+				m_settings->GUID.getString(),
 				path,
 				pngs,
 				m_settings->Width.get(),

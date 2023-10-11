@@ -180,7 +180,7 @@ namespace Skylicht
 
 			void exportGMap(const char* path, long x1, long y1, long x2, long y2, int zoom, int type, int gridSize);
 
-			void exportSprite(const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha);
+			void exportSprite(const char* id, const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha);
 		};
 	}
 }

@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "SpriteExportSettings.h"
+#include "Utils/CRandomID.h"
 
 namespace Skylicht
 {
@@ -31,12 +32,14 @@ namespace Skylicht
 	{
 		SpriteExportSettings::SpriteExportSettings() :
 			CObjectSerializable("SpriteExportSettings"),
-			Width(this, "Width", 2048),
-			Height(this, "Height", 2048),
-			Alpha(this, "Alpha", true),
-			ImagesFolder("Images folder", this)
+			GUID(this, "guid", ""),
+			Width(this, "width", 2048),
+			Height(this, "geight", 2048),
+			Alpha(this, "alpha", true),
+			ImagesFolder("imagesFolder", this)
 		{
-
+			GUID.setHidden(true);
+			GUID.set(CRandomID::generate().c_str());
 		}
 
 		SpriteExportSettings::~SpriteExportSettings()

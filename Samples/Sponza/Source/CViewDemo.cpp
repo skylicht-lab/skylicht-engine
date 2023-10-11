@@ -105,7 +105,7 @@ void CViewDemo::onGUI()
 	// BEGIN WINDOW
 	{
 		ImGui::Text("Press ASDW to move camera");
-		ImGui::Text("Drag Righ Mouse to rotate camera");
+		ImGui::Text("Drag Right Mouse to rotate camera");
 		ImGui::Text("Scroll Middle Mouse to go near/far");
 		ImGui::Separator();
 

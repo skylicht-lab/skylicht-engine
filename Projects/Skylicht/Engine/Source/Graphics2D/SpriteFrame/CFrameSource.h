@@ -36,6 +36,7 @@ namespace Skylicht
 	{
 	public:
 		CStringProperty SpritePath;
+		CStringProperty SpriteGUID;
 
 	public:
 		CFrameSource();

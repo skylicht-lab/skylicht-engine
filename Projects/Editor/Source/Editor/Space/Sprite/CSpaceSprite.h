@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetImporter.h"
 #include "AssetManager/CAssetManager.h"
 
-#include "Graphics2D/SpriteFrame/CSpriteFrame.h"
+#include "Graphics2D/SpriteFrame/CSpriteManager.h"
 
 namespace Skylicht
 {
@@ -44,8 +44,6 @@ namespace Skylicht
 			GUI::CTextBox* m_inputSearch;
 
 		protected:
-			CSpriteFrame* m_sprite;
-			
 			int m_materialID;
 
 		public:

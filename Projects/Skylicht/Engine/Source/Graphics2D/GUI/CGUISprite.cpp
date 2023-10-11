@@ -119,4 +119,23 @@ namespace Skylicht
 			m_frame->ModuleOffset[0].OffsetY = y;
 		}
 	}
+
+	CObjectSerializable* CGUISprite::createSerializable()
+	{
+		CObjectSerializable* object = CGUIElement::createSerializable();
+		object->autoRelease(new CFrameSourceProperty(object, "spriteSrc", m_resource.c_str()));
+		return object;
+	}
+
+	void CGUISprite::loadSerializable(CObjectSerializable* object)
+	{
+		std::string src = object->get("spriteSrc", std::string(""));
+		CGUIElement::loadSerializable(object);
+
+		if (src != m_resource)
+		{
+			m_resource = src;
+
+		}
+	}
 }

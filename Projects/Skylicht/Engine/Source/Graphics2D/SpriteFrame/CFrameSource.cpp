@@ -31,7 +31,8 @@ namespace Skylicht
 {
 	CFrameSource::CFrameSource() :
 		CAssetResource("CFrameSource"),
-		SpritePath(this, "spritePath")
+		SpritePath(this, "spritePath"),
+		SpriteGUID(this, "spriteGUID")
 	{
 
 	}
