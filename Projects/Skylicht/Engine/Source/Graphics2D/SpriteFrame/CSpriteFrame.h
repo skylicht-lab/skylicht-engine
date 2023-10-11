@@ -126,6 +126,9 @@ namespace Skylicht
 
 		bool m_deleteAtlas;
 
+		std::string m_id;
+		std::string m_path;
+
 	public:
 		CSpriteFrame();
 
@@ -143,9 +146,19 @@ namespace Skylicht
 			return m_names[name];
 		}
 
-		inline SFrame* getFrameByID(const char* id)
+		inline SFrame* getFrameById(const char* id)
 		{
-			return m_names[id];
+			return m_ids[id];
+		}
+
+		inline const char* getId()
+		{
+			return m_id.c_str();
+		}
+
+		inline const char* getPath()
+		{
+			return m_path.c_str();
 		}
 	};
 }

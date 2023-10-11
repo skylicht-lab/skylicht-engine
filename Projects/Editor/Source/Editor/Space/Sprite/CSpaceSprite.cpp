@@ -40,8 +40,7 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSpaceSprite::CSpaceSprite(GUI::CWindow* window, CEditor* editor) :
-			CSpace(window, editor),
-			m_sprite(NULL)
+			CSpace(window, editor)
 		{
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 
@@ -65,23 +64,17 @@ namespace Skylicht
 
 		CSpaceSprite::~CSpaceSprite()
 		{
-			if (m_sprite)
-				delete m_sprite;
 		}
 
 		void CSpaceSprite::openSprite(const std::string& path)
 		{
-			if (m_sprite)
-				delete m_sprite;
-
-			m_sprite = new CSpriteFrame();
-			m_sprite->load(path.c_str());
+			CSpriteFrame* sprite = CSpriteManager::getInstance()->loadSprite(path.c_str());
 
 			std::string shortPath = CPath::getFileName(path.c_str());
 			m_label->setString(CStringImp::convertUTF8ToUnicode(shortPath.c_str()));
 			m_label->sizeToContents();
 
-			std::vector<SFrame*>& allFrames = m_sprite->getFrames();
+			std::vector<SFrame*>& allFrames = sprite->getFrames();
 			for (SFrame* frame : allFrames)
 			{
 				GUI::CThumbnailItem* item = m_view->addItem();

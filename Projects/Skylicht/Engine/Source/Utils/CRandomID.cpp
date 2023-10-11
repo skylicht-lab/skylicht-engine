@@ -35,7 +35,7 @@ namespace Skylicht
 		randomString.reserve(len);
 
 		for (int i = 0; i < len; ++i)
-			randomString += alphanum[rand() % (sizeof(alphanum) - 1)];
+			randomString += alphanum[os::Randomizer::rand() % (sizeof(alphanum) - 1)];
 
 		return randomString;
 	}

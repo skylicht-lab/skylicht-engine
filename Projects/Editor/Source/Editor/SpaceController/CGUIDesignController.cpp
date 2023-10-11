@@ -129,6 +129,10 @@ namespace Skylicht
 			{
 				newNode = parentNode->getCanvas()->createImage(parentNode, r);
 			}
+			else if (command == L"GUI Sprite")
+			{
+				newNode = parentNode->getCanvas()->createSprite(parentNode, r, NULL);
+			}
 			else if (command == L"GUI Text")
 			{
 			}

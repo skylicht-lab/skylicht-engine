@@ -1302,7 +1302,7 @@ namespace Skylicht
 			spaceExport->exportMap(path, x1, y1, x2, y2, zoom, type, gridSize);
 		}
 
-		void CEditor::exportSprite(const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha)
+		void CEditor::exportSprite(const char* id, const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha)
 		{
 			m_exportSpriteDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
 			m_exportSpriteDialog->setCaption(L"Export Sprite");
@@ -1314,7 +1314,7 @@ namespace Skylicht
 
 			CSpace* space = getWorkspace(m_exportSpriteDialog);
 			CSpaceExportSprite* spaceExport = dynamic_cast<CSpaceExportSprite*>(space);
-			spaceExport->exportSprite(path, pngs, width, height, alpha);
+			spaceExport->exportSprite(id, path, pngs, width, height, alpha);
 		}
 
 		void CEditor::OnCommandGameObject(GUI::CBase* item)

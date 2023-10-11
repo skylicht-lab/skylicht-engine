@@ -209,7 +209,16 @@ namespace Skylicht
 			case io::EXN_ELEMENT:
 			{
 				std::wstring nodeName = xmlReader->getNodeName();
-				if (nodeName == L"page")
+				if (nodeName == L"sprite")
+				{
+					const wchar_t* id = xmlReader->getAttributeValue(L"id");
+					if (id)
+					{
+						CStringImp::convertUnicodeToUTF8(id, text);
+						m_id = text;
+					}
+				}
+				else if (nodeName == L"page")
 				{
 					m_images.push_back(new SImage());
 					SImage* img = m_images.back();
@@ -223,8 +232,11 @@ namespace Skylicht
 
 					char folderPath[128];
 					CStringImp::getFolderPath(folderPath, fileName);
-					img->Path = folderPath;
-					img->Path += "/";
+					if (CStringImp::length(folderPath) > 0)
+					{
+						img->Path = folderPath;
+						img->Path += "/";
+					}
 					img->Path += text;
 					img->Texture = CTextureManager::getInstance()->getTexture(img->Path.c_str());
 				}
@@ -365,6 +377,7 @@ namespace Skylicht
 			m_ids[frame->ID] = frame;
 		}
 
+		m_path = fileName;
 		return true;
 	}
 }
