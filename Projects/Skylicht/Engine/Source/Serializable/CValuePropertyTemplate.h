@@ -508,7 +508,9 @@ namespace Skylicht
 		{
 			CFrameSourceProperty* value = new CFrameSourceProperty(NULL, Name.c_str());
 			value->m_value = m_value;
+			value->m_guid = m_guid;
 			value->m_sprite = m_sprite;
+			value->m_spriteId = m_spriteId;
 			return value;
 		}
 

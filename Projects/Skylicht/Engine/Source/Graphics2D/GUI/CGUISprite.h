@@ -41,7 +41,10 @@ namespace Skylicht
 		float m_frameSpeed;
 		float m_animationTime;
 
-		std::string m_resource;
+		std::string m_guid;
+		std::string m_frameName;
+		std::string m_sprite;
+		std::string m_spriteId;
 
 	protected:
 		CGUISprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame);
