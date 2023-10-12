@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGUISprite.h"
 #include "Graphics2D/CGraphics2D.h"
+#include "Graphics2D/SpriteFrame/CSpriteManager.h"
 
 namespace Skylicht
 {
@@ -123,19 +124,42 @@ namespace Skylicht
 	CObjectSerializable* CGUISprite::createSerializable()
 	{
 		CObjectSerializable* object = CGUIElement::createSerializable();
-		object->autoRelease(new CFrameSourceProperty(object, "spriteSrc", m_resource.c_str()));
+
+		CFrameSourceProperty* frame = new CFrameSourceProperty(object, "spriteSrc", m_frameName.c_str());
+		frame->setGUID(m_guid.c_str());
+		frame->setSprite(m_sprite.c_str());
+		frame->setSpriteGUID(m_spriteId.c_str());
+
+		object->autoRelease(frame);
 		return object;
 	}
 
 	void CGUISprite::loadSerializable(CObjectSerializable* object)
 	{
-		std::string src = object->get("spriteSrc", std::string(""));
+		CFrameSourceProperty* frame = dynamic_cast<CFrameSourceProperty*>(object->getProperty("spriteSrc"));
 		CGUIElement::loadSerializable(object);
 
-		if (src != m_resource)
+		if (frame != NULL)
 		{
-			m_resource = src;
+			if (m_guid != frame->getGUID())
+			{
+				m_guid = frame->getGUID();
+				m_frameName = frame->get();
+				m_sprite = frame->getSprite();
+				m_spriteId = frame->getSpriteGUID();
 
+				CSpriteManager* spriteMgr = CSpriteManager::getInstance();
+
+				// load by id first
+				CSpriteFrame* sprite = spriteMgr->getSpriteById(m_spriteId.c_str());
+				if (!sprite)
+					sprite = spriteMgr->loadSprite(m_spriteId.c_str());
+
+				if (sprite && sprite->getId() == m_spriteId)
+				{
+					m_frame = sprite->getFrameById(m_guid.c_str());
+				}
+			}
 		}
 	}
 }
