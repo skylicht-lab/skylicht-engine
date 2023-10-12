@@ -28,7 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CSpriteManager::CSpriteManager()
+	CSpriteManager::CSpriteManager() :
+		m_currentCategory("global")
 	{
 
 	}
@@ -50,6 +51,11 @@ namespace Skylicht
 	CSpriteFrame* CSpriteManager::loadSprite(const char* path, const char* category)
 	{
 		char ansiPath[512];
+
+		if (category == NULL)
+		{
+			category = m_currentCategory.c_str();
+		}
 
 		std::string fixPath = CPath::normalizePath(path);
 		strcpy(ansiPath, fixPath.c_str());

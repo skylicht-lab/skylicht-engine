@@ -38,6 +38,8 @@ namespace Skylicht
 			CSpriteFrame* Sprite;
 		};
 
+		std::string m_currentCategory;
+
 		std::map<std::string, CSpriteFrame*> m_idToSprite;
 		std::map<std::string, CSpriteFrame*> m_pathToSprite;
 		std::vector<SSpritePackage*> m_spriteList;
@@ -47,12 +49,17 @@ namespace Skylicht
 
 		virtual ~CSpriteManager();
 
-		CSpriteFrame* loadSprite(const char* path, const char* category = "global");
+		CSpriteFrame* loadSprite(const char* path, const char* category = NULL);
 
 		CSpriteFrame* getSpriteById(const char* id);
 
 		void releaseSprite(const char* category);
 
 		void releaseSprite(CSpriteFrame* sprite);
+
+		inline void setCategory(const char* category)
+		{
+			m_currentCategory = category;
+		}
 	};
 }

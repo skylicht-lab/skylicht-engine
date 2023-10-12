@@ -117,34 +117,45 @@ namespace Skylicht
 
 			SColor c(255, 255, 255, 255);
 
+			std::wstring nameHint;
+
 			if (command == L"GUI Element")
 			{
+				nameHint = L"GUI";
 				newNode = parentNode->getCanvas()->createElement(parentNode, r);
 			}
 			else if (command == L"GUI Rect")
 			{
+				nameHint = L"Rect";
 				newNode = parentNode->getCanvas()->createRect(parentNode, r, c);
 			}
 			else if (command == L"GUI Image")
 			{
+				nameHint = L"Img";
 				newNode = parentNode->getCanvas()->createImage(parentNode, r);
 			}
 			else if (command == L"GUI Sprite")
 			{
+				nameHint = L"Sprite";
 				newNode = parentNode->getCanvas()->createSprite(parentNode, r, NULL);
 			}
 			else if (command == L"GUI Text")
 			{
+				nameHint = L"Txt";
 			}
 			else if (command == L"GUI Mask")
 			{
+				nameHint = L"Mask";
 				newNode = parentNode->getCanvas()->createMask(parentNode, r);
 			}
 
 			if (newNode)
 			{
+				std::wstring newName = nameHint + L" " + newNode->getNameW();
+				newNode->setName(newName.c_str());
+
 				CGUIHierachyNode* node = parent->addChild();
-				node->setName(newNode->getNameW().c_str());
+				node->setName(newName.c_str());
 				node->setTagData(newNode, CGUIHierachyNode::GUIElement);
 
 				setNodeEvent(node);
