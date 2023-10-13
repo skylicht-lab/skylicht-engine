@@ -24,55 +24,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Serializable/CAssetResource.h"
-
-#include "Graphics2D/Glyph/CGlyphFreetype.h"
-#include "Graphics2D/SpriteFrame/CSpriteFont.h"
-#include "Graphics2D/SpriteFrame/CGlyphFont.h"
+#include "Utils/CGameSingleton.h"
+#include "CFontSource.h"
 
 namespace Skylicht
 {
-	class CFontSource : public CAssetResource
+	class CFontManager : public CGameSingleton<CFontManager>
 	{
-	public:
-		enum EFontType
-		{
-			GlyphFreeType = 0,
-			SpriteFont
-		};
-
-	public:
-		CEnumProperty<EFontType> FontType;
-		CFilePathProperty Source;
-		CFloatProperty FontSizePt;
-
 	protected:
-		IFont* m_font;
-
-		std::string m_path;
-		std::string m_source;
-		float m_sizePt;
+		std::map<std::string, CFontSource*> m_idToFont;
+		std::map<std::string, CFontSource*> m_pathToFont;
 
 	public:
-		CFontSource();
+		CFontManager();
 
-		virtual ~CFontSource();
+		virtual ~CFontManager();
 
-		IFont* initFont();
+		CFontSource* loadFontSource(const char* path);
 
-		inline IFont* getFont()
-		{
-			return m_font;
-		}
+		CFontSource* getFontById(const char* id);
 
-		const void setPath(const char* path)
-		{
-			m_path = path;
-		}
-
-		const char* getPath()
-		{
-			return m_path.c_str();
-		}
+		void releaseFont(CFontSource* font);
 	};
 }

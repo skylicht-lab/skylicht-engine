@@ -66,6 +66,9 @@ namespace Skylicht
 		std::vector<ArrayModuleOffset> m_arrayCharRender;
 		std::vector<ArrayInt> m_arrayCharFormat;
 
+		std::string m_fontSource;
+		std::string m_fontGUID;
+
 	protected:
 		CGUIText(CCanvas* canvas, CGUIElement* parent, IFont* font);
 		CGUIText(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, IFont* font);
@@ -145,5 +148,9 @@ namespace Skylicht
 		}
 
 		DECLARE_GETTYPENAME(CGUIText);
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 	};
 }
