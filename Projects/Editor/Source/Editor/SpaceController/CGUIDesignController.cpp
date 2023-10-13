@@ -142,6 +142,10 @@ namespace Skylicht
 			else if (command == L"GUI Text")
 			{
 				nameHint = L"Txt";
+				r.LowerRightCorner.Y = 50.0f;
+				CGUIText* textNode = parentNode->getCanvas()->createText(parentNode, r, NULL);
+				textNode->setText("Enter text here");
+				newNode = textNode;
 			}
 			else if (command == L"GUI Mask")
 			{

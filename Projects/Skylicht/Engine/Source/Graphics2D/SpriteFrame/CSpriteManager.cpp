@@ -85,9 +85,10 @@ namespace Skylicht
 
 	CSpriteFrame* CSpriteManager::getSpriteById(const char* id)
 	{
-		if (m_idToSprite.find(id) != m_idToSprite.end())
+		std::map<std::string, CSpriteFrame*>::iterator it = m_idToSprite.find(id);
+		if (it != m_idToSprite.end())
 		{
-			return m_idToSprite[id];
+			return it->second;
 		}
 		return NULL;
 	}

@@ -811,7 +811,18 @@ namespace Skylicht
 			if (fileName.size() > 0)
 				input->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
 			else
-				input->setString(L"None");
+			{
+				std::string extString = "None (";
+				for (int i = 0, n = (int)exts.size(); i < n; i++)
+				{
+					extString += ".";
+					extString += exts[i];
+					if (i < n - 1)
+						extString += ", ";
+				}
+				extString += ")";
+				input->setString(CStringImp::convertUTF8ToUnicode(extString.c_str()));
+			}
 
 			input->OnPressed = [value](GUI::CBase* base)
 			{
