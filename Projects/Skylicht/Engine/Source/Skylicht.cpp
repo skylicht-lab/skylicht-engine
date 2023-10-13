@@ -44,6 +44,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Animation/CAnimationManager.h"
 #include "TextureManager/CTextureManager.h"
 #include "Graphics2D/SpriteFrame/CSpriteManager.h"
+#include "Graphics2D/SpriteFrame/CFontManager.h"
 #include "Debug/CSceneDebug.h"
 
 // Tween
@@ -79,6 +80,10 @@ namespace Skylicht
 		CAccelerometer::createGetInstance();
 		CJoystick::createGetInstance();
 
+#if defined(USE_FREETYPE)
+		CGlyphFreetype::createGetInstance();
+#endif
+
 		CShaderManager::createGetInstance();
 		CGraphics2D::createGetInstance();
 		CTextureManager::createGetInstance();
@@ -86,6 +91,7 @@ namespace Skylicht
 		CAnimationManager::createGetInstance();
 		CMaterialManager::createGetInstance();
 		CSpriteManager::createGetInstance();
+		CFontManager::createGetInstance();
 
 		CShadowRTTManager::createGetInstance();
 
@@ -94,10 +100,6 @@ namespace Skylicht
 		CSerializableActivator::createGetInstance();
 		CDependentComponent::createGetInstance();
 		CComponentCategory::createGetInstance();
-
-#if defined(USE_FREETYPE)
-		CGlyphFreetype::createGetInstance();
-#endif
 
 		CSceneDebug::createGetInstance();
 
@@ -114,10 +116,6 @@ namespace Skylicht
 
 		CSceneDebug::releaseInstance();
 
-#if defined(USE_FREETYPE)
-		CGlyphFreetype::releaseInstance();
-#endif
-
 		CComponentCategory::releaseInstance();
 		CDependentComponent::releaseInstance();
 		CActivator::releaseInstance();
@@ -126,6 +124,7 @@ namespace Skylicht
 
 		CShadowRTTManager::releaseInstance();
 
+		CFontManager::releaseInstance();
 		CSpriteManager::releaseInstance();
 		CMaterialManager::releaseInstance();
 		CAnimationManager::releaseInstance();
@@ -133,6 +132,10 @@ namespace Skylicht
 		CTextureManager::releaseInstance();
 		CGraphics2D::releaseInstance();
 		CShaderManager::releaseInstance();
+
+#if defined(USE_FREETYPE)
+		CGlyphFreetype::releaseInstance();
+#endif
 
 		CTouchManager::releaseInstance();
 		CAccelerometer::releaseInstance();

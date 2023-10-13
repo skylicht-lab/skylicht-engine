@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGUIText.h"
 #include "Utils/CStringImp.h"
 #include "Graphics2D/CGraphics2D.h"
+#include "Graphics2D/SpriteFrame/CFontManager.h"
 
 namespace Skylicht
 {
@@ -164,10 +165,7 @@ namespace Skylicht
 		m_text = text;
 		int numUnicode = CStringImp::getUnicodeStringSize(text);
 
-		wchar_t* textw = new wchar_t[numUnicode + 2];
-
-		CStringImp::convertUTF8ToUnicode(text, textw);
-		m_textw = textw;
+		m_textw = CStringImp::convertUTF8ToUnicode(text);
 
 		int i = 0;
 		m_textFormat.clear();
@@ -176,8 +174,6 @@ namespace Skylicht
 			m_textFormat.push_back(0);
 			++i;
 		}
-
-		delete[]textw;
 
 		m_updateTextRender = true;
 	}
@@ -377,6 +373,12 @@ namespace Skylicht
 
 	void CGUIText::render(CCamera* camera)
 	{
+		if (!m_font)
+		{
+			CGUIElement::render(camera);
+			return;
+		}
+
 		if (m_updateTextRender == true)
 		{
 			// encode string to list modules & format
@@ -654,5 +656,60 @@ namespace Skylicht
 
 		split.push_back(modules);
 		format.push_back(fm);
+	}
+
+	CObjectSerializable* CGUIText::createSerializable()
+	{
+		CObjectSerializable* object = CGUIElement::createSerializable();
+		object->autoRelease(new CBoolProperty(object, "Multiline", m_multiLine));
+		object->autoRelease(new CIntProperty(object, "Char padding", m_charPadding));
+		object->autoRelease(new CIntProperty(object, "Char space padding", m_charSpacePadding));
+		object->autoRelease(new CIntProperty(object, "Line padding", m_linePadding));
+
+		CEnumProperty<EGUIVerticalAlign>* verticalAlign = new CEnumProperty<EGUIVerticalAlign>(object, "Text Verticle", TextVertical);
+		verticalAlign->addEnumString("Top", EGUIVerticalAlign::Top);
+		verticalAlign->addEnumString("Middle", EGUIVerticalAlign::Middle);
+		verticalAlign->addEnumString("Bottom", EGUIVerticalAlign::Bottom);
+		object->autoRelease(verticalAlign);
+
+		CEnumProperty<EGUIHorizontalAlign>* horizontalAlign = new CEnumProperty<EGUIHorizontalAlign>(object, "Text Horizontal", TextHorizontal);
+		horizontalAlign->addEnumString("Left", EGUIHorizontalAlign::Left);
+		horizontalAlign->addEnumString("Center", EGUIHorizontalAlign::Center);
+		horizontalAlign->addEnumString("Right", EGUIHorizontalAlign::Right);
+		object->autoRelease(horizontalAlign);
+
+		object->autoRelease(new CFilePathProperty(object, "Font", m_fontSource.c_str(), "font"));
+		CStringProperty* fontGUID = new CStringProperty(object, "FontGUID", m_fontGUID.c_str());
+		fontGUID->setHidden(true);
+		object->autoRelease(fontGUID);
+
+		object->autoRelease(new CStringProperty(object, "Text", m_text.c_str()));
+
+		return object;
+	}
+
+	void CGUIText::loadSerializable(CObjectSerializable* object)
+	{
+		CGUIElement::loadSerializable(object);
+
+		m_multiLine = object->get<bool>("Multiline", true);
+		m_charPadding = object->get<int>("Char padding", 0);
+		m_charSpacePadding = object->get<int>("Char space padding", 0);
+		m_linePadding = object->get<int>("Line padding", 0);
+
+		TextVertical = object->get<EGUIVerticalAlign>("Text Verticle", EGUIVerticalAlign::Top);
+		TextHorizontal = object->get<EGUIHorizontalAlign>("Text Horizontal", EGUIHorizontalAlign::Left);
+
+		m_fontSource = object->get<std::string>("Font", std::string(""));
+		m_fontGUID = object->get<std::string>("Font", std::string(""));
+
+		CFontSource* font = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
+		if (font)
+			m_font = font->initFont();
+
+		std::string value = object->get<std::string>("Text", std::string(""));
+		setText(value.c_str());
+
+		m_updateTextRender = true;
 	}
 }
