@@ -59,6 +59,8 @@ namespace Skylicht
 		for (CGUIElement* element : childs)
 		{
 			CObjectSerializable* object = element->createSerializable();
+			parents->addProperty(object);
+			parents->autoRelease(object);
 
 			if (element->getChilds().size() > 0)
 			{
