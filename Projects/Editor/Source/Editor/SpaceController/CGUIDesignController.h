@@ -57,6 +57,8 @@ namespace Skylicht
 
 			CContextMenuGUIElement* m_contextMenu;
 
+			std::string m_canvasPath;
+
 		public:
 			CGUIDesignController();
 
@@ -83,6 +85,13 @@ namespace Skylicht
 			}
 
 			void initContextMenu(GUI::CCanvas* canvas);
+
+			inline const std::string& getSaveGUIPath()
+			{
+				return m_canvasPath;
+			}
+
+			void save(const char* path);
 
 			virtual void loadFile(const std::string& path);
 
