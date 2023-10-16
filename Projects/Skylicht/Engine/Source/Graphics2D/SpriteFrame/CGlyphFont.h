@@ -26,8 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "IFont.h"
 
-#if defined(USE_FREETYPE)
-
 #include "Graphics2D/Atlas/CAtlas.h"
 #include "CSpriteFrame.h"
 
@@ -78,5 +76,3 @@ namespace Skylicht
 		}
 	};
 }
-
-#endif

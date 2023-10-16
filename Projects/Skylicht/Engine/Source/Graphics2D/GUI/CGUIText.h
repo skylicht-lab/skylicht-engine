@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CFontSource;
+
 	class CGUIText : public CGUIElement
 	{
 		friend class CCanvas;
@@ -40,6 +42,7 @@ namespace Skylicht
 
 	protected:
 		IFont* m_font;
+		IFont* m_customfont;
 
 		int m_charPadding;
 		int m_charSpacePadding;
@@ -68,6 +71,8 @@ namespace Skylicht
 
 		std::string m_fontSource;
 		std::string m_fontGUID;
+
+		CFontSource* m_fontData;
 
 	protected:
 		CGUIText(CCanvas* canvas, CGUIElement* parent, IFont* font);
@@ -152,5 +157,11 @@ namespace Skylicht
 		virtual CObjectSerializable* createSerializable();
 
 		virtual void loadSerializable(CObjectSerializable* object);
+
+	protected:
+
+		void initFont(IFont* font);
+
+		IFont* getCurrentFont();
 	};
 }

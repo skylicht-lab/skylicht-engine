@@ -24,8 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 
-#if defined(USE_FREETYPE)
-
 #include "CGlyphFont.h"
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
 
@@ -150,5 +148,3 @@ namespace Skylicht
 		}
 	}
 }
-
-#endif

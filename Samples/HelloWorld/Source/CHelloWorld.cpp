@@ -9,10 +9,8 @@ void installApplication(const std::vector<std::string>& argv)
 }
 
 CHelloWorld::CHelloWorld() :
-	m_scene(NULL)
-#if defined(USE_FREETYPE)
-	,m_largeFont(NULL)
-#endif
+	m_scene(NULL),
+	m_largeFont(NULL)
 {
 
 }
@@ -20,9 +18,7 @@ CHelloWorld::CHelloWorld() :
 CHelloWorld::~CHelloWorld()
 {
 	delete m_scene;
-#if defined(USE_FREETYPE)
 	delete m_largeFont;
-#endif
 }
 
 void CHelloWorld::onInitApp()
@@ -36,11 +32,9 @@ void CHelloWorld::onInitApp()
 	// Load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 
-#if defined(USE_FREETYPE)
 	// init segoeuil.ttf inside BuiltIn.zip
 	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
-#endif
 
 	// Load basic shader
 	CShaderManager *shaderMgr = CShaderManager::getInstance();
@@ -57,7 +51,6 @@ void CHelloWorld::onInitApp()
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
-#if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("Segoe UI Light", 50);
 
@@ -69,7 +62,6 @@ void CHelloWorld::onInitApp()
 	CGUIText *textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("Hello, World");
 	textLarge->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
-#endif
 }
 
 void CHelloWorld::onUpdate()

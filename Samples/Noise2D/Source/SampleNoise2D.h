@@ -5,21 +5,19 @@
 class SampleNoise2D : public IApplicationEventReceiver
 {
 private:
-	CScene *m_scene;
-	CCamera *m_guiCamera;
-	CCamera *m_camera;
+	CScene* m_scene;
+	CCamera* m_guiCamera;
+	CCamera* m_camera;
 
-	CMaterial *m_noiseMaterial;
-	CMaterial *m_electricMaterial;
-	CMaterial *m_electricLightningMaterial;
-	CMaterial *m_burnMaterial;
-	CMaterial *m_electricCircleMaterial;
+	CMaterial* m_noiseMaterial;
+	CMaterial* m_electricMaterial;
+	CMaterial* m_electricLightningMaterial;
+	CMaterial* m_burnMaterial;
+	CMaterial* m_electricCircleMaterial;
 
-#if defined(USE_FREETYPE)	
-	CGlyphFont *m_largeFont;
-#endif
+	CGlyphFont* m_largeFont;
 
-	CForwardRP *m_forwardRP;
+	CForwardRP* m_forwardRP;
 
 	core::vector3df m_noiseOffset;
 	core::vector3df m_explosionParam;
