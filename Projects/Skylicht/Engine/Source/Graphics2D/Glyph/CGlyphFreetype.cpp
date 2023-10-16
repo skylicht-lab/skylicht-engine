@@ -25,8 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGlyphFreetype.h"
 
-#if defined(USE_FREETYPE)
-
 // From SDL_ttf: Handy routines for converting from fixed point
 #define FT_CEIL(X)  (((X + 63) & -64) / 64)
 
@@ -433,5 +431,3 @@ namespace Skylicht
 		return newAtlas;
 	}
 }
-
-#endif

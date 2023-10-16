@@ -9,11 +9,9 @@ private:
 	CCamera *m_guiCamera;
 	CCamera *m_camera;
 
-#if defined(USE_FREETYPE)	
 	CGlyphFont *m_largeFont;
-#endif
-
 	CForwardRP *m_forwardRP;
+
 public:
 	@project_name@();
 	virtual ~@project_name@();

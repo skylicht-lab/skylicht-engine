@@ -6,7 +6,7 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleNoise2D *app = new SampleNoise2D();
+	SampleNoise2D* app = new SampleNoise2D();
 	getApplication()->registerAppEvent("SampleNoise2D", app);
 }
 
@@ -14,10 +14,8 @@ SampleNoise2D::SampleNoise2D() :
 	m_scene(NULL),
 	m_forwardRP(NULL),
 	m_noiseMaterial(NULL),
-	m_noiseOffset(3.0f, 0.0f, 0.0f)
-#if defined(USE_FREETYPE)	
-	, m_largeFont(NULL)
-#endif
+	m_noiseOffset(3.0f, 0.0f, 0.0f),
+	m_largeFont(NULL)
 {
 
 }
@@ -25,9 +23,7 @@ SampleNoise2D::SampleNoise2D() :
 SampleNoise2D::~SampleNoise2D()
 {
 	delete m_scene;
-#if defined(USE_FREETYPE)	
 	delete m_largeFont;
-#endif
 
 	delete m_noiseMaterial;
 	delete m_electricMaterial;
@@ -46,24 +42,22 @@ void SampleNoise2D::onInitApp()
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 
-#if defined(USE_FREETYPE)
 	// init segoeuil.ttf inside BuiltIn.zip
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
-#endif
 
 	// load basic shader
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
 	// create a Scene
 	m_scene = new CScene();
 
 	// create a Zone in Scene
-	CZone *zone = m_scene->createZone();
+	CZone* zone = m_scene->createZone();
 
 	// create 2D camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
+	CGameObject* guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
@@ -84,30 +78,28 @@ void SampleNoise2D::onInitApp()
 	*/
 
 	// lighting
-	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CGameObject* lightObj = zone->createEmptyObject();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 	SColor c(255, 255, 244, 214);
 	directionalLight->setColor(SColorf(c));
 
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-#if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("Segoe UI Light", 50);
 
 	// create 2D Canvas
-	CGameObject *canvasObject = zone->createEmptyObject();
-	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
+	CGameObject* canvasObject = zone->createEmptyObject();
+	CCanvas* canvas = canvasObject->addComponent<CCanvas>();
 
 	// create UI Text in Canvas
-	CGUIText *textLarge = canvas->createText(m_largeFont);
+	CGUIText* textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleNoise2D");
 	textLarge->setTextAlign(EGUIHorizontalAlign::Left, EGUIVerticalAlign::Top);
-#endif
 
 	m_noiseMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Noise2D.xml");
 	m_electricMaterial = new CMaterial("NoiseMaterial", "BuiltIn/Shader/Noise/Electric2D.xml");
@@ -126,27 +118,27 @@ void SampleNoise2D::onInitApp()
 	f32 paddingY = 0.7f;
 
 	// noise
-	CGUIRect *noiseRect1 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	CGUIRect* noiseRect1 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect1->setMaterial(m_noiseMaterial);
 	noiseRect1->setPosition(core::vector3df(cx - offset - rectSize * paddingX, cy - offset - rectSize * paddingY, 0.0f));
 
 	// electric
-	CGUIRect *noiseRect2 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	CGUIRect* noiseRect2 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect2->setMaterial(m_electricMaterial);
 	noiseRect2->setPosition(core::vector3df(cx - offset, cy - offset - rectSize * paddingY, 0.0f));
 
 	// lightning
-	CGUIRect *noiseRect3 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	CGUIRect* noiseRect3 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect3->setMaterial(m_electricLightningMaterial);
 	noiseRect3->setPosition(core::vector3df(cx - offset + rectSize * paddingX, cy - offset - rectSize * paddingY, 0.0f));
 
 	// burn
-	CGUIRect *noiseRect4 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	CGUIRect* noiseRect4 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect4->setMaterial(m_burnMaterial);
 	noiseRect4->setPosition(core::vector3df(cx - offset - rectSize * paddingX, cy - offset + rectSize * paddingY, 0.0f));
 
 	// circle electric
-	CGUIRect *noiseRect6 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
+	CGUIRect* noiseRect6 = canvas->createRect(core::rectf(0.0f, 0.0f, rectSize, rectSize), SColor(255, 255, 255, 255));
 	noiseRect6->setMaterial(m_electricCircleMaterial);
 	noiseRect6->setPosition(core::vector3df(cx - offset + rectSize * paddingX, cy - offset + rectSize * paddingY, 0.0f));
 

@@ -16,10 +16,8 @@ void installApplication(const std::vector<std::string>& argv)
 
 SampleSocketIO::SampleSocketIO() :
 	m_scene(NULL),
-	m_forwardRP(NULL)
-#if defined(USE_FREETYPE)	
-	, m_largeFont(NULL)
-#endif
+	m_forwardRP(NULL),
+	m_largeFont(NULL)
 {
 	CImguiManager::createGetInstance();
 
@@ -31,9 +29,7 @@ SampleSocketIO::SampleSocketIO() :
 SampleSocketIO::~SampleSocketIO()
 {
 	delete m_scene;
-#if defined(USE_FREETYPE)	
 	delete m_largeFont;
-#endif
 	delete m_forwardRP;
 
 	delete m_io;
@@ -51,11 +47,9 @@ void SampleSocketIO::onInitApp()
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 
-#if defined(USE_FREETYPE)
 	// init segoeuil.ttf inside BuiltIn.zip
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
-#endif
 
 	// load basic shader
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
@@ -97,7 +91,6 @@ void SampleSocketIO::onInitApp()
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-#if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("Segoe UI Light", 50);
 
@@ -109,7 +102,6 @@ void SampleSocketIO::onInitApp()
 	CGUIText* textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleSocketIO");
 	textLarge->setTextAlign(EGUIHorizontalAlign::Left, EGUIVerticalAlign::Top);
-#endif
 
 	// rendering pipe line
 	u32 w = app->getWidth();

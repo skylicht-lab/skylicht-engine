@@ -56,9 +56,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Components/CDependentComponent.h"
 #include "Components/CComponentCategory.h"
 
-#if defined(USE_FREETYPE)
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
-#endif
 
 
 namespace Skylicht
@@ -80,9 +78,7 @@ namespace Skylicht
 		CAccelerometer::createGetInstance();
 		CJoystick::createGetInstance();
 
-#if defined(USE_FREETYPE)
 		CGlyphFreetype::createGetInstance();
-#endif
 
 		CShaderManager::createGetInstance();
 		CGraphics2D::createGetInstance();
@@ -133,9 +129,7 @@ namespace Skylicht
 		CGraphics2D::releaseInstance();
 		CShaderManager::releaseInstance();
 
-#if defined(USE_FREETYPE)
 		CGlyphFreetype::releaseInstance();
-#endif
 
 		CTouchManager::releaseInstance();
 		CAccelerometer::releaseInstance();

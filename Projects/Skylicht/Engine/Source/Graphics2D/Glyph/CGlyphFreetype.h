@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#if defined(USE_FREETYPE)
 #include <ft2build.h>
 #include FT_GLYPH_H
 
@@ -36,7 +35,7 @@ namespace Skylicht
 {
 	struct SGlyphEntity
 	{
-		CAtlas *m_atlas;
+		CAtlas* m_atlas;
 		float m_advance;
 		float m_uvX;
 		float m_uvY;
@@ -49,11 +48,11 @@ namespace Skylicht
 	struct SFaceEntity
 	{
 		FT_Face m_face;
-		FT_Byte *m_data;
+		FT_Byte* m_data;
 
 		std::map<u32, SGlyphEntity*> m_ge;
 
-		SFaceEntity(FT_Face face, FT_Byte *data) :
+		SFaceEntity(FT_Face face, FT_Byte* data) :
 			m_face(face),
 			m_data(data)
 		{
@@ -91,7 +90,7 @@ namespace Skylicht
 
 		virtual ~CGlyphFreetype();
 
-		bool initFont(const char *name, const char *path);
+		bool initFont(const char* name, const char* path);
 
 		void clearAtlas();
 
@@ -99,37 +98,35 @@ namespace Skylicht
 
 		static float sizePxToPt(int px);
 
-		CAtlas *getCharImage(unsigned short code,
-			const char *name,
+		CAtlas* getCharImage(unsigned short code,
+			const char* name,
 			int fontSize,
-			float *advance,
-			float *uvX,
-			float *uvY,
-			float *uvW,
-			float *uvH,
-			float *offsetX, float *offsetY);
+			float* advance,
+			float* uvX,
+			float* uvY,
+			float* uvW,
+			float* uvH,
+			float* offsetX, float* offsetY);
 
-		CAtlas *getCharImage(
-			CSpriteAtlas *external,
+		CAtlas* getCharImage(
+			CSpriteAtlas* external,
 			unsigned short code,
-			const char *name,
+			const char* name,
 			int fontSize,
-			float *advance,
-			float *uvX,
-			float *uvY,
-			float *uvW,
-			float *uvH,
-			float *offsetX, float *offsetY);
+			float* advance,
+			float* uvX,
+			float* uvY,
+			float* uvW,
+			float* uvH,
+			float* offsetX, float* offsetY);
 
 	protected:
 
 		CAtlas* addEmptyAtlas(ECOLOR_FORMAT color, int w, int h);
 
-		int putGlyphToTexture(const FT_GlyphSlot &glyph, float *uvx, float *uvy, float *uvW, float *uvH);
+		int putGlyphToTexture(const FT_GlyphSlot& glyph, float* uvx, float* uvy, float* uvW, float* uvH);
 
-		CAtlas* putGlyphToTexture(CSpriteAtlas *external, const FT_GlyphSlot &glyph, float *uvx, float *uvy, float *uvW, float *uvH);
+		CAtlas* putGlyphToTexture(CSpriteAtlas* external, const FT_GlyphSlot& glyph, float* uvx, float* uvy, float* uvW, float* uvH);
 
 	};
 }
-
-#endif
