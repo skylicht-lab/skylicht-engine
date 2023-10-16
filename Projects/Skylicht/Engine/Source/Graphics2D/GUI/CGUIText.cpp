@@ -42,7 +42,9 @@ namespace Skylicht
 		m_updateTextRender(true),
 		m_font(NULL),
 		m_customfont(font),
-		m_fontData(NULL)
+		m_fontData(NULL),
+		m_lastWidth(0.0f),
+		m_lastHeight(0.0f)
 	{
 
 	}
@@ -59,7 +61,9 @@ namespace Skylicht
 		m_updateTextRender(true),
 		m_font(NULL),
 		m_customfont(font),
-		m_fontData(NULL)
+		m_fontData(NULL),
+		m_lastWidth(0.0f),
+		m_lastHeight(0.0f)
 	{
 		init();
 	}
@@ -402,6 +406,15 @@ namespace Skylicht
 			m_font = font;
 		}
 
+		const core::rectf& rect = getRect();
+
+		if (m_lastWidth != rect.getWidth() || m_lastHeight != rect.getHeight())
+		{
+			m_lastWidth = rect.getWidth();
+			m_lastHeight = rect.getHeight();
+			m_updateTextRender = true;
+		}
+
 		if (m_updateTextRender == true)
 		{
 			// encode string to list modules & format
@@ -411,7 +424,7 @@ namespace Skylicht
 			if (m_multiLine == true)
 			{
 				// split to multi line
-				splitText(m_arrayCharRender, m_arrayCharFormat, (int)getRect().getWidth());
+				splitText(m_arrayCharRender, m_arrayCharFormat, (int)m_lastWidth);
 			}
 			else
 			{
@@ -451,9 +464,9 @@ namespace Skylicht
 
 		// calc text algin vertial
 		if (TextVertical == EGUIVerticalAlign::Middle)
-			y = ((int)getRect().getHeight() - textHeight - m_textOffsetY) / 2;
+			y = ((int)m_lastHeight - textHeight - m_textOffsetY) / 2;
 		else if (TextVertical == EGUIVerticalAlign::Bottom)
-			y = (int)getRect().getHeight() - textHeight;
+			y = (int)m_lastHeight - textHeight;
 
 		if (m_centerRotate == true)
 			y = -textHeight / 2;
@@ -684,29 +697,33 @@ namespace Skylicht
 	CObjectSerializable* CGUIText::createSerializable()
 	{
 		CObjectSerializable* object = CGUIElement::createSerializable();
-		object->autoRelease(new CBoolProperty(object, "Multiline", m_multiLine));
-		object->autoRelease(new CIntProperty(object, "Char padding", m_charPadding));
-		object->autoRelease(new CIntProperty(object, "Char space padding", m_charSpacePadding));
-		object->autoRelease(new CIntProperty(object, "Line padding", m_linePadding));
+		object->autoRelease(new CBoolProperty(object, "multiline", m_multiLine));
+		object->autoRelease(new CIntProperty(object, "charPadding", m_charPadding));
+		object->autoRelease(new CIntProperty(object, "charSpacePadding", m_charSpacePadding));
+		object->autoRelease(new CIntProperty(object, "linePadding", m_linePadding));
 
-		CEnumProperty<EGUIVerticalAlign>* verticalAlign = new CEnumProperty<EGUIVerticalAlign>(object, "Text Verticle", TextVertical);
+		CEnumProperty<EGUIVerticalAlign>* verticalAlign = new CEnumProperty<EGUIVerticalAlign>(object, "textVerticle", TextVertical);
 		verticalAlign->addEnumString("Top", EGUIVerticalAlign::Top);
 		verticalAlign->addEnumString("Middle", EGUIVerticalAlign::Middle);
 		verticalAlign->addEnumString("Bottom", EGUIVerticalAlign::Bottom);
 		object->autoRelease(verticalAlign);
 
-		CEnumProperty<EGUIHorizontalAlign>* horizontalAlign = new CEnumProperty<EGUIHorizontalAlign>(object, "Text Horizontal", TextHorizontal);
+		CEnumProperty<EGUIHorizontalAlign>* horizontalAlign = new CEnumProperty<EGUIHorizontalAlign>(object, "textHorizontal", TextHorizontal);
 		horizontalAlign->addEnumString("Left", EGUIHorizontalAlign::Left);
 		horizontalAlign->addEnumString("Center", EGUIHorizontalAlign::Center);
 		horizontalAlign->addEnumString("Right", EGUIHorizontalAlign::Right);
 		object->autoRelease(horizontalAlign);
 
-		object->autoRelease(new CFilePathProperty(object, "Font", m_fontSource.c_str(), "font"));
-		CStringProperty* fontGUID = new CStringProperty(object, "FontGUID", m_fontGUID.c_str());
+		object->autoRelease(new CFilePathProperty(object, "font", m_fontSource.c_str(), "font"));
+
+		if (m_fontData)
+			m_fontGUID = m_fontData->getGUID();
+
+		CStringProperty* fontGUID = new CStringProperty(object, "font.guid", m_fontGUID.c_str());
 		fontGUID->setHidden(true);
 		object->autoRelease(fontGUID);
 
-		object->autoRelease(new CStringProperty(object, "Text", m_text.c_str()));
+		object->autoRelease(new CStringProperty(object, "text", m_text.c_str()));
 
 		return object;
 	}
@@ -715,22 +732,32 @@ namespace Skylicht
 	{
 		CGUIElement::loadSerializable(object);
 
-		m_multiLine = object->get<bool>("Multiline", true);
-		m_charPadding = object->get<int>("Char padding", 0);
-		m_charSpacePadding = object->get<int>("Char space padding", 0);
-		m_linePadding = object->get<int>("Line padding", 0);
+		m_multiLine = object->get<bool>("multiline", true);
+		m_charPadding = object->get<int>("charPadding", 0);
+		m_charSpacePadding = object->get<int>("charSpacePadding", 0);
+		m_linePadding = object->get<int>("linePadding", 0);
 
-		TextVertical = object->get<EGUIVerticalAlign>("Text Verticle", EGUIVerticalAlign::Top);
-		TextHorizontal = object->get<EGUIHorizontalAlign>("Text Horizontal", EGUIHorizontalAlign::Left);
+		TextVertical = object->get<EGUIVerticalAlign>("textVerticle", EGUIVerticalAlign::Top);
+		TextHorizontal = object->get<EGUIHorizontalAlign>("textHorizontal", EGUIHorizontalAlign::Left);
 
-		m_fontSource = object->get<std::string>("Font", std::string(""));
-		m_fontGUID = object->get<std::string>("Font", std::string(""));
+		m_fontSource = object->get<std::string>("font", std::string(""));
+		m_fontGUID = object->get<std::string>("font.guid", std::string(""));
 
-		m_fontData = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
+		// read font by id first
+		m_fontData = CFontManager::getInstance()->getFontById(m_fontGUID.c_str());
+		if (!m_fontData)
+		{
+			m_fontData = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
+		}
+
+		// init font
 		if (m_fontData)
+		{
 			m_fontData->initFont();
+			m_fontGUID = m_fontData->getGUID();
+		}
 
-		std::string value = object->get<std::string>("Text", std::string(""));
+		std::string value = object->get<std::string>("text", std::string(""));
 		setText(value.c_str());
 
 		m_updateTextRender = true;

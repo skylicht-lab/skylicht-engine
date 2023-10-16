@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSceneController.h"
 #include "Selection/CSelection.h"
 #include "Graphics2D/CCanvas.h"
+#include "Graphics2D/CGUIExporter.h"
+#include "Graphics2D/CGUIImporter.h"
 
 namespace Skylicht
 {
@@ -358,6 +360,15 @@ namespace Skylicht
 						guiNode->setName(gui->getNameW().c_str());
 					}
 				}
+			}
+		}
+
+		void CGUIDesignController::save(const char* path)
+		{
+			// Save the canvas infomation to file
+			if (CGUIExporter::save(path, m_guiCanvas))
+			{
+				m_canvasPath = path;
 			}
 		}
 

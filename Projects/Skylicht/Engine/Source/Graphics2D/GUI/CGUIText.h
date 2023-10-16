@@ -74,6 +74,8 @@ namespace Skylicht
 
 		CFontSource* m_fontData;
 
+		float m_lastWidth;
+		float m_lastHeight;
 	protected:
 		CGUIText(CCanvas* canvas, CGUIElement* parent, IFont* font);
 		CGUIText(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, IFont* font);

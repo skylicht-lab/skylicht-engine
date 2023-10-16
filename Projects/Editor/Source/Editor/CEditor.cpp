@@ -1016,22 +1016,69 @@ namespace Skylicht
 
 		void CEditor::OnMenuSave(GUI::CBase* item)
 		{
-			CSceneController* sceneController = CSceneController::getInstance();
-			const std::string& fileName = sceneController->getScenePath();
+			bool saveScene = true;
+			bool saveCanvas = false;
 
-			if (fileName.empty())
+			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+			if (selectObject != NULL)
 			{
-				std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
-
-				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
-				dialog->OnSave = [&, controller = sceneController](std::string path)
+				if (selectObject->getType() == CSelectObject::GUIElement)
 				{
-					controller->save(path.c_str());
-				};
+					saveCanvas = true;
+					saveScene = false;
+				}
 			}
-			else
+
+			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+
+			if (saveScene)
 			{
-				sceneController->save(fileName.c_str());
+				CSceneController* sceneController = CSceneController::getInstance();
+				const std::string& fileName = sceneController->getScenePath();
+
+				if (fileName.empty())
+				{
+					GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas,
+						GUI::COpenSaveDialog::Save,
+						assetFolder.c_str(),
+						assetFolder.c_str(),
+						"scene;*"
+					);
+
+					dialog->OnSave = [&, controller = sceneController](std::string path)
+					{
+						controller->save(path.c_str());
+					};
+				}
+				else
+				{
+					sceneController->save(fileName.c_str());
+				}
+			}
+			else if (saveCanvas)
+			{
+				CGUIDesignController* guiDesignController = CGUIDesignController::getInstance();
+
+				const std::string& fileName = guiDesignController->getSaveGUIPath();
+
+				if (fileName.empty())
+				{
+					GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas,
+						GUI::COpenSaveDialog::Save,
+						assetFolder.c_str(),
+						assetFolder.c_str(),
+						"gui;*"
+					);
+
+					dialog->OnSave = [&, controller = guiDesignController](std::string path)
+					{
+						controller->save(path.c_str());
+					};
+				}
+				else
+				{
+					guiDesignController->save(fileName.c_str());
+				}
 			}
 		}
 
