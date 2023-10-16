@@ -108,8 +108,6 @@ option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform develo
 
 option(BUILD_IMGUI "Build Ocornut Imgui" ON)
 
-option(BUILD_FREETYPE "Build Font Freetype" ON)
-
 option(BUILD_SKYLICHT_NETWORK "Build Http, Socket module" ON)
 
 if (BUILD_EMSCRIPTEN)
@@ -134,10 +132,8 @@ else()
 	set(BUILD_CURL OFF)
 endif()
 
-if (BUILD_FREETYPE)
-	add_definitions(-DUSE_FREETYPE)
-	add_definitions(-DFT2_BUILD_LIBRARY)
-endif()
+# freetype font library
+add_definitions(-DFT2_BUILD_LIBRARY)
 
 # skylicht debug leak memory
 if (BUILD_DEBUG_VLD AND MSVC)

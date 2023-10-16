@@ -40,7 +40,9 @@ namespace Skylicht
 		m_charSpacePadding(0),
 		m_linePadding(0),
 		m_updateTextRender(true),
-		m_font(font)
+		m_font(NULL),
+		m_customfont(font),
+		m_fontData(NULL)
 	{
 
 	}
@@ -55,7 +57,9 @@ namespace Skylicht
 		m_charSpacePadding(0),
 		m_linePadding(0),
 		m_updateTextRender(true),
-		m_font(font)
+		m_font(NULL),
+		m_customfont(font),
+		m_fontData(NULL)
 	{
 		init();
 	}
@@ -66,22 +70,6 @@ namespace Skylicht
 		m_textHeight = 50;
 		m_textSpaceWidth = 20;
 
-		if (m_font)
-		{
-			// get text height
-			SModuleOffset* moduleCharA = m_font->getCharacterModule((int)'A');
-			if (moduleCharA)
-			{
-				m_textHeight = (int)moduleCharA->OffsetY + (int)moduleCharA->Module->H;
-				m_textOffsetY = (int)moduleCharA->OffsetY;
-			}
-
-			// get space width
-			SModuleOffset* moduleCharSpace = m_font->getCharacterModule((int)' ');
-			if (moduleCharSpace)
-				m_textSpaceWidth = (int)moduleCharSpace->XAdvance;
-		}
-
 		for (int i = 0; i < MAX_FORMATCOLOR; i++)
 			m_colorFormat[i].set(255, 255, 255, 255);
 	}
@@ -89,6 +77,33 @@ namespace Skylicht
 	CGUIText::~CGUIText()
 	{
 
+	}
+
+	void CGUIText::initFont(IFont* font)
+	{
+		// get text height
+		SModuleOffset* moduleCharA = font->getCharacterModule((int)'A');
+		if (moduleCharA)
+		{
+			m_textHeight = (int)moduleCharA->OffsetY + (int)moduleCharA->Module->H;
+			m_textOffsetY = (int)moduleCharA->OffsetY;
+		}
+
+		// get space width
+		SModuleOffset* moduleCharSpace = font->getCharacterModule((int)' ');
+		if (moduleCharSpace)
+			m_textSpaceWidth = (int)moduleCharSpace->XAdvance;
+	}
+
+	IFont* CGUIText::getCurrentFont()
+	{
+		if (m_customfont)
+			return m_customfont;
+
+		if (m_fontData)
+			return m_fontData->getFont();
+
+		return NULL;
 	}
 
 	void CGUIText::setFormatText(const char* formatText)
@@ -373,10 +388,18 @@ namespace Skylicht
 
 	void CGUIText::render(CCamera* camera)
 	{
-		if (!m_font)
+		IFont* font = getCurrentFont();
+
+		if (!font)
 		{
 			CGUIElement::render(camera);
 			return;
+		}
+
+		if (font != m_font)
+		{
+			initFont(font);
+			m_font = font;
 		}
 
 		if (m_updateTextRender == true)
@@ -703,9 +726,9 @@ namespace Skylicht
 		m_fontSource = object->get<std::string>("Font", std::string(""));
 		m_fontGUID = object->get<std::string>("Font", std::string(""));
 
-		CFontSource* font = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
-		if (font)
-			m_font = font->initFont();
+		m_fontData = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
+		if (m_fontData)
+			m_fontData->initFont();
 
 		std::string value = object->get<std::string>("Text", std::string(""));
 		setText(value.c_str());

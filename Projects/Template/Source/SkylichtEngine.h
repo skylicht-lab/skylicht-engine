@@ -72,12 +72,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/CGraphics2D.h"
 #include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
 #include "Graphics2D/SpriteFrame/CSpriteFont.h"
+#include "Graphics2D/SpriteFrame/CSpriteManager.h"
+#include "Graphics2D/SpriteFrame/CFontManager.h"
 
 // Font - Freetype
-#if defined(USE_FREETYPE)
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
 #include "Graphics2D/SpriteFrame/CGlyphFont.h"
-#endif
 
 // ECS system
 #include "Entity/CEntityManager.h"
@@ -105,6 +105,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 // Serializable
 #include "Serializable/CValueProperty.h"
+#include "Serializable/CObjectSerializable.h"
+#include "Serializable/CSerializableLoader.h"
 
 // Utils
 #include "Utils/CColor.h"

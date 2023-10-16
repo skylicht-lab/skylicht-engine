@@ -16,10 +16,8 @@ SampleNoise3D::SampleNoise3D() :
 	m_scene(NULL),
 	m_forwardRP(NULL),
 	m_postProcessorRP(NULL),
-	m_noiseOffset(3.0f, 0.0f, 0.0f)
-#if defined(USE_FREETYPE)	
-	, m_largeFont(NULL)
-#endif
+	m_noiseOffset(3.0f, 0.0f, 0.0f),
+	m_largeFont(NULL)
 {
 
 }
@@ -27,9 +25,7 @@ SampleNoise3D::SampleNoise3D() :
 SampleNoise3D::~SampleNoise3D()
 {
 	delete m_scene;
-#if defined(USE_FREETYPE)	
 	delete m_largeFont;
-#endif
 	delete m_forwardRP;
 	delete m_postProcessorRP;
 }
@@ -42,11 +38,9 @@ void SampleNoise3D::onInitApp()
 	// load "BuiltIn.zip" to read files inside it
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("BuiltIn.zip"), false, false);
 
-#if defined(USE_FREETYPE)
 	// init segoeuil.ttf inside BuiltIn.zip
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
-#endif
 
 	// load basic shader
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
@@ -111,7 +105,6 @@ void SampleNoise3D::onInitApp()
 	sphereObj->getTransformEuler()->setPosition(core::vector3df(-3.0f, 0.0f, 0.0f));
 	m_materials.push_back(sphere->getMaterial());
 
-#if defined(USE_FREETYPE)
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("Segoe UI Light", 50);
 
@@ -123,7 +116,6 @@ void SampleNoise3D::onInitApp()
 	CGUIText* textLarge = canvas->createText(m_largeFont);
 	textLarge->setText("SampleNoise3D");
 	textLarge->setTextAlign(EGUIHorizontalAlign::Left, EGUIVerticalAlign::Top);
-#endif
 
 	// rendering pipe line
 	u32 w = app->getWidth();
