@@ -153,7 +153,7 @@ namespace Skylicht
 				// load by id first
 				CSpriteFrame* sprite = spriteMgr->getSpriteById(m_spriteId.c_str());
 				if (!sprite)
-					sprite = spriteMgr->loadSprite(m_spriteId.c_str());
+					sprite = spriteMgr->loadSprite(m_sprite.c_str());
 
 				if (sprite && sprite->getId() == m_spriteId)
 				{

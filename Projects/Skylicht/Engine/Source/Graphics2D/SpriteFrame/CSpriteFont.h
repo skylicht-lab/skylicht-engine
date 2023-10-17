@@ -29,6 +29,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// <summary>
+	/// CSpriteFont
+	/// Use the software BMFont
+	/// https://www.angelcode.com/products/bmfont/
+	/// To generate the font sprite
+	/// </summary>
 	class CSpriteFont :
 		public CSpriteFrame,
 		public IFont
