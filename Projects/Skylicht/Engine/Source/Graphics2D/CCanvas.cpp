@@ -331,6 +331,11 @@ namespace Skylicht
 		return result;
 	}
 
+	void CCanvas::removeAllElement()
+	{
+		m_root->removeAllChilds();
+	}
+
 	/*
 	* Element constructor
 	*/

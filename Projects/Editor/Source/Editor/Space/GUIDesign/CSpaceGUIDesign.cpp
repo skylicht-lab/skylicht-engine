@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Handles/CGUIHandles.h"
 
+#include "Graphics2D/CGUIImporter.h"
+
 using namespace std::placeholders;
 
 namespace Skylicht
@@ -152,10 +154,27 @@ namespace Skylicht
 
 		void CSpaceGUIDesign::openGUI(const char* path)
 		{
+			// fix for open new space and open path
+			if (!m_scene)
+				m_scene = CSceneController::getInstance()->getScene();
+
 			if (m_scene)
 			{
 				CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
+				CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+				canvas->removeAllElement();
 				m_gizmos->onRemove();
+
+				if (CGUIImporter::beginImport(path, canvas) == true)
+				{
+					bool loadFinish = false;
+					do
+					{
+						loadFinish = CGUIImporter::updateLoadGUI();
+					} while (!loadFinish);
+
+					CGUIDesignController::getInstance()->rebuildGUIHierachy();
+				}
 			}
 		}
 

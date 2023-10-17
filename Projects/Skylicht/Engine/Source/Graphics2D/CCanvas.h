@@ -122,6 +122,8 @@ namespace Skylicht
 			return m_enable3DBillboard;
 		}
 
+		void removeAllElement();
+
 		CGUIElement* createElement();
 
 		CGUIElement* createElement(const core::rectf& r);
