@@ -54,6 +54,9 @@ namespace Skylicht
 		if (xmlReader == NULL)
 			return false;
 
+		// see the font format here
+		// https://www.angelcode.com/products/bmfont/doc/file_format.html
+
 		char text[512];
 
 		int readState = -1;
