@@ -9,7 +9,7 @@ Skylicht Engine, which is an evolution of the [Irrlicht Project](http://irrlicht
 
 Skylicht Engine is a super lightweight Game Engine that targets mobile platforms (Android, IOS). And, it's completely free.
 
-<img src="Documents/Media/logo-landscape.png" width="680" valign="middle"/>
+<img src="Documents/Media/logo-landscape.png"/>
 
 # How to build the project
 | Platform                                                                                 | Build Status                                                                                                                                                                      |
