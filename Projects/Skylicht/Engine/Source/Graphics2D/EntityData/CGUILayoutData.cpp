@@ -22,48 +22,20 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "Entity/IEntitySystem.h"
-#include "Entity/CArrayUtils.h"
-
-#include "Transform/CWorldTransformData.h"
-#include "Graphics2D/EntityData/CGUITransformData.h"
-#include "Graphics2D/EntityData/CGUIAlignData.h"
-#include "Graphics2D/EntityData/CGUILayoutData.h"
+#include "pch.h"
+#include "CGUILayoutData.h"
 
 namespace Skylicht
 {
-	class CGUILayoutSystem : public IEntitySystem
+	IMPLEMENT_DATA_TYPE_INDEX(CGUILayoutData);
+
+	CGUILayoutData::CGUILayoutData()
 	{
-	protected:
-		CFastArray<CWorldTransformData*> m_worldTransforms;
-		CFastArray<CGUITransformData*> m_guiTransform;
-		CFastArray<CGUIAlignData*> m_guiAlign;
-		CFastArray<CGUILayoutData*> m_guiLayout;
 
-	public:
-		CGUILayoutSystem();
+	}
 
-		virtual ~CGUILayoutSystem();
+	CGUILayoutData::~CGUILayoutData()
+	{
 
-		virtual void beginQuery(CEntityManager* entityManager);
-
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int count);
-
-		virtual void init(CEntityManager* entityManager);
-
-		virtual void update(CEntityManager* entityManager);
-
-	protected:
-
-		void updateLayout();
-
-		void updateAlign();
-
-		void layoutNoDock(CGUITransformData* t, CGUIAlignData* a, const core::rectf& parentRect);
-
-		void layoutDock(CGUITransformData* t, CGUIAlignData* a, const core::rectf& parentRect);
-
-		void updateTransform();
-
-	};
+	}
 }

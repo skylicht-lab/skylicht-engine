@@ -477,29 +477,25 @@ namespace Skylicht
 		return element;
 	}
 
-
 	/*
-	* RoundedRect constructor
+	* Layout constructor
 	*/
 
-	CGUIRoundedRect* CCanvas::createRoundedRect(float radius, const video::SColor& c)
+	CGUILayout* CCanvas::createLayout()
 	{
-		CGUIRoundedRect* element = new CGUIRoundedRect(this, m_root, m_rect, radius);
-		element->setColor(c);
+		CGUILayout* element = new CGUILayout(this, m_root, m_rect);
 		return element;
 	}
 
-	CGUIRoundedRect* CCanvas::createRoundedRect(const core::rectf& r, float radius, const video::SColor& c)
+	CGUILayout* CCanvas::createLayout(const core::rectf& r)
 	{
-		CGUIRoundedRect* element = new CGUIRoundedRect(this, m_root, r, radius);
-		element->setColor(c);
+		CGUILayout* element = new CGUILayout(this, m_root, r);
 		return element;
 	}
 
-	CGUIRoundedRect* CCanvas::createRoundedRect(CGUIElement* e, const core::rectf& r, float radius, const video::SColor& c)
+	CGUILayout* CCanvas::createLayout(CGUIElement* e, const core::rectf& r)
 	{
-		CGUIRoundedRect* element = new CGUIRoundedRect(this, e, r, radius);
-		element->setColor(c);
+		CGUILayout* element = new CGUILayout(this, e, r);
 		return element;
 	}
 

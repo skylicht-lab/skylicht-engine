@@ -154,6 +154,11 @@ namespace Skylicht
 				nameHint = L"Mask";
 				newNode = parentNode->getCanvas()->createMask(parentNode, r);
 			}
+			else if (command == L"GUI Layout")
+			{
+				nameHint = L"Layout";
+				newNode = parentNode->getCanvas()->createLayout(parentNode, r);
+			}
 
 			if (newNode)
 			{
@@ -185,7 +190,8 @@ namespace Skylicht
 					if (obj->getType() == CSelectObject::GUIElement)
 					{
 						CGUIElement* gui = canvas->getGUIByID(obj->getID().c_str());
-						gui->setDrawBorder(false);
+						if (gui)
+							gui->setDrawBorder(false);
 					}
 				}
 			}
@@ -368,13 +374,16 @@ namespace Skylicht
 			// Save the canvas infomation to file
 			if (CGUIExporter::save(path, m_guiCanvas))
 			{
-				m_canvasPath = path;
+				m_guiFilePath = path;
 			}
 		}
 
 		void CGUIDesignController::loadFile(const std::string& path)
 		{
 			CEditor* editor = CEditor::getInstance();
+
+			// clear selection
+			deselectAllOnHierachy();
 
 			// Show GUI Design window
 			CSpace* space = editor->getWorkspaceByName(std::wstring(L"GUI Design"));
@@ -399,6 +408,8 @@ namespace Skylicht
 			{
 				CSpaceGUIDesign* spaceGUI = dynamic_cast<CSpaceGUIDesign*>(space);
 				spaceGUI->openGUI(path.c_str());
+
+				m_guiFilePath = path;
 			}
 
 			// Show GUI Hierarchy window
@@ -415,6 +426,9 @@ namespace Skylicht
 						dockTab->setCurrentWindow(dockWindow);
 				}
 			}
+
+			// refresh editor
+			CEditor::getInstance()->refresh();
 		}
 	}
 }
