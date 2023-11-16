@@ -33,8 +33,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/CGUIText.h"
 #include "GUI/CGUISprite.h"
 #include "GUI/CGUIRect.h"
-#include "GUI/CGUIRoundedRect.h"
 #include "GUI/CGUIMask.h"
+#include "GUI/CGUILayout.h"
 
 #include "Entity/CEntityPrefab.h"
 #include "Entity/CEntityManager.h"
@@ -162,11 +162,11 @@ namespace Skylicht
 
 		CGUIRect* createRect(CGUIElement* e, const core::rectf& r, const video::SColor& c);
 
-		CGUIRoundedRect* createRoundedRect(float radius, const video::SColor& c);
+		CGUILayout* createLayout();
 
-		CGUIRoundedRect* createRoundedRect(const core::rectf& r, float radius, const video::SColor& c);
+		CGUILayout* createLayout(const core::rectf& r);
 
-		CGUIRoundedRect* createRoundedRect(CGUIElement* e, const core::rectf& r, float radius, const video::SColor& c);
+		CGUILayout* createLayout(CGUIElement* e, const core::rectf& r);
 
 		const core::matrix4& getRenderWorldTransform()
 		{

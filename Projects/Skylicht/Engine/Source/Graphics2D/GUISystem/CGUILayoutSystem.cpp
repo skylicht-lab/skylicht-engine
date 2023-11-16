@@ -42,6 +42,7 @@ namespace Skylicht
 		m_worldTransforms.reset();
 		m_guiTransform.reset();
 		m_guiAlign.reset();
+		m_guiLayout.reset();
 	}
 
 	void CGUILayoutSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int count)
@@ -53,6 +54,7 @@ namespace Skylicht
 			CWorldTransformData* w = GET_ENTITY_DATA(e, CWorldTransformData);
 			CGUITransformData* t = GET_ENTITY_DATA(e, CGUITransformData);
 			CGUIAlignData* a = GET_ENTITY_DATA(e, CGUIAlignData);
+			CGUILayoutData* l = GET_ENTITY_DATA(e, CGUILayoutData);
 
 			if (t->HasChanged || (w->Parent && w->Parent->HasChanged))
 				w->HasChanged = true;
@@ -60,6 +62,9 @@ namespace Skylicht
 			m_worldTransforms.push(w);
 			m_guiTransform.push(t);
 			m_guiAlign.push(a);
+
+			if (l)
+				m_guiLayout.push(l);
 		}
 	}
 
@@ -71,10 +76,16 @@ namespace Skylicht
 	void CGUILayoutSystem::update(CEntityManager* entityManager)
 	{
 		updateLayout();
+		updateAlign();
 		updateTransform();
 	}
 
 	void CGUILayoutSystem::updateLayout()
+	{
+
+	}
+
+	void CGUILayoutSystem::updateAlign()
 	{
 		int numEntity = m_worldTransforms.count();
 
