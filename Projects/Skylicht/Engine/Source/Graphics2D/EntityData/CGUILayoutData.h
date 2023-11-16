@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,37 +24,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CGUIElement.h"
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	class CGUIRoundedRect : public CGUIElement
+	class CGUILayoutData : public IEntityData
 	{
-		friend class CCanvas;
 	protected:
-		float m_radius;
-
-		IMeshBuffer *m_buffer;
-		SVertexBuffer *m_vertices;
-		CIndexBuffer *m_indices;
-
-	protected:
-		CGUIRoundedRect(CCanvas *canvas, CGUIElement *parent, float radius);
-		CGUIRoundedRect(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect, float radius);
-
-		void init();
 
 	public:
-		virtual ~CGUIRoundedRect();
+		DECLARE_DATA_TYPE_INDEX;
 
-		virtual void render(CCamera *camera);
+	public:
+		CGUILayoutData();
 
-		inline void setRadius(float r)
-		{
-			m_radius = r;
-			init();
-		}
+		virtual ~CGUILayoutData();
 
-		DECLARE_GETTYPENAME(CGUIRoundedRect);
+		DECLARE_GETTYPENAME(CGUILayoutData);
 	};
 }

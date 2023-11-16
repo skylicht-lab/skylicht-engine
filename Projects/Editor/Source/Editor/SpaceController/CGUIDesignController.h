@@ -57,7 +57,7 @@ namespace Skylicht
 
 			CContextMenuGUIElement* m_contextMenu;
 
-			std::string m_canvasPath;
+			std::string m_guiFilePath;
 
 		public:
 			CGUIDesignController();
@@ -88,7 +88,7 @@ namespace Skylicht
 
 			inline const std::string& getSaveGUIPath()
 			{
-				return m_canvasPath;
+				return m_guiFilePath;
 			}
 
 			void save(const char* path);

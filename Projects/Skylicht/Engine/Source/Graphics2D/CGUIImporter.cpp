@@ -81,12 +81,12 @@ namespace Skylicht
 								element = canvas->createMask(parent, nullRect);
 							else if (attributeName == L"CGUIRect")
 								element = canvas->createRect(parent, nullRect, nullColor);
-							else if (attributeName == L"CGUIRoundedRect")
-								element = canvas->createRoundedRect(parent, nullRect, 10.0f, nullColor);
 							else if (attributeName == L"CGUISprite")
 								element = canvas->createSprite(parent, nullRect, NULL);
 							else if (attributeName == L"CGUIText")
 								element = canvas->createText(parent, nullRect, NULL);
+							else if (attributeName == L"CGUILayout")
+								element = canvas->createLayout(parent, nullRect);
 						}
 						else
 						{
@@ -168,9 +168,9 @@ namespace Skylicht
 							attributeName == L"CGUIImage" ||
 							attributeName == L"CGUIMask" ||
 							attributeName == L"CGUIRect" ||
-							attributeName == L"CGUIRoundedRect" ||
 							attributeName == L"CGUISprite" ||
-							attributeName == L"CGUIText")
+							attributeName == L"CGUIText" ||
+							attributeName == L"CGUILayout")
 						{
 							CGUIElement* guiObject = dynamic_cast<CGUIElement*>(*s_current);
 							++s_current;
