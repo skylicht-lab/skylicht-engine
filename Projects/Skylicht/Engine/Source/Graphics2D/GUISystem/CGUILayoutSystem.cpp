@@ -64,7 +64,10 @@ namespace Skylicht
 			m_guiAlign.push(a);
 
 			if (l)
+			{
 				m_guiLayout.push(l);
+				m_guiLayoutTransform.push(w);
+			}
 		}
 	}
 
@@ -82,7 +85,17 @@ namespace Skylicht
 
 	void CGUILayoutSystem::updateLayout()
 	{
+		CWorldTransformData** worldTransforms = m_worldTransforms.pointer();
 
+		int numEntity = m_worldTransforms.count();
+		for (int i = 0; i < numEntity; i++)
+		{
+			CWorldTransformData* t = worldTransforms[i];
+			if (t->Parent)
+			{
+
+			}
+		}
 	}
 
 	void CGUILayoutSystem::updateAlign()

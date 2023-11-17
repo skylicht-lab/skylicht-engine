@@ -77,7 +77,10 @@ namespace Skylicht
 			m_guiCanvas = guiCanvas->getComponent<CCanvas>();
 
 			CGUIElement* root = m_guiCanvas->getRootElement();
+			root->invalidate();
+
 			CGUIElement* fullRect = root->getChilds()[0];
+			fullRect->invalidate();
 
 			m_rootNode = new CGUIHierachyNode(NULL);
 			m_rootNode->setTagData(fullRect, CGUIHierachyNode::Canvas);
