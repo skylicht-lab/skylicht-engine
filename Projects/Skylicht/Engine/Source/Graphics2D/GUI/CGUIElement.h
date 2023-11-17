@@ -195,6 +195,12 @@ namespace Skylicht
 			return m_guiTransform->getPosition();
 		}
 
+		inline void invalidate()
+		{
+			m_transform->HasChanged = true;
+			m_guiTransform->HasChanged = true;
+		}
+
 		inline void setPosition(const core::vector3df& v)
 		{
 			m_guiTransform->setPosition(v);

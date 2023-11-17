@@ -174,6 +174,23 @@ namespace Skylicht
 					} while (!loadFinish);
 
 					CGUIDesignController::getInstance()->rebuildGUIHierachy();
+
+					// reset view
+					m_guiScale = 1.0f;
+					m_viewX = 0.0f;
+					m_viewY = 0.0f;
+
+					float dx = 0.0f;
+					float dy = 0.0f;
+					m_topRuler->setPosition(-(m_viewX * m_guiScale + dx));
+					m_leftRuler->setPosition(-(m_viewY * m_guiScale + dy));
+
+					canvas->getRootElement()->setPosition(
+						core::vector3df(
+							m_viewX + dx / m_guiScale,
+							m_viewY + dy / m_guiScale,
+							0.0f)
+					);
 				}
 			}
 		}
