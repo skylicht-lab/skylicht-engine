@@ -35,11 +35,50 @@ namespace Skylicht
 	public:
 		DECLARE_DATA_TYPE_INDEX;
 
+		enum EAlignType
+		{
+			Vertical,
+			Horizontal
+		};
+
+		EAlignType AlignType;
+
+		bool FitChildrenSize;
+
+		float CurrentX;
+
+		float CurrentY;
+
+		float MaxW;
+
+		float MaxH;
+
+		float Spacing;
+
 	public:
 		CGUILayoutData();
 
 		virtual ~CGUILayoutData();
 
 		DECLARE_GETTYPENAME(CGUILayoutData);
+	};
+
+
+
+	class CGUIChildLayoutData : public IEntityData
+	{
+	protected:
+
+	public:
+		DECLARE_DATA_TYPE_INDEX;
+
+		CGUILayoutData* Parent;
+
+	public:
+		CGUIChildLayoutData();
+
+		virtual ~CGUIChildLayoutData();
+
+		DECLARE_GETTYPENAME(CGUIChildLayoutData);
 	};
 }

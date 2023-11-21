@@ -51,4 +51,29 @@ namespace Skylicht
 	{
 		CGUIElement::render(camera);
 	}
+
+	CObjectSerializable* CGUILayout::createSerializable()
+	{
+		CObjectSerializable* object = CGUIElement::createSerializable();
+
+		CEnumProperty<CGUILayoutData::EAlignType>* alginType = new CEnumProperty<CGUILayoutData::EAlignType>(object, "layoutAlignType", m_layoutData->AlignType);
+		alginType->addEnumString("Vertical", CGUILayoutData::Vertical);
+		alginType->addEnumString("Horizontal", CGUILayoutData::Horizontal);
+		object->autoRelease(alginType);
+
+		object->autoRelease(new CIntProperty(object, "spacing", m_layoutData->Spacing));
+
+		object->autoRelease(new CBoolProperty(object, "fitChildrenSize", m_layoutData->FitChildrenSize));
+
+		return object;
+	}
+
+	void CGUILayout::loadSerializable(CObjectSerializable* object)
+	{
+		CGUIElement::loadSerializable(object);
+
+		m_layoutData->AlignType = object->get<CGUILayoutData::EAlignType>("layoutAlignType", CGUILayoutData::Vertical);
+		m_layoutData->Spacing = object->get<int>("spacing", 0);
+		m_layoutData->FitChildrenSize = object->get<bool>("fitChildrenSize", 0);
+	}
 }
