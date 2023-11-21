@@ -29,12 +29,32 @@ namespace Skylicht
 {
 	IMPLEMENT_DATA_TYPE_INDEX(CGUILayoutData);
 
-	CGUILayoutData::CGUILayoutData()
+	CGUILayoutData::CGUILayoutData() :
+		AlignType(Vertical),
+		FitChildrenSize(false),
+		CurrentX(0.0f),
+		CurrentY(0.0f),
+		Spacing(0.0f),
+		MaxW(0.0f),
+		MaxH(0.0f)
 	{
 
 	}
 
 	CGUILayoutData::~CGUILayoutData()
+	{
+
+	}
+
+
+	IMPLEMENT_DATA_TYPE_INDEX(CGUIChildLayoutData);
+
+	CGUIChildLayoutData::CGUIChildLayoutData()
+	{
+
+	}
+
+	CGUIChildLayoutData::~CGUIChildLayoutData()
 	{
 
 	}

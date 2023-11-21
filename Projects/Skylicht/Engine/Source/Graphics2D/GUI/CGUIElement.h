@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/EntityData/CGUITransformData.h"
 #include "Graphics2D/EntityData/CGUIAlignData.h"
 #include "Graphics2D/EntityData/CGUIRenderData.h"
+#include "Graphics2D/EntityData/CGUILayoutData.h"
 
 namespace Skylicht
 {

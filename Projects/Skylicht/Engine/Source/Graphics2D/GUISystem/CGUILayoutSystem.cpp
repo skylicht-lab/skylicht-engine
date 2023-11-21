@@ -43,6 +43,7 @@ namespace Skylicht
 		m_guiTransform.reset();
 		m_guiAlign.reset();
 		m_guiLayout.reset();
+		m_guiLayoutTransform.reset();
 	}
 
 	void CGUILayoutSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int count)
@@ -54,19 +55,38 @@ namespace Skylicht
 			CWorldTransformData* w = GET_ENTITY_DATA(e, CWorldTransformData);
 			CGUITransformData* t = GET_ENTITY_DATA(e, CGUITransformData);
 			CGUIAlignData* a = GET_ENTITY_DATA(e, CGUIAlignData);
+			CGUIChildLayoutData* childLayout = GET_ENTITY_DATA(e, CGUIChildLayoutData);
 			CGUILayoutData* l = GET_ENTITY_DATA(e, CGUILayoutData);
 
 			if (t->HasChanged || (w->Parent && w->Parent->HasChanged))
 				w->HasChanged = true;
 
+			if (l)
+			{
+				l->CurrentX = 0.0f;
+				l->CurrentY = 0.0f;
+			}
+
 			m_worldTransforms.push(w);
 			m_guiTransform.push(t);
 			m_guiAlign.push(a);
 
-			if (l)
+			if (childLayout)
 			{
-				m_guiLayout.push(l);
-				m_guiLayoutTransform.push(w);
+				// reset to no dock align
+				a->Dock = EGUIDock::NoDock;
+				a->Vertical = EGUIVerticalAlign::Top;
+				a->Horizontal = EGUIHorizontalAlign::Left;
+
+				// reset rect transform
+				float width = t->Rect.getWidth();
+				float height = t->Rect.getHeight();
+				t->Rect.UpperLeftCorner.set(0.0f, 0.0f);
+				t->Rect.LowerRightCorner.set(width, height);
+
+				// add for layout system
+				m_guiLayout.push(childLayout);
+				m_guiLayoutTransform.push(t);
 			}
 		}
 	}
@@ -85,15 +105,52 @@ namespace Skylicht
 
 	void CGUILayoutSystem::updateLayout()
 	{
-		CWorldTransformData** worldTransforms = m_worldTransforms.pointer();
+		CGUIChildLayoutData** layouts = m_guiLayout.pointer();
+		CGUITransformData** transforms = m_guiLayoutTransform.pointer();
 
-		int numEntity = m_worldTransforms.count();
+		int numEntity = m_guiLayout.count();
 		for (int i = 0; i < numEntity; i++)
 		{
-			CWorldTransformData* t = worldTransforms[i];
-			if (t->Parent)
-			{
+			CGUIChildLayoutData* layout = layouts[i];
+			CGUITransformData* transform = transforms[i];
+			CGUILayoutData* parentLayoutInfo = layout->Parent;
 
+			if (!parentLayoutInfo)
+				continue;
+
+			float h = transform->Rect.getHeight();
+			float w = transform->Rect.getWidth();
+
+			switch (parentLayoutInfo->AlignType)
+			{
+			case CGUILayoutData::Vertical:
+			{
+				float y = parentLayoutInfo->CurrentY;
+
+				transform->setPosition(core::vector3df(0.0f, y, 0.0f));
+
+				y = y + h;
+				y = y + parentLayoutInfo->Spacing;
+
+				parentLayoutInfo->CurrentY = y;
+				parentLayoutInfo->MaxW = core::max_(parentLayoutInfo->MaxW, w);
+				parentLayoutInfo->MaxH = y - parentLayoutInfo->Spacing;
+			}
+			break;
+			case CGUILayoutData::Horizontal:
+			{
+				float x = parentLayoutInfo->CurrentX;
+
+				transform->setPosition(core::vector3df(x, 0.0f, 0.0f));
+
+				x = x + w;
+				x = x + parentLayoutInfo->Spacing;
+
+				parentLayoutInfo->CurrentX = x;
+				parentLayoutInfo->MaxH = core::max_(parentLayoutInfo->MaxH, h);
+				parentLayoutInfo->MaxW = x - parentLayoutInfo->Spacing;
+			}
+			break;
 			}
 		}
 	}
