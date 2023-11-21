@@ -123,6 +123,13 @@ namespace Skylicht
 
 			CWorldTransformData* w = GET_ENTITY_DATA(m_entity, CWorldTransformData);
 			w->Parent = GET_ENTITY_DATA(m_parent->m_entity, CWorldTransformData);
+
+			CGUILayoutData* parentLayout = GET_ENTITY_DATA(m_parent->m_entity, CGUILayoutData);
+			if (parentLayout != NULL)
+			{
+				CGUIChildLayoutData* childLayout = m_entity->addData<CGUIChildLayoutData>();
+				childLayout->Parent = parentLayout;
+			}
 		}
 		else
 		{
@@ -133,6 +140,12 @@ namespace Skylicht
 
 			CWorldTransformData* w = GET_ENTITY_DATA(m_entity, CWorldTransformData);
 			w->Parent = NULL;
+
+			CGUIChildLayoutData* l = GET_ENTITY_DATA(m_entity, CGUIChildLayoutData);
+			if (l != NULL)
+			{
+				m_entity->removeData<CGUIChildLayoutData>();
+			}
 		}
 	}
 

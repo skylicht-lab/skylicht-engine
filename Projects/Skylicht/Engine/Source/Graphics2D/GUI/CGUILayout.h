@@ -44,6 +44,35 @@ namespace Skylicht
 
 		virtual void render(CCamera* camera);
 
+		inline void setAlign(CGUILayoutData::EAlignType type)
+		{
+			m_layoutData->AlignType = type;
+		}
+
+		inline void setSpacing(float space)
+		{
+			m_layoutData->Spacing = space;
+		}
+
+		inline float getSpacing()
+		{
+			return m_layoutData->Spacing;
+		}
+
+		inline void setFitChildrenSize(bool b)
+		{
+			m_layoutData->FitChildrenSize = b;
+		}
+
+		inline bool isFitChildrenSize()
+		{
+			return m_layoutData->FitChildrenSize;
+		}
+
 		DECLARE_GETTYPENAME(CGUILayout);
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 	};
 }
