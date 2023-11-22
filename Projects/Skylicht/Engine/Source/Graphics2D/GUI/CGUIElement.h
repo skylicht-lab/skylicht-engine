@@ -60,6 +60,8 @@ namespace Skylicht
 		CGUIAlignData* m_guiAlign;
 		CGUIRenderData* m_renderData;
 
+		std::string m_materialFile;
+
 	protected:
 		CGUIElement(CCanvas* canvas, CGUIElement* parent);
 		CGUIElement(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
