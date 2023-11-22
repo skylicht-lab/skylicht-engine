@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/CCanvas.h"
 #include "Graphics2D/CGraphics2D.h"
 #include "Material/Shader/CShaderManager.h"
+#include "Material/CMaterialManager.h"
 
 namespace Skylicht
 {
@@ -272,6 +273,9 @@ namespace Skylicht
 		// material
 		object->autoRelease(new CColorProperty(object, "color", m_renderData->Color));
 
+		std::vector<std::string> materialExts = { "xml","mat" };
+		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
+
 		return object;
 	}
 
@@ -307,6 +311,24 @@ namespace Skylicht
 
 		// color
 		m_renderData->Color = object->get("color", SColor(255, 255, 255, 255));
+
+		std::string materialFile = object->get<std::string>("material", "");
+		if (materialFile != m_materialFile)
+		{
+			m_materialFile = materialFile;
+			std::vector<std::string> textureFolders;
+
+			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+				m_materialFile.c_str(),
+				true,
+				textureFolders
+			);
+
+			if (materials.size() > 0)
+			{
+				m_renderData->Material = materials[0];
+			}
+		}
 
 		notifyChanged();
 	}

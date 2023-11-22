@@ -170,6 +170,20 @@ namespace Skylicht
 					m_materialContext = material;
 					m_renameContext = textEditHelper;
 
+					GUI::CMenuItem* item = s_settingMaterialMenu->getItemByPath(L"Delete");
+					if (item)
+					{
+						if (material == m_materials[0])
+						{
+							// do not enable delete first item
+							item->setDisabled(true);
+						}
+						else
+						{
+							item->setDisabled(false);
+						}
+					}
+
 					s_settingMaterialMenu->open(btn);
 				};
 
