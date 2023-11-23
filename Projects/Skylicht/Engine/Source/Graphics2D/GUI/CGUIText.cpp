@@ -46,7 +46,7 @@ namespace Skylicht
 		m_lastWidth(0.0f),
 		m_lastHeight(0.0f)
 	{
-
+		m_enableMaterial = true;
 	}
 
 	CGUIText::CGUIText(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, IFont* font) :

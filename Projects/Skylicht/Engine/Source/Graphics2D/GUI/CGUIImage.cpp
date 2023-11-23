@@ -34,14 +34,14 @@ namespace Skylicht
 		CGUIElement(canvas, parent),
 		m_image(NULL)
 	{
-
+		m_enableMaterial = true;
 	}
 
 	CGUIImage::CGUIImage(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		CGUIElement(canvas, parent, rect),
 		m_image(NULL)
 	{
-
+		m_enableMaterial = true;
 	}
 
 	CGUIImage::~CGUIImage()

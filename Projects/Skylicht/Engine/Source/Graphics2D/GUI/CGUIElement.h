@@ -52,6 +52,11 @@ namespace Skylicht
 
 		bool m_drawBorder;
 		bool m_visible;
+		bool m_enableMaterial;
+
+		ArrayMaterial m_materials;
+
+		int m_materialId;
 
 		CEntity* m_entity;
 
@@ -270,6 +275,13 @@ namespace Skylicht
 			return m_renderData->ShaderID;
 		}
 
+		inline int getMaterialId()
+		{
+			return m_materialId;
+		}
+
+		void setMaterialId(int id);
+
 		inline void setMaterial(CMaterial* material)
 		{
 			m_renderData->Material = material;
@@ -293,6 +305,11 @@ namespace Skylicht
 		inline void setDrawBorder(bool b)
 		{
 			m_drawBorder = b;
+		}
+
+		inline bool isEnableMaterial()
+		{
+			return m_enableMaterial;
 		}
 
 		virtual void update(CCamera* camera);

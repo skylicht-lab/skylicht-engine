@@ -61,8 +61,7 @@ namespace Skylicht
 		alginType->addEnumString("Horizontal", CGUILayoutData::Horizontal);
 		object->autoRelease(alginType);
 
-		object->autoRelease(new CIntProperty(object, "spacing", m_layoutData->Spacing));
-
+		object->autoRelease(new CFloatProperty(object, "spacing", m_layoutData->Spacing));
 		object->autoRelease(new CBoolProperty(object, "fitChildrenSize", m_layoutData->FitChildrenSize));
 
 		return object;
@@ -73,7 +72,7 @@ namespace Skylicht
 		CGUIElement::loadSerializable(object);
 
 		m_layoutData->AlignType = object->get<CGUILayoutData::EAlignType>("layoutAlignType", CGUILayoutData::Vertical);
-		m_layoutData->Spacing = object->get<int>("spacing", 0);
+		m_layoutData->Spacing = object->get<float>("spacing", 0);
 		m_layoutData->FitChildrenSize = object->get<bool>("fitChildrenSize", 0);
 	}
 }

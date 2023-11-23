@@ -122,6 +122,12 @@ namespace Skylicht
 			CValueProperty* pRight = m_guiData->getProperty("marginRight");
 			CValueProperty* pBottom = m_guiData->getProperty("marginBottom");
 
+			CValueProperty* pMaterial = m_guiData->getProperty("material");
+			pMaterial->setHidden(!m_gui->isEnableMaterial());
+
+			CValueProperty* pMaterialId = m_guiData->getProperty("materialId");
+			pMaterialId->setHidden(!m_gui->isEnableMaterial());
+
 			switch (dock)
 			{
 			case EGUIDock::DockFill:
