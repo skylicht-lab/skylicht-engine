@@ -40,6 +40,8 @@ namespace Skylicht
 		m_parent(NULL),
 		m_mask(NULL),
 		m_drawBorder(false),
+		m_enableMaterial(false),
+		m_materialId(0),
 		m_applyCurrentMask(NULL)
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
@@ -62,6 +64,8 @@ namespace Skylicht
 		m_parent(NULL),
 		m_mask(NULL),
 		m_drawBorder(false),
+		m_enableMaterial(false),
+		m_materialId(0),
 		m_applyCurrentMask(NULL)
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
@@ -270,8 +274,11 @@ namespace Skylicht
 		object->autoRelease(new CFloatProperty(object, "marginRight", m_guiAlign->Margin.Right));
 		object->autoRelease(new CFloatProperty(object, "marginBottom", m_guiAlign->Margin.Bottom));
 
-		// material
+		// color
 		object->autoRelease(new CColorProperty(object, "color", m_renderData->Color));
+
+		// materials
+		object->autoRelease(new CIntProperty(object, "materialId", m_materialId, 0, (int)m_materials.size()));
 
 		std::vector<std::string> materialExts = { "xml","mat" };
 		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
@@ -312,25 +319,52 @@ namespace Skylicht
 		// color
 		m_renderData->Color = object->get("color", SColor(255, 255, 255, 255));
 
+		// materials
+		m_materialId = object->get<int>("materialId", 0);
 		std::string materialFile = object->get<std::string>("material", "");
+
 		if (materialFile != m_materialFile)
 		{
 			m_materialFile = materialFile;
-			std::vector<std::string> textureFolders;
 
-			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
-				m_materialFile.c_str(),
-				true,
-				textureFolders
-			);
-
-			if (materials.size() > 0)
+			if (materialFile.empty())
 			{
-				m_renderData->Material = materials[0];
+				m_renderData->Material = NULL;
+			}
+			else
+			{
+				std::vector<std::string> textureFolders;
+
+				m_materials = CMaterialManager::getInstance()->loadMaterial(
+					m_materialFile.c_str(),
+					true,
+					textureFolders
+				);
+
+				if (m_materials.size() > 0)
+				{
+					if (m_materialId >= m_materials.size())
+						m_materialId = 0;
+
+					m_renderData->Material = m_materials[m_materialId];
+				}
+				else
+				{
+					m_renderData->Material = NULL;
+				}
 			}
 		}
 
 		notifyChanged();
+	}
+
+	void CGUIElement::setMaterialId(int id)
+	{
+		m_materialId = id;
+		if (m_materialId >= m_materials.size())
+			m_materialId = 0;
+
+		m_renderData->Material = m_materials[m_materialId];
 	}
 
 	void CGUIElement::notifyChanged()

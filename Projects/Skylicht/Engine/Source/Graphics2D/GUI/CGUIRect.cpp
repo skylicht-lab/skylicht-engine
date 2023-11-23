@@ -32,12 +32,14 @@ namespace Skylicht
 	CGUIRect::CGUIRect(CCanvas* canvas, CGUIElement* parent) :
 		CGUIElement(canvas, parent)
 	{
+		m_enableMaterial = true;
 		m_renderData->ShaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
 	}
 
 	CGUIRect::CGUIRect(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		CGUIElement(canvas, parent, rect)
 	{
+		m_enableMaterial = true;
 		m_renderData->ShaderID = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
 	}
 

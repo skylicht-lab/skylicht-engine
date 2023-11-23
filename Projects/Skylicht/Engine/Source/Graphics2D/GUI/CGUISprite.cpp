@@ -37,7 +37,7 @@ namespace Skylicht
 		m_frameSpeed(0.0f),
 		m_frameRotate(0.0f)
 	{
-
+		m_enableMaterial = true;
 	}
 
 	CGUISprite::CGUISprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame) :
@@ -48,7 +48,7 @@ namespace Skylicht
 		m_frameSpeed(0.0f),
 		m_frameRotate(0.0f)
 	{
-
+		m_enableMaterial = true;
 	}
 
 	CGUISprite::~CGUISprite()
