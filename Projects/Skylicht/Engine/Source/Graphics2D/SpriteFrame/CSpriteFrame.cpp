@@ -130,14 +130,26 @@ namespace Skylicht
 		vertices[0].TCoords.X = x1;
 		vertices[0].TCoords.Y = y1;
 
+		vertices[0].Normal.X = 0.0f;
+		vertices[0].Normal.Y = 0.0f;
+
 		vertices[1].TCoords.X = x2;
 		vertices[1].TCoords.Y = y1;
+
+		vertices[1].Normal.X = 1.0f;
+		vertices[1].Normal.Y = 0;
 
 		vertices[2].TCoords.X = x2;
 		vertices[2].TCoords.Y = y2;
 
+		vertices[2].Normal.X = 1.0f;
+		vertices[2].Normal.Y = 1.0f;
+
 		vertices[3].TCoords.X = x1;
 		vertices[3].TCoords.Y = y2;
+
+		vertices[3].Normal.X = 0.0f;
+		vertices[3].Normal.Y = 1.0f;
 	}
 
 	void SModuleOffset::getColorBuffer(video::S3DVertex* vertices, const SColor& c)

@@ -55,6 +55,7 @@ namespace Skylicht
 		}
 
 		GUI::CMenu* s_pickTextureMenu = NULL;
+		GUI::CMenu* s_pickFileMenu = NULL;
 
 		void CSerializableEditor::serializableToControl(CObjectSerializable* object, CSpaceProperty* ui, GUI::CBoxLayout* layout)
 		{
@@ -63,6 +64,12 @@ namespace Skylicht
 			{
 				s_pickTextureMenu = new GUI::CMenu(editor->getRootCanvas());
 				s_pickTextureMenu->addItem(L"Clear Texture", GUI::ESystemIcon::Close);
+			}
+
+			if (s_pickFileMenu == NULL)
+			{
+				s_pickFileMenu = new GUI::CMenu(editor->getRootCanvas());
+				s_pickFileMenu->addItem(L"Clear Resource", GUI::ESystemIcon::Close);
 			}
 
 			// add serializable data control
@@ -437,7 +444,17 @@ namespace Skylicht
 						s->notify(o);
 					};
 
-					ui->addInputFile(layout, ui->getPrettyName(value->Name), subject, value->Exts);
+					GUI::CInputResourceBox* input = ui->addInputFile(layout, ui->getPrettyName(value->Name), subject, value->Exts);
+					input->OnRightMouseClick = [&, s = subject, o = observer](GUI::CBase* button, float x, float y, bool b)
+					{
+						GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+						s_pickFileMenu->open(mousePos);
+						s_pickFileMenu->OnCommand = [&, s, o](GUI::CBase* item)
+						{
+							s->set("");
+							s->notify(NULL);
+						};
+					};
 
 					valueProperty->OnChanged = [value, subject, observer]()
 					{
@@ -470,7 +487,18 @@ namespace Skylicht
 						s->notify(o);
 					};
 
-					ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
+					GUI::CInputResourceBox* input = ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
+
+					input->OnRightMouseClick = [&, s = subject, o = observer](GUI::CBase* button, float x, float y, bool b)
+					{
+						GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+						s_pickFileMenu->open(mousePos);
+						s_pickFileMenu->OnCommand = [&, s, o](GUI::CBase* item)
+						{
+							s->set("");
+							s->notify(NULL);
+						};
+					};
 
 					valueProperty->OnChanged = [value, subject, observer]()
 					{

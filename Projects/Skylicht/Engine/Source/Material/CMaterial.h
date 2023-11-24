@@ -313,7 +313,7 @@ namespace Skylicht
 
 		void bindUniformParam();
 
-		void readTexturePath();
+		void updateSetTextureSlot();
 
 		void initDefaultValue();
 
