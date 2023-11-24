@@ -238,6 +238,24 @@ namespace Skylicht
 		}
 	}
 
+	void CMaterial::setUniformTextureWrapU(const char* name, int wrapU)
+	{
+		SUniformTexture* p = getUniformTexture(name);
+		if (p != NULL)
+		{
+			p->WrapU = wrapU;
+		}
+	}
+
+	void CMaterial::setUniformTextureWrapV(const char* name, int wrapV)
+	{
+		SUniformTexture* p = getUniformTexture(name);
+		if (p != NULL)
+		{
+			p->WrapV = wrapV;
+		}
+	}
+
 	void CMaterial::setUniformTexture(const char* name, const char* path, bool loadTexture)
 	{
 		SUniformTexture* p = getUniformTexture(name);
@@ -298,6 +316,18 @@ namespace Skylicht
 	{
 		SUniformTexture* t = getExtraUniformTexture(e, name);
 		t->Path = path;
+	}
+
+	void CMaterial::setExtraUniformTextureWrapU(SExtraParams* e, const char* name, int wrapU)
+	{
+		SUniformTexture* t = getExtraUniformTexture(e, name);
+		t->WrapU = wrapU;
+	}
+
+	void CMaterial::setExtraUniformTextureWrapV(SExtraParams* e, const char* name, int wrapV)
+	{
+		SUniformTexture* t = getExtraUniformTexture(e, name);
+		t->WrapV = wrapV;
 	}
 
 	void CMaterial::setExtraUniform(SExtraParams* e, const char* name, float* f, int floatSize)
