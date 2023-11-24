@@ -44,6 +44,7 @@ namespace Skylicht
 			CMaterial* m_materialContext;
 
 			static GUI::CMenu* s_pickTextureMenu;
+			static GUI::CMenu* s_pickFileMenu;
 			static GUI::CMenu* s_settingMaterialMenu;
 
 		public:
