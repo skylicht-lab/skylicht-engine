@@ -453,9 +453,9 @@ namespace Skylicht
 
 		// add vertices
 		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0.0f, 0.0f);
-		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 1.0f, 0.0f);
-		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 1.0f, 1.0f);
-		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, 0.0f, 1.0f);
+		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 1.0f, 0.0f, 1.0f, color, 1.0f, 0.0f);
+		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 1.0f, 1.0f, 1.0f, color, 1.0f, 1.0f);
+		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 1.0f, 1.0f, color, 0.0f, 1.0f);
 
 		// transform
 		for (int i = 0; i < 4; i++)
@@ -514,9 +514,9 @@ namespace Skylicht
 
 		// add vertices
 		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, tx1, ty1);
-		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, tx2, ty1);
-		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, tx2, ty2);
-		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, tx1, ty2);
+		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 1.0f, 0.0f, 1.0f, color, tx2, ty1);
+		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 1.0f, 1.0f, 1.0f, color, tx2, ty2);
+		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 1.0f, 1.0f, color, tx1, ty2);
 
 		// transform
 		for (int i = 0; i < 4; i++)
@@ -1389,9 +1389,9 @@ namespace Skylicht
 		m_vertices->set_used(vertexUse);
 		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
 		vertices[numVertices + 0] = S3DVertex(pos.UpperLeftCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u1, v1);
-		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u2, v1);
-		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u2, v2);
-		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 0.0f, 1.0f, color, u1, v2);
+		vertices[numVertices + 1] = S3DVertex(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y, 0.0f, 1.0f, 0.0f, 1.0f, color, u2, v1);
+		vertices[numVertices + 2] = S3DVertex(pos.LowerRightCorner.X, pos.LowerRightCorner.Y, 0.0f, 1.0f, 1.0f, 1.0f, color, u2, v2);
+		vertices[numVertices + 3] = S3DVertex(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y, 0.0f, 0.0f, 1.0f, 1.0f, color, u1, v2);
 
 		// transform
 		for (int i = 0; i < 4; i++)

@@ -794,7 +794,7 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
-		void CSpaceProperty::addInputFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value, const std::vector<std::string>& exts)
+		GUI::CInputResourceBox* CSpaceProperty::addInputFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value, const std::vector<std::string>& exts)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -803,9 +803,8 @@ namespace Skylicht
 			label->setString(name);
 			label->setTextAlignment(GUI::TextRight);
 
-			GUI::CTextBox* input = new GUI::CTextBox(layout);
+			GUI::CInputResourceBox* input = new GUI::CInputResourceBox(layout);
 			input->showIcon(GUI::ESystemIcon::File);
-			input->setEditable(false);
 
 			std::string fileName = CPath::getFileName(value->get());
 			if (fileName.size() > 0)
@@ -889,9 +888,11 @@ namespace Skylicht
 				}
 			};
 			boxLayout->endVertical();
+
+			return input;
 		}
 
-		void CSpaceProperty::addInputFolder(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value)
+		GUI::CInputResourceBox* CSpaceProperty::addInputFolder(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -900,9 +901,8 @@ namespace Skylicht
 			label->setString(name);
 			label->setTextAlignment(GUI::TextRight);
 
-			GUI::CTextBox* input = new GUI::CTextBox(layout);
+			GUI::CInputResourceBox* input = new GUI::CInputResourceBox(layout);
 			input->showIcon(GUI::ESystemIcon::Folder);
-			input->setEditable(false);
 
 			std::string fileName = CPath::getFileName(value->get());
 			if (fileName.size() > 0)
@@ -969,6 +969,8 @@ namespace Skylicht
 				}
 			};
 			boxLayout->endVertical();
+
+			return input;
 		}
 
 		GUI::CImageButton* CSpaceProperty::addInputTextureFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value)

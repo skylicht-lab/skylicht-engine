@@ -442,7 +442,7 @@ namespace Skylicht
 			m_textures[i] = textures[i];
 
 		m_manualInitMaterial = true;
-		readTexturePath();
+		updateSetTextureSlot();
 	}
 
 	void CMaterial::setTexture(int slot, ITexture* texture)
@@ -450,7 +450,7 @@ namespace Skylicht
 		m_textures[slot] = texture;
 
 		m_manualInitMaterial = true;
-		readTexturePath();
+		updateSetTextureSlot();
 	}
 
 	ITexture* CMaterial::getTexture(int slot)
@@ -1052,7 +1052,7 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterial::readTexturePath()
+	void CMaterial::updateSetTextureSlot()
 	{
 		if (m_shader == NULL)
 			return;
@@ -1074,7 +1074,6 @@ namespace Skylicht
 				ITexture* texture = m_textures[uniformTexture->TextureSlot];
 				if (texture)
 				{
-					uniformTexture->Path = texture->getName().getPath().c_str();
 					uniformTexture->Texture = texture;
 				}
 			}
