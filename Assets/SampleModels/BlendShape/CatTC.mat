@@ -2,7 +2,7 @@
 <Materials>
 	<Material name='Cat Face' shader='BuiltIn/Shader/Basic/TextureColor.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+			<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='4' wrapV='4'/>
 		</Textures>
 		<Properties>
 			<Property name='ZBuffer' value='LessEqual'/>
@@ -13,19 +13,19 @@
 		<Extras>
 			<Extra name='BuiltIn/Shader/Basic/TextureColor.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.tga'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.tga' wrapU='4' wrapV='4'/>
 				</Textures>
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/Skin.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.tga'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.tga' wrapU='4' wrapV='4'/>
 				</Textures>
 			</Extra>
 		</Extras>
 	</Material>
 	<Material name='Cat Eye Iris' shader='BuiltIn/Shader/Basic/TextureColor.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+			<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='4' wrapV='4'/>
 		</Textures>
 		<Properties>
 			<Property name='ZBuffer' value='LessEqual'/>
@@ -38,19 +38,19 @@
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/Skin.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='4' wrapV='4'/>
 				</Textures>
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/TextureColor.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='4' wrapV='4'/>
 				</Textures>
 			</Extra>
 		</Extras>
 	</Material>
 	<Material name='Cat Eye Sclera ' shader='BuiltIn/Shader/Basic/TextureColor.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+			<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='4' wrapV='4'/>
 		</Textures>
 		<Properties>
 			<Property name='ZBuffer' value='LessEqual'/>
@@ -63,12 +63,12 @@
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/Skin.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='4' wrapV='4'/>
 				</Textures>
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/TextureColor.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='4' wrapV='4'/>
 				</Textures>
 			</Extra>
 		</Extras>

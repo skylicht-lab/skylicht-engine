@@ -2,9 +2,9 @@
 <Materials>
 	<Material name='Default' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml'>
 		<Textures>
-			<Texture name='uTexAlbedo' path='wind_turbine_a.tga'/>
-			<Texture name='uTexNormal' path='wind_turbine_n.tga'/>
-			<Texture name='uTexRoughMetal' path='wind_turbine_rma.tga'/>
+			<Texture name='uTexAlbedo' path='wind_turbine_a.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexNormal' path='wind_turbine_n.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexRoughMetal' path='wind_turbine_rma.tga' wrapU='4' wrapV='4'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -19,7 +19,7 @@
 		<Extras>
 			<Extra name='BuiltIn/Shader/Basic/TextureColor.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='wind_turbine_a.tga'/>
+					<Texture name='uTexDiffuse' path='wind_turbine_a.tga' wrapU='4' wrapV='4'/>
 				</Textures>
 			</Extra>
 		</Extras>
