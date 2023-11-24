@@ -153,12 +153,13 @@ namespace Skylicht
 
 						// load texture by name
 						textw = xmlRead->getAttributeValue(L"name");
+						std::string name;
 						if (textw != NULL)
 						{
 							CStringImp::convertUnicodeToUTF8(textw, text);
-							std::string name = text;
 							if (path.empty() == false)
 							{
+								name = text;
 								if (extra == NULL)
 									material->setUniformTexture(name.c_str(), path.c_str(), folders, loadTexture);
 								else
@@ -166,18 +167,28 @@ namespace Skylicht
 							}
 						}
 
-						// load texture by uniform slot
-						textw = xmlRead->getAttributeValue(L"slot");
+						// wrapU
+						textw = xmlRead->getAttributeValue(L"wrapU");
 						if (textw != NULL)
 						{
 							CStringImp::convertUnicodeToUTF8(textw, text);
-							int slot = atoi(text);
-							const char* name = material->getUniformTextureName(slot);
-							if (name != NULL)
-							{
-								if (extra == NULL)
-									material->setUniformTexture(name, path.c_str(), folders, loadTexture);
-							}
+							int wrapU = atoi(text);
+							if (extra == NULL)
+								material->setUniformTextureWrapU(name.c_str(), wrapU);
+							else
+								material->setExtraUniformTextureWrapU(extra, name.c_str(), wrapU);
+						}
+
+						// wrapV
+						textw = xmlRead->getAttributeValue(L"wrapV");
+						if (textw != NULL)
+						{
+							CStringImp::convertUnicodeToUTF8(textw, text);
+							int wrapV = atoi(text);
+							if (extra == NULL)
+								material->setUniformTextureWrapV(name.c_str(), wrapV);
+							else
+								material->setExtraUniformTextureWrapV(extra, name.c_str(), wrapV);
 						}
 					}
 				}
@@ -331,7 +342,11 @@ namespace Skylicht
 				buffer += "\t\t<Textures>\n";
 				for (CMaterial::SUniformTexture* texture : textures)
 				{
-					sprintf(data, "\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), CPath::getRelativePath(texture->Path, relativeTextureFolder).c_str());
+					sprintf(data, "\t\t\t<Texture name='%s' path='%s' wrapU='%d' wrapV='%d'/>\n",
+						texture->Name.c_str(),
+						CPath::getRelativePath(texture->Path, relativeTextureFolder).c_str(),
+						texture->WrapU,
+						texture->WrapV);
 					buffer += data;
 				}
 				buffer += "\t\t</Textures>\n";
@@ -387,7 +402,11 @@ namespace Skylicht
 						buffer += "\t\t\t\t<Textures>\n";
 						for (CMaterial::SUniformTexture* texture : e->UniformTextures)
 						{
-							sprintf(data, "\t\t\t\t\t<Texture name='%s' path='%s'/>\n", texture->Name.c_str(), CPath::getRelativePath(texture->Path, relativeTextureFolder).c_str());
+							sprintf(data, "\t\t\t\t\t<Texture name='%s' path='%s' wrapU='%d' wrapV='%d'/>\n",
+								texture->Name.c_str(),
+								CPath::getRelativePath(texture->Path, relativeTextureFolder).c_str(),
+								texture->WrapU,
+								texture->WrapV);
 							buffer += data;
 						}
 						buffer += "\t\t\t\t</Textures>\n";

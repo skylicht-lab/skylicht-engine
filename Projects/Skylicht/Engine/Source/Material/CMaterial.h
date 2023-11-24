@@ -40,11 +40,15 @@ namespace Skylicht
 			std::string Path;
 			ITexture* Texture;
 			int TextureSlot;
+			int WrapU;
+			int WrapV;
 
 			SUniformTexture()
 			{
 				Texture = NULL;
 				TextureSlot = -1;
+				WrapU = 4;
+				WrapV = 4;
 			}
 
 			SUniformTexture* clone()
@@ -54,6 +58,8 @@ namespace Skylicht
 				c->Path = Path;
 				c->Texture = Texture;
 				c->TextureSlot = TextureSlot;
+				c->WrapU = WrapU;
+				c->WrapV = WrapV;
 				return c;
 			}
 		};
@@ -189,10 +195,14 @@ namespace Skylicht
 		void setUniformTexture(const char* name, const char* path, bool loadTexture = true);
 		void setUniformTexture(const char* name, const char* path, std::vector<std::string>& folder, bool loadTexture = true);
 		void setUniformTexture(const char* name, ITexture* texture);
+		void setUniformTextureWrapU(const char* name, int wrapU);
+		void setUniformTextureWrapV(const char* name, int wrapV);
 
 		SExtraParams* newExtra(const char* shaderPath);
 		void setExtraUniformTexture(SExtraParams* e, const char* name, const char* path);
 		void setExtraUniform(SExtraParams* e, const char* name, float* f, int floatSize);
+		void setExtraUniformTextureWrapU(SExtraParams* e, const char* name, int wrapU);
+		void setExtraUniformTextureWrapV(SExtraParams* e, const char* name, int wrapV);
 
 		inline std::vector<SUniformValue*>& getUniformParams()
 		{
