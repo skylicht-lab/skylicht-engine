@@ -144,23 +144,8 @@ if (BUILD_SDL)
 	add_definitions(-DSDL)
 endif()
 
-# skylicht bullet engine
-option(BUILD_BULLET_PHYSIC2_LIB "Build bullet physic 2" ON)
-
-if (BUILD_BULLET_PHYSIC2_LIB)
-	add_definitions(-DUSE_PHYSIC_ENGINE -DUSE_PHYSIC_RAGDOLL -DUSE_PHYSIC_VEHICLE -DUSE_BULLET_PHYSIC_ENGINE)
-	
-	# sse on window
-	if (MSVC OR CYGWIN OR MINGW)
-		add_definitions(-DBT_USE_SSE)
-	endif()
-	
-	if (MINGW)
-		add_definitions(-DBT_NO_SIMD_OPERATOR_OVERLOADS)
-		set(CMAKE_C_FLAGS " -mssse3 ${CMAKE_C_FLAGS}")
-		set(CMAKE_CXX_FLAGS " -mssse3 ${CMAKE_CXX_FLAGS}")
-	endif()
-endif()
+# bullet engine
+option(BUILD_BULLET_PHYSIC_LIB "Build bullet physic" ON)
 
 # skylicht recast navigation
 option(BUILD_RECAST_NAVIGATION_LIB "Build Recast Navigation" ON)
@@ -274,6 +259,10 @@ subdirs (Projects/Irrlicht)
 
 if (BUILD_IMGUI)
 subdirs (Projects/Imgui)
+endif()
+
+if (BUILD_BULLET_PHYSIC_LIB)
+subdirs (Projects/Bullet3)
 endif()
 
 # skylicht engine
