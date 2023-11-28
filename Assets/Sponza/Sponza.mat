@@ -2,9 +2,9 @@
 <Materials>
 	<Material name='bricks-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/spnza_bricks_a_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/spnza_bricks_a_ddn.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/spnza_bricks_a_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/spnza_bricks_a_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/spnza_bricks_a_ddn.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/spnza_bricks_a_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -20,9 +20,9 @@
 	</Material>
 	<Material name='flagpole-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_flagpole_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_flagpole_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_flagpole_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_flagpole_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -38,9 +38,9 @@
 	</Material>
 	<Material name='column_b-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_column_b_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/sponza_column_b_ddn.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_column_b_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_column_b_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/sponza_column_b_ddn.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_column_b_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -56,8 +56,8 @@
 	</Material>
 	<Material name='vase_hanging-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/vase_hanging.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/vase_hanging.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -73,9 +73,9 @@
 	</Material>
 	<Material name='column_c-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_column_c_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/sponza_column_c_ddn.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_column_c_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_column_c_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/sponza_column_c_ddn.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_column_c_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -91,10 +91,10 @@
 	</Material>
 	<Material name='Material__57-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/vase_plant.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpecGloss' path='Textures/vase_plant_spec.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexMask' path='Textures/vase_plant_mask.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/vase_plant.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpecGloss' path='Textures/vase_plant_spec.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexMask' path='Textures/vase_plant_mask.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -110,9 +110,9 @@
 	</Material>
 	<Material name='vase_round-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/vase_round.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/vase_round_ddn.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/vase_round_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/vase_round.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/vase_round_ddn.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/vase_round_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -128,9 +128,9 @@
 	</Material>
 	<Material name='column_a-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_column_a_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/sponza_column_a_ddn.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_column_a_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_column_a_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/sponza_column_a_ddn.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_column_a_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -146,8 +146,8 @@
 	</Material>
 	<Material name='vase-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/vase_dif.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/vase_ddn.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/vase_dif.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/vase_ddn.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -163,9 +163,9 @@
 	</Material>
 	<Material name='ceiling-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_ceiling_a_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_ceiling_a_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_ceiling_a_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_ceiling_a_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -181,9 +181,9 @@
 	</Material>
 	<Material name='arch-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_arch_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/sponza_arch_ddn.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_arch_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_arch_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/sponza_arch_ddn.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_arch_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -199,8 +199,8 @@
 	</Material>
 	<Material name='chain-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/chain_texture.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/chain_texture_ddn.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/chain_texture.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/chain_texture_ddn.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -216,10 +216,10 @@
 	</Material>
 	<Material name='leaf-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_thorn_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/sponza_thorn_ddn.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpecGloss' path='Textures/sponza_thorn_spec.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexMask' path='Textures/sponza_thorn_mask.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_thorn_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/sponza_thorn_ddn.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpecGloss' path='Textures/sponza_thorn_spec.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexMask' path='Textures/sponza_thorn_mask.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -235,9 +235,9 @@
 	</Material>
 	<Material name='fabric_c-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_curtain_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_curtain_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -253,9 +253,9 @@
 	</Material>
 	<Material name='fabric_d-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_fabric_blue_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_fabric_blue_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -271,8 +271,8 @@
 	</Material>
 	<Material name='roof-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_roof_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_roof_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -288,9 +288,9 @@
 	</Material>
 	<Material name='fabric_f-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_curtain_green_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_curtain_green_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -306,9 +306,9 @@
 	</Material>
 	<Material name='details-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_details_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_details_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_details_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_details_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -324,9 +324,9 @@
 	</Material>
 	<Material name='floor-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_floor_a_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_floor_a_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_floor_a_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_floor_a_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -342,8 +342,8 @@
 	</Material>
 	<Material name='Material__25-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/lion.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/lion_ddn.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/lion.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/lion_ddn.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -359,8 +359,8 @@
 	</Material>
 	<Material name='Material__298-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/background.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='Textures/background_ddn.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/background.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='Textures/background_ddn.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -376,9 +376,9 @@
 	</Material>
 	<Material name='fabric_g-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_curtain_blue_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_curtain_blue_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -394,9 +394,9 @@
 	</Material>
 	<Material name='fabric_e-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_fabric_green_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_fabric_green_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -412,9 +412,9 @@
 	</Material>
 	<Material name='fabric_a-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Textures/sponza_fabric_diff.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='Textures/sponza_fabric_diff.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexSpec' path='Textures/sponza_fabric_spec.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
@@ -430,8 +430,8 @@
 	</Material>
 	<Material name='Material__47-effect' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='BuiltIn/Textures/NullTexture.png' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='BuiltIn/Textures/NullTexture.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='BuiltIn/Textures/NullNormalMap.png' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
