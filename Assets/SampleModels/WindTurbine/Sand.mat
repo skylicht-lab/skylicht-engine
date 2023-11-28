@@ -2,8 +2,8 @@
 <Materials>
 	<Material name='Sand' shader='BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='sand_a.tga' wrapU='4' wrapV='4'/>
-			<Texture name='uTexNormal' path='sand_n.tga' wrapU='4' wrapV='4'/>
+			<Texture name='uTexDiffuse' path='sand_a.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexNormal' path='sand_n.tga' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uColor' floatSize='4' floatValue='0.945098,0.917647,0.898039,1.000000'/>

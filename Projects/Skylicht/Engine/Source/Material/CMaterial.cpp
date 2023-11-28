@@ -1041,8 +1041,12 @@ namespace Skylicht
 				int textureSlot = uniformTexture->TextureSlot;
 				if (textureSlot >= 0 && textureSlot < MATERIAL_MAX_TEXTURES)
 				{
-					mat.setTexture(textureSlot, m_uniformTextures[i]->Texture);
-					m_textures[textureSlot] = m_uniformTextures[i]->Texture;
+					mat.setTexture(textureSlot, uniformTexture->Texture);
+
+					mat.TextureLayer[textureSlot].TextureWrapU = uniformTexture->WrapU;
+					mat.TextureLayer[textureSlot].TextureWrapV = uniformTexture->WrapV;
+
+					m_textures[textureSlot] = uniformTexture->Texture;
 				}
 			}
 		}

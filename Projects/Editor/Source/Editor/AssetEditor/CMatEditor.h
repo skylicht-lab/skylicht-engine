@@ -66,6 +66,8 @@ namespace Skylicht
 
 			static void addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects, std::function<void()> onChange);
 
+			static void addUniformTextureWrapUV(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, std::vector<ISubject*> subjects, std::function<void()> onChange);
+
 			DECLARE_GETTYPENAME(CMatEditor);
 		};
 	}
