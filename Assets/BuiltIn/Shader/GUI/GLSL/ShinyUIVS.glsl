@@ -15,6 +15,6 @@ void main(void)
 {
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
 	vTexCoord1 = vec2(inNormal.x + uTime.x, inNormal.y);
-	vColor = inColor;
+	vColor = inColor/ 255.0;
 	gl_Position = uMvpMatrix * inPosition;
 }
