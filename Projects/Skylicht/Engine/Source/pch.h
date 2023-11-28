@@ -90,4 +90,6 @@ namespace Skylicht
 	extern IVideoDriver* getVideoDriver();
 
 	extern float getTimeStep();
+
+	extern float getTotalTime();
 }

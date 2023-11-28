@@ -65,6 +65,7 @@ namespace Skylicht
 	IrrlichtDevice* g_device = NULL;
 	IVideoDriver* g_video = NULL;
 	float g_timestep = 0.0f;
+	float g_totalTime = 0.0f;
 
 	void initSkylicht(IrrlichtDevice* device, bool server)
 	{
@@ -166,4 +167,13 @@ namespace Skylicht
 		g_timestep = timestep;
 	}
 
+	float getTotalTime()
+	{
+		return g_totalTime;
+	}
+
+	void setTotalTime(float t)
+	{
+		g_totalTime = t;
+	}
 }
