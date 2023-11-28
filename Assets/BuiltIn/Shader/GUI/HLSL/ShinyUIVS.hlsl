@@ -18,6 +18,7 @@ cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
 	float4 uUVScale;
+	float4 uTime;
 };
 
 VS_OUTPUT main(VS_INPUT input)
@@ -26,7 +27,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 	output.pos = mul(input.pos, uMvpMatrix);
 	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
-	output.tex1 = float2(input.norm.x, input.norm.y);
+	output.tex1 = float2(input.norm.x + uTime.x, input.norm.y);
 	output.color = input.color;	
 	return output;
 }

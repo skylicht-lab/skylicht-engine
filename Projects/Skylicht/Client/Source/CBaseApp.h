@@ -52,12 +52,15 @@ namespace Skylicht
 		SExposedVideoData m_videoData;
 
 		float m_timeStep;
+
+		float m_totalTime;
+
 		int m_limitFPS;
 
 		bool m_showFPS;
 
 		float m_clearScreenTime;
-		
+
 		bool m_enableRender;
 
 		bool m_enableRunWhenPause;
