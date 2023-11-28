@@ -2,8 +2,8 @@
 <Materials>
 	<Material name='Cat Face' shader='BuiltIn/Shader/Toon/SkinToon.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Cat_D_7.tga'/>
-			<Texture name='uTexRamp' path='BuiltIn/Textures/TCP2Ramp.png'/>
+			<Texture name='uTexDiffuse' path='Cat_D_7.tga' wrapU='0' wrapV='0'/>
+			<Texture name='uTexRamp' path='BuiltIn/Textures/TCP2Ramp.png' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
@@ -21,20 +21,20 @@
 		<Extras>
 			<Extra name='BuiltIn/Shader/Basic/TextureColor.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.tga'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.tga' wrapU='0' wrapV='0'/>
 				</Textures>
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/Skin.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.tga'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.tga' wrapU='0' wrapV='0'/>
 				</Textures>
 			</Extra>
 		</Extras>
 	</Material>
 	<Material name='Cat Eye Iris' shader='BuiltIn/Shader/Toon/SkinToon.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
-			<Texture name='uTexRamp' path='BuiltIn/Textures/TCP2Ramp.png'/>
+			<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexRamp' path='BuiltIn/Textures/TCP2Ramp.png' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
@@ -54,20 +54,20 @@
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/Skin.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
 				</Textures>
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/TextureColor.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
 				</Textures>
 			</Extra>
 		</Extras>
 	</Material>
 	<Material name='Cat Eye Sclera ' shader='BuiltIn/Shader/Toon/SkinToon.xml'>
 		<Textures>
-			<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
-			<Texture name='uTexRamp' path='BuiltIn/Textures/TCP2Ramp.png'/>
+			<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
+			<Texture name='uTexRamp' path='BuiltIn/Textures/TCP2Ramp.png' wrapU='0' wrapV='0'/>
 		</Textures>
 		<Params>
 			<Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
@@ -87,12 +87,12 @@
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/Skin.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
 				</Textures>
 			</Extra>
 			<Extra name='BuiltIn/Shader/Basic/TextureColor.xml'/>
 				<Textures>
-					<Texture name='uTexDiffuse' path='Cat_D_7.png'/>
+					<Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
 				</Textures>
 			</Extra>
 		</Extras>

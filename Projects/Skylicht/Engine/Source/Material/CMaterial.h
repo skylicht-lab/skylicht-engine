@@ -47,8 +47,8 @@ namespace Skylicht
 			{
 				Texture = NULL;
 				TextureSlot = -1;
-				WrapU = 4;
-				WrapV = 4;
+				WrapU = 0; // Repeat
+				WrapV = 0; // Repeat
 			}
 
 			SUniformTexture* clone()

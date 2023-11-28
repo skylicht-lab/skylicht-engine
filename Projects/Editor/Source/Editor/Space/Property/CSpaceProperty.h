@@ -113,6 +113,8 @@ namespace Skylicht
 
 			void addColorPicker(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<SColor>* value);
 
+			GUI::CBoxLayout* addChildGroup(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool defaultExpand = false);
+
 			GUI::CInputResourceBox* addInputFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value, const std::vector<std::string>& exts);
 
 			GUI::CInputResourceBox* addInputFolder(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value);

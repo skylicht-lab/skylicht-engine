@@ -794,6 +794,23 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
+		GUI::CBoxLayout* CSpaceProperty::addChildGroup(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool defaultExpand)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(layout);
+			colapsible->dock(GUI::EPosition::Top);
+			colapsible->getHeader()->setLabel(name);
+			colapsible->getHeader()->enableDrawBackground(false);
+			colapsible->setExpand(defaultExpand);
+
+			GUI::CBoxLayout* childBoxLayout = new GUI::CBoxLayout(colapsible);
+
+			boxLayout->endVertical();
+
+			return childBoxLayout;
+		}
+
 		GUI::CInputResourceBox* CSpaceProperty::addInputFile(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::string>* value, const std::vector<std::string>& exts)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();

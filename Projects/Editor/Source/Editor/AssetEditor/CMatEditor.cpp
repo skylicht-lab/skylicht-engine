@@ -42,6 +42,8 @@ namespace Skylicht
 		GUI::CMenu* CMatEditor::s_pickTextureMenu = NULL;
 		GUI::CMenu* CMatEditor::s_settingMaterialMenu = NULL;
 
+		std::vector<std::wstring> s_listUVWrapValue;
+
 		CMatEditor::CMatEditor() :
 			m_renameContext(NULL),
 			m_materialContext(NULL),
@@ -124,6 +126,18 @@ namespace Skylicht
 
 		void CMatEditor::initGUI(const char* path, CSpaceProperty* ui)
 		{
+			if (s_listUVWrapValue.size() == 0)
+			{
+				s_listUVWrapValue.push_back(L"Repeat");
+				s_listUVWrapValue.push_back(L"Clamp");
+				s_listUVWrapValue.push_back(L"Clamp To Edge");
+				s_listUVWrapValue.push_back(L"Clamp To Border");
+				s_listUVWrapValue.push_back(L"Mirror");
+				s_listUVWrapValue.push_back(L"Mirror clamp");
+				s_listUVWrapValue.push_back(L"Mirror clamp to edge");
+				s_listUVWrapValue.push_back(L"Mirror clamp to border");
+			}
+
 			CEditor* editor = CEditor::getInstance();
 			if (s_pickTextureMenu == NULL)
 			{
@@ -173,7 +187,7 @@ namespace Skylicht
 					GUI::CMenuItem* item = s_settingMaterialMenu->getItemByPath(L"Delete");
 					if (item)
 					{
-						if (material == m_materials[0])
+						if (m_materials.size() == 1)
 						{
 							// do not enable delete first item
 							item->setDisabled(true);
@@ -293,17 +307,23 @@ namespace Skylicht
 				}
 			}
 
-			layout->addSpace(20.0f);
-			ui->addLabel(layout, L"Material Property");
+			GUI::CBoxLayout* childLayout = ui->addChildGroup(layout, L"UV Wrap");
+			for (int i = 0; i < numUI; i++)
+			{
+				CShader::SUniformUI* uniformUI = shader->getUniformUI(i);
+				addUniformTextureWrapUV(ui, childLayout, material, shader, uniformUI, subjects, onChange);
+			}
+
+			childLayout = ui->addChildGroup(layout, L"Material Property");
 
 			CSubject<bool>* backfaceCull = new CSubject<bool>(material->isBackfaceCulling());
-			ui->addCheckBox(layout, L"Backface culling", backfaceCull);
+			ui->addCheckBox(childLayout, L"Backface culling", backfaceCull);
 
 			CSubject<bool>* frontfaceCull = new CSubject<bool>(material->isFrontfaceCulling());
-			ui->addCheckBox(layout, L"Front culling", frontfaceCull);
+			ui->addCheckBox(childLayout, L"Front culling", frontfaceCull);
 
 			CSubject<bool>* zWrite = new CSubject<bool>(material->isZWrite());
-			ui->addCheckBox(layout, L"Z Write", zWrite);
+			ui->addCheckBox(childLayout, L"Z Write", zWrite);
 
 			backfaceCull->addObserver(new CObserver([material](ISubject* subject, IObserver* from) {
 				CSubject<bool>* value = (CSubject<bool>*)subject;
@@ -341,7 +361,7 @@ namespace Skylicht
 			zFunc.push_back(L"LessEqual");
 			zFunc.push_back(L"Greater");
 
-			ui->addComboBox(layout, L"ZTestFunction", zTestValue, zFunc);
+			ui->addComboBox(childLayout, L"ZTestFunction", zTestValue, zFunc);
 
 			zTestValue->addObserver(new CObserver([material](ISubject* subject, IObserver* from) {
 				CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
@@ -364,6 +384,60 @@ namespace Skylicht
 			subjects.push_back(zTestValue);
 		}
 
+		void CMatEditor::addUniformTextureWrapUV(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, std::vector<ISubject*> subjects, std::function<void()> onChange)
+		{
+			if (uniformUI->ControlType == CShader::UIGroup)
+			{
+				for (int i = 0, n = (int)uniformUI->Childs.size(); i < n; i++)
+				{
+					if (uniformUI->Childs[i]->UniformInfo != NULL)
+						addUniformTextureWrapUV(ui, layout, material, shader, uniformUI->Childs[i], subjects, onChange);
+				}
+			}
+			else if (uniformUI->ControlType == CShader::UITexture)
+			{
+				CMaterial::SUniformTexture* uniformTexture = material->getUniformTexture(uniformUI->Name.c_str());
+
+				CSubject<std::wstring>* subjectWrapU = new CSubject<std::wstring>(s_listUVWrapValue[uniformTexture->WrapU]);
+				CSubject<std::wstring>* subjectWrapV = new CSubject<std::wstring>(s_listUVWrapValue[uniformTexture->WrapV]);
+				subjects.push_back(subjectWrapU);
+				subjects.push_back(subjectWrapV);
+
+				std::wstring name = CStringImp::convertUTF8ToUnicode(uniformUI->Name.c_str());
+				std::wstring nameU = name + L" WrapU";
+				std::wstring nameV = L" WrapV";
+
+				ui->addComboBox(layout, nameU.c_str(), subjectWrapU, s_listUVWrapValue);
+				ui->addComboBox(layout, nameV.c_str(), subjectWrapV, s_listUVWrapValue);
+
+				subjectWrapU->addObserver(new CObserver([uniformTexture, onChange](ISubject* subject, IObserver* from) {
+					CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
+					for (int i = 0, n = (int)s_listUVWrapValue.size(); i < n; i++)
+					{
+						if (s_listUVWrapValue[i] == value->get())
+						{
+							uniformTexture->WrapU = i;
+							onChange();
+							break;
+						}
+					}
+					}), true);
+
+				subjectWrapV->addObserver(new CObserver([uniformTexture, onChange](ISubject* subject, IObserver* from) {
+					CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
+					for (int i = 0, n = (int)s_listUVWrapValue.size(); i < n; i++)
+					{
+						if (s_listUVWrapValue[i] == value->get())
+						{
+							uniformTexture->WrapV = i;
+							onChange();
+							break;
+						}
+					}
+					}), true);
+			}
+		}
+
 		void CMatEditor::addUniformUI(CSpaceProperty* ui, GUI::CBoxLayout* layout, CMaterial* material, CShader* shader, CShader::SUniformUI* uniformUI, int tab, std::vector<ISubject*> subjects, std::function<void()> onChange)
 		{
 			wchar_t text[512];
@@ -371,12 +445,12 @@ namespace Skylicht
 
 			if (uniformUI->ControlType == CShader::UIGroup)
 			{
-				ui->addLabel(layout, text);
+				GUI::CBoxLayout* childLayout = ui->addChildGroup(layout, text, true);
 
 				for (int i = 0, n = (int)uniformUI->Childs.size(); i < n; i++)
 				{
 					if (uniformUI->Childs[i]->UniformInfo != NULL)
-						addUniformUI(ui, layout, material, shader, uniformUI->Childs[i], tab + 1, subjects, onChange);
+						addUniformUI(ui, childLayout, material, shader, uniformUI->Childs[i], tab + 1, subjects, onChange);
 				}
 			}
 			else if (uniformUI->ControlType == CShader::UIColor)
@@ -818,6 +892,10 @@ namespace Skylicht
 						onChange();
 					};
 				};
+
+				// GUI::CBoxLayout* group = ui->addChildGroup(layout, L"WrapUV");
+				// ui->addLabel(group, L"WrapU");
+				// ui->addLabel(group, L"WrapV");
 			}
 		}
 	}
