@@ -41,6 +41,7 @@ namespace Skylicht
 		m_device(NULL),
 		m_driver(NULL),
 		m_timeStep(1.0f),
+		m_totalTime(0.0f),
 		m_limitFPS(-1),
 		m_showFPS(false),
 		m_clearColor(255, 0, 0, 0),
@@ -55,7 +56,7 @@ namespace Skylicht
 #if defined(_WIN32)
 		m_enableRunWhenPause = true;
 #endif
-	}
+}
 
 	CBaseApp::~CBaseApp()
 	{

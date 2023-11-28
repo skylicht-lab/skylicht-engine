@@ -31,8 +31,7 @@ namespace irr
 
 namespace Skylicht
 {
-
-	void initSkylicht(IrrlichtDevice *device, bool server = false);
+	void initSkylicht(IrrlichtDevice* device, bool server = false);
 
 	void releaseSkylicht();
 
@@ -46,4 +45,7 @@ namespace Skylicht
 
 	void setTimeStep(float timestep);
 
+	float getTotalTime();
+
+	void setTotalTime(float t);
 }

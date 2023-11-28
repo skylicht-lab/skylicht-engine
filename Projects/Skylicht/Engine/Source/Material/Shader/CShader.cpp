@@ -139,6 +139,7 @@ namespace Skylicht
 			"PARTICLE_ORIENTATION_UP",
 			"PARTICLE_ORIENTATION_NORMAL",
 			"LIGHTMAP_INDEX",
+			"TIME",
 			"NULL"
 		};
 
@@ -962,6 +963,24 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform.UniformShaderID, timestep, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
 			else
 				matRender->setShaderVariable(uniform.UniformShaderID, timestep, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
+		}
+		break;
+		case TIME:
+		{
+			float totalTime = getTotalTime();
+			float timeSec = totalTime / 1000.0f;
+			timeSec = fmodf(timeSec, 4.0f);
+
+			float time[4] = { 0 };
+			time[0] = timeSec;
+			time[1] = timeSec * 2.0f;
+			time[2] = timeSec * 3.0f;
+			time[3] = timeSec * 4.0f;
+
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform.UniformShaderID, time, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform.UniformShaderID, time, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		case DEFAULT_VALUE:
