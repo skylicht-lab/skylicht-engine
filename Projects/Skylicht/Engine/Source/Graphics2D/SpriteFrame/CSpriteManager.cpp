@@ -79,6 +79,11 @@ namespace Skylicht
 
 			m_spriteList.push_back(p);
 		}
+		else
+		{
+			delete sprite;
+			sprite = NULL;
+		}
 
 		return sprite;
 	}

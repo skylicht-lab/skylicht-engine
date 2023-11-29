@@ -113,6 +113,7 @@ namespace Skylicht
 					// create material
 					material = new CMaterial(name.c_str(), shader.c_str());
 					material->setMaterialPath(filename);
+					material->updateShaderParams();
 
 					extra = NULL;
 
