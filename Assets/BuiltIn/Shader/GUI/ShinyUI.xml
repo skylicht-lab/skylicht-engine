@@ -3,7 +3,8 @@
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
-			<uniform name="uTime" type="TIME" value="0.0, 0.0, 0.0, 0.0" float="4"/>
+			<uniform name="uTime" type="TIME" value="6.0, 0.0, 0.0, 0.0" float="4"/>
+			<uniform name="uData" type="MATERIAL_PARAM" valueIndex="2" value="-1.0, 1.0, 1.0, 0.0" float="4"/>
 		</vs>
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
@@ -21,6 +22,7 @@
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
+			<ui control="UIFloat4" name="uData" elementName="Speed;Offset;Width"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/ShinyUIVS.glsl" fs="GLSL/ShinyUIFS.glsl"/>

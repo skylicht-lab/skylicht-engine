@@ -969,7 +969,12 @@ namespace Skylicht
 		{
 			float totalTime = getTotalTime();
 			float timeSec = totalTime / 1000.0f;
-			timeSec = fmodf(timeSec, 4.0f);
+
+			float defaultLimit = 4.0f;
+			if (uniform.Value[0] > 0)
+				defaultLimit = uniform.Value[0];
+
+			timeSec = fmodf(timeSec, defaultLimit);
 
 			float time[4] = { 0 };
 			time[0] = timeSec;
