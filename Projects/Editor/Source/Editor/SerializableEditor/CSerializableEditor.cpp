@@ -1050,19 +1050,23 @@ namespace Skylicht
 							std::string name = CPath::getFileName(shortPath);
 							std::string meta = shortPath + ".meta";
 
+							bool errorSprite = true;
+
 							CFrameSource frameSource;
 							if (CSerializableLoader::loadSerializable(meta.c_str(), &frameSource))
 							{
-								// update value
-								value->set(shortPath.c_str());
-								value->setGUID(frameSource.getGUID());
-								value->setSprite(frameSource.SpritePath.getString());
-								value->setSpriteGUID(frameSource.SpriteGUID.getString());
-
 								// show on property
 								CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite(frameSource.SpritePath.getString());
 								if (spriteFrame)
 								{
+									errorSprite = false;
+
+									// update value
+									value->set(shortPath.c_str());
+									value->setGUID(frameSource.getGUID());
+									value->setSprite(frameSource.SpritePath.getString());
+									value->setSpriteGUID(frameSource.SpriteGUID.getString());
+
 									SFrame* frame = spriteFrame->getFrameById(frameSource.getGUID());
 									if (frame)
 									{
@@ -1083,7 +1087,8 @@ namespace Skylicht
 								// show on canvas
 								onUpdateValue(object);
 							}
-							else
+
+							if (errorSprite)
 							{
 								CEditor* editor = CEditor::getInstance();
 
