@@ -253,6 +253,21 @@ namespace Skylicht
 			m_exportSpriteDialog = NULL;
 		}
 
+		void CEditor::closeProperty()
+		{
+			CSpaceProperty* spaceProperty = (CSpaceProperty*)getWorkspaceByName(L"Property");
+
+			if (spaceProperty == NULL)
+				return;
+
+			// Clear old ui
+			spaceProperty->clearAllGroup();
+
+			// Tabable
+			spaceProperty->getWindow()->getCanvas()->TabableGroup.clear();
+			spaceProperty->getWindow()->forceUpdateLayout();
+		}
+
 		void CEditor::initImportGUI(bool fromWatcher)
 		{
 			m_importDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);

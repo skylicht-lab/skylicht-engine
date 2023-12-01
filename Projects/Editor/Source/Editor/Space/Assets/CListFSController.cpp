@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 #include "GUI/Theme/CThemeConfig.h"
 #include "Editor/SpaceController/CAssetPropertyController.h"
+#include "Editor/CEditor.h"
 
 namespace Skylicht
 {
@@ -82,7 +83,7 @@ namespace Skylicht
 			}
 		}
 
-		void CListFSController::scrollAndSelectPath(const char* path)
+		GUI::CBase* CListFSController::scrollAndSelectPath(const char* path)
 		{
 			std::list<GUI::CListRowItem*> items = m_listFS->getAllItems();
 			for (GUI::CListRowItem* item : items)
@@ -95,9 +96,12 @@ namespace Skylicht
 					m_listFS->invalidate();
 					m_listFS->recurseLayout();
 					m_listFS->scrollToItem(item);
-					return;
+
+					return item;
 				}
 			}
+
+			return NULL;
 		}
 
 		void CListFSController::OnPress(GUI::CBase* item)
@@ -190,11 +194,16 @@ namespace Skylicht
 				return;
 			}
 
+			// fix property window, that will save an old path asset
+			CEditor::getInstance()->closeProperty();
+
 			if (m_assetManager->renameAsset(path.c_str(), newName.c_str()))
 			{
 				m_renameItem = NULL;
 				refresh();
-				scrollAndSelectPath(newPath.c_str());
+				GUI::CBase* item = scrollAndSelectPath(newPath.c_str());
+				if (item)
+					OnPress(item);
 			}
 			else
 			{
@@ -407,6 +416,7 @@ namespace Skylicht
 			if (m_assetManager->newFolderAsset(newPath.c_str()))
 			{
 				m_newFolderItem = NULL;
+
 				refresh();
 				scrollAndSelectPath(newPath.c_str());
 
