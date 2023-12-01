@@ -97,7 +97,7 @@ namespace Skylicht
 
 			void removePath(const char* path);
 
-			void scrollAndSelectPath(const char* path);
+			GUI::CBase* scrollAndSelectPath(const char* path);
 
 			void newFolder(const char* parent);
 

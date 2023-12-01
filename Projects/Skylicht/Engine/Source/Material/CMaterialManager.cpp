@@ -440,6 +440,9 @@ namespace Skylicht
 		}
 
 		buffer += "</Materials>";
+
+		CStringImp::replaceString(buffer, std::string("\t"), std::string("    "));
+
 		writeFile->write(buffer.c_str(), (u32)buffer.size());
 		writeFile->drop();
 
@@ -558,6 +561,9 @@ namespace Skylicht
 		}
 
 		buffer += "</Materials>";
+
+		CStringImp::replaceString(buffer, std::string("\t"), std::string("    "));
+
 		writeFile->write(buffer.c_str(), (u32)buffer.size());
 		writeFile->drop();
 	}
