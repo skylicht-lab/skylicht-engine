@@ -783,6 +783,7 @@ namespace Skylicht
 		float right = m->W - anchorRight;
 
 		// [0]
+		if (anchorLeft > 0)
 		{
 			// position
 			core::rectf rect;
@@ -819,6 +820,7 @@ namespace Skylicht
 		}
 
 		// [2]
+		if (anchorRight > 0)
 		{
 			// position
 			core::rectf rect;
@@ -931,6 +933,7 @@ namespace Skylicht
 		float bottom = m->H - anchorBottom;
 
 		// [0]
+		if (anchorTop > 0)
 		{
 			// position
 			core::rectf rect;
@@ -967,6 +970,7 @@ namespace Skylicht
 		}
 
 		// [2]
+		if (anchorBottom > 0)
 		{
 			// position
 			core::rectf rect;
@@ -1082,6 +1086,7 @@ namespace Skylicht
 		float bottom = m->H - anchorBottom;
 
 		// [0]
+		if (anchorLeft > 0 && anchorTop > 0)
 		{
 			// position
 			core::rectf rect;
@@ -1100,6 +1105,7 @@ namespace Skylicht
 		}
 
 		// [1]
+		if (anchorTop > 0)
 		{
 			// position
 			core::rectf rect;
@@ -1118,6 +1124,7 @@ namespace Skylicht
 		}
 
 		// [2]
+		if (anchorRight > 0 && anchorTop > 0)
 		{
 			// position
 			core::rectf rect;
@@ -1136,6 +1143,7 @@ namespace Skylicht
 		}
 
 		// [3]
+		if (anchorLeft > 0)
 		{
 			// position
 			core::rectf rect;
@@ -1172,6 +1180,7 @@ namespace Skylicht
 		}
 
 		// [5]
+		if (anchorRight > 0)
 		{
 			// position
 			core::rectf rect;
@@ -1190,6 +1199,7 @@ namespace Skylicht
 		}
 
 		// [6]
+		if (anchorLeft > 0 && anchorBottom > 0)
 		{
 			// position
 			core::rectf rect;
@@ -1208,6 +1218,7 @@ namespace Skylicht
 		}
 
 		// [7]
+		if (anchorBottom > 0)
 		{
 			// position
 			core::rectf rect;
@@ -1226,6 +1237,7 @@ namespace Skylicht
 		}
 
 		// [8]
+		if (anchorRight > 0)
 		{
 			// position
 			core::rectf rect;
