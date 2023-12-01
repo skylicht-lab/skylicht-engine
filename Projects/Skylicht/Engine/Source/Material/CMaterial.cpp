@@ -233,7 +233,6 @@ namespace Skylicht
 		SUniformTexture* p = getUniformTexture(name);
 		if (p != NULL && texture != NULL)
 		{
-			p->Path = texture->getName().getPath().c_str();
 			p->Texture = texture;
 		}
 	}

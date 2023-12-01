@@ -92,6 +92,8 @@ namespace Skylicht
 
 			void closeExportSpriteDialog();
 
+			void closeProperty();
+
 			void saveLayout(const std::string& data);
 
 			void pause();
