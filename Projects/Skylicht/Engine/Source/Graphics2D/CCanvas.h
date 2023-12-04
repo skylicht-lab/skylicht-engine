@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/CGUIRect.h"
 #include "GUI/CGUIMask.h"
 #include "GUI/CGUILayout.h"
+#include "GUI/CGUICustomSizeSprite.h"
 
 #include "Entity/CEntityPrefab.h"
 #include "Entity/CEntityManager.h"
@@ -167,6 +168,14 @@ namespace Skylicht
 		CGUILayout* createLayout(const core::rectf& r);
 
 		CGUILayout* createLayout(CGUIElement* e, const core::rectf& r);
+
+		CGUICustomSizeSprite* createCustomSizeSprite(SFrame* frame);
+
+		CGUICustomSizeSprite* createCustomSizeSprite(const core::rectf& r, SFrame* frame);
+
+		CGUICustomSizeSprite* createCustomSizeSprite(CGUIElement* e, SFrame* frame);
+
+		CGUICustomSizeSprite* createCustomSizeSprite(CGUIElement* e, const core::rectf& r, SFrame* frame);
 
 		const core::matrix4& getRenderWorldTransform()
 		{

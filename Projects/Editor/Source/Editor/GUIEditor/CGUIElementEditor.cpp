@@ -37,6 +37,7 @@ namespace Skylicht
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUISprite);
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIText);
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUILayout);
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUICustomSizeSprite);
 
 		CGUIElementEditor::CGUIElementEditor()
 		{

@@ -35,7 +35,6 @@ namespace Skylicht
 	public:
 		enum AnchorType
 		{
-			Normal,
 			AnchorAll,
 			AnchorLeftRight,
 			AnchorTopBottom
