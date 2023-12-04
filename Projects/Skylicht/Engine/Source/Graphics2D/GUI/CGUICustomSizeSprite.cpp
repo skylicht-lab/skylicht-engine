@@ -32,7 +32,11 @@ namespace Skylicht
 	CGUICustomSizeSprite::CGUICustomSizeSprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame) :
 		CGUIElement(canvas, parent),
 		m_frame(frame),
-		m_anchorType(CGUICustomSizeSprite::Normal)
+		m_anchorType(CGUICustomSizeSprite::AnchorAll),
+		m_anchorLeft(15.0f),
+		m_anchorRight(15.0f),
+		m_anchorTop(15.0f),
+		m_anchorBottom(15.0f)
 	{
 		m_enableMaterial = true;
 	}
@@ -40,7 +44,11 @@ namespace Skylicht
 	CGUICustomSizeSprite::CGUICustomSizeSprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame) :
 		CGUIElement(canvas, parent, rect),
 		m_frame(frame),
-		m_anchorType(CGUICustomSizeSprite::Normal)
+		m_anchorType(CGUICustomSizeSprite::AnchorAll),
+		m_anchorLeft(15.0f),
+		m_anchorRight(15.0f),
+		m_anchorTop(15.0f),
+		m_anchorBottom(15.0f)
 	{
 		m_enableMaterial = true;
 	}
@@ -57,24 +65,25 @@ namespace Skylicht
 
 	void CGUICustomSizeSprite::render(CCamera* camera)
 	{
-		if (m_frame != NULL)
+		if (m_frame != NULL && m_frame->ModuleOffset.size() > 0)
 		{
 			CGraphics2D* g = CGraphics2D::getInstance();
 
+			SFrame* frame = m_frame->ModuleOffset[0].Frame;
+			float w = (float)frame->getWidth();
+			float h = (float)frame->getHeight();
+
 			switch (m_anchorType)
 			{
-			case CGUICustomSizeSprite::Normal:
-				g->addFrameBatch(m_frame, getColor(), m_transform->World, getShaderID(), getMaterial());
-				break;
 			case CGUICustomSizeSprite::AnchorAll:
 				g->addModuleBatch(&m_frame->ModuleOffset[0],
 					getColor(),
 					m_transform->World,
 					getRect(),
 					m_anchorLeft,
-					m_anchorRight,
+					w - m_anchorRight,
 					m_anchorTop,
-					m_anchorBottom,
+					h - m_anchorBottom,
 					getShaderID(),
 					getMaterial());
 				break;
@@ -84,7 +93,7 @@ namespace Skylicht
 					m_transform->World,
 					getRect(),
 					m_anchorLeft,
-					m_anchorRight,
+					w - m_anchorRight,
 					getShaderID(),
 					getMaterial());
 				break;
@@ -94,7 +103,7 @@ namespace Skylicht
 					m_transform->World,
 					getRect(),
 					m_anchorTop,
-					m_anchorBottom,
+					h - m_anchorBottom,
 					getShaderID(),
 					getMaterial());
 				break;
@@ -132,7 +141,6 @@ namespace Skylicht
 		object->autoRelease(frame);
 
 		CEnumProperty<AnchorType>* anchorType = new CEnumProperty<AnchorType>(object, "anchorType", m_anchorType);
-		anchorType->addEnumString("Normal", CGUICustomSizeSprite::Normal);
 		anchorType->addEnumString("Anchor all", CGUICustomSizeSprite::AnchorAll);
 		anchorType->addEnumString("Anchor left right", CGUICustomSizeSprite::AnchorLeftRight);
 		anchorType->addEnumString("Anchor left right", CGUICustomSizeSprite::AnchorTopBottom);
@@ -150,7 +158,7 @@ namespace Skylicht
 	{
 		CFrameSourceProperty* frame = dynamic_cast<CFrameSourceProperty*>(object->getProperty("spriteSrc"));
 
-		m_anchorType = object->get<AnchorType>("anchorType", CGUICustomSizeSprite::Normal);
+		m_anchorType = object->get<AnchorType>("anchorType", CGUICustomSizeSprite::AnchorAll);
 		m_anchorLeft = object->get<float>("anchorLeft", 0.0f);
 		m_anchorRight = object->get<float>("anchorRight", 0.0f);
 		m_anchorTop = object->get<float>("anchorTop", 0.0f);
