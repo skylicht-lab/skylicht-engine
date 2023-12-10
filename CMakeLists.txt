@@ -147,6 +147,10 @@ endif()
 # bullet engine
 option(BUILD_BULLET_PHYSIC_LIB "Build bullet physic" ON)
 
+if (BUILD_RECAST_NAVIGATION_LIB)
+	add_definitions(-DUSE_BULLET_PHYSIC_ENGINE)
+endif()
+
 # skylicht recast navigation
 option(BUILD_RECAST_NAVIGATION_LIB "Build Recast Navigation" ON)
 
