@@ -6,7 +6,12 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Bullet3/src
 )
+
+if (BUILD_BULLET_PHYSIC_LIB)
+include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Bullet3/src)
+endif()
 
 file(GLOB_RECURSE skylicht_physics 
 	./Source/*.cpp 
@@ -29,4 +34,13 @@ elseif(MSVC)
 target_link_libraries(Physics Engine System)
 elseif(CYGWIN OR MINGW)
 target_link_libraries(Physics Engine System)
+endif()
+
+if (BUILD_BULLET_PHYSIC_LIB)
+target_link_libraries(Physics BulletInverseDynamics BulletSoftBody BulletCollision BulletDynamics LinearMath Bullet3Common)
+
+IF(BUILD_BULLET3)
+target_link_libraries(Physics Bullet3OpenCL Bullet2FileLoader Bullet3Dynamics Bullet3Collision Bullet3Geometry )
+ENDIF(BUILD_BULLET3)
+
 endif()
