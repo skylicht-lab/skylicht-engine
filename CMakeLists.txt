@@ -147,7 +147,7 @@ endif()
 # bullet engine
 option(BUILD_BULLET_PHYSIC_LIB "Build bullet physic" ON)
 
-if (BUILD_RECAST_NAVIGATION_LIB)
+if (BUILD_BULLET_PHYSIC_LIB)
 	add_definitions(-DUSE_BULLET_PHYSIC_ENGINE)
 endif()
 
