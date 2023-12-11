@@ -5,9 +5,10 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Collision/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source	
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source	
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/GUI/Source
 )
 
 if (BUILD_DEBUG_VLD)
@@ -32,7 +33,7 @@ target_precompiled_header(Client ./Source/pch.cpp ${skylicht_client_source})
 
 set_target_properties(Client PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-target_link_libraries(Client Engine Components Collision Physics Lightmapper)
+target_link_libraries(Client Engine Components Collision Physics Lightmapper GUI)
 
 if (BUILD_SKYLICHT_NETWORK)
 	target_link_libraries(Client Network)
