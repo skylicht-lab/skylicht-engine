@@ -278,6 +278,7 @@ subdirs (Projects/Skylicht/Physics)
 subdirs (Projects/Skylicht/Lightmapper)
 subdirs (Projects/Skylicht/Audio)
 subdirs (Projects/Skylicht/Crypto)
+subdirs (Projects/Skylicht/GUI)
 
 if (BUILD_SKYLICHT_NETWORK)
 subdirs (Projects/Skylicht/Network)
