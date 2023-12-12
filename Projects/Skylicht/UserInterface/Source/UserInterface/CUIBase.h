@@ -24,29 +24,53 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "EventManager/CEventManager.h"
+#include "Graphics2D/GUI/CGUIElement.h"
+#include "Graphics2D/CCanvas.h"
 
 namespace Skylicht
 {
 	namespace UI
 	{
-		class CUIConatiner :
-			public CComponentSystem,
-			public IEventProcessor
+		class CUIContainer;
+
+		class CUIBase
 		{
 		protected:
+			CUIContainer* m_container;
 
-			std::string m_name;
+			CGUIElement* m_element;
 
-			bool m_enable;
+			core::vector3df m_rectTransform[4];
 
 		public:
-			CUIConatiner();
+			std::function<void(float, float)> OnPointerHover;
+			std::function<void(float, float)> OnPointerOut;
+			std::function<void(float, float)> OnPointerDown;
+			std::function<void(float, float)> OnPointerUp;
 
-			virtual ~CUIConatiner();
+			std::function<void()> OnPressed;
 
-			virtual bool OnProcessEvent(const SEvent& event);
+		public:
+			CUIBase(CUIContainer* container, CGUIElement* element);
+
+			virtual ~CUIBase();
+
+			inline CGUIElement* getElement()
+			{
+				return m_element;
+			}
+
+			core::vector3df* getRectTransform();
+
+			virtual void onPointerHover(float pointerX, float pointerY);
+
+			virtual void onPointerOut(float pointerX, float pointerY);
+
+			virtual void onPointerDown(float pointerX, float pointerY);
+
+			virtual void onPointerUp(float pointerX, float pointerY);
+
+			virtual void onPressed();
 		};
 	}
 }

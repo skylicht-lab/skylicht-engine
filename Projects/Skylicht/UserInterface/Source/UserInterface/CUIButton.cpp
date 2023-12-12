@@ -22,31 +22,22 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
-#include "EventManager/CEventManager.h"
+#include "pch.h"
+#include "CUIButton.h"
 
 namespace Skylicht
 {
 	namespace UI
 	{
-		class CUIConatiner :
-			public CComponentSystem,
-			public IEventProcessor
+		CUIButton::CUIButton(CUIContainer* container, CGUIElement* element) :
+			CUIBase(container, element)
 		{
-		protected:
 
-			std::string m_name;
+		}
 
-			bool m_enable;
+		CUIButton::~CUIButton()
+		{
 
-		public:
-			CUIConatiner();
-
-			virtual ~CUIConatiner();
-
-			virtual bool OnProcessEvent(const SEvent& event);
-		};
+		}
 	}
 }
