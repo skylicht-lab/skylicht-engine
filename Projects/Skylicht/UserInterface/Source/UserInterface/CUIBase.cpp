@@ -50,7 +50,7 @@ namespace Skylicht
 			// get last camera, that render this button
 			CCamera* camera = canvas->getRenderCamera();
 			if (camera == NULL)
-				return false;
+				return m_rectTransform;
 
 			const core::matrix4& world = canvas->getRenderWorldTransform();
 			const core::matrix4& elementTranform = m_element->getAbsoluteTransform();
