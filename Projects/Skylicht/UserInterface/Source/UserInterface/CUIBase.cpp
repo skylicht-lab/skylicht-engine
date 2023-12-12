@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CUIBase.h"
+#include "CUIContainer.h"
 
 namespace Skylicht
 {
@@ -33,12 +34,12 @@ namespace Skylicht
 			m_container(container),
 			m_element(element)
 		{
-
+			m_container->addChild(this);
 		}
 
 		CUIBase::~CUIBase()
 		{
-
+			m_container->removeChild(this);
 		}
 
 		core::vector3df* CUIBase::getRectTransform()

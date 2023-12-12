@@ -27,13 +27,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Components/CComponentSystem.h"
 #include "EventManager/CEventManager.h"
 
+#include "CUIBase.h"
+
 namespace Skylicht
 {
 	namespace UI
 	{
-		class CUIConatiner :
-			public CComponentSystem,
-			public IEventProcessor
+		class CUIContainer : public IEventProcessor
 		{
 		protected:
 
@@ -41,10 +41,17 @@ namespace Skylicht
 
 			bool m_enable;
 
-		public:
-			CUIConatiner();
+			std::vector<CUIBase*> m_arrayUIObjects;
+			core::array<CUIBase*> m_raycastUIObjects;
 
-			virtual ~CUIConatiner();
+		public:
+			CUIContainer();
+
+			virtual ~CUIContainer();
+
+			void addChild(CUIBase* base);
+
+			bool removeChild(CUIBase* base);
 
 			virtual bool OnProcessEvent(const SEvent& event);
 		};
