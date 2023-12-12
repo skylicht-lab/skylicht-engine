@@ -25,17 +25,30 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Components/CComponentSystem.h"
+#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
-	namespace GUI
+	namespace UI
 	{
-		class CGUI : public CComponentSystem
+		class CUIConatiner :
+			public CComponentSystem,
+			public IEventProcessor
 		{
-		public:
-			CGUI();
+		protected:
 
-			virtual ~CGUI();
+			typedef std::pair<std::string, IEventReceiver*> eventType;
+			std::vector<eventType> m_eventReceivers;
+
+			std::string m_name;
+			bool m_enable;
+
+		public:
+			CUIConatiner();
+
+			virtual ~CUIConatiner();
+
+			virtual bool OnProcessEvent(const SEvent& event);
 		};
 	}
 }

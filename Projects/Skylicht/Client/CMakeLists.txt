@@ -33,7 +33,7 @@ target_precompiled_header(Client ./Source/pch.cpp ${skylicht_client_source})
 
 set_target_properties(Client PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-target_link_libraries(Client Engine Components Collision Physics Lightmapper GUI)
+target_link_libraries(Client Engine Components Collision Physics Lightmapper UserInterface)
 
 if (BUILD_SKYLICHT_NETWORK)
 	target_link_libraries(Client Network)
