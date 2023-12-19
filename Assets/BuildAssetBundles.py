@@ -2,6 +2,7 @@ import zipfile
 import os
 
 compressExt = ["xml", "ttf", "otf", "txt",
+               "spritedata",
                "mat",
                "hlsl", "glsl",
                "png", "jpg",
@@ -61,6 +62,9 @@ def compress(dirName):
     zipETCFile = None
     for root, dirs, files in os.walk(dirName):
         for file in files:
+            if file.find("!") >= 0 or root.find("!") >= 0:
+                print("Skip: %s - %s" % (root, file))
+                continue
             if needCompress(file):
                 if zipCommonFile == None:
                     zipCommonFile = zipfile.ZipFile(

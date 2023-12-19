@@ -92,6 +92,8 @@ namespace Skylicht
 
 		protected:
 
+			void fixCleanPath(char* path);
+
 			void exportImage(SImage* image, const char* path);
 
 			void exportSpriteData();

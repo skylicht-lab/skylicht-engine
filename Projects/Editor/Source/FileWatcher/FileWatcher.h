@@ -81,6 +81,7 @@ namespace FW
 	{
 		enum Action
 		{
+			Unknown = 0,
 			/// Sent when a file is created or renamed
 			Add = 1,
 			/// Sent when a file is deleted or renamed
