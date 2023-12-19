@@ -255,7 +255,7 @@ namespace FW
 	//--------
 	void FileWatcherWin32::handleAction(WatchStruct* watch, const String& filename, unsigned long action)
 	{
-		Action fwAction;
+		Action fwAction = Actions::Unknown;
 
 		switch (action)
 		{
@@ -271,6 +271,9 @@ namespace FW
 			fwAction = Actions::Modified;
 			break;
 		};
+
+		if (fwAction == Actions::Unknown)
+			return;
 
 		watch->mFileWatchListener->handleFileAction(watch->mWatchid, watch->mDirName, filename, fwAction);
 	}
