@@ -34,7 +34,7 @@ namespace Skylicht
 			CObjectSerializable("SpriteExportSettings"),
 			GUID(this, "guid", ""),
 			Width(this, "width", 2048),
-			Height(this, "geight", 2048),
+			Height(this, "height", 2048),
 			Alpha(this, "alpha", true),
 			ImagesFolder("imagesFolder", this)
 		{

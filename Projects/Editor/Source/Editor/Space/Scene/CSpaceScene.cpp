@@ -206,64 +206,64 @@ namespace Skylicht
 			m_view->OnResize = BIND_LISTENER(&CSpaceScene::onRenderResize, this);
 
 			m_view->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
-			{
-				if (data->Name == "ListFSItem")
 				{
-					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-					bool isFolder = rowItem->getTagBool();
-					if (isFolder)
-						return false;
-
-					std::string path = rowItem->getTagString();
-					std::string fileExt = CPath::getFileNameExt(path);
-					fileExt = CStringImp::toLower(fileExt);
-					if (fileExt == "dae" ||
-						fileExt == "obj" ||
-						fileExt == "fbx" ||
-						fileExt == "smesh")
+					if (data->Name == "ListFSItem")
 					{
-						return true;
-					}
-				}
-				return false;
-			};
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						bool isFolder = rowItem->getTagBool();
+						if (isFolder)
+							return false;
 
-			m_view->OnDrop = [&](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				if (data->Name == "ListFSItem")
-				{
-					GUI::SPoint viewPoint = m_view->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-
-					core::line3df ray = CProjective::getViewRay(
-						m_editorCamera,
-						(float)viewPoint.X, (float)viewPoint.Y,
-						m_sceneRect.getWidth(),
-						m_sceneRect.getHeight()
-					);
-
-					core::vector3df out;
-					core::plane3df p;
-					p.setPlane(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f);
-					if (p.getIntersectionWithLimitedLine(ray.start, ray.end, out))
-					{
-						CSceneController* sceneController = CSceneController::getInstance();
-
-						CGameObject* targetObject = sceneController->createEmptyObject(NULL);
-						targetObject->getTransformEuler()->setPosition(out);
-
-						if (targetObject != NULL)
+						std::string path = rowItem->getTagString();
+						std::string fileExt = CPath::getFileNameExt(path);
+						fileExt = CStringImp::toLower(fileExt);
+						if (fileExt == "dae" ||
+							fileExt == "obj" ||
+							fileExt == "fbx" ||
+							fileExt == "smesh")
 						{
-							GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-							std::string path = rowItem->getTagString();
-
-							sceneController->createResourceComponent(path, targetObject);
-							CHierachyNode* node = sceneController->selectOnHierachy(targetObject);
-							sceneController->onSelectNode(node, true);
-							sceneController->updateTreeNode(targetObject);
+							return true;
 						}
 					}
-				}
-			};
+					return false;
+				};
+
+			m_view->OnDrop = [&](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					if (data->Name == "ListFSItem")
+					{
+						GUI::SPoint viewPoint = m_view->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+
+						core::line3df ray = CProjective::getViewRay(
+							m_editorCamera,
+							(float)viewPoint.X, (float)viewPoint.Y,
+							m_sceneRect.getWidth(),
+							m_sceneRect.getHeight()
+						);
+
+						core::vector3df out;
+						core::plane3df p;
+						p.setPlane(core::vector3df(0.0f, 1.0f, 0.0f), 0.0f);
+						if (p.getIntersectionWithLimitedLine(ray.start, ray.end, out))
+						{
+							CSceneController* sceneController = CSceneController::getInstance();
+
+							CGameObject* targetObject = sceneController->createEmptyObject(NULL);
+							targetObject->getTransformEuler()->setPosition(out);
+
+							if (targetObject != NULL)
+							{
+								GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+								std::string path = rowItem->getTagString();
+
+								sceneController->createResourceComponent(path, targetObject);
+								CHierachyNode* node = sceneController->selectOnHierachy(targetObject);
+								sceneController->onSelectNode(node, true);
+								sceneController->updateTreeNode(targetObject);
+							}
+						}
+					}
+				};
 
 			GUI::SDimension size = window->getSize();
 			initRenderPipeline(size.Width, size.Height);
@@ -352,9 +352,11 @@ namespace Skylicht
 			CCanvas* canvas = guiCanvas->addComponent<CCanvas>();
 			canvas->IsInEditor = true;
 
+			/*
 			CGUIRect* rect = canvas->createRect(SColor(255, 0, 0, 0));
 			rect->setDock(EGUIDock::DockFill);
 			rect->setName("Canvas");
+			*/
 
 			CGUIElement* root = canvas->getRootElement();
 			root->setDock(EGUIDock::NoDock);

@@ -77,10 +77,22 @@ namespace Skylicht
 			m_guiCanvas = guiCanvas->getComponent<CCanvas>();
 
 			CGUIElement* root = m_guiCanvas->getRootElement();
-			root->invalidate();
+			CGUIElement* fullRect;
 
-			CGUIElement* fullRect = root->getChilds()[0];
-			fullRect->invalidate();
+			if (root->getChilds().size() == 0)
+			{
+				fullRect = m_guiCanvas->createRect(SColor(255, 0, 0, 0));
+				fullRect->setDock(EGUIDock::DockFill);
+				fullRect->setName("Canvas");
+			}
+			else
+			{
+				fullRect = root->getChilds()[0];
+				fullRect->invalidate();
+			}
+
+			root->setDock(EGUIDock::NoDock);
+			root->setRect(core::rectf(0.0f, 0.0f, 1920.0f, 1080.0f));
 
 			m_rootNode = new CGUIHierachyNode(NULL);
 			m_rootNode->setTagData(fullRect, CGUIHierachyNode::Canvas);
