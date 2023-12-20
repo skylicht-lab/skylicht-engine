@@ -245,7 +245,8 @@ namespace Skylicht
 			buffer += "\t<images>\n";
 			for (SImage* image : images)
 			{
-				sprintf(data, "\t\t<page id=\"%d\" file=\"%s\"/>\n", image->ID, image->Path.c_str());
+				std::string imagePath = CPath::getFileName(image->Path);
+				sprintf(data, "\t\t<page id=\"%d\" file=\"%s\"/>\n", image->ID, imagePath.c_str());
 				buffer += data;
 			}
 			buffer += "\t</images>\n";
