@@ -226,7 +226,8 @@ namespace Skylicht
 
 		void CGUITransformGizmos::refresh()
 		{
-
+			CGUIHandles::getInstance()->end();
+			m_selectID = "";
 		}
 
 		void CGUITransformGizmos::onNotify(ISubject* subject, IObserver* from)
