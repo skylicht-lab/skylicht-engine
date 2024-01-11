@@ -149,6 +149,8 @@ namespace Skylicht
 
 		void CSpaceGUIDesign::refresh()
 		{
+			m_gizmos->refresh();
+
 			CGUIDesignController::getInstance()->refresh();
 		}
 

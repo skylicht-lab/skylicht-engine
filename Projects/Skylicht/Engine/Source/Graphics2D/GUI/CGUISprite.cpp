@@ -35,7 +35,10 @@ namespace Skylicht
 		m_animationTime(0),
 		m_autoRotate(false),
 		m_frameSpeed(0.0f),
-		m_frameRotate(0.0f)
+		m_frameRotate(0.0f),
+		m_isCenter(false),
+		m_defaultOffsetX(0.0f),
+		m_defaultOffsetY(0.0f)
 	{
 		m_enableMaterial = true;
 	}
@@ -46,7 +49,10 @@ namespace Skylicht
 		m_animationTime(0),
 		m_autoRotate(false),
 		m_frameSpeed(0.0f),
-		m_frameRotate(0.0f)
+		m_frameRotate(0.0f),
+		m_isCenter(false),
+		m_defaultOffsetX(0.0f),
+		m_defaultOffsetY(0.0f)
 	{
 		m_enableMaterial = true;
 	}
@@ -89,6 +95,18 @@ namespace Skylicht
 		CGUIElement::render(camera);
 	}
 
+	const core::rectf CGUISprite::getNativeRect()
+	{
+		core::rectf r = core::rectf(core::vector2df(0.0f, 0.0f), core::dimension2df(getWidth(), getHeight()));
+
+		if (m_frame != NULL)
+		{
+			r.LowerRightCorner.X = r.UpperLeftCorner.X + m_frame->getWidth();
+			r.LowerRightCorner.Y = r.UpperLeftCorner.Y + m_frame->getHeight();
+		}
+		return r;
+	}
+
 	void CGUISprite::setFrame(SFrame* frame)
 	{
 		m_frame = frame;
@@ -107,8 +125,25 @@ namespace Skylicht
 	{
 		if (m_frame)
 		{
+			if (!m_isCenter)
+			{
+				m_defaultOffsetX = m_frame->ModuleOffset[0].OffsetX;
+				m_defaultOffsetY = m_frame->ModuleOffset[0].OffsetY;
+				m_isCenter = true;
+			}
+
 			m_frame->ModuleOffset[0].OffsetX = -((float)m_frame->BoudingRect.getWidth() * 0.5f);
 			m_frame->ModuleOffset[0].OffsetY = -((float)m_frame->BoudingRect.getHeight() * 0.5f);
+		}
+	}
+
+	void CGUISprite::setAlignModuleDefault()
+	{
+		if (m_isCenter)
+		{
+			m_frame->ModuleOffset[0].OffsetX = m_defaultOffsetX;
+			m_frame->ModuleOffset[0].OffsetY = m_defaultOffsetY;
+			m_isCenter = false;
 		}
 	}
 
@@ -129,8 +164,10 @@ namespace Skylicht
 		frame->setGUID(m_guid.c_str());
 		frame->setSprite(m_sprite.c_str());
 		frame->setSpriteGUID(m_spriteId.c_str());
-
 		object->autoRelease(frame);
+
+		object->autoRelease(new CBoolProperty(object, "centerModule", m_isCenter));
+
 		return object;
 	}
 
@@ -138,6 +175,8 @@ namespace Skylicht
 	{
 		CFrameSourceProperty* frame = dynamic_cast<CFrameSourceProperty*>(object->getProperty("spriteSrc"));
 		CGUIElement::loadSerializable(object);
+
+		bool isCenter = object->get("centerModule", false);
 
 		if (frame != NULL)
 		{
@@ -161,5 +200,10 @@ namespace Skylicht
 				}
 			}
 		}
+
+		if (isCenter)
+			setAlignCenterModule();
+		else
+			setAlignModuleDefault();
 	}
 }

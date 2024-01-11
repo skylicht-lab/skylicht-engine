@@ -183,6 +183,11 @@ namespace Skylicht
 		m_childs.clear();
 	}
 
+	const core::rectf CGUIElement::getNativeRect()
+	{
+		return getRect();
+	}
+
 	void CGUIElement::update(CCamera* camera)
 	{
 
