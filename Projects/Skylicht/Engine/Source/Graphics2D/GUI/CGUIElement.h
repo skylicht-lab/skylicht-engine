@@ -151,6 +151,8 @@ namespace Skylicht
 			return m_guiTransform->getRect();
 		}
 
+		virtual const core::rectf getNativeRect();
+
 		inline int getDepth()
 		{
 			return m_transform->Depth;

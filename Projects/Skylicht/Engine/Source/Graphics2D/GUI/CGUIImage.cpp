@@ -67,6 +67,18 @@ namespace Skylicht
 		CGUIElement::render(camera);
 	}
 
+	const core::rectf CGUIImage::getNativeRect()
+	{
+		core::rectf r = core::rectf(core::vector2df(0.0f, 0.0f), core::dimension2df(getWidth(), getHeight()));
+		if (m_image != NULL)
+		{
+			core::dimension2du size = m_image->getSize();
+			r.LowerRightCorner.X = r.UpperLeftCorner.X + size.Width;
+			r.LowerRightCorner.Y = r.UpperLeftCorner.Y + size.Height;
+		}
+		return r;
+	}
+
 	void CGUIImage::setImage(ITexture* texture)
 	{
 		m_image = texture;

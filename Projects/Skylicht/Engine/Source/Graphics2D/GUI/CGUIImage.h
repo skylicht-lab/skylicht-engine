@@ -49,6 +49,8 @@ namespace Skylicht
 
 		virtual void render(CCamera* camera);
 
+		virtual const core::rectf getNativeRect();
+
 		void setImage(ITexture* texture);
 
 		inline ITexture* getImage()

@@ -41,6 +41,10 @@ namespace Skylicht
 		float m_frameSpeed;
 		float m_animationTime;
 
+		bool m_isCenter;
+		float m_defaultOffsetX;
+		float m_defaultOffsetY;
+
 		std::string m_guid;
 		std::string m_frameName;
 		std::string m_sprite;
@@ -57,11 +61,15 @@ namespace Skylicht
 
 		virtual void render(CCamera* camera);
 
+		virtual const core::rectf getNativeRect();
+
 		void setFrame(SFrame* frame);
 
 		void setAutoRotate(bool rotate, float rotateAngle, float framePerSec);
 
 		void setAlignCenterModule();
+
+		void setAlignModuleDefault();
 
 		void setOffsetModule(float x, float y);
 
