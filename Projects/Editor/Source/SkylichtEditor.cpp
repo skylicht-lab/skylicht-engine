@@ -19,6 +19,11 @@
 #include "HttpRequest/CHttpRequest.h"
 #endif
 
+#if defined(MACOS)
+// Generated in CMakeLists.txt
+#include "ProjectPath.h"
+#endif
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SkylichtEditor* app = new SkylichtEditor();
@@ -29,6 +34,10 @@ SkylichtEditor::SkylichtEditor() :
 	m_editor(NULL),
 	m_editorState(Startup)
 {
+#if defined(MACOS)
+    getIrrlichtDevice()->getFileSystem()->changeWorkingDirectoryTo(PROJECT_PATH);
+#endif
+    
 #if defined(HAVE_SKYLICHT_NETWORK)
 	CHttpRequest::globalInit();
 #endif

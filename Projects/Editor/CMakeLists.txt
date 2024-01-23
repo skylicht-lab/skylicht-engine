@@ -106,6 +106,12 @@ if (BUILD_MACOS)
 	list (APPEND application_source ${platform_mac_source})
 
 	setup_project_group("${platform_mac_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+ 
+    # Generate header source path
+    set(path_content "#define PROJECT_PATH \"${SKYLICHT_ENGINE_SOURCE_DIR}/Assets\"")
+    file(WRITE ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Editor/Source/ProjectPath.h ${path_content})
+    
+    list (APPEND application_source ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Editor/Source/ProjectPath.h)
 endif()
 	
 if (BUILD_DEBUG_VLD)
@@ -178,14 +184,11 @@ elseif (MSVC OR CYGWIN OR MINGW)
 		${template_path}/Platforms/Win32/Skylicht.rc
 	)
 elseif (BUILD_MACOS)
-	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
-
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
 	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
 
 	add_executable(SkylichtEditor 
-		${application_source} 
-		${resources_files}
+		${application_source}
 		${dylib_files}
 	)
 	
@@ -207,12 +210,6 @@ elseif (BUILD_MACOS)
 	target_link_libraries(SkylichtEditor "-framework Cocoa")
 		
 	message(STATUS "- Setup project: SkylichtEditor")
-	foreach(res_file ${resources_files})
-		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
-		message(STATUS "  - Add resources: ${res_path}")
-		set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
-		source_group("Bin" FILES "${res_file}")
-	endforeach()
 
 	foreach(lib_file ${dylib_files})
 		set_property(SOURCE ${lib_file} PROPERTY MACOSX_PACKAGE_LOCATION "Frameworks")
