@@ -409,6 +409,19 @@ bool OSWindow::popEvent(Event *event)
     }
 }
 
+bool OSWindow::getEvent(Event *event)
+{
+    if (mEvents.size() > 0 && event)
+    {
+        *event = mEvents.front();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void OSWindow::pushEvent(Event event)
 {
     switch (event.Type)
@@ -427,6 +440,9 @@ void OSWindow::pushEvent(Event event)
 
     mEvents.push_back(event);
 
+    if (OnEvents != nullptr)
+        OnEvents();
+    
 #if DEBUG_EVENTS
     PrintEvent(event);
 #endif

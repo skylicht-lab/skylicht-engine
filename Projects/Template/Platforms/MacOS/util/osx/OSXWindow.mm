@@ -478,6 +478,11 @@ static MouseButton TranslateMouseButton(NSInteger button)
     return YES;
 }
 
+-(BOOL)acceptsFirstMouse:(NSEvent *)event
+{
+    return YES;
+}
+
 // Handle mouse events from the NSResponder protocol
 - (float)translateMouseY:(float)y
 {
@@ -674,7 +679,7 @@ bool OSXWindow::initializeImpl(const std::string &name, int width, int height)
 
     [mWindow setContentView:mView];
     [mWindow setTitle:[NSString stringWithUTF8String:name.c_str()]];
-    [mWindow setAcceptsMouseMovedEvents:YES];
+    [mWindow setAcceptsMouseMovedEvents:YES];  
     [mWindow center];
 
     [NSApp activateIgnoringOtherApps:YES];

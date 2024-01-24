@@ -45,6 +45,7 @@ bool SkylichtApplication::initialize()
     g_device = createDevice(video::EDT_OPENGLES, dimension2d<u32>(w, h), 32, false, false, false, g_mainApp);
     
     g_mainApp->initApplication(g_device);
+    
     return true;
 }
 
@@ -251,6 +252,18 @@ void SkylichtApplication::onWheel(const Event::MouseWheelEvent &wheelEvent)
         event.MouseInput.Wheel = 1.0f;
     else
         event.MouseInput.Wheel = -1.0f;
+    
+    IrrlichtDevice *dev  = getIrrlichtDevice();
+    if (dev)
+        dev->postEventFromUser(event);
+}
+
+void SkylichtApplication::onResized(int width, int height)
+{
+    irr::SEvent event;
+    event.EventType = irr::EET_GAME_RESIZE;
+    event.UserEvent.UserData1 = (s32)width;
+    event.UserEvent.UserData2 = (s32)height;
     
     IrrlichtDevice *dev  = getIrrlichtDevice();
     if (dev)

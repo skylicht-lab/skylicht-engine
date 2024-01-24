@@ -563,6 +563,8 @@ namespace Skylicht
 			initWorkspace(console, console->getCaption());
 			initWorkspace(property, property->getCaption());
 			initWorkspace(hierarchy, hierarchy->getCaption());
+            initWorkspace(guiHierarchy, guiHierarchy->getCaption());
+            initWorkspace(guiDesign, guiDesign->getCaption());
 		}
 
 		CSpace* CEditor::initWorkspace(GUI::CWindow* window, const std::wstring& workspace)
