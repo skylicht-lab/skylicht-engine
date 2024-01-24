@@ -214,13 +214,31 @@ int AngleApplication::run()
     mTimer.start();
     double prevTime = 0.0;
 
+    // process resized event
+    mOSWindow->OnEvents = [&](){
+        Event event;
+        
+        // check resized event
+        mOSWindow->getEvent(&event);
+        if (event.Type == Event::EVENT_RESIZED)
+        {
+            onResized((int)event.Size.Width, (int)event.Size.Height);
+            
+            draw();
+            swap();
+            
+            // pop this event
+            mOSWindow->popEvent(&event);
+        }
+    };
+    
     while (mRunning)
     {
         double elapsedTime = mTimer.getElapsedCpuTime();
         double deltaTime   = elapsedTime - prevTime;
 
         step(static_cast<float>(deltaTime), elapsedTime);
-
+        
         // Clear events that the application did not process from this frame
         Event event;
         while (popEvent(&event))
@@ -249,7 +267,6 @@ int AngleApplication::run()
                 case Event::EVENT_MOUSE_WHEEL_MOVED:
                     onWheel(event.MouseWheel);
                     break;
-
                 default:
                     break;
             }
@@ -264,7 +281,7 @@ int AngleApplication::run()
         swap();
 
         mOSWindow->messageLoop();
-
+        
         prevTime = elapsedTime;
 
         mFrameCount++;
@@ -319,6 +336,11 @@ void AngleApplication::onMouseButtonRelease(const Event::MouseButtonEvent &mouse
 }
 
 void AngleApplication::onWheel(const Event::MouseWheelEvent &wheelEvent)
+{
+    // Default no-op.
+}
+
+void AngleApplication::onResized(int width, int height)
 {
     // Default no-op.
 }

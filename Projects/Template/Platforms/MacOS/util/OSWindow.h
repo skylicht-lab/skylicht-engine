@@ -57,6 +57,8 @@ class ANGLE_UTIL_EXPORT OSWindow
     virtual void messageLoop() = 0;
 
     bool popEvent(Event *event);
+    bool getEvent(Event *event);
+    
     virtual void pushEvent(Event event);
 
     virtual void setMousePosition(int x, int y)        = 0;
@@ -75,6 +77,8 @@ class ANGLE_UTIL_EXPORT OSWindow
 
     void ignoreSizeEvents() { mIgnoreSizeEvents = true; }
 
+    std::function<void()> OnEvents;
+    
   protected:
     OSWindow();
     virtual ~OSWindow();
@@ -87,7 +91,7 @@ class ANGLE_UTIL_EXPORT OSWindow
     int mHeight;
 
     std::list<Event> mEvents;
-
+    
     bool mValid;
     bool mIgnoreSizeEvents;
 };

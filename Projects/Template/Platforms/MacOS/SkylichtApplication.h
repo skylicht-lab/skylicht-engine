@@ -55,5 +55,7 @@ public:
     
     virtual void onWheel(const Event::MouseWheelEvent &wheelEvent);
     
+    virtual void onResized(int width, int height);
+    
     void createKeyMap();
 };
