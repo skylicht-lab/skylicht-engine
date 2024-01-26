@@ -28,7 +28,7 @@ class Event
     struct KeyEvent
     {
         Angle::Key Code;
-        char Char;
+        unsigned int Char;
         bool Alt;
         bool Control;
         bool Shift;
