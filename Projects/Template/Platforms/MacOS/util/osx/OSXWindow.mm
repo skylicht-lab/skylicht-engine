@@ -586,6 +586,48 @@ static MouseButton TranslateMouseButton(NSInteger button)
     mWindow->pushEvent(event);
 }
 
+- (unsigned int)getChar:(NSEvent*)nsEvent
+{
+    NSString *str;
+    unsigned int c,mchar;
+    const unsigned char *cStr;
+    BOOL skipCommand;
+
+    str = [nsEvent characters];
+    if ((str != nil) && ([str length] > 0))
+    {
+        mchar = 0;
+        c = [str characterAtIndex:0];
+        mchar = c;
+            
+        {
+            // workaround for period character
+            if (c == 0x2E)
+            {
+                mchar = '.';
+            }
+            else if (c == 127)
+            {
+                // backspace
+                mchar = '\b';
+            }
+            else
+            {
+                cStr = (unsigned char *)[str cStringUsingEncoding:NSWindowsCP1252StringEncoding];
+                if (cStr != NULL && strlen((char*)cStr) > 0)
+                {
+                    mchar = cStr[0];
+                }
+                else
+                {
+                    mchar = 0;
+                }
+            }
+        }
+    }
+    return mchar;
+}
+
 // Handle key events from the NSResponder protocol
 - (void)keyDown:(NSEvent *)nsEvent
 {
@@ -593,6 +635,7 @@ static MouseButton TranslateMouseButton(NSInteger button)
     Event event;
     event.Type     = Event::EVENT_KEY_PRESSED;
     event.Key.Code = NSCodeToKey([nsEvent keyCode]);
+    event.Key.Char = [self getChar:nsEvent];
     AddNSKeyStateToEvent(&event, [nsEvent modifierFlags]);
     mWindow->pushEvent(event);
 }
@@ -602,6 +645,7 @@ static MouseButton TranslateMouseButton(NSInteger button)
     Event event;
     event.Type     = Event::EVENT_KEY_RELEASED;
     event.Key.Code = NSCodeToKey([nsEvent keyCode]);
+    event.Key.Char = [self getChar:nsEvent];
     AddNSKeyStateToEvent(&event, [nsEvent modifierFlags]);
     mWindow->pushEvent(event);
 }
