@@ -4,6 +4,16 @@
 
 #include "SkylichtApplication.h"
 
+SkylichtApplication *g_osxApp = NULL;
+
+void exitOSXApp()
+{
+    if (g_osxApp != NULL)
+    {
+        g_osxApp->exit();
+    }
+}
+
 using namespace irr::core;
 using namespace irr::scene;
 using namespace irr::video;
@@ -30,6 +40,8 @@ SkylichtApplication::SkylichtApplication(int argc, char **argv)
     g_mainApp->setParams(params);
     
     createKeyMap();
+    
+    g_osxApp = this;
 }
 
 SkylichtApplication::~SkylichtApplication()
@@ -42,7 +54,19 @@ bool SkylichtApplication::initialize()
     int w = getWindow()->getWidth();
     int h = getWindow()->getHeight();
 
-    g_device = createDevice(video::EDT_OPENGLES, dimension2d<u32>(w, h), 32, false, false, false, g_mainApp);
+    OSWindow* window = getWindow();
+    
+    SIrrlichtCreationParameters p;
+    p.DriverType = video::EDT_OPENGLES;
+    p.WindowSize = dimension2d<u32>(w, h);
+    p.Bits = (u8)32;
+    p.Fullscreen = false;
+    p.Stencilbuffer = false;
+    p.Vsync = false;
+    p.EventReceiver = g_mainApp;
+    p.WindowId = window->getNativeOSWindow();
+    
+    g_device = createDeviceEx(p);
     
     g_mainApp->initApplication(g_device);
     

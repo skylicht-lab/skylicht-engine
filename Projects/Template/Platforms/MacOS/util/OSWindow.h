@@ -79,6 +79,8 @@ class ANGLE_UTIL_EXPORT OSWindow
 
     std::function<void()> OnEvents;
     
+    virtual void* getNativeOSWindow() { return NULL; }
+    
   protected:
     OSWindow();
     virtual ~OSWindow();

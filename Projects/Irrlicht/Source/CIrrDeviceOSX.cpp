@@ -27,6 +27,16 @@ namespace irr
 	}
 }
 
+extern void OSXSetWindow(void* window);
+extern void OSXSetDefaultCaption();
+extern void OSXSetWindowCaption(const wchar_t* caption);
+extern void OSXClose();
+extern void OSXSetResizable(bool resize);
+extern void OSXMinimizeWindow();
+extern void OSXMaximizeWindow();
+extern void OSXRestoreWindow();
+extern void OSXGetWindowPosition(int& x, int &y);
+
 namespace irr
 {
 
@@ -45,6 +55,9 @@ CIrrDeviceOSX::CIrrDeviceOSX(const SIrrlichtCreationParameters& param)
 		createGUIAndScene();
 
 	Initialized = true;
+    
+    OSXSetWindow(param.WindowId);
+    OSXSetDefaultCaption();
 }
 
 
@@ -115,6 +128,7 @@ void CIrrDeviceOSX::sleep(u32 timeMs, bool pauseTimer)
 
 void CIrrDeviceOSX::setWindowCaption(const wchar_t* text)
 {
+    OSXSetWindowCaption(text);
 }
 
 bool CIrrDeviceOSX::present(video::IImage* surface, void* windowId, core::rect<s32>* srcClip)
@@ -139,32 +153,39 @@ bool CIrrDeviceOSX::isWindowMinimized() const
 
 void CIrrDeviceOSX::closeDevice()
 {
+    OSXClose();
 }
 
 void CIrrDeviceOSX::setResizable(bool resize)
 {
+    OSXSetResizable(resize);
 }
 
 void CIrrDeviceOSX::minimizeWindow()
 {
+    OSXMinimizeWindow();
 }
 
 void CIrrDeviceOSX::maximizeWindow()
 {
+    OSXMaximizeWindow();
 }
 
 void CIrrDeviceOSX::restoreWindow()
 {
+    OSXRestoreWindow();
 }
 
 core::position2di CIrrDeviceOSX::getWindowPosition()
 {
-	return core::position2di(0, 0);
+    int x, y;
+    OSXGetWindowPosition(x, y);
+	return core::position2di(x, y);
 }
 
 E_DEVICE_TYPE CIrrDeviceOSX::getType() const
 {
-	return EIDT_PHONE;
+	return EIDT_OSX;
 }
 
 void CIrrDeviceOSX::createDriver()
