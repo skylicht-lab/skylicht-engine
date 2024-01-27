@@ -53,6 +53,8 @@ class OSXWindow : public OSWindow
     void signalTestEvent() override;
 
     NSWindow *getNSWindow() const;
+    
+    void* getNativeOSWindow() override;
 
   private:
     bool initializeImpl(const std::string &name, int width, int height) override;

@@ -20,8 +20,6 @@ namespace irr
 		/** This device uses Apple's Cocoa API and works in Mac OSX 10.2 and above. */
 		EIDT_OSX,
 
-		EIDT_MAC,		
-
 		EIDT_PHONE,
 
 		EIDT_LINUX,
