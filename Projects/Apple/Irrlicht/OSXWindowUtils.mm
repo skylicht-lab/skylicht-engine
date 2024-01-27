@@ -2,7 +2,7 @@
 
 NSWindow* g_window = nil;
 
-extern void exitOSXApp();
+void exitOSXApp();
 
 void OSXSetWindow(void* window)
 {
