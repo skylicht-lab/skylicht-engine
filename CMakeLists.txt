@@ -77,7 +77,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
 	set(BUILD_MACOS ON)
 	set(XCODE ON)
 	set(USE_OPENMP OFF)
-	set(CMAKE_WARN_DEPRECATED OFF)
 
 	add_definitions(-DMACOS)
 	add_definitions(-DUSE_ANGLE_GLES)
