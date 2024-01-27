@@ -871,6 +871,11 @@ NSWindow *OSXWindow::getNSWindow() const
     return mWindow;
 }
 
+void* OSXWindow::getNativeOSWindow()
+{
+    return mWindow;
+}
+
 // static
 OSWindow *OSWindow::New()
 {
