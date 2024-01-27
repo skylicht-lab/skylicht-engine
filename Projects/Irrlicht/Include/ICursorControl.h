@@ -182,6 +182,8 @@ namespace gui
 		/** \return Behavior set by setPlatformBehavior or ECPB_NONE for platforms not implementing specific behaviors.
 		*/
 		virtual ECURSOR_PLATFORM_BEHAVIOR getPlatformBehavior() const { return ECPB_NONE; }
+        
+        virtual void updateInternalCursorPosition(int x,int y) {}
 	};
 
 

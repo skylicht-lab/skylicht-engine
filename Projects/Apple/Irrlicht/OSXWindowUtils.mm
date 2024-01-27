@@ -1,8 +1,9 @@
+#import <CoreGraphics/CGEvent.h>
 #import <Cocoa/Cocoa.h>
 
 NSWindow* g_window = nil;
 
-extern "C" void exitOSXApp();
+void exitOSXApp();
 
 void OSXSetWindow(void* window)
 {
@@ -91,4 +92,46 @@ void OSXGetWindowPosition(int& x, int &y)
         x = rect.origin.x;
         y = screenHeight - rect.origin.y - rect.size.height;
     }
+}
+
+void OSXSetCursorVisible(bool visible)
+{
+    if (visible)
+        CGDisplayShowCursor(CGMainDisplayID());
+    else
+        CGDisplayHideCursor(CGMainDisplayID());
+}
+
+float translateWindowMouseY(float y)
+{
+    NSView *view = [g_window contentView];
+    return [view frame].size.height - y;
+}
+
+float translateScreenMouseY(float y)
+{
+    int screenHeight = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
+    return screenHeight - y;
+}
+
+void OSXSetMouseLocation(int x, int y)
+{
+    NSPoint    p;
+    CGPoint    c;
+    
+    if (g_window != NULL)
+    {
+        p.x = (float) x;
+        p.y = (float) translateWindowMouseY(y);
+        
+        p = [g_window convertBaseToScreen:p];
+        p.y = translateScreenMouseY(p.y);
+    }
+    
+    c.x = p.x;
+    c.y = p.y;
+
+    CGEventRef ev = CGEventCreateMouseEvent(NULL, kCGEventMouseMoved, c, kCGMouseButtonLeft);
+    CGEventPost(kCGHIDEventTap, ev);
+    CFRelease(ev);
 }
