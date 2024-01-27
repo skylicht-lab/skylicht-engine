@@ -6,14 +6,11 @@
 
 SkylichtApplication *g_osxApp = NULL;
 
-extern "C"
+void exitOSXApp()
 {
-    void exitOSXApp()
+    if (g_osxApp != NULL)
     {
-        if (g_osxApp != NULL)
-        {
-            g_osxApp->exit();
-        }
+        g_osxApp->exit();
     }
 }
 
@@ -181,7 +178,7 @@ void SkylichtApplication::onMouseMoved(const Event::MouseMoveEvent &mouseEvent)
     IrrlichtDevice *dev  = getIrrlichtDevice();
     if (dev)
     {
-        dev->getCursorControl()->setPosition(core::vector2di(m_mouseX, m_mouseY));
+        dev->getCursorControl()->updateInternalCursorPosition(m_mouseX, m_mouseY);
         dev->postEventFromUser(event);
     }
 }

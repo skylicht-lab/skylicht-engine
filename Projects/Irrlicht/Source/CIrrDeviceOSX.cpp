@@ -36,93 +36,97 @@ extern void OSXMinimizeWindow();
 extern void OSXMaximizeWindow();
 extern void OSXRestoreWindow();
 extern void OSXGetWindowPosition(int& x, int &y);
+extern void OSXSetCursorVisible(bool visible);
+extern void OSXSetMouseLocation(int x, int y);
 
 namespace irr
 {
 
 CIrrDeviceOSX::CIrrDeviceOSX(const SIrrlichtCreationParameters& param)
-	: CIrrDeviceStub(param), Focused(false), Initialized(false), Paused(true)
+: CIrrDeviceStub(param), Focused(false), Initialized(false), Paused(true)
 {
 #ifdef _DEBUG
-	setDebugName("CIrrDeviceOSX");
+    setDebugName("CIrrDeviceOSX");
 #endif
-
-	Operator = new COSOperator("Device Phone");
-
-	createDriver();
-
-	if (VideoDriver)
-		createGUIAndScene();
-
-	Initialized = true;
+    
+    Operator = new COSOperator("Device Phone");
+    
+    createDriver();
+    
+    if (VideoDriver)
+        createGUIAndScene();
+    
+    Initialized = true;
     
     OSXSetWindow(param.WindowId);
     OSXSetDefaultCaption();
+    
+    CursorControl = new CCursorControl(CreationParams.WindowSize, this);
 }
 
 
 CIrrDeviceOSX::~CIrrDeviceOSX()
 {
-	if (SceneManager)
-	{
-		SceneManager->drop();
-		SceneManager = 0;
-	}
-
-	if (VideoDriver)
-	{
-		VideoDriver->drop();
-		VideoDriver = 0;
-	}
+    if (SceneManager)
+    {
+        SceneManager->drop();
+        SceneManager = 0;
+    }
+    
+    if (VideoDriver)
+    {
+        VideoDriver->drop();
+        VideoDriver = 0;
+    }
 }
 
 bool CIrrDeviceOSX::run()
 {
-	if (!Initialized)
-		return false;
-
-	os::Timer::tick();
-
-	return Initialized;
+    if (!Initialized)
+        return false;
+    
+    os::Timer::tick();
+    
+    return Initialized;
 }
 
 void CIrrDeviceOSX::yield()
 {
 #if defined(_IRR_WINDOW_UNIVERSAL_PLATFORM_)
-	std::this_thread::yield();
+    std::this_thread::yield();
 #else
-	struct timespec ts = {0,1};
-	nanosleep(&ts, NULL);
+    struct timespec ts = {0,1};
+    nanosleep(&ts, NULL);
 #endif
 }
 
 void CIrrDeviceOSX::sleep(u32 timeMs, bool pauseTimer)
 {
 #if defined(_IRR_WINDOW_UNIVERSAL_PLATFORM_)
-	const bool wasStopped = Timer ? Timer->isStopped() : true;
-
-	if (pauseTimer && !wasStopped)
-		Timer->stop();
-
-	// sleep
-	std::this_thread::sleep_for(std::chrono::milliseconds(timeMs));
-
-	if (pauseTimer && !wasStopped)
-		Timer->start();
+    const bool wasStopped = Timer ? Timer->isStopped() : true;
+    
+    if (pauseTimer && !wasStopped)
+        Timer->stop();
+    
+    // sleep
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeMs));
+    
+    if (pauseTimer && !wasStopped)
+        Timer->start();
 #else
-	const bool wasStopped = Timer ? Timer->isStopped() : true;
-
-	struct timespec ts;
-	ts.tv_sec = (time_t) (timeMs / 1000);
-	ts.tv_nsec = (long) (timeMs % 1000) * 1000000;
-
-	if (pauseTimer && !wasStopped)
-		Timer->stop();
-
-	nanosleep(&ts, NULL);
-
-	if (pauseTimer && !wasStopped)
-		Timer->start();
+    const bool wasStopped = Timer ? Timer->isStopped() : true;
+    
+    struct timespec ts;
+    ts.tv_sec = (time_t) (timeMs / 1000);
+    ts.tv_nsec = (long) (timeMs % 1000) * 1000000;
+    
+    if (pauseTimer && !wasStopped)
+        Timer->stop();
+    
+    nanosleep(&ts, NULL);
+    
+    if (pauseTimer && !wasStopped)
+        Timer->start();
 #endif
 }
 
@@ -133,22 +137,22 @@ void CIrrDeviceOSX::setWindowCaption(const wchar_t* text)
 
 bool CIrrDeviceOSX::present(video::IImage* surface, void* windowId, core::rect<s32>* srcClip)
 {
-	return true;
+    return true;
 }
 
 bool CIrrDeviceOSX::isWindowActive() const
 {
-	return (Focused && !Paused);
+    return (Focused && !Paused);
 }
 
 bool CIrrDeviceOSX::isWindowFocused() const
 {
-	return Focused;
+    return Focused;
 }
 
 bool CIrrDeviceOSX::isWindowMinimized() const
 {
-	return !Focused;
+    return !Focused;
 }
 
 void CIrrDeviceOSX::closeDevice()
@@ -180,7 +184,17 @@ core::position2di CIrrDeviceOSX::getWindowPosition()
 {
     int x, y;
     OSXGetWindowPosition(x, y);
-	return core::position2di(x, y);
+    return core::position2di(x, y);
+}
+
+void CIrrDeviceOSX::setMouseLocation(int x, int y)
+{
+    OSXSetMouseLocation(x, y);
+}
+
+void CIrrDeviceOSX::setCursorVisible(bool visible)
+{
+    OSXSetCursorVisible(visible);
 }
 
 E_DEVICE_TYPE CIrrDeviceOSX::getType() const
