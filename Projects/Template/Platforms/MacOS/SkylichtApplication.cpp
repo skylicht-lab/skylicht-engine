@@ -6,11 +6,14 @@
 
 SkylichtApplication *g_osxApp = NULL;
 
-void exitOSXApp()
+extern "C"
 {
-    if (g_osxApp != NULL)
+    void exitOSXApp()
     {
-        g_osxApp->exit();
+        if (g_osxApp != NULL)
+        {
+            g_osxApp->exit();
+        }
     }
 }
 
