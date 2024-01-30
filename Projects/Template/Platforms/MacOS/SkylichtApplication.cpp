@@ -437,4 +437,11 @@ void SkylichtApplication::createKeyMap()
     m_keyMap.sort();
 }
 
+#else
+
+void exitOSXApp()
+{
+    
+}
+
 #endif
