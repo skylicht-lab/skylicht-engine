@@ -1,6 +1,8 @@
 #import <CoreGraphics/CGEvent.h>
 #import <Cocoa/Cocoa.h>
 
+#include <string>
+
 NSWindow* g_window = nil;
 
 void exitOSXApp();
@@ -134,4 +136,58 @@ void OSXSetMouseLocation(int x, int y)
     CGEventRef ev = CGEventCreateMouseEvent(NULL, kCGEventMouseMoved, c, kCGMouseButtonLeft);
     CGEventPost(kCGHIDEventTap, ev);
     CFRelease(ev);
+}
+
+void OSXSetCursorIcon(const char *icon)
+{
+    std::string iconName = icon;
+    
+    if (iconName == "normal")
+    {
+        [[NSCursor arrowCursor] set];
+    }
+    else if (iconName == "cross")
+    {
+        [[NSCursor crosshairCursor] set];
+    }
+    else if (iconName == "hand")
+    {
+        [[NSCursor openHandCursor] set];
+    }
+    else if (iconName == "ibeam")
+    {
+        [[NSCursor IBeamCursor] set];
+    }
+    else if (iconName == "no")
+    {
+        [[NSCursor operationNotAllowedCursor] set];
+    }
+    else if (iconName == "wait")
+    {
+        [[NSCursor arrowCursor] set];
+    }
+    else if (iconName == "sizeall")
+    {
+        [[NSCursor arrowCursor] set];
+    }
+    else if (iconName == "sizenesw")
+    {
+        [[NSCursor arrowCursor] set];
+    }
+    else if (iconName == "sizenwse")
+    {
+        [[NSCursor arrowCursor] set];
+    }
+    else if (iconName == "sizens")
+    {
+        [[NSCursor resizeUpDownCursor] set];
+    }
+    else if (iconName == "sizewe")
+    {
+        [[NSCursor resizeLeftRightCursor] set];
+    }
+    else if (iconName == "sizeup")
+    {
+        [[NSCursor resizeUpCursor] set];
+    }
 }

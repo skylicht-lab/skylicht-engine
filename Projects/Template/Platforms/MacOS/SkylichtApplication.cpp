@@ -3,6 +3,7 @@
 #ifndef TEST_APP
 
 #include "SkylichtApplication.h"
+#include "CWindowConfig.h"
 
 SkylichtApplication *g_osxApp = NULL;
 
@@ -23,7 +24,7 @@ CApplication *g_mainApp = NULL;
 IrrlichtDevice *g_device = NULL;
 
 SkylichtApplication::SkylichtApplication(int argc, char **argv)
-    :AngleApplication(std::string("Skylicht Engine - DEMO"), argc, argv, 3, 0),
+    :AngleApplication(std::string("Skylicht Engine"), argc, argv, 3, 0),
     m_shiftHold(false),
     m_controlHold(false),
     m_leftMouseDown(false),
@@ -33,6 +34,25 @@ SkylichtApplication::SkylichtApplication(int argc, char **argv)
     m_mouseY(0)
 {
     g_mainApp = new CApplication();
+    
+#if defined(SKYLICHT_EDITOR)
+    // read size from last session
+    u32 x, y, w, h;
+    bool maximize = false;
+    bool haveConfig = false;
+    haveConfig = CWindowConfig::loadConfig(x, y, w, h, maximize);
+    if (haveConfig)
+    {
+        mWidth = w;
+        mHeight = h;
+    }
+    else
+    {
+        mWidth = 1440;
+        mHeight = 900;
+    }
+    g_mainApp->enableWriteLog(true);
+#endif
     
     std::vector<std::string> params;
     for (int i = 1; i < argc; i++)
@@ -75,6 +95,16 @@ bool SkylichtApplication::initialize()
 
 void SkylichtApplication::destroy()
 {
+#if defined(SKYLICHT_EDITOR)
+    CWindowConfig::saveConfig(
+        0,
+        0,
+        mWidth,
+        mHeight,
+        false
+    );
+#endif
+    
     g_mainApp->destroyApplication();
 
     g_device->drop();

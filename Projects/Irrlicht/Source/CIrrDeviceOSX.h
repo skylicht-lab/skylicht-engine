@@ -56,6 +56,8 @@ namespace irr
         
         void setCursorVisible(bool visible);
         
+        void setCursorIcon(gui::ECURSOR_ICON iconId);
+        
 	private:
 
 		void createDriver();
@@ -174,6 +176,11 @@ namespace irr
                 CursorPos.Y = y;
             }
 
+            virtual void setActiveIcon(gui::ECURSOR_ICON iconId)
+            {
+                Device->setCursorIcon(iconId);
+            }
+            
         private:
 
             core::position2d<s32> CursorPos;
