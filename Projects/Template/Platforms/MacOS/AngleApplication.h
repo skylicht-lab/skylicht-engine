@@ -64,7 +64,7 @@ class AngleApplication
     int run();
     void exit();
 
-  private:
+  protected:
     bool popEvent(Event *event);
 
     std::string mName;

@@ -229,6 +229,9 @@ int AngleApplication::run()
             
             // pop this event
             mOSWindow->popEvent(&event);
+            
+            mWidth = event.Size.Width;
+            mHeight = event.Size.Height;
         }
     };
     

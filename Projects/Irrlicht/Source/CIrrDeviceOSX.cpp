@@ -27,17 +27,18 @@ namespace irr
 	}
 }
 
-extern void OSXSetWindow(void* window);
-extern void OSXSetDefaultCaption();
-extern void OSXSetWindowCaption(const wchar_t* caption);
-extern void OSXClose();
-extern void OSXSetResizable(bool resize);
-extern void OSXMinimizeWindow();
-extern void OSXMaximizeWindow();
-extern void OSXRestoreWindow();
-extern void OSXGetWindowPosition(int& x, int &y);
-extern void OSXSetCursorVisible(bool visible);
-extern void OSXSetMouseLocation(int x, int y);
+void OSXSetWindow(void* window);
+void OSXSetDefaultCaption();
+void OSXSetWindowCaption(const wchar_t* caption);
+void OSXClose();
+void OSXSetResizable(bool resize);
+void OSXMinimizeWindow();
+void OSXMaximizeWindow();
+void OSXRestoreWindow();
+void OSXGetWindowPosition(int& x, int &y);
+void OSXSetCursorVisible(bool visible);
+void OSXSetMouseLocation(int x, int y);
+void OSXSetCursorIcon(const char *icon);
 
 namespace irr
 {
@@ -195,6 +196,11 @@ void CIrrDeviceOSX::setMouseLocation(int x, int y)
 void CIrrDeviceOSX::setCursorVisible(bool visible)
 {
     OSXSetCursorVisible(visible);
+}
+
+void CIrrDeviceOSX::setCursorIcon(gui::ECURSOR_ICON iconId)
+{
+    OSXSetCursorIcon(gui::GUICursorIconNames[iconId]);
 }
 
 E_DEVICE_TYPE CIrrDeviceOSX::getType() const
