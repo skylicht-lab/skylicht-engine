@@ -29,6 +29,8 @@ namespace Skylicht
 	class CWindowConfig
 	{
 	public:
+        static void setSaveDirectory(const char *path);
+        
 		static bool loadConfig(u32 &x, u32 &y, u32 &width, u32 &height, bool &maximize);
 
 		static bool loadConfigAndExtraData(u32 &x, u32 &y, u32 &width, u32 &height, bool &maximize, std::string &data);
