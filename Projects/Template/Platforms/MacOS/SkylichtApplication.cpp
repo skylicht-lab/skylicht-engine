@@ -4,7 +4,7 @@
 
 #include "SkylichtApplication.h"
 
-#if defined(MACOS)
+#if defined(SKYLICHT_EDITOR)
 // Generated in CMakeLists.txt
 #include "ProjectPath.h"
 #include "CWindowConfig.h"
