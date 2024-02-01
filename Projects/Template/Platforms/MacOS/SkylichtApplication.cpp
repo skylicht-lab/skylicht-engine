@@ -3,7 +3,12 @@
 #ifndef TEST_APP
 
 #include "SkylichtApplication.h"
+
+#if defined(MACOS)
+// Generated in CMakeLists.txt
+#include "ProjectPath.h"
 #include "CWindowConfig.h"
+#endif
 
 SkylichtApplication *g_osxApp = NULL;
 
@@ -40,7 +45,10 @@ SkylichtApplication::SkylichtApplication(int argc, char **argv)
     u32 x, y, w, h;
     bool maximize = false;
     bool haveConfig = false;
+    
+    CWindowConfig::setSaveDirectory(PROJECT_PATH);
     haveConfig = CWindowConfig::loadConfig(x, y, w, h, maximize);
+    
     if (haveConfig)
     {
         mWidth = w;
