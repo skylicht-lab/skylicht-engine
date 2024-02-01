@@ -27,9 +27,21 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+    std::string g_savePath;
+
+    void CWindowConfig::setSaveDirectory(const char *path)
+    {
+        g_savePath = path;
+    }
+
 	bool CWindowConfig::loadConfig(u32 &x, u32 &y, u32 &width, u32 &height, bool &maximize)
 	{
-		FILE *file = fopen("Window.xml", "rt");
+        std::string windowFile = g_savePath;
+        if (!g_savePath.empty())
+            windowFile += "/";
+        windowFile += "Window.xml";
+        
+		FILE *file = fopen(windowFile.c_str(), "rt");
 		if (file == NULL)
 			return false;
 
@@ -60,7 +72,12 @@ namespace Skylicht
 
 		bool loaded = loadConfigAndExtraData(oldX, oldY, oldW, oldH, oldMaximize, data);
 
-		FILE *file = fopen("Window.xml", "wt");
+        std::string windowFile = g_savePath;
+        if (!g_savePath.empty())
+            windowFile += "/";
+        windowFile += "Window.xml";
+        
+		FILE *file = fopen(windowFile.c_str(), "wt");
 		if (file == NULL)
 			return;
 
