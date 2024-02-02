@@ -90,6 +90,7 @@ endif()
 if (BUILD_MACOS)
 	# Angle API
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
 	include_directories(${template_path}/Platforms/MacOS)
 	
 	file(GLOB_RECURSE platform_mac_source 
@@ -99,11 +100,14 @@ if (BUILD_MACOS)
 		${template_path}/Platforms/MacOS/**.m
 		${template_path}/Platforms/MacOS/**.mm
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
 
 	list (APPEND application_source ${platform_mac_source})
 
-	setup_project_group("${platform_mac_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+	setup_project_group_by_folder_relative("${platform_mac_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
 endif()
 	
 if (BUILD_DEBUG_VLD)
