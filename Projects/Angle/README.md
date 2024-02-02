@@ -38,11 +38,38 @@ Example: **'depot_tools'** at /Users/Skylicht/Documents/projects/depot_tools
 Edit generated file **args.gn**
 ```console
 is_debug = false
+target_cpu = "arm64"
 ```
+mac arm 64:
+target_cpu = "arm64"
+
+mac intel:
+target_cpu = "x64"
+
 Use autoninja (depot_tools) tool to build Angle project
 
 ```console
   autoninja -C out/Release libEGL libGLESv2
+```
+
+### IOS
+Edit **args.gn**
+```console
+is_debug = false
+target_os = "ios"
+target_cpu = "arm64"
+target_environment = "device"
+```
+
+arm64 simulator:
+```console
+target_environment = "simulator"
+target_cpu = "arm64"
+```
+x64 simulator
+```console
+target_environment = "simulator"
+target_cpu = "x64"
 ```
 
 #### DEBUG (Optional)
