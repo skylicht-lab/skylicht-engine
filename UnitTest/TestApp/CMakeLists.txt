@@ -25,6 +25,7 @@ set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template)
 
 if (BUILD_MACOS)
 include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
+include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
 include_directories(${template_path}/Platforms/MacOS)
 
 file(GLOB_RECURSE test_app_source 
@@ -38,7 +39,12 @@ file(GLOB_RECURSE test_app_source
 	${template_path}/Platforms/MacOS/**.mm
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm)
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
 else()
 file(GLOB_RECURSE test_app_source 
 	./**.cpp
