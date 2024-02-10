@@ -222,6 +222,19 @@ elseif (BUILD_MACOS)
   		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
+elseif (BUILD_IOS)
+	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleHelloWorld)
+	set(APP_BUNDLE_IDENTIFIER "com.skylicht.helloword")
+	set(CODE_SIGN_IDENTITY "iPhone Developer")
+	set(MACOSX_BUNDLE_INFO_STRING ${APP_BUNDLE_IDENTIFIER})
+	set(MACOSX_BUNDLE_GUI_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
+	set(MACOSX_BUNDLE_BUNDLE_NAME ${APP_BUNDLE_IDENTIFIER})
+
+	add_executable(SampleHelloWorld MACOSX_BUNDLE ${application_source})
+	
+	set_target_properties(SampleHelloWorld PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
+	set_target_properties(SampleHelloWorld PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
+	set_target_properties(SampleHelloWorld PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/IOS/plist.in")		 	
 else()
 	add_executable(SampleHelloWorld ${application_source})
 endif()

@@ -29,6 +29,7 @@
 # Build folder
 /Bin/
 /PrjMac/
+/PrjIOS/
 /PrjVisualStudio/
 /PrjUWP/
 /PrjEmscripten/

@@ -74,14 +74,32 @@ if (CMAKE_SYSTEM_NAME STREQUAL Linux)
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
-	set(BUILD_MACOS ON)
+
+	if (IOS)
+		# IOS
+		set(BUILD_IOS ON)
+		set(BUILD_ENGINE_TOOL OFF)
+		add_definitions(-DIOS)
+
+		# default for all sample
+		set(DEVICE_FAMILY "1,2")
+		set(MACOSX_BUNDLE_ICON_FILE "")
+		set(MACOSX_BUNDLE_LONG_VERSION_STRING "1.0")
+		set(MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0")
+		set(MACOSX_BUNDLE_BUNDLE_VERSION "1.0")
+		set(MACOSX_BUNDLE_COPYRIGHT "Copyright Skylicht LTD.Co")
+	else()
+		# MacOS
+		set(BUILD_MACOS ON)
+		add_definitions(-DMACOS)
+	endif()
+	
 	set(XCODE ON)
 	set(USE_OPENMP OFF)
-
-	add_definitions(-DMACOS)
+	
 	add_definitions(-DUSE_ANGLE_GLES)
 
-	link_libraries("-lc++")
+	# link_libraries("-lc++")
 
 	if (NOT CMAKE_OSX_ARCHITECTURES)
 		# set(CMAKE_OSX_ARCHITECTURES "x86_64")
