@@ -21,7 +21,7 @@ if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 endif()
 
 # Angle include
-if(BUILD_MACOS)
+if(BUILD_MACOS OR BUILD_IOS)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
 endif()
