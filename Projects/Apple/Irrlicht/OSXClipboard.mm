@@ -1,3 +1,4 @@
+#if defined(MACOS)
 // Copyright (C) 2005-2006 Etienne Petitjean
 // Copyright (C) 2007-2012 Christian Stehno
 // This file is part of the "Irrlicht Engine".
@@ -32,3 +33,4 @@ char* OSXCopyFromClipboard()
 		result = (char*)[str cStringUsingEncoding:NSWindowsCP1252StringEncoding];
 	return (result);
 }
+#endif

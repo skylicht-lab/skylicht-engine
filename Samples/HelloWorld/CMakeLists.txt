@@ -106,6 +106,31 @@ if (BUILD_MACOS)
 	setup_project_group_by_folder_relative("${platform_mac_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
 endif()
 	
+if (BUILD_IOS)
+	# Angle API
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
+	include_directories(${template_path}/Platforms/IOS)
+	
+	file(GLOB_RECURSE platform_ios_source 
+		${template_path}/Platforms/IOS/**.cpp 
+		${template_path}/Platforms/IOS/**.c 
+		${template_path}/Platforms/IOS/**.h
+		${template_path}/Platforms/IOS/**.m
+		${template_path}/Platforms/IOS/**.mm
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
+
+	file(GLOB_RECURSE platform_ios_resources ${template_path}/Platforms/IOS/**.storyboard)
+
+	list (APPEND application_source ${platform_ios_source})
+
+	setup_project_group_by_folder_relative("${platform_ios_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
+endif()
+
 if (BUILD_DEBUG_VLD)
 	if (CMAKE_CL_64)
 		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/lib/Win64")
@@ -224,17 +249,37 @@ elseif (BUILD_MACOS)
 	)
 elseif (BUILD_IOS)
 	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleHelloWorld)
+
+	set(APP_NAME "SampleHelloWorld")
 	set(APP_BUNDLE_IDENTIFIER "com.skylicht.helloword")
 	set(CODE_SIGN_IDENTITY "iPhone Developer")
-	set(MACOSX_BUNDLE_INFO_STRING ${APP_BUNDLE_IDENTIFIER})
-	set(MACOSX_BUNDLE_GUI_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
+
+	set(PRODUCT_NAME ${APP_NAME})
+	set(EXECUTABLE_NAME ${APP_NAME})
+	set(MACOSX_BUNDLE_EXECUTABLE_NAME ${APP_NAME})
 	set(MACOSX_BUNDLE_BUNDLE_NAME ${APP_BUNDLE_IDENTIFIER})
 
-	add_executable(SampleHelloWorld MACOSX_BUNDLE ${application_source})
+	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
+
+	add_executable(SampleHelloWorld MACOSX_BUNDLE 
+		${application_source}
+		${resources_files}
+		${platform_ios_resources}
+	)
 	
+	message(STATUS "- Setup project: SampleHelloWorld")
+	foreach(res_file ${resources_files})
+		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
+		source_group("Bin" FILES "${res_file}")
+	endforeach()
+
 	set_target_properties(SampleHelloWorld PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
 	set_target_properties(SampleHelloWorld PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
-	set_target_properties(SampleHelloWorld PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/IOS/plist.in")		 	
+	set_target_properties(SampleHelloWorld PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")		 	
+	set_target_properties(SampleHelloWorld PROPERTIES RESOURCE "${platform_ios_resources}")
+	set_target_properties(SampleHelloWorld PROPERTIES RESOURCE "${resources_files}")
+
+	target_link_libraries(SampleHelloWorld "-framework UIKit")
 else()
 	add_executable(SampleHelloWorld ${application_source})
 endif()

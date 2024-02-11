@@ -6,6 +6,8 @@
 
 // OSXWindow.mm: Implementation of OSWindow for OSX
 
+#if defined(MACOS)
+
 #include "util/osx/OSXWindow.h"
 
 #include <set>
@@ -881,3 +883,5 @@ OSWindow *OSWindow::New()
 {
     return new OSXWindow;
 }
+
+#endif
