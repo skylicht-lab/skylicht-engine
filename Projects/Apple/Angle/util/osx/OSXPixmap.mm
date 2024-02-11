@@ -6,6 +6,8 @@
 
 // OSXPixmap.cpp: Implementation of OSPixmap for OSX
 
+#if defined(MACOS)
+
 #include "util/osx/OSXPixmap.h"
 
 // TODO(cwallez) find out the native OSX pixmap type and implement this
@@ -13,3 +15,5 @@ OSPixmap *CreateOSPixmap()
 {
     return nullptr;
 }
+
+#endif

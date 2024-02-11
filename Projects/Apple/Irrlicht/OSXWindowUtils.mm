@@ -1,3 +1,4 @@
+#if defined(MACOS)
 #import <CoreGraphics/CGEvent.h>
 #import <Cocoa/Cocoa.h>
 
@@ -191,3 +192,4 @@ void OSXSetCursorIcon(const char *icon)
         [[NSCursor resizeUpCursor] set];
     }
 }
+#endif

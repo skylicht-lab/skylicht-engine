@@ -9,6 +9,8 @@
 #ifndef UTIL_OSX_WINDOW_H_
 #define UTIL_OSX_WINDOW_H_
 
+#if defined(MACOS)
+
 #import <Cocoa/Cocoa.h>
 
 #include "util/OSWindow.h"
@@ -63,5 +65,7 @@ class OSXWindow : public OSWindow
     WindowDelegate *mDelegate;
     ContentView *mView;
 };
+
+#endif
 
 #endif  // UTIL_OSX_WINDOW_H_
