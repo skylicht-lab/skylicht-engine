@@ -60,6 +60,7 @@ void CHelloWorld::onInitApp()
 
 	// Create UI Text in Canvas
 	CGUIText *textLarge = canvas->createText(m_largeFont);
+    textLarge->setDock(EGUIDock::DockFill);
 	textLarge->setText("Hello, World");
 	textLarge->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 }
