@@ -17,7 +17,6 @@
 namespace
 {
 const char *kUseAngleArg = "--use-angle=";
-const char *kUseGlArg    = "--use-gl=native";
 
 using DisplayTypeInfo = std::pair<const char *, EGLint>;
 
@@ -84,7 +83,6 @@ AngleApplication::AngleApplication(std::string name,
       mDriverType(angle::GLESDriverType::AngleEGL)
 {
     mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE; // EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE
-    bool useNativeGL         = false;
 
     for (int argIndex = 1; argIndex < argc; argIndex++)
     {
@@ -93,11 +91,6 @@ AngleApplication::AngleApplication(std::string name,
             const char *arg            = argv[argIndex] + strlen(kUseAngleArg);
             mPlatformParams.renderer   = GetDisplayTypeFromArg(arg);
             mPlatformParams.deviceType = GetDeviceTypeFromArg(arg);
-        }
-
-        if (strncmp(argv[argIndex], kUseGlArg, strlen(kUseGlArg)) == 0)
-        {
-            useNativeGL = true;
         }
     }
 

@@ -35,7 +35,6 @@ EGLNativeWindowType IOSWindow::getNativeWindow() const
 
 bool IOSWindow::setOrientation(int width, int height)
 {
-    UNIMPLEMENTED();
     return false;
 }
 
@@ -43,7 +42,7 @@ bool IOSWindow::resize(int width, int height)
 {
     mWidth = width;
     mHeight = height;
-    rootLayer().frame = CGRectMake(0, 0, width, height);
+    // rootLayer().frame = CGRectMake(0, 0, width, height);
     return true;
 }
 
