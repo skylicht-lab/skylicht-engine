@@ -85,6 +85,8 @@ void SkylichtApplication::draw()
 
 void SkylichtApplication::onResized(int width, int height)
 {
+    AngleApplication::onResized(width, height);
+    
     irr::SEvent event;
     event.EventType = irr::EET_GAME_RESIZE;
     event.UserEvent.UserData1 = (s32)width;
