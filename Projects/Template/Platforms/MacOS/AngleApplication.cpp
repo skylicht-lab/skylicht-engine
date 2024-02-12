@@ -206,7 +206,7 @@ int AngleApplication::run()
 
     mTimer.start();
     double prevTime = 0.0;
-
+    
     // process resized event
     mOSWindow->OnEvents = [&](){
         Event event;
@@ -217,7 +217,6 @@ int AngleApplication::run()
         {
             onResized((int)event.Size.Width, (int)event.Size.Height);
             
-            draw();
             swap();
             
             // pop this event

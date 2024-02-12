@@ -41,8 +41,7 @@ bool IOSWindow::setOrientation(int width, int height)
 bool IOSWindow::resize(int width, int height)
 {
     mWidth = width;
-    mHeight = height;
-    // rootLayer().frame = CGRectMake(0, 0, width, height);
+    mHeight = height;    
     return true;
 }
 
