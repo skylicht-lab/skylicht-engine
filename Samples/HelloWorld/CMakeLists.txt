@@ -258,13 +258,18 @@ elseif (BUILD_IOS)
 	set(EXECUTABLE_NAME ${APP_NAME})
 	set(MACOSX_BUNDLE_EXECUTABLE_NAME ${APP_NAME})
 	set(MACOSX_BUNDLE_BUNDLE_NAME ${APP_BUNDLE_IDENTIFIER})
+	set(MACOSX_BUNDLE_GUI_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
 
 	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
+
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/IOS/Release/arm64_simulator")
+	file(GLOB framework_files "${angle_lib_path}/*.framework")
 
 	add_executable(SampleHelloWorld MACOSX_BUNDLE 
 		${application_source}
 		${resources_files}
 		${platform_ios_resources}
+		${framework_files}
 	)
 	
 	message(STATUS "- Setup project: SampleHelloWorld")
@@ -273,12 +278,20 @@ elseif (BUILD_IOS)
 		source_group("Bin" FILES "${res_file}")
 	endforeach()
 
+	foreach(lib_file ${framework_files})
+		source_group("Frameworks" FILES "${lib_file}")
+	endforeach()
+
+	set_target_properties(SampleHelloWorld PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
 	set_target_properties(SampleHelloWorld PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
 	set_target_properties(SampleHelloWorld PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
-	set_target_properties(SampleHelloWorld PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")		 	
-	set_target_properties(SampleHelloWorld PROPERTIES RESOURCE "${platform_ios_resources}")
-	set_target_properties(SampleHelloWorld PROPERTIES RESOURCE "${resources_files}")
+	set_target_properties(SampleHelloWorld PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
+	set_target_properties(SampleHelloWorld PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
 
+	# embed .framework
+	set_target_properties(SampleHelloWorld PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
+
+	# link framework
 	target_link_libraries(SampleHelloWorld "-framework UIKit")
 else()
 	add_executable(SampleHelloWorld ${application_source})
