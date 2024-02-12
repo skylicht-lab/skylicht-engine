@@ -8,10 +8,13 @@
 #import "GameViewController.h"
 #import "Renderer.h"
 
+#include "AngleApplication.h"
+
 @implementation GameViewController
 {
     MTKView *_view;
     Renderer *_renderer;
+    AngleApplication* _angleApplication;
 }
 
 - (void)viewDidLoad
@@ -26,6 +29,15 @@
     [_renderer mtkView:_view drawableSizeWillChange:_view.drawableSize];
 
     _view.delegate = _renderer;
+    
+    // init Angle Application
+    int width = (int)_view.drawableSize.width;
+    int height = (int)_view.drawableSize.height;
+        
+    _angleApplication = new AngleApplication(std::string("Skylicht Engine"), 0, NULL, 3, 0, width, height);
+    _angleApplication->initialize();
+    
+    [_renderer setApplication:_angleApplication];
 }
 
 @end
