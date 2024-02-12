@@ -288,6 +288,10 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleHelloWorld PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
 	set_target_properties(SampleHelloWorld PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
 
+	# add assets icon
+	target_sources(SampleHelloWorld PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
+	set_target_properties(SampleHelloWorld PROPERTIES RESOURCE "${template_path}/Platforms/IOS/Assets.xcassets")
+
 	# embed .framework
 	set_target_properties(SampleHelloWorld PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
