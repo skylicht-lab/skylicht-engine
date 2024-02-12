@@ -8,7 +8,7 @@
 #import "GameViewController.h"
 #import "Renderer.h"
 
-#include "AngleApplication.h"
+#include "SkylichtApplication.h"
 
 @implementation GameViewController
 {
@@ -34,7 +34,7 @@
     int width = (int)_view.drawableSize.width;
     int height = (int)_view.drawableSize.height;
         
-    _angleApplication = new AngleApplication(std::string("Skylicht Engine"), 0, NULL, 3, 0, width, height);
+    _angleApplication = new SkylichtApplication(0, NULL, width, height);
     _angleApplication->initialize();
     
     [_renderer setApplication:_angleApplication];

@@ -542,7 +542,7 @@ const io::path& CFileSystem::getWorkingDirectory()
 			#endif
 		#endif
 
-		#if (defined(_IRR_POSIX_API_) || defined(_IRR_OSX_PLATFORM_) || defined(CYGWIN))
+		#if (defined(_IRR_POSIX_API_) || defined(_IRR_OSX_PLATFORM_) || defined(_IRR_IOS_PLATFORM_) || defined(CYGWIN))
 
 			// getting the CWD is rather complex as we do not know the size
 			// so try it until the call was successful

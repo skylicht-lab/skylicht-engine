@@ -32,7 +32,7 @@ class AngleApplication
     AngleApplication(std::string name,
                       int argc,
                       char **argv,
-                      EGLint glesMajorVersion = 2,
+                      EGLint glesMajorVersion = 3,
                       EGLint glesMinorVersion = 0,
                       uint32_t width          = 1280,
                       uint32_t height         = 720);
