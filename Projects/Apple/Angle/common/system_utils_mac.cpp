@@ -23,6 +23,10 @@ namespace angle
 {
 const char *GetSharedLibraryExtension()
 {
+#if defined(IOS)
+    return "framework";
+#else
     return "dylib";
+#endif
 }
 }  // namespace angle
