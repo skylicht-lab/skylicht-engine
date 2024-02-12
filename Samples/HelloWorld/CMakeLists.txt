@@ -262,7 +262,7 @@ elseif (BUILD_IOS)
 
 	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
 
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/IOS/Release/arm64_simulator")
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/IOS/Release/${IOS_PLATFORM}")
 	file(GLOB framework_files "${angle_lib_path}/*.framework")
 
 	add_executable(SampleHelloWorld MACOSX_BUNDLE 
