@@ -313,7 +313,7 @@ endif()
 include(CMakeProjects.cmake)
 
 # unit test
-if (NOT BUILD_ANDROID AND NOT BUILD_EMSCRIPTEN AND NOT BUILD_WINDOWS_STORE)
+if (NOT BUILD_ANDROID AND NOT BUILD_IOS AND NOT BUILD_EMSCRIPTEN AND NOT BUILD_WINDOWS_STORE)
 enable_testing()
 subdirs (UnitTest/TestApp)
 endif()
