@@ -77,10 +77,10 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin OR CMAKE_SYSTEM_NAME STREQUAL iOS)
 
 	if (IOS)
 		# IOS
+		set(IOS_PLATFORM "${PLATFORM}")
 		set(BUILD_IOS ON)
 		set(BUILD_ENGINE_TOOL OFF)
 		add_definitions(-DIOS)
-
 		# default for all sample
 		set(DEVICE_FAMILY "1,2")		
 		set(MACOSX_BUNDLE_COPYRIGHT "Copyright Skylicht LTD.Co")
