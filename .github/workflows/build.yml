@@ -155,3 +155,35 @@ jobs:
     #  with:
     #    name: SkylichtDemo_MacOS
     #    path: Build
+
+  IOS:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: |
+          cd Assets
+          python BuildAssetBundles.py
+          cd ..
+          cmake -S . -B ./PrjIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=./ios.cmake -DIOS_PLATFORM=OS
+          cd PrjIOS
+          xcodebuild -configuration Release
+          cd ..
+      - name: Package
+        run: |
+          brew install p7zip
+          mkdir Build
+          ls -l Bin/Release
+          version=$(cat "Version.txt")
+          file_version=${version//./_}
+          output=SkylichtDemo_${file_version}_IOS.zip
+          cd Bin/Release
+          7z a ${output} *.*
+          cd ../..
+          cp Bin/Release/${output} Build
+          ls -l Build
+    #- name: Result
+    #  uses: actions/upload-artifact@v1
+    #  with:
+    #    name: SkylichtDemo_IOS
+    #    path: Build

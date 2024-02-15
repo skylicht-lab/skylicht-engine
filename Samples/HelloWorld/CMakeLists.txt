@@ -231,7 +231,7 @@ elseif (BUILD_MACOS)
 
 	set_target_properties(SampleHelloWorld PROPERTIES
 		MACOSX_RPATH ON
-  		BUILD_WITH_INSTALL_RPATH 1
+		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
 elseif (BUILD_IOS)
