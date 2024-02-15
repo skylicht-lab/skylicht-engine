@@ -108,7 +108,32 @@ if (BUILD_MACOS)
 
 	setup_project_group_by_folder_relative("${platform_mac_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
 endif()
+
+if (BUILD_IOS)
+	# Angle API
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
+	include_directories(${template_path}/Platforms/IOS)
 	
+	file(GLOB_RECURSE platform_ios_source 
+		${template_path}/Platforms/IOS/**.cpp 
+		${template_path}/Platforms/IOS/**.c 
+		${template_path}/Platforms/IOS/**.h
+		${template_path}/Platforms/IOS/**.m
+		${template_path}/Platforms/IOS/**.mm
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
+
+	file(GLOB_RECURSE platform_ios_resources ${template_path}/Platforms/IOS/**.storyboard)
+
+	list (APPEND application_source ${platform_ios_source})
+
+	setup_project_group_by_folder_relative("${platform_ios_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
+endif()
+
 if (BUILD_DEBUG_VLD)
 	if (CMAKE_CL_64)
 		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/lib/Win64")
@@ -181,19 +206,6 @@ elseif (BUILD_MACOS)
 	
 	set_target_properties(SampleLuckyDraw PROPERTIES MACOSX_BUNDLE TRUE)
 	
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
-	
-	find_library(
-		LIBEGL 
-		libEGL.dylib
-		PATHS ${angle_lib_path})
-
-	find_library(
-		LIBGLESV2
-		libGLESv2.dylib
-		PATHS ${angle_lib_path})
-
-	target_link_libraries(SampleLuckyDraw ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(SampleLuckyDraw "-framework Cocoa")
 
 	message(STATUS "- Setup project: SampleLuckyDraw")
@@ -222,9 +234,62 @@ elseif (BUILD_MACOS)
 
 	set_target_properties(SampleLuckyDraw PROPERTIES
 		MACOSX_RPATH ON
-  		BUILD_WITH_INSTALL_RPATH 1
+		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
+elseif (BUILD_IOS)
+	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleLuckyDraw)
+
+	set(APP_NAME "SampleLuckyDraw")
+	set(APP_BUNDLE_IDENTIFIER "com.skylicht.sampleluckydraw")
+	set(CODE_SIGN_IDENTITY "iPhone Developer")
+
+	set(PRODUCT_NAME ${APP_NAME})
+	set(EXECUTABLE_NAME ${APP_NAME})
+	set(MACOSX_BUNDLE_EXECUTABLE_NAME ${APP_NAME})
+	set(MACOSX_BUNDLE_BUNDLE_NAME ${APP_BUNDLE_IDENTIFIER})
+	set(MACOSX_BUNDLE_GUI_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
+
+	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
+
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/IOS/Release/${IOS_PLATFORM}")
+	file(GLOB angle_framework_files "${angle_lib_path}/*.framework")
+
+	set (framework_files "")
+	list (APPEND framework_files ${angle_framework_files})
+
+	add_executable(SampleLuckyDraw MACOSX_BUNDLE 
+		${application_source}
+		${resources_files}
+		${platform_ios_resources}
+		${framework_files}
+	)
+	
+	message(STATUS "- Setup project: SampleLuckyDraw")
+	foreach(res_file ${resources_files})
+		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
+		source_group("Bin" FILES "${res_file}")
+	endforeach()
+
+	foreach(lib_file ${framework_files})
+		source_group("Frameworks" FILES "${lib_file}")
+	endforeach()
+
+	set_target_properties(SampleLuckyDraw PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
+	set_target_properties(SampleLuckyDraw PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
+	set_target_properties(SampleLuckyDraw PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
+	set_target_properties(SampleLuckyDraw PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
+	set_target_properties(SampleLuckyDraw PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+
+	# add assets icon
+	target_sources(SampleLuckyDraw PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
+	set_target_properties(SampleLuckyDraw PROPERTIES RESOURCE "${template_path}/Platforms/IOS/Assets.xcassets")
+
+	# embed .framework
+	set_target_properties(SampleLuckyDraw PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
+
+	# link framework
+	target_link_libraries(SampleLuckyDraw "-framework UIKit")
 else()
 	add_executable(SampleLuckyDraw ${application_source})
 endif()
