@@ -203,19 +203,6 @@ elseif (BUILD_MACOS)
 	
 	set_target_properties(SampleHelloWorld PROPERTIES MACOSX_BUNDLE TRUE)
 	
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
-	
-	find_library(
-		LIBEGL 
-		libEGL.dylib
-		PATHS ${angle_lib_path})
-
-	find_library(
-		LIBGLESV2
-		libGLESv2.dylib
-		PATHS ${angle_lib_path})
-
-	target_link_libraries(SampleHelloWorld ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(SampleHelloWorld "-framework Cocoa")
 	
 	message(STATUS "- Setup project: SampleHelloWorld")
@@ -263,7 +250,10 @@ elseif (BUILD_IOS)
 	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
 
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/IOS/Release/${IOS_PLATFORM}")
-	file(GLOB framework_files "${angle_lib_path}/*.framework")
+	file(GLOB angle_framework_files "${angle_lib_path}/*.framework")
+
+	set (framework_files "")
+	list (APPEND framework_files ${angle_framework_files})
 
 	add_executable(SampleHelloWorld MACOSX_BUNDLE 
 		${application_source}
