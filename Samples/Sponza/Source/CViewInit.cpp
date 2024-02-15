@@ -15,7 +15,9 @@
 
 #include "Lightmap/CLightmap.h"
 
-#define USE_DYNAMIC_LIGHTING
+#if !defined(ANDROID) && !defined(IOS) && !defined(__EMSCRIPTEN__)
+	#define USE_DYNAMIC_LIGHTING
+#endif
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
