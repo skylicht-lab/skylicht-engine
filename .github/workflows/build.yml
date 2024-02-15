@@ -167,7 +167,7 @@ jobs:
           cd ..
           cmake -S . -B ./PrjIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=./ios.cmake -DPLATFORM=OS
           cd PrjIOS
-          cmake --build ./PrjIOS --config "Release"
+          cmake --build . --config "Release"
           cd ..
       - name: Package
         run: |
