@@ -137,6 +137,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		winSize.Width = w;
 		winSize.Height = h;
 	}
+	else
+	{
+		winSize.Width = 1440;
+		winSize.Height = 900;
+	}
 #endif
 
 	if (params.size() >= 2)

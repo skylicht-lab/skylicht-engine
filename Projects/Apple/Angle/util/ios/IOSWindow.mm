@@ -30,7 +30,7 @@ bool IOSWindow::initializeImpl(const std::string &name, int width, int height)
 
 EGLNativeWindowType IOSWindow::getNativeWindow() const
 {
-    return rootLayer();
+    return (EGLNativeWindowType)rootLayer();
 }
 
 bool IOSWindow::setOrientation(int width, int height)

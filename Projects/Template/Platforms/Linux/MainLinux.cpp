@@ -68,7 +68,11 @@ int main(int argc, char *argv[])
 		size.Width = w;
 		size.Height = h;
 	}
-
+	else
+	{
+		size.Width = 1440;
+		size.Height = 900;
+	}
 	g_mainApp->enableWriteLog(true);
 #endif
 
