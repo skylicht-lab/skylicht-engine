@@ -287,6 +287,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleParticlesMagicSkill "-framework UIKit")
+	target_link_libraries(SampleParticlesMagicSkill "-framework CoreGraphics")
+	target_link_libraries(SampleParticlesMagicSkill "-framework AudioToolbox")
 else()
 	add_executable(SampleParticlesMagicSkill ${application_source})
 endif()

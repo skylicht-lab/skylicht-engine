@@ -287,6 +287,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleParticlesVortex "-framework UIKit")
+	target_link_libraries(SampleParticlesVortex "-framework CoreGraphics")
+	target_link_libraries(SampleParticlesVortex "-framework AudioToolbox")
 else()
 	add_executable(SampleParticlesVortex ${application_source})
 endif()

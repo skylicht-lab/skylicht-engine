@@ -303,6 +303,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleSocketIO "-framework UIKit")
+	target_link_libraries(SampleSocketIO "-framework CoreGraphics")
+	target_link_libraries(SampleSocketIO "-framework AudioToolbox")
 else()
 	add_executable(SampleSocketIO ${application_source})
 endif()

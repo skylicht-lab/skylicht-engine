@@ -287,6 +287,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleNoise2D "-framework UIKit")
+	target_link_libraries(SampleNoise2D "-framework CoreGraphics")
+	target_link_libraries(SampleNoise2D "-framework AudioToolbox")
 else()
 	add_executable(SampleNoise2D ${application_source})
 endif()

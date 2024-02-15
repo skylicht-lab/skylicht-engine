@@ -290,6 +290,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleCollision "-framework UIKit")
+	target_link_libraries(SampleCollision "-framework CoreGraphics")
+	target_link_libraries(SampleCollision "-framework AudioToolbox")
 else()
 	add_executable(SampleCollision ${application_source})
 endif()

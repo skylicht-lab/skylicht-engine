@@ -287,6 +287,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleLightmapUV "-framework UIKit")
+	target_link_libraries(SampleLightmapUV "-framework CoreGraphics")
+	target_link_libraries(SampleLightmapUV "-framework AudioToolbox")
 else()
 	add_executable(SampleLightmapUV ${application_source})
 endif()

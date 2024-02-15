@@ -45,6 +45,25 @@ file(GLOB_RECURSE test_app_source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
+elseif (BUILD_IOS)
+include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
+include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
+include_directories(${template_path}/Platforms/IOS)
+	
+file(GLOB_RECURSE test_app_source
+	./**.cpp
+	./**.c 
+	./**.h
+	${template_path}/Platforms/IOS/**.cpp 
+	${template_path}/Platforms/IOS/**.c 
+	${template_path}/Platforms/IOS/**.h
+	${template_path}/Platforms/IOS/**.m
+	${template_path}/Platforms/IOS/**.mm
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
 else()
 file(GLOB_RECURSE test_app_source 
 	./**.cpp
@@ -67,18 +86,6 @@ endif()
 
 if (BUILD_MACOS)
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
-
-	find_library(
-		LIBEGL 
-		libEGL.dylib
-		PATHS ${angle_lib_path})
-
-	find_library(
-		LIBGLESV2
-		libGLESv2.dylib
-		PATHS ${angle_lib_path})
-
-	target_link_libraries(TestApp ${LIBEGL} ${LIBGLESV2})
 	target_link_libraries(TestApp "-framework Cocoa")
 
 	add_custom_command(TARGET TestApp POST_BUILD COMMAND 
@@ -88,6 +95,16 @@ if (BUILD_MACOS)
 	add_custom_command(TARGET TestApp POST_BUILD COMMAND 
 		${CMAKE_COMMAND} -E copy_if_different "${angle_lib_path}/libEGL.dylib" 
 		$<TARGET_FILE_DIR:TestApp>)	
+endif()
+
+if (BUILD_IOS)
+	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/IOS/Release/${IOS_PLATFORM}")
+	file(GLOB angle_framework_files "${angle_lib_path}/*.framework")
+
+	set (framework_files "")
+	list (APPEND framework_files ${angle_framework_files})
+	
+	set_target_properties(TestApp PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 endif()
 
 if (BUILD_MACOS)

@@ -290,6 +290,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleBlendShape "-framework UIKit")
+	target_link_libraries(SampleBlendShape "-framework CoreGraphics")
+	target_link_libraries(SampleBlendShape "-framework AudioToolbox")
 else()
 	add_executable(SampleBlendShape ${application_source})
 endif()

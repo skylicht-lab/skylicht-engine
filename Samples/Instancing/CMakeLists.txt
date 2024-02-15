@@ -290,6 +290,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleInstancing "-framework UIKit")
+	target_link_libraries(SampleInstancing "-framework CoreGraphics")
+	target_link_libraries(SampleInstancing "-framework AudioToolbox")
 else()
 	add_executable(SampleInstancing ${application_source})
 endif()
