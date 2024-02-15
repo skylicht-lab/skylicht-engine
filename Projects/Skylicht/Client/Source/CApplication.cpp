@@ -356,7 +356,7 @@ namespace Skylicht
 			m_height = h;
 
 			// resize window
-            m_driver->OnResize(core::dimension2du((u32)w, (u32)h));
+			m_driver->OnResize(core::dimension2du((u32)w, (u32)h));
 
 			// resize mouse
 			if (getIrrlichtDevice()->isFullscreen())
@@ -371,11 +371,11 @@ namespace Skylicht
 			// application receiver
 			os::Printer::log("CApplication::resize");
 			sendEventToAppReceiver(AppEventResize, w, h);
-            
-            // update & repaint
-            m_showFPS = false; // fix bug on MacOS - setWindowCaption
-            mainLoop();
-            m_showFPS = true;
+
+			// update & repaint
+			m_showFPS = false; // fix bug on MacOS - setWindowCaption
+			mainLoop();
+			m_showFPS = true;
 		}
 	}
 

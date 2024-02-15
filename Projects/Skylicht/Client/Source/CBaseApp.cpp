@@ -56,7 +56,7 @@ namespace Skylicht
 #if defined(_WIN32)
 		m_enableRunWhenPause = true;
 #endif
-}
+	}
 
 	CBaseApp::~CBaseApp()
 	{
