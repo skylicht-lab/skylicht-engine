@@ -165,7 +165,7 @@ jobs:
           cd Assets
           python BuildAssetBundles.py
           cd ..
-          cmake -S . -B ./PrjIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=./ios.cmake -DPLATFORM=OS
+          cmake -S . -B ./PrjIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=./ios.cmake -DPLATFORM=SIMULATORARM64
           cd PrjIOS
           cmake --build . --config "Release"
           cd ..
