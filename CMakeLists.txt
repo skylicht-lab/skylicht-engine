@@ -110,6 +110,10 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin OR CMAKE_SYSTEM_NAME STREQUAL iOS)
 	add_definitions(-DEGL_EGL_PROTOTYPES=0)
 	add_definitions(-DANGLE_EGL_LIBRARY_NAME=\"libEGL\")
 	add_definitions(-DANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2\")
+	
+	# disable warning
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-declarations")
 endif()
 
 # irrlicht static lib
