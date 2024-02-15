@@ -106,7 +106,6 @@ if (BUILD_MACOS)
 	setup_project_group_by_folder_relative("${platform_mac_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
 endif()
 
-	
 if (BUILD_IOS)
 	# Angle API
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
