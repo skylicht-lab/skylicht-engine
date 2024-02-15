@@ -105,6 +105,10 @@ if (BUILD_IOS)
 	list (APPEND framework_files ${angle_framework_files})
 	
 	set_target_properties(TestApp PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
+	
+	target_link_libraries(SampleDrawPrimitives "-framework UIKit")
+	target_link_libraries(SampleDrawPrimitives "-framework CoreGraphics")
+	target_link_libraries(SampleDrawPrimitives "-framework AudioToolbox")
 endif()
 
 if (BUILD_MACOS)
