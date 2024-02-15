@@ -106,7 +106,7 @@ namespace SkylichtAudio
 			m_state = ISoundSource::StateError;
 			return Failed;
 		}
-		else if (status == status)
+		else if (status == Success)
 		{
 			m_initState++;
 			m_state = ISoundSource::StatePlaying;

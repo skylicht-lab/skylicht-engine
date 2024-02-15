@@ -290,6 +290,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleSkinnedMesh "-framework UIKit")
+	target_link_libraries(SampleSkinnedMesh "-framework CoreGraphics")
+	target_link_libraries(SampleSkinnedMesh "-framework AudioToolbox")
 else()
 	add_executable(SampleSkinnedMesh ${application_source})
 endif()

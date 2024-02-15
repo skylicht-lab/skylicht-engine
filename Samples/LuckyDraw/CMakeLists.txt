@@ -290,6 +290,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleLuckyDraw "-framework UIKit")
+	target_link_libraries(SampleLuckyDraw "-framework CoreGraphics")
+	target_link_libraries(SampleLuckyDraw "-framework AudioToolbox")
 else()
 	add_executable(SampleLuckyDraw ${application_source})
 endif()

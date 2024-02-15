@@ -290,6 +290,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleSponza "-framework UIKit")
+	target_link_libraries(SampleSponza "-framework CoreGraphics")
+	target_link_libraries(SampleSponza "-framework AudioToolbox")
 else()
 	add_executable(SampleSponza ${application_source})
 endif()

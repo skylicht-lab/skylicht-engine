@@ -287,6 +287,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleHelloWorld "-framework UIKit")
+	target_link_libraries(SampleHelloWorld "-framework CoreGraphics")
+	target_link_libraries(SampleHelloWorld "-framework AudioToolbox")
 else()
 	add_executable(SampleHelloWorld ${application_source})
 endif()

@@ -287,6 +287,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleShader "-framework UIKit")
+	target_link_libraries(SampleShader "-framework CoreGraphics")
+	target_link_libraries(SampleShader "-framework AudioToolbox")
 else()
 	add_executable(SampleShader ${application_source})
 endif()
