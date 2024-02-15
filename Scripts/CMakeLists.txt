@@ -287,6 +287,9 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(@project_name@ "-framework UIKit")
+	target_link_libraries(@project_name@ "-framework CoreGraphics")
+	target_link_libraries(@project_name@ "-framework AudioToolbox")
+	target_link_libraries(@project_name@ "-framework AVFAudio")
 else()
 	add_executable(@project_name@ ${application_source})
 endif()
