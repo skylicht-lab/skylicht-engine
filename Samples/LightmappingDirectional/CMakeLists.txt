@@ -292,6 +292,8 @@ elseif (BUILD_IOS)
 
 	# link framework
 	target_link_libraries(SampleLightmappingDirectional "-framework UIKit")
+	target_link_libraries(SampleLightmappingDirectional "-framework CoreGraphics")
+	target_link_libraries(SampleLightmappingDirectional "-framework AudioToolbox")
 else()
 	add_executable(SampleLightmappingDirectional ${application_source})
 endif()
