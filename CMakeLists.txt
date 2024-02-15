@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.8.0)
 
 # cmake config
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
