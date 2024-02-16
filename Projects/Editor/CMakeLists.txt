@@ -1,6 +1,6 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Editor/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
@@ -22,7 +22,7 @@ if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Imgui/Source)
 endif()
 
-set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template)
+set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main)
 
 file(GLOB_RECURSE application_source 
 	./Source/**.cpp 
@@ -31,8 +31,8 @@ file(GLOB_RECURSE application_source
 
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-list (APPEND application_source ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.cpp)
-list (APPEND application_source ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.h)
+list (APPEND application_source ${template_path}/Source/pch.cpp)
+list (APPEND application_source ${template_path}/Source/pch.h)
 
 if (BUILD_ANDROID)
 	file(GLOB_RECURSE platform_android_source 
@@ -48,18 +48,18 @@ if (BUILD_WINDOWS_STORE)
 	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Editor/Assets)
 	
 	file(GLOB uwp_assets 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Assets/**.*
+		${template_path}/Platforms/UWP/Assets/**.*
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/**.zip)
 	
 	foreach(asset_file ${uwp_assets})
 		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Editor/Assets)
 	endforeach()
 
-	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/Package.appxmanifest
+	file(COPY ${template_path}/Platforms/UWP/Package.appxmanifest
 		DESTINATION 
 		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Editor)
 		
-	file(COPY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/UWP/TemporaryKey.pfx
+	file(COPY ${template_path}/Platforms/UWP/TemporaryKey.pfx
 		DESTINATION 
 		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Editor)
 
@@ -78,7 +78,7 @@ if (BUILD_WINDOWS_STORE)
 endif()
 
 if (MSVC OR CYGWIN OR MINGW)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Win32)
+	include_directories(${template_path}/Platforms/Win32)
 
 	file(GLOB_RECURSE platform_win32_source 
 		${template_path}/Platforms/Win32/**.cpp 
@@ -239,7 +239,7 @@ else()
 	add_executable(SkylichtEditor ${application_source})
 endif()
 
-target_precompiled_header(SkylichtEditor ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source/pch.cpp ${application_source})
+target_precompiled_header(SkylichtEditor ${template_path}/Source/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)
@@ -270,8 +270,8 @@ if (BUILD_EMSCRIPTEN)
 	set_target_properties(SkylichtEditor PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
 	set(project_name SkylichtEditor)
-	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
-	configure_file(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SkylichtEditor.html)
+	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
+	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SkylichtEditor.html)
 endif()
 
 #VLD
