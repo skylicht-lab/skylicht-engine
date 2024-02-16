@@ -23,16 +23,16 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGUICustomSizeSprite.h"
+#include "CGUIFitSprite.h"
 #include "Graphics2D/CGraphics2D.h"
 #include "Graphics2D/SpriteFrame/CSpriteManager.h"
 
 namespace Skylicht
 {
-	CGUICustomSizeSprite::CGUICustomSizeSprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame) :
+	CGUIFitSprite::CGUIFitSprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame) :
 		CGUIElement(canvas, parent),
 		m_frame(frame),
-		m_anchorType(CGUICustomSizeSprite::AnchorAll),
+		m_anchorType(CGUIFitSprite::AnchorAll),
 		m_anchorLeft(15.0f),
 		m_anchorRight(15.0f),
 		m_anchorTop(15.0f),
@@ -41,10 +41,10 @@ namespace Skylicht
 		m_enableMaterial = true;
 	}
 
-	CGUICustomSizeSprite::CGUICustomSizeSprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame) :
+	CGUIFitSprite::CGUIFitSprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame) :
 		CGUIElement(canvas, parent, rect),
 		m_frame(frame),
-		m_anchorType(CGUICustomSizeSprite::AnchorAll),
+		m_anchorType(CGUIFitSprite::AnchorAll),
 		m_anchorLeft(15.0f),
 		m_anchorRight(15.0f),
 		m_anchorTop(15.0f),
@@ -53,17 +53,17 @@ namespace Skylicht
 		m_enableMaterial = true;
 	}
 
-	CGUICustomSizeSprite::~CGUICustomSizeSprite()
+	CGUIFitSprite::~CGUIFitSprite()
 	{
 
 	}
 
-	void CGUICustomSizeSprite::update(CCamera* camera)
+	void CGUIFitSprite::update(CCamera* camera)
 	{
 		CGUIElement::update(camera);
 	}
 
-	void CGUICustomSizeSprite::render(CCamera* camera)
+	void CGUIFitSprite::render(CCamera* camera)
 	{
 		if (m_frame != NULL && m_frame->ModuleOffset.size() > 0)
 		{
@@ -75,7 +75,7 @@ namespace Skylicht
 
 			switch (m_anchorType)
 			{
-			case CGUICustomSizeSprite::AnchorAll:
+			case CGUIFitSprite::AnchorAll:
 				g->addModuleBatch(&m_frame->ModuleOffset[0],
 					getColor(),
 					m_transform->World,
@@ -87,7 +87,7 @@ namespace Skylicht
 					getShaderID(),
 					getMaterial());
 				break;
-			case CGUICustomSizeSprite::AnchorLeftRight:
+			case CGUIFitSprite::AnchorLeftRight:
 				g->addModuleBatchLR(&m_frame->ModuleOffset[0],
 					getColor(),
 					m_transform->World,
@@ -97,7 +97,7 @@ namespace Skylicht
 					getShaderID(),
 					getMaterial());
 				break;
-			case CGUICustomSizeSprite::AnchorTopBottom:
+			case CGUIFitSprite::AnchorTopBottom:
 				g->addModuleBatchTB(&m_frame->ModuleOffset[0],
 					getColor(),
 					m_transform->World,
@@ -110,18 +110,44 @@ namespace Skylicht
 			default:
 				break;
 			}
-			CGUIElement::render(camera);
 		}
 
 		CGUIElement::render(camera);
+
+		if (m_drawBorder)
+		{
+			core::rectf r = getRect();
+
+			float z = 0.0f;
+
+			core::vector3df topLeft(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);
+			core::vector3df topRight(r.LowerRightCorner.X, r.UpperLeftCorner.Y, z);
+			core::vector3df bottomLeft(r.UpperLeftCorner.X, r.LowerRightCorner.Y, z);
+			core::vector3df bottomRight(r.LowerRightCorner.X, r.LowerRightCorner.Y, z);
+
+			m_transform->World.transformVect(topLeft);
+			m_transform->World.transformVect(topRight);
+			m_transform->World.transformVect(bottomLeft);
+			m_transform->World.transformVect(bottomRight);
+
+			std::vector<core::vector2df> lines;
+			lines.push_back(core::vector2df(topLeft.X + m_anchorLeft, topLeft.Y + m_anchorTop));
+			lines.push_back(core::vector2df(topRight.X - m_anchorRight, topRight.Y + m_anchorTop));
+			lines.push_back(core::vector2df(bottomRight.X - m_anchorRight, bottomRight.Y - m_anchorBottom));
+			lines.push_back(core::vector2df(bottomLeft.X + m_anchorLeft, bottomLeft.Y - m_anchorBottom));
+			lines.push_back(core::vector2df(topLeft.X + m_anchorLeft, topLeft.Y + m_anchorTop));
+
+			SColor borderColor(100, 255, 255, 255);
+			CGraphics2D::getInstance()->draw2DLines(lines, borderColor);
+		}
 	}
 
-	void CGUICustomSizeSprite::setFrame(SFrame* frame)
+	void CGUIFitSprite::setFrame(SFrame* frame)
 	{
 		m_frame = frame;
 	}
 
-	void CGUICustomSizeSprite::setAnchor(AnchorType type, float left, float right, float top, float bottom)
+	void CGUIFitSprite::setAnchor(AnchorType type, float left, float right, float top, float bottom)
 	{
 		m_anchorType = type;
 		m_anchorLeft = core::max_(left, 0.0f);
@@ -130,7 +156,7 @@ namespace Skylicht
 		m_anchorBottom = core::max_(bottom, 0.0f);
 	}
 
-	CObjectSerializable* CGUICustomSizeSprite::createSerializable()
+	CObjectSerializable* CGUIFitSprite::createSerializable()
 	{
 		CObjectSerializable* object = CGUIElement::createSerializable();
 
@@ -141,9 +167,9 @@ namespace Skylicht
 		object->autoRelease(frame);
 
 		CEnumProperty<AnchorType>* anchorType = new CEnumProperty<AnchorType>(object, "anchorType", m_anchorType);
-		anchorType->addEnumString("Anchor all", CGUICustomSizeSprite::AnchorAll);
-		anchorType->addEnumString("Anchor left right", CGUICustomSizeSprite::AnchorLeftRight);
-		anchorType->addEnumString("Anchor left right", CGUICustomSizeSprite::AnchorTopBottom);
+		anchorType->addEnumString("Anchor all", CGUIFitSprite::AnchorAll);
+		anchorType->addEnumString("Anchor left right", CGUIFitSprite::AnchorLeftRight);
+		anchorType->addEnumString("Anchor left right", CGUIFitSprite::AnchorTopBottom);
 		object->autoRelease(anchorType);
 
 		object->autoRelease(new CFloatProperty(object, "anchorLeft", m_anchorLeft, 0.0f));
@@ -154,11 +180,11 @@ namespace Skylicht
 		return object;
 	}
 
-	void CGUICustomSizeSprite::loadSerializable(CObjectSerializable* object)
+	void CGUIFitSprite::loadSerializable(CObjectSerializable* object)
 	{
 		CFrameSourceProperty* frame = dynamic_cast<CFrameSourceProperty*>(object->getProperty("spriteSrc"));
 
-		m_anchorType = object->get<AnchorType>("anchorType", CGUICustomSizeSprite::AnchorAll);
+		m_anchorType = object->get<AnchorType>("anchorType", CGUIFitSprite::AnchorAll);
 		m_anchorLeft = object->get<float>("anchorLeft", 0.0f);
 		m_anchorRight = object->get<float>("anchorRight", 0.0f);
 		m_anchorTop = object->get<float>("anchorTop", 0.0f);

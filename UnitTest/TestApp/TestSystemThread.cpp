@@ -1,6 +1,8 @@
 #include "Base.hh"
 #include "TestSystemThread.h"
 
+#include "pch.h"
+
 bool g_threadRunPass = false;
 bool g_threadPass = false;
 SkylichtSystem::IThread *g_thread = NULL;
@@ -17,6 +19,7 @@ TestThreadCallback::~TestThreadCallback()
 
 void TestThreadCallback::runThread()
 {
+	TEST_CASE("System thread run");
 	g_threadRunPass = true;
 }
 
@@ -30,6 +33,8 @@ void testSystemThread()
 {
 	TEST_CASE("System thread start");
 	g_thread = SkylichtSystem::IThread::createThread(new TestThreadCallback());
+
+	getIrrlichtDevice()->sleep(100);
 }
 
 bool isSystemThreadPass()

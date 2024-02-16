@@ -503,27 +503,27 @@ namespace Skylicht
 	* Custom Size Sprite constructor
 	*/
 
-	CGUICustomSizeSprite* CCanvas::createCustomSizeSprite(SFrame* frame)
+	CGUIFitSprite* CCanvas::createFitSprite(SFrame* frame)
 	{
-		CGUICustomSizeSprite* element = new CGUICustomSizeSprite(this, m_root, m_rect, frame);
+		CGUIFitSprite* element = new CGUIFitSprite(this, m_root, m_rect, frame);
 		return element;
 	}
 
-	CGUICustomSizeSprite* CCanvas::createCustomSizeSprite(const core::rectf& r, SFrame* frame)
+	CGUIFitSprite* CCanvas::createFitSprite(const core::rectf& r, SFrame* frame)
 	{
-		CGUICustomSizeSprite* element = new CGUICustomSizeSprite(this, m_root, r, frame);
+		CGUIFitSprite* element = new CGUIFitSprite(this, m_root, r, frame);
 		return element;
 	}
 
-	CGUICustomSizeSprite* CCanvas::createCustomSizeSprite(CGUIElement* e, SFrame* frame)
+	CGUIFitSprite* CCanvas::createFitSprite(CGUIElement* e, SFrame* frame)
 	{
-		CGUICustomSizeSprite* element = new CGUICustomSizeSprite(this, e, e->getRect(), frame);
+		CGUIFitSprite* element = new CGUIFitSprite(this, e, e->getRect(), frame);
 		return element;
 	}
 
-	CGUICustomSizeSprite* CCanvas::createCustomSizeSprite(CGUIElement* e, const core::rectf& r, SFrame* frame)
+	CGUIFitSprite* CCanvas::createFitSprite(CGUIElement* e, const core::rectf& r, SFrame* frame)
 	{
-		CGUICustomSizeSprite* element = new CGUICustomSizeSprite(this, e, r, frame);
+		CGUIFitSprite* element = new CGUIFitSprite(this, e, r, frame);
 		return element;
 	}
 
