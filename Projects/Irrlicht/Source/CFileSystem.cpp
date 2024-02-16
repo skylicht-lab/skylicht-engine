@@ -124,6 +124,9 @@ IReadFile* CFileSystem::createAndOpenFile(const io::path& filename)
 	IReadFile* file = 0;
 	u32 i;
 
+	if (filename.size() == 0)
+		return NULL;	// fix for Linux System filename == ""
+
 	for (i=0; i< FileArchives.size(); ++i)
 	{
 		file = FileArchives[i]->createAndOpenFile(filename);

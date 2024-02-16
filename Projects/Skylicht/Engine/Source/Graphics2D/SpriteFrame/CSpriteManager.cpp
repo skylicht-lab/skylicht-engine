@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpriteManager.h"
 #include "Utils/CPath.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -59,6 +60,9 @@ namespace Skylicht
 
 		std::string fixPath = CPath::normalizePath(path);
 		strcpy(ansiPath, fixPath.c_str());
+
+		if (CStringImp::length(ansiPath) == 0)
+			return NULL;
 
 		if (m_pathToSprite.find(ansiPath) != m_pathToSprite.end())
 		{
