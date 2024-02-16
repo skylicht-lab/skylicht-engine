@@ -1,6 +1,6 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/UnitTest/TestApp
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include	
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
@@ -21,7 +21,7 @@ if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Imgui/Source)
 endif()
 
-set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Template)
+set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main)
 
 if (BUILD_MACOS)
 include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
