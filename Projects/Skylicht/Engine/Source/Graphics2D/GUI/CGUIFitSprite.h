@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGUICustomSizeSprite : public CGUIElement
+	class CGUIFitSprite : public CGUIElement
 	{
 		friend class CCanvas;
 	public:
@@ -56,11 +56,11 @@ namespace Skylicht
 		float m_anchorBottom;
 
 	protected:
-		CGUICustomSizeSprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame);
-		CGUICustomSizeSprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame);
+		CGUIFitSprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame);
+		CGUIFitSprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame);
 
 	public:
-		virtual ~CGUICustomSizeSprite();
+		virtual ~CGUIFitSprite();
 
 		virtual void update(CCamera* camera);
 
@@ -74,6 +74,6 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		DECLARE_GETTYPENAME(CGUICustomSizeSprite);
+		DECLARE_GETTYPENAME(CGUIFitSprite);
 	};
 }

@@ -88,7 +88,7 @@ namespace Skylicht
 							else if (attributeName == L"CGUILayout")
 								element = canvas->createLayout(parent, nullRect);
 							else if (attributeName == L"CGUICustomSizeSprite")
-								element = canvas->createCustomSizeSprite(parent, nullRect, NULL);
+								element = canvas->createFitSprite(parent, nullRect, NULL);
 						}
 						else
 						{

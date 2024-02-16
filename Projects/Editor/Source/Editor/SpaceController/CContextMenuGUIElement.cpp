@@ -61,7 +61,13 @@ namespace Skylicht
 			addMenu->addItem(L"GUI Text");
 			addMenu->addItem(L"GUI Mask");
 			addMenu->addItem(L"GUI Layout");
-			addMenu->addItem(L"GUI Custom Size Sprite");
+			addMenu->addItem(L"GUI Fit Sprite");
+			addMenu->addSeparator();
+			addMenu->addItem(L"UI Button");
+			addMenu->addItem(L"UI Slider");
+			addMenu->addItem(L"UI Input");
+			addMenu->addItem(L"UI Checkbox");
+			addMenu->addItem(L"UI Switch");
 			addMenu->OnCommand = BIND_LISTENER(&CContextMenuGUIElement::OnContextMenuAddCommand, this);
 		}
 
