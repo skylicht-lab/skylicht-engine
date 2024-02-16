@@ -174,10 +174,10 @@ namespace Skylicht
 				nameHint = L"Layout";
 				newNode = parentNode->getCanvas()->createLayout(parentNode, r);
 			}
-			else if (command == L"GUI Custom Size Sprite")
+			else if (command == L"GUI Fit Sprite")
 			{
 				nameHint = L"Sprite";
-				newNode = parentNode->getCanvas()->createCustomSizeSprite(parentNode, r, NULL);
+				newNode = parentNode->getCanvas()->createFitSprite(parentNode, r, NULL);
 			}
 
 			if (newNode)

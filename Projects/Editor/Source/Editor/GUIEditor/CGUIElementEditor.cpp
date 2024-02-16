@@ -35,7 +35,7 @@ namespace Skylicht
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIMask);
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIText);
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUILayout);
-		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUICustomSizeSprite);
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIFitSprite);
 
 		CGUIElementEditor::CGUIElementEditor()
 		{
@@ -55,7 +55,7 @@ namespace Skylicht
 		{
 			CGUIEditor::initGUI(gui, ui);
 
-			GUI::CCollapsibleGroup* group = ui->addGroup("GUI Basic", this);
+			GUI::CCollapsibleGroup* group = ui->addGroup(gui->getTypeName().c_str(), this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 			serializableToControl(m_guiData, ui, layout);
 			group->setExpand(true);

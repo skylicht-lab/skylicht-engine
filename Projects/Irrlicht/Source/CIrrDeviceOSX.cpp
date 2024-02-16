@@ -93,28 +93,12 @@ bool CIrrDeviceOSX::run()
 
 void CIrrDeviceOSX::yield()
 {
-#if defined(_IRR_WINDOW_UNIVERSAL_PLATFORM_)
-    std::this_thread::yield();
-#else
     struct timespec ts = {0,1};
     nanosleep(&ts, NULL);
-#endif
 }
 
 void CIrrDeviceOSX::sleep(u32 timeMs, bool pauseTimer)
 {
-#if defined(_IRR_WINDOW_UNIVERSAL_PLATFORM_)
-    const bool wasStopped = Timer ? Timer->isStopped() : true;
-    
-    if (pauseTimer && !wasStopped)
-        Timer->stop();
-    
-    // sleep
-    std::this_thread::sleep_for(std::chrono::milliseconds(timeMs));
-    
-    if (pauseTimer && !wasStopped)
-        Timer->start();
-#else
     const bool wasStopped = Timer ? Timer->isStopped() : true;
     
     struct timespec ts;
@@ -128,7 +112,6 @@ void CIrrDeviceOSX::sleep(u32 timeMs, bool pauseTimer)
     
     if (pauseTimer && !wasStopped)
         Timer->start();
-#endif
 }
 
 void CIrrDeviceOSX::setWindowCaption(const wchar_t* text)
