@@ -149,9 +149,9 @@ namespace Skylicht
 				CGraphics2D* pG = CGraphics2D::getInstance();
 				pG->beginRenderGUI(projection, view);
 
-				wchar_t* text = L"The quick brown fox jumps over the lazy dog";
-				wchar_t* textUppercase = L"THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG'S BACK";
-				wchar_t* textNumber = L"1234567890 `~!@#$%^&*();:,.|";
+				const wchar_t* text = L"The quick brown fox jumps over the lazy dog";
+				const wchar_t* textUppercase = L"THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG'S BACK";
+				const wchar_t* textNumber = L"1234567890 `~!@#$%^&*();:,.|";
 
 				float x = 10.0f;
 				float y = 10.0f;
