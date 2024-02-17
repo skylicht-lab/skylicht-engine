@@ -276,11 +276,13 @@ elseif (BUILD_IOS)
 	set_target_properties(@project_name@ PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
 	set_target_properties(@project_name@ PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
 	set_target_properties(@project_name@ PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
-	set_target_properties(@project_name@ PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
-
+	
 	# add assets icon
 	target_sources(@project_name@ PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
-	set_target_properties(@project_name@ PROPERTIES RESOURCE "${template_path}/Platforms/IOS/Assets.xcassets")
+	
+	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
+	set_target_properties(@project_name@ PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+
 
 	# embed .framework
 	set_target_properties(@project_name@ PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")

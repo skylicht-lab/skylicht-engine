@@ -232,7 +232,8 @@ bool CViewInit::OnEvent(const SEvent& event)
 	{
 		if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 		{
-			CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+            if (m_initState == CViewInit::Finished)
+                CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 		}
 	}
 
