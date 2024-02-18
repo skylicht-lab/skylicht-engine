@@ -377,6 +377,7 @@ namespace SkylichtAudio
 			{
 				if (m_pitch == 1.0f)
 				{
+                    // printf("m_decoder::decode %d\n", m_bufferSize);
 					decodeResult = m_decoder->decode(m_buffer[m_currentBuffer], m_bufferSize);
 				}
 				else

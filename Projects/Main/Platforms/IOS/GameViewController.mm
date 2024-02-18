@@ -10,11 +10,12 @@
 
 #include "SkylichtApplication.h"
 
+SkylichtApplication* _angleApplication = NULL;
+
 @implementation GameViewController
 {
     MTKView *_view;
     Renderer *_renderer;
-    AngleApplication* _angleApplication;
 }
 
 - (void)viewDidLoad
@@ -38,6 +39,101 @@
     _angleApplication->initialize();
     
     [_renderer setApplication:_angleApplication];
+    
+        // get the name of the app
+    NSString* bundle = [[NSBundle mainBundle]bundleIdentifier];
+    
+    NSString* savePath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    savePath = [savePath stringByAppendingFormat:@"/%@", bundle];
+    
+    // set bundle id
+    
+    char bundleID[1024];
+    [bundle getCString:bundleID maxLength:1024 encoding:NSASCIIStringEncoding];
+    NSLog(@"Set bundle id: %@", bundle);
+    _angleApplication->setBundleId(bundleID);
+    
+    // create folder
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    if([fileManager fileExistsAtPath:savePath] == NO)
+    {
+        NSError *pError;
+        if([fileManager createDirectoryAtPath:savePath withIntermediateDirectories:YES attributes:nil error:&pError] == NO)
+        {
+            savePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+            NSLog(@"Error %@", pError);
+        }
+    }
+    
+    char path[1024];
+    savePath = [savePath stringByAppendingFormat:@"/"];
+    [savePath getCString:path maxLength:1024 encoding:NSASCIIStringEncoding];
+    _angleApplication->setSaveFolder(path);
+}
+
+- (void)dealloc
+{
+    delete _angleApplication;
+}
+
+#pragma mark - touches methods
+
+- (int)getTouchId:(UITouch*)touch
+{
+    long pointer = (long)touch;
+    int touchId = (int)(pointer % 32000);
+    return touchId;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    float scale = self.view.contentScaleFactor;
+    
+    for (UITouch* touch in touches)
+    {
+        int touchId = [self getTouchId:touch];
+        CGPoint cursor = [touch locationInView:[self view]];
+        _angleApplication->onTouchDown(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
+    }
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    float scale = self.view.contentScaleFactor;
+    
+    for (UITouch* touch in touches)
+    {
+        int touchId = [self getTouchId:touch];
+        CGPoint cursor = [touch locationInView:[self view]];
+        _angleApplication->onTouchMove(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
+    }
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    float scale = self.view.contentScaleFactor;
+    
+    for (UITouch* touch in touches)
+    {
+        int touchId = [self getTouchId:touch];
+        CGPoint cursor = [touch locationInView:[self view]];
+        _angleApplication->onTouchUp(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
+    }
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self touchesEnded:touches withEvent:event];
 }
 
 @end
+
+void notificationPause()
+{
+    
+}
+
+void notificationResume()
+{
+    
+}

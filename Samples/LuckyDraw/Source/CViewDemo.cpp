@@ -244,6 +244,10 @@ void CViewDemo::onInit()
 	core::rectf leftBtnSize(0.0f, 0.0f, leftW, leftH);
 	buttonY = 20.0f;
 
+#if defined(IOS)
+    buttonY = 100.0f;
+#endif
+    
 	CGUIElement* buttonLeftGUI = m_canvas->createElement(leftBtnSize);
 	buttonLeftGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 	buttonLeftGUI->setPosition(core::vector3df(-150.0f, buttonY, 0.0f));
