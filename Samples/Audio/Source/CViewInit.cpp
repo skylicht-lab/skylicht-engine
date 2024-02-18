@@ -191,6 +191,10 @@ void CViewInit::onUpdate()
 	{
 		initScene();
 		m_initState = CViewInit::Finished;
+
+#if !defined(__EMSCRIPTEN__)
+        CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+#endif
 	}
 	break;
 	case CViewInit::Error:

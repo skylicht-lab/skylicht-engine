@@ -28,16 +28,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifdef USE_AUDIO_UNIT
 
-#if defined(IOS)
-extern void AudioSetupStreamBufferLength(float time);
-extern float AudioGetStreamBufferLength();
-#endif
-
 namespace SkylichtAudio
 {
 	bool s_pauseEngine = false;
 
-	int s_bufferSize = 0;
 	int s_sampleRate = 0;
 
 	float s_pauseTime = 0.0f;
@@ -154,10 +148,9 @@ namespace SkylichtAudio
 		// todo: very important!
 		m_bufferLength = (bufferSizeIO / (float)m_preferedRate) / 4.0f;
 
-#if defined(IOS)
-		AudioSetupStreamBufferLength(m_bufferLength);
-#endif
-
+        printf("CDriverAudioUnit:init recommend buffer: %d %f\n", bufferSizeIO, m_bufferLength);
+        // need call change buffer duration but AudioSessionSetProperty Deprecated
+        
 		// init Audio
 		status = AudioUnitInitialize(m_audioUnit);
 		if (status != noErr)
@@ -168,12 +161,6 @@ namespace SkylichtAudio
 		if (status != noErr)
 			printLog("CDriverAudioUnit::init error [5]\n");
 
-#if defined(IOS)
-		// get buffer length
-		m_bufferLength = AudioGetStreamBufferLength();
-#endif
-
-		s_bufferSize = (static_cast<int>(m_bufferLength * m_preferedRate)) * 4;
 		s_sampleRate = m_preferedRate;
 	}
 
@@ -212,6 +199,8 @@ namespace SkylichtAudio
 
 				float duration = (dataSize / (float)s_sampleRate) / 4.0f;
 				driver->changeDuration(duration);
+                
+                // printf("playbackCallback size %d & duration %f - %d\n", (int)dataSize, (float)duration, (int)s_sampleRate);
                 
 #ifndef USE_MULTITHREAD_UPDATE
 				SkylichtAudio::CAudioEngine::getSoundEngine()->updateEmitter();

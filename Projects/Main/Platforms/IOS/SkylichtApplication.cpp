@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SkylichtApplication.h"
+#include "BuildConfig/CBuildConfig.h"
 
 #include "common/system_utils.h"
 
@@ -24,7 +25,11 @@ SkylichtApplication::SkylichtApplication(int argc, char **argv, int width, int h
 
 SkylichtApplication::~SkylichtApplication()
 {
-    
+    printf("Close Skylicht Application\n");
+    g_mainApp->destroyApplication();
+    delete g_mainApp;
+
+    g_device->drop();
 }
 
 bool SkylichtApplication::initialize()
@@ -95,4 +100,29 @@ void SkylichtApplication::onResized(int width, int height)
     IrrlichtDevice *dev  = getIrrlichtDevice();
     if (dev)
         dev->postEventFromUser(event);
+}
+
+void SkylichtApplication::onTouchDown(int touchID, int x, int y)
+{
+    g_mainApp->updateTouch(touchID, x, y, 0);
+}
+    
+void SkylichtApplication::onTouchMove(int touchID, int x, int y)
+{
+    g_mainApp->updateTouch(touchID, x, y, 2);
+}
+    
+void SkylichtApplication::onTouchUp(int touchID, int x, int y)
+{
+    g_mainApp->updateTouch(touchID, x, y, 1);
+}
+
+void SkylichtApplication::setSaveFolder(const char *folder)
+{
+    CBuildConfig::SaveFolder = folder;
+}
+
+void SkylichtApplication::setBundleId(const char *bundleId)
+{
+    CBuildConfig::AppID = bundleId;
 }

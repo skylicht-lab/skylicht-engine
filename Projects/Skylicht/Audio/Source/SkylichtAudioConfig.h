@@ -25,7 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifndef _SKYLICHT_AUDIO_CONFIG_
 #define _SKYLICHT_AUDIO_CONFIG_
 
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(IOS) && !defined(MACOS)
+// iOS & MacOS can not change the duration length & buffer size, so we dont use multithread
+// webgl emscripten do not support multithread on some browser
 #define USE_MULTITHREAD_UPDATE
 #endif
 
