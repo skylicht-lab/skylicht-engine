@@ -153,7 +153,7 @@ namespace Skylicht
 		// try to load compress texture
 		if (driver->getDriverType() == video::EDT_OPENGLES)
 		{
-#if defined(ANDROID)
+#if defined(ANDROID) || defined(IOS)
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(MACOS)
@@ -263,7 +263,7 @@ namespace Skylicht
 		// try to load compress texture
 		if (driver->getDriverType() == video::EDT_OPENGLES)
 		{
-#if defined(ANDROID)
+#if defined(ANDROID) || defined(IOS)
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(MACOS)
