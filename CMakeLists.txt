@@ -18,11 +18,17 @@ message(STATUS "- Skylicht Engine version ${SKYLICHT_VERSION}")
 # output
 if (CMAKE_SYSTEM_NAME STREQUAL Android)
 	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs/${ANDROID_ABI} CACHE PATH "Single output directory for building all libraries.")
+elseif (CMAKE_SYSTEM_NAME STREQUAL iOS)
+	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs/${PLATFORM} CACHE PATH "Single output directory for building all libraries.")
 else()
 	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs CACHE PATH "Single output directory for building all libraries.")
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin CACHE PATH "Single output directory for building executables.")
+if (CMAKE_SYSTEM_NAME STREQUAL iOS)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${PLATFORM} CACHE PATH "Single output directory for building executables.")
+else()
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin CACHE PATH "Single output directory for building executables.")
+endif()
 
 # debug/release
 if (NOT CMAKE_BUILD_TYPE)
