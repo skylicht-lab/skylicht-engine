@@ -1,11 +1,25 @@
 import os
+import platform
 from tinydb import TinyDB, Query
 import os.path
 import time
 import json
 
 textureExt = [".tga"]
-compressTools = "..\\Tools\\PVRTexTool\\PVRTexToolCLI.exe"
+
+systemName = platform.system()
+appname = ""
+if systemName == "Windows":
+    appname = "win32/PVRTexToolCLI.exe"
+elif systemName == "Darwin":
+    appname = "darwin/PVRTexToolCLI"
+else:
+    appname = "linux/PVRTexToolCLI"
+
+compressTools = "../Tools/PVRTexTool/" + appname;
+
+if systemName == "Windows":
+    compressTools = compressTools.replace("/", "\\")
 
 db = TinyDB('CachePVR.json')
 fileQuery = Query()
