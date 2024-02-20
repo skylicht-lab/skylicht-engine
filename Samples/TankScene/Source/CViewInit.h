@@ -21,6 +21,10 @@ protected:
 	EInitState m_initState;
 	unsigned int m_downloaded;
 
+	CGameObject* m_guiObject;
+	CGlyphFont* m_font;
+	CGUIText* m_textInfo;
+
 protected:
 	io::path getBuiltInPath(const char *name);
 

@@ -38,6 +38,26 @@ void CViewInit::onInit()
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+
+	CScene* scene = CContext::getInstance()->initScene();
+	CZone* zone = scene->createZone();
+
+	m_guiObject = zone->createEmptyObject();
+	CCanvas* canvas = m_guiObject->addComponent<CCanvas>();
+
+	m_font = new CGlyphFont();
+	m_font->setFont("Segoe UI Light", 25);
+
+	// create text
+	m_textInfo = canvas->createText(m_font);
+	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+	m_textInfo->setText(L"Init assets");
+
+	// crate gui camera
+	CGameObject* guiCameraObject = zone->createEmptyObject();
+	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
+	guiCamera->setProjectionType(CCamera::OrthoUI);
+	CContext::getInstance()->setGUICamera(guiCamera);
 }
 
 void CViewInit::initScene()
@@ -46,8 +66,8 @@ void CViewInit::initScene()
 
 	CContext* context = CContext::getInstance();
 
-	CScene* scene = context->initScene();
-	CZone* zone = scene->createZone();
+	CScene* scene = context->getScene();
+	CZone* zone = scene->getZone(0);
 
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
@@ -135,7 +155,8 @@ void CViewInit::initScene()
 
 void CViewInit::onDestroy()
 {
-
+	m_guiObject->remove();
+	delete m_font;
 }
 
 void CViewInit::onUpdate()
@@ -167,6 +188,10 @@ void CViewInit::onUpdate()
 		}
 		else
 		{
+			char log[512];
+			sprintf(log, "Download asset: %s - %d%%", filename, m_getFile->getPercent());
+			m_textInfo->setText(log);
+
 			if (m_getFile->getState() == CGetFileURL::Finish)
 			{
 				// [bundles].zip
@@ -230,5 +255,6 @@ void CViewInit::onUpdate()
 
 void CViewInit::onRender()
 {
-
+	CCamera* guiCamera = CContext::getInstance()->getGUICamera();
+	CGraphics2D::getInstance()->render(guiCamera);
 }
