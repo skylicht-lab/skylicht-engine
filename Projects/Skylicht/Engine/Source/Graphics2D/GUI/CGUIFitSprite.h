@@ -66,6 +66,8 @@ namespace Skylicht
 
 		virtual void render(CCamera* camera);
 
+		void setFrameSource(const char* spritePath, const char* frameName);
+
 		void setFrame(SFrame* frame);
 
 		void setAnchor(AnchorType type, float left, float right, float top, float bottom);
