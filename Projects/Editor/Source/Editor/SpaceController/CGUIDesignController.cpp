@@ -189,6 +189,7 @@ namespace Skylicht
 
 				CGUIFitSprite* bg = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
 				bg->setName(L".background");
+				bg->setFrameSource("SampleGUI/SampleGUI.spritedata", "button");
 				bg->setDock(EGUIDock::DockFill);
 				bg->setAnchor(CGUIFitSprite::AnchorAll, 45.0, 45.0f, 45.0f, 45.0f);
 
@@ -197,6 +198,7 @@ namespace Skylicht
 				text->setText(L"Button");
 				text->setDock(EGUIDock::DockFill);
 				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+				text->setFontSource("SampleGUI/Fonts/Roboto-Large.font");
 			}
 
 			if (newNode)

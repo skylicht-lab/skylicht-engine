@@ -762,4 +762,18 @@ namespace Skylicht
 
 		m_updateTextRender = true;
 	}
+
+	void CGUIText::setFontSource(const char* fontSource)
+	{
+		m_fontSource = fontSource;
+
+		m_fontData = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
+		if (m_fontData)
+		{
+			m_fontData->initFont();
+			m_fontGUID = m_fontData->getGUID();
+		}
+
+		m_updateTextRender = true;
+	}
 }
