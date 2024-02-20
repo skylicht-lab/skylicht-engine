@@ -197,10 +197,12 @@ skylicht-engine/Assets$ python3 BuildAssetBundles.py
 # example generate for simulator
 skylicht-engine/BuildCommand$ ./GenerateXCodeIOSSimulator.sh
 
-# for iOS device
+# or generate project for iOS device
 skylicht-engine/BuildCommand$ ./GenerateXCodeIOS.sh
 ```
 Open iOS XCode Project on folder **skylicht-engine/PrjIOS/SKYLICHT_ENGINE.xcodeproj**
+
+<img src="Documents/Media/Samples/ios/iosSimulator.png"/>
 
 # Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
