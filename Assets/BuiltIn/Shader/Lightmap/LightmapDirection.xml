@@ -1,4 +1,4 @@
-<shaderConfig name="LightmapDeferred" baseShader="SOLID">
+<shaderConfig name="LightmapDirection" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -10,6 +10,6 @@
 	</uniforms>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/VS.glsl" fs="GLSL/LightmapDeferredFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/VS.hlsl" fs="HLSL/LightmapDeferredFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/VS.glsl" fs="GLSL/LightmapDirectionFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/VS.hlsl" fs="HLSL/LightmapDirectionFS.hlsl"/>
 </shaderConfig>
