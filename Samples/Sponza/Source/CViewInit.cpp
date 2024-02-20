@@ -15,8 +15,8 @@
 
 #include "Lightmap/CLightmap.h"
 
-#if !defined(ANDROID) && !defined(IOS) && !defined(__EMSCRIPTEN__)
-	#define USE_DYNAMIC_LIGHTING
+#if defined(ANDROID) || defined(IOS) || defined(__EMSCRIPTEN__)
+#define USE_LIGHTMAP_DIRECTIONAL
 #endif
 
 CViewInit::CViewInit() :
@@ -122,7 +122,7 @@ void CViewInit::initScene()
 		{12.01f, 2.4f, -4.47f},
 	};
 
-#ifdef USE_DYNAMIC_LIGHTING
+#if !defined(USE_LIGHTMAP_DIRECTIONAL)
 	std::vector<CPointLight*> pointLights;
 
 	for (int i = 0; i < 4; i++)
@@ -177,7 +177,7 @@ void CViewInit::initScene()
 		textures.push_back("Sponza/LightMapRasterize_bounce_3_1.png");
 		textures.push_back("Sponza/LightMapRasterize_bounce_3_2.png");
 
-#ifndef USE_DYNAMIC_LIGHTING
+#if defined(USE_LIGHTMAP_DIRECTIONAL)
 		CLightmap* lightmap = sponza->addComponent<CLightmap>();
 
 		// see SampleLightmappingDirectional
@@ -192,7 +192,7 @@ void CViewInit::initScene()
 			indirectLighting->setIndirectLightmap(lightmapTexture);
 			indirectLighting->setIndirectLightingType(CIndirectLighting::LightmapArray);
 
-#ifndef USE_DYNAMIC_LIGHTING
+#if defined(USE_LIGHTMAP_DIRECTIONAL)
 			lightmap->setLightmap(lightmapTexture, 3); // start from index: 3
 #endif
 		}
@@ -212,10 +212,10 @@ void CViewInit::initScene()
 	// save to context
 	CContext* context = CContext::getInstance();
 
-#ifdef USE_DYNAMIC_LIGHTING
-	context->initRenderPipeline(app->getWidth(), app->getHeight(), true, true);
-#else
+#if defined(USE_LIGHTMAP_DIRECTIONAL)
 	context->initLightmapRenderPipeline(app->getWidth(), app->getHeight(), true);
+#else
+	context->initRenderPipeline(app->getWidth(), app->getHeight(), true, true);
 #endif
 
 	context->setActiveZone(zone);
@@ -224,7 +224,7 @@ void CViewInit::initScene()
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 
-#ifdef USE_DYNAMIC_LIGHTING
+#if !defined(USE_LIGHTMAP_DIRECTIONAL)
 	context->setPointLight(pointLights);
 #endif
 

@@ -57,7 +57,8 @@ namespace Skylicht
 		m_textureLinearRGBShader(0),
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
-		m_lightmapDeferredShader(0),
+		m_lightmapIndirectShader(0),
+		m_lightmapDirectionalShader(0),
 		m_lightmapIndirectTestShader(0),
 		m_indirectMultipler(1.0f),
 		m_directMultipler(1.0f),
@@ -94,10 +95,6 @@ namespace Skylicht
 		m_multiRenderTarget.push_back(m_position);
 		m_multiRenderTarget.push_back(m_normal);
 		m_multiRenderTarget.push_back(m_data);
-
-		// static lightmap buffer
-		m_multiLightTarget.push_back(m_indirect);
-		m_multiLightTarget.push_back(m_lightBuffer);
 	}
 
 	void CDeferredLightmapRP::releaseRTT()
@@ -126,7 +123,6 @@ namespace Skylicht
 			driver->removeTexture(m_target);
 
 		m_multiRenderTarget.clear();
-		m_multiLightTarget.clear();
 	}
 
 	void CDeferredLightmapRP::initRender(int w, int h)
@@ -142,7 +138,9 @@ namespace Skylicht
 		m_textureLinearRGBShader = shaderMgr->getShaderIDByName("TextureLinearRGB");
 		m_vertexColorShader = shaderMgr->getShaderIDByName("VertexColor");
 
-		m_lightmapDeferredShader = shaderMgr->getShaderIDByName("LightmapDeferred");
+		m_lightmapIndirectShader = shaderMgr->getShaderIDByName("Lightmap");
+		m_lightmapDirectionalShader = shaderMgr->getShaderIDByName("LightmapDirection");
+
 		m_lightmapIndirectTestShader = shaderMgr->getShaderIDByName("IndirectTest");
 
 		m_lightDirection = shaderMgr->getShaderIDByName("SGLightmap");
@@ -186,6 +184,10 @@ namespace Skylicht
 		m_directionalLightPass.TextureLayer[4].BilinearFilter = false;
 		m_directionalLightPass.TextureLayer[4].TrilinearFilter = false;
 		m_directionalLightPass.TextureLayer[4].AnisotropicFilter = 0;
+
+		m_directionalLightPass.TextureLayer[5].BilinearFilter = false;
+		m_directionalLightPass.TextureLayer[5].TrilinearFilter = false;
+		m_directionalLightPass.TextureLayer[5].AnisotropicFilter = 0;
 
 		// disable Z
 		m_directionalLightPass.ZBuffer = video::ECFN_DISABLED;
@@ -246,6 +248,36 @@ namespace Skylicht
 			if (indirectData == NULL)
 				return;
 
+			// set shader (uniform) material
+			if (mesh->Materials.size() > (u32)bufferID)
+				CShaderMaterial::setMaterial(mesh->Materials[bufferID]);
+
+			IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
+			IVideoDriver* driver = getVideoDriver();
+
+			video::SMaterial& material = mb->getMaterial();
+
+			if (indirectData->Type == CIndirectLightingData::LightmapArray)
+			{
+				// change shader to vertex color
+				SMaterial lightmapMat;
+
+				lightmapMat.MaterialType = m_lightmapIndirectShader;
+				lightmapMat.setTexture(0, indirectData->IndirectTexture);
+
+				// set irrlicht material
+				driver->setMaterial(lightmapMat);
+
+				// draw mesh buffer
+				driver->drawMeshBuffer(mb);
+			}
+		}
+		else if (m_isDirectionalPass)
+		{
+			CIndirectLightingData* indirectData = GET_ENTITY_DATA(entity->getEntity(entityID), CIndirectLightingData);
+			if (indirectData == NULL)
+				return;
+
 			CLightmapData* lightmapData = GET_ENTITY_DATA(entity->getEntity(entityID), CLightmapData);
 			if (lightmapData == NULL)
 				return;
@@ -266,15 +298,15 @@ namespace Skylicht
 			if (indirectData->Type == CIndirectLightingData::LightmapArray)
 			{
 				// change shader to vertex color
-				SMaterial lightmapDeferredMat;
+				SMaterial lightmapMat;
 
-				lightmapDeferredMat.MaterialType = m_lightmapDeferredShader;
-				lightmapDeferredMat.setTexture(0, indirectData->IndirectTexture);
+				lightmapMat.MaterialType = m_lightmapDirectionalShader;
+				lightmapMat.setTexture(0, indirectData->IndirectTexture);
 
 				CShaderManager::getInstance()->LightmapIndex = (float)lightmapData->LightmapIndex;
 
 				// set irrlicht material
-				driver->setMaterial(lightmapDeferredMat);
+				driver->setMaterial(lightmapMat);
 
 				// draw mesh buffer
 				driver->drawMeshBuffer(mb);
@@ -369,9 +401,9 @@ namespace Skylicht
 		CShaderDeferred::setView(m_viewMatrix);
 
 		// STEP 01:
-		// draw baked indirect & direction lighting
+		// draw baked indirect
 		m_isIndirectPass = true;
-		driver->setRenderTarget(m_multiLightTarget, true, true, SColor(255, 0, 0, 0));
+		driver->setRenderTarget(m_indirect, true, true, SColor(255, 0, 0, 0));
 		if (useCustomViewport)
 			driver->setViewPort(customViewport);
 
@@ -384,8 +416,16 @@ namespace Skylicht
 		{
 			entityManager->cullingAndRender();
 		}
-
 		m_isIndirectPass = false;
+
+		// baked direction lighting pass
+		m_isDirectionalPass = true;
+		driver->setRenderTarget(m_lightBuffer, true, true, SColor(255, 0, 0, 0));
+		if (useCustomViewport)
+			driver->setViewPort(customViewport);
+		entityManager->render();
+		m_isDirectionalPass = false;
+
 
 		// STEP 02:
 		// Render multi target to: albedo, position, normal, data		
@@ -484,9 +524,9 @@ namespace Skylicht
 		// test
 		if (s_enableRenderTestIndirect == true)
 		{
-			m_indirect->regenerateMipMapLevels();
 			SMaterial t = m_finalPass;
 			t.setTexture(0, m_indirect);
+			// t.setTexture(0, m_lightBuffer);
 			t.MaterialType = m_lightmapIndirectTestShader;
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, renderW, renderH, t);
 		}
