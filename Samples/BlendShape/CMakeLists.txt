@@ -292,6 +292,8 @@ elseif (BUILD_IOS)
 	# link framework
 	target_link_libraries(SampleBlendShape "-framework UIKit")
 	target_link_libraries(SampleBlendShape "-framework CoreGraphics")
+	target_link_libraries(SampleBlendShape "-framework Metal")
+	target_link_libraries(SampleBlendShape "-framework MetalKit")
 	target_link_libraries(SampleBlendShape "-framework AudioToolbox")
 	target_link_libraries(SampleBlendShape "-framework AVFAudio")
 else()

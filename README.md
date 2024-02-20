@@ -185,19 +185,22 @@ Run command build from Android Studio:
 ```code
 # Grant permission executive for PVRTexTool
 skylicht-engine/Tools/PVRTexTool/darwin$ chmod +x PVRTexToolCLI
+
+# Build compress texture ETC
 skylicht-engine/Assets$ python3 BuildTextureCompressETC.py
+
+# Build asset bundles
 skylicht-engine/Assets$ python3 BuildAssetBundles.py
 ```
 ### **step 2: Generate iOS xCode Project**
 ```code
-# Grant permission executive for PVRTexTool
 # example generate for simulator
 skylicht-engine/BuildCommand$ ./GenerateXCodeIOSSimulator.sh
 
-# or
+# for iOS device
 skylicht-engine/BuildCommand$ ./GenerateXCodeIOS.sh
 ```
-Open XCode Project on folder skylicht-engine/PrjIOS/**SKYLICHT_ENGINE.xcodeproj**
+Open iOS XCode Project on folder **skylicht-engine/PrjIOS/SKYLICHT_ENGINE.xcodeproj**
 
 # Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)

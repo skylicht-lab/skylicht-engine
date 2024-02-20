@@ -294,6 +294,8 @@ elseif (BUILD_IOS)
 	# link framework
 	target_link_libraries(SampleLightmapping "-framework UIKit")
 	target_link_libraries(SampleLightmapping "-framework CoreGraphics")
+	target_link_libraries(SampleLightmapping "-framework Metal")
+	target_link_libraries(SampleLightmapping "-framework MetalKit")
 	target_link_libraries(SampleLightmapping "-framework AudioToolbox")
 	target_link_libraries(SampleLightmapping "-framework AVFAudio")
 else()
