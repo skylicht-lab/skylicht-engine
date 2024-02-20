@@ -174,6 +174,7 @@ namespace irr
 				GL_WEBGL_compressed_texture_s3tc,
 				GL_WEBGL_compressed_texture_pvrtc,
 				GL_WEBGL_compressed_texture_etc,
+                IRR_GL_OES_compressed_ETC2_RGB8_texture,
 				IRR_OGLES3_Feature_Count
 			};
 
