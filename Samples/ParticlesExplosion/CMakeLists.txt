@@ -290,6 +290,8 @@ elseif (BUILD_IOS)
 	# link framework
 	target_link_libraries(SampleParticlesExplosion "-framework UIKit")
 	target_link_libraries(SampleParticlesExplosion "-framework CoreGraphics")
+	target_link_libraries(SampleParticlesExplosion "-framework Metal")
+	target_link_libraries(SampleParticlesExplosion "-framework MetalKit")
 	target_link_libraries(SampleParticlesExplosion "-framework AudioToolbox")
 	target_link_libraries(SampleParticlesExplosion "-framework AVFAudio")
 else()

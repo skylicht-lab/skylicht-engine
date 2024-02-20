@@ -289,6 +289,8 @@ elseif (BUILD_IOS)
 	# link framework
 	target_link_libraries(SampleDrawPrimitives "-framework UIKit")
 	target_link_libraries(SampleDrawPrimitives "-framework CoreGraphics")
+	target_link_libraries(SampleDrawPrimitives "-framework Metal")
+	target_link_libraries(SampleDrawPrimitives "-framework MetalKit")
 	target_link_libraries(SampleDrawPrimitives "-framework AudioToolbox")
 	target_link_libraries(SampleDrawPrimitives "-framework AVFAudio")
 else()

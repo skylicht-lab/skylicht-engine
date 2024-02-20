@@ -305,6 +305,8 @@ elseif (BUILD_IOS)
 	# link framework
 	target_link_libraries(SampleSocketIO "-framework UIKit")
 	target_link_libraries(SampleSocketIO "-framework CoreGraphics")
+	target_link_libraries(SampleSocketIO "-framework Metal")
+	target_link_libraries(SampleSocketIO "-framework MetalKit")
 	target_link_libraries(SampleSocketIO "-framework AudioToolbox")
 	target_link_libraries(SampleSocketIO "-framework AVFAudio")
 else()
