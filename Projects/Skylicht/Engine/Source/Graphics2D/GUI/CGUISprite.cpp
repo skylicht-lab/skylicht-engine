@@ -112,6 +112,25 @@ namespace Skylicht
 		m_frame = frame;
 	}
 
+	void CGUISprite::setFrameSource(const char* spritePath, const char* frameName)
+	{
+		CSpriteManager* spriteMgr = CSpriteManager::getInstance();
+
+		// load by id first
+		CSpriteFrame* sprite = spriteMgr->loadSprite(spritePath);
+		if (sprite)
+		{
+			m_frame = sprite->getFrameByName(frameName);
+			if (m_frame)
+			{
+				m_guid = m_frame->ID;
+				m_frameName = frameName;
+				m_sprite = spritePath;
+				m_spriteId = sprite->getId();
+			}
+		}
+	}
+
 	void CGUISprite::setAutoRotate(bool rotate, float rotateAngle, float framePerSec)
 	{
 		m_autoRotate = rotate;

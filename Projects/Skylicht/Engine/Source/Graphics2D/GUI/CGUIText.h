@@ -154,6 +154,8 @@ namespace Skylicht
 			m_centerRotate = b;
 		}
 
+		void setFontSource(const char* fontSource);
+
 		DECLARE_GETTYPENAME(CGUIText);
 
 		virtual CObjectSerializable* createSerializable();
