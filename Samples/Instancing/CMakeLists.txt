@@ -292,6 +292,8 @@ elseif (BUILD_IOS)
 	# link framework
 	target_link_libraries(SampleInstancing "-framework UIKit")
 	target_link_libraries(SampleInstancing "-framework CoreGraphics")
+	target_link_libraries(SampleInstancing "-framework Metal")
+	target_link_libraries(SampleInstancing "-framework MetalKit")
 	target_link_libraries(SampleInstancing "-framework AudioToolbox")
 	target_link_libraries(SampleInstancing "-framework AVFAudio")
 else()

@@ -289,6 +289,8 @@ elseif (BUILD_IOS)
 	# link framework
 	target_link_libraries(SampleShader "-framework UIKit")
 	target_link_libraries(SampleShader "-framework CoreGraphics")
+	target_link_libraries(SampleShader "-framework Metal")
+	target_link_libraries(SampleShader "-framework MetalKit")
 	target_link_libraries(SampleShader "-framework AudioToolbox")
 	target_link_libraries(SampleShader "-framework AVFAudio")
 else()
