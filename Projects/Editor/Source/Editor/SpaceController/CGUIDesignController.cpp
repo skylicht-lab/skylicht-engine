@@ -179,6 +179,25 @@ namespace Skylicht
 				nameHint = L"Sprite";
 				newNode = parentNode->getCanvas()->createFitSprite(parentNode, r, NULL);
 			}
+			else if (command == L"UI Button")
+			{
+				r.LowerRightCorner.X = 200.0f;
+				r.LowerRightCorner.Y = 90.0f;
+
+				nameHint = L"Btn";
+				newNode = parentNode->getCanvas()->createElement(parentNode, r);
+
+				CGUIFitSprite* bg = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
+				bg->setName(L".background");
+				bg->setDock(EGUIDock::DockFill);
+				bg->setAnchor(CGUIFitSprite::AnchorAll, 45.0, 45.0f, 45.0f, 45.0f);
+
+				CGUIText* text = parentNode->getCanvas()->createText(newNode, r, NULL);
+				text->setName(L".text");
+				text->setText(L"Button");
+				text->setDock(EGUIDock::DockFill);
+				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+			}
 
 			if (newNode)
 			{
@@ -190,6 +209,11 @@ namespace Skylicht
 				node->setTagData(newNode, CGUIHierachyNode::GUIElement);
 
 				setNodeEvent(node);
+
+				if (newNode->getChilds().size() > 0)
+				{
+					rebuildGUIHierachy(newNode, node);
+				}
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
