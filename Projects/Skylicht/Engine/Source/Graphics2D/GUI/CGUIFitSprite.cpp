@@ -169,7 +169,7 @@ namespace Skylicht
 		CEnumProperty<AnchorType>* anchorType = new CEnumProperty<AnchorType>(object, "anchorType", m_anchorType);
 		anchorType->addEnumString("Anchor all", CGUIFitSprite::AnchorAll);
 		anchorType->addEnumString("Anchor left right", CGUIFitSprite::AnchorLeftRight);
-		anchorType->addEnumString("Anchor left right", CGUIFitSprite::AnchorTopBottom);
+		anchorType->addEnumString("Anchor top bottom", CGUIFitSprite::AnchorTopBottom);
 		object->autoRelease(anchorType);
 
 		object->autoRelease(new CFloatProperty(object, "anchorLeft", m_anchorLeft, 0.0f));
