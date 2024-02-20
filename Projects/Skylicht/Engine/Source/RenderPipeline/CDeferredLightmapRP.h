@@ -48,17 +48,19 @@ namespace Skylicht
 		core::dimension2du m_size;
 
 		core::array<irr::video::IRenderTarget> m_multiRenderTarget;
-		core::array<irr::video::IRenderTarget> m_multiLightTarget;
 
 		core::matrix4 m_viewMatrix;
 		core::matrix4 m_projectionMatrix;
 
 		bool m_isIndirectPass;
+		bool m_isDirectionalPass;
+
 		int m_vertexColorShader;
 		int m_textureColorShader;
 		int m_textureLinearRGBShader;
 
-		int m_lightmapDeferredShader;
+		int m_lightmapIndirectShader;
+		int m_lightmapDirectionalShader;
 		int m_lightmapIndirectTestShader;
 
 		int m_lightDirection;
