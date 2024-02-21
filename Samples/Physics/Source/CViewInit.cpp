@@ -8,13 +8,13 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 
+#include "PhysicsEngine/CPhysicsEngine.h"
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
 	m_downloaded(0),
-	m_bakeSHLighting(true),
-	m_character01(NULL),
-	m_character02(NULL)
+	m_bakeSHLighting(true)
 {
 
 }
@@ -37,10 +37,6 @@ void CViewInit::onInit()
 
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
-
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
-	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -116,84 +112,10 @@ void CViewInit::initScene()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
 
-	// load dae animation
-	CAnimationManager* animManager = CAnimationManager::getInstance();
-	CAnimationClip* clip1 = animManager->loadAnimation("SampleModels/MixamoCharacter/Hip_Hop_Dancing.dae");
-	CAnimationClip* clip2 = animManager->loadAnimation("SampleModels/MixamoCharacter/Samba_Dancing.dae");
+	// init physics engine
+	Physics::CPhysicsEngine::getInstance()->initPhysics();
 
-	// skinned mesh
-	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SampleModels/MixamoCharacter/Ch17_nonPBR.dae", "SampleModels/MixamoCharacter/textures");
-	if (prefab != NULL)
-	{
-		// test exporter
-		/*
-		CMeshManager::getInstance()->exportModel(
-			prefab->getEntities(),
-			prefab->getNumEntities(),
-			"../Assets/SkinnedMesh/Ch17_nonPBR.smesh");
-		*/
-
-		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
-		if (material.size() == 2)
-		{
-			// body
-			material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
-			material[1]->autoDetectLoadTexture();
-
-			// hair
-			material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
-			material[0]->autoDetectLoadTexture();
-		}
-
-		// CHARACTER 01
-		// ------------------------------------------
-
-		// create character 01 object
-		m_character01 = zone->createEmptyObject();
-
-		// load skinned mesh character 01
-		CRenderMesh* renderMesh1 = m_character01->addComponent<CRenderMesh>();
-		renderMesh1->initFromPrefab(prefab);
-		renderMesh1->initMaterial(material);
-
-		// apply animation to character 01
-		CAnimationController* animController1 = m_character01->addComponent<CAnimationController>();
-		CSkeleton* skeleton1 = animController1->createSkeleton();
-		skeleton1->setAnimation(clip1, true);
-
-		// set position for character 01
-		m_character01->getTransformEuler()->setPosition(core::vector3df(-1.0f, 0.0f, 0.0f));
-
-		// set sh lighting
-		CIndirectLighting* indirectLighting = m_character01->addComponent<CIndirectLighting>();
-		indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
-
-
-		// CHARACTER 02
-		// ------------------------------------------
-
-		// create character 02 object
-		m_character02 = zone->createEmptyObject();
-
-		// load skinned mesh character 02
-		CRenderMesh* renderMesh2 = m_character02->addComponent<CRenderMesh>();
-		renderMesh2->initFromPrefab(prefab);
-		renderMesh2->initMaterial(material);
-
-		// apply animation to character 02
-		CAnimationController* animController2 = m_character02->addComponent<CAnimationController>();
-		CSkeleton* skeleton2 = animController2->createSkeleton();
-		skeleton2->setAnimation(clip2, true);
-
-		// set position for character 02
-		m_character02->getTransformEuler()->setPosition(core::vector3df(1.0f, 0.0f, 0.0f));
-
-		// set sh lighting
-		indirectLighting = m_character02->addComponent<CIndirectLighting>();
-		indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
-	}
-
-	// Rendering
+	// rendering
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
 
@@ -265,8 +187,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -279,7 +201,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::InitScene;
 #endif
@@ -321,9 +243,6 @@ void CViewInit::onRender()
 		{
 			m_bakeSHLighting = false;
 
-			m_character01->setVisible(false);
-			m_character02->setVisible(false);
-
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
 			scene->updateAddRemoveObject();
@@ -343,13 +262,6 @@ void CViewInit::onRender()
 				scene->getEntityManager(),
 				pos,
 				normal, tangent, binormal);
-
-			// apply indirect lighting
-			m_character01->getComponent<CIndirectLighting>()->setSH(sh.getValue());
-			m_character02->getComponent<CIndirectLighting>()->setSH(sh.getValue());
-
-			m_character01->setVisible(true);
-			m_character02->setVisible(true);
 		}
 	}
 	else
