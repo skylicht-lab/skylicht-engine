@@ -90,45 +90,45 @@ namespace Skylicht
 
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, X, Y, Z, observer](ISubject* subject, IObserver* from)
-					{
-						if (from != observer)
 						{
-							core::vector3df v = value->get();
-							v.X = X->get();
-							v.Y = Y->get();
-							v.Z = Z->get();
-							value->set(v);
-							onUpdateValue(object);
-						}
-					};
+							if (from != observer)
+							{
+								core::vector3df v = value->get();
+								v.X = X->get();
+								v.Y = Y->get();
+								v.Z = Z->get();
+								value->set(v);
+								onUpdateValue(object);
+							}
+						};
 
 					X->addObserver(observer);
 					Y->addObserver(observer);
 					Z->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [X, Y, Z, o = observer](bool hide)
-					{
-						X->setEnable(!hide);
-						X->notify(o);
+						{
+							X->setEnable(!hide);
+							X->notify(o);
 
-						Y->setEnable(!hide);
-						Y->notify(o);
+							Y->setEnable(!hide);
+							Y->notify(o);
 
-						Z->setEnable(!hide);
-						Z->notify(o);
-					};
+							Z->setEnable(!hide);
+							Z->notify(o);
+						};
 
 					valueProperty->OnChanged = [value, X, Y, Z, observer]()
-					{
-						X->set(value->get().X);
-						X->notify(observer);
+						{
+							X->set(value->get().X);
+							X->notify(observer);
 
-						Y->set(value->get().Y);
-						Y->notify(observer);
+							Y->set(value->get().Y);
+							Y->notify(observer);
 
-						Z->set(value->get().Z);
-						Z->notify(observer);
-					};
+							Z->set(value->get().Z);
+							Z->notify(observer);
+						};
 
 					std::wstring name = ui->getPrettyName(value->Name);
 					name += L" X";
@@ -154,18 +154,18 @@ namespace Skylicht
 					subject->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
 
 					ui->addCheckBox(layout, ui->getPrettyName(value->Name), subject);
 
 					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						subject->set(value->get());
-						subject->notify(observer);
-					};
+						{
+							subject->set(value->get());
+							subject->notify(observer);
+						};
 
 					m_subjects.push_back(subject);
 				}
@@ -178,28 +178,28 @@ namespace Skylicht
 						CSubject<float>* subject = new CSubject<float>(value->get());
 						CObserver* observer = new CObserver();
 						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-						{
-							if (from != o)
 							{
-								float v = s->get();
-								value->set(v);
-								s->set(v);
-								onUpdateValue(object);
-							}
-						};
+								if (from != o)
+								{
+									float v = s->get();
+									value->set(v);
+									s->set(v);
+									onUpdateValue(object);
+								}
+							};
 						subject->addObserver(observer, true);
 
 						valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-						{
-							s->setEnable(!hide);
-							s->notify(o);
-						};
+							{
+								s->setEnable(!hide);
+								s->notify(o);
+							};
 
 						valueProperty->OnChanged = [value, subject, observer]()
-						{
-							subject->set(value->get());
-							subject->notify(observer);
-						};
+							{
+								subject->set(value->get());
+								subject->notify(observer);
+							};
 
 						ui->addSlider(layout, ui->getPrettyName(value->Name), subject, value->Min, value->Max);
 						m_subjects.push_back(subject);
@@ -209,10 +209,62 @@ namespace Skylicht
 						CSubject<float>* subject = new CSubject<float>(value->get());
 						CObserver* observer = new CObserver();
 						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									float v = s->get();
+									bool notifyUI = false;
+
+									if (value->ClampMin && v < value->Min)
+									{
+										v = value->Min;
+										notifyUI = true;
+									}
+									if (value->ClampMax && v > value->Max)
+									{
+										v = value->Max;
+										notifyUI = true;
+									}
+
+									value->set(v);
+
+									if (notifyUI)
+									{
+										s->set(v);
+										s->notify(o);
+									}
+
+									onUpdateValue(object);
+								}
+							};
+						subject->addObserver(observer, true);
+
+						valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+							{
+								s->setEnable(!hide);
+								s->notify(o);
+							};
+
+						valueProperty->OnChanged = [value, subject, observer]()
+							{
+								subject->set(value->get());
+								subject->notify(observer);
+							};
+
+						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject, 0.01f);
+						m_subjects.push_back(subject);
+					}
+				}
+				else if (valueProperty->getType() == EPropertyDataType::Integer)
+				{
+					CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);
+					CSubject<int>* subject = new CSubject<int>(value->get());
+					CObserver* observer = new CObserver();
+					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
-								float v = s->get();
+								int v = s->get();
 								bool notifyUI = false;
 
 								if (value->ClampMin && v < value->Min)
@@ -237,71 +289,19 @@ namespace Skylicht
 								onUpdateValue(object);
 							}
 						};
-						subject->addObserver(observer, true);
+					subject->addObserver(observer, true);
 
-						valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
 						{
 							s->setEnable(!hide);
 							s->notify(o);
 						};
 
-						valueProperty->OnChanged = [value, subject, observer]()
+					valueProperty->OnChanged = [value, subject, observer]()
 						{
 							subject->set(value->get());
 							subject->notify(observer);
 						};
-
-						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject, 0.01f);
-						m_subjects.push_back(subject);
-					}
-				}
-				else if (valueProperty->getType() == EPropertyDataType::Integer)
-				{
-					CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);
-					CSubject<int>* subject = new CSubject<int>(value->get());
-					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
-						{
-							int v = s->get();
-							bool notifyUI = false;
-
-							if (value->ClampMin && v < value->Min)
-							{
-								v = value->Min;
-								notifyUI = true;
-							}
-							if (value->ClampMax && v > value->Max)
-							{
-								v = value->Max;
-								notifyUI = true;
-							}
-
-							value->set(v);
-
-							if (notifyUI)
-							{
-								s->set(v);
-								s->notify(o);
-							}
-
-							onUpdateValue(object);
-						}
-					};
-					subject->addObserver(observer, true);
-
-					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
-
-					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						subject->set(value->get());
-						subject->notify(observer);
-					};
 
 					ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
@@ -312,42 +312,42 @@ namespace Skylicht
 					CSubject<u32>* subject = new CSubject<u32>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							u32 v = s->get();
-							bool notifyUI = false;
-
-							if (value->ClampMax && v > value->Max)
+							if (from != o)
 							{
-								v = value->Max;
-								notifyUI = true;
+								u32 v = s->get();
+								bool notifyUI = false;
+
+								if (value->ClampMax && v > value->Max)
+								{
+									v = value->Max;
+									notifyUI = true;
+								}
+
+								value->set(v);
+
+								if (notifyUI)
+								{
+									s->set(v);
+									s->notify(o);
+								}
+
+								onUpdateValue(object);
 							}
-
-							value->set(v);
-
-							if (notifyUI)
-							{
-								s->set(v);
-								s->notify(o);
-							}
-
-							onUpdateValue(object);
-						}
-					};
+						};
 					subject->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
 
 					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						subject->set(value->get());
-						subject->notify(observer);
-					};
+						{
+							subject->set(value->get());
+							subject->notify(observer);
+						};
 
 					ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
@@ -361,31 +361,31 @@ namespace Skylicht
 
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const std::wstring& stringValue = s->get();
-							std::string stringValueA = CStringImp::convertUnicodeToUTF8(stringValue.c_str());
-							value->set(stringValueA);
-							onUpdateValue(object);
-						}
-					};
+							if (from != o)
+							{
+								const std::wstring& stringValue = s->get();
+								std::string stringValueA = CStringImp::convertUnicodeToUTF8(stringValue.c_str());
+								value->set(stringValueA);
+								onUpdateValue(object);
+							}
+						};
 					subject->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
 
 					ui->addTextBox(layout, ui->getPrettyName(value->Name), subject);
 
 					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						std::wstring stringValue = CStringImp::convertUTF8ToUnicode(value->get().c_str());
-						subject->set(stringValue);
-						subject->notify(observer);
-					};
+						{
+							std::wstring stringValue = CStringImp::convertUTF8ToUnicode(value->get().c_str());
+							subject->set(stringValue);
+							subject->notify(observer);
+						};
 
 					m_subjects.push_back(subject);
 				}
@@ -395,29 +395,29 @@ namespace Skylicht
 					CSubject<SColor>* subject = new CSubject<SColor>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const SColor& color = s->get();
-							value->set(color);
-							onUpdateValue(object);
-						}
-					};
+							if (from != o)
+							{
+								const SColor& color = s->get();
+								value->set(color);
+								onUpdateValue(object);
+							}
+						};
 					subject->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
 
 					ui->addColorPicker(layout, ui->getPrettyName(value->Name), subject);
 
 					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						subject->set(value->get());
-						subject->notify(observer);
-					};
+						{
+							subject->set(value->get());
+							subject->notify(observer);
+						};
 
 					m_subjects.push_back(subject);
 				}
@@ -427,40 +427,40 @@ namespace Skylicht
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const std::string& path = s->get();
-							value->set(path);
-							onUpdateValue(object);
-						}
-					};
+							if (from != o)
+							{
+								const std::string& path = s->get();
+								value->set(path);
+								onUpdateValue(object);
+							}
+						};
 
 					subject->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
 
 					GUI::CInputResourceBox* input = ui->addInputFile(layout, ui->getPrettyName(value->Name), subject, value->Exts);
 					input->OnRightMouseClick = [&, s = subject, o = observer](GUI::CBase* button, float x, float y, bool b)
-					{
-						GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
-						s_pickFileMenu->open(mousePos);
-						s_pickFileMenu->OnCommand = [&, s, o](GUI::CBase* item)
 						{
-							s->set("");
-							s->notify(NULL);
+							GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+							s_pickFileMenu->open(mousePos);
+							s_pickFileMenu->OnCommand = [&, s, o](GUI::CBase* item)
+								{
+									s->set("");
+									s->notify(NULL);
+								};
 						};
-					};
 
 					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						subject->set(value->get());
-						subject->notify(observer);
-					};
+						{
+							subject->set(value->get());
+							subject->notify(observer);
+						};
 
 					m_subjects.push_back(subject);
 				}
@@ -470,41 +470,41 @@ namespace Skylicht
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const std::string& path = s->get();
-							value->set(path);
-							onUpdateValue(object);
-						}
-					};
+							if (from != o)
+							{
+								const std::string& path = s->get();
+								value->set(path);
+								onUpdateValue(object);
+							}
+						};
 
 					subject->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
 
 					GUI::CInputResourceBox* input = ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
 
 					input->OnRightMouseClick = [&, s = subject, o = observer](GUI::CBase* button, float x, float y, bool b)
-					{
-						GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
-						s_pickFileMenu->open(mousePos);
-						s_pickFileMenu->OnCommand = [&, s, o](GUI::CBase* item)
 						{
-							s->set("");
-							s->notify(NULL);
+							GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+							s_pickFileMenu->open(mousePos);
+							s_pickFileMenu->OnCommand = [&, s, o](GUI::CBase* item)
+								{
+									s->set("");
+									s->notify(NULL);
+								};
 						};
-					};
 
 					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						subject->set(value->get());
-						subject->notify(observer);
-					};
+						{
+							subject->set(value->get());
+							subject->notify(observer);
+						};
 
 					m_subjects.push_back(subject);
 				}
@@ -519,9 +519,9 @@ namespace Skylicht
 					int enumCount = enumValue->getEnumCount();
 
 					valueProperty->OnSetHidden = [dropBox](bool hide)
-					{
-						dropBox->getParent()->setHidden(hide);
-					};
+						{
+							dropBox->getParent()->setHidden(hide);
+						};
 
 					for (int i = 0; i < enumCount; i++)
 					{
@@ -536,26 +536,26 @@ namespace Skylicht
 							dropBox->setLabel(enumName);
 
 						item->OnPress = [&, item, enumValue, dropBox, ui](GUI::CBase* base)
-						{
-							enumValue->setIntValue(item->getTagInt());
+							{
+								enumValue->setIntValue(item->getTagInt());
 
-							onUpdateValue(object);
+								onUpdateValue(object);
 
-							dropBox->setLabel(item->getLabel());
-							ui->getWindow()->getCanvas()->closeMenu();
-						};
+								dropBox->setLabel(item->getLabel());
+								ui->getWindow()->getCanvas()->closeMenu();
+							};
 					}
 
 					valueProperty->OnChanged = [dropBox, enumValue]()
-					{
-						int currentValue = enumValue->getIntValue();
-						CEnumPropertyData::SEnumString* enumData = enumValue->getEnumByValue(currentValue);
-						if (enumData)
 						{
-							std::wstring enumName = CStringImp::convertUTF8ToUnicode(enumData->Name.c_str());
-							dropBox->setLabel(enumName);
-						}
-					};
+							int currentValue = enumValue->getIntValue();
+							CEnumPropertyData::SEnumString* enumData = enumValue->getEnumByValue(currentValue);
+							if (enumData)
+							{
+								std::wstring enumName = CStringImp::convertUTF8ToUnicode(enumData->Name.c_str());
+								dropBox->setLabel(enumName);
+							}
+						};
 				}
 				else if (valueProperty->getType() == EPropertyDataType::Object)
 				{
@@ -568,9 +568,9 @@ namespace Skylicht
 					GUI::CBoxLayout* objectLayout = ui->createBoxLayout(group);
 
 					valueProperty->OnSetHidden = [group](bool hide)
-					{
-						group->setHidden(hide);
-					};
+						{
+							group->setHidden(hide);
+						};
 
 					if (object->isArray())
 					{
@@ -588,23 +588,23 @@ namespace Skylicht
 
 							CObserver* observer = new CObserver();
 							observer->Notify = [&, arrayObject, count, o = observer, objectLayout, group, ui](ISubject* subject, IObserver* from)
-							{
-								if (from != o)
 								{
-									int numElement = count->get();
-									if (arrayObject->resize(numElement))
+									if (from != o)
 									{
-										// remove old ui
-										objectLayout->getChild(0)->removeAllChildren();
+										int numElement = count->get();
+										if (arrayObject->resize(numElement))
+										{
+											// remove old ui
+											objectLayout->getChild(0)->removeAllChildren();
 
-										// re-init ui
-										serializableToControl(arrayObject, ui, objectLayout);
+											// re-init ui
+											serializableToControl(arrayObject, ui, objectLayout);
 
-										// update object data
-										onUpdateValue(object);
+											// update object data
+											onUpdateValue(object);
+										}
 									}
-								}
-							};
+								};
 							count->addObserver(observer, true);
 						}
 					}
@@ -620,29 +620,29 @@ namespace Skylicht
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const std::string& path = s->get();
+							if (from != o)
+							{
+								const std::string& path = s->get();
 
-							// read guid
-							std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(path.c_str());
+								// read guid
+								std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(path.c_str());
 
-							value->set(path);
-							value->setGUID(guid.c_str());
+								value->set(path);
+								value->setGUID(guid.c_str());
 
-							// apply image texture
-							onUpdateValue(object);
-						}
-					};
+								// apply image texture
+								onUpdateValue(object);
+							}
+						};
 
 					subject->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
 
 					GUI::CImageButton* imageButton = ui->addInputTextureFile(layout, ui->getPrettyName(value->Name), subject);
 
@@ -660,98 +660,98 @@ namespace Skylicht
 
 					// apply event drag/drop...
 					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						subject->set(value->get());
-						subject->notify(observer);
-					};
+						{
+							subject->set(value->get());
+							subject->notify(observer);
+						};
 
 					m_subjects.push_back(subject);
 
 					imageButton->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
-					{
-						if (data->Name == "ListFSItem")
 						{
-							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
-
-							std::string fullPath = item->getTagString();
-							bool isFolder = item->getTagBool();
-
-							if (!isFolder)
+							if (data->Name == "ListFSItem")
 							{
-								std::string ext = CPath::getFileNameExt(fullPath);
-								ext = CStringImp::toLower(ext);
-								if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
+								GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
+
+								std::string fullPath = item->getTagString();
+								bool isFolder = item->getTagBool();
+
+								if (!isFolder)
 								{
-									return true;
+									std::string ext = CPath::getFileNameExt(fullPath);
+									ext = CStringImp::toLower(ext);
+									if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
+									{
+										return true;
+									}
 								}
 							}
-						}
-						return false;
-					};
+							return false;
+						};
 
 					imageButton->OnDrop = [&, imageButton, value, object](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-					{
-						if (data->Name == "ListFSItem")
 						{
-							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
-
-							std::string fullPath = item->getTagString();
-							std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
-							std::string name = CPath::getFileName(shortPath);
-
-							// read guid
-							std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(shortPath.c_str());
-
-							ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
-							if (texture != NULL)
+							if (data->Name == "ListFSItem")
 							{
-								// update gui
-								const core::dimension2du& size = texture->getSize();
-								imageButton->getImage()->setImage(
-									texture,
-									GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
-								);
-								imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+								GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
 
-								// update value
-								value->set(shortPath.c_str());
-								value->setGUID(guid.c_str());
+								std::string fullPath = item->getTagString();
+								std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
+								std::string name = CPath::getFileName(shortPath);
 
-								onUpdateValue(object);
+								// read guid
+								std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(shortPath.c_str());
+
+								ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
+								if (texture != NULL)
+								{
+									// update gui
+									const core::dimension2du& size = texture->getSize();
+									imageButton->getImage()->setImage(
+										texture,
+										GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
+									);
+									imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+
+									// update value
+									value->set(shortPath.c_str());
+									value->setGUID(guid.c_str());
+
+									onUpdateValue(object);
+								}
+								else
+								{
+									CEditor* editor = CEditor::getInstance();
+
+									GUI::CMessageBox* msgBox = new GUI::CMessageBox(editor->getRootCanvas(), GUI::CMessageBox::OK);
+									msgBox->setMessage("Can't load texture!", name.c_str());
+									msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+								}
 							}
-							else
-							{
-								CEditor* editor = CEditor::getInstance();
-
-								GUI::CMessageBox* msgBox = new GUI::CMessageBox(editor->getRootCanvas(), GUI::CMessageBox::OK);
-								msgBox->setMessage("Can't load texture!", name.c_str());
-								msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
-							}
-						}
-					};
+						};
 
 					imageButton->OnPress = [value](GUI::CBase* button)
-					{
-						std::string assetPath = value->get();
-						assetPath = CAssetManager::getInstance()->getShortPath(assetPath.c_str());
-						CAssetPropertyController::getInstance()->browseAsset(assetPath.c_str());
-					};
+						{
+							std::string assetPath = value->get();
+							assetPath = CAssetManager::getInstance()->getShortPath(assetPath.c_str());
+							CAssetPropertyController::getInstance()->browseAsset(assetPath.c_str());
+						};
 
 					imageButton->OnRightPress = [&, imageButton, value, object](GUI::CBase* button)
-					{
-						GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
-						s_pickTextureMenu->open(mousePos);
-						s_pickTextureMenu->OnCommand = [&, imageButton, value, object](GUI::CBase* item)
 						{
-							// clear
-							imageButton->getImage()->setImage(NULL, GUI::SRect(0, 0, 0, 0));
-							imageButton->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
+							GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+							s_pickTextureMenu->open(mousePos);
+							s_pickTextureMenu->OnCommand = [&, imageButton, value, object](GUI::CBase* item)
+								{
+									// clear
+									imageButton->getImage()->setImage(NULL, GUI::SRect(0, 0, 0, 0));
+									imageButton->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
 
-							// update value
-							value->set("");
-							onUpdateValue(object);
+									// update value
+									value->set("");
+									onUpdateValue(object);
+								};
 						};
-					};
 				}
 				else if (valueProperty->getType() == EPropertyDataType::Object)
 				{
@@ -764,9 +764,9 @@ namespace Skylicht
 					GUI::CBoxLayout* objectLayout = ui->createBoxLayout(group);
 
 					valueProperty->OnSetHidden = [group](bool hide)
-					{
-						group->setHidden(hide);
-					};
+						{
+							group->setHidden(hide);
+						};
 
 					if (object->isArray())
 					{
@@ -784,23 +784,23 @@ namespace Skylicht
 
 							CObserver* observer = new CObserver();
 							observer->Notify = [&, arrayObject, count, o = observer, objectLayout, group, ui](ISubject* subject, IObserver* from)
-							{
-								if (from != o)
 								{
-									int numElement = count->get();
-									if (arrayObject->resize(numElement))
+									if (from != o)
 									{
-										// remove old ui
-										objectLayout->getChild(0)->removeAllChildren();
+										int numElement = count->get();
+										if (arrayObject->resize(numElement))
+										{
+											// remove old ui
+											objectLayout->getChild(0)->removeAllChildren();
 
-										// re-init ui
-										serializableToControl(arrayObject, ui, objectLayout);
+											// re-init ui
+											serializableToControl(arrayObject, ui, objectLayout);
 
-										// update object data
-										onUpdateValue(object);
+											// update object data
+											onUpdateValue(object);
+										}
 									}
-								}
-							};
+								};
 							count->addObserver(observer, true);
 						}
 					}
@@ -816,29 +816,29 @@ namespace Skylicht
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const std::string& path = s->get();
+							if (from != o)
+							{
+								const std::string& path = s->get();
 
-							// read guid
-							std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(path.c_str());
+								// read guid
+								std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(path.c_str());
 
-							value->set(path);
-							value->setGUID(guid.c_str());
+								value->set(path);
+								value->setGUID(guid.c_str());
 
-							// apply image texture
-							onUpdateValue(object);
-						}
-					};
+								// apply image texture
+								onUpdateValue(object);
+							}
+						};
 
 					subject->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
 
 					GUI::CImageButton* imageButton = ui->addInputTextureFile(layout, ui->getPrettyName(value->Name), subject);
 
@@ -856,98 +856,98 @@ namespace Skylicht
 
 					// apply event drag/drop...
 					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						subject->set(value->get());
-						subject->notify(observer);
-					};
+						{
+							subject->set(value->get());
+							subject->notify(observer);
+						};
 
 					m_subjects.push_back(subject);
 
 					imageButton->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
-					{
-						if (data->Name == "ListFSItem")
 						{
-							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
-
-							std::string fullPath = item->getTagString();
-							bool isFolder = item->getTagBool();
-
-							if (!isFolder)
+							if (data->Name == "ListFSItem")
 							{
-								std::string ext = CPath::getFileNameExt(fullPath);
-								ext = CStringImp::toLower(ext);
-								if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
+								GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
+
+								std::string fullPath = item->getTagString();
+								bool isFolder = item->getTagBool();
+
+								if (!isFolder)
 								{
-									return true;
+									std::string ext = CPath::getFileNameExt(fullPath);
+									ext = CStringImp::toLower(ext);
+									if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
+									{
+										return true;
+									}
 								}
 							}
-						}
-						return false;
-					};
+							return false;
+						};
 
 					imageButton->OnDrop = [&, imageButton, value, object](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-					{
-						if (data->Name == "ListFSItem")
 						{
-							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
-
-							std::string fullPath = item->getTagString();
-							std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
-							std::string name = CPath::getFileName(shortPath);
-
-							// read guid
-							std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(shortPath.c_str());
-
-							ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
-							if (texture != NULL)
+							if (data->Name == "ListFSItem")
 							{
-								// update gui
-								const core::dimension2du& size = texture->getSize();
-								imageButton->getImage()->setImage(
-									texture,
-									GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
-								);
-								imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+								GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
 
-								// update value
-								value->set(shortPath.c_str());
-								value->setGUID(guid.c_str());
+								std::string fullPath = item->getTagString();
+								std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
+								std::string name = CPath::getFileName(shortPath);
 
-								onUpdateValue(object);
+								// read guid
+								std::string guid = CAssetManager::getInstance()->getGenerateMetaGUID(shortPath.c_str());
+
+								ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
+								if (texture != NULL)
+								{
+									// update gui
+									const core::dimension2du& size = texture->getSize();
+									imageButton->getImage()->setImage(
+										texture,
+										GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
+									);
+									imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+
+									// update value
+									value->set(shortPath.c_str());
+									value->setGUID(guid.c_str());
+
+									onUpdateValue(object);
+								}
+								else
+								{
+									CEditor* editor = CEditor::getInstance();
+
+									GUI::CMessageBox* msgBox = new GUI::CMessageBox(editor->getRootCanvas(), GUI::CMessageBox::OK);
+									msgBox->setMessage("Can't load texture!", name.c_str());
+									msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+								}
 							}
-							else
-							{
-								CEditor* editor = CEditor::getInstance();
-
-								GUI::CMessageBox* msgBox = new GUI::CMessageBox(editor->getRootCanvas(), GUI::CMessageBox::OK);
-								msgBox->setMessage("Can't load texture!", name.c_str());
-								msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
-							}
-						}
-					};
+						};
 
 					imageButton->OnPress = [value](GUI::CBase* button)
-					{
-						std::string assetPath = value->get();
-						assetPath = CAssetManager::getInstance()->getShortPath(assetPath.c_str());
-						CAssetPropertyController::getInstance()->browseAsset(assetPath.c_str());
-					};
+						{
+							std::string assetPath = value->get();
+							assetPath = CAssetManager::getInstance()->getShortPath(assetPath.c_str());
+							CAssetPropertyController::getInstance()->browseAsset(assetPath.c_str());
+						};
 
 					imageButton->OnRightPress = [&, imageButton, value, object](GUI::CBase* button)
-					{
-						GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
-						s_pickTextureMenu->open(mousePos);
-						s_pickTextureMenu->OnCommand = [&, imageButton, value, object](GUI::CBase* item)
 						{
-							// clear
-							imageButton->getImage()->setImage(NULL, GUI::SRect(0, 0, 0, 0));
-							imageButton->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
+							GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+							s_pickTextureMenu->open(mousePos);
+							s_pickTextureMenu->OnCommand = [&, imageButton, value, object](GUI::CBase* item)
+								{
+									// clear
+									imageButton->getImage()->setImage(NULL, GUI::SRect(0, 0, 0, 0));
+									imageButton->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
 
-							// update value
-							value->set("");
-							onUpdateValue(object);
+									// update value
+									value->set("");
+									onUpdateValue(object);
+								};
 						};
-					};
 				}
 				else if (valueProperty->getType() == EPropertyDataType::FrameSource)
 				{
@@ -955,32 +955,32 @@ namespace Skylicht
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const std::string& path = s->get();
-							std::string meta = path + ".meta";
-
-							CFrameSource frameSource;
-							if (CSerializableLoader::loadSerializable(meta.c_str(), &frameSource))
+							if (from != o)
 							{
-								// update value
-								value->setGUID(frameSource.getGUID());
-								value->setSprite(frameSource.SpritePath.getString());
+								const std::string& path = s->get();
+								std::string meta = path + ".meta";
 
-								// apply image texture
-								onUpdateValue(object);
+								CFrameSource frameSource;
+								if (CSerializableLoader::loadSerializable(meta.c_str(), &frameSource))
+								{
+									// update value
+									value->setGUID(frameSource.getGUID());
+									value->setSprite(frameSource.SpritePath.getString());
+
+									// apply image texture
+									onUpdateValue(object);
+								}
 							}
-						}
-					};
+						};
 
 					subject->addObserver(observer, true);
 
 					valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
-					{
-						s->setEnable(!hide);
-						s->notify(o);
-					};
+						{
+							s->setEnable(!hide);
+							s->notify(o);
+						};
 
 					GUI::CImageButton* imageButton = ui->addInputTextureFile(layout, ui->getPrettyName(value->Name), subject);
 
@@ -1010,119 +1010,129 @@ namespace Skylicht
 
 					// apply event drag/drop...
 					valueProperty->OnChanged = [value, subject, observer]()
-					{
-						subject->set(value->get());
-						subject->notify(observer);
-					};
+						{
+							subject->set(value->get());
+							subject->notify(observer);
+						};
 
 					m_subjects.push_back(subject);
 
 					imageButton->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
-					{
-						if (data->Name == "ListFSItem")
 						{
-							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
-
-							std::string fullPath = item->getTagString();
-							bool isFolder = item->getTagBool();
-
-							if (!isFolder)
+							if (data->Name == "ListFSItem")
 							{
-								std::string ext = CPath::getFileNameExt(fullPath);
-								ext = CStringImp::toLower(ext);
-								if (ext == "png")
+								GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
+
+								std::string fullPath = item->getTagString();
+								bool isFolder = item->getTagBool();
+
+								if (!isFolder)
 								{
-									return true;
-								}
-							}
-						}
-						return false;
-					};
-
-					imageButton->OnDrop = [&, imageButton, value, object](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-					{
-						if (data->Name == "ListFSItem")
-						{
-							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
-
-							std::string fullPath = item->getTagString();
-							std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
-							std::string name = CPath::getFileName(shortPath);
-							std::string meta = shortPath + ".meta";
-
-							bool errorSprite = true;
-
-							CFrameSource frameSource;
-							if (CSerializableLoader::loadSerializable(meta.c_str(), &frameSource))
-							{
-								// show on property
-								CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite(frameSource.SpritePath.getString());
-								if (spriteFrame)
-								{
-									errorSprite = false;
-
-									// update value
-									value->set(shortPath.c_str());
-									value->setGUID(frameSource.getGUID());
-									value->setSprite(frameSource.SpritePath.getString());
-									value->setSpriteGUID(frameSource.SpriteGUID.getString());
-
-									SFrame* frame = spriteFrame->getFrameById(frameSource.getGUID());
-									if (frame)
+									std::string ext = CPath::getFileNameExt(fullPath);
+									ext = CStringImp::toLower(ext);
+									if (ext == "png")
 									{
-										ITexture* texture = frame->Image->Texture;
-										if (texture != NULL && frame->ModuleOffset.size() > 0)
-										{
-											SModuleRect* moduleRect = frame->ModuleOffset[0].Module;
-
-											imageButton->getImage()->setImage(
-												texture,
-												GUI::SRect(moduleRect->X, moduleRect->Y, moduleRect->W, moduleRect->H)
-											);
-											imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
-										}
+										return true;
 									}
 								}
-
-								// show on canvas
-								onUpdateValue(object);
 							}
+							return false;
+						};
 
-							if (errorSprite)
+					imageButton->OnDrop = [&, imageButton, value, object](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+						{
+							if (data->Name == "ListFSItem")
 							{
-								CEditor* editor = CEditor::getInstance();
+								GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
 
-								GUI::CMessageBox* msgBox = new GUI::CMessageBox(editor->getRootCanvas(), GUI::CMessageBox::OK);
-								msgBox->setMessage("Image resource should build in a sprite atlas", name.c_str());
-								msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+								std::string fullPath = item->getTagString();
+								std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
+								std::string name = CPath::getFileName(shortPath);
+								std::string meta = shortPath + ".meta";
+
+								bool errorSprite = true;
+
+								CFrameSource frameSource;
+								if (CSerializableLoader::loadSerializable(meta.c_str(), &frameSource))
+								{
+									// show on property
+									CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite(frameSource.SpritePath.getString());
+									if (spriteFrame)
+									{
+										errorSprite = false;
+
+										// update value
+										value->set(shortPath.c_str());
+										value->setGUID(frameSource.getGUID());
+										value->setSprite(frameSource.SpritePath.getString());
+										value->setSpriteGUID(frameSource.SpriteGUID.getString());
+
+										SFrame* frame = spriteFrame->getFrameById(frameSource.getGUID());
+										if (frame)
+										{
+											ITexture* texture = frame->Image->Texture;
+											if (texture != NULL && frame->ModuleOffset.size() > 0)
+											{
+												SModuleRect* moduleRect = frame->ModuleOffset[0].Module;
+
+												imageButton->getImage()->setImage(
+													texture,
+													GUI::SRect(moduleRect->X, moduleRect->Y, moduleRect->W, moduleRect->H)
+												);
+												imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+											}
+										}
+									}
+
+									// show on canvas
+									onUpdateValue(object);
+								}
+
+								if (errorSprite)
+								{
+									CEditor* editor = CEditor::getInstance();
+
+									GUI::CMessageBox* msgBox = new GUI::CMessageBox(editor->getRootCanvas(), GUI::CMessageBox::OK);
+									msgBox->setMessage("Image resource should build in a sprite atlas", name.c_str());
+									msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+								}
 							}
-						}
-					};
+						};
 
 					imageButton->OnPress = [value](GUI::CBase* button)
-					{
-						std::string assetPath = value->get();
-						assetPath = CAssetManager::getInstance()->getShortPath(assetPath.c_str());
-						CAssetPropertyController::getInstance()->browseAsset(assetPath.c_str());
-					};
+						{
+							std::string assetPath = value->get();
+							std::string spritePath = value->getSprite();
+
+							CAssetManager* assetManager = CAssetManager::getInstance();
+							assetPath = assetManager->getShortPath(assetPath.c_str());
+							if (assetManager->isExist(assetPath.c_str()))
+							{
+								CAssetPropertyController::getInstance()->browseAsset(assetPath.c_str());
+							}
+							else
+							{
+								CAssetPropertyController::getInstance()->browseAsset(spritePath.c_str());
+							}
+						};
 
 					imageButton->OnRightPress = [&, imageButton, value, object](GUI::CBase* button)
-					{
-						GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
-						s_pickTextureMenu->open(mousePos);
-						s_pickTextureMenu->OnCommand = [&, imageButton, value, object](GUI::CBase* item)
 						{
-							// clear
-							imageButton->getImage()->setImage(NULL, GUI::SRect(0, 0, 0, 0));
-							imageButton->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
+							GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+							s_pickTextureMenu->open(mousePos);
+							s_pickTextureMenu->OnCommand = [&, imageButton, value, object](GUI::CBase* item)
+								{
+									// clear
+									imageButton->getImage()->setImage(NULL, GUI::SRect(0, 0, 0, 0));
+									imageButton->getImage()->setColor(GUI::SGUIColor(255, 50, 50, 50));
 
-							// update value
-							value->set("");
-							value->setGUID("");
-							value->setSprite("");
-							onUpdateValue(object);
+									// update value
+									value->set("");
+									value->setGUID("");
+									value->setSprite("");
+									onUpdateValue(object);
+								};
 						};
-					};
 				}
 			}
 		}

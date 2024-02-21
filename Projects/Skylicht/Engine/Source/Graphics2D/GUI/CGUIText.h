@@ -52,6 +52,9 @@ namespace Skylicht
 		std::wstring m_textw;
 		ArrayInt m_textFormat;
 
+		std::string m_textId;
+		std::wstring m_textwId;
+
 		EGUIVerticalAlign TextVertical;
 		EGUIHorizontalAlign TextHorizontal;
 
@@ -120,6 +123,9 @@ namespace Skylicht
 		void setText(const wchar_t* text);
 		void setTextStrim(const wchar_t* text);
 
+		void setTextId(const char* textId);
+		void setTextId(const wchar_t* textId);
+
 		int getStringWidth(const char* text);
 		int getCharWidth(wchar_t c);
 
@@ -131,6 +137,16 @@ namespace Skylicht
 		const wchar_t* getTextW()
 		{
 			return m_textw.c_str();
+		}
+
+		const char* getTextId()
+		{
+			return m_textId.c_str();
+		}
+
+		const wchar_t* getTextwId()
+		{
+			return m_textwId.c_str();
 		}
 
 		inline void setCharPadding(int charPadding)

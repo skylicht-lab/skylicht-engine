@@ -662,12 +662,6 @@ namespace Skylicht
 			vb[3].Color = color;
 		}
 
-		/*
-		*   [0][   1    ][2]
-		*   [3][   4    ][5]
-		*   [6][   7    ][8]
-		*/
-
 		SModuleRect* m = module->Module;
 		float width = r.getWidth();
 		float height = r.getHeight();
@@ -684,7 +678,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X, m->Y);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -794,7 +788,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X, m->Y);
 			uv.LowerRightCorner = core::vector2df(m->X + anchorLeft, m->Y + m->H);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -812,7 +806,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X + anchorLeft, m->Y);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W - right, m->Y + m->H);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -830,7 +824,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X + m->W - right, m->Y);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -942,7 +936,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X, m->Y);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + anchorTop);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -960,7 +954,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X, m->Y + anchorTop);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H - bottom);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -978,7 +972,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X, m->Y + m->H - bottom);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1093,7 +1087,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X, m->Y);
 			uv.LowerRightCorner = core::vector2df(m->X + anchorLeft, m->Y + anchorTop);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1111,7 +1105,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X + anchorLeft, m->Y);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W - right, m->Y + anchorTop);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1129,7 +1123,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X + m->W - right, m->Y);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + anchorTop);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1147,7 +1141,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X, m->Y + anchorTop);
 			uv.LowerRightCorner = core::vector2df(m->X + anchorLeft, m->Y + m->H - bottom);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1165,7 +1159,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X + anchorLeft, m->Y + anchorTop);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W - right, m->Y + m->H - bottom);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1183,7 +1177,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X + m->W - right, m->Y + anchorTop);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H - bottom);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1201,7 +1195,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X, m->Y + m->H - bottom);
 			uv.LowerRightCorner = core::vector2df(m->X + anchorLeft, m->Y + m->H);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1219,7 +1213,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X + anchorLeft, m->Y + m->H - bottom);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W - right, m->Y + m->H);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1237,7 +1231,7 @@ namespace Skylicht
 			core::rectf uv;
 			uv.UpperLeftCorner = core::vector2df(m->X + m->W - right, m->Y + m->H - bottom);
 			uv.LowerRightCorner = core::vector2df(m->X + m->W, m->Y + m->H);
-			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight);
+			updateRectTexcoordBuffer(vertices, uv, texWidth, texHeight, m);
 
 			vertices += 4;
 			indices += 6;
@@ -1275,7 +1269,7 @@ namespace Skylicht
 		mat.transformVect(vertices[3].Pos);
 	}
 
-	void CGraphics2D::updateRectTexcoordBuffer(video::S3DVertex* vertices, const core::rectf& r, float texWidth, float texHeight)
+	void CGraphics2D::updateRectTexcoordBuffer(video::S3DVertex* vertices, const core::rectf& r, float texWidth, float texHeight, SModuleRect* moduleRect)
 	{
 		float x1 = r.UpperLeftCorner.X / texWidth;
 		float y1 = r.UpperLeftCorner.Y / texHeight;
@@ -1293,6 +1287,21 @@ namespace Skylicht
 
 		vertices[3].TCoords.X = x1;
 		vertices[3].TCoords.Y = y2;
+
+		if (moduleRect && moduleRect->W > 0 && moduleRect->H > 0)
+		{
+			vertices[0].Normal.X = (r.UpperLeftCorner.X - moduleRect->X) / moduleRect->W;
+			vertices[0].Normal.Y = (r.UpperLeftCorner.Y - moduleRect->Y) / moduleRect->H;
+
+			vertices[1].Normal.X = (r.LowerRightCorner.X - moduleRect->X) / moduleRect->W;
+			vertices[1].Normal.Y = (r.UpperLeftCorner.Y - moduleRect->Y) / moduleRect->H;
+
+			vertices[2].Normal.X = (r.LowerRightCorner.X - moduleRect->X) / moduleRect->W;
+			vertices[2].Normal.Y = (r.LowerRightCorner.Y - moduleRect->Y) / moduleRect->H;
+
+			vertices[3].Normal.X = (r.UpperLeftCorner.X - moduleRect->X) / moduleRect->W;
+			vertices[3].Normal.Y = (r.LowerRightCorner.Y - moduleRect->Y) / moduleRect->H;
+		}
 	}
 
 	void CGraphics2D::addFrameBatch(SFrame* frame, const SColor& color, const core::matrix4& absoluteMatrix, int materialID, CMaterial* material)

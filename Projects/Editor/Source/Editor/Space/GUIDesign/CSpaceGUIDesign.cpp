@@ -71,8 +71,8 @@ namespace Skylicht
 			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onZoomOut, this);
 
 			m_toolBar->addSpace();
-			m_toolBar->addButton(GUI::ESystemIcon::Copy);
-			m_toolBar->addButton(GUI::ESystemIcon::Paste);
+			m_toolBar->addButton(L"Copy", GUI::ESystemIcon::Copy);
+			m_toolBar->addButton(L"Paste", GUI::ESystemIcon::Paste);
 
 			m_textMousePos = new GUI::CLabel(m_toolBar);
 			m_toolBar->addControl(m_textMousePos, true);

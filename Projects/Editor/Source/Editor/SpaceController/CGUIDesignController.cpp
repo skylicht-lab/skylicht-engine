@@ -154,7 +154,9 @@ namespace Skylicht
 			else if (command == L"GUI Sprite")
 			{
 				nameHint = L"Sprite";
-				newNode = parentNode->getCanvas()->createSprite(parentNode, r, NULL);
+				CGUISprite* sprite = parentNode->getCanvas()->createSprite(parentNode, r, NULL);
+				sprite->setFrameSource("SampleGUI/SampleGUI.spritedata", "skylicht-icon");
+				newNode = sprite;
 			}
 			else if (command == L"GUI Text")
 			{
@@ -162,6 +164,7 @@ namespace Skylicht
 				r.LowerRightCorner.Y = 50.0f;
 				CGUIText* textNode = parentNode->getCanvas()->createText(parentNode, r, NULL);
 				textNode->setText("Enter text here");
+				textNode->setFontSource("SampleGUI/Fonts/Roboto.font");
 				newNode = textNode;
 			}
 			else if (command == L"GUI Mask")
@@ -176,29 +179,39 @@ namespace Skylicht
 			}
 			else if (command == L"GUI Fit Sprite")
 			{
-				nameHint = L"Sprite";
-				newNode = parentNode->getCanvas()->createFitSprite(parentNode, r, NULL);
-			}
-			else if (command == L"UI Button")
-			{
 				r.LowerRightCorner.X = 200.0f;
-				r.LowerRightCorner.Y = 90.0f;
+				r.LowerRightCorner.Y = 200.0f;
+
+				nameHint = L"Sprite";
+				CGUIFitSprite* fitSprite = parentNode->getCanvas()->createFitSprite(parentNode, r, NULL);
+				fitSprite->setFrameSource("SampleGUI/SampleGUI.spritedata", "popup");
+				fitSprite->setAnchor(CGUIFitSprite::AnchorAll, 20.0, 20.0f, 20.0f, 20.0f);
+
+				newNode = fitSprite;
+			}
+			else if (command == L"UI Button" || command == L"UI Button (Shiny)")
+			{
+				r.LowerRightCorner.X = 180.0f;
+				r.LowerRightCorner.Y = 70.0f;
 
 				nameHint = L"Btn";
 				newNode = parentNode->getCanvas()->createElement(parentNode, r);
 
 				CGUIFitSprite* bg = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
 				bg->setName(L".background");
-				bg->setFrameSource("SampleGUI/SampleGUI.spritedata", "button");
+				bg->setFrameSource("SampleGUI/SampleGUI.spritedata", "button-small");
 				bg->setDock(EGUIDock::DockFill);
-				bg->setAnchor(CGUIFitSprite::AnchorAll, 45.0, 45.0f, 45.0f, 45.0f);
+				bg->setAnchor(CGUIFitSprite::AnchorAll, 35.0, 35.0f, 35.0f, 35.0f);
+
+				if (command == L"UI Button (Shiny)")
+					bg->setMaterialSource("BuiltIn/Textures/Shiny.mat");
 
 				CGUIText* text = parentNode->getCanvas()->createText(newNode, r, NULL);
 				text->setName(L".text");
 				text->setText(L"Button");
 				text->setDock(EGUIDock::DockFill);
 				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
-				text->setFontSource("SampleGUI/Fonts/Roboto-Large.font");
+				text->setFontSource("SampleGUI/Fonts/Roboto-Bold.font");
 			}
 
 			if (newNode)

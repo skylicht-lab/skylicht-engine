@@ -289,6 +289,8 @@ namespace Skylicht
 			m_renderData->Material = material;
 		}
 
+		void setMaterialSource(const char* materialFile);
+
 		inline CMaterial* getMaterial()
 		{
 			return m_renderData->Material;
