@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -28,75 +28,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CEntity;
-
-	class CTransform : public CComponentSystem
+	namespace Physics
 	{
-	public:
-		static core::vector3df s_ox;
-		static core::vector3df s_oy;
-		static core::vector3df s_oz;
-
-	protected:
-		bool m_hasChanged;
-		bool m_attached;
-
-		bool m_isWorldTransform;
-
-	public:
-		CTransform();
-
-		virtual ~CTransform();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		void attachTransform(CEntity* entity);
-
-		inline void setChanged(bool b)
+		class CRigidbody : public CComponentSystem
 		{
-			m_hasChanged = b;
-		}
+		public:
+			CRigidbody();
 
-		inline bool hasChanged()
-		{
-			return m_hasChanged;
-		}
+			virtual ~CRigidbody();
 
-		inline bool isAttached()
-		{
-			return m_attached;
-		}
+			virtual void initComponent();
 
-		inline bool isWorldTransform()
-		{
-			return m_isWorldTransform;
-		}
+			virtual void updateComponent();
 
-		inline void setIsWorldTransform(bool b)
-		{
-			m_isWorldTransform = b;
-		}
-
-		CTransform* getParent();
-
-		CGameObject* getParentObject();
-
-		CEntity* getParentEntity();
-
-		core::matrix4 calcWorldTransform();
-
-		void setWorldMatrix(const core::matrix4& world);
-
-	public:
-
-		virtual void setRelativeTransform(const core::matrix4& mat) = 0;
-
-		virtual const core::matrix4& getRelativeTransform() = 0;
-
-		virtual void getRelativeTransform(core::matrix4& matrix) = 0;
-
-		DECLARE_GETTYPENAME(CTransform)
-	};
+			DECLARE_GETTYPENAME(CRigidbody)
+		};
+	}
 }
