@@ -179,6 +179,18 @@ namespace Skylicht
 		m_updateTextRender = true;
 	}
 
+	void CGUIText::setTextId(const char* textId)
+	{
+		m_textId = textId;
+		m_textwId = CStringImp::convertUTF8ToUnicode(textId);
+	}
+
+	void CGUIText::setTextId(const wchar_t* textId)
+	{
+		m_textw = textId;
+		m_textId = CStringImp::convertUnicodeToUTF8(textId);
+	}
+
 	void CGUIText::setText(const char* text)
 	{
 		m_text = text;
@@ -724,6 +736,7 @@ namespace Skylicht
 		object->autoRelease(fontGUID);
 
 		object->autoRelease(new CStringProperty(object, "text", m_text.c_str()));
+		object->autoRelease(new CStringProperty(object, "textId", m_textId.c_str()));
 
 		return object;
 	}
@@ -759,6 +772,9 @@ namespace Skylicht
 
 		std::string value = object->get<std::string>("text", std::string(""));
 		setText(value.c_str());
+
+		value = object->get<std::string>("textId", std::string(""));
+		setTextId(value.c_str());
 
 		m_updateTextRender = true;
 	}
