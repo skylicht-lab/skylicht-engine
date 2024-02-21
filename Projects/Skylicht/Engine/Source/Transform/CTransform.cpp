@@ -41,7 +41,8 @@ namespace Skylicht
 
 	CTransform::CTransform() :
 		m_hasChanged(true),
-		m_attached(false)
+		m_attached(false),
+		m_isWorldTransform(false)
 	{
 
 	}

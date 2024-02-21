@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,50 +24,49 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CTransformEuler.h"
+#include "Utils/CGameSingleton.h"
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+#endif
 
 namespace Skylicht
 {
-	class CTransformMatrix : public CTransformEuler
+	namespace Physics
 	{
-	protected:
+		class CRigidbody;
 
-	public:
-		CTransformMatrix();
-
-		virtual ~CTransformMatrix();
-
-		virtual void reset();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-	public:
-
-		inline core::vector3df getPosition()
+		class CPhysicsEngine : public CGameSingleton<CPhysicsEngine>
 		{
-			return m_transform.getTranslation();
-		}
+			friend class CRigidbody;
 
-		inline core::vector3df getRotation()
-		{
-			return m_transform.getRotationDegrees();
-		}
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			btBroadphaseInterface* m_broadphase;
+			btCollisionDispatcher* m_dispatcher;
+			btConstraintSolver* m_solver;
+			btDefaultCollisionConfiguration* m_collisionConfiguration;
+			btDiscreteDynamicsWorld* m_dynamicsWorld;
+#endif
+		public:
+			CPhysicsEngine();
 
-		inline core::vector3df getScale()
-		{
-			return m_transform.getScale();
-		}
+			virtual ~CPhysicsEngine();
 
-		virtual void setRelativeTransform(const core::matrix4& mat);
+			void initPhysics();
 
-		virtual const core::matrix4& getRelativeTransform();
+			void exitPhysics();
 
-		virtual void getRelativeTransform(core::matrix4& matrix);
+			void updatePhysics(float timestepSec);
 
-		virtual CObjectSerializable* createSerializable();
+		private:
 
-		DECLARE_GETTYPENAME(CTransformMatrix)
-	};
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			inline btDiscreteDynamicsWorld* getDynamicsWorld()
+			{
+				return m_dynamicsWorld;
+			}
+#endif
+		};
+	}
 }
