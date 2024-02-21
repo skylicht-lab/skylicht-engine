@@ -232,6 +232,43 @@ namespace Skylicht
 		}
 	}
 
+	void CGUIElement::setMaterialSource(const char* material)
+	{
+		std::string materialFile = material;
+
+		if (materialFile != m_materialFile)
+		{
+			m_materialFile = materialFile;
+
+			if (materialFile.empty())
+			{
+				m_renderData->Material = NULL;
+			}
+			else
+			{
+				std::vector<std::string> textureFolders;
+
+				m_materials = CMaterialManager::getInstance()->loadMaterial(
+					m_materialFile.c_str(),
+					true,
+					textureFolders
+				);
+
+				if (m_materials.size() > 0)
+				{
+					if (m_materialId >= m_materials.size())
+						m_materialId = 0;
+
+					m_renderData->Material = m_materials[m_materialId];
+				}
+				else
+				{
+					m_renderData->Material = NULL;
+				}
+			}
+		}
+	}
+
 	CObjectSerializable* CGUIElement::createSerializable()
 	{
 		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
@@ -330,34 +367,7 @@ namespace Skylicht
 
 		if (materialFile != m_materialFile)
 		{
-			m_materialFile = materialFile;
-
-			if (materialFile.empty())
-			{
-				m_renderData->Material = NULL;
-			}
-			else
-			{
-				std::vector<std::string> textureFolders;
-
-				m_materials = CMaterialManager::getInstance()->loadMaterial(
-					m_materialFile.c_str(),
-					true,
-					textureFolders
-				);
-
-				if (m_materials.size() > 0)
-				{
-					if (m_materialId >= m_materials.size())
-						m_materialId = 0;
-
-					m_renderData->Material = m_materials[m_materialId];
-				}
-				else
-				{
-					m_renderData->Material = NULL;
-				}
-			}
+			setMaterialSource(materialFile.c_str());
 		}
 
 		notifyChanged();
