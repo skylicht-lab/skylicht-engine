@@ -147,7 +147,7 @@ namespace Skylicht
 		m_frame = frame;
 	}
 
-	void CGUIFitSprite::setFrameSource(const char* spritePath, const char* frameName)
+	void CGUIFitSprite::setFrameSource(const char* spritePath, const char* frameName, const char* editorFileRef)
 	{
 		CSpriteManager* spriteMgr = CSpriteManager::getInstance();
 
@@ -159,7 +159,10 @@ namespace Skylicht
 			if (m_frame)
 			{
 				m_guid = m_frame->ID;
-				m_frameName = frameName;
+				if (editorFileRef)
+					m_frameName = editorFileRef;
+				else
+					m_frameName = frameName;
 				m_sprite = spritePath;
 				m_spriteId = sprite->getId();
 			}

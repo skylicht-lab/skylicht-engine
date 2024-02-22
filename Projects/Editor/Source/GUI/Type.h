@@ -511,6 +511,7 @@ namespace Skylicht
 				Snap,
 				MagnetOff,
 				MagnetOn,
+				AppIcon,
 				// End
 				NumSystemIcon
 			};

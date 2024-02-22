@@ -65,7 +65,7 @@ namespace Skylicht
 
 		void setFrame(SFrame* frame);
 
-		void setFrameSource(const char* spritePath, const char* frameName);
+		void setFrameSource(const char* spritePath, const char* frameName, const char* editorRileRef = NULL);
 
 		void setAutoRotate(bool rotate, float rotateAngle, float framePerSec);
 

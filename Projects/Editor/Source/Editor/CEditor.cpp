@@ -362,7 +362,7 @@ namespace Skylicht
 		{
 			GUI::CMenu* submenu, * temp;
 
-			GUI::CMenuItem* logo = m_menuBar->addItem(GUI::ESystemIcon::Windows);
+			GUI::CMenuItem* logo = m_menuBar->addItem(GUI::ESystemIcon::AppIcon);
 			submenu = logo->getMenu();
 			submenu->addItem(L"About");
 			submenu->addItem(L"Development funding", GUI::ESystemIcon::Web);
@@ -563,8 +563,8 @@ namespace Skylicht
 			initWorkspace(console, console->getCaption());
 			initWorkspace(property, property->getCaption());
 			initWorkspace(hierarchy, hierarchy->getCaption());
-            initWorkspace(guiHierarchy, guiHierarchy->getCaption());
-            initWorkspace(guiDesign, guiDesign->getCaption());
+			initWorkspace(guiHierarchy, guiHierarchy->getCaption());
+			initWorkspace(guiDesign, guiDesign->getCaption());
 		}
 
 		CSpace* CEditor::initWorkspace(GUI::CWindow* window, const std::wstring& workspace)
@@ -993,9 +993,9 @@ namespace Skylicht
 							std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
 							GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
 							dialog->OnSave = [&, controller = controller](std::string path)
-							{
-								controller->save(path.c_str());
-							};
+								{
+									controller->save(path.c_str());
+								};
 						}
 						else
 						{
@@ -1003,11 +1003,11 @@ namespace Skylicht
 							m_confirmQuit = true;
 							getIrrlichtDevice()->closeDevice();
 						}
-					};
+						};
 					msgBox->OnNo = [&](GUI::CBase* button) {
 						m_confirmQuit = true;
 						getIrrlichtDevice()->closeDevice();
-					};
+						};
 					return false;
 				}
 				else
@@ -1063,9 +1063,9 @@ namespace Skylicht
 					);
 
 					dialog->OnSave = [&, controller = sceneController](std::string path)
-					{
-						controller->save(path.c_str());
-					};
+						{
+							controller->save(path.c_str());
+						};
 				}
 				else
 				{
@@ -1088,9 +1088,9 @@ namespace Skylicht
 					);
 
 					dialog->OnSave = [&, controller = guiDesignController](std::string path)
-					{
-						controller->save(path.c_str());
-					};
+						{
+							controller->save(path.c_str());
+						};
 				}
 				else
 				{
@@ -1140,9 +1140,9 @@ namespace Skylicht
 
 				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::SaveAs, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
 				dialog->OnSave = [&, controller = CSceneController::getInstance()](std::string path)
-				{
-					controller->save(path.c_str());
-				};
+					{
+						controller->save(path.c_str());
+					};
 			}
 		}
 

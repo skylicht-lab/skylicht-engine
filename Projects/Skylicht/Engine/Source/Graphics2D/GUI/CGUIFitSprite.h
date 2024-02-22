@@ -66,7 +66,7 @@ namespace Skylicht
 
 		virtual void render(CCamera* camera);
 
-		void setFrameSource(const char* spritePath, const char* frameName);
+		void setFrameSource(const char* spritePath, const char* frameName, const char* editorFileRef = NULL);
 
 		void setFrame(SFrame* frame);
 
