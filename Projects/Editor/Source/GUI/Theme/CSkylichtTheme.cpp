@@ -232,6 +232,7 @@ namespace Skylicht
 				addEditorIcon(ESystemIcon::Snap, "snap.png");
 				addEditorIcon(ESystemIcon::MagnetOff, "magnet_off.png");
 				addEditorIcon(ESystemIcon::MagnetOn, "magnet_on.png");
+				addEditorIcon(ESystemIcon::AppIcon, "app_icon.png");
 
 			}
 
