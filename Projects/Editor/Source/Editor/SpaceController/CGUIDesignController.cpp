@@ -155,7 +155,11 @@ namespace Skylicht
 			{
 				nameHint = L"Sprite";
 				CGUISprite* sprite = parentNode->getCanvas()->createSprite(parentNode, r, NULL);
-				sprite->setFrameSource("SampleGUI/SampleGUI.spritedata", "skylicht-icon");
+				sprite->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"skylicht-icon",
+					"SampleGUI/!Sprites/skylicht-icon.png"
+				);
 				newNode = sprite;
 			}
 			else if (command == L"GUI Text")
@@ -184,7 +188,11 @@ namespace Skylicht
 
 				nameHint = L"Sprite";
 				CGUIFitSprite* fitSprite = parentNode->getCanvas()->createFitSprite(parentNode, r, NULL);
-				fitSprite->setFrameSource("SampleGUI/SampleGUI.spritedata", "popup");
+				fitSprite->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata", 
+					"popup",
+					"SampleGUI/!Sprites/popup.png"
+				);
 				fitSprite->setAnchor(CGUIFitSprite::AnchorAll, 20.0, 20.0f, 20.0f, 20.0f);
 
 				newNode = fitSprite;
@@ -199,7 +207,10 @@ namespace Skylicht
 
 				CGUIFitSprite* bg = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
 				bg->setName(L".background");
-				bg->setFrameSource("SampleGUI/SampleGUI.spritedata", "button-small");
+				bg->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata", 
+					"button-small",
+					"SampleGUI/!Sprites/button-small.png");
 				bg->setDock(EGUIDock::DockFill);
 				bg->setAnchor(CGUIFitSprite::AnchorAll, 35.0, 35.0f, 35.0f, 35.0f);
 

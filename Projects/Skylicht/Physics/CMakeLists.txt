@@ -34,7 +34,7 @@ if (BUILD_BULLET_PHYSIC_LIB)
 target_link_libraries(Physics LinearMath Bullet3Common BulletCollision BulletDynamics BulletInverseDynamics BulletSoftBody)
 
 IF(BUILD_BULLET3)
-target_link_libraries(Physics Bullet3OpenCL Bullet2FileLoader Bullet3Collision Bullet3Dynamics Bullet3Geometry)
+target_link_libraries(Physics Bullet3Collision Bullet3Dynamics Bullet3Geometry Bullet3OpenCL Bullet2FileLoader)
 ENDIF(BUILD_BULLET3)
 
 endif()
