@@ -28,19 +28,13 @@ target_precompiled_header(Physics ./Source/pch.cpp ${skylicht_physics})
 
 set_target_properties(Physics PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-if (BUILD_EMSCRIPTEN)
 target_link_libraries(Physics Engine System)
-elseif(MSVC)
-target_link_libraries(Physics Engine System)
-elseif(CYGWIN OR MINGW)
-target_link_libraries(Physics Engine System)
-endif()
 
 if (BUILD_BULLET_PHYSIC_LIB)
-target_link_libraries(Physics BulletInverseDynamics BulletSoftBody BulletCollision BulletDynamics LinearMath Bullet3Common)
+target_link_libraries(Physics LinearMath Bullet3Common BulletCollision BulletDynamics BulletInverseDynamics BulletSoftBody)
 
 IF(BUILD_BULLET3)
-target_link_libraries(Physics Bullet3OpenCL Bullet2FileLoader Bullet3Dynamics Bullet3Collision Bullet3Geometry )
+target_link_libraries(Physics Bullet3OpenCL Bullet2FileLoader Bullet3Collision Bullet3Dynamics Bullet3Geometry)
 ENDIF(BUILD_BULLET3)
 
 endif()
