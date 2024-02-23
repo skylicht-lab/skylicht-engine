@@ -22,60 +22,22 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Utils/CGameSingleton.h"
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-#include <btBulletCollisionCommon.h>
-#include <btBulletDynamicsCommon.h>
-#endif
+#include "pch.h"
+#include "CCollider.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CRigidbody;
-
-		class CPhysicsEngine : public CGameSingleton<CPhysicsEngine>
+		CCollider::CCollider() :
+			m_colliderType(Unknown)
 		{
-			friend class CRigidbody;
 
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			btBroadphaseInterface* m_broadphase;
-			btCollisionDispatcher* m_dispatcher;
-			btConstraintSolver* m_solver;
-			btDefaultCollisionConfiguration* m_collisionConfiguration;
-			btDiscreteDynamicsWorld* m_dynamicsWorld;
-#endif
-			float m_gravity;
+		}
 
-		public:
-			CPhysicsEngine();
+		CCollider::~CCollider()
+		{
 
-			virtual ~CPhysicsEngine();
-
-			void initPhysics();
-
-			void exitPhysics();
-
-			void updatePhysics(float timestepSec);
-
-			inline float getGravity()
-			{
-				return m_gravity;
-			}
-
-			void setGravity(float g);
-
-		private:
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			inline btDiscreteDynamicsWorld* getDynamicsWorld()
-			{
-				return m_dynamicsWorld;
-			}
-#endif
-		};
+		}
 	}
 }

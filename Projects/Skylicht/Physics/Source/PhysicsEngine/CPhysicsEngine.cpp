@@ -29,9 +29,10 @@ namespace Skylicht
 {
 	namespace Physics
 	{
-		CPhysicsEngine::CPhysicsEngine()
+		CPhysicsEngine::CPhysicsEngine() :
+			m_gravity(-10.0f),
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			:m_broadphase(NULL),
+			m_broadphase(NULL),
 			m_dispatcher(NULL),
 			m_solver(NULL),
 			m_collisionConfiguration(NULL),
@@ -71,7 +72,7 @@ namespace Skylicht
 				m_solver,
 				m_collisionConfiguration);
 
-			m_dynamicsWorld->setGravity(btVector3(0.0f, -10.0f, 0.0f));
+			m_dynamicsWorld->setGravity(btVector3(0.0f, m_gravity, 0.0f));
 #endif
 		}
 
@@ -101,6 +102,17 @@ namespace Skylicht
 			if (m_dynamicsWorld)
 			{
 				m_dynamicsWorld->stepSimulation(timestepSec);
+			}
+#endif
+		}
+
+		void CPhysicsEngine::setGravity(float g)
+		{
+			m_gravity = g;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_dynamicsWorld)
+			{
+				m_dynamicsWorld->setGravity(btVector3(0.0f, m_gravity, 0.0f));
 			}
 #endif
 		}
