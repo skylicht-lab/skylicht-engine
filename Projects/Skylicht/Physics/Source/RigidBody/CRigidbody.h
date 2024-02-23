@@ -26,12 +26,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Components/CComponentSystem.h"
 
+#ifdef USE_BULLET_PHYSIC_ENGINE
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+#include "Bullet/CBulletUtils.h"
+#endif
+
 namespace Skylicht
 {
 	namespace Physics
 	{
 		class CRigidbody : public CComponentSystem
 		{
+		protected:
+			bool m_isDynamic;
+			float m_mass;
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			btRigidBody* m_rigidBody;
+			btCollisionShape* m_shape;
+#endif
+
 		public:
 			CRigidbody();
 
@@ -40,6 +55,24 @@ namespace Skylicht
 			virtual void initComponent();
 
 			virtual void updateComponent();
+
+			void setDynamic(bool b);
+
+			inline bool isDynamic()
+			{
+				return m_isDynamic;
+			}
+
+			void setMass(float m);
+
+			inline float getMass()
+			{
+				return m_mass;
+			}
+
+			bool initRigidbody();
+
+			void releaseRigidbody();
 
 			DECLARE_GETTYPENAME(CRigidbody)
 		};

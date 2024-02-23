@@ -24,58 +24,41 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-#include <btBulletCollisionCommon.h>
-#include <btBulletDynamicsCommon.h>
-#endif
+#include "Components/CComponentSystem.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CRigidbody;
-
-		class CPhysicsEngine : public CGameSingleton<CPhysicsEngine>
+		class CCollider : public CComponentSystem
 		{
-			friend class CRigidbody;
+		public:
+			enum EColliderType
+			{
+				Box,
+				Sphere,
+				Plane,
+				Cylinder,
+				Capsule,
+				BVHMesh,
+				ConvexMesh,
+				Unknown,
+			};
 
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			btBroadphaseInterface* m_broadphase;
-			btCollisionDispatcher* m_dispatcher;
-			btConstraintSolver* m_solver;
-			btDefaultCollisionConfiguration* m_collisionConfiguration;
-			btDiscreteDynamicsWorld* m_dynamicsWorld;
-#endif
-			float m_gravity;
+		protected:
+			EColliderType m_colliderType;
+			
+			core::vector3df m_offset;
 
 		public:
-			CPhysicsEngine();
+			CCollider();
 
-			virtual ~CPhysicsEngine();
+			virtual ~CCollider();
 
-			void initPhysics();
-
-			void exitPhysics();
-
-			void updatePhysics(float timestepSec);
-
-			inline float getGravity()
+			EColliderType getColliderType()
 			{
-				return m_gravity;
+				return m_colliderType;
 			}
-
-			void setGravity(float g);
-
-		private:
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			inline btDiscreteDynamicsWorld* getDynamicsWorld()
-			{
-				return m_dynamicsWorld;
-			}
-#endif
 		};
 	}
 }

@@ -39,7 +39,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Primitive/CSphere.h"
 #include "Primitive/CPlane.h"
 
+#include "Collider/CBoxCollider.h"
+#include "RigidBody/CRigidbody.h"
+
 #define USE_COMPONENT(component) CComponentSystem *component##_used = addComponent(new component())
+
+using namespace Physics;
 
 namespace Skylicht
 {
@@ -63,17 +68,26 @@ namespace Skylicht
 		}
 
 		// BEGIN DECLARE COMPONENT THAT WILL COMPILE
+
 		USE_COMPONENT(CDirectionalLight);
 		USE_COMPONENT(CPointLight);
 		USE_COMPONENT(CSpotLight);
+
 		USE_COMPONENT(CRenderMesh);
+
 		USE_COMPONENT(CSkyDome);
 		USE_COMPONENT(CSkyBox);
+
 		USE_COMPONENT(CIndirectLighting);
 		USE_COMPONENT(CLightProbes);
+
 		USE_COMPONENT(CCube);
 		USE_COMPONENT(CSphere);
 		USE_COMPONENT(CPlane);
+
+		USE_COMPONENT(CRigidbody);
+		USE_COMPONENT(CBoxCollider);
+
 		// END DECLARE COMPONENT
 
 		int clean = cleanUp();
