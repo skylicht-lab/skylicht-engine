@@ -24,58 +24,46 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-#include <btBulletCollisionCommon.h>
-#include <btBulletDynamicsCommon.h>
-#endif
+#include "CCollider.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CRigidbody;
-
-		class CPhysicsEngine : public CGameSingleton<CPhysicsEngine>
+		class CStaticPlaneCollider : public CCollider
 		{
-			friend class CRigidbody;
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			btBroadphaseInterface* m_broadphase;
-			btCollisionDispatcher* m_dispatcher;
-			btConstraintSolver* m_solver;
-			btDefaultCollisionConfiguration* m_collisionConfiguration;
-			btDiscreteDynamicsWorld* m_dynamicsWorld;
-#endif
-			float m_gravity;
+		protected:
+			core::vector3df m_normal;
+			float m_d;
 
 		public:
-			CPhysicsEngine();
+			CStaticPlaneCollider();
 
-			virtual ~CPhysicsEngine();
+			virtual ~CStaticPlaneCollider();
 
-			void initPhysics();
+			virtual void initComponent();
 
-			void exitPhysics();
+			virtual void updateComponent();
 
-			void updatePhysics(float timestepSec);
+			virtual CObjectSerializable* createSerializable();
 
-			inline float getGravity()
+			virtual void loadSerializable(CObjectSerializable* object);
+
+			const core::vector3df& getNormal()
 			{
-				return m_gravity;
+				return m_normal;
 			}
 
-			void setGravity(float g);
-
-		private:
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			inline btDiscreteDynamicsWorld* getDynamicsWorld()
+			float getD()
 			{
-				return m_dynamicsWorld;
+				return m_d;
 			}
-#endif
+
+			void setPlane(const core::vector3df& normal, float d);
+
+			void setPlane(const core::vector3df& normal, const core::vector3df& origin);
+
+			DECLARE_GETTYPENAME(CStaticPlaneCollider)
 		};
 	}
 }

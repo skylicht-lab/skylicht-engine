@@ -22,60 +22,53 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Utils/CGameSingleton.h"
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-#include <btBulletCollisionCommon.h>
-#include <btBulletDynamicsCommon.h>
-#endif
+#include "pch.h"
+#include "CBoxCollider.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CRigidbody;
+		ACTIVATOR_REGISTER(CBoxCollider);
 
-		class CPhysicsEngine : public CGameSingleton<CPhysicsEngine>
+		CATEGORY_COMPONENT(CBoxCollider, "Box Collider", "Physics/Collider");
+
+		CBoxCollider::CBoxCollider() :
+			m_size(1.0f, 1.0f, 1.0f)
 		{
-			friend class CRigidbody;
+			m_colliderType = CBoxCollider::Box;
+		}
 
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			btBroadphaseInterface* m_broadphase;
-			btCollisionDispatcher* m_dispatcher;
-			btConstraintSolver* m_solver;
-			btDefaultCollisionConfiguration* m_collisionConfiguration;
-			btDiscreteDynamicsWorld* m_dynamicsWorld;
-#endif
-			float m_gravity;
+		CBoxCollider::~CBoxCollider()
+		{
 
-		public:
-			CPhysicsEngine();
+		}
 
-			virtual ~CPhysicsEngine();
+		void CBoxCollider::initComponent()
+		{
 
-			void initPhysics();
+		}
 
-			void exitPhysics();
+		void CBoxCollider::updateComponent()
+		{
 
-			void updatePhysics(float timestepSec);
+		}
 
-			inline float getGravity()
-			{
-				return m_gravity;
-			}
+		CObjectSerializable* CBoxCollider::createSerializable()
+		{
+			CObjectSerializable* obj = CComponentSystem::createSerializable();
+			obj->addProperty(new CFloatProperty(obj, "sizeX", m_size.X));
+			obj->addProperty(new CFloatProperty(obj, "sizeY", m_size.Y));
+			obj->addProperty(new CFloatProperty(obj, "sizeZ", m_size.Z));
+			return obj;
+		}
 
-			void setGravity(float g);
-
-		private:
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			inline btDiscreteDynamicsWorld* getDynamicsWorld()
-			{
-				return m_dynamicsWorld;
-			}
-#endif
-		};
+		void CBoxCollider::loadSerializable(CObjectSerializable* object)
+		{
+			CComponentSystem::loadSerializable(object);
+			m_size.X = object->get<float>("sizeX", 1.0f);
+			m_size.Y = object->get<float>("sizeY", 1.0f);
+			m_size.Z = object->get<float>("sizeZ", 1.0f);
+		}
 	}
 }
