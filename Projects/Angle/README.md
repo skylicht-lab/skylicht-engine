@@ -1,4 +1,4 @@
-# How to build Angle on MACOS
+# How to build Angle on MacOS
 
 ## Step 1: GET DEPOT TOOLS
 
@@ -59,6 +59,7 @@ is_debug = false
 target_os = "ios"
 target_cpu = "arm64"
 target_environment = "device"
+ios_enable_code_signing=false
 ```
 
 arm64 simulator:
