@@ -1,5 +1,7 @@
 # How to build Angle on MacOS
 
+Currently, Skylicht Engine use [Angle](https://github.com/google/angle) to simulation OpenGLES on MacOS and IOS.
+
 ## Step 1: GET DEPOT TOOLS
 
 ```console
@@ -53,13 +55,13 @@ Use autoninja (depot_tools) tool to build Angle project
 ```
 
 ### IOS
-Edit **args.gn**
+Edit out/Release/**args.gn**
 ```console
 is_debug = false
 target_os = "ios"
 target_cpu = "arm64"
 target_environment = "device"
-ios_enable_code_signing=false
+ios_enable_code_signing = false
 ```
 
 arm64 simulator:
@@ -85,11 +87,11 @@ is_debug = true
 Press ESC and type :wq to quit vi
 
 ```console
-  autoninja -C out/Debug libEGL libGLESv2
+  autoninja -C out/Release libEGL libGLESv2
 ```
 ### RESULT
 
-Copy **libEGL.dylib** and **libGLESv2.dylib** to **Projects/Angle/out/MacOS/Release** and update include folder (.h).
+Copy **libEGL.dylib** and **libGLESv2.dylib** (in folder out/Release) to **Projects/Angle/out/MacOS/Release** and update include folder (.h).
 
 ## More infomation
 

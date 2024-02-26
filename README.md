@@ -192,7 +192,27 @@ skylicht-engine/Assets$ python3 BuildTextureCompressETC.py
 # Build asset bundles
 skylicht-engine/Assets$ python3 BuildAssetBundles.py
 ```
-### **step 2: Generate iOS xCode Project**
+
+### **Step 2: Generate iOS xCode Project**
+
+If you want build samples for iOS device, you should replace the **bundleIdentifier** in CMakeLists.txt (Samples/{ProjectName}/CMakeLists.txt).
+
+```code
+elseif (BUILD_IOS)
+    # replace your application name
+    set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleHelloWorld)
+    set(APP_NAME "SampleHelloWorld")
+    
+    # replace your bundleIdentifier
+    set(APP_BUNDLE_IDENTIFIER "com.skylicht.helloword")
+    set(CODE_SIGN_IDENTITY "iPhone Developer")
+    
+    
+else()
+```
+
+And generate iOS xCode Project by this script.
+
 ```code
 # example generate for simulator
 skylicht-engine/BuildCommand$ ./GenerateXCodeIOSSimulator.sh
