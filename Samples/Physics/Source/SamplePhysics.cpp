@@ -26,11 +26,11 @@ SamplePhysics::SamplePhysics()
 
 SamplePhysics::~SamplePhysics()
 {
-	Physics::CPhysicsEngine::releaseInstance();
-
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();
+
+	Physics::CPhysicsEngine::releaseInstance();
 }
 
 void SamplePhysics::onInitApp()
