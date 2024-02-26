@@ -136,6 +136,12 @@ namespace Skylicht
 
 	void CTransform::setWorldMatrix(const core::matrix4& world)
 	{
+		if (m_isWorldTransform)
+		{
+			setRelativeTransform(world);
+			return;
+		}
+
 		core::matrix4 parentInv;
 
 		if (!isAttached())

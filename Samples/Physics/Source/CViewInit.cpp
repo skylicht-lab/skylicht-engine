@@ -6,9 +6,13 @@
 #include "Context/CContext.h"
 
 #include "GridPlane/CGridPlane.h"
+#include "Primitive/CCube.h"
 #include "SkyDome/CSkyDome.h"
 
 #include "PhysicsEngine/CPhysicsEngine.h"
+#include "Collider/CStaticPlaneCollider.h"
+#include "Collider/CBoxCollider.h"
+#include "RigidBody/CRigidbody.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -70,6 +74,9 @@ void CViewInit::initScene()
 	CScene* scene = CContext::getInstance()->getScene();
 	CZone* zone = scene->getZone(0);
 
+	// init physics engine
+	Physics::CPhysicsEngine::getInstance()->initPhysics();
+
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
@@ -77,7 +84,7 @@ void CViewInit::initScene()
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
 	CCamera* camera = camObj->getComponent<CCamera>();
-	camera->setPosition(core::vector3df(0.0f, 1.8f, 3.0f));
+	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
 	camera->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
@@ -101,6 +108,40 @@ void CViewInit::initScene()
 	// 3D grid
 	CGameObject* grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
+	grid->addComponent<Physics::CStaticPlaneCollider>();
+	Physics::CRigidbody* body = grid->addComponent<Physics::CRigidbody>();
+	body->setDynamic(false); // kinematic
+	body->initRigidbody();
+
+	// Cube 1
+	CGameObject* cubeObj = zone->createEmptyObject();
+
+	// Change to forwarder material
+	CCube* cube = cubeObj->addComponent<CCube>();
+	CMaterial* material = cube->getMaterial();
+	material->changeShader("BuiltIn/Shader/Basic/VertexColor.xml");
+
+	// Init physics
+	cubeObj->addComponent<Physics::CBoxCollider>();
+	body = cubeObj->addComponent<Physics::CRigidbody>();
+	body->initRigidbody();
+	body->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
+	body->setRotation(core::vector3df(45.0f, 45.0f, 0.0f));
+	body->syncTransform();
+
+	// Cube 2
+	cubeObj = zone->createEmptyObject();
+
+	// Change to forwarder material
+	cube = cubeObj->addComponent<CCube>();
+	material = cube->getMaterial();
+	material->changeShader("BuiltIn/Shader/Basic/VertexColor.xml");
+
+	cubeObj->addComponent<Physics::CBoxCollider>();
+	body = cubeObj->addComponent<Physics::CRigidbody>();
+	body->initRigidbody();
+	body->setPosition(core::vector3df(0.0f, 10.0f, 0.0f));
+	body->syncTransform();
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -111,9 +152,6 @@ void CViewInit::initScene()
 
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, CTransform::s_oy);
-
-	// init physics engine
-	Physics::CPhysicsEngine::getInstance()->initPhysics();
 
 	// rendering
 	u32 w = app->getWidth();
@@ -187,8 +225,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -201,7 +239,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif

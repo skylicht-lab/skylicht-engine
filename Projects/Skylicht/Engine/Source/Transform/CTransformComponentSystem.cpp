@@ -46,7 +46,7 @@ namespace Skylicht
 	void CComponentTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
 		if (m_group == NULL)
-		{			
+		{
 			const u32 type[] = GET_LIST_ENTITY_DATA(CTransformComponentData);
 			m_group = entityManager->createGroupFromVisible(type, 1);
 		}
@@ -74,16 +74,21 @@ namespace Skylicht
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			CTransformComponentData* component = GET_ENTITY_DATA(entity, CTransformComponentData);
 
+			CTransform* transformComponent = component->TransformComponent;
+
 			if (component != NULL
-				&& component->TransformComponent != NULL
-				&& component->TransformComponent->hasChanged())
+				&& transformComponent != NULL
+				&& transformComponent->hasChanged())
 			{
 				// copy transform to relative matrix
-				component->TransformComponent->getRelativeTransform(transform->Relative);
-				component->TransformComponent->setChanged(false);
+				transformComponent->getRelativeTransform(transform->Relative);
+				transformComponent->setChanged(false);
 
 				// notify changed for CWorldTransformSystem, sync in TransformComponent->hasChanged()
 				transform->HasChanged = true;
+
+				// sync is world transform
+				transform->IsWorldTransform = transformComponent->isWorldTransform();
 			}
 		}
 	}

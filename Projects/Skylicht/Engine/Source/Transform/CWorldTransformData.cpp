@@ -32,6 +32,7 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CWorldTransformData);
 
 	CWorldTransformData::CWorldTransformData() :
+		IsWorldTransform(false),
 		HasChanged(true),
 		NeedValidate(true),
 		Depth(0),

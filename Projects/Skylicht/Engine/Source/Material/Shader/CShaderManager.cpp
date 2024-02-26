@@ -180,6 +180,7 @@ namespace Skylicht
 
 	void CShaderManager::initSkylichtEngineShader()
 	{
+		initSGDeferredShader();
 	}
 
 
