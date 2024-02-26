@@ -87,7 +87,7 @@ namespace Skylicht
 
 				m_entities.push(entity);
 
-				if (transform->Depth == 0)
+				if (transform->Depth == 0 || transform->IsWorldTransform)
 					m_roots.push(transform);
 				else
 					m_childs.push(transform);

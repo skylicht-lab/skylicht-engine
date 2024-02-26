@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CPhysicsEngine.h"
+#include "RigidBody/CRigidbody.h"
+#include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
@@ -96,15 +98,90 @@ namespace Skylicht
 #endif
 		}
 
+		void CPhysicsEngine::addBody(CRigidbody* body)
+		{
+			SRigidbodyData* b = new SRigidbodyData();
+			b->Body = body;
+			b->BulletBody = body->getBody();
+			b->Transform = body->getGameObject()->getTransformMatrix();
+
+			m_bodies.push_back(b);
+
+			// add rigid body
+			m_dynamicsWorld->addRigidBody(b->BulletBody);
+		}
+
+		void CPhysicsEngine::removeBody(CRigidbody* body)
+		{
+			SRigidbodyData** bodies = m_bodies.pointer();
+			int used = (int)m_bodies.size();
+
+			int id = -1;
+			for (int i = 0; i < used; i++)
+			{
+				if (m_bodies[i]->Body == body)
+				{
+					id = i;
+					break;
+				}
+			}
+
+			if (id >= 0)
+			{
+				// drop rigid body
+				m_dynamicsWorld->removeRigidBody(bodies[id]->BulletBody);
+
+				// move last body to id
+				if (used >= 2)
+					bodies[id] = bodies[used - 1];
+
+				// remove last
+				m_bodies.set_used(used - 1);
+			}
+		}
+
 		void CPhysicsEngine::updatePhysics(float timestepSec)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			if (m_dynamicsWorld)
 			{
 				m_dynamicsWorld->stepSimulation(timestepSec);
+
+				syncTransforms();
 			}
 #endif
 		}
+
+		void CPhysicsEngine::syncTransforms()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			SRigidbodyData** bodies = m_bodies.pointer();
+			int used = (int)m_bodies.size();
+			core::matrix4 world;
+
+#ifdef BT_USE_NEON
+			float ptr[16] __attribute__((aligned(16)));
+#endif
+
+			for (int i = 0; i < used; i++)
+			{
+				btTransform& transform = bodies[i]->BulletBody->getWorldTransform();
+
+#ifdef BT_USE_NEON
+				tr.getOpenGLMatrix(ptr);
+
+				float* m = world.pointer();
+				for (int i = 0; i < 16; i++)
+					m[i] = ptr[i];
+#else
+				f32* ptr = world.pointer();
+				transform.getOpenGLMatrix(ptr);
+#endif
+
+				bodies[i]->Transform->setWorldMatrix(world);
+		}
+#endif
+	}
 
 		void CPhysicsEngine::setGravity(float g)
 		{
@@ -116,5 +193,5 @@ namespace Skylicht
 			}
 #endif
 		}
-	}
+}
 }

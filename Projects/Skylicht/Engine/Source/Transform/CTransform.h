@@ -77,6 +77,7 @@ namespace Skylicht
 		inline void setIsWorldTransform(bool b)
 		{
 			m_isWorldTransform = b;
+			m_hasChanged = true;
 		}
 
 		CTransform* getParent();

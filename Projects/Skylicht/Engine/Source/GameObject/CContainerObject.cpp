@@ -440,7 +440,7 @@ namespace Skylicht
 
 		int objectID = 0;
 		if (m_lastGenerateID >= 0)
-			objectID = m_lastGenerateID + 1;
+			objectID = m_lastGenerateID;
 
 		do
 		{

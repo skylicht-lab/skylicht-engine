@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CGameSingleton.h"
+#include "Transform/CTransformMatrix.h"
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
 #include <btBulletCollisionCommon.h>
@@ -36,6 +37,15 @@ namespace Skylicht
 	namespace Physics
 	{
 		class CRigidbody;
+
+		struct SRigidbodyData
+		{
+			CRigidbody* Body;
+			CTransformMatrix* Transform;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			btRigidBody* BulletBody;
+#endif
+		};
 
 		class CPhysicsEngine : public CGameSingleton<CPhysicsEngine>
 		{
@@ -49,6 +59,8 @@ namespace Skylicht
 			btDiscreteDynamicsWorld* m_dynamicsWorld;
 #endif
 			float m_gravity;
+
+			core::array<SRigidbodyData*> m_bodies;
 
 		public:
 			CPhysicsEngine();
@@ -76,6 +88,11 @@ namespace Skylicht
 				return m_dynamicsWorld;
 			}
 #endif
+			void addBody(CRigidbody* body);
+
+			void removeBody(CRigidbody* body);
+
+			void syncTransforms();
 		};
 	}
 }

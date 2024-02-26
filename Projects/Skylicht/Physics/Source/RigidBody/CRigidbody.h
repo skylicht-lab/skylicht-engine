@@ -38,6 +38,16 @@ namespace Skylicht
 	{
 		class CRigidbody : public CComponentSystem
 		{
+			friend class CPhysicsEngine;
+		public:
+			enum EActivationState
+			{
+				Activate,
+				Sleep,
+				Alway,
+				Disable
+			};
+
 		protected:
 			bool m_isDynamic;
 			float m_mass;
@@ -73,6 +83,36 @@ namespace Skylicht
 			bool initRigidbody();
 
 			void releaseRigidbody();
+
+			core::vector3df getPosition();
+
+			void setPosition(const core::vector3df& pos);
+
+			core::vector3df getRotationEuler();
+
+			core::quaternion getRotation();
+
+			void setRotation(const core::vector3df& eulerDeg);
+
+			void setRotation(const core::quaternion& q);
+
+			void syncTransform();
+
+			void setState(EActivationState state);
+
+		private:
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			inline btRigidBody* getBody()
+			{
+				return m_rigidBody;
+			}
+
+			inline btCollisionShape* getShape()
+			{
+				return m_shape;
+			}
+#endif
 
 			DECLARE_GETTYPENAME(CRigidbody)
 		};
