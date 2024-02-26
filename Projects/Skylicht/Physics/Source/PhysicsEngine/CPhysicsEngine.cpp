@@ -168,7 +168,7 @@ namespace Skylicht
 				btTransform& transform = bodies[i]->BulletBody->getWorldTransform();
 
 #ifdef BT_USE_NEON
-				tr.getOpenGLMatrix(ptr);
+				transform.getOpenGLMatrix(ptr);
 
 				float* m = world.pointer();
 				for (int i = 0; i < 16; i++)
@@ -179,9 +179,9 @@ namespace Skylicht
 #endif
 
 				bodies[i]->Transform->setWorldMatrix(world);
-		}
+			}
 #endif
-	}
+		}
 
 		void CPhysicsEngine::setGravity(float g)
 		{
@@ -193,5 +193,5 @@ namespace Skylicht
 			}
 #endif
 		}
-}
+	}
 }

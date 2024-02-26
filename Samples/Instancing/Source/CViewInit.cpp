@@ -124,6 +124,7 @@ void CViewInit::initScene()
 				windTurbine->setStatic(true);
 
 				CRenderMesh* renderer = windTurbine->addComponent<CRenderMesh>();
+				// Just init render entity node, that contain meshbuffer
 				renderer->enableOptimizeForRender(true);
 				renderer->initFromPrefab(prefabWindTurbine);
 				renderer->initMaterial(winTurbineMaterials);
@@ -149,6 +150,7 @@ void CViewInit::initScene()
 				transform->setPosition(core::vector3df(-1.59f, 38.0f, 0.0f));
 
 				CRenderMesh* renderer = windTurbineBlades->addComponent<CRenderMesh>();
+				// Just init render entity node, that contain meshbuffer
 				renderer->enableOptimizeForRender(true);
 				renderer->initFromPrefab(prefabBlades);
 				renderer->initMaterial(bladeTurbineMaterials);
@@ -243,7 +245,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -282,7 +284,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

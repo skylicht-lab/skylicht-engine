@@ -37,7 +37,6 @@ namespace Skylicht
 		{
 			// convert to readonly transform
 			m_gameObject->setupMatrixTransform();
-			m_gameObject->getTransformMatrix()->setIsWorldTransform(true);
 		}
 
 		void CRigidbody::updateComponent()
@@ -91,6 +90,11 @@ namespace Skylicht
 			if (collider == NULL)
 				return false;
 
+			if (m_rigidBody && m_shape)
+			{
+				releaseRigidbody();
+			}
+
 			switch (collider->getColliderType())
 			{
 			case CCollider::Box:
@@ -138,7 +142,14 @@ namespace Skylicht
 			m_rigidBody->setUserPointer(this);
 			m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
+			m_shape->setUserPointer(collider);
+
+			// add rigid body
 			engine->addBody(this);
+
+			// Transform component isnot in relative in Parent
+			// It is sync from Physics Engine
+			transform->setIsWorldTransform(true);
 
 			return true;
 #else
@@ -152,6 +163,19 @@ namespace Skylicht
 			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
 			if (engine)
 				engine->removeBody(this);
+
+			if (m_rigidBody)
+			{
+				delete m_rigidBody->getMotionState();
+				delete m_rigidBody;
+				m_rigidBody = NULL;
+			}
+
+			if (m_shape)
+			{
+				delete m_shape;
+				m_shape = NULL;
+			}
 #endif
 		}
 
