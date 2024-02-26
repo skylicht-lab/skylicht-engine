@@ -31,6 +31,7 @@ namespace Skylicht
 	class CWorldTransformData : public IEntityData
 	{
 	public:
+		bool IsWorldTransform;
 		bool HasChanged;
 		bool NeedValidate;
 		core::matrix4 World;

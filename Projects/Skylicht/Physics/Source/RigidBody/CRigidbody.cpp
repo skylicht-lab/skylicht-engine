@@ -47,11 +47,9 @@ namespace Skylicht
 
 		void CRigidbody::setDynamic(bool b)
 		{
-			m_isDynamic;
+			m_isDynamic = b;
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
-
 			if (m_rigidBody)
 			{
 				float mass = m_mass;
@@ -110,9 +108,10 @@ namespace Skylicht
 				const core::vector3df& n = plane->getNormal();
 				m_shape = new btStaticPlaneShape(btVector3(n.X, n.Y, n.Z), plane->getD());
 			}
+			break;
 			default:
 			{
-
+				m_shape = NULL;
 			}
 			}
 
@@ -121,7 +120,7 @@ namespace Skylicht
 
 			btTransform startTransform;
 
-			const f32* matrix = transform->getRelativeTransform().pointer();
+			const f32* matrix = transform->calcWorldTransform().pointer();
 			startTransform.setFromOpenGLMatrix(matrix);
 
 			btVector3 localInertia(0, 0, 0);
@@ -139,6 +138,8 @@ namespace Skylicht
 			m_rigidBody->setUserPointer(this);
 			m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
+			engine->addBody(this);
+
 			return true;
 #else
 			return false;
@@ -150,9 +151,131 @@ namespace Skylicht
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
 			if (engine)
+				engine->removeBody(this);
+#endif
+		}
+
+		void CRigidbody::syncTransform()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
 			{
-				btDiscreteDynamicsWorld* world = engine->getDynamicsWorld();
-				world->removeRigidBody(m_rigidBody);
+				const btTransform& world = m_rigidBody->getWorldTransform();
+				CTransformMatrix* transform = m_gameObject->getTransformMatrix();
+
+				core::matrix4 mat;
+				Bullet::bulletTransformToIrrMatrix(world, mat);
+
+				transform->setWorldMatrix(mat);
+			}
+#endif
+		}
+
+		core::vector3df CRigidbody::getPosition()
+		{
+			core::vector3df position;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				const btTransform& world = m_rigidBody->getWorldTransform();
+				const btVector3& origin = world.getOrigin();
+				position.X = origin.x();
+				position.Y = origin.y();
+				position.Z = origin.z();
+			}
+#endif
+			return position;
+		}
+
+		void CRigidbody::setPosition(const core::vector3df& pos)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				btTransform& world = m_rigidBody->getWorldTransform();
+				world.setOrigin(btVector3(pos.X, pos.Y, pos.Z));
+			}
+#endif
+		}
+
+		core::vector3df CRigidbody::getRotationEuler()
+		{
+			core::vector3df rotation;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				const btTransform& world = m_rigidBody->getWorldTransform();
+				btQuaternion q = world.getRotation();
+
+				btVector3 euler;
+				Bullet::quaternionToEuler(q, euler);
+
+				rotation.set(euler.x(), euler.y(), euler.z());
+			}
+#endif
+			return rotation;
+		}
+
+		core::quaternion CRigidbody::getRotation()
+		{
+			core::quaternion rotation;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				const btTransform& world = m_rigidBody->getWorldTransform();
+				btQuaternion q = world.getRotation();
+				rotation.set(q.x(), q.y(), q.z(), q.w());
+			}
+#endif
+			return rotation;
+		}
+
+		void CRigidbody::setRotation(const core::vector3df& eulerDeg)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				btTransform& world = m_rigidBody->getWorldTransform();
+				btQuaternion rot(eulerDeg.Y * core::DEGTORAD,
+					eulerDeg.X * core::DEGTORAD,
+					eulerDeg.Z * core::DEGTORAD);
+				world.setRotation(rot);
+			}
+#endif
+		}
+
+		void CRigidbody::setRotation(const core::quaternion& q)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				btTransform& world = m_rigidBody->getWorldTransform();
+				btQuaternion rot(q.X, q.Y, q.Z, q.W);
+				world.setRotation(rot);
+			}
+#endif
+		}
+
+		void CRigidbody::setState(EActivationState state)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				switch (state)
+				{
+				case Activate:
+					m_rigidBody->setActivationState(ACTIVE_TAG);
+					break;
+				case Sleep:
+					m_rigidBody->setActivationState(ISLAND_SLEEPING);
+					break;
+				case Alway:
+					m_rigidBody->setActivationState(DISABLE_DEACTIVATION);
+					break;
+				case Disable:
+					m_rigidBody->setActivationState(DISABLE_SIMULATION);
+					break;
+				}
 			}
 #endif
 		}
