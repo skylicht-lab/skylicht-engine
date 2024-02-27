@@ -272,6 +272,7 @@ void CViewInit::onRender()
 {
 	if (m_initState == CViewInit::Finished)
 	{
+		/*
 		CContext* context = CContext::getInstance();
 		CScene* scene = CContext::getInstance()->getScene();
 		CBaseRP* rp = CContext::getInstance()->getRenderPipeline();
@@ -301,6 +302,7 @@ void CViewInit::onRender()
 				pos,
 				normal, tangent, binormal);
 		}
+		*/
 	}
 	else
 	{

@@ -19,9 +19,9 @@ namespace Skylicht
 
 		CRigidbody::CRigidbody() :
 			m_mass(1.0f),
-			m_isDynamic(true),
+			m_isDynamic(true)
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_shape(NULL),
+			, m_shape(NULL),
 			m_rigidBody(NULL)
 #endif
 		{
@@ -300,6 +300,49 @@ namespace Skylicht
 					m_rigidBody->setActivationState(DISABLE_SIMULATION);
 					break;
 				}
+			}
+#endif
+		}
+
+		void CRigidbody::applyCenterForce(const core::vector3df& force)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->applyCentralForce(btVector3(force.X, force.Y, force.Z));
+			}
+#endif
+		}
+
+		void CRigidbody::applyForce(const core::vector3df& force, const core::vector3df& localPosition)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->applyForce(
+					btVector3(force.X, force.Y, force.Z),
+					btVector3(localPosition.X, localPosition.Y, localPosition.Z)
+				);
+			}
+#endif
+		}
+
+		void CRigidbody::applyTorque(const core::vector3df& torque)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->applyTorque(btVector3(torque.X, torque.Y, torque.Z));
+			}
+#endif
+		}
+
+		void CRigidbody::clearForce()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->clearForces();
 			}
 #endif
 		}
