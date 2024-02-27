@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CGameSingleton.h"
 #include "Transform/CTransformMatrix.h"
+#include "CPhysicsRaycast.h"
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
 #include <btBulletCollisionCommon.h>
@@ -79,6 +80,12 @@ namespace Skylicht
 			}
 
 			void setGravity(float g);
+
+			void updateAABBs();
+
+			bool rayTest(const core::vector3df& from, const core::vector3df& to, SAllRaycastResult& result);
+
+			bool rayTest(const core::vector3df& from, const core::vector3df& to, SClosestRaycastResult& result);
 
 		private:
 
