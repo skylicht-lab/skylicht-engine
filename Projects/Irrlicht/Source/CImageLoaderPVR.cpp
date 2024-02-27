@@ -191,6 +191,10 @@ IImage* CImageLoaderPVR::loadDataV3(io::IReadFile* file, SPVRHeaderV3& header) c
 		colorFormat = ECF_PVRTC_RGB4;
 	else if (format == 3)
 		colorFormat = ECF_PVRTC_ARGB4;
+    else if (format == 4)
+        colorFormat = ECF_PVRTC2_ARGB2;
+    else if (format == 5)
+        colorFormat = ECF_PVRTC2_ARGB4;
 	else if (format == 6)
 		colorFormat = ECF_ETC1;
 	else if (format == 22)

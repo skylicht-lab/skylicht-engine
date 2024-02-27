@@ -153,9 +153,12 @@ namespace Skylicht
 		// try to load compress texture
 		if (driver->getDriverType() == video::EDT_OPENGLES)
 		{
-#if defined(ANDROID) || defined(IOS)
+#if defined(ANDROID)
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
+#elif defined(IOS)
+			// pvr compress
+			CStringImp::replacePathExt(ansiPath, ".pvr");
 #elif defined(MACOS)
 			// dxt compress
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -165,7 +168,7 @@ namespace Skylicht
 			else
 				CStringImp::replacePathExt(ansiPath, ".etc2");
 #else
-			CStringImp::replacePathExt(ansiPath, ".pvr");
+			CStringImp::replacePathExt(ansiPath, ".tga");
 #endif
 		}
 		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
@@ -263,9 +266,12 @@ namespace Skylicht
 		// try to load compress texture
 		if (driver->getDriverType() == video::EDT_OPENGLES)
 		{
-#if defined(ANDROID) || defined(IOS)
+#if defined(ANDROID)
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
+#elif defined(IOS)
+			// etc compress
+			CStringImp::replacePathExt(ansiPath, ".pvr");
 #elif defined(MACOS)
 			// dxt compress
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -275,7 +281,7 @@ namespace Skylicht
 			else
 				CStringImp::replacePathExt(ansiPath, ".etc2");
 #else
-			CStringImp::replacePathExt(ansiPath, ".pvr");
+			CStringImp::replacePathExt(ansiPath, ".tga");
 #endif
 		}
 		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
@@ -368,13 +374,17 @@ namespace Skylicht
 #if defined(ANDROID)
 				// etc compress
 				CStringImp::replacePathExt(ansiPath, ".etc2");
+#elif defined(IOS)
+				CStringImp::replacePathExt(ansiPath, ".pvr");
+#elif defined(MACOS)
+				CStringImp::replacePathExt(ansiPath, ".dds");
 #elif defined(__EMSCRIPTEN__)
 				if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
 					CStringImp::replacePathExt(ansiPath, ".dds");
 				else
 					CStringImp::replacePathExt(ansiPath, ".etc2");
 #else
-				CStringImp::replacePathExt(ansiPath, ".pvr");
+				CStringImp::replacePathExt(ansiPath, ".tga");
 #endif
 			}
 			else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
