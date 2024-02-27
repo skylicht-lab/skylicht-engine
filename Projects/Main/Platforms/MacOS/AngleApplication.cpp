@@ -82,7 +82,7 @@ AngleApplication::AngleApplication(std::string name,
       mOSWindow(nullptr),
       mDriverType(angle::GLESDriverType::AngleEGL)
 {
-    mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE; // EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE
+    mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE;
 
     for (int argIndex = 1; argIndex < argc; argIndex++)
     {
