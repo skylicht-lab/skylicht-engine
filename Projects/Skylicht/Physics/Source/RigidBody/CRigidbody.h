@@ -100,6 +100,14 @@ namespace Skylicht
 
 			void setState(EActivationState state);
 
+			void applyCenterForce(const core::vector3df& force);
+
+			void applyForce(const core::vector3df& force, const core::vector3df& localPosition);
+
+			void applyTorque(const core::vector3df& torque);
+
+			void clearForce();
+
 		private:
 
 #ifdef USE_BULLET_PHYSIC_ENGINE

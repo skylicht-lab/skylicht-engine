@@ -27,14 +27,19 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RigidBody/CRigidbody.h"
 #include "GameObject/CGameObject.h"
 
+#ifdef USE_BULLET_PHYSIC_ENGINE
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+#include "BulletCollision/Gimpact/btGImpactShape.h"
+#endif
+
 namespace Skylicht
 {
 	namespace Physics
 	{
 		CPhysicsEngine::CPhysicsEngine() :
-			m_gravity(-10.0f),
+			m_gravity(-10.0f)
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_broadphase(NULL),
+			, m_broadphase(NULL),
 			m_dispatcher(NULL),
 			m_solver(NULL),
 			m_collisionConfiguration(NULL),
@@ -100,6 +105,7 @@ namespace Skylicht
 
 		void CPhysicsEngine::addBody(CRigidbody* body)
 		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
 			SRigidbodyData* b = new SRigidbodyData();
 			b->Body = body;
 			b->BulletBody = body->getBody();
@@ -109,10 +115,12 @@ namespace Skylicht
 
 			// add rigid body
 			m_dynamicsWorld->addRigidBody(b->BulletBody);
+#endif
 		}
 
 		void CPhysicsEngine::removeBody(CRigidbody* body)
 		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
 			SRigidbodyData** bodies = m_bodies.pointer();
 			int used = (int)m_bodies.size();
 
@@ -138,6 +146,7 @@ namespace Skylicht
 				// remove last
 				m_bodies.set_used(used - 1);
 			}
+#endif
 		}
 
 		void CPhysicsEngine::updatePhysics(float timestepSec)
@@ -192,6 +201,92 @@ namespace Skylicht
 				m_dynamicsWorld->setGravity(btVector3(0.0f, m_gravity, 0.0f));
 			}
 #endif
+		}
+
+		void CPhysicsEngine::updateAABBs()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_dynamicsWorld)
+			{
+				m_dynamicsWorld->updateAabbs();
+				m_dynamicsWorld->computeOverlappingPairs();
+			}
+#endif
+		}
+
+		bool CPhysicsEngine::rayTest(const core::vector3df& from, const core::vector3df& to, SAllRaycastResult& result)
+		{
+			bool ret = false;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_dynamicsWorld)
+			{
+				btVector3 from(from.X, from.Y, from.Z);
+				btVector3 to(to.X, to.Y, to.Z);
+
+				btCollisionWorld::AllHitsRayResultCallback allResults(from, to);
+
+				allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+
+				m_dynamicsWorld->rayTest(from, to, allResults);
+
+				ret = allResults.hasHit();
+
+				int numHit = allResults.m_collisionObjects.size();
+				for (int i = 0; i < numHit; i++)
+				{
+					const btCollisionShape* shape = allResults.m_collisionObjects[i]->getCollisionShape();
+					if (shape)
+					{
+						CCollider* collider = (CCollider*)shape->getUserPointer();
+						CRigidbody* body = (CRigidbody*)allResults.m_collisionObjects[i]->getUserPointer();
+
+						result.Colliders.push_back(collider);
+						result.Bodies.push_back(body);
+						result.HitFractions.push_back(allResults.m_hitFractions[i]);
+						result.HitNormalWorld.push_back(Bullet::bulletVectorToIrrVector(allResults.m_hitNormalWorld[i]));
+						result.HitPointWorld.push_back(Bullet::bulletVectorToIrrVector(allResults.m_hitPointWorld[i]));
+
+						result.RayFromWorld = Bullet::bulletVectorToIrrVector(allResults.m_rayFromWorld);
+						result.RayToWorld = Bullet::bulletVectorToIrrVector(allResults.m_rayToWorld);
+					}
+				}
+			}
+#endif
+			return ret;
+		}
+
+		bool CPhysicsEngine::rayTest(const core::vector3df& from, const core::vector3df& to, SClosestRaycastResult& result)
+		{
+			bool ret = false;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_dynamicsWorld)
+			{
+				btVector3 from(from.X, from.Y, from.Z);
+				btVector3 to(to.X, to.Y, to.Z);
+
+				btCollisionWorld::ClosestRayResultCallback closestResults(from, to);
+
+				m_dynamicsWorld->rayTest(from, to, closestResults);
+
+				if (closestResults.m_collisionObject)
+				{
+					ret = true;
+
+					const btCollisionShape* shape = closestResults.m_collisionObject->getCollisionShape();
+					if (shape)
+					{
+						result.Collider = (CCollider*)shape->getUserPointer();
+						result.Body = (CRigidbody*)closestResults.m_collisionObject->getUserPointer();
+						result.ClosestHitFraction = closestResults.m_closestHitFraction;
+						result.HitNormalWorld = Bullet::bulletVectorToIrrVector(closestResults.m_hitNormalWorld);
+						result.HitPointWorld = Bullet::bulletVectorToIrrVector(closestResults.m_hitPointWorld);
+						result.RayFromWorld = Bullet::bulletVectorToIrrVector(closestResults.m_rayFromWorld);
+						result.RayToWorld = Bullet::bulletVectorToIrrVector(closestResults.m_rayToWorld);
+					}
+				}
+			}
+#endif
+			return ret;
 		}
 	}
 }
