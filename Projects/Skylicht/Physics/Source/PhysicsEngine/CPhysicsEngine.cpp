@@ -220,14 +220,14 @@ namespace Skylicht
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			if (m_dynamicsWorld)
 			{
-				btVector3 from(from.X, from.Y, from.Z);
-				btVector3 to(to.X, to.Y, to.Z);
+				btVector3 btfrom(from.X, from.Y, from.Z);
+				btVector3 btto(to.X, to.Y, to.Z);
 
-				btCollisionWorld::AllHitsRayResultCallback allResults(from, to);
+				btCollisionWorld::AllHitsRayResultCallback allResults(btfrom, btto);
 
 				allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
 
-				m_dynamicsWorld->rayTest(from, to, allResults);
+				m_dynamicsWorld->rayTest(btfrom, btto, allResults);
 
 				ret = allResults.hasHit();
 
@@ -261,12 +261,12 @@ namespace Skylicht
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			if (m_dynamicsWorld)
 			{
-				btVector3 from(from.X, from.Y, from.Z);
-				btVector3 to(to.X, to.Y, to.Z);
+				btVector3 btfrom(from.X, from.Y, from.Z);
+				btVector3 btto(to.X, to.Y, to.Z);
 
-				btCollisionWorld::ClosestRayResultCallback closestResults(from, to);
+				btCollisionWorld::ClosestRayResultCallback closestResults(btfrom, btto);
 
-				m_dynamicsWorld->rayTest(from, to, closestResults);
+				m_dynamicsWorld->rayTest(btfrom, btto, closestResults);
 
 				if (closestResults.m_collisionObject)
 				{
