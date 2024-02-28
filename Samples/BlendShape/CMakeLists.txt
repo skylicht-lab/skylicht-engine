@@ -290,6 +290,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleBlendShape PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleBlendShape "-framework Foundation")
 	target_link_libraries(SampleBlendShape "-framework UIKit")
 	target_link_libraries(SampleBlendShape "-framework CoreGraphics")
 	target_link_libraries(SampleBlendShape "-framework Metal")

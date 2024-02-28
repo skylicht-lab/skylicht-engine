@@ -303,6 +303,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleSocketIO PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleSocketIO "-framework Foundation")
 	target_link_libraries(SampleSocketIO "-framework UIKit")
 	target_link_libraries(SampleSocketIO "-framework CoreGraphics")
 	target_link_libraries(SampleSocketIO "-framework Metal")

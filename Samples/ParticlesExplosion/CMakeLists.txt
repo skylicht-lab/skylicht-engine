@@ -288,6 +288,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleParticlesExplosion PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleParticlesExplosion "-framework Foundation")
 	target_link_libraries(SampleParticlesExplosion "-framework UIKit")
 	target_link_libraries(SampleParticlesExplosion "-framework CoreGraphics")
 	target_link_libraries(SampleParticlesExplosion "-framework Metal")

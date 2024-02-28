@@ -290,6 +290,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleCollision PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleCollision "-framework Foundation")
 	target_link_libraries(SampleCollision "-framework UIKit")
 	target_link_libraries(SampleCollision "-framework CoreGraphics")
 	target_link_libraries(SampleCollision "-framework Metal")

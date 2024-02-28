@@ -290,6 +290,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleLuckyDraw PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleLuckyDraw "-framework Foundation")
 	target_link_libraries(SampleLuckyDraw "-framework UIKit")
 	target_link_libraries(SampleLuckyDraw "-framework CoreGraphics")
 	target_link_libraries(SampleLuckyDraw "-framework Metal")

@@ -290,6 +290,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleSkinnedMesh PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleSkinnedMesh "-framework Foundation")
 	target_link_libraries(SampleSkinnedMesh "-framework UIKit")
 	target_link_libraries(SampleSkinnedMesh "-framework CoreGraphics")
 	target_link_libraries(SampleSkinnedMesh "-framework Metal")

@@ -292,6 +292,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleLightmappingDirectional PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleLightmappingDirectional "-framework Foundation")
 	target_link_libraries(SampleLightmappingDirectional "-framework UIKit")
 	target_link_libraries(SampleLightmappingDirectional "-framework CoreGraphics")
 	target_link_libraries(SampleLightmappingDirectional "-framework Metal")
