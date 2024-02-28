@@ -1,8 +1,8 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SkinnedMesh/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/Animations/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include	
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
@@ -12,6 +12,7 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Bullet3/src
 )
 
 if (BUILD_IMGUI)
@@ -42,24 +43,24 @@ if (BUILD_ANDROID)
 endif()
 
 if (BUILD_WINDOWS_STORE)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/Assets)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Animations)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Animations/Assets)
 	
 	file(GLOB uwp_assets 
 		${template_path}/Platforms/UWP/Assets/**.*
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/**.zip)
 	
 	foreach(asset_file ${uwp_assets})
-		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/Assets)
+		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Animations/Assets)
 	endforeach()
 
 	file(COPY ${template_path}/Platforms/UWP/Package.appxmanifest
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Animations)
 		
 	file(COPY ${template_path}/Platforms/UWP/TemporaryKey.pfx
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Animations)
 
 	file(GLOB_RECURSE platform_uwp_source 
 		${template_path}/Platforms/UWP/**.cpp 
@@ -67,7 +68,7 @@ if (BUILD_WINDOWS_STORE)
 		${template_path}/Platforms/UWP/**.h)
 	
 	# copy resource to generate prj folder
-	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/Assets/**.*)
+	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Animations/Assets/**.*)
 	add_source_group("${platform_uwp_asset}" "Assets")
 	
 	list (APPEND application_source ${platform_uwp_source})
@@ -144,7 +145,7 @@ if (BUILD_DEBUG_VLD)
 	endif()	
 	link_directories(${vld_lib_path})
 endif()
-
+	
 if (BUILD_SDL AND MSVC)
 	if (CMAKE_CL_64)
 		set(sdl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x64")
@@ -154,8 +155,8 @@ if (BUILD_SDL AND MSVC)
 		set(sdl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x86/*.dll")
 	endif()	
 	link_directories(${sdl_lib_path})
-endif()
-
+endif()	
+	
 if (MINGW OR CYGWIN)
 	# .rc build
 	set(CMAKE_RC_COMPILER_INIT windres)
@@ -164,31 +165,31 @@ if (MINGW OR CYGWIN)
 endif()
 
 if (BUILD_EMSCRIPTEN)
-	add_executable(SampleSkinnedMesh 
+	add_executable(SampleAnimations 
 		${application_source}
 		${template_path}/Platforms/Emscripten/MainWebGL.cpp
 	)
 elseif(BUILD_SDL)
-	add_executable(SampleSkinnedMesh 
+	add_executable(SampleAnimations 
 		${application_source}
 		${template_path}/Platforms/SDL2/MainSDL.cpp
 	)
 elseif(BUILD_LINUX)
-	add_executable(SampleSkinnedMesh
+	add_executable(SampleAnimations 
 		${application_source}
 		${template_path}/Platforms/Linux/MainLinux.cpp
 	)
 elseif(BUILD_ANDROID)
-	add_library(SampleSkinnedMesh SHARED ${application_source})
+	add_library(SampleAnimations SHARED ${application_source})
 elseif (BUILD_WINDOWS_STORE)
-	add_executable(SampleSkinnedMesh
+	add_executable(SampleAnimations
 		${application_source}
 		${platform_uwp_asset}
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/TemporaryKey.pfx
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMesh/Package.appxmanifest
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Animations/TemporaryKey.pfx
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Animations/Package.appxmanifest
 	)
 elseif (MSVC OR CYGWIN OR MINGW)
-	add_executable(SampleSkinnedMesh WIN32
+	add_executable(SampleAnimations WIN32
 		${application_source}
 		${template_path}/Platforms/Win32/Skylicht.rc
 	)
@@ -198,17 +199,17 @@ elseif (BUILD_MACOS)
 	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
 	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
 
-	add_executable(SampleSkinnedMesh 
+	add_executable(SampleAnimations 
 		${application_source} 
 		${resources_files}
 		${dylib_files}
 	)
 	
-	set_target_properties(SampleSkinnedMesh PROPERTIES MACOSX_BUNDLE TRUE)
+	set_target_properties(SampleAnimations PROPERTIES MACOSX_BUNDLE TRUE)
 	
-	target_link_libraries(SampleSkinnedMesh "-framework Cocoa")
+	target_link_libraries(SampleAnimations "-framework Cocoa")
 		
-	message(STATUS "- Setup project: SampleSkinnedMesh")
+	message(STATUS "- Setup project: SampleAnimations")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
 		message(STATUS "  - Add resources: ${res_path}")
@@ -222,26 +223,26 @@ elseif (BUILD_MACOS)
 		source_group("Libs" FILES "${lib_file}")
 	endforeach()
 
-	add_custom_command(TARGET SampleSkinnedMesh 
+	add_custom_command(TARGET SampleAnimations 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libEGL.dylib @rpath/libEGL.dylib
-		$<TARGET_FILE:SampleSkinnedMesh>)
+		$<TARGET_FILE:SampleAnimations>)
 
-	add_custom_command(TARGET SampleSkinnedMesh 
+	add_custom_command(TARGET SampleAnimations 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libGLESv2.dylib @rpath/libGLESv2.dylib
-		$<TARGET_FILE:SampleSkinnedMesh>)
+		$<TARGET_FILE:SampleAnimations>)
 
-	set_target_properties(SampleSkinnedMesh PROPERTIES
+	set_target_properties(SampleAnimations PROPERTIES
 		MACOSX_RPATH ON
 		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
 elseif (BUILD_IOS)
-	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleSkinnedMesh)
+	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleAnimations)
 
-	set(APP_NAME "SampleSkinnedMesh")
-	set(APP_BUNDLE_IDENTIFIER "com.skylicht.sampleskinnedmesh")
+	set(APP_NAME "SampleAnimations")
+	set(APP_BUNDLE_IDENTIFIER "com.team_name.project_name")
 	set(CODE_SIGN_IDENTITY "iPhone Developer")
 
 	set(PRODUCT_NAME ${APP_NAME})
@@ -258,14 +259,14 @@ elseif (BUILD_IOS)
 	set (framework_files "")
 	list (APPEND framework_files ${angle_framework_files})
 
-	add_executable(SampleSkinnedMesh MACOSX_BUNDLE 
+	add_executable(SampleAnimations MACOSX_BUNDLE 
 		${application_source}
 		${resources_files}
 		${platform_ios_resources}
 		${framework_files}
 	)
 	
-	message(STATUS "- Setup project: SampleSkinnedMesh")
+	message(STATUS "- Setup project: SampleAnimations")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
 		source_group("Bin" FILES "${res_file}")
@@ -275,44 +276,45 @@ elseif (BUILD_IOS)
 		source_group("Frameworks" FILES "${lib_file}")
 	endforeach()
 
-	set_target_properties(SampleSkinnedMesh PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
-	set_target_properties(SampleSkinnedMesh PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
-	set_target_properties(SampleSkinnedMesh PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
-	set_target_properties(SampleSkinnedMesh PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
+	set_target_properties(SampleAnimations PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
+	set_target_properties(SampleAnimations PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
+	set_target_properties(SampleAnimations PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
+	set_target_properties(SampleAnimations PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
 	
 	# add assets icon
-	target_sources(SampleSkinnedMesh PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
+	target_sources(SampleAnimations PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
 	
 	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
-	set_target_properties(SampleSkinnedMesh PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+	set_target_properties(SampleAnimations PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+
 
 	# embed .framework
-	set_target_properties(SampleSkinnedMesh PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
+	set_target_properties(SampleAnimations PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
-	target_link_libraries(SampleSkinnedMesh "-framework Foundation")
-	target_link_libraries(SampleSkinnedMesh "-framework UIKit")
-	target_link_libraries(SampleSkinnedMesh "-framework CoreGraphics")
-	target_link_libraries(SampleSkinnedMesh "-framework Metal")
-	target_link_libraries(SampleSkinnedMesh "-framework MetalKit")
-	target_link_libraries(SampleSkinnedMesh "-framework AudioToolbox")
-	target_link_libraries(SampleSkinnedMesh "-framework AVFAudio")
+	target_link_libraries(SampleAnimations "-framework Foundation")
+	target_link_libraries(SampleAnimations "-framework UIKit")
+	target_link_libraries(SampleAnimations "-framework CoreGraphics")
+	target_link_libraries(SampleAnimations "-framework Metal")
+	target_link_libraries(SampleAnimations "-framework MetalKit")
+	target_link_libraries(SampleAnimations "-framework AudioToolbox")
+	target_link_libraries(SampleAnimations "-framework AVFAudio")
 else()
-	add_executable(SampleSkinnedMesh ${application_source})
+	add_executable(SampleAnimations ${application_source})
 endif()
 
-target_precompiled_header(SampleSkinnedMesh ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleAnimations ${template_path}/Source/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)
-	target_link_libraries(SampleSkinnedMesh Client log)
+	target_link_libraries(SampleAnimations Client log)
 else()
-	target_link_libraries(SampleSkinnedMesh Client)
+	target_link_libraries(SampleAnimations Client)
 endif()
 
 # Imgui
 if (BUILD_IMGUI)
-	target_link_libraries(SampleSkinnedMesh Imgui)
+	target_link_libraries(SampleAnimations Imgui)
 endif()
 
 # Emscripten
@@ -322,20 +324,28 @@ if (BUILD_EMSCRIPTEN)
 	
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(SampleSkinnedMesh PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ./BuiltIn --shell-file ${template_path}/Platforms/Emscripten/Shell/shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	set_target_properties(SampleAnimations PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ./BuiltIn --shell-file ${template_path}/Platforms/Emscripten/Shell/shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
-	set(project_name SampleSkinnedMesh)
+	set(project_name SampleAnimations)
 	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
-	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SampleSkinnedMesh.html)
+	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SampleAnimations.html)
 endif()
 
 #VLD
 if (BUILD_DEBUG_VLD)
 	file(GLOB_RECURSE vld_bin_files ${vld_dll_path})
 	foreach(vld_bin ${vld_bin_files})
-		add_custom_command(TARGET SampleSkinnedMesh POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:SampleSkinnedMesh>)
+		add_custom_command(TARGET SampleAnimations POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:SampleAnimations>)
 	endforeach()
 endif()
 
-set_target_properties(SampleSkinnedMesh PROPERTIES VERSION ${SKYLICHT_VERSION})
-set_target_properties(SampleSkinnedMesh PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+#SDL
+if (BUILD_SDL AND MSVC)
+	file(GLOB_RECURSE sdl_bin_files ${sdl_dll_path})
+	foreach(sdl_bin ${sdl_bin_files})
+		add_custom_command(TARGET SampleAnimations POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sdl_bin} $<TARGET_FILE_DIR:SampleAnimations>)
+	endforeach()
+endif()
+
+set_target_properties(SampleAnimations PROPERTIES VERSION ${SKYLICHT_VERSION})
+set_target_properties(SampleAnimations PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
