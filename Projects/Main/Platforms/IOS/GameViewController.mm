@@ -40,14 +40,20 @@ SkylichtApplication* _angleApplication = NULL;
     
     [_renderer setApplication:_angleApplication];
     
-        // get the name of the app
+    // register event (https://stackoverflow.com/questions/9011868/whats-the-best-way-to-detect-when-the-app-is-entering-the-background-for-my-vie)
+	/*
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillTerminate:) name:UIApplicationWillTerminateNotification object:nil];
+    */
+    
+    // get the name of the app
     NSString* bundle = [[NSBundle mainBundle]bundleIdentifier];
     
     NSString* savePath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     savePath = [savePath stringByAppendingFormat:@"/%@", bundle];
     
     // set bundle id
-    
     char bundleID[1024];
     [bundle getCString:bundleID maxLength:1024 encoding:NSASCIIStringEncoding];
     NSLog(@"Set bundle id: %@", bundle);
@@ -126,14 +132,23 @@ SkylichtApplication* _angleApplication = NULL;
     [self touchesEnded:touches withEvent:event];
 }
 
+#pragma mark - app pause/resume
+/*
+-(void)appWillResignActive:(NSNotification*)note
+{
+
+}
+
+-(void)appWillBecomeActive:(NSNotification*)note
+{
+
+}
+
+-(void)appWillTerminate:(NSNotification*)note
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
+}
+*/
 @end
-
-void notificationPause()
-{
-    
-}
-
-void notificationResume()
-{
-    
-}

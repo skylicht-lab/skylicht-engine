@@ -290,6 +290,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleTankScene PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleTankScene "-framework Foundation")
 	target_link_libraries(SampleTankScene "-framework UIKit")
 	target_link_libraries(SampleTankScene "-framework CoreGraphics")
 	target_link_libraries(SampleTankScene "-framework Metal")

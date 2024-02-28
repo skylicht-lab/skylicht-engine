@@ -290,6 +290,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleSponza PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleSponza "-framework Foundation")
 	target_link_libraries(SampleSponza "-framework UIKit")
 	target_link_libraries(SampleSponza "-framework CoreGraphics")
 	target_link_libraries(SampleSponza "-framework Metal")

@@ -287,6 +287,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleDrawPrimitives PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleDrawPrimitives "-framework Foundation")
 	target_link_libraries(SampleDrawPrimitives "-framework UIKit")
 	target_link_libraries(SampleDrawPrimitives "-framework CoreGraphics")
 	target_link_libraries(SampleDrawPrimitives "-framework Metal")
