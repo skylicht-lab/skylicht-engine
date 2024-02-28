@@ -1,2 +1,2 @@
-Model download from
-https://github.com/runevision/LocomotionSystem
+Model download from: https://github.com/runevision/LocomotionSystem
+Convert fbx to collada (.dae) by software Autodesk FBX Converter x64 2013
