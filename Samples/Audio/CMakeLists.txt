@@ -290,6 +290,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleAudio PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleAudio "-framework Foundation")
 	target_link_libraries(SampleAudio "-framework UIKit")
 	target_link_libraries(SampleAudio "-framework CoreGraphics")
 	target_link_libraries(SampleAudio "-framework Metal")

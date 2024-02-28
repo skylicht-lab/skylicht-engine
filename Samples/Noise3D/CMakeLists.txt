@@ -287,6 +287,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleNoise3D PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleNoise3D "-framework Foundation")
 	target_link_libraries(SampleNoise3D "-framework UIKit")
 	target_link_libraries(SampleNoise3D "-framework CoreGraphics")
 	target_link_libraries(SampleNoise3D "-framework Metal")

@@ -290,6 +290,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleInstancing PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleInstancing "-framework Foundation")
 	target_link_libraries(SampleInstancing "-framework UIKit")
 	target_link_libraries(SampleInstancing "-framework CoreGraphics")
 	target_link_libraries(SampleInstancing "-framework Metal")

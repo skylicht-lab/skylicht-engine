@@ -292,6 +292,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SamplePhysics PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SamplePhysics "-framework Foundation")
 	target_link_libraries(SamplePhysics "-framework UIKit")
 	target_link_libraries(SamplePhysics "-framework CoreGraphics")
 	target_link_libraries(SamplePhysics "-framework Metal")

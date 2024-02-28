@@ -287,6 +287,7 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleParticlesMagicSkill PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
+	target_link_libraries(SampleParticlesMagicSkill "-framework Foundation")
 	target_link_libraries(SampleParticlesMagicSkill "-framework UIKit")
 	target_link_libraries(SampleParticlesMagicSkill "-framework CoreGraphics")
 	target_link_libraries(SampleParticlesMagicSkill "-framework Metal")
