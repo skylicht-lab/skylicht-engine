@@ -8,6 +8,8 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 
+#include "AnimationDefine.h"
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -135,9 +137,65 @@ void CViewInit::initScene()
 
 		// apply animation to character
 		CAnimationController* animController = m_character->addComponent<CAnimationController>();
-		CSkeleton* skeleton1 = animController->createSkeleton();
-		CAnimationClip* idle = animManager->loadAnimation("SampleAnimations/HeroArtwork/Hero@Idle.dae");
-		skeleton1->setAnimation(idle, true);
+
+		// create multi skeleton
+		for (int i = 0; i <= (int)EAnimationId::Result; i++)
+		{
+			CSkeleton* skeleton = animController->createSkeleton();
+			skeleton->getTimeline().Weight = 0.0f;
+		}
+
+		std::string animationName[(int)EAnimationId::Result];
+
+		animationName[(int)EAnimationId::Idle] = "Hero@Idle.dae";
+
+		animationName[(int)EAnimationId::WalkBack] = "Hero@WalkBackward.dae";
+		animationName[(int)EAnimationId::WalkForward] = "Hero@WalkForward.dae";
+		animationName[(int)EAnimationId::WalkLeft] = "Hero@WalkStrafeLeft.dae";
+		animationName[(int)EAnimationId::WalkRight] = "Hero@WalkStrafeRight.dae";
+
+		animationName[(int)EAnimationId::RunBack] = "Hero@RunBackward.dae";
+		animationName[(int)EAnimationId::RunForward] = "Hero@RunForward.dae";
+		animationName[(int)EAnimationId::RunLeft] = "Hero@RunStrafeLeft.dae";
+		animationName[(int)EAnimationId::RunRight] = "Hero@RunStrafeRight.dae";
+
+#define GET_SKELETON(name) (animController->getSkeleton((int)(name)))
+
+		for (int i = 0; i < (int)EAnimationId::Result; i++)
+		{
+			if (animationName->empty())
+				continue;
+
+			std::string anim = "SampleAnimations/HeroArtwork/";
+			anim += animationName[i];
+
+			// set loop animation for skeleton
+			CAnimationClip* clip = animManager->loadAnimation(anim.c_str());
+			animController->getSkeleton(i)->setAnimation(clip, true);
+		}
+
+		// target walk
+		for (int i = (int)EAnimationId::WalkBack; i <= (int)EAnimationId::WalkRight; i++)
+			animController->getSkeleton(i)->setTarget(GET_SKELETON(EAnimationId::Walk));
+		GET_SKELETON(EAnimationId::Walk)->setAnimationType(CSkeleton::Blending);
+
+		// target run
+		for (int i = (int)EAnimationId::RunBack; i <= (int)EAnimationId::RunForward; i++)
+			animController->getSkeleton(i)->setTarget(GET_SKELETON(EAnimationId::Run));
+		GET_SKELETON(EAnimationId::Run)->setAnimationType(CSkeleton::Blending);
+
+		// target output
+		CSkeleton* result = GET_SKELETON(EAnimationId::Result);
+		GET_SKELETON(EAnimationId::Idle)->setTarget(result);
+		GET_SKELETON(EAnimationId::Walk)->setTarget(result);
+		GET_SKELETON(EAnimationId::Run)->setTarget(result);
+
+		// output
+		result->setAnimationType(CSkeleton::Blending);
+		animController->setOutput(result);
+
+		// enable idle by weight = 1.0f (anthoer = 0.0f)
+		GET_SKELETON(EAnimationId::Idle)->getTimeline().Weight = 1.0f;
 
 		// set position for character
 		m_character->getTransformEuler()->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));

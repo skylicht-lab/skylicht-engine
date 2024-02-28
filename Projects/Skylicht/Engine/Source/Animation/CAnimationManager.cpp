@@ -54,14 +54,22 @@ namespace Skylicht
 		{
 			output = new CAnimationClip();
 
+			char log[512];
+
 			// load animation
 			if (importer->loadAnimation(resource, output) == true)
 			{
+				sprintf(log, "Load animation: %s", resource);
+				os::Printer::log(log);
+
 				// cached
 				m_clips[resource] = output;
 			}
 			else
 			{
+				sprintf(log, "Load animation: %s failed", resource);
+				os::Printer::log(log);
+
 				// load failed!
 				delete output;
 				output = NULL;
