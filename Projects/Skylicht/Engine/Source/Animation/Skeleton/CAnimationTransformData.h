@@ -40,6 +40,9 @@ namespace Skylicht
 		int ParentID;
 		int Depth;
 
+		// use to cancel animation
+		bool DisableAnimation;
+
 		float Weight;
 
 		// transform if the entity dont have animation
