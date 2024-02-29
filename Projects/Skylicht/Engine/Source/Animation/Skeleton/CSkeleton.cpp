@@ -35,7 +35,9 @@ namespace Skylicht
 		m_enable(true),
 		m_animationType(KeyFrame),
 		m_clip(NULL),
-		m_target(NULL)
+		m_target(NULL),
+		m_root(NULL),
+		m_addtiveAnimation(false)
 	{
 
 	}
@@ -74,6 +76,13 @@ namespace Skylicht
 			// handle real world transform
 			animationData->WorldTransform = worldTransform;
 
+			// save root nodes
+			if (m_root == NULL)
+				m_root = animationData;
+
+			// save this id
+			animationData->ID = newEntity->getIndex();
+
 			// find parent
 			if (entityIDMap.find(worldTransform->ParentIndex) != entityIDMap.end())
 			{
@@ -104,6 +113,7 @@ namespace Skylicht
 	{
 		m_entities.releaseAllEntities();
 		m_entitiesData.clear();
+		m_root = NULL;
 	}
 
 	void CSkeleton::setAnimation(CAnimationClip* clip, bool loop, float from, float duration, bool pause)
@@ -268,72 +278,136 @@ namespace Skylicht
 
 	void CSkeleton::updateBlending()
 	{
+		bool first = true;
+
+		for (CSkeleton*& skeleton : m_blending)
+		{
+			float weight = skeleton->getTimeline().Weight;
+			if (weight == 0.0f)
+				continue;
+
+			if (skeleton->isAddtiveAnimation())
+				doAddtive(skeleton, first);
+			else
+				doBlending(skeleton, first);
+
+			first = false;
+		}
+	}
+
+	void CSkeleton::doBlending(CSkeleton* skeleton, bool first)
+	{
 		int id = 0;
+		float skeletonWeight = skeleton->getTimeline().Weight;
 
 		for (CAnimationTransformData*& entity : m_entitiesData)
 		{
-			bool first = true;
+			CAnimationTransformData* src = skeleton->m_entitiesData[id++];
 
-			for (CSkeleton*& skeleton : m_blending)
+			float weight = skeletonWeight * src->Weight;
+
+			core::quaternion* rotation = &src->AnimRotation;
+			core::vector3df* position = &src->AnimPosition;
+			core::vector3df* scale = &src->AnimScale;
+
+			if (first == true)
 			{
-				core::quaternion* rotation = &skeleton->m_entitiesData[id]->AnimRotation;
-				core::vector3df* position = &skeleton->m_entitiesData[id]->AnimPosition;
-				core::vector3df* scale = &skeleton->m_entitiesData[id]->AnimScale;
+				entity->AnimRotation.X = rotation->X * weight;
+				entity->AnimRotation.Y = rotation->Y * weight;
+				entity->AnimRotation.Z = rotation->Z * weight;
+				entity->AnimRotation.W = rotation->W * weight;
 
-				float weight = skeleton->getTimeline().Weight;
-				if (weight == 0.0f)
-					continue;
+				entity->AnimPosition.X = position->X * weight;
+				entity->AnimPosition.Y = position->Y * weight;
+				entity->AnimPosition.Z = position->Z * weight;
 
-				if (first == true)
+				entity->AnimScale.X = scale->X * weight;
+				entity->AnimScale.Y = scale->Y * weight;
+				entity->AnimScale.Z = scale->Z * weight;
+			}
+			else
+			{
+				entity->AnimPosition.X += position->X * weight;
+				entity->AnimPosition.Y += position->Y * weight;
+				entity->AnimPosition.Z += position->Z * weight;
+
+				entity->AnimScale.X += scale->X * weight;
+				entity->AnimScale.Y += scale->Y * weight;
+				entity->AnimScale.Z += scale->Z * weight;
+
+				float Rx = rotation->X;
+				float Ry = rotation->Y;
+				float Rz = rotation->Z;
+				float Rw = rotation->W;
+
+				float dot = entity->AnimRotation.X * Rx + entity->AnimRotation.Y * Ry + entity->AnimRotation.Z * Rz + entity->AnimRotation.W * Rw;
+
+				if (dot < 0.0f)
 				{
-					first = false;
-
-					entity->AnimRotation.X = rotation->X * weight;
-					entity->AnimRotation.Y = rotation->Y * weight;
-					entity->AnimRotation.Z = rotation->Z * weight;
-					entity->AnimRotation.W = rotation->W * weight;
-
-					entity->AnimPosition.X = position->X * weight;
-					entity->AnimPosition.Y = position->Y * weight;
-					entity->AnimPosition.Z = position->Z * weight;
-
-					entity->AnimScale.X = scale->X * weight;
-					entity->AnimScale.Y = scale->Y * weight;
-					entity->AnimScale.Z = scale->Z * weight;
+					Rx *= -1.0f;
+					Ry *= -1.0f;
+					Rz *= -1.0f;
+					Rw *= -1.0f;
 				}
-				else
-				{
-					entity->AnimPosition.X += position->X * weight;
-					entity->AnimPosition.Y += position->Y * weight;
-					entity->AnimPosition.Z += position->Z * weight;
 
-					entity->AnimScale.X += scale->X * weight;
-					entity->AnimScale.Y += scale->Y * weight;
-					entity->AnimScale.Z += scale->Z * weight;
+				entity->AnimRotation.X += Rx * weight;
+				entity->AnimRotation.Y += Ry * weight;
+				entity->AnimRotation.Z += Rz * weight;
+				entity->AnimRotation.W += Rw * weight;
+			}
+		}
+	}
 
-					float Rx = rotation->X;
-					float Ry = rotation->Y;
-					float Rz = rotation->Z;
-					float Rw = rotation->W;
+	void CSkeleton::doAddtive(CSkeleton* skeleton, bool first)
+	{
+		core::quaternion addRotate;
+		int id = 0;
+		float skeletonWeight = skeleton->getTimeline().Weight;
 
-					float dot = entity->AnimRotation.X * Rx + entity->AnimRotation.Y * Ry + entity->AnimRotation.Z * Rz + entity->AnimRotation.W * Rw;
+		// Reference:
+		// https://github.com/guillaumeblanc/ozz-animation/blob/master/src/animation/runtime/blending_job.cc
+		// OZZ_ADD_PASS
 
-					if (dot < 0.0f)
-					{
-						Rx *= -1.0f;
-						Ry *= -1.0f;
-						Rz *= -1.0f;
-						Rw *= -1.0f;
-					}
+		for (CAnimationTransformData*& entity : m_entitiesData)
+		{
+			CAnimationTransformData* src = skeleton->m_entitiesData[id++];
 
-					entity->AnimRotation.X += Rx * weight;
-					entity->AnimRotation.Y += Ry * weight;
-					entity->AnimRotation.Z += Rz * weight;
-					entity->AnimRotation.W += Rw * weight;
-				}
+			float weight = skeletonWeight * src->Weight;
+			float oneMinsWeight = 1.0f - weight;
+
+			core::quaternion* rotation = &src->AnimRotation;
+			core::vector3df* position = &src->AnimPosition;
+			core::vector3df* scale = &src->AnimScale;
+
+			entity->AnimPosition.X += position->X * weight;
+			entity->AnimPosition.Y += position->Y * weight;
+			entity->AnimPosition.Z += position->Z * weight;
+
+			entity->AnimScale.X = entity->AnimScale.X * (oneMinsWeight + (scale->X * weight));
+			entity->AnimScale.Y = entity->AnimScale.Y * (oneMinsWeight + (scale->Y * weight));
+			entity->AnimScale.Z = entity->AnimScale.Z * (oneMinsWeight + (scale->Z * weight));
+
+			float Rx = rotation->X;
+			float Ry = rotation->Y;
+			float Rz = rotation->Z;
+			float Rw = rotation->W;
+
+			if (Rw < 0.0f)
+			{
+				Rx *= -1.0f;
+				Ry *= -1.0f;
+				Rz *= -1.0f;
+				Rw *= -1.0f;
 			}
 
-			id++;
+			addRotate.set(
+				Rx * weight,
+				Ry * weight,
+				Rz * weight,
+				(Rw - 1.0f) * weight + 1.0f
+			);
+			addRotate.normalize();
+			entity->AnimRotation = addRotate * entity->AnimRotation;
 		}
 	}
 
@@ -373,6 +447,46 @@ namespace Skylicht
 			CAnimationTimeline& trackInfo = skeleton->getTimeline();
 			frameRatio = core::clamp<float>(frameRatio, 0.0f, 1.0f);
 			trackInfo.Frame = trackInfo.From + frameRatio * (trackInfo.To - trackInfo.From);
+		}
+	}
+
+	void CSkeleton::setJointWeights(float weight)
+	{
+		for (CAnimationTransformData*& entity : m_entitiesData)
+		{
+			entity->Weight = weight;
+		}
+	}
+
+	void CSkeleton::setJointWeights(const char* name, float weight, bool includeChild)
+	{
+		// search root
+		int rootId = -1;
+
+		for (CAnimationTransformData*& entity : m_entitiesData)
+		{
+			if (entity->Name == name)
+			{
+				entity->Weight = weight;
+				rootId = entity->ID;
+				break;
+			}
+		}
+
+		if (includeChild)
+		{
+			core::array<int> listParent;
+			listParent.push_back(rootId);
+
+			for (CAnimationTransformData*& entity : m_entitiesData)
+			{
+				if (listParent.linear_search(entity->ParentID) >= 0)
+				{
+					// if reference parent
+					entity->Weight = weight;
+					listParent.push_back(entity->ID);
+				}
+			}
 		}
 	}
 }

@@ -45,6 +45,8 @@ namespace Skylicht
 
 		std::vector<CAnimationTransformData*> m_entitiesData;
 
+		CAnimationTransformData* m_root;
+
 		int m_id;
 
 		bool m_enable;
@@ -54,6 +56,8 @@ namespace Skylicht
 		EAnimationType m_animationType;
 
 		CAnimationClip* m_clip;
+
+		bool m_addtiveAnimation;
 
 	protected:
 
@@ -79,6 +83,10 @@ namespace Skylicht
 		void setAnimation(CAnimationClip* clip, bool loop, bool pause = false);
 
 		void setAnimation(CAnimationClip* clip, bool loop, float from, float duration, bool pause = false);
+
+		void setJointWeights(float weight);
+
+		void setJointWeights(const char* name, float weight, bool includeChild = true);
 
 		inline CAnimationClip* getCurrentAnimation()
 		{
@@ -115,6 +123,16 @@ namespace Skylicht
 			return m_animationType;
 		}
 
+		inline void setIsAddtiveAnimation(bool b)
+		{
+			m_addtiveAnimation = b;
+		}
+
+		inline bool isAddtiveAnimation()
+		{
+			return m_addtiveAnimation;
+		}
+
 		void setTarget(CSkeleton* skeleton);
 
 	protected:
@@ -124,6 +142,10 @@ namespace Skylicht
 		void updateTrackKeyFrame();
 
 		void updateBlending();
+
+		void doBlending(CSkeleton* skeleton, bool first);
+
+		void doAddtive(CSkeleton* skeleton, bool first);
 
 		void addBlending(CSkeleton* skeleton);
 

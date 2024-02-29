@@ -129,6 +129,7 @@ void CViewInit::initScene()
 
 		// create character object
 		m_character = zone->createEmptyObject();
+		m_character->setName(L"Character");
 
 		// load skinned mesh character
 		CRenderMesh* renderMesh1 = m_character->addComponent<CRenderMesh>();
@@ -148,16 +149,15 @@ void CViewInit::initScene()
 		std::string animationName[(int)EAnimationId::Result];
 
 		animationName[(int)EAnimationId::Idle] = "Hero@Idle.dae";
-
 		animationName[(int)EAnimationId::WalkBack] = "Hero@WalkBackward.dae";
 		animationName[(int)EAnimationId::WalkForward] = "Hero@WalkForward.dae";
 		animationName[(int)EAnimationId::WalkLeft] = "Hero@WalkStrafeLeft.dae";
 		animationName[(int)EAnimationId::WalkRight] = "Hero@WalkStrafeRight.dae";
-
 		animationName[(int)EAnimationId::RunBack] = "Hero@RunBackward.dae";
 		animationName[(int)EAnimationId::RunForward] = "Hero@RunForward.dae";
 		animationName[(int)EAnimationId::RunLeft] = "Hero@RunStrafeLeft.dae";
 		animationName[(int)EAnimationId::RunRight] = "Hero@RunStrafeRight.dae";
+		animationName[(int)EAnimationId::Aim] = "Hero@AimStraight.dae";
 
 #define GET_SKELETON(name) (animController->getSkeleton((int)(name)))
 
@@ -171,31 +171,45 @@ void CViewInit::initScene()
 
 			// set loop animation for skeleton
 			CAnimationClip* clip = animManager->loadAnimation(anim.c_str());
-			animController->getSkeleton(i)->setAnimation(clip, true);
+			if (clip != NULL)
+				animController->getSkeleton(i)->setAnimation(clip, true);
 		}
 
-		// target walk
-		for (int i = (int)EAnimationId::WalkBack; i <= (int)EAnimationId::WalkRight; i++)
-			animController->getSkeleton(i)->setTarget(GET_SKELETON(EAnimationId::Walk));
-		GET_SKELETON(EAnimationId::Walk)->setAnimationType(CSkeleton::Blending);
-
-		// target run
-		for (int i = (int)EAnimationId::RunBack; i <= (int)EAnimationId::RunForward; i++)
-			animController->getSkeleton(i)->setTarget(GET_SKELETON(EAnimationId::Run));
-		GET_SKELETON(EAnimationId::Run)->setAnimationType(CSkeleton::Blending);
-
-		// target output
+		CSkeleton* movement = GET_SKELETON(EAnimationId::Movement);
+		CSkeleton* idle = GET_SKELETON(EAnimationId::Idle);
 		CSkeleton* result = GET_SKELETON(EAnimationId::Result);
-		GET_SKELETON(EAnimationId::Idle)->setTarget(result);
-		GET_SKELETON(EAnimationId::Walk)->setTarget(result);
-		GET_SKELETON(EAnimationId::Run)->setTarget(result);
 
-		// output
+		// idle
+		idle->setTarget(movement);
+		idle->getTimeline().Weight = 1.0f;
+
+		// walk
+		for (int i = (int)EAnimationId::WalkBack; i <= (int)EAnimationId::WalkRight; i++)
+			animController->getSkeleton(i)->setTarget(movement);
+
+		// run
+		for (int i = (int)EAnimationId::RunBack; i <= (int)EAnimationId::RunRight; i++)
+			animController->getSkeleton(i)->setTarget(movement);
+
+		// movement
+		movement->setTarget(result);
+		movement->setAnimationType(CSkeleton::Blending);
+		movement->getTimeline().Weight = 1.0f;
+		// movement->setJointWeights("Spine3", 0.0f, true);
+
+		// aim
+		/*
+		CSkeleton* aim = GET_SKELETON(EAnimationId::Aim)
+		aim->setTarget(result);
+		aim->setJointWeights(0.0f); // clear all weight
+		aim->setJointWeights("Spine3", 1.0f, true); // aim from "Spine3"
+		*/
+
+		// result
 		result->setAnimationType(CSkeleton::Blending);
-		animController->setOutput(result);
 
-		// enable idle by weight = 1.0f (anthoer = 0.0f)
-		GET_SKELETON(EAnimationId::Idle)->getTimeline().Weight = 1.0f;
+		// final output
+		animController->setOutput(result);
 
 		// set position for character
 		m_character->getTransformEuler()->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));

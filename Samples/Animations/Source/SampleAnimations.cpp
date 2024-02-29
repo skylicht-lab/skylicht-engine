@@ -3,6 +3,7 @@
 
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
+#include "CImguiManager.h"
 
 #include "CViewInit.h"
 
@@ -17,13 +18,15 @@ SampleAnimations::SampleAnimations()
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
+	CImguiManager::createGetInstance();
 }
 
 SampleAnimations::~SampleAnimations()
 {
 	CViewManager::releaseInstance();
-	CContext::releaseInstance();
+	CImguiManager::releaseInstance();
 	CLightmapper::releaseInstance();
+	CContext::releaseInstance();
 }
 
 void SampleAnimations::onInitApp()
