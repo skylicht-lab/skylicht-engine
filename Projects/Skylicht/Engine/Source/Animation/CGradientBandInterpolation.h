@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,47 +22,54 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
+// Reference: 
+// https://github.com/runevision/LocomotionSystem/blob/master/Assets/Locomotion%20System%20Files/Locomotion%20System/PolarGradientBandInterpolator.cs
+// https://www.shadertoy.com/view/XlKXWR
+
+
 #pragma once
-
-#include "Entity/IEntityData.h"
-
-#include "Animation/CAnimationTrack.h"
-#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
-	class CAnimationTransformData : public IEntityData
+	class CGradientBandInterpolation
 	{
 	public:
-		std::string Name;
+		struct SSample
+		{
+			int Id;
+			core::vector3df Vector;
+			float Weight;
 
-		int ID;
-		int ParentID;
-		int Depth;
+			SSample()
+			{
+				Id = 0;
+				Weight = 0.0f;
+			}
+		};
 
-		float Weight;
-
-		// transform if the entity dont have animation
-		core::vector3df DefaultPosition;
-		core::vector3df DefaultScale;
-		core::quaternion DefaultRotation;
-
-		// transform get from animation track
-		core::vector3df AnimPosition;
-		core::vector3df AnimScale;
-		core::quaternion AnimRotation;
-
-		// handle of world transform
-		CWorldTransformData* WorldTransform;
-
-		// current animation track
-		CAnimationTrack AnimationTrack;
-
-		DECLARE_DATA_TYPE_INDEX;
+	protected:
+		core::array<SSample*> m_samples;
 
 	public:
-		CAnimationTransformData();
+		CGradientBandInterpolation();
 
-		virtual ~CAnimationTransformData();
+		virtual ~CGradientBandInterpolation();
+
+		float getAngle(const core::vector3df& a, const core::vector3df& b);
+
+		core::vector3df project(const core::vector3df& vector, const core::vector3df& onNormal);
+
+		inline core::array<SSample*>& getSamples()
+		{
+			return m_samples;
+		}
+
+		SSample* addSample(int id, const core::vector3df& vector);
+
+		void removeSample(SSample* sample);
+
+		void clear();
+
+		void sampleWeightsPolar(const core::vector3df& vector);
 	};
 }

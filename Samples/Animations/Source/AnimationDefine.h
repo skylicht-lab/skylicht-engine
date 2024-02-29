@@ -7,12 +7,11 @@ enum class EAnimationId
 	WalkForward,
 	WalkLeft,
 	WalkRight,
-	Walk,
 	RunBack,
 	RunForward,
 	RunLeft,
 	RunRight,
-	Run,
 	Movement,
+	Aim,
 	Result,
 };
