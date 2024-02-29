@@ -208,6 +208,21 @@ void CViewInit::initScene()
 		// result
 		result->setAnimationType(CSkeleton::Blending);
 
+		// gun alway in hand
+		CAnimationTransformData* gunNode = result->getNode("RightGun");
+		CAnimationTransformData* handNode = result->getNode("RightHand");
+		if (gunNode && handNode)
+		{
+			// gun attach to hand
+			gunNode->DisableAnimation = true;
+			gunNode->WorldTransform->AttachParentIndex = handNode->WorldTransform->EntityIndex;
+
+			// gun alignment, model unit: cm
+			gunNode->WorldTransform->Relative.makeIdentity();
+			gunNode->WorldTransform->Relative.setRotationDegrees(core::vector3df(0.0f, 90.0f, 0.0f));
+			gunNode->WorldTransform->Relative.setTranslation(core::vector3df(-2.0f, 9.0f, -13.0f));
+		}
+
 		// final output
 		animController->setOutput(result);
 
@@ -292,8 +307,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -306,7 +321,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::InitScene;
 #endif
@@ -332,7 +347,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

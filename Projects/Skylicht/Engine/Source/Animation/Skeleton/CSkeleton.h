@@ -88,6 +88,8 @@ namespace Skylicht
 
 		void setJointWeights(const char* name, float weight, bool includeChild = true);
 
+		CAnimationTransformData* getNode(const char* name);
+
 		inline CAnimationClip* getCurrentAnimation()
 		{
 			return m_clip;
