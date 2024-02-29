@@ -199,6 +199,9 @@ namespace Skylicht
 	{
 		for (CAnimationTransformData*& entity : m_entitiesData)
 		{
+			if (entity->DisableAnimation)
+				continue;
+
 			// todo calc relative matrix & position
 			core::matrix4& relativeMatrix = entity->WorldTransform->Relative;
 			relativeMatrix.makeIdentity();
@@ -480,7 +483,7 @@ namespace Skylicht
 
 			for (CAnimationTransformData*& entity : m_entitiesData)
 			{
-				if (listParent.linear_search(entity->ParentID) >= 0)
+				if (listParent.linear_reverse_search(entity->ParentID) >= 0)
 				{
 					// if reference parent
 					entity->Weight = weight;
@@ -488,5 +491,18 @@ namespace Skylicht
 				}
 			}
 		}
+	}
+
+	CAnimationTransformData* CSkeleton::getNode(const char* name)
+	{
+		for (CAnimationTransformData*& entity : m_entitiesData)
+		{
+			if (entity->Name == name)
+			{
+				return entity;
+			}
+		}
+
+		return NULL;
 	}
 }

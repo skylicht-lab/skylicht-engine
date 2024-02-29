@@ -32,7 +32,8 @@ namespace Skylicht
 	CAnimationTransformData::CAnimationTransformData() :
 		ParentID(-1),
 		Depth(0),
-		Weight(1.0f)
+		Weight(1.0f),
+		DisableAnimation(false)
 	{
 
 	}
