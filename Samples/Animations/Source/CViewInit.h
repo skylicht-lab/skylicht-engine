@@ -10,6 +10,7 @@ public:
 	enum EInitState
 	{
 		DownloadBundles,
+		LoadAnimations,
 		InitScene,
 		Error,
 		Finished
@@ -28,6 +29,9 @@ protected:
 	CGameObject* m_guiObject;
 	CGUIText* m_textInfo;
 	CGlyphFont* m_font;
+
+	core::array<std::string> m_animationName;
+	int m_animationLoaded;
 
 protected:
 	io::path getBuiltInPath(const char* name);

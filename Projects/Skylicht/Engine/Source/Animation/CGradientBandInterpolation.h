@@ -71,5 +71,7 @@ namespace Skylicht
 		void clear();
 
 		void sampleWeightsPolar(const core::vector3df& vector);
+
+		void sampleWeightsCartesian(const core::vector3df& vector);
 	};
 }

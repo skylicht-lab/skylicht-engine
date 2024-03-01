@@ -40,6 +40,13 @@ namespace Skylicht
 			Blending,
 		};
 
+		enum EAnimationLayerType
+		{
+			DefaultBlending,
+			Replace,
+			Addtive,
+		};
+
 	protected:
 		CEntityPrefab m_entities;
 
@@ -51,13 +58,15 @@ namespace Skylicht
 
 		bool m_enable;
 
+		bool m_needUpdateActivateEntities;
+
 		CAnimationTimeline m_timeline;
 
 		EAnimationType m_animationType;
 
 		CAnimationClip* m_clip;
 
-		bool m_addtiveAnimation;
+		EAnimationLayerType m_layerType;
 
 	protected:
 
@@ -76,6 +85,8 @@ namespace Skylicht
 
 		void update();
 
+		void updateActivateEntities();
+
 		void applyTransform();
 
 		void syncAnimationByTimeScale();
@@ -88,7 +99,16 @@ namespace Skylicht
 
 		void setJointWeights(const char* name, float weight, bool includeChild = true);
 
-		CAnimationTransformData* getNode(const char* name);
+		void getJoints(const char* name, std::vector<CAnimationTransformData*>& joints);
+
+		void setJointWeights(std::vector<CAnimationTransformData*>& joints, float weight);
+
+		CAnimationTransformData* getJoint(const char* name);
+
+		inline std::vector<CAnimationTransformData*>& getJoints()
+		{
+			return m_entitiesData;
+		}
 
 		inline CAnimationClip* getCurrentAnimation()
 		{
@@ -125,14 +145,19 @@ namespace Skylicht
 			return m_animationType;
 		}
 
-		inline void setIsAddtiveAnimation(bool b)
+		inline void setLayerType(EAnimationLayerType type)
 		{
-			m_addtiveAnimation = b;
+			m_layerType = type;
 		}
 
-		inline bool isAddtiveAnimation()
+		inline EAnimationLayerType getLayerType()
 		{
-			return m_addtiveAnimation;
+			return m_layerType;
+		}
+
+		inline void notifyUpdateActivateEntities()
+		{
+			m_needUpdateActivateEntities = true;
 		}
 
 		void setTarget(CSkeleton* skeleton);
@@ -148,6 +173,8 @@ namespace Skylicht
 		void doBlending(CSkeleton* skeleton, bool first);
 
 		void doAddtive(CSkeleton* skeleton, bool first);
+
+		void doReplace(CSkeleton* skeleton, bool first);
 
 		void addBlending(CSkeleton* skeleton);
 

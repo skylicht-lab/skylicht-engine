@@ -12,6 +12,11 @@ enum class EAnimationId
 	RunLeft,
 	RunRight,
 	Movement,
+	AimStraight,
+	AimUp,
+	AimDown,
+	AimLeft,
+	AimRight,
 	Aim,
 	Result,
 };
