@@ -59,7 +59,7 @@ void CViewInit::onInit()
 	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	m_textInfo->setText(L"Init assets");
 
-	// crate gui camera
+	// create gui camera
 	CGameObject* guiCameraObject = zone->createEmptyObject();
 	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
