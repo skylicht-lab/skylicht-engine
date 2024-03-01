@@ -9,6 +9,9 @@ CViewDemo::CViewDemo() :
 	m_animController(NULL),
 	m_movementSpeed(0.0f),
 	m_movementAngle(0.0f),
+	m_aim(0.0f),
+	m_aimUpDown(0.0f),
+	m_aimLeftRight(0.0f),
 	m_modify(true)
 {
 
@@ -39,12 +42,26 @@ void CViewDemo::onInit()
 	m_movementBlending.addSample((int)EAnimationId::RunBack, back * runSpeed);
 	m_movementBlending.addSample((int)EAnimationId::RunRight, right * runSpeed);
 
+
+	m_aimBlending.addSample((int)EAnimationId::AimStraight, core::vector3df());
+	m_aimBlending.addSample((int)EAnimationId::AimUp, core::vector3df(0.0f, 1.0f, 0.0f));
+	m_aimBlending.addSample((int)EAnimationId::AimDown, core::vector3df(0.0f, -1.0f, 0.0f));
+	m_aimBlending.addSample((int)EAnimationId::AimLeft, core::vector3df(-1.0f, 0.0f, 0.0f));
+	m_aimBlending.addSample((int)EAnimationId::AimRight, core::vector3df(1.0f, 0.0f, 0.0f));
+
+
 	CScene* scene = CContext::getInstance()->getScene();
 	scene->getZone(0)->updateIndexSearchObject();
 	CGameObject* character = scene->searchObjectInChild(L"Character");
 	if (character)
 	{
 		m_animController = character->getComponent<CAnimationController>();
+
+		// set mask 1.0f for aim joint from spine3
+		CSkeleton* aim = m_animController->getSkeleton((int)EAnimationId::Aim);
+		aim->setJointWeights(0.0f);
+		aim->setJointWeights("Spine", 1.0f, true);
+		aim->setLayerType(CSkeleton::Replace);
 	}
 }
 
@@ -68,6 +85,7 @@ void CViewDemo::onUpdate()
 		core::quaternion rot;
 		rot.fromAngleAxis(m_movementAngle * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
 
+		// MOVEMENT
 		// calc move speed vector
 		core::vector3df moveSpeed = rot * forward;
 		moveSpeed.normalize();
@@ -77,10 +95,30 @@ void CViewDemo::onUpdate()
 		m_movementBlending.sampleWeightsPolar(moveSpeed);
 
 		// apply weight for movement skeleton
-		core::array<CGradientBandInterpolation::SSample*>& allSamples = m_movementBlending.getSamples();
-		for (u32 i = 0, n = allSamples.size(); i < n; i++)
+		core::array<CGradientBandInterpolation::SSample*>& movementSamples = m_movementBlending.getSamples();
+		for (u32 i = 0, n = movementSamples.size(); i < n; i++)
 		{
-			CGradientBandInterpolation::SSample* sample = allSamples[i];
+			CGradientBandInterpolation::SSample* sample = movementSamples[i];
+
+			// update animation weight
+			m_animController->getSkeleton(sample->Id)->getTimeline().Weight = sample->Weight;
+		}
+
+		// UPPER AIM WEIGHT
+		m_animController->getSkeleton((int)EAnimationId::Aim)->getTimeline().Weight = m_aim;
+
+		// AIM UP/DOWN/LEFT/RIGHT
+		core::vector3df aimVector(m_aimLeftRight, m_aimUpDown, 0.0f);
+		if (aimVector.getLength() > 1.0f)
+			aimVector.normalize();
+
+		// calc animation weight for aim
+		m_aimBlending.sampleWeightsPolar(aimVector);
+
+		core::array<CGradientBandInterpolation::SSample*>& aimSamples = m_aimBlending.getSamples();
+		for (u32 i = 0, n = aimSamples.size(); i < n; i++)
+		{
+			CGradientBandInterpolation::SSample* sample = aimSamples[i];
 
 			// update animation weight
 			m_animController->getSkeleton(sample->Id)->getTimeline().Weight = sample->Weight;
@@ -154,6 +192,31 @@ void CViewDemo::onGUI()
 		minSize = 0.0f;
 		maxSize = 360.0f;
 		if (ImGui::SliderFloat("Move angle", &m_movementAngle, minSize, maxSize, "%.3f deg"))
+		{
+			m_modify = true;
+		}
+
+		ImGui::Spacing();
+	}
+
+	if (ImGui::CollapsingHeader("Aim", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		minSize = 0.0f;
+		maxSize = 1.0f;
+
+		if (ImGui::SliderFloat("Aim", &m_aim, minSize, maxSize, "%.3f"))
+		{
+			m_modify = true;
+		}
+
+		minSize = -1.0f;
+		maxSize = 1.0f;
+
+		if (ImGui::SliderFloat("Left/Right", &m_aimLeftRight, minSize, maxSize, "%.3f"))
+		{
+			m_modify = true;
+		}
+		if (ImGui::SliderFloat("Up/Down", &m_aimUpDown, minSize, maxSize, "%.3f"))
 		{
 			m_modify = true;
 		}

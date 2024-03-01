@@ -15,7 +15,8 @@ CViewInit::CViewInit() :
 	m_getFile(NULL),
 	m_downloaded(0),
 	m_bakeSHLighting(true),
-	m_character(NULL)
+	m_character(NULL),
+	m_animationLoaded(0)
 {
 
 }
@@ -60,11 +61,30 @@ void CViewInit::onInit()
 	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	m_textInfo->setText(L"Init assets");
 
-	// crate gui camera
+	// create gui camera
 	CGameObject* guiCameraObject = zone->createEmptyObject();
 	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 	CContext::getInstance()->setGUICamera(guiCamera);
+
+	// init list animation
+	for (int i = 0; i < (int)EAnimationId::Result; i++)
+		m_animationName.push_back(std::string());
+
+	m_animationName[(int)EAnimationId::Idle] = "Hero@Idle.dae";
+	m_animationName[(int)EAnimationId::WalkBack] = "Hero@WalkBackward.dae";
+	m_animationName[(int)EAnimationId::WalkForward] = "Hero@WalkForward.dae";
+	m_animationName[(int)EAnimationId::WalkLeft] = "Hero@WalkStrafeLeft.dae";
+	m_animationName[(int)EAnimationId::WalkRight] = "Hero@WalkStrafeRight.dae";
+	m_animationName[(int)EAnimationId::RunBack] = "Hero@RunBackward.dae";
+	m_animationName[(int)EAnimationId::RunForward] = "Hero@RunForward.dae";
+	m_animationName[(int)EAnimationId::RunLeft] = "Hero@RunStrafeLeft.dae";
+	m_animationName[(int)EAnimationId::RunRight] = "Hero@RunStrafeRight.dae";
+	m_animationName[(int)EAnimationId::AimStraight] = "Hero@AimStraight.dae";
+	m_animationName[(int)EAnimationId::AimUp] = "Hero@AimUp.dae";
+	m_animationName[(int)EAnimationId::AimDown] = "Hero@AimDown.dae";
+	m_animationName[(int)EAnimationId::AimLeft] = "Hero@AimLeft.dae";
+	m_animationName[(int)EAnimationId::AimRight] = "Hero@AimRight.dae";
 }
 
 void CViewInit::initScene()
@@ -146,28 +166,16 @@ void CViewInit::initScene()
 			skeleton->getTimeline().Weight = 0.0f;
 		}
 
-		std::string animationName[(int)EAnimationId::Result];
-
-		animationName[(int)EAnimationId::Idle] = "Hero@Idle.dae";
-		animationName[(int)EAnimationId::WalkBack] = "Hero@WalkBackward.dae";
-		animationName[(int)EAnimationId::WalkForward] = "Hero@WalkForward.dae";
-		animationName[(int)EAnimationId::WalkLeft] = "Hero@WalkStrafeLeft.dae";
-		animationName[(int)EAnimationId::WalkRight] = "Hero@WalkStrafeRight.dae";
-		animationName[(int)EAnimationId::RunBack] = "Hero@RunBackward.dae";
-		animationName[(int)EAnimationId::RunForward] = "Hero@RunForward.dae";
-		animationName[(int)EAnimationId::RunLeft] = "Hero@RunStrafeLeft.dae";
-		animationName[(int)EAnimationId::RunRight] = "Hero@RunStrafeRight.dae";
-		animationName[(int)EAnimationId::Aim] = "Hero@AimStraight.dae";
-
 #define GET_SKELETON(name) (animController->getSkeleton((int)(name)))
 
+		// set animations for skeletons
 		for (int i = 0; i < (int)EAnimationId::Result; i++)
 		{
-			if (animationName->empty())
+			if (m_animationName[i].empty())
 				continue;
 
 			std::string anim = "SampleAnimations/HeroArtwork/";
-			anim += animationName[i];
+			anim += m_animationName[i];
 
 			// set loop animation for skeleton
 			CAnimationClip* clip = animManager->loadAnimation(anim.c_str());
@@ -179,38 +187,30 @@ void CViewInit::initScene()
 		CSkeleton* idle = GET_SKELETON(EAnimationId::Idle);
 		CSkeleton* result = GET_SKELETON(EAnimationId::Result);
 
-		// idle
-		idle->setTarget(movement);
-		idle->getTimeline().Weight = 1.0f;
-
-		// walk
-		for (int i = (int)EAnimationId::WalkBack; i <= (int)EAnimationId::WalkRight; i++)
-			animController->getSkeleton(i)->setTarget(movement);
-
-		// run
-		for (int i = (int)EAnimationId::RunBack; i <= (int)EAnimationId::RunRight; i++)
+		// idle/walk/run
+		for (int i = (int)EAnimationId::Idle; i <= (int)EAnimationId::RunRight; i++)
 			animController->getSkeleton(i)->setTarget(movement);
 
 		// movement
 		movement->setTarget(result);
 		movement->setAnimationType(CSkeleton::Blending);
 		movement->getTimeline().Weight = 1.0f;
-		// movement->setJointWeights("Spine3", 0.0f, true);
 
 		// aim
-		/*
-		CSkeleton* aim = GET_SKELETON(EAnimationId::Aim)
+		CSkeleton* aim = GET_SKELETON(EAnimationId::Aim);
 		aim->setTarget(result);
-		aim->setJointWeights(0.0f); // clear all weight
-		aim->setJointWeights("Spine3", 1.0f, true); // aim from "Spine3"
-		*/
+		aim->setAnimationType(CSkeleton::Blending);
 
-		// result
+		for (int i = (int)EAnimationId::AimStraight; i <= (int)EAnimationId::AimRight; i++)
+			animController->getSkeleton(i)->setTarget(aim);
+
+		// result is output
 		result->setAnimationType(CSkeleton::Blending);
+		animController->setOutput(result);
 
-		// gun alway in hand
-		CAnimationTransformData* gunNode = result->getNode("RightGun");
-		CAnimationTransformData* handNode = result->getNode("RightHand");
+		// fix: gun alway in hand
+		CAnimationTransformData* gunNode = result->getJoint("RightGun");
+		CAnimationTransformData* handNode = result->getJoint("RightHand");
 		if (gunNode && handNode)
 		{
 			// gun attach to hand
@@ -222,9 +222,6 @@ void CViewInit::initScene()
 			gunNode->WorldTransform->Relative.setRotationDegrees(core::vector3df(0.0f, 90.0f, 0.0f));
 			gunNode->WorldTransform->Relative.setTranslation(core::vector3df(-2.0f, 9.0f, -13.0f));
 		}
-
-		// final output
-		animController->setOutput(result);
 
 		// set position for character
 		m_character->getTransformEuler()->setPosition(core::vector3df(0.0f, 0.0f, 0.0f));
@@ -307,8 +304,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -321,10 +318,35 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
-		m_initState = CViewInit::InitScene;
+		m_initState = CViewInit::LoadAnimations;
 #endif
+	}
+	break;
+	case CViewInit::LoadAnimations:
+	{
+		m_textInfo->setText(L"Init animations");
+
+		if (m_animationLoaded == (int)EAnimationId::Result)
+		{
+			// done!
+			m_textInfo->setText(L"Init scene");
+			m_initState = CViewInit::InitScene;
+			return;
+		}
+
+		if (m_animationName[m_animationLoaded].empty())
+		{
+			m_animationLoaded++;
+			return;
+		}
+
+		std::string anim = "SampleAnimations/HeroArtwork/";
+		anim += m_animationName[m_animationLoaded++];
+
+		// load and cache
+		CAnimationManager::getInstance()->loadAnimation(anim.c_str());
 	}
 	break;
 	case CViewInit::InitScene:
@@ -347,7 +369,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()

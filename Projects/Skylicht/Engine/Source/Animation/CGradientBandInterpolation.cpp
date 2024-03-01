@@ -180,7 +180,6 @@ namespace Skylicht
 
 				if (newValue < 0.0f)
 				{
-					// outsideHull = true;
 					value = 0.0f;
 					break;
 				}
@@ -191,7 +190,6 @@ namespace Skylicht
 			samples[i]->Weight = value;
 		}
 
-		// Normalize weights
 		float summedWeight = 0;
 		for (int i = 0; i < numMotions; i++)
 			summedWeight = summedWeight + samples[i]->Weight;
@@ -200,6 +198,54 @@ namespace Skylicht
 		{
 			for (int i = 0; i < numMotions; i++)
 				samples[i]->Weight = samples[i]->Weight / summedWeight;
+		}
+	}
+
+	void CGradientBandInterpolation::sampleWeightsCartesian(const core::vector3df& vector)
+	{
+		int numMotions = (int)m_samples.size();
+		SSample** samples = m_samples.pointer();
+
+		float totalWeight = 0.0f;
+
+		for (int i = 0; i < numMotions; ++i)
+		{
+			// Calc vecI -> sample
+			core::vector3df pointI = samples[i]->Vector;
+			core::vector3df vecIS = vector - pointI;
+
+			float weight = 1.0;
+
+			for (int j = 0; j < numMotions; ++j)
+			{
+				if (j == i)
+					continue;
+
+				// Calc vec i -> j
+				core::vector3df pointJ = samples[j]->Vector;
+				core::vector3df vecIJ = pointJ - pointI;
+
+				// Calc Weight
+				float lenSqIJ = vecIJ.dotProduct(vecIJ);
+
+				float newWeight = vecIS.dotProduct(vecIJ) / lenSqIJ;
+				newWeight = 1.0f - newWeight;
+				newWeight = core::clamp<float>(newWeight, 0.0, 1.0);
+
+				weight = core::min_<float>(weight, newWeight);
+			}
+
+			samples[i]->Weight = weight;
+
+			totalWeight += weight;
+		}
+
+		if (totalWeight > 0.0f)
+		{
+			for (int i = 0; i < numMotions; ++i)
+			{
+				samples[i]->Weight = samples[i]->Weight / totalWeight;
+			}
 		}
 	}
 }

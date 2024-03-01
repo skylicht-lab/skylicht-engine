@@ -37,7 +37,8 @@ namespace Skylicht
 		m_clip(NULL),
 		m_target(NULL),
 		m_root(NULL),
-		m_addtiveAnimation(false)
+		m_layerType(DefaultBlending),
+		m_needUpdateActivateEntities(true)
 	{
 
 	}
@@ -187,8 +188,20 @@ namespace Skylicht
 		}
 	}
 
+	void CSkeleton::updateActivateEntities()
+	{
+		if (m_needUpdateActivateEntities)
+		{
+			m_needUpdateActivateEntities = false;
+
+			// todo later
+		}
+	}
+
 	void CSkeleton::update()
 	{
+		updateActivateEntities();
+
 		if (m_animationType == KeyFrame)
 			updateTrackKeyFrame();
 		else
@@ -239,8 +252,13 @@ namespace Skylicht
 
 	void CSkeleton::updateTrackKeyFrame()
 	{
-		for (CAnimationTransformData*& entity : m_entitiesData)
+		CAnimationTransformData** entities = m_entitiesData.data();
+		u32 count = (u32)m_entitiesData.size();
+
+		for (u32 i = 0; i < count; i++)
 		{
+			CAnimationTransformData* entity = entities[i];
+
 			CAnimationTrack& track = entity->AnimationTrack;
 
 			if (track.HaveAnimation == true)
@@ -289,10 +307,21 @@ namespace Skylicht
 			if (weight == 0.0f)
 				continue;
 
-			if (skeleton->isAddtiveAnimation())
-				doAddtive(skeleton, first);
-			else
+			EAnimationLayerType type = skeleton->getLayerType();
+			switch (type)
+			{
+			case CSkeleton::DefaultBlending:
 				doBlending(skeleton, first);
+				break;
+			case CSkeleton::Replace:
+				doReplace(skeleton, first);
+				break;
+			case CSkeleton::Addtive:
+				doAddtive(skeleton, first);
+				break;
+			default:
+				break;
+			}
 
 			first = false;
 		}
@@ -303,8 +332,13 @@ namespace Skylicht
 		int id = 0;
 		float skeletonWeight = skeleton->getTimeline().Weight;
 
-		for (CAnimationTransformData*& entity : m_entitiesData)
+		CAnimationTransformData** entities = m_entitiesData.data();
+		u32 count = (u32)m_entitiesData.size();
+
+		for (u32 i = 0; i < count; i++)
 		{
+			CAnimationTransformData* entity = entities[i];
+
 			CAnimationTransformData* src = skeleton->m_entitiesData[id++];
 
 			float weight = skeletonWeight * src->Weight;
@@ -371,8 +405,12 @@ namespace Skylicht
 		// https://github.com/guillaumeblanc/ozz-animation/blob/master/src/animation/runtime/blending_job.cc
 		// OZZ_ADD_PASS
 
-		for (CAnimationTransformData*& entity : m_entitiesData)
+		CAnimationTransformData** entities = m_entitiesData.data();
+		u32 count = (u32)m_entitiesData.size();
+
+		for (u32 i = 0; i < count; i++)
 		{
+			CAnimationTransformData* entity = entities[i];
 			CAnimationTransformData* src = skeleton->m_entitiesData[id++];
 
 			float weight = skeletonWeight * src->Weight;
@@ -414,6 +452,39 @@ namespace Skylicht
 		}
 	}
 
+	void CSkeleton::doReplace(CSkeleton* skeleton, bool first)
+	{
+		int id = 0;
+		float skeletonWeight = skeleton->getTimeline().Weight;
+
+		CAnimationTransformData** entities = m_entitiesData.data();
+		u32 count = (u32)m_entitiesData.size();
+
+		for (u32 i = 0; i < count; i++)
+		{
+			CAnimationTransformData* entity = entities[i];
+
+			CAnimationTransformData* src = skeleton->m_entitiesData[id++];
+
+			float weight = skeletonWeight * src->Weight;
+			float oneMinWeight = 1.0f - weight;
+
+			core::quaternion* rotation = &src->AnimRotation;
+			core::vector3df* position = &src->AnimPosition;
+			core::vector3df* scale = &src->AnimScale;
+
+			CAnimationTrack::quaternionSlerp(entity->AnimRotation, entity->AnimRotation, *rotation, weight);
+
+			entity->AnimPosition.X = entity->AnimPosition.X * oneMinWeight + position->X * weight;
+			entity->AnimPosition.Y = entity->AnimPosition.Y * oneMinWeight + position->Y * weight;
+			entity->AnimPosition.Z = entity->AnimPosition.Z * oneMinWeight + position->Z * weight;
+
+			entity->AnimScale.X = entity->AnimScale.X * oneMinWeight + scale->X * weight;
+			entity->AnimScale.Y = entity->AnimScale.Y * oneMinWeight + scale->Y * weight;
+			entity->AnimScale.Z = entity->AnimScale.Z * oneMinWeight + scale->Z * weight;
+		}
+	}
+
 	void CSkeleton::syncAnimationByTimeScale()
 	{
 		float frameRatio = 0.0f;
@@ -426,9 +497,7 @@ namespace Skylicht
 			CAnimationTimeline& trackInfo = skeleton->getTimeline();
 			if (trackInfo.Duration > 0 && trackInfo.Weight > 0.0f)
 			{
-				float targetBlend = 1.0f;
-
-				float animWeight = trackInfo.Weight * targetBlend;
+				float animWeight = trackInfo.Weight;
 				float animDuration = trackInfo.To - trackInfo.From;
 
 				// find frame ratio
@@ -459,6 +528,8 @@ namespace Skylicht
 		{
 			entity->Weight = weight;
 		}
+
+		m_needUpdateActivateEntities = true;
 	}
 
 	void CSkeleton::setJointWeights(const char* name, float weight, bool includeChild)
@@ -476,7 +547,7 @@ namespace Skylicht
 			}
 		}
 
-		if (includeChild)
+		if (includeChild && rootId > 0)
 		{
 			core::array<int> listParent;
 			listParent.push_back(rootId);
@@ -491,9 +562,52 @@ namespace Skylicht
 				}
 			}
 		}
+
+		m_needUpdateActivateEntities = true;
 	}
 
-	CAnimationTransformData* CSkeleton::getNode(const char* name)
+	void CSkeleton::getJoints(const char* name, std::vector<CAnimationTransformData*>& joints)
+	{
+		int rootId = -1;
+
+		for (CAnimationTransformData*& entity : m_entitiesData)
+		{
+			if (entity->Name == name)
+			{
+				rootId = entity->ID;
+				joints.push_back(entity);
+				break;
+			}
+		}
+
+		if (rootId == -1)
+			return;
+
+		core::array<int> listParent;
+		listParent.push_back(rootId);
+
+		for (CAnimationTransformData*& entity : m_entitiesData)
+		{
+			if (listParent.linear_reverse_search(entity->ParentID) >= 0)
+			{
+				// if reference parent
+				joints.push_back(entity);
+				listParent.push_back(entity->ID);
+			}
+		}
+	}
+
+	void CSkeleton::setJointWeights(std::vector<CAnimationTransformData*>& joints, float weight)
+	{
+		for (CAnimationTransformData* entity : joints)
+		{
+			entity->Weight = weight;
+		}
+
+		m_needUpdateActivateEntities = true;
+	}
+
+	CAnimationTransformData* CSkeleton::getJoint(const char* name)
 	{
 		for (CAnimationTransformData*& entity : m_entitiesData)
 		{
