@@ -76,6 +76,7 @@ GL_APICALL void GL_APIENTRY glProvokingVertexANGLE(GLenum provokeMode);
 #ifndef GL_ANGLE_stencil_texturing
 #define GL_ANGLE_stencil_texturing 1
 #define GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE           0x90EA
+#define GL_STENCIL_INDEX_ANGLE                        0x1901
 #endif /* GL_ANGLE_stencil_texturing */
 
 #ifndef GL_ANGLE_renderability_validation
@@ -599,11 +600,6 @@ GL_APICALL void GL_APIENTRY glAcquireTexturesANGLE(GLuint numTexture, const GLui
 GL_APICALL void GL_APIENTRY glReleaseTexturesANGLE(GLuint numTexture, const GLuint *textures, GLenum *layouts);
 #endif
 #endif /* GL_ANGLE_vulkan_image */
-
-#ifndef GL_CHROMIUM_texture_filtering_hint
-#define GL_CHROMIUM_texture_filtering_hint
-#define GL_TEXTURE_FILTERING_HINT_CHROMIUM 0x8AF0
-#endif /* GL_CHROMIUM_texture_filtering_hint */
 
 #ifndef GL_NV_robustness_video_memory
 #define GL_NV_robustness_video_memory

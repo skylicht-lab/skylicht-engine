@@ -543,7 +543,7 @@ inline float normalizedToFloat(T input)
 {
     static_assert(std::numeric_limits<T>::is_integer, "T must be an integer.");
 
-    if (sizeof(T) > 2)
+    if constexpr (sizeof(T) > 2)
     {
         // float has only a 23 bit mantissa, so we need to do the calculation in double precision
         constexpr double inverseMax = 1.0 / std::numeric_limits<T>::max();
@@ -787,6 +787,8 @@ class Range
 
 typedef Range<int> RangeI;
 typedef Range<unsigned int> RangeUI;
+static_assert(std::is_trivially_copyable<RangeUI>(),
+              "RangeUI should be trivial copyable so that we can memcpy");
 
 struct IndexRange
 {
@@ -1111,7 +1113,7 @@ inline int BitCount(uint64_t bits)
 #    endif  // defined(_M_IX86) || defined(_M_X64)
 #endif      // defined(_MSC_VER) && !defined(__clang__)
 
-#if defined(ANGLE_PLATFORM_POSIX) || defined(__clang__)
+#if defined(ANGLE_PLATFORM_POSIX) || defined(__clang__) || defined(__GNUC__)
 inline int BitCount(uint32_t bits)
 {
     return __builtin_popcount(bits);
@@ -1121,7 +1123,7 @@ inline int BitCount(uint64_t bits)
 {
     return __builtin_popcountll(bits);
 }
-#endif  // defined(ANGLE_PLATFORM_POSIX) || defined(__clang__)
+#endif  // defined(ANGLE_PLATFORM_POSIX) || defined(__clang__) || defined(__GNUC__)
 
 inline int BitCount(uint8_t bits)
 {

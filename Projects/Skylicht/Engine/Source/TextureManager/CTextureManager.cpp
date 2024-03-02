@@ -157,8 +157,11 @@ namespace Skylicht
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(IOS)
-			// pvr compress
+	#if defined(USE_ETC_TEXTURE)
+			CStringImp::replacePathExt(ansiPath, ".etc2");
+	#else
 			CStringImp::replacePathExt(ansiPath, ".pvr");
+	#endif
 #elif defined(MACOS)
 			// dxt compress
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -270,8 +273,11 @@ namespace Skylicht
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(IOS)
-			// etc compress
+	#if defined(USE_ETC_TEXTURE)
+			CStringImp::replacePathExt(ansiPath, ".etc2");
+	#else
 			CStringImp::replacePathExt(ansiPath, ".pvr");
+	#endif
 #elif defined(MACOS)
 			// dxt compress
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -375,7 +381,11 @@ namespace Skylicht
 				// etc compress
 				CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(IOS)
+	#if defined(USE_ETC_TEXTURE)
+				CStringImp::replacePathExt(ansiPath, ".etc2");
+	#else
 				CStringImp::replacePathExt(ansiPath, ".pvr");
+	#endif
 #elif defined(MACOS)
 				CStringImp::replacePathExt(ansiPath, ".dds");
 #elif defined(__EMSCRIPTEN__)
