@@ -175,7 +175,11 @@ namespace Skylicht
 #elif defined(ANDROID)
 		result += "ETC.zip";
 #elif defined(IOS)
+	#if defined(USE_ETC_TEXTURE)
+		result += "ETC.zip";
+	#else
 		result += "PVR.zip";
+	#endif
 #else
 		result += "DDS.zip";
 #endif

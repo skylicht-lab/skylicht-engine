@@ -1,0 +1,1 @@
+#define PROJECT_PATH "/Users/phamhongduc/skylicht-engine/Assets"

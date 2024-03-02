@@ -194,6 +194,20 @@
             ]
         },
         {
+            "name": "write_helper_sample_mask",
+            "category": "Workarounds",
+            "description": [
+                "Some GPUs produce incorrect derivatives unless [[sample_mask]] is written"
+            ]
+        },
+        {
+            "name": "pre_transform_texture_cube_grad_derivatives",
+            "category": "Workarounds",
+            "description": [
+                "Apply a vendor-specific transformation to explicit cubemap derivatives"
+            ]
+        },
+        {
             "name": "multisample_color_format_shader_read_workaround",
             "category": "Workarounds",
             "description": [
@@ -249,6 +263,46 @@
                 "When uploading data to IOSurface-backed textures, use a staging buffer."
             ],
             "issue": "http://anglebug.com/7573"
+        },
+        {
+            "name": "always_use_staged_buffer_updates",
+            "category": "Features",
+            "description": [
+                "Always update buffers by copying the data to a staging buffer and then blitting it to the actual buffer"
+            ],
+            "issue": "http://anglebug.com/7544"
+        },
+        {
+            "name": "use_shadow_buffers_when_appropriate",
+            "category": "Features",
+            "description": [
+                "On some architectures using a shadow buffer can be faster for certain size buffers"
+            ],
+            "issue": "http://anglebug.com/7544"
+        },
+        {
+            "name": "always_use_managed_storage_mode_for_buffers",
+            "category": "Features",
+            "description": [
+                "Metal buffers can be managed, shared, or private. Sometimes managed is fastest"
+            ],
+            "issue": "http://anglebug.com/7544"
+        },
+        {
+            "name": "always_use_shared_storage_mode_for_buffers",
+            "category": "Features",
+            "description": [
+                "Metal buffers can be managed, shared, or private. Sometimes shared is fastest"
+            ],
+            "issue": "http://anglebug.com/7544"
+        },
+        {
+            "name": "prefer_cpu_for_buffersubdata",
+            "category": "Features",
+            "description": [
+                "Makes bufferSubData always update via CPU"
+            ],
+            "issue": "http://anglebug.com/7544"
         },
         {
             "name": "disable_programmable_blending",
@@ -341,6 +395,62 @@
                 " compile time. This results in bigger shaders."
             ],
             "issue": "http://crbug.com/1423136"
+        },
+        {
+            "name": "disable_metal_on_nvidia",
+            "category": "Features",
+            "description": [
+                "NVIDIA GPUs are unsupported due to scarcity of the hardware."
+            ],
+            "issue": "http://anglebug.com/8170"
+        },
+        {
+            "name": "flush_after_stream_vertex_data",
+            "category": "Features",
+            "description": [
+                "Flush after calls to StreamVertexData to work around driver bugs."
+            ]
+        },
+        {
+            "name": "require_gpu_family_2",
+            "category": "Features",
+            "description": [
+                "Mac GPU Family 2 is required to support all the features of OpenGL ES 2.0"
+            ],
+            "issue": "http://anglebug.com/7952"
+        },
+        {
+            "name": "require_msl_2_1",
+            "category": "Features",
+            "description": [
+                "MSL 2.1 is required to support all the features of OpenGL ES 2.0"
+            ],
+            "issue": "http://anglebug.com/8258"
+        },
+        {
+            "name": "rescope_global_variables",
+            "category": "Features",
+            "description": [
+                "Rescope global variables that are only used in one function to be function-local."
+            ],
+            "issue": "http://anglebug.com/8311"
+        },
+        {
+            "name": "always_resolve_multisample_render_buffers",
+            "category": "Features",
+            "description": [
+                "Always automatically resolve MSAA render buffers to single sampled texture."
+            ],
+            "issue": "http://crbug.com/1486094"
+        },
+        {
+            "name": "inject_asm_statement_into_loop_bodies",
+            "category": "Features",
+            "description": [
+                "Inject asm(\"\") statements into loop bodies to force all loops to be treated as ",
+                "having side effects and not optimized out."
+            ],
+            "issue": "http://crbug.com/1513738"
         }
     ]
 }
