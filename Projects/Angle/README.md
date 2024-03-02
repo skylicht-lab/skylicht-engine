@@ -35,8 +35,9 @@ Example: **'depot_tools'** at /Users/Skylicht/Documents/projects/depot_tools
 #### RELEASE
 
 ```console
-gn gen out/Release
+gn args out/Release
 ```
+
 Edit generated file **args.gn**
 ```console
 is_debug = false
@@ -46,6 +47,8 @@ angle_enable_wgpu = false
 angle_enable_swiftshader = false
 ```
 For intel: target_cpu = "x64"
+
+Press ESC and type :wq to quit vi
 
 Use autoninja (depot_tools) tool to build Angle project
 
