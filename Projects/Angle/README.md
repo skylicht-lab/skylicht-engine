@@ -35,23 +35,22 @@ Example: **'depot_tools'** at /Users/Skylicht/Documents/projects/depot_tools
 #### RELEASE
 
 ```console
-  gn gen out/Release
+gn gen out/Release
 ```
 Edit generated file **args.gn**
 ```console
 is_debug = false
 target_cpu = "arm64"
+angle_enable_vulkan = false
+angle_enable_wgpu = false
+angle_enable_swiftshader = false
 ```
-mac arm 64:
-target_cpu = "arm64"
-
-mac intel:
-target_cpu = "x64"
+For intel: target_cpu = "x64"
 
 Use autoninja (depot_tools) tool to build Angle project
 
 ```console
-  autoninja -C out/Release libEGL libGLESv2
+autoninja -C out/Release libEGL libGLESv2
 ```
 
 ### IOS
@@ -62,6 +61,9 @@ target_os = "ios"
 target_cpu = "arm64"
 target_environment = "device"
 ios_enable_code_signing = false
+angle_enable_vulkan = false
+angle_enable_wgpu = false
+angle_enable_swiftshader = false
 ```
 
 arm64 simulator:
@@ -77,7 +79,7 @@ target_cpu = "x64"
 
 #### DEBUG (Optional)
 ```console
-  gn args out/Debug
+gn args out/Debug
 ```
 After vi editor display, press Enter and edit **args.gn**:
 ```console
@@ -87,7 +89,7 @@ is_debug = true
 Press ESC and type :wq to quit vi
 
 ```console
-  autoninja -C out/Release libEGL libGLESv2
+autoninja -C out/Release libEGL libGLESv2
 ```
 ### RESULT
 

@@ -169,10 +169,7 @@ bool ReadFileToString(const std::string &path, std::string *stringOut)
     stringOut->resize(size);
     inFile.seekg(0, std::ios::beg);
 
-    char *data = new char[size];
-    inFile.read(data, size);
-    *stringOut = data;
-    delete []data;
+    inFile.read(stringOut->data(), size);
     return !inFile.fail();
 }
 

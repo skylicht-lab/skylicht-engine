@@ -250,6 +250,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "clUnloadPlatformCompiler";
         case EntryPoint::CLWaitForEvents:
             return "clWaitForEvents";
+        case EntryPoint::EGLAcquireExternalContextANGLE:
+            return "eglAcquireExternalContextANGLE";
         case EntryPoint::EGLBindAPI:
             return "eglBindAPI";
         case EntryPoint::EGLBindTexImage:
@@ -420,6 +422,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "eglReacquireHighPowerGPUANGLE";
         case EntryPoint::EGLReleaseDeviceANGLE:
             return "eglReleaseDeviceANGLE";
+        case EntryPoint::EGLReleaseExternalContextANGLE:
+            return "eglReleaseExternalContextANGLE";
         case EntryPoint::EGLReleaseHighPowerGPUANGLE:
             return "eglReleaseHighPowerGPUANGLE";
         case EntryPoint::EGLReleaseTexImage:
@@ -1180,6 +1184,10 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glFogxv";
         case EntryPoint::GLFramebufferFetchBarrierEXT:
             return "glFramebufferFetchBarrierEXT";
+        case EntryPoint::GLFramebufferFoveationConfigQCOM:
+            return "glFramebufferFoveationConfigQCOM";
+        case EntryPoint::GLFramebufferFoveationParametersQCOM:
+            return "glFramebufferFoveationParametersQCOM";
         case EntryPoint::GLFramebufferMemorylessPixelLocalStorageANGLE:
             return "glFramebufferMemorylessPixelLocalStorageANGLE";
         case EntryPoint::GLFramebufferParameteri:
@@ -2966,6 +2974,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glTextureBuffer";
         case EntryPoint::GLTextureBufferRange:
             return "glTextureBufferRange";
+        case EntryPoint::GLTextureFoveationParametersQCOM:
+            return "glTextureFoveationParametersQCOM";
         case EntryPoint::GLTextureParameterIiv:
             return "glTextureParameterIiv";
         case EntryPoint::GLTextureParameterIuiv:

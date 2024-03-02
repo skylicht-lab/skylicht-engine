@@ -92,6 +92,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin OR CMAKE_SYSTEM_NAME STREQUAL iOS)
 		set(MACOSX_BUNDLE_COPYRIGHT "Copyright Skylicht LTD.Co")
 		set(MACOSX_BUNDLE_BUNDLE_VERSION "1.0")
 		set(MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0")
+
+		add_definitions(-DUSE_ETC_TEXTURE)
 	else()
 		# MacOS
 		set(BUILD_MACOS ON)
@@ -101,7 +103,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin OR CMAKE_SYSTEM_NAME STREQUAL iOS)
 	set(XCODE ON)
 	set(USE_OPENMP OFF)
 	
-	add_definitions(-DUSE_ANGLE_GLES)
+	add_definitions(-DUSE_ANGLE_GLES)	
 
 	# link_libraries("-lc++")
 
