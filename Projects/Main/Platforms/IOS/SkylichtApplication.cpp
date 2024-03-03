@@ -126,3 +126,13 @@ void SkylichtApplication::setBundleId(const char *bundleId)
 {
     CBuildConfig::AppID = bundleId;
 }
+
+void SkylichtApplication::onPause()
+{
+    g_mainApp->pause();
+}
+
+void SkylichtApplication::onResume()
+{
+    g_mainApp->resume();
+}

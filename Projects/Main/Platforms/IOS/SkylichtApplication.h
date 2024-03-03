@@ -20,6 +20,9 @@ public:
     
     virtual void onResized(int width, int height);
     
+    void onPause();
+    void onResume();
+    
     void onTouchDown(int touchID, int x, int y);
     void onTouchMove(int touchID, int x, int y);
     void onTouchUp(int touchID, int x, int y);

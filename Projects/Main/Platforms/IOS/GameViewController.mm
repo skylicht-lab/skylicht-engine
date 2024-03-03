@@ -41,11 +41,10 @@ SkylichtApplication* _angleApplication = NULL;
     [_renderer setApplication:_angleApplication];
     
     // register event (https://stackoverflow.com/questions/9011868/whats-the-best-way-to-detect-when-the-app-is-entering-the-background-for-my-vie)
-	/*
+	
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillTerminate:) name:UIApplicationWillTerminateNotification object:nil];
-    */
     
     // get the name of the app
     NSString* bundle = [[NSBundle mainBundle]bundleIdentifier];
@@ -99,7 +98,9 @@ SkylichtApplication* _angleApplication = NULL;
     {
         int touchId = [self getTouchId:touch];
         CGPoint cursor = [touch locationInView:[self view]];
-        _angleApplication->onTouchDown(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
+        
+        if (_angleApplication)
+            _angleApplication->onTouchDown(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
     }
 }
 
@@ -111,7 +112,9 @@ SkylichtApplication* _angleApplication = NULL;
     {
         int touchId = [self getTouchId:touch];
         CGPoint cursor = [touch locationInView:[self view]];
-        _angleApplication->onTouchMove(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
+        
+        if (_angleApplication)
+            _angleApplication->onTouchMove(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
     }
 }
 
@@ -123,7 +126,9 @@ SkylichtApplication* _angleApplication = NULL;
     {
         int touchId = [self getTouchId:touch];
         CGPoint cursor = [touch locationInView:[self view]];
-        _angleApplication->onTouchUp(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
+        
+        if (_angleApplication)
+            _angleApplication->onTouchUp(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
     }
 }
 
@@ -133,15 +138,20 @@ SkylichtApplication* _angleApplication = NULL;
 }
 
 #pragma mark - app pause/resume
-/*
 -(void)appWillResignActive:(NSNotification*)note
 {
-
+    NSLog(@"appWillResignActive");
+    
+    if (_angleApplication)
+        _angleApplication->onPause();
 }
 
 -(void)appWillBecomeActive:(NSNotification*)note
 {
-
+    NSLog(@"appWillBecomeActive");
+    
+    if (_angleApplication)
+        _angleApplication->onResume();
 }
 
 -(void)appWillTerminate:(NSNotification*)note
@@ -150,5 +160,4 @@ SkylichtApplication* _angleApplication = NULL;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification  object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
 }
-*/
 @end
