@@ -60,6 +60,8 @@ namespace Skylicht
 		m_enableEditorChange = true;
 		m_enableEditorSelect = true;
 
+		m_enableEndUpdate = false;
+
 		m_parent = NULL;
 		m_zone = NULL;
 		m_entity = NULL;
@@ -237,6 +239,18 @@ namespace Skylicht
 		{
 			if (components[i]->isEnable())
 				components[i]->updateComponent();
+		}
+	}
+
+	void CGameObject::endUpdate()
+	{
+		size_t numComponents = m_components.size();
+		CComponentSystem** components = m_components.data();
+
+		for (int i = 0; i < numComponents; i++)
+		{
+			if (components[i]->isEnable())
+				components[i]->endUpdate();
 		}
 	}
 

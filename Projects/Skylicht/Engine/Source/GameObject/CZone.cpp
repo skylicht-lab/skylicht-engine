@@ -54,6 +54,11 @@ namespace Skylicht
 		updateAddRemoveObject();
 	}
 
+	void CZone::endUpdate()
+	{
+
+	}
+
 	CGameObject* CZone::searchObjectInScene(const wchar_t* objectName)
 	{
 		return m_scene->searchObjectInChild(objectName);

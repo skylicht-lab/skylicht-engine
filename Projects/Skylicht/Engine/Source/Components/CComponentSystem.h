@@ -67,6 +67,8 @@ namespace Skylicht
 
 		virtual void updateComponent() = 0;
 
+		virtual void endUpdate();
+
 		virtual void onEnable(bool b);
 
 		virtual CObjectSerializable* createSerializable();
