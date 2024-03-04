@@ -41,6 +41,23 @@ namespace Skylicht
 
 	}
 
+	void CWorldTransformSystem::registerLateUpdate(ILateUpdate* lateUpdate)
+	{
+		for (ILateUpdate* l : m_lateUpdates)
+		{
+			if (l == lateUpdate)
+				return;
+		}
+		m_lateUpdates.push_back(lateUpdate);
+	}
+
+	void CWorldTransformSystem::unRegisterLateUpdate(ILateUpdate* lateUpdate)
+	{
+		std::vector<ILateUpdate*>::iterator i = std::find(m_lateUpdates.begin(), m_lateUpdates.end(), lateUpdate);
+		if (i != m_lateUpdates.end())
+			m_lateUpdates.erase(i);
+	}
+
 	void CWorldTransformSystem::beginQuery(CEntityManager* entityManager)
 	{
 		if (m_groupTransform == NULL)
@@ -83,6 +100,19 @@ namespace Skylicht
 			// calc world = parent * relative
 			// - relative is copied from CTransformComponentSystem
 			// - relative is also defined in CEntityPrefab
+			t->World.setbyproduct_nocheck(t->Parent->World, t->Relative);
+		}
+
+		// call late update
+		for (ILateUpdate* l : m_lateUpdates)
+			l->lateUpdate();
+
+		// late update
+		transforms = m_groupTransform->getLateUpdate();
+		numEntity = m_groupTransform->getLateUpdateCount();
+		for (int i = 0; i < numEntity; i++)
+		{
+			CWorldTransformData* t = transforms[i];
 			t->World.setbyproduct_nocheck(t->Parent->World, t->Relative);
 		}
 	}

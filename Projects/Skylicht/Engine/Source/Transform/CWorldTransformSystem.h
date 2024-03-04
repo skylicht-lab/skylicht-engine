@@ -30,15 +30,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class ILateUpdate
+	{
+	public:
+
+		virtual void lateUpdate() = 0;
+	};
+
 	class CWorldTransformSystem : public IEntitySystem
 	{
 	protected:
 		CGroupTransform* m_groupTransform;
 
+		std::vector<ILateUpdate*> m_lateUpdates;
+
 	public:
 		CWorldTransformSystem();
 
 		virtual ~CWorldTransformSystem();
+
+		void registerLateUpdate(ILateUpdate* lateUpdate);
+
+		void unRegisterLateUpdate(ILateUpdate* lateUpdate);
 
 		virtual void beginQuery(CEntityManager* entityManager);
 

@@ -35,6 +35,8 @@ namespace Skylicht
 		IsWorldTransform(false),
 		HasChanged(true),
 		NeedValidate(true),
+		HasLateChanged(false),
+		NeedValidateForLate(false),
 		Depth(0),
 		ParentIndex(-1),
 		AttachParentIndex(-1),
