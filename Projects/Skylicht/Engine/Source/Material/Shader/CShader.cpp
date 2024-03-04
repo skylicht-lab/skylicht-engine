@@ -44,7 +44,9 @@ namespace Skylicht
 		m_numFSUniform(0),
 		m_deferred(false),
 		m_instancing(NULL),
-		m_instancingShader(NULL)
+		m_instancingShader(NULL),
+		m_softwareSkinningShader(NULL),
+		m_skinning(false)
 	{
 		// builtin callback
 		addCallback<CShaderLighting>();
@@ -79,6 +81,16 @@ namespace Skylicht
 		}
 
 		m_ui.clear();
+	}
+
+	CShader* CShader::getSoftwareSkinningShader()
+	{
+		if (m_softwareSkinningShader == NULL)
+		{
+			CShaderManager* shaderManager = CShaderManager::getInstance();
+			m_softwareSkinningShader = shaderManager->getShaderByName(m_softwareSkinning.c_str());
+		}
+		return m_softwareSkinningShader;
 	}
 
 	void CShader::deleteAllResource()
@@ -532,6 +544,23 @@ namespace Skylicht
 						{
 							char log[512];
 							sprintf(log, "Warning: Need load shader instancing: %s first", text);
+							os::Printer::log(log);
+						}
+					}
+
+					wtext = xmlReader->getAttributeValue(L"softwareSkinning");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+						m_softwareSkinning = text;
+						m_skinning = true;
+
+						CShaderManager* shaderManager = CShaderManager::getInstance();
+						m_softwareSkinningShader = shaderManager->getShaderByName(text);
+						if (m_softwareSkinningShader == NULL)
+						{
+							char log[512];
+							sprintf(log, "Warning: Need load shader fallback: %s first", text);
 							os::Printer::log(log);
 						}
 					}

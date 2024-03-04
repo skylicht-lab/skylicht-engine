@@ -1,4 +1,4 @@
-<shaderConfig name="ShadowDepthWriteSkinMesh" baseShader="SOLID">
+<shaderConfig name="ShadowDepthWriteSkinMesh" baseShader="SOLID" softwareSkinning="ShadowDepthWrite">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>

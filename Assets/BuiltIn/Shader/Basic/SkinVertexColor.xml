@@ -1,0 +1,14 @@
+<shaderConfig name="SkinVertexColor" baseShader="SOLID" softwareSkinning="VertexColor">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
+		</vs>
+		<fs>
+		</fs>
+	</uniforms>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/SkinVS.glsl" fs="GLSL/ColorFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SkinVS.hlsl" fs="HLSL/ColorFS.hlsl"/>
+</shaderConfig>

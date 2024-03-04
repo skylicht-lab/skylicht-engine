@@ -243,6 +243,12 @@ namespace Skylicht
 
 		bool m_deferred;
 
+		bool m_skinning;
+
+		// fallback for hardware skinning
+		std::string m_softwareSkinning;
+		CShader* m_softwareSkinningShader;
+
 		IShaderInstancing* m_instancing;
 		CShader* m_instancingShader;
 
@@ -276,6 +282,18 @@ namespace Skylicht
 		{
 			return m_writeDepth;
 		}
+
+		const std::string& getSoftwareSkinning()
+		{
+			return m_softwareSkinning;
+		}
+
+		inline bool isSkinning()
+		{
+			return m_skinning;
+		}
+
+		CShader* getSoftwareSkinningShader();
 
 		int getAttributeMappingCount()
 		{

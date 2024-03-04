@@ -1639,9 +1639,12 @@ namespace Skylicht
 					constructSkinMesh(&m_listMesh[meshID], skinnedMesh);
 
 					// add software skinning
+#if defined(IOS_SIMULATOR)
+					renderMesh->setSoftwareSkinning(true);
+#else
 					if (skinnedMesh->Joints.size() >= GPU_BONES_COUNT)
 						renderMesh->setSoftwareSkinning(true);
-
+#endif
 					renderMesh->setSkinnedMesh(true);
 				}
 			}

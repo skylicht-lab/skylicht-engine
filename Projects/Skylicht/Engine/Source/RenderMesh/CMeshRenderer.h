@@ -43,6 +43,8 @@ namespace Skylicht
 
 		virtual void beginQuery(CEntityManager* entityManager);
 
+		void addToListMesh(CEntity** entities, int numEntity);
+
 		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
 		virtual void init(CEntityManager* entityManager);
