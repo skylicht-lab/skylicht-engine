@@ -195,7 +195,7 @@ skylicht-engine/Assets$ python3 BuildAssetBundles.py
 
 ### **Step 2: Generate iOS xCode Project**
 
-If you want build samples for iOS device, you should replace the **bundleIdentifier** in CMakeLists.txt (Samples/{ProjectName}/CMakeLists.txt).
+If you want build samples for iOS device, you should replace the **bundleIdentifier** in Samples/{ProjectName}/**CMakeLists.txt**.
 
 ```code
 elseif (BUILD_IOS)
@@ -214,15 +214,17 @@ else()
 And generate iOS xCode Project by this script.
 
 ```code
-# example generate for simulator
-skylicht-engine/BuildCommand$ ./GenerateXCodeIOSSimulator.sh
-
-# or generate project for iOS device
+# generate project for iOS device
 skylicht-engine/BuildCommand$ ./GenerateXCodeIOS.sh
+
+# or generate for iOS simulator
+skylicht-engine/BuildCommand$ ./GenerateXCodeIOSSimulator.sh
 ```
 Open iOS XCode Project on folder **skylicht-engine/PrjIOS/SKYLICHT_ENGINE.xcodeproj**
 
 <img src="Documents/Media/Samples/ios/iosSimulator.png"/>
+
+*Note: iOS Simulator is not yet support compressed texture and hardware skinning.*
 
 # Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)

@@ -279,10 +279,8 @@ elseif (BUILD_IOS)
 	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
 	set_target_properties(SampleHelloWorld PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
 
-	# embed .framework
-	# set_target_properties(SampleHelloWorld PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
-
 	foreach(lib_file ${framework_files})
+		source_group("Frameworks" FILES "${lib_file}")
 		set_property(SOURCE ${lib_file} PROPERTY MACOSX_PACKAGE_LOCATION "Frameworks")
 		set_source_files_properties(${lib_file} PROPERTIES XCODE_FILE_ATTRIBUTES "CodeSignOnCopy")
 	endforeach()
