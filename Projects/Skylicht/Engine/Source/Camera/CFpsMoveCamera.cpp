@@ -31,6 +31,7 @@ namespace Skylicht
 	void CFpsMoveCamera::initComponent()
 	{
 		getGameObject()->getScene()->registerEvent("CFpsMoveCamera", this);
+		getGameObject()->setEnableEndUpdate(true);
 	}
 
 	void CFpsMoveCamera::updateComponent()

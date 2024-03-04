@@ -52,6 +52,8 @@ namespace Skylicht
 
 		std::vector<CAnimationTransformData*> m_entitiesData;
 
+		core::array<CAnimationTransformData*> m_entitiesActivated;
+
 		CAnimationTransformData* m_root;
 
 		int m_id;

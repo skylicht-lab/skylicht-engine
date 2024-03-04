@@ -41,6 +41,7 @@ namespace Skylicht
 		virtual ~CZone();
 		virtual void remove();
 		virtual void updateObject();
+		virtual void endUpdate();
 		virtual CGameObject* searchObjectInScene(const wchar_t* objectName);
 		virtual bool testConflictName(const wchar_t* objectName);
 

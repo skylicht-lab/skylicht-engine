@@ -58,6 +58,7 @@ namespace Skylicht
 		bool m_editorObject;
 		bool m_enableEditorChange;
 		bool m_enableEditorSelect;
+		bool m_enableEndUpdate;
 
 		u32 m_cullingLayer;
 
@@ -174,6 +175,11 @@ namespace Skylicht
 			return m_enable;
 		}
 
+		inline bool isEnableEndUpdate()
+		{
+			return m_enableEndUpdate;
+		}
+
 		inline bool isVisible()
 		{
 			return m_visible;
@@ -182,6 +188,11 @@ namespace Skylicht
 		virtual void setEnable(bool b)
 		{
 			m_enable = b;
+		}
+
+		virtual void setEnableEndUpdate(bool b)
+		{
+			m_enableEndUpdate = b;
 		}
 
 		virtual void setStatic(bool b)
@@ -249,6 +260,8 @@ namespace Skylicht
 		}
 
 		virtual void updateObject();
+
+		virtual void endUpdate();
 
 		virtual void remove();
 

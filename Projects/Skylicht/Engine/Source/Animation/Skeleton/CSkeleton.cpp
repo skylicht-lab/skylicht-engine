@@ -82,7 +82,7 @@ namespace Skylicht
 				m_root = animationData;
 
 			// save this id
-			animationData->ID = newEntity->getIndex();
+			animationData->ID = (int)m_entitiesData.size() - 1;
 
 			// find parent
 			if (entityIDMap.find(worldTransform->ParentIndex) != entityIDMap.end())
@@ -193,8 +193,14 @@ namespace Skylicht
 		if (m_needUpdateActivateEntities)
 		{
 			m_needUpdateActivateEntities = false;
+			m_entitiesActivated.set_used(0);
 
-			// todo later
+			for (CAnimationTransformData*& entity : m_entitiesData)
+			{
+				if (entity->DisableAnimation || entity->Weight == 0.0f)
+					continue;
+				m_entitiesActivated.push_back(entity);
+			}
 		}
 	}
 
@@ -252,8 +258,8 @@ namespace Skylicht
 
 	void CSkeleton::updateTrackKeyFrame()
 	{
-		CAnimationTransformData** entities = m_entitiesData.data();
-		u32 count = (u32)m_entitiesData.size();
+		CAnimationTransformData** entities = m_entitiesActivated.pointer();
+		u32 count = (u32)m_entitiesActivated.size();
 
 		for (u32 i = 0; i < count; i++)
 		{
@@ -329,17 +335,16 @@ namespace Skylicht
 
 	void CSkeleton::doBlending(CSkeleton* skeleton, bool first)
 	{
-		int id = 0;
 		float skeletonWeight = skeleton->getTimeline().Weight;
 
-		CAnimationTransformData** entities = m_entitiesData.data();
-		u32 count = (u32)m_entitiesData.size();
+		CAnimationTransformData** entities = m_entitiesActivated.pointer();
+		u32 count = (u32)m_entitiesActivated.size();
 
 		for (u32 i = 0; i < count; i++)
 		{
 			CAnimationTransformData* entity = entities[i];
 
-			CAnimationTransformData* src = skeleton->m_entitiesData[id++];
+			CAnimationTransformData* src = skeleton->m_entitiesData[entity->ID];
 
 			float weight = skeletonWeight * src->Weight;
 
@@ -398,20 +403,20 @@ namespace Skylicht
 	void CSkeleton::doAddtive(CSkeleton* skeleton, bool first)
 	{
 		core::quaternion addRotate;
-		int id = 0;
+
 		float skeletonWeight = skeleton->getTimeline().Weight;
 
 		// Reference:
 		// https://github.com/guillaumeblanc/ozz-animation/blob/master/src/animation/runtime/blending_job.cc
 		// OZZ_ADD_PASS
 
-		CAnimationTransformData** entities = m_entitiesData.data();
-		u32 count = (u32)m_entitiesData.size();
+		CAnimationTransformData** entities = m_entitiesActivated.pointer();
+		u32 count = (u32)m_entitiesActivated.size();
 
 		for (u32 i = 0; i < count; i++)
 		{
 			CAnimationTransformData* entity = entities[i];
-			CAnimationTransformData* src = skeleton->m_entitiesData[id++];
+			CAnimationTransformData* src = skeleton->m_entitiesData[entity->ID];
 
 			float weight = skeletonWeight * src->Weight;
 			float oneMinsWeight = 1.0f - weight;
@@ -454,17 +459,16 @@ namespace Skylicht
 
 	void CSkeleton::doReplace(CSkeleton* skeleton, bool first)
 	{
-		int id = 0;
 		float skeletonWeight = skeleton->getTimeline().Weight;
 
-		CAnimationTransformData** entities = m_entitiesData.data();
-		u32 count = (u32)m_entitiesData.size();
+		CAnimationTransformData** entities = m_entitiesActivated.pointer();
+		u32 count = (u32)m_entitiesActivated.size();
 
 		for (u32 i = 0; i < count; i++)
 		{
 			CAnimationTransformData* entity = entities[i];
 
-			CAnimationTransformData* src = skeleton->m_entitiesData[id++];
+			CAnimationTransformData* src = skeleton->m_entitiesData[entity->ID];
 
 			float weight = skeletonWeight * src->Weight;
 			float oneMinWeight = 1.0f - weight;
