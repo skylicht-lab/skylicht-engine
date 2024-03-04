@@ -33,7 +33,7 @@ namespace Skylicht
 	protected:
 		CFastArray<CWorldTransformData*> m_roots;
 		CFastArray<CWorldTransformData*> m_childs;
-
+		CFastArray<CWorldTransformData*> m_lateUpdate;
 	public:
 		CGroupTransform(CEntityGroup* parent);
 
@@ -57,6 +57,16 @@ namespace Skylicht
 		inline CWorldTransformData** getChilds()
 		{
 			return m_childs.pointer();
+		}
+
+		inline CWorldTransformData** getLateUpdate()
+		{
+			return m_lateUpdate.pointer();
+		}
+
+		inline int getLateUpdateCount()
+		{
+			return m_lateUpdate.count();
 		}
 
 		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
