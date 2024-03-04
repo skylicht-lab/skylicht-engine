@@ -87,11 +87,17 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin OR CMAKE_SYSTEM_NAME STREQUAL iOS)
 		set(BUILD_IOS ON)
 		set(BUILD_ENGINE_TOOL OFF)
 		add_definitions(-DIOS)
+		
 		# default for all sample
 		set(DEVICE_FAMILY "1,2")		
 		set(MACOSX_BUNDLE_COPYRIGHT "Copyright Skylicht LTD.Co")
 		set(MACOSX_BUNDLE_BUNDLE_VERSION "1.0")
 		set(MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0")
+
+		# add flag for simulator
+		if (IOS_PLATFORM STREQUAL "SIMULATORARM64")
+			add_definitions(-DIOS_SIMULATOR)
+		endif()
 
 		add_definitions(-DUSE_ETC_TEXTURE)
 	else()
