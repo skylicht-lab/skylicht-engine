@@ -41,6 +41,8 @@ namespace Skylicht
 		int AttachParentIndex;
 		std::string Name;
 		CWorldTransformData* Parent;
+		bool HasLateChanged;
+		bool NeedValidateForLate;
 
 		DECLARE_DATA_TYPE_INDEX;
 

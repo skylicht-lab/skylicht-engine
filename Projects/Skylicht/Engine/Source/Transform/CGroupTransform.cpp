@@ -53,6 +53,7 @@ namespace Skylicht
 		m_entities.reset();
 		m_roots.reset();
 		m_childs.reset();
+		m_lateUpdate.reset();
 
 		for (int i = 0; i < numEntity; i++)
 		{
@@ -61,6 +62,7 @@ namespace Skylicht
 
 			// set disable flag
 			transform->NeedValidate = false;
+			transform->NeedValidateForLate = false;
 
 			int parentID = transform->AttachParentIndex >= 0 ?
 				transform->AttachParentIndex :
@@ -73,6 +75,9 @@ namespace Skylicht
 				// this transform changed because parent is changed
 				if (transform->Parent->NeedValidate)
 					transform->HasChanged = true;
+
+				if (transform->Parent->NeedValidateForLate)
+					transform->HasLateChanged = true;
 			}
 			else
 			{
@@ -93,6 +98,16 @@ namespace Skylicht
 					m_childs.push(transform);
 
 				transform->HasChanged = false;
+			}
+
+			if (transform->HasLateChanged)
+			{
+				transform->NeedValidateForLate = true;
+
+				// see CWorldTransformSystem for late update
+				m_lateUpdate.push(transform);
+
+				transform->HasLateChanged = false;
 			}
 		}
 
