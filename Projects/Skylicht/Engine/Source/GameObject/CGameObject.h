@@ -250,10 +250,6 @@ namespace Skylicht
 
 		virtual void updateObject();
 
-		virtual void postUpdateObject();
-
-		virtual void endUpdate();
-
 		virtual void remove();
 
 		template<class T>
