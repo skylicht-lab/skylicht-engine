@@ -39,6 +39,11 @@ namespace Skylicht
 			m_gameObject->setupMatrixTransform();
 		}
 
+		void CRigidbody::startComponent()
+		{
+			initRigidbody();
+		}
+
 		void CRigidbody::updateComponent()
 		{
 

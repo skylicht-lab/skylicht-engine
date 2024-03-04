@@ -58,16 +58,6 @@ namespace Skylicht
 
 	}
 
-	void CComponentSystem::postUpdateComponent()
-	{
-
-	}
-
-	void CComponentSystem::endUpdate()
-	{
-
-	}
-
 	void CComponentSystem::onEnable(bool b)
 	{
 
