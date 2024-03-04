@@ -275,6 +275,13 @@ namespace Skylicht
 				if (obj->isEnable() == true)
 					obj->updateObject();
 			}
+
+			for (u32 i = 0, n = listChilds.size(); i < n; i++)
+			{
+				CGameObject* obj = objs[i];
+				if (obj->isEnable() == true && obj->isEnableEndUpdate())
+					obj->endUpdate();
+			}
 		}
 	}
 
