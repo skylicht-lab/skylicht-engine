@@ -13,9 +13,13 @@ in vec2 vTexCoord0;
 in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
 in vec3 vWorldLightDir;
+
+#ifndef NO_NORMAL_MAP
 in vec3 vWorldTangent;
 in vec3 vWorldBinormal;
 in float vTangentW;
+#endif
+
 in vec4 vViewPosition;
 in vec3 vWorldPosition;
 
@@ -48,14 +52,18 @@ float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
 void main(void)
 {
 	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy) * uColor;
-	vec3 normalMap = texture(uTexNormal, vTexCoord0.xy).xyz;
 	vec3 specMap = texture(uTexSpecular, vTexCoord0.xy).xyz;
 
+#ifdef NO_NORMAL_MAP
+	vec3 n = vWorldNormal;
+#else
+	vec3 normalMap = texture(uTexNormal, vTexCoord0.xy).xyz;
 	mat3 rotation = mat3(vWorldTangent, vWorldBinormal, vWorldNormal);
 	vec3 localCoords = normalMap * 2.0 - vec3(1.0, 1.0, 1.0);
 	localCoords.y *= vTangentW;
 	vec3 n = normalize(rotation * localCoords);
 	n = normalize(n);
+#endif
 
 	// Solver metallic
 	float roughness = 1.0 - specMap.g;

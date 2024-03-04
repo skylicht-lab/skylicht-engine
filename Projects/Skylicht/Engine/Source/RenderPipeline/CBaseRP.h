@@ -76,7 +76,7 @@ namespace Skylicht
 
 	public:
 
-		void updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID);
+		void updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
 
 		void beginRender2D(float w, float h);
 

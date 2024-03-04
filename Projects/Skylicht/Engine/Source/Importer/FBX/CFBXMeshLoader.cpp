@@ -400,7 +400,7 @@ namespace Skylicht
 					{
 						// no texture
 						if (isSkinnedMesh)
-							mat.MaterialType = shaderMgr->getShaderIDByName("Skin");
+							mat.MaterialType = shaderMgr->getShaderIDByName("SkinVertexColor");
 						else
 							mat.MaterialType = shaderMgr->getShaderIDByName("VertexColor");
 					}
@@ -432,7 +432,10 @@ namespace Skylicht
 
 						if (isSkinnedMesh)
 						{
-							mat.MaterialType = shaderMgr->getShaderIDByName("Skin");
+							if (foundTexture)
+								mat.MaterialType = shaderMgr->getShaderIDByName("Skin");
+							else
+								mat.MaterialType = shaderMgr->getShaderIDByName("SkinVertexColor");
 						}
 						else
 						{
@@ -575,8 +578,12 @@ namespace Skylicht
 					{
 						CSkinnedMesh* skinnedMesh = (CSkinnedMesh*)resultMesh;
 
+#if defined(IOS_SIMULATOR)
+						meshData->setSoftwareSkinning(true);
+#else
 						if (skinnedMesh->Joints.size() >= GPU_BONES_COUNT)
 							meshData->setSoftwareSkinning(true);
+#endif
 
 						meshData->setSkinnedMesh(true);
 
