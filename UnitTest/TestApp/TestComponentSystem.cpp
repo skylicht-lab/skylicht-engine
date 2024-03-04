@@ -5,8 +5,6 @@
 
 bool g_initComponentPass = false;
 bool g_updateComponentPass = false;
-bool g_postUpdateComponentPass = false;
-bool g_endUpdateComponentPass = false;
 bool g_releaseComponentPass = false;
 
 bool g_deleteEntityDataPass = false;
@@ -55,16 +53,6 @@ void TestComponent::updateComponent()
 	g_updateComponentPass = true;
 }
 
-void TestComponent::postUpdateComponent()
-{
-	g_postUpdateComponentPass = true;
-}
-
-void TestComponent::endUpdate()
-{
-	g_endUpdateComponentPass = true;
-}
-
 void testComponent(CGameObject* obj)
 {
 	TEST_CASE("Add component system");
@@ -90,7 +78,5 @@ bool isTestComponentPass()
 	return g_initComponentPass &&
 		g_releaseComponentPass &&
 		g_updateComponentPass &&
-		g_postUpdateComponentPass &&
-		g_endUpdateComponentPass &&
 		g_deleteEntityDataPass;
 }

@@ -64,6 +64,8 @@ namespace Skylicht
 
 			virtual void initComponent();
 
+			virtual void startComponent();
+
 			virtual void updateComponent();
 
 			void setDynamic(bool b);

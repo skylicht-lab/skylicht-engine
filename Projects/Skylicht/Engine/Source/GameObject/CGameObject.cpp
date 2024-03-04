@@ -240,30 +240,6 @@ namespace Skylicht
 		}
 	}
 
-	void CGameObject::postUpdateObject()
-	{
-		size_t numComponents = m_components.size();
-		CComponentSystem** components = m_components.data();
-
-		for (int i = 0; i < numComponents; i++)
-		{
-			if (components[i]->isEnable())
-				components[i]->postUpdateComponent();
-		}
-	}
-
-	void CGameObject::endUpdate()
-	{
-		size_t numComponents = m_components.size();
-		CComponentSystem** components = m_components.data();
-
-		for (int i = 0; i < numComponents; i++)
-		{
-			if (components[i]->isEnable())
-				components[i]->endUpdate();
-		}
-	}
-
 	CComponentSystem* CGameObject::addComponentByTypeName(const char* name)
 	{
 		IActivatorObject* activator = CActivator::getInstance()->createInstance(name);

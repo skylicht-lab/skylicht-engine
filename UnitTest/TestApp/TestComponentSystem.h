@@ -14,10 +14,6 @@ public:
 
 	virtual void updateComponent();
 
-	virtual void postUpdateComponent();
-
-	virtual void endUpdate();
-
 };
 
 void testComponent(CGameObject *gameObject);
