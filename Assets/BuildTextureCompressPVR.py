@@ -32,7 +32,7 @@ print("")
 
 
 def compress(inputFile, outputFile):
-    params = "-q pvrtcfast -f PVRTC2_4 -m"
+    params = "-q pvrtcfast -f PVRTC1_4 -m"
     command = "%s %s -i %s -o %s" % (
         compressTools, params, inputFile, outputFile
     )
