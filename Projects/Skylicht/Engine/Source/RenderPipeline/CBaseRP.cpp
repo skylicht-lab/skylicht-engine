@@ -126,7 +126,7 @@ namespace Skylicht
 			m_next->render(target, camera, entity, viewport);
 	}
 
-	void CBaseRP::updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID)
+	void CBaseRP::updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		video::SMaterial& irrMaterial = mb->getMaterial();
@@ -144,6 +144,20 @@ namespace Skylicht
 			CShader* shader = material->getShader();
 			if (shader != NULL)
 			{
+				if (shader->isSkinning() && !skinnedMesh)
+				{
+					// fallback to software skinning shader
+					CShader* softwareSkinning = shader->getSoftwareSkinningShader();
+					if (softwareSkinning)
+						irrMaterial.MaterialType = (int)softwareSkinning->getMaterialRenderID();
+					else
+					{
+						char log[512];
+						sprintf(log, "[CBaseRP] Shader for software skinning is not loaded: %s\n", shader->getSoftwareSkinning().c_str());
+						os::Printer::log(log);
+					}
+				}
+
 				for (int i = 0, n = shader->getNumResource(); i < n; i++)
 				{
 					CShader::SResource* res = shader->getResouceInfo(i);
@@ -187,7 +201,7 @@ namespace Skylicht
 	void CBaseRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
 		// update texture resource
-		updateTextureResource(mesh, bufferID, entity, entityID);
+		updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
 
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver* driver = getVideoDriver();

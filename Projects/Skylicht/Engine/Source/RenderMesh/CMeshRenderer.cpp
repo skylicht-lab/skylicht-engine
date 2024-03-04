@@ -50,13 +50,8 @@ namespace Skylicht
 		CMeshRenderSystem::beginQuery(entityManager);
 	}
 
-	void CMeshRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	void CMeshRenderer::addToListMesh(CEntity** entities, int numEntity)
 	{
-		// do not render gpu skinning, pass for CSkinMeshRenderer
-		// do not render instancing mesh, pass for CInstancingMeshRenderer
-		entities = m_groupMesh->getStaticMeshes();
-		numEntity = m_groupMesh->getNumStaticMesh();
-
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
@@ -74,6 +69,22 @@ namespace Skylicht
 			if (cullingVisible == true)
 				m_meshs.push_back(meshData);
 		}
+	}
+
+	void CMeshRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	{
+		// do not render gpu skinning, pass for CSkinMeshRenderer
+		// do not render instancing mesh, pass for CInstancingMeshRenderer
+		entities = m_groupMesh->getStaticMeshes();
+		numEntity = m_groupMesh->getNumStaticMesh();
+
+		addToListMesh(entities, numEntity);
+
+		// render software skinned mesh
+		entities = m_groupMesh->getSoftwareSkinnedMeshes();
+		numEntity = m_groupMesh->getNumSoftwareSkinnedMesh();
+
+		addToListMesh(entities, numEntity);
 	}
 
 	void CMeshRenderer::init(CEntityManager* entityManager)

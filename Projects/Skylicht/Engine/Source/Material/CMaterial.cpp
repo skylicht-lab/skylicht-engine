@@ -872,8 +872,6 @@ namespace Skylicht
 		return ret;
 	}
 
-	// PRIVATE & PROTECTED
-
 	void CMaterial::initDefaultValue()
 	{
 		if (m_shader != NULL)

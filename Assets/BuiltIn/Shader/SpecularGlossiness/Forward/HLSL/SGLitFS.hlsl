@@ -54,8 +54,8 @@ float solveMetallic(float3 diffuse, float3 specular, float oneMinusSpecularStren
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0) * uColor;
-	float3 normalMap = uTexNormalMap.Sample(uTexNormalMapSampler, input.tex0).xyz;
 	float3 specMap = uTexSpecularMap.Sample(uTexSpecularMapSampler, input.tex0).xyz;
+	float3 normalMap = uTexNormalMap.Sample(uTexNormalMapSampler, input.tex0).xyz;
 	float3x3 rotation = float3x3(input.worldTangent, input.worldBinormal, input.worldNormal);
 	float3 localCoords = normalMap * 2.0 - float3(1.0, 1.0, 1.0);
 	localCoords.y *= input.tangentw;

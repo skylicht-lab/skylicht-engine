@@ -98,11 +98,17 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Basic/AlphaBlend.xml");
 
 		loadShader("BuiltIn/Shader/Basic/Skin.xml");
+		loadShader("BuiltIn/Shader/Basic/SkinVertexColor.xml");
 
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowDepthWrite.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowDepthWriteSkinMesh.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowCubeDepthWrite.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowCubeDepthWriteSkinMesh.xml");
+
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWStandardInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeStandardInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWTBNInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeTBNInstancing.xml");
 
 		loadShader("BuiltIn/Shader/Basic/TextureSRGB.xml");
 		loadShader("BuiltIn/Shader/Basic/TextureLinearRGB.xml");
@@ -154,11 +160,6 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LMTBNSGInstancing.xml");
 
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWStandardInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeStandardInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWTBNInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeTBNInstancing.xml");
-
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml", new CStandardSGInstancing());
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml", new CTBNSGInstancing());
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
@@ -178,9 +179,19 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
 	}
 
+	void CShaderManager::initSGForwarderShader()
+	{
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SG.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGNoNormalMap.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
+	}
+
 	void CShaderManager::initSkylichtEngineShader()
 	{
 		initSGDeferredShader();
+		initSGForwarderShader();
 	}
 
 

@@ -317,7 +317,7 @@ namespace Skylicht
 			if (s_bakeMode == true)
 			{
 				// update texture resource
-				updateTextureResource(mesh, bufferID, entity, entityID);
+				updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
 
 				IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 				IVideoDriver* driver = getVideoDriver();
