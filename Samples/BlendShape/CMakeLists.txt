@@ -273,6 +273,8 @@ elseif (BUILD_IOS)
 
 	foreach(lib_file ${framework_files})
 		source_group("Frameworks" FILES "${lib_file}")
+		set_property(SOURCE ${lib_file} PROPERTY MACOSX_PACKAGE_LOCATION "Frameworks")
+		set_source_files_properties(${lib_file} PROPERTIES XCODE_FILE_ATTRIBUTES "CodeSignOnCopy")
 	endforeach()
 
 	set_target_properties(SampleBlendShape PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
@@ -285,9 +287,6 @@ elseif (BUILD_IOS)
 	
 	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
 	set_target_properties(SampleBlendShape PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
-
-	# embed .framework
-	set_target_properties(SampleBlendShape PROPERTIES XCODE_EMBED_FRAMEWORKS "${framework_files}")
 
 	# link framework
 	target_link_libraries(SampleBlendShape "-framework Foundation")
