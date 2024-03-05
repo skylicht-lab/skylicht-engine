@@ -26,17 +26,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CWorldTransformData.h"
 #include "Entity/IEntitySystem.h"
+#include "Components/ILateUpdate.h"
 #include "CGroupTransform.h"
 
 namespace Skylicht
 {
-	class ILateUpdate
-	{
-	public:
-
-		virtual void lateUpdate() = 0;
-	};
-
 	class CWorldTransformSystem : public IEntitySystem
 	{
 	protected:
@@ -60,5 +54,7 @@ namespace Skylicht
 		virtual void init(CEntityManager* entityManager);
 
 		virtual void update(CEntityManager* entityManager);
+
+		virtual void lateUpdate(CEntityManager* entityManager);
 	};
 }
