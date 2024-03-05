@@ -318,6 +318,11 @@ namespace Skylicht
 			s->onQuery(this, entities, numEntity);
 			s->update(this);
 		}
+
+		for (IEntitySystem*& s : m_systems)
+		{
+			s->lateUpdate(this);
+		}
 	}
 
 	void CEntityManager::updateSortRenderer()

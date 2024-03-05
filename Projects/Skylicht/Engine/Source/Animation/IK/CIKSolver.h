@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,35 +24,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CEntity.h"
-
 namespace Skylicht
 {
-	class CEntityManager;
-
-	class IEntitySystem
+	class CIKSolver
 	{
 	public:
-		IEntitySystem()
-		{
-		}
+		CIKSolver();
 
-		virtual ~IEntitySystem()
-		{
+		virtual ~CIKSolver();
 
-		}
+		void solveIK(const core::vector3df& startJointPos,
+			const core::vector3df& midJointPos,
+			const core::vector3df& endJointPos,
+			const core::vector3df& targetPos,
+			const core::vector3df& poleVector,
+			float twistValue,
+			core::quaternion& qStart,
+			core::quaternion& qMid);
 
-		virtual void beginQuery(CEntityManager* entityManager) = 0;
+	protected:
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int count) = 0;
+		float getAngle2Vector(const core::vector3df& v1, const core::vector3df& v2);
 
-		virtual void init(CEntityManager* entityManager) = 0;
-
-		virtual void update(CEntityManager* entityManager) = 0;
-
-		virtual void lateUpdate(CEntityManager* entityManager)
-		{
-
-		}
+		bool isVectorParallel(const core::vector3df& v1, const core::vector3df& v2);
 	};
 }

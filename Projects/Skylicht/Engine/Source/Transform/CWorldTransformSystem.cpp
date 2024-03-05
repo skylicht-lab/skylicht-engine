@@ -102,14 +102,17 @@ namespace Skylicht
 			// - relative is also defined in CEntityPrefab
 			t->World.setbyproduct_nocheck(t->Parent->World, t->Relative);
 		}
+	}
 
+	void CWorldTransformSystem::lateUpdate(CEntityManager* entityManager)
+	{
 		// call late update
 		for (ILateUpdate* l : m_lateUpdates)
 			l->lateUpdate();
 
-		// late update
-		transforms = m_groupTransform->getLateUpdate();
-		numEntity = m_groupTransform->getLateUpdateCount();
+		// late update: recalculate the world transform after late update
+		CWorldTransformData** transforms = m_groupTransform->getLateUpdate();
+		int numEntity = m_groupTransform->getLateUpdateCount();
 		for (int i = 0; i < numEntity; i++)
 		{
 			CWorldTransformData* t = transforms[i];
