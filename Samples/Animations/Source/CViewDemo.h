@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ViewManager/CView.h"
+#include "CIKHand.h"
 #include "Animation/CGradientBandInterpolation.h"
 #include "Animation/CAnimationController.h"
 
@@ -11,6 +12,7 @@ protected:
 	CGradientBandInterpolation m_aimBlending;
 
 	CAnimationController* m_animController;
+	CIKHand* m_handIK;
 
 	float m_movementSpeed;
 	float m_movementAngle;
@@ -18,6 +20,8 @@ protected:
 	float m_aimUpDown;
 	float m_aimLeftRight;
 	bool m_modify;
+
+	core::vector3df m_aimPosition;
 
 public:
 	CViewDemo();

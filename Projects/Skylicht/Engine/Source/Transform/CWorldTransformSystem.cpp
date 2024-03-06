@@ -102,6 +102,8 @@ namespace Skylicht
 			// - relative is also defined in CEntityPrefab
 			t->World.setbyproduct_nocheck(t->Parent->World, t->Relative);
 		}
+
+		lateUpdate(entityManager);
 	}
 
 	void CWorldTransformSystem::lateUpdate(CEntityManager* entityManager)
