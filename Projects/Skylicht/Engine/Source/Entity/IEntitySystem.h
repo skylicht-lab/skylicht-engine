@@ -49,10 +49,5 @@ namespace Skylicht
 		virtual void init(CEntityManager* entityManager) = 0;
 
 		virtual void update(CEntityManager* entityManager) = 0;
-
-		virtual void lateUpdate(CEntityManager* entityManager)
-		{
-
-		}
 	};
 }

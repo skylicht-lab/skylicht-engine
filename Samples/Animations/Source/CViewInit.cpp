@@ -10,6 +10,8 @@
 
 #include "AnimationDefine.h"
 
+#include "CIKHand.h"
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -208,6 +210,9 @@ void CViewInit::initScene()
 		// fix: gun alway in hand
 		CAnimationTransformData* gunNode = result->getJoint("RightGun");
 		CAnimationTransformData* handNode = result->getJoint("RightHand");
+
+		core::vector3df gunHandOffset(-2.0f, 9.0f, -13.0f);
+
 		if (gunNode && handNode)
 		{
 			// gun attach to hand
@@ -215,9 +220,16 @@ void CViewInit::initScene()
 			gunNode->WorldTransform->AttachParentIndex = handNode->WorldTransform->EntityIndex;
 
 			// gun alignment, model unit: cm
-			gunNode->WorldTransform->Relative.makeIdentity();
-			gunNode->WorldTransform->Relative.setRotationDegrees(core::vector3df(0.0f, 90.0f, 0.0f));
-			gunNode->WorldTransform->Relative.setTranslation(core::vector3df(-2.0f, 9.0f, -13.0f));
+			core::quaternion gunRotAdjust1;
+			gunRotAdjust1.fromAngleAxis(91.0f * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
+
+			core::quaternion gunRotAdjust2;
+			gunRotAdjust2.fromAngleAxis(-7.0f * core::DEGTORAD, core::vector3df(1.0f, 0.0f, 0.0f));
+
+			core::quaternion gunRotAdjust = gunRotAdjust1 * gunRotAdjust2;
+
+			gunNode->WorldTransform->Relative = gunRotAdjust.getMatrix();
+			gunNode->WorldTransform->Relative.setTranslation(gunHandOffset);
 		}
 
 		// set position for character
@@ -226,6 +238,20 @@ void CViewInit::initScene()
 		// set sh lighting
 		CIndirectLighting* indirectLighting = m_character->addComponent<CIndirectLighting>();
 		indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
+
+		// add ik hand component
+		CIKHand* ikHand = m_character->addComponent<CIKHand>();
+		ikHand->setLeftHand(
+			result->getJoint("LeftArm"),
+			result->getJoint("LeftForeArm"),
+			result->getJoint("LeftHand")
+		);
+		ikHand->setRightHand(
+			result->getJoint("RightArm"),
+			result->getJoint("RightForeArm"),
+			result->getJoint("RightHand")
+		);
+		ikHand->setGun(result->getJoint("RightGun"));
 	}
 
 	// Rendering
@@ -319,7 +345,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::LoadAnimations;
 #endif
-	}
+		}
 	break;
 	case CViewInit::LoadAnimations:
 	{
@@ -367,7 +393,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-}
+	}
 
 void CViewInit::onRender()
 {

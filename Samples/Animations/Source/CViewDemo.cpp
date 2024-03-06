@@ -12,7 +12,8 @@ CViewDemo::CViewDemo() :
 	m_aim(0.0f),
 	m_aimUpDown(0.0f),
 	m_aimLeftRight(0.0f),
-	m_modify(true)
+	m_modify(true),
+	m_aimPosition(0.0f, 1.5f, 2.0f)
 {
 
 }
@@ -62,6 +63,8 @@ void CViewDemo::onInit()
 		aim->setJointWeights(0.0f);
 		aim->setJointWeights("Spine", 1.0f, true);
 		aim->setLayerType(CSkeleton::Replace);
+
+		m_handIK = character->getComponent<CIKHand>();
 	}
 }
 
@@ -107,7 +110,13 @@ void CViewDemo::onUpdate()
 		// UPPER AIM WEIGHT
 		m_animController->getSkeleton((int)EAnimationId::Aim)->getTimeline().Weight = m_aim;
 
+		// IK AIM
+		m_handIK->setAimTarget(m_aimPosition);
+
 		// AIM UP/DOWN/LEFT/RIGHT
+		m_aimLeftRight = 0.0f;
+		m_aimUpDown = 0.0f;
+
 		core::vector3df aimVector(m_aimLeftRight, m_aimUpDown, 0.0f);
 		if (aimVector.getLength() > 1.0f)
 			aimVector.normalize();
@@ -209,18 +218,21 @@ void CViewDemo::onGUI()
 			m_modify = true;
 		}
 
-		minSize = -1.0f;
-		maxSize = 1.0f;
+		minSize = 1.0f;
+		maxSize = 5.0f;
 
-		if (ImGui::SliderFloat("Left/Right", &m_aimLeftRight, minSize, maxSize, "%.3f"))
+		float aimPos[3];
+		aimPos[0] = m_aimPosition.X;
+		aimPos[1] = m_aimPosition.Y;
+		aimPos[2] = m_aimPosition.Z;
+
+		if (ImGui::SliderFloat3("Aim position", aimPos, minSize, maxSize, "%.3f"))
 		{
+			m_aimPosition.X = aimPos[0];
+			m_aimPosition.Y = aimPos[1];
+			m_aimPosition.Z = aimPos[2];
 			m_modify = true;
 		}
-		if (ImGui::SliderFloat("Up/Down", &m_aimUpDown, minSize, maxSize, "%.3f"))
-		{
-			m_modify = true;
-		}
-
 		ImGui::Spacing();
 	}
 
