@@ -67,5 +67,7 @@ namespace Skylicht
 		CAnimationTransformData();
 
 		virtual ~CAnimationTransformData();
+
+		void updateTransform();
 	};
 }
