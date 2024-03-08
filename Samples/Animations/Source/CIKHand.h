@@ -4,6 +4,7 @@
 #include "Components/CComponentSystem.h"
 #include "Debug/CSceneDebug.h"
 #include "Animation/Skeleton/CAnimationTransformData.h"
+#include "Animation/IK/CIKSolver.h"
 
 class CIKHand :
 	public CComponentSystem,
@@ -29,6 +30,12 @@ protected:
 	CAnimationTransformData* m_gun;
 
 	core::vector3df m_aimTarget;
+
+	CIKSolver m_ikLeftHand;
+	CIKSolver m_ikRightHand;
+
+	float m_aimWeight;
+
 public:
 	CIKHand();
 
@@ -46,8 +53,13 @@ public:
 
 	void setRightHand(CAnimationTransformData* start, CAnimationTransformData* mid, CAnimationTransformData* end);
 
-	void setAimTarget(const core::vector3df& aimTarget)
+	void setAimTarget(const core::vector3df& aimTarget, float aimWeight)
 	{
 		m_aimTarget = aimTarget;
+		m_aimWeight = aimWeight;
 	}
+
+private:
+
+	core::vector3df getPoleVec(const core::vector3df* p);
 };

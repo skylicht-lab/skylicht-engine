@@ -211,8 +211,6 @@ void CViewInit::initScene()
 		CAnimationTransformData* gunNode = result->getJoint("RightGun");
 		CAnimationTransformData* handNode = result->getJoint("RightHand");
 
-		core::vector3df gunHandOffset(-2.0f, 9.0f, -13.0f);
-
 		if (gunNode && handNode)
 		{
 			// gun attach to hand
@@ -228,7 +226,11 @@ void CViewInit::initScene()
 
 			core::quaternion gunRotAdjust = gunRotAdjust1 * gunRotAdjust2;
 
+			// rotation
 			gunNode->WorldTransform->Relative = gunRotAdjust.getMatrix();
+
+			// translate
+			core::vector3df gunHandOffset(-2.0f, 9.0f, -13.0f);
 			gunNode->WorldTransform->Relative.setTranslation(gunHandOffset);
 		}
 
@@ -327,8 +329,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -341,11 +343,11 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::LoadAnimations;
 #endif
-		}
+	}
 	break;
 	case CViewInit::LoadAnimations:
 	{
@@ -393,7 +395,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {

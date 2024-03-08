@@ -42,4 +42,36 @@ namespace Skylicht
 	{
 
 	}
+
+	void CAnimationTransformData::updateTransform()
+	{
+		core::matrix4& relativeMatrix = WorldTransform->Relative;
+		relativeMatrix.makeIdentity();
+
+		// rotation
+		AnimRotation.getMatrix(relativeMatrix);
+
+		// position	
+		f32* m1 = relativeMatrix.pointer();
+
+		m1[12] = AnimPosition.X;
+		m1[13] = AnimPosition.Y;
+		m1[14] = AnimPosition.Z;
+
+		// scale
+		m1[0] *= AnimScale.X;
+		m1[1] *= AnimScale.X;
+		m1[2] *= AnimScale.X;
+		m1[3] *= AnimScale.X;
+
+		m1[4] *= AnimScale.Y;
+		m1[5] *= AnimScale.Y;
+		m1[6] *= AnimScale.Y;
+		m1[7] *= AnimScale.Y;
+
+		m1[8] *= AnimScale.Z;
+		m1[9] *= AnimScale.Z;
+		m1[10] *= AnimScale.Z;
+		m1[11] *= AnimScale.Z;
+	}
 }

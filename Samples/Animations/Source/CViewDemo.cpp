@@ -111,7 +111,7 @@ void CViewDemo::onUpdate()
 		m_animController->getSkeleton((int)EAnimationId::Aim)->getTimeline().Weight = m_aim;
 
 		// IK AIM
-		m_handIK->setAimTarget(m_aimPosition);
+		m_handIK->setAimTarget(m_aimPosition, m_aim);
 
 		// AIM UP/DOWN/LEFT/RIGHT
 		m_aimLeftRight = 0.0f;
