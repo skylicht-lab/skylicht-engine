@@ -7,13 +7,16 @@
 
 CViewDemo::CViewDemo() :
 	m_animController(NULL),
+	m_handIK(NULL),
 	m_movementSpeed(0.0f),
 	m_movementAngle(0.0f),
 	m_aim(0.0f),
 	m_aimUpDown(0.0f),
 	m_aimLeftRight(0.0f),
+	m_maxAimAngle(30.0f),
 	m_modify(true),
-	m_aimPosition(0.0f, 1.5f, 2.0f)
+	m_enableHandIK(true),
+	m_drawSkeleton(false)
 {
 
 }
@@ -45,8 +48,8 @@ void CViewDemo::onInit()
 
 
 	m_aimBlending.addSample((int)EAnimationId::AimStraight, core::vector3df());
-	m_aimBlending.addSample((int)EAnimationId::AimUp, core::vector3df(0.0f, 1.0f, 0.0f));
-	m_aimBlending.addSample((int)EAnimationId::AimDown, core::vector3df(0.0f, -1.0f, 0.0f));
+	m_aimBlending.addSample((int)EAnimationId::AimUp, core::vector3df(0.0f, -1.0f, 0.0f));
+	m_aimBlending.addSample((int)EAnimationId::AimDown, core::vector3df(0.0f, 1.0f, 0.0f));
 	m_aimBlending.addSample((int)EAnimationId::AimLeft, core::vector3df(-1.0f, 0.0f, 0.0f));
 	m_aimBlending.addSample((int)EAnimationId::AimRight, core::vector3df(1.0f, 0.0f, 0.0f));
 
@@ -65,6 +68,8 @@ void CViewDemo::onInit()
 		aim->setLayerType(CSkeleton::Replace);
 
 		m_handIK = character->getComponent<CIKHand>();
+		m_handIK->setSkeleton(m_animController->getSkeleton((int)EAnimationId::Result));
+		m_handIK->enableDrawDebugSkeleton(m_drawSkeleton);
 	}
 }
 
@@ -111,18 +116,25 @@ void CViewDemo::onUpdate()
 		m_animController->getSkeleton((int)EAnimationId::Aim)->getTimeline().Weight = m_aim;
 
 		// IK AIM
-		m_handIK->setAimTarget(m_aimPosition, m_aim);
+		core::vector3df aimVector(0.0f, 0.0f, 1.0f);
+		core::quaternion qx, qy;
+		qx.fromAngleAxis(m_aimLeftRight * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
+		qy.fromAngleAxis(m_aimUpDown * core::DEGTORAD, core::vector3df(1.0f, 0.0f, 0.0f));
 
-		// AIM UP/DOWN/LEFT/RIGHT
-		m_aimLeftRight = 0.0f;
-		m_aimUpDown = 0.0f;
+		aimVector = qx * aimVector;
+		aimVector = qy * aimVector;
+		aimVector.normalize();
 
-		core::vector3df aimVector(m_aimLeftRight, m_aimUpDown, 0.0f);
-		if (aimVector.getLength() > 1.0f)
-			aimVector.normalize();
+		// set aim position
+		core::vector3df aimBeginPosition(0.0f, 1.5f, 0.0f);
+		m_handIK->setAimTarget(aimBeginPosition + aimVector * 2.0f, m_aim);
 
-		// calc animation weight for aim
-		m_aimBlending.sampleWeightsPolar(aimVector);
+		// set aim blending
+		core::vector3df animBlend(m_aimLeftRight / m_maxAimAngle, m_aimUpDown / m_maxAimAngle, 0.0f);
+		if (animBlend.getLength() > 1.0f)
+			animBlend.normalize();
+
+		m_aimBlending.sampleWeightsPolar(animBlend);
 
 		core::array<CGradientBandInterpolation::SSample*>& aimSamples = m_aimBlending.getSamples();
 		for (u32 i = 0, n = aimSamples.size(); i < n; i++)
@@ -177,7 +189,7 @@ void CViewDemo::onGUI()
 
 	// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
 	ImGui::SetNextWindowPos(ImVec2(735, 15), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(420, 200), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(420, 290), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin("Animation Test", &open, window_flags))
 	{
@@ -218,22 +230,30 @@ void CViewDemo::onGUI()
 			m_modify = true;
 		}
 
-		minSize = 1.0f;
-		maxSize = 5.0f;
+		minSize = -m_maxAimAngle;
+		maxSize = m_maxAimAngle;
 
-		float aimPos[3];
-		aimPos[0] = m_aimPosition.X;
-		aimPos[1] = m_aimPosition.Y;
-		aimPos[2] = m_aimPosition.Z;
-
-		if (ImGui::SliderFloat3("Aim position", aimPos, minSize, maxSize, "%.3f"))
+		if (ImGui::SliderFloat("Left/Right", &m_aimLeftRight, 0.0f, maxSize, "%.3f"))
 		{
-			m_aimPosition.X = aimPos[0];
-			m_aimPosition.Y = aimPos[1];
-			m_aimPosition.Z = aimPos[2];
+			m_modify = true;
+		}
+		if (ImGui::SliderFloat("Up/Down", &m_aimUpDown, minSize, maxSize, "%.3f"))
+		{
 			m_modify = true;
 		}
 		ImGui::Spacing();
+
+		if (ImGui::Checkbox("Enable Hand IK", &m_enableHandIK))
+		{
+			m_modify = true;
+			m_handIK->setEnable(m_enableHandIK);
+		}
+
+		if (ImGui::Checkbox("Draw Skeleton", &m_drawSkeleton))
+		{
+			m_modify = true;
+			m_handIK->enableDrawDebugSkeleton(m_drawSkeleton);
+		}
 	}
 
 	ImGui::End();

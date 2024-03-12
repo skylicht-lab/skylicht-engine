@@ -164,6 +164,8 @@ namespace Skylicht
 
 		void setTarget(CSkeleton* skeleton);
 
+		void drawDebug(const core::matrix4& transform, const SColor& c);
+
 	protected:
 
 		void setAnimationData();

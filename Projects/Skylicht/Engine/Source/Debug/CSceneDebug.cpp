@@ -31,7 +31,8 @@ namespace Skylicht
 		m_nLine(0),
 		m_nLineStrip(0),
 		m_nBox(0),
-		m_nTri(0)
+		m_nTri(0),
+		m_noZDebug(NULL)
 	{
 		m_lines = new SLineDebug[MAX_DEBUGGEOMETRY];
 		m_linestrip = new SLineStripDebug[MAX_DEBUGGEOMETRY];
@@ -45,6 +46,16 @@ namespace Skylicht
 		delete[] m_linestrip;
 		delete[] m_boxs;
 		delete[] m_tri;
+
+		if (m_noZDebug)
+			delete m_noZDebug;
+	}
+
+	CSceneDebug* CSceneDebug::getNoZDebug()
+	{
+		if (m_noZDebug == NULL)
+			m_noZDebug = new CSceneDebug();
+		return m_noZDebug;
 	}
 
 	void CSceneDebug::addCircle(const core::vector3df& pos, float radius, const core::vector3df& normal, const SColor& color)

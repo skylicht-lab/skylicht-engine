@@ -30,41 +30,39 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	struct SLineDebug
+	{
+		core::line3df line;
+		SColor color;
+	};
+
+	struct SLineStripDebug
+	{
+		core::array<core::vector3df> point;
+		SColor color;
+	};
+
+	struct S2DRectDebug
+	{
+		core::rectf rect;
+		bool outLine;
+		SColor color;
+	};
+
+	struct SBoxDebug
+	{
+		core::aabbox3df box;
+		SColor color;
+	};
+
+	struct STriDebug
+	{
+		core::triangle3df tri;
+		SColor color;
+	};
+
 	class CSceneDebug : public CGameSingleton<CSceneDebug>
 	{
-	public:
-		struct SLineDebug
-		{
-			core::line3df line;
-			SColor color;
-		};
-
-		struct SLineStripDebug
-		{
-			core::array<core::vector3df> point;
-			SColor color;
-		};
-
-		struct S2DRectDebug
-		{
-			core::rectf rect;
-			bool outLine;
-			SColor color;
-		};
-
-		struct SBoxDebug
-		{
-			core::aabbox3df box;
-			SColor color;
-		};
-
-		struct STriDebug
-		{
-			core::triangle3df tri;
-			SColor color;
-		};
-
-
 	protected:
 		SLineDebug* m_lines;
 		SLineStripDebug* m_linestrip;
@@ -77,10 +75,14 @@ namespace Skylicht
 		int m_nBox;
 		int m_nTri;
 
+		CSceneDebug* m_noZDebug;
+
 	public:
 
 		CSceneDebug();
 		virtual ~CSceneDebug();
+
+		CSceneDebug* getNoZDebug();
 
 		void addCircle(const core::vector3df& pos, float radius, const core::vector3df& normal, const SColor& color);
 		void addEclipse(const core::vector3df& pos, float radiusZ, float radiusX, const core::vector3df& normal, const SColor& color);

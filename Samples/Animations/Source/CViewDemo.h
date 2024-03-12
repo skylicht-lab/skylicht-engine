@@ -19,9 +19,10 @@ protected:
 	float m_aim;
 	float m_aimUpDown;
 	float m_aimLeftRight;
+	float m_maxAimAngle;
 	bool m_modify;
-
-	core::vector3df m_aimPosition;
+	bool m_enableHandIK;
+	bool m_drawSkeleton;
 
 public:
 	CViewDemo();
