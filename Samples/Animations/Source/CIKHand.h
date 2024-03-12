@@ -3,6 +3,7 @@
 #include "Components/ILateUpdate.h"
 #include "Components/CComponentSystem.h"
 #include "Debug/CSceneDebug.h"
+#include "Animation/Skeleton/CSkeleton.h"
 #include "Animation/Skeleton/CAnimationTransformData.h"
 #include "Animation/IK/CIKSolver.h"
 
@@ -25,6 +26,9 @@ protected:
 		}
 	};
 
+	CSkeleton* m_skeleton;
+	bool m_drawSekeleton;
+
 	SHand m_leftHand;
 	SHand m_rightHand;
 	CAnimationTransformData* m_gun;
@@ -35,6 +39,8 @@ protected:
 	CIKSolver m_ikRightHand;
 
 	float m_aimWeight;
+
+	bool m_enable;
 
 public:
 	CIKHand();
@@ -47,16 +53,31 @@ public:
 
 	virtual void lateUpdate();
 
+	inline void setEnable(bool b)
+	{
+		m_enable = b;
+	}
+
 	void setGun(CAnimationTransformData* gun);
 
 	void setLeftHand(CAnimationTransformData* start, CAnimationTransformData* mid, CAnimationTransformData* end);
 
 	void setRightHand(CAnimationTransformData* start, CAnimationTransformData* mid, CAnimationTransformData* end);
 
-	void setAimTarget(const core::vector3df& aimTarget, float aimWeight)
+	inline void setAimTarget(const core::vector3df& aimTarget, float aimWeight)
 	{
 		m_aimTarget = aimTarget;
 		m_aimWeight = aimWeight;
+	}
+
+	inline void setSkeleton(CSkeleton* skeleton)
+	{
+		m_skeleton = skeleton;
+	}
+
+	inline void enableDrawDebugSkeleton(bool b)
+	{
+		m_drawSekeleton = b;
 	}
 
 private:

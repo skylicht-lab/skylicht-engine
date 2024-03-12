@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSkeleton.h"
 
+#include "Debug/CSceneDebug.h"
+
 #define COPY_VECTOR3DF(dest, src)	dest.X = src.X; dest.Y = src.Y; dest.Z = src.Z
 #define COPY_QUATERNION(dest, src)	dest.X = src.X; dest.Y = src.Y; dest.Z = src.Z; dest.W = src.W
 
@@ -622,5 +624,66 @@ namespace Skylicht
 		}
 
 		return NULL;
+	}
+
+	void CSkeleton::drawDebug(const core::matrix4& transform, const SColor& c)
+	{
+		CSceneDebug* debug = CSceneDebug::getInstance()->getNoZDebug();
+
+		core::matrix4 relative;
+
+		core::array<core::matrix4> worlds;
+		worlds.set_used((u32)m_entitiesData.size());
+
+		int id = 0;
+
+		for (CAnimationTransformData*& entity : m_entitiesData)
+		{
+			relative.makeIdentity();
+
+			if (!entity->DisableAnimation)
+			{
+				// todo calc relative matrix & position		
+				// rotation
+				entity->AnimRotation.getMatrix(relative);
+
+				// position	
+				f32* m1 = relative.pointer();
+
+				m1[12] = entity->AnimPosition.X;
+				m1[13] = entity->AnimPosition.Y;
+				m1[14] = entity->AnimPosition.Z;
+
+				// scale
+				m1[0] *= entity->AnimScale.X;
+				m1[1] *= entity->AnimScale.X;
+				m1[2] *= entity->AnimScale.X;
+				m1[3] *= entity->AnimScale.X;
+
+				m1[4] *= entity->AnimScale.Y;
+				m1[5] *= entity->AnimScale.Y;
+				m1[6] *= entity->AnimScale.Y;
+				m1[7] *= entity->AnimScale.Y;
+
+				m1[8] *= entity->AnimScale.Z;
+				m1[9] *= entity->AnimScale.Z;
+				m1[10] *= entity->AnimScale.Z;
+				m1[11] *= entity->AnimScale.Z;
+			}
+
+			if (entity->ParentID < 0)
+			{
+				worlds[id] = transform * relative;
+			}
+			else
+			{
+				worlds[id] = worlds[entity->ParentID] * relative;
+
+				// draw skeleton line
+				debug->addLine(worlds[id].getTranslation(), worlds[entity->ParentID].getTranslation(), c);
+			}
+
+			id++;
+		}
 	}
 }
