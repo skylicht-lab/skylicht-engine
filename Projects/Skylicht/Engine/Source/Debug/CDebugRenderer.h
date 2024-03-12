@@ -33,6 +33,7 @@ namespace Skylicht
 	{
 	protected:
 		CLineDrawData* m_drawData;
+		CLineDrawData* m_drawNoZData;
 
 	public:
 		CDebugRenderer();
