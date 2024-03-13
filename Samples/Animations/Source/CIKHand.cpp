@@ -31,20 +31,17 @@ void CIKHand::updateComponent()
 	if (!m_enable)
 		return;
 
-	// notify late update
-	if (m_leftHand.Start)
-		m_leftHand.Start->WorldTransform->HasLateChanged = true;
-	if (m_leftHand.Mid)
-		m_leftHand.Mid->WorldTransform->HasLateChanged = true;
-	if (m_leftHand.End)
-		m_leftHand.End->WorldTransform->HasLateChanged = true;
+	// notify late update for hand nodes
+	for (int i = 0; i < 3; i++)
+	{
+		notifyLateUpdate(m_leftHand.Nodes[i]);
+		notifyLateUpdate(m_rightHand.Nodes[i]);
+	}
+}
 
-	if (m_rightHand.Start)
-		m_rightHand.Start->WorldTransform->HasLateChanged = true;
-	if (m_rightHand.Mid)
-		m_rightHand.Mid->WorldTransform->HasLateChanged = true;
-	if (m_rightHand.End)
-		m_rightHand.End->WorldTransform->HasLateChanged = true;
+void CIKHand::notifyLateUpdate(CAnimationTransformData* node)
+{
+	node->WorldTransform->HasLateChanged = true;
 }
 
 void CIKHand::setGun(CAnimationTransformData* gun)
@@ -54,16 +51,26 @@ void CIKHand::setGun(CAnimationTransformData* gun)
 
 void CIKHand::setLeftHand(CAnimationTransformData* start, CAnimationTransformData* mid, CAnimationTransformData* end)
 {
-	m_leftHand.Start = start;
-	m_leftHand.Mid = mid;
-	m_leftHand.End = end;
+	m_leftHand.Nodes[0] = start;
+	m_leftHand.Nodes[1] = mid;
+	m_leftHand.Nodes[2] = end;
 }
 
 void CIKHand::setRightHand(CAnimationTransformData* start, CAnimationTransformData* mid, CAnimationTransformData* end)
 {
-	m_rightHand.Start = start;
-	m_rightHand.Mid = mid;
-	m_rightHand.End = end;
+	m_rightHand.Nodes[0] = start;
+	m_rightHand.Nodes[1] = mid;
+	m_rightHand.Nodes[2] = end;
+}
+
+core::vector3df CIKHand::getWorldPosition(CAnimationTransformData* node)
+{
+	return node->WorldTransform->World.getTranslation();
+}
+
+const core::matrix4& CIKHand::getWorldTransform(CAnimationTransformData* node)
+{
+	return node->WorldTransform->World;
 }
 
 void CIKHand::lateUpdate()
@@ -74,33 +81,25 @@ void CIKHand::lateUpdate()
 	CSceneDebug* debug = CSceneDebug::getInstance()->getNoZDebug();
 
 	core::vector3df left[3];
-	left[0] = m_leftHand.Start->WorldTransform->World.getTranslation();
-	left[1] = m_leftHand.Mid->WorldTransform->World.getTranslation();
-	left[2] = m_leftHand.End->WorldTransform->World.getTranslation();
-
 	core::vector3df right[3];
-	right[0] = m_rightHand.Start->WorldTransform->World.getTranslation();
-	right[1] = m_rightHand.Mid->WorldTransform->World.getTranslation();
-	right[2] = m_rightHand.End->WorldTransform->World.getTranslation();
 
-	core::matrix4 rightHandWorldInv = m_rightHand.Start->WorldTransform->World;
-	rightHandWorldInv.makeInverse();
-
-	core::matrix4 leftHandWorldInv = m_leftHand.Start->WorldTransform->World;
-	leftHandWorldInv.makeInverse();
+	for (int i = 0; i < 3; i++)
+	{
+		left[i] = getWorldPosition(m_leftHand.Nodes[i]);
+		right[i] = getWorldPosition(m_rightHand.Nodes[i]);
+	}
 
 	core::vector3df aimCenter = (right[0] + left[0]) * 0.5f;
 
 	if (m_gun)
 	{
-		const core::matrix4& gunRelative = m_gun->WorldTransform->Relative;
-		const core::matrix4& gunWorld = m_gun->WorldTransform->World;
+		const core::matrix4& gunWorld = getWorldTransform(m_gun);
 
 		core::vector3df gunFront(1.0f, 0.0f, 0.0f);
 		gunWorld.rotateVect(gunFront);
 		gunFront.normalize();
 
-		core::vector3df gunPos = gunWorld.getTranslation();
+		core::vector3df gunPos = getWorldPosition(m_gun);
 		core::vector3df gunVec = gunPos - aimCenter;
 
 		// core::vector3df gunHandOffset = gunPos - right[2];
@@ -118,9 +117,10 @@ void CIKHand::lateUpdate()
 		// core::vector3df gunAdjustOffset = predictGunPos - gunPos;
 		core::vector3df gunAdjustOffset(-0.0412531942f, -0.0346513987f, 0.00291103125f); // <- by default animation
 
-		// rotate offset by world
+		// offset for vector (0.0, 0.0, 1.0)
 		core::vector3df offset = gunHandOffset + gunAdjustOffset;
 
+		// rotate offset for aim vector
 		core::vector3df upVec(0.0f, 1.0f, 0.0f);
 		core::vector3df rightVec = upVec.crossProduct(aimVec);
 		upVec = aimVec.crossProduct(rightVec);
@@ -152,11 +152,22 @@ void CIKHand::lateUpdate()
 
 		core::vector3df predictRHandPos = predictGunPos - offset;
 
-		debug->addSphere(predictGunPos, 0.02f, SColor(255, 255, 255, 0));
-		debug->addSphere(predictRHandPos, 0.02f, SColor(255, 0, 255, 255));
+		// draw debug
+		if (m_drawSekeleton)
+		{
+			debug->addSphere(predictGunPos, 0.02f, SColor(255, 255, 255, 0));
+			debug->addSphere(predictRHandPos, 0.02f, SColor(255, 0, 255, 255));
+		}
 
 		// blending by aim ratio
 		predictRHandPos = right[2] * (1.0f - m_aimWeight) + predictRHandPos * m_aimWeight;
+
+		// transform to local hand position
+		core::matrix4 rightHandWorldInv = getWorldTransform(m_rightHand.Nodes[0]);
+		rightHandWorldInv.makeInverse();
+
+		core::matrix4 leftHandWorldInv = getWorldTransform(m_leftHand.Nodes[0]);
+		leftHandWorldInv.makeInverse();
 
 		for (int i = 0; i < 3; i++)
 		{
@@ -164,31 +175,31 @@ void CIKHand::lateUpdate()
 			leftHandWorldInv.transformVect(left[i]);
 		}
 
-		core::vector3df rightPole = getPoleVec(right);
+		core::vector3df rightPole = getPoleVector(right);
 		rightPole.normalize();
 
-		core::vector3df leftPole = getPoleVec(left);
+		core::vector3df leftPole = getPoleVector(left);
 		leftPole.normalize();
 
 		core::vector3df targetRight;
 		rightHandWorldInv.transformVect(targetRight, predictRHandPos);
 
-		// solve ik in right hand		
+		// solve ik in right hand
 		core::quaternion qStart, qMid;
-		m_ikRightHand.solveIK(right[0], right[1], right[2], targetRight, rightPole, 1.0f, qStart, qMid);
+		m_ikRightHand.solveIK(right[0], right[1], right[2], targetRight, rightPole, 0.1f, qStart, qMid);
 
-		m_rightHand.Start->AnimRotation *= qStart;
-		m_rightHand.Start->updateTransform();
+		m_rightHand.Nodes[0]->AnimRotation *= qStart;
+		m_rightHand.Nodes[0]->updateTransform();
 
-		m_rightHand.Mid->AnimRotation *= qMid;
-		m_rightHand.Mid->updateTransform();
+		m_rightHand.Nodes[1]->AnimRotation *= qMid;
+		m_rightHand.Nodes[1]->updateTransform();
 	}
 
 	if (m_skeleton && m_drawSekeleton)
-		m_skeleton->drawDebug(core::IdentityMatrix, SColor(255, 255, 255, 255));
+		m_skeleton->drawDebug(core::IdentityMatrix, SColor(100, 255, 255, 255));
 }
 
-core::vector3df CIKHand::getPoleVec(const core::vector3df* p)
+core::vector3df CIKHand::getPoleVector(const core::vector3df* p)
 {
 	core::vector3df pole = p[1] - p[0];
 	core::vector3df endVec = p[2] - p[0];
