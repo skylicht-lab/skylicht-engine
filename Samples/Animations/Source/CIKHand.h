@@ -14,15 +14,12 @@ class CIKHand :
 protected:
 	struct SHand
 	{
-		CAnimationTransformData* Start;
-		CAnimationTransformData* Mid;
-		CAnimationTransformData* End;
+		CAnimationTransformData* Nodes[3];
 
 		SHand()
 		{
-			Start = NULL;
-			Mid = NULL;
-			End = NULL;
+			for (int i = 0; i < 3; i++)
+				Nodes[i] = NULL;
 		}
 	};
 
@@ -50,6 +47,12 @@ public:
 	virtual void initComponent();
 
 	virtual void updateComponent();
+
+	core::vector3df getWorldPosition(CAnimationTransformData* node);
+
+	const core::matrix4& getWorldTransform(CAnimationTransformData* node);
+
+	void notifyLateUpdate(CAnimationTransformData* node);
 
 	virtual void lateUpdate();
 
@@ -82,5 +85,5 @@ public:
 
 private:
 
-	core::vector3df getPoleVec(const core::vector3df* p);
+	core::vector3df getPoleVector(const core::vector3df* p);
 };
