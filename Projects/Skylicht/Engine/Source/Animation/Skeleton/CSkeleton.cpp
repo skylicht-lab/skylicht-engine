@@ -643,7 +643,7 @@ namespace Skylicht
 
 			if (!entity->DisableAnimation)
 			{
-				// todo calc relative matrix & position		
+				// calc relative matrix & position
 				// rotation
 				entity->AnimRotation.getMatrix(relative);
 

@@ -127,7 +127,7 @@ void CViewDemo::onUpdate()
 
 		// set aim position
 		core::vector3df aimBeginPosition(0.0f, 1.5f, 0.0f);
-		m_handIK->setAimTarget(aimBeginPosition + aimVector * 2.0f, m_aim);
+		m_handIK->setAimTarget(aimBeginPosition + aimVector * 2.0f, m_aim, m_movementSpeed / 2.0f);
 
 		// set aim blending
 		core::vector3df animBlend(m_aimLeftRight / m_maxAimAngle, m_aimUpDown / m_maxAimAngle, 0.0f);

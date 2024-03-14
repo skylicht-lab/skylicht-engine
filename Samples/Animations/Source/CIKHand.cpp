@@ -7,6 +7,7 @@
 CIKHand::CIKHand() :
 	m_gun(NULL),
 	m_aimWeight(0.0f),
+	m_runWeight(0.0f),
 	m_enable(true),
 	m_drawSekeleton(false),
 	m_skeleton(NULL)
@@ -89,15 +90,11 @@ void CIKHand::lateUpdate()
 		right[i] = getWorldPosition(m_rightHand.Nodes[i]);
 	}
 
-	core::vector3df aimCenter = (right[0] + left[0]) * 0.5f;
-
 	if (m_gun)
 	{
-		const core::matrix4& gunWorld = getWorldTransform(m_gun);
+		core::vector3df aimCenter = (right[0] + left[0]) * 0.5f;
 
-		core::vector3df gunFront(1.0f, 0.0f, 0.0f);
-		gunWorld.rotateVect(gunFront);
-		gunFront.normalize();
+		const core::matrix4& gunWorld = getWorldTransform(m_gun);
 
 		core::vector3df gunPos = getWorldPosition(m_gun);
 		core::vector3df gunVec = gunPos - aimCenter;
@@ -109,10 +106,25 @@ void CIKHand::lateUpdate()
 		core::vector3df aimVec = m_aimTarget - aimCenter;
 		aimVec.normalize();
 
-		debug->addLine(aimCenter, aimCenter + aimVec * 2.0f, SColor(255, 0, 0, 100));
+		if (m_drawSekeleton)
+		{
+			// draw debug aim vector
+			debug->addLine(aimCenter, aimCenter + aimVec * 2.0f, SColor(255, 0, 0, 100));
+			debug->addLine(aimCenter, aimCenter + gunVec, SColor(100, 0, 100, 0));
+			debug->addPosition(m_aimTarget, 0.02f, SColor(255, 255, 0, 0));
+		}
 
 		// predict gun position by aim vector
-		core::vector3df predictGunPos = aimCenter + aimVec * gunVec.getLength();
+		float w = 1.0f;
+		if (m_runWeight > 0.5f)
+		{
+			float runRatio = core::clamp(1.0f - (m_runWeight - 0.5f) / 0.5f, 0.0f, 1.0f);
+			w = 0.9f + runRatio * 0.1f;
+		}
+
+		// adjust position by stand/walk/run
+		float l = gunVec.getLength() * w;
+		core::vector3df predictGunPos = aimCenter + aimVec * l;
 
 		// core::vector3df gunAdjustOffset = predictGunPos - gunPos;
 		core::vector3df gunAdjustOffset(-0.0412531942f, -0.0346513987f, 0.00291103125f); // <- by default animation
@@ -131,36 +143,34 @@ void CIKHand::lateUpdate()
 		matData[0] = rightVec.X;
 		matData[1] = rightVec.Y;
 		matData[2] = rightVec.Z;
-		matData[3] = 0.0f;
 
 		matData[4] = upVec.X;
 		matData[5] = upVec.Y;
 		matData[6] = upVec.Z;
-		matData[7] = 0.0f;
 
 		matData[8] = aimVec.X;
 		matData[9] = aimVec.Y;
 		matData[10] = aimVec.Z;
-		matData[11] = 0.0f;
-
-		matData[12] = 0.0f;
-		matData[13] = 0.0f;
-		matData[14] = 0.0f;
-		matData[15] = 1.0f;
 
 		rotationMatrix.rotateVect(offset);
 
 		core::vector3df predictRHandPos = predictGunPos - offset;
 
+		// left hande
+		core::vector3df leftRightHandOffset = right[2] - left[2];
+		core::vector3df predictLHandPos = predictRHandPos - leftRightHandOffset;
+
 		// draw debug
 		if (m_drawSekeleton)
 		{
-			debug->addSphere(predictGunPos, 0.02f, SColor(255, 255, 255, 0));
-			debug->addSphere(predictRHandPos, 0.02f, SColor(255, 0, 255, 255));
+			debug->addPosition(predictGunPos, 0.02f, SColor(255, 255, 255, 0));
+			debug->addPosition(predictRHandPos, 0.02f, SColor(255, 0, 255, 255));
+			debug->addPosition(predictLHandPos, 0.02f, SColor(255, 0, 255, 255));
 		}
 
 		// blending by aim ratio
 		predictRHandPos = right[2] * (1.0f - m_aimWeight) + predictRHandPos * m_aimWeight;
+		predictLHandPos = left[2] * (1.0f - m_aimWeight) + predictLHandPos * m_aimWeight;
 
 		// transform to local hand position
 		core::matrix4 rightHandWorldInv = getWorldTransform(m_rightHand.Nodes[0]);
@@ -181,18 +191,28 @@ void CIKHand::lateUpdate()
 		core::vector3df leftPole = getPoleVector(left);
 		leftPole.normalize();
 
-		core::vector3df targetRight;
+		core::vector3df targetRight, targetLeft;
 		rightHandWorldInv.transformVect(targetRight, predictRHandPos);
+		leftHandWorldInv.transformVect(targetLeft, predictLHandPos);
 
 		// solve ik in right hand
 		core::quaternion qStart, qMid;
-		m_ikRightHand.solveIK(right[0], right[1], right[2], targetRight, rightPole, 0.1f, qStart, qMid);
+		m_ikSolver.solveIK(right[0], right[1], right[2], targetRight, rightPole, 0.01f, qStart, qMid);
 
 		m_rightHand.Nodes[0]->AnimRotation *= qStart;
 		m_rightHand.Nodes[0]->updateTransform();
 
 		m_rightHand.Nodes[1]->AnimRotation *= qMid;
 		m_rightHand.Nodes[1]->updateTransform();
+
+		// solve ik in left hand
+		m_ikSolver.solveIK(left[0], left[1], left[2], targetLeft, leftPole, 0.01f, qStart, qMid);
+
+		m_leftHand.Nodes[0]->AnimRotation *= qStart;
+		m_leftHand.Nodes[0]->updateTransform();
+
+		m_leftHand.Nodes[1]->AnimRotation *= qMid;
+		m_leftHand.Nodes[1]->updateTransform();
 	}
 
 	if (m_skeleton && m_drawSekeleton)
