@@ -32,10 +32,10 @@ protected:
 
 	core::vector3df m_aimTarget;
 
-	CIKSolver m_ikLeftHand;
-	CIKSolver m_ikRightHand;
+	CIKSolver m_ikSolver;
 
 	float m_aimWeight;
+	float m_runWeight;
 
 	bool m_enable;
 
@@ -67,10 +67,11 @@ public:
 
 	void setRightHand(CAnimationTransformData* start, CAnimationTransformData* mid, CAnimationTransformData* end);
 
-	inline void setAimTarget(const core::vector3df& aimTarget, float aimWeight)
+	inline void setAimTarget(const core::vector3df& aimTarget, float aimWeight, float runWeight)
 	{
 		m_aimTarget = aimTarget;
 		m_aimWeight = aimWeight;
+		m_runWeight = runWeight;
 	}
 
 	inline void setSkeleton(CSkeleton* skeleton)
