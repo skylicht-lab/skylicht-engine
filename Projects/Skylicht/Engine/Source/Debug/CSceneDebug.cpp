@@ -156,6 +156,16 @@ namespace Skylicht
 		addCircle(pos, radius, normal, color);
 	}
 
+	void CSceneDebug::addPosition(const core::vector3df& pos, float length, const SColor& color)
+	{
+		core::vector3df u(0.0f, 1.0f, 0.0f);
+		core::vector3df f(0.0f, 0.0f, 1.0f);
+		core::vector3df r(1.0f, 0.0f, 0.0f);
+		addLine(pos - u * length, pos + u * length, color);
+		addLine(pos - f * length, pos + f * length, color);
+		addLine(pos - r * length, pos + r * length, color);
+	}
+
 	void CSceneDebug::addTri(const core::triangle3df& tri, const SColor& color)
 	{
 		if (m_nTri >= MAX_DEBUGGEOMETRY)

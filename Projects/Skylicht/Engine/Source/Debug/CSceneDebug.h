@@ -94,7 +94,9 @@ namespace Skylicht
 		void addBoudingBox(const core::aabbox3df& box, const SColor& color);
 		void addTransformBBox(const core::aabbox3df& box, const SColor& color, const core::matrix4& mat);
 		void addSphere(const core::vector3df& pos, float radius, const SColor& color);
+		void addPosition(const core::vector3df& pos, float length, const SColor& color);
 		void addTransform(const core::matrix4& mat, float vectorLength);
+
 
 		void clear()
 		{
