@@ -175,6 +175,7 @@ void CViewInit::initScene()
 
 			std::string anim = "SampleAnimations/HeroArtwork/";
 			anim += m_animationName[i];
+			anim = CPath::replaceFileExt(anim, ".sanim");
 
 			// set loop animation for skeleton
 			CAnimationClip* clip = animManager->loadAnimation(anim.c_str());
@@ -329,8 +330,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -343,7 +344,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
 		m_initState = CViewInit::LoadAnimations;
 #endif
@@ -369,9 +370,20 @@ void CViewInit::onUpdate()
 
 		std::string anim = "SampleAnimations/HeroArtwork/";
 		anim += m_animationName[m_animationLoaded++];
+		anim = CPath::replaceFileExt(anim, ".sanim");
 
 		// load and cache
-		CAnimationManager::getInstance()->loadAnimation(anim.c_str());
+		CAnimationClip* clip = CAnimationManager::getInstance()->loadAnimation(anim.c_str());
+
+		// export dae to sanim
+		/*
+		if (clip)
+		{
+			std::string output = CPath::getFileNameNoExt(anim);
+			output += std::string(".sanim");
+			CAnimationManager::getInstance()->exportAnimation(clip, output.c_str());
+		}
+		*/
 	}
 	break;
 	case CViewInit::InitScene:

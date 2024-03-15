@@ -186,6 +186,11 @@ namespace Skylicht
 
 				// notify this track have animation
 				track.HaveAnimation = true;
+
+				// modify default value
+				entity->DefaultPosition = anim->Data.Positions.Default;
+				entity->DefaultRotation = anim->Data.Rotations.Default;
+				entity->DefaultScale = anim->Data.Scales.Default;
 			}
 		}
 	}

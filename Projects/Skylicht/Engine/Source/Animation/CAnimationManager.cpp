@@ -3,6 +3,8 @@
 #include "Importer/IAnimationImporter.h"
 #include "Importer/Collada/CColladaAnimLoader.h"
 #include "Importer/FBX/CFBXAnimLoader.h"
+#include "Importer/Skylicht/CSkylichtAnimLoader.h"
+#include "Exporter/Skylicht/CSkylichtAnimExporter.h"
 #include "CAnimationManager.h"
 
 namespace Skylicht
@@ -49,6 +51,8 @@ namespace Skylicht
 			importer = new CColladaAnimLoader();
 		else if (ext == "fbx")
 			importer = new CFBXAnimLoader();
+		else if (ext == "sanim")
+			importer = new CSkylichtAnimLoader();
 
 		if (importer != NULL)
 		{
@@ -79,6 +83,24 @@ namespace Skylicht
 		}
 
 		return output;
+	}
+
+	bool CAnimationManager::exportAnimation(CAnimationClip* clip, const char* output)
+	{
+		IAnimationExporter* exporter = NULL;
+
+		std::string ext = CPath::getFileNameExt(output);
+		if (ext == "sanim")
+			exporter = new CSkylichtAnimExporter();
+
+		if (exporter != NULL)
+		{
+			bool result = exporter->exportAnim(clip, output);
+			delete exporter;
+			return true;
+		}
+
+		return false;
 	}
 
 	void CAnimationManager::releaseAllClips()

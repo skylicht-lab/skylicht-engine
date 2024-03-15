@@ -23,30 +23,26 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CSkylichtMeshLoader.h"
+#include "CSkylichtAnimLoader.h"
 
-#include "Entity/CEntity.h"
-#include "Entity/CEntityPrefab.h"
 #include "Exporter/ExportResources.h"
 
 #include "Utils/CMemoryStream.h"
-#include "Utils/CActivator.h"
-
-#include "Transform/CWorldTransformData.h"
+#include "Animation/CAnimationClip.h"
 
 namespace Skylicht
 {
-	CSkylichtMeshLoader::CSkylichtMeshLoader()
+	CSkylichtAnimLoader::CSkylichtAnimLoader()
 	{
 
 	}
 
-	CSkylichtMeshLoader::~CSkylichtMeshLoader()
+	CSkylichtAnimLoader::~CSkylichtAnimLoader()
 	{
 
 	}
 
-	bool CSkylichtMeshLoader::loadModel(const char* resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching)
+	bool CSkylichtAnimLoader::loadAnimation(const char* resource, CAnimationClip* output)
 	{
 		IrrlichtDevice* device = getIrrlichtDevice();
 		io::IFileSystem* fs = device->getFileSystem();
@@ -73,14 +69,14 @@ namespace Skylicht
 			return false;
 		}
 
-		if (assetHeader.AssetType != (u32)AssetModel)
+		if (assetHeader.AssetType != (u32)AssetAnimation)
 		{
 			delete[] data;
 			return false;
 		}
 
 		if (assetHeader.AssetVersion == 1)
-			loadVersion1(&stream, output, normalMap, texcoord2, batching);
+			loadVersion1(&stream, output);
 		else
 		{
 			delete[] data;
@@ -91,54 +87,65 @@ namespace Skylicht
 		return true;
 	}
 
-	void CSkylichtMeshLoader::loadVersion1(CMemoryStream* stream, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
+	void CSkylichtAnimLoader::loadVersion1(CMemoryStream* stream, CAnimationClip* output)
 	{
-		std::map<int, int> entityID;
-		int depthChange = 0;
+		output->AnimName = stream->readString();
+		output->Duration = stream->readFloat();
+		output->Loop = stream->readChar() == 1 ? true : false;
 
-		u32 numEntity = stream->readUInt();
-		for (u32 i = 0; i < numEntity; i++)
+		u32 count = stream->readUInt();
+
+		for (u32 i = 0; i < count; i++)
 		{
-			CEntity* entity = output->createEntity();
+			SEntityAnim* entityAnim = new SEntityAnim();
+			entityAnim->Name = stream->readString();
 
-			int entityIndex = stream->readInt();
-			entityID[entityIndex] = entity->getIndex();
+			// positions
+			CArrayKeyFrame<core::vector3df>& positions = entityAnim->Data.Positions;
 
-			bool entityVisible = stream->readChar() == 1 ? true : false;
-			entity->setVisible(entityVisible);
+			stream->readFloatArray(&positions.Default.X, 3);
 
-			int entityDataSize = stream->readInt();
-			while (entityDataSize != -1)
+			u32 numKey = stream->readUInt();
+			positions.Data.set_used(numKey);
+
+			for (u32 j = 0; j < numKey; j++)
 			{
-				std::string entityDataName = stream->readString();
-				u32 seek = stream->getPos();
-
-				IEntityData* data = entity->addDataByActivator(entityDataName.c_str());
-				if (data != NULL)
-				{
-					data->deserializable(stream);
-
-					// hardcode to fix transform
-					if (entityDataName == "CWorldTransformData")
-					{
-						CWorldTransformData* worldTransform = dynamic_cast<CWorldTransformData*>(data);
-						if (worldTransform != NULL)
-						{
-							if (i == 0)
-								depthChange = -worldTransform->Depth;
-
-							worldTransform->Depth += depthChange;
-
-							if (entityID.find(worldTransform->ParentIndex) != entityID.end())
-								worldTransform->ParentIndex = entityID[worldTransform->ParentIndex];
-						}
-					}
-				}
-
-				// go next data
-				stream->setPos(seek + entityDataSize);
-				entityDataSize = stream->readInt();
+				CPositionKey& posKey = positions.Data[j];
+				posKey.Frame = stream->readFloat();
+				stream->readFloatArray(&posKey.Value.X, 3);
 			}
+
+			// rotations
+			CArrayKeyFrame<core::quaternion>& rotations = entityAnim->Data.Rotations;
+
+			stream->readFloatArray(&rotations.Default.X, 4);
+
+			numKey = stream->readUInt();
+			rotations.Data.set_used(numKey);
+
+			for (u32 j = 0; j < numKey; j++)
+			{
+				CRotationKey& rotKey = rotations.Data[j];
+				rotKey.Frame = stream->readFloat();
+				stream->readFloatArray(&rotKey.Value.X, 4);
+			}
+
+			// scales
+			CArrayKeyFrame<core::vector3df>& scales = entityAnim->Data.Scales;
+
+			stream->readFloatArray(&scales.Default.X, 3);
+
+			numKey = stream->readUInt();
+			scales.Data.set_used(numKey);
+
+			for (u32 j = 0; j < numKey; j++)
+			{
+				CScaleKey& scaleKey = scales.Data[j];
+				scaleKey.Frame = stream->readFloat();
+				stream->readFloatArray(&scaleKey.Value.X, 3);
+			}
+
+			output->addAnim(entityAnim);
 		}
 	}
 }
