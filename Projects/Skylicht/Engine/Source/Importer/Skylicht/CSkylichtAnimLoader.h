@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,36 +24,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
-#include "CAnimation.h"
-#include "CAnimationClip.h"
+#include "Utils/CMemoryStream.h"
+#include "Importer/IAnimationImporter.h"
 
 namespace Skylicht
 {
-	class CAnimationManager : public CGameSingleton<CAnimationManager>
+	class CSkylichtAnimLoader : public IAnimationImporter
 	{
 	protected:
-		std::map<std::string, CAnimationClip*> m_clips;
-		std::map<std::string, CAnimation*> m_animations;
 
 	public:
-		CAnimationManager();
+		CSkylichtAnimLoader();
 
-		virtual ~CAnimationManager();
+		virtual ~CSkylichtAnimLoader();
 
-		CAnimation* createAnimation(const char* name);
+		virtual bool loadAnimation(const char* resource, CAnimationClip* output);
 
-		CAnimation* getAnimation(const char* animName)
-		{
-			return m_animations[animName];
-		}
+	protected:
 
-		CAnimationClip* loadAnimation(const char* resource);
+		void loadVersion1(CMemoryStream* stream, CAnimationClip* output);
 
-		bool exportAnimation(CAnimationClip* clip, const char* output);
-
-		void releaseAllClips();
-
-		void releaseAllAnimations();
 	};
 }

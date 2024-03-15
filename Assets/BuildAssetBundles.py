@@ -6,7 +6,7 @@ compressExt = ["xml", "ttf", "otf", "txt",
                "mat",
                "hlsl", "glsl",
                "png", "jpg",
-               "smesh",
+               "smesh", "sanim",
                "mp3", "wav",
                "font"]
 compressResourceModel = ["dae", "obj", "mtl", "fbx"]
