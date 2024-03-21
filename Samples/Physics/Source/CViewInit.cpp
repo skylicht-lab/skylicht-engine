@@ -5,7 +5,7 @@
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
 
-#include "GridPlane/CGridPlane.h"
+#include "Primitive/CPlane.h"
 #include "Primitive/CCube.h"
 #include "SkyDome/CSkyDome.h"
 
@@ -41,6 +41,7 @@ void CViewInit::onInit()
 
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
+	shaderMgr->initSGDeferredShader();
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -105,13 +106,23 @@ void CViewInit::initScene()
 	CReflectionProbe* reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
 	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
-	// 3D grid
+	// plane
 	CGameObject* grid = zone->createEmptyObject();
-	grid->addComponent<CGridPlane>();
+	CPlane* plan = grid->addComponent<CPlane>();
+	plan->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
+
+	// indirect lighting
+	grid->addComponent<CIndirectLighting>();
+
 	grid->addComponent<Physics::CStaticPlaneCollider>();
 	Physics::CRigidbody* body = grid->addComponent<Physics::CRigidbody>();
 	body->setDynamic(false); // kinematic
 	body->initRigidbody();
+
+	// scale plane for render
+	core::matrix4 m;
+	m.setScale(core::vector3df(100.0, 1.0f, 100.0f));
+	grid->getTransform()->setRelativeTransform(m);
 
 	// Cube 1
 	CGameObject* cubeObj = zone->createEmptyObject();
@@ -119,7 +130,10 @@ void CViewInit::initScene()
 	// Change to forwarder material
 	CCube* cube = cubeObj->addComponent<CCube>();
 	CMaterial* material = cube->getMaterial();
-	material->changeShader("BuiltIn/Shader/Basic/VertexColor.xml");
+	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+
+	// indirect lighting
+	cubeObj->addComponent<CIndirectLighting>();
 
 	// Init physics
 	cubeObj->addComponent<Physics::CBoxCollider>();
@@ -135,7 +149,10 @@ void CViewInit::initScene()
 	// Change to forwarder material
 	cube = cubeObj->addComponent<CCube>();
 	material = cube->getMaterial();
-	material->changeShader("BuiltIn/Shader/Basic/VertexColor.xml");
+	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+
+	// indirect lighting
+	cubeObj->addComponent<CIndirectLighting>();
 
 	cubeObj->addComponent<Physics::CBoxCollider>();
 	body = cubeObj->addComponent<Physics::CRigidbody>();
@@ -158,10 +175,8 @@ void CViewInit::initScene()
 	u32 h = app->getHeight();
 
 	CContext* context = CContext::getInstance();
-	CForwardRP* fwrp = new CForwardRP();
-	fwrp->initRender(w, h);
 
-	context->setCustomRP(fwrp);
+	context->initRenderPipeline(w, h);
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
@@ -272,7 +287,6 @@ void CViewInit::onRender()
 {
 	if (m_initState == CViewInit::Finished)
 	{
-		/*
 		CContext* context = CContext::getInstance();
 		CScene* scene = CContext::getInstance()->getScene();
 		CBaseRP* rp = CContext::getInstance()->getRenderPipeline();
@@ -282,27 +296,26 @@ void CViewInit::onRender()
 		{
 			m_bakeSHLighting = false;
 
+			CZone* zone = scene->getZone(0);
+
+			// light probe
+			CGameObject* lightProbeObj = zone->createEmptyObject();
+			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
+			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
+
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
 			scene->updateAddRemoveObject();
 
-			core::vector3df pos(0.0f, 0.0f, 0.0f);
-
-			core::vector3df normal = CTransform::s_oy;
-			core::vector3df tangent = CTransform::s_ox;
-			core::vector3df binormal = normal.crossProduct(tangent);
-			binormal.normalize();
-
+			// bake light probe
 			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
 			lm->initBaker(64);
-			Lightmapper::CSH9 sh = lm->bakeAtPosition(
-				bakeCamera,
-				rp,
-				scene->getEntityManager(),
-				pos,
-				normal, tangent, binormal);
+
+			std::vector<CLightProbe*> probes;
+			probes.push_back(lightProbe);
+
+			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
 		}
-		*/
 	}
 	else
 	{

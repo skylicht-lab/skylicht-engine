@@ -169,6 +169,8 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml", new CTBNSGInstancing());
 
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
+
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGLightmap.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLight.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Lighting/SGDirectionalLightSSR.xml");
