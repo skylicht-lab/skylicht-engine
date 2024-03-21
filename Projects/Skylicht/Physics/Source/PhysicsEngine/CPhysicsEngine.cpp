@@ -174,6 +174,9 @@ namespace Skylicht
 
 			for (int i = 0; i < used; i++)
 			{
+				if (bodies[i]->BulletBody->isStaticOrKinematicObject())
+					continue;
+
 				btTransform& transform = bodies[i]->BulletBody->getWorldTransform();
 
 #ifdef BT_USE_NEON
