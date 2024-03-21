@@ -126,8 +126,7 @@ int AngleApplication::run()
     configParams.depthBits   = 24;
     configParams.stencilBits = 8;
 
-    if (!mGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(), mDriverType, mPlatformParams,
-                                 configParams))
+    if (!mGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(), mDriverType, mPlatformParams, configParams))
     {
         return -1;
     }

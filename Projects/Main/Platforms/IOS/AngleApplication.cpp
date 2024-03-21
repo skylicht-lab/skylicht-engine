@@ -66,8 +66,7 @@ bool AngleApplication::initialize()
     configParams.depthBits   = 24;
     configParams.stencilBits = 8;
 
-    if (!mGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(), mDriverType, mPlatformParams,
-                                 configParams))
+    if (!mGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(), mDriverType, mPlatformParams, configParams))
     {
         return false;
     }
@@ -175,6 +174,5 @@ void AngleApplication::onWheel(const Event::MouseWheelEvent &wheelEvent)
 
 void AngleApplication::onResized(int width, int height)
 {
-    // Default no-op.
     mOSWindow->resize(width, height);
 }
