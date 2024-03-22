@@ -157,6 +157,8 @@ namespace Skylicht
 				m_dynamicsWorld->stepSimulation(timestepSec);
 
 				syncTransforms();
+
+				checkCollision();
 			}
 #endif
 		}
@@ -191,6 +193,51 @@ namespace Skylicht
 #endif
 
 				bodies[i]->Transform->setWorldMatrix(world);
+			}
+#endif
+		}
+
+		void CPhysicsEngine::checkCollision()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			// SCollisionContactPoint contactData[MANIFOLD_CACHE_SIZE];
+
+			btDispatcher* dispathcher = m_dynamicsWorld->getDispatcher();
+			int numManifolds = dispathcher->getNumManifolds();
+
+			for (int i = 0; i < numManifolds; i++)
+			{
+				btPersistentManifold* contactManifold = dispathcher->getManifoldByIndexInternal(i);
+				btCollisionObject* obA = (btCollisionObject*)contactManifold->getBody0();
+				btCollisionObject* obB = (btCollisionObject*)contactManifold->getBody1();
+
+				CCollider* colliderA = (CCollider*)obA->getUserPointer();
+				CCollider* colliderB = (CCollider*)obB->getUserPointer();
+
+				if (colliderA == NULL || colliderB == NULL)
+					continue;
+
+				int numContacts = contactManifold->getNumContacts();
+				if (numContacts == 0)
+					continue;
+
+				for (int j = 0; j < numContacts; j++)
+				{
+					btManifoldPoint& pt = contactManifold->getContactPoint(j);
+					if (pt.getDistance() < 0.f)
+					{
+						const btVector3& ptA = pt.getPositionWorldOnA();
+						const btVector3& ptB = pt.getPositionWorldOnB();
+						const btVector3& normalOnB = pt.m_normalWorldOnB;
+
+						// contactData[j].PositionWorldOnA = Bullet::bulletVectorToIrrVector(ptA);
+						// contactData[j].PositionWorldOnB = Bullet::bulletVectorToIrrVector(ptB);
+						// contactData[j].NormalWorldOnB = Bullet::bulletVectorToIrrVector(normalOnB);
+					}
+				}
+
+				// invoke onCollision
+				// onCollision(colObjA, colObjB, contactData, numContacts);
 			}
 #endif
 		}

@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 #include "Bullet/CBulletUtils.h"
+
+#include "Collider/CCollider.h"
 #endif
 
 namespace Skylicht
@@ -84,8 +86,9 @@ namespace Skylicht
 
 			bool initRigidbody();
 
+#ifdef USE_BULLET_PHYSIC_ENGINE
 			void initMeshCollider(CCollider* collider);
-
+#endif
 			void releaseRigidbody();
 
 			core::vector3df getPosition();
