@@ -37,7 +37,7 @@ namespace Skylicht
 			m_normal(0.0f, 1.0f, 0.0f),
 			m_d(0.0f)
 		{
-			m_colliderType = CStaticPlaneCollider::Plane;
+			m_colliderType = CCollider::Plane;
 		}
 
 		CStaticPlaneCollider::~CStaticPlaneCollider()

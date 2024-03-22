@@ -24,42 +24,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
+#include "CMeshCollider.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CCollider : public CComponentSystem
+		class CBvhMeshCollider : public CMeshCollider
 		{
-		public:
-			enum EColliderType
-			{
-				Box,
-				Sphere,
-				Plane,
-				Cylinder,
-				Capsule,
-				BvhMesh,
-				ConvexMesh,
-				Mesh,
-				Unknown,
-			};
-
 		protected:
-			EColliderType m_colliderType;
-			
-			core::vector3df m_offset;
 
 		public:
-			CCollider();
+			CBvhMeshCollider();
 
-			virtual ~CCollider();
+			virtual ~CBvhMeshCollider();
 
-			EColliderType getColliderType()
-			{
-				return m_colliderType;
-			}
+			DECLARE_GETTYPENAME(CBvhMeshCollider)
 		};
 	}
 }

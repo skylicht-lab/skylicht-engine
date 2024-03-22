@@ -22,44 +22,25 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
+#include "pch.h"
+#include "CConvexMeshCollider.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CCollider : public CComponentSystem
+		ACTIVATOR_REGISTER(CConvexMeshCollider);
+
+		CATEGORY_COMPONENT(CConvexMeshCollider, "Mesh Collider", "Physics/Convex Mesh Collider");
+
+		CConvexMeshCollider::CConvexMeshCollider()
 		{
-		public:
-			enum EColliderType
-			{
-				Box,
-				Sphere,
-				Plane,
-				Cylinder,
-				Capsule,
-				BvhMesh,
-				ConvexMesh,
-				Mesh,
-				Unknown,
-			};
+			m_colliderType = CCollider::ConvexMesh;
+		}
 
-		protected:
-			EColliderType m_colliderType;
-			
-			core::vector3df m_offset;
+		CConvexMeshCollider::~CConvexMeshCollider()
+		{
 
-		public:
-			CCollider();
-
-			virtual ~CCollider();
-
-			EColliderType getColliderType()
-			{
-				return m_colliderType;
-			}
-		};
+		}
 	}
 }
