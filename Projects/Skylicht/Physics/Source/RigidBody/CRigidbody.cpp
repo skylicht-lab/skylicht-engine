@@ -169,6 +169,7 @@ namespace Skylicht
 #endif
 		}
 
+#ifdef USE_BULLET_PHYSIC_ENGINE
 		void CRigidbody::initMeshCollider(CCollider* collider)
 		{
 			CMeshCollider* meshCollider = dynamic_cast<CMeshCollider*>(collider);
@@ -354,6 +355,7 @@ namespace Skylicht
 	btBvhTriangleMeshShape *shape = new btBvhTriangleMeshShape(m_indexVertexArrays,useQuantizedAabbCompression);
 */
 		}
+#endif
 
 		void CRigidbody::releaseRigidbody()
 		{
