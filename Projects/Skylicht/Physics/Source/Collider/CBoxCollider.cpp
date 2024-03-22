@@ -36,7 +36,7 @@ namespace Skylicht
 		CBoxCollider::CBoxCollider() :
 			m_size(1.0f, 1.0f, 1.0f)
 		{
-			m_colliderType = CBoxCollider::Box;
+			m_colliderType = CCollider::Box;
 		}
 
 		CBoxCollider::~CBoxCollider()

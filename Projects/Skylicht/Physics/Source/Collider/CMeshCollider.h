@@ -24,42 +24,44 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
+#include "CCollider.h"
+#include "Entity/CEntityPrefab.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CCollider : public CComponentSystem
+		class CMeshCollider : public CCollider
 		{
-		public:
-			enum EColliderType
-			{
-				Box,
-				Sphere,
-				Plane,
-				Cylinder,
-				Capsule,
-				BvhMesh,
-				ConvexMesh,
-				Mesh,
-				Unknown,
-			};
-
 		protected:
-			EColliderType m_colliderType;
-			
-			core::vector3df m_offset;
+			std::string m_source;
 
 		public:
-			CCollider();
+			CMeshCollider();
 
-			virtual ~CCollider();
+			virtual ~CMeshCollider();
 
-			EColliderType getColliderType()
+			virtual void initComponent();
+
+			virtual void updateComponent();
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
+			inline void setMeshSource(const char* source)
 			{
-				return m_colliderType;
+				m_source = source;
 			}
+
+			inline const char* getMeshSource()
+			{
+				return m_source.c_str();
+			}
+
+			CEntityPrefab* getMeshPrefab();
+
+			DECLARE_GETTYPENAME(CMeshCollider)
 		};
 	}
 }
