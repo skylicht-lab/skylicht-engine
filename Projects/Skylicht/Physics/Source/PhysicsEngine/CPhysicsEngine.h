@@ -100,6 +100,8 @@ namespace Skylicht
 			void removeBody(CRigidbody* body);
 
 			void syncTransforms();
+
+			void checkCollision();
 		};
 	}
 }
