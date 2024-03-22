@@ -84,6 +84,8 @@ namespace Skylicht
 
 			bool initRigidbody();
 
+			void initMeshCollider(CCollider* collider);
+
 			void releaseRigidbody();
 
 			core::vector3df getPosition();

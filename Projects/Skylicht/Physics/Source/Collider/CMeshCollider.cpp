@@ -22,44 +22,55 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
+#include "pch.h"
+#include "CMeshCollider.h"
+#include "MeshManager/CMeshManager.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CCollider : public CComponentSystem
+		ACTIVATOR_REGISTER(CMeshCollider);
+
+		CATEGORY_COMPONENT(CMeshCollider, "Mesh Collider", "Physics/Mesh Collider");
+
+		CMeshCollider::CMeshCollider()
 		{
-		public:
-			enum EColliderType
-			{
-				Box,
-				Sphere,
-				Plane,
-				Cylinder,
-				Capsule,
-				BvhMesh,
-				ConvexMesh,
-				Mesh,
-				Unknown,
-			};
+			m_colliderType = CCollider::Mesh;
+		}
 
-		protected:
-			EColliderType m_colliderType;
-			
-			core::vector3df m_offset;
+		CMeshCollider::~CMeshCollider()
+		{
 
-		public:
-			CCollider();
+		}
 
-			virtual ~CCollider();
+		void CMeshCollider::initComponent()
+		{
 
-			EColliderType getColliderType()
-			{
-				return m_colliderType;
-			}
-		};
+		}
+
+		void CMeshCollider::updateComponent()
+		{
+
+		}
+
+		CObjectSerializable* CMeshCollider::createSerializable()
+		{
+			std::vector<std::string> meshExts = { "dae","obj","smesh" };
+
+			CObjectSerializable* obj = CComponentSystem::createSerializable();
+			obj->addProperty(new CFilePathProperty(obj, "source", m_source.c_str(), meshExts));
+			return obj;
+		}
+
+		void CMeshCollider::loadSerializable(CObjectSerializable* object)
+		{
+			CComponentSystem::loadSerializable(object);
+		}
+
+		CEntityPrefab* CMeshCollider::getMeshPrefab()
+		{
+			return CMeshManager::getInstance()->loadModel(m_source.c_str(), NULL, false, false);
+		}
 	}
 }
