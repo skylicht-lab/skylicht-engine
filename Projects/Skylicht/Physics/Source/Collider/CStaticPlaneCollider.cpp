@@ -88,5 +88,14 @@ namespace Skylicht
 			m_normal.Z = object->get<float>("normalZ", 0.0f);
 			m_d = object->get<float>("d", 0.0f);
 		}
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+		btCollisionShape* CStaticPlaneCollider::initCollisionShape()
+		{
+			m_shape = new btStaticPlaneShape(btVector3(m_normal.X, m_normal.Y, m_normal.Z), m_d);
+			m_shape->setUserPointer(this);
+			return m_shape;
+		}
+#endif
 	}
 }

@@ -85,7 +85,8 @@ bool CViewDemo::OnEvent(const SEvent& event)
 			const core::recti& vp = getVideoDriver()->getViewPort();
 			core::line3df ray = CProjective::getViewRay(
 				context->getActiveCamera(),
-				m_mouseX, m_mouseY,
+				(float)m_mouseX,
+				(float)m_mouseY,
 				vp.getWidth(), vp.getHeight()
 			);
 

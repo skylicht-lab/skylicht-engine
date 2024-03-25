@@ -231,14 +231,46 @@ Open iOS XCode Project on folder **skylicht-engine/PrjIOS/SKYLICHT_ENGINE.xcodep
 - [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6) (In progress)
 <img src="Documents/Media/Editor/skylicht-engine-editor.jpg"/>
 
+# Codestyle
+
+```code  C/C++
+// init scene/zone
+CScene* scene = CContext::getInstance()->getScene();
+CZone* zone = scene->getZone(0);
+
+// load model
+CMeshManager* meshManager = CMeshManager::getInstance();
+CEntityPrefab* meshPrefab = meshManager->loadModel("SampleModels/BlendShape/Cat.fbx", NULL, true);
+
+// load material
+CMaterialManager* materialMgr = CMaterialManager::getInstance();
+
+// search textures folder
+std::vector<std::string> textureFolders;
+
+// use Skylicht Editor to edit .mat file
+ArrayMaterial& catMaterials = materialMgr->loadMaterial("SampleModels/BlendShape/Cat.mat", true, textureFolders);
+
+// create 3d object
+CGameObject* cat = zone->createEmptyObject();
+cat->setName("Cat");
+
+// add render mesh component & init material
+CRenderMesh* meshRenderer = cat->addComponent<CRenderMesh>();
+meshRenderer->initFromPrefab(meshPrefab);
+meshRenderer->initMaterial(catMaterials);
+```
+
+You can see more code in the Example folder.
+
 # Sample Project
 ### Samples\HelloWorld
 Engine Components are used:
-- **FreeType Font**
-- **Glyph Font**
-- **Canvas Component**
-- **Graphics2D**
-- **GUI Text**
+- FreeType Font
+- Glyph Font
+- Canvas Component
+- Graphics2D
+- GUI Text
 <img src="Documents/Media/Samples/sample_hello_world.jpg"/>
 
 ### Samples\DrawPrimitives
@@ -255,21 +287,21 @@ This demo code, How to bind shader on Material.
 
 ### Samples\LuckyDraw
 Engine Components are used:
-- **FreeType Font**
-- **Glyph Font**
-- **Graphics2D**
-- **GUI Text**
-- **GUI Image**
-- **GUI Mask**
-- **EventManager**
+- FreeType Font
+- Glyph Font
+- Graphics2D
+- GUI Text
+- GUI Image
+- GUI Mask
+- EventManager
 <img src="Documents/Media/Samples/sample_lucky_draw.gif" width="50%"/>
 
 ### Samples\SkinnedMesh
 This is example code. How to render character model with animation, models are downloaded from [mixamo](https://www.mixamo.com)
 - **DAE Collada** loader model/animation
-- **Forwarder** rendering
-- **Skydome**
-- **AnimationController**
+- Forwarder rendering
+- Skydome
+- AnimationController
 <img src="Documents/Media/Samples/sample_skinned_mesh.jpg"/>
 
 Live demo: [Emscripten](http://34.149.122.230/SampleSkinnedMesh.html)
@@ -324,12 +356,12 @@ Live demo: (Web PC Only) [Emscripten](http://34.149.122.230/SampleSponza.html)
 This is a demo to use lightmapper to set indirect lighting color on vertex color.
 
 Engine Components are used:
-- **OBJ Wavefront** loader
+- OBJ Wavefront loader
 - **Deferred** and **Forwarder** rendering
-- **Dynamic Direction Lighting**
-- **Shadow Mapping**
-- **Lightmapper**
-- **Skydome**
+- Dynamic Direction Lighting
+- Shadow Mapping
+- Lightmapper
+- Skydome
 
 #### Baked Global Illumination (3 bounces)
 Irradiance baked on Vertex Color:

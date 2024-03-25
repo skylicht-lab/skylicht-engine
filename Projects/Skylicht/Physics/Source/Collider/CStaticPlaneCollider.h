@@ -63,6 +63,10 @@ namespace Skylicht
 
 			void setPlane(const core::vector3df& normal, const core::vector3df& origin);
 
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			virtual btCollisionShape* initCollisionShape();
+#endif
+
 			DECLARE_GETTYPENAME(CStaticPlaneCollider)
 		};
 	}

@@ -53,6 +53,10 @@ namespace Skylicht
 				return m_size;
 			}
 
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			virtual btCollisionShape* initCollisionShape();
+#endif
+
 			DECLARE_GETTYPENAME(CBoxCollider)
 		};
 	}
