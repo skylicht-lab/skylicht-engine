@@ -86,9 +86,6 @@ namespace Skylicht
 
 			bool initRigidbody();
 
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			void initMeshCollider(CCollider* collider);
-#endif
 			void releaseRigidbody();
 
 			core::vector3df getPosition();

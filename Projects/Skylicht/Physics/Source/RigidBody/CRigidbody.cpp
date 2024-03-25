@@ -101,36 +101,8 @@ namespace Skylicht
 				releaseRigidbody();
 			}
 
-			switch (collider->getColliderType())
-			{
-			case CCollider::Box:
-			{
-				CBoxCollider* box = m_gameObject->getComponent<CBoxCollider>();
-
-				core::vector3df s = box->getSize() * 0.5f;
-				m_shape = new btBoxShape(btVector3(s.X, s.Y, s.Z));
-			}
-			break;
-			case CCollider::Plane:
-			{
-				CStaticPlaneCollider* plane = m_gameObject->getComponent<CStaticPlaneCollider>();
-
-				const core::vector3df& n = plane->getNormal();
-				m_shape = new btStaticPlaneShape(btVector3(n.X, n.Y, n.Z), plane->getD());
-			}
-			case CCollider::Mesh:
-			case CCollider::BvhMesh:
-			case CCollider::ConvexMesh:
-			{
-				initMeshCollider(collider);
-			}
-			break;
-			default:
-			{
-				m_shape = NULL;
-			}
-			}
-
+			// init shape
+			m_shape = collider->initCollisionShape();
 			if (m_shape == NULL)
 				return false;
 
@@ -154,8 +126,6 @@ namespace Skylicht
 			m_rigidBody->setUserPointer(this);
 			m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
-			m_shape->setUserPointer(collider);
-
 			// add rigid body
 			engine->addBody(this);
 
@@ -168,194 +138,6 @@ namespace Skylicht
 			return false;
 #endif
 		}
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-		void CRigidbody::initMeshCollider(CCollider* collider)
-		{
-			CMeshCollider* meshCollider = dynamic_cast<CMeshCollider*>(collider);
-			if (meshCollider == NULL)
-				return;
-
-			CEntityPrefab* prefab = meshCollider->getMeshPrefab();
-			if (prefab == NULL)
-				return;
-/*
-	// MESH COLLIDER
-	m_indexVertexArrays = new btTriangleMesh();
-
-	int numMeshBuffer = mesh->getMeshBufferCount();
-
-	btVector3 vertices[3];
-	core::vector3df v;
-
-	for (int i = 0; i < numMeshBuffer; i++)
-	{
-		IMeshBuffer *meshBuffer = mesh->getMeshBuffer(i);
-
-		IVertexBuffer	*vertexBuffer = meshBuffer->getVertexBuffer();
-		IIndexBuffer	*indexBuffer = meshBuffer->getIndexBuffer();
-
-		unsigned char* vertex = (unsigned char*)vertexBuffer->getVertices();
-		int vertexSize = vertexBuffer->getVertexSize();
-
-		int numIndex = indexBuffer->getIndexCount();
-
-		u16 *indexBuffer16 = NULL;
-		u32 *indexBuffer32 = NULL;
-
-		if (indexBuffer->getType() == video::EIT_16BIT)
-			indexBuffer16 = (u16*)indexBuffer->getIndices();
-		else
-			indexBuffer32 = (u32*)indexBuffer->getIndices();
-
-		for (int j = 0; j <numIndex; j+=3)
-		{
-			for (int k = 0; k < 3; k++)
-			{
-				u32 index = 0;
-
-				if (indexBuffer16 != NULL)
-					index = indexBuffer16[j + k];
-				else if (indexBuffer32 != NULL)
-					index = indexBuffer32[j + k];
-
-				unsigned char *vPos = vertex + index * vertexSize;
-				video::S3DVertex *vtx = (video::S3DVertex*)vPos;
-
-				v = vtx->Pos;
-				transform.transformVect(v);
-
-				vertices[k] = btVector3(v.X, v.Y, v.Z);
-			}
-
-			m_indexVertexArrays->addTriangle(vertices[0], vertices[1], vertices[2]);
-		}
-
-	}
-
-	btGImpactMeshShape *meshShape = new btGImpactMeshShape(m_indexVertexArrays);
-	meshShape->updateBound();
-	return meshShape;
-
-
-	// HULL
-	int numMeshBuffer = mesh->getMeshBufferCount();
-
-	btVector3 vertices;
-	core::vector3df v;
-
-	for (int i = 0; i < numMeshBuffer; i++)
-	{
-		IMeshBuffer *meshBuffer = mesh->getMeshBuffer(i);
-
-		IVertexBuffer	*vertexBuffer = meshBuffer->getVertexBuffer();
-		IIndexBuffer	*indexBuffer = meshBuffer->getIndexBuffer();
-
-		unsigned char *vertex = (unsigned char*)vertexBuffer->getVertices();
-		int vertexSize = vertexBuffer->getVertexSize();
-
-		int numIndex = indexBuffer->getIndexCount();
-
-		u16 *indexBuffer16 = NULL;
-		u32 *indexBuffer32 = NULL;
-
-		if (indexBuffer->getType() == video::EIT_16BIT)
-			indexBuffer16 = (u16*)indexBuffer->getIndices();
-		else
-			indexBuffer32 = (u32*)indexBuffer->getIndices();
-
-		for (int j = 0; j <numIndex; j+=3)
-		{
-			for (int k = 0; k < 3; k++)
-			{
-				u32 index = 0;
-
-				if (indexBuffer16 != NULL)
-					index = (u32)indexBuffer16[j + k];
-				else
-					index = (u32)indexBuffer32[j + k];
-
-				unsigned char *vPos = vertex + index * vertexSize;
-				video::S3DVertex *vtx = (video::S3DVertex*)vPos;
-
-				v = vtx->Pos;
-				transform.transformVect(v);
-
-				vertices = btVector3(v.X, v.Y, v.Z);
-
-				// add hull shape
-				hullShape->addPoint(vertices, false);
-			}
-		}
-	}
-
-	hullShape->recalcLocalAabb();
-
-	// BVH
-	IMeshBuffer *meshBuffer = mesh->getMeshBuffer(0);
-
-	IVertexBuffer	*vertexBuffer = meshBuffer->getVertexBuffer();
-	IIndexBuffer	*indexBuffer = meshBuffer->getIndexBuffer();
-
-
-	unsigned char *vertex = (unsigned char*)vertexBuffer->getVertices();
-	int vertexSize = vertexBuffer->getVertexSize();
-	int numVertex = vertexBuffer->getVertexCount();
-
-	int numIndex = indexBuffer->getIndexCount();
-
-	u16 *indexBuffer16 = NULL;
-	u32 *indexBuffer32 = NULL;
-
-	if (indexBuffer->getType() == video::EIT_16BIT)
-		indexBuffer16 = (u16*)indexBuffer->getIndices();
-	else
-		indexBuffer32 = (u32*)indexBuffer->getIndices();
-
-	m_vertices = new btVector3[numVertex];
-	m_indices = new int[numIndex];
-
-	for (int i = 0; i < numVertex; i++)
-	{
-		video::S3DVertex *v = (video::S3DVertex*)vertex;
-
-		core::vector3df pos = v->Pos;
-		transform.transformVect(pos);
-
-		m_vertices[i] = btVector3(pos.X, pos.Y, pos.Z);
-
-		vertex += vertexSize;
-	}
-
-	if (indexBuffer16 != NULL)
-	{
-		for (int i = 0; i < numIndex; i++)
-		{
-			m_indices[i] = (int)indexBuffer16[i];
-		}
-	}
-	else
-	{
-		for (int i = 0; i < numIndex; i++)
-		{
-			m_indices[i] = (int)indexBuffer32[i];
-		}
-	}
-
-	m_indexVertexArrays = new btTriangleIndexVertexArray(
-		numIndex/3,
-		m_indices,
-		sizeof(int)*3,
-		numVertex,
-		(btScalar*)&m_vertices[0].x(),
-		sizeof(btVector3)
-	);
-
-	bool useQuantizedAabbCompression = true;
-	btBvhTriangleMeshShape *shape = new btBvhTriangleMeshShape(m_indexVertexArrays,useQuantizedAabbCompression);
-*/
-		}
-#endif
 
 		void CRigidbody::releaseRigidbody()
 		{
@@ -373,6 +155,10 @@ namespace Skylicht
 
 			if (m_shape)
 			{
+				CCollider* collider = (CCollider*)m_shape->getUserPointer();
+				if (collider)
+					collider->dropCollisionShape();
+
 				delete m_shape;
 				m_shape = NULL;
 			}

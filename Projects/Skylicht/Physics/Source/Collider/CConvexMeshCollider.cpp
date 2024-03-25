@@ -42,5 +42,75 @@ namespace Skylicht
 		{
 
 		}
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+		btCollisionShape* CConvexMeshCollider::initCollisionShape()
+		{
+			CEntityPrefab* prefab = getMeshPrefab();
+			if (prefab == NULL)
+				return NULL;
+
+			btConvexHullShape* hullShape = new btConvexHullShape();
+
+			initFromPrefab(prefab, [hullShape](const core::matrix4& transform, CMesh* mesh) {
+				int numMeshBuffer = mesh->getMeshBufferCount();
+
+				btVector3 vertices;
+				core::vector3df v;
+
+				for (int i = 0; i < numMeshBuffer; i++)
+				{
+					IMeshBuffer* meshBuffer = mesh->getMeshBuffer(i);
+
+					IVertexBuffer* vertexBuffer = meshBuffer->getVertexBuffer();
+					IIndexBuffer* indexBuffer = meshBuffer->getIndexBuffer();
+
+					unsigned char* vertex = (unsigned char*)vertexBuffer->getVertices();
+					int vertexSize = vertexBuffer->getVertexSize();
+
+					int numIndex = indexBuffer->getIndexCount();
+
+					u16* indexBuffer16 = NULL;
+					u32* indexBuffer32 = NULL;
+
+					if (indexBuffer->getType() == video::EIT_16BIT)
+						indexBuffer16 = (u16*)indexBuffer->getIndices();
+					else
+						indexBuffer32 = (u32*)indexBuffer->getIndices();
+
+					for (int j = 0; j < numIndex; j += 3)
+					{
+						for (int k = 0; k < 3; k++)
+						{
+							u32 index = 0;
+
+							if (indexBuffer16 != NULL)
+								index = (u32)indexBuffer16[j + k];
+							else
+								index = (u32)indexBuffer32[j + k];
+
+							unsigned char* vPos = vertex + index * vertexSize;
+							video::S3DVertex* vtx = (video::S3DVertex*)vPos;
+
+							v = vtx->Pos;
+							transform.transformVect(v);
+
+							vertices = btVector3(v.X, v.Y, v.Z);
+
+							// add hull shape
+							hullShape->addPoint(vertices, false);
+						}
+					}
+				}
+
+				});
+
+
+			hullShape->recalcLocalAabb();
+			m_shape = hullShape;
+			m_shape->setUserPointer(this);
+			return m_shape;
+		}
+#endif
 	}
 }
