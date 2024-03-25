@@ -26,6 +26,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Components/CComponentSystem.h"
 
+#ifdef USE_BULLET_PHYSIC_ENGINE
+#include <btBulletCollisionCommon.h>
+#endif
+
 namespace Skylicht
 {
 	namespace Physics
@@ -48,8 +52,12 @@ namespace Skylicht
 
 		protected:
 			EColliderType m_colliderType;
-			
+
 			core::vector3df m_offset;
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			btCollisionShape* m_shape;
+#endif
 
 		public:
 			CCollider();
@@ -60,6 +68,12 @@ namespace Skylicht
 			{
 				return m_colliderType;
 			}
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			virtual btCollisionShape* initCollisionShape() = 0;
+
+			virtual void dropCollisionShape();
+#endif
 		};
 	}
 }

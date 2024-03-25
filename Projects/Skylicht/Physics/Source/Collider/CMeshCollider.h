@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CCollider.h"
 #include "Entity/CEntityPrefab.h"
+#include "RenderMesh/CRenderMeshData.h"
 
 namespace Skylicht
 {
@@ -60,6 +61,14 @@ namespace Skylicht
 			}
 
 			CEntityPrefab* getMeshPrefab();
+
+			core::matrix4 getWorldTransform();
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			virtual btCollisionShape* initCollisionShape();
+
+			void initFromPrefab(CEntityPrefab* prefab, std::function<void(const core::matrix4&, CMesh*)> callback);
+#endif
 
 			DECLARE_GETTYPENAME(CMeshCollider)
 		};

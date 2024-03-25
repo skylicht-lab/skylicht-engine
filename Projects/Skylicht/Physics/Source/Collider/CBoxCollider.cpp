@@ -70,5 +70,15 @@ namespace Skylicht
 			m_size.Y = object->get<float>("sizeY", 1.0f);
 			m_size.Z = object->get<float>("sizeZ", 1.0f);
 		}
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+		btCollisionShape* CBoxCollider::initCollisionShape()
+		{
+			core::vector3df s = m_size * 0.5f;
+			m_shape = new btBoxShape(btVector3(s.X, s.Y, s.Z));
+			m_shape->setUserPointer(this);
+			return m_shape;
+		}
+#endif
 	}
 }

@@ -39,6 +39,10 @@ namespace Skylicht
 
 			virtual ~CBvhMeshCollider();
 
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			virtual btCollisionShape* initCollisionShape();
+#endif
+
 			DECLARE_GETTYPENAME(CBvhMeshCollider)
 		};
 	}

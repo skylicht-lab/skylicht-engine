@@ -31,13 +31,25 @@ namespace Skylicht
 	{
 		CCollider::CCollider() :
 			m_colliderType(Unknown)
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			, m_shape(NULL)
+#endif
 		{
 
 		}
 
 		CCollider::~CCollider()
 		{
-
+			dropCollisionShape();
 		}
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+		void CCollider::dropCollisionShape()
+		{
+			if (m_shape)
+				m_shape->setUserPointer(NULL);
+			m_shape = NULL;
+		}
+#endif
 	}
 }
