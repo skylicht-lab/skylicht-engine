@@ -31,26 +31,26 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 -   Clone this repo
 
 -   Build assets bundle
-    ```console
-    C:\skylicht-engine>cd Assets
-    C:\skylicht-engine\Assets>python BuildAssetBundles.py
-    C:\skylicht-engine\Assets>cd ..
-    ```
-    
+```Batchfile
+C:\skylicht-engine>cd Assets
+C:\skylicht-engine\Assets>python BuildAssetBundles.py
+C:\skylicht-engine\Assets>cd ..
+```
+
 -   Run CMake from the current directory to generate visual studio project or xcode project
-    ```console
-    # Visual Studio 2017
-    C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
-  
-    # Visual Studio 2019
-    C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 16 2019" -A x64
-    
-    # Xcode
-    /User/Skylicht/Documents/skylicht-engine$cmake -S . -B ./PrjMac -G Xcode 
-    
-    # Linux
-    $ skylicht-engine$ cmake -S . -B ./PrjLinux -G "Unix Makefiles"
-    ```
+```Batchfile
+# Visual Studio 2017
+C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+
+# Visual Studio 2019
+C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 16 2019" -A x64
+
+# Xcode
+/User/Skylicht/Documents/skylicht-engine$cmake -S . -B ./PrjMac -G Xcode 
+
+# Linux
+$ skylicht-engine$ cmake -S . -B ./PrjLinux -G "Unix Makefiles"
+```
 -   Open the generated solution `PrjVisualStudio/SKYLICHT_ENGINE.sln`
 
 -   Once the solution opens, right click the **SampleXXX** project, click **"Set as StartUp Project"** and click the play button at the top to run the Demo App.
@@ -62,47 +62,47 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 ### Compress Texture
 -   **Optional**, You can skip this step if you don't modify any resource texture.
 -   This python tool will convert texture .TGA to compressed texture (.DDS, .ETC2, .PVRTC) to optimize gpu memory on runtime.
-    ```console
-    # Install Tinydb
-    # https://pypi.org/project/tinydb
-    C:\skylicht-engine>C:\Python37\Scripts\pip install tinydb
+```Batchfile
+# Install Tinydb
+# https://pypi.org/project/tinydb
+C:\skylicht-engine>C:\Python37\Scripts\pip install tinydb
 
-    # Install Pillow (Image processing)
-    # https://pillow.readthedocs.io/en/4.1.x/index.html
-    C:\skylicht-engine>C:\Python37\Scripts\pip install Pillow
+# Install Pillow (Image processing)
+# https://pillow.readthedocs.io/en/4.1.x/index.html
+C:\skylicht-engine>C:\Python37\Scripts\pip install Pillow
 
-    # Compress TGA to DDS, ETC2, PVR texture
-    C:\skylicht-engine>cd Assets    
-    C:\skylicht-engine\Assets>python BuildTextureCompressDDS.py
-    C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
-    C:\skylicht-engine\Assets>python BuildTextureCompressPVR.py
-    C:\skylicht-engine\Assets>cd ..
-    ```
+# Compress TGA to DDS, ETC2, PVR texture
+C:\skylicht-engine>cd Assets    
+C:\skylicht-engine\Assets>python BuildTextureCompressDDS.py
+C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
+C:\skylicht-engine\Assets>python BuildTextureCompressPVR.py
+C:\skylicht-engine\Assets>cd ..
+```
 ### Build Shader
 -   **Optional**, You can skip this step if you don't modify any shader.
 -   This python tool use C Preprocessor to inline shader script (HLSL, HLSL)
-    ```console
-    # Install pcpp (C Preprocessor tool)
-    # https://pypi.org/project/pcpp
-    C:\skylicht-engine>C:\Python37\Scripts\pip install pcpp
-    
-    # Build shader script
-    C:\skylicht-engine>cd Assets
-    C:\skylicht-engine\Assets>python BuildShader.py
-    C:\skylicht-engine\Assets>cd ..
-    ```
-    
+```Batchfile
+# Install pcpp (C Preprocessor tool)
+# https://pypi.org/project/pcpp
+C:\skylicht-engine>C:\Python37\Scripts\pip install pcpp
+
+# Build shader script
+C:\skylicht-engine>cd Assets
+C:\skylicht-engine\Assets>python BuildShader.py
+C:\skylicht-engine\Assets>cd ..
+```
+
 # Add your code to Project
 
 ## Add source code
 - Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project
-    ```console
-    C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
-    ```
+```Batchfile
+C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+```
 
 ## Create application project
 - Run **Scripts/create_project.py**. Example: Create application *NewApplication* at folder *Samples\NewApplication*
-```console
+```Batchfile
     C:\skylicht-engine>python Scripts\create_project.py NewApplication Samples\NewApplication
 ```
 - Edit **CMakeProjects.cmake**, add new line:"*subdirs (Samples/NewApplication)*" and regenerate projects
@@ -118,7 +118,7 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 ### **Step 1: Build native library**
 - Edit the file BuildCommand/BuildAndroidNDK.cmd by text editor and update your path **MINGW** and **NDK**
 
-```code
+```Batchfile
 # BuildAndroidNDK.cmd
 # Set your pc folder, example
 set MINGW=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
@@ -129,7 +129,7 @@ set NDK=C:\SDK\android-ndk-r21e
 - Run **BuildCommand/BuildAndroidNDK.cmd** to build android native library
 
 ### **Step 2: Copy native library to Gradle Project**
-```console
+```Batchfile
 # Make folder jniLibs on Android Project
 C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\armeabi-v7a
 C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\arm64-v8a
@@ -141,7 +141,7 @@ C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Pro
 ```
 
 ### **Step 3: Copy asset resource to Gradle Project**
-```console
+```Batchfile
 C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
 C:\skylicht-engine\Assets>python BuildAssetBundles.py
 C:\skylicht-engine\Assets>cd..
@@ -182,7 +182,7 @@ Run command build from Android Studio:
 
 ## How to build
 ### **Step 1: Build compress texture ETC and Build Asset Bundles**
-```code
+```Shell
 # Grant permission executive for PVRTexTool
 skylicht-engine/Tools/PVRTexTool/darwin$ chmod +x PVRTexToolCLI
 
@@ -197,7 +197,7 @@ skylicht-engine/Assets$ python3 BuildAssetBundles.py
 
 If you want build samples for iOS device, you should replace the **bundleIdentifier** in Samples/{ProjectName}/**CMakeLists.txt**.
 
-```code
+```CMake
 elseif (BUILD_IOS)
     # replace your application name
     set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleHelloWorld)
@@ -213,7 +213,7 @@ else()
 
 And generate iOS xCode Project by this script.
 
-```code
+```Shell
 # generate project for iOS device
 skylicht-engine/BuildCommand$ ./GenerateXCodeIOS.sh
 
@@ -233,10 +233,10 @@ Open iOS XCode Project on folder **skylicht-engine/PrjIOS/SKYLICHT_ENGINE.xcodep
 
 # Codestyle
 
-```code  C/C++
+```C++
 // init scene/zone
 CScene* scene = CContext::getInstance()->getScene();
-CZone* zone = scene->getZone(0);
+CZone* zone = scene->createZone();
 
 // load model
 CMeshManager* meshManager = CMeshManager::getInstance();
@@ -261,7 +261,7 @@ meshRenderer->initFromPrefab(meshPrefab);
 meshRenderer->initMaterial(catMaterials);
 ```
 
-You can see more code in the Example folder.
+You can see more code in the Samples folder.
 
 # Sample Project
 ### Samples\HelloWorld
