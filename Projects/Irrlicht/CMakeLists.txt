@@ -31,6 +31,10 @@ if(CYGWIN)
 	add_definitions(-DIRR_COMPILE_WITH_DX11_DEV_PACK)
 endif()
 
+if (BUILD_SHARED_LIBS)
+	add_definitions(-DIRRLICHT_EXPORTS)
+endif()
+
 file(GLOB_RECURSE irrlicht_source ./**.cpp ./**.c)
 file(GLOB_RECURSE irrlicht_include ./**.h)
 
@@ -77,4 +81,11 @@ if(BUILD_SDL)
 	else()
 		target_link_libraries(Irrlicht SDL2)
 	endif()	
+endif()
+
+if (INSTALL_LIBS)
+install(TARGETS Irrlicht
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
 endif()

@@ -20,3 +20,10 @@ target_precompiled_header(Lightmapper ./Source/pch.cpp ${skylicht_lightmapper_so
 set_target_properties(Lightmapper PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 target_link_libraries(Lightmapper Engine Components)
+
+if (INSTALL_LIBS)
+install(TARGETS Lightmapper
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

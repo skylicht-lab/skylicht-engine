@@ -38,3 +38,10 @@ target_link_libraries(Physics Bullet3Collision Bullet3Dynamics Bullet3Geometry B
 ENDIF(BUILD_BULLET3)
 
 endif()
+
+if (INSTALL_LIBS)
+install(TARGETS Physics
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

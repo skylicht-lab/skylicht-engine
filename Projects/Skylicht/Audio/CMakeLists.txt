@@ -42,3 +42,10 @@ else()
 		ThirdParty
 	)
 endif()
+
+if (INSTALL_LIBS)
+install(TARGETS Audio
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()
