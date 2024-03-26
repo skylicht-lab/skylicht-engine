@@ -22,58 +22,61 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-#include <btBulletCollisionCommon.h>
-#endif
+#include "pch.h"
+#include "CCapsuleCollider.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CCollider : public CComponentSystem
+		ACTIVATOR_REGISTER(CCapsuleCollider);
+
+		CATEGORY_COMPONENT(CCapsuleCollider, "Capsule Collider", "Physics/Collider");
+
+		CCapsuleCollider::CCapsuleCollider() :
+			m_radius(0.5f),
+			m_height(2.0f)
 		{
-		public:
-			enum EColliderType
-			{
-				Box,
-				Sphere,
-				Plane,
-				Cylinder,
-				Capsule,
-				BvhMesh,
-				ConvexMesh,
-				Mesh,
-				Unknown,
-			};
-			
-		protected:
-			EColliderType m_colliderType;
+			m_colliderType = CCollider::Capsule;
+		}
 
-			core::vector3df m_offset;
+		CCapsuleCollider::~CCapsuleCollider()
+		{
+
+		}
+
+		void CCapsuleCollider::initComponent()
+		{
+
+		}
+
+		void CCapsuleCollider::updateComponent()
+		{
+
+		}
+
+		CObjectSerializable* CCapsuleCollider::createSerializable()
+		{
+			CObjectSerializable* obj = CComponentSystem::createSerializable();
+			obj->addProperty(new CFloatProperty(obj, "radius", m_radius));
+			obj->addProperty(new CFloatProperty(obj, "height", m_height));
+			return obj;
+		}
+
+		void CCapsuleCollider::loadSerializable(CObjectSerializable* object)
+		{
+			CComponentSystem::loadSerializable(object);
+			m_radius = object->get<float>("radius", 1.0f);
+			m_height = object->get<float>("height", 1.0f);
+		}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			btCollisionShape* m_shape;
+		btCollisionShape* CCapsuleCollider::initCollisionShape()
+		{
+			m_shape = new btCapsuleShape(m_radius, m_height);
+			m_shape->setUserPointer(this);
+			return m_shape;
+		}
 #endif
-
-		public:
-			CCollider();
-
-			virtual ~CCollider();
-
-			EColliderType getColliderType()
-			{
-				return m_colliderType;
-			}
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			virtual btCollisionShape* initCollisionShape() = 0;
-
-			virtual void dropCollisionShape();
-#endif
-		};
 	}
 }

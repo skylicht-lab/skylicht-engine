@@ -22,58 +22,58 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-#include <btBulletCollisionCommon.h>
-#endif
+#include "pch.h"
+#include "CSphereCollider.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CCollider : public CComponentSystem
+		ACTIVATOR_REGISTER(CSphereCollider);
+
+		CATEGORY_COMPONENT(CSphereCollider, "Sphere Collider", "Physics/Collider");
+
+		CSphereCollider::CSphereCollider() :
+			m_radius(0.5f)
 		{
-		public:
-			enum EColliderType
-			{
-				Box,
-				Sphere,
-				Plane,
-				Cylinder,
-				Capsule,
-				BvhMesh,
-				ConvexMesh,
-				Mesh,
-				Unknown,
-			};
-			
-		protected:
-			EColliderType m_colliderType;
+			m_colliderType = CCollider::Sphere;
+		}
 
-			core::vector3df m_offset;
+		CSphereCollider::~CSphereCollider()
+		{
 
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			btCollisionShape* m_shape;
-#endif
+		}
 
-		public:
-			CCollider();
+		void CSphereCollider::initComponent()
+		{
 
-			virtual ~CCollider();
+		}
 
-			EColliderType getColliderType()
-			{
-				return m_colliderType;
-			}
+		void CSphereCollider::updateComponent()
+		{
+
+		}
+
+		CObjectSerializable* CSphereCollider::createSerializable()
+		{
+			CObjectSerializable* obj = CComponentSystem::createSerializable();
+			obj->addProperty(new CFloatProperty(obj, "radius", m_radius));
+			return obj;
+		}
+
+		void CSphereCollider::loadSerializable(CObjectSerializable* object)
+		{
+			CComponentSystem::loadSerializable(object);
+			m_radius = object->get<float>("radius", 0.5f);
+		}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			virtual btCollisionShape* initCollisionShape() = 0;
-
-			virtual void dropCollisionShape();
+		btCollisionShape* CSphereCollider::initCollisionShape()
+		{
+			m_shape = new btSphereShape(m_radius);
+			m_shape->setUserPointer(this);
+			return m_shape;
+		}
 #endif
-		};
 	}
 }
