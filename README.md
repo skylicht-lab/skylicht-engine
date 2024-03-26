@@ -31,14 +31,14 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 -   Clone this repo
 
 -   Build assets bundle
-```Batchfile
+```Shell
 C:\skylicht-engine>cd Assets
 C:\skylicht-engine\Assets>python BuildAssetBundles.py
 C:\skylicht-engine\Assets>cd ..
 ```
 
 -   Run CMake from the current directory to generate visual studio project or xcode project
-```Batchfile
+```Shell
 # Visual Studio 2017
 C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
 
@@ -62,7 +62,7 @@ $ skylicht-engine$ cmake -S . -B ./PrjLinux -G "Unix Makefiles"
 ### Compress Texture
 -   **Optional**, You can skip this step if you don't modify any resource texture.
 -   This python tool will convert texture .TGA to compressed texture (.DDS, .ETC2, .PVRTC) to optimize gpu memory on runtime.
-```Batchfile
+```Shell
 # Install Tinydb
 # https://pypi.org/project/tinydb
 C:\skylicht-engine>C:\Python37\Scripts\pip install tinydb
@@ -81,7 +81,7 @@ C:\skylicht-engine\Assets>cd ..
 ### Build Shader
 -   **Optional**, You can skip this step if you don't modify any shader.
 -   This python tool use C Preprocessor to inline shader script (HLSL, HLSL)
-```Batchfile
+```Shell
 # Install pcpp (C Preprocessor tool)
 # https://pypi.org/project/pcpp
 C:\skylicht-engine>C:\Python37\Scripts\pip install pcpp
@@ -96,13 +96,13 @@ C:\skylicht-engine\Assets>cd ..
 
 ## Add source code
 - Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project
-```Batchfile
+```Shell
 C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
 ```
 
 ## Create application project
 - Run **Scripts/create_project.py**. Example: Create application *NewApplication* at folder *Samples\NewApplication*
-```Batchfile
+```Shell
     C:\skylicht-engine>python Scripts\create_project.py NewApplication Samples\NewApplication
 ```
 - Edit **CMakeProjects.cmake**, add new line:"*subdirs (Samples/NewApplication)*" and regenerate projects
@@ -118,7 +118,7 @@ C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A
 ### **Step 1: Build native library**
 - Edit the file BuildCommand/BuildAndroidNDK.cmd by text editor and update your path **MINGW** and **NDK**
 
-```Batchfile
+```Shell
 # BuildAndroidNDK.cmd
 # Set your pc folder, example
 set MINGW=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
@@ -129,7 +129,7 @@ set NDK=C:\SDK\android-ndk-r21e
 - Run **BuildCommand/BuildAndroidNDK.cmd** to build android native library
 
 ### **Step 2: Copy native library to Gradle Project**
-```Batchfile
+```Shell
 # Make folder jniLibs on Android Project
 C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\armeabi-v7a
 C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\arm64-v8a
@@ -141,7 +141,7 @@ C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Pro
 ```
 
 ### **Step 3: Copy asset resource to Gradle Project**
-```Batchfile
+```Shell
 C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
 C:\skylicht-engine\Assets>python BuildAssetBundles.py
 C:\skylicht-engine\Assets>cd..
@@ -207,7 +207,6 @@ elseif (BUILD_IOS)
     set(APP_BUNDLE_IDENTIFIER "com.skylicht.helloword")
     set(CODE_SIGN_IDENTITY "iPhone Developer")
     
-    
 else()
 ```
 
@@ -261,7 +260,7 @@ meshRenderer->initFromPrefab(meshPrefab);
 meshRenderer->initMaterial(catMaterials);
 ```
 
-You can see more code in the Samples folder.
+And, more code in the Samples folder.
 
 # Sample Project
 ### Samples\HelloWorld

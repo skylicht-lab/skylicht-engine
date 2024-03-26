@@ -37,7 +37,7 @@ namespace Skylicht
 	{
 		ACTIVATOR_REGISTER(CMeshCollider);
 
-		CATEGORY_COMPONENT(CMeshCollider, "Mesh Collider", "Physics/Mesh Collider");
+		CATEGORY_COMPONENT(CMeshCollider, "Mesh Collider", "Physics/Collider");
 
 		CMeshCollider::CMeshCollider()
 		{

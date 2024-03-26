@@ -44,6 +44,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Collider/CBvhMeshCollider.h"
 #include "Collider/CConvexMeshCollider.h"
 #include "Collider/CMeshCollider.h"
+#include "Collider/CCylinderCollider.h"
+#include "Collider/CCapsuleCollider.h"
+#include "Collider/CSphereCollider.h"
 #include "RigidBody/CRigidbody.h"
 
 #define USE_COMPONENT(component) CComponentSystem *component##_used = addComponent(new component())
@@ -95,6 +98,9 @@ namespace Skylicht
 		USE_COMPONENT(CMeshCollider);
 		USE_COMPONENT(CBvhMeshCollider);
 		USE_COMPONENT(CConvexMeshCollider);
+		USE_COMPONENT(CCylinderCollider);
+		USE_COMPONENT(CCapsuleCollider);
+		USE_COMPONENT(CSphereCollider);
 
 		// END DECLARE COMPONENT
 

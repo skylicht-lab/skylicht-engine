@@ -31,7 +31,7 @@ namespace Skylicht
 	{
 		ACTIVATOR_REGISTER(CBvhMeshCollider);
 
-		CATEGORY_COMPONENT(CBvhMeshCollider, "Mesh Collider", "Physics/Bvh Mesh Collider");
+		CATEGORY_COMPONENT(CBvhMeshCollider, "Bvh Mesh Collider", "Physics/Collider");
 
 		CBvhMeshCollider::CBvhMeshCollider()
 		{
