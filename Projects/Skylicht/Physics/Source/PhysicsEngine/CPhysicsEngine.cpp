@@ -176,10 +176,17 @@ namespace Skylicht
 
 			for (int i = 0; i < used; i++)
 			{
-				if (bodies[i]->BulletBody->isStaticOrKinematicObject())
-					continue;
+				btRigidBody* body = bodies[i]->BulletBody;
+				CRigidbody* engineBody = bodies[i]->Body;
 
-				btTransform& transform = bodies[i]->BulletBody->getWorldTransform();
+				if (body->isStaticOrKinematicObject() && !engineBody->needUpdateTransform())
+				{
+					// statis kinematic just update when needUpdateTransform == true
+					engineBody->notifyUpdateTransform(false);
+					continue;
+				}
+
+				btTransform& transform = body->getWorldTransform();
 
 #ifdef BT_USE_NEON
 				transform.getOpenGLMatrix(ptr);
@@ -200,7 +207,7 @@ namespace Skylicht
 		void CPhysicsEngine::checkCollision()
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			// SCollisionContactPoint contactData[MANIFOLD_CACHE_SIZE];
+			SCollisionContactPoint contactData[MANIFOLD_CACHE_SIZE];
 
 			btDispatcher* dispathcher = m_dynamicsWorld->getDispatcher();
 			int numManifolds = dispathcher->getNumManifolds();
@@ -211,10 +218,13 @@ namespace Skylicht
 				btCollisionObject* obA = (btCollisionObject*)contactManifold->getBody0();
 				btCollisionObject* obB = (btCollisionObject*)contactManifold->getBody1();
 
-				CCollider* colliderA = (CCollider*)obA->getUserPointer();
-				CCollider* colliderB = (CCollider*)obB->getUserPointer();
+				CRigidbody* bodyA = (CRigidbody*)obA->getUserPointer();
+				CRigidbody* bodyB = (CRigidbody*)obB->getUserPointer();
 
-				if (colliderA == NULL || colliderB == NULL)
+				if (bodyA == NULL || bodyB == NULL)
+					continue;
+
+				if (bodyA->OnCollision == nullptr && bodyB->OnCollision == nullptr)
 					continue;
 
 				int numContacts = contactManifold->getNumContacts();
@@ -230,14 +240,18 @@ namespace Skylicht
 						const btVector3& ptB = pt.getPositionWorldOnB();
 						const btVector3& normalOnB = pt.m_normalWorldOnB;
 
-						// contactData[j].PositionWorldOnA = Bullet::bulletVectorToIrrVector(ptA);
-						// contactData[j].PositionWorldOnB = Bullet::bulletVectorToIrrVector(ptB);
-						// contactData[j].NormalWorldOnB = Bullet::bulletVectorToIrrVector(normalOnB);
+						contactData[j].PositionWorldOnA = Bullet::bulletVectorToIrrVector(ptA);
+						contactData[j].PositionWorldOnB = Bullet::bulletVectorToIrrVector(ptB);
+						contactData[j].NormalWorldOnB = Bullet::bulletVectorToIrrVector(normalOnB);
 					}
 				}
 
 				// invoke onCollision
-				// onCollision(colObjA, colObjB, contactData, numContacts);
+				if (bodyA->OnCollision != nullptr)
+					bodyA->OnCollision(bodyA, bodyB, contactData, numContacts);
+
+				if (bodyB->OnCollision != nullptr)
+					bodyB->OnCollision(bodyA, bodyB, contactData, numContacts);
 			}
 #endif
 		}

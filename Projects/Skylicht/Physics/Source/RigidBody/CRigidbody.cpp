@@ -20,7 +20,8 @@ namespace Skylicht
 
 		CRigidbody::CRigidbody() :
 			m_mass(1.0f),
-			m_isDynamic(true)
+			m_isDynamic(true),
+			m_needUpdateTransform(true)
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			, m_shape(NULL),
 			m_rigidBody(NULL)
@@ -206,6 +207,7 @@ namespace Skylicht
 				world.setOrigin(btVector3(pos.X, pos.Y, pos.Z));
 			}
 #endif
+			m_needUpdateTransform = true;
 		}
 
 		core::vector3df CRigidbody::getRotationEuler()
@@ -252,6 +254,7 @@ namespace Skylicht
 				world.setRotation(rot);
 			}
 #endif
+			m_needUpdateTransform = true;
 		}
 
 		void CRigidbody::setRotation(const core::quaternion& q)
@@ -264,6 +267,7 @@ namespace Skylicht
 				world.setRotation(rot);
 			}
 #endif
+			m_needUpdateTransform = true;
 		}
 
 		void CRigidbody::setState(EActivationState state)
@@ -288,6 +292,36 @@ namespace Skylicht
 				}
 			}
 #endif
+			m_needUpdateTransform = true;
+		}
+
+		CRigidbody::EActivationState CRigidbody::getState()
+		{
+			int state = m_rigidBody->getActivationState();
+			if (state == ACTIVE_TAG)
+				return Activate;
+			else if (state == ISLAND_SLEEPING)
+				return Sleep;
+			else if (state == DISABLE_DEACTIVATION)
+				return Alway;
+			else if (state == DISABLE_SIMULATION)
+				return Disable;
+		}
+
+		const char* CRigidbody::getStateName()
+		{
+			int state = m_rigidBody->getActivationState();
+			if (state == ACTIVE_TAG)
+				return "Activate";
+			else if (state == ISLAND_SLEEPING)
+				return "Sleep";
+			else if (state == WANTS_DEACTIVATION)
+				return "Wants Deactivation";
+			else if (state == DISABLE_DEACTIVATION)
+				return "Alway";
+			else if (state == DISABLE_SIMULATION)
+				return "Disable";
+			return "Unknown";
 		}
 
 		void CRigidbody::applyCenterForce(const core::vector3df& force)
@@ -296,6 +330,26 @@ namespace Skylicht
 			if (m_rigidBody)
 			{
 				m_rigidBody->applyCentralForce(btVector3(force.X, force.Y, force.Z));
+			}
+#endif
+		}
+
+		void CRigidbody::applyCenterImpulse(const core::vector3df& impulse)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->applyCentralImpulse(btVector3(impulse.X, impulse.Y, impulse.Z));
+			}
+#endif
+		}
+
+		void CRigidbody::applyCenterPushImpulse(const core::vector3df& impulse)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->applyCentralPushImpulse(btVector3(impulse.X, impulse.Y, impulse.Z));
 			}
 #endif
 		}
@@ -313,12 +367,58 @@ namespace Skylicht
 #endif
 		}
 
+		void CRigidbody::applyImpulse(const core::vector3df& impulse, const core::vector3df& localPosition)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->applyImpulse(
+					btVector3(impulse.X, impulse.Y, impulse.Z),
+					btVector3(localPosition.X, localPosition.Y, localPosition.Z)
+				);
+			}
+#endif
+		}
+
+		void CRigidbody::applyPushImpulse(const core::vector3df& impulse, const core::vector3df& localPosition)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->applyPushImpulse(
+					btVector3(impulse.X, impulse.Y, impulse.Z),
+					btVector3(localPosition.X, localPosition.Y, localPosition.Z)
+				);
+			}
+#endif
+		}
+
 		void CRigidbody::applyTorque(const core::vector3df& torque)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			if (m_rigidBody)
 			{
 				m_rigidBody->applyTorque(btVector3(torque.X, torque.Y, torque.Z));
+			}
+#endif
+		}
+
+		void CRigidbody::applyTorqueImpulse(const core::vector3df& torqueImpulse)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->applyTorqueImpulse(btVector3(torqueImpulse.X, torqueImpulse.Y, torqueImpulse.Z));
+			}
+#endif
+		}
+
+		void CRigidbody::applyTorqueTurnImpulse(const core::vector3df& torqueImpulse)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->applyTorqueTurnImpulse(btVector3(torqueImpulse.X, torqueImpulse.Y, torqueImpulse.Z));
 			}
 #endif
 		}

@@ -24,56 +24,45 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-#include <btBulletCollisionCommon.h>
-#endif
+#include "CCollider.h"
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CCollider : public CComponentSystem
+		class CSphereCollider : public CCollider
 		{
-		public:
-			enum EColliderType
-			{
-				Box,
-				Sphere,
-				Plane,
-				Cylinder,
-				Capsule,
-				BvhMesh,
-				ConvexMesh,
-				Mesh,
-				Unknown,
-			};
-			
 		protected:
-			EColliderType m_colliderType;
-
-			core::vector3df m_offset;
-
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			btCollisionShape* m_shape;
-#endif
+			float m_radius;
 
 		public:
-			CCollider();
+			CSphereCollider();
 
-			virtual ~CCollider();
+			virtual ~CSphereCollider();
 
-			EColliderType getColliderType()
+			virtual void initComponent();
+
+			virtual void updateComponent();
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
+			inline const float getRadius()
 			{
-				return m_colliderType;
+				return m_radius;
+			}
+
+			inline void setRadius(float r)
+			{
+				m_radius = r;
 			}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			virtual btCollisionShape* initCollisionShape() = 0;
-
-			virtual void dropCollisionShape();
+			virtual btCollisionShape* initCollisionShape();
 #endif
+
+			DECLARE_GETTYPENAME(CSphereCollider)
 		};
 	}
 }

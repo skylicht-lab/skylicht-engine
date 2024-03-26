@@ -53,6 +53,11 @@ namespace Skylicht
 				return m_size;
 			}
 
+			inline void setSize(const core::vector3df& s)
+			{
+				m_size = s;
+			}
+
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			virtual btCollisionShape* initCollisionShape();
 #endif

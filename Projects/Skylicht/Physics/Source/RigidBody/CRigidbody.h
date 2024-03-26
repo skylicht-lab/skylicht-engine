@@ -38,10 +38,18 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		struct SCollisionContactPoint
+		{
+			core::vector3df PositionWorldOnA;
+			core::vector3df PositionWorldOnB;
+			core::vector3df NormalWorldOnB;
+		};
+
 		class CRigidbody : public CComponentSystem
 		{
 			friend class CPhysicsEngine;
 		public:
+
 			enum EActivationState
 			{
 				Activate,
@@ -50,9 +58,13 @@ namespace Skylicht
 				Disable
 			};
 
+			std::function<void(CRigidbody*, CRigidbody*, SCollisionContactPoint*, int)> OnCollision;
+
 		protected:
 			bool m_isDynamic;
 			float m_mass;
+
+			bool m_needUpdateTransform;
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			btRigidBody* m_rigidBody;
@@ -104,6 +116,10 @@ namespace Skylicht
 
 			void setState(EActivationState state);
 
+			EActivationState getState();
+
+			const char* getStateName();
+
 			void applyCenterForce(const core::vector3df& force);
 
 			void applyForce(const core::vector3df& force, const core::vector3df& localPosition);
@@ -111,6 +127,28 @@ namespace Skylicht
 			void applyTorque(const core::vector3df& torque);
 
 			void clearForce();
+
+			void applyCenterImpulse(const core::vector3df& impulse);
+
+			void applyImpulse(const core::vector3df& impulse, const core::vector3df& localPosition);
+
+			void applyTorqueImpulse(const core::vector3df& torqueImpulse);
+
+			void applyCenterPushImpulse(const core::vector3df& impulse);
+
+			void applyPushImpulse(const core::vector3df& impulse, const core::vector3df& localPosition);
+
+			void applyTorqueTurnImpulse(const core::vector3df& torqueImpulse);
+
+			inline bool needUpdateTransform()
+			{
+				return m_needUpdateTransform;
+			}
+
+			void notifyUpdateTransform(bool b)
+			{
+				m_needUpdateTransform = b;
+			}
 
 		private:
 

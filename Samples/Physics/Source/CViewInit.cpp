@@ -108,8 +108,10 @@ void CViewInit::initScene()
 
 	// plane
 	CGameObject* grid = zone->createEmptyObject();
-	CPlane* plan = grid->addComponent<CPlane>();
-	plan->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
+	grid->setName("Plane");
+
+	CPlane* plane = grid->addComponent<CPlane>();
+	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
 
 	// indirect lighting
 	grid->addComponent<CIndirectLighting>();
@@ -124,8 +126,12 @@ void CViewInit::initScene()
 	m.setScale(core::vector3df(100.0, 1.0f, 100.0f));
 	grid->getTransform()->setRelativeTransform(m);
 
+	// that will disable replace transform in next update
+	body->notifyUpdateTransform(false);
+
 	// Cube 1
 	CGameObject* cubeObj = zone->createEmptyObject();
+	cubeObj->setName("Cube 1");
 
 	// Change to forwarder material
 	CCube* cube = cubeObj->addComponent<CCube>();
@@ -142,9 +148,20 @@ void CViewInit::initScene()
 	body->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
 	body->setRotation(core::vector3df(45.0f, 45.0f, 0.0f));
 	body->syncTransform();
+	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
+		{
+			char log[1024];
+			sprintf(log, "[%s - %s] collision [%s - %s]",
+				bodyA->getGameObject()->getNameA(),
+				bodyA->getStateName(),
+				bodyB->getGameObject()->getNameA(),
+				bodyB->getStateName());
+			os::Printer::log(log);
+		};
 
 	// Cube 2
 	cubeObj = zone->createEmptyObject();
+	cubeObj->setName("Cube 2");
 
 	// Change to forwarder material
 	cube = cubeObj->addComponent<CCube>();
@@ -159,6 +176,16 @@ void CViewInit::initScene()
 	body->initRigidbody();
 	body->setPosition(core::vector3df(0.0f, 10.0f, 0.0f));
 	body->syncTransform();
+	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
+		{
+			char log[1024];
+			sprintf(log, "[%s - %s] collision [%s - %s]",
+				bodyA->getGameObject()->getNameA(),
+				bodyA->getStateName(),
+				bodyB->getGameObject()->getNameA(),
+				bodyB->getStateName());
+			os::Printer::log(log);
+		};
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
