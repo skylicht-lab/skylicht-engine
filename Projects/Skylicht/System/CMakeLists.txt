@@ -19,3 +19,10 @@ set_target_properties(System PROPERTIES VERSION ${SKYLICHT_VERSION})
 if (NOT MSVC AND NOT BUILD_ANDROID AND NOT BUILD_EMSCRIPTEN)
 target_link_libraries(System ThirdParty pthread)
 endif()
+
+if (INSTALL_LIBS)
+install(TARGETS System
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

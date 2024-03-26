@@ -22,3 +22,10 @@ target_precompiled_header(UserInterface ./Source/pch.cpp ${skylicht_ui})
 set_target_properties(UserInterface PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 target_link_libraries(UserInterface Engine)
+
+if (INSTALL_LIBS)
+install(TARGETS UserInterface
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

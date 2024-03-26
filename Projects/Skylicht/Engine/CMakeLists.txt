@@ -27,3 +27,10 @@ target_link_libraries(Engine
 	System
 	Audio
 )
+
+if (INSTALL_LIBS)
+install(TARGETS Engine
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

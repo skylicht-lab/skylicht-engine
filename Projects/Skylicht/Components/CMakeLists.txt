@@ -30,3 +30,10 @@ target_link_libraries(Components Engine System)
 elseif(CYGWIN OR MINGW)
 target_link_libraries(Components Engine System)
 endif()
+
+if (INSTALL_LIBS)
+install(TARGETS Components
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

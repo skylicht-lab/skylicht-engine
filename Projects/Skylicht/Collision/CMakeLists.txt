@@ -30,3 +30,10 @@ target_link_libraries(Collision Engine System)
 elseif(CYGWIN OR MINGW)
 target_link_libraries(Collision Engine System)
 endif()
+
+if (INSTALL_LIBS)
+install(TARGETS Collision
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

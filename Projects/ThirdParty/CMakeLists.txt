@@ -145,3 +145,23 @@ add_library(ThirdParty STATIC
 )
 
 set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})
+
+if (BUILD_SHARED_LIBS AND BUILD_OPENSSL AND MSVC)
+	target_link_libraries(ThirdParty ws2_32)
+	target_link_libraries(ThirdParty crypto.lib decrepit.lib ssl.lib Crypt32.lib)
+	if (CMAKE_CL_64)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x64")
+		set(openssl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x64/*.dll")
+	else()
+		set(openssl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x86")
+		set(openssl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x86/*.dll")
+	endif()
+	target_link_directories(ThirdParty PUBLIC ${openssl_lib_path})
+endif()
+
+if (INSTALL_LIBS)
+install(TARGETS ThirdParty 
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

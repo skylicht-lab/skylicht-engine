@@ -230,7 +230,7 @@ Open iOS XCode Project on folder **skylicht-engine/PrjIOS/SKYLICHT_ENGINE.xcodep
 - [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6) (In progress)
 <img src="Documents/Media/Editor/skylicht-engine-editor.jpg"/>
 
-# Codestyle
+# Code example
 
 ```C++
 // init scene/zone
@@ -260,9 +260,8 @@ meshRenderer->initFromPrefab(meshPrefab);
 meshRenderer->initMaterial(catMaterials);
 ```
 
-And, more code in the Samples folder.
+# Sample Projects
 
-# Sample Project
 ### Samples\HelloWorld
 Engine Components are used:
 - FreeType Font

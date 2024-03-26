@@ -42,3 +42,10 @@ endif()
 if (BUILD_DEBUG_VLD)
 	target_link_libraries(Client vld)
 endif()
+
+if (INSTALL_LIBS)
+install(TARGETS Client
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()
