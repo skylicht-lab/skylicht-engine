@@ -1,6 +1,6 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source	
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
@@ -33,4 +33,8 @@ install(TARGETS Engine
 			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
+
+install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Engine
+	FILES_MATCHING PATTERN "*.h*")
 endif()
