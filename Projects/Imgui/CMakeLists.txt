@@ -17,3 +17,10 @@ add_library(Imgui STATIC ${imgui_source})
 set_target_properties(Imgui PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 target_link_libraries(Imgui Engine Irrlicht)
+
+if (INSTALL_LIBS)
+install(TARGETS Imgui
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

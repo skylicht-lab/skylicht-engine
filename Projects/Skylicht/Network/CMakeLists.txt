@@ -29,3 +29,10 @@ if (MSVC OR CYGWIN OR MINGW)
 endif()
 
 target_link_libraries(Network Engine System CryptoLib)
+
+if (INSTALL_LIBS)
+install(TARGETS Network
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

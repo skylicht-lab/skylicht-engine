@@ -12,3 +12,10 @@ setup_project_group("${crypto_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(CryptoLib STATIC ${crypto_source})
 
 set_target_properties(CryptoLib PROPERTIES VERSION ${SKYLICHT_VERSION})
+
+if (INSTALL_LIBS)
+install(TARGETS CryptoLib
+			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION lib)
+endif()

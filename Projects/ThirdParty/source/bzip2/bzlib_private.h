@@ -54,11 +54,12 @@ typedef unsigned short  UInt16;
 #endif 
 
 #ifndef BZ_NO_STDIO
-
+/*
 extern void BZ2_bz__AssertH__fail ( int errcode );
 #define AssertH(cond,errcode) \
    { if (!(cond)) BZ2_bz__AssertH__fail ( errcode ); }
-
+*/
+#define AssertH(cond,errcode)
 #if BZ_DEBUG
 #define AssertD(cond,msg) \
    { if (!(cond)) {       \
@@ -85,9 +86,12 @@ extern void BZ2_bz__AssertH__fail ( int errcode );
 
 #else
 
+/*
 extern void bz_internal_error ( int errcode );
 #define AssertH(cond,errcode) \
    { if (!(cond)) bz_internal_error ( errcode ); }
+*/
+#define AssertH(cond,errcode)
 #define AssertD(cond,msg)                do { } while (0)
 #define VPrintf0(zf)                     do { } while (0)
 #define VPrintf1(zf,za1)                 do { } while (0)

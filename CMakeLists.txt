@@ -24,6 +24,11 @@ else()
 	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs CACHE PATH "Single output directory for building all libraries.")
 endif()
 
+# install output
+set(CMAKE_INSTALL_PREFIX ${SKYLICHT_ENGINE_SOURCE_DIR}/Install)
+set(SKYLICHT_LIBRARY_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+set(SKYLICHT_INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include CACHE PATH "Output for install headers")
+
 if (CMAKE_SYSTEM_NAME STREQUAL iOS)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${PLATFORM} CACHE PATH "Single output directory for building executables.")
 else()
@@ -45,6 +50,8 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 
 option(BUILD_SHARED_LIBS "Use shared libraries" OFF)
+
+option(INSTALL_LIBS "Install library" OFF)
 
 option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
 
@@ -324,10 +331,14 @@ if (BUILD_ENGINE_TOOL)
 subdirs (Projects/Editor)
 endif()
 
+if (NOT INSTALL_LIBS)
+
 include(CMakeProjects.cmake)
 
 # unit test
 if (NOT BUILD_ANDROID AND NOT BUILD_IOS AND NOT BUILD_EMSCRIPTEN AND NOT BUILD_WINDOWS_STORE)
 enable_testing()
 subdirs (UnitTest/TestApp)
+endif()
+
 endif()
