@@ -33,11 +33,18 @@ endif()
 
 if (INSTALL_LIBS)
 install(TARGETS Collision
+			EXPORT CollisionTargets
 			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
 install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Collision/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Collision
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Collision
 	FILES_MATCHING PATTERN "*.h*")
+
+install(EXPORT CollisionTargets
+	FILE CollisionTargets.cmake
+	NAMESPACE Skylicht::
+	DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}/cmake
+)
 endif()

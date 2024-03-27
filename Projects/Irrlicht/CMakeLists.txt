@@ -83,6 +83,7 @@ endif()
 
 if (INSTALL_LIBS)
 install(TARGETS Irrlicht
+			EXPORT IrrlichtTargets
 			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
@@ -90,4 +91,10 @@ install(TARGETS Irrlicht
 install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Irrlicht
 	FILES_MATCHING PATTERN "*.h*")
+
+install(EXPORT IrrlichtTargets
+	FILE IrrlichtTargets.cmake
+	NAMESPACE Skylicht::
+	DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}/cmake
+)
 endif()

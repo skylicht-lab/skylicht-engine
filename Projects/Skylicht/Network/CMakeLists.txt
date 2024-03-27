@@ -32,11 +32,18 @@ target_link_libraries(Network Engine System CryptoLib)
 
 if (INSTALL_LIBS)
 install(TARGETS Network
+			EXPORT NetworkTargets
 			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
 install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Network
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Network
 	FILES_MATCHING PATTERN "*.h*")
+
+install(EXPORT NetworkTargets
+	FILE NetworkTargets.cmake
+	NAMESPACE Skylicht::
+	DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}/cmake
+)
 endif()
