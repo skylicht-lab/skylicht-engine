@@ -53,8 +53,6 @@ namespace Skylicht
 
 			core::vector3df Position[6];
 
-			DECLARE_DATA_TYPE_INDEX;
-
 		protected:
 			std::vector<std::pair<int, float>> m_sortPosition;
 
@@ -67,5 +65,7 @@ namespace Skylicht
 
 			EAxis hit(CCamera* camera, float x, float y, int viewportW, int viewportH);
 		};
+
+		DECLARE_DATA_TYPE_INDEX(CViewpointData);
 	}
 }

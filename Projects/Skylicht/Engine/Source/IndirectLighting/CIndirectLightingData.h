@@ -55,12 +55,12 @@ namespace Skylicht
 
 		bool ReleaseSH;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 
 		CIndirectLightingData();
 
 		virtual ~CIndirectLightingData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CIndirectLightingData);
 }

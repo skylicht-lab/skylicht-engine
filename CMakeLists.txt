@@ -167,11 +167,7 @@ endif()
 add_definitions(-DFT2_BUILD_LIBRARY)
 
 # irrlicht shared/static
-if (BUILD_SHARED_LIBS)
-if (INSTALL_LIBS)
-	add_definitions(-DIRRLICHT_EXPORTS)
-endif()
-else()
+if (NOT BUILD_SHARED_LIBS)
 	add_definitions(-D_IRR_STATIC_LIB_)
 endif()
 

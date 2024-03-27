@@ -38,16 +38,16 @@ namespace Skylicht
 		public:
 			core::array<CParticleTrail*> Trails;
 
-			DECLARE_DATA_TYPE_INDEX;
-
 		public:
 			CParticleTrailData();
 
 			virtual ~CParticleTrailData();
 
-			CParticleTrail* addTrail(CGroup *group);
+			CParticleTrail* addTrail(CGroup* group);
 
 			void removeTrail(CParticleTrail* group);
 		};
+
+		DECLARE_DATA_TYPE_INDEX(CParticleTrailData);
 	}
 }

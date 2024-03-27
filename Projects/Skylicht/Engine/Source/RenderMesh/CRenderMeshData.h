@@ -36,8 +36,6 @@ namespace Skylicht
 	public:
 		static std::vector<std::string> ImportTextureFolder;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	protected:
 		CMesh* RenderMesh;
 		CMesh* SoftwareSkinnedMesh;
@@ -124,4 +122,6 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CRenderMeshData)
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CRenderMeshData);
 }

@@ -14,6 +14,10 @@ add_library(System ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_system_source}
 )
 
+if (BUILD_SHARED_LIBS)
+set_target_properties(System PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+endif()
+
 set_target_properties(System PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 if (NOT MSVC AND NOT BUILD_ANDROID AND NOT BUILD_EMSCRIPTEN)

@@ -44,8 +44,6 @@ namespace Skylicht
 		bool HasLateChanged;
 		bool NeedValidateForLate;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CWorldTransformData();
 
@@ -57,4 +55,6 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CWorldTransformData);
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CWorldTransformData);
 }

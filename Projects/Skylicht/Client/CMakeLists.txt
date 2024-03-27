@@ -29,6 +29,10 @@ setup_project_group("${skylicht_client_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 	
 add_library(Client ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_client_source})
 
+if (BUILD_SHARED_LIBS)
+set_target_properties(Client PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+endif()
+
 target_precompiled_header(Client ./Source/pch.cpp ${skylicht_client_source})
 
 set_target_properties(Client PROPERTIES VERSION ${SKYLICHT_VERSION})

@@ -41,8 +41,6 @@ namespace Skylicht
 		// absolute joint transform at (0,0,0)
 		core::matrix4 AnimationMatrix;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CJointData();
 
@@ -54,4 +52,6 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CJointData)
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CJointData);
 }

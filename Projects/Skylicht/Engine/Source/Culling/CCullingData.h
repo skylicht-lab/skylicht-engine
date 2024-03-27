@@ -49,8 +49,6 @@ namespace Skylicht
 
 		bool Occlusion;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CCullingData();
 
@@ -62,4 +60,6 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CCullingData);
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CCullingData);
 }

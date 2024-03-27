@@ -35,7 +35,7 @@ namespace Skylicht
 		CEntityGroup(NULL, 0)
 	{
 		m_parentGroup = parent;
-		m_dataTypes.push_back(CRenderMeshData::DataTypeIndex);
+		m_dataTypes.push_back(DATA_TYPE_INDEX(CRenderMeshData));
 	}
 
 	CGroupMesh::~CGroupMesh()
