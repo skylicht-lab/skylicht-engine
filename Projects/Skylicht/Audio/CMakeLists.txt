@@ -11,7 +11,7 @@ file(GLOB_RECURSE skylicht_audio_source
 	./Source/*.h)
 setup_project_group("${skylicht_audio_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(Audio STATIC ${skylicht_audio_source})
+add_library(Audio ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_audio_source})
 
 target_precompiled_header(Audio ./Source/stdafx.cpp ${skylicht_audio_source})
 

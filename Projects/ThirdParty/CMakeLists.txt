@@ -129,7 +129,7 @@ file(GLOB_RECURSE kdtree_source
 	./source/kdtree/**.h)
 setup_project_group("${kdtree_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(ThirdParty STATIC
+add_library(ThirdParty ${ENGINE_SHARED_OR_STATIC_LIB}
 	${aes_gladman_source} 
 	${bzip2_source}
 	${curl_source}
@@ -145,6 +145,10 @@ add_library(ThirdParty STATIC
 )
 
 set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})
+
+if (BUILD_SHARED_LIBS)
+set_target_properties(ThirdParty PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+endif()
 
 if (BUILD_SHARED_LIBS AND BUILD_OPENSSL AND MSVC)
 	target_link_libraries(ThirdParty ws2_32)

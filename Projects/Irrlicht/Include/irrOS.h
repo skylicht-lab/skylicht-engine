@@ -17,7 +17,7 @@ namespace irr
 
 namespace os
 {
-	class Byteswap
+	class IRRLICHT_API Byteswap
 	{
 	public:
 		static u16 byteswap(u16 num);
@@ -30,7 +30,7 @@ namespace os
 		static c8  byteswap(c8  num);
 	};
 
-	class Printer
+	class IRRLICHT_API Printer
 	{
 	public:
 		// prints out a string to the console out stdout or debug log or whatever
@@ -46,7 +46,7 @@ namespace os
 	// mixed linear congruential generator (MLCG)
 	// numbers chosen according to L'Ecuyer, Commun. ACM 31 (1988) 742
 	// period is somewhere around m-1
-	class Randomizer
+	class IRRLICHT_API Randomizer
 	{
 	public:
 
@@ -75,7 +75,7 @@ namespace os
 
 
 
-	class Timer
+	class IRRLICHT_API Timer
 	{
 	public:
 
