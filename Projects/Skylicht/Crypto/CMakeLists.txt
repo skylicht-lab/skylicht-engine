@@ -11,6 +11,10 @@ setup_project_group("${crypto_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(CryptoLib ${ENGINE_SHARED_OR_STATIC_LIB} ${crypto_source})
 
+if (BUILD_SHARED_LIBS)
+set_target_properties(CryptoLib PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+endif()
+
 set_target_properties(CryptoLib PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 if (INSTALL_LIBS)

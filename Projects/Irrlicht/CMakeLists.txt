@@ -3,6 +3,11 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
 )
 
+# Irrlicht shared
+if (BUILD_SHARED_LIBS)
+	add_definitions(-DIRRLICHT_EXPORTS)
+endif()
+
 # SDL Include
 if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 	if(MSVC)

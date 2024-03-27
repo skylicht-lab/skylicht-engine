@@ -20,6 +20,10 @@ add_library(Network ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_network}
 )
 
+if (BUILD_SHARED_LIBS)
+set_target_properties(Network PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+endif()
+
 target_precompiled_header(Network ./Source/pch.cpp ${skylicht_network})
 
 set_target_properties(Network PROPERTIES VERSION ${SKYLICHT_VERSION})

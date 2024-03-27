@@ -34,11 +34,12 @@ namespace Skylicht
 	{
 	public:
 		CTransform* TransformComponent;
-		DECLARE_DATA_TYPE_INDEX;
 
 	public:
 		CTransformComponentData();
 
 		virtual ~CTransformComponentData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CTransformComponentData);
 }

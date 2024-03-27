@@ -31,9 +31,8 @@ namespace Skylicht
 	class CLODData : public IEntityData
 	{
 	public:
-		DECLARE_DATA_TYPE_INDEX;
-
 		float From;
+
 		float To;
 
 	public:
@@ -43,4 +42,6 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CLODData);
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CLODData);
 }

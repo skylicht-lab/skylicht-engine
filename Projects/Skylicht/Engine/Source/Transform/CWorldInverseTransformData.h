@@ -33,11 +33,11 @@ namespace Skylicht
 	public:
 		core::matrix4 WorldInverse;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CWorldInverseTransformData();
 
 		virtual ~CWorldInverseTransformData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CWorldInverseTransformData);
 }

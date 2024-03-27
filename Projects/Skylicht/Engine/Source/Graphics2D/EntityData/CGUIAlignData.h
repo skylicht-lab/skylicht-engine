@@ -73,7 +73,6 @@ namespace Skylicht
 		friend class CGUILayoutSystem;
 
 	public:
-		DECLARE_DATA_TYPE_INDEX;
 
 		EGUIDock Dock;
 
@@ -90,4 +89,6 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CGUIAlignData);
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CGUIAlignData);
 }
