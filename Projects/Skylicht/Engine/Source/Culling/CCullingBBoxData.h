@@ -34,11 +34,12 @@ namespace Skylicht
 	public:
 		core::aabbox3df BBox;
 		ArrayMaterial Materials;
-		DECLARE_DATA_TYPE_INDEX;
 
 	public:
 		CCullingBBoxData();
 
 		virtual ~CCullingBBoxData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CCullingBBoxData);
 }

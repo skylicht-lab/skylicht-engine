@@ -35,11 +35,11 @@ namespace Skylicht
 
 		bool Invalidate;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CReflectionProbeData();
 
 		virtual ~CReflectionProbeData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CReflectionProbeData);
 }

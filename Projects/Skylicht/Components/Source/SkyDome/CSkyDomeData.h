@@ -42,8 +42,6 @@ namespace Skylicht
 
 		CMaterial* SkyDomeMaterial;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CSkyDomeData();
 
@@ -51,4 +49,6 @@ namespace Skylicht
 
 		void generateMesh();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CSkyDomeData);
 }

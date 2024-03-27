@@ -40,8 +40,6 @@ namespace Skylicht
 		core::vector3df	m_rotation;
 
 	public:
-		DECLARE_DATA_TYPE_INDEX;
-
 		bool HasChanged;
 
 		core::rectf Rect;
@@ -113,4 +111,6 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CGUITransformData);
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CGUITransformData);
 }

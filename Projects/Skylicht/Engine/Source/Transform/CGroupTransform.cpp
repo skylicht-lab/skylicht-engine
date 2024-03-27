@@ -32,7 +32,7 @@ namespace Skylicht
 		CEntityGroup(NULL, 0)
 	{
 		m_parentGroup = parent;
-		m_dataTypes.push_back(CWorldTransformData::DataTypeIndex);
+		m_dataTypes.push_back(DATA_TYPE_INDEX(CWorldTransformData));
 	}
 
 	CGroupTransform::~CGroupTransform()

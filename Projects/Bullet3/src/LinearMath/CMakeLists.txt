@@ -54,7 +54,7 @@ SET(LinearMath_HDRS
 	TaskScheduler/btThreadSupportInterface.h
 )
 
-ADD_LIBRARY(LinearMath ${LinearMath_SRCS} ${LinearMath_HDRS})
+ADD_LIBRARY(LinearMath STATIC ${LinearMath_SRCS} ${LinearMath_HDRS})
 SET_TARGET_PROPERTIES(LinearMath PROPERTIES VERSION ${BULLET_VERSION})
 SET_TARGET_PROPERTIES(LinearMath PROPERTIES SOVERSION ${BULLET_VERSION})
 

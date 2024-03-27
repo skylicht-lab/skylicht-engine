@@ -45,8 +45,6 @@ namespace Skylicht
 
 		virtual ~CPrimiviteData();
 
-		DECLARE_DATA_TYPE_INDEX;
-
 		EPrimitive Type;
 
 		CMaterial* Material;
@@ -55,4 +53,6 @@ namespace Skylicht
 
 		bool NormalMap;
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CPrimiviteData);
 }

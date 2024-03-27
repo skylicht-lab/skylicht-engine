@@ -36,11 +36,12 @@ namespace Skylicht
 		bool Culled;
 
 		u32 CullingLayer;
-		DECLARE_DATA_TYPE_INDEX;
 
 	public:
 		CVisibleData();
 
 		virtual ~CVisibleData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CVisibleData);
 }

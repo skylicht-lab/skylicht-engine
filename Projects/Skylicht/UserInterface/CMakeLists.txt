@@ -17,6 +17,10 @@ add_library(UserInterface ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_ui}
 )
 
+if (BUILD_SHARED_LIBS)
+set_target_properties(UserInterface PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+endif()
+
 target_precompiled_header(UserInterface ./Source/pch.cpp ${skylicht_ui})
 
 set_target_properties(UserInterface PROPERTIES VERSION ${SKYLICHT_VERSION})
