@@ -164,12 +164,25 @@ if (BUILD_SHARED_LIBS AND BUILD_OPENSSL AND MSVC)
 endif()
 
 if (INSTALL_LIBS)
-install(TARGETS ThirdParty 
+install(TARGETS ThirdParty
+			EXPORT ThirdPartyTargets
 			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
-			
+
 install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/ThirdParty
 	FILES_MATCHING PATTERN "*.h*")
+
+if (BUILD_OPENSSL)
+install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/include
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/ThirdParty/source/boringssl
+	FILES_MATCHING PATTERN "*.h*")
+endif()
+
+install(EXPORT ThirdPartyTargets
+	FILE ThirdPartyTargets.cmake
+	NAMESPACE Skylicht::
+	DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}/cmake
+)
 endif()
