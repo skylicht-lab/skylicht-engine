@@ -23,11 +23,18 @@ target_link_libraries(Lightmapper Engine Components)
 
 if (INSTALL_LIBS)
 install(TARGETS Lightmapper
+			EXPORT LightmapperTargets
 			RUNTIME DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 			
 install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Lightmapper
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Lightmapper
 	FILES_MATCHING PATTERN "*.h*")
+
+install(EXPORT LightmapperTargets
+	FILE LightmapperTargets.cmake
+	NAMESPACE Skylicht::
+	DESTINATION ${SKYLICHT_LIBRARY_INSTALL_DIR}/cmake
+)
 endif()
