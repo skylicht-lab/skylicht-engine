@@ -18,7 +18,7 @@ void CSphereComponent::initComponent()
 	CEntity* entity = m_gameObject->getEntity();
 
 	// Add CSphereData (that inherit CRenderMeshData)
-	CSphereData* sphereData = entity->addData<CSphereData>(CRenderMeshData::DataTypeIndex);
+	CSphereData* sphereData = entity->addData<CSphereData>(DATA_TYPE_INDEX(CRenderMeshData));
 	sphereData->initSphere(1.0f, m_material);
 
 	CCullingData* culling = entity->addData<CCullingData>();

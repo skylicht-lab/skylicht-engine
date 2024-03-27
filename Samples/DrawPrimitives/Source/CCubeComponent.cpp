@@ -19,7 +19,7 @@ void CCubeComponent::initComponent()
 
 	// add cube mesh data to entity
 	// see more code init cube mesh from CCubeData (that inherit CRenderMeshData)
-	CCubeData* cube = entity->addData<CCubeData>(CRenderMeshData::DataTypeIndex);
+	CCubeData* cube = entity->addData<CCubeData>(DATA_TYPE_INDEX(CRenderMeshData));
 	cube->initCube(1.0f);
 
 	// add culling
