@@ -10,7 +10,7 @@ file(GLOB_RECURSE skylicht_system_source
 	./Source/*.h)
 setup_project_group("${skylicht_system_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(System STATIC
+add_library(System ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_system_source}
 )
 

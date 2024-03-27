@@ -13,7 +13,7 @@ file(GLOB_RECURSE skylicht_ui
 	./Source/*.h)
 setup_project_group("${skylicht_ui}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(UserInterface STATIC
+add_library(UserInterface ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_ui}
 )
 

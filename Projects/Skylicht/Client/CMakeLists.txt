@@ -27,7 +27,7 @@ file(GLOB_RECURSE skylicht_client_source
 	
 setup_project_group("${skylicht_client_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 	
-add_library(Client STATIC ${skylicht_client_source})
+add_library(Client ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_client_source})
 
 target_precompiled_header(Client ./Source/pch.cpp ${skylicht_client_source})
 

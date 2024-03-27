@@ -32,7 +32,11 @@ if(CYGWIN)
 endif()
 
 if (BUILD_SHARED_LIBS)
+if (INSTALL_LIBS)
 	add_definitions(-DIRRLICHT_EXPORTS)
+endif()
+else()
+	add_definitions(-D_IRR_STATIC_LIB_)
 endif()
 
 file(GLOB_RECURSE irrlicht_source ./**.cpp ./**.c)
@@ -41,7 +45,9 @@ file(GLOB_RECURSE irrlicht_include ./**.h)
 source_group("Source" FILES "${irrlicht_source}")
 source_group("Include" FILES "${irrlicht_include}")
 
-add_library(Irrlicht STATIC ${irrlicht_source} ${irrlicht_include})
+add_library(Irrlicht ${ENGINE_SHARED_OR_STATIC_LIB}
+	${irrlicht_source} 
+	${irrlicht_include})
 
 set_target_properties(Irrlicht PROPERTIES VERSION ${SKYLICHT_VERSION})
 
