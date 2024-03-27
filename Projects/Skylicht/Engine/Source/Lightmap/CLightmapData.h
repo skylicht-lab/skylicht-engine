@@ -34,12 +34,12 @@ namespace Skylicht
 		ITexture* LightmapTexture;
 		int LightmapIndex;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 
 		CLightmapData();
 
 		virtual ~CLightmapData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CLightmapData);
 }

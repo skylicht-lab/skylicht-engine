@@ -37,15 +37,15 @@ namespace Skylicht
 
 		core::aabbox3df BBox;
 
-		CLight *Light;
+		CLight* Light;
 
 		float CameraDistance;
-
-		DECLARE_DATA_TYPE_INDEX;
 
 	public:
 		CLightCullingData();
 
 		virtual ~CLightCullingData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CLightCullingData);
 }

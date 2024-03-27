@@ -33,8 +33,6 @@ namespace Skylicht
 	protected:
 
 	public:
-		DECLARE_DATA_TYPE_INDEX;
-
 		enum EAlignType
 		{
 			Vertical,
@@ -63,6 +61,7 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CGUILayoutData);
 	};
 
+	DECLARE_DATA_TYPE_INDEX(CGUILayoutData);
 
 
 	class CGUIChildLayoutData : public IEntityData
@@ -70,7 +69,6 @@ namespace Skylicht
 	protected:
 
 	public:
-		DECLARE_DATA_TYPE_INDEX;
 
 		CGUILayoutData* Parent;
 
@@ -81,4 +79,6 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CGUIChildLayoutData);
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CGUIChildLayoutData);
 }

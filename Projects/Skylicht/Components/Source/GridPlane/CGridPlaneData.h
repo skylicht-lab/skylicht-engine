@@ -12,7 +12,6 @@ namespace Skylicht
 	public:
 		int NumGrid;
 		float GridSize;
-		DECLARE_DATA_TYPE_INDEX;
 
 	public:
 		CGridPlaneData();
@@ -21,4 +20,6 @@ namespace Skylicht
 
 		void init();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CGridPlaneData);
 }

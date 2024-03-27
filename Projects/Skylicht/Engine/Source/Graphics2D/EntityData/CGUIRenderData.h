@@ -34,8 +34,6 @@ namespace Skylicht
 		friend class CGUILayoutSystem;
 
 	public:
-		DECLARE_DATA_TYPE_INDEX;
-
 		SColor Color;
 
 		int ShaderID;
@@ -49,4 +47,6 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CGUIRenderData);
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CGUIRenderData);
 }
