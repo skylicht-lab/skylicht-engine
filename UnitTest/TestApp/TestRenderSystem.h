@@ -8,9 +8,7 @@
 class CTestEntityData : public Skylicht::IEntityData
 {
 public:
-	IMesh *TestMesh;
-
-	DECLARE_DATA_TYPE_INDEX;
+	IMesh* TestMesh;
 
 public:
 	CTestEntityData();
@@ -19,6 +17,8 @@ public:
 
 	void initCubeMesh(float size);
 };
+
+DECLARE_DATA_TYPE_INDEX(CTestEntityData);
 
 class CTestRenderSystem : public Skylicht::IRenderSystem
 {
@@ -33,13 +33,13 @@ public:
 
 	virtual void beginQuery(CEntityManager* entityManager);
 
-	virtual void onQuery(CEntityManager *entityManager, CEntity** entities, int numEntity);
+	virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-	virtual void init(CEntityManager *entityManager);
+	virtual void init(CEntityManager* entityManager);
 
-	virtual void update(CEntityManager *entityManager);
+	virtual void update(CEntityManager* entityManager);
 
-	virtual void render(CEntityManager *entityManager);
+	virtual void render(CEntityManager* entityManager);
 };
 
 bool isTestRenderSystemPass();

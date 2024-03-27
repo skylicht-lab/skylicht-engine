@@ -24,17 +24,21 @@ add_library(Physics ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_physics}
 )
 
+if (BUILD_SHARED_LIBS)
+set_target_properties(Physics PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+endif()
+
 target_precompiled_header(Physics ./Source/pch.cpp ${skylicht_physics})
 
 set_target_properties(Physics PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-target_link_libraries(Physics Engine System)
+target_link_libraries(Physics PRIVATE Engine System)
 
 if (BUILD_BULLET_PHYSIC_LIB)
-target_link_libraries(Physics LinearMath Bullet3Common BulletCollision BulletDynamics BulletInverseDynamics BulletSoftBody)
+target_link_libraries(Physics PRIVATE LinearMath Bullet3Common BulletCollision BulletDynamics BulletInverseDynamics BulletSoftBody)
 
 IF(BUILD_BULLET3)
-target_link_libraries(Physics Bullet3Collision Bullet3Dynamics Bullet3Geometry Bullet3OpenCL Bullet2FileLoader)
+target_link_libraries(Physics PRIVATE Bullet3Collision Bullet3Dynamics Bullet3Geometry Bullet3OpenCL Bullet2FileLoader)
 ENDIF(BUILD_BULLET3)
 
 endif()

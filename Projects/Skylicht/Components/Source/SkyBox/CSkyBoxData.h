@@ -42,8 +42,6 @@ namespace Skylicht
 		ITexture* Top;
 		ITexture* Bottom;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CSkyBoxData();
 
@@ -55,4 +53,6 @@ namespace Skylicht
 		
 		void updateTexture();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CSkyBoxData);
 }

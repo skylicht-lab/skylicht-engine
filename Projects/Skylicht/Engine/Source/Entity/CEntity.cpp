@@ -125,7 +125,7 @@ namespace Skylicht
 	{
 		if (m_visible != b)
 		{
-			notifyUpdateGroup(CVisibleData::DataTypeIndex);
+			notifyUpdateGroup(DATA_TYPE_INDEX(CVisibleData));
 			m_visible = b;
 		}
 	}

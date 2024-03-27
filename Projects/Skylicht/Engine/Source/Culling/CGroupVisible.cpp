@@ -34,7 +34,7 @@ namespace Skylicht
 	CGroupVisible::CGroupVisible() :
 		CEntityGroup(NULL, 0)
 	{
-		m_dataTypes.push_back(CVisibleData::DataTypeIndex);
+		m_dataTypes.push_back(DATA_TYPE_INDEX(CVisibleData));
 	}
 
 	CGroupVisible::~CGroupVisible()
